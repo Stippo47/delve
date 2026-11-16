@@ -155,11 +155,8 @@ a few attempts; ~6 wins in 30 runs reaching depth 7.
 
 ---
 
-## 6. Getting it into a repo (from your PC)
+## 6. Repo and hosting
 
-```
-cd delve-repo
-git init -b main && git add -A && git commit -m "Delve v0.1"
-gh repo create delve --public --source . --push      # or create it on github.com and `git remote add` + push
-```
-Then Settings → Pages → Deploy from branch → `main` / root. Open the Pages URL on the iPhone once, Add to Home Screen.
+- Repo: `Stippo47/delve` (public). GitHub Pages serves `main` / root at https://stippo47.github.io/delve/
+- Open that URL in Safari on the iPhone once, then Share → Add to Home Screen. After that it runs offline.
+- Every release: bump `VERSION` in `sw.js`, or the phone keeps the cached copy.
