@@ -1,0 +1,9 @@
+{
+  "id": "live",
+  "kind": "report",
+  "rarity": "uncommon",
+  "title": "Delve is live",
+  "text": "The game is up at stippo47.github.io/delve and works offline once it's opened.",
+  "why": "Try it on the iPhone: open the link in Safari, Share, Add to Home Screen, then launch it from there in landscape. Say how it feels: speed, touch, anything off.",
+  "details": "https://stippo47.github.io/delve/\n\nChecked in a desktop browser at phone size: camp loads, a depth 1 run plays, no errors, and the offline copy saves. Not checked on a real iPhone yet, so frame rate, Low Power Mode and touch are still unknown."
+}

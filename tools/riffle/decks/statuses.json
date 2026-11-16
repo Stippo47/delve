@@ -1,0 +1,107 @@
+{
+  "title": "Status effects",
+  "topic": "statuses",
+  "order": 1,
+  "priority": 3,
+  "cards": [
+    {
+      "id": "now",
+      "kind": "report",
+      "rarity": "common",
+      "title": "How statuses work today",
+      "text": "Every status builds up to 100, then something bigger happens. Here's each one. Mark any part that's off.",
+      "why": "The questions after this one are about what comes next, so it helps to see what's there.",
+      "parts": [
+        {
+          "id": "burn",
+          "title": "Burn to Scorch",
+          "text": "Burn hurts over time. At 100 it drops to 20, the unit takes a big hit, and a small fire explosion goes off that burns those nearby."
+        },
+        {
+          "id": "chill",
+          "title": "Chill to Freeze to Shatter",
+          "text": "Chill slows, up to 60%. At 100 the unit freezes for 3 seconds (the boss 1.6). A hard hit while frozen shatters it into 8 icicles that chill whoever they hit. Each freeze makes the next one harder."
+        },
+        {
+          "id": "poison",
+          "title": "Poison to Rot",
+          "text": "Poison hurts over time. At 100 it rots: 15% of max HP at once. An enemy that dies badly poisoned leaves a gas cloud."
+        },
+        {
+          "id": "mix",
+          "title": "How they mix",
+          "text": "Fire thaws ice and burns chill away. Fire turns oil into fire and makes gas explode. Fire arrows set off oil and gas they fly through."
+        },
+        {
+          "id": "friendly",
+          "title": "Friendly fire",
+          "text": "Explosions and shatter icicles also hit your own heroes, at 40%."
+        },
+        {
+          "id": "who",
+          "title": "Who causes what",
+          "text": "Archer: chill on every arrow, fire arrows in Barrage. Rogue: poison. Knight: none, but his heavy hits shatter. Rings add any of the three. Enemies cause none."
+        }
+      ]
+    },
+    {
+      "id": "next",
+      "kind": "options",
+      "rarity": "rare",
+      "title": "The next status",
+      "text": "Which status we talked about should come next?",
+      "why": "Each one adds new combos. The first one in decides which new hero or ring brings it.",
+      "pick": "a",
+      "options": [
+        {
+          "id": "a",
+          "label": "Wet and Shock",
+          "text": "Shock chains at Overload. Wet doubles shock, halves burn."
+        },
+        {
+          "id": "b",
+          "label": "Bleed",
+          "text": "Hemorrhage: a big hit; moving bleeds faster."
+        },
+        {
+          "id": "c",
+          "label": "Stagger",
+          "text": "Heavy hits build to Topple: knocked flat briefly."
+        },
+        {
+          "id": "d",
+          "label": "Steam",
+          "text": "Fire on ice makes steam that blocks line of sight."
+        }
+      ]
+    },
+    {
+      "id": "new-heroes",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "New heroes' statuses",
+      "text": "Each hero now has its own status (archer chill, rogue poison). What should farmer and barbarian bring?",
+      "why": "A status per hero means every party you build combines differently.",
+      "pick": "Barbarian: bleed. Farmer: stagger from heavy knock-back swings, which also sets up the knight's shatters.",
+      "details": "The knight stays status-free, as the one who cashes in: his heavy hits shatter, and his Charge sends enemies into hazards."
+    },
+    {
+      "id": "enemies",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Enemies causing statuses",
+      "text": "No enemy causes a status yet. Should some?",
+      "why": "Right now statuses only ever help you. An enemy that sets your knight on fire next to oil makes rooms more dangerous and more interesting to watch.",
+      "pick": "Yes, one each: rat bites bleed, slimes leave wet puddles, skeletons cause nothing but resist poison (as now)."
+    },
+    {
+      "id": "friendly-fire",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Keep friendly fire?",
+      "text": "Explosions and icicles hit your own heroes at 40%. Keep it?",
+      "why": "It makes the knight charging into oil while the archer fires fire arrows a real risk, which is fun to watch. It also costs runs that feel unfair.",
+      "pick": "Keep it, and teach the brains to stay out of oil and gas when a fire is likely."
+    }
+  ]
+}

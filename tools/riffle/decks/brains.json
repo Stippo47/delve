@@ -1,0 +1,113 @@
+{
+  "title": "Brains and pathfinding",
+  "topic": "brains",
+  "order": 1,
+  "priority": 5,
+  "cards": [
+    {
+      "id": "now",
+      "kind": "report",
+      "rarity": "common",
+      "title": "How the brains work",
+      "text": "How heroes and enemies decide what to do today, in five parts. Mark any part that's off.",
+      "why": "This is built the way you asked. The questions after it are about what's missing.",
+      "parts": [
+        {
+          "id": "targets",
+          "title": "Picking a target",
+          "text": "Nearest first, plus a nudge each: archer likes hurt enemies it can see, rogue likes hurt or distracted ones, knight likes enemies attacking a teammate, rats like the archer. They stick with a target a while."
+        },
+        {
+          "id": "modes",
+          "title": "Choosing how to move",
+          "text": "Approach, hold, kite, strafe, flank, retreat or wander, re-scored every 0.4s. The best usually wins, but by chance, with a bonus for the current one and a minimum time before switching."
+        },
+        {
+          "id": "steering",
+          "title": "Steering",
+          "text": "Each unit scores 16 directions: wanting to go towards its goal, avoiding walls, pillars, hazards and crowding teammates. It moves the best way. No flow fields."
+        },
+        {
+          "id": "abilities",
+          "title": "Abilities",
+          "text": "Checked every half second. Better moments give better odds: Barrage on groups, Charge through a line, Shadow Step on a distracted target. Odds jump when one enemy is left."
+        },
+        {
+          "id": "paths",
+          "title": "Pathfinding",
+          "text": "None. Steering only looks about two body widths ahead, which is fine in open rooms with round pillars."
+        }
+      ]
+    },
+    {
+      "id": "pathfinding",
+      "kind": "question",
+      "rarity": "rare",
+      "title": "Pathfinding",
+      "text": "Steering alone gets stuck in dead ends once rooms have walls. How should units find their way?",
+      "why": "Needed before rooms get shapes. Without it, a hero behind a wall walks into it forever instead of going round.",
+      "pick": "A route through corner points around walls, worked out when the target moves. The next point becomes a 'go here' for the steering.",
+      "details": "This keeps your context steering as the part that moves units; the route only tells it where to head next. It's not a flow field: each unit gets its own short route, only when it can't see its target.\n\nIn open rooms nothing changes, since a unit that can see its target goes straight for it as now."
+    },
+    {
+      "id": "rogue",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "The rogue keeps dying",
+      "text": "The rogue is downed most often and ends up the lowest level. Fix the brain or the numbers?",
+      "why": "A hero who keeps falling behind stops being fun to bring.",
+      "pick": "The brain first: when hurt, retreat behind the knight and skip backstabs. Only raise HP if that's not enough.",
+      "details": "Why it happens: Shadow Step teleports the rogue behind enemies, often into the middle of a pack, and it keeps darting in at low HP."
+    },
+    {
+      "id": "teamwork",
+      "kind": "options",
+      "rarity": "uncommon",
+      "title": "Party teamwork",
+      "text": "Each hero picks targets by itself. Which bit of teamwork should go in first?",
+      "why": "Small team habits make the party look like it's working together, which is most of what you watch.",
+      "pick": "a",
+      "options": [
+        {
+          "id": "a",
+          "label": "Knight draws attention",
+          "text": "Enemies he hits or charges go for him for a few seconds."
+        },
+        {
+          "id": "b",
+          "label": "Finish the kill",
+          "text": "Archer and rogue prefer a nearly dead enemy."
+        },
+        {
+          "id": "c",
+          "label": "Knight protects",
+          "text": "He goes to whoever is low and being attacked."
+        },
+        {
+          "id": "d",
+          "label": "Walking formation",
+          "text": "Knight in front, archer behind, between fights."
+        }
+      ]
+    },
+    {
+      "id": "enemy-habits",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Enemy habits",
+      "text": "Enemies use the same brain as heroes with different numbers. Should each type get a habit of its own?",
+      "why": "You can tell enemies apart by how they move, not just by how they look, and each one asks something different of your party.",
+      "pick": "Yes: rats scatter when only one or two are left, skeletons line up shoulder to shoulder, the boss goes for whoever is alone.",
+      "details": "Slimes already split when they die, so they have their thing."
+    },
+    {
+      "id": "hazard-sense",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Knowing about combos",
+      "text": "Should the brains know about status combos, like luring enemies into oil before using fire?",
+      "why": "It's the difference between combos happening by luck and heroes visibly setting them up, which is the most fun to watch.",
+      "pick": "A little: the knight prefers to Charge enemies towards hazards, and Barrage prefers targets standing in oil or gas."
+    }
+  ]
+}

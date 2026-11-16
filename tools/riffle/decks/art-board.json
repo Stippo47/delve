@@ -1,0 +1,181 @@
+{
+  "title": "Character art: every candidate",
+  "topic": "art",
+  "order": 1,
+  "priority": 1,
+  "cards": [
+    {
+      "id": "candidates",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Class art candidates",
+      "text": "Every candidate on the approved base, one picture each. Tick a favourite per class and comment on any.",
+      "why": "Your ticks become the final art in the game. Each picture shows the design beside the archer at the same size, then turned 8 ways at game size.",
+      "pick": [
+        "knight-1",
+        "rogue-1",
+        "skeleton-1",
+        "skeleton-3",
+        "barbarian-1",
+        "farmer-2"
+      ],
+      "details": "Open any picture full size to compare head size with the archer.\n\nIn the game now as stand-ins: knight Bastion, rogue Shade, skeleton Rattler, boss Brute. None are approved yet.\n\nMy picks: Paladin (sword and shield read clearly at game size), Twinfang (two daggers give the rogue its own shape), Rattler for the grunt and Brute for the boss, Wildmane, and Granny Reaper (the scythe is the clearest tool of the farmers).\n\nFarmer and barbarian aren't in the game yet. Whatever you tick for them gets used when they join.",
+      "items": [
+        {
+          "id": "ref-archer",
+          "label": "Archer (locked)",
+          "image": "../out/ref-archer.png",
+          "thumb": "../out/ref-archer-thumb.png",
+          "text": "Locked final archer. Here so you can comment on it too; it's the yardstick for every other sheet."
+        },
+        {
+          "id": "ref-base",
+          "label": "Base body (approved)",
+          "image": "../out/ref-base.png",
+          "thumb": "../out/ref-base-thumb.png",
+          "text": "The approved base body every class is built on (head is the round collision token)."
+        },
+        {
+          "id": "knight-1",
+          "label": "Knight \u00b7 Paladin",
+          "image": "../out/knight-1.png",
+          "thumb": "../out/knight-1-thumb.png",
+          "text": "Paladin: open sallet with gold comb, blue scalloped cape, heater shield, arming sword forward. Weak: cape is a broad blue block, hem reads a bit cloud-like; most 'default knight'."
+        },
+        {
+          "id": "knight-2",
+          "label": "Knight \u00b7 Old Guard",
+          "image": "../out/knight-2.png",
+          "thumb": "../out/knight-2-thumb.png",
+          "text": "Old Guard: bald veteran, big white spade beard, fur collar, greatsword two-handed, shield slung on his back. Weak: the back shield peeks out like an ear or horn at game size."
+        },
+        {
+          "id": "knight-3",
+          "label": "Knight \u00b7 Bastion",
+          "image": "../out/knight-3.png",
+          "thumb": "../out/knight-3-thumb.png",
+          "text": "Bastion: faceless great helm, gold cross, braced pavise used as a ram for Charge. In the game now as a stand-in. Weak: reads as a red-and-grey crate at game size."
+        },
+        {
+          "id": "knight-4",
+          "label": "Knight \u00b7 Dame",
+          "image": "../out/knight-4.png",
+          "thumb": "../out/knight-4-thumb.png",
+          "text": "Dame: bareheaded, auburn braid trailing behind, teal cape, kite shield, sword in the left hand (mirror of the Paladin). Weak: hair cap is helmet-shaped."
+        },
+        {
+          "id": "skeleton-1",
+          "label": "Skeleton \u00b7 Rattler",
+          "image": "../out/skeleton-1.png",
+          "thumb": "../out/skeleton-1-thumb.png",
+          "text": "Rattler: the classic grunt, ring of separate bones around the skull, notched shortsword. In the game now. Weak: plainest; skull a little big for the base."
+        },
+        {
+          "id": "skeleton-2",
+          "label": "Skeleton \u00b7 Gaper",
+          "image": "../out/skeleton-2.png",
+          "thumb": "../out/skeleton-2-thumb.png",
+          "text": "Gaper: long skull pushed forward, jaw hanging open, vertebra hump, rusty spear. Weak: spear reads as a brown stick small."
+        },
+        {
+          "id": "skeleton-3",
+          "label": "Skeleton \u00b7 Brute",
+          "image": "../out/skeleton-3.png",
+          "thumb": "../out/skeleton-3-thumb.png",
+          "text": "Brute: ogre skull with tusks and underbite, knuckle fists, rusty cleaver. Used for the Bone King boss now. Weak: square stance can look like a chair."
+        },
+        {
+          "id": "skeleton-4",
+          "label": "Skeleton \u00b7 Hollow",
+          "image": "../out/skeleton-4.png",
+          "thumb": "../out/skeleton-4-thumb.png",
+          "text": "Hollow: tall narrow skull, fanned ribs, fencer stance with a rapier. Weak: raised back hand looks like a wave up close."
+        },
+        {
+          "id": "rogue-1",
+          "label": "Rogue \u00b7 Twinfang",
+          "image": "../out/rogue-1.png",
+          "thumb": "../out/rogue-1-thumb.png",
+          "text": "Twinfang: swept dark hair and ponytail, crimson scarf trailing, two reverse daggers forward. Weak: ponytail reads as a fin at game size."
+        },
+        {
+          "id": "rogue-2",
+          "label": "Rogue \u00b7 Cowl",
+          "image": "../out/rogue-2.png",
+          "thumb": "../out/rogue-2-thumb.png",
+          "text": "Cowl: round slouch hood and wide teal cowl, one centred dagger. Weak: a bit blobby or mushroom-like small."
+        },
+        {
+          "id": "rogue-3",
+          "label": "Rogue \u00b7 Bandit",
+          "image": "../out/rogue-3.png",
+          "thumb": "../out/rogue-3-thumb.png",
+          "text": "Bandit: red bandana and neckerchief, leather mantle, one dagger. Weak: both reds are the same; one-sided silhouette."
+        },
+        {
+          "id": "rogue-4",
+          "label": "Rogue \u00b7 Shade",
+          "image": "../out/rogue-4.png",
+          "thumb": "../out/rogue-4-thumb.png",
+          "text": "Shade: silver hair, violet swallowtail cape, crossed curved daggers. In the game now as a stand-in. Weak: hands small against the blades."
+        },
+        {
+          "id": "farmer-1",
+          "label": "Farmer \u00b7 Haymaker",
+          "image": "../out/farmer-1.png",
+          "thumb": "../out/farmer-1-thumb.png",
+          "text": "Haymaker: straw hat with red band, denim shoulders, pitchfork tines forward. Weak: hat hides the shoulders; tines tiny small."
+        },
+        {
+          "id": "farmer-2",
+          "label": "Farmer \u00b7 Granny Reaper",
+          "image": "../out/farmer-2.png",
+          "thumb": "../out/farmer-2-thumb.png",
+          "text": "Granny Reaper: red headscarf with big knot, white tufts, green shawl, scythe curling in at the front."
+        },
+        {
+          "id": "farmer-3",
+          "label": "Farmer \u00b7 Digger",
+          "image": "../out/farmer-3.png",
+          "thumb": "../out/farmer-3-thumb.png",
+          "text": "Digger: ginger lad, teal flat cap, leather vest, shovel spade-first. Weak: sideburns read as big ears."
+        },
+        {
+          "id": "farmer-4",
+          "label": "Farmer \u00b7 Grandpa Sickle",
+          "image": "../out/farmer-4.png",
+          "thumb": "../out/farmer-4-thumb.png",
+          "text": "Grandpa Sickle: bald, big white beard, grain sheaf on his back, sickle. Weak: sheaf is a plain gold wedge."
+        },
+        {
+          "id": "barbarian-1",
+          "label": "Barbarian \u00b7 Wildmane",
+          "image": "../out/barbarian-1.png",
+          "thumb": "../out/barbarian-1-thumb.png",
+          "text": "Wildmane: rust mane and forked beard, cream wolf-fur mantle, greatsword at the shoulder. One you liked in an earlier round."
+        },
+        {
+          "id": "barbarian-2",
+          "label": "Barbarian \u00b7 Bearskin",
+          "image": "../out/barbarian-2.png",
+          "thumb": "../out/barbarian-2-thumb.png",
+          "text": "Bearskin: bear-head helm with snout and fangs, hide mantle with paws, spiked club. One you liked earlier. Weak: club mostly hidden; a bit teddy up close."
+        },
+        {
+          "id": "barbarian-3",
+          "label": "Barbarian \u00b7 Warhelm",
+          "image": "../out/barbarian-3.png",
+          "thumb": "../out/barbarian-3-thumb.png",
+          "text": "Warhelm: horned iron helm with nasal bar, spiked pauldrons, brown beard, warhammer. Weak: face is small; hammer head a slab."
+        },
+        {
+          "id": "barbarian-4",
+          "label": "Barbarian \u00b7 Flail Berserker",
+          "image": "../out/barbarian-4.png",
+          "thumb": "../out/barbarian-4-thumb.png",
+          "text": "Flail Berserker: black hair with red mohawk, woad stripes, spiked-ball flail. Weakest of the four."
+        }
+      ]
+    }
+  ]
+}

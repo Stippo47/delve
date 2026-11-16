@@ -1,0 +1,87 @@
+{
+  "title": "How a run plays",
+  "topic": "runs",
+  "order": 1,
+  "priority": 4,
+  "cards": [
+    {
+      "id": "now",
+      "kind": "report",
+      "rarity": "common",
+      "title": "A run today",
+      "text": "What happens from entering a dungeon to the boss, in six parts. Mark any part that's off.",
+      "why": "The questions after this one change pieces of it.",
+      "parts": [
+        { "id": "layout", "title": "Layout", "text": "3 floors of 3 rooms. The last room of floor 3 is the Bone King with a few skeletons." },
+        { "id": "rooms", "title": "Rooms", "text": "Every room is the same open rectangle: in on the left, out on the right, 0 to 3 pillars." },
+        { "id": "types", "title": "Room types", "text": "Pack (enemies only), hazard (2 to 4 oil or spike patches), treasure (a chest), mixed, and the boss room." },
+        { "id": "chests", "title": "Keys and chests", "text": "Sometimes an enemy carries a key. After the fight the nearest hero walks to the chest and opens it, and a trinket goes in the satchel." },
+        { "id": "between", "title": "Between rooms", "text": "HP carries over. Downed heroes stay down until the floor is beaten, then come back at 10% HP. No healing except levelling up." },
+        { "id": "input", "title": "Your input", "text": "Speed (1x, 2x, 4x) and Retreat. Nothing else during a run." }
+      ]
+    },
+    {
+      "id": "room-shapes",
+      "kind": "question",
+      "rarity": "rare",
+      "title": "Room shapes",
+      "text": "Every room is the same rectangle. Should rooms come in different shapes?",
+      "why": "Shapes change how fights go: a corridor lets the knight hold a line, and a wall with gaps gives the archer cover. Today every fight looks alike after a few runs.",
+      "pick": "Yes: a handful of hand-made shapes (L-room, corridor, split room, round arena), with hazards and pillars still placed at random.",
+      "details": "This needs the heroes to find their way around walls, which they can't do yet: see [Pathfinding](riffle:delve/brains/pathfinding)."
+    },
+    {
+      "id": "branching",
+      "kind": "question",
+      "rarity": "rare",
+      "title": "Choosing the next room",
+      "text": "Should you get to choose between doors on the way out of a room?",
+      "why": "It's the one input that fits a game you mostly watch: a choice every minute or so, never during a fight.",
+      "pick": "Yes: two doors with icons (fight, treasure, rest, ?). Tap one, or the party picks by itself after 5 seconds.",
+      "details": "The ? door would be where Easter eggs and odd rooms live."
+    },
+    {
+      "id": "healing",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Healing during a run",
+      "text": "The only healing in a run is levelling up. Should there be more?",
+      "why": "By floor 3 the party is often worn down by small hits, so the boss fight depends more on earlier luck than on the boss.",
+      "pick": "A rest room on each floor (a fountain that heals everyone 40%), and nothing else, so it stays a big deal."
+    },
+    {
+      "id": "easter-eggs",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Easter eggs",
+      "text": "The five Easter eggs we talked about. Mark the ones you want, and say which goes in first.",
+      "why": "Each is small to build, and they make you want to watch closely.",
+      "pick": "The cracked wall first, since explosions already exist. Then the mimic chest.",
+      "parts": [
+        { "id": "mimic", "title": "Mimic chest", "text": "Now and then a chest bites back. Beating it gives two trinkets." },
+        { "id": "wall", "title": "Cracked wall", "text": "A crack in a room's wall. An explosion next to it opens a secret room with gold." },
+        { "id": "duck", "title": "The duck", "text": "A duck in a room. If no one hits it, it follows the party out and stays for the run." },
+        { "id": "personal", "title": "Nothing personal", "text": "Rarely, a rogue backstab crit says \"nothing personal\"." },
+        { "id": "asleep", "title": "Sleeping boss", "text": "If the rogue walks in first, the boss stays asleep for a free opening hit." }
+      ]
+    },
+    {
+      "id": "bosses",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "More than one boss",
+      "text": "Every depth ends with the same Bone King. Should there be others?",
+      "why": "The boss is the moment every run builds to, and seeing the same one each time makes deeper runs feel the same.",
+      "pick": "One new boss per few depths, each built around a status: a slime queen (wet), a rat king (bleed), and the Bone King stays."
+    },
+    {
+      "id": "sound",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Sound",
+      "text": "There's no sound yet. Add some?",
+      "why": "Hits, freezes and explosions land much harder with a sound. On the phone it follows the silent switch.",
+      "pick": "Yes, small sounds made in code (no sound files, so it stays light offline), with a mute button at camp."
+    }
+  ]
+}

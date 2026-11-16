@@ -1,0 +1,131 @@
+{
+  "title": "Progression: levels, coins, loot",
+  "topic": "progression",
+  "order": 1,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "now",
+      "kind": "report",
+      "rarity": "common",
+      "title": "How it works today",
+      "text": "What's built for progression in v0.1, in five parts. Mark any part that's off.",
+      "why": "The questions after this one build on it, so it's worth a quick look first.",
+      "parts": [
+        {
+          "id": "levels",
+          "title": "Levels",
+          "text": "Permanent. Each level gives +12% HP and +9% damage. Every hero alive in the room gets XP for each kill, and a level-up mid-fight heals 25%."
+        },
+        {
+          "id": "coins",
+          "title": "Coins",
+          "text": "Enemies drop them. A wipe keeps half, retreating keeps all, a win keeps all. There's nothing to spend them on yet."
+        },
+        {
+          "id": "loot",
+          "title": "Loot",
+          "text": "Chests give trinkets into a satchel. You only keep the satchel by beating the boss; a wipe or a retreat loses it. A win adds one bonus trinket."
+        },
+        {
+          "id": "trinkets",
+          "title": "Trinkets",
+          "text": "One slot per hero, equipped at camp. Eight so far: Last Breath, Volatile Charm, Frost / Ember Ring, Venom Fang, Vampire Tooth, Iron Skin, Swift Boots."
+        },
+        {
+          "id": "depth",
+          "title": "Depth",
+          "text": "Pick a depth at camp. Winning unlocks the next one. Each depth makes enemies about 22% stronger, and camp shows a recommended level."
+        }
+      ]
+    },
+    {
+      "id": "coins",
+      "kind": "question",
+      "rarity": "rare",
+      "title": "What coins buy",
+      "text": "Coins pile up with nothing to spend them on. What should camp sell?",
+      "why": "Without a use, coins and the 'keep half on a wipe' rule mean nothing. This is the main reason to go back into a dungeon you've already beaten.",
+      "pick": "A camp shop: a few trinkets that change each visit, and unlocking new heroes (farmer, barbarian) for a big price.",
+      "details": "Other things coins could buy, later: a second trinket slot, rerolling the shop, healing potions taken into a run, or a talent reset.\n\nI'd keep it to trinkets and heroes first, so coins have one clear meaning: more options for your party."
+    },
+    {
+      "id": "talents",
+      "kind": "options",
+      "rarity": "rare",
+      "title": "Talent points",
+      "text": "Stats grow by themselves; talents are chosen at camp. What shape should the choices take?",
+      "why": "This is what you'll tinker with between runs, so it sets how much planning the game asks of you.",
+      "pick": "a",
+      "options": [
+        {
+          "id": "a",
+          "label": "A small tree per hero",
+          "text": "A point per level, three short branches (archer: frost, fire, dodge)."
+        },
+        {
+          "id": "b",
+          "label": "Pick 1 of 3 at each level",
+          "text": "Random perks offered at camp."
+        },
+        {
+          "id": "c",
+          "label": "Unlock specials at set levels",
+          "text": "Planned extras (group hit, pierce) at levels 3, 6, 9."
+        },
+        {
+          "id": "d",
+          "label": "Tree plus specials",
+          "text": "Option a, with the specials as each branch's last node."
+        }
+      ]
+    },
+    {
+      "id": "floor-exit",
+      "kind": "question",
+      "rarity": "rare",
+      "title": "Leaving at a floor's end",
+      "text": "Should you be able to leave after a floor and keep the loot found so far, or only by beating the boss?",
+      "why": "Right now every run is all-or-nothing. A choice at each floor's end gives you a push-your-luck moment, which is a real decision in a game you mostly watch.",
+      "pick": "Yes: at each floor's end, leave with that floor's loot, or push on. Pushing on and winning adds a bonus trinket.",
+      "details": "This softens the rule you set (\"you must beat the dungeon to take loot out\"), so it's your call. A middle option: leaving early keeps only one item of your choice from the satchel.\n\nThe Retreat button would stay as it is: keep coins, lose the satchel."
+    },
+    {
+      "id": "dungeon-choice",
+      "kind": "question",
+      "rarity": "rare",
+      "title": "Choosing a dungeon",
+      "text": "Camp has a depth number to pick. Should it offer a few different dungeons instead?",
+      "why": "You said choosing the dungeon should be the main decision. A number alone is only 'harder or easier'; dungeons with a twist make the choice about your party too.",
+      "pick": "Yes: three dungeon cards each visit. Each has a depth, a twist (Flooded, Rat nest, Oil works) and a reward to match.",
+      "details": "Example: \"Oil works, depth 4: lots of oil and fire, rewards an Ember Ring.\" A party with the frost archer might avoid it; one with an Ember Ring might seek it out.\n\nThe twists would reuse things that already exist (hazards, enemy mixes) at first."
+    },
+    {
+      "id": "slots",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "A second trinket slot",
+      "text": "Each hero holds one trinket. Should a second slot open up?",
+      "why": "Two trinkets on one hero is where combos start (Frost Ring plus Volatile Charm, say), and you love things that combine.",
+      "pick": "Yes, earned: each hero's second slot opens at level 5."
+    },
+    {
+      "id": "roster",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Party size",
+      "text": "Once farmer and barbarian join, do all heroes go in, or do you pick a party?",
+      "why": "Picking a party makes heroes you leave at home matter less, but turns each dungeon into a team-building choice.",
+      "pick": "Pick 3 from everyone you've unlocked. Heroes at home still get a little XP, so nobody falls far behind."
+    },
+    {
+      "id": "last-breath",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Last Breath timing",
+      "text": "Last Breath says once per floor, but it actually comes back every room. Which should it be?",
+      "why": "Every room makes it very strong: a hero wearing it can't die in one hit, ever.",
+      "pick": "Once per floor, as its description says."
+    }
+  ]
+}
