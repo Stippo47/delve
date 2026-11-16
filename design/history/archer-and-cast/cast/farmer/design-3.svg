@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- FARMER design 3 "Reaper's Daughter": red headscarf knotted at the front with two big knot-ears, scythe carried
+       up the left side with the long blade hooked over the back of the head. Facing = DOWN (+y).
+       Rotate whole sprite around (100,100). -->
+  <defs>
+    <path id="scarf" d="M100 24 C134 24 158 48 158 80 C158 112 136 132 100 132 C64 132 42 112 42 80 C42 48 66 24 100 24 Z"/>
+    <clipPath id="scarfClip"><use href="#scarf"/></clipPath>
+    <ellipse id="face" cx="100" cy="138" rx="33" ry="21"/>
+    <clipPath id="faceClip"><use href="#face"/></clipPath>
+    <path id="earL" d="M97 114 C80 98 70 72 58 62 C50 56 42 64 46 76 C52 96 72 112 97 120 Z"/>
+    <path id="earR" d="M103 114 C120 98 130 72 142 62 C150 56 158 64 154 76 C148 96 128 112 103 120 Z"/>
+    <path id="blade" d="M23 22 C36 -2 106 -8 166 8 C172 10 172 14 166 15 C120 10 66 14 33 38 Z"/>
+    <clipPath id="bladeClip"><use href="#blade"/></clipPath>
+    <path id="shadeR" d="M100 -10 V220 H220 V-10 Z"/>
+
+    <linearGradient id="gScarf" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#E5675A"/><stop offset="1" stop-color="#C94B40"/>
+    </linearGradient>
+    <linearGradient id="gScarfS" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#BA4338"/><stop offset="1" stop-color="#9A342C"/>
+    </linearGradient>
+    <linearGradient id="gEar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F69A88"/><stop offset="1" stop-color="#E7705F"/>
+    </linearGradient>
+    <linearGradient id="gEarS" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D45A4B"/><stop offset="1" stop-color="#BC4A3E"/>
+    </linearGradient>
+    <linearGradient id="gFace" x1="0" y1="124" x2="0" y2="159" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9A6250"/>
+      <stop offset="0.36" stop-color="#C98E6C"/>
+      <stop offset="0.64" stop-color="#F2C7A0"/>
+      <stop offset="1" stop-color="#F6D0AC"/>
+    </linearGradient>
+    <linearGradient id="gWood" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#C98C55"/><stop offset="0.5" stop-color="#B07442"/><stop offset="0.5" stop-color="#94602F"/><stop offset="1" stop-color="#875629"/>
+    </linearGradient>
+    <linearGradient id="gBlade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9AA3AF"/><stop offset="0.45" stop-color="#C4CCD5"/><stop offset="1" stop-color="#EEF1F4"/>
+    </linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/>
+    </radialGradient>
+    <linearGradient id="gBraid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FAD98A"/><stop offset="1" stop-color="#E9B95A"/></linearGradient>
+    <linearGradient id="gBraidS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DDAA4E"/><stop offset="1" stop-color="#C79240"/></linearGradient>
+    <linearGradient id="gHairB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7A4A30"/><stop offset="1" stop-color="#5E3624"/></linearGradient>
+  </defs>
+
+  <!-- ===== heavy outer silhouette ===== -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#blade"/>
+    <path d="M27 24 L38 170" stroke-width="22"/>
+    
+    <path d="M54 104 C50 124 56 142 70 150 C78 146 80 136 78 126 L122 126 C120 136 122 146 130 150 C144 142 150 124 146 104 Z"/>
+    <use href="#face"/>
+    <use href="#scarf"/>
+    <rect x="25" y="152" width="26" height="21" rx="8"/>
+    <rect x="18" y="74" width="26" height="21" rx="8"/>
+  </g>
+
+  <!-- ===== interior ===== -->
+  <!-- scythe blade + snath -->
+  <use href="#blade" fill="url(#gBlade)"/>
+  <g clip-path="url(#bladeClip)"><path d="M100 -20 H200 V60 H100 Z" fill="#7F8895" opacity="0.35"/></g>
+  <path d="M27 24 L38 170" stroke="#A8703E" stroke-width="10" stroke-linecap="round"/>
+  <path d="M27 24 L38 170" stroke="#C98C55" stroke-width="5" stroke-linecap="round" transform="translate(-2 0)"/>
+
+
+  <!-- dark hair framing the face -->
+  <path d="M54 104 C50 124 56 142 70 150 C78 146 80 136 78 126 L122 126 C120 136 122 146 130 150 C144 142 150 124 146 104 Z" fill="url(#gHairB)"/>
+  <path d="M100 104 H146 C150 124 144 142 130 150 C122 146 120 136 122 126 H100 Z" fill="#4A2A1C" opacity="0.45"/>
+  <!-- face -->
+  <g clip-path="url(#faceClip)">
+    <use href="#face" fill="url(#gFace)"/>
+    <path d="M100 110 H140 V170 H100 Z" fill="#8A4E36" opacity="0.14"/>
+    <path d="M97 148 Q100 150.5 103 148" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- headscarf -->
+  <use href="#scarf" fill="#2B2230" opacity="0.28" transform="translate(0 3)"/>
+  <use href="#scarf" fill="url(#gScarf)"/>
+  <g clip-path="url(#scarfClip)">
+    <use href="#shadeR" fill="url(#gScarfS)"/>
+    <!-- knot ears -->
+    <use href="#earL" fill="#6E221D" opacity="0.5" transform="translate(1 4)"/>
+    <use href="#earR" fill="#6E221D" opacity="0.5" transform="translate(-1 4)"/>
+  </g>
+  <use href="#earL" fill="url(#gEar)"/>
+  <use href="#earR" fill="url(#gEarS)"/>
+  <circle cx="100" cy="117" r="11" fill="#6E221D" opacity="0.4" transform="translate(0 2)"/>
+  <circle cx="100" cy="117" r="11" fill="#F48C7A"/>
+  <path d="M100 106 A11 11 0 0 1 100 128 Z" fill="#D45A4B"/>
+
+  <!-- hands on the snath -->
+  <rect x="18" y="74" width="26" height="21" rx="8" fill="url(#gHand)"/>
+  <rect x="25" y="154" width="26" height="21" rx="8" fill="#2B2230" opacity="0.3"/>
+  <rect x="25" y="152" width="26" height="21" rx="8" fill="url(#gHand)"/>
+</svg>

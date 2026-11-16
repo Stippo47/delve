@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- Variant 2 "Folded Hood": lineless flat shapes + one thick outer silhouette outline, two-tone folded hood,
+       eyeless face split lit/shaded to match the hood, thin brim-shadow sliver, tapered recurve bow.
+       Single sprite. Front = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <path id="cape" d="M64 88 C38 90 18 104 8 124 C28 128 56 132 78 128 Z"/>
+    <path id="hood" d="M100 8 C112 30 148 54 158 90 C166 124 148 158 100 160 C52 158 34 124 42 90 C52 54 88 30 100 8 Z"/>
+    <path id="open" d="M62 137 C63 108 137 108 138 137 C135 154 65 154 62 137 Z"/>
+    <path id="bow" d="M100 173 C84 173 64 173 46 164 C34 157 29 148 22 137 C21 149 26 158 30 166 C44 180 72 188 100 188 C128 188 156 180 170 166 C174 158 179 149 178 137 C171 148 166 157 154 164 C136 173 116 173 100 173 Z"/>
+    <g id="quiver" transform="translate(-4 4) rotate(30 138 52)">
+      <path d="M131 31 C119 26 116 12 123 5 C132 10 136 22 131 31 Z"/>
+      <path d="M145 31 C157 26 160 12 153 5 C144 10 140 22 145 31 Z"/>
+      <rect x="121" y="26" width="34" height="50" rx="10"/>
+    </g>
+    <clipPath id="hoodClip"><use href="#hood"/></clipPath>
+    <clipPath id="openClip"><use href="#open"/></clipPath>
+  </defs>
+
+  <!-- 1. single silhouette outline: every shape stroked thick in dark, drawn once underneath everything -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="11" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#cape"/>
+    <use href="#cape" transform="matrix(-1 0 0 1 200 0)"/>
+    <use href="#quiver"/>
+    <use href="#hood"/>
+    <use href="#bow"/>
+    <path d="M100 150 V196" stroke-width="16"/>
+    <path d="M100 187 L110 194 L100 203 L90 194 Z"/>
+    <circle cx="100" cy="156" r="10"/>
+    <circle cx="100" cy="181" r="10"/>
+  </g>
+
+  <!-- 2. lineless colour blocks -->
+  <g fill="#2F6B42">
+    <use href="#cape"/>
+    <use href="#cape" transform="matrix(-1 0 0 1 200 0)"/>
+  </g>
+  <!-- quiver -->
+  <g transform="translate(-4 4) rotate(30 138 52)">
+    <path d="M131 31 C119 26 116 12 123 5 C132 10 136 22 131 31 Z" fill="#FFF3DA"/>
+    <path d="M145 31 C157 26 160 12 153 5 C144 10 140 22 145 31 Z" fill="#A9DB86"/>
+    <rect x="121" y="26" width="34" height="50" rx="10" fill="#9A6236"/>
+    <path d="M121 40 H155 V48 H121 Z" fill="#6B4122"/>
+  </g>
+
+  <!-- hood: two tones split along the midrib -->
+  <use href="#hood" fill="#3B8750"/>
+  <g clip-path="url(#hoodClip)">
+    <path d="M100 8 C96 40 97 76 101 120 L102 200 L0 200 L0 0 Z" fill="#58AE62"/>
+  </g>
+
+  <!-- gold trim, upper arc only -->
+  <path d="M51 139 C51 86 149 86 149 139 C146 123 126 108 100 108 C74 108 54 123 51 139 Z" fill="#F4B63C"/>
+
+  <!-- eyeless face: flat lit skin with a hard shade crescent, cheeks + nose nub, and just a thin brim-shadow sliver on top -->
+  <use href="#open" fill="#E3A582"/>
+  <g clip-path="url(#openClip)">
+    <use href="#open" fill="#F7CFA8" transform="translate(-4 -3)"/>
+    <ellipse cx="77" cy="139" rx="8" ry="4.6" fill="#EE9A86"/>
+    <ellipse cx="123" cy="139" rx="8" ry="4.6" fill="#EE9A86"/>
+    <ellipse cx="100" cy="134" rx="6" ry="4.4" fill="#EBB08A"/>
+    <path d="M40 100 H160 V125 C130 120 70 120 40 125 Z" fill="#4A3646"/>
+  </g>
+
+  <!-- bow string -->
+  <path d="M22 137 L100 160 L178 137" fill="none" stroke="#2B2230" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M22 137 L100 160 L178 137" fill="none" stroke="#FFF3DA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- arrow -->
+  <path d="M100 150 V196" fill="none" stroke="#C48A55" stroke-width="5"/>
+  <path d="M100 187 L110 194 L100 203 L90 194 Z" fill="#AEB8C6"/>
+  <path d="M100 187 L110 194 L100 203 Z" fill="#8995A6"/>
+
+  <!-- bow -->
+  <use href="#bow" fill="#A9693A"/>
+  <path d="M100 181 C72 181 46 174 30 166 C44 180 72 188 100 188 C128 188 156 180 170 166 C154 174 128 181 100 181 Z" fill="#7A4727"/>
+  <rect x="88" y="172" width="24" height="15" rx="5" fill="#F4B63C"/>
+
+  <!-- hands -->
+  <g fill="#E3A07C">
+    <circle cx="100" cy="156" r="10"/>
+    <circle cx="100" cy="181" r="10"/>
+  </g>
+  <g fill="#F7CFA8">
+    <circle cx="99" cy="154.5" r="8"/>
+    <circle cx="99" cy="179.5" r="8"/>
+  </g>
+</svg>

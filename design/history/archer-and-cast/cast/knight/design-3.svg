@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- KNIGHT design 3 "Norman": round open helm with a gold brow band sitting on a broad mail mantle
+       (wide, heavy shoulders), face below the brow, tall kite shield carried down the
+       left side point-forward, sword held out to the right in a low sweeping guard.
+       Facing = DOWN (+y). Rotate the whole sprite around (100,100). -->
+  <defs>
+    <ellipse id="mail" cx="100" cy="108" rx="68" ry="46"/>
+    <clipPath id="mailClip"><use href="#mail"/></clipPath>
+    <circle id="helm" cx="100" cy="82" r="47"/>
+    <clipPath id="helmClip"><use href="#helm"/></clipPath>
+    <ellipse id="face" cx="100" cy="132" rx="27" ry="21"/>
+    <clipPath id="faceClip"><use href="#face"/></clipPath>
+    <path id="kite" d="M-26 -50 C-26 -66 -14 -74 0 -74 C14 -74 26 -66 26 -50 C26 0 16 42 0 76 C-16 42 -26 0 -26 -50 Z"/>
+    <path id="kiteF" d="M-18 -49 C-18 -60 -10 -65 0 -65 C10 -65 18 -60 18 -49 C18 -4 10 32 0 60 C-10 32 -18 -4 -18 -49 Z"/>
+    <clipPath id="kiteClip"><use href="#kite"/></clipPath>
+    <clipPath id="kiteFClip"><use href="#kiteF"/></clipPath>
+    <g id="sword">
+      <path d="M-7 10 H7 V58 L0 70 L-7 58 Z"/>
+      <rect x="-17" y="0" width="34" height="11" rx="5"/>
+      <rect x="-5" y="-18" width="10" height="20"/>
+      <circle cx="0" cy="-20" r="7"/>
+    </g>
+    <path id="shadeR" d="M100 -10 V220 H220 V-10 Z"/>
+
+    <linearGradient id="gSteelLit" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#EEF1F5"/><stop offset="1" stop-color="#C3CBD7"/>
+    </linearGradient>
+    <linearGradient id="gSteelShade" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#ABB5C4"/><stop offset="1" stop-color="#8691A4"/>
+    </linearGradient>
+    <linearGradient id="gMail" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#A9B3C3"/><stop offset="1" stop-color="#8B96A9"/>
+    </linearGradient>
+    <linearGradient id="gMailShade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#848FA2"/><stop offset="1" stop-color="#69748A"/>
+    </linearGradient>
+    <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F9CB5C"/><stop offset="1" stop-color="#E8A030"/>
+    </linearGradient>
+    <linearGradient id="gBlue" x1="0" y1="-70" x2="0" y2="70" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5D92DE"/><stop offset="1" stop-color="#3E6DBD"/>
+    </linearGradient>
+    <linearGradient id="gBlueShade" x1="0" y1="-70" x2="0" y2="70" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#406FBA"/><stop offset="1" stop-color="#2E5293"/>
+    </linearGradient>
+    <linearGradient id="gFace" x1="0" y1="111" x2="0" y2="153" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9A6250"/><stop offset="0.36" stop-color="#C98E6C"/>
+      <stop offset="0.62" stop-color="#F2C7A0"/><stop offset="1" stop-color="#F6D0AC"/>
+    </linearGradient>
+    <linearGradient id="gBlade" x1="-7" y1="0" x2="7" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F2F5F8"/><stop offset="0.5" stop-color="#E2E7ED"/><stop offset="0.5" stop-color="#A9B2C0"/><stop offset="1" stop-color="#939DAD"/>
+    </linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ===== heavy outer silhouette ===== -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#mail"/>
+    <use href="#helm"/>
+    <use href="#face"/>
+    <use href="#kite" transform="translate(30 112) rotate(-6)"/>
+    <use href="#sword" transform="translate(146 128) rotate(-52)"/>
+    <rect x="134" y="117" width="24" height="22" rx="8" transform="rotate(-52 146 128)"/>
+  </g>
+
+  <!-- ===== mail mantle ===== -->
+  <use href="#mail" fill="url(#gMail)"/>
+  <g clip-path="url(#mailClip)"><use href="#shadeR" fill="url(#gMailShade)"/></g>
+
+  <!-- ===== face in the coif ===== -->
+  <g clip-path="url(#faceClip)">
+    <use href="#face" fill="url(#gFace)"/>
+    <path d="M100 100 H140 V160 H100 Z" fill="#8A4E36" opacity="0.14"/>
+    <path d="M97 144 Q100 146.5 103 144" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- ===== nasal helm ===== -->
+  <use href="#helm" fill="#3B4458" opacity="0.4" transform="translate(0 4)"/>
+  <use href="#helm" fill="url(#gSteelLit)"/>
+  <g clip-path="url(#helmClip)">
+    <use href="#shadeR" fill="url(#gSteelShade)"/>
+    <rect x="40" y="113" width="120" height="30" fill="url(#gGold)"/>
+    <rect x="100" y="113" width="60" height="30" fill="#D9952A"/>
+  </g>
+  <!-- ===== kite shield down the left side ===== -->
+  <g transform="translate(30 112) rotate(-6)">
+    <use href="#kite" fill="#2B2230" opacity="0.25" transform="translate(3 2)"/>
+    <use href="#kite" fill="url(#gGold)"/>
+    <g clip-path="url(#kiteClip)"><rect x="0" y="-80" width="40" height="170" fill="#D9952A"/></g>
+    <use href="#kiteF" fill="url(#gBlue)"/>
+    <g clip-path="url(#kiteFClip)">
+      <rect x="0" y="-80" width="40" height="170" fill="url(#gBlueShade)"/>
+      <rect x="-30" y="-24" width="60" height="13" fill="#FFF3DA"/>
+      <rect x="0" y="-24" width="30" height="13" fill="#E1D3B8"/>
+    </g>
+  </g>
+
+  <!-- ===== sword in a low sweeping guard ===== -->
+  <g transform="translate(146 128) rotate(-52)">
+    <path d="M-7 10 H7 V58 L0 70 L-7 58 Z" fill="url(#gBlade)"/>
+    <rect x="-5" y="-18" width="10" height="20" fill="#8E3D30"/>
+    <circle cx="0" cy="-20" r="7" fill="url(#gGold)"/>
+    <rect x="-17" y="0" width="34" height="11" rx="5" fill="url(#gGold)"/>
+  </g>
+  <rect x="134" y="119" width="24" height="22" rx="8" fill="#2B2230" opacity="0.3" transform="rotate(-52 146 128)"/>
+  <rect x="134" y="117" width="24" height="22" rx="8" fill="url(#gHand)" transform="rotate(-52 146 128)"/>
+</svg>

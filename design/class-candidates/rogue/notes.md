@@ -1,0 +1,4 @@
+design-1 TWINFANG: dark-ink swept hair with ponytail, crimson neck scarf with ragged tail streaming behind, plum leather shoulders, twin reverse daggers forward. Weak: scarf ring mostly hidden by head; ponytail reads as a fin at 40px.
+design-2 COWL: round slouch hood and wide cowl collar in slate-teal, one centred dagger, off-hand held low in guard. Weak: reads a bit blobby/mushroom at 40px; face opening is plain.
+design-3 BANDIT: brown hair under a red bandana with knot tail, red neckerchief pointing down over scalloped leather mantle, dagger in right hand, open left. Weak: neckerchief and bandana share the same red; one-sided silhouette.
+design-4 SHADE: silver swept hair with dark headband, deep violet swallowtail cape flaring behind, curved crossed daggers (X) at front. Weak: hands are small against the crossed blades; cape tips are wide and could clip in tight spaces.

@@ -1,0 +1,33 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>
+  body{margin:0;background:#EDE6D8;font:600 13px system-ui,sans-serif;color:#2B2230;height:100vh;display:grid;
+       grid-template-columns:auto 1fr;align-items:center;gap:24px;padding:0 24px;box-sizing:border-box;overflow:hidden}
+  .u{position:relative;display:inline-block}
+  .u::before{content:"";position:absolute;left:18%;right:18%;bottom:6%;height:16%;border-radius:50%;background:rgba(43,34,48,.18)}
+  .u img{position:relative;display:block}
+  .row{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .lbl{font-size:11px;opacity:.6;margin:10px 0 6px}
+  #spin{transition:none}
+</style></head><body>
+<div class="u"><img src="archer.svg" width="260" height="260"></div>
+<div>
+  <div class="lbl">8 HEADINGS (same sprite, rotated)</div>
+  <div class="row" id="h"></div>
+  <div class="lbl">IN-GAME SIZE · 40px</div>
+  <div class="row" id="s"></div>
+  <div class="lbl">LIVE · tracks your finger</div>
+  <div class="row"><div class="u"><img id="spin" src="archer.svg" width="90" height="90"></div></div>
+</div>
+<script>
+const angs=[0,45,90,135,180,225,270,315];
+for(const a of angs){const d=document.createElement('div');d.className='u';d.innerHTML=`<img src="archer.svg" width="70" height="70" style="transform:rotate(${a}deg)">`;h.appendChild(d)}
+for(const a of angs){const d=document.createElement('div');d.className='u';d.innerHTML=`<img src="archer.svg" width="40" height="40" style="transform:rotate(${a}deg)">`;s.appendChild(d)}
+let t=0,tx=null,ty=null;
+addEventListener('pointermove',e=>{tx=e.clientX;ty=e.clientY});
+(function f(){t+=0.012;const r=spin.getBoundingClientRect();let a;
+ if(tx!==null){a=Math.atan2(ty-(r.top+r.height/2),tx-(r.left+r.width/2))-Math.PI/2}else a=t;
+ spin.style.transform=`rotate(${a}rad)`;requestAnimationFrame(f)})();
+</script>
+</body></html>

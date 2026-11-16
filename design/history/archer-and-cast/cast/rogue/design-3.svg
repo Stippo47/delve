@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- ROGUE design 3 "Highwayman": a tricorn hat worn point-forward (the front corner is the facing arrow), crimson
+       kerchief over the lower face, dagger in reverse grip so the blade sweeps back along the right flank, smoke bomb
+       ready in the left hand (the teleport). Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <path id="brim" d="M100 156 C94 156 90 153 86 148 C74 130 52 110 32 92 C22 82 22 66 32 58 C68 72 132 72 168 58 C178 66 178 82 168 92 C148 110 126 130 114 148 C110 153 106 156 100 156 Z"/>
+    <clipPath id="brimClip"><use href="#brim"/></clipPath>
+    <path id="crown" d="M100 62 C122 62 136 76 136 94 C136 112 122 124 100 124 C78 124 64 112 64 94 C64 76 78 62 100 62 Z"/>
+    <clipPath id="crownClip"><use href="#crown"/></clipPath>
+    <path id="face" d="M66 140 C72 126 128 126 134 140 C134 160 120 172 100 172 C80 172 66 160 66 140 Z"/>
+    <clipPath id="faceClip"><use href="#face"/></clipPath>
+    <path id="shadeR" d="M100 -10 V220 H220 V-10 Z"/>
+    <clipPath id="halfR"><use href="#shadeR"/></clipPath>
+
+    <linearGradient id="gLit" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#7C6C9E"/><stop offset="1" stop-color="#5F5082"/>
+    </linearGradient>
+    <linearGradient id="gShade" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#55476F"/><stop offset="1" stop-color="#423758"/>
+    </linearGradient>
+    <linearGradient id="gCrownL" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9081B0"/><stop offset="1" stop-color="#6E5F92"/>
+    </linearGradient>
+    <linearGradient id="gCrownR" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#65578A"/><stop offset="1" stop-color="#4E426E"/>
+    </linearGradient>
+    <linearGradient id="gFace" x1="0" y1="128" x2="0" y2="172" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9A6250"/>
+      <stop offset="0.4" stop-color="#C98E6C"/>
+      <stop offset="0.7" stop-color="#F2C7A0"/>
+      <stop offset="1" stop-color="#F6D0AC"/>
+    </linearGradient>
+    <linearGradient id="gScarfL" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#B83F3B"/><stop offset="0.35" stop-color="#D9564B"/><stop offset="1" stop-color="#C9473F"/>
+    </linearGradient>
+    <linearGradient id="gScarfR" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8E2D30"/><stop offset="0.35" stop-color="#AE3B3A"/><stop offset="1" stop-color="#9C3234"/>
+    </linearGradient>
+    <linearGradient id="gSteelL" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#EEF1F4"/><stop offset="1" stop-color="#C9CFD7"/>
+    </linearGradient>
+    <linearGradient id="gSteelR" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#AEB5C0"/><stop offset="1" stop-color="#8C94A1"/>
+    </linearGradient>
+    <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F9CB5C"/><stop offset="1" stop-color="#E8A030"/>
+    </linearGradient>
+    <radialGradient id="gBomb" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#6B6E8A"/><stop offset="1" stop-color="#43455C"/>
+    </radialGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ===== heavy outer silhouette ===== -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#face"/><use href="#brim"/>
+    <!-- reverse-grip dagger: blade runs back up the right flank -->
+    <path d="M160 140 L170 100 L178 86 L181 102 L171 142 Z"/>
+    <rect x="152" y="136" width="28" height="9" rx="4.5" transform="rotate(12 166 140)"/>
+    <rect x="154" y="142" width="24" height="21" rx="8" transform="rotate(12 166 152)"/>
+    <!-- smoke bomb in the left hand -->
+    <circle cx="48" cy="172" r="14"/>
+    <path d="M38 166 L30 158" stroke-width="16"/>
+    <rect x="44" y="146" width="24" height="21" rx="8" transform="rotate(-20 56 156)"/>
+  </g>
+
+  <!-- ===== interior ===== -->
+  <!-- face in the hat's shadow -->
+  <g clip-path="url(#faceClip)">
+    <use href="#face" fill="url(#gFace)"/>
+    <path d="M100 120 H140 V176 H100 Z" fill="#8A4E36" opacity="0.14"/>
+    <path d="M97 164 Q100 166.5 103 164" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- tricorn brim -->
+  <use href="#brim" fill="#2B2230" opacity="0.3" transform="translate(0 3)"/>
+  <use href="#brim" fill="url(#gLit)"/>
+  <g clip-path="url(#brimClip)">
+    <use href="#shadeR" fill="url(#gShade)"/>
+    <!-- gold trim along the upturned edge -->
+    <use href="#brim" fill="none" stroke="url(#gGold)" stroke-width="14"/>
+    <g clip-path="url(#halfR)"><use href="#brim" fill="none" stroke="#D9952A" stroke-width="14"/></g>
+    <!-- crown's contact shadow -->
+    <use href="#crown" fill="#2B2230" opacity="0.3" transform="translate(0 5)"/>
+  </g>
+  <!-- crown -->
+  <use href="#crown" fill="url(#gCrownL)"/>
+  <g clip-path="url(#crownClip)"><use href="#shadeR" fill="url(#gCrownR)"/></g>
+
+  <!-- dagger -->
+  <path d="M160 140 L170 100 L178 86 L176 102 L166 141 Z" fill="url(#gSteelL)"/>
+  <path d="M166 141 L176 102 L178 86 L181 102 L171 142 Z" fill="url(#gSteelR)"/>
+  <rect x="152" y="136" width="28" height="9" rx="4.5" fill="url(#gGold)" transform="rotate(12 166 140)"/>
+  <rect x="155" y="144" width="22" height="20" rx="8" fill="#2B2230" opacity="0.3" transform="rotate(12 166 152)"/>
+  <rect x="155" y="142" width="22" height="20" rx="8" fill="url(#gHand)" transform="rotate(12 166 152)"/>
+
+  <!-- smoke bomb -->
+  <circle cx="48" cy="172" r="14" fill="url(#gBomb)"/>
+  <path d="M48 158 A14 14 0 0 1 48 186 Z" fill="#2B2230" opacity="0.2"/>
+  <path d="M38 166 L30 158" stroke="#FFF1D6" stroke-width="5" stroke-linecap="round"/>
+  <rect x="45" y="148" width="22" height="20" rx="8" fill="#2B2230" opacity="0.3" transform="rotate(-20 56 156)"/>
+  <rect x="45" y="146" width="22" height="20" rx="8" fill="url(#gHand)" transform="rotate(-20 56 156)"/>
+</svg>

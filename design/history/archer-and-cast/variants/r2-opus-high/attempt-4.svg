@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- Attempt 4 (stacked leaves): the hood is built from two layered leaves - a dark outer leaf and a lighter,
+       smaller inner leaf laid on top - so value comes from layering instead of a split; petals also lighter in
+       front. Heavy outer silhouette + thin inner lines, tapered flatbow, rounded-rect hands, calm eyeless face. Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <path id="hood" d="M100 14 C118 32 150 56 159 92 C166 124 146 153 100 155 C54 153 34 124 41 92 C50 56 82 32 100 14 Z"/>
+    <clipPath id="hoodClip"><use href="#hood"/></clipPath>
+    <path id="leaf2" d="M100 30 C113 44 139 64 144 96 C148 120 130 136 100 137 C70 136 52 120 56 96 C61 64 87 44 100 30 Z"/>
+    <clipPath id="leaf2Clip"><use href="#leaf2"/></clipPath>
+    <path id="pBackL" d="M60 96 C34 88 12 104 8 134 C28 140 52 128 70 112 Z"/>
+    <path id="pBackR" d="M140 96 C166 88 188 104 192 134 C172 140 148 128 130 112 Z"/>
+    <path id="pFrontL" d="M52 112 C30 114 18 134 22 158 C44 156 66 142 76 126 Z"/>
+    <path id="pFrontR" d="M148 112 C170 114 182 134 178 158 C156 156 134 142 124 126 Z"/>
+    <path id="brim" d="M50 134 C50 90 150 90 150 134 C148 152 130 160 100 160 C70 160 52 152 50 134 Z"/>
+    <clipPath id="brimClip"><use href="#brim"/></clipPath>
+    <path id="open" d="M62 132 C64 101 136 101 138 132 C134 151 66 151 62 132 Z"/>
+    <clipPath id="openClip"><use href="#open"/></clipPath>
+    <path id="bow" d="M28 146 C37 178 70 192 100 192 C130 192 163 178 172 146 L165 144 C154 169 128 181 100 181 C72 181 46 169 35 144 Z"/>
+    <clipPath id="bowClip"><use href="#bow"/></clipPath>
+    <g id="quiverShape" transform="rotate(30 138 52)">
+      <path d="M130 30 C120 24 118 12 124 6 C132 12 134 22 130 30 Z"/>
+      <path d="M146 30 C156 24 158 12 152 6 C144 12 142 22 146 30 Z"/>
+      <rect x="120" y="26" width="36" height="50" rx="10"/>
+    </g>
+    <!-- shade side: everything right of the vein -->
+    <path id="shadeR" d="M100 -10 C97 40 98 66 100 90 V220 H220 V-10 Z"/>
+  </defs>
+
+  <!-- ===== heavy outer silhouette ===== -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#pBackL"/><use href="#pBackR"/><use href="#pFrontL"/><use href="#pFrontR"/>
+    <use href="#quiverShape"/>
+    <use href="#hood"/><use href="#brim"/>
+    <use href="#bow"/>
+    <path d="M32 146 L100 156 L168 146" fill="none" stroke-width="9"/>
+    <path d="M100 152 V194" stroke-width="14"/>
+    <path d="M90 192 L100 208 L110 192 Z"/>
+    <rect x="86" y="175" width="28" height="21" rx="8"/>
+  </g>
+
+  <!-- ===== colour shapes, thin inner lines ===== -->
+  <g stroke="#2B2230" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#pBackL" fill="#33703C"/>
+    <use href="#pBackR" fill="#2A5E33"/>
+    <use href="#pFrontL" fill="#68B05F"/>
+    <use href="#pFrontR" fill="#5BA257"/>
+    <g transform="rotate(30 138 52)">
+      <path d="M130 30 C120 24 118 12 124 6 C132 12 134 22 130 30 Z" fill="#FFF8E8"/>
+      <path d="M146 30 C156 24 158 12 152 6 C144 12 142 22 146 30 Z" fill="#9AD17F"/>
+      <rect x="120" y="26" width="36" height="50" rx="10" fill="#9A6236"/>
+      <rect x="120" y="40" width="36" height="7" fill="#6E4222"/>
+    </g>
+  </g>
+  <!-- petal veins -->
+  <g fill="none" stroke-width="2.5" stroke-linecap="round">
+    <path d="M64 104 C46 104 30 112 20 126" stroke="#2A5E33"/>
+    <path d="M136 104 C154 104 170 112 180 126" stroke="#224E2A"/>
+    <path d="M62 124 C46 128 36 138 30 150" stroke="#4E9550"/>
+    <path d="M138 124 C154 128 164 138 170 150" stroke="#4A8C4C"/>
+  </g>
+
+  <!-- hood: dark outer leaf -->
+  <use href="#hood" fill="#3E7A44" stroke="#2B2230" stroke-width="3" stroke-linejoin="round"/>
+  <g clip-path="url(#hoodClip)">
+    <path d="M100 14 C99 20 99 26 100 32" fill="none" stroke="#2F6236" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+  <!-- inner leaf laid on top, with a small cast shadow -->
+  <use href="#leaf2" fill="#2F6236" transform="translate(4 4)"/>
+  <use href="#leaf2" fill="#68B05F"/>
+  <g clip-path="url(#leaf2Clip)">
+    <path d="M144 70 C150 100 140 128 112 140 L160 150 L160 60 Z" fill="#579E53"/>
+    <path d="M100 30 C97 52 98 74 100 96" fill="none" stroke="#4A8C4C" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M99 66 C90 60 84 54 80 46" fill="none" stroke="#4E9550" stroke-width="3" stroke-linecap="round"/>
+    <path d="M101 66 C110 60 116 54 120 46" fill="none" stroke="#4E9550" stroke-width="3" stroke-linecap="round"/>
+    <path d="M99 88 C88 82 78 74 72 64" fill="none" stroke="#4E9550" stroke-width="3" stroke-linecap="round"/>
+    <path d="M101 88 C112 82 122 74 128 64" fill="none" stroke="#4E9550" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <use href="#leaf2" fill="none" stroke="#2B2230" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- brim, same split -->
+  <use href="#brim" fill="#F4BA3E"/>
+  <g clip-path="url(#brimClip)"><path d="M40 136 C60 150 140 150 160 136 V170 H40 Z" fill="#DC9A2C"/></g>
+  <use href="#brim" fill="none" stroke="#2B2230" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- face: calm, eyeless. Skin, a skin-tone brim shadow following the arch, hood lining at the rim -->
+  <g clip-path="url(#openClip)">
+    <use href="#open" fill="#F2C7A0"/>
+        <path d="M56 96 H144 V129 C124 119 76 119 56 129 Z" fill="#B97A5C"/>
+        <use href="#open" fill="none" stroke="#2E5E35" stroke-width="7"/>
+    <path d="M97 135 Q100 137.5 103 135" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <use href="#open" fill="none" stroke="#2B2230" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- leaf clasp, split -->
+  <path d="M100 85 C111 91 113 103 100 111 C87 103 89 91 100 85 Z" fill="#A6DA88"/>
+  
+  <path d="M100 85 C111 91 113 103 100 111 C87 103 89 91 100 85 Z" fill="none" stroke="#2B2230" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- bow string -->
+  <path d="M32 146 L100 156 L168 146" fill="none" stroke="#2B2230" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M32 146 L100 156 L168 146" fill="none" stroke="#FFF8E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- arrow -->
+  <path d="M100 152 V194" stroke="#2B2230" stroke-width="7"/>
+  <path d="M100 152 V194" stroke="#A0683A" stroke-width="3"/>
+  <path d="M90 192 L100 208 L110 192 Z" fill="#D3D8DF"/>
+  <path d="M100 192 L110 192 L100 208 Z" fill="#A4ACB8"/>
+  <path d="M90 192 L100 208 L110 192 Z" fill="none" stroke="#2B2230" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- tapered flatbow, split shade, dark tips -->
+  <use href="#bow" fill="#C98B4E"/>
+  <g clip-path="url(#bowClip)">
+    <path d="M20 150 C40 186 160 186 180 150 V200 H20 Z" fill="#A0683A"/>
+    <path d="M20 130 L44 150 L36 162 L14 150 Z" fill="#2B2230"/>
+    <path d="M180 130 L156 150 L164 162 L186 150 Z" fill="#2B2230"/>
+  </g>
+  <use href="#bow" fill="none" stroke="#2B2230" stroke-width="3" stroke-linejoin="round"/>
+  <!-- leather grip -->
+  <rect x="83" y="178" width="34" height="15" rx="4" fill="#8A3B2E" stroke="#2B2230" stroke-width="3"/>
+
+  <!-- rounded-rect hands, split shade -->
+  <g stroke="#2B2230" stroke-width="3" stroke-linejoin="round">
+    <rect x="88" y="175" width="24" height="21" rx="8" fill="#F2C7A0"/>
+    <rect x="89" y="147" width="22" height="20" rx="8" fill="#F2C7A0"/>
+  </g>
+  <path d="M89.5 188 H110.5 V188 A6.5 6.5 0 0 1 104 194.5 H96 A6.5 6.5 0 0 1 89.5 188 Z" fill="#DDA27C"/>
+  <path d="M90.5 159 H109.5 A6.5 6.5 0 0 1 103 165.5 H97 A6.5 6.5 0 0 1 90.5 159 Z" fill="#DDA27C"/>
+</svg>

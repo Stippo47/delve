@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- Variant 3: lineless interior with ONE thick silhouette outline, faceless shadowed hood (only a chin/smile peeks out), notched brim, mitten hands on a slim bow. Front = DOWN. -->
+  <defs>
+    <path id="hood" d="M100 14 C118 32 150 56 159 92 C166 124 146 153 100 155 C54 153 34 124 41 92 C50 56 82 32 100 14 Z"/>
+    <clipPath id="hoodClip"><use href="#hood"/></clipPath>
+    <path id="open" d="M60 134 C62 102 138 102 140 134 C136 154 64 154 60 134 Z"/>
+    <clipPath id="openClip"><use href="#open"/></clipPath>
+    <path id="brim" d="M48 134 C48 90 152 90 152 134 C150 154 132 161 100 161 C68 161 50 154 48 134 Z"/>
+    <path id="bowline" d="M32 146 C28 158 36 166 46 168 C62 180 80 185 100 185 C120 185 138 180 154 168 C164 166 172 158 168 146"/>
+    <g id="cl">
+      <!-- every outlined silhouette part, drawn once and stroked -->
+      <path d="M58 94 C28 98 18 126 32 142 C44 154 66 148 76 138 Z"/>
+      <path d="M142 94 C172 98 182 126 168 142 C156 154 134 148 124 138 Z"/>
+      <g transform="rotate(30 138 52)">
+        <path d="M130 30 C120 24 118 12 124 6 C132 12 134 22 130 30 Z"/>
+        <path d="M146 30 C156 24 158 12 152 6 C144 12 142 22 146 30 Z"/>
+        <rect x="120" y="26" width="36" height="50" rx="10"/>
+      </g>
+      <use href="#hood"/>
+      <use href="#brim"/>
+      <path d="M100 152 V190"/>
+      <path d="M88 186 L100 204 L112 186 Z"/>
+      <use href="#bowline" fill="none"/>
+      <rect x="86" y="173" width="28" height="24" rx="10"/>
+      <rect x="87" y="145" width="26" height="22" rx="9"/>
+    </g>
+  </defs>
+
+  <!-- single thick silhouette outline (merged), with a round join -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="11" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#cl"/>
+  </g>
+  <path d="M38 154 L100 156 L162 154" fill="none" stroke="#2B2230" stroke-width="4" stroke-linecap="round"/>
+  <use href="#bowline" fill="none" stroke="#2B2230" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- fills, no inner lines: separation by value only -->
+  <path d="M58 94 C28 98 18 126 32 142 C44 154 66 148 76 138 Z" fill="#2F6A39"/>
+  <path d="M142 94 C172 98 182 126 168 142 C156 154 134 148 124 138 Z" fill="#2F6A39"/>
+
+  <g transform="rotate(30 138 52)">
+    <path d="M130 30 C120 24 118 12 124 6 C132 12 134 22 130 30 Z" fill="#FFF8E8"/>
+    <path d="M146 30 C156 24 158 12 152 6 C144 12 142 22 146 30 Z" fill="#9AD17F"/>
+    <rect x="120" y="26" width="36" height="50" rx="10" fill="#A0683A"/>
+    <rect x="120" y="40" width="36" height="7" fill="#7A4A26"/>
+  </g>
+
+  <use href="#hood" fill="#4E9650"/>
+  <g clip-path="url(#hoodClip)">
+    <use href="#hood" fill="#6DB566" transform="translate(-8 -7)"/>
+    <path d="M100 14 C97 40 98 66 100 90" fill="none" stroke="#4E9650" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <use href="#brim" fill="#F2B53A"/>
+  <use href="#open" fill="#2B2230"/>
+
+  <!-- faceless: deep hood shadow, only lower face shows with a little smile -->
+  <g clip-path="url(#openClip)">
+    <path d="M56 128 C78 118 122 118 144 128 L144 164 L56 164 Z" fill="#F2C7A0"/>
+    <path d="M124 122 C138 132 136 150 122 164 L150 164 L150 118 Z" fill="#DFA27B"/>
+    <ellipse cx="76" cy="142" rx="7" ry="4" fill="#E8A383"/>
+    <ellipse cx="124" cy="142" rx="7" ry="4" fill="#E8A383"/>
+    <path d="M92 140 Q100 147 108 140" fill="none" stroke="#2B2230" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- leaf clasp -->
+  <path d="M100 86 C111 92 113 104 100 112 C87 104 89 92 100 86 Z" fill="#9AD17F"/>
+  <path d="M100 91 V107" stroke="#4E9650" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- arrow -->
+  <path d="M100 152 V190" stroke="#A0683A" stroke-width="4" stroke-linecap="round"/>
+  <path d="M88 186 L100 204 L112 186 Z" fill="#D5DAE2"/>
+  <path d="M100 190 V198" stroke="#8F97A3" stroke-width="2.5"/>
+
+  <!-- slim bow -->
+  <use href="#bowline" fill="none" stroke="#A8703F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M38 154 L100 156 L162 154" fill="none" stroke="#FFF8E8" stroke-width="2" stroke-linecap="round"/>
+  <rect x="86" y="173" width="28" height="24" rx="10" fill="#F2C7A0"/>
+  <rect x="87" y="145" width="26" height="22" rx="9" fill="#F2C7A0"/>
+  <path d="M91 189 H109" stroke="#DFA27B" stroke-width="3" stroke-linecap="round"/>
+  <path d="M92 161 H108" stroke="#DFA27B" stroke-width="3" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#EDE6D8">
+<title>A+B — turning ball head</title>
+<style>
+  html,body{margin:0;height:100%;background:#EDE6D8;overflow:hidden;touch-action:none;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+  canvas{position:fixed;left:0;top:0;width:100vw;height:100vh;display:block}
+  #ui{position:fixed;left:0;top:0;width:844px;height:390px;transform-origin:0 0;pointer-events:none;
+    font:700 11px/1 ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",sans-serif;color:#2B2230}
+  #btns{position:absolute;right:4px;top:1px;display:flex}
+  #btns button{pointer-events:auto;background:none;border:0;padding:8px 4px;margin:0;font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+  #btns button span{display:block;padding:7px 12px;border-radius:99px;border:2px solid #2B2230;background:#EDE6D8}
+  #btns button[aria-pressed="true"] span{background:#F2B53A}
+  #btns button:focus-visible span{outline:2px solid #2B2230;outline-offset:2px}
+  #tag{position:absolute;left:12px;bottom:7px}
+  #hint{position:absolute;right:12px;bottom:7px;font-weight:600;opacity:.6}
+  #safe{position:fixed;left:0;top:0;visibility:hidden;pointer-events:none;
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="ui">
+  <div id="btns">
+    <button id="bFacing" aria-pressed="false"><span>Facing demo</span></button>
+    <button id="bTurn" aria-pressed="false"><span>Turnaround</span></button>
+  </div>
+  <div id="tag">A+B — turning ball head</div>
+  <div id="hint">Tap a unit to play its moves</div>
+</div>
+<div id="safe"></div>
+<script>
+'use strict';
+/* =====================================================================
+   A+B — TURNING BALL HEAD
+   Every unit is one ball (the collision circle) seen by a camera tilted
+   ~50° down. The head yaws a full 360° to its true heading; features are
+   authored as flat "front view" drawings, wrapped onto the ball and
+   projected every frame, so the face slides round the ball (front -> 3/4
+   -> profile -> back of head) and always stays upright on screen.
+   Lighting never turns: one hard shadow crescent lower-right, one hard
+   highlight upper-left. Flat fills, ink outline, no gradients/blur/glow.
+
+   Layout of this file
+     1. palette            (PALETTE.md, nothing else)
+     2. math + projection  (ball camera, sheets, path builders)
+     3. paint core         (form / zone / parts with union outline)
+     4. shared face parts  (eyes, brows, mouths)
+     5. one draw function per unit: drawX(ctx, x, y, radius, facing, state)
+     6. effects, animation controller, page
+   ===================================================================== */
+
+// ============================================================ 1. PALETTE
+const INK = '#2B2230', BG = '#EDE6D8', WHITE = '#FFFFFF', EYE_RED = '#E2483D';
+const GROUND = 'rgba(43,34,48,0.18)';
+// material = [base, shadow, highlight]
+const MAT = {
+  skin:   ['#F2C7A0', '#D99C75', '#F2C7A0'],
+  wood:   ['#A0683A', '#7A4A26', '#A0683A'],
+  woodD:  ['#7A4A26', '#7A4A26', '#7A4A26'],
+  steel:  ['#C9CED6', '#8F97A3', '#C9CED6'],
+  steelD: ['#8F97A3', '#8F97A3', '#8F97A3'],
+  gold:   ['#F2B53A', '#F2B53A', '#F2B53A'],
+  archer: ['#5FA35A', '#3E7A44', '#9AD17F'],
+  archerL:['#9AD17F', '#5FA35A', '#9AD17F'],
+  archerD:['#3E7A44', '#3E7A44', '#3E7A44'],
+  knight: ['#4F7BC4', '#36589A', '#8DB0E8'],
+  knightL:['#8DB0E8', '#4F7BC4', '#8DB0E8'],
+  knightD:['#36589A', '#36589A', '#36589A'],
+  rogue:  ['#8A5BB8', '#5E3D86', '#B994E0'],
+  rogueL: ['#B994E0', '#8A5BB8', '#B994E0'],
+  rogueD: ['#5E3D86', '#5E3D86', '#5E3D86'],
+  rat:    ['#8E7A6B', '#6B5A4E', '#B3A091'],
+  ratL:   ['#B3A091', '#8E7A6B', '#B3A091'],
+  ratD:   ['#6B5A4E', '#6B5A4E', '#6B5A4E'],
+  slime:  ['#4CC2A8', '#2F8F7B', '#8BE3CF'],
+  slimeL: ['#8BE3CF', '#4CC2A8', '#8BE3CF'],
+  slimeD: ['#2F8F7B', '#2F8F7B', '#2F8F7B'],
+  bone:   ['#E8E0CC', '#B8AD93', '#FFF8E8'],
+  boneL:  ['#FFF8E8', '#E8E0CC', '#FFF8E8'],
+  boneD:  ['#B8AD93', '#B8AD93', '#B8AD93'],
+  rust:   ['#9C5B3A', '#7A4A26', '#9C5B3A'],
+  white:  ['#FFFFFF', '#FFFFFF', '#FFFFFF'],
+  red:    ['#E2483D', '#E2483D', '#E2483D'],
+  ink:    ['#2B2230', '#2B2230', '#2B2230']
+};
+const FX_COL = { burn: '#FF7A2F', ice: '#7FD6F5', poison: '#9BCB3C', shock: '#FFE14D' };
+
+// ============================================================ 2. MATH + PROJECTION
+const TAU = Math.PI * 2, HPI = Math.PI / 2;
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const seg = (t, a, b) => clamp((t - a) / (b - a), 0, 1);
+const easeOut = t => 1 - (1 - t) * (1 - t);
+const easeIn = t => t * t;
+const easeIO = t => t < 0.5 ? 2 * t * t : 1 - 2 * (1 - t) * (1 - t);
+const backOut = t => { const c = 2.4, u = t - 1; return 1 + (c + 1) * u * u * u + c * u * u; };
+const bell = t => Math.sin(Math.PI * clamp(t, 0, 1));
+const rand = (a, b) => a + Math.random() * (b - a);
+function angDiff(a, b) { let d = (b - a) % TAU; if (d > Math.PI) d -= TAU; else if (d < -Math.PI) d += TAU; return d; }
+
+// Camera: orthographic, looking down at CAM_EL above the horizon, from the bottom of the screen.
+const CAM_EL = 50 * Math.PI / 180, CS = Math.sin(CAM_EL), CC = Math.cos(CAM_EL);
+// Fixed light, screen space (points toward the light: up-left)
+const LX = -0.6, LY = -0.8;
+
+// Head space: f = forward (nose), s = sideways (screen-right when the unit faces the camera), u = up.
+// M maps head space -> screen x, screen y, depth (toward camera). Rebuilt per unit per frame.
+let m00 = 0, m01 = 0, m02 = 0, m10 = 0, m11 = 0, m12 = 0, m20 = 0, m21 = 0, m22 = 0;
+let PX = 0, PY = 0, PD = 0;                       // last projected point
+function setHeadRotation(yaw, roll, nod) {
+  const ca = Math.cos(yaw), sa = Math.sin(yaw), cr = Math.cos(roll), sr = Math.sin(roll), cn = Math.cos(nod), sn = Math.sin(nod);
+  // column for each head axis: apply roll (about f), nod (about s), then yaw + camera
+  const col = (f, s, u, k) => {
+    const s1 = s * cr - u * sr, u1 = s * sr + u * cr;
+    const f2 = f * cn + u1 * sn, u2 = -f * sn + u1 * cn;
+    const X = f2 * ca + s1 * sa, N = -f2 * sa + s1 * ca;
+    const x = X, y = -(N * CS + u2 * CC), d = -N * CC + u2 * CS;
+    if (k === 0) { m00 = x; m10 = y; m20 = d; } else if (k === 1) { m01 = x; m11 = y; m21 = d; } else { m02 = x; m12 = y; m22 = d; }
+  };
+  col(1, 0, 0, 0); col(0, 1, 0, 1); col(0, 0, 1, 2);
+}
+function pj(f, s, u) { PX = m00 * f + m01 * s + m02 * u; PY = m10 * f + m11 * s + m12 * u; PD = m20 * f + m21 * s + m22 * u; }
+
+// A "sheet" is a flat drawing board glued to the ball: you author a shape as if looking straight
+// at that side of the head (a = right, b = up, unit disc = the ball), and it is wrapped on.
+function mkSheet(az, el) {
+  const ce = Math.cos(el), se = Math.sin(el), ca = Math.cos(az), sa = Math.sin(az);
+  return { cf: ce * ca, cs: ce * sa, cu: se, af: -sa, as: ca, au: 0, bf: -se * ca, bs: -se * sa, bu: ce };
+}
+const FACE_TILT = 34 * Math.PI / 180;             // faces look up a little, toward the camera
+const SF = mkSheet(0, FACE_TILT);                 // front (face) sheet
+const SB = mkSheet(Math.PI, 0.30);                // back-of-head sheet
+let HF = 0, HS = 0, HU = 0;
+function sheet3(sh, a, b, h) {                     // -> HF,HS,HU (head space)
+  let w = 1 - a * a - b * b; w = w > 0 ? Math.sqrt(w) : 0;
+  const k = 1 + h;
+  HF = (a * sh.af + b * sh.bf + w * sh.cf) * k; HS = (a * sh.as + b * sh.bs + w * sh.cs) * k; HU = (a * sh.au + b * sh.bu + w * sh.cu) * k;
+}
+function sheetPt(sh, a, b, h = 0) { sheet3(sh, a, b, h); pj(HF, HS, HU); }
+
+// --- tiny path language for authoring: "M x,y C x1,y1 x2,y2 x,y Q cx,cy x,y L x,y" -> sampled polyline
+function shape(str, n = 7) {
+  const tk = str.match(/[MLQC]|-?\d*\.?\d+/g), out = []; let i = 0, x = 0, y = 0, cmd = 'M';
+  const num = () => parseFloat(tk[i++]);
+  while (i < tk.length) {
+    if (/[MLQC]/.test(tk[i])) cmd = tk[i++];
+    if (cmd === 'M') { x = num(); y = num(); out.push(x, y); }
+    else if (cmd === 'L') { const ex = num(), ey = num(), m = Math.max(1, Math.ceil(Math.hypot(ex - x, ey - y) / 0.22)); for (let k = 1; k <= m; k++) out.push(x + (ex - x) * k / m, y + (ey - y) * k / m); x = ex; y = ey; }
+    else if (cmd === 'Q') { const cx = num(), cy = num(), ex = num(), ey = num();
+      for (let k = 1; k <= n; k++) { const t = k / n, m = 1 - t; out.push(m * m * x + 2 * m * t * cx + t * t * ex, m * m * y + 2 * m * t * cy + t * t * ey); } x = ex; y = ey; }
+    else { const x1 = num(), y1 = num(), x2 = num(), y2 = num(), ex = num(), ey = num();
+      for (let k = 1; k <= n; k++) { const t = k / n, m = 1 - t;
+        out.push(m * m * m * x + 3 * m * m * t * x1 + 3 * m * t * t * x2 + t * t * t * ex, m * m * m * y + 3 * m * m * t * y1 + 3 * m * t * t * y2 + t * t * t * ey); } x = ex; y = ey; }
+  }
+  return new Float32Array(out);
+}
+function mirror(p) { const o = new Float32Array(p.length); for (let i = 0, n = p.length / 2; i < n; i++) { o[i * 2] = -p[(n - 1 - i) * 2]; o[i * 2 + 1] = p[(n - 1 - i) * 2 + 1]; } return o; }
+function ellipsePts(cx, cy, rx, ry, n = 18, rot = 0) { const o = new Float32Array(n * 2), c = Math.cos(rot), s = Math.sin(rot);
+  for (let i = 0; i < n; i++) { const a = i / n * TAU, x = Math.cos(a) * rx, y = Math.sin(a) * ry; o[i * 2] = cx + x * c - y * s; o[i * 2 + 1] = cy + x * s + y * c; } return o; }
+
+// Horizon clipping. Scratch arrays hold a closed polygon already projected (counter-clockwise as seen from
+// outside the ball). Hidden runs are replaced by the arc of the rim between where the outline dives behind
+// the ball and where it comes back, so patches tuck round the far side cleanly at every heading.
+const QA = new Float32Array(256), QB = new Float32Array(256), QX = new Float32Array(256), QY = new Float32Array(256), QD = new Float32Array(256);
+const RS = new Int16Array(24), RL = new Int16Array(24), RIN = new Float32Array(24), ROUT = new Float32Array(24), RIX = new Float32Array(24), RIY = new Float32Array(24), ROX = new Float32Array(24), ROY = new Float32Array(24), RU = new Uint8Array(24);
+let CXx = 0, CXy = 0;
+function rimCross(i0, i1) { const t = QD[i0] / (QD[i0] - QD[i1]); let x = QX[i0] + (QX[i1] - QX[i0]) * t, y = QY[i0] + (QY[i1] - QY[i0]) * t; const l = Math.hypot(x, y) || 1; CXx = x / l; CXy = y / l; }
+function clipPath(n) {
+  const p = new Path2D(); let anyV = false, allV = true;
+  for (let i = 0; i < n; i++) { if (QD[i] > 0) anyV = true; else allV = false; }
+  if (!anyV) return p;
+  if (allV) { p.moveTo(QX[0], QY[0]); for (let i = 1; i < n; i++) p.lineTo(QX[i], QY[i]); p.closePath(); return p; }
+  let s = 0; while (!(QD[s] <= 0 && QD[(s + 1) % n] > 0)) s++;
+  // visible runs, each with the rim points where it surfaces (in) and dives (out)
+  let nr = 0, open = false;
+  for (let e = 0; e < n; e++) { const i0 = (s + e) % n, i1 = (s + e + 1) % n, v0 = QD[i0] > 0, v1 = QD[i1] > 0;
+    if (!v0 && v1) { if (nr >= 24) break; rimCross(i0, i1); RIX[nr] = CXx; RIY[nr] = CXy; RIN[nr] = Math.atan2(CXy, CXx); RS[nr] = i1; RL[nr] = 1; RU[nr] = 0; open = true; }
+    else if (v0 && v1 && open) RL[nr]++;
+    else if (v0 && !v1 && open) { rimCross(i0, i1); ROX[nr] = CXx; ROY[nr] = CXy; ROUT[nr] = Math.atan2(CXy, CXx); nr++; open = false; } }
+  // stitch: from where a run dives, follow the rim (keeping the ball on the left) to the next run that surfaces
+  for (let r0 = 0; r0 < nr; r0++) { if (RU[r0]) continue; let r = r0; p.moveTo(RIX[r], RIY[r]);
+    for (let guard = 0; guard < 24; guard++) { RU[r] = 1;
+      for (let k = 0; k < RL[r]; k++) { const i = (RS[r] + k) % n; p.lineTo(QX[i], QY[i]); }
+      p.lineTo(ROX[r], ROY[r]);
+      let q = r0, best = 1e9; for (let c = 0; c < nr; c++) { let d = (ROUT[r] - RIN[c]) % TAU; if (d < 0) d += TAU; if (d < best) { best = d; q = c; } }
+      p.arc(0, 0, 1, ROUT[r], RIN[q], true);
+      if (q === r0 || RU[q]) break; r = q; }
+    p.closePath(); }
+  return p;
+}
+// project QA/QB (sheet coords, n points) and clip; fixes winding so authoring order does not matter
+function sheetPoly(sh, n) {
+  let ar = 0; for (let i = 0; i < n; i++) { const j = (i + 1) % n; ar += QA[i] * QB[j] - QA[j] * QB[i]; }
+  for (let i = 0; i < n; i++) { const k = ar < 0 ? n - 1 - i : i; sheetPt(sh, QA[k], QB[k]); QX[i] = PX; QY[i] = PY; QD[i] = PD; }
+  return clipPath(n);
+}
+// closed sheet polygon -> Path2D. h > 0 lifts it off the ball (no clipping then: it is a free-standing shape)
+function SP(sh, pts, h = 0, da = 0, db = 0, sc = 1) {
+  const n = pts.length / 2;
+  if (h > 0) { const p = new Path2D(); for (let i = 0; i < n; i++) { sheetPt(sh, da + pts[i * 2] * sc, db + pts[i * 2 + 1] * sc, h); if (i) p.lineTo(PX, PY); else p.moveTo(PX, PY); } p.closePath(); return p; }
+  for (let i = 0; i < n; i++) { QA[i] = da + pts[i * 2] * sc; QB[i] = db + pts[i * 2 + 1] * sc; }
+  return sheetPoly(sh, n);
+}
+// closed loop of points on the ball given in head space [f,s,u,...], counter-clockwise seen from outside
+function loop3(pts) { const n = pts.length / 3; for (let i = 0; i < n; i++) { pj(pts[i * 3], pts[i * 3 + 1], pts[i * 3 + 2]); QX[i] = PX; QY[i] = PY; QD[i] = PD; } return clipPath(n); }
+// circle of constant sheet-height b0 (a "cap" round the sheet's up axis), as a loop3 array
+function capLoop(sh, b0, n = 28) { const o = new Float32Array(n * 3), k = Math.sqrt(1 - b0 * b0);
+  for (let i = 0; i < n; i++) { const a = i / n * TAU, c = Math.cos(a) * k, s = Math.sin(a) * k;
+    o[i * 3] = b0 * sh.bf + c * sh.cf + s * sh.af; o[i * 3 + 1] = b0 * sh.bs + c * sh.cs + s * sh.as; o[i * 3 + 2] = b0 * sh.bu + c * sh.cu + s * sh.au; } return o; }
+// sheet polyline for strokes -> Path2D, broken wherever it goes behind the ball
+function SL(sh, pts, closed = false, da = 0, db = 0, sc = 1) {
+  const p = new Path2D(); let pen = false; const n = pts.length;
+  for (let i = 0, m = closed ? n + 2 : n; i < m; i += 2) { const j = i % n; sheetPt(sh, da + pts[j] * sc, db + pts[j + 1] * sc, 0);
+    if (PD > 0.03) { if (pen) p.lineTo(PX, PY); else { p.moveTo(PX, PY); pen = true; } } else pen = false; }
+  return p;
+}
+// free 3D polygon (head space [f,s,u,...]) -> Path2D, no clamping (for things that stick out)
+function poly3(pts, of = 0, os = 0, ou = 0) { const p = new Path2D();
+  for (let i = 0; i < pts.length; i += 3) { pj(pts[i] + of, pts[i + 1] + os, pts[i + 2] + ou); if (i) p.lineTo(PX, PY); else p.moveTo(PX, PY); }
+  p.closePath(); return p; }
+function circleAt(x, y, r) { const p = new Path2D(); p.arc(x, y, r, 0, TAU); return p; }
+const HEAD = circleAt(0, 0, 1);
+
+// ============================================================ 3. PAINT CORE
+// P = per-unit paint state. Everything is drawn in "ball units" (radius 1) in screen space.
+const P = { g: null, lw: 0.1, big: false, flash: false, k: 1, edge: INK };
+const outlinePx = k => clamp(2 * Math.pow(k / 20, 0.55), 1.5, 4.2);     // 2px at in-game size
+function col(mat, i) { return P.flash ? WHITE : MAT[mat][i]; }
+
+function begin(g, x, y, r, facing, st) {
+  const k = r * st.scale; if (k < 0.5) return false;
+  g.save(); g.translate(x, y - st.lift * r);
+  g.translate(0, k); g.scale(k * st.sx, k * st.sy); g.translate(0, -1);   // squash is anchored at the bottom of the ball
+  g.lineJoin = 'round'; g.lineCap = 'round';
+  P.g = g; P.k = k; P.lw = outlinePx(k) / k; P.big = k >= 30; P.flash = st.flash; P.edge = INK; NP = 0;
+  setHeadRotation(facing, st.roll, st.nod);
+  return true;
+}
+function end() { P.g.restore(); }
+
+// fill + ONE hard shadow shape: the part of the form not covered by a copy of itself slid toward the light
+function form(path, mat, d = 0.08, lit = null) {
+  const g = P.g, m = MAT[mat];
+  if (P.flash) { g.fillStyle = WHITE; g.fill(path); return; }
+  if (d === 0 || m[1] === m[0]) { g.fillStyle = m[0]; g.fill(path); return; }
+  g.fillStyle = m[1]; g.fill(path);
+  g.save(); g.clip(path); g.translate(LX * d, LY * d); g.fillStyle = m[0]; g.fill(lit || path); g.restore();
+}
+// a patch on the ball: shares the ball's crescent so the whole head shades as one form
+function zone(path, mat) { form(path, mat, 0.24, HEAD); }
+function line(path, w, color) { const g = P.g; g.lineWidth = w * P.lw; g.strokeStyle = P.flash && color !== INK ? WHITE : color; g.stroke(path); }
+function hilite(mat, x = -0.40, y = -0.56, s = 1) { if (P.flash) return; const g = P.g; g.fillStyle = MAT[mat][2];
+  g.beginPath(); g.ellipse(x, y, 0.2 * s, 0.085 * s, -0.62, 0, TAU); g.fill();
+  g.beginPath(); g.arc(x + 0.26 * s, y - 0.13 * s, 0.045 * s, 0, TAU); g.fill(); }
+
+// Parts = things that stick out of / float round the ball (props, ears, tails). They are depth sorted:
+// behind the ball -> drawn under it, in front -> over it. All of it shares one union outline.
+const PARTS = []; let NP = 0;
+function part(path, mat, depth, shade = 0.07, thin = true, w = 0) {
+  const o = PARTS[NP] || (PARTS[NP] = {}); NP++;
+  o.path = path; o.mat = mat; o.depth = depth; o.shade = shade; o.thin = thin; o.w = w; o.lit = null; o.edge = P.edge; return o;
+}
+function fillPart(o, front) {
+  const g = P.g;
+  if (o.w) { g.lineWidth = o.w; g.strokeStyle = col(o.mat, 0); g.stroke(o.path); return; }
+  form(o.path, o.mat, o.shade, o.lit);
+  if (front && o.thin) { g.lineWidth = P.lw * 0.8; g.strokeStyle = P.flash ? INK : o.edge; g.stroke(o.path); }
+}
+function paintBody(head, mat, zones) {
+  const g = P.g;
+  for (let i = 1; i < NP; i++) { const o = PARTS[i]; let j = i - 1; while (j >= 0 && PARTS[j].depth > o.depth) { PARTS[j + 1] = PARTS[j]; j--; } PARTS[j + 1] = o; }
+  g.strokeStyle = INK;
+  for (let i = 0; i < NP; i++) { const o = PARTS[i]; if (o.mat === 'ink' && o.w) continue; g.lineWidth = o.w + 2 * P.lw; g.stroke(o.path); }
+  g.lineWidth = 2 * P.lw; g.stroke(head);
+  let i = 0;
+  for (; i < NP && PARTS[i].depth < 0; i++) fillPart(PARTS[i], false);
+  form(head, mat, 0.24);
+  g.save(); g.clip(head); zones(); g.restore();
+  for (; i < NP; i++) fillPart(PARTS[i], true);
+  NP = 0;
+}
+
+// tapered tube along a 3D spine [f,s,u,radius,...] -> one or two parts (hidden run goes behind the ball)
+const TX = new Float32Array(64), TY = new Float32Array(64), TR = new Float32Array(64), TH = new Uint8Array(64), TDp = new Float32Array(64);
+function tube(sp, mat, shade = 0.07, notch = 0, thin = true, bias = 0, lit = null) {
+  const n = sp.length / 4;
+  for (let i = 0; i < n; i++) { pj(sp[i * 4], sp[i * 4 + 1], sp[i * 4 + 2]); TX[i] = PX; TY[i] = PY; TR[i] = sp[i * 4 + 3]; TDp[i] = PD; TH[i] = (PD < 0 && PX * PX + PY * PY < 1.02) ? 1 : 0; }
+  let a = 0;
+  while (a < n) { let b = a; while (b + 1 < n && TH[b + 1] === TH[a]) b++;
+    const i0 = Math.max(0, a - 1), i1 = b;            // overlap one point so the two runs join under the rim
+    if (i1 > i0 || n === 1) { let md = 0; for (let i = a; i <= b; i++) md += TDp[i]; part(ribbon(i0, i1, i1 === n - 1 ? notch : 0, i1 === n - 1), mat, TH[a] ? -1 : Math.max(0.01, md / (b - a + 1)) + bias, shade, thin).lit = lit; }
+    a = b + 1; }
+}
+function ribbon(i0, i1, notch, capEnd) {
+  const p = new Path2D(); let tx = 1, ty = 0;
+  const tan = i => { const j0 = Math.max(i0, i - 1), j1 = Math.min(i1, i + 1); let dx = TX[j1] - TX[j0], dy = TY[j1] - TY[j0]; const l = Math.hypot(dx, dy); if (l > 1e-4) { tx = dx / l; ty = dy / l; } };
+  for (let i = i0; i <= i1; i++) { tan(i); const x = TX[i] - ty * TR[i], y = TY[i] + tx * TR[i]; if (i === i0) p.moveTo(x, y); else p.lineTo(x, y); }
+  tan(i1); const th = Math.atan2(ty, tx);
+  if (notch) p.lineTo(TX[i1] - tx * notch, TY[i1] - ty * notch);
+  else if (capEnd) p.arc(TX[i1], TY[i1], TR[i1], th + HPI, th - HPI, true);
+  for (let i = i1; i >= i0; i--) { tan(i); p.lineTo(TX[i] + ty * TR[i], TY[i] - tx * TR[i]); }
+  tan(i0); const t0 = Math.atan2(ty, tx); p.arc(TX[i0], TY[i0], TR[i0], t0 - HPI, t0 - 3 * HPI, true);
+  p.closePath(); return p;
+}
+// ball-shaped part at a head-space point
+function knob(f, s, u, r, mat, shade = 0.3 * r, thin = true) { pj(f, s, u); const hid = PD < 0 && PX * PX + PY * PY < 1; return part(circleAt(PX, PY, r), mat, hid ? -1 : Math.max(0.01, PD), shade, thin); }
+// flat prop: 2D points [x,y,...] placed on a plane origin O + x*E1 + y*E2 (head space)
+function plane(pts, of, os, ou, e1f, e1s, e1u, e2f, e2s, e2u, sc = 1) { const p = new Path2D();
+  for (let i = 0; i < pts.length; i += 2) { const x = pts[i] * sc, y = pts[i + 1] * sc; pj(of + x * e1f + y * e2f, os + x * e1s + y * e2s, ou + x * e1u + y * e2u); if (i) p.lineTo(PX, PY); else p.moveTo(PX, PY); }
+  p.closePath(); return p; }
+function depthOf(f, s, u) { pj(f, s, u); return (PD < 0 && PX * PX + PY * PY < 1) ? -1 : Math.max(0.01, PD); }
+
+// ============================================================ 4. SHARED FACE PARTS
+// Pose/state object every draw function reads. The game only has to fill in what it uses.
+function newPose() {
+  return { t: 0, expr: 'idle', blink: 0, lookX: 0, lookY: 0, lag: 0, sx: 1, sy: 1, scale: 1, lift: 0, roll: 0, nod: 0, flash: false,
+    walk: 0, walkPh: 0, drop: 0, aim: 0, pull: 0, nock: 0, guard: 0, swing: 0, pokeL: 0, pokeR: 0, jaw: 0, split: 0 };
+}
+const ELLC = new Float32Array(16), ELLS = new Float32Array(16);
+for (let i = 0; i < 16; i++) { ELLC[i] = Math.cos(i / 16 * TAU); ELLS[i] = Math.sin(i / 16 * TAU); }
+function ellPath(sh, cx, cy, rx, ry) { for (let i = 0; i < 16; i++) { QA[i] = cx + ELLC[i] * rx; QB[i] = cy + ELLS[i] * ry; } return sheetPoly(sh, 16); }
+function quadPath(sh, x0, y0, x1, y1, x2, y2, x3, y3) { QA[0] = x0; QB[0] = y0; QA[1] = x1; QB[1] = y1; QA[2] = x2; QB[2] = y2; QA[3] = x3; QB[3] = y3; return sheetPoly(sh, 4); }
+// stroke through sheet points (x,y pairs in args), skipped where hidden
+function strokePts(sh, w, color, ...a) { const p = new Path2D(); let pen = false;
+  for (let i = 0; i < a.length; i += 2) { sheetPt(sh, a[i], a[i + 1]); if (PD > 0.03) { if (pen) p.lineTo(PX, PY); else { p.moveTo(PX, PY); pen = true; } } else pen = false; }
+  line(p, w, color); }
+function curvePts(sh, w, color, x0, y0, cx, cy, x1, y1) { const p = new Path2D(); let pen = false;
+  for (let k = 0; k <= 6; k++) { const t = k / 6, m = 1 - t; sheetPt(sh, m * m * x0 + 2 * m * t * cx + t * t * x1, m * m * y0 + 2 * m * t * cy + t * t * y1);
+    if (PD > 0.03) { if (pen) p.lineTo(PX, PY); else { p.moveTo(PX, PY); pen = true; } } else pen = false; }
+  line(p, w, color); }
+function dot(sh, a, b, r, color) { sheetPt(sh, a, b); if (PD > 0.12) { const g = P.g; g.fillStyle = P.flash ? WHITE : color; g.beginPath(); g.arc(PX, PY, r, 0, TAU); g.fill(); } }
+
+// Eye style table. sc = eyeball, iris/pupil colours + size (fraction of eye), lid colour, base lid + tilt.
+const EYES = {
+  archer:   { sc: WHITE, iris: '#3E7A44', ir: 0.80, pupil: INK, pr: 0.46, lid: 'skin', l0: 0.10, t0: 0.10, lash: 1.5, out: 0.8 },
+  knight:   { sc: WHITE, iris: '#36589A', ir: 0.78, pupil: INK, pr: 0.46, lid: 'skin', l0: 0.16, t0: 0.22, lash: 1.5, out: 0.8 },
+  rogue:    { sc: WHITE, iris: '#F2B53A', ir: 0.74, pupil: INK, pr: 0.36, lid: 'skin', l0: 0.34, t0: 0.30, lash: 1.5, out: 0.8 },
+  rat:      { sc: EYE_RED, iris: null, ir: 0, pupil: null, pr: 0.5, lid: 'rat', l0: 0.22, t0: 0.50, lash: 1.3, out: 0.8 },
+  slime:    { sc: EYE_RED, iris: null, ir: 0, pupil: INK, pr: 0.52, lid: 'slime', l0: 0.26, t0: 0.34, lash: 1.2, out: 0.8 }
+};
+function eyeSymbol(sh, cx, cy, rx, ry, side, st, sym) {   // closed / hurt / dead eyes; returns true if it drew one
+  const x = st.expr, m = Math.min(rx, ry);
+  if (x === 'dead') { const k = m * 0.72; strokePts(sh, 1.5, sym, cx - k, cy - k, cx + k, cy + k); strokePts(sh, 1.5, sym, cx - k, cy + k, cx + k, cy - k); return true; }
+  if (x === 'hurt') { strokePts(sh, 1.5, sym, cx + side * rx * 0.75, cy + ry * 0.6, cx - side * rx * 0.55, cy, cx + side * rx * 0.75, cy - ry * 0.6); return true; }
+  if (x === 'happy') { curvePts(sh, 1.5, sym, cx - rx, cy - ry * 0.25, cx, cy + ry * 1.0, cx + rx, cy - ry * 0.25); return true; }
+  if (st.blink > 0.5) { curvePts(sh, 1.5, sym, cx - rx, cy + ry * 0.1, cx, cy - ry * 0.55, cx + rx, cy + ry * 0.1); return true; }
+  return false;
+}
+// One eye on a sheet. side = -1 / +1 (which side of the nose). Expression comes from st.expr / st.blink.
+function eye(sh, cx, cy, rx, ry, side, st, S) {
+  const g = P.g, x = st.expr, m = Math.min(rx, ry);
+  if (eyeSymbol(sh, cx, cy, rx, ry, side, st, INK)) return;
+  let lid = S.l0, tilt = S.t0, pk = 1;
+  if (x === 'focus') { lid += 0.16; tilt += 0.22; } else if (x === 'angry') { lid += 0.10; tilt += 0.42; pk = 0.92; } else if (x === 'wide') { lid = 0; tilt *= 0.3; pk = 0.74; }
+  const sp = ellPath(sh, cx, cy, rx, ry);
+  g.fillStyle = P.flash ? WHITE : S.sc; g.fill(sp);
+  g.save(); g.clip(sp);
+  const ir = m * (S.iris ? S.ir : S.pr) * pk;
+  const ix = cx - side * rx * 0.10 + st.lookX * (rx - ir * 0.7) * 0.9, iy = cy - ry * 0.06 + st.lookY * (ry - ir * 0.7) * 0.7;
+  if (S.iris) { g.fillStyle = S.iris; g.fill(ellPath(sh, ix, iy, ir, ir)); }
+  if (S.pupil) { const pr = S.iris ? m * S.pr * pk : ir; g.fillStyle = S.pupil; g.fill(ellPath(sh, ix, iy, pr, pr)); }
+  sheetPt(sh, ix, iy);
+  if (PD > 0.05) { const hr = 0.36 * ir * (0.6 + 0.4 * PD); g.fillStyle = WHITE; g.beginPath(); g.arc(PX + LX * ir * 0.5, PY + LY * ir * 0.5, hr, 0, TAU); g.fill();
+    if (P.big && S.iris) { g.beginPath(); g.arc(PX - LX * ir * 0.45, PY - LY * ir * 0.45, hr * 0.45, 0, TAU); g.fill(); } }
+  if (lid > 0.01 || tilt > 0.01) {
+    const y0 = cy + ry - 2 * ry * lid, T = Math.tan(tilt) * side, xa = cx - rx * 1.5, xb = cx + rx * 1.5, ya = y0 + T * (xa - cx), yb = y0 + T * (xb - cx);
+    g.fillStyle = col(S.lid, 0); g.fill(quadPath(sh, xa, ya, xb, yb, xb, cy + ry * 2, xa, cy + ry * 2));
+    if (S.lash) strokePts(sh, S.lash, INK, xa, ya, xb, yb);
+  }
+  g.restore();
+  if (S.out) line(sp, S.out, INK);
+}
+// brow: a short thick stroke above an eye; tilts with the expression
+function brow(sh, cx, cy, len, side, st, color = INK, w = 1.5) {
+  const x = st.expr; let t = 0.12, dy = 0; if (x === 'hurt' || x === 'dead') return;
+  if (x === 'focus') { t = 0.3; dy = -0.03; } else if (x === 'angry') { t = 0.48; dy = -0.05; } else if (x === 'wide') { t = -0.05; dy = 0.05; } else if (x === 'hurt' || x === 'dead') { t = -0.35; } else if (x === 'happy') { t = -0.1; dy = 0.04; }
+  const k = len * 0.5, T = t * side;                       // inner end drops when angry
+  curvePts(sh, w, color, cx - k, cy + dy - k * T, cx, cy + dy + 0.035, cx + k, cy + dy + k * T);
+}
+// mouth: changes shape with the expression
+function mouth(sh, cx, cy, w, st, idle = 0) {
+  const g = P.g, x = st.expr;
+  if (x === 'angry') { const p = quadPath(sh, cx - w * 1.1, cy + 0.07, cx + w * 1.1, cy + 0.07, cx + w * 0.95, cy - 0.08, cx - w * 0.95, cy - 0.08);
+    g.fillStyle = P.flash ? WHITE : MAT.boneL[0]; g.fill(p); line(p, 0.8, INK); strokePts(sh, 0.6, INK, cx, cy + 0.07, cx, cy - 0.08); if (P.big) { strokePts(sh, 0.6, INK, cx - w * 0.5, cy + 0.07, cx - w * 0.5, cy - 0.08); strokePts(sh, 0.6, INK, cx + w * 0.5, cy + 0.07, cx + w * 0.5, cy - 0.08); } return; }
+  if (x === 'wide') { g.fillStyle = INK; g.fill(ellPath(sh, cx, cy, w * 0.75, 0.1)); return; }
+  if (x === 'hurt') { g.fillStyle = INK; g.fill(ellPath(sh, cx, cy, w * 0.45, 0.07)); return; }
+  if (x === 'dead') { strokePts(sh, 1.2, INK, cx - w * 0.7, cy - 0.01, cx - w * 0.2, cy + 0.03, cx + w * 0.25, cy - 0.02, cx + w * 0.7, cy + 0.02); return; }
+  if (x === 'happy') { for (let i = 0; i <= 8; i++) { const a = Math.PI + i / 8 * Math.PI; QA[i] = cx + Math.cos(a) * w; QB[i] = cy + 0.04 + Math.sin(a) * 0.15; } g.fillStyle = INK; g.fill(sheetPoly(sh, 9)); return; }
+  if (x === 'focus' || idle === 1) { curvePts(sh, 1.2, INK, cx - w * 0.8, cy, cx, cy + 0.03, cx + w * 0.8, cy); return; }
+  curvePts(sh, 1.2, INK, cx - w, cy + 0.03, cx, cy - 0.09, cx + w, cy + 0.03);
+}
+// prop frame: origin + forward axis (az, el) + a level sideways axis. Props are authored flat in (x along, y across).
+let FOf = 0, FOs = 0, FOu = 0, E1f = 1, E1s = 0, E1u = 0, E2f = 0, E2s = 1, E2u = 0, FSC = 1;
+function setFrame(of, os, ou, az, el = 0, sc = 1) { const ce = Math.cos(el); FOf = of; FOs = os; FOu = ou; E1f = Math.cos(az) * ce; E1s = Math.sin(az) * ce; E1u = Math.sin(el); E2f = -Math.sin(az); E2s = Math.cos(az); E2u = 0; FSC = sc; }
+function setFrameSheet(of, os, ou, sh, sc = 1) { FOf = of; FOs = os; FOu = ou; E1f = sh.af; E1s = sh.as; E1u = sh.au; E2f = sh.bf; E2s = sh.bs; E2u = sh.bu; FSC = sc; }
+function fpt(x, y) { pj(FOf + (x * E1f + y * E2f) * FSC, FOs + (x * E1s + y * E2s) * FSC, FOu + (x * E1u + y * E2u) * FSC); }
+function fpath(pts, closed = true, dx = 0, dy = 0, k = 1) { const p = new Path2D(); for (let i = 0; i < pts.length; i += 2) { fpt(dx + pts[i] * k, dy + pts[i + 1] * k); if (i) p.lineTo(PX, PY); else p.moveTo(PX, PY); } if (closed) p.closePath(); return p; }
+function fdepth(bias = 0) { pj(FOf, FOs, FOu); return (PD < 0 && PX * PX + PY * PY < 1) ? -1 + bias : Math.max(0.01, PD) + bias; }
+function fline(x0, y0, x1, y1) { const p = new Path2D(); fpt(x0, y0); p.moveTo(PX, PY); fpt(x1, y1); p.lineTo(PX, PY); return p; }
+// trailing spine: copy `src` [f,s,u,r,...] swung about the up axis, more toward the tip (how trailing parts lag a turn)
+const SPN = new Float32Array(64);
+function trail(src, lag, sway = 0, n = src.length / 4) {
+  for (let i = 0; i < n; i++) { const t = i / (n - 1), a = -lag * Math.pow(t, 1.3) + sway * t * t, c = Math.cos(a), s = Math.sin(a), f = src[i * 4], y = src[i * 4 + 1];
+    SPN[i * 4] = f * c - y * s; SPN[i * 4 + 1] = f * s + y * c; SPN[i * 4 + 2] = src[i * 4 + 2]; SPN[i * 4 + 3] = src[i * 4 + 3]; }
+  return SPN.subarray(0, n * 4);
+}
+// short tapered plume / feather / drip from a base point along a direction
+const FTH = new Float32Array(12);
+function feather(f, s, u, df, ds, du, len, r0, mat, shade = 0, r1 = 0.3, thin = true, lit = null) {
+  FTH[0] = f; FTH[1] = s; FTH[2] = u; FTH[3] = r0;
+  FTH[4] = f + df * len * 0.55; FTH[5] = s + ds * len * 0.55; FTH[6] = u + du * len * 0.55; FTH[7] = r0 * 0.82;
+  FTH[8] = f + df * len; FTH[9] = s + ds * len; FTH[10] = u + du * len; FTH[11] = r0 * r1;
+  tube(FTH, mat, shade, 0, thin, 0, lit);
+}
+const HAND_R = 0.19;
+
+// ============================================================ 5. UNITS
+// drawX(ctx, x, y, radius, facing, state): facing is the screen angle the unit is heading (0 = right, PI/2 = down-screen).
+
+// ------------------------------------------------------------ ARCHER
+// Signature: pointed hood whose tip curls off the back. Front: open cheerful face, brown fringe, folded brim.
+// Back: hood seam, trailing tip, quiver with fletchings. Kit: recurve bow (left hand).
+const A_FACE = shape('M -0.72,0.2 C -0.5,0.42 -0.2,0.32 0,0.37 C 0.2,0.32 0.5,0.42 0.72,0.2 C 0.86,-0.1 0.8,-0.62 0.45,-0.86 C 0.2,-1.0 -0.2,-1.0 -0.45,-0.86 C -0.8,-0.62 -0.86,-0.1 -0.72,0.2');
+const A_HAIR = shape('M -0.72,0.32 L 0.72,0.32 L 0.74,0.12 C 0.62,0.14 0.52,0.2 0.46,0.27 C 0.44,0.17 0.34,0.1 0.22,0.08 C 0.26,0.15 0.24,0.22 0.18,0.27 C 0.1,0.16 -0.08,0.08 -0.28,0.08 C -0.18,0.14 -0.15,0.2 -0.18,0.27 C -0.32,0.19 -0.5,0.14 -0.74,0.13');
+const A_TIP = new Float32Array([-0.36, 0, 0.80, 0.37, -0.62, 0, 0.95, 0.28, -0.86, 0, 1.0, 0.2, -1.05, 0, 0.95, 0.135, -1.17, 0, 0.82, 0.085, -1.2, 0, 0.68, 0.05]);
+const A_SEAM = shape('M 0,0.86 C 0.05,0.5 -0.05,0.1 0,-0.7');
+const A_HOODHEM = shape('M -0.8,-0.5 C -0.4,-0.72 0.4,-0.72 0.8,-0.5');
+const A_QUIVER = new Float32Array([-0.72, -0.56, -0.56, 0.15, -0.84, -0.48, -0.06, 0.155, -0.92, -0.42, 0.4, 0.165]);
+const A_BOW = shape('M -0.1,-0.78 C -0.2,-0.76 -0.24,-0.7 -0.2,-0.66 C 0.1,-0.52 0.28,-0.25 0.28,0 C 0.28,0.25 0.1,0.52 -0.2,0.66 C -0.24,0.7 -0.2,0.76 -0.1,0.78');
+const A_GRIP = shape('M 0.255,-0.14 Q 0.29,0 0.255,0.14', 4);
+const ARROW_HEAD = shape('M 0,0 L -0.2,-0.085 L -0.14,0 L -0.2,0.085');
+const ARROW_FLETCH = shape('M 0,0 L -0.06,-0.085 L 0.16,-0.085 L 0.22,0 L 0.16,0.085 L -0.06,0.085');
+function arrowParts(x0, len, depth) {              // in the current prop frame, pointing along +x
+  part(fline(x0, 0, x0 + len - 0.1, 0), 'wood', depth, 0, false, 0.055);
+  part(fpath(ARROW_FLETCH, true, x0, 0), 'archerL', depth + 0.001, 0, true);
+  part(fpath(ARROW_HEAD, true, x0 + len, 0), 'steel', depth + 0.002, 0.03, true);
+}
+function drawArcher(g, x, y, r, facing, st) {
+  if (!begin(g, x, y, r, facing, st)) return;
+  const wk = Math.sin(st.walkPh) * st.walk, ps = 1 - st.drop, aim = st.aim, E = EYES.archer;
+  // quiver slung behind the right shoulder, three fletchings poking out
+  tube(A_QUIVER, 'wood', 0.07);
+  feather(-0.95, -0.47, 0.5, -0.3, -0.42, 0.86, 0.34, 0.08, 'boneL', 0.03);
+  feather(-0.97, -0.4, 0.52, -0.28, 0.0, 0.96, 0.4, 0.08, 'boneL', 0.03);
+  feather(-0.9, -0.36, 0.52, 0.16, 0.34, 0.92, 0.3, 0.075, 'boneL', 0.03);
+  // hood tip: tube trailing off the back of the crown, lagging behind turns
+  tube(trail(A_TIP, st.lag * 1.2, 0.10 * Math.sin(st.t * 1.6)), 'archer', 0.09);
+  // nose: only shows as a bump in profile
+  sheet3(SF, 0, -0.3, 0.04); knob(HF, HS, HU, 0.075, 'skin', 0, false);
+  if (ps > 0.03) {
+    // bow in the left hand (held level so it reads from above), right hand rests or draws the string
+    const dk = 1 + st.drop * 0.5, th = lerp(1.42, 0, aim);     // bow lies level: carried at the left side, swung round in front to shoot
+    setFrame(Math.cos(th) * lerp(1.2, 1.26, aim) * dk, Math.sin(th) * lerp(1.2, 1.26, aim) * dk, lerp(-0.26, -0.18, aim) + wk * 0.05, th, lerp(0, -0.15, aim), ps); const bd = fdepth();
+    const xs = -0.2 - 0.48 * st.pull;
+    const str = new Path2D(); fpt(-0.2, -0.67); str.moveTo(PX, PY); fpt(xs, 0); str.lineTo(PX, PY); const sx = PX, sy = PY, sd = PD; fpt(-0.2, 0.67); str.lineTo(PX, PY);
+    part(str, 'ink', bd - 0.004, 0, false, P.lw * 0.7);
+    if (st.nock > 0.5) arrowParts(xs - 0.03, 1.25, bd - 0.003);
+    part(fpath(A_BOW, false), 'wood', bd, 0, false, 0.14);
+    part(fpath(A_GRIP, false), 'gold', bd + 0.001, 0, false, 0.16);
+    fpt(0.16, 0); part(circleAt(PX, PY, HAND_R * ps), 'skin', bd + 0.002, 0.05);
+    // right hand
+    pj(0.45, -1.0, -0.4 - wk * 0.05); const hx = lerp(PX, sx, aim), hy = lerp(PY, sy, aim), hd = lerp(PD, sd, aim);
+    part(circleAt(hx, hy, HAND_R * ps), 'skin', (hd < 0 && hx * hx + hy * hy < 1) ? -1 : Math.max(0.01, hd) + (aim > 0.5 ? 0.5 : 0), 0.05);
+  }
+  paintBody(HEAD, 'archer', () => {
+    hilite('archer');
+    line(SL(SB, A_SEAM), 0.9, col('archer', 1));
+    line(SL(SB, A_HOODHEM), 2.2, col('archerL', 0));
+    const face = SP(SF, A_FACE);
+    g.lineWidth = 0.17; g.strokeStyle = col('archerL', 0); g.stroke(face);            // folded brim
+    if (P.big) { g.lineWidth = 0.17 + P.lw * 1.2; g.strokeStyle = col('archer', 1); g.stroke(face); g.lineWidth = 0.17; g.strokeStyle = col('archerL', 0); g.stroke(face); }
+    zone(face, 'skin');
+    g.save(); g.clip(face);
+    g.fillStyle = col('skin', 1); g.fill(ellPath(SF, -0.56, -0.38, 0.12, 0.07)); g.fill(ellPath(SF, 0.56, -0.38, 0.12, 0.07));   // blush
+    g.fill(ellPath(SF, 0, -0.33, 0.045, 0.03));                                                                                   // nose dab
+    zone(SP(SF, A_HAIR), 'wood');
+    g.restore();
+    line(SL(SF, A_FACE, true), 0.7, INK);
+    eye(SF, -0.33, -0.09, 0.185, 0.25, -1, st, E); eye(SF, 0.33, -0.09, 0.185, 0.25, 1, st, E);
+    brow(SF, -0.34, 0.25, 0.3, -1, st); brow(SF, 0.34, 0.25, 0.3, 1, st);
+    mouth(SF, 0, -0.57, 0.13, st);
+  });
+  end();
+}
+
+// ------------------------------------------------------------ KNIGHT
+// Signature: gold feathered crest running over the helmet and off the back. Front: T-visor with stern eyes, steel cheek plates.
+// Back: crest tail + riveted steel neck guard. Kit: heater shield (left), sword (right).
+const K_VISOR = shape('M -0.7,0.17 C -0.42,0.25 -0.16,0.14 0,0.05 C 0.16,0.14 0.42,0.25 0.7,0.17 C 0.79,0.0 0.75,-0.2 0.62,-0.27 C 0.42,-0.31 0.24,-0.3 0.14,-0.25 L 0.13,-0.9 L -0.13,-0.9 L -0.14,-0.25 C -0.24,-0.3 -0.42,-0.31 -0.62,-0.27 C -0.75,-0.2 -0.79,0.0 -0.7,0.17');
+const K_CHEEK = shape('M 0.25,-0.41 L 0.78,-0.38 C 0.86,-0.6 0.7,-0.86 0.36,-0.98 L 0.25,-0.97');
+const K_CHEEK_L = mirror(K_CHEEK);
+const K_NECK = shape('M -0.9,-0.12 C -0.45,-0.3 0.45,-0.3 0.9,-0.12 C 0.95,-0.5 0.6,-0.95 0,-1.0 C -0.6,-0.95 -0.95,-0.5 -0.9,-0.12');
+const K_NECK_EDGE = shape('M -0.9,-0.12 C -0.45,-0.3 0.45,-0.3 0.9,-0.12');
+const K_NECK_LAME = shape('M -0.88,-0.45 C -0.4,-0.62 0.4,-0.62 0.88,-0.45');
+const K_SHIELD = shape('M -0.42,0.48 C -0.2,0.54 0.2,0.54 0.42,0.48 C 0.46,0.02 0.32,-0.36 0,-0.62 C -0.32,-0.36 -0.46,0.02 -0.42,0.48');
+const K_EMBLEM = shape('M -0.2,0.2 L 0,0.02 L 0.2,0.2 L 0.2,0.02 L 0,-0.18 L -0.2,0.02');
+const K_BLADE = shape('M 0.12,-0.1 L 0.86,-0.1 L 1.06,0 L 0.86,0.1 L 0.12,0.1');
+const K_GUARD = shape('M 0.0,-0.26 C 0.05,-0.29 0.13,-0.29 0.17,-0.25 L 0.15,0.25 C 0.13,0.29 0.05,0.29 0.0,0.26');
+const K_GRIP = shape('M -0.24,-0.055 L 0.03,-0.055 L 0.03,0.055 L -0.24,0.055');
+// crest feathers along the midline: [angle over the top (0 = front horizon, PI/2 = crown), length, base radius]
+const K_CREST = [0.95, 0.36, 0.13, 1.25, 0.44, 0.15, 1.57, 0.5, 0.165, 1.9, 0.54, 0.17, 2.22, 0.56, 0.17];
+const K_TAIL1 = new Float32Array([-0.9, 0, 0.5, 0.19, -1.14, 0, 0.44, 0.15, -1.36, 0, 0.3, 0.06]);
+const K_TAIL2 = new Float32Array([-0.96, 0, 0.26, 0.165, -1.17, 0, 0.14, 0.125, -1.33, 0, -0.02, 0.05]);
+function drawKnight(g, x, y, r, facing, st) {
+  if (!begin(g, x, y, r, facing, st)) return;
+  const wk = Math.sin(st.walkPh) * st.walk, ps = 1 - st.drop, E = EYES.knight, dr = 1 + st.drop * 0.5;
+  // crest: overlapping plumes over the top, the last two trail and lag
+  for (let i = 0; i < K_CREST.length; i += 3) { const a = K_CREST[i], cf = Math.cos(a), cu = Math.sin(a); let df = cf * 0.25 - 0.85, du = cu * 0.25 + 0.3; const l = Math.hypot(df, du);
+    feather(cf * 0.97, 0, cu * 0.97, df / l, 0, du / l, K_CREST[i + 1], K_CREST[i + 2], 'gold'); }
+  const sway = 0.08 * Math.sin(st.t * 1.8);
+  tube(trail(K_TAIL1, st.lag * 1.2, sway), 'gold', 0); tube(trail(K_TAIL2, st.lag * 1.4, sway), 'gold', 0);
+  if (ps > 0.03) {
+    // shield: left arm. A leaning plane, so its face always catches the camera a little.
+    const gd = st.guard, saz = lerp(1.15, 0.0, gd), sr = lerp(1.17, 1.2, gd) * dr;
+    const of = Math.cos(saz) * sr, os = Math.sin(saz) * sr, ou = lerp(-0.4, -0.2, gd) + wk * 0.05;
+    const sh = mkSheet(lerp(0.75, 0, gd), lerp(0.9, 0.6, gd)), sc = 0.9 * ps;
+    pj(sh.cf, sh.cs, sh.cu); const frontSide = PD > 0;
+    setFrameSheet(of - sh.cf * 0.07, os - sh.cs * 0.07, ou - sh.cu * 0.07, sh, sc); let sd = fdepth();
+    part(fpath(K_SHIELD), 'steelD', sd, 0, true);                                    // slab edge / back
+    setFrameSheet(of, os, ou, sh, sc); sd = fdepth() + 0.002;
+    if (frontSide) {
+      part(fpath(K_SHIELD), 'steel', sd, 0.06, true);
+      part(fpath(K_SHIELD, true, 0, 0.0, 0.76), 'knight', sd + 0.001, 0.06, true);
+      part(fpath(K_EMBLEM, true, 0, 0.02, 0.9), 'gold', sd + 0.002, 0, P.big);
+    } else part(fpath(K_SHIELD), 'wood', sd, 0.06, true);
+    // sword: right arm, blade held out and up
+    const sw = st.swing, haz = -1.0 + sw * 0.55, hf = Math.cos(haz) * 1.12 * dr, hs = Math.sin(haz) * 1.12 * dr, hu = -0.36 - wk * 0.05;
+    setFrame(hf, hs, hu, -0.75 + sw, 0.42 - Math.abs(sw) * 0.12, ps); const d0 = fdepth();
+    part(fpath(K_GRIP), 'wood', d0, 0, true);
+    part(fline(0.1, 0, 0.98, 0), 'steel', d0 + 0.0005, 0, false, 0.085);
+    part(fpath(K_BLADE), 'steel', d0 + 0.001, 0.05, true);
+    part(fpath(K_GUARD), 'gold', d0 + 0.002, 0, true);
+    fpt(-0.1, 0); part(circleAt(PX, PY, HAND_R * ps), 'skin', d0 + 0.003, 0.05);
+  }
+  paintBody(HEAD, 'knight', () => {
+    hilite('knight');
+    // back: neck guard
+    zone(SP(SB, K_NECK), 'steel');
+    line(SL(SB, K_NECK_EDGE), 2.0, col('gold', 0)); line(SL(SB, K_NECK_LAME), 0.7, INK);
+    if (P.big) for (const a of [-0.6, -0.2, 0.2, 0.6]) dot(SB, a, -0.74 + a * a * 0.3, 0.028, INK);
+    // front: cheek plates, gold-trimmed visor cut, face inside
+    zone(SP(SF, K_CHEEK), 'steel'); zone(SP(SF, K_CHEEK_L), 'steel');
+    if (P.big) for (const s of [-1, 1]) { dot(SF, s * 0.66, -0.5, 0.026, INK); dot(SF, s * 0.56, -0.74, 0.026, INK); }
+    const vis = SP(SF, K_VISOR);
+    g.lineWidth = 0.2; g.strokeStyle = col('gold', 0); g.stroke(vis);
+    if (P.big) { g.lineWidth = 0.2 + P.lw * 1.2; g.strokeStyle = INK; g.stroke(vis); g.lineWidth = 0.2; g.strokeStyle = col('gold', 0); g.stroke(vis); }
+    zone(vis, 'skin');
+    line(SL(SF, K_VISOR, true), 0.7, INK);
+    g.save(); g.clip(vis);
+    eye(SF, -0.35, -0.05, 0.175, 0.2, -1, st, E); eye(SF, 0.35, -0.05, 0.175, 0.2, 1, st, E);
+    mouth(SF, 0, -0.58, 0.085, st, 1);
+    g.restore();
+  });
+  end();
+}
+
+// ------------------------------------------------------------ ROGUE
+// Signature: pale headband knotted at the back with two ribbon tails. Front: sly gold eyes between band and mask, dark fringe.
+// Back: knot + tails on the band. Kit: two curved daggers.
+const R_BAND = capLoop(SF, 0.27), R_CROWN = capLoop(SF, 0.53);
+const R_SKIN = shape('M -0.9,0.28 L 0.9,0.28 C 0.95,0.05 0.93,-0.12 0.86,-0.26 C 0.5,-0.37 0.2,-0.3 0,-0.15 C -0.2,-0.3 -0.5,-0.37 -0.86,-0.26 C -0.93,-0.12 -0.95,0.05 -0.9,0.28');
+const R_MASK = shape('M -0.88,-0.25 C -0.5,-0.37 -0.2,-0.3 0,-0.15 C 0.2,-0.3 0.5,-0.37 0.88,-0.25 C 0.92,-0.6 0.6,-0.96 0,-1.0 C -0.6,-0.96 -0.92,-0.6 -0.88,-0.25');
+const R_MASKTOP = shape('M -0.88,-0.25 C -0.5,-0.37 -0.2,-0.3 0,-0.15 C 0.2,-0.3 0.5,-0.37 0.88,-0.25');
+const R_FOLD = shape('M -0.34,-0.52 Q 0,-0.4 0.34,-0.52');
+const R_HAIR = shape('M -0.12,0.3 L 0.74,0.3 C 0.76,0.22 0.72,0.16 0.64,0.12 C 0.64,0.17 0.6,0.2 0.54,0.22 C 0.5,0.17 0.42,0.13 0.3,0.12 C 0.35,0.15 0.33,0.2 0.26,0.23 C 0.18,0.19 0.04,0.18 -0.12,0.2');
+const R_KNOT = [0.39 * SF.bf - 0.921 * SF.cf, 0, 0.39 * SF.bu - 0.921 * SF.cu];
+const R_TAILA = new Float32Array([-0.02, 0.03, 0, 0.085, -0.16, 0.1, -0.13, 0.1, -0.3, 0.17, -0.33, 0.115, -0.38, 0.2, -0.58, 0.125]);
+const R_TAILB = new Float32Array([-0.02, -0.04, 0, 0.08, -0.13, -0.12, -0.11, 0.09, -0.23, -0.19, -0.27, 0.105, -0.26, -0.23, -0.44, 0.11]);
+const R_DAG = shape('M 0.1,-0.075 C 0.3,-0.125 0.52,-0.1 0.76,0.035 C 0.52,0.1 0.3,0.09 0.1,0.075');
+const R_DGUARD = shape('M 0.0,-0.17 L 0.11,-0.15 L 0.11,0.15 L 0.0,0.17');
+const R_DGRIP = shape('M -0.2,-0.05 L 0.02,-0.05 L 0.02,0.05 L -0.2,0.05');
+const RT = new Float32Array(16);
+function drawRogue(g, x, y, r, facing, st) {
+  if (!begin(g, x, y, r, facing, st)) return;
+  const wk = Math.sin(st.walkPh) * st.walk, ps = 1 - st.drop, E = EYES.rogue, dr = 1 + st.drop * 0.5;
+  // headband tails + knot
+  for (let k = 0; k < 2; k++) { const src = k ? R_TAILB : R_TAILA; for (let i = 0; i < 4; i++) { const fl = 0.05 * Math.sin(st.t * 3.1 + i * 0.9 + k * 2) * i; RT[i * 4] = R_KNOT[0] + src[i * 4]; RT[i * 4 + 1] = src[i * 4 + 1] + fl; RT[i * 4 + 2] = R_KNOT[2] + src[i * 4 + 2]; RT[i * 4 + 3] = src[i * 4 + 3]; }
+    tube(trail(RT, st.lag * 1.5, 0), 'rogueL', 0.05, k ? 0.1 : 0.11); }
+  knob(R_KNOT[0] * 1.03, 0, R_KNOT[2] * 1.03, 0.15, 'rogueL', 0.05);
+  if (ps > 0.03) for (let sgn = -1; sgn <= 1; sgn += 2) {
+    const pk = sgn < 0 ? st.pokeR : st.pokeL;                       // -s side is the character's right hand
+    const haz = sgn * lerp(1.0, 0.4, pk), rho = (1.12 + pk * 0.5) * dr;          // reverse grip at rest, flips forward to stab
+    setFrame(Math.cos(haz) * rho, Math.sin(haz) * rho, -0.45 + sgn * wk * 0.06 + pk * 0.15, sgn * lerp(2.7, 0.0, easeIO(pk)), lerp(-0.08, 0.1, pk), ps); const d0 = fdepth();
+    part(fpath(R_DGRIP), 'wood', d0, 0, true);
+    part(fline(0.1, 0, 0.7, 0), 'steel', d0 + 0.0005, 0, false, 0.07);
+    part(fpath(R_DAG), 'steel', d0 + 0.001, 0.045, true);
+    part(fpath(R_DGUARD), 'gold', d0 + 0.002, 0, true);
+    fpt(-0.09, 0); part(circleAt(PX, PY, HAND_R * ps), 'skin', d0 + 0.003, 0.05);
+  }
+  paintBody(HEAD, 'rogue', () => {
+    zone(loop3(R_BAND), 'rogueL');
+    const crown = loop3(R_CROWN); zone(crown, 'rogue');
+    if (P.big) { line(SL3(R_BAND), 0.6, INK); line(SL3(R_CROWN), 0.6, INK); }
+    hilite('rogue');
+    const skin = SP(SF, R_SKIN); zone(skin, 'skin');
+    zone(SP(SF, R_MASK), 'rogueD');
+    line(SL(SF, R_MASKTOP), 0.7, INK);
+    if (P.big) line(SL(SF, R_FOLD), 0.6, INK);
+    g.save(); g.clip(skin);
+    eye(SF, -0.36, 0.0, 0.19, 0.2, -1, st, E); eye(SF, 0.36, 0.0, 0.19, 0.2, 1, st, E);
+    g.restore();
+    const hair = SP(SF, R_HAIR); zone(hair, 'rogueD'); line(SL(SF, R_HAIR, true), 0.6, INK);
+    if (st.expr === 'angry' || st.expr === 'wide' || st.expr === 'hurt' || st.expr === 'happy') mouth(SF, 0, -0.56, 0.1, st);   // mask stays shut otherwise
+  });
+  end();
+}
+function SL3(pts) { const p = new Path2D(); let pen = false; const n = pts.length / 3; for (let i = 0; i <= n; i++) { const j = i % n; pj(pts[j * 3], pts[j * 3 + 1], pts[j * 3 + 2]); if (PD > 0.03) { if (pen) p.lineTo(PX, PY); else { p.moveTo(PX, PY); pen = true; } } else pen = false; } return p; }
+
+// ------------------------------------------------------------ RAT
+// Signature: big notched ears and a pointed snout with buck teeth. Back: ears from behind + long segmented tail curling up.
+const RAT_MUZZLE = shape('M -0.52,-0.1 C -0.3,0.04 0.3,0.04 0.52,-0.1 C 0.74,-0.5 0.4,-0.95 0,-1.0 C -0.4,-0.95 -0.74,-0.5 -0.52,-0.1');
+const RAT_EAR = shape('M 0,-0.42 C 0.24,-0.42 0.42,-0.22 0.42,0.02 C 0.42,0.26 0.24,0.44 0,0.44 C -0.24,0.44 -0.42,0.26 -0.42,0.02 C -0.42,-0.22 -0.24,-0.42 0,-0.42');
+const RAT_EAR_N = shape('M 0,-0.42 C 0.24,-0.42 0.42,-0.22 0.42,0.02 C 0.42,0.12 0.39,0.2 0.34,0.27 L 0.2,0.16 L 0.2,0.38 C 0.14,0.42 0.07,0.44 0,0.44 C -0.24,0.44 -0.42,0.26 -0.42,0.02 C -0.42,-0.22 -0.24,-0.42 0,-0.42');
+const RAT_TEETH = shape('M -0.105,0.05 L 0.105,0.05 L 0.095,-0.15 L 0.012,-0.16 L 0,-0.07 L -0.012,-0.16 L -0.095,-0.15');
+const RAT_TAIL = new Float32Array([-0.88, 0, -0.42, 0.115, -1.12, 0.06, -0.6, 0.1, -1.32, 0.17, -0.66, 0.085, -1.48, 0.2, -0.62, 0.07, -1.6, 0.1, -0.55, 0.055, -1.66, -0.05, -0.5, 0.04]);
+const RAT_TUFT = shape('M -0.2,0.06 L -0.26,-0.16 L -0.1,-0.06 L -0.03,-0.3 L 0.07,-0.07 L 0.22,-0.2 L 0.19,0.06');
+const RAT_P0 = (() => { sheet3(SF, 0, -0.34, 0); return [HF, HS, HU]; })();
+const RAT_EARSH = [mkSheet(-0.3, 0.5), mkSheet(0.3, 0.5)];
+function drawRat(g, x, y, r, facing, st) {
+  if (!begin(g, x, y, r, facing, st)) return;
+  const E = EYES.rat, p0f = RAT_P0[0], p0u = RAT_P0[2], df = 0.992, du = 0.12, tw = 0.03 * Math.sin(st.t * 9);
+  // tail
+  tube(trail(RAT_TAIL, st.lag * 1.6, 0.35 * Math.sin(st.t * 2.4) + st.walk * 0.5 * Math.sin(st.walkPh)), 'ratL', 0.04);
+  if (P.big) for (let i = 1; i < 5; i++) { const o = (TH[i] ? -1 : Math.max(0.011, TDp[i])) + 0.001; let tx = TX[i + 1] - TX[i - 1], ty = TY[i + 1] - TY[i - 1]; const l = Math.hypot(tx, ty) || 1; tx /= l; ty /= l;
+    const p = new Path2D(); p.moveTo(TX[i] - ty * TR[i], TY[i] + tx * TR[i]); p.lineTo(TX[i] + ty * TR[i], TY[i] - tx * TR[i]); part(p, 'ink', o, 0, false, P.lw * 0.55); }
+  // ears: flat notched discs standing on the head
+  for (let k = 0; k < 2; k++) { const sgn = k ? 1 : -1, sh = RAT_EARSH[k], cf = -0.42, cs = sgn * 0.58, cu = 1.02, er = 0.36 * (1 + 0.035 * Math.sin(st.t * 5 + k * 2));
+    pj(cf, cs, cu); const ex = PX, ey = PY, d = (PD < 0 && PX * PX + PY * PY < 1) ? -1 : Math.max(0.01, PD), ep = new Path2D();
+    if (k) { const na = -0.5 - (ex > 0 ? 0 : 1.2); ep.arc(ex, ey, er, na + 0.3, na - 0.3 + TAU); ep.lineTo(ex + Math.cos(na) * er * 0.52, ey + Math.sin(na) * er * 0.52); ep.closePath(); }   // bitten ear
+    else ep.arc(ex, ey, er, 0, TAU);
+    part(ep, 'rat', d, 0.07, true);
+    pj(sh.cf, sh.cs, sh.cu); if (PD > 0.05) { setFrameSheet(cf + sh.cf * 0.2, cs + sh.cs * 0.2, cu + sh.cu * 0.2, sh, 1); part(fpath(RAT_EAR, true, 0, -0.02, 0.56), 'ratL', d + 0.001, 0.04, false); } }
+  // snout + nose + buck teeth
+  const jw = st.jaw;
+  setFrame(p0f + df * 0.36, 0, p0u + du * 0.36 - 0.3 - jw * 0.06, HPI, HPI); E2f = 0; E2s = 0; E2u = 1; E1f = 0; E1s = 1; E1u = 0;
+  part(fpath(RAT_TEETH), 'boneL', fdepth(), 0, true);
+  FTH[0] = p0f * 0.84; FTH[1] = 0; FTH[2] = p0u * 0.84; FTH[3] = 0.36; FTH[4] = p0f + df * 0.16; FTH[5] = 0; FTH[6] = p0u + du * 0.16; FTH[7] = 0.29; FTH[8] = p0f + df * 0.35; FTH[9] = tw; FTH[10] = p0u + du * 0.35; FTH[11] = 0.19;
+  tube(FTH, 'ratL', 0.07, 0, true, 0.002);
+  knob(p0f + df * 0.49, tw * 1.4, p0u + du * 0.49, 0.12, 'ink', 0, false).depth += 0.01;
+  if (P.big) for (let sgn = -1; sgn <= 1; sgn += 2) for (let k = 0; k < 2; k++) { const p = new Path2D(); pj(p0f + df * 0.24, sgn * 0.22, p0u + du * 0.24 - 0.05); const d = PD, hid = PD < 0 && PX * PX + PY * PY < 1; p.moveTo(PX, PY);
+    pj(p0f + df * 0.2, sgn * 0.86, p0u + (k ? -0.22 : 0.1)); p.lineTo(PX, PY); part(p, 'ink', hid ? -1 : Math.max(0.01, d) + 0.004, 0, false, P.lw * 0.5); }
+  paintBody(HEAD, 'rat', () => {
+    hilite('rat');
+    zone(SP(SF, RAT_MUZZLE), 'ratL');
+    eye(SF, -0.38, 0.14, 0.155, 0.175, -1, st, E); eye(SF, 0.38, 0.14, 0.155, 0.175, 1, st, E);
+  });
+  end();
+}
+
+// ------------------------------------------------------------ SLIME
+// Signature: wobbling jelly ball with a dollop tip that flops backward. Front: grumpy red eyes, fang. Inside: dark core + bubbles.
+// Back: the tip curls toward you, bubbles show through. Drips hang round the lower edge.
+const SL_TIP = new Float32Array([0.0, 0, 0.9, 0.27, -0.17, 0, 1.08, 0.2, -0.33, 0, 1.14, 0.14, -0.46, 0, 1.1, 0.09, -0.52, 0, 1.0, 0.055]);
+const SL_DRIPS = [1.2, 0.14, 0.2, 2.9, 0.13, 0.17, -1.9, 0.14, 0.24];        // [azimuth, radius, length]
+function slimeBody(t, amp) { const p = new Path2D(), N = 40;
+  for (let i = 0; i < N; i++) { const a = i / N * TAU, rr = 1 + amp * (0.032 * Math.sin(2 * a + t * 2.3) + 0.022 * Math.sin(3 * a - t * 1.9 + 1)); if (i) p.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); else p.moveTo(rr, 0); }
+  p.closePath(); return p; }
+function slimeOne(g, st, small) {
+  const E = EYES.slime, t = st.t;
+  const body = slimeBody(t, 1);
+  P.edge = MAT.slime[1];                                   // slime folds are drawn in its own dark tone, never ink
+  tube(trail(SL_TIP, st.lag * 1.5, 0.12 * Math.sin(t * 1.7)), 'slime', 0.09, 0, true);
+  for (let i = 0; i < SL_DRIPS.length; i += 3) { const az = SL_DRIPS[i] - st.lag * 0.3, f = Math.cos(az) * 0.86, s = Math.sin(az) * 0.86, len = SL_DRIPS[i + 2] * (1 + 0.18 * Math.sin(t * 1.3 + i));
+    feather(f, s, -0.45, f * 0.1, s * 0.1, -1, len, SL_DRIPS[i + 1], 'slime', 0.24, 0.78, true, body); }
+  paintBody(body, 'slime', () => {
+    // dark core, seen through the jelly
+    pj(-0.3, 0, 0.2); const cx = PX, cy = PY; g.fillStyle = col('slimeD', 0); g.beginPath();
+    for (let i = 0; i < 20; i++) { const a = i / 20 * TAU, rr = 0.36 * (1 + 0.1 * Math.sin(3 * a + t * 1.6)); if (i) g.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr * 0.92); else g.moveTo(cx + rr, cy); } g.fill();
+    if (!small || P.big) { g.fillStyle = col('slime', 0); g.beginPath(); g.arc(cx - 0.1, cy - 0.11, 0.07, 0, TAU); g.fill(); }
+    // bubbles
+    pj(-0.5, 0.36, 0.42); if (PD > -0.2) { g.fillStyle = col('slimeL', 0); g.beginPath(); g.arc(PX, PY, 0.13, 0, TAU); g.fill(); g.fillStyle = col('slime', 0); g.beginPath(); g.arc(PX + 0.035, PY + 0.04, 0.095, 0, TAU); g.fill(); }
+    pj(-0.3, -0.5, 0.3); if (PD > -0.2) { g.fillStyle = col('slimeL', 0); g.beginPath(); g.arc(PX, PY, 0.06, 0, TAU); g.fill(); }
+    hilite('slime', -0.42, -0.56, 1.15);
+    eye(SF, -0.33, 0.0, 0.175, 0.2, -1, st, E); eye(SF, 0.33, 0.0, 0.175, 0.2, 1, st, E);
+    const x = st.expr;
+    if (x === 'idle' || x === 'focus') { curvePts(SF, 1.2, INK, -0.15, -0.44, 0, -0.36, 0.15, -0.44); if (P.big) { const f = quadPath(SF, 0.03, -0.4, 0.11, -0.42, 0.08, -0.52, 0.07, -0.52); g.fillStyle = WHITE; g.fill(f); line(f, 0.5, INK); } }
+    else mouth(SF, 0, -0.44, 0.14, st);
+  });
+}
+function drawSlime(g, x, y, r, facing, st) {
+  if (!begin(g, x, y, r, facing, st)) return;
+  if (st.split > 0.02) {                                   // splitting: two half-size slimes peel apart sideways on screen
+    const k = st.split, sc = lerp(0.8, 0.62, k), lw = P.lw;
+    for (let sgn = -1; sgn <= 1; sgn += 2) { g.save(); g.translate(sgn * k * 0.95, 1 - sc - 0.12 * Math.sin(Math.PI * k) ); g.scale(sc, sc); P.lw = lw / sc; P.big = P.k * sc >= 30; NP = 0; slimeOne(g, st, true); g.restore(); }
+    P.lw = lw;
+  } else slimeOne(g, st, false);
+  end();
+}
+
+// ------------------------------------------------------------ SKELETON
+// Signature: big slanted sockets with glowing red pupils and a chattering jaw. Back: jagged hole in the cranium + dangling vertebrae.
+// Kit: chipped rusty cleaver (right hand).
+const SK_SOCK = shape('M 0.13,0.08 C 0.2,0.27 0.5,0.31 0.61,0.15 C 0.7,0.0 0.62,-0.22 0.43,-0.25 C 0.26,-0.27 0.1,-0.1 0.13,0.08');
+const SK_SOCK_L = mirror(SK_SOCK);
+const SK_NOSE = shape('M 0,-0.25 C 0.1,-0.31 0.15,-0.44 0.08,-0.48 C 0.04,-0.5 0.01,-0.47 0,-0.43 C -0.01,-0.47 -0.04,-0.5 -0.08,-0.48 C -0.15,-0.44 -0.1,-0.31 0,-0.25', 5);
+const SK_CHEEK = shape('M 0.5,-0.33 C 0.66,-0.3 0.8,-0.36 0.88,-0.46 C 0.76,-0.57 0.6,-0.57 0.46,-0.47');
+const SK_CHEEK_L = mirror(SK_CHEEK);
+const SK_TEETH = shape('M -0.42,-0.59 L 0.42,-0.59 L 0.38,-0.78 L -0.38,-0.78');
+const SK_JAW = shape('M -0.5,-0.76 L 0.5,-0.76 C 0.54,-0.95 0.34,-1.12 0,-1.15 C -0.34,-1.12 -0.54,-0.95 -0.5,-0.76');
+const SK_CRACK = shape('M 0.14,0.8 L 0.04,0.64 L 0.15,0.54 L 0.06,0.42');
+const SK_HOLE = shape('M -0.2,0.32 L 0.0,0.44 L 0.12,0.31 L 0.3,0.36 L 0.27,0.13 L 0.4,0.0 L 0.21,-0.1 L 0.1,-0.27 L -0.06,-0.14 L -0.27,-0.19 L -0.24,0.02 L -0.4,0.15');
+const SK_HC1 = shape('M 0.4,0 L 0.58,-0.09 L 0.7,0.03'), SK_HC2 = shape('M -0.27,-0.19 L -0.4,-0.42'), SK_HC3 = shape('M 0,0.44 L 0.06,0.68');
+const SK_SIDE = [mkSheet(-HPI, 0.2), mkSheet(HPI, 0.2)];
+const SK_TEMPLE = shape('M -0.3,0.2 C -0.1,0.34 0.22,0.3 0.34,0.12 C 0.4,-0.04 0.3,-0.2 0.1,-0.22 C -0.14,-0.24 -0.36,-0.02 -0.3,0.2');
+const SK_SUTURE = (() => { const o = []; for (let i = 0; i <= 12; i++) { const a = -1.25 + i * 2.5 / 12, z = (i & 1 ? 0.07 : -0.05); o.push(-0.28 + z, Math.sin(a) * Math.sqrt(1 - (0.28 - z) * (0.28 - z)), Math.cos(a) * Math.sqrt(1 - (0.28 - z) * (0.28 - z))); } return new Float32Array(o); })();
+const SK_SPINE = new Float32Array([-0.6, 0, -0.76, 0.18, -0.7, 0, -0.99, 0.145, -0.75, 0, -1.17, 0.105]);
+const SK_BLADE = shape('M 0.1,-0.07 L 0.84,-0.13 L 1.02,0.0 L 0.98,0.2 C 0.82,0.25 0.68,0.23 0.62,0.17 L 0.54,0.25 L 0.45,0.15 C 0.34,0.2 0.2,0.18 0.1,0.1');
+const SK_HANDLE = shape('M -0.24,-0.055 L 0.12,-0.055 L 0.12,0.06 L -0.24,0.06');
+function skEye(sh, pts, cx, cy, side, st) {
+  const g = P.g, sp = SP(sh, pts); g.fillStyle = INK; g.fill(sp);
+  if (eyeSymbol(sh, cx, cy, 0.17, 0.17, side, st, EYE_RED)) return;
+  g.save(); g.clip(sp);
+  const x = st.expr, pr = x === 'wide' ? 0.065 : x === 'angry' ? 0.105 : 0.09 + 0.008 * Math.sin(st.t * 7);
+  const ix = cx + st.lookX * 0.1, iy = cy + st.lookY * 0.08;
+  g.fillStyle = EYE_RED; g.fill(ellPath(sh, ix, iy, pr, pr));
+  sheetPt(sh, ix, iy); if (PD > 0.05) { g.fillStyle = WHITE; g.beginPath(); g.arc(PX + LX * pr * 0.4, PY + LY * pr * 0.4, pr * 0.3, 0, TAU); g.fill(); }
+  if (x === 'focus' || x === 'angry') { const T = (x === 'angry' ? 0.75 : 0.5) * side, y0 = cy + 0.14; g.fillStyle = col('bone', 0); g.fill(quadPath(sh, cx - 0.4, y0 - 0.4 * T, cx + 0.4, y0 + 0.4 * T, cx + 0.4, cy + 0.6, cx - 0.4, cy + 0.6)); }
+  g.restore();
+}
+function drawSkeleton(g, x, y, r, facing, st) {
+  if (!begin(g, x, y, r, facing, st)) return;
+  const wk = Math.sin(st.walkPh) * st.walk, ps = 1 - st.drop, dr = 1 + st.drop * 0.5, jaw = st.jaw;
+  // dangling neck bones (lag the turn)
+  const sp = trail(SK_SPINE, st.lag * 1.6, 0.12 * Math.sin(st.t * 2.1));
+  for (let i = 0; i < 3; i++) knob(sp[i * 4], sp[i * 4 + 1], sp[i * 4 + 2] - st.drop * 0.5, sp[i * 4 + 3] * ps, 'bone', 0.05);
+  // jaw hangs below the face and chatters
+  sheetPt(SF, 0, -0.95 - jaw * 0.1, 0.07); const jd = (PD < 0 && PX * PX + PY * PY < 1) ? -1 : Math.max(0.01, PD);
+  part(SP(SF, SK_JAW, 0.07, 0, -jaw * 0.11 - st.drop * 0.4), 'bone', jd, 0.07, true);
+  if (ps > 0.03) {
+    const sw = st.swing, haz = -1.0 + sw * 0.55, hf = Math.cos(haz) * 1.12 * dr, hs = Math.sin(haz) * 1.12 * dr, hu = -0.36 - wk * 0.05;
+    setFrame(hf, hs, hu, -0.7 + sw, 0.4 - Math.abs(sw) * 0.12, ps); const d0 = fdepth();
+    part(fpath(SK_HANDLE), 'wood', d0, 0, true);
+    part(fline(0.1, 0.02, 0.9, 0.02), 'rust', d0 + 0.0005, 0, false, 0.06);
+    part(fpath(SK_BLADE), 'rust', d0 + 0.001, 0.05, true);
+    if (P.big) { const p = new Path2D(); fpt(0.3, 0.02); p.arc(PX, PY, 0.035, 0, TAU); fpt(0.72, 0.06); p.moveTo(PX + 0.045, PY); p.arc(PX, PY, 0.045, 0, TAU); part(p, 'woodD', d0 + 0.002, 0, false); }
+    fpt(-0.1, 0); part(circleAt(PX, PY, HAND_R * ps), 'bone', d0 + 0.003, 0.05);
+    pj(0.5 * dr, 1.0 * dr, -0.4 + wk * 0.05); part(circleAt(PX, PY, HAND_R * ps), 'bone', (PD < 0 && PX * PX + PY * PY < 1) ? -1 : Math.max(0.01, PD), 0.05);
+  }
+  paintBody(HEAD, 'bone', () => {
+    hilite('bone');
+    // back: jagged hole + cracks
+    g.fillStyle = INK; g.fill(SP(SB, SK_HOLE)); line(SL(SB, SK_HOLE, true), 1.6, col('bone', 1));
+    g.fillStyle = INK; g.fill(SP(SB, SK_HOLE, 0, 0, 0.02, 0.86));
+    line(SL(SB, SK_HC1), 0.8, INK); line(SL(SB, SK_HC2), 0.8, INK); line(SL(SB, SK_HC3), 0.8, INK);
+    // sides + crown: temple hollows, ear holes, zigzag suture
+    for (let k = 0; k < 2; k++) { g.fillStyle = col('bone', 1); g.fill(SP(SK_SIDE[k], SK_TEMPLE, 0, 0, 0, k ? -1 : 1)); g.fillStyle = INK; g.fill(ellPath(SK_SIDE[k], k ? 0.02 : -0.02, -0.34, 0.07, 0.085)); }
+    { const p = new Path2D(); let pen = false; for (let i = 0; i < SK_SUTURE.length; i += 3) { pj(SK_SUTURE[i], SK_SUTURE[i + 1], SK_SUTURE[i + 2]); if (PD > 0.03) { if (pen) p.lineTo(PX, PY); else { p.moveTo(PX, PY); pen = true; } } else pen = false; } line(p, 0.7, col('bone', 1)); }
+    // front
+    line(SL(SF, SK_CRACK), 0.8, INK);
+    g.fillStyle = col('bone', 1); g.fill(SP(SF, SK_CHEEK)); g.fill(SP(SF, SK_CHEEK_L));
+    skEye(SF, SK_SOCK_L, -0.37, 0.02, -1, st); skEye(SF, SK_SOCK, 0.37, 0.02, 1, st);
+    g.fillStyle = INK; g.fill(SP(SF, SK_NOSE));
+    const teeth = SP(SF, SK_TEETH); zone(teeth, 'boneL'); line(SL(SF, SK_TEETH, true), 0.7, INK);
+    for (const a of [-0.21, 0, 0.21]) strokePts(SF, 0.6, INK, a, -0.59, a * 0.93, -0.78);
+    g.fillStyle = INK; g.fill(quadPath(SF, 0.21, -0.68, 0.39, -0.68, 0.38, -0.78, 0.2, -0.78));     // chipped tooth
+  });
+  end();
+}
+
+const DRAW = { archer: drawArcher, knight: drawKnight, rogue: drawRogue, rat: drawRat, slime: drawSlime, skeleton: drawSkeleton };
+// ground shadow: flat ellipse, a little below the ball (PALETTE.md)
+function drawGroundShadow(g, x, y, r, st) {
+  const k = st.scale * (1 - Math.min(0.5, st.lift * 0.35)); if (k < 0.05) return;
+  g.fillStyle = GROUND;
+  if (st.split > 0.02) { const sc = lerp(0.8, 0.62, st.split) * k; for (let s = -1; s <= 1; s += 2) { g.beginPath(); g.ellipse(x + s * st.split * 0.95 * r, y + r * (1 - sc) + sc * r * 0.34, sc * r * 0.92, sc * r * 0.7, 0, 0, TAU); g.fill(); } return; }
+  g.beginPath(); g.ellipse(x + 0.03 * r, y + 0.36 * r, 0.93 * r * k, 0.72 * r * k, 0, 0, TAU); g.fill();
+}
+
+// ============================================================ 6. EFFECTS (flat, hard-edged; positions in ball radii, relative to the unit's home)
+function fx(e, o) { o.t = 0; e.fx.push(o); return o; }
+function updateFx(e, dt) { const a = e.fx; for (let i = a.length - 1; i >= 0; i--) { const f = a[i]; f.t += dt; if (f.vx !== undefined) { f.x += f.vx * dt; f.y += f.vy * dt; if (f.drag) { const d = Math.exp(-f.drag * dt); f.vx *= d; f.vy *= d; } } if (f.t >= f.life) a.splice(i, 1); } }
+function starPath(g, x, y, R, r, n, rot) { g.beginPath(); for (let i = 0; i < n * 2; i++) { const a = rot + i * Math.PI / n, rr = i & 1 ? r : R; g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } g.closePath(); }
+function drawFx(g, e, cx, cy, r, rot, over) {
+  if (!e.fx.length) return;
+  g.save(); g.translate(cx, cy); g.rotate(rot); g.scale(r, r);
+  const lw = outlinePx(r) / r; g.lineJoin = 'round'; g.lineCap = 'round';
+  for (const f of e.fx) {
+    const p = f.t / f.life, isOver = !(f.k === 'ring' || f.k === 'dust' || f.k === 'dummy');
+    if (isOver !== over || f.k === 'text') continue;
+    if (f.k === 'arrow') { g.save(); g.translate(f.x, f.y); g.rotate(f.a); const s = p > 0.8 ? 1 - (p - 0.8) / 0.2 : 1; g.scale(s, s);
+      g.strokeStyle = WHITE; g.lineWidth = 0.07; g.beginPath(); g.moveTo(-1.55, -0.12); g.lineTo(-2.1, -0.12); g.moveTo(-1.45, 0.13); g.lineTo(-1.85, 0.13); g.stroke();
+      g.strokeStyle = INK; g.lineWidth = 0.06 + 2 * lw * 0.7; g.beginPath(); g.moveTo(-1.15, 0); g.lineTo(-0.15, 0); g.stroke();
+      g.strokeStyle = MAT.wood[0]; g.lineWidth = 0.06; g.stroke();
+      g.fillStyle = MAT.archerL[0]; g.strokeStyle = INK; g.lineWidth = lw * 0.7; g.beginPath(); g.moveTo(-1.2, 0); g.lineTo(-1.27, -0.1); g.lineTo(-1.02, -0.1); g.lineTo(-0.95, 0); g.lineTo(-1.02, 0.1); g.lineTo(-1.27, 0.1); g.closePath(); g.fill(); g.stroke();
+      g.fillStyle = MAT.steel[0]; g.beginPath(); g.moveTo(0, 0); g.lineTo(-0.24, -0.11); g.lineTo(-0.17, 0); g.lineTo(-0.24, 0.11); g.closePath(); g.fill(); g.stroke(); g.restore(); }
+    else if (f.k === 'slash') { const grow = easeOut(Math.min(1, p * 2.4)), a0 = f.a - f.span / 2, a1 = a0 + f.span * grow, w = f.w * (1 - p * p), N = 14;   // swoosh: fat in the middle, pointed ends
+      g.beginPath(); for (let i = 0; i <= N; i++) { const a = a0 + (a1 - a0) * i / N; g.lineTo(f.x + Math.cos(a) * f.R, f.y + Math.sin(a) * f.R * 0.86); }
+      for (let i = N; i >= 0; i--) { const a = a0 + (a1 - a0) * i / N, rr = f.R - w * Math.pow(Math.sin(Math.PI * i / N), 0.7); g.lineTo(f.x + Math.cos(a) * rr, f.y + Math.sin(a) * rr * 0.86); }
+      g.closePath(); g.fillStyle = f.col || WHITE; g.fill(); g.lineWidth = lw * 0.7; g.strokeStyle = INK; g.stroke(); }
+    else if (f.k === 'star') { const s = f.s * (p < 0.3 ? backOut(p / 0.3) : 1 - (p - 0.3) / 0.7); starPath(g, f.x, f.y, s, s * 0.42, f.n || 4, f.rot + p * 1.2); g.fillStyle = f.col || WHITE; g.fill(); g.lineWidth = lw * 0.8; g.strokeStyle = INK; g.stroke(); }
+    else if (f.k === 'puff') { const s = f.s * (p < 0.35 ? easeOut(p / 0.35) : 1), k = p < 0.35 ? 1 : 1 - (p - 0.35) / 0.65; const m = MAT[f.mat];
+      for (let pass = 0; pass < 2; pass++) for (let i = 0; i < 5; i++) { const a = f.rot + i * TAU / 5, d = s * 0.62, rr = s * (0.42 + 0.08 * (i % 2)) * k; if (rr <= 0.01) continue;
+        g.beginPath(); g.arc(f.x + Math.cos(a) * d, f.y + Math.sin(a) * d * 0.8, rr, 0, TAU);
+        if (pass === 0) { g.lineWidth = 2 * lw; g.strokeStyle = INK; g.stroke(); } else { g.fillStyle = m[i % 2 ? 1 : 0]; g.fill(); } }
+      if (k > 0.3) { g.beginPath(); g.arc(f.x, f.y, s * 0.5 * k, 0, TAU); g.fillStyle = m[2]; g.fill(); } }
+    else if (f.k === 'ring') { const rr = lerp(f.r0, f.r1, easeOut(p)); g.beginPath(); g.ellipse(f.x, f.y, rr, rr * 0.8, 0, 0, TAU); g.lineWidth = Math.max(0.01, f.w * (1 - p)); g.strokeStyle = f.col; g.stroke(); }
+    else if (f.k === 'dust') { const rr = f.s * (1 - p); g.beginPath(); g.arc(f.x, f.y, rr, 0, TAU); g.fillStyle = f.col; g.fill(); if (f.ink) { g.lineWidth = lw * 0.8; g.strokeStyle = INK; g.stroke(); } }
+    else if (f.k === 'line') { const c = Math.cos(f.a), s = Math.sin(f.a), k = 1 - p; g.beginPath(); g.moveTo(f.x, f.y); g.lineTo(f.x - c * f.len * k, f.y - s * f.len * k); g.lineWidth = lw * 1.1; g.strokeStyle = f.col || INK; g.stroke(); }
+    else if (f.k === 'dummy') { const s = (p < 0.08 ? backOut(p / 0.08) : p > 0.9 ? 1 - (p - 0.9) / 0.1 : 1) * 0.5, sh = f.hit > 0 ? Math.sin(f.hit * 60) * 0.06 * f.hit * 4 : 0; if (f.hit > 0) f.hit -= 0.016;
+      g.save(); g.translate(f.x + sh, f.y); g.setLineDash([0.16, 0.14]); g.lineWidth = lw * 1.1; g.strokeStyle = INK; g.beginPath(); g.arc(0, 0, s, 0, TAU); g.stroke(); g.setLineDash([]);
+      g.beginPath(); g.moveTo(-s * 0.35, 0); g.lineTo(s * 0.35, 0); g.moveTo(0, -s * 0.35); g.lineTo(0, s * 0.35); g.stroke(); g.restore(); }
+  }
+  g.restore();
+}
+function drawFxText(g, e, cx, cy, r, rot) { for (const f of e.fx) { if (f.k !== 'text') continue; const p = f.t / f.life, c = Math.cos(rot), s = Math.sin(rot);
+  const x = cx + (f.x * c - f.y * s) * r, y = cy + (f.x * s + f.y * c) * r - easeOut(p) * r * 0.9, sz = Math.max(9, r * 0.62) * (p < 0.15 ? backOut(p / 0.15) : 1);
+  g.font = `800 ${sz}px ${FONT}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.globalAlpha = p > 0.75 ? 1 - (p - 0.75) / 0.25 : 1;
+  g.lineWidth = Math.max(2.5, sz * 0.26); g.strokeStyle = WHITE; g.strokeText(f.str, x, y); g.fillStyle = INK; g.fillText(f.str, x, y); g.globalAlpha = 1; } }
+
+// ============================================================ 7. ANIMATION CONTROLLER
+// One entity per unit type. Motion is expressed in ball radii so the same state drives the big and the 40px copies.
+const FONT = 'ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif';
+const UNITS = [
+  { type: 'archer', name: 'Archer', desc: 'Ranged, strafes, dodges', ability: 'Arrow barrage', light: 'archerL', k: 1 },
+  { type: 'knight', name: 'Knight', desc: 'Tough, shield, charges', ability: 'Charge', light: 'knightL', k: 1 },
+  { type: 'rogue', name: 'Rogue', desc: 'Nimble, in and out', ability: 'Teleport behind', light: 'rogueL', k: 1 },
+  { type: 'rat', name: 'Rat', desc: 'Small, hunts in packs', ability: 'Frenzy', light: 'ratL', k: 0.66 },
+  { type: 'slime', name: 'Slime', desc: 'Splits when popped', ability: 'Big bounce', light: 'slimeL', k: 1 },
+  { type: 'skeleton', name: 'Skeleton', desc: 'Rattly, rusty cleaver', ability: 'Whirl', light: 'boneL', k: 1 }
+];
+const STEPS = ['move', 'face', 'attack', 'ability', 'hit', 'death', 'respawn'];
+const DUR = { move: 2.6, face: 0.35, hit: 0.65, death: 1.6, respawn: 1.0,
+  attack: { archer: 1.7, knight: 1.9, rogue: 1.8, rat: 1.4, slime: 1.3, skeleton: 1.9 },
+  ability: { archer: 2.0, knight: 2.0, rogue: 2.2, rat: 1.5, slime: 1.7, skeleton: 1.9 } };
+const durOf = (e, s) => typeof DUR[s] === 'number' ? DUR[s] : DUR[s][e.type];
+const ev = (t, dt, te) => t - dt < te && t >= te;
+function along(e, d, lat = 0) { const c = Math.cos(e.dir), s = Math.sin(e.dir); e.ox += c * d - s * lat; e.oy += s * d + c * lat; }
+function frontOf(e, d, lat = 0) { const c = Math.cos(e.dir), s = Math.sin(e.dir); return [e.ox + c * d - s * lat, e.oy + s * d + c * lat]; }
+
+function play(e, from = 'move') { if (e.seq) return; if (MODE.turn && from === 'move') from = 'attack';      // turnaround keeps its 8 headings fixed: no walk loop
+  e.seq = { i: STEPS.indexOf(from), t: 0, f0: e.facing, n: 4 + (Math.random() * 9 | 0) }; }
+function runSeq(e, dt) {
+  const s = e.seq, st = e.st; s.t += dt; const name = STEPS[s.i], t = s.t;
+  e.cap = name === 'ability' ? e.ability : name === 'face' ? 'Move' : name[0].toUpperCase() + name.slice(1);
+  if (name === 'move') {
+    const p = Math.min(1, t / DUR.move), th = TAU * p * p * (3 - 2 * p), R = 0.62, f0 = s.f0;
+    e.ox = Math.cos(f0 + HPI) * R + Math.cos(f0 - HPI + th) * R; e.oy = Math.sin(f0 + HPI) * R + Math.sin(f0 - HPI + th) * R;
+    e.facing = f0 + th; e.tf = e.facing; e.fv = TAU * 6 * p * (1 - p) / DUR.move; e.snap = true;
+    walkCycle(e, dt, 1);
+  } else if (name === 'face') { e.tf = e.dir; }
+  else if (name === 'attack') { e.tf = e.dir; ATTACK[e.type](e, t, dt); }
+  else if (name === 'ability') { e.tf = e.dir; ABILITY[e.type](e, t, dt); }
+  else if (name === 'hit') { e.tf = e.dir;
+    st.flash = t < 0.09; if (t < 0.42) st.expr = 'hurt';
+    const k = easeOut(seg(t, 0, 0.1)), r = easeIO(seg(t, 0.22, 0.62)); along(e, -0.42 * k * (1 - r));
+    st.sy *= 1 - 0.16 * bell(seg(t, 0, 0.16)) + 0.07 * bell(seg(t, 0.16, 0.4)); st.sx *= 1 + 0.12 * bell(seg(t, 0, 0.16));
+    st.nod = -0.32 * k * (1 - r); st.roll += 0.12 * Math.sin(t * 42) * (1 - seg(t, 0, 0.45));
+    if (ev(t, dt, 0.001)) { const [x, y] = frontOf(e, 0.9); fx(e, { k: 'star', x, y, s: 0.55, life: 0.28, rot: rand(0, 3) }); fx(e, { k: 'text', x: e.ox, y: e.oy - 1.2, str: '-' + s.n, life: 0.8 }); e.tv += 9; }
+  } else if (name === 'death') { e.tf = e.dir; (e.type === 'slime' ? slimeDeath : death)(e, t, dt); }
+  else if (name === 'respawn') { (e.type === 'slime' ? slimeRespawn : respawn)(e, t, dt); }
+  if (s.t >= durOf(e, name)) { s.i++; s.t = 0; s.f0 = e.facing; if (s.i >= STEPS.length) { e.seq = null; e.cap = ''; } }
+}
+function walkCycle(e, dt, amt) {
+  const st = e.st, sp = e.type === 'rat' ? 24 : e.type === 'slime' ? 8 : 11; st.walk = amt; st.walkPh += dt * sp;
+  const s = Math.sin(st.walkPh);
+  if (e.type === 'slime') { const h = Math.abs(s); st.lift = 0.3 * h * amt; st.sy *= 1 + (0.16 * h - 0.1 * (1 - h)) * amt; st.sx *= 1 - (0.1 * h - 0.08 * (1 - h)) * amt; }
+  else { st.lift = 0.09 * Math.abs(s) * amt; st.roll += 0.09 * s * amt; st.sy *= 1 - 0.03 * (1 - Math.abs(s)) * amt; }
+}
+function arrowFx(e, off = 0) { const a = e.facing + off, c = Math.cos(a), s = Math.sin(a); fx(e, { k: 'arrow', x: e.ox + c * 2.4, y: e.oy + s * 2.0 + 0.1, a, vx: c * 15, vy: s * 15, life: 0.2 }); }
+
+const ATTACK = {
+  archer(e, t, dt) { const st = e.st, i = Math.min(1, t / 0.8 | 0), u = t - i * 0.8;
+    st.aim = Math.min(easeOut(seg(t, 0, 0.22)), 1 - easeIO(seg(t, 1.38, 1.68)));
+    if (t > 1.6) return;
+    if (u < 0.42) { const pl = easeIO(seg(u, 0.08, 0.36)); st.pull = pl; st.nock = u > 0.05 ? 1 : 0; st.expr = 'focus'; st.nod = -0.12 * pl; along(e, -0.1 * pl); st.sy *= 1 - 0.04 * pl; }
+    else { const q = u - 0.42; st.pull = -0.2 * Math.exp(-q * 16) * Math.cos(q * 45); if (q < 0.22) st.expr = 'angry'; along(e, -0.22 * Math.exp(-q * 9) * Math.cos(q * 9)); st.nod = 0.16 * Math.exp(-q * 10); st.lift = 0.08 * bell(seg(q, 0, 0.2)); }
+    if (ev(u, dt, 0.42)) arrowFx(e); },
+  knight(e, t, dt) { swing(e, t, dt, 0.95, -1.25, 1.65, 0.42, 0); },
+  skeleton(e, t, dt) { swing(e, t, dt, 0.95, -1.2, 1.6, 0.38, 1); },
+  rogue(e, t, dt) { const st = e.st, u = t % 0.9; if (t >= 1.8) return;
+    const inn = easeOut(seg(u, 0.1, 0.22)), out = easeIO(seg(u, 0.5, 0.8)); along(e, 0.85 * inn * (1 - out));
+    st.lift = 0.14 * bell(seg(u, 0.08, 0.26)) + 0.2 * bell(seg(u, 0.5, 0.82)); st.sy *= 1 - 0.08 * bell(seg(u, 0, 0.12));
+    st.pokeR = bell(seg(u, 0.16, 0.38)); st.pokeL = bell(seg(u, 0.3, 0.54)); st.nod = 0.18 * inn * (1 - out);
+    if (u > 0.08 && u < 0.58) st.expr = 'angry';
+    if (ev(u, dt, 0.27)) { const [x, y] = frontOf(e, 1.9, 0.35); fx(e, { k: 'star', x, y, s: 0.34, life: 0.2, rot: 0.4 }); }
+    if (ev(u, dt, 0.42)) { const [x, y] = frontOf(e, 1.9, -0.35); fx(e, { k: 'star', x, y, s: 0.34, life: 0.2, rot: 0.1 }); } },
+  rat(e, t, dt) { const st = e.st, u = t % 0.7; if (t >= 1.4) return;
+    const back = easeOut(seg(u, 0, 0.16)), go = easeOut(seg(u, 0.18, 0.28)), ret = easeIO(seg(u, 0.36, 0.62));
+    along(e, -0.25 * back * (1 - go) + 0.95 * go * (1 - ret)); st.lift = 0.22 * bell(seg(u, 0.16, 0.38)); st.sy *= 1 - 0.14 * back * (1 - go);
+    st.nod = -0.2 * back * (1 - go) + 0.3 * go * (1 - ret); st.jaw = bell(seg(u, 0.2, 0.42)); st.expr = 'angry';
+    if (ev(u, dt, 0.28)) { const [x, y] = frontOf(e, 1.5); fx(e, { k: 'star', x, y, s: 0.42, life: 0.2, rot: 0.3 }); } },
+  slime(e, t, dt) { const st = e.st, sq = easeOut(seg(t, 0, 0.3)) * (1 - seg(t, 0.3, 0.36)), go = easeOut(seg(t, 0.32, 0.52)), ret = easeIO(seg(t, 0.75, 1.2));
+    along(e, 0.95 * go * (1 - ret)); st.lift = 0.55 * bell(seg(t, 0.32, 0.56)) + 0.15 * bell(seg(t, 0.75, 1.2));
+    let sy = 1 - 0.26 * sq + 0.2 * bell(seg(t, 0.32, 0.52)) - 0.3 * bell(seg(t, 0.52, 0.74)); if (t > 0.62) sy += 0.08 * Math.sin((t - 0.62) * 30) * Math.exp(-(t - 0.62) * 6);
+    st.sy *= sy; st.sx *= 1 + (1 - sy) * 0.8; st.expr = t < 0.32 ? 'focus' : t < 0.8 ? 'angry' : 'idle';
+    if (ev(t, dt, 0.55)) splat(e, 5, 0.9); }
+};
+function swing(e, t, dt, cyc, back, fwd, lunge, bones) { const st = e.st, u = t % cyc; if (t >= cyc * 2) return;
+  const wind = easeIO(seg(u, 0, 0.3)), strike = easeOut(seg(u, 0.32, 0.42)), settle = easeIO(seg(u, 0.6, 0.92));
+  st.swing = back * wind * (1 - strike) + fwd * strike * (1 - settle);
+  e.tf = e.dir + 0.3 * wind * (1 - strike) - 0.35 * strike * (1 - settle);
+  along(e, -0.14 * wind * (1 - strike) + lunge * strike * (1 - settle));
+  st.nod = -0.16 * wind * (1 - strike) + 0.24 * strike * (1 - settle); st.lift = 0.12 * bell(seg(u, 0.3, 0.52)); st.sy *= 1 - 0.05 * wind * (1 - strike);
+  st.expr = u < 0.32 ? 'focus' : u < 0.66 ? 'angry' : 'idle';
+  if (bones) st.jaw = wind * (1 - strike) * (0.5 + 0.5 * Math.sin(u * 70)) + 0.8 * strike * (1 - settle);
+  if (ev(u, dt, 0.35)) { const [x, y] = frontOf(e, 0.5); fx(e, { k: 'slash', x, y, a: e.dir, R: 1.75, span: 2.3, w: 0.5, life: 0.24, col: bones ? MAT.boneL[0] : WHITE }); } }
+function splat(e, n, sp) { for (let i = 0; i < n; i++) { const a = rand(0, TAU), v = rand(2, 4) * sp; fx(e, { k: 'dust', x: e.ox + Math.cos(a) * 0.8, y: e.oy + 0.5 + Math.sin(a) * 0.4, vx: Math.cos(a) * v, vy: Math.sin(a) * v * 0.6, drag: 5, s: rand(0.1, 0.18), life: 0.45, col: MAT.slime[0], ink: 1 }); }
+  fx(e, { k: 'ring', x: e.ox, y: e.oy + 0.45, r0: 0.9, r1: 1.7 * sp, w: 0.12, life: 0.35, col: MAT.slime[1] }); }
+const FAN = [0, -0.24, 0.24, -0.44, 0.44, 0];
+const ABILITY = {
+  archer(e, t, dt) { const st = e.st, b = easeOut(seg(t, 0, 0.25)) * (1 - easeIO(seg(t, 1.5, 1.9)));
+    along(e, -0.55 * b); st.lift = 0.34 * bell(seg(t, 0, 0.32)); st.aim = Math.min(easeOut(seg(t, 0, 0.2)), 1 - easeIO(seg(t, 1.55, 1.9)));
+    if (ev(t, dt, 0.02)) fx(e, { k: 'ring', x: 0, y: 0.4, r0: 0.6, r1: 1.9, w: 0.14, life: 0.4, col: MAT.gold[0] });
+    const k = Math.floor((t - 0.42) / 0.17), u = (t - 0.42) - k * 0.17;
+    if (t > 0.3 && t < 1.5) st.expr = 'angry'; else if (t <= 0.3) st.expr = 'wide';
+    if (k >= 0 && k < 6) { e.tf = e.dir + FAN[k]; st.nock = u < 0.11 ? 1 : 0; st.pull = u < 0.11 ? 0.85 * easeOut(u / 0.11) : -0.12 * Math.cos((u - 0.11) * 60); along(e, -0.05 * (u > 0.11 ? 1 : 0)); st.nod = u > 0.11 ? 0.1 : -0.06;
+      if (ev(u, dt, 0.11)) arrowFx(e); } },
+  knight(e, t, dt) { const st = e.st; st.guard = Math.min(easeOut(seg(t, 0, 0.25)), 1 - easeIO(seg(t, 1.62, 1.92)));
+    const back = easeIO(seg(t, 0.05, 0.42)), dash = easeIn(seg(t, 0.45, 0.62)), ret = easeIO(seg(t, 1.05, 1.65));
+    along(e, -0.42 * back * (1 - dash) + 1.4 * dash * (1 - ret) - 0.22 * bell(seg(t, 0.62, 0.86)), 0.03 * Math.sin(t * 70) * back * (1 - dash));
+    st.nod = -0.22 * back * (1 - dash) + 0.32 * dash * (1 - seg(t, 0.62, 0.95)); st.sy *= 1 - 0.1 * back * (1 - dash) - 0.14 * bell(seg(t, 0.62, 0.8)); st.sx *= 1 + 0.1 * bell(seg(t, 0.62, 0.8));
+    st.expr = t < 0.45 ? 'focus' : t < 1.05 ? 'angry' : 'idle';
+    if (ret > 0 && ret < 1) walkCycle(e, dt, 1);
+    if (ev(t, dt, 0.02)) fx(e, { k: 'ring', x: 0, y: 0.4, r0: 0.6, r1: 1.9, w: 0.14, life: 0.4, col: MAT.gold[0] });
+    if (t > 0.45 && t < 0.62 && ((t / 0.03 | 0) !== ((t - dt) / 0.03 | 0))) { const [x, y] = frontOf(e, -1.0, rand(-0.7, 0.7)); fx(e, { k: 'line', x, y, a: e.dir, len: 1.2, life: 0.22 });
+      fx(e, { k: 'dust', x: e.ox, y: e.oy + 0.7, vx: rand(-1, 1), vy: rand(-0.5, 0.2), s: rand(0.16, 0.26), life: 0.4, col: 'rgba(43,34,48,0.16)' }); }
+    if (ev(t, dt, 0.62)) { const [x, y] = frontOf(e, 1.5); fx(e, { k: 'star', x, y, s: 0.85, n: 6, life: 0.32, rot: 0.2 }); fx(e, { k: 'ring', x, y, r0: 0.3, r1: 1.5, w: 0.14, life: 0.3, col: INK }); } },
+  rogue(e, t, dt) { const st = e.st, far = 2.95;
+    if (ev(t, dt, 0.02)) { const [x, y] = frontOf(e, 1.5); e.dummy = fx(e, { k: 'dummy', x, y, life: 1.75, hit: 0 }); fx(e, { k: 'ring', x: 0, y: 0.4, r0: 0.6, r1: 1.9, w: 0.14, life: 0.4, col: MAT.gold[0] }); }
+    const puff = (d) => { const [x, y] = frontOf(e, d); fx(e, { k: 'puff', x, y: y - 0.1, s: 0.95, life: 0.42, mat: 'rogue', rot: rand(0, 3) }); };
+    if (t < 0.4) { st.scale = 1 - easeIn(seg(t, 0.24, 0.38)); st.expr = 'focus'; st.sy *= 1 - 0.1 * bell(seg(t, 0, 0.24)); e.spin = 3 * easeIn(seg(t, 0.2, 0.38)); }
+    else if (t < 1.32) { if (ev(t, dt, 0.4)) { e.facing = e.dir + Math.PI; e.fv = 0; e.tail = e.facing; e.tv = 0; }
+      e.tf = e.dir + Math.PI; e.ox = 0; e.oy = 0; along(e, far - 0.2 * bell(seg(t, 0.64, 0.92)));
+      st.scale = backOut(seg(t, 0.42, 0.6)) * (1 - easeIn(seg(t, 1.14, 1.28))); st.pokeL = bell(seg(t, 0.62, 0.86)); st.pokeR = bell(seg(t, 0.7, 0.96)); st.nod = 0.2 * bell(seg(t, 0.62, 0.96));
+      st.expr = t > 0.56 && t < 1.05 ? 'angry' : 'idle'; }
+    else { if (ev(t, dt, 1.32)) { e.facing = e.dir; e.fv = 0; e.tail = e.facing; e.tv = 0; }
+      st.scale = backOut(seg(t, 1.36, 1.56)); if (t < 1.95) st.expr = 'happy'; st.lift = 0.12 * bell(seg(t, 1.5, 1.8)); }
+    if (ev(t, dt, 0.3)) puff(0); if (ev(t, dt, 0.42)) puff(far); if (ev(t, dt, 1.2)) puff(far); if (ev(t, dt, 1.36)) puff(0);
+    if (ev(t, dt, 0.76)) { const [x, y] = frontOf(e, 1.5); fx(e, { k: 'star', x, y, s: 0.7, n: 5, life: 0.3, rot: 0.3 }); if (e.dummy) e.dummy.hit = 0.25; } },
+  rat(e, t, dt) { const st = e.st, on = bell(seg(t, 0, 1.3)) > 0 ? 1 : 0, env = Math.min(1, seg(t, 0, 0.15), 1 - seg(t, 1.2, 1.45));
+    along(e, 0.95 * easeIO(seg(t, 0, 0.9)) * (1 - easeIO(seg(t, 1.1, 1.45))), 0.45 * Math.sin(t * TAU * 2.4) * env);
+    e.tf = e.dir + 0.6 * Math.cos(t * TAU * 2.4) * env; walkCycle(e, dt, env); st.jaw = (0.5 + 0.5 * Math.sin(t * 46)) * env; st.expr = env > 0.2 ? 'angry' : 'idle';
+    if (on && ((t / 0.26 | 0) !== ((t - dt) / 0.26 | 0)) && t < 1.2) { const [x, y] = frontOf(e, 0.55, rand(-0.3, 0.3)); fx(e, { k: 'star', x: x + Math.cos(e.facing) * 1.3, y: y + Math.sin(e.facing) * 1.1, s: 0.36, life: 0.18, rot: rand(0, 3) }); } },
+  slime(e, t, dt) { const st = e.st, sq = easeOut(seg(t, 0, 0.36)) * (1 - seg(t, 0.36, 0.42)), up = bell(seg(t, 0.38, 0.92));
+    st.lift = 1.25 * up; st.scale = 1 + 0.16 * up; along(e, 0.5 * easeIO(seg(t, 0.38, 0.92)) * (1 - easeIO(seg(t, 1.2, 1.65))));
+    let sy = 1 - 0.3 * sq + 0.22 * bell(seg(t, 0.38, 0.6)) - 0.42 * bell(seg(t, 0.9, 1.14)); if (t > 1.02) sy += 0.12 * Math.sin((t - 1.02) * 28) * Math.exp(-(t - 1.02) * 5);
+    st.sy *= sy; st.sx *= 1 + (1 - sy) * 0.85; st.expr = t < 0.38 ? 'focus' : t < 0.95 ? 'wide' : t < 1.3 ? 'angry' : 'idle';
+    if (ev(t, dt, 0.02)) fx(e, { k: 'ring', x: 0, y: 0.4, r0: 0.6, r1: 1.9, w: 0.14, life: 0.4, col: MAT.gold[0] });
+    if (ev(t, dt, 0.93)) { splat(e, 9, 1.5); fx(e, { k: 'ring', x: e.ox, y: e.oy + 0.45, r0: 0.6, r1: 2.6, w: 0.18, life: 0.4, col: INK }); } },
+  skeleton(e, t, dt) { const st = e.st, cr = easeOut(seg(t, 0, 0.3)), sp = easeIO(seg(t, 0.3, 1.25));
+    e.spin = TAU * 2 * sp; st.swing = -0.75 * Math.min(cr, 1 - seg(t, 1.25, 1.5)); along(e, 0.45 * bell(seg(t, 0.3, 1.25)));
+    st.sy *= 1 - 0.1 * cr * (1 - seg(t, 0.3, 0.4)); st.lift = 0.1 * bell(seg(t, 0.3, 1.25)); st.jaw = t < 1.25 ? 0.5 + 0.5 * Math.sin(t * 60) : 0;
+    st.expr = t < 0.3 ? 'focus' : t < 1.25 ? 'angry' : t < 1.7 ? 'hurt' : 'idle'; if (t > 1.25 && t < 1.75) st.roll += 0.2 * Math.sin((t - 1.25) * 14) * (1 - seg(t, 1.25, 1.75));
+    if (ev(t, dt, 0.02)) fx(e, { k: 'ring', x: 0, y: 0.4, r0: 0.6, r1: 1.9, w: 0.14, life: 0.4, col: MAT.gold[0] });
+    if (t > 0.4 && t < 1.15 && ((t / 0.19 | 0) !== ((t - dt) / 0.19 | 0))) fx(e, { k: 'slash', x: e.ox, y: e.oy, a: e.facing + e.spin - 1.2, R: 1.95, span: 2.4, w: 0.42, life: 0.2, col: MAT.boneL[0] }); }
+};
+function death(e, t, dt) { const st = e.st; st.flash = t < 0.1; st.expr = 'dead';
+  const k = easeOut(seg(t, 0, 0.3)); along(e, -0.6 * k); st.lift = 0.4 * bell(seg(t, 0, 0.5)); e.spin = 5.6 * easeOut(seg(t, 0, 1.0));
+  st.drop = easeOut(seg(t, 0.05, 0.5)); st.nod = -0.5 * easeOut(seg(t, 0, 0.4)); st.sy *= 1 - 0.14 * bell(seg(t, 0.46, 0.7)); st.scale = 1 - easeIn(seg(t, 1.0, 1.22));
+  if (ev(t, dt, 0.001)) { const [x, y] = frontOf(e, 0.9); fx(e, { k: 'star', x, y, s: 0.7, n: 6, life: 0.3, rot: rand(0, 3) }); fx(e, { k: 'text', x: e.ox, y: e.oy - 1.2, str: '-' + (e.seq.n * 3), life: 0.8 }); e.tv += 12; }
+  if (ev(t, dt, 1.08)) fx(e, { k: 'puff', x: e.ox, y: e.oy, s: 1.0, life: 0.5, mat: e.type === 'skeleton' ? 'bone' : e.type, rot: rand(0, 3) }); }
+function respawn(e, t, dt) { const st = e.st; e.ox = 0; e.oy = 0;
+  st.scale = backOut(seg(t, 0.14, 0.5)); st.lift = 0.9 * (1 - easeIn(seg(t, 0.14, 0.44))); st.sy *= 1 - 0.18 * bell(seg(t, 0.42, 0.66)); st.sx *= 1 + 0.12 * bell(seg(t, 0.42, 0.66));
+  e.spin = -3.2 * (1 - easeOut(seg(t, 0.14, 0.62))); if (t < 0.88) st.expr = 'happy'; st.drop = 1 - backOut(seg(t, 0.36, 0.66));
+  if (ev(t, dt, 0.02)) fx(e, { k: 'ring', x: 0, y: 0.4, r0: 2.0, r1: 0.7, w: 0.16, life: 0.42, col: MAT.gold[0] });
+  if (ev(t, dt, 0.46)) for (let i = 0; i < 3; i++) { const a = -2.4 + i * 0.85; fx(e, { k: 'star', x: Math.cos(a) * 1.5, y: Math.sin(a) * 1.3, s: 0.34, life: 0.4, rot: i, col: MAT.gold[0] }); } }
+function slimeDeath(e, t, dt) { const st = e.st; st.flash = t < 0.1; st.expr = t < 0.45 ? 'dead' : t < 0.9 ? 'wide' : 'idle';
+  along(e, -0.3 * easeOut(seg(t, 0, 0.3))); const sq = bell(seg(t, 0.02, 0.4)); st.sy *= 1 - 0.3 * sq; st.sx *= 1 + 0.3 * sq;
+  st.split = backOut(seg(t, 0.32, 0.72));
+  if (ev(t, dt, 0.001)) fx(e, { k: 'text', x: e.ox, y: e.oy - 1.2, str: '-' + (e.seq.n * 3), life: 0.8 });
+  if (ev(t, dt, 0.34)) splat(e, 7, 1.1); }
+function slimeRespawn(e, t, dt) { const st = e.st; e.ox = 0; e.oy = 0; along(e, -0.3 * (1 - easeIO(seg(t, 0.1, 0.5))));
+  st.split = 1 - easeIn(seg(t, 0.12, 0.48)); const q = t - 0.48;
+  if (q > 0) { const j = 0.24 * Math.sin(q * 26) * Math.exp(-q * 6); st.sy *= 1 + j; st.sx *= 1 - j * 0.8; st.lift = 0.2 * bell(seg(q, 0, 0.3)); if (t < 0.9) st.expr = 'happy'; }
+  if (ev(t, dt, 0.48)) splat(e, 6, 1.0); }
+
+const MODE = { facing: false, turn: false };
+const DOT = { x: 240, y: 110, ang: -2.3, held: 0, hx: 0, hy: 0, drag: false };
+function updateEnt(e, dt) {
+  const st = e.st; st.t += dt;
+  st.expr = 'idle'; st.sx = st.sy = 1; st.scale = 1; st.lift = 0; st.nod = 0; st.roll = 0; st.flash = false; st.walk = 0; st.drop = 0; st.aim = 0; st.pull = 0; st.nock = 0; st.guard = 0; st.swing = 0; st.pokeL = 0; st.pokeR = 0; st.jaw = 0; st.split = 0;
+  e.ox = 0; e.oy = 0; e.spin = 0; e.snap = false;
+  const br = Math.sin(st.t * 2.1 + e.phase); st.sy = 1 + 0.018 * br; st.sx = 1 - 0.012 * br;         // breathing
+  e.blinkT -= dt; if (e.blinkT < -0.12) e.blinkT = Math.random() < 0.2 ? 0.18 : rand(1.6, 4.5); st.blink = e.blinkT < 0 ? 1 : 0;
+  if (e.type === 'skeleton' && !e.seq) st.jaw = Math.max(0, Math.sin(st.t * 1.3 + e.phase) - 0.86) * 7 * (0.5 + 0.5 * Math.sin(st.t * 50));
+  if (MODE.turn) { e.tf = e.base; e.dir = e.base; }
+  else if (MODE.facing) { e.tf = Math.atan2(DOT.y - e.hy, DOT.x - e.hx); e.dir = e.tf; }
+  else { e.glanceT -= dt; if (e.glanceT < 0) { if (e.glance) { e.glance = 0; e.glanceT = rand(2, 5); } else { e.glance = rand(0.3, 0.7) * (Math.random() < 0.5 ? -1 : 1); e.glanceT = rand(0.7, 1.5); } }
+    e.tf = e.base + e.glance; e.dir = e.dir0; }
+  if (e.seq) runSeq(e, dt);
+  if (!e.snap) { const d = angDiff(e.facing, e.tf); e.fv += (d * 120 - e.fv * 15) * dt; e.fv = clamp(e.fv, -16, 16); e.facing += e.fv * dt; }
+  const fa = e.facing + e.spin, d2 = angDiff(e.tail, fa); e.tv += (d2 * 46 - e.tv * 5.5) * dt; e.tail += e.tv * dt;
+  st.lag = clamp(angDiff(fa, e.tail), -1.25, 1.25);
+  st.roll += clamp(e.fv * 0.03, -0.24, 0.24);                    // bank into the turn
+  st.lookX = clamp(-e.fv * 0.14, -1, 1); st.lookY = 0;            // eyes lead the turn
+  updateFx(e, dt);
+}
+
+// ============================================================ 8. PAGE
+const cv = document.getElementById('c'), ctx = cv.getContext('2d', { alpha: false });
+const W0 = 844, H0 = 390;                                   // design size (landscape phone)
+let DPR = 1, S = 1, OX = 0, OY = 0, VW = 0, VH = 0;
+const BIG_R = 44, SMALL_R = 20, COLS = [104, 312, 520], ROWS = [84, 262], SM_COLS = [664, 734, 804], SM_ROWS = [132, 244];
+const MATES = [[-1.95, -0.85, 0.3, 1.7], [1.9, -1.1, -0.35, 3.9]];            // rat pack: x, y (in rat radii), heading offset, phase
+const TURN_X = i => 62 + i * 103, TURN_Y = 116, TURN_R = 33, TURN_Y2 = 236, PICK_Y = 322;
+const ents = UNITS.map((u, i) => { const col = i % 3, row = i / 3 | 0, hx = COLS[col], hy = ROWS[row], base = HPI + [-0.36, 0.12, 0.36][col];
+  const gx = hx + [[104, 104, 104], [104, 104, -104]][row][col], dir0 = Math.atan2(176 - hy, gx - hx);      // attacks aim into the gaps between cells
+  return Object.assign({ i, hx, hy, sx: SM_COLS[col], sy: SM_ROWS[row], base, dir0, dir: dir0, facing: base, tf: base, fv: 0, tail: base, tv: 0, ox: 0, oy: 0, spin: 0, snap: false,
+    st: newPose(), seq: null, fx: [], cap: '', blinkT: rand(0.5, 3), glance: 0, glanceT: rand(1, 4), phase: rand(0, 6), dummy: null }, u); });
+let selected = ents[0];
+const SHEET = /[?&]sheet/.test(location.search);
+
+function drawUnitAt(g, e, cx, cy, r, rot, pack) {
+  const c = Math.cos(rot), s = Math.sin(rot), rr = r * e.k, st = e.st;
+  const px = cx + (e.ox * c - e.oy * s) * rr, py = cy + (e.ox * s + e.oy * c) * rr, fa = e.facing + e.spin + rot;
+  if (pack) for (const m of MATES) drawGroundShadow(g, px + m[0] * rr, py + m[1] * rr, rr, st);
+  drawGroundShadow(g, px, py, rr, st);
+  drawFx(g, e, cx, cy, rr, rot, false);
+  if (pack) for (const m of MATES) { const t0 = st.t, b0 = st.blink; st.t += m[3]; st.blink = 0; DRAW[e.type](g, px + m[0] * rr, py + m[1] * rr, rr, fa + m[2] * (1 - st.walk) + 0.25 * Math.sin(t0 * 0.9 + m[3]), st); st.t = t0; st.blink = b0; }
+  DRAW[e.type](g, px, py, rr, fa, st);
+  drawFx(g, e, cx, cy, rr, rot, true);
+  drawFxText(g, e, cx, cy, rr, rot);
+}
+function label(g, str, x, y, font, color, alpha = 1) { g.font = font; g.textAlign = 'center'; g.textBaseline = 'alphabetic'; g.globalAlpha = alpha; g.fillStyle = color; g.fillText(str, x, y); g.globalAlpha = 1; }
+function pill(g, x, y, w, h, fill, stroke) { const r = h / 2; g.beginPath(); g.moveTo(x - w / 2 + r, y - r); g.lineTo(x + w / 2 - r, y - r); g.arc(x + w / 2 - r, y, r, -HPI, HPI); g.lineTo(x - w / 2 + r, y + r); g.arc(x - w / 2 + r, y, r, HPI, 3 * HPI); g.closePath(); if (fill) { g.fillStyle = fill; g.fill(); } if (stroke) { g.lineWidth = 1.5; g.strokeStyle = stroke; g.stroke(); } }
+
+function renderMain(g) {
+  if (MODE.facing) {                                         // target dot + its orbit
+    g.setLineDash([3, 6]); g.lineWidth = 1.2; g.strokeStyle = 'rgba(43,34,48,0.22)'; g.beginPath(); g.ellipse(312, 180, 292, 148, 0, 0, TAU); g.stroke(); g.setLineDash([]);
+  }
+  g.fillStyle = 'rgba(43,34,48,0.14)'; g.fillRect(628, 54, 1, 280);
+  label(g, 'In-game size · 40 px', 734, 70, `700 11px ${FONT}`, INK, 0.62);
+  for (const e of ents) {                                    // labels under the big units
+    const y = e.hy + BIG_R + 31;
+    label(g, e.name, e.hx, y, `800 15px ${FONT}`, INK);
+    if (e.cap) { g.font = `700 10.5px ${FONT}`; const w = g.measureText(e.cap).width + 16; pill(g, e.hx, y + 12.5, w, 15, MAT.gold[0], null); label(g, e.cap, e.hx, y + 16.2, `700 10.5px ${FONT}`, INK); }
+    else label(g, e.desc, e.hx, y + 16, `600 10.5px ${FONT}`, INK, 0.62);
+  }
+  const order = ents.slice().sort((a, b) => (a.hy + a.oy * BIG_R) - (b.hy + b.oy * BIG_R));
+  for (const e of order) drawUnitAt(g, e, e.sx, e.sy, SMALL_R, 0, e.type === 'rat');
+  for (const e of order) drawUnitAt(g, e, e.hx, e.hy, BIG_R, 0, e.type === 'rat');
+  if (MODE.facing) { g.fillStyle = GROUND; g.beginPath(); g.ellipse(DOT.x + 1, DOT.y + 4, 9, 7, 0, 0, TAU); g.fill();
+    g.beginPath(); g.arc(DOT.x, DOT.y, 8.5, 0, TAU); g.fillStyle = MAT.gold[0]; g.fill(); g.lineWidth = 2; g.strokeStyle = INK; g.stroke();
+    g.beginPath(); g.arc(DOT.x, DOT.y, 2.8, 0, TAU); g.fillStyle = INK; g.fill(); }
+}
+const COMPASS = ['S', 'SW', 'W', 'NW', 'N', 'NE', 'E', 'SE'];
+function renderTurn(g) {
+  const e = selected;
+  g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.fillStyle = INK; g.font = `800 15px ${FONT}`; g.fillText('Turnaround · ' + e.name, 14, 24);
+  g.globalAlpha = 0.62; g.font = `600 10.5px ${FONT}`; g.fillText(e.cap ? '' : '8 headings, 45° apart — tap a figure to play its moves', 14, 39); g.globalAlpha = 1;
+  if (e.cap) { g.font = `700 10.5px ${FONT}`; const w = g.measureText(e.cap).width + 16; pill(g, 14 + w / 2, 35.5, w, 15, MAT.gold[0], null); g.fillStyle = INK; g.textAlign = 'center'; g.fillText(e.cap, 14 + w / 2, 39.2); }
+  for (let pass = 0; pass < 2; pass++) for (let k = 0; k < 8; k++) { const a = HPI + k * Math.PI / 4, rot = a - e.base, x = TURN_X(k);
+    if (pass === 0) { drawUnitAt(g, e, x, TURN_Y2, SMALL_R, rot, false);
+      g.save(); g.translate(x, 186); g.rotate(a); g.strokeStyle = INK; g.globalAlpha = 0.5; g.lineWidth = 1.6; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); g.moveTo(-6, 0); g.lineTo(6, 0); g.moveTo(2, -4); g.lineTo(6, 0); g.lineTo(2, 4); g.stroke(); g.restore();
+      label(g, COMPASS[k], x + 16, 189.5, `700 9.5px ${FONT}`, INK, 0.5); }
+    else drawUnitAt(g, e, x, TURN_Y, TURN_R, rot, false); }
+  ents.forEach((u, i) => { const x = W0 / 2 + (i - 2.5) * 112, on = u === selected;      // unit picker
+    pill(g, x, PICK_Y, 104, 34, on ? MAT.gold[0] : null, INK);
+    drawGroundShadow(g, x - 32, PICK_Y, 11 * u.k, u.st); DRAW[u.type](g, x - 32, PICK_Y, 11 * u.k, u === selected ? HPI + 0.3 : u.facing, u.st);
+    label(g, u.name, x + 12, PICK_Y + 4, `700 11px ${FONT}`, INK); });
+}
+function renderSheet(g) {                                    // ?sheet : every unit at 8 headings, big and at game size (art review)
+  const q = new URLSearchParams(location.search), only = q.get('u'), list = ents.filter(e => !only || only.split(',').includes(e.type));
+  const R = +(q.get('r') || 40), rowH = R * 3.2 + 74, extra = q.get('st') ? JSON.parse(q.get('st')) : null;
+  list.forEach((e, row) => { const st = newPose(); st.t = 1.3; if (extra) Object.assign(st, extra);
+    for (let k = 0; k < 8; k++) { const a = HPI + k * Math.PI / 4, x = 100 + k * (VW - 130) / 8, y = 26 + R * 1.75 + row * rowH, y2 = y + R * 1.6 + 36;
+      drawGroundShadow(g, x, y, R * e.k, st); DRAW[e.type](g, x, y, R * e.k, a, st);
+      drawGroundShadow(g, x, y2, SMALL_R * e.k, st); DRAW[e.type](g, x, y2, SMALL_R * e.k, a, st); } });
+}
+function render() {
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = BG; ctx.fillRect(0, 0, cv.width, cv.height);
+  if (SHEET) { ctx.setTransform(DPR, 0, 0, DPR, 0, 0); renderSheet(ctx); return; }
+  ctx.setTransform(DPR * S, 0, 0, DPR * S, DPR * OX, DPR * OY);
+  if (MODE.turn) renderTurn(ctx); else renderMain(ctx);
+}
+const ui = document.getElementById('ui'), bFacing = document.getElementById('bFacing'), bTurn = document.getElementById('bTurn'), hint = document.getElementById('hint');
+function resize() {
+  DPR = Math.min(3, window.devicePixelRatio || 1); VW = window.innerWidth; VH = window.innerHeight;
+  cv.width = Math.round(VW * DPR); cv.height = Math.round(VH * DPR);
+  const cs = getComputedStyle(document.getElementById('safe')), sl = parseFloat(cs.paddingLeft) || 0, sr = parseFloat(cs.paddingRight) || 0, stp = parseFloat(cs.paddingTop) || 0, sb = parseFloat(cs.paddingBottom) || 0;
+  const w = VW - sl - sr, h = VH - stp - sb; S = Math.min(w / W0, h / H0); OX = sl + (w - W0 * S) / 2; OY = stp + (h - H0 * S) / 2;
+  ui.style.transform = `translate(${OX}px,${OY}px) scale(${S})`; ui.style.display = SHEET ? 'none' : '';
+}
+function setMode(facing, turn) { MODE.facing = facing; MODE.turn = turn; bFacing.setAttribute('aria-pressed', facing); bTurn.setAttribute('aria-pressed', turn);
+  hint.textContent = turn ? 'Tap a figure to play · pick a unit below' : facing ? 'Drag the dot — everyone turns to face it' : 'Tap a unit to play its moves'; }
+bFacing.addEventListener('click', () => setMode(!MODE.facing, false));
+bTurn.addEventListener('click', () => setMode(false, !MODE.turn));
+function toDesign(ev2) { return [(ev2.clientX - OX) / S, (ev2.clientY - OY) / S]; }
+cv.addEventListener('pointerdown', ev2 => {
+  const [x, y] = toDesign(ev2);
+  if (MODE.turn) {
+    for (let i = 0; i < ents.length; i++) { const px = W0 / 2 + (i - 2.5) * 112; if (Math.abs(x - px) < 54 && Math.abs(y - PICK_Y) < 22) { selected = ents[i]; return; } }
+    if (y > 50 && y < 290) play(selected); return;
+  }
+  if (MODE.facing && Math.hypot(x - DOT.x, y - DOT.y) < 30) { DOT.drag = true; DOT.held = 1e9; cv.setPointerCapture(ev2.pointerId); return; }
+  let best = null, bd = 1e9;
+  for (const e of ents) { const d1 = Math.hypot(x - e.hx, y - e.hy) / (BIG_R * 1.5), d2 = Math.hypot(x - e.sx, y - e.sy) / 34, d = Math.min(d1, d2); if (d < 1 && d < bd) { bd = d; best = e; } }
+  if (best) { selected = best; play(best); }
+});
+cv.addEventListener('pointermove', ev2 => { if (!DOT.drag) return; const [x, y] = toDesign(ev2); DOT.hx = clamp(x, 12, W0 - 12); DOT.hy = clamp(y, 12, H0 - 12); });
+const endDrag = () => { if (DOT.drag) { DOT.drag = false; DOT.held = 3; } };
+cv.addEventListener('pointerup', endDrag); cv.addEventListener('pointercancel', endDrag);
+function updateDot(dt) {
+  if (!DOT.drag && DOT.held <= 0) DOT.ang += dt * TAU / 11;
+  const ox = 312 + Math.cos(DOT.ang) * 292, oy = 180 + Math.sin(DOT.ang) * 148;
+  if (DOT.drag) { DOT.x += (DOT.hx - DOT.x) * Math.min(1, dt * 30); DOT.y += (DOT.hy - DOT.y) * Math.min(1, dt * 30); }
+  else if (DOT.held > 0) { DOT.held -= dt; if (DOT.held <= 0) DOT.ang = Math.atan2((DOT.y - 180) / 148, (DOT.x - 312) / 292); }
+  else { DOT.x += (ox - DOT.x) * Math.min(1, dt * 6); DOT.y += (oy - DOT.y) * Math.min(1, dt * 6); }
+}
+let last = 0;
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000 || 0.016); last = now;
+  if (!SHEET) { updateDot(dt); for (const e of ents) updateEnt(e, dt); }
+  render(); requestAnimationFrame(frame);
+}
+window.addEventListener('resize', resize); window.addEventListener('orientationchange', resize);
+DOT.hx = DOT.x; DOT.hy = DOT.y; { const a = DOT.ang; DOT.x = 312 + Math.cos(a) * 292; DOT.y = 180 + Math.sin(a) * 148; }
+// small hook for scripted screenshots / poking from the console
+window.DEMO = { ents, MODE, DOT, setMode, play: (type, from) => { const e = ents.find(u => u.type === type); selected = e; e.seq = null; play(e, from); }, select: type => { selected = ents.find(u => u.type === type); },
+  holdDot: (x, y) => { DOT.x = DOT.hx = x; DOT.y = DOT.hy = y; DOT.held = 1e9; } };
+resize(); setMode(false, false); requestAnimationFrame(frame);
+
+</script>
+</body>
+</html>

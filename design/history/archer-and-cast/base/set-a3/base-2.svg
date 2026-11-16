@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- BASE HUMAN 2 "Swept": narrow egg head, open face, blonde side-swept fringe lock with pointed tips, the rest combed back over a clean rounded crown; small ears; both hands angled together at front-left for a two-handed grip. Sized to the archer HEAD (hood footprint). Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <clipPath id="R"><rect x="100" y="-10" width="120" height="230"/></clipPath>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+    <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F4D27A"/><stop offset="1" stop-color="#E2AE4C"/></linearGradient>
+    <linearGradient id="g2" x1="60" y1="0" x2="165" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#A8681E" stop-opacity="0"/><stop offset="1" stop-color="#A8681E" stop-opacity="0.55"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#DDA344"/><stop offset="1" stop-color="#C48632"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0.2" y2="1"><stop offset="0" stop-color="#F4CBA5"/><stop offset="1" stop-color="#EAB78F"/></linearGradient>
+    <linearGradient id="g5" x1="0" y1="0" x2="0.2" y2="1"><stop offset="0" stop-color="#DDA982"/><stop offset="1" stop-color="#CE9671"/></linearGradient>
+    <ellipse cx="52.8" cy="110.0" rx="8.8" ry="12.0" id="s6"/>
+    <clipPath id="s6c"><use href="#s6"/></clipPath>
+    <ellipse cx="147.2" cy="110.0" rx="8.8" ry="12.0" id="s7"/>
+    <clipPath id="s7c"><use href="#s7"/></clipPath>
+    <path d="M 100.0 39.6 C 133.6 39.6 149.6 70.0 149.6 102.0 C 149.6 134.0 127.2 154.8 100.0 154.8 C 72.8 154.8 50.4 134.0 50.4 102.0 C 50.4 70.0 66.4 39.6 100.0 39.6 Z" id="s8"/>
+    <clipPath id="s8c"><use href="#s8"/></clipPath>
+    <path d="M 50.4 108.4 C 42.4 73.2 60.0 38.0 100.0 34.8 C 140.0 38.0 156.0 73.2 148.0 103.6 C 141.6 92.4 133.6 84.4 124.0 82.8 C 119.2 92.4 112.8 97.2 103.2 98.8 C 101.6 94.0 100.0 90.8 96.8 89.2 C 92.0 98.8 85.6 105.2 76.0 108.4 C 71.2 116.4 64.8 122.8 55.2 124.4 C 53.6 119.6 52.0 114.8 50.4 108.4 Z" id="s9"/>
+    <clipPath id="s9c"><use href="#s9"/></clipPath>
+    <linearGradient id="g10" x1="0" y1="87.6" x2="0" y2="154.8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B97C60"/><stop offset="0.24" stop-color="#D59D7A"/><stop offset="0.5" stop-color="#F2C7A0"/><stop offset="1" stop-color="#F6D0AC"/></linearGradient>
+    <linearGradient id="g11" x1="80" y1="0" x2="150" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.22"/></linearGradient>
+    <rect x="48" y="138" width="24" height="21" rx="8" transform="rotate(-35 60.0 148.5)" id="s12"/>
+    <clipPath id="s12c"><use href="#s12"/></clipPath>
+    <rect x="66" y="154" width="24" height="21" rx="8" transform="rotate(-35 78.0 164.5)" id="s13"/>
+    <clipPath id="s13c"><use href="#s13"/></clipPath>
+  </defs>
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#s6"/>
+    <use href="#s7"/>
+    <use href="#s8"/>
+    <use href="#s9"/>
+    <use href="#s12"/>
+    <use href="#s13"/>
+  </g>
+  <use href="#s6" fill="url(#g4)"/>
+  <use href="#s7" fill="url(#g5)"/>
+  <use href="#s8" fill="url(#g10)"/>
+  <use href="#s8" fill="url(#g11)"/>
+  <use href="#s9" fill="#7A4A20" opacity="0.32" transform="translate(0 4)"/>
+  <use href="#s9" fill="url(#g1)"/>
+  <use href="#s9" fill="url(#g2)"/>
+  <path d="M97 140.4 Q100 142.9 103 140.4" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  <g transform="translate(0 2.5)"><rect x="49" y="138" width="22" height="21" rx="8" fill="#2B2230" opacity="0.3" transform="rotate(-35 60.0 148.5)"/></g>
+  <use href="#s12" fill="url(#gHand)"/>
+  <g transform="translate(0 2.5)"><rect x="67" y="154" width="22" height="21" rx="8" fill="#2B2230" opacity="0.3" transform="rotate(-35 78.0 164.5)"/></g>
+  <use href="#s13" fill="url(#gHand)"/>
+</svg>

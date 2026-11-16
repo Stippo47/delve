@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- KNIGHT design 2 "Errant": round open-faced armet with a curling blue feather panache, heater shield slung
+       diagonally across the back, two-handed greatsword held low across the front.
+       Facing = DOWN (+y). Rotate the whole sprite around (100,100). -->
+  <defs>
+    <path id="sh" d="M-36 -6 C-36 -30 -20 -50 0 -62 C20 -50 36 -30 36 -6 C36 8 30 14 0 16 C-30 14 -36 8 -36 -6 Z"/>
+    <path id="shf" d="M-27 -7 C-27 -26 -15 -42 0 -51 C15 -42 27 -26 27 -7 C27 3 22 7 0 8 C-22 7 -27 3 -27 -7 Z"/>
+    <clipPath id="shClip"><use href="#sh"/></clipPath>
+    <clipPath id="shfClip"><use href="#shf"/></clipPath>
+    <path id="helm" d="M44 98 C44 64 70 40 100 40 C130 40 156 64 156 98 C156 130 134 154 100 154 C66 154 44 130 44 98 Z"/>
+    <clipPath id="helmClip"><use href="#helm"/></clipPath>
+    <path id="open" d="M68 124 C68 108 132 108 132 124 C132 142 118 150 100 150 C82 150 68 142 68 124 Z"/>
+    <clipPath id="openClip"><use href="#open"/></clipPath>
+    <path id="plume" d="M92 86 C84 62 90 36 110 20 C126 6 152 2 168 16 C156 14 146 18 142 26 C154 28 162 40 160 52 C152 44 140 42 132 48 C140 56 138 68 128 74 C124 66 116 64 110 68 C112 76 112 80 108 86 Z"/>
+    <clipPath id="plumeClip"><use href="#plume"/></clipPath>
+    <path id="shadeR" d="M100 -10 V220 H220 V-10 Z"/>
+
+    <linearGradient id="gSteelLit" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#EEF1F5"/><stop offset="1" stop-color="#C3CBD7"/>
+    </linearGradient>
+    <linearGradient id="gSteelShade" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#ABB5C4"/><stop offset="1" stop-color="#8691A4"/>
+    </linearGradient>
+    <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F9CB5C"/><stop offset="1" stop-color="#E8A030"/>
+    </linearGradient>
+    <linearGradient id="gBlue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5D92DE"/><stop offset="1" stop-color="#3E6DBD"/>
+    </linearGradient>
+    <linearGradient id="gBlueShade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#406FBA"/><stop offset="1" stop-color="#2E5293"/>
+    </linearGradient>
+    <linearGradient id="gBlueDeep" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3A64AE"/><stop offset="1" stop-color="#2A4A86"/>
+    </linearGradient>
+    <linearGradient id="gFace" x1="0" y1="108" x2="0" y2="150" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9A6250"/><stop offset="0.36" stop-color="#C98E6C"/>
+      <stop offset="0.62" stop-color="#F2C7A0"/><stop offset="1" stop-color="#F6D0AC"/>
+    </linearGradient>
+    <linearGradient id="gBlade" x1="-8" y1="0" x2="8" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F2F5F8"/><stop offset="0.5" stop-color="#E2E7ED"/><stop offset="0.5" stop-color="#A9B2C0"/><stop offset="1" stop-color="#939DAD"/>
+    </linearGradient>
+    <linearGradient id="gGrip" x1="-5" y1="0" x2="5" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#A44A39"/><stop offset="1" stop-color="#7A3227"/>
+    </linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ===== heavy outer silhouette ===== -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#sh" transform="translate(66 70) rotate(-34)"/>
+    <use href="#helm"/>
+    <use href="#plume"/>
+    <g transform="translate(126 150) rotate(63)">
+      <path d="M-8 10 H8 V90 L0 104 L-8 90 Z"/>
+      <rect x="-22" y="0" width="44" height="11" rx="5"/>
+      <rect x="-5" y="-44" width="10" height="46"/>
+      <circle cx="0" cy="-48" r="8"/>
+      <rect x="-12" y="-24" width="24" height="21" rx="8"/>
+      <rect x="-12" y="-45" width="24" height="21" rx="8"/>
+    </g>
+  </g>
+
+  <!-- ===== heater shield slung on the back ===== -->
+  <g transform="translate(66 70) rotate(-34)">
+    <use href="#sh" fill="url(#gGold)"/>
+    <g clip-path="url(#shClip)"><rect x="0" y="-80" width="60" height="120" fill="#D9952A" opacity="0.6"/></g>
+    <use href="#shf" fill="url(#gBlue)"/>
+    <g clip-path="url(#shfClip)">
+      <rect x="0" y="-80" width="60" height="120" fill="url(#gBlueShade)"/>
+      <rect x="-40" y="-26" width="80" height="12" fill="#FFF3DA"/>
+      <rect x="0" y="-26" width="40" height="12" fill="#E1D3B8"/>
+    </g>
+  </g>
+
+  <!-- ===== helm ===== -->
+  <use href="#helm" fill="#1E2E52" opacity="0.4" transform="translate(0 4)"/>
+  <use href="#helm" fill="url(#gSteelLit)"/>
+  <g clip-path="url(#helmClip)">
+    <use href="#shadeR" fill="url(#gSteelShade)"/>
+  </g>
+  <!-- ===== plume ===== -->
+  <use href="#plume" fill="#2B2230" opacity="0.28" transform="translate(0 3)"/>
+  <use href="#plume" fill="url(#gBlue)"/>
+  <g clip-path="url(#plumeClip)">
+    <path d="M101 92 C99 60 116 32 172 14 L220 0 V120 Z" fill="url(#gBlueShade)"/>
+  </g>
+
+  <path d="M91 80 H109 V88 C109 92 91 92 91 88 Z" fill="url(#gGold)"/>
+  <path d="M100 80 H109 V88 C109 90 104 91 100 91 Z" fill="#D9952A"/>
+
+  <!-- face -->
+  <g clip-path="url(#openClip)">
+    <use href="#open" fill="url(#gFace)"/>
+    <path d="M100 100 H140 V156 H100 Z" fill="#8A4E36" opacity="0.14"/>
+    <path d="M97 140 Q100 142.5 103 140" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- ===== greatsword, two-handed, low diagonal guard ===== -->
+  <g transform="translate(126 150) rotate(63)">
+    <path d="M-8 10 H8 V90 L0 104 L-8 90 Z" fill="url(#gBlade)"/>
+    <rect x="-5" y="-44" width="10" height="46" fill="url(#gGrip)"/>
+    <circle cx="0" cy="-48" r="8" fill="url(#gGold)"/>
+    <rect x="-22" y="0" width="44" height="11" rx="5" fill="url(#gGold)"/>
+    <rect x="-12" y="-22" width="24" height="21" rx="8" fill="#2B2230" opacity="0.3"/>
+    <rect x="-12" y="-24" width="24" height="21" rx="8" fill="url(#gHand)"/>
+    <rect x="-12" y="-43" width="24" height="21" rx="8" fill="#2B2230" opacity="0.3"/>
+    <rect x="-12" y="-45" width="24" height="21" rx="8" fill="url(#gHand)"/>
+  </g>
+</svg>

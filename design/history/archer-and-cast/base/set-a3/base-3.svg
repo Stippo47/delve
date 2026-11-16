@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- BASE HUMAN 3 "Crop": broad squarish head and wide jaw, short tufty copper crop cut high above big jug ears, soft side shading (no split); square fists held wide at the front corners. Sized to the archer HEAD (hood footprint). Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <clipPath id="R"><rect x="100" y="-10" width="120" height="230"/></clipPath>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+    <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E3823F"/><stop offset="1" stop-color="#CC672C"/></linearGradient>
+    <linearGradient id="g2" x1="60" y1="0" x2="170" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#6A2410" stop-opacity="0"/><stop offset="1" stop-color="#6A2410" stop-opacity="0.5"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0.2" y2="1"><stop offset="0" stop-color="#F4CBA5"/><stop offset="1" stop-color="#EAB78F"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0.2" y2="1"><stop offset="0" stop-color="#DDA982"/><stop offset="1" stop-color="#CE9671"/></linearGradient>
+    <rect x="37.0" y="90.2" width="23.8" height="30.8" rx="11.2" id="s5"/>
+    <clipPath id="s5c"><use href="#s5"/></clipPath>
+    <rect x="139.2" y="90.2" width="23.8" height="30.8" rx="11.2" id="s6"/>
+    <clipPath id="s6c"><use href="#s6"/></clipPath>
+    <rect x="51.0" y="53.8" width="98.0" height="93.8" rx="36.4" id="s7"/>
+    <clipPath id="s7c"><use href="#s7"/></clipPath>
+    <path d="M 53.8 105.6 C 46.8 86.0 46.8 72.0 55.2 62.2 C 53.8 52.4 62.2 44.0 72.0 46.8 C 77.6 37.0 91.6 35.6 98.6 44.0 C 105.6 35.6 122.4 37.0 128.0 46.8 C 137.8 44.0 146.2 52.4 144.8 62.2 C 153.2 72.0 153.2 86.0 146.2 105.6 C 140.6 98.6 133.6 97.2 128.0 102.8 C 122.4 93.0 112.6 93.0 107.0 101.4 C 102.8 95.8 97.2 95.8 93.0 101.4 C 87.4 93.0 77.6 93.0 72.0 102.8 C 66.4 97.2 59.4 98.6 53.8 105.6 Z" id="s8"/>
+    <clipPath id="s8c"><use href="#s8"/></clipPath>
+    <linearGradient id="g9" x1="0" y1="98.6" x2="0" y2="147.6" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#AD725A"/><stop offset="0.24" stop-color="#D59D7A"/><stop offset="0.5" stop-color="#F2C7A0"/><stop offset="1" stop-color="#F6D0AC"/></linearGradient>
+    <linearGradient id="g10" x1="80" y1="0" x2="150" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.22"/></linearGradient>
+    <rect x="30" y="128" width="26" height="23" rx="9" id="s11"/>
+    <clipPath id="s11c"><use href="#s11"/></clipPath>
+    <rect x="144" y="128" width="26" height="23" rx="9" id="s12"/>
+    <clipPath id="s12c"><use href="#s12"/></clipPath>
+  </defs>
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#s5"/>
+    <use href="#s6"/>
+    <use href="#s7"/>
+    <use href="#s8"/>
+    <use href="#s11"/>
+    <use href="#s12"/>
+  </g>
+  <use href="#s5" fill="url(#g3)"/>
+  <use href="#s6" fill="url(#g4)"/>
+  <use href="#s7" fill="url(#g9)"/>
+  <use href="#s7" fill="url(#g10)"/>
+  <use href="#s8" fill="#6A2A10" opacity="0.3" transform="translate(0 4)"/>
+  <use href="#s8" fill="url(#g1)"/>
+  <use href="#s8" fill="url(#g2)"/>
+  <path d="M96 136.4 Q100 138.9 104 136.4" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  <g transform="translate(0 2.5)"><rect x="31" y="128" width="24" height="23" rx="9" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#s11" fill="url(#gHand)"/>
+  <g transform="translate(0 2.5)"><rect x="145" y="128" width="24" height="23" rx="9" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#s12" fill="url(#gHand)"/>
+</svg>

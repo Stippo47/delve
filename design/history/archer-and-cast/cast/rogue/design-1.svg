@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- ROGUE design 1 "Ribbon Tails": round head bound in a crimson bandana, the knot at the back-left trailing two
+       streamers that blow back in the wind (speed read), twin daggers held forward and splayed like fangs. Facing = DOWN (+y). Rotate around (100,100). -->
+  <defs>
+    <path id="dome" d="M100 36 C136 36 160 60 160 96 C160 128 142 151 100 153 C58 151 40 128 40 96 C40 60 64 36 100 36 Z"/>
+    <clipPath id="domeClip"><use href="#dome"/></clipPath>
+    <path id="face" d="M64 128 C66 110 134 110 136 128 C136 150 120 160 100 160 C80 160 64 150 64 128 Z"/>
+    <clipPath id="faceClip"><use href="#face"/></clipPath>
+    <path id="fold" d="M46 112 C56 100 144 100 154 112 C156 122 152 130 144 130 C126 120 74 120 56 130 C48 130 44 122 46 112 Z"/>
+    <clipPath id="foldClip"><use href="#fold"/></clipPath>
+    <path id="tailL" d="M64 58 C48 60 30 58 16 46 L0 38 L14 32 L4 18 C24 22 38 32 52 34 C60 35 66 34 74 34 Z"/>
+    <path id="tailR" d="M66 42 C60 32 50 24 44 12 L42 2 L53 7 L60 1 C64 10 74 20 88 30 Z"/>
+    <path id="knot" d="M74 30 C84 30 90 37 90 45 C90 53 84 58 74 58 C64 58 58 53 58 45 C58 37 64 30 74 30 Z"/>
+    <g id="dagger">
+      <rect x="-13" y="8" width="26" height="9" rx="4.5"/>
+      <path d="M-6.5 16 H6.5 L5.5 38 L0 50 L-5.5 38 Z"/>
+    </g>
+    <path id="shadeR" d="M100 -10 V220 H220 V-10 Z"/>
+
+    <linearGradient id="gLit" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#E2675A"/><stop offset="1" stop-color="#C9473F"/>
+    </linearGradient>
+    <linearGradient id="gShade" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#B23E3C"/><stop offset="1" stop-color="#922D30"/>
+    </linearGradient>
+    <linearGradient id="gTailLit" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#D3554B"/><stop offset="1" stop-color="#B13E3A"/>
+    </linearGradient>
+    <linearGradient id="gTailShade" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#A23535"/><stop offset="1" stop-color="#7E2629"/>
+    </linearGradient>
+    <linearGradient id="gFold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C24640"/><stop offset="1" stop-color="#A2363A"/>
+    </linearGradient>
+    <linearGradient id="gFace" x1="0" y1="116" x2="0" y2="158" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9A6250"/>
+      <stop offset="0.3" stop-color="#C98E6C"/>
+      <stop offset="0.6" stop-color="#F2C7A0"/>
+      <stop offset="1" stop-color="#F6D0AC"/>
+    </linearGradient>
+    <linearGradient id="gSteelL" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EEF1F4"/><stop offset="1" stop-color="#C9CFD7"/>
+    </linearGradient>
+    <linearGradient id="gSteelR" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#AEB5C0"/><stop offset="1" stop-color="#8C94A1"/>
+    </linearGradient>
+    <linearGradient id="gGuard" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9C6A3E"/><stop offset="1" stop-color="#7A4E2B"/>
+    </linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ===== heavy outer silhouette ===== -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#tailL"/><use href="#tailR"/><use href="#knot"/>
+    <use href="#dome"/><use href="#fold"/><use href="#face"/>
+    <use href="#dagger" transform="translate(66 146) rotate(14)"/>
+    <use href="#dagger" transform="translate(134 146) rotate(-14)"/>
+    <rect x="54" y="138" width="24" height="21" rx="8" transform="rotate(14 66 148)"/>
+    <rect x="122" y="138" width="24" height="21" rx="8" transform="rotate(-14 134 148)"/>
+  </g>
+
+  <!-- ===== interior: colour only ===== -->
+  <!-- streamers (left lit, right shaded) -->
+  <use href="#tailL" fill="url(#gTailLit)"/>
+  <use href="#tailR" fill="url(#gTailShade)"/>
+
+  <!-- bandana dome on a soft contact shadow -->
+  <use href="#dome" fill="#5E1E24" opacity="0.5" transform="translate(0 3)"/>
+  <use href="#dome" fill="url(#gLit)"/>
+  <g clip-path="url(#domeClip)">
+    <use href="#shadeR" fill="url(#gShade)"/>
+    <!-- cloth pulled toward the knot -->
+    <g fill="none" stroke="#7E2629" stroke-width="4" stroke-linecap="round" opacity="0.4">
+      <path d="M88 50 C108 52 128 62 142 80"/>
+      <path d="M84 60 C98 70 108 84 112 100"/>
+      <path d="M62 56 C56 66 52 80 52 94"/>
+    </g>
+  </g>
+  <!-- knot sits on the back of the head -->
+  <use href="#knot" fill="#5E1E24" opacity="0.4" transform="translate(1 4)"/>
+  <use href="#knot" fill="url(#gLit)"/>
+  <path d="M74 30 C84 30 90 37 90 45 C90 53 84 58 74 58 Z" fill="url(#gShade)"/>
+
+  <!-- face -->
+  <g clip-path="url(#faceClip)">
+    <use href="#face" fill="url(#gFace)"/>
+    <path d="M100 100 H140 V164 H100 Z" fill="#8A4E36" opacity="0.14"/>
+    <path d="M97 147 Q100 149.5 103 147" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- the bandana's folded front edge, overhanging the face -->
+  <use href="#fold" fill="#2B2230" opacity="0.25" transform="translate(0 3)"/>
+  <use href="#fold" fill="url(#gFold)"/>
+  <g clip-path="url(#foldClip)"><use href="#shadeR" fill="#7E2629" opacity="0.6"/></g>
+
+  <!-- daggers -->
+  <g transform="translate(66 146) rotate(14)">
+    <path d="M-6.5 16 H0 V50 L-5.5 38 Z" fill="url(#gSteelL)"/>
+    <path d="M0 16 H6.5 L5.5 38 L0 50 Z" fill="url(#gSteelR)"/>
+    <rect x="-13" y="8" width="26" height="9" rx="4.5" fill="url(#gGuard)"/>
+  </g>
+  <g transform="translate(134 146) rotate(-14)">
+    <path d="M-6.5 16 H0 V50 L-5.5 38 Z" fill="url(#gSteelL)"/>
+    <path d="M0 16 H6.5 L5.5 38 L0 50 Z" fill="url(#gSteelR)"/>
+    <rect x="-13" y="8" width="26" height="9" rx="4.5" fill="url(#gGuard)"/>
+  </g>
+
+  <!-- hands -->
+  <rect x="55" y="140" width="22" height="20" rx="8" fill="#2B2230" opacity="0.3" transform="rotate(14 66 148)"/>
+  <rect x="55" y="138" width="22" height="20" rx="8" fill="url(#gHand)" transform="rotate(14 66 148)"/>
+  <rect x="123" y="140" width="22" height="20" rx="8" fill="#2B2230" opacity="0.3" transform="rotate(-14 134 148)"/>
+  <rect x="123" y="138" width="22" height="20" rx="8" fill="url(#gHand)" transform="rotate(-14 134 148)"/>
+</svg>

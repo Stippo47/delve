@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- KNIGHT design 4 "Boar": blue-enamelled bascinet with a long pointed steel "pig-face" visor jutting forward (closed, no face), sword cocked back over the left shoulder ready to swing,
+       round buckler punched out in the right fist. Facing = DOWN (+y). Rotate the whole sprite around (100,100). -->
+  <defs>
+    <path id="skull" d="M44 92 C44 58 70 32 100 32 C130 32 156 58 156 92 C156 120 134 142 100 142 C66 142 44 120 44 92 Z"/>
+    <clipPath id="skullClip"><use href="#skull"/></clipPath>
+    <path id="visor" d="M48 104 C64 90 136 90 152 104 C152 120 136 128 126 144 C118 158 116 178 100 186 C84 178 82 158 74 144 C64 128 48 120 48 104 Z"/>
+    <clipPath id="visorClip"><use href="#visor"/></clipPath>
+    <circle id="buck" cx="160" cy="150" r="27"/>
+    <clipPath id="buckClip"><use href="#buck"/></clipPath>
+    <path id="shadeR" d="M100 -10 V220 H220 V-10 Z"/>
+
+    <linearGradient id="gSteelLit" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#EEF1F5"/><stop offset="1" stop-color="#C3CBD7"/>
+    </linearGradient>
+    <linearGradient id="gSteelShade" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#ABB5C4"/><stop offset="1" stop-color="#8691A4"/>
+    </linearGradient>
+    <linearGradient id="gBrimLit" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C9D1DC"/><stop offset="1" stop-color="#A4AEBD"/>
+    </linearGradient>
+    <linearGradient id="gBrimShade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8F9AAC"/><stop offset="1" stop-color="#717D91"/>
+    </linearGradient>
+    <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F9CB5C"/><stop offset="1" stop-color="#E8A030"/>
+    </linearGradient>
+    <linearGradient id="gBlue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5D92DE"/><stop offset="1" stop-color="#3E6DBD"/>
+    </linearGradient>
+    <linearGradient id="gBlueShade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#406FBA"/><stop offset="1" stop-color="#2E5293"/>
+    </linearGradient>
+    <linearGradient id="gFace" x1="0" y1="124" x2="0" y2="168" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9A6250"/><stop offset="0.45" stop-color="#C98E6C"/>
+      <stop offset="0.7" stop-color="#F2C7A0"/><stop offset="1" stop-color="#F6D0AC"/>
+    </linearGradient>
+    <linearGradient id="gBlade" x1="-8" y1="0" x2="8" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F2F5F8"/><stop offset="0.5" stop-color="#E2E7ED"/><stop offset="0.5" stop-color="#A9B2C0"/><stop offset="1" stop-color="#939DAD"/>
+    </linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ===== heavy outer silhouette ===== -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#skull"/>
+    <use href="#visor"/>
+    <use href="#buck"/>
+    <g transform="translate(50 146) rotate(162)">
+      <path d="M-8 10 H8 V96 L0 110 L-8 96 Z"/>
+      <rect x="-20" y="0" width="40" height="11" rx="5"/>
+      <rect x="-5" y="-26" width="10" height="28"/>
+      <circle cx="0" cy="-28" r="8"/>
+    </g>
+    <rect x="38" y="134" width="24" height="22" rx="8" transform="rotate(-18 50 145)"/>
+  </g>
+
+  <!-- ===== bascinet skull ===== -->
+  <use href="#skull" fill="url(#gBlue)"/>
+  <g clip-path="url(#skullClip)"><use href="#shadeR" fill="url(#gBlueShade)"/></g>
+
+  <!-- ===== pointed "hounskull" visor, ridge = the lit/shade seam ===== -->
+  <use href="#visor" fill="#3E4A5E" opacity="0.4" transform="translate(0 -5)"/>
+  <use href="#visor" fill="url(#gSteelLit)"/>
+  <g clip-path="url(#visorClip)">
+    <use href="#shadeR" fill="url(#gSteelShade)"/>
+    <path d="M40 96 C66 82 134 82 160 96 V110 C134 98 66 98 40 110 Z" fill="url(#gGold)"/>
+    <path d="M100 86 C124 86 146 90 160 96 V110 C146 103 124 99 100 99 Z" fill="#D9952A"/>
+  </g>
+
+  <!-- ===== buckler in the right fist ===== -->
+  <use href="#buck" fill="#2B2230" opacity="0.25" transform="translate(-2 -3)"/>
+  <use href="#buck" fill="url(#gGold)"/>
+  <g clip-path="url(#buckClip)">
+    <rect x="160" y="110" width="40" height="80" fill="#D9952A"/>
+    <circle cx="160" cy="150" r="20" fill="url(#gBlue)"/>
+    <rect x="160" y="120" width="30" height="60" fill="url(#gBlueShade)" clip-path="url(#buckClip)"/>
+  </g>
+  <circle cx="160" cy="150" r="20" fill="none"/>
+  <g clip-path="url(#buckClip)">
+    <path d="M160 130 A20 20 0 0 1 160 170 Z" fill="url(#gBlueShade)"/>
+    <circle cx="160" cy="150" r="9" fill="#FFF3DA"/>
+    <path d="M160 141 A9 9 0 0 1 160 159 Z" fill="#E1D3B8"/>
+  </g>
+
+  <!-- ===== sword cocked over the left shoulder ===== -->
+  <g transform="translate(50 146) rotate(162)">
+    <path d="M-8 10 H8 V96 L0 110 L-8 96 Z" fill="#2B2230" opacity="0.25" transform="translate(-3 -1)"/>
+    <path d="M-8 10 H8 V96 L0 110 L-8 96 Z" fill="url(#gBlade)"/>
+    <rect x="-5" y="-26" width="10" height="28" fill="#8E3D30"/>
+    <circle cx="0" cy="-28" r="8" fill="url(#gGold)"/>
+    <rect x="-20" y="0" width="40" height="11" rx="5" fill="url(#gGold)"/>
+  </g>
+  <rect x="38" y="136" width="24" height="22" rx="8" fill="#2B2230" opacity="0.3" transform="rotate(-18 50 145)"/>
+  <rect x="38" y="134" width="24" height="22" rx="8" fill="url(#gHand)" transform="rotate(-18 50 145)"/>
+</svg>

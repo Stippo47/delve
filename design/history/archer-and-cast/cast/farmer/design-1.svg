@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- FARMER design 1 "Haymaker": wide wavy straw hat with red band + blue patch, pitchfork carried like a pike
+       on the right side, passing under the brim. Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <path id="brim" d="M167.0 76.0 C167.6 79.2 168.5 82.6 168.0 85.8 C167.5 88.9 165.7 92.0 164.3 94.9 C162.9 97.8 160.7 100.2 159.4 103.1 C158.1 106.0 157.6 109.2 156.4 112.2 C155.1 115.2 154.0 118.6 151.9 121.0 C149.8 123.4 146.6 125.0 143.9 126.6 C141.1 128.3 138.0 129.2 135.3 130.9 C132.6 132.7 130.5 135.1 127.8 136.9 C125.2 138.8 122.4 141.0 119.4 141.9 C116.3 142.8 112.8 142.4 109.5 142.3 C106.3 142.2 103.2 141.3 100.0 141.3 C96.8 141.3 93.7 142.2 90.5 142.3 C87.2 142.4 83.7 142.8 80.6 141.9 C77.6 141.0 74.8 138.8 72.2 136.9 C69.5 135.1 67.4 132.7 64.7 130.9 C62.0 129.2 58.9 128.3 56.1 126.6 C53.4 125.0 50.2 123.4 48.1 121.0 C46.0 118.6 44.9 115.2 43.6 112.2 C42.4 109.2 41.9 106.0 40.6 103.1 C39.3 100.2 37.1 97.8 35.7 94.9 C34.3 92.0 32.5 88.9 32.0 85.8 C31.5 82.6 32.4 79.2 33.0 76.0 C33.6 72.8 34.9 69.9 35.4 66.7 C35.8 63.6 35.4 60.3 35.7 57.1 C36.1 53.9 36.2 50.4 37.5 47.5 C38.8 44.6 41.4 42.1 43.6 39.8 C45.8 37.4 48.6 35.6 50.6 33.2 C52.7 30.8 54.1 27.9 56.1 25.4 C58.2 22.9 60.2 19.9 62.9 18.2 C65.5 16.5 69.0 15.9 72.2 15.1 C75.3 14.2 78.6 14.2 81.6 13.3 C84.7 12.4 87.4 10.7 90.5 9.7 C93.5 8.7 96.8 7.3 100.0 7.3 C103.2 7.3 106.5 8.7 109.5 9.7 C112.6 10.7 115.3 12.4 118.4 13.3 C121.4 14.2 124.7 14.2 127.8 15.1 C131.0 15.9 134.5 16.5 137.1 18.2 C139.8 19.9 141.8 22.9 143.9 25.4 C145.9 27.9 147.3 30.8 149.4 33.2 C151.4 35.6 154.2 37.4 156.4 39.8 C158.6 42.1 161.2 44.6 162.5 47.5 C163.8 50.4 163.9 53.9 164.3 57.1 C164.6 60.3 164.2 63.6 164.6 66.7 C165.1 69.9 166.4 72.8 167.0 76.0 Z"/>
+    <clipPath id="brimClip"><use href="#brim"/></clipPath>
+    <circle id="band" cx="100" cy="68" r="38"/>
+    <circle id="crown" cx="100" cy="65" r="31"/>
+    <clipPath id="crownClip"><use href="#crown"/></clipPath>
+    <clipPath id="bandClip"><use href="#band"/></clipPath>
+    <ellipse id="face" cx="100" cy="149" rx="31" ry="20"/>
+    <clipPath id="faceClip"><use href="#face"/></clipPath>
+    <path id="shadeR" d="M100 -10 V220 H220 V-10 Z"/>
+    <g id="fork">
+      <rect x="-5" y="-160" width="10" height="160" rx="5"/>
+      <rect x="-21" y="-4" width="42" height="11" rx="5"/>
+      <path d="M-21 2 V30 L-17 37 L-13 30 V2 Z"/>
+      <path d="M-4 2 V32 L0 40 L4 32 V2 Z"/>
+      <path d="M13 2 V30 L17 37 L21 30 V2 Z"/>
+    </g>
+
+    <linearGradient id="gStraw" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#F8DE92"/><stop offset="1" stop-color="#EAC062"/>
+    </linearGradient>
+    <linearGradient id="gStrawS" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#E0B456"/><stop offset="1" stop-color="#C99640"/>
+    </linearGradient>
+    <linearGradient id="gCrown" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#FBE6A6"/><stop offset="1" stop-color="#F0CB72"/>
+    </linearGradient>
+    <linearGradient id="gCrownS" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#E6BE62"/><stop offset="1" stop-color="#D3A24A"/>
+    </linearGradient>
+    <linearGradient id="gBand" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D2584A"/><stop offset="1" stop-color="#B04236"/>
+    </linearGradient>
+    <linearGradient id="gPatch" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6E93C8"/><stop offset="1" stop-color="#5279B0"/>
+    </linearGradient>
+    <linearGradient id="gFace" x1="0" y1="140" x2="0" y2="169" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9A6250"/>
+      <stop offset="0.35" stop-color="#C98E6C"/>
+      <stop offset="0.65" stop-color="#F2C7A0"/>
+      <stop offset="1" stop-color="#F6D0AC"/>
+    </linearGradient>
+    <linearGradient id="gWood" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#C98C55"/><stop offset="0.5" stop-color="#B07442"/><stop offset="0.5" stop-color="#94602F"/><stop offset="1" stop-color="#875629"/>
+    </linearGradient>
+    <linearGradient id="gSteel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E6EAEF"/><stop offset="1" stop-color="#B9C1CB"/>
+    </linearGradient>
+    <linearGradient id="gSteelS" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#AEB6C1"/><stop offset="1" stop-color="#8E97A4"/>
+    </linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ===== heavy outer silhouette ===== -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#fork" transform="translate(134 161) rotate(14)"/>
+    <use href="#face"/>
+    <use href="#brim"/>
+    <g transform="translate(134 161) rotate(14)">
+      <rect x="-12" y="-58" width="24" height="21" rx="8"/>
+      <rect x="-12" y="-27" width="24" height="21" rx="8"/>
+    </g>
+  </g>
+
+  <!-- ===== interior: colour only ===== -->
+  <!-- pitchfork -->
+  <g transform="translate(134 161) rotate(14)">
+    <rect x="-5" y="-160" width="10" height="160" rx="5" fill="url(#gWood)"/>
+    <g fill="url(#gSteel)">
+      <path d="M-21 2 V30 L-17 37 L-13 30 V2 Z"/>
+      <path d="M-4 2 V32 L0 40 L4 32 V2 Z"/>
+    </g>
+    <path d="M13 2 V30 L17 37 L21 30 V2 Z" fill="url(#gSteelS)"/>
+    <path d="M0 2 V40 L4 32 V2 Z" fill="#8E97A4" opacity="0.6"/>
+    <rect x="-21" y="-4" width="42" height="11" rx="5" fill="url(#gSteel)"/>
+    <path d="M0 -4 H16 A5 5 0 0 1 21 1 V2 A5 5 0 0 1 16 7 H0 Z" fill="#8E97A4" opacity="0.55"/>
+  </g>
+
+  <!-- face under the front of the brim -->
+  <g clip-path="url(#faceClip)">
+    <use href="#face" fill="url(#gFace)"/>
+    <path d="M100 120 H140 V170 H100 Z" fill="#8A4E36" opacity="0.14"/>
+    <path d="M97 160 Q100 162.5 103 160" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- brim on a contact shadow -->
+  <use href="#brim" fill="#2B2230" opacity="0.28" transform="translate(0 3)"/>
+  <use href="#brim" fill="url(#gStraw)"/>
+  <g clip-path="url(#brimClip)">
+    <use href="#shadeR" fill="url(#gStrawS)"/>
+    <circle cx="100" cy="74" r="55" fill="none" stroke="#D9AA52" stroke-width="3" opacity="0.55"/>
+  </g>
+
+  <!-- blue patch sewn on the back-left of the brim -->
+  <g transform="rotate(-20 58 42)">
+    <rect x="42" y="28" width="31" height="28" rx="6" fill="#2B2230" opacity="0.22" transform="translate(0 2)"/>
+    <rect x="42" y="28" width="31" height="28" rx="6" fill="url(#gPatch)"/>
+  </g>
+
+  <!-- red band + crown -->
+  <use href="#band" fill="#7A4A1E" opacity="0.35" transform="translate(0 4)"/>
+  <use href="#band" fill="url(#gBand)"/>
+  <g clip-path="url(#bandClip)"><use href="#shadeR" fill="#8E3128" opacity="0.45"/></g>
+  <use href="#crown" fill="#8E3128" opacity="0.5" transform="translate(0 2)"/>
+  <use href="#crown" fill="url(#gCrown)"/>
+  <g clip-path="url(#crownClip)"><use href="#shadeR" fill="url(#gCrownS)"/></g>
+
+  <!-- hands on the shaft -->
+  <g transform="translate(134 161) rotate(14)">
+    <rect x="-12" y="-58" width="24" height="21" rx="8" fill="url(#gHand)"/>
+    <rect x="-12" y="-25" width="24" height="21" rx="8" fill="#2B2230" opacity="0.3"/>
+    <rect x="-12" y="-27" width="24" height="21" rx="8" fill="url(#gHand)"/>
+  </g>
+</svg>

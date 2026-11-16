@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- Variant 2: bubblier hood with a soft rounded tip, a mantle of layered leaf petals instead of the cape lobes,
+       rounded-rectangle mitten hands. Facing = DOWN (+y). Rotate the whole sprite around (100,100) to aim. -->
+  <defs>
+    <path id="hood" d="M91 25 C96 18 104 18 109 25 C130 40 159 64 161 100 C163 134 140 156 100 156 C60 156 37 134 39 100 C41 64 70 40 91 25 Z"/>
+    <clipPath id="hoodClip"><use href="#hood"/></clipPath>
+    <path id="open" d="M63 133 C65 102 135 102 137 133 C133 152 67 152 63 133 Z"/>
+    <clipPath id="openClip"><use href="#open"/></clipPath>
+    <!-- leaf petal pointing +x, root at 0,0 -->
+    <path id="leaf" d="M0 0 C14 -19 44 -19 60 0 C44 19 14 19 0 0 Z"/>
+    <path id="rib" d="M6 0 C20 -2 34 -2 48 0"/>
+  </defs>
+
+  <g stroke="#2B2230" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <!-- quiver peeking out the back-right -->
+    <g transform="rotate(30 138 52)">
+      <path d="M130 30 C120 24 118 12 124 6 C132 12 134 22 130 30 Z" fill="#FFF8E8"/>
+      <path d="M146 30 C156 24 158 12 152 6 C144 12 142 22 146 30 Z" fill="#9AD17F"/>
+      <rect x="120" y="26" width="36" height="50" rx="12" fill="#A0683A"/>
+      <rect x="120" y="40" width="36" height="7" fill="#7A4A26"/>
+    </g>
+
+    <!-- leaf-petal mantle: back row (dark) -->
+    <g fill="#3E7A44">
+      <use href="#leaf" transform="translate(66 106) rotate(200)"/>
+      <use href="#leaf" transform="translate(134 106) rotate(-20)"/>
+      <use href="#leaf" transform="translate(70 116) rotate(134)"/>
+      <use href="#leaf" transform="translate(130 116) rotate(46)"/>
+    </g>
+    <!-- front row (mid) -->
+    <g fill="#5FA35A">
+      <use href="#leaf" transform="translate(66 112) rotate(166)"/>
+      <use href="#leaf" transform="translate(134 112) rotate(14)"/>
+    </g>
+    <g fill="none" stroke-width="2.5">
+      <use href="#rib" stroke="#2F6236" transform="translate(66 106) rotate(200)"/>
+      <use href="#rib" stroke="#2F6236" transform="translate(134 106) rotate(-20)"/>
+      <use href="#rib" stroke="#2F6236" transform="translate(70 116) rotate(134)"/>
+      <use href="#rib" stroke="#2F6236" transform="translate(130 116) rotate(46)"/>
+      <use href="#rib" stroke="#3E7A44" transform="translate(66 112) rotate(166)"/>
+      <use href="#rib" stroke="#3E7A44" transform="translate(134 112) rotate(14)"/>
+    </g>
+
+    <!-- hood base -->
+    <use href="#hood" fill="#3E7A44"/>
+  </g>
+
+  <!-- hood: lit body offset up-left leaves a soft-edged shadow crescent lower-right -->
+  <g clip-path="url(#hoodClip)">
+    <use href="#hood" fill="#5FA35A" transform="translate(-8 -7)"/>
+    <path d="M100 18 C97 42 98 68 100 92" fill="none" stroke="#3E7A44" stroke-width="4" stroke-linecap="round"/>
+    <path d="M70 52 C62 62 56 74 54 88" fill="none" stroke="#9AD17F" stroke-width="9" stroke-linecap="round"/>
+  </g>
+  <use href="#hood" fill="none" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- chunky round brim + face opening -->
+  <g stroke="#2B2230" stroke-width="4" stroke-linejoin="round">
+    <path d="M48 134 C46 86 154 86 152 134 C150 154 130 162 100 162 C70 162 50 154 48 134 Z" fill="#F2B53A"/>
+    <use href="#open" fill="#2B2230"/>
+  </g>
+
+  <!-- face -->
+  <g clip-path="url(#openClip)">
+    <path d="M65 143 C67 119 133 119 135 143 C131 161 69 161 65 143 Z" fill="#F2C7A0"/>
+    <path d="M122 121 C138 131 136 151 122 161 L150 161 L150 117 Z" fill="#D99C75"/>
+    <path d="M56 98 H144 V123 C122 116 78 116 56 123 Z" fill="#2B2230"/>
+    <ellipse cx="76" cy="145" rx="6" ry="3.5" fill="#E8A383"/>
+    <ellipse cx="124" cy="145" rx="6" ry="3.5" fill="#E8A383"/>
+  </g>
+
+  <!-- leaf clasp -->
+  <path d="M100 85 C112 91 114 104 100 113 C86 104 88 91 100 85 Z" fill="#9AD17F" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M100 90 V108" stroke="#3E7A44" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- bow string -->
+  <path d="M38 154 L100 157 L162 154" fill="none" stroke="#2B2230" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M38 154 L100 157 L162 154" fill="none" stroke="#FFF8E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g stroke="#2B2230" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <!-- arrow -->
+    <path d="M100 152 V194" stroke="#2B2230" stroke-width="7"/>
+    <path d="M100 152 V194" stroke="#A0683A" stroke-width="3"/>
+    <path d="M89 192 Q100 190 111 192 L100 208 Z" fill="#C9CED6"/>
+    <path d="M100 195 V203" stroke="#8F97A3" stroke-width="2.5"/>
+
+    <!-- recurve bow -->
+    <path d="M34 146 C30 156 36 164 44 166 C60 178 80 184 100 184 C120 184 140 178 156 166 C164 164 170 156 166 146"
+          fill="none" stroke="#2B2230" stroke-width="12"/>
+    <path d="M34 146 C30 156 36 164 44 166 C60 178 80 184 100 184 C120 184 140 178 156 166 C164 164 170 156 166 146"
+          fill="none" stroke="#A0683A" stroke-width="5"/>
+    <path d="M118 182 C134 179 148 173 156 166" fill="none" stroke="#7A4A26" stroke-width="5" stroke-linecap="butt"/>
+
+    <!-- mitten hands: rounded rectangles wrapping grip and string -->
+    <rect x="86" y="174" width="28" height="21" rx="8" fill="#F2C7A0"/>
+    <rect x="87" y="146" width="26" height="21" rx="8" fill="#F2C7A0"/>
+  </g>
+  <!-- knuckle creases + shade -->
+  <g fill="none" stroke="#D99C75" stroke-width="2.5" stroke-linecap="round">
+    <path d="M95 189 V192"/><path d="M100 189 V192"/><path d="M105 189 V192"/>
+    <path d="M95 161 V164"/><path d="M100 161 V164"/><path d="M105 161 V164"/>
+  </g>
+</svg>

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- Variant 2: flat two-tone leaf hood split by a vein, layered leaf-petal shoulders, solid tapered bow, no sheen/highlights, one line weight. Front = DOWN. -->
+  <defs>
+    <path id="hood" d="M100 14 C118 32 150 56 159 92 C166 124 146 153 100 155 C54 153 34 124 41 92 C50 56 82 32 100 14 Z"/>
+    <clipPath id="hoodClip"><use href="#hood"/></clipPath>
+    <path id="open" d="M62 132 C64 100 136 100 138 132 C134 152 66 152 62 132 Z"/>
+    <clipPath id="openClip"><use href="#open"/></clipPath>
+  </defs>
+
+  <g stroke="#2B2230" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <!-- quiver -->
+    <g transform="rotate(30 138 52)">
+      <path d="M130 30 C120 24 118 12 124 6 C132 12 134 22 130 30 Z" fill="#FFF8E8"/>
+      <path d="M146 30 C156 24 158 12 152 6 C144 12 142 22 146 30 Z" fill="#9AD17F"/>
+      <rect x="120" y="26" width="36" height="50" rx="10" fill="#A0683A"/>
+      <rect x="120" y="40" width="36" height="7" fill="#7A4A26"/>
+    </g>
+
+    <!-- layered leaf petals, back row (left, right) -->
+    <path d="M60 96 C34 88 12 104 8 134 C28 140 52 128 70 112 Z" fill="#2F6A39"/>
+    <path d="M140 96 C166 88 188 104 192 134 C172 140 148 128 130 112 Z" fill="#2F6A39"/>
+    <!-- front row, lower petals -->
+    <path d="M52 112 C30 114 18 134 22 158 C44 156 66 142 76 126 Z" fill="#3E7A44"/>
+    <path d="M148 112 C170 114 182 134 178 158 C156 156 134 142 124 126 Z" fill="#3E7A44"/>
+
+    <!-- hood: light half left, dark half right, split by the vein -->
+    <use href="#hood" fill="#5FA35A"/>
+  </g>
+  <g clip-path="url(#hoodClip)">
+    <path d="M100 14 C97 40 98 66 100 160 L170 160 L170 10 Z" fill="#3E7A44"/>
+    <!-- side veins -->
+    <path d="M99 52 C86 52 76 58 68 68" fill="none" stroke="#3E7A44" stroke-width="4" stroke-linecap="round"/>
+    <path d="M101 52 C114 52 124 58 132 68" fill="none" stroke="#2F6A39" stroke-width="4" stroke-linecap="round"/>
+    <path d="M99 74 C84 74 72 80 64 90" fill="none" stroke="#3E7A44" stroke-width="4" stroke-linecap="round"/>
+    <path d="M101 74 C116 74 128 80 136 90" fill="none" stroke="#2F6A39" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <use href="#hood" fill="none" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- slim gold brim + opening -->
+  <g stroke="#2B2230" stroke-width="4" stroke-linejoin="round">
+    <path d="M52 134 C52 92 148 92 148 134 C146 152 130 158 100 158 C70 158 54 152 52 134 Z" fill="#F2B53A"/>
+    <use href="#open" fill="#2B2230"/>
+  </g>
+
+  <!-- face: flat, two plain eyes, no highlights or blush -->
+  <g clip-path="url(#openClip)">
+    <path d="M64 142 C66 118 134 118 136 142 C132 160 68 160 64 142 Z" fill="#F2C7A0"/>
+    <path d="M122 120 C138 130 136 150 122 160 L150 160 L150 116 Z" fill="#E2A67E"/>
+    <path d="M56 96 H144 V122 C122 115 78 115 56 122 Z" fill="#2B2230"/>
+  </g>
+
+  <!-- leaf clasp -->
+  <path d="M100 86 C111 92 113 104 100 112 C87 104 89 92 100 86 Z" fill="#9AD17F" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- string -->
+  <path d="M38 154 L100 156 L162 154" fill="none" stroke="#2B2230" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g stroke="#2B2230" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <!-- arrow: shaft + head, same line weight -->
+    <path d="M97 152 H103 V192 H97 Z" fill="#A0683A"/>
+    <path d="M90 190 L100 206 L110 190 Z" fill="#C9CED6"/>
+
+    <!-- solid tapered bow, drawn as a filled shape -->
+    <path d="M30 144 C24 158 34 170 46 173 C62 186 80 191 100 191 C120 191 138 186 154 173 C166 170 176 158 170 144 C166 150 164 156 158 160 C142 172 122 178 100 178 C78 178 58 172 42 160 C36 156 34 150 30 144 Z" fill="#A0683A"/>
+    <rect x="88" y="177" width="24" height="15" rx="5" fill="#F2B53A"/>
+
+    <!-- rounded-rectangle hands -->
+    <rect x="88" y="174" width="24" height="22" rx="9" fill="#F2C7A0"/>
+    <rect x="89" y="147" width="22" height="20" rx="8" fill="#F2C7A0"/>
+  </g>
+</svg>

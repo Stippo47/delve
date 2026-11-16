@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- Variant 3 "Leaf Cloak + Scarf": veined leaf hood and veined shoulder leaves, berry scarf wrapped under the face instead of a gold brim,
+       leaf-tipped bow, finger-lined hands. Line system: thick dark OUTER outline, thin tone-on-tone INNER lines.
+       Single sprite. Front = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <path id="petal" d="M62 90 C34 88 12 108 8 142 C34 146 58 136 74 118 Z"/>
+    <path id="hood" d="M100 12 C118 30 152 56 162 92 C170 124 150 156 100 158 C50 156 30 124 38 92 C48 56 82 30 100 12 Z"/>
+    <path id="rim" d="M53 132 C53 96 147 96 147 132 C147 156 128 160 100 160 C72 160 53 156 53 132 Z"/>
+    <path id="open" d="M64 132 C66 106 134 106 136 132 C132 148 68 148 64 132 Z"/>
+    <path id="scarf" d="M22 152 C38 142 66 146 100 146 C134 146 162 142 178 152 C172 160 176 166 170 172 C150 176 126 171 100 171 C74 171 50 176 30 172 C24 166 28 160 22 152 Z"/>
+    <path id="bow" d="M30 134 C24 158 58 186 100 186 C142 186 176 158 170 134 C166 148 150 164 130 172 C118 176 110 176 100 176 C90 176 82 176 70 172 C50 164 34 148 30 134 Z"/>
+    <g id="quiver" transform="translate(-4 4) rotate(30 138 52)">
+      <path d="M130 31 C119 26 117 12 123 5 C132 10 135 22 130 31 Z"/>
+      <path d="M146 31 C157 26 159 12 153 5 C144 10 141 22 146 31 Z"/>
+      <rect x="120" y="26" width="36" height="50" rx="10"/>
+    </g>
+    <clipPath id="hoodClip"><use href="#hood"/></clipPath>
+    <clipPath id="openClip"><use href="#open"/></clipPath>
+    <clipPath id="petalClip"><use href="#petal"/></clipPath>
+  </defs>
+
+  <!-- 1. thick dark outer outline for the whole silhouette -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="11" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#petal"/>
+    <use href="#petal" transform="matrix(-1 0 0 1 200 0)"/>
+    <use href="#quiver"/>
+    <use href="#hood"/>
+    <use href="#rim"/>
+    <use href="#scarf"/>
+    <use href="#bow"/>
+    <path d="M100 150 V196" stroke-width="15"/>
+    <path d="M100 187 C111 192 112 197 100 203 C88 197 89 192 100 187 Z"/>
+    <circle cx="100" cy="158" r="11"/>
+    <circle cx="100" cy="181" r="11"/>
+  </g>
+
+  <!-- 2. coloured shapes with thin tone-on-tone inner lines -->
+  <g stroke-linejoin="round" stroke-linecap="round">
+    <!-- shoulder leaves -->
+    <g id="petalArt">
+      <use href="#petal" fill="#337046" stroke="#245838" stroke-width="2.5"/>
+      <path d="M64 96 C42 100 26 116 15 137" fill="none" stroke="#245838" stroke-width="2.5"/>
+    </g>
+    <use href="#petalArt" transform="matrix(-1 0 0 1 200 0)"/>
+
+    <!-- quiver -->
+    <g transform="translate(-4 4) rotate(30 138 52)">
+      <path d="M130 31 C119 26 117 12 123 5 C132 10 135 22 130 31 Z" fill="#FFF3DA" stroke="#D9CBAA" stroke-width="2.5"/>
+      <path d="M146 31 C157 26 159 12 153 5 C144 10 141 22 146 31 Z" fill="#A9DB86" stroke="#6FAE58" stroke-width="2.5"/>
+      <rect x="120" y="26" width="36" height="50" rx="10" fill="#A56B3C" stroke="#7A4727" stroke-width="2.5"/>
+      <path d="M120 41 H156 V48 H120 Z" fill="#7A4727"/>
+    </g>
+
+    <!-- hood: hard-shaded leaf -->
+    <use href="#hood" fill="#3B7A45"/>
+    <g clip-path="url(#hoodClip)">
+      <use href="#hood" fill="#5FA95B" transform="translate(-8 -6)"/>
+      <!-- veins -->
+      <g fill="none" stroke="#2F6B3B" stroke-width="3">
+        <path d="M100 26 V92"/>
+        <path d="M100 74 C90 70 82 62 78 54"/>
+        <path d="M100 74 C110 70 118 62 122 54"/>
+        <path d="M100 52 C94 48 90 43 88 38"/>
+        <path d="M100 52 C106 48 110 43 112 38"/>
+      </g>
+    </g>
+    <use href="#hood" fill="none" stroke="#2F6B3B" stroke-width="2.5"/>
+
+    <!-- leaf-green rim around the face -->
+    <use href="#rim" fill="#A8DA84" stroke="#6FAE58" stroke-width="2.5"/>
+
+    <!-- face -->
+    <use href="#open" fill="#F6CFA6" stroke="#6FAE58" stroke-width="2.5"/>
+    <g clip-path="url(#openClip)">
+      <path d="M60 100 H140 V118 C120 112 80 112 60 118 Z" fill="#E3A582"/>
+      <path d="M124 112 C142 124 138 146 122 152 L150 152 L150 108 Z" fill="#E3A582"/>
+      <!-- eyeless: cheeks and a nose nub -->
+      <ellipse cx="78" cy="136" rx="8" ry="5" fill="#EE9488" opacity="0.8"/>
+      <ellipse cx="122" cy="136" rx="8" ry="5" fill="#EE9488" opacity="0.8"/>
+      <ellipse cx="100" cy="132" rx="6" ry="4.2" fill="#E8A583"/>
+    </g>
+
+    <!-- berry scarf under the face -->
+    <use href="#scarf" fill="#D94F5C" stroke="#A8323F" stroke-width="2.5"/>
+    <path d="M34 160 C56 166 78 164 100 164 C122 164 144 166 166 160" fill="none" stroke="#B83A4A" stroke-width="3"/>
+  </g>
+
+  <!-- bow string -->
+  <path d="M30 134 L100 158 L170 134" fill="none" stroke="#2B2230" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M30 134 L100 158 L170 134" fill="none" stroke="#FFF3DA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g stroke-linejoin="round" stroke-linecap="round">
+    <!-- arrow -->
+    <path d="M100 150 V196" fill="none" stroke="#C48A55" stroke-width="5"/>
+    <path d="M100 187 C111 192 112 197 100 203 C88 197 89 192 100 187 Z" fill="#CBD2DA" stroke="#8F99A8" stroke-width="2.5"/>
+
+    <!-- bow with leaf tips -->
+    <use href="#bow" fill="#A56B3C" stroke="#7A4727" stroke-width="2.5"/>
+    <g id="tipL">
+      <path d="M31 138 C18 134 12 120 16 108 C28 112 36 124 31 138 Z" fill="#A9DB86" stroke="#5FA35A" stroke-width="2.5"/>
+    </g>
+    <use href="#tipL" transform="matrix(-1 0 0 1 200 0)"/>
+  </g>
+
+  <!-- hands -->
+  <g fill="#F6CFA6" stroke="#C98B66" stroke-width="2.5" stroke-linecap="round">
+    <circle cx="100" cy="158" r="10.5"/>
+    <circle cx="100" cy="181" r="10.5"/>
+    <path d="M94 153 Q100 150 106 153" fill="none"/>
+    <path d="M94 176 Q100 173 106 176" fill="none"/>
+  </g>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- BARBARIAN design 3 "Bullskull": a horned bull skull worn as a full mask (no face shows), horns sweeping forward like a charge; a double-bit greataxe yoked across the shoulders with both wrists hooked over the haft. Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#C98A52"/><stop offset="1" stop-color="#A9703E"/></linearGradient>
+    <clipPath id="c2"><rect x="100" y="-300" width="400" height="600"/></clipPath>
+    <linearGradient id="g3" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#9C6536"/><stop offset="1" stop-color="#80512A"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#EEF1F4"/><stop offset="1" stop-color="#C3CAD3"/></linearGradient>
+    <clipPath id="c5"><rect x="22" y="-300" width="400" height="600"/></clipPath>
+    <linearGradient id="g6" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#AEB7C3"/><stop offset="1" stop-color="#8A95A5"/></linearGradient>
+    <linearGradient id="g7" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#8C7468"/><stop offset="1" stop-color="#6E5850"/></linearGradient>
+    <linearGradient id="g8" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#5E4A44"/><stop offset="1" stop-color="#4A3A36"/></linearGradient>
+    <linearGradient id="g9" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#FBF5E6"/><stop offset="1" stop-color="#E8DBBE"/></linearGradient>
+    <clipPath id="c10"><rect x="100" y="-300" width="400" height="600"/></clipPath>
+    <linearGradient id="g11" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#DDCDAA"/><stop offset="1" stop-color="#C6B38C"/></linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+  </defs>
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M14 38 H186 Q192 38 192 44 Q192 50 186 50 H14 Z"/>
+    <path d="M16 36 C12 26 4 16 0 4 Q22 -6 44 4 C40 16 32 26 28 36 L28 52 C32 62 40 72 44 84 Q22 94 0 84 C4 72 12 62 16 52 Z"/>
+    <path d="M62 76 C42 70 22 80 14 100 C8 120 16 142 36 160 C32 140 30 120 38 108 C44 100 54 98 64 100 Z"/>
+    <path d="M138 76 C158 70 178 80 186 100 C192 120 184 142 164 160 C168 140 170 120 162 108 C156 100 146 98 136 100 Z"/>
+    <path d="M100 30 C132 30 150 48 150 76 C150 94 142 104 130 110 C126 126 124 144 120 156 C116 168 108 172 100 172 C92 172 84 168 80 156 C76 144 74 126 70 110 C58 104 50 94 50 76 C50 48 68 30 100 30 Z"/>
+    <rect x="36" y="32" width="26" height="24" rx="9"/>
+    <rect x="138" y="32" width="26" height="24" rx="9"/>
+  </g>
+  <path d="M14 38 H186 Q192 38 192 44 Q192 50 186 50 H14 Z" fill="url(#g1)"/><g clip-path="url(#c2)"><path d="M14 38 H186 Q192 38 192 44 Q192 50 186 50 H14 Z" fill="url(#g3)"/></g>
+  <g transform="translate(0 3)"><path d="M16 36 C12 26 4 16 0 4 Q22 -6 44 4 C40 16 32 26 28 36 L28 52 C32 62 40 72 44 84 Q22 94 0 84 C4 72 12 62 16 52 Z" fill="#2B2230" opacity="0.25"/></g>
+  <path d="M16 36 C12 26 4 16 0 4 Q22 -6 44 4 C40 16 32 26 28 36 L28 52 C32 62 40 72 44 84 Q22 94 0 84 C4 72 12 62 16 52 Z" fill="url(#g4)"/><g clip-path="url(#c5)"><path d="M16 36 C12 26 4 16 0 4 Q22 -6 44 4 C40 16 32 26 28 36 L28 52 C32 62 40 72 44 84 Q22 94 0 84 C4 72 12 62 16 52 Z" fill="url(#g6)"/></g>
+  <g transform="translate(0 3)"><path d="M62 76 C42 70 22 80 14 100 C8 120 16 142 36 160 C32 140 30 120 38 108 C44 100 54 98 64 100 Z" fill="#2B2230" opacity="0.25"/></g>
+  <path d="M62 76 C42 70 22 80 14 100 C8 120 16 142 36 160 C32 140 30 120 38 108 C44 100 54 98 64 100 Z" fill="url(#g7)"/>
+  <g transform="translate(0 3)"><path d="M138 76 C158 70 178 80 186 100 C192 120 184 142 164 160 C168 140 170 120 162 108 C156 100 146 98 136 100 Z" fill="#2B2230" opacity="0.25"/></g>
+  <path d="M138 76 C158 70 178 80 186 100 C192 120 184 142 164 160 C168 140 170 120 162 108 C156 100 146 98 136 100 Z" fill="url(#g8)"/>
+  <g transform="translate(0 3)"><path d="M100 30 C132 30 150 48 150 76 C150 94 142 104 130 110 C126 126 124 144 120 156 C116 168 108 172 100 172 C92 172 84 168 80 156 C76 144 74 126 70 110 C58 104 50 94 50 76 C50 48 68 30 100 30 Z" fill="#2B2230" opacity="0.3"/></g>
+  <path d="M100 30 C132 30 150 48 150 76 C150 94 142 104 130 110 C126 126 124 144 120 156 C116 168 108 172 100 172 C92 172 84 168 80 156 C76 144 74 126 70 110 C58 104 50 94 50 76 C50 48 68 30 100 30 Z" fill="url(#g9)"/><g clip-path="url(#c10)"><path d="M100 30 C132 30 150 48 150 76 C150 94 142 104 130 110 C126 126 124 144 120 156 C116 168 108 172 100 172 C92 172 84 168 80 156 C76 144 74 126 70 110 C58 104 50 94 50 76 C50 48 68 30 100 30 Z" fill="url(#g11)"/></g>
+  <g transform="translate(0 2.5)"><rect x="36" y="32" width="26" height="24" rx="9" fill="#2B2230" opacity="0.3"/></g>
+  <rect x="36" y="32" width="26" height="24" rx="9" fill="url(#gHand)"/>
+  <g transform="translate(0 2.5)"><rect x="138" y="32" width="26" height="24" rx="9" fill="#2B2230" opacity="0.3"/></g>
+  <rect x="138" y="32" width="26" height="24" rx="9" fill="url(#gHand)"/>
+</svg>

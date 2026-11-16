@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#120c0a">
+<title>Style 4 — Toy</title>
+<style>
+  html,body{margin:0;height:100%;background:#120c0a;overflow:hidden;overscroll-behavior:none;touch-action:none;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+  canvas{position:fixed;left:0;top:0;display:block}
+  .chip{font:800 11px/1 ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.03em;
+    color:#fbe9cf;background:linear-gradient(#4f382b,#2c1d16);border:1px solid rgba(255,214,160,.3);border-radius:999px;
+    box-shadow:0 2px 0 #170e0a,0 3px 8px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,235,200,.25);padding:6px 11px;display:inline-block}
+  #tag{position:fixed;left:calc(env(safe-area-inset-left,0px) + 8px);bottom:calc(env(safe-area-inset-bottom,0px) + 5px);pointer-events:none;opacity:.94}
+  #tog{position:fixed;right:calc(env(safe-area-inset-right,0px) + 2px);top:calc(env(safe-area-inset-top,0px) + 0px);
+    width:96px;height:44px;border:0;background:none;padding:0;margin:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  #tog .chip{padding:7px 12px}
+  #tog:active .chip{transform:translateY(1px);box-shadow:0 1px 0 #170e0a,inset 0 1px 0 rgba(255,235,200,.2)}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="tag" class="chip">Style 4 — Toy</div>
+<button id="tog" aria-label="Toggle lineup view"><span class="chip" id="togl">&#9679; Lineup</span></button>
+<script>
+'use strict';
+/* =====================================================================
+   STYLE 4 — "SOFT TOY / TABLETOP MINIATURES"
+   Plain canvas 2D. All shading is cached to offscreen sprites; the hot
+   path only blits, plus a few cheap strokes for faces & bows.
+   ===================================================================== */
+
+// ---------- SHARED PALETTE ----------
+const PAL = {
+  bg:'#120c0a',
+  floorA:'#6f5c4d', floorB:'#665446', floorC:'#776350', floorD:'#5f4f43', grout:'#2a201b',
+  wallTop:'#5a4a40', wallTop2:'#4f4038', wallFace:'#3a2d27', wallFace2:'#33271f', doorDark:'#080403',
+  torchGlow:'#ffad55', flameHot:'#fff4c0', flameMid:'#ffb43c', flameEdge:'#ff5a1e',
+  shadow:'#1a0b05',
+  baseDark:'#251a15', heroRim:'#f2c66d', foeRim:'#d4574a',
+  knight:'#4d74d4', steel:'#cfd8e2', steelDark:'#6c7787', plume:'#e8483e', shieldFace:'#c8433a', gold:'#f1c35a', goldDark:'#8d5a19',
+  bladeHi:'#f2fcff', bladeLo:'#8fc3df',
+  archer:'#5ba85a', hood:'#3b7a45', skin:'#f5caa0', cheek:'#ff8a80', wood:'#c08a50', woodDark:'#5e3518', string:'#f6ecd4', fletch:'#f26b5b', leather:'#80502c',
+  rogue:'#8d5ecb', mask:'#2a1f3e', tail:'#3b2a5a', tailHi:'#6a52a0', dagger:'#e4ebf2', teal:'#3cbcab', venom:'#9be84c',
+  rat:'#a38f83', ratSnout:'#c6b3a6', ratPink:'#f4a3a6', ratTail:'#e59a99',
+  slime:'#ff5f9b', slimeCore:'#ffd0e2', slimeRim:'#b52a64',
+  bone:'#efe5cc', boneDark:'#9d8b68', socket:'#352421', ember:'#ffb347', rust:'#a8603a', rustDark:'#5f2f18', iron:'#9aa1aa',
+  stone:'#9a8774', stoneDark:'#4a3b31', moss:'#6f8f45',
+  burn:'#ff7a26', chill:'#7fd4ff', ice:'#c8eeff', poison:'#96de3e', gas:'#8fd14a', shock:'#ffe14a',
+  text:'#fff4e0', textDark:'#2a170f', crit:'#ffd84a', hpHero:'#86e37a', hpFoe:'#ff6a55',
+};
+const FONT = 'ui-rounded,"SF Pro Rounded","Nunito","Varela Round",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif';
+const TAU = Math.PI * 2;
+const WORLD_W = 844, WORLD_H = 390;
+const ROOM = { x0: 34, y0: 50, x1: 810, y1: 362 };
+const PILLARS = [ { x: 330, y: 148, r: 22 }, { x: 556, y: 272, r: 22 } ];
+const TORCHES = [ { x: 250, y: 34, face: true }, { x: 610, y: 34, face: true }, { x: 17, y: 214 }, { x: 700, y: 377 } ];
+const OIL = { x: 640, y: 150, parts: [[0,0,34,19],[24,7,18,12],[-25,6,16,11],[5,-12,16,9],[-8,13,14,8]], fire: 0, cool: 0 };
+const SPIKES = { x: 196, y: 262, w: 60, h: 60, t: 1.2, rise: 0 };
+
+// ---------- UTIL ----------
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const rand = (a, b) => a + Math.random() * (b - a);
+const pick = a => a[(Math.random() * a.length) | 0];
+const easeOut = t => 1 - (1 - t) * (1 - t) * (1 - t);
+function angDiff(a, b) { let d = (b - a) % TAU; if (d > Math.PI) d -= TAU; if (d < -Math.PI) d += TAU; return d; }
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function hx(c) { c = c.slice(1); if (c.length === 3) c = c.replace(/./g, x => x + x); return [parseInt(c.slice(0,2),16), parseInt(c.slice(2,4),16), parseInt(c.slice(4,6),16)]; }
+function toHex(a) { return '#' + a.map(v => Math.round(clamp(v,0,255)).toString(16).padStart(2,'0')).join(''); }
+function mix(a, b, t) { const A = hx(a), B = hx(b); return toHex([A[0]+(B[0]-A[0])*t, A[1]+(B[1]-A[1])*t, A[2]+(B[2]-A[2])*t]); }
+function rgba(c, a) { const A = hx(c); return `rgba(${A[0]},${A[1]},${A[2]},${a})`; }
+function rrect(g, x, y, w, h, r) { r = Math.min(r, w / 2, h / 2); g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+
+// ---------- CANVAS / DPR ----------
+const cvs = document.getElementById('c');
+const ctx = cvs.getContext('2d', { alpha: false });
+let DPR = 1, VS = 1, OX = 0, OY = 0, RS = 1, CW = 0, CH = 0;
+let floorC = null, vigC = null;
+
+// ---------- SPRITE CACHE ----------
+// A sprite covers world-rect [x0,x0+w]x[y0,y0+h] around its origin and is rasterised at
+// RS*ZOOM px per world unit, so it is crisp at the current view scale (ZOOM>1 for lineup).
+const cache = new Map();
+let ZOOM = 1;
+function spr(key, x0, y0, w, h, paint) {
+  const k = key + '@' + ZOOM;
+  let s = cache.get(k);
+  if (s) return s;
+  const res = RS * ZOOM;
+  const c = document.createElement('canvas');
+  c.width = Math.max(1, Math.ceil(w * res)); c.height = Math.max(1, Math.ceil(h * res));
+  const g = c.getContext('2d');
+  g.setTransform(res, 0, 0, res, -x0 * res, -y0 * res);
+  paint(g);
+  s = { c, x0, y0, w, h, key };
+  cache.set(k, s);
+  return s;
+}
+const sprC = (key, R, paint) => spr(key, -R, -R, 2 * R, 2 * R, paint);
+// Soft drop-shadow version of any sprite (shadowBlur only at cache time, never per frame).
+function sprShadow(src, blur = 1.6, alpha = 0.42) {
+  const pad = blur * 2.5;
+  return spr(src.key + '#sh' + blur + alpha, src.x0 - pad, src.y0 - pad, src.w + 2 * pad, src.h + 2 * pad, g => {
+    const res = RS * ZOOM, off = 5000;
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    g.shadowColor = rgba(PAL.shadow, alpha); g.shadowBlur = blur * res; g.shadowOffsetX = off;
+    g.drawImage(src.c, pad * res - off, pad * res);
+  });
+}
+function blit(s, x, y) { ctx.drawImage(s.c, x + s.x0, y + s.y0, s.w, s.h); }
+function blitK(s, x, y, k) { ctx.drawImage(s.c, x + s.x0 * k, y + s.y0 * k, s.w * k, s.h * k); }
+
+// ---------- CORE PAINTER: the soft vinyl blob ----------
+function paintBlob(g, r, c, o = {}) {
+  const hi = o.hi || mix(c, '#ffffff', .55), lo = o.lo || mix(c, '#1b0d07', .58);
+  let gr = g.createRadialGradient(-r*.38, -r*.44, r*.04, -r*.12, -r*.14, r*1.2);
+  gr.addColorStop(0, hi); gr.addColorStop(.42, c); gr.addColorStop(1, lo);
+  g.beginPath(); g.arc(0, 0, r, 0, TAU); g.fillStyle = gr; g.fill();
+  g.save(); g.beginPath(); g.arc(0, 0, r, 0, TAU); g.clip();
+  gr = g.createRadialGradient(r*.62, r*.7, 0, r*.62, r*.7, r*.8);           // warm bounce light from the table
+  gr.addColorStop(0, `rgba(255,170,100,${o.bounce ?? .22})`); gr.addColorStop(1, 'rgba(255,170,100,0)');
+  g.fillStyle = gr; g.fillRect(-r, -r, 2*r, 2*r);
+  gr = g.createRadialGradient(-r*.1, -r*.1, r*.6, 0, 0, r*1.02);            // ambient occlusion rim
+  gr.addColorStop(0, 'rgba(20,8,4,0)'); gr.addColorStop(1, `rgba(20,8,4,${o.ao ?? .3})`);
+  g.fillStyle = gr; g.fillRect(-r, -r, 2*r, 2*r);
+  g.restore();
+  const sp = o.spec ?? 1;
+  if (sp > 0) {                                                              // glossy vinyl highlight
+    g.save(); g.translate(-r*.34, -r*.42); g.rotate(-.75); g.scale(1, .6);
+    gr = g.createRadialGradient(0, 0, 0, 0, 0, r*.42);
+    gr.addColorStop(0, `rgba(255,255,255,${.8*sp})`); gr.addColorStop(.5, `rgba(255,255,255,${.28*sp})`); gr.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gr; g.beginPath(); g.arc(0, 0, r*.42, 0, TAU); g.fill(); g.restore();
+    g.fillStyle = `rgba(255,255,255,${.85*sp})`; g.beginPath(); g.ellipse(-r*.44, -r*.5, Math.max(.5,r*.1), Math.max(.35,r*.065), -.75, 0, TAU); g.fill();
+  }
+  if (o.line !== false) { g.beginPath(); g.arc(0, 0, r - .35, 0, TAU); g.lineWidth = .7; g.strokeStyle = o.lineC || 'rgba(28,12,6,.5)'; g.stroke(); }
+}
+const ballSpr = (c, r, o) => sprC('ball' + c + r + (o ? JSON.stringify(o) : ''), r + 1, g => paintBlob(g, r, c, o));
+const shadowSpr = r => sprC('sh' + r, r * 1.7, g => {
+  const gr = g.createRadialGradient(0, 0, 0, 0, 0, r * 1.45);
+  gr.addColorStop(0, rgba(PAL.shadow, .55)); gr.addColorStop(.55, rgba(PAL.shadow, .4)); gr.addColorStop(1, rgba(PAL.shadow, 0));
+  g.fillStyle = gr; g.beginPath(); g.arc(0, 0, r * 1.45, 0, TAU); g.fill();
+});
+// Miniature base: thin bevelled ring in team colour peeking out under each figure.
+const baseSpr = (r, team) => sprC('base' + r + team, r + 5, g => {
+  const R = r + 2.6, rim = team === 'hero' ? PAL.heroRim : PAL.foeRim;
+  let gr = g.createRadialGradient(0, 0, R * .9, 0, 0, R + 2.2);
+  gr.addColorStop(0, 'rgba(15,6,3,.5)'); gr.addColorStop(1, 'rgba(15,6,3,0)');
+  g.fillStyle = gr; g.beginPath(); g.arc(0, 0, R + 2.2, 0, TAU); g.fill();
+  gr = g.createLinearGradient(-R, -R, R, R);
+  gr.addColorStop(0, mix(rim, '#ffffff', .35)); gr.addColorStop(.45, rim); gr.addColorStop(1, mix(rim, '#140804', .7));
+  g.fillStyle = gr; g.beginPath(); g.arc(0, 0, R, 0, TAU); g.fill();
+  g.fillStyle = PAL.baseDark; g.beginPath(); g.arc(0, 0, R - 1.3, 0, TAU); g.fill();
+  g.lineWidth = .6; g.strokeStyle = 'rgba(20,8,4,.7)'; g.beginPath(); g.arc(0, 0, R, 0, TAU); g.stroke();
+});

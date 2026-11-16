@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- ROGUE design 2 "Cutpurse": street thief in a puffy flat cap whose stiff peak juts out front over the face,
+       a fat loot sack hauled over the left shoulder by its neck, one dagger held out front-right.
+       Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <path id="crown" d="M100 38 C140 38 164 62 164 92 C164 120 142 134 100 134 C58 134 36 120 36 92 C36 62 60 38 100 38 Z"/>
+    <clipPath id="crownClip"><use href="#crown"/></clipPath>
+    <path id="peak" d="M58 118 C72 110 128 110 142 118 C150 140 128 164 100 164 C72 164 50 140 58 118 Z"/>
+    <clipPath id="peakClip"><use href="#peak"/></clipPath>
+    <path id="chin" d="M78 156 C82 148 118 148 122 156 C120 170 111 175 100 175 C89 175 80 170 78 156 Z"/>
+    <clipPath id="chinClip"><use href="#chin"/></clipPath>
+    <!-- sack: round body behind the shoulder, neck tapering toward the hand -->
+    <path id="sack" d="M -1.0 28.4 C -1.0 8.2 14.7 -3.0 32.6 -0.8 C 50.5 1.5 59.5 14.9 57.2 30.6 C 56.1 37.3 55.0 41.8 61.7 48.5 L 52.8 59.7 C 46.0 53.0 41.6 55.2 32.6 56.4 C 12.4 58.6 -1.0 46.3 -1.0 28.4 Z"/>
+    <clipPath id="sackClip"><use href="#sack"/></clipPath>
+    <path id="tuft" d="M56 52 C62 46 72 48 74 56 C76 64 70 70 64 70 C56 70 52 60 56 52 Z"/>
+    <g id="dagger">
+      <rect x="-15" y="8" width="30" height="8" rx="4"/>
+      <path d="M-5.5 15 H5.5 L5 40 L0 52 L-5 40 Z"/>
+    </g>
+    <path id="shadeR" d="M100 -10 V220 H220 V-10 Z"/>
+
+    <linearGradient id="gLit" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#8A95BE"/><stop offset="1" stop-color="#6E79A6"/>
+    </linearGradient>
+    <linearGradient id="gShade" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#5F6893"/><stop offset="1" stop-color="#4A527B"/>
+    </linearGradient>
+    <linearGradient id="gPeak" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4B5380"/><stop offset="1" stop-color="#5C6592"/>
+    </linearGradient>
+    <linearGradient id="gSackL" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#DDB781"/><stop offset="1" stop-color="#C09662"/>
+    </linearGradient>
+    <linearGradient id="gSackR" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#B98E5A"/><stop offset="1" stop-color="#9A7144"/>
+    </linearGradient>
+    <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F9CB5C"/><stop offset="1" stop-color="#E8A030"/>
+    </linearGradient>
+    <linearGradient id="gFace" x1="0" y1="150" x2="0" y2="175" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9A6250"/>
+      <stop offset="0.4" stop-color="#D49A76"/>
+      <stop offset="0.75" stop-color="#F2C7A0"/>
+      <stop offset="1" stop-color="#F6D0AC"/>
+    </linearGradient>
+    <linearGradient id="gSteelL" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EEF1F4"/><stop offset="1" stop-color="#C9CFD7"/>
+    </linearGradient>
+    <linearGradient id="gSteelR" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#AEB5C0"/><stop offset="1" stop-color="#8C94A1"/>
+    </linearGradient>
+    <linearGradient id="gGuard" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9C6A3E"/><stop offset="1" stop-color="#7A4E2B"/>
+    </linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ===== heavy outer silhouette ===== -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#sack"/>
+    <use href="#chin"/><use href="#peak"/><use href="#crown"/>
+    <use href="#tuft"/>
+    <use href="#dagger" transform="translate(142 146) rotate(-8)"/>
+    <rect x="130" y="136" width="24" height="21" rx="8" transform="rotate(-8 142 146)"/>
+    <rect x="40" y="42" width="24" height="21" rx="8" transform="rotate(-42 52 52)"/>
+  </g>
+
+  <!-- ===== interior ===== -->
+  <!-- loot sack, lit/shaded by its own centre -->
+  <use href="#sack" fill="url(#gSackL)"/>
+  <g clip-path="url(#sackClip)">
+    <path d="M33 -10 V90 H100 V-10 Z" fill="url(#gSackR)"/>
+    <path d="M12 28 C14 18 22 12 31 12" fill="none" stroke="#EBC896" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
+  </g>
+
+  <!-- chin peeking out under the peak -->
+  <g clip-path="url(#chinClip)">
+    <use href="#chin" fill="url(#gFace)"/>
+    <path d="M100 140 H130 V180 H100 Z" fill="#8A4E36" opacity="0.14"/>
+    <path d="M97 168 Q100 170.5 103 168" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <!-- peak, then the puffy crown overhanging it -->
+  <use href="#peak" fill="#2B2230" opacity="0.3" transform="translate(0 3)"/>
+  <use href="#peak" fill="url(#gPeak)"/>
+  <g clip-path="url(#peakClip)">
+    <use href="#shadeR" fill="#323962" opacity="0.55"/>
+    <use href="#crown" fill="#232842" opacity="0.45" transform="translate(0 6)"/>
+  </g>
+  <use href="#crown" fill="url(#gLit)"/>
+  <g clip-path="url(#crownClip)">
+    <use href="#shadeR" fill="url(#gShade)"/>
+    <!-- soft panel seams meeting at the top -->
+    <g fill="none" stroke-width="4" stroke-linecap="round" opacity="0.55">
+      <path d="M99 80 C82 70 66 60 50 56" stroke="#5E6895"/>
+      <path d="M101 80 C118 70 134 60 150 56" stroke="#3F4770"/>
+      <path d="M99 82 C86 94 70 106 52 112" stroke="#5E6895"/>
+      <path d="M101 82 C114 94 130 106 148 112" stroke="#3F4770"/>
+    </g>
+  </g>
+
+  <!-- gathered neck of the sack, held over the shoulder -->
+  <use href="#tuft" fill="#2D3352" opacity="0.4" transform="translate(1 3)"/>
+  <use href="#tuft" fill="url(#gSackL)"/>
+  <path d="M65 48 C70 49 73 52 74 56 C76 64 70 70 65 70 Z" fill="url(#gSackR)"/>
+
+  <!-- dagger, front-right -->
+  <g transform="translate(142 146) rotate(-8)">
+    <path d="M-5.5 15 H0 V52 L-5 40 Z" fill="url(#gSteelL)"/>
+    <path d="M0 15 H5.5 L5 40 L0 52 Z" fill="url(#gSteelR)"/>
+    <rect x="-15" y="8" width="30" height="8" rx="4" fill="url(#gGuard)"/>
+  </g>
+
+  <!-- hands -->
+  <rect x="131" y="138" width="22" height="20" rx="8" fill="#2B2230" opacity="0.3" transform="rotate(-8 142 146)"/>
+  <rect x="131" y="136" width="22" height="20" rx="8" fill="url(#gHand)" transform="rotate(-8 142 146)"/>
+  <rect x="41" y="44" width="22" height="20" rx="8" fill="#2B2230" opacity="0.3" transform="rotate(-42 52 52)"/>
+  <rect x="41" y="42" width="22" height="20" rx="8" fill="url(#gHand)" transform="rotate(-42 52 52)"/>
+</svg>

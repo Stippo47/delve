@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- ROGUE design 4 "Knife Fan": bare-headed, a shock of silver hair swept back into flame spikes, short teal
+       shoulder cape, a fan of three throwing knives spread in the right hand, left hand leading. Facing = DOWN (+y).
+       Rotate whole sprite around (100,100). -->
+  <defs>
+    <path id="cape" d="M32 122 C24 94 40 70 66 62 C88 56 112 56 134 62 C160 70 176 94 168 122 C162 138 38 138 32 122 Z"/>
+    <clipPath id="capeClip"><use href="#cape"/></clipPath>
+    <path id="hair" d="M56 120 C50 104 50 88 56 76 Q40 72 26 58 Q48 56 62 62 Q54 44 54 24 Q70 38 82 50 Q84 28 98 8 Q104 30 106 48 Q120 32 142 22 Q132 42 128 58 Q146 54 170 58 Q156 70 144 78 C150 90 150 104 144 120 C134 138 66 138 56 120 Z"/>
+    <clipPath id="hairClip"><use href="#hair"/></clipPath>
+    <path id="face" d="M66 128 C68 112 132 112 134 128 C134 150 120 160 100 160 C80 160 66 150 66 128 Z"/>
+    <clipPath id="faceClip"><use href="#face"/></clipPath>
+    <!-- fringe: the hair's front edge, three big locks over the brow -->
+    <path id="fringe" d="M54 114 C62 100 138 100 146 114 C146 122 142 128 138 128 L128 124 L118 134 L108 124 L94 134 L86 124 L72 132 L62 126 C56 124 54 120 54 114 Z"/>
+    <clipPath id="fringeClip"><use href="#fringe"/></clipPath>
+    <g id="knife">
+      <path d="M-5.5 12 H5.5 L7.5 34 L0 52 L-7.5 34 Z"/>
+    </g>
+    <path id="shadeR" d="M100 -10 V220 H220 V-10 Z"/>
+
+    <linearGradient id="gHairL" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#F5F1F8"/><stop offset="1" stop-color="#D9D2E4"/>
+    </linearGradient>
+    <linearGradient id="gHairR" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#C8BFD8"/><stop offset="1" stop-color="#A89DBE"/>
+    </linearGradient>
+    <linearGradient id="gCapeL" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3E9A93"/><stop offset="1" stop-color="#2E7F7A"/>
+    </linearGradient>
+    <linearGradient id="gCapeR" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2C746F"/><stop offset="1" stop-color="#215B58"/>
+    </linearGradient>
+    <linearGradient id="gFace" x1="0" y1="114" x2="0" y2="158" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9A6250"/>
+      <stop offset="0.35" stop-color="#C98E6C"/>
+      <stop offset="0.65" stop-color="#F2C7A0"/>
+      <stop offset="1" stop-color="#F6D0AC"/>
+    </linearGradient>
+    <linearGradient id="gSteelL" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EEF1F4"/><stop offset="1" stop-color="#C9CFD7"/>
+    </linearGradient>
+    <linearGradient id="gSteelR" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#AEB5C0"/><stop offset="1" stop-color="#8C94A1"/>
+    </linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ===== heavy outer silhouette ===== -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#cape"/><use href="#hair"/><use href="#face"/><use href="#fringe"/>
+    <use href="#knife" transform="translate(146 144) rotate(2)"/>
+    <use href="#knife" transform="translate(146 144) rotate(-42)"/>
+    <use href="#knife" transform="translate(146 144) rotate(-86)"/>
+    <rect x="132" y="136" width="24" height="21" rx="8" transform="rotate(-40 144 146)"/>
+    <rect x="56" y="146" width="24" height="21" rx="8" transform="rotate(10 68 156)"/>
+  </g>
+
+  <!-- ===== interior ===== -->
+  <!-- shoulder cape -->
+  <use href="#cape" fill="url(#gCapeL)"/>
+  <g clip-path="url(#capeClip)">
+    <use href="#shadeR" fill="url(#gCapeR)"/>
+    <use href="#hair" fill="#163E3C" opacity="0.4" transform="translate(0 4)"/>
+  </g>
+
+  <!-- hair -->
+  <use href="#hair" fill="url(#gHairL)"/>
+  <g clip-path="url(#hairClip)">
+    <use href="#shadeR" fill="url(#gHairR)"/>
+    <g fill="none" stroke-width="4" stroke-linecap="round" opacity="0.6">
+      <path d="M96 92 C90 76 90 56 96 30" stroke="#CFC6DD"/>
+      <path d="M90 96 C78 84 70 70 66 58" stroke="#CFC6DD"/>
+      <path d="M106 92 C112 78 118 64 130 50" stroke="#9A8FB2"/>
+    </g>
+  </g>
+
+  <!-- face, fringe on top -->
+  <g clip-path="url(#faceClip)">
+    <use href="#face" fill="url(#gFace)"/>
+    <path d="M100 100 H140 V164 H100 Z" fill="#8A4E36" opacity="0.14"/>
+    <path d="M97 148 Q100 150.5 103 148" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <use href="#fringe" fill="#7A5A50" opacity="0.3" transform="translate(0 3)"/>
+  <use href="#fringe" fill="url(#gHairL)"/>
+  <g clip-path="url(#fringeClip)"><use href="#shadeR" fill="url(#gHairR)"/></g>
+
+  <!-- fan of throwing knives -->
+  <g transform="translate(146 144) rotate(-86)"><path d="M-5.5 12 H0 V52 L-7.5 34 Z" fill="url(#gSteelL)"/><path d="M0 12 H5.5 L7.5 34 L0 52 Z" fill="url(#gSteelR)"/></g>
+  <g transform="translate(146 144) rotate(-42)"><path d="M-5.5 12 H0 V52 L-7.5 34 Z" fill="url(#gSteelL)"/><path d="M0 12 H5.5 L7.5 34 L0 52 Z" fill="url(#gSteelR)"/></g>
+  <g transform="translate(146 144) rotate(2)"><path d="M-5.5 12 H0 V52 L-7.5 34 Z" fill="url(#gSteelL)"/><path d="M0 12 H5.5 L7.5 34 L0 52 Z" fill="url(#gSteelR)"/></g>
+
+  <!-- hands -->
+  <rect x="133" y="138" width="22" height="20" rx="8" fill="#2B2230" opacity="0.3" transform="rotate(-40 144 146)"/>
+  <rect x="133" y="136" width="22" height="20" rx="8" fill="url(#gHand)" transform="rotate(-40 144 146)"/>
+  <rect x="57" y="148" width="22" height="20" rx="8" fill="#2B2230" opacity="0.3" transform="rotate(10 68 156)"/>
+  <rect x="57" y="146" width="22" height="20" rx="8" fill="url(#gHand)" transform="rotate(10 68 156)"/>
+</svg>

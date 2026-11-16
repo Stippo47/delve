@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- Archer v3 "bubbly": rounded gumdrop hood, plump rolled brim with a smaller face window,
+       mitten hands, chunkier bow with ball nocks. Single sprite. Facing = DOWN (+y).
+       Rotate the whole sprite around (100,100) to aim. -->
+  <defs>
+    <path id="hood" d="M100 19 C108 19 117 28 128 41 C146 62 159 84 159 109 C159 138 135 155 100 155 C65 155 41 138 41 109 C41 84 54 62 72 41 C83 28 92 19 100 19 Z"/>
+    <clipPath id="hoodClip"><use href="#hood"/></clipPath>
+    <path id="brim" d="M47 132 C47 84 153 84 153 132 C151 154 131 163 100 163 C69 163 49 154 47 132 Z"/>
+    <clipPath id="brimClip"><use href="#brim"/></clipPath>
+    <path id="open" d="M66 134 C68 106 132 106 134 134 C130 151 70 151 66 134 Z"/>
+    <clipPath id="openClip"><use href="#open"/></clipPath>
+    <path id="bow" d="M34 146 C30 156 36 164 44 166 C60 178 80 184 100 184 C120 184 140 178 156 166 C164 164 170 156 166 146"/>
+  </defs>
+
+  <g stroke="#2B2230" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <!-- plump shoulder lobes (behind hood) -->
+    <path d="M60 95 C30 95 17 121 26 139 C35 155 61 154 78 140 Z" fill="#3E7A44"/>
+    <path d="M140 95 C170 95 183 121 174 139 C165 155 139 154 122 140 Z" fill="#3E7A44"/>
+
+    <!-- quiver peeking out the back-right -->
+    <g transform="rotate(30 140 50)">
+      <path d="M131 30 C120 25 118 13 123 6 C132 12 135 22 131 30 Z" fill="#FFF8E8"/>
+      <path d="M145 30 C156 25 158 13 153 6 C144 12 141 22 145 30 Z" fill="#9AD17F"/>
+      <rect x="120" y="26" width="36" height="48" rx="14" fill="#A0683A"/>
+      <rect x="120" y="40" width="36" height="7" fill="#7A4A26"/>
+    </g>
+
+    <!-- hood base -->
+    <use href="#hood" fill="#3E7A44"/>
+  </g>
+
+  <!-- hood: lit body offset up-left leaves a shadow crescent lower-right; round bubbly sheen -->
+  <g clip-path="url(#hoodClip)">
+    <use href="#hood" fill="#5FA35A" transform="translate(-8 -7)"/>
+    <path d="M100 22 C98 42 98 62 100 80" fill="none" stroke="#3E7A44" stroke-width="4" stroke-linecap="round"/>
+    <path d="M71 52 C63 60 57 71 56 82" fill="none" stroke="#9AD17F" stroke-width="9" stroke-linecap="round"/>
+    <circle cx="79" cy="41" r="3.8" fill="#9AD17F"/>
+  </g>
+  <use href="#hood" fill="none" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- plump rolled brim: same offset-crescent shading as the hood -->
+  <use href="#brim" fill="#D99525"/>
+  <g clip-path="url(#brimClip)">
+    <use href="#brim" fill="#F2B53A" transform="translate(-5 -5)"/>
+    <path d="M62 117 C66 107 76 100 88 97" fill="none" stroke="#FFDB86" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <use href="#brim" fill="none" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- face (no eyes): lit skin, only a thin shade sliver right under the brim -->
+  <g clip-path="url(#openClip)">
+    <rect x="60" y="100" width="80" height="56" fill="#3A2A30"/>
+    <use href="#open" fill="#F4CBA4" transform="translate(0 5.5)"/>
+    <ellipse cx="80" cy="138" rx="6" ry="3.6" fill="#EDA083"/>
+    <ellipse cx="120" cy="138" rx="6" ry="3.6" fill="#EDA083"/>
+    <path d="M95.5 132 C96 128 104 128 104.5 132 C104 135.5 96 135.5 95.5 132 Z" fill="#E0A27F"/>
+  </g>
+  <use href="#open" fill="none" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- leaf clasp -->
+  <path d="M100 80 C112 86 114 100 100 108 C86 100 88 86 100 80 Z" fill="#9AD17F" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M100 86 V102" stroke="#3E7A44" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- bow string, drawn back to the chin -->
+  <path d="M38 152 L100 156 L162 152" fill="none" stroke="#2B2230" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M38 152 L100 156 L162 152" fill="none" stroke="#FFF8E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g stroke="#2B2230" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <!-- arrow -->
+    <path d="M100 152 V194" stroke="#2B2230" stroke-width="7"/>
+    <path d="M100 152 V194" stroke="#A0683A" stroke-width="3"/>
+    <path d="M89 192 L100 207 L111 192 Z" fill="#C9CED6"/>
+    <path d="M100 195 V203" stroke="#8F97A3" stroke-width="2.5"/>
+
+    <!-- chunky recurve bow -->
+    <use href="#bow" fill="none" stroke="#2B2230" stroke-width="15"/>
+    <use href="#bow" fill="none" stroke="#A0683A" stroke-width="7"/>
+    <path d="M118 182 C134 179 148 173 156 166" fill="none" stroke="#7A4A26" stroke-width="7" stroke-linecap="butt"/>
+    <circle cx="34" cy="146" r="6" fill="#F2B53A"/>
+    <circle cx="166" cy="146" r="6" fill="#F2B53A"/>
+
+    <!-- mitten hands -->
+    <rect x="88" y="174" width="24" height="20" rx="9" fill="#F2C7A0"/>
+    <rect x="89" y="147" width="22" height="19" rx="9" fill="#F2C7A0"/>
+  </g>
+</svg>

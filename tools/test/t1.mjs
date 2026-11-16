@@ -1,0 +1,18 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ args: ['--no-sandbox'] });
+const p = await b.newPage({ viewport: { width: 844, height: 390 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
+const errs = [];
+p.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errs.push(m.type() + ': ' + m.text()); });
+p.on('pageerror', (e) => errs.push('pageerror: ' + e.message));
+await p.goto('http://localhost:8811/index.html?seed=7');
+await p.waitForTimeout(800);
+await p.screenshot({ path: 'camp.png' });
+await p.click('#enterBtn');
+await p.waitForTimeout(2500);
+await p.screenshot({ path: 'run1.png' });
+await p.waitForTimeout(2500);
+await p.screenshot({ path: 'run2.png' });
+const info = await p.evaluate(() => { const r = GAME.run; return { phase: r.phase, units: r.world.units.map(u => u.kind + ':' + Math.round(u.hp) + ':' + u.mode).join(' ') }; });
+console.log(JSON.stringify(info));
+console.log(errs.join('\n') || 'no errors');
+await b.close();

@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2b2536">
+<title>Style 4 — Cel</title>
+<style>
+  html,body{margin:0;height:100%;background:#2b2536;overflow:hidden;overscroll-behavior:none;touch-action:none;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+  canvas{position:fixed;left:0;top:0;display:block}
+  #tag{position:fixed;left:calc(env(safe-area-inset-left,0px) + 8px);bottom:calc(env(safe-area-inset-bottom,0px) + 6px);
+    font:800 11px/1 ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.03em;
+    color:#2b2536;background:#ffe9b8;border:1.5px solid #8a5a3c;border-radius:999px;padding:5px 10px;pointer-events:none;
+    box-shadow:0 2px 0 #8a5a3c}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="tag">Style 4 — Cel</div>
+<script>
+'use strict';
+/* =====================================================================
+   STYLE 4 — "CEL-SHADED VECTOR"
+   Every form = flat base fill + ONE hard shadow shape + ONE hard highlight
+   shape + a thin outline in a dark shade of its own colour. Ground shadows
+   are flat hard-edged ellipses. No gradients, no blur. Everything is plain
+   canvas paths, so it stays crisp at any scale and is cheap to draw.
+   ===================================================================== */
+
+// ---------- SHARED PALETTE ----------
+const PAL = {
+  bg:'#2b2536', bgPanel:'#332c40', stage:'#3b3349', stageRim:'#463d56', ground:'rgba(16,9,26,.42)',
+  ink:'#1d1030',            // outlines are mixed toward this, never pure black
+  shadeTo:'#2b1b4a',        // cel shadows shift cool/purple
+  hiTo:'#fffdf0',           // highlights shift warm/cream
+  text:'#ffe9b8', textSub:'#b9a9cf', heroTag:'#ffcf5a', foeTag:'#ff7a6b',
+  knight:'#4f86f0', steel:'#d7e0ea', plume:'#f0503f', shield:'#d9443a', gold:'#ffc94a', blade:'#eef8ff', frost:'#9fe2ff',
+  archer:'#5cb85a', hood:'#3d8a4a', skin:'#ffd2a6', cheek:'#ff8f86', wood:'#c98a4b', string:'#fff3da', fletch:'#ff6b5b', leather:'#8a5530',
+  rogue:'#9a62d8', mask:'#2e2147', tail:'#3d2c63', dagger:'#e6eef6', teal:'#3fd0bb', venom:'#a6f050',
+  rat:'#a99487', ratSnout:'#cdb9ab', ratPink:'#ffa9ae', ratEye:'#2a1420',
+  slime:'#ff5fa0', slimeCore:'#ffb3d2', slimeEye:'#4a1030',
+  bone:'#f1e6cc', socket:'#3b2630', ember:'#ffb03b', rust:'#b8653a', iron:'#a7b0bb', hilt:'#6b4a35',
+  burn:'#ff7a26', burnHot:'#ffd24a', chill:'#86d8ff', ice:'#c9f0ff', poison:'#9be04a', gas:'#7fcf45', shock:'#ffe14a',
+  white:'#ffffff', star:'#fff6c8', dmg:'#ffffff', crit:'#ffd84a', dodge:'#9ff0ff',
+};
+const FONT = 'ui-rounded,"SF Pro Rounded","Nunito","Varela Round",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif';
+const TAU = Math.PI * 2;
+const W = 844, H = 390;
+
+// ---------- UTIL ----------
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const rand = (a, b) => a + Math.random() * (b - a);
+const easeOut = t => 1 - Math.pow(1 - clamp(t, 0, 1), 3);
+const easeIn = t => Math.pow(clamp(t, 0, 1), 2);
+const easeInOut = t => (t = clamp(t, 0, 1), t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+function angDiff(a, b) { let d = (b - a) % TAU; if (d > Math.PI) d -= TAU; if (d < -Math.PI) d += TAU; return d; }
+function hx(c) { c = c.slice(1); if (c.length === 3) c = c.replace(/./g, x => x + x); return [parseInt(c.slice(0,2),16), parseInt(c.slice(2,4),16), parseInt(c.slice(4,6),16)]; }
+function toHex(a) { return '#' + a.map(v => Math.round(clamp(v,0,255)).toString(16).padStart(2,'0')).join(''); }
+function mix(a, b, t) { const A = hx(a), B = hx(b); return toHex([A[0]+(B[0]-A[0])*t, A[1]+(B[1]-A[1])*t, A[2]+(B[2]-A[2])*t]); }
+// cel tone ramp, memoised so the hot path never parses colours
+const TONES = new Map();
+function tones(c) {
+  let t = TONES.get(c);
+  if (!t) { t = { base: c, sh: mix(c, PAL.shadeTo, .38), hi: mix(c, PAL.hiTo, .52), ol: mix(c, PAL.ink, .64) }; TONES.set(c, t); }
+  return t;
+}
+
+// ---------- CANVAS / DPR ----------
+const cvs = document.getElementById('c');
+const ctx = cvs.getContext('2d');
+let DPR = 1, VS = 1, OX = 0, OY = 0;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  const w = window.innerWidth, h = window.innerHeight;
+  cvs.style.width = w + 'px'; cvs.style.height = h + 'px';
+  cvs.width = Math.round(w * DPR); cvs.height = Math.round(h * DPR);
+  VS = Math.min(w / W, h / H);
+  OX = (w - W * VS) / 2; OY = (h - H * VS) / 2;
+}
+window.addEventListener('resize', resize);
+
+// ---------- CEL PRIMITIVES ----------
+// LW = outline width in unit space; set per draw so outlines stay ~constant on screen.
+let LW = 1;
+function circ(x, y, r) { ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); }
+// A cel ball: shadow fill, lit disc (offset toward light, clipped), hard highlight, outline.
+// Light is world top-left; callers drawing inside a rotated frame pass lx,ly = local light dir.
+function cel(x, y, r, c, o) {
+  const t = tones(c), lx = o && o.lx !== undefined ? o.lx : -.7, ly = o && o.ly !== undefined ? o.ly : -.7;
+  circ(x, y, r); ctx.fillStyle = t.sh; ctx.fill();
+  ctx.save(); ctx.clip();
+  circ(x + lx * r * .3, y + ly * r * .3, r * .93); ctx.fillStyle = t.base; ctx.fill();
+  if (!o || o.hl !== false) {
+    const a = Math.atan2(ly, lx);
+    ctx.beginPath(); ctx.ellipse(x + lx * r * .5, y + ly * r * .5, r * .3, r * .15, a + Math.PI / 2, 0, TAU);
+    ctx.fillStyle = t.hi; ctx.fill();
+  }
+  ctx.restore();
+  circ(x, y, r); ctx.lineWidth = (o && o.lw) || LW; ctx.strokeStyle = (o && o.ol) || t.ol; ctx.stroke();
+}
+// flat path helpers for props: fill base, then a hard shadow half, a hard light strip, outline
+function poly(pts) { ctx.beginPath(); ctx.moveTo(pts[0], pts[1]); for (let i = 2; i < pts.length; i += 2) ctx.lineTo(pts[i], pts[i + 1]); ctx.closePath(); }
+function fillStroke(fill, ol, lw) { ctx.fillStyle = fill; ctx.fill(); ctx.lineWidth = lw || LW; ctx.strokeStyle = ol; ctx.stroke(); }
+function groundShadow(x, y, r, z) {
+  const k = 1 / (1 + z * .012);
+  ctx.beginPath(); ctx.ellipse(x + r * .16 + z * .25, y + r * .3 + z * .35, r * 1.04 * k, r * .86 * k, 0, 0, TAU);
+  ctx.fillStyle = PAL.ground; ctx.fill();
+}
+
+// Light direction used by cel(): world top-left, re-expressed in a unit's facing frame.
+let CLX = -.7, CLY = -.7;
+function enterFacing(e) { ctx.save(); ctx.rotate(e.face); const c = Math.cos(e.face), s = Math.sin(e.face); CLX = -.7 * c - .7 * s; CLY = .7 * s - .7 * c; }
+function exitFacing() { ctx.restore(); CLX = -.7; CLY = -.7; }
+// patch cel() to read the current light frame
+const _cel = cel;
+cel = function (x, y, r, c, o) { o = o || {}; if (o.lx === undefined) { o.lx = CLX; o.ly = CLY; } _cel(x, y, r, c, o); };
+
+// ---------- UNIT DEFINITIONS ----------
+const TYPES = {
+  knight:   { team: 'hero', r: 16, name: 'Knight',   role: 'Tank · Sword · Charge' },
+  archer:   { team: 'hero', r: 14, name: 'Archer',   role: 'Ranged · Barrage · Dodge' },
+  rogue:    { team: 'hero', r: 13, name: 'Rogue',    role: 'Skirmish · Shadow Walk' },
+  rat:      { team: 'foe',  r: 9,  name: 'Rat',      role: 'Swarm · Bite · Scurry' },
+  slime:    { team: 'foe',  r: 20, name: 'Slime',    role: 'Slam · Splits in two' },
+  skeleton: { team: 'foe',  r: 14, name: 'Skeleton', role: 'Cleaver · Bone Toss' },
+};
+let UID = 0;
+function makeUnit(type, x, y, o = {}) {
+  const T = TYPES[type];
+  const face0 = o.face ?? (T.team === 'hero' ? Math.PI / 2 - .5 : Math.PI / 2 + .5);
+  return {
+    id: ++UID, type, team: T.team, r: o.r || T.r, sc: o.sc || 2.2, hx: x, hy: y, x, y, z: 0, vz: 0, walkZ: 0, hop: 0,
+    face: face0, face0, aimDir: T.team === 'hero' ? 0 : Math.PI, alpha: 1,
+    sq: 0, sqV: 0, sqA: 0, sp: 0, spV: 0, flash: 0, ph: Math.random() * TAU, blinkT: rand(1, 4), blink: 0,
+    swing: 0, handF: 0, aim: 0, pull: 0, nocked: true, pokeL: 0, pokeR: 0, guard: 0, bite: 0, lean: 0,
+    act: null, t: 0, phase: '', fired: {}, status: o.status || null, mini: !!o.mini, split: 0, dead: false,
+    lastX: x, lastY: y, speed: 0, gen: o.gen || 0,
+  };
+}
+
+// ---------- UNIT PIPELINE ----------
+// drawUnit handles shadow, lift, squash, facing and flash; each type supplies back/body/top/front.
+function drawUnit(e) {
+  if (e.alpha <= .01) return;
+  const D = DRAW[e.type], z = e.z + e.walkZ;
+  ctx.save(); ctx.translate(e.x, e.y); ctx.scale(e.sc, e.sc);
+  LW = 1.55 / Math.sqrt(e.sc);
+  ctx.globalAlpha = e.alpha;
+  groundShadow(0, 0, e.r, z);
+  const lift = 1 + z * .012 + e.sp;
+  ctx.translate(0, -z * .22); ctx.scale(lift, lift);
+  if (D.back) { enterFacing(e); D.back(e); exitFacing(); }
+  ctx.save();
+  if (e.status !== 'frozen') {
+    const w = Math.sin(performance.now() / 1000 * (e.type === 'slime' ? 4 : 2.6) + e.ph) * (e.type === 'slime' ? .05 : .025);
+    ctx.rotate(e.sqA); ctx.scale(1 + e.sq, 1 / (1 + e.sq)); ctx.rotate(-e.sqA);
+    ctx.scale(1 + w, 1 - w);
+  }
+  D.body(e);
+  enterFacing(e); D.top(e); exitFacing();
+  if (e.flash > 0) { circ(0, 0, e.r + .4); ctx.fillStyle = `rgba(255,255,255,${clamp(e.flash / .12, 0, 1)})`; ctx.fill(); }
+  ctx.restore();
+  if (D.front) { enterFacing(e); D.front(e); exitFacing(); }
+  if (e.status) drawStatusOverlay(e);
+  ctx.restore();
+  ctx.globalAlpha = 1;
+}
+const blinking = e => e.blink > 0;
+function eyeDot(x, y, rx, ry, c, sparkle) {
+  ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, TAU); ctx.fillStyle = c; ctx.fill();
+  if (sparkle) { circ(x + CLX * rx * .45, y + CLY * ry * .45, Math.max(.35, rx * .38)); ctx.fillStyle = '#fff'; ctx.fill(); }
+}
+function closedEye(x, y, w) { ctx.beginPath(); ctx.moveTo(x, y - w); ctx.lineTo(x, y + w); ctx.lineWidth = LW * .9; ctx.strokeStyle = PAL.ink; ctx.lineCap = 'round'; ctx.stroke(); }
+
+const DRAW = {
+  // ---------------- KNIGHT: cobalt tabard, steel helm with visor slit, red crest ----------------
+  knight: {
+    body(e) { cel(0, 0, e.r, PAL.knight); },
+    top(e) {
+      const r = e.r;
+      cel(-r * .05, -r * .74, r * .36, PAL.steel); cel(-r * .05, r * .74, r * .36, PAL.steel);   // pauldrons
+      cel(-r * .06, 0, r * .66, PAL.steel);                                                     // helm
+      ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.arc(-r * .06, 0, r * .45, -.64, .64); ctx.lineWidth = r * .2; ctx.strokeStyle = '#2a2f48'; ctx.stroke();
+      if (!blinking(e)) { ctx.fillStyle = '#fff3c2'; for (const s of [-1, 1]) { circ(-r * .06 + Math.cos(.3 * s) * r * .45, Math.sin(.3 * s) * r * .45, r * .065); ctx.fill(); } }
+      // crest: flat base + hard shadow half + light strip
+      const t = tones(PAL.plume), x0 = -r * 1.12, x1 = r * .3, hw = r * .17;
+      ctx.beginPath(); ctx.moveTo(x1, 0); ctx.quadraticCurveTo(x1 - 3, -hw, -r * .3, -hw); ctx.quadraticCurveTo(x0 + 3, -hw * .9, x0, 0);
+      ctx.quadraticCurveTo(x0 + 3, hw * .9, -r * .3, hw); ctx.quadraticCurveTo(x1 - 3, hw, x1, 0); ctx.closePath();
+      ctx.fillStyle = t.base; ctx.fill();
+      ctx.save(); ctx.clip(); ctx.fillStyle = t.sh; ctx.fillRect(x0, CLY < 0 ? hw * .15 : -hw * 1.2, x1 - x0, hw * 1.05);
+      ctx.fillStyle = t.hi; ctx.fillRect(x0 + 4, CLY < 0 ? -hw * .7 : hw * .3, (x1 - x0) * .55, hw * .4); ctx.restore();
+      ctx.lineWidth = LW; ctx.strokeStyle = t.ol; ctx.stroke();
+      ctx.beginPath(); for (let i = 1; i < 4; i++) { const x = x0 + i * (x1 - x0) / 4.3; ctx.moveTo(x, -hw * .8); ctx.lineTo(x - 1.6, hw * .8); }
+      ctx.lineWidth = LW * .6; ctx.stroke();
+    },
+    front(e) { drawKnightProps(e); },
+  },
+  // ---------------- ARCHER: leaf-green hood with point, round face, quiver ----------------
+  archer: {
+    back(e) {
+      const r = e.r, t = tones(PAL.hood);
+      ctx.beginPath(); ctx.moveTo(-r * .5, -r * .62); ctx.quadraticCurveTo(-r * 1.15, -r * .3, -r * 1.55, r * .12);
+      ctx.quadraticCurveTo(-r * 1.05, r * .38, -r * .5, r * .62); ctx.closePath();
+      fillStroke(t.base, t.ol);
+      ctx.beginPath(); ctx.moveTo(-r * .7, r * .1); ctx.quadraticCurveTo(-r * 1.1, r * .3, -r * 1.55, r * .12); ctx.quadraticCurveTo(-r * 1.05, r * .38, -r * .6, r * .55); ctx.closePath();
+      ctx.fillStyle = t.sh; ctx.fill();
+    },
+    body(e) { cel(0, 0, e.r, PAL.archer); },
+    top(e) {
+      const r = e.r, sk = tones(PAL.skin);
+      ctx.beginPath(); ctx.ellipse(r * .44, 0, r * .4, r * .56, 0, 0, TAU); ctx.fillStyle = tones(PAL.hood).sh; ctx.fill();   // hood opening
+      ctx.beginPath(); ctx.ellipse(r * .5, 0, r * .32, r * .46, 0, 0, TAU); ctx.fillStyle = sk.base; ctx.fill();
+      ctx.save(); ctx.clip(); ctx.beginPath(); ctx.ellipse(r * .5 - CLX * r * .2, -CLY * r * .2, r * .32, r * .46, 0, 0, TAU);
+      ctx.fillStyle = sk.sh; ctx.fill(); ctx.beginPath(); ctx.ellipse(r * .5, 0, r * .25, r * .4, 0, 0, TAU); ctx.fillStyle = sk.base; ctx.fill(); ctx.restore();
+      ctx.beginPath(); ctx.ellipse(r * .5, 0, r * .32, r * .46, 0, 0, TAU); ctx.lineWidth = LW * .8; ctx.strokeStyle = sk.ol; ctx.stroke();
+      ctx.fillStyle = PAL.cheek; for (const s of [-1, 1]) { circ(r * .5, s * r * .3, r * .075); ctx.fill(); }
+      if (blinking(e)) { closedEye(r * .6, -r * .15, r * .07); closedEye(r * .6, r * .15, r * .07); }
+      else { eyeDot(r * .6, -r * .15, r * .07, r * .1, PAL.ratEye, true); eyeDot(r * .6, r * .15, r * .07, r * .1, PAL.ratEye, true); }
+      // quiver across the back
+      ctx.save(); ctx.translate(-r * .42, r * .42); ctx.rotate(-.65);
+      const q = tones(PAL.leather);
+      ctx.fillStyle = PAL.fletch; for (const s of [-1.6, 0, 1.6]) { ctx.beginPath(); ctx.ellipse(-r * .62, s, r * .2, r * .09, s * .25, 0, TAU); ctx.fill(); }
+      rrectPath(-r * .5, -r * .18, r * .95, r * .36, r * .18); fillStroke(q.base, q.ol, LW * .8);
+      ctx.fillStyle = q.sh; ctx.fillRect(-r * .44, 0, r * .85, r * .14);
+      ctx.fillStyle = PAL.gold; ctx.fillRect(r * .05, -r * .18, r * .1, r * .36);
+      ctx.restore();
+    },
+    front(e) { drawBow(e); },
+  },
+  // ---------------- ROGUE: violet, mask band, trailing bandana tails, twin daggers ----------------
+  rogue: {
+    back(e) {
+      const r = e.r, tt = performance.now() / 1000, amp = 1.4 + Math.min(4, e.speed * .05);
+      ctx.lineCap = 'round';
+      for (const s of [-1, 1]) {
+        const w1 = Math.sin(tt * 7 + s) * amp, w2 = Math.sin(tt * 7 + s + 1.4) * amp * 1.3;
+        ctx.beginPath(); ctx.moveTo(-r * .7, s * r * .12); ctx.quadraticCurveTo(-r * 1.3, s * r * .3 + w1, -r * 2.0, s * r * .5 + w2);
+        ctx.lineWidth = r * .34; ctx.strokeStyle = tones(PAL.tail).ol; ctx.stroke();
+        ctx.lineWidth = r * .22; ctx.strokeStyle = PAL.tail; ctx.stroke();
+      }
+    },
+    body(e) { cel(0, 0, e.r, PAL.rogue); },
+    top(e) {
+      const r = e.r, m = tones(PAL.mask);
+      ctx.lineCap = 'butt';
+      ctx.beginPath(); ctx.arc(0, 0, r * .6, -1.05, 1.05); ctx.lineWidth = r * .42; ctx.strokeStyle = m.ol; ctx.stroke();
+      ctx.lineWidth = r * .32; ctx.strokeStyle = m.base; ctx.stroke();
+      for (const s of [-1, 1]) {
+        const a = .34 * s, x = Math.cos(a) * r * .6, y = Math.sin(a) * r * .6;
+        if (blinking(e)) { ctx.beginPath(); ctx.moveTo(x - r * .04, y - s * r * .12); ctx.lineTo(x + r * .02, y + s * r * .02); ctx.lineWidth = LW; ctx.strokeStyle = '#fff'; ctx.stroke(); }
+        else { ctx.beginPath(); ctx.ellipse(x, y, r * .09, r * .15, -s * .45, 0, TAU); ctx.fillStyle = '#fff'; ctx.fill(); }
+      }
+      cel(-r * .84, 0, r * .24, PAL.mask);
+    },
+    front(e) { drawDaggers(e); },
+  },
+  // ---------------- RAT: dusty grey, pink ears & tail, beady eyes ----------------
+  rat: {
+    back(e) {
+      const r = e.r, tt = performance.now() / 1000, w = Math.sin(tt * 6 + e.ph) * r * .35;
+      ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-r * .8, 0); ctx.quadraticCurveTo(-r * 1.6, w, -r * 2.5, -w * .6);
+      ctx.lineWidth = r * .3; ctx.strokeStyle = tones(PAL.ratPink).ol; ctx.stroke();
+      ctx.lineWidth = r * .18; ctx.strokeStyle = PAL.ratPink; ctx.stroke();
+    },
+    body(e) { cel(0, 0, e.r, PAL.rat); },
+    top(e) {
+      const r = e.r;
+      for (const s of [-1, 1]) { cel(-r * .15, s * r * .68, r * .42, PAL.rat, { hl: false }); circ(-r * .12, s * r * .7, r * .24); ctx.fillStyle = PAL.ratPink; ctx.fill(); }
+      const sn = tones(PAL.ratSnout);
+      ctx.beginPath(); ctx.ellipse(r * .66, 0, r * .44, r * .38, 0, 0, TAU); fillStroke(sn.base, sn.ol, LW * .8);
+      if (e.bite > .2) { ctx.fillStyle = '#fff'; ctx.fillRect(r * .98, -r * .2, r * .16, r * .14); ctx.fillRect(r * .98, r * .06, r * .16, r * .14); }
+      circ(r * 1.06, 0, r * .16); ctx.fillStyle = '#ff7f93'; ctx.fill();
+      ctx.beginPath(); for (const s of [-1, 1]) { ctx.moveTo(r * .86, s * r * .22); ctx.lineTo(r * 1.32, s * r * .58); ctx.moveTo(r * .84, s * r * .3); ctx.lineTo(r * 1.18, s * r * .78); }
+      ctx.lineWidth = LW * .55; ctx.strokeStyle = 'rgba(255,240,230,.75)'; ctx.stroke();
+      if (blinking(e)) { closedEye(r * .38, -r * .38, r * .1); closedEye(r * .38, r * .38, r * .1); }
+      else for (const s of [-1, 1]) eyeDot(r * .38, s * r * .38, r * .13, r * .13, PAL.ratEye, true);
+    },
+  },
+  // ---------------- SLIME: bubblegum jelly, big gloss, bubbles, simple face ----------------
+  slime: {
+    body(e) {
+      const r = e.r, t = tones(PAL.slime);
+      cel(0, 0, r, PAL.slime, { hl: false });
+      ctx.save(); circ(0, 0, r); ctx.clip();
+      ctx.beginPath(); ctx.ellipse(r * .22, r * .3, r * .46, r * .34, -.5, 0, TAU); ctx.fillStyle = PAL.slimeCore; ctx.globalAlpha *= .55; ctx.fill(); ctx.restore();
+      ctx.fillStyle = t.hi;
+      ctx.beginPath(); ctx.ellipse(-r * .4, -r * .44, r * .34, r * .17, -.75, 0, TAU); ctx.fill();
+      circ(-r * .02, -r * .66, r * .07); ctx.fill();
+      ctx.lineWidth = LW * .7; ctx.strokeStyle = t.hi;
+      circ(r * .48, -r * .12, r * .1); ctx.stroke(); circ(r * .3, r * .58, r * .06); ctx.stroke();
+    },
+    top(e) {
+      const r = e.r;
+      if (blinking(e)) { closedEye(r * .3, -r * .3, r * .12); closedEye(r * .3, r * .3, r * .12); }
+      else for (const s of [-1, 1]) eyeDot(r * .3, s * r * .3, r * .12, r * .17, PAL.slimeEye, true);
+      ctx.beginPath(); ctx.arc(r * .38, 0, r * .16, -1.1, 1.1); ctx.lineWidth = LW; ctx.strokeStyle = PAL.slimeEye; ctx.lineCap = 'round'; ctx.stroke();
+    },
+  },
+  // ---------------- SKELETON: chibi skull, ember eyes, rusty cleaver ----------------
+  skeleton: {
+    body(e) {
+      const r = e.r; cel(0, 0, r, PAL.bone);
+      ctx.beginPath(); ctx.moveTo(r * .1, -r * .95); ctx.lineTo(r * .02, -r * .62); ctx.lineTo(r * .22, -r * .45); ctx.lineTo(r * .12, -r * .22);
+      ctx.moveTo(-r * .72, r * .4); ctx.lineTo(-r * .48, r * .32); ctx.lineTo(-r * .42, r * .5);
+      ctx.lineWidth = LW * .7; ctx.strokeStyle = tones(PAL.bone).ol; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke();
+    },
+    top(e) {
+      const r = e.r, glow = .75 + Math.sin(performance.now() / 160 + e.ph) * .25;
+      for (const s of [-1, 1]) {
+        ctx.beginPath(); ctx.ellipse(r * .36, s * r * .34, r * .2, r * .25, s * .2, 0, TAU); ctx.fillStyle = PAL.socket; ctx.fill();
+        if (!blinking(e)) { circ(r * .4, s * r * .33, r * .09 * glow + r * .03); ctx.fillStyle = PAL.ember; ctx.fill(); circ(r * .42, s * r * .31, r * .035); ctx.fillStyle = '#fff6c0'; ctx.fill(); }
+      }
+      poly([r * .62, 0, r * .5, -r * .08, r * .5, r * .08]); ctx.fillStyle = PAL.socket; ctx.fill();
+      ctx.lineCap = 'butt'; ctx.beginPath(); ctx.arc(0, 0, r * .8, -.45, .45); ctx.lineWidth = r * .17; ctx.strokeStyle = PAL.socket; ctx.stroke();
+      ctx.beginPath(); for (let i = -2; i <= 2; i++) { const a = i * .17; ctx.moveTo(Math.cos(a) * r * .71, Math.sin(a) * r * .71); ctx.lineTo(Math.cos(a) * r * .89, Math.sin(a) * r * .89); }
+      ctx.lineWidth = LW * .9; ctx.strokeStyle = PAL.bone; ctx.stroke();
+    },
+    front(e) { drawCleaver(e); },
+  },
+};
+function rrectPath(x, y, w, h, r) { r = Math.min(r, w / 2, h / 2); ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+// ---------- PROPS (drawn in the unit's facing frame, +x = forward) ----------
+function blade(x0, x1, tip, hw, c, edge) {           // flat blade with hard shadow half + light edge strip
+  const t = tones(c);
+  poly([x0, -hw, x1, -hw, tip, 0, x1, hw, x0, hw]); ctx.fillStyle = t.base; ctx.fill();
+  poly([x0, 0, tip, 0, x1, hw, x0, hw]); ctx.fillStyle = edge || t.sh; ctx.fill();
+  ctx.fillStyle = t.hi; ctx.fillRect(x0 + (x1 - x0) * .12, -hw * .72, (x1 - x0) * .6, hw * .32);
+  poly([x0, -hw, x1, -hw, tip, 0, x1, hw, x0, hw]); ctx.lineWidth = LW * .8; ctx.strokeStyle = t.ol; ctx.lineJoin = 'round'; ctx.stroke();
+}
+function drawSword(r) {
+  rrectPath(-r * .22, -r * .085, r * .34, r * .17, r * .05); fillStroke(PAL.hilt, tones(PAL.hilt).ol, LW * .7);
+  cel(-r * .28, 0, r * .12, PAL.gold, { hl: false, lw: LW * .7 });
+  blade(r * .2, r * 1.3, r * 1.55, r * .13, PAL.blade, tones(PAL.frost).base);
+  rrectPath(r * .08, -r * .32, r * .14, r * .64, r * .07); fillStroke(PAL.gold, tones(PAL.gold).ol, LW * .7);
+}
+function drawShield(rs) {
+  cel(0, 0, rs, PAL.gold);
+  cel(0, 0, rs * .74, PAL.shield);
+  ctx.beginPath(); ctx.moveTo(-rs * .42, -rs * .1); ctx.lineTo(0, rs * .32); ctx.lineTo(rs * .42, -rs * .1); ctx.lineTo(rs * .42, -rs * .3); ctx.lineTo(0, rs * .1); ctx.lineTo(-rs * .42, -rs * .3); ctx.closePath();
+  fillStroke(PAL.gold, tones(PAL.gold).ol, LW * .6);                                     // chevron emblem
+  ctx.fillStyle = tones(PAL.gold).ol; for (let i = 0; i < 4; i++) { const a = i * TAU / 4 + .785; circ(Math.cos(a) * rs * .87, Math.sin(a) * rs * .87, rs * .06); ctx.fill(); }
+}
+function drawKnightProps(e) {
+  const r = e.r;
+  // shield (upright so its cel light stays world-consistent)
+  const sx = lerp(r * .3, r * 1.02, e.guard), sy = lerp(-r * 1.05, -r * .3, e.guard);
+  ctx.save(); ctx.translate(sx, sy); ctx.rotate(-e.face); const lx = CLX, ly = CLY; CLX = -.7; CLY = -.7; drawShield(r * .62); CLX = lx; CLY = ly; ctx.restore();
+  // sword
+  ctx.save(); ctx.translate(r * .2 + e.handF * r * .5, r * 1.0 - e.handF * r * .35); ctx.rotate(.3 + e.swing);
+  drawSword(r); cel(0, 0, r * .21, PAL.steel, { lw: LW * .8 }); ctx.restore();
+}
+function drawBow(e) {
+  const r = e.r, a = e.aim, pull = e.pull;
+  ctx.save(); ctx.translate(lerp(r * .55, r * 1.08, a), lerp(-r * 1.0, 0, a)); ctx.rotate(lerp(-1.05, 0, a));
+  const L = r * .95, sx = -pull * r * .6, wt = tones(PAL.wood);
+  ctx.beginPath(); ctx.moveTo(0, -L); ctx.lineTo(sx, 0); ctx.lineTo(0, L); ctx.lineWidth = LW * .55; ctx.strokeStyle = PAL.string; ctx.stroke();
+  if (e.nocked && a > .3) { ctx.save(); ctx.translate(sx + r * 1.25, 0); drawArrowShape(r * 1.25); ctx.restore(); }
+  ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(0, -L); ctx.quadraticCurveTo(r * .95, 0, 0, L);
+  ctx.lineWidth = r * .27; ctx.strokeStyle = wt.ol; ctx.stroke();
+  ctx.lineWidth = r * .16; ctx.strokeStyle = wt.base; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(r * .05, L * .55); ctx.quadraticCurveTo(r * .55, L * .15, r * .44, -L * .1);
+  ctx.lineWidth = r * .06; ctx.strokeStyle = wt.sh; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(r * .05, -L * .6); ctx.quadraticCurveTo(r * .4, -L * .35, r * .44, -L * .15);
+  ctx.lineWidth = r * .05; ctx.strokeStyle = wt.hi; ctx.stroke();
+  cel(r * .47, 0, r * .2, PAL.leather, { lw: LW * .8 });
+  if (a > .3) cel(sx - r * .05, 0, r * .19, PAL.leather, { lw: LW * .8 });
+  ctx.restore();
+}
+// arrow pointing +x, tip at x=0
+function drawArrowShape(len) {
+  const f = tones(PAL.fletch);
+  poly([-len, 0, -len - len * .14, -len * .16, -len * .74, -len * .16, -len * .66, 0, -len * .74, len * .16, -len - len * .14, len * .16]);
+  fillStroke(f.base, f.ol, LW * .55);
+  ctx.beginPath(); ctx.moveTo(-len * .98, 0); ctx.lineTo(-len * .22, 0); ctx.lineCap = 'round';
+  ctx.lineWidth = len * .1 + LW * .6; ctx.strokeStyle = tones(PAL.wood).ol; ctx.stroke();
+  ctx.lineWidth = len * .1; ctx.strokeStyle = PAL.wood; ctx.stroke();
+  poly([0, 0, -len * .3, -len * .13, -len * .24, 0, -len * .3, len * .13]); fillStroke(PAL.iron, tones(PAL.iron).ol, LW * .55);
+}
+function drawDaggers(e) {
+  const r = e.r;
+  for (const s of [-1, 1]) {
+    const k = s < 0 ? e.pokeL : e.pokeR;
+    ctx.save(); ctx.translate(r * .5 + k * r * .85, s * (r * .98 - k * r * .38)); ctx.rotate(s * .25 * (1 - k));
+    rrectPath(-r * .2, -r * .08, r * .3, r * .16, r * .05); fillStroke(PAL.hilt, tones(PAL.hilt).ol, LW * .6);
+    blade(r * .16, r * .78, r * 1.02, r * .1, PAL.dagger);
+    rrectPath(r * .06, -r * .24, r * .11, r * .48, r * .05); fillStroke(PAL.teal, tones(PAL.teal).ol, LW * .6);
+    ctx.beginPath(); ctx.ellipse(r * .86, r * .13, r * .07, r * .1, 0, 0, TAU); ctx.fillStyle = PAL.venom; ctx.fill();
+    cel(0, 0, r * .2, PAL.mask, { lw: LW * .8 });
+    ctx.restore();
+  }
+}
+function drawCleaver(e) {
+  const r = e.r;
+  cel(r * .5, -r * .98, r * .2, PAL.bone, { lw: LW * .8 });
+  ctx.save(); ctx.translate(r * .25 + e.handF * r * .5, r * 1.0 - e.handF * r * .3); ctx.rotate(.35 + e.swing);
+  rrectPath(-r * .3, -r * .08, r * .62, r * .16, r * .06); fillStroke(PAL.hilt, tones(PAL.hilt).ol, LW * .7);
+  const t = tones(PAL.rust);
+  const B = [r * .28, -r * .14, r * 1.32, -r * .14, r * 1.38, r * .5, r * .95, r * .5, r * .86, r * .4, r * .76, r * .5, r * .28, r * .5];
+  poly(B); ctx.fillStyle = t.base; ctx.fill();
+  ctx.fillStyle = t.sh; poly([r * .28, r * .2, r * 1.35, r * .2, r * 1.38, r * .5, r * .95, r * .5, r * .86, r * .4, r * .76, r * .5, r * .28, r * .5]); ctx.fill();
+  ctx.fillStyle = PAL.iron; ctx.fillRect(r * .3, r * .38, r * .44, r * .1); ctx.fillRect(r * .97, r * .38, r * .38, r * .1);
+  ctx.fillStyle = t.hi; ctx.fillRect(r * .4, -r * .08, r * .7, r * .08);
+  poly(B); ctx.lineWidth = LW * .8; ctx.strokeStyle = t.ol; ctx.lineJoin = 'round'; ctx.stroke();
+  circ(r * 1.1, r * .04, r * .07); ctx.fillStyle = PAL.bg; ctx.fill(); ctx.stroke();
+  cel(0, 0, r * .2, PAL.bone, { lw: LW * .8 });
+  ctx.restore();
+}
+function drawBoneShape(L) {
+  const t = tones(PAL.bone);
+  for (const x of [-L, L]) for (const y of [-L * .28, L * .28]) cel(x, y, L * .32, PAL.bone, { hl: false, lw: LW * .7 });
+  rrectPath(-L, -L * .2, L * 2, L * .4, L * .1); fillStroke(t.base, t.ol, LW * .7);
+  ctx.fillStyle = t.base; for (const x of [-L, L]) { circ(x, 0, L * .25); ctx.fill(); }
+}
+
+// ---------- PARTICLES (pooled, flat shapes) ----------
+const POOL = []; let poolI = 0;
+for (let i = 0; i < 500; i++) POOL.push({ on: false });
+function part(type, x, y, vx, vy, life, size, c, o) {
+  const p = POOL[poolI]; poolI = (poolI + 1) % POOL.length;
+  p.on = true; p.type = type; p.x = x; p.y = y; p.vx = vx; p.vy = vy; p.z = 0; p.vz = 0; p.life = p.max = life; p.size = size; p.c = c;
+  p.rot = rand(0, TAU); p.vr = rand(-8, 8); p.drag = 3; p.grav = 0; p.delay = 0;
+  if (o) Object.assign(p, o);
+  return p;
+}
+function updateParts(dt) {
+  for (const p of POOL) {
+    if (!p.on) continue;
+    if (p.delay > 0) { p.delay -= dt; continue; }
+    p.life -= dt; if (p.life <= 0) { p.on = false; continue; }
+    const f = 1 / (1 + p.drag * dt);
+    p.vx *= f; p.vy *= f; p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
+    if (p.grav) { p.vz -= p.grav * dt; p.z += p.vz * dt; if (p.z < 0) { p.z = 0; if (p.vz < -60) { p.vz *= -.45; p.vx *= .6; p.vy *= .6; p.vr *= .5; } else { p.vz = 0; p.vr *= .8; } } }
+  }
+}
+function flameShape(x, y, s) {
+  ctx.beginPath(); ctx.moveTo(x, y - s * 1.9);
+  ctx.quadraticCurveTo(x + s * 1.05, y - s * .6, x + s, y); ctx.arc(x, y, s, 0, Math.PI);
+  ctx.quadraticCurveTo(x - s * 1.05, y - s * .6, x, y - s * 1.9); ctx.closePath();
+}
+function drawFlame(x, y, s) {   // three hard-edged tiers instead of a gradient
+  flameShape(x, y, s); ctx.fillStyle = '#e8432a'; ctx.fill(); ctx.lineWidth = LW * .7; ctx.strokeStyle = '#8a1f1a'; ctx.stroke();
+  flameShape(x, y + s * .15, s * .68); ctx.fillStyle = PAL.burn; ctx.fill();
+  flameShape(x, y + s * .3, s * .36); ctx.fillStyle = PAL.burnHot; ctx.fill();
+}
+function drawParts() {
+  LW = 1;
+  for (const p of POOL) {
+    if (!p.on || p.delay > 0) continue;
+    const k = p.life / p.max, u = 1 - k;
+    switch (p.type) {
+      case 'puff': {   // cel cotton puff: pops up then shrinks
+        const s = p.size * (u < .2 ? .5 + u * 2.5 : 1 - (u - .2) * 1.15);
+        if (s > .3) cel(p.x, p.y - p.z, s, p.c, { lw: Math.max(.6, s * .1) }); break; }
+      case 'conf': {
+        const s = p.size * (k < .25 ? k / .25 : 1);
+        if (p.z < 2) { ctx.fillStyle = PAL.ground; ctx.fillRect(p.x - s * .5 + 1, p.y - s * .3 + 1.5, s, s * .6); }
+        ctx.save(); ctx.translate(p.x, p.y - p.z); ctx.rotate(p.rot); ctx.scale(1, Math.abs(Math.cos(p.rot * 1.7)) * .7 + .3);
+        ctx.fillStyle = p.c; ctx.fillRect(-s * .5, -s * .35, s, s * .7); ctx.lineWidth = .7; ctx.strokeStyle = tones(p.c).ol; ctx.strokeRect(-s * .5, -s * .35, s, s * .7);
+        ctx.restore(); break; }
+      case 'spark': {
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - p.vx * .05, p.y - p.vy * .05);
+        ctx.lineCap = 'round'; ctx.lineWidth = p.size * k; ctx.strokeStyle = p.c; ctx.stroke(); break; }
+      case 'flame': drawFlame(p.x, p.y, p.size * Math.sqrt(k)); break;
+      case 'bubble': {
+        const s = p.size * (.6 + u * .6);
+        circ(p.x, p.y, s); ctx.fillStyle = p.c; ctx.fill(); ctx.lineWidth = .8; ctx.strokeStyle = tones(p.c).ol; ctx.stroke();
+        circ(p.x - s * .35, p.y - s * .35, s * .28); ctx.fillStyle = '#fff'; ctx.fill(); break; }
+      case 'bone': {
+        if (p.z < 2) { ctx.beginPath(); ctx.ellipse(p.x + 1.5, p.y + 2, p.size * 1.2, p.size * .6, 0, 0, TAU); ctx.fillStyle = PAL.ground; ctx.fill(); }
+        ctx.save(); ctx.translate(p.x, p.y - p.z); ctx.rotate(p.rot); ctx.globalAlpha = Math.min(1, k * 4); drawBoneShape(p.size); ctx.restore(); ctx.globalAlpha = 1; break; }
+      case 'goo': {
+        const s = p.size * (k < .3 ? k / .3 : 1);
+        if (p.z < 1) { ctx.beginPath(); ctx.ellipse(p.x, p.y, s * 1.5, s * 1.1, p.rot, 0, TAU); ctx.fillStyle = tones(PAL.slime).sh; ctx.fill(); }
+        else cel(p.x, p.y - p.z, s, PAL.slime, { lw: .7 });
+        break; }
+      case 'star': drawStar(p.x, p.y, p.size * (k < .5 ? 1 : k * 2), p.rot); break;
+    }
+  }
+}
+function drawStar(x, y, s, rot) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot || 0); ctx.beginPath();
+  for (let i = 0; i < 8; i++) { const a = i * TAU / 8, rr = i % 2 ? s * .32 : s; ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); }
+  ctx.closePath(); ctx.fillStyle = PAL.star; ctx.fill(); ctx.lineWidth = 1.2; ctx.strokeStyle = '#c9822a'; ctx.stroke();
+  ctx.beginPath(); for (let i = 0; i < 8; i++) { const a = i * TAU / 8, rr = i % 2 ? s * .16 : s * .5; ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); }
+  ctx.closePath(); ctx.fillStyle = '#ffffff'; ctx.fill(); ctx.restore();
+}
+
+// ---------- FX (one-shots with their own draw functions) ----------
+const FX = [];
+function fx(o) { o.t = 0; FX.push(o); return o; }
+function updateFx(dt) {
+  for (let i = FX.length - 1; i >= 0; i--) {
+    const f = FX[i]; f.t += dt;
+    if (f.type === 'arrow' || f.type === 'boneshot') { f.x += f.vx * dt; f.y += f.vy * dt; }
+    if (f.t >= f.dur) { if (f.onEnd) f.onEnd(f); FX.splice(i, 1); }
+  }
+}
+const FXDRAW = {
+  swoosh(f) {     // crescent slash: two flat bands, sweeping head + chasing tail
+    const k = f.t / f.dur, a0 = f.a - f.span / 2 * f.dir, a1 = f.a + f.span / 2 * f.dir;
+    const head = lerp(a0, a1, easeOut(k * 1.7)), tail = lerp(a0, a1, easeIn((k - .15) / .85));
+    for (const [w, c] of [[1, f.c1], [.55, f.c2]]) {
+      ctx.beginPath(); const N = 14;
+      for (let i = 0; i <= N; i++) { const a = lerp(tail, head, i / N); ctx.lineTo(f.x + Math.cos(a) * f.R, f.y + Math.sin(a) * f.R); }
+      for (let i = N; i >= 0; i--) { const a = lerp(tail, head, i / N), th = Math.sin(Math.PI * i / N) * f.R * .32 * w; ctx.lineTo(f.x + Math.cos(a) * (f.R - th), f.y + Math.sin(a) * (f.R - th)); }
+      ctx.closePath(); ctx.fillStyle = c; ctx.fill();
+    }
+  },
+  ring(f) { const k = f.t / f.dur; circ(f.x, f.y, lerp(f.r0, f.r1, easeOut(k))); ctx.lineWidth = f.lw * (1 - k) + .3; ctx.strokeStyle = f.c; ctx.stroke(); },
+  arrow(f) {
+    const k = f.t / f.dur; LW = 1;
+    ctx.beginPath(); ctx.moveTo(f.x + 3, f.y + 5); ctx.lineTo(f.x + 3 - Math.cos(f.ang) * f.len, f.y + 5 - Math.sin(f.ang) * f.len); ctx.lineWidth = 2; ctx.strokeStyle = PAL.ground; ctx.stroke();
+    ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.ang); ctx.globalAlpha = k > .85 ? (1 - k) / .15 : 1; drawArrowShape(f.len); ctx.restore(); ctx.globalAlpha = 1;
+  },
+  boneshot(f) {
+    const k = f.t / f.dur, z = Math.sin(k * Math.PI) * 34;
+    ctx.beginPath(); ctx.ellipse(f.x, f.y + 4, 7, 3.5, 0, 0, TAU); ctx.fillStyle = PAL.ground; ctx.fill();
+    LW = 1; ctx.save(); ctx.translate(f.x, f.y - z); ctx.rotate(f.t * 16); drawBoneShape(7); ctx.restore();
+  },
+  lines(f) {      // speed lines behind a charge
+    const k = f.t / f.dur, c = Math.cos(f.a), s = Math.sin(f.a);
+    ctx.lineCap = 'round'; ctx.strokeStyle = '#fff6dc';
+    for (const o of f.l) {
+      const x = f.x + (-s) * o.p, y = f.y + c * o.p, L = o.len * (1 - k);
+      ctx.lineWidth = o.w * (1 - k); ctx.beginPath(); ctx.moveTo(x - c * o.b, y - s * o.b); ctx.lineTo(x - c * (o.b + L), y - s * (o.b + L)); ctx.stroke();
+    }
+  },
+  streak(f) {     // shadow-walk path: flat violet band that thins out
+    const k = f.t / f.dur; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(f.x, f.y); ctx.lineTo(f.x2, f.y2);
+    ctx.lineWidth = 14 * (1 - k); ctx.strokeStyle = tones(PAL.mask).base; ctx.stroke();
+    ctx.lineWidth = 5 * (1 - k); ctx.strokeStyle = PAL.rogue; ctx.stroke();
+  },
+  ghost(f) { const k = f.t / f.dur; const g = f.g; g.alpha = .45 * (1 - k); g.flash = 0; drawUnit(g); },
+  text(f) {
+    const k = f.t / f.dur, pop = k < .12 ? .5 + k / .12 * .75 : k < .22 ? 1.25 - (k - .12) / .1 * .25 : 1;
+    const y = f.y - easeOut(k) * f.rise;
+    ctx.save(); ctx.translate(f.x, y); ctx.scale(pop, pop); ctx.globalAlpha = k > .75 ? 1 - (k - .75) / .25 : 1;
+    ctx.font = `900 ${f.size}px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+    if (f.pill) {
+      const w = (f.w ||= ctx.measureText(f.s).width) + f.size * 1.1, h = f.size * 1.6;
+      rrectPath(-w / 2, -h / 2 + 1.5, w, h, h / 2); ctx.fillStyle = tones(f.c).ol; ctx.fill();
+      rrectPath(-w / 2, -h / 2, w, h, h / 2); ctx.fillStyle = f.c; ctx.fill(); ctx.lineWidth = 1.2; ctx.strokeStyle = tones(f.c).ol; ctx.stroke();
+      ctx.fillStyle = tones(f.c).ol; ctx.fillText(f.s, 0, .5);
+    } else {
+      ctx.lineWidth = f.size * .32; ctx.strokeStyle = '#2a1430'; ctx.strokeText(f.s, 0, 0); ctx.fillStyle = f.c; ctx.fillText(f.s, 0, 0);
+    }
+    ctx.restore(); ctx.globalAlpha = 1;
+  },
+};
+function drawFx(layer) { for (const f of FX) if ((f.layer || 'top') === layer) FXDRAW[f.type](f); }
+const label = (x, y, s, c) => fx({ type: 'text', x, y, s, c, size: 11, pill: true, rise: 14, dur: 1.1 });
+const dmgNum = (x, y, n, c, big) => fx({ type: 'text', x: x + rand(-5, 5), y, s: String(n), c: c || PAL.dmg, size: big ? 19 : 14, rise: 26, dur: .85 });
+function impact(x, y, s) {
+  part('star', x, y, 0, 0, .28, 11 * s, null, { rot: rand(0, 1), vr: 0 });
+  for (let i = 0; i < 7; i++) { const a = rand(0, TAU), v = rand(80, 170) * s; part('spark', x, y, Math.cos(a) * v, Math.sin(a) * v, rand(.18, .3), 2.4 * s, i % 2 ? '#fff6c8' : '#ffc94a', { drag: 5 }); }
+}
+function puffs(x, y, n, c, s, spread, spd) {
+  for (let i = 0; i < n; i++) { const a = rand(0, TAU), d = rand(0, spread), v = rand(spd * .4, spd); part('puff', x + Math.cos(a) * d, y + Math.sin(a) * d, Math.cos(a) * v, Math.sin(a) * v - 10, rand(.4, .7), rand(4, 7) * s, c, { drag: 4 }); }
+}
+
+// ---------- STATUS OVERLAYS (flat) ----------
+function drawStatusOverlay(e) {
+  const r = e.r, tt = performance.now() / 1000;
+  if (e.status === 'burn') {
+    circ(0, 0, r); ctx.fillStyle = 'rgba(255,110,30,.18)'; ctx.fill();
+    for (let i = 0; i < 3; i++) { const a = -Math.PI / 2 + (i - 1) * .75, fl = 1 + Math.sin(tt * 14 + i * 2) * .15; drawFlame(Math.cos(a) * r * .72, Math.sin(a) * r * .62, r * (i === 1 ? .36 : .27) * fl); }
+  } else if (e.status === 'frozen') {
+    const R = r * 1.32, pts = [];
+    for (let i = 0; i < 7; i++) { const a = i * TAU / 7 - .3, rr = R * (i % 2 ? .9 : 1.05); pts.push(Math.cos(a) * rr, Math.sin(a) * rr); }
+    poly(pts); ctx.fillStyle = 'rgba(190,236,255,.6)'; ctx.fill();
+    ctx.save(); poly(pts); ctx.clip();
+    poly([R * .05, -R * 1.2, R * 1.3, R * 1.3, -R * 1.2, R * .2]); ctx.fillStyle = 'rgba(120,196,240,.45)'; ctx.fill();
+    poly([-R * .75, -R * .15, -R * .2, -R * .8, -R * .05, -R * .6, -R * .55, -R * .02]); ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.fill();
+    ctx.restore();
+    poly(pts); ctx.lineWidth = LW * 1.1; ctx.strokeStyle = '#4fa6db'; ctx.lineJoin = 'round'; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pts[0], pts[1]); ctx.lineTo(R * .1, R * .1); ctx.lineTo(pts[6], pts[7]); ctx.moveTo(R * .1, R * .1); ctx.lineTo(pts[10], pts[11]);
+    ctx.lineWidth = LW * .6; ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.stroke();
+    const tw = .5 + .5 * Math.sin(tt * 4); drawStar(-R * .5, -R * .55, r * .22 * tw + .5, 0);
+  } else if (e.status === 'poison') {
+    circ(0, 0, r); ctx.fillStyle = 'rgba(140,220,60,.2)'; ctx.fill();
+    for (let i = 0; i < 4; i++) { const a = i * 1.7 + tt * .6; cel(Math.cos(a) * r * 1.0, Math.sin(a) * r * .55 + r * .5, r * (.3 + .06 * Math.sin(tt * 3 + i)), PAL.gas, { lw: LW * .7 }); }
+    for (let i = 0; i < 3; i++) { const u = (tt * .7 + i / 3) % 1; circ((i - 1) * r * .5, -r * .3 - u * r * 1.1, r * .12 * (1 - u * .4)); ctx.fillStyle = PAL.poison; ctx.fill(); ctx.lineWidth = LW * .6; ctx.strokeStyle = tones(PAL.poison).ol; ctx.stroke(); }
+  }
+}
+
+// ---------- ACTION SEQUENCER ----------
+// Tap → Move → Attack → Ability → Hit → Death → Respawn → idle. Times in seconds.
+const PH = [['Move', 0], ['Attack', 1.2], ['Ability', 2.15], ['Hit', 3.75], ['Death', 4.5], ['Respawn', 5.3], ['', 5.95]];
+const ABILITY = { knight: 'Charge', archer: 'Barrage', rogue: 'Shadow Walk', rat: 'Scurry', slime: 'Split', skeleton: 'Bone Toss' };
+let SHAKE = 0;
+function startAction(e) { if (e.act || e.mini) return; e.act = true; e.t = 0; e.fired = {}; e.ox = 0; e.oy = 0; e.kbx = 0; e.kby = 0; }
+function at(e, time, key) { if (e.t >= time && !e.fired[key]) { e.fired[key] = true; return true; } return false; }
+function phaseOf(e) { let p = PH[0]; for (const q of PH) if (e.t >= q[1]) p = q; return p; }
+function swingCurve(p, wind, slash) { // 0 → windup → slash → rest
+  if (p < 0 || p > 1) return 0;
+  if (p < .3) return lerp(0, wind, easeOut(p / .3));
+  if (p < .55) return lerp(wind, slash, easeOut((p - .3) / .25));
+  return lerp(slash, 0, easeInOut((p - .55) / .45));
+}
+function worldFront(e, d) { return [e.x + Math.cos(e.face) * d, e.y + Math.sin(e.face) * d]; }
+function ghostOf(e, dur) { const g = Object.assign({}, e); g.status = null; g.act = false; fx({ type: 'ghost', g, dur: dur || .3, layer: 'under' }); }
+function hitFeedback(e, n, c, big) {
+  e.flash = .14; e.sqA = e.aimDir; e.sqV -= 6; e.kbx -= Math.cos(e.aimDir) * 9 * e.sc; e.kby -= Math.sin(e.aimDir) * 9 * e.sc;
+  const [ix, iy] = worldFront(e, e.r * e.sc * .8); impact(ix, iy, e.sc * .55);
+  dmgNum(e.x, e.y - e.r * e.sc - 8, n, c, big);
+}
+function deathBurst(e) {
+  const s = e.sc * .5, x = e.x, y = e.y;
+  fx({ type: 'ring', x, y, r0: e.r * e.sc * .6, r1: e.r * e.sc * 1.7, lw: 5, c: '#fff6dc', dur: .35 });
+  part('star', x, y, 0, 0, .3, 15 * s, null, { rot: .3, vr: 0 });
+  const cols = { knight: [PAL.knight, PAL.steel, PAL.plume, PAL.gold], archer: [PAL.archer, PAL.hood, PAL.skin, PAL.fletch], rogue: [PAL.rogue, PAL.mask, PAL.teal, PAL.venom],
+    rat: [PAL.rat, PAL.ratPink, PAL.ratSnout], slime: [PAL.slime, PAL.slimeCore], skeleton: [PAL.bone, PAL.rust, PAL.ember] }[e.type];
+  if (e.type === 'skeleton') {
+    for (let i = 0; i < 7; i++) { const a = rand(0, TAU), v = rand(40, 110); part('bone', x, y, Math.cos(a) * v, Math.sin(a) * v, 1.6, rand(3.5, 5) * e.sc * .5, null, { grav: 520, vz: rand(120, 230), drag: 1.5, vr: rand(-12, 12) }); }
+  } else if (e.type === 'slime') {
+    for (let i = 0; i < 12; i++) { const a = rand(0, TAU), v = rand(50, 140); part('goo', x, y, Math.cos(a) * v, Math.sin(a) * v, 1.3, rand(2.5, 5) * e.sc * .5, null, { grav: 600, vz: rand(100, 220), drag: 2 }); }
+  }
+  for (let i = 0; i < 16; i++) { const a = rand(0, TAU), v = rand(60, 160); part('conf', x, y, Math.cos(a) * v, Math.sin(a) * v, rand(.9, 1.3), rand(4, 6.5) * s, cols[i % cols.length], { grav: 500, vz: rand(140, 260), drag: 1.8, vr: rand(-14, 14) }); }
+  puffs(x, y, 7, '#efe4f6', s, e.r * e.sc * .5, 70);
+}
+function shootArrow(e, ang, len) {
+  const [bx, by] = worldFront(e, e.r * e.sc * 1.3), v = 360;
+  fx({ type: 'arrow', x: bx, y: by, vx: Math.cos(ang) * v, vy: Math.sin(ang) * v, ang, len: len || 14 * e.sc * .55, dur: .3,
+       onEnd: f => impact(f.x, f.y, e.sc * .35) });
+}
+function updateAction(e, dt) {
+  const t = e.t, sc = e.sc, D = (e.type === 'rogue' ? 22 : 30) * sc, ad = e.aimDir, c = Math.cos(ad), s = Math.sin(ad);
+  let ox = 0, oy = 0, faceT = ad;
+  const ph = phaseOf(e)[0];
+  if (at(e, PH[0][1], 'p0')) label(e.x, e.y - e.r * sc - 16, 'Move', '#ffe9b8');
+  if (at(e, PH[1][1], 'p1')) label(e.hx, e.hy - e.r * sc - 16, 'Attack', '#ffe9b8');
+  if (at(e, PH[2][1], 'p2')) label(e.hx, e.hy - e.r * sc - 16, ABILITY[e.type] + '!', e.team === 'hero' ? PAL.heroTag : PAL.foeTag);
+  if (at(e, PH[3][1], 'p3')) label(e.hx, e.hy - e.r * sc - 16, 'Hit', '#ffe9b8');
+  if (at(e, PH[4][1], 'p4')) label(e.hx, e.hy - e.r * sc - 16, 'Death', '#ffe9b8');
+  if (ph === 'Move') {                         // figure-of-eight stroll
+    const u = t / 1.2; ox = Math.sin(u * TAU) * 13 * sc; oy = Math.sin(u * 2 * TAU) * 6 * sc;
+    faceT = Math.atan2(Math.cos(u * 2 * TAU) * 2 * 6, Math.cos(u * TAU) * 13);
+    if (e.type === 'slime' && e.z === 0 && Math.sin(u * TAU * 3) > .9) e.vz = 120;
+  } else if (ph === 'Attack') {
+    const a = t - PH[1][1];
+    if (e.type === 'knight' || e.type === 'skeleton') {
+      const sk = e.type === 'skeleton', p1 = a / (sk ? .55 : .42), p2 = (a - .45) / .42;
+      e.swing = sk ? swingCurve(p1, 1.4, -1.9) : swingCurve(p1, 1.2, -1.9) || swingCurve(p2, 1.2, -1.9);
+      e.handF = Math.abs(e.swing) > .05 ? clamp(.5 + Math.abs(e.swing) * .3, 0, 1) : 0;
+      const hits = sk ? [.16] : [.12, .57];
+      hits.forEach((h, i) => { if (at(e, PH[1][1] + h, 'sw' + i)) {
+        fx({ type: 'swoosh', x: e.x, y: e.y, a: ad, R: e.r * sc * 2.05, span: 2.4, dir: -1, dur: .24, c1: sk ? '#ffd9b8' : '#ffffff', c2: sk ? PAL.rust : PAL.frost });
+        impact(e.hx + c * D, e.hy + s * D, sc * .5); dmgNum(e.hx + c * D, e.hy + s * D - 14, sk ? 7 : 12);
+      } });
+    } else if (e.type === 'archer') {
+      e.aim = Math.min(1, e.aim + dt * 6);
+      e.pull = a < .32 ? easeOut(a / .32) : 0;
+      if (at(e, PH[1][1] + .32, 'shot')) { e.nocked = false; shootArrow(e, ad); e.sqA = ad; e.sqV -= 3; setTimeout(() => dmgNum(e.hx + c * D * 1.1, e.hy - 14, 9), 200); }
+      if (a > .55) e.nocked = true;
+    } else if (e.type === 'rogue') {
+      [.08, .32, .56].forEach((p, i) => {
+        const k = (a - p) / .2; if (k >= 0 && k <= 1) { const v = Math.sin(k * Math.PI); if (i % 2) e.pokeR = v; else e.pokeL = v; ox = c * v * 8 * sc; oy = s * v * 8 * sc; }
+        if (at(e, PH[1][1] + p + .08, 'pk' + i)) { const [ix, iy] = worldFront(e, e.r * sc * 2); impact(ix, iy, sc * .4); dmgNum(ix, iy - 12, 5, PAL.venom); }
+      });
+    } else if (e.type === 'rat') {
+      [.1, .45].forEach((p, i) => {
+        const k = (a - p) / .25; if (k >= 0 && k <= 1) { const v = Math.sin(k * Math.PI); ox = c * v * 12 * sc; oy = s * v * 12 * sc; e.bite = v; }
+        if (at(e, PH[1][1] + p + .12, 'bt' + i)) { const [ix, iy] = worldFront(e, e.r * sc * 1.4); impact(ix, iy, sc * .35); dmgNum(ix, iy - 10, 3); }
+      });
+    } else if (e.type === 'slime') {
+      if (at(e, PH[1][1] + .02, 'j1')) e.vz = 250;
+      if (at(e, PH[1][1] + .5, 'j2')) e.vz = 170;
+      ox = a < .5 ? c * D * .55 * easeInOut(a / .4) : c * D * .55 * (1 - easeInOut((a - .5) / .3)); oy = 0;
+      e.onLand = e.onLand || (() => { if (phaseOf(e)[0] === 'Attack' && e.t - PH[1][1] < .5) {
+        fx({ type: 'ring', x: e.x, y: e.y, r0: e.r * sc, r1: e.r * sc * 2, lw: 5, c: PAL.slimeCore, dur: .35, layer: 'under' });
+        impact(e.x + c * e.r * sc, e.y, sc * .45); dmgNum(e.x + c * e.r * sc, e.y - e.r * sc, 6);
+        for (let i = 0; i < 6; i++) { const q = rand(0, TAU); part('goo', e.x + Math.cos(q) * e.r * sc, e.y + Math.sin(q) * e.r * sc * .7, Math.cos(q) * 60, Math.sin(q) * 40, .9, rand(2, 3.5) * sc * .5, null, { grav: 600, vz: rand(80, 160) }); }
+      } });
+    }
+  } else if (ph === 'Ability') {
+    const a = t - PH[2][1];
+    if (e.type === 'knight') {                 // CHARGE: wind-up, dash, shield-bash, walk back
+      e.guard = Math.min(1, e.guard + dt * 6);
+      if (a < .35) { ox = -c * 6 * sc * easeOut(a / .35); e.sqA = ad; e.sq = -.14 * easeOut(a / .35); if (Math.random() < .5) puffs(e.x - c * e.r * sc, e.y + e.r * sc * .5, 1, '#d9cbb8', sc * .45, 4, 30); }
+      else if (a < .58) { const k = easeIn((a - .35) / .23); ox = lerp(-6 * sc, D * .9, k); e.sq = .16; if (at(e, PH[2][1] + .36, 'lines')) fx({ type: 'lines', x: e.x, y: e.y, a: ad, dur: .4, layer: 'under', l: [-14, -6, 3, 11, 17].map(p => ({ p: p * sc * .6, len: rand(20, 34) * sc * .6, b: e.r * sc * .9, w: rand(2, 3.4) })) }); if ((a * 40 | 0) % 2 === 0) ghostOf(e, .25); }
+      else if (a < 1.0) { ox = D * .9; }
+      else { ox = D * .9 * (1 - easeInOut((a - 1.0) / .55)); faceT = ad; }
+      if (at(e, PH[2][1] + .58, 'bash')) { const [ix, iy] = worldFront(e, e.r * sc * 1.3); impact(ix, iy, sc * .9); SHAKE = .25; e.sqV -= 5; dmgNum(ix, iy - 16, 24, PAL.crit, true); fx({ type: 'ring', x: ix, y: iy, r0: 6, r1: 34 * sc * .6, lw: 6, c: '#ffffff', dur: .3 }); puffs(ix, iy, 5, '#d9cbb8', sc * .5, 8, 80); }
+      if (a > 1.25) e.guard = 0;
+    } else if (e.type === 'archer') {          // BARRAGE: hop, three fanned volleys
+      e.aim = 1; if (at(e, PH[2][1], 'hop')) { e.vz = 160; }
+      [.25, .5, .75].forEach((w, i) => {
+        const k = (a - w + .2) / .2; if (k > 0 && k <= 1) e.pull = easeOut(k);
+        if (at(e, PH[2][1] + w, 'v' + i)) { e.pull = 0; e.sqA = ad; e.sqV -= 3; for (let j = -2; j <= 2; j++) shootArrow(e, ad + j * .2 + (i - 1) * .05, 12 * sc * .55); setTimeout(() => dmgNum(e.hx + c * D * 1.2, e.hy - 16 + rand(-6, 6), 6 + i, PAL.dmg), 220); }
+      });
+      if (a > 1.05) e.aim = Math.max(0, e.aim - dt * 4);
+    } else if (e.type === 'rogue') {           // SHADOW WALK: vanish, reappear behind target, backstab, return
+      const bx = c * (D + 26 * sc * .5), by = s * (D + 26 * sc * .5);
+      if (at(e, PH[2][1], 'v1')) { puffs(e.x, e.y, 9, PAL.mask, sc * .55, e.r * sc * .6, 60); fx({ type: 'streak', x: e.x, y: e.y, x2: e.hx + bx, y2: e.hy + by, dur: .35, layer: 'under' }); }
+      if (a < .3) { e.alpha = Math.max(0, 1 - a / .08); }
+      else if (a < 1.0) { e.alpha = 1; ox = bx; oy = by; faceT = ad + Math.PI; }
+      if (at(e, PH[2][1] + .3, 'v2')) { puffs(e.hx + bx, e.hy + by, 9, PAL.mask, sc * .55, e.r * sc * .6, 60); e.sp = .25; }
+      if (a > .42 && a < .7) { const v = Math.sin((a - .42) / .28 * Math.PI); e.pokeL = e.pokeR = v; }
+      if (at(e, PH[2][1] + .5, 'stab')) { const tx = e.hx + c * D, ty = e.hy + s * D; impact(tx, ty, sc * .8); dmgNum(tx, ty - 18, 'CRIT 31', PAL.crit, true); SHAKE = .15; }
+      if (at(e, PH[2][1] + 1.0, 'v3')) { puffs(e.hx + bx, e.hy + by, 8, PAL.mask, sc * .5, e.r * sc * .6, 60); fx({ type: 'streak', x: e.hx + bx, y: e.hy + by, x2: e.hx, y2: e.hy, dur: .35, layer: 'under' }); }
+      if (a >= 1.0 && a < 1.25) { e.alpha = 0; }
+      if (at(e, PH[2][1] + 1.25, 'v4')) { e.alpha = 1; puffs(e.hx, e.hy, 8, PAL.mask, sc * .5, e.r * sc * .6, 60); e.sp = .2; }
+      if (a >= 1.25) faceT = e.face0;
+    } else if (e.type === 'rat') {             // SCURRY: zig-zag dash out and back
+      const k = a / 1.4, d = Math.sin(Math.min(1, k) * Math.PI);
+      ox = c * d * D * 1.1; oy = Math.sin(k * TAU * 3) * 9 * sc * d;
+      faceT = k < .5 ? Math.atan2(Math.cos(k * TAU * 3) * 3, c) : Math.atan2(Math.cos(k * TAU * 3) * 3, -c);
+      if (Math.random() < .35) puffs(e.x - Math.cos(e.face) * e.r * sc, e.y + e.r * sc * .4, 1, '#d9cbb8', sc * .35, 2, 20);
+    } else if (e.type === 'slime') {           // SPLIT: wobble, divide into two, reform
+      if (a < .3) { e.sqA = Math.PI / 2; e.sq = .25 * Math.sin(a / .3 * Math.PI * 3) * (1 - a / .3); }
+      else if (a < 1.2) { e.split = Math.min(1, e.split + dt * 5); }
+      else e.split = Math.max(0, e.split - dt * 4);
+      if (at(e, PH[2][1] + .3, 'sp')) { puffs(e.x, e.y, 6, PAL.slimeCore, sc * .5, 6, 70); e.kids.forEach(k => { k.vz = 160; }); }
+      if (at(e, PH[2][1] + 1.45, 'mg')) { e.sp = .3; puffs(e.x, e.y, 5, PAL.slimeCore, sc * .5, 6, 60); }
+    } else if (e.type === 'skeleton') {        // BONE TOSS: wind-up, lob a spinning bone
+      e.swing = swingCurve(a / .6, 1.6, -1.2); e.handF = e.swing ? .6 : 0;
+      if (at(e, PH[2][1] + .25, 'toss')) {
+        const [hx, hy] = worldFront(e, e.r * sc), tx = e.hx + c * D * 1.15, ty = e.hy + s * D * 1.15;
+        fx({ type: 'boneshot', x: hx, y: hy, vx: (tx - hx) / .5, vy: (ty - hy) / .5, dur: .5, onEnd: f => { impact(f.x, f.y, sc * .5); dmgNum(f.x, f.y - 14, 8); } });
+      }
+    }
+  } else if (ph === 'Hit') {
+    const a = t - PH[3][1];
+    if (e.type === 'archer') {                 // passive: dodges the first hit
+      if (at(e, PH[3][1] + .02, 'dg')) { ghostOf(e, .35); fx({ type: 'text', x: e.x, y: e.y - e.r * sc - 6, s: 'Dodge!', c: PAL.dodge, size: 14, rise: 18, dur: .8 }); }
+      if (a < .35) { const k = Math.sin(a / .35 * Math.PI); ox = -s * 16 * sc * .6 * k; oy = c * 16 * sc * .6 * k; }
+      if (at(e, PH[3][1] + .42, 'h1')) hitFeedback(e, 11);
+    } else if (at(e, PH[3][1] + .12, 'h1')) hitFeedback(e, e.team === 'hero' ? 11 : 14);
+  } else if (ph === 'Death') {
+    const a = t - PH[4][1];
+    if (a < .2) { e.sp = .3 * easeOut(a / .2); ox = Math.sin(a * 90) * 2; e.flash = .08; }
+    if (at(e, PH[4][1] + .2, 'pop')) { e.alpha = 0; e.sp = 0; deathBurst(e); SHAKE = .12; }
+    if (a >= .2) e.alpha = 0;
+  } else if (ph === 'Respawn') {
+    if (at(e, PH[5][1], 'drop')) { e.alpha = 1; e.z = 70; e.vz = 0; e.onLand = null; e.face = e.face0; }
+  } else { e.act = false; e.swing = e.handF = e.pull = e.pokeL = e.pokeR = e.guard = e.bite = 0; e.aim = 0; e.nocked = true; e.alpha = 1; e.split = 0; e.onLand = null; }
+  if (ph !== 'Attack' && ph !== 'Ability' && e.type !== 'knight' && e.type !== 'skeleton') e.swing = 0;
+  if (ph !== 'Attack' && ph !== 'Ability') { e.aim = Math.max(0, e.aim - dt * 4); e.pokeL *= .8; e.pokeR *= .8; e.bite *= .8; e.handF *= .8; e.swing *= .8; e.guard = Math.max(0, e.guard - dt * 4); }
+  if (ph === '' ) faceT = e.face0;
+  e.ox = ox; e.oy = oy; e.faceT = faceT;
+}

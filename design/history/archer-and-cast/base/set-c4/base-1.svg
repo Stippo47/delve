@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- BASE 1 MOP (adult). Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <rect id="all" x="-40" y="-40" width="280" height="280"/>
+    <linearGradient id="gSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6D0AC"/><stop offset="1" stop-color="#EFC096"/></linearGradient>
+    <linearGradient id="gSkinS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E2AE88"/><stop offset="1" stop-color="#D49B76"/></linearGradient>
+    <linearGradient id="gFaceSoft" x1="88" y1="0" x2="162" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+    <linearGradient id="gCloth" x1="0" y1="92" x2="0" y2="162" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#BBA47F"/><stop offset="1" stop-color="#9E8865"/></linearGradient>
+    <linearGradient id="gClothSoft" x1="90" y1="0" x2="182" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7C6A50" stop-opacity="0"/><stop offset="1" stop-color="#7C6A50" stop-opacity="0.55"/></linearGradient>
+<path id="sh" d="M18 124 C16 106 32 96 54 98 C74 100 126 100 146 98 C168 96 184 106 182 124 C180 150 164 158 148 154 C128 148 72 148 52 154 C36 158 20 150 18 124 Z"/><clipPath id="shC"><use href="#sh"/></clipPath>
+    <path id="skull" d="M100 28 C142 28 162 60 161 100 C160 128 154 148 140 164 C130 176 116 184 100 184 C84 184 70 176 60 164 C46 148 40 128 39 100 C38 60 58 28 100 28 Z"/>
+    <clipPath id="skullC"><use href="#skull"/></clipPath>
+    <ellipse id="earL" cx="40" cy="116" rx="13" ry="17"/>
+    <ellipse id="earR" cx="160" cy="116" rx="13" ry="17"/>
+    <path id="hair" d="M26 104 C16 52 52 14 102 14 C150 14 186 50 176 102
+       C172 116 158 120 148 108 C140 122 120 122 112 106 C102 118 82 118 76 102 C68 114 54 116 48 104 C42 112 30 114 26 104 Z"/>
+    <clipPath id="hairC"><use href="#hair"/></clipPath>
+    <linearGradient id="gStub" x1="0" y1="128" x2="0" y2="184" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8A5A44" stop-opacity="0"/><stop offset="0.45" stop-color="#8A5A44" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#8A5A44" stop-opacity="0.3"/></linearGradient>
+    <linearGradient id="gFace" x1="0" y1="104" x2="0" y2="150" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9A6250"/><stop offset="0.34" stop-color="#C98E6C"/>
+      <stop offset="0.6" stop-color="#F2C7A0"/><stop offset="1" stop-color="#F6D0AC"/></linearGradient>
+    <linearGradient id="gHair" x1="0" y1="20" x2="48" y2="180" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#C27A4C"/><stop offset="1" stop-color="#A55E37"/></linearGradient><linearGradient id="gHairSoft" x1="84" y1="0" x2="172" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#6E3A20" stop-opacity="0"/><stop offset="1" stop-color="#6E3A20" stop-opacity="0.9"/></linearGradient>
+    
+  </defs>
+  <g fill="#2B2230" stroke="#2B2230" stroke-linejoin="round" stroke-linecap="round">
+    <g stroke-width="12"><use href="#sh"/></g>
+    <g transform="translate(100 86) scale(0.72) translate(-100 -99)" stroke-width="16.67"><use href="#earL"/><use href="#earR"/><use href="#skull"/><use href="#hair"/></g>
+    <g stroke-width="12"><rect x="52" y="152" width="22" height="18" rx="7" transform="rotate(-10 63.0 161.0)"/><rect x="126" y="152" width="22" height="18" rx="7" transform="rotate(10 137.0 161.0)"/></g>
+  </g>
+  <use href="#sh" fill="url(#gCloth)"/><g clip-path="url(#shC)"><use href="#all" fill="url(#gClothSoft)"/></g>
+  <g transform="translate(100 86) scale(0.72) translate(-100 -99)">
+  <use href="#earL" fill="url(#gSkin)"/><use href="#earR" fill="url(#gSkinS)"/>
+  <use href="#skull" fill="url(#gFace)"/><g clip-path="url(#skullC)"><use href="#all" fill="url(#gFaceSoft)"/></g>
+  <g clip-path="url(#skullC)"><path d="M40 126 C50 150 64 166 76 168 C88 172 112 172 124 168 C136 166 150 150 160 126 V200 H40 Z" fill="url(#gStub)"/></g>
+  <path d="M95.8 150 Q100 152.6 104.2 150" fill="none" stroke="#C48466" stroke-width="3.2" stroke-linecap="round"/>
+  <use href="#hair" fill="#2B2230" opacity="0.25" transform="translate(0 4)"/>
+  <use href="#hair" fill="url(#gHair)"/><g clip-path="url(#hairC)"><use href="#all" fill="url(#gHairSoft)"/></g>
+  </g>
+  <g transform="rotate(-10 63.0 161.0)"><rect x="53" y="154" width="22" height="18" rx="7" fill="#2B2230" opacity="0.3"/><rect x="52" y="152" width="22" height="18" rx="7" fill="url(#gHand)"/></g><g transform="rotate(10 137.0 161.0)"><rect x="127" y="154" width="22" height="18" rx="7" fill="#2B2230" opacity="0.3"/><rect x="126" y="152" width="22" height="18" rx="7" fill="url(#gHand)"/></g>
+</svg>

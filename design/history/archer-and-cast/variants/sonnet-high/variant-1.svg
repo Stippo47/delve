@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- Variant 1: bubbly hood, soft gradient shading instead of hard crescent/sheen, heavier uniform outline. Front = DOWN. -->
+  <defs>
+    <path id="hood" d="M100 12 C113 30 162 46 162 100 C162 136 138 157 100 157 C62 157 38 136 38 100 C38 46 87 30 100 12 Z"/>
+    <clipPath id="hoodClip"><use href="#hood"/></clipPath>
+    <path id="open" d="M60 132 C62 98 138 98 140 132 C136 154 64 154 60 132 Z"/>
+    <clipPath id="openClip"><use href="#open"/></clipPath>
+    <radialGradient id="hoodG" gradientUnits="userSpaceOnUse" cx="84" cy="62" r="110">
+      <stop offset="0" stop-color="#8ACB78"/><stop offset="0.45" stop-color="#5FA35A"/><stop offset="1" stop-color="#37703F"/>
+    </radialGradient>
+    <radialGradient id="capeG" gradientUnits="userSpaceOnUse" cx="100" cy="90" r="100">
+      <stop offset="0" stop-color="#4C9150"/><stop offset="1" stop-color="#2F6538"/>
+    </radialGradient>
+    <linearGradient id="brimG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFCB55"/><stop offset="1" stop-color="#E9A12A"/>
+    </linearGradient>
+    <linearGradient id="shadeG" gradientUnits="userSpaceOnUse" x1="0" y1="100" x2="0" y2="128">
+      <stop offset="0" stop-color="#2B2230" stop-opacity="1"/><stop offset="0.45" stop-color="#2B2230" stop-opacity="0.85"/><stop offset="1" stop-color="#2B2230" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="skinG" gradientUnits="userSpaceOnUse" cx="92" cy="138" r="50">
+      <stop offset="0" stop-color="#F7D4B0"/><stop offset="1" stop-color="#E6AC84"/>
+    </radialGradient>
+    <radialGradient id="handG" cx="0.4" cy="0.35" r="0.8">
+      <stop offset="0" stop-color="#F7D4B0"/><stop offset="1" stop-color="#E3A881"/>
+    </radialGradient>
+    <linearGradient id="woodG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#B7794A"/><stop offset="1" stop-color="#8E5830"/>
+    </linearGradient>
+  </defs>
+
+  <g stroke="#2B2230" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <!-- round shoulder lobes -->
+    <path d="M62 94 C30 86 12 118 25 141 C38 160 68 154 80 138 Z" fill="url(#capeG)"/>
+    <path d="M138 94 C170 86 188 118 175 141 C162 160 132 154 120 138 Z" fill="url(#capeG)"/>
+
+    <!-- quiver, back-right -->
+    <g transform="rotate(30 138 52)">
+      <path d="M130 30 C118 24 116 10 124 4 C134 10 136 22 130 30 Z" fill="#FFF8E8"/>
+      <path d="M146 30 C158 24 160 10 152 4 C142 10 140 22 146 30 Z" fill="#9AD17F"/>
+      <rect x="119" y="26" width="38" height="50" rx="16" fill="url(#woodG)"/>
+      <rect x="119" y="40" width="38" height="8" fill="#7A4A26" stroke="none"/>
+      <rect x="119" y="26" width="38" height="50" rx="16" fill="none"/>
+    </g>
+
+    <use href="#hood" fill="url(#hoodG)"/>
+  </g>
+
+  <!-- soft hood fold, no hard crescent -->
+  <g clip-path="url(#hoodClip)">
+    <path d="M100 18 C95 44 96 70 100 96" fill="none" stroke="#3E7A44" stroke-opacity="0.55" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <use href="#hood" fill="none" stroke="#2B2230" stroke-width="5" stroke-linejoin="round"/>
+
+  <!-- brim + opening -->
+  <g stroke="#2B2230" stroke-width="5" stroke-linejoin="round">
+    <path d="M47 134 C47 86 153 86 153 134 C151 156 132 163 100 163 C68 163 49 156 47 134 Z" fill="url(#brimG)"/>
+    <use href="#open" fill="#2B2230"/>
+  </g>
+
+  <g clip-path="url(#openClip)">
+    <rect x="50" y="90" width="100" height="75" fill="url(#skinG)"/>
+    <rect x="50" y="96" width="100" height="34" fill="url(#shadeG)"/>
+    <ellipse cx="75" cy="145" rx="8" ry="4.5" fill="#EE9A86" opacity="0.8"/>
+    <ellipse cx="125" cy="145" rx="8" ry="4.5" fill="#EE9A86" opacity="0.8"/>
+    <ellipse cx="86" cy="134" rx="7.5" ry="9" fill="#2B2230"/>
+    <ellipse cx="114" cy="134" rx="7.5" ry="9" fill="#2B2230"/>
+    <circle cx="83.5" cy="130.5" r="3" fill="#FFFFFF"/>
+    <circle cx="111.5" cy="130.5" r="3" fill="#FFFFFF"/>
+  </g>
+
+  <!-- leaf clasp -->
+  <path d="M100 84 C113 91 115 104 100 113 C85 104 87 91 100 84 Z" fill="#9AD17F" stroke="#2B2230" stroke-width="5" stroke-linejoin="round"/>
+
+  <!-- string -->
+  <path d="M38 154 L100 157 L162 154" fill="none" stroke="#2B2230" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M38 154 L100 157 L162 154" fill="none" stroke="#FFF8E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g stroke="#2B2230" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <!-- arrow -->
+    <path d="M100 152 V194" stroke-width="8"/>
+    <path d="M100 152 V194" stroke="#A0683A" stroke-width="3.5"/>
+    <path d="M89 190 L100 205 L111 190 Z" fill="#D5DAE2"/>
+
+    <!-- bow -->
+    <path d="M34 146 C30 156 36 164 44 166 C60 178 80 184 100 184 C120 184 140 178 156 166 C164 164 170 156 166 146"
+          fill="none" stroke-width="13"/>
+    <path d="M34 146 C30 156 36 164 44 166 C60 178 80 184 100 184 C120 184 140 178 156 166 C164 164 170 156 166 146"
+          fill="none" stroke="#A8703F" stroke-width="5"/>
+    <rect x="89" y="176" width="22" height="14" rx="6" fill="#F2B53A"/>
+
+    <!-- hands -->
+    <circle cx="100" cy="185" r="11.5" fill="url(#handG)"/>
+    <circle cx="100" cy="157" r="11.5" fill="url(#handG)"/>
+  </g>
+</svg>

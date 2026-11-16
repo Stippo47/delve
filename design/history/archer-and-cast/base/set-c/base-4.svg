@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- BASE 4 CLOUD. Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <path id="shadeR" d="M100 -10 V220 H220 V-10 Z"/>
+    <linearGradient id="gSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6D0AC"/><stop offset="1" stop-color="#EFC096"/></linearGradient>
+    <linearGradient id="gSkinS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E2AE88"/><stop offset="1" stop-color="#D49B76"/></linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+    <radialGradient id="gHandS" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#EBC09C"/><stop offset="1" stop-color="#CF946F"/></radialGradient>
+
+    <g id="cloud"><circle cx="100" cy="80" r="58"/><circle cx="62.5" cy="117.5" r="26"/><circle cx="49.6" cy="96.4" r="29"/><circle cx="47.7" cy="71.7" r="29"/><circle cx="57.1" cy="48.8" r="29"/><circle cx="75.9" cy="32.8" r="29"/><circle cx="100.0" cy="27.0" r="29"/><circle cx="124.1" cy="32.8" r="29"/><circle cx="142.9" cy="48.8" r="29"/><circle cx="152.3" cy="71.7" r="29"/><circle cx="150.4" cy="96.4" r="29"/><circle cx="137.5" cy="117.5" r="26"/></g>
+    <clipPath id="cloudC"><circle cx="100" cy="80" r="58"/><circle cx="62.5" cy="117.5" r="26"/><circle cx="49.6" cy="96.4" r="29"/><circle cx="47.7" cy="71.7" r="29"/><circle cx="57.1" cy="48.8" r="29"/><circle cx="75.9" cy="32.8" r="29"/><circle cx="100.0" cy="27.0" r="29"/><circle cx="124.1" cy="32.8" r="29"/><circle cx="142.9" cy="48.8" r="29"/><circle cx="152.3" cy="71.7" r="29"/><circle cx="150.4" cy="96.4" r="29"/><circle cx="137.5" cy="117.5" r="26"/></clipPath>
+    <circle id="face" cx="100" cy="140" r="46"/>
+    <clipPath id="faceC"><use href="#face"/></clipPath>
+    <linearGradient id="gFace" x1="0" y1="132" x2="0" y2="176" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9A6250"/><stop offset="0.36" stop-color="#C98E6C"/>
+      <stop offset="0.62" stop-color="#F2C7A0"/><stop offset="1" stop-color="#F6D0AC"/></linearGradient>
+    <linearGradient id="gHair" x1="0" y1="20" x2="48" y2="180" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7E4E39"/><stop offset="1" stop-color="#6A3F2D"/></linearGradient><linearGradient id="gHairS" x1="0" y1="20" x2="48" y2="180" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5A3527"/><stop offset="1" stop-color="#47291E"/></linearGradient>
+    
+  </defs>
+  <g transform="translate(100 107) scale(1.06) translate(-100 -100)">
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="11.3" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#face"/><use href="#cloud"/>
+    <rect x="38" y="160" width="33" height="29" rx="12" transform="rotate(-10 54.5 174.5)"/><rect x="152" y="128" width="31" height="28" rx="12" transform="rotate(14 167.5 142.0)"/>
+  </g>
+  
+  <use href="#face" fill="url(#gFace)"/>
+  <g clip-path="url(#faceC)"><use href="#shadeR" fill="#8A4E36" opacity="0.14"/></g>
+  <path d="M97 176 Q100 178.5 103 176" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  <use href="#cloud" fill="#2B2230" opacity="0.25" transform="translate(0 3)"/>
+  <use href="#cloud" fill="url(#gHair)"/>
+  <g clip-path="url(#cloudC)"><use href="#shadeR" fill="url(#gHairS)"/></g>
+  <g transform="rotate(-10 54.5 174.5)"><rect x="39" y="162.5" width="33" height="29" rx="12" fill="#2B2230" opacity="0.3"/><rect x="38" y="160" width="33" height="29" rx="12" fill="url(#gHand)"/></g><g transform="rotate(14 167.5 142.0)"><rect x="153" y="130.5" width="31" height="28" rx="12" fill="#2B2230" opacity="0.3"/><rect x="152" y="128" width="31" height="28" rx="12" fill="url(#gHandS)"/></g>
+  </g>
+</svg>

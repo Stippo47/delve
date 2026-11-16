@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- KNIGHT design-2 "Old Guard": bald grey-bearded veteran, cream fur collar on a crimson mantle, heavy steel pauldrons, round shield slung on the back, two-handed greatsword held low and forward-right. Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+<defs><radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><path id="p1" d="M-32 -28 C-12 -35 12 -35 32 -28 C34 2 22 24 0 40 C-22 24 -34 2 -32 -28 Z"/><linearGradient id="g2" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E3E7ED"/><stop offset="1" stop-color="#A9B2C0"/></linearGradient><linearGradient id="h3" x1="70" y1="0" x2="165" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4A5468" stop-opacity="0"/><stop offset="1" stop-color="#4A5468" stop-opacity="0.3"/></linearGradient><clipPath id="c4"><use href="#p1"/></clipPath><path id="p5" d="M22 112 C20 80 50 64 100 64 C150 64 180 80 178 112 C176 142 150 150 100 150 C50 150 24 142 22 112 Z"/><linearGradient id="g6" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#C8473F"/><stop offset="1" stop-color="#8E2A28"/></linearGradient><linearGradient id="h7" x1="70" y1="0" x2="165" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5A1416" stop-opacity="0"/><stop offset="1" stop-color="#5A1416" stop-opacity="0.45"/></linearGradient><path id="p8" d="M156.8 95.2 Q158.4 105.9 141.6 108.1 Q132.4 119.6 113.1 115.3 Q96.2 123.9 80.5 114.5 Q61.2 117.5 54.1 105.9 Q38.5 102.3 42.2 92.2 Q35.3 83.2 48.7 77.9 Q52.7 66.3 71.5 67.4 Q85.1 56.9 103.3 64.0 Q122.2 58.0 134.1 69.0 Q152.3 69.2 154.0 80.6 Q165.8 87.1 156.8 95.2 Z"/><linearGradient id="g9" x1="0" y1="56" x2="0" y2="124" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FBF1DE"/><stop offset="1" stop-color="#D9C7A6"/></linearGradient><linearGradient id="h10" x1="70" y1="0" x2="165" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8E7A5A" stop-opacity="0"/><stop offset="1" stop-color="#8E7A5A" stop-opacity="0.4"/></linearGradient><path id="p11" d="M11.0 116.0 A27 30 0 1 0 65.0 116.0 A27 30 0 1 0 11.0 116.0 Z"/><linearGradient id="g12" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#B9C0CB"/><stop offset="1" stop-color="#7C8697"/></linearGradient><linearGradient id="h13" x1="70" y1="0" x2="165" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2E3442" stop-opacity="0"/><stop offset="1" stop-color="#2E3442" stop-opacity="0.42"/></linearGradient><clipPath id="c14"><use href="#p11"/></clipPath><path id="p15" d="M135.0 116.0 A27 30 0 1 0 189.0 116.0 A27 30 0 1 0 135.0 116.0 Z"/><clipPath id="c16"><use href="#p15"/></clipPath><linearGradient id="g17" x1="0" y1="48" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#F6D2AE"/><stop offset="0.55" stop-color="#EDBF97"/><stop offset="1" stop-color="#D49A74"/></linearGradient><path id="p18" d="M 100.0 47.8 C 129.6 47.8 147.8 68.7 147.8 98.3 C 147.8 122.6 136.5 140.0 120.9 147.8 C 113.9 151.3 107.0 153.1 100.0 153.1 C 93.0 153.1 86.1 151.3 79.1 147.8 C 63.5 140.0 52.1 122.6 52.1 98.3 C 52.1 68.7 70.4 47.8 100.0 47.8 Z"/><linearGradient id="h19" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.3"/></linearGradient><clipPath id="c20"><use href="#p18"/></clipPath><path id="p21" d="M50 82 C42 98 44 118 54 128 C62 120 66 104 64 88 C60 82 54 80 50 82 Z"/><linearGradient id="g22" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E6E3DE"/><stop offset="1" stop-color="#B7B1A8"/></linearGradient><linearGradient id="h23" x1="70" y1="0" x2="165" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#6C665E" stop-opacity="0"/><stop offset="1" stop-color="#6C665E" stop-opacity="0.4"/></linearGradient><path id="p24" d="M150 82 C158 98 156 118 146 128 C138 120 134 104 136 88 C140 82 146 80 150 82 Z"/><path id="p25" d="M58 116 C60 138 68 160 82 178 Q100 198 118 178 C132 160 140 138 142 116 C130 128 116 132 100 132 C84 132 70 128 58 116 Z"/><linearGradient id="g26" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F4F1EC"/><stop offset="1" stop-color="#BDB6AC"/></linearGradient><linearGradient id="h27" x1="70" y1="0" x2="165" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#6C665E" stop-opacity="0"/><stop offset="1" stop-color="#6C665E" stop-opacity="0.45"/></linearGradient><clipPath id="c28"><use href="#p25"/></clipPath><path id="p29" d="M72 128 C82 118 94 120 100 126 C106 120 118 118 128 128 C120 138 108 136 100 132 C92 136 80 138 72 128 Z"/><linearGradient id="g30" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D8D2C8"/></linearGradient><linearGradient id="h31" x1="70" y1="0" x2="165" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#6C665E" stop-opacity="0"/><stop offset="1" stop-color="#6C665E" stop-opacity="0.35"/></linearGradient><path id="p32" d="M-7.5 -50.0 A7.5 7.5 0 1 0 7.5 -50.0 A7.5 7.5 0 1 0 -7.5 -50.0 Z"/><linearGradient id="g33" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F9CB5C"/><stop offset="1" stop-color="#D9952A"/></linearGradient><path id="p34" d="M-9.0 6 H9.0 V48 L0 64.2 L-9.0 48 Z"/><clipPath id="c35"><use href="#p34"/></clipPath><path id="p36" d="M-18.0 0 H18.0 A5 5 0 0 1 23.0 5 V5 A5 5 0 0 1 18.0 10 H-18.0 A5 5 0 0 1 -23.0 5 V5 A5 5 0 0 1 -18.0 0 Z"/><clipPath id="c37"><use href="#p36"/></clipPath><path id="p38" d="M148 112 H156 A8 8 0 0 1 164 120 V125 A8 8 0 0 1 156 133 H148 A8 8 0 0 1 140 125 V120 A8 8 0 0 1 148 112 Z"/><path id="p39" d="M148 91 H156 A8 8 0 0 1 164 99 V104 A8 8 0 0 1 156 112 H148 A8 8 0 0 1 140 104 V99 A8 8 0 0 1 148 91 Z"/></defs>
+<g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"><use href="#p1" transform="translate(56 42) rotate(158) scale(1.15)"/><use href="#p5"/><use href="#p8"/><use href="#p11"/><use href="#p15"/><use href="#p18"/><use href="#p21"/><use href="#p24"/><use href="#p25"/><use href="#p29"/><use href="#p32" transform="translate(152 134) rotate(-14)"/><use href="#p34" transform="translate(152 134) rotate(-14)"/><use href="#p36" transform="translate(152 134) rotate(-14)"/><use href="#p38" transform="rotate(-14 152 122)"/><use href="#p39" transform="rotate(-14 152 101)"/></g>
+<use href="#p1" fill="url(#g2)" transform="translate(56 42) rotate(158) scale(1.15)"/>
+<use href="#p1" fill="url(#h3)" transform="translate(56 42) rotate(158) scale(1.15)"/>
+<g transform="translate(56 42) rotate(158) scale(1.15)"><g clip-path="url(#c4)"><path d="M-24 -22 C-9 -27 9 -27 24 -22 C25 0 16 17 0 30 C-16 17 -25 0 -24 -22 Z" fill="#B8403A"/></g></g>
+<use href="#p5" fill="#2B2230" opacity="0.28" transform="translate(0 3.0)"/>
+<use href="#p5" fill="url(#g6)"/>
+<use href="#p5" fill="url(#h7)"/>
+<use href="#p8" fill="#2B2230" opacity="0.28" transform="translate(0 3.0)"/>
+<use href="#p8" fill="url(#g9)"/>
+<use href="#p8" fill="url(#h10)"/>
+<use href="#p11" fill="#2B2230" opacity="0.28" transform="translate(0 3.0)"/>
+<use href="#p11" fill="url(#g12)"/>
+<use href="#p11" fill="url(#h13)"/>
+<g><g clip-path="url(#c14)"><path d="M10.0 136.0 A28 14 0 1 0 66.0 136.0 A28 14 0 1 0 10.0 136.0 Z" fill="#7F8898" opacity="0.4"/></g></g>
+<use href="#p15" fill="#2B2230" opacity="0.28" transform="translate(0 3.0)"/>
+<use href="#p15" fill="url(#g12)"/>
+<use href="#p15" fill="url(#h13)"/>
+<g><g clip-path="url(#c16)"><path d="M134.0 136.0 A28 14 0 1 0 190.0 136.0 A28 14 0 1 0 134.0 136.0 Z" fill="#7F8898" opacity="0.4"/></g></g>
+<use href="#p18" fill="#2B2230" opacity="0.3" transform="translate(0 5)"/>
+<use href="#p18" fill="url(#g17)"/>
+<use href="#p18" fill="url(#h19)"/>
+<g><g clip-path="url(#c20)"><ellipse cx="86" cy="70" rx="16" ry="11" fill="#FFF3E2" opacity="0.45"/><path d="M40 104 Q100 86 160 104 V125 H40 Z" fill="#B67A5E" opacity="0.18"/></g></g>
+<use href="#p21" fill="#2B2230" opacity="0.25" transform="translate(0 3.0)"/>
+<use href="#p21" fill="url(#g22)"/>
+<use href="#p21" fill="url(#h23)"/>
+<use href="#p24" fill="#2B2230" opacity="0.25" transform="translate(0 3.0)"/>
+<use href="#p24" fill="url(#g22)"/>
+<use href="#p24" fill="url(#h23)"/>
+<use href="#p25" fill="#2B2230" opacity="0.32" transform="translate(0 3)"/>
+<use href="#p25" fill="url(#g26)"/>
+<use href="#p25" fill="url(#h27)"/>
+<g><g clip-path="url(#c28)"><path d="M70 150 Q100 166 130 150 V200 H70 Z" fill="#A69E92" opacity="0.35"/></g></g>
+<use href="#p29" fill="#2B2230" opacity="0.3" transform="translate(0 2.5)"/>
+<use href="#p29" fill="url(#g30)"/>
+<use href="#p29" fill="url(#h31)"/>
+<use href="#p32" fill="url(#g33)" transform="translate(152 134) rotate(-14)"/>
+<use href="#p34" fill="#2B2230" opacity="0.25" transform="translate(152 134) rotate(-14) translate(0 3.0)"/>
+<use href="#p34" fill="url(#g2)" transform="translate(152 134) rotate(-14)"/>
+<g transform="translate(152 134) rotate(-14)"><g clip-path="url(#c35)"><path d="M0 0 H11.0 V78 H0 Z" fill="#7E8899" opacity="0.45"/></g></g>
+<use href="#p36" fill="#2B2230" opacity="0.28" transform="translate(152 134) rotate(-14) translate(0 3.0)"/>
+<use href="#p36" fill="url(#g33)" transform="translate(152 134) rotate(-14)"/>
+<g transform="translate(152 134) rotate(-14)"><g clip-path="url(#c37)"><rect x="0" y="-2" width="46" height="14" fill="#D9952A" opacity="0.6"/></g></g>
+<use href="#p38" fill="#2B2230" opacity="0.3" transform="rotate(-14 152 122) translate(0 2.5)"/>
+<use href="#p38" fill="url(#gHand)" transform="rotate(-14 152 122)"/>
+<use href="#p39" fill="#2B2230" opacity="0.3" transform="rotate(-14 152 101) translate(0 2.5)"/>
+<use href="#p39" fill="url(#gHand)" transform="rotate(-14 152 101)"/>
+</svg>

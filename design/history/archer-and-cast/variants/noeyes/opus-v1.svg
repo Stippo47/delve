@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- Variant 1: lineless interior + one bold outer silhouette outline, soft gradients instead of the hard shadow crescent.
+       Facing = DOWN (+y). Rotate the whole sprite around (100,100) to aim. -->
+  <defs>
+    <path id="hood" d="M100 16 C116 32 148 56 158 90 C166 122 148 152 100 154 C52 152 34 122 42 90 C52 56 84 32 100 16 Z"/>
+    <path id="capeL" d="M58 94 C28 98 18 126 32 142 C44 154 66 148 76 138 Z"/>
+    <path id="capeR" d="M142 94 C172 98 182 126 168 142 C156 154 134 148 124 138 Z"/>
+    <path id="brim" d="M50 134 C50 90 150 90 150 134 C148 152 130 160 100 160 C70 160 52 152 50 134 Z"/>
+    <path id="open" d="M62 132 C64 100 136 100 138 132 C134 152 66 152 62 132 Z"/>
+    <clipPath id="openClip"><use href="#open"/></clipPath>
+    <path id="bow" d="M34 146 C30 156 36 164 44 166 C60 178 80 184 100 184 C120 184 140 178 156 166 C164 164 170 156 166 146"/>
+    <g id="quiver">
+      <path d="M130 30 C120 24 118 12 124 6 C132 12 134 22 130 30 Z"/>
+      <path d="M146 30 C156 24 158 12 152 6 C144 12 142 22 146 30 Z"/>
+      <rect x="120" y="26" width="36" height="50" rx="10"/>
+    </g>
+    <path id="head" d="M90 192 L100 208 L110 192 Z"/>
+
+    <radialGradient id="gHood" cx="0.36" cy="0.30" r="0.80">
+      <stop offset="0" stop-color="#86C66E"/>
+      <stop offset="0.55" stop-color="#5FA35A"/>
+      <stop offset="1" stop-color="#3B7442"/>
+    </radialGradient>
+    <linearGradient id="gCape" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3E7A44"/>
+      <stop offset="1" stop-color="#2F6236"/>
+    </linearGradient>
+    <linearGradient id="gBrim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F7C653"/>
+      <stop offset="1" stop-color="#E09A2C"/>
+    </linearGradient>
+    <linearGradient id="gQuiver" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#B57944"/>
+      <stop offset="1" stop-color="#8A5530"/>
+    </linearGradient>
+    <linearGradient id="gFace" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C98E6A"/>
+      <stop offset="0.45" stop-color="#F2C7A0"/>
+    </linearGradient>
+    <radialGradient id="gHand" cx="0.4" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#F8D4B2"/>
+      <stop offset="1" stop-color="#DDA47E"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ============ SILHOUETTE: one bold outline around the whole figure ============ -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#capeL"/><use href="#capeR"/>
+    <use href="#quiver" transform="rotate(30 138 52)"/>
+    <use href="#hood"/>
+    <use href="#brim"/>
+    <use href="#bow" fill="none" stroke-width="19"/>
+    <path d="M38 154 L100 156 L162 154" fill="none" stroke-width="8"/>
+    <path d="M100 152 V194" stroke-width="15"/>
+    <use href="#head"/>
+    <rect x="89" y="176" width="22" height="15" rx="4"/>
+    <circle cx="100" cy="185" r="10"/>
+    <circle cx="100" cy="157" r="10"/>
+  </g>
+
+  <!-- ============ INTERIOR: flat shapes, no inner lines ============ -->
+  <!-- cape lobes -->
+  <use href="#capeL" fill="url(#gCape)"/>
+  <use href="#capeR" fill="url(#gCape)"/>
+
+  <!-- quiver -->
+  <g transform="rotate(30 138 52)">
+    <path d="M130 30 C120 24 118 12 124 6 C132 12 134 22 130 30 Z" fill="#FFF8E8"/>
+    <path d="M146 30 C156 24 158 12 152 6 C144 12 142 22 146 30 Z" fill="#9AD17F"/>
+    <rect x="120" y="26" width="36" height="50" rx="10" fill="url(#gQuiver)"/>
+    <rect x="120" y="40" width="36" height="7" fill="#6E4222"/>
+  </g>
+
+  <!-- dark gap so the hood separates from the cape/quiver by colour, not by a line -->
+  <use href="#hood" fill="#2E5E35" transform="translate(0 2)"/>
+  <!-- hood: soft radial light from the upper-left -->
+  <use href="#hood" fill="url(#gHood)"/>
+  <!-- seam as a soft tone, not a line -->
+  <path d="M100 18 C96 40 97 66 100 92 C103 66 104 40 100 18 Z" fill="#3E7A44" opacity="0.45"/>
+
+  <!-- brim -->
+  <use href="#brim" fill="url(#gBrim)"/>
+  <use href="#open" fill="#2B2230"/>
+
+  <!-- face -->
+  <g clip-path="url(#openClip)">
+    <path d="M64 142 C66 118 134 118 136 142 C132 160 68 160 64 142 Z" fill="url(#gFace)"/>
+    <path d="M56 96 H144 V121 C122 114 78 114 56 121 Z" fill="#2B2230"/>
+    <ellipse cx="76" cy="144" rx="6" ry="3.5" fill="#E8A383"/>
+    <ellipse cx="124" cy="144" rx="6" ry="3.5" fill="#E8A383"/>
+  </g>
+
+  <!-- leaf clasp: two tones, no outline -->
+  <path d="M100 85 C112 91 114 104 100 113 C86 104 88 91 100 85 Z" fill="#2E5E35"/>
+  <path d="M100 87 C110 93 111 103 100 110 C89 103 90 93 100 87 Z" fill="#9AD17F"/>
+  <path d="M100 87 C109 93 110 103 100 110 Z" fill="#7DBB66"/>
+
+  <!-- bow string -->
+  <path d="M38 154 L100 156 L162 154" fill="none" stroke="#FFF8E8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- arrow -->
+  <path d="M100 152 V194" stroke="#A0683A" stroke-width="4"/>
+  <use href="#head" fill="#C9CED6"/>
+  <path d="M100 194 L110 192 L100 208 Z" fill="#9AA2AE"/>
+
+  <!-- bow: wood with a darker underside tone -->
+  <use href="#bow" fill="none" stroke="#A0683A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M116 182.5 C134 179 148 173 156 166" fill="none" stroke="#7A4A26" stroke-width="7"/>
+  <rect x="89" y="176" width="22" height="15" rx="4" fill="url(#gBrim)"/>
+
+  <!-- hands: soft shaded, no outline -->
+  <circle cx="100" cy="185" r="10" fill="url(#gHand)"/>
+  <circle cx="100" cy="157" r="10" fill="url(#gHand)"/>
+</svg>

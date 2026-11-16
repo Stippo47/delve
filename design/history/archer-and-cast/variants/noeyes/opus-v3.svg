@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- Variant 3: faceless ranger — eyes removed, face is deep shadow with only the lit chin/nose under the brim;
+       flat two-tone split shading (light left / dark right, no highlight); tapered flat longbow.
+       Facing = DOWN (+y). Rotate the whole sprite around (100,100) to aim. -->
+  <defs>
+    <path id="hood" d="M100 16 C116 32 148 56 158 90 C166 122 148 152 100 154 C52 152 34 122 42 90 C52 56 84 32 100 16 Z"/>
+    <clipPath id="hoodClip"><use href="#hood"/></clipPath>
+    <path id="open" d="M62 132 C64 100 136 100 138 132 C134 152 66 152 62 132 Z"/>
+    <clipPath id="openClip"><use href="#open"/></clipPath>
+    <!-- right (shadow) half of the sprite, split along the hood seam -->
+    <clipPath id="rightHalf"><path d="M100 -10 C97 40 98 66 100 90 V220 H220 V-10 Z"/></clipPath>
+    <path id="bow" d="M28 146 C37 178 70 192 100 192 C130 192 163 178 172 146 L165 144 C154 169 128 181 100 181 C72 181 46 169 35 144 Z"/>
+  </defs>
+
+  <g stroke="#2B2230" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <!-- shoulder cape lobes: lit left, shaded right -->
+    <path d="M58 94 C28 98 18 126 32 142 C44 154 66 148 76 138 Z" fill="#4F9150"/>
+    <path d="M142 94 C172 98 182 126 168 142 C156 154 134 148 124 138 Z" fill="#336A3A"/>
+
+    <!-- quiver -->
+    <g transform="rotate(30 138 52)">
+      <path d="M130 30 C120 24 118 12 124 6 C132 12 134 22 130 30 Z" fill="#FFF8E8"/>
+      <path d="M146 30 C156 24 158 12 152 6 C144 12 142 22 146 30 Z" fill="#9AD17F"/>
+      <rect x="120" y="26" width="36" height="50" rx="10" fill="#8A5530"/>
+      <rect x="120" y="40" width="36" height="7" fill="#6A3E20"/>
+    </g>
+
+    <use href="#hood" fill="#5FA35A"/>
+  </g>
+
+  <!-- flat split shading: everything right of the seam a single darker tone -->
+  <g clip-path="url(#hoodClip)">
+    <use href="#hood" fill="#3E7A44" clip-path="url(#rightHalf)"/>
+  </g>
+  <use href="#hood" fill="none" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- brim (lit left / shaded right) + face opening -->
+  <g stroke="#2B2230" stroke-width="4" stroke-linejoin="round">
+    <path d="M50 134 C50 90 150 90 150 134 C148 152 130 160 100 160 C70 160 52 152 50 134 Z" fill="#F2B53A"/>
+  </g>
+  <path d="M100 99 V160 C130 160 148 152 150 134 C150 112 126 100 100 99 Z" fill="#D9952A" stroke="none"/>
+  <path d="M50 134 C50 90 150 90 150 134 C148 152 130 160 100 160 C70 160 52 152 50 134 Z" fill="none" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+  <use href="#open" fill="#2B2230" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- face in shadow: the brim's shadow hides the eyes, only the lower face catches light -->
+  <g clip-path="url(#openClip)">
+    <path d="M64 142 C66 118 134 118 136 142 C132 160 68 160 64 142 Z" fill="#F2C7A0"/>
+    <path d="M100 116 C122 116 134 128 136 142 C132 160 110 158 100 158 Z" fill="#D99C75"/>
+    <!-- sagging brim shadow over the eyes -->
+    <path d="M56 96 H144 V122 C126 134 74 134 56 122 Z" fill="#2B2230"/>
+    <!-- nose + mouth hint -->
+    <path d="M96 137.5 Q100 141 104 137.5" fill="none" stroke="#B9785A" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- leaf clasp -->
+  <path d="M100 86 C111 92 113 104 100 112 C87 104 89 92 100 86 Z" fill="#9AD17F" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M100 86 C111 92 113 104 100 112 Z" fill="#7DBB66"/>
+  <path d="M100 86 C111 92 113 104 100 112 C87 104 89 92 100 86 Z" fill="none" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- bow string -->
+  <path d="M32 146 L100 156 L168 146" fill="none" stroke="#2B2230" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M32 146 L100 156 L168 146" fill="none" stroke="#FFF8E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g stroke="#2B2230" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <!-- arrow -->
+    <path d="M100 152 V194" stroke="#2B2230" stroke-width="7"/>
+    <path d="M100 152 V194" stroke="#A0683A" stroke-width="3"/>
+    <path d="M90 192 L100 208 L110 192 Z" fill="#C9CED6"/>
+
+    <!-- tapered flat longbow -->
+    <use href="#bow" fill="#C98B4E"/>
+  </g>
+  <!-- bow shade on the right limb (same flat split) -->
+  <g clip-path="url(#rightHalf)">
+    <use href="#bow" fill="#A0683A"/>
+  </g>
+  <use href="#bow" fill="none" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+  <!-- nocks -->
+  <circle cx="31.5" cy="145" r="5" fill="#2B2230"/>
+  <circle cx="168.5" cy="145" r="5" fill="#2B2230"/>
+  <!-- arrowhead shade -->
+  <path d="M100 194 L110 192 L100 208 Z" fill="#8F97A3" stroke="#2B2230" stroke-width="0"/>
+  <path d="M90 192 L100 208 L110 192 Z" fill="none" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+
+  <g stroke="#2B2230" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <!-- leather grip -->
+    <rect x="87" y="175" width="26" height="20" rx="4" fill="#8A3B2E"/>
+    <!-- hands -->
+    <circle cx="100" cy="185" r="10.5" fill="#F2C7A0"/>
+    <circle cx="100" cy="157" r="10.5" fill="#F2C7A0"/>
+  </g>
+  <!-- hand shade: flat right half -->
+  <path d="M100 176.5 A8.5 8.5 0 0 1 100 193.5 Z" fill="#D99C75"/>
+  <path d="M100 148.5 A8.5 8.5 0 0 1 100 165.5 Z" fill="#D99C75"/>
+</svg>

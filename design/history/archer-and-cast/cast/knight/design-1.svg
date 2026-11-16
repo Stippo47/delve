@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- KNIGHT design 1 "Vanguard": flat-topped great helm with a gold cross brace, a big heater shield braced
+       in front with a chevron, arming sword thrust forward past the shield's right edge.
+       Facing = DOWN (+y). Rotate the whole sprite around (100,100). -->
+  <defs>
+    <path id="helm" d="M38 92 C38 54 66 30 100 30 C134 30 162 54 162 92 C162 126 134 146 100 146 C66 146 38 126 38 92 Z"/>
+    <clipPath id="helmClip"><use href="#helm"/></clipPath>
+    <ellipse id="top" cx="100" cy="86" rx="56" ry="50"/>
+    <clipPath id="topClip"><use href="#top"/></clipPath>
+    <path id="shield" d="M36 122 C66 112 134 112 164 122 C166 158 142 186 100 204 C58 186 34 158 36 122 Z"/>
+    <clipPath id="shieldClip"><use href="#shield"/></clipPath>
+    <path id="field" d="M47 129 C72 121 128 121 153 129 C153 157 133 179 100 193 C67 179 47 157 47 129 Z"/>
+    <clipPath id="fieldClip"><use href="#field"/></clipPath>
+    <g id="sword">
+      <path d="M0 10 H14 V54 L7 66 L0 54 Z"/>
+      <rect x="-9" y="0" width="32" height="11" rx="5"/>
+    </g>
+    <path id="shadeR" d="M100 -10 V220 H220 V-10 Z"/>
+
+    <linearGradient id="gSteelLit" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#EEF1F5"/><stop offset="1" stop-color="#C3CBD7"/>
+    </linearGradient>
+    <linearGradient id="gSteelShade" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#ABB5C4"/><stop offset="1" stop-color="#8691A4"/>
+    </linearGradient>
+    <linearGradient id="gWall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9DA8B8"/><stop offset="1" stop-color="#7A8698"/>
+    </linearGradient>
+    <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F9CB5C"/><stop offset="1" stop-color="#E8A030"/>
+    </linearGradient>
+    <linearGradient id="gBlue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5D92DE"/><stop offset="1" stop-color="#3E6DBD"/>
+    </linearGradient>
+    <linearGradient id="gBlueShade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#406FBA"/><stop offset="1" stop-color="#2E5293"/>
+    </linearGradient>
+    <linearGradient id="gBlade" x1="0" y1="0" x2="14" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F2F5F8"/><stop offset="0.5" stop-color="#E2E7ED"/><stop offset="0.5" stop-color="#A9B2C0"/><stop offset="1" stop-color="#939DAD"/>
+    </linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ===== heavy outer silhouette ===== -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#helm"/>
+    <use href="#shield"/>
+    <use href="#sword" transform="translate(163 140) rotate(-12)"/>
+    <rect x="156" y="124" width="26" height="22" rx="8" transform="rotate(-12 169 135)"/>
+    <rect x="38" y="112" width="24" height="21" rx="8"/>
+  </g>
+
+  <!-- ===== helm ===== -->
+  <use href="#helm" fill="url(#gWall)"/>
+  <g clip-path="url(#helmClip)">
+    <use href="#shadeR" fill="#5F6B7F" opacity="0.45"/>
+    <use href="#top" fill="#55607A" opacity="0.45" transform="translate(0 4)"/>
+    <use href="#top" fill="url(#gSteelLit)"/>
+    <g clip-path="url(#topClip)"><use href="#shadeR" fill="url(#gSteelShade)"/></g>
+    <!-- gold cross brace -->
+    <rect x="92" y="20" width="16" height="140" fill="url(#gGold)"/>
+    <rect x="30" y="78" width="140" height="15" fill="url(#gGold)"/>
+    <path d="M100 20 H108 V160 H100 Z" fill="#D9952A" opacity="0.75"/>
+    <path d="M108 78 H170 V93 H108 Z" fill="#D9952A" opacity="0.75"/>
+  </g>
+
+  <!-- ===== shield ===== -->
+  <use href="#shield" fill="#2B2230" opacity="0.3" transform="translate(0 -4)"/>
+  <use href="#shield" fill="url(#gGold)"/>
+  <g clip-path="url(#shieldClip)"><use href="#shadeR" fill="#D9952A" opacity="0.6"/></g>
+  <use href="#field" fill="url(#gBlue)"/>
+  <g clip-path="url(#fieldClip)">
+    <use href="#shadeR" fill="url(#gBlueShade)"/>
+    <path d="M40 176 L100 138 L160 176 V192 L100 154 L40 192 Z" fill="#FFF3DA"/>
+    <path d="M100 138 L160 176 V192 L100 154 Z" fill="#E1D3B8"/>
+  </g>
+
+  <!-- shield hand gripping the top-left edge -->
+  <rect x="39" y="115" width="24" height="21" rx="8" fill="#2B2230" opacity="0.3"/>
+  <rect x="38" y="112" width="24" height="21" rx="8" fill="url(#gHand)"/>
+
+  <!-- ===== sword thrust forward past the shield ===== -->
+  <g transform="translate(163 140) rotate(-12)">
+    <path d="M0 10 H14 V54 L7 66 L0 54 Z" fill="url(#gBlade)"/>
+    <rect x="-9" y="0" width="32" height="11" rx="5" fill="url(#gGold)"/>
+    <path d="M7 0 H18 A5 5 0 0 1 23 5.5 A5 5 0 0 1 18 11 H7 Z" fill="#D9952A"/>
+  </g>
+  <rect x="156" y="126" width="26" height="22" rx="8" fill="#2B2230" opacity="0.3" transform="rotate(-12 169 135)"/>
+  <rect x="156" y="124" width="26" height="22" rx="8" fill="url(#gHand)" transform="rotate(-12 169 135)"/>
+</svg>

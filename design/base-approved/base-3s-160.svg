@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- BASE HUMAN 3 "Crop": adult, squarish 1x1 token: broad rounded-square head with a firm (not heavy) jaw and soft copper stubble shadow; short tufty copper crop, slightly uneven; ears that stick out; square fists held wide at the front corners. SHOULDERS VARIANT: rounded band centred on the head, nudged 8 forward, depth 64, ~160 total span. Sized to the archer HEAD (hood footprint). Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <clipPath id="R"><rect x="100" y="-10" width="120" height="230"/></clipPath>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+    <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E3823F"/><stop offset="1" stop-color="#CC672C"/></linearGradient>
+    <linearGradient id="g2" x1="60" y1="0" x2="166" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#6A2410" stop-opacity="0"/><stop offset="1" stop-color="#6A2410" stop-opacity="0.5"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0.2" y2="1"><stop offset="0" stop-color="#F4CBA5"/><stop offset="1" stop-color="#EAB78F"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0.2" y2="1"><stop offset="0" stop-color="#DDA982"/><stop offset="1" stop-color="#CE9671"/></linearGradient>
+    <path d="M26.0 108.0 C26.0 82 54.0 76 100 76 C146.0 76 174.0 82 174.0 108.0 C174.0 134 146.0 140 100 140 C54.0 140 26.0 134 26.0 108.0 Z" id="s5"/>
+    <clipPath id="s5c"><use href="#s5"/></clipPath>
+    <linearGradient id="g6" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#98A1B3"/><stop offset="1" stop-color="#7C8598"/></linearGradient>
+    <linearGradient id="g7" x1="80" y1="0" x2="174.0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2E3442" stop-opacity="0"/><stop offset="1" stop-color="#2E3442" stop-opacity="0.4"/></linearGradient>
+    <rect x="42.6" y="94.8" width="15.7" height="24.4" rx="7.0" id="s8"/>
+    <clipPath id="s8c"><use href="#s8"/></clipPath>
+    <rect x="141.8" y="94.8" width="15.7" height="24.4" rx="7.0" id="s9"/>
+    <clipPath id="s9c"><use href="#s9"/></clipPath>
+    <path d="M 53.0 84.3 C 53.0 58.2 72.2 46.1 100.0 46.1 C 127.8 46.1 147.0 58.2 147.0 84.3 L 147.0 113.9 C 147.0 136.5 131.3 150.5 113.9 152.2 L 86.1 152.2 C 68.7 150.5 53.0 136.5 53.0 113.9 Z" id="s10"/>
+    <clipPath id="s10c"><use href="#s10"/></clipPath>
+    <path d="M 51.3 100.0 C 44.3 84.3 46.1 68.7 53.0 60.0 C 53.0 49.5 63.5 44.3 73.9 46.1 C 79.1 39.1 93.0 37.4 100.0 42.6 C 107.0 37.4 122.6 39.1 127.8 47.8 C 140.0 46.1 150.5 54.8 147.0 66.9 C 153.9 75.6 153.9 89.6 147.0 100.0 C 143.5 94.8 138.3 93.0 133.1 98.3 C 127.8 89.6 117.4 89.6 112.2 96.5 C 107.0 91.3 100.0 91.3 94.8 96.5 C 89.6 87.8 77.4 87.8 72.2 96.5 C 65.2 91.3 56.5 93.0 51.3 100.0 Z" id="s11"/>
+    <clipPath id="s11c"><use href="#s11"/></clipPath>
+    <linearGradient id="g12" x1="0" y1="93.04" x2="0" y2="152.2" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient>
+    <linearGradient id="g13" x1="0" y1="115.7" x2="0" y2="152.2" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#9A4E2A" stop-opacity="0"/><stop offset="0.45" stop-color="#9A4E2A" stop-opacity="0.2"/><stop offset="1" stop-color="#9A4E2A" stop-opacity="0.3"/></linearGradient>
+    <linearGradient id="g14" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+    <rect x="29" y="131" width="26" height="22" rx="8" id="s15"/>
+    <clipPath id="s15c"><use href="#s15"/></clipPath>
+    <rect x="145" y="131" width="26" height="22" rx="8" id="s16"/>
+    <clipPath id="s16c"><use href="#s16"/></clipPath>
+  </defs>
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#s5"/>
+    <use href="#s8"/>
+    <use href="#s9"/>
+    <use href="#s10"/>
+    <use href="#s11"/>
+    <use href="#s15"/>
+    <use href="#s16"/>
+  </g>
+  <use href="#s5" fill="url(#g6)"/>
+  <use href="#s5" fill="url(#g7)"/>
+  <use href="#s8" fill="url(#g3)"/>
+  <use href="#s9" fill="url(#g4)"/>
+  <use href="#s10" fill="#1E2230" opacity="0.3" transform="translate(0 5)"/>
+  <use href="#s10" fill="url(#g12)"/>
+  <use href="#s10" fill="url(#g13)"/>
+  <use href="#s10" fill="url(#g14)"/>
+  <use href="#s11" fill="#6A2A10" opacity="0.3" transform="translate(0 4)"/>
+  <use href="#s11" fill="url(#g1)"/>
+  <use href="#s11" fill="url(#g2)"/>
+  <path d="M95 138.28 Q100 140.78 105 138.28" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  <g transform="translate(0 2.5)"><rect x="30" y="131" width="24" height="22" rx="8" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#s15" fill="url(#gHand)"/>
+  <g transform="translate(0 2.5)"><rect x="146" y="131" width="24" height="22" rx="8" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#s16" fill="url(#gHand)"/>
+</svg>

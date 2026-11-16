@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- BASE 4 CLOUD. Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <path id="shadeR" d="M100 -40 V240 H240 V-40 Z"/>
+    <rect id="all" x="-40" y="-40" width="280" height="280"/>
+    <linearGradient id="gSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6D0AC"/><stop offset="1" stop-color="#EFC096"/></linearGradient>
+    <linearGradient id="gSkinS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E2AE88"/><stop offset="1" stop-color="#D49B76"/></linearGradient>
+    <linearGradient id="gFaceSoft" x1="92" y1="0" x2="162" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.26"/></linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+
+    <g id="cloud"><circle cx="100" cy="80" r="50"/><circle cx="67.5" cy="112.5" r="22"/><circle cx="56.3" cy="94.2" r="25"/><circle cx="54.6" cy="72.8" r="25"/><circle cx="62.8" cy="53.0" r="25"/><circle cx="79.1" cy="39.0" r="25"/><circle cx="100.0" cy="34.0" r="25"/><circle cx="120.9" cy="39.0" r="25"/><circle cx="137.2" cy="53.0" r="25"/><circle cx="145.4" cy="72.8" r="25"/><circle cx="143.7" cy="94.2" r="25"/><circle cx="132.5" cy="112.5" r="22"/></g>
+    <clipPath id="cloudC"><circle cx="100" cy="80" r="50"/><circle cx="67.5" cy="112.5" r="22"/><circle cx="56.3" cy="94.2" r="25"/><circle cx="54.6" cy="72.8" r="25"/><circle cx="62.8" cy="53.0" r="25"/><circle cx="79.1" cy="39.0" r="25"/><circle cx="100.0" cy="34.0" r="25"/><circle cx="120.9" cy="39.0" r="25"/><circle cx="137.2" cy="53.0" r="25"/><circle cx="145.4" cy="72.8" r="25"/><circle cx="143.7" cy="94.2" r="25"/><circle cx="132.5" cy="112.5" r="22"/></clipPath>
+    <circle id="face" cx="100" cy="136" r="54"/>
+    <clipPath id="faceC"><use href="#face"/></clipPath>
+    <linearGradient id="gFace" x1="0" y1="124" x2="0" y2="178" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9A6250"/><stop offset="0.36" stop-color="#C98E6C"/>
+      <stop offset="0.62" stop-color="#F2C7A0"/><stop offset="1" stop-color="#F6D0AC"/></linearGradient>
+    <linearGradient id="gHair" x1="0" y1="20" x2="48" y2="180" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#9E6A4C"/><stop offset="1" stop-color="#82543A"/></linearGradient><linearGradient id="gHairS" x1="0" y1="20" x2="48" y2="180" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#6A4230"/><stop offset="1" stop-color="#563222"/></linearGradient><linearGradient id="gHairSoft" x1="70" y1="0" x2="180" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#563222" stop-opacity="0"/><stop offset="1" stop-color="#563222" stop-opacity="0.9"/></linearGradient>
+    
+  </defs>
+  <g fill="#2B2230" stroke="#2B2230" stroke-linejoin="round" stroke-linecap="round">
+    <g transform="translate(100 86) scale(0.75) translate(-100 -100)" stroke-width="16.00"><use href="#face"/><use href="#cloud"/></g>
+    <g stroke-width="12"><rect x="54" y="148" width="24" height="21" rx="8" transform="rotate(-10 66.0 158.5)"/><rect x="140" y="116" width="24" height="21" rx="8" transform="rotate(14 152.0 126.5)"/></g>
+  </g>
+  <g transform="translate(100 86) scale(0.75) translate(-100 -100)">
+  <use href="#face" fill="url(#gFace)"/><g clip-path="url(#faceC)"><use href="#all" fill="url(#gFaceSoft)"/></g>
+  <path d="M96.4 176 Q100 179 103.6 176" fill="none" stroke="#C98868" stroke-width="3.3" stroke-linecap="round"/>
+  <use href="#cloud" fill="#2B2230" opacity="0.25" transform="translate(0 4)"/>
+  <use href="#cloud" fill="url(#gHair)"/><g clip-path="url(#cloudC)"><use href="#all" fill="url(#gHairSoft)"/></g>
+  </g>
+  <g transform="rotate(-10 66.0 158.5)"><rect x="55" y="150" width="24" height="21" rx="8" fill="#2B2230" opacity="0.3"/><rect x="54" y="148" width="24" height="21" rx="8" fill="url(#gHand)"/></g><g transform="rotate(14 152.0 126.5)"><rect x="141" y="118" width="24" height="21" rx="8" fill="#2B2230" opacity="0.3"/><rect x="140" y="116" width="24" height="21" rx="8" fill="url(#gHand)"/></g>
+</svg>

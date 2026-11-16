@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- Attempt 3 (pointed leaf cowl): the gold brim and face opening become leaf-shaped (pointed toward the
+       clasp), one clean pair of swept leaf petals instead of two rows, uniform 4px lines everywhere,
+       flat two-tone split. Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <path id="hood" d="M100 14 C118 32 150 56 159 92 C166 124 146 153 100 155 C54 153 34 124 41 92 C50 56 82 32 100 14 Z"/>
+    <clipPath id="hoodClip"><use href="#hood"/></clipPath>
+    <path id="brim" d="M100 84 C122 96 151 110 151 136 C149 155 128 162 100 162 C72 162 51 155 49 136 C49 110 78 96 100 84 Z"/>
+    <clipPath id="brimClip"><use href="#brim"/></clipPath>
+    <path id="open" d="M100 102 C116 109 137 119 137 134 C134 151 66 151 63 134 C63 119 84 109 100 102 Z"/>
+    <clipPath id="openClip"><use href="#open"/></clipPath>
+    <path id="bow" d="M28 146 C37 178 70 192 100 192 C130 192 163 178 172 146 L165 144 C154 169 128 181 100 181 C72 181 46 169 35 144 Z"/>
+    <clipPath id="bowClip"><use href="#bow"/></clipPath>
+    <path id="shadeR" d="M100 -10 C97 40 98 66 100 90 V220 H220 V-10 Z"/>
+  </defs>
+
+  <g stroke="#2B2230" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <!-- quiver -->
+    <g transform="rotate(30 138 52)">
+      <path d="M130 30 C120 24 118 12 124 6 C132 12 134 22 130 30 Z" fill="#FFF8E8"/>
+      <path d="M146 30 C156 24 158 12 152 6 C144 12 142 22 146 30 Z" fill="#9AD17F"/>
+      <rect x="120" y="26" width="36" height="50" rx="10" fill="#A0683A"/>
+      <rect x="120" y="40" width="36" height="7" fill="#7A4A26"/>
+    </g>
+
+    <!-- one swept leaf petal per shoulder -->
+    <path d="M62 98 C36 92 14 108 10 142 C14 152 38 152 56 138 C66 130 72 120 74 112 Z" fill="#4A8C4C"/>
+    <path d="M138 98 C164 92 186 108 190 142 C186 152 162 152 144 138 C134 130 128 120 126 112 Z" fill="#3E7A44"/>
+  </g>
+  <g fill="none" stroke-width="3" stroke-linecap="round">
+    <path d="M64 108 C44 110 26 124 18 142" stroke="#3E7A44"/>
+    <path d="M136 108 C156 110 174 124 182 142" stroke="#2F6236"/>
+  </g>
+
+  <!-- hood: flat split -->
+  <use href="#hood" fill="#5FA35A"/>
+  <g clip-path="url(#hoodClip)">
+    <use href="#shadeR" fill="#4A8C4C"/>
+    <path d="M100 14 C97 40 98 66 100 92" fill="none" stroke="#3E7A44" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <use href="#hood" fill="none" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- leaf-shaped gold brim, split -->
+  <use href="#brim" fill="#F2B53A"/>
+  <g clip-path="url(#brimClip)"><use href="#shadeR" fill="#D9952A"/></g>
+  <use href="#brim" fill="none" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- face: calm, eyeless; skin-tone shadow follows the pointed brim -->
+  <g clip-path="url(#openClip)">
+    <use href="#open" fill="#F2C7A0"/>
+    <use href="#shadeR" fill="#E2AC84"/>
+    <path d="M56 96 H144 V130 C128 122 112 117 100 116 C88 117 72 122 56 130 Z" fill="#B97A5C"/>
+    <path d="M100 96 H144 V130 C128 122 112 117 100 116 Z" fill="#A86B50"/>
+    <use href="#open" fill="none" stroke="#2E5E35" stroke-width="7"/>
+    <path d="M97 136 Q100 138.5 103 136" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <use href="#open" fill="none" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- leaf clasp at the brim's point -->
+  <path d="M100 74 C111 80 113 92 100 100 C87 92 89 80 100 74 Z" fill="#9AD17F" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M100 78 C108 83 110 92 100 97 Z" fill="#7DBB66"/>
+
+  <!-- string -->
+  <path d="M32 146 L100 156 L168 146" fill="none" stroke="#2B2230" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g stroke="#2B2230" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <!-- arrow -->
+    <path d="M97 152 H103 V192 H97 Z" fill="#A0683A"/>
+    <path d="M90 191 L100 207 L110 191 Z" fill="#C9CED6"/>
+    <!-- tapered flatbow -->
+    <use href="#bow" fill="#C98B4E"/>
+  </g>
+  <g clip-path="url(#bowClip)">
+    <use href="#shadeR" fill="#A0683A"/>
+    <path d="M20 130 L44 150 L36 162 L14 150 Z" fill="#2B2230"/>
+    <path d="M180 130 L156 150 L164 162 L186 150 Z" fill="#2B2230"/>
+  </g>
+  <use href="#bow" fill="none" stroke="#2B2230" stroke-width="4" stroke-linejoin="round"/>
+
+  <g stroke="#2B2230" stroke-width="4" stroke-linejoin="round">
+    <rect x="83" y="178" width="34" height="15" rx="4" fill="#8A3B2E"/>
+    <rect x="88" y="175" width="24" height="21" rx="8" fill="#F2C7A0"/>
+    <rect x="89" y="147" width="22" height="20" rx="8" fill="#F2C7A0"/>
+  </g>
+  <path d="M100 177 H104 A6 6 0 0 1 110 183 V188 A6 6 0 0 1 104 194 H100 Z" fill="#DDA27C"/>
+  <path d="M100 149 H103 A6 6 0 0 1 109 155 V159 A6 6 0 0 1 103 165 H100 Z" fill="#DDA27C"/>
+</svg>

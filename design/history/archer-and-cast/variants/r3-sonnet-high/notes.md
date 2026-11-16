@@ -1,0 +1,4 @@
+attempt-1 - Cleanest favourite: Opus r2 attempt-1 design (two rows of petals, split leaf hood, arch opening, flatbow with dark tips, leather grip, rounded-rect hands) in Opus attempt-2 rendering (one outer outline, soft gradients, no inner lines); green inner ring removed so the gold brim meets the face directly, subtle Opus nose/mouth hint.
+attempt-2 - Wide visor-crescent hood opening (low and wide, thin gold ring) plus a new fan-of-arrows quiver: a short leather pouch with three fletched arrows splayed out behind the shoulder.
+attempt-3 - Shield opening (flat brow, tapering to a chin point) plus a tapered cone quiver with a leather lip, moved to the back-left shoulder, two fletchings.
+attempt-4 - Levelled-up: stacked leaves (dark outer hood leaf, lighter veined inner leaf with a soft cast shadow, lighter front petals), gold-studded clasp, gold-banded quiver and gold bow tips; same gradient rendering and arch opening, so it reads as the same archer upgraded.

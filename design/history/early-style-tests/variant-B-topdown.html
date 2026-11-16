@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#EDE6D8">
+<title>B — Faces where it's going</title>
+<style>
+  html,body{margin:0;height:100%;background:#EDE6D8;overflow:hidden;touch-action:none;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+  canvas{position:fixed;left:0;top:0;width:100vw;height:100vh;display:block;cursor:pointer}
+  .hud{position:fixed;font:700 11px/1 ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",sans-serif;color:#2B2230;z-index:2}
+  #label{left:calc(env(safe-area-inset-left) + 10px);bottom:calc(env(safe-area-inset-bottom) + 9px);pointer-events:none}
+  #hint{right:calc(env(safe-area-inset-right) + 10px);bottom:calc(env(safe-area-inset-bottom) + 9px);pointer-events:none;font-weight:600;opacity:.6}
+  #facing{right:calc(env(safe-area-inset-right) + 2px);top:calc(env(safe-area-inset-top) + 2px);padding:8px;background:none;border:0;cursor:pointer;touch-action:manipulation}
+  #facing span{display:block;padding:6px 11px;border-radius:99px;border:2px solid #2B2230;background:#EDE6D8;color:#2B2230}
+  #facing[aria-pressed="true"] span{background:#F2B53A}
+  #facing:focus-visible span{outline:2px solid #2B2230;outline-offset:2px}
+  #fps{left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 9px);display:none;pointer-events:none}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="label" class="hud">B — Faces where it's going</div>
+<div id="hint" class="hud">Tap a unit to play its moves</div>
+<button id="facing" class="hud" aria-pressed="false"><span>Facing demo</span></button>
+<div id="fps" class="hud"></div>
+<script>
+'use strict';
+/* =====================================================================
+   VARIANT B — FACE POINTS WHERE IT'S GOING
+   True top-down chibi heads. Everything that belongs to the head (face,
+   hood, ears, props) is drawn in a local frame where +x = facing, and the
+   frame rotates a full 360°. Lighting does NOT rotate: the hard shadow
+   crescent (lower-right) and the highlight fleck (upper-left) are clip
+   regions fixed in screen space, and each head is re-painted inside them
+   with its "dark" / "light" tones. Flat fills, ink outlines, no gradients.
+   ===================================================================== */
+
+// ------------------------------------------------------------- palette (PALETTE.md)
+const INK = '#2B2230', BG = '#EDE6D8', WHITE = '#FFFFFF', EYE_RED = '#E2483D', GROUND = 'rgba(43,34,48,0.18)';
+// material = [base, dark, light]; index 3 is the hit-flash pass
+const M = {
+  skin: ['#F2C7A0', '#D99C75', '#F2C7A0'],
+  wood: ['#A0683A', '#7A4A26', '#A0683A'],
+  steel: ['#C9CED6', '#8F97A3', '#C9CED6'],
+  gold: ['#F2B53A', '#F2B53A', '#F2B53A'],
+  archer: ['#5FA35A', '#3E7A44', '#9AD17F'], archerL: ['#9AD17F', '#5FA35A', '#9AD17F'],
+  knight: ['#4F7BC4', '#36589A', '#8DB0E8'],
+  rogue: ['#8A5BB8', '#5E3D86', '#B994E0'], rogueD: ['#5E3D86', '#5E3D86', '#8A5BB8'],
+  rat: ['#8E7A6B', '#6B5A4E', '#B3A091'], ratL: ['#B3A091', '#8E7A6B', '#B3A091'],
+  slime: ['#4CC2A8', '#2F8F7B', '#8BE3CF'], slimeL: ['#8BE3CF', '#4CC2A8', '#8BE3CF'],
+  bone: ['#E8E0CC', '#B8AD93', '#FFF8E8'],
+  rust: ['#9C5B3A', '#7A4A26', '#9C5B3A']
+};
+const col = (mat, m) => m === 3 ? WHITE : M[mat][m];
+const FX = { burn: '#FF7A2F', ice: '#7FD6F5', poison: '#9BCB3C', shock: '#FFE14D' };
+
+// ------------------------------------------------------------- utils
+const TAU = Math.PI * 2, HALF_PI = Math.PI / 2;
+const rand = (a, b) => a + Math.random() * (b - a);
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeOut = t => 1 - (1 - t) * (1 - t);
+const easeInOut = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+const easeOutBack = t => { const c = 2.2; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+function angDiff(a, b) { let d = b - a; while (d > Math.PI) d -= TAU; while (d < -Math.PI) d += TAU; return d; }
+function turnTo(e, target, rate, dt) { e.facing += angDiff(e.facing, target) * Math.min(1, rate * dt); }
+const FONT = 'ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif';
+
+// ------------------------------------------------------------- canvas
+const WORLD_W = 844, WORLD_H = 390;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d', { alpha: false });
+let DPR = 1, W = 0, H = 0, SCALE = 1, OX = 0, OY = 0;
+let OUT = 2; // outline width in the current local units
+
+// ------------------------------------------------------------- stroke helpers
+function ink(g, w = 1) { g.lineWidth = OUT * w; g.strokeStyle = INK; g.stroke(); }
+function circ(g, x, y, r) { g.moveTo(x + r, y); g.arc(x, y, r, 0, TAU); }
+function ell(g, x, y, rx, ry, rot = 0) { g.moveTo(x + Math.cos(rot) * rx, y + Math.sin(rot) * rx); g.ellipse(x, y, rx, ry, rot, 0, TAU); }
+
+// =====================================================================
+// HEAD DESIGNS
+// Each design: r (in-game radius, ~40px diameter), shapes[] (filled + inked, shaded
+// by the fixed light), under() (unshaded bits behind the head), face config, props().
+// Shapes use local space: origin = head centre, +x = facing direction.
+// =====================================================================
+const SH = (p, mat, extra = {}) => Object.assign({ p, mat }, extra);
+const clipHead = (g, r) => circ(g, 0, 0, r);
+
+const DESIGN = {
+  // ---------------------------------------------------------------- ARCHER
+  archer: {
+    r: 19, name: 'Archer', desc: 'Ranged, strafes, may dodge', ability: 'Arrow barrage', side: 'hero',
+    shapes: [
+      // hood with a droopy point at the back
+      SH((g, r) => { g.arc(0, 0, r, -2.25, 2.25); g.quadraticCurveTo(-1.08 * r, 0.72 * r, -1.5 * r, 0.12 * r); g.quadraticCurveTo(-1.05 * r, -0.42 * r, Math.cos(-2.25) * r, Math.sin(-2.25) * r); g.closePath(); }, 'archer', { w: 1.2 }),
+      // face opening
+      SH((g, r) => circ(g, 0.5 * r, 0, 0.6 * r), 'skin', { clip: clipHead })
+    ],
+    face: { ex: 0.47, ey: 0.27, erx: 0.15, ery: 0.12, mx: 0.8, iris: INK, brows: true, mouth: 'smile', cheeks: true },
+    props: drawArcherProps
+  },
+  // ---------------------------------------------------------------- KNIGHT
+  knight: {
+    r: 21, name: 'Knight', desc: 'Tough, shield and sword', ability: 'Charge', side: 'hero',
+    shapes: [
+      SH((g, r) => circ(g, 0, 0, r), 'knight', { w: 1.2 }),
+      // face opening — a squared-off visor window
+      SH((g, r) => { g.roundRect(0.18 * r, -0.5 * r, 1.2 * r, 1.0 * r, 0.32 * r); }, 'skin', { clip: clipHead }),
+      // crest running front-to-back over the crown
+      SH((g, r) => { g.moveTo(0.02 * r, 0); g.quadraticCurveTo(-0.5 * r, -0.36 * r, -1.36 * r, 0); g.quadraticCurveTo(-0.5 * r, 0.36 * r, 0.02 * r, 0); g.closePath(); }, 'gold')
+    ],
+    face: { ex: 0.48, ey: 0.25, erx: 0.15, ery: 0.12, mx: 0.8, iris: INK, brows: true, mouth: 'flat' },
+    props: drawKnightProps
+  },
+  // ---------------------------------------------------------------- ROGUE
+  rogue: {
+    r: 18, name: 'Rogue', desc: 'Nimble, darts in and out', ability: 'Shadow step', side: 'hero',
+    under: drawRogueScarf,
+    shapes: [
+      SH((g, r) => circ(g, 0, 0, r), 'rogue', { w: 1.2 }),
+      // knot at the back
+      SH((g, r) => circ(g, -0.95 * r, 0, 0.24 * r), 'rogueD'),
+      SH((g, r) => circ(g, 0.56 * r, 0, 0.52 * r), 'skin', { clip: clipHead }),
+      // mask over the lower face (the edge nearest the facing direction)
+      SH((g, r) => { g.rect(0.68 * r, -r, r, 2 * r); }, 'rogueD', { clip: (g, r) => { circ(g, 0, 0, r); } , clip2: (g, r) => circ(g, 0.56 * r, 0, 0.52 * r) })
+    ],
+    face: { ex: 0.44, ey: 0.25, erx: 0.13, ery: 0.12, mx: 0.85, iris: INK, brows: true, browTilt: 1.3, mouth: 'none' },
+    props: drawRogueProps
+  },
+  // ---------------------------------------------------------------- RAT
+  rat: {
+    r: 14, name: 'Rat', desc: 'Small, quick, comes in packs', ability: 'Frenzy', side: 'foe',
+    under: drawRatTail,
+    shapes: [
+      SH((g, r) => { circ(g, -0.18 * r, -0.86 * r, 0.5 * r); circ(g, -0.18 * r, 0.86 * r, 0.5 * r); }, 'rat'),
+      SH((g, r) => { circ(g, -0.1 * r, -0.95 * r, 0.27 * r); circ(g, -0.1 * r, 0.95 * r, 0.27 * r); }, 'ratL', { noInk: true }),
+      SH((g, r) => circ(g, 0, 0, r), 'rat', { w: 1.2 }),
+      // muzzle
+      SH((g, r) => { g.moveTo(0.3 * r, -0.66 * r); g.quadraticCurveTo(1.3 * r, -0.52 * r, 1.48 * r, 0); g.quadraticCurveTo(1.3 * r, 0.52 * r, 0.3 * r, 0.66 * r); g.arc(0, 0, 0.73 * r, 1.15, -1.15, true); g.closePath(); }, 'ratL', { w: 1.1 })
+    ],
+    face: { ex: 0.36, ey: 0.36, erx: 0.15, ery: 0.13, mx: 1.22, iris: EYE_RED, brows: true, browTilt: 1.2, mouth: 'rat' },
+    props: drawRatExtras
+  },
+  // ---------------------------------------------------------------- SLIME
+  slime: {
+    r: 20, name: 'Slime', desc: 'Squishy, splits when popped', ability: 'Big splat', side: 'foe',
+    shapes: [
+      SH((g, r, e) => slimePath(g, r, e.anim), 'slime', { w: 1.2 }),
+      SH((g, r, e) => { const t = e.anim; circ(g, -0.38 * r + Math.sin(t * 1.3) * 0.05 * r, -0.3 * r, 0.13 * r); circ(g, -0.5 * r, 0.28 * r + Math.cos(t * 1.1) * 0.05 * r, 0.09 * r); }, 'slimeL', { noInk: true })
+    ],
+    face: { ex: 0.4, ey: 0.3, erx: 0.16, ery: 0.14, mx: 0.76, iris: EYE_RED, brows: false, mouth: 'open' }
+  },
+  // ---------------------------------------------------------------- SKELETON
+  skeleton: {
+    r: 19, name: 'Skeleton', desc: 'Bony brute, rusty blade', ability: 'Spin slash', side: 'foe',
+    shapes: [
+      // jaw (drawn first so the skull covers its inner edge)
+      SH((g, r) => { g.roundRect(0.3 * r, -0.4 * r, 0.8 * r, 0.8 * r, 0.34 * r); }, 'bone', { w: 1.2 }),
+      SH((g, r) => circ(g, 0, 0, r), 'bone', { w: 1.2 })
+    ],
+    face: { ex: 0.34, ey: 0.32, erx: 0.2, ery: 0.17, mx: 0.85, iris: EYE_RED, socket: true, brows: false, mouth: 'teeth' },
+    props: drawSkeletonProps
+  }
+};
+const ORDER = ['archer', 'knight', 'rogue', 'rat', 'slime', 'skeleton'];
+
+function slimePath(g, r, t) {
+  const N = 30;
+  for (let i = 0; i <= N; i++) {
+    const th = i / N * TAU, back = Math.pow(Math.max(0, -Math.cos(th)), 10);
+    const rr = r * (1 + 0.035 * Math.sin(3 * th + t * 3) + 0.025 * Math.sin(5 * th - t * 2.2) + 0.3 * back);
+    const x = Math.cos(th) * rr, y = Math.sin(th) * rr + back * Math.sin(t * 2.4) * 0.12 * r;
+    if (i === 0) g.moveTo(x, y); else g.lineTo(x, y);
+  }
+  g.closePath();
+}
+
+// ------------------------------------------------------------- shape passes
+function shapePass(g, e, D, m, stroke) {
+  const r = D.r;
+  for (const sh of D.shapes) {
+    if (stroke && sh.noInk) continue;
+    const clipped = !!sh.clip;
+    if (clipped) { g.save(); g.beginPath(); sh.clip(g, r, e); g.clip(); if (sh.clip2) { g.beginPath(); sh.clip2(g, r, e); g.clip(); } }
+    g.beginPath(); sh.p(g, r, e);
+    if (stroke) ink(g, sh.w || 1); else { g.fillStyle = col(sh.mat, m); g.fill(); }
+    if (clipped) g.restore();
+  }
+}
+
+// =====================================================================
+// FACE — sits toward the +x edge; light-fixed eye highlights
+// =====================================================================
+function drawFace(g, e, D) {
+  const f = D.face, r = D.r, ex = f.ex * r, ey = f.ey * r, rx = f.erx * r, ry = f.ery * r, x = e.expr;
+  // highlight direction: screen up-left, expressed in the rotated frame
+  const c = Math.cos(-e.facing), s = Math.sin(-e.facing), hx = c * -0.55 - s * -0.6, hy = s * -0.55 + c * -0.6;
+  g.lineCap = 'round'; g.lineJoin = 'round';
+  for (let side = -1; side <= 1; side += 2) {
+    const cx = ex, cy = side * ey;
+    if (x === 'dead') {
+      g.beginPath(); const k = Math.max(rx, ry) * 0.9;
+      g.moveTo(cx - k, cy - k); g.lineTo(cx + k, cy + k); g.moveTo(cx + k, cy - k); g.lineTo(cx - k, cy + k); ink(g, 1.4);
+      continue;
+    }
+    if (x === 'hit') { // >< wince: chevron points at the nose line
+      g.beginPath(); g.moveTo(cx - rx * 1.1, cy + side * ry * 0.8); g.lineTo(cx, cy - side * ry * 0.7); g.lineTo(cx + rx * 1.1, cy + side * ry * 0.8); ink(g, 1.4);
+      continue;
+    }
+    if (e.blink > 0 && x === 'idle') { // closed: gentle arc across the eye's width
+      g.beginPath(); g.moveTo(cx, cy - ry); g.quadraticCurveTo(cx + rx * 0.9, cy, cx, cy + ry); ink(g, 1.3);
+      continue;
+    }
+    const nrx = x === 'attack' ? rx * 0.62 : rx; // narrowed when attacking
+    if (f.socket) { // skeleton: dark socket + red ember pupil
+      g.beginPath(); ell(g, cx, cy, nrx, ry); g.fillStyle = INK; g.fill();
+      g.beginPath(); circ(g, cx + 0.15 * rx, cy, Math.min(nrx, ry) * 0.42); g.fillStyle = EYE_RED; g.fill();
+      g.beginPath(); circ(g, cx + 0.15 * rx + hx * rx * 0.2, cy + hy * ry * 0.2, Math.min(nrx, ry) * 0.15); g.fillStyle = WHITE; g.fill();
+      continue;
+    }
+    g.beginPath(); ell(g, cx, cy, nrx, ry);
+    g.fillStyle = f.iris; g.fill();
+    if (f.iris !== INK) ink(g, 0.9);
+    // two hard highlights
+    g.beginPath(); circ(g, cx + hx * nrx * 0.42, cy + hy * ry * 0.42, Math.min(nrx, ry) * 0.36); circ(g, cx - hx * nrx * 0.45, cy - hy * ry * 0.45, Math.min(nrx, ry) * 0.16);
+    g.fillStyle = WHITE; g.fill();
+  }
+  // brows — "above" the eyes means toward the crown (−x)
+  if (f.brows && x !== 'dead') {
+    const tilt = f.browTilt || 1, mad = x === 'attack' ? 1.4 : x === 'hit' ? -0.6 : 1;
+    g.beginPath();
+    for (let side = -1; side <= 1; side += 2) {
+      const cy = side * ey, bx = ex - rx * 1.55;
+      g.moveTo(bx - rx * 0.25 * mad * tilt, cy + side * ry * 1.0); g.lineTo(bx + rx * 0.35 * mad * tilt, cy - side * ry * 0.55);
+    }
+    ink(g, 1.25);
+  }
+  // cheeks
+  if (f.cheeks && x === 'idle') { g.beginPath(); ell(g, ex + rx * 1.3, ey * 1.75, rx * 0.5, ry * 0.45); ell(g, ex + rx * 1.3, -ey * 1.75, rx * 0.5, ry * 0.45); g.fillStyle = M.skin[1]; g.fill(); }
+  // mouth
+  const mx = f.mx * r, w = 0.15 * r;
+  g.beginPath();
+  switch (f.mouth === 'none' ? 'none' : x === 'dead' ? 'o' : x === 'hit' ? 'wavy' : x === 'attack' ? 'grit' : f.mouth) {
+    case 'smile': g.moveTo(mx - w * 0.3, -w); g.quadraticCurveTo(mx + w * 0.75, 0, mx - w * 0.3, w); ink(g, 1.2); break;
+    case 'flat': g.moveTo(mx, -w * 0.8); g.quadraticCurveTo(mx + w * 0.3, 0, mx, w * 0.8); ink(g, 1.25); break;
+    case 'open': g.moveTo(mx - w * 0.2, -w * 1.1); g.quadraticCurveTo(mx + w * 1.4, 0, mx - w * 0.2, w * 1.1); g.closePath(); g.fillStyle = INK; g.fill(); break;
+    case 'grit':
+      g.roundRect(mx - w * 0.45, -w * 1.1, w * 0.9, w * 2.2, w * 0.3); g.fillStyle = WHITE; g.fill(); ink(g, 1.1);
+      g.beginPath(); g.moveTo(mx, -w * 1.1); g.lineTo(mx, w * 1.1); g.moveTo(mx - w * 0.45, -w * 0.35); g.lineTo(mx + w * 0.45, -w * 0.35); g.moveTo(mx - w * 0.45, w * 0.35); g.lineTo(mx + w * 0.45, w * 0.35); ink(g, 0.7); break;
+    case 'wavy': g.moveTo(mx, -w); g.quadraticCurveTo(mx - w * 0.4, -w * 0.5, mx, 0); g.quadraticCurveTo(mx + w * 0.4, w * 0.5, mx, w); ink(g, 1.1); break;
+    case 'o': circ(g, mx, 0, w * 0.4); ink(g, 1.1); break;
+    case 'rat': // nose + little buck teeth
+      break;
+    case 'teeth': break;
+  }
+  if (D === DESIGN.rat) drawRatNose(g, e, r);
+  if (D === DESIGN.skeleton) drawSkullDetails(g, e, r);
+}
+function drawRatNose(g, e, r) {
+  const t = e.anim, wig = Math.sin(t * 9) * 0.03 * r;
+  // whiskers
+  g.beginPath();
+  for (let sd = -1; sd <= 1; sd += 2) { g.moveTo(1.05 * r, sd * 0.3 * r); g.lineTo(1.2 * r + wig, sd * 0.9 * r); g.moveTo(1.0 * r, sd * 0.3 * r); g.lineTo(0.85 * r - wig, sd * 0.95 * r); }
+  ink(g, 0.8);
+  // teeth (bared when biting / attacking)
+  if (e.expr === 'attack' || e.bite > 0.2) { g.beginPath(); g.rect(1.12 * r, -0.17 * r, 0.24 * r, 0.16 * r); g.rect(1.12 * r, 0.01 * r, 0.24 * r, 0.16 * r); g.fillStyle = WHITE; g.fill(); ink(g, 0.8); }
+  g.beginPath(); ell(g, 1.45 * r + e.bite * 0.1 * r, 0, 0.13 * r, 0.17 * r); g.fillStyle = INK; g.fill();
+}
+function drawSkullDetails(g, e, r) {
+  // nose hole
+  g.beginPath(); g.moveTo(0.58 * r, 0); g.lineTo(0.74 * r, -0.09 * r); g.lineTo(0.74 * r, 0.09 * r); g.closePath(); g.fillStyle = INK; g.fill();
+  // teeth row
+  const open = e.expr === 'attack' ? 0.08 * r : 0;
+  g.beginPath(); g.moveTo(0.9 * r + open, -0.34 * r); g.lineTo(0.9 * r + open, 0.34 * r);
+  for (let k = -1; k <= 1; k++) { g.moveTo(0.8 * r + open, k * 0.17 * r); g.lineTo(1.0 * r + open, k * 0.17 * r); }
+  ink(g, 0.9);
+  // crack across the crown
+  g.beginPath(); g.moveTo(-0.95 * r, -0.2 * r); g.lineTo(-0.62 * r, -0.05 * r); g.lineTo(-0.5 * r, -0.28 * r); g.lineTo(-0.3 * r, -0.2 * r); ink(g, 0.8);
+}
+
+// =====================================================================
+// PROPS — rotate with the head; each blade carries its own hard shadow half
+// =====================================================================
+/** Blade along +x of the current frame; `worldAng` = this frame's world angle, used to put the dark half away from the light. */
+function blade(g, x0, x1, w, mat, worldAng, tipLen = w) {
+  const nx = Math.cos(worldAng + HALF_PI), ny = Math.sin(worldAng + HALF_PI), darkSide = nx + ny > 0 ? 1 : -1;
+  g.beginPath(); g.moveTo(x0, -w / 2); g.lineTo(x1 - tipLen, -w / 2); g.lineTo(x1, 0); g.lineTo(x1 - tipLen, w / 2); g.lineTo(x0, w / 2); g.closePath();
+  g.fillStyle = col(mat, 0); g.fill();
+  g.beginPath(); g.moveTo(x0, 0); g.lineTo(x1, 0); g.lineTo(x1 - tipLen, darkSide * w / 2); g.lineTo(x0, darkSide * w / 2); g.closePath();
+  g.fillStyle = col(mat, 1); g.fill();
+  g.beginPath(); g.moveTo(x0, -w / 2); g.lineTo(x1 - tipLen, -w / 2); g.lineTo(x1, 0); g.lineTo(x1 - tipLen, w / 2); g.lineTo(x0, w / 2); g.closePath(); ink(g, 1);
+}
+function hand(g, x, y, r, mat = 'skin') { g.beginPath(); circ(g, x, y, r); g.fillStyle = col(mat, 0); g.fill(); ink(g, 0.9); }
+function bar(g, x0, y0, x1, y1, w, color) { // chunky outlined stroke (bows, grips, guards)
+  g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.lineCap = 'round';
+  g.strokeStyle = INK; g.lineWidth = w + OUT * 2; g.stroke(); g.strokeStyle = color; g.lineWidth = w; g.stroke();
+}
+function drawArcherProps(g, e) {
+  const r = DESIGN.archer.r, pull = e.pull, hx = 0.62 * r, hy = -1.08 * r;
+  const barr = e.state === 'barrage';
+  // bow ")" held at the left hand, string pulled toward the head
+  const t1x = hx - 0.42 * r, t1y = hy - 0.62 * r, t2x = hx - 0.42 * r, t2y = hy + 0.62 * r, sx = t1x - pull * 0.5 * r;
+  g.beginPath(); g.moveTo(t1x, t1y); g.lineTo(sx, hy); g.lineTo(t2x, t2y); g.strokeStyle = INK; g.lineWidth = OUT * 0.8; g.stroke();
+  if (pull > 0.05) { // nocked arrow
+    bar(g, sx, hy, hx + 0.55 * r, hy, 0.09 * r, M.wood[0]);
+    g.beginPath(); g.moveTo(hx + 0.55 * r, hy - 0.16 * r); g.lineTo(hx + 0.85 * r, hy); g.lineTo(hx + 0.55 * r, hy + 0.16 * r); g.closePath();
+    g.fillStyle = barr ? FX.shock : M.steel[0]; g.fill(); ink(g, 0.9);
+  }
+  g.beginPath(); g.moveTo(t1x, t1y); g.quadraticCurveTo(hx + 0.42 * r, hy, t2x, t2y);
+  g.lineCap = 'round'; g.strokeStyle = INK; g.lineWidth = 0.2 * r + OUT * 2; g.stroke(); g.strokeStyle = M.wood[0]; g.lineWidth = 0.2 * r; g.stroke();
+  hand(g, hx + 0.02 * r, hy, 0.17 * r);
+  if (pull > 0.05) hand(g, sx - 0.05 * r, hy, 0.15 * r);
+}
+function drawKnightProps(g, e) {
+  const r = DESIGN.knight.r, charging = e.state === 'windup' || e.state === 'charge';
+  // sword: radial on the right side, swings across the front
+  let th = 1.0;
+  if (e.swing > 0) { const p = e.swing; th = p < 0.25 ? lerp(1.0, 1.7, p / 0.25) : p < 0.65 ? lerp(1.7, -1.2, easeOut((p - 0.25) / 0.4)) : lerp(-1.2, 1.0, (p - 0.65) / 0.35); }
+  if (charging) th = 0.75;
+  g.save(); g.rotate(th);
+  blade(g, 1.38 * r, 2.1 * r, 0.26 * r, 'steel', e.facing + th, 0.24 * r);
+  bar(g, 1.0 * r, 0, 1.3 * r, 0, 0.15 * r, M.wood[0]);
+  bar(g, 1.32 * r, -0.28 * r, 1.32 * r, 0.28 * r, 0.12 * r, M.gold[0]);
+  hand(g, 1.15 * r, 0, 0.17 * r);
+  g.restore();
+  // shield: a chunky slab on the front-left; swings to the front when charging
+  const sc = charging ? -0.15 : -0.85, span = 0.62, r0 = 1.08 * r, r1 = 1.48 * r;
+  g.beginPath(); g.arc(0, 0, r1, sc - span, sc + span); g.arc(0, 0, r0, sc + span, sc - span, true); g.closePath();
+  g.fillStyle = M.knight[0]; g.fill();
+  g.beginPath(); g.arc(0, 0, r1, sc - span, sc + span); g.arc(0, 0, r1 - 0.13 * r, sc + span, sc - span, true); g.closePath(); g.fillStyle = M.knight[1]; g.fill();
+  g.beginPath(); g.arc(0, 0, r1, sc - span, sc + span); g.arc(0, 0, r0, sc + span, sc - span, true); g.closePath(); ink(g, 1.1);
+  // gold emblem: a chevron on the shield's face
+  const mx = Math.cos(sc) * (r0 + r1) / 2, my = Math.sin(sc) * (r0 + r1) / 2, tx = -Math.sin(sc), ty = Math.cos(sc), ox = Math.cos(sc), oy = Math.sin(sc);
+  g.beginPath(); g.moveTo(mx + tx * 0.3 * r - ox * 0.07 * r, my + ty * 0.3 * r - oy * 0.07 * r); g.lineTo(mx + ox * 0.1 * r, my + oy * 0.1 * r); g.lineTo(mx - tx * 0.3 * r - ox * 0.07 * r, my - ty * 0.3 * r - oy * 0.07 * r);
+  g.lineCap = 'round'; g.strokeStyle = INK; g.lineWidth = 0.13 * r + OUT * 2; g.stroke(); g.strokeStyle = M.gold[0]; g.lineWidth = 0.13 * r; g.stroke();
+}
+function drawRogueScarf(g, e) {
+  const r = DESIGN.rogue.r, t = e.anim;
+  for (let sd = -1; sd <= 1; sd += 2) {
+    const pts = [];
+    for (let k = 0; k <= 3; k++) pts.push([-0.9 * r - k * 0.24 * r, sd * (0.06 + k * 0.17) * r + Math.sin(t * 5 - k * 0.9 + sd) * 0.05 * k * r]);
+    g.beginPath(); g.moveTo(pts[0][0], pts[0][1] - 0.15 * r);
+    for (let k = 1; k < pts.length; k++) g.lineTo(pts[k][0], pts[k][1] - 0.17 * r * (1 - k * 0.12));
+    const [lx, ly] = pts[pts.length - 1]; g.lineTo(lx - 0.14 * r, ly + sd * 0.06 * r);
+    for (let k = pts.length - 1; k >= 0; k--) g.lineTo(pts[k][0], pts[k][1] + 0.17 * r * (1 - k * 0.12));
+    g.closePath(); g.fillStyle = M.rogue[2]; g.fill(); ink(g, 1);
+  }
+}
+function drawRogueProps(g, e) {
+  const r = DESIGN.rogue.r;
+  for (let sd = -1; sd <= 1; sd += 2) {
+    // hand at the side, blade pointing forward; the stabbing one thrusts in
+    const th = e.stabSide === sd ? e.stab : 0, hx = 0.45 * r + th * 0.75 * r, hy = sd * (1.05 - th * 0.45) * r, a = sd * 0.25 * (1 - th);
+    g.save(); g.translate(hx, hy); g.rotate(a);
+    blade(g, 0.12 * r, 1.0 * r, 0.24 * r, 'steel', e.facing + a, 0.3 * r);
+    bar(g, 0.1 * r, -0.2 * r, 0.1 * r, 0.2 * r, 0.1 * r, M.gold[0]);
+    hand(g, 0, 0, 0.16 * r);
+    g.restore();
+  }
+}
+function drawRatTail(g, e) {
+  const r = DESIGN.rat.r, t = e.anim;
+  g.beginPath(); g.moveTo(-0.8 * r, 0);
+  for (let k = 1; k <= 6; k++) g.lineTo(-0.8 * r - k * 0.24 * r, Math.sin(t * 8 - k * 0.8) * 0.06 * r * k);
+  g.lineCap = 'round'; g.lineJoin = 'round'; g.strokeStyle = INK; g.lineWidth = 0.14 * r + OUT * 2; g.stroke(); g.strokeStyle = M.rat[2]; g.lineWidth = 0.14 * r; g.stroke();
+}
+function drawRatExtras(g, e) { }
+function drawSkeletonProps(g, e) {
+  const r = DESIGN.skeleton.r;
+  let th = 0.95;
+  if (e.state === 'windup') th = lerp(0.95, 1.85, easeOut(e.wind));
+  if (e.swing > 0) { const p = e.swing; th = p < 0.55 ? lerp(1.85, -1.1, easeOut(p / 0.55)) : lerp(-1.1, 0.95, (p - 0.55) / 0.45); }
+  if (e.state === 'spin') th = 0.2;
+  g.save(); g.rotate(th);
+  // chunky rusty cleaver with a notch
+  const x0 = 1.32 * r, x1 = 2.25 * r, w = 0.42 * r;
+  const nx = Math.cos(e.facing + th + HALF_PI), ny = Math.sin(e.facing + th + HALF_PI), ds = nx + ny > 0 ? 1 : -1;
+  const path = () => { g.beginPath(); g.moveTo(x0, -w * 0.35); g.lineTo(x1 - 0.1 * r, -w * 0.6); g.quadraticCurveTo(x1 + 0.08 * r, -w * 0.2, x1, w * 0.45); g.lineTo(x0 + 0.42 * r, w * 0.45); g.lineTo(x0 + 0.34 * r, w * 0.22); g.lineTo(x0 + 0.24 * r, w * 0.42); g.lineTo(x0, w * 0.35); g.closePath(); };
+  path(); g.fillStyle = M.rust[0]; g.fill();
+  g.save(); path(); g.clip(); g.beginPath(); g.rect(x0 - r, ds > 0 ? 0.04 * r : -2 * r, 3 * r, 2 * r - 0.04 * r); g.fillStyle = M.rust[1]; g.fill(); g.restore();
+  path(); ink(g, 1);
+  bar(g, 0.98 * r, 0, 1.3 * r, 0, 0.15 * r, M.wood[0]);
+  hand(g, 1.1 * r, 0, 0.16 * r, 'bone');
+  g.restore();
+}
+
+// =====================================================================
+// UNIT RENDER — fixed light: shadow crescent + highlight are screen-space clips
+// =====================================================================
+function drawUnit(g, e) {
+  if (e.hidden) return;
+  const D = DESIGN[e.type], r = D.r * e.k, S = e.scale, R = r * S;
+  let pop = 1; if (e.spawnT > 0) pop = 0.2 + 0.8 * easeOutBack(clamp(1 - e.spawnT / 0.45, 0, 1));
+  if (e.dying > 0) pop *= 1 + 0.15 * Math.sin(e.dying * 40) * (1 - e.dying);
+  const lift = e.lift;
+  // ground shadow (stays on the floor)
+  g.beginPath(); g.ellipse(e.x, e.y + R * 0.45, R * 1.02 * (1 - lift * 0.35) * pop, R * 0.5 * (1 - lift * 0.35) * pop, 0, 0, TAU); g.fillStyle = GROUND; g.fill();
+  const sc = S * e.k * (1 + lift * 0.3) * pop, breath = e.breath;
+  g.save(); g.translate(e.x, e.y - lift * R * 1.2); g.scale(sc * (1 + breath), sc * (1 - breath));
+  OUT = 2 * Math.sqrt(S) / sc; g.lineCap = 'round'; g.lineJoin = 'round';
+  const flash = e.flash > 0;
+  if (D.under) { g.save(); g.rotate(e.facing); D.under(g, e); g.restore(); }
+  // base pass
+  g.save(); g.rotate(e.facing); shapePass(g, e, D, flash ? 3 : 0, false); g.restore();
+  if (!flash) {
+    // hard shadow: everything outside the "lit" disc (offset toward the light, up-left)
+    const lr = D.r;
+    g.save(); g.beginPath(); g.rect(-4 * lr, -4 * lr, 8 * lr, 8 * lr); g.arc(-0.2 * lr, -0.24 * lr, 1.02 * lr, 0, TAU); g.clip('evenodd');
+    g.rotate(e.facing); shapePass(g, e, D, 1, false); g.restore();
+    // small hard highlight fleck
+    g.save(); g.beginPath(); g.ellipse(-0.46 * lr, -0.5 * lr, 0.24 * lr, 0.11 * lr, -0.75, 0, TAU); g.clip();
+    g.rotate(e.facing); shapePass(g, e, D, 2, false); g.restore();
+  }
+  g.save(); g.rotate(e.facing); shapePass(g, e, D, 0, true); drawFace(g, e, D); if (D.props) D.props(g, e); g.restore();
+  g.restore();
+}
+
+// =====================================================================
+// FLAT EFFECTS (pooled particles + a few shape effects)
+// =====================================================================
+const P_MAX = 400, pPool = [], pLive = [];
+for (let i = 0; i < P_MAX; i++) pPool.push({ x: 0, y: 0, vx: 0, vy: 0, t: 0, life: 1, size: 1, color: '', kind: 0, rot: 0, vr: 0, drag: 0, grav: 0 });
+const PK = { DOT: 0, BONE: 1, LINE: 2, PUFF: 3 };
+function emit(kind, x, y, vx, vy, life, size, color, drag = 3, grav = 0) {
+  const p = pPool.pop(); if (!p) return;
+  Object.assign(p, { kind, x, y, vx, vy, life, size, color, drag, grav, t: 0, rot: rand(0, TAU), vr: rand(-10, 10) }); pLive.push(p);
+}
+function burst(kind, x, y, n, sp0, sp1, life, size, color, drag = 4, grav = 0) {
+  for (let i = 0; i < n; i++) { const a = rand(0, TAU), sp = rand(sp0, sp1); emit(kind, x, y, Math.cos(a) * sp, Math.sin(a) * sp, life * rand(0.7, 1.2), size * rand(0.7, 1.2), color, drag, grav); }
+}
+function updateParticles(dt) {
+  for (let i = pLive.length - 1; i >= 0; i--) {
+    const p = pLive[i]; p.t += dt;
+    if (p.t >= p.life) { pLive[i] = pLive[pLive.length - 1]; pLive.pop(); pPool.push(p); continue; }
+    const d = Math.exp(-p.drag * dt); p.vx *= d; p.vy = p.vy * d + p.grav * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
+  }
+}
+function drawParticles(g) {
+  OUT = 2; g.lineCap = 'round';
+  for (const p of pLive) {
+    const k = 1 - p.t / p.life, s = p.size * (p.kind === PK.PUFF ? (k > 0.7 ? (1 - k) / 0.3 * 0.6 + 0.4 : k / 0.7) : Math.min(1, k * 1.6));
+    if (s <= 0.1) continue;
+    g.beginPath();
+    if (p.kind === PK.LINE) { g.moveTo(p.x, p.y); g.lineTo(p.x - p.vx * 0.05, p.y - p.vy * 0.05); g.strokeStyle = p.color; g.lineWidth = p.size * k; g.stroke(); continue; }
+    if (p.kind === PK.BONE) {
+      const c = Math.cos(p.rot) * s, sn = Math.sin(p.rot) * s;
+      g.moveTo(p.x - c, p.y - sn); g.lineTo(p.x + c, p.y + sn); g.strokeStyle = INK; g.lineWidth = s * 0.7 + 3; g.stroke();
+      g.beginPath(); circ(g, p.x - c, p.y - sn, s * 0.45); circ(g, p.x + c, p.y + sn, s * 0.45); g.fillStyle = INK; g.fill();
+      g.beginPath(); g.moveTo(p.x - c, p.y - sn); g.lineTo(p.x + c, p.y + sn); g.strokeStyle = M.bone[0]; g.lineWidth = s * 0.7; g.stroke();
+      g.beginPath(); circ(g, p.x - c, p.y - sn, s * 0.45 - 1.4); circ(g, p.x + c, p.y + sn, s * 0.45 - 1.4); g.fillStyle = M.bone[0]; g.fill();
+      continue;
+    }
+    circ(g, p.x, p.y, s); g.fillStyle = p.color; g.fill();
+    if (p.size > 3.5) { g.lineWidth = 1.6; g.strokeStyle = INK; g.stroke(); }
+  }
+}
+// shape effects
+const fxs = [];
+function addFx(o) { o.t = 0; fxs.push(o); }
+function star(x, y, R, life = 0.28, color = WHITE) { addFx({ k: 'star', x, y, R, life, color, rot: rand(0, 1) }); }
+function ringFx(x, y, r0, r1, life, color, w = 5) { addFx({ k: 'ring', x, y, r0, r1, life, color, w }); }
+function slashFx(x, y, ang, R, arc, dir, life, color) { addFx({ k: 'slash', x, y, ang, R, arc, dir, life, color }); }
+function puff(x, y, R, color = M.rogue[2], dark = M.rogue[0]) {
+  for (let i = 0; i < 7; i++) { const a = i / 7 * TAU + rand(-0.2, 0.2), d = R * rand(0.35, 0.6); emit(PK.PUFF, x + Math.cos(a) * d, y + Math.sin(a) * d, Math.cos(a) * R * 1.2, Math.sin(a) * R * 1.2, 0.55, R * rand(0.38, 0.55), i % 2 ? color : dark, 5); }
+  emit(PK.PUFF, x, y, 0, 0, 0.5, R * 0.6, color, 5);
+}
+function updateFx(dt) { for (let i = fxs.length - 1; i >= 0; i--) { const f = fxs[i]; f.t += dt; if (f.t >= f.life) { fxs[i] = fxs[fxs.length - 1]; fxs.pop(); } } }
+function drawFx(g) {
+  OUT = 2;
+  for (const f of fxs) {
+    const p = f.t / f.life;
+    g.beginPath();
+    if (f.k === 'star') {
+      const R = f.R * (p < 0.35 ? easeOut(p / 0.35) : 1 - (p - 0.35) / 0.65 * 0.9);
+      for (let i = 0; i < 16; i++) { const a = f.rot + i / 16 * TAU, rr = i % 2 ? R * 0.42 : R; i ? g.lineTo(f.x + Math.cos(a) * rr, f.y + Math.sin(a) * rr) : g.moveTo(f.x + Math.cos(a) * rr, f.y + Math.sin(a) * rr); }
+      g.closePath(); g.fillStyle = f.color; g.fill(); ink(g, 1);
+    } else if (f.k === 'ring') {
+      const R = lerp(f.r0, f.r1, easeOut(p)), w = f.w * (1 - p);
+      circ(g, f.x, f.y, R); g.strokeStyle = INK; g.lineWidth = w + 3; g.stroke(); g.strokeStyle = f.color; g.lineWidth = w; g.stroke();
+    } else if (f.k === 'slash') {
+      // flat crescent that sweeps then thins out
+      const half = f.arc / 2, a0 = f.ang + half * f.dir, a1 = f.ang - half * f.dir, head = lerp(a0, a1, easeOut(Math.min(1, p * 2.2))), tail = lerp(a0, a1, Math.min(1, p * 1.2));
+      const lo = Math.min(head, tail), hi = Math.max(head, tail); if (hi - lo < 0.02) continue;
+      const mid = (lo + hi) / 2, th = f.R * 0.28 * (1 - p * 0.6);
+      g.arc(f.x, f.y, f.R, lo, hi); g.arc(f.x + Math.cos(mid) * th, f.y + Math.sin(mid) * th, f.R - th * 0.4, hi, lo, true); g.closePath();
+      g.fillStyle = f.color; g.fill(); ink(g, 1);
+    }
+  }
+}
+// projectiles (flat arrows)
+const projs = [];
+function shoot(x, y, ang, speed, color, size, life = 0.4) { projs.push({ x, y, ang, vx: Math.cos(ang) * speed, vy: Math.sin(ang) * speed, color, size, t: 0, life }); }
+function updateProjs(dt) { for (let i = projs.length - 1; i >= 0; i--) { const p = projs[i]; p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt; if (p.t >= p.life) projs.splice(i, 1); } }
+function drawProjs(g) {
+  OUT = 2;
+  for (const p of projs) {
+    const L = p.size, c = Math.cos(p.ang), s = Math.sin(p.ang);
+    g.save(); g.translate(p.x, p.y); g.rotate(p.ang);
+    bar(g, -L, 0, 0, 0, L * 0.13, M.wood[0]);
+    g.beginPath(); g.moveTo(-L, 0); g.lineTo(-L - L * 0.18, -L * 0.17); g.lineTo(-L * 0.78, 0); g.lineTo(-L - L * 0.18, L * 0.17); g.closePath(); g.fillStyle = M.archer[2]; g.fill(); ink(g, 0.8);
+    g.beginPath(); g.moveTo(0, -L * 0.17); g.lineTo(L * 0.3, 0); g.lineTo(0, L * 0.17); g.closePath(); g.fillStyle = p.color; g.fill(); ink(g, 0.9);
+    g.restore();
+  }
+}
+// floating text
+const texts = [];
+function popText(x, y, str, size = 15, color = INK) { texts.push({ x: x + rand(-4, 4), y, str, size, color, t: 0, life: 0.9 }); }
+function updateTexts(dt) { for (let i = texts.length - 1; i >= 0; i--) { const o = texts[i]; o.t += dt; o.y -= dt * 34 * (1 - o.t / o.life); if (o.t >= o.life) texts.splice(i, 1); } }
+function drawTexts(g) {
+  g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
+  for (const o of texts) {
+    const p = o.t / o.life, s = 1 + 0.45 * Math.max(0, 1 - p * 6);
+    g.save(); g.translate(o.x, o.y); g.scale(s, s); g.globalAlpha = p > 0.75 ? 1 - (p - 0.75) / 0.25 : 1;
+    g.font = `900 ${o.size}px ${FONT}`; g.lineWidth = 4; g.strokeStyle = WHITE; g.strokeText(o.str, 0, 0); g.fillStyle = o.color; g.fillText(o.str, 0, 0);
+    g.restore();
+  }
+  g.globalAlpha = 1;
+}
+
+// =====================================================================
+// SHEET — two rows of big heads + an in-game-size row
+// =====================================================================
+const BIG = 1.6;
+const LAYOUT = { archer: [150, 76], knight: [422, 76], rogue: [694, 76], rat: [150, 222], slime: [422, 222], skeleton: [694, 222] };
+const MINI_Y = 343, MINI_X0 = 228, MINI_DX = 78;
+let units = [], minis = [], extras = [], LT = 0;
+let facingDemo = false, dotAng = -1.0, dotStill = false;
+const DOT = { x: 0, y: 0 };
+
+function makeUnit(type, x, y, scale) {
+  return { type, hx: x, hy: y, x, y, ox: 0, oy: 0, kx: 0, ky: 0, kvx: 0, kvy: 0, scale, k: 1, facing: HALF_PI, look: HALF_PI, lookT: rand(1, 3),
+    anim: rand(0, 10), breath: 0, blink: 0, blinkT: rand(1, 4), expr: 'idle', flash: 0, hidden: false, lift: 0, spawnT: 0, dying: 0,
+    state: 'idle', swing: 0, pull: 0, stab: 0, stabSide: 1, bite: 0, wind: 0, seq: null, lastX: x, lastY: y };
+}
+function buildSheet() {
+  units = ORDER.map(t => makeUnit(t, LAYOUT[t][0], LAYOUT[t][1], BIG));
+  minis = ORDER.map((t, i) => { const m = makeUnit(t, MINI_X0 + i * MINI_DX, MINI_Y, 1); m.mini = true; return m; });
+}
+
+// ------------------------------------------------------------- sequence: move → attack → ability → hit → death → respawn
+const PHASES = [['Move', 1.7], ['Basic attack', 1.4], ['Ability', 2.0], ['Hit', 1.0], ['Death', 1.2], ['', 0.55]];
+function play(e, delay = 0) { if (e.seq) return; e.seq = { i: 0, t: -delay, pt: -delay }; }
+const ATK_DIR = { archer: 0, knight: 0, rogue: Math.PI, rat: 0, slime: Math.PI, skeleton: Math.PI };
+function atkDir(e) { return ATK_DIR[e.type]; }
+
+function runPhase(e, i, t, pt, dur, dt) {
+  const D = DESIGN[e.type], X = T => pt < T && t >= T, u = clamp(t / dur, 0, 1), S = e.scale, R = D.r * S, ad = atkDir(e), fx = Math.cos(ad), fy = Math.sin(ad);
+  const front = (d = 1, ang = e.facing) => [e.x + Math.cos(ang) * R * d, e.y + Math.sin(ang) * R * d];
+  switch (i) {
+    case 0: { // MOVE — a little loop, head turning a full 360° to follow its path
+      const env = Math.sin(u * Math.PI), a = u * TAU, rad = (e.type === 'rat' ? 26 : 22);
+      e.ox = Math.sin(a) * rad; e.oy = -(1 - Math.cos(a)) * rad * 0.62;
+      const vx = Math.cos(a), vy = -Math.sin(a) * 0.62; if (u > 0.02 && u < 0.98) turnTo(e, Math.atan2(vy, vx), 14, dt);
+      if (e.type === 'slime') e.lift = Math.abs(Math.sin(u * Math.PI * 4)) * 0.22 * env; else e.lift = Math.abs(Math.sin(u * Math.PI * (e.type === 'rat' ? 10 : 6))) * 0.06 * env;
+      if (e.type === 'rogue' && Math.random() < dt * 20) emit(PK.DOT, e.x + rand(-6, 6), e.y + R * 0.4, 0, 0, 0.35, 3, GROUND, 1);
+      if (X(1.5)) e.lift = 0;
+      break;
+    }
+    case 1: // BASIC ATTACK
+      turnTo(e, ad, 12, dt); e.ox *= Math.exp(-dt * 6); e.oy *= Math.exp(-dt * 6); e.lift *= Math.exp(-dt * 10);
+      e.expr = t > 0.15 && t < 1.15 ? 'attack' : 'idle';
+      if (e.type === 'archer') {
+        for (const [a0, a1] of [[0.15, 0.5], [0.75, 1.1]]) { if (t > a0 && t < a1) e.pull = (t - a0) / (a1 - a0); if (X(a1)) { e.pull = 0; const hx = 0.62 * D.r * S, hy = -1.08 * D.r * S, c = Math.cos(e.facing), s = Math.sin(e.facing); shoot(e.x + c * hx - s * hy, e.y + s * hx + c * hy, e.facing, 420, M.steel[0], 0.9 * R, 0.32); } }
+      } else if (e.type === 'knight') {
+        for (const T of [0.2, 0.8]) if (X(T)) e.swing = 0.001;
+        for (const T of [0.32, 0.92]) if (X(T)) { slashFx(e.x, e.y, e.facing, R * 1.95, 2.4, 1, 0.3, WHITE); const [px, py] = front(2.1); star(px, py, R * 0.4); }
+      } else if (e.type === 'rogue') {
+        for (const [T, sd] of [[0.25, 1], [0.48, -1], [0.71, 1]]) if (X(T)) { e.stab = 1; e.stabSide = sd; const [px, py] = front(2.0, e.facing + sd * 0.35); star(px, py, R * 0.32); emit(PK.DOT, px, py, rand(-20, 20), -30, 0.5, 3.5, FX.poison, 2); }
+        const l = Math.sin(clamp((t - 0.15) / 0.8, 0, 1) * Math.PI) * 10; e.ox = fx * l; e.oy = fy * l;
+      } else if (e.type === 'rat') {
+        for (const T of [0.2, 0.45, 0.7]) if (X(T)) { e.bite = 1; const [px, py] = front(1.85); star(px, py, R * 0.38); }
+        const l = e.bite * 9; e.ox = fx * l; e.oy = fy * l;
+      } else if (e.type === 'slime') {
+        const k = t < 0.45 ? easeOut(t / 0.45) : 1 - easeInOut(clamp((t - 0.6) / 0.7, 0, 1));
+        e.ox = fx * k * 22; e.oy = fy * k * 22; e.lift = t < 0.45 ? Math.sin(t / 0.45 * Math.PI) * 0.25 : 0;
+        if (X(0.45)) { const [px, py] = front(1); ringFx(px, py, R * 0.3, R * 1.1, 0.35, M.slime[2]); star(px, py, R * 0.45); }
+      } else if (e.type === 'skeleton') {
+        if (t > 0.15 && t < 0.6) { e.state = 'windup'; e.wind = (t - 0.15) / 0.45; }
+        if (X(0.6)) { e.state = 'idle'; e.swing = 0.001; }
+        if (X(0.7)) { slashFx(e.x, e.y, e.facing, R * 1.95, 2.2, 1, 0.3, WHITE); const [px, py] = front(2); star(px, py, R * 0.42); }
+      }
+      break;
+    case 2: // ABILITY
+      e.expr = 'attack';
+      if (e.type === 'archer') {
+        turnTo(e, ad, 12, dt);
+        if (t < 1.0) { e.state = 'barrage'; if (t < 0.45) e.pull = t / 0.45; } else { e.state = 'idle'; e.pull = 0; e.expr = 'idle'; }
+        if (X(0.45)) popText(e.x, e.y - R * 1.25, 'Barrage!', 13, M.archer[1]);
+        for (let k = 0; k < 7; k++) if (X(0.45 + k * 0.07)) {
+          const hx = 0.62 * D.r * S, hy = -1.08 * D.r * S, c = Math.cos(e.facing), s = Math.sin(e.facing);
+          shoot(e.x + c * hx - s * hy, e.y + s * hx + c * hy, e.facing + (k - 3) * 0.13, 360, FX.shock, 0.85 * R, 0.42); e.pull = 0.6;
+        }
+      } else if (e.type === 'knight') {
+        turnTo(e, ad, 14, dt);
+        if (t < 0.45) { e.state = 'windup'; const k = t / 0.45; e.ox = -fx * 8 * k; e.oy = -fy * 8 * k; e.breath = -0.04 * k; }
+        else if (t < 0.7) { e.state = 'charge'; const k = easeOut((t - 0.45) / 0.25) * 62 - 8; e.ox = fx * k; e.oy = fy * k; e.breath = 0.05; if (Math.random() < dt * 60) emit(PK.LINE, e.x - fx * R * rand(0.8, 1.4), e.y + rand(-R, R) * 0.9, -fx * 300, -fy * 300, 0.18, 3, INK, 2); }
+        else { e.state = 'idle'; e.breath = 0; const k = 54 * (1 - easeInOut(clamp((t - 0.95) / 0.9, 0, 1))); e.ox = fx * k; e.oy = fy * k; if (t > 1.0) e.expr = 'idle'; }
+        if (X(0.7)) { const [px, py] = front(1.7); star(px, py, R * 0.75, 0.35, M.gold[0]); ringFx(px, py, R * 0.3, R * 1.2, 0.35, WHITE); popText(e.x, e.y - R * 1.25, 'Charge!', 13, M.knight[1]); burst(PK.DOT, px, py, 8, 80, 200, 0.35, 4, M.gold[0], 5); }
+      } else if (e.type === 'rogue') {
+        const D2 = 64;
+        if (X(0.12)) { puff(e.x, e.y, R * 0.9); e.hidden = true; }
+        if (X(0.42)) { e.ox = fx * D2; e.oy = fy * D2; e.facing = ad + Math.PI; e.hidden = false; e.x = e.hx + e.ox; e.y = e.hy + e.oy; puff(e.x, e.y, R * 0.8); popText(e.x, e.y - R * 1.25, 'Shadow step!', 13, M.rogue[1]); }
+        if (X(0.6)) { e.stab = 1; e.stabSide = -1; const [px, py] = front(1.9); star(px, py, R * 0.5, 0.3, WHITE); popText(px, py - R * 0.6, '32', 15, M.rogue[1]); }
+        if (X(1.3)) { puff(e.x, e.y, R * 0.8); e.hidden = true; }
+        if (X(1.55)) { e.ox = 0; e.oy = 0; e.x = e.hx; e.y = e.hy; e.facing = HALF_PI; e.hidden = false; puff(e.x, e.y, R * 0.7); e.expr = 'idle'; }
+      } else if (e.type === 'rat') {
+        if (X(0.05)) popText(e.x, e.y - R * 1.3, 'Frenzy!', 13, M.rat[1]);
+        const k = t < 1.5 ? Math.sin(clamp(t / 1.5, 0, 1) * Math.PI) : 0, zig = Math.sin(t * 20) * 10 * k, f = k * 34;
+        e.ox = fx * f - fy * zig; e.oy = fy * f + fx * zig; e.facing = ad + Math.cos(t * 20) * 0.7 * k;
+        if (Math.floor(t / 0.16) !== Math.floor(pt / 0.16) && t < 1.4) { e.bite = 1; const [px, py] = front(1.8); star(px, py, R * 0.3); }
+        if (t > 1.5) e.expr = 'idle';
+      } else if (e.type === 'slime') {
+        turnTo(e, ad, 10, dt);
+        if (t < 0.4) { e.breath = -0.12 * (t / 0.4); }
+        else if (t < 1.0) { const k = (t - 0.4) / 0.6; e.breath = 0.06; e.lift = Math.sin(k * Math.PI) * 0.75; e.ox = fx * 16 * k; e.oy = fy * 16 * k; }
+        else { e.breath *= Math.exp(-dt * 8); e.lift = 0; e.ox *= Math.exp(-dt * 3); e.oy *= Math.exp(-dt * 3); if (t > 1.4) e.expr = 'idle'; }
+        if (X(1.0)) { e.breath = -0.16; ringFx(e.x, e.y + R * 0.2, R * 0.8, R * 2.4, 0.5, M.slime[0], 7); burst(PK.DOT, e.x, e.y, 12, 90, 200, 0.45, 5, M.slime[2], 4); popText(e.x, e.y - R * 1.3, 'Splat!', 13, M.slime[1]); }
+      } else if (e.type === 'skeleton') {
+        if (t < 0.5) { e.state = 'windup'; e.wind = t / 0.5; turnTo(e, ad, 10, dt); }
+        else if (t < 1.25) { e.state = 'spin'; e.facing = ad + easeInOut((t - 0.5) / 0.75) * TAU * 2; }
+        else { e.state = 'idle'; turnTo(e, ad, 10, dt); if (t > 1.5) e.expr = 'idle'; }
+        if (X(0.5)) popText(e.x, e.y - R * 1.3, 'Spin slash!', 13, M.rust[0]);
+        for (const T of [0.6, 0.85, 1.1]) if (X(T)) slashFx(e.x, e.y, e.facing, R * 1.9, 3.0, -1, 0.26, WHITE);
+      }
+      break;
+    case 3: { // HIT
+      e.ox *= Math.exp(-dt * 8); e.oy *= Math.exp(-dt * 8); turnTo(e, ad, 10, dt);
+      for (const [T, n] of [[0.1, 0], [0.5, 1]]) if (X(T)) {
+        if (e.type === 'archer' && n === 1) { e.kvx = -fy * 260; e.kvy = fx * 260; popText(e.x, e.y - R * 1.4, 'Dodge!', 13, M.archer[1]); e.expr = 'attack'; continue; }
+        e.flash = 0.12; e.expr = 'hit'; e.kvx = -fx * 240; e.kvy = -fy * 240;
+        const [px, py] = front(1); star(px, py, R * 0.45);
+        popText(e.x + (n ? 14 : -10), e.y - R * 1.25 - n * 10, n ? '17' : '12', 16);
+      }
+      if (t > 0.85) e.expr = 'idle';
+      break;
+    }
+    case 4: // DEATH
+      if (X(0.02)) { e.expr = 'dead'; e.dying = 0.001; }
+      if (e.dying > 0) e.dying = Math.min(1, t / 0.45);
+      if (X(0.45)) {
+        e.dying = 0; e.hidden = true;
+        star(e.x, e.y, R * 0.9, 0.3, WHITE); ringFx(e.x, e.y, R * 0.6, R * 1.8, 0.4, M[D === DESIGN.skeleton ? 'bone' : e.type][0]);
+        if (e.type === 'skeleton') burst(PK.BONE, e.x, e.y, 6, 80, 180, 0.7, R * 0.28, '', 4, 120);
+        else { burst(PK.DOT, e.x, e.y, 10, 90, 220, 0.5, 5, M[e.type][0], 4, 60); burst(PK.DOT, e.x, e.y, 6, 60, 160, 0.5, 3.5, M[e.type][2], 4, 60); }
+        if (e.type === 'slime') for (let sd = -1; sd <= 1; sd += 2) {
+          const c = makeUnit('slime', e.x, e.y, e.scale); c.k = 0.6; c.facing = ad + sd * 0.8; c.vx = -fy * sd * 120 + fx * 30; c.vy = fx * sd * 120 + fy * 30; c.life = 0.75; c.spawnT = 0.3; c.lift = 0;
+          extras.push(c);
+        }
+      }
+      break;
+    case 5: // RESPAWN
+      if (X(0.01)) { e.hidden = false; e.expr = 'idle'; e.spawnT = 0.45; e.ox = e.oy = 0; e.facing = HALF_PI; e.state = 'idle'; ringFx(e.x, e.y, R * 1.6, R * 0.9, 0.35, WHITE, 4); }
+      break;
+  }
+}
+function updateAnim(e, dt) {
+  e.anim += dt;
+  if (e.flash > 0) e.flash -= dt;
+  if (e.swing > 0) { e.swing += dt / 0.34; if (e.swing >= 1) e.swing = 0; }
+  if (e.stab > 0) e.stab = Math.max(0, e.stab - dt * 5);
+  if (e.bite > 0) e.bite = Math.max(0, e.bite - dt * 6);
+  if (e.spawnT > 0) e.spawnT = Math.max(0, e.spawnT - dt);
+  e.blinkT -= dt; if (e.blinkT <= 0) { e.blink = 0.12; e.blinkT = rand(2.2, 4.5); } if (e.blink > 0) e.blink -= dt;
+  e.kx += e.kvx * dt; e.ky += e.kvy * dt; e.kvx *= Math.exp(-dt * 12); e.kvy *= Math.exp(-dt * 12); e.kx *= Math.exp(-dt * 7); e.ky *= Math.exp(-dt * 7);
+}
+function idleFacing(e, dt) {
+  if (facingDemo) { turnTo(e, Math.atan2(DOT.y - e.y, DOT.x - e.x), 5, dt); return; }
+  e.lookT -= dt; if (e.lookT <= 0) { e.lookT = rand(1.6, 3.4); e.look = HALF_PI + [0, 0, -0.75, 0.75, -1.3, 1.3][Math.floor(rand(0, 6))]; }
+  turnTo(e, e.look, 3.5, dt);
+}
+function updateSheet(dt) {
+  LT += dt;
+  if (facingDemo) { if (!dotStill) dotAng += dt * 0.32; DOT.x = 422 + Math.cos(dotAng) * 392; DOT.y = 182 + Math.sin(dotAng) * 158; }
+  for (const e of units) {
+    updateAnim(e, dt);
+    if (e.seq) {
+      const q = e.seq; q.pt = q.t; q.t += dt;
+      if (q.t >= 0) {
+        const dur = PHASES[q.i][1]; runPhase(e, q.i, q.t, Math.max(0, q.pt), dur, dt);
+        if (q.t >= dur) { q.i++; q.t = 0; q.pt = 0; if (q.i >= PHASES.length) { e.seq = null; e.state = 'idle'; e.pull = 0; e.lift = 0; e.breath = 0; } }
+      } else idleFacing(e, dt);
+    } else {
+      idleFacing(e, dt); e.ox *= Math.exp(-dt * 5); e.oy *= Math.exp(-dt * 5);
+      e.breath = Math.sin(LT * 2.4 + e.hx * 0.01) * 0.025;
+      if (e.type === 'slime') e.breath = Math.sin(LT * 3 + 1) * 0.045;
+    }
+    e.x = e.hx + e.ox + e.kx; e.y = e.hy + e.oy + e.ky;
+  }
+  for (let i = extras.length - 1; i >= 0; i--) {
+    const c = extras[i]; updateAnim(c, dt); c.hx += c.vx * dt; c.hy += c.vy * dt; c.vx *= Math.exp(-dt * 4); c.vy *= Math.exp(-dt * 4); c.x = c.hx; c.y = c.hy; c.life -= dt;
+    c.lift = Math.abs(Math.sin(c.life * 9)) * 0.2; c.breath = Math.sin(c.anim * 9) * 0.06;
+    if (c.life <= 0) { const R = DESIGN.slime.r * c.scale * c.k; star(c.x, c.y, R * 0.8, 0.25); burst(PK.DOT, c.x, c.y, 7, 70, 170, 0.45, 4, M.slime[0], 4, 50); extras.splice(i, 1); }
+  }
+  for (const m of minis) { updateAnim(m, dt); idleFacing(m, dt); m.breath = Math.sin(LT * 2.4 + m.hx * 0.02) * 0.025; }
+  updateProjs(dt);
+}
+
+// =====================================================================
+// RENDER
+// =====================================================================
+function drawLabels(g) {
+  g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+  for (const e of units) {
+    const D = DESIGN[e.type], y = e.hy + 64, x = e.hx;
+    g.font = `800 15px ${FONT}`; g.fillStyle = INK; g.fillText(D.name, x, y);
+    if (e.seq && e.seq.t >= 0 && e.seq.i < 5) {
+      const label = e.seq.i === 2 ? 'Ability: ' + D.ability : PHASES[e.seq.i][0];
+      g.font = `700 10px ${FONT}`; g.fillStyle = M[D === DESIGN.skeleton ? 'rust' : e.type][1]; g.fillText(label, x, y + 14);
+      for (let k = 0; k < 5; k++) { g.beginPath(); circ(g, x - 16 + k * 8, y + 24, 2.2); g.fillStyle = k === e.seq.i ? INK : 'rgba(43,34,48,0.2)'; g.fill(); }
+    } else {
+      g.font = `600 10px ${FONT}`; g.fillStyle = 'rgba(43,34,48,0.62)'; g.fillText(D.desc, x, y + 14);
+    }
+  }
+  // in-game size row caption
+  g.textAlign = 'right'; g.font = `700 10px ${FONT}`; g.fillStyle = 'rgba(43,34,48,0.62)'; g.fillText('In-game size', MINI_X0 - 40, MINI_Y + 4);
+  g.beginPath(); g.moveTo(MINI_X0 - 40, MINI_Y - 31.5); g.lineTo(MINI_X0 + 5 * MINI_DX + 40, MINI_Y - 31.5); g.strokeStyle = 'rgba(43,34,48,0.14)'; g.lineWidth = 1; g.stroke();
+}
+function drawDot(g) {
+  if (!facingDemo) return;
+  g.beginPath(); g.ellipse(422, 182, 392, 158, 0, 0, TAU); g.setLineDash([2, 7]); g.strokeStyle = 'rgba(43,34,48,0.16)'; g.lineWidth = 1.5; g.stroke(); g.setLineDash([]);
+  g.beginPath(); circ(g, DOT.x, DOT.y + 4, 9); g.fillStyle = GROUND; g.fill();
+  g.beginPath(); circ(g, DOT.x, DOT.y, 9); g.fillStyle = M.gold[0]; g.fill(); g.lineWidth = 2.5; g.strokeStyle = INK; g.stroke();
+  g.beginPath(); circ(g, DOT.x, DOT.y, 3.2); g.fillStyle = INK; g.fill();
+}
+function render() {
+  const g = ctx;
+  g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = BG; g.fillRect(0, 0, W, H);
+  g.setTransform(SCALE, 0, 0, SCALE, OX, OY);
+  drawLabels(g);
+  drawDot(g);
+  const all = units.concat(extras, minis);
+  all.sort((a, b) => a.y - b.y);
+  for (const e of all) drawUnit(g, e);
+  drawFx(g); drawProjs(g); drawParticles(g); drawTexts(g);
+}
+
+// =====================================================================
+// BOOT / INPUT / LOOP
+// =====================================================================
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 3);
+  const cw = window.innerWidth, ch = window.innerHeight;
+  W = Math.max(1, Math.round(cw * DPR)); H = Math.max(1, Math.round(ch * DPR)); cv.width = W; cv.height = H;
+  SCALE = Math.min(cw / WORLD_W, ch / WORLD_H) * DPR; OX = (W - WORLD_W * SCALE) / 2; OY = (H - WORLD_H * SCALE) / 2;
+}
+cv.addEventListener('pointerdown', ev => {
+  const wx = (ev.clientX * DPR - OX) / SCALE, wy = (ev.clientY * DPR - OY) / SCALE;
+  let best = null, bd = 1e9;
+  for (const e of units) { const d = Math.hypot(e.hx - wx, e.hy - wy); if (d < bd) { bd = d; best = e; } }
+  for (const m of minis) { const d = Math.hypot(m.hx - wx, m.hy - wy); if (d < 30 && d < bd) { bd = d; best = units[minis.indexOf(m)]; } }
+  if (best && bd < 120) play(best);
+});
+const facingBtn = document.getElementById('facing');
+function setFacing(on) { facingDemo = on; facingBtn.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+facingBtn.addEventListener('click', () => setFacing(!facingDemo));
+window.addEventListener('resize', resize);
+window.addEventListener('orientationchange', () => setTimeout(resize, 200));
+
+// hash options (handy for screenshots): #facing  #dot=-1.0  #still  #play  #fps
+const HASH = location.hash;
+if (/facing/.test(HASH)) setFacing(true);
+const dm = HASH.match(/dot=(-?[\d.]+)/); if (dm) dotAng = parseFloat(dm[1]);
+if (/still/.test(HASH)) dotStill = true;
+const fpsEl = document.getElementById('fps'), showFps = /fps/.test(HASH); if (showFps) fpsEl.style.display = 'block';
+let last = performance.now(), fAcc = 0, fN = 0, work = 0;
+function frame(now) {
+  let dt = (now - last) / 1000; last = now; if (dt > 0.05) dt = 0.05; if (dt < 0) dt = 0;
+  const w0 = performance.now();
+  updateSheet(dt); updateParticles(dt); updateFx(dt); updateTexts(dt); render();
+  work = work * 0.95 + (performance.now() - w0) * 0.05;
+  if (showFps) { fAcc += dt; fN++; if (fAcc > 0.5) { fpsEl.textContent = Math.round(fN / fAcc) + ' fps ' + work.toFixed(1) + 'ms'; fAcc = fN = 0; } }
+  requestAnimationFrame(frame);
+}
+resize(); buildSheet();
+if (/play/.test(HASH)) units.forEach((e, i) => play(e, 0.3 + i * 0.12));
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

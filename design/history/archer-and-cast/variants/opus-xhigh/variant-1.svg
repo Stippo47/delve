@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- Archer v1 "bold cut": one heavy outer silhouette line, thin inner lines, split-tone (folded leaf) shading.
+       Single sprite. Facing = DOWN (+y). Rotate the whole sprite around (100,100) to aim. -->
+  <defs>
+    <path id="hood" d="M100 16 C116 32 148 56 158 90 C166 122 148 152 100 154 C52 152 34 122 42 90 C52 56 84 32 100 16 Z"/>
+    <clipPath id="hoodClip"><use href="#hood"/></clipPath>
+    <path id="lobeL" d="M58 94 C28 98 18 126 32 142 C44 154 66 148 76 138 Z"/>
+    <path id="lobeR" d="M142 94 C172 98 182 126 168 142 C156 154 134 148 124 138 Z"/>
+    <path id="brim" d="M50 134 C50 90 150 90 150 134 C148 152 130 160 100 160 C70 160 52 152 50 134 Z"/>
+    <clipPath id="brimClip"><use href="#brim"/></clipPath>
+    <path id="open" d="M62 132 C64 100 136 100 138 132 C134 152 66 152 62 132 Z"/>
+    <clipPath id="openClip"><use href="#open"/></clipPath>
+    <path id="bow" d="M34 146 C30 156 36 164 44 166 C60 178 80 184 100 184 C120 184 140 178 156 166 C164 164 170 156 166 146"/>
+    <g id="quiver" transform="rotate(32 138 52)">
+      <rect x="121" y="24" width="34" height="50" rx="10"/>
+      <path d="M131 28 C122 22 120 11 125 5 C133 11 135 20 131 28 Z"/>
+      <path d="M145 28 C154 22 156 11 151 5 C143 11 141 20 145 28 Z"/>
+    </g>
+    <!-- right half of every form sits in shade: split on the centre axis like a folded leaf -->
+    <path id="shadeR" d="M100 0 C97 40 98 66 100 90 L100 220 L220 220 L220 0 Z"/>
+  </defs>
+
+  <!-- ===== heavy outer silhouette (drawn once, under everything) ===== -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="13" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#lobeL"/><use href="#lobeR"/><use href="#quiver"/><use href="#hood"/><use href="#brim"/>
+    <use href="#bow" fill="none" stroke-width="17" transform="translate(0 -3)"/>
+    <circle cx="100" cy="182" r="9.8"/>
+    <path d="M87 187 L100 204 L113 187 Z" stroke-width="9"/>
+  </g>
+
+  <!-- ===== colour shapes, thin inner lines ===== -->
+  <g stroke="#2B2230" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <!-- shoulder lobes -->
+    <use href="#lobeL" fill="#3F7D45"/>
+    <use href="#lobeR" fill="#33673A"/>
+    <!-- quiver -->
+    <g transform="rotate(32 138 52)">
+      <path d="M131 28 C122 22 120 11 125 5 C133 11 135 20 131 28 Z" fill="#FFF8E8"/>
+      <path d="M145 28 C154 22 156 11 151 5 C143 11 141 20 145 28 Z" fill="#9AD17F"/>
+      <rect x="121" y="24" width="34" height="50" rx="10" fill="#A0683A"/>
+      <path d="M138 24 V74" stroke="none"/>
+      <rect x="121" y="38" width="34" height="7" fill="#7A4A26"/>
+    </g>
+  </g>
+  <!-- quiver shade half -->
+  <g transform="rotate(32 138 52)">
+    <path d="M139 25.5 H145 A8.5 8.5 0 0 1 153.5 34 V64 A8.5 8.5 0 0 1 145 72.5 H139 Z" fill="#7A4A26" opacity="0.55"/>
+    <rect x="121" y="24" width="34" height="50" rx="10" fill="none" stroke="#2B2230" stroke-width="3"/>
+  </g>
+
+  <!-- hood: lit left half / shaded right half -->
+  <use href="#hood" fill="#68B05F"/>
+  <g clip-path="url(#hoodClip)">
+    <use href="#shadeR" fill="#4C9550"/>
+  </g>
+  <use href="#hood" fill="none" stroke="#2B2230" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- brim, same split -->
+  <use href="#brim" fill="#F4BA3E"/>
+  <g clip-path="url(#brimClip)"><use href="#shadeR" fill="#DC9A2C"/></g>
+  <use href="#brim" fill="none" stroke="#2B2230" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- face: no eyes; flat skin, the brim casts one hard-edged shade crescent across the brow -->
+  <g clip-path="url(#openClip)">
+    <use href="#open" fill="#F4CBA4"/>
+    <path d="M56 96 H144 V130 C124 118 76 118 56 130 Z" fill="#D6956F"/>
+    <ellipse cx="77" cy="139" rx="6.5" ry="3.8" fill="#EDA083"/>
+    <ellipse cx="123" cy="139" rx="6.5" ry="3.8" fill="#EDA083"/>
+    <path d="M95.5 133.5 C96 129.5 104 129.5 104.5 133.5 C104 137 96 137 95.5 133.5 Z" fill="#E0A27F"/>
+  </g>
+  <use href="#open" fill="none" stroke="#2B2230" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- leaf clasp, split too -->
+  <path d="M100 86 C111 92 113 104 100 112 C87 104 89 92 100 86 Z" fill="#A6DA88"/>
+  <path d="M100 86 C111 92 113 104 100 112 Z" fill="#7FBF66"/>
+  <path d="M100 86 C111 92 113 104 100 112 C87 104 89 92 100 86 Z" fill="none" stroke="#2B2230" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- bow string, drawn back to the chin -->
+  <path d="M37 151 L100 156 L163 151" fill="none" stroke="#2B2230" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M37 151 L100 156 L163 151" fill="none" stroke="#FFF8E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- arrow -->
+  <path d="M100 152 V194" stroke="#2B2230" stroke-width="7" stroke-linecap="round"/>
+  <path d="M100 152 V194" stroke="#A0683A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M87 187 L100 204 L113 187 Z" fill="#D3D8DF"/>
+  <path d="M100 187 L113 187 L100 204 Z" fill="#A4ACB8"/>
+
+  <!-- recurve bow: wood, shaded right limb -->
+  <g transform="translate(0 -3)">
+    <use href="#bow" fill="none" stroke="#A0683A" stroke-width="7" stroke-linecap="round"/>
+    <path d="M100 184 C120 184 140 178 156 166 C164 164 170 156 166 146" fill="none" stroke="#7E4E29" stroke-width="7" stroke-linecap="round"/>
+    <rect x="90" y="177" width="20" height="13" rx="3.5" fill="#F4BA3E" stroke="#2B2230" stroke-width="3"/>
+  </g>
+
+  <!-- hands -->
+  <g stroke="#2B2230" stroke-width="3">
+    <circle cx="100" cy="182" r="9.8" fill="#F2C7A0"/>
+    <circle cx="100" cy="157" r="10" fill="#F2C7A0"/>
+  </g>
+</svg>

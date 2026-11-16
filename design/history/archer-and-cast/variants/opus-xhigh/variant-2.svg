@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- Archer v2 "soft tonal": smooth gradients instead of hard shading, every line inked in a deep shade of its own colour.
+       Single sprite. Facing = DOWN (+y). Rotate the whole sprite around (100,100) to aim. -->
+  <defs>
+    <path id="hood" d="M100 16 C116 32 148 56 158 90 C166 122 148 152 100 154 C52 152 34 122 42 90 C52 56 84 32 100 16 Z"/>
+    <path id="open" d="M62 132 C64 100 136 100 138 132 C134 152 66 152 62 132 Z"/>
+    <clipPath id="openClip"><use href="#open"/></clipPath>
+    <path id="bow" d="M34 146 C30 156 36 164 44 166 C60 178 80 184 100 184 C120 184 140 178 156 166 C164 164 170 156 166 146"/>
+
+    <radialGradient id="gHood" gradientUnits="userSpaceOnUse" cx="82" cy="58" r="108" fx="78" fy="50">
+      <stop offset="0" stop-color="#86CB72"/>
+      <stop offset="0.45" stop-color="#5FA65A"/>
+      <stop offset="1" stop-color="#3C7E44"/>
+    </radialGradient>
+    <linearGradient id="gLobe" gradientUnits="userSpaceOnUse" x1="0" y1="94" x2="0" y2="152">
+      <stop offset="0" stop-color="#4E9150"/>
+      <stop offset="1" stop-color="#2F6838"/>
+    </linearGradient>
+    <linearGradient id="gBrim" gradientUnits="userSpaceOnUse" x1="70" y1="96" x2="130" y2="160">
+      <stop offset="0" stop-color="#FFD866"/>
+      <stop offset="1" stop-color="#E7992C"/>
+    </linearGradient>
+    <linearGradient id="gFace" gradientUnits="userSpaceOnUse" x1="0" y1="106" x2="0" y2="150">
+      <stop offset="0" stop-color="#E9B48E"/>
+      <stop offset="1" stop-color="#FAD9BA"/>
+    </linearGradient>
+    <linearGradient id="gBrimShade" gradientUnits="userSpaceOnUse" x1="0" y1="105" x2="0" y2="132">
+      <stop offset="0" stop-color="#4A2A22" stop-opacity="0.95"/>
+      <stop offset="0.38" stop-color="#5E3A2C" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#5E3A2C" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gWood" gradientUnits="userSpaceOnUse" x1="34" y1="0" x2="166" y2="0">
+      <stop offset="0" stop-color="#C08048"/>
+      <stop offset="1" stop-color="#8A5530"/>
+    </linearGradient>
+    <linearGradient id="gQuiver" gradientUnits="userSpaceOnUse" x1="121" y1="0" x2="155" y2="0">
+      <stop offset="0" stop-color="#BC7D46"/>
+      <stop offset="1" stop-color="#8A5530"/>
+    </linearGradient>
+    <radialGradient id="gSkin" cx="0.38" cy="0.32" r="0.75">
+      <stop offset="0" stop-color="#FCE0C4"/>
+      <stop offset="1" stop-color="#E7AE86"/>
+    </radialGradient>
+    <linearGradient id="gLeaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#C2EBA2"/>
+      <stop offset="1" stop-color="#86C46C"/>
+    </linearGradient>
+    <linearGradient id="gSteel" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#E9EDF2"/>
+      <stop offset="1" stop-color="#A3ACB8"/>
+    </linearGradient>
+  </defs>
+
+  <g stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <!-- shoulder cape lobes (behind hood) -->
+    <path d="M58 94 C28 98 18 126 32 142 C44 154 66 148 76 138 Z" fill="url(#gLobe)" stroke="#1F4A2A"/>
+    <path d="M142 94 C172 98 182 126 168 142 C156 154 134 148 124 138 Z" fill="url(#gLobe)" stroke="#1F4A2A"/>
+
+    <!-- quiver peeking out the back-right -->
+    <g transform="rotate(30 138 52)">
+      <path d="M130 30 C120 24 118 12 124 6 C132 12 134 22 130 30 Z" fill="#FFF8E8" stroke="#5E4A36"/>
+      <path d="M146 30 C156 24 158 12 152 6 C144 12 142 22 146 30 Z" fill="#9AD17F" stroke="#2F6838"/>
+      <rect x="120" y="26" width="36" height="50" rx="10" fill="url(#gQuiver)" stroke="#4E2C14"/>
+      <rect x="122" y="40" width="32" height="7" fill="#6E401F" stroke="none"/>
+    </g>
+
+    <!-- hood: one soft radial gradient, no hard crescent, no sheen -->
+    <use href="#hood" fill="url(#gHood)" stroke="#1F4A2A"/>
+    <path d="M100 20 C98 42 98 66 100 88" fill="none" stroke="#3C7E44" stroke-width="3.5" opacity="0.7"/>
+
+    <!-- gold brim + face opening -->
+    <path d="M50 134 C50 90 150 90 150 134 C148 152 130 160 100 160 C70 160 52 152 50 134 Z" fill="url(#gBrim)" stroke="#94570F"/>
+    <use href="#open" fill="none" stroke="none"/>
+  </g>
+
+  <!-- face: no eyes; skin fills the opening and the brim's shadow fades softly down the brow -->
+  <g clip-path="url(#openClip)">
+    <use href="#open" fill="url(#gFace)"/>
+    <path d="M56 96 H144 V134 C124 120 76 120 56 134 Z" fill="url(#gBrimShade)"/>
+    <ellipse cx="77" cy="139" rx="7" ry="4" fill="#F0A088" opacity="0.7"/>
+    <ellipse cx="123" cy="139" rx="7" ry="4" fill="#F0A088" opacity="0.7"/>
+    <path d="M95.5 133 C96 129 104 129 104.5 133 C104 136.5 96 136.5 95.5 133 Z" fill="#E2A07C"/>
+  </g>
+  <use href="#open" fill="none" stroke="#7A440C" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- leaf clasp -->
+  <path d="M100 86 C111 92 113 104 100 112 C87 104 89 92 100 86 Z" fill="url(#gLeaf)" stroke="#1F4A2A" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M100 91 V107" stroke="#4E9150" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- bow string, drawn back to the chin -->
+  <path d="M38 154 L100 156 L162 154" fill="none" stroke="#6E5A44" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M38 154 L100 156 L162 154" fill="none" stroke="#FFF8E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g stroke-linejoin="round" stroke-linecap="round">
+    <!-- arrow -->
+    <path d="M100 152 V194" stroke="#4E2C14" stroke-width="7"/>
+    <path d="M100 152 V194" stroke="#B87A44" stroke-width="3"/>
+    <path d="M90 192 L100 207 L110 192 Z" fill="url(#gSteel)" stroke="#4A5462" stroke-width="4"/>
+
+    <!-- recurve bow -->
+    <use href="#bow" fill="none" stroke="#4E2C14" stroke-width="12"/>
+    <use href="#bow" fill="none" stroke="url(#gWood)" stroke-width="5"/>
+    <rect x="90" y="177" width="20" height="13" rx="3.5" fill="url(#gBrim)" stroke="#94570F" stroke-width="4"/>
+
+    <!-- hands -->
+    <circle cx="100" cy="185" r="10.5" fill="url(#gSkin)" stroke="#9A5A3A" stroke-width="4"/>
+    <circle cx="100" cy="157" r="10.5" fill="url(#gSkin)" stroke="#9A5A3A" stroke-width="4"/>
+  </g>
+</svg>

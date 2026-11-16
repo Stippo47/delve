@@ -1,0 +1,700 @@
+// The combat simulation: AI (weighted move modes + context steering), physics, combat, statuses, hazards.
+import { TAU, clamp, dist, dist2, angleTo, wrapAngle, angleDiff, rand, rrange, rint, chance, softmaxPick } from './util.js';
+import { DEFS, levelHp, levelDmg } from './units.js';
+
+let NEXT_ID = 1;
+const DIRS = 16;
+const DIR_X = [], DIR_Y = [];
+for (let i = 0; i < DIRS; i++) { DIR_X.push(Math.cos(i / DIRS * TAU)); DIR_Y.push(Math.sin(i / DIRS * TAU)); }
+
+export function makeWorld(W, H) {
+  return {
+    W, H, time: 0, units: [], projectiles: [], particles: [], texts: [], hazards: [], pickups: [], pillars: [],
+    telegraphs: [], cleared: false, doorIn: { x: 0, y: H / 2 }, doorOut: { x: W, y: H / 2 },
+    on: {}, shake: 0,
+  };
+}
+
+const emit = (w, ev, ...a) => w.on[ev] && w.on[ev](...a);
+
+// ---------------------------------------------------------------- spawning
+export function spawn(w, kind, x, y, opts = {}) {
+  const d = DEFS[kind];
+  const hero = d.team === 'hero';
+  const lvl = opts.level || 1;
+  const mult = opts.mult || 1;
+  const maxHp = hero ? levelHp(d.hp, lvl) : Math.round(d.hp * mult * (opts.hpMul || 1));
+  const u = {
+    id: NEXT_ID++, kind, def: d, team: d.team, x, y, vx: 0, vy: 0, kx: 0, ky: 0, dvx: 0, dvy: 0,
+    r: d.r * (opts.scale || 1), mass: d.mass * (opts.scale || 1), maxHp, hp: opts.hp != null ? Math.min(opts.hp, maxHp) : maxHp,
+    dmgMul: hero ? levelDmg(1, lvl) : 0.65 + 0.35 * mult, level: lvl,
+    facing: hero ? 0 : Math.PI, atkT: rand() * d.atkCd, abilT: (d.abilCd || 0) * rrange(0.3, 0.7),
+    mode: 'wander', modeT: 0, thinkT: rand() * 0.4, abilThinkT: rand() * 0.5, target: null, targetT: 0,
+    st: { burn: 0, chill: 0, poison: 0 }, frozenT: 0, freezeImmune: 0, dotAcc: 0,
+    flashT: 0, invulnT: 0, act: null, dead: false, downed: false,
+    trinket: opts.trinket || null, lastBreathUsed: false, hasKey: !!opts.hasKey,
+    strafeSign: chance(0.5) ? 1 : -1, wanderA: rand() * TAU, hazardT: 0, forcedGoal: null,
+    gen: opts.gen || 0, bob: rand() * TAU, lastAttackT: -9,
+  };
+  w.units.push(u);
+  return u;
+}
+
+const alive = (u) => !u.dead && !u.downed;
+const opponents = (w, u) => w.units.filter((o) => alive(o) && o.team !== u.team);
+const allies = (w, u) => w.units.filter((o) => alive(o) && o.team === u.team && o !== u);
+const hpRatio = (u) => u.hp / u.maxHp;
+const hasTrinket = (u, id) => u.trinket === id;
+const speedOf = (u) => {
+  let s = u.def.speed * (hasTrinket(u, 'swiftBoots') ? 1.15 : 1);
+  s *= 1 - Math.min(0.6, u.st.chill / 160);
+  if (u.inOil) s *= 0.7;
+  return s;
+};
+
+// ---------------------------------------------------------------- line of sight
+function blocked(w, ax, ay, bx, by) {
+  for (const p of w.pillars) {
+    const dx = bx - ax, dy = by - ay; const L2 = dx * dx + dy * dy || 1;
+    let t = ((p.x - ax) * dx + (p.y - ay) * dy) / L2; t = clamp(t, 0, 1);
+    if (dist2(ax + dx * t, ay + dy * t, p.x, p.y) < (p.r + 4) ** 2) return true;
+  }
+  return false;
+}
+
+// ---------------------------------------------------------------- targeting
+function chooseTarget(w, u) {
+  const opp = opponents(w, u);
+  if (!opp.length) { u.target = null; return; }
+  const k = u.kind;
+  let best = null, bestS = -Infinity;
+  for (const o of opp) {
+    const d = dist(u.x, u.y, o.x, o.y);
+    let s = -d / 300;
+    if (k === 'archer') { s += (1 - hpRatio(o)) * 0.5; if (d <= u.def.range && !blocked(w, u.x, u.y, o.x, o.y)) s += 0.6; }
+    else if (k === 'rogue') { s += (1 - hpRatio(o)) * 1.1 + (o.target && o.target !== u ? 0.5 : 0) - (o.def.boss ? 0.3 : 0); }
+    else if (k === 'knight') { s += o.target && o.target.kind !== 'knight' ? 0.35 : 0; }
+    else if (k === 'rat') { s += o.kind === 'archer' ? 0.35 : 0; }
+    if (o === u.target) s += 0.35; // stickiness
+    if (s > bestS) { bestS = s; best = o; }
+  }
+  u.target = best;
+}
+
+// ---------------------------------------------------------------- move-mode choice
+const MODES = ['approach', 'hold', 'kite', 'strafe', 'flank', 'retreat', 'wander'];
+
+function scoreModes(w, u) {
+  const t = u.target;
+  const sc = { approach: 0, hold: 0, kite: 0, strafe: 0, flank: 0, retreat: 0, wander: 0 };
+  if (!t) { sc.wander = 1; return sc; }
+  const d = dist(u.x, u.y, t.x, t.y);
+  const gap = d - u.r - t.r;
+  const role = u.def.role;
+  const ready = u.atkT <= 0.15;
+  if (role === 'melee') {
+    const inRange = gap <= u.def.range + 6;
+    sc.approach = inRange ? 0.1 : 1;
+    sc.hold = inRange ? 1.05 : 0;
+    if (u.team === 'hero' && hpRatio(u) < 0.18) sc.retreat = 0.5;
+  } else if (role === 'ranged') {
+    let near = Infinity;
+    for (const o of opponents(w, u)) near = Math.min(near, dist(u.x, u.y, o.x, o.y) - o.r);
+    const los = !blocked(w, u.x, u.y, t.x, t.y);
+    sc.kite = near < u.def.keep ? 0.5 + 1.1 * (1 - near / u.def.keep) : 0;
+    sc.approach = d > u.def.range * 0.92 || !los ? 1 : 0.05;
+    sc.strafe = d <= u.def.range ? (los ? 0.75 : 0.9) : 0.15;
+    sc.hold = d <= u.def.range && los && ready ? 0.55 : 0;
+  } else { // skirmish: in and out
+    const inRange = gap <= u.def.range + 4;
+    const sinceAtk = w.time - u.lastAttackT;
+    sc.approach = ready ? (inRange ? 0.3 : 1) : 0.15;
+    sc.hold = inRange && ready ? 0.9 : 0;
+    sc.flank = t.target && t.target !== u && gap < 180 ? (u.kind === 'rogue' ? 0.95 : 0.6) : 0;
+    sc.retreat = !ready && sinceAtk < 0.9 ? (u.kind === 'rogue' ? 1.05 : 0.6) : 0;
+    sc.strafe = !ready ? 0.55 : 0.1;
+  }
+  return sc;
+}
+
+function think(w, u) {
+  const prevT = u.target;
+  chooseTarget(w, u);
+  const sc = scoreModes(w, u);
+  const list = MODES.map((m) => (sc[m] > 0 ? sc[m] : -4)); // modes that don't apply are effectively off
+  const cur = MODES.indexOf(u.mode);
+  if (cur >= 0) list[cur] += 0.25; // hysteresis: incumbent bonus
+  let best = 0; for (let i = 1; i < list.length; i++) if (list[i] > list[best]) best = i;
+  const locked = u.modeT < u.def.commit && cur >= 0 && list[best] - list[cur] < 0.8 && prevT === u.target;
+  if (!locked) {
+    const i = softmaxPick(list, u.def.temp * 0.6);
+    if (MODES[i] !== u.mode) { u.mode = MODES[i]; u.modeT = 0; if (u.mode === 'strafe' && chance(0.35)) u.strafeSign *= -1; }
+  }
+}
+
+// ---------------------------------------------------------------- context steering
+const interest = new Float32Array(DIRS), danger = new Float32Array(DIRS);
+
+function steer(w, u, gx, gy, opts = {}) {
+  const gl = Math.hypot(gx, gy);
+  if (gl < 1e-4) return [0, 0];
+  gx /= gl; gy /= gl;
+  for (let i = 0; i < DIRS; i++) {
+    const dp = DIR_X[i] * gx + DIR_Y[i] * gy;
+    interest[i] = Math.max(0, dp) + (opts.side ? 0.15 * Math.max(0, DIR_X[i] * -gy * opts.side + DIR_Y[i] * gx * opts.side) : 0);
+    danger[i] = 0;
+  }
+  const R = u.r;
+  const look = 46 + R;
+  // walls
+  for (let i = 0; i < DIRS; i++) {
+    const dx = DIR_X[i], dy = DIR_Y[i];
+    let tWall = Infinity;
+    if (dx > 0) tWall = Math.min(tWall, (w.W - R - u.x) / dx); if (dx < 0) tWall = Math.min(tWall, (R - u.x) / dx);
+    if (dy > 0) tWall = Math.min(tWall, (w.H - R - u.y) / dy); if (dy < 0) tWall = Math.min(tWall, (R - u.y) / dy);
+    if (tWall < look) danger[i] = Math.max(danger[i], 1 - tWall / look);
+  }
+  const avoidCircle = (cx, cy, cr, weight, range) => {
+    const d = dist(u.x, u.y, cx, cy) - cr - R;
+    if (d > range) return;
+    const a = angleTo(u.x, u.y, cx, cy);
+    const spread = Math.atan2(cr + R, Math.max(1, d + cr + R)) + 0.25;
+    const k = weight * clamp(1 - d / range, 0, 1);
+    for (let i = 0; i < DIRS; i++) {
+      const ad = angleDiff(i / DIRS * TAU, a);
+      if (ad < spread) danger[i] = Math.max(danger[i], k * (1 - ad / (spread * 1.6)));
+    }
+  };
+  for (const p of w.pillars) avoidCircle(p.x, p.y, p.r, 1, 70);
+  const fear = u.team === 'hero' ? 0.9 : 0.45;
+  for (const h of w.hazards) if (h.type !== 'oil' || u.team === 'hero') avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' ? 0.35 : fear, 40);
+  for (const o of w.units) {
+    if (o === u || !alive(o)) continue;
+    if (o.team === u.team) avoidCircle(o.x, o.y, o.r + (u.team === 'hero' ? 14 : 0), 0.45, 18);
+    else if (u.def.role === 'ranged' && o !== u.target) avoidCircle(o.x, o.y, o.r, 0.7, 60);
+  }
+  let bi = 0, bv = -1;
+  for (let i = 0; i < DIRS; i++) {
+    const v = interest[i] * (1 - danger[i]);
+    if (v > bv) { bv = v; bi = i; }
+  }
+  if (bv < 0.04) return [0, 0];
+  // blend with neighbours for smoother headings
+  const l = (bi + DIRS - 1) % DIRS, r = (bi + 1) % DIRS;
+  const vl = interest[l] * (1 - danger[l]), vr = interest[r] * (1 - danger[r]);
+  let x = DIR_X[bi] * bv + DIR_X[l] * vl * 0.5 + DIR_X[r] * vr * 0.5;
+  let y = DIR_Y[bi] * bv + DIR_Y[l] * vl * 0.5 + DIR_Y[r] * vr * 0.5;
+  const n = Math.hypot(x, y) || 1;
+  return [x / n, y / n];
+}
+
+function movement(w, u, dt) {
+  let gx = 0, gy = 0, side = 0, mult = 1;
+  const t = u.target;
+  if (u.forcedGoal) {
+    gx = u.forcedGoal.x - u.x; gy = u.forcedGoal.y - u.y;
+    if (Math.hypot(gx, gy) < 10) { gx = gy = 0; }
+  } else if (!t || u.mode === 'wander') {
+    u.wanderA += rrange(-1.2, 1.2) * dt;
+    gx = Math.cos(u.wanderA); gy = Math.sin(u.wanderA); mult = 0.35;
+    if (u.team === 'hero') { // heroes drift together instead of scattering
+      const al = allies(w, u);
+      if (al.length) { let cx = 0, cy = 0; for (const a of al) { cx += a.x; cy += a.y; } cx /= al.length; cy /= al.length;
+        if (dist(u.x, u.y, cx, cy) > 90) { gx = cx - u.x; gy = cy - u.y; mult = 0.6; } }
+    }
+  } else {
+    const d = dist(u.x, u.y, t.x, t.y);
+    const tx = (t.x - u.x) / (d || 1), ty = (t.y - u.y) / (d || 1);
+    switch (u.mode) {
+      case 'approach': gx = tx; gy = ty; if (d - u.r - t.r < u.def.range * 0.6) { gx = gy = 0; } break;
+      case 'hold': gx = gy = 0; break;
+      case 'kite': {
+        let ax = 0, ay = 0;
+        for (const o of opponents(w, u)) { const od = dist(u.x, u.y, o.x, o.y); if (od < u.def.keep * 1.3) { ax += (u.x - o.x) / (od * od + 1); ay += (u.y - o.y) / (od * od + 1); } }
+        gx = ax; gy = ay; side = u.strafeSign; break;
+      }
+      case 'strafe': {
+        gx = -ty * u.strafeSign; gy = tx * u.strafeSign;
+        const want = u.def.role === 'ranged' ? u.def.range * 0.75 : u.r + t.r + 50;
+        const corr = clamp((d - want) / 80, -1, 1);
+        gx += tx * corr; gy += ty * corr; mult = 0.8; break;
+      }
+      case 'flank': {
+        const bx = t.x - Math.cos(t.facing) * (t.r + u.r + 8), by = t.y - Math.sin(t.facing) * (t.r + u.r + 8);
+        gx = bx - u.x; gy = by - u.y;
+        if (Math.hypot(gx, gy) < 8) { gx = tx; gy = ty; mult = 0.3; }
+        side = u.strafeSign; break;
+      }
+      case 'retreat': gx = -tx; gy = -ty; side = u.strafeSign; mult = 0.9; break;
+    }
+  }
+  const [sx, sy] = steer(w, u, gx, gy, { side });
+  const sp = speedOf(u) * mult;
+  u.dvx = sx * sp; u.dvy = sy * sp;
+}
+
+// ---------------------------------------------------------------- facing
+function updateFacing(u, dt) {
+  let want = null;
+  const t = u.target;
+  if (t && !u.forcedGoal) {
+    const d = dist(u.x, u.y, t.x, t.y);
+    if (u.mode !== 'retreat' && (d < (u.def.role === 'ranged' ? u.def.range + 60 : 140) || u.mode === 'hold' || u.mode === 'kite')) want = angleTo(u.x, u.y, t.x, t.y);
+  }
+  if (want === null && Math.hypot(u.vx, u.vy) > 8) want = Math.atan2(u.vy, u.vx);
+  if (want === null) return;
+  const rate = (u.kind === 'rat' ? 11 : u.kind === 'rogue' ? 9 : 6) * dt;
+  const diff = wrapAngle(want - u.facing);
+  u.facing = wrapAngle(u.facing + clamp(diff, -rate, rate));
+}
+
+// ---------------------------------------------------------------- damage & statuses
+function text(w, x, y, s, color = '#FFFFFF', size = 1) {
+  w.texts.push({ x, y, s: String(s), color, size, life: 0.9, max: 0.9, vy: -40 });
+}
+function puff(w, x, y, color, n = 8, spd = 90, size = 5, life = 0.5) {
+  for (let i = 0; i < n; i++) {
+    const a = rand() * TAU, v = spd * rrange(0.3, 1);
+    w.particles.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: life * rrange(0.6, 1), max: life, size: size * rrange(0.6, 1.3), color });
+  }
+}
+
+export function hurt(w, u, amount, src, o = {}) {
+  if (!alive(u) || u.invulnT > 0 || amount <= 0) return 0;
+  if (!o.dot && !o.noDodge && u.def.dodge && chance(u.def.dodge)) { text(w, u.x, u.y - u.r, 'dodge', '#CFE8FF', 0.8); return 0; }
+  let amt = amount;
+  if (!o.dot && u.def.shield && src) {
+    const a = angleTo(u.x, u.y, src.x, src.y);
+    if (angleDiff(a, u.facing) < 1.25) { amt *= 1 - u.def.shield; puff(w, u.x + Math.cos(u.facing) * u.r, u.y + Math.sin(u.facing) * u.r, '#E8EDF3', 3, 60, 3, 0.25); }
+  }
+  if (hasTrinket(u, 'ironSkin')) amt *= 0.85;
+  // shatter: a hard hit on a frozen unit
+  if (u.frozenT > 0 && !o.dot && (o.heavy || amount >= 12 || (o.knock || 0) >= 150)) shatter(w, u, src);
+  u.hp -= amt;
+  if (!o.dot) { u.flashT = 0.12; text(w, u.x + rrange(-6, 6), u.y - u.r - 4, Math.round(amt), o.crit ? '#FFE14D' : '#FFFFFF', o.crit ? 1.3 : 1); }
+  else { u.dotAcc += amt; if (u.dotAcc >= 4) { text(w, u.x, u.y - u.r, Math.round(u.dotAcc), o.color || '#FF9A55', 0.75); u.dotAcc = 0; } }
+  if (src && src.trinket === 'vampTooth' && alive(src)) src.hp = Math.min(src.maxHp, src.hp + amt * 0.08);
+  if (o.knock) {
+    const a = o.kAngle != null ? o.kAngle : src ? angleTo(src.x, src.y, u.x, u.y) : rand() * TAU;
+    const k = o.knock / u.mass;
+    u.kx += Math.cos(a) * k; u.ky += Math.sin(a) * k;
+  }
+  for (const s of ['burn', 'chill', 'poison']) if (o[s]) addStatus(w, u, s, o[s], src);
+  if (!o.dot && u.trinket === 'volatile' && chance(0.15)) explode(w, u.x, u.y, 70, 14, { burn: 28 }, u, '#FF8A3D');
+  if (u.hp <= 0) {
+    if (u.trinket === 'lastBreath' && !u.lastBreathUsed) {
+      u.lastBreathUsed = true; u.hp = 1; u.invulnT = 2; text(w, u.x, u.y - u.r - 10, 'LAST BREATH', '#FFE7A0', 1.1); puff(w, u.x, u.y, '#FFE7A0', 14, 120);
+    } else kill(w, u, src);
+  }
+  return amt;
+}
+
+export function addStatus(w, u, type, amount, src) {
+  if (!alive(u)) return;
+  const res = (u.def.res && u.def.res[type]) ?? 1;
+  const s = u.st;
+  s[type] += amount * res;
+  if (type === 'burn') {
+    if (u.frozenT > 0) { u.frozenT = 0; s.chill = 0; puff(w, u.x, u.y, 'rgba(235,240,245,0.8)', 10, 60, 9, 0.8); text(w, u.x, u.y - u.r, 'thaw', '#DDEAF2', 0.8); }
+    s.chill = Math.max(0, s.chill - amount);
+    if (s.burn >= 100) { s.burn = 20; text(w, u.x, u.y - u.r - 12, 'SCORCH', '#FF7A2F', 1.2); hurt(w, u, 22, src, { noDodge: true }); explode(w, u.x, u.y, 60, 10, { burn: 24 }, src, '#FF7A2F', u); }
+  } else if (type === 'chill') {
+    const need = 100 + u.freezeImmune;
+    if (s.chill >= need && u.frozenT <= 0) {
+      u.frozenT = u.def.boss ? 1.6 : 3; s.chill = 0; s.burn = 0; u.freezeImmune += 45; u.act = null;
+      text(w, u.x, u.y - u.r - 12, 'FREEZE', '#7FD6F5', 1.2); puff(w, u.x, u.y, '#BFEFFF', 10, 70, 4);
+    }
+  } else if (type === 'poison') {
+    if (s.poison >= 100) { s.poison = 30; text(w, u.x, u.y - u.r - 12, 'ROT', '#9BCB3C', 1.2); hurt(w, u, u.maxHp * 0.15, src, { noDodge: true, color: '#9BCB3C' }); }
+  }
+}
+
+function shatter(w, u, src) {
+  u.frozenT = 0; u.st.chill = 0;
+  text(w, u.x, u.y - u.r - 14, 'SHATTER', '#BFEFFF', 1.3);
+  u.hp -= 26; u.flashT = 0.15;
+  puff(w, u.x, u.y, '#E6F8FF', 18, 160, 5, 0.6);
+  w.shake = Math.max(w.shake, 6);
+  for (let i = 0; i < 8; i++) {
+    const a = i / 8 * TAU + rand() * 0.3;
+    w.projectiles.push({ kind: 'icicle', x: u.x + Math.cos(a) * u.r, y: u.y + Math.sin(a) * u.r, vx: Math.cos(a) * 340, vy: Math.sin(a) * 340,
+      r: 5, team: 'neutral', owner: src, skip: u, dmg: 7, o: { chill: 30, noDodge: true }, life: 0.6 });
+  }
+}
+
+export function explode(w, x, y, r, dmg, statuses, src, color, skip) {
+  w.telegraphs.push({ type: 'blast', x, y, r, t: 0.25, max: 0.25, color });
+  puff(w, x, y, color, 16, r * 3, 6, 0.45);
+  w.shake = Math.max(w.shake, 4);
+  for (const o of w.units) {
+    if (!alive(o) || o === skip) continue;
+    if (dist(x, y, o.x, o.y) > r + o.r) continue;
+    const friendly = src && o.team === src.team;
+    hurt(w, o, dmg * (friendly ? 0.4 : 1), src, { noDodge: true, knock: 110, kAngle: angleTo(x, y, o.x, o.y),
+      ...Object.fromEntries(Object.entries(statuses).map(([k, v]) => [k, v * (friendly ? 0.4 : 1)])) });
+  }
+  if (statuses.burn) igniteAround(w, x, y, r);
+}
+
+function igniteAround(w, x, y, r) {
+  for (const h of [...w.hazards]) {
+    if (dist(x, y, h.x, h.y) > r + h.r) continue;
+    if (h.type === 'oil') { h.type = 'fire'; h.t = 5; h.max = 5; }
+    else if (h.type === 'gas') { w.hazards.splice(w.hazards.indexOf(h), 1); text(w, h.x, h.y, 'BOOM', '#FFB347', 1.3); explode(w, h.x, h.y, h.r * 1.35, 18, { burn: 30 }, null, '#FFB347'); }
+  }
+}
+
+function kill(w, u, src) {
+  u.hp = 0;
+  if (u.team === 'hero') {
+    u.downed = true; u.act = null; u.frozenT = 0; u.st = { burn: 0, chill: 0, poison: 0 };
+    text(w, u.x, u.y - u.r - 10, 'DOWN', '#FF8A80', 1.1);
+    emit(w, 'heroDown', u);
+    return;
+  }
+  u.dead = true;
+  puff(w, u.x, u.y, u.kind.startsWith('slime') ? '#6CC9B0' : u.kind === 'rat' ? '#9C8676' : '#EDE4CD', 12, 120, 5, 0.5);
+  if (u.st.poison > 40) w.hazards.push({ type: 'gas', x: u.x, y: u.y, r: 52, t: 4, max: 4 });
+  if (u.def.splits && u.gen === 0) {
+    for (const s of [-1, 1]) {
+      const c = spawn(w, 'slimeSmall', u.x + s * 12, u.y + s * 4, { mult: w.mult, gen: 1 });
+      c.kx = s * 140; c.ky = rrange(-60, 60);
+    }
+  }
+  const [c0, c1] = u.def.coins || [0, 0];
+  const coins = rint(c0, c1);
+  for (let i = 0; i < coins; i++) w.pickups.push({ type: 'coin', x: u.x + rrange(-10, 10), y: u.y + rrange(-10, 10), vx: rrange(-80, 80), vy: rrange(-80, 80), v: 1 });
+  if (u.hasKey) w.pickups.push({ type: 'key', x: u.x, y: u.y, vx: 0, vy: 0 });
+  emit(w, 'kill', u, src);
+}
+
+// ---------------------------------------------------------------- attacks & abilities
+function inMeleeArc(u, o, extra = 0) {
+  const d = dist(u.x, u.y, o.x, o.y) - u.r - o.r;
+  if (d > (u.def.range + extra)) return false;
+  return angleDiff(angleTo(u.x, u.y, o.x, o.y), u.facing) < (u.def.arc || 1.5) / 2 + 0.2;
+}
+
+function trinketStatus(u, o) {
+  if (u.trinket === 'frostRing') o.chill = (o.chill || 0) + 15;
+  if (u.trinket === 'emberRing') o.burn = (o.burn || 0) + 15;
+  if (u.trinket === 'venomFang') o.poison = (o.poison || 0) + 15;
+  return o;
+}
+
+function meleeSwing(w, u, single) {
+  const d = u.def;
+  const targets = single ? (u.target && inMeleeArc(u, u.target, 6) ? [u.target] : []) : w.units.filter((o) => alive(o) && o.team !== u.team && inMeleeArc(u, o, 6));
+  w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, color: u.team === 'hero' ? '#FFFFFF' : '#FFD2C2' });
+  for (const o of targets) {
+    hurt(w, o, d.dmg * u.dmgMul * rrange(0.9, 1.1), u, trinketStatus(u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison }));
+  }
+}
+
+function fireArrow(w, u, angle, o = {}) {
+  const sp = o.speed || 520;
+  w.projectiles.push({ kind: o.fire ? 'fireArrow' : 'arrow', x: u.x + Math.cos(angle) * (u.r + 6), y: u.y + Math.sin(angle) * (u.r + 6),
+    vx: Math.cos(angle) * sp, vy: Math.sin(angle) * sp, r: 4, team: u.team, owner: u, dmg: (o.dmg || u.def.dmg) * u.dmgMul,
+    o: trinketStatus(u, { chill: o.fire ? 0 : u.def.chill, burn: o.fire ? 20 : 0, knock: 30 }), life: 1.2, a: angle });
+}
+
+function tryAttack(w, u) {
+  const t = u.target;
+  if (!t || u.atkT > 0 || u.act || u.forcedGoal) return;
+  const d = dist(u.x, u.y, t.x, t.y);
+  const face = angleDiff(angleTo(u.x, u.y, t.x, t.y), u.facing);
+  const def = u.def;
+  if (def.role === 'ranged') {
+    if (d <= def.range && face < 0.35 && !blocked(w, u.x, u.y, t.x, t.y)) {
+      const lead = d / 520;
+      fireArrow(w, u, angleTo(u.x, u.y, t.x + t.vx * lead, t.y + t.vy * lead) + rrange(-0.04, 0.04));
+      u.atkT = def.atkCd * rrange(0.9, 1.1); u.lastAttackT = w.time;
+    }
+    return;
+  }
+  if (d - u.r - t.r <= def.range + 2 && face < 0.6) {
+    if (def.windup) { u.act = { type: 'windup', t: def.windup, max: def.windup }; }
+    else meleeSwing(w, u, def.role === 'skirmish');
+    u.atkT = def.atkCd * rrange(0.9, 1.1); u.lastAttackT = w.time;
+    if (u.kind === 'slime' || u.kind === 'slimeSmall') { u.kx += Math.cos(u.facing) * 60; u.ky += Math.sin(u.facing) * 60; }
+  }
+}
+
+function abilityScore(w, u) {
+  const t = u.target; if (!t) return 0;
+  const d = dist(u.x, u.y, t.x, t.y);
+  const opp = opponents(w, u);
+  switch (u.def.ability) {
+    case 'barrage': {
+      if (d > u.def.range || blocked(w, u.x, u.y, t.x, t.y)) return 0;
+      const n = opp.filter((o) => dist(o.x, o.y, t.x, t.y) < 85).length;
+      return (n - 1) * 0.45 + 0.08;
+    }
+    case 'charge': {
+      if (d < 85 || d > 340) return 0;
+      const a = angleTo(u.x, u.y, t.x, t.y);
+      let n = 0;
+      for (const o of opp) { const od = dist(u.x, u.y, o.x, o.y); const off = Math.abs(Math.sin(angleTo(u.x, u.y, o.x, o.y) - a)) * od; if (od < d + 40 && off < 40) n++; }
+      const protect = t.target && t.target.team === 'hero' && t.target !== u ? 0.25 : 0;
+      return 0.25 + (n - 1) * 0.35 + protect;
+    }
+    case 'shadowstep': {
+      if (d < 70) return 0;
+      return (1 - hpRatio(t)) * 0.6 + (t.target && t.target !== u ? 0.45 : 0) + (t.def.boss ? 0.1 : 0);
+    }
+    case 'slam': {
+      const n = opp.filter((o) => dist(u.x, u.y, o.x, o.y) < 130).length;
+      return n * 0.45 - 0.1;
+    }
+  }
+  return 0;
+}
+
+function useAbility(w, u) {
+  const t = u.target;
+  const def = u.def;
+  u.abilT = def.abilCd;
+  switch (def.ability) {
+    case 'barrage': {
+      const base = angleTo(u.x, u.y, t.x, t.y);
+      text(w, u.x, u.y - u.r - 12, 'BARRAGE', '#FFB36B', 0.9);
+      for (let i = 0; i < 7; i++) fireArrow(w, u, base + (i - 3) * 0.075 + rrange(-0.02, 0.02), { fire: true, dmg: 7, speed: 470 + i * 8 });
+      u.atkT = Math.max(u.atkT, 0.6);
+      break;
+    }
+    case 'charge': {
+      const a = angleTo(u.x, u.y, t.x, t.y);
+      u.facing = a;
+      u.act = { type: 'charge', t: 0.55, max: 0.55, a, hit: new Set() };
+      text(w, u.x, u.y - u.r - 12, 'CHARGE', '#BFD4FF', 0.9);
+      break;
+    }
+    case 'shadowstep': {
+      puff(w, u.x, u.y, 'rgba(60,40,90,0.85)', 14, 70, 8, 0.6);
+      const back = t.facing + Math.PI;
+      let nx = t.x + Math.cos(back) * (t.r + u.r + 6), ny = t.y + Math.sin(back) * (t.r + u.r + 6);
+      nx = clamp(nx, u.r, w.W - u.r); ny = clamp(ny, u.r, w.H - u.r);
+      u.x = nx; u.y = ny; u.vx = u.vy = 0; u.facing = angleTo(u.x, u.y, t.x, t.y);
+      puff(w, u.x, u.y, 'rgba(60,40,90,0.85)', 14, 70, 8, 0.6);
+      hurt(w, t, def.dmg * 3.2 * u.dmgMul, u, trinketStatus(u, { crit: true, poison: 30, noDodge: true }));
+      text(w, u.x, u.y - u.r - 12, 'BACKSTAB', '#C9A7FF', 0.9);
+      u.atkT = def.atkCd; u.lastAttackT = w.time; u.mode = 'retreat'; u.modeT = 0;
+      break;
+    }
+    case 'slam': {
+      u.act = { type: 'slam', t: 0.8, max: 0.8 };
+      w.telegraphs.push({ type: 'ring', x: u.x, y: u.y, r: 125, t: 0.8, max: 0.8, color: '#FF6B5A' });
+      break;
+    }
+  }
+}
+
+function runAction(w, u, dt) {
+  const a = u.act;
+  a.t -= dt;
+  if (a.type === 'windup') {
+    u.dvx = u.dvy = 0;
+    if (a.t <= 0) { u.act = null; meleeSwing(w, u, false); }
+  } else if (a.type === 'charge') {
+    const sp = u.def.speed * 3.6;
+    u.dvx = Math.cos(a.a) * sp; u.dvy = Math.sin(a.a) * sp; u.vx = u.dvx; u.vy = u.dvy;
+    if (rand() < 0.6) w.particles.push({ x: u.x - Math.cos(a.a) * u.r, y: u.y - Math.sin(a.a) * u.r, vx: 0, vy: 0, life: 0.3, max: 0.3, size: 7, color: 'rgba(220,226,235,0.7)' });
+    for (const o of w.units) {
+      if (!alive(o) || o.team === u.team || a.hit.has(o)) continue;
+      if (dist(u.x, u.y, o.x, o.y) < u.r + o.r + 6) {
+        a.hit.add(o);
+        const side = Math.sign(Math.sin(angleTo(u.x, u.y, o.x, o.y) - a.a)) || 1;
+        hurt(w, o, 18 * u.dmgMul, u, trinketStatus(u, { knock: 340, kAngle: a.a + side * 0.6, heavy: true }));
+        w.shake = Math.max(w.shake, 5);
+      }
+    }
+    if (a.t <= 0) u.act = null;
+  } else if (a.type === 'slam') {
+    u.dvx = u.dvy = 0;
+    if (a.t <= 0) {
+      u.act = null;
+      text(w, u.x, u.y - u.r - 14, 'SLAM', '#FF6B5A', 1.2);
+      w.shake = Math.max(w.shake, 9);
+      for (const o of w.units) if (alive(o) && o.team !== u.team && dist(u.x, u.y, o.x, o.y) < 125 + o.r)
+        hurt(w, o, 20 * u.dmgMul, u, { knock: 260, heavy: true, noDodge: true });
+      puff(w, u.x, u.y, '#D9CDB0', 24, 260, 7, 0.6);
+    }
+  }
+}
+
+// ---------------------------------------------------------------- statuses over time
+function statusTick(w, u, dt) {
+  const s = u.st;
+  if (s.burn > 0) { s.burn = Math.max(0, s.burn - 7 * dt); if (s.burn >= 30) { hurt(w, u, (2 + s.burn * 0.05) * dt, null, { dot: true, color: '#FF9A55' });
+    if (rand() < dt * 12) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.7, y: u.y + rrange(-u.r, u.r) * 0.7, vx: 0, vy: -50, life: 0.45, max: 0.45, size: 5, color: '#FF8A3D' }); } }
+  if (s.chill > 0) s.chill = Math.max(0, s.chill - 6 * dt);
+  if (s.poison > 0) { s.poison = Math.max(0, s.poison - 4 * dt); hurt(w, u, s.poison * 0.07 * dt, null, { dot: true, color: '#9BCB3C' });
+    if (s.poison > 25 && rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.7, y: u.y + rrange(-u.r, u.r) * 0.7, vx: 0, vy: -25, life: 0.6, max: 0.6, size: 4, color: '#9BCB3C' }); }
+  if (u.frozenT > 0) u.frozenT -= dt;
+  if (u.freezeImmune > 0) u.freezeImmune = Math.max(0, u.freezeImmune - 4 * dt);
+}
+
+// ---------------------------------------------------------------- physics
+const SLAM_SPEED = 210;
+function wallHit(w, u, speed) {
+  if (speed > SLAM_SPEED) {
+    const dmg = 4 + (speed - SLAM_SPEED) * 0.05;
+    hurt(w, u, dmg, null, { noDodge: true });
+    text(w, u.x, u.y - u.r - 10, 'SLAM', '#FFD9A0', 0.9);
+    puff(w, u.x, u.y, '#CDBFA6', 8, 90, 5, 0.4);
+  }
+}
+
+function physics(w, dt) {
+  const us = w.units;
+  for (const u of us) {
+    if (u.dead || u.downed) continue;
+    const frozen = u.frozenT > 0;
+    const acc = Math.min(1, dt * (u.kind === 'rat' ? 12 : 8));
+    if (frozen) { u.vx *= 0.8; u.vy *= 0.8; }
+    else { u.vx += (u.dvx - u.vx) * acc; u.vy += (u.dvy - u.vy) * acc; }
+    u.x += (u.vx + u.kx) * dt; u.y += (u.vy + u.ky) * dt;
+    const kd = Math.exp(-5 * dt); u.kx *= kd; u.ky *= kd;
+    // walls
+    const ks = Math.hypot(u.kx, u.ky);
+    if (u.x < u.r) { u.x = u.r; if (u.kx < 0) { wallHit(w, u, ks); u.kx *= -0.25; } }
+    if (u.x > w.W - u.r) { u.x = w.W - u.r; if (u.kx > 0) { wallHit(w, u, ks); u.kx *= -0.25; } }
+    if (u.y < u.r) { u.y = u.r; if (u.ky < 0) { wallHit(w, u, ks); u.ky *= -0.25; } }
+    if (u.y > w.H - u.r) { u.y = w.H - u.r; if (u.ky > 0) { wallHit(w, u, ks); u.ky *= -0.25; } }
+    for (const p of w.pillars) {
+      const d = dist(u.x, u.y, p.x, p.y), m = u.r + p.r;
+      if (d < m && d > 0) {
+        const nx = (u.x - p.x) / d, ny = (u.y - p.y) / d;
+        u.x = p.x + nx * m; u.y = p.y + ny * m;
+        const into = -(u.kx * nx + u.ky * ny);
+        if (into > 0) { wallHit(w, u, into); u.kx += nx * into * 1.25; u.ky += ny * into * 1.25; }
+      }
+    }
+  }
+  // unit-unit
+  for (let i = 0; i < us.length; i++) {
+    const a = us[i]; if (a.dead || a.downed) continue;
+    for (let j = i + 1; j < us.length; j++) {
+      const b = us[j]; if (b.dead || b.downed) continue;
+      const dx = b.x - a.x, dy = b.y - a.y; const d2 = dx * dx + dy * dy; const m = a.r + b.r;
+      if (d2 >= m * m || d2 === 0) continue;
+      const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, over = m - d;
+      const ta = b.mass / (a.mass + b.mass), tb = 1 - ta;
+      a.x -= nx * over * ta; a.y -= ny * over * ta; b.x += nx * over * tb; b.y += ny * over * tb;
+      // bowling: a fast knocked body transfers momentum
+      const ka = Math.hypot(a.kx, a.ky), kb = Math.hypot(b.kx, b.ky);
+      if (ka > 200 && a.kx * nx + a.ky * ny > 0) { b.kx += nx * ka * 0.6 * a.mass / b.mass; b.ky += ny * ka * 0.6 * a.mass / b.mass; a.kx *= 0.5; a.ky *= 0.5;
+        if (a.team !== b.team || a.team === 'enemy') hurt(w, b, 3 + ka * 0.02, null, { noDodge: true }); }
+      else if (kb > 200 && -(b.kx * nx + b.ky * ny) > 0) { a.kx -= nx * kb * 0.6 * b.mass / a.mass; a.ky -= ny * kb * 0.6 * b.mass / a.mass; b.kx *= 0.5; b.ky *= 0.5;
+        if (a.team !== b.team || b.team === 'enemy') hurt(w, a, 3 + kb * 0.02, null, { noDodge: true }); }
+    }
+  }
+}
+
+// ---------------------------------------------------------------- projectiles, hazards, pickups
+function projectiles(w, dt) {
+  for (const p of w.projectiles) {
+    p.life -= dt;
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    if (p.x < 0 || p.y < 0 || p.x > w.W || p.y > w.H) p.life = 0;
+    for (const pl of w.pillars) if (dist(p.x, p.y, pl.x, pl.y) < pl.r) p.life = 0;
+    if (p.kind === 'fireArrow') for (const h of w.hazards) if ((h.type === 'oil' || h.type === 'gas') && dist(p.x, p.y, h.x, h.y) < h.r) { igniteAround(w, p.x, p.y, 4); p.life = Math.min(p.life, 0.02); }
+    if (p.life <= 0) continue;
+    for (const u of w.units) {
+      if (!alive(u) || u === p.skip || u === p.owner) continue;
+      if (p.team !== 'neutral' && u.team === p.team) continue;
+      if (dist(p.x, p.y, u.x, u.y) < u.r + p.r) {
+        const friendly = p.team === 'neutral' && p.owner && u.team === p.owner.team;
+        const o = { ...p.o, kAngle: Math.atan2(p.vy, p.vx) };
+        if (friendly) { for (const k of ['chill', 'burn', 'poison']) if (o[k]) o[k] *= 0.4; }
+        hurt(w, u, p.dmg * (friendly ? 0.4 : 1), p.owner, o);
+        p.life = 0;
+        if (p.kind === 'fireArrow') puff(w, p.x, p.y, '#FF8A3D', 4, 60, 4, 0.3);
+        else puff(w, p.x, p.y, p.kind === 'icicle' ? '#DFF6FF' : '#F2E6CC', 3, 50, 3, 0.25);
+        break;
+      }
+    }
+  }
+  w.projectiles = w.projectiles.filter((p) => p.life > 0);
+}
+
+function hazards(w, dt) {
+  for (const h of w.hazards) if (h.t != null) h.t -= dt;
+  w.hazards = w.hazards.filter((h) => h.t == null || h.t > 0);
+  for (const u of w.units) {
+    if (!alive(u)) continue;
+    u.inOil = false;
+    u.hazardT -= dt;
+    for (const h of w.hazards) {
+      if (dist(u.x, u.y, h.x, h.y) > h.r + u.r * 0.4) continue;
+      if (h.type === 'oil') u.inOil = true;
+      else if (h.type === 'fire') addStatus(w, u, 'burn', 34 * dt);
+      else if (h.type === 'gas') addStatus(w, u, 'poison', 24 * dt);
+      else if (h.type === 'spikes' && u.hazardT <= 0) { u.hazardT = 0.6; hurt(w, u, 5 + Math.hypot(u.kx, u.ky) * 0.03, null, { noDodge: true }); }
+    }
+  }
+}
+
+function pickups(w, dt) {
+  const heroes = w.units.filter((u) => u.team === 'hero' && alive(u));
+  for (const p of w.pickups) {
+    if (p.type === 'chest') continue;
+    let near = null, nd = Infinity;
+    for (const h of heroes) { const d = dist(p.x, p.y, h.x, h.y); if (d < nd) { nd = d; near = h; } }
+    const magnet = w.cleared || nd < 70;
+    if (near && magnet) { const a = angleTo(p.x, p.y, near.x, near.y); const sp = w.cleared ? 420 : 260; p.vx += Math.cos(a) * sp * dt * 6; p.vy += Math.sin(a) * sp * dt * 6; }
+    p.vx *= Math.exp(-3 * dt); p.vy *= Math.exp(-3 * dt);
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    p.x = clamp(p.x, 6, w.W - 6); p.y = clamp(p.y, 6, w.H - 6);
+    if (near && nd < near.r + 6) { p.got = true; emit(w, p.type, p, near); }
+  }
+  w.pickups = w.pickups.filter((p) => !p.got);
+}
+
+// ---------------------------------------------------------------- main step
+export function step(w, dt) {
+  w.time += dt;
+  w.shake = Math.max(0, w.shake - dt * 30);
+  for (const u of w.units) {
+    if (!alive(u)) continue;
+    u.flashT = Math.max(0, u.flashT - dt); u.invulnT = Math.max(0, u.invulnT - dt);
+    u.atkT -= dt; u.abilT -= dt; u.modeT += dt; u.bob += dt * 6;
+    statusTick(w, u, dt);
+    if (!alive(u)) continue;
+    if (u.frozenT > 0) { u.dvx = u.dvy = 0; continue; }
+    if (u.target && !alive(u.target)) u.target = null;
+    u.thinkT -= dt;
+    if (u.thinkT <= 0) { u.thinkT = 0.4 + rand() * 0.08; think(w, u); }
+    if (u.act) { const charging = u.act.type === 'charge'; runAction(w, u, dt); if (!charging) updateFacing(u, dt); continue; }
+    movement(w, u, dt);
+    updateFacing(u, dt);
+    if (u.def.ability && u.abilT <= 0 && !u.forcedGoal) {
+      u.abilThinkT -= dt;
+      if (u.abilThinkT <= 0) {
+        u.abilThinkT = 0.5;
+        const s = abilityScore(w, u);
+        if (s > 0) {
+          const lastOne = opponents(w, u).length === 1;
+          let ch = clamp(0.02 + s * 0.55, 0, 0.92);
+          if (lastOne) ch = Math.max(ch * 3, 0.4);
+          if (chance(ch)) useAbility(w, u);
+        }
+      }
+    }
+    if (!u.act) tryAttack(w, u);
+  }
+  physics(w, dt);
+  projectiles(w, dt);
+  hazards(w, dt);
+  pickups(w, dt);
+  for (const p of w.particles) { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 0.92; p.vy *= 0.92; }
+  w.particles = w.particles.filter((p) => p.life > 0);
+  if (w.particles.length > 400) w.particles.splice(0, w.particles.length - 400);
+  for (const t of w.texts) { t.life -= dt; t.y += t.vy * dt; t.vy *= 0.94; }
+  w.texts = w.texts.filter((t) => t.life > 0);
+  for (const t of w.telegraphs) t.t -= dt;
+  w.telegraphs = w.telegraphs.filter((t) => t.t > 0);
+  w.units = w.units.filter((u) => !u.dead);
+}
+
+export { alive, opponents };

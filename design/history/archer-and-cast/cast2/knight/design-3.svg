@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- KNIGHT design-3 "Bastion": faceless hulk in a flat-topped great helm with a visor slit and gold cross, stacked dark-iron pauldrons, red surcoat, big pavise held in front, short sword out to the right. Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+<defs><radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><path id="p1" d="M26.0 108.0 C26.0 82 54.0 76 100 76 C146.0 76 174.0 82 174.0 108.0 C174.0 134 146.0 140 100 140 C54.0 140 26.0 134 26.0 108.0 Z"/><linearGradient id="g2" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#C9473E"/><stop offset="1" stop-color="#93302C"/></linearGradient><linearGradient id="h3" x1="70" y1="0" x2="165" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5A1416" stop-opacity="0"/><stop offset="1" stop-color="#5A1416" stop-opacity="0.4"/></linearGradient><path id="p4" d="M30 76 H50 A22 22 0 0 1 72 98 V104 A22 22 0 0 1 50 126 H30 A22 22 0 0 1 8 104 V98 A22 22 0 0 1 30 76 Z"/><linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#A7B0BE"/><stop offset="1" stop-color="#6B7586"/></linearGradient><linearGradient id="h6" x1="70" y1="0" x2="165" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2E3442" stop-opacity="0"/><stop offset="1" stop-color="#2E3442" stop-opacity="0.42"/></linearGradient><path id="p7" d="M26 112 H54 A14 14 0 0 1 68 126 V128 A14 14 0 0 1 54 142 H26 A14 14 0 0 1 12 128 V126 A14 14 0 0 1 26 112 Z"/><path id="p8" d="M34.0 96.0 A6 6 0 1 0 46.0 96.0 A6 6 0 1 0 34.0 96.0 Z"/><linearGradient id="g9" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F9CB5C"/><stop offset="1" stop-color="#D9952A"/></linearGradient><path id="p10" d="M150 76 H170 A22 22 0 0 1 192 98 V104 A22 22 0 0 1 170 126 H150 A22 22 0 0 1 128 104 V98 A22 22 0 0 1 150 76 Z"/><path id="p11" d="M146 112 H174 A14 14 0 0 1 188 126 V128 A14 14 0 0 1 174 142 H146 A14 14 0 0 1 132 128 V126 A14 14 0 0 1 146 112 Z"/><path id="p12" d="M154.0 96.0 A6 6 0 1 0 166.0 96.0 A6 6 0 1 0 154.0 96.0 Z"/><path id="p13" d="M80 44 H120 A26 26 0 0 1 146 70 V130 A26 26 0 0 1 120 156 H80 A26 26 0 0 1 54 130 V70 A26 26 0 0 1 80 44 Z"/><linearGradient id="g14" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#C3CAD5"/><stop offset="1" stop-color="#8B95A6"/></linearGradient><linearGradient id="h15" x1="70" y1="0" x2="165" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2E3442" stop-opacity="0"/><stop offset="1" stop-color="#2E3442" stop-opacity="0.45"/></linearGradient><clipPath id="c16"><use href="#p13"/></clipPath><path id="p17" d="M40 150 Q40 140 52 140 H148 Q160 140 160 150 V176 Q160 194 100 204 Q40 194 40 176 Z"/><linearGradient id="g18" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D24C42"/><stop offset="1" stop-color="#9A302B"/></linearGradient><linearGradient id="h19" x1="60" y1="0" x2="165" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5A1416" stop-opacity="0"/><stop offset="1" stop-color="#5A1416" stop-opacity="0.45"/></linearGradient><clipPath id="c20"><use href="#p17"/></clipPath><path id="p21" d="M-7.5 -26.0 A7.5 7.5 0 1 0 7.5 -26.0 A7.5 7.5 0 1 0 -7.5 -26.0 Z"/><path id="p22" d="M-7.5 6 H7.5 V30 L0 43.5 L-7.5 30 Z"/><linearGradient id="g23" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E3E7ED"/><stop offset="1" stop-color="#A9B2C0"/></linearGradient><clipPath id="c24"><use href="#p22"/></clipPath><path id="p25" d="M-11.0 0 H11.0 A5 5 0 0 1 16.0 5 V5 A5 5 0 0 1 11.0 10 H-11.0 A5 5 0 0 1 -16.0 5 V5 A5 5 0 0 1 -11.0 0 Z"/><clipPath id="c26"><use href="#p25"/></clipPath><path id="p27" d="M168 128 H176 A8 8 0 0 1 184 136 V141 A8 8 0 0 1 176 149 H168 A8 8 0 0 1 160 141 V136 A8 8 0 0 1 168 128 Z"/><path id="p28" d="M36 140 H44 A8 8 0 0 1 52 148 V153 A8 8 0 0 1 44 161 H36 A8 8 0 0 1 28 153 V148 A8 8 0 0 1 36 140 Z"/></defs>
+<g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"><use href="#p1"/><use href="#p4"/><use href="#p7"/><use href="#p8"/><use href="#p10"/><use href="#p11"/><use href="#p12"/><use href="#p13"/><use href="#p17"/><use href="#p21" transform="translate(172 150) rotate(-10)"/><use href="#p22" transform="translate(172 150) rotate(-10)"/><use href="#p25" transform="translate(172 150) rotate(-10)"/><use href="#p27" transform="rotate(-10 172 138)"/><use href="#p28"/></g>
+<use href="#p1" fill="#2B2230" opacity="0.28" transform="translate(0 3.0)"/>
+<use href="#p1" fill="url(#g2)"/>
+<use href="#p1" fill="url(#h3)"/>
+<use href="#p4" fill="#2B2230" opacity="0.28" transform="translate(0 3.0)"/>
+<use href="#p4" fill="url(#g5)"/>
+<use href="#p4" fill="url(#h6)"/>
+<use href="#p7" fill="#2B2230" opacity="0.28" transform="translate(0 3.5)"/>
+<use href="#p7" fill="url(#g5)"/>
+<use href="#p7" fill="url(#h6)"/>
+<use href="#p8" fill="#2B2230" opacity="0.25" transform="translate(0 2)"/>
+<use href="#p8" fill="url(#g9)"/>
+<use href="#p10" fill="#2B2230" opacity="0.28" transform="translate(0 3.0)"/>
+<use href="#p10" fill="url(#g5)"/>
+<use href="#p10" fill="url(#h6)"/>
+<use href="#p11" fill="#2B2230" opacity="0.28" transform="translate(0 3.5)"/>
+<use href="#p11" fill="url(#g5)"/>
+<use href="#p11" fill="url(#h6)"/>
+<use href="#p12" fill="#2B2230" opacity="0.25" transform="translate(0 2)"/>
+<use href="#p12" fill="url(#g9)"/>
+<use href="#p13" fill="#2B2230" opacity="0.3" transform="translate(0 5)"/>
+<use href="#p13" fill="url(#g14)"/>
+<use href="#p13" fill="url(#h15)"/>
+<g><g clip-path="url(#c16)"><rect x="40" y="112" width="120" height="60" fill="#5E6878" opacity="0.4"/><rect x="54" y="122" width="92" height="9" rx="4.5" fill="#2B2230"/><rect x="95" y="40" width="10" height="82" fill="#F2B53A"/><rect x="95" y="131" width="10" height="30" fill="#F2B53A"/><rect x="100" y="40" width="5" height="121" fill="#C98620" opacity="0.7"/></g></g>
+<use href="#p17" fill="#2B2230" opacity="0.35" transform="translate(0 4)"/>
+<use href="#p17" fill="url(#g18)"/>
+<use href="#p17" fill="url(#h19)"/>
+<g><g clip-path="url(#c20)"><path d="M40 140 H160 V150 H40 Z" fill="#F2B53A"/><rect x="92" y="140" width="16" height="70" fill="#F2B53A"/><rect x="100" y="140" width="8" height="70" fill="#C98620" opacity="0.7"/></g></g>
+<use href="#p21" fill="url(#g9)" transform="translate(172 150) rotate(-10)"/>
+<use href="#p22" fill="#2B2230" opacity="0.25" transform="translate(172 150) rotate(-10) translate(0 3.0)"/>
+<use href="#p22" fill="url(#g23)" transform="translate(172 150) rotate(-10)"/>
+<g transform="translate(172 150) rotate(-10)"><g clip-path="url(#c24)"><path d="M0 0 H9.5 V60 H0 Z" fill="#7E8899" opacity="0.45"/></g></g>
+<use href="#p25" fill="#2B2230" opacity="0.28" transform="translate(172 150) rotate(-10) translate(0 3.0)"/>
+<use href="#p25" fill="url(#g9)" transform="translate(172 150) rotate(-10)"/>
+<g transform="translate(172 150) rotate(-10)"><g clip-path="url(#c26)"><rect x="0" y="-2" width="32" height="14" fill="#D9952A" opacity="0.6"/></g></g>
+<use href="#p27" fill="#2B2230" opacity="0.3" transform="rotate(-10 172 138) translate(0 2.5)"/>
+<use href="#p27" fill="url(#gHand)" transform="rotate(-10 172 138)"/>
+<use href="#p28" fill="#2B2230" opacity="0.3" transform="translate(0 2.5)"/>
+<use href="#p28" fill="url(#gHand)"/>
+</svg>

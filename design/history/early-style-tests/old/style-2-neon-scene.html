@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#05051a">
+<title>Style 2 — Neon</title>
+<style>
+  html,body{margin:0;height:100%;background:#05051a;overflow:hidden;touch-action:none;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+  canvas{position:fixed;left:0;top:0;width:100vw;height:100vh;display:block}
+  .hud{position:fixed;font:600 10px/1 ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",sans-serif;
+    letter-spacing:.06em;color:#8d93e0;z-index:2}
+  #label{left:calc(env(safe-area-inset-left) + 10px);bottom:calc(env(safe-area-inset-bottom) + 9px);
+    pointer-events:none;opacity:.85}
+  #toggle{right:calc(env(safe-area-inset-right) + 2px);top:calc(env(safe-area-inset-top) + 2px);
+    padding:12px;background:none;border:0;cursor:pointer;touch-action:manipulation}
+  #toggle span{display:block;padding:5px 10px 5px;border-radius:99px;border:1px solid rgba(120,128,255,.55);
+    background:rgba(8,8,30,.72);color:#c9ccff;box-shadow:0 0 8px rgba(91,99,255,.35),inset 0 0 6px rgba(91,99,255,.25)}
+  #toggle:active span{background:rgba(60,66,190,.5)}
+  #toggle:focus-visible span{outline:2px solid #c9ccff;outline-offset:2px}
+  #fps{right:calc(env(safe-area-inset-right) + 12px);bottom:calc(env(safe-area-inset-bottom) + 9px);display:none;pointer-events:none}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="label" class="hud">Style 2 — Neon</div>
+<button id="toggle" class="hud" aria-label="Toggle lineup view"><span>Lineup</span></button>
+<div id="fps" class="hud"></div>
+<script>
+'use strict';
+/* =====================================================================
+   STYLE 2 — NEON GEOMETRY
+   Everything is line-art light on a dark indigo floor. Glow is faked with
+   layered strokes in 'lighter' composite + cached radial sprites + a cheap
+   mip-chain bloom of the emissive layer. No shadowBlur anywhere.
+   ===================================================================== */
+
+// ---------------------------------------------------------------- config
+const TAU = Math.PI * 2, HALF_PI = Math.PI / 2;
+const WORLD_W = 844, WORLD_H = 390;
+const ROOM = { x0: 30, y0: 22, x1: 814, y1: 368, chamfer: 38 };
+const BLOOM = true;
+const TRAIL_N = 10, TRAIL_DT = 0.04;
+
+// ---------------------------------------------------------------- palette
+function hexRgb(h) { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+function mixHex(a, b, t) {
+  const A = hexRgb(a), B = hexRgb(b);
+  return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join('');
+}
+/** A tone = signature colour + whitened core (for the hot centre of a neon tube). */
+function tone(hex, coreMix = 0.55) { return { c: hex, core: mixHex(hex, '#ffffff', coreMix), rgb: hexRgb(hex) }; }
+
+const PAL = {
+  bg: '#05051a', floor: '#0a0a22', body: '#07071a', void: '#030310',
+  wall: tone('#5b63ff', 0.45), torchA: tone('#5b63ff', 0.5), torchB: tone('#9a5cff', 0.5),
+  pillar: tone('#7c6dff', 0.45),
+  // heroes — cool, clean
+  knight: tone('#4d9cff'), archer: tone('#3dffb0'), rogue: tone('#c77dff'),
+  // foes — hot, sickly
+  rat: tone('#ff3d5e'), slime: tone('#ff4fd8'), bone: tone('#f2e4c0', 0.4), boneEye: tone('#ff2e3a', 0.35),
+  // statuses
+  burn: tone('#ff7b22', 0.5), chill: tone('#8fe3ff', 0.6), poison: tone('#a8ff3e', 0.5), shock: tone('#fff27a', 0.7),
+  // misc
+  white: tone('#ffffff', 0), hurt: tone('#ff6b7d', 0.5), spike: tone('#cfd6ff', 0.5), danger: tone('#ff3b3b', 0.4),
+  dummy: tone('#8a8fc8', 0.45), text: '#9ba0e0'
+};
+const STATUS_KEYS = ['burn', 'chill', 'poison', 'shock'];
+
+// ---------------------------------------------------------------- utils
+const rand = (a, b) => a + Math.random() * (b - a);
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const easeOut = t => 1 - (1 - t) * (1 - t);
+const easeOutBack = t => { const c = 1.9; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+function angDiff(a, b) { let d = b - a; while (d > Math.PI) d -= TAU; while (d < -Math.PI) d += TAU; return d; }
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function crossed(pc, c, T) { return pc <= c ? (pc < T && T <= c) : (T > pc || T <= c); }
+
+// ---------------------------------------------------------------- canvases
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d', { alpha: false });
+const fxC = document.createElement('canvas'); const fx = fxC.getContext('2d');      // emissive layer
+const floorC = document.createElement('canvas'); const fl = floorC.getContext('2d'); // static floor
+const mips = [0, 1, 2, 3].map(() => { const c = document.createElement('canvas'); return { c, g: c.getContext('2d') }; });
+let DPR = 1, W = 0, H = 0, SCALE = 1, OX = 0, OY = 0;
+
+// ---------------------------------------------------------------- glow sprites (cached per colour)
+const glowCache = new Map();
+function glowSprite(t) {
+  let s = glowCache.get(t.c); if (s) return s;
+  const S = 64; s = document.createElement('canvas'); s.width = s.height = S;
+  const g = s.getContext('2d'), [r, gg, b] = t.rgb, [cr, cg, cb] = hexRgb(t.core);
+  const gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+  gr.addColorStop(0, `rgba(${cr},${cg},${cb},1)`);
+  gr.addColorStop(0.16, `rgba(${r},${gg},${b},0.6)`);
+  gr.addColorStop(0.42, `rgba(${r},${gg},${b},0.17)`);
+  gr.addColorStop(0.7, `rgba(${r},${gg},${b},0.05)`);
+  gr.addColorStop(1, `rgba(${r},${gg},${b},0)`);
+  g.fillStyle = gr; g.fillRect(0, 0, S, S);
+  glowCache.set(t.c, s); return s;
+}
+/** additive soft light blob (caller keeps composite = 'lighter') */
+function glow(g, t, x, y, rad, alpha) {
+  if (alpha <= 0.004 || rad <= 0.2) return;
+  g.globalAlpha = alpha > 1 ? 1 : alpha; g.drawImage(glowSprite(t), x - rad, y - rad, rad * 2, rad * 2);
+}
+
+// ---------------------------------------------------------------- neon stroke helpers
+let ghostMode = false; // when true, bodies are drawn outline-only (afterimages)
+let lwMul = 1;          // thins strokes when an entity is drawn zoomed (lineup)
+/** Full neon tube: wide faint halo + mid glow + hot core. Path must already be built. */
+function neon(g, t, w, a) {
+  w *= lwMul; g.strokeStyle = t.c;
+  g.globalAlpha = Math.min(1, 0.13 * a); g.lineWidth = w * 4.6; g.stroke();
+  g.globalAlpha = Math.min(1, 0.34 * a); g.lineWidth = w * 2.2; g.stroke();
+  g.strokeStyle = t.core; g.globalAlpha = Math.min(1, a); g.lineWidth = w; g.stroke();
+}
+/** Cheaper 2-pass tube for secondary details. */
+function neonLite(g, t, w, a) {
+  w *= lwMul; g.strokeStyle = t.c; g.globalAlpha = Math.min(1, 0.3 * a); g.lineWidth = w * 2.6; g.stroke();
+  g.strokeStyle = t.core; g.globalAlpha = Math.min(1, a); g.lineWidth = w; g.stroke();
+}
+/** Dark glass body — occludes floor & trails, then a faint additive tint of the signature colour. */
+function darkFill(g, t, tint, flash, a) {
+  if (ghostMode) return;
+  g.globalCompositeOperation = 'source-over';
+  g.globalAlpha = 0.94 * a; g.fillStyle = PAL.body; g.fill();
+  g.globalCompositeOperation = 'lighter';
+  g.globalAlpha = Math.min(1, (tint + flash * 0.2) * a); g.fillStyle = t.c; g.fill();
+}
+function circlePath(g, x, y, r) { g.beginPath(); g.arc(x, y, r, 0, TAU); }
+
+// ---------------------------------------------------------------- fonts (cached strings)
+const FONT_FAMILY = 'ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif';
+const fontCache = new Map();
+function font(size, weight = 800) { const k = size * 1000 + weight; let f = fontCache.get(k); if (!f) { f = `${weight} ${size}px ${FONT_FAMILY}`; fontCache.set(k, f); } return f; }
+
+// =====================================================================
+// PARTICLES (pooled)
+// =====================================================================
+const PK = { DOT: 0, SPARK: 1, SHARD: 2, BUBBLE: 3, SHADE: 4, FLAME: 5 };
+const P_MAX = 900, pPool = [], pLive = [];
+for (let i = 0; i < P_MAX; i++) pPool.push({ x: 0, y: 0, vx: 0, vy: 0, t: 0, life: 1, size: 1, tone: null, kind: 0, rot: 0, vr: 0, drag: 0, grav: 0 });
+function emit(kind, x, y, vx, vy, life, size, t, drag = 0, grav = 0) {
+  const p = pPool.pop(); if (!p) return null;
+  p.kind = kind; p.x = x; p.y = y; p.vx = vx; p.vy = vy; p.t = 0; p.life = life; p.size = size; p.tone = t;
+  p.drag = drag; p.grav = grav; p.rot = Math.random() * TAU; p.vr = 0;
+  pLive.push(p); return p;
+}
+function burst(kind, x, y, n, spMin, spMax, lifeMin, lifeMax, size, t, drag = 3, grav = 0, angC = null, spread = Math.PI) {
+  for (let i = 0; i < n; i++) {
+    const a = angC == null ? Math.random() * TAU : angC + rand(-spread, spread), sp = rand(spMin, spMax);
+    const p = emit(kind, x, y, Math.cos(a) * sp, Math.sin(a) * sp, rand(lifeMin, lifeMax), size * rand(0.7, 1.25), t, drag, grav);
+    if (p && kind === PK.SHARD) p.vr = rand(-14, 14);
+  }
+}
+function updateParticles(dt) {
+  for (let i = pLive.length - 1; i >= 0; i--) {
+    const p = pLive[i]; p.t += dt;
+    if (p.t >= p.life) { pLive[i] = pLive[pLive.length - 1]; pLive.pop(); pPool.push(p); continue; }
+    const d = Math.exp(-p.drag * dt); p.vx *= d; p.vy = p.vy * d + p.grav * dt;
+    p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
+  }
+}
+function clearParticles() { while (pLive.length) pPool.push(pLive.pop()); }
+
+function drawShadeParticles(g) {
+  g.globalCompositeOperation = 'source-over'; g.fillStyle = '#000000';
+  for (const p of pLive) {
+    if (p.kind !== PK.SHADE) continue;
+    const k = 1 - p.t / p.life; g.globalAlpha = 0.55 * k;
+    circlePath(g, p.x, p.y, p.size * (1.4 - 0.6 * k)); g.fill();
+  }
+  g.globalCompositeOperation = 'lighter';
+}
+function drawParticles(g) {
+  for (const p of pLive) {
+    const k = 1 - p.t / p.life, T = p.tone;
+    switch (p.kind) {
+      case PK.DOT: glow(g, T, p.x, p.y, p.size * (0.45 + 0.55 * k), k); break;
+      case PK.SPARK: {
+        g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(p.x - p.vx * 0.045, p.y - p.vy * 0.045);
+        g.strokeStyle = T.c; g.globalAlpha = 0.35 * k; g.lineWidth = p.size * 2.8; g.stroke();
+        g.strokeStyle = T.core; g.globalAlpha = k; g.lineWidth = p.size * (0.4 + 0.6 * k); g.stroke(); break;
+      }
+      case PK.SHARD: {
+        const s = p.size, c = Math.cos(p.rot), sn = Math.sin(p.rot);
+        g.beginPath(); g.moveTo(p.x + c * s * 1.6, p.y + sn * s * 1.6);
+        g.lineTo(p.x - c * s * 0.8 - sn * s * 0.7, p.y - sn * s * 0.8 + c * s * 0.7);
+        g.lineTo(p.x - c * s * 0.8 + sn * s * 0.7, p.y - sn * s * 0.8 - c * s * 0.7); g.closePath();
+        g.globalAlpha = 0.25 * k; g.fillStyle = T.c; g.fill();
+        neonLite(g, T, 0.9, k); break;
+      }
+      case PK.BUBBLE: circlePath(g, p.x, p.y, p.size * (0.7 + 0.5 * (1 - k))); neonLite(g, T, 0.7, 0.85 * k); break;
+      case PK.FLAME: {
+        const s = p.size * (0.5 + 0.5 * k);
+        g.beginPath(); g.moveTo(p.x, p.y - s * 1.8); g.lineTo(p.x + s * 0.8, p.y + s * 0.4); g.lineTo(p.x - s * 0.8, p.y + s * 0.4); g.closePath();
+        g.globalAlpha = 0.5 * k; g.fillStyle = T.c; g.fill(); neonLite(g, T, 0.6, k); break;
+      }
+    }
+  }
+}
+
+// =====================================================================
+// FLOATING TEXT (pooled)
+// =====================================================================
+const T_MAX = 70, tPool = [], tLive = [];
+for (let i = 0; i < T_MAX; i++) tPool.push({ x: 0, y: 0, vx: 0, vy: 0, t: 0, life: 1, str: '', tone: null, size: 9, word: false });
+function popText(x, y, str, t, size = 9, word = false) {
+  const o = tPool.pop(); if (!o) return;
+  o.x = x + (word ? 0 : rand(-6, 6)); o.y = word ? y - 8 : y; o.vx = rand(-10, 10); o.vy = word ? -18 : -34; o.t = 0; o.life = word ? 1.05 : 0.8;
+  o.str = str; o.tone = t; o.size = size; o.word = word; tLive.push(o);
+}
+function updateTexts(dt) {
+  for (let i = tLive.length - 1; i >= 0; i--) {
+    const o = tLive[i]; o.t += dt;
+    if (o.t >= o.life) { tLive[i] = tLive[tLive.length - 1]; tLive.pop(); tPool.push(o); continue; }
+    o.vy *= Math.exp(-2.6 * dt); o.vx *= Math.exp(-3 * dt); o.x += o.vx * dt; o.y += o.vy * dt;
+  }
+}
+function drawTexts(g) {
+  g.textAlign = 'center'; g.textBaseline = 'middle';
+  for (const o of tLive) {
+    const p = o.t / o.life, a = p < 0.65 ? 1 : 1 - (p - 0.65) / 0.35;
+    const pop = 1 + 0.6 * Math.max(0, 1 - p * 7);
+    g.save(); g.translate(o.x, o.y); g.scale(pop, pop);
+    glow(g, o.tone, 0, 0, o.size * (o.word ? 2.6 : 1.7), 0.45 * a);
+    g.font = font(o.size, o.word ? 800 : 900);
+    g.globalCompositeOperation = 'source-over'; g.globalAlpha = 0.85 * a;
+    g.lineWidth = 3; g.strokeStyle = PAL.void; g.strokeText(o.str, 0, 0);
+    g.globalCompositeOperation = 'lighter'; g.globalAlpha = a; g.fillStyle = o.tone.core; g.fillText(o.str, 0, 0);
+    g.restore();
+  }
+}
+
+// =====================================================================
+// TRANSIENT FX (rings, rays, flashes, slashes, bolts, ghosts, shadow paths)
+// =====================================================================
+const fxs = [];
+function addFx(o) { o.t = 0; fxs.push(o); return o; }
+function ring(x, y, r0, r1, life, t, w = 2, layer = 1) { return addFx({ k: 'ring', x, y, r0, r1, life, tone: t, w, layer }); }
+function flash(x, y, rad, life, t) { return addFx({ k: 'flash', x, y, rad, life, tone: t, layer: 1 }); }
+function rays(x, y, n, r0, r1, life, t, w = 1.3) { return addFx({ k: 'rays', x, y, n, r0, r1, life, tone: t, w, rot: Math.random() * TAU, layer: 1 }); }
+function slash(x, y, ang, r, arc, dir, life, t, w = 2) { return addFx({ k: 'slash', x, y, ang, r, arc, dir, life, tone: t, w, layer: 1 }); }
+function bolt(x0, y0, x1, y1, life = 0.28, t = PAL.shock) { const f = addFx({ k: 'bolt', x0, y0, x1, y1, life, tone: t, pts: new Float32Array(18), jt: 0, layer: 1 }); jitterBolt(f); return f; }
+function shadowPath(x0, y0, x1, y1) { return addFx({ k: 'spath', x0, y0, x1, y1, life: 0.55, layer: 0 }); }
+function xMark(x, y, s, life, t) { return addFx({ k: 'xmark', x, y, s, life, tone: t, rot: rand(0, 1), layer: 1 }); }
+function ghost(e, life = 0.3, alpha = 0.5) {
+  const snap = { type: e.type, x: e.x, y: e.y, r: e.r, facing: e.facing, tone: e.tone, anim: e.anim, flash: 0, state: e.state,
+    swing: e.swing, pull: e.pull, stab: e.stab, stabSide: e.stabSide, bite: e.bite, squash: e.squash, teleP: e.teleP, size: e.size, drawScale: e.drawScale || 1 };
+  return addFx({ k: 'ghost', e: snap, life, alpha, layer: 0 });
+}
+function jitterBolt(f) {
+  const n = f.pts.length / 2, dx = f.x1 - f.x0, dy = f.y1 - f.y0, L = Math.hypot(dx, dy) || 1, px = -dy / L, py = dx / L;
+  for (let i = 0; i < n; i++) {
+    const u = i / (n - 1), j = (i === 0 || i === n - 1) ? 0 : rand(-1, 1) * Math.min(9, L * 0.12);
+    f.pts[i * 2] = f.x0 + dx * u + px * j; f.pts[i * 2 + 1] = f.y0 + dy * u + py * j;
+  }
+}
+function updateFx(dt) {
+  for (let i = fxs.length - 1; i >= 0; i--) {
+    const f = fxs[i]; f.t += dt;
+    if (f.k === 'bolt') { f.jt -= dt; if (f.jt <= 0) { f.jt = 0.035; jitterBolt(f); } }
+    if (f.t >= f.life) { fxs[i] = fxs[fxs.length - 1]; fxs.pop(); }
+  }
+}
+function drawFxLayer(g, layer) { for (const f of fxs) if (f.layer === layer) FX_DRAW[f.k](g, f); }
+
+function drawRingFx(g, f) {
+  const p = f.t / f.life, r = lerp(f.r0, f.r1, easeOut(p));
+  circlePath(g, f.x, f.y, Math.max(0.1, r)); neon(g, f.tone, Math.max(0.2, f.w * (1 - p * 0.85)), 1 - p);
+}
+function drawFlashFx(g, f) { const p = f.t / f.life; glow(g, f.tone, f.x, f.y, f.rad * (0.6 + 0.4 * p), (1 - p) * (1 - p)); }
+function drawRaysFx(g, f) {
+  const p = f.t / f.life, e = easeOut(p), r1 = lerp(f.r0, f.r1, e), r0 = lerp(f.r0, f.r1, Math.max(0, e * 1.25 - 0.25));
+  g.beginPath();
+  for (let i = 0; i < f.n; i++) {
+    const a = f.rot + i / f.n * TAU, c = Math.cos(a), s = Math.sin(a);
+    g.moveTo(f.x + c * r0, f.y + s * r0); g.lineTo(f.x + c * r1, f.y + s * r1);
+  }
+  neonLite(g, f.tone, f.w * (1 - p * 0.6), 1 - p);
+}
+function drawSlashFx(g, f) {
+  const p = f.t / f.life, a = 1 - p * p, half = f.arc / 2;
+  const start = f.ang + half * f.dir, end = f.ang - half * f.dir;
+  const head = start + (end - start) * easeOut(Math.min(1, p * 2.4));
+  const tail = start + (end - start) * Math.min(1, p * 1.15);
+  const a0 = Math.min(head, tail), a1 = Math.max(head, tail);
+  if (a1 - a0 < 0.01) return;
+  const mid = (a0 + a1) / 2, off = f.r * 0.2;
+  g.beginPath(); g.arc(f.x, f.y, f.r, a0, a1);
+  g.arc(f.x + Math.cos(mid) * off, f.y + Math.sin(mid) * off, f.r * 0.78, a1, a0, true); g.closePath();
+  g.globalAlpha = 0.3 * a; g.fillStyle = f.tone.c; g.fill();
+  g.beginPath(); g.arc(f.x, f.y, f.r, a0, a1); neon(g, f.tone, f.w, a);
+  glow(g, f.tone, f.x + Math.cos(head) * f.r, f.y + Math.sin(head) * f.r, 8, a);
+}
+function drawBoltFx(g, f) {
+  const p = f.t / f.life, n = f.pts.length / 2;
+  g.beginPath(); g.moveTo(f.pts[0], f.pts[1]);
+  for (let i = 1; i < n; i++) g.lineTo(f.pts[i * 2], f.pts[i * 2 + 1]);
+  neon(g, f.tone, 1.3, 1 - p * 0.7);
+  glow(g, f.tone, f.x1, f.y1, 12, 1 - p);
+}
+function drawSPathFx(g, f) {
+  const p = f.t / f.life, dx = f.x1 - f.x0, dy = f.y1 - f.y0, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+  const n = Math.max(3, Math.min(8, L / 12 | 0));
+  for (let i = 0; i < n; i++) {
+    const u = (i + 0.5) / n, a = clamp(1.4 - p * 2 - (1 - u) * 0.5, 0, 1); if (a <= 0) continue;
+    const x = f.x0 + dx * u, y = f.y0 + dy * u, s = 3.4;
+    g.beginPath(); g.moveTo(x - ux * s - uy * s, y - uy * s + ux * s); g.lineTo(x, y); g.lineTo(x - ux * s + uy * s, y - uy * s - ux * s);
+    neonLite(g, PAL.rogue, 1, a);
+  }
+}
+function drawXMarkFx(g, f) {
+  const p = f.t / f.life, a = 1 - p, s = f.s * (0.7 + 0.5 * easeOut(Math.min(1, p * 3)));
+  g.beginPath();
+  for (let i = 0; i < 2; i++) { const ang = f.rot + 0.785 + i * HALF_PI, c = Math.cos(ang) * s, sn = Math.sin(ang) * s; g.moveTo(f.x - c, f.y - sn); g.lineTo(f.x + c, f.y + sn); }
+  neon(g, f.tone, 1.6, a);
+}
+function drawGhostFx(g, f) {
+  const p = f.t / f.life, e = f.e, s = e.drawScale;
+  ghostMode = true; g.save(); g.translate(e.x, e.y); g.scale(s, s); g.rotate(e.facing); lwMul = s > 1.2 ? 1.6 / (s + 0.6) : 1;
+  DRAW[e.type](g, e, f.alpha * (1 - p)); g.restore(); ghostMode = false; lwMul = 1;
+}
+const FX_DRAW = { ring: drawRingFx, flash: drawFlashFx, rays: drawRaysFx, slash: drawSlashFx, bolt: drawBoltFx, spath: drawSPathFx, xmark: drawXMarkFx, ghost: drawGhostFx };
+
+// screen shake
+let shakeAmp = 0, shx = 0, shy = 0;
+function shake(v) { shakeAmp = Math.max(shakeAmp, v); }
+
+// =====================================================================
+// ENTITIES — definitions
+// =====================================================================
+const DEFS = {
+  knight: { team: 0, r: 15, hp: 520, speed: 36, mass: 3.2, tone: 'knight' },
+  archer: { team: 0, r: 11.5, hp: 260, speed: 44, mass: 1.4, tone: 'archer' },
+  rogue: { team: 0, r: 10.5, hp: 240, speed: 62, mass: 1.2, tone: 'rogue' },
+  rat: { team: 1, r: 7.5, hp: 30, speed: 50, mass: 0.5, tone: 'rat' },
+  slime: { team: 1, r: 16, hp: 130, speed: 20, mass: 2.6, tone: 'slime', accel: 2.2 },
+  bone: { team: 1, r: 13, hp: 150, speed: 29, mass: 2.2, tone: 'bone' },
+  dummy: { team: 2, r: 10, hp: 1, speed: 0, mass: 1, tone: 'dummy' }
+};
+const SLIME_SIZES = [{ r: 7, hp: 26, mass: 0.8 }, { r: 11, hp: 60, mass: 1.5 }, { r: 16, hp: 130, mass: 2.6 }];
+let nextId = 1;
+function makeEnt(type, x, y, size = 2) {
+  const d = DEFS[type];
+  const e = {
+    id: nextId++, type, team: d.team, x, y, vx: 0, vy: 0, dvx: 0, dvy: 0, r: d.r, mass: d.mass, hp: d.hp, maxHp: d.hp,
+    speed: d.speed, accel: d.accel || 6, tone: PAL[d.tone], facing: 0, anim: Math.random() * 10, flash: 0, alpha: 1,
+    burn: 0, chill: 0, poison: 0, shock: 0, frozen: 0, frozeAge: 0, stun: 0, dotT: rand(0, 0.6), inv: 0,
+    atkCd: rand(0.2, 0.9), abCd: rand(1.8, 3.2), state: 'move', st: 0, swing: 0, pull: 0, stab: 0, stabSide: 1, bite: 0,
+    squash: 0, hopT: rand(0.3, 1), hopAge: 1, teleP: 0, lockAng: 0, strafe: 1, strafeT: 2, tgt: null, retT: 0, spawnT: 0,
+    dead: false, size, bumped: false, drawScale: 1,
+    trail: new Float32Array(TRAIL_N * 2), trailHead: 0, trailT: 0
+  };
+  if (type === 'slime') { const s = SLIME_SIZES[size]; e.r = s.r; e.hp = e.maxHp = s.hp; e.mass = s.mass; }
+  resetTrail(e); return e;
+}
+function resetTrail(e) { for (let i = 0; i < TRAIL_N; i++) { e.trail[i * 2] = e.x; e.trail[i * 2 + 1] = e.y; } }
+
+// =====================================================================
+// DRAW — one function per entity type. Local space: origin = centre, +x = facing.
+// =====================================================================
+function drawKnight(g, e, a) {
+  const r = e.r, T = e.tone, t = e.anim, fl = e.flash, ring = fl > 0.35 ? PAL.white : T;
+  const charging = e.state === 'charge' || e.state === 'windup';
+  circlePath(g, 0, 0, r); darkFill(g, T, 0.1, fl, a); neon(g, ring, 1.6, a);
+  // inner plate ring (breathes)
+  circlePath(g, 0, 0, r * (0.54 + 0.03 * Math.sin(t * 2.2))); neonLite(g, T, 0.85, 0.5 * a);
+  // helm chevron — the forward read
+  g.beginPath(); g.moveTo(-r * 0.14, -r * 0.38); g.lineTo(r * 0.3, 0); g.lineTo(-r * 0.14, r * 0.38); neon(g, T, 1.4, a);
+  // shield band (front-left; swings to the front when charging)
+  const sc = charging ? 0 : -0.8, span = charging ? 0.95 : 0.62, sr = r + 3.8, sw = 3.4;
+  g.beginPath(); g.arc(0, 0, sr, sc - span, sc + span); g.arc(0, 0, sr + sw, sc + span * 0.9, sc - span * 0.9, true); g.closePath();
+  if (!ghostMode) { g.globalCompositeOperation = 'source-over'; g.globalAlpha = 0.9 * a; g.fillStyle = PAL.body; g.fill(); g.globalCompositeOperation = 'lighter'; }
+  g.globalAlpha = (charging ? 0.5 : 0.16) * a; g.fillStyle = T.c; g.fill();
+  neon(g, T, 1.1, a * (charging ? 1.3 : 1));
+  // shield boss
+  const bx = Math.cos(sc) * (sr + sw * 0.5), by = Math.sin(sc) * (sr + sw * 0.5);
+  glow(g, T, bx, by, charging ? 9 : 5, (charging ? 0.9 : 0.6) * a);
+  // sword (radial blade from body edge)
+  let th = 0.95;
+  if (e.swing > 0) { const p = e.swing; th = p < 0.22 ? lerp(0.95, 1.75, p / 0.22) : lerp(1.75, -1.35, easeOut(Math.min(1, (p - 0.22) / 0.5))); if (p > 0.72) th = lerp(-1.35, 0.95, (p - 0.72) / 0.28); }
+  if (charging) th = 0.5;
+  const c = Math.cos(th), s = Math.sin(th), r0 = r * 0.8, r1 = r * 2.35;
+  g.beginPath(); g.moveTo(c * r0, s * r0); g.lineTo(c * r1, s * r1); neon(g, T, 1.25, a);
+  const gx = c * (r + 1.5), gy = s * (r + 1.5);
+  g.beginPath(); g.moveTo(gx - s * 3.4, gy + c * 3.4); g.lineTo(gx + s * 3.4, gy - c * 3.4); neonLite(g, T, 1.1, a);
+  glow(g, T, c * r1, s * r1, 5, 0.7 * a);
+}
+
+function drawArcher(g, e, a) {
+  const r = e.r, T = e.tone, fl = e.flash, ring = fl > 0.35 ? PAL.white : T;
+  const barr = e.state === 'barrage', bowT = barr ? PAL.shock : T, pull = e.pull || 0;
+  circlePath(g, 0, 0, r); darkFill(g, T, 0.1, fl, a); neon(g, ring, 1.4, a);
+  // hood — chevron pointing back
+  g.beginPath(); g.moveTo(-r * 0.02, -r * 0.55); g.lineTo(-r * 0.6, 0); g.lineTo(-r * 0.02, r * 0.55); neonLite(g, T, 1.05, 0.8 * a);
+  // eye diamond
+  const ex = r * 0.22, es = r * 0.16;
+  g.beginPath(); g.moveTo(ex - es, 0); g.lineTo(ex, -es); g.lineTo(ex + es, 0); g.lineTo(ex, es); g.closePath(); neonLite(g, T, 0.9, a);
+  // quiver fletching
+  g.beginPath();
+  for (let k = 0; k < 3; k++) { const y = r * (0.25 + k * 0.17); g.moveTo(-r * 0.95, y + r * 0.25); g.lineTo(-r * 0.55, y); }
+  neonLite(g, T, 0.7, 0.55 * a);
+  // bow
+  const bc = -r * 0.15, br = r * 1.32, span = 0.92, tipX = bc + Math.cos(span) * br, tipY = Math.sin(span) * br;
+  g.beginPath(); g.arc(bc, 0, br, -span, span); neon(g, bowT, 1.5, a);
+  glow(g, bowT, tipX, -tipY, 3.5, 0.8 * a); glow(g, bowT, tipX, tipY, 3.5, 0.8 * a);
+  const sx = tipX - pull * r * 0.85;
+  g.beginPath(); g.moveTo(tipX, -tipY); g.lineTo(sx, 0); g.lineTo(tipX, tipY); neonLite(g, T, 0.6, 0.75 * a);
+  if (pull > 0.05) {
+    const tipT = barr ? PAL.shock : PAL.chill, hx = bc + br + r * 0.4;
+    g.beginPath(); g.moveTo(sx, 0); g.lineTo(hx, 0); neonLite(g, bowT, 0.9, a);
+    g.beginPath(); g.moveTo(hx - 3.2, -2.6); g.lineTo(hx + 1, 0); g.lineTo(hx - 3.2, 2.6); neonLite(g, tipT, 1, a);
+    glow(g, tipT, hx, 0, 6 + pull * 6, pull * a);
+  }
+}
+
+function drawRogue(g, e, a) {
+  const r = e.r, T = e.tone, t = e.anim, fl = e.flash, ring = fl > 0.35 ? PAL.white : T;
+  // scarf tails (behind the body)
+  // scarf — one flowing ribbon tied off the back
+  g.beginPath(); g.moveTo(-r * 0.7, -r * 0.18);
+  for (let k = 1; k <= 5; k++) { const x = -r * 0.7 - k * r * 0.24, y = -r * 0.3 + k * r * 0.03 + Math.sin(t * 7 - k * 0.8) * r * 0.05 * k; g.lineTo(x, y); }
+  for (let k = 5; k >= 1; k--) { const x = -r * 0.7 - k * r * 0.24, y = r * 0.14 - k * r * 0.05 + Math.sin(t * 7 - k * 0.8) * r * 0.05 * k; g.lineTo(x, y); }
+  g.lineTo(-r * 0.7, r * 0.18);
+  g.globalAlpha = 0.18 * a; g.fillStyle = T.c; g.fill();
+  neonLite(g, T, 0.85, 0.75 * a);
+  circlePath(g, 0, 0, r); darkFill(g, T, 0.12, fl, a); neonLite(g, ring, 0.6, 0.35 * a);
+  // segmented ring — three spinning arcs
+  const rot = t * 1.7;
+  g.beginPath();
+  for (let k = 0; k < 3; k++) { const s0 = rot + k * TAU / 3; g.moveTo(Math.cos(s0) * r, Math.sin(s0) * r); g.arc(0, 0, r, s0, s0 + TAU / 3 - 0.6); }
+  neon(g, ring, 1.4, a);
+  // mask slits
+  g.beginPath(); g.moveTo(r * 0.02, -r * 0.44); g.lineTo(r * 0.52, -r * 0.13); g.moveTo(r * 0.02, r * 0.44); g.lineTo(r * 0.52, r * 0.13);
+  neon(g, T, 1.15, a);
+  // twin daggers — held at the hips, blades forward; the stabbing one thrusts
+  for (let side = -1; side <= 1; side += 2) {
+    const th = e.stabSide === side ? e.stab : 0, hx = r * (0.5 + th * 0.85), hy = side * r * (0.86 - th * 0.45);
+    const ang = side * 0.32 * (1 - th), c = Math.cos(ang), s = Math.sin(ang), L = r * 1.05, w = 1.5;
+    const tx = hx + c * L, ty = hy + s * L, mx = hx + c * L * 0.35, my = hy + s * L * 0.35;
+    g.beginPath(); g.moveTo(hx, hy); g.lineTo(mx - s * w, my + c * w); g.lineTo(tx, ty); g.lineTo(mx + s * w, my - c * w); g.closePath();
+    g.moveTo(hx - s * 2.6, hy + c * 2.6); g.lineTo(hx + s * 2.6, hy - c * 2.6);
+    neonLite(g, T, 0.9, a);
+    glow(g, PAL.poison, tx, ty, 3.5 + th * 6, (0.5 + th * 0.5) * a);
+  }
+}
+
+function ratPath(g, r, sn) {
+  g.beginPath(); g.moveTo(sn, 0); g.lineTo(r * 0.73, r * 0.68); g.arc(0, 0, r, 0.75, TAU - 0.75); g.closePath();
+}
+function drawRat(g, e, a) {
+  const r = e.r, T = e.tone, t = e.anim, fl = e.flash, ring = fl > 0.35 ? PAL.white : T, sn = r * (1.6 + e.bite * 0.55);
+  // tail
+  g.beginPath(); g.moveTo(-r * 0.9, 0);
+  for (let k = 1; k <= 5; k++) g.lineTo(-r * 0.9 - k * r * 0.3, Math.sin(t * 13 - k * 0.9) * r * 0.13 * k);
+  neonLite(g, T, 0.75, 0.7 * a);
+  ratPath(g, r, sn); darkFill(g, T, 0.13, fl, a); neon(g, ring, 1.15, a);
+  // ears — two little round flaps
+  g.beginPath(); g.arc(r * 0.05, -r * 0.86, r * 0.3, 0, TAU); g.moveTo(r * 0.35, r * 0.86); g.arc(r * 0.05, r * 0.86, r * 0.3, 0, TAU);
+  if (!ghostMode) { g.globalCompositeOperation = 'source-over'; g.globalAlpha = a; g.fillStyle = PAL.body; g.fill(); g.globalCompositeOperation = 'lighter'; }
+  neonLite(g, T, 0.75, 0.85 * a);
+  // whiskers (only when seen up close)
+  if (e.drawScale > 1.5) g.beginPath(); else return;
+  for (let sd = -1; sd <= 1; sd += 2) { g.moveTo(sn - r * 0.35, sd * r * 0.22); g.lineTo(sn - r * 0.05, sd * r * 0.75); g.moveTo(sn - r * 0.35, sd * r * 0.22); g.lineTo(sn + r * 0.15, sd * r * 0.55); }
+  neonLite(g, T, 0.45, 0.5 * a);
+  // eyes + nose
+  glow(g, T, r * 0.62, -r * 0.3, r * 0.42, a); glow(g, T, r * 0.62, r * 0.3, r * 0.42, a);
+  glow(g, PAL.white, sn, 0, r * 0.35, 0.8 * a);
+}
+
+function slimePath(g, r, t, sq) {
+  const N = 22; g.beginPath();
+  for (let i = 0; i <= N; i++) {
+    const th = i / N * TAU, rr = r * (1 + 0.055 * Math.sin(3 * th + t * 3.1) + 0.035 * Math.sin(5 * th - t * 2.3));
+    const x = Math.cos(th) * rr * (1 + sq), y = Math.sin(th) * rr * (1 - sq * 0.8);
+    if (i === 0) g.moveTo(x, y); else g.lineTo(x, y);
+  }
+  g.closePath();
+}
+function drawSlime(g, e, a) {
+  const r = e.r, T = e.tone, t = e.anim, fl = e.flash, ring = fl > 0.35 ? PAL.white : T, sq = e.squash;
+  slimePath(g, r, t, sq); darkFill(g, T, 0.17, fl, a); neon(g, ring, 1.5, a);
+  // nucleus
+  const nx = -r * 0.12 + Math.sin(t * 1.3) * r * 0.08, ny = Math.cos(t * 1.1) * r * 0.1;
+  circlePath(g, nx, ny, r * 0.3); neonLite(g, T, 0.9, 0.6 * a);
+  glow(g, T, nx, ny, r * 0.5, 0.35 * a);
+  // drifting bubbles
+  g.beginPath();
+  for (let k = 0; k < 3; k++) {
+    const ph = (t * 0.35 + k / 3) % 1, bx = lerp(-r * 0.6, r * 0.25, ph) , by = Math.sin(k * 2.1 + t) * r * 0.45, br = r * (0.06 + 0.05 * k) * Math.sin(ph * Math.PI);
+    g.moveTo(bx + br, by); g.arc(bx, by, Math.max(0.2, br), 0, TAU);
+  }
+  neonLite(g, T, 0.6, 0.6 * a);
+  // eyes
+  const ey = r * 0.26, exx = r * 0.48;
+  g.beginPath(); g.moveTo(exx, -ey - r * 0.12); g.lineTo(exx, -ey + r * 0.12); g.moveTo(exx, ey - r * 0.12); g.lineTo(exx, ey + r * 0.12);
+  neon(g, PAL.white, Math.max(1, r * 0.08), 0.9 * a);
+  // specular arc
+  g.beginPath(); g.arc(0, 0, r * 0.72, -2.5, -1.7); neonLite(g, PAL.white, 0.7, 0.4 * a);
+}
+
+function drawBone(g, e, a) {
+  const r = e.r, T = e.tone, t = e.anim, fl = e.flash, ring = fl > 0.35 ? PAL.white : T;
+  // glaive
+  let th = 0.75 + Math.sin(t * 1.6) * 0.05;
+  if (e.state === 'tele') th = lerp(0.75, 1.95, easeOut(e.teleP));
+  if (e.swing > 0) th = e.swing < 0.6 ? lerp(1.95, -1.15, easeOut(e.swing / 0.6)) : lerp(-1.15, 0.75, (e.swing - 0.6) / 0.4);
+  const c = Math.cos(th), s = Math.sin(th), h0 = r * 0.3, h1 = r * 2.15;
+  g.beginPath(); g.moveTo(c * h0, s * h0); g.lineTo(c * h1, s * h1); neonLite(g, T, 1.1, a);
+  // crescent axe head on the leading side of the haft
+  const bcx = c * r * 1.8, bcy = s * r * 1.8, bn = th - HALF_PI, ox = Math.cos(bn) * r * 0.2, oy = Math.sin(bn) * r * 0.2;
+  g.beginPath(); g.arc(bcx, bcy, r * 0.62, bn - 1.15, bn + 1.15); g.arc(bcx - ox, bcy - oy, r * 0.5, bn + 1.0, bn - 1.0, true); g.closePath();
+  const bladeT = e.state === 'tele' ? PAL.danger : T;
+  g.globalAlpha = 0.22 * a; g.fillStyle = bladeT.c; g.fill();
+  neon(g, bladeT, 1.1, a);
+  // body
+  circlePath(g, 0, 0, r); darkFill(g, T, 0.08, fl, a); neon(g, ring, 1.3, a);
+  // shoulder knobs
+  g.beginPath(); g.arc(-r * 0.1, -r * 0.9, r * 0.2, 0, TAU); g.moveTo(-r * 0.1 + r * 0.2, r * 0.9); g.arc(-r * 0.1, r * 0.9, r * 0.2, 0, TAU);
+  if (!ghostMode) { g.globalCompositeOperation = 'source-over'; g.globalAlpha = a; g.fillStyle = PAL.body; g.fill(); g.globalCompositeOperation = 'lighter'; }
+  neonLite(g, T, 0.9, a);
+  // spine + ribs seen from above
+  g.beginPath(); g.moveTo(-r * 0.12, 0); g.lineTo(-r * 0.86, 0);
+  for (let k = 0; k < 3; k++) {
+    const x = -r * (0.28 + k * 0.2), w = r * (0.62 - k * 0.1);
+    g.moveTo(x, 0); g.quadraticCurveTo(x - r * 0.02, -w, x - r * 0.16, -w * 1.05);
+    g.moveTo(x, 0); g.quadraticCurveTo(x - r * 0.02, w, x - r * 0.16, w * 1.05);
+  }
+  neonLite(g, T, 0.75, 0.6 * a);
+  // skull
+  circlePath(g, r * 0.24, 0, r * 0.42); neonLite(g, T, 0.95, 0.9 * a);
+  g.beginPath(); g.moveTo(r * 0.66, -r * 0.15); g.lineTo(r * 0.66, r * 0.15); neonLite(g, T, 0.8, 0.7 * a);
+  const eyeA = (0.85 + 0.15 * Math.sin(t * 5)) * a;
+  g.beginPath(); g.moveTo(r * 0.3, -r * 0.27); g.lineTo(r * 0.46, -r * 0.1); g.moveTo(r * 0.3, r * 0.27); g.lineTo(r * 0.46, r * 0.1);
+  neonLite(g, PAL.boneEye, 1.1, eyeA);
+  glow(g, PAL.boneEye, r * 0.38, -r * 0.18, r * 0.3, 0.7 * eyeA); glow(g, PAL.boneEye, r * 0.38, r * 0.18, r * 0.3, 0.7 * eyeA);
+}
+
+function drawDummy(g, e, a) {
+  const r = e.r, T = e.tone;
+  circlePath(g, 0, 0, r); darkFill(g, T, 0.06, e.flash, a); neon(g, T, 1.1, 0.8 * a);
+  circlePath(g, 0, 0, r * 0.45); neonLite(g, T, 0.7, 0.5 * a);
+  g.beginPath(); g.moveTo(-r * 0.8, 0); g.lineTo(-r * 0.25, 0); g.moveTo(r * 0.25, 0); g.lineTo(r * 0.8, 0);
+  g.moveTo(0, -r * 0.8); g.lineTo(0, -r * 0.25); g.moveTo(0, r * 0.25); g.lineTo(0, r * 0.8); neonLite(g, T, 0.6, 0.45 * a);
+}
+const DRAW = { knight: drawKnight, archer: drawArcher, rogue: drawRogue, rat: drawRat, slime: drawSlime, bone: drawBone, dummy: drawDummy };
+
+// ---------------------------------------------------------------- status overlay (unrotated local space)
+function drawStatus(g, e, a) {
+  const r = e.r, t = e.anim;
+  // HP arc (top) — only once hurt
+  if (e.type !== 'dummy' && e.hp < e.maxHp - 0.5) {
+    const f = clamp(e.hp / e.maxHp, 0, 1), span = 1.15, R = r + (e.type === 'knight' ? 9.5 : 3.6);
+    g.beginPath(); g.arc(0, 0, R, -HALF_PI - span, -HALF_PI + span); g.strokeStyle = e.tone.c; g.globalAlpha = 0.16 * a; g.lineWidth = 1.2; g.stroke();
+    g.beginPath(); g.arc(0, 0, R, -HALF_PI - span, -HALF_PI - span + 2 * span * f); neonLite(g, e.team === 1 ? PAL.hurt : e.tone, 1, 0.9 * a);
+  }
+  // build-up meters (bottom, stacked)
+  let row = 0;
+  for (const k of STATUS_KEYS) {
+    const v = e[k]; if (v < 0.5) continue;
+    const R = r + 3.6 + row * 2.8, span = 1.1 * Math.min(1, v / 100);
+    g.beginPath(); g.arc(0, 0, R, HALF_PI - span, HALF_PI + span); neonLite(g, PAL[k], 0.95, 0.95 * a); row++;
+  }
+  // burn — flame tongues licking upward off the rim
+  if (e.burn > 0) {
+    const k = Math.min(1, 0.35 + e.burn / 70);
+    glow(g, PAL.burn, 0, 0, r * 2.2, 0.28 * k * a);
+    g.beginPath();
+    for (let i = 0; i < 3; i++) {
+      const ang = -HALF_PI + (i - 1) * 0.85, bx = Math.cos(ang) * r * 0.88, by = Math.sin(ang) * r * 0.88;
+      const h = (4 + 3.5 * k) * (0.75 + 0.35 * Math.sin(t * 11 + i * 2.3)), w = 2.2;
+      g.moveTo(bx - w, by); g.lineTo(bx + Math.sin(t * 7 + i) * 1.2, by - h); g.lineTo(bx + w, by);
+    }
+    neonLite(g, PAL.burn, 1, k * a);
+  }
+  // chill — frost ticks around rim
+  if (e.chill > 0 && e.frozen <= 0) {
+    const k = Math.min(1, 0.3 + e.chill / 80);
+    g.beginPath();
+    for (let i = 0; i < 6; i++) {
+      const ang = i / 6 * TAU + t * 0.4, c = Math.cos(ang), s = Math.sin(ang), r0 = r * 0.72, r1 = r * 1.12, m = r * 0.95;
+      g.moveTo(c * r0, s * r0); g.lineTo(c * r1, s * r1);
+      g.moveTo(c * m - s * 1.6, s * m + c * 1.6); g.lineTo(c * (m + 2.2), s * (m + 2.2)); g.lineTo(c * m + s * 1.6, s * m - c * 1.6);
+    }
+    neonLite(g, PAL.chill, 0.7, k * a);
+  }
+  // poison — dotted toxic halo
+  if (e.poison > 0) {
+    const k = Math.min(1, 0.3 + e.poison / 80);
+    for (let i = 0; i < 8; i++) { const ang = i / 8 * TAU - t * 0.9; glow(g, PAL.poison, Math.cos(ang) * r * 1.12, Math.sin(ang) * r * 1.12, 2.6, k * a); }
+  }
+  // shock — crackle
+  if (e.shock > 0 && Math.random() < 0.3 + e.shock / 160) {
+    const a0 = Math.random() * TAU; g.beginPath();
+    for (let i = 0; i < 4; i++) { const ang = a0 + i * 0.32, rr = r * (0.9 + (i % 2 ? 0.35 : 0)); const x = Math.cos(ang) * rr, y = Math.sin(ang) * rr; if (i === 0) g.moveTo(x, y); else g.lineTo(x, y); }
+    neonLite(g, PAL.shock, 0.9, a);
+  }
+  if (e.frozen > 0) drawFreezeCrystal(g, e, a);
+  // stun — orbiting sparks
+  if (e.stun > 0 && e.frozen <= 0) for (let i = 0; i < 3; i++) { const ang = t * 7 + i * 2.09; glow(g, PAL.shock, Math.cos(ang) * r * 0.7, -r - 3 + Math.sin(ang) * 2, 3, a); }
+}
+function drawFreezeCrystal(g, e, a) {
+  const R = e.r + 5, rot = 0.26, crack = e.frozen < 0.6 ? (0.6 + 0.4 * Math.sin(e.frozen * 60)) : 1;
+  g.beginPath();
+  for (let i = 0; i < 6; i++) { const ang = rot + i / 6 * TAU, x = Math.cos(ang) * R, y = Math.sin(ang) * R; if (i === 0) g.moveTo(x, y); else g.lineTo(x, y); }
+  g.closePath();
+  g.globalAlpha = 0.2 * a; g.fillStyle = PAL.chill.c; g.fill();
+  neon(g, PAL.chill, 1.5, a * crack);
+  g.beginPath();
+  for (let i = 0; i < 6; i++) { const ang = rot + i / 6 * TAU, c = Math.cos(ang), s = Math.sin(ang); g.moveTo(c * R, s * R); g.lineTo(c * R * 0.42, s * R * 0.42); }
+  neonLite(g, PAL.chill, 0.6, 0.45 * a);
+  g.beginPath(); g.moveTo(-R * 0.5, -R * 0.35); g.lineTo(-R * 0.15, -R * 0.62); neonLite(g, PAL.white, 0.9, 0.7 * a);
+}
+
+// ---------------------------------------------------------------- per-entity extras
+function drawEntity(g, e) {
+  const s = e.drawScale; let a = e.alpha, sc = s;
+  if (e.spawnT > 0) { const k = clamp(1 - e.spawnT / 0.5, 0, 1); sc *= 0.25 + 0.75 * easeOutBack(k); a *= k; }
+  if (a <= 0.01) return;
+  g.save(); g.translate(e.x, e.y); g.scale(sc, sc); lwMul = sc > 1.2 ? 1.6 / (sc + 0.6) : 1;
+  g.save(); g.rotate(e.facing); DRAW[e.type](g, e, a); g.restore();
+  drawStatus(g, e, a);
+  g.restore(); lwMul = 1;
+}
+function drawHalo(g, e) {
+  const R = e.r * e.drawScale; glow(g, e.tone, e.x, e.y, R * 3.6, 0.2 * e.alpha);
+}
+function drawTrail(g, e) {
+  if (e.frozen > 0 || e.alpha < 0.3) return;
+  const tr = e.trail, n = TRAIL_N, T = e.tone, w0 = e.r * e.drawScale * (e.type === 'rogue' ? 1.5 : 1.1);
+  let px = e.x, py = e.y, total = 0;
+  for (let k = 0; k < n; k++) { const i = (e.trailHead - k + n) % n; total += Math.abs(tr[i * 2] - px) + Math.abs(tr[i * 2 + 1] - py); px = tr[i * 2]; py = tr[i * 2 + 1]; }
+  if (total < 4) return;
+  const boost = e.state === 'charge' || e.state === 'dart' || e.state === 'retreat' ? 1.8 : 1;
+  g.strokeStyle = T.c; px = e.x; py = e.y;
+  for (let k = 0; k < n; k++) {
+    const i = (e.trailHead - k + n) % n, qx = tr[i * 2], qy = tr[i * 2 + 1], f = 1 - k / n;
+    g.beginPath(); g.moveTo(px, py); g.lineTo(qx, qy); g.globalAlpha = Math.min(1, 0.11 * f * boost); g.lineWidth = w0 * (0.3 + 0.9 * f); g.stroke();
+    px = qx; py = qy;
+  }
+  g.beginPath(); g.moveTo(e.x, e.y);
+  for (let k = 0; k < n; k++) { const i = (e.trailHead - k + n) % n; g.lineTo(tr[i * 2], tr[i * 2 + 1]); }
+  g.strokeStyle = T.core; g.globalAlpha = 0.22 * boost; g.lineWidth = 0.9; g.stroke();
+}
+function drawTelegraph(g, e) {
+  const s = e.drawScale, R = (e.r + 30) * s, p = e.teleP, a0 = e.lockAng - 1.0, a1 = e.lockAng + 1.0;
+  g.beginPath(); g.moveTo(e.x, e.y); g.arc(e.x, e.y, R, a0, a1); g.closePath();
+  g.globalAlpha = 0.04 + 0.12 * p; g.fillStyle = PAL.danger.c; g.fill();
+  g.beginPath(); g.moveTo(e.x, e.y); g.arc(e.x, e.y, R * easeOut(p), a0, a1); g.closePath(); g.globalAlpha = 0.14; g.fill();
+  g.beginPath(); g.arc(e.x, e.y, R, a0, a1); neonLite(g, PAL.danger, 1.1, 0.35 + 0.6 * p);
+  g.beginPath(); g.moveTo(e.x + Math.cos(a0) * e.r * s * 1.2, e.y + Math.sin(a0) * e.r * s * 1.2); g.lineTo(e.x + Math.cos(a0) * R, e.y + Math.sin(a0) * R);
+  g.moveTo(e.x + Math.cos(a1) * e.r * s * 1.2, e.y + Math.sin(a1) * e.r * s * 1.2); g.lineTo(e.x + Math.cos(a1) * R, e.y + Math.sin(a1) * R);
+  g.strokeStyle = PAL.danger.c; g.globalAlpha = 0.3 * p; g.lineWidth = 0.8; g.stroke();
+}
+
+// =====================================================================
+// ROOM — pillars, spike trap, torches, doors
+// =====================================================================
+const PILLARS = [{ x: 318, y: 112, r: 20 }, { x: 556, y: 280, r: 20 }];
+const SPIKES = { x: 226, y: 300, r: 24, t: 0.6, period: 3.6, state: 0 };
+const TORCHES = [
+  { x: 160, y: ROOM.y0, tn: 'torchA' }, { x: 422 - 120, y: ROOM.y0, tn: 'torchB' }, { x: 422 + 120, y: ROOM.y0, tn: 'torchB' }, { x: 684, y: ROOM.y0, tn: 'torchA' },
+  { x: 160, y: ROOM.y1, tn: 'torchB' }, { x: 422, y: ROOM.y1, tn: 'torchA' }, { x: 684, y: ROOM.y1, tn: 'torchB' },
+  { x: ROOM.x0, y: 100, tn: 'torchB' }, { x: ROOM.x0, y: 290, tn: 'torchA' }, { x: ROOM.x1, y: 100, tn: 'torchA' }, { x: ROOM.x1, y: 290, tn: 'torchB' }
+];
+const DOORS = [{ x: ROOM.x0, y: 195, nx: 1, ny: 0 }, { x: ROOM.x1, y: 195, nx: -1, ny: 0 }, { x: 422, y: ROOM.y0, nx: 0, ny: 1 }];
+const B = { x0: ROOM.x0 + 6, y0: ROOM.y0 + 6, x1: ROOM.x1 - 6, y1: ROOM.y1 - 6, k: ROOM.chamfer + 6 * 0.4142 };
+
+function roomPath(g, i) {
+  const { x0, y0, x1, y1, chamfer: c } = ROOM, k = c + i * 0.4142;
+  g.beginPath(); g.moveTo(x0 + k, y0 + i); g.lineTo(x1 - k, y0 + i); g.lineTo(x1 - i, y0 + k); g.lineTo(x1 - i, y1 - k);
+  g.lineTo(x1 - k, y1 - i); g.lineTo(x0 + k, y1 - i); g.lineTo(x0 + i, y1 - k); g.lineTo(x0 + i, y0 + k); g.closePath();
+}
+function pool(g, x, y, rad, hex, a) {
+  const [r, gg, b] = hexRgb(hex), gr = g.createRadialGradient(x, y, 0, x, y, rad);
+  gr.addColorStop(0, `rgba(${r},${gg},${b},${a})`); gr.addColorStop(0.5, `rgba(${r},${gg},${b},${a * 0.35})`); gr.addColorStop(1, `rgba(${r},${gg},${b},0)`);
+  g.fillStyle = gr; g.fillRect(x - rad, y - rad, rad * 2, rad * 2);
+}
+function buildFloor() {
+  const g = fl, rnd = mulberry32(11);
+  g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+  g.fillStyle = PAL.void; g.fillRect(0, 0, W, H);
+  g.setTransform(SCALE, 0, 0, SCALE, OX, OY);
+  g.lineCap = 'round'; g.lineJoin = 'round';
+  // floor slab
+  roomPath(g, 0); g.fillStyle = PAL.floor; g.fill();
+  g.save(); roomPath(g, 0); g.clip();
+  // light pools
+  g.globalCompositeOperation = 'lighter';
+  pool(g, 422, 195, 330, '#12143e', 0.9);
+  pool(g, 300, 150, 200, '#160f3a', 0.5);
+  pool(g, 600, 250, 200, '#0d1a3a', 0.5);
+  for (const t of TORCHES) pool(g, t.x, t.y, 120, PAL[t.tn].c, 0.07);
+  for (const p of PILLARS) pool(g, p.x, p.y, 70, PAL.pillar.c, 0.06);
+  // stone grain: soft irregular blotches + specks (no grid)
+  g.globalCompositeOperation = 'source-over';
+  for (let i = 0; i < 70; i++) {
+    const x = ROOM.x0 + rnd() * (ROOM.x1 - ROOM.x0), y = ROOM.y0 + rnd() * (ROOM.y1 - ROOM.y0), rr = 12 + rnd() * 40;
+    g.globalAlpha = 0.08 + rnd() * 0.12; g.fillStyle = rnd() < 0.5 ? '#07071a' : '#0f0f30';
+    g.beginPath(); for (let k = 0; k < 7; k++) { const a = k / 7 * TAU, q = rr * (0.6 + rnd() * 0.5); k ? g.lineTo(x + Math.cos(a) * q, y + Math.sin(a) * q * 0.7) : g.moveTo(x + Math.cos(a) * q, y + Math.sin(a) * q * 0.7); } g.closePath(); g.fill();
+  }
+  for (let i = 0; i < 1100; i++) {
+    const x = ROOM.x0 + rnd() * (ROOM.x1 - ROOM.x0), y = ROOM.y0 + rnd() * (ROOM.y1 - ROOM.y0);
+    g.globalAlpha = 0.25 + rnd() * 0.4; g.fillStyle = rnd() < 0.55 ? '#14153c' : '#050512';
+    const s = 0.5 + rnd() * 1.4; g.fillRect(x, y, s, s);
+  }
+  // hairline cracks
+  g.strokeStyle = '#1a1c48'; g.lineWidth = 0.6;
+  for (let i = 0; i < 26; i++) {
+    let x = ROOM.x0 + rnd() * (ROOM.x1 - ROOM.x0), y = ROOM.y0 + rnd() * (ROOM.y1 - ROOM.y0), a = rnd() * TAU;
+    g.globalAlpha = 0.35 + rnd() * 0.3; g.beginPath(); g.moveTo(x, y);
+    for (let k = 0; k < 4; k++) { a += rnd() - 0.5; x += Math.cos(a) * (6 + rnd() * 12); y += Math.sin(a) * (6 + rnd() * 12); g.lineTo(x, y); }
+    g.stroke();
+  }
+  // etched ward in the centre — concentric rings, ticks, a faint triangle pair
+  const cx = 422, cy = 195;
+  g.strokeStyle = '#2a2e78'; g.lineWidth = 0.8;
+  g.globalAlpha = 0.5; circlePath(g, cx, cy, 58); g.stroke(); circlePath(g, cx, cy, 64); g.stroke();
+  g.globalAlpha = 0.3; g.setLineDash([2, 7]); circlePath(g, cx, cy, 116); g.stroke(); g.setLineDash([]);
+  g.globalAlpha = 0.45; g.beginPath();
+  for (let i = 0; i < 36; i++) { const a = i / 36 * TAU, r1 = i % 3 ? 61 : 67; g.moveTo(cx + Math.cos(a) * 58, cy + Math.sin(a) * 58); g.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1); }
+  g.stroke();
+  g.globalAlpha = 0.22; g.beginPath();
+  for (let s = 0; s < 2; s++) for (let i = 0; i <= 3; i++) { const a = -HALF_PI + s * Math.PI + i / 3 * TAU, x = cx + Math.cos(a) * 52, y = cy + Math.sin(a) * 52; i ? g.lineTo(x, y) : g.moveTo(x, y); }
+  g.stroke();
+  // vignette
+  g.globalAlpha = 1;
+  const vg = g.createRadialGradient(cx, cy, 120, cx, cy, 470);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,10,0.62)');
+  g.fillStyle = vg; g.fillRect(ROOM.x0, ROOM.y0, ROOM.x1 - ROOM.x0, ROOM.y1 - ROOM.y0);
+  g.restore();
+  // walls: dark outer band + neon wall line + faint inner echo
+  g.globalCompositeOperation = 'source-over';
+  roomPath(g, -7); g.strokeStyle = '#0b0b26'; g.lineWidth = 12; g.globalAlpha = 1; g.stroke();
+  g.globalCompositeOperation = 'lighter';
+  roomPath(g, -1); neon(g, PAL.wall, 1.3, 0.55);
+  roomPath(g, 5); g.strokeStyle = PAL.wall.c; g.globalAlpha = 0.16; g.lineWidth = 0.8; g.stroke();
+  roomPath(g, -9); g.strokeStyle = PAL.wall.c; g.globalAlpha = 0.12; g.lineWidth = 0.8; g.stroke();
+  // doors — cut gaps, frame caps, inward chevrons
+  for (const d of DOORS) {
+    const gap = 27, horiz = d.ny !== 0;
+    g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+    const gr = horiz ? g.createLinearGradient(d.x, d.y - 18, d.x, d.y + 8) : g.createLinearGradient(d.x - d.nx * 18, d.y, d.x + d.nx * 8, d.y);
+    gr.addColorStop(0, PAL.void); gr.addColorStop(1, PAL.floor);
+    g.fillStyle = gr;
+    if (horiz) g.fillRect(d.x - gap, d.y - 20, gap * 2, 26); else g.fillRect(d.nx > 0 ? d.x - 20 : d.x - 6, d.y - gap, 26, gap * 2);
+    g.globalCompositeOperation = 'lighter';
+    g.beginPath();
+    for (let s = -1; s <= 1; s += 2) {
+      if (horiz) { g.moveTo(d.x + s * gap, d.y - 14); g.lineTo(d.x + s * gap, d.y + 3); }
+      else { g.moveTo(d.x - d.nx * 14, d.y + s * gap); g.lineTo(d.x + d.nx * 3, d.y + s * gap); }
+    }
+    neon(g, PAL.wall, 1.4, 0.9);
+    g.beginPath();
+    for (let k = 0; k < 2; k++) {
+      const o = -8 + k * 6;
+      if (horiz) { g.moveTo(d.x - 6, d.y + o); g.lineTo(d.x, d.y + o + 5); g.lineTo(d.x + 6, d.y + o); }
+      else { g.moveTo(d.x + d.nx * o, d.y - 6); g.lineTo(d.x + d.nx * (o + 5), d.y); g.lineTo(d.x + d.nx * o, d.y + 6); }
+    }
+    neonLite(g, PAL.wall, 0.8, 0.35);
+  }
+  // torch sconces
+  for (const t of TORCHES) {
+    const T = PAL[t.tn], s = 3.2;
+    g.beginPath(); g.moveTo(t.x - s, t.y); g.lineTo(t.x, t.y - s); g.lineTo(t.x + s, t.y); g.lineTo(t.x, t.y + s); g.closePath();
+    g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.fillStyle = PAL.body; g.fill();
+    g.globalCompositeOperation = 'lighter'; neonLite(g, T, 0.9, 0.9);
+  }
+  g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+}
+function drawAmbient(g, time) {
+  for (let i = 0; i < TORCHES.length; i++) {
+    const t = TORCHES[i], T = PAL[t.tn], f = 0.75 + 0.15 * Math.sin(time * 7.3 + i * 1.7) + 0.1 * Math.sin(time * 13.1 + i);
+    glow(g, T, t.x, t.y, 46, 0.16 * f); glow(g, T, t.x, t.y, 9, 0.9 * f);
+  }
+}
+function drawPillar(g, p, time) {
+  glow(g, PAL.pillar, p.x, p.y, p.r * 3.2, 0.12);
+  g.save(); g.translate(p.x, p.y);
+  circlePath(g, 0, 0, p.r); g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; g.fillStyle = PAL.body; g.fill(); g.globalCompositeOperation = 'lighter';
+  g.globalAlpha = 0.06; g.fillStyle = PAL.pillar.c; g.fill();
+  neon(g, PAL.pillar, 1.6, 0.7);
+  circlePath(g, 0, 0, p.r * 0.7); neonLite(g, PAL.pillar, 0.8, 0.4);
+  circlePath(g, 0, 0, p.r * (0.3 + 0.03 * Math.sin(time * 1.5))); neonLite(g, PAL.pillar, 0.8, 0.3);
+  g.beginPath();
+  const rot = time * 0.08;
+  for (let i = 0; i < 12; i++) { const a = rot + i / 12 * TAU, c = Math.cos(a), s = Math.sin(a); g.moveTo(c * p.r * 0.74, s * p.r * 0.74); g.lineTo(c * p.r * 0.9, s * p.r * 0.9); }
+  neonLite(g, PAL.pillar, 0.6, 0.45);
+  g.beginPath(); g.arc(0, 0, p.r - 3, -2.6, -1.5); neonLite(g, PAL.white, 0.7, 0.3);
+  g.restore();
+}
+function spikeState(s) { const ph = s.t % s.period; return ph < 2.5 ? 0 : ph < 3.0 ? 1 : 2; }
+function drawSpikes(g, s, time) {
+  const st = s.state, warn = st === 1 && Math.sin(time * 40) > 0, T = st === 2 ? PAL.danger : warn ? PAL.danger : PAL.spike;
+  const up = st === 2 ? 1 - ((s.t % s.period) - 3.0) / 0.6 * 0.4 : 0;
+  // plate
+  g.beginPath();
+  for (let i = 0; i < 6; i++) { const a = i / 6 * TAU, x = s.x + Math.cos(a) * s.r, y = s.y + Math.sin(a) * s.r; i ? g.lineTo(x, y) : g.moveTo(x, y); }
+  g.closePath(); g.globalAlpha = st === 2 ? 0.12 : 0.04; g.fillStyle = T.c; g.fill();
+  neonLite(g, T, 0.9, st === 0 ? 0.35 : 0.85);
+  if (st === 2) glow(g, PAL.danger, s.x, s.y, s.r * 2.4, 0.35 * up);
+  // spikes: centre + ring of 6, drawn as three-point stars seen from above
+  g.beginPath();
+  for (let i = 0; i < 7; i++) {
+    const a = i / 6 * TAU + 0.52, px = i === 6 ? s.x : s.x + Math.cos(a) * s.r * 0.56, py = i === 6 ? s.y : s.y + Math.sin(a) * s.r * 0.56;
+    const h = st === 2 ? 6.5 * up + 1.5 : 2.6;
+    for (let k = 0; k < 3; k++) { const b = -HALF_PI + k / 3 * TAU; g.moveTo(px, py); g.lineTo(px + Math.cos(b) * h, py + Math.sin(b) * h); }
+  }
+  if (st === 2) neon(g, T, 1.1, 1); else neonLite(g, T, 0.8, st === 1 ? 0.9 : 0.45);
+}
+
+// =====================================================================
+// PROJECTILES & CLOUDS
+// =====================================================================
+const projs = [], clouds = [];
+function shoot(x, y, ang, speed, kind, hitsTeam, dmg, src, o = {}) {
+  projs.push({ x, y, vx: Math.cos(ang) * speed, vy: Math.sin(ang) * speed, kind, hitsTeam, dmg, src, t: 0, life: o.life || 1.4,
+    ignore: o.ignore || 0, chill: o.chill || 0, shock: o.shock || 0, kb: o.kb || 30, fade: o.fade || 0 });
+}
+function drawArrow(g, p, a) {
+  const sp = Math.hypot(p.vx, p.vy), ux = p.vx / sp, uy = p.vy / sp, px = -uy, py = ux;
+  const shock = p.kind === 'sarrow', T = shock ? PAL.shock : PAL.archer, tip = shock ? PAL.shock : PAL.chill;
+  g.beginPath(); g.moveTo(p.x - ux * 34, p.y - uy * 34); g.lineTo(p.x - ux * 9, p.y - uy * 9);
+  g.strokeStyle = T.c; g.globalAlpha = 0.2 * a; g.lineWidth = 2.4; g.stroke();
+  g.beginPath(); g.moveTo(p.x - ux * 12, p.y - uy * 12); g.lineTo(p.x, p.y); neonLite(g, T, 0.95, a);
+  g.beginPath(); g.moveTo(p.x - ux * 4 + px * 2.7, p.y - uy * 4 + py * 2.7); g.lineTo(p.x + ux * 1.6, p.y + uy * 1.6); g.lineTo(p.x - ux * 4 - px * 2.7, p.y - uy * 4 - py * 2.7);
+  neonLite(g, tip, 1.05, a);
+  g.beginPath(); g.moveTo(p.x - ux * 10, p.y - uy * 10); g.lineTo(p.x - ux * 13.5 + px * 2.3, p.y - uy * 13.5 + py * 2.3);
+  g.moveTo(p.x - ux * 10, p.y - uy * 10); g.lineTo(p.x - ux * 13.5 - px * 2.3, p.y - uy * 13.5 - py * 2.3); neonLite(g, T, 0.7, 0.65 * a);
+  glow(g, tip, p.x, p.y, shock ? 10 : 7, 0.55 * a);
+}
+function drawIcicle(g, p, a) {
+  const sp = Math.hypot(p.vx, p.vy), ux = p.vx / sp, uy = p.vy / sp, px = -uy, py = ux, L = 6, w = 2;
+  g.beginPath(); g.moveTo(p.x - ux * 22, p.y - uy * 22); g.lineTo(p.x - ux * L, p.y - uy * L);
+  g.strokeStyle = PAL.chill.c; g.globalAlpha = 0.2 * a; g.lineWidth = 2; g.stroke();
+  g.beginPath(); g.moveTo(p.x + ux * L, p.y + uy * L); g.lineTo(p.x + px * w, p.y + py * w); g.lineTo(p.x - ux * L, p.y - uy * L); g.lineTo(p.x - px * w, p.y - py * w); g.closePath();
+  g.globalAlpha = 0.3 * a; g.fillStyle = PAL.chill.c; g.fill(); neonLite(g, PAL.chill, 0.9, a);
+  glow(g, PAL.chill, p.x, p.y, 7, 0.5 * a);
+}
+function drawProjectiles(g) {
+  for (const p of projs) { const a = p.fade ? clamp(1 - p.t / p.life, 0, 1) : 1; if (p.kind === 'icicle') drawIcicle(g, p, a); else drawArrow(g, p, a); }
+}
+function spawnCloud(x, y, hitsTeam, life = 5) {
+  const c = { x, y, r: 34, t: 0, life, hitsTeam, tick: 0.2, vx: rand(-5, 5), vy: rand(-5, 5), puffs: [] };
+  for (let i = 0; i < 7; i++) c.puffs.push({ a: rand(0, TAU), d: i === 0 ? 0 : rand(10, 22), r: rand(10, 16), s: rand(-0.5, 0.5), ph: rand(0, TAU) });
+  clouds.push(c);
+  ring(x, y, 6, 38, 0.55, PAL.poison, 1.8);
+  burst(PK.BUBBLE, x, y, 10, 20, 60, 0.5, 1, 2, PAL.poison, 3, -12);
+  popText(x, y - 20, 'Gas cloud', PAL.poison, 8, true);
+}
+function drawClouds(g) {
+  for (const c of clouds) {
+    const fi = Math.min(1, c.t / 0.35), fo = Math.min(1, (c.life - c.t) / 1.0), k = fi * fo, grow = 0.6 + 0.4 * easeOut(fi);
+    for (const p of c.puffs) {
+      const px = c.x + Math.cos(p.a + c.t * p.s) * p.d * grow, py = c.y + Math.sin(p.a + c.t * p.s) * p.d * grow;
+      const pr = p.r * (1 + 0.12 * Math.sin(c.t * 2 + p.ph)) * grow;
+      glow(g, PAL.poison, px, py, pr * 1.9, 0.17 * k);
+      circlePath(g, px, py, pr * 0.82); neonLite(g, PAL.poison, 0.7, 0.22 * k);
+    }
+  }
+}
+
+// =====================================================================
+// COMBAT + STATUSES
+// =====================================================================
+let ents = [], pending = [];
+function dmgTone(kind, f) { return kind === 'burn' ? PAL.burn : kind === 'poison' ? PAL.poison : kind === 'shock' ? PAL.shock : kind === 'ice' ? PAL.chill : kind === 'crit' ? PAL.rogue : f.team === 0 ? PAL.hurt : PAL.white; }
+function hurt(f, amt, src, kind, o) {
+  if (f.dead || f.spawnT > 0 || f.inv > 0) return false;
+  if (f.type === 'archer' && kind === 'phys' && Math.random() < 0.28) {
+    const dx = o ? o.dx : 1, dy = o ? o.dy : 0, s = Math.random() < 0.5 ? 1 : -1;
+    ghost(f, 0.35, 0.7); f.vx += -dy * s * 150; f.vy += dx * s * 150;
+    popText(f.x, f.y - f.r - 6, 'Dodge', PAL.archer, 8, true); return false;
+  }
+  if (f.frozen > 0 && f.frozeAge > 0.3 && kind !== 'burn' && kind !== 'poison' && kind !== 'ice') { amt += 22; shatter(f); }
+  amt = Math.max(1, Math.round(amt));
+  f.hp -= amt; f.flash = 1;
+  if (o && o.kb && f.frozen <= 0) { const k = o.kb / f.mass; f.vx += o.dx * k; f.vy += o.dy * k; }
+  const crit = kind === 'crit';
+  popText(f.x, f.y - f.r - 4, crit ? amt + '!' : '' + amt, dmgTone(kind, f), crit ? 13 : (kind === 'burn' || kind === 'poison') ? 7.5 : 9.5);
+  if (f.team === 0) { if (f.hp < f.maxHp * 0.22) f.hp = f.maxHp * 0.22; }
+  else if (f.hp <= 0) { kill(f); return true; }
+  if (o) {
+    if (o.burn) addBurn(f, o.burn);
+    if (o.chill) addChill(f, o.chill);
+    if (o.poison) addPoison(f, o.poison);
+    if (o.shock) addShock(f, o.shock);
+  }
+  return true;
+}
+function addBurn(f, v) { if (f.dead) return; f.burn += v; if (f.burn >= 100) { f.burn = 20; scorch(f); } }
+function addChill(f, v) {
+  if (f.dead || f.frozen > 0) return; f.chill += v;
+  if (f.chill >= 100) { STATS.freeze++; f.chill = 0; f.frozen = 3.2; f.frozeAge = 0; f.vx = f.vy = 0; fxFreeze(f.x, f.y, f.r * f.drawScale); if (f.state === 'tele') { f.state = 'move'; f.teleP = 0; } }
+}
+function addPoison(f, v) { if (f.dead) return; f.poison += v; if (f.poison >= 100) { STATS.cloud++; f.poison = 25; spawnCloud(f.x, f.y, f.team); } }
+function addShock(f, v) { if (f.dead) return; f.shock += v; if (f.shock >= 100) { f.shock = 0; chainShock(f); } }
+
+function scorch(f) {
+  STATS.scorch++;
+  fxScorch(f.x, f.y);
+  hurt(f, 26, null, 'burn');
+  for (const o of ents) {
+    if (o === f || o.dead || o.team !== f.team) continue;
+    const dx = o.x - f.x, dy = o.y - f.y, d = Math.hypot(dx, dy) || 1;
+    if (d < 50 + o.r) { hurt(o, 15, null, 'burn', { dx: dx / d, dy: dy / d, kb: 110, burn: 22 }); }
+  }
+}
+function shatter(f) {
+  STATS.shatter++;
+  f.frozen = 0; f.chill = 0;
+  fxShatter(f.x, f.y, f.r, f.team, f.id);
+}
+function chainShock(f) {
+  STATS.chain++;
+  f.stun = Math.max(f.stun, 0.9);
+  let cur = f; const hit = new Set([f.id]);
+  burst(PK.SPARK, f.x, f.y, 8, 60, 160, 0.15, 0.3, 1, PAL.shock, 5);
+  for (let n = 0; n < 3; n++) {
+    let best = null, bd = 100;
+    for (const o of ents) { if (o.dead || o.team !== f.team || hit.has(o.id)) continue; const d = Math.hypot(o.x - cur.x, o.y - cur.y); if (d < bd) { bd = d; best = o; } }
+    if (!best) break;
+    hit.add(best.id); bolt(cur.x, cur.y, best.x, best.y);
+    best.stun = Math.max(best.stun, 0.7); hurt(best, 12, null, 'shock');
+    burst(PK.SPARK, best.x, best.y, 5, 50, 140, 0.12, 0.25, 1, PAL.shock, 5);
+    cur = best;
+  }
+  if (cur === f) for (let i = 0; i < 3; i++) { const a = rand(0, TAU), d = rand(28, 44); bolt(f.x, f.y, f.x + Math.cos(a) * d, f.y + Math.sin(a) * d, 0.2); }
+  popText(f.x, f.y - f.r - 14, 'Chain shock', PAL.shock, 8, true);
+}
+function kill(f) {
+  f.dead = true; fxDeath(f);
+  if (f.type === 'slime' && f.size > 0) {
+    for (let s = -1; s <= 1; s += 2) {
+      const a = f.facing + HALF_PI * s, c = makeEnt('slime', f.x + Math.cos(a) * f.r * 0.45, f.y + Math.sin(a) * f.r * 0.45, f.size - 1);
+      c.vx = Math.cos(a) * 110; c.vy = Math.sin(a) * 110; c.inv = 0.3; c.burn = f.burn * 0.5; c.facing = f.facing; c.hopT = rand(0.4, 0.9);
+      pending.push(c);
+    }
+    STATS.split++; popText(f.x, f.y - f.r - 8, 'Split', PAL.slime, 8, true);
+  }
+}
+
+// ---------------------------------------------------------------- composite effects (visual)
+function fxHit(x, y, t, dx, dy, n = 4) {
+  burst(PK.SPARK, x, y, n, 60, 170, 0.12, 0.28, 1.1, t, 6, 0, Math.atan2(dy, dx), 0.8);
+  emit(PK.DOT, x, y, 0, 0, 0.1, 6, t);
+}
+function fxDeath(e) {
+  const R = e.r * e.drawScale;
+  flash(e.x, e.y, R * 4.5, 0.28, e.tone);
+  ring(e.x, e.y, R, R * 3.2, 0.42, e.tone, 2);
+  rays(e.x, e.y, 8, R * 0.8, R * 3, 0.32, e.tone, 1.1);
+  burst(PK.SPARK, e.x, e.y, 8 + (R | 0), 70, 200, 0.2, 0.45, 1.1, e.tone, 4);
+  burst(PK.SHARD, e.x, e.y, 5, 40, 110, 0.4, 0.7, 2.2, e.tone, 3);
+  burst(PK.DOT, e.x, e.y, 6, 10, 50, 0.4, 0.8, 4, e.tone, 2);
+}
+function fxScorch(x, y) {
+  flash(x, y, 80, 0.4, PAL.burn); flash(x, y, 22, 0.15, PAL.shock);
+  ring(x, y, 6, 58, 0.45, PAL.burn, 3);
+  ring(x, y, 4, 40, 0.25, PAL.shock, 1.4);
+  rays(x, y, 12, 10, 56, 0.38, PAL.burn, 1.4);
+  burst(PK.SPARK, x, y, 20, 110, 280, 0.2, 0.5, 1.3, PAL.burn, 4);
+  burst(PK.FLAME, x, y, 10, 20, 70, 0.35, 0.7, 4, PAL.burn, 3, -40);
+  burst(PK.DOT, x, y, 10, 20, 60, 0.5, 1, 4, PAL.burn, 2, -30);
+  popText(x, y - 26, 'Scorch', PAL.burn, 9, true);
+  shake(4);
+}
+function fxFreeze(x, y, r) {
+  ring(x, y, r * 3, r + 5, 0.3, PAL.chill, 1.6);
+  flash(x, y, r * 4, 0.3, PAL.chill);
+  for (let i = 0; i < 12; i++) { const a = i / 12 * TAU, d = r * 3; emit(PK.DOT, x + Math.cos(a) * d, y + Math.sin(a) * d, -Math.cos(a) * d * 3.2, -Math.sin(a) * d * 3.2, 0.3, 3, PAL.chill, 0); }
+  popText(x, y - r - 14, 'Frozen', PAL.chill, 8, true);
+}
+function fxShatter(x, y, r, hitsTeam, ignore) {
+  flash(x, y, 64, 0.35, PAL.chill); flash(x, y, 20, 0.12, PAL.white);
+  ring(x, y, r, r + 44, 0.4, PAL.chill, 2.4);
+  burst(PK.SHARD, x, y, 14, 70, 220, 0.4, 0.8, 3, PAL.chill, 3.5);
+  burst(PK.DOT, x, y, 10, 20, 70, 0.4, 0.9, 3, PAL.white, 2);
+  const a0 = rand(0, TAU);
+  for (let i = 0; i < 7; i++) shoot(x, y, a0 + i / 7 * TAU, 230, 'icicle', hitsTeam, 12, null, { life: 0.5, ignore, chill: 38, kb: 50, fade: 1 });
+  popText(x, y - r - 14, 'Shatter', PAL.chill, 9, true);
+  shake(3.5);
+}
+function fxSpawn(e) {
+  const R = e.r * 3.2;
+  ring(e.x, e.y, R, e.r, 0.5, e.tone, 1.4);
+  for (let i = 0; i < 10; i++) { const a = i / 10 * TAU; const p = emit(PK.DOT, e.x + Math.cos(a) * R, e.y + Math.sin(a) * R, -Math.sin(a) * 60 - Math.cos(a) * 90, Math.cos(a) * 60 - Math.sin(a) * 90, 0.45, 3, e.tone, 1); }
+}
+function shadePuff(x, y) {
+  burst(PK.SHADE, x, y, 7, 10, 45, 0.5, 0.9, 7, PAL.rogue, 3);
+  burst(PK.DOT, x, y, 9, 20, 80, 0.3, 0.6, 3.5, PAL.rogue, 3);
+  burst(PK.SPARK, x, y, 5, 60, 140, 0.15, 0.3, 0.9, PAL.rogue, 5);
+}
+
+// =====================================================================
+// AI + SIM
+// =====================================================================
+function pickTarget(e) {
+  const team = 1 - e.team; let best = null, bd = 1e9;
+  for (const o of ents) {
+    if (o.dead || o.team !== team || o.spawnT > 0) continue;
+    let d = Math.hypot(o.x - e.x, o.y - e.y);
+    if (o.type === 'knight') d *= 0.8;
+    if (o === e.tgt) d *= 0.72;
+    if (d < bd) { bd = d; best = o; }
+  }
+  e.tgt = best; return best;
+}
+function steer(e, dx, dy, mul) {
+  let l = Math.hypot(dx, dy); if (l > 1e-4) { dx /= l; dy /= l; } else { dx = 0; dy = 0; }
+  let ax = 0, ay = 0;
+  if (l > 1e-4) {
+    for (const p of PILLARS) {
+      const ox = e.x - p.x, oy = e.y - p.y, d = Math.hypot(ox, oy), m = p.r + e.r + 20;
+      if (d < m && d > 0.01) { const w = (m - d) / m * 1.5; ax += ox / d * w - oy / d * w * 0.6 * Math.sign(ox * dy - oy * dx || 1); ay += oy / d * w + ox / d * w * 0.6 * Math.sign(ox * dy - oy * dx || 1); }
+    }
+    const m = 24;
+    if (e.x < B.x0 + m) ax += (B.x0 + m - e.x) / m; if (e.x > B.x1 - m) ax -= (e.x - (B.x1 - m)) / m;
+    if (e.y < B.y0 + m) ay += (B.y0 + m - e.y) / m; if (e.y > B.y1 - m) ay -= (e.y - (B.y1 - m)) / m;
+    dx += ax; dy += ay; l = Math.hypot(dx, dy); if (l > 1) { dx /= l; dy /= l; }
+  }
+  const slow = (e.frozen > 0 || e.stun > 0) ? 0 : (1 - Math.min(0.6, e.chill / 160));
+  e.dvx = dx * e.speed * mul * slow; e.dvy = dy * e.speed * mul * slow;
+}
+function faceTo(e, dx, dy, k) { const t = Math.atan2(dy, dx); e.facing += angDiff(e.facing, t) * Math.min(1, k); }
+const HOME = { knight: [250, 195], archer: [170, 160], rogue: [190, 240] };
+function goHome(e) { const h = HOME[e.type]; steer(e, h[0] - e.x, h[1] - e.y, Math.hypot(h[0] - e.x, h[1] - e.y) > 8 ? 0.6 : 0); faceTo(e, 1, 0, 0.05); }
+function foesNear(e, R) { let n = 0; for (const o of ents) if (!o.dead && o.team !== e.team && o.team < 2 && Math.hypot(o.x - e.x, o.y - e.y) < R) n++; return n; }
+
+function aiKnight(e, dt) {
+  e.atkCd -= dt; e.abCd -= dt;
+  if (e.state === 'windup') {
+    e.st -= dt; steer(e, 0, 0, 0); faceTo(e, e.cdx, e.cdy, dt * 16);
+    if (Math.random() < dt * 30) emit(PK.DOT, e.x + rand(-e.r, e.r), e.y + rand(-e.r, e.r), -e.cdx * 40, -e.cdy * 40, 0.3, 3, PAL.knight, 2);
+    if (e.st <= 0) { e.state = 'charge'; e.st = 0.62; e.hitSet = new Set(); e.ghT = 0; ring(e.x, e.y, e.r, e.r * 2.6, 0.3, PAL.knight, 1.6); shake(1.5); }
+    return;
+  }
+  if (e.state === 'charge') {
+    e.st -= dt; e.vx = e.cdx * 250; e.vy = e.cdy * 250; e.ghT -= dt;
+    if (e.ghT <= 0) { ghost(e, 0.28, 0.55); e.ghT = 0.04; }
+    for (const f of ents) {
+      if (f.dead || f.team !== 1 || e.hitSet.has(f.id)) continue;
+      const dx = f.x - e.x, dy = f.y - e.y, d = Math.hypot(dx, dy) || 1;
+      if (d < e.r + f.r + 5) {
+        e.hitSet.add(f.id); const kx = dx / d * 0.7 + e.cdx * 0.7, ky = dy / d * 0.7 + e.cdy * 0.7, kl = Math.hypot(kx, ky) || 1;
+        f.stun = Math.max(f.stun, 0.55);
+        hurt(f, 24, e, 'phys', { dx: kx / kl, dy: ky / kl, kb: 200, burn: 22 });
+        fxHit(f.x, f.y, PAL.knight, kx, ky, 6); shake(2);
+      }
+    }
+    if (e.st <= 0 || e.bumped) {
+      e.state = 'move'; e.abCd = 6.5; e.vx *= 0.15; e.vy *= 0.15;
+      ring(e.x, e.y, e.r, e.r + 42, 0.38, PAL.knight, 2.4); rays(e.x, e.y, 10, e.r, e.r + 36, 0.3, PAL.knight); flash(e.x, e.y, 50, 0.25, PAL.knight);
+      for (const f of ents) { if (f.dead || f.team !== 1) continue; const dx = f.x - e.x, dy = f.y - e.y, d = Math.hypot(dx, dy) || 1; if (d < 48 + f.r) hurt(f, 8, e, 'phys', { dx: dx / d, dy: dy / d, kb: 120 }); }
+      STATS.charge++; shake(3); popText(e.x, e.y - e.r - 12, 'Charge', PAL.knight, 8, true);
+    }
+    return;
+  }
+  const tg = e.tgt; if (!tg) { goHome(e); return; }
+  const dx = tg.x - e.x, dy = tg.y - e.y, d = Math.hypot(dx, dy) || 1;
+  if (e.abCd <= 0 && d > 70 && d < 280) { e.state = 'windup'; e.st = 0.4; e.cdx = dx / d; e.cdy = dy / d; return; }
+  faceTo(e, dx, dy, dt * 8);
+  const reach = e.r + tg.r + 10;
+  steer(e, dx, dy, d > reach - 2 ? 1 : 0);
+  if (d < reach + 8 && e.atkCd <= 0) {
+    e.atkCd = 1.1; e.swing = 0.001;
+    slash(e.x, e.y, e.facing, e.r + 24, 2.6, 1, 0.26, PAL.knight, 2);
+    for (const f of ents) {
+      if (f.dead || f.team !== 1) continue;
+      const fx_ = f.x - e.x, fy_ = f.y - e.y, fd = Math.hypot(fx_, fy_) || 1;
+      if (fd < e.r + f.r + 26 && Math.abs(angDiff(e.facing, Math.atan2(fy_, fx_))) < 1.3) {
+        hurt(f, rand(16, 22), e, 'phys', { dx: fx_ / fd, dy: fy_ / fd, kb: 100, burn: 36 });
+        fxHit(f.x - fx_ / fd * f.r, f.y - fy_ / fd * f.r, PAL.knight, fx_, fy_, 4);
+      }
+    }
+  }
+}
+function aiArcher(e, dt) {
+  e.atkCd -= dt; e.abCd -= dt; e.strafeT -= dt;
+  const tg = e.tgt; if (!tg) { e.state = 'move'; e.pull = 0; goHome(e); return; }
+  const dx = tg.x - e.x, dy = tg.y - e.y, d = Math.hypot(dx, dy) || 1, ang = Math.atan2(dy, dx);
+  faceTo(e, dx, dy, dt * 10);
+  let rad = d < 125 ? -1 : d > 200 ? 1 : (d - 162) / 40 * 0.4;
+  if (foesNear(e, 42) > 0) rad = -1.4;
+  if (e.strafeT <= 0) { e.strafe *= -1; e.strafeT = rand(1.6, 3.2); }
+  const nearWall = e.x < B.x0 + 30 || e.x > B.x1 - 30 || e.y < B.y0 + 30 || e.y > B.y1 - 30;
+  if (nearWall && e.strafeT < 1.2 && e.strafeT > 1.1) e.strafe *= -1;
+  steer(e, dx / d * rad - dy / d * e.strafe * 0.75, dy / d * rad + dx / d * e.strafe * 0.75, e.state === 'move' ? 1 : 0.35);
+  if (e.state === 'barrage') {
+    e.st -= dt;
+    if (e.sub === 0) { e.pull = Math.min(1, e.pull + dt * 3); if (Math.random() < dt * 30) emit(PK.DOT, e.x + Math.cos(e.facing) * e.r * 1.4 + rand(-4, 4), e.y + Math.sin(e.facing) * e.r * 1.4 + rand(-4, 4), 0, 0, 0.25, 3, PAL.shock); if (e.st <= 0) { STATS.barrage++; e.sub = 1; e.shot = 0; e.st = 0; e.fan = ang; popText(e.x, e.y - e.r - 12, 'Barrage', PAL.shock, 8, true); } }
+    else if (e.st <= 0) {
+      const i = e.shot, n = 9;
+      const aa = e.fan + ((i % 2 ? 1 : -1) * Math.ceil(i / 2)) * 0.085;
+      shoot(e.x + Math.cos(aa) * e.r * 1.3, e.y + Math.sin(aa) * e.r * 1.3, aa, 400, 'sarrow', 1, 9, e, { shock: 40, kb: 40 });
+      e.pull = 0.55; e.st = 0.05; e.shot++;
+      if (e.shot >= n) { e.state = 'move'; e.abCd = 7; e.pull = 0; e.atkCd = 0.6; }
+    }
+    return;
+  }
+  if (e.state === 'draw') {
+    e.st -= dt; e.pull = Math.min(1, e.pull + dt * 5);
+    if (e.st <= 0) {
+      const lead = d / 330, lx = tg.x + tg.vx * lead * 0.6 - e.x, ly = tg.y + tg.vy * lead * 0.6 - e.y, la = Math.atan2(ly, lx);
+      shoot(e.x + Math.cos(la) * e.r * 1.3, e.y + Math.sin(la) * e.r * 1.3, la, 330, 'arrow', 1, rand(10, 14), e, { chill: 32, kb: 45 });
+      e.state = 'move'; e.pull = 0; e.atkCd = 0.95;
+    }
+    return;
+  }
+  if (e.abCd <= 0 && d < 300) { e.state = 'barrage'; e.sub = 0; e.st = 0.5; return; }
+  if (e.atkCd <= 0 && d < 330) { e.state = 'draw'; e.st = 0.22; }
+}
+function startRetreat(e, tg) {
+  const a = Math.atan2(e.y - tg.y, e.x - tg.x) + rand(-0.9, 0.9);
+  e.rx = clamp(tg.x + Math.cos(a) * 82, B.x0 + 24, B.x1 - 24); e.ry = clamp(tg.y + Math.sin(a) * 82, B.y0 + 24, B.y1 - 24);
+  e.state = 'retreat'; e.st = 0.75;
+}
+function aiRogue(e, dt) {
+  e.abCd -= dt; e.st -= dt;
+  const tg = e.tgt && !e.tgt.dead ? e.tgt : null;
+  if (e.state === 'vanish') {
+    e.alpha = Math.max(0, e.st / 0.16); steer(e, 0, 0, 0);
+    if (e.st <= 0) {
+      if (tg) {
+        const bx = clamp(tg.x - Math.cos(tg.facing) * (tg.r + e.r + 3), B.x0 + e.r, B.x1 - e.r), by = clamp(tg.y - Math.sin(tg.facing) * (tg.r + e.r + 3), B.y0 + e.r, B.y1 - e.r);
+        shadowPath(e.x, e.y, bx, by); e.x = bx; e.y = by; e.vx = e.vy = 0; resetTrail(e);
+        e.facing = Math.atan2(tg.y - e.y, tg.x - e.x); shadePuff(e.x, e.y); ring(e.x, e.y, e.r * 3, e.r, 0.22, PAL.rogue, 1.6);
+        e.state = 'appear'; e.st = 0.12;
+      } else { e.state = 'stalk'; e.alpha = 1; e.st = 0.5; }
+    }
+    return;
+  }
+  if (e.state === 'appear') {
+    e.alpha = 1 - Math.max(0, e.st) / 0.12; steer(e, 0, 0, 0);
+    if (e.st <= 0) {
+      e.alpha = 1; e.abCd = 5.5;
+      if (tg) {
+        const dx = tg.x - e.x, dy = tg.y - e.y, d = Math.hypot(dx, dy) || 1;
+        e.stab = 1; e.stabSide = 1; xMark(tg.x, tg.y, tg.r + 6, 0.35, PAL.rogue);
+        hurt(tg, rand(32, 40), e, 'crit', { dx: dx / d, dy: dy / d, kb: 90, poison: 50 });
+        burst(PK.SPARK, tg.x, tg.y, 8, 80, 200, 0.15, 0.3, 1.1, PAL.rogue, 5, 0, Math.atan2(dy, dx), 0.7);
+        STATS.shadow++; popText(e.x, e.y - e.r - 12, 'Shadow step', PAL.rogue, 8, true);
+        startRetreat(e, tg);
+      } else e.state = 'stalk';
+    }
+    return;
+  }
+  if (!tg) { e.state = 'stalk'; goHome(e); return; }
+  const dx = tg.x - e.x, dy = tg.y - e.y, d = Math.hypot(dx, dy) || 1;
+  if (e.abCd <= 0 && (e.state === 'stalk' || e.state === 'retreat') && d < 230) { e.state = 'vanish'; e.st = 0.16; shadePuff(e.x, e.y); ghost(e, 0.4, 0.6); return; }
+  switch (e.state) {
+    case 'stalk': {
+      faceTo(e, dx, dy, dt * 10);
+      const rad = clamp((d - 64) / 30, -1, 1);
+      steer(e, dx / d * rad - dy / d * e.strafe * 0.9, dy / d * rad + dx / d * e.strafe * 0.9, 0.8);
+      if (e.st <= 0) { e.state = 'dart'; e.st = 1.2; }
+      break;
+    }
+    case 'dart':
+      faceTo(e, dx, dy, dt * 14); steer(e, dx, dy, 2.1);
+      if (d < e.r + tg.r + 6) { e.state = 'poke'; e.pokes = 2; e.pokeT = 0.04; e.st = 0.8; }
+      else if (e.st <= 0) { e.state = 'stalk'; e.st = 0.5; }
+      break;
+    case 'poke':
+      faceTo(e, dx, dy, dt * 14); steer(e, dx, dy, d > e.r + tg.r + 3 ? 0.6 : 0);
+      e.pokeT -= dt;
+      if (e.pokeT <= 0 && e.pokes > 0) {
+        e.pokes--; e.pokeT = 0.2; e.stab = 1; e.stabSide = e.pokes % 2 ? 1 : -1;
+        if (d < e.r + tg.r + 14) { hurt(tg, rand(8, 12), e, 'phys', { dx: dx / d, dy: dy / d, kb: 35, poison: 34 }); fxHit(tg.x - dx / d * tg.r, tg.y - dy / d * tg.r, PAL.rogue, dx, dy, 3); }
+      }
+      if (e.pokes <= 0 && e.pokeT <= 0) startRetreat(e, tg);
+      break;
+    case 'retreat': {
+      const rx = e.rx - e.x, ry = e.ry - e.y; faceTo(e, rx, ry, dt * 8); steer(e, rx, ry, 2.0);
+      if (e.st <= 0 || Math.hypot(rx, ry) < 8) { e.state = 'stalk'; e.st = rand(0.6, 1.2); e.strafe = Math.random() < 0.5 ? 1 : -1; }
+      break;
+    }
+    default: e.state = 'stalk'; e.st = 0.5;
+  }
+}
+function aiRat(e, dt) {
+  e.atkCd -= dt; const tg = e.tgt; if (!tg) { steer(e, 0, 0, 0); return; }
+  const dx = tg.x - e.x, dy = tg.y - e.y, d = Math.hypot(dx, dy) || 1, touch = e.r + tg.r + 3;
+  const a = Math.atan2(dy, dx) + Math.sin(e.anim * 6 + e.id * 1.7) * (d > 40 ? 0.7 : 0.25);
+  steer(e, Math.cos(a), Math.sin(a), d < touch ? 0.15 : 1); e.facing += angDiff(e.facing, a) * Math.min(1, dt * 10);
+  if (d < touch + 1 && e.atkCd <= 0) { e.atkCd = rand(0.7, 1); e.bite = 1; hurt(tg, rand(3, 5), e, 'phys', { dx: dx / d, dy: dy / d, kb: 15 }); }
+}
+function aiSlime(e, dt) {
+  e.atkCd -= dt; e.hopT -= dt; steer(e, 0, 0, 0);
+  const tg = e.tgt; if (!tg) return;
+  const dx = tg.x - e.x, dy = tg.y - e.y, d = Math.hypot(dx, dy) || 1;
+  faceTo(e, dx, dy, dt * 3);
+  if (e.hopT <= 0) {
+    e.hopT = rand(1.0, 1.4); const imp = [55, 65, 75][e.size] * (1 - Math.min(0.6, e.chill / 160));
+    e.vx += dx / d * imp; e.vy += dy / d * imp; e.hopAge = 0;
+    burst(PK.DOT, e.x - dx / d * e.r, e.y - dy / d * e.r, 3, 10, 30, 0.3, 0.5, 3, PAL.slime, 3);
+  }
+  if (d < e.r + tg.r + 3 && e.atkCd <= 0) { e.atkCd = 1; hurt(tg, [4, 6, 9][e.size], e, 'phys', { dx: dx / d, dy: dy / d, kb: 50 }); }
+}
+function aiBone(e, dt) {
+  e.atkCd -= dt; const tg = e.tgt;
+  if (e.state === 'tele') {
+    e.st -= dt; e.teleP = clamp(1 - e.st / 0.6, 0, 1); steer(e, 0, 0, 0); e.facing += angDiff(e.facing, e.lockAng) * Math.min(1, dt * 12);
+    if (e.st <= 0) {
+      e.state = 'move'; e.teleP = 0; e.swing = 0.001; e.atkCd = 2.1;
+      slash(e.x, e.y, e.lockAng, e.r + 28, 2.0, 1, 0.28, PAL.bone, 2.2);
+      for (const h of ents) {
+        if (h.dead || h.team !== 0) continue;
+        const hx = h.x - e.x, hy = h.y - e.y, hd = Math.hypot(hx, hy) || 1;
+        if (hd < e.r + h.r + 30 && Math.abs(angDiff(e.lockAng, Math.atan2(hy, hx))) < 1.05) { if (hurt(h, 14, e, 'phys', { dx: hx / hd, dy: hy / hd, kb: 150 })) fxHit(h.x, h.y, PAL.bone, hx, hy, 5); }
+      }
+    }
+    return;
+  }
+  if (!tg) { steer(e, 0, 0, 0); return; }
+  const dx = tg.x - e.x, dy = tg.y - e.y, d = Math.hypot(dx, dy) || 1, reach = e.r + tg.r + 18;
+  faceTo(e, dx, dy, dt * 5); steer(e, dx, dy, d > reach - 4 ? 1 : 0);
+  if (d < reach + 4 && e.atkCd <= 0) { e.state = 'tele'; e.st = 0.6; e.lockAng = Math.atan2(dy, dx); }
+}
+const AI = { knight: aiKnight, archer: aiArcher, rogue: aiRogue, rat: aiRat, slime: aiSlime, bone: aiBone };
+
+// shared per-frame animation state
+function updateAnim(e, dt) {
+  if (e.frozen <= 0) e.anim += dt;
+  if (e.flash > 0) e.flash = Math.max(0, e.flash - dt * 7);
+  if (e.swing > 0) { e.swing += dt / 0.3; if (e.swing >= 1) e.swing = 0; }
+  if (e.stab > 0) e.stab = Math.max(0, e.stab - dt * 6);
+  if (e.bite > 0) e.bite = Math.max(0, e.bite - dt * 6);
+  if (e.type === 'slime') {
+    e.hopAge += dt; const h = e.hopAge;
+    e.squash = h < 0.35 ? Math.sin(h / 0.35 * Math.PI) * 0.2 : e.hopT < 0.3 ? -(0.3 - Math.max(0, e.hopT)) / 0.3 * 0.14 : 0;
+  }
+  if (e.inv > 0) e.inv -= dt;
+  if (e.spawnT > 0) e.spawnT = Math.max(0, e.spawnT - dt);
+}
+function statusParticles(e, dt) {
+  const R = e.r * e.drawScale;
+  if (e.burn > 0 && Math.random() < dt * (4 + e.burn * 0.12)) emit(Math.random() < 0.4 ? PK.FLAME : PK.DOT, e.x + rand(-R, R) * 0.7, e.y - R * 0.4 + rand(-3, 3), rand(-8, 8), rand(-30, -55), rand(0.4, 0.8), rand(2.5, 3.5), PAL.burn, 1, -10);
+  if (e.chill > 0 && Math.random() < dt * (2 + e.chill * 0.06)) emit(PK.DOT, e.x + rand(-R, R), e.y + rand(-R, R), rand(-6, 6), rand(4, 14), rand(0.5, 1), rand(2, 3), PAL.chill, 1);
+  if (e.poison > 0 && Math.random() < dt * (2 + e.poison * 0.06)) emit(PK.BUBBLE, e.x + rand(-R, R) * 0.8, e.y + rand(-R, R) * 0.5, rand(-5, 5), rand(-12, -22), rand(0.5, 0.9), rand(1.2, 2.2), PAL.poison, 1);
+  if (e.frozen > 0 && Math.random() < dt * 4) emit(PK.DOT, e.x + rand(-R, R), e.y + rand(-R, R), 0, -6, 0.5, 2.5, PAL.white, 1);
+}
+function updateStatus(e, dt) {
+  if (e.burn > 0) e.burn = Math.max(0, e.burn - dt * 5);
+  if (e.chill > 0) e.chill = Math.max(0, e.chill - dt * 6);
+  if (e.poison > 0) e.poison = Math.max(0, e.poison - dt * 6);
+  if (e.shock > 0) e.shock = Math.max(0, e.shock - dt * 10);
+  e.dotT -= dt;
+  if (e.dotT <= 0) { e.dotT = 0.6; if (e.burn > 1) hurt(e, 1 + e.burn * 0.05, null, 'burn'); if (!e.dead && e.poison > 1) hurt(e, 1 + e.poison * 0.04, null, 'poison'); }
+  if (e.frozen > 0) {
+    e.frozen -= dt; e.frozeAge += dt;
+    if (e.frozen <= 0) { e.frozen = 0; burst(PK.SHARD, e.x, e.y, 6, 20, 60, 0.3, 0.6, 2, PAL.chill, 3); }
+  }
+  if (e.stun > 0) e.stun -= dt;
+  statusParticles(e, dt);
+}
+
+// ---------------------------------------------------------------- physics
+function resolvePhysics() {
+  const n = ents.length;
+  for (let i = 0; i < n; i++) {
+    const a = ents[i]; if (a.dead) continue;
+    for (let j = i + 1; j < n; j++) {
+      const b = ents[j]; if (b.dead) continue;
+      const dx = b.x - a.x, dy = b.y - a.y, rr = a.r + b.r, d2 = dx * dx + dy * dy;
+      if (d2 < rr * rr && d2 > 1e-6) {
+        const d = Math.sqrt(d2), ov = rr - d, nx = dx / d, ny = dy / d;
+        const ma = a.mass * (a.frozen > 0 ? 6 : 1) * (a.state === 'charge' ? 10 : 1), mb = b.mass * (b.frozen > 0 ? 6 : 1) * (b.state === 'charge' ? 10 : 1);
+        const ta = mb / (ma + mb), tb = ma / (ma + mb);
+        a.x -= nx * ov * ta; a.y -= ny * ov * ta; b.x += nx * ov * tb; b.y += ny * ov * tb;
+      }
+    }
+  }
+  for (const e of ents) {
+    if (e.dead) continue;
+    const ox = e.x, oy = e.y;
+    for (const p of PILLARS) {
+      const dx = e.x - p.x, dy = e.y - p.y, d = Math.hypot(dx, dy), m = p.r + e.r;
+      if (d < m && d > 1e-4) { e.x = p.x + dx / d * m; e.y = p.y + dy / d * m; }
+    }
+    e.x = clamp(e.x, B.x0 + e.r, B.x1 - e.r); e.y = clamp(e.y, B.y0 + e.r, B.y1 - e.r);
+    // chamfered corners
+    const k = B.k + e.r * 1.4142;
+    let dd;
+    if ((dd = k - ((e.x - B.x0) + (e.y - B.y0))) > 0) { e.x += dd / 2; e.y += dd / 2; }
+    if ((dd = k - ((B.x1 - e.x) + (e.y - B.y0))) > 0) { e.x -= dd / 2; e.y += dd / 2; }
+    if ((dd = k - ((e.x - B.x0) + (B.y1 - e.y))) > 0) { e.x += dd / 2; e.y -= dd / 2; }
+    if ((dd = k - ((B.x1 - e.x) + (B.y1 - e.y))) > 0) { e.x -= dd / 2; e.y -= dd / 2; }
+    e.bumped = Math.abs(e.x - ox) + Math.abs(e.y - oy) > 1.2;
+  }
+}
+
+// ---------------------------------------------------------------- spawning
+const WAVES = [[['rat', 4], ['bone', 1]], [['slime', 1], ['rat', 3]], [['bone', 2], ['rat', 2]], [['rat', 5]], [['slime', 1], ['bone', 1]]];
+let waveI = 0, spawnCd = 0;
+function spawnWave() {
+  const w = WAVES[waveI % WAVES.length], door = DOORS[(waveI * 2 + 1) % 3]; waveI++;
+  let i = 0;
+  for (const [type, n] of w) for (let k = 0; k < n; k++, i++) {
+    const spread = (i - 1.5) * 15 + rand(-4, 4), x = door.x + door.nx * (34 + rand(0, 14)) + (door.ny ? spread : 0), y = door.y + door.ny * (34 + rand(0, 14)) + (door.nx ? spread : 0);
+    const e = makeEnt(type, x, y, 2); e.facing = Math.atan2(door.ny, door.nx); e.spawnT = 0.5 + i * 0.07;
+    fxSpawn(e); pending.push(e);
+  }
+}
+function initBattle() {
+  ents = []; pending = []; projs.length = 0; clouds.length = 0; fxs.length = 0; clearParticles();
+  const add = (t, x, y, s = 2) => { const e = makeEnt(t, x, y, s); ents.push(e); return e; };
+  add('knight', 330, 196).facing = 0; add('archer', 215, 150).facing = 0; add('rogue', 260, 262).facing = 0;
+  [[430, 168], [446, 204], [420, 236], [462, 182]].forEach(([x, y]) => add('rat', x, y).facing = Math.PI);
+  add('bone', 480, 222).facing = Math.PI; add('slime', 505, 140).facing = Math.PI;
+  waveI = 1; spawnCd = 3;
+}
+
+// ---------------------------------------------------------------- battle update
+let time = 0;
+function updateBattle(dt) {
+  time += dt;
+  // spawner
+  spawnCd -= dt;
+  let foes = 0; for (const e of ents) if (!e.dead && e.team === 1) foes++;
+  if (foes < 7 && spawnCd <= 0) { spawnWave(); spawnCd = 2.6; }
+  // AI
+  for (const e of ents) {
+    if (e.dead) continue;
+    updateAnim(e, dt);
+    if (e.spawnT > 0) { e.dvx = e.dvy = 0; continue; }
+    e.retT -= dt; if (e.retT <= 0 || !e.tgt || e.tgt.dead) { pickTarget(e); e.retT = 0.35; }
+    if (e.frozen > 0 || e.stun > 0) {
+      steer(e, 0, 0, 0); if (e.state === 'tele') { e.state = 'move'; e.teleP = 0; }
+      if (e.state === 'windup' || e.state === 'draw' || e.state === 'barrage') { e.state = 'move'; e.pull = 0; }
+    } else AI[e.type](e, dt);
+    if (e.team === 0) e.hp = Math.min(e.maxHp, e.hp + dt * 7);
+  }
+  // integrate
+  for (const e of ents) {
+    if (e.dead) continue;
+    if (e.state !== 'charge') { const k = Math.min(1, dt * (e.frozen > 0 ? 8 : e.accel)); e.vx += (e.dvx - e.vx) * k; e.vy += (e.dvy - e.vy) * k; }
+    e.x += e.vx * dt; e.y += e.vy * dt;
+  }
+  resolvePhysics();
+  // statuses (after movement so DOT deaths split correctly)
+  for (const e of ents) if (!e.dead) updateStatus(e, dt);
+  // trails
+  for (const e of ents) {
+    e.trailT -= dt; if (e.trailT <= 0) { e.trailT = TRAIL_DT; e.trailHead = (e.trailHead + 1) % TRAIL_N; e.trail[e.trailHead * 2] = e.x; e.trail[e.trailHead * 2 + 1] = e.y; }
+  }
+  // spikes
+  SPIKES.t += dt; const ns = spikeState(SPIKES);
+  if (ns === 2 && SPIKES.state !== 2) {
+    burst(PK.SPARK, SPIKES.x, SPIKES.y, 10, 60, 150, 0.15, 0.3, 1, PAL.danger, 5);
+    ring(SPIKES.x, SPIKES.y, SPIKES.r * 0.5, SPIKES.r * 1.5, 0.3, PAL.danger, 1.6);
+    for (const e of ents) { if (e.dead) continue; const dx = e.x - SPIKES.x, dy = e.y - SPIKES.y, d = Math.hypot(dx, dy) || 1; if (d < SPIKES.r + e.r * 0.5) hurt(e, 10, null, 'phys', { dx: dx / d, dy: dy / d, kb: 120 }); }
+  }
+  SPIKES.state = ns;
+  // projectiles
+  updateProjectiles(dt, true);
+  // clouds
+  for (let i = clouds.length - 1; i >= 0; i--) {
+    const c = clouds[i]; c.t += dt; c.x += c.vx * dt; c.y += c.vy * dt; c.tick -= dt;
+    if (Math.random() < dt * 6) emit(PK.BUBBLE, c.x + rand(-c.r, c.r) * 0.7, c.y + rand(-c.r, c.r) * 0.6, 0, rand(-8, -16), rand(0.6, 1), rand(1.2, 2.4), PAL.poison, 1);
+    if (c.tick <= 0 && c.hitsTeam >= 0) {
+      c.tick = 0.5;
+      for (const e of ents) { if (e.dead || e.team !== c.hitsTeam) continue; if (Math.hypot(e.x - c.x, e.y - c.y) < c.r + e.r * 0.5) { hurt(e, 3, null, 'poison'); e.poison = Math.min(92, e.poison + 8); } }
+    }
+    if (c.t >= c.life) { clouds[i] = clouds[clouds.length - 1]; clouds.pop(); }
+  }
+  // cleanup
+  let w = 0; for (const e of ents) if (!e.dead) ents[w++] = e; ents.length = w;
+  if (pending.length) { for (const e of pending) ents.push(e); pending.length = 0; }
+}
+function updateProjectiles(dt, collide) {
+  for (let i = projs.length - 1; i >= 0; i--) {
+    const p = projs[i]; p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt;
+    let dead = p.t >= p.life;
+    if (!dead && collide) {
+      if (p.x < B.x0 || p.x > B.x1 || p.y < B.y0 || p.y > B.y1) { dead = true; burst(PK.SPARK, p.x, p.y, 3, 40, 100, 0.1, 0.2, 0.8, p.kind === 'icicle' ? PAL.chill : PAL.archer, 6); }
+      for (const pl of PILLARS) if (!dead && Math.hypot(p.x - pl.x, p.y - pl.y) < pl.r) { dead = true; burst(PK.SPARK, p.x, p.y, 4, 40, 110, 0.1, 0.25, 0.8, p.kind === 'sarrow' ? PAL.shock : PAL.archer, 6); }
+      if (!dead && p.hitsTeam >= 0) for (const e of ents) {
+        if (e.dead || e.team !== p.hitsTeam || e.id === p.ignore || e.spawnT > 0) continue;
+        if (Math.hypot(e.x - p.x, e.y - p.y) < e.r + 2.5) {
+          const sp = Math.hypot(p.vx, p.vy), dx = p.vx / sp, dy = p.vy / sp;
+          hurt(e, p.dmg, p.src, p.kind === 'icicle' ? 'ice' : 'phys', { dx, dy, kb: p.kb, chill: p.chill, shock: p.shock });
+          fxHit(p.x, p.y, p.kind === 'sarrow' ? PAL.shock : p.kind === 'icicle' ? PAL.chill : PAL.archer, -dx, -dy, 3);
+          dead = true; break;
+        }
+      }
+    }
+    if (dead) { projs[i] = projs[projs.length - 1]; projs.pop(); }
+  }
+}
+
+// =====================================================================
+// LINEUP VIEW
+// =====================================================================
+const LINEUP = [
+  { type: 'knight', name: 'Knight', d1: 'Holds a shield, swings a burning sword', d2: 'Charge: rams through, knocks foes flying', x: 112, s: 2.3, cyc: 4.2 },
+  { type: 'archer', name: 'Archer', d1: 'Keeps its distance, fires frost arrows', d2: 'Barrage: a fan of shock arrows', x: 232, s: 2.6, cyc: 4.2 },
+  { type: 'rogue', name: 'Rogue', d1: 'Darts in and out with poison daggers', d2: 'Shadow step: strikes from behind', x: 350, s: 2.7, cyc: 4.2 },
+  { type: 'rat', name: 'Gnawling', d1: 'Fast, fragile, bites in packs', d2: 'Comes through the doors in fours', x: 494, s: 3.3, cyc: 3.0 },
+  { type: 'slime', name: 'Splitgel', d1: 'Hops slowly, slams on contact', d2: 'Splits in two when it pops', x: 614, s: 2.3, cyc: 2.4 },
+  { type: 'bone', name: 'Bonewarden', d1: 'Slow, swings a wide glaive', d2: 'Flashes red before each swing', x: 734, s: 2.4, cyc: 3.6 }
+];
+const DUMMIES = [
+  { st: 'burn', label: 'Burn builds to Scorch', x: 150 },
+  { st: 'chill', label: 'Chill builds to Freeze, then Shatter', x: 330 },
+  { st: 'poison', label: 'Poison builds to a gas cloud', x: 514 },
+  { st: 'shock', label: 'Shock builds to a chain arc', x: 696 }
+];
+const LINE_Y = 140, DUMMY_Y = 304;
+let lineupEnts = [], dummyEnts = [], LT = 0;
+function buildLineup() {
+  lineupEnts = LINEUP.map((L, i) => { const e = makeEnt(L.type, L.x, LINE_Y, 2); e.facing = i < 3 ? 0.35 : Math.PI - 0.35; e.drawScale = L.s; e.L = L; e.pc = 0; e.off = i * 0.37; return e; });
+  dummyEnts = DUMMIES.map((D, i) => { const e = makeEnt('dummy', D.x, DUMMY_Y); e.drawScale = 1.6; e.D = D; e.pc = 0; e.off = i * 0.55; e.facing = -HALF_PI; return e; });
+}
+function updateLineup(dt) {
+  LT += dt;
+  for (const e of lineupEnts) {
+    updateAnim(e, dt);
+    const L = e.L, c = (LT + e.off) % L.cyc, pc = e.pc, X = T => crossed(pc, c, T), s = e.drawScale, R = e.r * s;
+    const fx0 = e.x + Math.cos(e.facing) * R, fy0 = e.y + Math.sin(e.facing) * R;
+    e.pc = c;
+    switch (e.type) {
+      case 'knight':
+        if (X(0.8)) { e.swing = 0.001; slash(e.x, e.y, e.facing, R + 20, 2.6, 1, 0.28, PAL.knight, 2.4); }
+        e.state = c > 2.2 && c < 3.0 ? 'windup' : 'move';
+        if (e.state === 'windup' && Math.random() < dt * 30) emit(PK.DOT, e.x + rand(-R, R), e.y + rand(-R, R), -Math.cos(e.facing) * 50, -Math.sin(e.facing) * 50, 0.3, 4, PAL.knight, 2);
+        if (X(3.0)) { ring(e.x, e.y, R, R + 34, 0.4, PAL.knight, 2.4); rays(e.x, e.y, 10, R, R + 30, 0.32, PAL.knight); popText(e.x, e.y - R - 14, 'Charge', PAL.knight, 8, true); }
+        break;
+      case 'archer':
+        if (c > 0.5 && c < 0.85) e.pull = (c - 0.5) / 0.35;
+        if (X(0.85)) { e.pull = 0; shoot(fx0, fy0, e.facing, 300, 'arrow', -1, 0, null, { life: 0.28, fade: 1 }); }
+        if (c > 2.0 && c < 2.95) { e.state = 'barrage'; if (c < 2.6) e.pull = Math.min(1, (c - 2.0) / 0.4); }
+        else if (e.state === 'barrage') { e.state = 'move'; e.pull = 0; }
+        for (let k = 0; k < 3; k++) if (X(2.6 + k * 0.1)) { shoot(fx0, fy0, e.facing + (k - 1) * 0.15, 360, 'sarrow', -1, 0, null, { life: 0.26, fade: 1 }); e.pull = 0.6; }
+        break;
+      case 'rogue':
+        if (X(0.7)) { e.stab = 1; e.stabSide = 1; } if (X(0.95)) { e.stab = 1; e.stabSide = -1; }
+        if (X(2.2)) { shadePuff(e.x, e.y); ghost(e, 0.4, 0.6); }
+        e.alpha = c > 2.2 && c < 2.4 ? 1 - (c - 2.2) / 0.2 : c >= 2.4 && c < 2.6 ? (c - 2.4) / 0.2 : 1;
+        if (X(2.4)) { shadePuff(e.x, e.y); ring(e.x, e.y, R * 2.6, R, 0.25, PAL.rogue, 1.8); }
+        break;
+      case 'rat': if (X(0.6) || X(1.0) || X(2.0)) e.bite = 1; break;
+      case 'slime': e.hopT = (1.3 - c + L.cyc) % L.cyc; if (X(1.3)) e.hopAge = 0; break;
+      case 'bone':
+        if (c > 1.4 && c < 2.0) { e.state = 'tele'; e.teleP = (c - 1.4) / 0.6; e.lockAng = e.facing; }
+        if (X(2.0)) { e.state = 'move'; e.teleP = 0; e.swing = 0.001; slash(e.x, e.y, e.facing, (e.r + 26) * s * 0.85, 2.0, 1, 0.3, PAL.bone, 2.4); }
+        break;
+    }
+  }
+  for (const e of dummyEnts) {
+    updateAnim(e, dt);
+    const cyc = 4.4, c = (LT + e.off) % cyc, pc = e.pc, X = T => crossed(pc, c, T), R = e.r * e.drawScale; e.pc = c;
+    const decay = k => { e[k] = Math.max(0, e[k] - dt * 30); };
+    switch (e.D.st) {
+      case 'burn': if (c < 2.4) e.burn = c / 2.4 * 100; else decay('burn'); if (X(2.4)) { e.burn = 20; fxScorch(e.x, e.y); e.flash = 1; } break;
+      case 'chill':
+        if (c < 1.8) e.chill = c / 1.8 * 100; else e.chill = 0;
+        if (X(1.8)) { e.frozen = 99; e.frozeAge = 0; fxFreeze(e.x, e.y, R); }
+        if (X(3.1)) { e.frozen = 0; e.flash = 1; fxShatter(e.x, e.y, R, -1, e.id); }
+        break;
+      case 'poison': if (c < 2.2) e.poison = c / 2.2 * 100; else decay('poison'); if (X(2.2)) { e.poison = 25; spawnCloud(e.x, e.y, -1, 2.0); } break;
+      case 'shock':
+        if (c < 2.0) e.shock = c / 2.0 * 100; else e.shock = 0;
+        if (X(2.0)) {
+          e.stun = 0.9; e.flash = 1; burst(PK.SPARK, e.x, e.y, 8, 60, 160, 0.15, 0.3, 1, PAL.shock, 5);
+          let px = e.x, py = e.y, a = rand(0, TAU);
+          for (let k = 0; k < 3; k++) { a += rand(1.4, 2.4); const nx = e.x + Math.cos(a) * rand(38, 52), ny = e.y + Math.sin(a) * rand(20, 30); bolt(px, py, nx, ny, 0.35); burst(PK.SPARK, nx, ny, 4, 40, 120, 0.12, 0.25, 0.9, PAL.shock, 5); px = nx; py = ny; }
+          popText(e.x, e.y - R - 14, 'Chain shock', PAL.shock, 8, true);
+        }
+        if (e.stun > 0) e.stun -= dt;
+        break;
+    }
+    statusParticles(e, dt);
+  }
+  updateProjectiles(dt, false);
+  for (let i = clouds.length - 1; i >= 0; i--) { const c = clouds[i]; c.t += dt; if (Math.random() < dt * 6) emit(PK.BUBBLE, c.x + rand(-c.r, c.r) * 0.7, c.y + rand(-c.r, c.r) * 0.6, 0, rand(-8, -16), rand(0.6, 1), rand(1.2, 2.4), PAL.poison, 1); if (c.t >= c.life) { clouds[i] = clouds[clouds.length - 1]; clouds.pop(); } }
+}
+function drawLineupChrome(g) {
+  g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+  // section titles
+  const titles = [['Heroes', 230], ['Foes', 614]];
+  for (const [t, x] of titles) {
+    g.font = font(10, 700); g.globalAlpha = 0.75; g.fillStyle = PAL.text; g.fillText(t, x, 52);
+    g.beginPath(); g.moveTo(x - 108, 48.5); g.lineTo(x - 26, 48.5); g.moveTo(x + 26, 48.5); g.lineTo(x + 108, 48.5);
+    g.strokeStyle = PAL.wall.c; g.globalAlpha = 0.3; g.lineWidth = 0.7; g.stroke();
+  }
+  // divider
+  g.beginPath(); for (let y = 62; y < 236; y += 7) { g.moveTo(422, y); g.lineTo(422, y + 2.5); }
+  g.strokeStyle = PAL.wall.c; g.globalAlpha = 0.35; g.lineWidth = 0.8; g.stroke();
+  // labels
+  for (const e of lineupEnts) {
+    const L = e.L, T = e.tone;
+    glow(g, T, L.x, 206, 30, 0.12);
+    g.font = font(12.5, 800); g.globalAlpha = 1; g.fillStyle = T.core; g.fillText(L.name, L.x, 210);
+    g.font = font(7.6, 500); g.globalAlpha = 0.85; g.fillStyle = PAL.text;
+    wrapCentered(g, L.d1, L.x, 224, 112, 9.5);
+    g.globalAlpha = 0.9; g.fillStyle = T.c; g.font = font(7.6, 650);
+    wrapCentered(g, L.d2, L.x, 245, 112, 9.5);
+  }
+  // status row
+  g.beginPath(); g.moveTo(90, 262.5); g.lineTo(754, 262.5);
+  g.strokeStyle = PAL.wall.c; g.globalAlpha = 0.3; g.lineWidth = 0.7; g.stroke();
+  for (const e of dummyEnts) { g.font = font(8.2, 650); g.globalAlpha = 0.95; g.fillStyle = PAL[e.D.st].core; g.fillText(e.D.label, e.D.x, 348); }
+}
+function wrapCentered(g, text, x, y, maxW, lh) {
+  const words = text.split(' '); let line = '', yy = y;
+  for (const w of words) { const t = line ? line + ' ' + w : w; if (g.measureText(t).width > maxW && line) { g.fillText(line, x, yy); line = w; yy += lh; } else line = t; }
+  if (line) g.fillText(line, x, yy);
+}
+
+// =====================================================================
+// RENDER PIPELINE
+// =====================================================================
+let mode = 'battle';
+const STATS = window.STATS = { scorch: 0, freeze: 0, shatter: 0, cloud: 0, chain: 0, charge: 0, barrage: 0, shadow: 0, split: 0, workMs: 0 };
+function renderScene(g, list, extra) {
+  drawAmbient(g, time + LT);
+  if (mode === 'battle') drawSpikes(g, SPIKES, time);
+  for (const e of list) if (e.type === 'bone' && e.state === 'tele') drawTelegraph(g, e);
+  drawShadeParticles(g);
+  for (const e of list) drawTrail(g, e);
+  for (const e of list) drawHalo(g, e);
+  drawFxLayer(g, 0);
+  if (mode === 'battle') for (const p of PILLARS) drawPillar(g, p, time);
+  for (const e of list) drawEntity(g, e);
+  drawClouds(g);
+  drawFxLayer(g, 1);
+  drawProjectiles(g);
+  drawParticles(g);
+  if (extra) extra(g);
+  drawTexts(g);
+}
+function render() {
+  // shake
+  if (shakeAmp > 0.05) { shx = rand(-1, 1) * shakeAmp; shy = rand(-1, 1) * shakeAmp; shakeAmp *= 0.86; } else { shx = shy = 0; shakeAmp = 0; }
+  const sx = shx * SCALE, sy = shy * SCALE;
+  // base: floor
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+  ctx.fillStyle = PAL.void; ctx.fillRect(0, 0, W, H);
+  ctx.drawImage(floorC, sx, sy);
+  if (mode === 'lineup') { ctx.globalAlpha = 0.5; ctx.fillStyle = PAL.void; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1; }
+  // emissive layer
+  fx.setTransform(1, 0, 0, 1, 0, 0); fx.globalCompositeOperation = 'source-over'; fx.globalAlpha = 1; fx.clearRect(0, 0, W, H);
+  fx.setTransform(SCALE, 0, 0, SCALE, OX + sx, OY + sy);
+  fx.globalCompositeOperation = 'lighter'; fx.lineCap = 'round'; fx.lineJoin = 'round';
+  if (mode === 'battle') renderScene(fx, ents, null);
+  else renderScene(fx, lineupEnts.concat(dummyEnts), drawLineupChrome);
+  fx.globalCompositeOperation = 'source-over'; fx.globalAlpha = 1;
+  ctx.drawImage(fxC, 0, 0);
+  // cheap bloom: mip chain of the emissive layer, added back
+  if (BLOOM) {
+    let src = fxC;
+    for (const m of mips) { m.g.globalCompositeOperation = 'copy'; m.g.drawImage(src, 0, 0, m.c.width, m.c.height); src = m.c; }
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = 0.24; ctx.drawImage(mips[1].c, 0, 0, W, H);
+    ctx.globalAlpha = 0.34; ctx.drawImage(mips[2].c, 0, 0, W, H);
+    ctx.globalAlpha = 0.45; ctx.drawImage(mips[3].c, 0, 0, W, H);
+    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+  }
+}
+
+// =====================================================================
+// BOOT / LOOP / INPUT
+// =====================================================================
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  const cw = window.innerWidth, ch = window.innerHeight;
+  W = Math.max(1, Math.round(cw * DPR)); H = Math.max(1, Math.round(ch * DPR));
+  cv.width = W; cv.height = H; fxC.width = W; fxC.height = H; floorC.width = W; floorC.height = H;
+  SCALE = Math.min(cw / WORLD_W, ch / WORLD_H) * DPR;
+  OX = (W - WORLD_W * SCALE) / 2; OY = (H - WORLD_H * SCALE) / 2;
+  let w = W, h = H; for (const m of mips) { w = Math.max(1, Math.round(w / 2)); h = Math.max(1, Math.round(h / 2)); m.c.width = w; m.c.height = h; m.g.imageSmoothingEnabled = true; }
+  buildFloor();
+}
+const toggleBtn = document.getElementById('toggle');
+function setMode(m) {
+  mode = m; projs.length = 0; clouds.length = 0; fxs.length = 0; clearParticles(); tLive.forEach(o => tPool.push(o)); tLive.length = 0;
+  if (m === 'lineup') { buildLineup(); LT = 0; }
+  toggleBtn.firstElementChild.textContent = m === 'lineup' ? 'Battle' : 'Lineup';
+}
+toggleBtn.addEventListener('click', e => { e.preventDefault(); setMode(mode === 'battle' ? 'lineup' : 'battle'); });
+window.addEventListener('resize', resize);
+window.addEventListener('orientationchange', () => setTimeout(resize, 200));
+
+const fpsEl = document.getElementById('fps'), showFps = /fps/.test(location.hash);
+if (showFps) fpsEl.style.display = 'block';
+let last = performance.now(), fpsAcc = 0, fpsN = 0;
+function frame(now) {
+  let dt = (now - last) / 1000; last = now; if (dt > 0.05) dt = 0.05; if (dt < 0) dt = 0;
+  const w0 = performance.now();
+  if (mode === 'battle') updateBattle(dt); else updateLineup(dt);
+  updateParticles(dt); updateFx(dt); updateTexts(dt);
+  render();
+  STATS.workMs = STATS.workMs * 0.95 + (performance.now() - w0) * 0.05;
+  if (showFps) { fpsAcc += dt; fpsN++; if (fpsAcc > 0.5) { fpsEl.textContent = Math.round(fpsN / fpsAcc) + ' fps  ' + STATS.workMs.toFixed(1) + 'ms  ' + pLive.length + 'p'; fpsAcc = 0; fpsN = 0; } }
+  requestAnimationFrame(frame);
+}
+resize(); initBattle();
+if (/lineup/.test(location.hash)) setMode('lineup');
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

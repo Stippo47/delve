@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- BASE 3 EGG + BUN. Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <path id="shadeR" d="M100 -10 V220 H220 V-10 Z"/>
+    <linearGradient id="gSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6D0AC"/><stop offset="1" stop-color="#EFC096"/></linearGradient>
+    <linearGradient id="gSkinS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E2AE88"/><stop offset="1" stop-color="#D49B76"/></linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+    <radialGradient id="gHandS" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#EBC09C"/><stop offset="1" stop-color="#CF946F"/></radialGradient>
+
+    <path id="skull" d="M100 22 C148 22 168 62 165 104 C162 144 134 178 100 182 C66 178 38 144 35 104 C32 62 52 22 100 22 Z"/>
+    <clipPath id="skullC"><use href="#skull"/></clipPath>
+    <ellipse id="earL" cx="35" cy="116" rx="16" ry="20"/>
+    <ellipse id="earR" cx="165" cy="116" rx="16" ry="20"/>
+    <circle id="bun" cx="70" cy="16" r="22"/>
+    <clipPath id="bunC"><use href="#bun"/></clipPath>
+    <path id="hair" d="M29 112 C22 56 56 16 100 16 C144 16 178 56 171 116
+       C166 128 154 134 144 128 C120 118 86 118 64 98 C56 108 42 118 29 112 Z"/>
+    <clipPath id="hairC"><use href="#hair"/></clipPath>
+    <linearGradient id="gFace" x1="0" y1="104" x2="0" y2="156" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9A6250"/><stop offset="0.36" stop-color="#C98E6C"/>
+      <stop offset="0.62" stop-color="#F2C7A0"/><stop offset="1" stop-color="#F6D0AC"/></linearGradient>
+    <linearGradient id="gHair" x1="0" y1="20" x2="48" y2="180" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#EFC872"/><stop offset="1" stop-color="#DFAE52"/></linearGradient><linearGradient id="gHairS" x1="0" y1="20" x2="48" y2="180" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#CF9A44"/><stop offset="1" stop-color="#B98232"/></linearGradient>
+    
+  </defs>
+  <g transform="translate(100 109) scale(1.06) translate(-100 -100)">
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="11.3" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#bun"/><use href="#earL"/><use href="#earR"/><use href="#skull"/><use href="#hair"/>
+    <rect x="10" y="140" width="30" height="36" rx="13" transform="rotate(22 25.0 158.0)"/><rect x="160" y="140" width="30" height="36" rx="13" transform="rotate(-22 175.0 158.0)"/>
+  </g>
+  
+  <use href="#bun" fill="url(#gHair)"/>
+  <g clip-path="url(#bunC)"><use href="#hair" fill="#2B2230" opacity="0.22" transform="translate(0 -3)"/></g>
+  <use href="#earL" fill="url(#gSkin)"/><use href="#earR" fill="url(#gSkinS)"/>
+  <use href="#skull" fill="url(#gFace)"/>
+  <g clip-path="url(#skullC)"><use href="#shadeR" fill="#8A4E36" opacity="0.14"/></g>
+  <path d="M97 160 Q100 162.5 103 160" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  <use href="#hair" fill="#2B2230" opacity="0.25" transform="translate(0 3)"/>
+  <use href="#hair" fill="url(#gHair)"/><g clip-path="url(#hairC)"><use href="#shadeR" fill="url(#gHairS)"/></g>
+  <g transform="rotate(22 25.0 158.0)"><rect x="11" y="142.5" width="30" height="36" rx="13" fill="#2B2230" opacity="0.3"/><rect x="10" y="140" width="30" height="36" rx="13" fill="url(#gHand)"/></g><g transform="rotate(-22 175.0 158.0)"><rect x="161" y="142.5" width="30" height="36" rx="13" fill="#2B2230" opacity="0.3"/><rect x="160" y="140" width="30" height="36" rx="13" fill="url(#gHandS)"/></g>
+  </g>
+</svg>

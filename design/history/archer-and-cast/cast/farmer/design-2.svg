@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- FARMER design 2 "Digger": puffy blue flat cap with a short peak, ginger hair tufts sticking out at the sides,
+       shovel gripped level across the waist with the spade jutting out to the right.
+       Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <path id="hair" d="M66 92 L24 80 L40 100 L14 114 L44 120 L32 140 L66 128 L134 128 L168 140 L156 120 L186 114 L160 100 L176 80 L134 92 Z"/>
+    <clipPath id="hairClip"><use href="#hair"/></clipPath>
+    <path id="cap" d="M100 16 C142 16 168 42 168 76 C168 102 152 118 132 122 C120 125 110 126 100 126 C90 126 80 125 68 122 C48 118 32 102 32 76 C32 42 58 16 100 16 Z"/>
+    <clipPath id="capClip"><use href="#cap"/></clipPath>
+    <path id="peak" d="M50 108 C70 98 130 98 150 108 C156 128 134 146 100 146 C66 146 44 128 50 108 Z"/>
+    <clipPath id="peakClip"><use href="#peak"/></clipPath>
+    <ellipse id="face" cx="100" cy="150" rx="31" ry="18"/>
+    <clipPath id="faceClip"><use href="#face"/></clipPath>
+    <path id="blade" d="M144 162 C158 159 176 161 190 170 C196 174 198 178 196 181 C194 185 190 188 186 190 C174 198 158 200 144 196 Z"/>
+    <clipPath id="bladeClip"><use href="#blade"/></clipPath>
+    <path id="shadeR" d="M100 -10 V220 H220 V-10 Z"/>
+
+    <linearGradient id="gCap" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#7DA0D2"/><stop offset="1" stop-color="#5B80B8"/>
+    </linearGradient>
+    <linearGradient id="gCapS" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#4E70A6"/><stop offset="1" stop-color="#3D5A8C"/>
+    </linearGradient>
+    <linearGradient id="gPeak" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4A6CA6"/><stop offset="1" stop-color="#365489"/>
+    </linearGradient>
+    <linearGradient id="gPeakS" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#304B7E"/><stop offset="1" stop-color="#263D68"/>
+    </linearGradient>
+    <linearGradient id="gHair" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E08A4A"/><stop offset="1" stop-color="#C46A34"/>
+    </linearGradient>
+    <linearGradient id="gHairS" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#B85E2C"/><stop offset="1" stop-color="#9C4C24"/>
+    </linearGradient>
+    <linearGradient id="gFace" x1="0" y1="140" x2="0" y2="168" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9A6250"/>
+      <stop offset="0.38" stop-color="#C98E6C"/>
+      <stop offset="0.68" stop-color="#F2C7A0"/>
+      <stop offset="1" stop-color="#F6D0AC"/>
+    </linearGradient>
+    <linearGradient id="gWood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C98C55"/><stop offset="1" stop-color="#94602F"/>
+    </linearGradient>
+    <linearGradient id="gTin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E9EDF1"/><stop offset="1" stop-color="#C2CAD3"/>
+    </linearGradient>
+    <linearGradient id="gBlade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E6EAEF"/><stop offset="1" stop-color="#B3BCC7"/>
+    </linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ===== heavy outer silhouette ===== -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#hair"/>
+    <use href="#face"/>
+    <use href="#cap"/>
+    <use href="#peak"/>
+    <rect x="22" y="170" width="130" height="11" rx="5.5"/>
+    <rect x="14" y="161" width="14" height="29" rx="6"/>
+    <use href="#blade"/>
+    <rect x="136" y="162" width="15" height="27" rx="5"/>
+    <rect x="30" y="165" width="24" height="21" rx="8"/>
+    <rect x="100" y="165" width="24" height="21" rx="8"/>
+  </g>
+
+  <!-- ===== interior ===== -->
+  <!-- face under the peak -->
+  <g clip-path="url(#faceClip)">
+    <use href="#face" fill="url(#gFace)"/>
+    <path d="M100 110 H140 V170 H100 Z" fill="#8A4E36" opacity="0.14"/>
+    <path d="M97 159 Q100 161.5 103 159" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- ginger hair tufts -->
+  <use href="#hair" fill="url(#gHair)"/>
+  <g clip-path="url(#hairClip)"><use href="#shadeR" fill="url(#gHairS)"/></g>
+
+  <!-- cap on a contact shadow -->
+  <use href="#cap" fill="#2B2230" opacity="0.28" transform="translate(0 3)"/>
+  <use href="#cap" fill="url(#gCap)"/>
+  <g clip-path="url(#capClip)">
+    <use href="#shadeR" fill="url(#gCapS)"/>
+    <path d="M100 22 C96 50 96 80 100 108 C104 80 104 50 100 22 Z" fill="#3D5A8C" opacity="0.5"/>
+  </g>
+  <!-- peak -->
+  <use href="#peak" fill="#22355A" opacity="0.4" transform="translate(0 3)"/>
+  <use href="#peak" fill="url(#gPeak)"/>
+  <g clip-path="url(#peakClip)"><use href="#shadeR" fill="url(#gPeakS)"/></g>
+  <!-- button -->
+  <circle cx="100" cy="58" r="9" fill="#22355A" opacity="0.35" transform="translate(0 2)"/>
+  <circle cx="100" cy="58" r="9" fill="#6E93C8"/>
+  <path d="M100 49 A9 9 0 0 1 100 67 Z" fill="#4A6CA6"/>
+
+  <!-- shovel -->
+  <rect x="14" y="161" width="14" height="29" rx="6" fill="url(#gWood)"/>
+  <rect x="22" y="170" width="130" height="11" rx="5.5" fill="url(#gWood)"/>
+  <use href="#blade" fill="url(#gBlade)"/>
+  <g clip-path="url(#bladeClip)"><path d="M120 178 H210 V210 H120 Z" fill="#939DAA" opacity="0.75"/></g>
+  <rect x="136" y="162" width="15" height="27" rx="5" fill="url(#gTin)"/>
+  <path d="M136 175.5 H151 V184 A5 5 0 0 1 146 189 H141 A5 5 0 0 1 136 184 Z" fill="#939DAA"/>
+
+  <!-- hands -->
+  <rect x="30" y="165" width="24" height="21" rx="8" fill="url(#gHand)"/>
+  <rect x="100" y="167" width="24" height="21" rx="8" fill="#2B2230" opacity="0.3"/>
+  <rect x="100" y="165" width="24" height="21" rx="8" fill="url(#gHand)"/>
+</svg>

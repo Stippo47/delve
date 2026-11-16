@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- BASE 2 "Long": long egg head, slicked-back hair to a soft peak, ponytail curling over the right shoulder, big ears, open hands wide at flanks. Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+    <linearGradient id="g1" x1="0" y1="42" x2="0" y2="118" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#F3D47A"/><stop offset="1" stop-color="#DDAF4C"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="42" x2="0" y2="118" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#CC9A3E"/><stop offset="1" stop-color="#AC7C2C"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="22" x2="0" y2="62" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#E6BE5C"/><stop offset="1" stop-color="#CDA044"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="22" x2="0" y2="62" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#BE8C36"/><stop offset="1" stop-color="#9E7028"/></linearGradient>
+    <clipPath id="c5"><path d="M92 46 C92 30 108 22 124 24 C142 26 156 40 156 62 C150 52 140 44 128 42 C116 41 108 46 104 52 Z"/></clipPath>
+    <clipPath id="c6"><ellipse cx="60" cy="112" rx="12" ry="16"/><ellipse cx="140" cy="112" rx="12" ry="16"/></clipPath>
+    <linearGradient id="g7" x1="0" y1="96" x2="0" y2="128" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#E9B48C"/><stop offset="1" stop-color="#D9A07A"/></linearGradient>
+    <linearGradient id="g8" x1="98" y1="0" x2="160" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.32"/></linearGradient>
+    <clipPath id="c9"><ellipse cx="100" cy="98" rx="40" ry="56"/></clipPath>
+    <linearGradient id="g10" x1="0" y1="108" x2="0" y2="154" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#BC876C"/><stop offset="0.32" stop-color="#E2AF8A"/><stop offset="0.58" stop-color="#F2C7A0"/><stop offset="1" stop-color="#F6D0AC"/></linearGradient>
+    <clipPath id="c11"><path d="M62 114 C52 70 70 42 100 42 C130 42 148 70 138 114 C134 108 124 106 116 110 C110 113 105 116 100 118 C95 116 90 113 84 110 C76 106 66 108 62 114 Z"/></clipPath>
+  </defs>
+<g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"><ellipse cx="60" cy="112" rx="12" ry="16"/><ellipse cx="140" cy="112" rx="12" ry="16"/><path d="M92 46 C92 30 108 22 124 24 C142 26 156 40 156 62 C150 52 140 44 128 42 C116 41 108 46 104 52 Z"/><ellipse cx="100" cy="98" rx="40" ry="56"/><path d="M62 114 C52 70 70 42 100 42 C130 42 148 70 138 114 C134 108 124 106 116 110 C110 113 105 116 100 118 C95 116 90 113 84 110 C76 106 66 108 62 114 Z"/><rect x="35.5" y="127.5" width="21" height="25" rx="9" transform="rotate(10 46 140)"/><rect x="143.5" y="127.5" width="21" height="25" rx="9" transform="rotate(-10 154 140)"/></g>
+<g fill="url(#g3)"><path d="M92 46 C92 30 108 22 124 24 C142 26 156 40 156 62 C150 52 140 44 128 42 C116 41 108 46 104 52 Z"/></g>
+<g clip-path="url(#c5)"><rect x="100" y="-20" width="140" height="260" fill="url(#g4)"/></g>
+<g fill="url(#g7)"><ellipse cx="60" cy="112" rx="12" ry="16"/><ellipse cx="140" cy="112" rx="12" ry="16"/></g>
+<g clip-path="url(#c6)">
+<rect x="-20" y="-20" width="260" height="260" fill="url(#g8)"/>
+</g>
+<g fill="url(#g10)"><ellipse cx="100" cy="98" rx="40" ry="56"/></g>
+<g clip-path="url(#c9)">
+<rect x="100" y="-20" width="140" height="260" fill="#8A4E36" opacity="0.14"/>
+<g transform="translate(0 3.5)" fill="#7A3E2A" opacity="0.3"><path d="M62 114 C52 70 70 42 100 42 C130 42 148 70 138 114 C134 108 124 106 116 110 C110 113 105 116 100 118 C95 116 90 113 84 110 C76 106 66 108 62 114 Z"/></g>
+</g>
+<path d="M97 144 Q100 146.5 103 144" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+<g fill="url(#g1)"><path d="M62 114 C52 70 70 42 100 42 C130 42 148 70 138 114 C134 108 124 106 116 110 C110 113 105 116 100 118 C95 116 90 113 84 110 C76 106 66 108 62 114 Z"/></g>
+<g clip-path="url(#c11)"><rect x="100" y="-20" width="140" height="260" fill="url(#g2)"/></g>
+<g transform="translate(0 2.5)"><rect x="35.5" y="127.5" width="21" height="25" rx="9" transform="rotate(10 46 140)" fill="#2B2230" opacity="0.3"/></g>
+<g transform="translate(0 2.5)"><rect x="143.5" y="127.5" width="21" height="25" rx="9" transform="rotate(-10 154 140)" fill="#2B2230" opacity="0.3"/></g>
+<rect x="35.5" y="127.5" width="21" height="25" rx="9" transform="rotate(10 46 140)" fill="url(#gHand)"/>
+<rect x="143.5" y="127.5" width="21" height="25" rx="9" transform="rotate(-10 154 140)" fill="url(#gHand)"/>
+</svg>

@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- R3 attempt 1: r2 attempt-1 DESIGN (split leaf hood with side veins, two rows of swept petals, round gold
+       brim, tapered flatbow with dark tips + leather grip, rounded-rect hands) in r2 attempt-2 RENDERING
+       (one heavy outer silhouette, no inner lines, soft gradients, contact shadows). No lining ring in the
+       opening: gold brim goes straight to the face. Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
+  <defs>
+    <path id="hood" d="M100 14 C118 32 150 56 159 92 C166 124 146 153 100 155 C54 153 34 124 41 92 C50 56 82 32 100 14 Z"/>
+    <clipPath id="hoodClip"><use href="#hood"/></clipPath>
+    <path id="pBackL" d="M60 96 C34 88 12 104 8 134 C28 140 52 128 70 112 Z"/>
+    <path id="pBackR" d="M140 96 C166 88 188 104 192 134 C172 140 148 128 130 112 Z"/>
+    <path id="pFrontL" d="M52 112 C30 114 18 134 22 158 C44 156 66 142 76 126 Z"/>
+    <path id="pFrontR" d="M148 112 C170 114 182 134 178 158 C156 156 134 142 124 126 Z"/>
+    <clipPath id="petalsClip"><use href="#pBackL"/><use href="#pBackR"/><use href="#pFrontL"/><use href="#pFrontR"/></clipPath>
+    <path id="brim" d="M50 134 C50 90 150 90 150 134 C148 152 130 160 100 160 C70 160 52 152 50 134 Z"/>
+    <clipPath id="brimClip"><use href="#brim"/></clipPath>
+    <path id="open" d="M62 132 C64 101 136 101 138 132 C134 151 66 151 62 132 Z"/>
+    <clipPath id="openClip"><use href="#open"/></clipPath>
+    <path id="bow" d="M28 146 C37 178 70 192 100 192 C130 192 163 178 172 146 L165 144 C154 169 128 181 100 181 C72 181 46 169 35 144 Z"/>
+    <clipPath id="bowClip"><use href="#bow"/></clipPath>
+    <g id="quiverShape" transform="rotate(28 138 52)">
+      <path d="M124 26 C116 16 116 6 122 0 C128 8 130 18 128 26 Z"/>
+      <path d="M137 24 C134 12 136 2 142 -4 C146 6 144 16 140 24 Z"/>
+      <path d="M150 26 C156 16 158 6 154 0 C148 8 146 18 146 26 Z"/>
+      <path d="M116 24 H160 L154 74 C153 80 123 80 122 74 Z"/>
+    </g>
+    <path id="shadeR" d="M100 -10 V220 H220 V-10 Z"/>
+
+    <linearGradient id="gLit" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#80C473"/><stop offset="1" stop-color="#66AD5F"/>
+    </linearGradient>
+    <linearGradient id="gShade" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#4C8C4F"/><stop offset="1" stop-color="#376E3D"/>
+    </linearGradient>
+    <linearGradient id="gPetalLit" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5DA458"/><stop offset="1" stop-color="#3F8046"/>
+    </linearGradient>
+    <linearGradient id="gPetalShade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#43854A"/><stop offset="1" stop-color="#2F6637"/>
+    </linearGradient>
+    <linearGradient id="gPetalBack" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2F6636"/><stop offset="1" stop-color="#234D29"/>
+    </linearGradient>
+    <linearGradient id="gBrim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F9CB5C"/><stop offset="1" stop-color="#E8A030"/>
+    </linearGradient>
+    <linearGradient id="gFace" x1="0" y1="101" x2="0" y2="150" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9A6250"/>
+      <stop offset="0.36" stop-color="#C98E6C"/>
+      <stop offset="0.62" stop-color="#F2C7A0"/>
+      <stop offset="1" stop-color="#F6D0AC"/>
+    </linearGradient>
+    <linearGradient id="gWood" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#D0935A"/><stop offset="0.5" stop-color="#B57944"/><stop offset="1" stop-color="#94602F"/>
+    </linearGradient>
+    <linearGradient id="gQuiver" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#B57944"/><stop offset="1" stop-color="#8A552C"/>
+    </linearGradient>
+    <linearGradient id="gGrip" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#A44A39"/><stop offset="1" stop-color="#7A3227"/>
+    </linearGradient>
+    <linearGradient id="gSteel" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#E2E6EB"/><stop offset="1" stop-color="#9AA2AE"/>
+    </linearGradient>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/>
+    </radialGradient>
+    <radialGradient id="gClasp" cx="0.35" cy="0.35" r="0.8">
+      <stop offset="0" stop-color="#B8E59A"/><stop offset="1" stop-color="#7DBB66"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ===== heavy outer silhouette ===== -->
+  <g fill="#2B2230" stroke="#2B2230" stroke-width="12" stroke-linejoin="round" stroke-linecap="round">
+    <use href="#pBackL"/><use href="#pBackR"/><use href="#pFrontL"/><use href="#pFrontR"/>
+    <use href="#quiverShape"/>
+    <use href="#hood"/><use href="#brim"/>
+    <use href="#bow"/>
+    <path d="M32 146 L100 156 L168 146" fill="none" stroke-width="8"/>
+    <path d="M100 152 V194" stroke-width="14"/>
+    <path d="M90 192 L100 208 L110 192 Z"/>
+    <rect x="86" y="175" width="28" height="21" rx="8"/>
+  </g>
+
+  <!-- ===== interior: colour only, no lines ===== -->
+  <!-- petals -->
+  <use href="#pBackL" fill="url(#gPetalBack)"/>
+  <use href="#pBackR" fill="url(#gPetalBack)"/>
+  <g clip-path="url(#petalsClip)">
+    <use href="#pFrontL" fill="#1F4425" transform="translate(0 -3)"/>
+    <use href="#pFrontR" fill="#1F4425" transform="translate(0 -3)"/>
+  </g>
+  <use href="#pFrontL" fill="url(#gPetalLit)"/>
+  <use href="#pFrontR" fill="url(#gPetalShade)"/>
+  <g fill="none" stroke-width="3" stroke-linecap="round">
+    <path d="M64 104 C46 104 30 112 20 126" stroke="#3E7A44" opacity="0.8"/>
+    <path d="M136 104 C154 104 170 112 180 126" stroke="#3A7140" opacity="0.8"/>
+    <path d="M62 124 C46 128 36 138 30 150" stroke="#357139"/>
+    <path d="M138 124 C154 128 164 138 170 150" stroke="#285A2E"/>
+  </g>
+
+  <!-- quiver -->
+  <g transform="rotate(28 138 52)">
+    <path d="M124 26 C116 16 116 6 122 0 C128 8 130 18 128 26 Z" fill="#FFF8E8"/>
+    <path d="M137 24 C134 12 136 2 142 -4 C146 6 144 16 140 24 Z" fill="#9AD17F"/>
+    <path d="M150 26 C156 16 158 6 154 0 C148 8 146 18 146 26 Z" fill="#FFF8E8"/>
+    <path d="M116 24 H160 L154 74 C153 80 123 80 122 74 Z" fill="url(#gQuiver)"/>
+    <path d="M116 24 H160 L159 33 H117 Z" fill="#F2B53A"/>
+    <path d="M117 33 H159 L158.5 36 H117.3 Z" fill="#B97E22"/>
+    <path d="M121 64 H155 L154 74 C153 80 123 80 122 74 Z" fill="#6E4222"/>
+    <path d="M128 40 V60 M138 40 V60 M148 40 V60" stroke="#6E4222" stroke-width="2" stroke-dasharray="3 3" opacity="0.7"/>
+  </g>
+
+  <!-- hood on a soft contact shadow -->
+  <use href="#hood" fill="#24502B" transform="translate(0 3)"/>
+  <use href="#hood" fill="url(#gLit)"/>
+  <g clip-path="url(#hoodClip)">
+    <use href="#shadeR" fill="url(#gShade)"/>
+    </g>
+
+  <!-- brim -->
+  <use href="#brim" fill="#2B2230" opacity="0.25" transform="translate(0 2)"/>
+  <use href="#brim" fill="url(#gBrim)"/>
+  <g clip-path="url(#brimClip)"><use href="#shadeR" fill="#D9952A" opacity="0.55"/></g>
+
+  <!-- face: straight from brim to face, soft brim shadow, subtle nose hint -->
+  <g clip-path="url(#openClip)">
+    <use href="#open" fill="url(#gFace)"/>
+    <path d="M100 96 H144 V156 H100 Z" fill="#8A4E36" opacity="0.14"/>
+    <path d="M97 136 Q100 138.5 103 136" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- gold arrowhead clasp -->
+  <path d="M100 79 L114 105 L100 99 L86 105 Z" fill="#2B2230" stroke="#2B2230" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M100 81 L112 103 L100 98 L88 103 Z" fill="#F7C552"/>
+  <path d="M100 81 L112 103 L100 98 Z" fill="#D9952A"/>
+
+  <!-- string -->
+  <path d="M32 146 L100 156 L168 146" fill="none" stroke="#FFF8E8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- arrow -->
+  <path d="M100 152 V194" stroke="#A0683A" stroke-width="4"/>
+  <path d="M90 192 L100 208 L110 192 Z" fill="url(#gSteel)"/>
+
+  <!-- tapered flatbow -->
+  <use href="#bow" fill="url(#gWood)"/>
+  <g clip-path="url(#bowClip)">
+    <path d="M20 130 L44 150 L36 162 L14 150 Z" fill="#2B2230"/>
+    <path d="M180 130 L156 150 L164 162 L186 150 Z" fill="#2B2230"/>
+  </g>
+  <rect x="83" y="178" width="34" height="15" rx="4" fill="url(#gGrip)"/>
+
+  <!-- rounded-rect hands -->
+  <rect x="88" y="175" width="24" height="21" rx="8" fill="url(#gHand)"/>
+  <rect x="89" y="149" width="22" height="20" rx="8" fill="#2B2230" opacity="0.3"/>
+  <rect x="89" y="147" width="22" height="20" rx="8" fill="url(#gHand)"/>
+</svg>
