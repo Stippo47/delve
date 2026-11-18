@@ -1,0 +1,252 @@
+{
+  "title": "Art round 2: your notes applied",
+  "topic": "art",
+  "order": 2,
+  "priority": 1,
+  "tags": [
+    "first"
+  ],
+  "cards": [
+    {
+      "id": "round2",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Art round 2",
+      "text": "Every design with your notes applied, plus new Bastions. Tick the keepers, comment on any.",
+      "why": "Your ticks become the game's art. Each picture shows the design beside the archer at the same size, then 8 turns at game size.",
+      "pick": [
+        "knight-dame",
+        "knight-paladin",
+        "knight-bastion-a",
+        "skeleton-rattler",
+        "skeleton-brute",
+        "rogue-twinfang",
+        "rogue-shade-collar",
+        "farmer-granny-reaper",
+        "barbarian-wildmane",
+        "barbarian-bearskin-b",
+        "barbarian-warhelm-a"
+      ],
+      "details": "Every sprite is now built in parts: the body, each arm with what it holds, and a cape or quiver behind. The outline is added afterwards over the whole figure. So weapon swings, the bow drawing back and arm swing can come next, once you've picked.\n\nThe outline in these pictures is a rounder version than the brief first asked for: two of the artists found the first one squared off points.\n\nWhere a note was open (crown or accent, cape or collar, mask or not, club or another weapon, the Warhelm's shoulders, what replaces the woad stripes), there are two versions to pick from.\n\nEach item's text has your note, what changed and what's still weak.",
+      "items": [
+        {
+          "id": "archer",
+          "label": "Archer, split into parts",
+          "image": "../../../design/class-round2/archer/renders/archer.png",
+          "thumb": "../../../design/class-round2/archer/renders/archer-thumb.png",
+          "text": "Your note: Locked: should look the same.\n\nChanged: Rebuilt as parts so the bow arm and the drawing arm can animate. Looks the same at game size.\n\nStill weak: The arrow now draws over the bow hand (a thin line across it), so it can be pulled back."
+        },
+        {
+          "id": "knight-paladin",
+          "label": "Knight · Paladin",
+          "image": "../../../design/class-round2/knight/renders/knight-paladin.png",
+          "thumb": "../../../design/class-round2/knight/renders/knight-paladin-thumb.png",
+          "text": "Your note: Hand holding shield hidden. Longer, bigger sword, angled inwards.\n\nChanged: Shield covers the hand; blade about 70% longer, angled in to point front-centre.\n\nStill weak: Cape hem still a bit cloud-like."
+        },
+        {
+          "id": "knight-old-guard",
+          "label": "Knight · Old Guard",
+          "image": "../../../design/class-round2/knight/renders/knight-old-guard.png",
+          "thumb": "../../../design/class-round2/knight/renders/knight-old-guard-thumb.png",
+          "text": "Your note: Sword short, pose weird. Cape wider and straight on. Beard not meshing with balding hairline.\n\nChanged: Greatsword in both fists across the front; wide straight crimson cape; hair, sideburns and beard one connected piece. Back shield dropped.\n\nStill weak: The diagonal hold is a guess at 'weird'."
+        },
+        {
+          "id": "knight-dame",
+          "label": "Knight · Dame (circlet)",
+          "image": "../../../design/class-round2/knight/renders/knight-dame.png",
+          "thumb": "../../../design/class-round2/knight/renders/knight-dame-thumb.png",
+          "text": "Your note: Cape straight. Hand on shield hidden. Gold crown or accent. Bigger, cooler sword. Hair shadow on face should be hair-coloured.\n\nChanged: Straight centred cape, hidden hand, gold circlet with a gem, leaf blade with gold guard, warm auburn hair shadow.\n\nStill weak: Circlet can look a bit like a halo."
+        },
+        {
+          "id": "knight-dame-tiara",
+          "label": "Knight · Dame (tiara)",
+          "image": "../../../design/class-round2/knight/renders/knight-dame-tiara.png",
+          "thumb": "../../../design/class-round2/knight/renders/knight-dame-tiara-thumb.png",
+          "text": "Your note: Same notes as the circlet version.\n\nChanged: The same, with a gold tiara peaked at the parting instead.\n\nStill weak: Guard blurs to a gold flick at game size."
+        },
+        {
+          "id": "knight-bastion-a",
+          "label": "Knight · Bastion A, Tower",
+          "image": "../../../design/class-round2/knight/renders/knight-bastion-a.png",
+          "thumb": "../../../design/class-round2/knight/renders/knight-bastion-a-thumb.png",
+          "text": "Your note: Bastion: can't tell what's going on. Redo, 3 versions.\n\nChanged: New: closed helm with a white crest, stepped shoulder plates, red tower shield, flanged mace.\n\nStill weak: Faceless; the shield hides one shoulder."
+        },
+        {
+          "id": "knight-bastion-b",
+          "label": "Knight · Bastion B, Bulwark",
+          "image": "../../../design/class-round2/knight/renders/knight-bastion-b.png",
+          "thumb": "../../../design/class-round2/knight/renders/knight-bastion-b-thumb.png",
+          "text": "Your note: Redo, 3 versions.\n\nChanged: New: kettle hat with the face showing, bronze pauldrons, round green shield, long spear.\n\nStill weak: Reads more foot soldier than heavy knight."
+        },
+        {
+          "id": "knight-bastion-c",
+          "label": "Knight · Bastion C, Griffon",
+          "image": "../../../design/class-round2/knight/renders/knight-bastion-c.png",
+          "thumb": "../../../design/class-round2/knight/renders/knight-bastion-c-thumb.png",
+          "text": "Your note: Redo, 3 versions.\n\nChanged: New: round helm with gold wings, purple spaulders, chevron heater shield, warhammer.\n\nStill weak: Shoulders merge into one purple slab behind."
+        },
+        {
+          "id": "skeleton-rattler",
+          "label": "Skeleton · Rattler",
+          "image": "../../../design/class-round2/skeleton/renders/skeleton-rattler.png",
+          "thumb": "../../../design/class-round2/skeleton/renders/skeleton-rattler-thumb.png",
+          "text": "Your note: Remove rib cage. Eye sockets. No split down the middle. Then variants.\n\nChanged: Sockets, one soft gradient, nose the right way up, no ribs; collarbones under the chin; bigger sword.\n\nStill weak: Plainest of the set."
+        },
+        {
+          "id": "skeleton-rattler-jawless",
+          "label": "Skeleton · Rattler, no jaw",
+          "image": "../../../design/class-round2/skeleton/renders/skeleton-rattler-jawless.png",
+          "thumb": "../../../design/class-round2/skeleton/renders/skeleton-rattler-jawless-thumb.png",
+          "text": "Your note: Including one without a bottom jaw.\n\nChanged: Skull stops at the upper jaw; long teeth hang free.\n\nStill weak: Close to the plain Rattler at game size."
+        },
+        {
+          "id": "skeleton-rattler-loosejaw",
+          "label": "Skeleton · Rattler, loose jaw",
+          "image": "../../../design/class-round2/skeleton/renders/skeleton-rattler-loosejaw.png",
+          "thumb": "../../../design/class-round2/skeleton/renders/skeleton-rattler-loosejaw-thumb.png",
+          "text": "Your note: Variants.\n\nChanged: A chip out of the dome, one bigger socket, jaw hanging crooked with a tooth missing.\n\nStill weak: Lower teeth tiny at game size."
+        },
+        {
+          "id": "skeleton-gaper",
+          "label": "Skeleton · Gaper",
+          "image": "../../../design/class-round2/skeleton/renders/skeleton-gaper.png",
+          "thumb": "../../../design/class-round2/skeleton/renders/skeleton-gaper-thumb.png",
+          "text": "Your note: Why the hood shadow? No split. Eye sockets. Nose triangle the wrong way?\n\nChanged: Hood shadow gone, no split, sockets, nose flipped; spear held low in both hands, bigger head; spine sways behind.\n\nStill weak: Open jaw runs a little past the base head."
+        },
+        {
+          "id": "skeleton-brute",
+          "label": "Skeleton · Brute",
+          "image": "../../../design/class-round2/skeleton/renders/skeleton-brute.png",
+          "thumb": "../../../design/class-round2/skeleton/renders/skeleton-brute-thumb.png",
+          "text": "Your note: Same edits. Remove the arm bones.\n\nChanged: Arm bones gone: fists float in front of big shoulder balls. Smaller skull, shorter tusks, bigger cleaver.\n\nStill weak: Widest of the set, still a bit boxy."
+        },
+        {
+          "id": "skeleton-hollow",
+          "label": "Skeleton · Hollow",
+          "image": "../../../design/class-round2/skeleton/renders/skeleton-hollow.png",
+          "thumb": "../../../design/class-round2/skeleton/renders/skeleton-hollow-thumb.png",
+          "text": "Your note: You get the idea.\n\nChanged: Ribs gone; the biggest, deepest sockets; back hand on the hip instead of waving; longer rapier with a cup guard.\n\nStill weak: Rapier still the thinnest weapon."
+        },
+        {
+          "id": "rogue-twinfang",
+          "label": "Rogue · Twinfang",
+          "image": "../../../design/class-round2/rogue/renders/rogue-twinfang.png",
+          "thumb": "../../../design/class-round2/rogue/renders/rogue-twinfang-thumb.png",
+          "text": "Your note: Cape centred and wider.\n\nChanged: Centred crimson cape, wider than the shoulders; bigger daggers held low.\n\nStill weak: Ponytail sits off-centre on the cape."
+        },
+        {
+          "id": "rogue-bandit-mask",
+          "label": "Rogue · Bandit (mask)",
+          "image": "../../../design/class-round2/rogue/renders/rogue-bandit-mask.png",
+          "thumb": "../../../design/class-round2/rogue/renders/rogue-bandit-mask-thumb.png",
+          "text": "Your note: Mask over the lower face? Bigger sword. Bandana on the forehead, hair peeking through.\n\nChanged: Bandana low on the forehead with hair above and locks over it; slate face mask; a big cutlass held low.\n\nStill weak: One-sided silhouette."
+        },
+        {
+          "id": "rogue-bandit-nomask",
+          "label": "Rogue · Bandit (no mask)",
+          "image": "../../../design/class-round2/rogue/renders/rogue-bandit-nomask.png",
+          "thumb": "../../../design/class-round2/rogue/renders/rogue-bandit-nomask-thumb.png",
+          "text": "Your note: Same notes.\n\nChanged: The same, with a mustard neckerchief instead of the mask.\n\nStill weak: Locks a bit spiky up close."
+        },
+        {
+          "id": "rogue-shade-cape",
+          "label": "Rogue · Shade (cape)",
+          "image": "../../../design/class-round2/rogue/renders/rogue-shade-cape.png",
+          "thumb": "../../../design/class-round2/rogue/renders/rogue-shade-cape-thumb.png",
+          "text": "Your note: Hard to read depth. Cape or raised collar? Headband off. Purple hilts?\n\nChanged: Depth layered dark to light; bell cloak; headband goes round the head with tails; purple hilts, bigger daggers.\n\nStill weak: Hands sit on the jaw."
+        },
+        {
+          "id": "rogue-shade-collar",
+          "label": "Rogue · Shade (collar)",
+          "image": "../../../design/class-round2/rogue/renders/rogue-shade-collar.png",
+          "thumb": "../../../design/class-round2/rogue/renders/rogue-shade-collar-thumb.png",
+          "text": "Your note: Same notes; the Dracula collar.\n\nChanged: Tight raised collar with a crimson lining instead of the cloak.\n\nStill weak: Collar points look a bit like ears small."
+        },
+        {
+          "id": "farmer-granny-reaper",
+          "label": "Farmer · Granny Reaper",
+          "image": "../../../design/class-round2/farmer/renders/farmer-granny-reaper.png",
+          "thumb": "../../../design/class-round2/farmer/renders/farmer-granny-reaper-thumb.png",
+          "text": "Your note: Hold it below the body, not on top. Bigger, better hand positions.\n\nChanged: Both fists grip the snath at the front; blade 1.6x longer, sweeping across below the chin.\n\nStill weak: Outline chunky at the blade tip."
+        },
+        {
+          "id": "farmer-haymaker-fork",
+          "label": "Farmer · Haymaker (fork)",
+          "image": "../../../design/class-round2/farmer/renders/farmer-haymaker-fork.png",
+          "thumb": "../../../design/class-round2/farmer/renders/farmer-haymaker-fork-thumb.png",
+          "text": "Your note: Hat is off. Rake too, and how it's held.\n\nChanged: New tipped-back straw hat with a wavy brim; three-tine pitchfork held diagonally, fists apart.\n\nStill weak: Hat hides most of the shoulders."
+        },
+        {
+          "id": "farmer-haymaker-rake",
+          "label": "Farmer · Haymaker (rake)",
+          "image": "../../../design/class-round2/farmer/renders/farmer-haymaker-rake.png",
+          "thumb": "../../../design/class-round2/farmer/renders/farmer-haymaker-rake-thumb.png",
+          "text": "Your note: Same notes.\n\nChanged: The same, with a wooden hay rake.\n\nStill weak: Rake teeth merge at game size."
+        },
+        {
+          "id": "farmer-digger",
+          "label": "Farmer · Digger",
+          "image": "../../../design/class-round2/farmer/renders/farmer-digger.png",
+          "thumb": "../../../design/class-round2/farmer/renders/farmer-digger-thumb.png",
+          "text": "Your note: Bad overall. You can retry.\n\nChanged: A new character: knit beanie with a pompom, big moustache, work coat, big spade held low.\n\nStill weak: One fist touches the cheek."
+        },
+        {
+          "id": "farmer-grandpa-sickle",
+          "label": "Farmer · Grandpa Sickle",
+          "image": "../../../design/class-round2/farmer/renders/farmer-grandpa-sickle.png",
+          "thumb": "../../../design/class-round2/farmer/renders/farmer-grandpa-sickle-thumb.png",
+          "text": "Your note: Can't tell what's on his back. Forehead shadow? Beard, nose line, doesn't mesh with hair.\n\nChanged: Sheaf across his back with stalks and ears; lit bald dome; hair and beard one white shape with a real moustache; bigger sickle.\n\nStill weak: Beard is a big plain white area."
+        },
+        {
+          "id": "barbarian-wildmane",
+          "label": "Barbarian · Wildmane",
+          "image": "../../../design/class-round2/barbarian/renders/barbarian-wildmane.png",
+          "thumb": "../../../design/class-round2/barbarian/renders/barbarian-wildmane-thumb.png",
+          "text": "Your note: Sword below the body, not above. Bigger.\n\nChanged: Sword moved to the right hand, low, wider blade and guard.\n\nStill weak: Fist over the pommel a little like a thumbs-up."
+        },
+        {
+          "id": "barbarian-bearskin-a",
+          "label": "Barbarian · Bearskin (club)",
+          "image": "../../../design/class-round2/barbarian/renders/barbarian-bearskin-a.png",
+          "thumb": "../../../design/class-round2/barbarian/renders/barbarian-bearskin-a-thumb.png",
+          "text": "Your note: Weapon hard to see. Spiked club doesn't look right.\n\nChanged: Club moved off the face; rebuilt as a pale wooden club with iron spikes.\n\nStill weak: Spikes run into the fur in some turns."
+        },
+        {
+          "id": "barbarian-bearskin-b",
+          "label": "Barbarian · Bearskin (axe)",
+          "image": "../../../design/class-round2/barbarian/renders/barbarian-bearskin-b.png",
+          "thumb": "../../../design/class-round2/barbarian/renders/barbarian-bearskin-b-thumb.png",
+          "text": "Your note: Or another weapon.\n\nChanged: The same bear, with a double-bit war axe.\n\nStill weak: Reads clearest of all at game size."
+        },
+        {
+          "id": "barbarian-warhelm-a",
+          "label": "Barbarian · Warhelm (plates)",
+          "image": "../../../design/class-round2/barbarian/renders/barbarian-warhelm-a.png",
+          "thumb": "../../../design/class-round2/barbarian/renders/barbarian-warhelm-a-thumb.png",
+          "text": "Your note: Hammer and its position bad. Helm midline off. Shoulder pads. Can't see the beard.\n\nChanged: New hammer with a visible haft, clear of the beard; midline straight; layered plate pauldrons; lighter beard.\n\nStill weak: Face is a thin strip."
+        },
+        {
+          "id": "barbarian-warhelm-b",
+          "label": "Barbarian · Warhelm (spike)",
+          "image": "../../../design/class-round2/barbarian/renders/barbarian-warhelm-b.png",
+          "thumb": "../../../design/class-round2/barbarian/renders/barbarian-warhelm-b-thumb.png",
+          "text": "Your note: Same notes; the shoulder pads.\n\nChanged: The same, with domed gold-rimmed pauldrons and one big spike.\n\nStill weak: Hammer head smallish small."
+        },
+        {
+          "id": "barbarian-berserker-a",
+          "label": "Barbarian · Berserker (strap)",
+          "image": "../../../design/class-round2/barbarian/renders/barbarian-berserker-a.png",
+          "thumb": "../../../design/class-round2/barbarian/renders/barbarian-berserker-a-thumb.png",
+          "text": "Your note: Same weapon problems. Don't like the striped shoulder. Bangs peek out under the mohawk.\n\nChanged: Bigger flail held low; stripes replaced by a leather strap; one smooth hairline, the crest covers it.\n\nStill weak: Short chain."
+        },
+        {
+          "id": "barbarian-berserker-b",
+          "label": "Barbarian · Berserker (pelt)",
+          "image": "../../../design/class-round2/barbarian/renders/barbarian-berserker-b.png",
+          "thumb": "../../../design/class-round2/barbarian/renders/barbarian-berserker-b-thumb.png",
+          "text": "Your note: Same notes.\n\nChanged: The same, with a grey wolf pelt on the bare shoulder.\n\nStill weak: The pelt echoes Wildmane's fur."
+        }
+      ]
+    }
+  ]
+}

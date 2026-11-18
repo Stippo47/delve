@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- SKELETON round 2 "Gaper": hunched scavenger. Long narrow skull pushed forward, the lower jaw hanging open and loose, a few vertebrae trailing behind, coat-hanger collarbones with knobbed ends. Spear held in both hands, so both hands and the spear are in #arm-r and there is no #arm-l. #back = the trailing vertebrae. The outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feComposite in="a" in2="b" operator="over" result="ab"/><feComposite in="c" in2="ab" operator="over" result="d"/><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="shX" x1="70" y1="0" x2="160" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4A3220" stop-opacity="0"/><stop offset="1" stop-color="#4A3220" stop-opacity="0.34"/></linearGradient>
+    <linearGradient id="gSkull" x1="52" y1="40" x2="150" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FCF6E4"/><stop offset="0.5" stop-color="#F0E2BE"/><stop offset="1" stop-color="#D6C096"/></linearGradient>
+    <radialGradient id="gDome" cx="84" cy="74" r="44" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
+    <linearGradient id="gBone" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#F7EDD3"/><stop offset="1" stop-color="#E0CFA4"/></linearGradient>
+    <linearGradient id="gBone2" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#DCCDA6"/><stop offset="1" stop-color="#B6A47C"/></linearGradient>
+    <linearGradient id="gSock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B2230"/><stop offset="1" stop-color="#4A3A3C"/></linearGradient>
+    <linearGradient id="gIron" x1="0" y1="0" x2="1" y2="0.3"><stop offset="0" stop-color="#ABA29A"/><stop offset="1" stop-color="#776C66"/></linearGradient>
+    <linearGradient id="gRust" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D27A40"/><stop offset="1" stop-color="#A4532B"/></linearGradient>
+    <linearGradient id="gWood" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9A6A40"/><stop offset="1" stop-color="#6E4628"/></linearGradient>
+    <linearGradient id="gWrap" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7A4A32"/><stop offset="1" stop-color="#55301F"/></linearGradient>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+    <path id="vert0-w" d="M89.6 36.4 H110.4 A3.6 3.6 0 0 1 114 40 V40 A3.6 3.6 0 0 1 110.4 43.6 H89.6 A3.6 3.6 0 0 1 86 40 V40 A3.6 3.6 0 0 1 89.6 36.4 Z"/>
+    <path id="vert0" d="M98.5 34 H101.5 A5 5 0 0 1 106.5 39 V41 A5 5 0 0 1 101.5 46 H98.5 A5 5 0 0 1 93.5 41 V39 A5 5 0 0 1 98.5 34 Z"/>
+    <path id="vert1-w" d="M91.2 23.9 H108.8 A3.1 3.1 0 0 1 111.9 27 V27 A3.1 3.1 0 0 1 108.8 30.1 H91.2 A3.1 3.1 0 0 1 88.1 27 V27 A3.1 3.1 0 0 1 91.2 23.9 Z"/>
+    <path id="vert1" d="M98.7 21.9 H101.3 A4.2 4.2 0 0 1 105.5 26.1 V27.8 A4.2 4.2 0 0 1 101.3 32.1 H98.7 A4.2 4.2 0 0 1 94.5 27.8 V26.1 A4.2 4.2 0 0 1 98.7 21.9 Z"/>
+    <path id="vert2-w" d="M92.7 13.5 H107.3 A2.5 2.5 0 0 1 109.8 16 V16 A2.5 2.5 0 0 1 107.3 18.5 H92.7 A2.5 2.5 0 0 1 90.2 16 V16 A2.5 2.5 0 0 1 92.7 13.5 Z"/>
+    <path id="vert2" d="M99 11.8 H101 A3.5 3.5 0 0 1 104.5 15.3 V16.7 A3.5 3.5 0 0 1 101 20.2 H99 A3.5 3.5 0 0 1 95.5 16.7 V15.3 A3.5 3.5 0 0 1 99 11.8 Z"/>
+    <path id="collar-l" d="M93.4 142.3 L90.7 139.9 L88 137.5 L85.2 135 L82.5 132.5 L79.7 130 L77 127.5 L74.2 124.9 L71.4 122.4 L68.6 119.8 L65.8 117.1 L63 114.5 L60.1 111.8 L57.3 109.1 L54.4 106.3 L51.5 103.6 L48.6 100.8 L45.7 98 L42.8 95.2 A4 4 0 0 1 37.2 100.8 L40 103.8 L42.9 106.6 L45.7 109.5 L48.5 112.4 L51.3 115.2 L54.1 118 L56.9 120.8 L59.6 123.5 L62.4 126.2 L65.1 128.9 L67.9 131.6 L70.6 134.3 L73.3 136.9 L76 139.5 L78.7 142.1 L81.3 144.6 L84 147.2 L86.6 149.7 L86.6 149.7 A5 5 0 0 1 93.4 142.3 Z"/>
+    <path id="collar-r" d="M 106.6 142.3 L 109.3 139.9 L 112 137.5 L 114.8 135 L 117.5 132.5 L 120.3 130 L 123 127.5 L 125.8 124.9 L 128.6 122.4 L 131.4 119.8 L 134.2 117.1 L 137 114.5 L 139.9 111.8 L 142.7 109.1 L 145.6 106.3 L 148.5 103.6 L 151.4 100.8 L 154.3 98 L 157.2 95.2 A 4 4 0 0 0 162.8 100.8 L 160 103.8 L 157.1 106.6 L 154.3 109.5 L 151.5 112.4 L 148.7 115.2 L 145.9 118 L 143.1 120.8 L 140.4 123.5 L 137.6 126.2 L 134.9 128.9 L 132.1 131.6 L 129.4 134.3 L 126.7 136.9 L 124 139.5 L 121.3 142.1 L 118.7 144.6 L 116 147.2 L 113.4 149.7 L 113.4 149.7 A 5 5 0 0 0 106.6 142.3 Z"/>
+    <path id="knobA-l" d="M28 104 A8 8 0 1 0 44 104 A8 8 0 1 0 28 104 Z"/>
+    <path id="knobA-r" d="M 172 104 A 8 8 0 1 1 156 104 A 8 8 0 1 1 172 104 Z"/>
+    <path id="knobB-l" d="M34 92 A8 8 0 1 0 50 92 A8 8 0 1 0 34 92 Z"/>
+    <path id="knobB-r" d="M 166 92 A 8 8 0 1 1 150 92 A 8 8 0 1 1 166 92 Z"/>
+    <path id="jaw" d="M73 154 C73 150.5 77 149.5 80 151.5 H120 C123 149.5 127 150.5 127 154 C126 164 115 170 100 170 C85 170 74 164 73 154 Z"/>
+    <path id="ltooth0" d="M84 145.5 H85 A3 3 0 0 1 88 148.5 V151.5 A3 3 0 0 1 85 154.5 H84 A3 3 0 0 1 81 151.5 V148.5 A3 3 0 0 1 84 145.5 Z"/>
+    <path id="ltooth1" d="M93 145.5 H94 A3 3 0 0 1 97 148.5 V151.5 A3 3 0 0 1 94 154.5 H93 A3 3 0 0 1 90 151.5 V148.5 A3 3 0 0 1 93 145.5 Z"/>
+    <path id="ltooth2" d="M108 145.5 H109 A3 3 0 0 1 112 148.5 V151.5 A3 3 0 0 1 109 154.5 H108 A3 3 0 0 1 105 151.5 V148.5 A3 3 0 0 1 108 145.5 Z"/>
+    <path id="ltooth3" d="M117 145.5 H118 A3 3 0 0 1 121 148.5 V151.5 A3 3 0 0 1 118 154.5 H117 A3 3 0 0 1 114 151.5 V148.5 A3 3 0 0 1 117 145.5 Z"/>
+    <path id="tooth0" d="M81.2 130 H81.8 A3.2 3.2 0 0 1 85 133.2 V135.8 A3.2 3.2 0 0 1 81.8 139 H81.2 A3.2 3.2 0 0 1 78 135.8 V133.2 A3.2 3.2 0 0 1 81.2 130 Z"/>
+    <path id="tooth1" d="M90.4 130 H91.1 A3.2 3.2 0 0 1 94.3 133.2 V138.8 A3.2 3.2 0 0 1 91.1 142 H90.4 A3.2 3.2 0 0 1 87.2 138.8 V133.2 A3.2 3.2 0 0 1 90.4 130 Z"/>
+    <path id="tooth2" d="M99.7 130 H100.3 A3.2 3.2 0 0 1 103.5 133.2 V138.8 A3.2 3.2 0 0 1 100.3 142 H99.7 A3.2 3.2 0 0 1 96.5 138.8 V133.2 A3.2 3.2 0 0 1 99.7 130 Z"/>
+    <path id="tooth3" d="M108.9 130 H109.6 A3.2 3.2 0 0 1 112.8 133.2 V138.8 A3.2 3.2 0 0 1 109.6 142 H108.9 A3.2 3.2 0 0 1 105.7 138.8 V133.2 A3.2 3.2 0 0 1 108.9 130 Z"/>
+    <path id="tooth4" d="M118.2 130 H118.8 A3.2 3.2 0 0 1 122 133.2 V135.8 A3.2 3.2 0 0 1 118.8 139 H118.2 A3.2 3.2 0 0 1 115 135.8 V133.2 A3.2 3.2 0 0 1 118.2 130 Z"/>
+    <path id="skull" d="M100 47 C122 47 139 62 140 87 C141 103 140 111 142 118 C144 124 140 129 134 131 C132 136 127 139 121 140 L79 140 C73 139 68 136 66 131 C60 129 56 124 58 118 C60 111 59 103 60 87 C61 62 78 47 100 47 Z"/>
+    <path id="shaft" d="M 173.5 91.5 L 173.5 91.5 A 4.5 4.5 13 0 1 176.9 96.9 L 162.7 158.3 A 4.5 4.5 13 0 1 157.3 161.7 L 157.3 161.7 A 4.5 4.5 13 0 1 153.9 156.3 L 168.1 94.9 A 4.5 4.5 13 0 1 173.5 91.5 Z"/>
+    <path id="spearhead" d="M 148.1 201.6 C 142.3 191.1 140.4 177.3 143.6 167.8 C 146.4 160.2 152.1 157.4 158.2 157.8 C 163.8 160.1 167.8 165.1 167 173.2 C 165.7 183.1 157.9 194.7 148.1 201.6 Z"/>
+    <path id="binding" d="M 155.2 150.9 L 163.9 153 A 3 3 13 0 1 166.2 156.6 L 165.7 158.5 A 3 3 13 0 1 162.1 160.8 L 153.4 158.7 A 3 3 13 0 1 151.1 155.1 L 151.6 153.2 A 3 3 13 0 1 155.2 150.9 Z"/>
+    <path id="hand-back-f0" d="M 150.1 107.4 L 150.1 107.4 A 2.1 2.1 13 0 1 151.7 109.9 L 150.1 116.5 A 2.1 2.1 13 0 1 147.6 118.1 L 147.6 118.1 A 2.1 2.1 13 0 1 146 115.6 L 147.6 108.9 A 2.1 2.1 13 0 1 150.1 107.4 Z"/>
+    <path id="hand-back-f1" d="M 155.8 108.7 L 155.8 108.7 A 2.1 2.1 13 0 1 157.4 111.2 L 155.9 117.8 A 2.1 2.1 13 0 1 153.4 119.4 L 153.4 119.4 A 2.1 2.1 13 0 1 151.8 116.9 L 153.3 110.3 A 2.1 2.1 13 0 1 155.8 108.7 Z"/>
+    <path id="hand-back-f2" d="M 161.7 110 L 161.7 110 A 2.1 2.1 13 0 1 163.3 112.6 L 161.7 119.2 A 2.1 2.1 13 0 1 159.2 120.8 L 159.2 120.8 A 2.1 2.1 13 0 1 157.6 118.2 L 159.2 111.6 A 2.1 2.1 13 0 1 161.7 110 Z"/>
+    <path id="hand-back-f3" d="M 167.4 111.4 L 167.4 111.4 A 2.1 2.1 13 0 1 169 113.9 L 167.5 120.5 A 2.1 2.1 13 0 1 165 122.1 L 165 122.1 A 2.1 2.1 13 0 1 163.4 119.6 L 164.9 112.9 A 2.1 2.1 13 0 1 167.4 111.4 Z"/>
+    <path id="hand-back-palm" d="M 156.8 95.6 L 166.6 97.8 A 6 6 13 0 1 171.1 105 L 170.4 107.9 A 6 6 13 0 1 163.2 112.4 L 153.4 110.2 A 6 6 13 0 1 148.9 103 L 149.6 100.1 A 6 6 13 0 1 156.8 95.6 Z"/>
+    <path id="hand-front-f0" d="M 150.1 137.4 L 150.1 137.4 A 2.1 2.1 13 0 1 151.7 139.9 L 150.1 146.5 A 2.1 2.1 13 0 1 147.6 148.1 L 147.6 148.1 A 2.1 2.1 13 0 1 146 145.6 L 147.6 138.9 A 2.1 2.1 13 0 1 150.1 137.4 Z"/>
+    <path id="hand-front-f1" d="M 155.8 138.7 L 155.8 138.7 A 2.1 2.1 13 0 1 157.4 141.2 L 155.9 147.8 A 2.1 2.1 13 0 1 153.4 149.4 L 153.4 149.4 A 2.1 2.1 13 0 1 151.8 146.9 L 153.3 140.3 A 2.1 2.1 13 0 1 155.8 138.7 Z"/>
+    <path id="hand-front-f2" d="M 161.7 140 L 161.7 140 A 2.1 2.1 13 0 1 163.3 142.6 L 161.7 149.2 A 2.1 2.1 13 0 1 159.2 150.8 L 159.2 150.8 A 2.1 2.1 13 0 1 157.6 148.2 L 159.2 141.6 A 2.1 2.1 13 0 1 161.7 140 Z"/>
+    <path id="hand-front-f3" d="M 167.4 141.4 L 167.4 141.4 A 2.1 2.1 13 0 1 169 143.9 L 167.5 150.5 A 2.1 2.1 13 0 1 165 152.1 L 165 152.1 A 2.1 2.1 13 0 1 163.4 149.6 L 164.9 142.9 A 2.1 2.1 13 0 1 167.4 141.4 Z"/>
+    <path id="hand-front-palm" d="M 156.8 125.6 L 166.6 127.8 A 6 6 13 0 1 171.1 135 L 170.4 137.9 A 6 6 13 0 1 163.2 142.4 L 153.4 140.2 A 6 6 13 0 1 148.9 133 L 149.6 130.1 A 6 6 13 0 1 156.8 125.6 Z"/>
+    <clipPath id="under-vert0"><use href="#vert0-w"/></clipPath>
+    <clipPath id="under-vert1"><use href="#vert0-w"/><use href="#vert0"/><use href="#vert1-w"/></clipPath>
+    <clipPath id="under-vert2"><use href="#vert0-w"/><use href="#vert0"/><use href="#vert1-w"/><use href="#vert1"/><use href="#vert2-w"/></clipPath>
+    <clipPath id="under-knobB-l"><use href="#vert0-w"/><use href="#vert0"/><use href="#vert1-w"/><use href="#vert1"/><use href="#vert2-w"/><use href="#vert2"/><use href="#collar-l"/><use href="#collar-r"/><use href="#knobA-l"/><use href="#knobA-r"/></clipPath>
+    <clipPath id="under-knobB-r"><use href="#vert0-w"/><use href="#vert0"/><use href="#vert1-w"/><use href="#vert1"/><use href="#vert2-w"/><use href="#vert2"/><use href="#collar-l"/><use href="#collar-r"/><use href="#knobA-l"/><use href="#knobA-r"/><use href="#knobB-l"/></clipPath>
+    <clipPath id="under-skull"><use href="#vert0-w"/><use href="#vert0"/><use href="#vert1-w"/><use href="#vert1"/><use href="#vert2-w"/><use href="#vert2"/><use href="#collar-l"/><use href="#collar-r"/><use href="#knobA-l"/><use href="#knobA-r"/><use href="#knobB-l"/><use href="#knobB-r"/><use href="#jaw"/><use href="#ltooth0"/><use href="#ltooth1"/><use href="#ltooth2"/><use href="#ltooth3"/></clipPath>
+    <clipPath id="skull-c"><use href="#skull"/></clipPath>
+    <clipPath id="under-spearhead"><use href="#vert0-w"/><use href="#vert0"/><use href="#vert1-w"/><use href="#vert1"/><use href="#vert2-w"/><use href="#vert2"/><use href="#collar-l"/><use href="#collar-r"/><use href="#knobA-l"/><use href="#knobA-r"/><use href="#knobB-l"/><use href="#knobB-r"/><use href="#jaw"/><use href="#ltooth0"/><use href="#ltooth1"/><use href="#ltooth2"/><use href="#ltooth3"/><use href="#skull"/><use href="#shaft"/></clipPath>
+    <clipPath id="spearhead-c"><use href="#spearhead"/></clipPath>
+    <clipPath id="under-binding"><use href="#vert0-w"/><use href="#vert0"/><use href="#vert1-w"/><use href="#vert1"/><use href="#vert2-w"/><use href="#vert2"/><use href="#collar-l"/><use href="#collar-r"/><use href="#knobA-l"/><use href="#knobA-r"/><use href="#knobB-l"/><use href="#knobB-r"/><use href="#jaw"/><use href="#ltooth0"/><use href="#ltooth1"/><use href="#ltooth2"/><use href="#ltooth3"/><use href="#skull"/><use href="#shaft"/><use href="#spearhead"/></clipPath>
+    <clipPath id="under-hand-back-palm"><use href="#vert0-w"/><use href="#vert0"/><use href="#vert1-w"/><use href="#vert1"/><use href="#vert2-w"/><use href="#vert2"/><use href="#collar-l"/><use href="#collar-r"/><use href="#knobA-l"/><use href="#knobA-r"/><use href="#knobB-l"/><use href="#knobB-r"/><use href="#jaw"/><use href="#ltooth0"/><use href="#ltooth1"/><use href="#ltooth2"/><use href="#ltooth3"/><use href="#skull"/><use href="#shaft"/><use href="#spearhead"/><use href="#binding"/><use href="#hand-back-f0"/><use href="#hand-back-f1"/><use href="#hand-back-f2"/><use href="#hand-back-f3"/></clipPath>
+    <clipPath id="under-hand-front-palm"><use href="#vert0-w"/><use href="#vert0"/><use href="#vert1-w"/><use href="#vert1"/><use href="#vert2-w"/><use href="#vert2"/><use href="#collar-l"/><use href="#collar-r"/><use href="#knobA-l"/><use href="#knobA-r"/><use href="#knobB-l"/><use href="#knobB-r"/><use href="#jaw"/><use href="#ltooth0"/><use href="#ltooth1"/><use href="#ltooth2"/><use href="#ltooth3"/><use href="#skull"/><use href="#shaft"/><use href="#spearhead"/><use href="#binding"/><use href="#hand-back-f0"/><use href="#hand-back-f1"/><use href="#hand-back-f2"/><use href="#hand-back-f3"/><use href="#hand-back-palm"/><use href="#hand-front-f0"/><use href="#hand-front-f1"/><use href="#hand-front-f2"/><use href="#hand-front-f3"/></clipPath>
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <g id="back" data-pivot="100 52">
+      <use href="#vert0-w" fill="url(#gBone2)"/>
+      <use href="#vert0-w" fill="url(#shX)"/>
+      <g clip-path="url(#under-vert0)"><use href="#vert0" fill="#2B2230" opacity="0.3" transform="translate(0 2.5)"/></g>
+      <use href="#vert0" fill="url(#gBone2)"/>
+      <use href="#vert0" fill="url(#shX)"/>
+      <use href="#vert1-w" fill="url(#gBone2)"/>
+      <use href="#vert1-w" fill="url(#shX)"/>
+      <g clip-path="url(#under-vert1)"><use href="#vert1" fill="#2B2230" opacity="0.3" transform="translate(0 2.5)"/></g>
+      <use href="#vert1" fill="url(#gBone2)"/>
+      <use href="#vert1" fill="url(#shX)"/>
+      <use href="#vert2-w" fill="url(#gBone2)"/>
+      <use href="#vert2-w" fill="url(#shX)"/>
+      <g clip-path="url(#under-vert2)"><use href="#vert2" fill="#2B2230" opacity="0.3" transform="translate(0 2.5)"/></g>
+      <use href="#vert2" fill="url(#gBone2)"/>
+      <use href="#vert2" fill="url(#shX)"/>
+    </g>
+    <g id="body">
+      <use href="#collar-l" fill="url(#gBone2)"/>
+      <use href="#collar-l" fill="url(#shX)"/>
+      <use href="#collar-r" fill="url(#gBone2)"/>
+      <use href="#collar-r" fill="url(#shX)"/>
+      <use href="#knobA-l" fill="url(#gBone2)"/>
+      <use href="#knobA-l" fill="url(#shX)"/>
+      <use href="#knobA-r" fill="url(#gBone2)"/>
+      <use href="#knobA-r" fill="url(#shX)"/>
+      <g clip-path="url(#under-knobB-l)"><use href="#knobB-l" fill="#2B2230" opacity="0.3" transform="translate(0 2.5)"/></g>
+      <use href="#knobB-l" fill="url(#gBone2)"/>
+      <use href="#knobB-l" fill="url(#shX)"/>
+      <g clip-path="url(#under-knobB-r)"><use href="#knobB-r" fill="#2B2230" opacity="0.3" transform="translate(0 2.5)"/></g>
+      <use href="#knobB-r" fill="url(#gBone2)"/>
+      <use href="#knobB-r" fill="url(#shX)"/>
+      <use href="#jaw" fill="url(#gBone)"/>
+      <use href="#jaw" fill="url(#shX)"/>
+      <use href="#ltooth0" fill="#FFF8E6"/>
+      <use href="#ltooth1" fill="#FFF8E6"/>
+      <use href="#ltooth2" fill="#FFF8E6"/>
+      <use href="#ltooth3" fill="#FFF8E6"/>
+      <use href="#tooth0" fill="#FFF8E6"/>
+      <use href="#tooth1" fill="#FFF8E6"/>
+      <use href="#tooth2" fill="#FFF8E6"/>
+      <use href="#tooth3" fill="#FFF8E6"/>
+      <use href="#tooth4" fill="#FFF8E6"/>
+      <g clip-path="url(#under-skull)"><use href="#skull" fill="#2B2230" opacity="0.32" transform="translate(0 5)"/></g>
+      <use href="#skull" fill="url(#gSkull)"/>
+      <g clip-path="url(#skull-c)"><rect x="40" y="30" width="120" height="140" fill="url(#gDome)"/><path d="M70.5 106 C72 100.5 88 99.5 91 105 C93.5 111 90.5 121 82.5 122.5 C74 123.5 68.5 113 70.5 106 Z" fill="url(#gSock)"/><path d="M 129.5 106 C 128 100.5 112 99.5 109 105 C 106.5 111 109.5 121 117.5 122.5 C 126 123.5 131.5 113 129.5 106 Z" fill="url(#gSock)"/><path d="M 100 118 C 102.5 121.5 105.5 125 106 128 C 106.5 131 104 132 102.2 130.6 L 100 129 L 97.8 130.6 C 96 132 93.5 131 94 128 C 94.5 125 97.5 121.5 100 118 Z" fill="url(#gSock)"/></g>
+    </g>
+    <g id="arm-r" data-pivot="160 100">
+      <use href="#shaft" fill="url(#gWood)"/>
+      <use href="#shaft" fill="url(#shX)"/>
+      <g clip-path="url(#under-spearhead)"><use href="#spearhead" fill="#2B2230" opacity="0.3" transform="translate(0 3)"/></g>
+      <use href="#spearhead" fill="url(#gIron)"/>
+      <g clip-path="url(#spearhead-c)"><g transform="rotate(13 160 150)"><ellipse cx="156" cy="172" rx="7" ry="8" fill="#C0662E" opacity="0.95"/><ellipse cx="165" cy="189" rx="4" ry="6" fill="#A04E24" opacity="0.9"/></g></g>
+      <use href="#spearhead" fill="url(#shX)"/>
+      <g clip-path="url(#under-binding)"><use href="#binding" fill="#2B2230" opacity="0.3" transform="translate(0 2.5)"/></g>
+      <use href="#binding" fill="url(#gRust)"/>
+      <use href="#binding" fill="url(#shX)"/>
+      <use href="#hand-back-f0" fill="url(#gBone)"/>
+      <use href="#hand-back-f0" fill="url(#shX)"/>
+      <use href="#hand-back-f1" fill="url(#gBone)"/>
+      <use href="#hand-back-f1" fill="url(#shX)"/>
+      <use href="#hand-back-f2" fill="url(#gBone)"/>
+      <use href="#hand-back-f2" fill="url(#shX)"/>
+      <use href="#hand-back-f3" fill="url(#gBone)"/>
+      <use href="#hand-back-f3" fill="url(#shX)"/>
+      <g clip-path="url(#under-hand-back-palm)"><use href="#hand-back-palm" fill="#2B2230" opacity="0.3" transform="translate(0 3)"/></g>
+      <use href="#hand-back-palm" fill="url(#gBone)"/>
+      <use href="#hand-back-palm" fill="url(#shX)"/>
+      <use href="#hand-front-f0" fill="url(#gBone)"/>
+      <use href="#hand-front-f0" fill="url(#shX)"/>
+      <use href="#hand-front-f1" fill="url(#gBone)"/>
+      <use href="#hand-front-f1" fill="url(#shX)"/>
+      <use href="#hand-front-f2" fill="url(#gBone)"/>
+      <use href="#hand-front-f2" fill="url(#shX)"/>
+      <use href="#hand-front-f3" fill="url(#gBone)"/>
+      <use href="#hand-front-f3" fill="url(#shX)"/>
+      <g clip-path="url(#under-hand-front-palm)"><use href="#hand-front-palm" fill="#2B2230" opacity="0.3" transform="translate(0 3)"/></g>
+      <use href="#hand-front-palm" fill="url(#gBone)"/>
+      <use href="#hand-front-palm" fill="url(#shX)"/>
+    </g>
+  </g>
+</svg>

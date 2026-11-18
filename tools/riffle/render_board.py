@@ -27,6 +27,7 @@ def sprite(src, px, deg=0):
 def shoot(html, out, w, h):
     page = OUT / f"_page-{pathlib.Path(out).stem}.html"
     page.write_text(html, encoding="utf-8")
+    pathlib.Path(out).unlink(missing_ok=True)  # else the wait below can see an old picture and return early
     subprocess.run([EDGE, "--headless=new", "--disable-gpu", "--hide-scrollbars",
                     "--force-device-scale-factor=2", "--virtual-time-budget=3000",
                     f"--user-data-dir={OUT / '_profile'}", f"--window-size={w},{h}",
