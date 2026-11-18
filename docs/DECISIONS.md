@@ -107,3 +107,38 @@ decisions from before Riffle. Where they conflict, this file wins.
 - Weapons held **below the body, not over the shoulder**, and **bigger**. Hands on shields hidden.
 - Per-item notes are in the round-1 log; the art round brief carries them.
 - **Skeletons get eye sockets** (overrides "no eyes" for skeletons), no rib cage, no light/dark split down the middle; nose hole the right way up.
+
+## Round 3 (2026-11-18): art round 2 picks and the stage 2 report
+Raw answers: `docs/riffle-log/2026-11-18-round3.txt`.
+
+### Art
+- Picked (favourites): archer split, Paladin, Old Guard, Dame (tiara), Bastion A/B/C, Rattler + jawless + loose jaw,
+  Gaper, Brute, Twinfang, Bandit (mask), Shade (cape), Granny Reaper, Haymaker (fork), Digger, Grandpa Sickle,
+  Wildmane, Bearskin (club), Warhelm A and B, Berserker (strap). "Looking really good."
+- **Every pick becomes its own unit**, except near-identical pairs (Warhelm A/B are one unit).
+- **Weapon rule (most weapons): further forward, drawn *behind* the body/shoulder, not on top.** Shields are the
+  exception. Several weapons are still too small.
+- **More enemies in the art: the slimes, plus bats, ghosts, lizard men, spiders, snowmen, etc.**
+- Per design:
+  - Paladin: the rule above. Twinfang: the rule, and the daggers further apart.
+  - Bastion A: no eye holes. Bastion B: reads as a paint brush. Bastion C: almost good, helmet boring.
+  - Rattler: no rib cage, or pull it back more; good. Jawless: same, give it a bow or spear. Loose jaw: same, a mace.
+  - Gaper: two long swords, look a bit angry. Brute: give a shield; can't tell what its weapon is.
+  - **Hollow: doesn't work as a skeleton; keep its head for a ghoul/banshee enemy.**
+  - Granny Reaper: weapon too small, the handle especially.
+  - Haymaker (fork): handle short; hat too detailed, crown not wide enough; fork tines too shiny.
+  - Digger: longer handle, below the body.
+  - Wildmane: bigger weapon; maybe a scar over the "eye".
+  - Warhelm A: is that a beard? It doesn't cover the face. Shoulder pads a bit too detailed. Slightly longer handle.
+    Warhelm B: remove the shoulder spikes.
+  - Berserker (strap): spikes on the top face of the mace.
+
+### Stage 2 report (map: good overall)
+- **No wobble walk** (the slight turning looks weird).
+- **The rogue keeps turning around instead of backing up.** Back off facing the enemy.
+- **Spikes look bad.** **Doors don't look good yet.**
+- Tree: **up to 5 rooms wide** per layer. The HUD map doesn't need to show the spread.
+- **Rooms: "that's how big they can get", in both directions, and many shapes: T, L, +, box, square, etc.**
+  (Not just long strips.)
+- **Coins must be collected** by walking over them; they vanish after a few seconds. (An economy-focused unit comes later.)
+- **Potions: a hero *can* start with one**, not always.

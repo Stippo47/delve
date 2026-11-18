@@ -1,0 +1,55 @@
+Riffle round 3 answers, 2026-11-18 (raw)
+
+delve / art / art-round2
+  round2 (Art round 2): GO, picked: Archer, split into parts, Knight · Paladin, Knight · Old Guard, Knight · Dame (tiara), Knight · Bastion A, Tower, Knight · Bastion B, Bulwark, Knight · Bastion C, Griffon, Skeleton · Rattler, Skeleton · Rattler, no jaw, Skeleton · Rattler, loose jaw, Skeleton · Gaper, Skeleton · Brute, Rogue · Twinfang, Rogue · Bandit (mask), Rogue · Shade (cape), Farmer · Granny Reaper, Farmer · Haymaker (fork), Farmer · Digger, Farmer · Grandpa Sickle, Barbarian · Wildmane, Barbarian · Bearskin (club), Barbarian · Warhelm (plates), Barbarian · Warhelm (spike), Barbarian · Berserker (strap)
+      "I selected all of my favourites. They are looking really good. Some Weapons seem small and positioning was off.
+
+I want all of them (except for the basically identical ones) as different units. 
+
+Get me the slimes in here and any other enemies (bats, ghosts, lizard men, spiders, snowmen, etc)"
+      item knight-paladin (Knight · Paladin): "This rule is going to go for many weapons. More forward, render behind the body/shoulder, not ontop. The shield is a special case."
+      item knight-bastion-a (Knight · Bastion A, Tower): "No eye holes."
+      item knight-bastion-b (Knight · Bastion B, Bulwark): "Looks like a paint brush "
+      item knight-bastion-c (Knight · Bastion C, Griffon): "Almost good. Helmet boring"
+      item skeleton-rattler (Skeleton · Rattler): "No rib cage, or pull it back more. Overall good"
+      item skeleton-rattler-jawless (Skeleton · Rattler, no jaw): "Same
+Give a bow or spear"
+      item skeleton-rattler-loosejaw (Skeleton · Rattler, loose jaw): "Same. 
+Give him a mace"
+      item skeleton-gaper (Skeleton · Gaper): "Give 2 long swords.
+Make look a bit angry "
+      item skeleton-brute (Skeleton · Brute): "Give shield. Can’t tell what weapon is. "
+      item skeleton-hollow (Skeleton · Hollow): "Keep the head for a ghoul/banshee enemy. Doesnt work as a skeleton."
+      item rogue-twinfang (Rogue · Twinfang): "Same thing as first knight. Weapons a bit forward, behind the shoulders, also move them apart a bit."
+      item farmer-granny-reaper (Farmer · Granny Reaper): "Weapon too small. Specifically handle."
+      item farmer-haymaker-fork (Farmer · Haymaker (fork)): "Handle short. 
+Hat is a bit too detailed. bowl isnt wide enough.
+Pitchfork fingers too shiny "
+      item farmer-digger (Farmer · Digger): "Longer handle, below body. "
+      item barbarian-wildmane (Barbarian · Wildmane): "Bigger weapon. 
+
+Addd Scar on “eye”?"
+      item barbarian-warhelm-a (Barbarian · Warhelm (plates)): "Is that a beard? If so it doesn’t cover the face. 
+Shoulder pads may be a bit too detailed. 
+Slightly longer handle."
+      item barbarian-warhelm-b (Barbarian · Warhelm (spike)): "Remove the shoulder spikes."
+      item barbarian-berserker-a (Barbarian · Berserker (strap)): "Spikes on the top face of the mace. "
+  DECK: done (1 of 1 answered)
+
+delve / runs / stage2-report
+  anim-parts (Arms that swing: waiting on art): GOOD
+  map (The dungeon as a journey): GOOD
+      "Watching these I don’t like the wobble walk. (Turning slightly looks weird). 
+
+Bandit is also constantly turning around instead of backing up. 
+
+Spikes look bad"
+      part tree (Forward-only tree): GOOD, "More rooms on a layer, maybe 5 wide tree. I don’t need to see the spread in the ui. "
+      part doors (Doors): GOOD, "Don’t look good yet. "
+      part rooms (Long rooms with walls): PROBLEM, "That’s not what I meant. Like that’s how big they can get. In both directions. And be of multiple shapes. T, L, +, box, square, etc."
+      part paths (Finding the way): GOOD
+      part camera (Camera): GOOD
+      part after (After a fight): GOOD, "Party has to collect the coins, the disappear after a few seconds (there will be a unit focused on economy) "
+      part potions (Potions): GOOD, "Can start with one. Not will."
+      part 1b (Your stage 1 notes): GOOD
+  DECK: done (2 of 2 answered)
