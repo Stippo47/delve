@@ -1,0 +1,29 @@
+{
+  "title": "Stage 2b: your map notes",
+  "topic": "runs",
+  "order": 5,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "fixes",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Rooms of every shape",
+      "text": "Rooms now come in many shapes and sizes, both ways. Your other map notes are in too. Live now as 0.4.0.",
+      "why": "This is how every room plays from now on. The clip is one plus-shaped room at triple speed. Mark any part that's off.",
+      "videos": ["../../../clips/s2b-rooms.mp4"],
+      "details": "Four full test runs, 30 rooms each, none stuck. Still won every time, so balance waits for the progression in stage 3.\n\nWithout a potion to start with, the rogue went down in the clip's first room, so it's a little harder than before.",
+      "parts": [
+        { "id": "shapes", "title": "Room shapes", "text": "Rooms are built from screen-sized pieces: long strips, boxes, squares up to 3 screens each way, L, T, plus and S shapes. Pieces left out are rock. Big rooms sometimes have square blocks in them; long strips keep the walls from before." },
+        { "id": "camera", "title": "Camera both ways", "text": "The camera follows the party sideways as well as forward. Drag in any direction to look around; it eases back after a couple of seconds." },
+        { "id": "explore", "title": "Walking the room", "text": "With nothing in sight, the party walks to the nearest part of the room it hasn't seen, so it finds every group, and goes to the doors last." },
+        { "id": "coins", "title": "Coins", "text": "Coins stay where they drop. A hero has to walk over them, and they blink out after 7 seconds. Heroes grab nearby coins when they aren't busy fighting, and collect what's left after the fight." },
+        { "id": "backup", "title": "Rogue backs up", "text": "After a hit, the rogue backs away still facing the enemy, a bit slower, instead of turning round to run." },
+        { "id": "wobble", "title": "No wobble", "text": "The side-to-side waddle is gone; only a small step bounce is left until arms swing with the new art." },
+        { "id": "doors", "title": "Doors and spikes", "text": "Doors are archways in the wall: a shut wooden door during the fight, open after, lit on the one the party takes. What's behind each is on a stone plaque in front. Spikes are now an iron grate of spike tips." },
+        { "id": "tree", "title": "Wider tree", "text": "Each layer of the floor has 2 to 5 rooms. The map at the top just shows rooms done, where you are, rooms to go and the boss." },
+        { "id": "potions", "title": "Potions", "text": "Heroes no longer start with a potion. Bringing one in will be something you buy at the camp (stage 3); chests and choice rooms still give them." }
+      ]
+    }
+  ]
+}
