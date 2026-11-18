@@ -74,8 +74,17 @@
   #result h1 { font-size: 28px; }
   #banner { position: fixed; left: 50%; top: 42%; transform: translate(-50%, -50%); font-size: 30px; color: var(--paper);
     text-shadow: 0 3px 0 var(--ink), 0 0 12px rgba(0,0,0,0.5); pointer-events: none; }
-  #rotate { position: fixed; inset: 0; background: #2F2734; color: var(--paper); display: none; align-items: center; justify-content: center; text-align: center; font-size: 18px; padding: 30px; z-index: 50; }
-  @media (orientation: portrait) and (max-width: 700px) { #rotate { display: flex; } }
+  /* Portrait: the HUD wraps onto two rows, camp stacks into one scrolling column. */
+  @media (orientation: portrait) {
+    #hud { height: auto; flex-wrap: wrap; row-gap: 6px; padding-top: calc(8px + var(--st)); padding-bottom: 8px; background: #2F2734; box-shadow: 0 3px 0 rgba(0,0,0,0.25); z-index: 2; }
+    #chips { order: 1; flex: 1 1 100%; justify-content: center; }
+    #where { order: 2; flex: 1 1 100%; }
+    #hud .pill, #hud .btn { order: 3; }
+    .screen { flex-direction: column; overflow-y: auto; }
+    #camp .left { width: auto; }
+    #camp .mid { flex: none; }
+    #camp .right { flex: none; min-height: 180px; }
+  }
 </style>
 </head>
 <body>
@@ -112,7 +121,6 @@
 </div>
 
 <div id="result" class="screen hidden"><div class="card" id="resultCard"></div></div>
-<div id="rotate">Turn your phone sideways</div>
 
 <script type="module" src="js/main.js"></script>
 </body>

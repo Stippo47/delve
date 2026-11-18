@@ -1,0 +1,30 @@
+{
+  "title": "The new progression loop",
+  "topic": "progression",
+  "order": 2,
+  "priority": 2,
+  "tags": ["waiting"],
+  "cards": [
+    {
+      "id": "loop",
+      "kind": "design",
+      "rarity": "epic",
+      "title": "The new loop",
+      "text": "Your answers put together as one loop. Mark any part I got wrong, and comment where I guessed.",
+      "why": "This replaces permanent levels. Everything in camp is built on it, so it's worth getting right before stage 3.",
+      "pick": "Build it as written in stage 3.",
+      "parts": [
+        { "id": "run-levels", "title": "Levels live in a run", "text": "Every run starts at level 1. Kills give XP and levels during the run. Leaving or losing resets them." },
+        { "id": "gold", "title": "Gold is forever", "text": "You keep all gold whether you win, lose or leave. It's spent at camp." },
+        { "id": "tree", "title": "Skill trees", "text": "One per hero, four branches: attack, survival, support, movement. Bought with gold, kept forever. Nodes are abilities, stat buys you can take again, or trinket slots." },
+        { "id": "feats", "title": "Feats", "text": "Some nodes need a feat first, like \"reached level 8 in a run\", or a level reached during the run before they work." },
+        { "id": "party", "title": "Party slots", "text": "You start with one hero. More slots cost gold, each dearer than the last. Heroes at home get nothing." },
+        { "id": "mercs", "title": "Mercenaries", "text": "Instead, hire a weak-to-middling party for one run. You don't keep them, and they take half the gold." },
+        { "id": "recovery", "title": "Recovery", "text": "A hero downed in a run rests for a while in real time. Gold cuts it short. Meanwhile you go in with someone else." },
+        { "id": "gems", "title": "Gems", "text": "A second, rare currency that unlocks new heroes. Bosses drop them; my guess, since you didn't say where they come from." },
+        { "id": "leaving", "title": "Leaving", "text": "Leave between rooms any time and keep the trinkets found. If the party is wiped, those trinkets are lost, as before." },
+        { "id": "dungeons", "title": "Choosing a dungeon", "text": "Camp offers a few dungeons, each a different theme and difficulty. No recommended level shown." }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "title": "Round 2: the plan",
+  "topic": "runs",
+  "order": 2,
+  "priority": 1,
+  "tags": ["first", "waiting"],
+  "cards": [
+    {
+      "id": "order",
+      "kind": "question",
+      "rarity": "rare",
+      "title": "Order of work",
+      "text": "Your answers add up to four stages of work. Build them in this order?",
+      "why": "Each stage changes what the next one looks like, so the order matters. You'll get clips after each stage.",
+      "pick": "1 feel, 2 dungeon map, 3 progression and camp, 4 statuses. The art round runs alongside from now.",
+      "parts": [
+        { "id": "s1", "title": "1. Feel", "text": "Portrait, bigger rooms and colliders, movement with momentum and real turning, hit impact, simple animations, consistent outlines, bigger arrows and rats, new fire and status visuals, the brain fixes (rogue, targeting, teamwork, rat habits)." },
+        { "id": "s2", "title": "2. The dungeon map", "text": "A map of rooms with doors the party chooses between, room shapes, A* so units find their way, fountains and decision rooms, chests with potions, XP and coins." },
+        { "id": "s3", "title": "3. Progression and camp", "text": "The new loop (see its card), and a camp screen redone from scratch with life in it, mocked up first so you can steer it." },
+        { "id": "s4", "title": "4. Statuses", "text": "The new rules and Wet, Shock and Stagger (see their card)." },
+        { "id": "art", "title": "Art round 2", "text": "Your notes on each candidate go to artists now, one per class group. A new board comes back with every fixed design." }
+      ]
+    },
+    {
+      "id": "map",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "The dungeon as a map",
+      "text": "A dungeon becomes a journey through a map of rooms, like Binding of Isaac. Mark any part that's off.",
+      "why": "This replaces the nine rooms in a row. It also answers your question: how many rooms and floors.",
+      "pick": "Build it as written in stage 2.",
+      "parts": [
+        { "id": "map", "title": "The map", "text": "Each floor is a grid of 8 to 12 rooms: a start, a boss room at the far end, and side branches with treasure. A small map shows rooms you've been to." },
+        { "id": "doors", "title": "Who picks doors", "text": "When a room has several exits, the party picks: mostly towards unexplored rooms and the boss, a fountain likelier when hurt, with some randomness." },
+        { "id": "floors", "title": "Floors", "text": "3 floors per dungeon, so about 30 rooms a run. Each floor ends in a boss; the last boss ends the dungeon. Last Breath works once per floor." },
+        { "id": "rooms", "title": "Room sizes", "text": "Rooms are taller than wide for portrait, 25% bigger than now. Some are double rooms, L-shapes or corridors." },
+        { "id": "kinds", "title": "Room kinds", "text": "Fight, treasure, fountain, decision room (3 free things, take 1), boss. Rare: the duck's room, a mimic." }
+      ]
+    }
+  ]
+}

@@ -11,7 +11,7 @@ export function makeWorld(W, H) {
   return {
     W, H, time: 0, units: [], projectiles: [], particles: [], texts: [], hazards: [], pickups: [], pillars: [],
     telegraphs: [], cleared: false, doorIn: { x: 0, y: H / 2 }, doorOut: { x: W, y: H / 2 },
-    on: {}, shake: 0,
+    on: {}, shake: 0, hitstop: 0, corpses: [],
   };
 }
 
@@ -26,7 +26,7 @@ export function spawn(w, kind, x, y, opts = {}) {
   const maxHp = hero ? levelHp(d.hp, lvl) : Math.round(d.hp * mult * (opts.hpMul || 1));
   const u = {
     id: NEXT_ID++, kind, def: d, team: d.team, x, y, vx: 0, vy: 0, kx: 0, ky: 0, dvx: 0, dvy: 0,
-    r: d.r * (opts.scale || 1), mass: d.mass * (opts.scale || 1), maxHp, hp: opts.hp != null ? Math.min(opts.hp, maxHp) : maxHp,
+    r: d.r * (opts.scale || 1), vr: (d.vr || d.r) * (opts.scale || 1), mass: d.mass * (opts.scale || 1), maxHp, hp: opts.hp != null ? Math.min(opts.hp, maxHp) : maxHp,
     dmgMul: hero ? levelDmg(1, lvl) : 0.65 + 0.35 * mult, level: lvl,
     facing: hero ? 0 : Math.PI, atkT: rand() * d.atkCd, abilT: (d.abilCd || 0) * rrange(0.3, 0.7),
     mode: 'wander', modeT: 0, thinkT: rand() * 0.4, abilThinkT: rand() * 0.5, target: null, targetT: 0,
@@ -35,6 +35,7 @@ export function spawn(w, kind, x, y, opts = {}) {
     trinket: opts.trinket || null, lastBreathUsed: false, hasKey: !!opts.hasKey,
     strafeSign: chance(0.5) ? 1 : -1, wanderA: rand() * TAU, hazardT: 0, forcedGoal: null,
     gen: opts.gen || 0, bob: rand() * TAU, lastAttackT: -9,
+    mvA: hero ? 0 : Math.PI, spd: 0, sdx: 0, sdy: 0, lungeT: 0, recoilT: 0, hitT: 0, hitA: 0, tauntBy: null, tauntT: 0,
   };
   w.units.push(u);
   return u;
@@ -68,13 +69,28 @@ function chooseTarget(w, u) {
   if (!opp.length) { u.target = null; return; }
   const k = u.kind;
   let best = null, bestS = -Infinity;
+  const mates = allies(w, u);
   for (const o of opp) {
     const d = dist(u.x, u.y, o.x, o.y);
     let s = -d / 300;
+    // how many of my side are already on it, and how many of its side stand around it
+    let on = 0; for (const a of mates) if (a.target === o) on++;
+    let crowd = 0; for (const q of opp) if (q !== o && dist(q.x, q.y, o.x, o.y) < 95) crowd++;
+    if (u.team === 'hero') {
+      s -= on * 0.22;                                   // spread out: prefer enemies nobody is on yet
+      s -= crowd * (k === 'rogue' ? 0.4 : 0.08);        // don't dive into a pack (the rogue most of all)
+      // finish the kill: a nearly dead enemy someone is already hitting
+      if ((k === 'archer' || k === 'rogue') && on > 0 && hpRatio(o) < 0.35) s += 0.55;
+    }
     if (k === 'archer') { s += (1 - hpRatio(o)) * 0.5; if (d <= u.def.range && !blocked(w, u.x, u.y, o.x, o.y)) s += 0.6; }
     else if (k === 'rogue') { s += (1 - hpRatio(o)) * 1.1 + (o.target && o.target !== u ? 0.5 : 0) - (o.def.boss ? 0.3 : 0); }
-    else if (k === 'knight') { s += o.target && o.target.kind !== 'knight' ? 0.35 : 0; }
+    else if (k === 'knight') {
+      s += o.target && o.target.kind !== 'knight' ? 0.35 : 0;
+      // protect: go for whoever is on a hurt teammate
+      if (o.target && o.target.team === 'hero' && o.target !== u && hpRatio(o.target) < 0.45) s += 0.9;
+    }
     else if (k === 'rat') { s += o.kind === 'archer' ? 0.35 : 0; }
+    if (u.team === 'enemy' && u.tauntT > 0 && u.tauntBy === o) s += 0.85; // the knight drew its attention
     if (o === u.target) s += 0.35; // stickiness
     if (s > bestS) { bestS = s; best = o; }
   }
@@ -128,8 +144,23 @@ function think(w, u) {
   const locked = u.modeT < u.def.commit && cur >= 0 && list[best] - list[cur] < 0.8 && prevT === u.target;
   if (!locked) {
     const i = softmaxPick(list, u.def.temp * 0.6);
-    if (MODES[i] !== u.mode) { u.mode = MODES[i]; u.modeT = 0; if (u.mode === 'strafe' && chance(0.35)) u.strafeSign *= -1; }
+    if (MODES[i] !== u.mode) { u.mode = MODES[i]; u.modeT = 0; if (u.mode === 'strafe' || u.mode === 'flank' || u.mode === 'retreat') u.strafeSign = quietSide(w, u); }
   }
+}
+
+// Which way round the target has fewer of its friends (so strafing doesn't run into a pack).
+function quietSide(w, u) {
+  const t = u.target; if (!t) return u.strafeSign;
+  const a = angleTo(u.x, u.y, t.x, t.y);
+  let l = 0, r = 0;
+  for (const o of opponents(w, u)) {
+    if (o === t) continue;
+    const d = dist(u.x, u.y, o.x, o.y); if (d > 260) continue;
+    const side = Math.sin(angleTo(u.x, u.y, o.x, o.y) - a);
+    if (side > 0) r += 1 / (1 + d / 120); else l += 1 / (1 + d / 120);
+  }
+  if (Math.abs(l - r) < 0.15) return chance(0.35) ? -u.strafeSign : u.strafeSign;
+  return r > l ? -1 : 1;
 }
 
 // ---------------------------------------------------------------- context steering
@@ -172,6 +203,7 @@ function steer(w, u, gx, gy, opts = {}) {
     if (o === u || !alive(o)) continue;
     if (o.team === u.team) avoidCircle(o.x, o.y, o.r + (u.team === 'hero' ? 14 : 0), 0.45, 18);
     else if (u.def.role === 'ranged' && o !== u.target) avoidCircle(o.x, o.y, o.r, 0.7, 60);
+    else if (u.def.role === 'skirmish' && u.team === 'hero' && o !== u.target) avoidCircle(o.x, o.y, o.r, 0.75, 55);
   }
   let bi = 0, bv = -1;
   for (let i = 0; i < DIRS; i++) {
@@ -206,7 +238,18 @@ function movement(w, u, dt) {
     const d = dist(u.x, u.y, t.x, t.y);
     const tx = (t.x - u.x) / (d || 1), ty = (t.y - u.y) / (d || 1);
     switch (u.mode) {
-      case 'approach': gx = tx; gy = ty; if (d - u.r - t.r < u.def.range * 0.6) { gx = gy = 0; } break;
+      case 'approach': {
+        gx = tx; gy = ty;
+        const gap = d - u.r - t.r;
+        if (u.kind === 'rat') {
+          // rats dart side to side on the way in, then circle in close until their bite is ready
+          const z = Math.sin(w.time * 7 + u.id * 1.7) * 0.85;
+          gx += -ty * z; gy += tx * z;
+          if (gap < 55 && u.atkT > 0.2) { gx = -ty * u.strafeSign + tx * 0.25; gy = tx * u.strafeSign + ty * 0.25; }
+        }
+        if (gap < u.def.range * 0.6) { gx = gy = 0; }
+        break;
+      }
       case 'hold': gx = gy = 0; break;
       case 'kite': {
         let ax = 0, ay = 0;
@@ -228,9 +271,38 @@ function movement(w, u, dt) {
       case 'retreat': gx = -tx; gy = -ty; side = u.strafeSign; mult = 0.9; break;
     }
   }
+  // formation, lightly: an archer nearer the enemy than the knight leans back towards him
+  if (u.kind === 'archer' && t && !u.forcedGoal) {
+    const kn = w.units.find((o) => o.kind === 'knight' && alive(o));
+    if (kn) {
+      const da = dist(u.x, u.y, t.x, t.y), dk = dist(kn.x, kn.y, t.x, t.y);
+      if (da < dk) { const kd = dist(u.x, u.y, kn.x, kn.y) || 1; const k = 0.45 * clamp((dk - da) / 120, 0, 1);
+        const gl = Math.hypot(gx, gy) || 1; gx = gx / gl + (kn.x - u.x) / kd * k; gy = gy / gl + (kn.y - u.y) / kd * k; }
+    }
+  }
   const [sx, sy] = steer(w, u, gx, gy, { side });
-  const sp = speedOf(u) * mult;
-  u.dvx = sx * sp; u.dvy = sy * sp;
+  drive(u, sx, sy, speedOf(u) * mult, dt);
+}
+
+// Momentum: the movement heading swings at the unit's turn rate, speed builds up and drops off,
+// and a sharp turn bleeds speed. Nothing snaps.
+function drive(u, sx, sy, want, dt) {
+  const d = u.def;
+  const k = 1 - Math.exp(-dt * 7);                // smooth the steering wish a little
+  u.sdx += (sx - u.sdx) * k; u.sdy += (sy - u.sdy) * k;
+  const m = Math.hypot(u.sdx, u.sdy);
+  let goal = 0;
+  if (m > 0.15 && want > 0) {
+    const a = Math.atan2(u.sdy, u.sdx);
+    const diff = wrapAngle(a - u.mvA);
+    const turn = (d.turn || 5) * dt * (u.spd < 15 ? 2.2 : 1); // turning on the spot is quicker than mid-stride
+    u.mvA = wrapAngle(u.mvA + clamp(diff, -turn, turn));
+    goal = want * Math.min(1, m) * Math.max(0.2, Math.cos(Math.min(Math.PI / 2, Math.abs(diff))));
+  }
+  const acc = (d.accel || 250) * dt;
+  u.spd += clamp(goal - u.spd, -acc * 1.6, acc);
+  if (u.spd < 0) u.spd = 0;
+  u.dvx = Math.cos(u.mvA) * u.spd; u.dvy = Math.sin(u.mvA) * u.spd;
 }
 
 // ---------------------------------------------------------------- facing
@@ -241,16 +313,20 @@ function updateFacing(u, dt) {
     const d = dist(u.x, u.y, t.x, t.y);
     if (u.mode !== 'retreat' && (d < (u.def.role === 'ranged' ? u.def.range + 60 : 140) || u.mode === 'hold' || u.mode === 'kite')) want = angleTo(u.x, u.y, t.x, t.y);
   }
-  if (want === null && Math.hypot(u.vx, u.vy) > 8) want = Math.atan2(u.vy, u.vx);
+  if (want === null && u.spd > 8) want = u.mvA;
   if (want === null) return;
-  const rate = (u.kind === 'rat' ? 11 : u.kind === 'rogue' ? 9 : 6) * dt;
+  const rate = (u.def.face || 5) * dt;
   const diff = wrapAngle(want - u.facing);
   u.facing = wrapAngle(u.facing + clamp(diff, -rate, rate));
 }
 
 // ---------------------------------------------------------------- damage & statuses
-function text(w, x, y, s, color = '#FFFFFF', size = 1) {
-  w.texts.push({ x, y, s: String(s), color, size, life: 0.9, max: 0.9, vy: -40 });
+function text(w, x, y, s, color = '#FFFFFF', size = 1, pop = false) {
+  w.texts.push({ x, y, s: String(s), color, size, life: 0.9, max: 0.9, vy: -40, pop });
+}
+// Text above a unit: anchored on the unit, lifted 'up' towards the top of the screen (the renderer knows which way that is).
+function textU(w, x, y, up, s, color = '#FFFFFF', size = 1, pop = false) {
+  w.texts.push({ x, y, up, s: String(s), color, size, life: 0.9, max: 0.9, vy: -40, pop });
 }
 function puff(w, x, y, color, n = 8, spd = 90, size = 5, life = 0.5) {
   for (let i = 0; i < n; i++) {
@@ -259,9 +335,19 @@ function puff(w, x, y, color, n = 8, spd = 90, size = 5, life = 0.5) {
   }
 }
 
+// Shaped particles: 'flame' (licks of fire that rise and shrink), 'spark' (impact streaks), 'shard' (ice).
+function flames(w, x, y, n, spread = 14, up = 70) {
+  for (let i = 0; i < n; i++) w.particles.push({ shape: 'flame', x: x + rrange(-spread, spread), y: y + rrange(-spread, spread) * 0.6,
+    vx: rrange(-20, 20), vy: rrange(-20, 20), rise: up * rrange(0.6, 1.1), up: 0, life: rrange(0.35, 0.6), max: 0.6, size: rrange(5, 9), color: '#FF8A3D', drag: 0.97 });
+}
+function sparks(w, x, y, a, n, color = '#FFFFFF', big = 1) {
+  for (let i = 0; i < n; i++) { const b = a + rrange(-0.9, 0.9), v = rrange(180, 360) * big;
+    w.particles.push({ shape: 'spark', x, y, vx: Math.cos(b) * v, vy: Math.sin(b) * v, life: 0.16, max: 0.16, size: 3 * big, color, drag: 0.85 }); }
+}
+
 export function hurt(w, u, amount, src, o = {}) {
   if (!alive(u) || u.invulnT > 0 || amount <= 0) return 0;
-  if (!o.dot && !o.noDodge && u.def.dodge && chance(u.def.dodge)) { text(w, u.x, u.y - u.r, 'dodge', '#CFE8FF', 0.8); return 0; }
+  if (!o.dot && !o.noDodge && u.def.dodge && chance(u.def.dodge)) { textU(w, u.x, u.y, u.r, 'dodge', '#CFE8FF', 0.8); return 0; }
   let amt = amount;
   if (!o.dot && u.def.shield && src) {
     const a = angleTo(u.x, u.y, src.x, src.y);
@@ -271,8 +357,15 @@ export function hurt(w, u, amount, src, o = {}) {
   // shatter: a hard hit on a frozen unit
   if (u.frozenT > 0 && !o.dot && (o.heavy || amount >= 12 || (o.knock || 0) >= 150)) shatter(w, u, src);
   u.hp -= amt;
-  if (!o.dot) { u.flashT = 0.12; text(w, u.x + rrange(-6, 6), u.y - u.r - 4, Math.round(amt), o.crit ? '#FFE14D' : '#FFFFFF', o.crit ? 1.3 : 1); }
-  else { u.dotAcc += amt; if (u.dotAcc >= 4) { text(w, u.x, u.y - u.r, Math.round(u.dotAcc), o.color || '#FF9A55', 0.75); u.dotAcc = 0; } }
+  if (!o.dot) {
+    const fromA = src ? angleTo(src.x, src.y, u.x, u.y) : o.kAngle != null ? o.kAngle : rand() * TAU;
+    u.hitT = 0.16; u.hitA = fromA;
+    const big = o.heavy || o.crit || amt >= 14;
+    sparks(w, u.x - Math.cos(fromA) * u.r * 0.6, u.y - Math.sin(fromA) * u.r * 0.6, fromA, big ? 7 : 4, o.crit ? '#FFE14D' : '#FFFFFF', big ? 1.3 : 1);
+    if (big) { w.hitstop = Math.max(w.hitstop, o.crit ? 0.09 : 0.06); w.shake = Math.max(w.shake, 4); }
+    if (src && src.kind === 'knight' && u.team === 'enemy') { u.tauntBy = src; u.tauntT = 3; }
+    u.flashT = 0.12; textU(w, u.x + rrange(-6, 6), u.y, u.r + 4, Math.round(amt), o.crit ? '#FFE14D' : '#FFFFFF', o.crit ? 1.3 : 1, true); }
+  else { u.dotAcc += amt; if (u.dotAcc >= 4) { textU(w, u.x, u.y, u.r, Math.round(u.dotAcc), o.color || '#FF9A55', 0.75); u.dotAcc = 0; } }
   if (src && src.trinket === 'vampTooth' && alive(src)) src.hp = Math.min(src.maxHp, src.hp + amt * 0.08);
   if (o.knock) {
     const a = o.kAngle != null ? o.kAngle : src ? angleTo(src.x, src.y, u.x, u.y) : rand() * TAU;
@@ -283,7 +376,7 @@ export function hurt(w, u, amount, src, o = {}) {
   if (!o.dot && u.trinket === 'volatile' && chance(0.15)) explode(w, u.x, u.y, 70, 14, { burn: 28 }, u, '#FF8A3D');
   if (u.hp <= 0) {
     if (u.trinket === 'lastBreath' && !u.lastBreathUsed) {
-      u.lastBreathUsed = true; u.hp = 1; u.invulnT = 2; text(w, u.x, u.y - u.r - 10, 'LAST BREATH', '#FFE7A0', 1.1); puff(w, u.x, u.y, '#FFE7A0', 14, 120);
+      u.lastBreathUsed = true; u.hp = 1; u.invulnT = 2; textU(w, u.x, u.y, u.r + 10, 'LAST BREATH', '#FFE7A0', 1.1); puff(w, u.x, u.y, '#FFE7A0', 14, 120);
     } else kill(w, u, src);
   }
   return amt;
@@ -295,23 +388,23 @@ export function addStatus(w, u, type, amount, src) {
   const s = u.st;
   s[type] += amount * res;
   if (type === 'burn') {
-    if (u.frozenT > 0) { u.frozenT = 0; s.chill = 0; puff(w, u.x, u.y, 'rgba(235,240,245,0.8)', 10, 60, 9, 0.8); text(w, u.x, u.y - u.r, 'thaw', '#DDEAF2', 0.8); }
+    if (u.frozenT > 0) { u.frozenT = 0; s.chill = 0; puff(w, u.x, u.y, 'rgba(235,240,245,0.8)', 10, 60, 9, 0.8); textU(w, u.x, u.y, u.r, 'thaw', '#DDEAF2', 0.8); }
     s.chill = Math.max(0, s.chill - amount);
-    if (s.burn >= 100) { s.burn = 20; text(w, u.x, u.y - u.r - 12, 'SCORCH', '#FF7A2F', 1.2); hurt(w, u, 22, src, { noDodge: true }); explode(w, u.x, u.y, 60, 10, { burn: 24 }, src, '#FF7A2F', u); }
+    if (s.burn >= 100) { s.burn = 20; textU(w, u.x, u.y, u.r + 12, 'SCORCH', '#FF7A2F', 1.2); hurt(w, u, 22, src, { noDodge: true }); explode(w, u.x, u.y, 60, 10, { burn: 24 }, src, '#FF7A2F', u); }
   } else if (type === 'chill') {
     const need = 100 + u.freezeImmune;
     if (s.chill >= need && u.frozenT <= 0) {
       u.frozenT = u.def.boss ? 1.6 : 3; s.chill = 0; s.burn = 0; u.freezeImmune += 45; u.act = null;
-      text(w, u.x, u.y - u.r - 12, 'FREEZE', '#7FD6F5', 1.2); puff(w, u.x, u.y, '#BFEFFF', 10, 70, 4);
+      textU(w, u.x, u.y, u.r + 12, 'FREEZE', '#7FD6F5', 1.2); puff(w, u.x, u.y, '#BFEFFF', 10, 70, 4);
     }
   } else if (type === 'poison') {
-    if (s.poison >= 100) { s.poison = 30; text(w, u.x, u.y - u.r - 12, 'ROT', '#9BCB3C', 1.2); hurt(w, u, u.maxHp * 0.15, src, { noDodge: true, color: '#9BCB3C' }); }
+    if (s.poison >= 100) { s.poison = 30; textU(w, u.x, u.y, u.r + 12, 'ROT', '#9BCB3C', 1.2); hurt(w, u, u.maxHp * 0.15, src, { noDodge: true, color: '#9BCB3C' }); }
   }
 }
 
 function shatter(w, u, src) {
   u.frozenT = 0; u.st.chill = 0;
-  text(w, u.x, u.y - u.r - 14, 'SHATTER', '#BFEFFF', 1.3);
+  textU(w, u.x, u.y, u.r + 14, 'SHATTER', '#BFEFFF', 1.3);
   u.hp -= 26; u.flashT = 0.15;
   puff(w, u.x, u.y, '#E6F8FF', 18, 160, 5, 0.6);
   w.shake = Math.max(w.shake, 6);
@@ -324,7 +417,8 @@ function shatter(w, u, src) {
 
 export function explode(w, x, y, r, dmg, statuses, src, color, skip) {
   w.telegraphs.push({ type: 'blast', x, y, r, t: 0.25, max: 0.25, color });
-  puff(w, x, y, color, 16, r * 3, 6, 0.45);
+  if (statuses.burn) { flames(w, x, y, 14, r * 0.6, 90); sparks(w, x, y, 0, 0); }
+  else puff(w, x, y, color, 16, r * 3, 6, 0.45);
   w.shake = Math.max(w.shake, 4);
   for (const o of w.units) {
     if (!alive(o) || o === skip) continue;
@@ -348,11 +442,12 @@ function kill(w, u, src) {
   u.hp = 0;
   if (u.team === 'hero') {
     u.downed = true; u.act = null; u.frozenT = 0; u.st = { burn: 0, chill: 0, poison: 0 };
-    text(w, u.x, u.y - u.r - 10, 'DOWN', '#FF8A80', 1.1);
+    textU(w, u.x, u.y, u.r + 10, 'DOWN', '#FF8A80', 1.1);
     emit(w, 'heroDown', u);
     return;
   }
   u.dead = true;
+  w.corpses.push({ kind: u.kind, x: u.x, y: u.y, vr: u.vr, facing: u.facing, t: 0.35, max: 0.35, kx: u.kx * 0.3, ky: u.ky * 0.3 });
   puff(w, u.x, u.y, u.kind.startsWith('slime') ? '#6CC9B0' : u.kind === 'rat' ? '#9C8676' : '#EDE4CD', 12, 120, 5, 0.5);
   if (u.st.poison > 40) w.hazards.push({ type: 'gas', x: u.x, y: u.y, r: 52, t: 4, max: 4 });
   if (u.def.splits && u.gen === 0) {
@@ -385,6 +480,7 @@ function trinketStatus(u, o) {
 function meleeSwing(w, u, single) {
   const d = u.def;
   const targets = single ? (u.target && inMeleeArc(u, u.target, 6) ? [u.target] : []) : w.units.filter((o) => alive(o) && o.team !== u.team && inMeleeArc(u, o, 6));
+  u.lungeT = 0.18;
   w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, color: u.team === 'hero' ? '#FFFFFF' : '#FFD2C2' });
   for (const o of targets) {
     hurt(w, o, d.dmg * u.dmgMul * rrange(0.9, 1.1), u, trinketStatus(u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison }));
@@ -393,8 +489,9 @@ function meleeSwing(w, u, single) {
 
 function fireArrow(w, u, angle, o = {}) {
   const sp = o.speed || 520;
+  u.recoilT = 0.14;
   w.projectiles.push({ kind: o.fire ? 'fireArrow' : 'arrow', x: u.x + Math.cos(angle) * (u.r + 6), y: u.y + Math.sin(angle) * (u.r + 6),
-    vx: Math.cos(angle) * sp, vy: Math.sin(angle) * sp, r: 4, team: u.team, owner: u, dmg: (o.dmg || u.def.dmg) * u.dmgMul,
+    vx: Math.cos(angle) * sp, vy: Math.sin(angle) * sp, r: 6, team: u.team, owner: u, dmg: (o.dmg || u.def.dmg) * u.dmgMul,
     o: trinketStatus(u, { chill: o.fire ? 0 : u.def.chill, burn: o.fire ? 20 : 0, knock: 30 }), life: 1.2, a: angle });
 }
 
@@ -428,7 +525,9 @@ function abilityScore(w, u) {
     case 'barrage': {
       if (d > u.def.range || blocked(w, u.x, u.y, t.x, t.y)) return 0;
       const n = opp.filter((o) => dist(o.x, o.y, t.x, t.y) < 85).length;
-      return (n - 1) * 0.45 + 0.08;
+      let fuel = 0; // fire arrows into oil or gas
+      for (const h of w.hazards) if ((h.type === 'oil' || h.type === 'gas') && opp.some((o) => dist(o.x, o.y, h.x, h.y) < h.r + o.r)) fuel += 0.35;
+      return (n - 1) * 0.45 + 0.08 + Math.min(0.7, fuel);
     }
     case 'charge': {
       if (d < 85 || d > 340) return 0;
@@ -436,7 +535,12 @@ function abilityScore(w, u) {
       let n = 0;
       for (const o of opp) { const od = dist(u.x, u.y, o.x, o.y); const off = Math.abs(Math.sin(angleTo(u.x, u.y, o.x, o.y) - a)) * od; if (od < d + 40 && off < 40) n++; }
       const protect = t.target && t.target.team === 'hero' && t.target !== u ? 0.25 : 0;
-      return 0.25 + (n - 1) * 0.35 + protect;
+      // a hazard or wall just past the target: the charge will slam it into it
+      let behind = 0;
+      const bx = t.x + Math.cos(a) * 90, by = t.y + Math.sin(a) * 90;
+      for (const h of w.hazards) if (h.type !== 'gas' && dist(bx, by, h.x, h.y) < h.r + 30) behind = 0.4;
+      if (bx < 20 || by < 20 || bx > w.W - 20 || by > w.H - 20) behind = Math.max(behind, 0.25);
+      return 0.25 + (n - 1) * 0.35 + protect + behind;
     }
     case 'shadowstep': {
       if (d < 70) return 0;
@@ -457,7 +561,7 @@ function useAbility(w, u) {
   switch (def.ability) {
     case 'barrage': {
       const base = angleTo(u.x, u.y, t.x, t.y);
-      text(w, u.x, u.y - u.r - 12, 'BARRAGE', '#FFB36B', 0.9);
+      textU(w, u.x, u.y, u.r + 12, 'BARRAGE', '#FFB36B', 0.9);
       for (let i = 0; i < 7; i++) fireArrow(w, u, base + (i - 3) * 0.075 + rrange(-0.02, 0.02), { fire: true, dmg: 7, speed: 470 + i * 8 });
       u.atkT = Math.max(u.atkT, 0.6);
       break;
@@ -466,7 +570,7 @@ function useAbility(w, u) {
       const a = angleTo(u.x, u.y, t.x, t.y);
       u.facing = a;
       u.act = { type: 'charge', t: 0.55, max: 0.55, a, hit: new Set() };
-      text(w, u.x, u.y - u.r - 12, 'CHARGE', '#BFD4FF', 0.9);
+      textU(w, u.x, u.y, u.r + 12, 'CHARGE', '#BFD4FF', 0.9);
       break;
     }
     case 'shadowstep': {
@@ -475,9 +579,10 @@ function useAbility(w, u) {
       let nx = t.x + Math.cos(back) * (t.r + u.r + 6), ny = t.y + Math.sin(back) * (t.r + u.r + 6);
       nx = clamp(nx, u.r, w.W - u.r); ny = clamp(ny, u.r, w.H - u.r);
       u.x = nx; u.y = ny; u.vx = u.vy = 0; u.facing = angleTo(u.x, u.y, t.x, t.y);
+      u.spd = 0; u.mvA = u.facing; u.lungeT = 0.18;
       puff(w, u.x, u.y, 'rgba(60,40,90,0.85)', 14, 70, 8, 0.6);
       hurt(w, t, def.dmg * 3.2 * u.dmgMul, u, trinketStatus(u, { crit: true, poison: 30, noDodge: true }));
-      text(w, u.x, u.y - u.r - 12, 'BACKSTAB', '#C9A7FF', 0.9);
+      textU(w, u.x, u.y, u.r + 12, 'BACKSTAB', '#C9A7FF', 0.9);
       u.atkT = def.atkCd; u.lastAttackT = w.time; u.mode = 'retreat'; u.modeT = 0;
       break;
     }
@@ -513,7 +618,7 @@ function runAction(w, u, dt) {
     u.dvx = u.dvy = 0;
     if (a.t <= 0) {
       u.act = null;
-      text(w, u.x, u.y - u.r - 14, 'SLAM', '#FF6B5A', 1.2);
+      textU(w, u.x, u.y, u.r + 14, 'SLAM', '#FF6B5A', 1.2);
       w.shake = Math.max(w.shake, 9);
       for (const o of w.units) if (alive(o) && o.team !== u.team && dist(u.x, u.y, o.x, o.y) < 125 + o.r)
         hurt(w, o, 20 * u.dmgMul, u, { knock: 260, heavy: true, noDodge: true });
@@ -526,7 +631,7 @@ function runAction(w, u, dt) {
 function statusTick(w, u, dt) {
   const s = u.st;
   if (s.burn > 0) { s.burn = Math.max(0, s.burn - 7 * dt); if (s.burn >= 30) { hurt(w, u, (2 + s.burn * 0.05) * dt, null, { dot: true, color: '#FF9A55' });
-    if (rand() < dt * 12) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.7, y: u.y + rrange(-u.r, u.r) * 0.7, vx: 0, vy: -50, life: 0.45, max: 0.45, size: 5, color: '#FF8A3D' }); } }
+    if (rand() < dt * 9) flames(w, u.x, u.y - u.vr * 0.3, 1, u.vr * 0.6, 60); } }
   if (s.chill > 0) s.chill = Math.max(0, s.chill - 6 * dt);
   if (s.poison > 0) { s.poison = Math.max(0, s.poison - 4 * dt); hurt(w, u, s.poison * 0.07 * dt, null, { dot: true, color: '#9BCB3C' });
     if (s.poison > 25 && rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.7, y: u.y + rrange(-u.r, u.r) * 0.7, vx: 0, vy: -25, life: 0.6, max: 0.6, size: 4, color: '#9BCB3C' }); }
@@ -540,7 +645,7 @@ function wallHit(w, u, speed) {
   if (speed > SLAM_SPEED) {
     const dmg = 4 + (speed - SLAM_SPEED) * 0.05;
     hurt(w, u, dmg, null, { noDodge: true });
-    text(w, u.x, u.y - u.r - 10, 'SLAM', '#FFD9A0', 0.9);
+    textU(w, u.x, u.y, u.r + 10, 'SLAM', '#FFD9A0', 0.9);
     puff(w, u.x, u.y, '#CDBFA6', 8, 90, 5, 0.4);
   }
 }
@@ -550,7 +655,7 @@ function physics(w, dt) {
   for (const u of us) {
     if (u.dead || u.downed) continue;
     const frozen = u.frozenT > 0;
-    const acc = Math.min(1, dt * (u.kind === 'rat' ? 12 : 8));
+    const acc = Math.min(1, dt * 20);
     if (frozen) { u.vx *= 0.8; u.vy *= 0.8; }
     else { u.vx += (u.dvx - u.vx) * acc; u.vy += (u.dvy - u.vy) * acc; }
     u.x += (u.vx + u.kx) * dt; u.y += (u.vy + u.ky) * dt;
@@ -658,14 +763,16 @@ export function step(w, dt) {
   for (const u of w.units) {
     if (!alive(u)) continue;
     u.flashT = Math.max(0, u.flashT - dt); u.invulnT = Math.max(0, u.invulnT - dt);
-    u.atkT -= dt; u.abilT -= dt; u.modeT += dt; u.bob += dt * 6;
+    u.atkT -= dt; u.abilT -= dt; u.modeT += dt; u.bob += dt * (3 + u.spd * 0.09);
+    u.lungeT = Math.max(0, u.lungeT - dt); u.recoilT = Math.max(0, u.recoilT - dt); u.hitT = Math.max(0, u.hitT - dt);
+    if (u.tauntT > 0) { u.tauntT -= dt; if (u.tauntT <= 0 || !u.tauntBy || !alive(u.tauntBy)) { u.tauntBy = null; u.tauntT = 0; } }
     statusTick(w, u, dt);
     if (!alive(u)) continue;
-    if (u.frozenT > 0) { u.dvx = u.dvy = 0; continue; }
+    if (u.frozenT > 0) { u.dvx = u.dvy = 0; u.spd = 0; continue; }
     if (u.target && !alive(u.target)) u.target = null;
     u.thinkT -= dt;
     if (u.thinkT <= 0) { u.thinkT = 0.4 + rand() * 0.08; think(w, u); }
-    if (u.act) { const charging = u.act.type === 'charge'; runAction(w, u, dt); if (!charging) updateFacing(u, dt); continue; }
+    if (u.act) { const charging = u.act.type === 'charge'; u.spd *= Math.exp(-dt * 10); if (charging) { u.mvA = u.act.a; u.spd = u.def.speed * 1.5; } runAction(w, u, dt); if (!charging) updateFacing(u, dt); continue; }
     movement(w, u, dt);
     updateFacing(u, dt);
     if (u.def.ability && u.abilT <= 0 && !u.forcedGoal) {
@@ -687,10 +794,12 @@ export function step(w, dt) {
   projectiles(w, dt);
   hazards(w, dt);
   pickups(w, dt);
-  for (const p of w.particles) { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 0.92; p.vy *= 0.92; }
+  for (const p of w.particles) { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; const dr = p.drag || 0.92; p.vx *= dr; p.vy *= dr; if (p.rise) p.up += p.rise * dt; }
+  for (const c of w.corpses) { c.t -= dt; c.x += c.kx * dt; c.y += c.ky * dt; }
+  w.corpses = w.corpses.filter((c) => c.t > 0);
   w.particles = w.particles.filter((p) => p.life > 0);
   if (w.particles.length > 400) w.particles.splice(0, w.particles.length - 400);
-  for (const t of w.texts) { t.life -= dt; t.y += t.vy * dt; t.vy *= 0.94; }
+  for (const t of w.texts) { t.life -= dt; t.up = (t.up || 0) - t.vy * dt; t.vy *= 0.94; }
   w.texts = w.texts.filter((t) => t.life > 0);
   for (const t of w.telegraphs) t.t -= dt;
   w.telegraphs = w.telegraphs.filter((t) => t.t > 0);

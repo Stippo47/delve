@@ -59,25 +59,25 @@ function rasterSvg(text, px) {
 // ---- procedural enemies, drawn in the 220-unit box (origin at -10,-10) ----
 function grad(g, y0, y1, a, b) { const l = g.createLinearGradient(0, y0, 0, y1); l.addColorStop(0, a); l.addColorStop(1, b); return l; }
 
-function drawRat(g) {
+function drawRat(g, lw) {
   const body = new Path2D('M100 44 C134 44 150 72 150 100 C150 124 134 142 116 150 L100 176 L84 150 C66 142 50 124 50 100 C50 72 66 44 100 44 Z');
   const earL = new Path2D('M62 70 C44 58 36 78 46 92 C54 92 62 84 66 76 Z');
   const earR = new Path2D('M138 70 C156 58 164 78 154 92 C146 92 138 84 134 76 Z');
   const tail = new Path2D('M100 50 C98 30 112 18 126 14 C136 12 140 4 136 -2');
   g.lineJoin = 'round'; g.lineCap = 'round';
-  g.strokeStyle = INK; g.lineWidth = 14; g.stroke(tail);
+  g.strokeStyle = INK; g.lineWidth = lw + 2; g.stroke(tail);
   g.strokeStyle = '#D8A39A'; g.lineWidth = 5; g.stroke(tail);
-  for (const p of [earL, earR, body]) { g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = 12; g.fill(p); g.stroke(p); }
+  for (const p of [earL, earR, body]) { g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = lw; g.fill(p); g.stroke(p); }
   g.fillStyle = grad(g, 60, 100, '#E9B7AE', '#C98E86'); g.fill(earL); g.fill(earR);
   g.fillStyle = grad(g, 44, 176, '#9C8676', '#6F5A4D'); g.fill(body);
   g.save(); g.clip(body); g.fillStyle = 'rgba(43,34,48,0.18)'; g.fillRect(100, 0, 120, 220); g.restore();
   g.fillStyle = '#E2A1A5'; g.beginPath(); g.arc(100, 170, 7, 0, Math.PI * 2); g.fill();
 }
 
-function drawSlime(g, tint) {
+function drawSlime(g, tint, lw) {
   const body = new Path2D('M100 42 C140 42 156 72 156 104 C156 138 134 158 100 160 C66 158 44 138 44 104 C44 72 60 42 100 42 Z');
   const drip = new Path2D('M86 152 C90 170 96 180 100 184 C104 180 110 170 114 152 Z');
-  for (const p of [drip, body]) { g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = 12; g.lineJoin = 'round'; g.fill(p); g.stroke(p); }
+  for (const p of [drip, body]) { g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = lw; g.lineJoin = 'round'; g.fill(p); g.stroke(p); }
   g.fillStyle = grad(g, 42, 184, tint[0], tint[1]); g.fill(body); g.fill(drip);
   g.save(); g.clip(body);
   g.fillStyle = 'rgba(20,70,60,0.22)'; g.beginPath(); g.arc(108, 112, 30, 0, Math.PI * 2); g.fill();
@@ -90,9 +90,10 @@ function proceduralCanvas(kind, px) {
   const g = c.getContext('2d');
   const s = px / 220;
   g.setTransform(s, 0, 0, s, 10 * s, 10 * s);
-  if (kind === 'rat') drawRat(g);
-  else if (kind === 'slime') drawSlime(g, ['#7FD9C2', '#3E9C86']);
-  else if (kind === 'slimeSmall') drawSlime(g, ['#A6E8D6', '#58B49D']);
+  // Outline widths chosen so the outline shows the same thickness in the world as the SVG heroes' (see OUTLINE in render.js).
+  if (kind === 'rat') drawRat(g, 16);
+  else if (kind === 'slime') drawSlime(g, ['#7FD9C2', '#3E9C86'], 12);
+  else if (kind === 'slimeSmall') drawSlime(g, ['#A6E8D6', '#58B49D'], 18);
   return c;
 }
 
@@ -108,6 +109,17 @@ export function getSprite(kind, px) {
   if (SVG_KINDS[kind] && svgText[kind]) rasterSvg(svgText[kind], size).then(done);
   else done(proceduralCanvas(kind, size));
   return e.ready ? e : null;
+}
+
+// A copy of a sprite washed with a colour (chilled blue, poisoned green), made once per sprite and colour.
+export function tinted(e, color) {
+  e.tints = e.tints || {};
+  if (!e.tints[color]) {
+    const c = makeCanvas(e.img.width); const g = c.getContext('2d');
+    g.drawImage(e.img, 0, 0); g.globalCompositeOperation = 'source-atop'; g.fillStyle = color; g.fillRect(0, 0, c.width, c.height);
+    e.tints[color] = c;
+  }
+  return e.tints[color];
 }
 
 export const headR = (kind) => HEAD_R[kind] || HEAD_R[kind.replace('Small', '')] || 54;

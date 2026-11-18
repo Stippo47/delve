@@ -4,7 +4,9 @@ import { makeWorld, spawn, step, alive } from './sim.js';
 import { DEFS, HERO_ORDER, xpToNext, levelHp, levelDmg, TRINKET_IDS, TRINKETS } from './units.js';
 import { rand, rrange, rint, pick, chance, dist, clamp } from './util.js';
 
-export const W = 960, H = 480;
+// Rooms are 25% bigger than v0.1 (960x480). The long axis runs from the way in to the way out;
+// in portrait the renderer turns the room so the way out is at the top.
+export const W = 1200, H = 480;
 export const FLOORS = 3, ROOMS = 3;
 
 export function newRun(save, depth) {
@@ -34,13 +36,13 @@ function buildRoom(run) {
   run.template = template;
   // pillars
   const np = boss ? 2 : rint(0, 3);
-  for (let i = 0; i < np; i++) { const r = rrange(22, 36); const p = placeFree(w, r, 260, 700); w.pillars.push({ x: p.x, y: p.y, r }); }
+  for (let i = 0; i < np; i++) { const r = rrange(22, 36); const p = placeFree(w, r, 320, 880); w.pillars.push({ x: p.x, y: p.y, r }); }
   // hazards
   const nh = template === 'hazard' ? rint(2, 4) : template === 'mixed' ? rint(1, 2) : boss ? 1 : chance(0.3) ? 1 : 0;
   for (let i = 0; i < nh; i++) {
     const type = chance(0.5) ? 'oil' : 'spikes';
     const r = type === 'oil' ? rrange(34, 52) : rrange(24, 34);
-    const p = placeFree(w, r, 230, 760); w.hazards.push({ type, x: p.x, y: p.y, r });
+    const p = placeFree(w, r, 280, 960); w.hazards.push({ type, x: p.x, y: p.y, r });
   }
   // heroes
   const ys = [H / 2, H / 2 - 60, H / 2 + 60];
@@ -77,7 +79,7 @@ function buildRoom(run) {
   run.fade = 1;
 }
 
-function text(run, s, color) { const w = run.world; const hs = w.units.filter((u) => u.team === 'hero' && alive(u)); const h = hs[0]; if (h) w.texts.push({ x: h.x, y: h.y - 40, s, color, size: 1, life: 1, max: 1, vy: -30 }); }
+function text(run, s, color) { const w = run.world; const hs = w.units.filter((u) => u.team === 'hero' && alive(u)); const h = hs[0]; if (h) w.texts.push({ x: h.x, y: h.y, up: 40, s, color, size: 1, life: 1, max: 1, vy: -30 }); }
 
 function onKill(run, u) {
   run.kills++;
@@ -92,7 +94,7 @@ function onKill(run, u) {
       const ratio = h.hp / h.maxHp;
       h.maxHp = levelHp(h.def.hp, sv.level); h.hp = Math.min(h.maxHp, h.maxHp * ratio + h.maxHp * 0.25);
       h.dmgMul = levelDmg(1, sv.level); h.level = sv.level;
-      w.texts.push({ x: h.x, y: h.y - h.r - 18, s: 'LEVEL ' + sv.level, color: '#FFE14D', size: 1.2, life: 1.3, max: 1.3, vy: -30 });
+      w.texts.push({ x: h.x, y: h.y, up: h.r + 18, s: 'LEVEL ' + sv.level, color: '#FFE14D', size: 1.2, life: 1.3, max: 1.3, vy: -30 });
       for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; w.particles.push({ x: h.x, y: h.y, vx: Math.cos(a) * 120, vy: Math.sin(a) * 120, life: 0.6, max: 0.6, size: 4, color: '#FFE14D' }); }
     }
   }
@@ -113,6 +115,7 @@ export function update(run, dt) {
     if (run.fadeOut >= 1) nextRoom(run);
     return;
   }
+  if (w.hitstop > 0) { w.hitstop -= dt; return; } // a beat of stillness on big hits
   step(w, dt);
   // track downed heroes
   for (const u of w.units) if (u.team === 'hero' && u.downed) run.heroes[u.kind].down = true;
@@ -135,7 +138,7 @@ export function update(run, dt) {
         run.chestT = 0;
         chest.open = true; run.keys--; near.forcedGoal = null;
         const item = rollTrinket(); run.satchel.push(item);
-        w.texts.push({ x: chest.x, y: chest.y - 30, s: TRINKETS[item.id].name, color: '#FFE7A0', size: 1, life: 1.6, max: 1.6, vy: -24, item: item.id });
+        w.texts.push({ x: chest.x, y: chest.y, up: 30, s: TRINKETS[item.id].name, color: '#FFE7A0', size: 1, life: 1.6, max: 1.6, vy: -24, item: item.id });
         for (let i = 0; i < 16; i++) { const a = rand() * Math.PI * 2; w.particles.push({ x: chest.x, y: chest.y, vx: Math.cos(a) * 140, vy: Math.sin(a) * 140, life: 0.7, max: 0.7, size: 5, color: '#FFD45A' }); }
         run.t = 2.2;
       }

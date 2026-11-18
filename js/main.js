@@ -1,5 +1,5 @@
 import { loadSprites } from './sprites.js';
-import { layout, draw, view } from './render.js';
+import { layout, draw, view, snapCamera } from './render.js';
 import { newRun, update, W, H, FLOORS, ROOMS, rollTrinket } from './dungeon.js';
 import { loadSave, writeSave } from './save.js';
 import { HERO_ORDER, DEFS, TRINKETS, xpToNext, levelHp } from './units.js';
@@ -149,13 +149,20 @@ function endRun(result) {
 
 // ---------------------------------------------------------------- loop
 const STEP = 1 / 60;
-let last = performance.now(), acc = 0;
+let last = performance.now(), acc = 0, lastWorld = null;
 function frame(now) {
   requestAnimationFrame(frame);
   let dt = Math.min(0.1, (now - last) / 1000); last = now;
-  if (state === 'run' && run) {
-    layout(canvas, W, H, 50);
-    acc += dt * save.speed;
+  if (state === 'run' && run && !recording) drawRun(dt, true);
+}
+
+let recording = false;
+function drawRun(dt, live) {
+  {
+    if (run.world !== lastWorld) { lastWorld = run.world; snapCamera(); }
+    const hud = $('hud').getBoundingClientRect();
+    layout(canvas, run.world, Math.round(hud.bottom) + 6, 10);
+    acc += dt * (live ? save.speed : 1);
     let n = 0;
     while (acc >= STEP && n < 16) { update(run, STEP); acc -= STEP; n++; if (run.phase === 'won' || run.phase === 'lost') break; }
     if (acc > STEP * 16) acc = 0;
@@ -165,8 +172,8 @@ function frame(now) {
       ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0); ctx.fillStyle = `rgba(47,39,52,${Math.min(1, a)})`; ctx.fillRect(0, 0, view.cw, view.ch);
     }
     hudT -= dt; if (hudT <= 0) { hudT = 0.1; updateHud(); }
-    if (run.phase === 'won') endRun('won');
-    else if (run.phase === 'lost') endRun('lost');
+    if (live && run.phase === 'won') endRun('won');
+    else if (live && run.phase === 'lost') endRun('lost');
   }
 }
 
@@ -175,6 +182,9 @@ document.addEventListener('visibilitychange', () => { last = performance.now(); 
 window.GAME = {
   get save() { return save; }, get run() { return run; }, get state() { return state; },
   startRun, endRun, setSpeed: (s) => { save.speed = s; },
+  // Recording clips: stop the live loop, then step and draw one frame at a time (tools/clip.mjs).
+  record(on = true) { recording = on; acc = 0; },
+  recFrame(dt) { if (run) drawRun(dt, false); },
   fastForward(seconds) { const n = Math.round(seconds / STEP); for (let i = 0; i < n && run && run.phase !== 'won' && run.phase !== 'lost'; i++) update(run, STEP); },
 };
 

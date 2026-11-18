@@ -1,0 +1,69 @@
+# Delve: decisions
+
+The designer's rulings, newest round first. Raw answers are in `docs/riffle-log/`. HANDOFF.md has the
+decisions from before Riffle. Where they conflict, this file wins.
+
+---
+
+## Round 1 (Riffle, answered 2026-11-16/17)
+
+### Game feel (from the "Delve is live" card, played on the phone)
+- **Portrait.** Must be playable vertically.
+- **Collider bigger** (units overlap visually now: the collider is only the head).
+- **Rooms ~25% larger.**
+- **Movement:** robotic, no momentum, no flow, too rigid. Units must take time to turn around, not snap.
+- **No animations** yet: needs them.
+- **Hit impact** is weak.
+- **Outlines:** thickness is mixed between things; make it consistent.
+- **Arrows** too small. **Rats** a bit too small.
+- **Status effect visuals** disliked. **Fire puffs** look bad.
+- **Menu/UI:** no life to it, bad. Redo.
+- **Rogue dies** because it strafes towards large groups.
+
+### Brains
+- Report is right. Pathfinding marked "decent": go with **A\***.
+- Targeting: weigh targets that **nobody is already on** higher; weigh targets **surrounded by more of their allies** lower (rogue fix: brain, not HP).
+- Teamwork, all three: **knight draws attention** (soft taunt), **finish the kill**, **knight protects** the low hero being attacked.
+- Formation only slightly enforced: if the archer is closer to an enemy than the knight, it weighs moving towards the knight more.
+- Enemy habits yes, but **simple**: e.g. rats rapidly changing direction while approaching, circling in. Not my examples.
+- Brains should know combos a little (Charge towards hazards, Barrage at targets in oil/gas): yes.
+
+### Statuses
+- **Statuses mostly come from trinkets or abilities, not base attacks.** (Archer's chill-on-every-arrow and rogue's poison pokes are wrong.)
+- Burn: chance to **spread** to nearby units, 20-50% of the current amount.
+- Chill: a **constant** slow, no ramp (for now). Each freeze makes the next harder: keep. Shatter is heavy damage, never an instant kill.
+- Poison: also slightly slows action speed and movement.
+- **Next statuses: Wet, Shock and Stagger.**
+  - Wet: special abilities trigger slower. At 100 the unit **slips** (spins for a second) and leaves a puddle.
+  - Shock: a stun that **retriggers** every few moments.
+  - Stagger: a short continuous stun that **stacks**. At full: **knocked out**, unreactive and vulnerable for a few seconds.
+- Also floated: entangle / vines.
+- Enemies causing statuses: yes, but **make enemies for the statuses**, don't bolt statuses onto existing enemies.
+- Friendly fire at 40%: keep.
+- "New heroes' statuses" card sent back (heroes don't bring a status by default; see first rule).
+
+### How a run plays
+- Today's layout is **too small and too regular: it should be a journey.** Rooms: problem.
+- **Binding of Isaac-like layout**: a map of rooms with doors. Sometimes there are doors to choose between, and **the units choose** (maybe at random). No player door choice.
+- Room shapes: yes. More bosses: yes. Sound: yes.
+- Healing: fountain yes, plus passive healing, heal abilities, **health potions** a hero carries in, used like an ability (likely when low and safe; slows, takes a second, can be interrupted).
+- **Decision rooms:** 3 free things, pick 1.
+- Chests give **more than trinkets**: HP potions, XP, coins. Trinkets found in a dungeon can be used during it.
+- Easter eggs: **mimic** yes (normal drops + XP, not 2 trinkets), **duck** yes, **"nothing personal"** yes. Cracked wall and sleeping boss: unsure.
+- Player input (speed, retreat) is fine.
+
+### Progression (big change: see the design card sent back)
+- **Keep all gold**, even on a loss. **Leave any time.**
+- Hurt or dead heroes need a **recovery timer**; coins speed it up. Enter with other heroes meanwhile.
+- **Mercenary party:** a weak-to-middling starter party you don't keep, which takes ~50% of the gold.
+- **Party size starts at 1**; gold or gems buy more slots, cost growing fast. No free XP for heroes left at home.
+- **Skill tree per hero**, split 3-4 ways (attack, survival, utility/support, maybe movement). Leaves are ability unlocks or stat buys that can be bought repeatedly (+5 damage, +15% vs undead, +attack speed and knockback below 20 HP...). Branches group sensibly. Tree nodes can open **more trinket slots**.
+- **XP and levels only matter inside a run** and reset on leaving. **Gold buys tree nodes** (permanent). Some nodes need a level, or a feat like "reached level 8 in a dungeon".
+- Coins also buy base-stat growth per level and trinkets; **gems unlock new heroes**.
+- **Don't show a recommended level. Each dungeon is a different theme.** Offer a few dungeons to choose from.
+
+### Art (board)
+- Liked overall: archer, base, Paladin, Old Guard, Dame, Twinfang, Bandit, Shade, Granny Reaper, Wildmane, Bearskin.
+- Weapons held **below the body, not over the shoulder**, and **bigger**. Hands on shields hidden.
+- Per-item notes are in the round-1 log; the art round brief carries them.
+- **Skeletons get eye sockets** (overrides "no eyes" for skeletons), no rib cage, no light/dark split down the middle; nose hole the right way up.

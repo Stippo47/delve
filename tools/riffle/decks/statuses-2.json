@@ -1,0 +1,67 @@
+{
+  "title": "The new status rules",
+  "topic": "statuses",
+  "order": 2,
+  "priority": 3,
+  "tags": [
+    "waiting"
+  ],
+  "cards": [
+    {
+      "id": "rules",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "Where statuses come from",
+      "text": "Base attacks go plain; statuses come from abilities and trinkets. Mark what's off.",
+      "why": "This changes what each hero does today. My guess at which ability gives what is in the parts.",
+      "pick": "Build it as written in stage 4. Enemies built around statuses come later, as a board of my pitches.",
+      "parts": [
+        {
+          "id": "plain",
+          "title": "Plain base attacks",
+          "text": "Archer arrows no longer chill. Rogue pokes no longer poison. Knight swings stay plain."
+        },
+        {
+          "id": "abilities",
+          "title": "From abilities",
+          "text": "Archer Barrage: fire. Rogue Shadow Step: poison. Knight Charge: stagger. More come from skill-tree abilities."
+        },
+        {
+          "id": "trinkets",
+          "title": "From trinkets",
+          "text": "Frost, Ember and Venom rings as now, plus a ring for each new status. Frost only comes from trinkets for now."
+        },
+        {
+          "id": "burn",
+          "title": "Burn spreads",
+          "text": "A burning unit can pass 20-50% of its burn to those touching it."
+        },
+        {
+          "id": "chill",
+          "title": "Chill",
+          "text": "A flat slow while chilled, no ramp. Freeze and shatter as now; shatter is a heavy hit, never an instant kill."
+        },
+        {
+          "id": "poison",
+          "title": "Poison",
+          "text": "Also slightly slows attacks and movement while it lasts."
+        },
+        {
+          "id": "wet",
+          "title": "Wet",
+          "text": "Abilities come round slower. At 100 the unit slips: spins for a second and leaves a puddle. Doubles shock, halves burn."
+        },
+        {
+          "id": "shock",
+          "title": "Shock",
+          "text": "A short stun that strikes again every few moments while it lasts."
+        },
+        {
+          "id": "stagger",
+          "title": "Stagger",
+          "text": "A short stun that stacks. At 100: knocked out for a few seconds, takes extra damage."
+        }
+      ]
+    }
+  ]
+}

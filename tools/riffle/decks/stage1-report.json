@@ -1,0 +1,68 @@
+{
+  "title": "Stage 1: feel",
+  "topic": "runs",
+  "order": 3,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "feel",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Stage 1: how it feels now",
+      "text": "Your notes from playing it, all done except the menu and status rules. It's live now. Mark any part that's off.",
+      "why": "This is the base everything else builds on: how units move, hit and look in a fight.",
+      "videos": [
+        "../../../clips/s1-fight.mp4"
+      ],
+      "details": "The clip is a real depth 1 room at normal speed, recorded in portrait at iPhone size.\n\nNot in this stage: the menu and camp (redone with the progression in stage 3, mocked up first) and the status rules (stage 4). Base attacks still apply chill and poison until then.\n\nThe four art artists start at 2am, once the weekly limit resets.",
+      "parts": [
+        {
+          "id": "portrait",
+          "title": "Portrait",
+          "text": "Hold the phone either way. Upright, the room turns so you walk up the screen, and the camera follows the party. Sideways still works.",
+          "videos": [
+            "../../../clips/s1-landscape.mp4"
+          ]
+        },
+        {
+          "id": "size",
+          "title": "Bigger rooms and bodies",
+          "text": "Rooms are 25% bigger. Bodies now collide at the shoulders, not the head, so they don't overlap. Melee reach shrank to match."
+        },
+        {
+          "id": "movement",
+          "title": "Momentum and turning",
+          "text": "Units speed up and slow down, swing round at their own turn speed (knight slowest, rats fastest), and a sharp turn bleeds speed."
+        },
+        {
+          "id": "anim",
+          "title": "Animations",
+          "text": "A waddle and bounce when walking, a lunge on each swing, bow recoil, a pull-back before heavy blows, and enemies pop and fade when they die.",
+          "videos": [
+            "../../../clips/s1-closeup-slow.mp4"
+          ]
+        },
+        {
+          "id": "impact",
+          "title": "Hit impact",
+          "text": "Hits squash and shove the target, throw sparks, and damage numbers land big. Heavy hits and crits freeze the action for a split second and shake the screen."
+        },
+        {
+          "id": "look",
+          "title": "Outlines, arrows, rats",
+          "text": "One outline thickness for everything. Arrows about twice the size, with fletching. Rats bigger."
+        },
+        {
+          "id": "fx",
+          "title": "Fire and statuses",
+          "text": "Fire is outlined flame licks instead of orange puffs. Statuses tint the unit and show as a small meter under its health bar; frozen units sit in an ice block."
+        },
+        {
+          "id": "brains",
+          "title": "Brains",
+          "text": "Targets nobody's on come first, packs are avoided (the rogue most), the rogue strafes away from groups. Knight draws attention and protects; archer stays behind him. Rats zigzag in and circle."
+        }
+      ]
+    }
+  ]
+}

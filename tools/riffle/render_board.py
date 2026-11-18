@@ -82,6 +82,15 @@ for cls, names in NAMES.items():
         ITEMS.append((f"{cls}-{i}", f"{cls.title()} · {n}", ROOT / f"design/class-candidates/{cls}/design-{i}.svg"))
 
 if __name__ == "__main__":
+    import sys
+    # Your own designs:  python render_board.py --out some/folder a.svg=Label b.svg=Label ...
+    # writes <stem>.png (archer beside it, 8 facings, game size) and <stem>-thumb.png into that folder.
+    if len(sys.argv) > 2 and sys.argv[1] == "--out":
+        OUT = pathlib.Path(sys.argv[2]).resolve(); OUT.mkdir(parents=True, exist_ok=True)
+        ITEMS = []
+        for a in sys.argv[3:]:
+            f, _, lab = a.partition("=")
+            ITEMS.append((pathlib.Path(f).stem, lab or pathlib.Path(f).stem, pathlib.Path(f).resolve()))
     for iid, label, src in ITEMS:
         sheet(src, label, OUT / f"{iid}.png")
         thumb(src, OUT / f"{iid}-thumb.png")
