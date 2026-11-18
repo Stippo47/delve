@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- GHOST (round 3 enemy): a plain sheet ghost seen from above. Round head at the front (down), the sheet narrows behind
+       it into one wispy tail that flicks to the side (up), two little sheet-arm nubs reach forward. Two dark eyes and an "oo" mouth.
+       Different from the banshee (that one is a skull with hair). Parts (file order = draw order): #arm-l, #arm-r = the
+       nubs (pivot at the side of the sheet; drawn before #body so the sheet covers where they join), #body = the sheet.
+       The tail tips can be swayed by skewing #body around its front if wanted.
+       The outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <path id="sheet" d="M100 164 C126 164 147 146 147 118 C147 94 138 80 128 66 C118 52 112 40 114 26 C115 18 120 12 126 10 C116 6 104 10 98 20 C92 30 90 40 82 50 C66 68 53 88 53 118 C53 146 74 164 100 164 Z"/>
+    <path id="nub" d="M64 104 C50 106 36 116 31 132 C30 138 36 141 42 140 C52 138 60 134 66 128 Z"/>
+    <mask id="sheetM"><use href="#sheet" fill="#fff" stroke="#fff" stroke-width="5" stroke-linejoin="round"/></mask>
+    <linearGradient id="gSheet" x1="50" y1="40" x2="150" y2="150" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E2E1F4"/></linearGradient>
+    <radialGradient id="gDome" cx="88" cy="112" r="56" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.9"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shX" x1="92" y1="0" x2="150" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5A5C9A" stop-opacity="0"/><stop offset="1" stop-color="#5A5C9A" stop-opacity="0.38"/></linearGradient>
+    <linearGradient id="shTail" x1="0" y1="20" x2="0" y2="96" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5A5C9A" stop-opacity="0.34"/><stop offset="1" stop-color="#5A5C9A" stop-opacity="0"/></linearGradient>
+    <linearGradient id="gNub" x1="30" y1="0" x2="66" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DCDBF0"/></linearGradient>
+    <linearGradient id="gNubR" x1="30" y1="0" x2="66" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#C9C8E6"/><stop offset="1" stop-color="#D9D8EE"/></linearGradient>
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <g id="arm-l" data-pivot="62 112">
+      <use href="#nub" fill="url(#gNub)" stroke="url(#gNub)" stroke-width="4" stroke-linejoin="round"/>
+    </g>
+    <g id="arm-r" data-pivot="138 112">
+      <g transform="translate(200 0) scale(-1 1)"><use href="#nub" fill="url(#gNubR)" stroke="url(#gNubR)" stroke-width="4" stroke-linejoin="round"/></g>
+    </g>
+    <g id="body">
+      <use href="#sheet" fill="url(#gSheet)" stroke="url(#gSheet)" stroke-width="5" stroke-linejoin="round"/>
+      <g mask="url(#sheetM)">
+        <!-- one soft fold running back into the tail -->
+        <path d="M84 84 C92 64 100 46 110 26 C106 46 104 66 104 86 Z" fill="#8E8FC4" opacity="0.26"/>
+        <rect x="40" y="10" width="120" height="90" fill="url(#shTail)"/>
+        <rect x="40" y="10" width="120" height="160" fill="url(#shX)"/>
+        <circle cx="96" cy="118" r="60" fill="url(#gDome)"/>
+        <!-- face at the front of the head -->
+        <ellipse cx="86" cy="136" rx="7.5" ry="10" fill="#2B2230"/>
+        <ellipse cx="114" cy="136" rx="7.5" ry="10" fill="#2B2230"/>
+        <ellipse cx="100" cy="153" rx="5" ry="5.5" fill="#2B2230"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- SLIME, fire / magma (round 3 enemy, a third slime kind). Big-slime size. Molten orange jelly with a yellow-hot core,
+       embers inside, and flames licking back off it. Cross eyes.
+       Parts: #back = the flames (pivot at the back edge so they can flicker/sway), #body = the blob.
+       The outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <path id="jelly" d="M100 46 C138 46 168 68 175 102 C182 140 152 168 100 168 C48 168 18 140 25 102 C32 68 62 46 100 46 Z"/>
+    <path id="core" d="M100 152 C70 152 46 136 46 110 C46 86 66 68 96 66 C128 64 154 82 154 108 C154 136 130 152 100 152 Z"/>
+    <path id="flames" d="M52 74 C44 58 48 42 58 32 Q62 29 63 34 C64 44 70 50 77 50 C73 34 82 16 97 7 Q102 5 101 10 C100 24 107 36 116 43 C119 34 126 28 134 25 Q139 24 138 29 C136 40 142 50 150 70 Z"/>
+    <path id="flamesIn" d="M70 70 C64 60 66 50 72 44 C74 54 82 58 88 58 C86 44 92 30 102 22 C102 38 110 46 118 52 C122 44 128 40 134 38 C132 48 136 58 140 72 Z"/>
+    <clipPath id="jellyC"><use href="#jelly"/></clipPath>
+    <clipPath id="flamesC"><use href="#flames"/></clipPath>
+    <radialGradient id="gJelly" cx="86" cy="92" r="104" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFD36A"/><stop offset="0.5" stop-color="#F7943A"/><stop offset="1" stop-color="#C2401F"/></radialGradient>
+    <radialGradient id="gCore" cx="92" cy="104" r="62" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFF4B0" stop-opacity="0.95"/><stop offset="1" stop-color="#FFD36A" stop-opacity="0"/></radialGradient>
+    <linearGradient id="gFlame" x1="0" y1="70" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#F26A2A"/><stop offset="1" stop-color="#D8401E"/></linearGradient>
+    <linearGradient id="gFlameIn" x1="0" y1="72" x2="0" y2="20" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFE07A"/><stop offset="1" stop-color="#FFB040"/></linearGradient>
+    <linearGradient id="shX" x1="80" y1="0" x2="180" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7A1E14" stop-opacity="0"/><stop offset="1" stop-color="#7A1E14" stop-opacity="0.38"/></linearGradient>
+    <linearGradient id="shY" x1="0" y1="110" x2="0" y2="170" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7A1E14" stop-opacity="0"/><stop offset="1" stop-color="#7A1E14" stop-opacity="0.32"/></linearGradient>
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <g id="back" data-pivot="100 70">
+      <use href="#flames" fill="url(#gFlame)"/>
+      <use href="#flamesIn" fill="url(#gFlameIn)"/>
+    </g>
+    <g id="body">
+      <use href="#jelly" fill="url(#gJelly)"/>
+      <use href="#core" fill="url(#gCore)"/>
+      <g clip-path="url(#jellyC)">
+        <circle cx="84" cy="80" r="3.5" fill="#FFF6C8"/>
+        <circle cx="112" cy="110" r="2.8" fill="#FFF6C8"/>
+        <circle cx="62" cy="134" r="3" fill="#FFF6C8"/>
+        <circle cx="132" cy="146" r="2.5" fill="#FFF6C8"/>
+        <circle cx="140" cy="80" r="5" fill="#FFE68A" opacity="0.8"/>
+        <circle cx="150" cy="118" r="3.5" fill="#FFE68A" opacity="0.8"/>
+        <circle cx="50" cy="110" r="4" fill="#FFE68A" opacity="0.8"/>
+        <use href="#jelly" fill="url(#shX)"/>
+        <use href="#jelly" fill="url(#shY)"/>
+        <path d="M40 140 C60 166 140 172 168 136 C160 166 130 176 100 176 C70 176 46 164 40 140 Z" fill="#FFD36A" opacity="0.6"/>
+        <ellipse cx="62" cy="76" rx="16" ry="8" transform="rotate(-38 62 76)" fill="#FFFBE6" opacity="0.75"/>
+        <!-- cross eyes: top edge slants down to the middle -->
+        <path d="M70 124 L91 130 C92 140 88 146 81 146 C73 146 69 139 70 124 Z" fill="#2B2230"/>
+        <path d="M130 124 L109 130 C108 140 112 146 119 146 C127 146 131 139 130 124 Z" fill="#2B2230"/>
+        <circle cx="77" cy="133" r="2.6" fill="#FFF6C8"/>
+        <circle cx="115" cy="133" r="2.6" fill="#FFF6C8"/>
+        <path d="M92 156 Q100 151 108 156" fill="none" stroke="#2B2230" stroke-width="3.2" stroke-linecap="round"/>
+      </g>
+    </g>
+  </g>
+</svg>

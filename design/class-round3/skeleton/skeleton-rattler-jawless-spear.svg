@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- SKELETON round 3 "Rattler, no jaw" (spear): no lower jaw, upper teeth hang free. Parts in draw order: #arm-r (long spear + claw; drawn first so the shaft runs under the shoulder and its butt shows behind), #body (skull + shoulder balls), #arm-l (empty claw). Facing = DOWN (+y), centre (100,100). -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="shX" x1="70" y1="0" x2="160" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4A3220" stop-opacity="0"/><stop offset="1" stop-color="#4A3220" stop-opacity="0.34"/></linearGradient>
+    <linearGradient id="gSkull" x1="52" y1="40" x2="150" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FCF6E4"/><stop offset="0.5" stop-color="#F0E2BE"/><stop offset="1" stop-color="#D6C096"/></linearGradient>
+    <radialGradient id="gDome" cx="84" cy="74" r="44" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
+    <linearGradient id="gBone" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#F7EDD3"/><stop offset="1" stop-color="#E0CFA4"/></linearGradient>
+    <linearGradient id="gBone2" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#DCCDA6"/><stop offset="1" stop-color="#B6A47C"/></linearGradient>
+    <linearGradient id="gSock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B2230"/><stop offset="1" stop-color="#4A3A3C"/></linearGradient>
+    <linearGradient id="gIron" x1="0" y1="0" x2="1" y2="0.3"><stop offset="0" stop-color="#ABA29A"/><stop offset="1" stop-color="#776C66"/></linearGradient>
+    <linearGradient id="gIronD" x1="0" y1="0" x2="1" y2="0.3"><stop offset="0" stop-color="#8C837C"/><stop offset="1" stop-color="#5E5552"/></linearGradient>
+    <linearGradient id="gRust" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D27A40"/><stop offset="1" stop-color="#A4532B"/></linearGradient>
+    <linearGradient id="gWood" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9A6A40"/><stop offset="1" stop-color="#6E4628"/></linearGradient>
+    <linearGradient id="gWrap" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7A4A32"/><stop offset="1" stop-color="#55301F"/></linearGradient>
+    <path id="butt" d="M 169.8 35.3 L 172.8 35.7 A 3 3 0 0 1 175.4 39 L 175 42 A 3 3 0 0 1 171.7 44.6 L 168.7 44.3 A 3 3 0 0 1 166.1 40.9 L 166.5 37.9 A 3 3 0 0 1 169.8 35.3 Z"/>
+    <path id="shaft" d="M 170.8 38 L 171.2 38 A 3 3 0 0 1 173.8 41.4 L 159.9 154.5 A 3 3 0 0 1 156.6 157.1 L 156.2 157.1 A 3 3 0 0 1 153.6 153.7 L 167.5 40.6 A 3 3 0 0 1 170.8 38 Z"/>
+    <path id="spearhead" d="M 151.1 199.8 C 149.3 190.5 143.2 178.7 144 171.7 C 144.7 165.8 150.7 162.5 152.5 160.7 L 159.3 161.5 C 160.6 163.7 165.6 168.3 164.8 174.3 C 164 181.2 155.2 191.2 151.1 199.8 Z"/>
+    <path id="binding" d="M 155.2 154.4 L 158.2 154.8 A 3 3 0 0 1 160.8 158.2 L 160.4 161.1 A 3 3 0 0 1 157.1 163.7 L 154.1 163.4 A 3 3 0 0 1 151.5 160 L 151.8 157.1 A 3 3 0 0 1 155.2 154.4 Z"/>
+    <path id="fist-r-f0" d="M 150.8 135.3 L 150.8 135.3 A 2.2 2.2 0 0 1 152.7 137.7 L 152.2 142.3 A 2.2 2.2 0 0 1 149.7 144.2 L 149.7 144.2 A 2.2 2.2 0 0 1 147.7 141.7 L 148.2 137.2 A 2.2 2.2 0 0 1 150.8 135.3 Z"/>
+    <path id="fist-r-f1" d="M 156.2 135.9 L 156.2 135.9 A 2.2 2.2 0 0 1 158.2 138.4 L 157.6 143 A 2.2 2.2 0 0 1 155.1 144.9 L 155.1 144.9 A 2.2 2.2 0 0 1 153.1 142.4 L 153.7 137.8 A 2.2 2.2 0 0 1 156.2 135.9 Z"/>
+    <path id="fist-r-f2" d="M 161.7 136.6 L 161.7 136.6 A 2.2 2.2 0 0 1 163.6 139.1 L 163.1 143.6 A 2.2 2.2 0 0 1 160.6 145.5 L 160.6 145.5 A 2.2 2.2 0 0 1 158.6 143.1 L 159.2 138.5 A 2.2 2.2 0 0 1 161.7 136.6 Z"/>
+    <path id="fist-r-f3" d="M 167.1 137.3 L 167.1 137.3 A 2.2 2.2 0 0 1 169.1 139.7 L 168.5 144.3 A 2.2 2.2 0 0 1 166 146.2 L 166 146.2 A 2.2 2.2 0 0 1 164.1 143.7 L 164.6 139.2 A 2.2 2.2 0 0 1 167.1 137.3 Z"/>
+    <path id="fist-r-palm" d="M 155.4 124.2 L 165.3 125.5 A 6 6 0 0 1 170.5 132.1 L 170.2 135.1 A 6 6 0 0 1 163.5 140.3 L 153.5 139.1 A 6 6 0 0 1 148.3 132.4 L 148.7 129.5 A 6 6 0 0 1 155.4 124.2 Z"/>
+    <path id="ball-l" d="M29.5 110 A12.5 12.5 0 1 0 54.5 110 A12.5 12.5 0 1 0 29.5 110 Z"/>
+    <path id="ball-r" d="M145.5 110 A12.5 12.5 0 1 0 170.5 110 A12.5 12.5 0 1 0 145.5 110 Z"/>
+    <path id="tooth0" d="M80.2 132 H81.1 A3.2 3.2 0 0 1 84.3 135.2 V141.3 A3.2 3.2 0 0 1 81.1 144.5 H80.2 A3.2 3.2 0 0 1 77 141.3 V135.2 A3.2 3.2 0 0 1 80.2 132 Z"/>
+    <path id="tooth1" d="M89.9 132 H90.8 A3.2 3.2 0 0 1 94 135.2 V144.3 A3.2 3.2 0 0 1 90.8 147.5 H89.9 A3.2 3.2 0 0 1 86.7 144.3 V135.2 A3.2 3.2 0 0 1 89.9 132 Z"/>
+    <path id="tooth2" d="M99.6 132 H100.4 A3.2 3.2 0 0 1 103.6 135.2 V144.3 A3.2 3.2 0 0 1 100.4 147.5 H99.6 A3.2 3.2 0 0 1 96.4 144.3 V135.2 A3.2 3.2 0 0 1 99.6 132 Z"/>
+    <path id="tooth3" d="M109.2 132 H110.1 A3.2 3.2 0 0 1 113.3 135.2 V144.3 A3.2 3.2 0 0 1 110.1 147.5 H109.2 A3.2 3.2 0 0 1 106 144.3 V135.2 A3.2 3.2 0 0 1 109.2 132 Z"/>
+    <path id="tooth4" d="M118.9 132 H119.8 A3.2 3.2 0 0 1 123 135.2 V141.3 A3.2 3.2 0 0 1 119.8 144.5 H118.9 A3.2 3.2 0 0 1 115.7 141.3 V135.2 A3.2 3.2 0 0 1 118.9 132 Z"/>
+    <path id="skull" d="M100 48 C126 48 145 64 145 90 C145 102 144 109 147 116 C149 121 146 127 138 130 C135 135 130 138 124 139 L76 139 C70 138 65 135 62 130 C54 127 51 121 53 116 C56 109 55 102 55 90 C55 64 74 48 100 48 Z"/>
+    <path id="hand-l-f0" d="M 42.7 149.4 L 42.7 149.4 A 2.1 2.1 0 0 1 45.3 151 L 46 154.6 A 2.1 2.1 0 0 1 44.4 157.2 L 44.4 157.2 A 2.1 2.1 0 0 1 41.8 155.5 L 41.1 151.9 A 2.1 2.1 0 0 1 42.7 149.4 Z"/>
+    <path id="hand-l-f1" d="M 48.3 147.4 L 48.3 147.4 A 2.1 2.1 0 0 1 50.9 149.1 L 51.7 152.7 A 2.1 2.1 0 0 1 50 155.2 L 50 155.2 A 2.1 2.1 0 0 1 47.5 153.6 L 46.7 150 A 2.1 2.1 0 0 1 48.3 147.4 Z"/>
+    <path id="hand-l-f2" d="M 54.1 146.2 L 54.1 146.2 A 2.1 2.1 0 0 1 56.7 147.9 L 57.4 151.5 A 2.1 2.1 0 0 1 55.7 154 L 55.7 154 A 2.1 2.1 0 0 1 53.2 152.4 L 52.5 148.8 A 2.1 2.1 0 0 1 54.1 146.2 Z"/>
+    <path id="hand-l-f3" d="M 60.1 145.7 L 60.1 145.7 A 2.1 2.1 0 0 1 62.6 147.3 L 63.4 150.9 A 2.1 2.1 0 0 1 61.8 153.5 L 61.8 153.5 A 2.1 2.1 0 0 1 59.2 151.8 L 58.4 148.2 A 2.1 2.1 0 0 1 60.1 145.7 Z"/>
+    <path id="hand-l-palm" d="M 43.5 134.7 L 53.3 132.6 A 6 6 0 0 1 60.4 137.2 L 61.1 140.2 A 6 6 0 0 1 56.5 147.3 L 46.7 149.4 A 6 6 0 0 1 39.6 144.8 L 38.9 141.8 A 6 6 0 0 1 43.5 134.7 Z"/>
+    <clipPath id="under-spearhead"><use href="#butt"/><use href="#shaft"/></clipPath>
+    <clipPath id="spearhead-c"><use href="#spearhead"/></clipPath>
+    <clipPath id="under-binding"><use href="#butt"/><use href="#shaft"/><use href="#spearhead"/></clipPath>
+    <clipPath id="under-fist-r-palm"><use href="#butt"/><use href="#shaft"/><use href="#spearhead"/><use href="#binding"/><use href="#fist-r-f0"/><use href="#fist-r-f1"/><use href="#fist-r-f2"/><use href="#fist-r-f3"/></clipPath>
+    <clipPath id="under-ball-l"><use href="#butt"/><use href="#shaft"/><use href="#spearhead"/><use href="#binding"/><use href="#fist-r-f0"/><use href="#fist-r-f1"/><use href="#fist-r-f2"/><use href="#fist-r-f3"/><use href="#fist-r-palm"/></clipPath>
+    <clipPath id="under-ball-r"><use href="#butt"/><use href="#shaft"/><use href="#spearhead"/><use href="#binding"/><use href="#fist-r-f0"/><use href="#fist-r-f1"/><use href="#fist-r-f2"/><use href="#fist-r-f3"/><use href="#fist-r-palm"/><use href="#ball-l"/></clipPath>
+    <clipPath id="under-skull"><use href="#butt"/><use href="#shaft"/><use href="#spearhead"/><use href="#binding"/><use href="#fist-r-f0"/><use href="#fist-r-f1"/><use href="#fist-r-f2"/><use href="#fist-r-f3"/><use href="#fist-r-palm"/><use href="#ball-l"/><use href="#ball-r"/><use href="#tooth0"/><use href="#tooth1"/><use href="#tooth2"/><use href="#tooth3"/><use href="#tooth4"/></clipPath>
+    <clipPath id="skull-c"><use href="#skull"/></clipPath>
+    <clipPath id="under-hand-l-palm"><use href="#butt"/><use href="#shaft"/><use href="#spearhead"/><use href="#binding"/><use href="#fist-r-f0"/><use href="#fist-r-f1"/><use href="#fist-r-f2"/><use href="#fist-r-f3"/><use href="#fist-r-palm"/><use href="#ball-l"/><use href="#ball-r"/><use href="#tooth0"/><use href="#tooth1"/><use href="#tooth2"/><use href="#tooth3"/><use href="#tooth4"/><use href="#skull"/><use href="#hand-l-f0"/><use href="#hand-l-f1"/><use href="#hand-l-f2"/><use href="#hand-l-f3"/></clipPath>
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <g id="arm-r" data-pivot="160 110">
+      <use href="#butt" fill="url(#gIronD)"/>
+      <use href="#butt" fill="url(#shX)"/>
+      <use href="#shaft" fill="url(#gWood)"/>
+      <use href="#shaft" fill="url(#shX)"/>
+      <g clip-path="url(#under-spearhead)"><use href="#spearhead" fill="#2B2230" opacity="0.3" transform="translate(0 3)"/></g>
+      <use href="#spearhead" fill="url(#gIron)"/>
+      <g clip-path="url(#spearhead-c)"><path d="M 151.1 199.8 L 155.9 161.1 L 167.8 162.5 L 163 201.2 Z" fill="#4A3A36" opacity="0.22"/><g transform="matrix(0.9925 0.1219 -0.1219 0.9925 171 38)"><ellipse cx="-5" cy="133" rx="4" ry="5" fill="#C0662E" opacity="0.92"/><ellipse cx="4" cy="149" rx="3" ry="4" fill="#A04E24" opacity="0.92"/></g></g>
+      <use href="#spearhead" fill="url(#shX)"/>
+      <g clip-path="url(#under-binding)"><use href="#binding" fill="#2B2230" opacity="0.3" transform="translate(0 3)"/></g>
+      <use href="#binding" fill="url(#gRust)"/>
+      <use href="#binding" fill="url(#shX)"/>
+      <use href="#fist-r-f0" fill="url(#gBone)"/>
+      <use href="#fist-r-f0" fill="url(#shX)"/>
+      <use href="#fist-r-f1" fill="url(#gBone)"/>
+      <use href="#fist-r-f1" fill="url(#shX)"/>
+      <use href="#fist-r-f2" fill="url(#gBone)"/>
+      <use href="#fist-r-f2" fill="url(#shX)"/>
+      <use href="#fist-r-f3" fill="url(#gBone)"/>
+      <use href="#fist-r-f3" fill="url(#shX)"/>
+      <g clip-path="url(#under-fist-r-palm)"><use href="#fist-r-palm" fill="#2B2230" opacity="0.3" transform="translate(0 3)"/></g>
+      <use href="#fist-r-palm" fill="url(#gBone)"/>
+      <use href="#fist-r-palm" fill="url(#shX)"/>
+    </g>
+    <g id="body">
+      <g clip-path="url(#under-ball-l)"><use href="#ball-l" fill="#2B2230" opacity="0.3" transform="translate(0 3)"/></g>
+      <use href="#ball-l" fill="url(#gBone2)"/>
+      <use href="#ball-l" fill="url(#shX)"/>
+      <g clip-path="url(#under-ball-r)"><use href="#ball-r" fill="#2B2230" opacity="0.3" transform="translate(0 3)"/></g>
+      <use href="#ball-r" fill="url(#gBone2)"/>
+      <use href="#ball-r" fill="url(#shX)"/>
+      <use href="#tooth0" fill="#FFF8E6"/>
+      <use href="#tooth1" fill="#FFF8E6"/>
+      <use href="#tooth2" fill="#FFF8E6"/>
+      <use href="#tooth3" fill="#FFF8E6"/>
+      <use href="#tooth4" fill="#FFF8E6"/>
+      <g clip-path="url(#under-skull)"><use href="#skull" fill="#2B2230" opacity="0.32" transform="translate(0 5)"/></g>
+      <use href="#skull" fill="url(#gSkull)"/>
+      <g clip-path="url(#skull-c)"><rect x="40" y="30" width="120" height="140" fill="url(#gDome)"/><path d="M69 108 C71 102.5 89 101.5 92 106.5 C94.5 112.5 89.5 121 81 121 C72.5 121 66.5 114 69 108 Z" fill="url(#gSock)"/><path d="M 131 108 C 129 102.5 111 101.5 108 106.5 C 105.5 112.5 110.5 121 119 121 C 127.5 121 133.5 114 131 108 Z" fill="url(#gSock)"/><path d="M 100 119 C 102.5 122.5 105.5 126 106 129 C 106.5 132 104 133 102.2 131.6 L 100 130 L 97.8 131.6 C 96 133 93.5 132 94 129 C 94.5 126 97.5 122.5 100 119 Z" fill="url(#gSock)"/></g>
+      <use href="#skull" fill="url(#shX)"/>
+    </g>
+    <g id="arm-l" data-pivot="40 110">
+      <use href="#hand-l-f0" fill="url(#gBone)"/>
+      <use href="#hand-l-f0" fill="url(#shX)"/>
+      <use href="#hand-l-f1" fill="url(#gBone)"/>
+      <use href="#hand-l-f1" fill="url(#shX)"/>
+      <use href="#hand-l-f2" fill="url(#gBone)"/>
+      <use href="#hand-l-f2" fill="url(#shX)"/>
+      <use href="#hand-l-f3" fill="url(#gBone)"/>
+      <use href="#hand-l-f3" fill="url(#shX)"/>
+      <g clip-path="url(#under-hand-l-palm)"><use href="#hand-l-palm" fill="#2B2230" opacity="0.3" transform="translate(0 3)"/></g>
+      <use href="#hand-l-palm" fill="url(#gBone)"/>
+      <use href="#hand-l-palm" fill="url(#shX)"/>
+    </g>
+  </g>
+</svg>

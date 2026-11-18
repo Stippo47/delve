@@ -1,0 +1,336 @@
+{
+  "title": "Who each unit is",
+  "topic": "art",
+  "order": 3,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "knights",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "Knights: the front line",
+      "text": "Six knights, each holding the line a different way.",
+      "why": "You asked for every pick to be its own unit. This is what makes each one play differently. Mark any that's wrong or dull.",
+      "pick": "Go with these; each one's move is its unlockable ability in its skill tree.",
+      "details": "Base attacks stay plain. Each unit's move here is its ability, unlocked in its skill tree, so a level-1 unit just fights with its weapon. Kept to one move each so they're easy to tell apart in a fight.",
+      "parts": [
+        {
+          "id": "knight-paladin",
+          "title": "Paladin",
+          "text": "Sword and shield. Guards a hurt ally: stands next to them and takes part of the damage meant for them.",
+          "images": [
+            "../../../design/class-round3/knight/renders/knight-paladin-thumb.png"
+          ]
+        },
+        {
+          "id": "knight-old-guard",
+          "title": "Old Guard",
+          "text": "Two-handed greatsword. Slow, wide sweeps that hit everything in front.",
+          "images": [
+            "../../../design/class-round3/knight/renders/knight-old-guard-thumb.png"
+          ]
+        },
+        {
+          "id": "knight-dame",
+          "title": "Dame",
+          "text": "A duellist. Quick sword; blocks a hit now and then and strikes straight back.",
+          "images": [
+            "../../../design/class-round3/knight/renders/knight-dame-thumb.png"
+          ]
+        },
+        {
+          "id": "knight-tower",
+          "title": "Bastion, Tower",
+          "text": "Pure wall. Plants the tower shield: takes far less damage and draws every enemy near.",
+          "images": [
+            "../../../design/class-round3/knight/renders/knight-tower-thumb.png"
+          ]
+        },
+        {
+          "id": "knight-bulwark",
+          "title": "Bastion, Bulwark",
+          "text": "Spear and round shield. Long reach: fights from just behind the front, keeps enemies at spear length.",
+          "images": [
+            "../../../design/class-round3/knight/renders/knight-bulwark-thumb.png"
+          ]
+        },
+        {
+          "id": "knight-griffon",
+          "title": "Bastion, Griffon",
+          "text": "Warhammer. Leaps onto a far enemy and lands with a shove that knocks those around it back.",
+          "images": [
+            "../../../design/class-round3/knight/renders/knight-griffon-thumb.png"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rogues",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "Rogues: quick and sly",
+      "text": "Three rogues: one kills, one earns, one hides.",
+      "why": "You asked for every pick to be its own unit. This is what makes each one play differently. Mark any that's wrong or dull.",
+      "pick": "Go with these; each one's move is its unlockable ability in its skill tree.",
+      "details": "Base attacks stay plain. Each unit's move here is its ability, unlocked in its skill tree, so a level-1 unit just fights with its weapon. Kept to one move each so they're easy to tell apart in a fight.",
+      "parts": [
+        {
+          "id": "rogue-twinfang",
+          "title": "Twinfang",
+          "text": "Twin daggers. A fast flurry on one target; best at finishing the hurt ones.",
+          "images": [
+            "../../../design/class-round3/rogue/renders/rogue-twinfang-thumb.png"
+          ]
+        },
+        {
+          "id": "rogue-bandit-mask",
+          "title": "Bandit",
+          "text": "The money one. Grabs coins from further away, and what it kills drops extra coins.",
+          "images": [
+            "../../../design/class-round3/rogue/renders/rogue-bandit-mask-thumb.png"
+          ]
+        },
+        {
+          "id": "rogue-shade-cape",
+          "title": "Shade",
+          "text": "Slips out of sight for a moment; the next hit from behind is a big backstab.",
+          "images": [
+            "../../../design/class-round3/rogue/renders/rogue-shade-cape-thumb.png"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "farmers",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "Farmers: tools as weapons",
+      "text": "Four farmers, each tool doing what it does on a farm.",
+      "why": "You asked for every pick to be its own unit. This is what makes each one play differently. Mark any that's wrong or dull.",
+      "pick": "Go with these; each one's move is its unlockable ability in its skill tree.",
+      "details": "Base attacks stay plain. Each unit's move here is its ability, unlocked in its skill tree, so a level-1 unit just fights with its weapon. Kept to one move each so they're easy to tell apart in a fight.",
+      "parts": [
+        {
+          "id": "farmer-granny-reaper",
+          "title": "Granny Reaper",
+          "text": "Scythe. A slow sweep all the way round her, hitting everyone close.",
+          "images": [
+            "../../../design/class-round3/farmer/renders/farmer-granny-reaper-thumb.png"
+          ]
+        },
+        {
+          "id": "farmer-haymaker-fork",
+          "title": "Haymaker",
+          "text": "Pitchfork. Shoves enemies back hard; one shoved into a wall takes extra damage.",
+          "images": [
+            "../../../design/class-round3/farmer/renders/farmer-haymaker-fork-thumb.png"
+          ]
+        },
+        {
+          "id": "farmer-digger",
+          "title": "Digger",
+          "text": "Spade. Digs a trench that slows enemies crossing it.",
+          "images": [
+            "../../../design/class-round3/farmer/renders/farmer-digger-thumb.png"
+          ]
+        },
+        {
+          "id": "farmer-grandpa-sickle",
+          "title": "Grandpa Sickle",
+          "text": "Sickle. Quick cuts that hit much harder on enemies already low.",
+          "images": [
+            "../../../design/class-round3/farmer/renders/farmer-grandpa-sickle-thumb.png"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "barbarians",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "Barbarians: big hits",
+      "text": "Four barbarians, each strong in a different way.",
+      "why": "You asked for every pick to be its own unit. This is what makes each one play differently. Mark any that's wrong or dull.",
+      "pick": "Go with these; each one's move is its unlockable ability in its skill tree.",
+      "details": "Base attacks stay plain. Each unit's move here is its ability, unlocked in its skill tree, so a level-1 unit just fights with its weapon. Kept to one move each so they're easy to tell apart in a fight.",
+      "parts": [
+        {
+          "id": "barbarian-wildmane",
+          "title": "Wildmane",
+          "text": "Big sword. Gets stronger the more hurt he is.",
+          "images": [
+            "../../../design/class-round3/barbarian/renders/barbarian-wildmane-thumb.png"
+          ]
+        },
+        {
+          "id": "barbarian-bearskin",
+          "title": "Bearskin",
+          "text": "Spiked club. Grabs an enemy and throws it into others.",
+          "images": [
+            "../../../design/class-round3/barbarian/renders/barbarian-bearskin-thumb.png"
+          ]
+        },
+        {
+          "id": "barbarian-warhelm",
+          "title": "Warhelm",
+          "text": "Hammer. Slams the ground: everyone around is knocked back and staggered.",
+          "images": [
+            "../../../design/class-round3/barbarian/renders/barbarian-warhelm-thumb.png"
+          ]
+        },
+        {
+          "id": "barbarian-berserker",
+          "title": "Berserker",
+          "text": "Flail. Spins it while moving, hitting everything around; can't stop for a few seconds.",
+          "images": [
+            "../../../design/class-round3/barbarian/renders/barbarian-berserker-thumb.png"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "undead",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "Undead: one habit each",
+      "text": "The skeletons and the banshee, each with one simple habit.",
+      "why": "You said to make enemies for the statuses, not bolt statuses on. These are kept simple, like the rats.",
+      "pick": "Go with these.",
+      "details": "Rats stay as they are now. The status ones (lizardman wet, spider tangle, snowman chill, fire slime burn) come with stage 4, when those statuses are in.",
+      "parts": [
+        {
+          "id": "skeleton-rattler",
+          "title": "Rattler",
+          "text": "The plain skeleton: a sword, walks in, swings.",
+          "images": [
+            "../../../design/class-round3/skeleton/renders/skeleton-rattler-thumb.png"
+          ]
+        },
+        {
+          "id": "skeleton-rattler-jawless-bow",
+          "title": "Rattler, bow",
+          "text": "Shoots from range and backs away.",
+          "images": [
+            "../../../design/class-round3/skeleton/renders/skeleton-rattler-jawless-bow-thumb.png"
+          ]
+        },
+        {
+          "id": "skeleton-rattler-jawless-spear",
+          "title": "Rattler, spear",
+          "text": "Reach: stabs from further off.",
+          "images": [
+            "../../../design/class-round3/skeleton/renders/skeleton-rattler-jawless-spear-thumb.png"
+          ]
+        },
+        {
+          "id": "skeleton-rattler-loosejaw",
+          "title": "Rattler, mace",
+          "text": "Slow, heavy hits that stagger.",
+          "images": [
+            "../../../design/class-round3/skeleton/renders/skeleton-rattler-loosejaw-thumb.png"
+          ]
+        },
+        {
+          "id": "skeleton-gaper",
+          "title": "Gaper",
+          "text": "Two long swords, angry: fast and charges straight in.",
+          "images": [
+            "../../../design/class-round3/skeleton/renders/skeleton-gaper-thumb.png"
+          ]
+        },
+        {
+          "id": "skeleton-brute",
+          "title": "Brute",
+          "text": "Shield: blocks hits from the front, so it has to be hit from the side or back.",
+          "images": [
+            "../../../design/class-round3/skeleton/renders/skeleton-brute-thumb.png"
+          ]
+        },
+        {
+          "id": "banshee-hood",
+          "title": "Banshee",
+          "text": "Floats over hazards; a scream that slows everyone near.",
+          "images": [
+            "../../../design/class-round3/banshee/renders/banshee-hood-thumb.png"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "creatures",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "Creatures: one habit each",
+      "text": "The new creatures, each with one habit, built around a status where it has one.",
+      "why": "You said to make enemies for the statuses, not bolt statuses on. These are kept simple, like the rats.",
+      "pick": "Go with these.",
+      "details": "Rats stay as they are now. The status ones (lizardman wet, spider tangle, snowman chill, fire slime burn) come with stage 4, when those statuses are in.",
+      "parts": [
+        {
+          "id": "slime-big",
+          "title": "Slime",
+          "text": "As now: splits into small slimes when it dies.",
+          "images": [
+            "../../../design/class-round3/enemies/renders/slime-big-thumb.png"
+          ]
+        },
+        {
+          "id": "slime-fire",
+          "title": "Fire slime",
+          "text": "Burn: leaves a burning patch where it hops.",
+          "images": [
+            "../../../design/class-round3/enemies/renders/slime-fire-thumb.png"
+          ]
+        },
+        {
+          "id": "mimic",
+          "title": "Mimic",
+          "text": "Looks like a chest until the party comes close; normal drops and XP when killed.",
+          "images": [
+            "../../../design/class-round3/enemies/renders/mimic-thumb.png"
+          ]
+        },
+        {
+          "id": "bat",
+          "title": "Bat",
+          "text": "Flies over hazards; darts in, bites, darts out.",
+          "images": [
+            "../../../design/class-round3/enemies/renders/bat-thumb.png"
+          ]
+        },
+        {
+          "id": "ghost",
+          "title": "Ghost",
+          "text": "Drifts through walls; fades in and out.",
+          "images": [
+            "../../../design/class-round3/enemies/renders/ghost-thumb.png"
+          ]
+        },
+        {
+          "id": "lizardman-spear",
+          "title": "Lizardman",
+          "text": "Wet: a spear lunge that soaks what it hits.",
+          "images": [
+            "../../../design/class-round3/enemies/renders/lizardman-spear-thumb.png"
+          ]
+        },
+        {
+          "id": "spider",
+          "title": "Spider",
+          "text": "Webs: shoots a strand that tangles a hero in place for a moment.",
+          "images": [
+            "../../../design/class-round3/enemies/renders/spider-thumb.png"
+          ]
+        },
+        {
+          "id": "snowman",
+          "title": "Snowman",
+          "text": "Chill: throws snowballs that slow.",
+          "images": [
+            "../../../design/class-round3/enemies/renders/snowman-thumb.png"
+          ]
+        }
+      ]
+    }
+  ]
+}

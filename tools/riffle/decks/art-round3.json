@@ -1,0 +1,316 @@
+{
+  "title": "Art round 3: weapons back, new enemies",
+  "topic": "art",
+  "order": 3,
+  "priority": 1,
+  "tags": [
+    "first"
+  ],
+  "cards": [
+    {
+      "id": "round3",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Art round 3",
+      "text": "Your picks with the new weapon rule, the Bastions and Warhelm redone, and the new enemies. Tick the keepers.",
+      "why": "Each tick becomes a unit in the game. Each picture shows the design beside the archer at the same size, then 8 turns at game size.",
+      "pick": [
+        "knight-paladin",
+        "knight-old-guard",
+        "knight-dame",
+        "knight-tower",
+        "knight-bulwark",
+        "knight-griffon",
+        "barbarian-wildmane-scar",
+        "barbarian-bearskin",
+        "barbarian-warhelm",
+        "barbarian-berserker",
+        "rogue-twinfang",
+        "rogue-bandit-mask",
+        "rogue-shade-cape-crossed",
+        "farmer-granny-reaper",
+        "farmer-haymaker-fork",
+        "farmer-digger",
+        "farmer-grandpa-sickle",
+        "skeleton-rattler",
+        "skeleton-rattler-jawless-bow",
+        "skeleton-rattler-jawless-spear",
+        "skeleton-rattler-loosejaw",
+        "skeleton-gaper",
+        "skeleton-brute",
+        "banshee-hood",
+        "slime-big",
+        "slime-small",
+        "slime-fire",
+        "bat",
+        "ghost",
+        "lizardman-spear",
+        "spider",
+        "snowman",
+        "mimic"
+      ],
+      "details": "Weapons now sit behind the body and shoulder and come out forward, with only the fist showing, as you asked for the Paladin. Shields stay in front.\n\nThe sprite box is the limit: with the weapon starting under the body, there's only a little room in front, so the longest weapons run diagonally to stay big.\n\nWhere a note was open there are two versions: Wildmane with or without the scar, Shade's daggers spread or crossed, the banshee hooded or with hair, the lizardman with a spear or a blade.",
+      "items": [
+        {
+          "id": "knight-paladin",
+          "label": "Knight · Paladin",
+          "image": "../../../design/class-round3/knight/renders/knight-paladin.png",
+          "thumb": "../../../design/class-round3/knight/renders/knight-paladin-thumb.png",
+          "text": "Your note: Weapons more forward, behind the body/shoulder. Shield is the special case.\n\nChanged: Sword under the right shoulder, only the fist showing; shield stays in front.\n\nStill weak: The sword angles a little outward."
+        },
+        {
+          "id": "knight-old-guard",
+          "label": "Knight · Old Guard",
+          "image": "../../../design/class-round3/knight/renders/knight-old-guard.png",
+          "thumb": "../../../design/class-round3/knight/renders/knight-old-guard-thumb.png",
+          "text": "Your note: (Picked.)\n\nChanged: Weapon further forward, behind the shoulder. Greatsword runs long and diagonal under the beard.\n\nStill weak: Diagonal so it fits the sprite: longer, but less straight ahead."
+        },
+        {
+          "id": "knight-dame",
+          "label": "Knight · Dame",
+          "image": "../../../design/class-round3/knight/renders/knight-dame.png",
+          "thumb": "../../../design/class-round3/knight/renders/knight-dame-thumb.png",
+          "text": "Your note: (Picked, tiara.)\n\nChanged: Weapon further forward, behind the shoulder. Leaf sword under the left shoulder; guard less hooked.\n\nStill weak: Small sword next to the shield."
+        },
+        {
+          "id": "knight-tower",
+          "label": "Knight · Bastion, Tower",
+          "image": "../../../design/class-round3/knight/renders/knight-tower.png",
+          "thumb": "../../../design/class-round3/knight/renders/knight-tower-thumb.png",
+          "text": "Your note: No eye holes.\n\nChanged: A smooth closed helm, no slit at all. Bigger dark-iron mace.\n\nStill weak: The least person-like; the mace is small."
+        },
+        {
+          "id": "knight-bulwark",
+          "label": "Knight · Bastion, Bulwark",
+          "image": "../../../design/class-round3/knight/renders/knight-bulwark.png",
+          "thumb": "../../../design/class-round3/knight/renders/knight-bulwark-thumb.png",
+          "text": "Your note: Looks like a paint brush.\n\nChanged: A thin winged spear with a sharp kite head; the butt shows behind the shoulder.\n\nStill weak: Spear shows short in front."
+        },
+        {
+          "id": "knight-griffon",
+          "label": "Knight · Bastion, Griffon",
+          "image": "../../../design/class-round3/knight/renders/knight-griffon.png",
+          "thumb": "../../../design/class-round3/knight/renders/knight-griffon-thumb.png",
+          "text": "Your note: Almost good. Helmet boring.\n\nChanged: Big gold feathered wings, a purple crest and a gold beak over the face. Clear block-head hammer.\n\nStill weak: Busiest knight; crest stripe like the others."
+        },
+        {
+          "id": "barbarian-wildmane",
+          "label": "Barbarian · Wildmane",
+          "image": "../../../design/class-round3/barbarian/renders/barbarian-wildmane.png",
+          "thumb": "../../../design/class-round3/barbarian/renders/barbarian-wildmane-thumb.png",
+          "text": "Your note: Bigger weapon.\n\nChanged: Broadsword much bigger, diagonal under the beard.\n\nStill weak: Points across more than ahead."
+        },
+        {
+          "id": "barbarian-wildmane-scar",
+          "label": "Barbarian · Wildmane (scar)",
+          "image": "../../../design/class-round3/barbarian/renders/barbarian-wildmane-scar.png",
+          "thumb": "../../../design/class-round3/barbarian/renders/barbarian-wildmane-scar-thumb.png",
+          "text": "Your note: Add scar on 'eye'?\n\nChanged: The same, with a short pale scar where the left eye would be.\n\nStill weak: The scar is a fleck at game size."
+        },
+        {
+          "id": "barbarian-bearskin",
+          "label": "Barbarian · Bearskin",
+          "image": "../../../design/class-round3/barbarian/renders/barbarian-bearskin.png",
+          "thumb": "../../../design/class-round3/barbarian/renders/barbarian-bearskin-thumb.png",
+          "text": "Your note: (Picked, club.)\n\nChanged: Weapon further forward, behind the shoulder. Pale spiked club under the right paw.\n\nStill weak: Paw hides the handle: can read as a drumstick. The round-2 axe is the fallback."
+        },
+        {
+          "id": "barbarian-warhelm",
+          "label": "Barbarian · Warhelm",
+          "image": "../../../design/class-round3/barbarian/renders/barbarian-warhelm.png",
+          "thumb": "../../../design/class-round3/barbarian/renders/barbarian-warhelm-thumb.png",
+          "text": "Your note: A and B as one. Beard doesn't cover the face. Pads too detailed. Longer handle. No spikes.\n\nChanged: One Warhelm: plain domed pads, no spikes; the beard covers everything below the cheeks, with a moustache; longer haft, bigger head.\n\nStill weak: Hammer still mostly hidden."
+        },
+        {
+          "id": "barbarian-berserker",
+          "label": "Barbarian · Berserker",
+          "image": "../../../design/class-round3/barbarian/renders/barbarian-berserker.png",
+          "thumb": "../../../design/class-round3/barbarian/renders/barbarian-berserker-thumb.png",
+          "text": "Your note: Spikes on the top face of the mace.\n\nChanged: Five spikes on top of the ball as well as round the rim; bigger ball, one more chain link.\n\nStill weak: Top spikes are a glint at game size."
+        },
+        {
+          "id": "rogue-twinfang",
+          "label": "Rogue · Twinfang",
+          "image": "../../../design/class-round3/rogue/renders/rogue-twinfang.png",
+          "thumb": "../../../design/class-round3/rogue/renders/rogue-twinfang-thumb.png",
+          "text": "Your note: Weapons forward, behind the shoulders, further apart.\n\nChanged: Daggers behind the shoulders, fists at the front corners, further apart, angled out.\n\nStill weak: Daggers a little shorter so they fit."
+        },
+        {
+          "id": "rogue-bandit-mask",
+          "label": "Rogue · Bandit",
+          "image": "../../../design/class-round3/rogue/renders/rogue-bandit-mask.png",
+          "thumb": "../../../design/class-round3/rogue/renders/rogue-bandit-mask-thumb.png",
+          "text": "Your note: (Picked, mask.)\n\nChanged: Weapon further forward, behind the shoulder. Slimmer cutlass coming out under the right of the mantle.\n\nStill weak: Couldn't get the blade longer and stay in the sprite."
+        },
+        {
+          "id": "rogue-shade-cape",
+          "label": "Rogue · Shade (spread)",
+          "image": "../../../design/class-round3/rogue/renders/rogue-shade-cape.png",
+          "thumb": "../../../design/class-round3/rogue/renders/rogue-shade-cape-thumb.png",
+          "text": "Your note: (Picked, cape.)\n\nChanged: Weapon further forward, behind the shoulder. Curved daggers spread apart.\n\nStill weak: Close to Twinfang now."
+        },
+        {
+          "id": "rogue-shade-cape-crossed",
+          "label": "Rogue · Shade (crossed)",
+          "image": "../../../design/class-round3/rogue/renders/rogue-shade-cape-crossed.png",
+          "thumb": "../../../design/class-round3/rogue/renders/rogue-shade-cape-crossed-thumb.png",
+          "text": "Your note: (Picked, cape.)\n\nChanged: The rule, but the daggers keep Shade's crossed X ahead of the chin.\n\nStill weak: Hands still near the chin."
+        },
+        {
+          "id": "farmer-granny-reaper",
+          "label": "Farmer · Granny Reaper",
+          "image": "../../../design/class-round3/farmer/renders/farmer-granny-reaper.png",
+          "thumb": "../../../design/class-round3/farmer/renders/farmer-granny-reaper-thumb.png",
+          "text": "Your note: Weapon too small. Specifically handle.\n\nChanged: Handle about 1.5x longer, held in two fists under the shoulder; blade wider.\n\nStill weak: The handle end at the shoulder is the closest to 'over the shoulder'."
+        },
+        {
+          "id": "farmer-haymaker-fork",
+          "label": "Farmer · Haymaker",
+          "image": "../../../design/class-round3/farmer/renders/farmer-haymaker-fork.png",
+          "thumb": "../../../design/class-round3/farmer/renders/farmer-haymaker-fork-thumb.png",
+          "text": "Your note: Handle short. Hat too detailed, bowl not wide enough. Tines too shiny.\n\nChanged: Handle 1.6x longer; a plain hat with a wider crown and a red band; matte tines.\n\nStill weak: The fork points off at an angle."
+        },
+        {
+          "id": "farmer-digger",
+          "label": "Farmer · Digger",
+          "image": "../../../design/class-round3/farmer/renders/farmer-digger.png",
+          "thumb": "../../../design/class-round3/farmer/renders/farmer-digger-thumb.png",
+          "text": "Your note: Longer handle, below body.\n\nChanged: Handle twice as long, under the body; spade forward.\n\nStill weak: Spade angles off to the right."
+        },
+        {
+          "id": "farmer-grandpa-sickle",
+          "label": "Farmer · Grandpa Sickle",
+          "image": "../../../design/class-round3/farmer/renders/farmer-grandpa-sickle.png",
+          "thumb": "../../../design/class-round3/farmer/renders/farmer-grandpa-sickle-thumb.png",
+          "text": "Your note: (Picked.)\n\nChanged: Weapon further forward, behind the shoulder. Sickle a bit bigger, clear of the beard.\n\nStill weak: Free hand still over the body."
+        },
+        {
+          "id": "skeleton-rattler",
+          "label": "Skeleton · Rattler",
+          "image": "../../../design/class-round3/skeleton/renders/skeleton-rattler.png",
+          "thumb": "../../../design/class-round3/skeleton/renders/skeleton-rattler-thumb.png",
+          "text": "Your note: No rib cage, or pull it back. Overall good.\n\nChanged: Nothing left in front of the skull; sword behind the shoulder, a bit wider.\n\nStill weak: The empty hand floats under the shoulder."
+        },
+        {
+          "id": "skeleton-rattler-jawless-bow",
+          "label": "Skeleton · Rattler, bow",
+          "image": "../../../design/class-round3/skeleton/renders/skeleton-rattler-jawless-bow.png",
+          "thumb": "../../../design/class-round3/skeleton/renders/skeleton-rattler-jawless-bow-thumb.png",
+          "text": "Your note: Give a bow or spear.\n\nChanged: A recurve bow held out in front, arrow and drawing claw; the string can pull back like the archer's.\n\nStill weak: Ring-shaped like the archer at game size."
+        },
+        {
+          "id": "skeleton-rattler-jawless-spear",
+          "label": "Skeleton · Rattler, spear",
+          "image": "../../../design/class-round3/skeleton/renders/skeleton-rattler-jawless-spear.png",
+          "thumb": "../../../design/class-round3/skeleton/renders/skeleton-rattler-jawless-spear-thumb.png",
+          "text": "Your note: Give a bow or spear.\n\nChanged: A long thin spear with a leaf head (not a brush); butt behind the shoulder.\n\nStill weak: Spear on one side only."
+        },
+        {
+          "id": "skeleton-rattler-loosejaw",
+          "label": "Skeleton · Rattler, mace",
+          "image": "../../../design/class-round3/skeleton/renders/skeleton-rattler-loosejaw.png",
+          "thumb": "../../../design/class-round3/skeleton/renders/skeleton-rattler-loosejaw-thumb.png",
+          "text": "Your note: Give him a mace.\n\nChanged: A rusty spiked mace on a handle under the shoulder."
+        },
+        {
+          "id": "skeleton-gaper",
+          "label": "Skeleton · Gaper",
+          "image": "../../../design/class-round3/skeleton/renders/skeleton-gaper.png",
+          "thumb": "../../../design/class-round3/skeleton/renders/skeleton-gaper-thumb.png",
+          "text": "Your note: 2 long swords. A bit angry.\n\nChanged: Two long thin swords angled out; sockets slanting down to the nose with a brow ridge.\n\nStill weak: Claws sit back by the cheeks so the swords fit."
+        },
+        {
+          "id": "skeleton-brute",
+          "label": "Skeleton · Brute",
+          "image": "../../../design/class-round3/skeleton/renders/skeleton-brute.png",
+          "thumb": "../../../design/class-round3/skeleton/renders/skeleton-brute-thumb.png",
+          "text": "Your note: Give shield. Can't tell what the weapon is.\n\nChanged: Round wooden shield in front, claw hidden; a big bearded axe instead of the cleaver."
+        },
+        {
+          "id": "banshee-hood",
+          "label": "Banshee (hood)",
+          "image": "../../../design/class-round3/banshee/renders/banshee-hood.png",
+          "thumb": "../../../design/class-round3/banshee/renders/banshee-hood-thumb.png",
+          "text": "Your note: Keep the Hollow's head for a ghoul/banshee.\n\nChanged: The Hollow's skull in a ragged hood, a ghost body trailing into wisps, bony hands reaching forward.\n\nStill weak: Skull is still warm bone; glowing eyes would be an option."
+        },
+        {
+          "id": "banshee-hair",
+          "label": "Banshee (hair)",
+          "image": "../../../design/class-round3/banshee/renders/banshee-hair.png",
+          "thumb": "../../../design/class-round3/banshee/renders/banshee-hair-thumb.png",
+          "text": "Your note: Same.\n\nChanged: The same with long lavender-white hair instead of the hood.\n\nStill weak: Hair and body blur together small."
+        },
+        {
+          "id": "slime-big",
+          "label": "Slime",
+          "image": "../../../design/class-round3/enemies/renders/slime-big.png",
+          "thumb": "../../../design/class-round3/enemies/renders/slime-big-thumb.png",
+          "text": "Your note: Get me the slimes in here.\n\nChanged: A jelly blob with a shine, a bone and a coin inside, eyes at the front."
+        },
+        {
+          "id": "slime-small",
+          "label": "Slime, small",
+          "image": "../../../design/class-round3/enemies/renders/slime-small.png",
+          "thumb": "../../../design/class-round3/enemies/renders/slime-small-thumb.png",
+          "text": "Changed: What it splits into: smaller, paler, bigger eyes."
+        },
+        {
+          "id": "slime-fire",
+          "label": "Fire slime",
+          "image": "../../../design/class-round3/enemies/renders/slime-fire.png",
+          "thumb": "../../../design/class-round3/enemies/renders/slime-fire-thumb.png",
+          "text": "Changed: A molten slime with flames off its back that can flicker. Built for burn."
+        },
+        {
+          "id": "bat",
+          "label": "Bat",
+          "image": "../../../design/class-round3/enemies/renders/bat.png",
+          "thumb": "../../../design/class-round3/enemies/renders/bat-thumb.png",
+          "text": "Your note: Bats.\n\nChanged: Small, wings spread so they can flap."
+        },
+        {
+          "id": "ghost",
+          "label": "Ghost",
+          "image": "../../../design/class-round3/enemies/renders/ghost.png",
+          "thumb": "../../../design/class-round3/enemies/renders/ghost-thumb.png",
+          "text": "Your note: Ghosts.\n\nChanged: A plain sheet ghost, unlike the banshee."
+        },
+        {
+          "id": "lizardman-spear",
+          "label": "Lizardman (spear)",
+          "image": "../../../design/class-round3/enemies/renders/lizardman-spear.png",
+          "thumb": "../../../design/class-round3/enemies/renders/lizardman-spear-thumb.png",
+          "text": "Your note: Lizard men.\n\nChanged: Snout forward, crest, tail behind; a leaf spear under the shoulder.\n\nStill weak: Olive green, near the archer's green."
+        },
+        {
+          "id": "lizardman-blade",
+          "label": "Lizardman (blade)",
+          "image": "../../../design/class-round3/enemies/renders/lizardman-blade.png",
+          "thumb": "../../../design/class-round3/enemies/renders/lizardman-blade-thumb.png",
+          "text": "Changed: The same with a curved scimitar.\n\nStill weak: The scimitar can read as a tusk."
+        },
+        {
+          "id": "spider",
+          "label": "Spider",
+          "image": "../../../design/class-round3/enemies/renders/spider.png",
+          "thumb": "../../../design/class-round3/enemies/renders/spider-thumb.png",
+          "text": "Your note: Spiders.\n\nChanged: Round marked body, six red eyes, eight legs that can move."
+        },
+        {
+          "id": "snowman",
+          "label": "Snowman",
+          "image": "../../../design/class-round3/enemies/renders/snowman.png",
+          "thumb": "../../../design/class-round3/enemies/renders/snowman-thumb.png",
+          "text": "Your note: Snowmen.\n\nChanged: Bucket hat, red scarf, carrot nose forward, stick arms.\n\nStill weak: The two balls blur below the scarf."
+        },
+        {
+          "id": "mimic",
+          "label": "Mimic (artist's idea)",
+          "image": "../../../design/class-round3/enemies/renders/mimic.png",
+          "thumb": "../../../design/class-round3/enemies/renders/mimic-thumb.png",
+          "text": "Your note: (You said yes to mimic chests.)\n\nChanged: A chest whose lid is a mouth of teeth, tongue out."
+        }
+      ]
+    }
+  ]
+}

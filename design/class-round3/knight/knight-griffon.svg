@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- Round 3 (was Bastion C): new griffon helm: big feathered gold wings, purple feather crest, gold beak visor over the upper face. Warhammer (arm-l) drawn before #body; shield (arm-r) in front. -->
+<!-- KNIGHT Bastion C 'Griffon' (round 2): tank knight: round bascinet with gold wings and the face showing, huge squared purple spaulders with gold rims, silver heater shield with a purple chevron on the right arm (hand hidden), warhammer in the left hand. -->
+<!-- Parts layout: #back, #body, #arm-l, #arm-r, #front inside #sprite; the outline comes from the #outline filter over the whole figure (no outline strokes in the shapes). Facing = DOWN (+y), centre (100,100). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+<linearGradient id="gFace" x1="0" y1="94.8" x2="0" y2="153.1" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient>
+<linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#7E8798"/><stop offset="1" stop-color="#545C6E"/></linearGradient>
+<path id="s1" data-part="shoulders (mail)" d="M 26 108 C 26 82 54 76 100 76 C 146 76 174 82 174 108 C 174 134 146 140 100 140 C 54 140 26 134 26 108 Z"/>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#252A36" stop-opacity="0"/><stop offset="1" stop-color="#252A36" stop-opacity="0.4"/></linearGradient>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#9670D6"/><stop offset="1" stop-color="#5E3C9A"/></linearGradient>
+<path id="s2" data-part="spaulder" d="M 12 98 C 12 82 24 76 44 76 C 62 76 74 84 74 100 L 74 132 C 74 140 68 144 58 144 L 28 144 C 18 144 12 138 12 128 Z"/>
+<clipPath id="u3"><use href="#s1"/></clipPath>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2E1A55" stop-opacity="0"/><stop offset="1" stop-color="#2E1A55" stop-opacity="0.5"/></linearGradient>
+<clipPath id="c4"><use href="#s2"/></clipPath>
+<path id="s5" data-part="spaulder" d="M 188 98 C 188 82 176 76 156 76 C 138 76 126 84 126 100 L 126 132 C 126 140 132 144 142 144 L 172 144 C 182 144 188 138 188 128 Z"/>
+<clipPath id="u6"><use href="#s1"/><use href="#s2"/></clipPath>
+<clipPath id="c7"><use href="#s5"/></clipPath>
+<path id="s8" data-part="head" d="M 100 47.8 C 129.6 47.8 147.8 68.7 147.8 98.3 C 147.8 122.6 136.5 140 120.9 147.8 C 113.9 151.3 107 153.1 100 153.1 C 93 153.1 86.1 151.3 79.1 147.8 C 63.5 140 52.1 122.6 52.1 98.3 C 52.1 68.7 70.4 47.8 100 47.8 Z"/>
+<clipPath id="u9"><use href="#s1"/><use href="#s2"/><use href="#s5"/></clipPath>
+<clipPath id="c10"><use href="#s8"/></clipPath>
+<linearGradient id="g5" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#FBD46E"/><stop offset="1" stop-color="#E09A2E"/></linearGradient>
+<path id="s11" data-part="helm wing" d="M 68 94 C 50 94 24 80 8 52 Q 20 48 28 56 Q 26 44 38 48 Q 38 38 50 44 Q 54 36 64 46 C 76 60 78 82 68 94 Z"/>
+<clipPath id="u12"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/></clipPath>
+<linearGradient id="g6" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A86A16" stop-opacity="0"/><stop offset="1" stop-color="#A86A16" stop-opacity="0.5"/></linearGradient>
+<clipPath id="c13"><use href="#s11"/></clipPath>
+<path id="s14" data-part="helm wing" d="M 132 94 C 150 94 176 80 192 52 Q 180 48 172 56 Q 174 44 162 48 Q 162 38 150 44 Q 146 36 136 46 C 124 60 122 82 132 94 Z"/>
+<clipPath id="u15"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/><use href="#s11"/></clipPath>
+<clipPath id="c16"><use href="#s14"/></clipPath>
+<linearGradient id="g7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E3E7ED"/><stop offset="1" stop-color="#A9B2C0"/></linearGradient>
+<path id="s17" data-part="winged bascinet" fill-rule="evenodd" clip-rule="evenodd" d="M 100 40 C 134 40 154 64 154 98 C 154 130 138 154 100 158 C 62 154 46 130 46 98 C 46 64 66 40 100 40 Z M 100 106 C 120 106 133 117 133 132 C 133 146 120 152 100 152 C 80 152 67 146 67 132 C 67 117 80 106 100 106 Z"/>
+<clipPath id="u18"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/></clipPath>
+<linearGradient id="g8" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4A5468" stop-opacity="0"/><stop offset="1" stop-color="#4A5468" stop-opacity="0.5"/></linearGradient>
+<clipPath id="c19"><use href="#s17"/></clipPath>
+<linearGradient id="g9" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F9CB5C"/><stop offset="1" stop-color="#E09A2E"/></linearGradient>
+<linearGradient id="g10" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F8EED8"/><stop offset="1" stop-color="#D8C59E"/></linearGradient>
+<path id="s20" data-part="heater shield" d="M 112 120 C 132 112 168 112 190 120 C 192 154 178 182 151 202 C 124 182 110 154 112 120 Z"/>
+<clipPath id="u21"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/></clipPath>
+<linearGradient id="g11" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A86A16" stop-opacity="0"/><stop offset="1" stop-color="#A86A16" stop-opacity="0.45"/></linearGradient>
+<clipPath id="c22"><use href="#s20"/></clipPath>
+<linearGradient id="g12" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#B57944"/><stop offset="1" stop-color="#7E4A24"/></linearGradient>
+<path id="s23" data-part="haft" d="M 35.6 105.3 L 37.5 104.6 C 39.5 103.9 41.8 104.9 42.6 107 L 70.6 184.1 C 71.4 186.1 70.3 188.4 68.2 189.2 L 66.4 189.9 C 64.3 190.6 62 189.6 61.2 187.5 L 33.2 110.4 C 32.4 108.4 33.5 106.1 35.6 105.3 Z"/>
+<clipPath id="u24"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s20"/></clipPath>
+<linearGradient id="g13" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4A2A12" stop-opacity="0"/><stop offset="1" stop-color="#4A2A12" stop-opacity="0.4"/></linearGradient>
+<path id="s25" data-part="hammer head" d="M 41 175.7 L 78.6 162 C 81.7 160.9 85.1 162.5 86.3 165.6 L 89.7 175 C 90.8 178.1 89.2 181.6 86.1 182.7 L 48.5 196.4 C 45.4 197.5 42 195.9 40.8 192.8 L 37.4 183.4 C 36.3 180.3 37.9 176.8 41 175.7 Z"/>
+<clipPath id="u26"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s20"/><use href="#s23"/></clipPath>
+<clipPath id="c27"><use href="#s25"/></clipPath>
+<path id="s28" data-part="spike" d="M 60.7 191.9 L 73.9 187.1 L 72.1 202.7 Z"/>
+<clipPath id="u29"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s20"/><use href="#s23"/><use href="#s25"/></clipPath>
+<linearGradient id="g14" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4A5468" stop-opacity="0"/><stop offset="1" stop-color="#4A5468" stop-opacity="0.4"/></linearGradient>
+<path id="s30" d="M 52.7 164 L 62.1 160.6 C 63.6 160 65.4 160.8 65.9 162.4 L 66.6 164.2 C 67.2 165.8 66.4 167.5 64.8 168.1 L 55.4 171.5 C 53.9 172.1 52.2 171.3 51.6 169.7 L 50.9 167.8 C 50.3 166.3 51.1 164.6 52.7 164 Z"/>
+<clipPath id="u31"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s20"/><use href="#s23"/><use href="#s25"/><use href="#s28"/></clipPath>
+<linearGradient id="g15" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A86A16" stop-opacity="0"/><stop offset="1" stop-color="#A86A16" stop-opacity="0.4"/></linearGradient>
+<path id="s32" d="M 38 109.5 L 46 109.5 C 50.4 109.5 54 113.1 54 117.5 L 54 122.5 C 54 126.9 50.4 130.5 46 130.5 L 38 130.5 C 33.6 130.5 30 126.9 30 122.5 L 30 117.5 C 30 113.1 33.6 109.5 38 109.5 Z"/>
+<clipPath id="u33"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s20"/><use href="#s23"/><use href="#s25"/><use href="#s28"/><use href="#s30"/></clipPath>
+<path id="gWingL" d="M 66 104 C 44 104 16 86 0 52 Q 10 44 18 50 Q 12 36 26 34 Q 24 22 38 26 Q 40 14 54 24 Q 64 32 70 50 C 78 70 80 94 66 104 Z"/>
+<path id="gWingR" d="M 134 104 C 156 104 184 86 200 52 Q 190 44 182 50 Q 188 36 174 34 Q 176 22 162 26 Q 160 14 146 24 Q 136 32 130 50 C 122 70 120 94 134 104 Z"/>
+<path id="gHelm" fill-rule="evenodd" clip-rule="evenodd" d="M 100 40 C 134 40 154 64 154 98 C 154 130 138 154 100 158 C 62 154 46 130 46 98 C 46 64 66 40 100 40 Z M 100 114 C 116 114 128 120 129 133 C 129 146 116 152 100 152 C 84 152 71 146 71 133 C 72 120 84 114 100 114 Z"/>
+<path id="gCrest" d="M 100 100 C 93 94 89 86 90 78 L 86 72 C 86 64 88 56 90 50 L 86 44 C 88 34 93 26 100 18 C 107 26 112 34 114 44 L 110 50 C 112 56 114 64 114 72 L 110 78 C 111 86 107 94 100 100 Z"/>
+<path id="gBeak" d="M 84 98 C 90 91 110 91 116 98 C 119 112 110 130 100 146 C 90 130 81 112 84 98 Z"/>
+<clipPath id="gcUnder"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/></clipPath>
+<clipPath id="gcUnderHelm"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/><use href="#gWingL"/><use href="#gWingR"/></clipPath>
+<clipPath id="gcWingL"><use href="#gWingL"/></clipPath>
+<clipPath id="gcWingR"><use href="#gWingR"/></clipPath>
+<clipPath id="gcHelm"><use href="#gHelm"/></clipPath>
+<clipPath id="gcHelmFace"><use href="#gHelm"/><use href="#s8"/></clipPath>
+<clipPath id="gcCrest"><use href="#gCrest"/></clipPath>
+<clipPath id="gcBeak"><use href="#gBeak"/></clipPath>
+<path id="gHam" d="M -15 32 L 15 32 C 18 32 20 34 20 37 L 20 49 C 20 52 18 54 15 54 L -15 54 C -18 54 -20 52 -20 49 L -20 37 C -20 34 -18 32 -15 32 Z"/>
+<clipPath id="gcHaft"><rect x="-4.5" y="-40" width="9" height="88"/></clipPath>
+<clipPath id="gcHam"><use href="#gHam"/></clipPath>
+<clipPath id="gcWpn"><g transform="translate(52 146) rotate(-28)"><rect x="-4.5" y="-40" width="9" height="88"/><use href="#gHam"/><rect x="-12.5" y="-10.5" width="25" height="21" rx="8.5"/></g></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-l" data-pivot="50 108">
+  <!-- warhammer, held low: the haft passes under the left spaulder and the head comes out past the front of the body; only the fist shows at the body's edge -->
+  <g transform="translate(52 146) rotate(-28)">
+    <rect x="-4.5" y="-40" width="9" height="74" rx="3.5" fill="url(#g12)"/>
+    <rect x="-4.5" y="-40" width="9" height="74" rx="3.5" fill="url(#g13)"/>
+    <circle cx="0" cy="-40" r="6" fill="url(#g9)"/>
+    <g clip-path="url(#gcHaft)"><use href="#gHam" transform="translate(0 4)" fill="#2B2230" opacity="0.3"/></g>
+    <use href="#gHam" fill="url(#g7)"/>
+    <use href="#gHam" fill="url(#g8)"/>
+    <g clip-path="url(#gcHam)"><rect x="-20" y="32" width="8" height="22" fill="#F2F4F8" opacity="0.8"/><rect x="12" y="32" width="8" height="22" fill="#7E8899" opacity="0.6"/><rect x="-3" y="32" width="6" height="22" fill="url(#g9)"/></g>
+    
+    <g clip-path="url(#gcHaft)"><rect x="-12.5" y="-10.5" width="25" height="21" rx="8.5" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
+    <rect x="-12.5" y="-10.5" width="25" height="21" rx="8.5" fill="url(#gHand)"/>
+  </g>
+</g>
+<g id="body">
+  <!-- shadow of the body on the hammer where it comes out from under it -->
+  <g clip-path="url(#gcWpn)"><use href="#s2" transform="translate(2 5)" fill="#2B2230" opacity="0.32"/><use href="#gHelm" transform="translate(0 5)" fill="#2B2230" opacity="0.32"/></g>
+  <!-- shoulders (mail) -->
+  <use href="#s1" fill="url(#g1)"/>
+  <use href="#s1" fill="url(#g2)"/>
+  <!-- spaulder -->
+  <g clip-path="url(#u3)"><use href="#s2" transform="translate(0 4)" fill="#2B2230" opacity="0.35"/></g>
+  <use href="#s2" fill="url(#g3)"/>
+  <use href="#s2" fill="url(#g4)"/>
+  <g clip-path="url(#c4)"><path d="M 0 130 L 90 130 L 90 150 L 0 150 Z" fill="#F2B53A"/><path d="M 0 76 L 90 76 L 90 88 L 0 88 Z" fill="#B497E6" opacity="0.45"/></g>
+  <!-- spaulder -->
+  <g clip-path="url(#u6)"><use href="#s5" transform="translate(0 4)" fill="#2B2230" opacity="0.35"/></g>
+  <use href="#s5" fill="url(#g3)"/>
+  <use href="#s5" fill="url(#g4)"/>
+  <g clip-path="url(#c7)"><path d="M 200 130 L 110 130 L 110 150 L 200 150 Z" fill="#F2B53A"/><path d="M 200 76 L 110 76 L 110 88 L 200 88 Z" fill="#B497E6" opacity="0.45"/></g>
+  <!-- head -->
+  <g clip-path="url(#u9)"><use href="#s8" transform="translate(0 5)" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#s8" fill="url(#gFace)"/>
+  <g clip-path="url(#c10)"><rect x="100" y="40" width="56" height="120" fill="url(#gFaceSide)"/></g>
+  <path d="M96 136.5 Q100 139 104 136.5" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- griffon helm: big feathered wings swept back, purple feather crest, gold beak visor over the upper face -->
+  <g clip-path="url(#gcUnder)"><use href="#gWingL" transform="translate(0 4)" fill="#2B2230" opacity="0.35"/><use href="#gWingR" transform="translate(0 4)" fill="#2B2230" opacity="0.35"/></g>
+  <use href="#gWingL" fill="url(#g5)"/><use href="#gWingL" fill="url(#g6)"/>
+  <use href="#gWingR" fill="url(#g5)"/><use href="#gWingR" fill="url(#g6)"/>
+  <g clip-path="url(#gcWingL)"><path d="M 70 104 C 46 98 22 80 6 52 L 16 50 C 30 74 48 88 72 94 Z" fill="#F8EED8" opacity="0.9"/><path d="M 30 38 C 40 56 54 70 70 80 L 72 74 C 58 64 46 52 38 34 Z" fill="#C57E1E" opacity="0.28"/><path d="M 16 50 C 28 66 44 80 66 90 L 70 86 C 50 76 34 62 24 46 Z" fill="#C57E1E" opacity="0.22"/></g>
+  <g clip-path="url(#gcWingR)"><path d="M 130 104 C 154 98 178 80 194 52 L 184 50 C 170 74 152 88 128 94 Z" fill="#F8EED8" opacity="0.9"/><path d="M 170 38 C 160 56 146 70 130 80 L 128 74 C 142 64 154 52 162 34 Z" fill="#C57E1E" opacity="0.28"/><path d="M 184 50 C 172 66 156 80 134 90 L 130 86 C 150 76 166 62 176 46 Z" fill="#C57E1E" opacity="0.22"/></g>
+  <g clip-path="url(#gcUnderHelm)"><use href="#gHelm" transform="translate(0 5)" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#gHelm" fill="url(#g7)"/>
+  <use href="#gHelm" fill="url(#g8)"/>
+  <g clip-path="url(#gcHelm)"><path d="M 60 70 C 60 62 68 56 78 56 C 86 56 90 62 88 68 C 82 72 70 76 60 70 Z" fill="#FFFFFF" opacity="0.5"/></g>
+  <g clip-path="url(#gcHelm)"><use href="#gCrest" transform="translate(0 4)" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#gCrest" fill="url(#g3)"/>
+  <use href="#gCrest" fill="url(#g4)"/>
+  <g clip-path="url(#gcCrest)"><path d="M 86 44 Q 100 50 114 44 L 114 48 Q 100 54 86 48 Z M 86 64 Q 100 70 114 64 L 114 68 Q 100 74 86 68 Z" fill="#3E2470" opacity="0.4"/><path d="M 94 30 L 98 30 L 98 98 L 94 98 Z" fill="#C3A6F2" opacity="0.5"/></g>
+  <g clip-path="url(#gcHelmFace)"><use href="#gBeak" transform="translate(0 4)" fill="#2B2230" opacity="0.32"/></g>
+  <use href="#gBeak" fill="url(#g5)"/>
+  <use href="#gBeak" fill="url(#g6)"/>
+  <g clip-path="url(#gcBeak)"><path d="M 84 132 Q 100 127 116 132 L 116 150 L 84 150 Z" fill="#B0661A" opacity="0.8"/><path d="M 95 96 L 98 96 L 98 124 L 95 124 Z" fill="#FFF1C4" opacity="0.6"/></g>
+</g>
+<g id="arm-r" data-pivot="150 108">
+  <!-- heater shield -->
+  <g clip-path="url(#u21)"><use href="#s20" transform="translate(0 4)" fill="#2B2230" opacity="0.35"/></g>
+  <use href="#s20" fill="url(#g9)"/>
+  <use href="#s20" fill="url(#g11)"/>
+  <g clip-path="url(#c22)"><path d="M 120 126 C 138 120 164 120 182 126 C 183 154 172 176 151 191 C 130 176 119 154 120 126 Z" fill="url(#g10)"/><path d="M 120 150 L 151 128 L 182 150 L 182 168 L 151 146 L 120 168 Z" fill="url(#g3)"/><path d="M 151 100 L 200 100 L 200 210 L 151 210 Z" fill="#3A3550" opacity="0.28"/></g>
+</g>
+</g>
+</svg>

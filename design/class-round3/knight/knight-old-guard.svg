@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- Round 3: the greatsword (arm-r, both hands) is drawn before #body: it passes under the right pauldron, the blade runs long under the beard; only the fists and pommel show beside the pauldron. -->
+<!-- KNIGHT Old Guard (round 2): bald veteran, white fringe running round the back of the head into sideburns and a spade beard, fur collar, wide straight crimson cape, heavy pauldrons, greatsword held two-handed across the front. -->
+<!-- Parts layout: #back, #body, #arm-l, #arm-r, #front inside #sprite; the outline comes from the #outline filter over the whole figure (no outline strokes in the shapes). Facing = DOWN (+y), centre (100,100). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+<linearGradient id="gFace" x1="0" y1="94.8" x2="0" y2="153.1" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient>
+<linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#C8473F"/><stop offset="1" stop-color="#8E2A28"/></linearGradient>
+<path id="s1" data-part="cape" d="M 30 100 C 14 76 6 46 8 22 C 8 12 14 8 24 8 Q 40 4 54 10 Q 77 0 100 6 Q 123 0 146 10 Q 160 4 176 8 C 186 8 192 12 192 22 C 194 46 186 76 170 100 Z"/>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5A1416" stop-opacity="0"/><stop offset="1" stop-color="#5A1416" stop-opacity="0.45"/></linearGradient>
+<clipPath id="c2"><use href="#s1"/></clipPath>
+<path id="s3" data-part="mantle" d="M 22 112 C 20 80 50 64 100 64 C 150 64 180 80 178 112 C 176 142 150 150 100 150 C 50 150 24 142 22 112 Z"/>
+<clipPath id="u4"><use href="#s1"/></clipPath>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#B9C0CB"/><stop offset="1" stop-color="#7C8697"/></linearGradient>
+<path id="s5" data-part="pauldron" d="M 11 116 C 11 99.4 23.1 86 38 86 C 52.9 86 65 99.4 65 116 C 65 132.6 52.9 146 38 146 C 23.1 146 11 132.6 11 116 Z"/>
+<clipPath id="u6"><use href="#s1"/><use href="#s3"/></clipPath>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2E3442" stop-opacity="0"/><stop offset="1" stop-color="#2E3442" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c7"><use href="#s5"/></clipPath>
+<path id="s8" data-part="pauldron" d="M 135 116 C 135 99.4 147.1 86 162 86 C 176.9 86 189 99.4 189 116 C 189 132.6 176.9 146 162 146 C 147.1 146 135 132.6 135 116 Z"/>
+<clipPath id="u9"><use href="#s1"/><use href="#s3"/><use href="#s5"/></clipPath>
+<clipPath id="c10"><use href="#s8"/></clipPath>
+<linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6D2AE"/><stop offset="0.55" stop-color="#EDBF97"/><stop offset="1" stop-color="#D49A74"/></linearGradient>
+<path id="s11" data-part="head" d="M 100 47.8 C 129.6 47.8 147.8 68.7 147.8 98.3 C 147.8 122.6 136.5 140 120.9 147.8 C 113.9 151.3 107 153.1 100 153.1 C 93 153.1 86.1 151.3 79.1 147.8 C 63.5 140 52.1 122.6 52.1 98.3 C 52.1 68.7 70.4 47.8 100 47.8 Z"/>
+<clipPath id="u12"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/></clipPath>
+<clipPath id="c13"><use href="#s11"/></clipPath>
+<linearGradient id="g6" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F4F1EC"/><stop offset="1" stop-color="#BDB6AC"/></linearGradient>
+<path id="s14" data-part="fringe and beard" fill-rule="evenodd" clip-rule="evenodd" d="M 100 176 C 78 175 58 160 51 134 Q 43 120 46 104 Q 40 88 48 76 Q 46 60 60 54 Q 66 40 82 40 Q 91 32 100 37 Q 109 32 118 40 Q 134 40 140 54 Q 154 60 152 76 Q 160 88 154 104 Q 157 120 149 134 C 142 160 122 175 100 176 Z M 100 50 C 124 50 141 68 142 92 C 142 104 138 113 132 119 C 125 127 112 131 100 131 C 88 131 75 127 68 119 C 62 113 58 104 58 92 C 59 68 76 50 100 50 Z"/>
+<clipPath id="u15"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/></clipPath>
+<linearGradient id="g7" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6C665E" stop-opacity="0"/><stop offset="1" stop-color="#6C665E" stop-opacity="0.45"/></linearGradient>
+<clipPath id="c16"><use href="#s14"/></clipPath>
+<linearGradient id="g8" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F4CBA5"/><stop offset="1" stop-color="#EAB78F"/></linearGradient>
+<linearGradient id="g9" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#DDA982"/><stop offset="1" stop-color="#CE9671"/></linearGradient>
+<path id="s17" data-part="ear" d="M 45.5 100 C 45.5 94.5 48.9 90 53 90 C 57.1 90 60.5 94.5 60.5 100 C 60.5 105.5 57.1 110 53 110 C 48.9 110 45.5 105.5 45.5 100 Z"/>
+<clipPath id="u18"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/></clipPath>
+<path id="s19" data-part="ear" d="M 139.5 100 C 139.5 94.5 142.9 90 147 90 C 151.1 90 154.5 94.5 154.5 100 C 154.5 105.5 151.1 110 147 110 C 142.9 110 139.5 105.5 139.5 100 Z"/>
+<clipPath id="u20"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/></clipPath>
+<linearGradient id="g10" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D8D2C8"/></linearGradient>
+<path id="s21" data-part="moustache" d="M 72 128 C 82 118 94 120 100 126 C 106 120 118 118 128 128 C 120 138 108 136 100 132 C 92 136 80 138 72 128 Z"/>
+<clipPath id="u22"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s19"/></clipPath>
+<linearGradient id="g11" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6C665E" stop-opacity="0"/><stop offset="1" stop-color="#6C665E" stop-opacity="0.35"/></linearGradient>
+<linearGradient id="g12" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F9CB5C"/><stop offset="1" stop-color="#E09A2E"/></linearGradient>
+<path id="s23" data-part="pommel" d="M 173.3 91.5 C 176.8 87.9 182.5 87.8 186.1 91.3 C 189.6 94.8 189.7 100.4 186.3 104 C 182.8 107.6 177.1 107.7 173.6 104.2 C 170 100.8 169.9 95.1 173.3 91.5 Z"/>
+<clipPath id="u24"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s19"/><use href="#s21"/></clipPath>
+<linearGradient id="g13" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A86A16" stop-opacity="0"/><stop offset="1" stop-color="#A86A16" stop-opacity="0.4"/></linearGradient>
+<path id="s25" d="M 174.9 100 L 177.8 102.8 C 179 103.9 179 105.8 177.8 107 L 147.3 138.7 C 146.1 139.8 144.2 139.9 143 138.7 L 140.2 135.9 C 139 134.8 138.9 132.9 140.1 131.7 L 170.7 100.1 C 171.8 98.9 173.7 98.8 174.9 100 Z"/>
+<clipPath id="u26"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s19"/><use href="#s21"/><use href="#s23"/></clipPath>
+<linearGradient id="g14" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E3E7ED"/><stop offset="1" stop-color="#A9B2C0"/></linearGradient>
+<path id="s27" data-part="blade" d="M 126.7 134.1 L 145.4 152.1 L 103.7 195.3 L 80.5 200.6 L 85 177.2 Z"/>
+<clipPath id="u28"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s19"/><use href="#s21"/><use href="#s23"/><use href="#s25"/></clipPath>
+<clipPath id="c29"><use href="#s27"/></clipPath>
+<path id="s30" data-part="crossguard" d="M 125.7 116.4 L 163.1 152.5 C 165.5 154.8 165.5 158.6 163.2 161 L 162.5 161.7 C 160.2 164.1 156.4 164.2 154.1 161.9 L 116.6 125.7 C 114.3 123.4 114.2 119.6 116.5 117.3 L 117.2 116.5 C 119.5 114.2 123.3 114.1 125.7 116.4 Z"/>
+<clipPath id="u31"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s19"/><use href="#s21"/><use href="#s23"/><use href="#s25"/><use href="#s27"/></clipPath>
+<linearGradient id="g15" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A86A16" stop-opacity="0"/><stop offset="1" stop-color="#A86A16" stop-opacity="0.5"/></linearGradient>
+<path id="s32" d="M 164 99.5 L 172 99.5 C 176.4 99.5 180 103.1 180 107.5 L 180 112.5 C 180 116.9 176.4 120.5 172 120.5 L 164 120.5 C 159.6 120.5 156 116.9 156 112.5 L 156 107.5 C 156 103.1 159.6 99.5 164 99.5 Z"/>
+<clipPath id="u33"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s19"/><use href="#s21"/><use href="#s23"/><use href="#s25"/><use href="#s27"/><use href="#s30"/></clipPath>
+<path id="s34" d="M 148.7 115.3 L 156.7 115.3 C 161.1 115.3 164.7 118.9 164.7 123.3 L 164.7 128.3 C 164.7 132.7 161.1 136.3 156.7 136.3 L 148.7 136.3 C 144.3 136.3 140.7 132.7 140.7 128.3 L 140.7 123.3 C 140.7 118.9 144.3 115.3 148.7 115.3 Z"/>
+<clipPath id="u35"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s19"/><use href="#s21"/><use href="#s23"/><use href="#s25"/><use href="#s27"/><use href="#s30"/><use href="#s32"/></clipPath>
+<path id="ogBlade" d="M -16 16 L 16 16 L 15 60 L 0 95 L -15 60 Z"/>
+<path id="ogGuard" d="M -33 9 Q -16 6 0 7 Q 16 6 33 9 Q 37.5 13 33 17.5 Q 16 20 0 19 Q -16 20 -33 17.5 Q -37.5 13 -33 9 Z"/>
+<clipPath id="ogcBlade"><use href="#ogBlade"/></clipPath>
+<clipPath id="ogcGrip"><use href="#ogGuard"/><use href="#ogBlade"/><rect x="-13" y="-29" width="26" height="22" rx="9"/></clipPath>
+<clipPath id="ogcWpn"><g transform="translate(168 146) rotate(54)"><use href="#ogBlade"/><use href="#ogGuard"/><rect x="-13" y="-10.5" width="26" height="22" rx="9"/></g></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="back" data-pivot="100 88">
+  <!-- cape -->
+  <use href="#s1" fill="url(#g1)"/>
+  <use href="#s1" fill="url(#g2)"/>
+  <g clip-path="url(#c2)"><path d="M 54 10 C 56 40 60 70 66 98 L 72 98 C 64 70 60 40 58 8 Z" fill="#7A2222" opacity="0.4"/><path d="M 146 10 C 144 40 140 70 134 98 L 128 98 C 136 70 140 40 142 8 Z" fill="#7A2222" opacity="0.4"/></g>
+</g>
+<g id="arm-r" data-pivot="150 108">
+  <!-- greatsword, both hands (two-handed: no arm-l). Held low under the right pauldron; the blade comes out past the front of the body, the lower fist shows at the body's edge, the upper fist is under the pauldron. -->
+  <g transform="translate(168 146) rotate(54)">
+    <use href="#ogBlade" fill="url(#g14)"/>
+    <g clip-path="url(#ogcBlade)"><rect x="0" y="0" width="22" height="120" fill="#6F7A8E" opacity="0.5"/><rect x="-2.2" y="22" width="4.4" height="40" rx="2.2" fill="#8E97A8" opacity="0.7"/><rect x="-0.8" y="22" width="1.6" height="58" fill="#F4F6FA" opacity="0.5"/></g>
+    <rect x="-5" y="-31" width="10" height="41" rx="3.5" fill="#5A2E1E"/>
+    <circle cx="0" cy="-31" r="7.5" fill="url(#g12)"/><circle cx="0" cy="-31" r="7.5" fill="url(#g13)"/>
+    <g clip-path="url(#ogcBlade)"><use href="#ogGuard" transform="translate(0 4)" fill="#2B2230" opacity="0.3"/></g>
+    <use href="#ogGuard" fill="url(#g12)"/>
+    <use href="#ogGuard" fill="url(#g15)"/>
+    <rect x="-13" y="-29" width="26" height="22" rx="9" fill="url(#gHand)"/>
+    <g clip-path="url(#ogcGrip)"><rect x="-13" y="-10.5" width="26" height="22" rx="9" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
+    <rect x="-13" y="-10.5" width="26" height="22" rx="9" fill="url(#gHand)"/>
+  </g>
+</g>
+<g id="body">
+  <!-- mantle -->
+  <g clip-path="url(#u4)"><use href="#s3" transform="translate(0 3)" fill="#2B2230" opacity="0.28"/></g>
+  <use href="#s3" fill="url(#g1)"/>
+  <use href="#s3" fill="url(#g2)"/>
+  <!-- shadow of the body on the sword where it comes out from under it -->
+  <g clip-path="url(#ogcWpn)"><use href="#s8" transform="translate(-1 5)" fill="#2B2230" opacity="0.32"/><use href="#s3" transform="translate(0 5)" fill="#2B2230" opacity="0.32"/><use href="#s14" transform="translate(0 5)" fill="#2B2230" opacity="0.32"/></g>
+  <!-- pauldron -->
+  <g clip-path="url(#u6)"><use href="#s5" transform="translate(0 3)" fill="#2B2230" opacity="0.28"/></g>
+  <use href="#s5" fill="url(#g3)"/>
+  <use href="#s5" fill="url(#g4)"/>
+  <g clip-path="url(#c7)"><path d="M 10 136 C 10 128.3 22.5 122 38 122 C 53.5 122 66 128.3 66 136 C 66 143.7 53.5 150 38 150 C 22.5 150 10 143.7 10 136 Z" fill="#7F8898" opacity="0.4"/></g>
+  <!-- pauldron -->
+  <g clip-path="url(#u9)"><use href="#s8" transform="translate(0 3)" fill="#2B2230" opacity="0.28"/></g>
+  <use href="#s8" fill="url(#g3)"/>
+  <use href="#s8" fill="url(#g4)"/>
+  <g clip-path="url(#c10)"><path d="M 134 136 C 134 128.3 146.5 122 162 122 C 177.5 122 190 128.3 190 136 C 190 143.7 177.5 150 162 150 C 146.5 150 134 143.7 134 136 Z" fill="#7F8898" opacity="0.4"/></g>
+  <!-- head -->
+  <g clip-path="url(#u12)"><use href="#s11" transform="translate(0 5)" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#s11" fill="url(#g5)"/>
+  <g clip-path="url(#c13)"><rect x="100" y="40" width="56" height="120" fill="url(#gFaceSide)"/><path d="M 70 72 C 70 65.9 77.2 61 86 61 C 94.8 61 102 65.9 102 72 C 102 78.1 94.8 83 86 83 C 77.2 83 70 78.1 70 72 Z" fill="#FFF3E2" opacity="0.45"/></g>
+  <!-- fringe and beard -->
+  <g clip-path="url(#u15)"><use href="#s14" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#s14" fill="url(#g6)"/>
+  <use href="#s14" fill="url(#g7)"/>
+  <g clip-path="url(#c16)"><path d="M 70 156 Q 100 170 130 156 L 130 200 L 70 200 Z" fill="#A69E92" opacity="0.35"/></g>
+  <!-- ear -->
+  <g clip-path="url(#u18)"><use href="#s17" transform="translate(0 2)" fill="#2B2230" opacity="0.25"/></g>
+  <use href="#s17" fill="url(#g8)"/>
+  <!-- ear -->
+  <g clip-path="url(#u20)"><use href="#s19" transform="translate(0 2)" fill="#2B2230" opacity="0.25"/></g>
+  <use href="#s19" fill="url(#g9)"/>
+  <!-- moustache -->
+  <g clip-path="url(#u22)"><use href="#s21" transform="translate(0 2.5)" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#s21" fill="url(#g10)"/>
+  <use href="#s21" fill="url(#g11)"/>
+</g>
+</g>
+</svg>

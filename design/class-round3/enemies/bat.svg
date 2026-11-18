@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- BAT (round 3 enemy), small. Seen from above flying forward: head and ears at the front (down), wings spread to the
+       sides with scalloped back edges, little tail flap behind. Yellow eyes and two fangs.
+       Parts (file order = draw order): #arm-l and #arm-r = the wings (drawn at 80% inside each group; pivot at each shoulder, so the game can flap them
+       by swinging or squashing them in x); they come BEFORE #body so the body sits on top. #body = tail flap, body, head.
+       The outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <path id="wing" d="M92 106 C78 112 64 110 52 107 C42 104 32 100 22 96 Q36 84 30 62 Q46 78 56 56 Q64 76 80 70 Q84 82 92 90 Z"/>
+    <clipPath id="wingC"><use href="#wing"/></clipPath>
+    <path id="tail" d="M88 82 C88 70 92 62 100 58 C108 62 112 70 112 82 Z"/>
+    <path id="torso" d="M100 74 C112 74 119 86 119 100 C119 112 112 118 100 118 C88 118 81 112 81 100 C81 86 88 74 100 74 Z"/>
+    <path id="head" d="M100 106 C111 106 118 114 118 124 C118 134 110 140 100 140 C90 140 82 134 82 124 C82 114 89 106 100 106 Z"/>
+    <path id="earL" d="M88 114 C80 116 72 126 70 140 C80 140 89 134 93 126 Z"/>
+    <path id="earR" d="M112 114 C120 116 128 126 130 140 C120 140 111 134 107 126 Z"/>
+    <clipPath id="underHead"><use href="#torso"/><use href="#tail"/></clipPath>
+    <clipPath id="underTorso"><use href="#tail"/></clipPath>
+    <linearGradient id="gWing" x1="20" y1="60" x2="92" y2="108" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7C5C93"/><stop offset="1" stop-color="#5E4577"/></linearGradient>
+    <linearGradient id="gWingR" x1="20" y1="60" x2="92" y2="108" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#6A4D80"/><stop offset="1" stop-color="#4E3966"/></linearGradient>
+    <linearGradient id="gFur" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="#A08BBE"/><stop offset="1" stop-color="#7A6599"/></linearGradient>
+    <linearGradient id="shX" x1="84" y1="0" x2="122" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2E1F40" stop-opacity="0"/><stop offset="1" stop-color="#2E1F40" stop-opacity="0.35"/></linearGradient>
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <g id="arm-l" data-pivot="92 98.4">
+      <g transform="translate(100 100) scale(0.8) translate(-100 -100)">
+      <use href="#wing" fill="url(#gWing)" stroke="url(#gWing)" stroke-width="6" stroke-linejoin="round"/>
+      <g clip-path="url(#wingC)" fill="none" stroke="#A48BBB" stroke-width="3.2" stroke-linecap="round">
+        <path d="M92 99 L52 105"/><path d="M52 105 L22 96"/><path d="M52 105 L30 62"/><path d="M52 105 L56 56"/><path d="M52 105 L80 70"/>
+      </g>
+      <circle cx="52" cy="105" r="4" fill="#A48BBB"/>
+      </g>
+    </g>
+    <g id="arm-r" data-pivot="108 98.4">
+      <g transform="translate(100 100) scale(0.8) translate(-100 -100)">
+      <g transform="translate(200 0) scale(-1 1)">
+        <use href="#wing" fill="url(#gWingR)" stroke="url(#gWingR)" stroke-width="6" stroke-linejoin="round"/>
+        <g clip-path="url(#wingC)" fill="none" stroke="#8C74A6" stroke-width="3.2" stroke-linecap="round">
+          <path d="M92 99 L52 105"/><path d="M52 105 L22 96"/><path d="M52 105 L30 62"/><path d="M52 105 L56 56"/><path d="M52 105 L80 70"/>
+        </g>
+        <circle cx="52" cy="105" r="4" fill="#8C74A6"/>
+      </g>
+      </g>
+    </g>
+    <g id="body">
+      <g transform="translate(100 100) scale(0.8) translate(-100 -100)">
+      <use href="#tail" fill="#5E4577"/>
+      <g clip-path="url(#underTorso)"><use href="#torso" fill="#2B2230" opacity="0.3" transform="translate(0 3)"/></g>
+      <use href="#torso" fill="url(#gFur)"/>
+      <use href="#torso" fill="url(#shX)"/>
+      <use href="#earL" fill="url(#gFur)"/>
+      <use href="#earR" fill="#7A6599"/>
+      <path d="M87 120 C81 124 77 130 75 137 C81 136 86 132 89 127 Z" fill="#E7A3B4"/>
+      <path d="M113 120 C119 124 123 130 125 137 C119 136 114 132 111 127 Z" fill="#C98798"/>
+      <g clip-path="url(#underHead)"><use href="#head" fill="#2B2230" opacity="0.3" transform="translate(0 3)"/></g>
+      <use href="#head" fill="url(#gFur)"/>
+      <use href="#head" fill="url(#shX)"/>
+      <ellipse cx="92.5" cy="129" rx="3.6" ry="3.2" fill="#FFD84A"/>
+      <ellipse cx="107.5" cy="129" rx="3.6" ry="3.2" fill="#FFD84A"/>
+      <path d="M94 138 L96 145 L98 138 Z M102 138 L104 145 L106 138 Z" fill="#FFF8E8"/>
+      </g>
+    </g>
+  </g>
+</svg>

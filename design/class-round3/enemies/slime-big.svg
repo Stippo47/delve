@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- SLIME, big (round 3 enemy). A jelly blob seen from above: eyes at the front (down),
+       a bone, a coin and bubbles floating inside. Parts: #body only (the game squashes/stretches the whole sprite to hop).
+       The outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <path id="jelly" d="M100 46 C138 46 168 68 175 102 C182 140 152 168 100 168 C48 168 18 140 25 102 C32 68 62 46 100 46 Z"/>
+    <path id="core" d="M100 157 C66 157 38 140 36 110 C34 84 56 62 94 58 C132 55 162 74 164 106 C166 140 134 157 100 157 Z"/>
+    <clipPath id="jellyC"><use href="#jelly"/></clipPath>
+    <radialGradient id="gJelly" cx="86" cy="86" r="104" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#9BE8CF"/><stop offset="0.6" stop-color="#5EC3A7"/><stop offset="1" stop-color="#2F8571"/></radialGradient>
+    <radialGradient id="gCore" cx="84" cy="88" r="80" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B4F2DD" stop-opacity="0.9"/><stop offset="1" stop-color="#7FD9C2" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shX" x1="80" y1="0" x2="180" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1D5A4C" stop-opacity="0"/><stop offset="1" stop-color="#1D5A4C" stop-opacity="0.4"/></linearGradient>
+    <linearGradient id="shY" x1="0" y1="110" x2="0" y2="170" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1D5A4C" stop-opacity="0"/><stop offset="1" stop-color="#1D5A4C" stop-opacity="0.35"/></linearGradient>
+    <linearGradient id="gBone" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#FBF2DA"/><stop offset="1" stop-color="#D9C79C"/></linearGradient>
+    <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBD66A"/><stop offset="1" stop-color="#D99A2A"/></linearGradient>
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <g id="body">
+      <use href="#jelly" fill="url(#gJelly)"/>
+      <use href="#core" fill="url(#gCore)"/>
+      <g clip-path="url(#jellyC)">
+        <!-- things floating inside -->
+        <g transform="rotate(-28 122 90) translate(122 90) scale(1.15) translate(-122 -90)">
+          <path d="M102 86 H142 V94 H102 Z" fill="url(#gBone)"/>
+          <circle cx="101" cy="85" r="6" fill="url(#gBone)"/><circle cx="101" cy="95" r="6" fill="url(#gBone)"/>
+          <circle cx="143" cy="85" r="6" fill="url(#gBone)"/><circle cx="143" cy="95" r="6" fill="url(#gBone)"/>
+        </g>
+        <use href="#jelly" fill="#5EC3A7" opacity="0.25"/>
+        <circle cx="64" cy="122" r="10" fill="url(#gGold)" opacity="0.85"/>
+        <circle cx="64" cy="122" r="5" fill="#E9B43E" opacity="0.85"/>
+        <circle cx="146" cy="128" r="7" fill="#C9F7E8" opacity="0.7"/>
+        <circle cx="138" cy="66" r="4.5" fill="#C9F7E8" opacity="0.7"/>
+        <circle cx="96" cy="70" r="3.5" fill="#C9F7E8" opacity="0.7"/>
+        <circle cx="152" cy="104" r="3" fill="#C9F7E8" opacity="0.7"/>
+        <!-- shading, lit from the left -->
+        <use href="#jelly" fill="url(#shX)"/>
+        <use href="#jelly" fill="url(#shY)"/>
+        <!-- light passing through the jelly glows along the far (front-right) edge -->
+        <path d="M40 140 C60 166 140 172 168 136 C160 166 130 176 100 176 C70 176 46 164 40 140 Z" fill="#B8F4E2" opacity="0.55"/>
+        <!-- shine -->
+        <ellipse cx="60" cy="76" rx="18" ry="9" transform="rotate(-38 60 76)" fill="#FFFFFF" opacity="0.8"/>
+        <circle cx="45" cy="98" r="5" fill="#FFFFFF" opacity="0.7"/>
+        <!-- face at the front -->
+        <ellipse cx="80" cy="132" rx="8" ry="10.5" fill="#2B2230"/>
+        <ellipse cx="120" cy="132" rx="8" ry="10.5" fill="#2B2230"/>
+        <circle cx="77.5" cy="128" r="3" fill="#FFFFFF"/>
+        <circle cx="117.5" cy="128" r="3" fill="#FFFFFF"/>
+        <path d="M93 150 Q100 155 107 150" fill="none" stroke="#2B2230" stroke-width="3.2" stroke-linecap="round"/>
+      </g>
+    </g>
+  </g>
+</svg>

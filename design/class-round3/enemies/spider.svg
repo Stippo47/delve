@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- SPIDER (round 3 enemy), about 80% of the archer. Seen from above: big round abdomen behind (up) with a pale
+       stripe and spots, smaller front body with a cluster of red eyes and two fangs at the front (down). Eight jointed legs,
+       four a side: front pair reaching forward, back pair trailing back.
+       Parts (file order = draw order): #arm-l = the 4 left legs, #arm-r = the 4 right legs (pivot where they join the
+       body; the game can rock them in turn to walk), drawn BEFORE #body so the body covers their roots. #body = abdomen,
+       front body, eyes, fangs. The outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <g id="legs">
+      <!-- each leg: thigh (body to knee), shin (knee to foot), a pale band at the knee -->
+      <path d="M88 136 L58 150 Q50 164 54 183" stroke-width="7.5"/>
+      <path d="M84 129 L48 126 Q34 134 26 151" stroke-width="7.5"/>
+      <path d="M84 121 L48 102 Q34 92 23 88" stroke-width="7.5"/>
+      <path d="M88 113 L60 82 Q50 68 50 49" stroke-width="7.5"/>
+    </g>
+    <path id="abdomen" d="M100 40 C122 40 138 58 138 82 C138 106 122 118 100 118 C78 118 62 106 62 82 C62 58 78 40 100 40 Z"/>
+    <clipPath id="abdomenC"><use href="#abdomen"/></clipPath>
+    <path id="thorax" d="M100 106 C114 106 124 116 124 130 C124 144 114 152 100 152 C86 152 76 144 76 130 C76 116 86 106 100 106 Z"/>
+    <clipPath id="thoraxC"><use href="#thorax"/></clipPath>
+    <clipPath id="underThorax"><use href="#abdomen"/></clipPath>
+    <linearGradient id="gBody" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#A06A44"/><stop offset="1" stop-color="#7A4A2E"/></linearGradient>
+    <linearGradient id="gBody2" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#93603E"/><stop offset="1" stop-color="#6E4228"/></linearGradient>
+    <radialGradient id="gDome" cx="86" cy="66" r="40" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFE2C0" stop-opacity="0.45"/><stop offset="1" stop-color="#FFE2C0" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shX" x1="96" y1="0" x2="140" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3A1C10" stop-opacity="0"/><stop offset="1" stop-color="#3A1C10" stop-opacity="0.38"/></linearGradient>
+    <radialGradient id="gEye" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FF8A70"/><stop offset="1" stop-color="#C8282C"/></radialGradient>
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <g id="arm-l" data-pivot="86 124">
+      <use href="#legs" fill="none" stroke="#7A4A2E" stroke-linecap="round" stroke-linejoin="round"/>
+      <g fill="#D9A56A"><circle cx="58" cy="150" r="5"/><circle cx="48" cy="126" r="5"/><circle cx="48" cy="102" r="5"/><circle cx="60" cy="82" r="5"/></g>
+    </g>
+    <g id="arm-r" data-pivot="114 124">
+      <g transform="translate(200 0) scale(-1 1)">
+        <use href="#legs" fill="none" stroke="#653C24" stroke-linecap="round" stroke-linejoin="round"/>
+        <g fill="#BC8A54"><circle cx="58" cy="150" r="5"/><circle cx="48" cy="126" r="5"/><circle cx="48" cy="102" r="5"/><circle cx="60" cy="82" r="5"/></g>
+      </g>
+    </g>
+    <g id="body">
+      <use href="#abdomen" fill="url(#gBody)"/>
+      <g clip-path="url(#abdomenC)">
+        <!-- pale marking: a stripe down the middle and two rows of spots -->
+        <path d="M100 50 C104 50 106 56 106 64 C106 80 104 98 100 106 C96 98 94 80 94 64 C94 56 96 50 100 50 Z" fill="#E9C38A"/>
+        <g fill="#E9C38A"><ellipse cx="82" cy="66" rx="5.5" ry="6.5"/><ellipse cx="118" cy="66" rx="5.5" ry="6.5"/><ellipse cx="80" cy="84" rx="4.8" ry="5.6"/><ellipse cx="120" cy="84" rx="4.8" ry="5.6"/><ellipse cx="84" cy="100" rx="4" ry="4.6"/><ellipse cx="116" cy="100" rx="4" ry="4.6"/></g>
+        <circle cx="100" cy="82" r="44" fill="url(#gDome)"/>
+        <rect x="60" y="36" width="82" height="90" fill="url(#shX)"/>
+      </g>
+      <g clip-path="url(#underThorax)"><use href="#thorax" fill="#2B2230" opacity="0.32" transform="translate(0 -4)"/></g>
+      <use href="#thorax" fill="url(#gBody2)"/>
+      <g clip-path="url(#thoraxC)">
+        <rect x="74" y="104" width="52" height="50" fill="url(#shX)"/>
+        <!-- eye cluster at the front -->
+        <circle cx="93" cy="136" r="5.5" fill="url(#gEye)"/>
+        <circle cx="107" cy="136" r="5.5" fill="url(#gEye)"/>
+        <circle cx="84" cy="129" r="3.4" fill="url(#gEye)"/>
+        <circle cx="116" cy="129" r="3.4" fill="url(#gEye)"/>
+        <circle cx="94" cy="125" r="2.6" fill="url(#gEye)"/>
+        <circle cx="106" cy="125" r="2.6" fill="url(#gEye)"/>
+        <circle cx="91.5" cy="134" r="1.8" fill="#FFFFFF"/>
+        <circle cx="105.5" cy="134" r="1.8" fill="#FFFFFF"/>
+      </g>
+      <!-- fangs -->
+      <path d="M90 148 C90 156 92 162 96 164 C96 158 96 154 97 149 Z" fill="#F2E6C4"/>
+      <path d="M110 148 C110 156 108 162 104 164 C104 158 104 154 103 149 Z" fill="#D9C79C"/>
+    </g>
+  </g>
+</svg>

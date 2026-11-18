@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- Round 3: the sword (arm-r) is drawn before #body: it passes under the right pauldron and points forward; only the fist shows at the body edge. The shield (arm-l) stays in front. -->
+<!-- KNIGHT Paladin (round 2): young knight, open sallet with gold comb, blue cape, round pauldrons, heater shield on the left arm (hand hidden behind it), longer arming sword in the right hand angled inward. -->
+<!-- Parts layout: #back, #body, #arm-l, #arm-r, #front inside #sprite; the outline comes from the #outline filter over the whole figure (no outline strokes in the shapes). Facing = DOWN (+y), centre (100,100). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+<linearGradient id="gFace" x1="0" y1="94.8" x2="0" y2="153.1" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient>
+<linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#5B8CDB"/><stop offset="1" stop-color="#2E5AA8"/></linearGradient>
+<path id="s1" data-part="cape" d="M 40 96 C 24 76 18 46 30 22 Q 44 -2 64 12 Q 82 -6 100 8 Q 118 -6 136 12 Q 156 -2 170 22 C 182 46 176 76 160 96 Z"/>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1F3F7A" stop-opacity="0"/><stop offset="1" stop-color="#1F3F7A" stop-opacity="0.45"/></linearGradient>
+<clipPath id="c2"><use href="#s1"/></clipPath>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#4F7FCF"/><stop offset="1" stop-color="#3462B0"/></linearGradient>
+<path id="s3" data-part="shoulders" d="M 26 108 C 26 82 54 76 100 76 C 146 76 174 82 174 108 C 174 134 146 140 100 140 C 54 140 26 134 26 108 Z"/>
+<clipPath id="u4"><use href="#s1"/></clipPath>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1F3F7A" stop-opacity="0"/><stop offset="1" stop-color="#1F3F7A" stop-opacity="0.4"/></linearGradient>
+<linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#B4BCC8"/><stop offset="1" stop-color="#7D879A"/></linearGradient>
+<path id="s5" data-part="pauldron" d="M 17 110 C 17 93.4 29.1 80 44 80 C 58.9 80 71 93.4 71 110 C 71 126.6 58.9 140 44 140 C 29.1 140 17 126.6 17 110 Z"/>
+<clipPath id="u6"><use href="#s1"/><use href="#s3"/></clipPath>
+<linearGradient id="g6" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4A5468" stop-opacity="0"/><stop offset="1" stop-color="#4A5468" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c7"><use href="#s5"/></clipPath>
+<path id="s8" data-part="pauldron" d="M 129 110 C 129 93.4 141.1 80 156 80 C 170.9 80 183 93.4 183 110 C 183 126.6 170.9 140 156 140 C 141.1 140 129 126.6 129 110 Z"/>
+<clipPath id="u9"><use href="#s1"/><use href="#s3"/><use href="#s5"/></clipPath>
+<clipPath id="c10"><use href="#s8"/></clipPath>
+<path id="s11" data-part="head" d="M 100 47.8 C 129.6 47.8 147.8 68.7 147.8 98.3 C 147.8 122.6 136.5 140 120.9 147.8 C 113.9 151.3 107 153.1 100 153.1 C 93 153.1 86.1 151.3 79.1 147.8 C 63.5 140 52.1 122.6 52.1 98.3 C 52.1 68.7 70.4 47.8 100 47.8 Z"/>
+<clipPath id="u12"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/></clipPath>
+<clipPath id="c13"><use href="#s11"/></clipPath>
+<linearGradient id="g7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E3E7ED"/><stop offset="1" stop-color="#A9B2C0"/></linearGradient>
+<path id="s14" data-part="sallet" d="M 46 118 C 38 70 62 40 100 40 C 138 40 162 70 154 118 C 151 128 139 128 137 117 C 133 106 120 100 100 100 C 80 100 67 106 63 117 C 61 128 49 128 46 118 Z"/>
+<clipPath id="u15"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/></clipPath>
+<linearGradient id="g8" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4A5468" stop-opacity="0"/><stop offset="1" stop-color="#4A5468" stop-opacity="0.45"/></linearGradient>
+<clipPath id="c16"><use href="#s14"/></clipPath>
+<linearGradient id="g9" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F9CB5C"/><stop offset="1" stop-color="#E09A2E"/></linearGradient>
+<path id="s17" data-part="comb" d="M 100 26 C 109 38 110 76 106 98 L 94 98 C 90 76 91 38 100 26 Z"/>
+<clipPath id="u18"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/></clipPath>
+<linearGradient id="g10" x1="0.4" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A86A16" stop-opacity="0"/><stop offset="1" stop-color="#A86A16" stop-opacity="0.6"/></linearGradient>
+<path id="s19" data-part="shield" d="M 14 126 C 38 117 68 117 90 126 C 92 160 79 186 52 203 C 25 186 12 160 14 126 Z"/>
+<clipPath id="u20"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/></clipPath>
+<linearGradient id="g11" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A86A16" stop-opacity="0"/><stop offset="1" stop-color="#A86A16" stop-opacity="0.4"/></linearGradient>
+<clipPath id="c21"><use href="#s19"/></clipPath>
+<path id="s22" data-part="pommel" d="M 163.3 103.7 C 165.6 100.3 170.3 99.4 173.7 101.7 C 177.1 104 178 108.7 175.7 112.1 C 173.4 115.5 168.7 116.4 165.3 114.1 C 161.9 111.8 161 107.1 163.3 103.7 Z"/>
+<clipPath id="u23"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s19"/></clipPath>
+<path id="s24" d="M 166.6 109.6 L 169.1 111.2 C 170.4 112.2 170.8 114 169.9 115.4 L 158.7 132 C 157.8 133.4 155.9 133.7 154.5 132.8 L 152 131.1 C 150.7 130.2 150.3 128.3 151.2 126.9 L 162.4 110.4 C 163.3 109 165.2 108.6 166.6 109.6 Z"/>
+<clipPath id="u25"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s19"/><use href="#s22"/></clipPath>
+<path id="s26" data-part="blade" d="M 139.7 132.4 L 157.9 144.7 L 131.7 183.7 L 106.9 200.8 L 113.4 171.4 Z"/>
+<clipPath id="u27"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s19"/><use href="#s22"/><use href="#s24"/></clipPath>
+<clipPath id="c28"><use href="#s26"/></clipPath>
+<path id="s29" data-part="crossguard" d="M 138.4 118.3 L 171.5 140.6 C 173.8 142.2 174.4 145.3 172.9 147.6 L 172.3 148.4 C 170.8 150.7 167.7 151.3 165.4 149.8 L 132.2 127.4 C 129.9 125.9 129.3 122.7 130.9 120.5 L 131.4 119.6 C 133 117.3 136.1 116.7 138.4 118.3 Z"/>
+<clipPath id="u30"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s19"/><use href="#s22"/><use href="#s24"/><use href="#s26"/></clipPath>
+<linearGradient id="g12" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A86A16" stop-opacity="0"/><stop offset="1" stop-color="#A86A16" stop-opacity="0.5"/></linearGradient>
+<path id="s31" d="M 156 111.5 L 164 111.5 C 168.4 111.5 172 115.1 172 119.5 L 172 124.5 C 172 128.9 168.4 132.5 164 132.5 L 156 132.5 C 151.6 132.5 148 128.9 148 124.5 L 148 119.5 C 148 115.1 151.6 111.5 156 111.5 Z"/>
+<clipPath id="u32"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s14"/><use href="#s17"/><use href="#s19"/><use href="#s22"/><use href="#s24"/><use href="#s26"/><use href="#s29"/></clipPath>
+<path id="pBlade" d="M -14.5 17 L 14.5 17 L 13 58 L 0 77 L -13 58 Z"/>
+<path id="pGuard" d="M -26 9 Q 0 5 26 9 Q 29.5 12.5 26 16.5 Q 0 20.5 -26 16.5 Q -29.5 12.5 -26 9 Z"/>
+<clipPath id="pcBlade"><use href="#pBlade"/></clipPath>
+<clipPath id="pcGuard"><use href="#pGuard"/><use href="#pBlade"/></clipPath>
+<clipPath id="pcBack"><use href="#s1" transform="rotate(-37) translate(-151 -140)"/></clipPath>
+<clipPath id="pcWpn"><g transform="translate(151 140) rotate(37)"><use href="#pBlade"/><use href="#pGuard"/><rect x="-13" y="-10.5" width="26" height="22" rx="9"/></g></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="back" data-pivot="100 88">
+  <!-- cape -->
+  <use href="#s1" fill="url(#g1)"/>
+  <use href="#s1" fill="url(#g2)"/>
+  <g clip-path="url(#c2)"><path d="M 100 -10 C 96 30 96 60 100 96 L 104 96 C 100 60 100 30 104 -10 Z" fill="#244C92" opacity="0.5"/></g>
+</g>
+<g id="arm-r" data-pivot="150 108">
+  <!-- arming sword, held low: it passes under the right pauldron and comes out past the front of the body; only the fist shows at the body's edge -->
+  <g transform="translate(151 140) rotate(37)">
+    <use href="#pBlade" transform="translate(0 3)" fill="#2B2230" opacity="0.22" clip-path="url(#pcBack)"/>
+    <use href="#pBlade" fill="url(#g7)"/>
+    <g clip-path="url(#pcBlade)"><rect x="0" y="0" width="20" height="120" fill="#6F7A8E" opacity="0.5"/><rect x="-1.2" y="20" width="2.4" height="64" fill="#F4F6FA" opacity="0.55"/></g>
+    <rect x="-4.5" y="-30" width="9" height="40" rx="3" fill="#6E4222"/>
+    <circle cx="0" cy="-32" r="7.5" fill="url(#g9)"/>
+    <g clip-path="url(#pcBlade)"><use href="#pGuard" transform="translate(0 4)" fill="#2B2230" opacity="0.3"/></g>
+    <use href="#pGuard" fill="url(#g9)"/>
+    <use href="#pGuard" fill="url(#g12)"/>
+    <g clip-path="url(#pcGuard)"><rect x="-13" y="-10.5" width="26" height="22" rx="9" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
+    <rect x="-13" y="-10.5" width="26" height="22" rx="9" fill="url(#gHand)"/>
+  </g>
+</g>
+<g id="body">
+  <!-- shoulders -->
+  <g clip-path="url(#u4)"><use href="#s3" transform="translate(0 3)" fill="#2B2230" opacity="0.28"/></g>
+  <use href="#s3" fill="url(#g3)"/>
+  <use href="#s3" fill="url(#g4)"/>
+  <!-- shadow of the shoulders and head on the sword where it comes out from under them -->
+  <g clip-path="url(#pcWpn)"><use href="#s8" transform="translate(-1 5)" fill="#2B2230" opacity="0.32"/><use href="#s3" transform="translate(0 5)" fill="#2B2230" opacity="0.32"/><use href="#s11" transform="translate(0 5)" fill="#2B2230" opacity="0.32"/></g>
+  <!-- pauldron -->
+  <g clip-path="url(#u6)"><use href="#s5" transform="translate(0 3)" fill="#2B2230" opacity="0.28"/></g>
+  <use href="#s5" fill="url(#g5)"/>
+  <use href="#s5" fill="url(#g6)"/>
+  <g clip-path="url(#c7)"><path d="M 17 128 C 17 120.3 29.1 114 44 114 C 58.9 114 71 120.3 71 128 C 71 135.7 58.9 142 44 142 C 29.1 142 17 135.7 17 128 Z" fill="#8A93A3" opacity="0.45"/></g>
+  <!-- pauldron -->
+  <g clip-path="url(#u9)"><use href="#s8" transform="translate(0 3)" fill="#2B2230" opacity="0.28"/></g>
+  <use href="#s8" fill="url(#g5)"/>
+  <use href="#s8" fill="url(#g6)"/>
+  <g clip-path="url(#c10)"><path d="M 129 128 C 129 120.3 141.1 114 156 114 C 170.9 114 183 120.3 183 128 C 183 135.7 170.9 142 156 142 C 141.1 142 129 135.7 129 128 Z" fill="#8A93A3" opacity="0.45"/></g>
+  <!-- head -->
+  <g clip-path="url(#u12)"><use href="#s11" transform="translate(0 5)" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#s11" fill="url(#gFace)"/>
+  <g clip-path="url(#c13)"><rect x="100" y="40" width="56" height="120" fill="url(#gFaceSide)"/></g>
+  <path d="M96 136.5 Q100 139 104 136.5" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- sallet -->
+  <g clip-path="url(#u15)"><use href="#s14" transform="translate(0 4)" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#s14" fill="url(#g7)"/>
+  <use href="#s14" fill="url(#g8)"/>
+  <g clip-path="url(#c16)"><path d="M 40 112 C 60 100 80 96 100 96 C 120 96 140 100 160 112 L 160 140 L 40 140 Z" fill="#7F8898" opacity="0.35"/></g>
+  <!-- comb -->
+  <g clip-path="url(#u18)"><use href="#s17" transform="translate(0 3)" fill="#2B2230" opacity="0.28"/></g>
+  <use href="#s17" fill="url(#g9)"/>
+  <use href="#s17" fill="url(#g10)"/>
+</g>
+<g id="arm-l" data-pivot="50 108">
+  <!-- shield -->
+  <g clip-path="url(#u20)"><use href="#s19" transform="translate(0 3)" fill="#2B2230" opacity="0.28"/></g>
+  <use href="#s19" fill="url(#g9)"/>
+  <use href="#s19" fill="url(#g11)"/>
+  <g clip-path="url(#c21)"><path d="M 23 132 C 43 125 61 125 81 132 C 82 158 72 178 52 192 C 32 178 22 158 23 132 Z" fill="#3D6CC0"/><path d="M 52 110 L 52 210 L 95 210 L 95 110 Z" fill="#1F3F7A" opacity="0.35"/><path d="M 23 132 C 43 125 61 125 81 132 L 81 140 C 61 133 43 133 23 140 Z" fill="#6F9BE6" opacity="0.6"/></g>
+</g>
+</g>
+</svg>

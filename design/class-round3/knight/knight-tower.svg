@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- Round 3 (was Bastion A): closed helm with no eye holes or visor marks at all; flanged iron mace (arm-r) drawn before #body; tower shield (arm-l) in front, lifted 5 to stay in the frame. -->
+<!-- KNIGHT Bastion A 'Tower' (round 2): tank knight: closed great helm with a white crest, stacked dark-iron pauldrons, tall red tower shield on the left arm (hand hidden), flanged mace in the right hand. -->
+<!-- Parts layout: #back, #body, #arm-l, #arm-r, #front inside #sprite; the outline comes from the #outline filter over the whole figure (no outline strokes in the shapes). Facing = DOWN (+y), centre (100,100). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+<linearGradient id="gFace" x1="0" y1="94.8" x2="0" y2="153.1" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient>
+<linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D24C42"/><stop offset="1" stop-color="#9A2A26"/></linearGradient>
+<path id="s1" data-part="shoulders (surcoat)" d="M 26 108 C 26 82 54 76 100 76 C 146 76 174 82 174 108 C 174 134 146 140 100 140 C 54 140 26 134 26 108 Z"/>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5A1416" stop-opacity="0"/><stop offset="1" stop-color="#5A1416" stop-opacity="0.4"/></linearGradient>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#6E7788"/><stop offset="1" stop-color="#4C5466"/></linearGradient>
+<path id="s2" data-part="pauldron lame 1" d="M 24 92 C 24 82.1 35.6 74 50 74 C 64.4 74 76 82.1 76 92 C 76 101.9 64.4 110 50 110 C 35.6 110 24 101.9 24 92 Z"/>
+<clipPath id="u3"><use href="#s1"/></clipPath>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#252A36" stop-opacity="0"/><stop offset="1" stop-color="#252A36" stop-opacity="0.45"/></linearGradient>
+<linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#8A93A4"/><stop offset="1" stop-color="#5C6476"/></linearGradient>
+<path id="s4" data-part="pauldron lame 2" d="M 14 108 C 14 97.5 27.4 89 44 89 C 60.6 89 74 97.5 74 108 C 74 118.5 60.6 127 44 127 C 27.4 127 14 118.5 14 108 Z"/>
+<clipPath id="u5"><use href="#s1"/><use href="#s2"/></clipPath>
+<linearGradient id="g6" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#A6AEBC"/><stop offset="1" stop-color="#717A8C"/></linearGradient>
+<path id="s6" data-part="pauldron lame 3" d="M 9 124 C 9 113.5 22.9 105 40 105 C 57.1 105 71 113.5 71 124 C 71 134.5 57.1 143 40 143 C 22.9 143 9 134.5 9 124 Z"/>
+<clipPath id="u7"><use href="#s1"/><use href="#s2"/><use href="#s4"/></clipPath>
+<clipPath id="c8"><use href="#s6"/></clipPath>
+<path id="s9" data-part="pauldron lame 1" d="M 176 92 C 176 82.1 164.4 74 150 74 C 135.6 74 124 82.1 124 92 C 124 101.9 135.6 110 150 110 C 164.4 110 176 101.9 176 92 Z"/>
+<clipPath id="u10"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/></clipPath>
+<path id="s11" data-part="pauldron lame 2" d="M 186 108 C 186 97.5 172.6 89 156 89 C 139.4 89 126 97.5 126 108 C 126 118.5 139.4 127 156 127 C 172.6 127 186 118.5 186 108 Z"/>
+<clipPath id="u12"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s9"/></clipPath>
+<path id="s13" data-part="pauldron lame 3" d="M 191 124 C 191 113.5 177.1 105 160 105 C 142.9 105 129 113.5 129 124 C 129 134.5 142.9 143 160 143 C 177.1 143 191 134.5 191 124 Z"/>
+<clipPath id="u14"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s9"/><use href="#s11"/></clipPath>
+<clipPath id="c15"><use href="#s13"/></clipPath>
+<linearGradient id="g7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E3E7ED"/><stop offset="1" stop-color="#A9B2C0"/></linearGradient>
+<path id="s16" data-part="great helm" d="M 100 42 C 132 42 152 64 152 96 C 152 126 140 150 122 157 C 110 161 90 161 78 157 C 60 150 48 126 48 96 C 48 64 68 42 100 42 Z"/>
+<clipPath id="u17"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s9"/><use href="#s11"/><use href="#s13"/></clipPath>
+<linearGradient id="g8" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4A5468" stop-opacity="0"/><stop offset="1" stop-color="#4A5468" stop-opacity="0.5"/></linearGradient>
+<clipPath id="c18"><use href="#s16"/></clipPath>
+<linearGradient id="g9" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D8D2C8"/></linearGradient>
+<path id="s19" data-part="crest" d="M 100 22 C 112 30 113 60 110 86 C 108 100 104 110 100 114 C 96 110 92 100 90 86 C 87 60 88 30 100 22 Z"/>
+<clipPath id="u20"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s9"/><use href="#s11"/><use href="#s13"/><use href="#s16"/></clipPath>
+<linearGradient id="g10" x1="0.4" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6C665E" stop-opacity="0"/><stop offset="1" stop-color="#6C665E" stop-opacity="0.5"/></linearGradient>
+<linearGradient id="g11" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F9CB5C"/><stop offset="1" stop-color="#E09A2E"/></linearGradient>
+<path id="s21" data-part="tower shield" d="M 22 120 L 62 120 C 70.8 120 78 127.2 78 136 L 78 188 C 78 196.8 70.8 204 62 204 L 22 204 C 13.2 204 6 196.8 6 188 L 6 136 C 6 127.2 13.2 120 22 120 Z"/>
+<clipPath id="u22"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s9"/><use href="#s11"/><use href="#s13"/><use href="#s16"/><use href="#s19"/></clipPath>
+<linearGradient id="g12" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A86A16" stop-opacity="0"/><stop offset="1" stop-color="#A86A16" stop-opacity="0.45"/></linearGradient>
+<clipPath id="c23"><use href="#s21"/></clipPath>
+<linearGradient id="g13" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#B57944"/><stop offset="1" stop-color="#7E4A24"/></linearGradient>
+<path id="s24" data-part="haft" d="M 163.1 104.8 L 164.9 105.5 C 167 106.4 168 108.7 167.1 110.7 L 142.4 171.9 C 141.6 174 139.2 175 137.2 174.2 L 135.3 173.4 C 133.3 172.6 132.3 170.2 133.1 168.2 L 157.9 107 C 158.7 105 161 104 163.1 104.8 Z"/>
+<clipPath id="u25"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s9"/><use href="#s11"/><use href="#s13"/><use href="#s16"/><use href="#s19"/><use href="#s21"/></clipPath>
+<linearGradient id="g14" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4A2A12" stop-opacity="0"/><stop offset="1" stop-color="#4A2A12" stop-opacity="0.4"/></linearGradient>
+<path id="s26" d="M 136.9 158.9 L 146.2 162.7 C 147.7 163.3 148.4 165 147.8 166.6 L 146.7 169.4 C 146.1 170.9 144.3 171.6 142.8 171 L 133.5 167.3 C 132 166.6 131.2 164.9 131.9 163.4 L 133 160.6 C 133.6 159 135.3 158.3 136.9 158.9 Z"/>
+<clipPath id="u27"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s9"/><use href="#s11"/><use href="#s13"/><use href="#s16"/><use href="#s19"/><use href="#s21"/><use href="#s24"/></clipPath>
+<linearGradient id="g15" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A86A16" stop-opacity="0"/><stop offset="1" stop-color="#A86A16" stop-opacity="0.4"/></linearGradient>
+<path id="s28" data-part="mace head" d="M 141.5 160.8 L 144.8 179.4 L 155.5 190.2 L 140.3 190.5 L 125 201.6 L 121.8 183 L 111 172.2 L 126.3 171.9 Z"/>
+<clipPath id="u29"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s9"/><use href="#s11"/><use href="#s13"/><use href="#s16"/><use href="#s19"/><use href="#s21"/><use href="#s24"/><use href="#s26"/></clipPath>
+<clipPath id="c30"><use href="#s28"/></clipPath>
+<path id="s31" d="M 126.3 178.4 C 127.9 174.5 132.2 172.7 136.1 174.2 C 139.9 175.8 141.8 180.2 140.2 184 C 138.7 187.8 134.3 189.7 130.5 188.1 C 126.6 186.6 124.8 182.2 126.3 178.4 Z"/>
+<clipPath id="u32"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s9"/><use href="#s11"/><use href="#s13"/><use href="#s16"/><use href="#s19"/><use href="#s21"/><use href="#s24"/><use href="#s26"/><use href="#s28"/></clipPath>
+<path id="s33" d="M 154 109.5 L 162 109.5 C 166.4 109.5 170 113.1 170 117.5 L 170 122.5 C 170 126.9 166.4 130.5 162 130.5 L 154 130.5 C 149.6 130.5 146 126.9 146 122.5 L 146 117.5 C 146 113.1 149.6 109.5 154 109.5 Z"/>
+<clipPath id="u34"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s9"/><use href="#s11"/><use href="#s13"/><use href="#s16"/><use href="#s19"/><use href="#s21"/><use href="#s24"/><use href="#s26"/><use href="#s28"/><use href="#s31"/></clipPath>
+<path id="tHead" d="M 6.5 61.0 L 10.6 49.9 L 21.5 44.9 L 13.9 35.7 L 15.0 23.9 L 3.2 25.9 L -6.5 19.0 L -10.6 30.1 L -21.5 35.1 L -13.9 44.3 L -15.0 56.1 L -3.2 54.1 Z"/>
+<clipPath id="tcHaft"><rect x="-5" y="-34" width="10" height="62" rx="4"/></clipPath>
+<clipPath id="tcWpn"><g transform="translate(155 143) rotate(38)"><rect x="-5" y="-34" width="10" height="62" rx="4"/><use href="#tHead"/><rect x="-13" y="-10.5" width="26" height="22" rx="9"/></g></clipPath>
+<linearGradient id="tgIron" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#8E97A6"/><stop offset="1" stop-color="#4E5666"/></linearGradient>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-r" data-pivot="150 108">
+  <!-- flanged mace, held low: the haft passes under the right pauldron and the head comes out past the front of the body; only the fist shows at the body's edge -->
+  <g transform="translate(155 143) rotate(38)">
+    <rect x="-5" y="-34" width="10" height="62" rx="4" fill="url(#g13)"/>
+    <rect x="-5" y="-34" width="10" height="62" rx="4" fill="url(#g14)"/>
+    <circle cx="0" cy="-35" r="6.5" fill="url(#g11)"/>
+    <rect x="-7.5" y="17" width="15" height="8" rx="3" fill="url(#g11)"/>
+    <use href="#tHead" transform="translate(0 3)" fill="#2B2230" opacity="0.3" clip-path="url(#tcHaft)"/>
+    <use href="#tHead" fill="url(#tgIron)"/>
+    <use href="#tHead" fill="url(#g8)"/>
+    <circle cx="0" cy="40" r="10" fill="#B4BCC8"/>
+    <circle cx="-2.5" cy="37.5" r="4.5" fill="#F2F4F8" opacity="0.8"/>
+    <g clip-path="url(#tcHaft)"><rect x="-13" y="-10.5" width="26" height="22" rx="9" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
+    <rect x="-13" y="-10.5" width="26" height="22" rx="9" fill="url(#gHand)"/>
+  </g>
+</g>
+<g id="body">
+  <!-- shadow of the body on the mace where it comes out from under it -->
+  <g clip-path="url(#tcWpn)"><use href="#s13" transform="translate(-1 5)" fill="#2B2230" opacity="0.32"/><use href="#s16" transform="translate(0 5)" fill="#2B2230" opacity="0.32"/></g>
+  <!-- shoulders (surcoat) -->
+  <use href="#s1" fill="url(#g1)"/>
+  <use href="#s1" fill="url(#g2)"/>
+  <!-- pauldron lame 1 -->
+  <g clip-path="url(#u3)"><use href="#s2" transform="translate(0 4)" fill="#2B2230" opacity="0.4"/></g>
+  <use href="#s2" fill="url(#g3)"/>
+  <use href="#s2" fill="url(#g4)"/>
+  <!-- pauldron lame 2 -->
+  <g clip-path="url(#u5)"><use href="#s4" transform="translate(0 4)" fill="#2B2230" opacity="0.4"/></g>
+  <use href="#s4" fill="url(#g5)"/>
+  <use href="#s4" fill="url(#g4)"/>
+  <!-- pauldron lame 3 -->
+  <g clip-path="url(#u7)"><use href="#s6" transform="translate(0 4)" fill="#2B2230" opacity="0.4"/></g>
+  <use href="#s6" fill="url(#g6)"/>
+  <use href="#s6" fill="url(#g4)"/>
+  <g clip-path="url(#c8)"><path d="M 6 136 C 6 131.6 21.2 128 40 128 C 58.8 128 74 131.6 74 136 C 74 140.4 58.8 144 40 144 C 21.2 144 6 140.4 6 136 Z" fill="#F2B53A"/></g>
+  <!-- pauldron lame 1 -->
+  <g clip-path="url(#u10)"><use href="#s9" transform="translate(0 4)" fill="#2B2230" opacity="0.4"/></g>
+  <use href="#s9" fill="url(#g3)"/>
+  <use href="#s9" fill="url(#g4)"/>
+  <!-- pauldron lame 2 -->
+  <g clip-path="url(#u12)"><use href="#s11" transform="translate(0 4)" fill="#2B2230" opacity="0.4"/></g>
+  <use href="#s11" fill="url(#g5)"/>
+  <use href="#s11" fill="url(#g4)"/>
+  <!-- pauldron lame 3 -->
+  <g clip-path="url(#u14)"><use href="#s13" transform="translate(0 4)" fill="#2B2230" opacity="0.4"/></g>
+  <use href="#s13" fill="url(#g6)"/>
+  <use href="#s13" fill="url(#g4)"/>
+  <g clip-path="url(#c15)"><path d="M 194 136 C 194 131.6 178.8 128 160 128 C 141.2 128 126 131.6 126 136 C 126 140.4 141.2 144 160 144 C 178.8 144 194 140.4 194 136 Z" fill="#F2B53A"/></g>
+  <!-- great helm -->
+  <g clip-path="url(#u17)"><use href="#s16" transform="translate(0 5)" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#s16" fill="url(#g7)"/>
+  <use href="#s16" fill="url(#g8)"/>
+  <g clip-path="url(#c18)"><path d="M 60 60 C 64 52 76 48 84 50 C 74 58 68 70 66 84 C 62 78 58 68 60 60 Z" fill="#FFFFFF" opacity="0.35"/></g>
+  <!-- crest -->
+  <g clip-path="url(#u20)"><use href="#s19" transform="translate(0 3.5)" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#s19" fill="url(#g9)"/>
+  <use href="#s19" fill="url(#g10)"/>
+</g>
+<g id="arm-l" data-pivot="50 108">
+<g transform="translate(0 -5)"><!-- shield lifted 5 so its outline stays inside the frame -->
+  <!-- tower shield -->
+  <g clip-path="url(#u22)"><use href="#s21" transform="translate(0 4)" fill="#2B2230" opacity="0.35"/></g>
+  <use href="#s21" fill="url(#g11)"/>
+  <use href="#s21" fill="url(#g12)"/>
+  <g clip-path="url(#c23)"><path d="M 24 128 L 60 128 C 65.5 128 70 132.5 70 138 L 70 186 C 70 191.5 65.5 196 60 196 L 24 196 C 18.5 196 14 191.5 14 186 L 14 138 C 14 132.5 18.5 128 24 128 Z" fill="url(#g1)"/><path d="M 42 110 L 90 110 L 90 210 L 42 210 Z" fill="#5A1416" opacity="0.3"/><path d="M 30 160 C 30 153.4 35.4 148 42 148 C 48.6 148 54 153.4 54 160 C 54 166.6 48.6 172 42 172 C 35.4 172 30 166.6 30 160 Z" fill="url(#g11)"/></g>
+</g>
+</g>
+</g>
+</svg>

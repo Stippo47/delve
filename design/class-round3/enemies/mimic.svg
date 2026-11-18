@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- MIMIC (round 3 enemy, MY OWN IDEA): a treasure chest that bites. Seen from above: the planked wooden lid with gold
+       bands (hinge at the back, up), the lid's front edge lifted open into a wide mouth of teeth, a pink tongue lolling
+       forward (down). Parts (file order = draw order): #arm-r = the tongue (pivot at the mouth, so it can lash/lick;
+       drawn before #body so the lower jaw covers its root), #body = chest, lid, mouth, teeth.
+       The outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <path id="lid" d="M52 36 H148 A14 14 0 0 1 162 50 V124 A8 8 0 0 1 154 132 H46 A8 8 0 0 1 38 124 V50 A14 14 0 0 1 52 36 Z"/>
+    <clipPath id="lidC"><use href="#lid"/></clipPath>
+    <path id="jaw" d="M40 140 H160 V158 A10 10 0 0 1 150 168 H50 A10 10 0 0 1 40 158 Z"/>
+    <clipPath id="jawC"><use href="#jaw"/></clipPath>
+    <path id="mouth" d="M44 128 H156 C155 142 149 152 138 155 H62 C51 152 45 142 44 128 Z"/>
+    <clipPath id="mouthC"><use href="#mouth"/></clipPath>
+    <path id="tongue" d="M86 146 C84 166 90 186 103 197 C114 189 118 168 115 146 Z"/>
+    <linearGradient id="gWood" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#C98A50"/><stop offset="1" stop-color="#9A6234"/></linearGradient>
+    <linearGradient id="gWoodDk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8E5A30"/><stop offset="1" stop-color="#6E4222"/></linearGradient>
+    <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FAD06A"/><stop offset="1" stop-color="#D9952A"/></linearGradient>
+    <linearGradient id="shX" x1="96" y1="0" x2="164" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3A1C0C" stop-opacity="0"/><stop offset="1" stop-color="#3A1C0C" stop-opacity="0.34"/></linearGradient>
+    <linearGradient id="gMouth" x1="0" y1="128" x2="0" y2="156" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3E1426"/><stop offset="1" stop-color="#7A2638"/></linearGradient>
+    <linearGradient id="gTongue" x1="86" y1="0" x2="116" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#F48AA2"/><stop offset="1" stop-color="#D2526E"/></linearGradient>
+    <linearGradient id="gTooth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFBEE"/><stop offset="1" stop-color="#E6D9B6"/></linearGradient>
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <g id="arm-r" data-pivot="100 150">
+      <use href="#tongue" fill="url(#gTongue)"/>
+      <path d="M100 160 C100 172 102 182 104 190" fill="none" stroke="#B83E5A" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    </g>
+    <g id="body">
+      <!-- lower jaw: the front of the box -->
+      <use href="#jaw" fill="url(#gWoodDk)"/>
+      <g clip-path="url(#jawC)">
+        <rect x="56" y="140" width="10" height="30" fill="url(#gGold)"/>
+        <rect x="134" y="140" width="10" height="30" fill="url(#gGold)"/>
+        <rect x="38" y="140" width="126" height="30" fill="url(#shX)"/>
+      </g>
+      <!-- open mouth, teeth top and bottom -->
+      <use href="#mouth" fill="url(#gMouth)"/>
+      <g clip-path="url(#mouthC)" fill="url(#gTooth)">
+        <path d="M50 128 L56 142 L62 128 Z M66 128 L72 144 L78 128 Z M82 128 L88 145 L94 128 Z M106 128 L112 145 L118 128 Z M122 128 L128 144 L134 128 Z M138 128 L144 142 L150 128 Z"/>
+        <path d="M58 156 L64 144 L70 156 Z M74 156 L80 145 L86 156 Z M114 156 L120 145 L126 156 Z M130 156 L136 144 L142 156 Z"/>
+      </g>
+      <!-- lid seen from above: planks, two gold bands, gold lip at the front -->
+      <g clip-path="url(#mouthC)"><use href="#lid" fill="#2B2230" opacity="0.3" transform="translate(0 5)"/></g>
+      <use href="#lid" fill="url(#gWood)"/>
+      <g clip-path="url(#lidC)">
+        <path d="M38 62 H162 M38 88 H162 M38 112 H162" stroke="#8E5A30" stroke-width="3" opacity="0.6"/>
+        <rect x="56" y="30" width="12" height="110" fill="url(#gGold)"/>
+        <rect x="132" y="30" width="12" height="110" fill="url(#gGold)"/>
+        <rect x="36" y="122" width="130" height="12" fill="url(#gGold)"/>
+        <rect x="86" y="114" width="28" height="20" rx="4" fill="#D9952A"/>
+        <path d="M100 119 A4 4 0 0 1 102.5 126 L104 131 H96 L97.5 126 A4 4 0 0 1 100 119 Z" fill="#5A3A1E"/>
+        <rect x="36" y="30" width="130" height="110" fill="url(#shX)"/>
+        <ellipse cx="66" cy="48" rx="20" ry="6" fill="#FFFFFF" opacity="0.25"/>
+      </g>
+    </g>
+  </g>
+</svg>
