@@ -1,0 +1,37 @@
+{
+  "title": "Stage 1b and 2: the map",
+  "topic": "runs",
+  "order": 4,
+  "priority": 1,
+  "cards": [
+    {
+      "id": "map",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The dungeon as a journey",
+      "text": "Rooms you only go forward through, long rooms with walls, doors the party picks. Live now. Mark any part that's off.",
+      "why": "This is the shape of every run from now on. The clip is the first two rooms at double speed.",
+      "videos": ["../../../clips/s2-map.mp4"],
+      "details": "Ten full test runs: about 30 rooms each, 16 to 22 minutes of game time, none stuck. All ten were won, so it's too easy right now; balance comes with the progression in stage 3, since levels will start at 1 each run.\n\nThe mimic and the duck aren't in yet.",
+      "parts": [
+        { "id": "tree", "title": "Forward-only tree", "text": "Each floor: 9 layers of 2 or 3 rooms, then a boss. Doors only lead forward. 3 floors. The small map at the top shows where you've been and what's ahead." },
+        { "id": "doors", "title": "Doors", "text": "A cleared room has one door per room it leads to, each marked with what's behind it (fight, hazards, elite, treasure, fountain, choice, boss). The party picks: mostly at random, a fountain much likelier when hurt." },
+        { "id": "rooms", "title": "Long rooms with walls", "text": "Rooms run 1 to 3 screens long. Most fight rooms have walls: a wall with gaps, a corridor, a zigzag or blocks. Enemies wait in groups along the room until the party gets close." },
+        { "id": "paths", "title": "Finding the way", "text": "A* round the walls when a unit can't see where it's going; straight there when it can. Every room is checked crossable before it's used." },
+        { "id": "camera", "title": "Camera", "text": "Follows the party smoothly. Drag the room to look around; it eases back a couple of seconds after you let go." },
+        { "id": "after", "title": "After a fight", "text": "Coins come to the party, then: chest (potion, XP, coins or trinket), fountain (everyone heals 40%), or a choice room (three things, the party takes one)." },
+        { "id": "potions", "title": "Potions", "text": "Each hero starts with one. They drink when low and nobody's near: it takes a second, slows them, and a hit stops it." },
+        { "id": "1b", "title": "Your stage 1 notes", "text": "Room fills the phone's width. Bigger hit boxes, bigger skeletons. No bars, numbers or ability names in the arena; the boss bar is in the top bar. Rats dash, and their tails spring along behind." }
+      ]
+    },
+    {
+      "id": "anim-parts",
+      "kind": "report",
+      "rarity": "common",
+      "title": "Arms that swing: waiting on art",
+      "text": "Weapon swings, the bow drawing back and arm swing need sprites in parts. The art round makes them that way.",
+      "why": "So you know why the animations haven't changed yet: it's the next thing once the new art lands.",
+      "details": "The four artists start at 2am. Their brief now asks for each sprite as separate parts (body, each arm with what it holds, a cape or quiver behind) with the outline added afterwards over the whole figure, as you described. One of them also splits the finished archer into parts without changing how it looks."
+    }
+  ]
+}
