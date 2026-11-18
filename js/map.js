@@ -1,4 +1,4 @@
-// A floor is a tree of rooms you only ever go forward through: an entrance, layers of 2-3 rooms joined to the
+// A floor is a tree of rooms you only ever go forward through: an entrance, layers of 2-5 rooms joined to the
 // next layer by doors, and a boss room at the end. Each room shows on its door what kind it is.
 import { rand, rint, chance, pick } from './util.js';
 
@@ -16,7 +16,7 @@ function rollKind(L) {
 export function makeFloor() {
   const layers = [[{ L: 0, i: 0, pos: 0.5, kind: 'fight', next: [] }]];
   for (let L = 1; L < LAYERS; L++) {
-    const n = L === LAYERS - 1 ? rint(2, 3) : rint(2, 3);
+    const n = L === LAYERS - 1 ? rint(2, 3) : rint(2, 5);
     const row = [];
     for (let i = 0; i < n; i++) row.push({ L, i, pos: (i + 0.5) / n + (rand() - 0.5) * 0.12, kind: rollKind(L), next: [] });
     // the last layer before the boss leans towards a breather

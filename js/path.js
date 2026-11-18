@@ -75,6 +75,22 @@ function nearestOpen(g, i, j) {
   return [i, j];
 }
 
+// A binary min-heap of cell indices ordered by f[] (rooms can be several screens each way).
+function heap(f) {
+  const a = [];
+  return {
+    size: () => a.length,
+    push(k) { a.push(k); let i = a.length - 1; while (i > 0) { const p = (i - 1) >> 1; if (f[a[p]] <= f[a[i]]) break; [a[p], a[i]] = [a[i], a[p]]; i = p; } },
+    pop() {
+      const top = a[0], last = a.pop();
+      if (a.length) { a[0] = last; let i = 0; for (;;) { const l = i * 2 + 1, r = l + 1; let m = i;
+        if (l < a.length && f[a[l]] < f[a[m]]) m = l; if (r < a.length && f[a[r]] < f[a[m]]) m = r;
+        if (m === i) break; [a[m], a[i]] = [a[i], a[m]]; i = m; } }
+      return top;
+    },
+  };
+}
+
 // A route of points from (ax,ay) to (bx,by), pulled straight, or null.
 export function findPath(w, ax, ay, bx, by) {
   const g = w.grid; if (!g) return null;
@@ -82,13 +98,13 @@ export function findPath(w, ax, ay, bx, by) {
   const [ti, tj] = nearestOpen(g, ...cellOf(g, bx, by));
   const N = g.gw * g.gh, start = sj * g.gw + si, goal = tj * g.gw + ti;
   const gs = new Float32Array(N).fill(Infinity), from = new Int32Array(N).fill(-1), closed = new Uint8Array(N);
-  const open = [start]; gs[start] = 0;
+  gs[start] = 0;
   const h = (k) => { const x = k % g.gw, y = (k / g.gw) | 0; const dx = Math.abs(x - ti), dy = Math.abs(y - tj); return Math.max(dx, dy) + 0.414 * Math.min(dx, dy); };
   const f = new Float32Array(N).fill(Infinity); f[start] = h(start);
+  const open = heap(f); open.push(start);
   let found = false, iter = 0;
-  while (open.length && iter++ < 6000) {
-    let bi = 0; for (let k = 1; k < open.length; k++) if (f[open[k]] < f[open[bi]]) bi = k;
-    const cur = open[bi]; open[bi] = open[open.length - 1]; open.pop();
+  while (open.size() && iter++ < 30000) {
+    const cur = open.pop();
     if (cur === goal) { found = true; break; }
     if (closed[cur]) continue; closed[cur] = 1;
     const cx = cur % g.gw, cy = (cur / g.gw) | 0;

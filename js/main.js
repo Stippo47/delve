@@ -159,21 +159,18 @@ function drawMap() {
   const dpr = Math.min(window.devicePixelRatio || 1, 3), cw = c.clientWidth, ch = c.clientHeight;
   if (c.width !== Math.round(cw * dpr)) { c.width = Math.round(cw * dpr); c.height = Math.round(ch * dpr); }
   const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, cw, ch);
+  // one dot per layer: the rooms you went through, where you are, how many to go, then the boss
   const m = run.map, nL = m.layers.length;
-  const X = (L) => 8 + (cw - 16) * L / (nL - 1), Y = (n) => 4 + (ch - 8) * n.pos;
-  const visited = new Set(m.path.map(([L, i]) => L + ':' + i));
-  g.lineWidth = 1.5;
-  m.layers.forEach((row, L) => row.forEach((n) => n.next.forEach((j) => {
-    const b = m.layers[L + 1][j]; const on = visited.has(L + ':' + n.i) && visited.has(L + 1 + ':' + j);
-    g.strokeStyle = on ? 'rgba(237,230,216,0.9)' : 'rgba(237,230,216,0.22)'; g.beginPath(); g.moveTo(X(L), Y(n)); g.lineTo(X(L + 1), Y(b)); g.stroke();
-  })));
-  m.layers.forEach((row, L) => row.forEach((n) => {
-    const here = L === m.L && n.i === m.i, been = visited.has(L + ':' + n.i);
-    g.fillStyle = MAP_COL[n.kind] || '#999'; g.globalAlpha = been || L > m.L ? 1 : 0.3;
-    g.beginPath(); g.arc(X(L), Y(n), n.kind === 'boss' ? 5 : 3.5, 0, Math.PI * 2); g.fill();
-    if (here) { g.globalAlpha = 1; g.strokeStyle = '#FFE14D'; g.lineWidth = 2; g.beginPath(); g.arc(X(L), Y(n), 7, 0, Math.PI * 2); g.stroke(); g.lineWidth = 1.5; }
-  }));
-  g.globalAlpha = 1;
+  const X = (L) => 8 + (cw - 16) * L / (nL - 1), y = ch / 2;
+  g.strokeStyle = 'rgba(237,230,216,0.25)'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(X(0), y); g.lineTo(X(nL - 1), y); g.stroke();
+  g.strokeStyle = 'rgba(237,230,216,0.9)'; g.beginPath(); g.moveTo(X(0), y); g.lineTo(X(m.L), y); g.stroke();
+  for (let L = 0; L < nL; L++) {
+    const been = L <= m.L, step = m.path[L], n = step ? m.layers[step[0]][step[1]] : null;
+    const boss = L === nL - 1;
+    g.fillStyle = been && n ? MAP_COL[n.kind] || '#999' : boss ? MAP_COL.boss : 'rgba(237,230,216,0.35)';
+    g.beginPath(); g.arc(X(L), y, boss ? 5 : been ? 3.8 : 2.6, 0, Math.PI * 2); g.fill();
+    if (L === m.L) { g.strokeStyle = '#FFE14D'; g.lineWidth = 2; g.beginPath(); g.arc(X(L), y, 7, 0, Math.PI * 2); g.stroke(); g.lineWidth = 1.5; }
+  }
 }
 
 // Drag on the room to look around; the camera eases back to the party a couple of seconds after you let go.
@@ -182,8 +179,9 @@ canvas.addEventListener('pointerdown', (e) => { if (state === 'run') drag = { x:
 window.addEventListener('pointermove', (e) => {
   if (!drag) return;
   const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag = { x: e.clientX, y: e.clientY };
-  const along = view.rot ? dy : -dx; // screen movement along the room's long axis, in room units below
-  view.manual = (view.manual ?? view.camX) + along / view.scale; view.manualT = 2.5;
+  const along = view.rot ? dy : -dx, across = view.rot ? -dx : -dy; // the room follows the finger
+  view.manual = (view.manual ?? view.camX) + along / view.scale;
+  view.manualY = (view.manualY ?? view.camY) + across / view.scale; view.manualT = 2.5;
 });
 window.addEventListener('pointerup', () => { drag = null; });
 

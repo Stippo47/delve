@@ -1,12 +1,13 @@
 // Canvas renderer for one room. Everything is drawn in room units, scaled and (in portrait) turned so the
-// way out is at the top. A camera follows the party along the room's long axis.
+// way out is at the top. One screen shows one chunk across (ACROSS units); a camera follows the party both ways.
 import { getSprite, headR, tinted } from './sprites.js';
 import { INK, TAU, clamp } from './util.js';
 
 // One outline thickness for everything drawn here, in room units. Matches what the SVG heroes show.
 export const OUTLINE = 2.4;
 
-export const view = { scale: 1, dpr: 1, cw: 0, ch: 0, rot: false, camX: null, m: [1, 0, 0, 1, 0, 0] };
+export const view = { scale: 1, dpr: 1, cw: 0, ch: 0, rot: false, camX: null, camY: null, m: [1, 0, 0, 1, 0, 0] };
+const ACROSS = 480; // one room chunk across = the screen's width in portrait
 
 // topPad/bottomPad: screen space taken by the HUD. Portrait turns the room a quarter turn.
 export function layout(canvas, w, topPad, bottomPad = 10, sidePad = 10) {
@@ -18,30 +19,35 @@ export function layout(canvas, w, topPad, bottomPad = 10, sidePad = 10) {
   const pad = 26; // the wall frame around the floor
   const edge = 7; // how much of the side walls stays on screen
   const availW = cw - sidePad * 2, availH = ch - topPad - bottomPad;
-  // fit the room's short side across the screen's short side; the long side scrolls if it has to
+  // one chunk across fills the screen's short side; anything bigger scrolls, both ways
   const across = view.rot ? availW : availH, along = view.rot ? availH : availW;
-  const s = view.rot ? cw / (w.H + edge * 2) : Math.min(across / (w.H + edge * 2), along / (w.W * 0.55));
+  const s = view.rot ? cw / (ACROSS + edge * 2) : Math.min(across / (ACROSS + edge * 2), along / 900);
   view.scale = s;
-  // camera along the long axis: follow the party, never past the walls
+  // the camera follows the party's middle, never further than the walls
   const heroes = w.units.filter((u) => u.team === 'hero' && !u.downed);
-  let target = w.W / 2;
-  if (heroes.length) { target = 0; for (const h of heroes) target += h.x; target /= heroes.length; }
-  const half = along / (2 * s);
-  const lo = half - pad, hi = w.W - half + pad;
-  target = lo > hi ? w.W / 2 : clamp(target, lo, hi);
+  let tx = w.W / 2, ty = w.H / 2;
+  if (heroes.length) { tx = ty = 0; for (const h of heroes) { tx += h.x; ty += h.y; } tx /= heroes.length; ty /= heroes.length; }
+  const halfX = along / (2 * s), halfY = across / (2 * s);
+  const fit = (v, half, size) => { const lo = half - pad, hi = size - half + pad; return lo > hi ? size / 2 : clamp(v, lo, hi); };
+  tx = fit(tx, halfX, w.W); ty = fit(ty, halfY, w.H);
   // the player's drag wins for a while, then the camera eases back to the party
   const now = performance.now(), fdt = Math.min(0.1, (now - (view.lastT || now)) / 1000); view.lastT = now;
-  if (view.manualT > 0) { view.manualT -= fdt; view.manual = lo > hi ? w.W / 2 : clamp(view.manual, lo, hi); target = view.manual; }
-  else view.manual = null;
+  if (view.manualT > 0) {
+    view.manualT -= fdt;
+    if (view.manual != null) { view.manual = fit(view.manual, halfX, w.W); tx = view.manual; }
+    if (view.manualY != null) { view.manualY = fit(view.manualY, halfY, w.H); ty = view.manualY; }
+  } else { view.manual = null; view.manualY = null; }
   const ease = view.manualT > 0 ? 0.35 : 0.06;
-  view.camX = view.camX == null || view.snap ? target : view.camX + (target - view.camX) * ease;
+  const snap = view.camX == null || view.camY == null || view.snap;
+  view.camX = snap ? tx : view.camX + (tx - view.camX) * ease;
+  view.camY = snap ? ty : view.camY + (ty - view.camY) * ease;
   view.snap = false;
   const midAcross = view.rot ? cw / 2 : topPad + availH / 2;
   const midAlong = view.rot ? topPad + availH / 2 : sidePad + availW / 2;
-  if (view.rot) view.m = [0, -s, s, 0, midAcross - (w.H / 2) * s, midAlong + view.camX * s];  // world +x = screen up
-  else view.m = [s, 0, 0, s, midAlong - view.camX * s, midAcross - (w.H / 2) * s];
+  if (view.rot) view.m = [0, -s, s, 0, midAcross - view.camY * s, midAlong + view.camX * s];  // world +x = screen up
+  else view.m = [s, 0, 0, s, midAlong - view.camX * s, midAcross - view.camY * s];
 }
-export function snapCamera() { view.snap = true; view.manual = null; view.manualT = 0; }
+export function snapCamera() { view.snap = true; view.manual = null; view.manualY = null; view.manualT = 0; }
 
 // Draw fn in a frame centred on (x,y) that stays upright on screen (texts, bars, shadows).
 function upright(ctx, x, y, fn) { ctx.save(); ctx.translate(x, y); if (view.rot) ctx.rotate(Math.PI / 2); fn(); ctx.restore(); }
@@ -54,7 +60,9 @@ function floor(w) {
   if (floorCache && floorCache.key === key && floorCache.w === w) return floorCache.c;
   const pad = 26;
   const c = document.createElement('canvas');
-  const s = view.scale * view.dpr;
+  let s = view.scale * view.dpr;
+  const area = (w.W + pad * 2) * (w.H + pad * 2);
+  if (area * s * s > 12e6) s = Math.sqrt(12e6 / area); // a big room's floor is cached a little softer
   c.width = Math.ceil((w.W + pad * 2) * s); c.height = Math.ceil((w.H + pad * 2) * s);
   const g = c.getContext('2d');
   g.scale(s, s); g.translate(pad, pad);
@@ -69,7 +77,20 @@ function floor(w) {
     roundRect(g, x + 3, y + 3, T - 6, T - 6, 10); g.fill();
   }
   g.restore();
-  floorCache = { key, c, w, pad };
+  // rock where the room's shape leaves chunks out: a wall band along the floor's edge, darkness behind it
+  const solids = w.walls.filter((r) => r.solid);
+  const isFloor = (c, r) => r >= 0 && c >= 0 && w.cells && w.cells.some((k) => k.c === c && k.r === r);
+  const inset = (r, d) => {
+    const ch = w.chunks || { nc: 1, nr: 1 };
+    const l = r.c === 0 ? -pad : isFloor(r.c - 1, r.r) ? d : 0, t = r.r === 0 ? -pad : isFloor(r.c, r.r - 1) ? d : 0;
+    const rt = r.c === ch.nc - 1 ? -pad : isFloor(r.c + 1, r.r) ? d : 0, b = r.r === ch.nr - 1 ? -pad : isFloor(r.c, r.r + 1) ? d : 0;
+    return [r.x + l, r.y + t, r.w - l - rt, r.h - t - b];
+  };
+  for (const r of solids) { g.fillStyle = INK; const [x, y, ww, hh] = inset(r, -6); roundRect(g, x, y, ww, hh, 10); g.fill(); }
+  for (const r of solids) { g.fillStyle = '#6B5D52'; const [x, y, ww, hh] = inset(r, 0); roundRect(g, x, y, ww, hh, 8); g.fill(); }
+  for (const r of solids) { g.fillStyle = INK; const [x, y, ww, hh] = inset(r, 20); roundRect(g, x, y, ww, hh, 14); g.fill(); }
+  for (const r of solids) { g.fillStyle = '#2F2734'; const [x, y, ww, hh] = inset(r, 26); roundRect(g, x, y, ww, hh, 12); g.fill(); }
+  floorCache = { key, c, w, pad, s };
   return c;
 }
 
@@ -91,9 +112,9 @@ export function draw(ctx, w) {
   ctx.setTransform(d * m[0], d * m[1], d * m[2], d * m[3], d * (m[4] + sh), d * (m[5] + sv));
   const fl = floor(w);
   const s = view.scale;
-  ctx.drawImage(fl, -floorCache.pad, -floorCache.pad, fl.width / (s * d), fl.height / (s * d));
+  ctx.drawImage(fl, -floorCache.pad, -floorCache.pad, fl.width / floorCache.s, fl.height / floorCache.s);
   drawDoors(ctx, w);
-  for (const r of w.walls) drawWall(ctx, r);
+  for (const r of w.walls) if (!r.solid) drawWall(ctx, r);
   for (const h of w.hazards) drawHazard(ctx, h, w.time);
   for (const p of w.pickups) drawPickup(ctx, p, w.time);
   // shadows, cast towards the bottom of the screen
@@ -117,16 +138,36 @@ const screenDepth = (u) => (view.rot ? -u.x : u.y);
 // The way in (behind the party) and the doors ahead, each marked with what kind of room it leads to.
 const DOOR_COL = { fight: '#C8553D', hazard: '#E0884B', elite: '#8E3B5B', treasure: '#F2B53A', fountain: '#5DB7E0', decision: '#9B7BD6', boss: '#2B2230' };
 function drawDoors(ctx, w) {
-  const dh = 96;
-  ctx.fillStyle = '#3A3036'; ctx.fillRect(-22, w.H / 2 - dh / 2, 18, dh);
+  arch(ctx, 0, w.doorIn.y, -1, true, false, w.time);
   for (const d of w.doors || []) {
-    const open = w.cleared;
-    ctx.fillStyle = open ? (d.chosen ? '#F4E3B5' : '#5A4D52') : '#3A3036';
-    ctx.fillRect(w.W + 4, d.y - dh / 2, 18, dh);
-    if (!open) { ctx.fillStyle = '#8F97A3'; for (let i = 0; i < 3; i++) ctx.fillRect(w.W + 8, d.y - dh / 2 + 12 + i * 28, 10, 18); }
-    if (d.chosen) { ctx.fillStyle = 'rgba(255,225,140,0.3)'; ctx.beginPath(); ctx.ellipse(w.W - 10, d.y, 40, dh / 2 + 10, 0, 0, TAU); ctx.fill(); }
-    // the kind of room, as a marked plate on the floor in front of the door
-    upright(ctx, w.W - 36, d.y, () => roomIcon(ctx, d.kind, 11));
+    arch(ctx, w.W, d.y, 1, w.cleared, d.chosen, w.time);
+    // what's behind it, on a stone plaque on the floor in front
+    upright(ctx, w.W - 40, d.y, () => {
+      inked(ctx, () => roundRect(ctx, -17, -17, 34, 34, 9), '#A99C8B');
+      roomIcon(ctx, d.kind, 12);
+    });
+  }
+}
+// A doorway in the wall band at x (the room's edge), facing into the room (dir -1: the way in, +1: a way out).
+function arch(ctx, x, y, dir, open, chosen, t) {
+  const half = 56, band = 26, o = dir > 0 ? x : x - band;
+  // stone jambs either side
+  for (const sy of [-1, 1]) inked(ctx, () => roundRect(ctx, o - 2, y + sy * (half + 8) - 9, band + 4, 18, 5), '#9A8C7C');
+  // the opening
+  ctx.fillStyle = INK; ctx.fillRect(o, y - half, band, half * 2);
+  if (!open) {
+    // a shut wooden door: planks and two iron bands
+    const g = ctx.createLinearGradient(o, y - half, o, y + half); g.addColorStop(0, '#9A6A3E'); g.addColorStop(1, '#7A5130');
+    ctx.fillStyle = g; ctx.fillRect(o + 3, y - half + 3, band - 6, half * 2 - 6);
+    ctx.fillStyle = 'rgba(43,34,48,0.35)'; for (let i = 1; i < 4; i++) ctx.fillRect(o + 3, y - half + 3 + i * (half * 2 - 6) / 4 - 1, band - 6, 2);
+    ctx.fillStyle = '#4A4247'; for (const k of [-0.55, 0.55]) ctx.fillRect(o + 3, y + k * half - 3, band - 6, 6);
+  } else if (chosen) {
+    // light spills in through the way the party is taking
+    const k = 0.75 + 0.25 * Math.sin(t * 4);
+    const g = ctx.createRadialGradient(x, y, 4, x, y, 110);
+    g.addColorStop(0, `rgba(255,225,140,${0.55 * k})`); g.addColorStop(1, 'rgba(255,225,140,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 110, 0, TAU); ctx.fill();
+    ctx.fillStyle = '#F4E3B5'; ctx.fillRect(o + 4, y - half + 4, band - 8, half * 2 - 8);
   }
 }
 function roomIcon(ctx, kind, r) {
@@ -175,10 +216,17 @@ function drawHazard(ctx, h, t) {
       ctx.globalAlpha = 0.55 * a; ctx.fillStyle = '#A9D44A'; ctx.beginPath(); ctx.arc(x, y, h.r * 0.55, 0, TAU); ctx.fill();
     }
   } else if (h.type === 'spikes') {
-    inked(ctx, () => { ctx.beginPath(); ctx.arc(h.x, h.y, h.r, 0, TAU); }, '#9C9184');
-    for (let i = 0; i < 7; i++) {
-      const a = i / 7 * TAU, rr = i === 0 ? 0 : h.r * 0.55;
-      inked(ctx, () => tri(ctx, h.x + Math.cos(a) * rr, h.y + Math.sin(a) * rr, 6), '#DCE0E6');
+    inked(ctx, () => { ctx.beginPath(); ctx.arc(h.x, h.y, h.r, 0, TAU); }, '#57534F');
+    ctx.fillStyle = '#6E6965'; ctx.beginPath(); ctx.arc(h.x, h.y, h.r - 4, 0, TAU); ctx.fill();
+    const tips = [[0, 0]];
+    const ring = Math.max(5, Math.round(h.r / 4.6));
+    for (let i = 0; i < ring; i++) { const a = i / ring * TAU + 0.3; tips.push([Math.cos(a) * h.r * 0.58, Math.sin(a) * h.r * 0.58]); }
+    for (const [dx, dy] of tips) {
+      const x = h.x + dx, y = h.y + dy, r = 4.6;
+      ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(x + 0.8, y + 0.8, r + 1.4, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#8D949C'; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#D9DEE4'; ctx.beginPath(); ctx.moveTo(x, y); ctx.arc(x, y, r, Math.PI * 0.55, Math.PI * 1.55); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(x - 0.4, y - 0.4, 1.1, 0, TAU); ctx.fill();
     }
   }
   ctx.restore();
@@ -222,6 +270,8 @@ function flameShape(ctx, x, y, r, outer, inner) {
 
 function drawPickup(ctx, p, t) {
   if (p.type === 'coin') {
+    // blinks out over its last second and a half
+    if (p.life != null && p.life < 1.5 && Math.sin(t * 22) < 0) return;
     inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, 5.5, 0, TAU); }, '#F2B53A');
     ctx.fillStyle = '#FFE08A'; ctx.beginPath(); ctx.arc(p.x - 1.6, p.y - 1.6, 2, 0, TAU); ctx.fill();
   } else if (p.type === 'key') {
@@ -270,9 +320,9 @@ function drawUnit(ctx, u, w) {
   // in the sprite's own frame forward is +y
   let fx = 0, fy = 0, sc = 1, tilt = 0;
   const moving = !u.downed && u.spd > 6;
-  if (moving) { // a waddle and a bounce, stronger the faster it goes
+  if (moving) { // a small step bounce, no side-to-side wobble (the arms will swing once the art is in parts)
     const k = clamp(u.spd / (u.def.speed || 60), 0, 1.3);
-    tilt = Math.sin(u.bob) * 0.09 * k; sc = 1 + Math.abs(Math.cos(u.bob)) * 0.035 * k;
+    sc = 1 + Math.abs(Math.cos(u.bob)) * 0.03 * k;
   }
   if (u.lungeT > 0) { const k = ease(1 - u.lungeT / 0.18); fy += u.vr * 0.5 * k; sc *= 1 + 0.08 * k; }
   if (u.recoilT > 0) { fy -= u.vr * 0.22 * (u.recoilT / 0.14); }

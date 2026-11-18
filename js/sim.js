@@ -260,12 +260,17 @@ function movement(w, u, dt) {
     [gx, gy] = goalVec(w, u, u.forcedGoal.x, u.forcedGoal.y);
     if (Math.hypot(u.forcedGoal.x - u.x, u.forcedGoal.y - u.y) < 10) { gx = gy = 0; }
     if (u.forcedGoal.slow) mult = u.forcedGoal.slow;
+  } else if (u.coinGoal && (!t || dist(u.x, u.y, t.x, t.y) > 240)) {
+    [gx, gy] = goalVec(w, u, u.coinGoal.x, u.coinGoal.y); mult = 0.9;
   } else if (!t && u.team === 'hero' && !w.cleared) {
     // nothing in sight: press on through the room together, the slowest setting the pace
+    // towards the next chunk of the room the party hasn't walked yet (dungeon.js keeps w.wp)
     const al = allies(w, u);
-    let cx = u.x; for (const a of al) cx += a.x; cx /= al.length + 1;
-    const ahead = u.x - cx;
-    [gx, gy] = goalVec(w, u, Math.min(w.W - 70, u.x + 220), clamp(u.y + (w.H / 2 - u.y) * 0.3, 70, w.H - 70));
+    const wx = w.wp ? w.wp.x : Math.min(w.W - 70, u.x + 220), wy = w.wp ? w.wp.y : u.y;
+    let md = dist(u.x, u.y, wx, wy); for (const a of al) md += dist(a.x, a.y, wx, wy); md /= al.length + 1;
+    const ahead = md - dist(u.x, u.y, wx, wy);
+    [gx, gy] = goalVec(w, u, wx, wy);
+    if (dist(u.x, u.y, wx, wy) < 60) { gx *= 0.2; gy *= 0.2; }
     mult = ahead > 90 ? 0.15 : ahead < -60 ? 0.85 : 0.6;
   } else if (!t || u.mode === 'wander') {
     u.wanderA += rrange(-1.2, 1.2) * dt;
@@ -309,7 +314,7 @@ function movement(w, u, dt) {
         if (Math.hypot(gx, gy) < 8) { gx = tx; gy = ty; mult = 0.3; }
         side = u.strafeSign; break;
       }
-      case 'retreat': gx = -tx; gy = -ty; side = u.strafeSign; mult = 0.9; break;
+      case 'retreat': gx = -tx; gy = -ty; side = u.strafeSign; mult = d < 260 ? 0.7 : 0.9; break; // backpedalling is slower
     }
   }
   // formation, lightly: an archer nearer the enemy than the knight leans back towards him
@@ -357,7 +362,9 @@ function updateFacing(u, dt) {
   const t = u.target;
   if (t && !u.forcedGoal) {
     const d = dist(u.x, u.y, t.x, t.y);
-    if (u.mode !== 'retreat' && (d < (u.def.role === 'ranged' ? u.def.range + 60 : 140) || u.mode === 'hold' || u.mode === 'kite')) want = angleTo(u.x, u.y, t.x, t.y);
+    // backing off after a hit keeps the face to the enemy (a backpedal), rather than turning round to run
+    const near = d < (u.def.role === 'ranged' ? u.def.range + 60 : 140) || u.mode === 'hold' || u.mode === 'kite';
+    if (u.mode === 'retreat' ? d < 260 : near) want = angleTo(u.x, u.y, t.x, t.y);
   }
   if (want === null && u.spd > 8) want = u.mvA;
   if (want === null) return;
@@ -812,18 +819,29 @@ function hazards(w, dt) {
   }
 }
 
+// Coins lie where they fall and must be walked over; they fade after a few seconds. Keys wait to be picked up.
+export const COIN_LIFE = 7;
 function pickups(w, dt) {
   const heroes = w.units.filter((u) => u.team === 'hero' && alive(u));
+  for (const h of heroes) h.coinGoal = null;
   for (const p of w.pickups) {
-    if (p.type === 'chest') continue;
+    if (p.type !== 'coin' && p.type !== 'key') continue;
+    if (p.type === 'coin') {
+      if (p.life == null) p.life = COIN_LIFE;
+      p.life -= dt;
+      if (p.life <= 0) { p.got = true; continue; }
+    }
     let near = null, nd = Infinity;
     for (const h of heroes) { const d = dist(p.x, p.y, h.x, h.y); if (d < nd) { nd = d; near = h; } }
-    const magnet = w.cleared || nd < 70;
-    if (near && magnet) { const a = angleTo(p.x, p.y, near.x, near.y); const sp = w.cleared ? 420 : 260; p.vx += Math.cos(a) * sp * dt * 6; p.vy += Math.sin(a) * sp * dt * 6; }
-    p.vx *= Math.exp(-3 * dt); p.vy *= Math.exp(-3 * dt);
+    // only a short pull right at the feet
+    if (near && nd < near.r + 26) { const a = angleTo(p.x, p.y, near.x, near.y); p.vx += Math.cos(a) * 300 * dt * 6; p.vy += Math.sin(a) * 300 * dt * 6; }
+    p.vx *= Math.exp(-4 * dt); p.vy *= Math.exp(-4 * dt);
     p.x += p.vx * dt; p.y += p.vy * dt;
     p.x = clamp(p.x, 6, w.W - 6); p.y = clamp(p.y, 6, w.H - 6);
-    if (near && nd < near.r + 6) { p.got = true; emit(w, p.type, p, near); }
+    for (const wl of w.walls) { const c = circleRect(p.x, p.y, 6, wl); if (c) { p.x += c.nx * c.over; p.y += c.ny * c.over; } }
+    if (near && nd < near.r + 6) { p.got = true; emit(w, p.type, p, near); continue; }
+    // a hero who isn't busy fighting goes for coins close by
+    if (near && nd < 170 && (!near.coinGoal || nd < near.coinGoal.d)) near.coinGoal = { x: p.x, y: p.y, d: nd };
   }
   w.pickups = w.pickups.filter((p) => !p.got);
 }

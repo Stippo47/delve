@@ -1,11 +1,12 @@
 // Run flow. A dungeon is 3 floors; a floor is a forward-only tree of rooms (map.js) ending in a boss.
-// Rooms vary in length (up to several screens) and shape (walls). Enemies wait in groups along the room until
-// the party comes near. After a room is cleared the party deals with what's in it (chest, fountain, a choice of
+// A room is a shape made of screen-sized chunks (strips, boxes, L, T, plus...), so it can run several screens in
+// both directions; chunks left out are solid rock. Enemies wait in groups around the room until the party comes
+// near, and the party walks the room chunk by chunk before heading for the doors. After a room is cleared the party deals with what's in it (chest, fountain, a choice of
 // three things), then picks one of the doors ahead. Heroes keep HP and potions between rooms; downed heroes stay
 // down until the floor's boss is beaten, then come back at 10% HP.
 import { makeWorld, spawn, step, alive } from './sim.js';
 import { DEFS, HERO_ORDER, xpToNext, levelHp, levelDmg, TRINKET_IDS } from './units.js';
-import { rand, rrange, rint, pick, chance, dist, clamp } from './util.js';
+import { rand, rrange, rint, pick, chance, dist, clamp, angleTo } from './util.js';
 import { buildGrid, circleRect, findPath } from './path.js';
 import { makeFloor, nodeAt, nextNodes, chooseDoor, advance, LAYERS } from './map.js';
 
@@ -14,13 +15,45 @@ export const FLOORS = 3;
 
 export function newRun(save, depth) {
   const heroes = {};
-  for (const k of HERO_ORDER) heroes[k] = { hp: null, down: false, potions: 1 };
+  for (const k of HERO_ORDER) heroes[k] = { hp: null, down: false, potions: 0 }; // a potion to bring in comes from the camp (stage 3)
   const run = { depth, floor: 1, map: makeFloor(), coins: 0, satchel: [], keys: 0, heroes, phase: 'fight', t: 0, fade: 1, save, kills: 0, banner: null, rooms: 0 };
   buildRoom(run);
   return run;
 }
 
-const LENGTH = { fight: [1500, 2600], hazard: [1400, 2200], elite: [1300, 1800], treasure: [1000, 1300], fountain: [850, 1000], decision: [950, 1100], boss: [1400, 1500] };
+// Room shapes on a grid of chunks. Columns run forward (the doors out are past the last column; in portrait
+// that's up the screen), rows run across. '#' is floor, '.' is rock. Each row is one screen across.
+export const ROW = 480;
+const SHAPES = {
+  one: ['#'], strip2: ['##'], strip3: ['###'], strip4: ['####'],
+  box: ['##', '##'], wide: ['###', '###'], square: ['###', '###', '###'],
+  L: ['###', '..#'], L2: ['#..', '###'], J: ['..#', '###'], S: ['##.', '.##'],
+  T: ['..#', '###', '..#'], Tside: ['###', '.#.'], plus: ['.#.', '###', '.#.'],
+};
+const KIND_SHAPES = {
+  fight: ['strip2', 'strip3', 'strip3', 'strip4', 'box', 'box', 'wide', 'L', 'L2', 'J', 'S', 'T', 'Tside', 'plus', 'square'],
+  hazard: ['strip3', 'box', 'L', 'J', 'S', 'Tside'],
+  elite: ['one', 'box', 'plus', 'T'],
+  treasure: ['one', 'strip2', 'L2'],
+  fountain: ['one'], decision: ['one'],
+  boss: ['box', 'wide'],
+};
+const COL_LEN = { one: [800, 1100], fountain: [700, 900], decision: [750, 900] };
+
+function makeShape(kind) {
+  const name = pick(KIND_SHAPES[kind] || KIND_SHAPES.fight);
+  const rows = SHAPES[name], nr = rows.length, nc = rows[0].length;
+  const [a, b] = COL_LEN[kind] || (nc === 1 ? COL_LEN.one : [480, 760]);
+  const colW = []; for (let c = 0; c < nc; c++) colW.push(Math.round(rrange(a, b)));
+  const colX = [0]; for (let c = 0; c < nc; c++) colX.push(colX[c] + colW[c]);
+  const cells = [], solid = [];
+  for (let r = 0; r < nr; r++) for (let c = 0; c < nc; c++) {
+    const cell = { c, r, x: colX[c], y: r * ROW, w: colW[c], h: ROW };
+    (rows[r][c] === '#' ? cells : solid).push(cell);
+  }
+  return { name, nr, nc, W: colX[nc], H: nr * ROW, cells, solid };
+}
+const centre = (cell) => ({ x: cell.x + cell.w / 2, y: cell.y + cell.h / 2 });
 
 function freeSpot(w, x, y, r) {
   if (x < r || y < r || x > w.W - r || y > w.H - r) return false;
@@ -30,8 +63,16 @@ function freeSpot(w, x, y, r) {
   return true;
 }
 function placeFree(w, r, xmin, xmax, ymin = r + 30, ymax = w.H - r - 30) {
-  for (let i = 0; i < 60; i++) { const x = rrange(xmin, xmax), y = rrange(ymin, ymax); if (freeSpot(w, x, y, r)) return { x, y }; }
-  return { x: rrange(xmin, xmax), y: w.H / 2 };
+  for (let i = 0; i < 90; i++) { const x = rrange(xmin, xmax), y = rrange(ymin, ymax); if (freeSpot(w, x, y, r)) return { x, y }; }
+  // nothing free in that band: the middle of a floor chunk that overlaps it
+  const cs = w.cells.filter((c) => c.x < xmax && c.x + c.w > xmin);
+  const c = cs.length ? pick(cs) : pick(w.cells);
+  return { x: clamp(c.x + c.w / 2, xmin, xmax), y: c.y + c.h / 2 };
+}
+// A spot in a chunk, kept away from its edges; in the entrance chunk, only its far half.
+function inCell(w, cell, r, m = 110) {
+  const x0 = cell === w.entry ? cell.x + cell.w * 0.55 : cell.x + m, x1 = cell.x + cell.w - m;
+  return placeFree(w, r, x0, Math.max(x0 + 10, x1), cell.y + m, cell.y + cell.h - m);
 }
 
 // Shapes: walls that break the room up, kept clear of the way in and the way out.
@@ -56,7 +97,17 @@ function addWalls(w) {
   w.shape = shape;
 }
 
-function enemyPack(w, run, budget, x0, x1, keyChance) {
+// Square blocks to break up a big room, each inside a floor chunk.
+function addBlocks(w) {
+  for (let i = 0; i < rint(2, 4); i++) {
+    const c = pick(w.cells); if (c === w.entry) continue;
+    const sz = rint(60, 110), x = rrange(c.x + 120, c.x + c.w - 120 - sz), y = rrange(c.y + 110, c.y + c.h - 110 - sz);
+    if (w.walls.every((r) => r.solid || x + sz + 70 < r.x || x > r.x + r.w + 70 || y + sz + 70 < r.y || y > r.y + r.h + 70)) w.walls.push({ x, y, w: sz, h: sz });
+  }
+  w.shape += '+blocks';
+}
+
+function enemyPack(w, run, budget, cell, keyChance) {
   const kinds = [];
   while (budget > 0) {
     const roll = rand();
@@ -65,10 +116,11 @@ function enemyPack(w, run, budget, x0, x1, keyChance) {
     kinds.push(k); budget -= { slime: 2, skeleton: 3 }[k];
   }
   const keyIdx = chance(keyChance) ? rint(0, kinds.length - 1) : -1;
-  const cy = rrange(110, w.H - 110);
+  const c = inCell(w, cell, 40, 150);
   kinds.forEach((k, i) => {
-    const p = placeFree(w, DEFS[k].r, x0, x1, Math.max(DEFS[k].r + 20, cy - 150), Math.min(w.H - DEFS[k].r - 20, cy + 150));
-    const u = spawn(w, k, p.x, p.y, { mult: w.mult, hasKey: i === keyIdx }); u.facing = Math.PI; u.mvA = Math.PI;
+    const p = placeFree(w, DEFS[k].r, c.x - 150, c.x + 150, Math.max(DEFS[k].r + 20, c.y - 150), Math.min(w.H - DEFS[k].r - 20, c.y + 150));
+    const u = spawn(w, k, p.x, p.y, { mult: w.mult, hasKey: i === keyIdx });
+    u.facing = u.mvA = angleTo(p.x, p.y, w.doorIn.x, w.doorIn.y); // facing the way the party comes in
   });
   return keyIdx >= 0;
 }
@@ -76,33 +128,54 @@ function enemyPack(w, run, budget, x0, x1, keyChance) {
 function buildRoom(run) {
   const node = nodeAt(run.map);
   const kind = node.kind;
-  const [l0, l1] = LENGTH[kind] || LENGTH.fight;
-  const w = makeWorld(Math.round(rrange(l0, l1)), H);
+  const sh = makeShape(kind);
+  const w = makeWorld(sh.W, sh.H);
   run.world = w; run.node = node; run.rooms++;
+  w.cells = sh.cells; w.shape = sh.name;
+  for (const c of sh.solid) w.walls.push({ x: c.x, y: c.y, w: c.w, h: c.h, solid: true, c: c.c, r: c.r });
+  w.chunks = { nc: sh.nc, nr: sh.nr };
+  w.entry = pick(sh.cells.filter((c) => c.c === 0));
+  w.exits = sh.cells.filter((c) => c.c === sh.nc - 1);
+  w.doorIn = { x: 0, y: centre(w.entry).y };
   const L = node.L;
   w.mult = 1 + 0.22 * (run.depth - 1) + 0.12 * (run.floor - 1) + 0.025 * L;
-  if (kind === 'fight' || kind === 'hazard' || kind === 'elite') { if (chance(0.75)) addWalls(w); }
-  else if (kind === 'treasure' && chance(0.5)) addWalls(w);
+  const busy = kind === 'fight' || kind === 'hazard' || kind === 'elite';
+  if (sh.nr === 1 && sh.nc > 1) { if ((busy && chance(0.75)) || (kind === 'treasure' && chance(0.5))) addWalls(w); }
+  else if (busy && sh.cells.length > 2 && chance(0.55)) addBlocks(w);
   // round pillars and hazards
-  const np = kind === 'boss' ? 2 : kind === 'fountain' || kind === 'decision' ? 0 : rint(0, 3);
+  const np = kind === 'boss' ? 2 : kind === 'fountain' || kind === 'decision' ? 0 : rint(0, 1 + sh.cells.length);
   // pillars keep well clear of walls so they never seal a gap
   for (let i = 0; i < np; i++) { const r = rrange(22, 36); const p = placeFree(w, r + 90, 320, w.W - 300); if (freeSpot(w, p.x, p.y, r + 90)) w.pillars.push({ x: p.x, y: p.y, r }); }
-  const nh = kind === 'hazard' ? Math.round(w.W / 400) : kind === 'boss' ? 1 : (kind === 'fight' || kind === 'elite') && chance(0.4) ? rint(1, 2) : 0;
+  const nh = kind === 'hazard' ? Math.round(sh.cells.length * 1.6) : kind === 'boss' ? 1 : busy && chance(0.4) ? rint(1, 2) : 0;
   for (let i = 0; i < nh; i++) {
     const type = chance(0.5) ? 'oil' : 'spikes';
     const r = type === 'oil' ? rrange(34, 52) : rrange(24, 34);
-    const p = placeFree(w, r, 280, w.W - 240); w.hazards.push({ type, x: p.x, y: p.y, r });
+    const p = placeFree(w, r, 280, w.W - 240); if (freeSpot(w, p.x, p.y, r)) w.hazards.push({ type, x: p.x, y: p.y, r });
   }
   // what the room holds
-  if (kind === 'fountain') w.pillars.push({ x: w.W * 0.55, y: w.H / 2, r: 38, fountain: true, used: false });
-  if (kind === 'decision') pickRewards(3).forEach((rw, i) => w.pickups.push({ type: 'pedestal', x: w.W * 0.55, y: w.H * (i + 1) / 4, reward: rw }));
-  if (kind === 'treasure') { const p = placeFree(w, 24, w.W * 0.5, w.W - 200); w.pickups.push({ type: 'chest', x: p.x, y: p.y, open: false, free: true }); }
+  const mid = centre(sh.cells[Math.floor(sh.cells.length / 2)]);
+  if (kind === 'fountain') w.pillars.push({ x: w.W * 0.55, y: mid.y, r: 38, fountain: true, used: false });
+  if (kind === 'decision') pickRewards(3).forEach((rw, i) => w.pickups.push({ type: 'pedestal', x: w.W * 0.55, y: mid.y - ROW / 2 + ROW * (i + 1) / 4, reward: rw }));
+  // doors ahead: one per room the tree leads to, spread along the far edge of the last column's chunks
+  const ahead = kind === 'boss' ? [] : nextNodes(run.map);
+  const spans = w.exits.map((c) => [c.y + 70, c.y + c.h - 70]), span = spans.reduce((a, [p, q]) => a + q - p, 0);
+  w.doors = ahead.map((n, j) => {
+    let at = span * (j + 0.5) / ahead.length, y = spans[0][0];
+    for (const [p, q] of spans) { if (at <= q - p) { y = p + at; break; } at -= q - p; }
+    return { y, kind: n.kind, chosen: false };
+  });
   buildGrid(w);
-  // every room must be crossable from the way in to the way out; if not, lose the pillars, then the walls
-  if (!findPath(w, 80, H / 2, w.W - 60, H / 2)) { w.pillars = w.pillars.filter((p) => p.fountain); buildGrid(w); }
-  if (!findPath(w, 80, H / 2, w.W - 60, H / 2)) { w.walls = []; w.shape = 'open'; buildGrid(w); }
-  // heroes come in at the left (the bottom of the screen in portrait)
-  const ys = [H / 2, H / 2 - 60, H / 2 + 60];
+  // every room must be crossable from the way in to every way out; if not, lose the pillars, then the inner walls
+  const outs = () => (w.doors.length ? w.doors : [{ y: centre(w.exits[0]).y }]);
+  const ok = () => outs().every((d) => findPath(w, 80, w.doorIn.y, w.W - 60, d.y));
+  if (!ok()) { w.pillars = w.pillars.filter((p) => p.fountain); buildGrid(w); }
+  if (!ok()) { w.walls = w.walls.filter((r) => r.solid); w.shape += '-walls'; buildGrid(w); }
+  if (kind === 'treasure') { const p = inCell(w, pick(w.exits), 24); w.pickups.push({ type: 'chest', x: p.x, y: p.y, open: false, free: true }); }
+  // the party walks the room chunk by chunk: the nearest chunk not yet seen, the way-out chunks last
+  w.toVisit = sh.cells.filter((c) => c !== w.entry).map((c) => ({ ...centre(c), exit: c.c === sh.nc - 1 }));
+  w.wp = null;
+  // heroes come in at the way in (the bottom of the screen in portrait)
+  const y0 = w.doorIn.y, ys = [y0, y0 - 60, y0 + 60];
   HERO_ORDER.forEach((k, i) => {
     const hs = run.heroes[k];
     if (hs.down) return;
@@ -110,27 +183,27 @@ function buildRoom(run) {
     const u = spawn(w, k, 70 + (k === 'knight' ? 40 : 0), ys[i], { level: sv.level, trinket: sv.trinket ? sv.trinket.id : null, hp: hs.hp, potions: hs.potions });
     u.facing = 0; u.mvA = 0;
   });
-  // enemies: groups spaced along the room, waiting
+  // enemies: groups around the room's chunks, waiting
+  const far = pick(w.exits);
   if (kind === 'boss') {
-    const b = spawn(w, 'boss', w.W - 260, H / 2, { mult: w.mult * (run.floor === FLOORS ? 1 : 0.7) }); b.facing = Math.PI;
-    for (let i = 0; i < 1 + run.floor + Math.floor(run.depth / 2); i++) { const p = placeFree(w, 30, w.W - 520, w.W - 120); const u = spawn(w, 'skeleton', p.x, p.y, { mult: w.mult }); u.facing = Math.PI; }
+    const fc = centre(far);
+    const b = spawn(w, 'boss', w.W - 260, fc.y, { mult: w.mult * (run.floor === FLOORS ? 1 : 0.7) }); b.facing = Math.PI;
+    for (let i = 0; i < 1 + run.floor + Math.floor(run.depth / 2); i++) { const p = inCell(w, far, 30, 90); const u = spawn(w, 'skeleton', p.x, p.y, { mult: w.mult }); u.facing = Math.PI; }
   } else if (kind === 'fight' || kind === 'hazard' || kind === 'elite' || kind === 'treasure') {
-    const packs = kind === 'treasure' ? 1 : Math.max(1, Math.round((w.W - 500) / 520));
-    const total = (kind === 'treasure' ? 3 : 4 + run.depth * 2 + run.floor * 2) + L * 0.5;
+    let homes = sh.cells.filter((c) => c !== w.entry);
+    if (!homes.length) homes = [w.entry];
+    if (kind === 'treasure') homes = [pick(homes)];
+    const total = ((kind === 'treasure' ? 3 : 4 + run.depth * 2 + run.floor * 2) + L * 0.5) * (kind === 'treasure' ? 1 : 0.55 + 0.18 * sh.cells.length);
     let keyed = false;
-    for (let i = 0; i < packs; i++) {
-      const x0 = 520 + i * (w.W - 700) / packs, x1 = x0 + (w.W - 700) / packs - 60;
-      if (enemyPack(w, run, Math.max(2, Math.round(total / packs * rrange(0.8, 1.25))), x0, Math.max(x0 + 40, x1), kind === 'treasure' ? 0 : 0.18)) keyed = true;
+    for (const cell of homes) {
+      if (enemyPack(w, run, Math.max(2, Math.round(total / homes.length * rrange(0.8, 1.25))), cell, kind === 'treasure' ? 0 : 0.18)) keyed = true;
     }
     if (kind === 'elite') {
-      const p = placeFree(w, 40, w.W * 0.55, w.W - 220);
+      const p = inCell(w, far, 40);
       const u = spawn(w, 'skeleton', p.x, p.y, { mult: w.mult * 1.3, scale: 1.25, hpMul: 2.2 }); u.facing = Math.PI; u.elite = true; u.hasKey = true; keyed = true;
     }
-    if (keyed && kind !== 'treasure') { const p = placeFree(w, 24, w.W * 0.45, w.W - 200); w.pickups.push({ type: 'chest', x: p.x, y: p.y, open: false }); }
+    if (keyed && kind !== 'treasure') { const p = inCell(w, pick(homes), 24); w.pickups.push({ type: 'chest', x: p.x, y: p.y, open: false }); }
   }
-  // doors ahead: one per room the tree leads to
-  const ahead = kind === 'boss' ? [] : nextNodes(run.map);
-  w.doors = ahead.map((n, j) => ({ y: H * (j + 1) / (ahead.length + 1), kind: n.kind, chosen: false }));
   w.on.kill = (u) => onKill(run, u);
   w.on.coin = (p) => { run.coins += p.v; };
   w.on.key = () => { run.keys++; };
@@ -199,6 +272,7 @@ export function update(run, dt) {
     if (run.kills !== run.lastKills) { run.lastKills = run.kills; run.quietT = 0; } else run.quietT = (run.quietT || 0) + dt;
     if (run.quietT > 25) for (const e of enemies) e.aggro = true;
   }
+  if (run.phase === 'fight') nextWaypoint(w);
   if (run.phase === 'fight' && enemies.length === 0) {
     w.cleared = true; run.phase = 'loot'; run.t = 0;
     for (const h of heroesAlive(run)) h.target = null;
@@ -214,17 +288,36 @@ export function update(run, dt) {
       run.exitT = 0;
     }
     const door = w.doors[run.doorK];
-    hs.forEach((h, i) => { h.forcedGoal = { x: w.W - 24, y: clamp(door.y + (i - 1) * 40, 40, H - 40) }; h.target = null; });
+    hs.forEach((h, i) => { h.forcedGoal = { x: w.W - 24, y: clamp(door.y + (i - 1) * 40, 40, w.H - 40) }; h.target = null; });
     run.exitT += dt;
     if (hs.every((h) => h.x > w.W - 80) || run.exitT > 12) { finishRoomHp(run); run.phase = 'transition'; run.fadeOut = 0; }
   }
 }
 
-// After the fight: pick up coins, then open the chest, drink from the fountain, take one of three things.
+// Where the party heads when nothing is in sight: the nearest chunk it hasn't walked through yet.
+function nextWaypoint(w) {
+  const hs = w.units.filter((u) => u.team === 'hero' && alive(u)); if (!hs.length) return;
+  let cx = 0, cy = 0; for (const h of hs) { cx += h.x; cy += h.y; } cx /= hs.length; cy /= hs.length;
+  w.toVisit = w.toVisit.filter((p) => dist(p.x, p.y, cx, cy) > 170 && !hs.some((h) => dist(p.x, p.y, h.x, h.y) < 90));
+  const open = w.toVisit.filter((p) => !p.exit), list = open.length ? open : w.toVisit;
+  let best = null, bd = Infinity; for (const p of list) { const d = dist(p.x, p.y, cx, cy); if (d < bd) { bd = d; best = p; } }
+  w.wp = best;
+}
+
+// After the fight: walk over the coins (they fade), then open the chest, drink from the fountain, take one of three things.
 function doTasks(run, dt) {
   const w = run.world;
   const loose = w.pickups.filter((p) => p.type === 'coin' || p.type === 'key');
-  if (loose.length && run.t < 3) return false;
+  if (loose.length && run.t < 14) {
+    for (const h of heroesAlive(run)) {
+      let best = null, bd = Infinity; for (const p of loose) { const d = dist(p.x, p.y, h.x, h.y); if (d < bd) { bd = d; best = p; } }
+      h.forcedGoal = { x: best.x, y: best.y, coin: true };
+    }
+    return false;
+  }
+  for (const p of loose) if (p.type === 'key') { run.keys++; p.got = true; } // a key out of reach still counts
+  w.pickups = w.pickups.filter((p) => !p.got);
+  for (const h of heroesAlive(run)) if (h.forcedGoal && h.forcedGoal.coin) h.forcedGoal = null;
   if (!run.task) {
     const chest = w.pickups.find((p) => p.type === 'chest' && !p.open && (p.free || run.keys > 0));
     const fountain = w.pillars.find((p) => p.fountain && !p.used);
