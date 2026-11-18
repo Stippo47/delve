@@ -1,6 +1,7 @@
 // The combat simulation: AI (weighted move modes + context steering), physics, combat, statuses, hazards.
 import { TAU, clamp, dist, dist2, angleTo, wrapAngle, angleDiff, rand, rrange, rint, chance, softmaxPick } from './util.js';
 import { DEFS, levelHp, levelDmg } from './units.js';
+import { lineClear, rayToRect, circleRect, findPath } from './path.js';
 
 let NEXT_ID = 1;
 const DIRS = 16;
@@ -9,7 +10,7 @@ for (let i = 0; i < DIRS; i++) { DIR_X.push(Math.cos(i / DIRS * TAU)); DIR_Y.pus
 
 export function makeWorld(W, H) {
   return {
-    W, H, time: 0, units: [], projectiles: [], particles: [], texts: [], hazards: [], pickups: [], pillars: [],
+    W, H, time: 0, units: [], projectiles: [], particles: [], texts: [], hazards: [], pickups: [], pillars: [], walls: [], grid: null,
     telegraphs: [], cleared: false, doorIn: { x: 0, y: H / 2 }, doorOut: { x: W, y: H / 2 },
     on: {}, shake: 0, hitstop: 0, corpses: [],
   };
@@ -34,7 +35,7 @@ export function spawn(w, kind, x, y, opts = {}) {
     flashT: 0, invulnT: 0, act: null, dead: false, downed: false,
     trinket: opts.trinket || null, lastBreathUsed: false, hasKey: !!opts.hasKey,
     strafeSign: chance(0.5) ? 1 : -1, wanderA: rand() * TAU, hazardT: 0, forcedGoal: null,
-    gen: opts.gen || 0, bob: rand() * TAU, lastAttackT: -9,
+    gen: opts.gen || 0, bob: rand() * TAU, lastAttackT: -9, aggro: hero, potions: opts.potions || 0, path: null, pathT: 0, pathGoal: null,
     mvA: hero ? 0 : Math.PI, spd: 0, sdx: 0, sdy: 0, lungeT: 0, recoilT: 0, hitT: 0, hitA: 0, tauntBy: null, tauntT: 0,
   };
   w.units.push(u);
@@ -55,6 +56,7 @@ const speedOf = (u) => {
 
 // ---------------------------------------------------------------- line of sight
 function blocked(w, ax, ay, bx, by) {
+  if (!lineClear(w, ax, ay, bx, by, 2)) return true;
   for (const p of w.pillars) {
     const dx = bx - ax, dy = by - ay; const L2 = dx * dx + dy * dy || 1;
     let t = ((p.x - ax) * dx + (p.y - ay) * dy) / L2; t = clamp(t, 0, 1);
@@ -64,8 +66,19 @@ function blocked(w, ax, ay, bx, by) {
 }
 
 // ---------------------------------------------------------------- targeting
+const SIGHT = 520, AGGRO = 400;
+function wake(w, u) {
+  if (u.aggro) return;
+  u.aggro = true;
+  for (const o of w.units) if (o.team === u.team && !o.aggro && alive(o) && dist(o.x, o.y, u.x, u.y) < 240) { o.aggro = true; }
+}
 function chooseTarget(w, u) {
-  const opp = opponents(w, u);
+  if (u.team === 'enemy' && !u.aggro) {
+    for (const h of opponents(w, u)) if (dist(u.x, u.y, h.x, h.y) < AGGRO && !blocked(w, u.x, u.y, h.x, h.y)) { wake(w, u); break; }
+    if (!u.aggro) { u.target = null; return; }
+  }
+  let opp = opponents(w, u);
+  if (u.team === 'hero') opp = opp.filter((o) => o.aggro || dist(u.x, u.y, o.x, o.y) < SIGHT);
   if (!opp.length) { u.target = null; return; }
   const k = u.kind;
   let best = null, bestS = -Infinity;
@@ -197,6 +210,10 @@ function steer(w, u, gx, gy, opts = {}) {
     }
   };
   for (const p of w.pillars) avoidCircle(p.x, p.y, p.r, 1, 70);
+  for (const r of w.walls) {
+    if (u.x < r.x - look - R || u.x > r.x + r.w + look + R || u.y < r.y - look - R || u.y > r.y + r.h + look + R) continue;
+    for (let i = 0; i < DIRS; i++) { const tt = rayToRect(u.x, u.y, DIR_X[i], DIR_Y[i], r, R); if (tt < look) danger[i] = Math.max(danger[i], 1 - tt / look); }
+  }
   const fear = u.team === 'hero' ? 0.9 : 0.45;
   for (const h of w.hazards) if (h.type !== 'oil' || u.team === 'hero') avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' ? 0.35 : fear, 40);
   for (const o of w.units) {
@@ -220,12 +237,36 @@ function steer(w, u, gx, gy, opts = {}) {
   return [x / n, y / n];
 }
 
+// Head for (tx,ty): straight there if there's a clear line, else along an A* route round the walls.
+function goalVec(w, u, tx, ty) {
+  if (!w.walls.length || lineClear(w, u.x, u.y, tx, ty, u.r * 0.9)) { u.path = null; return [tx - u.x, ty - u.y]; }
+  u.pathT -= 1 / 60;
+  const moved = !u.pathGoal || Math.hypot(u.pathGoal.x - tx, u.pathGoal.y - ty) > 60;
+  if (!u.path || u.pathT <= 0 || moved) { u.path = findPath(w, u.x, u.y, tx, ty); u.pathT = 0.6; u.pathGoal = { x: tx, y: ty }; }
+  if (!u.path || !u.path.length) return [tx - u.x, ty - u.y];
+  // the furthest route point we can see
+  let k = 0;
+  for (let i = u.path.length - 1; i >= 0; i--) if (lineClear(w, u.x, u.y, u.path[i].x, u.path[i].y, u.r * 0.9)) { k = i; break; }
+  if (k > 0) u.path.splice(0, k);
+  const p = u.path[0];
+  if (Math.hypot(p.x - u.x, p.y - u.y) < 16 && u.path.length > 1) u.path.shift();
+  return [u.path[0].x - u.x, u.path[0].y - u.y];
+}
+
 function movement(w, u, dt) {
   let gx = 0, gy = 0, side = 0, mult = 1;
   const t = u.target;
   if (u.forcedGoal) {
-    gx = u.forcedGoal.x - u.x; gy = u.forcedGoal.y - u.y;
-    if (Math.hypot(gx, gy) < 10) { gx = gy = 0; }
+    [gx, gy] = goalVec(w, u, u.forcedGoal.x, u.forcedGoal.y);
+    if (Math.hypot(u.forcedGoal.x - u.x, u.forcedGoal.y - u.y) < 10) { gx = gy = 0; }
+    if (u.forcedGoal.slow) mult = u.forcedGoal.slow;
+  } else if (!t && u.team === 'hero' && !w.cleared) {
+    // nothing in sight: press on through the room together, the slowest setting the pace
+    const al = allies(w, u);
+    let cx = u.x; for (const a of al) cx += a.x; cx /= al.length + 1;
+    const ahead = u.x - cx;
+    [gx, gy] = goalVec(w, u, Math.min(w.W - 70, u.x + 220), clamp(u.y + (w.H / 2 - u.y) * 0.3, 70, w.H - 70));
+    mult = ahead > 90 ? 0.15 : ahead < -60 ? 0.85 : 0.6;
   } else if (!t || u.mode === 'wander') {
     u.wanderA += rrange(-1.2, 1.2) * dt;
     gx = Math.cos(u.wanderA); gy = Math.sin(u.wanderA); mult = 0.35;
@@ -239,7 +280,7 @@ function movement(w, u, dt) {
     const tx = (t.x - u.x) / (d || 1), ty = (t.y - u.y) / (d || 1);
     switch (u.mode) {
       case 'approach': {
-        gx = tx; gy = ty;
+        [gx, gy] = goalVec(w, u, t.x, t.y); { const l = Math.hypot(gx, gy) || 1; gx /= l; gy /= l; }
         const gap = d - u.r - t.r;
         if (u.kind === 'rat') {
           // rats dart side to side on the way in, then circle in close until their bite is ready
@@ -264,7 +305,7 @@ function movement(w, u, dt) {
       }
       case 'flank': {
         const bx = t.x - Math.cos(t.facing) * (t.r + u.r + 8), by = t.y - Math.sin(t.facing) * (t.r + u.r + 8);
-        gx = bx - u.x; gy = by - u.y;
+        [gx, gy] = goalVec(w, u, bx, by);
         if (Math.hypot(gx, gy) < 8) { gx = tx; gy = ty; mult = 0.3; }
         side = u.strafeSign; break;
       }
@@ -280,6 +321,11 @@ function movement(w, u, dt) {
         const gl = Math.hypot(gx, gy) || 1; gx = gx / gl + (kn.x - u.x) / kd * k; gy = gy / gl + (kn.y - u.y) / kd * k; }
     }
   }
+  const wants = Math.hypot(gx, gy) > 0.05 && mult > 0.2;
+  const mv = Math.hypot(u.x - (u.lastX ?? u.x), u.y - (u.lastY ?? u.y)); u.lastX = u.x; u.lastY = u.y;
+  u.stuckT = wants && mv < 12 * dt ? (u.stuckT || 0) + dt : Math.max(0, (u.stuckT || 0) - dt * 2);
+  if (u.stuckT > 1.2) { u.unstickT = 0.7; u.unstickA = rand() * TAU; u.stuckT = 0; u.path = null; }
+  if (u.unstickT > 0) { u.unstickT -= dt; gx = Math.cos(u.unstickA); gy = Math.sin(u.unstickA); mult = Math.max(mult, 0.7); }
   const [sx, sy] = steer(w, u, gx, gy, { side });
   drive(u, sx, sy, speedOf(u) * mult, dt);
 }
@@ -347,6 +393,8 @@ function sparks(w, x, y, a, n, color = '#FFFFFF', big = 1) {
 
 export function hurt(w, u, amount, src, o = {}) {
   if (!alive(u) || u.invulnT > 0 || amount <= 0) return 0;
+  if (u.team === 'enemy') wake(w, u);
+  if (u.act && u.act.type === 'drink' && !o.dot) u.act = null;
   if (!o.dot && !o.noDodge && u.def.dodge && chance(u.def.dodge)) { textU(w, u.x, u.y, u.r, 'dodge', '#CFE8FF', 0.8); return 0; }
   let amt = amount;
   if (!o.dot && u.def.shield && src) {
@@ -623,6 +671,9 @@ function runAction(w, u, dt) {
       }
     }
     if (a.t <= 0) u.act = null;
+  } else if (a.type === 'drink') {
+    u.spd *= Math.exp(-dt * 6); u.dvx = Math.cos(u.mvA) * u.spd; u.dvy = Math.sin(u.mvA) * u.spd;
+    if (a.t <= 0) { u.act = null; u.potions--; u.hp = Math.min(u.maxHp, u.hp + u.maxHp * 0.45); puff(w, u.x, u.y, '#E0604B', 10, 70, 5, 0.6); emit(w, 'drank', u); }
   } else if (a.type === 'dash') {
     const sp = u.def.speed * 3.4;
     u.dvx = Math.cos(a.a) * sp; u.dvy = Math.sin(a.a) * sp; u.vx = u.dvx; u.vy = u.dvy; u.mvA = a.a; u.spd = sp;
@@ -680,6 +731,12 @@ function physics(w, dt) {
     if (u.x > w.W - u.r) { u.x = w.W - u.r; if (u.kx > 0) { wallHit(w, u, ks); u.kx *= -0.25; } }
     if (u.y < u.r) { u.y = u.r; if (u.ky < 0) { wallHit(w, u, ks); u.ky *= -0.25; } }
     if (u.y > w.H - u.r) { u.y = w.H - u.r; if (u.ky > 0) { wallHit(w, u, ks); u.ky *= -0.25; } }
+    for (const r of w.walls) {
+      const c = circleRect(u.x, u.y, u.r, r); if (!c) continue;
+      u.x += c.nx * c.over; u.y += c.ny * c.over;
+      const into = -(u.kx * c.nx + u.ky * c.ny);
+      if (into > 0) { wallHit(w, u, into); u.kx += c.nx * into * 1.25; u.ky += c.ny * into * 1.25; }
+    }
     for (const p of w.pillars) {
       const d = dist(u.x, u.y, p.x, p.y), m = u.r + p.r;
       if (d < m && d > 0) {
@@ -717,6 +774,7 @@ function projectiles(w, dt) {
     p.x += p.vx * dt; p.y += p.vy * dt;
     if (p.x < 0 || p.y < 0 || p.x > w.W || p.y > w.H) p.life = 0;
     for (const pl of w.pillars) if (dist(p.x, p.y, pl.x, pl.y) < pl.r) p.life = 0;
+    for (const r of w.walls) if (p.x > r.x && p.x < r.x + r.w && p.y > r.y && p.y < r.y + r.h) p.life = 0;
     if (p.kind === 'fireArrow') for (const h of w.hazards) if ((h.type === 'oil' || h.type === 'gas') && dist(p.x, p.y, h.x, h.y) < h.r) { igniteAround(w, p.x, p.y, 4); p.life = Math.min(p.life, 0.02); }
     if (p.life <= 0) continue;
     for (const u of w.units) {
@@ -801,6 +859,10 @@ export function step(w, dt) {
           if (chance(ch)) useAbility(w, u);
         }
       }
+    }
+    if (!u.act && u.potions > 0 && hpRatio(u) < 0.35) {
+      let near = Infinity; for (const o of opponents(w, u)) near = Math.min(near, dist(u.x, u.y, o.x, o.y) - o.r);
+      if (near > 150 && chance(dt * 3)) { u.act = { type: 'drink', t: 1, max: 1 }; }
     }
     if (!u.act) tryAttack(w, u);
   }

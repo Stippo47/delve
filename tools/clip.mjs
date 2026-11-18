@@ -1,6 +1,6 @@
 // Record a short clip of a run, frame by frame, so it plays smoothly whatever the machine's speed.
 // Needs the dev server on :8811 and `npm i --no-save playwright-core` in tools/. Drives the installed Edge.
-//   node tools/clip.mjs <out.mp4> [--seed N] [--depth D] [--secs S] [--skip S] [--w 390 --h 844] [--fps 30]
+//   node tools/clip.mjs <out.mp4> [--seed N] [--depth D] [--secs S] [--skip S] [--speed 2] [--w 390 --h 844] [--fps 30]
 import { chromium } from 'playwright-core';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -10,7 +10,7 @@ const args = process.argv.slice(2);
 const out = path.resolve(args[0] || 'clip.mp4');
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 const seed = +opt('seed', 3), depth = +opt('depth', 1), secs = +opt('secs', 8), skip = +opt('skip', 0);
-const W = +opt('w', 390), H = +opt('h', 844), fps = +opt('fps', 30);
+const W = +opt('w', 390), H = +opt('h', 844), fps = +opt('fps', 30), speed = +opt('speed', 1);
 
 const frames = fs.mkdtempSync(path.join(path.dirname(out), '.frames-'));
 // Edge won't take Playwright's pipe here, so start it ourselves with a debugging port and connect.
@@ -32,7 +32,7 @@ await page.evaluate((d) => { GAME.record(true); GAME.startRun(d); }, depth);
 if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) GAME.recFrame(1 / 30); }, skip);
 const n = Math.round(secs * fps);
 for (let i = 0; i < n; i++) {
-  await page.evaluate((dt) => GAME.recFrame(dt), 1 / fps);
+  await page.evaluate((dt) => GAME.recFrame(dt), speed / fps);
   await page.screenshot({ path: path.join(frames, `f${String(i).padStart(4, '0')}.png`) });
 }
 await browser.close(); edge.kill(); try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}

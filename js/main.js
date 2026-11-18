@@ -1,6 +1,6 @@
 import { loadSprites } from './sprites.js';
 import { layout, draw, view, snapCamera } from './render.js';
-import { newRun, update, W, H, FLOORS, ROOMS, rollTrinket } from './dungeon.js';
+import { newRun, update, FLOORS, LAYERS, rollTrinket } from './dungeon.js';
 import { loadSave, writeSave } from './save.js';
 import { HERO_ORDER, DEFS, TRINKETS, xpToNext, levelHp } from './units.js';
 import { setSeed } from './util.js';
@@ -109,7 +109,8 @@ function updateHud() {
     el.querySelector('.bar.xp > i').style.width = Math.round(100 * sv.xp / xpToNext(sv.level)) + '%';
     el.querySelector('.lv').textContent = 'Lv ' + sv.level + (down ? ' · down' : '');
   }
-  $('where').textContent = `Depth ${run.depth} · Floor ${run.floor}/${FLOORS} · Room ${run.room}/${ROOMS}`;
+  $('where').textContent = `Depth ${run.depth} · Floor ${run.floor}/${FLOORS}`;
+  drawMap();
   $('hCoins').textContent = run.coins; $('hKeys').textContent = run.keys; $('hBag').textContent = run.satchel.length;
   $('speedBtn').textContent = save.speed + '×';
   const boss = w.units.find((u) => u.def.boss && !u.dead);
@@ -141,7 +142,7 @@ function endRun(result) {
     save.coins += r.coins;
     lines.push(`Kept ${r.coins} coins`, r.satchel.length ? `Left behind: ${r.satchel.map((i) => TRINKETS[i.id].name).join(', ')}` : 'No loot was left behind');
   }
-  lines.push(`Reached floor ${r.floor}, room ${r.room} · ${r.kills} kills`);
+  lines.push(`Reached floor ${r.floor}, room ${r.map.L + 1} of ${LAYERS + 1} · ${r.kills} kills`);
   lines.push('Levels: ' + HERO_ORDER.map((k) => `${DEFS[k].name} ${save.heroes[k].level}`).join(' · '));
   writeSave(save);
   $('resultCard').innerHTML = `<h1>${title}</h1>${lines.map((l) => `<div class="muted" style="font-size:14px">${l}</div>`).join('')}<button class="btn big" id="toCamp">Back to camp</button>`;
@@ -149,6 +150,42 @@ function endRun(result) {
   window.GAME.lastResult = result;
   show('result');
 }
+
+// ---------------------------------------------------------------- the floor's map, in the HUD
+// Layers run left to right; the rooms you passed are filled, the one you're in is ringed, doors are lines.
+const MAP_COL = { fight: '#C8553D', hazard: '#E0884B', elite: '#8E3B5B', treasure: '#F2B53A', fountain: '#5DB7E0', decision: '#9B7BD6', boss: '#2B2230' };
+function drawMap() {
+  const c = $('mapCanvas'); if (!c || !run) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 3), cw = c.clientWidth, ch = c.clientHeight;
+  if (c.width !== Math.round(cw * dpr)) { c.width = Math.round(cw * dpr); c.height = Math.round(ch * dpr); }
+  const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, cw, ch);
+  const m = run.map, nL = m.layers.length;
+  const X = (L) => 8 + (cw - 16) * L / (nL - 1), Y = (n) => 4 + (ch - 8) * n.pos;
+  const visited = new Set(m.path.map(([L, i]) => L + ':' + i));
+  g.lineWidth = 1.5;
+  m.layers.forEach((row, L) => row.forEach((n) => n.next.forEach((j) => {
+    const b = m.layers[L + 1][j]; const on = visited.has(L + ':' + n.i) && visited.has(L + 1 + ':' + j);
+    g.strokeStyle = on ? 'rgba(237,230,216,0.9)' : 'rgba(237,230,216,0.22)'; g.beginPath(); g.moveTo(X(L), Y(n)); g.lineTo(X(L + 1), Y(b)); g.stroke();
+  })));
+  m.layers.forEach((row, L) => row.forEach((n) => {
+    const here = L === m.L && n.i === m.i, been = visited.has(L + ':' + n.i);
+    g.fillStyle = MAP_COL[n.kind] || '#999'; g.globalAlpha = been || L > m.L ? 1 : 0.3;
+    g.beginPath(); g.arc(X(L), Y(n), n.kind === 'boss' ? 5 : 3.5, 0, Math.PI * 2); g.fill();
+    if (here) { g.globalAlpha = 1; g.strokeStyle = '#FFE14D'; g.lineWidth = 2; g.beginPath(); g.arc(X(L), Y(n), 7, 0, Math.PI * 2); g.stroke(); g.lineWidth = 1.5; }
+  }));
+  g.globalAlpha = 1;
+}
+
+// Drag on the room to look around; the camera eases back to the party a couple of seconds after you let go.
+let drag = null;
+canvas.addEventListener('pointerdown', (e) => { if (state === 'run') drag = { x: e.clientX, y: e.clientY }; });
+window.addEventListener('pointermove', (e) => {
+  if (!drag) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag = { x: e.clientX, y: e.clientY };
+  const along = view.rot ? dy : -dx; // screen movement along the room's long axis, in room units below
+  view.manual = (view.manual ?? view.camX) + along / view.scale; view.manualT = 2.5;
+});
+window.addEventListener('pointerup', () => { drag = null; });
 
 // ---------------------------------------------------------------- loop
 const STEP = 1 / 60;

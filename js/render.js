@@ -20,7 +20,7 @@ export function layout(canvas, w, topPad, bottomPad = 10, sidePad = 10) {
   const availW = cw - sidePad * 2, availH = ch - topPad - bottomPad;
   // fit the room's short side across the screen's short side; the long side scrolls if it has to
   const across = view.rot ? availW : availH, along = view.rot ? availH : availW;
-  const s = Math.min((view.rot ? cw : across) / (w.H + edge * 2), along / (w.W * 0.55));
+  const s = view.rot ? cw / (w.H + edge * 2) : Math.min(across / (w.H + edge * 2), along / (w.W * 0.55));
   view.scale = s;
   // camera along the long axis: follow the party, never past the walls
   const heroes = w.units.filter((u) => u.team === 'hero' && !u.downed);
@@ -29,14 +29,19 @@ export function layout(canvas, w, topPad, bottomPad = 10, sidePad = 10) {
   const half = along / (2 * s);
   const lo = half - pad, hi = w.W - half + pad;
   target = lo > hi ? w.W / 2 : clamp(target, lo, hi);
-  view.camX = view.camX == null || view.snap ? target : view.camX + (target - view.camX) * 0.08;
+  // the player's drag wins for a while, then the camera eases back to the party
+  const now = performance.now(), fdt = Math.min(0.1, (now - (view.lastT || now)) / 1000); view.lastT = now;
+  if (view.manualT > 0) { view.manualT -= fdt; view.manual = lo > hi ? w.W / 2 : clamp(view.manual, lo, hi); target = view.manual; }
+  else view.manual = null;
+  const ease = view.manualT > 0 ? 0.35 : 0.06;
+  view.camX = view.camX == null || view.snap ? target : view.camX + (target - view.camX) * ease;
   view.snap = false;
   const midAcross = view.rot ? cw / 2 : topPad + availH / 2;
   const midAlong = view.rot ? topPad + availH / 2 : sidePad + availW / 2;
   if (view.rot) view.m = [0, -s, s, 0, midAcross - (w.H / 2) * s, midAlong + view.camX * s];  // world +x = screen up
   else view.m = [s, 0, 0, s, midAlong - view.camX * s, midAcross - (w.H / 2) * s];
 }
-export function snapCamera() { view.snap = true; }
+export function snapCamera() { view.snap = true; view.manual = null; view.manualT = 0; }
 
 // Draw fn in a frame centred on (x,y) that stays upright on screen (texts, bars, shadows).
 function upright(ctx, x, y, fn) { ctx.save(); ctx.translate(x, y); if (view.rot) ctx.rotate(Math.PI / 2); fn(); ctx.restore(); }
@@ -88,6 +93,7 @@ export function draw(ctx, w) {
   const s = view.scale;
   ctx.drawImage(fl, -floorCache.pad, -floorCache.pad, fl.width / (s * d), fl.height / (s * d));
   drawDoors(ctx, w);
+  for (const r of w.walls) drawWall(ctx, r);
   for (const h of w.hazards) drawHazard(ctx, h, w.time);
   for (const p of w.pickups) drawPickup(ctx, p, w.time);
   // shadows, cast towards the bottom of the screen
@@ -108,14 +114,39 @@ export function draw(ctx, w) {
 }
 const screenDepth = (u) => (view.rot ? -u.x : u.y);
 
+// The way in (behind the party) and the doors ahead, each marked with what kind of room it leads to.
+const DOOR_COL = { fight: '#C8553D', hazard: '#E0884B', elite: '#8E3B5B', treasure: '#F2B53A', fountain: '#5DB7E0', decision: '#9B7BD6', boss: '#2B2230' };
 function drawDoors(ctx, w) {
-  const dh = 110;
-  ctx.fillStyle = '#3A3036';
-  ctx.fillRect(-22, w.H / 2 - dh / 2, 18, dh);
-  ctx.fillStyle = w.cleared ? '#F4E3B5' : '#3A3036';
-  ctx.fillRect(w.W + 4, w.H / 2 - dh / 2, 18, dh);
-  if (!w.cleared) { ctx.fillStyle = '#8F97A3'; for (let i = 0; i < 4; i++) ctx.fillRect(w.W + 6 + (i % 2) * 6, w.H / 2 - dh / 2 + 10 + i * 24, 6, 16); }
-  else { ctx.fillStyle = 'rgba(255,225,140,0.25)'; ctx.beginPath(); ctx.ellipse(w.W - 10, w.H / 2, 40, dh / 2 + 10, 0, 0, TAU); ctx.fill(); }
+  const dh = 96;
+  ctx.fillStyle = '#3A3036'; ctx.fillRect(-22, w.H / 2 - dh / 2, 18, dh);
+  for (const d of w.doors || []) {
+    const open = w.cleared;
+    ctx.fillStyle = open ? (d.chosen ? '#F4E3B5' : '#5A4D52') : '#3A3036';
+    ctx.fillRect(w.W + 4, d.y - dh / 2, 18, dh);
+    if (!open) { ctx.fillStyle = '#8F97A3'; for (let i = 0; i < 3; i++) ctx.fillRect(w.W + 8, d.y - dh / 2 + 12 + i * 28, 10, 18); }
+    if (d.chosen) { ctx.fillStyle = 'rgba(255,225,140,0.3)'; ctx.beginPath(); ctx.ellipse(w.W - 10, d.y, 40, dh / 2 + 10, 0, 0, TAU); ctx.fill(); }
+    // the kind of room, as a marked plate on the floor in front of the door
+    upright(ctx, w.W - 36, d.y, () => roomIcon(ctx, d.kind, 11));
+  }
+}
+function roomIcon(ctx, kind, r) {
+  inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, r, 0, TAU); }, DOOR_COL[kind] || '#999');
+  ctx.fillStyle = '#FFF4DC'; ctx.strokeStyle = '#FFF4DC'; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
+  const k = r / 11;
+  ctx.beginPath();
+  if (kind === 'fight' || kind === 'elite') { ctx.moveTo(-5 * k, -5 * k); ctx.lineTo(5 * k, 5 * k); ctx.moveTo(5 * k, -5 * k); ctx.lineTo(-5 * k, 5 * k); ctx.stroke(); if (kind === 'elite') { ctx.beginPath(); ctx.arc(0, -8 * k, 2 * k, 0, TAU); ctx.fill(); } }
+  else if (kind === 'hazard') { ctx.moveTo(0, -6 * k); ctx.lineTo(5.5 * k, 4.5 * k); ctx.lineTo(-5.5 * k, 4.5 * k); ctx.closePath(); ctx.stroke(); }
+  else if (kind === 'treasure') { ctx.rect(-5.5 * k, -3.5 * k, 11 * k, 8 * k); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-5.5 * k, 0); ctx.lineTo(5.5 * k, 0); ctx.stroke(); }
+  else if (kind === 'fountain') { ctx.moveTo(0, -6 * k); ctx.bezierCurveTo(5 * k, 0, 4 * k, 5 * k, 0, 5 * k); ctx.bezierCurveTo(-4 * k, 5 * k, -5 * k, 0, 0, -6 * k); ctx.fill(); }
+  else if (kind === 'decision') { for (const x of [-4.5, 0, 4.5]) { ctx.moveTo(x * k + 1.6 * k, 0); ctx.arc(x * k, 0, 1.6 * k, 0, TAU); } ctx.fill(); }
+  else if (kind === 'boss') { ctx.moveTo(-6 * k, 4 * k); ctx.lineTo(-6 * k, -4 * k); ctx.lineTo(-3 * k, 0); ctx.lineTo(0, -5 * k); ctx.lineTo(3 * k, 0); ctx.lineTo(6 * k, -4 * k); ctx.lineTo(6 * k, 4 * k); ctx.closePath(); ctx.fill(); }
+}
+
+function drawWall(ctx, r) {
+  // stone blocks seen from above: outlined, lit from the left, a lighter top face
+  const g = ctx.createLinearGradient(r.x, r.y, r.x + r.w, r.y + r.h); g.addColorStop(0, '#8C7E70'); g.addColorStop(1, '#6E6157');
+  inked(ctx, () => roundRect(ctx, r.x, r.y, r.w, r.h, 6), g);
+  ctx.fillStyle = 'rgba(255,255,255,0.12)'; roundRect(ctx, r.x + 5, r.y + 5, Math.max(0, r.w - 10), Math.max(0, r.h - 10), 4); ctx.fill();
 }
 
 function drawHazard(ctx, h, t) {
@@ -154,6 +185,12 @@ function drawHazard(ctx, h, t) {
 }
 
 function drawPillar(ctx, p) {
+  if (p.fountain) {
+    inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, '#A99C8B');
+    ctx.fillStyle = p.used ? '#7FA9BC' : '#5DB7E0'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 0.72, 0, TAU); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.beginPath(); ctx.ellipse(p.x - p.r * 0.25, p.y - p.r * 0.25, p.r * 0.3, p.r * 0.12, -0.6, 0, TAU); ctx.fill();
+    return;
+  }
   const g = ctx.createLinearGradient(p.x - p.r, p.y - p.r, p.x + p.r, p.y + p.r);
   g.addColorStop(0, '#B8AC9A'); g.addColorStop(1, '#857A6C');
   inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, g);
@@ -192,6 +229,16 @@ function drawPickup(ctx, p, t) {
     upright(ctx, p.x, p.y, () => {
       ctx.translate(0, b);
       inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -6, 6, 0, TAU); roundRect(ctx, -2, -2, 4, 16, 1.5); roundRect(ctx, 0, 9, 7, 3.5, 1); }, '#FFD45A');
+    });
+  } else if (p.type === 'pedestal') {
+    upright(ctx, p.x, p.y, () => {
+      inked(ctx, () => roundRect(ctx, -18, -14, 36, 28, 6), '#A99C8B');
+      const col = { potion: '#E0604B', xp: '#FFE14D', coins: '#F2B53A', trinket: '#C9A7FF' }[p.reward];
+      const bob = Math.sin(t * 3 + p.y) * 2;
+      if (p.reward === 'potion') inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -4 + bob, 7, 0, TAU); roundRect(ctx, -2.5, -15 + bob, 5, 6, 1.5); }, col);
+      else if (p.reward === 'coins') { for (const [x, y] of [[-5, 0], [5, 0], [0, -6]]) inked(ctx, () => { ctx.beginPath(); ctx.arc(x, y - 3 + bob, 5, 0, TAU); }, col); }
+      else if (p.reward === 'xp') inked(ctx, () => { ctx.beginPath(); for (let i = 0; i < 10; i++) { const a = i / 10 * TAU - Math.PI / 2, rr = i % 2 ? 4 : 9; ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr - 3 + bob); } ctx.closePath(); }, col);
+      else inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -12 + bob); ctx.lineTo(7, -3 + bob); ctx.lineTo(0, 6 + bob); ctx.lineTo(-7, -3 + bob); ctx.closePath(); }, col);
     });
   } else if (p.type === 'chest') {
     upright(ctx, p.x, p.y, () => {
