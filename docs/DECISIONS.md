@@ -5,6 +5,46 @@ decisions from before Riffle. Where they conflict, this file wins.
 
 ---
 
+## Round 2 (Riffle, answered 2026-11-18)
+
+### Stage 1 report: good, with more to do (call it stage 1b)
+- **Portrait only** for the UI if supporting both doubles the work. (It does for camp: go portrait.)
+- **Room wider**, so it fills the sides of the phone.
+- **Animations: more.** Weapon swings, the bow drawing back, arms swinging while walking. **Hands and weapons are
+  separate parts, and the outline is added afterwards** over the whole figure (like an outline shader).
+  *This overrides HANDOFF's "one sprite rotated whole, no shifting components".* The art round brief now asks for parts.
+- **Rat tail**: still one part, but it springs and drags behind.
+- **Hit box a bit bigger still**: too much overlap.
+- **No health bars in the arena.** Heroes' HP is shown in the UI above everything. Only the boss gets an HP bar, also separate, in the UI.
+- Skeletons look **shrunk**.
+- **No damage numbers and no ability text. Show, don't tell.**
+- **No status meters** under units.
+- **Rats get a dash** (in the direction they're moving/facing).
+- Impact, outlines, arrows, rats, momentum, fire, brains: good.
+
+### The dungeon map (my Isaac-style map was off)
+- **A decision tree, always forward.** You can't go back. Rooms can have several exit doors. About **9 room layers
+  to the boss room**, as before. 3 floors per dungeon.
+- Rooms can be **several screens big**. The camera follows smoothly, and **the player can drag to override it**.
+- Room kinds as proposed (fight, treasure, fountain, decision room, boss, rare duck/mimic).
+
+### Progression loop: approved, with two changes
+- Leaving: **you have to finish the room first.**
+- **Trinkets found in a dungeon are not kept**; only bought ones are. (Found trinkets are for that run.)
+- "Levels live in a run": yes, but it "feels a bit off". Still open; revisit when building stage 3.
+
+### Status rules: approved, with additions
+- **Heroes have no elements at level 1.** A hero gets its element when its ability is unlocked.
+- Archer frost: a **skill-tree upgrade: a chance to load a frost arrow.**
+- Burn spread doesn't feed back: it stops once the receiver has 50% of the source's burn, and a unit with less burn
+  can't add to one with more.
+- Wet: **soaked units take very high knockback, freeze more easily, and wet removes poison.**
+
+### Order of work: approved
+1 feel (+1b), 2 the map, 3 progression and camp, 4 statuses. Art round 2 alongside.
+
+---
+
 ## Round 1 (Riffle, answered 2026-11-16/17)
 
 ### Game feel (from the "Delve is live" card, played on the phone)

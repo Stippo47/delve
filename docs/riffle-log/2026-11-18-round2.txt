@@ -1,0 +1,226 @@
+
+delve / art / art-board
+  candidates (Class art candidates): GO, picked: Archer (locked), Base body (approved), Knight · Paladin, Knight · Old Guard, Knight · Dame, Rogue · Twinfang, Rogue · Bandit, Rogue · Shade, Farmer · Granny Reaper, Barbarian · Wildmane, Barbarian · Bearskin
+      "Picked the ones that overall look good"
+      item knight-1 (Knight · Paladin): "Hand when holding shield should be hidden. Longer/bigger sword, angled inwards"
+      item knight-2 (Knight · Old Guard): "Sword short. Holding pose is weird. 
+Cape wider and straight on. Beard not meshing with balding hairline"
+      item knight-3 (Knight · Bastion): "Bad. I can’t tell what’s going on. Redo. 3 versions"
+      item knight-4 (Knight · Dame): "Good. 
+Fix cape to be straight. Hand on shield hidden. Golden crown or accent on head. Bigger cooler sword. 
+The hair shadow onto face isnt orange line the hair. I’m not talking about the gradient "
+      item skeleton-1 (Skeleton · Rattler): "Remove rib cage. Give eye sockets. Then make variants. Including one without a bottom jaw. 
+Try without the split down the middle"
+      item skeleton-2 (Skeleton · Gaper): "Not horrible but like why is there a hood shadow. Try no split. 
+Eye sockets. 
+Isnt the nose triangle the wrong way around? "
+      item skeleton-3 (Skeleton · Brute): "Similar edits as last 2. Remove the arm bones. "
+      item skeleton-4 (Skeleton · Hollow): "You get the idea."
+      item rogue-1 (Rogue · Twinfang): "Good. Cape centred and wider. "
+      item rogue-2 (Rogue · Cowl): "Boring "
+      item rogue-3 (Rogue · Bandit): "Mask over bottom half of face? Bigger sword. 
+Not bad. 
+Bandana on forehead letting hair peak through "
+      item rogue-4 (Rogue · Shade): "Almost good. Finding it hard to read depth. Cape or raised collar? (almost looks like Dracula raised collar thing which is good reference for later) Headband is off. 
+Purple hilt swords?"
+      item farmer-1 (Farmer · Haymaker): "Hat is off. Rake too. As well as how it’s being held. "
+      item farmer-2 (Farmer · Granny Reaper): "Not bad. Should hold it below body not ontop. Looks like it’s over the shoulder.
+Bigger and better hand positioning"
+      item farmer-3 (Farmer · Digger): "Bad overall. U can retry "
+      item farmer-4 (Farmer · Grandpa Sickle): "Can’t tell what’s on back. 
+Where is the forehead shadow coming from. 
+Beard doesn't look good. Nose line on beard? Doesnt mesh well with hair "
+      item barbarian-1 (Barbarian · Wildmane): "Sword position. Below body not above. Bigger sword. Otherwise pretty good"
+      item barbarian-2 (Barbarian · Bearskin): "Weapon position makes it hard to see but what I can see looks good. If that’s a spiked club it doesnt look right "
+      item barbarian-3 (Barbarian · Warhelm): "Hammer bad, positioning of hammer bad. 
+Helmet midline slightly off. Shoulder pads could maybe be improved. 
+Otherwise not bad. Can’t see beard well now so idk "
+      item barbarian-4 (Barbarian · Flail Berserker): "Good. Same weapon problems. 
+I don’t like the stripped shoulder design. 
+Som of the bangs wear the no hawk should be, peaks out "
+  DECK: done (1 of 1 answered)
+
+delve / brains / brains
+  enemy-habits (Enemy habits): GO
+      "Yes but not ur examples. Keep their brains pretty simple for now. Simple behaviours like rats rapidly changing direction while approaching. Circle in."
+  hazard-sense (Knowing about combos): GO
+  now (How the brains work): GOOD
+      part targets (Picking a target): GOOD, "Also weighing targets without someone already on them more"
+      part modes (Choosing how to move): GOOD
+      part steering (Steering): GOOD
+      part abilities (Abilities): GOOD
+      part paths (Pathfinding): DECENT
+  pathfinding (Pathfinding): GO
+      "U can do a*"
+  rogue (The rogue keeps dying): GO
+      "Brain. Weigh targets surrounded by more allies lower. 
+
+Entities should also actually take time to turn around. Not instant if it is that way rn"
+  teamwork (Party teamwork): GO, picked: Knight draws attention, Finish the kill, Knight protects
+      "Walking formation only slightly enforced. If an archer is closer to an enemy than a knight it will weigh the direction towards the knight more"
+  DECK: done (6 of 6 answered)
+
+delve / misc / misc
+  live (Delve is live): DECENT
+      "Many things are off.
+Make collider bigger. 
+No animations. 
+I Want to be able to play it vertically. Portrait. 
+I do not like the menu. No life to it. Ui is bad. 
+Movement is robotic. No momentum, no flow. Too rigid. 
+Dungeon is a bit too small. Make this base room like 25% larger. 
+Bad hit impact. 
+Mixed outline thickness for different things. 
+Arrows too small. 
+The rogue is strafing towards large groups. That’s why they die. 
+
+Rats are a bit too small. 
+
+I don’t like status effect visuals. 
+
+Fire puffed look bad."
+  DECK: done (1 of 1 answered)
+
+delve / progression / progression
+  coins (What coins buy): IDK
+      "Maybe upgrade base stats that increase per level, trinkets, and gems unlock new units."
+  dungeon-choice (Choosing a dungeon): GO
+  floor-exit (Leaving at a floor's end): GO
+      "You keep all gold you earn even when you lose. Hero’s that die or hurt might need a timer cooldown to recover (can use coins to speed it up) enter the dungeon with different hero’s or revive current ones if they die. 
+U can leave at any time. 
+U can enter a dungeon with a starter/mercenaries party (misc weak-mediocre units that you don’t get to keep if you win or lose, they take like 50% of gold earned)"
+  last-breath (Last Breath timing): IDK
+      "How many rooms per floor? How many floors per dungeon?"
+  now (How it works today): DECENT
+      part levels (Levels): no mark, "Idk about progression loop yet"
+      part coins (Coins): no mark, "Idk about progression loop yet"
+      part loot (Loot): GOOD
+      part trinkets (Trinkets): GOOD
+      part depth (Depth): DECENT, "Don’t show recommended level. 
+Each dungeon is a different theme "
+  roster (Party size): GO
+      "Party size base is 1. Spend gold or gems to increase size (cost grows rapidly) 
+No body gets free xp."
+  slots (A second trinket slot): GO
+      "In skill tree can open up more slots."
+  talents (Talent points): GO, picked: A small tree per hero, (your pick, nothing tapped)
+      "Skill tree. Some leaves are ability unlocks, and some are stat increases (can be bought multiple times. +5 damage, +15% damage against undead, +2 attack speed and KB when below 20 hp, etc). The branches should be relevant to each other. Makes sense how they are grouped. Maybe split 3/4 ways. Attack, survival, utility/support, (and maybe movement as the last one) very direction can have skills or stat increases."
+  Deck notes: "Some nodes in a skill tree have a level requirement. Xp only matters inside of a level. Gold upgrades skill tree. Gets reset when they leave dungeon. Some nodes that u can but have requirements like “rogue needs to have gotten to level 8 or higher in a dungeon to unlock” "
+  DECK: done (8 of 8 answered)
+
+delve / progression / progression-2
+  loop (The new loop): YES
+      part run-levels (Levels live in a run): YES, "But I really don’t know. It feels a bit off."
+      part gold (Gold is forever): YES
+      part tree (Skill trees): YES
+      part feats (Feats): YES
+      part party (Party slots): YES
+      part mercs (Mercenaries): YES
+      part recovery (Recovery): YES
+      part gems (Gems): YES
+      part leaving (Leaving): no mark, "Have to finish the room first. 
+Don’t get to keep trinkets found. Only ones bought."
+      part dungeons (Choosing a dungeon): YES
+  DECK: done (1 of 1 answered)
+
+delve / runs / round2-plan
+  map (The dungeon as a map): IDK
+      "Ok that was wrong of me. More like a decision tree. You can’t go back down the tree. Your always forced forwards. Rooms can have multiple exit doors. 
+Their can be like 9 room layers til you get to the boss room like before."
+      part map (The map): RETHINK
+      part doors (Who picks doors): RETHINK
+      part floors (Floors): YES
+      part rooms (Room sizes): YES, "Can be bigger than the screen by multiple times. Screen auto follows/tracks smoothly. I can still over ride."
+      part kinds (Room kinds): YES
+  order (Order of work): GO
+      part s1 (1. Feel): GO
+      part s2 (2. The dungeon map): GO
+      part s3 (3. Progression and camp): GO
+      part s4 (4. Statuses): GO
+      part art (Art round 2): GO
+  DECK: done (2 of 2 answered)
+
+delve / runs / runs
+  bosses (More than one boss): GO
+  branching (Choosing the next room): GO
+      "No but there should be doors sometimes. Units choose. Maybe randomly. Binding of Isaac like layout"
+  easter-eggs (Easter eggs): GO
+      part mimic (Mimic chest): GO, "No 2 trinkets. Just normal drops + xp for killing it"
+      part wall (Cracked wall): IDK
+      part duck (The duck): GO
+      part personal (Nothing personal): GO
+      part asleep (Sleeping boss): IDK
+  healing (Healing during a run): GO
+      "I also described other ways. I like the fountain idea too. Also Decision rooms. 3 free things to choose from. Can only choose 1"
+  now (A run today): DECENT
+      part layout (Layout): PROBLEM, "Too small and too regular.
+Should be a journey. "
+      part rooms (Rooms): PROBLEM
+      part types (Room types): DECENT
+      part chests (Keys and chests): DECENT, "Not only trinkets. Hp potion, xp, coins. And trinkets found in a dungeon can be used."
+      part between (Between rooms): DECENT, "Healing passively, heal abilities, health potions. Can give units equipment like a hp potion the can bring in. Activates like an ability. High chance to use when at low hp and safe (slows you for a second takes a second to drink, interruptible) "
+      part input (Your input): GOOD
+  room-shapes (Room shapes): GO
+  sound (Sound): GO
+  DECK: done (7 of 7 answered)
+
+delve / runs / stage1-report
+  feel (Stage 1: how it feels now): GOOD
+      part portrait (Portrait): GOOD, "If it adds double the work for art to do a vertical and horizontal screen just do vertical (ui mostly)"
+      part size (Bigger rooms and bodies): GOOD, "Room should be wider so it fills the side of the phone."
+      part movement (Momentum and turning): GOOD
+      part anim (Animations): PROBLEM, "More. Weapon swings, bow pulling back. Arm swing when walking. How is a separate component than the archer. An outline shader is added after the fact. 
+Also rat tail animated can still just be 1 component that is on. Spring to drag behind 
+
+Hit box may need to be a bit bigger. Still see a bit too much overlap. 
+
+No health bars shown on the arena. Hero’s hp shown on ui canvas above everything. Only boss hp is shown and is separated too like unit hp.
+
+Also are skeletons shrunk a bit? They seem small. 
+
+No damage numbers or ability text. show don’t tell. "
+      part impact (Hit impact): GOOD
+      part look (Outlines, arrows, rats): GOOD
+      part fx (Fire and statuses): GOOD, "No bar. "
+      part brains (Brains): GOOD, "Rats get a dash ability (in movement direction, facing direction) "
+  DECK: done (1 of 1 answered)
+
+delve / statuses / statuses
+  enemies (Enemies causing statuses): GO
+      "Yes but I don’t like ur examples. Don’t force statuses to enemies, make enemies for the statuses"
+  friendly-fire (Keep friendly fire?): GO
+  new-heroes (New heroes' statuses): WORKSHOP
+  next (The next status): GO, picked: Wet and Shock, Stagger
+      "Wet makes special abilities trigger slower. At 100, entity slips (spins around for a second, and leaves behind a puddle)
+
+Stagger is a stun. 
+
+Shock is a stun that retriggers every few moments. 
+Stagger is a stun that is continuous for a short duration, can stack. At full. Knocked out. Unreactive for a few seconds and vulnerable."
+  now (How statuses work today): GOOD
+      "Shock/stun? 
+Entangle/vines? 
+Wet?"
+      part burn (Burn to Scorch): GOOD, "Burn also has a chance to spread to nearby entities. 20-50% of current level."
+      part chill (Chill to Freeze to Shatter): GOOD, "Each freeze next one harder. Entity that is shattered doesnt instantly die. Just heavy damage. 
+Chill stays a constant slowness no ramp (for now atleast) "
+      part poison (Poison to Rot): GOOD, "When poisoned, slightly slower action speed and movement speed"
+      part mix (How they mix): GOOD
+      part friendly (Friendly fire): GOOD
+      part who (Who causes what): PROBLEM, "Archer???
+Status effects for the most part are the result of trinkets or abilities, not base actions"
+  DECK: done (5 of 5 answered)
+
+delve / statuses / statuses-2
+  rules (Where statuses come from): YES
+      part plain (Plain base attacks): YES
+      part abilities (From abilities): YES, "At level 1 they get no elements. Elements are achieved after they unlock their ability "
+      part trinkets (From trinkets): no mark, "Archer upgrade in skill tree. Chance to load a frost arrow."
+      part burn (Burn spreads): YES, "Won’t make an echo chamber. Won’t continuously stack, once it reaches 50% of what they have will stop. The lower one can’t add burn to the one with higher burn"
+      part chill (Chill): YES
+      part poison (Poison): YES
+      part wet (Wet): YES, "Soaked makes you have very high knockback. You also freeze easier when wet. 
+Wet removes poison. "
+      part shock (Shock): YES
+      part stagger (Stagger): YES
+  DECK: done (1 of 1 answered)

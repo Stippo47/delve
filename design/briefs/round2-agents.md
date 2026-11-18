@@ -25,7 +25,12 @@ Rules for all of them: **give eye sockets** (this overrides "no eyes" for skelet
 - **Digger** (farmer design-3): "Bad overall. You can retry." -> one fresh attempt.
 - **Grandpa Sickle** (farmer design-4): "Can't tell what's on back. Where is the forehead shadow coming from. Beard doesn't look good. Nose line on beard? Doesn't mesh well with hair."
 
-## D. Barbarians -> design/class-round2/barbarian/
+## D. Barbarians -> design/class-round2/barbarian/  (and the archer split, below)
+- **Archer split, do this first** -> design/class-round2/archer/archer.svg: the locked archer
+  (`design/archer-final/archer.svg`) rebuilt into the parts layout from the brief. **Don't change how it looks.**
+  The bow and the hand holding it go in `arm-l`. The drawing hand and the arrow go in `arm-r`, so the game can pull
+  them back. The quiver goes in `back`. Remove the baked outline strokes and use the outline filter. Render it next to
+  the original and check they match at big size and at 40px.
 - **Wildmane** (design-1): "Sword position. Below body not above. Bigger sword. Otherwise pretty good."
 - **Bearskin** (design-2): "Weapon position makes it hard to see but what I can see looks good. If that's a spiked club it doesn't look right." -> show the weapon clearly; make the spiked club read as one (or try another weapon).
 - **Warhelm** (design-3): "Hammer bad, positioning of hammer bad. Helmet midline slightly off. Shoulder pads could maybe be improved. Otherwise not bad. Can't see beard well now so idk."

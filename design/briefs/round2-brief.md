@@ -21,6 +21,26 @@ and expect it applied as written. Where a note is unclear, make 2-3 labelled ver
 - Sprite: one SVG, front = down (+y), centre (100,100), viewBox "-10 -10 220 220", everything inside it.
   Must read at 40px in all 8 facings.
 
+## Parts and outline (NEW, overrides "one sprite, no shifting components")
+The designer wants real animation: weapon swings, the bow drawing back, arms swinging while walking. So each
+sprite is now built from **parts the game can move**, and **the outline is added afterwards** over the
+combined silhouette (like an outline shader), not drawn into the shapes.
+- Wrap everything in `<g id="sprite" filter="url(#outline)">` and put this filter in `<defs>` exactly:
+  `<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6" result="d"/><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>`
+  It gives the same heavy outline as before (~6 units showing) round the whole figure, so previews look right.
+- **No outline strokes in the shapes any more.** Remove the dark #2B2230 under-strokes from the round-1 SVGs.
+  Contact shadows and gradients stay. Where two parts overlap there is no line between them (as before).
+- Inside `#sprite`, these groups, in draw order, each a direct child:
+  - `<g id="back">` optional: things behind everything (a cape, a quiver, a slung shield). Add `data-pivot="x y"` if it should sway.
+  - `<g id="body">` head, hair/helm, shoulders: everything that doesn't move on its own.
+  - `<g id="arm-l" data-pivot="x y">` and `<g id="arm-r" data-pivot="x y">`: a hand **and whatever it holds**
+    (the weapon, the shield). The pivot is that shoulder's point, about where the arm would join the shoulder.
+    The game swings each arm around its pivot. Left = the sprite's left as drawn (smaller x).
+  - A two-handed weapon goes in `arm-r` with both hands; leave `arm-l` out. Say so in notes.md.
+  - `<g id="front">` optional: anything that must sit over the arms.
+- Front is still down (+y), centre (100,100), viewBox "-10 -10 220 220", and the whole thing must still read at
+  40px in 8 facings. Drawn together, the parts should look exactly like one finished sprite.
+
 ## Seeing your work
 `python tools/riffle/render_board.py --out <your folder>/renders <your folder>/design-1.svg=Label ...`
 writes `<name>.png` (archer beside it at the same scale, 8 facings at 70px, the same at game size 40px) and
