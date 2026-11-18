@@ -546,6 +546,11 @@ function abilityScore(w, u) {
       if (d < 70) return 0;
       return (1 - hpRatio(t)) * 0.6 + (t.target && t.target !== u ? 0.45 : 0) + (t.def.boss ? 0.1 : 0);
     }
+    case 'dash': {
+      const gap = d - u.r - t.r;
+      if (gap < 35 || gap > 170) return 0;
+      return angleDiff(u.mvA, angleTo(u.x, u.y, t.x, t.y)) < 0.5 && u.spd > 30 ? 0.7 : 0;
+    }
     case 'slam': {
       const n = opp.filter((o) => dist(u.x, u.y, o.x, o.y) < 130).length;
       return n * 0.45 - 0.1;
@@ -586,6 +591,10 @@ function useAbility(w, u) {
       u.atkT = def.atkCd; u.lastAttackT = w.time; u.mode = 'retreat'; u.modeT = 0;
       break;
     }
+    case 'dash': {
+      u.act = { type: 'dash', t: 0.22, max: 0.22, a: u.mvA };
+      break;
+    }
     case 'slam': {
       u.act = { type: 'slam', t: 0.8, max: 0.8 };
       w.telegraphs.push({ type: 'ring', x: u.x, y: u.y, r: 125, t: 0.8, max: 0.8, color: '#FF6B5A' });
@@ -614,6 +623,11 @@ function runAction(w, u, dt) {
       }
     }
     if (a.t <= 0) u.act = null;
+  } else if (a.type === 'dash') {
+    const sp = u.def.speed * 3.4;
+    u.dvx = Math.cos(a.a) * sp; u.dvy = Math.sin(a.a) * sp; u.vx = u.dvx; u.vy = u.dvy; u.mvA = a.a; u.spd = sp;
+    if (rand() < 0.5) w.particles.push({ x: u.x - Math.cos(a.a) * u.r, y: u.y - Math.sin(a.a) * u.r, vx: 0, vy: 0, life: 0.25, max: 0.25, size: 5, color: 'rgba(200,190,170,0.7)' });
+    if (a.t <= 0) { u.act = null; u.spd = u.def.speed; }
   } else if (a.type === 'slam') {
     u.dvx = u.dvy = 0;
     if (a.t <= 0) {
@@ -772,7 +786,7 @@ export function step(w, dt) {
     if (u.target && !alive(u.target)) u.target = null;
     u.thinkT -= dt;
     if (u.thinkT <= 0) { u.thinkT = 0.4 + rand() * 0.08; think(w, u); }
-    if (u.act) { const charging = u.act.type === 'charge'; u.spd *= Math.exp(-dt * 10); if (charging) { u.mvA = u.act.a; u.spd = u.def.speed * 1.5; } runAction(w, u, dt); if (!charging) updateFacing(u, dt); continue; }
+    if (u.act) { const charging = u.act.type === 'charge' || u.act.type === 'dash'; if (u.act.type !== 'dash') u.spd *= Math.exp(-dt * 10); if (u.act.type === 'charge') { u.mvA = u.act.a; u.spd = u.def.speed * 1.5; } runAction(w, u, dt); if (!charging) updateFacing(u, dt); continue; }
     movement(w, u, dt);
     updateFacing(u, dt);
     if (u.def.ability && u.abilT <= 0 && !u.forcedGoal) {

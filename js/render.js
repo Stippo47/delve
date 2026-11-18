@@ -16,10 +16,11 @@ export function layout(canvas, w, topPad, bottomPad = 10, sidePad = 10) {
   view.dpr = dpr; view.cw = cw; view.ch = ch;
   view.rot = ch > cw;
   const pad = 26; // the wall frame around the floor
+  const edge = 7; // how much of the side walls stays on screen
   const availW = cw - sidePad * 2, availH = ch - topPad - bottomPad;
   // fit the room's short side across the screen's short side; the long side scrolls if it has to
   const across = view.rot ? availW : availH, along = view.rot ? availH : availW;
-  const s = Math.min(across / (w.H + pad * 2), along / (w.W * 0.55));
+  const s = Math.min((view.rot ? cw : across) / (w.H + edge * 2), along / (w.W * 0.55));
   view.scale = s;
   // camera along the long axis: follow the party, never past the walls
   const heroes = w.units.filter((u) => u.team === 'hero' && !u.downed);
@@ -30,7 +31,7 @@ export function layout(canvas, w, topPad, bottomPad = 10, sidePad = 10) {
   target = lo > hi ? w.W / 2 : clamp(target, lo, hi);
   view.camX = view.camX == null || view.snap ? target : view.camX + (target - view.camX) * 0.08;
   view.snap = false;
-  const midAcross = view.rot ? sidePad + availW / 2 : topPad + availH / 2;
+  const midAcross = view.rot ? cw / 2 : topPad + availH / 2;
   const midAlong = view.rot ? topPad + availH / 2 : sidePad + availW / 2;
   if (view.rot) view.m = [0, -s, s, 0, midAcross - (w.H / 2) * s, midAlong + view.camX * s];  // world +x = screen up
   else view.m = [s, 0, 0, s, midAlong - view.camX * s, midAcross - (w.H / 2) * s];
@@ -96,13 +97,14 @@ export function draw(ctx, w) {
   for (const t of w.telegraphs) if (t.type === 'ring') drawRing(ctx, t);
   for (const c of w.corpses) drawCorpse(ctx, c);
   const order = [...w.units].sort((a, b) => (a.downed ? -1 : 0) - (b.downed ? -1 : 0) || screenDepth(a) - screenDepth(b));
-  for (const u of order) drawUnit(ctx, u, w);
+  const dt = Math.min(0.05, Math.max(0, w.time - (w._lastDraw ?? w.time))); w._lastDraw = w.time;
+  for (const u of order) { if (u.kind === 'rat' && !u.downed) drawTail(ctx, u, dt); drawUnit(ctx, u, w); }
   for (const p of w.projectiles) drawProjectile(ctx, p);
   for (const p of w.particles) drawParticle(ctx, p);
   ctx.globalAlpha = 1;
   for (const t of w.telegraphs) if (t.type === 'swing') drawSwing(ctx, t); else if (t.type === 'blast') drawBlast(ctx, t);
   for (const u of order) drawOverlay(ctx, u);
-  for (const t of w.texts) drawText(ctx, t);
+  // Words over the arena (damage numbers, ability names) are off: show, don't tell. drawText stays for later use.
 }
 const screenDepth = (u) => (view.rot ? -u.x : u.y);
 
@@ -252,6 +254,31 @@ function drawUnit(ctx, u, w) {
   if (u.frozenT > 0) drawIce(ctx, u, w);
 }
 
+// A tail as a short chain of points that trails the body on springs, so it whips round on turns.
+function drawTail(ctx, u, dt) {
+  const back = u.facing + Math.PI, seg = u.vr * 0.42, n = 4;
+  const ax = u.x + Math.cos(back) * u.vr * 0.85, ay = u.y + Math.sin(back) * u.vr * 0.85;
+  if (!u.tail) { u.tail = []; for (let i = 1; i <= n; i++) u.tail.push({ x: ax + Math.cos(back) * seg * i, y: ay + Math.sin(back) * seg * i, vx: 0, vy: 0 }); }
+  let px = ax, py = ay, pa = back;
+  for (let i = 0; i < n; i++) {
+    const p = u.tail[i];
+    // where this point would rest: one segment straight back from the one before it
+    const rx = px + Math.cos(pa) * seg, ry = py + Math.sin(pa) * seg;
+    p.vx += (rx - p.x) * 60 * dt; p.vy += (ry - p.y) * 60 * dt;
+    const damp = Math.exp(-dt * 9); p.vx *= damp; p.vy *= damp;
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    // keep the segment length
+    const dx = p.x - px, dy = p.y - py, L = Math.hypot(dx, dy) || 1;
+    p.x = px + dx / L * seg; p.y = py + dy / L * seg;
+    pa = Math.atan2(p.y - py, p.x - px); px = p.x; py = p.y;
+  }
+  const path = () => { ctx.beginPath(); ctx.moveTo(ax, ay); for (const p of u.tail) ctx.lineTo(p.x, p.y); };
+  ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.strokeStyle = INK; ctx.lineWidth = 2.2 + OUTLINE * 2; path(); ctx.stroke();
+  ctx.strokeStyle = '#D8A39A'; ctx.lineWidth = 2.2; path(); ctx.stroke();
+  ctx.restore();
+}
+
 function drawIce(ctx, u, w) {
   // a block of ice around the unit, seen from above: an outlined, see-through crystal
   const r = u.vr * 1.35;
@@ -277,6 +304,7 @@ function drawCorpse(ctx, c) {
 
 // Bars, marks and status meters, upright above or below each unit.
 const STATUS = [['burn', '#FF7A2F'], ['chill', '#7FD6F5'], ['poison', '#9BCB3C']];
+const SHOW_BARS = false; // health and status bars live in the HUD now (designer, round 2)
 function drawOverlay(ctx, u) {
   if (u.downed) return;
   upright(ctx, u.x, u.y, () => {
@@ -287,14 +315,14 @@ function drawOverlay(ctx, u) {
     }
     if (u.hasKey) inked(ctx, () => { ctx.beginPath(); ctx.arc(u.vr * 0.8, -u.vr * 0.8, 4.5, 0, TAU); }, '#FFD45A');
     let by = u.vr + 8;
-    if (u.team === 'hero' || u.hp < u.maxHp) {
+    if (SHOW_BARS && (u.team === 'hero' || u.hp < u.maxHp)) {
       const bw = Math.max(26, u.vr * 1.8);
       inked(ctx, () => roundRect(ctx, -bw / 2, by, bw, 3.5, 1.75), '#3A2F3E');
       ctx.fillStyle = u.team === 'hero' ? '#7CC06F' : '#E0604B'; roundRect(ctx, -bw / 2, by, bw * clamp(u.hp / u.maxHp, 0, 1), 3.5, 1.75); ctx.fill();
       by += 3.5 + OUTLINE * 2 + 1;
     }
     // status build-up: a short meter per status, filling to the threshold
-    const list = STATUS.filter(([k]) => u.st[k] >= 3);
+    const list = SHOW_BARS ? STATUS.filter(([k]) => u.st[k] >= 3) : [];
     if (list.length) {
       const pw = 14, gap = 4, tot = list.length * pw + (list.length - 1) * gap;
       list.forEach(([k, col], i) => {

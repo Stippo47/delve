@@ -1,5 +1,5 @@
 // Keeps the whole game on the phone so it opens with no signal. Bump VERSION on every release.
-const VERSION = '0.2.0';
+const VERSION = '0.2.1';
 const CACHE = `delve-${VERSION}`;
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png',
   'art/archer.svg', 'art/knight.svg', 'art/rogue.svg', 'art/skeleton.svg', 'art/boss.svg',

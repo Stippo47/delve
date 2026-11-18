@@ -112,6 +112,9 @@ function updateHud() {
   $('where').textContent = `Depth ${run.depth} · Floor ${run.floor}/${FLOORS} · Room ${run.room}/${ROOMS}`;
   $('hCoins').textContent = run.coins; $('hKeys').textContent = run.keys; $('hBag').textContent = run.satchel.length;
   $('speedBtn').textContent = save.speed + '×';
+  const boss = w.units.find((u) => u.def.boss && !u.dead);
+  $('bossBar').classList.toggle('hidden', !boss);
+  if (boss) { $('bossName').textContent = boss.def.name; $('bossBar').querySelector('i').style.width = Math.max(0, 100 * boss.hp / boss.maxHp) + '%'; }
   const b = $('banner');
   if (run.banner) { b.textContent = run.banner.s; b.classList.remove('hidden'); } else b.classList.add('hidden');
 }

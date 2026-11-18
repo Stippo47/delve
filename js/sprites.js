@@ -65,8 +65,7 @@ function drawRat(g, lw) {
   const earR = new Path2D('M138 70 C156 58 164 78 154 92 C146 92 138 84 134 76 Z');
   const tail = new Path2D('M100 50 C98 30 112 18 126 14 C136 12 140 4 136 -2');
   g.lineJoin = 'round'; g.lineCap = 'round';
-  g.strokeStyle = INK; g.lineWidth = lw + 2; g.stroke(tail);
-  g.strokeStyle = '#D8A39A'; g.lineWidth = 5; g.stroke(tail);
+  // the tail is drawn by the renderer as its own springy part
   for (const p of [earL, earR, body]) { g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = lw; g.fill(p); g.stroke(p); }
   g.fillStyle = grad(g, 60, 100, '#E9B7AE', '#C98E86'); g.fill(earL); g.fill(earR);
   g.fillStyle = grad(g, 44, 176, '#9C8676', '#6F5A4D'); g.fill(body);

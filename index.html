@@ -37,6 +37,9 @@
   .bar > i { display: block; height: 100%; background: #7CC06F; }
   .bar.xp > i { background: var(--gold); }
   .chip .lv { font-size: 11px; opacity: 0.85; }
+  #bossBar { order: 9; flex: 1 1 100%; display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 0 6px; }
+  #bossBar .bar { flex: 1; height: 9px; border: 2px solid var(--ink); }
+  #bossBar .bar > i { background: #E0604B; }
   #where { flex: 1; text-align: center; font-size: 13px; opacity: 0.9; }
   .pill { display: inline-flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.25); padding: 5px 9px; border-radius: 12px; }
   .coin { width: 12px; height: 12px; border-radius: 50%; background: var(--gold); border: 2px solid var(--ink); display: inline-block; }
@@ -98,6 +101,7 @@
   <span class="pill"><span class="bag"></span><span id="hBag">0</span></span>
   <button class="btn small" id="speedBtn">1×</button>
   <button class="btn small" id="retreatBtn">Retreat</button>
+  <div id="bossBar" class="hidden"><span id="bossName">Bone King</span><div class="bar"><i></i></div></div>
 </div>
 <div id="banner" class="hidden"></div>
 
