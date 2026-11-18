@@ -1,7 +1,7 @@
 """Helpers to rebuild round-2 SVGs into round-3 layout (weapon arms before body)."""
 import re, pathlib
 
-ROOT = pathlib.Path(r"C:\Users\Isaiah\Dev\delve")
+ROOT = pathlib.Path(__file__).resolve().parents[4]
 R2 = ROOT / "design" / "class-round2"
 R3 = ROOT / "design" / "class-round3"
 

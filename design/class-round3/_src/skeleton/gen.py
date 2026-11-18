@@ -3,7 +3,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from lib import *
 import math
 
-OUT = pathlib.Path(r"C:\Users\Isaiah\Dev\delve\design\class-round3")
+OUT = pathlib.Path(__file__).resolve().parents[2]
 SK = OUT / "skeleton"; SK.mkdir(parents=True, exist_ok=True)
 BN = OUT / "banshee"; BN.mkdir(parents=True, exist_ok=True)
 
