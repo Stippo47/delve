@@ -274,6 +274,7 @@ function readyTarget(u) {
   const gap = Math.hypot(t.x - u.x, t.y - u.y) - u.r - t.r;
   const ranged = (d.role === 'ranged' || d.role === 'caster' || d.keep) && (d.range || 0) > 80;
   if (ranged) return gap + t.r + u.r <= d.range + 10 ? clamp(1 - u.atkT / 0.55, 0, 1) : 0;
+  if (d.windup) return 0; // its wind-up plays inside the anim (the sim's windup)
   return gap <= (d.range || 20) + 34 ? clamp(1 - u.atkT / 0.2, 0, 1) : 0;
 }
 
@@ -327,6 +328,7 @@ export function poseFor(u, w, dt) {
     main = addP(main, { dy: s * 5 * k, r: s * 0.06 * k });
     off = addP(off, { dy: -s * 5 * k, r: -s * 0.06 * k });
   }
+  if (u.act && u.act.type === 'drink') main = { r: 0.55, dy: -14 }; // the potion goes to the mouth
   if (u.sleepT > 0 || (u.st && u.st.stagger >= 100)) { main = addP(main, { r: -0.35, dy: -4 }); off = addP(off, { r: -0.35, dy: -4 }); }
   pose[hand] = hand === 'arm-r' ? main : mirror(main);
   pose[other] = other === 'arm-r' ? off : mirror(off);

@@ -633,6 +633,7 @@ function useAbility(w, u) {
       const base = angleTo(u.x, u.y, t.x, t.y);
       textU(w, u.x, u.y, u.r + 12, 'BARRAGE', '#FFB36B', 0.9);
       for (let i = 0; i < 7; i++) fireArrow(w, u, base + (i - 3) * 0.075 + rrange(-0.02, 0.02), { fire: true, dmg: 7, speed: 470 + i * 8 });
+      setAnim(u, 'ability', 0.45);
       u.atkT = Math.max(u.atkT, 0.6);
       break;
     }
@@ -652,6 +653,7 @@ function useAbility(w, u) {
       u.spd = 0; u.mvA = u.facing; u.lungeT = 0.18;
       puff(w, u.x, u.y, 'rgba(60,40,90,0.85)', 14, 70, 8, 0.6);
       hurt(w, t, def.dmg * 3.2 * u.dmgMul, u, trinketStatus(u, { crit: true, poison: 30, noDodge: true }));
+      setAnim(u, 'thrust', 0.3);
       textU(w, u.x, u.y, u.r + 12, 'BACKSTAB', '#C9A7FF', 0.9);
       u.atkT = def.atkCd; u.lastAttackT = w.time; u.mode = 'retreat'; u.modeT = 0;
       break;
