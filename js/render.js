@@ -5,6 +5,7 @@ import { getRig, drawRig, poseFor, LIMP } from './parts.js';
 import { DEFS } from './units.js';
 import { drawGroundFx, drawAirFx, drawProjectile as projectile, drawStatusFx, noteHits, drawLocal } from './fx.js';
 import { INK, TAU, clamp } from './util.js';
+import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
 
 // One outline thickness for everything drawn here, in room units. Matches what the SVG heroes show.
 export const OUTLINE = 2.4;
@@ -63,6 +64,7 @@ function upright(ctx, x, y, fn) { ctx.save(); ctx.translate(x, y); if (view.rot)
 function upVec() { return view.rot ? [1, 0] : [0, -1]; }
 
 let floorCache = null;
+// The room's floor, rock and dressing, drawn once into a canvas (scenery.js paints it in the dungeon type's look).
 function floor(w) {
   const key = w.W + 'x' + w.H + ':' + view.base.toFixed(3) + ':' + view.dpr;
   if (floorCache && floorCache.key === key && floorCache.w === w) return floorCache.c;
@@ -74,30 +76,7 @@ function floor(w) {
   c.width = Math.ceil((w.W + pad * 2) * s); c.height = Math.ceil((w.H + pad * 2) * s);
   const g = c.getContext('2d');
   g.scale(s, s); g.translate(pad, pad);
-  g.fillStyle = INK; roundRect(g, -pad, -pad, w.W + pad * 2, w.H + pad * 2, 22); g.fill();
-  g.fillStyle = '#6B5D52'; roundRect(g, -pad + 6, -pad + 6, w.W + pad * 2 - 12, w.H + pad * 2 - 12, 18); g.fill();
-  const fg = g.createLinearGradient(0, 0, 0, w.H); fg.addColorStop(0, '#E2D6BE'); fg.addColorStop(1, '#D3C5A9');
-  g.fillStyle = fg; roundRect(g, 0, 0, w.W, w.H, 8); g.fill();
-  g.save(); roundRect(g, 0, 0, w.W, w.H, 8); g.clip();
-  const T = 60;
-  for (let y = 0; y < w.H; y += T) for (let x = (y / T) % 2 ? -T / 2 : 0; x < w.W; x += T) {
-    g.fillStyle = ((x + y) / T) % 3 < 1 ? 'rgba(160,140,110,0.10)' : 'rgba(255,255,255,0.08)';
-    roundRect(g, x + 3, y + 3, T - 6, T - 6, 10); g.fill();
-  }
-  g.restore();
-  // rock where the room's shape leaves chunks out: a wall band along the floor's edge, darkness behind it
-  const solids = w.walls.filter((r) => r.solid);
-  const isFloor = (c, r) => r >= 0 && c >= 0 && w.cells && w.cells.some((k) => k.c === c && k.r === r);
-  const inset = (r, d) => {
-    const ch = w.chunks || { nc: 1, nr: 1 };
-    const l = r.c === 0 ? -pad : isFloor(r.c - 1, r.r) ? d : 0, t = r.r === 0 ? -pad : isFloor(r.c, r.r - 1) ? d : 0;
-    const rt = r.c === ch.nc - 1 ? -pad : isFloor(r.c + 1, r.r) ? d : 0, b = r.r === ch.nr - 1 ? -pad : isFloor(r.c, r.r + 1) ? d : 0;
-    return [r.x + l, r.y + t, r.w - l - rt, r.h - t - b];
-  };
-  for (const r of solids) { g.fillStyle = INK; const [x, y, ww, hh] = inset(r, -6); roundRect(g, x, y, ww, hh, 10); g.fill(); }
-  for (const r of solids) { g.fillStyle = '#6B5D52'; const [x, y, ww, hh] = inset(r, 0); roundRect(g, x, y, ww, hh, 8); g.fill(); }
-  for (const r of solids) { g.fillStyle = INK; const [x, y, ww, hh] = inset(r, 20); roundRect(g, x, y, ww, hh, 14); g.fill(); }
-  for (const r of solids) { g.fillStyle = '#2F2734'; const [x, y, ww, hh] = inset(r, 26); roundRect(g, x, y, ww, hh, 12); g.fill(); }
+  paintFloor(g, w, pad);
   floorCache = { key, c, w, pad, s };
   return c;
 }
@@ -126,20 +105,22 @@ const SPRITE_KIND = { boss: 'boss', slimeSmall: 'slimeSmall' };
 export function draw(ctx, w) {
   const d = view.dpr, m = view.m;
   ctx.setTransform(d, 0, 0, d, 0, 0);
-  ctx.fillStyle = '#2F2734'; ctx.fillRect(0, 0, view.cw, view.ch);
+  ctx.fillStyle = voidColor(w); ctx.fillRect(0, 0, view.cw, view.ch);
   const sh = w.shake > 0 ? (Math.random() - 0.5) * w.shake : 0, sv = w.shake > 0 ? (Math.random() - 0.5) * w.shake : 0;
   ctx.setTransform(d * m[0], d * m[1], d * m[2], d * m[3], d * (m[4] + sh), d * (m[5] + sv));
   const fl = floor(w);
   const s = view.scale;
   ctx.drawImage(fl, -floorCache.pad, -floorCache.pad, fl.width / floorCache.s, fl.height / floorCache.s);
   drawDoors(ctx, w);
-  for (const r of w.walls) if (!r.solid) drawWall(ctx, r);
-  for (const h of w.hazards) drawHazard(ctx, h, w.time);
+  for (const r of w.walls) if (!r.solid) drawWallThemed(ctx, r, w);
+  for (const h of w.hazards) if (!drawThemeHazard(ctx, h, w.time)) drawHazard(ctx, h, w.time);
+  drawArena(ctx, w);
+  drawDanger(ctx, w);
   for (const p of w.pickups) drawPickup(ctx, p, w.time);
   drawGroundFx(ctx, w);
   // shadows, cast towards the bottom of the screen
   for (const p of w.pillars) upright(ctx, p.x, p.y, () => { ctx.fillStyle = 'rgba(43,34,48,0.22)'; ctx.beginPath(); ctx.ellipse(4, p.r * 0.45, p.r * 1.1, p.r * 0.6, 0, 0, TAU); ctx.fill(); });
-  for (const p of w.pillars) drawPillar(ctx, p);
+  for (const p of w.pillars) drawPillar(ctx, p, w);
   for (const u of w.units) upright(ctx, u.x, u.y, () => { const r = u.vr * (u.downed ? 1.1 : 1.3); ctx.drawImage(softShadow(), 2 - r, u.vr * 0.62 - r * 0.46, r * 2, r * 0.92); });
   for (const t of w.telegraphs) if (t.type === 'ring') drawRing(ctx, t);
   for (const c of w.corpses) drawCorpse(ctx, c);
@@ -153,6 +134,9 @@ export function draw(ctx, w) {
   drawAirFx(ctx, w);
   drawLocal(ctx, dt);
   for (const t of w.telegraphs) if (t.type === 'swing') drawSwing(ctx, t); else if (t.type === 'blast') drawBlast(ctx, t);
+  for (const f of w.fx) drawSpikeFx(ctx, f);
+  drawMood(ctx, w, view.cw, view.ch, view.dpr);
+  ctx.setTransform(d * m[0], d * m[1], d * m[2], d * m[3], d * m[4], d * m[5]);
   for (const u of order) drawOverlay(ctx, u);
   // Words over the arena (damage numbers, ability names) are off: show, don't tell. drawText stays for later use.
 }
@@ -287,9 +271,13 @@ function drawHazard(ctx, h, t) {
   ctx.restore();
 }
 
-function drawPillar(ctx, p) {
-  const name = p.fountain ? (p.used ? 'fountain-used' : 'fountain') : p.prop || OBSTACLES[Math.abs(Math.round(p.x * 7 + p.y * 3)) % 3];
+function drawPillar(ctx, p, w) {
+  // obstacles from the prop art (rock, broken pillar, crates), except the Sewers' pipes which are drawn by the theme
+  const style = w && w.theme && w.theme.pillar;
+  if (!p.fountain && style === 'pipe') return drawPillarThemed(ctx, p, w);
+  const name = p.fountain ? (p.used ? 'fountain-used' : 'fountain') : p.prop || (style === 'barrel' ? 'obstacle-crates' : OBSTACLES[Math.abs(Math.round(p.x * 7 + p.y * 3)) % 2]);
   if (prop(ctx, name, p.x, p.y, PROP_BOX, { sc: p.r / (p.fountain ? 38 : 30) })) return;
+  if (!p.fountain) return drawPillarThemed(ctx, p, w);
   if (p.fountain) {
     inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, '#A99C8B');
     ctx.fillStyle = p.used ? '#7FA9BC' : '#5DB7E0'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 0.72, 0, TAU); ctx.fill();

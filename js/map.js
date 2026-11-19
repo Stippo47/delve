@@ -5,21 +5,22 @@ import { rand, rint, chance, pick } from './util.js';
 export const LAYERS = 9; // room layers before the boss room
 
 const KINDS = [['fight', 46], ['hazard', 14], ['treasure', 13], ['fountain', 10], ['decision', 13], ['elite', 4]];
-function rollKind(L) {
-  const list = KINDS.map(([k, wt]) => [k, k === 'fountain' && L < 3 ? wt * 0.3 : k === 'elite' && L < 4 ? 0 : wt]);
+function rollKind(L, mix) {
+  const list = KINDS.map(([k, wt]) => [k, mix && mix[k] != null ? mix[k] : wt]).map(([k, wt]) => [k, k === 'fountain' && L < 3 ? wt * 0.3 : k === 'elite' && L < 4 ? 0 : wt]);
   let tot = 0; for (const [, wt] of list) tot += wt;
   let r = rand() * tot;
   for (const [k, wt] of list) { r -= wt; if (r <= 0) return k; }
   return 'fight';
 }
 
-export function makeFloor() {
+// mix: the dungeon type's room weights ({ fight, hazard, ... }, themes.js), or the defaults above.
+export function makeFloor(mix) {
   const layers = [[{ L: 0, i: 0, pos: 0.5, kind: 'fight', next: [] }]];
   for (let L = 1; L < LAYERS; L++) {
     // up to 5 wide, but never more than 3 doors' worth per room behind (a room has at most 3 doors out)
     const n = Math.min(L === LAYERS - 1 ? rint(2, 3) : rint(2, 5), 3 * layers[L - 1].length);
     const row = [];
-    for (let i = 0; i < n; i++) row.push({ L, i, pos: (i + 0.5) / n + (rand() - 0.5) * 0.12, kind: rollKind(L), next: [] });
+    for (let i = 0; i < n; i++) row.push({ L, i, pos: (i + 0.5) / n + (rand() - 0.5) * 0.12, kind: rollKind(L, mix), next: [] });
     // the last layer before the boss leans towards a breather
     if (L === LAYERS - 1 && !row.some((r) => r.kind === 'fountain' || r.kind === 'decision')) pick(row).kind = chance(0.6) ? 'fountain' : 'decision';
     layers.push(row);

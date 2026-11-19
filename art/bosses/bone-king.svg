@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- THE BONE KING (lane C, build v1): the Crypt's boss (docs/BOSS-bone-king.md). A big skeleton king seen from above:
+       a heavy skull with calm round sockets and its own lower jaw, a tall tarnished-gold crown with three soul-blue gems,
+       dark iron pauldrons, a ragged royal-purple cape behind, a long greatsword in the right claw running forward past the
+       body (drawn before the body so the hilt passes under the pauldron, only the claw showing), and a soul lantern hanging
+       from the left claw. Parts (file order = draw order): #back (the cape, pivot at the shoulders), #arm-r (sword + claw),
+       #body (pauldrons, skull, jaw, crown), #arm-l (lantern + claw). No outline strokes: the #outline filter adds it.
+       Facing = DOWN (+y), centre (100,100). The game draws him about 1.6x a hero. -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="shX" x1="80" y1="0" x2="190" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3A2440" stop-opacity="0"/><stop offset="1" stop-color="#3A2440" stop-opacity="0.36"/></linearGradient>
+    <linearGradient id="gSkull" x1="56" y1="40" x2="144" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FCF6E4"/><stop offset="0.5" stop-color="#F0E2BE"/><stop offset="1" stop-color="#D3BD92"/></linearGradient>
+    <radialGradient id="gDome" cx="86" cy="64" r="46" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
+    <linearGradient id="gBone" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F5EBD0"/><stop offset="1" stop-color="#D9C79C"/></linearGradient>
+    <linearGradient id="gSock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B2230"/><stop offset="1" stop-color="#4A3A44"/></linearGradient>
+    <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="0.4"><stop offset="0" stop-color="#F2CF6A"/><stop offset="1" stop-color="#B07E2C"/></linearGradient>
+    <linearGradient id="gGoldD" x1="0" y1="0" x2="1" y2="0.4"><stop offset="0" stop-color="#D8AE4A"/><stop offset="1" stop-color="#8E621E"/></linearGradient>
+    <linearGradient id="gIron" x1="0" y1="0" x2="1" y2="0.5"><stop offset="0" stop-color="#8E8A9A"/><stop offset="1" stop-color="#55516A"/></linearGradient>
+    <linearGradient id="gIronL" x1="0" y1="0" x2="1" y2="0.5"><stop offset="0" stop-color="#ABA7B6"/><stop offset="1" stop-color="#6E6A80"/></linearGradient>
+    <linearGradient id="gCape" x1="20" y1="0" x2="180" y2="40" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A3E78"/><stop offset="1" stop-color="#4E1E48"/></linearGradient>
+    <linearGradient id="gCapeIn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E1230" stop-opacity="0"/><stop offset="1" stop-color="#2E1230" stop-opacity="0.45"/></linearGradient>
+    <linearGradient id="gSteel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#EEF1F5"/><stop offset="0.55" stop-color="#B9C0CA"/><stop offset="1" stop-color="#848C99"/></linearGradient>
+    <linearGradient id="gFur" x1="0" y1="0" x2="1" y2="0.3"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DCD5CC"/></linearGradient>
+    <linearGradient id="gGrip" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6A4636"/><stop offset="1" stop-color="#3E2620"/></linearGradient>
+    <radialGradient id="gSoul" cx="0.4" cy="0.4" r="0.7"><stop offset="0" stop-color="#F2FCFF"/><stop offset="0.45" stop-color="#9FE4FF"/><stop offset="1" stop-color="#3C9CD0"/></radialGradient>
+    <path id="skull" d="M100 30 C127 30 145 46 145 70 C145 88 141 101 132 108 C123 114 77 114 68 108 C59 101 55 88 55 70 C55 46 73 30 100 30 Z"/>
+    <path id="jaw" d="M72 118 C86 115 114 115 128 118 C131 127 125 138 113 140 L87 140 C75 138 69 127 72 118 Z"/>
+    <path id="paulL" d="M40 64 C58 62 74 74 76 92 C78 108 66 122 48 122 C28 122 14 108 14 90 C14 74 24 65 40 64 Z"/>
+    <path id="paulR" d="M160 64 C142 62 126 74 124 92 C122 108 134 122 152 122 C172 122 186 108 186 90 C186 74 176 65 160 64 Z"/>
+    <path id="cape" d="M30 96 C18 84 12 62 16 40 L22 26 L34 28 L40 14 L54 20 L64 6 L76 14 L88 2 L100 10 L112 2 L124 14 L136 6 L146 20 L160 14 L166 28 L178 26 L184 40 C188 62 182 84 170 96 Z"/>
+    <path id="blade" d="M161 126 L187 126 L187 188 L174 210 L161 188 Z"/>
+    <mask id="skullM"><use href="#skull" fill="#fff"/></mask>
+    <mask id="capeM"><use href="#cape" fill="#fff"/></mask>
+    <mask id="bladeM"><use href="#blade" fill="#fff"/></mask>
+    <mask id="paulM"><use href="#paulL" fill="#fff"/><use href="#paulR" fill="#fff"/></mask>
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <!-- the cape: behind everything, ragged at the back -->
+    <g id="back" data-pivot="100 80">
+      <use href="#cape" fill="url(#gCape)"/>
+      <g mask="url(#capeM)">
+        <rect x="0" y="0" width="200" height="40" fill="url(#gCapeIn)" transform="rotate(180 100 20)"/>
+        <path d="M58 90 C56 64 60 40 68 12 L74 14 C68 40 66 64 70 90 Z" fill="#2E1230" opacity="0.28"/>
+        <path d="M142 90 C144 64 140 40 132 12 L126 14 C132 40 134 64 130 90 Z" fill="#2E1230" opacity="0.28"/>
+        
+        <rect x="0" y="-10" width="200" height="120" fill="url(#shX)"/>
+      </g>
+    </g>
+    <!-- the greatsword in the right claw, running forward past the body -->
+    <g id="arm-r" data-pivot="160 92">
+      <g transform="rotate(-5 174 110)">
+        <use href="#blade" fill="url(#gSteel)"/>
+        <g mask="url(#bladeM)">
+          <rect x="172" y="130" width="4.5" height="60" rx="2" fill="#5E6672" opacity="0.45"/>
+          <path d="M163 160 L185 152 L185 168 L163 176 Z" fill="#7FA6C2" opacity="0.18"/>
+          <ellipse cx="179" cy="182" rx="2.5" ry="4" fill="#9C5A2E" opacity="0.55"/>
+        </g>
+        <rect x="150" y="119" width="48" height="10" rx="5" fill="url(#gGoldD)"/>
+        <circle cx="151" cy="124" r="6" fill="url(#gGold)"/>
+        <circle cx="197" cy="124" r="6" fill="url(#gGold)"/>
+        <rect x="168" y="94" width="12" height="27" rx="4" fill="url(#gGrip)"/>
+        <!-- the claw round the grip: palm across it, knuckles down the grip on the outer side -->
+        <rect x="160" y="100" width="24" height="17" rx="7" fill="url(#gBone)"/>
+        <rect x="182" y="99" width="9" height="5.2" rx="2.6" fill="url(#gBone)"/>
+        <rect x="182" y="104.6" width="9" height="5.2" rx="2.6" fill="url(#gBone)"/>
+        <rect x="182" y="110.2" width="9" height="5.2" rx="2.6" fill="url(#gBone)"/>
+        <rect x="160" y="100" width="31" height="17" rx="7" fill="url(#shX)"/>
+      </g>
+    </g>
+    <g id="body">
+      <!-- an ermine collar round the back of the neck -->
+      <path d="M40 78 C52 50 148 50 160 78 C150 86 50 86 40 78 Z" fill="url(#gFur)"/>
+      <ellipse cx="62" cy="64" rx="2.6" ry="4" fill="#2B2230" opacity="0.8"/>
+      <ellipse cx="100" cy="54" rx="2.6" ry="4" fill="#2B2230" opacity="0.8"/>
+      <ellipse cx="138" cy="64" rx="2.6" ry="4" fill="#2B2230" opacity="0.8"/>
+      <path d="M40 78 C52 50 148 50 160 78 C150 86 50 86 40 78 Z" fill="url(#shX)"/>
+      <!-- pauldrons -->
+      <use href="#paulL" fill="url(#gIron)"/>
+      <use href="#paulR" fill="url(#gIron)"/>
+      <g mask="url(#paulM)">
+        <path d="M14 98 C30 104 60 104 78 96 L78 122 L14 122 Z" fill="#2B2230" opacity="0.18"/>
+        <path d="M186 98 C170 104 140 104 122 96 L122 122 L186 122 Z" fill="#2B2230" opacity="0.18"/>
+        <circle cx="34" cy="82" r="14" fill="#FFFFFF" opacity="0.16"/>
+        <circle cx="154" cy="82" r="14" fill="#FFFFFF" opacity="0.10"/>
+        <rect x="0" y="40" width="200" height="90" fill="url(#shX)"/>
+      </g>
+      <circle cx="40" cy="91" r="7" fill="url(#gIronL)"/>
+      <circle cx="160" cy="91" r="7" fill="url(#gIronL)"/>
+      <!-- the jaw, its own bone below the skull with a dark gap -->
+      <use href="#jaw" fill="url(#gBone)"/>
+      <rect x="86" y="117" width="6" height="7" rx="2" fill="#FFF8E6"/>
+      <rect x="94.5" y="117" width="6" height="7" rx="2" fill="#FFF8E6"/>
+      <rect x="103" y="117" width="6" height="7" rx="2" fill="#FFF8E6"/>
+      <rect x="111.5" y="117" width="6" height="7" rx="2" fill="#FFF8E6"/>
+      <use href="#jaw" fill="url(#shX)"/>
+      <!-- the skull -->
+      <ellipse cx="100" cy="114" rx="40" ry="6" fill="#2B2230" opacity="0.35"/>
+      <use href="#skull" fill="url(#gSkull)"/>
+      <g mask="url(#skullM)">
+        <rect x="40" y="20" width="120" height="100" fill="url(#gDome)"/>
+        <!-- calm round sockets -->
+        <ellipse cx="82" cy="82" rx="12.5" ry="11" fill="url(#gSock)"/>
+        <ellipse cx="118" cy="82" rx="12.5" ry="11" fill="url(#gSock)"/>
+        <!-- nose hole, point up -->
+        <path d="M100 92 C102.5 96 106 100 106 103.5 C106 106 103.5 107 101.8 105.8 L100 104.5 L98.2 105.8 C96.5 107 94 106 94 103.5 C94 100 97.5 96 100 92 Z" fill="url(#gSock)"/>
+        <!-- upper teeth -->
+        <rect x="85" y="106" width="7" height="8" rx="2" fill="#FFF8E6"/>
+        <rect x="93.5" y="106" width="7" height="8" rx="2" fill="#FFF8E6"/>
+        <rect x="102" y="106" width="7" height="8" rx="2" fill="#FFF8E6"/>
+        <rect x="110.5" y="106" width="7" height="8" rx="2" fill="#FFF8E6"/>
+        <!-- the crown's shadow on the dome -->
+        <path d="M56 62 C76 70 124 70 144 62 L144 72 C124 80 76 80 56 72 Z" fill="#6A4E2A" opacity="0.25"/>
+        <rect x="40" y="20" width="120" height="100" fill="url(#shX)"/>
+      </g>
+      <!-- the crown: a band round the back of the skull, tall points rising behind it -->
+      <path d="M60 58 L60 30 L70 42 L78 18 L88 38 L100 10 L112 38 L122 18 L130 42 L140 30 L140 58 C124 66 76 66 60 58 Z" fill="url(#gGold)"/>
+      <path d="M60 50 C76 58 124 58 140 50 L140 60 C124 68 76 68 60 60 Z" fill="url(#gGoldD)"/>
+      <path d="M60 58 L60 30 L70 42 L78 18 L88 38 L100 10 L112 38 L122 18 L130 42 L140 30 L140 58 C124 66 76 66 60 58 Z" fill="url(#shX)"/>
+      <circle cx="78" cy="57" r="4.2" fill="url(#gSoul)"/>
+      <circle cx="100" cy="60" r="5.2" fill="url(#gSoul)"/>
+      <circle cx="122" cy="57" r="4.2" fill="url(#gSoul)"/>
+    </g>
+    <!-- the soul lantern in the left claw -->
+    <g id="arm-l" data-pivot="40 92">
+      <rect x="31" y="112" width="3" height="16" rx="1.5" fill="#55516A"/>
+      <rect x="22" y="104" width="22" height="15" rx="6" fill="url(#gBone)"/>
+      <rect x="15" y="105" width="8" height="4.6" rx="2.3" fill="url(#gBone)"/>
+      <rect x="15" y="110" width="8" height="4.6" rx="2.3" fill="url(#gBone)"/>
+      <path d="M20 132 L46 132 L50 140 L46 160 L20 160 L16 140 Z" fill="url(#gIron)"/>
+      <path d="M24 136 L42 136 L45 142 L42 156 L24 156 L21 142 Z" fill="url(#gSoul)"/>
+      <ellipse cx="30" cy="142" rx="5" ry="6" fill="#FFFFFF" opacity="0.7"/>
+      <rect x="22" y="128" width="22" height="6" rx="3" fill="url(#gIronL)"/>
+      <rect x="22" y="158" width="22" height="5" rx="2.5" fill="url(#gIron)"/>
+    </g>
+  </g>
+</svg>

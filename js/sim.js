@@ -16,6 +16,7 @@ export function makeWorld(W, H) {
     telegraphs: [], cleared: false, doorIn: { x: 0, y: H / 2 }, doorOut: { x: W, y: H / 2 },
     on: {}, shake: 0, hitstop: 0, corpses: [],
     fx: [], // visual effects the renderer draws (see docs/BUILD-v1.md: ring, zone, beam, wall, wave)
+    danger: [], // telegraphed hits on the ground that the other side steers out of (see 'danger zones' below)
   };
 }
 
@@ -233,6 +234,61 @@ function quietSide(w, u) {
   return r > l ? -1 : 1;
 }
 
+// ---------------------------------------------------------------- danger zones
+// A telegraphed hit: a shape on the ground that fills up, then strikes everyone of the other side inside it.
+// The other side sees it and steers out (after a short reaction), so big attacks can be dodged.
+//   { shape: 'circle', x, y, r } | { shape: 'ring', x, y, r0, r1 } (safe inside r0) |
+//   { shape: 'cone', x, y, a, arc, r } | { shape: 'line', x1, y1, x2, y2, hw }
+//   + { t (seconds to the hit), max, team (who made it), src?, kind ('bone' | 'soul' | 'blade' | 'water': the colour),
+//       hit?: { dmg, ...hurt options }, onFire?(w, z) }
+// Pushed with addDanger; the sim counts t down, strikes at 0 (only if src is still standing), and drops it soon after.
+export function addDanger(w, z) { z.max = z.max || z.t; z.age = 0; w.danger.push(z); return z; }
+export function inZone(z, x, y, pad = 0) {
+  switch (z.shape) {
+    case 'circle': return dist2(x, y, z.x, z.y) < (z.r + pad) ** 2;
+    case 'ring': { const d = dist(x, y, z.x, z.y); return d > z.r0 - pad && d < z.r1 + pad; }
+    case 'cone': { const d = dist(x, y, z.x, z.y); return d < z.r + pad && (d < pad + 8 || angleDiff(angleTo(z.x, z.y, x, y), z.a) < z.arc / 2 + Math.atan2(pad, Math.max(d, 1))); }
+    case 'line': {
+      const dx = z.x2 - z.x1, dy = z.y2 - z.y1, L2 = dx * dx + dy * dy || 1;
+      const k = clamp(((x - z.x1) * dx + (y - z.y1) * dy) / L2, 0, 1);
+      return dist2(x, y, z.x1 + dx * k, z.y1 + dy * k) < (z.hw + pad) ** 2;
+    }
+  }
+  return false;
+}
+const threatens = (z, u) => z.team !== u.team && z.t > 0;
+function dangerTick(w, dt) {
+  for (const z of w.danger) {
+    z.t -= dt; z.age += dt;
+    if (z.t > 0 || z.done) continue;
+    z.done = true;
+    if (z.src && (z.src.dead || z.src.downed)) { z.cancelled = true; continue; }
+    if (z.hit) for (const o of w.units) if (alive(o) && o.team !== z.team && inZone(z, o.x, o.y, o.r * 0.5)) hurt(w, o, z.hit.dmg, z.src || null, { noDodge: true, ...z.hit });
+    if (z.onFire) z.onFire(w, z);
+  }
+  w.danger = w.danger.filter((z) => z.t > -0.3);
+}
+// Where to stand to be out of every zone that threatens u: the nearest safe spot (null if u is safe).
+// A unit only reacts once a zone has been showing for its reaction time.
+function dangerEscape(w, u) {
+  if (!w.danger.length) return null;
+  if (u.react == null) u.react = rrange(0.12, 0.32);
+  const live = w.danger.filter((z) => threatens(z, u) && z.age >= u.react);
+  if (!live.some((z) => inZone(z, u.x, u.y, u.r * 0.6))) { u.escape = null; return null; }
+  if (u.escape && u.escape.until > w.time && !live.some((z) => inZone(z, u.escape.x, u.escape.y, u.r * 0.75))) return u.escape;
+  let best = null, bd = Infinity;
+  for (let i = 0; i < DIRS; i++) for (let d = 24; d <= 300; d += 22) {
+    const x = u.x + DIR_X[i] * d, y = u.y + DIR_Y[i] * d;
+    if (x < u.r || y < u.r || x > w.W - u.r || y > w.H - u.r || !lineClear(w, u.x, u.y, x, y, u.r * 0.8)) break;
+    if (live.some((z) => inZone(z, x, y, u.r * 0.75))) continue;
+    const cost = d + (live.some((z) => z.shape !== 'ring' && dist(x, y, z.x ?? z.x1, z.y ?? z.y1) < dist(u.x, u.y, z.x ?? z.x1, z.y ?? z.y1)) ? 25 : 0);
+    if (cost < bd) { bd = cost; best = { x, y }; }
+    break;
+  }
+  u.escape = best ? { ...best, until: w.time + 0.3 } : null;
+  return u.escape;
+}
+
 // ---------------------------------------------------------------- context steering
 const interest = new Float32Array(DIRS), danger = new Float32Array(DIRS);
 
@@ -267,6 +323,11 @@ function steer(w, u, gx, gy, opts = {}) {
     }
   };
   for (const p of w.pillars) avoidCircle(p.x, p.y, p.r, 1, 70);
+  // telegraphed hits: don't walk into one (escaping one that's already under you is movement()'s job)
+  if (w.danger.length) for (const z of w.danger) {
+    if (!threatens(z, u) || inZone(z, u.x, u.y, R * 0.6)) continue;
+    for (let i = 0; i < DIRS; i++) if (inZone(z, u.x + DIR_X[i] * look, u.y + DIR_Y[i] * look, R * 0.6)) danger[i] = Math.max(danger[i], 0.92);
+  }
   for (const r of w.walls) {
     if (u.x < r.x - look - R || u.x > r.x + r.w + look + R || u.y < r.y - look - R || u.y > r.y + r.h + look + R) continue;
     // already against this wall: only the directions into it are blocked (rays from inside the padded box all read
@@ -279,7 +340,7 @@ function steer(w, u, gx, gy, opts = {}) {
     for (let i = 0; i < DIRS; i++) { const tt = rayToRect(u.x, u.y, DIR_X[i], DIR_Y[i], r, R); if (tt < look) danger[i] = Math.max(danger[i], 1 - tt / look); }
   }
   const fear = u.team === 'hero' ? 0.9 : 0.45;
-  for (const h of w.hazards) if (h.type !== 'oil' || u.team === 'hero') avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' ? 0.35 : fear, 40);
+  for (const h of w.hazards) if (!h.hidden && (h.type !== 'oil' || u.team === 'hero')) avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' ? 0.35 : fear, 40);
   for (const o of w.units) {
     if (o === u || !alive(o) || o.ethereal || u.ethereal) continue;
     if (o.team === u.team) avoidCircle(o.x, o.y, o.r + (u.team === 'hero' ? 14 : 0), 0.45, 18);
@@ -320,7 +381,10 @@ function goalVec(w, u, tx, ty) {
 function movement(w, u, dt) {
   let gx = 0, gy = 0, side = 0, mult = 1;
   const t = u.target;
-  if (u.forcedGoal) {
+  const esc = dangerEscape(w, u);
+  if (esc) {
+    [gx, gy] = goalVec(w, u, esc.x, esc.y); mult = 1; // out of the telegraphed hit first
+  } else if (u.forcedGoal) {
     [gx, gy] = goalVec(w, u, u.forcedGoal.x, u.forcedGoal.y);
     // ease in on arrival so momentum doesn't carry it past and swing it back and forth
     const gd = Math.hypot(u.forcedGoal.x - u.x, u.forcedGoal.y - u.y);
@@ -398,12 +462,12 @@ function movement(w, u, dt) {
   if (u.stuckT > 1.2) { u.unstickT = 0.7; u.unstickA = rand() * TAU; u.stuckT = 0; u.path = null; }
   if (u.unstickT > 0) { u.unstickT -= dt; gx = Math.cos(u.unstickA); gy = Math.sin(u.unstickA); mult = Math.max(mult, 0.7); }
   const [sx, sy] = steer(w, u, gx, gy, { side });
-  drive(u, sx, sy, speedOf(u) * mult, dt);
+  drive(u, sx, sy, speedOf(u) * mult * (esc ? 1.1 : 1), dt, esc ? 2.2 : 1); // getting out of a telegraph is a scramble: quick to turn and go
 }
 
 // Momentum: the movement heading swings at the unit's turn rate, speed builds up and drops off,
 // and a sharp turn bleeds speed. Nothing snaps.
-function drive(u, sx, sy, want, dt) {
+function drive(u, sx, sy, want, dt, quick = 1) {
   const d = u.def;
   const k = 1 - Math.exp(-dt * 7);                // smooth the steering wish a little
   u.sdx += (sx - u.sdx) * k; u.sdy += (sy - u.sdy) * k;
@@ -412,11 +476,11 @@ function drive(u, sx, sy, want, dt) {
   if (m > 0.15 && want > 0) {
     const a = Math.atan2(u.sdy, u.sdx);
     const diff = wrapAngle(a - u.mvA);
-    const turn = (d.turn || 5) * dt * (u.spd < 15 ? 2.2 : 1); // turning on the spot is quicker than mid-stride
+    const turn = (d.turn || 5) * dt * quick * (u.spd < 15 ? 2.2 : 1); // turning on the spot is quicker than mid-stride
     u.mvA = wrapAngle(u.mvA + clamp(diff, -turn, turn));
     goal = want * Math.min(1, m) * Math.max(0.2, Math.cos(Math.min(Math.PI / 2, Math.abs(diff))));
   }
-  const acc = (d.accel || 250) * dt;
+  const acc = (d.accel || 250) * dt * quick;
   u.spd += clamp(goal - u.spd, -acc * 1.6, acc);
   if (u.spd < 0) u.spd = 0;
   u.dvx = Math.cos(u.mvA) * u.spd; u.dvy = Math.sin(u.mvA) * u.spd;
@@ -486,9 +550,10 @@ export function hurt(w, u, amount, src, o = {}) {
   if (!o.dot && src) for (const b of u.buffs) if (b.frontBlock && angleDiff(angleTo(u.x, u.y, src.x, src.y), u.facing) < 1.3) {
     amt *= 1 - b.frontBlock; if (b.reflect && alive(src) && src !== u) hurt(w, src, amount * b.reflect, u, { noDodge: true, dot: true });
   }
-  if (!o.dot && u.def.shield && src) {
+  const shield = u.shield ?? u.def.shield; // u.shield / u.shieldArc: a shield raised as an action (brains set them)
+  if (!o.dot && shield && src) {
     const a = angleTo(u.x, u.y, src.x, src.y);
-    if (angleDiff(a, u.facing) < 1.25) { amt *= 1 - u.def.shield; puff(w, u.x + Math.cos(u.facing) * u.r, u.y + Math.sin(u.facing) * u.r, '#E8EDF3', 3, 60, 3, 0.25); }
+    if (angleDiff(a, u.facing) < (u.shieldArc ?? 1.25)) { amt *= 1 - shield; puff(w, u.x + Math.cos(u.facing) * u.r, u.y + Math.sin(u.facing) * u.r, '#E8EDF3', 3, 60, 3, 0.25); }
   }
   // shatter: a hard hit on a frozen unit
   if (u.frozenT > 0 && !o.dot && (o.heavy || amount >= 12 || (o.knock || 0) >= 150)) shatter(w, u, src);
@@ -937,6 +1002,7 @@ function projectiles(w, dt) {
         const mul = p.owner && p.owner.nextShotMul && !p.hitSet ? p.owner.nextShotMul : 1;
         if (mul > 1) p.owner.nextShotMul = 0;
         hurt(w, u, p.dmg * (friendly ? 0.4 : 1) * mul, p.owner, o);
+        if (p.onHit) p.onHit(w, p, u); // a projectile with an effect of its own (water that soaks, a fireball that bursts)
         if (p.hitSet && p.pierce > 0) { p.hitSet.add(u); p.pierce--; continue; }
         p.life = 0;
         if (p.land && !p.landed) { p.landed = true; p.land(p); }
@@ -955,14 +1021,14 @@ function hazards(w, dt) {
   w.hazards = w.hazards.filter((h) => h.t == null || h.t > 0);
   for (const u of w.units) {
     if (!alive(u) || u.ethereal) continue;
-    u.inOil = false;
+    u.inOil = false; u.soakedT = 0;
     u.hazardT -= dt;
     for (const h of w.hazards) {
       if (dist(u.x, u.y, h.x, h.y) > h.r + u.r * 0.4) continue;
       if (h.type === 'oil') u.inOil = true;
       else if (h.type === 'fire') addStatus(w, u, 'burn', 34 * dt);
       else if (h.type === 'gas') addStatus(w, u, 'poison', 24 * dt);
-      else if (h.type === 'water') addStatus(w, u, 'wet', 20 * dt);
+      else if (h.type === 'water' && !u.soakedT) { u.soakedT = 1; addStatus(w, u, 'wet', Math.min(20 * dt, Math.max(0, 90 - u.st.wet))); } // standing water soaks to 90, never tips into a slip (a slip's puddle would feed itself)
       else if (h.type === 'spikes' && u.hazardT <= 0) { u.hazardT = 0.6; hurt(w, u, 5 + Math.hypot(u.kx, u.ky) * 0.03, null, { noDodge: true }); }
     }
   }
@@ -1053,6 +1119,7 @@ export function step(w, dt) {
     if (!u.act) tryAttack(w, u);
   }
   physics(w, dt);
+  dangerTick(w, dt);
   projectiles(w, dt);
   hazards(w, dt);
   pickups(w, dt);
@@ -1079,4 +1146,4 @@ export function step(w, dt) {
   w.units = w.units.filter((u) => !u.dead);
 }
 
-export { alive, opponents, allies, hpRatio, wake, puff, textU, goalVec, steer, drive, blocked };
+export { alive, opponents, allies, hpRatio, wake, puff, textU, goalVec, steer, drive, blocked, updateFacing, meleeSwing, sparks, flames, kill, dangerEscape };

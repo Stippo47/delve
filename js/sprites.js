@@ -126,7 +126,8 @@ export function tinted(e, color) {
   return e.tints[color];
 }
 
-export const headR = (kind) => HEAD_R[kind] || HEAD_R[kind.replace('Small', '')] || 54;
+export const headR = (kind) => HEAD_R[kind] || (DEFS[kind] && DEFS[kind].headR) || HEAD_R[kind.replace('Small', '')] || 54;
+
 
 // ---- props (art/props/*.svg), drawn whole with their own outline filter. A file's #spill / #glow (light with no
 // outline) comes as a separate image so the game can pulse it.
