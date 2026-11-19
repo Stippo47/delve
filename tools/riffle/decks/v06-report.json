@@ -1,0 +1,30 @@
+{
+  "title": "0.6.0: Delve is a game now",
+  "topic": "runs",
+  "order": 7,
+  "priority": 1,
+  "tags": ["first"],
+  "cards": [
+    {
+      "id": "game",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "The game, built",
+      "text": "Camp, progression, 15 heroes with kits and trees, animation, three dungeons, a boss, 30 trinkets. Live as 0.6.0.",
+      "why": "Everything from your 'make this a game' list is in. Mark any part that's off; each part is one piece of it.",
+      "videos": ["../../../clips/v06-boss.mp4"],
+      "details": "The clip is the Bone King fight at 1.5x speed (paladin, archer, pyromancer at level 6).\n\nTested with batches of full runs: no stuck runs, no errors. With the three starters and nothing bought, the Crypt is won about a third of the time (most losses at the King), the Sewers and Warren most of the time. A brand-new single hero tends to fall around rooms 5 to 10 with 100 to 200 gold.\n\nThe enemy art you picked is used (skeletons, ghost, lizardmen, rat, slime); the Warren's greenskins are placeholders until they're redrawn.",
+      "parts": [
+        { "id": "camp", "title": "Camp", "text": "A campfire with your party sitting round it, resting heroes on bedrolls, seats to fill. Tabs for the camp, your heroes and the shop. Set out picks the dungeon.", "images": ["../../../clips/camp/02-camp.png"] },
+        { "id": "tree", "title": "Skill trees", "text": "Each hero's page has its kit and a three-branch tree. Tiers are bought with gold, kept for good, and switch on in a run at levels 2, 5 and 8. Tier III and the second trinket slot need the hero to have reached level 8 once.", "images": ["../../../clips/camp/09-hero-tree.png"] },
+        { "id": "progress", "title": "Progression", "text": "Gold is kept even on a loss. Party seats start at 1 and cost gold or gems. Downed heroes rest 10 minutes (3 if badly hurt), and gold shortens it. Sellswords go in with you and take half the gold. Gems unlock heroes; bosses drop them, chests sometimes, first clears too.", "images": ["../../../clips/camp/13-shop.png"] },
+        { "id": "dungeons", "title": "Three dungeons", "text": "The Crypt (skeletons, ghosts, chilling grave mist), the Sewers (lizardmen, slimes, water canals that soak) and the Warren (greenskins, hidden snares). Each has its own look, enemies, hazards and room mix.", "images": ["../../../clips/camp/15-dungeon-pick.png"], "videos": ["../../../clips/v06-warren.mp4"] },
+        { "id": "boss", "title": "The Bone King", "text": "Three phases: cleaves and a grave lance (his sword sticks after it); then he leaps to his throne, the graves crack and his court climbs out while bone rows ripple at the heroes; then the room goes dark and he alternates a nova to run out of and a ring to run into. The heroes dodge the telegraphs." },
+        { "id": "heroes", "title": "15 heroes", "text": "Each has an attack, three abilities with three tiers, and a trait (the cleric revives three times faster, at 40%). Kits are in the other deck.", "videos": ["../../../clips/v06-crypt.mp4"] },
+        { "id": "anim", "title": "Animation", "text": "Heroes are drawn from their parts with one outline round the whole figure: swords swing, daggers jab, bows draw back and release, casters lift their arms, arms swing as they walk. Every ability has its own effect." },
+        { "id": "trinkets", "title": "30 trinkets", "text": "All your examples (Phoenix Feather revives once, Imp Lantern lobs fireballs, Snake Charm, Blink Stone, Wraith Veil's ghost) plus Hourglass of Sand (rewinds you 3s), Thunder Ring, Whirling Knives, Bone Charm, Widow's Locket and more. Bought ones are kept; found ones last the run." },
+        { "id": "fixes", "title": "Fixes", "text": "Units touching a rock wall used to freeze (likely the archer stuck in a wall). A puddle loop could freeze a run. Effects ran at double speed. All fixed." }
+      ]
+    }
+  ]
+}
