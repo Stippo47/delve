@@ -49,7 +49,8 @@ async function runOne(tq, s) {
       maxUnits = Math.max(maxUnits, w.units.length); maxHz = Math.max(maxHz, w.hazards.length);
       if (slowest > 5000) return { stuck: true, slow: true, phase: GAME.run.phase, rooms: GAME.run.rooms, t, calls, slowest, maxHz };
       if (GAME.run.rooms !== lastRooms) { lastRooms = GAME.run.rooms; stuckRoom = 0; } else stuckRoom++;
-      if (stuckRoom > 200) return { stuck: true, phase: GAME.run.phase, rooms: GAME.run.rooms, t, calls };
+      if (stuckRoom > 200) return { stuck: true, phase: GAME.run.phase, rooms: GAME.run.rooms, t, calls,
+        why: `${GAME.run.node.kind} room, quiet ${Math.round(GAME.run.quietT || 0)}s, ` + w.units.filter((u) => !u.dead).map((u) => `${u.kind}${u.downed ? '(down)' : ''}${u.ethereal ? '(ghost)' : ''}@${u.x | 0},${u.y | 0}${u.aggro ? '' : '(asleep)'}`).join(' ') };
     }
     const r = GAME.run;
     return { phase: r.phase, floor: r.floor, rooms: r.rooms, t, calls, etherealSeconds: ethereal, maxUnits, slowest, maxHz,
@@ -72,6 +73,7 @@ for (const id of list) {
   if (flag === '!!') bad++;
   console.log(`${flag} ${id.padEnd(16)} ${r.stuck ? 'STUCK' : r.phase} f${r.floor} rooms ${r.rooms} t${r.t} ${JSON.stringify(r.calls)}${r.etherealSeconds ? ' ethereal-s ' + r.etherealSeconds : ''} units<=${r.maxUnits} hazards<=${r.maxHz} slowest 1s step ${Math.round(r.slowest)}ms`);
   if (r.left) console.log('     ', JSON.stringify(r.left));
+  if (r.why) console.log('      stuck in', r.why);
   for (const e of r.errors.slice(0, 3)) console.log('     ERR', e);
 }
 console.log(bad ? `${bad} trinket runs had errors or got stuck` : 'all clean');
