@@ -243,6 +243,7 @@ window.GAME = {
 (async function boot() {
   await loadSprites();
   show('camp');
+  window.GAME.ready = true; // tools/clip.mjs waits for this before starting a run
   requestAnimationFrame(frame);
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
   if (params.has('auto')) { save.speed = 4; startRun(+params.get('auto') || 1); }

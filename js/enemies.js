@@ -3,7 +3,7 @@
 // is worth when a room's enemy budget is spent; see dungeon.js), `pack` ([min, max]: small things come in groups)
 // and optionally `brain(w, u, dt)` for behaviour of their own (return true to skip the usual brain that tick).
 // Dungeon themes pick from these (see js/themes.js). Brains stay simple: one habit each (designer, round 1 + 4).
-import { alive, opponents, hurt, puff, goalVec, steer, drive, blocked, setAnim, addDanger, explode, sparks, spawn, addStatus } from './sim.js';
+import { alive, opponents, hurt, puff, goalVec, steer, drive, blocked, setAnim, addDanger, explode, sparks, spawn, addStatus, kill } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange, chance } from './util.js';
 import { BOSSES } from './boss.js';
 
@@ -182,19 +182,22 @@ function slam(w, u, dt, o) {
 }
 
 // Calls a few more from the room's edges, now and then.
-function callAdds(w, u, dt, kinds, every) {
+function callAdds(w, u, dt, kinds, every, n = 2) {
   u.callT = (u.callT ?? every * 0.5) - dt;
   if (u.callT > 0 || !u.aggro) return;
   u.callT = every;
   const mine = w.units.filter((o) => o.team === u.team && alive(o) && o !== u).length;
   if (mine >= 3) return;
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < n; i++) {
     const k = kinds[Math.floor(rand() * kinds.length)];
     const y = chance(0.5) ? 50 : w.H - 50, x = clamp(u.x + rrange(-250, 250), 80, w.W - 80);
-    const a = spawn(w, k, x, y, { mult: w.mult }); a.aggro = true;
+    const a = spawn(w, k, x, y, { mult: w.mult }); a.aggro = true; a.court = true;
     puff(w, x, y, '#BFA98A', 10, 80, 6, 0.5);
   }
 }
+
+// When a warden falls, the ones it called scatter (they're gone with it).
+function courtFalls(w) { for (const o of w.units) if (o.court && alive(o)) { puff(w, o.x, o.y, '#BFA98A', 8, 80, 5, 0.4); kill(w, o, null); } }
 
 // ---------------------------------------------------------------- the kinds
 export const ENEMIES = {
@@ -238,16 +241,16 @@ export const ENEMIES = {
 
   // ---- wardens: the end of floors 1 and 2 (and, until each theme has a boss of its own, floor 3 too)
   graveWarden: { ...SKELETON, name: 'Grave Warden', art: 'art/enemies/brute.svg', r: 50, vr: 36, mass: 4.5, turn: 2.2, face: 2.2, hp: 420, speed: 42,
-    role: 'melee', range: 26, atkCd: 1.8, windup: 0.6, dmg: 18, knock: 240, arc: 2, heavy: true, xp: 80, coins: [30, 45], boss: true, attackAnim: 'swing',
+    role: 'melee', range: 26, atkCd: 1.8, windup: 0.6, dmg: 18, knock: 240, arc: 2, heavy: true, xp: 80, coins: [30, 45], boss: true, onDeath: courtFalls, attackAnim: 'swing',
     brain: (w, u, dt) => slam(w, u, dt, { r: 140, tell: 0.95, dmg: 20, cdMin: 6, cdMax: 8 }) || bruteBrain(w, u, dt) },
   lizardChief: { team: 'enemy', name: 'Lizard Chief', art: 'art/enemies/lizardman-blade.svg', headR: 56, r: 48, vr: 34, turn: 3, accel: 200, face: 3, mass: 4,
     hp: 380, speed: 54, role: 'melee', range: 30, atkCd: 1.4, windup: 0.4, dmg: 13, knock: 180, arc: 1.8, temp: 0.25, commit: 1.2, xp: 80, coins: [30, 45],
-    boss: true, attackAnim: 'swing', res: { burn: 0.8, chill: 1.2 },
+    boss: true, onDeath: courtFalls, attackAnim: 'swing', res: { burn: 0.8, chill: 1.2 },
     brain: (w, u, dt) => { callAdds(w, u, dt, ['rat', 'rat', 'lizardBlade'], 18); return tailSpin(w, u, dt, { shots: 6, reach: 70, tell: 0.75, hitDmg: 10, knock: 200, cdMin: 6, cdMax: 8, dmg: 6 }); } },
   warboss: { team: 'enemy', name: 'Orc Warboss', art: 'art/enemies/orc.svg', headR: 60, r: 50, vr: 37, turn: 2.4, accel: 150, face: 2.4, mass: 4.5,
-    hp: 450, speed: 48, role: 'melee', range: 26, atkCd: 1.7, windup: 0.5, dmg: 19, knock: 240, arc: 2, heavy: true, temp: 0.25, commit: 1.2, xp: 80, coins: [30, 45],
-    boss: true, attackAnim: 'swing',
-    brain: (w, u, dt) => { callAdds(w, u, dt, ['goblin', 'goblin', 'hobgoblin'], 17); return slam(w, u, dt, { r: 150, tell: 0.9, dmg: 22, cdMin: 5.5, cdMax: 7.5 }); } },
+    hp: 400, speed: 48, role: 'melee', range: 26, atkCd: 1.8, windup: 0.55, dmg: 16, knock: 240, arc: 2, heavy: true, temp: 0.25, commit: 1.2, xp: 80, coins: [30, 45],
+    boss: true, onDeath: courtFalls, attackAnim: 'swing',
+    brain: (w, u, dt) => { callAdds(w, u, dt, ['goblin', 'goblin', 'hobgoblin'], 20, 1); return slam(w, u, dt, { r: 145, tell: 0.95, dmg: 18, cdMin: 6.5, cdMax: 8.5 }); } },
 
   ...BOSSES,
 };

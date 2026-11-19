@@ -54,9 +54,17 @@ function shade(hex, k) {
 
 function dirt(g, w, P) {
   // packed earth: soft blotches, darker ruts, a scatter of pebbles
-  for (let i = 0; i < w.W * w.H / 9000; i++) {
-    const x = hash(i, 1) * w.W, y = hash(i, 2) * w.H, r = 30 + hash(i, 3) * 70;
-    g.fillStyle = hash(i, 4) < 0.5 ? P.tile[0] : P.tile[1]; g.beginPath(); g.ellipse(x, y, r, r * 0.7, hash(i, 5) * 3, 0, TAU); g.fill();
+  g.globalAlpha = 0.55;
+  for (let i = 0; i < w.W * w.H / 26000; i++) {
+    const x = hash(i, 1) * w.W, y = hash(i, 2) * w.H, r = 60 + hash(i, 3) * 90;
+    g.fillStyle = hash(i, 4) < 0.5 ? P.tile[0] : P.tile[1]; g.beginPath(); g.ellipse(x, y, r, r * 0.6, hash(i, 5) * 3, 0, TAU); g.fill();
+  }
+  g.globalAlpha = 1;
+  // ruts: a few long soft tracks worn into the dirt
+  g.strokeStyle = P.tile[0]; g.lineCap = 'round';
+  for (let i = 0; i < w.W / 500; i++) {
+    const y = hash(i, 11) * w.H; g.lineWidth = 14 + hash(i, 12) * 10;
+    g.beginPath(); g.moveTo(0, y); g.bezierCurveTo(w.W * 0.3, y + 60 * (hash(i, 13) - 0.5), w.W * 0.6, y - 80 * (hash(i, 14) - 0.5), w.W, y + 40 * (hash(i, 15) - 0.5)); g.stroke();
   }
   for (let i = 0; i < w.W * w.H / 4000; i++) {
     const x = hash(i, 6) * w.W, y = hash(i, 7) * w.H, r = 2 + hash(i, 8) * 3;

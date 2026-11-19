@@ -275,7 +275,7 @@ function kingDeath(w, u) {
 export const BOSSES = {
   boneKing: {
     team: 'enemy', name: 'The Bone King', art: 'art/bosses/bone-king.svg', headR: 50, r: 56, vr: 38, turn: 2, accel: 120, face: 2, mass: 6,
-    hp: 1080, speed: 46, role: 'melee', range: 30, atkCd: 999, arc: 2, temp: 0.2, commit: 1.4, xp: 160, coins: [60, 80], boss: true,
+    hp: 1000, speed: 46, role: 'melee', range: 30, atkCd: 999, arc: 2, temp: 0.2, commit: 1.4, xp: 160, coins: [60, 80], boss: true,
     res: { poison: 0.3, burn: 0.6, chill: 0.5 }, arena: 'throne',
     brain: (w, u, dt) => {
       const k = u.k;
