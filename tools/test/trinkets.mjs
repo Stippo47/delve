@@ -54,7 +54,8 @@ async function runOne(tq, s) {
     const r = GAME.run;
     return { phase: r.phase, floor: r.floor, rooms: r.rooms, t, calls, etherealSeconds: ethereal, maxUnits, slowest, maxHz,
       left: Object.fromEntries(Object.entries(r.heroes).map(([k, h]) => [k, h.trinkets.join('+') + (h.down ? ' (down)' : '') + ' L' + h.level])) };
-  }, { tq, secs, party, depth });
+  }, { tq, secs, party, depth }).catch((e) => ({ thrown: true, errorsInRun: String(e).split(String.fromCharCode(10)).slice(0, 3).join(' | ') }));
+  if (out.thrown) errors.push(out.errorsInRun);
   await page.close();
   return { ...out, errors };
 }
