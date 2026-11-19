@@ -1,0 +1,26 @@
+{
+  "title": "Stage 2c: revive, zoom, doors",
+  "topic": "runs",
+  "order": 6,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "fixes",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Your 2b notes, in",
+      "text": "Reviving, zoom, glowing doors, longer coins and the rogue's dash. Live now as 0.5.0.",
+      "why": "The clip is one room at double speed, through to the doors this time. Mark any part that's off.",
+      "videos": ["../../../clips/s2c-doors.mp4"],
+      "details": "Twenty full test runs, about 600 rooms, none stuck.\n\nThe boulders, traps and chest are being redrawn by an artist in this art round; they're still the old look in the clip.",
+      "parts": [
+        { "id": "revive", "title": "Revive", "text": "A downed hero is revived by an ally standing over them for 3 seconds, at 10% HP. The nearest ally who isn't fighting goes over; enemies nearby keep them away. Support heroes reviving better comes with those heroes." },
+        { "id": "zoom", "title": "Zoom", "text": "The camera starts further out. Pinch to zoom in or out (mouse wheel on a computer); it remembers your zoom." },
+        { "id": "doors", "title": "Doors", "text": "Each door's opening glows in the colour of the room behind it; the one the party takes glows brightest. At most 3 doors per room now, so they never crowd." },
+        { "id": "coins", "title": "Coins", "text": "Coins last 25 seconds instead of 7." },
+        { "id": "rogue", "title": "Rogue dash", "text": "The rogue dashes: away when an enemy is on it as it backs off, or in at a target that's 2 to 5 body-lengths off. It also goes after enemies on their own, even far away, more than before." },
+        { "id": "stuck", "title": "Archer stuck", "text": "Heroes now ease in as they reach a spot instead of overshooting it and swinging back, which is what looked like jitter. In testing the archer never ended up inside a wall. Tell me if you still see it stuck, and where." }
+      ]
+    }
+  ]
+}
