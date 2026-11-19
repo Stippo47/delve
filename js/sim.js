@@ -647,7 +647,7 @@ function meleeSwing(w, u, single) {
 function fireArrow(w, u, angle, o = {}) {
   const sp = o.speed || 520;
   u.recoilT = 0.14;
-  w.projectiles.push({ kind: o.fire ? 'fireArrow' : 'arrow', x: u.x + Math.cos(angle) * (u.r + 6), y: u.y + Math.sin(angle) * (u.r + 6),
+  w.projectiles.push({ kind: o.fire ? 'fireArrow' : (u.def.proj || 'arrow'), color: u.def.projColor, x: u.x + Math.cos(angle) * (u.r + 6), y: u.y + Math.sin(angle) * (u.r + 6),
     vx: Math.cos(angle) * sp, vy: Math.sin(angle) * sp, r: 6, team: u.team, owner: u, dmg: (o.dmg || u.def.dmg) * u.dmgMul,
     o: trinketStatus(u, { chill: o.fire ? 0 : u.def.chill, burn: o.fire ? 20 : 0, knock: 30 }), life: 1.2, a: angle });
 }

@@ -57,6 +57,10 @@ for (const [id, h] of Object.entries(HEROES)) {
   if (h.role === 'skirmish') Object.assign(DEFS[id], { temp: 0.55, commit: 0.5 });
   if (h.role === 'tank' || h.role === 'melee') Object.assign(DEFS[id], { temp: 0.18, commit: 1.2 });
   if (h.role === 'tank') DEFS[id].heavy = true;
+  // what the plain ranged attack throws, and its colour
+  const PROJ = { pyromancer: ['bolt', '#FF8A3D'], frost: ['bolt', '#8FD3FF'], storm: ['bolt', '#FFF27A'], necromancer: ['bone'],
+    bard: ['note', '#FFD27A'], druid: ['thorn'], plague: ['vial', '#9BCB3C'] };
+  if (PROJ[id]) { DEFS[id].proj = PROJ[id][0]; DEFS[id].projColor = PROJ[id][1]; }
 }
 // Summons
 DEFS.wolf = { team: 'hero', name: 'Wolf', r: 24, vr: 18, turn: 6, accel: 380, face: 6, mass: 1, hp: 60, speed: 92, role: 'skirmish',
