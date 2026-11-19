@@ -117,7 +117,7 @@ function start(w, u, k, what, speed, t) {
     const end = lanceEnd(w, u, a, L.len);
     begin(u, k, tell, L.rec, a); u.facing = a;
     setAnim(u, 'thrust', tell + 0.3);
-    const z = addDanger(w, { shape: 'line', x1: u.x, y1: u.y, x2: end.x, y2: end.y, hw: L.hw, t: tell, team: u.team, src: u, kind: 'bone',
+    addDanger(w, { shape: 'line', x1: u.x, y1: u.y, x2: end.x, y2: end.y, hw: L.hw, t: tell, team: u.team, src: u, kind: 'bone',
       onFire: (w2, z2) => {
         for (const o of heroes(w2)) {
           const side = Math.sign(Math.sin(angleTo(z2.x1, z2.y1, o.x, o.y) - a)) || (chance(0.5) ? 1 : -1);
@@ -140,7 +140,6 @@ function start(w, u, k, what, speed, t) {
       sparks(w, u.x + Math.cos(a) * (u.r + 30), u.y + Math.sin(a) * (u.r + 30), a + Math.PI, 8, '#FFE7A0', 1.3);
       puff(w, u.x + Math.cos(a) * (u.r + 30), u.y + Math.sin(a) * (u.r + 30), '#BDB4A6', 12, 110, 6, 0.6);
     };
-    void z;
   } else if (what === 'rows') {
     const R = KING.rows, tell = R.tell * speed;
     k.rowsCd = w.time + rrange(7, 9);
@@ -220,13 +219,12 @@ function turnToCourt(w, u, k) {
   addDanger(w, { shape: 'circle', x: th.x, y: th.y, r: L.r, t: L.tell, team: u.team, src: u, kind: 'bone',
     hit: { dmg: L.dmg * u.dmgMul, knock: 300, heavy: true },
     onFire: (w2) => { w2.shake = Math.max(w2.shake, 10); puff(w2, th.x, th.y, '#CFC6B4', 26, 260, 8, 0.7); crackGraves(w2, u, 1); } });
+  // the leap: he slides back to the throne over the landing circle's tell (u.kTurn runs while he's turning)
   let p = 0;
-  k.act = null;
-  k.turnMove = (dt) => { p = Math.min(1, p + dt / L.tell); const e = p * p * (3 - 2 * p); u.x = sx + (th.x - sx) * e; u.y = sy + (th.y - sy) * e; };
-  k.st = 'turn'; k.actTurn = true;
-  u.kTurn = k.turnMove;
+  u.kTurn = (dt) => { p = Math.min(1, p + dt / L.tell); const e = p * p * (3 - 2 * p); u.x = sx + (th.x - sx) * e; u.y = sy + (th.y - sy) * e; if (p >= 1) u.kTurn = null; };
 }
 function turnToUnbound(w, u, k) {
+  u.kTurn = null;
   k.phase = 3; k.st = 'turn'; k.t = 1.6; u.invulnT = 1.6; k.lock = null; k.soulCd = w.time + 2.5;
   setAnim(u, 'cast', 1.2);
   const C = KING.crown;
