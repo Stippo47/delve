@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Delve lab</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #2F2734; overflow: hidden; font: 700 12px system-ui, sans-serif; color: #EDE6D8; }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  #info { position: fixed; left: 6px; top: 4px; pointer-events: none; opacity: 0.8; }
+</style>
+</head>
+<body>
+<!-- A test bench for the renderer (not part of the game): every sprite in its poses, every effect, a frame-time count.
+     lab.html?m=grid | fx | fight | perf  (&anim=swing|thrust|draw|cast|throw|ability to force one) -->
+<canvas id="c"></canvas>
+<div id="info"></div>
+<script type="module" src="js/lab.js"></script>
+</body>
+</html>

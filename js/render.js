@@ -1,6 +1,9 @@
 // Canvas renderer for one room. Everything is drawn in room units, scaled and (in portrait) turned so the
 // way out is at the top. One screen shows one chunk across (ACROSS units); a camera follows the party both ways.
 import { getSprite, headR, tinted } from './sprites.js';
+import { getRig, drawRig, poseFor, LIMP } from './parts.js';
+import { DEFS } from './units.js';
+import { drawGroundFx, drawAirFx, drawProjectile as projectile, drawStatusFx, noteHits, drawLocal } from './fx.js';
 import { INK, TAU, clamp } from './util.js';
 
 // One outline thickness for everything drawn here, in room units. Matches what the SVG heroes show.
@@ -122,6 +125,7 @@ export function draw(ctx, w) {
   for (const r of w.walls) if (!r.solid) drawWall(ctx, r);
   for (const h of w.hazards) drawHazard(ctx, h, w.time);
   for (const p of w.pickups) drawPickup(ctx, p, w.time);
+  drawGroundFx(ctx, w);
   // shadows, cast towards the bottom of the screen
   for (const p of w.pillars) upright(ctx, p.x, p.y, () => { ctx.fillStyle = 'rgba(43,34,48,0.22)'; ctx.beginPath(); ctx.ellipse(4, p.r * 0.45, p.r * 1.1, p.r * 0.6, 0, 0, TAU); ctx.fill(); });
   for (const p of w.pillars) drawPillar(ctx, p);
@@ -129,11 +133,14 @@ export function draw(ctx, w) {
   for (const t of w.telegraphs) if (t.type === 'ring') drawRing(ctx, t);
   for (const c of w.corpses) drawCorpse(ctx, c);
   const order = [...w.units].sort((a, b) => (a.downed ? -1 : 0) - (b.downed ? -1 : 0) || screenDepth(a) - screenDepth(b));
-  const dt = Math.min(0.05, Math.max(0, w.time - (w._lastDraw ?? w.time))); w._lastDraw = w.time;
-  for (const u of order) { if (u.kind === 'rat' && !u.downed) drawTail(ctx, u, dt); drawUnit(ctx, u, w); }
-  for (const p of w.projectiles) drawProjectile(ctx, p);
+  const dt = Math.min(0.05, Math.max(0, w.time - (w._lastDraw ?? w.time))); w._lastDraw = w.time; w._dt = dt;
+  noteHits(w);
+  for (const u of order) { if (u.kind === 'rat' && !u.downed) drawTail(ctx, u, dt); drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); }
+  for (const p of w.projectiles) projectile(ctx, p, w.time);
   for (const p of w.particles) drawParticle(ctx, p);
   ctx.globalAlpha = 1;
+  drawAirFx(ctx, w);
+  drawLocal(ctx, dt);
   for (const t of w.telegraphs) if (t.type === 'swing') drawSwing(ctx, t); else if (t.type === 'blast') drawBlast(ctx, t);
   for (const u of order) drawOverlay(ctx, u);
   // Words over the arena (damage numbers, ability names) are off: show, don't tell. drawText stays for later use.
@@ -312,12 +319,8 @@ function drawPickup(ctx, p, t) {
 // ---------------------------------------------------------------- units
 const ease = (k) => Math.sin(k * Math.PI);
 
-function drawUnit(ctx, u, w) {
-  const s = view.scale * view.dpr;
-  const kind = SPRITE_KIND[u.kind] || u.kind;
-  const sizeU = u.vr * 220 / headR(kind);
-  const spr = getSprite(kind, sizeU * s);
-  ctx.save();
+// The motion every unit shares, in its own frame: the hit squash, the turn to its facing, lunges and recoils.
+function unitFrame(ctx, u, w) {
   ctx.translate(u.x, u.y);
   // hit: squashed and shoved along the blow
   if (u.hitT > 0 && !u.downed) {
@@ -327,10 +330,9 @@ function drawUnit(ctx, u, w) {
   ctx.rotate(u.downed ? u.facing - Math.PI / 2 + 0.6 : u.facing - Math.PI / 2);
   // in the sprite's own frame forward is +y
   let fx = 0, fy = 0, sc = 1, tilt = 0;
-  const moving = !u.downed && u.spd > 6;
-  if (moving) { // a small step bounce, no side-to-side wobble (the arms will swing once the art is in parts)
+  if (!u.downed && u.spd > 6) { // a small step bounce, no side-to-side wobble; the arms swing (parts.js)
     const k = clamp(u.spd / (u.def.speed || 60), 0, 1.3);
-    sc = 1 + Math.abs(Math.cos(u.bob)) * 0.03 * k;
+    sc = 1 + Math.abs(Math.cos(u.bob)) * 0.025 * k;
   }
   if (u.lungeT > 0) { const k = ease(1 - u.lungeT / 0.18); fy += u.vr * 0.5 * k; sc *= 1 + 0.08 * k; }
   if (u.recoilT > 0) { fy -= u.vr * 0.22 * (u.recoilT / 0.14); }
@@ -338,25 +340,80 @@ function drawUnit(ctx, u, w) {
     const k = 1 - u.act.t / u.act.max; fy -= u.vr * 0.3 * k; sc *= 1 + 0.1 * k; tilt += Math.sin(w.time * 40) * 0.03 * k;
   }
   if (u.act && u.act.type === 'charge') { fy += u.vr * 0.15; sc *= 1.04; }
+  if (u.sleepT > 0) sc *= 1 + Math.sin(w.time * 2.4 + u.id) * 0.02;
   ctx.translate(fx, fy); ctx.rotate(tilt); ctx.scale(sc, sc);
+}
+
+// Status washes over the sprite: [colour, strength] pairs.
+function washesOf(u, w) {
+  if (u.downed || u.flashT > 0.06) return [];
+  const st = u.st || {}, out = [];
+  const chill = u.frozenT > 0 ? 1 : clamp((st.chill || 0) / 100, 0, 1), poison = clamp((st.poison || 0) / 100, 0, 1), burn = clamp((st.burn || 0) / 100, 0, 1);
+  const wet = clamp((st.wet || 0) / 100, 0, 1), shock = clamp((st.shock || 0) / 100, 0, 1);
+  if (chill > 0.05) out.push(['#9FDDF6', 0.25 + 0.4 * chill]);
+  if (poison > 0.05) out.push(['#9BCB3C', 0.2 + 0.35 * poison]);
+  if (burn > 0.3) out.push(['#FF7A2F', (0.12 + 0.2 * burn) * (0.7 + 0.3 * Math.sin(w.time * 25 + u.id))]);
+  if (wet > 0.05) out.push(['#3F8FD8', 0.1 + 0.22 * wet]);
+  if (shock > 0.05 && Math.sin(w.time * 31 + u.id * 3) > 0.55) out.push(['#FFF3A0', 0.35 + 0.4 * shock]);
+  if (u.ethereal) out.push(['#BFE6FF', 0.45]);
+  return out;
+}
+
+function drawUnit(ctx, u, w) {
+  if (u.def.art) { drawPartsUnit(ctx, u, w); if (u.frozenT > 0) drawIce(ctx, u, w); return; }
+  const s = view.scale * view.dpr;
+  const kind = SPRITE_KIND[u.kind] || u.kind;
+  const sizeU = u.vr * 220 / headR(kind);
+  const spr = getSprite(kind, sizeU * s);
+  ctx.save();
+  unitFrame(ctx, u, w);
   if (u.invulnT > 0) ctx.globalAlpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18));
   if (u.downed) ctx.globalAlpha = 0.75;
+  if (u.ethereal) ctx.globalAlpha = 0.45;
   if (spr) {
     let img = u.downed ? spr.grey : u.flashT > 0.06 ? spr.flash : spr.img;
     ctx.drawImage(img, -sizeU / 2, -sizeU / 2, sizeU, sizeU);
     // status washes over the sprite itself rather than rings around it
-    if (!u.downed && u.flashT <= 0.06) {
-      const chill = u.frozenT > 0 ? 1 : clamp(u.st.chill / 100, 0, 1), poison = clamp(u.st.poison / 100, 0, 1), burn = clamp(u.st.burn / 100, 0, 1);
-      if (chill > 0.05) { ctx.globalAlpha = 0.25 + 0.4 * chill; ctx.drawImage(tinted(spr, '#9FDDF6'), -sizeU / 2, -sizeU / 2, sizeU, sizeU); }
-      if (poison > 0.05) { ctx.globalAlpha = 0.2 + 0.35 * poison; ctx.drawImage(tinted(spr, '#9BCB3C'), -sizeU / 2, -sizeU / 2, sizeU, sizeU); }
-      if (burn > 0.3) { ctx.globalAlpha = (0.12 + 0.2 * burn) * (0.7 + 0.3 * Math.sin(w.time * 25 + u.id)); ctx.drawImage(tinted(spr, '#FF7A2F'), -sizeU / 2, -sizeU / 2, sizeU, sizeU); }
-    }
+    const ga = ctx.globalAlpha;
+    for (const [col, a] of washesOf(u, w)) { ctx.globalAlpha = ga * a; ctx.drawImage(tinted(spr, col), -sizeU / 2, -sizeU / 2, sizeU, sizeU); }
   } else {
     inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, u.vr, 0, TAU); }, u.team === 'hero' ? '#5FA35A' : '#C8553D');
   }
   ctx.restore();
   ctx.globalAlpha = 1;
   if (u.frozenT > 0) drawIce(ctx, u, w);
+}
+
+// A unit drawn from its SVG parts, arms moving with what it is doing (parts.js).
+function drawPartsUnit(ctx, u, w) {
+  const sizeU = u.vr * 220 / (u.def.headR || headR(u.kind)); // def.headR: the head's radius in the art's SVG units
+  const set = getRig(u.def.art, sizeU * view.scale * view.dpr * 1.04);
+  ctx.save();
+  unitFrame(ctx, u, w);
+  if (!set) { inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, u.vr, 0, TAU); }, u.team === 'hero' ? '#5FA35A' : '#C8553D'); ctx.restore(); return; }
+  const pose = u.downed ? LIMP : poseFor(u, w, w._dt ?? 1 / 60);
+  const k = sizeU / 220 * (1 + 0.05 * (pose.pop || 0));
+  ctx.scale(k, k); ctx.translate(-100, -100);
+  let alpha = 1;
+  if (u.invulnT > 0) alpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18));
+  if (u.downed) alpha = 0.75;
+  if (u.ethereal) alpha *= 0.5;
+  const mode = u.downed ? 'grey' : u.flashT > 0.06 ? 'flash' : 'normal';
+  drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w) });
+  if (pose.glow && mode === 'normal') castGlow(ctx, pose.glow, w.time);
+  ctx.restore();
+}
+
+// The light a caster gathers in front of its hands (sprite frame, SVG units).
+function castGlow(ctx, gl, t) {
+  const a = clamp(gl.a, 0, 1), r = 18 + 22 * a;
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  const g = ctx.createRadialGradient(100, 182, 0, 100, 182, r);
+  g.addColorStop(0, hexA(gl.color, 0.85 * a)); g.addColorStop(0.45, hexA(gl.color, 0.35 * a)); g.addColorStop(1, hexA(gl.color, 0));
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(100, 182, r, 0, TAU); ctx.fill();
+  ctx.fillStyle = hexA('#FFFFFF', 0.8 * a);
+  for (let i = 0; i < 3; i++) { const b = t * 5 + i * 2.1; ctx.beginPath(); ctx.arc(100 + Math.cos(b) * r * 0.55, 182 + Math.sin(b) * r * 0.45, 2.6 * a + 0.5, 0, TAU); ctx.fill(); }
+  ctx.restore();
 }
 
 // A tail as a short chain of points that trails the body on springs, so it whips round on turns.
@@ -396,13 +453,22 @@ function drawIce(ctx, u, w) {
 }
 
 function drawCorpse(ctx, c) {
-  const kind = SPRITE_KIND[c.kind] || c.kind;
-  const sizeU = c.vr * 220 / headR(kind);
-  const spr = getSprite(kind, sizeU * view.scale * view.dpr); if (!spr) return;
+  const kind = SPRITE_KIND[c.kind] || c.kind, def = DEFS[c.kind], art = def && def.art;
+  const sizeU = c.vr * 220 / ((art && def.headR) || headR(kind));
   const k = 1 - c.t / c.max; // 0 -> 1
-  ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.facing - Math.PI / 2 + k * 0.6);
+  // a pop as the blow lands, then it slumps flat and fades
   const sc = 1 + 0.25 * Math.sin(Math.min(1, k * 2.2) * Math.PI / 2) - 0.6 * Math.max(0, k - 0.45);
-  ctx.scale(sc, sc); ctx.globalAlpha = clamp(1.4 - k * 1.5, 0, 1);
+  const alpha = clamp(1.4 - k * 1.5, 0, 1);
+  if (art) {
+    const set = getRig(art, sizeU * view.scale * view.dpr); if (!set) return;
+    ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.facing - Math.PI / 2 + k * 0.6); ctx.scale(sc, sc * (1 - 0.25 * k));
+    ctx.scale(sizeU / 220, sizeU / 220); ctx.translate(-100, -100);
+    drawRig(ctx, set, LIMP, { mode: k < 0.25 ? 'flash' : 'normal', alpha });
+    ctx.restore(); return;
+  }
+  const spr = getSprite(kind, sizeU * view.scale * view.dpr); if (!spr) return;
+  ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.facing - Math.PI / 2 + k * 0.6);
+  ctx.scale(sc, sc); ctx.globalAlpha = alpha;
   ctx.drawImage(k < 0.25 ? spr.flash : spr.img, -sizeU / 2, -sizeU / 2, sizeU, sizeU);
   ctx.restore(); ctx.globalAlpha = 1;
 }
@@ -437,20 +503,6 @@ function drawOverlay(ctx, u) {
       });
     }
   });
-}
-
-function drawProjectile(ctx, p) {
-  ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(Math.atan2(p.vy, p.vx));
-  if (p.kind === 'icicle') {
-    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(11, 0); ctx.lineTo(-7, -4.5); ctx.lineTo(-7, 4.5); ctx.closePath(); }, '#CFF3FF');
-  } else {
-    // a bigger arrow: shaft, fletching, head
-    const fire = p.kind === 'fireArrow';
-    inked(ctx, () => { roundRect(ctx, -17, -1.6, 28, 3.2, 1.6); }, fire ? '#FF8A3D' : '#C99A6A');
-    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-17, 0); ctx.lineTo(-22, -5); ctx.lineTo(-12, -2); ctx.lineTo(-12, 2); ctx.lineTo(-22, 5); ctx.closePath(); }, '#F1E8DA');
-    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(17, 0); ctx.lineTo(9, -5); ctx.lineTo(9, 5); ctx.closePath(); }, fire ? '#FFD45A' : '#DCE0E6');
-  }
-  ctx.restore();
 }
 
 function drawParticle(ctx, p) {

@@ -2,6 +2,8 @@
 // then rotated whole in-game. SVG art is rasterised once per pixel size; rats and slimes are drawn
 // procedurally in the same space so they match the outline/gradient rendering.
 import { INK } from './util.js';
+import { DEFS } from './units.js';
+import { loadArt } from './parts.js';
 
 const SVG_KINDS = { archer: 'art/archer.svg', knight: 'art/knight.svg', rogue: 'art/rogue.svg',
   skeleton: 'art/skeleton.svg', boss: 'art/boss.svg' };
@@ -16,6 +18,8 @@ export async function loadSprites() {
   await Promise.all(Object.entries(SVG_KINDS).map(async ([k, url]) => {
     try { svgText[k] = await (await fetch(url)).text(); } catch (e) { svgText[k] = null; }
   }));
+  // kinds drawn from SVG parts (parts.js)
+  await Promise.all([...new Set(Object.values(DEFS).map((d) => d.art).filter(Boolean))].map(loadArt));
 }
 
 function makeCanvas(px) {
