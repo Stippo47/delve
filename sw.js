@@ -1,9 +1,25 @@
 // Keeps the whole game on the phone so it opens with no signal. Bump VERSION on every release.
 const VERSION = '0.5.0';
 const CACHE = `delve-${VERSION}`;
-const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png',
-  'art/archer.svg', 'art/knight.svg', 'art/rogue.svg', 'art/skeleton.svg', 'art/boss.svg',
-  'js/main.js', 'js/camp.js', 'js/progress.js', 'css/camp.css', 'js/util.js', 'js/sprites.js', 'js/units.js', 'js/sim.js', 'js/dungeon.js', 'js/render.js', 'js/save.js', 'js/path.js', 'js/map.js'];
+const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-192.png',
+  'icons/icon-512.png', 'js/camp.js', 'js/dungeon.js', 'js/enemies.js', 'js/fx.js', 'js/heroes.js', 'js/kits.js',
+  'js/main.js', 'js/map.js', 'js/parts.js', 'js/path.js', 'js/progress.js', 'js/render.js', 'js/save.js',
+  'js/sim.js', 'js/sprites.js', 'js/trinkets.js', 'js/units.js', 'js/util.js', 'css/camp.css', 'art/archer.svg',
+  'art/boss.svg', 'art/enemies/brute.svg', 'art/enemies/gaper.svg', 'art/enemies/ghost.svg',
+  'art/enemies/lizardman-blade.svg', 'art/enemies/lizardman.svg', 'art/enemies/rattler-jawless-bow.svg',
+  'art/enemies/rattler-jawless-spear.svg', 'art/enemies/rattler-loosejaw.svg', 'art/enemies/rattler.svg',
+  'art/heroes/archer.svg', 'art/heroes/bard.svg', 'art/heroes/berserker.svg', 'art/heroes/cleric.svg',
+  'art/heroes/druid.svg', 'art/heroes/frost.svg', 'art/heroes/granny.svg', 'art/heroes/necromancer.svg',
+  'art/heroes/paladin.svg', 'art/heroes/plague.svg', 'art/heroes/pyromancer.svg', 'art/heroes/storm.svg',
+  'art/heroes/tower.svg', 'art/heroes/twinfang.svg', 'art/heroes/wildmane.svg', 'art/knight.svg',
+  'art/props/chest-closed.svg', 'art/props/chest-locked.svg', 'art/props/chest-open.svg',
+  'art/props/door-open-boss.svg', 'art/props/door-open-choice.svg', 'art/props/door-open-elite.svg',
+  'art/props/door-open-fight.svg', 'art/props/door-open-fountain.svg', 'art/props/door-open-hazard.svg',
+  'art/props/door-open-treasure.svg', 'art/props/door-open.svg', 'art/props/door-shut.svg',
+  'art/props/fountain-used.svg', 'art/props/fountain.svg', 'art/props/hazard-oil.svg',
+  'art/props/obstacle-crates.svg', 'art/props/obstacle-pillar.svg', 'art/props/obstacle-rock.svg',
+  'art/props/pedestal.svg', 'art/props/trap-spikes-down.svg', 'art/props/trap-spikes-up.svg', 'art/rogue.svg',
+  'art/skeleton.svg'];
 self.addEventListener('install', (e) => e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES.map((f) => new Request(f, { cache: 'reload' })))).then(() => self.skipWaiting())));
 self.addEventListener('activate', (e) => e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k.startsWith('delve-') && k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())));
 self.addEventListener('fetch', (e) => { if (e.request.method !== 'GET') return; e.respondWith(caches.match(e.request, { ignoreSearch: true }).then((r) => r || fetch(e.request))); });
