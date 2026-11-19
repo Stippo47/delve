@@ -37,7 +37,8 @@ for (let i = 0; i < n; i++) {
   await page.evaluate((dt) => GAME.recFrame(dt), speed / fps);
   await page.screenshot({ path: path.join(frames, `f${String(i).padStart(4, '0')}.png`) });
 }
-await browser.close(); edge.kill(); try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
+// a plain kill() leaves Edge running on Windows: take its whole process tree down
+await browser.close(); try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); } try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', path.join(frames, 'f%04d.png'),
   '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '24', '-movflags', '+faststart', out]);
 fs.rmSync(frames, { recursive: true, force: true });

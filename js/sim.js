@@ -520,7 +520,8 @@ export function addStatus(w, u, type, amount, src) {
     s.poison *= 0.5;                                             // water washes poison off
     if (s.wet >= 100) {                                          // soaked through: slips, spins, leaves a puddle
       s.wet = 60; u.act = { type: 'slip', t: 1, max: 1 }; u.stunT = Math.max(u.stunT, 1);
-      w.hazards.push({ type: 'water', x: u.x, y: u.y, r: 42, t: 6, max: 6 });
+      // no new puddle on top of one: slipping in a puddle used to make puddles that soak and slip again, without end
+      if (!w.hazards.some((h) => h.type === 'water' && dist(u.x, u.y, h.x, h.y) < h.r + 20)) w.hazards.push({ type: 'water', x: u.x, y: u.y, r: 42, t: 6, max: 6 });
       textU(w, u.x, u.y, u.r + 10, 'SLIP', '#8FD3FF', 1);
     }
     return;

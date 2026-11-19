@@ -16,6 +16,10 @@ const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
 const dport = 9300 + Math.floor(Math.random() * 500);
 const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'delve-edge-'));
 const edge = spawn(EDGE, ['--headless=new', '--disable-gpu', '--mute-audio', `--remote-debugging-port=${dport}`, `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
+// Edge's main process outlives a plain kill() on Windows: take the whole tree down, also when the script is stopped.
+import { execFileSync } from 'node:child_process';
+function quit() { try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch {} try { fs.rmSync(prof, { recursive: true, force: true }); } catch {} }
+process.on('SIGINT', () => { quit(); process.exit(1); }); process.on('SIGTERM', () => { quit(); process.exit(1); });
 let browser;
 for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${dport}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
 const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
@@ -37,17 +41,18 @@ async function runOne(tq, s) {
     }
     if (party) GAME.save.party = party.split(',');
     GAME.startRun(depth);
-    let t = 0, ghosts = 0, ethereal = 0, maxUnits = 0, rooms = 0, stuckRoom = 0, lastRooms = 0;
+    let slowest = 0, maxHz = 0, t = 0, ghosts = 0, ethereal = 0, maxUnits = 0, rooms = 0, stuckRoom = 0, lastRooms = 0;
     while (t < secs && GAME.run.phase !== 'won' && GAME.run.phase !== 'lost') {
-      GAME.fastForward(1); t += 1;
+      const c0 = performance.now(); GAME.fastForward(1); t += 1; slowest = Math.max(slowest, performance.now() - c0);
       const w = GAME.run.world;
       for (const u of w.units) if (u.ethereal) { ethereal++; if (u.ghostOf) ghosts++; }
-      maxUnits = Math.max(maxUnits, w.units.length);
+      maxUnits = Math.max(maxUnits, w.units.length); maxHz = Math.max(maxHz, w.hazards.length);
+      if (slowest > 5000) return { stuck: true, slow: true, phase: GAME.run.phase, rooms: GAME.run.rooms, t, calls, slowest, maxHz };
       if (GAME.run.rooms !== lastRooms) { lastRooms = GAME.run.rooms; stuckRoom = 0; } else stuckRoom++;
       if (stuckRoom > 200) return { stuck: true, phase: GAME.run.phase, rooms: GAME.run.rooms, t, calls };
     }
     const r = GAME.run;
-    return { phase: r.phase, floor: r.floor, rooms: r.rooms, t, calls, etherealSeconds: ethereal, maxUnits,
+    return { phase: r.phase, floor: r.floor, rooms: r.rooms, t, calls, etherealSeconds: ethereal, maxUnits, slowest, maxHz,
       left: Object.fromEntries(Object.entries(r.heroes).map(([k, h]) => [k, h.trinkets.join('+') + (h.down ? ' (down)' : '') + ' L' + h.level])) };
   }, { tq, secs, party, depth });
   await page.close();
@@ -62,11 +67,11 @@ const list = only ? only.split(',') : [...TRINKET_IDS, 'all'];
 let bad = 0;
 for (const id of list) {
   const r = await runOne(id, seed);
-  const flag = r.errors.length || r.stuck ? '!!' : '  ';
+  const flag = r.errors.length || r.stuck || r.slowest > 1500 ? '!!' : '  ';
   if (flag === '!!') bad++;
-  console.log(`${flag} ${id.padEnd(16)} ${r.stuck ? 'STUCK' : r.phase} f${r.floor} rooms ${r.rooms} t${r.t} ${JSON.stringify(r.calls)}${r.etherealSeconds ? ' ethereal-s ' + r.etherealSeconds : ''} units<=${r.maxUnits}`);
+  console.log(`${flag} ${id.padEnd(16)} ${r.stuck ? 'STUCK' : r.phase} f${r.floor} rooms ${r.rooms} t${r.t} ${JSON.stringify(r.calls)}${r.etherealSeconds ? ' ethereal-s ' + r.etherealSeconds : ''} units<=${r.maxUnits} hazards<=${r.maxHz} slowest 1s step ${Math.round(r.slowest)}ms`);
   if (r.left) console.log('     ', JSON.stringify(r.left));
   for (const e of r.errors.slice(0, 3)) console.log('     ERR', e);
 }
 console.log(bad ? `${bad} trinket runs had errors or got stuck` : 'all clean');
-await browser.close(); edge.kill(); try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
+await browser.close(); quit();
