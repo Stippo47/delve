@@ -267,6 +267,13 @@ function steer(w, u, gx, gy, opts = {}) {
   for (const p of w.pillars) avoidCircle(p.x, p.y, p.r, 1, 70);
   for (const r of w.walls) {
     if (u.x < r.x - look - R || u.x > r.x + r.w + look + R || u.y < r.y - look - R || u.y > r.y + r.h + look + R) continue;
+    // already against this wall: only the directions into it are blocked (rays from inside the padded box all read
+    // as blocked, which froze units touching a wall)
+    const touch = circleRect(u.x, u.y, R + 2, r);
+    if (touch) {
+      for (let i = 0; i < DIRS; i++) { const into = -(DIR_X[i] * touch.nx + DIR_Y[i] * touch.ny); if (into > 0.15) danger[i] = Math.max(danger[i], Math.min(1, into * 1.4)); }
+      continue;
+    }
     for (let i = 0; i < DIRS; i++) { const tt = rayToRect(u.x, u.y, DIR_X[i], DIR_Y[i], r, R); if (tt < look) danger[i] = Math.max(danger[i], 1 - tt / look); }
   }
   const fear = u.team === 'hero' ? 0.9 : 0.45;

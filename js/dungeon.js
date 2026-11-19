@@ -6,7 +6,7 @@
 // down until the floor's boss is beaten, then come back at 10% HP.
 import { makeWorld, spawn, step, alive } from './sim.js';
 import { DEFS, xpToNext, levelHp, levelDmg, TRINKET_IDS } from './units.js';
-import { HEROES, STARTERS, treeFor } from './heroes.js';
+import { HEROES, STARTERS, treeFor, freeNodes } from './heroes.js';
 import { initKit, refreshKit, hooksOf } from './kits.js';
 import { rand, rrange, rint, pick, chance, dist, clamp, angleTo } from './util.js';
 import { buildGrid, circleRect, findPath } from './path.js';
@@ -205,7 +205,9 @@ function buildRoom(run) {
     let homes = sh.cells.filter((c) => c !== w.entry);
     if (!homes.length) homes = [w.entry];
     if (kind === 'treasure') homes = [pick(homes)];
-    const total = ((kind === 'treasure' ? 3 : 4 + run.depth * 2 + run.floor * 2) + L * 0.5) * (kind === 'treasure' ? 1 : 0.55 + 0.18 * sh.cells.length);
+    // fewer enemies for a smaller party: one hero faces about 40% of what three do
+    const partyScale = 0.12 + 0.28 * Math.min(4, run.party.length);
+    const total = ((kind === 'treasure' ? 3 : 4 + run.depth * 2 + run.floor * 2) + L * 0.5) * (kind === 'treasure' ? 1 : 0.55 + 0.18 * sh.cells.length) * partyScale;
     let keyed = false;
     for (const cell of homes) {
       if (enemyPack(w, run, Math.max(2, Math.round(total / homes.length * rrange(0.8, 1.25))), cell, kind === 'treasure' ? 0 : 0.18)) keyed = true;
@@ -250,7 +252,7 @@ function buildFor(save, k) {
   if (typeof location !== 'undefined' && /[?&]allnodes/.test(location.search)) {
     const nodes = {}; for (const n of treeFor(k)) nodes[n.id] = n.max; return { nodes };
   }
-  return { nodes: (save.heroes && save.heroes[k] && save.heroes[k].nodes) || {} };
+  return { nodes: { ...freeNodes(k), ...((save.heroes && save.heroes[k] && save.heroes[k].nodes) || {}) } };
 }
 
 function giveXp(run, h, xp) {
