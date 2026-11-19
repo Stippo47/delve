@@ -202,3 +202,7 @@ Raw answers: `docs/riffle-log/2026-11-19-round4.txt`.
   explodes, complete poison immunity, auto-teleport out of reach of an attack on a cooldown, on death turn ethereal
   (very weak attacks, can't be hit or targeted, the corpse stays behind).
 - Plan and contracts: `docs/BUILD-v1.md`. The 15 and their kits: `js/heroes.js`.
+- My calls while building (round 5): every hero's first ability (tier I) is free from the start, so a brand-new party
+  of one still has a move; enemy numbers scale with party size (one hero faces ~40% of what three do); a new solo
+  hero tends to fall around rooms 5-10 with 100-200 gold to spend on the tree. Fixed a freeze: a unit touching a rock
+  chunk read every direction as blocked and stood still (likely the archer "stuck in a wall").

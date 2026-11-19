@@ -1,0 +1,172 @@
+{
+  "title": "Build v1: the 15 heroes' kits",
+  "topic": "progression",
+  "order": 3,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "kits",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "15 heroes in the game",
+      "text": "Each hero's attack, three abilities with three tiers, and trait. Tick the ones you like; comment on any.",
+      "why": "These are in the game now (being finished). Your notes here change what each one does.",
+      "pick": [
+        "paladin",
+        "tower",
+        "archer",
+        "twinfang",
+        "wildmane",
+        "berserker",
+        "granny",
+        "pyromancer",
+        "frost",
+        "storm",
+        "cleric",
+        "bard",
+        "druid",
+        "necromancer",
+        "plague"
+      ],
+      "details": "Base attacks are plain. Abilities and their tiers are bought in each hero's skill tree with gold; a bought tier switches on in a run once the hero reaches its level there (2, 5 and 8). Tier III also needs the hero to have reached level 8 in a dungeon once.",
+      "items": [
+        {
+          "id": "paladin",
+          "label": "Paladin",
+          "image": "../../../design/class-round4/knight/renders/knight-paladin.png",
+          "thumb": "../../../design/class-round4/knight/renders/knight-paladin-thumb.png",
+          "text": "Sword and shield. Stands in front and keeps the others alive. (tank; Starter.)\n\nAttack: Sword.\n\nShield Bash (free from the start): Lunges into an enemy with the shield, knocking it back.\nI: Knocks back and staggers. II: Stuns for a moment as well. III: Hits everything in front, not just one.\n\nGuard: Stands beside a hurt ally and takes part of the damage meant for them.\nI: Takes 40% of their damage for 5s. II: Takes 60%. III: Also heals them 15% when it starts.\n\nConsecrate: Holy ground around him: hurts enemies, mends allies.\nI: A ring of light for 4s. II: Bigger and lasts 6s. III: Undead in it burn.\n\nTrait, Bulwark: Blocks 35% of damage that comes from the front."
+        },
+        {
+          "id": "tower",
+          "label": "Tower",
+          "image": "../../../design/class-round4/knight/renders/knight-tower.png",
+          "thumb": "../../../design/class-round4/knight/renders/knight-tower-thumb.png",
+          "text": "A wall with a mace. Pulls every enemy onto himself. (tank; Unlocked with 2 gems.)\n\nAttack: Flanged mace.\n\nHold the Line (free from the start): Plants the tower shield and calls enemies to him.\nI: Takes 60% less damage from the front and taunts those near for 4s. II: Taunts further, for 6s. III: Hits taken while planted are struck back.\n\nCharge: Charges in a line, bowling enemies aside.\nI: A short charge. II: Longer, and slams enemies into walls harder. III: Staggers everything it hits.\n\nGround Pound: Slams the shield down: a ring that shoves enemies away.\nI: Knocks back. II: Staggers as well. III: A second ring follows.\n\nTrait, Unmovable: Can't be knocked back."
+        },
+        {
+          "id": "archer",
+          "label": "Archer",
+          "image": "../../../design/class-round2/archer/renders/archer.png",
+          "thumb": "../../../design/class-round2/archer/renders/archer-thumb.png",
+          "text": "Shoots from behind the front line. (ranged; Starter.)\n\nAttack: Bow.\n\nBarrage (free from the start): A fan of arrows.\nI: Five arrows. II: Seven arrows, set alight. III: The arrows go through.\n\nFrost Arrow: A frost-tipped arrow.\nI: Chills hard. II: Freezes. III: Bursts, chilling all around.\n\nRoll: Rolls out of reach when something gets close.\nI: A quick roll back. II: The next arrow after a roll hits twice as hard. III: Leaves caltrops that slow.\n\nTrait, Steady Aim: After standing still for 1.5s, the next arrow is a critical hit."
+        },
+        {
+          "id": "twinfang",
+          "label": "Twinfang",
+          "image": "../../../design/class-round4/rogue/renders/rogue-twinfang.png",
+          "thumb": "../../../design/class-round4/rogue/renders/rogue-twinfang-thumb.png",
+          "text": "Hooked daggers. Picks off the ones on their own. (skirmish; Starter.)\n\nAttack: Twin daggers.\n\nBackstab (free from the start): Steps into the shadows and appears behind the target.\nI: A big hit from behind. II: Poisons too. III: A kill resets it.\n\nDash: A burst of speed: in at a lone target, or out of reach.\nI: One dash. II: Leaves smoke: enemies lose sight of her. III: Two dashes before it recharges.\n\nFan of Knives: Throws knives all around.\nI: Eight knives. II: They poison. III: Twelve knives, and they go through.\n\nTrait, Opportunist: +50% damage to enemies fighting someone else."
+        },
+        {
+          "id": "wildmane",
+          "label": "Wildmane",
+          "image": "../../../design/class-round4/barbarian/renders/barbarian-wildmane-scar.png",
+          "thumb": "../../../design/class-round4/barbarian/renders/barbarian-wildmane-scar-thumb.png",
+          "text": "Big sword, bigger temper. (melee; Unlocked with 2 gems.)\n\nAttack: Greatsword.\n\nRage (free from the start): Takes less damage and attacks and moves faster for a while.\nI: For 5s. II: Her hits also heal her. III: For 8s, and nothing knocks her back.\n\nLeap: Leaps onto a far enemy; the landing shoves those around.\nI: A leap. II: Lands harder, staggering. III: Leaps again straight after.\n\nCleave: A full spin with the sword.\nI: Hits everything around. II: Wider, and knocks back. III: Spins twice.\n\nTrait, Bloodied: Hits harder the more hurt she is: up to +50%."
+        },
+        {
+          "id": "berserker",
+          "label": "Berserker",
+          "image": "../../../design/class-round4/barbarian/renders/barbarian-berserker.png",
+          "thumb": "../../../design/class-round4/barbarian/renders/barbarian-berserker-thumb.png",
+          "text": "A flail and no plan. Shockwaves. (melee; Unlocked with 2 gems.)\n\nAttack: Flail.\n\nShockwave (free from the start): Slams the ground, sending a shockwave forward that repeats.\nI: Three waves. II: Five waves. III: The waves stagger.\n\nWhirl: Spins the flail while moving, hitting everything around.\nI: For 3s. II: For 5s. III: Pulls enemies in.\n\nUnstoppable: Shakes off every status and can't be stopped for a moment.\nI: Clears statuses, 2s of immunity. II: 4s. III: Heals 20% too.\n\nTrait, Momentum: Each hit in a row makes the next a little faster, up to +50%."
+        },
+        {
+          "id": "granny",
+          "label": "Granny Reaper",
+          "image": "../../../design/class-round4/farmer/renders/farmer-granny-reaper.png",
+          "thumb": "../../../design/class-round4/farmer/renders/farmer-granny-reaper-thumb.png",
+          "text": "Scythe. Sweeps all the way round. (melee; Unlocked with 3 gems.)\n\nAttack: Scythe.\n\nReap (free from the start): A full sweep all the way round her.\nI: Hits everyone close. II: Reaches further. III: Heals her for each enemy hit.\n\nHook: Hooks a far enemy and drags it to her.\nI: One enemy. II: Staggers it on arrival. III: Two enemies.\n\nOld Bones: When she would go down, she shrugs it off.\nI: Stays up at 1 HP once per room. II: Heals 20% when it saves her. III: Knocks everything around back too.\n\nTrait, Grim: Finishes off any enemy her hits leave below 12% health."
+        },
+        {
+          "id": "pyromancer",
+          "label": "Pyromancer",
+          "image": "../../../design/class-round4/heroes-casters/renders/caster-pyromancer.png",
+          "thumb": "../../../design/class-round4/heroes-casters/renders/caster-pyromancer-thumb.png",
+          "text": "Fire, mostly. (caster; Unlocked with 2 gems.)\n\nAttack: Spark.\n\nFireball (free from the start): A slow fireball that bursts.\nI: Bursts and burns. II: Leaves burning ground. III: Bigger burst.\n\nFlame Wall: A line of fire across the enemies' way.\nI: Burns what walks through. II: Longer and lasts longer. III: Sets oil off from further away.\n\nInferno: A ring of fire bursts out of her.\nI: Burns all near. II: Knocks them back. III: Leaves her immune to burning for 6s.\n\nTrait, Kindling: Burning enemies take 20% more from her."
+        },
+        {
+          "id": "frost",
+          "label": "Frost Mage",
+          "image": "../../../design/class-round4/heroes-casters/renders/caster-frost.png",
+          "thumb": "../../../design/class-round4/heroes-casters/renders/caster-frost-thumb.png",
+          "text": "Slows everything down, then shatters it. (caster; Unlocked with 2 gems.)\n\nAttack: Snow bolt.\n\nIce Shard (free from the start): A shard that goes through enemies in a line.\nI: Chills. II: Chills harder. III: Splits into three.\n\nFrost Nova: Freezes everything close to her.\nI: Freezes for a moment. II: Bigger. III: Frozen enemies take double damage.\n\nIce Wall: Raises a wall of ice that blocks enemies.\nI: A short wall for 5s. II: Longer, 8s. III: It chills what touches it.\n\nTrait, Cold Blood: Can't be chilled or frozen."
+        },
+        {
+          "id": "storm",
+          "label": "Storm Mage",
+          "image": "../../../design/class-round4/heroes-casters/renders/caster-storm.png",
+          "thumb": "../../../design/class-round4/heroes-casters/renders/caster-storm-thumb.png",
+          "text": "Lightning that jumps. Loves wet enemies. (caster; Unlocked with 3 gems.)\n\nAttack: Zap.\n\nChain Lightning (free from the start): A bolt that jumps from enemy to enemy, shocking.\nI: Jumps 3 times. II: Jumps 5 times. III: Jumps back to enemies already hit.\n\nThunderclap: A crack of thunder around a target.\nI: Staggers. II: Bigger. III: Shocks too.\n\nStorm Cloud: A cloud over the enemies that rains and strikes.\nI: Soaks what's under it. II: Strikes lightning too. III: Follows the enemies.\n\nTrait, Conductor: Shock lasts twice as long on wet enemies."
+        },
+        {
+          "id": "cleric",
+          "label": "Cleric",
+          "image": "../../../design/class-round4/heroes-support/renders/support-cleric.png",
+          "thumb": "../../../design/class-round4/heroes-support/renders/support-cleric-thumb.png",
+          "text": "Heals, and brings the fallen back fast. (support; Unlocked with 1 gems.)\n\nAttack: Sceptre.\n\nMend (free from the start): Heals the most hurt ally nearby.\nI: Heals 20%. II: Heals 30%. III: Heals a second ally too.\n\nSanctuary: A circle of light that heals allies standing in it.\nI: For 5s. II: Bigger, 7s. III: Enemies can't step in.\n\nSmite: A pillar of light on an enemy.\nI: Hurts and staggers. II: Hurts more. III: Undead take triple.\n\nTrait, Raiser: Revives the downed three times faster, at 40% health."
+        },
+        {
+          "id": "bard",
+          "label": "Bard",
+          "image": "../../../design/class-round4/heroes-support/renders/support-bard.png",
+          "thumb": "../../../design/class-round4/heroes-support/renders/support-bard-thumb.png",
+          "text": "Songs that make the others better. (support; Unlocked with 2 gems.)\n\nAttack: Sour note.\n\nWar Song (free from the start): Allies near attack faster for a while.\nI: +25% for 6s. II: +40%. III: They move faster too.\n\nLullaby: Enemies in front grow slow and drowsy.\nI: Slows for 4s. II: Puts the weakest to sleep. III: Wider.\n\nEncore: An ally's ability is ready again.\nI: One ally. II: Heals them 10% too. III: Two allies.\n\nTrait, Rhythm: Allies near the bard move 10% faster."
+        },
+        {
+          "id": "druid",
+          "label": "Druid",
+          "image": "../../../design/class-round4/heroes-casters/renders/caster-druid.png",
+          "thumb": "../../../design/class-round4/heroes-casters/renders/caster-druid-thumb.png",
+          "text": "Vines, healing, and a wolf. (support; Unlocked with 2 gems.)\n\nAttack: Thorn.\n\nEntangle (free from the start): Vines burst up and hold enemies in place.\nI: Holds for 1.5s. II: Bigger patch. III: The vines poison.\n\nRejuvenate: Heals an ally slowly over time.\nI: 30% over 6s. II: 45%. III: Two allies.\n\nCall Wolf: A wolf comes to fight beside the party for a while.\nI: For 15s. II: A bigger wolf. III: Two wolves.\n\nTrait, Barkskin: Takes 30% less damage while standing still."
+        },
+        {
+          "id": "necromancer",
+          "label": "Necromancer",
+          "image": "../../../design/class-round4/heroes-casters/renders/caster-necromancer.png",
+          "thumb": "../../../design/class-round4/heroes-casters/renders/caster-necromancer-thumb.png",
+          "text": "The dead fight for him. (caster; Unlocked with 3 gems.)\n\nAttack: Bone dart.\n\nRaise Dead (free from the start): Raises a fallen enemy to fight for the party for a while.\nI: One skeleton, 12s. II: Two. III: They explode when they fall.\n\nLife Drain: Drains an enemy, healing himself.\nI: For 3s. II: Heals allies near him too. III: Stronger.\n\nBone Spear: A spear of bone through a line of enemies.\nI: Goes through. II: Knocks back. III: Wider and longer.\n\nTrait, Soul Harvest: Every enemy that dies near him shortens his cooldowns."
+        },
+        {
+          "id": "plague",
+          "label": "Plague Doctor",
+          "image": "../../../design/class-round4/heroes-support/renders/support-plague-doctor.png",
+          "thumb": "../../../design/class-round4/heroes-support/renders/support-plague-doctor-thumb.png",
+          "text": "Poison clouds, and cures for friends. (caster; Unlocked with 2 gems.)\n\nAttack: Vial.\n\nMiasma (free from the start): A flask that bursts into a poison cloud.\nI: A cloud for 5s. II: Bigger. III: Enemies in it hit softer.\n\nCure: Clears an ally's statuses and heals a little.\nI: One ally, 10%. II: 20%. III: Every ally near.\n\nLeeches: Leeches on an enemy drain it for allies to heal from.\nI: For 5s. II: Spread to one more enemy. III: Heal twice as much.\n\nTrait, Immunity: Can't be poisoned, and his poison spreads to enemies nearby."
+        }
+      ]
+    },
+    {
+      "id": "calls",
+      "kind": "design",
+      "rarity": "uncommon",
+      "title": "My calls so far",
+      "text": "Choices I made while building, so a new player has a fair start. Mark any you'd change.",
+      "why": "You said not to wait for you, so I picked. Each part is one call; they're easy to change.",
+      "pick": "Keep these.",
+      "parts": [
+        {
+          "id": "free",
+          "title": "First ability free",
+          "text": "Every hero starts with its first ability (tier I) already bought, so a new party of one still has a move."
+        },
+        {
+          "id": "scale",
+          "title": "Fewer enemies for small parties",
+          "text": "Enemy numbers scale with party size: one hero faces about 40% of what three do."
+        },
+        {
+          "id": "pace",
+          "title": "First runs",
+          "text": "A brand-new solo hero tends to fall around rooms 5 to 10 with 100 to 200 gold, enough for a node or two."
+        },
+        {
+          "id": "enemies",
+          "title": "Enemy art",
+          "text": "Only the enemy art you picked is used (skeletons, ghost, lizardmen, plus the rat and slime). Anything else is a placeholder until it's redrawn."
+        }
+      ]
+    }
+  ]
+}

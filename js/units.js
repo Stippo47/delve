@@ -49,10 +49,18 @@ export const DEFS = {
 };
 
 // Every hero in heroes.js becomes a def; the old trio's fields (abilities the sim already runs) are kept for now.
+// role (how it moves: melee / ranged / skirmish) comes from the hero's role; heroRole keeps the hero's own.
+const MOVE_ROLE = { tank: 'melee', melee: 'melee', skirmish: 'skirmish', ranged: 'ranged', caster: 'ranged' };
 for (const [id, h] of Object.entries(HEROES)) {
-  DEFS[id] = { ...(DEFS[id] || {}), team: 'hero', name: h.name, ...h.stats, attackAnim: h.attack.anim, art: h.art, hero: id };
-  if (id === 'archer') delete DEFS[id].chill; // base attacks are plain now
+  const role = MOVE_ROLE[h.role] || (h.stats.range > 60 ? 'ranged' : 'melee');
+  DEFS[id] = { team: 'hero', name: h.name, temp: 0.35, commit: 0.8, keep: 150, ...h.stats, role, heroRole: h.role, attackAnim: h.attack.anim, art: h.art, hero: id };
+  if (h.role === 'skirmish') Object.assign(DEFS[id], { temp: 0.55, commit: 0.5 });
+  if (h.role === 'tank' || h.role === 'melee') Object.assign(DEFS[id], { temp: 0.18, commit: 1.2 });
+  if (h.role === 'tank') DEFS[id].heavy = true;
 }
+// Summons
+DEFS.wolf = { team: 'hero', name: 'Wolf', r: 24, vr: 18, turn: 6, accel: 380, face: 6, mass: 1, hp: 60, speed: 92, role: 'skirmish',
+  range: 14, atkCd: 0.8, dmg: 7, arc: 1.4, temp: 0.5, commit: 0.5 };
 Object.assign(DEFS, ENEMIES);
 
 export const HERO_ORDER = ['knight', 'archer', 'rogue'];

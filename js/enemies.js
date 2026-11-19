@@ -3,7 +3,7 @@
 // is worth when a room's enemy budget is spent; see dungeon.js), `pack` ([min, max]: small things come in groups)
 // and optionally `brain(w, u, dt)` for behaviour of their own (return true to skip the usual brain that tick).
 // Dungeon themes pick from these (see js/themes.js). Brains stay simple: one habit each (designer, round 1 + 4).
-import { alive, opponents, hurt, puff, goalVec, steer, drive, blocked, setAnim, addDanger, explode, sparks, spawn } from './sim.js';
+import { alive, opponents, hurt, puff, goalVec, steer, drive, blocked, setAnim, addDanger, explode, sparks, spawn, addStatus } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange, chance } from './util.js';
 import { BOSSES } from './boss.js';
 
@@ -18,13 +18,13 @@ export function walkTo(w, u, x, y, mult, dt) {
   drive(u, sx, sy, u.def.speed * mult, dt);
 }
 export function stand(u, dt) { u.spd *= Math.exp(-dt * 10); u.dvx = Math.cos(u.mvA) * u.spd; u.dvy = Math.sin(u.mvA) * u.spd; }
-// Wet: a status the lead's sim reads (soaked units fly further, freeze easier, lose poison).
-export function soak(u, n) { if (!u.st) return; u.st.wet = Math.min(100, (u.st.wet || 0) + n); if (u.st.poison) u.st.poison = Math.max(0, u.st.poison - n); }
+// Wet (sim.js: soaked units fly further, freeze easier, lose poison, slip at 100).
+export function soak(w, u, n) { if (alive(u)) addStatus(w, u, 'wet', n); }
 function waterShot(w, u, a, o = {}) {
   const sp = o.speed || 150;
   w.projectiles.push({ kind: 'water', x: u.x + Math.cos(a) * (u.r + 8), y: u.y + Math.sin(a) * (u.r + 8), vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
     r: 9, team: u.team, owner: u, dmg: (o.dmg || 5) * u.dmgMul, o: { knock: 60 }, life: o.life || 2.4, a,
-    onHit: (w2, p, t) => { soak(t, o.wet || 45); puff(w2, p.x, p.y, '#8FD3F0', 8, 70, 5, 0.4); } });
+    onHit: (w2, p, t) => { soak(w2, t, o.wet || 45); puff(w2, p.x, p.y, '#8FD3F0', 8, 70, 5, 0.4); } });
 }
 
 // ---------------------------------------------------------------- brains

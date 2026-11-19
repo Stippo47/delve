@@ -5,7 +5,9 @@
 // three things), then picks one of the doors ahead. Heroes keep HP and potions between rooms; downed heroes stay
 // down until the floor's boss is beaten, then come back at 10% HP.
 import { makeWorld, spawn, step, alive } from './sim.js';
-import { DEFS, HERO_ORDER, xpToNext, levelHp, levelDmg, TRINKET_IDS } from './units.js';
+import { DEFS, xpToNext, levelHp, levelDmg, TRINKET_IDS } from './units.js';
+import { HEROES, STARTERS, treeFor, freeNodes } from './heroes.js';
+import { initKit, refreshKit, hooksOf } from './kits.js';
 import { rand, rrange, rint, pick, chance, dist, clamp, angleTo } from './util.js';
 import { buildGrid, circleRect, findPath } from './path.js';
 import { makeFloor, nodeAt, nextNodes, chooseDoor, advance, LAYERS } from './map.js';
@@ -13,10 +15,18 @@ import { makeFloor, nodeAt, nextNodes, chooseDoor, advance, LAYERS } from './map
 export const H = 480;
 export const FLOORS = 3;
 
-export function newRun(save, depth) {
+// opts: { theme, party: [heroId...], mercs, depth }. (A number for opts is the old depth argument.)
+// Levels start at 1 every run: XP and levels live inside a run, and bought skill-tree nodes switch on as levels come.
+export function newRun(save, opts = {}) {
+  if (typeof opts === 'number') opts = { depth: opts };
+  const party = (opts.party && opts.party.length ? opts.party : save.party && save.party.length ? save.party : STARTERS).filter((k) => HEROES[k]);
   const heroes = {};
-  for (const k of HERO_ORDER) heroes[k] = { hp: null, down: false, potions: 0 }; // a potion to bring in comes from the camp (stage 3)
-  const run = { depth, floor: 1, map: makeFloor(), coins: 0, satchel: [], keys: 0, heroes, phase: 'fight', t: 0, fade: 1, save, kills: 0, banner: null, rooms: 0 };
+  for (const k of party) {
+    const sv = (save.heroes && save.heroes[k]) || {};
+    heroes[k] = { level: 1, xp: 0, hp: null, down: false, potions: (opts.potions && opts.potions[k]) || 0, trinkets: (sv.trinkets || []).slice(), best: 1 };
+  }
+  const run = { depth: opts.depth || save.depth || 1, theme: opts.theme || null, mercs: !!opts.mercs, party, floor: 1, map: makeFloor(), coins: 0, gems: 0,
+    satchel: [], keys: 0, heroes, phase: 'fight', t: 0, fade: 1, save, kills: 0, banner: null, rooms: 0 };
   buildRoom(run);
   return run;
 }
@@ -176,11 +186,13 @@ function buildRoom(run) {
   w.wp = null;
   // heroes come in at the way in (the bottom of the screen in portrait)
   const y0 = w.doorIn.y, ys = [y0, y0 - 60, y0 + 60];
-  HERO_ORDER.forEach((k, i) => {
+  run.party.forEach((k, i) => {
     const hs = run.heroes[k];
     if (hs.down) return;
-    const sv = run.save.heroes[k];
-    const u = spawn(w, k, 70 + (k === 'knight' ? 40 : 0), ys[i], { level: sv.level, trinket: sv.trinket ? sv.trinket.id : null, hp: hs.hp, potions: hs.potions });
+    const tank = HEROES[k].role === 'tank';
+    const u = spawn(w, k, 70 + (tank ? 40 : 0), ys[i % 3] + Math.floor(i / 3) * 30, { level: hs.level, hp: hs.hp, potions: hs.potions, trinkets: hs.trinkets });
+    initKit(u, k, buildFor(run.save, k), hs.level);
+    if (hs.hp != null) u.hp = Math.min(u.maxHp, hs.hp);
     u.facing = 0; u.mvA = 0;
   });
   // enemies: groups around the room's chunks, waiting
@@ -193,7 +205,9 @@ function buildRoom(run) {
     let homes = sh.cells.filter((c) => c !== w.entry);
     if (!homes.length) homes = [w.entry];
     if (kind === 'treasure') homes = [pick(homes)];
-    const total = ((kind === 'treasure' ? 3 : 4 + run.depth * 2 + run.floor * 2) + L * 0.5) * (kind === 'treasure' ? 1 : 0.55 + 0.18 * sh.cells.length);
+    // fewer enemies for a smaller party: one hero faces about 40% of what three do
+    const partyScale = 0.12 + 0.28 * Math.min(4, run.party.length);
+    const total = ((kind === 'treasure' ? 3 : 4 + run.depth * 2 + run.floor * 2) + L * 0.5) * (kind === 'treasure' ? 1 : 0.55 + 0.18 * sh.cells.length) * partyScale;
     let keyed = false;
     for (const cell of homes) {
       if (enemyPack(w, run, Math.max(2, Math.round(total / homes.length * rrange(0.8, 1.25))), cell, kind === 'treasure' ? 0 : 0.18)) keyed = true;
@@ -233,14 +247,24 @@ function grant(run, reward, hero) {
 }
 function burst(w, x, y, color) { for (let i = 0; i < 18; i++) { const a = rand() * Math.PI * 2; w.particles.push({ x, y, vx: Math.cos(a) * 150, vy: Math.sin(a) * 150, life: 0.7, max: 0.7, size: 5, color }); } }
 
+// The skill-tree nodes a hero has bought (the save's), or everything with ?allnodes in the address (for testing).
+function buildFor(save, k) {
+  if (typeof location !== 'undefined' && /[?&]allnodes/.test(location.search)) {
+    const nodes = {}; for (const n of treeFor(k)) nodes[n.id] = n.max; return { nodes };
+  }
+  return { nodes: { ...freeNodes(k), ...((save.heroes && save.heroes[k] && save.heroes[k].nodes) || {}) } };
+}
+
 function giveXp(run, h, xp) {
-  const w = run.world, sv = run.save.heroes[h.kind];
+  const w = run.world, sv = run.heroes[h.kind];
+  if (!sv || h.summon) return;
   sv.xp += xp;
   while (sv.xp >= xpToNext(sv.level)) {
-    sv.xp -= xpToNext(sv.level); sv.level++;
-    const ratio = h.hp / h.maxHp;
-    h.maxHp = levelHp(h.def.hp, sv.level); h.hp = Math.min(h.maxHp, h.maxHp * ratio + h.maxHp * 0.25);
-    h.dmgMul = levelDmg(1, sv.level); h.level = sv.level;
+    sv.xp -= xpToNext(sv.level); sv.level++; sv.best = Math.max(sv.best, sv.level);
+    const ratio = h.hp / h.maxHp, grow = levelHp(h.def.hp, sv.level) / levelHp(h.def.hp, sv.level - 1);
+    h.maxHp = Math.round(h.maxHp * grow); h.hp = Math.min(h.maxHp, h.maxHp * ratio + h.maxHp * 0.25);
+    h.dmgMul *= levelDmg(1, sv.level) / levelDmg(1, sv.level - 1); h.level = sv.level;
+    refreshKit(h, sv.level);
     for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; w.particles.push({ x: h.x, y: h.y, vx: Math.cos(a) * 120, vy: Math.sin(a) * 120, life: 0.6, max: 0.6, size: 4, color: '#FFE14D' }); }
   }
 }
@@ -251,7 +275,7 @@ function onKill(run, u) {
   for (const h of run.world.units) if (h.team === 'hero' && alive(h)) giveXp(run, h, xp);
 }
 
-const heroesAlive = (run) => run.world.units.filter((u) => u.team === 'hero' && alive(u));
+const heroesAlive = (run) => run.world.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon);
 function nearestHero(run, x, y) { let best = null, bd = Infinity; for (const h of heroesAlive(run)) { const d = dist(h.x, h.y, x, y); if (d < bd) { bd = d; best = h; } } return best; }
 
 // ---------------------------------------------------------------- the room's flow
@@ -264,8 +288,8 @@ export function update(run, dt) {
   if (run.phase === 'transition') { run.fadeOut += dt * 2.2; if (run.fadeOut >= 1) nextRoom(run); return; }
   if (w.hitstop > 0) { w.hitstop -= dt; return; } // a beat of stillness on big hits
   step(w, dt);
-  for (const u of w.units) if (u.team === 'hero' && u.downed) run.heroes[u.kind].down = true;
-  if (heroesAlive(run).length === 0) { run.phase = 'lost'; return; }
+  for (const u of w.units) if (u.team === 'hero' && u.downed && run.heroes[u.kind]) run.heroes[u.kind].down = true;
+  if (heroesAlive(run).length === 0) { run.phase = 'lost'; summarize(run); return; }
   const enemies = w.units.filter((u) => u.team === 'enemy' && alive(u));
   // a fight that's gone quiet (someone stuck, a group never met): everyone left comes looking
   if (run.phase === 'fight') {
@@ -283,7 +307,7 @@ export function update(run, dt) {
     if (run.node.kind === 'boss') { finishRoomHp(run); endFloor(run); return; }
     const hs = heroesAlive(run);
     if (run.doorK == null) {
-      const hp = hs.reduce((a, h) => a + h.hp / h.maxHp, 0) / HERO_ORDER.length;
+      const hp = hs.reduce((a, h) => a + h.hp / h.maxHp, 0) / run.party.length;
       run.doorK = chooseDoor(run.map, hp, run.keys);
       w.doors[run.doorK].chosen = true;
       run.exitT = 0;
@@ -314,10 +338,11 @@ function revive(run, dt) {
     if (!helper || threat) { if (helper && helper.forcedGoal && helper.forcedGoal.who === d) helper.forcedGoal = null; d.reviveT = Math.max(0, (d.reviveT || 0) - dt); continue; }
     helper.forcedGoal = { x: d.x, y: d.y, revive: true, who: d }; helper.target = null;
     if (hd < d.r + helper.r + 18) {
-      d.reviveT = (d.reviveT || 0) + dt;
+      const rate = Math.max(1, ...hooksOf(helper).map((x) => x.reviveRate || 1));
+      d.reviveT = (d.reviveT || 0) + dt * rate; d.reviveHp = Math.max(REVIVE_HP, ...hooksOf(helper).map((x) => x.reviveHp || 0));
       if (Math.random() < dt * 14) w.particles.push({ x: d.x + rrange(-18, 18), y: d.y + rrange(-18, 18), vx: 0, vy: 0, rise: 40, life: 0.6, max: 0.6, size: 4, color: '#FFE7A0' });
       if (d.reviveT >= REVIVE_T) {
-        d.downed = false; d.reviveT = 0; d.hp = d.maxHp * REVIVE_HP; d.invulnT = 1.2; d.st = { burn: 0, chill: 0, poison: 0 };
+        d.downed = false; d.reviveT = 0; d.hp = d.maxHp * (d.reviveHp || REVIVE_HP); d.invulnT = 1.2; d.st = { burn: 0, chill: 0, poison: 0 };
         run.heroes[d.kind].down = false; helper.forcedGoal = null;
         burst(w, d.x, d.y, '#FFE7A0');
       }
@@ -395,14 +420,14 @@ function doTasks(run, dt) {
 }
 
 function finishRoomHp(run) {
-  for (const u of run.world.units) if (u.team === 'hero') { const hs = run.heroes[u.kind]; hs.hp = u.hp; hs.potions = u.potions; if (u.downed) hs.down = true; }
+  for (const u of run.world.units) if (u.team === 'hero' && run.heroes[u.kind]) { const hs = run.heroes[u.kind]; hs.hp = u.hp; hs.potions = u.potions; if (u.downed) hs.down = true; }
 }
 
 function endFloor(run) {
-  if (run.floor >= FLOORS) { run.phase = 'won'; return; }
+  if (run.floor >= FLOORS) { run.phase = 'won'; summarize(run); return; }
   run.floor++;
   run.map = makeFloor();
-  for (const k of HERO_ORDER) { const hs = run.heroes[k]; if (hs.down) { hs.down = false; hs.hp = levelHp(DEFS[k].hp, run.save.heroes[k].level) * 0.1; } }
+  for (const k of run.party) { const hs = run.heroes[k]; if (hs.down) { hs.down = false; hs.hp = levelHp(DEFS[k].hp, hs.level) * 0.1; } }
   run.banner = { s: 'Floor ' + run.floor, t: 1.8 };
   run.doorK = null;
   run.phase = 'transition'; run.fadeOut = 0; run.newFloor = true;
@@ -415,5 +440,15 @@ function nextRoom(run) {
   buildRoom(run);
 }
 
-export function retreat(run) { run.phase = 'retreated'; }
+export function retreat(run) { run.phase = 'retreated'; summarize(run); }
+
+// What the camp needs from a finished run (docs/BUILD-v1.md): gold, gems, levels reached, who went down.
+export function summarize(run) {
+  if (run.summary) return run.summary;
+  const levels = {}, downed = [];
+  for (const k of run.party) { levels[k] = run.heroes[k].best || run.heroes[k].level; if (run.heroes[k].down) downed.push(k); }
+  for (const u of (run.world ? run.world.units : [])) if (u.team === 'hero' && u.downed && !downed.includes(u.kind) && run.heroes[u.kind]) downed.push(u.kind);
+  run.summary = { gold: run.coins, gems: run.gems || 0, kills: run.kills, floor: run.floor, rooms: run.rooms, levels, downed, foundTrinkets: run.satchel.slice(), result: run.phase };
+  return run.summary;
+}
 export { LAYERS };

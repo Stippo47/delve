@@ -60,7 +60,7 @@ export const HEROES = {
   twinfang: {
     name: 'Twinfang', art: 'art/heroes/twinfang.svg', role: 'skirmish', starter: true,
     blurb: 'Hooked daggers. Picks off the ones on their own.',
-    stats: { hp: 80, speed: 96, r: 29, vr: 20, turn: 7, accel: 420, face: 7, mass: 0.9, range: 16, atkCd: 0.55, dmg: 7, arc: 1.4 },
+    stats: { hp: 100, speed: 96, r: 29, vr: 20, turn: 7, accel: 420, face: 7, mass: 0.9, range: 16, atkCd: 0.55, dmg: 8, arc: 1.4, dodge: 0.18 },
     attack: { name: 'Twin daggers', anim: 'thrust', desc: 'Quick stabs.' },
     abilities: [
       { id: 'backstab', name: 'Backstab', cd: 6, desc: 'Steps into the shadows and appears behind the target.',
@@ -242,6 +242,8 @@ export const HERO_IDS = Object.keys(HEROES);
 export const STARTERS = HERO_IDS.filter((k) => HEROES[k].starter);
 
 // ---------------------------------------------------------------- skill trees
+// Nodes marked `free` are owned from the start (the camp shows them bought).
+export const freeNodes = (id) => Object.fromEntries(treeFor(id).filter((n) => n.free).map((n) => [n.id, 1]));
 // Every hero's tree has the same shape: three branches, one per ability, each with the ability's three tiers and
 // a stat node that can be bought more than once. Tier nodes need the one before and a level reached in the run before
 // they switch on; tier III also needs a feat (the hero once reached level 8 in a dungeon). The trinket-slot node needs
@@ -260,11 +262,14 @@ export function treeFor(id) {
   const nodes = [];
   for (const b of BRANCHES) {
     const ab = h.abilities[b.ability];
-    ab.tiers.forEach((t, i) => nodes.push({
-      id: `${ab.id}${i + 1}`, branch: b.id, kind: 'tier', ability: ab.id, tier: i + 1,
-      name: `${ab.name} ${'I'.repeat(i + 1)}`, desc: i === 0 ? `${ab.desc} ${t}` : t,
-      cost: [TIER_COST[i]], max: 1, req: { node: i ? `${ab.id}${i}` : null, level: TIER_LEVEL[i], feat: i === 2 },
-    }));
+    ab.tiers.forEach((t, i) => {
+      const free = b.ability === 0 && i === 0; // every hero starts with their first ability (tier I) for free
+      nodes.push({
+        id: `${ab.id}${i + 1}`, branch: b.id, kind: 'tier', ability: ab.id, tier: i + 1, free,
+        name: `${ab.name} ${'I'.repeat(i + 1)}`, desc: i === 0 ? `${ab.desc} ${t}` : t,
+        cost: [free ? 0 : TIER_COST[i]], max: 1, req: { node: i ? `${ab.id}${i}` : null, level: TIER_LEVEL[i], feat: i === 2 },
+      });
+    });
     nodes.push({ id: b.stat.id, branch: b.id, kind: 'stat', name: b.stat.name, desc: b.stat.desc, cost: b.stat.cost, max: b.stat.max, req: {} });
   }
   nodes.push({ id: 'slot2', branch: 'utility', kind: 'slot', name: 'Second trinket', desc: 'Wear a second trinket.', cost: [400], max: 1, req: { feat: true } });
