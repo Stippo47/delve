@@ -19,14 +19,16 @@ export const FLOORS = 3;
 // Levels start at 1 every run: XP and levels live inside a run, and bought skill-tree nodes switch on as levels come.
 export function newRun(save, opts = {}) {
   if (typeof opts === 'number') opts = { depth: opts };
-  const party = (opts.party && opts.party.length ? opts.party : save.party && save.party.length ? save.party : STARTERS).filter((k) => HEROES[k]);
+  const party = (opts.party && (opts.party.length || opts.mercs) ? opts.party : save.party && save.party.length ? save.party : STARTERS).filter((k) => HEROES[k]);
+  const hired = opts.mercs ? ['knight', 'rogue'] : []; // mercenaries: the old starter kinds, middling, not kept (camp lane B)
   const heroes = {};
+  for (const k of hired) heroes[k] = { level: 1, xp: 0, hp: null, down: false, potions: 0, trinkets: [], best: 1, merc: true };
   for (const k of party) {
     const sv = (save.heroes && save.heroes[k]) || {};
     heroes[k] = { level: 1, xp: 0, hp: null, down: false, potions: (opts.potions && opts.potions[k]) || 0, trinkets: (sv.trinkets || []).slice(), best: 1 };
   }
-  const run = { depth: opts.depth || save.depth || 1, theme: opts.theme || null, mercs: !!opts.mercs, party, floor: 1, map: makeFloor(), coins: 0, gems: 0,
-    satchel: [], keys: 0, heroes, phase: 'fight', t: 0, fade: 1, save, kills: 0, banner: null, rooms: 0 };
+  const run = { depth: opts.depth || save.depth || 1, theme: opts.theme || null, mercs: !!opts.mercs, hired, party, floor: 1, map: makeFloor(), coins: 0, gems: 0,
+    satchel: [], keys: 0, heroes, phase: 'fight', t: 0, fade: 1, save, kills: 0, banner: null, rooms: 0, leaving: false };
   buildRoom(run);
   return run;
 }
@@ -186,12 +188,12 @@ function buildRoom(run) {
   w.wp = null;
   // heroes come in at the way in (the bottom of the screen in portrait)
   const y0 = w.doorIn.y, ys = [y0, y0 - 60, y0 + 60];
-  run.party.forEach((k, i) => {
+  [...run.party, ...run.hired].forEach((k, i) => {
     const hs = run.heroes[k];
     if (hs.down) return;
-    const tank = HEROES[k].role === 'tank';
+    const tank = hs.merc ? k === 'knight' : HEROES[k].role === 'tank';
     const u = spawn(w, k, 70 + (tank ? 40 : 0), ys[i % 3] + Math.floor(i / 3) * 30, { level: hs.level, hp: hs.hp, potions: hs.potions, trinkets: hs.trinkets });
-    initKit(u, k, buildFor(run.save, k), hs.level);
+    if (!hs.merc) initKit(u, k, buildFor(run.save, k), hs.level);
     if (hs.hp != null) u.hp = Math.min(u.maxHp, hs.hp);
     u.facing = 0; u.mvA = 0;
   });
@@ -206,7 +208,7 @@ function buildRoom(run) {
     if (!homes.length) homes = [w.entry];
     if (kind === 'treasure') homes = [pick(homes)];
     // fewer enemies for a smaller party: one hero faces about 40% of what three do
-    const partyScale = 0.12 + 0.28 * Math.min(4, run.party.length);
+    const partyScale = 0.12 + 0.28 * Math.min(4, run.party.length + run.hired.length);
     const total = ((kind === 'treasure' ? 3 : 4 + run.depth * 2 + run.floor * 2) + L * 0.5) * (kind === 'treasure' ? 1 : 0.55 + 0.18 * sh.cells.length) * partyScale;
     let keyed = false;
     for (const cell of homes) {
@@ -271,6 +273,7 @@ function giveXp(run, h, xp) {
 
 function onKill(run, u) {
   run.kills++;
+  if (u.def.boss) run.gems += run.floor >= FLOORS ? 2 : 1; // gems: each floor's boss drops one, the last boss two (camp lane B)
   const xp = Math.round((u.def.xp || 0) * (1 + 0.15 * (run.depth - 1)) * (u.elite ? 3 : 1));
   for (const h of run.world.units) if (h.team === 'hero' && alive(h)) giveXp(run, h, xp);
 }
@@ -304,10 +307,11 @@ export function update(run, dt) {
   }
   if (run.phase === 'loot') { if (doTasks(run, dt)) { run.phase = 'choose'; run.t = 0; } return; }
   if (run.phase === 'choose') {
+    if (run.leaving) { finishRoomHp(run); run.phase = 'retreated'; summarize(run); return; } // leaving: the room is done, out we go
     if (run.node.kind === 'boss') { finishRoomHp(run); endFloor(run); return; }
     const hs = heroesAlive(run);
     if (run.doorK == null) {
-      const hp = hs.reduce((a, h) => a + h.hp / h.maxHp, 0) / run.party.length;
+      const hp = hs.reduce((a, h) => a + h.hp / h.maxHp, 0) / Math.max(1, run.party.length + run.hired.length);
       run.doorK = chooseDoor(run.map, hp, run.keys);
       w.doors[run.doorK].chosen = true;
       run.exitT = 0;
@@ -409,6 +413,7 @@ function doTasks(run, dt) {
     h.forcedGoal = null;
     if (task.type === 'chest') {
       o.open = true; if (!o.free) run.keys--;
+      if (chance(0.06)) run.gems++; // now and then a chest holds a gem
       grant(run, pick(['potion', 'potion', 'xp', 'coins', 'coins', 'trinket']), h);
     } else {
       grant(run, o.reward, h);
@@ -440,7 +445,12 @@ function nextRoom(run) {
   buildRoom(run);
 }
 
-export function retreat(run) { run.phase = 'retreated'; summarize(run); }
+// Leaving (the player taps Leave): the room is finished first, then the run ends as 'retreated'. Between rooms it ends
+// straight away. retreat(run, false) changes their mind.
+export function retreat(run, on = true) {
+  run.leaving = on;
+  if (on && run.phase === 'transition') { run.phase = 'retreated'; summarize(run); }
+}
 
 // What the camp needs from a finished run (docs/BUILD-v1.md): gold, gems, levels reached, who went down.
 export function summarize(run) {
@@ -448,7 +458,10 @@ export function summarize(run) {
   const levels = {}, downed = [];
   for (const k of run.party) { levels[k] = run.heroes[k].best || run.heroes[k].level; if (run.heroes[k].down) downed.push(k); }
   for (const u of (run.world ? run.world.units : [])) if (u.team === 'hero' && u.downed && !downed.includes(u.kind) && run.heroes[u.kind]) downed.push(u.kind);
-  run.summary = { gold: run.coins, gems: run.gems || 0, kills: run.kills, floor: run.floor, rooms: run.rooms, levels, downed, foundTrinkets: run.satchel.slice(), result: run.phase };
+  const hp = {}; // how hurt each came out (0-1), for the camp's recovery timers
+  for (const k of run.party) { const u = run.world && run.world.units.find((x) => x.kind === k && x.team === 'hero' && !x.summon); const hs = run.heroes[k];
+    hp[k] = u ? Math.max(0, u.hp / u.maxHp) : hs.hp != null ? hs.hp / levelHp(DEFS[k].hp, hs.level) : 1; }
+  run.summary = { gold: run.coins, gems: run.gems || 0, kills: run.kills, floor: run.floor, rooms: run.rooms, levels, downed, hp, foundTrinkets: run.satchel.slice(), result: run.phase };
   return run.summary;
 }
 export { LAYERS };
