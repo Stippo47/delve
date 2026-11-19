@@ -21,7 +21,8 @@ export const FLOORS = 3;
 // Levels start at 1 every run: XP and levels live inside a run, and bought skill-tree nodes switch on as levels come.
 export function newRun(save, opts = {}) {
   if (typeof opts === 'number') opts = { depth: opts };
-  const party = (opts.party && (opts.party.length || opts.mercs) ? opts.party : save.party && save.party.length ? save.party : STARTERS).filter((k) => HEROES[k]);
+  const dp = debugParam('party'); // testing: ?party=a,b,c
+  const party = (dp ? dp.split(',') : opts.party && (opts.party.length || opts.mercs) ? opts.party : save.party && save.party.length ? save.party : STARTERS).filter((k) => HEROES[k]);
   const hired = opts.mercs ? ['knight', 'rogue'] : []; // mercenaries: the old starter kinds, middling, not kept (camp lane B)
   const heroes = {};
   for (const k of hired) heroes[k] = { level: 1, xp: 0, hp: null, down: false, potions: 0, trinkets: [], best: 1, merc: true };

@@ -177,7 +177,9 @@ function dungeonPick() {
   const opts = P.runOptions(save, null, potionFor);
   const who = [...opts.party.map((id) => HEROES[id].art), ...(save.mercs ? P.MERCS.map((m) => m.art) : [])];
   const cards = Object.entries(THEMES).map(([id, t], i) => {
-    const p = t.palette || {}, rec = save.dungeons[id];
+    const p0 = t.palette || {}, rec = save.dungeons[id];
+    const c = (v, i = 0) => (Array.isArray(v) ? v[i] : v); // theme palettes give [light, dark] pairs
+    const p = { floor: c(p0.floor), wall: c(p0.wall), rock: c(p0.rock, 1) || p0.void, accent: p0.accent };
     const line = !rec ? 'Not entered yet.' : rec.cleared ? `Cleared ${rec.cleared === 1 ? 'once' : rec.cleared + ' times'}` : `Got as far as floor ${rec.best}`;
     return `<button class="theme" data-act="enter:${id}" style="--floor:${p.floor || '#6B5E66'};--wall:${p.wall || '#3A3040'};--rock:${p.rock || '#2B2230'};--accent:${p.accent || '#F2DFA0'};--d:${i * 0.08}s">
       <div class="theme-art"><svg viewBox="0 0 200 90" preserveAspectRatio="xMidYMax slice">
