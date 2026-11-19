@@ -10,8 +10,8 @@ unit in the game, so it must read as a different character at 40px from everythi
 - `docs/DECISIONS.md`, the "Round 3" and "Round 4" sections.
 - Look at the finished round-3 SVGs (`design/class-round3/*/`) and their renders to match the house style:
   big round head (the base's head size), shoulders, soft gradients lit from the left, contact shadows, one heavy
-  outline from the filter, no inner lines, chunky readable shapes. **People have no eyes, brows or mouths**
-  (monsters may have simple eyes). The designer said one redo was "losing the style": stay in this style.
+  outline from the filter, no inner lines, chunky readable shapes. **People have no eyes, brows, blush or nose dot, but they do
+  have the small subtle mouth curve** the round-3 sprites have (HANDOFF section 3); monsters may have simple eyes. The designer said one redo was "losing the style": stay in this style.
 
 ## Rules (new this round, from the designer)
 - **Every hand that holds a weapon or tool is turned to match the handle**: the fist wraps the handle, its
