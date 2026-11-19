@@ -8,7 +8,14 @@
 //   kill(w, u, victim)                   u killed something
 //   death(w, u, victim)                  something died within 260 of u
 //   downed(w, u, src) -> true            u would go down: return true to stay up (the hook sets hp)
+//   evade(w, u, src, amt, o) -> true     a blow (not a dot) is about to land on u: return true and it misses
+//   struck(w, u, src, amt, o)            after a blow (not a dot) landed on u
+//   fallen(w, u, src)                    u went down (a hero) or died (not called for summons)
+//   allyDown(w, u, victim)               a unit on u's side went down or died anywhere in the room (not summons)
+//   moveSpeed(u) -> mul, atkSpeed(u) -> mul, immune: [status...], knockImmune: true
 //   reviveRate, reviveHp                 numbers read by the revive code
+// Hit options worth knowing in hooks: o.dot (damage over time), o.shot (a projectile hit), o.proc (damage a trinket
+// made itself: trinkets that react to hits skip these, so they never set each other off in a loop).
 import { HEROES } from './heroes.js';
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange, chance } from './util.js';
 import {
@@ -18,7 +25,7 @@ import {
 import { lineClear } from './path.js';
 
 // ---------------------------------------------------------------- helpers
-const near = (w, u, x, y, r, team) => w.units.filter((o) => alive(o) && o.team === team && dist(x, y, o.x, o.y) < r + o.r);
+const near = (w, u, x, y, r, team) => w.units.filter((o) => alive(o) && !o.ethereal && o.team === team && dist(x, y, o.x, o.y) < r + o.r);
 const foesNear = (w, u, x, y, r) => near(w, u, x, y, r, u.team === 'hero' ? 'enemy' : 'hero');
 const friendsNear = (w, u, x, y, r) => near(w, u, x, y, r, u.team);
 const hurtMost = (list) => list.reduce((b, o) => (!b || hpRatio(o) < hpRatio(b) ? o : b), null);
