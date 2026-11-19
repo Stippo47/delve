@@ -154,11 +154,13 @@ function shamanBrain(w, u, dt) {
   return false;
 }
 
-// Troll: grows back what it loses, unless it has been burned in the last few seconds.
+// Troll: grows back what it loses once it's left alone for a moment, unless it has been burned lately.
 function trollBrain(w, u, dt) {
   if (u.st.burn > 4) u.burnedT = 4;
-  u.burnedT = (u.burnedT || 0) - dt;
-  if (u.burnedT <= 0 && u.hp < u.maxHp) {
+  if (u.hp < (u.lastHp ?? u.hp)) u.calmT = 2.5;
+  u.lastHp = u.hp;
+  u.burnedT = (u.burnedT || 0) - dt; u.calmT = (u.calmT || 0) - dt;
+  if (u.burnedT <= 0 && u.calmT <= 0 && u.hp < u.maxHp) {
     u.hp = Math.min(u.maxHp, u.hp + u.maxHp * 0.025 * dt);
     if (rand() < dt * 5) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.6, y: u.y + rrange(-u.r, u.r) * 0.6, vx: 0, vy: 0, rise: 30, life: 0.6, max: 0.6, size: 4, color: '#8FD16A' });
   }
@@ -185,7 +187,7 @@ function callAdds(w, u, dt, kinds, every) {
   if (u.callT > 0 || !u.aggro) return;
   u.callT = every;
   const mine = w.units.filter((o) => o.team === u.team && alive(o) && o !== u).length;
-  if (mine >= 5) return;
+  if (mine >= 3) return;
   for (let i = 0; i < 2; i++) {
     const k = kinds[Math.floor(rand() * kinds.length)];
     const y = chance(0.5) ? 50 : w.H - 50, x = clamp(u.x + rrange(-250, 250), 80, w.W - 80);
@@ -210,26 +212,26 @@ export const ENEMIES = {
   brute: { ...SKELETON, name: 'Brute', art: 'art/enemies/brute.svg', r: 40, vr: 28, mass: 2.6, turn: 2.6, face: 2.6, hp: 140, speed: 44, role: 'melee',
     range: 24, atkCd: 1.9, windup: 0.55, dmg: 17, knock: 230, arc: 1.8, heavy: true, xp: 26, coins: [5, 10], cost: 7, attackAnim: 'swing', brain: bruteBrain },
   ghost: { team: 'enemy', name: 'Ghost', art: 'art/enemies/ghost.svg', headR: 58, r: 28, vr: 22, turn: 4, accel: 160, face: 4, mass: 0.6, hp: 40, speed: 64,
-    role: 'melee', range: 14, atkCd: 999, touchCd: 1.3, touchDmg: 6, arc: 2, temp: 0.5, commit: 0.8, xp: 12, coins: [2, 5], cost: 3,
+    role: 'melee', range: 14, atkCd: 999, touchCd: 1.3, touchDmg: 6, dmg: 6, arc: 2, temp: 0.5, commit: 0.8, xp: 12, coins: [2, 5], cost: 3,
     res: { poison: 0, burn: 1.3, chill: 0.2 }, brain: ghostBrain },
   // the sewers (rats and slimes are in units.js)
   lizardman: { team: 'enemy', name: 'Lizardman', art: 'art/enemies/lizardman.svg', headR: 56, r: 32, vr: 23, turn: 4, accel: 220, face: 4, mass: 1.4,
     hp: 64, speed: 58, role: 'melee', range: 40, atkCd: 1.4, windup: 0.3, dmg: 10, knock: 120, arc: 0.9, temp: 0.35, commit: 0.9, xp: 14, coins: [3, 6],
-    cost: 4, attackAnim: 'thrust', res: { burn: 0.8, chill: 1.4 }, brain: (w, u, dt) => tailSpin(w, u, dt) },
+    cost: 5, attackAnim: 'thrust', res: { burn: 0.8, chill: 1.4 }, brain: (w, u, dt) => tailSpin(w, u, dt) },
   lizardBlade: { team: 'enemy', name: 'Lizard Blade', art: 'art/enemies/lizardman-blade.svg', headR: 56, r: 31, vr: 23, turn: 6, accel: 360, face: 6, mass: 1.1,
     hp: 52, speed: 72, role: 'skirmish', range: 16, atkCd: 0.85, dmg: 8, arc: 1.6, temp: 0.5, commit: 0.5, xp: 12, coins: [2, 5], cost: 3,
     attackAnim: 'swing', ability: 'dash', abilCd: 3.4, res: { burn: 0.8, chill: 1.4 } },
   // the warren (art: round-4 greenskins, PLACEHOLDER art the designer didn't love)
   goblin: { team: 'enemy', name: 'Goblin', art: 'art/enemies/goblin.svg', headR: 40, r: 22, vr: 16, turn: 8, accel: 480, face: 8, mass: 0.6, hp: 22, speed: 86,
-    role: 'skirmish', range: 12, atkCd: 0.8, dmg: 5, arc: 1.5, temp: 0.7, commit: 0.4, xp: 5, coins: [1, 3], cost: 1.5, pack: [2, 3],
+    role: 'skirmish', range: 12, atkCd: 0.8, dmg: 5, arc: 1.5, temp: 0.7, commit: 0.4, xp: 5, coins: [1, 3], cost: 2, pack: [2, 3],
     attackAnim: 'thrust', ability: 'dash', abilCd: 3 },
   hobgoblin: { team: 'enemy', name: 'Hobgoblin', art: 'art/enemies/hobgoblin.svg', headR: 56, r: 31, vr: 22, turn: 3.6, accel: 200, face: 3.6, mass: 1.4,
-    hp: 60, speed: 52, role: 'melee', range: 20, atkCd: 1.3, windup: 0.3, dmg: 9, knock: 110, arc: 1.5, shield: 0.55, temp: 0.3, commit: 1,
+    hp: 60, speed: 52, role: 'melee', range: 20, atkCd: 1.3, windup: 0.3, dmg: 8, knock: 110, arc: 1.5, shield: 0.4, temp: 0.3, commit: 1,
     xp: 11, coins: [2, 5], cost: 3, attackAnim: 'swing' },
-  orc: { team: 'enemy', name: 'Orc', art: 'art/enemies/orc.svg', headR: 60, r: 36, vr: 27, turn: 3, accel: 170, face: 3, mass: 1.9, hp: 95, speed: 50,
-    role: 'melee', range: 22, atkCd: 1.6, windup: 0.45, dmg: 15, knock: 190, arc: 1.8, heavy: true, temp: 0.3, commit: 1.1, xp: 18, coins: [3, 7], cost: 5, attackAnim: 'swing' },
+  orc: { team: 'enemy', name: 'Orc', art: 'art/enemies/orc.svg', headR: 60, r: 36, vr: 27, turn: 3, accel: 170, face: 3, mass: 1.9, hp: 90, speed: 50,
+    role: 'melee', range: 22, atkCd: 1.7, windup: 0.5, dmg: 13, knock: 190, arc: 1.8, heavy: true, temp: 0.3, commit: 1.1, xp: 18, coins: [3, 7], cost: 5, attackAnim: 'swing' },
   orcShaman: { team: 'enemy', name: 'Orc Shaman', art: 'art/enemies/orc-shaman.svg', headR: 60, r: 33, vr: 25, turn: 3.4, accel: 180, face: 3.4, mass: 1.4,
-    hp: 60, speed: 48, role: 'ranged', range: 250, keep: 190, atkCd: 999, temp: 0.4, commit: 0.9, xp: 16, coins: [3, 7], cost: 5, brain: shamanBrain },
+    hp: 60, speed: 48, role: 'ranged', range: 250, keep: 190, atkCd: 999, dmg: 5, temp: 0.4, commit: 0.9, xp: 16, coins: [3, 7], cost: 5, brain: shamanBrain },
   troll: { team: 'enemy', name: 'Troll', art: 'art/enemies/troll.svg', headR: 60, r: 42, vr: 31, turn: 2.6, accel: 150, face: 2.6, mass: 3, hp: 170, speed: 46,
     role: 'melee', range: 30, atkCd: 1.7, windup: 0.45, dmg: 16, knock: 200, arc: 2.4, temp: 0.25, commit: 1.2, xp: 30, coins: [6, 12], cost: 8,
     attackAnim: 'swing', res: { burn: 1.4 }, brain: trollBrain },
@@ -239,13 +241,13 @@ export const ENEMIES = {
     role: 'melee', range: 26, atkCd: 1.8, windup: 0.6, dmg: 18, knock: 240, arc: 2, heavy: true, xp: 80, coins: [30, 45], boss: true, attackAnim: 'swing',
     brain: (w, u, dt) => slam(w, u, dt, { r: 140, tell: 0.95, dmg: 20, cdMin: 6, cdMax: 8 }) || bruteBrain(w, u, dt) },
   lizardChief: { team: 'enemy', name: 'Lizard Chief', art: 'art/enemies/lizardman-blade.svg', headR: 56, r: 48, vr: 34, turn: 3, accel: 200, face: 3, mass: 4,
-    hp: 400, speed: 54, role: 'melee', range: 30, atkCd: 1.3, windup: 0.35, dmg: 15, knock: 180, arc: 1.8, temp: 0.25, commit: 1.2, xp: 80, coins: [30, 45],
+    hp: 380, speed: 54, role: 'melee', range: 30, atkCd: 1.4, windup: 0.4, dmg: 13, knock: 180, arc: 1.8, temp: 0.25, commit: 1.2, xp: 80, coins: [30, 45],
     boss: true, attackAnim: 'swing', res: { burn: 0.8, chill: 1.2 },
-    brain: (w, u, dt) => { callAdds(w, u, dt, ['rat', 'rat', 'lizardBlade'], 16); return tailSpin(w, u, dt, { shots: 6, reach: 70, tell: 0.7, hitDmg: 12, knock: 240, cdMin: 4.5, cdMax: 6, dmg: 7 }); } },
+    brain: (w, u, dt) => { callAdds(w, u, dt, ['rat', 'rat', 'lizardBlade'], 18); return tailSpin(w, u, dt, { shots: 6, reach: 70, tell: 0.75, hitDmg: 10, knock: 200, cdMin: 6, cdMax: 8, dmg: 6 }); } },
   warboss: { team: 'enemy', name: 'Orc Warboss', art: 'art/enemies/orc.svg', headR: 60, r: 50, vr: 37, turn: 2.4, accel: 150, face: 2.4, mass: 4.5,
     hp: 450, speed: 48, role: 'melee', range: 26, atkCd: 1.7, windup: 0.5, dmg: 19, knock: 240, arc: 2, heavy: true, temp: 0.25, commit: 1.2, xp: 80, coins: [30, 45],
     boss: true, attackAnim: 'swing',
-    brain: (w, u, dt) => { callAdds(w, u, dt, ['goblin', 'goblin', 'hobgoblin'], 13); return slam(w, u, dt, { r: 150, tell: 0.9, dmg: 22, cdMin: 5.5, cdMax: 7.5 }); } },
+    brain: (w, u, dt) => { callAdds(w, u, dt, ['goblin', 'goblin', 'hobgoblin'], 17); return slam(w, u, dt, { r: 150, tell: 0.9, dmg: 22, cdMin: 5.5, cdMax: 7.5 }); } },
 
   ...BOSSES,
 };

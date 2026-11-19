@@ -2,6 +2,7 @@
 // then rotated whole in-game. SVG art is rasterised once per pixel size; rats and slimes are drawn
 // procedurally in the same space so they match the outline/gradient rendering.
 import { INK } from './util.js';
+import { DEFS } from './units.js';
 
 const SVG_KINDS = { archer: 'art/archer.svg', knight: 'art/knight.svg', rogue: 'art/rogue.svg',
   skeleton: 'art/skeleton.svg', boss: 'art/boss.svg' };
@@ -13,6 +14,8 @@ const svgText = {};
 const cache = new Map();
 
 export async function loadSprites() {
+  // lane C: any kind with `art` in its def (heroes, enemies.js, boss.js) is drawn whole from it until parts.js draws parts
+  for (const [k, d] of Object.entries(DEFS)) if (d.art && !SVG_KINDS[k]) SVG_KINDS[k] = d.art;
   await Promise.all(Object.entries(SVG_KINDS).map(async ([k, url]) => {
     try { svgText[k] = await (await fetch(url)).text(); } catch (e) { svgText[k] = null; }
   }));
@@ -121,4 +124,4 @@ export function tinted(e, color) {
   return e.tints[color];
 }
 
-export const headR = (kind) => HEAD_R[kind] || HEAD_R[kind.replace('Small', '')] || 54;
+export const headR = (kind) => HEAD_R[kind] || (DEFS[kind] && DEFS[kind].headR) || HEAD_R[kind.replace('Small', '')] || 54;

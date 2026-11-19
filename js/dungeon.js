@@ -4,13 +4,14 @@
 // near, and the party walks the room chunk by chunk before heading for the doors. After a room is cleared the party deals with what's in it (chest, fountain, a choice of
 // three things), then picks one of the doors ahead. Heroes keep HP and potions between rooms; downed heroes stay
 // down until the floor's boss is beaten, then come back at 10% HP.
-import { makeWorld, spawn, step, alive } from './sim.js';
+import { makeWorld, spawn, step, alive, addStatus, hurt, puff } from './sim.js';
 import { DEFS, xpToNext, levelHp, levelDmg, TRINKET_IDS } from './units.js';
 import { HEROES, STARTERS, treeFor, freeNodes } from './heroes.js';
 import { initKit, refreshKit, hooksOf } from './kits.js';
 import { rand, rrange, rint, pick, chance, dist, clamp, angleTo } from './util.js';
 import { buildGrid, circleRect, findPath } from './path.js';
 import { makeFloor, nodeAt, nextNodes, chooseDoor, advance, LAYERS } from './map.js';
+import { themeOf, weighted } from './themes.js';
 
 export const H = 480;
 export const FLOORS = 3;
@@ -25,11 +26,17 @@ export function newRun(save, opts = {}) {
     const sv = (save.heroes && save.heroes[k]) || {};
     heroes[k] = { level: 1, xp: 0, hp: null, down: false, potions: (opts.potions && opts.potions[k]) || 0, trinkets: (sv.trinkets || []).slice(), best: 1 };
   }
-  const run = { depth: opts.depth || save.depth || 1, theme: opts.theme || null, mercs: !!opts.mercs, party, floor: 1, map: makeFloor(), coins: 0, gems: 0,
+  const theme = themeOf(opts.theme || debugParam('theme')).id;
+  const run = { depth: opts.depth || save.depth || 1, theme, mercs: !!opts.mercs, party, floor: 1, map: makeFloor(themeOf(theme).kinds), coins: 0, gems: 0,
     satchel: [], keys: 0, heroes, phase: 'fight', t: 0, fade: 1, save, kills: 0, banner: null, rooms: 0 };
+  // testing: ?bossroom jumps straight to floor 3's boss room, ?lvl=N starts the heroes at level N
+  if (debugParam('bossroom') != null) { run.floor = FLOORS; run.map.L = LAYERS; run.map.i = 0; }
+  const lvl = +debugParam('lvl'); if (lvl > 1) for (const k of party) heroes[k].level = heroes[k].best = lvl;
   buildRoom(run);
   return run;
 }
+
+function debugParam(k) { try { return typeof location !== 'undefined' ? new URLSearchParams(location.search).get(k) : null; } catch { return null; } }
 
 // Room shapes on a grid of chunks. Columns run forward (the doors out are past the last column; in portrait
 // that's up the screen), rows run across. '#' is floor, '.' is rock. Each row is one screen across.
@@ -117,13 +124,20 @@ function addBlocks(w) {
   w.shape += '+blocks';
 }
 
+// What an enemy is worth from a room's budget, and the group size small things come in (enemies.js defs carry
+// cost/pack; these are for the older kinds in units.js).
+const OLD_COST = { rat: 1, slime: 2, slimeSmall: 1, skeleton: 3 }, OLD_PACK = { rat: [2, 4] };
+const costOf = (k) => DEFS[k].cost ?? OLD_COST[k] ?? 3;
+const packOf = (k) => DEFS[k].pack || OLD_PACK[k] || null;
 function enemyPack(w, run, budget, cell, keyChance) {
   const kinds = [];
-  while (budget > 0) {
-    const roll = rand();
-    const k = roll < 0.42 ? 'rat' : roll < 0.72 ? 'slime' : 'skeleton';
-    if (k === 'rat') { const n = Math.min(budget, rint(2, 4)); for (let j = 0; j < n; j++) kinds.push('rat'); budget -= n; continue; }
-    kinds.push(k); budget -= { slime: 2, skeleton: 3 }[k];
+  const T = themeOf(run.theme), roster = T.enemies[Math.min(T.enemies.length, run.floor) - 1];
+  for (let guard = 0; budget > 0 && guard < 40; guard++) {
+    const k = weighted(roster, rand), c = costOf(k), pk = packOf(k);
+    if (c > budget + 1.5 && kinds.length) { if (guard > 20) break; continue; } // too big for what's left: something smaller
+    const n = pk ? Math.max(1, Math.min(rint(pk[0], pk[1]), Math.ceil(budget / c))) : 1;
+    for (let j = 0; j < n; j++) kinds.push(k);
+    budget -= n * c;
   }
   const keyIdx = chance(keyChance) ? rint(0, kinds.length - 1) : -1;
   const c = inCell(w, cell, 40, 150);
@@ -138,30 +152,37 @@ function enemyPack(w, run, budget, cell, keyChance) {
 function buildRoom(run) {
   const node = nodeAt(run.map);
   const kind = node.kind;
-  const sh = makeShape(kind);
+  const T = themeOf(run.theme);
+  // the floor's last room: floors 1 and 2 end with the theme's warden, floor 3 with its boss (which may bring an arena)
+  const bossKind = kind === 'boss' ? (run.floor >= FLOORS ? T.boss : T.warden) : null;
+  const arena = bossKind && DEFS[bossKind].arena;
+  const sh = arena ? arenaShape(arena) : makeShape(kind);
   const w = makeWorld(sh.W, sh.H);
+  w.theme = T; w.bossAdds = T.bossAdds;
   run.world = w; run.node = node; run.rooms++;
   w.cells = sh.cells; w.shape = sh.name;
   for (const c of sh.solid) w.walls.push({ x: c.x, y: c.y, w: c.w, h: c.h, solid: true, c: c.c, r: c.r });
   w.chunks = { nc: sh.nc, nr: sh.nr };
   w.entry = pick(sh.cells.filter((c) => c.c === 0));
   w.exits = sh.cells.filter((c) => c.c === sh.nc - 1);
-  w.doorIn = { x: 0, y: centre(w.entry).y };
+  w.doorIn = { x: 0, y: arena ? sh.H / 2 : centre(w.entry).y };
   const L = node.L;
   w.mult = 1 + 0.22 * (run.depth - 1) + 0.12 * (run.floor - 1) + 0.025 * L;
   const busy = kind === 'fight' || kind === 'hazard' || kind === 'elite';
-  if (sh.nr === 1 && sh.nc > 1) { if ((busy && chance(0.75)) || (kind === 'treasure' && chance(0.5))) addWalls(w); }
+  if (arena) buildArena(w, arena);
+  else if (sh.nr === 1 && sh.nc > 1) { if ((busy && chance(0.75)) || (kind === 'treasure' && chance(0.5))) addWalls(w); }
   else if (busy && sh.cells.length > 2 && chance(0.55)) addBlocks(w);
   // round pillars and hazards
-  const np = kind === 'boss' ? 2 : kind === 'fountain' || kind === 'decision' ? 0 : rint(0, 1 + sh.cells.length);
+  const np = arena ? 0 : kind === 'boss' ? 2 : kind === 'fountain' || kind === 'decision' ? 0 : rint(0, 1 + sh.cells.length);
   // pillars keep well clear of walls so they never seal a gap
   for (let i = 0; i < np; i++) { const r = rrange(22, 36); const p = placeFree(w, r + 90, 320, w.W - 300); if (freeSpot(w, p.x, p.y, r + 90)) w.pillars.push({ x: p.x, y: p.y, r }); }
-  const nh = kind === 'hazard' ? Math.round(sh.cells.length * 1.6) : kind === 'boss' ? 1 : busy && chance(0.4) ? rint(1, 2) : 0;
+  const nh = arena ? 0 : kind === 'hazard' ? Math.round(sh.cells.length * 1.6) : kind === 'boss' ? 1 : busy && chance(0.4) ? rint(1, 2) : 0;
   for (let i = 0; i < nh; i++) {
-    const type = chance(0.5) ? 'oil' : 'spikes';
-    const r = type === 'oil' ? rrange(34, 52) : rrange(24, 34);
-    const p = placeFree(w, r, 280, w.W - 240); if (freeSpot(w, p.x, p.y, r)) w.hazards.push({ type, x: p.x, y: p.y, r });
+    const type = weighted(T.hazards, rand);
+    const r = HAZ_R[type] ? rrange(...HAZ_R[type]) : rrange(24, 34);
+    const p = placeFree(w, r, 280, w.W - 240); if (freeSpot(w, p.x, p.y, r)) w.hazards.push({ type, x: p.x, y: p.y, r, hidden: type === 'snare' });
   }
+  if (T.water && !arena && (busy || kind === 'treasure') && chance(kind === 'hazard' ? 1 : T.water)) addWater(w);
   // what the room holds
   const mid = centre(sh.cells[Math.floor(sh.cells.length / 2)]);
   if (kind === 'fountain') w.pillars.push({ x: w.W * 0.55, y: mid.y, r: 38, fountain: true, used: false });
@@ -181,6 +202,7 @@ function buildRoom(run) {
   if (!ok()) { w.pillars = w.pillars.filter((p) => p.fountain); buildGrid(w); }
   if (!ok()) { w.walls = w.walls.filter((r) => r.solid); w.shape += '-walls'; buildGrid(w); }
   if (kind === 'treasure') { const p = inCell(w, pick(w.exits), 24); w.pickups.push({ type: 'chest', x: p.x, y: p.y, open: false, free: true }); }
+  dress(w, T, sh);
   // the party walks the room chunk by chunk: the nearest chunk not yet seen, the way-out chunks last
   w.toVisit = sh.cells.filter((c) => c !== w.entry).map((c) => ({ ...centre(c), exit: c.c === sh.nc - 1 }));
   w.wp = null;
@@ -199,8 +221,14 @@ function buildRoom(run) {
   const far = pick(w.exits);
   if (kind === 'boss') {
     const fc = centre(far);
-    const b = spawn(w, 'boss', w.W - 260, fc.y, { mult: w.mult * (run.floor === FLOORS ? 1 : 0.7) }); b.facing = Math.PI;
-    for (let i = 0; i < 1 + run.floor + Math.floor(run.depth / 2); i++) { const p = inCell(w, far, 30, 90); const u = spawn(w, 'skeleton', p.x, p.y, { mult: w.mult }); u.facing = Math.PI; }
+    const partyScale = 0.12 + 0.28 * Math.min(4, run.party.length);
+    const bx = arena ? w.throne.x : w.W - 260, by = arena ? w.throne.y : fc.y;
+    // a smaller party meets a weaker boss (the same party-size idea as the rooms' enemy budget)
+    const b = spawn(w, bossKind, bx, by, { mult: w.mult * (run.floor === FLOORS ? 1 : 0.75), hpMul: 0.4 + 0.2 * Math.min(3, run.party.length) });
+    b.facing = b.mvA = Math.PI;
+    if (!arena) for (let i = 0; i < Math.round((1 + run.floor + Math.floor(run.depth / 2)) * partyScale); i++) {
+      const p = inCell(w, far, 30, 90); const u = spawn(w, pick(T.bossAdds), p.x, p.y, { mult: w.mult }); u.facing = Math.PI;
+    }
   } else if (kind === 'fight' || kind === 'hazard' || kind === 'elite' || kind === 'treasure') {
     let homes = sh.cells.filter((c) => c !== w.entry);
     if (!homes.length) homes = [w.entry];
@@ -214,7 +242,7 @@ function buildRoom(run) {
     }
     if (kind === 'elite') {
       const p = inCell(w, far, 40);
-      const u = spawn(w, 'skeleton', p.x, p.y, { mult: w.mult * 1.3, scale: 1.25, hpMul: 2.2 }); u.facing = Math.PI; u.elite = true; u.hasKey = true; keyed = true;
+      const u = spawn(w, T.elite, p.x, p.y, { mult: w.mult * 1.25, scale: 1.15, hpMul: 1.9 }); u.facing = Math.PI; u.elite = true; u.hasKey = true; keyed = true;
     }
     if (keyed && kind !== 'treasure') { const p = inCell(w, pick(homes), 24); w.pickups.push({ type: 'chest', x: p.x, y: p.y, open: false }); }
   }
@@ -223,6 +251,81 @@ function buildRoom(run) {
   w.on.key = () => { run.keys++; };
   w.on.drank = (u) => { run.heroes[u.kind].potions = u.potions; };
   run.phase = 'fight'; run.t = 0; run.fade = 1; run.task = null; run.quietT = 0;
+}
+
+// ---------------------------------------------------------------- dungeon types: hazards, water, dressing, arenas
+// Hazard sizes. 'mist' (crypt): cold grave mist, chills. 'gas' (sewers): a standing cloud of sewer gas (poisons; fire
+// sets it off). 'snare' (warren): a hidden goblin trap that holds whoever steps on it for a moment, then it's spent.
+const HAZ_R = { oil: [34, 52], spikes: [24, 34], mist: [58, 82], gas: [44, 60], snare: [15, 17] };
+
+// Sewer water: a channel running across the room. Wading through it soaks you and slows you down.
+function addWater(w) {
+  w.water = w.water || [];
+  const n = w.W > 1600 && chance(0.5) ? 2 : 1;
+  for (let i = 0; i < n; i++) {
+    for (let tries = 0; tries < 12; tries++) {
+      const cw = rrange(70, 105), x = rrange(300, w.W - 280 - cw);
+      if (w.pillars.some((p) => p.x + p.r > x - 20 && p.x - p.r < x + cw + 20)) continue;
+      if (w.water.some((c) => x < c.x + c.w + 200 && x + cw > c.x - 200)) continue;
+      w.water.push({ x, y: 0, w: cw, h: w.H });
+      break;
+    }
+  }
+}
+
+// Floor dressing: drawn into the floor (render.js), no collision. Kept off doors and hazards.
+function dress(w, T, sh) {
+  w.decor = [];
+  for (const cell of sh.cells) for (const [type, per] of T.props) {
+    const n = Math.floor(per) + (chance(per % 1) ? 1 : 0);
+    for (let i = 0; i < n; i++) {
+      const x = rrange(cell.x + 40, cell.x + cell.w - 40), y = rrange(cell.y + 34, cell.y + cell.h - 34);
+      if (w.walls.some((r) => circleRect(x, y, 26, r)) || w.pillars.some((p) => dist(x, y, p.x, p.y) < p.r + 26)) continue;
+      if (w.hazards.some((h) => dist(x, y, h.x, h.y) < h.r + 22) || x < 90 || x > w.W - 90) continue;
+      w.decor.push({ type, x, y, a: rand() * Math.PI * 2, s: rrange(0.8, 1.2), v: rint(0, 2) });
+    }
+  }
+  if (w.arena === 'throne') {
+    w.decor.push({ type: 'dais', x: w.throne.x + 30, y: w.throne.y, a: 0, s: 1, v: 0 });
+    for (const sy of [-1, 1]) for (const dx of [-40, 60]) w.decor.push({ type: 'candles', x: w.throne.x + dx, y: w.throne.y + sy * 150, a: 0, s: 1.2, v: 1 });
+  }
+}
+
+// A boss's room. 'throne': the Bone King's crypt hall (docs/BOSS-bone-king.md): two chunks by two, a throne on a
+// dais at the far end, an aisle between two rows of pillars, four open graves by the side walls.
+function arenaShape(name) {
+  const colW = name === 'throne' ? [660, 660] : [650, 650];
+  const cells = [];
+  for (let r = 0; r < 2; r++) for (let c = 0; c < 2; c++) cells.push({ c, r, x: c * colW[0], y: r * ROW, w: colW[c], h: ROW });
+  return { name, nr: 2, nc: 2, W: colW[0] + colW[1], H: 2 * ROW, cells, solid: [] };
+}
+function buildArena(w, name) {
+  w.arena = name; w.shape = name;
+  const W = w.W, Hh = w.H;
+  w.throne = { x: W - 170, y: Hh / 2 };
+  for (const fx of [0.36, 0.62]) for (const fy of [230, Hh - 230]) w.pillars.push({ x: W * fx, y: fy, r: 34 });
+  w.graves = [];
+  for (const fx of [0.2, 0.8]) for (const fy of [100, Hh - 100]) w.graves.push({ x: W * fx, y: fy, a: fy < Hh / 2 ? 0 : Math.PI, open: false });
+}
+
+// Each tick, after the sim: the theme's own hazards.
+function themeTick(w, dt) {
+  for (const u of w.units) {
+    if (!alive(u)) continue;
+    for (const h of w.hazards) {
+      if (h.type === 'mist') { if (dist(u.x, u.y, h.x, h.y) < h.r + u.r * 0.3) addStatus(w, u, 'chill', 15 * dt); }
+      else if (h.type === 'snare' && !h.sprung && dist(u.x, u.y, h.x, h.y) < h.r + u.r * 0.35) {
+        h.sprung = true; h.t = 5; h.max = 5; h.hidden = false;
+        u.rootT = Math.max(u.rootT || 0, 1.6); u.x = h.x; u.y = h.y; u.kx = u.ky = 0;
+        hurt(w, u, 8, null, { noDodge: true });
+        puff(w, h.x, h.y, '#B58B5A', 10, 90, 5, 0.4);
+      }
+    }
+    if (w.water) for (const c of w.water) if (u.x > c.x && u.x < c.x + c.w && u.y > c.y && u.y < c.y + c.h) {
+      addStatus(w, u, 'wet', Math.min(24 * dt, Math.max(0, 90 - u.st.wet))); u.inOil = true; // wading: slowed like oil until the sim's next hazard pass
+      if (u.spd > 20 && rand() < dt * 8) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.6, y: u.y + rrange(-u.r, u.r) * 0.6, vx: 0, vy: 0, life: 0.5, max: 0.5, size: 5, color: 'rgba(200,235,240,0.8)' });
+    }
+  }
 }
 
 // ---------------------------------------------------------------- rewards
@@ -271,6 +374,7 @@ function giveXp(run, h, xp) {
 
 function onKill(run, u) {
   run.kills++;
+  if (u.def.onDeath) u.def.onDeath(run.world, u);
   const xp = Math.round((u.def.xp || 0) * (1 + 0.15 * (run.depth - 1)) * (u.elite ? 3 : 1));
   for (const h of run.world.units) if (h.team === 'hero' && alive(h)) giveXp(run, h, xp);
 }
@@ -288,6 +392,7 @@ export function update(run, dt) {
   if (run.phase === 'transition') { run.fadeOut += dt * 2.2; if (run.fadeOut >= 1) nextRoom(run); return; }
   if (w.hitstop > 0) { w.hitstop -= dt; return; } // a beat of stillness on big hits
   step(w, dt);
+  themeTick(w, dt);
   for (const u of w.units) if (u.team === 'hero' && u.downed && run.heroes[u.kind]) run.heroes[u.kind].down = true;
   if (heroesAlive(run).length === 0) { run.phase = 'lost'; summarize(run); return; }
   const enemies = w.units.filter((u) => u.team === 'enemy' && alive(u));

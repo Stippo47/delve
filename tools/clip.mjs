@@ -1,6 +1,7 @@
 // Record a short clip of a run, frame by frame, so it plays smoothly whatever the machine's speed.
 // Needs the dev server on :8811 and `npm i --no-save playwright-core` in tools/. Drives the installed Edge.
 //   node tools/clip.mjs <out.mp4> [--seed N] [--depth D] [--secs S] [--skip S] [--speed 2] [--w 390 --h 844] [--fps 30]
+//   [--q 'theme=crypt&bossroom&lvl=6'] (extra address parameters for the game's test switches)
 import { chromium } from 'playwright-core';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -27,7 +28,8 @@ const ctx = await browser.newContext({ viewport: { width: W, height: H }, device
 const page = await ctx.newPage();
 const errors = [];
 page.on('pageerror', (e) => errors.push(String(e)));
-await page.goto(`http://localhost:${site}/?seed=${seed}`);
+const q = opt('q', ''); // extra address parameters
+await page.goto(`http://localhost:${site}/?seed=${seed}${q ? '&' + q : ''}`);
 await page.waitForFunction(() => window.GAME && GAME.state === 'camp');
 await page.evaluate((d) => { GAME.record(true); GAME.startRun(d); }, depth);
 if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) GAME.recFrame(1 / 30); }, skip);

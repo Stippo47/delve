@@ -16,17 +16,17 @@
 //   hazards: [[type, weight], ...] ('spikes' | 'oil' | 'mist' | 'gas' | 'snare'; 'water' channels are separate),
 //   water: chance a room has a water channel (sewers),
 //   props: [[type, per-chunk count], ...] (floor dressing drawn into the floor: bones, candles, slab, web, crack,
-//          skulls, grate, moss, puddle, pipe, straw, crate, torch, rubble, bonepile) }
+//          skulls, grate, moss, puddle, pipe, straw, planks, firepit, rubble, bonepile; drawn in scenery.js) }
 
 export const THEMES = {
   crypt: {
     name: 'The Crypt', blurb: 'Old graves under the hill. The dead here don\'t stay down.',
     palette: {
-      floor: ['#CFCBC4', '#B9B3AA'], tile: ['rgba(90,92,110,0.13)', 'rgba(255,255,255,0.10)'], grout: 'rgba(60,58,72,0.16)',
+      floor: ['#B9B5B2', '#A29E9D'], tile: ['rgba(70,72,96,0.14)', 'rgba(255,255,255,0.08)'], grout: 'rgba(40,38,56,0.28)',
       wall: ['#8E8D96', '#66646F'], wallTop: 'rgba(255,255,255,0.14)', rock: ['#5E5C68', '#25222C'], void: '#25222C', accent: '#7FD6F5',
     },
     floorStyle: 'flag', pillar: 'stone',
-    mood: { fog: 'rgba(28,34,58,', fogK: 0.5, tint: 'rgba(70,90,140,0.06)' },
+    mood: { fog: 'rgba(24,28,52,', fogK: 0.62, tint: 'rgba(70,90,140,0.06)' },
     kinds: { fight: 46, hazard: 13, treasure: 13, fountain: 10, decision: 13, elite: 5 },
     enemies: [
       [['rat', 3], ['rattler', 4], ['rattlerBow', 2]],
@@ -72,7 +72,7 @@ export const THEMES = {
     ],
     elite: 'troll', warden: 'warboss', boss: 'warboss', bossAdds: ['goblin', 'goblin', 'hobgoblin', 'orc'],
     hazards: [['snare', 3], ['spikes', 2], ['oil', 1.5]],
-    props: [['straw', 2], ['crate', 0.7], ['torch', 0.7], ['rubble', 1.2], ['bonepile', 0.6], ['crack', 0.6]],
+    props: [['straw', 2], ['planks', 0.7], ['firepit', 0.4], ['rubble', 1.2], ['bonepile', 0.6], ['crack', 0.6]],
   },
 };
 for (const [id, t] of Object.entries(THEMES)) t.id = id;

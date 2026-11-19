@@ -273,12 +273,12 @@ function dangerEscape(w, u) {
   if (u.react == null) u.react = rrange(0.12, 0.32);
   const live = w.danger.filter((z) => threatens(z, u) && z.age >= u.react);
   if (!live.some((z) => inZone(z, u.x, u.y, u.r * 0.6))) { u.escape = null; return null; }
-  if (u.escape && u.escape.until > w.time && !live.some((z) => inZone(z, u.escape.x, u.escape.y, u.r))) return u.escape;
+  if (u.escape && u.escape.until > w.time && !live.some((z) => inZone(z, u.escape.x, u.escape.y, u.r * 0.75))) return u.escape;
   let best = null, bd = Infinity;
   for (let i = 0; i < DIRS; i++) for (let d = 24; d <= 300; d += 22) {
     const x = u.x + DIR_X[i] * d, y = u.y + DIR_Y[i] * d;
     if (x < u.r || y < u.r || x > w.W - u.r || y > w.H - u.r || !lineClear(w, u.x, u.y, x, y, u.r * 0.8)) break;
-    if (live.some((z) => inZone(z, x, y, u.r))) continue;
+    if (live.some((z) => inZone(z, x, y, u.r * 0.75))) continue;
     const cost = d + (live.some((z) => z.shape !== 'ring' && dist(x, y, z.x ?? z.x1, z.y ?? z.y1) < dist(u.x, u.y, z.x ?? z.x1, z.y ?? z.y1)) ? 25 : 0);
     if (cost < bd) { bd = cost; best = { x, y }; }
     break;
@@ -338,7 +338,7 @@ function steer(w, u, gx, gy, opts = {}) {
     for (let i = 0; i < DIRS; i++) { const tt = rayToRect(u.x, u.y, DIR_X[i], DIR_Y[i], r, R); if (tt < look) danger[i] = Math.max(danger[i], 1 - tt / look); }
   }
   const fear = u.team === 'hero' ? 0.9 : 0.45;
-  for (const h of w.hazards) if (h.type !== 'oil' || u.team === 'hero') avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' ? 0.35 : fear, 40);
+  for (const h of w.hazards) if (!h.hidden && (h.type !== 'oil' || u.team === 'hero')) avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' ? 0.35 : fear, 40);
   for (const o of w.units) {
     if (o === u || !alive(o)) continue;
     if (o.team === u.team) avoidCircle(o.x, o.y, o.r + (u.team === 'hero' ? 14 : 0), 0.45, 18);
@@ -460,12 +460,12 @@ function movement(w, u, dt) {
   if (u.stuckT > 1.2) { u.unstickT = 0.7; u.unstickA = rand() * TAU; u.stuckT = 0; u.path = null; }
   if (u.unstickT > 0) { u.unstickT -= dt; gx = Math.cos(u.unstickA); gy = Math.sin(u.unstickA); mult = Math.max(mult, 0.7); }
   const [sx, sy] = steer(w, u, gx, gy, { side });
-  drive(u, sx, sy, speedOf(u) * mult, dt);
+  drive(u, sx, sy, speedOf(u) * mult * (esc ? 1.1 : 1), dt, esc ? 2.2 : 1); // getting out of a telegraph is a scramble: quick to turn and go
 }
 
 // Momentum: the movement heading swings at the unit's turn rate, speed builds up and drops off,
 // and a sharp turn bleeds speed. Nothing snaps.
-function drive(u, sx, sy, want, dt) {
+function drive(u, sx, sy, want, dt, quick = 1) {
   const d = u.def;
   const k = 1 - Math.exp(-dt * 7);                // smooth the steering wish a little
   u.sdx += (sx - u.sdx) * k; u.sdy += (sy - u.sdy) * k;
@@ -474,11 +474,11 @@ function drive(u, sx, sy, want, dt) {
   if (m > 0.15 && want > 0) {
     const a = Math.atan2(u.sdy, u.sdx);
     const diff = wrapAngle(a - u.mvA);
-    const turn = (d.turn || 5) * dt * (u.spd < 15 ? 2.2 : 1); // turning on the spot is quicker than mid-stride
+    const turn = (d.turn || 5) * dt * quick * (u.spd < 15 ? 2.2 : 1); // turning on the spot is quicker than mid-stride
     u.mvA = wrapAngle(u.mvA + clamp(diff, -turn, turn));
     goal = want * Math.min(1, m) * Math.max(0.2, Math.cos(Math.min(Math.PI / 2, Math.abs(diff))));
   }
-  const acc = (d.accel || 250) * dt;
+  const acc = (d.accel || 250) * dt * quick;
   u.spd += clamp(goal - u.spd, -acc * 1.6, acc);
   if (u.spd < 0) u.spd = 0;
   u.dvx = Math.cos(u.mvA) * u.spd; u.dvy = Math.sin(u.mvA) * u.spd;
@@ -1023,14 +1023,14 @@ function hazards(w, dt) {
   w.hazards = w.hazards.filter((h) => h.t == null || h.t > 0);
   for (const u of w.units) {
     if (!alive(u)) continue;
-    u.inOil = false;
+    u.inOil = false; u.soakedT = 0;
     u.hazardT -= dt;
     for (const h of w.hazards) {
       if (dist(u.x, u.y, h.x, h.y) > h.r + u.r * 0.4) continue;
       if (h.type === 'oil') u.inOil = true;
       else if (h.type === 'fire') addStatus(w, u, 'burn', 34 * dt);
       else if (h.type === 'gas') addStatus(w, u, 'poison', 24 * dt);
-      else if (h.type === 'water') addStatus(w, u, 'wet', 20 * dt);
+      else if (h.type === 'water' && !u.soakedT) { u.soakedT = 1; addStatus(w, u, 'wet', Math.min(20 * dt, Math.max(0, 90 - u.st.wet))); } // standing water soaks to 90, never tips into a slip (a slip's puddle would feed itself)
       else if (h.type === 'spikes' && u.hazardT <= 0) { u.hazardT = 0.6; hurt(w, u, 5 + Math.hypot(u.kx, u.ky) * 0.03, null, { noDodge: true }); }
     }
   }

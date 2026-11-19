@@ -14,11 +14,11 @@ const heroes = (w) => w.units.filter((o) => o.team === 'hero' && alive(o));
 // Phases by health: 1 the Duel (cleave, grave lance), 2 the Court (adds from the graves, bone rows),
 // 3 Unbound (blue crown fire: soul nova / soul ring, twin cleave, ghosts). Every attack: tell -> hit -> recovery.
 const KING = {
-  cleave: { r: 175, arc: 2.1, tell: 0.95, dmg: 26, rec: 0.6 },
-  lance: { len: 460, hw: 36, tell: 1.1, dmg: 30, rec: 1.5, open: 0.35 },
-  rows: { tell: 1.0, step: 50, r: 30, ripple: 0.07, len: 560, dmg: 14, rec: 0.9 },
-  nova: { r: 210, tell: 1.4, dmg: 28, rec: 0.8 },
-  ring: { r0: 165, r1: 390, tell: 1.4, dmg: 28, rec: 0.8 },
+  cleave: { r: 175, arc: 2.1, tell: 1.0, dmg: 18, rec: 0.9 },
+  lance: { len: 460, hw: 36, tell: 1.3, dmg: 25, rec: 1.5, open: 0.35 },
+  rows: { tell: 1.0, step: 50, r: 30, ripple: 0.07, len: 560, dmg: 12, rec: 0.9 },
+  nova: { r: 160, tell: 2.0, dmg: 24, rec: 0.8 },
+  ring: { r0: 170, r1: 380, tell: 1.7, dmg: 24, rec: 0.8 },
   leap: { r: 125, tell: 1.15, dmg: 18 },
   crown: { r: 200, tell: 0.9, dmg: 12 },
 };
@@ -52,15 +52,15 @@ function kingBrain(w, u, dt) {
     if (k.t <= 0) {
       if (k.st === 'tell') { k.st = 'act'; k.t = k.actT || 0.25; }
       else if (k.st === 'act') { k.st = 'recover'; k.t = (k.rec || 0.6) * recK; k.act = null; if (k.after) { k.after(); k.after = null; } }
-      else if (k.st === 'recover' || k.st === 'turn') { k.st = 'idle'; k.cd = rrange(0.35, 0.8) * recK; u.shield = null; u.shieldArc = null; k.lock = null; u.invulnT = 0; }
+      else if (k.st === 'recover' || k.st === 'turn') { k.st = 'idle'; k.cd = rrange(0.7, 1.3) * recK; u.shield = null; u.shieldArc = null; k.lock = null; u.invulnT = 0; }
     }
     return true;
   }
 
   // phase turns happen between attacks
   const hp = u.hp / u.maxHp;
-  if (k.phase === 1 && hp < 0.66) { turnToCourt(w, u, k); return true; }
-  if (k.phase === 2 && hp < 0.33) { turnToUnbound(w, u, k); return true; }
+  if (k.phase === 1 && hp < 0.62) { turnToCourt(w, u, k); return true; }
+  if (k.phase === 2 && hp < 0.3) { turnToUnbound(w, u, k); return true; }
 
   // who he wants: whoever is taunting him, else the nearest, rethought every second
   if ((k.tgtT -= dt) <= 0 || !u.target || !alive(u.target)) {
@@ -160,7 +160,7 @@ function start(w, u, k, what, speed, t) {
       }
     }
   } else if (what === 'nova' || what === 'ring') {
-    const N = what === 'nova' ? KING.nova : KING.ring, tell = N.tell * speed;
+    const N = what === 'nova' ? KING.nova : KING.ring, tell = N.tell; // the soul attacks keep their full tell: they're the ones to read
     k.soulCd = w.time + rrange(6.5, 8); k.novaNext = what !== 'nova';
     begin(u, k, tell, N.rec, null);
     setAnim(u, 'cast', tell + 0.2);
@@ -219,7 +219,7 @@ function turnToCourt(w, u, k) {
   const L = KING.leap, sx = u.x, sy = u.y;
   addDanger(w, { shape: 'circle', x: th.x, y: th.y, r: L.r, t: L.tell, team: u.team, src: u, kind: 'bone',
     hit: { dmg: L.dmg * u.dmgMul, knock: 300, heavy: true },
-    onFire: (w2) => { w2.shake = Math.max(w2.shake, 10); puff(w2, th.x, th.y, '#CFC6B4', 26, 260, 8, 0.7); crackGraves(w2, u, 2); } });
+    onFire: (w2) => { w2.shake = Math.max(w2.shake, 10); puff(w2, th.x, th.y, '#CFC6B4', 26, 260, 8, 0.7); crackGraves(w2, u, 1); } });
   let p = 0;
   k.act = null;
   k.turnMove = (dt) => { p = Math.min(1, p + dt / L.tell); const e = p * p * (3 - 2 * p); u.x = sx + (th.x - sx) * e; u.y = sy + (th.y - sy) * e; };
@@ -256,7 +256,7 @@ function crackGraves(w, u, n, only) {
 function court(w, u, k, dt) {
   const adds = w.units.filter((o) => o.court && alive(o)).length;
   k.addT -= dt;
-  if (k.addT <= 0 && adds < 2 && (w.graves || []).length) { k.addT = 12; crackGraves(w, u, 2, w.graves[Math.floor(rand() * w.graves.length)]); }
+  if (k.addT <= 0 && adds < 2 && (w.graves || []).length) { k.addT = 14; crackGraves(w, u, 2, w.graves[Math.floor(rand() * w.graves.length)]); }
   if (k.phase === 3) {
     k.ghostT -= dt;
     if (k.ghostT <= 0 && adds < 5 && (w.graves || []).length) { k.ghostT = 10; const g = w.graves[Math.floor(rand() * w.graves.length)]; g.ghost = true; crackGraves(w, u, 1, g); }
@@ -275,7 +275,7 @@ function kingDeath(w, u) {
 export const BOSSES = {
   boneKing: {
     team: 'enemy', name: 'The Bone King', art: 'art/bosses/bone-king.svg', headR: 50, r: 56, vr: 38, turn: 2, accel: 120, face: 2, mass: 6,
-    hp: 1400, speed: 46, role: 'melee', range: 30, atkCd: 999, arc: 2, temp: 0.2, commit: 1.4, xp: 160, coins: [60, 80], boss: true,
+    hp: 1080, speed: 46, role: 'melee', range: 30, atkCd: 999, arc: 2, temp: 0.2, commit: 1.4, xp: 160, coins: [60, 80], boss: true,
     res: { poison: 0.3, burn: 0.6, chill: 0.5 }, arena: 'throne',
     brain: (w, u, dt) => {
       const k = u.k;
