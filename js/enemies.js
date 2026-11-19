@@ -232,7 +232,7 @@ export const ENEMIES = {
     hp: 60, speed: 52, role: 'melee', range: 20, atkCd: 1.3, windup: 0.3, dmg: 8, knock: 110, arc: 1.5, shield: 0.4, temp: 0.3, commit: 1,
     xp: 11, coins: [2, 5], cost: 3, attackAnim: 'swing' },
   orc: { team: 'enemy', name: 'Orc', art: 'art/enemies/orc.svg', headR: 60, r: 36, vr: 27, turn: 3, accel: 170, face: 3, mass: 1.9, hp: 90, speed: 50,
-    role: 'melee', range: 22, atkCd: 1.7, windup: 0.5, dmg: 13, knock: 190, arc: 1.8, heavy: true, temp: 0.3, commit: 1.1, xp: 18, coins: [3, 7], cost: 5, attackAnim: 'swing' },
+    role: 'melee', range: 22, atkCd: 1.7, windup: 0.5, dmg: 14, knock: 190, arc: 1.8, heavy: true, temp: 0.3, commit: 1.1, xp: 18, coins: [3, 7], cost: 5, attackAnim: 'swing' },
   orcShaman: { team: 'enemy', name: 'Orc Shaman', art: 'art/enemies/orc-shaman.svg', headR: 60, r: 33, vr: 25, turn: 3.4, accel: 180, face: 3.4, mass: 1.4,
     hp: 60, speed: 48, role: 'ranged', range: 250, keep: 190, atkCd: 999, dmg: 5, temp: 0.4, commit: 0.9, xp: 16, coins: [3, 7], cost: 5, brain: shamanBrain },
   troll: { team: 'enemy', name: 'Troll', art: 'art/enemies/troll.svg', headR: 60, r: 42, vr: 31, turn: 2.6, accel: 150, face: 2.6, mass: 3, hp: 170, speed: 46,

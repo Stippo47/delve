@@ -68,7 +68,7 @@ export const THEMES = {
     enemies: [
       [['goblin', 5], ['hobgoblin', 2], ['rat', 1]],
       [['goblin', 4], ['hobgoblin', 3], ['orc', 2], ['orcShaman', 1.2]],
-      [['goblin', 4], ['hobgoblin', 2.5], ['orc', 2.5], ['orcShaman', 1.6], ['troll', 0.9]],
+      [['goblin', 3.5], ['hobgoblin', 2.5], ['orc', 3], ['orcShaman', 1.8], ['troll', 1.1]],
     ],
     elite: 'troll', warden: 'warboss', boss: 'warboss', bossAdds: ['goblin', 'goblin', 'hobgoblin', 'orc'],
     hazards: [['snare', 3], ['spikes', 2], ['oil', 1.5]],
