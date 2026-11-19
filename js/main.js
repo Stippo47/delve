@@ -86,9 +86,9 @@ function startRun(depth) {
 
 function buildChips() {
   const c = $('chips'); c.innerHTML = '';
-  for (const k of HERO_ORDER) {
+  for (const k of run.party) {
     const el = document.createElement('div'); el.className = 'chip'; el.id = 'chip-' + k;
-    el.innerHTML = `<img src="art/${k}.svg" alt=""><div class="bars"><div class="bar"><i></i></div><div class="bar xp"><i></i></div><div class="lv"></div></div>`;
+    el.innerHTML = `<img src="${DEFS[k].art || 'art/' + k + '.svg'}" alt=""><div class="bars"><div class="bar"><i></i></div><div class="bar xp"><i></i></div><div class="lv"></div></div>`;
     c.appendChild(el);
   }
 }
@@ -97,15 +97,15 @@ let hudT = 0;
 function updateHud() {
   if (!run) return;
   const w = run.world;
-  for (const k of HERO_ORDER) {
+  for (const k of run.party) {
     const el = $('chip-' + k); if (!el) continue;
-    const u = w.units.find((x) => x.kind === k);
+    const u = w.units.find((x) => x.kind === k && !x.summon);
     const hs = run.heroes[k];
     const down = hs.down || (u && u.downed);
-    const hp = u ? u.hp / u.maxHp : (hs.hp != null ? hs.hp / levelHp(DEFS[k].hp, save.heroes[k].level) : 1);
+    const hp = u ? u.hp / u.maxHp : (hs.hp != null ? hs.hp / levelHp(DEFS[k].hp, hs.level) : 1);
     el.classList.toggle('down', !!down);
     el.querySelector('.bar > i').style.width = (down ? 0 : Math.max(0, hp) * 100) + '%';
-    const sv = save.heroes[k];
+    const sv = hs;
     el.querySelector('.bar.xp > i').style.width = Math.round(100 * sv.xp / xpToNext(sv.level)) + '%';
     el.querySelector('.lv').textContent = 'Lv ' + sv.level + (down ? ' · down' : '');
   }
@@ -143,7 +143,7 @@ function endRun(result) {
     lines.push(`Kept ${r.coins} coins`, r.satchel.length ? `Left behind: ${r.satchel.map((i) => TRINKETS[i.id].name).join(', ')}` : 'No loot was left behind');
   }
   lines.push(`Reached floor ${r.floor}, room ${r.map.L + 1} of ${LAYERS + 1} · ${r.kills} kills`);
-  lines.push('Levels: ' + HERO_ORDER.map((k) => `${DEFS[k].name} ${save.heroes[k].level}`).join(' · '));
+  lines.push('Levels reached: ' + r.party.map((k) => `${DEFS[k].name} ${r.heroes[k].best || r.heroes[k].level}`).join(' · '));
   writeSave(save);
   $('resultCard').innerHTML = `<h1>${title}</h1>${lines.map((l) => `<div class="muted" style="font-size:14px">${l}</div>`).join('')}<button class="btn big" id="toCamp">Back to camp</button>`;
   $('toCamp').onclick = () => { run = null; show('camp'); };
