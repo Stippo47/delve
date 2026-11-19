@@ -68,8 +68,17 @@ Projectiles have `kind`: 'arrow' | 'fireArrow' | 'bolt' | 'fireball' | 'shard' |
 Called every tick before the usual brain; return true to skip the usual brain. Use the helpers sim.js exports.
 
 ### Themes (`js/themes.js`, lane C)
-`THEMES[id]` = { name, blurb, palette (floor, wall, rock, accent), enemies (weighted kinds per floor), boss,
-hazards, props }. `newRun` takes `theme`. At least 3 themes.
+`THEMES[id]` = { name, blurb, palette (floor, tile, grout, wall, wallTop, rock, void, accent), floorStyle, pillar,
+mood, kinds (room mix), enemies (weighted kinds per floor), elite, warden (floors 1-2), boss (floor 3), bossAdds,
+hazards, water, props }. `THEME_IDS`: crypt, sewers, warren. `newRun(save, { theme })` builds every room from it
+(`run.theme` is the id; `?theme=` in the address for testing). The camp's dungeon cards can use name, blurb and
+palette.accent. Drawing: `js/scenery.js` (floor, rock, walls, pillars, dressing, theme hazards, arenas, mood).
+Test switches: `?bossroom` (start in floor 3's boss room), `?lvl=N` (heroes start at level N).
+
+### Danger zones (`sim.js` `addDanger`, lane C; drawn by `scenery.js` `drawDanger`)
+A telegraphed hit: `{ shape: 'circle'|'ring'|'cone'|'line', ..., t, team, src, kind, hit?, onFire? }`. The sim
+counts it down and strikes at 0 (unless `src` fell); units of the other side steer out of it after a short
+reaction (a quick scramble). Any brain can use it. Bosses: `js/boss.js` (the Bone King, docs/BOSS-bone-king.md).
 
 ## Art the game uses
 `art/heroes/<id>.svg` (the 15), `art/enemies/*.svg` (picked skeletons, ghost, lizardmen), `art/props/*.svg`.
