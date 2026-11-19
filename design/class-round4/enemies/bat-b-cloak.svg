@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- BAT take B "cloak": a sleek dark vampire bat with its wings swept forward round its head like a cloak, about to dive; tall pointed ears, glowing red eyes, white fangs. About 65% of the archer. Parts: #arm-l, #arm-r = the wings (pivot at the shoulders, before #body), #body = body, head, ears. Facing = DOWN (+y), centre (100,100). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<linearGradient id="g1" x1="0" y1="0" x2="-0.2" y2="1"><stop offset="0" stop-color="#5A5276"/><stop offset="1" stop-color="#2E2842"/></linearGradient>
+<path id="p2" d="M90 84 C88.4 79.5 74.1 68.9 68 66 C61.9 63.1 49.6 60.7 44 62 C38.4 63.3 29.5 70.4 26 76 C22.5 81.6 18.3 96 18 104 C17.7 112 21.1 128.3 24 136 C26.9 143.7 36.5 156.9 40 162 C43.5 167.1 50 174 50 174 C50 174 46.1 159.7 48 156 C49.9 152.3 64 146 64 146 C64 146 59.4 135.2 61 132 C62.6 128.8 76 122 76 122 C76 122 72.5 112.9 73 110 C73.5 107.1 77.7 103.5 80 100 C82.3 96.5 91.6 88.5 90 84 Z"/>
+<clipPath id="c3"><use href="#p2"/></clipPath>
+<linearGradient id="g4" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.3"/></linearGradient>
+<linearGradient id="g5" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#5A5276"/><stop offset="1" stop-color="#2E2842"/></linearGradient>
+<path id="p6" d="M110 84 C111.6 79.5 125.9 68.9 132 66 C138.1 63.1 150.4 60.7 156 62 C161.6 63.3 170.5 70.4 174 76 C177.5 81.6 181.7 96 182 104 C182.3 112 178.9 128.3 176 136 C173.1 143.7 163.5 156.9 160 162 C156.5 167.1 150 174 150 174 C150 174 153.9 159.7 152 156 C150.1 152.3 136 146 136 146 C136 146 140.6 135.2 139 132 C137.4 128.8 124 122 124 122 C124 122 127.5 112.9 127 110 C126.5 107.1 122.3 103.5 120 100 C117.7 96.5 108.4 88.5 110 84 Z"/>
+<clipPath id="c7"><use href="#p6"/></clipPath>
+<linearGradient id="g8" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#4E4766"/><stop offset="1" stop-color="#2A2438"/></linearGradient>
+<path id="p9" d="M82 86 A18 26 0 1 0 118 86 A18 26 0 1 0 82 86 Z"/>
+<clipPath id="c10"><use href="#p9"/></clipPath>
+<linearGradient id="g11" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#5E5678"/><stop offset="1" stop-color="#332C48"/></linearGradient>
+<path id="p12" d="M92 104 C93.2 101.9 87.6 90.4 86 86 C84.4 81.6 79.6 66.5 78 66 C76.4 65.5 72.2 77.6 72 82 C71.8 86.4 73.7 101.4 76 104 C78.3 106.6 90.8 106.1 92 104 Z"/>
+<clipPath id="c13"><use href="#p12"/></clipPath>
+<linearGradient id="g14" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.2"/></linearGradient>
+<path id="p15" d="M108 104 C106.8 101.9 112.4 90.4 114 86 C115.6 81.6 120.4 66.5 122 66 C123.6 65.5 127.8 77.6 128 82 C128.2 86.4 126.3 101.4 124 104 C121.7 106.6 109.2 106.1 108 104 Z"/>
+<clipPath id="c16"><use href="#p15"/></clipPath>
+<linearGradient id="g17" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#5E5678"/><stop offset="1" stop-color="#2E2842"/></linearGradient>
+<path id="p18" d="M76 118 A24 24 0 1 0 124 118 A24 24 0 1 0 76 118 Z"/>
+<clipPath id="c19"><use href="#p2"/><use href="#p6"/><use href="#p9"/><use href="#p12"/><use href="#p15"/></clipPath>
+<clipPath id="c20"><use href="#p18"/></clipPath>
+<radialGradient id="g21" cx="0.32" cy="0.28" r="0.55"><stop offset="0" stop-color="#FFFFF4" stop-opacity="0.25"/><stop offset="1" stop-color="#FFFFF4" stop-opacity="0"/></radialGradient>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-l" data-pivot="86 92"><g>
+<use href="#p2" fill="url(#g1)"/>
+<g clip-path="url(#c3)"><path d="M74 84 C71.6 78.3 56 74.8 50 76 C44 77.2 36.7 85.4 34 92 C31.3 98.6 30.5 111.9 32 120 C33.5 128.1 40.7 144.5 44 146 C47.3 147.5 50.7 134.8 54 130 C57.3 125.2 63 120.9 66 114 C69 107.1 76.4 89.7 74 84 Z" fill="#8A3A5A" opacity="0.55"/><use href="#p2" fill="url(#g4)"/></g>
+</g></g>
+<g id="arm-r" data-pivot="114 92"><g>
+<use href="#p6" fill="url(#g5)"/>
+<g clip-path="url(#c7)"><path d="M126 84 C128.4 78.3 144 74.8 150 76 C156 77.2 163.3 85.4 166 92 C168.7 98.6 169.5 111.9 168 120 C166.5 128.1 159.3 144.5 156 146 C152.7 147.5 149.3 134.8 146 130 C142.7 125.2 137 120.9 134 114 C131 107.1 123.6 89.7 126 84 Z" fill="#8A3A5A" opacity="0.55"/><use href="#p6" fill="url(#g4)"/></g>
+</g></g>
+<g id="body"><g>
+<use href="#p9" fill="url(#g8)"/>
+<g clip-path="url(#c10)"><use href="#p9" fill="url(#g4)"/></g>
+<use href="#p12" fill="url(#g11)"/>
+<g clip-path="url(#c13)"><path d="M92 104 C93.2 101.9 87.6 90.4 86 86 C84.4 81.6 79.6 66.5 78 66 C76.4 65.5 72.2 77.6 72 82 C71.8 86.4 73.7 101.4 76 104 C78.3 106.6 90.8 106.1 92 104 Z" fill="#B05A7A" opacity="0.5" transform="translate(0 6) scale(1)"/><use href="#p12" fill="url(#g14)"/></g>
+<use href="#p15" fill="url(#g11)"/>
+<g clip-path="url(#c16)"><path d="M108 104 C106.8 101.9 112.4 90.4 114 86 C115.6 81.6 120.4 66.5 122 66 C123.6 65.5 127.8 77.6 128 82 C128.2 86.4 126.3 101.4 124 104 C121.7 106.6 109.2 106.1 108 104 Z" fill="#B05A7A" opacity="0.5" transform="translate(0 6) scale(1)"/><use href="#p15" fill="url(#g14)"/></g>
+<g clip-path="url(#c19)"><use href="#p18" transform="translate(0 4)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p18" fill="url(#g17)"/>
+<g clip-path="url(#c20)"><use href="#p18" fill="url(#g21)"/><use href="#p18" fill="url(#g4)"/></g>
+<path d="M82.5 122 A6.5 5 0 1 0 95.5 122 A6.5 5 0 1 0 82.5 122 Z" fill="#FF5A4A"/>
+<path d="M85.7 121 A1.8 1.8 0 1 0 89.3 121 A1.8 1.8 0 1 0 85.7 121 Z" fill="#FFE0D0"/>
+<path d="M104.5 122 A6.5 5 0 1 0 117.5 122 A6.5 5 0 1 0 104.5 122 Z" fill="#FF5A4A"/>
+<path d="M107.7 121 A1.8 1.8 0 1 0 111.3 121 A1.8 1.8 0 1 0 107.7 121 Z" fill="#FFE0D0"/>
+<path d="M91 138 L97 138 L94 146 Z M103 138 L109 138 L106 146 Z" fill="#FFF8EC"/>
+</g></g>
+</g>
+</svg>

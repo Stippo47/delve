@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- WITCH: a huge violet witch hat (wide brim, crooked tip, green band), dark-green hair falling at the sides; a broom held forward in the LEFT fist, bristles first (behind the body); empty right fist. -->
+<!-- Parts: groups inside #sprite in draw order; weapon arms come before #body so the weapon sits under the body and only the fist shows. Pivots: the shoulder points. Front = down (+y), centre (100,100). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gFace" x1="0" y1="94.8" x2="0" y2="153.1" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient><linearGradient id="sR" x1="0.4" y1="0" x2="1" y2="0.12"><stop offset="0" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.32"/></linearGradient><linearGradient id="sRl" x1="0.4" y1="0" x2="1" y2="0.12"><stop offset="0" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.18"/></linearGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.55"/><stop offset="0.42" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gWood" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#CF9A62"/><stop offset="0.55" stop-color="#AD7442"/><stop offset="1" stop-color="#83542C"/></linearGradient>
+<linearGradient id="g1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B88250"/><stop offset="1" stop-color="#7A4E2A"/></linearGradient>
+<path id="s2" d="M 10.3 57.5 L 52.3 161.5 A 4.0 4.0 0 0 0 59.7 158.5 L 17.7 54.5 A 4.0 4.0 0 0 0 10.3 57.5 Z"/>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#F0D27A"/><stop offset="1" stop-color="#B58A30"/></linearGradient>
+<path id="s4" d="M -7 -2 L 7 -2 C 12 10 17 24 19 36 C 10 42 -10 42 -19 36 C -17 24 -12 10 -7 -2 Z" transform="translate(56.0 160.0) rotate(-21.99)"/>
+<clipPath id="c5"><use href="#s4"/></clipPath>
+<clipPath id="c6"><use href="#s2"/><use href="#s4"/></clipPath>
+<linearGradient id="g7" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#7E4AAE"/><stop offset="1" stop-color="#43246A"/></linearGradient>
+<path id="s8" d="M 26 108 C 26 82 54 76 100 76 C 146 76 174 82 174 108 C 174 134 146 140 100 140 C 54 140 26 134 26 108 Z"/>
+<path id="s9" d="M 100 47.8 C 129.6 47.8 147.8 68.7 147.8 98.3 C 147.8 122.6 136.5 140 120.9 147.8 C 113.9 151.3 107 153.1 100 153.1 C 93 153.1 86.1 151.3 79.1 147.8 C 63.5 140 52.1 122.6 52.1 98.3 C 52.1 68.7 70.4 47.8 100 47.8 Z"/>
+<clipPath id="c10"><use href="#s2"/><use href="#s4"/><use href="#s8"/></clipPath>
+<clipPath id="c11"><use href="#s9"/></clipPath>
+<linearGradient id="g12" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#4E8A5C"/><stop offset="1" stop-color="#24452E"/></linearGradient>
+<path id="s13" d="M 52 104 C 46 124 50 142 62 154 C 64 140 66 124 66 106 Z"/>
+<clipPath id="c14"><use href="#s2"/><use href="#s4"/><use href="#s8"/><use href="#s9"/></clipPath>
+<path id="s15" d="M 148 104 C 154 124 150 142 138 154 C 136 140 134 124 134 106 Z"/>
+<clipPath id="c16"><use href="#s2"/><use href="#s4"/><use href="#s8"/><use href="#s9"/><use href="#s13"/></clipPath>
+<linearGradient id="g17" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#8A55BC"/><stop offset="1" stop-color="#3E2066"/></linearGradient>
+<path id="s18" d="M 18 76 C 18 46 56 28 100 28 C 144 28 182 46 182 76 C 182 104 144 120 100 120 C 56 120 18 104 18 76 Z"/>
+<clipPath id="c19"><use href="#s2"/><use href="#s4"/><use href="#s8"/><use href="#s9"/><use href="#s13"/><use href="#s15"/></clipPath>
+<clipPath id="c20"><use href="#s18"/></clipPath>
+<linearGradient id="g21" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#9662C8"/><stop offset="1" stop-color="#4A2876"/></linearGradient>
+<path id="s22" d="M 68 82 C 62 58 72 40 88 30 C 96 24 100 14 92 -2 C 110 2 120 14 116 30 C 128 42 136 60 132 82 C 118 94 82 94 68 82 Z"/>
+<clipPath id="c23"><use href="#s2"/><use href="#s4"/><use href="#s8"/><use href="#s9"/><use href="#s13"/><use href="#s15"/><use href="#s18"/></clipPath>
+<clipPath id="c24"><use href="#s22"/></clipPath>
+<clipPath id="c25"><use href="#s2"/><use href="#s4"/><use href="#s8"/><use href="#s9"/><use href="#s13"/><use href="#s15"/><use href="#s18"/><use href="#s22"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-l" data-pivot="46 108">
+<use href="#s2" fill="url(#g1)"/><use href="#s2" fill="url(#sR)"/>
+<use href="#s4" fill="url(#g3)"/><g clip-path="url(#c5)"><g transform="translate(56.0 160.0) rotate(-21.99)"><rect x="-12" y="4" width="24" height="6" fill="#A8333A"/><path d="M -4 14 L -8 40 L -5 40 L -1 14 Z M 5 14 L 7 40 L 10 40 L 8 14 Z" fill="#9C7426" opacity="0.5"/></g></g><use href="#s4" fill="url(#sR)"/>
+<g clip-path="url(#c6)"><rect x="38.4" y="131.2" width="20" height="25" rx="8" transform="rotate(-22.0 48.4 141.2)" fill="#2B2230" opacity="0.28"/></g><rect x="38.4" y="128.7" width="20" height="25" rx="8" transform="rotate(-22.0 48.4 141.2)" fill="url(#gHand)"/><rect x="38.4" y="128.7" width="20" height="25" rx="8" transform="rotate(-22.0 48.4 141.2)" fill="url(#gUnder)"/>
+</g>
+<g id="body">
+<g clip-path="url(#c6)"><use href="#s8" transform="translate(0 3)" fill="#1A1030" opacity="0.28"/></g><use href="#s8" fill="url(#g7)"/><use href="#s8" fill="url(#sR)"/>
+<g clip-path="url(#c10)"><use href="#s9" transform="translate(0 5)" fill="#1A1030" opacity="0.3"/></g><use href="#s9" fill="url(#gFace)"/><g clip-path="url(#c11)"><rect x="100" y="40" width="56" height="120" fill="url(#gFaceSide)"/></g>
+<path d="M96 136.5 Q100 139 104 136.5" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+<g clip-path="url(#c14)"><use href="#s13" transform="translate(0 3)" fill="#1A1030" opacity="0.25"/></g><use href="#s13" fill="url(#g12)"/><use href="#s13" fill="url(#sR)"/>
+<g clip-path="url(#c16)"><use href="#s15" transform="translate(0 3)" fill="#1A1030" opacity="0.25"/></g><use href="#s15" fill="url(#g12)"/><use href="#s15" fill="url(#sR)"/>
+<g clip-path="url(#c19)"><use href="#s18" transform="translate(0 5)" fill="#1A1030" opacity="0.34"/></g><use href="#s18" fill="url(#g17)"/><g clip-path="url(#c20)"><path d="M 30 86 C 48 110 80 118 100 118 C 120 118 152 110 170 86 C 176 100 150 124 100 124 C 50 124 24 100 30 86 Z" fill="#B48ADC" opacity="0.35"/></g><use href="#s18" fill="url(#sR)"/>
+<g clip-path="url(#c23)"><use href="#s22" transform="translate(0 5)" fill="#1A1030" opacity="0.36"/></g><use href="#s22" fill="url(#g21)"/><g clip-path="url(#c24)"><path d="M 60 82 L 140 82 L 140 68 C 120 78 80 78 60 68 Z" fill="#8CC84A"/><rect x="93" y="72" width="14" height="12" rx="2" fill="#F2C94C"/></g><use href="#s22" fill="url(#sR)"/>
+</g>
+<g id="arm-r" data-pivot="154 108">
+<g clip-path="url(#c25)"><rect x="131.0" y="132.0" width="24" height="21" rx="8" transform="rotate(0.0 143.0 140.0)" fill="#2B2230" opacity="0.28"/></g><rect x="131.0" y="129.5" width="24" height="21" rx="8" transform="rotate(0.0 143.0 140.0)" fill="url(#gHand)"/>
+</g>
+</g>
+</svg>

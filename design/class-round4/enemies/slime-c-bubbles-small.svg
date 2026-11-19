@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- SLIME take C "bubbles" (small): a cluster of glossy jelly bubbles stuck together like frogspawn: one big bubble at the front with the face, smaller ones bunched behind it (they pop off as slimelets). Parts: #body only. Facing = DOWN (+y), centre (100,100). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<linearGradient id="g1" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#FFDDEE"/><stop offset="1" stop-color="#DC7AAE"/></linearGradient>
+<path id="p2" d="M102 70 A24 24 0 1 0 150 70 A24 24 0 1 0 102 70 Z"/>
+<clipPath id="c3"><use href="#p2"/></clipPath>
+<linearGradient id="g4" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.3"/></linearGradient>
+<path id="p5" d="M56 112 A44 44 0 1 0 144 112 A44 44 0 1 0 56 112 Z"/>
+<clipPath id="c6"><use href="#p2"/></clipPath>
+<clipPath id="c7"><use href="#p5"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="body"><g transform="translate(100 100) scale(0.62) translate(-100 -100)">
+<use href="#p2" fill="url(#g1)"/>
+<g clip-path="url(#c3)"><path d="M111.6 74.3 A17.3 17.3 0 1 0 146.2 74.3 A17.3 17.3 0 1 0 111.6 74.3 Z" fill="#F8B0D4" opacity="0.55"/><use href="#p2" fill="url(#g4)"/></g>
+<path d="M120.7 72.9 A7.2 7.2 0 1 0 135.1 72.9 A7.2 7.2 0 1 0 120.7 72.9 Z" fill="#B85A8C" opacity="0.7"/>
+<path d="M109.7 59.9 A6.2 4.1 0 1 0 122.2 59.9 A6.2 4.1 0 1 0 109.7 59.9 Z" fill="#FFFFFF" opacity="0.9"/>
+<path d="M135.1 58 A2.9 2.9 0 1 0 140.9 58 A2.9 2.9 0 1 0 135.1 58 Z" fill="#FFFFFF" opacity="0.8"/>
+<g clip-path="url(#c6)"><use href="#p5" transform="translate(0 5)" fill="#2B2230" opacity="0.28"/></g>
+<use href="#p5" fill="url(#g1)"/>
+<g clip-path="url(#c7)"><path d="M73.6 119.9 A31.7 31.7 0 1 0 137 119.9 A31.7 31.7 0 1 0 73.6 119.9 Z" fill="#F8B0D4" opacity="0.55"/><use href="#p5" fill="url(#g4)"/></g>
+<path d="M70.1 93.5 A11.4 7.5 0 1 0 93 93.5 A11.4 7.5 0 1 0 70.1 93.5 Z" fill="#FFFFFF" opacity="0.9"/>
+<path d="M117.5 90 A4.5 4.5 0 1 0 126.5 90 A4.5 4.5 0 1 0 117.5 90 Z" fill="#FFFFFF" opacity="0.8"/>
+<path d="M70 128.7 A11 14 0 1 0 92 128.7 A11 14 0 1 0 70 128.7 Z" fill="#2B2230"/>
+<path d="M73.5 123.4 A4 4 0 1 0 81.4 123.4 A4 4 0 1 0 73.5 123.4 Z" fill="#FFFFFF"/>
+<path d="M108 128.7 A11 14 0 1 0 130 128.7 A11 14 0 1 0 108 128.7 Z" fill="#2B2230"/>
+<path d="M111.5 123.4 A4 4 0 1 0 119.4 123.4 A4 4 0 1 0 111.5 123.4 Z" fill="#FFFFFF"/>
+</g></g>
+</g>
+</svg>

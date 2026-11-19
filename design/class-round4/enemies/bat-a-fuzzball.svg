@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- BAT take A "fuzzball": a round ball of fluff with huge ears and two small leathery wings held out to the sides; big eyes, a pink nose and two fangs at the front. About 65% of the archer. Parts: #arm-l, #arm-r = the wings (pivot at the shoulders, before #body: flap them by swinging or squashing in x), #body = the ball, ears and face. Facing = DOWN (+y), centre (100,100). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<linearGradient id="g1" x1="0" y1="0" x2="-0.2" y2="1"><stop offset="0" stop-color="#7A68A0"/><stop offset="1" stop-color="#4A3A6C"/></linearGradient>
+<path id="p2" d="M76 92 C73.6 86.7 60.1 80.7 54 78 C47.9 75.3 34 70.9 30 72 C26 73.1 24.3 82.3 24 86 C23.7 89.7 26.7 96.5 28 100 C29.3 103.5 31.9 110.9 34 112 C36.1 113.1 41.9 106.9 44 108 C46.1 109.1 47.9 119.2 50 120 C52.1 120.8 57.1 114.3 60 114 C62.9 113.7 69.9 120.9 72 118 C74.1 115.1 78.4 97.3 76 92 Z"/>
+<clipPath id="c3"><use href="#p2"/></clipPath>
+<linearGradient id="g4" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.25"/></linearGradient>
+<linearGradient id="g5" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#7A68A0"/><stop offset="1" stop-color="#4A3A6C"/></linearGradient>
+<path id="p6" d="M124 92 C126.4 86.7 139.9 80.7 146 78 C152.1 75.3 166 70.9 170 72 C174 73.1 175.7 82.3 176 86 C176.3 89.7 173.3 96.5 172 100 C170.7 103.5 168.1 110.9 166 112 C163.9 113.1 158.1 106.9 156 108 C153.9 109.1 152.1 119.2 150 120 C147.9 120.8 142.9 114.3 140 114 C137.1 113.7 130.1 120.9 128 118 C125.9 115.1 121.6 97.3 124 92 Z"/>
+<clipPath id="c7"><use href="#p6"/></clipPath>
+<linearGradient id="g8" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#B6A2D8"/><stop offset="1" stop-color="#7A66A0"/></linearGradient>
+<path id="p9" d="M88 76 C88.3 71.2 79.1 58 76 52 C72.9 46 68.5 34.3 66 34 C63.5 33.7 58.6 44.3 58 50 C57.4 55.7 59.7 68.9 62 74 C64.3 79.1 70.3 85.7 74 86 C77.7 86.3 87.7 80.8 88 76 Z"/>
+<clipPath id="c10"><use href="#p9"/></clipPath>
+<linearGradient id="g11" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.2"/></linearGradient>
+<path id="p12" d="M112 76 C111.7 71.2 120.9 58 124 52 C127.1 46 131.4 34.3 134 34 C136.6 33.7 141.4 44.3 142 50 C142.6 55.7 140.3 68.9 138 74 C135.7 79.1 129.7 85.7 126 86 C122.3 86.3 112.3 80.8 112 76 Z"/>
+<clipPath id="c13"><use href="#p12"/></clipPath>
+<linearGradient id="g14" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#CDBCEA"/><stop offset="1" stop-color="#8A76B4"/></linearGradient>
+<path id="p15" d="M100 60 C104.3 60 109.9 64.9 114.4 66.5 C118.8 68.1 126.3 68 129.6 70.8 C132.9 73.5 134 80.9 136.4 85 C138.7 89.1 144.6 93.8 145.3 98 C146 102.3 142.2 108.6 141.4 113.3 C140.5 117.9 142 125.3 139.8 129 C137.7 132.7 130.6 135.1 127 138.2 C123.4 141.2 119.8 147.8 115.7 149.2 C111.7 150.7 104.7 148 100 148 C95.3 148 88.3 150.7 84.3 149.2 C80.2 147.8 76.6 141.2 73 138.2 C69.4 135.1 62.3 132.7 60.2 129 C58 125.3 59.5 117.9 58.6 113.3 C57.8 108.6 54 102.3 54.7 98 C55.4 93.8 61.3 89.1 63.6 85 C66 80.9 67.1 73.5 70.4 70.8 C73.7 68 81.2 68.1 85.6 66.5 C90.1 64.9 95.7 60 100 60 Z"/>
+<clipPath id="c16"><use href="#p2"/><use href="#p6"/><use href="#p9"/><use href="#p12"/></clipPath>
+<clipPath id="c17"><use href="#p15"/></clipPath>
+<radialGradient id="g18" cx="0.32" cy="0.28" r="0.55"><stop offset="0" stop-color="#FFFFF4" stop-opacity="0.35"/><stop offset="1" stop-color="#FFFFF4" stop-opacity="0"/></radialGradient>
+<linearGradient id="g19" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.3"/></linearGradient>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-l" data-pivot="70 98"><g>
+<use href="#p2" fill="url(#g1)"/>
+<g clip-path="url(#c3)"><path d="M76 92 C73.6 86.7 60.1 80.7 54 78 C47.9 75.3 34 70.9 30 72 C26 73.1 24.3 82.3 24 86 C23.7 89.7 26.7 96.5 28 100 C29.3 103.5 31.9 110.9 34 112 C36.1 113.1 41.9 106.9 44 108 C46.1 109.1 47.9 119.2 50 120 C52.1 120.8 57.1 114.3 60 114 C62.9 113.7 69.9 120.9 72 118 C74.1 115.1 78.4 97.3 76 92 Z" fill="#9C88C4" opacity="0.45" transform="translate(6 -4) scale(1)"/><use href="#p2" fill="url(#g4)"/></g>
+</g></g>
+<g id="arm-r" data-pivot="130 98"><g>
+<use href="#p6" fill="url(#g5)"/>
+<g clip-path="url(#c7)"><path d="M124 92 C126.4 86.7 139.9 80.7 146 78 C152.1 75.3 166 70.9 170 72 C174 73.1 175.7 82.3 176 86 C176.3 89.7 173.3 96.5 172 100 C170.7 103.5 168.1 110.9 166 112 C163.9 113.1 158.1 106.9 156 108 C153.9 109.1 152.1 119.2 150 120 C147.9 120.8 142.9 114.3 140 114 C137.1 113.7 130.1 120.9 128 118 C125.9 115.1 121.6 97.3 124 92 Z" fill="#9C88C4" opacity="0.45" transform="translate(-6 -4) scale(1)"/><use href="#p6" fill="url(#g4)"/></g>
+</g></g>
+<g id="body"><g>
+<use href="#p9" fill="url(#g8)"/>
+<g clip-path="url(#c10)"><path d="M80 74 C80.6 71.2 74 60 72 56 C70 52 67.3 45.4 66 46 C64.7 46.6 62.7 55.8 63 60 C63.3 64.2 65.6 74 68 76 C70.4 78 79.4 76.8 80 74 Z" fill="#F0A6C0" opacity="0.85"/><use href="#p9" fill="url(#g11)"/></g>
+<use href="#p12" fill="url(#g8)"/>
+<g clip-path="url(#c13)"><path d="M120 74 C119.4 71.2 126 60 128 56 C130 52 132.7 45.4 134 46 C135.3 46.6 137.3 55.8 137 60 C136.7 64.2 134.4 74 132 76 C129.6 78 120.6 76.8 120 74 Z" fill="#F0A6C0" opacity="0.85"/><use href="#p12" fill="url(#g11)"/></g>
+<g clip-path="url(#c16)"><use href="#p15" transform="translate(0 5)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p15" fill="url(#g14)"/>
+<g clip-path="url(#c17)"><path d="M74 126 A26 18 0 1 0 126 126 A26 18 0 1 0 74 126 Z" fill="#E6DAF6" opacity="0.7"/><use href="#p15" fill="url(#g18)"/><use href="#p15" fill="url(#g19)"/></g>
+<path d="M76 116 A8 10 0 1 0 92 116 A8 10 0 1 0 76 116 Z" fill="#2B2230"/>
+<path d="M78.9 112.5 A2.7 2.7 0 1 0 84.3 112.5 A2.7 2.7 0 1 0 78.9 112.5 Z" fill="#FFFFFF"/>
+<path d="M108 116 A8 10 0 1 0 124 116 A8 10 0 1 0 108 116 Z" fill="#2B2230"/>
+<path d="M110.9 112.5 A2.7 2.7 0 1 0 116.3 112.5 A2.7 2.7 0 1 0 110.9 112.5 Z" fill="#FFFFFF"/>
+<path d="M94 132 A6 4.5 0 1 0 106 132 A6 4.5 0 1 0 94 132 Z" fill="#E07A9A"/>
+<path d="M89.5 146 L96.5 146 L93 155 Z M103.5 146 L110.5 146 L107 155 Z" fill="#FFF8EC"/>
+</g></g>
+</g>
+</svg>

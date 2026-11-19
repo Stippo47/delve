@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- RANGED Harpooner: yellow oilskin sou'wester (long back flap, narrow front brim), grey beard, navy knit sweater. A big barbed harpoon in the right hand (arm-r, drawn before #body: the shaft runs under the shoulder, the head comes out forward) with its rope looping across the front to a coil held in the left hand (arm-l). Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="s1" d="M 0 -2 H 0 A 4.5 4.5 0 0 1 4.5 2.5 V 125.5 A 4.5 4.5 0 0 1 0 130 H 0 A 4.5 4.5 0 0 1 -4.5 125.5 V 2.5 A 4.5 4.5 0 0 1 0 -2 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#B7804D"/><stop offset="1" stop-color="#936438"/></linearGradient>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4E341C" stop-opacity="0"/><stop offset="1" stop-color="#4E341C" stop-opacity="0.42"/></linearGradient>
+<path id="s2" d="M 0 119 H 0 A 3 3 0 0 1 3 122 V 150 A 3 3 0 0 1 0 153 H 0 A 3 3 0 0 1 -3 150 V 122 A 3 3 0 0 1 0 119 Z"/>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#ACB3BD"/><stop offset="1" stop-color="#808A9A"/></linearGradient>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#414853" stop-opacity="0"/><stop offset="1" stop-color="#414853" stop-opacity="0.42"/></linearGradient>
+<path id="s3" d="M 0 178 L -17 146 L -6 150 L -5 138 L 5 138 L 6 150 L 17 146 Z"/>
+<linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#EDEFF2"/><stop offset="1" stop-color="#AFB8C7"/></linearGradient>
+<linearGradient id="g6" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4F5E75" stop-opacity="0"/><stop offset="1" stop-color="#4F5E75" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c3"><use href="#s3" transform="translate(165 25) rotate(7)"/></clipPath>
+<path id="s4" d="M -3.5 122.5 H 3.5 A 2.5 2.5 0 0 1 6 125 V 127 A 2.5 2.5 0 0 1 3.5 129.5 H -3.5 A 2.5 2.5 0 0 1 -6 127 V 125 A 2.5 2.5 0 0 1 -3.5 122.5 Z"/>
+<linearGradient id="g7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E1CEA5"/><stop offset="1" stop-color="#CEAD62"/></linearGradient>
+<linearGradient id="g8" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7B6024" stop-opacity="0"/><stop offset="1" stop-color="#7B6024" stop-opacity="0.42"/></linearGradient>
+<path id="s5" d="M -2.5 99.5 H 2.5 A 8 8 0 0 1 10.5 107.5 V 116.5 A 8 8 0 0 1 2.5 124.5 H -2.5 A 8 8 0 0 1 -10.5 116.5 V 107.5 A 8 8 0 0 1 -2.5 99.5 Z"/>
+<clipPath id="u5"><use href="#s1" transform="translate(165 25) rotate(7)"/><use href="#s2" transform="translate(165 25) rotate(7)"/><use href="#s3" transform="translate(165 25) rotate(7)"/><use href="#s4" transform="translate(165 25) rotate(7)"/></clipPath>
+<path id="s6" d="M 26 108 C 26 82 54 76 100 76 C 146 76 174 82 174 108 C 174 134 146 140 100 140 C 54 140 26 134 26 108 Z"/>
+<clipPath id="u6"><use href="#s1" transform="translate(165 25) rotate(7)"/><use href="#s2" transform="translate(165 25) rotate(7)"/><use href="#s3" transform="translate(165 25) rotate(7)"/><use href="#s4" transform="translate(165 25) rotate(7)"/><use href="#s5" transform="translate(165 25) rotate(7)"/></clipPath>
+<linearGradient id="g9" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#344C6A"/><stop offset="1" stop-color="#273B54"/></linearGradient>
+<linearGradient id="g10" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#141F2C" stop-opacity="0"/><stop offset="1" stop-color="#141F2C" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c6"><use href="#s6"/></clipPath>
+<path id="s7" d="M 100 47.8 C 129.6 47.8 147.8 68.7 147.8 98.3 C 147.8 122.6 136.5 140 120.9 147.8 C 113.9 151.3 107 153.1 100 153.1 C 93 153.1 86.1 151.3 79.1 147.8 C 63.5 140 52.1 122.6 52.1 98.3 C 52.1 68.7 70.4 47.8 100 47.8 Z"/>
+<clipPath id="u7"><use href="#s1" transform="translate(165 25) rotate(7)"/><use href="#s2" transform="translate(165 25) rotate(7)"/><use href="#s3" transform="translate(165 25) rotate(7)"/><use href="#s4" transform="translate(165 25) rotate(7)"/><use href="#s5" transform="translate(165 25) rotate(7)"/><use href="#s6"/></clipPath>
+<clipPath id="c7"><use href="#s7"/></clipPath>
+<path id="s8" d="M 100 110 A 11.5 11.5 0 0 1 117.6 115.7 A 11.5 11.5 0 0 1 128.5 130.7 A 11.5 11.5 0 0 1 128.5 149.3 A 11.5 11.5 0 0 1 117.6 164.3 A 11.5 11.5 0 0 1 100 170 A 11.5 11.5 0 0 1 82.4 164.3 A 11.5 11.5 0 0 1 71.5 149.3 A 11.5 11.5 0 0 1 71.5 130.7 A 11.5 11.5 0 0 1 82.4 115.7 A 11.5 11.5 0 0 1 100 110 Z"/>
+<clipPath id="u8"><use href="#s1" transform="translate(165 25) rotate(7)"/><use href="#s2" transform="translate(165 25) rotate(7)"/><use href="#s3" transform="translate(165 25) rotate(7)"/><use href="#s4" transform="translate(165 25) rotate(7)"/><use href="#s5" transform="translate(165 25) rotate(7)"/><use href="#s6"/><use href="#s7"/></clipPath>
+<linearGradient id="g11" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#DCDAD7"/><stop offset="1" stop-color="#AFABA4"/></linearGradient>
+<linearGradient id="g12" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5F5A53" stop-opacity="0"/><stop offset="1" stop-color="#5F5A53" stop-opacity="0.42"/></linearGradient>
+<path id="s9" d="M 44 100 C 39.2 94.6 34.6 79.3 34 70 C 33.4 60.6 36.3 43.1 40 34 C 43.7 24.9 51.5 11.7 60 6 C 68.5 0.3 88.7 -6 100 -6 C 111.3 -6 131.5 0.3 140 6 C 148.5 11.7 156.3 24.9 160 34 C 163.7 43.1 166.6 60.6 166 70 C 165.4 79.3 160.8 94.6 156 100 C 151.2 105.4 139.9 106.6 132 108 C 124.1 109.4 109.1 110 100 110 C 90.9 110 75.9 109.4 68 108 C 60.1 106.6 48.8 105.4 44 100 Z"/>
+<clipPath id="u9"><use href="#s1" transform="translate(165 25) rotate(7)"/><use href="#s2" transform="translate(165 25) rotate(7)"/><use href="#s3" transform="translate(165 25) rotate(7)"/><use href="#s4" transform="translate(165 25) rotate(7)"/><use href="#s5" transform="translate(165 25) rotate(7)"/><use href="#s6"/><use href="#s7"/><use href="#s8"/></clipPath>
+<linearGradient id="g13" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E3B439"/><stop offset="1" stop-color="#C79717"/></linearGradient>
+<linearGradient id="g14" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6A500A" stop-opacity="0"/><stop offset="1" stop-color="#6A500A" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c9"><use href="#s9"/></clipPath>
+<path id="s10" d="M 67 68 A 33 33 0 1 0 133 68 A 33 33 0 1 0 67 68 Z"/>
+<clipPath id="u10"><use href="#s1" transform="translate(165 25) rotate(7)"/><use href="#s2" transform="translate(165 25) rotate(7)"/><use href="#s3" transform="translate(165 25) rotate(7)"/><use href="#s4" transform="translate(165 25) rotate(7)"/><use href="#s5" transform="translate(165 25) rotate(7)"/><use href="#s6"/><use href="#s7"/><use href="#s8"/><use href="#s9"/></clipPath>
+<linearGradient id="g15" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#EFC64D"/><stop offset="1" stop-color="#E9B20F"/></linearGradient>
+<linearGradient id="g16" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7D5E05" stop-opacity="0"/><stop offset="1" stop-color="#7D5E05" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c10"><use href="#s10"/></clipPath>
+<path id="s11" d="M 36 166 A 18 18 0 1 0 72 166 A 18 18 0 1 0 36 166 Z"/>
+<clipPath id="u11"><use href="#s1" transform="translate(165 25) rotate(7)"/><use href="#s2" transform="translate(165 25) rotate(7)"/><use href="#s3" transform="translate(165 25) rotate(7)"/><use href="#s4" transform="translate(165 25) rotate(7)"/><use href="#s5" transform="translate(165 25) rotate(7)"/><use href="#s6"/><use href="#s7"/><use href="#s8"/><use href="#s9"/><use href="#s10"/></clipPath>
+<clipPath id="c11"><use href="#s11"/></clipPath>
+<path id="s12" d="M -2.5 -12.5 H 2.5 A 8 8 0 0 1 10.5 -4.5 V 4.5 A 8 8 0 0 1 2.5 12.5 H -2.5 A 8 8 0 0 1 -10.5 4.5 V -4.5 A 8 8 0 0 1 -2.5 -12.5 Z"/>
+<clipPath id="u12"><use href="#s1" transform="translate(165 25) rotate(7)"/><use href="#s2" transform="translate(165 25) rotate(7)"/><use href="#s3" transform="translate(165 25) rotate(7)"/><use href="#s4" transform="translate(165 25) rotate(7)"/><use href="#s5" transform="translate(165 25) rotate(7)"/><use href="#s6"/><use href="#s7"/><use href="#s8"/><use href="#s9"/><use href="#s10"/><use href="#s11"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-r" data-pivot="154 108"><!-- harpoon + its rope -->
+<use href="#s1" transform="translate(165 25) rotate(7)" fill="url(#g1)"/><use href="#s1" transform="translate(165 25) rotate(7)" fill="url(#g2)"/>
+<use href="#s2" transform="translate(165 25) rotate(7)" fill="url(#g3)"/><use href="#s2" transform="translate(165 25) rotate(7)" fill="url(#g4)"/>
+<use href="#s3" transform="translate(165 25) rotate(7)" fill="url(#g5)"/><use href="#s3" transform="translate(165 25) rotate(7)" fill="url(#g6)"/><g clip-path="url(#c3)"><g transform="translate(165 25) rotate(7)"><path d="M -1.5 140 L 0 176 L 1.5 140 Z" fill="#F4F6F9" opacity="0.8"/></g></g>
+<use href="#s4" transform="translate(165 25) rotate(7)" fill="url(#g7)"/><use href="#s4" transform="translate(165 25) rotate(7)" fill="url(#g8)"/>
+<g clip-path="url(#u5)"><use href="#s5" transform="translate(0 3) translate(165 25) rotate(7)" fill="#2B2230" opacity="0.3"/></g><use href="#s5" transform="translate(165 25) rotate(7)" fill="url(#gHand)"/>
+</g>
+<g id="body">
+<g clip-path="url(#u6)"><use href="#s6" transform="translate(0 4) " fill="#2B2230" opacity="0.3"/></g><use href="#s6" fill="url(#g9)"/><use href="#s6" fill="url(#g10)"/><g clip-path="url(#c6)"><path d="M 40 90 V 132 M 56 82 V 138 M 144 82 V 138 M 160 90 V 132" stroke="#3E5878" stroke-width="5" opacity="0.6"/></g>
+<g clip-path="url(#u7)"><use href="#s7" transform="translate(0 5) " fill="#2B2230" opacity="0.3"/></g><use href="#s7" fill="url(#gFace)"/><g clip-path="url(#c7)"><rect x="100" y="40" width="56" height="120" fill="url(#gFaceSide)"/></g>
+<g clip-path="url(#u8)"><use href="#s8" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s8" fill="url(#g11)"/><use href="#s8" fill="url(#g12)"/>
+<path d="M96 122 Q100 124.5 104 122" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+<g clip-path="url(#u9)"><use href="#s9" transform="translate(0 5) " fill="#2B2230" opacity="0.3"/></g><use href="#s9" fill="url(#g13)"/><use href="#s9" fill="url(#g14)"/><g clip-path="url(#c9)"><path d="M 54 30 A 22 20 0 1 0 98 30 A 22 20 0 1 0 54 30 Z" fill="#F2C845" opacity="0.6"/></g>
+<g clip-path="url(#u10)"><use href="#s10" transform="translate(0 3) " fill="#2B2230" opacity="0.2"/></g><use href="#s10" fill="url(#g15)"/><use href="#s10" fill="url(#g16)"/><g clip-path="url(#c10)"><path d="M 76 56 A 12 8 0 1 0 100 56 A 12 8 0 1 0 76 56 Z" fill="#F8D868" opacity="0.7"/></g>
+</g>
+<g id="arm-l" data-pivot="46 108"><!-- rope coil -->
+<path d="M 66 178 C 92 198 126 198 146 182" stroke="#D8C08A" stroke-width="4" fill="none" stroke-linecap="round"/>
+<g clip-path="url(#u11)"><use href="#s11" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s11" fill="url(#g7)"/><use href="#s11" fill="url(#g8)"/><g clip-path="url(#c11)"><path d="M 45 166 A 9 9 0 1 0 63 166 A 9 9 0 1 0 45 166 Z" fill="#8E7A50"/><path d="M 40.5 166 A 13.5 13.5 0 1 0 67.5 166 A 13.5 13.5 0 1 0 40.5 166 Z" fill="none" stroke="#B8A06A" stroke-width="2"/></g>
+<g clip-path="url(#u12)"><use href="#s12" transform="translate(0 3) translate(52 148) rotate(78)" fill="#2B2230" opacity="0.3"/></g><use href="#s12" transform="translate(52 148) rotate(78)" fill="url(#gHand)"/>
+</g>
+</g>
+</svg>

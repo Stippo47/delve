@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- ANGEL (round 4), archer-sized, enemy or ally: big white feathered wings spread out behind, a gold halo ring over brown hair, white robe shoulders with a gold collar, a gold spear (no eyes, the small mouth curve the heroes have). Parts: #back (wings, pivot at the centre of the back), #arm-r (spear + fist, before #body), #body, #arm-l (empty hand). Facing = DOWN (+y), centre (100,100). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#C9CEDE"/></linearGradient>
+<path id="p2" d="M118 92 C118.7 86.6 133.9 71.6 140 66 C146.1 60.4 163 48.2 170 44 C177 39.8 196 29.8 200 30 C204 30.2 204.2 42.3 204 46 C203.8 49.7 198.2 59 198 62 C197.8 65 202.9 69.4 202 72 C201.1 74.6 191.2 81.2 190 84 C188.8 86.8 193.4 93.7 192 96 C190.6 98.3 179.9 101.7 178 104 C176.1 106.3 178.1 114.6 176 116 C173.9 117.4 162.8 115.1 160 116 C157.2 116.9 155 124.5 152 124 C149 123.5 138 115.7 134 112 C130 108.3 117.3 97.4 118 92 Z"/>
+<clipPath id="c3"><use href="#p2"/></clipPath>
+<linearGradient id="g4" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.18"/></linearGradient>
+<linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#F6F4FA"/><stop offset="1" stop-color="#D8DCE8"/></linearGradient>
+<path id="p6" d="M122 92 C123.2 88.3 136.9 78 142 74 C147.1 70 162.3 58.5 166 58 C169.7 57.5 174 67.2 174 70 C174 72.8 166.7 79.2 166 82 C165.3 84.8 169.4 92.1 168 94 C166.6 95.9 156.1 96.4 154 98 C151.9 99.6 152.6 107.1 150 108 C147.4 108.9 135.3 107.9 132 106 C128.7 104.1 120.8 95.7 122 92 Z"/>
+<clipPath id="c7"><use href="#p6"/></clipPath>
+<path id="p8" d="M82 92 C81.3 86.6 66.1 71.6 60 66 C53.9 60.4 37 48.2 30 44 C23 39.8 4 29.8 0 30 C-4 30.2 -4.2 42.3 -4 46 C-3.8 49.7 1.8 59 2 62 C2.2 65 -2.9 69.4 -2 72 C-1.1 74.6 8.8 81.2 10 84 C11.2 86.8 6.6 93.7 8 96 C9.4 98.3 20.1 101.7 22 104 C23.9 106.3 21.9 114.6 24 116 C26.1 117.4 37.2 115.1 40 116 C42.8 116.9 45 124.5 48 124 C51 123.5 62 115.7 66 112 C70 108.3 82.7 97.4 82 92 Z"/>
+<clipPath id="c9"><use href="#p8"/></clipPath>
+<path id="p10" d="M78 92 C76.8 88.3 63.1 78 58 74 C52.9 70 37.7 58.5 34 58 C30.3 57.5 26 67.2 26 70 C26 72.8 33.3 79.2 34 82 C34.7 84.8 30.6 92.1 32 94 C33.4 95.9 43.9 96.4 46 98 C48.1 99.6 47.4 107.1 50 108 C52.6 108.9 64.7 107.9 68 106 C71.3 104.1 79.2 95.7 78 92 Z"/>
+<clipPath id="c11"><use href="#p10"/></clipPath>
+<linearGradient id="g12" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F6E6B0"/><stop offset="1" stop-color="#C89A40"/></linearGradient>
+<path id="p13" d="M0 -104 H0 A3.5 3.5 0 0 1 3.5 -100.5 V0.5 A3.5 3.5 0 0 1 0 4 H0 A3.5 3.5 0 0 1 -3.5 0.5 V-100.5 A3.5 3.5 0 0 1 0 -104 Z" transform="translate(156 144) rotate(-5)"/>
+<clipPath id="c14"><use href="#p13"/></clipPath>
+<linearGradient id="g15" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.32"/></linearGradient>
+<linearGradient id="g16" x1="0" y1="0" x2="1" y2="0.3"><stop offset="0" stop-color="#FFE08A"/><stop offset="1" stop-color="#C8902E"/></linearGradient>
+<path id="p17" d="M0 6 C2.7 6 8.4 14.8 10 18 C11.6 21.2 13.3 25.7 12 30 C10.7 34.3 3.2 50 0 50 C-3.2 50 -10.7 34.3 -12 30 C-13.3 25.7 -11.6 21.2 -10 18 C-8.4 14.8 -2.7 6 0 6 Z" transform="translate(156 144) rotate(-5)"/>
+<clipPath id="c18"><use href="#p17"/></clipPath>
+<linearGradient id="g19" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#FFE08A"/><stop offset="1" stop-color="#C8902E"/></linearGradient>
+<path id="p20" d="M-3.5 0.5 H3.5 A3.5 3.5 0 0 1 7 4 V4 A3.5 3.5 0 0 1 3.5 7.5 H-3.5 A3.5 3.5 0 0 1 -7 4 V4 A3.5 3.5 0 0 1 -3.5 0.5 Z" transform="translate(156 144) rotate(-5)"/>
+<clipPath id="c21"><use href="#p20"/></clipPath>
+<linearGradient id="g22" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#F4CBA5"/><stop offset="1" stop-color="#DCA27E"/></linearGradient>
+<path id="p23" d="M-4 -10.5 H4 A8 8 0 0 1 12 -2.5 V2.5 A8 8 0 0 1 4 10.5 H-4 A8 8 0 0 1 -12 2.5 V-2.5 A8 8 0 0 1 -4 -10.5 Z" transform="translate(156 142) rotate(-5)"/>
+<clipPath id="c24"><use href="#p2"/><use href="#p6"/><use href="#p8"/><use href="#p10"/><use href="#p13"/><use href="#p17"/><use href="#p20"/></clipPath>
+<clipPath id="c25"><use href="#p23"/></clipPath>
+<path id="p26" d="M6.3 -6.5 A4.2 4.2 0 1 0 14.7 -6.5 A4.2 4.2 0 1 0 6.3 -6.5 Z M6.3 0 A4.2 4.2 0 1 0 14.7 0 A4.2 4.2 0 1 0 6.3 0 Z M6.3 6.5 A4.2 4.2 0 1 0 14.7 6.5 A4.2 4.2 0 1 0 6.3 6.5 Z" transform="translate(156 142) rotate(-5)"/>
+<clipPath id="c27"><use href="#p26"/></clipPath>
+<linearGradient id="g28" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.2"/></linearGradient>
+<linearGradient id="g29" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#FBF8F0"/><stop offset="1" stop-color="#CFC8B8"/></linearGradient>
+<path id="p30" d="M100 76 C114 76 130 75 142 78 C154 81 166.3 88 172 94 C177.7 100 178.3 107 176 114 C173.7 121 170.7 131.3 158 136 C145.3 140.7 119.3 142 100 142 C80.7 142 54.7 140.7 42 136 C29.3 131.3 26.3 121 24 114 C21.7 107 22.3 100 28 94 C33.7 88 46 81 58 78 C70 75 86 76 100 76 Z"/>
+<clipPath id="c31"><use href="#p2"/><use href="#p6"/><use href="#p8"/><use href="#p10"/><use href="#p13"/><use href="#p17"/><use href="#p20"/><use href="#p23"/><use href="#p26"/></clipPath>
+<clipPath id="c32"><use href="#p30"/></clipPath>
+<path id="p33" d="M100 112 C107.3 112 115.3 110.3 122 112 C128.7 113.7 138 117.7 140 122 C142 126.3 140.7 133.7 134 138 C127.3 142.3 111.3 148 100 148 C88.7 148 72.7 142.3 66 138 C59.3 133.7 58 126.3 60 122 C62 117.7 71.3 113.7 78 112 C84.7 110.3 92.7 112 100 112 Z"/>
+<clipPath id="c34"><use href="#p2"/><use href="#p6"/><use href="#p8"/><use href="#p10"/><use href="#p13"/><use href="#p17"/><use href="#p20"/><use href="#p23"/><use href="#p26"/><use href="#p30"/></clipPath>
+<clipPath id="c35"><use href="#p33"/></clipPath>
+<path id="p36" d="M100 50 C110.7 50 123.8 49.7 132 54 C140.2 58.3 146 67.7 149 76 C152 84.3 151.5 95.3 150 104 C148.5 112.7 148.3 121.3 140 128 C131.7 134.7 113.3 144 100 144 C86.7 144 68.3 134.7 60 128 C51.7 121.3 51.5 112.7 50 104 C48.5 95.3 48 84.3 51 76 C54 67.7 59.8 58.3 68 54 C76.2 49.7 89.3 50 100 50 Z"/>
+<clipPath id="c37"><use href="#p2"/><use href="#p6"/><use href="#p8"/><use href="#p10"/><use href="#p13"/><use href="#p17"/><use href="#p20"/><use href="#p23"/><use href="#p26"/><use href="#p30"/><use href="#p33"/></clipPath>
+<clipPath id="c38"><use href="#p36"/></clipPath>
+<linearGradient id="g39" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#B87A4A"/><stop offset="1" stop-color="#7A4A2A"/></linearGradient>
+<path id="p40" d="M100 42 C106.8 42 117.5 41.7 124 44 C130.5 46.3 141.5 52.6 146 58 C150.5 63.4 154.6 74.6 156 82 C157.4 89.4 157.1 104 156 110 C154.9 116 150 124.6 148 124 C146 123.4 144.3 110 142 106 C139.7 102 135.7 96.8 132 96 C128.3 95.2 120.5 100 116 100 C111.5 100 104.5 96 100 96 C95.5 96 88.5 100 84 100 C79.5 100 71.7 95.2 68 96 C64.3 96.8 60.3 102 58 106 C55.7 110 54 123.4 52 124 C50 124.6 45.1 116 44 110 C42.9 104 42.6 89.4 44 82 C45.4 74.6 49.5 63.4 54 58 C58.5 52.6 69.5 46.3 76 44 C82.5 41.7 93.2 42 100 42 Z"/>
+<clipPath id="c41"><use href="#p2"/><use href="#p6"/><use href="#p8"/><use href="#p10"/><use href="#p13"/><use href="#p17"/><use href="#p20"/><use href="#p23"/><use href="#p26"/><use href="#p30"/><use href="#p33"/><use href="#p36"/></clipPath>
+<clipPath id="c42"><use href="#p40"/></clipPath>
+<radialGradient id="g43" cx="0.32" cy="0.28" r="0.55"><stop offset="0" stop-color="#FFFFF4" stop-opacity="0.3"/><stop offset="1" stop-color="#FFFFF4" stop-opacity="0"/></radialGradient>
+<linearGradient id="g44" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#FFF2B0"/><stop offset="1" stop-color="#E8B440"/></linearGradient>
+<path id="p45" d="M66 64 A34 30 0 1 0 134 64 A34 30 0 1 0 66 64 Z M75 64 A25 21 0 1 1 125 64 A25 21 0 1 1 75 64 Z"/>
+<clipPath id="c46"><use href="#p2"/><use href="#p6"/><use href="#p8"/><use href="#p10"/><use href="#p13"/><use href="#p17"/><use href="#p20"/><use href="#p23"/><use href="#p26"/><use href="#p30"/><use href="#p33"/><use href="#p36"/><use href="#p40"/></clipPath>
+<clipPath id="c47"><use href="#p45"/></clipPath>
+<linearGradient id="g48" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.15"/></linearGradient>
+<path id="p49" d="M-4 -10.5 H4 A8 8 0 0 1 12 -2.5 V2.5 A8 8 0 0 1 4 10.5 H-4 A8 8 0 0 1 -12 2.5 V-2.5 A8 8 0 0 1 -4 -10.5 Z" transform="translate(44 144) rotate(0)"/>
+<clipPath id="c50"><use href="#p2"/><use href="#p6"/><use href="#p8"/><use href="#p10"/><use href="#p13"/><use href="#p17"/><use href="#p20"/><use href="#p23"/><use href="#p26"/><use href="#p30"/><use href="#p33"/><use href="#p36"/><use href="#p40"/><use href="#p45"/></clipPath>
+<clipPath id="c51"><use href="#p49"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="back" data-pivot="100 90"><g>
+<use href="#p2" fill="url(#g1)"/>
+<g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>
+<use href="#p6" fill="url(#g5)"/>
+<g clip-path="url(#c7)"><use href="#p6" fill="url(#g4)"/></g>
+<use href="#p8" fill="url(#g1)"/>
+<g clip-path="url(#c9)"><use href="#p8" fill="url(#g4)"/></g>
+<use href="#p10" fill="url(#g5)"/>
+<g clip-path="url(#c11)"><use href="#p10" fill="url(#g4)"/></g>
+</g></g>
+<g id="arm-r" data-pivot="160 108"><g>
+<use href="#p13" fill="url(#g12)"/>
+<g clip-path="url(#c14)"><use href="#p13" fill="url(#g15)"/></g>
+<use href="#p17" fill="url(#g16)"/>
+<g clip-path="url(#c18)"><path d="M0 6 L10 18 L12 30 L0 50 Z" fill="#B07A20" opacity="0.35" transform="translate(156 144) rotate(-5)"/><use href="#p17" fill="url(#g15)"/></g>
+<use href="#p20" fill="url(#g19)"/>
+<g clip-path="url(#c21)"><use href="#p20" fill="url(#g15)"/></g>
+<g clip-path="url(#c24)"><use href="#p23" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p23" fill="url(#g22)"/>
+<g clip-path="url(#c25)"><use href="#p23" fill="url(#g15)"/></g>
+<use href="#p26" fill="url(#g22)"/>
+<g clip-path="url(#c27)"><use href="#p26" fill="url(#g28)"/></g>
+</g></g>
+<g id="body"><g>
+<g clip-path="url(#c31)"><use href="#p30" transform="translate(0 4)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p30" fill="url(#g29)"/>
+<g clip-path="url(#c32)"><use href="#p30" fill="url(#g15)"/></g>
+<g clip-path="url(#c34)"><use href="#p33" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p33" fill="url(#g19)"/>
+<g clip-path="url(#c35)"><use href="#p33" fill="url(#g15)"/></g>
+<g clip-path="url(#c37)"><use href="#p36" transform="translate(0 5)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p36" fill="url(#g22)"/>
+<g clip-path="url(#c38)"><use href="#p36" fill="url(#g15)"/></g>
+<g clip-path="url(#c41)"><use href="#p40" transform="translate(0 4)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p40" fill="url(#g39)"/>
+<g clip-path="url(#c42)"><use href="#p40" fill="url(#g43)"/><use href="#p40" fill="url(#g15)"/></g>
+<g clip-path="url(#c46)"><use href="#p45" transform="translate(0 5)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p45" fill="url(#g44)"/>
+<g clip-path="url(#c47)"><use href="#p45" fill="url(#g48)"/></g>
+<path d="M96 129 Q100 131.5 104 129" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+</g></g>
+<g id="arm-l" data-pivot="40 108"><g>
+<g clip-path="url(#c50)"><use href="#p49" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p49" fill="url(#g22)"/>
+<g clip-path="url(#c51)"><use href="#p49" fill="url(#g15)"/></g>
+</g></g>
+</g>
+</svg>

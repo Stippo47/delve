@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- SLIME take A "cube" (fire): a gelatinous cube seen from above. A soft-cornered block of clear jelly with a bevelled top face, a glass-like rim light on the top-left edges, things stuck inside, two eyes floating at the front edge, goo sagging over the front lip. Parts: #body only (squash/stretch the whole sprite to hop). Facing = DOWN (+y), centre (100,100). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<linearGradient id="g1" x1="0" y1="0" x2="0.4" y2="-1"><stop offset="0" stop-color="#FFB23A"/><stop offset="1" stop-color="#E0501C"/></linearGradient>
+<path id="p2" d="M44 64 C40.7 61.2 40.8 54.8 42 50.8 C43.2 46.8 49.4 41 52 37.6 C54.6 34.2 58.6 30.6 59.2 27.9 C59.8 25.3 56 20 56 20 C56 20 73.9 34.8 78.4 39.8 C82.9 44.8 85.5 49 86 53 C86.5 57 85.3 63.8 82 66.2 C78.7 68.6 69.7 69.6 64 69.3 C58.3 69 47.3 66.8 44 64 Z"/>
+<clipPath id="c3"><use href="#p2"/></clipPath>
+<linearGradient id="g4" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.2"/></linearGradient>
+<path id="p5" d="M75 64 C70.9 60.1 71 51 72.5 45.4 C74 39.8 80.5 31.6 85 26.8 C89.5 22 99.6 16.9 102.4 13.2 C105.2 9.4 104 2 104 2 C104 2 118.7 22.9 122.2 29.9 C125.7 36.9 127.5 42.9 127.5 48.5 C127.5 54.1 126.6 63.7 122.5 67.1 C118.4 70.5 107.1 71.9 100 71.4 C92.9 71 79.1 67.9 75 64 Z"/>
+<clipPath id="c6"><use href="#p5"/></clipPath>
+<path id="p7" d="M118 64 C114.7 61.1 114.8 54.3 116 50.2 C117.2 46.1 121.8 40 126 36.4 C130.2 32.8 140.7 29 144 26.3 C147.3 23.5 148 18 148 18 C148 18 156 33.5 157.8 38.7 C159.6 43.9 160.3 48.4 160 52.5 C159.7 56.6 159.3 63.7 156 66.3 C152.7 68.9 143.7 69.9 138 69.5 C132.3 69.2 121.3 66.9 118 64 Z"/>
+<clipPath id="c8"><use href="#p7"/></clipPath>
+<linearGradient id="g9" x1="0" y1="0" x2="0" y2="-1"><stop offset="0" stop-color="#FFF3B0"/><stop offset="1" stop-color="#FFC23A"/></linearGradient>
+<path id="p10" d="M56 60 C54.4 58.5 54.4 55 55 52.8 C55.6 50.6 58.7 47.5 60 45.6 C61.3 43.7 63.3 41.8 63.6 40.3 C63.9 38.9 62 36 62 36 C62 36 71 44.1 73.2 46.8 C75.5 49.5 76.7 51.8 77 54 C77.3 56.2 76.7 59.9 75 61.2 C73.3 62.5 68.8 63.1 66 62.9 C63.1 62.7 57.6 61.5 56 60 Z"/>
+<path id="p11" d="M87 60 C84.9 57.7 84.9 52.4 85.7 49.2 C86.5 46 89.9 41.2 92.2 38.4 C94.5 35.6 99.7 32.6 101.2 30.5 C102.7 28.3 102 24 102 24 C102 24 109.7 36.2 111.5 40.2 C113.4 44.2 114.3 47.8 114.3 51 C114.3 54.2 113.8 59.8 111.7 61.8 C109.6 63.8 103.7 64.6 100 64.3 C96.3 64 89.1 62.3 87 60 Z"/>
+<path id="p12" d="M126 60 C124.3 58.5 124.4 55 125 52.8 C125.6 50.6 127.9 47.5 130 45.6 C132.1 43.7 137.3 41.8 139 40.3 C140.7 38.9 141 36 141 36 C141 36 145 44.1 145.9 46.8 C146.8 49.5 147.1 51.8 147 54 C146.9 56.2 146.7 59.9 145 61.2 C143.3 62.5 138.8 63.1 136 62.9 C133.2 62.7 127.7 61.5 126 60 Z"/>
+<linearGradient id="g13" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#D9461C"/><stop offset="1" stop-color="#8E2414"/></linearGradient>
+<path id="p14" d="M70 142 H70 A8 8 0 0 1 78 150 V172 A8 8 0 0 1 70 180 H70 A8 8 0 0 1 62 172 V150 A8 8 0 0 1 70 142 Z"/>
+<clipPath id="c15"><use href="#p14"/></clipPath>
+<path id="p16" d="M106 140 H106 A10 10 0 0 1 116 150 V178 A10 10 0 0 1 106 188 H106 A10 10 0 0 1 96 178 V150 A10 10 0 0 1 106 140 Z"/>
+<clipPath id="c17"><use href="#p16"/></clipPath>
+<path id="p18" d="M136 143 H136 A7 7 0 0 1 143 150 V171 A7 7 0 0 1 136 178 H136 A7 7 0 0 1 129 171 V150 A7 7 0 0 1 136 143 Z"/>
+<clipPath id="c19"><use href="#p18"/></clipPath>
+<linearGradient id="g20" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#FF9A2E"/><stop offset="1" stop-color="#D9461C"/></linearGradient>
+<path id="p21" d="M62 40 H138 A30 30 0 0 1 168 70 V138 A30 30 0 0 1 138 168 H62 A30 30 0 0 1 32 138 V70 A30 30 0 0 1 62 40 Z"/>
+<clipPath id="c22"><use href="#p21"/></clipPath>
+<linearGradient id="g23" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.3"/></linearGradient>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="back" data-pivot="100 46"><g>
+<use href="#p2" fill="url(#g1)"/>
+<g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>
+<use href="#p5" fill="url(#g1)"/>
+<g clip-path="url(#c6)"><use href="#p5" fill="url(#g4)"/></g>
+<use href="#p7" fill="url(#g1)"/>
+<g clip-path="url(#c8)"><use href="#p7" fill="url(#g4)"/></g>
+<use href="#p10" fill="url(#g9)"/>
+<use href="#p11" fill="url(#g9)"/>
+<use href="#p12" fill="url(#g9)"/>
+</g></g>
+<g id="body"><g>
+<use href="#p14" fill="url(#g13)"/>
+<g clip-path="url(#c15)"><use href="#p14" fill="url(#g4)"/></g>
+<use href="#p16" fill="url(#g13)"/>
+<g clip-path="url(#c17)"><use href="#p16" fill="url(#g4)"/></g>
+<use href="#p18" fill="url(#g13)"/>
+<g clip-path="url(#c19)"><use href="#p18" fill="url(#g4)"/></g>
+<use href="#p21" fill="url(#g20)"/>
+<g clip-path="url(#c22)"><path d="M66 50 H126 A22 22 0 0 1 148 72 V124 A22 22 0 0 1 126 146 H66 A22 22 0 0 1 44 124 V72 A22 22 0 0 1 66 50 Z" fill="#FFE27A" opacity="0.55"/><path d="M74 62 H122 A18 18 0 0 1 140 80 V120 A18 18 0 0 1 122 138 H74 A18 18 0 0 1 56 120 V80 A18 18 0 0 1 74 62 Z" fill="#FF9A2E" opacity="0.5"/><use href="#p21" fill="url(#g23)"/></g>
+<path d="M62 96 A26 22 0 1 0 114 96 A26 22 0 1 0 62 96 Z" fill="#FFF1A0" opacity="0.55"/>
+<path d="M70 92 A14 12 0 1 0 98 92 A14 12 0 1 0 70 92 Z" fill="#FFFBE0" opacity="0.7"/>
+<path d="M55.5 42.5 H144.5 A3.5 3.5 0 0 1 148 46 V46 A3.5 3.5 0 0 1 144.5 49.5 H55.5 A3.5 3.5 0 0 1 52 46 V46 A3.5 3.5 0 0 1 55.5 42.5 Z" fill="#FFF6D0" opacity="0.85"/>
+<path d="M40 60 H40 A3.5 3.5 0 0 1 43.5 63.5 V136.5 A3.5 3.5 0 0 1 40 140 H40 A3.5 3.5 0 0 1 36.5 136.5 V63.5 A3.5 3.5 0 0 1 40 60 Z" fill="#FFF6D0" opacity="0.7"/>
+<path d="M42 50 A6 6 0 1 0 54 50 A6 6 0 1 0 42 50 Z" fill="#FFF6D0" opacity="0.9"/>
+<path d="M71 138 A9 11 0 1 0 89 138 A9 11 0 1 0 71 138 Z" fill="#2B2230"/>
+<path d="M73.9 133.8 A3.2 3.2 0 1 0 80.4 133.8 A3.2 3.2 0 1 0 73.9 133.8 Z" fill="#FFFFFF"/>
+<path d="M111 138 A9 11 0 1 0 129 138 A9 11 0 1 0 111 138 Z" fill="#2B2230"/>
+<path d="M113.9 133.8 A3.2 3.2 0 1 0 120.4 133.8 A3.2 3.2 0 1 0 113.9 133.8 Z" fill="#FFFFFF"/>
+<path d="M58.5 70 A3.5 3.5 0 1 0 65.5 70 A3.5 3.5 0 1 0 58.5 70 Z" fill="#FFF6D0" opacity="0.9"/>
+<path d="M137 128 A3 3 0 1 0 143 128 A3 3 0 1 0 137 128 Z" fill="#FFF6D0" opacity="0.9"/>
+<path d="M127.5 64 A2.5 2.5 0 1 0 132.5 64 A2.5 2.5 0 1 0 127.5 64 Z" fill="#FFF6D0" opacity="0.9"/>
+<path d="M55.5 130 A2.5 2.5 0 1 0 60.5 130 A2.5 2.5 0 1 0 55.5 130 Z" fill="#FFF6D0" opacity="0.9"/>
+</g></g>
+</g>
+</svg>

@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- SPIDER B "widow" (round 4): a glossy black widow. A big shiny round abdomen with a red hourglass, a small head with red eyes, eight long arched legs. About 85% of the archer (long legs). Parts: #arm-l, #arm-r = the legs, #body = abdomen, head. Facing = DOWN (+y). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<linearGradient id="g1" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#4A4460"/><stop offset="1" stop-color="#221E30"/></linearGradient>
+<path id="p2" d="M90.7 123.7 C87.9 123.2 79.8 127.4 74.8 129.2 C69.8 131 60.7 131.5 57.3 135.7 C53.9 140 53.6 151 52.1 157.3 C50.6 163.5 47.5 174.2 47.6 177.4 C47.6 180.6 50.9 181.4 52.4 178.6 C54 175.8 56.4 164.5 57.9 158.7 C59.4 153 59.8 143.5 62.7 140.3 C65.6 137 72.6 138 77.2 136.8 C81.8 135.6 91.3 134.3 93.3 132.3 C95.4 130.3 93.4 124.2 90.7 123.7 Z"/>
+<clipPath id="c3"><use href="#p2"/></clipPath>
+<linearGradient id="g4" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.2"/></linearGradient>
+<path id="p5" d="M89 117.6 C86 115.6 73.8 114.5 66.9 113.1 C60 111.7 48.9 107.1 43.2 108.6 C37.5 110.1 32.9 118.7 28.9 122.9 C24.8 127 17.6 133.7 16.2 136.2 C14.9 138.8 17.2 141.1 19.8 139.8 C22.3 138.4 29.4 130.8 33.1 127.1 C36.9 123.5 40 116.3 44.8 115.4 C49.6 114.5 58.8 119.3 65.1 120.9 C71.4 122.5 83.4 126.9 87 126.4 C90.6 125.9 92 119.6 89 117.6 Z"/>
+<clipPath id="c6"><use href="#p5"/></clipPath>
+<path id="p7" d="M90.6 112.4 C88.1 108.9 75.1 101.5 68.4 96.8 C61.6 92 51.5 83.9 45.7 80.9 C39.9 78 34.4 78.2 29.8 77.1 C25.1 76 17.1 73.4 14.6 73.6 C12.2 73.8 11.3 77 13.4 78.4 C15.4 79.8 23.9 81.6 28.2 82.9 C32.6 84.2 37 84 42.3 87.1 C47.6 90.1 57.2 98.4 63.6 103.2 C70.1 108.1 81.3 118.3 85.4 119.6 C89.4 121 93.2 115.8 90.6 112.4 Z"/>
+<clipPath id="c8"><use href="#p7"/></clipPath>
+<path id="p9" d="M95.7 107.4 C94.2 103.1 83.5 90.8 78.3 83.7 C73.1 76.6 64.8 66.3 61 60.2 C57.2 54.1 55.2 48.1 52.7 42.8 C50.2 37.5 46.2 27.3 44.3 25 C42.3 22.6 39.3 24 39.7 27 C40.2 30.1 45 39.7 47.3 45.2 C49.6 50.7 51.3 57.3 55 63.8 C58.7 70.3 66.7 81 71.7 88.3 C76.7 95.6 84.7 109.7 88.3 112.6 C91.9 115.5 97.2 111.7 95.7 107.4 Z"/>
+<clipPath id="c10"><use href="#p9"/></clipPath>
+<path id="p11" d="M106.7 132.3 C108.7 134.3 118.2 135.6 122.8 136.8 C127.4 138 134.4 137 137.3 140.3 C140.2 143.5 140.6 153 142.1 158.7 C143.6 164.5 146 175.8 147.6 178.6 C149.1 181.4 152.4 180.6 152.4 177.4 C152.5 174.2 149.4 163.5 147.9 157.3 C146.4 151 146.1 140 142.7 135.7 C139.3 131.5 130.2 131 125.2 129.2 C120.2 127.4 112.1 123.2 109.3 123.7 C106.6 124.2 104.6 130.3 106.7 132.3 Z"/>
+<clipPath id="c12"><use href="#p11"/></clipPath>
+<path id="p13" d="M113 126.4 C116.6 126.9 128.6 122.5 134.9 120.9 C141.2 119.3 150.4 114.5 155.2 115.4 C160 116.3 163.1 123.5 166.9 127.1 C170.6 130.8 177.7 138.4 180.2 139.8 C182.8 141.1 185.1 138.8 183.8 136.2 C182.4 133.7 175.2 127 171.1 122.9 C167.1 118.7 162.5 110.1 156.8 108.6 C151.1 107.1 140 111.7 133.1 113.1 C126.2 114.5 114 115.6 111 117.6 C108 119.6 109.4 125.9 113 126.4 Z"/>
+<clipPath id="c14"><use href="#p13"/></clipPath>
+<path id="p15" d="M114.6 119.6 C118.7 118.3 129.9 108.1 136.4 103.2 C142.8 98.4 152.4 90.1 157.7 87.1 C163 84 167.4 84.2 171.8 82.9 C176.1 81.6 184.6 79.8 186.6 78.4 C188.7 77 187.8 73.8 185.4 73.6 C182.9 73.4 174.9 76 170.2 77.1 C165.6 78.2 160.1 78 154.3 80.9 C148.5 83.9 138.4 92 131.6 96.8 C124.9 101.5 111.9 108.9 109.4 112.4 C106.8 115.8 110.6 121 114.6 119.6 Z"/>
+<clipPath id="c16"><use href="#p15"/></clipPath>
+<path id="p17" d="M111.7 112.6 C115.3 109.7 123.3 95.6 128.3 88.3 C133.3 81 141.3 70.3 145 63.8 C148.7 57.3 150.4 50.7 152.7 45.2 C155 39.7 159.8 30.1 160.3 27 C160.7 24 157.7 22.6 155.7 25 C153.8 27.3 149.8 37.5 147.3 42.8 C144.8 48.1 142.8 54.1 139 60.2 C135.2 66.3 126.9 76.6 121.7 83.7 C116.5 90.8 105.8 103.1 104.3 107.4 C102.8 111.7 108.1 115.5 111.7 112.6 Z"/>
+<clipPath id="c18"><use href="#p17"/></clipPath>
+<linearGradient id="g19" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#4E4868"/><stop offset="1" stop-color="#1E1A2A"/></linearGradient>
+<path id="p20" d="M60 74 A40 40 0 1 0 140 74 A40 40 0 1 0 60 74 Z"/>
+<clipPath id="c21"><use href="#p20"/></clipPath>
+<linearGradient id="g22" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.3"/></linearGradient>
+<linearGradient id="g23" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#4E4868"/><stop offset="1" stop-color="#221E30"/></linearGradient>
+<path id="p24" d="M81 124 A19 21 0 1 0 119 124 A19 21 0 1 0 81 124 Z"/>
+<clipPath id="c25"><use href="#p2"/><use href="#p5"/><use href="#p7"/><use href="#p9"/><use href="#p11"/><use href="#p13"/><use href="#p15"/><use href="#p17"/><use href="#p20"/></clipPath>
+<clipPath id="c26"><use href="#p24"/></clipPath>
+<radialGradient id="g27" cx="0.32" cy="0.28" r="0.55"><stop offset="0" stop-color="#FFFFF4" stop-opacity="0.25"/><stop offset="1" stop-color="#FFFFF4" stop-opacity="0"/></radialGradient>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-l" data-pivot="90 118"><g>
+<use href="#p2" fill="url(#g1)"/>
+<g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>
+<use href="#p5" fill="url(#g1)"/>
+<g clip-path="url(#c6)"><use href="#p5" fill="url(#g4)"/></g>
+<use href="#p7" fill="url(#g1)"/>
+<g clip-path="url(#c8)"><use href="#p7" fill="url(#g4)"/></g>
+<use href="#p9" fill="url(#g1)"/>
+<g clip-path="url(#c10)"><use href="#p9" fill="url(#g4)"/></g>
+</g></g>
+<g id="arm-r" data-pivot="110 118"><g>
+<use href="#p11" fill="url(#g1)"/>
+<g clip-path="url(#c12)"><use href="#p11" fill="url(#g4)"/></g>
+<use href="#p13" fill="url(#g1)"/>
+<g clip-path="url(#c14)"><use href="#p13" fill="url(#g4)"/></g>
+<use href="#p15" fill="url(#g1)"/>
+<g clip-path="url(#c16)"><use href="#p15" fill="url(#g4)"/></g>
+<use href="#p17" fill="url(#g1)"/>
+<g clip-path="url(#c18)"><use href="#p17" fill="url(#g4)"/></g>
+</g></g>
+<g id="body"><g>
+<use href="#p20" fill="url(#g19)"/>
+<g clip-path="url(#c21)"><path d="M88 54 L112 54 L100 72 Z M100 76 L112 94 L88 94 Z" fill="#E83A3A"/><path d="M72 56 A12 8 0 1 0 96 56 A12 8 0 1 0 72 56 Z" fill="#FFFFFF" opacity="0.35"/><use href="#p20" fill="url(#g22)"/></g>
+<g clip-path="url(#c25)"><use href="#p24" transform="translate(0 5)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p24" fill="url(#g23)"/>
+<g clip-path="url(#c26)"><use href="#p24" fill="url(#g27)"/><use href="#p24" fill="url(#g22)"/></g>
+<path d="M92.5 140.5 H93.5 A3 3 0 0 1 96.5 143.5 V146.5 A3 3 0 0 1 93.5 149.5 H92.5 A3 3 0 0 1 89.5 146.5 V143.5 A3 3 0 0 1 92.5 140.5 Z M106.5 140.5 H107.5 A3 3 0 0 1 110.5 143.5 V146.5 A3 3 0 0 1 107.5 149.5 H106.5 A3 3 0 0 1 103.5 146.5 V143.5 A3 3 0 0 1 106.5 140.5 Z" fill="#2A2436"/>
+<path d="M88.8 132 A4.2 4.2 0 1 0 97.2 132 A4.2 4.2 0 1 0 88.8 132 Z" fill="#FF4A4A"/>
+<path d="M102.8 132 A4.2 4.2 0 1 0 111.2 132 A4.2 4.2 0 1 0 102.8 132 Z" fill="#FF4A4A"/>
+<path d="M85.4 124 A2.6 2.6 0 1 0 90.6 124 A2.6 2.6 0 1 0 85.4 124 Z" fill="#FF4A4A"/>
+<path d="M109.4 124 A2.6 2.6 0 1 0 114.6 124 A2.6 2.6 0 1 0 109.4 124 Z" fill="#FF4A4A"/>
+</g></g>
+</g>
+</svg>

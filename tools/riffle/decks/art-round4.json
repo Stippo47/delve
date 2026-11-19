@@ -1,0 +1,1064 @@
+{
+  "title": "Art round 4: fixes, 40 heroes, monsters",
+  "topic": "art",
+  "order": 4,
+  "priority": 1,
+  "tags": [
+    "first"
+  ],
+  "cards": [
+    {
+      "id": "fixes",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Your picks, fixed",
+      "text": "Every pick with your round-3 notes and the new hand rule.",
+      "why": "Each tick becomes a unit (or the prop) in the game. Each picture shows it beside the archer at the same size, then 8 turns at game size.",
+      "pick": [
+        "knight-bulwark",
+        "knight-dame",
+        "knight-griffon",
+        "knight-old-guard",
+        "knight-paladin",
+        "knight-tower",
+        "barbarian-bearskin",
+        "barbarian-berserker",
+        "barbarian-warhelm",
+        "barbarian-wildmane-scar",
+        "rogue-bandit-mask",
+        "rogue-shade-cape-crossed",
+        "rogue-twinfang",
+        "farmer-digger",
+        "farmer-grandpa-sickle",
+        "farmer-granny-reaper",
+        "farmer-haymaker-fork",
+        "skeleton-brute",
+        "skeleton-gaper",
+        "skeleton-rattler-jawless-bow",
+        "skeleton-rattler-jawless-spear",
+        "skeleton-rattler-loosejaw",
+        "skeleton-rattler"
+      ],
+      "details": "Each item's text is the artist's note: what you asked for or what it is, a suggested move (only a proposal), and what's still weak.",
+      "items": [
+        {
+          "id": "knight-bulwark",
+          "label": "Bulwark",
+          "image": "../../../design/class-round4/knight/renders/knight-bulwark.png",
+          "thumb": "../../../design/class-round4/knight/renders/knight-bulwark-thumb.png",
+          "text": "\"Hold the spear a bit further back\": the fist grips about 10 units further back on the shaft (bare shaft shows between the fist and the head), and the spear sits a little further out so the fist still shows at the pauldron.\n\nSuggested move: Brace - sets the spear: the first enemy to come in range is hit hard and stopped."
+        },
+        {
+          "id": "knight-dame",
+          "label": "Dame",
+          "image": "../../../design/class-round4/knight/renders/knight-dame.png",
+          "thumb": "../../../design/class-round4/knight/renders/knight-dame-thumb.png",
+          "text": "Hand rule only (the sword moved 3 units out so the turned fist shows).\n\nSuggested move: Riposte - after blocking a hit with her shield, her next swing comes fast and hits harder."
+        },
+        {
+          "id": "knight-griffon",
+          "label": "Griffon",
+          "image": "../../../design/class-round4/knight/renders/knight-griffon.png",
+          "thumb": "../../../design/class-round4/knight/renders/knight-griffon-thumb.png",
+          "text": "\"Helmet weird. Opening bigger and different shape, too narrow\": the face opening is now a wide open face with cheek guards, open right down past the chin (round 3's was a small oval). The long gold beak that covered the middle of the face is cut down to a short gold brow peak. \"Hammer small\": the hammer head is about 1.3x bigger (50 x 28, was 40 x 22) on a longer, thicker haft.\n\nSuggested move: Leap strike - jumps onto a far enemy and slams the hammer down, hurting everything round the landing.\n\nWeak: still the busiest knight (wings, crest, peak). If the small peak still reads as \"weird\", it can go."
+        },
+        {
+          "id": "knight-old-guard",
+          "label": "Old Guard",
+          "image": "../../../design/class-round4/knight/renders/knight-old-guard.png",
+          "thumb": "../../../design/class-round4/knight/renders/knight-old-guard-thumb.png",
+          "text": "\"If two-handed, hold in the middle, in front\": both fists are now on the grip at the centre of the body, in front of the beard, with bare grip showing between them; the blade comes forward past the beard. Because it is held in front, #arm-r is now drawn after #body (it was before). Still two-handed: #arm-r only, no #arm-l. The blade is shorter (66 to the tip, was 95): held in the middle it can't run as far forward inside the box. The sword casts a soft shadow on the beard below it.\n\nSuggested move: Great sweep - a wide, slow arc in front that hits every enemy in it.\n\nWeak: the blade crosses the beard on a diagonal (forward and to his right). Pointing straight down it would hide the beard and need to be shorter still."
+        },
+        {
+          "id": "knight-paladin",
+          "label": "Paladin",
+          "image": "../../../design/class-round4/knight/renders/knight-paladin.png",
+          "thumb": "../../../design/class-round4/knight/renders/knight-paladin-thumb.png",
+          "text": "Hand rule only. The sword moved 3 units out so the turned fist still shows past the pauldron.\n\nSuggested move: Shield bash - a short dash into the nearest enemy that knocks it back and stuns it for a moment.\n\nWeak: unchanged from round 3 (the blade can't get longer inside the box)."
+        },
+        {
+          "id": "knight-tower",
+          "label": "Tower",
+          "image": "../../../design/class-round4/knight/renders/knight-tower.png",
+          "thumb": "../../../design/class-round4/knight/renders/knight-tower-thumb.png",
+          "text": "\"Eye slots\": two dark horizontal slots either side of the centre, under the white crest. \"Bad mace, use others as reference, maybe a flanged mace\": a new flanged mace. A steel head with flanges (two seen edge-on at the sides, a raised centre flange, dark grooves between), a gold collar, a small end knob, on a longer wooden haft. The head is about 1.4x the old one. The fist wraps the haft.\n\nSuggested move: Hold the line - plants the tower shield: much less damage from the front, and taunts nearby enemies for a few seconds.\n\nWeak: the mace head is steel-grey beside a steel-grey helm; at 40px it reads by its shape more than its colour."
+        },
+        {
+          "id": "barbarian-bearskin",
+          "label": "Bearskin",
+          "image": "../../../design/class-round4/barbarian/renders/barbarian-bearskin.png",
+          "thumb": "../../../design/class-round4/barbarian/renders/barbarian-bearskin-thumb.png",
+          "text": "\"Worse club?\": a new club. Straight and bigger, pale wood thickening to a rounded end, five iron spikes (two each side, one at the tip), three nail heads and a dark wrapped handle. It sits low at the front-right, under the paw, and comes out forward. The round-2 war axe stays the fallback if this still doesn't read.\n\nSuggested move: Maul - a heavy overhead smash that stuns the target.\n\nWeak: from some facings the club overlaps the paw's claws."
+        },
+        {
+          "id": "barbarian-berserker",
+          "label": "Berserker",
+          "image": "../../../design/class-round4/barbarian/renders/barbarian-berserker.png",
+          "thumb": "../../../design/class-round4/barbarian/renders/barbarian-berserker-thumb.png",
+          "text": "\"Spike bad. Different style\": the diamond studs and thin spikes are gone. Now seven clean cone spikes round the ball, each lit on one side, and a ring of five short spikes on the top face leaning out from a bright crown, the way a spiked ball looks from above.\n\nMove (the designer's, from the roster): Ground slam - slams the ground, sending a repeating shockwave forward.\n\nWeak: at 40px the ball reads as a grey star. Clearer than round 3, but the top spikes are a detail."
+        },
+        {
+          "id": "barbarian-warhelm",
+          "label": "Warhelm",
+          "image": "../../../design/class-round4/barbarian/renders/barbarian-warhelm.png",
+          "thumb": "../../../design/class-round4/barbarian/renders/barbarian-warhelm-thumb.png",
+          "text": "\"Hammer maybe a bit small, 15% bigger\": the hammer head is exactly 15% bigger, on a slightly longer, thicker haft.\n\nSuggested move: Thunder blow - a hammer slam that knocks back everything in front of him."
+        },
+        {
+          "id": "barbarian-wildmane-scar",
+          "label": "Wildmane",
+          "image": "../../../design/class-round4/barbarian/renders/barbarian-wildmane-scar.png",
+          "thumb": "../../../design/class-round4/barbarian/renders/barbarian-wildmane-scar-thumb.png",
+          "text": "\"That's a she\": made only the scar version, as asked. The forked beard is gone (it read as a man). In its place two long locks of the same rust hair fall from beside her face down onto the mantle. Fringe, mane, wolf-fur mantle and greatsword kept. No facial features. Scar, \"just one solid darker shade, not white\": one solid stroke of darker skin (#C47F62), no white core.\n\nMove (the designer's, from the roster): Rage - for a short time she takes less damage and attacks and moves faster.\n\nWeak: with no face, \"woman\" rests on the long locks and the missing beard. The mantle is the same broad one as before; a slimmer mantle would help but would change her look, so I left it."
+        },
+        {
+          "id": "rogue-bandit-mask",
+          "label": "Bandit",
+          "image": "../../../design/class-round4/rogue/renders/rogue-bandit-mask.png",
+          "thumb": "../../../design/class-round4/rogue/renders/rogue-bandit-mask-thumb.png",
+          "text": "Hand rule only.\n\nSuggested move: Smoke bomb - throws downward smoke, is hard to hit for a moment, and slips behind the target."
+        },
+        {
+          "id": "rogue-shade-cape-crossed",
+          "label": "Shade",
+          "image": "../../../design/class-round4/rogue/renders/rogue-shade-cape-crossed.png",
+          "thumb": "../../../design/class-round4/rogue/renders/rogue-shade-cape-crossed-thumb.png",
+          "text": "Kept the crossed daggers, as asked; hand rule only.\n\nSuggested move: Shadow step - vanishes and reappears behind the farthest, most isolated enemy for a backstab.\n\nWeak: the fists now point along the blades, so at the X they read a little narrower than before."
+        },
+        {
+          "id": "rogue-twinfang",
+          "label": "Twinfang",
+          "image": "../../../design/class-round4/rogue/renders/rogue-twinfang.png",
+          "thumb": "../../../design/class-round4/rogue/renders/rogue-twinfang-thumb.png",
+          "text": "\"Hooked/curved daggers, inwards\": both blades now bow and hook in toward the centre line, ending in hooked tips that point at each other (like a pair of karambits). The daggers are held straight forward, still spread apart.\n\nSuggested move: Twin flurry - a fast burst of four slashes, the last one making the target bleed."
+        },
+        {
+          "id": "farmer-digger",
+          "label": "Digger",
+          "image": "../../../design/class-round4/farmer/renders/farmer-digger.png",
+          "thumb": "../../../design/class-round4/farmer/renders/farmer-digger-thumb.png",
+          "text": "Hand rule only; the fist slid 15 units down the handle so it shows past the body's edge once turned.\n\nMove (the designer's, from the roster): Dirt fling - digs up and flings dirt that blinds (or staggers)."
+        },
+        {
+          "id": "farmer-grandpa-sickle",
+          "label": "Grandpa Sickle",
+          "image": "../../../design/class-round4/farmer/renders/farmer-grandpa-sickle.png",
+          "thumb": "../../../design/class-round4/farmer/renders/farmer-grandpa-sickle-thumb.png",
+          "text": "Hand rule only: the fist is turned to the sickle's upright handle (it was tilted 8 degrees off it).\n\nMove (the designer's, from the roster): Bread toss - throws bread to nearby hurt allies, healing them."
+        },
+        {
+          "id": "farmer-granny-reaper",
+          "label": "Granny Reaper",
+          "image": "../../../design/class-round4/farmer/renders/farmer-granny-reaper.png",
+          "thumb": "../../../design/class-round4/farmer/renders/farmer-granny-reaper-thumb.png",
+          "text": "\"Hold further down the shaft\": both hands now sit 80 and 107 units along the snath (were 64 and 102), so the upper hand is well clear of the shoulder and both are near the blade end.\n\nSuggested move: Reap - a wide scythe sweep round her that hits everything close."
+        },
+        {
+          "id": "farmer-haymaker-fork",
+          "label": "Haymaker",
+          "image": "../../../design/class-round4/farmer/renders/farmer-haymaker-fork.png",
+          "thumb": "../../../design/class-round4/farmer/renders/farmer-haymaker-fork-thumb.png",
+          "text": "\"Fork head one colour\": the socket, crossbar and three tines are now one soft grey (one gradient); no darker socket or crossbar.\n\nSuggested move: Toss - forks the nearest enemy and throws it over his shoulder."
+        },
+        {
+          "id": "skeleton-brute",
+          "label": "Brute",
+          "image": "../../../design/class-round4/skeleton/renders/skeleton-brute.png",
+          "thumb": "../../../design/class-round4/skeleton/renders/skeleton-brute-thumb.png",
+          "text": "\"15% bigger\": the body, skull, jaw, tusks and shield are scaled 1.15x about the centre. The right pivot moved out to 170 104. \"Axe flipped\": the axe is mirrored, so the blade now faces in toward the body and the back spike points out. It is also 10% bigger and held a little higher. The claw is turned to the haft.\n\nMove (the designer's, from the roster): Raise shield - an action: while raised it turns slowly and blocks only damage from the front 180 degrees.\n\nWeak: I read \"axe flipped\" as the blade facing the other way (inward). If it meant upside down (head up by the shoulder), that is a different change."
+        },
+        {
+          "id": "skeleton-gaper",
+          "label": "Gaper",
+          "image": "../../../design/class-round4/skeleton/renders/skeleton-gaper.png",
+          "thumb": "../../../design/class-round4/skeleton/renders/skeleton-gaper-thumb.png",
+          "text": "\"30% bigger\": the skull, jaw, shoulder knobs and vertebrae are scaled 1.3x about the centre; the trailing vertebrae are tucked in 14 units so they stay in the box. The swords are 12% longer and re-placed under the wider shoulders, pointing forward and out. Pivots moved out with the shoulders (22 100 and 178 100). \"No eyebrows, too mad, too sharp\": the brow ridges are gone, and the slanted angry sockets are now big, round, calm ones. The open hanging jaw (now a separate bone) and the long skull keep it apart from the Rattlers.\n\nMove (the designer's, from the roster): Charge and spin - a piercing charge with the swords in a V ahead, ending in a rapid spin with the swords out to the sides.\n\nWeak: big and round, it now looks more goofy than menacing; it may have gone too far the other way."
+        },
+        {
+          "id": "skeleton-rattler-jawless-bow",
+          "label": "Rattler, bow",
+          "image": "../../../design/class-round4/skeleton/renders/skeleton-rattler-jawless-bow.png",
+          "thumb": "../../../design/class-round4/skeleton/renders/skeleton-rattler-jawless-bow-thumb.png",
+          "text": "Has a lower jaw again (separate, below a gap). The bow claw is turned across, along the bow's grip. The drawing claw holds the arrow's end at the chin, turned along the arrow; that arm (#arm-r) now draws after #body, so the claw sits over the jaw like the archer's hand.\n\nSuggested move: Volley - looses three arrows in a fan.\n\nWeak: the arrow is shorter, because the drawing hand moved down onto the jaw."
+        },
+        {
+          "id": "skeleton-rattler-jawless-spear",
+          "label": "Rattler, spear",
+          "image": "../../../design/class-round4/skeleton/renders/skeleton-rattler-jawless-spear.png",
+          "thumb": "../../../design/class-round4/skeleton/renders/skeleton-rattler-jawless-spear-thumb.png",
+          "text": "Has a lower jaw again, below a gap. The spear claw is turned to the shaft.\n\nSuggested move: Lunge - a long-reach thrust that pierces through the first enemy into the one behind."
+        },
+        {
+          "id": "skeleton-rattler-loosejaw",
+          "label": "Rattler, mace",
+          "image": "../../../design/class-round4/skeleton/renders/skeleton-rattler-loosejaw.png",
+          "thumb": "../../../design/class-round4/skeleton/renders/skeleton-rattler-loosejaw-thumb.png",
+          "text": "The crooked loose jaw hangs 3 units lower, so the gap under the skull shows at game size. The mace claw is turned to the handle.\n\nSuggested move: Skull crack - a mace blow that dazes the target, slowing its attacks."
+        },
+        {
+          "id": "skeleton-rattler",
+          "label": "Rattler",
+          "image": "../../../design/class-round4/skeleton/renders/skeleton-rattler.png",
+          "thumb": "../../../design/class-round4/skeleton/renders/skeleton-rattler-thumb.png",
+          "text": "The closed grin painted on the skull is gone. Now: the cranium with its upper teeth hanging free, a gap, then a separate lower jaw with its own teeth. The sword claw is turned to the grip.\n\nSuggested move: Rattle - when it dies it falls into a heap and gets back up once, a few seconds later, at half health."
+        }
+      ]
+    },
+    {
+      "id": "heroes",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "40 new heroes",
+      "text": "Casters, support, ranged and fighters: ten each, all different.",
+      "why": "Each tick becomes a unit (or the prop) in the game. Each picture shows it beside the archer at the same size, then 8 turns at game size.",
+      "pick": [
+        "caster-alchemist",
+        "caster-cultist",
+        "caster-druid",
+        "caster-frost",
+        "caster-necromancer",
+        "caster-pyromancer",
+        "caster-shaman",
+        "caster-storm",
+        "caster-warlock",
+        "caster-witch",
+        "support-bard",
+        "support-beekeeper",
+        "support-chef",
+        "support-cleric",
+        "support-lantern-keeper",
+        "support-monk",
+        "support-plague-doctor",
+        "support-quartermaster",
+        "support-seer",
+        "support-templar",
+        "ranged-crossbowman",
+        "ranged-falconer",
+        "ranged-grenadier",
+        "ranged-harpooner",
+        "ranged-javelin-huntress",
+        "ranged-marksman",
+        "ranged-ninja",
+        "ranged-pirate",
+        "ranged-slinger",
+        "ranged-trapper",
+        "engineer-turret",
+        "fighter-beast-tamer",
+        "fighter-engineer",
+        "fighter-executioner",
+        "fighter-gladiator",
+        "fighter-jester",
+        "fighter-samurai",
+        "fighter-scarecrow",
+        "fighter-valkyrie",
+        "fighter-vampire",
+        "fighter-werewolf",
+        "tamer-beast"
+      ],
+      "details": "Each item's text is the artist's note: what you asked for or what it is, a suggested move (only a proposal), and what's still weak.",
+      "items": [
+        {
+          "id": "caster-alchemist",
+          "label": "Alchemist",
+          "image": "../../../design/class-round4/heroes-casters/renders/caster-alchemist.png",
+          "thumb": "../../../design/class-round4/heroes-casters/renders/caster-alchemist-thumb.png",
+          "text": "A brown leather cap with a brass band, a brass loupe flipped up on the right, and white hair puffing out at the sides. A strap of six corked vials in different colours fans over the shoulders. He holds a round flask of green brew by the neck in his right fist, behind the body, ready to throw.\n\nSuggested move: Flask Toss: lobs the flask and it shatters into a pool of acid that hurts enemies standing in it.\n\nWeak: I tried goggles pushed upward on the cap, but two round lenses on the head read as a pair of eyes, so I cut them. The loupe and the vials carry the \"gadgets and potions\" read instead. At 40px the vials read as a colourful fringe, which is distinct but could pass for feathers."
+        },
+        {
+          "id": "caster-cultist",
+          "label": "Cultist",
+          "image": "../../../design/class-round4/heroes-casters/renders/caster-cultist.png",
+          "thumb": "../../../design/class-round4/heroes-casters/renders/caster-cultist-thumb.png",
+          "text": "A heavy blood-red hooded mantle sits low over a smooth gold mask that has no features at all. A dark grimoire with gold corners is in the left fist, and a wavy ritual dagger is in the right (both behind the body).\n\nSuggested move: Blood Pact: gives up some of his own health to make nearby allies hit harder for a few seconds.\n\nWeak: with a plain hood the red dome read as a helmet, and a gold sigil on top read as a little face, so the mask carries the read. The mask is a gold face shape. Check that it doesn't read as a gold-skinned person. A plain ivory mask is the other option."
+        },
+        {
+          "id": "caster-druid",
+          "label": "Druid",
+          "image": "../../../design/class-round4/heroes-casters/renders/caster-druid.png",
+          "thumb": "../../../design/class-round4/heroes-casters/renders/caster-druid-thumb.png",
+          "text": "Long chestnut hair falling down the sides, a circlet of leaves on the hairline, and a big pair of branching antlers. Moss-green mantle with a brown edge. The gnarled staff ends in a curled crook with two leaves (right fist, behind the body).\n\nSuggested move: Entangle: roots burst up under an enemy and root it in place for a moment.\n\nWeak: the antlers stick out a long way at the back. They are the read, but they make the sprite wider than most. The crook curl is a stroke, not a filled shape. It renders the same, but say if the game needs fills only."
+        },
+        {
+          "id": "caster-frost",
+          "label": "Frost mage",
+          "image": "../../../design/class-round4/heroes-casters/renders/caster-frost.png",
+          "thumb": "../../../design/class-round4/heroes-casters/renders/caster-frost-thumb.png",
+          "text": "A round pale-blue hood with a puffy white fur ruff round the face. Two ice shards grow out of each shoulder. The long frosted staff has a big snowflake on the end. It is held in the right fist, behind the body.\n\nSuggested move: Frost Nova, a ring of frost around her that slows every enemy it touches.\n\nWeak: the smooth hood is close to a helmet shape. I tried a pointed hood, but it looked like the archer's, so I went back to round."
+        },
+        {
+          "id": "caster-necromancer",
+          "label": "Necromancer",
+          "image": "../../../design/class-round4/heroes-casters/renders/caster-necromancer.png",
+          "thumb": "../../../design/class-round4/heroes-casters/renders/caster-necromancer-thumb.png",
+          "text": "A deep charcoal-green hood with a long tail drooping back and a torn hem on the shoulders. The bone staff has a skull on the end with green glow in its sockets (right fist, behind the body). A green ghost-flame burns over the empty left fist.\n\nSuggested move: Raise Dead: a fallen enemy rises as a weak skeleton that fights for him for a few seconds.\n\nWeak: earlier tries (a ragged cape, a torn fringe over the forehead) read as spiky hair or bangs, so the hood rim is smooth now. The hood is dark, so most of the read comes from the bone skull and the green flame."
+        },
+        {
+          "id": "caster-pyromancer",
+          "label": "Pyromancer",
+          "image": "../../../design/class-round4/heroes-casters/renders/caster-pyromancer.png",
+          "thumb": "../../../design/class-round4/heroes-casters/renders/caster-pyromancer-thumb.png",
+          "text": "Fire mage. The hair is a fire: three tongues stream back off the head, yellow at the hairline and red at the tips. Dark red robe with a gold edge. Both fists are out in front, cupping a fireball (two-handed: both fists and the fireball are in arm-r, and there is no arm-l).\n\nSuggested move: Fireball, a slow fireball that bursts on impact and sets the ground burning for a few seconds.\n\nWeak: the hands hold a ball, not a handle, so the hand rule doesn't really apply. The fists are just turned in towards it. The robe shoulders show only as a dark-red rim under the hair."
+        },
+        {
+          "id": "caster-shaman",
+          "label": "Shaman",
+          "image": "../../../design/class-round4/heroes-casters/renders/caster-shaman.png",
+          "thumb": "../../../design/class-round4/heroes-casters/renders/caster-shaman-thumb.png",
+          "text": "A carved totem with spread teal-and-white wings is strapped to the back and rises behind the head. Dark hair with a terracotta headband, a feather at the side, and two plaited braids. Teal robe with a terracotta edge. A feathered spirit-stick is in the left fist (behind the body); the right fist is empty.\n\nSuggested move: Totem: plants a small totem that heals allies near it for a few seconds (or zaps enemies in range, as a second kind).\n\nWeak: the hair and headband read a bit like a cap. At 40px the braids read only as dark bumps beside the face. The feather bunch on the stick could pass for a torch."
+        },
+        {
+          "id": "caster-storm",
+          "label": "Storm mage",
+          "image": "../../../design/class-round4/heroes-casters/renders/caster-storm.png",
+          "thumb": "../../../design/class-round4/heroes-casters/renders/caster-storm-thumb.png",
+          "text": "A deep-blue wizard hat whose tip bends back into a yellow lightning bolt. A long white beard sticks out in front. He holds a yellow bolt like a javelin in his right fist, behind the body. He is the only caster with a beard.\n\nSuggested move: Chain Lightning, a bolt that jumps from the target to two more enemies nearby.\n\nWeak: a first try with a spiky crackling orb on a rod read as a mace, so the weapon is now the bolt itself. The outline filter stair-steps a little on the bolt's long diagonals (the shared filter does this on thin diagonal shapes)."
+        },
+        {
+          "id": "caster-warlock",
+          "label": "Warlock",
+          "image": "../../../design/class-round4/heroes-casters/renders/caster-warlock.png",
+          "thumb": "../../../design/class-round4/heroes-casters/renders/caster-warlock-thumb.png",
+          "text": "Two long ivory horns sweep back from the brow. Slicked violet-black hair with a widow's peak, and a dark coat with a magenta edge. A short gold sceptre topped with a magenta orb with a slit pupil (a demon's eye) is in his right fist, behind the body.\n\nSuggested move: Pact Bolt: fires a magenta bolt that drains health from the target and heals him.\n\nWeak: horns will also be on the round-4 Devil and Demon (another artist's section). Next to those, his human face, hair and sceptre should keep him apart, but compare them side by side."
+        },
+        {
+          "id": "caster-witch",
+          "label": "Witch",
+          "image": "../../../design/class-round4/heroes-casters/renders/caster-witch.png",
+          "thumb": "../../../design/class-round4/heroes-casters/renders/caster-witch-thumb.png",
+          "text": "A huge violet witch hat with a wide brim and a crooked tip, plus a lime band and a gold buckle. Dark-green hair falls at the sides of the face. She holds a broom in her left fist, bristles first, behind the body. It's one-handed, so the two-handed rule doesn't apply. The right fist is empty.\n\nSuggested move: Hex: turns the target into a frog for two seconds (it can't attack).\n\nWeak: the brim covers almost all of the shoulders, so her body barely shows. That is intended, because the hat is the read."
+        },
+        {
+          "id": "support-bard",
+          "label": "Bard",
+          "image": "../../../design/class-round4/heroes-support/renders/support-bard.png",
+          "thumb": "../../../design/class-round4/heroes-support/renders/support-bard-thumb.png",
+          "text": "Note: lute. I drew a big plum beret worn tilted, a long red feather sweeping back past the head, auburn hair and a teal doublet with puffed shoulders. The lute is held across the front: the bowl front-left, the neck up to the right shoulder. One fist strums on the bowl and the other is on the neck, turned along it. The lute is an instrument held across the chest, so it sits in front of the body like the archer's bow, not behind it. Both hands are on it, so it is all in arm-r.\n\nSuggested move: Ballad. He plays, and allies in range attack a little faster while the tune lasts.\n\nWeak: the feather sticks out far behind at the top-right. It is the strongest read, but it makes the sprite a bit lopsided."
+        },
+        {
+          "id": "support-beekeeper",
+          "label": "Beekeeper",
+          "image": "../../../design/class-round4/heroes-support/renders/support-beekeeper.png",
+          "thumb": "../../../design/class-round4/heroes-support/renders/support-beekeeper-thumb.png",
+          "text": "Note: beekeeper. I drew a wide canvas hat with a dark band and a dark mesh veil where the face would be, and a white suit. A copper smoker puffing two smoke balls is in the right hand, drawn behind the body. Three bees buzz round in front.\n\nSuggested move: Swarm. He releases bees that chase the nearest enemy, stinging and slowing it.\n\nWeak: from above the smoker is small and reads only as \"a copper thing\". The hat is a round brim like the Haymaker's, but it is a different colour, has a dark veil instead of a face, and has the bees. An all-white hat looked like a fried egg, so I dropped it."
+        },
+        {
+          "id": "support-chef",
+          "label": "Chef",
+          "image": "../../../design/class-round4/heroes-support/renders/support-chef.png",
+          "thumb": "../../../design/class-round4/heroes-support/renders/support-chef-thumb.png",
+          "text": "Note: pan and ladle. I drew a tall puffy white toque, seen from above as a scalloped cloud, a big dark handlebar moustache, a white jacket and a red neckerchief. A black iron frying pan is in the right hand and a steel ladle in the left. Both arms are drawn before body, so the handles run under the shoulders and only the fists show.\n\nSuggested move: Hot meal. He cooks a snack and drops it; the first ally to walk over it is healed. (Or a pan bonk that stuns.)\n\nWeak: the ladle is thin and mostly hidden. At 40px the chef reads as a white puff, a black pan and the red neckerchief."
+        },
+        {
+          "id": "support-cleric",
+          "label": "Cleric",
+          "image": "../../../design/class-round4/heroes-support/renders/support-cleric.png",
+          "thumb": "../../../design/class-round4/heroes-support/renders/support-cleric-thumb.png",
+          "text": "Note: healer. I drew a white hood with a gold rim round the face, a sky-blue mantle, and a big gold sun-halo standing up behind the head (back). She holds a short sun sceptre in her right hand, drawn behind the body with only the fist showing. Her left hand is free.\n\nSuggested move: Mend. She lifts the sceptre and heals the most hurt ally nearby a little, every few seconds.\n\nWeak: at some angles the spiky halo could read as a lion's mane or a sunflower. The free left fist holds nothing."
+        },
+        {
+          "id": "support-lantern-keeper",
+          "label": "Lantern keeper",
+          "image": "../../../design/class-round4/heroes-support/renders/support-lantern-keeper.png",
+          "thumb": "../../../design/class-round4/heroes-support/renders/support-lantern-keeper-thumb.png",
+          "text": "Note: lantern keeper. I drew a deep navy hooded cloak with a drooping hood tail, the face in the hood's shadow, and an amber scarf. He holds a pole out front-right, drawn behind the body with only the fist showing. A brass lantern hangs from its end. From above you see its six-sided cap and the glowing glass round it.\n\nSuggested move: Beacon. He raises the lantern: enemies in its light are revealed and take more damage, and hidden traps nearby show up.\n\nWeak: the pole is short, because a longer one pushed the lantern out of the sprite box. The glow is drawn inside the lantern only: a soft halo round it would get outlined by the filter."
+        },
+        {
+          "id": "support-monk",
+          "label": "Monk",
+          "image": "../../../design/class-round4/heroes-support/renders/support-monk.png",
+          "thumb": "../../../design/class-round4/heroes-support/renders/support-monk-thumb.png",
+          "text": "Note: fists, no weapon. I drew a shaved head with a small dark topknot, a saffron robe with a maroon sash over one shoulder, and a string of big wooden prayer beads hanging in front with a red bead in the middle. Two big fists with white wraps are held up, one forward as if punching. They are in arm-l and arm-r, after body, because there is nothing to hide.\n\nSuggested move: Flurry. A burst of quick punches; each hit heals him a little.\n\nWeak: from above he is mostly a big bald head. The topknot, the orange robe and the bead string carry the read. Grandpa Sickle is the other bald head, but he has white hair, a beard and green."
+        },
+        {
+          "id": "support-plague-doctor",
+          "label": "Plague doctor",
+          "image": "../../../design/class-round4/heroes-support/renders/support-plague-doctor.png",
+          "thumb": "../../../design/class-round4/heroes-support/renders/support-plague-doctor-thumb.png",
+          "text": "Note: beaked mask. I drew a wide flat-brimmed dark hat and a long ivory beak jutting forward from under the brim, with a brass strap across it. The mask is leather, so no skin shows. The coat is waxed brown with a short cape. A walking cane with a brass tip is drawn behind the body, and the left hand is free.\n\nSuggested move: Vapours. He throws a vial that leaves a green cloud: it heals allies standing in it and poisons enemies.\n\nWeak: the hat is a big dark disc and covers most of the body. It reads well at 40px (hat plus beak), but the coat hardly shows. I took out a brass ring round the crown, because it made the hat look like an eye."
+        },
+        {
+          "id": "support-quartermaster",
+          "label": "Quartermaster",
+          "image": "../../../design/class-round4/heroes-support/renders/support-quartermaster.png",
+          "thumb": "../../../design/class-round4/heroes-support/renders/support-quartermaster-thumb.png",
+          "text": "Note: a merchant with a huge backpack. I drew a pack wider than the shoulders (in back), with a red bedroll strapped on top, a copper pot on one side and a rope coil on the other. He wears a mustard knit cap with a bobble and a teal tunic with brown pack straps. He has no weapon: both fists grip the straps at the front of the shoulders (arm-l, arm-r, after body), turned along the straps.\n\nSuggested move: Resupply. He tosses a potion or a supply bundle to the ally who needs it most (healing or a short buff).\n\nWeak: he has no attack pose. If he needs one for normal attacks, he could swing a small cudgel, or throw from the pack."
+        },
+        {
+          "id": "support-seer",
+          "label": "Seer",
+          "image": "../../../design/class-round4/heroes-support/renders/support-seer.png",
+          "thumb": "../../../design/class-round4/heroes-support/renders/support-seer-thumb.png",
+          "text": "Note: blindfold, crystal. I drew long silver-lilac hair down the back and two locks framing the face, a violet blindfold across the eyes with its knot and tails trailing behind, and a midnight-blue shawl. She holds a glowing teal crystal ball out in front in both cupped hands. The hands sit under the ball, so only their sides show. The ball is in front, like the archer's bow, because it is held out in two hands, not swung. It is all in arm-r.\n\nSuggested move: Foresight. She marks the strongest enemy in the room; allies deal more damage to it and it can't dodge.\n\nWeak: the back hair is a big rounded shape and can read a little like a hood. She is the purple hero of this set, so check her beside the casters (H1) for colour clashes."
+        },
+        {
+          "id": "support-templar",
+          "label": "Templar",
+          "image": "../../../design/class-round4/heroes-support/renders/support-templar.png",
+          "thumb": "../../../design/class-round4/heroes-support/renders/support-templar-thumb.png",
+          "text": "Note: templar knight, must not look like the existing knights. I drew a flat-topped great helm with a gold band and a cross-shaped visor slit, a white surcoat with mail at the ends of the shoulders, and a white cape with a big red cross pattee. He has no shield (the other knights have one). He swings a gold-hilted greatsword with both fists on the grip, in front, the blade pointing forward-left across the body.\n\nSuggested move: Oath. He plants the sword, and allies around him take less damage for a few seconds.\n\nWeak: the box is too short for a straight-forward greatsword, so the blade lies across the front at about 60°. I kept the cross off the helm top, because a red cross on a white square read as a first-aid box."
+        },
+        {
+          "id": "ranged-crossbowman",
+          "label": "Crossbowman",
+          "image": "../../../design/class-round4/heroes-ranged/renders/ranged-crossbowman.png",
+          "thumb": "../../../design/class-round4/heroes-ranged/renders/ranged-crossbowman-thumb.png",
+          "text": "Brief: crossbow. Steel kettle hat (round crown, wide brim), dark slate gambeson, a tall pavise slung on the back (yellow and red halves, wood rim), heavy crossbow held in front with both fists side by side on the stock, the steel prod across ahead of the face, bolt pointing forward. All in arm-r.\n\nSuggested move: Pavise: plants the shield in front and shoots from behind it, taking much less damage from the front until it moves.\n\nWeak: the kettle hat is a big flat disc; at some angles the brim reads as a steel plate rather than a hat."
+        },
+        {
+          "id": "ranged-falconer",
+          "label": "Falconer",
+          "image": "../../../design/class-round4/heroes-ranged/renders/ranged-falconer.png",
+          "thumb": "../../../design/class-round4/heroes-ranged/renders/ranged-falconer-thumb.png",
+          "text": "Brief: bird on the arm. Rust-red beret worn tilted with a tan feather, brown hair, leather jerkin over green; a slate-grey falcon with half-spread wings sits on the leather gauntlet of the raised left fist (arm-l drawn after body so the bird is on top); right hand free.\n\nSuggested move: Loose the falcon: sends the bird at the farthest enemy; it marks it (everyone deals more damage to it) and pecks until it returns.\n\nWeak: the bird is in arm-l, so it swings with the arm; if the game launches it, it will need to be its own part. The falcon's two eye dots are the only eyes in the set (an animal, so allowed)."
+        },
+        {
+          "id": "ranged-grenadier",
+          "label": "Grenadier",
+          "image": "../../../design/class-round4/heroes-ranged/renders/ranged-grenadier.png",
+          "thumb": "../../../design/class-round4/heroes-ranged/renders/ranged-grenadier-thumb.png",
+          "text": "Brief: bombs. Orange-red knit cap with a cream turn-up and pompom, big brown handlebar moustache, olive coat with a strap, a burlap sack of bombs on the back, a lit bomb cupped in the right hand; left hand free.\n\nSuggested move: Bomb lob: lobs a bomb that lands after a short delay and blasts a small area (hits allies' enemies only, knocks them back).\n\nWeak: the moustache reads well big, at 40px it's a brown band; the bombs on the back carry the read more."
+        },
+        {
+          "id": "ranged-harpooner",
+          "label": "Harpooner",
+          "image": "../../../design/class-round4/heroes-ranged/renders/ranged-harpooner.png",
+          "thumb": "../../../design/class-round4/heroes-ranged/renders/ranged-harpooner-thumb.png",
+          "text": "Brief: harpoon on a rope. Yellow oilskin sou'wester (big round brim, long back flap), grey beard, navy knit sweater; a big barbed harpoon in the right hand (shaft under the shoulder, head out forward) with its rope looping across the front to a coil held in the left hand.\n\nSuggested move: Reel in: throws the harpoon at a far enemy and drags it back to him (or pulls himself to a heavy one).\n\nWeak: the rope crosses from arm-r's harpoon to arm-l's coil but is drawn in arm-l; when the arms swing it will detach from the harpoon. The game may want the rope drawn live between the two."
+        },
+        {
+          "id": "ranged-javelin-huntress",
+          "label": "Javelin huntress",
+          "image": "../../../design/class-round4/heroes-ranged/renders/ranged-javelin-huntress.png",
+          "thumb": "../../../design/class-round4/heroes-ranged/renders/ranged-javelin-huntress-thumb.png",
+          "text": "Brief: javelin huntress (a woman). Darker skin, long dark hair down over the shoulders and a high ponytail tied with a coral band swinging back, coral headband with gold beads, spotted ochre pelt, two spare javelins slung on her back, a javelin in the right hand (shaft under the shoulder, head out forward), left hand up to aim.\n\nSuggested move: Javelin: throws a javelin that pins the first enemy hit (slowed for a moment); she picks it up again by walking over it, throwing faster while she has spares.\n\nWeak: \"woman\" carried by hair only (no faces by rule), same approach as Wildmane; check they don't feel alike (Wildmane has the wild mane, this one a sleek ponytail and darker skin)."
+        },
+        {
+          "id": "ranged-marksman",
+          "label": "Marksman",
+          "image": "../../../design/class-round4/heroes-ranged/renders/ranged-marksman.png",
+          "thumb": "../../../design/class-round4/heroes-ranged/renders/ranged-marksman-thumb.png",
+          "text": "Brief: long musket. Wide teal slouch hat with a cream plume sweeping back, crimson coat with a gold crossbelt. The musket runs under the right side of the head; rear fist on the wrist of the stock, front fist on the fore-stock, both turned along the barrel; long steel barrel with brass bands out front. Two-handed, all in arm-r.\n\nSuggested move: Aimed shot: stands still for a moment, then fires one long-range shot that pierces the first enemy and hits the one behind.\n\nWeak: the musket sits off to the right rather than dead centre (centre would hide it under the head); the plume edge notches are small."
+        },
+        {
+          "id": "ranged-ninja",
+          "label": "Ninja",
+          "image": "../../../design/class-round4/heroes-ranged/renders/ranged-ninja.png",
+          "thumb": "../../../design/class-round4/heroes-ranged/renders/ranged-ninja-thumb.png",
+          "text": "Brief: ninja. Charcoal hood and face wrap with only a slit of face, two crimson scarf tails trailing back from a red knot, katana slung on the back (hilt over the left shoulder), a big shuriken pinched in each hand (both arms before body).\n\nSuggested move: Shuriken fan: throws three shuriken in a spread; then vanishes into smoke and reappears a short step to the side.\n\nWeak: the face slit is the only skin, so at 40px it's a dark blob with a red tuft; that's the read, but it is the darkest sprite in the set. Shuriken aren't handles, so the fists are only pinching them."
+        },
+        {
+          "id": "ranged-pirate",
+          "label": "Pirate",
+          "image": "../../../design/class-round4/heroes-ranged/renders/ranged-pirate.png",
+          "thumb": "../../../design/class-round4/heroes-ranged/renders/ranged-pirate-thumb.png",
+          "text": "Brief: cutlass and pistol. Black tricorn with gold edging, black hair and a big black beard, burgundy coat with gold epaulettes; curved cutlass with a gold guard in the left hand, flintlock pistol in the right, both coming out forward from under the shoulders.\n\nSuggested move: Point blank: fires the pistol at a close enemy for a big hit and knock-back, then fights with the cutlass while it \"reloads\".\n\nWeak: tricorn + beard is a lot of near-black around the face; the gold edge carries it."
+        },
+        {
+          "id": "ranged-slinger",
+          "label": "Slinger",
+          "image": "../../../design/class-round4/heroes-ranged/renders/ranged-slinger.png",
+          "thumb": "../../../design/class-round4/heroes-ranged/renders/ranged-slinger-thumb.png",
+          "text": "Brief: shepherd with a sling. Pale-blue headcloth with a white stripe, held by a brown cord, draping down the back; a woolly fleece mantle over the shoulders; shepherd's crook in the left hand (hook forward), sling in the right (two cords, leather pouch with a stone). Both arms before body.\n\nSuggested move: Sling stone: a quick spinning windup and a stone that stuns the target for half a second; the crook can pull a downed ally one step closer (support flavour).\n\nWeak: the headcloth is plain; I tried blue-and-white stripes first but they looked like a beach towel and read as a helmet at 40px."
+        },
+        {
+          "id": "ranged-trapper",
+          "label": "Trapper",
+          "image": "../../../design/class-round4/heroes-ranged/renders/ranged-trapper.png",
+          "thumb": "../../../design/class-round4/heroes-ranged/renders/ranged-trapper-thumb.png",
+          "text": "Brief: hunter with traps. Grey raccoon-skin cap with a ringed tail hanging behind, buckskin coat, cream fur collar; an open jaw trap (steel ring with teeth) held out on a short chain in the right hand; left hand free.\n\nSuggested move: Set trap: drops a jaw trap at its feet; the first enemy to step on it is held in place for two seconds and bleeds.\n\nWeak: at 40px the trap reads as a small round steel thing (a cog?); the jaws are hard to show from above. The first try with the spring arms out to the sides read as a propeller, so they were dropped."
+        },
+        {
+          "id": "engineer-turret",
+          "label": "Engineer's turret",
+          "image": "../../../design/class-round4/heroes-fighters/renders/engineer-turret.png",
+          "thumb": "../../../design/class-round4/heroes-fighters/renders/engineer-turret-thumb.png",
+          "text": "Did: orange work suit with a dark band, a brass gear on the left shoulder, a welding mask flipped up on top of the head (steel, dark green window), messy brown hair. A big open-ended wrench in the right hand. (Goggles were avoided because the Alchemist already wears them.) Turret: about 70% of a hero: a three-legged stand (two legs forward, one back), a round brass housing with a hatch, a brass mantlet with an orange stripe and twin steel barrels pointing forward. #back (legs), #body (the rest; the game turns the whole sprite to aim).\n\nMove: Deploy turret: sets the turret down; it shoots the nearest enemy until destroyed; the wrench repairs it.\n\nWeak: the flipped-up mask can read as a helmet visor; the zigzag fringe is the same trick as the Wildmane's."
+        },
+        {
+          "id": "fighter-beast-tamer",
+          "label": "Beast tamer",
+          "image": "../../../design/class-round4/heroes-fighters/renders/fighter-beast-tamer.png",
+          "thumb": "../../../design/class-round4/heroes-fighters/renders/fighter-beast-tamer-thumb.png",
+          "text": "Did: a ringmaster: tall black top hat with a red band, emerald tailcoat with gold frogging, a bullwhip whose lash curls out in front. (A first, wilder take with a leopard pelt and a ponytail read as an acorn; dropped.) Beast: a tiger cub about 60% of a hero: orange with stripes, round ears, pale muzzle, simple eyes (beasts may have eyes), striped tail in #back (pivot to sway), front paws as arm-l/arm-r so it can walk.\n\nMove: Crack the whip: the cub gets a burst of speed and damage and pounces on the tamer's target.\n\nWeak: the hat is tall (it reaches the top of the sprite box); it is the whole read, but say if it should be shorter. A ringmaster may be more circus than dungeon; a wild-hunter tamer is possible if this is not wanted."
+        },
+        {
+          "id": "fighter-engineer",
+          "label": "Engineer",
+          "image": "../../../design/class-round4/heroes-fighters/renders/fighter-engineer.png",
+          "thumb": "../../../design/class-round4/heroes-fighters/renders/fighter-engineer-thumb.png",
+          "text": "Did: orange work suit with a dark band, a brass gear on the left shoulder, a welding mask flipped up on top of the head (steel, dark green window), messy brown hair. A big open-ended wrench in the right hand. (Goggles were avoided because the Alchemist already wears them.) Turret: about 70% of a hero: a three-legged stand (two legs forward, one back), a round brass housing with a hatch, a brass mantlet with an orange stripe and twin steel barrels pointing forward. #back (legs), #body (the rest; the game turns the whole sprite to aim).\n\nMove: Deploy turret: sets the turret down; it shoots the nearest enemy until destroyed; the wrench repairs it.\n\nWeak: the flipped-up mask can read as a helmet visor; the zigzag fringe is the same trick as the Wildmane's."
+        },
+        {
+          "id": "fighter-executioner",
+          "label": "Executioner",
+          "image": "../../../design/class-round4/heroes-fighters/renders/fighter-executioner.png",
+          "thumb": "../../../design/class-round4/heroes-fighters/renders/fighter-executioner-thumb.png",
+          "text": "Did: a dark pointed hood over the whole head with two eye slots (holes in the hood, not eyes), studded leather shoulders, a diagonal strap. A big crescent axe held two-handed in front.\n\nMove: Execute: a slow overhead chop that does huge damage to an enemy below a quarter HP.\n\nWeak: the hood is near the outline colour, so its inside shading is subtle; the read is the dark spade shape plus the axe. The axe could be bigger, but bigger leaves the sprite box."
+        },
+        {
+          "id": "fighter-gladiator",
+          "label": "Gladiator",
+          "image": "../../../design/class-round4/heroes-fighters/renders/fighter-gladiator.png",
+          "thumb": "../../../design/class-round4/heroes-fighters/renders/fighter-gladiator-thumb.png",
+          "text": "Did: retiarius: bare tanned shoulders with a leather strap, a tall bronze shoulder guard (galerus) standing up on the left, short black curly hair (no helmet, so it can't read as a knight). Trident in the right hand, weighted net in the left; both arms before #body.\n\nMove: Net throw: throws the net to pin one enemy in place for a few seconds; the trident hits pinned enemies harder.\n\nWeak: the net's mesh is a texture of thin lines (darker beige, not outline-coloured); at 40px it reads as a pale bundle with weights. The bronze guard and the skin are close in hue."
+        },
+        {
+          "id": "fighter-jester",
+          "label": "Jester",
+          "image": "../../../design/class-round4/heroes-fighters/renders/fighter-jester.png",
+          "thumb": "../../../design/class-round4/heroes-fighters/renders/fighter-jester-thumb.png",
+          "text": "Did: a three-pointed floppy cap split magenta and yellow with gold bells on the tips, a pointed ruff collar in the same colours, harlequin diamonds on the shoulders. A marotte (stick with a little jester head) in the right hand.\n\nMove: Mock: taunts enemies nearby so they attack the jester, and confuses one so it hits its own allies briefly.\n\nWeak: the ruff is busy at full size (fine at 40px). The marotte's little head reads only as a ball at game size."
+        },
+        {
+          "id": "fighter-samurai",
+          "label": "Samurai",
+          "image": "../../../design/class-round4/heroes-fighters/renders/fighter-samurai.png",
+          "thumb": "../../../design/class-round4/heroes-fighters/renders/fighter-samurai-thumb.png",
+          "text": "Did: black kabuto with a wide black neck guard laced in red, a big gold crescent (maedate) on a red brow plate, red lacquered shoulder plates with gold bands, black lacquered gloves. A katana held two-handed in front, diagonal so the mouth stays clear.\n\nMove: Iaido dash: a fast straight dash through enemies, cutting everything on the line.\n\nWeak: the fists sit on the lower right of the face (as the Old Guard's do); black gloves keep them from merging with the skin. The blade is shortish so it stays inside the sprite box."
+        },
+        {
+          "id": "fighter-scarecrow",
+          "label": "Scarecrow",
+          "image": "../../../design/class-round4/heroes-fighters/renders/fighter-scarecrow.png",
+          "thumb": "../../../design/class-round4/heroes-fighters/renders/fighter-scarecrow-thumb.png",
+          "text": "Did: a burlap sack head (faint weave) tied with a rope, straw poking out of the top, a stitched mouth instead of the curve, a spiky straw ruff, a faded patched blue coat, the wooden cross-pole behind the shoulders (#back), a crow on the left shoulder (a bird, so it has two small pale eye dots). No weapon: straw tufts for hands.\n\nMove: Murder of crows: the crow and a few more fly out and peck enemies in a cone, slowing them.\n\nWeak: the cross-pole makes it wider than the other heroes (it is detail, not collision). The straw on top can look a bit like a crown at small sizes."
+        },
+        {
+          "id": "fighter-valkyrie",
+          "label": "Valkyrie",
+          "image": "../../../design/class-round4/heroes-fighters/renders/fighter-valkyrie.png",
+          "thumb": "../../../design/class-round4/heroes-fighters/renders/fighter-valkyrie-thumb.png",
+          "text": "Did: round silver helm with a gold brow band and two big white feathered wings sweeping back, long golden braids over the shoulders (she reads as a woman by the braids), silver scale on the shoulders. A spear with a winged gold crossguard in the right hand, left hand free. No shield, to stay clear of the Bulwark.\n\nMove: Valkyrie's call: revives a fallen ally at once at low HP (once per room), or throws the spear in a line.\n\nWeak: a winged helm is the Griffon's theme too (gold wings, purple); here they are white, bigger and on the helm sides, and the braids and the lack of a shield set her apart, but check them side by side."
+        },
+        {
+          "id": "fighter-vampire",
+          "label": "Vampire",
+          "image": "../../../design/class-round4/heroes-fighters/renders/fighter-vampire.png",
+          "thumb": "../../../design/class-round4/heroes-fighters/renders/fighter-vampire-thumb.png",
+          "text": "Did: pale grey-lilac skin and hands, black hair slicked back to a widow's peak, a tall stand-up collar in four bat-wing points (black outside, crimson inside) in #back, wine-coloured shoulders. Rapier with a gold cup hilt in the right hand, left hand free.\n\nMove: Life drain: each hit heals the vampire for a share of the damage; below half HP, a lunge that drains more.\n\nWeak: very dark overall; the read is the bat collar and the pale face. The rapier is thin (true to a rapier) and may get lost when it swings."
+        },
+        {
+          "id": "fighter-werewolf",
+          "label": "Werewolf",
+          "image": "../../../design/class-round4/heroes-fighters/renders/fighter-werewolf.png",
+          "thumb": "../../../design/class-round4/heroes-fighters/renders/fighter-werewolf-thumb.png",
+          "text": "Did: a grey-blue wolf head (tall pointed ears, a jagged ruff, a long snout pointing forward with a pale underside and a dark nose), a torn red shirt, no weapon: two furry paws with white claws held forward. Kept well apart from the Bearskin (brown bear hood over a human face). Eyes: I gave it small yellow eyes. It is the only hero with eyes; without them it read as a mole or a badger. This bends the \"people have no eyes\" rule (monsters may have them): your call, an eyeless version is one line.\n\nMove: Frenzy: each hit on the same target makes the next one faster; a howl at full stacks.\n\nWeak: angular fur shapes are a little sharper than the house style."
+        },
+        {
+          "id": "tamer-beast",
+          "label": "Beast tamer's cub",
+          "image": "../../../design/class-round4/heroes-fighters/renders/tamer-beast.png",
+          "thumb": "../../../design/class-round4/heroes-fighters/renders/tamer-beast-thumb.png",
+          "text": "Did: a ringmaster: tall black top hat with a red band, emerald tailcoat with gold frogging, a bullwhip whose lash curls out in front. (A first, wilder take with a leopard pelt and a ponytail read as an acorn; dropped.) Beast: a tiger cub about 60% of a hero: orange with stripes, round ears, pale muzzle, simple eyes (beasts may have eyes), striped tail in #back (pivot to sway), front paws as arm-l/arm-r so it can walk.\n\nMove: Crack the whip: the cub gets a burst of speed and damage and pounces on the tamer's target.\n\nWeak: the hat is tall (it reaches the top of the sprite box); it is the whole read, but say if it should be shorter. A ringmaster may be more circus than dungeon; a wild-hunter tamer is possible if this is not wanted."
+        }
+      ]
+    },
+    {
+      "id": "enemies",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Enemies and props",
+      "text": "Shut, open (the way in), and the glow for each kind of room behind a door.",
+      "why": "Each tick becomes a unit (or the prop) in the game. Each picture shows it beside the archer at the same size, then 8 turns at game size.",
+      "pick": [
+        "banshee-a-wailer",
+        "banshee-b-veiled",
+        "bat-a-fuzzball",
+        "bat-b-cloak",
+        "bat-c-foxbat",
+        "ghost-a-swish",
+        "ghost-b-trail",
+        "lizardman-a-spear",
+        "lizardman-b-desert-blade",
+        "lizardman-c-croc",
+        "mimic",
+        "slime-a-cube-big",
+        "slime-a-cube-fire",
+        "slime-a-cube-small",
+        "slime-b-ooze-big",
+        "slime-b-ooze-fire",
+        "slime-b-ooze-small",
+        "slime-c-bubbles-big",
+        "slime-c-bubbles-fire",
+        "slime-c-bubbles-small",
+        "snowman-a-tophat",
+        "snowman-b-beanie",
+        "spider-a-hunter",
+        "spider-b-widow",
+        "spider-c-jumper",
+        "spider-d-momma",
+        "celestial-angel",
+        "celestial-cherub",
+        "dragonborn-dragonborn",
+        "fiend-demon",
+        "fiend-devil",
+        "fiend-fiend",
+        "fiend-imp",
+        "greenskin-goblin",
+        "greenskin-hobgoblin",
+        "greenskin-ogre",
+        "greenskin-orc-shaman",
+        "greenskin-orc",
+        "greenskin-troll",
+        "chest-closed",
+        "chest-locked",
+        "chest-open",
+        "door-open-boss",
+        "door-open-choice",
+        "door-open-elite",
+        "door-open-fight",
+        "door-open-fountain",
+        "door-open-hazard",
+        "door-open-treasure",
+        "door-open",
+        "door-shut",
+        "fountain-used",
+        "fountain",
+        "hazard-oil",
+        "obstacle-crates",
+        "obstacle-pillar",
+        "obstacle-rock",
+        "pedestal",
+        "trap-spikes-down",
+        "trap-spikes-up",
+        "props-scene",
+        "props-door-glows"
+      ],
+      "details": "Each item's text is the artist's note: what you asked for or what it is, a suggested move (only a proposal), and what's still weak.",
+      "items": [
+        {
+          "id": "banshee-a-wailer",
+          "label": "A Wailer",
+          "image": "../../../design/class-round4/enemies/renders/banshee-a-wailer.png",
+          "thumb": "../../../design/class-round4/enemies/renders/banshee-a-wailer-thumb.png",
+          "text": "A wailer (banshee-a-wailer.svg): a drowned-looking spirit woman: cold blue-white face, long lilac-silver hair that frames the face and streams behind into one long tail of hair (no legs), two hollow eyes with teal pinpoints and a wide-open wailing mouth, a dark-teal ragged shawl over the shoulders, pale hands reaching forward. Parts: back = the hair tail (sways), body, arm-l/arm-r = hands. B veiled (banshee-b-veiled.svg): keeps the Hollow's tall skull (the round-3 note), under a long black mourning veil that covers the dome and falls behind into a train, a pale ghost glow at the shoulders, glowing teal pinpoints in the deep sockets, bony hands with three finger bones. Parts: back = the veil train, body, arm-l/arm-r.\n\nSuggested move: Wail: a scream in a cone ahead that makes heroes flee for a moment (fear).\n\nStill weak: B may read as a reaper rather than a banshee;..."
+        },
+        {
+          "id": "banshee-b-veiled",
+          "label": "B Veiled",
+          "image": "../../../design/class-round4/enemies/renders/banshee-b-veiled.png",
+          "thumb": "../../../design/class-round4/enemies/renders/banshee-b-veiled-thumb.png",
+          "text": "B veiled (banshee-b-veiled.svg): keeps the Hollow's tall skull (the round-3 note), under a long black mourning veil that covers the dome and falls behind into a train, a pale ghost glow at the shoulders, glowing teal pinpoints in the deep sockets, bony hands with three finger bones. Parts: back = the veil train, body, arm-l/arm-r.\n\nSuggested move: Wail: a scream in a cone ahead that makes heroes flee for a moment (fear).\n\nStill weak: B may read as a reaper rather than a banshee; A's hair is close in value to the face."
+        },
+        {
+          "id": "bat-a-fuzzball",
+          "label": "A Fuzzball",
+          "image": "../../../design/class-round4/enemies/renders/bat-a-fuzzball.png",
+          "thumb": "../../../design/class-round4/enemies/renders/bat-a-fuzzball-thumb.png",
+          "text": "A fuzzball (bat-a-fuzzball.svg): a round ball of lilac fluff with huge pink-lined ears, small leathery wings held out to the sides, big glossy eyes, a pink nose, two fangs. Cute. B cloak (bat-b-cloak.svg): a sleek dark vampire bat with its long wings swept forward round its head like a cloak, plum wing webbing, red glowing eyes, fangs. Menacing; reads like Dracula's bat. C fox bat (bat-c-foxbat.svg): a brown fruit bat seen as an arrowhead: wings swept back in a V with scalloped trailing edges, an orange fur ruff, a fox-like head with a pointed snout leading. Parts (all three): arm-l/arm-r = the wings (pivot at the shoulders, before body; flap by swinging or squashing in x), body. All about 65-70% of the archer.\n\nSuggested move: Swoop: flies over obstacles straight at the back line, bites, and flutters away.\n\nStill weak: B's wing tips show small steps in the outline..."
+        },
+        {
+          "id": "bat-b-cloak",
+          "label": "B Cloak",
+          "image": "../../../design/class-round4/enemies/renders/bat-b-cloak.png",
+          "thumb": "../../../design/class-round4/enemies/renders/bat-b-cloak-thumb.png",
+          "text": "B cloak (bat-b-cloak.svg): a sleek dark vampire bat with its long wings swept forward round its head like a cloak, plum wing webbing, red glowing eyes, fangs. Menacing; reads like Dracula's bat. C fox bat (bat-c-foxbat.svg): a brown fruit bat seen as an arrowhead: wings swept back in a V with scalloped trailing edges, an orange fur ruff, a fox-like head with a pointed snout leading. Parts (all three): arm-l/arm-r = the wings (pivot at the shoulders, before body; flap by swinging or squashing in x), body. All about 65-70% of the archer.\n\nSuggested move: Swoop: flies over obstacles straight at the back line, bites, and flutters away.\n\nStill weak: B's wing tips show small steps in the outline at big size (the filter does that on sharp points); C's wings make the facing read from the snout only."
+        },
+        {
+          "id": "bat-c-foxbat",
+          "label": "C Foxbat",
+          "image": "../../../design/class-round4/enemies/renders/bat-c-foxbat.png",
+          "thumb": "../../../design/class-round4/enemies/renders/bat-c-foxbat-thumb.png",
+          "text": "C fox bat (bat-c-foxbat.svg): a brown fruit bat seen as an arrowhead: wings swept back in a V with scalloped trailing edges, an orange fur ruff, a fox-like head with a pointed snout leading. Parts (all three): arm-l/arm-r = the wings (pivot at the shoulders, before body; flap by swinging or squashing in x), body. All about 65-70% of the archer.\n\nSuggested move: Swoop: flies over obstacles straight at the back line, bites, and flutters away.\n\nStill weak: B's wing tips show small steps in the outline at big size (the filter does that on sharp points); C's wings make the facing read from the snout only."
+        },
+        {
+          "id": "ghost-a-swish",
+          "label": "A Swish",
+          "image": "../../../design/class-round4/enemies/renders/ghost-a-swish.png",
+          "thumb": "../../../design/class-round4/enemies/renders/ghost-a-swish-thumb.png",
+          "text": "A swish (ghost-a-swish.svg): the sheet flows straight back from the head into one long S-curve that ends in a small curl: wide at the head, tapering smoothly. B trail (ghost-b-trail.svg): the sheet tapers behind into a short stub and breaks up into three shrinking puffs, like smoke left behind as it drifts. Parts: arm-l/arm-r = the nubs, body = head and tail (sway the tail by skewing body).\n\nSuggested move: Phase: drifts through walls and can't be hit for a moment after it attacks."
+        },
+        {
+          "id": "ghost-b-trail",
+          "label": "B Trail",
+          "image": "../../../design/class-round4/enemies/renders/ghost-b-trail.png",
+          "thumb": "../../../design/class-round4/enemies/renders/ghost-b-trail-thumb.png",
+          "text": "B trail (ghost-b-trail.svg): the sheet tapers behind into a short stub and breaks up into three shrinking puffs, like smoke left behind as it drifts. Parts: arm-l/arm-r = the nubs, body = head and tail (sway the tail by skewing body).\n\nSuggested move: Phase: drifts through walls and can't be hit for a moment after it attacks."
+        },
+        {
+          "id": "lizardman-a-spear",
+          "label": "A Spear",
+          "image": "../../../design/class-round4/enemies/renders/lizardman-a-spear.png",
+          "thumb": "../../../design/class-round4/enemies/renders/lizardman-a-spear-thumb.png",
+          "text": "A spear (lizardman-a-spear.svg): the picked round-3 olive lizardman, redone to the hand rule: the fist is turned to the shaft (knuckles along it), shaft behind the shoulder, leaf spearhead forward. Orange spine crest, curled tail. B desert blade (lizardman-b-desert-blade.svg): a sand lizard: tan scales with brown blotches, a shorter rounder snout, big amber eyes on bumps, a red sash over the left shoulder, a thin banded tail. The scimitar now curves in, toward the centre line, with a gold guard. C croc (lizardman-c-croc.svg): a heavier swamp croc-man: dark moss hide, a broad flat snout with teeth poking out along both jaws, eyes on raised bumps, armour ridges down the back of the head, a thick spiked tail, a bone club behind the right shoulder and a turtle-shell shield in front (hand hidden). Parts: back = tail (pivot at its root), arm-r = weapon + fist (before..."
+        },
+        {
+          "id": "lizardman-b-desert-blade",
+          "label": "B Desert Blade",
+          "image": "../../../design/class-round4/enemies/renders/lizardman-b-desert-blade.png",
+          "thumb": "../../../design/class-round4/enemies/renders/lizardman-b-desert-blade-thumb.png",
+          "text": "B desert blade (lizardman-b-desert-blade.svg): a sand lizard: tan scales with brown blotches, a shorter rounder snout, big amber eyes on bumps, a red sash over the left shoulder, a thin banded tail. The scimitar now curves in, toward the centre line, with a gold guard. C croc (lizardman-c-croc.svg): a heavier swamp croc-man: dark moss hide, a broad flat snout with teeth poking out along both jaws, eyes on raised bumps, armour ridges down the back of the head, a thick spiked tail, a bone club behind the right shoulder and a turtle-shell shield in front (hand hidden). Parts: back = tail (pivot at its root), arm-r = weapon + fist (before body), body, arm-l = empty claw (or the shield for C).\n\nSuggested move: the designer's: Tail spin that throws upward 3 slow water projectiles (C could block with the shell instead).\n\nStill weak: the fists have no claws now (claws on a..."
+        },
+        {
+          "id": "lizardman-c-croc",
+          "label": "C Croc",
+          "image": "../../../design/class-round4/enemies/renders/lizardman-c-croc.png",
+          "thumb": "../../../design/class-round4/enemies/renders/lizardman-c-croc-thumb.png",
+          "text": "C croc (lizardman-c-croc.svg): a heavier swamp croc-man: dark moss hide, a broad flat snout with teeth poking out along both jaws, eyes on raised bumps, armour ridges down the back of the head, a thick spiked tail, a bone club behind the right shoulder and a turtle-shell shield in front (hand hidden). Parts: back = tail (pivot at its root), arm-r = weapon + fist (before body), body, arm-l = empty claw (or the shield for C).\n\nSuggested move: the designer's: Tail spin that throws upward 3 slow water projectiles (C could block with the shell instead).\n\nStill weak: the fists have no claws now (claws on a gripping fist looked like a comb); the empty left claw keeps them. A and C are both green; C is darker and browner but they're closest of the set."
+        },
+        {
+          "id": "mimic",
+          "label": "Mimic",
+          "image": "../../../design/class-round4/enemies/renders/mimic.png",
+          "thumb": "../../../design/class-round4/enemies/renders/mimic-thumb.png",
+          "text": "mimic.svg: now built from the game's own chest (rounded brown box, a gold band across the middle, a gold lock) so it looks like the real chest. The gold band is where it opens: the lid and box part along it into a wide mouth with gold lips, teeth on both lips and two yellow eyes glowing in the dark corners. The lock sits on the lid lip above the mouth. The tongue grows out of the back of the mouth (its root is inside the dark, drawn over it) and lolls forward over the front of the box. Parts: body = chest, mouth, teeth, eyes, lock; arm-r = the tongue (pivot at its root in the mouth; drawn after body so the root shows attached).\n\nSuggested move: Ambush: sits as a chest until a hero comes close, then lunges and grabs them with the tongue, pulling them in.\n\nStill weak: like any chest it reads as a rotated box in the diagonal facings. If the props artist changes the..."
+        },
+        {
+          "id": "slime-a-cube-big",
+          "label": "A Cube Big",
+          "image": "../../../design/class-round4/enemies/renders/slime-a-cube-big.png",
+          "thumb": "../../../design/class-round4/enemies/renders/slime-a-cube-big-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "slime-a-cube-fire",
+          "label": "A Cube Fire",
+          "image": "../../../design/class-round4/enemies/renders/slime-a-cube-fire.png",
+          "thumb": "../../../design/class-round4/enemies/renders/slime-a-cube-fire-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "slime-a-cube-small",
+          "label": "A Cube Small",
+          "image": "../../../design/class-round4/enemies/renders/slime-a-cube-small.png",
+          "thumb": "../../../design/class-round4/enemies/renders/slime-a-cube-small-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "slime-b-ooze-big",
+          "label": "B Ooze Big",
+          "image": "../../../design/class-round4/enemies/renders/slime-b-ooze-big.png",
+          "thumb": "../../../design/class-round4/enemies/renders/slime-b-ooze-big-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "slime-b-ooze-fire",
+          "label": "B Ooze Fire",
+          "image": "../../../design/class-round4/enemies/renders/slime-b-ooze-fire.png",
+          "thumb": "../../../design/class-round4/enemies/renders/slime-b-ooze-fire-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "slime-b-ooze-small",
+          "label": "B Ooze Small",
+          "image": "../../../design/class-round4/enemies/renders/slime-b-ooze-small.png",
+          "thumb": "../../../design/class-round4/enemies/renders/slime-b-ooze-small-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "slime-c-bubbles-big",
+          "label": "C Bubbles Big",
+          "image": "../../../design/class-round4/enemies/renders/slime-c-bubbles-big.png",
+          "thumb": "../../../design/class-round4/enemies/renders/slime-c-bubbles-big-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "slime-c-bubbles-fire",
+          "label": "C Bubbles Fire",
+          "image": "../../../design/class-round4/enemies/renders/slime-c-bubbles-fire.png",
+          "thumb": "../../../design/class-round4/enemies/renders/slime-c-bubbles-fire-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "slime-c-bubbles-small",
+          "label": "C Bubbles Small",
+          "image": "../../../design/class-round4/enemies/renders/slime-c-bubbles-small.png",
+          "thumb": "../../../design/class-round4/enemies/renders/slime-c-bubbles-small-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "snowman-a-tophat",
+          "label": "A Tophat",
+          "image": "../../../design/class-round4/enemies/renders/snowman-a-tophat.png",
+          "thumb": "../../../design/class-round4/enemies/renders/snowman-a-tophat-thumb.png",
+          "text": "A top hat (snowman-a-tophat.svg): a plain black top hat (brim and crown, no band), coal eyes, carrot nose, a red scarf showing round the neck with one end blowing back, stick arms with twig fingers, lumpy packed-snow edges. B beanie (snowman-b-beanie.svg): the same snowman in a blue knitted beanie with a white pompom. Parts: arm-l/arm-r = the stick arms (pivot where they go into the body, before body), body.\n\nSuggested move: Snowball: lobs a snowball that slows the hero it hits; melts (takes extra damage) from fire.\n\nStill weak: straight from above a snowman is circles inside circles; the scarf ring and carrot carry the read."
+        },
+        {
+          "id": "snowman-b-beanie",
+          "label": "B Beanie",
+          "image": "../../../design/class-round4/enemies/renders/snowman-b-beanie.png",
+          "thumb": "../../../design/class-round4/enemies/renders/snowman-b-beanie-thumb.png",
+          "text": "B beanie (snowman-b-beanie.svg): the same snowman in a blue knitted beanie with a white pompom. Parts: arm-l/arm-r = the stick arms (pivot where they go into the body, before body), body.\n\nSuggested move: Snowball: lobs a snowball that slows the hero it hits; melts (takes extra damage) from fire.\n\nStill weak: straight from above a snowman is circles inside circles; the scarf ring and carrot carry the read."
+        },
+        {
+          "id": "spider-a-hunter",
+          "label": "A Hunter",
+          "image": "../../../design/class-round4/enemies/renders/spider-a-hunter.png",
+          "thumb": "../../../design/class-round4/enemies/renders/spider-a-hunter-thumb.png",
+          "text": "A hunter (spider-a-hunter.svg): a chunky grey-brown wolf spider, oval abdomen with a dark leaf mark and pale spots, two big eyes and four small, stubby fangs, eight thick bent legs. ~85%. B widow (spider-b-widow.svg): a glossy black widow: big shiny round abdomen with a red hourglass, small head with red eyes, long arched legs. ~85% (long legs). C jumper (spider-c-jumper.svg): a fuzzy jumping spider: big square head with two huge glossy eyes, shiny teal fangs, black abdomen with white spots and an orange band, short thick legs. ~75%. The cutest of the three. D momma (spider-d-momma.svg): the big web-shooter, ~125%: a dusky plum spider with a huge abdomen carrying five spiderlings on her back, a white silk egg-sac at the back, two big red eyes and four small, long heavy legs with pale bands at the knees. Parts (all): arm-l/arm-r = the four legs on each side (pivot..."
+        },
+        {
+          "id": "spider-b-widow",
+          "label": "B Widow",
+          "image": "../../../design/class-round4/enemies/renders/spider-b-widow.png",
+          "thumb": "../../../design/class-round4/enemies/renders/spider-b-widow-thumb.png",
+          "text": "B widow (spider-b-widow.svg): a glossy black widow: big shiny round abdomen with a red hourglass, small head with red eyes, long arched legs. ~85% (long legs). C jumper (spider-c-jumper.svg): a fuzzy jumping spider: big square head with two huge glossy eyes, shiny teal fangs, black abdomen with white spots and an orange band, short thick legs. ~75%. The cutest of the three. D momma (spider-d-momma.svg): the big web-shooter, ~125%: a dusky plum spider with a huge abdomen carrying five spiderlings on her back, a white silk egg-sac at the back, two big red eyes and four small, long heavy legs with pale bands at the knees. Parts (all): arm-l/arm-r = the four legs on each side (pivot where they join; rock them in turn to walk; before body), body. Moves: the designer's: base spider bites with poison and leaves a slowing web when it dies; momma shoots a web cluster (short..."
+        },
+        {
+          "id": "spider-c-jumper",
+          "label": "C Jumper",
+          "image": "../../../design/class-round4/enemies/renders/spider-c-jumper.png",
+          "thumb": "../../../design/class-round4/enemies/renders/spider-c-jumper-thumb.png",
+          "text": "C jumper (spider-c-jumper.svg): a fuzzy jumping spider: big square head with two huge glossy eyes, shiny teal fangs, black abdomen with white spots and an orange band, short thick legs. ~75%. The cutest of the three. D momma (spider-d-momma.svg): the big web-shooter, ~125%: a dusky plum spider with a huge abdomen carrying five spiderlings on her back, a white silk egg-sac at the back, two big red eyes and four small, long heavy legs with pale bands at the knees. Parts (all): arm-l/arm-r = the four legs on each side (pivot where they join; rock them in turn to walk; before body), body. Moves: the designer's: base spider bites with poison and leaves a slowing web when it dies; momma shoots a web cluster (short range): entangles a unit for a second on a hit, a slowing web on the ground on a miss.\n\nStill weak: at 40px the legs make every spider busy (partly the point). B..."
+        },
+        {
+          "id": "spider-d-momma",
+          "label": "D Momma",
+          "image": "../../../design/class-round4/enemies/renders/spider-d-momma.png",
+          "thumb": "../../../design/class-round4/enemies/renders/spider-d-momma-thumb.png",
+          "text": "D momma (spider-d-momma.svg): the big web-shooter, ~125%: a dusky plum spider with a huge abdomen carrying five spiderlings on her back, a white silk egg-sac at the back, two big red eyes and four small, long heavy legs with pale bands at the knees. Parts (all): arm-l/arm-r = the four legs on each side (pivot where they join; rock them in turn to walk; before body), body. Moves: the designer's: base spider bites with poison and leaves a slowing web when it dies; momma shoots a web cluster (short range): entangles a unit for a second on a hit, a slowing web on the ground on a miss.\n\nStill weak: at 40px the legs make every spider busy (partly the point). B is close to the outline colour, so it reads mostly by its red hourglass."
+        },
+        {
+          "id": "celestial-angel",
+          "label": "Angel",
+          "image": "../../../design/class-round4/monsters/renders/celestial-angel.png",
+          "thumb": "../../../design/class-round4/monsters/renders/celestial-angel-thumb.png",
+          "text": "celestial-angel.svg, archer-sized. Big white feathered wings spread out behind, a gold halo ring over brown hair (brown so the gold ring stands out), white robe shoulders with a gold collar, a gold spear. Person-style: no eyes, the small mouth curve. Parts: back (wings), arm-r (spear), body, arm-l (empty hand).\n\nMove: Smite: a beam of light down on one target, or as an ally a burst that heals everyone nearby."
+        },
+        {
+          "id": "celestial-cherub",
+          "label": "Cherub",
+          "image": "../../../design/class-round4/monsters/renders/celestial-cherub.png",
+          "thumb": "../../../design/class-round4/monsters/renders/celestial-cherub-thumb.png",
+          "text": "celestial-cherub.svg, about 60%. A chubby baby with round blond curls, rosy skin, little round white wings, a small gold bow with a heart-tipped arrow held in front. No eyes, the small mouth curve. Parts: back (wings), body, arm-r (the drawing hand), arm-l (bow + bow hand, in front, like the archer's bow).\n\nMove: Love arrow: a heart arrow that charms a target into fighting for the cherub's side for a few seconds."
+        },
+        {
+          "id": "dragonborn-dragonborn",
+          "label": "Dragonborn",
+          "image": "../../../design/class-round4/monsters/renders/dragonborn-dragonborn.png",
+          "thumb": "../../../design/class-round4/monsters/renders/dragonborn-dragonborn-thumb.png",
+          "text": "dragonborn-dragonborn.svg, about 115%. A dragon-flavoured lizardman: sapphire-blue scales (not the lizardman's olive), a broad snout, two big ivory horns swept back off the brow, teal frill fans on the cheeks, small folded wings behind, bronze pauldrons, yellow slit eyes, a falchion. Parts: back (wings), arm-r (falchion + claw), body, arm-l (empty claw).\n\nMove: Breath: a short cone of fire breath ahead after a wind-up (the frills flare)."
+        },
+        {
+          "id": "fiend-demon",
+          "label": "Demon",
+          "image": "../../../design/class-round4/monsters/renders/fiend-demon.png",
+          "thumb": "../../../design/class-round4/monsters/renders/fiend-demon-thumb.png",
+          "text": "fiend-demon.svg, about 115%. A hulking dark violet brute with two huge horns sweeping back, a crest of fire on the head, glowing orange eyes and two huge burning fists (no weapon). Parts: back (the head fire, can flicker), body, arm-l/arm-r (the burning fists, pivot at the shoulders).\n\nMove: Hellfire slam: both fists into the ground, a ring of fire that burns for a few seconds."
+        },
+        {
+          "id": "fiend-devil",
+          "label": "Devil",
+          "image": "../../../design/class-round4/monsters/renders/fiend-devil.png",
+          "thumb": "../../../design/class-round4/monsters/renders/fiend-devil-thumb.png",
+          "text": "fiend-devil.svg, archer-sized. The classic devil: scarlet, bald, two short dark horns, pointed ears, a black pointed goatee, yellow eyes, darker red shoulders, a long tail with an arrowhead tip, a gold trident. Parts: back (tail, pivot at its root), arm-r (trident), body, arm-l.\n\nMove: Pitchfork toss: throws the trident in a line, pinning the first hero hit in place for a second."
+        },
+        {
+          "id": "fiend-fiend",
+          "label": "Fiend",
+          "image": "../../../design/class-round4/monsters/renders/fiend-fiend.png",
+          "thumb": "../../../design/class-round4/monsters/renders/fiend-fiend-thumb.png",
+          "text": "fiend-fiend.svg, the beast: a four-legged hellhound shape, dark maroon hide, a row of bone spikes down the spine, two bone horns swept back off the brow, glowing green eyes, fangs, a barbed tail. Parts: back (tail), body (hind legs, torso, head), arm-l/arm-r = the front legs (pivot at the shoulders, for swipes).\n\nMove: Pounce: leaps onto a far hero and pins them, mauling until hit."
+        },
+        {
+          "id": "fiend-imp",
+          "label": "Imp",
+          "image": "../../../design/class-round4/monsters/renders/fiend-imp.png",
+          "thumb": "../../../design/class-round4/monsters/renders/fiend-imp-thumb.png",
+          "text": "fiend-imp.svg, about 60%. All head: orange-red, two little dark horns swept back, pointed ears, big yellow slit eyes, wide bat wings, a thin tail with a dark spade tip, a fireball in its right claw. Parts: back (tail + wings; flap by squashing in x), arm-r (fireball claw), body, arm-l.\n\nMove: Fire spit: flits about at range throwing small fireballs; blinks away when hit."
+        },
+        {
+          "id": "greenskin-goblin",
+          "label": "Goblin",
+          "image": "../../../design/class-round4/monsters/renders/greenskin-goblin.png",
+          "thumb": "../../../design/class-round4/monsters/renders/greenskin-goblin-thumb.png",
+          "text": "greenskin-goblin.svg, about 70%. Bright lime-yellow skin, huge sideways ears, a long nose, big yellow eyes with red pupils, a brown rag tunic, a rusty dagger. Parts: arm-r (dagger), body, arm-l (empty claw).\n\nMove: Backstab dash: darts behind its target and stabs, then scurries off."
+        },
+        {
+          "id": "greenskin-hobgoblin",
+          "label": "Hobgoblin",
+          "image": "../../../design/class-round4/monsters/renders/greenskin-hobgoblin.png",
+          "thumb": "../../../design/class-round4/monsters/renders/greenskin-hobgoblin-thumb.png",
+          "text": "greenskin-hobgoblin.svg, archer-sized. A soldier: dull olive-khaki skin, an iron cap with a red crest, ears swept back, red leather shoulders, a short sword, a red square shield with a gold boss. Parts: arm-r (sword), body, arm-l (shield in front, hand hidden).\n\nMove: Shield wall: raises the shield and blocks shots from the front for a few seconds; nearby goblins hide behind it."
+        },
+        {
+          "id": "greenskin-ogre",
+          "label": "Ogre",
+          "image": "../../../design/class-round4/monsters/renders/greenskin-ogre.png",
+          "thumb": "../../../design/class-round4/monsters/renders/greenskin-ogre-thumb.png",
+          "text": "greenskin-ogre.svg, the biggest (fills the box). Pale grey-sage skin, a huge round back and a big belly bulging in front, a small bald head with a black topknot, two little teeth, a leather strap across the belly, a big studded club. Parts: arm-r (club), body, arm-l (empty fist).\n\nMove: Belly slam: drops forward onto the ground, knocking back and stunning everyone in a short cone."
+        },
+        {
+          "id": "greenskin-orc-shaman",
+          "label": "Orc Shaman",
+          "image": "../../../design/class-round4/monsters/renders/greenskin-orc-shaman.png",
+          "thumb": "../../../design/class-round4/monsters/renders/greenskin-orc-shaman-thumb.png",
+          "text": "greenskin-orc-shaman.svg, about 110% (the second orc). Darker moss-green skin, a bleached beast skull worn as a helm with two horns, a grey wolf-fur mantle, small tusks, a gnarled staff with a little skull in green fire. Parts: arm-r (staff), body, arm-l (empty hand).\n\nMove: Green fire hex: lobs a green fireball that leaves a burning patch, or heals the orcs standing in it."
+        },
+        {
+          "id": "greenskin-orc",
+          "label": "Orc",
+          "image": "../../../design/class-round4/monsters/renders/greenskin-orc.png",
+          "thumb": "../../../design/class-round4/monsters/renders/greenskin-orc-thumb.png",
+          "text": "greenskin-orc.svg, about 115%. Grass-green skin, a wide head with a heavy underbite and two big tusks, pointed ears, a black mohawk, a brown leather vest with a strap, one spiked iron pauldron, a jagged chopper. Parts: arm-r (chopper), body, arm-l (empty fist).\n\nMove: War cry: roars, and orcs and goblins nearby attack faster for a short time."
+        },
+        {
+          "id": "greenskin-troll",
+          "label": "Troll",
+          "image": "../../../design/class-round4/monsters/renders/greenskin-troll.png",
+          "thumb": "../../../design/class-round4/monsters/renders/greenskin-troll-thumb.png",
+          "text": "greenskin-troll.svg, about 130%. Sea-green/teal skin, hunched: a small head low and forward with a big round nose and little tusks at the jaw corners, a shaggy dark mane over the back, very long arms reaching forward with big three-clawed hands. No weapon. Parts: body, arm-l/arm-r = the long arms (pivot at the shoulders, drawn over the body).\n\nMove: Regrow: heals over time unless it was burned recently; long-arm swipes hit two targets."
+        },
+        {
+          "id": "chest-closed",
+          "label": "Closed",
+          "image": "../../../design/class-round4/props/renders/chest-closed.png",
+          "thumb": "../../../design/class-round4/props/renders/chest-closed-thumb.png",
+          "text": "| chest-closed.svg | free chest: domed planked lid, gold bands, gold hasp, lid lip over the front | 49 wide x 46 deep | | chest-locked.svg | keyed chest: darker wood, studded iron bands, big brass padlock (key colour) | 49 wide x 46 deep | | chest-open.svg | lid up behind, box of gold coins and a ruby; #glow (warm light, 3 sparkles) has no outline | 49 wide x 57 deep (the raised lid adds 11 at the back) | | door-shut.svg | stone arch with a keystone, doorstep, planked double door, iron straps, ring handles | 112 across, the wall band 26, the arch rises ~20 past it | | door-open.svg | the way in: leaves swung back, dark passage, no glow | as above | | door-open-<kind>.svg | the passage lit in the room's colour; #spill (no outline) throws light ~70 room units onto the floor | as above; spill reaches ~70 into the room | | fountain.svg | lobed stone basin, blue water and..."
+        },
+        {
+          "id": "chest-locked",
+          "label": "Locked",
+          "image": "../../../design/class-round4/props/renders/chest-locked.png",
+          "thumb": "../../../design/class-round4/props/renders/chest-locked-thumb.png",
+          "text": "| chest-locked.svg | keyed chest: darker wood, studded iron bands, big brass padlock (key colour) | 49 wide x 46 deep | | chest-open.svg | lid up behind, box of gold coins and a ruby; #glow (warm light, 3 sparkles) has no outline | 49 wide x 57 deep (the raised lid adds 11 at the back) | | door-shut.svg | stone arch with a keystone, doorstep, planked double door, iron straps, ring handles | 112 across, the wall band 26, the arch rises ~20 past it | | door-open.svg | the way in: leaves swung back, dark passage, no glow | as above | | door-open-<kind>.svg | the passage lit in the room's colour; #spill (no outline) throws light ~70 room units onto the floor | as above; spill reaches ~70 into the room | | fountain.svg | lobed stone basin, blue water and ripples, a splashing spout | r 38 (the game's collider) | | fountain-used.svg | the same with the water low and grey,..."
+        },
+        {
+          "id": "chest-open",
+          "label": "Open",
+          "image": "../../../design/class-round4/props/renders/chest-open.png",
+          "thumb": "../../../design/class-round4/props/renders/chest-open-thumb.png",
+          "text": "| chest-open.svg | lid up behind, box of gold coins and a ruby; #glow (warm light, 3 sparkles) has no outline | 49 wide x 57 deep (the raised lid adds 11 at the back) | | door-shut.svg | stone arch with a keystone, doorstep, planked double door, iron straps, ring handles | 112 across, the wall band 26, the arch rises ~20 past it | | door-open.svg | the way in: leaves swung back, dark passage, no glow | as above | | door-open-<kind>.svg | the passage lit in the room's colour; #spill (no outline) throws light ~70 room units onto the floor | as above; spill reaches ~70 into the room | | fountain.svg | lobed stone basin, blue water and ripples, a splashing spout | r 38 (the game's collider) | | fountain-used.svg | the same with the water low and grey, the spout dry | r 38 | | pedestal.svg | short round plinth, a violet cushion with gold trim; the reward floats over the..."
+        },
+        {
+          "id": "door-open-boss",
+          "label": "Open Boss",
+          "image": "../../../design/class-round4/props/renders/door-open-boss.png",
+          "thumb": "../../../design/class-round4/props/renders/door-open-boss-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "door-open-choice",
+          "label": "Open Choice",
+          "image": "../../../design/class-round4/props/renders/door-open-choice.png",
+          "thumb": "../../../design/class-round4/props/renders/door-open-choice-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "door-open-elite",
+          "label": "Open Elite",
+          "image": "../../../design/class-round4/props/renders/door-open-elite.png",
+          "thumb": "../../../design/class-round4/props/renders/door-open-elite-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "door-open-fight",
+          "label": "Open Fight",
+          "image": "../../../design/class-round4/props/renders/door-open-fight.png",
+          "thumb": "../../../design/class-round4/props/renders/door-open-fight-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "door-open-fountain",
+          "label": "Open Fountain",
+          "image": "../../../design/class-round4/props/renders/door-open-fountain.png",
+          "thumb": "../../../design/class-round4/props/renders/door-open-fountain-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "door-open-hazard",
+          "label": "Open Hazard",
+          "image": "../../../design/class-round4/props/renders/door-open-hazard.png",
+          "thumb": "../../../design/class-round4/props/renders/door-open-hazard-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "door-open-treasure",
+          "label": "Open Treasure",
+          "image": "../../../design/class-round4/props/renders/door-open-treasure.png",
+          "thumb": "../../../design/class-round4/props/renders/door-open-treasure-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "door-open",
+          "label": "Open",
+          "image": "../../../design/class-round4/props/renders/door-open.png",
+          "thumb": "../../../design/class-round4/props/renders/door-open-thumb.png",
+          "text": "| door-open.svg | the way in: leaves swung back, dark passage, no glow | as above | | door-open-<kind>.svg | the passage lit in the room's colour; #spill (no outline) throws light ~70 room units onto the floor | as above; spill reaches ~70 into the room | | fountain.svg | lobed stone basin, blue water and ripples, a splashing spout | r 38 (the game's collider) | | fountain-used.svg | the same with the water low and grey, the spout dry | r 38 | | pedestal.svg | short round plinth, a violet cushion with gold trim; the reward floats over the cushion centre (SVG 100,77) | 40 wide |"
+        },
+        {
+          "id": "door-shut",
+          "label": "Shut",
+          "image": "../../../design/class-round4/props/renders/door-shut.png",
+          "thumb": "../../../design/class-round4/props/renders/door-shut-thumb.png",
+          "text": "| door-shut.svg | stone arch with a keystone, doorstep, planked double door, iron straps, ring handles | 112 across, the wall band 26, the arch rises ~20 past it | | door-open.svg | the way in: leaves swung back, dark passage, no glow | as above | | door-open-<kind>.svg | the passage lit in the room's colour; #spill (no outline) throws light ~70 room units onto the floor | as above; spill reaches ~70 into the room | | fountain.svg | lobed stone basin, blue water and ripples, a splashing spout | r 38 (the game's collider) | | fountain-used.svg | the same with the water low and grey, the spout dry | r 38 | | pedestal.svg | short round plinth, a violet cushion with gold trim; the reward floats over the cushion centre (SVG 100,77) | 40 wide |"
+        },
+        {
+          "id": "fountain-used",
+          "label": "Used",
+          "image": "../../../design/class-round4/props/renders/fountain-used.png",
+          "thumb": "../../../design/class-round4/props/renders/fountain-used-thumb.png",
+          "text": "| fountain-used.svg | the same with the water low and grey, the spout dry | r 38 | | pedestal.svg | short round plinth, a violet cushion with gold trim; the reward floats over the cushion centre (SVG 100,77) | 40 wide |"
+        },
+        {
+          "id": "fountain",
+          "label": "Fountain",
+          "image": "../../../design/class-round4/props/renders/fountain.png",
+          "thumb": "../../../design/class-round4/props/renders/fountain-thumb.png",
+          "text": "| fountain.svg | lobed stone basin, blue water and ripples, a splashing spout | r 38 (the game's collider) | | fountain-used.svg | the same with the water low and grey, the spout dry | r 38 | | pedestal.svg | short round plinth, a violet cushion with gold trim; the reward floats over the cushion centre (SVG 100,77) | 40 wide |"
+        },
+        {
+          "id": "hazard-oil",
+          "label": "Oil",
+          "image": "../../../design/class-round4/props/renders/hazard-oil.png",
+          "thumb": "../../../design/class-round4/props/renders/hazard-oil-thumb.png",
+          "text": "| hazard-oil.svg | flat lobed oil splat, lighter shallow rim, rainbow sheen, wet highlights, drips | drawn at r 38 across, 28 front to back; scale by r/38 (range 34-52) | | chest-closed.svg | free chest: domed planked lid, gold bands, gold hasp, lid lip over the front | 49 wide x 46 deep | | chest-locked.svg | keyed chest: darker wood, studded iron bands, big brass padlock (key colour) | 49 wide x 46 deep | | chest-open.svg | lid up behind, box of gold coins and a ruby; #glow (warm light, 3 sparkles) has no outline | 49 wide x 57 deep (the raised lid adds 11 at the back) | | door-shut.svg | stone arch with a keystone, doorstep, planked double door, iron straps, ring handles | 112 across, the wall band 26, the arch rises ~20 past it | | door-open.svg | the way in: leaves swung back, dark passage, no glow | as above | | door-open-<kind>.svg | the passage lit in the..."
+        },
+        {
+          "id": "obstacle-crates",
+          "label": "Crates",
+          "image": "../../../design/class-round4/props/renders/obstacle-crates.png",
+          "thumb": "../../../design/class-round4/props/renders/obstacle-crates-thumb.png",
+          "text": "| obstacle-crates.svg | big crate, small crate stacked on it, barrel beside | drawn at r 30; scale by r/30 | | trap-spikes-down.svg | square iron plate, 3x3 holes with the tips just showing | plate 49 square, for r 30; scale by r/30 (range 24-34) | | trap-spikes-up.svg | the same plate, nine steel spikes up | as above | | hazard-oil.svg | flat lobed oil splat, lighter shallow rim, rainbow sheen, wet highlights, drips | drawn at r 38 across, 28 front to back; scale by r/38 (range 34-52) | | chest-closed.svg | free chest: domed planked lid, gold bands, gold hasp, lid lip over the front | 49 wide x 46 deep | | chest-locked.svg | keyed chest: darker wood, studded iron bands, big brass padlock (key colour) | 49 wide x 46 deep | | chest-open.svg | lid up behind, box of gold coins and a ruby; #glow (warm light, 3 sparkles) has no outline | 49 wide x 57 deep (the raised lid..."
+        },
+        {
+          "id": "obstacle-pillar",
+          "label": "Pillar",
+          "image": "../../../design/class-round4/props/renders/obstacle-pillar.png",
+          "thumb": "../../../design/class-round4/props/renders/obstacle-pillar-thumb.png",
+          "text": "| obstacle-pillar.svg | fluted column on a square plinth, top snapped off, a fallen drum, rubble | drawn at r 30 (corners/drum reach ~36); scale by r/30 | | obstacle-crates.svg | big crate, small crate stacked on it, barrel beside | drawn at r 30; scale by r/30 | | trap-spikes-down.svg | square iron plate, 3x3 holes with the tips just showing | plate 49 square, for r 30; scale by r/30 (range 24-34) | | trap-spikes-up.svg | the same plate, nine steel spikes up | as above | | hazard-oil.svg | flat lobed oil splat, lighter shallow rim, rainbow sheen, wet highlights, drips | drawn at r 38 across, 28 front to back; scale by r/38 (range 34-52) | | chest-closed.svg | free chest: domed planked lid, gold bands, gold hasp, lid lip over the front | 49 wide x 46 deep | | chest-locked.svg | keyed chest: darker wood, studded iron bands, big brass padlock (key colour) | 49 wide x..."
+        },
+        {
+          "id": "obstacle-rock",
+          "label": "Rock",
+          "image": "../../../design/class-round4/props/renders/obstacle-rock.png",
+          "thumb": "../../../design/class-round4/props/renders/obstacle-rock-thumb.png",
+          "text": "| obstacle-rock.svg | low-poly boulder, lit top facet, dark underside, two pebbles | drawn at r 30; scale by r/30 (range 22-36) | | obstacle-pillar.svg | fluted column on a square plinth, top snapped off, a fallen drum, rubble | drawn at r 30 (corners/drum reach ~36); scale by r/30 | | obstacle-crates.svg | big crate, small crate stacked on it, barrel beside | drawn at r 30; scale by r/30 | | trap-spikes-down.svg | square iron plate, 3x3 holes with the tips just showing | plate 49 square, for r 30; scale by r/30 (range 24-34) | | trap-spikes-up.svg | the same plate, nine steel spikes up | as above | | hazard-oil.svg | flat lobed oil splat, lighter shallow rim, rainbow sheen, wet highlights, drips | drawn at r 38 across, 28 front to back; scale by r/38 (range 34-52) | | chest-closed.svg | free chest: domed planked lid, gold bands, gold hasp, lid lip over the front |..."
+        },
+        {
+          "id": "pedestal",
+          "label": "Pedestal",
+          "image": "../../../design/class-round4/props/renders/pedestal.png",
+          "thumb": "../../../design/class-round4/props/renders/pedestal-thumb.png",
+          "text": "| pedestal.svg | short round plinth, a violet cushion with gold trim; the reward floats over the cushion centre (SVG 100,77) | 40 wide |"
+        },
+        {
+          "id": "trap-spikes-down",
+          "label": "Spikes Down",
+          "image": "../../../design/class-round4/props/renders/trap-spikes-down.png",
+          "thumb": "../../../design/class-round4/props/renders/trap-spikes-down-thumb.png",
+          "text": "| trap-spikes-down.svg | square iron plate, 3x3 holes with the tips just showing | plate 49 square, for r 30; scale by r/30 (range 24-34) | | trap-spikes-up.svg | the same plate, nine steel spikes up | as above | | hazard-oil.svg | flat lobed oil splat, lighter shallow rim, rainbow sheen, wet highlights, drips | drawn at r 38 across, 28 front to back; scale by r/38 (range 34-52) | | chest-closed.svg | free chest: domed planked lid, gold bands, gold hasp, lid lip over the front | 49 wide x 46 deep | | chest-locked.svg | keyed chest: darker wood, studded iron bands, big brass padlock (key colour) | 49 wide x 46 deep | | chest-open.svg | lid up behind, box of gold coins and a ruby; #glow (warm light, 3 sparkles) has no outline | 49 wide x 57 deep (the raised lid adds 11 at the back) | | door-shut.svg | stone arch with a keystone, doorstep, planked double door, iron..."
+        },
+        {
+          "id": "trap-spikes-up",
+          "label": "Spikes Up",
+          "image": "../../../design/class-round4/props/renders/trap-spikes-up.png",
+          "thumb": "../../../design/class-round4/props/renders/trap-spikes-up-thumb.png",
+          "text": "| trap-spikes-up.svg | the same plate, nine steel spikes up | as above | | hazard-oil.svg | flat lobed oil splat, lighter shallow rim, rainbow sheen, wet highlights, drips | drawn at r 38 across, 28 front to back; scale by r/38 (range 34-52) | | chest-closed.svg | free chest: domed planked lid, gold bands, gold hasp, lid lip over the front | 49 wide x 46 deep | | chest-locked.svg | keyed chest: darker wood, studded iron bands, big brass padlock (key colour) | 49 wide x 46 deep | | chest-open.svg | lid up behind, box of gold coins and a ruby; #glow (warm light, 3 sparkles) has no outline | 49 wide x 57 deep (the raised lid adds 11 at the back) | | door-shut.svg | stone arch with a keystone, doorstep, planked double door, iron straps, ring handles | 112 across, the wall band 26, the arch rises ~20 past it | | door-open.svg | the way in: leaves swung back, dark passage,..."
+        },
+        {
+          "id": "props-scene",
+          "label": "Props in a room",
+          "image": "../../../design/class-round4/props/renders/scene.png",
+          "text": "Every prop at true size on the floor, with four doors in the wall and the archer for scale."
+        },
+        {
+          "id": "props-door-glows",
+          "label": "All the door states",
+          "image": "../../../design/class-round4/props/renders/door-glows.png",
+          "text": "Shut, open (the way in), and the glow for each kind of room behind a door."
+        }
+      ]
+    }
+  ]
+}

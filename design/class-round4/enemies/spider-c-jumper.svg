@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- SPIDER C "jumper" (round 4): a fuzzy jumping spider. A big square-ish head at the front with two huge glossy eyes, shiny teal fangs, a black abdomen with white spots and an orange band, short thick legs (the front pair raised and bigger). About 75% of the archer. Parts: #arm-l, #arm-r = the legs, #body = abdomen, head, eyes, fangs. Facing = DOWN (+y). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<linearGradient id="g1" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#5A505A"/><stop offset="1" stop-color="#241E26"/></linearGradient>
+<path id="p2" d="M81.8 123.8 C78.9 122 72 126.6 67 128.4 C61.9 130.2 50.8 131.8 48.1 135.8 C45.5 139.7 48.9 150 49.4 154.9 C50 159.9 49.9 167 52.1 168.8 C54.2 170.7 62.4 169.5 63.9 167.2 C65.5 164.8 63.2 156.5 62.6 153.1 C61.9 149.6 58.6 145.7 59.9 144.2 C61.1 142.8 67.1 144.2 71 143.6 C75 143 84.6 143.2 86.2 140.2 C87.8 137.2 84.7 125.6 81.8 123.8 Z"/>
+<clipPath id="c3"><use href="#p2"/></clipPath>
+<linearGradient id="g4" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.2"/></linearGradient>
+<path id="p5" d="M81.3 115.6 C79.4 113.3 71.1 113.8 66.2 113.1 C61.2 112.4 52.4 109.3 48.3 110.8 C44.2 112.3 41.3 119.7 38.9 123.1 C36.5 126.5 32.2 131.1 32.3 133.4 C32.4 135.7 37.5 139.3 39.7 138.6 C41.9 137.9 45.3 131.5 47.1 128.9 C48.9 126.3 49.2 121.8 51.7 121.2 C54.2 120.6 59.8 123.8 63.8 124.9 C67.9 126 76.1 129.8 78.7 128.4 C81.3 127 83.2 117.9 81.3 115.6 Z"/>
+<clipPath id="c6"><use href="#p5"/></clipPath>
+<path id="p7" d="M82.7 106.1 C81.3 103.4 72.1 101.5 67.5 99.6 C63 97.6 56 94.7 52.5 93.1 C49.1 91.5 47.1 90.1 44.6 88.8 C42.2 87.4 38.3 83.7 36.4 84.2 C34.4 84.6 31.2 89.9 31.6 91.8 C32.1 93.8 37 95.6 39.4 97.2 C41.7 98.9 44 100.9 47.5 102.9 C50.9 104.9 58 108.2 62.5 110.4 C66.9 112.7 74.2 118.5 77.3 117.9 C80.3 117.2 84.2 108.9 82.7 106.1 Z"/>
+<clipPath id="c8"><use href="#p7"/></clipPath>
+<path id="p9" d="M90.4 95.2 C89.9 92.2 81.6 87.6 78.1 84.6 C74.5 81.5 68.8 77.7 66.4 74.8 C64.1 71.9 63.9 68.3 62.7 65.3 C61.5 62.2 60.2 55.6 58.2 54.5 C56.3 53.3 50.5 55.4 49.8 57.5 C49 59.7 52.1 65.2 53.3 68.7 C54.5 72.3 55.1 77.5 57.6 81.2 C60 84.9 66.3 89.9 69.9 93.4 C73.6 97 78.5 104.5 81.6 104.8 C84.7 105.1 90.9 98.2 90.4 95.2 Z"/>
+<clipPath id="c10"><use href="#p9"/></clipPath>
+<path id="p11" d="M113.8 140.2 C115.4 143.2 125 143 129 143.6 C132.9 144.2 138.9 142.8 140.1 144.2 C141.4 145.7 138.1 149.6 137.4 153.1 C136.8 156.5 134.5 164.8 136.1 167.2 C137.6 169.5 145.8 170.7 147.9 168.8 C150.1 167 150 159.9 150.6 154.9 C151.1 150 154.5 139.7 151.9 135.8 C149.2 131.8 138.1 130.2 133 128.4 C128 126.6 121.1 122 118.2 123.8 C115.3 125.6 112.2 137.2 113.8 140.2 Z"/>
+<clipPath id="c12"><use href="#p11"/></clipPath>
+<path id="p13" d="M121.3 128.4 C123.9 129.8 132.1 126 136.2 124.9 C140.2 123.8 145.8 120.6 148.3 121.2 C150.8 121.8 151.1 126.3 152.9 128.9 C154.7 131.5 158.1 137.9 160.3 138.6 C162.5 139.3 167.6 135.7 167.7 133.4 C167.8 131.1 163.5 126.5 161.1 123.1 C158.7 119.7 155.8 112.3 151.7 110.8 C147.6 109.3 138.8 112.4 133.8 113.1 C128.9 113.8 120.6 113.3 118.7 115.6 C116.8 117.9 118.7 127 121.3 128.4 Z"/>
+<clipPath id="c14"><use href="#p13"/></clipPath>
+<path id="p15" d="M122.7 117.9 C125.8 118.5 133.1 112.7 137.5 110.4 C142 108.2 149.1 104.9 152.5 102.9 C156 100.9 158.3 98.9 160.6 97.2 C163 95.6 167.9 93.8 168.4 91.8 C168.8 89.9 165.6 84.6 163.6 84.2 C161.7 83.7 157.8 87.4 155.4 88.8 C152.9 90.1 150.9 91.5 147.5 93.1 C144 94.7 137 97.6 132.5 99.6 C127.9 101.5 118.7 103.4 117.3 106.1 C115.8 108.9 119.7 117.2 122.7 117.9 Z"/>
+<clipPath id="c16"><use href="#p15"/></clipPath>
+<path id="p17" d="M118.4 104.8 C121.5 104.5 126.4 97 130.1 93.4 C133.7 89.9 140 84.9 142.4 81.2 C144.9 77.5 145.5 72.3 146.7 68.7 C147.9 65.2 151 59.7 150.2 57.5 C149.5 55.4 143.7 53.3 141.8 54.5 C139.8 55.6 138.5 62.2 137.3 65.3 C136.1 68.3 135.9 71.9 133.6 74.8 C131.2 77.7 125.5 81.5 121.9 84.6 C118.4 87.6 110.1 92.2 109.6 95.2 C109.1 98.2 115.3 105.1 118.4 104.8 Z"/>
+<clipPath id="c18"><use href="#p17"/></clipPath>
+<linearGradient id="g19" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#4A4048"/><stop offset="1" stop-color="#1E1A20"/></linearGradient>
+<path id="p20" d="M70 72 A30 34 0 1 0 130 72 A30 34 0 1 0 70 72 Z"/>
+<clipPath id="c21"><use href="#p20"/></clipPath>
+<linearGradient id="g22" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.3"/></linearGradient>
+<linearGradient id="g23" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#5A505A"/><stop offset="1" stop-color="#2A2430"/></linearGradient>
+<path id="p24" d="M90 101 H110 A22 22 0 0 1 132 123 V129 A22 22 0 0 1 110 151 H90 A22 22 0 0 1 68 129 V123 A22 22 0 0 1 90 101 Z"/>
+<clipPath id="c25"><use href="#p2"/><use href="#p5"/><use href="#p7"/><use href="#p9"/><use href="#p11"/><use href="#p13"/><use href="#p15"/><use href="#p17"/><use href="#p20"/></clipPath>
+<clipPath id="c26"><use href="#p24"/></clipPath>
+<radialGradient id="g27" cx="0.32" cy="0.28" r="0.55"><stop offset="0" stop-color="#FFFFF4" stop-opacity="0.25"/><stop offset="1" stop-color="#FFFFF4" stop-opacity="0"/></radialGradient>
+<linearGradient id="g28" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#7AE0D0"/><stop offset="1" stop-color="#2A8A90"/></linearGradient>
+<path id="p29" d="M83 154 A8 9 0 1 0 99 154 A8 9 0 1 0 83 154 Z M101 154 A8 9 0 1 0 117 154 A8 9 0 1 0 101 154 Z"/>
+<clipPath id="c30"><use href="#p2"/><use href="#p5"/><use href="#p7"/><use href="#p9"/><use href="#p11"/><use href="#p13"/><use href="#p15"/><use href="#p17"/><use href="#p20"/><use href="#p24"/></clipPath>
+<clipPath id="c31"><use href="#p29"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-l" data-pivot="82 118"><g>
+<use href="#p2" fill="url(#g1)"/>
+<g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>
+<use href="#p5" fill="url(#g1)"/>
+<g clip-path="url(#c6)"><use href="#p5" fill="url(#g4)"/></g>
+<use href="#p7" fill="url(#g1)"/>
+<g clip-path="url(#c8)"><use href="#p7" fill="url(#g4)"/></g>
+<use href="#p9" fill="url(#g1)"/>
+<g clip-path="url(#c10)"><use href="#p9" fill="url(#g4)"/></g>
+</g></g>
+<g id="arm-r" data-pivot="118 118"><g>
+<use href="#p11" fill="url(#g1)"/>
+<g clip-path="url(#c12)"><use href="#p11" fill="url(#g4)"/></g>
+<use href="#p13" fill="url(#g1)"/>
+<g clip-path="url(#c14)"><use href="#p13" fill="url(#g4)"/></g>
+<use href="#p15" fill="url(#g1)"/>
+<g clip-path="url(#c16)"><use href="#p15" fill="url(#g4)"/></g>
+<use href="#p17" fill="url(#g1)"/>
+<g clip-path="url(#c18)"><use href="#p17" fill="url(#g4)"/></g>
+</g></g>
+<g id="body"><g>
+<use href="#p20" fill="url(#g19)"/>
+<g clip-path="url(#c21)"><path d="M74 86 H126 A6 6 0 0 1 132 92 V92 A6 6 0 0 1 126 98 H74 A6 6 0 0 1 68 92 V92 A6 6 0 0 1 74 86 Z" fill="#F08A2A"/><path d="M82 58 A6 6 0 1 0 94 58 A6 6 0 1 0 82 58 Z M106 58 A6 6 0 1 0 118 58 A6 6 0 1 0 106 58 Z M87.5 76 A4.5 4.5 0 1 0 96.5 76 A4.5 4.5 0 1 0 87.5 76 Z M103.5 76 A4.5 4.5 0 1 0 112.5 76 A4.5 4.5 0 1 0 103.5 76 Z" fill="#F4EEE2"/><use href="#p20" fill="url(#g22)"/></g>
+<g clip-path="url(#c25)"><use href="#p24" transform="translate(0 5)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p24" fill="url(#g23)"/>
+<g clip-path="url(#c26)"><use href="#p24" fill="url(#g27)"/><use href="#p24" fill="url(#g22)"/></g>
+<g clip-path="url(#c30)"><use href="#p29" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p29" fill="url(#g28)"/>
+<g clip-path="url(#c31)"><use href="#p29" fill="url(#g4)"/></g>
+<path d="M75 136 A12 12 0 1 0 99 136 A12 12 0 1 0 75 136 Z" fill="#141018"/>
+<path d="M79.6 131.8 A3.8 3.8 0 1 0 87.2 131.8 A3.8 3.8 0 1 0 79.6 131.8 Z" fill="#FFFFFF"/>
+<path d="M101 136 A12 12 0 1 0 125 136 A12 12 0 1 0 101 136 Z" fill="#141018"/>
+<path d="M105.6 131.8 A3.8 3.8 0 1 0 113.2 131.8 A3.8 3.8 0 1 0 105.6 131.8 Z" fill="#FFFFFF"/>
+<path d="M67.5 124 A4.5 4.5 0 1 0 76.5 124 A4.5 4.5 0 1 0 67.5 124 Z" fill="#141018"/>
+<path d="M69.2 122.4 A1.4 1.4 0 1 0 72.1 122.4 A1.4 1.4 0 1 0 69.2 122.4 Z" fill="#FFFFFF"/>
+<path d="M123.5 124 A4.5 4.5 0 1 0 132.5 124 A4.5 4.5 0 1 0 123.5 124 Z" fill="#141018"/>
+<path d="M125.2 122.4 A1.4 1.4 0 1 0 128.1 122.4 A1.4 1.4 0 1 0 125.2 122.4 Z" fill="#FFFFFF"/>
+</g></g>
+</g>
+</svg>

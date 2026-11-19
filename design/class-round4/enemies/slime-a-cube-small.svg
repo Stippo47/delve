@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- SLIME take A "cube" (small): a gelatinous cube seen from above. A soft-cornered block of clear jelly with a bevelled top face, a glass-like rim light on the top-left edges, things stuck inside, two eyes floating at the front edge, goo sagging over the front lip. Parts: #body only (squash/stretch the whole sprite to hop). Facing = DOWN (+y), centre (100,100). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#4FA893"/><stop offset="1" stop-color="#3A8A78"/></linearGradient>
+<path id="p2" d="M70 142 H70 A8 8 0 0 1 78 150 V172 A8 8 0 0 1 70 180 H70 A8 8 0 0 1 62 172 V150 A8 8 0 0 1 70 142 Z"/>
+<clipPath id="c3"><use href="#p2"/></clipPath>
+<linearGradient id="g4" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.2"/></linearGradient>
+<path id="p5" d="M106 140 H106 A10 10 0 0 1 116 150 V178 A10 10 0 0 1 106 188 H106 A10 10 0 0 1 96 178 V150 A10 10 0 0 1 106 140 Z"/>
+<clipPath id="c6"><use href="#p5"/></clipPath>
+<path id="p7" d="M136 143 H136 A7 7 0 0 1 143 150 V171 A7 7 0 0 1 136 178 H136 A7 7 0 0 1 129 171 V150 A7 7 0 0 1 136 143 Z"/>
+<clipPath id="c8"><use href="#p7"/></clipPath>
+<linearGradient id="g9" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#8EDCC8"/><stop offset="1" stop-color="#4FA893"/></linearGradient>
+<path id="p10" d="M62 40 H138 A30 30 0 0 1 168 70 V138 A30 30 0 0 1 138 168 H62 A30 30 0 0 1 32 138 V70 A30 30 0 0 1 62 40 Z"/>
+<clipPath id="c11"><use href="#p10"/></clipPath>
+<linearGradient id="g12" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.3"/></linearGradient>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="body"><g transform="translate(100 100) scale(0.62) translate(-100 -100)">
+<use href="#p2" fill="url(#g1)"/>
+<g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>
+<use href="#p5" fill="url(#g1)"/>
+<g clip-path="url(#c6)"><use href="#p5" fill="url(#g4)"/></g>
+<use href="#p7" fill="url(#g1)"/>
+<g clip-path="url(#c8)"><use href="#p7" fill="url(#g4)"/></g>
+<use href="#p10" fill="url(#g9)"/>
+<g clip-path="url(#c11)"><path d="M66 50 H126 A22 22 0 0 1 148 72 V124 A22 22 0 0 1 126 146 H66 A22 22 0 0 1 44 124 V72 A22 22 0 0 1 66 50 Z" fill="#C8F7EC" opacity="0.55"/><path d="M74 62 H122 A18 18 0 0 1 140 80 V120 A18 18 0 0 1 122 138 H74 A18 18 0 0 1 56 120 V80 A18 18 0 0 1 74 62 Z" fill="#8EDCC8" opacity="0.5"/><use href="#p10" fill="url(#g12)"/></g>
+<path d="M71 86 A9 9 0 1 0 89 86 A9 9 0 1 0 71 86 Z" fill="#FFFFFF" opacity="0.45"/>
+<path d="M113 80 A5 5 0 1 0 123 80 A5 5 0 1 0 113 80 Z" fill="#FFFFFF" opacity="0.45"/>
+<path d="M55.5 42.5 H144.5 A3.5 3.5 0 0 1 148 46 V46 A3.5 3.5 0 0 1 144.5 49.5 H55.5 A3.5 3.5 0 0 1 52 46 V46 A3.5 3.5 0 0 1 55.5 42.5 Z" fill="#FFFFFF" opacity="0.85"/>
+<path d="M40 60 H40 A3.5 3.5 0 0 1 43.5 63.5 V136.5 A3.5 3.5 0 0 1 40 140 H40 A3.5 3.5 0 0 1 36.5 136.5 V63.5 A3.5 3.5 0 0 1 40 60 Z" fill="#FFFFFF" opacity="0.7"/>
+<path d="M42 50 A6 6 0 1 0 54 50 A6 6 0 1 0 42 50 Z" fill="#FFFFFF" opacity="0.9"/>
+<path d="M66 136 A12 14 0 1 0 90 136 A12 14 0 1 0 66 136 Z" fill="#2B2230"/>
+<path d="M69.8 130.7 A4.3 4.3 0 1 0 78.5 130.7 A4.3 4.3 0 1 0 69.8 130.7 Z" fill="#FFFFFF"/>
+<path d="M110 136 A12 14 0 1 0 134 136 A12 14 0 1 0 110 136 Z" fill="#2B2230"/>
+<path d="M113.8 130.7 A4.3 4.3 0 1 0 122.5 130.7 A4.3 4.3 0 1 0 113.8 130.7 Z" fill="#FFFFFF"/>
+</g></g>
+</g>
+</svg>

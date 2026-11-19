@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- BROKEN PILLAR: a fluted stone column on a square plinth, seen from above, its top snapped off (a high jagged stub on the lit side, the broken lower face darker), a fallen drum of it across the plinth's front corner, rubble. Drawn at radius 30 room units (the plinth corners and the drum reach ~36). Scale by r/30. -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="gPlinth" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#9E9180"/><stop offset="1" stop-color="#6E6354"/></linearGradient>
+    <linearGradient id="gCol" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#EEE6D7"/><stop offset="1" stop-color="#B9AC97"/></linearGradient>
+    <linearGradient id="gBreak" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#AE9F88"/><stop offset="1" stop-color="#837560"/></linearGradient>
+    <linearGradient id="gDrum" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EDE4D4"/><stop offset="0.55" stop-color="#C9BCA6"/><stop offset="1" stop-color="#958771"/></linearGradient>
+    <linearGradient id="gChunk" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#E3D9C8"/><stop offset="1" stop-color="#A49680"/></linearGradient>
+    <path id="col" d="M138 86 Q142.9 96.9 134.2 105.1 Q134.6 117.1 123.4 121.4 Q119.1 132.6 107.1 132.2 Q98.9 140.9 88 136 Q77.1 140.9 68.9 132.2 Q56.9 132.6 52.6 121.4 Q41.4 117.1 41.8 105.1 Q33.1 96.9 38 86 Q33.1 75.1 41.8 66.9 Q41.4 54.9 52.6 50.6 Q56.9 39.4 68.9 39.8 Q77.1 31.1 88 36 Q98.9 31.1 107.1 39.8 Q119.1 39.4 123.4 50.6 Q134.6 54.9 134.2 66.9 Q142.9 75.1 138 86 Z"/>
+    <clipPath id="colC"><use href="#col"/></clipPath>
+    <clipPath id="topC"><circle cx="88" cy="86" r="42"/></clipPath>
+    <path id="plinth" d="M44 30 H152 A14 14 0 0 1 166 44 V152 A14 14 0 0 1 152 166 H44 A14 14 0 0 1 30 152 V44 A14 14 0 0 1 44 30 Z"/>
+    <clipPath id="plC"><use href="#plinth"/></clipPath>
+    <path id="drum" d="M-40 -19 H40 A10 19 0 0 1 40 19 H-40 A10 19 0 0 1 -40 -19 Z"/>
+    <clipPath id="drumC"><use href="#drum"/></clipPath>
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <use href="#plinth" fill="url(#gPlinth)"/>
+    <g clip-path="url(#plC)"><rect x="30" y="30" width="136" height="9" fill="#FFFFFF" opacity="0.18"/><rect x="30" y="30" width="9" height="136" fill="#FFFFFF" opacity="0.12"/></g>
+    <use href="#col" fill="#2B2230" opacity="0.32" transform="translate(7 9)"/>
+    <use href="#col" fill="url(#gCol)"/>
+    <g clip-path="url(#colC)">
+      <path d="M88 86 L157.7 93 L154.9 106.7 Z" fill="#FFFFFF" opacity="0.22"/><path d="M88 86 L149.7 119.1 L141.9 130.7 Z" fill="#FFFFFF" opacity="0.22"/><path d="M88 86 L132.3 140.2 L120.7 147.9 Z" fill="#FFFFFF" opacity="0.22"/><path d="M88 86 L108.2 153 L94.5 155.7 Z" fill="#FFFFFF" opacity="0.22"/><path d="M88 86 L81 155.7 L67.3 152.9 Z" fill="#FFFFFF" opacity="0.22"/><path d="M88 86 L54.9 147.7 L43.3 139.9 Z" fill="#FFFFFF" opacity="0.22"/><path d="M88 86 L33.8 130.3 L26.1 118.7 Z" fill="#FFFFFF" opacity="0.22"/><path d="M88 86 L21 106.2 L18.3 92.5 Z" fill="#FFFFFF" opacity="0.22"/><path d="M88 86 L18.3 79 L21.1 65.3 Z" fill="#FFFFFF" opacity="0.22"/><path d="M88 86 L26.3 52.9 L34.1 41.3 Z" fill="#FFFFFF" opacity="0.22"/><path d="M88 86 L43.7 31.8 L55.3 24.1 Z" fill="#FFFFFF" opacity="0.22"/><path d="M88 86 L67.8 19 L81.5 16.3 Z" fill="#FFFFFF" opacity="0.22"/><path d="M88 86 L95 16.3 L108.7 19.1 Z" fill="#FFFFFF" opacity="0.22"/><path d="M88 86 L121.1 24.3 L132.7 32.1 Z" fill="#FFFFFF" opacity="0.22"/><path d="M88 86 L142.2 41.7 L149.9 53.3 Z" fill="#FFFFFF" opacity="0.22"/><path d="M88 86 L155 65.8 L157.7 79.5 Z" fill="#FFFFFF" opacity="0.22"/>
+      <circle cx="108" cy="108" r="64" fill="none" stroke="#5E5244" stroke-width="20" opacity="0.25"/>
+    </g>
+    <circle cx="88" cy="86" r="42" fill="url(#gBreak)"/>
+    <g clip-path="url(#topC)">
+      <path d="M30 60 C38 42 52 34 70 32 L92 46 L84 60 L106 66 L98 82 L118 90 L100 100 L106 116 L82 112 L72 132 L52 124 C38 110 30 88 30 60 Z" fill="#2B2230" opacity="0.3" transform="translate(6 7)"/>
+      <path d="M30 60 C38 42 52 34 70 32 L92 46 L84 60 L106 66 L98 82 L118 90 L100 100 L106 116 L82 112 L72 132 L52 124 C38 110 30 88 30 60 Z" fill="url(#gCol)"/>
+      <path d="M40 54 C46 44 56 40 68 38" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.45"/>
+    </g>
+    <g clip-path="url(#plC)"><use href="#drum" fill="#2B2230" opacity="0.3" transform="translate(136 150) rotate(-38) translate(4 8)"/></g>
+    <g transform="translate(136 150) rotate(-38)">
+      <use href="#drum" fill="url(#gDrum)"/>
+      <g clip-path="url(#drumC)">
+        <rect x="-50" y="-12" width="100" height="4" fill="#FFFFFF" opacity="0.4"/>
+        <rect x="-50" y="-1" width="100" height="4" fill="#8E806C" opacity="0.35"/>
+        <rect x="-50" y="9" width="100" height="4" fill="#6E6252" opacity="0.4"/>
+      </g>
+      <ellipse cx="-40" cy="0" rx="10" ry="19" fill="#D8CCB8"/>
+      <ellipse cx="-41" cy="-2" rx="6" ry="12" fill="#FFFFFF" opacity="0.3"/>
+    </g>
+    <path d="M181.7 102.1 Q184.3 107.5 178.8 109 Q173.3 110.4 170 105.3 Q166.8 100.1 173 98.4 Q179.1 96.6 181.7 102.1 Z" fill="url(#gChunk)"/>
+    <path d="M34.6 172.4 Q37.8 178.4 32.4 182.2 Q27.1 185.9 20.7 183.7 Q14.2 181.4 17 175.4 Q19.9 169.4 25.7 167.9 Q31.4 166.4 34.6 172.4 Z" fill="url(#gChunk)"/>
+  </g>
+</svg>
