@@ -6,7 +6,10 @@ import { INK, TAU, clamp } from './util.js';
 // One outline thickness for everything drawn here, in room units. Matches what the SVG heroes show.
 export const OUTLINE = 2.4;
 
-export const view = { scale: 1, dpr: 1, cw: 0, ch: 0, rot: false, camX: null, camY: null, m: [1, 0, 0, 1, 0, 0] };
+export const view = { scale: 1, base: 1, zoom: 0.8, dpr: 1, cw: 0, ch: 0, rot: false, camX: null, camY: null, m: [1, 0, 0, 1, 0, 0] };
+try { const z = +localStorage.getItem('delve.zoom'); if (z) view.zoom = z; } catch {}
+export const ZOOM_MIN = 0.5, ZOOM_MAX = 1.5;
+export function setZoom(z) { view.zoom = clamp(z, ZOOM_MIN, ZOOM_MAX); try { localStorage.setItem('delve.zoom', String(view.zoom)); } catch {} }
 const ACROSS = 480; // one room chunk across = the screen's width in portrait
 
 // topPad/bottomPad: screen space taken by the HUD. Portrait turns the room a quarter turn.
@@ -21,8 +24,10 @@ export function layout(canvas, w, topPad, bottomPad = 10, sidePad = 10) {
   const availW = cw - sidePad * 2, availH = ch - topPad - bottomPad;
   // one chunk across fills the screen's short side; anything bigger scrolls, both ways
   const across = view.rot ? availW : availH, along = view.rot ? availH : availW;
-  const s = view.rot ? cw / (ACROSS + edge * 2) : Math.min(across / (ACROSS + edge * 2), along / 900);
-  view.scale = s;
+  // zoom 1 = one chunk across fills the screen's short side; the default shows a bit more
+  const base = view.rot ? cw / (ACROSS + edge * 2) : Math.min(across / (ACROSS + edge * 2), along / 900);
+  const s = base * view.zoom;
+  view.scale = s; view.base = base;
   // the camera follows the party's middle, never further than the walls
   const heroes = w.units.filter((u) => u.team === 'hero' && !u.downed);
   let tx = w.W / 2, ty = w.H / 2;
@@ -56,11 +61,11 @@ function upVec() { return view.rot ? [1, 0] : [0, -1]; }
 
 let floorCache = null;
 function floor(w) {
-  const key = w.W + 'x' + w.H + ':' + view.scale.toFixed(3) + ':' + view.dpr;
+  const key = w.W + 'x' + w.H + ':' + view.base.toFixed(3) + ':' + view.dpr;
   if (floorCache && floorCache.key === key && floorCache.w === w) return floorCache.c;
   const pad = 26;
   const c = document.createElement('canvas');
-  let s = view.scale * view.dpr;
+  let s = view.base * view.dpr;
   const area = (w.W + pad * 2) * (w.H + pad * 2);
   if (area * s * s > 12e6) s = Math.sqrt(12e6 / area); // a big room's floor is cached a little softer
   c.width = Math.ceil((w.W + pad * 2) * s); c.height = Math.ceil((w.H + pad * 2) * s);
@@ -140,7 +145,7 @@ const DOOR_COL = { fight: '#C8553D', hazard: '#E0884B', elite: '#8E3B5B', treasu
 function drawDoors(ctx, w) {
   arch(ctx, 0, w.doorIn.y, -1, true, false, w.time);
   for (const d of w.doors || []) {
-    arch(ctx, w.W, d.y, 1, w.cleared, d.chosen, w.time);
+    arch(ctx, w.W, d.y, 1, w.cleared, d.chosen, w.time, DOOR_COL[d.kind]);
     // what's behind it, on a stone plaque on the floor in front
     upright(ctx, w.W - 40, d.y, () => {
       inked(ctx, () => roundRect(ctx, -17, -17, 34, 34, 9), '#A99C8B');
@@ -149,10 +154,10 @@ function drawDoors(ctx, w) {
   }
 }
 // A doorway in the wall band at x (the room's edge), facing into the room (dir -1: the way in, +1: a way out).
-function arch(ctx, x, y, dir, open, chosen, t) {
-  const half = 56, band = 26, o = dir > 0 ? x : x - band;
+function arch(ctx, x, y, dir, open, chosen, t, col) {
+  const half = 44, band = 26, o = dir > 0 ? x : x - band;
   // stone jambs either side
-  for (const sy of [-1, 1]) inked(ctx, () => roundRect(ctx, o - 2, y + sy * (half + 8) - 9, band + 4, 18, 5), '#9A8C7C');
+  for (const sy of [-1, 1]) inked(ctx, () => roundRect(ctx, o - 2, y + sy * (half + 6) - 7, band + 4, 14, 5), '#9A8C7C');
   // the opening
   ctx.fillStyle = INK; ctx.fillRect(o, y - half, band, half * 2);
   if (!open) {
@@ -161,15 +166,18 @@ function arch(ctx, x, y, dir, open, chosen, t) {
     ctx.fillStyle = g; ctx.fillRect(o + 3, y - half + 3, band - 6, half * 2 - 6);
     ctx.fillStyle = 'rgba(43,34,48,0.35)'; for (let i = 1; i < 4; i++) ctx.fillRect(o + 3, y - half + 3 + i * (half * 2 - 6) / 4 - 1, band - 6, 2);
     ctx.fillStyle = '#4A4247'; for (const k of [-0.55, 0.55]) ctx.fillRect(o + 3, y + k * half - 3, band - 6, 6);
-  } else if (chosen) {
-    // light spills in through the way the party is taking
-    const k = 0.75 + 0.25 * Math.sin(t * 4);
-    const g = ctx.createRadialGradient(x, y, 4, x, y, 110);
-    g.addColorStop(0, `rgba(255,225,140,${0.55 * k})`); g.addColorStop(1, 'rgba(255,225,140,0)');
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 110, 0, TAU); ctx.fill();
-    ctx.fillStyle = '#F4E3B5'; ctx.fillRect(o + 4, y - half + 4, band - 8, half * 2 - 8);
+  } else if (col) {
+    // the opening glows in the colour of the room behind it; the one the party takes glows strongest
+    const k = (chosen ? 1 : 0.55) * (0.8 + 0.2 * Math.sin(t * 3 + y));
+    const R = chosen ? 130 : 95;
+    const g = ctx.createRadialGradient(x, y, 4, x, y, R);
+    g.addColorStop(0, hexA(col, 0.6 * k)); g.addColorStop(1, hexA(col, 0));
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, TAU); ctx.fill();
+    ctx.fillStyle = col; ctx.globalAlpha = 0.85; ctx.fillRect(o + 4, y - half + 4, band - 8, half * 2 - 8);
+    ctx.fillStyle = '#FFF4DC'; ctx.globalAlpha = 0.35 * k; ctx.fillRect(o + 8, y - half + 10, band - 16, half * 2 - 20); ctx.globalAlpha = 1;
   }
 }
+function hexA(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; }
 function roomIcon(ctx, kind, r) {
   inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, r, 0, TAU); }, DOOR_COL[kind] || '#999');
   ctx.fillStyle = '#FFF4DC'; ctx.strokeStyle = '#FFF4DC'; ctx.lineWidth = 2.2; ctx.lineCap = 'round';

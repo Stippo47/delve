@@ -16,7 +16,8 @@ function rollKind(L) {
 export function makeFloor() {
   const layers = [[{ L: 0, i: 0, pos: 0.5, kind: 'fight', next: [] }]];
   for (let L = 1; L < LAYERS; L++) {
-    const n = L === LAYERS - 1 ? rint(2, 3) : rint(2, 5);
+    // up to 5 wide, but never more than 3 doors' worth per room behind (a room has at most 3 doors out)
+    const n = Math.min(L === LAYERS - 1 ? rint(2, 3) : rint(2, 5), 3 * layers[L - 1].length);
     const row = [];
     for (let i = 0; i < n; i++) row.push({ L, i, pos: (i + 0.5) / n + (rand() - 0.5) * 0.12, kind: rollKind(L), next: [] });
     // the last layer before the boss leans towards a breather
@@ -34,7 +35,8 @@ export function makeFloor() {
     }
     b.forEach((m, j) => {
       if (a.some((n) => n.next.includes(j))) return;
-      let best = a[0]; for (const n of a) if (Math.abs(n.pos - m.pos) < Math.abs(best.pos - m.pos)) best = n;
+      let best = null; for (const n of a) if (n.next.length < 3 && (!best || Math.abs(n.pos - m.pos) < Math.abs(best.pos - m.pos))) best = n;
+      if (!best) { best = a[0]; for (const n of a) if (n.next.length < best.next.length) best = n; }
       best.next.push(j);
     });
     for (const n of a) n.next.sort((x, y) => b[x].pos - b[y].pos);

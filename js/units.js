@@ -17,7 +17,7 @@ export const DEFS = {
   rogue: {
     team: 'hero', name: 'Rogue', r: 29, vr: 20, turn: 7, accel: 420, face: 7, mass: 0.9, hp: 80, speed: 96, role: 'skirmish',
     range: 16, atkCd: 0.55, dmg: 7, poison: 16, arc: 1.4,
-    temp: 0.55, commit: 0.5, ability: 'shadowstep', abilCd: 6,
+    temp: 0.55, commit: 0.5, ability: 'shadowstep', abilCd: 6, dashCd: 3.2,
   },
   rat: {
     team: 'enemy', name: 'Rat', r: 18, vr: 15, turn: 8, accel: 500, face: 8, mass: 0.4, hp: 18, speed: 88, role: 'skirmish',

@@ -85,13 +85,14 @@ function chooseTarget(w, u) {
   const mates = allies(w, u);
   for (const o of opp) {
     const d = dist(u.x, u.y, o.x, o.y);
-    let s = -d / 300;
+    let s = -d / (k === 'rogue' ? 900 : 300);
     // how many of my side are already on it, and how many of its side stand around it
     let on = 0; for (const a of mates) if (a.target === o) on++;
     let crowd = 0; for (const q of opp) if (q !== o && dist(q.x, q.y, o.x, o.y) < 95) crowd++;
     if (u.team === 'hero') {
       s -= on * 0.22;                                   // spread out: prefer enemies nobody is on yet
       s -= crowd * (k === 'rogue' ? 0.4 : 0.08);        // don't dive into a pack (the rogue most of all)
+      if (k === 'rogue' && crowd === 0) s += 0.45;      // the rogue hunts the ones on their own, even far off
       // finish the kill: a nearly dead enemy someone is already hitting
       if ((k === 'archer' || k === 'rogue') && on > 0 && hpRatio(o) < 0.35) s += 0.55;
     }
@@ -258,10 +259,12 @@ function movement(w, u, dt) {
   const t = u.target;
   if (u.forcedGoal) {
     [gx, gy] = goalVec(w, u, u.forcedGoal.x, u.forcedGoal.y);
-    if (Math.hypot(u.forcedGoal.x - u.x, u.forcedGoal.y - u.y) < 10) { gx = gy = 0; }
-    if (u.forcedGoal.slow) mult = u.forcedGoal.slow;
+    // ease in on arrival so momentum doesn't carry it past and swing it back and forth
+    const gd = Math.hypot(u.forcedGoal.x - u.x, u.forcedGoal.y - u.y);
+    if (gd < 14) { gx = gy = 0; } else mult = clamp(gd / 90, 0.25, 1);
+    if (u.forcedGoal.slow) mult *= u.forcedGoal.slow;
   } else if (u.coinGoal && (!t || dist(u.x, u.y, t.x, t.y) > 240)) {
-    [gx, gy] = goalVec(w, u, u.coinGoal.x, u.coinGoal.y); mult = 0.9;
+    [gx, gy] = goalVec(w, u, u.coinGoal.x, u.coinGoal.y); mult = clamp(u.coinGoal.d / 90, 0.35, 0.9);
   } else if (!t && u.team === 'hero' && !w.cleared) {
     // nothing in sight: press on through the room together, the slowest setting the pace
     // towards the next chunk of the room the party hasn't walked yet (dungeon.js keeps w.wp)
@@ -820,7 +823,7 @@ function hazards(w, dt) {
 }
 
 // Coins lie where they fall and must be walked over; they fade after a few seconds. Keys wait to be picked up.
-export const COIN_LIFE = 7;
+export const COIN_LIFE = 25;
 function pickups(w, dt) {
   const heroes = w.units.filter((u) => u.team === 'hero' && alive(u));
   for (const h of heroes) h.coinGoal = null;
@@ -876,6 +879,18 @@ export function step(w, dt) {
           if (lastOne) ch = Math.max(ch * 3, 0.4);
           if (chance(ch)) useAbility(w, u);
         }
+      }
+    }
+    if (u.def.dashCd && !u.act && !u.forcedGoal) {
+      u.dashT = (u.dashT ?? 1) - dt;
+      const t = u.target;
+      if (u.dashT <= 0 && t) {
+        let near = Infinity, no = null; for (const o of opponents(w, u)) { const od = dist(u.x, u.y, o.x, o.y) - o.r; if (od < near) { near = od; no = o; } }
+        const gap = dist(u.x, u.y, t.x, t.y) - u.r - t.r;
+        let a = null;
+        if (u.mode === 'retreat' && no && near < u.r + 60) a = angleTo(no.x, no.y, u.x, u.y);            // get out of reach
+        else if (u.mode !== 'retreat' && gap > 130 && gap < 320 && u.atkT <= 0.2 && lineClear(w, u.x, u.y, t.x, t.y, u.r)) a = angleTo(u.x, u.y, t.x, t.y); // close in
+        if (a !== null) { u.act = { type: 'dash', t: 0.2, max: 0.2, a }; u.dashT = u.def.dashCd; continue; }
       }
     }
     if (!u.act && u.potions > 0 && hpRatio(u) < 0.35) {

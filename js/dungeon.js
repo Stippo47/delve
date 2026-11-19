@@ -158,7 +158,7 @@ function buildRoom(run) {
   if (kind === 'decision') pickRewards(3).forEach((rw, i) => w.pickups.push({ type: 'pedestal', x: w.W * 0.55, y: mid.y - ROW / 2 + ROW * (i + 1) / 4, reward: rw }));
   // doors ahead: one per room the tree leads to, spread along the far edge of the last column's chunks
   const ahead = kind === 'boss' ? [] : nextNodes(run.map);
-  const spans = w.exits.map((c) => [c.y + 70, c.y + c.h - 70]), span = spans.reduce((a, [p, q]) => a + q - p, 0);
+  const spans = w.exits.map((c) => [c.y + 60, c.y + c.h - 60]), span = spans.reduce((a, [p, q]) => a + q - p, 0);
   w.doors = ahead.map((n, j) => {
     let at = span * (j + 0.5) / ahead.length, y = spans[0][0];
     for (const [p, q] of spans) { if (at <= q - p) { y = p + at; break; } at -= q - p; }
@@ -272,6 +272,7 @@ export function update(run, dt) {
     if (run.kills !== run.lastKills) { run.lastKills = run.kills; run.quietT = 0; } else run.quietT = (run.quietT || 0) + dt;
     if (run.quietT > 25) for (const e of enemies) e.aggro = true;
   }
+  revive(run, dt);
   if (run.phase === 'fight') nextWaypoint(w);
   if (run.phase === 'fight' && enemies.length === 0) {
     w.cleared = true; run.phase = 'loot'; run.t = 0;
@@ -294,6 +295,36 @@ export function update(run, dt) {
   }
 }
 
+// A downed hero is revived by an ally standing over them for a few seconds (10% HP). The nearest ally that
+// isn't fighting goes over; enemies close by keep them away.
+const REVIVE_T = 3, REVIVE_HP = 0.1;
+function revive(run, dt) {
+  const w = run.world;
+  const downed = w.units.filter((u) => u.team === 'hero' && u.downed && !u.dead);
+  for (const h of heroesAlive(run)) if (h.forcedGoal && h.forcedGoal.revive && !downed.includes(h.forcedGoal.who)) h.forcedGoal = null;
+  for (const d of downed) {
+    const threat = w.units.some((e) => e.team === 'enemy' && !e.dead && !e.downed && e.aggro && dist(e.x, e.y, d.x, d.y) < 260);
+    let helper = null, hd = Infinity;
+    for (const h of heroesAlive(run)) {
+      const busy = h.target && dist(h.x, h.y, h.target.x, h.target.y) < 300;
+      const dd = dist(h.x, h.y, d.x, d.y);
+      if ((!busy || (h.forcedGoal && h.forcedGoal.who === d)) && dd < hd) { hd = dd; helper = h; }
+    }
+    for (const h of heroesAlive(run)) if (h !== helper && h.forcedGoal && h.forcedGoal.who === d) h.forcedGoal = null;
+    if (!helper || threat) { if (helper && helper.forcedGoal && helper.forcedGoal.who === d) helper.forcedGoal = null; d.reviveT = Math.max(0, (d.reviveT || 0) - dt); continue; }
+    helper.forcedGoal = { x: d.x, y: d.y, revive: true, who: d }; helper.target = null;
+    if (hd < d.r + helper.r + 18) {
+      d.reviveT = (d.reviveT || 0) + dt;
+      if (Math.random() < dt * 14) w.particles.push({ x: d.x + rrange(-18, 18), y: d.y + rrange(-18, 18), vx: 0, vy: 0, rise: 40, life: 0.6, max: 0.6, size: 4, color: '#FFE7A0' });
+      if (d.reviveT >= REVIVE_T) {
+        d.downed = false; d.reviveT = 0; d.hp = d.maxHp * REVIVE_HP; d.invulnT = 1.2; d.st = { burn: 0, chill: 0, poison: 0 };
+        run.heroes[d.kind].down = false; helper.forcedGoal = null;
+        burst(w, d.x, d.y, '#FFE7A0');
+      }
+    }
+  }
+}
+
 // Where the party heads when nothing is in sight: the nearest chunk it hasn't walked through yet.
 function nextWaypoint(w) {
   const hs = w.units.filter((u) => u.team === 'hero' && alive(u)); if (!hs.length) return;
@@ -308,7 +339,9 @@ function nextWaypoint(w) {
 function doTasks(run, dt) {
   const w = run.world;
   const loose = w.pickups.filter((p) => p.type === 'coin' || p.type === 'key');
-  if (loose.length && run.t < 14) {
+  // reviving first, but never holding the room up for long (they can still be revived on the way out)
+  if (run.t < 25 && w.units.some((u) => u.team === 'hero' && u.downed && !u.dead)) return false;
+  if (loose.length && run.t < 30) {
     for (const h of heroesAlive(run)) {
       let best = null, bd = Infinity; for (const p of loose) { const d = dist(p.x, p.y, h.x, h.y); if (d < bd) { bd = d; best = p; } }
       h.forcedGoal = { x: best.x, y: best.y, coin: true };

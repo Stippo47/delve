@@ -1,5 +1,5 @@
 import { loadSprites } from './sprites.js';
-import { layout, draw, view, snapCamera } from './render.js';
+import { layout, draw, view, snapCamera, setZoom } from './render.js';
 import { newRun, update, FLOORS, LAYERS, rollTrinket } from './dungeon.js';
 import { loadSave, writeSave } from './save.js';
 import { HERO_ORDER, DEFS, TRINKETS, xpToNext, levelHp } from './units.js';
@@ -175,9 +175,23 @@ function drawMap() {
 
 // Drag on the room to look around; the camera eases back to the party a couple of seconds after you let go.
 let drag = null;
-canvas.addEventListener('pointerdown', (e) => { if (state === 'run') drag = { x: e.clientX, y: e.clientY }; });
+const touches = new Map(); let pinch = null;
+canvas.addEventListener('pointerdown', (e) => {
+  if (state !== 'run') return;
+  touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (touches.size === 2) { const [a, b] = [...touches.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), z: view.zoom }; drag = null; }
+  else drag = { x: e.clientX, y: e.clientY };
+});
 window.addEventListener('pointermove', (e) => {
-  if (!drag) return;
+  if (!touches.has(e.pointerId)) return;
+  touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pinch && touches.size === 2) { const [a, b] = [...touches.values()]; setZoom(pinch.z * Math.hypot(a.x - b.x, a.y - b.y) / Math.max(20, pinch.d)); }
+});
+const lift = (e) => { touches.delete(e.pointerId); if (touches.size < 2) pinch = null; };
+window.addEventListener('pointerup', lift); window.addEventListener('pointercancel', lift);
+canvas.addEventListener('wheel', (e) => { if (state !== 'run') return; e.preventDefault(); setZoom(view.zoom * Math.exp(-e.deltaY * 0.0015)); }, { passive: false });
+window.addEventListener('pointermove', (e) => {
+  if (!drag || pinch) return;
   const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag = { x: e.clientX, y: e.clientY };
   const along = view.rot ? dy : -dx, across = view.rot ? -dx : -dy; // the room follows the finger
   view.manual = (view.manual ?? view.camX) + along / view.scale;
