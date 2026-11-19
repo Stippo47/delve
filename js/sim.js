@@ -1079,8 +1079,6 @@ export function step(w, dt) {
   if (wallsGone) { w.walls = w.walls.filter((r) => r.temp == null || r.temp > 0); buildGrid(w); }
   for (const t of w.telegraphs) t.t -= dt;
   w.telegraphs = w.telegraphs.filter((t) => t.t > 0);
-  for (const f of w.fx) f.t += dt;
-  w.fx = w.fx.filter((f) => f.t < f.max);
   w.units = w.units.filter((u) => !u.dead);
 }
 
