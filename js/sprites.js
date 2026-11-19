@@ -2,6 +2,8 @@
 // then rotated whole in-game. SVG art is rasterised once per pixel size; rats and slimes are drawn
 // procedurally in the same space so they match the outline/gradient rendering.
 import { INK } from './util.js';
+import { DEFS } from './units.js';
+import { loadArt } from './parts.js';
 
 const SVG_KINDS = { archer: 'art/archer.svg', knight: 'art/knight.svg', rogue: 'art/rogue.svg',
   skeleton: 'art/skeleton.svg', boss: 'art/boss.svg' };
@@ -16,6 +18,9 @@ export async function loadSprites() {
   await Promise.all(Object.entries(SVG_KINDS).map(async ([k, url]) => {
     try { svgText[k] = await (await fetch(url)).text(); } catch (e) { svgText[k] = null; }
   }));
+  // kinds drawn from SVG parts (parts.js)
+  await Promise.all([...new Set(Object.values(DEFS).map((d) => d.art).filter(Boolean))].map(loadArt));
+  loadProps(); // props draw procedurally until their art arrives
 }
 
 function makeCanvas(px) {
@@ -122,3 +127,39 @@ export function tinted(e, color) {
 }
 
 export const headR = (kind) => HEAD_R[kind] || HEAD_R[kind.replace('Small', '')] || 54;
+
+// ---- props (art/props/*.svg), drawn whole with their own outline filter. A file's #spill / #glow (light with no
+// outline) comes as a separate image so the game can pulse it.
+const PROPS = ['chest-closed', 'chest-locked', 'chest-open', 'door-open', 'door-shut', 'door-open-boss', 'door-open-choice',
+  'door-open-elite', 'door-open-fight', 'door-open-fountain', 'door-open-hazard', 'door-open-treasure', 'fountain', 'fountain-used',
+  'hazard-oil', 'obstacle-crates', 'obstacle-pillar', 'obstacle-rock', 'pedestal', 'trap-spikes-down', 'trap-spikes-up'];
+const propText = {};
+const propCache = new Map();
+export async function loadProps() {
+  await Promise.all(PROPS.map(async (n) => {
+    try {
+      const t = await (await fetch(`art/props/${n}.svg`)).text();
+      const doc = new DOMParser().parseFromString(t, 'image/svg+xml'), ser = new XMLSerializer();
+      const extra = doc.querySelector('#spill, #glow');
+      if (!extra) { propText[n] = { main: t }; return; }
+      const a = doc.documentElement.cloneNode(true); a.querySelector('#' + extra.id).remove();
+      const b = doc.documentElement.cloneNode(true); const sp = b.querySelector('#sprite'); if (sp) sp.remove();
+      const over = !!(doc.querySelector('#sprite') && (extra.compareDocumentPosition(doc.querySelector('#sprite')) & 2)); // the light goes over the prop
+      propText[n] = { main: ser.serializeToString(a), extra: ser.serializeToString(b), over };
+    } catch { propText[n] = null; }
+  }));
+}
+// { img, extra } canvases for a prop at about px pixels across its box, or null while it renders.
+export function getProp(name, px) {
+  const src = propText[name]; if (!src) return null;
+  const size = Math.max(16, Math.min(1024, Math.ceil(px / 16) * 16));
+  const key = name + ':' + size;
+  let e = propCache.get(key);
+  if (!e) {
+    e = { ready: false }; propCache.set(key, e);
+    Promise.all([rasterSvg(src.main, size), src.extra ? rasterSvg(src.extra, size) : null]).then(([m, x]) => { if (m) { e.img = m; e.extra = x; e.over = src.over; e.ready = true; } });
+  }
+  if (e.ready) { e.used = 1; return e; }
+  for (const [k, o] of propCache) if (o.ready && k.startsWith(name + ':')) return o; // another size stands in meanwhile
+  return null;
+}
