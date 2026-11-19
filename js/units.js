@@ -1,4 +1,7 @@
 // Unit definitions. Numbers are tuning knobs; behaviour lives in sim.js.
+// Heroes come from heroes.js (one def per hero, built below); extra enemy kinds come from enemies.js.
+import { HEROES } from './heroes.js';
+import { ENEMIES } from './enemies.js';
 // r: collider (covers shoulders), vr: head radius the sprite is sized from.
 // turn: how fast the movement heading swings (rad/s), accel: speed gained per second, face: sprite turn rate.
 // role: 'melee' stands and fights, 'ranged' keeps distance, 'skirmish' darts in and out.
@@ -44,6 +47,13 @@ export const DEFS = {
     res: { poison: 0.3, burn: 0.6, chill: 0.6 },
   },
 };
+
+// Every hero in heroes.js becomes a def; the old trio's fields (abilities the sim already runs) are kept for now.
+for (const [id, h] of Object.entries(HEROES)) {
+  DEFS[id] = { ...(DEFS[id] || {}), team: 'hero', name: h.name, ...h.stats, attackAnim: h.attack.anim, art: h.art, hero: id };
+  if (id === 'archer') delete DEFS[id].chill; // base attacks are plain now
+}
+Object.assign(DEFS, ENEMIES);
 
 export const HERO_ORDER = ['knight', 'archer', 'rogue'];
 

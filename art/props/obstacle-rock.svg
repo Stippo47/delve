@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- ROCK: a round obstacle (boulder) seen from above, a chunky low-poly stone with a lit top facet, a side facet and a dark underside, two pebbles. Drawn at radius 30 room units (76 SVG units). Scale it by r/30. Light from the top left; the game draws the ground shadow. -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="gRock" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#BDB2A1"/><stop offset="1" stop-color="#8A7E70"/></linearGradient>
+    <linearGradient id="gTop" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#DCD3C4"/><stop offset="1" stop-color="#B7AC9B"/></linearGradient>
+    <linearGradient id="gLow" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#8C8072"/><stop offset="1" stop-color="#6A5F54"/></linearGradient>
+    <linearGradient id="gPeb" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#B5AA99"/><stop offset="1" stop-color="#7E7266"/></linearGradient>
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <path d="M2 128 L14 118 L28 124 L26 138 L10 142 Z" fill="url(#gPeb)" stroke="url(#gPeb)" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M14 160 L30 146 L50 154 L50 172 L30 180 L14 172 Z" fill="url(#gPeb)" stroke="url(#gPeb)" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M40 70 L70 30 L124 24 L168 56 L178 108 L150 160 L96 176 L44 150 L26 108 Z" fill="url(#gRock)" stroke="url(#gRock)" stroke-width="16" stroke-linejoin="round"/>
+    <path d="M44 150 L26 108 L40 70 L58 104 Z" fill="#A79B8B" stroke="#A79B8B" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M168 56 L178 108 L150 160 L120 136 L136 92 Z" fill="#857969" stroke="#857969" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M150 160 L96 176 L44 150 L58 104 L92 104 L136 92 L120 136 Z" fill="url(#gLow)" stroke="#776B5E" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M40 70 L70 30 L124 24 L168 56 L136 92 L92 104 L58 104 Z" fill="url(#gTop)" stroke="#C9BFAE" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M70 46 L104 36 L84 58 Z" fill="#FFFFFF" opacity="0.35" stroke="#FFFFFF" stroke-width="6" stroke-opacity="0.35" stroke-linejoin="round"/>
+    <path d="M18 158 L30 150 L40 156 Z" fill="#FFFFFF" opacity="0.3"/>
+  </g>
+</svg>

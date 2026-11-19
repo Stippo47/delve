@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- LIZARDMAN with curved blade (round 3 enemy), archer-sized. Olive scales, a long snout pointing forward (down) with nostrils,
+       yellow slit eyes on brow bumps, an orange crest of spines down the back of the head, tail curling behind (up). Weapon rule: the sword arm is drawn BEFORE #body, so the fist comes out at the
+       front edge of the body; a long curved blade (scimitar) runs forward, then sweeps outward.
+       Parts (file order = draw order): #back = tail (pivot at its root, can sway), #arm-r = curved blade + right fist (pivot at
+       the right shoulder), #body = shoulders, head, #arm-l = empty left claw.
+       The outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <path id="tail" d="M82 84 C78 62 82 42 94 28 C104 16 116 10 130 6 C120 16 113 28 111 42 C109 58 114 72 118 84 Z"/>
+    <clipPath id="tailC"><use href="#tail"/></clipPath>
+    <path id="shoulders" d="M30 108 C30 85 56 78 100 78 C144 78 170 85 170 108 C170 131 144 140 100 140 C56 140 30 131 30 108 Z"/>
+    <clipPath id="shouldersC"><use href="#shoulders"/></clipPath>
+    <path id="head" d="M100 52 C127 52 143 70 143 94 C143 110 137 121 129 131 C122 141 120 155 114 166 C110 172 105 174 100 174 C95 174 90 172 86 166 C80 155 78 141 71 131 C63 121 57 110 57 94 C57 70 73 52 100 52 Z"/>
+    <clipPath id="headC"><use href="#head"/></clipPath>
+    <path id="browL" d="M52 104 A13 12 0 1 0 78 104 A13 12 0 1 0 52 104 Z"/>
+    <path id="browR" d="M122 104 A13 12 0 1 0 148 104 A13 12 0 1 0 122 104 Z"/>
+    <path id="crest" d="M100 40 L108 56 L104 58 L111 72 L106 74 L112 88 L100 96 L88 88 L94 74 L89 72 L96 58 L92 56 Z"/>
+    <path id="hand-l" d="M48 130 H60 A8 8 0 0 1 68 138 V146 A8 8 0 0 1 60 154 H48 A8 8 0 0 1 40 146 V138 A8 8 0 0 1 48 130 Z"/>
+    <path id="hand-r" d="M148 133 H164 A8 8 0 0 1 172 141 V148 A8 8 0 0 1 164 156 H148 A8 8 0 0 1 140 148 V141 A8 8 0 0 1 148 133 Z"/>
+    <clipPath id="underHead"><use href="#shoulders"/><use href="#tail"/></clipPath>
+    <clipPath id="underHandL"><use href="#shoulders"/></clipPath>
+    <linearGradient id="gScale" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#A9C75E"/><stop offset="1" stop-color="#7EA343"/></linearGradient>
+    <linearGradient id="gScaleDk" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="#86A847"/><stop offset="1" stop-color="#5F8233"/></linearGradient>
+    <linearGradient id="shX" x1="96" y1="0" x2="172" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2A3A12" stop-opacity="0"/><stop offset="1" stop-color="#2A3A12" stop-opacity="0.36"/></linearGradient>
+    <radialGradient id="gDome" cx="86" cy="80" r="46" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#F4FFD0" stop-opacity="0.45"/><stop offset="1" stop-color="#F4FFD0" stop-opacity="0"/></radialGradient>
+    <linearGradient id="gCrest" x1="0" y1="40" x2="0" y2="96" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#F08A3A"/><stop offset="1" stop-color="#D2552A"/></linearGradient>
+    <linearGradient id="gBronze" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E8B45A"/><stop offset="1" stop-color="#B07A2E"/></linearGradient>
+    <linearGradient id="gSteel" x1="150" y1="0" x2="200" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#E6EAEF"/><stop offset="1" stop-color="#A8B0BC"/></linearGradient>
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <g id="back" data-pivot="100 80">
+      <use href="#tail" fill="url(#gScale)"/>
+      <g clip-path="url(#tailC)">
+        <path d="M96 84 C92 62 96 44 106 32 C112 24 120 16 130 6 C122 20 116 32 113 46 C110 60 112 72 114 84 Z" fill="#5F8233" opacity="0.55"/>
+        <path d="M94 50 C98 40 104 32 112 26" fill="none" stroke="#D2552A" stroke-width="4" stroke-linecap="round" stroke-dasharray="6 7"/>
+      </g>
+    </g>
+    <g id="arm-r" data-pivot="160 108">
+      <!-- curved blade: grip hidden in the fist, bronze guard, broad blade curving outward -->
+      <path d="M149 158 L164 158 C166 174 176 186 199 192 C200 194 199 196 197 197 C170 206 148 192 149 158 Z" fill="url(#gSteel)"/>
+      <path d="M158 158 L164 158 C166 174 176 186 199 192 C178 192 162 182 158 158 Z" fill="#6E7682" opacity="0.4"/>
+      <rect x="143" y="154" width="27" height="8" rx="4" fill="url(#gBronze)"/>
+      <use href="#hand-r" fill="url(#gScale)"/>
+      <use href="#hand-r" fill="url(#shX)"/>
+      <path d="M142 153 L145 160 L149 154 Z M152 155 L155 162 L159 155 Z M162 154 L166 160 L169 152 Z" fill="#F2E6C4"/>
+    </g>
+    <g id="body">
+      <use href="#shoulders" fill="url(#gScaleDk)"/>
+      <g clip-path="url(#shouldersC)">
+        <circle cx="46" cy="100" r="5" fill="#5F8233" opacity="0.6"/><circle cx="40" cy="114" r="4" fill="#5F8233" opacity="0.6"/>
+        <circle cx="154" cy="100" r="5" fill="#4A6A28" opacity="0.6"/><circle cx="160" cy="114" r="4" fill="#4A6A28" opacity="0.6"/>
+        <use href="#shoulders" fill="url(#shX)"/>
+      </g>
+      <g clip-path="url(#underHead)"><use href="#head" fill="#2B2230" opacity="0.3" transform="translate(0 5)"/></g>
+      <use href="#browL" fill="url(#gScale)"/>
+      <use href="#browR" fill="url(#gScaleDk)"/>
+      <use href="#head" fill="url(#gScale)"/>
+      <g clip-path="url(#headC)">
+        <circle cx="100" cy="88" r="46" fill="url(#gDome)"/>
+        <circle cx="80" cy="74" r="4.5" fill="#6E9238" opacity="0.5"/><circle cx="122" cy="76" r="4.5" fill="#6E9238" opacity="0.5"/>
+        <circle cx="88" cy="128" r="4" fill="#6E9238" opacity="0.5"/><circle cx="114" cy="126" r="4" fill="#6E9238" opacity="0.5"/>
+        <circle cx="100" cy="144" r="3.5" fill="#6E9238" opacity="0.5"/>
+        <rect x="96" y="40" width="80" height="140" fill="url(#shX)"/>
+      </g>
+      <use href="#crest" fill="url(#gCrest)"/>
+      <path d="M100 40 L108 56 L104 58 L111 72 L106 74 L112 88 L100 96 Z" fill="#B84622" opacity="0.4"/>
+      <!-- slit eyes on the brow bumps -->
+      <ellipse cx="64" cy="108" rx="6" ry="7" fill="#FFD23F"/>
+      <ellipse cx="136" cy="108" rx="6" ry="7" fill="#F2C232"/>
+      <ellipse cx="64.5" cy="108.5" rx="1.8" ry="6" fill="#2B2230"/>
+      <ellipse cx="135.5" cy="108.5" rx="1.8" ry="6" fill="#2B2230"/>
+      <ellipse cx="93" cy="163" rx="2.6" ry="3.6" fill="#3A4A1E"/>
+      <ellipse cx="107" cy="163" rx="2.6" ry="3.6" fill="#3A4A1E"/>
+    </g>
+    <g id="arm-l" data-pivot="42 108">
+      <g clip-path="url(#underHandL)"><use href="#hand-l" fill="#2B2230" opacity="0.3" transform="translate(0 3)"/></g>
+      <use href="#hand-l" fill="url(#gScale)"/>
+      <path d="M41 151 L43 159 L47 152 Z M51 153 L54 161 L58 153 Z M61 151 L64 158 L67 149 Z" fill="#F2E6C4"/>
+    </g>
+  </g>
+</svg>

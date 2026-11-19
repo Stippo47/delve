@@ -191,3 +191,14 @@ Raw answers: `docs/riffle-log/2026-11-19-round4.txt`.
 - **Rogue gets a dash** (to get out of range, or to engage on top of the backstab) and weighs isolated and far-away
   enemies more.
 - Thought: the archer gets stuck a lot, frozen in a wall, and jitters left and right going to some spots (diagonals?).
+
+## Round 5 (2026-11-19): make it a game
+- The designer: "The art is good enough. I'll do notes later." Build: camp overhaul, the progression system,
+  environments/dungeon types, a boss fight, **15 heroes with 1 attack, 3 abilities (each with tiers) and 1 trait
+  (works on its own, e.g. a healer reviving better)**, and a skill tree; **animations so characters use their weapon
+  (swing, draw the bow)**; any visual polish.
+- **The round-4 enemy redesigns mostly didn't fit the style.** Many heroes were good, with a few visual flaws each.
+- **More trinkets with fun, unique effects**, e.g. a one-time self-revive, a fireball shot out every so often that
+  explodes, complete poison immunity, auto-teleport out of reach of an attack on a cooldown, on death turn ethereal
+  (very weak attacks, can't be hit or targeted, the corpse stays behind).
+- Plan and contracts: `docs/BUILD-v1.md`. The 15 and their kits: `js/heroes.js`.

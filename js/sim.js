@@ -13,8 +13,13 @@ export function makeWorld(W, H) {
     W, H, time: 0, units: [], projectiles: [], particles: [], texts: [], hazards: [], pickups: [], pillars: [], walls: [], grid: null,
     telegraphs: [], cleared: false, doorIn: { x: 0, y: H / 2 }, doorOut: { x: W, y: H / 2 },
     on: {}, shake: 0, hitstop: 0, corpses: [],
+    fx: [], // visual effects the renderer draws (see docs/BUILD-v1.md: ring, zone, beam, wall, wave)
   };
 }
+
+// What the sprite is doing, for the renderer: u.anim = { kind, t, dur }. kind: 'swing' | 'thrust' | 'draw' | 'cast'
+// | 'throw' | 'ability'. The renderer moves the sprite's arm parts from it (see docs/BUILD-v1.md).
+export function setAnim(u, kind, dur) { u.anim = { kind, t: 0, dur }; }
 
 const emit = (w, ev, ...a) => w.on[ev] && w.on[ev](...a);
 
@@ -563,6 +568,7 @@ function tryAttack(w, u) {
     if (d <= def.range && face < 0.35 && !blocked(w, u.x, u.y, t.x, t.y)) {
       const lead = d / 520;
       fireArrow(w, u, angleTo(u.x, u.y, t.x + t.vx * lead, t.y + t.vy * lead) + rrange(-0.04, 0.04));
+      setAnim(u, def.attackAnim || 'draw', 0.32);
       u.atkT = def.atkCd * rrange(0.9, 1.1); u.lastAttackT = w.time;
     }
     return;
@@ -570,6 +576,7 @@ function tryAttack(w, u) {
   if (d - u.r - t.r <= def.range + 2 && face < 0.6) {
     if (def.windup) { u.act = { type: 'windup', t: def.windup, max: def.windup }; }
     else meleeSwing(w, u, def.role === 'skirmish');
+    setAnim(u, def.attackAnim || (def.role === 'skirmish' ? 'thrust' : 'swing'), (def.windup || 0) + 0.28);
     u.atkT = def.atkCd * rrange(0.9, 1.1); u.lastAttackT = w.time;
     if (u.kind === 'slime' || u.kind === 'slimeSmall') { u.kx += Math.cos(u.facing) * 60; u.ky += Math.sin(u.facing) * 60; }
   }
@@ -861,7 +868,10 @@ export function step(w, dt) {
     if (u.tauntT > 0) { u.tauntT -= dt; if (u.tauntT <= 0 || !u.tauntBy || !alive(u.tauntBy)) { u.tauntBy = null; u.tauntT = 0; } }
     statusTick(w, u, dt);
     if (!alive(u)) continue;
+    if (u.anim) { u.anim.t += dt; if (u.anim.t >= u.anim.dur) u.anim = null; }
     if (u.frozenT > 0) { u.dvx = u.dvy = 0; u.spd = 0; continue; }
+    // a unit with its own brain (bosses, special enemies) runs it first; returning true skips the usual brain
+    if (u.def.brain && u.def.brain(w, u, dt)) continue;
     if (u.target && !alive(u.target)) u.target = null;
     u.thinkT -= dt;
     if (u.thinkT <= 0) { u.thinkT = 0.4 + rand() * 0.08; think(w, u); }
@@ -915,4 +925,4 @@ export function step(w, dt) {
   w.units = w.units.filter((u) => !u.dead);
 }
 
-export { alive, opponents };
+export { alive, opponents, allies, hpRatio, wake, puff, textU, goalVec, steer, drive, blocked };

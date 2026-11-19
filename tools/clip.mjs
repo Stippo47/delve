@@ -9,6 +9,7 @@ import path from 'node:path';
 const args = process.argv.slice(2);
 const out = path.resolve(args[0] || 'clip.mp4');
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
+const site = +opt('port', 8811); // the game's dev server
 const seed = +opt('seed', 3), depth = +opt('depth', 1), secs = +opt('secs', 8), skip = +opt('skip', 0);
 const W = +opt('w', 390), H = +opt('h', 844), fps = +opt('fps', 30), speed = +opt('speed', 1);
 
@@ -26,7 +27,7 @@ const ctx = await browser.newContext({ viewport: { width: W, height: H }, device
 const page = await ctx.newPage();
 const errors = [];
 page.on('pageerror', (e) => errors.push(String(e)));
-await page.goto(`http://localhost:8811/?seed=${seed}`);
+await page.goto(`http://localhost:${site}/?seed=${seed}`);
 await page.waitForFunction(() => window.GAME && GAME.state === 'camp');
 await page.evaluate((d) => { GAME.record(true); GAME.startRun(d); }, depth);
 if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) GAME.recFrame(1 / 30); }, skip);

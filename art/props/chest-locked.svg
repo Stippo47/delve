@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- CHEST, locked (needs a key): darker wood, iron bands with studs instead of gold, and a big brass padlock (key colour) hanging over the seam. 48 room units wide. Stays upright on screen. -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="gWood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#86603F"/><stop offset="0.38" stop-color="#B38962"/><stop offset="1" stop-color="#6E4C32"/></linearGradient>
+    <linearGradient id="gWoodDk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7E5636"/><stop offset="1" stop-color="#5C3C24"/></linearGradient>
+    <linearGradient id="gBand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#AEB4BE"/><stop offset="1" stop-color="#666B75"/></linearGradient>
+    <linearGradient id="gBrass" x1="0" y1="0" x2="0.7" y2="1"><stop offset="0" stop-color="#FFE38A"/><stop offset="1" stop-color="#E0A82A"/></linearGradient>
+    <linearGradient id="shX" x1="96" y1="0" x2="170" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2B1A10" stop-opacity="0"/><stop offset="1" stop-color="#2B1A10" stop-opacity="0.32"/></linearGradient>
+    <path id="lid" d="M56 40 H144 A18 18 0 0 1 162 58 V112 H38 V58 A18 18 0 0 1 56 40 Z"/>
+    <clipPath id="lidC"><use href="#lid"/></clipPath>
+    <path id="front" d="M44 108 H156 V148 A10 10 0 0 1 146 158 H54 A10 10 0 0 1 44 148 Z"/>
+    <clipPath id="frontC"><use href="#front"/></clipPath>
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <use href="#front" fill="url(#gWoodDk)"/>
+    <g clip-path="url(#frontC)"><rect x="56" y="20" width="12" height="150" fill="url(#gBand)"/><rect x="132" y="20" width="12" height="150" fill="url(#gBand)"/><rect x="36" y="110" width="130" height="50" fill="url(#shX)"/></g>
+    <use href="#lid" fill="url(#gWood)"/>
+    <g clip-path="url(#lidC)">
+      <path d="M38 62 H162 M38 86 H162" stroke="#5C3C24" stroke-width="3" opacity="0.4"/>
+      <rect x="56" y="20" width="12" height="150" fill="url(#gBand)"/><rect x="132" y="20" width="12" height="150" fill="url(#gBand)"/>
+      <rect x="36" y="100" width="130" height="12" fill="url(#gBand)"/>
+      <rect x="36" y="36" width="130" height="80" fill="url(#shX)"/>
+      <ellipse cx="78" cy="72" rx="26" ry="5" fill="#FFFFFF" opacity="0.28"/>
+    </g>
+    <rect x="44" y="112" width="112" height="5" fill="#2B2230" opacity="0.3"/>
+    <circle cx="62" cy="52" r="2.6" fill="#D9DEE4"/><circle cx="62" cy="74" r="2.6" fill="#D9DEE4"/><circle cx="62" cy="94" r="2.6" fill="#D9DEE4"/><circle cx="62" cy="126" r="2.6" fill="#D9DEE4"/><circle cx="62" cy="146" r="2.6" fill="#D9DEE4"/><circle cx="138" cy="52" r="2.6" fill="#D9DEE4"/><circle cx="138" cy="74" r="2.6" fill="#D9DEE4"/><circle cx="138" cy="94" r="2.6" fill="#D9DEE4"/><circle cx="138" cy="126" r="2.6" fill="#D9DEE4"/><circle cx="138" cy="146" r="2.6" fill="#D9DEE4"/>
+    <path d="M88 116 V102 A12 12 0 0 1 112 102 V116" fill="none" stroke="#8A6A2A" stroke-width="7" transform="translate(1.5 2)" opacity="0.6"/><path d="M88 116 V102 A12 12 0 0 1 112 102 V116" fill="none" stroke="url(#gBrass)" stroke-width="7"/><path d="M88 112 H112 A9 9 0 0 1 121 121 V139 A9 9 0 0 1 112 148 H88 A9 9 0 0 1 79 139 V121 A9 9 0 0 1 88 112 Z" fill="#2B2230" opacity="0.3" transform="translate(3 4)"/><path d="M88 112 H112 A9 9 0 0 1 121 121 V139 A9 9 0 0 1 112 148 H88 A9 9 0 0 1 79 139 V121 A9 9 0 0 1 88 112 Z" fill="url(#gBrass)"/><path d="M86 116 H114 A3 3 0 0 1 117 119 V119 A3 3 0 0 1 114 122 H86 A3 3 0 0 1 83 119 V119 A3 3 0 0 1 86 116 Z" fill="#FFF3C4" opacity="0.7"/><path d="M100 124 A5 5 0 0 1 103 133 L105 141 H95 L97 133 A5 5 0 0 1 100 124 Z" fill="#4A3418"/>
+  </g>
+</svg>
