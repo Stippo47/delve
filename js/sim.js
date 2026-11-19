@@ -3,6 +3,7 @@ import { TAU, clamp, dist, dist2, angleTo, wrapAngle, angleDiff, rand, rrange, r
 import { DEFS, levelHp, levelDmg } from './units.js';
 import { lineClear, rayToRect, circleRect, findPath, buildGrid } from './path.js';
 import { kitThink, hooksOf, segDist } from './kits.js';
+import { trinketHooks } from './trinkets.js';
 
 let NEXT_ID = 1;
 const DIRS = 16;
@@ -40,7 +41,7 @@ export function spawn(w, kind, x, y, opts = {}) {
     mode: 'wander', modeT: 0, thinkT: rand() * 0.4, abilThinkT: rand() * 0.5, target: null, targetT: 0,
     st: { burn: 0, chill: 0, poison: 0, wet: 0, shock: 0, stagger: 0 }, frozenT: 0, stunT: 0, rootT: 0, sleepT: 0, koT: 0, buffs: [], later: null, freezeImmune: 0, dotAcc: 0,
     flashT: 0, invulnT: 0, act: null, dead: false, downed: false,
-    trinket: opts.trinket || null, trinkets: opts.trinkets || [], lastBreathUsed: false, hasKey: !!opts.hasKey,
+    trinkets: opts.trinkets || [], trinketHooks: trinketHooks(opts.trinkets), hasKey: !!opts.hasKey,
     strafeSign: chance(0.5) ? 1 : -1, wanderA: rand() * TAU, hazardT: 0, forcedGoal: null,
     gen: opts.gen || 0, bob: rand() * TAU, lastAttackT: -9, aggro: team === 'hero', potions: opts.potions || 0, path: null, pathT: 0, pathGoal: null,
     atkMul: 1, moveMul: 1, mvA: hero ? 0 : Math.PI, spd: 0, sdx: 0, sdy: 0, lungeT: 0, recoilT: 0, hitT: 0, hitA: 0, tauntBy: null, tauntT: 0,
@@ -50,12 +51,13 @@ export function spawn(w, kind, x, y, opts = {}) {
 }
 
 const alive = (u) => !u.dead && !u.downed;
-const opponents = (w, u) => w.units.filter((o) => alive(o) && o.team !== u.team);
-const allies = (w, u) => w.units.filter((o) => alive(o) && o.team === u.team && o !== u);
+// Ethereal units (a Wraith Veil ghost) are nobody's opponent or ally: they can't be targeted, hit or helped.
+const opponents = (w, u) => w.units.filter((o) => alive(o) && o.team !== u.team && !o.ethereal);
+const allies = (w, u) => w.units.filter((o) => alive(o) && o.team === u.team && o !== u && !o.ethereal);
 const hpRatio = (u) => u.hp / u.maxHp;
-const hasTrinket = (u, id) => u.trinket === id;
 const speedOf = (u) => {
-  let s = u.def.speed * (hasTrinket(u, 'swiftBoots') ? 1.15 : 1) * (u.moveMul || 1);
+  let s = u.def.speed * (u.moveMul || 1);
+  for (const h of hooksOf(u)) if (h.moveSpeed) s *= h.moveSpeed(u);
   s *= 1 - Math.min(0.6, u.st.chill / 160);
   if (u.st.poison > 20) s *= 0.9;          // poison slows a little
   if (u.inOil) s *= 0.7;
@@ -279,7 +281,7 @@ function steer(w, u, gx, gy, opts = {}) {
   const fear = u.team === 'hero' ? 0.9 : 0.45;
   for (const h of w.hazards) if (h.type !== 'oil' || u.team === 'hero') avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' ? 0.35 : fear, 40);
   for (const o of w.units) {
-    if (o === u || !alive(o)) continue;
+    if (o === u || !alive(o) || o.ethereal || u.ethereal) continue;
     if (o.team === u.team) avoidCircle(o.x, o.y, o.r + (u.team === 'hero' ? 14 : 0), 0.45, 18);
     else if (u.def.role === 'ranged' && o !== u.target) avoidCircle(o.x, o.y, o.r, 0.7, 60);
     else if (u.def.role === 'skirmish' && u.team === 'hero' && o !== u.target) avoidCircle(o.x, o.y, o.r, 0.75, 55);
@@ -466,6 +468,8 @@ export function hurt(w, u, amount, src, o = {}) {
   if (!alive(u) || u.invulnT > 0 || amount <= 0 || u.ethereal) return 0;
   if (u.team === 'enemy') wake(w, u);
   if (u.sleepT > 0 && !o.dot) u.sleepT = 0;
+  // a hook can make the blow miss entirely (Blink Stone)
+  if (!o.dot && hooksOf(u).some((h) => h.evade && h.evade(w, u, src, amount, o))) return 0;
   // someone guarding this unit takes part of the blow
   if (u.guardBy && u.guardT > 0 && alive(u.guardBy) && !o.dot && !o.guarded) {
     const share = amount * (u.guardShare || 0.4); amount -= share;
@@ -486,7 +490,6 @@ export function hurt(w, u, amount, src, o = {}) {
     const a = angleTo(u.x, u.y, src.x, src.y);
     if (angleDiff(a, u.facing) < 1.25) { amt *= 1 - u.def.shield; puff(w, u.x + Math.cos(u.facing) * u.r, u.y + Math.sin(u.facing) * u.r, '#E8EDF3', 3, 60, 3, 0.25); }
   }
-  if (hasTrinket(u, 'ironSkin')) amt *= 0.85;
   // shatter: a hard hit on a frozen unit
   if (u.frozenT > 0 && !o.dot && (o.heavy || amount >= 12 || (o.knock || 0) >= 150)) shatter(w, u, src);
   u.hp -= amt;
@@ -499,7 +502,6 @@ export function hurt(w, u, amount, src, o = {}) {
     if (src && (src.kind === 'knight' || src.def.heroRole === 'tank') && u.team === 'enemy') { u.tauntBy = src; u.tauntT = 3; }
     u.flashT = 0.12; textU(w, u.x + rrange(-6, 6), u.y, u.r + 4, Math.round(amt), o.crit ? '#FFE14D' : '#FFFFFF', o.crit ? 1.3 : 1, true); }
   else { u.dotAcc += amt; if (u.dotAcc >= 4) { textU(w, u.x, u.y, u.r, Math.round(u.dotAcc), o.color || '#FF9A55', 0.75); u.dotAcc = 0; } }
-  if (src && src.trinket === 'vampTooth' && alive(src)) src.hp = Math.min(src.maxHp, src.hp + amt * 0.08);
   if (src && alive(src)) { const ls = src.buffs.reduce((a, b) => a + (b.lifesteal || 0), 0); if (ls) heal(w, src, amt * ls, src); }
   if (o.knock && !knockImmune(u)) {
     const a = o.kAngle != null ? o.kAngle : src ? angleTo(src.x, src.y, u.x, u.y) : rand() * TAU;
@@ -508,18 +510,14 @@ export function hurt(w, u, amount, src, o = {}) {
   }
   for (const s of ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger']) if (o[s]) addStatus(w, u, s, o[s], src);
   if (src && alive(src) && !o.dot) for (const h of hooksOf(src)) if (h.hit) h.hit(w, src, u, amt, o);
-  if (!o.dot && u.trinket === 'volatile' && chance(0.15)) explode(w, u.x, u.y, 70, 14, { burn: 28 }, u, '#FF8A3D');
+  if (!o.dot) for (const h of hooksOf(u)) if (h.struck) h.struck(w, u, src, amt, o);
   if (u.hp <= 0 && hooksOf(u).some((h) => h.downed && h.downed(w, u, src))) return amt;
-  if (u.hp <= 0) {
-    if (u.trinket === 'lastBreath' && !u.lastBreathUsed) {
-      u.lastBreathUsed = true; u.hp = 1; u.invulnT = 2; textU(w, u.x, u.y, u.r + 10, 'LAST BREATH', '#FFE7A0', 1.1); puff(w, u.x, u.y, '#FFE7A0', 14, 120);
-    } else kill(w, u, src);
-  }
+  if (u.hp <= 0) kill(w, u, src);
   return amt;
 }
 
 export function addStatus(w, u, type, amount, src) {
-  if (!alive(u) || immuneTo(u, type)) return;
+  if (!alive(u) || u.ethereal || immuneTo(u, type)) return;
   const res = (u.def.res && u.def.res[type]) ?? 1;
   const s = u.st;
   if (type === 'chill' && s.wet > 30) amount *= 1.5;          // wet freezes easier
@@ -529,7 +527,8 @@ export function addStatus(w, u, type, amount, src) {
     s.poison *= 0.5;                                             // water washes poison off
     if (s.wet >= 100) {                                          // soaked through: slips, spins, leaves a puddle
       s.wet = 60; u.act = { type: 'slip', t: 1, max: 1 }; u.stunT = Math.max(u.stunT, 1);
-      w.hazards.push({ type: 'water', x: u.x, y: u.y, r: 42, t: 6, max: 6 });
+      // no new puddle on top of one: slipping in a puddle used to make puddles that soak and slip again, without end
+      if (!w.hazards.some((h) => h.type === 'water' && dist(u.x, u.y, h.x, h.y) < h.r + 20)) w.hazards.push({ type: 'water', x: u.x, y: u.y, r: 42, t: 6, max: 6 });
       textU(w, u.x, u.y, u.r + 10, 'SLIP', '#8FD3FF', 1);
     }
     return;
@@ -596,6 +595,10 @@ function kill(w, u, src) {
   if (src && src !== u && alive(src)) for (const h of hooksOf(src)) if (h.kill) h.kill(w, src, u);
   for (const o of w.units) if (o !== u && alive(o) && dist(o.x, o.y, u.x, u.y) < 260) for (const h of hooksOf(o)) if (h.death) h.death(w, o, u);
   if (u.boom) explode(w, u.x, u.y, 80, 16, {}, u.summonBy || null, '#9BE07A', u);
+  if (!u.summon) {   // going down (a hero) or dying: its own hooks, then its side's
+    for (const h of hooksOf(u)) if (h.fallen) h.fallen(w, u, src);
+    for (const o of w.units) if (o !== u && o.team === u.team && alive(o)) for (const h of hooksOf(o)) if (h.allyDown) h.allyDown(w, o, u);
+  }
   if (u.summon) { u.dead = true; puff(w, u.x, u.y, '#9BE07A', 10, 80, 5, 0.5); return; } // summons just fade
   if (u.team === 'hero') {
     u.downed = true; u.act = null; u.frozenT = 0; u.st = { burn: 0, chill: 0, poison: 0 };
@@ -627,20 +630,13 @@ function inMeleeArc(u, o, extra = 0) {
   return angleDiff(angleTo(u.x, u.y, o.x, o.y), u.facing) < (u.def.arc || 1.5) / 2 + 0.2;
 }
 
-function trinketStatus(u, o) {
-  if (u.trinket === 'frostRing') o.chill = (o.chill || 0) + 15;
-  if (u.trinket === 'emberRing') o.burn = (o.burn || 0) + 15;
-  if (u.trinket === 'venomFang') o.poison = (o.poison || 0) + 15;
-  return o;
-}
-
 function meleeSwing(w, u, single) {
   const d = u.def;
   const targets = single ? (u.target && inMeleeArc(u, u.target, 6) ? [u.target] : []) : w.units.filter((o) => alive(o) && o.team !== u.team && inMeleeArc(u, o, 6));
   u.lungeT = 0.18;
   w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, color: u.team === 'hero' ? '#FFFFFF' : '#FFD2C2' });
   for (const o of targets) {
-    hurt(w, o, d.dmg * u.dmgMul * rrange(0.9, 1.1), u, trinketStatus(u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison }));
+    hurt(w, o, d.dmg * u.dmgMul * rrange(0.9, 1.1), u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison });
   }
 }
 
@@ -649,7 +645,7 @@ function fireArrow(w, u, angle, o = {}) {
   u.recoilT = 0.14;
   w.projectiles.push({ kind: o.fire ? 'fireArrow' : (u.def.proj || 'arrow'), color: u.def.projColor, x: u.x + Math.cos(angle) * (u.r + 6), y: u.y + Math.sin(angle) * (u.r + 6),
     vx: Math.cos(angle) * sp, vy: Math.sin(angle) * sp, r: 6, team: u.team, owner: u, dmg: (o.dmg || u.def.dmg) * u.dmgMul,
-    o: trinketStatus(u, { chill: o.fire ? 0 : u.def.chill, burn: o.fire ? 20 : 0, knock: 30 }), life: 1.2, a: angle });
+    o: { chill: o.fire ? 0 : u.def.chill, burn: o.fire ? 20 : 0, knock: 30 }, life: 1.2, a: angle });
 }
 
 function tryAttack(w, u) {
@@ -746,7 +742,7 @@ function useAbility(w, u) {
       u.x = nx; u.y = ny; u.vx = u.vy = 0; u.facing = angleTo(u.x, u.y, t.x, t.y);
       u.spd = 0; u.mvA = u.facing; u.lungeT = 0.18;
       puff(w, u.x, u.y, 'rgba(60,40,90,0.85)', 14, 70, 8, 0.6);
-      hurt(w, t, def.dmg * 3.2 * u.dmgMul, u, trinketStatus(u, { crit: true, poison: 30, noDodge: true }));
+      hurt(w, t, def.dmg * 3.2 * u.dmgMul, u, { crit: true, poison: 30, noDodge: true });
       setAnim(u, 'thrust', 0.3);
       textU(w, u.x, u.y, u.r + 12, 'BACKSTAB', '#C9A7FF', 0.9);
       u.atkT = def.atkCd; u.lastAttackT = w.time; u.mode = 'retreat'; u.modeT = 0;
@@ -779,7 +775,7 @@ function runAction(w, u, dt) {
       if (dist(u.x, u.y, o.x, o.y) < u.r + o.r + 6) {
         a.hit.add(o);
         const side = Math.sign(Math.sin(angleTo(u.x, u.y, o.x, o.y) - a.a)) || 1;
-        hurt(w, o, 18 * u.dmgMul * (a.power || 1), u, trinketStatus(u, { knock: 340 * (a.power || 1), kAngle: a.a + side * 0.6, heavy: true, stagger: a.stagger || 0 }));
+        hurt(w, o, 18 * u.dmgMul * (a.power || 1), u, { knock: 340 * (a.power || 1), kAngle: a.a + side * 0.6, heavy: true, stagger: a.stagger || 0 });
         w.shake = Math.max(w.shake, 5);
       }
     }
@@ -901,9 +897,9 @@ function physics(w, dt) {
   }
   // unit-unit
   for (let i = 0; i < us.length; i++) {
-    const a = us[i]; if (a.dead || a.downed) continue;
+    const a = us[i]; if (a.dead || a.downed || a.ethereal) continue;
     for (let j = i + 1; j < us.length; j++) {
-      const b = us[j]; if (b.dead || b.downed) continue;
+      const b = us[j]; if (b.dead || b.downed || b.ethereal) continue;
       const dx = b.x - a.x, dy = b.y - a.y; const d2 = dx * dx + dy * dy; const m = a.r + b.r;
       if (d2 >= m * m || d2 === 0) continue;
       const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, over = m - d;
@@ -936,7 +932,7 @@ function projectiles(w, dt) {
       if (p.hitSet && p.hitSet.has(u)) continue;
       if (dist(p.x, p.y, u.x, u.y) < u.r + p.r) {
         const friendly = p.team === 'neutral' && p.owner && u.team === p.owner.team;
-        const o = { ...p.o, kAngle: Math.atan2(p.vy, p.vx) };
+        const o = { ...p.o, kAngle: Math.atan2(p.vy, p.vx), shot: true };
         if (friendly) { for (const k of ['chill', 'burn', 'poison']) if (o[k]) o[k] *= 0.4; }
         const mul = p.owner && p.owner.nextShotMul && !p.hitSet ? p.owner.nextShotMul : 1;
         if (mul > 1) p.owner.nextShotMul = 0;
@@ -958,7 +954,7 @@ function hazards(w, dt) {
   for (const h of w.hazards) if (h.t != null) h.t -= dt;
   w.hazards = w.hazards.filter((h) => h.t == null || h.t > 0);
   for (const u of w.units) {
-    if (!alive(u)) continue;
+    if (!alive(u) || u.ethereal) continue;
     u.inOil = false;
     u.hazardT -= dt;
     for (const h of w.hazards) {
@@ -1007,7 +1003,8 @@ export function step(w, dt) {
     if (!alive(u)) continue;
     u.flashT = Math.max(0, u.flashT - dt); u.invulnT = Math.max(0, u.invulnT - dt);
     u.atkT -= dt * atkRate(u); u.abilT -= dt;
-    if (u.kit) for (const k in u.kit.cd) u.kit.cd[k] -= dt * (1 - Math.min(0.5, u.st.wet / 200)); // wet slows abilities u.modeT += dt; u.bob += dt * (3 + u.spd * 0.09);
+    if (u.kit) for (const k in u.kit.cd) u.kit.cd[k] -= dt * (1 - Math.min(0.5, u.st.wet / 200)); // wet slows abilities
+    u.modeT += dt; u.bob += dt * (3 + u.spd * 0.09);
     u.lungeT = Math.max(0, u.lungeT - dt); u.recoilT = Math.max(0, u.recoilT - dt); u.hitT = Math.max(0, u.hitT - dt);
     if (u.tauntT > 0) { u.tauntT -= dt; if (u.tauntT <= 0 || !u.tauntBy || !alive(u.tauntBy)) { u.tauntBy = null; u.tauntT = 0; } }
     statusTick(w, u, dt);

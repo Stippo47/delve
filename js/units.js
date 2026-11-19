@@ -74,14 +74,5 @@ export const levelHp = (base, lvl) => Math.round(base * (1 + 0.12 * (lvl - 1)));
 export const levelDmg = (base, lvl) => base * (1 + 0.09 * (lvl - 1));
 export const xpToNext = (lvl) => Math.round(40 * Math.pow(lvl, 1.45));
 
-export const TRINKETS = {
-  lastBreath: { name: 'Last Breath', desc: 'Once per floor: survive a killing blow at 1 HP, invulnerable for 2s.' },
-  volatile: { name: 'Volatile Charm', desc: '15% chance when hit to explode, burning everything nearby.' },
-  frostRing: { name: 'Frost Ring', desc: 'Attacks add chill.' },
-  emberRing: { name: 'Ember Ring', desc: 'Attacks add burn.' },
-  venomFang: { name: 'Venom Fang', desc: 'Attacks add poison.' },
-  vampTooth: { name: 'Vampire Tooth', desc: 'Heal 8% of damage dealt.' },
-  ironSkin: { name: 'Iron Skin', desc: 'Take 15% less damage.' },
-  swiftBoots: { name: 'Swift Boots', desc: '15% faster.' },
-};
-export const TRINKET_IDS = Object.keys(TRINKETS);
+// Trinkets live in trinkets.js (each is a set of hooks); re-exported here so older imports keep working.
+export { TRINKETS, TRINKET_IDS } from './trinkets.js';

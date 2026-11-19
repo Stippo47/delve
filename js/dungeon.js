@@ -6,6 +6,7 @@
 // down until the floor's boss is beaten, then come back at 10% HP.
 import { makeWorld, spawn, step, alive } from './sim.js';
 import { DEFS, xpToNext, levelHp, levelDmg, TRINKET_IDS } from './units.js';
+import { trinketHooks, raiseGhost, wears } from './trinkets.js';
 import { HEROES, STARTERS, treeFor, freeNodes } from './heroes.js';
 import { initKit, refreshKit, hooksOf } from './kits.js';
 import { rand, rrange, rint, pick, chance, dist, clamp, angleTo } from './util.js';
@@ -27,6 +28,9 @@ export function newRun(save, opts = {}) {
     const sv = (save.heroes && save.heroes[k]) || {};
     heroes[k] = { level: 1, xp: 0, hp: null, down: false, potions: (opts.potions && opts.potions[k]) || 0, trinkets: (sv.trinkets || []).slice(), best: 1 };
   }
+  // testing: ?trinkets=a,b,c (or ?trinkets=all) puts those trinkets on every hero, whatever the slots
+  const tq = typeof location !== 'undefined' && new URLSearchParams(location.search).get('trinkets');
+  if (tq) for (const k of party) heroes[k].trinkets = tq === 'all' ? TRINKET_IDS.slice() : tq.split(',').filter((id) => TRINKET_IDS.includes(id));
   const run = { depth: opts.depth || save.depth || 1, theme: opts.theme || null, mercs: !!opts.mercs, hired, party, floor: 1, map: makeFloor(), coins: 0, gems: 0,
     satchel: [], keys: 0, heroes, phase: 'fight', t: 0, fade: 1, save, kills: 0, banner: null, rooms: 0, leaving: false };
   buildRoom(run);
@@ -190,7 +194,8 @@ function buildRoom(run) {
   const y0 = w.doorIn.y, ys = [y0, y0 - 60, y0 + 60];
   [...run.party, ...run.hired].forEach((k, i) => {
     const hs = run.heroes[k];
-    if (hs.down) return;
+    // a downed hero stays out until the floor's boss falls; with the Wraith Veil, its ghost comes along
+    if (hs.down) { if (wears(hs.trinkets, 'wraithVeil')) raiseGhost(w, { kind: k, x: 70, y: ys[i % 3], level: hs.level, dmgMul: levelDmg(1, hs.level), fake: true }); return; }
     const tank = hs.merc ? k === 'knight' : HEROES[k].role === 'tank';
     const u = spawn(w, k, 70 + (tank ? 40 : 0), ys[i % 3] + Math.floor(i / 3) * 30, { level: hs.level, hp: hs.hp, potions: hs.potions, trinkets: hs.trinkets });
     if (!hs.merc) initKit(u, k, buildFor(run.save, k), hs.level);
@@ -236,7 +241,7 @@ function grant(run, reward, hero) {
   const w = run.world;
   burst(w, hero ? hero.x : w.W / 2, hero ? hero.y : w.H / 2, { potion: '#E0604B', xp: '#FFE14D', coins: '#F2B53A', trinket: '#C9A7FF' }[reward]);
   if (reward === 'potion') {
-    const hs = w.units.filter((u) => u.team === 'hero' && alive(u)).sort((a, b) => a.potions - b.potions || a.hp / a.maxHp - b.hp / b.maxHp);
+    const hs = w.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon).sort((a, b) => a.potions - b.potions || a.hp / a.maxHp - b.hp / b.maxHp);
     const h = hs[0]; if (h) { h.potions++; run.heroes[h.kind].potions = h.potions; }
   } else if (reward === 'xp') {
     for (const h of w.units) if (h.team === 'hero' && alive(h)) giveXp(run, h, 30 + 20 * run.depth);
@@ -244,8 +249,19 @@ function grant(run, reward, hero) {
     const n = rint(10, 18) + run.depth * 6;
     for (let i = 0; i < n; i++) w.pickups.push({ type: 'coin', x: hero ? hero.x : w.W / 2, y: hero ? hero.y : w.H / 2, vx: rrange(-120, 120), vy: rrange(-120, 120), v: 1 });
   } else if (reward === 'trinket') {
-    run.satchel.push(rollTrinket());
+    const it = rollTrinket(); run.satchel.push(it);
+    equipFound(run, it.id, hero);
   }
+}
+// A found trinket goes straight on: the hero who found it if they have a free slot, else whoever does.
+// It's worn for the rest of the run only (summary.foundTrinkets lists it; found trinkets aren't kept).
+export const trinketSlots = (run, k) => 1 + (buildFor(run.save, k).nodes.slot2 ? 1 : 0);
+function equipFound(run, id, finder) {
+  const order = [finder && finder.kind, ...run.party].filter((k) => k && run.heroes[k] && !run.heroes[k].down);
+  const k = order.find((k) => run.heroes[k].trinkets.length < trinketSlots(run, k)); if (!k) return;
+  run.heroes[k].trinkets.push(id);
+  const u = run.world.units.find((o) => o.kind === k && !o.summon);
+  if (u) { if (u.trinkets !== run.heroes[k].trinkets) u.trinkets = run.heroes[k].trinkets; u.trinketHooks = trinketHooks(u.trinkets); }
 }
 function burst(w, x, y, color) { for (let i = 0; i < 18; i++) { const a = rand() * Math.PI * 2; w.particles.push({ x, y, vx: Math.cos(a) * 150, vy: Math.sin(a) * 150, life: 0.7, max: 0.7, size: 5, color }); } }
 
@@ -425,7 +441,7 @@ function doTasks(run, dt) {
 }
 
 function finishRoomHp(run) {
-  for (const u of run.world.units) if (u.team === 'hero' && run.heroes[u.kind]) { const hs = run.heroes[u.kind]; hs.hp = u.hp; hs.potions = u.potions; if (u.downed) hs.down = true; }
+  for (const u of run.world.units) if (u.team === 'hero' && !u.summon && run.heroes[u.kind]) { const hs = run.heroes[u.kind]; hs.hp = u.hp; hs.potions = u.potions; if (u.downed) hs.down = true; }
 }
 
 function endFloor(run) {
