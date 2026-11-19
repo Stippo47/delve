@@ -29,7 +29,7 @@ const near = (w, u, x, y, r, team) => w.units.filter((o) => alive(o) && !o.ether
 const foesNear = (w, u, x, y, r) => near(w, u, x, y, r, u.team === 'hero' ? 'enemy' : 'hero');
 const friendsNear = (w, u, x, y, r) => near(w, u, x, y, r, u.team);
 const hurtMost = (list) => list.reduce((b, o) => (!b || hpRatio(o) < hpRatio(b) ? o : b), null);
-const dmgOf = (u, k) => u.def.dmg * u.dmgMul * k;
+const dmgOf = (u, k) => (u.def.dmg || 8) * (u.dmgMul || 1) * k;
 const ang = (u, t) => angleTo(u.x, u.y, t.x, t.y);
 const isUndead = (o) => /skeleton|rattler|gaper|brute|ghost|banshee|boss/.test(o.kind) || o.def.undead;
 

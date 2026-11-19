@@ -30,7 +30,7 @@ const errors = [];
 page.on('pageerror', (e) => errors.push(String(e)));
 const q = opt('q', ''); // extra address parameters
 await page.goto(`http://localhost:${site}/?seed=${seed}${q ? '&' + q : ''}`);
-await page.waitForFunction(() => window.GAME && GAME.state === 'camp' && GAME.ready); // sprites loaded, camp shown
+await page.waitForFunction(() => window.GAME && GAME.state === 'camp' && GAME.ready, null, { timeout: 180000 }); // sprites loaded, camp shown
 await page.evaluate((d) => { GAME.record(true); GAME.startRun(d); }, depth);
 if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) GAME.recFrame(1 / 30); }, skip);
 const n = Math.round(secs * fps);

@@ -1,5 +1,5 @@
 import { loadSprites } from './sprites.js';
-import { layout, draw, view, snapCamera, setZoom } from './render.js';
+import { layout, draw, view, snapCamera, setZoom, warmArt } from './render.js';
 import { newRun, update, retreat, summarize, FLOORS } from './dungeon.js';
 import { loadSave, writeSave } from './save.js';
 import { DEFS, xpToNext, levelHp } from './units.js';
@@ -32,6 +32,7 @@ function startRun(opts) {
   if (typeof opts !== 'object' || !opts) opts = { depth: +opts || 1, theme: save.theme || Object.keys(THEMES)[0], party: save.party, mercs: save.mercs };
   run = newRun(save, opts);
   if (save.zoom) setZoom(save.zoom);
+  warmArt(run.world);
   buildChips();
   show('run');
 }

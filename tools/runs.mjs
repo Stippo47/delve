@@ -27,7 +27,7 @@ for (const theme of themes) {
       while (run.phase !== 'won' && run.phase !== 'lost' && t < 3600) {
         update(run, DT); t += DT;
         if (run.rooms !== lastRooms) { lastRooms = run.rooms; lastT = t; if (args.includes('--arrive') && run.node.kind === 'boss' && run.floor === FLOORS) console.log('   arrive', run.world.units.filter((u) => u.team === 'hero').map((h) => h.kind + ':' + Math.round(100 * h.hp / h.maxHp) + '% lv' + h.level + ' pots' + h.potions).join(' '), 'downed', run.party.filter((k) => run.heroes[k].down).join(',')); }
-        if (run.node && run.node.kind === 'boss' && run.floor === FLOORS && bossStart == null) bossStart = t;
+        if (bossStart == null && run.floor === FLOORS && run.world.units.some((u) => u.def.boss && !u.dead)) bossStart = t; // the last boss is up
         if (t - lastT > 300) { run.stuckIn = run.phase + ' hitstop ' + run.world.hitstop + ' t ' + run.t + ' exitT ' + run.exitT + ' doorK ' + run.doorK + ' doors ' + JSON.stringify(run.world.doors) + ' task ' + (run.task && run.task.type) + ' pickups ' + run.world.pickups.map((p) => p.type + '@' + Math.round(p.x) + ',' + Math.round(p.y)).join(' ') + ' water ' + JSON.stringify(run.world.water) + ' enemies ' + run.world.units.filter((u) => u.team === 'enemy' && !u.dead).length + ' wp ' + JSON.stringify(run.world.wp) + ' toVisit ' + JSON.stringify(run.world.toVisit); run.phase = 'stuck'; break; }
       }
     } catch (e) { errs = e; run.phase = 'error'; }

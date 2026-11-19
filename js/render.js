@@ -423,13 +423,18 @@ function drawUnit(ctx, u, w) {
   if (u.frozenT > 0) drawIce(ctx, u, w);
 }
 
+// Ask for every unit's art at its current size, so it's ready by the time the room fades in.
+export function warmArt(w) {
+  for (const u of w.units) if (u.def.art) getRig(u.def.art, u.vr * 220 / (u.def.headR || headR(u.kind)) * view.scale * view.dpr * 1.04);
+}
+
 // A unit drawn from its SVG parts, arms moving with what it is doing (parts.js).
 function drawPartsUnit(ctx, u, w) {
   const sizeU = u.vr * 220 / (u.def.headR || headR(u.kind)); // def.headR: the head's radius in the art's SVG units
   const set = getRig(u.def.art, sizeU * view.scale * view.dpr * 1.04);
   ctx.save();
   unitFrame(ctx, u, w);
-  if (!set) { inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, u.vr, 0, TAU); }, u.team === 'hero' ? '#5FA35A' : '#C8553D'); ctx.restore(); return; }
+  if (!set) { ctx.restore(); return; } // still rendering (a fraction of a second): draw nothing rather than a placeholder
   const pose = u.downed ? LIMP : poseFor(u, w, w._dt ?? 1 / 60);
   const k = sizeU / 220 * (1 + 0.05 * (pose.pop || 0));
   ctx.scale(k, k); ctx.translate(-100, -100);
