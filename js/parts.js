@@ -121,7 +121,8 @@ function moveLooseShadows(rig, data) {
   });
 }
 
-const bucket = (px) => clamp(Math.ceil(px / 16) * 16, 32, 576);
+// sizes step by about 12%, so a pinch zoom re-renders a few times, not at every pixel
+const bucket = (px) => clamp(Math.round(32 * Math.pow(2, Math.ceil(Math.log2(Math.max(px, 32) / 32) * 6) / 6)), 32, 640);
 
 // The raster set for an art file at about px pixels per 220 units, or the nearest one ready while it renders.
 export function getRig(url, px220) {

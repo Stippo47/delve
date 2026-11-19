@@ -22,7 +22,7 @@ const ENEMY_ART = ['rattler', 'rattler-loosejaw', 'rattler-jawless-spear', 'ratt
 for (const a of ENEMY_ART) {
   const bow = a.endsWith('bow');
   DEFS['lab-' + a] = { ...DEFS.skeleton, name: a, art: `art/enemies/${a}.svg`, attackAnim: bow ? 'draw' : a.endsWith('spear') ? 'thrust' : 'swing',
-    role: bow ? 'ranged' : 'melee', range: bow ? 240 : 20, keep: bow ? 160 : undefined, windup: bow ? 0 : 0.45 };
+    role: bow ? 'ranged' : 'melee', range: bow ? 240 : 20, keep: bow ? 160 : undefined, windup: bow ? 0 : 0.45, headR: 72 };
 }
 const HERO_KINDS = Object.keys(HEROES);
 const ART_KINDS = [...HERO_KINDS, ...ENEMY_ART.map((a) => 'lab-' + a)];
@@ -105,7 +105,7 @@ function setupFight(n) {
   heroes.forEach((k, i) => { const u = spawn(w, k, 120 + (i % 2) * 40, 60 + i * (360 / heroes.length)); u.facing = 0; });
   const foes = ['lab-rattler', 'lab-rattler-loosejaw', 'lab-rattler-jawless-spear', 'lab-rattler-jawless-bow', 'lab-gaper', 'lab-brute', 'lab-lizardman', 'lab-lizardman-blade'];
   const m = n ? n - heroes.length : 6;
-  for (let i = 0; i < m; i++) { const u = spawn(w, foes[i % foes.length], 560 + (i % 4) * 70, 60 + Math.floor(i / 4) * 80 + (i % 2) * 30); u.facing = Math.PI; u.aggro = true; }
+  for (let i = 0; i < m; i++) { const u = spawn(w, foes[i % foes.length], 380 + (i % 4) * 70, 60 + Math.floor(i / 4) * 80 + (i % 2) * 30); u.facing = Math.PI; u.aggro = true; }
   setZoom(+(P.get('zoom') || 0.8));
   tick = (dt) => { step(w, dt); for (const u of w.units) if (u.team === 'hero' && u.hp < u.maxHp * 0.3) u.hp = u.maxHp; };
 }
@@ -152,7 +152,25 @@ function setupFx() {
   // the sim moves the fx only once lane work lands; here the bench does it
 }
 
+function setupProps() {
+  w = room(900, 480);
+  w.walls = []; w.cleared = true;
+  const kinds = ['fight', 'hazard', 'elite', 'treasure', 'fountain', 'decision', 'boss'];
+  w.doors = [{ y: 70, kind: 'fight', chosen: true }, { y: 190, kind: 'treasure' }, { y: 310, kind: 'boss' }, { y: 420, kind: 'fountain' }];
+  if (P.get('shut')) w.cleared = false;
+  void kinds;
+  w.pillars.push({ x: 640, y: 80, r: 30, prop: 'obstacle-rock' }, { x: 640, y: 200, r: 30, prop: 'obstacle-pillar' }, { x: 640, y: 320, r: 30, prop: 'obstacle-crates' }, { x: 520, y: 400, r: 38, fountain: true }, { x: 400, y: 400, r: 38, fountain: true, used: true });
+  w.hazards.push({ type: 'oil', x: 520, y: 80, r: 40 }, { type: 'spikes', x: 520, y: 200, r: 30 }, { type: 'spikes', x: 520, y: 300, r: 30, up: false }, { type: 'fire', x: 400, y: 80, r: 34 }, { type: 'gas', x: 400, y: 200, r: 40 });
+  w.pickups.push({ type: 'chest', x: 300, y: 80, free: true, open: false }, { type: 'chest', x: 300, y: 190, open: false }, { type: 'chest', x: 300, y: 300, open: true, free: true },
+    { type: 'pedestal', x: 200, y: 80, reward: 'potion' }, { type: 'pedestal', x: 200, y: 190, reward: 'trinket' }, { type: 'coin', x: 200, y: 300, vx: 0, vy: 0 }, { type: 'key', x: 200, y: 360 });
+  const u = spawn(w, 'archer', 120, 240); u.facing = 0; u.team = 'hero';
+  const u2 = spawn(w, 'paladin', 760, 240); u2.facing = 0; u2.team = 'hero';
+  setZoom(+(P.get('zoom') || 0.62));
+  tick = (dt) => { w.time += dt; };
+}
+
 if (mode === 'grid') setupGrid();
+else if (mode === 'props') setupProps();
 else if (mode === 'sheet') setupSheet();
 else if (mode === 'fx') setupFx();
 else if (mode === 'fight') setupFight(0);

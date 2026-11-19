@@ -1,6 +1,6 @@
 // Canvas renderer for one room. Everything is drawn in room units, scaled and (in portrait) turned so the
 // way out is at the top. One screen shows one chunk across (ACROSS units); a camera follows the party both ways.
-import { getSprite, headR, tinted } from './sprites.js';
+import { getSprite, headR, tinted, getProp } from './sprites.js';
 import { getRig, drawRig, poseFor, LIMP } from './parts.js';
 import { DEFS } from './units.js';
 import { drawGroundFx, drawAirFx, drawProjectile as projectile, drawStatusFx, noteHits, drawLocal } from './fx.js';
@@ -110,6 +110,17 @@ function inked(ctx, pathFn, fill) {
   ctx.fillStyle = fill; pathFn(); ctx.fill();
 }
 
+// A soft round shadow, made once: dark in the middle, fading at the rim.
+let shadowImg = null;
+function softShadow() {
+  if (shadowImg) return shadowImg;
+  const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d');
+  const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(43,34,48,0.26)'); gr.addColorStop(0.6, 'rgba(43,34,48,0.2)'); gr.addColorStop(1, 'rgba(43,34,48,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+  return (shadowImg = c);
+}
+
 const SPRITE_KIND = { boss: 'boss', slimeSmall: 'slimeSmall' };
 
 export function draw(ctx, w) {
@@ -129,7 +140,7 @@ export function draw(ctx, w) {
   // shadows, cast towards the bottom of the screen
   for (const p of w.pillars) upright(ctx, p.x, p.y, () => { ctx.fillStyle = 'rgba(43,34,48,0.22)'; ctx.beginPath(); ctx.ellipse(4, p.r * 0.45, p.r * 1.1, p.r * 0.6, 0, 0, TAU); ctx.fill(); });
   for (const p of w.pillars) drawPillar(ctx, p);
-  for (const u of w.units) upright(ctx, u.x, u.y, () => { ctx.fillStyle = 'rgba(43,34,48,0.18)'; ctx.beginPath(); ctx.ellipse(2, u.vr * 0.7, u.vr * 1.25, u.vr * 0.55, 0, 0, TAU); ctx.fill(); });
+  for (const u of w.units) upright(ctx, u.x, u.y, () => { const r = u.vr * (u.downed ? 1.1 : 1.3); ctx.drawImage(softShadow(), 2 - r, u.vr * 0.62 - r * 0.46, r * 2, r * 0.92); });
   for (const t of w.telegraphs) if (t.type === 'ring') drawRing(ctx, t);
   for (const c of w.corpses) drawCorpse(ctx, c);
   const order = [...w.units].sort((a, b) => (a.downed ? -1 : 0) - (b.downed ? -1 : 0) || screenDepth(a) - screenDepth(b));
@@ -152,7 +163,7 @@ const DOOR_COL = { fight: '#C8553D', hazard: '#E0884B', elite: '#8E3B5B', treasu
 function drawDoors(ctx, w) {
   arch(ctx, 0, w.doorIn.y, -1, true, false, w.time);
   for (const d of w.doors || []) {
-    arch(ctx, w.W, d.y, 1, w.cleared, d.chosen, w.time, DOOR_COL[d.kind]);
+    arch(ctx, w.W, d.y, 1, w.cleared, d.chosen, w.time, DOOR_COL[d.kind], d.kind);
     // what's behind it, on a stone plaque on the floor in front
     upright(ctx, w.W - 40, d.y, () => {
       inked(ctx, () => roundRect(ctx, -17, -17, 34, 34, 9), '#A99C8B');
@@ -161,7 +172,17 @@ function drawDoors(ctx, w) {
   }
 }
 // A doorway in the wall band at x (the room's edge), facing into the room (dir -1: the way in, +1: a way out).
-function arch(ctx, x, y, dir, open, chosen, t, col) {
+function arch(ctx, x, y, dir, open, chosen, t, col, kind) {
+  // the door art: +y in the file points into the room
+  const name = dir < 0 ? 'door-open' : !open ? 'door-shut' : DOOR_ART[kind] || 'door-open';
+  const pulse = (chosen ? 1 : 0.6) * (0.75 + 0.25 * Math.sin(t * 3 + y));
+  if (prop(ctx, name, x, y, 141.4, { rot: dir > 0 ? Math.PI / 2 : -Math.PI / 2, extraA: pulse })) {
+    if (open && col && dir > 0 && chosen) { // the way the party takes glows a little more
+      const g = ctx.createRadialGradient(x, y, 4, x, y, 120); g.addColorStop(0, hexA(col, 0.3 * pulse)); g.addColorStop(1, hexA(col, 0));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 120, 0, TAU); ctx.fill();
+    }
+    return;
+  }
   const half = 44, band = 26, o = dir > 0 ? x : x - band;
   // stone jambs either side
   for (const sy of [-1, 1]) inked(ctx, () => roundRect(ctx, o - 2, y + sy * (half + 6) - 7, band + 4, 14, 5), '#9A8C7C');
@@ -198,6 +219,23 @@ function roomIcon(ctx, kind, r) {
   else if (kind === 'boss') { ctx.moveTo(-6 * k, 4 * k); ctx.lineTo(-6 * k, -4 * k); ctx.lineTo(-3 * k, 0); ctx.lineTo(0, -5 * k); ctx.lineTo(3 * k, 0); ctx.lineTo(6 * k, -4 * k); ctx.lineTo(6 * k, 4 * k); ctx.closePath(); ctx.fill(); }
 }
 
+// Props from art/props: a 220 box is 86.4 room units (the doors' 360 box 141.4), centred on the prop.
+const PROP_BOX = 86.4;
+function prop(ctx, name, x, y, box, opts = {}) {
+  const e = getProp(name, box * view.scale * view.dpr * (opts.sc || 1)); if (!e) return false;
+  ctx.save(); ctx.translate(x, y);
+  if (opts.rot != null) ctx.rotate(opts.rot); else if (opts.upright !== false && view.rot) ctx.rotate(Math.PI / 2);
+  if (opts.sc) ctx.scale(opts.sc, opts.sc);
+  const light = () => { if (opts.extraA && e.extra) { ctx.globalAlpha = opts.extraA; ctx.drawImage(e.extra, -box / 2, -box / 2, box, box); ctx.globalAlpha = 1; } };
+  if (!e.over) light();
+  ctx.drawImage(e.img, -box / 2, -box / 2, box, box);
+  if (e.over) light();
+  ctx.restore();
+  return true;
+}
+const OBSTACLES = ['obstacle-rock', 'obstacle-pillar', 'obstacle-crates'];
+const DOOR_ART = { fight: 'door-open-fight', hazard: 'door-open-hazard', elite: 'door-open-elite', treasure: 'door-open-treasure', fountain: 'door-open-fountain', decision: 'door-open-choice', boss: 'door-open-boss' };
+
 function drawWall(ctx, r) {
   // stone blocks seen from above: outlined, lit from the left, a lighter top face
   const g = ctx.createLinearGradient(r.x, r.y, r.x + r.w, r.y + r.h); g.addColorStop(0, '#8C7E70'); g.addColorStop(1, '#6E6157');
@@ -206,6 +244,8 @@ function drawWall(ctx, r) {
 }
 
 function drawHazard(ctx, h, t) {
+  if (h.type === 'oil' && prop(ctx, 'hazard-oil', h.x, h.y, PROP_BOX, { sc: h.r / 38 })) return;
+  if (h.type === 'spikes' && prop(ctx, h.up === false ? 'trap-spikes-down' : 'trap-spikes-up', h.x, h.y, PROP_BOX, { sc: h.r / 30 })) return;
   ctx.save();
   if (h.type === 'oil') {
     inked(ctx, () => blob(ctx, h.x, h.y, h.r, 7, h.x * 0.1), '#3B3330');
@@ -248,6 +288,8 @@ function drawHazard(ctx, h, t) {
 }
 
 function drawPillar(ctx, p) {
+  const name = p.fountain ? (p.used ? 'fountain-used' : 'fountain') : p.prop || OBSTACLES[Math.abs(Math.round(p.x * 7 + p.y * 3)) % 3];
+  if (prop(ctx, name, p.x, p.y, PROP_BOX, { sc: p.r / (p.fountain ? 38 : 30) })) return;
   if (p.fountain) {
     inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, '#A99C8B');
     ctx.fillStyle = p.used ? '#7FA9BC' : '#5DB7E0'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 0.72, 0, TAU); ctx.fill();
@@ -289,23 +331,32 @@ function drawPickup(ctx, p, t) {
     if (p.life != null && p.life < 1.5 && Math.sin(t * 22) < 0) return;
     inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, 5.5, 0, TAU); }, '#F2B53A');
     ctx.fillStyle = '#FFE08A'; ctx.beginPath(); ctx.arc(p.x - 1.6, p.y - 1.6, 2, 0, TAU); ctx.fill();
+    // now and then a glint runs over it
+    const g = (t * 0.7 + (p.x * 0.013 + p.y * 0.007)) % 2.2;
+    if (g < 0.25) { const k = Math.sin(g / 0.25 * Math.PI); ctx.fillStyle = '#FFFFFF'; ctx.beginPath();
+      for (let i = 0; i < 8; i++) { const a = i / 8 * TAU, rr = i % 2 ? 1.3 * k : 6 * k; ctx.lineTo(p.x + 2 + Math.cos(a) * rr, p.y - 2 + Math.sin(a) * rr); } ctx.fill(); }
   } else if (p.type === 'key') {
     const b = Math.sin(t * 5) * 2;
     upright(ctx, p.x, p.y, () => {
       ctx.translate(0, b);
-      inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -6, 6, 0, TAU); roundRect(ctx, -2, -2, 4, 16, 1.5); roundRect(ctx, 0, 9, 7, 3.5, 1); }, '#FFD45A');
+      inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -6, 6, 0, TAU); ctx.rect(-2, -2, 4, 16); ctx.rect(0, 9, 7, 3.5); }, '#FFD45A');
     });
   } else if (p.type === 'pedestal') {
     upright(ctx, p.x, p.y, () => {
-      inked(ctx, () => roundRect(ctx, -18, -14, 36, 28, 6), '#A99C8B');
+      if (prop(ctx, 'pedestal', 0, 0, PROP_BOX, { upright: false })) ctx.translate(0, -11); // the reward floats over the cushion
+      else inked(ctx, () => roundRect(ctx, -18, -14, 36, 28, 6), '#A99C8B');
       const col = { potion: '#E0604B', xp: '#FFE14D', coins: '#F2B53A', trinket: '#C9A7FF' }[p.reward];
       const bob = Math.sin(t * 3 + p.y) * 2;
-      if (p.reward === 'potion') inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -4 + bob, 7, 0, TAU); roundRect(ctx, -2.5, -15 + bob, 5, 6, 1.5); }, col);
+      if (p.reward === 'potion') inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -4 + bob, 7, 0, TAU); ctx.rect(-2.5, -15 + bob, 5, 6); }, col);
       else if (p.reward === 'coins') { for (const [x, y] of [[-5, 0], [5, 0], [0, -6]]) inked(ctx, () => { ctx.beginPath(); ctx.arc(x, y - 3 + bob, 5, 0, TAU); }, col); }
       else if (p.reward === 'xp') inked(ctx, () => { ctx.beginPath(); for (let i = 0; i < 10; i++) { const a = i / 10 * TAU - Math.PI / 2, rr = i % 2 ? 4 : 9; ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr - 3 + bob); } ctx.closePath(); }, col);
       else inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -12 + bob); ctx.lineTo(7, -3 + bob); ctx.lineTo(0, 6 + bob); ctx.lineTo(-7, -3 + bob); ctx.closePath(); }, col);
     });
   } else if (p.type === 'chest') {
+    if (p.open && p._openAt == null) p._openAt = t;
+    const glow = p.open ? clamp(1 - (t - p._openAt) / 2.5, 0.2, 1) : 0;
+    upright(ctx, p.x, p.y, () => { ctx.fillStyle = 'rgba(43,34,48,0.2)'; ctx.beginPath(); ctx.ellipse(2, 16, 26, 9, 0, 0, TAU); ctx.fill(); });
+    if (prop(ctx, p.open ? 'chest-open' : p.free ? 'chest-closed' : 'chest-locked', p.x, p.y, PROP_BOX, { extraA: glow })) return;
     upright(ctx, p.x, p.y, () => {
       ctx.fillStyle = 'rgba(43,34,48,0.2)'; ctx.beginPath(); ctx.ellipse(2, 14, 26, 9, 0, 0, TAU); ctx.fill();
       inked(ctx, () => roundRect(ctx, -21, -15, 42, 30, 6), p.open ? '#7A4A26' : '#A0683A');
