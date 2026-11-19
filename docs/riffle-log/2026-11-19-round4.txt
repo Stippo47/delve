@@ -1,0 +1,114 @@
+Riffle round 4 answers, 2026-11-19 (raw)
+
+delve / art / art-round3: "Art round 3: weapons back, new enemies"
+  round3 (Art round 3): GO, picked: Knight · Paladin, Knight · Old Guard, Knight · Dame, Knight · Bastion, Tower, Knight · Bastion, Bulwark, Barbarian · Wildmane, Barbarian · Bearskin, Barbarian · Warhelm, Barbarian · Berserker, Rogue · Twinfang, Rogue · Bandit, Rogue · Shade (crossed), Farmer · Granny Reaper, Farmer · Haymaker, Farmer · Digger, Farmer · Grandpa Sickle, Skeleton · Rattler, Skeleton · Rattler, bow, Skeleton · Rattler, spear, Skeleton · Rattler, mace, Skeleton · Gaper, Skeleton · Brute, Ghost, Lizardman (spear), Lizardman (blade)
+      "Ontop of fixing everything. I want you to go “crazy” make like 40 different heroes. You can spread them out between agents. Make sure they don’t overlap too much. Get variation. Mages, Druid, marksman, plague doctor, ninja, Templar night, cultist, vampire, beast tamer, etc. 
+
+Also make orcs, goblins, trolls, ogre, hob goblin (all different shades of green). 
+Demon, devil, imp, fiend. And dragon born (dragon flavoured lizard man) 
+Angel, cherub."
+      item knight-old-guard (Knight · Old Guard): "If 2 handed. Hold in middle in front "
+      item knight-tower (Knight · Bastion, Tower): "Eye slots. 
+
+Bad mace. Use others as reference. Maybe give them a flanged mace. "
+      item knight-bulwark (Knight · Bastion, Bulwark): "Hold spear a bit further back."
+      item knight-griffon (Knight · Bastion, Griffon): "Helmet weird. hammer small. Make opening bigger and different shape. Too narrow."
+      item barbarian-wildmane-scar (Barbarian · Wildmane (scar)): "Just 1 solid darker shade. Not white. "
+      item barbarian-bearskin (Barbarian · Bearskin): "Worse club? "
+      item barbarian-warhelm (Barbarian · Warhelm): "Really good. Hammer maybe a bit small. 15% bigger? "
+      item barbarian-berserker (Barbarian · Berserker): "Spike bad. Different style. Try again…"
+      item rogue-twinfang (Rogue · Twinfang): "Give em hooked/curved daggers. Inwards. "
+      item rogue-shade-cape (Rogue · Shade (spread)): "Don’t like daggers. 
+Maybe dagger in 1 hand and rapier in other. "
+      item rogue-shade-cape-crossed (Rogue · Shade (crossed)): "These daggers look better."
+      item farmer-granny-reaper (Farmer · Granny Reaper): "Hold further down the shaft. "
+      item farmer-haymaker-fork (Farmer · Haymaker): "Make fork head 1 colour."
+      item skeleton-rattler (Skeleton · Rattler): "All hands holding weapons should be rotated to match their handle. You can see the problem with the skeletons hand on the sword. 
+Try separating the lower jaw from the skull to read more like a skeleton. "
+      item skeleton-rattler-loosejaw (Skeleton · Rattler, mace)
+      item skeleton-gaper (Skeleton · Gaper): "30% bigger. 
+
+No eyebrows. Too mad/too sharp. "
+      item skeleton-brute (Skeleton · Brute): "15% bigger. Axe flipped."
+      item banshee-hood (Banshee (hood)): "No. Try again. Losing style. "
+      item slime-big (Slime): "Totally different style. Try again"
+      item slime-small (Slime, small): "Same"
+      item slime-fire (Fire slime): "Same"
+      item bat (Bat): "Same"
+      item ghost (Ghost): "Better. Tail could use work."
+      item lizardman-spear (Lizardman (spear)): "Decent. Try variants. "
+      item lizardman-blade (Lizardman (blade)): "Curved wrong way?"
+      item spider (Spider): "Try again. 4 variants/styles."
+      item snowman (Snowman): "Leaning over. hat too much detail.. 
+different style. "
+      item mimic (Mimic (artist's idea)): "Try again. 
+Close, not quite. Deviating too much. Tongue not even attached. "
+  DECK: done (1 of 1 answered)
+
+delve / art / roster: "Who each unit is"
+  knights (Knights: the front line): YES on the card. Its parts: 6 yes
+      part knight-paladin (Paladin): YES
+      part knight-old-guard (Old Guard): YES
+      part knight-dame (Dame): YES
+      part knight-tower (Bastion, Tower): YES
+      part knight-bulwark (Bastion, Bulwark): YES
+      part knight-griffon (Bastion, Griffon): YES
+  rogues (Rogues: quick and sly): YES on the card. Its parts: 3 yes
+      part rogue-twinfang (Twinfang): YES
+      part rogue-bandit-mask (Bandit): YES
+      part rogue-shade-cape (Shade): YES
+  farmers (Farmers: tools as weapons): YES on the card. Its parts: 2 yes, 1 rethink, 1 idk
+      part farmer-granny-reaper (Granny Reaper): YES
+      part farmer-haymaker-fork (Haymaker): YES
+      part farmer-digger (Digger): RETHINK, "Digs up and Flings dirt that blinds? Or just staggers? "
+      part farmer-grandpa-sickle (Grandpa Sickle): IDK, "Throws bread to nearby allies damaged and heals them. "
+  barbarians (Barbarians: big hits): YES on the card. Its parts: 2 words only, 2 yes
+      part barbarian-wildmane (Wildmane): no mark, "That’s a she. 
+
+Enters a rage mode, takes less damage, faster attack speed and movement for a short time. "
+      part barbarian-bearskin (Bearskin): YES
+      part barbarian-warhelm (Warhelm): YES
+      part barbarian-berserker (Berserker): no mark, "Slams ground sending out a repeating shockwave forwards."
+  undead (Undead: one habit each): YES on the card. Its parts: 5 yes, 2 words only
+      part skeleton-rattler (Rattler): YES
+      part skeleton-rattler-jawless-bow (Rattler, bow): YES
+      part skeleton-rattler-jawless-spear (Rattler, spear): YES
+      part skeleton-rattler-loosejaw (Rattler, mace): YES
+      part skeleton-gaper (Gaper): no mark, "Piercing charge attack with a rapid spin at the end. 
+Dash has swords in a v in front of them. 
+Spin has them stretched out to either side. "
+      part skeleton-brute (Brute): no mark, "Raise shield, not just passive. Slow turn when raised. Only blocks damage from front 180 degrees. "
+      part banshee-hood (Banshee): YES
+  creatures (Creatures: one habit each): YES on the card. Its parts: 6 yes, 2 words only
+      part slime-big (Slime): YES
+      part slime-fire (Fire slime): YES
+      part mimic (Mimic): YES
+      part bat (Bat): YES
+      part ghost (Ghost): YES
+      part lizardman-spear (Lizardman): no mark, "Tail spin that shoots up 3 slow moving water projectiles. "
+      part spider (Spider): no mark, "Base spider. On death makes slowing web on the ground. Bite causes poison. 
+Momma spider, shoot out a web cluster that has short range, if it hits a unit it entangles them for a second, if it doesn’t hit any it leaves a slowing web in the ground. "
+      part snowman (Snowman): YES
+  DECK: done (6 of 6 answered)
+
+delve / runs / stage2b-report: "Stage 2b: your map notes"
+  fixes (Rooms of every shape): GOOD on the card. Its parts: 7 good, 1 decent, 1 words only
+      "Allies can be revived in a level if stood over for a few seconds. Will revive with 10% hp for most fighters. 
+Support classes will have better revive boosts"
+      part shapes (Room shapes): GOOD, "Zoom the camera out more. Allow for zoom in and out. 
+
+Note the boulders and traps need overhaul. As well as the chest visual."
+      part camera (Camera both ways): GOOD
+      part explore (Walking the room): GOOD, "Doors still aren’t good. The opening should have a coloured glow representing the room. "
+      part coins (Coins): DECENT, "Way Too short. "
+      part backup (Rogue backs up): GOOD, "Give the rogue a dash ability. (Can use to get out of range or engage ontop of backstab) should weigh isolated and far away enemies more. "
+      part wobble (No wobble): GOOD
+      part doors (Doors and spikes): no mark, "No image shown can’t judge. In the clip they never even make it to the door which they should. "
+      part tree (Wider tree): GOOD
+      part potions (Potions): GOOD
+  DECK: done (1 of 1 answered)
+
+delve: thoughts
+  mwn5k4xs-ae-61w2j0: "When I played lasts the archer got stuck a lot. Just froze in a wall.
+The jitter rapidly left and right when navigating to some positions, maybe only on diagonals."
+

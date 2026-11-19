@@ -142,3 +142,52 @@ Raw answers: `docs/riffle-log/2026-11-18-round3.txt`.
   (Not just long strips.)
 - **Coins must be collected** by walking over them; they vanish after a few seconds. (An economy-focused unit comes later.)
 - **Potions: a hero *can* start with one**, not always.
+
+## Round 4 (2026-11-19): art round 3 picks, the roster, the stage 2b report
+Raw answers: `docs/riffle-log/2026-11-19-round4.txt`.
+
+### Art
+- Picked: Paladin, Old Guard, Dame, Tower, Bulwark, Wildmane, Bearskin, Warhelm, Berserker, Twinfang, Bandit,
+  Shade (crossed), Granny Reaper, Haymaker, Digger, Grandpa Sickle, Rattler + bow + spear + mace, Gaper, Brute,
+  Ghost, Lizardman (spear and blade).
+- **"Go crazy": about 40 more heroes**, spread over agents, not overlapping: mages, druid, marksman, plague doctor,
+  ninja, templar knight, cultist, vampire, beast tamer, etc.
+- **New enemies:** orcs, goblins, trolls, ogre, hobgoblin (all different shades of green); demon, devil, imp, fiend;
+  dragonborn (a dragon-flavoured lizardman); angel, cherub.
+- **Rule: every hand holding a weapon is turned to match the handle.**
+- Fixes per design:
+  - Old Guard: a two-handed weapon is held in the middle, in front. Tower: eye slots back; a flanged mace (use the
+    others as reference). Bulwark: hold the spear a bit further back. Griffon: helmet weird, opening bigger and a
+    different shape (too narrow); hammer small.
+  - **Wildmane is a she.** Scar: one solid darker shade, not white. Bearskin: a better club. Warhelm: really good,
+    hammer ~15% bigger. Berserker: the spikes are bad, a different style.
+  - Twinfang: hooked/curved daggers, curving inwards. Shade: the crossed daggers are better (the spread version could
+    have been a dagger and a rapier).
+  - Granny: holds further down the shaft. Haymaker: fork head one colour.
+  - Rattler: hands rotated to the handle; separate the lower jaw from the skull so it reads as a skeleton.
+    Gaper: 30% bigger, no eyebrows, less mad/sharp. Brute: 15% bigger, axe flipped.
+  - Banshee: no, losing the style; try again. Slimes (all three) and bat: a totally different style.
+    Ghost: better, tail needs work. Lizardman: decent, try variants; the blade is curved the wrong way.
+    Spider: 4 variants/styles. Snowman: leaning over, hat too detailed, different style.
+    Mimic: close but deviates too much; the tongue isn't attached.
+
+### Roster (one move each: approved, with these changes)
+- Digger: flings dirt that blinds, or staggers. Grandpa Sickle: throws bread to hurt allies nearby, healing them.
+- Wildmane (she): rage: less damage taken, faster attacks and movement for a short time.
+- Berserker: slams the ground, sending a repeating shockwave forwards.
+- Gaper: a piercing charge (swords in a V ahead) ending in a rapid spin (swords out to the sides).
+- Brute: raises the shield (an action, not passive): turns slowly while raised, blocks only the front 180 degrees.
+- Lizardman: tail spin that throws up 3 slow water projectiles.
+- Spider: bite poisons, a slowing web on the ground when it dies. **Momma spider:** a short-range web cluster that
+  entangles a unit for a second if it hits, or leaves a slowing web on the ground if it misses.
+
+### Stage 2b (good)
+- **Revive: an ally is revived in a room by standing over them for a few seconds**, at 10% HP for most; support
+  classes revive better.
+- **Camera zoomed out more, with zoom in and out.**
+- Boulders, traps and the chest need a visual overhaul. **Doors still not good: the opening glows in the colour of
+  the room behind it.** (The clip never reached a door; show one.)
+- **Coins last far too short.**
+- **Rogue gets a dash** (to get out of range, or to engage on top of the backstab) and weighs isolated and far-away
+  enemies more.
+- Thought: the archer gets stuck a lot, frozen in a wall, and jitters left and right going to some spots (diagonals?).
