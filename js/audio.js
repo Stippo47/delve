@@ -100,10 +100,10 @@ export const SOUNDS = {
   hit_armor_l: [0.22, (c, o, t, r) => { B(c, o, t, { f: 480 + r() * 120, ratio: 2.76, index: 2.5, dur: 0.18, v: 0.3 }); thump(c, o, t, 160, 80, 0.1, 0.5); N(c, o, t, { f: 3000, q: 2, dur: 0.03, v: 0.3 }); }, { ...HIT, lvl: 0.4 }],
   hit_armor_h: [0.4, (c, o, t, r) => { B(c, o, t, { f: 300 + r() * 80, ratio: 2.76, index: 3.5, dur: 0.35, v: 0.35 }); thump(c, o, t, 110, 45, 0.25, 0.8); N(c, o, t, { ft: 'lowpass', f: 1500, f2: 200, dur: 0.2, v: 0.5 }); }, { ...HIT, lvl: 0.6, prio: 2 }],
   crit: [0.4, (c, o, t) => { T(c, o, t, { f: 2500, f2: 2350, dur: 0.32, v: 0.22 }); T(c, o, t, { type: 'triangle', f: 1870, dur: 0.18, v: 0.15 }); N(c, o, t, { ft: 'highpass', f: 4500, dur: 0.06, v: 0.35 }); whoosh(c, o, t, 1200, 4000, 0.12, 0.3); }, { lvl: 0.42, cap: 4, prio: 2, pos: 1 }],
-  block: [0.4, (c, o, t, r) => { B(c, o, t, { f: 650 + r() * 150, ratio: 3.1, index: 4, dur: 0.35, v: 0.45 }); N(c, o, t, { f: 3200, q: 3, dur: 0.05, v: 0.4 }); thump(c, o, t, 180, 90, 0.08, 0.4); }, { lvl: 0.5, cap: 5, prio: 2, vars: 2, pos: 1 }],
+  block: [0.4, (c, o, t, r) => { B(c, o, t, { f: 650 + r() * 150, ratio: 3.1, index: 4, dur: 0.35, v: 0.45 }); N(c, o, t, { f: 3200, q: 3, dur: 0.05, v: 0.4 }); thump(c, o, t, 180, 90, 0.08, 0.4); }, { lvl: 0.4, cap: 4, prio: 2, vars: 2, pos: 1 }],
   shatter: [0.6, (c, o, t, r) => { N(c, o, t, { ft: 'highpass', f: 2200, dur: 0.35, v: 0.7 }); for (let i = 0; i < 12; i++) T(c, o, t + r() * 0.25, { f: 2400 + r() * 4000, dur: 0.08 + r() * 0.2, v: 0.08 }); thump(c, o, t, 160, 70, 0.15, 0.5); }, { lvl: 0.62, cap: 3, prio: 2, vars: 2, pos: 1 }],
   // swings and shots
-  swing: [0.22, (c, o, t) => whoosh(c, o, t, 420, 1500, 0.18, 0.5), { lvl: 0.22, cap: 6, group: 'swing', prio: 1, vars: 2, pv: 0.12, pos: 1 }],
+  swing: [0.22, (c, o, t) => whoosh(c, o, t, 420, 1500, 0.18, 0.5), { lvl: 0.22, cap: 4, group: 'swing', prio: 1, vars: 2, pv: 0.12, pos: 1 }],
   swing_big: [0.32, (c, o, t) => whoosh(c, o, t, 240, 900, 0.28, 0.6, 1), { lvl: 0.32, cap: 4, group: 'swing', prio: 1, vars: 2, pos: 1 }],
   thrust: [0.14, (c, o, t) => whoosh(c, o, t, 900, 2600, 0.11, 0.45, 1.6), { lvl: 0.2, cap: 6, group: 'swing', prio: 1, vars: 2, pv: 0.12, pos: 1 }],
   whoosh: [0.2, (c, o, t) => whoosh(c, o, t, 600, 2200, 0.16, 0.5), { lvl: 0.22, cap: 4, prio: 1, pos: 1 }],
@@ -174,6 +174,7 @@ export const SOUNDS = {
   fountain: [1.4, (c, o, t, r) => { N(c, o, t, { f: 1500, q: 0.5, dur: 1.0, a: 0.1, v: 0.3 }); for (let i = 0; i < 8; i++) { const f = 500 + r() * 700; T(c, o, t + r() * 0.9, { f, f2: f * 1.6, dur: 0.06, v: 0.1 }); } ['C5', 'G5', 'E6'].forEach((n, i) => B(c, o, t + 0.2 + i * 0.12, { f: nf(n), ratio: 3.5, index: 0.5, dur: 0.9, v: 0.1 })); }, { lvl: 0.38, cap: 1, prio: 3 }],
   door: [1.3, (c, o, t) => { N(c, o, t, { ft: 'lowpass', f: 320, dur: 1.0, a: 0.25, v: 0.8, color: 'brown', rel: 0.1 }); T(c, o, t, { type: 'sawtooth', f: 48, f2: 52, dur: 1.0, a: 0.2, v: 0.12, lp: 200 }); thump(c, o, t + 1.05, 110, 50, 0.2, 0.6); }, { lvl: 0.42, cap: 1, prio: 3, pos: 1 }],
   leave: [0.9, (c, o, t) => whoosh(c, o, t, 260, 900, 0.8, 0.5, 1), { lvl: 0.18, cap: 1, prio: 2 }],
+  rift: [1.4, (c, o, t, r) => { N(c, o, t, { ft: 'lowpass', f: 180, f2: 420, dur: 1.1, a: 0.5, v: 0.9, color: 'brown', rel: 0.2 }); T(c, o, t, { type: 'sawtooth', f: 42, f2: 55, dur: 1.1, a: 0.6, v: 0.12, lp: 160 }); clicks(c, o, t + 0.3, 8, 0.9, 300, 1200, 0.5, 4, r); }, { lvl: 0.45, cap: 1, prio: 3, pv: 0.04 }],
   room: [0.4, (c, o, t) => { thump(c, o, t, 95, 48, 0.3, 0.6); N(c, o, t, { ft: 'lowpass', f: 450, dur: 0.22, v: 0.4 }); }, { lvl: 0.3, cap: 1, prio: 2 }],
   // the camp
   tap: [0.06, (c, o, t) => { T(c, o, t, { f: 1700, f2: 1150, dur: 0.035, v: 0.4 }); N(c, o, t, { ft: 'highpass', f: 4500, dur: 0.012, v: 0.25 }); }, { lvl: 0.2, cap: 12, prio: 3, pv: 0.04 }],
@@ -221,6 +222,7 @@ function deathOf(kind) {
 }
 const SHOT = { arrow: 'bow', fireArrow: 'bow', bolt: 'zap', fireball: 'fire_cast', shard: 'frost_cast', dagger: 'throw', vial: 'throw', thorn: 'thorn',
   note: 'note', bone: 'throw', water: 'water', orb: 'orb', holy: 'orb', light: 'orb' };
+const BOLT = { pyromancer: 'bolt_fire', frost: 'bolt_frost', storm: 'zap', cleric: 'orb' };
 const ZONE = { fire: 'fire_cast', poison: 'gas', ice: 'frost_cast', storm: 'lightning', holy: 'holy', sanctuary: 'holy', heal: 'heal', vines: 'vines', drain: 'drain' };
 const STATUS = { burn: 'ignite', chill: 'chill', poison: 'bubbles', wet: 'splash', shock: 'buzz', stagger: 'bonk', root: 'vines', sleep: 'sleep' };
 const WORD = { dodge: 'whoosh', CHARGE: 'charge', BACKSTAB: 'stab', thaw: 'steam', 'NOT YET': 'revive', REAPED: 'drain' };
@@ -241,7 +243,7 @@ export function soundsFor(ev) {
     case 'shot': {
       const p = a, ene = p.team === 'enemy';
       let s = SHOT[p.kind] || 'throw';
-      if (p.kind === 'bolt' && p.color) s = /^#FF[89A]/i.test(p.color) ? 'bolt_fire' : /^#[89A][0-9A-F]D/i.test(p.color) ? 'bolt_frost' : 'zap';   // the casters' bolts by colour
+      if (p.kind === 'bolt') s = BOLT[p.owner && p.owner.kind] || (/^#FF[89A]/i.test(p.color || '') ? 'bolt_fire' : /^#[89A][0-9A-F]D/i.test(p.color || '') ? 'bolt_frost' : 'zap');   // the casters' bolts
       const out = [[s, { ...at(p), vol: ene ? 0.75 : 1, rate: ene ? 0.92 : 1 }]];
       if (p.kind === 'fireArrow') out.push(['fire_small', { ...at(p), vol: 0.6 }]);
       return out;
@@ -255,6 +257,7 @@ export function soundsFor(ev) {
       if (f.type === 'wave') return [[f.kind === 'note' ? 'chord' : 'shockwave', at(f)]];
       if (f.type === 'pillar') return [[f.kind === 'lightning' ? 'thunder' : f.kind === 'drain' ? 'drain' : 'holy', at(f)]];
       if (f.type === 'ring') return [['pulse', { ...at(f), vol: 0.6 }]];
+      if (f.type === 'rift') return [['rift', {}]];   // the next wave climbing out of the floor
       return [];
     }
     case 'tele': {
@@ -289,7 +292,7 @@ export function soundsFor(ev) {
 
 // ---------------------------------------------------------------- how often things may play
 // Pure bookkeeping (no WebAudio), so the Node test tool can run it too.
-export const GROUP_CAP = { hit: 12, swing: 8, shot: 9, spell: 6, status: 7, death: 7, boom: 5, tell: 4 };
+export const GROUP_CAP = { hit: 12, swing: 6, shot: 9, spell: 6, status: 7, death: 7, boom: 5, tell: 4 };
 export const MAX_VOICES = 18;
 export class Gate {
   constructor() { this.times = {}; this.voices = []; }
