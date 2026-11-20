@@ -5,6 +5,7 @@ import { getRig, drawRig, poseFor, LIMP } from './parts.js';
 import { DEFS } from './units.js';
 import { drawGroundFx, drawAirFx, drawProjectile as projectile, drawStatusFx, noteHits, drawLocal } from './fx.js';
 import { INK, TAU, clamp } from './util.js';
+import { envId, obstacleFor } from './env.js';
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
 
 // One outline thickness for everything drawn here, in room units. Matches what the SVG heroes show.
@@ -66,9 +67,9 @@ function upVec() { return view.rot ? [1, 0] : [0, -1]; }
 let floorCache = null;
 // The room's floor, rock and dressing, drawn once into a canvas (scenery.js paints it in the dungeon type's look).
 function floor(w) {
-  const key = w.W + 'x' + w.H + ':' + view.base.toFixed(3) + ':' + view.dpr;
+  const key = w.W + 'x' + w.H + ':' + view.base.toFixed(3) + ':' + view.dpr + ':' + view.rot + ':env' + envId();
   if (floorCache && floorCache.key === key && floorCache.w === w) return floorCache.c;
-  const pad = 26;
+  const pad = 48; // the walls round the room and a little rock past them
   const c = document.createElement('canvas');
   let s = view.base * view.dpr;
   const area = (w.W + pad * 2) * (w.H + pad * 2);
@@ -112,14 +113,14 @@ export function draw(ctx, w) {
   const s = view.scale;
   ctx.drawImage(fl, -floorCache.pad, -floorCache.pad, fl.width / floorCache.s, fl.height / floorCache.s);
   drawDoors(ctx, w);
-  for (const r of w.walls) if (!r.solid) drawWallThemed(ctx, r, w);
+  for (const r of w.walls) if (r.temp != null) drawWallThemed(ctx, r, w); // the rest are in the floor cache
   for (const h of w.hazards) if (!drawThemeHazard(ctx, h, w.time)) drawHazard(ctx, h, w.time);
   drawArena(ctx, w);
   drawDanger(ctx, w);
   for (const p of w.pickups) drawPickup(ctx, p, w.time);
   drawGroundFx(ctx, w);
-  // shadows, cast towards the bottom of the screen
-  for (const p of w.pillars) upright(ctx, p.x, p.y, () => { ctx.fillStyle = 'rgba(43,34,48,0.22)'; ctx.beginPath(); ctx.ellipse(4, p.r * 0.45, p.r * 1.1, p.r * 0.6, 0, 0, TAU); ctx.fill(); });
+  // shadows straight down under each obstacle (top-down: never cast to one side)
+  for (const p of w.pillars) { const R = p.r * 1.45; ctx.drawImage(softShadow(), p.x - R, p.y - R, R * 2, R * 2); }
   for (const p of w.pillars) drawPillar(ctx, p, w);
   for (const u of w.units) upright(ctx, u.x, u.y, () => { const r = u.vr * (u.downed ? 1.1 : 1.3); ctx.drawImage(softShadow(), 2 - r, u.vr * 0.62 - r * 0.46, r * 2, r * 0.92); });
   for (const t of w.telegraphs) if (t.type === 'ring') drawRing(ctx, t);
@@ -217,7 +218,6 @@ function prop(ctx, name, x, y, box, opts = {}) {
   ctx.restore();
   return true;
 }
-const OBSTACLES = ['obstacle-rock', 'obstacle-pillar', 'obstacle-crates'];
 const DOOR_ART = { fight: 'door-open-fight', hazard: 'door-open-hazard', elite: 'door-open-elite', treasure: 'door-open-treasure', fountain: 'door-open-fountain', decision: 'door-open-choice', boss: 'door-open-boss' };
 
 function drawWall(ctx, r) {
@@ -272,22 +272,17 @@ function drawHazard(ctx, h, t) {
 }
 
 function drawPillar(ctx, p, w) {
-  // obstacles from the prop art (rock, broken pillar, crates), except the Sewers' pipes which are drawn by the theme
-  const style = w && w.theme && w.theme.pillar;
-  if (!p.fountain && style === 'pipe') return drawPillarThemed(ctx, p, w);
-  const name = p.fountain ? (p.used ? 'fountain-used' : 'fountain') : p.prop || (style === 'barrel' ? 'obstacle-crates' : OBSTACLES[Math.abs(Math.round(p.x * 7 + p.y * 3)) % 2]);
-  if (prop(ctx, name, p.x, p.y, PROP_BOX, { sc: p.r / (p.fountain ? 38 : 30) })) return;
-  if (!p.fountain) return drawPillarThemed(ctx, p, w);
   if (p.fountain) {
+    if (prop(ctx, p.used ? 'fountain-used' : 'fountain', p.x, p.y, PROP_BOX, { sc: p.r / 38 })) return;
     inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, '#A99C8B');
     ctx.fillStyle = p.used ? '#7FA9BC' : '#5DB7E0'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 0.72, 0, TAU); ctx.fill();
-    ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.beginPath(); ctx.ellipse(p.x - p.r * 0.25, p.y - p.r * 0.25, p.r * 0.3, p.r * 0.12, -0.6, 0, TAU); ctx.fill();
     return;
   }
-  const g = ctx.createLinearGradient(p.x - p.r, p.y - p.r, p.x + p.r, p.y + p.r);
-  g.addColorStop(0, '#B8AC9A'); g.addColorStop(1, '#857A6C');
-  inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, g);
-  ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.beginPath(); ctx.arc(p.x - p.r * 0.15, p.y - p.r * 0.15, p.r * 0.62, 0, TAU); ctx.fill();
+  // obstacles from the prop art: crates (two path cells square) and barrels at their own size, rocks and braziers
+  // scaled to the collider; the Sewers' pipes are drawn by the theme (env.js obstacleFor picks)
+  const name = p.prop || obstacleFor(p, w);
+  if (name !== 'pipe' && prop(ctx, name, p.x, p.y, PROP_BOX, { sc: name === 'crate' || name === 'barrel' ? 1 : p.r / 30 })) return;
+  drawPillarThemed(ctx, p, w);
 }
 
 function blob(ctx, x, y, r, n, ph) {

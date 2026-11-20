@@ -133,7 +133,8 @@ export const headR = (kind) => HEAD_R[kind] || (DEFS[kind] && DEFS[kind].headR) 
 // outline) comes as a separate image so the game can pulse it.
 const PROPS = ['chest-closed', 'chest-locked', 'chest-open', 'door-open', 'door-shut', 'door-open-boss', 'door-open-choice',
   'door-open-elite', 'door-open-fight', 'door-open-fountain', 'door-open-hazard', 'door-open-treasure', 'fountain', 'fountain-used',
-  'hazard-oil', 'obstacle-crates', 'obstacle-pillar', 'obstacle-rock', 'pedestal', 'trap-spikes-down', 'trap-spikes-up'];
+  'hazard-oil', 'obstacle-crates', 'obstacle-pillar', 'obstacle-rock', 'pedestal', 'trap-spikes-down', 'trap-spikes-up',
+  'crate', 'barrel', 'brazier', 'rock-1', 'rock-2', 'rock-3', 'rock-4'];
 const propText = {};
 const propCache = new Map();
 export async function loadProps() {
