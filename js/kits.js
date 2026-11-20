@@ -23,6 +23,7 @@ import {
   stun, heal, addBuff, fx, zone, cleanse, wallRect,
 } from './sim.js';
 import { lineClear } from './path.js';
+import { cue } from './sfx.js';
 
 // ---------------------------------------------------------------- helpers
 const near = (w, u, x, y, r, team) => w.units.filter((o) => alive(o) && !o.ethereal && o.team === team && dist(x, y, o.x, o.y) < r + o.r);
@@ -632,5 +633,6 @@ export function kitThink(w, u) {
   if (!chance(clamp(0.25 + bs * 0.6, 0, 0.95)) && !lastOne) return false;
   k.cd[best.id] = best.cd;
   ABILITIES[best.id].use(w, u, u.target, k.tiers[best.id]);
+  cue('ability', u, best.id);
   return true;
 }

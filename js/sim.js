@@ -4,6 +4,7 @@ import { DEFS, FEEL, levelHp, levelDmg } from './units.js';
 import { lineClear, rayToRect, circleRect, findPath, buildGrid } from './path.js';
 import { kitThink, kitTick, hooksOf, segDist } from './kits.js';
 import { trinketHooks } from './trinkets.js';
+import { cue } from './sfx.js';
 
 let NEXT_ID = 1;
 const DIRS = 16;
@@ -605,7 +606,7 @@ export function hurt(w, u, amount, src, o = {}) {
   if (u.koT > 0) amt *= 1.5;                                 // knocked out: wide open
   if (u.frozenT > 0 && u.frozenBonus) amt *= u.frozenBonus;  // Frost Nova III
   if (!o.dot && src) for (const b of u.buffs) if (b.frontBlock && angleDiff(angleTo(u.x, u.y, src.x, src.y), u.facing) < 1.3) {
-    amt *= 1 - b.frontBlock; if (b.reflect && alive(src) && src !== u) hurt(w, src, amount * b.reflect, u, { noDodge: true, dot: true });
+    amt *= 1 - b.frontBlock; u.blockedAt = w.time; if (b.reflect && alive(src) && src !== u) hurt(w, src, amount * b.reflect, u, { noDodge: true, dot: true });
   }
   // where the blow comes from: a shot's own heading, else the line from whoever struck
   const fromA = o.kAngle != null && (o.shot || !src) ? o.kAngle : src ? angleTo(src.x, src.y, u.x, u.y) : o.kAngle != null ? o.kAngle : rand() * TAU;
@@ -613,12 +614,13 @@ export function hurt(w, u, amount, src, o = {}) {
   const shield = u.shield ?? u.def.shield; // u.shield / u.shieldArc: a shield raised as an action (brains set them)
   if (!o.dot && shield && src) {
     const a = angleTo(u.x, u.y, src.x, src.y);
-    if (angleDiff(a, u.facing) < (u.shieldArc ?? 1.25)) { amt *= 1 - shield; onShield = true; }
+    if (angleDiff(a, u.facing) < (u.shieldArc ?? 1.25)) { amt *= 1 - shield; onShield = true; u.blockedAt = w.time; }
   }
   if (!o.dot && src && !onShield && (u.buffs.some((b) => b.frontBlock) || SHIELD_BEARERS.has(u.kind)) && angleDiff(fromA + Math.PI, u.facing) < 1.1) onShield = true;
   // shatter: a hard hit on a frozen unit
   if (u.frozenT > 0 && !o.dot && (o.heavy || amount >= 12 || (o.knock || 0) >= 150)) shatter(w, u, src);
   u.hp -= amt;
+  if (!o.dot) cue('hit', u, src, { amt, crit: o.crit, heavy: o.heavy, shot: o.shot, blocked: u.blockedAt === w.time });
   if (!o.dot) {
     u.hitT = 0.16; u.hitA = fromA; u.hitBlock = onShield;
     // the impact point: on the body's edge facing the blow, or on the shield's face (pushed out a little further)
@@ -692,6 +694,7 @@ export function addStatus(w, u, type, amount, src) {
 }
 
 function shatter(w, u, src) {
+  cue('shatter', u);
   u.frozenT = 0; u.st.chill = 0;
   textU(w, u.x, u.y, u.r + 14, 'SHATTER', '#BFEFFF', 1.3);
   u.hp -= 26; u.flashT = 0.15;

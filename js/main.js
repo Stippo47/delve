@@ -7,6 +7,7 @@ import { setSeed } from './util.js';
 import { initCamp, showCamp, hideCamp, showResult, loadThemes, THEMES, applyLook } from './camp.js';
 import { applySummary, applyLoadout, MERCS } from './progress.js';
 import { buildCards, updateCards } from './hud.js';
+import { initAudio, audioFrame } from './audio.js';
 import { initInspect, openInspect, closeInspect, inspecting, selected, select, unitAt, drawSelection, panelHeight, refreshInspect } from './inspect.js';
 
 const $ = (id) => document.getElementById(id);
@@ -182,6 +183,14 @@ function frame(now) {
   requestAnimationFrame(frame);
   let dt = Math.min(0.1, (now - last) / 1000); last = now;
   if (state === 'run' && run && !recording) drawRun(dt, true);
+  audioFrame({ state, run, speed: save.speed, quiet: recording, project: hearAt });
+}
+// Where a sound is on screen: left/right pan, and quieter the further off screen it is.
+function hearAt(x, y) {
+  const m = view.m; if (!view.cw) return null;
+  const sx = m[0] * x + m[2] * y + m[4], sy = m[1] * x + m[3] * y + m[5];
+  const off = Math.max(0, Math.abs(sx - view.cw / 2) - view.cw / 2, Math.abs(sy - view.ch / 2) - view.ch / 2);
+  return { pan: Math.max(-1, Math.min(1, (sx / view.cw) * 2 - 1)) * 0.6, gain: Math.max(0.3, 1 - off / 500) };
 }
 
 let recording = false;
@@ -224,6 +233,7 @@ window.GAME = {
 
 (async function boot() {
   initCamp({ save, onSetOut: (opts) => startRun(opts) });
+  initAudio();
   initInspect(() => setPaused(false));
   await Promise.all([loadSprites(), loadThemes()]);
   show('camp');
