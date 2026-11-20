@@ -8,7 +8,8 @@
 //   runs, wins, speed, zoom,
 //   party: [heroId...] (last picked, camp only), mercs (last choice), theme (last picked),
 //   round 6: elixirs: { [potionId]: n } (potions other than healing), tlv: { [trinketId]: level },
-//   seen: { [enemyKind]: { met, beaten } } (the bestiary), look / treeLook (camp and skill-tree styles), cheat }
+//   seen: { [enemyKind]: { met, beaten } } (the bestiary), campLayout ('clearing' | 'fireside') and
+//   treeLayout ('grove' | 'wheel') (round 7: the camp's and the skill tree's layouts), cheat }
 // A v1 save (levels were permanent then) starts fresh but keeps its coins as gold.
 import { HEROES } from './heroes.js';
 
@@ -24,7 +25,7 @@ export function freshSave() {
   for (const id of Object.keys(HEROES)) heroes[id] = freshHero(id);
   return { v: 2, gold: 0, gems: 0, slots: 1, potions: 0, heroes, trinkets: [], dungeons: {}, runs: 0, wins: 0,
     speed: 1, zoom: null, party: [Object.keys(HEROES).find((k) => HEROES[k].starter)], mercs: false, theme: null,
-    elixirs: {}, tlv: {}, seen: {}, look: 'classic', treeLook: 'classic', cheat: false };
+    elixirs: {}, tlv: {}, seen: {}, campLayout: 'clearing', treeLayout: 'grove', cheat: false };
 }
 
 // Fill anything a save is missing (new heroes added since, new fields) without touching what it has.
@@ -44,6 +45,10 @@ function normalise(s) {
   out.seen = {};
   for (const [k, v] of Object.entries(s.seen && typeof s.seen === 'object' ? s.seen : {})) out.seen[k] = { met: +(v && v.met) || 0, beaten: +(v && v.beaten) || 0 };
   out.cheat = !!s.cheat;
+  // round 6's re-theme looks are gone (round 7): the layouts replace them
+  delete out.look; delete out.treeLook;
+  if (out.campLayout !== 'fireside') out.campLayout = 'clearing';
+  if (out.treeLayout !== 'wheel') out.treeLayout = 'grove';
   // rest was 10 minutes before round 6: nobody waits longer than the new longest rest
   const cap = Date.now() + 3 * 60e3;
   for (const h of Object.values(out.heroes)) if (h.recoverUntil > cap) h.recoverUntil = cap;
