@@ -5,6 +5,18 @@
 // gems spent on heroes, bought trinkets and potions, party seats, feats (a hero reached level 8 once) and records.
 import { HEROES, treeFor, freeNodes, FEAT_LEVEL } from './heroes.js';
 import { TRINKETS } from './units.js';
+import { TRINKET_LEVEL_MAX, trinketHooks } from './trinkets.js';
+import { POTIONS, POTION_MAX as BAG_MAX, CARRY_MAX, elixirKey } from './potions.js';
+
+// ---------------------------------------------------------------- paying
+// The unlimited-currency cheat (a settings toggle, save.cheat): everything is affordable and nothing is taken.
+// The real gold and gems stay as they were, so switching it off puts you back where you were.
+export const afford = (save, currency, n) => !!save.cheat || save[currency] >= n;
+export function pay(save, currency, n) {
+  if (!afford(save, currency, n)) return false;
+  if (!save.cheat) save[currency] -= n;
+  return true;
+}
 
 // ---------------------------------------------------------------- party seats
 // Party size starts at 1; each seat after costs a lot more. Either gold or gems buys it.
@@ -17,17 +29,21 @@ export function slotPrice(save) {
 }
 export function buySlot(save, currency) {
   const p = slotPrice(save); if (!p) return false;
-  if (save[currency] < p[currency]) return false;
-  save[currency] -= p[currency]; save.slots++;
+  if (!pay(save, currency, p[currency])) return false;
+  save.slots++;
   return true;
 }
 
 // ---------------------------------------------------------------- potions to bring in
-export const POTION_PRICE = 30;
-export const POTION_MAX = 9;
-export function buyPotion(save) {
-  if (save.gold < POTION_PRICE || save.potions >= POTION_MAX) return false;
-  save.gold -= POTION_PRICE; save.potions++;
+// Healing draughts are save.potions (as before); the other kinds are save.elixirs[id]. See potions.js.
+export const POTION_PRICE = POTIONS.heal.price;
+export const POTION_MAX = BAG_MAX;
+export { POTIONS, CARRY_MAX };
+export const potionCount = (save, id) => (id === 'heal' ? save.potions : (save.elixirs && save.elixirs[id]) || 0);
+export function buyPotion(save, id = 'heal') {
+  const p = POTIONS[id]; if (!p || potionCount(save, id) >= POTION_MAX) return false;
+  if (!pay(save, 'gold', p.price)) return false;
+  if (id === 'heal') save.potions++; else save.elixirs[id] = (save.elixirs[id] || 0) + 1;
   return true;
 }
 
@@ -63,12 +79,26 @@ export function trinketInfo(id) {
   if (!color) { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 360; color = `hsl(${h} 62% 58%)`; }
   return { id, name: t.name, desc: t.desc, rarity, price, color };
 }
-export const shopTrinkets = () => Object.keys(TRINKETS).map(trinketInfo)
+export const shopTrinkets = () => Object.keys(TRINKETS).filter((id) => !TRINKETS[id].potion).map(trinketInfo)
   .sort((a, b) => Object.keys(RARITY).indexOf(a.rarity) - Object.keys(RARITY).indexOf(b.rarity) || a.price - b.price);
 export function buyTrinket(save, id) {
   const t = trinketInfo(id);
-  if (save.gold < t.price) return false;
-  save.gold -= t.price; save.trinkets.push(id);
+  if (!pay(save, 'gold', t.price)) return false;
+  save.trinkets.push(id);
+  return true;
+}
+// Trinket levels: bought per kind of trinket (every copy you own goes up), once you own one. See trinkets.js.
+export const TLV_MAX = TRINKET_LEVEL_MAX;
+export const trinketLevel = (save, id) => Math.max(1, (save.tlv && save.tlv[id]) || 1);
+export const ownsTrinket = (save, id) => save.trinkets.includes(id) || Object.values(save.heroes).some((h) => h.trinkets.includes(id));
+export function upgradePrice(save, id) {
+  const lv = trinketLevel(save, id); if (lv >= TLV_MAX) return null;
+  return Math.round(trinketInfo(id).price * (lv === 1 ? 0.9 : 1.6) / 5) * 5;
+}
+export function upgradeTrinket(save, id) {
+  const c = upgradePrice(save, id); if (c == null || !ownsTrinket(save, id)) return false;
+  if (!pay(save, 'gold', c)) return false;
+  save.tlv[id] = trinketLevel(save, id) + 1;
   return true;
 }
 export const trinketSlots = (save, id) => 1 + (save.heroes[id].nodes.slot2 ? 1 : 0);
@@ -92,21 +122,22 @@ export function unequip(save, heroId, slot) {
 export const heroPrice = (id) => (HEROES[id].unlock && HEROES[id].unlock.gems) || 0;
 export function unlockHero(save, id) {
   const h = save.heroes[id], p = heroPrice(id);
-  if (h.owned || save.gems < p) return false;
-  save.gems -= p; h.owned = true;
+  if (h.owned || !pay(save, 'gems', p)) return false;
+  h.owned = true;
   return true;
 }
 
 // Recovery: a hero downed in a run rests a while; one that came out badly hurt rests a little. Gold speeds it up.
-export const RECOVER_DOWN = 10 * 60e3;
-export const RECOVER_HURT = 3 * 60e3;
+// Round 6: 2-3 minutes, not 10.
+export const RECOVER_DOWN = 3 * 60e3;
+export const RECOVER_HURT = 90e3;
 export const HURT_BELOW = 0.35;
 export const recoverLeft = (save, id, now = Date.now()) => Math.max(0, (save.heroes[id].recoverUntil || 0) - now);
-export const speedUpCost = (ms) => Math.max(5, Math.ceil(ms / 15000)); // 4 gold a minute
+export const speedUpCost = (ms) => Math.max(5, Math.ceil(ms / 7500)); // 8 gold a minute
 export function speedUp(save, id, now = Date.now()) {
   const left = recoverLeft(save, id, now); if (!left) return false;
-  const c = speedUpCost(left); if (save.gold < c) return false;
-  save.gold -= c; save.heroes[id].recoverUntil = 0;
+  if (!pay(save, 'gold', speedUpCost(left))) return false;
+  save.heroes[id].recoverUntil = 0;
   return true;
 }
 export const canGo = (save, id, now) => save.heroes[id].owned && !recoverLeft(save, id, now);
@@ -129,12 +160,12 @@ export function nodeState(save, heroId, node) {
   if (!h.owned) needs.push({ what: 'owned', ok: false, text: 'Unlock the hero first' });
   const maxed = r >= node.max, cost = maxed ? 0 : node.cost[Math.min(r, node.cost.length - 1)];
   const met = needs.every((n) => n.ok);
-  return { rank: r, maxed, cost, needs, met, canBuy: met && !maxed && save.gold >= cost };
+  return { rank: r, maxed, cost, needs, met, canBuy: met && !maxed && afford(save, 'gold', cost) };
 }
 export function buyNode(save, heroId, nodeId) {
   const node = tree(heroId).find((n) => n.id === nodeId); if (!node) return false;
   const st = nodeState(save, heroId, node); if (!st.canBuy) return false;
-  save.gold -= st.cost; save.heroes[heroId].nodes[nodeId] = st.rank + 1;
+  pay(save, 'gold', st.cost); save.heroes[heroId].nodes[nodeId] = st.rank + 1;
   return true;
 }
 // How many tiers of each ability the hero owns (0-3), for the hero page's pips.
@@ -142,18 +173,42 @@ export const abilityTiers = (save, heroId, abilityId) => [1, 2, 3].filter((t) =>
 
 // ---------------------------------------------------------------- starting a run
 // What newRun gets: the party (heroes who can go, up to the seats), the theme, mercs, and the potions handed out.
+// potionFor: { [heroId]: [potionId, ...] } from the camp (an old `true` means one healing draught).
+// opts.potions: { [heroId]: healing draughts } (newRun's contract); opts.elixirs: { [heroId]: [elixirId, ...] } and
+// opts.tlv: { [trinketId]: level } go onto run.heroes[id].trinkets through applyLoadout (main.js calls it).
 export function runOptions(save, theme, potionFor = {}) {
   const now = Date.now();
   const party = save.party.filter((id) => canGo(save, id, now)).slice(0, save.slots);
-  const potions = {};
-  let left = save.potions;
-  for (const id of party) if (potionFor[id] && left > 0) { potions[id] = 1; left--; }
-  return { theme, party, mercs: !!save.mercs, potions };
+  const potions = {}, elixirs = {};
+  const left = { heal: save.potions, ...save.elixirs };
+  for (const id of party) {
+    const want = potionFor[id] === true ? ['heal'] : (potionFor[id] || []);
+    for (const p of want.slice(0, CARRY_MAX)) {
+      if (!(left[p] > 0)) continue; left[p]--;
+      if (p === 'heal') potions[id] = (potions[id] || 0) + 1; else (elixirs[id] || (elixirs[id] = [])).push(p);
+    }
+  }
+  return { theme, party, mercs: !!save.mercs, potions, elixirs, tlv: { ...save.tlv } };
 }
 // The potions handed out are used up going in (drunk or not, they're the run's now).
 export function payForRun(save, opts) {
   save.potions -= Object.values(opts.potions).reduce((a, b) => a + b, 0);
+  for (const list of Object.values(opts.elixirs || {})) for (const p of list) save.elixirs[p] = Math.max(0, (save.elixirs[p] || 0) - 1);
   save.runs++;
+}
+// After newRun: put each hero's elixirs and trinket levels on their run trinket list (what dungeon.js spawns with).
+export function applyLoadout(run, opts) {
+  for (const id of run.party || []) {
+    const hs = run.heroes[id]; if (!hs) continue;
+    const list = hs.trinkets || (hs.trinkets = []); // changed in place: spawned units share this array
+    list.forEach((t, i) => {
+      const tid = t && t.id ? t.id : t, lv = (opts.tlv || {})[tid] || 1;
+      if (lv > 1) list[i] = { ...(t && t.id ? t : { id: tid }), lv };
+    });
+    for (const p of (opts.elixirs || {})[id] || []) list.push(elixirKey(p));
+    // newRun already spawned the first room: give those heroes their new hooks
+    for (const u of (run.world && run.world.units) || []) if (u.kind === id && u.team === 'hero' && !u.summon) { u.trinkets = list; u.trinketHooks = trinketHooks(list); }
+  }
 }
 
 // ---------------------------------------------------------------- ending a run

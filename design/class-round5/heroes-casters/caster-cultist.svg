@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- CULTIST (round 5, redone): a tall pointed black-violet hood pulled low, its point leaning back, a big gold eye-in-a-circle sigil on top of the hood and a blood-red lining showing at the front edge; robe of the same dark violet with a red sash; a curved ritual dagger in the right fist and a black candle burning in the left (both behind the body, only the fists and what they hold showing). -->
+<!-- Parts: groups inside #sprite in draw order; weapon arms come before #body so the weapon sits under the body and only the fist shows. Pivots: the shoulder points. Front = down (+y), centre (100,100). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gFace" x1="0" y1="94.8" x2="0" y2="153.1" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient><linearGradient id="sR" x1="0.4" y1="0" x2="1" y2="0.12"><stop offset="0" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.32"/></linearGradient><linearGradient id="sRl" x1="0.4" y1="0" x2="1" y2="0.12"><stop offset="0" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.18"/></linearGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.55"/><stop offset="0.42" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gWood" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#CF9A62"/><stop offset="0.55" stop-color="#AD7442"/><stop offset="1" stop-color="#83542C"/></linearGradient>
+<linearGradient id="g1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4A3A5A"/><stop offset="1" stop-color="#1E1428"/></linearGradient>
+<path id="s2" d="M -7 4 L 7 4 L 7 30 C 7 33 -7 33 -7 30 Z" transform="translate(54 142) rotate(-6)"/>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#2B2230"/><stop offset="1" stop-color="#2B2230"/></linearGradient>
+<path id="s4" d="M -2 32 L 2 32 L 2 36 L -2 36 Z" transform="translate(54 142) rotate(-6)"/>
+<linearGradient id="g5" x1="0" y1="0" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFF4C0"/><stop offset="1" stop-color="#FF9A3A"/></linearGradient>
+<path id="s6" d="M -6.0 46.0 C -6.0 51.4 6.0 51.4 6.0 46.0 C 6.0 38.8 1.2 34.8 0.0 30.0 C -3.0 35.6 -6.0 38.8 -6.0 46.0 Z" transform="translate(54 142) rotate(-6) rotate(180 0 42)"/>
+<clipPath id="c7"><use href="#s2"/><use href="#s4"/><use href="#s6"/></clipPath>
+<linearGradient id="g8" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F4F6F9"/><stop offset="1" stop-color="#8E96A4"/></linearGradient>
+<path id="s9" d="M -6 12 C -12 24 -14 40 -8 54 C -4 62 4 66 10 64 C 2 58 0 48 2 38 C 4 28 8 20 6 12 Z" transform="translate(147 141) rotate(10)"/>
+<linearGradient id="g10" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#F6CF63"/><stop offset="1" stop-color="#C48A22"/></linearGradient>
+<path id="s11" d="M -14 8 C -14 5 14 5 14 8 L 14 13 C 14 16 -14 16 -14 13 Z" transform="translate(147 141) rotate(10)"/>
+<clipPath id="c12"><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s9"/><use href="#s11"/></clipPath>
+<linearGradient id="g13" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#3E2A52"/><stop offset="1" stop-color="#1A1024"/></linearGradient>
+<path id="s14" d="M 26 108 C 26 82 54 76 100 76 C 146 76 174 82 174 108 C 174 134 146 140 100 140 C 54 140 26 134 26 108 Z"/>
+<clipPath id="c15"><use href="#s14"/></clipPath>
+<path id="s16" d="M 100 47.8 C 129.6 47.8 147.8 68.7 147.8 98.3 C 147.8 122.6 136.5 140 120.9 147.8 C 113.9 151.3 107 153.1 100 153.1 C 93 153.1 86.1 151.3 79.1 147.8 C 63.5 140 52.1 122.6 52.1 98.3 C 52.1 68.7 70.4 47.8 100 47.8 Z"/>
+<clipPath id="c17"><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s9"/><use href="#s11"/><use href="#s14"/></clipPath>
+<clipPath id="c18"><use href="#s16"/></clipPath>
+<linearGradient id="g19" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#4E3868"/><stop offset="1" stop-color="#160E22"/></linearGradient>
+<path id="s20" d="M 40 132 C 28 92 44 56 70 40 C 76 22 88 4 100 -6 C 112 4 124 22 130 40 C 156 56 172 92 160 132 C 156 140 146 142 140 136 C 134 116 120 106 100 106 C 80 106 66 116 60 136 C 54 142 44 140 40 132 Z"/>
+<clipPath id="c21"><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s9"/><use href="#s11"/><use href="#s14"/><use href="#s16"/></clipPath>
+<clipPath id="c22"><use href="#s20"/></clipPath>
+<linearGradient id="g23" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#F6D477"/><stop offset="1" stop-color="#B8862A"/></linearGradient>
+<path id="s24" d="M 83.0 62.0 A 17 17 0 1 0 117.0 62.0 A 17 17 0 1 0 83.0 62.0 Z"/>
+<clipPath id="c25"><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s9"/><use href="#s11"/><use href="#s14"/><use href="#s16"/><use href="#s20"/></clipPath>
+<clipPath id="c26"><use href="#s24"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-l" data-pivot="46 108">
+<use href="#s2" fill="url(#g1)"/><use href="#s2" fill="url(#sR)"/>
+<use href="#s4" fill="url(#g3)"/>
+<use href="#s6" fill="url(#g5)"/>
+<g clip-path="url(#c7)"><rect x="44.0" y="132.0" width="20" height="25" rx="8" transform="rotate(-6.0 54.0 142.0)" fill="#2B2230" opacity="0.28"/></g><rect x="44.0" y="129.5" width="20" height="25" rx="8" transform="rotate(-6.0 54.0 142.0)" fill="url(#gHand)"/><rect x="44.0" y="129.5" width="20" height="25" rx="8" transform="rotate(-6.0 54.0 142.0)" fill="url(#gUnder)"/>
+</g>
+<g id="arm-r" data-pivot="154 108">
+<use href="#s9" fill="url(#g8)"/><use href="#s9" fill="url(#sR)"/>
+<use href="#s11" fill="url(#g10)"/><use href="#s11" fill="url(#sR)"/>
+<g clip-path="url(#c12)"><rect x="137.0" y="131.0" width="20" height="25" rx="8" transform="rotate(10.0 147.0 141.0)" fill="#2B2230" opacity="0.28"/></g><rect x="137.0" y="128.5" width="20" height="25" rx="8" transform="rotate(10.0 147.0 141.0)" fill="url(#gHand)"/><rect x="137.0" y="128.5" width="20" height="25" rx="8" transform="rotate(10.0 147.0 141.0)" fill="url(#gUnder)"/>
+</g>
+<g id="body">
+<g clip-path="url(#c12)"><use href="#s14" transform="translate(0 3)" fill="#1A1030" opacity="0.28"/></g><use href="#s14" fill="url(#g13)"/><g clip-path="url(#c15)"><rect x="0" y="0" width="200" height="200" fill="#A8202E"/><path d="M 26 108 C 26 82 54 76 100 76 C 146 76 174 82 174 108 C 174 134 146 140 100 140 C 54 140 26 134 26 108 Z" transform="translate(0 -7)" fill="url(#g13)"/></g><use href="#s14" fill="url(#sR)"/>
+<g clip-path="url(#c17)"><use href="#s16" transform="translate(0 5)" fill="#1A1030" opacity="0.3"/></g><use href="#s16" fill="url(#gFace)"/><g clip-path="url(#c18)"><rect x="100" y="40" width="56" height="120" fill="url(#gFaceSide)"/></g>
+<path d="M96 136.5 Q100 139 104 136.5" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+<g clip-path="url(#c21)"><use href="#s20" transform="translate(0 5)" fill="#1A1030" opacity="0.38"/></g><use href="#s20" fill="url(#g19)"/><g clip-path="url(#c22)"><rect x="0" y="0" width="200" height="200" fill="#A8202E"/><path d="M 40 132 C 28 92 44 56 70 40 C 76 22 88 4 100 -6 C 112 4 124 22 130 40 C 156 56 172 92 160 132 C 156 140 146 142 140 136 C 134 116 120 106 100 106 C 80 106 66 116 60 136 C 54 142 44 140 40 132 Z" transform="translate(0 -6)" fill="url(#g19)"/><path d="M 100 -6 C 96 20 96 50 98 76 L 104 76 C 104 50 104 20 100 -6 Z" fill="#000000" opacity="0.18"/></g><use href="#s20" fill="url(#sR)"/>
+<g clip-path="url(#c25)"><use href="#s24" transform="translate(0 2)" fill="#1A1030" opacity="0.25"/></g><use href="#s24" fill="url(#g23)"/><g clip-path="url(#c26)"><circle cx="100" cy="62" r="11.5" fill="#2A1A3A"/><path d="M 90 62 Q 100 54 110 62 Q 100 70 90 62 Z" fill="#F6D477"/><circle cx="100" cy="62" r="3" fill="#A8202E"/></g><use href="#s24" fill="url(#sRl)"/>
+</g>
+</g>
+</svg>

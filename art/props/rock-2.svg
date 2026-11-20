@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- ROCK 2 (Flat): a low-poly rock cut in flat facets, brightest on top, darkening towards the bottom right. r 30; scale by r/30. -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <polygon points="46.0,70.0 78.0,34.0 128.0,28.0 168.0,62.0 174.0,114.0 146.0,160.0 94.0,172.0 50.0,148.0 32.0,108.0" fill="#8E8579"/>
+    <polygon points="46.0,70.0 78.0,34.0 128.0,28.0 124.0,56.0 80.0,62.0 68.0,84.0" fill="#C2BAAD"/><polygon points="46.0,70.0 68.0,84.0 32.0,108.0" fill="#AFA699"/><polygon points="128.0,28.0 168.0,62.0 148.0,88.0 124.0,56.0" fill="#A39A8E"/><polygon points="168.0,62.0 174.0,114.0 148.0,88.0" fill="#8A8176"/>
+    <polygon points="174.0,114.0 146.0,160.0 120.0,118.0 148.0,88.0" fill="#776E64"/><polygon points="146.0,160.0 94.0,172.0 82.0,108.0 120.0,118.0" fill="#6C645B"/><polygon points="94.0,172.0 50.0,148.0 32.0,108.0 82.0,108.0" fill="#857C71"/><polygon points="32.0,108.0 68.0,84.0 82.0,108.0" fill="#958C80"/>
+    <polygon points="80.0,62.0 124.0,56.0 148.0,88.0 120.0,118.0 82.0,108.0 68.0,84.0" fill="#D6CFC3"/>
+    <polygon points="86.0,68.0 118.0,63.0 104.0,76.0" fill="#FFFFFF" opacity="0.35"/>
+  </g>
+</svg>

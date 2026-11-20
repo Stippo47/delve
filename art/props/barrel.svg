@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- BARREL seen from straight above: the planked lid and its bung inside the bulging staves and an iron hoop. 47 room units across (r 23.6); drawn at its own size (sc 1). -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <radialGradient id="gStave" cx="0.38" cy="0.36" r="0.7"><stop offset="0" stop-color="#C99060"/><stop offset="1" stop-color="#7A5232"/></radialGradient><linearGradient id="gHoop" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#8C8790"/><stop offset="1" stop-color="#4A454E"/></linearGradient><linearGradient id="gLid" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#D9A066"/><stop offset="1" stop-color="#A06A3A"/></linearGradient><clipPath id="outC"><circle cx="100" cy="100" r="60"/></clipPath><clipPath id="lidC"><circle cx="100" cy="100" r="40"/></clipPath>
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <circle cx="100" cy="100" r="60" fill="url(#gStave)"/>
+    <g clip-path="url(#outC)" stroke="#5E3C22" stroke-width="2.4" opacity="0.45"><path d="M100 100 L169.7 107.0" /><path d="M100 100 L161.7 133.1" /><path d="M100 100 L144.3 154.2" /><path d="M100 100 L120.2 167.0" /><path d="M100 100 L93.0 169.7" /><path d="M100 100 L66.9 161.7" /><path d="M100 100 L45.8 144.3" /><path d="M100 100 L33.0 120.2" /><path d="M100 100 L30.3 93.0" /><path d="M100 100 L38.3 66.9" /><path d="M100 100 L55.7 45.8" /><path d="M100 100 L79.8 33.0" /><path d="M100 100 L107.0 30.3" /><path d="M100 100 L133.1 38.3" /><path d="M100 100 L154.2 55.7" /><path d="M100 100 L167.0 79.8" /></g>
+    <circle cx="100" cy="100" r="54" fill="none" stroke="url(#gHoop)" stroke-width="7"/>
+    <circle cx="100" cy="100" r="44" fill="#6E4424"/>
+    <circle cx="100" cy="100" r="40" fill="url(#gLid)"/>
+    <g clip-path="url(#lidC)"><path d="M60 80 H140 M60 100 H140 M60 120 H140" stroke="#8E5A30" stroke-width="3" opacity="0.5"/>
+      <circle cx="104" cy="104" r="40" fill="none" stroke="#2B1A10" stroke-width="8" opacity="0.18"/></g>
+    <circle cx="118" cy="112" r="6.5" fill="#4A2E1A"/><circle cx="117" cy="111" r="3.5" fill="#2B1A10"/>
+    <path d="M58 78 A48 48 0 0 1 96 54" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" opacity="0.28"/>
+  </g>
+</svg>

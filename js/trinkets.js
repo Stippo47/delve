@@ -449,10 +449,28 @@ function consume(u, id) {
   u.trinketHooks = trinketHooks(u.trinkets);
 }
 
-// The hook objects for a list of worn trinkets (ids, or { id } items).
+// The hook objects for a list of worn trinkets (ids, or { id, lv } items: lv is the trinket's level, bought in camp).
 export function trinketHooks(list) {
   const out = [];
-  for (const t of list || []) { const d = TRINKETS[t && t.id ? t.id : t]; if (d) out.push(d.hooks); }
+  for (const t of list || []) { const d = TRINKETS[t && t.id ? t.id : t]; if (d) out.push(t && t.lv > 1 ? leveled(d, t.lv) : d.hooks); }
+  return out;
+}
+
+// Trinket levels (camp lane): a levelled trinket does the same thing, more. Its clock runs faster (timed effects come
+// round sooner), what it adds to damage, defence and speed grows, and what it does on a hit or a kill sometimes
+// happens twice. Level II is about a third stronger, level III about two thirds. Once-only effects stay once-only.
+export const TRINKET_LEVEL_MAX = 3;
+export const trinketLevelMul = (lv) => 1 + 0.35 * (Math.max(1, lv) - 1);
+const levelCache = new Map();
+function leveled(d, lv) {
+  const key = d.id + '@' + lv; if (levelCache.has(key)) return levelCache.get(key);
+  const h = d.hooks, m = trinketLevelMul(lv), out = { ...h };
+  if (h.tick) out.tick = (w, u, dt) => h.tick(w, u, dt * m);
+  if (h.dealt) out.dealt = (w, u, t, amt, o) => amt + (h.dealt(w, u, t, amt, o) - amt) * m;
+  if (h.taken) out.taken = (w, u, s, amt, o) => Math.max(0, amt + (h.taken(w, u, s, amt, o) - amt) * m);
+  for (const f of ['moveSpeed', 'atkSpeed']) if (h[f]) out[f] = (u) => 1 + (h[f](u) - 1) * m;
+  for (const f of ['hit', 'kill', 'struck', 'death']) if (h[f]) out[f] = (...a) => { h[f](...a); if (rand() < m - 1) h[f](...a); };
+  levelCache.set(key, out);
   return out;
 }
 export const wears = (list, id) => (list || []).some((t) => (t && t.id ? t.id : t) === id);

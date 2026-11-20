@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><title>Delve icons</title>
+<style>body{background:#EDE6D8;font:700 11px system-ui;margin:12px}h2{margin:10px 0 4px}div{display:flex;flex-wrap:wrap;gap:6px}
+figure{margin:0;width:70px;text-align:center}figure svg{width:48px;height:48px;display:block;margin:0 auto 2px}
+.dark{background:#2F2734;color:#EDE6D8;padding:6px;border-radius:8px}</style>
+<body><script type="module">
+import * as I from '../js/icons.js';
+const sec = (t, kind, ids, cls = '') => document.body.insertAdjacentHTML('beforeend', `<h2>${t}</h2><div class="${cls}">${ids.map((id) => `<figure>${I.icon(kind, id)}${id}</figure>`).join('')}</div>`);
+sec('Trinkets', 'trinket', I.TRINKET_ICON_IDS); sec('Potions', 'potion', I.POTION_ICON_IDS); sec('Statuses', 'status', I.STATUS_ICON_IDS, 'dark');
+sec('Abilities', 'ability', ['shieldBash','consecrate','charge','groundPound','barrage','frostArrow','backstab','rage','leap','cleave','reap','hook','oldBones','fireball','iceWall','chainLightning','stormCloud','mend','warSong','lullaby','entangle','rejuvenate','callWolf','raiseDead','lifeDrain','miasma'], 'dark');
+document.title = 'ready';
+</script>
