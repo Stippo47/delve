@@ -206,3 +206,62 @@ Raw answers: `docs/riffle-log/2026-11-19-round4.txt`.
   of one still has a move; enemy numbers scale with party size (one hero faces ~40% of what three do); a new solo
   hero tends to fall around rooms 5-10 with 100-200 gold to spend on the tree. Fixed a freeze: a unit touching a rock
   chunk read every direction as blocked and stood still (likely the archer "stuck in a wall").
+
+## Round 6 (2026-11-20): 0.6.0 played, art round 4, 28 thoughts
+Raw answers: `docs/riffle-log/2026-11-20-round6.txt` (every art note is there word for word). Plan: `docs/BUILD-v2.md`.
+
+### Combat and feel
+- **Each room has waves**: when it's cleared, another bunch spawns in. **Longer TTK for everyone.**
+- **Party too slow: base move speed ~3-4x**, ability cooldowns about the same. Rooms maybe a bit too big.
+- **Longer attack and view range for everyone; slightly bigger colliders.**
+- **More knockback and physical reactions ("juice")**, punchier impacts **without** excessive shake/hitstop.
+  **Corpses get launched, stay on the ground and fade slowly.** Hit effects land at the unit's surface (and on a
+  raised shield, not through it).
+- Pathfinding: still rapid spinning back and forth sometimes. Enemies wander into corners and get stuck.
+- **The party doesn't search areas with nobody in them.**
+- **Chest appears near the party when a room is won; no keys.** It opens **empty, with coins spilling out around
+  it.** Dropped coins **scatter wider and home in fast** when a hero comes near.
+- **Spikes go down when the room is beaten.** Puddle look disliked. Aura effects round heroes (Paladin's Guard)
+  disliked. **A circle shadow under every unit.**
+- **Twinfang's Backstab triggers too often: longer cooldown.**
+- **Cleric is ranged** (a weak light orb), not front line; **first ability is a heal-over-time ray to an ally, no
+  burst heal**; can't heal itself with its base ability.
+- **First ability is not free, but cheap.** Party-size scaling: unsure (kept for now).
+- **Each dungeon harder than the last, and each level (floor) harder too; more enemy variety and abilities.**
+- Camera pans past the room's edges by about a third of its width. A cheat for unlimited currency.
+
+### UI
+- **Camp: don't like the look overall. Skill tree: don't like the look.** Better item visuals. Dungeon doors and
+  the door/room choosing don't look good.
+- **Battle HUD**: better hero cards with current/max HP on the bar, **ability cooldowns**, **status effects as a
+  shrinking ring with an icon**, **items as sprites, no text**; swap the heroes with the currencies/Leave button.
+- **Pause in a dungeon to inspect** party, statuses, items and their descriptions.
+- **Bestiary** with fun descriptions; fun descriptions for items too.
+- **Rest 2-3 minutes**, not 10. **More potions** (haste, faster abilities, fire immunity, iron skin...).
+  **Trinkets have levels.**
+
+### Environment
+- **The whole environment needs a visual overhaul: offer about 4 styles.** Walls textured with faces angled outward
+  on all four sides; about 12 floor styles. Ground decor must not stand out (it looks collidable or important).
+  Shadows must be top-down (the fountain's isn't). Doors look good on walls.
+- Props: crates as single 2x2-cell crates and barrels; rocks in 4 styles; the pillar unclear; pedestal at the wrong
+  view angle; oil not good; open chest's top weird; the boss door's doorway good, doors not; the used fountain meh.
+
+### Art
+- Fixes and 40 heroes all picked, with notes on most (log). **Weapons and hands are separate from the body, their
+  own sprite; the outline goes on after.** Variants asked for: Druid x2, Marksman x4, Beast tamer x4 (each with 2
+  beasts), Engineer x4; redo: Executioner, Gladiator, Samurai, Werewolf (+ human form), Cultist, Pyromancer, Storm,
+  Necromancer, Cleric, Lantern keeper, Plague doctor, Templar; Ninja without the katana. Witch, Beekeeper,
+  Crossbowman hats: use the farmers as base. Gaper: everything 30% bigger except the outline.
+- Enemies: most of the round-4 redos/new families disliked ("try again"); lizards and dragonborn without eyes (and a
+  version with human-style face shading); dragonborn red; devil, imp, goblin no eyes; the old mimic was better
+  and mimics should look like the chest; slimes maybe with the tail things turned 180 degrees and no eyes.
+- **Sound effects and ambient music.**
+
+### Kits
+- All 15 kits approved ("All sound great").
+
+### An idea (not decided): the wagon
+A different genre: escort a slow wagon upward through biomes while enemies come from all sides; the party is ~3x
+faster than the wagon; camps between stretches with a hero to hire, a shop, the fire to upgrade; gold dropped by
+enemies must be picked up or is left behind; meta progression stays. Pitched back in Riffle, not built.

@@ -1,0 +1,237 @@
+Riffle round 6 answers, 2026-11-20 (raw)
+
+delve / art / art-round4: "Art round 4: fixes, 40 heroes, monsters"
+  fixes (Your picks, fixed): GO, picked: Bulwark, Dame, Griffon, Old Guard, Paladin, Tower, Bearskin, Berserker, Warhelm, Wildmane, Bandit, Shade, Twinfang, Digger, Grandpa Sickle, Granny Reaper, Haymaker, Brute, Gaper, Rattler, bow, Rattler, spear, Rattler, mace, Rattler
+      item knight-griffon (Griffon): "The bottom opening of helmet is connected by a sliver. Bring the opening ups a bit, have it cover the mouth area but the helmet being just as tall"
+      item barbarian-bearskin (Bearskin): "Spikes are still meh"
+      item barbarian-berserker (Berserker): "Too spike is still meh"
+      item barbarian-wildmane-scar (Wildmane): "Shorter locks on the sides. Already read as female before. There wasn’t a forked beard before?"
+      item rogue-bandit-mask (Bandit): "Red bandanna "
+      item rogue-shade-cape-crossed (Shade): "The blades should be identical flipped. 
+
+Note weapons (and hands) should be separate from the body. Their own sprite. The dark outline shader is done after."
+      item rogue-twinfang (Twinfang): "Same as previous "
+      item farmer-granny-reaper (Granny Reaper): "Hands seemed to have note moved or moved more up the shaft. Opposite way"
+      item farmer-haymaker-fork (Haymaker): "Weird shading on the had on the rim. "
+      item skeleton-gaper (Gaper): "I wanted everything 30% bigger. Except outline "
+  heroes (40 new heroes): GO, picked: Alchemist, Cultist, Druid, Frost mage, Necromancer, Pyromancer, Shaman, Storm mage, Warlock, Witch, Bard, Beekeeper, Chef, Cleric, Lantern keeper, Monk, Plague doctor, Quartermaster, Seer, Templar, Crossbowman, Falconer, Grenadier, Harpooner, Javelin huntress, Marksman, Ninja, Pirate, Slinger, Trapper, Engineer's turret, Beast tamer, Engineer, Executioner, Gladiator, Jester, Samurai, Scarecrow, Valkyrie, Vampire, Werewolf, Beast tamer's cub, (your pick, nothing tapped)
+      item caster-alchemist (Alchemist): "Hair and hit don’t work together "
+      item caster-cultist (Cultist): "Don’t like. Doesnt read well"
+      item caster-druid (Druid): "Pretty good. Make 2 variants. "
+      item caster-frost (Frost mage): "Good. Maybe like a blue gem on hood"
+      item caster-necromancer (Necromancer): "Not good. Staff is meh"
+      item caster-pyromancer (Pyromancer): "Not good"
+      item caster-shaman (Shaman): "Good except for braids connecting to the head. Also maybe too long"
+      item caster-storm (Storm mage): "Not good"
+      item caster-warlock (Warlock): "Pretty simple. "
+      item caster-witch (Witch): "Bad hat. Use farmers as base"
+      item support-bard (Bard): "Good"
+      item support-beekeeper (Beekeeper): "Good except the bowl of the hat. Use farmers as base"
+      item support-chef (Chef): "Weird"
+      item support-cleric (Cleric): "Not good "
+      item support-lantern-keeper (Lantern keeper): "Not good"
+      item support-monk (Monk): "Necklace doesn’t attach well. Other than that good"
+      item support-plague-doctor (Plague doctor): "Bad"
+      item support-quartermaster (Quartermaster): "Decent"
+      item support-seer (Seer): "Meh. Hair isnt done the best"
+      item support-templar (Templar): "Bad"
+      item ranged-crossbowman (Crossbowman): "Not bad. Fix hat. Farmer as base"
+      item ranged-falconer (Falconer): "Hat off center?"
+      item ranged-grenadier (Grenadier): "Meh. Good moustache and bomb. Everything else is lacking "
+      item ranged-harpooner (Harpooner): "Make remove nose, add a puffy moustache. Fix hat and it could look pretty good"
+      item ranged-javelin-huntress (Javelin huntress): "Good. Head band could be better. Also pony tail straight back "
+      item ranged-marksman (Marksman): "Can’t see gun. Doesnt look great overall. Make 4 variants of a marksman in different styles.
+
+Hat feather looks cool. "
+      item ranged-ninja (Ninja): "Decent. Lower Face covering could maybe curve up in the middle. 
+No katana. Make a seperate samurai "
+      item ranged-pirate (Pirate): "Nose makes it look like they are smiling. 
+Otherwise good. Maybe seperate moustache aswell like harpooner."
+      item ranged-slinger (Slinger): "Don’t understand what they are supposed to be. Head not great body and weapons are good"
+      item ranged-trapper (Trapper): "Had too round top down. Slight tilt maybe just start from scratch on the hat. Should also carry a gun "
+      item engineer-turret (Engineer's turret): "Nice make sure top turret is separate from base so they can turn independently."
+      item fighter-beast-tamer (Beast tamer): "No. Different vibe. Try 4 variants again, different styles/theme. Ring master can stay but fix hat. Don’t know how the whip will work as a weapon/animate. "
+      item fighter-engineer (Engineer): "Ok. 
+Try 4 variants different styles."
+      item fighter-executioner (Executioner): "Try again"
+      item fighter-gladiator (Gladiator): "Try again"
+      item fighter-jester (Jester): "Good except top middle bell/ dangly bit. Looks cut off "
+      item fighter-samurai (Samurai): "Try again"
+      item fighter-scarecrow (Scarecrow): "Mouth too small. Too thin of lines. 
+
+Hands stuck to either stick side. 
+Crow separate.
+Top of hooded sack looks wrong. "
+      item fighter-valkyrie (Valkyrie): "Not bad except braids. Spear too small. 
+Top helmet part not full width of bottom part"
+      item fighter-vampire (Vampire): "Collar doesnt read well. Hair doesn’t look good/ hug head"
+      item fighter-werewolf (Werewolf): "Not good. Redo. Add human form"
+      item tamer-beast (Beast tamer's cub): "That’s not a beast. Make 2 variants for each 4 beast tamer "
+  enemies (Enemies and props): IDK
+      "Everything i didnt select i didnt really like, if it has a comment it may be able to be salvaged. The spiders may have to stay that way but they seemed to not match the style. 
+
+Try again"
+      item lizardman-a-spear (A Spear): "Try without eyes. Then 1 with shading like humans over the face. Do this with other lizards and dragon born "
+      item mimic (Mimic): "The old one was way better"
+      item slime-a-cube-big (A Cube Big): "I do not like these slimes. Rotate the tail things 180 degrees, remove eyes and they may look good. "
+      item celestial-angel (Angel): "Good except crown. "
+      item dragonborn-dragonborn (Dragonborn): "Should be red. Overall not great."
+      item fiend-devil (Devil): "No eyes. Tail back"
+      item fiend-imp (Imp): "No eyes"
+      item greenskin-goblin (Goblin): "No eyes"
+      item chest-closed (Closed): "The mimics should look like chest "
+      item chest-open (Open): "Top part of chest looks weird"
+      item door-open-boss (Open Boss): "Doorway good, doors arent"
+      item fountain-used (Used): "Meh"
+      item hazard-oil (Oil): "Not good"
+      item obstacle-crates (Crates): "No single crates? That are the size of 2x2 cells. And barrels "
+      item obstacle-pillar (Pillar): "??"
+      item obstacle-rock (Rock): "Try 4 styles"
+      item pedestal (Pedestal): "Wrong view angle completely "
+      item trap-spikes-down (Spikes Down)
+      item props-scene (Props in a room): "Shadow under fountain???
+The shadows aren’t done right here. It’s top down 
+Doors look good on walls. Need wall textures done (angles outwards from all 4 sides Aswell as like 12 different floor styles."
+  DECK: done (3 of 3 answered)
+
+delve / progression / kits: "Build v1: the 15 heroes' kits"
+  kits (15 heroes in the game): GO, picked: Paladin, Tower, Archer, Twinfang, Wildmane, Berserker, Granny Reaper, Pyromancer, Frost Mage, Storm Mage, Cleric, Bard, Druid, Necromancer, Plague Doctor, (your pick, nothing tapped)
+      "All sound great"
+  calls (My calls so far): YES on the card. Its parts: 1 rethink, 1 idk, 1 not marked, 1 yes
+      part free (First ability free): RETHINK, "No. First ability is cheap to get though"
+      part scale (Fewer enemies for small parties): IDK
+      part enemies (Enemy art): YES
+  DECK: done (2 of 2 answered)
+
+delve / runs / stage2c-report: "Stage 2c: revive, zoom, doors"
+  fixes (Your 2b notes, in): GOOD on the card. Its parts: 5 good, 1 problem
+      "Each rooms will have waves of enemies (after the floor is cleared another bunch will spawn in). Longer ttk. 
+I need them animations done. 
+I want to see knockback, more physical reactions. 
+
+Leave corpses behind for a little bit."
+      part revive (Revive): GOOD
+      part zoom (Zoom): GOOD
+      part doors (Doors): PROBLEM, "The entire environment needs a visual overhaul. Ofer like 4 styles. "
+      part coins (Coins): GOOD
+      part rogue (Rogue dash): GOOD, "Backstab triggers too often. Longer cooldown."
+      part stuck (Archer stuck): GOOD
+  DECK: done (1 of 1 answered)
+
+delve / runs / v06-report: "0.6.0: Delve is a game now"
+  game (The game, built): DECENT on the card. Its parts: 2 problem, 2 decent, 5 good
+      part camp (Camp): PROBLEM, "Don’t like look overall"
+      part tree (Skill trees): PROBLEM, "Don’t like look"
+      part progress (Progression): DECENT, "Rest too long. More like 2-3 minutes 
+
+Better item visuals. "
+      part dungeons (Three dungeons): GOOD, "Party Too slow. Rooms maybe a bit too big.
+I want a circle shadow under them. 
+
+The dungeon doors/ choosing level doesnt look good."
+      part boss (The Bone King): GOOD
+      part heroes (15 heroes): GOOD, "Don’t like the puddle. 
+
+The chest should be empty when it opens and coins spill out all around it. 
+
+Genially more polish. Better visuals. More punchy impacts (without excessive screen shake and hitstop) 
+Corpses should get launched and left behind on the ground slowly fading."
+      part anim (Animation): DECENT
+      part trinkets (30 trinkets): GOOD
+      part fixes (Fixes): GOOD
+  DECK: done (1 of 1 answered)
+
+delve: thoughts
+  mwn5k4xs-ae-61w2j0: "When I played lasts the archer got stuck a lot. Just froze in a wall.
+The jitter rapidly left and right when navigating to some positions, maybe only on diagonals."
+  mwoopr8w-0-o2jf4n: "The cleric should be ranged. Weak light orb. Should not be a front line melee fighter…
+First ability should be a ray to ally that heals over time. No burst healing for first ability."
+  mwooqrhw-3-g08ysg: "I should be able to pan my camera further than the dungeons bounds slightly. Like +1/3 dungeon width."
+  mwoorx4q-6-zuy0sk: "Add a “cheat” to give unlimited currency."
+  mwoosfpv-8-o5kiya: "Party members should not search areas without anyone in them. No need."
+  mwoouq3h-d-ne4kxq: "Better hero card ui in battles. Show current hp/ max hp on health bar. 
+Swap the place of heroes and the currencies and leave button."
+  mwoov7sz-g-n8pvg7: "Spikes should go down when dungeon is beat."
+  mwoovwaa-j-920gfi: "Make anything that is on the ground that is just decor not stand out as much, they look collidable or important."
+  mwoowzyl-m-8w0k3o: "Work on pathfinding and smoothness. Still see them rapidly spin back and forth sometimes."
+  mwooxh3h-o-zdg0of: "Have the chest apear near the party members when they win. No more key needed."
+  mwoozwze-s-f2968w: "Coins that are dropped should be scattered out more. Big random radius rather than clustered. 
+Should also be quickly attracted when a party member goes near it, homing in."
+  mwop1x0h-u-7k3y2n: "This is more for riffle but allow me to edit my thoughts. I wanted to add: show the cooldowns of abilities a the party members card in the battle ui. To a previous note relating to ui but I can’t."
+  mwop3g76-x-wz2e90: "More knockback, more physical “juice”"
+  mwop5v2p-11-4bmi3z: "Add bestiary with fun descriptions. Including fun descriptions for items."
+  mwop72mh-14-2szzli: "Collision effects should happen near the surface of entity. Especially if they have a shield up, currently it looks like stuff like arrows go through shields."
+  mwop9zz8-16-7frjsc: "Also show status effects on units ui in battles. (Shrinking rink with status icon in the middle). And show items in the ui too. No text just sprite."
+  mwopbfno-18-4ab7v1: "Should be able to pause in dungeons to see more details about party setup state/ inspect stuff like statuses, items and their descriptions, etc."
+  mwopc6xu-1b-sa70ok: "Trinkets should have levels too."
+  mwopcs02-1d-cvsowb: "I don’t like the aura effects around party members like the paladins protect ability"
+  mwopg0hc-1i-2nu0kx: "More potions to be bought. Various effects like haste, faster abilities, fire immunity, iron skin, etc"
+  mwophhuc-1k-75x0ge: "Their base movement speed should be like 3-4x but ability cooldown about the same."
+  mwopjfkz-1m-kn0sj3: "Add sound effects and ambient music"
+  mwopnikn-1o-40z7kv: "Better enemy navigation. They often just wander into corners and get stuck"
+  mwopp5zc-1q-n5bewm: "Longer ttk for everyone"
+  mwoprbmx-1s-vgy6bm: "Longer attack and view range for everyone. 
+Slightly bigger hit box collider too"
+  mwopwc5t-1y-k6xqrn: "Make each dungeon harder than the last, and each level harder too. 
+More enemy variety and abilities."
+  mwopxhii-20-suyq92: "Cleric shouldn’t be able to heal themselves with their base ability"
+  mwoq9m0t-2i-l7ueys: "Another potential genre. 
+Not a dungeon crawler but a wave survival game. Waves of enemies come from all around (or just from 1 size) and the party has to defend against them. 
+
+
+Ohh idea. They are transporting a wagon carrying goods through different environments, enemies constantly spawn from all around trying to destroy your wagon. 
+Each dungeon now becomes different biomes. 
+The wagon is always moving upwards at a steady pace. Enemies spawn in from off the screen and move towards the cart to attack it. The party members and Most enemies are 3x faster than the cart, it’s pretty slow. 
+
+More rogue like vibes. You start off with 1 party member. The wagon slowly makes it from safe zone to safe zone (camps) where another character or shop may be waiting. You can hire people with the coins you pick up within a game, upgrade your character at the fire, or buy trinkets from the shop. 
+Gold is dropped my enemies attacking the cart. Still needs to be picked up or it gets left behind. 
+
+There is still meta progression."
+
+delve: thoughts
+  mwn5k4xs-ae-61w2j0: "When I played lasts the archer got stuck a lot. Just froze in a wall.
+The jitter rapidly left and right when navigating to some positions, maybe only on diagonals."
+  mwoopr8w-0-o2jf4n: "The cleric should be ranged. Weak light orb. Should not be a front line melee fighter…
+First ability should be a ray to ally that heals over time. No burst healing for first ability."
+  mwooqrhw-3-g08ysg: "I should be able to pan my camera further than the dungeons bounds slightly. Like +1/3 dungeon width."
+  mwoorx4q-6-zuy0sk: "Add a “cheat” to give unlimited currency."
+  mwoosfpv-8-o5kiya: "Party members should not search areas without anyone in them. No need."
+  mwoouq3h-d-ne4kxq: "Better hero card ui in battles. Show current hp/ max hp on health bar. 
+Swap the place of heroes and the currencies and leave button."
+  mwoov7sz-g-n8pvg7: "Spikes should go down when dungeon is beat."
+  mwoovwaa-j-920gfi: "Make anything that is on the ground that is just decor not stand out as much, they look collidable or important."
+  mwoowzyl-m-8w0k3o: "Work on pathfinding and smoothness. Still see them rapidly spin back and forth sometimes."
+  mwooxh3h-o-zdg0of: "Have the chest apear near the party members when they win. No more key needed."
+  mwoozwze-s-f2968w: "Coins that are dropped should be scattered out more. Big random radius rather than clustered. 
+Should also be quickly attracted when a party member goes near it, homing in."
+  mwop1x0h-u-7k3y2n: "This is more for riffle but allow me to edit my thoughts. I wanted to add: show the cooldowns of abilities a the party members card in the battle ui. To a previous note relating to ui but I can’t."
+  mwop3g76-x-wz2e90: "More knockback, more physical “juice”"
+  mwop5v2p-11-4bmi3z: "Add bestiary with fun descriptions. Including fun descriptions for items."
+  mwop72mh-14-2szzli: "Collision effects should happen near the surface of entity. Especially if they have a shield up, currently it looks like stuff like arrows go through shields."
+  mwop9zz8-16-7frjsc: "Also show status effects on units ui in battles. (Shrinking rink with status icon in the middle). And show items in the ui too. No text just sprite."
+  mwopbfno-18-4ab7v1: "Should be able to pause in dungeons to see more details about party setup state/ inspect stuff like statuses, items and their descriptions, etc."
+  mwopc6xu-1b-sa70ok: "Trinkets should have levels too."
+  mwopcs02-1d-cvsowb: "I don’t like the aura effects around party members like the paladins protect ability"
+  mwopg0hc-1i-2nu0kx: "More potions to be bought. Various effects like haste, faster abilities, fire immunity, iron skin, etc"
+  mwophhuc-1k-75x0ge: "Their base movement speed should be like 3-4x but ability cooldown about the same."
+  mwopjfkz-1m-kn0sj3: "Add sound effects and ambient music"
+  mwopnikn-1o-40z7kv: "Better enemy navigation. They often just wander into corners and get stuck"
+  mwopp5zc-1q-n5bewm: "Longer ttk for everyone"
+  mwoprbmx-1s-vgy6bm: "Longer attack and view range for everyone. 
+Slightly bigger hit box collider too"
+  mwopwc5t-1y-k6xqrn: "Make each dungeon harder than the last, and each level harder too. 
+More enemy variety and abilities."
+  mwopxhii-20-suyq92: "Cleric shouldn’t be able to heal themselves with their base ability"
+  mwoq9m0t-2i-l7ueys: "Another potential genre. 
+Not a dungeon crawler but a wave survival game. Waves of enemies come from all around (or just from 1 size) and the party has to defend against them. 
+
+
+Ohh idea. They are transporting a wagon carrying goods through different environments, enemies constantly spawn from all around trying to destroy your wagon. 
+Each dungeon now becomes different biomes. 
+The wagon is always moving upwards at a steady pace. Enemies spawn in from off the screen and move towards the cart to attack it. The party members and Most enemies are 3x faster than the cart, it’s pretty slow. 
+
+More rogue like vibes. You start off with 1 party member. The wagon slowly makes it from safe zone to safe zone (camps) where another character or shop may be waiting. You can hire people with the coins you pick up within a game, upgrade your character at the fire, or buy trinkets from the shop. 
+Gold is dropped my enemies attacking the cart. Still needs to be picked up or it gets left behind. 
+
+There is still meta progression."
+
