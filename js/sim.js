@@ -64,6 +64,7 @@ const speedOf = (u) => {
   if (u.inOil) s *= 0.7;
   for (const b of u.buffs) if (b.move) s *= b.move;
   if (u.flinchT > 0) s *= 0.5;            // just took a blow
+  if (u.staleBoost) s *= 1.3;              // a stand-off that's gone on too long (dungeon.js w.stale)
   if (u.rootT > 0 || u.stunT > 0 || u.sleepT > 0 || u.buffs.some((b) => b.root)) s = 0;
   return s;
 };
@@ -181,7 +182,9 @@ function scoreModes(w, u) {
   const role = u.def.role;
   const ready = u.atkT <= 0.15;
   if (role === 'melee') {
-    const inRange = gap <= u.def.range + 6;
+    // 'in range' must mean the swing can land (tryAttack allows range + 2): holding just outside it was a stand-off
+    // where both sides waited for ever
+    const inRange = gap <= u.def.range;
     sc.approach = inRange ? 0.1 : 1;
     sc.hold = inRange ? 1.05 : 0;
     if (u.team === 'hero' && hpRatio(u) < 0.18) sc.retreat = 0.5;
@@ -189,12 +192,12 @@ function scoreModes(w, u) {
     let near = Infinity;
     for (const o of opponents(w, u)) near = Math.min(near, dist(u.x, u.y, o.x, o.y) - o.r);
     const los = !blocked(w, u.x, u.y, t.x, t.y);
-    sc.kite = near < u.def.keep ? 0.5 + 1.1 * (1 - near / u.def.keep) : 0;
+    sc.kite = near < u.def.keep && !u.staleBoost ? 0.5 + 1.1 * (1 - near / u.def.keep) : 0;
     sc.approach = d > u.def.range * 0.92 || !los ? 1 : 0.05;
     sc.strafe = d <= u.def.range ? (los ? 0.75 : 0.9) : 0.15;
     sc.hold = d <= u.def.range && los && ready ? 0.55 : 0;
   } else { // skirmish: in and out
-    const inRange = gap <= u.def.range + 4;
+    const inRange = gap <= u.def.range;
     const sinceAtk = w.time - u.lastAttackT;
     sc.approach = ready ? (inRange ? 0.3 : 1) : 0.15;
     sc.hold = inRange && ready ? 0.9 : 0;
@@ -470,7 +473,7 @@ function movement(w, u, dt) {
       case 'kite': {
         let ax = 0, ay = 0;
         for (const o of opponents(w, u)) { const od = dist(u.x, u.y, o.x, o.y); if (od < u.def.keep * 1.3) { ax += (u.x - o.x) / (od * od + 1); ay += (u.y - o.y) / (od * od + 1); } }
-        gx = ax; gy = ay; side = u.strafeSign;
+        gx = ax; gy = ay; side = u.strafeSign; mult = 0.8; // backing off while facing them is slower than running (else a shooter could kite for ever)
         // backing off into a wall or a corner: slide out along the open side instead of pressing into it
         const gl = Math.hypot(gx, gy);
         if (gl > 1e-6 && clearance(w, u, gx / gl, gy / gl, 120) < 90) {
@@ -1187,6 +1190,7 @@ export function step(w, dt) {
   w.shake = Math.max(0, w.shake - dt * 30);
   for (const u of w.units) {
     if (!alive(u)) continue;
+    u.staleBoost = !!w.stale && u.team === 'enemy';
     u.flashT = Math.max(0, u.flashT - dt); u.invulnT = Math.max(0, u.invulnT - dt);
     u.atkT -= dt * atkRate(u); u.abilT -= dt;
     if (u.kit) for (const k in u.kit.cd) u.kit.cd[k] -= dt * (1 - Math.min(0.5, u.st.wet / 200)); // wet slows abilities

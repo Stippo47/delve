@@ -160,7 +160,7 @@ function trollBrain(w, u, dt) {
   if (u.hp < (u.lastHp ?? u.hp)) u.calmT = 2.5;
   u.lastHp = u.hp;
   u.burnedT = (u.burnedT || 0) - dt; u.calmT = (u.calmT || 0) - dt;
-  if (u.burnedT <= 0 && u.calmT <= 0 && u.hp < u.maxHp) {
+  if (u.burnedT <= 0 && u.calmT <= 0 && u.hp < u.maxHp && !w.stale) {
     u.hp = Math.min(u.maxHp, u.hp + u.maxHp * 0.025 * dt);
     if (rand() < dt * 5) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.6, y: u.y + rrange(-u.r, u.r) * 0.6, vx: 0, vy: 0, rise: 30, life: 0.6, max: 0.6, size: 4, color: '#8FD16A' });
   }

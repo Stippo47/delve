@@ -1,7 +1,8 @@
 // Headless batch of full runs in Node (no browser): checks nothing gets stuck, per dungeon type.
 //   node tools/runs.mjs [--n 10] [--theme crypt|sewers|warren|all] [--seed 1] [--party paladin,archer,twinfang] [--depth 1]
 //   [--boss] (start in floor 3's boss room) [--lvl N] [--allnodes] [--first] (each hero owns tier I of its first ability) [--feel] (count jitter and stuck units)
-// A run is stuck if no room is finished for 300 simulated seconds (the biggest rooms take 150+).
+// A run is stuck if no room is finished for 300 simulated seconds (the biggest rooms take 150+), or 600 in a boss
+// room (a lone survivor against a floor's boss can take that long since round 6's longer fights).
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 const n = +opt('n', 10), seed0 = +opt('seed', 1), depth = +opt('depth', 1), lvl = +opt('lvl', 0);
@@ -47,7 +48,7 @@ for (const theme of themes) {
         if (feel) feelTick(run.world, t);
         if (run.rooms !== lastRooms) { lastRooms = run.rooms; lastT = t; if (args.includes('--arrive') && run.node.kind === 'boss' && run.floor === FLOORS) console.log('   arrive', run.world.units.filter((u) => u.team === 'hero').map((h) => h.kind + ':' + Math.round(100 * h.hp / h.maxHp) + '% lv' + h.level + ' pots' + h.potions).join(' '), 'downed', run.party.filter((k) => run.heroes[k].down).join(',')); }
         if (bossStart == null && run.floor === FLOORS && run.world.units.some((u) => u.def.boss && !u.dead)) bossStart = t; // the last boss is up
-        if (t - lastT > 300) { run.stuckIn = run.phase + ' hitstop ' + run.world.hitstop + ' t ' + run.t + ' exitT ' + run.exitT + ' doorK ' + run.doorK + ' doors ' + JSON.stringify(run.world.doors) + ' task ' + (run.task && run.task.type) + ' pickups ' + run.world.pickups.map((p) => p.type + '@' + Math.round(p.x) + ',' + Math.round(p.y)).join(' ') + ' water ' + JSON.stringify(run.world.water) + ' enemies ' + run.world.units.filter((u) => u.team === 'enemy' && !u.dead).length + ' wp ' + JSON.stringify(run.world.wp) + ' toVisit ' + JSON.stringify(run.world.toVisit); run.phase = 'stuck'; break; }
+        if (t - lastT > (run.node.kind === 'boss' ? 600 : 300)) { run.stuckIn = run.phase + ' hitstop ' + run.world.hitstop + ' t ' + run.t + ' exitT ' + run.exitT + ' doorK ' + run.doorK + ' doors ' + JSON.stringify(run.world.doors) + ' task ' + (run.task && run.task.type) + ' pickups ' + run.world.pickups.map((p) => p.type + '@' + Math.round(p.x) + ',' + Math.round(p.y)).join(' ') + ' water ' + JSON.stringify(run.world.water) + ' enemies ' + run.world.units.filter((u) => u.team === 'enemy' && !u.dead).length + ' wp ' + JSON.stringify(run.world.wp) + ' toVisit ' + JSON.stringify(run.world.toVisit); run.phase = 'stuck'; break; }
       }
     } catch (e) { errs = e; run.phase = 'error'; }
     if (args.includes('--v')) console.log(`  ${theme} #${i}: ${run.phase} floor ${run.floor} in ${run.node.kind} rooms ${run.rooms} sim ${Math.round(t)}s wall ${Math.round((Date.now() - w0) / 1000)}s levels ${run.party.map((k) => run.heroes[k].level).join('/')}`);

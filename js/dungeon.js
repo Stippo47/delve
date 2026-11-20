@@ -427,6 +427,9 @@ export function update(run, dt) {
   if (run.phase === 'fight') {
     if (run.kills !== run.lastKills) { run.lastKills = run.kills; run.quietT = 0; } else run.quietT = (run.quietT || 0) + dt;
     if (run.quietT > 25) for (const e of enemies) e.aggro = true;
+    // still nobody falling after a long while (a lone shooter kiting a regrowing troll, say): the enemies press in
+    // harder (faster, no backing off, no regrowing) so a stand-off always ends
+    w.stale = run.quietT > 45;
   }
   revive(run, dt);
   if (run.phase === 'fight') nextWaypoint(w);
