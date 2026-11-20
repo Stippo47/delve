@@ -463,7 +463,8 @@ export const ABILITIES = {
     score: (w, u) => (w.corpses.length && foesNear(w, u, u.x, u.y, 380).length && w.units.filter((o) => o.summonBy === u && alive(o)).length < 3 ? 0.7 : 0),
     use(w, u, t, tier) {
       cast(u, 'cast', 0.6);
-      const cs = w.corpses.filter((c) => dist(u.x, u.y, c.x, c.y) < 400).slice(0, tier >= 2 ? 2 : 1);
+      const cs = w.corpses.filter((c) => c.z <= 0 && dist(u.x, u.y, c.x, c.y) < 400).slice(0, tier >= 2 ? 2 : 1);
+      w.corpses = w.corpses.filter((c) => !cs.includes(c)); // the body gets up: it no longer lies there
       const spots = cs.length ? cs : [{ x: u.x + rrange(-40, 40), y: u.y + rrange(-40, 40) }];
       for (const c of spots) {
         const s = spawn(w, 'skeleton', c.x, c.y, { team: 'hero' });

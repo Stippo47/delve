@@ -75,6 +75,7 @@ export const FEEL = {
   heroSpeed: 3, enemySpeed: 2.3, bossSpeed: 1.8, // walking speed
   turn: 1.8, face: 1.5,                           // turning keeps up with the speed (else they swing in wide arcs)
   heroHp: 2, enemyHp: 2, bossHp: 1.6,             // time to kill
+  enemyDmg: 0.75,                                 // enemy blows (fights are denser now: faster, more of them at once)
   collider: 1.1,                                  // r (vr, the sprite size, stays)
   rangedRange: 1.3, keep: 1.25, meleeReach: 8,    // ranged range x, kiting distance x, melee reach + (room units)
 };

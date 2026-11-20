@@ -1,6 +1,6 @@
 // The combat simulation: AI (weighted move modes + context steering), physics, combat, statuses, hazards.
 import { TAU, clamp, dist, dist2, angleTo, wrapAngle, angleDiff, rand, rrange, rint, chance, softmaxPick } from './util.js';
-import { DEFS, levelHp, levelDmg } from './units.js';
+import { DEFS, FEEL, levelHp, levelDmg } from './units.js';
 import { lineClear, rayToRect, circleRect, findPath, buildGrid } from './path.js';
 import { kitThink, kitTick, hooksOf, segDist } from './kits.js';
 import { trinketHooks } from './trinkets.js';
@@ -37,7 +37,7 @@ export function spawn(w, kind, x, y, opts = {}) {
   const u = {
     id: NEXT_ID++, kind, def: d, team, x, y, vx: 0, vy: 0, kx: 0, ky: 0, dvx: 0, dvy: 0,
     r: d.r * (opts.scale || 1), vr: (d.vr || d.r) * (opts.scale || 1), mass: d.mass * (opts.scale || 1), maxHp, hp: opts.hp != null ? Math.min(opts.hp, maxHp) : maxHp,
-    dmgMul: hero ? levelDmg(1, lvl) : 0.65 + 0.35 * mult, level: lvl,
+    dmgMul: hero ? levelDmg(1, lvl) : (0.65 + 0.35 * mult) * (team === 'enemy' ? FEEL.enemyDmg : 1), level: lvl,
     facing: team === 'hero' ? 0 : Math.PI, atkT: rand() * d.atkCd, abilT: (d.abilCd || 0) * rrange(0.3, 0.7),
     mode: 'wander', modeT: 0, thinkT: rand() * 0.4, abilThinkT: rand() * 0.5, target: null, targetT: 0,
     st: { burn: 0, chill: 0, poison: 0, wet: 0, shock: 0, stagger: 0 }, frozenT: 0, stunT: 0, rootT: 0, sleepT: 0, koT: 0, buffs: [], later: null, freezeImmune: 0, dotAcc: 0,
@@ -63,7 +63,7 @@ const speedOf = (u) => {
   if (u.st.poison > 20) s *= 0.9;          // poison slows a little
   if (u.inOil) s *= 0.7;
   for (const b of u.buffs) if (b.move) s *= b.move;
-  if (u.flinchT > 0) s *= 0.35;           // just took a blow
+  if (u.flinchT > 0) s *= 0.5;            // just took a blow
   if (u.rootT > 0 || u.stunT > 0 || u.sleepT > 0 || u.buffs.some((b) => b.root)) s = 0;
   return s;
 };
@@ -630,8 +630,8 @@ export function hurt(w, u, amount, src, o = {}) {
     // punch without freezing the game: only a crit holds the frame, and only a hair; the shake is small
     if (o.crit) w.hitstop = Math.max(w.hitstop, 0.025);
     if (big) w.shake = Math.max(w.shake, 1.5);
-    // the body reacts: it flinches (stride broken for a moment)
-    u.flinchT = Math.max(u.flinchT || 0, onShield ? 0.06 : big ? 0.22 : 0.12); u.spd *= onShield ? 0.8 : 0.45;
+    // the body reacts: its stride breaks for a moment (heroes only on big hits, so a swarm can't pin them in place)
+    if (u.team !== 'hero' || big) { u.flinchT = Math.max(u.flinchT || 0, onShield ? 0.06 : big ? 0.2 : 0.1); u.spd *= onShield ? 0.85 : 0.6; }
     if (src && (src.kind === 'knight' || src.def.heroRole === 'tank') && u.team === 'enemy') { u.tauntBy = src; u.tauntT = 3; }
     u.flashT = 0.12; textU(w, u.x + rrange(-6, 6), u.y, u.r + 4, Math.round(amt), o.crit ? '#FFE14D' : '#FFFFFF', o.crit ? 1.3 : 1, true); }
   else { u.dotAcc += amt; if (u.dotAcc >= 4) { textU(w, u.x, u.y, u.r, Math.round(u.dotAcc), o.color || '#FF9A55', 0.75); u.dotAcc = 0; } }

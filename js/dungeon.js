@@ -182,7 +182,7 @@ function buildRoom(run) {
   w.doorIn = { x: 0, y: arena ? sh.H / 2 : centre(w.entry).y };
   const L = node.L;
   // enemy strength: the dungeon type, the run's depth, the floor and how far into it (each floor harder than the last)
-  w.mult = 1 + 0.12 * (DUNGEON_RANK[run.theme] || 0) + 0.22 * (run.depth - 1) + 0.15 * (run.floor - 1) + 0.03 * L;
+  w.mult = 1 + 0.12 * (DUNGEON_RANK[run.theme] || 0) + 0.22 * (run.depth - 1) + 0.18 * (run.floor - 1) + 0.03 * L;
   const busy = kind === 'fight' || kind === 'hazard' || kind === 'elite';
   if (arena) buildArena(w, arena);
   else if (sh.nr === 1 && sh.nc > 1) { if ((busy && chance(0.75)) || (kind === 'treasure' && chance(0.5))) addWalls(w); }
@@ -259,7 +259,7 @@ function buildRoom(run) {
     }
     // waves: once the room is clear, more come up out of the floor (1-2, more likely on deeper floors), each about
     // half the room's first lot; the chest (if the room has one) shows up when the last wave is down
-    if (kind !== 'treasure') w.waves = { left: kind === 'elite' ? 1 : 1 + (chance(0.25 * (run.floor - 1)) ? 1 : 0), budget: total * 0.4, n: 0 };
+    if (kind !== 'treasure') w.waves = { left: kind === 'elite' ? 1 : 1 + (chance(0.25 * (run.floor - 1)) ? 1 : 0), budget: total * (0.28 + 0.02 * L), n: 0 }; // waves grow deeper into the floor
     w.chest = kind === 'treasure' || kind === 'elite' || chance(0.3);
   }
   w.on.kill = (u) => onKill(run, u);
