@@ -128,7 +128,7 @@ def valkyrie():
                "gold brow band (straight sides, round top). White wings on the helm, silver scale shoulders. Spear in "
                "the right hand (arm-r, before #body); left hand free. " + LAYOUT)
     S.group("arm-r", PR, "winged spear")
-    T = frame(160, 120, 10)
+    T = frame(160, 110, 10)
     S.shape(rr(0, -6, 9, 150, 4.5), "#B98A56", T=T, shadow=0)
     S.shape("M 0 44 C 14 54 15 70 0 92 C -15 70 -14 54 0 44 Z", STEEL, T=T, shadow=2,
             decor='<rect x="-1.5" y="50" width="3" height="36" fill="#F4F6FA" opacity="0.7"/>')
@@ -224,13 +224,13 @@ def executioner():
     S.shape(blob([(84, 60), (88, 34), (98, 14), (104, 4), (112, 14), (116, 36), (116, 60)], 0.8), "#2E2630", shadow=0,
             decor=f'<path d="{ell(98, 26, 5, 14)}" fill="#4A4052" opacity="0.7"/>')
     S.group("arm-r", PR, "headsman's axe")
-    T = frame(158, 104, 4)
-    S.shape(rr(0, 40, 11, 110, 5), "#6E4A2C", T=T, shadow=0, decor=strokes("M -3 0 L -3 90", "#9A6E44", 2.5, 0.6))
-    blade = "M 4 60 C 18 58 34 50 46 40 C 56 58 58 86 48 108 C 36 98 20 92 4 92 Z"
+    T = frame(166, 80, 4)
+    S.shape(rr(0, 40, 11, 110, 5), "#6E4A2C", T=T, shadow=0, decor=strokes("M 3 0 L 3 90", "#9A6E44", 2.5, 0.6))
+    blade = "M -4 66 C -18 64 -32 56 -44 46 C -54 64 -56 90 -46 112 C -34 102 -20 98 -4 98 Z"
     S.shape(blade, "#B9C0CC", T=T, shadow=3,
-            decor=strokes("M 46 44 C 54 62 54 86 46 104", "#EEF1F5", 6) + '<path d="M 4 60 L 4 92 L 16 92 L 16 60 Z" fill="#5E6676" opacity="0.7"/>')
-    S.shape(rr(0, 76, 15, 38, 4), "#4E5464", T=T, shadow=2)
-    fist(S, 0, 46, T=T, w=22, h=26)
+            decor=strokes("M -44 50 C -50 66 -50 90 -44 108", "#EEF1F5", 6) + '<path d="M -4 66 L -4 98 L -16 98 L -16 66 Z" fill="#5E6676" opacity="0.7"/>')
+    S.shape(rr(0, 100, 15, 22, 4), "#4E5464", T=T, shadow=2)
+    fist(S, 0, 66, T=T, w=22, h=24)
     S.group("body")
     wide = "M 18 110 C 18 78 52 72 100 72 C 148 72 182 78 182 110 C 182 138 148 144 100 144 C 52 144 18 138 18 110 Z"
     S.shape(wide, SKIN, decor=f'<path d="{ell(46, 96, 18, 10)}" fill="#F0BC92" opacity="0.6"/><path d="{ell(154, 96, 18, 10)}" fill="#F0BC92" opacity="0.4"/>')
@@ -292,7 +292,7 @@ def samurai():
                "and the blade out front show); left hand free on the scabbard side (arm-l). " + LAYOUT)
     IND, LACE = "#2E3C66", "#E8742E"
     S.group("arm-r", PR, "katana")
-    T = frame(156, 120, 6)
+    T = frame(156, 108, 6)
     blade = "M -4.5 26 L 4.5 26 C 5.5 52 4 74 -1 92 L -5 91 C -2.5 72 -3.5 50 -4.5 26 Z"
     S.shape(blade, "#D8DDE5", T=T, shadow=0,
             decor='<path d="M 2 28 C 3 52 2 74 -2 90" stroke="#F4F6FA" stroke-width="2" fill="none" opacity="0.8"/>')

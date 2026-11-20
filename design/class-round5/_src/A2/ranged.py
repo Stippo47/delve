@@ -271,7 +271,7 @@ def marksman_b():
     S.shape(blob([(118, 74), (130, 70), (132, 82), (120, 86)], 0.8), "#6E5A3E", shadow=2)
     mouth(S)
     S.group("arm-r", PR, "scoped hunting rifle, both hands (arm-l left out)")
-    gun(S, frame(160, 90, 4), "#6A3E24", "#7E8592", None, scope="#C99A3A", front=94)
+    gun(S, frame(160, 90, 4), "#6A3E24", "#7E8592", None, scope="#C99A3A")
     return save_r("marksman-b", S)
 
 
@@ -322,7 +322,7 @@ def marksman_d():
     plume(S, (64, 66), (40, 40), (52, -2), 12)
     mouth(S)
     S.group("arm-r", PR, "scoped long rifle, both hands (arm-l left out)")
-    gun(S, frame(160, 90, 4), "#5A3420", "#8E96A4", "#C9D0DA", scope="#5E6474", front=94)
+    gun(S, frame(160, 90, 4), "#5A3420", "#8E96A4", "#C9D0DA", scope="#5E6474")
     return save_r("marksman-d", S)
 
 
@@ -460,7 +460,7 @@ def trapper():
     S.group("arm-r", PR, "short rifle")
     T = frame(160, 66, 4)
     S.shape(blob([(-9, 0), (9, 0), (7, 18), (4.5, 44), (-4.5, 44), (-7, 18)], 0.6), "#7A4A2A", T=T, shadow=0)
-    S.shape(rr(0, 92, 6, 96, 3), "#7E8592", T=T, shadow=2,
+    S.shape(rr(0, 88, 6, 88, 3), "#7E8592", T=T, shadow=2,
             decor='<rect x="-2.2" y="44" width="1.8" height="94" fill="#E6EAF0" opacity="0.6"/>')
     S.shape(rr(0, 92, 10, 40, 4.5), "#7A4A2A", T=T, shadow=2)
     S.shape(rr(0, 60, 10, 18, 3.5), "#5E6474", T=T, shadow=2)

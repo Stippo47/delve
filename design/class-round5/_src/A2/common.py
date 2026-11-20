@@ -148,8 +148,8 @@ def rifle(S, T, length=150, stock="#8A5530", metal="#8E96A4", bands=BRASS, fore=
     fist(S, 0, rear, T=T, w=22, h=24, hand=hand)
 
 
-def gun(S, T, stock="#8A5530", metal="#8E96A4", bands=BRASS, scope=None, hand="url(#gHand)", length=114,
-        receiver="#5E6474", rear=30, front=84, k=1.35):
+def gun(S, T, stock="#8A5530", metal="#8E96A4", bands=BRASS, scope=None, hand="url(#gHand)",
+        receiver="#5E6474", rear=30, front=70, k=1.35, length=106):
     """A long gun aimed forward in the local frame T (butt plate at y=0 on the shoulder, muzzle at y=length):
     a slim stock, a dark receiver with a trigger guard, a wooden fore-stock and a long steel barrel; both fists on it.
     k widens the gun (not the fists)."""
@@ -166,9 +166,9 @@ def gun(S, T, stock="#8A5530", metal="#8E96A4", bands=BRASS, scope=None, hand="u
         for yy in (66, 92):
             S.shape(rr(0, yy, 12, 4.5, 2), bands, T=T, shadow=1)
     if scope:
-        S.shape(rr(0, 54, 9, 34, 4), scope, T=T, shadow=3,
+        S.shape(rr(0, 50, 9, 30, 4), scope, T=T, shadow=3,
                 decor='<rect x="-2.5" y="38" width="2" height="30" fill="#FFF3C4" opacity="0.55"/>')
-        S.shape(rr(0, 38, 12, 6, 2.5), shade(scope, 0.75), T=T, shadow=1)
-        S.shape(rr(0, 71, 12, 6, 2.5), shade(scope, 0.75), T=T, shadow=1)
+        S.shape(rr(0, 37, 12, 6, 2.5), shade(scope, 0.75), T=T, shadow=1)
+        S.shape(rr(0, 63, 12, 6, 2.5), shade(scope, 0.75), T=T, shadow=1)
     fist(S, 0, front, T=TF, w=21, h=21, hand=hand)
     fist(S, 0, rear, T=TF, w=21, h=23, hand=hand)
