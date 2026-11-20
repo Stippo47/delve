@@ -44,8 +44,10 @@ export function layout(canvas, w, topPad, bottomPad = 10, sidePad = 10) {
   const now = performance.now(), fdt = Math.min(0.1, (now - (view.lastT || now)) / 1000); view.lastT = now;
   if (view.manualT > 0) {
     view.manualT -= fdt;
-    if (view.manual != null) { view.manual = fit(view.manual, halfX, w.W); tx = view.manual; }
-    if (view.manualY != null) { view.manualY = fit(view.manualY, halfY, w.H); ty = view.manualY; }
+    // a drag can take the camera past the room's edge by up to a third of the room's size (designer, round 6)
+    const loose = (v, half, size) => { const m = size / 3, lo = half - pad - m, hi = size - half + pad + m; return lo > hi ? clamp(v, size / 2 - m, size / 2 + m) : clamp(v, lo, hi); };
+    if (view.manual != null) { view.manual = loose(view.manual, halfX, w.W); tx = view.manual; }
+    if (view.manualY != null) { view.manualY = loose(view.manualY, halfY, w.H); ty = view.manualY; }
   } else { view.manual = null; view.manualY = null; }
   const ease = view.manualT > 0 ? 0.35 : 0.06;
   const snap = view.camX == null || view.camY == null || view.snap;
@@ -101,13 +103,27 @@ function softShadow() {
   return (shadowImg = c);
 }
 
+// The circle shadow under a unit (round 6): a firmer disc with a short soft rim, a little wider than the body so it
+// shows round the sprite's edge.
+let unitShadowImg = null;
+function unitShadow() {
+  if (unitShadowImg) return unitShadowImg;
+  const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d');
+  const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(43,34,48,0.42)'); gr.addColorStop(0.8, 'rgba(43,34,48,0.36)'); gr.addColorStop(1, 'rgba(43,34,48,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+  return (unitShadowImg = c);
+}
+
 const SPRITE_KIND = { boss: 'boss', slimeSmall: 'slimeSmall' };
 
 export function draw(ctx, w) {
   const d = view.dpr, m = view.m;
   ctx.setTransform(d, 0, 0, d, 0, 0);
   ctx.fillStyle = voidColor(w); ctx.fillRect(0, 0, view.cw, view.ch);
-  const sh = w.shake > 0 ? (Math.random() - 0.5) * w.shake : 0, sv = w.shake > 0 ? (Math.random() - 0.5) * w.shake : 0;
+  // screen shake, kept small (round 6: punchy hits without heavy shake)
+  const sk = Math.min(w.shake, 8) * 0.45;
+  const sh = sk > 0 ? (Math.random() - 0.5) * sk : 0, sv = sk > 0 ? (Math.random() - 0.5) * sk : 0;
   ctx.setTransform(d * m[0], d * m[1], d * m[2], d * m[3], d * (m[4] + sh), d * (m[5] + sv));
   const fl = floor(w);
   const s = view.scale;
@@ -122,7 +138,8 @@ export function draw(ctx, w) {
   // shadows straight down under each obstacle (top-down: never cast to one side)
   for (const p of w.pillars) { const R = p.r * 1.45; ctx.drawImage(softShadow(), p.x - R, p.y - R, R * 2, R * 2); }
   for (const p of w.pillars) drawPillar(ctx, p, w);
-  for (const u of w.units) upright(ctx, u.x, u.y, () => { const r = u.vr * (u.downed ? 1.1 : 1.3); ctx.drawImage(softShadow(), 2 - r, u.vr * 0.62 - r * 0.46, r * 2, r * 0.92); });
+  // a round shadow straight under every unit (top-down: no side cast); a leaping unit's shrinks as it rises
+  for (const u of w.units) { if (u.ethereal) continue; const r = (u.downed ? u.vr * 1.4 : Math.max(u.r * 1.7, u.vr * 2)) * (1 - Math.min(0.35, (u.hop || 0) / 120)); ctx.drawImage(unitShadow(), u.x - r, u.y - r, r * 2, r * 2); }
   for (const t of w.telegraphs) if (t.type === 'ring') drawRing(ctx, t);
   for (const c of w.corpses) drawCorpse(ctx, c);
   const order = [...w.units].sort((a, b) => (a.downed ? -1 : 0) - (b.downed ? -1 : 0) || screenDepth(a) - screenDepth(b));
@@ -268,7 +285,7 @@ function drawHazard(ctx, h, t) {
     const tips = [[0, 0]];
     const ring = Math.max(5, Math.round(h.r / 4.6));
     for (let i = 0; i < ring; i++) { const a = i / ring * TAU + 0.3; tips.push([Math.cos(a) * h.r * 0.58, Math.sin(a) * h.r * 0.58]); }
-    for (const [dx, dy] of tips) {
+    if (h.up !== false) for (const [dx, dy] of tips) { // sunk (no tips) once the room is won
       const x = h.x + dx, y = h.y + dy, r = 4.6;
       ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(x + 0.8, y + 0.8, r + 1.4, 0, TAU); ctx.fill();
       ctx.fillStyle = '#8D949C'; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
@@ -320,12 +337,11 @@ function drawPickup(ctx, p, t) {
   if (p.type === 'coin') {
     // blinks out over its last second and a half
     if (p.life != null && p.life < 1.5 && Math.sin(t * 22) < 0) return;
-    inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, 5.5, 0, TAU); }, '#F2B53A');
-    ctx.fillStyle = '#FFE08A'; ctx.beginPath(); ctx.arc(p.x - 1.6, p.y - 1.6, 2, 0, TAU); ctx.fill();
-    // now and then a glint runs over it
-    const g = (t * 0.7 + (p.x * 0.013 + p.y * 0.007)) % 2.2;
-    if (g < 0.25) { const k = Math.sin(g / 0.25 * Math.PI); ctx.fillStyle = '#FFFFFF'; ctx.beginPath();
-      for (let i = 0; i < 8; i++) { const a = i / 8 * TAU, rr = i % 2 ? 1.3 * k : 6 * k; ctx.lineTo(p.x + 2 + Math.cos(a) * rr, p.y - 2 + Math.sin(a) * rr); } ctx.fill(); }
+    if (p.hop > 0) { // still flying out of the burst: lifted up the screen in an arc
+      const [ux, uy] = upVec(), h = Math.sin(Math.PI * clamp(p.hop / 0.45, 0, 1)) * 16;
+      ctx.save(); ctx.translate(ux * h, uy * h); drawCoin(ctx, p, t); ctx.restore(); return;
+    }
+    drawCoin(ctx, p, t);
   } else if (p.type === 'key') {
     const b = Math.sin(t * 5) * 2;
     upright(ctx, p.x, p.y, () => {
@@ -346,18 +362,30 @@ function drawPickup(ctx, p, t) {
       else inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -12 + bob); ctx.lineTo(7, -3 + bob); ctx.lineTo(0, 6 + bob); ctx.lineTo(-7, -3 + bob); ctx.closePath(); }, col);
     });
   } else if (p.type === 'chest') {
-    if (p.open && p._openAt == null) p._openAt = t;
-    const glow = p.open ? clamp(1 - (t - p._openAt) / 2.5, 0.2, 1) : 0;
-    { const R = 34; ctx.drawImage(softShadow(), p.x - R, p.y - R, R * 2, R * 2); } // straight down, under it
-    if (prop(ctx, p.open ? 'chest-open' : p.free ? 'chest-closed' : 'chest-locked', p.x, p.y, PROP_BOX, { extraA: glow })) return;
-    upright(ctx, p.x, p.y, () => {
-      ctx.fillStyle = 'rgba(43,34,48,0.2)'; ctx.beginPath(); ctx.ellipse(2, 14, 26, 9, 0, 0, TAU); ctx.fill();
-      inked(ctx, () => roundRect(ctx, -21, -15, 42, 30, 6), p.open ? '#7A4A26' : '#A0683A');
-      ctx.fillStyle = '#F2B53A'; ctx.fillRect(-21, -3, 42, 6);
-      if (!p.open) inked(ctx, () => roundRect(ctx, -5, -5, 10, 10, 2.5), '#FFE08A');
-      else { ctx.fillStyle = '#FFE7A0'; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.arc(0, -10, 16, 0, TAU); ctx.fill(); }
-    });
+    // dropping in by the party when a room is won: it falls from above the screen (drawn big, shrinking to its size)
+    const fall = p.drop > 0 ? p.drop / 0.45 : 0;
+    if (fall > 0) { ctx.save(); ctx.translate(p.x, p.y); ctx.scale(1 + fall * 1.2, 1 + fall * 1.2); ctx.translate(-p.x, -p.y); ctx.globalAlpha = 1 - fall * 0.6; }
+    drawChest(ctx, p, t);
+    if (fall > 0) { ctx.restore(); ctx.globalAlpha = 1; }
   }
+}
+function drawCoin(ctx, p, t) {
+  inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, 5.5, 0, TAU); }, '#F2B53A');
+  ctx.fillStyle = '#FFE08A'; ctx.beginPath(); ctx.arc(p.x - 1.6, p.y - 1.6, 2, 0, TAU); ctx.fill();
+  // now and then a glint runs over it
+  const g = (t * 0.7 + (p.x * 0.013 + p.y * 0.007)) % 2.2;
+  if (g < 0.25) { const k = Math.sin(g / 0.25 * Math.PI); ctx.fillStyle = '#FFFFFF'; ctx.beginPath();
+    for (let i = 0; i < 8; i++) { const a = i / 8 * TAU, rr = i % 2 ? 1.3 * k : 6 * k; ctx.lineTo(p.x + 2 + Math.cos(a) * rr, p.y - 2 + Math.sin(a) * rr); } ctx.fill(); }
+}
+// The chest opens empty (round 6): its coins spill out onto the floor, so no glow or gold inside once it's open.
+function drawChest(ctx, p, t) {
+  { const R = 34; ctx.drawImage(softShadow(), p.x - R, p.y - R, R * 2, R * 2); } // straight down, under it
+  if (prop(ctx, p.open ? 'chest-open' : p.free ? 'chest-closed' : 'chest-locked', p.x, p.y, PROP_BOX, { extraA: 0 })) return;
+  upright(ctx, p.x, p.y, () => {
+    inked(ctx, () => roundRect(ctx, -21, -15, 42, 30, 6), p.open ? '#7A4A26' : '#A0683A');
+    if (p.open) { ctx.fillStyle = '#2E2220'; roundRect(ctx, -16, -10, 32, 20, 4); ctx.fill(); }
+    else { ctx.fillStyle = '#F2B53A'; ctx.fillRect(-21, -3, 42, 6); inked(ctx, () => roundRect(ctx, -5, -5, 10, 10, 2.5), '#FFE08A'); }
+  });
 }
 
 // ---------------------------------------------------------------- units
@@ -369,7 +397,7 @@ function unitFrame(ctx, u, w) {
   // hit: squashed and shoved along the blow
   if (u.hitT > 0 && !u.downed) {
     const k = u.hitT / 0.16;
-    ctx.rotate(u.hitA); ctx.translate(4 * k, 0); ctx.scale(1 - 0.16 * k, 1 + 0.1 * k); ctx.rotate(-u.hitA);
+    ctx.rotate(u.hitA); ctx.translate((u.hitBlock ? 3 : 8) * k, 0); ctx.scale(1 - 0.2 * k, 1 + 0.12 * k); ctx.rotate(-u.hitA);
   }
   ctx.rotate(u.downed ? u.facing - Math.PI / 2 + 0.6 : u.facing - Math.PI / 2);
   // in the sprite's own frame forward is +y
@@ -380,7 +408,7 @@ function unitFrame(ctx, u, w) {
   }
   if (u.lungeT > 0) { const k = ease(1 - u.lungeT / 0.18); fy += u.vr * 0.5 * k; sc *= 1 + 0.08 * k; }
   if (u.recoilT > 0) { fy -= u.vr * 0.22 * (u.recoilT / 0.14); }
-  if (u.act && (u.act.type === 'windup' || u.act.type === 'slam')) {
+  if (u.act && (u.act.type === 'windup' || u.act.type === 'slam' || u.act.type === 'chargeTell')) {
     const k = 1 - u.act.t / u.act.max; fy -= u.vr * 0.3 * k; sc *= 1 + 0.1 * k; tilt += Math.sin(w.time * 40) * 0.03 * k;
   }
   if (u.act && u.act.type === 'charge') { fy += u.vr * 0.15; sc *= 1.04; }
@@ -501,24 +529,26 @@ function drawIce(ctx, u, w) {
   ctx.restore();
 }
 
+// A body thrown by the killing blow (sim.js corpses): white for an instant, then limp, spinning while in the air
+// (lifted: drawn a little bigger, its shadow left on the floor), then lying flat and fading over its last seconds.
 function drawCorpse(ctx, c) {
   const kind = SPRITE_KIND[c.kind] || c.kind, def = DEFS[c.kind], art = def && def.art;
   const sizeU = c.vr * 220 / ((art && def.headR) || headR(kind));
-  const k = 1 - c.t / c.max; // 0 -> 1
-  // a pop as the blow lands, then it slumps flat and fades
-  const sc = 1 + 0.25 * Math.sin(Math.min(1, k * 2.2) * Math.PI / 2) - 0.6 * Math.max(0, k - 0.45);
-  const alpha = clamp(1.4 - k * 1.5, 0, 1);
+  const lift = 1 + Math.min(0.35, (c.z || 0) / 160);
+  const alpha = clamp(c.t / 4, 0, 1) * 0.95;
+  const flash = (c.age ?? 1) < 0.07;
+  if (c.z > 2) { const r = c.r * 1.1; ctx.globalAlpha = alpha * 0.8; ctx.drawImage(unitShadow(), c.x - r, c.y - r, r * 2, r * 2); ctx.globalAlpha = 1; }
+  ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.facing - Math.PI / 2); ctx.scale(lift, lift);
   if (art) {
-    const set = getRig(art, sizeU * view.scale * view.dpr); if (!set) return;
-    ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.facing - Math.PI / 2 + k * 0.6); ctx.scale(sc, sc * (1 - 0.25 * k));
-    ctx.scale(sizeU / 220, sizeU / 220); ctx.translate(-100, -100);
-    drawRig(ctx, set, LIMP, { mode: k < 0.25 ? 'flash' : 'normal', alpha });
+    const set = getRig(art, sizeU * view.scale * view.dpr); if (set) {
+      ctx.scale(sizeU / 220, sizeU / 220); ctx.translate(-100, -100);
+      drawRig(ctx, set, LIMP, { mode: flash ? 'flash' : 'normal', alpha, washes: flash ? [] : [['#2B2230', 0.18]] });
+    }
     ctx.restore(); return;
   }
-  const spr = getSprite(kind, sizeU * view.scale * view.dpr); if (!spr) return;
-  ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.facing - Math.PI / 2 + k * 0.6);
-  ctx.scale(sc, sc); ctx.globalAlpha = alpha;
-  ctx.drawImage(k < 0.25 ? spr.flash : spr.img, -sizeU / 2, -sizeU / 2, sizeU, sizeU);
+  const spr = getSprite(kind, sizeU * view.scale * view.dpr);
+  if (spr) { ctx.globalAlpha = alpha; ctx.drawImage(flash ? spr.flash : spr.img, -sizeU / 2, -sizeU / 2, sizeU, sizeU);
+    ctx.globalAlpha = alpha * 0.18; ctx.drawImage(tinted(spr, '#2B2230'), -sizeU / 2, -sizeU / 2, sizeU, sizeU); }
   ctx.restore(); ctx.globalAlpha = 1;
 }
 
@@ -530,8 +560,9 @@ function drawOverlay(ctx, u) {
   upright(ctx, u.x, u.y, () => {
     if (u.act && (u.act.type === 'windup' || u.act.type === 'slam')) {
       const k = 1 - u.act.t / u.act.max;
-      ctx.font = `900 ${18 + 6 * k}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.lineJoin = 'round';
-      ctx.lineWidth = OUTLINE * 2; ctx.strokeStyle = INK; ctx.strokeText('!', 0, -u.vr - 12); ctx.fillStyle = '#FF6B5A'; ctx.fillText('!', 0, -u.vr - 12);
+      // a warning mark drawn as a shape (no text in the arena): a bar and a dot over the head
+      const s = 1 + 0.35 * k, y0 = -u.vr - 14;
+      inked(ctx, () => { ctx.beginPath(); roundRect(ctx, -2.6 * s, y0 - 15 * s, 5.2 * s, 10.5 * s, 2.4 * s); ctx.moveTo(2.8 * s, y0); ctx.arc(0, y0, 2.8 * s, 0, TAU); }, '#FF6B5A');
     }
     if (u.hasKey) inked(ctx, () => { ctx.beginPath(); ctx.arc(u.vr * 0.8, -u.vr * 0.8, 4.5, 0, TAU); }, '#FFD45A');
     let by = u.vr + 8;

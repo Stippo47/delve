@@ -63,7 +63,7 @@ export const HEROES = {
     stats: { hp: 100, speed: 96, r: 29, vr: 20, turn: 7, accel: 420, face: 7, mass: 0.9, range: 16, atkCd: 0.55, dmg: 8, arc: 1.4, dodge: 0.18 },
     attack: { name: 'Twin daggers', anim: 'thrust', desc: 'Quick stabs.' },
     abilities: [
-      { id: 'backstab', name: 'Backstab', cd: 6, desc: 'Steps into the shadows and appears behind the target.',
+      { id: 'backstab', name: 'Backstab', cd: 11, desc: 'Steps into the shadows and appears behind the target.',
         tiers: ['A big hit from behind.', 'Poisons too.', 'A kill resets it.'] },
       { id: 'dash', name: 'Dash', cd: 3.2, desc: 'A burst of speed: in at a lone target, or out of reach.',
         tiers: ['One dash.', 'Leaves smoke: enemies lose sight of her.', 'Two dashes before it recharges.'] },
@@ -164,12 +164,13 @@ export const HEROES = {
   },
   cleric: {
     name: 'Cleric', art: 'art/heroes/cleric.svg', role: 'support', unlock: { gems: 1 },
-    blurb: 'Heals, and brings the fallen back fast.',
-    stats: { hp: 85, speed: 62, r: 31, vr: 22, turn: 4, accel: 220, face: 4.2, mass: 1.2, range: 20, atkCd: 1.3, dmg: 7, arc: 1.6 },
-    attack: { name: 'Sceptre', anim: 'swing', desc: 'A knock with the sceptre.' },
+    blurb: 'Stays at the back, mends with a ray of light, and brings the fallen back fast.',
+    stats: { hp: 80, speed: 62, r: 31, vr: 22, turn: 4.2, accel: 230, face: 4.4, mass: 1.1, range: 210, keep: 170, atkCd: 1.3, dmg: 5 },
+    attack: { name: 'Light orb', anim: 'cast', desc: 'A weak orb of light.' },
     abilities: [
-      { id: 'mend', name: 'Mend', cd: 5, desc: 'Heals the most hurt ally nearby.',
-        tiers: ['Heals 20%.', 'Heals 30%.', 'Heals a second ally too.'] },
+      // the id stays 'mend' so bought nodes in saves keep working
+      { id: 'mend', name: 'Mending Ray', cd: 7, desc: 'A ray of light to the most hurt ally that heals them slowly while it holds (never herself).',
+        tiers: ['Heals 25% over 4s.', 'Heals 40% over 4s.', 'Splits to a second ally.'] },
       { id: 'sanctuary', name: 'Sanctuary', cd: 16, desc: 'A circle of light that heals allies standing in it.',
         tiers: ['For 5s.', 'Bigger, 7s.', 'Enemies can\'t step in.'] },
       { id: 'smite', name: 'Smite', cd: 9, desc: 'A pillar of light on an enemy.',
@@ -242,7 +243,8 @@ export const HERO_IDS = Object.keys(HEROES);
 export const STARTERS = HERO_IDS.filter((k) => HEROES[k].starter);
 
 // ---------------------------------------------------------------- skill trees
-// Nodes marked `free` are owned from the start (the camp shows them bought).
+// Nodes marked `free` are owned from the start (the camp shows them bought). None are since round 6 (the first
+// ability is cheap instead); kept so saves and the camp's code that read it still work.
 export const freeNodes = (id) => Object.fromEntries(treeFor(id).filter((n) => n.free).map((n) => [n.id, 1]));
 // Every hero's tree has the same shape: three branches, one per ability, each with the ability's three tiers and
 // a stat node that can be bought more than once. Tier nodes need the one before and a level reached in the run before
@@ -255,6 +257,7 @@ export const BRANCHES = [
 ];
 const TIER_LEVEL = [2, 5, 8];        // the run level each tier switches on at
 const TIER_COST = [60, 160, 320];
+const FIRST_COST = 20;               // tier I of a hero's first ability
 export const FEAT_LEVEL = 8;
 
 export function treeFor(id) {
@@ -263,11 +266,12 @@ export function treeFor(id) {
   for (const b of BRANCHES) {
     const ab = h.abilities[b.ability];
     ab.tiers.forEach((t, i) => {
-      const free = b.ability === 0 && i === 0; // every hero starts with their first ability (tier I) for free
+      // the first ability's tier I is cheap, so a new hero gets a move after a run or two (not free: designer, round 6)
+      const cheap = b.ability === 0 && i === 0;
       nodes.push({
-        id: `${ab.id}${i + 1}`, branch: b.id, kind: 'tier', ability: ab.id, tier: i + 1, free,
+        id: `${ab.id}${i + 1}`, branch: b.id, kind: 'tier', ability: ab.id, tier: i + 1, free: false,
         name: `${ab.name} ${'I'.repeat(i + 1)}`, desc: i === 0 ? `${ab.desc} ${t}` : t,
-        cost: [free ? 0 : TIER_COST[i]], max: 1, req: { node: i ? `${ab.id}${i}` : null, level: TIER_LEVEL[i], feat: i === 2 },
+        cost: [cheap ? FIRST_COST : TIER_COST[i]], max: 1, req: { node: i ? `${ab.id}${i}` : null, level: TIER_LEVEL[i], feat: i === 2 },
       });
     });
     nodes.push({ id: b.stat.id, branch: b.id, kind: 'stat', name: b.stat.name, desc: b.stat.desc, cost: b.stat.cost, max: b.stat.max, req: {} });

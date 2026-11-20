@@ -34,7 +34,7 @@ function show(s) {
 // ---------------------------------------------------------------- run
 // opts: { theme, party, mercs, potions } from the camp. A bare number (the debug ?auto) goes in with the saved party.
 function startRun(opts) {
-  if (typeof opts !== 'object' || !opts) opts = { depth: +opts || 1, theme: save.theme || Object.keys(THEMES)[0], party: save.party, mercs: save.mercs };
+  if (typeof opts !== 'object' || !opts) opts = { depth: +opts || 1, theme: params.get('theme') || save.theme || Object.keys(THEMES)[0], party: save.party, mercs: save.mercs }; // ?theme: testing
   run = newRun(save, opts);
   applyLoadout(run, opts); // elixirs and trinket levels onto the heroes' run lists (progress.js)
   met = new Set(); beaten = new Set();

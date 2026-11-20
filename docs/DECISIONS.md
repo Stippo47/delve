@@ -265,3 +265,7 @@ Raw answers: `docs/riffle-log/2026-11-20-round6.txt` (every art note is there wo
 A different genre: escort a slow wagon upward through biomes while enemies come from all sides; the party is ~3x
 faster than the wagon; camps between stretches with a hero to hire, a shop, the fire to upgrade; gold dropped by
 enemies must be picked up or is left behind; meta progression stays. Pitched back in Riffle, not built.
+- Round 6 build calls (lane F): enemy damage x0.75 (fights got much denser); a chest drops by the party after
+  treasure and elite rooms always, other fights 30%; "the puddle" read as the heal/holy zone discs (now a faint glow);
+  difficulty order Warren < Sewers < Crypt (+0.12 per rank, +0.18 per floor); first ability's tier I costs 20.
+  A fresh trio with nothing bought reaches floors 2-3 and doesn't win; with tier I bought, Warren is won most runs.

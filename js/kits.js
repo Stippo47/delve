@@ -102,7 +102,7 @@ export const ABILITIES = {
       const dur = tier >= 2 ? 6 : 4;
       addBuff(u, { id: 'holdTheLine', dur, frontBlock: 0.6, root: true, reflect: tier >= 3 ? 0.5 : 0 });
       for (const e of foesNear(w, u, u.x, u.y, tier >= 2 ? 300 : 200)) { e.tauntBy = u; e.tauntT = dur; e.target = u; }
-      fx(w, { type: 'ring', x: u.x, y: u.y, r: tier >= 2 ? 300 : 200, color: '#FFD27A', max: 0.5 });
+      puff(w, u.x, u.y, '#FFE7A0', 10, 140, 5, 0.45); // no ring round him (round 6): a burst of dust as the shield plants
     },
   },
   charge: {
@@ -155,7 +155,8 @@ export const ABILITIES = {
   },
   // ----- Twinfang
   backstab: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) > 70 ? (1 - hpRatio(t)) * 0.6 + (t.target && t.target !== u ? 0.45 : 0) : 0),
+    // worth it on a hurt target busy with someone else (the cooldown is long since round 6: it came too often)
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) > 90 ? (1 - hpRatio(t)) * 0.6 + (t.target && t.target !== u ? 0.4 : 0) : 0),
     use(w, u, t, tier) {
       puff(w, u.x, u.y, 'rgba(60,40,90,0.85)', 14, 70, 8, 0.6);
       const back = t.facing + Math.PI;
@@ -369,12 +370,19 @@ export const ABILITIES = {
     },
   },
   // ----- Cleric
+  // Mending Ray: a held ray of light to the most hurt ally (never herself) that heals over 4s. She keeps her feet
+  // while it holds (she can back off) but doesn't attack; it breaks if they get too far apart or a wall comes between.
   mend: {
-    score: (w, u) => { const a = hurtMost([u, ...allies(w, u)]); return a && hpRatio(a) < 0.7 ? 1.1 - hpRatio(a) : 0; },
+    score(w, u) {
+      if (u.rays && u.rays.length) return 0;
+      const a = hurtMost(allies(w, u).filter((o) => !o.summon && rayable(w, u, o)));
+      return a && hpRatio(a) < 0.8 ? 1.15 - hpRatio(a) : 0;
+    },
     use(w, u, t, tier) {
       cast(u, 'cast', 0.4);
-      const list = [u, ...allies(w, u)].filter((a) => a.team === 'hero' && !a.summon).sort((a, b) => hpRatio(a) - hpRatio(b)).slice(0, tier >= 3 ? 2 : 1);
-      for (const a of list) { heal(w, a, a.maxHp * (tier >= 2 ? 0.3 : 0.2), u); fx(w, { type: 'pillar', x: a.x, y: a.y, r: 22, kind: 'holy', max: 0.4 }); }
+      const list = allies(w, u).filter((o) => !o.summon && rayable(w, u, o)).sort((a, b) => hpRatio(a) - hpRatio(b)).slice(0, tier >= 3 ? 2 : 1);
+      const pct = tier >= 2 ? 0.4 : 0.25;
+      u.rays = list.map((a) => ({ to: a, t: RAY_T, rate: a.maxHp * pct / RAY_T, f: fx(w, { type: 'beam', kind: 'heal', from: u, to: a, x1: u.x, y1: u.y, x2: a.x, y2: a.y, max: RAY_T }) }));
     },
   },
   sanctuary: {
@@ -399,8 +407,8 @@ export const ABILITIES = {
   warSong: {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 320).length >= 2 && friendsNear(w, u, u.x, u.y, 220).length >= 1 ? 0.7 : 0),
     use(w, u, t, tier) {
-      cast(u, 'cast', 0.6); fx(w, { type: 'ring', x: u.x, y: u.y, r: 220, color: '#FFD27A', max: 0.6 });
-      for (const a of [u, ...friendsNear(w, u, u.x, u.y, 220)]) addBuff(a, { id: 'warSong', dur: 6, atkSpeed: tier >= 2 ? 1.4 : 1.25, move: tier >= 3 ? 1.2 : 1, glow: '#FFD27A' });
+      cast(u, 'cast', 0.6);
+      for (const a of [u, ...friendsNear(w, u, u.x, u.y, 220)]) { addBuff(a, { id: 'warSong', dur: 6, atkSpeed: tier >= 2 ? 1.4 : 1.25, move: tier >= 3 ? 1.2 : 1, glow: '#FFD27A' }); puff(w, a.x, a.y, '#FFD27A', 6, 70, 4, 0.5); }
     },
   },
   lullaby: {
@@ -456,7 +464,8 @@ export const ABILITIES = {
     score: (w, u) => (w.corpses.length && foesNear(w, u, u.x, u.y, 380).length && w.units.filter((o) => o.summonBy === u && alive(o)).length < 3 ? 0.7 : 0),
     use(w, u, t, tier) {
       cast(u, 'cast', 0.6);
-      const cs = w.corpses.filter((c) => dist(u.x, u.y, c.x, c.y) < 400).slice(0, tier >= 2 ? 2 : 1);
+      const cs = w.corpses.filter((c) => c.z <= 0 && dist(u.x, u.y, c.x, c.y) < 400).slice(0, tier >= 2 ? 2 : 1);
+      w.corpses = w.corpses.filter((c) => !cs.includes(c)); // the body gets up: it no longer lies there
       const spots = cs.length ? cs : [{ x: u.x + rrange(-40, 40), y: u.y + rrange(-40, 40) }];
       for (const c of spots) {
         const s = spawn(w, 'skeleton', c.x, c.y, { team: 'hero' });
@@ -515,6 +524,22 @@ export const ABILITIES = {
   },
 };
 ABILITIES.oldBones = { score: () => 0, use() {} };
+const RAY_T = 4, RAY_RANGE = 380;
+const rayable = (w, u, o) => dist(u.x, u.y, o.x, o.y) < RAY_RANGE - 40 && !blocked(w, u.x, u.y, o.x, o.y);
+
+// Every step, for a unit with a kit: abilities that last (the Cleric's rays).
+export function kitTick(w, u, dt) {
+  if (!u.rays) return;
+  for (const r of u.rays) {
+    r.t -= dt;
+    const ok = r.t > 0 && alive(r.to) && alive(u) && u.stunT <= 0 && u.frozenT <= 0 && dist(u.x, u.y, r.to.x, r.to.y) < RAY_RANGE && lineClear(w, u.x, u.y, r.to.x, r.to.y, 2);
+    if (!ok) { r.t = 0; r.f.max = Math.min(r.f.max, r.f.t + 0.15); continue; }
+    heal(w, r.to, r.rate * dt, u);
+    u.atkT = Math.max(u.atkT, 0.2); // busy holding the ray
+  }
+  u.rays = u.rays.filter((r) => r.t > 0);
+  if (!u.rays.length) u.rays = null;
+}
 const maxCd = (o) => Math.max(0, ...Object.values(o.kit.cd));
 export function segDist(px, py, x1, y1, x2, y2) {
   const dx = x2 - x1, dy = y2 - y1, L = dx * dx + dy * dy || 1;

@@ -4,7 +4,7 @@
 import { clamp } from './util.js';
 
 const CELL = 24;
-const CLEAR = 40; // how far paths keep from walls and pillars: wider than the widest hero (knight, r 34)
+const CLEAR = 46; // how far paths keep from walls and pillars: wider than the widest hero (Tower, r 40 since round 6)
 
 // Does the segment a->b pass through rectangle r grown by pad? (slab test)
 export function segHitsRect(ax, ay, bx, by, r, pad = 0) {
@@ -91,8 +91,9 @@ function heap(f) {
   };
 }
 
-// A route of points from (ax,ay) to (bx,by), pulled straight, or null.
-export function findPath(w, ax, ay, bx, by) {
+// A route of points from (ax,ay) to (bx,by), pulled straight, or null. pad: how wide a line the route keeps clear
+// when it's pulled straight (the walker's radius), so a big body isn't sent across a corner it can't fit past.
+export function findPath(w, ax, ay, bx, by, pad = 30) {
   const g = w.grid; if (!g) return null;
   const [si, sj] = nearestOpen(g, ...cellOf(g, ax, ay));
   const [ti, tj] = nearestOpen(g, ...cellOf(g, bx, by));
@@ -127,7 +128,7 @@ export function findPath(w, ax, ay, bx, by) {
   const out = []; let px = ax, py = ay, i = 0;
   while (i < pts.length) {
     let j = pts.length - 1;
-    while (j > i && !lineClear(w, px, py, pts[j].x, pts[j].y, 30)) j--;
+    while (j > i && !lineClear(w, px, py, pts[j].x, pts[j].y, pad)) j--;
     out.push(pts[j]); px = pts[j].x; py = pts[j].y; i = j + 1;
   }
   return out;
