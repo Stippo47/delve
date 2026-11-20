@@ -6,7 +6,9 @@
 //   heroes: { [id]: { owned, nodes: { [nodeId]: rank }, feat, best, trinkets: [id...], recoverUntil } },
 //   trinkets: [id...] (owned, not equipped), dungeons: { [themeId]: { best, cleared } },
 //   runs, wins, speed, zoom,
-//   party: [heroId...] (last picked, camp only), mercs (last choice), theme (last picked) }
+//   party: [heroId...] (last picked, camp only), mercs (last choice), theme (last picked),
+//   round 6: elixirs: { [potionId]: n } (potions other than healing), tlv: { [trinketId]: level },
+//   seen: { [enemyKind]: { met, beaten } } (the bestiary), look / treeLook (camp and skill-tree styles), cheat }
 // A v1 save (levels were permanent then) starts fresh but keeps its coins as gold.
 import { HEROES } from './heroes.js';
 
@@ -21,7 +23,8 @@ export function freshSave() {
   const heroes = {};
   for (const id of Object.keys(HEROES)) heroes[id] = freshHero(id);
   return { v: 2, gold: 0, gems: 0, slots: 1, potions: 0, heroes, trinkets: [], dungeons: {}, runs: 0, wins: 0,
-    speed: 1, zoom: null, party: [Object.keys(HEROES).find((k) => HEROES[k].starter)], mercs: false, theme: null };
+    speed: 1, zoom: null, party: [Object.keys(HEROES).find((k) => HEROES[k].starter)], mercs: false, theme: null,
+    elixirs: {}, tlv: {}, seen: {}, look: 'classic', treeLook: 'classic', cheat: false };
 }
 
 // Fill anything a save is missing (new heroes added since, new fields) without touching what it has.
@@ -36,6 +39,14 @@ function normalise(s) {
   }
   out.trinkets = Array.isArray(s.trinkets) ? s.trinkets.filter((t) => typeof t === 'string') : [];
   out.dungeons = { ...(s.dungeons || {}) };
+  const counts = (o) => Object.fromEntries(Object.entries(o && typeof o === 'object' ? o : {}).map(([k, v]) => [k, Math.max(0, Math.floor(+v || 0))]));
+  out.elixirs = counts(s.elixirs); out.tlv = counts(s.tlv);
+  out.seen = {};
+  for (const [k, v] of Object.entries(s.seen && typeof s.seen === 'object' ? s.seen : {})) out.seen[k] = { met: +(v && v.met) || 0, beaten: +(v && v.beaten) || 0 };
+  out.cheat = !!s.cheat;
+  // rest was 10 minutes before round 6: nobody waits longer than the new longest rest
+  const cap = Date.now() + 3 * 60e3;
+  for (const h of Object.values(out.heroes)) if (h.recoverUntil > cap) h.recoverUntil = cap;
   out.party = (Array.isArray(s.party) ? s.party : f.party).filter((id) => out.heroes[id] && out.heroes[id].owned).slice(0, out.slots);
   for (const k of ['gold', 'gems', 'potions', 'runs', 'wins']) out[k] = Math.max(0, Math.floor(+out[k] || 0));
   out.slots = Math.max(1, Math.floor(+out.slots || 1));

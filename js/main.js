@@ -4,8 +4,10 @@ import { newRun, update, retreat, summarize, FLOORS } from './dungeon.js';
 import { loadSave, writeSave } from './save.js';
 import { DEFS, xpToNext, levelHp } from './units.js';
 import { setSeed } from './util.js';
-import { initCamp, showCamp, hideCamp, showResult, loadThemes, THEMES } from './camp.js';
-import { applySummary, MERCS } from './progress.js';
+import { initCamp, showCamp, hideCamp, showResult, loadThemes, THEMES, applyLook } from './camp.js';
+import { applySummary, applyLoadout, MERCS } from './progress.js';
+import { buildCards, updateCards } from './hud.js';
+import { initInspect, openInspect, closeInspect, inspecting, selected, select, unitAt, drawSelection, panelHeight, refreshInspect } from './inspect.js';
 
 const $ = (id) => document.getElementById(id);
 const canvas = $('game');
@@ -23,6 +25,8 @@ function show(s) {
   $('camp').classList.toggle('hidden', s !== 'camp');
   $('result').classList.toggle('hidden', s !== 'result');
   $('hud').classList.toggle('hidden', s !== 'run');
+  $('dock').classList.toggle('hidden', s !== 'run');
+  if (s !== 'run') setPaused(false);
   if (s === 'camp') showCamp(); else hideCamp();
 }
 
@@ -31,6 +35,8 @@ function show(s) {
 function startRun(opts) {
   if (typeof opts !== 'object' || !opts) opts = { depth: +opts || 1, theme: save.theme || Object.keys(THEMES)[0], party: save.party, mercs: save.mercs };
   run = newRun(save, opts);
+  applyLoadout(run, opts); // elixirs and trinket levels onto the heroes' run lists (progress.js)
+  met = new Set(); beaten = new Set();
   if (save.zoom) setZoom(save.zoom);
   warmArt(run.world);
   buildChips();
@@ -39,12 +45,33 @@ function startRun(opts) {
 
 const members = (r) => [...r.party, ...(r.hired || [])];
 const artOf = (k) => (DEFS[k] && DEFS[k].art) || (MERCS.find((m) => m.kind === k) || {}).art || `art/${k}.svg`;
+// The hero cards live in the dock along the bottom (hud.js); tapping one pauses and inspects that hero.
 function buildChips() {
-  const c = $('chips'); c.innerHTML = '';
-  for (const k of members(run)) {
-    const el = document.createElement('div'); el.className = 'chip' + (run.heroes[k].merc ? ' merc' : ''); el.id = 'chip-' + k;
-    el.innerHTML = `<img src="${artOf(k)}" alt=""><div class="bars"><div class="bar"><i></i></div><div class="bar xp"><i></i></div><div class="lv"></div></div>`;
-    c.appendChild(el);
+  buildCards(run, artOf, (k) => {
+    const u = run.world.units.find((x) => x.kind === k && x.team === 'hero' && !x.summon && !x.dead);
+    if (inspecting() && selected() === u) { setPaused(false); return; }
+    setPaused(true, u);
+  });
+}
+
+// ---------------------------------------------------------------- pause and inspect
+let paused = false;
+function setPaused(on, unit) {
+  paused = !!on && state === 'run' && !!run;
+  document.body.classList.toggle('paused', paused);
+  $('pauseBtn').classList.toggle('on', paused);
+  if (paused) openInspect(run, unit);
+  else { closeInspect(); view.manualT = Math.min(view.manualT || 0, 0.6); }
+}
+
+// The bestiary counts: every enemy kind seen awake in a room is met; every one that dies is beaten.
+let met = new Set(), beaten = new Set();
+function noteBeasts(w) {
+  for (const u of w.units) {
+    if (u.team !== 'enemy' || u.summon) continue;
+    const s = save.seen[u.kind] || (save.seen[u.kind] = { met: 0, beaten: 0 });
+    if (u.aggro && !met.has(u)) { met.add(u); s.met++; }
+    if (u.dead && !beaten.has(u)) { beaten.add(u); s.beaten++; }
   }
 }
 
@@ -52,21 +79,14 @@ let hudT = 0;
 function updateHud() {
   if (!run) return;
   const w = run.world;
-  for (const k of members(run)) {
-    const el = $('chip-' + k); if (!el) continue;
-    const u = w.units.find((x) => x.kind === k && x.team === 'hero' && !x.summon);
-    const hs = run.heroes[k];
-    const down = hs.down || (u && u.downed);
-    const hp = u ? u.hp / u.maxHp : (hs.hp != null ? hs.hp / levelHp(DEFS[k].hp, hs.level) : 1);
-    el.classList.toggle('down', !!down);
-    el.querySelector('.bar > i').style.width = (down ? 0 : Math.max(0, hp) * 100) + '%';
-    el.querySelector('.bar.xp > i').style.width = Math.round(100 * hs.xp / xpToNext(hs.level)) + '%';
-    el.querySelector('.lv').textContent = 'Lv ' + hs.level + (down ? ' · down' : '');
-  }
+  if (!updateCards(run)) buildChips();
+  noteBeasts(w);
   const th = THEMES[run.theme];
   $('where').textContent = `${th ? th.name + ' · ' : ''}Floor ${run.floor}/${FLOORS}`;
   drawMap();
   $('hCoins').textContent = run.coins; $('hKeys').textContent = run.keys; $('hBag').textContent = run.satchel.length;
+  $('hKeys').parentElement.classList.toggle('hidden', !run.keys);
+  $('hBag').parentElement.classList.toggle('hidden', !run.satchel.length);
   $('hGems').textContent = run.gems || 0;
   $('retreatBtn').textContent = run.leaving ? 'Stay' : 'Leave';
   $('retreatBtn').classList.toggle('leaving', !!run.leaving);
@@ -79,12 +99,15 @@ function updateHud() {
   if (msg) { b.textContent = msg; b.classList.remove('hidden'); b.classList.toggle('soft', !run.banner); } else b.classList.add('hidden');
 }
 
+$('pauseBtn').onclick = () => setPaused(!paused);
 $('speedBtn').onclick = () => { save.speed = SPEEDS[(SPEEDS.indexOf(save.speed) + 1) % SPEEDS.length]; writeSave(save); updateHud(); };
 // Leave: the room is finished first; tap again to stay after all.
 $('retreatBtn').onclick = () => { if (run && !run.summary) { retreat(run, !run.leaving); updateHud(); } };
 
 function endRun(result) {
   const r = run;
+  setPaused(false);
+  if (r.world) noteBeasts(r.world);
   summarize(r);
   if (view.zoom) save.zoom = view.zoom;
   const rep = applySummary(save, r, result);
@@ -119,8 +142,10 @@ function drawMap() {
 // Drag on the room to look around; the camera eases back to the party a couple of seconds after you let go.
 let drag = null;
 const touches = new Map(); let pinch = null;
+let press = null;
 canvas.addEventListener('pointerdown', (e) => {
   if (state !== 'run') return;
+  press = { x: e.clientX, y: e.clientY, t: performance.now() };
   touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (touches.size === 2) { const [a, b] = [...touches.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), z: view.zoom }; drag = null; }
   else drag = { x: e.clientX, y: e.clientY };
@@ -130,7 +155,15 @@ window.addEventListener('pointermove', (e) => {
   touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (pinch && touches.size === 2) { const [a, b] = [...touches.values()]; setZoom(pinch.z * Math.hypot(a.x - b.x, a.y - b.y) / Math.max(20, pinch.d)); }
 });
-const lift = (e) => { touches.delete(e.pointerId); if (touches.size < 2) pinch = null; };
+// A tap on a unit (no drag, no pinch) pauses and shows it; a tap on nothing while paused does nothing.
+const lift = (e) => {
+  if (press && touches.size === 1 && run && Math.hypot(e.clientX - press.x, e.clientY - press.y) < 10 && performance.now() - press.t < 400) {
+    const u = unitAt(run.world, e.clientX, e.clientY);
+    if (u) { if (paused) select(u); else setPaused(true, u); }
+  }
+  press = null;
+  touches.delete(e.pointerId); if (touches.size < 2) pinch = null;
+};
 window.addEventListener('pointerup', lift); window.addEventListener('pointercancel', lift);
 canvas.addEventListener('wheel', (e) => { if (state !== 'run') return; e.preventDefault(); setZoom(view.zoom * Math.exp(-e.deltaY * 0.0015)); }, { passive: false });
 window.addEventListener('pointermove', (e) => {
@@ -138,7 +171,7 @@ window.addEventListener('pointermove', (e) => {
   const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag = { x: e.clientX, y: e.clientY };
   const along = view.rot ? dy : -dx, across = view.rot ? -dx : -dy; // the room follows the finger
   view.manual = (view.manual ?? view.camX) + along / view.scale;
-  view.manualY = (view.manualY ?? view.camY) + across / view.scale; view.manualT = 2.5;
+  view.manualY = (view.manualY ?? view.camY) + across / view.scale; view.manualT = paused ? 1e9 : 2.5;
 });
 window.addEventListener('pointerup', () => { drag = null; });
 
@@ -156,12 +189,16 @@ function drawRun(dt, live) {
   {
     if (run.world !== lastWorld) { lastWorld = run.world; snapCamera(); }
     const hud = $('hud').getBoundingClientRect();
-    layout(canvas, run.world, Math.round(hud.bottom) + 6, 10);
-    acc += dt * (live ? save.speed : 1);
-    let n = 0;
-    while (acc >= STEP && n < 16) { update(run, STEP); acc -= STEP; n++; if (run.summary) break; }
-    if (acc > STEP * 16) acc = 0;
+    const bottom = paused ? panelHeight() : view.ch - $('dock').getBoundingClientRect().top;
+    layout(canvas, run.world, Math.round(hud.bottom) + 6, Math.max(10, Math.round(bottom) + 6));
+    if (!paused) {
+      acc += dt * (live ? save.speed : 1);
+      let n = 0;
+      while (acc >= STEP && n < 16) { update(run, STEP); acc -= STEP; n++; if (run.summary) break; }
+      if (acc > STEP * 16) acc = 0;
+    }
     draw(ctx, run.world);
+    if (paused) drawSelection(ctx, performance.now() / 1000);
     if (run.phase === 'transition' || run.fade > 0) {
       const a = run.phase === 'transition' ? run.fadeOut : run.fade;
       ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0); ctx.fillStyle = `rgba(47,39,52,${Math.min(1, a)})`; ctx.fillRect(0, 0, view.cw, view.ch);
@@ -179,13 +216,15 @@ window.GAME = {
   // Recording clips: stop the live loop, then step and draw one frame at a time (tools/clip.mjs).
   record(on = true) { recording = on; acc = 0; },
   recFrame(dt) { if (run) drawRun(dt, false); },
+  pause(on = true, kind) { const u = kind && run && run.world.units.find((x) => x.kind === kind && !x.dead); setPaused(on, u); },
   fastForward(seconds) { const n = Math.round(seconds / STEP); for (let i = 0; i < n && run && !run.summary; i++) update(run, STEP); },
   // debug: change the camp's save while testing, e.g. GAME.cheat({ gold: 999, gems: 9 })
-  cheat(o) { Object.assign(save, o); writeSave(save); if (state === 'camp') showCamp(); },
+  cheat(o) { Object.assign(save, o); writeSave(save); applyLook(save); if (state === 'camp') showCamp(); },
 };
 
 (async function boot() {
   initCamp({ save, onSetOut: (opts) => startRun(opts) });
+  initInspect(() => setPaused(false));
   await Promise.all([loadSprites(), loadThemes()]);
   show('camp');
   window.GAME.ready = true; // tools/clip.mjs waits for this before starting a run
