@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- Round 5 (B): new flail head - eight short fat cone spikes round the ball, and three round domed studs on the top face instead of spikes. -->
+<!-- Round 4: new flail spikes - seven clean cone spikes round the ball, lit from the left, and a ring of short spikes on the top face leaning outward from the crown (no more diamond studs); the fist wraps the handle. -->
+<!-- Round 3 (strap version): flail (arm-r) drawn before #body; bigger ball with pyramid spikes on its top face as well as round the rim; longer chain. -->
+  <!-- BARBARIAN Flail Berserker (round 2, left shoulder a): shaved head, clean red mohawk crest running back-to-front with no fringe under it, jaw beard, spiked leather pauldron on the right. Flail held low in the right hand, chain and a big spiked ball forward. Parts: body / arm-l (raised empty fist) / arm-r (hand + flail). Facing = DOWN (+y). -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="gF" x1="0" y1="48" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#E9BD98"/><stop offset="0.5" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient>
+    <linearGradient id="gFs" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+    <path d="M26.0 108.0 C26.0 82 54.0 76 100 76 C146.0 76 174.0 82 174.0 108.0 C174.0 134 146.0 140 100 140 C54.0 140 26.0 134 26.0 108.0 Z" id="s1"/>
+    <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E0AE8A"/><stop offset="1" stop-color="#BE8662"/></linearGradient>
+    <linearGradient id="g2" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#74524C" stop-opacity="0"/><stop offset="1" stop-color="#74524C" stop-opacity="0.5"/></linearGradient>
+    <path d="M30 78 L46 76 L62 142 L46 144 Z" id="s2"/>
+    <linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#8A5A3C"/><stop offset="1" stop-color="#5E3A26"/></linearGradient>
+    <linearGradient id="g4" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#3E2620" stop-opacity="0"/><stop offset="1" stop-color="#3E2620" stop-opacity="0.3"/></linearGradient>
+    <clipPath id="cs1"><use href="#s1"/></clipPath>
+    <path d="M150 82 L176 70 L170 94 Z M158 104 L194 100 L168 122 Z M146 126 L178 134 L150 144 Z" id="s3"/>
+    <clipPath id="k4"><use href="#s1"/></clipPath>
+    <linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D5DBE4"/><stop offset="1" stop-color="#8C95A4"/></linearGradient>
+    <linearGradient id="g6" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#5B5A6D" stop-opacity="0"/><stop offset="1" stop-color="#5B5A6D" stop-opacity="0.5"/></linearGradient>
+    <path d="M128 80 C152 74 178 88 178 110 C178 132 152 142 128 136 Z" id="s5"/>
+    <clipPath id="k6"><use href="#s1"/><use href="#s3"/></clipPath>
+    <linearGradient id="g7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#6E5568"/><stop offset="1" stop-color="#463747"/></linearGradient>
+    <linearGradient id="g8" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#382A3E" stop-opacity="0"/><stop offset="1" stop-color="#382A3E" stop-opacity="0.5"/></linearGradient>
+    <ellipse cx="52.1" cy="108.7" rx="7" ry="9.6" id="s7"/>
+    <linearGradient id="g9" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#EDBF9A"/><stop offset="1" stop-color="#D9A27F"/></linearGradient>
+    <ellipse cx="147.8" cy="108.7" rx="7" ry="9.6" id="s8"/>
+    <linearGradient id="g10" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E0AE8A"/><stop offset="1" stop-color="#C99672"/></linearGradient>
+    <path d="M 100.0 47.8 C 129.6 47.8 147.8 68.7 147.8 98.3 C 147.8 122.6 136.5 140.0 120.9 147.8 C 113.9 151.3 107.0 153.1 100.0 153.1 C 93.0 153.1 86.1 151.3 79.1 147.8 C 63.5 140.0 52.1 122.6 52.1 98.3 C 52.1 68.7 70.4 47.8 100.0 47.8 Z" id="head"/>
+    <clipPath id="k9"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s7"/><use href="#s8"/></clipPath>
+    <path d="M54 112 C50 134 64 150 78 154 C88 160 112 160 122 154 C136 150 150 134 146 112 C140 128 128 138 118 142 C108 146 92 146 82 142 C72 138 60 128 54 112 Z" id="s10"/>
+    <clipPath id="k11"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s7"/><use href="#s8"/><use href="#head"/></clipPath>
+    <linearGradient id="g11" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#4A3A4C"/><stop offset="1" stop-color="#2C2232"/></linearGradient>
+    <linearGradient id="g12" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#2B2034" stop-opacity="0"/><stop offset="1" stop-color="#2B2034" stop-opacity="0.4"/></linearGradient>
+    <path d="M50 100 C42 60 64 40 100 40 C136 40 158 60 150 100 L146 114 L138 92 C132 86 126 84 120 86 C110 82 90 82 80 86 C74 84 68 86 62 92 L54 114 Z" id="s12"/>
+    <clipPath id="k13"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s7"/><use href="#s8"/><use href="#head"/><use href="#s10"/></clipPath>
+    <path d="M76 93 L70 72 L84 75 L78 52 L91 56 L89 32 L100 13 L111 32 L109 56 L122 52 L116 75 L130 72 L124 93 C112 101 88 101 76 93 Z" id="s14"/>
+    <clipPath id="k15"><use href="#s12"/></clipPath>
+    <linearGradient id="g13" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#EE5A44"/><stop offset="1" stop-color="#C0303A"/></linearGradient>
+    <clipPath id="cs14"><use href="#s14"/></clipPath>
+    <rect id="h16" x="30" y="130" width="24" height="21" rx="8" transform="rotate(-15 42 140)"/>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+    <clipPath id="k17"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s7"/><use href="#s8"/><use href="#head"/><use href="#s10"/><use href="#s12"/><use href="#s14"/></clipPath>
+    <rect x="151" y="120" width="10" height="30" rx="3" id="s18"/>
+    <linearGradient id="g15" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#B57944"/><stop offset="1" stop-color="#7C4E2A"/></linearGradient>
+    <linearGradient id="g16" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#533630" stop-opacity="0"/><stop offset="1" stop-color="#533630" stop-opacity="0.4"/></linearGradient>
+    <ellipse cx="156" cy="150" rx="7" ry="4.5" id="s19"/>
+    <linearGradient id="g17" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#C9D0DA"/><stop offset="1" stop-color="#7F8898"/></linearGradient>
+    <linearGradient id="g18" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#545367" stop-opacity="0"/><stop offset="1" stop-color="#545367" stop-opacity="0.5"/></linearGradient>
+    <ellipse cx="156" cy="156" rx="3.6" ry="5.5" id="s20"/>
+    <ellipse cx="156" cy="164" rx="5.5" ry="4" id="s21"/>
+    <polygon points="156.0,160.0 161.0,170.0 171.6,166.4 168.0,177.0 178.0,182.0 168.0,187.0 171.6,197.6 161.0,194.0 156.0,204.0 151.0,194.0 140.4,197.6 144.0,187.0 134.0,182.0 144.0,177.0 140.4,166.4 151.0,170.0" id="s22"/>
+    <clipPath id="k23"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s7"/><use href="#s8"/><use href="#head"/><use href="#s10"/><use href="#s12"/><use href="#s14"/><use href="#h16"/><use href="#s18"/><use href="#s19"/><use href="#s20"/><use href="#s21"/></clipPath>
+    <linearGradient id="g19" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D5DBE4"/><stop offset="1" stop-color="#7F8898"/></linearGradient>
+    <linearGradient id="g20" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#4C4B5F" stop-opacity="0"/><stop offset="1" stop-color="#4C4B5F" stop-opacity="0.55"/></linearGradient>
+    <circle cx="156" cy="182" r="14.5" id="s24"/>
+    <linearGradient id="g21" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#A9B2C1"/><stop offset="1" stop-color="#5E6878"/></linearGradient>
+    <linearGradient id="g22" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#444357" stop-opacity="0"/><stop offset="1" stop-color="#444357" stop-opacity="0.45"/></linearGradient>
+    <rect id="h25" x="144" y="112" width="24" height="21" rx="8"/>
+    <clipPath id="k26"><use href="#s1"/><use href="#s3"/><use href="#s5"/><use href="#s7"/><use href="#s8"/><use href="#head"/><use href="#s10"/><use href="#s12"/><use href="#s14"/><use href="#h16"/><use href="#s18"/><use href="#s19"/><use href="#s20"/><use href="#s21"/><use href="#s22"/><use href="#s24"/></clipPath>
+      <clipPath id="bzcHandle"><rect x="-5" y="-34" width="10" height="46"/><ellipse cx="0" cy="13" rx="6.5" ry="4.2"/></clipPath>
+    <clipPath id="bzcWpn"><g transform="translate(159 146) rotate(40)"><rect x="-5" y="-34" width="10" height="46"/><use href="#fistR"/><rect x="-7" y="8" width="14" height="26"/></g><circle cx="130.7" cy="179.7" r="23"/></clipPath>
+<path id="fistR" d="M -4.5 -13.5 L 5.3 -13.5 Q 7.9 -13.5 7.9 -10.5 A 3.52 3.52 0 0 1 7.9 -5.25 A 3.52 3.52 0 0 1 7.9 0 A 3.52 3.52 0 0 1 7.9 5.25 A 3.52 3.52 0 0 1 7.9 10.5 Q 7.9 13.5 5.3 13.5 L -4.5 13.5 Q -10.5 13.5 -10.5 7.5 L -10.5 -7.5 Q -10.5 -13.5 -4.5 -13.5 Z"/>
+<radialGradient id="bzgStud" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#F4F6FA"/><stop offset="0.55" stop-color="#A9B2C1"/><stop offset="1" stop-color="#4E5666"/></radialGradient>
+<linearGradient id="r5Steel" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E4E8EE"/><stop offset="1" stop-color="#7F8898"/></linearGradient><linearGradient id="r5Ivory" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#FFF8E8"/><stop offset="1" stop-color="#CDB98E"/></linearGradient>
+</defs>
+  <g id="sprite" filter="url(#outline)">
+    <g id="arm-r" data-pivot="160 108">
+      <!-- flail, held low: the handle passes under the spiked pauldron and the chain and spiked ball hang out past the front of the body; only the fist shows at the body's edge -->
+      <g transform="translate(159 146) rotate(40)">
+        <rect x="-5" y="-34" width="10" height="46" rx="3.5" fill="url(#g15)"/>
+        <rect x="-5" y="-34" width="10" height="46" rx="3.5" fill="url(#g16)"/>
+        <ellipse cx="0" cy="12.5" rx="6.5" ry="4.2" fill="url(#g17)"/><ellipse cx="0" cy="12.5" rx="6.5" ry="4.2" fill="url(#g18)"/><ellipse cx="0" cy="18" rx="3.4" ry="5.2" fill="url(#g17)"/><ellipse cx="0" cy="18" rx="3.4" ry="5.2" fill="url(#g18)"/><ellipse cx="0" cy="23.5" rx="5.2" ry="3.8" fill="url(#g17)"/><ellipse cx="0" cy="23.5" rx="5.2" ry="3.8" fill="url(#g18)"/><ellipse cx="0" cy="29" rx="3.4" ry="5.2" fill="url(#g17)"/><ellipse cx="0" cy="29" rx="3.4" ry="5.2" fill="url(#g18)"/>
+      </g>
+      <path d="M 140.49 169.14 L 140.57 160.04 Q 140.08 157.06 137.62 158.82 L 131.25 165.31 Z M 145.09 179.15 L 151.58 172.78 Q 153.34 170.32 150.36 169.83 L 141.26 169.91 Z M 141.26 189.49 L 150.36 189.57 Q 153.34 189.08 151.58 186.62 L 145.09 180.25 Z M 131.25 194.09 L 137.62 200.58 Q 140.08 202.34 140.57 199.36 L 140.49 190.26 Z M 120.91 190.26 L 120.83 199.36 Q 121.32 202.34 123.78 200.58 L 130.15 194.09 Z M 116.31 180.25 L 109.82 186.62 Q 108.06 189.08 111.04 189.57 L 120.14 189.49 Z M 120.14 169.91 L 111.04 169.83 Q 108.06 170.32 109.82 172.78 L 116.31 179.15 Z M 130.15 165.31 L 123.78 158.82 Q 121.32 157.06 120.83 160.04 L 120.91 169.14 Z" fill="url(#r5Steel)"/>
+      <path d="M 135.87 167.23 L 140.08 157.06 L 140.49 169.14 Z M 143.17 174.53 L 153.34 170.32 L 145.09 179.15 Z M 143.17 184.87 L 153.34 189.08 L 141.26 189.49 Z M 135.87 192.17 L 140.08 202.34 L 140.49 190.26 Z M 125.53 192.17 L 121.32 202.34 L 130.15 194.09 Z M 118.23 184.87 L 108.06 189.08 L 120.14 189.49 Z M 118.23 174.53 L 108.06 170.32 L 116.31 179.15 Z M 125.53 167.23 L 121.32 157.06 L 130.15 165.31 Z" fill="#3E3D52" opacity="0.45"/>
+      <circle cx="130.7" cy="179.7" r="16.5" fill="url(#g21)"/>
+      <circle cx="130.7" cy="179.7" r="16.5" fill="url(#g22)"/>
+      <circle cx="125.2" cy="175.7" r="4.6" fill="url(#bzgStud)"/><circle cx="136.2" cy="175.7" r="4.6" fill="url(#bzgStud)"/><circle cx="130.7" cy="185.7" r="4.6" fill="url(#bzgStud)"/>
+      <g transform="translate(159 146) rotate(40)">
+        <g clip-path="url(#bzcHandle)"><use href="#fistR" transform="translate(1 3)" fill="#2B2230" opacity="0.3"/></g>
+        <use href="#fistR" fill="url(#gHand)"/>
+      </g>
+    </g>
+    <g id="body">
+      <!-- shadow of the pauldron on the flail where it comes out from under it -->
+      <g clip-path="url(#bzcWpn)"><use href="#s5" transform="translate(-1 5)" fill="#2B2230" opacity="0.32"/><use href="#s3" transform="translate(-1 4)" fill="#2B2230" opacity="0.32"/><use href="#s10" transform="translate(0 5)" fill="#2B2230" opacity="0.32"/></g>
+      <use href="#s1" fill="url(#g1)"/>
+      <use href="#s1" fill="url(#g2)"/>
+      <g clip-path="url(#cs1)"><use href="#s2" fill="url(#g3)"/><use href="#s2" fill="url(#g4)"/></g>
+      <g clip-path="url(#k4)"><use href="#s3" fill="#2B2230" opacity="0.28" transform="translate(0 2)"/></g>
+      <use href="#s3" fill="url(#g5)"/>
+      <use href="#s3" fill="url(#g6)"/>
+      <g clip-path="url(#k6)"><use href="#s5" fill="#2B2230" opacity="0.28" transform="translate(0 4)"/></g>
+      <use href="#s5" fill="url(#g7)"/>
+      <use href="#s5" fill="url(#g8)"/>
+      <use href="#s7" fill="url(#g9)"/>
+      <use href="#s8" fill="url(#g10)"/>
+      <g clip-path="url(#k9)"><use href="#head" fill="#2B2230" opacity="0.3" transform="translate(0 5)"/></g>
+      <use href="#head" fill="url(#gF)"/>
+      <use href="#head" fill="url(#gFs)"/>
+      <g clip-path="url(#k11)"><use href="#s10" fill="#2B2230" opacity="0.28" transform="translate(0 2)"/></g>
+      <use href="#s10" fill="url(#g11)"/>
+      <use href="#s10" fill="url(#g12)"/>
+      <g clip-path="url(#k13)"><use href="#s12" fill="#2B2230" opacity="0.28" transform="translate(0 3)"/></g>
+      <use href="#s12" fill="url(#g11)"/>
+      <use href="#s12" fill="url(#g12)"/>
+      <g clip-path="url(#k15)"><use href="#s14" fill="#2B2230" opacity="0.28" transform="translate(0 3)"/></g>
+      <use href="#s14" fill="url(#g13)"/>
+      <g clip-path="url(#cs14)"><rect x="100" y="-10" width="220" height="230" fill="#7A1C2C" opacity="0.38"/></g>
+      <path d="M96 136.5 Q100 139 104 136.5" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+    <g id="arm-l" data-pivot="40 108">
+      <g clip-path="url(#k17)"><use href="#h16" fill="#2B2230" opacity="0.3" transform="translate(1 2.5)"/></g>
+      <use href="#h16" fill="url(#gHand)"/>
+    </g>
+  </g>
+</svg>
