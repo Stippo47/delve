@@ -28,7 +28,7 @@ try {
     const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2 });
     const page = await ctx.newPage();
     page.on('pageerror', (e) => errors.push(`${theme} env${env}: ${e}`));
-    await page.goto(`http://localhost:${site}/?seed=${seed}&env=${env}&party=paladin,archer,twinfang`);
+    await page.goto(`http://localhost:${site}/?seed=${seed}&env=${env}&party=paladin,archer,twinfang${opt("q", "") ? "&" + opt("q", "") : ""}`);
     await page.waitForFunction(() => window.GAME && GAME.state === 'camp' && GAME.ready, null, { timeout: 180000 });
     for (const scene of scenes) {
       if (scene === 'perf') { // how long painting the floor cache takes, for the room and the biggest room shape

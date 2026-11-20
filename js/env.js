@@ -268,8 +268,8 @@ function massTexture(g, w, pad, L) {
   if (L.style === 1) { // big soft lumps
     for (let i = 0, n = (X - x0) * (Y - y0) / 2600; i < n; i++) {
       const x = x0 + hash(i, 1.3) * (X - x0), y = y0 + hash(i, 2.7) * (Y - y0), r = 10 + hash(i, 3.1) * 16;
-      g.fillStyle = 'rgba(255,255,255,0.05)'; g.beginPath(); g.ellipse(x - 2, y - 2, r, r * 0.75, hash(i, 4), 0, TAU); g.fill();
-      g.fillStyle = 'rgba(0,0,0,0.12)'; g.beginPath(); g.ellipse(x + 3, y + 3, r * 0.8, r * 0.55, hash(i, 5), 0, TAU); g.fill();
+      g.fillStyle = 'rgba(255,255,255,0.035)'; g.beginPath(); g.ellipse(x - 2, y - 2, r, r * 0.75, hash(i, 4), 0, TAU); g.fill();
+      g.fillStyle = 'rgba(0,0,0,0.07)'; g.beginPath(); g.ellipse(x + 3, y + 3, r * 0.8, r * 0.55, hash(i, 5), 0, TAU); g.fill();
     }
   } else if (L.style === 2) { // a fine diagonal hatch
     g.strokeStyle = 'rgba(255,255,255,0.05)'; g.lineWidth = 3;
