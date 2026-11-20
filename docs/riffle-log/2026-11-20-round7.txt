@@ -1,0 +1,110 @@
+Riffle round 7 answers, 2026-11-20 (raw)
+
+delve / art / art-round5: "Art round 5: your notes applied"
+  heroes1 (Picks, casters, support): GO, picked: Griffon, Paladin, Tower, Berserker A, Berserker B, Wildmane Scar, Bandit Mask B, Shade Cape Crossed, Twinfang, Granny Reaper, Haymaker Fork, Gaper, Archer, Alchemist A, Cultist, Druid A, Frost, Shaman, Witch, Bard, Cleric, Monk, Seer
+      "Picked all the ones that look good. The rest need fixing"
+      item rogue-bandit-mask-a (Bandit Mask A): "Did u just swap them? Keep top red broski. 
+Nvm"
+      item caster-witch (Witch): "Remove shine. Make tip of hat a slightly less weird shape "
+      item support-chef (Chef): "Hat bad"
+      item support-seer (Seer): "Eyeband doesn’t look right. Should be u see hair and flipped "
+  heroes2 (Ranged and fighters): GO, picked: Crossbowman, Falconer, Grenadier, Harpooner, Javelin Huntress, Marksman A, Ninja, Pirate, Slinger, Trapper, Turret, Engineer A, Engineer C, Gladiator, Jester, Samurai, Valkyrie, Werewolf Human, Werewolf
+      "Who did these changes sonnet? If so make sure a capable model is doing it so I don’t have to send u back a bunch"
+      item ranged-harpooner (Harpooner): "Where beard go?"
+      item ranged-marksman-a (Marksman A): "Gun too short. Give facial hair. Maybe skinny grey moustache "
+      item ranged-ninja (Ninja): "Make mask softer/ less sharp turn. "
+      item ranged-pirate (Pirate): "Wider bowl of hat. Wider hat overall "
+      item ranged-slinger (Slinger): "Needs fixing of hat but looks interesting "
+      item ranged-trapper (Trapper): "Why hat not on right? "
+      item fighter-gladiator (Gladiator): "Give a spartan styled helmet"
+      item fighter-werewolf-human (Werewolf Human): "Just in case u haven’t noticed. It seems you often layer facial hair wrong, showing up behind heads. If that’s not the case here. It doesn’t look good. 
+Remove sheen from hair and the lines. 
+Flip axe."
+      item fighter-werewolf (Werewolf): "Better. 
+Weird fangs. 
+Weird shadowing in some places. Like that too head segment and ears."
+  enemies (Enemies, built like heroes): GO, picked: Bat, Angel A, Big, Fire, Small, Hunter, Momma
+      "Everything not selected needs to be tried again for 1 reason or another"
+      item bat (Bat): "Decent. Fix shading. Maybe add nose. "
+      item celestial-angel-b (Angel B): "Halo is behind, not layered properly "
+      item lizardman-spear-a (Spear A): "Looks like it reverted a lot more than what I had asked. Once again did u get sonnet on this???"
+      item slime-big (Big): "Slime also changed more. Doesnt look bad but not what I asked. Remove tail "
+      item snowman (Snowman): "STOP HAVING IT LOOK LIKE ITS LEANING OVER. Stack the head over the body in the middle"
+      item spider-hunter (Hunter): "Fix fangs and shading "
+  DECK: done (3 of 3 answered)
+
+delve / art / looks-r6: "Pick the looks"
+  env (Four dungeon styles): GO, picked: Carved, crypt, Carved, sewers, Carved, warren, Torchlit, crypt, Mosaic, warren
+      "Note. I want the obstacles (barrel, crate, and stone/boulder, to be aligned to the grid, be about the size of the units max sprite area (1 unit can almost fit in the space the objects occupy) that will be the size of 1 cell. 
+Rooms will generate with walls and various obstacles in the way. The spikes will also be sized accordingly"
+  camp (Four camp looks): REDO, none of them
+      "You just changed the theme. It was fundamentally bad layout/design. 
+But for the theme I guess I like nights watch the most."
+  tree (Four skill tree looks): REDO, none of them
+      "Once again mostly just theme change. No actual difference in how it’s shown/ layout. No web, or tree. Something more creative and interesting."
+  DECK: done (3 of 3 answered)
+
+delve / runs / v07-report: "0.7.0: your round 6 notes"
+  feel (Feel, HUD and polish): GOOD on the card. Its parts: 9 good, 1 problem
+      "Smaller shadows. Don’t let shadows stack. Will be a union. Make everyone 20% slower. 
+
+Add a death explosion effect."
+      part waves (Waves): GOOD, "2-3 more. Each wave a bit harder than the last."
+      part speed (Speed and TTK): GOOD
+      part juice (Juice): GOOD
+      part paths (Paths): GOOD
+      part loot (Chests and coins): GOOD
+      part cleric (Cleric and Backstab): GOOD
+      part hud (HUD and pause): PROBLEM
+      part camp (Camp additions): GOOD
+      part harder (Harder deeper): GOOD
+      part camera (Camera): GOOD
+  sound (Sound and music): DECENT
+  DECK: done (2 of 2 answered)
+
+delve: thoughts
+  mwn5k4xs-ae-61w2j0: "When I played lasts the archer got stuck a lot. Just froze in a wall.
+The jitter rapidly left and right when navigating to some positions, maybe only on diagonals."
+  mwoopr8w-0-o2jf4n: "The cleric should be ranged. Weak light orb. Should not be a front line melee fighter…
+First ability should be a ray to ally that heals over time. No burst healing for first ability."
+  mwooqrhw-3-g08ysg: "I should be able to pan my camera further than the dungeons bounds slightly. Like +1/3 dungeon width."
+  mwoorx4q-6-zuy0sk: "Add a “cheat” to give unlimited currency."
+  mwoosfpv-8-o5kiya: "Party members should not search areas without anyone in them. No need."
+  mwoouq3h-d-ne4kxq: "Better hero card ui in battles. Show current hp/ max hp on health bar. 
+Swap the place of heroes and the currencies and leave button."
+  mwoov7sz-g-n8pvg7: "Spikes should go down when dungeon is beat."
+  mwoovwaa-j-920gfi: "Make anything that is on the ground that is just decor not stand out as much, they look collidable or important."
+  mwoowzyl-m-8w0k3o: "Work on pathfinding and smoothness. Still see them rapidly spin back and forth sometimes."
+  mwooxh3h-o-zdg0of: "Have the chest apear near the party members when they win. No more key needed."
+  mwoozwze-s-f2968w: "Coins that are dropped should be scattered out more. Big random radius rather than clustered. 
+Should also be quickly attracted when a party member goes near it, homing in."
+  mwop1x0h-u-7k3y2n: "This is more for riffle but allow me to edit my thoughts. I wanted to add: show the cooldowns of abilities a the party members card in the battle ui. To a previous note relating to ui but I can’t."
+  mwop3g76-x-wz2e90: "More knockback, more physical “juice”"
+  mwop5v2p-11-4bmi3z: "Add bestiary with fun descriptions. Including fun descriptions for items."
+  mwop72mh-14-2szzli: "Collision effects should happen near the surface of entity. Especially if they have a shield up, currently it looks like stuff like arrows go through shields."
+  mwop9zz8-16-7frjsc: "Also show status effects on units ui in battles. (Shrinking rink with status icon in the middle). And show items in the ui too. No text just sprite."
+  mwopbfno-18-4ab7v1: "Should be able to pause in dungeons to see more details about party setup state/ inspect stuff like statuses, items and their descriptions, etc."
+  mwopc6xu-1b-sa70ok: "Trinkets should have levels too."
+  mwopcs02-1d-cvsowb: "I don’t like the aura effects around party members like the paladins protect ability"
+  mwopg0hc-1i-2nu0kx: "More potions to be bought. Various effects like haste, faster abilities, fire immunity, iron skin, etc"
+  mwophhuc-1k-75x0ge: "Their base movement speed should be like 3-4x but ability cooldown about the same."
+  mwopjfkz-1m-kn0sj3: "Add sound effects and ambient music"
+  mwopnikn-1o-40z7kv: "Better enemy navigation. They often just wander into corners and get stuck"
+  mwopp5zc-1q-n5bewm: "Longer ttk for everyone"
+  mwoprbmx-1s-vgy6bm: "Longer attack and view range for everyone. 
+Slightly bigger hit box collider too"
+  mwopwc5t-1y-k6xqrn: "Make each dungeon harder than the last, and each level harder too. 
+More enemy variety and abilities."
+  mwopxhii-20-suyq92: "Cleric shouldn’t be able to heal themselves with their base ability"
+  mwoq9m0t-2i-l7ueys: "Another potential genre. 
+Not a dungeon crawler but a wave survival game. Waves of enemies come from all around (or just from 1 size) and the party has to defend against them. 
+
+
+Ohh idea. They are transporting a wagon carrying goods through different environments, enemies constantly spawn from all around trying to destroy your wagon. 
+Each dungeon now becomes different biomes. 
+The wagon is always moving upwards at a steady pace. Enemies spawn in from off the screen and move towards the cart to attack it. The party members and Most enemies are 3x faster than the cart, it’s pretty slow. 
+
+More rogue like vibes. You start off with 1 party member. The wagon slowly makes it from safe zone to safe zone (camps) where another character or shop may be waiting. You can hire people with the coins you pick up within a game, upgrade your character at the fire, or buy trinkets from the shop. 
+Gold is dropped my enemies attacking the cart. Still needs to be picked up or it gets left behind. 
+
+There is still meta progression."

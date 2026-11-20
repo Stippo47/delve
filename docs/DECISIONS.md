@@ -269,3 +269,7 @@ enemies must be picked up or is left behind; meta progression stays. Pitched bac
   treasure and elite rooms always, other fights 30%; "the puddle" read as the heal/holy zone discs (now a faint glow);
   difficulty order Warren < Sewers < Crypt (+0.12 per rank, +0.18 per floor); first ability's tier I costs 20.
   A fresh trio with nothing bought reaches floors 2-3 and doesn't win; with tier I bought, Warren is won most runs.
+
+## Round 7 (2026-11-20)
+Plan and the designer's words: `docs/BUILD-v3.md`; raw answers: `docs/riffle-log/2026-11-20-round7.txt`.
+Highlights: elites for every enemy kind; 3 harder dungeons; stronger upgrades and harder scaling; 2-3 more waves each harder; everyone 20% slower; quick door exit with heroes vanishing into the light; trinket pickup up to slots; grid obstacles one cell each; smaller merged shadows; death bursts; fainter dead; summons purple-outlined; HUD keeps HP/XP numbers; camp and tree need real layout redesigns (Night watch theme); dungeon look default Carved; art: change only what each note asks.
