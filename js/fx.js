@@ -435,8 +435,18 @@ export function drawStatusFx(ctx, u, T) {
 }
 
 // ---------------------------------------------------------------- the renderer's own touches
-// Short-lived marks the renderer adds itself (not in the sim): impact stars, coin sparkles.
+// Short-lived marks the renderer adds itself (not in the sim): impact stars, coin sparkles, death bursts.
 const local = [];
+// A death burst's colour: bone for the dead that walk, the slimes' and rats' own, purple for our summons.
+const SUMMON_BURST = '#A77BEA';
+function burstColor(u) {
+  if (u.summon) return SUMMON_BURST;
+  const k = u.kind;
+  if (k.startsWith('slime')) return '#6CC9B0';
+  if (k === 'rat') return '#B49C8A';
+  if (u.def.undead || /skeleton|rattler|gaper|brute|ghost|bone|grave/i.test(k) || (u.def.res && u.def.res.poison < 0.5)) return '#EDE4CD';
+  return '#F2B27A';
+}
 export function noteHits(w) {
   for (const u of w.units) {
     if (u.hitT > (u._seenHit || 0) + 0.02 && !u.downed) {
@@ -446,11 +456,39 @@ export function noteHits(w) {
     }
     u._seenHit = u.hitT;
   }
+  // something that was here last frame and is gone with no HP left has died: it bursts (round 7). Done here, not in
+  // the sim, so it needs nothing from sim.js; a hero who goes down stays in the list and doesn't burst.
+  const was = w._here, here = new Set();
+  for (const u of w.units) if (!u.ethereal) here.add(u);
+  if (was) for (const u of was) if (!here.has(u) && u.hp <= 0) {
+    local.push({ type: 'death', x: u.x, y: u.y, r: Math.max(14, u.vr), color: burstColor(u), seed: u.id, t: 0, max: u.def.boss ? 0.75 : 0.5, big: !!u.def.boss });
+  }
+  w._here = here;
   // coins that vanished while still fresh were picked up
   const now = new Set();
   for (const p of w.pickups) if (p.type === 'coin') now.add(p);
   if (w._coins) for (const p of w._coins) if (!now.has(p) && (p.life == null || p.life > 0.05)) local.push({ type: 'sparkle', x: p.x, y: p.y, t: 0, max: 0.4 });
   w._coins = now;
+}
+// A body bursting: a white pop at the core, a shock ring, puffs in its colour thrown outward, a few sparks past them.
+function deathBurst(ctx, f, k) {
+  const e = easeOut(k), R = f.r * 1.3, n = f.big ? 11 : 8;
+  ctx.save();
+  if (k < 0.35) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, f.x, f.y, R * (1.4 + 1.8 * e), '#FFF4DC', 1 - k / 0.35); ctx.restore(); }
+  ctx.globalAlpha = (1 - k) * (1 - k);
+  inkLine(ctx, () => { ctx.beginPath(); ctx.arc(f.x, f.y, R * (0.5 + 1.6 * e), 0, TAU); }, '#FFF8EC', 6 * (1 - k) + 1);
+  ctx.globalAlpha = 1 - k * k * k;
+  for (let i = 0; i < n; i++) {
+    const a = (i + hash(f.seed, i) * 0.6) / n * TAU, d = R * (0.2 + (1.05 + 0.45 * hash(i, f.seed)) * e), pr = R * (0.42 + 0.16 * hash(f.seed, i, 3)) * (1 - e) + 1.5;
+    inked(ctx, () => { ctx.beginPath(); ctx.arc(f.x + Math.cos(a) * d, f.y + Math.sin(a) * d, pr, 0, TAU); }, i % 3 === 2 ? '#FFF6E6' : f.color);
+  }
+  if (k < 0.45) inked(ctx, () => { ctx.beginPath(); ctx.arc(f.x, f.y, R * 0.7 * (1 - k / 0.45) + 1, 0, TAU); }, '#FFFFFF');
+  ctx.globalAlpha = 1 - k;
+  for (let i = 0; i < 5; i++) {
+    const a = (i + 0.5) / 5 * TAU + hash(f.seed, i, 7), d = R * (0.7 + 1.9 * e);
+    inked(ctx, () => star(ctx, f.x + Math.cos(a) * d, f.y + Math.sin(a) * d, 6 * (1 - k) + 1.5, 4, 0.35, a), '#FFFFFF');
+  }
+  ctx.restore();
 }
 export function drawLocal(ctx, dt) {
   for (const f of local) {
@@ -464,6 +502,8 @@ export function drawLocal(ctx, dt) {
       }
       inked(ctx, () => star(ctx, f.x, f.y, s, 4, 0.3, f.a), f.block ? '#FFF4C8' : '#FFFFFF');
       ctx.restore();
+    } else if (f.type === 'death') {
+      deathBurst(ctx, f, k);
     } else if (f.type === 'sparkle') {
       ctx.save(); ctx.globalAlpha = 1 - k;
       for (let i = 0; i < 4; i++) { const an = i / 4 * TAU + 0.4, d = 4 + 16 * easeOut(k);

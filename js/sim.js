@@ -748,7 +748,7 @@ function kill(w, u, src) {
     for (const h of hooksOf(u)) if (h.fallen) h.fallen(w, u, src);
     for (const o of w.units) if (o !== u && o.team === u.team && alive(o)) for (const h of hooksOf(o)) if (h.allyDown) h.allyDown(w, o, u);
   }
-  if (u.summon) { u.dead = true; puff(w, u.x, u.y, '#9BE07A', 10, 80, 5, 0.5); return; } // summons just fade
+  if (u.summon) { u.dead = true; puff(w, u.x, u.y, '#A77BEA', 10, 80, 5, 0.5); return; } // summons just fade (purple: ours, round 7)
   if (u.team === 'hero') {
     u.downed = true; u.act = null; u.frozenT = 0; u.st = { burn: 0, chill: 0, poison: 0 };
     textU(w, u.x, u.y, u.r + 10, 'DOWN', '#FF8A80', 1.1);

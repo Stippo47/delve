@@ -200,7 +200,7 @@ export const TRINKETS = {
         Object.assign(s, { summon: true, summonBy: u, boneCharm: true, lifeT: 9, aggro: true, dmgMul: (u.dmgMul || 1) * 0.6, tint: '#C9A7FF', facing: v.facing, mvA: v.facing });
         s.hp = s.maxHp = Math.round(s.maxHp * 0.7);
         fx(w, { type: 'pillar', x: v.x, y: v.y, r: 24, kind: 'drain', max: 0.5 });
-        puff(w, v.x, v.y, '#E8E2D0', 14, 90, 5, 0.6);
+        puff(w, v.x, v.y, '#A77BEA', 14, 90, 5, 0.6);
       },
     },
   },
