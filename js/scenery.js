@@ -4,15 +4,18 @@
 // The look is the game's: warm, chunky, one heavy ink outline (OUTLINE), soft gradients lit from the left.
 import { INK, TAU, clamp } from './util.js';
 import { OUTLINE } from './render.js';
+import { paintRoom, drawBlock, envVoid, envFogK } from './env.js';
 
 const DEF_PAL = { floor: ['#E2D6BE', '#D3C5A9'], tile: ['rgba(160,140,110,0.10)', 'rgba(255,255,255,0.08)'], grout: 'rgba(120,100,80,0.10)',
   wall: ['#8C7E70', '#6E6157'], wallTop: 'rgba(255,255,255,0.12)', rock: ['#6B5D52', '#2F2734'], void: '#2F2734', accent: '#FFE14D' };
 export const pal = (w) => (w.theme && w.theme.palette) || DEF_PAL;
-export const voidColor = (w) => pal(w).void;
+export const voidColor = (w) => envVoid(w);
 
 function rr(g, x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); }
+let soft = false; // floor dressing: a faint outline instead of the heavy ink one
 function inked(g, pathFn, fill) {
-  g.save(); g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = OUTLINE * 2; g.lineJoin = 'round'; g.lineCap = 'round';
+  const o = soft ? 'rgba(30,20,30,0.28)' : INK;
+  g.save(); g.fillStyle = o; g.strokeStyle = o; g.lineWidth = OUTLINE * (soft ? 1 : 2); g.lineJoin = 'round'; g.lineCap = 'round';
   pathFn(); g.fill(); g.stroke(); g.restore();
   g.fillStyle = fill; pathFn(); g.fill();
 }
@@ -20,57 +23,20 @@ const hash = (a, b) => { const s = Math.sin(a * 12.9898 + b * 78.233) * 43758.54
 function lin(g, x0, y0, x1, y1, a, b) { const l = g.createLinearGradient(x0, y0, x1, y1); l.addColorStop(0, a); l.addColorStop(1, b); return l; }
 
 // ---------------------------------------------------------------- the floor (drawn once per room into a cache)
-// g is already scaled and translated so (0,0) is the room's corner; pad is the wall frame round it.
+// g is already scaled and translated so (0,0) is the room's corner; pad is how far the cache reaches past it.
+// The look (floor pattern, walls, rock, light) comes from the environment style (env.js); the theme's water and
+// floor dressing are painted here, the dressing soft and faint so it never looks solid.
 export function paintFloor(g, w, pad) {
-  const P = pal(w), style = (w.theme && w.theme.floorStyle) || 'flag';
-  g.fillStyle = INK; rr(g, -pad, -pad, w.W + pad * 2, w.H + pad * 2, 22); g.fill();
-  g.fillStyle = lin(g, -pad, 0, w.W + pad, 0, P.rock[0], shade(P.rock[0], -0.12)); rr(g, -pad + 6, -pad + 6, w.W + pad * 2 - 12, w.H + pad * 2 - 12, 18); g.fill();
-  const fg = lin(g, 0, 0, 0, w.H, P.floor[0], P.floor[1]);
-  g.fillStyle = fg; rr(g, 0, 0, w.W, w.H, 8); g.fill();
-  g.save(); rr(g, 0, 0, w.W, w.H, 8); g.clip();
-  if (style === 'dirt') dirt(g, w, P);
-  else {
-    g.fillStyle = P.grout; g.fillRect(0, 0, w.W, w.H);
-    const TW = style === 'brick' ? 64 : 66, TH = style === 'brick' ? 34 : 66, gap = style === 'brick' ? 3 : 4;
-    for (let j = 0, y = 0; y < w.H; j++, y += TH) for (let x = j % 2 ? -TW / 2 : 0, i = 0; x < w.W; x += TW, i++) {
-      const h = hash(i + j * 0.37, j), big = style === 'flag' && h > 0.86; // now and then a stone twice as long
-      const ww = big ? TW * 2 : TW;
-      g.fillStyle = fg; rr(g, x + gap / 2, y + gap / 2, ww - gap, TH - gap, style === 'brick' ? 4 : 9); g.fill();
-      g.fillStyle = h < 0.33 ? P.tile[0] : h > 0.7 ? P.tile[1] : 'rgba(0,0,0,0)'; g.fill();
-      if (big) x += TW;
-    }
-  }
-  if (w.water) for (const c of w.water) water(g, c, w);
-  for (const d of w.decor || []) decor(g, d, P);
-  g.restore();
-  rock(g, w, pad, P);
+  const P = pal(w);
+  paintRoom(g, w, pad, {
+    water: w.water ? (lg) => { for (const c of w.water) water(lg, c, w); } : null,
+    decor: (w.decor && w.decor.length) ? (lg) => { soft = true; try { for (const d of w.decor) decor(lg, d, P); } finally { soft = false; } } : null,
+  });
 }
-
 function shade(hex, k) {
   const n = parseInt(hex.slice(1), 16); let r = n >> 16, gg = (n >> 8) & 255, b = n & 255;
   const f = (v) => Math.round(clamp(k < 0 ? v * (1 + k) : v + (255 - v) * k, 0, 255));
   return `rgb(${f(r)},${f(gg)},${f(b)})`;
-}
-
-function dirt(g, w, P) {
-  // packed earth: soft blotches, darker ruts, a scatter of pebbles
-  g.globalAlpha = 0.55;
-  for (let i = 0; i < w.W * w.H / 26000; i++) {
-    const x = hash(i, 1) * w.W, y = hash(i, 2) * w.H, r = 60 + hash(i, 3) * 90;
-    g.fillStyle = hash(i, 4) < 0.5 ? P.tile[0] : P.tile[1]; g.beginPath(); g.ellipse(x, y, r, r * 0.6, hash(i, 5) * 3, 0, TAU); g.fill();
-  }
-  g.globalAlpha = 1;
-  // ruts: a few long soft tracks worn into the dirt
-  g.strokeStyle = P.tile[0]; g.lineCap = 'round';
-  for (let i = 0; i < w.W / 500; i++) {
-    const y = hash(i, 11) * w.H; g.lineWidth = 14 + hash(i, 12) * 10;
-    g.beginPath(); g.moveTo(0, y); g.bezierCurveTo(w.W * 0.3, y + 60 * (hash(i, 13) - 0.5), w.W * 0.6, y - 80 * (hash(i, 14) - 0.5), w.W, y + 40 * (hash(i, 15) - 0.5)); g.stroke();
-  }
-  for (let i = 0; i < w.W * w.H / 4000; i++) {
-    const x = hash(i, 6) * w.W, y = hash(i, 7) * w.H, r = 2 + hash(i, 8) * 3;
-    g.fillStyle = 'rgba(80,55,30,0.35)'; g.beginPath(); g.arc(x + 1, y + 1, r, 0, TAU); g.fill();
-    g.fillStyle = 'rgba(235,215,180,0.55)'; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
-  }
 }
 
 function water(g, c, w) {
@@ -82,33 +48,6 @@ function water(g, c, w) {
   g.fillStyle = 'rgba(160,220,210,0.25)';
   for (let y = 20; y < c.h; y += 46) { const k = hash(c.x, y); g.beginPath(); g.ellipse(c.x + c.w * (0.25 + 0.5 * k), c.y + y, c.w * 0.18, 3, 0, 0, TAU); g.fill(); }
   g.fillStyle = 'rgba(20,40,40,0.25)'; g.fillRect(c.x + c.w - 14, c.y, 11, c.h); // shade on the right bank
-}
-
-function rock(g, w, pad, P) {
-  // rock where the room's shape leaves chunks out: a wall band along the floor's edge, darkness behind it
-  const solids = w.walls.filter((r) => r.solid);
-  const isFloor = (c, r) => r >= 0 && c >= 0 && w.cells && w.cells.some((k) => k.c === c && k.r === r);
-  const inset = (r, d) => {
-    const ch = w.chunks || { nc: 1, nr: 1 };
-    const l = r.c === 0 ? -pad : isFloor(r.c - 1, r.r) ? d : 0, t = r.r === 0 ? -pad : isFloor(r.c, r.r - 1) ? d : 0;
-    const rt = r.c === ch.nc - 1 ? -pad : isFloor(r.c + 1, r.r) ? d : 0, b = r.r === ch.nr - 1 ? -pad : isFloor(r.c, r.r + 1) ? d : 0;
-    return [r.x + l, r.y + t, r.w - l - rt, r.h - t - b];
-  };
-  for (const r of solids) { g.fillStyle = INK; const [x, y, ww, hh] = inset(r, -6); rr(g, x, y, ww, hh, 10); g.fill(); }
-  for (const r of solids) { const [x, y, ww, hh] = inset(r, 0); g.fillStyle = lin(g, x, y, x + ww, y + hh, P.rock[0], shade(P.rock[0], -0.15)); rr(g, x, y, ww, hh, 8); g.fill(); }
-  // the band's stones: lumps along it so rock reads as rock, not a flat strip
-  for (const r of solids) {
-    const [x, y, ww, hh] = inset(r, 0);
-    g.save(); rr(g, x, y, ww, hh, 8); g.clip();
-    for (let i = 0; i < (ww + hh) / 18; i++) {
-      const px = x + hash(r.x + i, 9) * ww, py = y + hash(r.y + i, 10) * hh, s = 8 + hash(i, r.x) * 14;
-      g.fillStyle = 'rgba(255,255,255,0.08)'; g.beginPath(); g.ellipse(px - 2, py - 2, s, s * 0.7, hash(i, 3), 0, TAU); g.fill();
-      g.fillStyle = 'rgba(0,0,0,0.10)'; g.beginPath(); g.ellipse(px + 3, py + 3, s * 0.8, s * 0.5, hash(i, 4), 0, TAU); g.fill();
-    }
-    g.restore();
-  }
-  for (const r of solids) { g.fillStyle = INK; const [x, y, ww, hh] = inset(r, 20); rr(g, x, y, ww, hh, 14); g.fill(); }
-  for (const r of solids) { g.fillStyle = P.rock[1]; const [x, y, ww, hh] = inset(r, 26); rr(g, x, y, ww, hh, 12); g.fill(); }
 }
 
 // ---------------------------------------------------------------- floor dressing
@@ -217,15 +156,7 @@ function throne(g, x, y) {
 }
 
 // ---------------------------------------------------------------- walls and pillars
-export function drawWallThemed(ctx, r, w) {
-  const P = pal(w);
-  inked(ctx, () => rr(ctx, r.x, r.y, r.w, r.h, 6), lin(ctx, r.x, r.y, r.x + r.w, r.y + r.h, P.wall[0], P.wall[1]));
-  ctx.fillStyle = P.wallTop; rr(ctx, r.x + 5, r.y + 5, Math.max(0, r.w - 10), Math.max(0, r.h - 10), 4); ctx.fill();
-  // block seams so a wall reads as built
-  ctx.fillStyle = 'rgba(0,0,0,0.10)';
-  const long = r.w > r.h, n = Math.floor((long ? r.w : r.h) / 44);
-  for (let i = 1; i < n; i++) { if (long) ctx.fillRect(r.x + i * r.w / n - 1, r.y + 4, 2, r.h - 8); else ctx.fillRect(r.x + 4, r.y + i * r.h / n - 1, r.w - 8, 2); }
-}
+export function drawWallThemed(ctx, r, w) { drawBlock(ctx, r, w); } // walls that come and go; the rest are in the floor cache
 
 export function drawPillarThemed(ctx, p, w) {
   const style = (w.theme && w.theme.pillar) || 'stone';
@@ -353,7 +284,7 @@ export function drawMood(ctx, w, cw, ch, dpr) {
   const m = (w.theme && w.theme.mood) || null; if (!m) return;
   ctx.save(); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   const dark = w.mood === 'unbound';
-  const fog = dark ? 'rgba(10,18,40,' : m.fog, k = dark ? 0.82 : m.fogK;
+  const fog = dark ? 'rgba(10,18,40,' : m.fog, k = dark ? 0.82 : Math.min(0.9, m.fogK * envFogK());
   const R = Math.hypot(cw, ch) / 2;
   const g = ctx.createRadialGradient(cw / 2, ch / 2, R * (dark ? 0.2 : 0.3), cw / 2, ch / 2, R);
   g.addColorStop(0, fog + '0)'); g.addColorStop(1, fog + k + ')');

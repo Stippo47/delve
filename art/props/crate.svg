@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- CRATE: one wooden crate seen from straight above, 48 room units square (two path cells, 122 SVG units). The sides slope out from the lid like the walls; a diagonal brace, iron corners. Drawn at its own size whatever the collider (sc 1). -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="gTop" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#E2AA6C"/><stop offset="1" stop-color="#A86E3C"/></linearGradient><linearGradient id="gBrace" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#C98A50"/><stop offset="1" stop-color="#9A6234"/></linearGradient><linearGradient id="shX" x1="96" y1="0" x2="160" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2B1A10" stop-opacity="0"/><stop offset="1" stop-color="#2B1A10" stop-opacity="0.22"/></linearGradient><clipPath id="topC"><rect x="48" y="48" width="104" height="104"/></clipPath>
+  </defs>
+  <g id="sprite" filter="url(#outline)">
+    <rect x="39" y="39" width="122" height="122" rx="4" fill="#6E4424"/>
+    <polygon points="39.0,39.0 161.0,39.0 152.0,48.0 48.0,48.0" fill="#D29A5E"/>
+    <polygon points="39.0,39.0 48.0,48.0 48.0,152.0 39.0,161.0" fill="#B98049"/>
+    <polygon points="161.0,39.0 161.0,161.0 152.0,152.0 152.0,48.0" fill="#7E4F2B"/>
+    <polygon points="39.0,161.0 48.0,152.0 152.0,152.0 161.0,161.0" fill="#6A4122"/>
+    <rect x="48" y="48" width="104" height="104" fill="url(#gTop)"/>
+    <g clip-path="url(#topC)">
+      <rect x="48" y="48" width="104" height="104" fill="none" stroke="#9A6436" stroke-width="26"/>
+      <path d="M61 88 H139 M61 114 H139" stroke="#8E5A30" stroke-width="3" opacity="0.55"/>
+      <path d="M56 132 L132 56 L144 68 L68 144 Z" fill="url(#gBrace)"/>
+      <rect x="48" y="48" width="104" height="104" fill="url(#shX)"/>
+      <ellipse cx="78" cy="62" rx="22" ry="4" fill="#FFFFFF" opacity="0.25"/>
+    </g>
+    <g fill="#5A5458"><path d="M48 48 h22 v7 h-15 v15 h-7 Z"/><path d="M152 48 h-22 v7 h15 v15 h7 Z"/><path d="M48 152 h22 v-7 h-15 v-15 h-7 Z"/><path d="M152 152 h-22 v-7 h15 v-15 h7 Z"/></g>
+    <g fill="#B8B2B8"><circle cx="62" cy="52" r="2.2"/><circle cx="52" cy="62" r="2.2"/><circle cx="138" cy="52" r="2.2"/><circle cx="148" cy="62" r="2.2"/><circle cx="62" cy="148" r="2.2"/><circle cx="52" cy="138" r="2.2"/><circle cx="138" cy="148" r="2.2"/><circle cx="148" cy="138" r="2.2"/></g>
+  </g>
+</svg>

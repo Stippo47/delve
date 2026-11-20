@@ -5,6 +5,7 @@ import { getRig, drawRig, poseFor, LIMP } from './parts.js';
 import { DEFS } from './units.js';
 import { drawGroundFx, drawAirFx, drawProjectile as projectile, drawStatusFx, noteHits, drawLocal } from './fx.js';
 import { INK, TAU, clamp } from './util.js';
+import { envId, obstacleFor } from './env.js';
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
 
 // One outline thickness for everything drawn here, in room units. Matches what the SVG heroes show.
@@ -66,9 +67,9 @@ function upVec() { return view.rot ? [1, 0] : [0, -1]; }
 let floorCache = null;
 // The room's floor, rock and dressing, drawn once into a canvas (scenery.js paints it in the dungeon type's look).
 function floor(w) {
-  const key = w.W + 'x' + w.H + ':' + view.base.toFixed(3) + ':' + view.dpr;
+  const key = w.W + 'x' + w.H + ':' + view.base.toFixed(3) + ':' + view.dpr + ':' + view.rot + ':env' + envId();
   if (floorCache && floorCache.key === key && floorCache.w === w) return floorCache.c;
-  const pad = 26;
+  const pad = 48; // the walls round the room and a little rock past them
   const c = document.createElement('canvas');
   let s = view.base * view.dpr;
   const area = (w.W + pad * 2) * (w.H + pad * 2);
@@ -112,14 +113,14 @@ export function draw(ctx, w) {
   const s = view.scale;
   ctx.drawImage(fl, -floorCache.pad, -floorCache.pad, fl.width / floorCache.s, fl.height / floorCache.s);
   drawDoors(ctx, w);
-  for (const r of w.walls) if (!r.solid) drawWallThemed(ctx, r, w);
+  for (const r of w.walls) if (r.temp != null) drawWallThemed(ctx, r, w); // the rest are in the floor cache
   for (const h of w.hazards) if (!drawThemeHazard(ctx, h, w.time)) drawHazard(ctx, h, w.time);
   drawArena(ctx, w);
   drawDanger(ctx, w);
   for (const p of w.pickups) drawPickup(ctx, p, w.time);
   drawGroundFx(ctx, w);
-  // shadows, cast towards the bottom of the screen
-  for (const p of w.pillars) upright(ctx, p.x, p.y, () => { ctx.fillStyle = 'rgba(43,34,48,0.22)'; ctx.beginPath(); ctx.ellipse(4, p.r * 0.45, p.r * 1.1, p.r * 0.6, 0, 0, TAU); ctx.fill(); });
+  // shadows straight down under each obstacle (top-down: never cast to one side)
+  for (const p of w.pillars) { const R = p.r * 1.45; ctx.drawImage(softShadow(), p.x - R, p.y - R, R * 2, R * 2); }
   for (const p of w.pillars) drawPillar(ctx, p, w);
   for (const u of w.units) upright(ctx, u.x, u.y, () => { const r = u.vr * (u.downed ? 1.1 : 1.3); ctx.drawImage(softShadow(), 2 - r, u.vr * 0.62 - r * 0.46, r * 2, r * 0.92); });
   for (const t of w.telegraphs) if (t.type === 'ring') drawRing(ctx, t);
@@ -146,12 +147,18 @@ const screenDepth = (u) => (view.rot ? -u.x : u.y);
 const DOOR_COL = { fight: '#C8553D', hazard: '#E0884B', elite: '#8E3B5B', treasure: '#F2B53A', fountain: '#5DB7E0', decision: '#9B7BD6', boss: '#2B2230' };
 function drawDoors(ctx, w) {
   arch(ctx, 0, w.doorIn.y, -1, true, false, w.time);
+  // shut while the fight is on; open and lit in the colour of the room behind once it's won; when the party picks
+  // one, the others swing shut again so the way it takes stands out
+  const picked = (w.doors || []).some((d) => d.chosen);
   for (const d of w.doors || []) {
-    arch(ctx, w.W, d.y, 1, w.cleared, d.chosen, w.time, DOOR_COL[d.kind], d.kind);
-    // what's behind it, on a stone plaque on the floor in front
-    upright(ctx, w.W - 40, d.y, () => {
-      inked(ctx, () => roundRect(ctx, -17, -17, 34, 34, 9), '#A99C8B');
-      roomIcon(ctx, d.kind, 12);
+    const open = w.cleared && (!picked || d.chosen);
+    arch(ctx, w.W, d.y, 1, open, d.chosen, w.time, DOOR_COL[d.kind], d.kind);
+    // what's behind it: its sign set in the doorway (on the shut doors, or hanging in the lit passage)
+    upright(ctx, w.W + 17, d.y, () => {
+      const k = d.chosen ? 1 + 0.08 * Math.sin(w.time * 5) : 1;
+      ctx.globalAlpha = picked && !d.chosen ? 0.5 : 1; ctx.scale(k, k);
+      roomIcon(ctx, d.kind, 12.5);
+      ctx.globalAlpha = 1;
     });
   }
 }
@@ -195,7 +202,9 @@ function roomIcon(ctx, kind, r) {
   ctx.fillStyle = '#FFF4DC'; ctx.strokeStyle = '#FFF4DC'; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
   const k = r / 11;
   ctx.beginPath();
-  if (kind === 'fight' || kind === 'elite') { ctx.moveTo(-5 * k, -5 * k); ctx.lineTo(5 * k, 5 * k); ctx.moveTo(5 * k, -5 * k); ctx.lineTo(-5 * k, 5 * k); ctx.stroke(); if (kind === 'elite') { ctx.beginPath(); ctx.arc(0, -8 * k, 2 * k, 0, TAU); ctx.fill(); } }
+  // a sword point up (a plain X read as "no way" on a shut door); the elite's two swords crossed, hilts down
+  if (kind === 'fight') { ctx.moveTo(0, -6.5 * k); ctx.lineTo(0, 3 * k); ctx.moveTo(-4 * k, 2.6 * k); ctx.lineTo(4 * k, 2.6 * k); ctx.moveTo(0, 3 * k); ctx.lineTo(0, 6 * k); ctx.stroke(); }
+  else if (kind === 'elite') { for (const sx of [-1, 1]) { ctx.moveTo(sx * 5.5 * k, -6 * k); ctx.lineTo(-sx * 3 * k, 3.5 * k); ctx.moveTo(-sx * 4.6 * k, 0.8 * k); ctx.lineTo(-sx * 0.4 * k, 4.8 * k); ctx.moveTo(-sx * 3 * k, 3.5 * k); ctx.lineTo(-sx * 5 * k, 5.6 * k); } ctx.stroke(); }
   else if (kind === 'hazard') { ctx.moveTo(0, -6 * k); ctx.lineTo(5.5 * k, 4.5 * k); ctx.lineTo(-5.5 * k, 4.5 * k); ctx.closePath(); ctx.stroke(); }
   else if (kind === 'treasure') { ctx.rect(-5.5 * k, -3.5 * k, 11 * k, 8 * k); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-5.5 * k, 0); ctx.lineTo(5.5 * k, 0); ctx.stroke(); }
   else if (kind === 'fountain') { ctx.moveTo(0, -6 * k); ctx.bezierCurveTo(5 * k, 0, 4 * k, 5 * k, 0, 5 * k); ctx.bezierCurveTo(-4 * k, 5 * k, -5 * k, 0, 0, -6 * k); ctx.fill(); }
@@ -217,7 +226,6 @@ function prop(ctx, name, x, y, box, opts = {}) {
   ctx.restore();
   return true;
 }
-const OBSTACLES = ['obstacle-rock', 'obstacle-pillar', 'obstacle-crates'];
 const DOOR_ART = { fight: 'door-open-fight', hazard: 'door-open-hazard', elite: 'door-open-elite', treasure: 'door-open-treasure', fountain: 'door-open-fountain', decision: 'door-open-choice', boss: 'door-open-boss' };
 
 function drawWall(ctx, r) {
@@ -272,22 +280,17 @@ function drawHazard(ctx, h, t) {
 }
 
 function drawPillar(ctx, p, w) {
-  // obstacles from the prop art (rock, broken pillar, crates), except the Sewers' pipes which are drawn by the theme
-  const style = w && w.theme && w.theme.pillar;
-  if (!p.fountain && style === 'pipe') return drawPillarThemed(ctx, p, w);
-  const name = p.fountain ? (p.used ? 'fountain-used' : 'fountain') : p.prop || (style === 'barrel' ? 'obstacle-crates' : OBSTACLES[Math.abs(Math.round(p.x * 7 + p.y * 3)) % 2]);
-  if (prop(ctx, name, p.x, p.y, PROP_BOX, { sc: p.r / (p.fountain ? 38 : 30) })) return;
-  if (!p.fountain) return drawPillarThemed(ctx, p, w);
   if (p.fountain) {
+    if (prop(ctx, p.used ? 'fountain-used' : 'fountain', p.x, p.y, PROP_BOX, { sc: p.r / 38 })) return;
     inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, '#A99C8B');
     ctx.fillStyle = p.used ? '#7FA9BC' : '#5DB7E0'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 0.72, 0, TAU); ctx.fill();
-    ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.beginPath(); ctx.ellipse(p.x - p.r * 0.25, p.y - p.r * 0.25, p.r * 0.3, p.r * 0.12, -0.6, 0, TAU); ctx.fill();
     return;
   }
-  const g = ctx.createLinearGradient(p.x - p.r, p.y - p.r, p.x + p.r, p.y + p.r);
-  g.addColorStop(0, '#B8AC9A'); g.addColorStop(1, '#857A6C');
-  inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, g);
-  ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.beginPath(); ctx.arc(p.x - p.r * 0.15, p.y - p.r * 0.15, p.r * 0.62, 0, TAU); ctx.fill();
+  // obstacles from the prop art: crates (two path cells square) and barrels at their own size, rocks and braziers
+  // scaled to the collider; the Sewers' pipes are drawn by the theme (env.js obstacleFor picks)
+  const name = p.prop || obstacleFor(p, w);
+  if (name !== 'pipe' && prop(ctx, name, p.x, p.y, PROP_BOX, { sc: name === 'crate' || name === 'barrel' ? 1 : p.r / 30 })) return;
+  drawPillarThemed(ctx, p, w);
 }
 
 function blob(ctx, x, y, r, n, ph) {
@@ -331,7 +334,9 @@ function drawPickup(ctx, p, t) {
     });
   } else if (p.type === 'pedestal') {
     upright(ctx, p.x, p.y, () => {
-      if (prop(ctx, 'pedestal', 0, 0, PROP_BOX, { upright: false })) ctx.translate(0, -11); // the reward floats over the cushion
+      // the plinth seen from straight above (a soft shadow right under it); the reward floats over the cushion's middle
+      const R = 26; ctx.drawImage(softShadow(), -R, -R, R * 2, R * 2);
+      if (prop(ctx, 'pedestal', 0, 0, PROP_BOX, { upright: false })) ctx.scale(0.9, 0.9);
       else inked(ctx, () => roundRect(ctx, -18, -14, 36, 28, 6), '#A99C8B');
       const col = { potion: '#E0604B', xp: '#FFE14D', coins: '#F2B53A', trinket: '#C9A7FF' }[p.reward];
       const bob = Math.sin(t * 3 + p.y) * 2;
@@ -343,7 +348,7 @@ function drawPickup(ctx, p, t) {
   } else if (p.type === 'chest') {
     if (p.open && p._openAt == null) p._openAt = t;
     const glow = p.open ? clamp(1 - (t - p._openAt) / 2.5, 0.2, 1) : 0;
-    upright(ctx, p.x, p.y, () => { ctx.fillStyle = 'rgba(43,34,48,0.2)'; ctx.beginPath(); ctx.ellipse(2, 16, 26, 9, 0, 0, TAU); ctx.fill(); });
+    { const R = 34; ctx.drawImage(softShadow(), p.x - R, p.y - R, R * 2, R * 2); } // straight down, under it
     if (prop(ctx, p.open ? 'chest-open' : p.free ? 'chest-closed' : 'chest-locked', p.x, p.y, PROP_BOX, { extraA: glow })) return;
     upright(ctx, p.x, p.y, () => {
       ctx.fillStyle = 'rgba(43,34,48,0.2)'; ctx.beginPath(); ctx.ellipse(2, 14, 26, 9, 0, 0, TAU); ctx.fill();

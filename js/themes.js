@@ -6,7 +6,8 @@
 //   name, blurb,
 //   palette: { floor: [near, far] (gradient), tile: [dark, light] (tile tints), grout, wall: [lit, shade], wallTop,
 //              rock: [band, deep], void (what's outside the room), accent (the theme's colour: glows, the camp) },
-//   floorStyle: 'flag' | 'brick' | 'dirt', pillar: 'stone' | 'pipe' | 'barrel',
+//   floorStyle, pillar: older fields; since round 6 the floor, walls, rock and obstacles come from the environment
+//   style (js/env.js: four looks, each with its own floor per theme) and palette.floor/wall/rock are its fallbacks,
 //   mood: { fog (vignette colour), fogK (how far in it reaches 0..1), tint (a wash over everything, or null) },
 //   kinds: { fight, hazard, treasure, fountain, decision, elite } (room mix, weights),
 //   enemies: [floor1, floor2, floor3] each [[kind, weight], ...] (kinds from enemies.js / units.js; each def has a
