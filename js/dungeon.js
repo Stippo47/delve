@@ -150,8 +150,12 @@ export const DUNGEON_RANK = { warren: 0, sewers: 1, crypt: 2, frost: 3, ember: 4
 // Enemy strength (hp and damage) for a room: the dungeon's rank, the run's depth, the floor, and the room layer.
 // The first three keep their round-6 steps; the deeper three climb steeply (they're for a party that has grown).
 // A dungeon's own step comes in over the first floor's first rooms (the party starts every run at level 1).
-export const RANK_MULT = [1, 1.12, 1.26, 1.85, 2.6, 3.5];
-export const enemyMult = (run, L) => 1 + (RANK_MULT[DUNGEON_RANK[run.theme] || 0] - 1) * (run.floor > 1 ? 1 : 0.55 + 0.45 * Math.min(1, L / 5)) + 0.22 * (run.depth - 1) + 0.25 * (run.floor - 1) + 0.04 * L;
+export const RANK_MULT = [1, 1.12, 1.26, 1.8, 2.4, 3];
+// Deeper dungeons also climb more from floor to floor.
+export const enemyMult = (run, L) => {
+  const rank = DUNGEON_RANK[run.theme] || 0;
+  return 1 + (RANK_MULT[rank] - 1) * (run.floor > 1 ? 1 : 0.35 + 0.65 * Math.min(1, L / 6)) + 0.22 * (run.depth - 1) + (0.25 + 0.08 * Math.max(0, rank - 2)) * (run.floor - 1) + 0.04 * L;
+};
 
 function buildRoom(run) {
   const node = nodeAt(run.map);
