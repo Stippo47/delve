@@ -135,18 +135,23 @@ function enemyPack(w, run, budget, cell) {
 // (enemies.js makeElite). opts.elite forces one.
 function foe(w, run, k, x, y, opts = {}, p = 0) {
   const u = spawn(w, k, x, y, { mult: w.mult, ...opts });
+  u.coinMul = 1 + 0.12 * (DUNGEON_RANK[run.theme] || 0); // harder dungeons pay better
   if (opts.elite || (p > 0 && !DEFS[k].boss && chance(p))) makeElite(w, u);
   return u;
 }
 // How likely any one enemy is to be an elite (designer, round 7: "have elites show up more often"): more on deeper
 // floors, in harder dungeons and in later waves.
-const eliteP = (run, wave = 0) => Math.min(0.3, 0.05 + 0.025 * (run.floor - 1) + 0.012 * (DUNGEON_RANK[run.theme] || 0) + 0.03 * wave);
+// (testing: ?elites makes every enemy an elite)
+const eliteP = (run, wave = 0) => (debugParam('elites') != null ? 1 : Math.min(0.3, 0.05 + 0.025 * (run.floor - 1) + 0.012 * (DUNGEON_RANK[run.theme] || 0) + 0.03 * wave));
 
 // How hard each dungeon type is, easiest first (designer, round 6: each dungeon harder than the last; round 7: three
 // harder ones after the Crypt).
 export const DUNGEON_RANK = { warren: 0, sewers: 1, crypt: 2, frost: 3, ember: 4, spire: 5 };
 // Enemy strength (hp and damage) for a room: the dungeon's rank, the run's depth, the floor, and the room layer.
-export const enemyMult = (run, L) => 1 + 0.2 * (DUNGEON_RANK[run.theme] || 0) + 0.22 * (run.depth - 1) + 0.3 * (run.floor - 1) + 0.04 * L;
+// The first three keep their round-6 steps; the deeper three climb steeply (they're for a party that has grown).
+// A dungeon's own step comes in over the first floor's first rooms (the party starts every run at level 1).
+export const RANK_MULT = [1, 1.12, 1.26, 1.85, 2.6, 3.5];
+export const enemyMult = (run, L) => 1 + (RANK_MULT[DUNGEON_RANK[run.theme] || 0] - 1) * (run.floor > 1 ? 1 : 0.55 + 0.45 * Math.min(1, L / 5)) + 0.22 * (run.depth - 1) + 0.25 * (run.floor - 1) + 0.04 * L;
 
 function buildRoom(run) {
   const node = nodeAt(run.map);
@@ -254,7 +259,7 @@ function buildRoom(run) {
     // waves: once the room is clear, more come up out of the floor. Round 7: 2-3 more than before (3-4, a fifth now
     // and then deeper down; the elite room 2), each a bit harder than the last (bigger, heavier kinds, more elites);
     // the chest (if the room has one) shows up when the last wave is down
-    if (kind !== 'treasure') w.waves = { left: kind === 'elite' ? 2 : rint(3, 4) + (chance(0.2 * (run.floor - 1)) ? 1 : 0), budget: total * (0.24 + 0.015 * L), n: 0 };
+    if (kind !== 'treasure') w.waves = { left: kind === 'elite' ? 2 : rint(3, 4) + (chance(0.2 * (run.floor - 1)) ? 1 : 0), budget: total * (0.17 + 0.012 * L), n: 0 };
     w.chest = kind === 'treasure' || kind === 'elite' || chance(0.3);
   }
   w.on.kill = (u) => onKill(run, u);
@@ -424,7 +429,8 @@ function onKill(run, u) {
   run.kills++;
   if (u.def.boss) run.gems += run.floor >= FLOORS ? 2 : 1; // gems: each floor's boss drops one, the last boss two (camp lane B)
   if (u.def.onDeath) u.def.onDeath(run.world, u);
-  const xp = Math.round((u.def.xp || 0) * (1 + 0.15 * (run.depth - 1)) * (u.elite ? 3 : 1));
+  // tougher enemies (a harder dungeon, a deeper floor) are worth more
+  const xp = Math.round((u.def.xp || 0) * (1 + 0.15 * (run.depth - 1)) * Math.sqrt(run.world.mult || 1) * (u.elite ? 3 : 1));
   for (const h of run.world.units) if (h.team === 'hero' && alive(h)) giveXp(run, h, xp);
 }
 

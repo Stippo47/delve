@@ -451,7 +451,7 @@ function washesOf(u, w) {
 }
 
 // Elites (round 7) are marked by a gold rim round the figure (no text in the arena).
-const ELITE_COL = '#FFC83A', ELITE_RIM = 1.13;
+const ELITE_COL = '#FFC83A', ELITE_RIM = 1.16;
 function drawUnit(ctx, u, w) {
   if (u.def.art) { drawPartsUnit(ctx, u, w); if (u.frozenT > 0) drawIce(ctx, u, w); return; }
   const s = view.scale * view.dpr;

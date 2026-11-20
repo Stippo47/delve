@@ -19,7 +19,7 @@ export function makeElite(w, u) {
   u.maxHp = Math.round(u.maxHp * ELITE.hp); u.hp = u.maxHp;
   u.dmgMul *= ELITE.dmg; u.moveMul = (u.moveMul || 1) * ELITE.speed; u.atkMul = (u.atkMul || 1) * ELITE.atk;
   u.r *= ELITE.scale; u.vr *= ELITE.scale; u.mass *= 1.3;
-  u.coinMul = ELITE.gold;
+  u.coinMul = (u.coinMul || 1) * ELITE.gold;
   const E = ELITES[u.kind] || ELITES[u.def.eliteAs];
   if (E) { u.eliteFn = E.tick || null; u.eliteDeath = E.death || null; }
   u.el = u.el || {};
@@ -167,7 +167,7 @@ export const ELITES = {
   rat: {
     tick(w, u, dt) {
       if (!u.aggro || u.spd < 60 || !due(u, 'gas', dt, 0.4)) return false;
-      again(u, 'gas', 0.45, 0.6);
+      again(u, 'gas', 0.8, 1.1);
       if (!w.hazards.some((h) => h.type === 'gas' && dist(h.x, h.y, u.x, u.y) < 30)) w.hazards.push({ type: 'gas', x: u.x - Math.cos(u.mvA) * u.r, y: u.y - Math.sin(u.mvA) * u.r, r: 26, t: 2.6, max: 2.6 });
       addBuff(u, { id: 'plague', dur: 1, immune: ['poison'] });
       return false;
