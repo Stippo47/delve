@@ -1,1 +1,230 @@
-/* camp and skill-tree looks: filled in below */
+/* Camp and skill-tree looks (round 6: "don't like the look of the camp / the skill tree"). Chosen in the camp's
+   settings; <html data-look> is the camp's look, <html data-tree> the tree's. 'classic' is the 0.6.0 look and needs
+   nothing here. camp.css draws with variables (--ink text, --line borders, --drop press shadows, --paper surfaces,
+   --night background, --bw3/--bw2 border widths), so most of a look is a new set of those; the rest is per look. */
+
+/* =============================================================== EMBER: "Night watch"
+   Dark night, the fire the only light. No ink outlines: glassy dark cards with a thin warm rim, amber glow on what you
+   can press, the camp scene full width and taller, the party lit from the middle. */
+[data-look="ember"] :is(#camp, #sheet, #result) {
+  --ink: #F3E3C6; --line: rgba(255, 196, 120, .30); --drop: rgba(0, 0, 0, .45); --paper: #1E2438; --paper2: #262E48; --paper3: #171C2C;
+  --night: #0C0F1A; --gold: #FFB347; --gold2: #FFC870; --bw3: 1.5px; --bw2: 1.5px;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+[data-look="ember"] #camp { background: #0C0F1A; background-image:
+  radial-gradient(1px 1px at 12% 8%, #fff8 50%, transparent 51%), radial-gradient(1px 1px at 78% 4%, #fff6 50%, transparent 51%),
+  radial-gradient(1.5px 1.5px at 44% 12%, #fff7 50%, transparent 51%), radial-gradient(1px 1px at 90% 18%, #fff5 50%, transparent 51%),
+  radial-gradient(140% 70% at 50% 30%, #2A2030 0%, #12151F 55%, #0A0C14 100%); }
+[data-look="ember"] .topbar .logo { color: #FFD9A0; text-shadow: 0 0 18px rgba(255, 150, 60, .65); letter-spacing: 6px; font-weight: 800; text-transform: uppercase; font-size: 20px; }
+[data-look="ember"] .purse { background: rgba(255, 179, 71, .08); box-shadow: none; }
+[data-look="ember"] .iconbtn { background: rgba(255, 179, 71, .08); box-shadow: none; }
+[data-look="ember"] .iconbtn svg path[fill="#2B2230"], [data-look="ember"] .iconbtn svg circle[fill="#2B2230"] { fill: #FFD9A0; }
+[data-look="ember"] .tabs { background: rgba(8, 10, 16, .85); border-top: 1px solid rgba(255, 196, 120, .18); }
+[data-look="ember"] .tabs button { color: #9C8F7E; }
+[data-look="ember"] .tabs button.on { background: none; box-shadow: none; border-color: transparent; color: #FFD9A0; }
+[data-look="ember"] .tabs button.on svg { filter: drop-shadow(0 0 8px rgba(255, 150, 60, .9)); }
+[data-look="ember"] :is(.card, .seat, .htile, .wares .ware, .theme, .hero-banner, .rcard, .beast, .lookbtn, .prow, .trow, .cheat-toggle) {
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 220, 170, .08); backdrop-filter: blur(6px); }
+[data-look="ember"] .card { background: linear-gradient(rgba(38, 46, 72, .82), rgba(26, 31, 50, .88)); }
+[data-look="ember"] :is(#camp, #sheet, #result) .btn { background: rgba(255, 179, 71, .10); color: #FFD9A0; box-shadow: none; }
+[data-look="ember"] :is(#camp, #sheet, #result) .btn.big { background: linear-gradient(#FFC870, #FF8A3D); color: #2A1408; border-color: transparent;
+  box-shadow: 0 0 0 1px rgba(255, 200, 130, .5), 0 8px 30px rgba(255, 120, 40, .45); }
+[data-look="ember"] .row-h.title h1, [data-look="ember"] .subhead h1 { color: #FFD9A0; text-shadow: 0 0 16px rgba(255, 150, 60, .5); font-weight: 800; letter-spacing: 1px; }
+[data-look="ember"] #camp h1, [data-look="ember"] .hero-banner h1 { font-family: inherit; }
+[data-look="ember"] .scene { height: 360px; margin: 0 -12px; border: 0; border-radius: 0; box-shadow: none;
+  -webkit-mask-image: linear-gradient(transparent, #000 10%, #000 85%, transparent); mask-image: linear-gradient(transparent, #000 10%, #000 85%, transparent); }
+[data-look="ember"] .scene .grass { filter: brightness(.38) saturate(.7) hue-rotate(-10deg); }
+[data-look="ember"] .scene .dirt { filter: brightness(.55); }
+[data-look="ember"] .scene .glow { width: 420px; height: 400px; background: radial-gradient(closest-side, rgba(255, 170, 70, .75), rgba(255, 120, 40, .25) 50%, transparent 78%); }
+[data-look="ember"] .scene :is(.tent, .crate, .logseat) { filter: brightness(.55) saturate(.8); }
+[data-look="ember"] .seat:not(.resting) .art, [data-look="ember"] .htile:not(.locked):not(.resting) img { filter: drop-shadow(0 0 10px rgba(255, 160, 80, .35)); }
+[data-look="ember"] .htile .rug { background: radial-gradient(circle, color-mix(in srgb, var(--rc) 35%, transparent) 0 55%, transparent 62%); }
+[data-look="ember"] .big-art .rug { background: radial-gradient(circle, color-mix(in srgb, var(--rc) 40%, #1E2438), #1E2438 70%); }
+[data-look="ember"] .hero-banner { background-image: radial-gradient(90% 60% at 50% 22%, color-mix(in srgb, var(--rc) 22%, #262E48), #1E2438 70%); }
+[data-look="ember"] .note, [data-look="ember"] .sh { color: #B9A88F; }
+[data-look="ember"] .switch { background: #171C2C; }
+[data-look="ember"] .switch i { background: #FFD9A0; border-color: transparent; }
+[data-look="ember"] .mercs.on .switch, [data-look="ember"] .cheat-toggle.on .switch { background: #FF8A3D; }
+[data-look="ember"] .coin { border-color: #3A2410; box-shadow: 0 0 8px rgba(255, 190, 80, .6); }
+[data-look="ember"] .gem, [data-look="ember"] .tico .ico, [data-look="ember"] .bico, [data-look="ember"] .nico { filter: drop-shadow(0 0 4px rgba(255, 200, 140, .25)); }
+[data-look="ember"] .beast.unknown img { filter: brightness(0) invert(.25); }
+[data-look="ember"] .pips i, [data-look="ember"] .tiers li span, [data-look="ember"] .rank i, [data-look="ember"] .lvpips i { background: #171C2C; }
+[data-look="ember"] .pips i.on, [data-look="ember"] .tiers li.on span, [data-look="ember"] .rank i.on, [data-look="ember"] .lvpips i.on { background: #FFB347; color: #2A1408; }
+[data-look="ember"] .flag { color: #2A1408; }
+[data-look="ember"] #sheet .panel { background: linear-gradient(#232A40, #171C2C); }
+[data-look="ember"] .lvl { background: #FFB347; color: #2A1408; }
+
+/* =============================================================== JOURNAL: "Field journal"
+   A traveller's sketchbook on a desk: light paper, brown pencil lines, serif handwriting-ish type, notes taped in,
+   the camp scene a faded sepia print pinned to the page. Quiet, readable, nothing glows. */
+[data-look="journal"] :is(#camp, #sheet, #result) {
+  --ink: #3B2A1A; --line: #6B4E31; --drop: rgba(107, 78, 49, .35); --paper: #FBF5E6; --paper2: #FFFBF1; --paper3: #EFE4CC;
+  --night: #E8DDC4; --gold: #D9A441; --gold2: #E9C27A; --bw3: 1.5px; --bw2: 1.5px;
+  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+}
+[data-look="journal"] #camp { background: #E8DDC4;
+  background-image: repeating-linear-gradient(transparent 0 27px, rgba(107, 140, 170, .16) 27px 28px), linear-gradient(90deg, transparent 34px, rgba(200, 85, 61, .25) 34px 35px, transparent 35px); }
+[data-look="journal"] #camp h1, [data-look="journal"] .rtitle h1, [data-look="journal"] .topbar .logo, [data-look="journal"] .hero-banner h1 {
+  font-family: Georgia, serif; font-style: italic; font-weight: 700; }
+[data-look="journal"] .topbar .logo { color: #3B2A1A; text-shadow: none; font-size: 26px; letter-spacing: 0; }
+[data-look="journal"] .row-h.title h1, [data-look="journal"] .subhead h1 { color: #3B2A1A; text-shadow: none; }
+[data-look="journal"] .row-h.title .muted, [data-look="journal"] .note, [data-look="journal"] .sh, [data-look="journal"] .goers .muted { color: #6B4E31; }
+[data-look="journal"] .purse, [data-look="journal"] .iconbtn { background: #FFFBF1; box-shadow: 1px 2px 0 rgba(107, 78, 49, .3); }
+[data-look="journal"] :is(.card, .seat, .htile, .wares .ware, .theme, .hero-banner, .rcard, .beast, .lookbtn, .prow, .trow, .cheat-toggle) {
+  border-radius: 3px; box-shadow: 1px 2px 0 rgba(107, 78, 49, .25), 3px 6px 12px rgba(80, 60, 30, .12); }
+[data-look="journal"] .card { position: relative; background: #FBF5E6; background-image: repeating-linear-gradient(transparent 0 23px, rgba(107, 140, 170, .12) 23px 24px); }
+[data-look="journal"] .card::before { content: ''; position: absolute; left: 50%; top: -9px; width: 70px; height: 18px; margin-left: -35px; transform: rotate(-2deg);
+  background: rgba(230, 214, 160, .75); box-shadow: 0 1px 2px rgba(0, 0, 0, .12); }
+[data-look="journal"] .htile:nth-child(odd) { transform: rotate(-.8deg); }
+[data-look="journal"] .htile:nth-child(even) { transform: rotate(.7deg); }
+[data-look="journal"] .htile .rug { background: radial-gradient(circle, color-mix(in srgb, var(--rc) 22%, #FBF5E6) 0 58%, transparent 60%); }
+[data-look="journal"] .htile:not(.locked):not(.resting) img, [data-look="journal"] .seat:not(.resting) .art, [data-look="journal"] .hero-banner:not(.locked) .big-art img { filter: sepia(.25); }
+[data-look="journal"] .big-art .rug { background: #F3EAD3; border-style: dashed; box-shadow: none; }
+[data-look="journal"] .hero-banner { background-image: none; }
+[data-look="journal"] :is(#camp, #sheet, #result) .btn { border-radius: 4px; background: #FFFBF1; box-shadow: 1px 2px 0 rgba(107, 78, 49, .35); }
+[data-look="journal"] :is(#camp, #sheet, #result) .btn.big { background: #C8553D; color: #FFF6E6; border: 2px solid #8A3423; border-radius: 4px;
+  box-shadow: 2px 3px 0 rgba(138, 52, 35, .45); font-style: italic; letter-spacing: .5px; }
+[data-look="journal"] .tabs { background: #D9CBAA; border-top: 1.5px solid #6B4E31; }
+[data-look="journal"] .tabs button { color: #6B4E31; border-radius: 0 0 6px 6px; }
+[data-look="journal"] .tabs button.on { background: #FBF5E6; border: 1.5px solid #6B4E31; border-top: 0; box-shadow: 1px 2px 0 rgba(107, 78, 49, .3); margin-top: -10px; padding-top: 12px; }
+[data-look="journal"] .tabs button svg { filter: sepia(.6) saturate(.8); }
+[data-look="journal"] .scene { border: 6px solid #FFFBF1; outline: 1.5px solid #6B4E31; border-radius: 2px; transform: rotate(-.7deg);
+  box-shadow: 2px 4px 10px rgba(60, 40, 20, .25); filter: sepia(.55) saturate(.85) contrast(1.02); }
+[data-look="journal"] .scene .glow { mix-blend-mode: soft-light; }
+[data-look="journal"] .seat { background: #FFFBF1; }
+[data-look="journal"] .seat.empty, [data-look="journal"] .seat.locked { border-style: dashed; background: none; }
+[data-look="journal"] .switch { background: #EFE4CC; }
+[data-look="journal"] .mercs.on .switch { background: #7FA04A; }
+[data-look="journal"] .muted { font-style: italic; }
+[data-look="journal"] .segs { background: #D9CBAA; }
+[data-look="journal"] .segs button { color: #6B4E31; }
+[data-look="journal"] .flag { background: #E9C27A; }
+[data-look="journal"] .lvl { background: #6B4E31; }
+[data-look="journal"] .coin { border-width: 1.5px; }
+[data-look="journal"] .theme-art { filter: sepia(.4); }
+[data-look="journal"] #result { background: #E8DDC4; }
+[data-look="journal"] .ware .gem, [data-look="journal"] .tico .ico { filter: sepia(.2); }
+
+/* =============================================================== ARCADE
+   Chunky pixel frames, square corners, hard offset shadows, loud colours on deep purple, a monospace uppercase type.
+   The camp scene is a little pixel-art clearing. */
+[data-look="arcade"] :is(#camp, #sheet, #result) {
+  --ink: #FFFFFF; --line: #0D0A1F; --drop: #0D0A1F; --paper: #3A2C7A; --paper2: #4A3A99; --paper3: #2B2163;
+  --night: #1A1238; --gold: #FFD23F; --gold2: #FFE27A; --bw3: 3px; --bw2: 3px;
+  font-family: "Cascadia Mono", "Consolas", "Courier New", ui-monospace, monospace; letter-spacing: .2px;
+}
+[data-look="arcade"] #camp { background: #1A1238;
+  background-image: linear-gradient(rgba(46, 230, 197, .06) 1px, transparent 1px), linear-gradient(90deg, rgba(46, 230, 197, .06) 1px, transparent 1px); background-size: 16px 16px; }
+[data-look="arcade"] #camp h1, [data-look="arcade"] .rtitle h1, [data-look="arcade"] .topbar .logo, [data-look="arcade"] .hero-banner h1 {
+  font-family: inherit; text-transform: uppercase; letter-spacing: 2px; }
+[data-look="arcade"] .topbar .logo { color: #2EE6C5; text-shadow: 3px 3px 0 #FF4F9A; font-size: 24px; }
+[data-look="arcade"] .row-h.title h1, [data-look="arcade"] .subhead h1 { color: #FFD23F; text-shadow: 3px 3px 0 #0D0A1F; }
+[data-look="arcade"] * { border-radius: 0 !important; }
+[data-look="arcade"] :is(.coin, .sitter.empty, .node .nface, .rank i, .lvpips i, .switch, .switch i, .bpic, .htile .rug, .big-art .rug, .ab, .ip-face, .hc-face, .flask-btn) { border-radius: 50% !important; }
+[data-look="arcade"] .node.stat .nface, [data-look="arcade"] .node.slot .nface { border-radius: 0 !important; }
+[data-look="arcade"] :is(.card, .seat, .htile, .wares .ware, .theme, .hero-banner, .rcard, .beast, .lookbtn, .prow, .trow, .cheat-toggle, .purse, .iconbtn, .scene) {
+  box-shadow: 5px 5px 0 #0D0A1F; }
+[data-look="arcade"] .card, [data-look="arcade"] .hero-banner { background-image: none; }
+[data-look="arcade"] .htile { background: #3A2C7A; }
+[data-look="arcade"] .htile:nth-child(3n+1) { border-top: 6px solid #FF4F9A; }
+[data-look="arcade"] .htile:nth-child(3n+2) { border-top: 6px solid #2EE6C5; }
+[data-look="arcade"] .htile:nth-child(3n) { border-top: 6px solid #FFD23F; }
+[data-look="arcade"] .purse { background: #0D0A1F; color: #FFD23F; }
+[data-look="arcade"] .iconbtn { background: #2EE6C5; }
+[data-look="arcade"] :is(#camp, #sheet, #result) .btn { background: #4A3A99; color: #fff; text-transform: uppercase; box-shadow: 4px 4px 0 #0D0A1F; }
+[data-look="arcade"] :is(#camp, #sheet, #result) .btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 #0D0A1F; }
+[data-look="arcade"] :is(#camp, #sheet, #result) .btn.big { background: #2EE6C5; color: #0D0A1F; box-shadow: 6px 6px 0 #FF4F9A; font-weight: 900; }
+[data-look="arcade"] .tabs { background: #0D0A1F; border-top: 3px solid #2EE6C5; }
+[data-look="arcade"] .tabs button { color: #8C7FD0; text-transform: uppercase; font-size: 11px; }
+[data-look="arcade"] .tabs button.on { background: #FFD23F; color: #0D0A1F; box-shadow: 4px 4px 0 #FF4F9A; }
+[data-look="arcade"] .scene { border: 4px solid #0D0A1F; background: #2E7D4F; image-rendering: pixelated; }
+[data-look="arcade"] .scene .grass { background: repeating-conic-gradient(#3C9A5E 0 25%, #348A53 0 50%) 0 0 / 16px 16px; }
+[data-look="arcade"] .scene .dirt { background: repeating-conic-gradient(#B4864E 0 25%, #A47744 0 50%) 0 0 / 12px 12px;
+  clip-path: polygon(30% 0, 70% 0, 70% 8%, 85% 8%, 85% 18%, 95% 18%, 95% 35%, 100% 35%, 100% 65%, 95% 65%, 95% 82%, 85% 82%, 85% 92%, 70% 92%, 70% 100%, 30% 100%, 30% 92%, 15% 92%, 15% 82%, 5% 82%, 5% 65%, 0 65%, 0 35%, 5% 35%, 5% 18%, 15% 18%, 15% 8%, 30% 8%); }
+[data-look="arcade"] .scene .glow { opacity: .5; }
+[data-look="arcade"] .sitter:not(.resting) img, [data-look="arcade"] .htile:not(.locked):not(.resting) img, [data-look="arcade"] .seat:not(.resting) .art, [data-look="arcade"] .hero-banner:not(.locked) .big-art img { filter: drop-shadow(3px 3px 0 #0D0A1F); }
+[data-look="arcade"] .fire .stones b { border-radius: 0 !important; }
+[data-look="arcade"] .note, [data-look="arcade"] .sh { color: #8C7FD0; text-transform: uppercase; font-size: 11px; }
+[data-look="arcade"] .muted { opacity: .75; }
+[data-look="arcade"] .rar { color: var(--rar); filter: brightness(1.4); }
+[data-look="arcade"] .wares .ware { border-left: 10px solid var(--rar); }
+[data-look="arcade"] .switch { background: #0D0A1F; }
+[data-look="arcade"] .mercs.on .switch { background: #2EE6C5; }
+[data-look="arcade"] .flag { background: #FF4F9A; color: #fff; }
+[data-look="arcade"] .lvl { background: #FF4F9A; color: #fff; }
+[data-look="arcade"] .tico .ico, [data-look="arcade"] .bico { filter: drop-shadow(2px 2px 0 #0D0A1F); }
+[data-look="arcade"] .segs { background: #0D0A1F; }
+[data-look="arcade"] .segs button.on { background: #FFD23F; color: #0D0A1F; }
+[data-look="arcade"] #result { background: #1A1238; }
+[data-look="arcade"] .beast.unknown img { filter: brightness(0) invert(.3); }
+
+/* =============================================================== TREE: "Constellation"
+   Each ability a column of stars on a night sky; bought tiers burn bright, ones you can buy pulse, locked ones are
+   faint. The links are thin starlight. Tier stars carry the ability's sprite. */
+[data-tree="stars"] .tree { background: #0E1430; border: 2px solid #3A4B8C; border-radius: 18px; color: #DDE4FF; padding: 14px 4px 16px;
+  background-image: radial-gradient(1px 1px at 10% 20%, #fff9 50%, transparent 51%), radial-gradient(1px 1px at 30% 70%, #fff6 50%, transparent 51%),
+  radial-gradient(1.5px 1.5px at 62% 30%, #fff8 50%, transparent 51%), radial-gradient(1px 1px at 85% 80%, #fff6 50%, transparent 51%),
+  radial-gradient(1px 1px at 50% 92%, #fff5 50%, transparent 51%), radial-gradient(120% 80% at 50% 0%, #22306A, #0E1430 70%); }
+[data-tree="stars"] .bhead { color: #DDE4FF; }
+[data-tree="stars"] .bhead .bico { display: block; margin-bottom: 2px; filter: drop-shadow(0 0 6px rgba(255, 233, 168, .5)); }
+[data-tree="stars"] .link { width: 2px; height: 26px; background: rgba(170, 190, 255, .25); border: 0; }
+[data-tree="stars"] .link.on { background: #FFE9A8; box-shadow: 0 0 8px #FFE9A8; }
+[data-tree="stars"] .node .nface { background: #18204A; border: 1.5px solid #5A6BB0; box-shadow: none; color: #DDE4FF; width: 52px; height: 52px; }
+[data-tree="stars"] .node.tier .nface .rn { display: none; }
+[data-tree="stars"] .node.tier .nface .nico { display: block; opacity: .55; filter: grayscale(.6); }
+[data-tree="stars"] .node.owned .nface { background: radial-gradient(circle, #FFF6D8, #FFD45A 45%, #B5761A 100%); border-color: #FFF6D8; box-shadow: 0 0 18px rgba(255, 220, 120, .8); }
+[data-tree="stars"] .node.owned .nface .nico { opacity: 1; filter: none; }
+[data-tree="stars"] .node.ready .nface { border-color: #FFE9A8; animation: starPulse 1.6s ease-in-out infinite; }
+@keyframes starPulse { 50% { box-shadow: 0 0 0 5px rgba(255, 233, 168, .25), 0 0 16px rgba(255, 233, 168, .5); } }
+[data-tree="stars"] .node.locked .nface { background: #0E1430; border-style: dashed; border-color: #3A4B8C; color: #5A6BB0; }
+[data-tree="stars"] .node.stat .nface { width: 30px; height: 30px; font-size: 16px; margin: 9px 0; }
+[data-tree="stars"] .node.part .nface { background: linear-gradient(to top, #B5761A 50%, #18204A 50%); }
+[data-tree="stars"] .nlabel, [data-tree="stars"] .nname { color: #DDE4FF; }
+[data-tree="stars"] .nlock { background: #18204A; border-color: #5A6BB0; }
+[data-tree="stars"] .lvl { background: #3A4B8C; color: #DDE4FF; }
+[data-tree="stars"] .rank i { background: #18204A; border-color: #5A6BB0; }
+[data-tree="stars"] .rank i.on { background: #FFD45A; }
+
+/* =============================================================== TREE: "Ladder" (layout in camp.js ladderView)
+   One row per ability, its tiers left to right with the sprite on each step: reads like a list, no hunting. */
+[data-tree="ladder"] .ladder { background: none; border: 0; padding: 0; background-image: none; }
+[data-tree="ladder"] .lrow { box-shadow: 0 3px 0 var(--drop); }
+[data-tree="ladder"] .node .nface { width: 54px; height: 54px; }
+[data-tree="ladder"] .node.owned .nface { background: radial-gradient(circle at 35% 30%, #D8F0C8, #7CC06F 70%); }
+[data-tree="ladder"] .link.on { background: #7CC06F; }
+
+/* =============================================================== TREE: "Rune stones"
+   A grey slab; each node a carved stone. Unbought stones are dull with the sprite cut in; bought ones glow blue from
+   inside. Links are grooves in the slab. */
+[data-tree="runes"] .tree { background: #5E5A62; border: 3px solid #2E2B33; border-radius: 10px; color: #F0EDF3;
+  background-image: radial-gradient(60% 40% at 30% 20%, rgba(255, 255, 255, .10), transparent), repeating-linear-gradient(35deg, rgba(0, 0, 0, .05) 0 3px, transparent 3px 9px);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, .12), inset 0 -4px 0 rgba(0, 0, 0, .25); }
+[data-tree="runes"] .bhead { color: #F0EDF3; text-shadow: 0 1px 0 #2E2B33; }
+[data-tree="runes"] .bhead .bico { display: block; filter: grayscale(1) brightness(1.3) drop-shadow(0 1px 0 #2E2B33); opacity: .8; }
+[data-tree="runes"] .link { width: 6px; background: #3E3B42; border: 0; box-shadow: inset 1px 1px 0 rgba(0, 0, 0, .4); }
+[data-tree="runes"] .link.on { background: #5FD0E8; box-shadow: 0 0 8px #5FD0E8; }
+[data-tree="runes"] .node .nface { border-radius: 12px; background: linear-gradient(145deg, #9A96A0, #77737D); border: 2px solid #2E2B33; color: #2E2B33;
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, .25), inset -2px -3px 0 rgba(0, 0, 0, .25), 0 3px 0 #2E2B33; }
+[data-tree="runes"] .node.tier .nface .rn { display: none; }
+[data-tree="runes"] .node.tier .nface .nico { display: block; filter: grayscale(1) brightness(.55) contrast(1.4); opacity: .75; }
+[data-tree="runes"] .node.owned .nface { background: linear-gradient(145deg, #7FE3F5, #2FA6C9); box-shadow: inset 2px 2px 0 rgba(255, 255, 255, .35), 0 0 16px rgba(95, 208, 232, .7), 0 3px 0 #2E2B33; }
+[data-tree="runes"] .node.owned .nface .nico { filter: none; opacity: 1; }
+[data-tree="runes"] .node.ready .nface { animation: runeReady 1.6s ease-in-out infinite; }
+@keyframes runeReady { 50% { box-shadow: inset 2px 2px 0 rgba(255, 255, 255, .25), 0 0 0 4px rgba(95, 208, 232, .45), 0 3px 0 #2E2B33; } }
+[data-tree="runes"] .node.locked .nface { background: linear-gradient(145deg, #6A666F, #57535B); color: #3E3B42; }
+[data-tree="runes"] .node.stat .nface { border-radius: 8px; }
+[data-tree="runes"] .node.part .nface { background: linear-gradient(to top, #2FA6C9 50%, #8A8690 50%); }
+[data-tree="runes"] .nlabel, [data-tree="runes"] .nname { color: #F0EDF3; text-shadow: 0 1px 0 #2E2B33; }
+[data-tree="runes"] .nlock { background: #77737D; border-color: #2E2B33; }
+[data-tree="runes"] .lvl { background: #2E2B33; color: #F0EDF3; }
+[data-tree="runes"] .rank i { background: #3E3B42; border-color: #2E2B33; }
+[data-tree="runes"] .rank i.on { background: #5FD0E8; }
+
+/* small fixes */
+[data-look="ember"] .fact.feat { background: rgba(255, 179, 71, .18); }
+[data-look="arcade"] .row-h.title .muted { color: #8C7FD0; opacity: 1; }
+[data-look="arcade"] .htile.locked { background: #2B2163; }
+[data-look="journal"] .seat:not(.empty):not(.locked):nth-child(odd) { transform: rotate(-1.5deg); }
+[data-look="journal"] .seat:not(.empty):not(.locked):nth-child(even) { transform: rotate(1.2deg); }
+[data-look="ember"] .htile.locked { background: #171C2C; }
+[data-look="journal"] .htile.locked { background: #EFE4CC; }

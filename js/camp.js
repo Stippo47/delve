@@ -4,6 +4,32 @@
 import { HEROES, HERO_IDS, BRANCHES, FEAT_LEVEL } from './heroes.js';
 import * as P from './progress.js';
 import { writeSave } from './save.js';
+import { icon } from './icons.js';
+import { DEFS } from './units.js';
+import { BEASTS, beastFun, beastHabit, trinketFun, POTION_FUN } from './bestiary.js';
+import { portrait } from './inspect.js';
+
+// ---------------------------------------------------------------- looks (round 6: a style setting)
+// The camp and the skill tree each have looks to choose from in the settings; the classic one is the 0.6.0 look.
+// css/looks.css does the work, keyed on <html data-look> and <html data-tree>; the tree's ladder look also changes
+// its layout (treeView below).
+export const LOOKS = [
+  { id: 'classic', name: 'Parchment', blurb: 'The 0.6.0 look: warm paper cards, heavy ink.' },
+  { id: 'ember', name: 'Night watch', blurb: 'Dark night, the fire the only light.' },
+  { id: 'journal', name: 'Field journal', blurb: 'A traveller\'s sketchbook: pencil, paper, tape.' },
+  { id: 'arcade', name: 'Arcade', blurb: 'Chunky pixels, loud colours.' },
+];
+export const TREE_LOOKS = [
+  { id: 'classic', name: 'Columns', blurb: 'Three columns of round nodes (0.6.0).' },
+  { id: 'stars', name: 'Constellation', blurb: 'Each ability a line of stars in the night sky.' },
+  { id: 'ladder', name: 'Ladder', blurb: 'One row per ability: its tiers left to right, easy to read.' },
+  { id: 'runes', name: 'Rune stones', blurb: 'Carved stones on a slab; lit when bought.' },
+];
+export function applyLook(s = save) {
+  const html = document.documentElement;
+  html.dataset.look = LOOKS.some((l) => l.id === s.look) ? s.look : 'classic';
+  html.dataset.tree = TREE_LOOKS.some((l) => l.id === s.treeLook) ? s.treeLook : 'classic';
+}
 
 // ---------------------------------------------------------------- dungeons (themes)
 // Lane C writes js/themes.js (THEMES[id] = { name, blurb, palette { floor, wall, rock, accent }, ... }).
@@ -36,6 +62,9 @@ const I = {
   zzz: '<span class="zzz"><i>z</i><i>z</i><i>z</i></span>',
 };
 const coin = '<span class="coin"></span>';
+const tIcon = (t) => { const lv = P.trinketLevel(save, t.id); return `<span class="tico lv${lv}">${icon('trinket', t.id, '', t.color)}${lv > 1 ? `<i class="tlv">${roman(lv)}</i>` : ''}</span>`; };
+const pIcon = (id) => `<span class="tico">${icon('potion', id)}</span>`;
+const cheapEnough = (n, cur = 'gold') => P.afford(save, cur, n);
 const gold = (n) => `<span class="cost">${coin}${n}</span>`;
 const gems = (n) => `<span class="cost">${I.gem}${n}</span>`;
 const ROLE = { tank: 'Tank', melee: 'Fighter', skirmish: 'Skirmisher', ranged: 'Ranged', caster: 'Caster', support: 'Support' };
@@ -48,8 +77,9 @@ const ownedHeroes = (save) => HERO_IDS.filter((id) => save.heroes[id].owned);
 let save = null, onSetOut = null, root = null, mainEl = null, sheetEl = null;
 let tab = 'camp';          // camp | heroes | shop
 let sub = null;            // null | { view: 'hero', id } | { view: 'dungeons' }
+let bookTab = 'beasts';    // the bestiary's page: beasts | items
 let sheet = null;          // null | { type: 'party', slot } | { type: 'node', hero, node } | { type: 'trinket', hero, slot }
-let potionFor = {};        // heroes handed a potion to bring in
+let potionFor = {};        // { heroId: [potionId...] }: what each hero is handed to bring in
 let lastView = '';
 let ticker = 0;
 
@@ -58,11 +88,12 @@ export function initCamp(opts) {
   root = document.getElementById('camp');
   mainEl = document.getElementById('campMain');
   sheetEl = document.getElementById('sheet');
+  applyLook();
   root.addEventListener('click', onClick);
   sheetEl.addEventListener('click', onClick);
   document.getElementById('result').addEventListener('click', onClick);
 }
-export function setSave(s) { save = s; }
+export function setSave(s) { save = s; applyLook(); }
 
 export function showCamp() {
   sub = null; sheet = null;
@@ -78,14 +109,16 @@ function render() {
   const view = sub ? sub.view + (sub.id || '') : tab;
   const fresh = view !== lastView; lastView = view;
   const keep = fresh ? 0 : mainEl.scrollTop;
-  document.getElementById('cGold').textContent = save.gold;
-  document.getElementById('cGems').textContent = save.gems;
+  document.getElementById('cGold').textContent = save.cheat ? '\u221e' : save.gold;
+  document.getElementById('cGems').textContent = save.cheat ? '\u221e' : save.gems;
+  root.classList.toggle('cheat', !!save.cheat);
   for (const b of root.querySelectorAll('.tabs button')) b.classList.toggle('on', !sub && b.dataset.act === 'tab:' + tab || (sub && sub.view === 'hero' && b.dataset.act === 'tab:heroes') || (sub && sub.view === 'dungeons' && b.dataset.act === 'tab:camp'));
   let html = '';
   if (sub && sub.view === 'hero') html = heroPage(sub.id);
   else if (sub && sub.view === 'dungeons') html = dungeonPick();
   else if (tab === 'camp') html = campView();
   else if (tab === 'heroes') html = rosterView();
+  else if (tab === 'book') html = bookView();
   else html = shopView();
   mainEl.innerHTML = `<div class="view${fresh ? ' enter' : ''}">${html}</div>`;
   mainEl.scrollTop = keep;
@@ -98,7 +131,9 @@ function campView() {
   const seats = [];
   for (let i = 0; i < save.slots; i++) seats.push(save.party[i] || null);
   const resting = ownedHeroes(save).filter((id) => P.recoverLeft(save, id, now) && !save.party.includes(id)).slice(0, 3);
-  const canPay = save.potions > 0;
+  const bag = P.POTIONS ? Object.keys(P.POTIONS).reduce((a, id) => a + P.potionCount(save, id), 0) : save.potions;
+  const handed = Object.values(potionFor).reduce((a, l) => a + l.length, 0);
+  const canPay = bag > 0;
   const nextSeat = P.slotPrice(save);
   return `
   ${scene(seats, resting)}
@@ -108,7 +143,7 @@ function campView() {
       ${seats.map((id, i) => seatTile(id, i, now)).join('')}
       ${nextSeat ? `<button class="seat locked" data-act="tab:shop">${I.lock}<b>Another seat</b><span class="muted">in the shop</span></button>` : ''}
     </div>
-    <div class="potions-line">${I.flask}<span>${canPay ? `<b>${save.potions}</b> ${save.potions === 1 ? 'potion' : 'potions'} to hand out: tap the flask on a hero.` : 'No potions to bring in. The shop sells them.'}</span></div>
+    <div class="potions-line">${I.flask}<span>${canPay ? `<b>${bag - handed}</b> ${bag - handed === 1 ? 'potion' : 'potions'} in the bag: tap the flask on a hero to hand some out.` : 'No potions to bring in. The shop sells them.'}</span></div>
   </section>
   <section class="card mercs ${save.mercs ? 'on' : ''}">
     <button class="merc-toggle" data-act="mercs">
@@ -124,12 +159,13 @@ function campView() {
 function seatTile(id, i, now) {
   if (!id) return `<button class="seat empty" data-act="slot:${i}"><span class="plus">+</span><b>Choose</b></button>`;
   const h = HEROES[id], left = P.recoverLeft(save, id, now);
-  const flask = save.potions > 0 || potionFor[id];
+  const mine = potionFor[id] || [];
+  const flask = mine.length || Object.keys(P.POTIONS).some((p) => P.potionCount(save, p) > 0);
   return `<div class="seat ${left ? 'resting' : ''}">
     <button class="seat-pick" data-act="slot:${i}"><img class="art" src="${h.art}" alt=""><b>${h.name}</b></button>
     ${left ? `<span class="timer" data-until="${save.heroes[id].recoverUntil}">${mmss(left)}</span>
       <button class="btn tiny" data-act="speed:${id}">Rest less ${gold(P.speedUpCost(left))}</button>`
-    : flask ? `<button class="flask-btn ${potionFor[id] ? 'on' : ''}" data-act="potion:${id}" aria-label="potion">${I.flask}</button>` : ''}
+    : flask ? `<button class="flask-btn ${mine.length ? 'on' : ''} n${mine.length}" data-act="potion:${id}" aria-label="potions">${mine.length ? mine.map((p) => icon('potion', p)).join('') : I.flask}</button>` : ''}
   </div>`;
 }
 
@@ -235,7 +271,7 @@ function heroPage(id) {
   const tslots = Array.from({ length: 2 }, (_, k) => {
     if (k >= nSlots) return `<div class="tslot locked">${I.lock}<span class="muted">Second slot: in the tree</span></div>`;
     const t = sv.trinkets[k] && P.trinketInfo(sv.trinkets[k]);
-    return `<button class="tslot ${t ? 'full' : ''}" data-act="tslot:${k}" ${sv.owned ? '' : 'disabled'}>${t ? `${gemIcon(t.color)}<span><b>${t.name}</b><span class="muted">${t.desc}</span></span>` : '<span class="plus">+</span><span class="muted">Empty: tap to wear a trinket</span>'}</button>`;
+    return `<button class="tslot ${t ? 'full' : ''}" data-act="tslot:${k}" ${sv.owned ? '' : 'disabled'}>${t ? `${tIcon(t)}<span><b>${t.name}</b><span class="muted">${t.desc}</span></span>` : '<span class="plus">+</span><span class="muted">Empty: tap to wear a trinket</span>'}</button>`;
   }).join('');
   return `<div class="subhead"><button class="iconbtn" data-act="back">${I.back}</button></div>
   <section class="hero-banner ${sv.owned ? '' : 'locked'}" style="--rc:${ROLE_COL[h.role]}">
@@ -259,6 +295,7 @@ function heroPage(id) {
 const gemIcon = (color) => `<span class="gem" style="--g:${color}"></span>`;
 
 function treeView(id) {
+  if (save.treeLook === 'ladder') return ladderView(id);
   const nodes = P.tree(id), h = HEROES[id];
   const cols = BRANCHES.map((b) => {
     const mine = nodes.filter((n) => n.branch === b.id);
@@ -270,14 +307,15 @@ function treeView(id) {
     });
     parts.push('<i class="gap"></i>');
     for (const n of extra) parts.push(nodeBtn(id, n));
-    return `<div class="branch"><div class="bhead"><b>${b.name}</b><span>${h.abilities[b.ability].name}</span></div>${parts.join('')}</div>`;
+    const ab = h.abilities[b.ability];
+    return `<div class="branch"><div class="bhead">${icon('ability', ab.id, 'bico')}<b>${b.name}</b><span>${ab.name}</span></div>${parts.join('')}</div>`;
   }).join('');
   return `<div class="tree">${cols}</div>`;
 }
 function nodeBtn(id, n) {
   const st = P.nodeState(save, id, n);
   const cls = st.maxed ? 'owned' : st.rank ? 'part' : !st.met ? 'locked' : st.canBuy ? 'ready' : 'poor';
-  const face = n.kind === 'tier' ? roman(n.tier) : n.kind === 'slot' ? '<span class="gem" style="--g:#C9A7FF"></span>' : '<b>+</b>';
+  const face = n.kind === 'tier' ? `<span class="rn">${roman(n.tier)}</span>${icon('ability', n.ability, 'nico')}` : n.kind === 'slot' ? '<span class="gem" style="--g:#C9A7FF"></span>' : '<b>+</b>';
   const pips = n.max > 1 ? `<span class="rank">${Array.from({ length: n.max }, (_, k) => `<i class="${k < st.rank ? 'on' : ''}"></i>`).join('')}</span>` : '';
   const under = st.maxed ? `<span class="nlabel">${n.free ? 'Free' : n.max > 1 ? 'All bought' : 'Owned'}</span>` : `<span class="nlabel">${gold(st.cost)}</span>`;
   return `<button class="node ${n.kind} ${cls}" data-act="node:${n.id}" data-node="${n.id}">
@@ -287,32 +325,77 @@ function nodeBtn(id, n) {
   </button>`;
 }
 
+// The ladder look: one row per ability, its three tiers left to right; the stat nodes and the slot underneath.
+function ladderView(id) {
+  const nodes = P.tree(id), h = HEROES[id];
+  const rows = BRANCHES.map((b) => {
+    const ab = h.abilities[b.ability], mine = nodes.filter((n) => n.branch === b.id);
+    const tiers = mine.filter((n) => n.kind === 'tier');
+    const have = P.abilityTiers(save, id, ab.id);
+    return `<div class="lrow"><div class="lhead">${icon('ability', ab.id, 'bico')}<span><b>${ab.name}</b><span class="muted">${b.name} · ${have} of 3</span></span></div>
+      <div class="lsteps">${tiers.map((n, k) => (k ? `<i class="link ${P.rank(save, id, n.id) ? 'on' : ''}"></i>` : '') + nodeBtn(id, n)).join('')}</div></div>`;
+  }).join('');
+  const extra = nodes.filter((n) => n.kind !== 'tier');
+  return `<div class="tree ladder">${rows}<div class="lrow lextra"><div class="lhead"><span><b>Training</b><span class="muted">Bought again and again</span></span></div>
+    <div class="lsteps">${extra.map((n) => nodeBtn(id, n)).join('')}</div></div></div>`;
+}
+
+// ---- the bestiary (the Book tab): every enemy met, and every item
+function bookView() {
+  const kinds = Object.keys(DEFS).filter((k) => DEFS[k].team === 'enemy' && k !== 'boss' && k !== 'skeleton');
+  const seen = save.seen || {};
+  const metN = kinds.filter((k) => seen[k] && seen[k].met).length;
+  const tabs = `<div class="segs"><button class="${bookTab === 'beasts' ? 'on' : ''}" data-act="book:beasts">Monsters</button><button class="${bookTab === 'items' ? 'on' : ''}" data-act="book:items">Items</button></div>`;
+  let body = '';
+  if (bookTab === 'beasts') {
+    body = `<div class="beasts">${kinds.map((k, i) => {
+      const s = seen[k], d = DEFS[k];
+      if (!s || !s.met) return `<div class="beast unknown" style="--d:${(i % 12) * 0.03}s"><span class="bpic"><img src="${portrait(k)}" alt=""></span><b>???</b></div>`;
+      return `<button class="beast ${d.boss ? 'boss' : ''}" data-act="beast:${k}" style="--d:${(i % 12) * 0.03}s"><span class="bpic"><img src="${portrait(k)}" alt=""></span><b>${d.name}</b><span class="muted">${s.beaten} beaten</span></button>`;
+    }).join('')}</div>`;
+  } else {
+    const pots = Object.keys(P.POTIONS).map((id) => { const p = P.POTIONS[id];
+      return `<div class="entry">${pIcon(id)}<span><b>${p.name}</b><em>${POTION_FUN[id] || ''}</em><span class="muted">${p.desc}</span></span></div>`; }).join('');
+    const tr = P.shopTrinkets().map((t) => `<div class="entry ${P.ownsTrinket(save, t.id) ? 'owned' : ''}" style="--rar:${P.RARITY[t.rarity].color}">${tIcon(t)}<span><b>${t.name}</b><em>${trinketFun(t.id)}</em><span class="muted">${t.desc}</span></span></div>`).join('');
+    body = `<h2 class="sh">Potions</h2><section class="card entries">${pots}</section><h2 class="sh">Trinkets</h2><section class="card entries">${tr}</section>`;
+  }
+  return `<div class="row-h title"><h1>Bestiary</h1><span class="muted">${bookTab === 'beasts' ? `${metN} of ${kinds.length} met` : ''}</span></div>${tabs}${body}`;
+}
+
 // ---- the shop
 function shopView() {
   const seat = P.slotPrice(save);
   const owned = {}; for (const t of save.trinkets) owned[t] = (owned[t] || 0) + 1;
   const worn = {}; for (const id of HERO_IDS) for (const t of save.heroes[id].trinkets) (worn[t] = worn[t] || []).push(HEROES[id].name);
   const items = P.shopTrinkets().map((t, i) => {
-    const r = P.RARITY[t.rarity];
-    return `<div class="ware" style="--rar:${r.color};--d:${i * 0.04}s">
-      ${gemIcon(t.color)}
-      <div class="ware-text"><b>${t.name}</b><span class="rar">${r.name}</span><span class="desc">${t.desc}</span>
-        ${owned[t.id] || worn[t.id] ? `<span class="muted">${owned[t.id] ? `${owned[t.id]} in the chest` : ''}${owned[t.id] && worn[t.id] ? ' · ' : ''}${worn[t.id] ? 'worn by ' + worn[t.id].join(', ') : ''}</span>` : ''}</div>
-      <button class="btn buy ${save.gold >= t.price ? '' : 'poor'}" data-act="buyt:${t.id}">${gold(t.price)}</button>
+    const r = P.RARITY[t.rarity], lv = P.trinketLevel(save, t.id), up = P.upgradePrice(save, t.id), have = owned[t.id] || worn[t.id];
+    const lvl = have ? `<div class="lvrow"><span class="lvpips">${Array.from({ length: P.TLV_MAX }, (_, k) => `<i class="${k < lv ? 'on' : ''}"></i>`).join('')}</span>
+      ${up != null ? `<button class="btn small up ${cheapEnough(up) ? '' : 'poor'}" data-act="upt:${t.id}">Level ${roman(lv + 1)} ${gold(up)}</button>` : '<span class="muted">Top level</span>'}</div>` : '';
+    return `<div class="ware" style="--rar:${r.color};--d:${Math.min(i, 12) * 0.04}s">
+      ${tIcon(t)}
+      <div class="ware-text"><b>${t.name}</b><span class="rar">${r.name}</span><span class="desc">${t.desc}</span><em class="fun">${trinketFun(t.id)}</em>
+        ${have ? `<span class="muted">${owned[t.id] ? `${owned[t.id]} in the chest` : ''}${owned[t.id] && worn[t.id] ? ' · ' : ''}${worn[t.id] ? 'worn by ' + worn[t.id].join(', ') : ''}</span>` : ''}${lvl}</div>
+      <button class="btn buy ${cheapEnough(t.price) ? '' : 'poor'}" data-act="buyt:${t.id}">${gold(t.price)}</button>
     </div>`;
+  }).join('');
+  const pots = Object.keys(P.POTIONS).map((id) => {
+    const p = P.POTIONS[id], n = P.potionCount(save, id);
+    return `<div class="ware potion">${pIcon(id)}<div class="ware-text"><b>${p.name}</b><span class="desc">${p.desc}</span><em class="fun">${POTION_FUN[id] || ''}</em>
+      <span class="muted">${n} of ${P.POTION_MAX} in the bag</span></div>
+      <button class="btn buy ${cheapEnough(p.price) && n < P.POTION_MAX ? '' : 'poor'}" data-act="buyp:${id}">${gold(p.price)}</button></div>`;
   }).join('');
   return `<div class="row-h title"><h1>Shop</h1></div>
   <section class="card supplies">
-    <div class="ware">${I.flask}<div class="ware-text"><b>Healing potion</b><span class="desc">Hand one to a hero before you set out. They drink it when low and safe.</span>
-      <span class="muted">${save.potions} of ${P.POTION_MAX} in the bag</span></div>
-      <button class="btn buy ${save.gold >= P.POTION_PRICE && save.potions < P.POTION_MAX ? '' : 'poor'}" data-act="buyp">${gold(P.POTION_PRICE)}</button></div>
     <div class="ware seatware"><span class="seat-ic">${save.slots + (seat ? 1 : 0)}</span><div class="ware-text"><b>${seat ? 'Another seat by the fire' : 'Every seat is taken'}</b>
       <span class="desc">${seat ? `Party size ${save.slots} → ${save.slots + 1}.` : `Your party is ${save.slots} strong.`}</span></div>
-      ${seat ? `<div class="paywith"><button class="btn buy ${save.gold >= seat.gold ? '' : 'poor'}" data-act="buys:gold">${gold(seat.gold)}</button>
-        <button class="btn buy ${save.gems >= seat.gems ? '' : 'poor'}" data-act="buys:gems">${gems(seat.gems)}</button></div>` : ''}</div>
+      ${seat ? `<div class="paywith"><button class="btn buy ${cheapEnough(seat.gold) ? '' : 'poor'}" data-act="buys:gold">${gold(seat.gold)}</button>
+        <button class="btn buy ${cheapEnough(seat.gems, 'gems') ? '' : 'poor'}" data-act="buys:gems">${gems(seat.gems)}</button></div>` : ''}</div>
   </section>
+  <h2 class="sh">Potions</h2>
+  <p class="muted sh">Hand them out at the fire before you set out: two each at most, one of a kind. Elixirs are drunk when the first real fight starts and last that room.</p>
+  <section class="card supplies potions">${pots}</section>
   <h2 class="sh">Trinkets</h2>
-  <p class="muted sh">Bought trinkets are yours for good; put them on a hero from the hero's page. Ones found in a dungeon only last that run.</p>
+  <p class="muted sh">Bought trinkets are yours for good; put them on a hero from the hero's page. Ones found in a dungeon only last that run. Once you own one, level it up: every copy gets stronger.</p>
   <section class="wares">${items}</section>`;
 }
 
@@ -324,6 +407,9 @@ function renderSheet() {
   if (sheet.type === 'party') body = partySheet(sheet.slot);
   else if (sheet.type === 'node') body = nodeSheet(sheet.hero, sheet.node);
   else if (sheet.type === 'trinket') body = trinketSheet(sheet.hero, sheet.slot);
+  else if (sheet.type === 'potions') body = potionSheet(sheet.hero);
+  else if (sheet.type === 'settings') body = settingsSheet();
+  else if (sheet.type === 'beast') body = beastSheet(sheet.kind);
   const was = !sheetEl.classList.contains('hidden');
   sheetEl.innerHTML = `<div class="backdrop" data-act="closesheet"></div><div class="panel ${was ? '' : 'rise'}"><span class="grip"></span>${body}</div>`;
   sheetEl.classList.remove('hidden');
@@ -363,11 +449,47 @@ function trinketSheet(heroId, slot) {
   const seen = new Set();
   const rows = save.trinkets.filter((t) => !seen.has(t) && seen.add(t)).map((tid) => {
     const t = P.trinketInfo(tid), n = save.trinkets.filter((x) => x === tid).length;
-    return `<button class="trow" data-act="equip:${tid}">${gemIcon(t.color)}<span><b>${t.name}${n > 1 ? ` ×${n}` : ''}</b><span class="muted">${t.desc}</span></span></button>`;
+    return `<button class="trow" data-act="equip:${tid}">${tIcon(t)}<span><b>${t.name}${n > 1 ? ` ×${n}` : ''}</b><span class="muted">${t.desc}</span></span></button>`;
   }).join('');
   return `<h2>${cur ? 'Swap trinket' : 'Wear a trinket'}</h2>
     ${rows ? `<div class="plist">${rows}</div>` : '<p class="muted">The chest is empty. Trinkets are in the shop.</p>'}
     <div class="sheet-foot">${cur ? '<button class="btn" data-act="unequip">Take it off</button>' : ''}<button class="btn" data-act="tab:shop">Shop</button></div>`;
+}
+
+// Potions for one hero: toggle each kind in or out (two at most, one of a kind).
+function potionSheet(heroId) {
+  const mine = potionFor[heroId] || [];
+  const taken = (p) => Object.entries(potionFor).reduce((a, [h, l]) => a + (h !== heroId && l.includes(p) ? 1 : 0), 0);
+  const rows = Object.keys(P.POTIONS).map((p) => {
+    const left = P.potionCount(save, p) - taken(p), on = mine.includes(p);
+    if (left <= 0 && !on) return '';
+    const P0 = P.POTIONS[p];
+    return `<button class="trow pick ${on ? 'on' : ''}" data-act="givep:${p}">${pIcon(p)}<span><b>${P0.name}</b><span class="muted">${P0.desc}</span><span class="muted">${left - (on ? 1 : 0)} more in the bag</span></span><span class="tick">${on ? I.check : ''}</span></button>`;
+  }).join('');
+  return `<h2>Potions for ${HEROES[heroId].name}</h2><p class="muted">Two at most, one of each kind.</p>
+    ${rows ? `<div class="plist">${rows}</div>` : '<p class="muted">The bag is empty. The shop sells potions.</p>'}
+    <div class="sheet-foot"><button class="btn" data-act="closesheet">Done</button></div>`;
+}
+
+function settingsSheet() {
+  const pick = (list, cur, act) => `<div class="looks">${list.map((l) => `<button class="lookbtn ${cur === l.id ? 'on' : ''}" data-act="${act}:${l.id}">
+    <span class="swatch sw-${act}-${l.id}"><i></i><i></i><i></i></span><b>${l.name}</b><span class="muted">${l.blurb}</span></button>`).join('')}</div>`;
+  return `<h2>Settings</h2>
+    <h3 class="set-h">Camp look</h3>${pick(LOOKS, save.look || 'classic', 'look')}
+    <h3 class="set-h">Skill tree look</h3>${pick(TREE_LOOKS, save.treeLook || 'classic', 'treelook')}
+    <h3 class="set-h">Cheats</h3>
+    <button class="merc-toggle cheat-toggle ${save.cheat ? 'on' : ''}" data-act="cheat"><span class="merc-text"><b>Unlimited gold and gems</b><span class="muted">Everything in the camp is free while it's on. Your real purse is kept for when you switch it off.</span></span><span class="switch"><i></i></span></button>
+    <div class="sheet-foot"><button class="btn" data-act="closesheet">Done</button></div>`;
+}
+
+function beastSheet(kind) {
+  const d = DEFS[kind], s = (save.seen || {})[kind] || { met: 0, beaten: 0 };
+  const res = Object.entries(d.res || {}).filter(([, v]) => v !== 1);
+  const word = { burn: 'fire', chill: 'cold', poison: 'poison', shock: 'lightning', wet: 'water' };
+  return `<div class="bsheet"><span class="bpic big"><img src="${portrait(kind)}" alt=""></span><div><h2>${d.name}</h2><span class="muted">${d.boss ? 'Boss · ' : ''}${s.met} met · ${s.beaten} beaten</span></div></div>
+    <p class="ndesc"><em>${beastFun(kind)}</em></p><p class="ndesc small">${beastHabit(kind)}</p>
+    ${res.length ? `<div class="ip-chips">${res.map(([k, v]) => `<span class="${v < 1 ? 'res' : 'weak'}">${icon('status', k)}${v === 0 ? 'Immune to' : v < 1 ? 'Shrugs off' : 'Weak to'} ${word[k] || k}</span>`).join('')}</div>` : ''}
+    <div class="sheet-foot"><button class="btn" data-act="closesheet">Close</button></div>`;
 }
 
 // ---------------------------------------------------------------- what taps do
@@ -389,12 +511,23 @@ function onClick(e) {
       save.party = party.filter(Boolean).slice(0, save.slots);
       closeSheet(); ok(); pop('.sitter:not(.empty), .seat-pick'); break;
     }
-    case 'potion': {
-      if (potionFor[arg]) delete potionFor[arg];
-      else if (Object.keys(potionFor).length < save.potions) potionFor[arg] = true;
+    case 'potion': openSheet({ type: 'potions', hero: arg }); break;
+    case 'givep': {
+      const h = sheet.hero, mine = potionFor[h] || (potionFor[h] = []), i = mine.indexOf(arg);
+      const taken = Object.values(potionFor).reduce((a, l) => a + l.filter((p) => p === arg).length, 0);
+      if (i >= 0) mine.splice(i, 1);
+      else if (mine.length < P.CARRY_MAX && taken < P.potionCount(save, arg)) mine.push(arg);
       else { no(); return; }
+      if (!mine.length) delete potionFor[h];
       render(); break;
     }
+    case 'settings': openSheet({ type: 'settings' }); break;
+    case 'look': save.look = arg; applyLook(); persist(); render(); break;
+    case 'treelook': save.treeLook = arg; applyLook(); persist(); render(); break;
+    case 'cheat': save.cheat = !save.cheat; persist(); render(); break;
+    case 'book': bookTab = arg; render(); break;
+    case 'beast': openSheet({ type: 'beast', kind: arg }); break;
+    case 'upt': if (P.upgradeTrinket(save, arg)) { ok(); popGold(); } else no(); break;
     case 'mercs': save.mercs = !save.mercs; ok(); break;
     case 'setout': sub = { view: 'dungeons' }; render(); break;
     case 'enter': {
@@ -414,7 +547,7 @@ function onClick(e) {
     case 'equip': if (P.equip(save, sheet.hero, arg, sheet.slot)) { closeSheet(); ok(); } else no(); break;
     case 'unequip': if (P.unequip(save, sheet.hero, sheet.slot)) { closeSheet(); ok(); } else no(); break;
     case 'buyt': if (P.buyTrinket(save, arg)) { ok(); popGold(); } else no(); break;
-    case 'buyp': if (P.buyPotion(save)) { ok(); popGold(); } else no(); break;
+    case 'buyp': if (P.buyPotion(save, arg || 'heal')) { ok(); popGold(); } else no(); break;
     case 'buys': if (P.buySlot(save, arg)) { ok(); popGold(); } else no(); break;
     case 'closesheet': closeSheet(); break;
     case 'home': closeResult(); break;
@@ -445,7 +578,7 @@ export function showResult(rep, done) {
     return `<div class="rhero" style="--d:${0.5 + i * 0.15}s"><img src="${H.art}" class="${h.downed ? 'down' : ''}" alt="">
       <span><b>${H.name}</b><span class="muted">Reached level ${h.level}${h.record ? ' · best yet' : ''}</span>
       ${h.feat ? `<span class="featline">${I.star} Feat: level ${FEAT_LEVEL}! Tier III and the second trinket slot can be bought.</span>` : ''}
-      ${h.downed ? '<span class="restnote">Downed: resting 10 minutes</span>' : h.hurt ? '<span class="restnote">Badly hurt: resting 3 minutes</span>' : ''}</span></div>`;
+      ${h.downed ? `<span class="restnote">Downed: resting ${restWords(P.RECOVER_DOWN)}</span>` : h.hurt ? `<span class="restnote">Badly hurt: resting ${restWords(P.RECOVER_HURT)}</span>` : ''}</span></div>`;
   }).join('');
   const found = rep.found.length ? `<div class="found">Found and used down there: ${rep.found.map((t) => P.trinketInfo(t).name).join(', ')}. Found trinkets stay in the dungeon.</div>` : '';
   el.innerHTML = `<div class="rcard ${rep.result}">
@@ -465,4 +598,5 @@ export function showResult(rep, done) {
   const step = (now) => { const k = Math.min(1, (now - t0 - 350) / 900); c.textContent = Math.round(to * Math.max(0, 1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); };
   requestAnimationFrame(step);
 }
+const restWords = (ms) => { const m = ms / 60e3; return m === Math.floor(m) ? `${m} ${m === 1 ? 'minute' : 'minutes'}` : `${Math.floor(m)} and a half minutes`; };
 function closeResult() { const d = resultDone; resultDone = null; if (d) d(); }

@@ -4,7 +4,7 @@ import { newRun, update, retreat, summarize, FLOORS } from './dungeon.js';
 import { loadSave, writeSave } from './save.js';
 import { DEFS, xpToNext, levelHp } from './units.js';
 import { setSeed } from './util.js';
-import { initCamp, showCamp, hideCamp, showResult, loadThemes, THEMES } from './camp.js';
+import { initCamp, showCamp, hideCamp, showResult, loadThemes, THEMES, applyLook } from './camp.js';
 import { applySummary, applyLoadout, MERCS } from './progress.js';
 import { buildCards, updateCards } from './hud.js';
 import { initInspect, openInspect, closeInspect, inspecting, selected, select, unitAt, drawSelection, panelHeight, refreshInspect } from './inspect.js';
@@ -219,7 +219,7 @@ window.GAME = {
   pause(on = true, kind) { const u = kind && run && run.world.units.find((x) => x.kind === kind && !x.dead); setPaused(on, u); },
   fastForward(seconds) { const n = Math.round(seconds / STEP); for (let i = 0; i < n && run && !run.summary; i++) update(run, STEP); },
   // debug: change the camp's save while testing, e.g. GAME.cheat({ gold: 999, gems: 9 })
-  cheat(o) { Object.assign(save, o); writeSave(save); if (state === 'camp') showCamp(); },
+  cheat(o) { Object.assign(save, o); writeSave(save); applyLook(save); if (state === 'camp') showCamp(); },
 };
 
 (async function boot() {
