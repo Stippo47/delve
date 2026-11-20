@@ -1,0 +1,46 @@
+{
+  "title": "0.7.0: your round 6 notes",
+  "topic": "runs",
+  "order": 8,
+  "priority": 1,
+  "tags": ["first"],
+  "cards": [
+    {
+      "id": "feel",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "Feel, HUD and polish",
+      "text": "Waves, a faster party, longer fights, real knockback, corpses that stay, smoother paths, a new HUD. Live as 0.7.0.",
+      "why": "This is most of your round 6 list. Mark any part that's off.",
+      "videos": ["../../../clips/r6/feel.mp4"],
+      "images": ["../../../clips/r6/hud/02-hud-fight.png", "../../../clips/r6/hud/03-pause-hero.png"],
+      "details": "Batches of full runs: nothing stuck, no errors. With each hero's first ability bought, the starter trio wins about half the time (the Warren most, the Crypt least). A trio with nothing bought reaches floors 2 to 3 and doesn't win: that's the progression curve now; say if you want it gentler.\n\nThe clip is a Crypt room at 1.5x with four heroes at level 5.",
+      "parts": [
+        { "id": "waves", "title": "Waves", "text": "After a room is cleared, 1 or 2 more waves climb out of dark rifts in the floor. Doors open after the last wave." },
+        { "id": "speed", "title": "Speed and TTK", "text": "Heroes move 3x faster (enemies 2.5x), everyone has twice the health, ranges are longer and colliders a bit bigger. Rooms are a bit smaller." },
+        { "id": "juice", "title": "Juice", "text": "More knockback; hit units flinch; sparks land on the body's edge, or on a raised shield's face with a clang. Hitstop only on crits and short; much less shake. Killed enemies are thrown by the blow, land, slide and lie there, fading slowly." },
+        { "id": "paths", "title": "Paths", "text": "Steering is smooth between directions, so no more flicking back and forth. Enemies don't stick in corners. The party goes straight for enemies instead of searching empty areas." },
+        { "id": "loot", "title": "Chests and coins", "text": "No keys. When a room is won a chest can drop in by the party; it opens empty and coins spill out round it. Coins scatter wider and fly to a hero who comes close. Spikes sink once a room is won." },
+        { "id": "cleric", "title": "Cleric and Backstab", "text": "The cleric is ranged with a light orb, and her first ability is a mending ray that heals an ally over time (never herself). Backstab's cooldown is 11s, up from 6. Auras round heroes are gone." },
+        { "id": "hud", "title": "HUD and pause", "text": "Hero cards along the bottom with current/max health, ability dials that sweep as they cool down, status rings with icons, and item sprites. Pause, or tap any unit, to inspect it.", "images": ["../../../clips/r6/hud/04-pause-hero-items.png"] },
+        { "id": "camp", "title": "Camp additions", "text": "A Book tab: a bestiary with fun lines for every enemy, plus every trinket and potion. Five new potions to buy (haste, faster abilities, fire immunity, iron skin, regeneration). Trinkets level up to III in the shop. Rest is 3 minutes down, 90s hurt. A settings toggle for unlimited currency." },
+        { "id": "harder", "title": "Harder deeper", "text": "Warren, then Sewers, then Crypt get harder, and each floor is harder than the last, with more enemy kinds and moves (orcs charge, bone spears lunge)." },
+        { "id": "camera", "title": "Camera", "text": "Drag past the room's edge by up to a third of its size." }
+      ]
+    },
+    {
+      "id": "sound",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Sound and music",
+      "text": "Every hit, spell, coin and door has a sound, and each place has its own music. Listen to the three samples.",
+      "why": "Made in the game itself, no sound files. Volumes and how often things play are one-line changes, so say what's too loud, too often or wrong.",
+      "audio": [
+        { "src": "../../../clips/r6/sound/delve-sound-crypt.m4a", "label": "Camp, then a Crypt fight with a wave" },
+        { "src": "../../../clips/r6/sound/delve-sound-boss.m4a", "label": "The Bone King" },
+        { "src": "../../../clips/r6/sound/delve-sound-board.m4a", "label": "Every sound in a row" }
+      ],
+      "details": "About 96 sounds: hits by what's hit (flesh, bone, slime, armour), crits, shield clangs, bow draw and twang, spells by element, every status, deaths by kind, coins that rise in pitch, chests, doors, the wave rumble, room and floor stingers, boss tells that rise into the strike, and camp clicks.\n\nMusic never loops: a calm layer for each place (camp, Crypt, Sewers, Warren) with a fight layer that comes in when enemies wake, and a boss track that builds with each phase. On iPhone the silent switch mutes it and your own music keeps playing. Volumes are in the camp's settings."
+    }
+  ]
+}
