@@ -8,6 +8,7 @@ import { icon } from './icons.js';
 import { DEFS } from './units.js';
 import { BEASTS, beastFun, beastHabit, trinketFun, POTION_FUN } from './bestiary.js';
 import { portrait } from './inspect.js';
+import { ENV_STYLES, envId, setEnv } from './env.js';
 
 // ---------------------------------------------------------------- looks (round 6: a style setting)
 // The camp and the skill tree each have looks to choose from in the settings; the classic one is the 0.6.0 look.
@@ -477,6 +478,7 @@ function settingsSheet() {
   return `<h2>Settings</h2>
     <h3 class="set-h">Camp look</h3>${pick(LOOKS, save.look || 'classic', 'look')}
     <h3 class="set-h">Skill tree look</h3>${pick(TREE_LOOKS, save.treeLook || 'classic', 'treelook')}
+    <h3 class="set-h">Dungeon look</h3>${pick(ENV_STYLES.map((e) => ({ ...e, id: String(e.id) })), String(envId()), 'env')}
     <h3 class="set-h">Cheats</h3>
     <button class="merc-toggle cheat-toggle ${save.cheat ? 'on' : ''}" data-act="cheat"><span class="merc-text"><b>Unlimited gold and gems</b><span class="muted">Everything in the camp is free while it's on. Your real purse is kept for when you switch it off.</span></span><span class="switch"><i></i></span></button>
     <div class="sheet-foot"><button class="btn" data-act="closesheet">Done</button></div>`;
@@ -525,6 +527,7 @@ function onClick(e) {
     case 'look': save.look = arg; applyLook(); persist(); render(); break;
     case 'treelook': save.treeLook = arg; applyLook(); persist(); render(); break;
     case 'cheat': save.cheat = !save.cheat; persist(); render(); break;
+    case 'env': setEnv(+arg); render(); break;
     case 'book': bookTab = arg; render(); break;
     case 'beast': openSheet({ type: 'beast', kind: arg }); break;
     case 'upt': if (P.upgradeTrinket(save, arg)) { ok(); popGold(); } else no(); break;
