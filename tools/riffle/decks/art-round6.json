@@ -1,0 +1,539 @@
+{
+  "title": "Art round 6: only what you asked",
+  "topic": "art",
+  "order": 7,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "fixes",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Exactly your notes",
+      "text": "Each design changed only where your note said, shown beside the version you saw.",
+      "why": "Tick the ones that are right now. Each 'before' tile is the last version, for comparing.",
+      "details": "Every design was rebuilt from the exact file you saw, and only the note was applied. Where last round had redrawn something instead of doing your note (the lizards, dragonborn, goblin, imp, devil), it went back to the earlier version with only your note applied. All of it was done by Opus at the highest effort.\n\nHeroes not picked with no note (Bearskin, Necromancer, Pyromancer, Storm, Beekeeper, Lantern keeper, Plague doctor, Templar, Scarecrow, Vampire, the tamers) were left alone: they need a note each to know what to fix.",
+      "pick": [
+        "caster-witch",
+        "support-chef",
+        "support-seer",
+        "ranged-harpooner",
+        "ranged-marksman-a",
+        "ranged-ninja",
+        "ranged-pirate",
+        "ranged-slinger",
+        "ranged-trapper-right",
+        "ranged-trapper",
+        "fighter-executioner",
+        "fighter-gladiator",
+        "fighter-werewolf-human",
+        "fighter-werewolf",
+        "bat",
+        "celestial-angel-b",
+        "dragonborn-a",
+        "dragonborn-b",
+        "fiend-demon",
+        "fiend-devil",
+        "fiend-imp",
+        "ghost",
+        "greenskin-goblin",
+        "greenskin-hobgoblin",
+        "greenskin-ogre",
+        "greenskin-orc-shaman",
+        "greenskin-orc",
+        "greenskin-troll",
+        "lizardman-blade-a",
+        "lizardman-blade-b",
+        "lizardman-croc-a",
+        "lizardman-croc-b",
+        "lizardman-spear-a",
+        "lizardman-spear-b",
+        "slime-big",
+        "snowman",
+        "spider-hunter"
+      ],
+      "items": [
+        {
+          "id": "caster-witch",
+          "label": "Witch",
+          "image": "../../../design/class-round6/heroes-casters/renders/caster-witch.png",
+          "thumb": "../../../design/class-round6/heroes-casters/renders/caster-witch-thumb.png",
+          "text": "Witch (caster-witch.svg), picked. \"Remove shine. Make tip of hat a slightly less weird shape\": the pale shine on the crown is gone; the tip is one smooth bent cone tapering evenly to a rounded point (it ended in a thin hooked flick). Nothing else changed."
+        },
+        {
+          "id": "caster-witch-before",
+          "label": "Witch (before)",
+          "image": "../../../design/class-round6/heroes-casters/renders/caster-witch-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "support-chef",
+          "label": "Chef",
+          "image": "../../../design/class-round6/heroes-support/renders/support-chef.png",
+          "thumb": "../../../design/class-round6/heroes-support/renders/support-chef-thumb.png",
+          "text": "Chef (support-chef.svg). \"Hat bad\": a new hat only. A toque seen from above: a broad band wrapping the top of the head down to the brow, and a big puffed top as wide as the head (round 5: a narrow band and a small puff on the back of the head, bare scalp between). Face, moustache, jacket, pan and spoon as they were."
+        },
+        {
+          "id": "support-chef-before",
+          "label": "Chef (before)",
+          "image": "../../../design/class-round6/heroes-support/renders/support-chef-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "support-seer",
+          "label": "Seer",
+          "image": "../../../design/class-round6/heroes-support/renders/support-seer.png",
+          "thumb": "../../../design/class-round6/heroes-support/renders/support-seer-thumb.png",
+          "text": "Seer (support-seer.svg), picked. \"Eyeband doesn't look right. Should be u see hair and flipped\": the blindfold now bows down round the front of the face (it arched upward, so it read upside down) and sits under the hair: the fringe comes down onto its top edge and the two front locks lie over its ends, so hair shows above and beside it. Same band colour and width, same hair."
+        },
+        {
+          "id": "support-seer-before",
+          "label": "Seer (before)",
+          "image": "../../../design/class-round6/heroes-support/renders/support-seer-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "ranged-harpooner",
+          "label": "Harpooner",
+          "image": "../../../design/class-round6/ranged/renders/ranged-harpooner.png",
+          "thumb": "../../../design/class-round6/ranged/renders/ranged-harpooner-thumb.png",
+          "text": "Harpooner (ranged-harpooner.svg), picked. \"Where beard go?\": the round-4 grey beard is back (same scalloped shape, size, place and colour), drawn over the face, without the mouth line on it that read as a nose; the round-5 moustache sits on it. Its two top lobes are left off so no grey pokes up between the moustache and the hat."
+        },
+        {
+          "id": "ranged-harpooner-before",
+          "label": "Harpooner (before)",
+          "image": "../../../design/class-round6/ranged/renders/ranged-harpooner-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "ranged-marksman-a",
+          "label": "Marksman A",
+          "image": "../../../design/class-round6/ranged/renders/ranged-marksman-a.png",
+          "thumb": "../../../design/class-round6/ranged/renders/ranged-marksman-a-thumb.png",
+          "text": "Marksman A (ranged-marksman-a.svg), picked. \"Gun too short. Give facial hair. Maybe skinny grey moustache\": the same musket, about a fifth longer (the stock reaches further back along the shoulder, the barrel further forward, the wooden fore-stock ends at the front hand so more steel barrel shows; the hands stay put); a thin grey moustache with flicked-up ends, on the face over the mouth."
+        },
+        {
+          "id": "ranged-marksman-a-before",
+          "label": "Marksman A (before)",
+          "image": "../../../design/class-round6/ranged/renders/ranged-marksman-a-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "ranged-ninja",
+          "label": "Ninja",
+          "image": "../../../design/class-round6/ranged/renders/ranged-ninja.png",
+          "thumb": "../../../design/class-round6/ranged/renders/ranged-ninja-thumb.png",
+          "text": "Ninja (ranged-ninja.svg), picked. \"Make mask softer/ less sharp turn\": the mask still rises over the nose, in one soft round curve instead of a point; its fold line follows it."
+        },
+        {
+          "id": "ranged-ninja-before",
+          "label": "Ninja (before)",
+          "image": "../../../design/class-round6/ranged/renders/ranged-ninja-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "ranged-pirate",
+          "label": "Pirate",
+          "image": "../../../design/class-round6/ranged/renders/ranged-pirate.png",
+          "thumb": "../../../design/class-round6/ranged/renders/ranged-pirate-thumb.png",
+          "text": "Pirate (ranged-pirate.svg), picked. \"Wider bowl of hat. Wider hat overall\": the tricorn 18% wider (same height, same gold edge); its crown (the bowl) from a 48-wide circle to a 68 x 52 oval."
+        },
+        {
+          "id": "ranged-pirate-before",
+          "label": "Pirate (before)",
+          "image": "../../../design/class-round6/ranged/renders/ranged-pirate-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "ranged-slinger",
+          "label": "Slinger",
+          "image": "../../../design/class-round6/ranged/renders/ranged-slinger.png",
+          "thumb": "../../../design/class-round6/ranged/renders/ranged-slinger-thumb.png",
+          "text": "Slinger (ranged-slinger.svg), picked. \"Needs fixing of hat but looks interesting\": the same ram-fleece hood and horns, cleaned up: the darker crescent across the brow (it read as a frowning visor) is gone, so the hood ends in its own woolly edge; no shine or spots on the wool; the horns go under the hood so their roots tuck into the wool; no scratch lines on the horns."
+        },
+        {
+          "id": "ranged-slinger-before",
+          "label": "Slinger (before)",
+          "image": "../../../design/class-round6/ranged/renders/ranged-slinger-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "ranged-trapper-right",
+          "label": "Trapper",
+          "image": "../../../design/class-round6/ranged/renders/ranged-trapper-right.png",
+          "thumb": "../../../design/class-round6/ranged/renders/ranged-trapper-right-thumb.png",
+          "text": "Trapper (ranged-trapper.svg, and ranged-trapper-right.svg), picked. \"Why hat not on right?\": the cap sat turned 9 degrees on the head and looked knocked askew; it now sits straight and centred. In case the note meant the tilt should go the other way, -right has the same slight tilt mirrored (crown leaning right). Same cap otherwise."
+        },
+        {
+          "id": "ranged-trapper-right-before",
+          "label": "Trapper (before)",
+          "image": "../../../design/class-round6/ranged/renders/ranged-trapper-right-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "ranged-trapper",
+          "label": "Trapper",
+          "image": "../../../design/class-round6/ranged/renders/ranged-trapper.png",
+          "thumb": "../../../design/class-round6/ranged/renders/ranged-trapper-thumb.png",
+          "text": "Trapper (ranged-trapper.svg, and ranged-trapper-right.svg), picked. \"Why hat not on right?\": the cap sat turned 9 degrees on the head and looked knocked askew; it now sits straight and centred. In case the note meant the tilt should go the other way, -right has the same slight tilt mirrored (crown leaning right). Same cap otherwise."
+        },
+        {
+          "id": "ranged-trapper-before",
+          "label": "Trapper (before)",
+          "image": "../../../design/class-round6/ranged/renders/ranged-trapper-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "fighter-executioner",
+          "label": "Executioner",
+          "image": "../../../design/class-round6/fighters/renders/fighter-executioner.png",
+          "thumb": "../../../design/class-round6/fighters/renders/fighter-executioner-thumb.png",
+          "text": "Executioner (fighter-executioner.svg), no note: the same fault as the werewolf's human form (a flat stubble crescent hanging past the chin, read as a shadow behind the head). Now a short dark beard on the jaw, drawn over the face. Nothing else changed."
+        },
+        {
+          "id": "fighter-executioner-before",
+          "label": "Executioner (before)",
+          "image": "../../../design/class-round6/fighters/renders/fighter-executioner-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "fighter-gladiator",
+          "label": "Gladiator",
+          "image": "../../../design/class-round6/fighters/renders/fighter-gladiator.png",
+          "thumb": "../../../design/class-round6/fighters/renders/fighter-gladiator-thumb.png",
+          "text": "Gladiator (fighter-gladiator.svg), picked. \"Give a spartan styled helmet\": a Corinthian helm: one bronze shell over the head with cheek guards down to the jaw, the face showing through a T (an eye band split by a nose guard, a slot to the chin where the mouth shows); the round-5 red crest front to back, now ending at the brow. Body, gladius and shield as they were."
+        },
+        {
+          "id": "fighter-gladiator-before",
+          "label": "Gladiator (before)",
+          "image": "../../../design/class-round6/fighters/renders/fighter-gladiator-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "fighter-werewolf-human",
+          "label": "Werewolf human",
+          "image": "../../../design/class-round6/fighters/renders/fighter-werewolf-human.png",
+          "thumb": "../../../design/class-round6/fighters/renders/fighter-werewolf-human-thumb.png",
+          "text": "Werewolf human (fighter-werewolf-human.svg), picked. \"Facial hair layered wrong... Remove sheen from hair and the lines. Flip axe\": the stubble was a see-through crescent hanging below the chin, so it read as a shadow behind the head; it is now a short scruffy beard in the hair's colour, drawn on the face from the sideburns round the jaw, the mouth above it. The hair has no sheen patch and no lines. The hatchet head is mirrored across the haft (the blade faces in, toward the body)."
+        },
+        {
+          "id": "fighter-werewolf-human-before",
+          "label": "Werewolf human (before)",
+          "image": "../../../design/class-round6/fighters/renders/fighter-werewolf-human-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "fighter-werewolf",
+          "label": "Werewolf",
+          "image": "../../../design/class-round6/fighters/renders/fighter-werewolf.png",
+          "thumb": "../../../design/class-round6/fighters/renders/fighter-werewolf-thumb.png",
+          "text": "Werewolf (fighter-werewolf.svg), picked. \"Weird fangs. Weird shadowing in some places, like that top head segment and ears\": no light sheen patches (skull, ruff, paws) and no dark stripes on the skull; the skull's shadow on the ruff is short and soft (it ringed the top of the head like a separate dome); the inner ears follow the ear's shape in a muted pink (they were round pink spots); two curved fangs hang from the upper jaw beside the nose (they were flat triangles on the snout's sides)."
+        },
+        {
+          "id": "fighter-werewolf-before",
+          "label": "Werewolf (before)",
+          "image": "../../../design/class-round6/fighters/renders/fighter-werewolf-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "bat",
+          "label": "Bat",
+          "image": "../../../design/class-round6/enemies/renders/bat.png",
+          "thumb": "../../../design/class-round6/enemies/renders/bat-thumb.png",
+          "text": "Bat (bat.svg), picked. \"Decent. Fix shading. Maybe add nose\": the face used the heroes' face gradient (dark at the top, as under a hat brim the bat doesn't have), which put a dark band across the head; it is lit like the rest of the bat now, light top left to darker bottom right. A small dark nose on the snout."
+        },
+        {
+          "id": "bat-before",
+          "label": "Bat (before)",
+          "image": "../../../design/class-round6/enemies/renders/bat-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "celestial-angel-b",
+          "label": "Angel B",
+          "image": "../../../design/class-round6/enemies/renders/celestial-angel-b.png",
+          "thumb": "../../../design/class-round6/enemies/renders/celestial-angel-b-thumb.png",
+          "text": "Angel B (celestial-angel-b.svg). \"Halo is behind, not layered properly\": the same thin pale halo is drawn over the head now, floating: its near arc crosses the top of the hair, its far arc is beyond the head, with a faint shadow on the hair under it."
+        },
+        {
+          "id": "celestial-angel-b-before",
+          "label": "Angel B (before)",
+          "image": "../../../design/class-round6/enemies/renders/celestial-angel-b-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "dragonborn-a",
+          "label": "A",
+          "image": "../../../design/class-round6/enemies/renders/dragonborn-a.png",
+          "thumb": "../../../design/class-round6/enemies/renders/dragonborn-a-thumb.png",
+          "text": "Changed this round."
+        },
+        {
+          "id": "dragonborn-a-before",
+          "label": "A (before)",
+          "image": "../../../design/class-round6/enemies/renders/dragonborn-a-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "dragonborn-b",
+          "label": "B",
+          "image": "../../../design/class-round6/enemies/renders/dragonborn-b.png",
+          "thumb": "../../../design/class-round6/enemies/renders/dragonborn-b-thumb.png",
+          "text": "Changed this round."
+        },
+        {
+          "id": "dragonborn-b-before",
+          "label": "B (before)",
+          "image": "../../../design/class-round6/enemies/renders/dragonborn-b-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "fiend-demon",
+          "label": "Orc, Troll, Ogre, Demon",
+          "image": "../../../design/class-round6/enemies/renders/fiend-demon.png",
+          "thumb": "../../../design/class-round6/enemies/renders/fiend-demon-thumb.png",
+          "text": "Orc, Troll, Ogre, Demon (greenskin-orc.svg, greenskin-troll.svg, greenskin-ogre.svg, fiend-demon.svg): plain fists, and the bald head drawn like the Monk's (the bald hero): one smooth head lit from the top left, without the crease line across the brow that read like a seam or a cap's edge."
+        },
+        {
+          "id": "fiend-demon-before",
+          "label": "Orc, Troll, Ogre, Demon (before)",
+          "image": "../../../design/class-round6/enemies/renders/fiend-demon-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "fiend-devil",
+          "label": "Goblin, Imp, Devil",
+          "image": "../../../design/class-round6/enemies/renders/fiend-devil.png",
+          "thumb": "../../../design/class-round6/enemies/renders/fiend-devil-thumb.png",
+          "text": "Goblin, Imp, Devil (greenskin-goblin.svg, fiend-imp.svg, fiend-devil.svg): round 6 asked \"no eyes\" (devil: \"no eyes, tail back\"); round 5 redrew them instead. Back on their round-4 designs with only that: eyes out, and the devil's tail runs straight back."
+        },
+        {
+          "id": "fiend-devil-before",
+          "label": "Goblin, Imp, Devil (before)",
+          "image": "../../../design/class-round6/enemies/renders/fiend-devil-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "fiend-imp",
+          "label": "Goblin, Imp, Devil",
+          "image": "../../../design/class-round6/enemies/renders/fiend-imp.png",
+          "thumb": "../../../design/class-round6/enemies/renders/fiend-imp-thumb.png",
+          "text": "Goblin, Imp, Devil (greenskin-goblin.svg, fiend-imp.svg, fiend-devil.svg): round 6 asked \"no eyes\" (devil: \"no eyes, tail back\"); round 5 redrew them instead. Back on their round-4 designs with only that: eyes out, and the devil's tail runs straight back."
+        },
+        {
+          "id": "fiend-imp-before",
+          "label": "Goblin, Imp, Devil (before)",
+          "image": "../../../design/class-round6/enemies/renders/fiend-imp-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "ghost",
+          "label": "Ghost",
+          "image": "../../../design/class-round6/enemies/renders/ghost.png",
+          "thumb": "../../../design/class-round6/enemies/renders/ghost-thumb.png",
+          "text": "Ghost (ghost.svg): the hollow mouth is a small dark \"o\", the size of the picked round-3 ghost's (it was twice that). Nothing else."
+        },
+        {
+          "id": "ghost-before",
+          "label": "Ghost (before)",
+          "image": "../../../design/class-round6/enemies/renders/ghost-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "greenskin-goblin",
+          "label": "Goblin, Imp, Devil",
+          "image": "../../../design/class-round6/enemies/renders/greenskin-goblin.png",
+          "thumb": "../../../design/class-round6/enemies/renders/greenskin-goblin-thumb.png",
+          "text": "Goblin, Imp, Devil (greenskin-goblin.svg, fiend-imp.svg, fiend-devil.svg): round 6 asked \"no eyes\" (devil: \"no eyes, tail back\"); round 5 redrew them instead. Back on their round-4 designs with only that: eyes out, and the devil's tail runs straight back."
+        },
+        {
+          "id": "greenskin-goblin-before",
+          "label": "Goblin, Imp, Devil (before)",
+          "image": "../../../design/class-round6/enemies/renders/greenskin-goblin-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "greenskin-hobgoblin",
+          "label": "Hobgoblin, Orc shaman",
+          "image": "../../../design/class-round6/enemies/renders/greenskin-hobgoblin.png",
+          "thumb": "../../../design/class-round6/enemies/renders/greenskin-hobgoblin-thumb.png",
+          "text": "Hobgoblin, Orc shaman (greenskin-hobgoblin.svg, greenskin-orc-shaman.svg): the heroes' plain fists (the knuckle bumps are gone). Nothing else."
+        },
+        {
+          "id": "greenskin-hobgoblin-before",
+          "label": "Hobgoblin, Orc shaman (before)",
+          "image": "../../../design/class-round6/enemies/renders/greenskin-hobgoblin-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "greenskin-ogre",
+          "label": "Orc, Troll, Ogre, Demon",
+          "image": "../../../design/class-round6/enemies/renders/greenskin-ogre.png",
+          "thumb": "../../../design/class-round6/enemies/renders/greenskin-ogre-thumb.png",
+          "text": "Orc, Troll, Ogre, Demon (greenskin-orc.svg, greenskin-troll.svg, greenskin-ogre.svg, fiend-demon.svg): plain fists, and the bald head drawn like the Monk's (the bald hero): one smooth head lit from the top left, without the crease line across the brow that read like a seam or a cap's edge."
+        },
+        {
+          "id": "greenskin-ogre-before",
+          "label": "Orc, Troll, Ogre, Demon (before)",
+          "image": "../../../design/class-round6/enemies/renders/greenskin-ogre-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "greenskin-orc-shaman",
+          "label": "Hobgoblin, Orc shaman",
+          "image": "../../../design/class-round6/enemies/renders/greenskin-orc-shaman.png",
+          "thumb": "../../../design/class-round6/enemies/renders/greenskin-orc-shaman-thumb.png",
+          "text": "Hobgoblin, Orc shaman (greenskin-hobgoblin.svg, greenskin-orc-shaman.svg): the heroes' plain fists (the knuckle bumps are gone). Nothing else."
+        },
+        {
+          "id": "greenskin-orc-shaman-before",
+          "label": "Hobgoblin, Orc shaman (before)",
+          "image": "../../../design/class-round6/enemies/renders/greenskin-orc-shaman-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "greenskin-orc",
+          "label": "Orc, Troll, Ogre, Demon",
+          "image": "../../../design/class-round6/enemies/renders/greenskin-orc.png",
+          "thumb": "../../../design/class-round6/enemies/renders/greenskin-orc-thumb.png",
+          "text": "Orc, Troll, Ogre, Demon (greenskin-orc.svg, greenskin-troll.svg, greenskin-ogre.svg, fiend-demon.svg): plain fists, and the bald head drawn like the Monk's (the bald hero): one smooth head lit from the top left, without the crease line across the brow that read like a seam or a cap's edge."
+        },
+        {
+          "id": "greenskin-orc-before",
+          "label": "Orc, Troll, Ogre, Demon (before)",
+          "image": "../../../design/class-round6/enemies/renders/greenskin-orc-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "greenskin-troll",
+          "label": "Orc, Troll, Ogre, Demon",
+          "image": "../../../design/class-round6/enemies/renders/greenskin-troll.png",
+          "thumb": "../../../design/class-round6/enemies/renders/greenskin-troll-thumb.png",
+          "text": "Orc, Troll, Ogre, Demon (greenskin-orc.svg, greenskin-troll.svg, greenskin-ogre.svg, fiend-demon.svg): plain fists, and the bald head drawn like the Monk's (the bald hero): one smooth head lit from the top left, without the crease line across the brow that read like a seam or a cap's edge."
+        },
+        {
+          "id": "greenskin-troll-before",
+          "label": "Orc, Troll, Ogre, Demon (before)",
+          "image": "../../../design/class-round6/enemies/renders/greenskin-troll-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "lizardman-blade-a",
+          "label": "Blade a",
+          "image": "../../../design/class-round6/enemies/renders/lizardman-blade-a.png",
+          "thumb": "../../../design/class-round6/enemies/renders/lizardman-blade-a-thumb.png",
+          "text": "Changed this round."
+        },
+        {
+          "id": "lizardman-blade-a-before",
+          "label": "Blade a (before)",
+          "image": "../../../design/class-round6/enemies/renders/lizardman-blade-a-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "lizardman-blade-b",
+          "label": "Blade b",
+          "image": "../../../design/class-round6/enemies/renders/lizardman-blade-b.png",
+          "thumb": "../../../design/class-round6/enemies/renders/lizardman-blade-b-thumb.png",
+          "text": "Changed this round."
+        },
+        {
+          "id": "lizardman-blade-b-before",
+          "label": "Blade b (before)",
+          "image": "../../../design/class-round6/enemies/renders/lizardman-blade-b-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "lizardman-croc-a",
+          "label": "Croc a",
+          "image": "../../../design/class-round6/enemies/renders/lizardman-croc-a.png",
+          "thumb": "../../../design/class-round6/enemies/renders/lizardman-croc-a-thumb.png",
+          "text": "Changed this round."
+        },
+        {
+          "id": "lizardman-croc-a-before",
+          "label": "Croc a (before)",
+          "image": "../../../design/class-round6/enemies/renders/lizardman-croc-a-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "lizardman-croc-b",
+          "label": "Croc b",
+          "image": "../../../design/class-round6/enemies/renders/lizardman-croc-b.png",
+          "thumb": "../../../design/class-round6/enemies/renders/lizardman-croc-b-thumb.png",
+          "text": "Changed this round."
+        },
+        {
+          "id": "lizardman-croc-b-before",
+          "label": "Croc b (before)",
+          "image": "../../../design/class-round6/enemies/renders/lizardman-croc-b-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "lizardman-spear-a",
+          "label": "Lizardman spear A",
+          "image": "../../../design/class-round6/enemies/renders/lizardman-spear-a.png",
+          "thumb": "../../../design/class-round6/enemies/renders/lizardman-spear-a-thumb.png",
+          "text": "Lizardman spear A (lizardman-spear-a.svg, -b). \"Looks like it reverted a lot more than what I had asked\": back on the round-4 lizardman A spear (the one the round-6 note was on), with only that note: a no eyes; b no eyes and the heroes' face shading over the head (a soft dark band across the brow where a hero's face is darkest and where the eyes were, light down the snout, a touch darker at the tip, no shine)."
+        },
+        {
+          "id": "lizardman-spear-a-before",
+          "label": "Lizardman spear A (before)",
+          "image": "../../../design/class-round6/enemies/renders/lizardman-spear-a-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "lizardman-spear-b",
+          "label": "Spear b",
+          "image": "../../../design/class-round6/enemies/renders/lizardman-spear-b.png",
+          "thumb": "../../../design/class-round6/enemies/renders/lizardman-spear-b-thumb.png",
+          "text": "Changed this round."
+        },
+        {
+          "id": "lizardman-spear-b-before",
+          "label": "Spear b (before)",
+          "image": "../../../design/class-round6/enemies/renders/lizardman-spear-b-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "slime-big",
+          "label": "Slime big",
+          "image": "../../../design/class-round6/enemies/renders/slime-big.png",
+          "thumb": "../../../design/class-round6/enemies/renders/slime-big-thumb.png",
+          "text": "Slime big (slime-big.svg), picked. \"Not what I asked. Remove tail\": the three drips trailing behind are gone; nothing else. Small and Fire (picked) keep theirs."
+        },
+        {
+          "id": "slime-big-before",
+          "label": "Slime big (before)",
+          "image": "../../../design/class-round6/enemies/renders/slime-big-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "snowman",
+          "label": "Snowman",
+          "image": "../../../design/class-round6/enemies/renders/snowman.png",
+          "thumb": "../../../design/class-round6/enemies/renders/snowman-thumb.png",
+          "text": "Snowman (snowman.svg). \"Stack the head over the body in the middle\": the head is centred exactly on the body (both balls on the sprite's centre), so it stands straight under the camera; the scarf ring, beanie, coal smile and carrot moved up with the head. Same shapes and colours."
+        },
+        {
+          "id": "snowman-before",
+          "label": "Snowman (before)",
+          "image": "../../../design/class-round6/enemies/renders/snowman-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "spider-hunter",
+          "label": "Spider hunter",
+          "image": "../../../design/class-round6/enemies/renders/spider-hunter.png",
+          "thumb": "../../../design/class-round6/enemies/renders/spider-hunter-thumb.png",
+          "text": "Spider hunter (spider-hunter.svg), picked. \"Fix fangs and shading\": the head is lit like the rest of the spider (it had the heroes' face gradient, a dark band across it); the fangs are two stubby jaws in the body's colour, each with a short ivory fang curving in (they were near-black blades that read as a hole in the outline)."
+        },
+        {
+          "id": "spider-hunter-before",
+          "label": "Spider hunter (before)",
+          "image": "../../../design/class-round6/enemies/renders/spider-hunter-before.png",
+          "text": "The version you saw last round, for comparison."
+        }
+      ]
+    }
+  ]
+}
