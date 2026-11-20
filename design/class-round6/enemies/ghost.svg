@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- GHOST (round 5): a pale sheet-like head seen from above with a hollow dark mouth, no eyes; two wispy arms reaching forward; a long wispy tail trailing behind with a curl at the end. Face shaded like the humans (darker toward the top). Parts: #back (tail, sways), #arm-l / #arm-r (wisps), #body. Front = DOWN (+y). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#F4F8FF"/><stop offset="1" stop-color="#A8B6D8"/></linearGradient>
+<path id="p2" d="M127.6 85.1 C134.2 79.6 118 64.9 116.9 58.3 C115.7 51.7 117.8 46.1 120 41.3 C122.2 36.6 128.6 29 131.7 26.5 C134.9 23.9 138.6 23.2 140.9 24.2 C143.2 25.1 145.3 31.8 147.1 32.8 C148.9 33.9 152.3 34.3 152.9 31.2 C153.5 28 155.4 16.3 151.1 11.8 C146.8 7.4 133.1 0.5 124.3 1.5 C115.4 2.6 100 10.8 92 18.7 C84 26.5 74.1 42.3 71.1 53.7 C68.2 65.1 64 90.2 72.4 94.9 C80.9 99.6 120.9 90.6 127.6 85.1 Z"/>
+<clipPath id="c3"><use href="#p2"/></clipPath>
+<linearGradient id="g4" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.3"/></linearGradient>
+<path id="p5" d="M62 104 C58.5 103.7 47.2 115.9 44 122 C40.8 128.1 37.5 144.4 38 150 C38.5 155.6 48 164 48 164 C48 164 49.1 147.3 52 142 C54.9 136.7 68.7 129.1 70 124 C71.3 118.9 65.5 104.3 62 104 Z"/>
+<clipPath id="c6"><use href="#p5"/></clipPath>
+<linearGradient id="g7" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.25"/></linearGradient>
+<path id="p8" d="M138 104 C141.5 103.7 152.8 115.9 156 122 C159.2 128.1 162.5 144.4 162 150 C161.5 155.6 152 164 152 164 C152 164 150.9 147.3 148 142 C145.1 136.7 131.3 129.1 130 124 C128.7 118.9 134.5 104.3 138 104 Z"/>
+<clipPath id="c9"><use href="#p8"/></clipPath>
+<path id="p10" d="M 100 47.8 C 129.6 47.8 147.8 68.7 147.8 98.3 C 147.8 122.6 136.5 140 120.9 147.8 C 113.9 151.3 107 153.1 100 153.1 C 93 153.1 86.1 151.3 79.1 147.8 C 63.5 140 52.1 122.6 52.1 98.3 C 52.1 68.7 70.4 47.8 100 47.8 Z"/>
+<clipPath id="c11"><use href="#p2"/><use href="#p5"/><use href="#p8"/></clipPath>
+<clipPath id="c12"><use href="#p10"/></clipPath>
+<linearGradient id="g13" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#3A3050"/><stop offset="1" stop-color="#1E1830"/></linearGradient>
+<path id="p14" d="M94.5 137 A5.5 6 0 1 0 105.5 137 A5.5 6 0 1 0 94.5 137 Z"/>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="back" data-pivot="100 80"><g>
+<use href="#p2" fill="url(#g1)"/>
+<g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>
+</g></g>
+<g id="arm-l" data-pivot="60 110"><g>
+<use href="#p5" fill="url(#g1)"/>
+<g clip-path="url(#c6)"><use href="#p5" fill="url(#g7)"/></g>
+</g></g>
+<g id="arm-r" data-pivot="140 110"><g>
+<use href="#p8" fill="url(#g1)"/>
+<g clip-path="url(#c9)"><use href="#p8" fill="url(#g7)"/></g>
+</g></g>
+<g id="body"><g>
+<g clip-path="url(#c11)"><use href="#p10" transform="translate(0 5)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p10" fill="url(#g1)"/>
+<g clip-path="url(#c12)"><path d="M40 104 C70 96 130 96 160 104 L160 112 C130 104 70 104 40 112 Z" fill="#8C9AC4" opacity="0.0"/><use href="#p10" fill="url(#g4)"/></g>
+<use href="#p14" fill="url(#g13)"/>
+</g></g>
+</g>
+</svg>
