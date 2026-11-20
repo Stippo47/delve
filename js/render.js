@@ -103,16 +103,48 @@ function softShadow() {
   return (shadowImg = c);
 }
 
-// The circle shadow under a unit (round 6): a firmer disc with a short soft rim, a little wider than the body so it
-// shows round the sprite's edge.
+// The circle shadow under a unit (round 6), smaller in round 7 and merged: where shadows overlap they make one shape
+// (their union), never a darker patch. Every disc goes at full strength into one layer at half the canvas's
+// resolution, and that layer goes onto the floor once, see-through (SHADOW_A). Only the part of the layer the discs
+// cover is cleared and copied each frame.
+const SHADOW_A = 0.36;
 let unitShadowImg = null;
-function unitShadow() {
+function unitShadow() { // solid to 60% of the radius, then a short soft rim
   if (unitShadowImg) return unitShadowImg;
   const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d');
   const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-  gr.addColorStop(0, 'rgba(43,34,48,0.42)'); gr.addColorStop(0.8, 'rgba(43,34,48,0.36)'); gr.addColorStop(1, 'rgba(43,34,48,0)');
+  gr.addColorStop(0, 'rgb(43,34,48)'); gr.addColorStop(0.6, 'rgb(43,34,48)'); gr.addColorStop(1, 'rgba(43,34,48,0)');
   g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
   return (unitShadowImg = c);
+}
+const shadowSize = (u) => (u.downed ? u.vr * 1.35 : u.vr * 1.75) * (1 - Math.min(0.35, (u.hop || 0) / 120));
+const SH = { c: null, box: null, half: 0.5 };
+function drawShadows(ctx, w, tf) {
+  const cv = ctx.canvas, h = SH.half;
+  if (!SH.c) SH.c = document.createElement('canvas');
+  const lw = Math.ceil(cv.width * h), lh = Math.ceil(cv.height * h);
+  if (SH.c.width !== lw || SH.c.height !== lh) { SH.c.width = lw; SH.c.height = lh; SH.box = null; }
+  const g = SH.c.getContext('2d');
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  if (SH.box) g.clearRect(SH.box[0], SH.box[1], SH.box[2] - SH.box[0], SH.box[3] - SH.box[1]);
+  const [a, b, c, d, e, f] = tf.map((v) => v * h), k = Math.hypot(a, b), img = unitShadow();
+  g.setTransform(a, b, c, d, e, f);
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  const disc = (x, y, r, al) => {
+    g.globalAlpha = al; g.drawImage(img, x - r, y - r, r * 2, r * 2);
+    const sx = a * x + c * y + e, sy = b * x + d * y + f, sr = r * k + 2;
+    if (sx - sr < x0) x0 = sx - sr; if (sy - sr < y0) y0 = sy - sr; if (sx + sr > x1) x1 = sx + sr; if (sy + sr > y1) y1 = sy + sr;
+  };
+  for (const u of w.units) if (!u.ethereal) disc(u.x, u.y, shadowSize(u), 1);
+  // a body in the air leaves its shadow on the floor
+  for (const cp of w.corpses) if (cp.z > 2) disc(cp.x, cp.y, cp.vr * 1.3, clamp(cp.t / 4, 0, 1) * 0.8);
+  g.globalAlpha = 1;
+  x0 = Math.max(0, Math.floor(x0)); y0 = Math.max(0, Math.floor(y0)); x1 = Math.min(lw, Math.ceil(x1)); y1 = Math.min(lh, Math.ceil(y1));
+  SH.box = x1 > x0 && y1 > y0 ? [x0, y0, x1, y1] : null;
+  if (!SH.box) return;
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = SHADOW_A;
+  ctx.drawImage(SH.c, x0, y0, x1 - x0, y1 - y0, x0 / h, y0 / h, (x1 - x0) / h, (y1 - y0) / h);
+  ctx.restore();
 }
 
 const SPRITE_KIND = { boss: 'boss', slimeSmall: 'slimeSmall' };
@@ -124,7 +156,8 @@ export function draw(ctx, w) {
   // screen shake, kept small (round 6: punchy hits without heavy shake)
   const sk = Math.min(w.shake, 8) * 0.45;
   const sh = sk > 0 ? (Math.random() - 0.5) * sk : 0, sv = sk > 0 ? (Math.random() - 0.5) * sk : 0;
-  ctx.setTransform(d * m[0], d * m[1], d * m[2], d * m[3], d * (m[4] + sh), d * (m[5] + sv));
+  const tf = [d * m[0], d * m[1], d * m[2], d * m[3], d * (m[4] + sh), d * (m[5] + sv)];
+  ctx.setTransform(...tf);
   const fl = floor(w);
   const s = view.scale;
   ctx.drawImage(fl, -floorCache.pad, -floorCache.pad, fl.width / floorCache.s, fl.height / floorCache.s);
@@ -140,8 +173,9 @@ export function draw(ctx, w) {
   for (const p of w.pillars) drawPillar(ctx, p, w);
   // crates on the grid (layout.js): square obstacles, colliding as the wall rectangle they are (48 across at sc 1)
   for (const r of w.walls) if (r.prop) { const R = r.w * 0.8, x = r.x + r.w / 2, y = r.y + r.h / 2; ctx.drawImage(softShadow(), x - R, y - R, R * 2, R * 2); prop(ctx, r.prop, x, y, PROP_BOX, { sc: r.w / 48 }); }
-  // a round shadow straight under every unit (top-down: no side cast); a leaping unit's shrinks as it rises
-  for (const u of w.units) { if (u.ethereal) continue; const r = (u.downed ? u.vr * 1.4 : Math.max(u.r * 1.7, u.vr * 2)) * (1 - Math.min(0.35, (u.hop || 0) / 120)); ctx.drawImage(unitShadow(), u.x - r, u.y - r, r * 2, r * 2); }
+  // a round shadow straight under every unit (top-down: no side cast), all of them merged; a leaping unit's shrinks
+  // as it rises
+  drawShadows(ctx, w, tf);
   for (const t of w.telegraphs) if (t.type === 'ring') drawRing(ctx, t);
   for (const c of w.corpses) drawCorpse(ctx, c);
   const order = [...w.units].sort((a, b) => (a.downed ? -1 : 0) - (b.downed ? -1 : 0) || screenDepth(a) - screenDepth(b));
@@ -461,7 +495,7 @@ function drawUnit(ctx, u, w) {
   ctx.save();
   unitFrame(ctx, u, w);
   if (u.invulnT > 0) ctx.globalAlpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18));
-  if (u.downed) ctx.globalAlpha = 0.75;
+  if (u.downed) ctx.globalAlpha = 0.62;
   if (u.ethereal && !u.exiting) ctx.globalAlpha = 0.45;
   if (spr) {
     if (u.elite && !u.downed) { const ga = ctx.globalAlpha, r = sizeU * ELITE_RIM; ctx.globalAlpha = ga * (0.7 + 0.3 * Math.sin(w.time * 5 + u.id)); ctx.drawImage(tinted(spr, ELITE_COL), -r / 2, -r / 2, r, r); ctx.globalAlpha = ga; }
@@ -484,6 +518,9 @@ export function warmArt(w) {
 }
 
 // A unit drawn from its SVG parts, arms moving with what it is doing (parts.js).
+// Summons wear a purple outline (round 7), so a raised skeleton or a called wolf reads as ours, not the enemy's.
+export const SUMMON_INK = '#7B3FD0';
+const summonInk = (u) => (u.summon && !u.ethereal ? SUMMON_INK : null);
 function drawPartsUnit(ctx, u, w) {
   const sizeU = u.vr * 220 / (u.def.headR || headR(u.kind)); // def.headR: the head's radius in the art's SVG units
   const set = getRig(u.def.art, sizeU * view.scale * view.dpr * 1.04);
@@ -495,14 +532,14 @@ function drawPartsUnit(ctx, u, w) {
   ctx.scale(k, k); ctx.translate(-100, -100);
   let alpha = 1;
   if (u.invulnT > 0) alpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18));
-  if (u.downed) alpha = 0.75;
+  if (u.downed) alpha = 0.62; // a hero who is down lies faint too (round 7)
   if (u.ethereal && !u.exiting) alpha *= 0.5;
   const mode = u.downed ? 'grey' : u.flashT > 0.06 ? 'flash' : 'normal';
   if (u.elite && !u.downed) { // an elite: a gold rim round the whole figure, outside its ink outline, softly pulsing
     ctx.save(); ctx.globalAlpha = alpha * (0.7 + 0.3 * Math.sin(w.time * 5 + u.id)); ctx.translate(100, 100); ctx.scale(ELITE_RIM, ELITE_RIM); ctx.translate(-100, -100);
     drawComposed(ctx, composeRig(set, pose, 'normal', ELITE_COL)); ctx.restore();
   }
-  drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w) });
+  drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w), ink: summonInk(u) });
   if (pose.glow && mode === 'normal') castGlow(ctx, pose.glow, w.time);
   ctx.restore();
 }
@@ -556,25 +593,49 @@ function drawIce(ctx, u, w) {
 }
 
 // A body thrown by the killing blow (sim.js corpses): white for an instant, then limp, spinning while in the air
-// (lifted: drawn a little bigger, its shadow left on the floor), then lying flat and fading over its last seconds.
+// (lifted: drawn a little bigger, its shadow left on the floor, render's shadow layer). Dead things lie faint (round
+// 7): from just before it lands the body greys and fades to DEAD_A, and over its last seconds it goes altogether.
+// A body lies in one pose, so its look is composed once per art and size and then drawn as one image.
+const DEAD_A = 0.42, DEAD_WASH = 'rgba(96,90,106,0.6)';
+function bodyLook(set, dead) {
+  const key = dead ? '_deadLook' : '_bodyLook';
+  if (set[key]) return set[key];
+  const k = composeRig(set, LIMP, 'normal');
+  const c = document.createElement('canvas'); c.width = c.height = k.sx;
+  const g = c.getContext('2d'); g.drawImage(k.c, 0, 0, k.sx, k.sx, 0, 0, k.sx, k.sx);
+  if (dead) { g.globalCompositeOperation = 'source-atop'; g.fillStyle = DEAD_WASH; g.fillRect(0, 0, k.sx, k.sx); }
+  return (set[key] = { c, sx: k.sx, x: k.x, s: k.s });
+}
 function drawCorpse(ctx, c) {
   const kind = SPRITE_KIND[c.kind] || c.kind, def = DEFS[c.kind], art = def && def.art;
   const sizeU = c.vr * 220 / ((art && def.headR) || headR(kind));
   const lift = 1 + Math.min(0.35, (c.z || 0) / 160);
-  const alpha = clamp(c.t / 4, 0, 1) * 0.95;
+  const fade = clamp(c.t / 4, 0, 1);
+  const m = c.z > 2 ? 0 : clamp(((c.age ?? 1) - 0.25) / 0.6, 0, 1); // 0 flying, 1 lying dead
   const flash = (c.age ?? 1) < 0.07;
-  if (c.z > 2) { const r = c.r * 1.1; ctx.globalAlpha = alpha * 0.8; ctx.drawImage(unitShadow(), c.x - r, c.y - r, r * 2, r * 2); ctx.globalAlpha = 1; }
+  const live = fade * (1 - m), dead = fade * m * DEAD_A; // the two looks cross-fade
   ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.facing - Math.PI / 2); ctx.scale(lift, lift);
   if (art) {
     const set = getRig(art, sizeU * view.scale * view.dpr); if (set) {
       ctx.scale(sizeU / 220, sizeU / 220); ctx.translate(-100, -100);
-      drawRig(ctx, set, LIMP, { mode: flash ? 'flash' : 'normal', alpha, washes: flash ? [] : [['#2B2230', 0.18]] });
+      if (flash) drawRig(ctx, set, LIMP, { mode: 'flash' });
+      else {
+        const ga = ctx.globalAlpha;
+        if (live > 0.01) { ctx.globalAlpha = ga * live; drawComposed(ctx, bodyLook(set, false)); }
+        if (dead > 0.01) { ctx.globalAlpha = ga * dead; drawComposed(ctx, bodyLook(set, true)); }
+        ctx.globalAlpha = ga;
+      }
     }
     ctx.restore(); return;
   }
   const spr = getSprite(kind, sizeU * view.scale * view.dpr);
-  if (spr) { ctx.globalAlpha = alpha; ctx.drawImage(flash ? spr.flash : spr.img, -sizeU / 2, -sizeU / 2, sizeU, sizeU);
-    ctx.globalAlpha = alpha * 0.18; ctx.drawImage(tinted(spr, '#2B2230'), -sizeU / 2, -sizeU / 2, sizeU, sizeU); }
+  if (spr) {
+    if (flash) ctx.drawImage(spr.flash, -sizeU / 2, -sizeU / 2, sizeU, sizeU);
+    else {
+      if (live > 0.01) { ctx.globalAlpha = live; ctx.drawImage(spr.img, -sizeU / 2, -sizeU / 2, sizeU, sizeU); }
+      if (dead > 0.01) { ctx.globalAlpha = dead; ctx.drawImage(tinted(spr, DEAD_WASH), -sizeU / 2, -sizeU / 2, sizeU, sizeU); }
+    }
+  }
   ctx.restore(); ctx.globalAlpha = 1;
 }
 
@@ -584,9 +645,10 @@ const SHOW_BARS = false; // health and status bars live in the HUD now (designer
 function drawOverlay(ctx, u) {
   if (u.downed) return;
   upright(ctx, u.x, u.y, () => {
-    if (u.act && (u.act.type === 'windup' || u.act.type === 'slam')) {
+    if (u.team !== 'hero' && u.act && (u.act.type === 'windup' || u.act.type === 'slam')) {
       const k = 1 - u.act.t / u.act.max;
-      // a warning mark drawn as a shape (no text in the arena): a bar and a dot over the head
+      // a warning mark drawn as a shape (no text in the arena): a bar and a dot over the head. Only on the enemy's
+      // side: a raised skeleton of ours winds up the same way, but the red mark read as a threat (round 7)
       const s = 1 + 0.35 * k, y0 = -u.vr - 14;
       inked(ctx, () => { ctx.beginPath(); roundRect(ctx, -2.6 * s, y0 - 15 * s, 5.2 * s, 10.5 * s, 2.4 * s); ctx.moveTo(2.8 * s, y0); ctx.arc(0, y0, 2.8 * s, 0, TAU); }, '#FF6B5A');
     }

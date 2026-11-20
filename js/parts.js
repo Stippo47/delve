@@ -188,16 +188,17 @@ function strokeString(g, pts, color, w) {
 }
 
 // Paint a figure into g, whose transform maps SVG units. mode: 'normal' | 'flash' (all white) | 'grey' (downed) |
-// 'sil' (the parts' own silhouette, for washing with a colour afterwards).
-export function paintRig(g, set, pose, mode = 'normal') {
+// 'sil' (the parts' own silhouette, for washing with a colour afterwards). ink: the outline's colour (summons are
+// drawn with a purple one, round 7), INK when not given.
+export function paintRig(g, set, pose, mode = 'normal', ink = null) {
   const Ls = set.layers, str = set.string ? stringPts(set, pose) : null, strLayer = set.string && set.string.layer;
   if (mode !== 'sil') {
     for (const L of Ls) {
       g.save(); place(g, L, pose[L.id]);
-      g.drawImage(mode === 'flash' ? filled(L, '#FFFFFF') : L.ink, L.x, L.y, L.w, L.h);
+      g.drawImage(mode === 'flash' ? filled(L, '#FFFFFF') : ink ? filled(L, ink) : L.ink, L.x, L.y, L.w, L.h);
       g.restore();
     }
-    if (str) strokeString(g, str, mode === 'flash' ? '#FFFFFF' : INK, set.string.w + LINE * 2);
+    if (str) strokeString(g, str, mode === 'flash' ? '#FFFFFF' : ink || INK, set.string.w + LINE * 2);
     if (mode === 'flash') return;
   }
   for (const L of Ls) {
@@ -211,25 +212,25 @@ export function paintRig(g, set, pose, mode = 'normal') {
 // A scratch canvas for figures that must be composed first (see-through, or washed with a colour).
 const SCR0 = -60, SCR = 320;
 let scratch = null;
-export function composeRig(set, pose, mode, wash) {
+export function composeRig(set, pose, mode, wash, ink = null) {
   const px = Math.ceil(SCR * set.k);
   if (!scratch || scratch.width < px) scratch = canvas(px, px);
   const g = scratch.getContext('2d');
   g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
   g.clearRect(0, 0, px, px);
   g.setTransform(set.k, 0, 0, set.k, -SCR0 * set.k, -SCR0 * set.k);
-  paintRig(g, set, pose, mode);
+  paintRig(g, set, pose, mode, ink);
   if (wash) { g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = wash; g.fillRect(0, 0, px, px); g.globalCompositeOperation = 'source-over'; }
   return { c: scratch, sx: px, x: SCR0, s: SCR };
 }
 // Draw a composed scratch into ctx (whose transform maps SVG units).
 export function drawComposed(ctx, k) { ctx.drawImage(k.c, 0, 0, k.sx, k.sx, k.x, k.x, k.s, k.s); }
 
-// Draw the figure into ctx (transform in SVG units). o: { mode, alpha, washes: [[color, a], ...] }
+// Draw the figure into ctx (transform in SVG units). o: { mode, alpha, washes: [[color, a], ...], ink (outline colour) }
 export function drawRig(ctx, set, pose, o = {}) {
   const alpha = o.alpha ?? 1;
-  if (alpha >= 0.999) paintRig(ctx, set, pose, o.mode || 'normal');
-  else { const k = composeRig(set, pose, o.mode || 'normal'); const a = ctx.globalAlpha; ctx.globalAlpha = a * alpha; drawComposed(ctx, k); ctx.globalAlpha = a; }
+  if (alpha >= 0.999) paintRig(ctx, set, pose, o.mode || 'normal', o.ink);
+  else { const k = composeRig(set, pose, o.mode || 'normal', null, o.ink); const a = ctx.globalAlpha; ctx.globalAlpha = a * alpha; drawComposed(ctx, k); ctx.globalAlpha = a; }
   if (o.washes) for (const [col, a] of o.washes) {
     if (a <= 0.01) continue;
     const k = composeRig(set, pose, 'sil', col); const ga = ctx.globalAlpha; ctx.globalAlpha = ga * a * alpha; drawComposed(ctx, k); ctx.globalAlpha = ga;

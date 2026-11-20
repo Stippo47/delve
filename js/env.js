@@ -8,14 +8,16 @@ import { INK, TAU, clamp } from './util.js';
 import { view, OUTLINE } from './render.js';
 
 export const ENV_STYLES = [
-  { id: 1, name: 'Carved', blurb: 'Clean, chunky stone: rounded tiles with soft gradients, ink outlines, short bevelled walls.' },
+  { id: 1, name: 'Carved', blurb: 'The default. Clean, chunky stone: rounded tiles with soft gradients, ink outlines, short bevelled walls.' },
   { id: 2, name: 'Flat', blurb: 'Graphic flat colour: crisp geometric tiles, three-tone bevels, no gradients, no outlines.' },
   { id: 3, name: 'Torchlit', blurb: 'Dark and deep: tall walls, torches on the walls throwing warm pools of light on the floor.' },
   { id: 4, name: 'Mosaic', blurb: 'Ornate patterned floors framed by a tiled border, walls capped with a trim, cut masonry.' },
 ];
 const KEY = 'delve.env';
 let cur = 0;
-// The current style (1..4): ?env= wins, then the saved setting, then 1.
+// The current style (1..4): ?env= wins, then the saved setting, then 1, Carved. Round 7 (looks-r6): the designer
+// picked Carved for all three dungeon types as the default, and also ticked Torchlit for the Crypt and Mosaic for
+// the Warren, so all four stay selectable in the settings.
 export function envId() {
   if (cur) return cur;
   let n = 0;

@@ -98,7 +98,7 @@ function body(u) {
   const sub = hero ? `${ROLE[hero.role]} · level ${u.level || 1}` : u.team === 'hero' ? `Hired hand · level ${u.level || 1}` : d.boss ? 'Boss' : 'Enemy';
   let html = `<div class="ip-head"><img src="${portrait(u.kind)}" alt=""><div><h2>${d.name}</h2><span class="muted">${sub}${u.downed ? ' · down' : ''}</span>
     <span class="ip-hp"><i style="width:${100 * hp / max}%"></i><em>${hp}/${max}</em></span>
-    ${hs && !hs.merc ? `<span class="ip-xp"><i style="width:${Math.min(100, 100 * hs.xp / xpToNext(hs.level))}%"></i></span>` : ''}</div></div>`;
+    ${hs && !hs.merc ? `<span class="ip-xp"><i style="width:${Math.min(100, 100 * hs.xp / xpToNext(hs.level))}%"></i><em>${Math.floor(hs.xp)}/${xpToNext(hs.level)}</em></span>` : ''}</div></div>`;
   // statuses
   const sts = unitStatuses(u);
   if (sts.length) html += `<h3>Right now</h3><ul class="ip-list">${sts.map((s) => {

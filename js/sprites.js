@@ -5,8 +5,8 @@ import { INK } from './util.js';
 import { DEFS } from './units.js';
 import { loadArt } from './parts.js';
 
-const SVG_KINDS = { archer: 'art/archer.svg', knight: 'art/knight.svg', rogue: 'art/rogue.svg',
-  skeleton: 'art/skeleton.svg', boss: 'art/boss.svg' };
+// (the skeleton kind is drawn from parts now, in the Rattler's art: units.js)
+const SVG_KINDS = { archer: 'art/archer.svg', knight: 'art/knight.svg', rogue: 'art/rogue.svg', boss: 'art/boss.svg' };
 
 // Radius of the collision head inside each sprite's 220-unit box. Used to size sprites to unit radius.
 export const HEAD_R = { archer: 56, knight: 58, rogue: 52, skeleton: 60, boss: 62, rat: 50, slime: 54 };

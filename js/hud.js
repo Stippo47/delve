@@ -1,7 +1,8 @@
 // The battle HUD's hero cards (round 6): a dock along the bottom of the screen, one card per hero. Each card: the
-// face with its run level, current/max HP on the bar, the XP sliver, each ability's cooldown as a sweeping dial,
-// the statuses on the hero as shrinking rings with an icon, and the items (trinkets, potions) as little sprites.
-// No words on the cards; numbers only where the designer asked (HP). Tapping a card pauses and inspects that hero.
+// face with its run level, current/max HP on the HP bar and XP so far/needed on the XP bar (round 7: "the unit cards
+// should keep their HP and XP lines with the numbers"), each ability's cooldown as a sweeping dial, the statuses on
+// the hero as shrinking rings with an icon, and the items (trinkets, potions) as little sprites. No words on the
+// cards; numbers only on the two bars. Tapping a card pauses and inspects that hero.
 // unitStatuses() is shared with inspect.js.
 import { HEROES } from './heroes.js';
 import { DEFS, xpToNext, levelHp } from './units.js';
@@ -93,7 +94,7 @@ export function buildCards(run, artOf, tap) {
     const abil = H ? H.abilities.map((ab) => `<span class="ab" data-ab="${ab.id}" style="--ac:${ABILITY_COLOR[abilityGlyph(ab.id)]}">${icon('ability', ab.id)}</span>`).join('') : '';
     return `<button class="hcard${merc ? ' merc' : ''}" id="hc-${k}" data-k="${k}">
       <span class="hc-head"><span class="hc-face"><img src="${artOf(k)}" alt=""><b class="hc-lv"></b></span><span class="hc-items"></span></span>
-      <span class="hc-hp"><i></i><em></em></span><span class="hc-xp"><i></i></span>
+      <span class="hc-hp"><i></i><em></em></span><span class="hc-xp"><i></i><em></em></span>
       ${abil ? `<span class="hc-abil">${abil}</span>` : ''}
       <span class="hc-st"></span>
     </button>`;
@@ -115,7 +116,9 @@ export function updateCards(run) {
     el.classList.toggle('low', !down && hp / maxHp < 0.35);
     el.querySelector('.hc-hp > i').style.width = (100 * hp / maxHp) + '%';
     el.querySelector('.hc-hp > em').textContent = `${Math.ceil(hp)}/${Math.round(maxHp)}`;
-    el.querySelector('.hc-xp > i').style.width = Math.min(100, Math.round(100 * hs.xp / xpToNext(hs.level))) + '%';
+    const need = xpToNext(hs.level);
+    el.querySelector('.hc-xp > i').style.width = Math.min(100, Math.round(100 * hs.xp / need)) + '%';
+    el.querySelector('.hc-xp > em').textContent = `${Math.floor(hs.xp)}/${need}`;
     el.querySelector('.hc-lv').textContent = hs.level;
     // abilities: a dark wedge sweeps away as the cooldown runs out; dim when not unlocked at this level
     const H = HEROES[k];
