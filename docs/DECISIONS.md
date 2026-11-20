@@ -273,3 +273,11 @@ enemies must be picked up or is left behind; meta progression stays. Pitched bac
 ## Round 7 (2026-11-20)
 Plan and the designer's words: `docs/BUILD-v3.md`; raw answers: `docs/riffle-log/2026-11-20-round7.txt`.
 Highlights: elites for every enemy kind; 3 harder dungeons; stronger upgrades and harder scaling; 2-3 more waves each harder; everyone 20% slower; quick door exit with heroes vanishing into the light; trinket pickup up to slots; grid obstacles one cell each; smaller merged shadows; death bursts; fainter dead; summons purple-outlined; HUD keeps HP/XP numbers; camp and tree need real layout redesigns (Night watch theme); dungeon look default Carved; art: change only what each note asks.
+- Round 7 build calls (lane D): elites are hp x2.4, blows x1.8, walk x1.5, attacks x1.2, size 1.05 (the old elites
+  were 1.15), gold x0.8 of a plain one, XP x3, a gold rim; any enemy can roll elite (5% on floor 1, rising with floor,
+  dungeon and wave, max 30%), the elite room holds one or two. "An additional trinket": a hero picks up found trinkets
+  up to its slots plus one (FOUND_EXTRA in dungeon.js; 0 makes it slots only). Waves: 3-4 after the first lot (a 5th
+  sometimes deeper down), each ~16% bigger with heavier kinds and more elites. Grid cell 80 units; crates collide as
+  squares, barrels and boulders as circles. Dungeon order Warren < Sewers < Crypt < Frost Hollow < Ember Deep < Gilded
+  Spire; the deep three ease in over floor 1's first rooms and pay more XP and gold. A fresh trio with tier I bought
+  now wins the Warren about 1 in 4 and loses the deep three on floor 1; a fully bought trio wins all six most runs.
