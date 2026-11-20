@@ -50,8 +50,10 @@
 .hcard.low .hc-hp > i { background: linear-gradient(#F08A6E, #D8573E); }
 .hc-hp > em { position: absolute; inset: 0; font: 800 10.5px/15px system-ui, sans-serif; font-style: normal; text-align: center; color: #fff;
   text-shadow: 0 1px 0 var(--ink), 1px 0 0 var(--ink), -1px 0 0 var(--ink), 0 -1px 0 var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -.2px; }
-.hc-xp { height: 4px; border-radius: 2px; background: #2B223044; overflow: hidden; margin-top: -1px; }
-.hc-xp > i { display: block; height: 100%; background: var(--gold); }
+.hc-xp { position: relative; height: 12px; border-radius: 5px; background: var(--ink); overflow: hidden; margin-top: -1px; }
+.hc-xp > i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(#FFE27A, #E8B53A); transition: width .15s; }
+.hc-xp > em { position: absolute; inset: 0; font: 800 9px/12px system-ui, sans-serif; font-style: normal; text-align: center; color: #fff;
+  text-shadow: 0 1px 0 var(--ink), 1px 0 0 var(--ink), -1px 0 0 var(--ink), 0 -1px 0 var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -.2px; }
 .hc-abil { display: flex; justify-content: space-between; gap: 2px; }
 .ab { position: relative; width: 24px; height: 24px; border-radius: 50%; background: color-mix(in srgb, var(--ac) 30%, var(--paper)); border: 2px solid var(--ink);
   display: grid; place-items: center; overflow: hidden; flex: none; }
@@ -98,8 +100,9 @@ body.paused canvas#game { filter: saturate(.75); }
 .ip-hp { position: relative; height: 17px; border-radius: 7px; background: var(--ink); overflow: hidden; margin-top: 2px; }
 .ip-hp > i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(#9AD88C, #6DB35F); }
 .ip-hp > em { position: absolute; inset: 0; text-align: center; font: 800 12px/17px system-ui; font-style: normal; color: #fff; text-shadow: 0 1px 0 var(--ink); }
-.ip-xp { height: 5px; border-radius: 3px; background: #2B223033; overflow: hidden; }
-.ip-xp > i { display: block; height: 100%; background: var(--gold); }
+.ip-xp { position: relative; height: 14px; border-radius: 6px; background: var(--ink); overflow: hidden; }
+.ip-xp > i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(#FFE27A, #E8B53A); }
+.ip-xp > em { position: absolute; inset: 0; text-align: center; font: 800 10.5px/14px system-ui; font-style: normal; color: #fff; text-shadow: 0 1px 0 var(--ink); }
 #inspect h3 { margin: 12px 0 5px; font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; opacity: .55; }
 .ip-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
 .ip-list li { display: flex; gap: 9px; align-items: flex-start; }

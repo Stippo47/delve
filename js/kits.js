@@ -455,7 +455,7 @@ export const ABILITIES = {
       for (let i = 0; i < (tier >= 3 ? 2 : 1); i++) {
         const s = spawn(w, 'wolf', u.x + rrange(-30, 30), u.y + rrange(-30, 30), { team: 'hero', scale: tier >= 2 ? 1.25 : 1, hpMul: tier >= 2 ? 1.5 : 1 });
         s.summon = true; s.summonBy = u; s.lifeT = 15; s.aggro = true; s.dmgMul = u.dmgMul * (tier >= 2 ? 1.3 : 1);
-        puff(w, s.x, s.y, '#9AB56B', 12, 80, 6, 0.5);
+        puff(w, s.x, s.y, '#A77BEA', 12, 80, 6, 0.5); // summons arrive in purple (round 7)
       }
     },
   },
@@ -470,7 +470,7 @@ export const ABILITIES = {
       for (const c of spots) {
         const s = spawn(w, 'skeleton', c.x, c.y, { team: 'hero' });
         s.summon = true; s.summonBy = u; s.lifeT = 12; s.aggro = true; s.dmgMul = u.dmgMul * 0.9; s.boom = tier >= 3; s.tint = '#9BE07A';
-        fx(w, { type: 'pillar', x: c.x, y: c.y, r: 24, kind: 'drain', max: 0.5 }); puff(w, c.x, c.y, '#9BE07A', 12, 70, 6, 0.6);
+        fx(w, { type: 'pillar', x: c.x, y: c.y, r: 24, kind: 'drain', max: 0.5 }); puff(w, c.x, c.y, '#A77BEA', 12, 70, 6, 0.6);
       }
     },
   },
