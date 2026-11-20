@@ -147,7 +147,7 @@ export function firesideHome(ctx) {
   const ids = Object.keys(themes);
   const gates = ids.map((id, i) => {
     const c = themeColors(themes[id]), n = ids.length;
-    const x = 12 + (n === 1 ? 38 : (i / (n - 1)) * 76), y = 64 - (i % 2 ? 18 : 4) - (i / Math.max(1, n - 1)) * 14;
+    const x = 11 + (n === 1 ? 38 : (i / (n - 1)) * 70), y = 64 - (i % 2 ? 18 : 4) - (i / Math.max(1, n - 1)) * 14;
     return `<button class="gate" data-act="setout" style="left:${x}%;top:${y}%;--accent:${c.accent}" aria-label="${themes[id].name}"><i></i><span>${themes[id].name.replace(/^The /, '')}</span></button>`;
   }).join('');
   // the logs: two seats left of the fire, two right
@@ -170,9 +170,10 @@ export function firesideHome(ctx) {
   if (focus && save.party.includes(focus)) {
     const k = save.party.indexOf(focus), x = xs[order.indexOf(k)] ?? 0;
     const cx = Math.max(-ctx.width / 2 + 100, Math.min(ctx.width / 2 - 100, x));
-    const any = bagCount(save) > 0;
+    const any = bagCount(save) > 0, rest = P.recoverLeft(save, focus, now);
     fan = `<div class="fan" style="--x:${cx}px"><span class="fname">${HEROES[focus].name}</span>
-      ${any ? `<button class="fanbtn" data-act="pack:${focus}">${I.flask}<span>Potions</span></button>` : ''}
+      ${rest ? `<button class="fanbtn" data-act="speed:${focus}">${I.zzz}<span>Rest less ${gold(P.speedUpCost(rest))}</span></button>`
+        : any ? `<button class="fanbtn" data-act="pack:${focus}">${I.flask}<span>Potions</span></button>` : ''}
       <button class="fanbtn" data-act="hero:${focus}">${I.tree}<span>Skills</span></button>
       <button class="fanbtn" data-act="stand:${focus}">${I.stand}<span>Stand up</span></button></div>`;
   }
@@ -195,7 +196,7 @@ export function firesideHome(ctx) {
         <svg class="range far" viewBox="0 0 400 100" preserveAspectRatio="none"><path d="M0 100V58l30-20 26 14 40-34 34 22 30-16 44 30 36-26 40 18 30-28 46 32 44-22v102z"/></svg>
         <svg class="range near" viewBox="0 0 400 100" preserveAspectRatio="none"><path d="M0 100V70l44-26 38 22 30-12 50 26 46-36 40 24 34-10 52 30 40-18 26 10v50z"/></svg>
         ${gates}
-        <span class="sky-hint">${ids.length} ways down. Tap a light to set out.</span>
+        <span class="sky-hint">${ids.length} ways down. Tap a light to set out.<br>${save.runs ? `${save.runs} ${save.runs === 1 ? 'run' : 'runs'} · ${save.wins} cleared` : 'Gold you bring out is yours, win or lose.'}</span>
       </div>
       <div class="fs-camp" data-act="unfocus">
         <div class="fs-glow"></div>

@@ -131,7 +131,7 @@
 .fs-sky { position: relative; flex: 1 1 auto; min-height: 170px; overflow: hidden; background: linear-gradient(#05070F, #0F1428 55%, #241C30 100%); }
 .stars i { position: absolute; width: var(--s); height: var(--s); border-radius: 50%; background: #FFF6E0; opacity: .7; animation: twinkle 3s ease-in-out infinite; animation-delay: calc(var(--d) * -1); }
 @keyframes twinkle { 50% { opacity: .25; } }
-.moon { position: absolute; right: 18%; top: 14%; width: 34px; height: 34px; border-radius: 50%; background: #F4E9CF; box-shadow: 0 0 30px rgba(244, 233, 207, .5), inset -9px -4px 0 #D9CBA8; }
+.moon { position: absolute; right: 12px; top: 8%; width: 30px; height: 30px; border-radius: 50%; background: #F4E9CF; box-shadow: 0 0 30px rgba(244, 233, 207, .5), inset -9px -4px 0 #D9CBA8; }
 .range { position: absolute; left: 0; bottom: 0; width: 100%; }
 .range.far { height: 62%; } .range.far path { fill: #1A1E35; }
 .range.near { height: 44%; } .range.near path { fill: #121528; }
@@ -188,6 +188,8 @@
 .fanbtn { width: 66px; height: 62px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 12px; font-weight: 800;
   color: #FFD9A0; background: rgba(20, 24, 40, .96); border: 1.5px solid var(--gold); box-shadow: 0 8px 20px rgba(0, 0, 0, .55), 0 0 14px rgba(255, 140, 50, .3); }
 .fanbtn svg { width: 24px; height: 24px; }
+.fanbtn .zzz { position: static; font-size: 16px; }
+.fanbtn .cost { font-size: 11px; }
 .fanbtn:active { transform: scale(.94); }
 .fireside.focusing .fs-sky { filter: brightness(.7); }
 
@@ -240,3 +242,20 @@
 .gtext { display: flex; flex-direction: column; gap: 2px; font-size: 12.5px; font-weight: 600; color: #E6D6BC; background: rgba(10, 12, 22, .72); border: 1px solid var(--line); border-radius: 14px; padding: 8px 10px; }
 .gtext b { font-size: 17px; font-weight: 900; color: #FFE2B0; }
 .mountain .walkers { position: absolute; left: 0; right: 0; bottom: 14px; z-index: 3; }
+
+/* short phones (iPhone SE and the like): squeeze the scenes so the fire and the bench still fit */
+@media (max-height: 700px) {
+  .clearing { min-height: 520px; }
+  .place.tent .pic { width: 96px; } .place.cart .pic { width: 90px; }
+  .place.book { top: 150px; } .place.book .pic { width: 80px; }
+  .place.mercs { top: 144px; }
+  .cl-fire, .cl-dirt, .cl-glow { top: calc(100% - 172px); }
+  .cl-fire { transform: scale(.84); }
+  .fireside { min-height: 540px; }
+  .fs-sky { min-height: 96px; }
+  .sky-hint { display: none; }
+  .fs-camp { height: 252px; }
+  .fs-book, .fs-mercs { bottom: 140px; } .fs-cart { bottom: 136px; }
+  .bfig { min-height: 100px; } .bfig img { width: 58px; height: 58px; } .brug { width: 58px; height: 58px; margin-left: -29px; }
+  .bskills { min-height: 34px; }
+}
