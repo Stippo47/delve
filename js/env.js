@@ -41,10 +41,10 @@ const LOOKS = {
     warren: { pattern: 'planks', floor: ['#CB9C64', '#BB8C56', '#D8AB72'], grout: '#7A5534', wall: '#8A6442', top: '#A67C54', mass: '#33251B', void: '#33251B' } },
   3: { D: 24, T: 10, ink: true, ao: 0.42, decorA: 0.42, rock: 'rock-3', fogK: 1.25, torches: true,
     crypt: { pattern: 'slate', floor: ['#706C76', '#5E5A65'], grout: '#34303A', wall: '#5C5866', top: '#6E6A78', mass: '#141218', void: '#141218', light: '255,178,102' },
-    sewers: { pattern: 'cobble', floor: ['#5F6858', '#4D5548'], grout: '#262C24', wall: '#4C5446', top: '#5E6758', mass: '#0F1410', void: '#0F1410', light: '214,236,140' },
+    sewers: { pattern: 'cobble', floor: ['#5F6858', '#4D5548'], grout: '#3A4236', wall: '#4C5446', top: '#5E6758', mass: '#0F1410', void: '#0F1410', light: '214,236,140' },
     warren: { pattern: 'crazy', floor: ['#7E6652', '#6C5645'], grout: '#38291F', wall: '#604837', top: '#745A48', mass: '#160F0B', void: '#160F0B', light: '255,150,72' } },
   4: { D: 12, T: 18, ink: true, ao: 0.16, decorA: 0.45, rock: 'rock-4', fogK: 0.85, border: true,
-    crypt: { pattern: 'checker', floor: ['#E2DCCF', '#55586E'], grout: '#3E4054', vein: 'rgba(255,255,255,0.18)', wall: '#B4AEA2', top: '#CAC4B8', mass: '#2A2833', void: '#22202A', trim: '#6E8FB0', trim2: '#C9A45A' },
+    crypt: { pattern: 'checker', floor: ['#DED8CB', '#7D8098'], grout: '#3E4054', vein: 'rgba(255,255,255,0.18)', wall: '#B4AEA2', top: '#CAC4B8', mass: '#2A2833', void: '#22202A', trim: '#6E8FB0', trim2: '#C9A45A' },
     sewers: { pattern: 'herring', floor: ['#B47C5C', '#9E6A4D'], grout: '#5E4A3E', wall: '#8C8F7A', top: '#A3A68F', mass: '#202923', void: '#1C2420', trim: '#3F7360', trim2: '#C7B98A' },
     warren: { pattern: 'basket', floor: ['#C9774F', '#B56640'], grout: '#E2C9A6', wall: '#A8805A', top: '#C19870', mass: '#2F2017', void: '#2A1C14', trim: '#7A3F24', trim2: '#E8B65A' } },
 };
@@ -130,10 +130,12 @@ export function paintRoom(g, w, pad, hooks) {
   if (hooks && hooks.water) hooks.water(g);
   if (hooks && hooks.decor) {
     // the floor dressing on its own layer, laid down faint so nothing on the ground looks solid or important
-    const c = document.createElement('canvas'); c.width = g.canvas.width; c.height = g.canvas.height;
-    const lg = c.getContext('2d'); lg.setTransform(g.getTransform());
+    // (at half the cache's resolution: it is faint anyway, and a phone's canvas memory is short)
+    const c = document.createElement('canvas'); c.width = Math.ceil(g.canvas.width / 2); c.height = Math.ceil(g.canvas.height / 2);
+    const lg = c.getContext('2d'), m = g.getTransform(); lg.setTransform(m.a / 2, m.b / 2, m.c / 2, m.d / 2, m.e / 2, m.f / 2);
     hooks.decor(lg);
-    g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = L.decorA; g.drawImage(c, 0, 0); g.restore();
+    g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = L.decorA; g.drawImage(c, 0, 0, g.canvas.width, g.canvas.height); g.restore();
+    c.width = c.height = 0; // let it go now (Safari holds canvas memory until then)
   }
   // top-down shadow at the foot of every wall, the same all round
   const blocks = (w.walls || []).filter((r) => !r.solid && r.temp == null).map((r) => blockEdges(r, w, L.D + L.T));
@@ -363,8 +365,8 @@ const PATTERNS = {
     for (let j = 0; j * S < w.H + S; j++) for (let i = 0; i * S < w.W + S; i++) {
       const x = i * S + (j % 2) * S / 2 + (hash(i, j) - 0.5) * 6, y = j * S + (hash(j, i) - 0.5) * 6, hv = hash(i + 1.3, j + 2.1);
       const rx = 11 + hv * 3, ry = 10 + hash(i, j + 5) * 3;
-      g.fillStyle = shade(L.floor[0], (hv - 0.5) * 0.3); g.beginPath(); g.ellipse(x, y, rx, ry, hv * 3, 0, TAU); g.fill();
-      if (hv > 0.55) { g.fillStyle = 'rgba(220,240,230,0.13)'; g.beginPath(); g.ellipse(x - 3, y - 3, rx * 0.45, ry * 0.25, -0.6, 0, TAU); g.fill(); }
+      g.fillStyle = shade(L.floor[0], (hv - 0.5) * 0.14); g.beginPath(); g.ellipse(x, y, rx, ry, hv * 3, 0, TAU); g.fill();
+      if (hv > 0.7) { g.fillStyle = 'rgba(220,240,230,0.08)'; g.beginPath(); g.ellipse(x - 3, y - 3, rx * 0.45, ry * 0.25, -0.6, 0, TAU); g.fill(); }
     }
     for (let i = 0; i < w.W * w.H / 90000; i++) { const x = hash(i, 9) * w.W, y = hash(i, 10) * w.H; g.fillStyle = 'rgba(10,20,16,0.22)'; g.beginPath(); g.ellipse(x, y, 60 + hash(i, 11) * 50, 30 + hash(i, 12) * 20, hash(i, 13) * 3, 0, TAU); g.fill(); }
   },

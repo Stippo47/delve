@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+  <!-- ROCK 4 (Mosaic): a flat layered rock, three stepped strata rising to a lit top. r 30; scale by r/30. -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <clipPath id="l0"><path d="M175.4 117.4 L150.9 159.2 L100.1 170.8 L58.1 148.7 L40.5 112.3 L45.9 73.1 L78.6 41.2 L130.7 38.4 L168.3 71.5 Z" stroke="#000" stroke-width="10"/></clipPath>
+  </defs>
+  <g id="sprite" filter="url(#outline)" stroke-linejoin="round">
+    <path d="M175.4 117.4 L150.9 159.2 L100.1 170.8 L58.1 148.7 L40.5 112.3 L45.9 73.1 L78.6 41.2 L130.7 38.4 L168.3 71.5 Z" fill="#8A8074" stroke="#8A8074" stroke-width="10"/>
+    <g clip-path="url(#l0)"><path d="M175.4 117.4 L150.9 159.2 L100.1 170.8 L58.1 148.7 L40.5 112.3 L45.9 73.1 L78.6 41.2 L130.7 38.4 L168.3 71.5 Z" fill="#4E464A" stroke="#4E464A" stroke-width="10" opacity="0.35" transform="translate(7 9)"/><path d="M175.4 117.4 L150.9 159.2 L100.1 170.8 L58.1 148.7 L40.5 112.3 L45.9 73.1 L78.6 41.2 L130.7 38.4 L168.3 71.5 Z" fill="#8A8074" stroke="#8A8074" stroke-width="10"/><path d="M116.0 132.9 L84.1 132.7 L58.3 118.2 L44.3 91.6 L54.2 60.6 L87.4 45.5 L121.0 56.6 L136.7 82.3 L134.7 109.6 Z" fill="#4E464A" stroke="#4E464A" stroke-width="10" opacity="0.35" transform="translate(7 9)"/><path d="M116.0 132.9 L84.1 132.7 L58.3 118.2 L44.3 91.6 L54.2 60.6 L87.4 45.5 L121.0 56.6 L136.7 82.3 L134.7 109.6 Z" fill="#A89E91" stroke="#A89E91" stroke-width="10"/><path d="M67.7 106.4 L56.5 90.1 L62.4 71.8 L79.6 63.1 L97.4 64.9 L111.5 74.6 L117.3 91.5 L107.7 108.5 L87.1 113.5 Z" fill="#4E464A" stroke="#4E464A" stroke-width="10" opacity="0.35" transform="translate(7 9)"/><path d="M67.7 106.4 L56.5 90.1 L62.4 71.8 L79.6 63.1 L97.4 64.9 L111.5 74.6 L117.3 91.5 L107.7 108.5 L87.1 113.5 Z" fill="#C8BFB2" stroke="#C8BFB2" stroke-width="10"/>
+      <path d="M150 120 L168 112 M36 120 L52 126" stroke="#5E5458" stroke-width="4" stroke-linecap="round" opacity="0.3"/>
+      <ellipse cx="80" cy="72" rx="16" ry="4" transform="rotate(-18 80 72)" fill="#FFFFFF" opacity="0.35"/></g>
+  </g>
+</svg>
