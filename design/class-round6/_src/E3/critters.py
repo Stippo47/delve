@@ -1,0 +1,220 @@
+"""Round 5 critters in the house style: slimes (cube, drips turned to trail behind, no eyes), bat, ghost, two spiders,
+snowman. All seen from straight above, chunky shapes, lit from the left, contact shadows, no eyes.
+python critters.py   (writes ../../enemies/*.svg)
+"""
+from lib import *
+
+BONE = ("#F4EBD2", "#C9B98E")
+WOOD = ("#9A6A40", "#5E3C22")
+BAT_R6 = True
+SPIDER_R6 = True
+SLIME_R6 = True
+SNOWMAN_R6 = True
+
+
+# ----------------------------------------------------------------- slimes
+def slime(kind):
+    cols = {"big": ("#8FE3CB", "#3E9C86", 1.0), "small": ("#B4EEDD", "#58B49D", 0.66), "fire": ("#FFC070", "#D8482A", 1.0)}
+    c1, c2, k = cols[kind]
+    S = Sprite(f'SLIME, {kind} (round 5): the round-4 cube slime with its drips turned 180 degrees (they now trail '
+               f'behind it, so it reads as moving forward) and no eyes. A soft rounded cube of jelly lit from the left, '
+               + ('a swallowed bone inside, ' if kind == "big" else 'embers inside, ' if kind == "fire" else '')
+               + f'one soft shine. Scaled {k}. Parts: #body only (the game squashes it whole). Front = DOWN (+y).', k=k)
+    S.group("body")
+    drips = [(70, 56, 14, 24), (100, 52, 17, 36), (131, 56, 12, 18)]
+    if kind == "big" and SLIME_R6:
+        drips = []  # round 6 ("remove tail"): the three drips trailing behind are gone; nothing else changed
+    for x, y, w, L in drips:
+        S.shape(blob([(x - w, y + 14), (x - w * 0.8, y - L * 0.45), (x - w * 0.95, y - L + w * 0.5), (x, y - L - w * 0.35),
+                      (x + w * 0.95, y - L + w * 0.5), (x + w * 0.8, y - L * 0.45), (x + w, y + 14)], 1.0),
+                S.lg(c1, c2), shadow=False, shade=0.2)
+    inner = []
+    if kind == "big":
+        inner.append(f'<g transform="translate(118 116) rotate(-35)" opacity="0.35"><rect x="-5" y="-22" width="10" height="44" rx="5" fill="{dk(c2, 0.5)}"/>'
+                     f'<circle cx="-6" cy="-22" r="7" fill="{dk(c2, 0.5)}"/><circle cx="6" cy="-22" r="7" fill="{dk(c2, 0.5)}"/>'
+                     f'<circle cx="-6" cy="22" r="7" fill="{dk(c2, 0.5)}"/><circle cx="6" cy="22" r="7" fill="{dk(c2, 0.5)}"/></g>')
+    if kind == "fire":
+        inner.append(''.join(f'<circle cx="{x}" cy="{y}" r="{r}" fill="#FFF0A0" opacity="0.8"/>' for x, y, r in ((120, 120, 9), (84, 136, 6), (132, 88, 5))))
+    inner.append(f'<path d="M36 140 C60 160 140 160 164 140 L164 180 L36 180 Z" fill="{dk(c2, 0.25)}" opacity="0.35"/>')
+    S.shape(rr(100, 104, 136, 122, 44), S.lg(c1, c2), shade=0.3, decor=inner)
+    S.flat(blob([(58, 78), (76, 66), (88, 70), (72, 84), (60, 90)], 1.0), "#FFFFFF", op=0.35)
+    return S
+
+
+# ----------------------------------------------------------------- bat
+def bat():
+    fur, mem = "#7E6070", "#5A3E54"
+    S = Sprite('BAT (round 5), small: seen from above in flight; a round furry head with two big ears swept back, a '
+               'small snout with two white fangs, no eyes; membrane wings spread to the sides (scalloped trailing edge, '
+               'paler bones). Parts: #arm-l / #arm-r (the wings, pivots at the shoulders, so the game flaps them), '
+               '#body (head and fur). Scaled 0.8. Front = DOWN (+y).', k=0.8)
+    for gid, side in (("arm-l", -1), ("arm-r", 1)):
+        S.group(gid, (100 + side * 26, 100))
+        pts = [(120, 110), (156, 116), (190, 112), (210, 98, 'c'), (192, 86), (182, 64, 'c'), (166, 76), (150, 50, 'c'),
+               (138, 72), (122, 64, 'c'), (118, 84)]
+        if side < 0:
+            pts = mx(pts)
+        S.shape(blob(pts, 0.6), S.lg(lt(mem, 0.15), dk(mem, 0.3)), shadow=False, shade=0.2)
+        for bone in ([(122, 104), (160, 106), (206, 98)], [(160, 106), (180, 68)], [(160, 106), (150, 56)]):
+            b = bone if side > 0 else mx(bone)
+            S.shape(stroke_path(b, 9, 5), S.lg(lt(mem, 0.35), lt(mem, 0.1)), shadow=False, shade=0)
+    S.group("body")
+    S.shape(ell(100, 82, 26, 30), S.lg(lt(fur, 0.1), dk(fur, 0.3)), shadow=False, shade=0.3)
+    for side in (1, -1):
+        pts = [(110, 92), (124, 84), (134, 52, 'c'), (116, 70)]
+        S.shape(blob(pts if side > 0 else mx(pts), 0.8), S.lg(lt(fur, 0.12), dk(fur, 0.28)), shadow=False, shade=0.25,
+                decor=[f'<path d="{blob([(114, 86), (124, 80), (130, 62), (118, 74)] if side > 0 else mx([(114, 86), (124, 80), (130, 62), (118, 74)]), 0.8)}" fill="#C78A9A" opacity="0.6"/>'])
+    if BAT_R6:
+        # round 6 ("decent; fix shading; maybe add nose"): the face no longer uses the heroes' face gradient (dark at
+        # the top for the shadow of a hat brim the bat doesn't have, so it showed as a dark band across its head); it is
+        # lit like the rest of the bat, light top left to darker bottom right. A small dark nose on the snout.
+        S.shape(circ(100, 112, 36), S.lg(lt(fur, 0.22), dk(fur, 0.12)), sh=4, shade=0.3)
+        S.shape(ell(100, 140, 14, 11), S.lg(lt(fur, 0.2), dk(fur, 0.1)), sh=3, shade=0.2)
+        S.shape("M 93.5 135.5 C 93.5 131.5 106.5 131.5 106.5 135.5 C 106.5 139 102.5 141.5 100 141.5 C 97.5 141.5 93.5 139 93.5 135.5 Z",
+                S.lg(dk(fur, 0.45), dk(fur, 0.65)), sh=1.5, op=0.25, shade=0)
+    else:
+        S.shape(circ(100, 112, 36), face_fill(S, lt(fur, 0.15), 92, 148), sh=4, shade=0,
+                decor=[f'<rect x="100" y="60" width="50" height="100" fill="{side_shade(S, fur, 100, 140)}"/>'])
+        S.shape(ell(100, 140, 14, 11), S.lg(lt(fur, 0.2), dk(fur, 0.1)), sh=3, shade=0.2)
+    for x in (94, 106):
+        S.shape(poly([(x - 3, 146), (x + 3, 146), (x, 155)]), S.lg("#FFFFFF", "#D8D0E0"), shadow=False, shade=0)
+    return S
+
+
+# ----------------------------------------------------------------- ghost
+def ghost():
+    c1, c2 = "#F4F8FF", "#A8B6D8"
+    S = Sprite('GHOST (round 5): a pale sheet-like head seen from above with a hollow dark mouth, no eyes; two wispy '
+               'arms reaching forward; a long wispy tail trailing behind with a curl at the end. Face shaded like the '
+               'humans (darker toward the top). Parts: #back (tail, sways), #arm-l / #arm-r (wisps), #body. '
+               'Front = DOWN (+y).')
+    S.group("back", (100, 80))
+    S.shape(stroke_path([(100, 90), (94, 56), (106, 30), (128, 14), (146, 18), (150, 32)], 56, 6, 0.9), S.lg(c1, c2), shadow=False, shade=0.3)
+    for gid, side in (("arm-l", -1), ("arm-r", 1)):
+        S.group(gid, (100 + side * 40, 110))
+        p = [(138, 104), (156, 122), (162, 150), (152, 164, 'c'), (148, 142), (130, 124)]
+        S.shape(blob(p if side > 0 else mx(p), 0.8), S.lg(c1, c2), shadow=False, shade=0.25)
+    S.group("body")
+    S.shape(HEAD, S.lg(c1, c2), sh=5, shade=0.3,
+            decor=[f'<path d="M40 104 C70 96 130 96 160 104 L160 112 C130 104 70 104 40 112 Z" fill="#8C9AC4" opacity="0.0"/>'])
+    if HEROES6:
+        # round 6 (closer to the heroes, whose mouths are small): the hollow mouth is a small dark "o" the size of the
+        # picked round-3 ghost's mouth (it was twice that), where a hero's mouth sits. Nothing else changed.
+        S.shape(ell(100, 137, 5.5, 6), S.lg("#3A3050", "#1E1830"), shadow=False, shade=0)
+    else:
+        S.shape(ell(100, 134, 10, 8), S.lg("#3A3050", "#1E1830"), shadow=False, shade=0)
+    return S
+
+
+# ----------------------------------------------------------------- spiders
+LEGS = [((124, 134), (166, 148), (164, 192)),
+        ((134, 124), (182, 120), (200, 148)),
+        ((134, 112), (182, 94), (200, 66)),
+        ((126, 100), (164, 68), (160, 26))]
+
+
+def spider(kind):
+    if kind == "hunter":
+        body, mark, k = "#9A7656", "#5A4030", 0.9
+        desc = 'SPIDER, hunter (round 5): a sandy-brown hunting spider, chunky legs with dark tips, a dark chevron on the abdomen'
+    else:
+        body, mark, k = "#86749A", "#E8DEF0", 1.0
+        desc = 'SPIDER, momma (round 5): a big purple-grey spider with a huge abdomen carrying pale egg bumps, thick legs'
+    S = Sprite(desc + ', two fangs at the front, no eyes. Seen from straight above, few big shapes. Parts: #back (the '
+               'abdomen and the six rear legs), #arm-l / #arm-r (the front legs, so the game can raise them to bite), '
+               f'#body (head and fangs). Scaled {k}. Front = DOWN (+y).', k=k)
+    lw0, lw1 = (16, 9) if kind == "hunter" else (19, 11)
+    S.group("back", (100, 100))
+    for side in (1, -1):
+        for leg in LEGS[1:]:
+            pts = list(leg) if side > 0 else mx(list(leg))
+            S.shape(stroke_path(pts, lw0, lw1, 0.6), S.lg(lt(body, 0.05), dk(body, 0.35)), shadow=False, shade=0.25,
+                    decor=[f'<circle cx="{pts[2][0]}" cy="{pts[2][1]}" r="16" fill="{dk(body, 0.5)}"/>'])
+    if kind == "hunter":
+        ab = ell(100, 60, 46, 50)
+        dec = [f'<path d="{blob([(100, 30), (124, 50), (118, 78), (100, 64), (82, 78), (76, 50)], 0.7)}" fill="{mark}" opacity="0.75"/>']
+    else:
+        ab = ell(100, 54, 62, 60)
+        dec = [f'<circle cx="{x}" cy="{y}" r="{r}" fill="{mark}" opacity="0.85"/>' for x, y, r in
+               ((84, 40, 11), (112, 30, 9), (124, 58, 10), (96, 68, 9), (70, 64, 7), (136, 36, 6))]
+    S.shape(ab, S.lg(lt(body, 0.1), dk(body, 0.35)), shade=0.3, decor=dec)
+    for gid, side in (("arm-l", -1), ("arm-r", 1)):
+        S.group(gid, (100 + side * 24, 132))
+        pts = list(LEGS[0]) if side > 0 else mx(list(LEGS[0]))
+        S.shape(stroke_path(pts, lw0, lw1, 0.6), S.lg(lt(body, 0.05), dk(body, 0.35)), shadow=False, shade=0.25,
+                decor=[f'<circle cx="{pts[2][0]}" cy="{pts[2][1]}" r="16" fill="{dk(body, 0.5)}"/>'])
+    S.group("body")
+    if kind == "hunter" and SPIDER_R6:
+        # round 6 ("fix fangs and shading"): the head is lit like the rest of the spider (light top left, darker bottom
+        # right) instead of the heroes' face gradient, which put a dark band across it under the abdomen. The fangs:
+        # two stubby jaws in the body's colour at the front of the head, each ending in a short ivory fang that curves
+        # in (they were near-black, so they read as a hole in the outline, not as fangs).
+        S.shape(ell(100, 118, 40, 38), S.lg(lt(body, 0.12), dk(body, 0.22)), sh=5, shade=0.3)
+        for side in (1, -1):
+            jaw = [(101, 140), (113, 139), (117, 150), (112, 160), (103, 158)]
+            fang = [(103, 154), (111, 155), (109, 164), (103, 172, 'c'), (104, 163)]
+            S.shape(blob(jaw if side > 0 else mx(jaw), 0.9), S.lg(dk(body, 0.05), dk(body, 0.3)), sh=3, shade=0.25)
+            S.shape(blob(fang if side > 0 else mx(fang), 0.8), S.lg("#F4EBD2", "#C9B98E"), sh=2, op=0.25, shade=0.15)
+    else:
+        S.shape(ell(100, 118, 40, 38), face_fill(S, lt(body, 0.1), 84, 156), sh=5, shade=0,
+                decor=[f'<rect x="100" y="60" width="60" height="120" fill="{side_shade(S, body, 100, 140)}"/>'])
+        for side in (1, -1):
+            p = [(104, 146), (118, 146), (116, 164), (106, 174, 'c'), (108, 160)]
+            S.shape(blob(p if side > 0 else mx(p), 0.8), S.lg("#4A3A44", "#1E1820"), sh=3, shade=0.2)
+    return S
+
+
+# ----------------------------------------------------------------- snowman
+def snowman():
+    s1, s2 = "#FFFFFF", "#B8C8E0"
+    S = Sprite('SNOWMAN (round 5): seen from straight above, upright (not leaning): a big snowball body behind a '
+               'smaller snowball head, a plain dark top hat (two shapes, no band), a red scarf with one end trailing '
+               'behind, a carrot nose poking forward, a coal smile, stick arms with twig hands. No eyes. Parts: '
+               '#back (the scarf end), #arm-l / #arm-r (sticks), #body. Front = DOWN (+y).')
+    S.group("back", (100, 92))
+    S.shape(blob([(118, 96), (132, 92), (150, 40), (156, 22, 'c'), (140, 30), (122, 80)], 0.8), S.lg("#E8545A", "#A8282E"), shadow=False, shade=0.2)
+    for gid, side in (("arm-l", -1), ("arm-r", 1)):
+        S.group(gid, (100 + side * 56, 100))
+        pts = [(150, 104), (176, 128), (192, 158)]
+        b = pts if side > 0 else mx(pts)
+        S.shape(stroke_path(b, 9, 6), S.lg(*WOOD), shadow=False, shade=0.2)
+        for tw in ([(192, 158), (186, 176)], [(192, 158), (206, 166)], [(180, 134), (196, 132)]):
+            t = tw if side > 0 else mx(tw)
+            S.shape(stroke_path(t, 6, 3), S.lg(*WOOD), shadow=False, shade=0)
+    S.group("body")
+    if SNOWMAN_R6:
+        # round 6 ("stop having it look like it's leaning over; stack the head over the body in the middle"): the head
+        # now sits dead centre on the body, both balls centred on the sprite's centre (100, 100), so it stands straight
+        # up under the camera. The scarf ring round the neck, the beanie, the coal smile and the carrot nose move up with
+        # the head (the head was 36 units in front of the body's centre). Same shapes, sizes and colours.
+        dy = -20
+        S.shape(circ(100, 100, 70), S.lg(s1, s2), shade=0.25)
+        S.shape(ell(100, 103, 54, 50), S.lg("#E8545A", "#A8282E"), sh=4, shade=0.25,
+                decor=['<path d="M40 100 L160 100 L160 106 L40 106 Z" fill="#A8282E" opacity="0.4"/>'])
+        S.shape(circ(100, 100, 46), S.lg(s1, s2), sh=5, shade=0.28)
+    else:
+        dy = 0
+        S.shape(circ(100, 84, 70), S.lg(s1, s2), shade=0.25)
+        S.shape(ell(100, 114, 54, 42), S.lg("#E8545A", "#A8282E"), sh=4, shade=0.25,
+                decor=['<path d="M40 100 L160 100 L160 106 L40 106 Z" fill="#A8282E" opacity="0.4"/>'])
+        S.shape(circ(100, 120, 46), S.lg(s1, s2), sh=5, shade=0.28)
+    for x in (84, 92, 100, 108, 116):
+        S.flat(circ(x, 154 + dy - abs(x - 100) * 0.3, 3.2), "#2E2834")
+    S.shape("M 55 126 C 52 92 72 72 100 72 C 128 72 148 92 145 126 C 134 116 118 112 100 114 C 82 112 66 116 55 126 Z",
+            S.lg("#6E9CE6", "#3460B0"), sh=4, shade=0.28, tf=f"translate(0 {dy})" if dy else None,
+            decor=['<path d="M40 104 C70 94 130 94 160 104 L160 132 L40 132 Z" fill="#9CC0F4" opacity="0.55"/>'] if not dy else
+                  [f'<path d="M40 {104 + dy} C70 {94 + dy} 130 {94 + dy} 160 {104 + dy} L160 {132 + dy} L40 {132 + dy} Z" fill="#9CC0F4" opacity="0.55"/>'])
+    S.shape(circ(100, 82 + dy, 13), S.lg("#FFFFFF", "#C8D4EA"), sh=3, shade=0.2)
+    S.shape(blob([(93, 132 + dy), (107, 132 + dy), (102, 170 + dy), (100, 178 + dy, 'c'), (98, 170 + dy)], 0.8),
+            S.lg("#FFAA50", "#E06A1E"), sh=3, shade=0.2)
+    return S
+
+
+if __name__ == "__main__":
+    for kind in ("big", "small", "fire"):
+        print(slime(kind).write(f"slime-{kind}.svg"))
+    print(bat().write("bat.svg"))
+    print(ghost().write("ghost.svg"))
+    for kind in ("hunter", "momma"):
+        print(spider(kind).write(f"spider-{kind}.svg"))
+    print(snowman().write("snowman.svg"))
