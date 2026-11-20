@@ -1,7 +1,7 @@
 // Canvas renderer for one room. Everything is drawn in room units, scaled and (in portrait) turned so the
 // way out is at the top. One screen shows one chunk across (ACROSS units); a camera follows the party both ways.
 import { getSprite, headR, tinted, getProp } from './sprites.js';
-import { getRig, drawRig, poseFor, LIMP } from './parts.js';
+import { getRig, drawRig, poseFor, LIMP, composeRig, drawComposed } from './parts.js';
 import { DEFS } from './units.js';
 import { drawGroundFx, drawAirFx, drawProjectile as projectile, drawStatusFx, noteHits, drawLocal } from './fx.js';
 import { INK, TAU, clamp } from './util.js';
@@ -138,6 +138,8 @@ export function draw(ctx, w) {
   // shadows straight down under each obstacle (top-down: never cast to one side)
   for (const p of w.pillars) { const R = p.r * 1.45; ctx.drawImage(softShadow(), p.x - R, p.y - R, R * 2, R * 2); }
   for (const p of w.pillars) drawPillar(ctx, p, w);
+  // crates on the grid (layout.js): square obstacles, colliding as the wall rectangle they are (48 across at sc 1)
+  for (const r of w.walls) if (r.prop) { const R = r.w * 0.8, x = r.x + r.w / 2, y = r.y + r.h / 2; ctx.drawImage(softShadow(), x - R, y - R, R * 2, R * 2); prop(ctx, r.prop, x, y, PROP_BOX, { sc: r.w / 48 }); }
   // a round shadow straight under every unit (top-down: no side cast); a leaping unit's shrinks as it rises
   for (const u of w.units) { if (u.ethereal) continue; const r = (u.downed ? u.vr * 1.4 : Math.max(u.r * 1.7, u.vr * 2)) * (1 - Math.min(0.35, (u.hop || 0) / 120)); ctx.drawImage(unitShadow(), u.x - r, u.y - r, r * 2, r * 2); }
   for (const t of w.telegraphs) if (t.type === 'ring') drawRing(ctx, t);
@@ -305,8 +307,11 @@ function drawPillar(ctx, p, w) {
   }
   // obstacles from the prop art: crates (two path cells square) and barrels at their own size, rocks and braziers
   // scaled to the collider; the Sewers' pipes are drawn by the theme (env.js obstacleFor picks)
-  const name = p.prop || obstacleFor(p, w);
-  if (name !== 'pipe' && prop(ctx, name, p.x, p.y, PROP_BOX, { sc: name === 'crate' || name === 'barrel' ? 1 : p.r / 30 })) return;
+  let name = p.prop || obstacleFor(p, w);
+  if (name === 'rock') name = obstacleFor({ x: p.x, y: p.y, r: 99 }, w); // the style's boulder
+  // grid obstacles (layout.js) fill their cell: a barrel 47 across at sc 1, a boulder ~60 at r 30
+  const sc = p.grid ? (name === 'barrel' ? 1.5 : name === 'brazier' ? 1.25 : 1.2) : name === 'crate' || name === 'barrel' ? 1 : p.r / 30;
+  if (name !== 'pipe' && prop(ctx, name, p.x, p.y, PROP_BOX, { sc })) return;
   drawPillarThemed(ctx, p, w);
 }
 
@@ -347,6 +352,18 @@ function drawPickup(ctx, p, t) {
     upright(ctx, p.x, p.y, () => {
       ctx.translate(0, b);
       inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -6, 6, 0, TAU); ctx.rect(-2, -2, 4, 16); ctx.rect(0, 9, 7, 3.5); }, '#FFD45A');
+    });
+  } else if (p.type === 'trinket') {
+    // a found trinket lying on the floor (round 7: a hero with a free slot walks over and takes it; a full one leaves
+    // it for an ally): a violet gem on a soft glow, bobbing; flying out of the chest or off the plinth first
+    const hop = p.hop > 0 ? Math.sin(Math.PI * clamp(p.hop / 0.5, 0, 1)) * 22 : 0, b = Math.sin(t * 4 + p.x) * 2 + hop;
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.35 + 0.15 * Math.sin(t * 3);
+    const gl = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 26); gl.addColorStop(0, '#C9A7FF'); gl.addColorStop(1, 'rgba(201,167,255,0)');
+    ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(p.x, p.y, 26, 0, TAU); ctx.fill(); ctx.restore();
+    upright(ctx, p.x, p.y, () => {
+      ctx.translate(0, -b);
+      inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -11); ctx.lineTo(8, -2); ctx.lineTo(0, 9); ctx.lineTo(-8, -2); ctx.closePath(); }, '#B48CFF');
+      ctx.fillStyle = '#E9DCFF'; ctx.beginPath(); ctx.moveTo(0, -11); ctx.lineTo(-8, -2); ctx.lineTo(0, -2); ctx.closePath(); ctx.fill();
     });
   } else if (p.type === 'pedestal') {
     upright(ctx, p.x, p.y, () => {
@@ -413,11 +430,13 @@ function unitFrame(ctx, u, w) {
   }
   if (u.act && u.act.type === 'charge') { fy += u.vr * 0.15; sc *= 1.04; }
   if (u.sleepT > 0) sc *= 1 + Math.sin(w.time * 2.4 + u.id) * 0.02;
+  if (u.exiting) { const k = clamp(u.exiting.t / u.exiting.dur, 0, 1); sc *= 1 + 0.12 * Math.sin(Math.min(1, k * 3) * Math.PI) - 0.85 * k * k; } // through the door: a lift, then shrinking into the light
   ctx.translate(fx, fy); ctx.rotate(tilt); ctx.scale(sc, sc);
 }
 
 // Status washes over the sprite: [colour, strength] pairs.
 function washesOf(u, w) {
+  if (u.exiting) return [['#FFF6D8', clamp(u.exiting.t / u.exiting.dur * 1.6, 0, 0.95)]]; // glowing into the light
   if (u.downed || u.flashT > 0.06) return [];
   const st = u.st || {}, out = [];
   const chill = u.frozenT > 0 ? 1 : clamp((st.chill || 0) / 100, 0, 1), poison = clamp((st.poison || 0) / 100, 0, 1), burn = clamp((st.burn || 0) / 100, 0, 1);
@@ -431,6 +450,8 @@ function washesOf(u, w) {
   return out;
 }
 
+// Elites (round 7) are marked by a gold rim round the figure (no text in the arena).
+const ELITE_COL = '#FFC83A', ELITE_RIM = 1.13;
 function drawUnit(ctx, u, w) {
   if (u.def.art) { drawPartsUnit(ctx, u, w); if (u.frozenT > 0) drawIce(ctx, u, w); return; }
   const s = view.scale * view.dpr;
@@ -441,8 +462,9 @@ function drawUnit(ctx, u, w) {
   unitFrame(ctx, u, w);
   if (u.invulnT > 0) ctx.globalAlpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18));
   if (u.downed) ctx.globalAlpha = 0.75;
-  if (u.ethereal) ctx.globalAlpha = 0.45;
+  if (u.ethereal && !u.exiting) ctx.globalAlpha = 0.45;
   if (spr) {
+    if (u.elite && !u.downed) { const ga = ctx.globalAlpha, r = sizeU * ELITE_RIM; ctx.globalAlpha = ga * (0.7 + 0.3 * Math.sin(w.time * 5 + u.id)); ctx.drawImage(tinted(spr, ELITE_COL), -r / 2, -r / 2, r, r); ctx.globalAlpha = ga; }
     let img = u.downed ? spr.grey : u.flashT > 0.06 ? spr.flash : spr.img;
     ctx.drawImage(img, -sizeU / 2, -sizeU / 2, sizeU, sizeU);
     // status washes over the sprite itself rather than rings around it
@@ -474,8 +496,12 @@ function drawPartsUnit(ctx, u, w) {
   let alpha = 1;
   if (u.invulnT > 0) alpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18));
   if (u.downed) alpha = 0.75;
-  if (u.ethereal) alpha *= 0.5;
+  if (u.ethereal && !u.exiting) alpha *= 0.5;
   const mode = u.downed ? 'grey' : u.flashT > 0.06 ? 'flash' : 'normal';
+  if (u.elite && !u.downed) { // an elite: a gold rim round the whole figure, outside its ink outline, softly pulsing
+    ctx.save(); ctx.globalAlpha = alpha * (0.7 + 0.3 * Math.sin(w.time * 5 + u.id)); ctx.translate(100, 100); ctx.scale(ELITE_RIM, ELITE_RIM); ctx.translate(-100, -100);
+    drawComposed(ctx, composeRig(set, pose, 'normal', ELITE_COL)); ctx.restore();
+  }
   drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w) });
   if (pose.glow && mode === 'normal') castGlow(ctx, pose.glow, w.time);
   ctx.restore();

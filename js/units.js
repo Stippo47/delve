@@ -72,7 +72,7 @@ Object.assign(DEFS, ENEMIES);
 // colliders. Applied once here over every def so heroes.js / enemies.js keep their readable base numbers.
 // Things that move at a multiple of def.speed (dashes, charges) are tuned against the scaled speed in sim.js.
 export const FEEL = {
-  heroSpeed: 3, enemySpeed: 2.5, bossSpeed: 1.9, // walking speed
+  heroSpeed: 2.4, enemySpeed: 2, bossSpeed: 1.52, // walking speed (round 7: everyone 20% slower than round 6's 3 / 2.5 / 1.9)
   turn: 1.8, face: 1.5,                           // turning keeps up with the speed (else they swing in wide arcs)
   heroHp: 2, enemyHp: 2, bossHp: 1.4,             // time to kill
   enemyDmg: 0.75,                                 // enemy blows (fights are denser now: faster, more of them at once)
@@ -94,9 +94,9 @@ for (const d of Object.values(DEFS)) {
 
 export const HERO_ORDER = ['knight', 'archer', 'rogue'];
 
-// Level scaling for heroes (permanent levels).
-export const levelHp = (base, lvl) => Math.round(base * (1 + 0.12 * (lvl - 1)));
-export const levelDmg = (base, lvl) => base * (1 + 0.09 * (lvl - 1));
+// Level scaling for heroes (levels inside a run; round 7: steeper, with the dungeons scaling harder to match).
+export const levelHp = (base, lvl) => Math.round(base * (1 + 0.14 * (lvl - 1)));
+export const levelDmg = (base, lvl) => base * (1 + 0.11 * (lvl - 1));
 export const xpToNext = (lvl) => Math.round(40 * Math.pow(lvl, 1.45));
 
 // Trinkets live in trinkets.js (each is a set of hooks); re-exported here so older imports keep working.

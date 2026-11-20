@@ -250,10 +250,13 @@ export const freeNodes = (id) => Object.fromEntries(treeFor(id).filter((n) => n.
 // a stat node that can be bought more than once. Tier nodes need the one before and a level reached in the run before
 // they switch on; tier III also needs a feat (the hero once reached level 8 in a dungeon). The trinket-slot node needs
 // that feat too. Costs are in gold.
+// Round 7: stronger steps ("have the upgrades have stronger scaling", matched by harder dungeons and floors).
+export const STAT_STEP = { might: 0.14, vigor: 0.16, hasteAtk: 0.09, hasteMove: 0.05 };
+export const TIER_CD = 0.1; // each tier past I takes 10% off its ability's cooldown
 export const BRANCHES = [
-  { id: 'attack', name: 'Attack', ability: 0, stat: { id: 'might', name: 'Might', desc: '+8% damage', max: 5, cost: [40, 70, 110, 160, 220] } },
-  { id: 'survival', name: 'Survival', ability: 1, stat: { id: 'vigor', name: 'Vigor', desc: '+10% health', max: 5, cost: [40, 70, 110, 160, 220] } },
-  { id: 'utility', name: 'Utility', ability: 2, stat: { id: 'haste', name: 'Haste', desc: '+6% attack speed, +4% move speed', max: 3, cost: [60, 110, 170] } },
+  { id: 'attack', name: 'Attack', ability: 0, stat: { id: 'might', name: 'Might', desc: '+14% damage', max: 5, cost: [40, 70, 110, 160, 220] } },
+  { id: 'survival', name: 'Survival', ability: 1, stat: { id: 'vigor', name: 'Vigor', desc: '+16% health', max: 5, cost: [40, 70, 110, 160, 220] } },
+  { id: 'utility', name: 'Utility', ability: 2, stat: { id: 'haste', name: 'Haste', desc: '+9% attack speed, +5% move speed', max: 3, cost: [60, 110, 170] } },
 ];
 const TIER_LEVEL = [2, 5, 8];        // the run level each tier switches on at
 const TIER_COST = [60, 160, 320];

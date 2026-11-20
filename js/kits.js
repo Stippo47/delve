@@ -16,7 +16,7 @@
 //   reviveRate, reviveHp                 numbers read by the revive code
 // Hit options worth knowing in hooks: o.dot (damage over time), o.shot (a projectile hit), o.proc (damage a trinket
 // made itself: trinkets that react to hits skip these, so they never set each other off in a loop).
-import { HEROES } from './heroes.js';
+import { HEROES, STAT_STEP, TIER_CD } from './heroes.js';
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange, chance } from './util.js';
 import {
   hurt, addStatus, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, textU,
@@ -594,10 +594,11 @@ export function initKit(u, heroId, build = {}, level = 1) {
   const nodes = build.nodes || {};
   u.kit = { hero: heroId, nodes, cd: {}, tiers: {}, trait: TRAITS[h.trait.id] || {}, charges: 2 };
   for (const ab of h.abilities) u.kit.cd[ab.id] = rrange(1, 3);
+  // the tree's stat nodes (round 7: stronger steps; heroes.js BRANCHES carries the same numbers for the camp)
   const might = nodes.might || 0, vigor = nodes.vigor || 0, haste = nodes.haste || 0;
-  u.dmgMul *= 1 + 0.08 * might;
-  const hpMul = 1 + 0.1 * vigor; u.maxHp = Math.round(u.maxHp * hpMul); u.hp = Math.min(u.maxHp, u.hp * hpMul);
-  u.atkMul = 1 + 0.06 * haste; u.moveMul = 1 + 0.04 * haste;
+  u.dmgMul *= 1 + STAT_STEP.might * might;
+  const hpMul = 1 + STAT_STEP.vigor * vigor; u.maxHp = Math.round(u.maxHp * hpMul); u.hp = Math.min(u.maxHp, u.hp * hpMul);
+  u.atkMul = 1 + STAT_STEP.hasteAtk * haste; u.moveMul = 1 + STAT_STEP.hasteMove * haste;
   refreshKit(u, level);
 }
 // Which tiers are switched on at this run level (bought nodes whose level requirement is met).
@@ -631,7 +632,7 @@ export function kitThink(w, u) {
   if (!best || bs < 0.3) return false;
   const lastOne = opponents(w, u).length === 1;
   if (!chance(clamp(0.25 + bs * 0.6, 0, 0.95)) && !lastOne) return false;
-  k.cd[best.id] = best.cd;
+  k.cd[best.id] = best.cd * (1 - TIER_CD * (k.tiers[best.id] - 1)); // round 7: higher tiers come round sooner too
   ABILITIES[best.id].use(w, u, u.target, k.tiers[best.id]);
   cue('ability', u, best.id);
   return true;

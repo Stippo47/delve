@@ -345,7 +345,7 @@ function steer(w, u, gx, gy, opts = {}) {
     for (let i = 0; i < DIRS; i++) { const tt = rayToRect(u.x, u.y, DIR_X[i], DIR_Y[i], r, R); if (tt < look) danger[i] = Math.max(danger[i], 1 - tt / look); }
   }
   const fear = u.team === 'hero' ? 0.9 : 0.45;
-  for (const h of w.hazards) if (!h.hidden && h.up !== false && (h.type !== 'oil' || u.team === 'hero')) avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' ? 0.35 : fear, 40);
+  for (const h of w.hazards) if (!h.hidden && h.up !== false && h.type !== 'beam' && ((h.type !== 'oil' && h.type !== 'web') || u.team === 'hero')) avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' || h.type === 'web' ? 0.35 : fear, 40);
   for (const o of w.units) {
     if (o === u || !alive(o) || o.ethereal || u.ethereal) continue;
     if (o.team === u.team) avoidCircle(o.x, o.y, o.r + (u.team === 'hero' ? 14 : 0), 0.45, 18);
@@ -766,14 +766,15 @@ function kill(w, u, src) {
   if (w.corpses.length > MAX_CORPSES) w.corpses.splice(0, w.corpses.length - MAX_CORPSES);
   puff(w, u.x, u.y, u.kind.startsWith('slime') ? '#6CC9B0' : u.kind === 'rat' ? '#9C8676' : '#EDE4CD', 6, 110, 4, 0.4); // the body itself flies now: a small puff
   if (u.st.poison > 40) w.hazards.push({ type: 'gas', x: u.x, y: u.y, r: 52, t: 4, max: 4 });
-  if (u.def.splits && u.gen === 0) {
+  if (u.eliteDeath) u.eliteDeath(w, u); // an elite's own end (elites.js: the elite slime bursts into four)
+  if (u.def.splits && u.gen === 0 && !(u.elite && u.eliteDeath)) {
     for (const s of [-1, 1]) {
       const c = spawn(w, 'slimeSmall', u.x + s * 12, u.y + s * 4, { mult: w.mult, gen: 1 });
       c.kx = s * 140; c.ky = rrange(-60, 60);
     }
   }
   const [c0, c1] = u.def.coins || [0, 0];
-  const coins = rint(c0, c1);
+  const coins = Math.round(rint(c0, c1) * (u.coinMul ?? 1)); // elites drop a little less (round 7)
   scatterCoins(w, u.x, u.y, coins);
   emit(w, 'kill', u, src);
 }
@@ -1089,7 +1090,7 @@ function projectiles(w, dt) {
     for (const r of w.walls) if (p.x > r.x && p.x < r.x + r.w && p.y > r.y && p.y < r.y + r.h) p.life = 0;
     if (p.life <= 0 && p.land && !p.landed) { p.landed = true; p.land(p); }
     if (p.kind === 'fireArrow') for (const h of w.hazards) if ((h.type === 'oil' || h.type === 'gas') && dist(p.x, p.y, h.x, h.y) < h.r) { igniteAround(w, p.x, p.y, 4); p.life = Math.min(p.life, 0.02); }
-    if (p.life <= 0) continue;
+    if (p.life <= 0 || p.noHit) continue; // noHit: only a look (a lobbed thing; its landing is a danger zone)
     for (const u of w.units) {
       if (!alive(u) || u === p.skip || u === p.owner || u.ethereal) continue;
       if (p.team !== 'neutral' && u.team === p.team) continue;
@@ -1124,7 +1125,7 @@ function hazards(w, dt) {
     u.hazardT -= dt;
     for (const h of w.hazards) {
       if (dist(u.x, u.y, h.x, h.y) > h.r + u.r * 0.4) continue;
-      if (h.type === 'oil') u.inOil = true;
+      if (h.type === 'oil' || h.type === 'web') u.inOil = true; // web (round 7): sticky, slows like oil
       else if (h.type === 'fire') addStatus(w, u, 'burn', 34 * dt);
       else if (h.type === 'gas') addStatus(w, u, 'poison', 24 * dt);
       else if (h.type === 'water' && !u.soakedT) { u.soakedT = 1; addStatus(w, u, 'wet', Math.min(20 * dt, Math.max(0, 90 - u.st.wet))); } // standing water soaks to 90, never tips into a slip (a slip's puddle would feed itself)
@@ -1205,6 +1206,7 @@ export function step(w, dt) {
     if (u.anim) { u.anim.t += dt; if (u.anim.t >= u.anim.dur) u.anim = null; }
     if (u.frozenT > 0 || u.stunT > 0 || u.sleepT > 0) { if (!u.act || u.act.type !== 'slip') { u.dvx = u.dvy = 0; u.spd = 0; continue; } }
     // a unit with its own brain (bosses, special enemies) runs it first; returning true skips the usual brain
+    if (u.eliteFn && u.eliteFn(w, u, dt)) continue; // an elite's extra move (elites.js)
     if (u.def.brain && u.def.brain(w, u, dt)) continue;
     if (u.target && !alive(u.target)) u.target = null;
     u.thinkT -= dt;

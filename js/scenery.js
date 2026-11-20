@@ -189,6 +189,26 @@ export function drawThemeHazard(ctx, h, t) {
     ctx.globalAlpha = 0.35; ctx.fillStyle = '#E4F1FF'; ctx.beginPath(); ctx.arc(h.x - h.r * 0.15, h.y - h.r * 0.15, h.r * 0.4, 0, TAU); ctx.fill();
     ctx.globalAlpha = 1; return true;
   }
+  if (h.type === 'web') {
+    // a spider's web on the floor (round 7): pale threads from the middle and rings between them; fades as it goes
+    const a0 = h.max ? clamp(h.t / h.max * 3, 0, 1) : 1;
+    ctx.save(); ctx.translate(h.x, h.y); ctx.globalAlpha = 0.7 * a0; ctx.strokeStyle = '#ECE6F4'; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+    const n = 8; ctx.beginPath();
+    for (let i = 0; i < n; i++) { const b = i / n * TAU + h.x * 0.01; ctx.moveTo(0, 0); ctx.lineTo(Math.cos(b) * h.r, Math.sin(b) * h.r); }
+    for (const k of [0.35, 0.62, 0.9]) for (let i = 0; i <= n; i++) { const b = i / n * TAU + h.x * 0.01, r = h.r * k * (i % 2 ? 0.92 : 1); i ? ctx.lineTo(Math.cos(b) * r, Math.sin(b) * r) : ctx.moveTo(Math.cos(b) * r, Math.sin(b) * r); }
+    ctx.stroke(); ctx.restore(); ctx.globalAlpha = 1; return true;
+  }
+  if (h.type === 'beam') {
+    // a gold sigil set in the floor (the Spire): it brightens as it gathers light, then calls a shaft down on itself
+    const lit = h.lit > 0 ? 1 : 0;
+    ctx.save(); ctx.translate(h.x, h.y);
+    ctx.globalAlpha = 0.55 + 0.25 * lit; ctx.strokeStyle = '#C9A44A'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(0, 0, h.r * 0.92, 0, TAU); ctx.stroke();
+    ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, h.r * 0.62, 0, TAU); ctx.stroke();
+    ctx.beginPath(); for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + t * 0.3; ctx.moveTo(Math.cos(b) * h.r * 0.62, Math.sin(b) * h.r * 0.62); ctx.lineTo(Math.cos(b + 2.1) * h.r * 0.62, Math.sin(b + 2.1) * h.r * 0.62); } ctx.stroke();
+    ctx.fillStyle = '#F2C84A'; for (let i = 0; i < 6; i++) { const b = i / 6 * TAU; ctx.beginPath(); ctx.arc(Math.cos(b) * h.r * 0.92, Math.sin(b) * h.r * 0.92, 3, 0, TAU); ctx.fill(); }
+    ctx.restore(); ctx.globalAlpha = 1; return true;
+  }
   if (h.type === 'snare') {
     // a goblin snare: iron jaws half buried in the dirt, easy to miss; once sprung, shut and spent
     ctx.save(); ctx.translate(h.x, h.y);
@@ -233,7 +253,7 @@ export function drawArena(ctx, w) {
 
 // ---------------------------------------------------------------- danger zones (sim.js addDanger)
 // The shape shows at once, dashed; inside it a fill grows from nothing to the edge as the hit comes; then a flash.
-const ZONE_COL = { bone: '#E0604B', blade: '#E0604B', soul: '#7FD6F5', water: '#5DB7E0' };
+const ZONE_COL = { bone: '#E0604B', blade: '#E0604B', soul: '#7FD6F5', water: '#5DB7E0', fire: '#FF7A2F', holy: '#F2C84A', ice: '#8FD3FF', web: '#B9AFD6', poison: '#9BCB3C' };
 function zonePath(ctx, z, k) {
   ctx.beginPath();
   if (z.shape === 'circle') ctx.arc(z.x, z.y, Math.max(0.1, z.r * k), 0, TAU);

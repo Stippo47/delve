@@ -6,6 +6,7 @@
 import { alive, opponents, hurt, puff, goalVec, steer, drive, blocked, setAnim, addDanger, explode, sparks, spawn, addStatus, kill } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange, chance } from './util.js';
 import { BOSSES } from './boss.js';
+import { FOES } from './foes.js';
 
 const BONE = { poison: 0.35, burn: 0.8, chill: 1.2 }; // skeletons: poison barely takes, cold bites
 const SKELETON = { team: 'enemy', turn: 3.4, accel: 180, face: 3.4, mass: 1.3, temp: 0.3, commit: 1, res: BONE, headR: 60 };
@@ -126,7 +127,7 @@ export function tailSpin(w, u, dt, o = {}) {
 }
 
 // Ghost: cold to the touch. Drifts in and chills what it brushes against.
-function ghostBrain(w, u, dt) {
+export function ghostBrain(w, u, dt) {
   u.gT = (u.gT ?? rrange(0.4, 1.2)) - dt;
   const t = u.target;
   if (t && alive(t) && u.gT <= 0 && dist(u.x, u.y, t.x, t.y) - u.r - t.r < 18) {
@@ -139,7 +140,7 @@ function ghostBrain(w, u, dt) {
 }
 
 // Orc shaman: lobs a ball of green-gold fire that bursts and sets things alight.
-function shamanBrain(w, u, dt) {
+export function shamanBrain(w, u, dt) {
   u.sT = (u.sT ?? rrange(1, 2.5)) - dt;
   const t = u.target;
   if (!t || !alive(t) || u.sT > 0) return false;
@@ -168,7 +169,7 @@ function trollBrain(w, u, dt) {
 }
 
 // A warden's slam: a telegraphed ring round itself when the party crowds it.
-function slam(w, u, dt, o) {
+export function slam(w, u, dt, o) {
   u.slT = (u.slT ?? rrange(3, 5)) - dt;
   if (u.slamming > 0) { u.slamming -= dt; stand(u, dt); return true; }
   if (u.slT > 0 || !u.aggro) return false;
@@ -182,7 +183,7 @@ function slam(w, u, dt, o) {
 }
 
 // Calls a few more from the room's edges, now and then.
-function callAdds(w, u, dt, kinds, every, n = 2) {
+export function callAdds(w, u, dt, kinds, every, n = 2) {
   u.callT = (u.callT ?? every * 0.5) - dt;
   if (u.callT > 0 || !u.aggro) return;
   u.callT = every;
@@ -197,7 +198,7 @@ function callAdds(w, u, dt, kinds, every, n = 2) {
 }
 
 // When a warden falls, the ones it called scatter (they're gone with it).
-function courtFalls(w) { for (const o of w.units) if (o.court && alive(o)) { puff(w, o.x, o.y, '#BFA98A', 8, 80, 5, 0.4); kill(w, o, null); } }
+export function courtFalls(w) { for (const o of w.units) if (o.court && alive(o)) { puff(w, o.x, o.y, '#BFA98A', 8, 80, 5, 0.4); kill(w, o, null); } }
 
 // ---------------------------------------------------------------- the kinds
 export const ENEMIES = {
@@ -255,4 +256,5 @@ export const ENEMIES = {
     brain: (w, u, dt) => { callAdds(w, u, dt, ['goblin', 'goblin', 'hobgoblin'], 20, 1); return slam(w, u, dt, { r: 145, tell: 0.95, dmg: 18, cdMin: 6.5, cdMax: 8.5 }); } },
 
   ...BOSSES,
+  ...FOES, // round 7: the three deeper dungeons' kinds and their wardens and bosses (js/foes.js)
 };
