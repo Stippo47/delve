@@ -5,7 +5,7 @@
 // gems spent on heroes, bought trinkets and potions, party seats, feats (a hero reached level 8 once) and records.
 import { HEROES, treeFor, freeNodes, FEAT_LEVEL } from './heroes.js';
 import { TRINKETS } from './units.js';
-import { TRINKET_LEVEL_MAX } from './trinkets.js';
+import { TRINKET_LEVEL_MAX, trinketHooks } from './trinkets.js';
 import { POTIONS, POTION_MAX as BAG_MAX, CARRY_MAX, elixirKey } from './potions.js';
 
 // ---------------------------------------------------------------- paying
@@ -200,11 +200,14 @@ export function payForRun(save, opts) {
 export function applyLoadout(run, opts) {
   for (const id of run.party || []) {
     const hs = run.heroes[id]; if (!hs) continue;
-    hs.trinkets = (hs.trinkets || []).map((t) => {
+    const list = hs.trinkets || (hs.trinkets = []); // changed in place: spawned units share this array
+    list.forEach((t, i) => {
       const tid = t && t.id ? t.id : t, lv = (opts.tlv || {})[tid] || 1;
-      return lv > 1 ? { ...(t && t.id ? t : { id: tid }), lv } : t;
+      if (lv > 1) list[i] = { ...(t && t.id ? t : { id: tid }), lv };
     });
-    for (const p of (opts.elixirs || {})[id] || []) hs.trinkets.push(elixirKey(p));
+    for (const p of (opts.elixirs || {})[id] || []) list.push(elixirKey(p));
+    // newRun already spawned the first room: give those heroes their new hooks
+    for (const u of (run.world && run.world.units) || []) if (u.kind === id && u.team === 'hero' && !u.summon) { u.trinkets = list; u.trinketHooks = trinketHooks(list); }
   }
 }
 
