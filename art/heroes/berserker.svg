@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- Round 5 (A): new flail head - six fat cone spikes round the ball, and one big four-sided spike in the middle of the top face, seen from straight above (lit facets top left, dark bottom right). -->
 <!-- Round 4: new flail spikes - seven clean cone spikes round the ball, lit from the left, and a ring of short spikes on the top face leaning outward from the crown (no more diamond studs); the fist wraps the handle. -->
 <!-- Round 3 (strap version): flail (arm-r) drawn before #body; bigger ball with pyramid spikes on its top face as well as round the rim; longer chain. -->
   <!-- BARBARIAN Flail Berserker (round 2, left shoulder a): shaved head, clean red mohawk crest running back-to-front with no fringe under it, jaw beard, spiked leather pauldron on the right. Flail held low in the right hand, chain and a big spiked ball forward. Parts: body / arm-l (raised empty fist) / arm-r (hand + flail). Facing = DOWN (+y). -->
@@ -61,6 +62,7 @@
     <clipPath id="bzcWpn"><g transform="translate(159 146) rotate(40)"><rect x="-5" y="-34" width="10" height="46"/><use href="#fistR"/><rect x="-7" y="8" width="14" height="26"/></g><circle cx="130.7" cy="179.7" r="23"/></clipPath>
 <path id="fistR" d="M -4.5 -13.5 L 5.3 -13.5 Q 7.9 -13.5 7.9 -10.5 A 3.52 3.52 0 0 1 7.9 -5.25 A 3.52 3.52 0 0 1 7.9 0 A 3.52 3.52 0 0 1 7.9 5.25 A 3.52 3.52 0 0 1 7.9 10.5 Q 7.9 13.5 5.3 13.5 L -4.5 13.5 Q -10.5 13.5 -10.5 7.5 L -10.5 -7.5 Q -10.5 -13.5 -4.5 -13.5 Z"/>
 <radialGradient id="bzgStud" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#F4F6FA"/><stop offset="0.55" stop-color="#A9B2C1"/><stop offset="1" stop-color="#4E5666"/></radialGradient>
+<linearGradient id="r5Steel" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E4E8EE"/><stop offset="1" stop-color="#7F8898"/></linearGradient><linearGradient id="r5Ivory" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#FFF8E8"/><stop offset="1" stop-color="#CDB98E"/></linearGradient>
 </defs>
   <g id="sprite" filter="url(#outline)">
     <g id="arm-r" data-pivot="160 108">
@@ -70,12 +72,11 @@
         <rect x="-5" y="-34" width="10" height="46" rx="3.5" fill="url(#g16)"/>
         <ellipse cx="0" cy="12.5" rx="6.5" ry="4.2" fill="url(#g17)"/><ellipse cx="0" cy="12.5" rx="6.5" ry="4.2" fill="url(#g18)"/><ellipse cx="0" cy="18" rx="3.4" ry="5.2" fill="url(#g17)"/><ellipse cx="0" cy="18" rx="3.4" ry="5.2" fill="url(#g18)"/><ellipse cx="0" cy="23.5" rx="5.2" ry="3.8" fill="url(#g17)"/><ellipse cx="0" cy="23.5" rx="5.2" ry="3.8" fill="url(#g18)"/><ellipse cx="0" cy="29" rx="3.4" ry="5.2" fill="url(#g17)"/><ellipse cx="0" cy="29" rx="3.4" ry="5.2" fill="url(#g18)"/>
       </g>
-      <path d="M 138.8 166.6 L 136.42 152.8 L 128.63 164.44 Z M 145.99 177.86 L 155.3 167.4 L 141.34 168.56 Z M 141.67 190.51 L 155.65 191.26 L 146.04 181.08 Z M 129.09 195.02 L 137.22 206.42 L 139.19 192.55 Z M 117.72 187.99 L 113.88 201.45 L 125.94 194.35 Z M 116.12 174.72 L 103.2 180.11 L 116.28 185.12 Z M 125.51 165.2 L 113.23 158.46 L 117.47 171.8 Z" fill="url(#g19)"/>
-      <path d="M 133.71 165.52 L 136.42 152.8 L 128.63 164.44 Z M 143.67 173.21 L 155.3 167.4 L 141.34 168.56 Z M 143.86 185.8 L 155.65 191.26 L 146.04 181.08 Z M 134.14 193.79 L 137.22 206.42 L 139.19 192.55 Z M 121.83 191.17 L 113.88 201.45 L 125.94 194.35 Z M 116.2 179.92 L 103.2 180.11 L 116.28 185.12 Z M 121.49 168.5 L 113.23 158.46 L 117.47 171.8 Z" fill="#3E3D52" opacity="0.5"/>
+      <path d="M 142.82 171.11 L 144.56 158.9 Q 144.45 155.88 141.78 157.3 L 132.08 164.91 Z M 144.2 185.9 L 155.64 181.3 Q 158.2 179.7 155.64 178.1 L 144.2 173.5 Z M 132.08 194.49 L 141.78 202.1 Q 144.45 203.52 144.56 200.5 L 142.82 188.29 Z M 118.58 188.29 L 116.84 200.5 Q 116.95 203.52 119.62 202.1 L 129.32 194.49 Z M 117.2 173.5 L 105.76 178.1 Q 103.2 179.7 105.76 181.3 L 117.2 185.9 Z M 129.32 164.91 L 119.62 157.3 Q 116.95 155.88 116.84 158.9 L 118.58 171.11 Z" fill="url(#r5Steel)"/>
+      <path d="M 137.45 168.01 L 144.45 155.88 L 142.82 171.11 Z M 144.2 179.7 L 158.2 179.7 L 144.2 185.9 Z M 137.45 191.39 L 144.45 203.52 L 142.82 188.29 Z M 123.95 191.39 L 116.95 203.52 L 129.32 194.49 Z M 117.2 179.7 L 103.2 179.7 L 117.2 185.9 Z M 123.95 168.01 L 116.95 155.88 L 129.32 164.91 Z" fill="#3E3D52" opacity="0.45"/>
       <circle cx="130.7" cy="179.7" r="16.5" fill="url(#g21)"/>
       <circle cx="130.7" cy="179.7" r="16.5" fill="url(#g22)"/>
-      <!-- round 4: spikes on the top face drawn as a ring of short spikes leaning outward from the crown -->
-      <path d="M 135.07 179.33 L 137.45 168.01 L 128.83 175.73 Z M 132.4 183.74 L 143.9 182.51 L 133.89 176.7 Z M 127.38 182.56 L 132.11 193.13 L 134.54 181.81 Z M 126.95 177.43 L 118.37 185.19 L 129.88 184.01 Z M 131.7 175.43 L 121.67 169.67 L 126.35 180.25 Z" fill="url(#g19)"/><path d="M 131.95 177.53 L 137.45 168.01 L 128.83 175.73 Z M 133.15 180.22 L 143.9 182.51 L 133.89 176.7 Z M 130.96 182.19 L 132.11 193.13 L 134.54 181.81 Z M 128.42 180.72 L 118.37 185.19 L 129.88 184.01 Z M 129.03 177.84 L 121.67 169.67 L 126.35 180.25 Z" fill="#3E3D52" opacity="0.45"/><circle cx="130.7" cy="179.7" r="3.4" fill="#E9EDF2"/>
+      <path d="M 119.2 179.7 L 130.7 168.2 L 130.7 179.7 Z" fill="#F6F8FB"/><path d="M 130.7 168.2 L 142.2 179.7 L 130.7 179.7 Z" fill="#C3CAD4"/><path d="M 130.7 191.2 L 119.2 179.7 L 130.7 179.7 Z" fill="#A4ACB9"/><path d="M 142.2 179.7 L 130.7 191.2 L 130.7 179.7 Z" fill="#6C7484"/>
       <g transform="translate(159 146) rotate(40)">
         <g clip-path="url(#bzcHandle)"><use href="#fistR" transform="translate(1 3)" fill="#2B2230" opacity="0.3"/></g>
         <use href="#fistR" fill="url(#gHand)"/>

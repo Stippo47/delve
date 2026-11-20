@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- Round 5: the side locks are much shorter: they end a little below the chin (were down past the shoulders). -->
 <!-- Round 4: Wildmane is a woman. The forked beard is gone; two long locks of hair fall past her face onto the mantle (same rust as the mane). The scar is one solid darker skin shade, no white. The sword fist wraps the grip. -->
 <!-- Round 3: same as barbarian-wildmane.svg plus a short pale scar across where her left eye would be. -->
   <!-- BARBARIAN Wildmane, scar version (round 3): cream wolf-fur mantle, swept rust mane, fringe (round 4: no beard, long locks instead). Greatsword now held low in the right hand, point forward (+y), wider blade with a centre ridge. Parts: body / arm-l (empty fist) / arm-r (hand + greatsword). Facing = DOWN (+y). -->
@@ -22,7 +23,7 @@
     <clipPath id="k11"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4"/><use href="#s5"/><use href="#s6"/><use href="#s7"/><use href="#s8"/><use href="#s9"/></clipPath>
     <linearGradient id="g4" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D96C30"/><stop offset="1" stop-color="#A9431F"/></linearGradient>
     <linearGradient id="g5" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#6A302A" stop-opacity="0"/><stop offset="1" stop-color="#6A302A" stop-opacity="0.5"/></linearGradient>
-    <path d="M 61 92 C 50 104 42 124 42 146 C 42 158 44 168 48 180 L 54 170 L 59 184 L 65 170 L 70 176 C 71 162 72 146 71 128 C 70 114 68 102 61 92 Z M 139 92 C 150 104 158 124 158 146 C 158 158 156 168 152 180 L 146 170 L 141 184 L 135 170 L 130 176 C 129 162 128 146 129 128 C 130 114 132 102 139 92 Z" id="s12"/>
+    <path d="M 61 92 C 51 103 45 116 45 130 C 45 138 46 144 49 151 L 54 145 L 59 153 L 64 144 L 69 148 C 70 137 70 126 69 115 C 68 106 66 99 61 92 Z M 139 92 C 149 103 155 116 155 130 C 155 138 154 144 151 151 L 146 145 L 141 153 L 136 144 L 131 148 C 130 137 130 126 131 115 C 132 106 134 99 139 92 Z" id="s12"/>
     <clipPath id="k13"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4"/><use href="#s5"/><use href="#s6"/><use href="#s7"/><use href="#s8"/><use href="#s9"/><use href="#s10"/></clipPath>
     <linearGradient id="g6" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#CC5A28"/><stop offset="1" stop-color="#9C3C1F"/></linearGradient>
     <linearGradient id="g7" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#632D2A" stop-opacity="0"/><stop offset="1" stop-color="#632D2A" stop-opacity="0.5"/></linearGradient>
