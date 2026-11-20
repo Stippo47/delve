@@ -98,9 +98,21 @@ function softShadow() {
   if (shadowImg) return shadowImg;
   const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d');
   const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-  gr.addColorStop(0, 'rgba(43,34,48,0.36)'); gr.addColorStop(0.72, 'rgba(43,34,48,0.3)'); gr.addColorStop(1, 'rgba(43,34,48,0)');
+  gr.addColorStop(0, 'rgba(43,34,48,0.26)'); gr.addColorStop(0.6, 'rgba(43,34,48,0.2)'); gr.addColorStop(1, 'rgba(43,34,48,0)');
   g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
   return (shadowImg = c);
+}
+
+// The circle shadow under a unit (round 6): a firmer disc with a short soft rim, a little wider than the body so it
+// shows round the sprite's edge.
+let unitShadowImg = null;
+function unitShadow() {
+  if (unitShadowImg) return unitShadowImg;
+  const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d');
+  const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(43,34,48,0.42)'); gr.addColorStop(0.8, 'rgba(43,34,48,0.36)'); gr.addColorStop(1, 'rgba(43,34,48,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+  return (unitShadowImg = c);
 }
 
 const SPRITE_KIND = { boss: 'boss', slimeSmall: 'slimeSmall' };
@@ -127,7 +139,7 @@ export function draw(ctx, w) {
   for (const p of w.pillars) { const R = p.r * 1.45; ctx.drawImage(softShadow(), p.x - R, p.y - R, R * 2, R * 2); }
   for (const p of w.pillars) drawPillar(ctx, p, w);
   // a round shadow straight under every unit (top-down: no side cast); a leaping unit's shrinks as it rises
-  for (const u of w.units) { const r = (u.downed ? u.vr * 1.15 : Math.max(u.vr * 1.3, u.r * 0.95)) * (1 - Math.min(0.35, (u.hop || 0) / 120)); ctx.drawImage(softShadow(), u.x - r, u.y - r, r * 2, r * 2); }
+  for (const u of w.units) { if (u.ethereal) continue; const r = (u.downed ? u.vr * 1.4 : Math.max(u.r * 1.7, u.vr * 2)) * (1 - Math.min(0.35, (u.hop || 0) / 120)); ctx.drawImage(unitShadow(), u.x - r, u.y - r, r * 2, r * 2); }
   for (const t of w.telegraphs) if (t.type === 'ring') drawRing(ctx, t);
   for (const c of w.corpses) drawCorpse(ctx, c);
   const order = [...w.units].sort((a, b) => (a.downed ? -1 : 0) - (b.downed ? -1 : 0) || screenDepth(a) - screenDepth(b));
@@ -525,7 +537,7 @@ function drawCorpse(ctx, c) {
   const lift = 1 + Math.min(0.35, (c.z || 0) / 160);
   const alpha = clamp(c.t / 4, 0, 1) * 0.95;
   const flash = (c.age ?? 1) < 0.07;
-  if (c.z > 2) upright(ctx, c.x, c.y, () => { const r = c.vr * 1.2; ctx.globalAlpha = alpha; ctx.drawImage(softShadow(), -r, -r, r * 2, r * 2); ctx.globalAlpha = 1; });
+  if (c.z > 2) { const r = c.r * 1.1; ctx.globalAlpha = alpha * 0.8; ctx.drawImage(unitShadow(), c.x - r, c.y - r, r * 2, r * 2); ctx.globalAlpha = 1; }
   ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.facing - Math.PI / 2); ctx.scale(lift, lift);
   if (art) {
     const set = getRig(art, sizeU * view.scale * view.dpr); if (set) {
