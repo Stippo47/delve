@@ -37,7 +37,7 @@ function gaperBrain(w, u, dt) {
     if (g.cd > 0 || !t || !alive(t) || !u.aggro) return false;
     const d = dist(u.x, u.y, t.x, t.y);
     if (d < 110 || d > 330 || blocked(w, u.x, u.y, t.x, t.y)) return false;
-    const a = angleTo(u.x, u.y, t.x, t.y), len = Math.min(d + 80, 360), sp = u.def.speed * 4.4;
+    const a = angleTo(u.x, u.y, t.x, t.y), len = Math.min(d + 80, 360), sp = u.def.speed * 2.8; // def.speed is the round-6 (fast) walk
     Object.assign(g, { phase: 'tell', t: 0.55, a, len, sp, hit: new Set() });
     addDanger(w, { shape: 'line', x1: u.x, y1: u.y, x2: u.x + Math.cos(a) * len, y2: u.y + Math.sin(a) * len, hw: u.r + 8, t: 0.55 + len / sp, team: u.team, src: u, kind: 'blade' });
     setAnim(u, 'ability', 0.55 + len / sp);
@@ -207,7 +207,8 @@ export const ENEMIES = {
   rattlerBow: { ...SKELETON, name: 'Bone Archer', art: 'art/enemies/rattler-jawless-bow.svg', r: 31, vr: 23, hp: 36, speed: 50, role: 'ranged',
     range: 250, keep: 160, atkCd: 1.7, dmg: 7, xp: 10, coins: [2, 5], cost: 3, attackAnim: 'draw', temp: 0.35 },
   rattlerSpear: { ...SKELETON, name: 'Bone Spear', art: 'art/enemies/rattler-jawless-spear.svg', r: 32, vr: 23, hp: 46, speed: 50, role: 'melee',
-    range: 46, atkCd: 1.6, windup: 0.35, dmg: 11, knock: 140, arc: 0.8, xp: 11, coins: [2, 5], cost: 3, attackAnim: 'thrust' },
+    range: 46, atkCd: 1.6, windup: 0.35, dmg: 11, knock: 140, arc: 0.8, xp: 11, coins: [2, 5], cost: 3, attackAnim: 'thrust',
+    ability: 'dash', abilCd: 4.5 }, // lunges in behind the spear
   rattlerMace: { ...SKELETON, name: 'Loose Jaw', art: 'art/enemies/rattler-loosejaw.svg', r: 34, vr: 24, hp: 60, speed: 46, role: 'melee',
     range: 22, atkCd: 1.8, windup: 0.55, dmg: 14, knock: 210, arc: 1.6, heavy: true, xp: 12, coins: [2, 6], cost: 4, attackAnim: 'swing' },
   gaper: { ...SKELETON, name: 'Gaper', art: 'art/enemies/gaper.svg', r: 38, vr: 31, mass: 1.6, hp: 90, speed: 54, role: 'melee',
@@ -232,7 +233,8 @@ export const ENEMIES = {
     hp: 60, speed: 52, role: 'melee', range: 20, atkCd: 1.3, windup: 0.3, dmg: 8, knock: 110, arc: 1.5, shield: 0.4, temp: 0.3, commit: 1,
     xp: 11, coins: [2, 5], cost: 3, attackAnim: 'swing' },
   orc: { team: 'enemy', name: 'Orc', art: 'art/enemies/orc.svg', headR: 60, r: 36, vr: 27, turn: 3, accel: 170, face: 3, mass: 1.9, hp: 90, speed: 50,
-    role: 'melee', range: 22, atkCd: 1.7, windup: 0.5, dmg: 14, knock: 190, arc: 1.8, heavy: true, temp: 0.3, commit: 1.1, xp: 18, coins: [3, 7], cost: 5, attackAnim: 'swing' },
+    role: 'melee', range: 22, atkCd: 1.7, windup: 0.5, dmg: 14, knock: 190, arc: 1.8, heavy: true, temp: 0.3, commit: 1.1, xp: 18, coins: [3, 7], cost: 5, attackAnim: 'swing',
+    ability: 'charge', abilCd: 9 }, // barrels into the party, bowling them aside
   orcShaman: { team: 'enemy', name: 'Orc Shaman', art: 'art/enemies/orc-shaman.svg', headR: 60, r: 33, vr: 25, turn: 3.4, accel: 180, face: 3.4, mass: 1.4,
     hp: 60, speed: 48, role: 'ranged', range: 250, keep: 190, atkCd: 999, dmg: 5, temp: 0.4, commit: 0.9, xp: 16, coins: [3, 7], cost: 5, brain: shamanBrain },
   troll: { team: 'enemy', name: 'Troll', art: 'art/enemies/troll.svg', headR: 60, r: 42, vr: 31, turn: 2.6, accel: 150, face: 2.6, mass: 3, hp: 170, speed: 46,

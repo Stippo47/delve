@@ -74,7 +74,25 @@ const ZONE = {
   holy: '#F2C14E', fire: '#E8582A', poison: '#7DB83A', ice: '#9FDDF6', storm: '#5B6C9A', vines: '#4E8A3A', heal: '#8BE07A', sanctuary: '#FFF1B0',
 };
 export function drawGroundFx(ctx, w) {
-  for (const f of w.fx || []) if (f.type === 'zone') zone(ctx, f, w.time);
+  for (const f of w.fx || []) if (f.type === 'zone') zone(ctx, f, w.time); else if (f.type === 'rift') rift(ctx, f, w.time);
+}
+// Where the next wave comes up (dungeon.js): a dark crack in the floor that opens and swirls, flares as the enemy
+// climbs out, then closes. { x, y, r, at (seconds until the enemy appears) }.
+function rift(ctx, f, T) {
+  const open = easeOut(clamp(f.t / Math.max(0.01, f.at), 0, 1)), shut = clamp((f.max - f.t) / 0.35, 0, 1);
+  const r = f.r * open * shut, seed = Math.round(f.x * 3 + f.y * 7);
+  if (r < 1) return;
+  ctx.save();
+  inked(ctx, () => blob(ctx, f.x, f.y, r, 8, seed + T * 2, 0.9), '#1E1724');
+  ctx.globalAlpha = 0.85;
+  for (let i = 0; i < 3; i++) { // swirling arms of purple light
+    const a0 = T * 4 + i / 3 * TAU;
+    ctx.strokeStyle = i % 2 ? '#9B7BD6' : '#C9A7FF'; ctx.lineWidth = 2.4; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(f.x, f.y, r * 0.6, a0, a0 + 1.4); ctx.stroke();
+  }
+  const flare = f.t > f.at ? clamp(1 - (f.t - f.at) / 0.3, 0, 1) : 0;
+  if (flare > 0) { ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, f.x, f.y, f.r * 2, '#C9A7FF', 0.7 * flare); }
+  ctx.restore();
 }
 function zone(ctx, f, T) {
   const a = life(f, 0.25, 0.45), grow = 0.55 + 0.45 * easeOut(clamp(f.t / 0.3, 0, 1)), r = f.r * grow, x = f.x, y = f.y;
@@ -143,20 +161,13 @@ function zone(ctx, f, T) {
       break;
     }
     case 'heal': case 'holy': case 'sanctuary': {
+      // round 6: no ring or glowing disc round the hero (the designer disliked the aura and the 'puddle' look):
+      // just light on the floor, faint and soft-edged, and motes rising out of it
       const col = ZONE[f.kind], pulse = 0.85 + 0.15 * Math.sin(T * 4 + seed);
-      ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x, y, r * 1.05, col, 0.32 * pulse); ctx.restore();
-      ctx.strokeStyle = rgba(col, 0.9); ctx.lineWidth = f.kind === 'sanctuary' ? 4 : 2.6;
-      ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.stroke();
-      if (f.kind !== 'heal') { // a turning ring of rune marks
-        ctx.save(); ctx.translate(x, y); ctx.rotate(T * (f.kind === 'holy' ? 0.5 : -0.3));
-        ctx.strokeStyle = rgba(f.kind === 'holy' ? '#FFF4C8' : '#FFFFFF', 0.85); ctx.lineWidth = 2.2; ctx.lineCap = 'round';
-        const n = Math.round(r / 7);
-        for (let i = 0; i < n; i++) { const an = i / n * TAU; ctx.beginPath(); ctx.arc(0, 0, r * 0.82, an, an + TAU / n * 0.45); ctx.stroke(); }
-        ctx.restore();
-      }
+      if (f.kind !== 'heal') { ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x, y, r, col, 0.12 * pulse); ctx.restore(); }
       // motes rising: crosses for healing, sparks of light for the others
       const [ux, uy] = upVec();
-      for (let i = 0; i < 7; i++) {
+      for (let i = 0, n = Math.max(7, Math.round(r / 9)); i < n; i++) {
         const ph = (T * 0.6 + hash(i, seed)) % 1, an = hash(seed, i, 4) * TAU, rr = r * 0.8 * Math.sqrt(hash(i, seed, 9));
         const px = x + Math.cos(an) * rr + ux * ph * 26, py = y + Math.sin(an) * rr + uy * ph * 26, al = Math.sin(ph * Math.PI);
         ctx.globalAlpha = a * al;
@@ -209,6 +220,15 @@ function beam(ctx, f, T) {
     for (let i = 0; i < 5; i++) { const k = 1 - ((T * 1.4 + i / 5) % 1), o = Math.sin(k * 9 + T * 8) * 7 * Math.sin(k * Math.PI);
       inked(ctx, () => { ctx.beginPath(); ctx.arc(x1 + (x2 - x1) * k + nx * o, y1 + (y2 - y1) * k + ny * o, 3.2, 0, TAU); }, '#E0604B'); }
     void L;
+  } else if (f.kind === 'heal') {
+    // a mending ray: a soft, thin ray of warm light, with motes flowing along it to the one being healed (x2, y2)
+    const pulse = 0.85 + 0.15 * Math.sin(T * 9);
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgba(255,240,170,0.22)'; ctx.lineWidth = 16 * pulse; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.restore();
+    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); }, '#FFF1B0', 3.2);
+    for (let i = 0; i < 6; i++) { const k = (T * 1.3 + i / 6) % 1;
+      ctx.fillStyle = i % 2 ? '#FFFBEA' : '#C8F5B0'; star(ctx, x1 + (x2 - x1) * k, y1 + (y2 - y1) * k, 3.4, 4, 0.4, T * 3 + i); ctx.fill(); }
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x2, y2, 24 * pulse, '#FFF1B0', 0.55); ctx.restore();
   } else { // holy: a straight shaft of light
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.lineCap = 'round';
     ctx.strokeStyle = 'rgba(255,225,140,0.25)'; ctx.lineWidth = 26; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.restore();
@@ -420,8 +440,9 @@ const local = [];
 export function noteHits(w) {
   for (const u of w.units) {
     if (u.hitT > (u._seenHit || 0) + 0.02 && !u.downed) {
-      const r = u.r * 0.55;
-      local.push({ type: 'impact', x: u.x - Math.cos(u.hitA) * r, y: u.y - Math.sin(u.hitA) * r, a: u.hitA, t: 0, max: 0.13, big: u.hitT > 0.15 && w.hitstop > 0 });
+      // at the point the sim worked out: the body's edge facing the blow, or the face of a raised shield
+      const r = u.r * 0.85, x = u.hitX ?? u.x - Math.cos(u.hitA) * r, y = u.hitY ?? u.y - Math.sin(u.hitA) * r;
+      local.push({ type: 'impact', x, y, a: u.hitA, t: 0, max: u.hitBlock ? 0.16 : 0.13, big: u.flinchT > 0.15, block: u.hitBlock, fa: u.facing });
     }
     u._seenHit = u.hitT;
   }
@@ -435,9 +456,13 @@ export function drawLocal(ctx, dt) {
   for (const f of local) {
     f.t += dt; const k = clamp(f.t / f.max, 0, 1);
     if (f.type === 'impact') {
-      const s = (f.big ? 13 : 9) * (0.6 + 0.6 * easeOut(k));
+      const s = (f.big ? 15 : 10) * (0.6 + 0.6 * easeOut(k));
       ctx.save(); ctx.globalAlpha = 1 - k * k;
-      inked(ctx, () => star(ctx, f.x, f.y, s, 4, 0.3, f.a), '#FFFFFF');
+      if (f.block) { // a clang on the shield: a bright arc along its face, and a hard white star
+        ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, f.x, f.y, 22 * (1 - k) + 6, '#FFF4C8', 0.8); ctx.restore();
+        inkLine(ctx, () => { ctx.beginPath(); ctx.arc(f.x - Math.cos(f.fa) * 12, f.y - Math.sin(f.fa) * 12, 14 + 6 * k, f.fa - 0.9, f.fa + 0.9); }, '#FFF8E0', 3 * (1 - k) + 1);
+      }
+      inked(ctx, () => star(ctx, f.x, f.y, s, 4, 0.3, f.a), f.block ? '#FFF4C8' : '#FFFFFF');
       ctx.restore();
     } else if (f.type === 'sparkle') {
       ctx.save(); ctx.globalAlpha = 1 - k;

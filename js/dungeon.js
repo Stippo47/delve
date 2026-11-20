@@ -4,7 +4,7 @@
 // near, and the party walks the room chunk by chunk before heading for the doors. After a room is cleared the party deals with what's in it (chest, fountain, a choice of
 // three things), then picks one of the doors ahead. Heroes keep HP and potions between rooms; downed heroes stay
 // down until the floor's boss is beaten, then come back at 10% HP.
-import { makeWorld, spawn, step, alive, addStatus, hurt, puff } from './sim.js';
+import { makeWorld, spawn, step, alive, addStatus, hurt, puff, fx, scatterCoins } from './sim.js';
 import { DEFS, xpToNext, levelHp, levelDmg, TRINKET_IDS } from './units.js';
 import { trinketHooks, raiseGhost, wears } from './trinkets.js';
 import { HEROES, STARTERS, treeFor, freeNodes } from './heroes.js';
@@ -62,12 +62,12 @@ const KIND_SHAPES = {
   fountain: ['one'], decision: ['one'],
   boss: ['box', 'wide'],
 };
-const COL_LEN = { one: [800, 1100], fountain: [700, 900], decision: [750, 900] };
+const COL_LEN = { one: [680, 920], fountain: [600, 780], decision: [640, 780] }; // round 6: rooms a bit smaller
 
 function makeShape(kind) {
   const name = pick(KIND_SHAPES[kind] || KIND_SHAPES.fight);
   const rows = SHAPES[name], nr = rows.length, nc = rows[0].length;
-  const [a, b] = COL_LEN[kind] || (nc === 1 ? COL_LEN.one : [480, 760]);
+  const [a, b] = COL_LEN[kind] || (nc === 1 ? COL_LEN.one : [420, 640]);
   const colW = []; for (let c = 0; c < nc; c++) colW.push(Math.round(rrange(a, b)));
   const colX = [0]; for (let c = 0; c < nc; c++) colX.push(colX[c] + colW[c]);
   const cells = [], solid = [];
@@ -136,25 +136,32 @@ function addBlocks(w) {
 const OLD_COST = { rat: 1, slime: 2, slimeSmall: 1, skeleton: 3 }, OLD_PACK = { rat: [2, 4] };
 const costOf = (k) => DEFS[k].cost ?? OLD_COST[k] ?? 3;
 const packOf = (k) => DEFS[k].pack || OLD_PACK[k] || null;
-function enemyPack(w, run, budget, cell, keyChance) {
+// What a group is made of: kinds from the theme's roster for this floor, spending `budget`. harder: now and then
+// a kind from the next floor's roster (later waves bring heavier things).
+function rollKinds(run, budget, harder = 0) {
   const kinds = [];
-  const T = themeOf(run.theme), roster = T.enemies[Math.min(T.enemies.length, run.floor) - 1];
+  const T = themeOf(run.theme), at = (f) => T.enemies[Math.min(T.enemies.length, f) - 1];
   for (let guard = 0; budget > 0 && guard < 40; guard++) {
+    const roster = chance(harder) ? at(run.floor + 1) : at(run.floor);
     const k = weighted(roster, rand), c = costOf(k), pk = packOf(k);
     if (c > budget + 1.5 && kinds.length) { if (guard > 20) break; continue; } // too big for what's left: something smaller
     const n = pk ? Math.max(1, Math.min(rint(pk[0], pk[1]), Math.ceil(budget / c))) : 1;
     for (let j = 0; j < n; j++) kinds.push(k);
     budget -= n * c;
   }
-  const keyIdx = chance(keyChance) ? rint(0, kinds.length - 1) : -1;
-  const c = inCell(w, cell, 40, 150);
-  kinds.forEach((k, i) => {
-    const p = placeFree(w, DEFS[k].r, c.x - 150, c.x + 150, Math.max(DEFS[k].r + 20, c.y - 150), Math.min(w.H - DEFS[k].r - 20, c.y + 150));
-    const u = spawn(w, k, p.x, p.y, { mult: w.mult, hasKey: i === keyIdx });
-    u.facing = u.mvA = angleTo(p.x, p.y, w.doorIn.x, w.doorIn.y); // facing the way the party comes in
-  });
-  return keyIdx >= 0;
+  return kinds;
 }
+function enemyPack(w, run, budget, cell) {
+  const c = inCell(w, cell, 40, 150);
+  for (const k of rollKinds(run, budget)) {
+    const p = placeFree(w, DEFS[k].r, c.x - 150, c.x + 150, Math.max(DEFS[k].r + 20, c.y - 150), Math.min(w.H - DEFS[k].r - 20, c.y + 150));
+    const u = spawn(w, k, p.x, p.y, { mult: w.mult });
+    u.facing = u.mvA = angleTo(p.x, p.y, w.doorIn.x, w.doorIn.y); // facing the way the party comes in
+  }
+}
+
+// How hard each dungeon type is, easiest first (designer, round 6: each dungeon harder than the last).
+export const DUNGEON_RANK = { warren: 0, sewers: 1, crypt: 2 };
 
 function buildRoom(run) {
   const node = nodeAt(run.map);
@@ -174,7 +181,8 @@ function buildRoom(run) {
   w.exits = sh.cells.filter((c) => c.c === sh.nc - 1);
   w.doorIn = { x: 0, y: arena ? sh.H / 2 : centre(w.entry).y };
   const L = node.L;
-  w.mult = 1 + 0.22 * (run.depth - 1) + 0.12 * (run.floor - 1) + 0.025 * L;
+  // enemy strength: the dungeon type, the run's depth, the floor and how far into it (each floor harder than the last)
+  w.mult = 1 + 0.12 * (DUNGEON_RANK[run.theme] || 0) + 0.22 * (run.depth - 1) + 0.15 * (run.floor - 1) + 0.03 * L;
   const busy = kind === 'fight' || kind === 'hazard' || kind === 'elite';
   if (arena) buildArena(w, arena);
   else if (sh.nr === 1 && sh.nc > 1) { if ((busy && chance(0.75)) || (kind === 'treasure' && chance(0.5))) addWalls(w); }
@@ -208,7 +216,6 @@ function buildRoom(run) {
   const ok = () => outs().every((d) => findPath(w, 80, w.doorIn.y, w.W - 60, d.y));
   if (!ok()) { w.pillars = w.pillars.filter((p) => p.fountain); buildGrid(w); }
   if (!ok()) { w.walls = w.walls.filter((r) => r.solid); w.shape += '-walls'; buildGrid(w); }
-  if (kind === 'treasure') { const p = inCell(w, pick(w.exits), 24); w.pickups.push({ type: 'chest', x: p.x, y: p.y, open: false, free: true }); }
   dress(w, T, sh);
   // the party walks the room chunk by chunk: the nearest chunk not yet seen, the way-out chunks last
   w.toVisit = sh.cells.filter((c) => c !== w.entry).map((c) => ({ ...centre(c), exit: c.c === sh.nc - 1 }));
@@ -243,20 +250,20 @@ function buildRoom(run) {
     if (kind === 'treasure') homes = [pick(homes)];
     // fewer enemies for a smaller party: one hero faces about 40% of what three do
     const partyScale = 0.12 + 0.28 * Math.min(4, run.party.length + run.hired.length);
-    const total = ((kind === 'treasure' ? 3 : 4 + run.depth * 2 + run.floor * 2) + L * 0.5) * (kind === 'treasure' ? 1 : 0.55 + 0.18 * sh.cells.length) * partyScale;
-    let keyed = false;
-    for (const cell of homes) {
-      if (enemyPack(w, run, Math.max(2, Math.round(total / homes.length * rrange(0.8, 1.25))), cell, kind === 'treasure' ? 0 : 0.18)) keyed = true;
-    }
+    const total = ((kind === 'treasure' ? 3 : 4 + run.depth * 2 + run.floor * 2 + (DUNGEON_RANK[run.theme] || 0)) + L * 0.5) * (kind === 'treasure' ? 1 : 0.55 + 0.18 * sh.cells.length) * partyScale;
+    // the first lot is a little smaller than before round 6: the waves after it make up the rest
+    for (const cell of homes) enemyPack(w, run, Math.max(2, Math.round(total * (kind === 'treasure' ? 1 : 0.75) / homes.length * rrange(0.8, 1.25))), cell);
     if (kind === 'elite') {
       const p = inCell(w, far, 40);
-      const u = spawn(w, T.elite, p.x, p.y, { mult: w.mult * 1.25, scale: 1.15, hpMul: 1.9 }); u.facing = Math.PI; u.elite = true; u.hasKey = true; keyed = true;
+      const u = spawn(w, T.elite, p.x, p.y, { mult: w.mult * 1.25, scale: 1.15, hpMul: 1.9 }); u.facing = Math.PI; u.elite = true;
     }
-    if (keyed && kind !== 'treasure') { const p = inCell(w, pick(homes), 24); w.pickups.push({ type: 'chest', x: p.x, y: p.y, open: false }); }
+    // waves: once the room is clear, more come up out of the floor (1-2, more likely on deeper floors), each about
+    // half the room's first lot; the chest (if the room has one) shows up when the last wave is down
+    if (kind !== 'treasure') w.waves = { left: kind === 'elite' ? 1 : 1 + (chance(0.25 * (run.floor - 1)) ? 1 : 0), budget: total * 0.4, n: 0 };
+    w.chest = kind === 'treasure' || kind === 'elite' || chance(0.3);
   }
   w.on.kill = (u) => onKill(run, u);
   w.on.coin = (p) => { run.coins += p.v; };
-  w.on.key = () => { run.keys++; };
   w.on.drank = (u) => { run.heroes[u.kind].potions = u.potions; };
   run.phase = 'fight'; run.t = 0; run.fade = 1; run.task = null; run.quietT = 0;
 }
@@ -351,7 +358,7 @@ function grant(run, reward, hero) {
     for (const h of w.units) if (h.team === 'hero' && alive(h)) giveXp(run, h, 30 + 20 * run.depth);
   } else if (reward === 'coins') {
     const n = rint(10, 18) + run.depth * 6;
-    for (let i = 0; i < n; i++) w.pickups.push({ type: 'coin', x: hero ? hero.x : w.W / 2, y: hero ? hero.y : w.H / 2, vx: rrange(-120, 120), vy: rrange(-120, 120), v: 1 });
+    scatterCoins(w, hero ? hero.x : w.W / 2, hero ? hero.y : w.H / 2, n);
   } else if (reward === 'trinket') {
     const it = rollTrinket(); run.satchel.push(it);
     equipFound(run, it.id, hero);
@@ -424,8 +431,8 @@ export function update(run, dt) {
   revive(run, dt);
   if (run.phase === 'fight') nextWaypoint(w);
   if (run.phase === 'fight' && enemies.length === 0) {
-    w.cleared = true; run.phase = 'loot'; run.t = 0;
-    for (const h of heroesAlive(run)) h.target = null;
+    if (w.waves && (w.waves.left > 0 || w.waves.pending)) waveTick(run, dt);
+    else roomWon(run);
   }
   if (run.phase === 'loot') { if (doTasks(run, dt)) { run.phase = 'choose'; run.t = 0; } return; }
   if (run.phase === 'choose') {
@@ -478,26 +485,88 @@ function revive(run, dt) {
   }
 }
 
-// Where the party heads when nothing is in sight: the nearest chunk it hasn't walked through yet.
+// Where the party heads when nothing is in sight: the nearest enemy still standing (they don't search empty parts
+// of the room). While a wave is on its way they hold together where they are.
 function nextWaypoint(w) {
   const hs = w.units.filter((u) => u.team === 'hero' && alive(u)); if (!hs.length) return;
   let cx = 0, cy = 0; for (const h of hs) { cx += h.x; cy += h.y; } cx /= hs.length; cy /= hs.length;
-  w.toVisit = w.toVisit.filter((p) => dist(p.x, p.y, cx, cy) > 170 && !hs.some((h) => dist(p.x, p.y, h.x, h.y) < 90));
-  const open = w.toVisit.filter((p) => !p.exit), list = open.length ? open : w.toVisit;
-  let best = null, bd = Infinity; for (const p of list) { const d = dist(p.x, p.y, cx, cy); if (d < bd) { bd = d; best = p; } }
-  w.wp = best;
+  let best = null, bd = Infinity;
+  for (const e of w.units) if (e.team === 'enemy' && alive(e)) { const d = dist(e.x, e.y, cx, cy); if (d < bd) { bd = d; best = e; } }
+  w.wp = best ? { x: best.x, y: best.y } : { x: cx, y: cy };
+}
+
+// ---------------------------------------------------------------- waves
+// The room is clear but more are coming: a short breather, then cracks open in the floor around the party (shown,
+// not told: dark rifts, a low rumble of shake) and the next wave climbs out of them, already angry.
+const WAVE_GAP = 1.3, RIFT_T = 1.1;
+function waveTick(run, dt) {
+  const w = run.world, wv = w.waves;
+  if (!wv.pending) { wv.pending = { t: WAVE_GAP + RIFT_T, spots: null }; wv.left--; wv.n++; }
+  const pd = wv.pending;
+  pd.t -= dt;
+  if (!pd.spots && pd.t <= RIFT_T) {
+    const hs = heroesAlive(run); if (!hs.length) return;
+    let cx = 0, cy = 0; for (const h of hs) { cx += h.x; cy += h.y; } cx /= hs.length; cy /= hs.length;
+    const kinds = rollKinds(run, Math.max(2, Math.round(wv.budget * rrange(0.85, 1.15))), 0.2 + 0.15 * wv.n);
+    // one or two groups, each round a spot a fair way from the party, on open floor
+    const groups = kinds.length > 3 && chance(0.6) ? 2 : 1, centres = [];
+    for (let g = 0; g < groups; g++) centres.push(waveSpot(w, cx, cy, 60));
+    pd.spots = kinds.map((k, i) => {
+      const c = centres[i % groups], r = DEFS[k].r;
+      let p = null;
+      for (let tries = 0; tries < 30 && !p; tries++) { const a = rand() * Math.PI * 2, d = rrange(0, 50 + 12 * kinds.length / groups), x = c.x + Math.cos(a) * d, y = c.y + Math.sin(a) * d; if (freeSpot(w, x, y, r)) p = { x, y }; }
+      p = p || c;
+      fx(w, { type: 'rift', x: p.x, y: p.y, r: r * 1.1, at: RIFT_T, max: RIFT_T + 0.5 });
+      return { k, ...p };
+    });
+    w.shake = Math.max(w.shake, 3);
+  }
+  if (pd.t > 0) return;
+  for (const sp of pd.spots || []) {
+    const u = spawn(w, sp.k, sp.x, sp.y, { mult: w.mult });
+    u.aggro = true; u.facing = u.mvA = rand() * Math.PI * 2; u.flinchT = 0.35; // a moment to find its feet
+    puff(w, sp.x, sp.y, '#3A2E44', 10, 120, 7, 0.5);
+  }
+  wv.pending = null;
+}
+// A spot on open floor 260-420 from (cx, cy), out of the party's way.
+function waveSpot(w, cx, cy, r) {
+  for (let i = 0; i < 80; i++) {
+    const a = rand() * Math.PI * 2, d = rrange(260, 420), x = cx + Math.cos(a) * d, y = cy + Math.sin(a) * d;
+    if (freeSpot(w, x, y, r) && w.cells.some((c) => x > c.x && x < c.x + c.w && y > c.y && y < c.y + c.h)) return { x, y };
+  }
+  return placeFree(w, r, 60, w.W - 60);
+}
+
+// The room is won: spikes sink, and (if the room has one) a chest drops in beside the party.
+function roomWon(run) {
+  const w = run.world;
+  w.cleared = true; run.phase = 'loot'; run.t = 0;
+  for (const h of heroesAlive(run)) h.target = null;
+  for (const h of w.hazards) if (h.type === 'spikes' && h.up !== false) { h.up = false; puff(w, h.x, h.y, '#B9AE9C', 6, 60, 5, 0.4); }
+  if (w.chest) {
+    const hs = heroesAlive(run);
+    let cx = 0, cy = 0; for (const h of hs) { cx += h.x; cy += h.y; } cx /= hs.length || 1; cy /= hs.length || 1;
+    let p = null;
+    for (let i = 0; i < 60 && !p; i++) { const a = rand() * Math.PI * 2, d = rrange(70, 150), x = cx + Math.cos(a) * d, y = cy + Math.sin(a) * d;
+      if (freeSpot(w, x, y, 34) && !hs.some((h) => dist(h.x, h.y, x, y) < h.r + 30)) p = { x, y }; }
+    p = p || { x: clamp(cx + 90, 60, w.W - 60), y: cy };
+    w.pickups.push({ type: 'chest', x: p.x, y: p.y, open: false, free: true, drop: 0.45 }); // drop: falling in (render.js)
+  }
 }
 
 // After the fight: walk over the coins (they fade), then open the chest, drink from the fountain, take one of three things.
 function doTasks(run, dt) {
   const w = run.world;
-  const loose = w.pickups.filter((p) => p.type === 'coin' || p.type === 'key');
+  const loose = w.pickups.filter((p) => (p.type === 'coin' || p.type === 'key') && !p.homing); // homing ones come by themselves
   // reviving first, but never holding the room up for long (they can still be revived on the way out)
   if (run.t < 25 && w.units.some((u) => u.team === 'hero' && u.downed && !u.dead)) return false;
   if (loose.length && run.t < 30) {
     for (const h of heroesAlive(run)) {
-      let best = null, bd = Infinity; for (const p of loose) { const d = dist(p.x, p.y, h.x, h.y); if (d < bd) { bd = d; best = p; } }
-      h.forcedGoal = { x: best.x, y: best.y, coin: true };
+      // stick with the coin it's walking to until it's picked up (switching every tick swung it about)
+      let best = h.forcedGoal && h.forcedGoal.coin && loose.includes(h.forcedGoal.p) ? h.forcedGoal.p : null;
+      if (!best) { let bd = Infinity; for (const p of loose) { const d = dist(p.x, p.y, h.x, h.y); if (d < bd) { bd = d; best = p; } } }
+      h.forcedGoal = { x: best.x, y: best.y, coin: true, p: best };
     }
     return false;
   }
@@ -505,7 +574,7 @@ function doTasks(run, dt) {
   w.pickups = w.pickups.filter((p) => !p.got);
   for (const h of heroesAlive(run)) if (h.forcedGoal && h.forcedGoal.coin) h.forcedGoal = null;
   if (!run.task) {
-    const chest = w.pickups.find((p) => p.type === 'chest' && !p.open && (p.free || run.keys > 0));
+    const chest = w.pickups.find((p) => p.type === 'chest' && !p.open && !(p.drop > 0));
     const fountain = w.pillars.find((p) => p.fountain && !p.used);
     const peds = w.pickups.filter((p) => p.type === 'pedestal');
     if (chest) run.task = { type: 'chest', obj: chest };
@@ -536,9 +605,12 @@ function doTasks(run, dt) {
   if (dist(h.x, h.y, o.x, o.y) < h.r + 26 || task.t > 7) {
     h.forcedGoal = null;
     if (task.type === 'chest') {
-      o.open = true; if (!o.free) run.keys--;
+      // the lid flies open on an empty chest and the coins spill out all round it (they still have to be picked up)
+      o.open = true;
+      scatterCoins(w, o.x, o.y, rint(6, 10) + run.depth * 3 + run.floor * 2, 1.15);
+      w.shake = Math.max(w.shake, 2);
       if (chance(0.06)) run.gems++; // now and then a chest holds a gem
-      grant(run, pick(['potion', 'potion', 'xp', 'coins', 'coins', 'trinket']), h);
+      if (chance(0.5)) grant(run, pick(['potion', 'potion', 'xp', 'trinket']), h);
     } else {
       grant(run, o.reward, h);
       w.pickups = w.pickups.filter((p) => p.type !== 'pedestal');

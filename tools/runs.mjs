@@ -1,16 +1,33 @@
 // Headless batch of full runs in Node (no browser): checks nothing gets stuck, per dungeon type.
 //   node tools/runs.mjs [--n 10] [--theme crypt|sewers|warren|all] [--seed 1] [--party paladin,archer,twinfang] [--depth 1]
-//   [--boss] (start in floor 3's boss room) [--lvl N]
+//   [--boss] (start in floor 3's boss room) [--lvl N] [--allnodes] [--first] (each hero owns tier I of its first ability) [--feel] (count jitter and stuck units)
 // A run is stuck if no room is finished for 300 simulated seconds (the biggest rooms take 150+).
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 const n = +opt('n', 10), seed0 = +opt('seed', 1), depth = +opt('depth', 1), lvl = +opt('lvl', 0);
 const boss = args.includes('--boss');
 // debug switches the game reads from the address
-globalThis.location = { search: (boss ? '?bossroom' : '?x') + (lvl ? '&lvl=' + lvl : '') };
+globalThis.location = { search: (boss ? '?bossroom' : '?x') + (lvl ? '&lvl=' + lvl : '') + (args.includes('--allnodes') ? '&allnodes' : '') };
+const feel = args.includes('--feel') ? { flips: 0, unitSecs: 0, stuck: 0, enemySecs: 0 } : null;
+// --feel: a 'spin' is a unit's facing swinging back and forth: four reversals of 0.5 rad or more within 1.5s (rats
+// left out: darting side to side is their habit); 'stuck' counts seconds an angry enemy that has a target out of reach moved under 25 units in 2s.
+function feelTick(w, t) {
+  for (const u of w.units) {
+    if (u.dead || u.downed) continue;
+    const f = u._f || (u._f = { a: u.facing, dir: 0, acc: 0, lastFlip: -9, px: u.x, py: u.y, pt: t });
+    let d = u.facing - f.a; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; f.a = u.facing;
+    feel.unitSecs += DT;
+    if (Math.abs(d) > 1e-4) { const s = Math.sign(d); if (s !== f.dir) { if (Math.abs(f.acc) > 0.5 && u.kind !== 'rat') { f.flipTs = (f.flipTs || []).filter((x) => t - x < 1.5); f.flipTs.push(t); } if (f.flipTs && f.flipTs.length >= 4) { f.flipTs = []; feel.flips++; const k = (u.team === 'hero' ? 'H:' : '') + (u.act ? 'act:' + u.act.type : u.forcedGoal ? 'forced' : u.mode) + (u.target ? '' : '/none'); (feel.by || (feel.by = {}))[k] = (feel.by[k] || 0) + 1; } f.lastFlip = t; f.dir = s; f.acc = 0; } f.acc += d; }
+    if (u.team === 'enemy' && u.aggro && u.target && !u.def.boss) {
+      feel.enemySecs += DT;
+      if (t - f.pt >= 2) { const gap = Math.hypot(u.target.x - u.x, u.target.y - u.y) - u.r - u.target.r; if (Math.hypot(u.x - f.px, u.y - f.py) < 25 && gap > (u.def.role === 'ranged' ? u.def.range : u.def.range + 40) && !u.act) feel.stuck += 2; f.px = u.x; f.py = u.y; f.pt = t; }
+    }
+  }
+}
 const { newRun, update, FLOORS } = await import('../js/dungeon.js');
 const { setSeed } = await import('../js/util.js');
 const { THEME_IDS } = await import('../js/themes.js');
+const { HEROES, STARTERS } = await import('../js/heroes.js');
 const themes = opt('theme', 'all') === 'all' ? THEME_IDS : [opt('theme')];
 const party = opt('party', '') ? opt('party').split(',') : undefined;
 const DT = 1 / 60;
@@ -20,12 +37,14 @@ for (const theme of themes) {
   for (let i = 0; i < n; i++) {
     setSeed(seed0 + i * 7919);
     const save = { heroes: {}, depth };
+    if (args.includes('--first')) for (const k of party || STARTERS) save.heroes[k] = { nodes: { [HEROES[k].abilities[0].id + '1']: 1 } };
     const run = newRun(save, { theme, party, depth });
     const w0 = Date.now();
     let t = 0, lastRooms = run.rooms, lastT = 0, bossStart = null, errs = null;
     try {
       while (run.phase !== 'won' && run.phase !== 'lost' && t < 3600) {
         update(run, DT); t += DT;
+        if (feel) feelTick(run.world, t);
         if (run.rooms !== lastRooms) { lastRooms = run.rooms; lastT = t; if (args.includes('--arrive') && run.node.kind === 'boss' && run.floor === FLOORS) console.log('   arrive', run.world.units.filter((u) => u.team === 'hero').map((h) => h.kind + ':' + Math.round(100 * h.hp / h.maxHp) + '% lv' + h.level + ' pots' + h.potions).join(' '), 'downed', run.party.filter((k) => run.heroes[k].down).join(',')); }
         if (bossStart == null && run.floor === FLOORS && run.world.units.some((u) => u.def.boss && !u.dead)) bossStart = t; // the last boss is up
         if (t - lastT > 300) { run.stuckIn = run.phase + ' hitstop ' + run.world.hitstop + ' t ' + run.t + ' exitT ' + run.exitT + ' doorK ' + run.doorK + ' doors ' + JSON.stringify(run.world.doors) + ' task ' + (run.task && run.task.type) + ' pickups ' + run.world.pickups.map((p) => p.type + '@' + Math.round(p.x) + ',' + Math.round(p.y)).join(' ') + ' water ' + JSON.stringify(run.world.water) + ' enemies ' + run.world.units.filter((u) => u.team === 'enemy' && !u.dead).length + ' wp ' + JSON.stringify(run.world.wp) + ' toVisit ' + JSON.stringify(run.world.toVisit); run.phase = 'stuck'; break; }
@@ -45,4 +64,6 @@ for (const theme of themes) {
   console.log(theme.padEnd(7), `won ${res.won} lost ${res.lost} stuck ${res.stuck || 0} err ${res.error || 0}`, `| ended on floor 1/2/3: ${res.floors.slice(1).join('/')}`,
     `| avg ${Math.round(res.secs / n)}s ${Math.round(res.rooms / n)} rooms`, res.bossT.length ? `| final boss fights (s): ${res.bossT.join(' ')}` : '');
 }
+if (feel && args.includes('--v')) console.log(Object.entries(feel.by || {}).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, v]) => k + ' ' + v).join(' | '));
+if (feel) console.log(`feel: spinning back and forth ${(feel.flips / (feel.unitSecs / 60)).toFixed(2)} per unit-minute | enemies stuck ${(100 * feel.stuck / Math.max(1, feel.enemySecs)).toFixed(1)}% of their angry time`);
 process.exit(stuck ? 1 : 0);
