@@ -500,7 +500,7 @@ const EXIT_R = 130, EXIT_T = 0.5;
 function stepOut(run, h, door) {
   const w = run.world;
   h.exiting = { t: 0, dur: EXIT_T }; h.ethereal = true; h.invulnT = 9;
-  const hs = run.heroes[h.kind]; if (hs) { hs.hp = h.hp; hs.potions = h.potions; }
+  const hs = run.heroes[h.kind]; if (hs) { hs.hp = h.hp; hs.maxHp = h.maxHp; hs.potions = h.potions; }
   fx(w, { type: 'pillar', x: h.x, y: h.y, r: h.r * 0.9, kind: 'holy', max: EXIT_T + 0.35 });
   for (let i = 0; i < 10; i++) { const a = rand() * Math.PI * 2, v = rrange(20, 70);
     w.particles.push({ x: h.x + Math.cos(a) * h.r * 0.6, y: h.y + Math.sin(a) * h.r * 0.6, vx: Math.cos(a) * v, vy: Math.sin(a) * v, rise: rrange(50, 110), up: 0, life: rrange(0.5, 0.9), max: 0.9, size: rrange(2.5, 4.5), color: chance(0.5) ? '#FFF4C8' : '#FFE08A', drag: 0.9 }); }

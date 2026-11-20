@@ -110,7 +110,7 @@ export function updateCards(run) {
     const el = document.getElementById('hc-' + k); if (!el) continue;
     const u = heroUnit(w, k), hs = run.heroes[k];
     const down = !!(hs.down || (u && u.downed));
-    const maxHp = u ? u.maxHp : levelHp(DEFS[k].hp, hs.level);
+    const maxHp = u ? u.maxHp : hs.maxHp || levelHp(DEFS[k].hp, hs.level); // hs.maxHp: kept as a hero steps through a door
     const hp = down ? 0 : u ? Math.max(0, u.hp) : hs.hp != null ? hs.hp : maxHp;
     el.classList.toggle('down', down);
     el.classList.toggle('low', !down && hp / maxHp < 0.35);
