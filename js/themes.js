@@ -30,7 +30,7 @@ export const THEMES = {
     mood: { fog: 'rgba(24,28,52,', fogK: 0.62, tint: 'rgba(70,90,140,0.06)' },
     kinds: { fight: 46, hazard: 13, treasure: 13, fountain: 10, decision: 13, elite: 5 },
     enemies: [
-      [['rat', 3], ['rattler', 4], ['rattlerBow', 2]],
+      [['rat', 3], ['rattler', 4], ['rattlerBow', 2], ['rattlerSpear', 1], ['ghost', 0.7]],
       [['rat', 2], ['rattler', 3], ['rattlerBow', 2], ['rattlerSpear', 2], ['rattlerMace', 2], ['ghost', 2], ['gaper', 1]],
       [['rattler', 2], ['rattlerBow', 2], ['rattlerSpear', 2], ['rattlerMace', 2], ['ghost', 2], ['gaper', 2], ['brute', 1.2]],
     ],
@@ -48,7 +48,7 @@ export const THEMES = {
     mood: { fog: 'rgba(22,40,30,', fogK: 0.55, tint: 'rgba(90,140,60,0.07)' },
     kinds: { fight: 48, hazard: 16, treasure: 12, fountain: 9, decision: 12, elite: 4 },
     enemies: [
-      [['rat', 5], ['slime', 3], ['lizardBlade', 1]],
+      [['rat', 5], ['slime', 3], ['lizardBlade', 1.2], ['lizardman', 0.6]],
       [['rat', 4], ['slime', 3], ['lizardman', 2.5], ['lizardBlade', 2]],
       [['rat', 3], ['slime', 2], ['lizardman', 3], ['lizardBlade', 3]],
     ],
@@ -67,7 +67,7 @@ export const THEMES = {
     mood: { fog: 'rgba(50,26,12,', fogK: 0.45, tint: 'rgba(255,150,60,0.05)' },
     kinds: { fight: 50, hazard: 15, treasure: 14, fountain: 8, decision: 10, elite: 5 },
     enemies: [
-      [['goblin', 5], ['hobgoblin', 2], ['rat', 1]],
+      [['goblin', 5], ['hobgoblin', 2], ['rat', 1], ['orc', 0.5]],
       [['goblin', 4], ['hobgoblin', 3], ['orc', 2], ['orcShaman', 1.2]],
       [['goblin', 3.5], ['hobgoblin', 2.5], ['orc', 3], ['orcShaman', 1.8], ['troll', 1.1]],
     ],

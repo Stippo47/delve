@@ -20,7 +20,7 @@ export const DEFS = {
   rogue: {
     team: 'hero', name: 'Rogue', r: 29, vr: 20, turn: 7, accel: 420, face: 7, mass: 0.9, hp: 80, speed: 96, role: 'skirmish',
     range: 16, atkCd: 0.55, dmg: 7, poison: 16, arc: 1.4,
-    temp: 0.55, commit: 0.5, ability: 'shadowstep', abilCd: 6, dashCd: 3.2,
+    temp: 0.55, commit: 0.5, ability: 'shadowstep', abilCd: 11, dashCd: 3.2,
   },
   rat: {
     team: 'enemy', name: 'Rat', r: 18, vr: 15, turn: 8, accel: 500, face: 8, mass: 0.4, hp: 18, speed: 88, role: 'skirmish',
@@ -59,13 +59,38 @@ for (const [id, h] of Object.entries(HEROES)) {
   if (h.role === 'tank') DEFS[id].heavy = true;
   // what the plain ranged attack throws, and its colour
   const PROJ = { pyromancer: ['bolt', '#FF8A3D'], frost: ['bolt', '#8FD3FF'], storm: ['bolt', '#FFF27A'], necromancer: ['bone'],
-    bard: ['note', '#FFD27A'], druid: ['thorn'], plague: ['vial', '#9BCB3C'] };
+    bard: ['note', '#FFD27A'], druid: ['thorn'], plague: ['vial', '#9BCB3C'], cleric: ['bolt', '#FFF1B0'] };
   if (PROJ[id]) { DEFS[id].proj = PROJ[id][0]; DEFS[id].projColor = PROJ[id][1]; }
 }
 // Summons
 DEFS.wolf = { team: 'hero', name: 'Wolf', r: 24, vr: 18, turn: 6, accel: 380, face: 6, mass: 1, hp: 60, speed: 92, role: 'skirmish',
   range: 14, atkCd: 0.8, dmg: 7, arc: 1.4, temp: 0.5, commit: 0.5 };
 Object.assign(DEFS, ENEMIES);
+
+// Round 6 feel (designer, 2026-11-20): a much faster party (~3x; enemies faster too so fights still meet, ability
+// cooldowns unchanged), longer time-to-kill (more HP for everyone), longer attack and view range, slightly bigger
+// colliders. Applied once here over every def so heroes.js / enemies.js keep their readable base numbers.
+// Things that move at a multiple of def.speed (dashes, charges) are tuned against the scaled speed in sim.js.
+export const FEEL = {
+  heroSpeed: 3, enemySpeed: 2.5, bossSpeed: 1.9, // walking speed
+  turn: 1.8, face: 1.5,                           // turning keeps up with the speed (else they swing in wide arcs)
+  heroHp: 2, enemyHp: 2, bossHp: 1.4,             // time to kill
+  enemyDmg: 0.75,                                 // enemy blows (fights are denser now: faster, more of them at once)
+  collider: 1.1,                                  // r (vr, the sprite size, stays)
+  rangedRange: 1.3, keep: 1.25, meleeReach: 8,    // ranged range x, kiting distance x, melee reach + (room units)
+};
+for (const d of Object.values(DEFS)) {
+  if (d.scaled) continue;
+  d.scaled = true;
+  const hero = d.team === 'hero', boss = !!d.boss;
+  const sp = hero ? FEEL.heroSpeed : boss ? FEEL.bossSpeed : FEEL.enemySpeed;
+  d.speed *= sp; d.accel = (d.accel || 250) * sp;
+  d.turn = (d.turn || 5) * FEEL.turn; d.face = (d.face || 5) * FEEL.face;
+  d.hp = Math.round(d.hp * (hero ? FEEL.heroHp : boss ? FEEL.bossHp : FEEL.enemyHp));
+  d.r *= FEEL.collider;
+  if (d.role === 'ranged') { d.range *= FEEL.rangedRange; if (d.keep) d.keep *= FEEL.keep; }
+  else if (d.range != null) d.range += FEEL.meleeReach;
+}
 
 export const HERO_ORDER = ['knight', 'archer', 'rogue'];
 
