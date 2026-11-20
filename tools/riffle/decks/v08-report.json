@@ -1,0 +1,44 @@
+{
+  "title": "0.8.0: elites, deep dungeons, new camp",
+  "topic": "runs",
+  "order": 9,
+  "priority": 1,
+  "tags": ["first"],
+  "cards": [
+    {
+      "id": "combat",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "Elites and deep dungeons",
+      "text": "Every enemy can be elite with its own extra move. Three harder dungeons. Live as 0.8.0.",
+      "why": "Your message from today, all of it. Mark any part that's off.",
+      "videos": ["../../../clips/r7-dun-elites-sewers.mp4"],
+      "details": "Batches: with every node bought, all six dungeons are won; with only tier I bought, almost nothing is won now (extra waves, steeper floors, elites). That's steep; say if the start should be gentler.\n\nThe deep three use the enemy art you said wasn't good, as placeholders.",
+      "parts": [
+        { "id": "elites", "title": "Elites", "text": "Any enemy can be elite: 2.4x health, 1.8x damage, 1.5x faster, a bit bigger, less gold, a gold rim. Each kind has its own extra move: the elite slime lobs slimelets and dies into four slimes that split again; rats leave plague gas; archers loose five-arrow volleys; brutes shield-bash; ghosts blink behind you; trolls throw boulders; and so on. About 5% of enemies on floor 1, rising with floor, dungeon and wave." },
+        { "id": "deep", "title": "Three deep dungeons", "text": "After the Crypt: the Frost Hollow (bats, snowmen, spiders, banshee, ogre; webs), the Ember Deep (imps, fire slimes, devils, demons, dragonborn; burning ground) and the Gilded Spire (cherubs, angels, seraphs; sigils that call down light). Each has a warden and a boss (powered-up wardens for now).", "videos": ["../../../clips/r7-dun-frost.mp4"] },
+        { "id": "scaling", "title": "Scaling", "text": "Upgrades are stronger (Might +14% a rank, Vigor +16%, Haste +9%, each tier past I cuts that ability's cooldown 10%), and dungeons and floors get much harder to match." },
+        { "id": "waves", "title": "Waves and pace", "text": "3 to 4 more waves per room, each about 16% bigger with more elites. Everyone moves 20% slower than 0.7." },
+        { "id": "door", "title": "Door exit", "text": "A hero near the chosen door steps into a shaft of light, lifts, glows, shrinks and is gone; the room ends as soon as all are through.", "videos": ["../../../clips/r7-dun-door.mp4"] },
+        { "id": "trinkets", "title": "Found trinkets", "text": "Found trinkets pop out as a violet gem; a hero with room walks over and takes it, a full hero leaves it for an ally. I read 'an additional trinket' as one more than the hero's slots while in a dungeon." },
+        { "id": "grid", "title": "Grid obstacles", "text": "Rooms are laid on a grid: walls are straight runs of cells, crates, barrels, boulders and braziers take one cell each, in small clumps, and spikes are one cell across." }
+      ]
+    },
+    {
+      "id": "polish",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Polish and the new camp",
+      "text": "Merged shadows, death bursts, faint bodies, purple summons, HP and XP numbers, and a camp and skill tree laid out anew.",
+      "why": "The camp and tree are real layout changes this time, in Night watch. Two of each, switchable in settings.",
+      "images": ["../../../clips/r7/camp/A01-home.png", "../../../clips/r7/camp/A09-tree-grove.png"],
+      "parts": [
+        { "id": "shadows", "title": "Shadows and deaths", "text": "Shadows are smaller and merge where they overlap instead of stacking darker. Anything that dies bursts (a pop, a ring, puffs in its colour); bodies grey out and lie faint.", "images": ["../../../clips/r7/compare-5.png"] },
+        { "id": "summons", "title": "Summons", "text": "Raised skeletons were using the old skeleton art: now they use the current one with a purple outline, as does every summon (the wolf had no art; it uses the tamer's wolf for now).", "images": ["../../../clips/r7/summons-still.png"] },
+        { "id": "hud", "title": "Hero cards", "text": "HP and XP each have a bar with its numbers again.", "images": ["../../../clips/r7/hud-cards.png"] },
+        { "id": "camp", "title": "Camp layouts", "text": "The clearing (default): your party round the fire, the tent for heroes, the trader's cart, the book on a stump, sellswords by a lantern, a signpost to the dungeons. Fireside: a side-on view with a bench of heroes and the dungeons as gates in the mountains.", "images": ["../../../clips/r7/camp/A01-home.png", "../../../clips/r7/camp/B01-home.png"] },
+        { "id": "tree", "title": "Skill tree layouts", "text": "Grove (default): a tree growing up out of the hero, one bough per ability, tiers on level bands, training as roots. Star wheel: the hero at the hub, rings per level, the branch you tap turns to the top.", "images": ["../../../clips/r7/camp/A09-tree-grove.png", "../../../clips/r7/camp/B09-tree-wheel.png"] }
+      ]
+    }
+  ]
+}
