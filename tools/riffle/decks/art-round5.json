@@ -1,0 +1,855 @@
+{
+  "title": "Art round 5: your notes applied",
+  "topic": "art",
+  "order": 5,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "heroes1",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Picks, casters, support",
+      "text": "Your notes on the picks, casters and support heroes. Hands and weapons are their own parts now.",
+      "why": "Each picture shows it beside the archer at the same size, then 8 turns at game size. Tick the keepers.",
+      "details": "The ones in the game now: Twinfang, Wildmane, Berserker (A), Granny, Frost, Druid (A), Pyromancer, Storm, Cleric, Necromancer, Plague doctor. Where a note was open there are lettered versions.",
+      "items": [
+        {
+          "id": "knight-griffon",
+          "label": "Griffon",
+          "image": "../../../design/class-round5/knight/renders/knight-griffon.png",
+          "thumb": "../../../design/class-round5/knight/renders/knight-griffon-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "knight-paladin",
+          "label": "Paladin",
+          "image": "../../../design/class-round5/knight/renders/knight-paladin.png",
+          "thumb": "../../../design/class-round5/knight/renders/knight-paladin-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "knight-tower",
+          "label": "Tower",
+          "image": "../../../design/class-round5/knight/renders/knight-tower.png",
+          "thumb": "../../../design/class-round5/knight/renders/knight-tower-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "barbarian-bearskin-a",
+          "label": "Bearskin A",
+          "image": "../../../design/class-round5/barbarian/renders/barbarian-bearskin-a.png",
+          "thumb": "../../../design/class-round5/barbarian/renders/barbarian-bearskin-a-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "barbarian-bearskin-b",
+          "label": "Bearskin B",
+          "image": "../../../design/class-round5/barbarian/renders/barbarian-bearskin-b.png",
+          "thumb": "../../../design/class-round5/barbarian/renders/barbarian-bearskin-b-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "barbarian-berserker-a",
+          "label": "Berserker A",
+          "image": "../../../design/class-round5/barbarian/renders/barbarian-berserker-a.png",
+          "thumb": "../../../design/class-round5/barbarian/renders/barbarian-berserker-a-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "barbarian-berserker-b",
+          "label": "Berserker B",
+          "image": "../../../design/class-round5/barbarian/renders/barbarian-berserker-b.png",
+          "thumb": "../../../design/class-round5/barbarian/renders/barbarian-berserker-b-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "barbarian-wildmane-scar",
+          "label": "Wildmane Scar",
+          "image": "../../../design/class-round5/barbarian/renders/barbarian-wildmane-scar.png",
+          "thumb": "../../../design/class-round5/barbarian/renders/barbarian-wildmane-scar-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "rogue-bandit-mask-a",
+          "label": "Bandit Mask A",
+          "image": "../../../design/class-round5/rogue/renders/rogue-bandit-mask-a.png",
+          "thumb": "../../../design/class-round5/rogue/renders/rogue-bandit-mask-a-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "rogue-bandit-mask-b",
+          "label": "Bandit Mask B",
+          "image": "../../../design/class-round5/rogue/renders/rogue-bandit-mask-b.png",
+          "thumb": "../../../design/class-round5/rogue/renders/rogue-bandit-mask-b-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "rogue-shade-cape-crossed",
+          "label": "Shade Cape Crossed",
+          "image": "../../../design/class-round5/rogue/renders/rogue-shade-cape-crossed.png",
+          "thumb": "../../../design/class-round5/rogue/renders/rogue-shade-cape-crossed-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "rogue-twinfang",
+          "label": "Twinfang",
+          "image": "../../../design/class-round5/rogue/renders/rogue-twinfang.png",
+          "thumb": "../../../design/class-round5/rogue/renders/rogue-twinfang-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "farmer-granny-reaper",
+          "label": "Granny Reaper",
+          "image": "../../../design/class-round5/farmer/renders/farmer-granny-reaper.png",
+          "thumb": "../../../design/class-round5/farmer/renders/farmer-granny-reaper-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "farmer-haymaker-fork",
+          "label": "Haymaker Fork",
+          "image": "../../../design/class-round5/farmer/renders/farmer-haymaker-fork.png",
+          "thumb": "../../../design/class-round5/farmer/renders/farmer-haymaker-fork-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "skeleton-gaper",
+          "label": "Gaper",
+          "image": "../../../design/class-round5/skeleton/renders/skeleton-gaper.png",
+          "thumb": "../../../design/class-round5/skeleton/renders/skeleton-gaper-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "archer",
+          "label": "Archer",
+          "image": "../../../design/class-round5/archer/renders/archer.png",
+          "thumb": "../../../design/class-round5/archer/renders/archer-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "caster-alchemist-a",
+          "label": "Alchemist A",
+          "image": "../../../design/class-round5/heroes-casters/renders/caster-alchemist-a.png",
+          "thumb": "../../../design/class-round5/heroes-casters/renders/caster-alchemist-a-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "caster-alchemist-b",
+          "label": "Alchemist B",
+          "image": "../../../design/class-round5/heroes-casters/renders/caster-alchemist-b.png",
+          "thumb": "../../../design/class-round5/heroes-casters/renders/caster-alchemist-b-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "caster-cultist",
+          "label": "Cultist",
+          "image": "../../../design/class-round5/heroes-casters/renders/caster-cultist.png",
+          "thumb": "../../../design/class-round5/heroes-casters/renders/caster-cultist-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "caster-druid-a",
+          "label": "Druid A",
+          "image": "../../../design/class-round5/heroes-casters/renders/caster-druid-a.png",
+          "thumb": "../../../design/class-round5/heroes-casters/renders/caster-druid-a-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "caster-druid-b",
+          "label": "Druid B",
+          "image": "../../../design/class-round5/heroes-casters/renders/caster-druid-b.png",
+          "thumb": "../../../design/class-round5/heroes-casters/renders/caster-druid-b-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "caster-druid-c",
+          "label": "Druid C",
+          "image": "../../../design/class-round5/heroes-casters/renders/caster-druid-c.png",
+          "thumb": "../../../design/class-round5/heroes-casters/renders/caster-druid-c-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "caster-frost",
+          "label": "Frost",
+          "image": "../../../design/class-round5/heroes-casters/renders/caster-frost.png",
+          "thumb": "../../../design/class-round5/heroes-casters/renders/caster-frost-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "caster-necromancer",
+          "label": "Necromancer",
+          "image": "../../../design/class-round5/heroes-casters/renders/caster-necromancer.png",
+          "thumb": "../../../design/class-round5/heroes-casters/renders/caster-necromancer-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "caster-pyromancer",
+          "label": "Pyromancer",
+          "image": "../../../design/class-round5/heroes-casters/renders/caster-pyromancer.png",
+          "thumb": "../../../design/class-round5/heroes-casters/renders/caster-pyromancer-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "caster-shaman",
+          "label": "Shaman",
+          "image": "../../../design/class-round5/heroes-casters/renders/caster-shaman.png",
+          "thumb": "../../../design/class-round5/heroes-casters/renders/caster-shaman-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "caster-storm",
+          "label": "Storm",
+          "image": "../../../design/class-round5/heroes-casters/renders/caster-storm.png",
+          "thumb": "../../../design/class-round5/heroes-casters/renders/caster-storm-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "caster-witch",
+          "label": "Witch",
+          "image": "../../../design/class-round5/heroes-casters/renders/caster-witch.png",
+          "thumb": "../../../design/class-round5/heroes-casters/renders/caster-witch-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "support-bard",
+          "label": "Bard",
+          "image": "../../../design/class-round5/heroes-support/renders/support-bard.png",
+          "thumb": "../../../design/class-round5/heroes-support/renders/support-bard-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "support-beekeeper",
+          "label": "Beekeeper",
+          "image": "../../../design/class-round5/heroes-support/renders/support-beekeeper.png",
+          "thumb": "../../../design/class-round5/heroes-support/renders/support-beekeeper-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "support-chef",
+          "label": "Chef",
+          "image": "../../../design/class-round5/heroes-support/renders/support-chef.png",
+          "thumb": "../../../design/class-round5/heroes-support/renders/support-chef-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "support-cleric",
+          "label": "Cleric",
+          "image": "../../../design/class-round5/heroes-support/renders/support-cleric.png",
+          "thumb": "../../../design/class-round5/heroes-support/renders/support-cleric-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "support-lantern-keeper",
+          "label": "Lantern Keeper",
+          "image": "../../../design/class-round5/heroes-support/renders/support-lantern-keeper.png",
+          "thumb": "../../../design/class-round5/heroes-support/renders/support-lantern-keeper-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "support-monk",
+          "label": "Monk",
+          "image": "../../../design/class-round5/heroes-support/renders/support-monk.png",
+          "thumb": "../../../design/class-round5/heroes-support/renders/support-monk-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "support-plague-doctor",
+          "label": "Plague Doctor",
+          "image": "../../../design/class-round5/heroes-support/renders/support-plague-doctor.png",
+          "thumb": "../../../design/class-round5/heroes-support/renders/support-plague-doctor-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "support-seer",
+          "label": "Seer",
+          "image": "../../../design/class-round5/heroes-support/renders/support-seer.png",
+          "thumb": "../../../design/class-round5/heroes-support/renders/support-seer-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "support-templar",
+          "label": "Templar",
+          "image": "../../../design/class-round5/heroes-support/renders/support-templar.png",
+          "thumb": "../../../design/class-round5/heroes-support/renders/support-templar-thumb.png",
+          "text": "New this round."
+        }
+      ],
+      "pick": [
+        "knight-griffon",
+        "knight-paladin",
+        "knight-tower",
+        "barbarian-bearskin-a",
+        "barbarian-bearskin-b",
+        "barbarian-berserker-a",
+        "barbarian-berserker-b",
+        "barbarian-wildmane-scar",
+        "rogue-bandit-mask-a",
+        "rogue-bandit-mask-b",
+        "rogue-shade-cape-crossed",
+        "rogue-twinfang",
+        "farmer-granny-reaper",
+        "farmer-haymaker-fork",
+        "skeleton-gaper",
+        "archer",
+        "caster-alchemist-a",
+        "caster-alchemist-b",
+        "caster-cultist",
+        "caster-druid-a",
+        "caster-druid-b",
+        "caster-druid-c",
+        "caster-frost",
+        "caster-necromancer",
+        "caster-pyromancer",
+        "caster-shaman",
+        "caster-storm",
+        "caster-witch",
+        "support-bard",
+        "support-beekeeper",
+        "support-chef",
+        "support-cleric",
+        "support-lantern-keeper",
+        "support-monk",
+        "support-plague-doctor",
+        "support-seer",
+        "support-templar"
+      ]
+    },
+    {
+      "id": "heroes2",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Ranged and fighters",
+      "text": "Your notes on the ranged heroes and fighters, with the variants you asked for.",
+      "why": "Each picture shows it beside the archer at the same size, then 8 turns at game size. Tick the keepers.",
+      "details": "Four marksmen, four beast tamers with two beasts each, four engineers, a new executioner, gladiator and samurai, and the werewolf with a human form. The turret's gun, each tamer's whip and the scarecrow's crow are separate parts so they move on their own.",
+      "items": [
+        {
+          "id": "ranged-crossbowman",
+          "label": "Crossbowman",
+          "image": "../../../design/class-round5/ranged/renders/ranged-crossbowman.png",
+          "thumb": "../../../design/class-round5/ranged/renders/ranged-crossbowman-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "ranged-falconer",
+          "label": "Falconer",
+          "image": "../../../design/class-round5/ranged/renders/ranged-falconer.png",
+          "thumb": "../../../design/class-round5/ranged/renders/ranged-falconer-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "ranged-grenadier",
+          "label": "Grenadier",
+          "image": "../../../design/class-round5/ranged/renders/ranged-grenadier.png",
+          "thumb": "../../../design/class-round5/ranged/renders/ranged-grenadier-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "ranged-harpooner",
+          "label": "Harpooner",
+          "image": "../../../design/class-round5/ranged/renders/ranged-harpooner.png",
+          "thumb": "../../../design/class-round5/ranged/renders/ranged-harpooner-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "ranged-javelin-huntress",
+          "label": "Javelin Huntress",
+          "image": "../../../design/class-round5/ranged/renders/ranged-javelin-huntress.png",
+          "thumb": "../../../design/class-round5/ranged/renders/ranged-javelin-huntress-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "ranged-marksman-a",
+          "label": "Marksman A",
+          "image": "../../../design/class-round5/ranged/renders/ranged-marksman-a.png",
+          "thumb": "../../../design/class-round5/ranged/renders/ranged-marksman-a-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "ranged-marksman-b",
+          "label": "Marksman B",
+          "image": "../../../design/class-round5/ranged/renders/ranged-marksman-b.png",
+          "thumb": "../../../design/class-round5/ranged/renders/ranged-marksman-b-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "ranged-marksman-c",
+          "label": "Marksman C",
+          "image": "../../../design/class-round5/ranged/renders/ranged-marksman-c.png",
+          "thumb": "../../../design/class-round5/ranged/renders/ranged-marksman-c-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "ranged-marksman-d",
+          "label": "Marksman D",
+          "image": "../../../design/class-round5/ranged/renders/ranged-marksman-d.png",
+          "thumb": "../../../design/class-round5/ranged/renders/ranged-marksman-d-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "ranged-ninja",
+          "label": "Ninja",
+          "image": "../../../design/class-round5/ranged/renders/ranged-ninja.png",
+          "thumb": "../../../design/class-round5/ranged/renders/ranged-ninja-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "ranged-pirate",
+          "label": "Pirate",
+          "image": "../../../design/class-round5/ranged/renders/ranged-pirate.png",
+          "thumb": "../../../design/class-round5/ranged/renders/ranged-pirate-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "ranged-slinger",
+          "label": "Slinger",
+          "image": "../../../design/class-round5/ranged/renders/ranged-slinger.png",
+          "thumb": "../../../design/class-round5/ranged/renders/ranged-slinger-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "ranged-trapper",
+          "label": "Trapper",
+          "image": "../../../design/class-round5/ranged/renders/ranged-trapper.png",
+          "thumb": "../../../design/class-round5/ranged/renders/ranged-trapper-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "engineer-turret",
+          "label": "Turret",
+          "image": "../../../design/class-round5/fighters/renders/engineer-turret.png",
+          "thumb": "../../../design/class-round5/fighters/renders/engineer-turret-thumb.png",
+          "text": "engineer-turret.svg: #top (pivot 100 96, the swivel centre) is the gun: housing, mantlet, twin barrels. #body is the base ring and #back the legs, so the top can turn on its own. the beast tamers: #whip is the lash on its own, pivot at the tip of the handle (160 163); arm-r holds the handle. To animate: pin the lash's pivot to the hand (apply arm-r's pose to the pivot point), then crack it: swing it out from the pivot and snap it back, or stretch it toward the target on the hit. fighter-scarecrow.svg: #crow (pivot 34 100) so it can lift off the shoulder and fly. Note for the game: parts.js only treats ids starting arm-, back, front as \"moving\" when it hands the body's loose shadows down; top, whip and crow should be added to that regex when they are wired in. | design | the designer's note | what changed | |---|---|---| | Engineer's turret | top separate from base |..."
+        },
+        {
+          "id": "fighter-engineer-a",
+          "label": "Engineer A",
+          "image": "../../../design/class-round5/fighters/renders/fighter-engineer-a.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-engineer-a-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fighter-engineer-b",
+          "label": "Engineer B",
+          "image": "../../../design/class-round5/fighters/renders/fighter-engineer-b.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-engineer-b-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fighter-engineer-c",
+          "label": "Engineer C",
+          "image": "../../../design/class-round5/fighters/renders/fighter-engineer-c.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-engineer-c-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fighter-engineer-d",
+          "label": "Engineer D",
+          "image": "../../../design/class-round5/fighters/renders/fighter-engineer-d.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-engineer-d-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fighter-executioner",
+          "label": "Executioner",
+          "image": "../../../design/class-round5/fighters/renders/fighter-executioner.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-executioner-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fighter-gladiator",
+          "label": "Gladiator",
+          "image": "../../../design/class-round5/fighters/renders/fighter-gladiator.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-gladiator-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fighter-jester",
+          "label": "Jester",
+          "image": "../../../design/class-round5/fighters/renders/fighter-jester.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-jester-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fighter-samurai",
+          "label": "Samurai",
+          "image": "../../../design/class-round5/fighters/renders/fighter-samurai.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-samurai-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fighter-scarecrow",
+          "label": "Scarecrow",
+          "image": "../../../design/class-round5/fighters/renders/fighter-scarecrow.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-scarecrow-thumb.png",
+          "text": "fighter-scarecrow.svg: #crow (pivot 34 100) so it can lift off the shoulder and fly. Note for the game: parts.js only treats ids starting arm-, back, front as \"moving\" when it hands the body's loose shadows down; top, whip and crow should be added to that regex when they are wired in. | design | the designer's note | what changed | |---|---|---| | Engineer's turret | top separate from base | #top is its own part (see above) | | Beast tamer A, ringmaster | can stay, fix the hat | the top hat is drawn from above now: wide brim, round crown, red band (no side view); moustache added; whip as two parts | | Beast tamer B, jungle beastmaster | 4 variants, different themes | leopard head worn as a hood (ears, spots, muzzle on the brow), pelt down the back, darker skin, fang necklace, green vine whip | | Beast tamer C, steppe rider | | tall red felt cap with a fur brim and..."
+        },
+        {
+          "id": "fighter-tamer-a",
+          "label": "Tamer A",
+          "image": "../../../design/class-round5/fighters/renders/fighter-tamer-a.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-tamer-a-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fighter-tamer-b",
+          "label": "Tamer B",
+          "image": "../../../design/class-round5/fighters/renders/fighter-tamer-b.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-tamer-b-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fighter-tamer-c",
+          "label": "Tamer C",
+          "image": "../../../design/class-round5/fighters/renders/fighter-tamer-c.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-tamer-c-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fighter-tamer-d",
+          "label": "Tamer D",
+          "image": "../../../design/class-round5/fighters/renders/fighter-tamer-d.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-tamer-d-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fighter-valkyrie",
+          "label": "Valkyrie",
+          "image": "../../../design/class-round5/fighters/renders/fighter-valkyrie.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-valkyrie-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fighter-vampire",
+          "label": "Vampire",
+          "image": "../../../design/class-round5/fighters/renders/fighter-vampire.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-vampire-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fighter-werewolf-human",
+          "label": "Werewolf Human",
+          "image": "../../../design/class-round5/fighters/renders/fighter-werewolf-human.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-werewolf-human-thumb.png",
+          "text": "| Werewolf | redo, add a human form | wolf from above in the house style: round skull, ears laid back, long snout with pale muzzle, dark nose, white fangs, shaggy ruff, rags of the red shirt, clawed paws, no eyes. Human form fighter-werewolf-human.svg: same torn red shirt, wild grey-brown hair, sideburns and stubble, a hatchet |"
+        },
+        {
+          "id": "fighter-werewolf",
+          "label": "Werewolf",
+          "image": "../../../design/class-round5/fighters/renders/fighter-werewolf.png",
+          "thumb": "../../../design/class-round5/fighters/renders/fighter-werewolf-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "tamer-a-bear",
+          "label": "A Bear",
+          "image": "../../../design/class-round5/fighters/renders/tamer-a-bear.png",
+          "thumb": "../../../design/class-round5/fighters/renders/tamer-a-bear-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "tamer-a-lion",
+          "label": "A Lion",
+          "image": "../../../design/class-round5/fighters/renders/tamer-a-lion.png",
+          "thumb": "../../../design/class-round5/fighters/renders/tamer-a-lion-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "tamer-b-boar",
+          "label": "B Boar",
+          "image": "../../../design/class-round5/fighters/renders/tamer-b-boar.png",
+          "thumb": "../../../design/class-round5/fighters/renders/tamer-b-boar-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "tamer-b-panther",
+          "label": "B Panther",
+          "image": "../../../design/class-round5/fighters/renders/tamer-b-panther.png",
+          "thumb": "../../../design/class-round5/fighters/renders/tamer-b-panther-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "tamer-c-sabretooth",
+          "label": "C Sabretooth",
+          "image": "../../../design/class-round5/fighters/renders/tamer-c-sabretooth.png",
+          "thumb": "../../../design/class-round5/fighters/renders/tamer-c-sabretooth-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "tamer-c-wolf",
+          "label": "C Wolf",
+          "image": "../../../design/class-round5/fighters/renders/tamer-c-wolf.png",
+          "thumb": "../../../design/class-round5/fighters/renders/tamer-c-wolf-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "tamer-d-beetle",
+          "label": "D Beetle",
+          "image": "../../../design/class-round5/fighters/renders/tamer-d-beetle.png",
+          "thumb": "../../../design/class-round5/fighters/renders/tamer-d-beetle-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "tamer-d-drake",
+          "label": "D Drake",
+          "image": "../../../design/class-round5/fighters/renders/tamer-d-drake.png",
+          "thumb": "../../../design/class-round5/fighters/renders/tamer-d-drake-thumb.png",
+          "text": "New this round."
+        }
+      ],
+      "pick": [
+        "ranged-crossbowman",
+        "ranged-falconer",
+        "ranged-grenadier",
+        "ranged-harpooner",
+        "ranged-javelin-huntress",
+        "ranged-marksman-a",
+        "ranged-marksman-b",
+        "ranged-marksman-c",
+        "ranged-marksman-d",
+        "ranged-ninja",
+        "ranged-pirate",
+        "ranged-slinger",
+        "ranged-trapper",
+        "engineer-turret",
+        "fighter-engineer-a",
+        "fighter-engineer-b",
+        "fighter-engineer-c",
+        "fighter-engineer-d",
+        "fighter-executioner",
+        "fighter-gladiator",
+        "fighter-jester",
+        "fighter-samurai",
+        "fighter-scarecrow",
+        "fighter-tamer-a",
+        "fighter-tamer-b",
+        "fighter-tamer-c",
+        "fighter-tamer-d",
+        "fighter-valkyrie",
+        "fighter-vampire",
+        "fighter-werewolf-human",
+        "fighter-werewolf",
+        "tamer-a-bear",
+        "tamer-a-lion",
+        "tamer-b-boar",
+        "tamer-b-panther",
+        "tamer-c-sabretooth",
+        "tamer-c-wolf",
+        "tamer-d-beetle",
+        "tamer-d-drake"
+      ]
+    },
+    {
+      "id": "enemies",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Enemies, built like heroes",
+      "text": "Every enemy redone the way the heroes are built: no eyes, the head from above, matte.",
+      "why": "Each picture shows it beside the archer at the same size, then 8 turns at game size. Tick the keepers.",
+      "details": "Why the earlier ones missed: they were drawn from the front with eyes, small heads on full bodies, and shiny. These follow the heroes. The Warren's greenskins are in the game now; lizards come in a plain (a) and a face-shaded (b) version for you to pick.",
+      "items": [
+        {
+          "id": "bat",
+          "label": "Bat",
+          "image": "../../../design/class-round5/enemies/renders/bat.png",
+          "thumb": "../../../design/class-round5/enemies/renders/bat-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "celestial-angel-a",
+          "label": "Angel A",
+          "image": "../../../design/class-round5/enemies/renders/celestial-angel-a.png",
+          "thumb": "../../../design/class-round5/enemies/renders/celestial-angel-a-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "celestial-angel-b",
+          "label": "Angel B",
+          "image": "../../../design/class-round5/enemies/renders/celestial-angel-b.png",
+          "thumb": "../../../design/class-round5/enemies/renders/celestial-angel-b-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "dragonborn-a",
+          "label": "A",
+          "image": "../../../design/class-round5/enemies/renders/dragonborn-a.png",
+          "thumb": "../../../design/class-round5/enemies/renders/dragonborn-a-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "dragonborn-b",
+          "label": "B",
+          "image": "../../../design/class-round5/enemies/renders/dragonborn-b.png",
+          "thumb": "../../../design/class-round5/enemies/renders/dragonborn-b-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fiend-demon",
+          "label": "Demon",
+          "image": "../../../design/class-round5/enemies/renders/fiend-demon.png",
+          "thumb": "../../../design/class-round5/enemies/renders/fiend-demon-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fiend-devil",
+          "label": "Devil",
+          "image": "../../../design/class-round5/enemies/renders/fiend-devil.png",
+          "thumb": "../../../design/class-round5/enemies/renders/fiend-devil-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "fiend-imp",
+          "label": "Imp",
+          "image": "../../../design/class-round5/enemies/renders/fiend-imp.png",
+          "thumb": "../../../design/class-round5/enemies/renders/fiend-imp-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "ghost",
+          "label": "Ghost",
+          "image": "../../../design/class-round5/enemies/renders/ghost.png",
+          "thumb": "../../../design/class-round5/enemies/renders/ghost-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "greenskin-goblin",
+          "label": "Goblin",
+          "image": "../../../design/class-round5/enemies/renders/greenskin-goblin.png",
+          "thumb": "../../../design/class-round5/enemies/renders/greenskin-goblin-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "greenskin-hobgoblin",
+          "label": "Hobgoblin",
+          "image": "../../../design/class-round5/enemies/renders/greenskin-hobgoblin.png",
+          "thumb": "../../../design/class-round5/enemies/renders/greenskin-hobgoblin-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "greenskin-ogre",
+          "label": "Ogre",
+          "image": "../../../design/class-round5/enemies/renders/greenskin-ogre.png",
+          "thumb": "../../../design/class-round5/enemies/renders/greenskin-ogre-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "greenskin-orc-shaman",
+          "label": "Orc Shaman",
+          "image": "../../../design/class-round5/enemies/renders/greenskin-orc-shaman.png",
+          "thumb": "../../../design/class-round5/enemies/renders/greenskin-orc-shaman-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "greenskin-orc",
+          "label": "Orc",
+          "image": "../../../design/class-round5/enemies/renders/greenskin-orc.png",
+          "thumb": "../../../design/class-round5/enemies/renders/greenskin-orc-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "greenskin-troll",
+          "label": "Troll",
+          "image": "../../../design/class-round5/enemies/renders/greenskin-troll.png",
+          "thumb": "../../../design/class-round5/enemies/renders/greenskin-troll-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "lizardman-blade-a",
+          "label": "Blade A",
+          "image": "../../../design/class-round5/enemies/renders/lizardman-blade-a.png",
+          "thumb": "../../../design/class-round5/enemies/renders/lizardman-blade-a-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "lizardman-blade-b",
+          "label": "Blade B",
+          "image": "../../../design/class-round5/enemies/renders/lizardman-blade-b.png",
+          "thumb": "../../../design/class-round5/enemies/renders/lizardman-blade-b-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "lizardman-spear-a",
+          "label": "Spear A",
+          "image": "../../../design/class-round5/enemies/renders/lizardman-spear-a.png",
+          "thumb": "../../../design/class-round5/enemies/renders/lizardman-spear-a-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "lizardman-spear-b",
+          "label": "Spear B",
+          "image": "../../../design/class-round5/enemies/renders/lizardman-spear-b.png",
+          "thumb": "../../../design/class-round5/enemies/renders/lizardman-spear-b-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "slime-big",
+          "label": "Big",
+          "image": "../../../design/class-round5/enemies/renders/slime-big.png",
+          "thumb": "../../../design/class-round5/enemies/renders/slime-big-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "slime-fire",
+          "label": "Fire",
+          "image": "../../../design/class-round5/enemies/renders/slime-fire.png",
+          "thumb": "../../../design/class-round5/enemies/renders/slime-fire-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "slime-small",
+          "label": "Small",
+          "image": "../../../design/class-round5/enemies/renders/slime-small.png",
+          "thumb": "../../../design/class-round5/enemies/renders/slime-small-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "snowman",
+          "label": "Snowman",
+          "image": "../../../design/class-round5/enemies/renders/snowman.png",
+          "thumb": "../../../design/class-round5/enemies/renders/snowman-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "spider-hunter",
+          "label": "Hunter",
+          "image": "../../../design/class-round5/enemies/renders/spider-hunter.png",
+          "thumb": "../../../design/class-round5/enemies/renders/spider-hunter-thumb.png",
+          "text": "New this round."
+        },
+        {
+          "id": "spider-momma",
+          "label": "Momma",
+          "image": "../../../design/class-round5/enemies/renders/spider-momma.png",
+          "thumb": "../../../design/class-round5/enemies/renders/spider-momma-thumb.png",
+          "text": "New this round."
+        }
+      ],
+      "pick": [
+        "bat",
+        "celestial-angel-a",
+        "celestial-angel-b",
+        "dragonborn-a",
+        "dragonborn-b",
+        "fiend-demon",
+        "fiend-devil",
+        "fiend-imp",
+        "ghost",
+        "greenskin-goblin",
+        "greenskin-hobgoblin",
+        "greenskin-ogre",
+        "greenskin-orc-shaman",
+        "greenskin-orc",
+        "greenskin-troll",
+        "lizardman-blade-a",
+        "lizardman-blade-b",
+        "lizardman-spear-a",
+        "lizardman-spear-b",
+        "slime-big",
+        "slime-fire",
+        "slime-small",
+        "snowman",
+        "spider-hunter",
+        "spider-momma"
+      ]
+    }
+  ]
+}

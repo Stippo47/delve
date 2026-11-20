@@ -1,0 +1,197 @@
+{
+  "title": "Pick the looks",
+  "topic": "art",
+  "order": 6,
+  "priority": 1,
+  "tags": [
+    "first"
+  ],
+  "cards": [
+    {
+      "id": "env",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Four dungeon styles",
+      "text": "Four whole looks for the dungeons, each in all three themes. Tick the one (or parts) you like.",
+      "why": "You asked for about 4 styles. All four are in the game: Settings, Dungeon look.",
+      "details": "Every style has walls sloping out on all sides, quieter floor decor and straight-down shadows. 12 floor patterns across them. Doors stay shut until the room is won, then open lit in the room's colour.",
+      "pick": [
+        "env1-crypt",
+        "env1-sewers",
+        "env1-warren"
+      ],
+      "items": [
+        {
+          "id": "env1-crypt",
+          "label": "Carved, crypt",
+          "image": "../../../clips/r6/env/crypt-env1-start.png",
+          "text": "Style 1 (Carved) in the Crypt."
+        },
+        {
+          "id": "env1-sewers",
+          "label": "Carved, sewers",
+          "image": "../../../clips/r6/env/sewers-env1-start.png",
+          "text": "Style 1 (Carved) in the Sewers."
+        },
+        {
+          "id": "env1-warren",
+          "label": "Carved, warren",
+          "image": "../../../clips/r6/env/warren-env1-start.png",
+          "text": "Style 1 (Carved) in the Warren."
+        },
+        {
+          "id": "env2-crypt",
+          "label": "Flat, crypt",
+          "image": "../../../clips/r6/env/crypt-env2-start.png",
+          "text": "Style 2 (Flat) in the Crypt."
+        },
+        {
+          "id": "env2-sewers",
+          "label": "Flat, sewers",
+          "image": "../../../clips/r6/env/sewers-env2-start.png",
+          "text": "Style 2 (Flat) in the Sewers."
+        },
+        {
+          "id": "env2-warren",
+          "label": "Flat, warren",
+          "image": "../../../clips/r6/env/warren-env2-start.png",
+          "text": "Style 2 (Flat) in the Warren."
+        },
+        {
+          "id": "env3-crypt",
+          "label": "Torchlit, crypt",
+          "image": "../../../clips/r6/env/crypt-env3-start.png",
+          "text": "Style 3 (Torchlit) in the Crypt."
+        },
+        {
+          "id": "env3-sewers",
+          "label": "Torchlit, sewers",
+          "image": "../../../clips/r6/env/sewers-env3-start.png",
+          "text": "Style 3 (Torchlit) in the Sewers."
+        },
+        {
+          "id": "env3-warren",
+          "label": "Torchlit, warren",
+          "image": "../../../clips/r6/env/warren-env3-start.png",
+          "text": "Style 3 (Torchlit) in the Warren."
+        },
+        {
+          "id": "env4-crypt",
+          "label": "Mosaic, crypt",
+          "image": "../../../clips/r6/env/crypt-env4-start.png",
+          "text": "Style 4 (Mosaic) in the Crypt."
+        },
+        {
+          "id": "env4-sewers",
+          "label": "Mosaic, sewers",
+          "image": "../../../clips/r6/env/sewers-env4-start.png",
+          "text": "Style 4 (Mosaic) in the Sewers."
+        },
+        {
+          "id": "env4-warren",
+          "label": "Mosaic, warren",
+          "image": "../../../clips/r6/env/warren-env4-start.png",
+          "text": "Style 4 (Mosaic) in the Warren."
+        }
+      ]
+    },
+    {
+      "id": "camp",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Four camp looks",
+      "text": "You didn't like the camp's look: four directions, each shown on the camp and the shop.",
+      "why": "All four are in the game: the gear button, Camp look. The one you pick becomes the camp.",
+      "pick": [
+        "camp-ember"
+      ],
+      "items": [
+        {
+          "id": "camp-classic",
+          "label": "Parchment",
+          "image": "../../../clips/r6/camp/L-classic-1-camp.png",
+          "text": "The camp in the Parchment look."
+        },
+        {
+          "id": "shop-classic",
+          "label": "Parchment, shop",
+          "image": "../../../clips/r6/camp/L-classic-6-shop.png",
+          "text": "The shop in the Parchment look."
+        },
+        {
+          "id": "camp-ember",
+          "label": "Night watch",
+          "image": "../../../clips/r6/camp/L-ember-1-camp.png",
+          "text": "The camp in the Night watch look."
+        },
+        {
+          "id": "shop-ember",
+          "label": "Night watch, shop",
+          "image": "../../../clips/r6/camp/L-ember-6-shop.png",
+          "text": "The shop in the Night watch look."
+        },
+        {
+          "id": "camp-journal",
+          "label": "Field journal",
+          "image": "../../../clips/r6/camp/L-journal-1-camp.png",
+          "text": "The camp in the Field journal look."
+        },
+        {
+          "id": "shop-journal",
+          "label": "Field journal, shop",
+          "image": "../../../clips/r6/camp/L-journal-6-shop.png",
+          "text": "The shop in the Field journal look."
+        },
+        {
+          "id": "camp-arcade",
+          "label": "Arcade",
+          "image": "../../../clips/r6/camp/L-arcade-1-camp.png",
+          "text": "The camp in the Arcade look."
+        },
+        {
+          "id": "shop-arcade",
+          "label": "Arcade, shop",
+          "image": "../../../clips/r6/camp/L-arcade-6-shop.png",
+          "text": "The shop in the Arcade look."
+        }
+      ]
+    },
+    {
+      "id": "tree",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Four skill tree looks",
+      "text": "Four ways to draw a hero's skill tree. Ladder is a different layout: one row per ability.",
+      "why": "All four are in the game: the gear button, Tree look.",
+      "pick": [
+        "tree-ladder"
+      ],
+      "items": [
+        {
+          "id": "tree-classic",
+          "label": "Columns",
+          "image": "../../../clips/r6/camp/L-classic-5-tree-classic.png",
+          "text": "The skill tree as Columns (shown under the Parchment camp)."
+        },
+        {
+          "id": "tree-stars",
+          "label": "Constellation",
+          "image": "../../../clips/r6/camp/L-ember-5-tree-stars.png",
+          "text": "The skill tree as Constellation (shown under the Night watch camp)."
+        },
+        {
+          "id": "tree-ladder",
+          "label": "Ladder",
+          "image": "../../../clips/r6/camp/L-journal-5-tree-ladder.png",
+          "text": "The skill tree as Ladder (shown under the Field journal camp)."
+        },
+        {
+          "id": "tree-runes",
+          "label": "Rune stones",
+          "image": "../../../clips/r6/camp/L-arcade-5-tree-runes.png",
+          "text": "The skill tree as Rune stones (shown under the Arcade camp)."
+        }
+      ]
+    }
+  ]
+}
