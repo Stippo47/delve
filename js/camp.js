@@ -9,6 +9,8 @@ import { DEFS } from './units.js';
 import { BEASTS, beastFun, beastHabit, trinketFun, POTION_FUN } from './bestiary.js';
 import { portrait } from './inspect.js';
 import { ENV_STYLES, envId, setEnv } from './env.js';
+import { soundSettingsHtml } from './audio.js';
+import { cue } from './sfx.js';
 
 // ---------------------------------------------------------------- looks (round 6: a style setting)
 // The camp and the skill tree each have looks to choose from in the settings; the classic one is the 0.6.0 look.
@@ -479,6 +481,7 @@ function settingsSheet() {
     <h3 class="set-h">Camp look</h3>${pick(LOOKS, save.look || 'classic', 'look')}
     <h3 class="set-h">Skill tree look</h3>${pick(TREE_LOOKS, save.treeLook || 'classic', 'treelook')}
     <h3 class="set-h">Dungeon look</h3>${pick(ENV_STYLES.map((e) => ({ ...e, id: String(e.id) })), String(envId()), 'env')}
+    ${soundSettingsHtml()}
     <h3 class="set-h">Cheats</h3>
     <button class="merc-toggle cheat-toggle ${save.cheat ? 'on' : ''}" data-act="cheat"><span class="merc-text"><b>Unlimited gold and gems</b><span class="muted">Everything in the camp is free while it's on. Your real purse is kept for when you switch it off.</span></span><span class="switch"><i></i></span></button>
     <div class="sheet-foot"><button class="btn" data-act="closesheet">Done</button></div>`;
@@ -499,7 +502,7 @@ function onClick(e) {
   const el = e.target.closest('[data-act]'); if (!el || el.disabled) return;
   const [act, arg] = el.dataset.act.split(':');
   const ok = () => { persist(); render(); };
-  const no = () => { el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); };
+  const no = () => { cue('deny'); el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); };
   switch (act) {
     case 'tab': closeSheet(); tab = arg; sub = null; render(); mainEl.scrollTop = 0; break;
     case 'back': sub = null; render(); break;
@@ -557,7 +560,7 @@ function onClick(e) {
   }
 }
 function pop(sel) { for (const el of mainEl.querySelectorAll(sel)) { el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); } }
-function popGold() { for (const el of root.querySelectorAll('.purse')) { el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); } }
+function popGold() { cue('buy'); for (const el of root.querySelectorAll('.purse')) { el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); } }
 
 // Timers tick down in place; when one runs out, redraw so the hero is ready again.
 function tick() {
