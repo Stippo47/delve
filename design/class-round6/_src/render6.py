@@ -21,6 +21,9 @@ R4 = {  # round-6 file -> the round-4 render it is built back from
 }
 
 
+ALT = {"ranged-trapper-right": "ranged-trapper"}  # an alternate version -> the round-5 design it comes from
+
+
 def label(stem):
     words = stem.split("-")
     if words[0] in ("caster", "support", "ranged", "fighter", "greenskin", "fiend", "celestial", "lizardman"):
@@ -37,7 +40,7 @@ for folder in sorted(p for p in R6.iterdir() if p.is_dir() and p.name != "_src")
     out.mkdir(exist_ok=True)
     subprocess.run([sys.executable, str(RB), "--out", str(out)] + [f"{s}={label(s.stem)}" for s in svgs], check=True)
     for s in svgs:
-        before = DESIGN / "class-round5" / folder.name / "renders" / f"{s.stem}.png"
+        before = DESIGN / "class-round5" / folder.name / "renders" / f"{ALT.get(s.stem, s.stem)}.png"
         if before.exists():
             shutil.copyfile(before, out / f"{s.stem}-before.png")
         if s.stem in R4:
