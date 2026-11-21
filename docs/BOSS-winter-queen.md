@@ -72,3 +72,6 @@ that moves her most (`WQ.hail`), then health.
 
 ## Still to do
 Real art (her, the images, the dais; docs/ART-NEEDED-bosses.md). The designer's answer on whether she stays.
+
+## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
+Re-measured, not retuned (the lead tunes hero numbers first): level 41: won 2 of 10, avg 207 s. Same command as above.

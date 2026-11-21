@@ -62,3 +62,6 @@ the campaign reaches the Ember Deep's boss with four heroes at about level 50):
 | 10 fights, level 50 (health 1200) | 4 of 10 | avg 177 s |
 | (health 1400, before parts ignored statuses) | 6 of 10 | avg 209 s |
 Swingy from 4 to 6 of 10 on small changes; the knobs are health, the scorch's tick damage and the fire call's count.
+
+## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
+Re-measured, not retuned (the lead tunes hero numbers first): level 50: won 5 of 10, avg 182 s. Same command as above.

@@ -86,3 +86,6 @@ Knobs: `CH.drum` (how often they call, how many at once), damage in `CH`, health
 ## Still to do
 Real art (the chief, the drums, the tunnels; see docs/ART-NEEDED-bosses.md); his own swing and roar looks (the
 visuals lane: the cone strikes with the bone-spike burst every 'blade' danger uses now).
+
+## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
+Re-measured, not retuned (the lead tunes hero numbers first): level 15, 3 heroes: won 4 of 10, avg 246 s. Same command as above.

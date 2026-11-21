@@ -62,3 +62,6 @@ Re-run against the Dunes' own strength once roster3 merges (knobs: health, the e
 
 ## Known placeholder gaps
 While under the sand its head is hidden but its round floor shadow still shows; the real art pass should hide it.
+
+## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
+Re-measured, not retuned (the lead tunes hero numbers first): the Dunes' own strength (`--theme dunes`), level 62: won 1 of 10, avg 214 s. Same command as above.

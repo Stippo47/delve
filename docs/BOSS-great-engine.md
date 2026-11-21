@@ -65,3 +65,6 @@ the Spire's strength stands in for the Foundry's; level 66 is a guess past the D
 | 10 fights, level 66 | 7 of 10 | avg 189 s |
 (+20% damage and hands every 1.6-2.4 s took it to 1 of 10.) Re-run against the Foundry's own strength once roster3
 merges (knobs: `GE.hand.every`, the hands' damage, `GE.guard`).
+
+## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
+Re-measured, not retuned (the lead tunes hero numbers first): the Foundry' own strength (`--theme foundry`), level 66: won 0 of 10, avg 86 s. Same command as above.

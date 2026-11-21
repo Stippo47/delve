@@ -61,3 +61,6 @@ the campaign hasn't reached the Spire in 110 runs: about level 58 is the guess f
 |---|---|---|
 | 10 fights, level 58 | 5 of 10 | avg 258 s |
 (+10% damage took her to 3 of 10, -10% to 10 of 10.) Long fights: the choir phase is the knob (`GS.choir`).
+
+## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
+Re-measured, not retuned (the lead tunes hero numbers first): level 58: won 2 of 10, avg 272 s. Same command as above.

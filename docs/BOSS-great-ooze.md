@@ -76,3 +76,6 @@ brood (`OZ.brood`), health.
 ## A later variant: the Thing in the Cistern
 If the Sewers ever get a second boss (or a harder mode), the Thing can stand alone: the canals with no ooze, a dozen arms
 that slam, grab and sweep, and a mouth that surfaces in a canal now and then as the only place it can be hurt.
+
+## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
+Re-measured, not retuned (the lead tunes hero numbers first): level 17, 4 heroes: won 10 of 10, avg 188 s. Same command as above.
