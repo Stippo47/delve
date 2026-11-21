@@ -135,6 +135,10 @@ const STATUS = {
   radiant: `<path d="M16 2l2.6 7.4L26 6l-3.4 7.4L30 16l-7.4 2.6L26 26l-7.4-3.4L16 30l-2.6-7.4L6 26l3.4-7.4L2 16l7.4-2.6L6 6l7.4 3.4z" fill="#FFE48A"/><circle cx="16" cy="16" r="5.5" fill="#FFFFFF" ${H}/>`,
   // cursed builds (a purple skull-drop), hexed is the armed curse (an eye in a ring)
   curse: `<path d="M16 3c6 0 10 4.4 10 10 0 4-2 6.4-4 7.6V26h-12v-5.4C8 19.4 6 17 6 13 6 7.4 10 3 16 3z" fill="#9A5CC8"/><circle cx="12.2" cy="13.5" r="2.6" fill="${INK}" ${H}/><circle cx="19.8" cy="13.5" r="2.6" fill="${INK}" ${H}/><path d="M13 22v3M16 22v3M19 22v3" stroke="${INK}" stroke-width="1.6" ${H}/>`,
+  // round 9: entangle builds (a curl of vine), tangled is the burst (roots wrapped round a foot)
+  entangle: `<path d="M8 26c0-8 4-12 9-12 4 0 6-3 6-6" fill="none" stroke="${INK}" stroke-width="5.6" stroke-linecap="round"/><path d="M8 26c0-8 4-12 9-12 4 0 6-3 6-6" fill="none" stroke="#7FA04A" stroke-width="2.6" stroke-linecap="round" ${H}/>
+    <path d="M13 17c-3-1-5-3-5-6 3 0 5 2 5 6zM20 12c1-3 4-4 6-3-1 3-3 4-6 3z" fill="#9BCB3C"/>`,
+  tangled: `<path d="M10 6h8v14h6v6H10z" fill="#C9B8A0"/><path d="M5 14c6 4 16 4 22 0M5 21c6 4 16 4 22 0" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M5 14c6 4 16 4 22 0M5 21c6 4 16 4 22 0" fill="none" stroke="#7A5A3A" stroke-width="2.4" stroke-linecap="round" ${H}/>`,
   hexed: `<circle cx="16" cy="16" r="12" fill="none" stroke="${INK}" stroke-width="5.4"/><circle cx="16" cy="16" r="12" fill="none" stroke="#9A5CC8" stroke-width="2.6" ${H}/>
     <path d="M6 16c3-5 6.4-7 10-7s7 2 10 7c-3 5-6.4 7-10 7s-7-2-10-7z" fill="#E6D2F6"/><circle cx="16" cy="16" r="3.6" fill="#5A2A80" ${H}/>`,
 };

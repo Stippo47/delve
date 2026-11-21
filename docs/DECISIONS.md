@@ -289,3 +289,13 @@ My calls: gems are dropped (gold only); hero cards were buttons, which iPhone Sa
 
 ## Round 9 (2026-11-21)
 Rulings and lanes: `docs/BUILD-v5.md`; the designer's words (47 cards: roster, showcase, art, 0.9 report): `docs/riffle-log/2026-11-21-round9.txt`.
+- Round 9 build calls (lane E, enemies): majors (the old mini-boss form) are hp x5 (less for big kinds: / (1 + 0.12 x (cost - 2))),
+  blows x2.2, size 1.55, two trinkets, no enrage, not bosses; 0.8% of any enemy on floor 1 rising to 6%, and from
+  floor 2 the elite room's second big one is a major a third of the time. Elites carry one trinket always (designer:
+  "Elites 1"). No gold rim: u.look gives a faint tint and a twinkle. Gems: a floor's last foe drops one, the dungeon's
+  boss two, 6% of chests, 15% of majors; kept even when leaving early. The Wildwood is rank 0 (strength x0.75); the
+  Warren, second now, went from x1 to x1.6; the others moved up one rank. A save keeps any dungeon it has been into
+  open. Slimes are blue, hop, and leave no body. Floors whose last foe is a plain kind (the Warren's hobgoblin and
+  orc, the Sewers' slime and lizard blade...) now meet a major of it until they get named mini-bosses. The golden
+  skeleton keeps its homing bones on the base kind (the designer "might" move them to the elite). The rat king's
+  sprite is a big recoloured rat for now (the designer asked for more than a stacked rat sprite: real art queued).

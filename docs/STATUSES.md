@@ -28,11 +28,12 @@ the problem (an archer's frost arrow is 34 chill: about three to freeze). Now ea
 | **Stagger** | heavy blows, bone spikes, the banshee's wail, bat screech | 100 | 12 | every hit that adds stagger stops it for 0.15 s (bosses 0.05) | **Knocked out**: 2.5 s (bosses 1.2) helpless and taking 1.5x damage; drops to 0 |
 | **Radiance** (new) | angels (blows 22, smite 30), cherubs (arrows 12, arrow rain 18), seraphs (bolts 20), the Archon and the Radiant (blows 25, the Radiant's ring 40) | 100 | 6 | attacks come up to 35% slower and hit up to 60% weaker (both scale with value / threshold) | **Radiant**: for 3 s it glows (an aura 120 across), **can't attack or use an ability**, and everyone else inside the aura gains 24 radiance a second (not itself); drops to 0, and it can't gain radiance again until 4 s after the glow ends |
 | **Cursed** (new) | ghosts' touch (30; ghosts no longer chill), the banshee's wail (32) and pull (22), the Bone King's last phase (his Soul Nova / Ring 40 and the Bone Wall 20) | 100 | 5 | heals do (1 - 1.6 x fill) of what they should: nothing from about 63; blows land up to 40% harder | **Hexed**: drops to 0; its next attack, heal or summon (within 8 s) **turns on it**: its damage hurts itself instead (80% of it, at most 30% of its max health per hex), a heal hurts the friend it was meant for, a summon joins the other side (with a 12 s life). Everything that one action does in the next 0.6 s turns too (all seven arrows of a Barrage) |
+| **Entangle** (round 9) | ents' root lines (55), an elite ent's root ring (70), the Elder Ent's roots (65) and root cage (110), grasping roots on the floor (22/s), rooted sproutlings' seeds (6, an elite's 14) | 100 | 6 | up to 70% slower (x fill); walking hurts (2.2 x fill per 100 walked) and so does every attack or ability (2.5 x fill) | **Tangled**: rooted for 3 s (bosses 1.2), attacks at half speed, 3 damage a second and 5 more for every attack or ability; drops to 0, then 3 s before it can be entangled again |
 
 Angels, cherubs, seraphs and the angel bosses can't be made radiant; ghosts and banshees can't be cursed.
 
 ## Timers (not build-ups)
-Frozen, stunned, knocked out, rooted, asleep, guarded, untouchable, taunted, radiant (the glow) and hexed (the armed
+Frozen, stunned, knocked out, rooted, tangled, asleep, guarded, untouchable, taunted, radiant (the glow) and hexed (the armed
 hex) are timers: their HUD ring shrinks from full as they run out.
 
 ## How they look (the hooks the visuals read)
