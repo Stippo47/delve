@@ -17,6 +17,12 @@ COPIES = [
     ("props/yeti-snowball.svg", "props/yeti-snowball.svg"),
     ("enemies/frost-icicle-wraith.svg", "enemies/icicle-wraith.svg"),
     ("enemies/frost-spirit.svg", "enemies/spirit-frost.svg"),
+    # the Ember Deep
+    ("enemies/ember-fire-spider.svg", "enemies/fire-spider.svg"),
+    ("enemies/ember-hellhound.svg", "enemies/hellhound.svg"),
+    ("enemies/ember-cinder-bat.svg", "enemies/cinder-bat.svg"),
+    ("enemies/ember-spirit.svg", "enemies/spirit-fire.svg"),
+    ("enemies/ember-pit-lord.svg", "enemies/pit-lord.svg"),
 ]
 
 if __name__ == "__main__":

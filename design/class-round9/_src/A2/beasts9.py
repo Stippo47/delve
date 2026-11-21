@@ -229,7 +229,7 @@ def spirit9(el, name, desc):
               f'<linearGradient id="{gid}T" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="{t0}"/>'
               f'<stop offset="1" stop-color="{t1}"/></linearGradient>')
     S.group("back", (100, 100), "the tail")
-    S.shape(comma_tail(100, 104, 70, 52, 128, 30, 56), fill=f"url(#{gid}T)", shadow=0, side=False,
+    S.shape(comma_tail(100, 110, 70, 54, 128, 30, 52), fill=f"url(#{gid}T)", shadow=0, side=False,
             decor=f'<path d="{comma_tail(94, 92, 76, 58, 112, 40, 18)}" fill="{t0}" opacity="0.5"/>')
     S.group("body")
     S.shape(circ(100, 116, 36), fill=f"url(#{gid})", shadow=3, side=False,

@@ -33,6 +33,12 @@ add("frost-spider", "Frost spider", 20, 54, 20, 52)
 add("frost-yeti", "Yeti", 31, 68, 31, 66)
 add("frost-icicle-wraith", "Icicle wraith", 22, 42, 22, 58)
 add("frost-spirit", "Frost spirit", 15, 34, 15, 58)
+# the Ember Deep
+add("ember-fire-spider", "Fire spider", 20, 54, 20, 52)
+add("ember-hellhound", "Hellhound", 18, 35)
+add("ember-cinder-bat", "Cinder bat", 16, 44)
+add("ember-spirit", "Fire spirit", 15, 34, 15, 58)
+add("ember-pit-lord", "The Pit Lord", 38, 68, 38, 64)
 
 
 # boards that show a design with what the game draws apart, as the game places it (round 8's troll and boulder)

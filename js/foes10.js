@@ -296,13 +296,13 @@ export const FOES10 = {
     res: { poison: 0, burn: 1.5, chill: 0, curse: 0 }, brain: wraithBrain },
   spiritFrost: { ...spirit('frost', 'Frost Spirit', { hue: 175, sat: 0.8, light: 0.2 }, { chill: 0 }), art: 'art/enemies/spirit-frost.svg', headR: 34 }, // art round 9
   // ---- the Ember Deep
-  spiderFire: { variantOf: 'spiderHunter', name: 'Fire Spider', hue: -40, sat: 1.5, light: 0.02, poison: 0, burn: 20, xp: 11, cost: 3.5, res: { burn: 0 },
+  spiderFire: { variantOf: 'spiderHunter', name: 'Fire Spider', art: 'art/enemies/fire-spider.svg', headR: 54, poison: 0, burn: 20, xp: 11, cost: 3.5, res: { burn: 0 },
     onDeath: (w, u) => firePatch(w, u.x, u.y, 40, 3.5),
     brain: (w, u, dt) => { every(w, u, dt, 'spit', 3, 4.2, 320, (t) => { setAnim(u, 'throw', 0.3); fireball(w, u, angleTo(u.x, u.y, t.x + (t.vx || 0) * 0.4, t.y + (t.vy || 0) * 0.4)); }); return false; } },
-  hellhound: { variantOf: 'wolf', name: 'Hellhound', hue: -25, sat: 1.7, light: -0.16, burn: 14, hp: 40, dmg: 7, xp: 11, cost: 3, pack: [2, 3], res: { burn: 0, chill: 1.4 }, brain: houndBrain },
-  cinderBat: { variantOf: 'bat', name: 'Cinder Bat', hue: -30, sat: 1.6, light: 0.05, hp: 20, xp: 6, cost: 2, pack: [2, 3], ability: null, atkCd: 999, res: { burn: 0 }, brain: cinderBrain },
-  spiritFire: spirit('fire', 'Fire Spirit', { hue: -40, sat: 1.8, light: 0.1 }, { burn: 0 }),
-  pitLord: { ...FOES.pitLord, brain: pitLordBrain },
+  hellhound: { variantOf: 'wolf', name: 'Hellhound', art: 'art/enemies/hellhound.svg', burn: 14, hp: 40, dmg: 7, xp: 11, cost: 3, pack: [2, 3], res: { burn: 0, chill: 1.4 }, brain: houndBrain },
+  cinderBat: { variantOf: 'bat', name: 'Cinder Bat', art: 'art/enemies/cinder-bat.svg', hp: 20, xp: 6, cost: 2, pack: [2, 3], ability: null, atkCd: 999, res: { burn: 0 }, brain: cinderBrain },
+  spiritFire: { ...spirit('fire', 'Fire Spirit', { hue: -40, sat: 1.8, light: 0.1 }, { burn: 0 }), art: 'art/enemies/spirit-fire.svg', headR: 34 }, // art round 9
+  pitLord: { ...FOES.pitLord, art: 'art/enemies/pit-lord.svg', headR: 68, brain: pitLordBrain }, // art round 9: its own art (it wore the round-5 demon)
   // ---- the Gilded Spire
   angelFallen: { variantOf: 'angel', name: 'Fallen Angel', hue: 230, sat: 0.55, light: -0.3, radiance: 0, curse: 22, xp: 17, res: { radiance: 0, curse: 0 } },
   sunBlade: { ...FOE, name: 'Sun Blade', art: variantUrl(ART('cherub'), { hue: 18, sat: 1.4, light: 0.16 }), headR: 46, r: 22, vr: 17, turn: 6, accel: 360, face: 6, mass: 0.8,
