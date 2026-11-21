@@ -81,7 +81,9 @@ PART1 = {
     "greenskin-orc": ("enemies", R7 / "greenskin-orc.png", None),
     "ghost-a": ("enemies", R7 / "ghost-a.png", None),
     "ghost-b": ("enemies", R7 / "ghost-b.png", None),
+    "greenskin-chieftain": ("enemies", R7 / "greenskin-troll-a.png", None),
 }
+LABELS = {"greenskin-chieftain": "Chieftain (was Troll A)"}
 
 
 def troll():
@@ -96,10 +98,34 @@ def troll():
            src=R8 / "boards" / "greenskin-troll-boulder.svg", lab="Troll, with its boulder")
 
 
+# part 2: name -> folder; the before is the placeholder the game showed (befores.py)
+PART2 = {}
+for n in ("wild-wolf", "wild-dire-wolf", "wild-alpha", "bandit-sword", "bandit-torch", "bandit-greatsword", "bandit-axe",
+          "bandit-spear", "bandit-daggers", "bandit-poacher", "bandit-brute", "bandit-chief", "wild-boar",
+          "wild-sproutling", "wild-ent", "wild-wisp", "wild-elder-ent", "sewer-rat-king", "sewer-croc", "sewer-crab"):
+    PART2[n] = "enemies"
+LABELS2 = {"wild-wolf": "Wolf", "wild-dire-wolf": "Dire wolf", "wild-alpha": "The Alpha", "bandit-sword": "Bandit (sword and shield)",
+           "bandit-torch": "Torch bandit (sword and torch)", "bandit-greatsword": "Greatsword bandit", "bandit-axe": "Axe bandit",
+           "bandit-spear": "Spear bandit", "bandit-daggers": "Knife bandit (two daggers)", "bandit-poacher": "Poacher",
+           "bandit-brute": "Bandit brute", "bandit-chief": "The Bandit Chief", "wild-boar": "Thornback boar",
+           "wild-sproutling": "Sproutling", "wild-ent": "Ent", "wild-wisp": "Wisp", "wild-elder-ent": "The Elder Ent",
+           "sewer-rat-king": "Rat king", "sewer-croc": "Croc (two axes)", "sewer-crab": "Sewer crab"}
+
+
+def part2(stem):
+    import befores
+    b = befores.before_svg(stem)
+    render(PART2[stem], stem, b, lab=LABELS2[stem])
+
+
 if __name__ == "__main__":
     want = set(sys.argv[1:])
+    sys.path.insert(0, str(HERE))
+    for stem in PART2:
+        if (not want and (R8 / PART2[stem] / f"{stem}.svg").exists()) or stem in want:
+            part2(stem)
     for stem, (folder, before, k) in PART1.items():
         if not want or stem in want:
-            render(folder, stem, before, k)
+            render(folder, stem, before, k, lab=LABELS.get(stem))
     if not want or "greenskin-troll" in want:
         troll()

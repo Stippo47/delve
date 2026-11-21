@@ -56,6 +56,8 @@ def build(want=()):
     if on("ghost-a") or on("ghost-b"):
         for t in "ab":
             made.append(write(C.ghost7(t), f"ghost-{t}.svg"))
+    if on("greenskin-chieftain"):
+        made.append(write(G.chieftain8(), "greenskin-chieftain.svg"))
     if on("greenskin-troll"):
         made.append(write(G.troll8(), "greenskin-troll.svg"))
         made.append(write(G.boulder(), "troll-boulder.svg", R8 / "props"))

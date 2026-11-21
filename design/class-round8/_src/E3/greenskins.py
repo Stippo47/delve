@@ -431,6 +431,21 @@ def troll7(take):
     return S
 
 
+# round 8 (art-round7 deck, on Troll A, mohawk: "Keep this but not as a troll"): kept exactly as it was (troll7("a"):
+# the same shapes and colours, byte for byte but the comment), and it is now the Warren's chieftain: the boss the
+# designer renamed ("The Warboss: Chieftain. More abilities."). The red war crest, the big tusks and the club make it
+# the tribe's chief, and next to the Warren's trolls (the hunched mounds) it stands upright on its shoulders. Only its
+# name changes; the game still draws the Warboss as the orc until the boss lane takes this up.
+CHIEF_R8 = True
+
+
+def chieftain8():
+    S = troll7("a")
+    S.comment = S.comment.replace("TROLL, mohawk (round 7)", "CHIEFTAIN (round 8: the round-7 Troll A, mohawk, kept as it "
+                                  "was and made the Warren's chieftain, the boss)")
+    return S
+
+
 def ogre():
     skin = SKIN["ogre"]
     S = Sprite('OGRE (round 5): drab moss skin, no eyes; a big round bald head, a heavy underbite with two stubby '
