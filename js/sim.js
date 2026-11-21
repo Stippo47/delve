@@ -1,7 +1,7 @@
 // The combat simulation: AI (weighted move modes + context steering), physics, combat, statuses, hazards.
 import { TAU, clamp, dist, dist2, angleTo, wrapAngle, angleDiff, rand, rrange, rint, chance, softmaxPick } from './util.js';
 import { DEFS, FEEL, levelHp, levelDmg } from './units.js';
-import { lineClear, rayToRect, circleRect, findPath, buildGrid } from './path.js';
+import { lineClear, pathClear, rayToRoundRect, circleRect, findPath, buildGrid } from './path.js';
 import { kitThink, kitTick, hooksOf, segDist } from './kits.js';
 import { trinketHooks } from './trinkets.js';
 import { cue } from './sfx.js';
@@ -342,7 +342,7 @@ function steer(w, u, gx, gy, opts = {}) {
       for (let i = 0; i < DIRS; i++) { const into = -(DIR_X[i] * touch.nx + DIR_Y[i] * touch.ny); if (into > 0.15) danger[i] = Math.max(danger[i], Math.min(1, into * 1.4)); }
       continue;
     }
-    for (let i = 0; i < DIRS; i++) { const tt = rayToRect(u.x, u.y, DIR_X[i], DIR_Y[i], r, R); if (tt < look) danger[i] = Math.max(danger[i], 1 - tt / look); }
+    for (let i = 0; i < DIRS; i++) { const tt = rayToRoundRect(u.x, u.y, DIR_X[i], DIR_Y[i], r, R); if (tt < look) danger[i] = Math.max(danger[i], 1 - tt / look); }
   }
   const fear = u.team === 'hero' ? 0.9 : 0.45;
   for (const h of w.hazards) if (!h.hidden && h.up !== false && h.type !== 'beam' && ((h.type !== 'oil' && h.type !== 'web') || u.team === 'hero')) avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' || h.type === 'web' ? 0.35 : fear, 40);
@@ -376,18 +376,40 @@ function steer(w, u, gx, gy, opts = {}) {
 // Head for (tx,ty): straight there if there's a clear line, else along an A* route round the walls.
 const CLEAR_PAD = 42; // a route is pulled straight no tighter than this (the A* grid keeps 46 from walls)
 function goalVec(w, u, tx, ty) {
-  if (!w.walls.length || lineClear(w, u.x, u.y, tx, ty, u.r * 0.9)) { u.path = null; return [tx - u.x, ty - u.y]; }
+  if ((!w.walls.length && !w.pillars.length) || pathClear(w, u.x, u.y, tx, ty, u.r * 0.9)) { u.path = null; return [tx - u.x, ty - u.y]; }
   u.pathT -= 1 / 60;
   const moved = !u.pathGoal || Math.hypot(u.pathGoal.x - tx, u.pathGoal.y - ty) > 60;
   if (!u.path || u.pathT <= 0 || moved) { u.path = findPath(w, u.x, u.y, tx, ty, Math.min(CLEAR_PAD, u.r * 0.9)); u.pathT = 0.6; u.pathGoal = { x: tx, y: ty }; }
   if (!u.path || !u.path.length) return [tx - u.x, ty - u.y];
   // the furthest route point we can see
   let k = 0;
-  for (let i = u.path.length - 1; i >= 0; i--) if (lineClear(w, u.x, u.y, u.path[i].x, u.path[i].y, u.r * 0.9)) { k = i; break; }
+  for (let i = u.path.length - 1; i >= 0; i--) if (pathClear(w, u.x, u.y, u.path[i].x, u.path[i].y, u.r * 0.9)) { k = i; break; }
   if (k > 0) u.path.splice(0, k);
   const p = u.path[0];
   if (Math.hypot(p.x - u.x, p.y - u.y) < 16 && u.path.length > 1) u.path.shift();
   return [u.path[0].x - u.x, u.path[0].y - u.y];
+}
+
+// Where a melee unit closing on t should head: straight at it, unless a friend already stands in that spot at t's
+// side (then the nearest free spot round t), so a pack spreads round its target instead of queueing behind the one in
+// front. Rethought a few times a second, not every tick, so the choice holds.
+const SPOT_OFF = [0, 0.55, -0.55, 1.1, -1.1, 1.65, -1.65, 2.3, -2.3];
+const spotAt = (t, u, a) => { const ring = t.r + u.r + Math.min(u.def.range, 30) * 0.5; return { x: t.x + Math.cos(a) * ring, y: t.y + Math.sin(a) * ring }; };
+function approachSpot(w, u, t) {
+  if (u.spotT > w.time && u.spotFor === t) return u.spotA == null ? null : spotAt(t, u, u.spotA);
+  u.spotT = w.time + 0.5; u.spotFor = t; u.spotA = null;
+  const mates = w.units.filter((o) => o !== u && o.team === u.team && alive(o) && !o.ethereal && dist(o.x, o.y, t.x, t.y) < t.r + o.r + 90);
+  if (!mates.length) return null;
+  const base = angleTo(t.x, t.y, u.x, u.y); // fixed for the life of the choice, so the spot doesn't slide round with u
+  for (const off of SPOT_OFF) {
+    const s = spotAt(t, u, base + off);
+    if (s.x < u.r || s.y < u.r || s.x > w.W - u.r || s.y > w.H - u.r) continue;
+    if (w.walls.some((r) => circleRect(s.x, s.y, u.r, r)) || w.pillars.some((p) => dist(s.x, s.y, p.x, p.y) < p.r + u.r)) continue;
+    if (mates.some((o) => dist(o.x, o.y, s.x, s.y) < (o.r + u.r) * 0.95)) continue;
+    if (off === 0) return null;
+    u.spotA = base + off; return s;
+  }
+  return null;
 }
 
 // How far u can go along (dx, dy) before a wall, the room's edge or a pillar (up to max).
@@ -397,7 +419,7 @@ function clearance(w, u, dx, dy, max) {
   if (dy > 0) t = Math.min(t, (w.H - u.r - u.y) / dy); if (dy < 0) t = Math.min(t, (u.r - u.y) / dy);
   for (const r of w.walls) {
     if (u.x < r.x - max - u.r || u.x > r.x + r.w + max + u.r || u.y < r.y - max - u.r || u.y > r.y + r.h + max + u.r) continue;
-    t = Math.min(t, rayToRect(u.x, u.y, dx, dy, r, u.r));
+    t = Math.min(t, rayToRoundRect(u.x, u.y, dx, dy, r, u.r));
   }
   for (const p of w.pillars) {
     const ox = p.x - u.x, oy = p.y - u.y, along = ox * dx + oy * dy; if (along < 0) continue;
@@ -458,8 +480,9 @@ function movement(w, u, dt) {
     const tx = (t.x - u.x) / (d || 1), ty = (t.y - u.y) / (d || 1);
     switch (u.mode) {
       case 'approach': {
-        [gx, gy] = goalVec(w, u, t.x, t.y); { const l = Math.hypot(gx, gy) || 1; gx /= l; gy /= l; }
         const gap = d - u.r - t.r;
+        const spot = u.def.role !== 'ranged' && gap > u.def.range + 8 ? approachSpot(w, u, t) : null;
+        [gx, gy] = spot ? goalVec(w, u, spot.x, spot.y) : goalVec(w, u, t.x, t.y); { const l = Math.hypot(gx, gy) || 1; gx /= l; gy /= l; }
         if (u.kind === 'rat') {
           // rats dart side to side on the way in, then circle in close until their bite is ready
           const z = Math.sin(w.time * 7 + u.id * 1.7) * 0.85;
@@ -507,6 +530,7 @@ function movement(w, u, dt) {
     }
   }
   const wants = Math.hypot(gx, gy) > 0.05 && mult > 0.2;
+  u.navWant = wants; // for tools/nav.mjs
   const mv = Math.hypot(u.x - (u.lastX ?? u.x), u.y - (u.lastY ?? u.y)); u.lastX = u.x; u.lastY = u.y;
   u.stuckT = wants && mv < 12 * dt ? (u.stuckT || 0) + dt : Math.max(0, (u.stuckT || 0) - dt * 2);
   if (u.stuckT > 1.2) { u.unstickT = 0.6; u.unstickA = openAngle(w, u, Math.atan2(gy, gx)); u.stuckT = 0; u.path = null; } // out towards open floor

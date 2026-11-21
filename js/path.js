@@ -30,6 +30,22 @@ export function rayToRect(ax, ay, dx, dy, r, pad = 0) {
   return Math.max(0, t0);
 }
 
+// How far a circle of radius rad can travel along a ray (unit direction) before it touches rectangle r, or Infinity.
+// The exact sweep: the ray against the rectangle grown by rad with rounded corners. (rayToRect with a pad grows it
+// with square corners: a body standing in that square corner's empty bit read every direction as blocked at 0, and
+// froze there; that was most of the 'stuck behind rocks and crates'.) 0 when the circle already overlaps it.
+export function rayToRoundRect(ax, ay, dx, dy, r, rad) {
+  const cx = clamp(ax, r.x, r.x + r.w), cy = clamp(ay, r.y, r.y + r.h);
+  if ((ax - cx) ** 2 + (ay - cy) ** 2 < rad * rad) return 0;
+  let t = Math.min(rayToRect(ax, ay, dx, dy, { x: r.x - rad, y: r.y, w: r.w + 2 * rad, h: r.h }), rayToRect(ax, ay, dx, dy, { x: r.x, y: r.y - rad, w: r.w, h: r.h + 2 * rad }));
+  for (const [px, py] of [[r.x, r.y], [r.x + r.w, r.y], [r.x, r.y + r.h], [r.x + r.w, r.y + r.h]]) {
+    const ox = px - ax, oy = py - ay, along = ox * dx + oy * dy; if (along < 0) continue;
+    const off2 = ox * ox + oy * oy - along * along; if (off2 >= rad * rad) continue;
+    t = Math.min(t, along - Math.sqrt(rad * rad - off2));
+  }
+  return Math.max(0, t);
+}
+
 // Push a circle out of a rectangle. Returns the push normal {nx, ny, d} or null.
 export function circleRect(x, y, rad, r) {
   const cx = clamp(x, r.x, r.x + r.w), cy = clamp(y, r.y, r.y + r.h);
@@ -48,6 +64,19 @@ export function circleRect(x, y, rad, r) {
 
 export function lineClear(w, ax, ay, bx, by, pad = 0) {
   for (const r of w.walls) if (segHitsRect(ax, ay, bx, by, r, pad)) return false;
+  return true;
+}
+
+// lineClear, and round obstacles too (pillars, barrels, boulders, braziers): can a body of radius pad go straight
+// from a to b? Steering used to head straight at a goal behind two boulders sitting side by side (a gap narrower than
+// the body), because only the walls were checked, and pushed back and forth at the gap.
+export function pathClear(w, ax, ay, bx, by, pad = 0) {
+  if (!lineClear(w, ax, ay, bx, by, pad)) return false;
+  const dx = bx - ax, dy = by - ay, L2 = dx * dx + dy * dy || 1;
+  for (const p of w.pillars) {
+    const k = clamp(((p.x - ax) * dx + (p.y - ay) * dy) / L2, 0, 1), qx = ax + dx * k - p.x, qy = ay + dy * k - p.y;
+    if (qx * qx + qy * qy < (p.r + pad) ** 2) return false;
+  }
   return true;
 }
 
@@ -128,7 +157,7 @@ export function findPath(w, ax, ay, bx, by, pad = 30) {
   const out = []; let px = ax, py = ay, i = 0;
   while (i < pts.length) {
     let j = pts.length - 1;
-    while (j > i && !lineClear(w, px, py, pts[j].x, pts[j].y, pad)) j--;
+    while (j > i && !pathClear(w, px, py, pts[j].x, pts[j].y, pad)) j--;
     out.push(pts[j]); px = pts[j].x; py = pts[j].y; i = j + 1;
   }
   return out;
