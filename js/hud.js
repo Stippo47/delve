@@ -8,11 +8,15 @@ import { HEROES } from './heroes.js';
 import { DEFS, xpToNext, levelHp } from './units.js';
 import { icon, abilityGlyph, ABILITY_COLOR } from './icons.js';
 import { elixirOf, POTIONS } from './potions.js';
+import { STATUS, fillOf, RADIANCE, CURSE } from './statuses.js';
 
 // ---------------------------------------------------------------- statuses on a unit
-// Every status as { id, kind, icon, frac (1 = full ring, shrinking to 0), color, left (s, when known) }.
-// Values that build up and drain (burn, chill...) and timers whose start we don't see shrink against the highest
-// value seen since they began; buffs know their own duration.
+// Every status as { id, kind, icon, frac (0..1 of the ring), color, left (s, when known), build (true for a build-up) }.
+// Build-ups (burn, chill, poison, wet, shock, stagger, radiance, curse) fill their ring as they build: value over the
+// threshold (statuses.js), so a full ring is the burst. (Round 8: they used to be drawn against the highest value seen,
+// which while building is always the value itself: every build-up showed as a full ring, and the burst came from
+// nowhere.) burst: true for a moment after it burst. Timers whose start we don't see shrink against the highest value
+// seen since they began; buffs know their own duration.
 const STATUS_COL = { burn: '#FF7A2F', chill: '#7FD6F5', frozen: '#BFEFFF', poison: '#9BCB3C', wet: '#6FB7E8', shock: '#FFF27A',
   stagger: '#E8E2D0', stun: '#FFE14D', root: '#7FA04A', sleep: '#C9B8FF', ko: '#FFE7A0', guard: '#5B8CDB', invuln: '#FFE07A',
   taunt: '#E0604B', buff: '#7CC06F', debuff: '#C8553D', rage: '#E0604B' };
@@ -23,18 +27,26 @@ function peaked(u, id, v) {
   if (!p[id] || v > p[id]) p[id] = v;
   return v / p[id];
 }
-export function unitStatuses(u) {
+export function unitStatuses(u, now = 0) {
   const out = [];
   if (!u || u.dead) return out;
   const add = (id, v, extra = {}) => { const f = peaked(u, id, v); if (f > 0) out.push({ id, kind: 'status', icon: id, frac: f, color: STATUS_COL[id], ...extra }); };
   const s = u.st || {};
+  const build = (id, show) => { // a build-up: the ring is how close it is to bursting
+    const burst = u.bursts && u.bursts[id] != null && now - u.bursts[id] < 0.5;
+    if (show || burst) out.push({ id, kind: 'status', icon: id, frac: burst ? 1 : fillOf(u, id), color: STATUS[id].col, amount: s[id], build: true, burst });
+  };
   if (u.frozenT > 0) add('frozen', u.frozenT, { left: u.frozenT }); else peaked(u, 'frozen', 0);
-  add('burn', s.burn > 4 ? s.burn : 0, { amount: s.burn });
-  add('chill', s.chill > 4 && !(u.frozenT > 0) ? s.chill : 0, { amount: s.chill });
-  add('poison', s.poison > 4 ? s.poison : 0, { amount: s.poison });
-  add('wet', s.wet > 4 ? s.wet : 0, { amount: s.wet });
-  add('shock', s.shock > 4 ? s.shock : 0, { amount: s.shock });
-  add('stagger', s.stagger > 6 ? s.stagger : 0, { amount: s.stagger });
+  if (u.radiantT > 0) out.push({ id: 'radiant', kind: 'status', icon: 'radiant', frac: u.radiantT / RADIANCE.auraT, color: STATUS.radiance.col, left: u.radiantT });
+  if (u.hexed) out.push({ id: 'hexed', kind: 'status', icon: 'hexed', frac: u.hexT / CURSE.armT, color: STATUS.curse.col, left: u.hexT });
+  build('burn', s.burn > 2);
+  build('chill', s.chill > 2 && !(u.frozenT > 0));
+  build('poison', s.poison > 2);
+  build('wet', s.wet > 2);
+  build('shock', s.shock > 2);
+  build('stagger', s.stagger > 3);
+  build('radiance', s.radiance > 2);
+  build('curse', s.curse > 2);
   add('ko', u.koT, { left: u.koT });
   add('stun', u.stunT > 0.05 && !(u.koT > 0) && !(u.frozenT > 0) ? u.stunT : 0, { left: u.stunT });
   add('root', u.rootT, { left: u.rootT });
@@ -62,6 +74,7 @@ export function ringSvg(st, size = 24) {
 function setRing(el, st) {
   const c = 2 * Math.PI * 10.2;
   const arc = el.querySelector('.arc'); if (arc) arc.setAttribute('stroke-dasharray', `${(st.frac * c).toFixed(2)} ${c.toFixed(2)}`);
+  el.classList.toggle('burst', !!st.burst); // a build-up that just burst: the ring flashes full
 }
 
 // ---------------------------------------------------------------- items a hero carries
@@ -139,7 +152,7 @@ export function updateCards(run) {
       ib.innerHTML = items.map((i) => `<span class="it${i.lv > 1 ? ' lv' + i.lv : ''}">${icon(i.kind, i.id)}</span>`).join('');
     }
     // statuses: rings rebuilt when the set changes, arcs updated in place otherwise
-    const sts = down || !u ? [] : unitStatuses(u).slice(0, 5);
+    const sts = down || !u ? [] : unitStatuses(u, w.time).slice(0, 5);
     const skey = sts.map((s) => s.id).join('|');
     const sb = el.querySelector('.hc-st');
     if (sb.dataset.key !== skey) { sb.dataset.key = skey; sb.innerHTML = sts.map((s) => ringSvg(s, 22)).join(''); }

@@ -24,6 +24,7 @@ import {
 } from './sim.js';
 import { lineClear } from './path.js';
 import { cue } from './sfx.js';
+import { tagAbility } from './fxtag.js';
 
 // ---------------------------------------------------------------- the skill web's stat nodes (round 8)
 // u.kit.mods = statsFor(hero, nodes) (heroes.js). Generic stats go straight onto the unit in initKit; an ability's own
@@ -481,7 +482,7 @@ export const ABILITIES = {
       for (let i = 0; i < (tier >= 3 ? 2 : 1); i++) {
         const s = spawn(w, 'wolf', u.x + rrange(-30, 30), u.y + rrange(-30, 30), { team: 'hero', scale: tier >= 2 ? 1.25 : 1, hpMul: tier >= 2 ? 1.5 : 1 });
         s.summon = true; s.summonBy = u; s.lifeT = 15; s.aggro = true; s.dmgMul = u.dmgMul * (tier >= 2 ? 1.3 : 1);
-        puff(w, s.x, s.y, '#A77BEA', 12, 80, 6, 0.5); // summons arrive in purple (round 7)
+        puff(w, s.x, s.y, '#A9D47A', 12, 80, 6, 0.5); // a swirl of leaves (round 8: summons no longer purple)
       }
     },
   },
@@ -496,7 +497,7 @@ export const ABILITIES = {
       for (const c of spots) {
         const s = spawn(w, 'skeleton', c.x, c.y, { team: 'hero' });
         s.summon = true; s.summonBy = u; s.lifeT = 12; s.aggro = true; s.dmgMul = u.dmgMul * 0.9; s.boom = tier >= 3; s.tint = '#9BE07A';
-        fx(w, { type: 'pillar', x: c.x, y: c.y, r: 24, kind: 'drain', max: 0.5 }); puff(w, c.x, c.y, '#A77BEA', 12, 70, 6, 0.6);
+        fx(w, { type: 'pillar', x: c.x, y: c.y, r: 24, kind: 'drain', max: 0.5 }); puff(w, c.x, c.y, '#B8C8DA', 12, 70, 6, 0.6);
       }
     },
   },
@@ -663,7 +664,7 @@ export function kitThink(w, u) {
   k.cd[best.id] = cooldownOf(u, best);
   const hadLater = u.later, hadRays = u.rays;
   k.using = best.id;
-  try { ABILITIES[best.id].use(w, u, u.target, k.tiers[best.id]); } finally { k.using = null; }
+  try { tagAbility(w, u, best.id, k.tiers[best.id], () => ABILITIES[best.id].use(w, u, u.target, k.tiers[best.id])); } finally { k.using = null; } // fxtag.js: each ability drawn in its own look
   // what the ability left to happen later keeps its ability (its damage, heal and status nodes)
   if (u.later && u.later !== hadLater) for (const l of u.later) if (!l.ab) { l.ab = best.id; l.f = withAb(u, best.id, l.f); }
   if (u.rays && u.rays !== hadRays) for (const r of u.rays) if (!r.ab) r.ab = best.id;

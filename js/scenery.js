@@ -156,7 +156,18 @@ function throne(g, x, y) {
 }
 
 // ---------------------------------------------------------------- walls and pillars
-export function drawWallThemed(ctx, r, w) { drawBlock(ctx, r, w); } // walls that come and go; the rest are in the floor cache
+export function drawWallThemed(ctx, r, w) { if (r.kind === 'bone') boneBlock(ctx, r); else drawBlock(ctx, r, w); } // walls that come and go; the rest are in the floor cache
+// One block of the Bone King's bone wall (boss.js boneWall, round 8): a heap of bone that bursts up, with spurs, and
+// sinks back as it runs out.
+function boneBlock(ctx, r) {
+  const up = clamp(Math.min(((r.max || 6) - r.temp) / 0.18, r.temp / 0.4, 1), 0, 1), cx = r.x + r.w / 2, cy = r.y + r.h / 2, h = r.w / 2 * (0.4 + 0.6 * up), seed = Math.round(cx * 3 + cy);
+  ctx.save();
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(cx, cy, h * 1.1, h, 0, 0, TAU); }, BONE_D);
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(cx - h * 0.15, cy - h * 0.2, h * 0.75, h * 0.62, 0, 0, TAU); }, BONE);
+  for (let i = 0; i < 3; i++) { const a = (seed % 7) + i * 2.1, L = h * (1.1 + 0.25 * ((seed + i) % 3)), bx = cx + Math.cos(a) * h * 0.3, by = cy + Math.sin(a) * h * 0.3;
+    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(bx - Math.sin(a) * 4, by + Math.cos(a) * 4); ctx.lineTo(bx + Math.cos(a) * L, by + Math.sin(a) * L); ctx.lineTo(bx + Math.sin(a) * 4, by - Math.cos(a) * 4); ctx.closePath(); }, BONE); }
+  ctx.restore();
+}
 
 export function drawPillarThemed(ctx, p, w) {
   const style = (w.theme && w.theme.pillar) || 'stone';

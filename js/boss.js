@@ -4,7 +4,7 @@
 // which the heroes steer out of. `arena` names the room layout dungeon.js builds for it.
 import { alive, hurt, puff, sparks, goalVec, steer, drive, setAnim, addDanger, spawn, kill } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, angleDiff, rand, rrange, chance } from './util.js';
-import { circleRect } from './path.js';
+import { circleRect, buildGrid } from './path.js';
 
 const turnTo = (u, a, rate, dt) => { u.facing = wrapAngle(u.facing + clamp(wrapAngle(a - u.facing), -rate * dt, rate * dt)); };
 const stand = (u, dt) => { u.spd *= Math.exp(-dt * 10); u.dvx = Math.cos(u.mvA) * u.spd; u.dvy = Math.sin(u.mvA) * u.spd; };
@@ -12,22 +12,27 @@ const heroes = (w) => w.units.filter((o) => o.team === 'hero' && alive(o));
 
 // ---------------------------------------------------------------- the Bone King
 // Phases by health: 1 the Duel (cleave, grave lance), 2 the Court (adds from the graves, bone rows),
-// 3 Unbound (blue crown fire: soul nova / soul ring, twin cleave, ghosts). Every attack: tell -> hit -> recovery.
+// 3 Unbound (blue crown fire: soul nova / soul ring, twin cleave, ghosts), 4 the Last Court (round 8: every grave
+// at once, his lance leaves a wall of bone, lances come in pairs, the soul fire curses). Every attack: tell -> hit ->
+// recovery.
 const KING = {
-  cleave: { r: 175, arc: 2.1, tell: 1.0, dmg: 18, rec: 0.9 },
-  lance: { len: 460, hw: 36, tell: 1.3, dmg: 25, rec: 1.5, open: 0.35 },
-  rows: { tell: 1.0, step: 50, r: 30, ripple: 0.07, len: 560, dmg: 12, rec: 0.9 },
-  nova: { r: 160, tell: 2.0, dmg: 24, rec: 0.8 },
-  ring: { r0: 170, r1: 380, tell: 1.7, dmg: 24, rec: 0.8 },
+  cleave: { r: 175, arc: 2.1, tell: 1.0, dmg: 20, rec: 0.9 },
+  lance: { len: 480, hw: 36, tell: 1.3, dmg: 27, rec: 1.5, open: 0.35 },
+  rows: { tell: 1.0, step: 50, r: 30, ripple: 0.07, len: 560, dmg: 13, rec: 0.9 },
+  nova: { r: 160, tell: 2.0, dmg: 25, rec: 0.8 },
+  ring: { r0: 170, r1: 380, tell: 1.7, dmg: 25, rec: 0.8 },
   leap: { r: 125, tell: 1.15, dmg: 18 },
   crown: { r: 200, tell: 0.9, dmg: 12 },
+  call: { r: 230, tell: 1.4, dmg: 14, curse: 30 },          // the Last Court's turn: a ring of soul fire, then every grave
+  wall: { size: 36, step: 36, dur: 6, curse: 20 },           // the bone wall a phase-4 lance leaves behind it
 };
+const PHASE_AT = [1, 0.66, 0.4, 0.16]; // where each phase starts (fraction of his health)
 const WAKE = 380;
 
 function kingBrain(w, u, dt) {
   const k = u.k || (u.k = { phase: 0, st: 'asleep', t: 0, cd: 1.2, cleaves: 0, last: null, tgtT: 0, addT: 8, ghostT: 6, novaNext: chance(0.5) });
-  const speed = k.phase === 3 ? 0.8 : k.phase === 2 ? 0.92 : 1; // how long tells take
-  const recK = k.phase === 3 ? 0.7 : 1;
+  const speed = k.phase >= 4 ? 0.75 : k.phase === 3 ? 0.8 : k.phase === 2 ? 0.92 : 1; // how long tells take
+  const recK = k.phase >= 4 ? 0.62 : k.phase === 3 ? 0.7 : 1;
   k.t -= dt; k.cd -= dt;
 
   // asleep on the throne until someone comes near or hurts him; then he rises
@@ -59,8 +64,9 @@ function kingBrain(w, u, dt) {
 
   // phase turns happen between attacks
   const hp = u.hp / u.maxHp;
-  if (k.phase === 1 && hp < 0.62) { turnToCourt(w, u, k); return true; }
-  if (k.phase === 2 && hp < 0.3) { turnToUnbound(w, u, k); return true; }
+  if (k.phase === 1 && hp < PHASE_AT[1]) { turnToCourt(w, u, k); return true; }
+  if (k.phase === 2 && hp < PHASE_AT[2]) { turnToUnbound(w, u, k); return true; }
+  if (k.phase === 3 && hp < PHASE_AT[3]) { turnToLastCourt(w, u, k); return true; }
 
   // who he wants: whoever is taunting him, else the nearest, rethought every second
   if ((k.tgtT -= dt) <= 0 || !u.target || !alive(u.target)) {
@@ -78,11 +84,16 @@ function kingBrain(w, u, dt) {
     const far = heroes(w).filter((h) => dist(h.x, h.y, u.x, u.y) > 260);
     const close = d < KING.cleave.r + t.r * 0.5 - 10;
     let pick = null;
-    if (k.phase === 3 && (k.soulCd ?? 0) <= w.time) pick = k.novaNext ? 'nova' : 'ring';
+    if (k.again) { pick = 'lance'; k.again = false; } // phase 4: a second lance straight after the first, at someone else
+    else if (k.phase >= 3 && (k.soulCd ?? 0) <= w.time) pick = k.novaNext ? 'nova' : 'ring';
     else if (k.phase >= 2 && (k.rowsCd ?? 0) <= w.time && chance(0.45)) pick = 'rows';
-    else if (close && (k.cleaves < 2 || !far.length)) pick = k.phase === 3 && chance(0.5) ? 'twin' : 'cleave';
+    else if (close && (k.cleaves < 2 || !far.length)) pick = k.phase >= 3 && chance(0.5) ? 'twin' : 'cleave';
     else if (!close || far.length) pick = 'lance';
-    if (pick) { start(w, u, k, pick, speed, far.length && pick === 'lance' && !close ? far[Math.floor(rand() * far.length)] : t); return true; }
+    if (pick) {
+      let who = far.length && pick === 'lance' && !close ? far[Math.floor(rand() * far.length)] : t;
+      if (pick === 'lance' && k.lastLance && heroes(w).length > 1) { const o = heroes(w).filter((h) => h !== k.lastLance); if (o.length) who = o[Math.floor(rand() * o.length)]; }
+      start(w, u, k, pick, speed, who); return true;
+    }
   }
   // walk at the one he wants, into cleaving distance
   const want = d > KING.cleave.r * 0.7;
@@ -113,6 +124,7 @@ function start(w, u, k, what, speed, t) {
     k.after = null; setTimeoutAnim(u, 'swing', t1 + 0.05, gap + 0.2);
   } else if (what === 'lance') {
     k.cleaves = 0;
+    const second = !!k.lastLance; k.lastLance = second ? null : t;
     const L = KING.lance, tell = L.tell * speed;
     const end = lanceEnd(w, u, a, L.len);
     begin(u, k, tell, L.rec, a); u.facing = a;
@@ -135,6 +147,9 @@ function start(w, u, k, what, speed, t) {
       if (rand() < 0.7) w.particles.push({ x: u.x - Math.cos(a) * u.r, y: u.y - Math.sin(a) * u.r, vx: 0, vy: 0, life: 0.35, max: 0.35, size: 9, color: 'rgba(214,206,190,0.75)' });
     };
     k.after = () => {
+      if (k.phase >= 4) { boneWall(w, u, sx, sy, u.x, u.y); if (!second && heroes(w).length > 1) { k.again = true; k.rec = 0.55; } else k.lastLance = null; }
+      else k.lastLance = null;
+      if (k.again) return; // the first of a pair: no stuck sword, he wrenches it straight out for the second
       u.shield = -L.open; u.shieldArc = Math.PI + 0.1; // stuck: every hit lands harder
       w.shake = Math.max(w.shake, 6);
       sparks(w, u.x + Math.cos(a) * (u.r + 30), u.y + Math.sin(a) * (u.r + 30), a + Math.PI, 8, '#FFE7A0', 1.3);
@@ -163,7 +178,7 @@ function start(w, u, k, what, speed, t) {
     k.soulCd = w.time + rrange(6.5, 8); k.novaNext = what !== 'nova';
     begin(u, k, tell, N.rec, null);
     setAnim(u, 'cast', tell + 0.2);
-    const hit = { dmg: N.dmg * u.dmgMul, chill: 45, knock: 210 };
+    const hit = k.phase >= 4 ? { dmg: N.dmg * u.dmgMul, curse: 40, knock: 210 } : { dmg: N.dmg * u.dmgMul, chill: 45, knock: 210 }; // the last court's fire curses
     const fire = (w2, z) => { w2.shake = Math.max(w2.shake, 7); soulBurst(w2, z); };
     if (what === 'nova') addDanger(w, { shape: 'circle', x: u.x, y: u.y, r: N.r, t: tell, team: u.team, src: u, kind: 'soul', hit, onFire: fire });
     else addDanger(w, { shape: 'ring', x: u.x, y: u.y, r0: N.r0, r1: N.r1, t: tell, team: u.team, src: u, kind: 'soul', hit: { ...hit, knock: 160 }, onFire: fire });
@@ -233,6 +248,42 @@ function turnToUnbound(w, u, k) {
     onFire: (w2, z) => { w2.shake = Math.max(w2.shake, 9); soulBurst(w2, z); w2.mood = 'unbound'; u.crown = true; } });
 }
 
+// The Last Court (round 8, ROSTER.md): he drives the sword into the floor and calls his whole court at once: a wide
+// ring of soul fire round him (get out, or be cursed and thrown), then every grave bursts open with two of the court.
+function turnToLastCourt(w, u, k) {
+  u.kTurn = null;
+  k.phase = 4; k.st = 'turn'; k.t = 2.4; u.invulnT = 2.4; k.lock = null; k.soulCd = w.time + 4; k.addT = 16; k.ghostT = 8;
+  setAnim(u, 'ability', 1.4);
+  const C = KING.call;
+  addDanger(w, { shape: 'circle', x: u.x, y: u.y, r: C.r, t: C.tell, team: u.team, src: u, kind: 'soul',
+    hit: { dmg: C.dmg * u.dmgMul, knock: 380, curse: C.curse },
+    onFire: (w2, z) => { w2.shake = Math.max(w2.shake, 11); soulBurst(w2, z); for (const g of w2.graves || []) g.ghost = chance(0.35); crackGraves(w2, u, 1); } });
+}
+
+// A phase-4 lance leaves a wall of bone along its line for a few seconds (temporary walls: they block walking and
+// shots, and the A* grid is rebuilt when they rise and fall). A chain of small square blocks, so it can lie at any
+// angle; not on top of a pillar, nor round where he ends up. Heroes standing on it are pushed off to one side.
+function boneWall(w, u, x1, y1, x2, y2) {
+  const B = KING.wall, L = dist(x1, y1, x2, y2), a = angleTo(x1, y1, x2, y2), made = [];
+  for (let d = u.r * 0.6; d < L - u.r - 20; d += B.step) {
+    const cx = x1 + Math.cos(a) * d, cy = y1 + Math.sin(a) * d;
+    if (w.pillars.some((p) => dist(cx, cy, p.x, p.y) < p.r + B.size)) continue;
+    const r = { x: cx - B.size / 2, y: cy - B.size / 2, w: B.size, h: B.size, temp: B.dur + (made.length % 3) * 0.12, kind: 'bone' }; r.max = r.temp;
+    w.walls.push(r); made.push(r);
+    w.fx.push({ type: 'spike', x: cx, y: cy, r: 30, t: 0, max: 0.6 });
+  }
+  if (!made.length) return;
+  buildGrid(w);
+  for (const o of w.units) {
+    if (!alive(o) || o === u) continue;
+    for (const r of made) { const c = circleRect(o.x, o.y, o.r, r); if (!c) continue;
+      const side = Math.sign(Math.sin(angleTo(x1, y1, o.x, o.y) - a)) || 1, na = a + side * Math.PI / 2; // off to the side it was on
+      o.x += Math.cos(na) * (c.over + 2); o.y += Math.sin(na) * (c.over + 2);
+      if (o.team !== u.team) hurt(w, o, 6 * u.dmgMul, u, { noDodge: true, curse: B.curse, knock: 120, kAngle: na }); }
+  }
+  w.shake = Math.max(w.shake, 6);
+}
+
 // Graves: a circle fills on the grave, then it bursts and n of his court climb out.
 function crackGraves(w, u, n, only) {
   const graves = (w.graves || []).filter((g) => !only || g === only);
@@ -255,7 +306,7 @@ function court(w, u, k, dt) {
   const adds = w.units.filter((o) => o.court && alive(o)).length;
   k.addT -= dt;
   if (k.addT <= 0 && adds < 2 && (w.graves || []).length) { k.addT = 14; crackGraves(w, u, 2, w.graves[Math.floor(rand() * w.graves.length)]); }
-  if (k.phase === 3) {
+  if (k.phase >= 3) {
     k.ghostT -= dt;
     if (k.ghostT <= 0 && adds < 5 && (w.graves || []).length) { k.ghostT = 10; const g = w.graves[Math.floor(rand() * w.graves.length)]; g.ghost = true; crackGraves(w, u, 1, g); }
   }
@@ -264,6 +315,7 @@ function court(w, u, k, dt) {
 // When he falls, his court falls with him.
 function kingDeath(w, u) {
   w.mood = null;
+  for (const r of w.walls) if (r.kind === 'bone' && r.temp != null) r.temp = Math.min(r.temp, 0.05 + rand() * 0.3); // his bone walls crumble with him
   for (const o of w.units) if (o.court && alive(o)) kill(w, o, null);
   for (let i = 0; i < 40; i++) { const a = rand() * TAU, v = rrange(60, 260); w.particles.push({ x: u.x, y: u.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0.9, max: 0.9, size: rrange(4, 8), color: chance(0.2) ? '#9FE4FF' : '#EDE4CD' }); }
   (w.remains = w.remains || []).push({ kind: 'king', x: u.x, y: u.y, a: u.facing });
@@ -273,8 +325,8 @@ function kingDeath(w, u) {
 export const BOSSES = {
   boneKing: {
     team: 'enemy', name: 'The Bone King', art: 'art/bosses/bone-king.svg', headR: 50, r: 56, vr: 38, turn: 2, accel: 120, face: 2, mass: 6,
-    hp: 950, speed: 46, role: 'melee', range: 30, atkCd: 999, arc: 2, temp: 0.2, commit: 1.4, xp: 160, coins: [60, 80], boss: true,
-    res: { poison: 0.3, burn: 0.6, chill: 0.5 }, arena: 'throne',
+    hp: 1100, speed: 48, role: 'melee', range: 30, atkCd: 999, arc: 2, temp: 0.2, commit: 1.4, xp: 160, coins: [60, 80], boss: true,
+    res: { poison: 0.3, burn: 0.6, chill: 0.5, curse: 0, radiance: 0.5 }, arena: 'throne',
     brain: (w, u, dt) => {
       const k = u.k;
       if (k && k.st === 'turn' && u.kTurn) u.kTurn(dt);

@@ -126,15 +126,15 @@ export function tailSpin(w, u, dt, o = {}) {
   return true;
 }
 
-// Ghost: cold to the touch. Drifts in and chills what it brushes against.
+// Ghost: drifts in and curses what it brushes against (round 8: ghosts curse, they no longer chill).
 export function ghostBrain(w, u, dt) {
   u.gT = (u.gT ?? rrange(0.4, 1.2)) - dt;
   const t = u.target;
   if (t && alive(t) && u.gT <= 0 && dist(u.x, u.y, t.x, t.y) - u.r - t.r < 18) {
     u.gT = u.def.touchCd;
-    hurt(w, t, u.def.touchDmg * u.dmgMul, u, { chill: 34, knock: 50 });
+    hurt(w, t, u.def.touchDmg * u.dmgMul, u, { curse: 30, knock: 50 });
     setAnim(u, 'cast', 0.35);
-    puff(w, t.x, t.y, '#CFEFFF', 6, 50, 5, 0.5);
+    puff(w, t.x, t.y, '#B48CE0', 6, 50, 5, 0.5);
   }
   return false;
 }
@@ -218,7 +218,7 @@ export const ENEMIES = {
     range: 24, atkCd: 1.9, windup: 0.55, dmg: 17, knock: 230, arc: 1.8, heavy: true, xp: 26, coins: [5, 10], cost: 7, attackAnim: 'swing', brain: bruteBrain },
   ghost: { team: 'enemy', name: 'Ghost', art: 'art/enemies/ghost.svg', headR: 58, r: 28, vr: 22, turn: 4, accel: 160, face: 4, mass: 0.6, hp: 40, speed: 64,
     role: 'melee', range: 14, atkCd: 999, touchCd: 1.3, touchDmg: 6, dmg: 6, arc: 2, temp: 0.5, commit: 0.8, xp: 12, coins: [2, 5], cost: 3,
-    res: { poison: 0, burn: 1.3, chill: 0.2 }, brain: ghostBrain },
+    res: { poison: 0, burn: 1.3, chill: 0.2, curse: 0 }, brain: ghostBrain },
   // the sewers (rats and slimes are in units.js)
   lizardman: { team: 'enemy', name: 'Lizardman', art: 'art/enemies/lizardman.svg', headR: 56, r: 32, vr: 23, turn: 4, accel: 220, face: 4, mass: 1.4,
     hp: 64, speed: 58, role: 'melee', range: 40, atkCd: 1.4, windup: 0.3, dmg: 10, knock: 120, arc: 0.9, temp: 0.35, commit: 0.9, xp: 14, coins: [3, 6],

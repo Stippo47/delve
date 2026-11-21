@@ -157,6 +157,31 @@ function washed(L, color, a) {
     return c;
   });
 }
+// Our summons (round 8): their own colours turned towards a cool blue-grey, so a raised skeleton or a called wolf reads
+// as ours without a coloured outline. Done once per layer and size (pixels), kept with the layer's other tints.
+const SHIFT_H = 215 / 360, SHIFT_MIX = 0.65;
+function shifted(L) {
+  return colored(L, 'shift', () => {
+    const c = canvas(L.img.width, L.img.height), g = c.getContext('2d');
+    g.drawImage(L.img, 0, 0);
+    let d; try { d = g.getImageData(0, 0, c.width, c.height); } catch { return L.img; }
+    const a = d.data;
+    for (let i = 0; i < a.length; i += 4) {
+      if (!a[i + 3]) continue;
+      const r = a[i] / 255, gg = a[i + 1] / 255, b = a[i + 2] / 255, mx = Math.max(r, gg, b), mn = Math.min(r, gg, b), l = (mx + mn) / 2;
+      let h = 0, sat = 0;
+      if (mx !== mn) { const dd = mx - mn; sat = l > 0.5 ? dd / (2 - mx - mn) : dd / (mx + mn);
+        h = mx === r ? (gg - b) / dd + (gg < b ? 6 : 0) : mx === gg ? (b - r) / dd + 2 : (r - gg) / dd + 4; h /= 6; }
+      let dh = SHIFT_H - h; if (dh > 0.5) dh -= 1; if (dh < -0.5) dh += 1;
+      h = (h + dh * SHIFT_MIX + 1) % 1; sat = sat * 0.55 + 0.06 * Math.min(1, l * 4);
+      const q = l < 0.5 ? l * (1 + sat) : l + sat - l * sat, p2 = 2 * l - q;
+      const f = (t) => { t = (t + 1) % 1; return t < 1 / 6 ? p2 + (q - p2) * 6 * t : t < 0.5 ? q : t < 2 / 3 ? p2 + (q - p2) * (2 / 3 - t) * 6 : p2; };
+      a[i] = f(h + 1 / 3) * 255; a[i + 1] = f(h) * 255; a[i + 2] = f(h - 1 / 3) * 255;
+    }
+    g.putImageData(d, 0, 0);
+    return c;
+  });
+}
 function filled(L, color) {
   return colored(L, 'f' + color, () => {
     const c = canvas(L.ink.width, L.ink.height), g = c.getContext('2d');
@@ -188,9 +213,9 @@ function strokeString(g, pts, color, w) {
 }
 
 // Paint a figure into g, whose transform maps SVG units. mode: 'normal' | 'flash' (all white) | 'grey' (downed) |
-// 'sil' (the parts' own silhouette, for washing with a colour afterwards). ink: the outline's colour (summons are
-// drawn with a purple one, round 7), INK when not given.
-export function paintRig(g, set, pose, mode = 'normal', ink = null) {
+// 'sil' (the parts' own silhouette, for washing with a colour afterwards). ink: the outline's colour, INK when not
+// given. shift: our summons' cool hue (round 8; they wore a purple outline in round 7).
+export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = false) {
   const Ls = set.layers, str = set.string ? stringPts(set, pose) : null, strLayer = set.string && set.string.layer;
   if (mode !== 'sil') {
     for (const L of Ls) {
@@ -204,7 +229,7 @@ export function paintRig(g, set, pose, mode = 'normal', ink = null) {
   for (const L of Ls) {
     if (str && L.id === strLayer) strokeString(g, str, mode === 'grey' ? '#9A929C' : set.string.color, set.string.w);
     g.save(); place(g, L, pose[L.id]);
-    g.drawImage(mode === 'grey' ? washed(L, 'rgb(120,112,125)', 0.72) : L.img, L.x, L.y, L.w, L.h);
+    g.drawImage(mode === 'grey' ? washed(L, 'rgb(120,112,125)', 0.72) : shift ? shifted(L) : L.img, L.x, L.y, L.w, L.h);
     g.restore();
   }
 }
@@ -212,25 +237,26 @@ export function paintRig(g, set, pose, mode = 'normal', ink = null) {
 // A scratch canvas for figures that must be composed first (see-through, or washed with a colour).
 const SCR0 = -60, SCR = 320;
 let scratch = null;
-export function composeRig(set, pose, mode, wash, ink = null) {
+export function composeRig(set, pose, mode, wash, ink = null, shift = false) {
   const px = Math.ceil(SCR * set.k);
   if (!scratch || scratch.width < px) scratch = canvas(px, px);
   const g = scratch.getContext('2d');
   g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
   g.clearRect(0, 0, px, px);
   g.setTransform(set.k, 0, 0, set.k, -SCR0 * set.k, -SCR0 * set.k);
-  paintRig(g, set, pose, mode, ink);
+  paintRig(g, set, pose, mode, ink, shift);
   if (wash) { g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = wash; g.fillRect(0, 0, px, px); g.globalCompositeOperation = 'source-over'; }
   return { c: scratch, sx: px, x: SCR0, s: SCR };
 }
 // Draw a composed scratch into ctx (whose transform maps SVG units).
 export function drawComposed(ctx, k) { ctx.drawImage(k.c, 0, 0, k.sx, k.sx, k.x, k.x, k.s, k.s); }
 
-// Draw the figure into ctx (transform in SVG units). o: { mode, alpha, washes: [[color, a], ...], ink (outline colour) }
+// Draw the figure into ctx (transform in SVG units). o: { mode, alpha, washes: [[color, a], ...], ink (outline colour),
+// shift (our summons' cool hue) }
 export function drawRig(ctx, set, pose, o = {}) {
   const alpha = o.alpha ?? 1;
-  if (alpha >= 0.999) paintRig(ctx, set, pose, o.mode || 'normal', o.ink);
-  else { const k = composeRig(set, pose, o.mode || 'normal', null, o.ink); const a = ctx.globalAlpha; ctx.globalAlpha = a * alpha; drawComposed(ctx, k); ctx.globalAlpha = a; }
+  if (alpha >= 0.999) paintRig(ctx, set, pose, o.mode || 'normal', o.ink, o.shift);
+  else { const k = composeRig(set, pose, o.mode || 'normal', null, o.ink, o.shift); const a = ctx.globalAlpha; ctx.globalAlpha = a * alpha; drawComposed(ctx, k); ctx.globalAlpha = a; }
   if (o.washes) for (const [col, a] of o.washes) {
     if (a <= 0.01) continue;
     const k = composeRig(set, pose, 'sil', col); const ga = ctx.globalAlpha; ctx.globalAlpha = ga * a * alpha; drawComposed(ctx, k); ctx.globalAlpha = ga;

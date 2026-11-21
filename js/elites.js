@@ -204,7 +204,7 @@ export function summon(w, u, kind, n, o = {}) {
     if (crowd(w, u.team) >= cap || mine() >= (o.own || 4)) return;
     E(u).coming = (E(u).coming || 0) + 1;
     const a = rand() * TAU, d = u.r + rrange(30, 70), x = clamp(u.x + Math.cos(a) * d, 50, w.W - 50), y = clamp(u.y + Math.sin(a) * d, 50, w.H - 50);
-    later(w, x, y, 0.6, () => { E(u).coming = Math.max(0, (E(u).coming || 0) - 1); const s = spawn(w, kind, x, y, { mult: w.mult, hpMul: o.hpMul, scale: o.scale }); s.aggro = true; s.minion = true; s.calledBy = u; s.facing = a; puff(w, x, y, o.color || '#3A2E44', 8, 90, 6, 0.4); });
+    later(w, x, y, 0.6, () => { E(u).coming = Math.max(0, (E(u).coming || 0) - 1); const s = spawn(w, kind, x, y, { mult: w.mult, hpMul: o.hpMul, scale: o.scale }); s.aggro = true; s.minion = true; s.calledBy = u; s.summonBy = u; s.facing = a; puff(w, x, y, o.color || '#3A2E44', 8, 90, 6, 0.4); });
   }
 }
 // Something that happens in a moment at (x, y), shown by a small rift (counts as "still coming" for a room's end).
@@ -415,7 +415,7 @@ export const ELITES = {
   // Orc shaman: mends the most hurt of its side with a gout of green fire.
   orcShaman: {
     tick(w, u, dt) {
-      if (!due(u, 'mend', dt, 3)) return false;
+      if (w.stale || !due(u, 'mend', dt, 3)) return false; // no mending in a stand-off (dungeon.js w.stale), like the troll
       const hurtOne = [u, ...allies(w, u)].filter((a) => dist(a.x, a.y, u.x, u.y) < 320 && a.hp < a.maxHp * 0.7).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
       if (!hurtOne) return false;
       again(u, 'mend', 6, 8);

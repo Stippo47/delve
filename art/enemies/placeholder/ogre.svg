@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
-  <!-- PLACEHOLDER (round 7): art the designer marked not good, standing in for the new dungeons until it is redone. -->
-<!-- OGRE (round 5): drab moss skin, no eyes; a big round bald head, a heavy underbite with two stubby teeth, fat shoulders with a spotted hide over one, and no weapon: two huge fists in iron cuffs. Parts: #body, #arm-l and #arm-r (the fists, after #body). Front = DOWN (+y). -->
+<!-- GAME COPY (art round 7) of design/class-round7/enemies/greenskin-ogre.svg: the designer's pick with the round-8 note applied. It stays under placeholder/ because js/foes.js loads it from here. -->
+<!-- OGRE (round 5): drab moss skin, no eyes; a big round bald head, a heavy underbite with two stubby teeth, fat shoulders with a spotted hide over one, and no weapon: two huge plain fists in iron cuffs (round 7: no knuckle bumps). Parts: #body, #arm-l and #arm-r (the fists, after #body). Front = DOWN (+y). -->
 <defs>
 <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#8DA063"/><stop offset="1" stop-color="#66714D"/></linearGradient>
@@ -50,16 +50,12 @@
 <clipPath id="c45"><use href="#p2"/><use href="#p6"/><use href="#p11"/><use href="#p14"/><use href="#p18"/><use href="#p22"/><use href="#p27"/><use href="#p31"/><use href="#p34"/><use href="#p37"/><use href="#p41"/></clipPath>
 <clipPath id="c46"><use href="#p44"/></clipPath>
 <linearGradient id="g47" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.32"/></linearGradient>
-<path id="p48" d="M-19.7 -11 A4.2 4.2 0 1 0 -11.3 -11 A4.2 4.2 0 1 0 -19.7 -11 Z M-19.7 0 A4.2 4.2 0 1 0 -11.3 0 A4.2 4.2 0 1 0 -19.7 0 Z M-19.7 11 A4.2 4.2 0 1 0 -11.3 11 A4.2 4.2 0 1 0 -19.7 11 Z" transform="translate(30 154) rotate(0)"/>
-<clipPath id="c49"><use href="#p48"/></clipPath>
-<path id="p50" d="M161 128 H179 A6 6 0 0 1 185 134 V138 A6 6 0 0 1 179 144 H161 A6 6 0 0 1 155 138 V134 A6 6 0 0 1 161 128 Z"/>
-<clipPath id="c51"><use href="#p2"/><use href="#p6"/><use href="#p11"/><use href="#p14"/><use href="#p18"/><use href="#p22"/><use href="#p27"/><use href="#p31"/><use href="#p34"/><use href="#p37"/><use href="#p41"/><use href="#p44"/><use href="#p48"/></clipPath>
-<clipPath id="c52"><use href="#p50"/></clipPath>
-<path id="p53" d="M-9 -15 H9 A8 8 0 0 1 17 -7 V7 A8 8 0 0 1 9 15 H-9 A8 8 0 0 1 -17 7 V-7 A8 8 0 0 1 -9 -15 Z" transform="translate(170 154) rotate(0)"/>
-<clipPath id="c54"><use href="#p2"/><use href="#p6"/><use href="#p11"/><use href="#p14"/><use href="#p18"/><use href="#p22"/><use href="#p27"/><use href="#p31"/><use href="#p34"/><use href="#p37"/><use href="#p41"/><use href="#p44"/><use href="#p48"/><use href="#p50"/></clipPath>
-<clipPath id="c55"><use href="#p53"/></clipPath>
-<path id="p56" d="M11.3 -11 A4.2 4.2 0 1 0 19.7 -11 A4.2 4.2 0 1 0 11.3 -11 Z M11.3 0 A4.2 4.2 0 1 0 19.7 0 A4.2 4.2 0 1 0 11.3 0 Z M11.3 11 A4.2 4.2 0 1 0 19.7 11 A4.2 4.2 0 1 0 11.3 11 Z" transform="translate(170 154) rotate(0)"/>
-<clipPath id="c57"><use href="#p56"/></clipPath>
+<path id="p48" d="M161 128 H179 A6 6 0 0 1 185 134 V138 A6 6 0 0 1 179 144 H161 A6 6 0 0 1 155 138 V134 A6 6 0 0 1 161 128 Z"/>
+<clipPath id="c49"><use href="#p2"/><use href="#p6"/><use href="#p11"/><use href="#p14"/><use href="#p18"/><use href="#p22"/><use href="#p27"/><use href="#p31"/><use href="#p34"/><use href="#p37"/><use href="#p41"/><use href="#p44"/></clipPath>
+<clipPath id="c50"><use href="#p48"/></clipPath>
+<path id="p51" d="M-9 -15 H9 A8 8 0 0 1 17 -7 V7 A8 8 0 0 1 9 15 H-9 A8 8 0 0 1 -17 7 V-7 A8 8 0 0 1 -9 -15 Z" transform="translate(170 154) rotate(0)"/>
+<clipPath id="c52"><use href="#p2"/><use href="#p6"/><use href="#p11"/><use href="#p14"/><use href="#p18"/><use href="#p22"/><use href="#p27"/><use href="#p31"/><use href="#p34"/><use href="#p37"/><use href="#p41"/><use href="#p44"/><use href="#p48"/></clipPath>
+<clipPath id="c53"><use href="#p51"/></clipPath>
 </defs>
 <g id="sprite" filter="url(#outline)">
 <g id="body"><g>
@@ -97,18 +93,14 @@
 <g clip-path="url(#c45)"><use href="#p44" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
 <use href="#p44" fill="url(#g10)"/>
 <g clip-path="url(#c46)"><use href="#p44" fill="url(#g47)"/></g>
-<use href="#p48" fill="url(#g10)"/>
-<g clip-path="url(#c49)"><use href="#p48" fill="url(#g13)"/></g>
 </g></g>
 <g id="arm-r" data-pivot="160 114"><g>
-<g clip-path="url(#c51)"><use href="#p50" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
-<use href="#p50" fill="url(#g40)"/>
-<g clip-path="url(#c52)"><use href="#p50" fill="url(#g4)"/></g>
-<g clip-path="url(#c54)"><use href="#p53" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
-<use href="#p53" fill="url(#g10)"/>
-<g clip-path="url(#c55)"><use href="#p53" fill="url(#g47)"/></g>
-<use href="#p56" fill="url(#g10)"/>
-<g clip-path="url(#c57)"><use href="#p56" fill="url(#g13)"/></g>
+<g clip-path="url(#c49)"><use href="#p48" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p48" fill="url(#g40)"/>
+<g clip-path="url(#c50)"><use href="#p48" fill="url(#g4)"/></g>
+<g clip-path="url(#c52)"><use href="#p51" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p51" fill="url(#g10)"/>
+<g clip-path="url(#c53)"><use href="#p51" fill="url(#g47)"/></g>
 </g></g>
 </g>
 </svg>

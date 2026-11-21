@@ -69,6 +69,8 @@
 .sring .trk { fill: rgba(43,34,48,.82); stroke: rgba(255,255,255,.18); stroke-width: 2.6; }
 .sring .arc { fill: none; stroke-width: 2.8; stroke-linecap: round; transition: stroke-dasharray .12s linear; }
 .sring > .ico { position: absolute; width: 62%; height: 62%; }
+.sring.burst .trk { fill: rgba(255,255,255,.55); } /* a build-up that just burst (lane S, round 8) */
+.sring.burst { transform: scale(1.18); transition: transform .1s; }
 .hcard.down { background: #CFC4AE; }
 .hcard.down .hc-face img { filter: grayscale(1) brightness(.7); transform: rotate(100deg); }
 .hcard.down .hc-abil, .hcard.down .hc-items { opacity: .35; }

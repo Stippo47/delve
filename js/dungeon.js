@@ -20,6 +20,7 @@ import { themeOf, floorTheme, weighted } from './themes.js';
 import { G, SPIKE_R, makeGrid, gridWalls, gridObstacles, hazardCell, dropObstacles, dropGridWalls } from './layout.js';
 import { makeElite, makeMiniBoss, setCostOf, ENEMY_TRINKETS, ELITE_TRINKET } from './elites.js';
 import { addXp } from './progress.js';
+import { freshStatuses } from './statuses.js';
 
 export const H = 480;
 export const FLOORS = 3;
@@ -603,7 +604,7 @@ function revive(run, dt) {
       d.reviveT = (d.reviveT || 0) + dt * rate; d.reviveHp = Math.max(REVIVE_HP, ...hooksOf(helper).map((x) => x.reviveHp || 0));
       if (rand() < dt * 14) w.particles.push({ x: d.x + rrange(-18, 18), y: d.y + rrange(-18, 18), vx: 0, vy: 0, rise: 40, life: 0.6, max: 0.6, size: 4, color: '#FFE7A0' });
       if (d.reviveT >= REVIVE_T) {
-        d.downed = false; d.reviveT = 0; d.hp = d.maxHp * (d.reviveHp || REVIVE_HP); d.invulnT = 1.2; d.st = { burn: 0, chill: 0, poison: 0 };
+        d.downed = false; d.reviveT = 0; d.hp = d.maxHp * (d.reviveHp || REVIVE_HP); d.invulnT = 1.2; d.st = freshStatuses();
         run.heroes[d.kind].down = false; helper.forcedGoal = null;
         burst(w, d.x, d.y, '#FFE7A0');
       }
