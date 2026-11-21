@@ -292,4 +292,5 @@
   .delve-go, .bagbtn { height: 50px; }
   .dcard { height: 128px; }
   .dc-art { width: 92px; height: 104px; }
+  .dc-text p { -webkit-line-clamp: 2; }
 }
