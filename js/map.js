@@ -2,11 +2,11 @@
 // next layer by doors, and a boss room at the end. Each room shows on its door what kind it is.
 import { rand, rint, chance, pick } from './util.js';
 
-export const LAYERS = 9; // room layers before the boss room
+export const LAYERS = 6; // room layers before the boss room: 7 rooms a floor with it (round 8)
 
 const KINDS = [['fight', 46], ['hazard', 14], ['treasure', 13], ['fountain', 10], ['decision', 13], ['elite', 4]];
 function rollKind(L, mix) {
-  const list = KINDS.map(([k, wt]) => [k, mix && mix[k] != null ? mix[k] : wt]).map(([k, wt]) => [k, k === 'fountain' && L < 3 ? wt * 0.3 : k === 'elite' && L < 4 ? 0 : wt]);
+  const list = KINDS.map(([k, wt]) => [k, mix && mix[k] != null ? mix[k] : wt]).map(([k, wt]) => [k, k === 'fountain' && L < 2 ? wt * 0.3 : k === 'elite' && L < 2 ? 0 : wt]);
   let tot = 0; for (const [, wt] of list) tot += wt;
   let r = rand() * tot;
   for (const [k, wt] of list) { r -= wt; if (r <= 0) return k; }

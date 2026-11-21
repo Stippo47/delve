@@ -1,24 +1,29 @@
-// Headless batch of full runs in Node (no browser): checks nothing gets stuck, per dungeon type.
-//   node tools/runs.mjs [--n 10] [--theme crypt|sewers|warren|all] [--seed 1] [--party paladin,archer,twinfang] [--depth 1]
-//   [--boss] (start in floor 3's boss room) [--lvl N] [--allnodes] [--first] (each hero owns tier I of its first ability) [--feel] (count jitter and stuck units)
-// A run is stuck if no room is finished for 300 simulated seconds (the biggest rooms take 150+), or 600 in a boss
-// room (a lone survivor against a floor's boss can take that long since round 6's longer fights).
+// Headless batch of full runs in Node (no browser): checks nothing gets stuck, and measures how hard things are.
+//   node tools/runs.mjs [--n 10] [--theme warren|sewers|crypt|frost|ember|spire|all] [--seed 1] [--party paladin,archer,twinfang]
+//     [--floor N] (start at floor N, a checkpoint) [--depth 1] [--boss] (start in floor 3's boss room)
+//     [--level N] (every hero at level N with its points spent by progress.js autoSpend) [--max] (every node bought)
+//     [--first] (level 1, the one starting point spent: tier I of the first ability) [--feel] (count jitter and stuck units)
+//     [--v] (a line per run)
+//   node tools/runs.mjs --campaign 60 [--seed 1] [--v]
+//     plays a fresh save run after run like a player would: the newest open dungeon from its furthest checkpoint, the
+//     highest-level heroes that fit the slots, points spent with autoSpend, heroes bought with gold when there's enough,
+//     a trinket each when gold is spare; reports when each slot, boss and dungeon came.
+// A run is stuck if no room is finished for 300 simulated seconds, or 600 in a boss room.
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
-const n = +opt('n', 10), seed0 = +opt('seed', 1), depth = +opt('depth', 1), lvl = +opt('lvl', 0);
-const boss = args.includes('--boss');
-// debug switches the game reads from the address
-globalThis.location = { search: (boss ? '?bossroom' : '?x') + (lvl ? '&lvl=' + lvl : '') + (args.includes('--allnodes') ? '&allnodes' : '') };
+const n = +opt('n', 10), seed0 = +opt('seed', 1), depth = +opt('depth', 1), level = +opt('level', 0), startFloor = +opt('floor', 1);
+const boss = args.includes('--boss'), verbose = args.includes('--v');
+globalThis.location = { search: (boss ? '?bossroom' + (opt('floor') ? '&floor=' + opt('floor') : '') : '?x') };
+globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
 const feel = args.includes('--feel') ? { flips: 0, unitSecs: 0, stuck: 0, enemySecs: 0 } : null;
-// --feel: a 'spin' is a unit's facing swinging back and forth: four reversals of 0.5 rad or more within 1.5s (rats
-// left out: darting side to side is their habit); 'stuck' counts seconds an angry enemy that has a target out of reach moved under 25 units in 2s.
+const DT = 1 / 60;
 function feelTick(w, t) {
   for (const u of w.units) {
     if (u.dead || u.downed) continue;
     const f = u._f || (u._f = { a: u.facing, dir: 0, acc: 0, lastFlip: -9, px: u.x, py: u.y, pt: t });
     let d = u.facing - f.a; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; f.a = u.facing;
     feel.unitSecs += DT;
-    if (Math.abs(d) > 1e-4) { const s = Math.sign(d); if (s !== f.dir) { if (Math.abs(f.acc) > 0.5 && u.kind !== 'rat') { f.flipTs = (f.flipTs || []).filter((x) => t - x < 1.5); f.flipTs.push(t); } if (f.flipTs && f.flipTs.length >= 4) { f.flipTs = []; feel.flips++; const k = (u.team === 'hero' ? 'H:' : '') + (u.act ? 'act:' + u.act.type : u.forcedGoal ? 'forced' : u.mode) + (u.target ? '' : '/none'); (feel.by || (feel.by = {}))[k] = (feel.by[k] || 0) + 1; } f.lastFlip = t; f.dir = s; f.acc = 0; } f.acc += d; }
+    if (Math.abs(d) > 1e-4) { const s = Math.sign(d); if (s !== f.dir) { if (Math.abs(f.acc) > 0.5 && u.kind !== 'rat') { f.flipTs = (f.flipTs || []).filter((x) => t - x < 1.5); f.flipTs.push(t); } if (f.flipTs && f.flipTs.length >= 4) { f.flipTs = []; feel.flips++; } f.lastFlip = t; f.dir = s; f.acc = 0; } f.acc += d; }
     if (u.team === 'enemy' && u.aggro && u.target && !u.def.boss) {
       feel.enemySecs += DT;
       if (t - f.pt >= 2) { const gap = Math.hypot(u.target.x - u.x, u.target.y - u.y) - u.r - u.target.r; if (Math.hypot(u.x - f.px, u.y - f.py) < 25 && gap > (u.def.role === 'ranged' ? u.def.range : u.def.range + 40) && !u.act) feel.stuck += 2; f.px = u.x; f.py = u.y; f.pt = t; }
@@ -28,43 +33,120 @@ function feelTick(w, t) {
 const { newRun, update, FLOORS } = await import('../js/dungeon.js');
 const { setSeed } = await import('../js/util.js');
 const { THEME_IDS } = await import('../js/themes.js');
-const { HEROES, STARTERS } = await import('../js/heroes.js');
-const themes = opt('theme', 'all') === 'all' ? THEME_IDS : [opt('theme')];
-const party = opt('party', '') ? opt('party').split(',') : undefined;
-const DT = 1 / 60;
-let stuck = 0;
-for (const theme of themes) {
-  const res = { won: 0, lost: 0, stuck: 0, floors: [0, 0, 0, 0], secs: 0, rooms: 0, bossT: [] };
-  for (let i = 0; i < n; i++) {
-    setSeed(seed0 + i * 7919);
-    const save = { heroes: {}, depth };
-    if (args.includes('--first')) for (const k of party || STARTERS) save.heroes[k] = { nodes: { [HEROES[k].abilities[0].id + '1']: 1 } };
-    const run = newRun(save, { theme, party, depth });
-    const w0 = Date.now();
-    let t = 0, lastRooms = run.rooms, lastT = 0, bossStart = null, errs = null;
-    try {
-      while (run.phase !== 'won' && run.phase !== 'lost' && t < 3600) {
-        update(run, DT); t += DT;
-        if (feel) feelTick(run.world, t);
-        if (run.rooms !== lastRooms) { lastRooms = run.rooms; lastT = t; if (args.includes('--arrive') && run.node.kind === 'boss' && run.floor === FLOORS) console.log('   arrive', run.world.units.filter((u) => u.team === 'hero').map((h) => h.kind + ':' + Math.round(100 * h.hp / h.maxHp) + '% lv' + h.level + ' pots' + h.potions).join(' '), 'downed', run.party.filter((k) => run.heroes[k].down).join(',')); }
-        if (bossStart == null && run.floor === FLOORS && run.world.units.some((u) => u.def.boss && !u.dead)) bossStart = t; // the last boss is up
-        if (t - lastT > (run.node.kind === 'boss' ? 600 : 300)) { run.stuckIn = run.phase + ' hitstop ' + run.world.hitstop + ' t ' + run.t + ' exitT ' + run.exitT + ' doorK ' + run.doorK + ' doors ' + JSON.stringify(run.world.doors) + ' task ' + (run.task && run.task.type) + ' pickups ' + run.world.pickups.map((p) => p.type + '@' + Math.round(p.x) + ',' + Math.round(p.y)).join(' ') + ' water ' + JSON.stringify(run.world.water) + ' enemies ' + run.world.units.filter((u) => u.team === 'enemy' && !u.dead).length + ' wp ' + JSON.stringify(run.world.wp) + ' toVisit ' + JSON.stringify(run.world.toVisit); run.phase = 'stuck'; break; }
-      }
-    } catch (e) { errs = e; run.phase = 'error'; }
-    if (args.includes('--v')) console.log(`  ${theme} #${i}: ${run.phase} floor ${run.floor} in ${run.node.kind} rooms ${run.rooms} sim ${Math.round(t)}s wall ${Math.round((Date.now() - w0) / 1000)}s levels ${run.party.map((k) => run.heroes[k].level).join('/')}`);
-    if (bossStart != null && (run.phase === 'won' || run.phase === 'lost')) res.bossT.push(Math.round(t - bossStart) + (run.phase === 'won' ? 'w' : 'l'));
-    res[run.phase] = (res[run.phase] || 0) + 1;
-    res.floors[run.floor]++; res.secs += t; res.rooms += run.rooms;
-    if (run.phase === 'stuck' || run.phase === 'error') {
-      stuck++;
-      const w = run.world;
-      console.log(run.stuckIn); console.log(`  ${theme} #${i} ${run.phase} floor ${run.floor} room ${run.map.L} kind ${run.node.kind} shape ${w.shape} phase ${run.phase}`, errs ? errs.stack : '',
-        w.units.filter((u) => !u.dead).map((u) => `${u.kind}@${Math.round(u.x)},${Math.round(u.y)}${u.downed ? 'D' : ''}`).join(' '));
+const { HEROES, STARTERS, treeFor } = await import('../js/heroes.js');
+const { freshSave } = await import('../js/save.js');
+const P = await import('../js/progress.js');
+
+// One run to its end. Returns { run, t, phase }.
+function play(save, opts) {
+  const run = newRun(save, opts);
+  let t = 0, lastRooms = run.rooms, lastT = 0, err = null;
+  try {
+    while (run.phase !== 'won' && run.phase !== 'lost' && run.phase !== 'retreated' && t < 4000) {
+      update(run, DT); t += DT;
+      if (feel) feelTick(run.world, t);
+      if (run.rooms !== lastRooms) { lastRooms = run.rooms; lastT = t; }
+      if (t - lastT > (run.node.kind === 'boss' ? 600 : 300)) { run.phase = 'stuck'; break; }
     }
+  } catch (e) { err = e; run.phase = 'error'; }
+  if (run.phase === 'stuck' || run.phase === 'error') {
+    const w = run.world;
+    console.log(`  ${run.theme} ${run.phase} floor ${run.floor} room ${run.map.L} kind ${run.node.kind} shape ${w.shape}`, err ? err.stack : '',
+      w.units.filter((u) => !u.dead).map((u) => `${u.kind}@${Math.round(u.x)},${Math.round(u.y)}${u.downed ? 'D' : ''}`).join(' '));
   }
-  console.log(theme.padEnd(7), `won ${res.won} lost ${res.lost} stuck ${res.stuck || 0} err ${res.error || 0}`, `| ended on floor 1/2/3: ${res.floors.slice(1).join('/')}`,
-    `| avg ${Math.round(res.secs / n)}s ${Math.round(res.rooms / n)} rooms`, res.bossT.length ? `| final boss fights (s): ${res.bossT.join(' ')}` : '');
+  return { run, t, phase: run.phase };
 }
-if (feel && args.includes('--v')) console.log(Object.entries(feel.by || {}).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, v]) => k + ' ' + v).join(' | '));
-if (feel) console.log(`feel: spinning back and forth ${(feel.flips / (feel.unitSecs / 60)).toFixed(2)} per unit-minute | enemies stuck ${(100 * feel.stuck / Math.max(1, feel.enemySecs)).toFixed(1)}% of their angry time`);
-process.exit(stuck ? 1 : 0);
+
+// A save with the party at a level (points spent), or everything bought.
+function buildSave(party) {
+  const s = freshSave();
+  for (const k of party) {
+    const h = s.heroes[k]; h.owned = true;
+    if (args.includes('--max')) { for (const nd of treeFor(k)) if (!nd.free) h.nodes[nd.id] = nd.max; h.level = 120; continue; }
+    const lv = args.includes('--first') ? 1 : level || 1;
+    h.level = lv; h.points = P.START_POINTS + lv - 1;
+    P.autoSpend(s, k);
+  }
+  s.party = party.slice(); s.unlocks = { slotMini1: true, slotBoss1: true, slotBoss2: true }; s.slots = 4;
+  return s;
+}
+
+if (opt('campaign')) campaign(+opt('campaign'));
+else batch();
+
+function batch() {
+  const themes = opt('theme', 'all') === 'all' ? THEME_IDS : [opt('theme')];
+  const party = opt('party', '') ? opt('party').split(',') : STARTERS.slice();
+  let bad = 0;
+  for (const theme of themes) {
+    const res = { won: 0, lost: 0, stuck: 0, error: 0, floors: [0, 0, 0, 0], secs: 0, rooms: 0, minis: [0, 0], gold: 0, gained: 0, deaths: [] };
+    for (let i = 0; i < n; i++) {
+      setSeed(seed0 + i * 7919);
+      const save = buildSave(party);
+      const { run, t, phase } = play(save, { theme, party, depth, floor: startFloor });
+      res[phase] = (res[phase] || 0) + 1;
+      res.floors[run.floor]++; res.secs += t; res.rooms += run.rooms; res.gold += run.coins;
+      run.minis.forEach((m, j) => { if (m) res.minis[j]++; });
+      res.gained += party.reduce((a, k) => a + (run.heroes[k].gained || 0), 0) / party.length;
+      if (phase === 'lost') res.deaths.push(`${run.floor}.${run.map.L + 1}`);
+      if (verbose) console.log(`  ${theme} #${i}: ${phase} floor ${run.floor} room ${run.map.L + 1} (${run.node.kind}) rooms ${run.rooms} sim ${Math.round(t)}s gold ${run.coins} levels ${party.map((k) => run.heroes[k].level).join('/')}`);
+      if (phase === 'stuck' || phase === 'error') bad++;
+    }
+    console.log(theme.padEnd(7), `won ${res.won}/${n} lost ${res.lost} stuck ${res.stuck} err ${res.error}`, `| ended on floor 1/2/3: ${res.floors.slice(1).join('/')}`,
+      `| minis ${res.minis.join('/')}`, `| avg ${Math.round(res.secs / n)}s ${Math.round(res.rooms / n)} rooms ${Math.round(res.gold / n)} gold +${(res.gained / n).toFixed(1)} lv`,
+      res.deaths.length ? `| fell at ${res.deaths.sort().join(' ')}` : '');
+  }
+  if (feel) console.log(`feel: spinning back and forth ${(feel.flips / (feel.unitSecs / 60)).toFixed(2)} per unit-minute | enemies stuck ${(100 * feel.stuck / Math.max(1, feel.enemySecs)).toFixed(1)}% of their angry time`);
+  process.exit(bad ? 1 : 0);
+}
+
+// ---------------------------------------------------------------- a campaign from a fresh save
+function campaign(N) {
+  const save = freshSave();
+  const PREF = ['paladin', 'archer', 'cleric', 'twinfang', 'pyromancer', 'tower', 'wildmane', 'druid', 'frost', 'storm', 'bard', 'berserker', 'granny', 'necromancer', 'plague'];
+  const events = [];
+  const note = (i, s) => { events.push(`run ${i + 1}: ${s}`); };
+  let bad = 0, totalT = 0;
+  const walls = {};
+  for (let i = 0; i < N; i++) {
+    setSeed(seed0 + i * 7919);
+    // buy heroes when there's gold for one and a free slot to fill (cheapest first, in the order above)
+    for (const id of PREF) if (!save.heroes[id].owned && save.gold >= P.heroPrice(id) + 100 && P.ownedCount(save) < P.slotCount(save) + 1) { P.unlockHero(save, id); note(i, `bought ${id}`); }
+    const owned = PREF.filter((id) => save.heroes[id].owned).sort((a, b) => save.heroes[b].level - save.heroes[a].level || PREF.indexOf(a) - PREF.indexOf(b));
+    const party = owned.slice(0, P.slotCount(save));
+    for (const k of party) P.autoSpend(save, k);
+    // a common trinket for anyone without one, when gold is spare
+    for (const k of party) if (!save.heroes[k].trinkets.length && save.gold > 450) { const t = P.shopTrinkets().find((x) => x.rarity === 'common'); if (t && P.buyTrinket(save, t.id)) P.equip(save, k, t.id, 0); }
+    // potions: a healing draught each when there's gold to spare
+    for (const k of party) if (save.gold > 300 && save.potions < party.length) P.buyPotion(save, 'heal');
+    // trinket levels when rich
+    for (const k of party) for (const t of save.heroes[k].trinkets) if (save.gold > 900) P.upgradeTrinket(save, t);
+    const theme = P.openDungeons(save).slice(-1)[0], st = P.dungeonState(save, theme);
+    save.party = party;
+    // the furthest checkpoint, unless the last three runs from it all fell in its first two rooms: then one floor back
+    const key = theme + st.checkpoint, wall = (walls[key] || 0) >= 3;
+    const floor = wall ? Math.max(1, st.checkpoint - 1) : st.checkpoint;
+    if (wall) walls[key] = 0;
+    const potionFor = {}; party.forEach((k, j) => { if (j < save.potions) potionFor[k] = ['heal']; });
+    const opts = P.runOptions(save, theme, potionFor, floor);
+    P.payForRun(save, opts);
+    opts.party = party;
+    const { run, t, phase } = play(save, opts);
+    totalT += t;
+    if (opts.floor === st.checkpoint && run.floor === opts.floor && run.map.L < 2 && phase !== 'won') walls[key] = (walls[key] || 0) + 1;
+    else if (run.floor > opts.floor || run.map.L >= 2) walls[key] = 0;
+    if (phase === 'stuck' || phase === 'error') { bad++; run.phase = 'lost'; }
+    const rep = P.applySummary(save, run, run.phase === 'won' ? 'won' : run.phase, 0);
+    for (const k of Object.keys(save.heroes)) save.heroes[k].recoverUntil = 0;
+    if (rep.slots.unlocked.length) note(i, `slot ${rep.slots.after} (${rep.slots.unlocked.join(',')})`);
+    if (rep.opened.length) note(i, `opened ${rep.opened.join(',')}`);
+    if (rep.minis.some(Boolean)) rep.minis.forEach((m, j) => { if (m) note(i, `${theme} mini ${j + 1}`); });
+    if (rep.bossKilled) note(i, `${theme} BOSS`);
+    if (verbose) console.log(`  #${String(i + 1).padStart(3)} ${theme.padEnd(6)} from f${opts.floor} ${run.phase.padEnd(9)} f${run.floor}.${run.map.L + 1} party ${party.map((k) => k.slice(0, 4) + save.heroes[k].level).join(' ')} gold +${rep.gold} (-${rep.lost}) bank ${save.gold} ${Math.round(t)}s`);
+  }
+  console.log(events.join('\n'));
+  const lv = Object.entries(save.heroes).filter(([, h]) => h.owned).map(([k, h]) => `${k} ${h.level}`).join(', ');
+  console.log(`after ${N} runs (${Math.round(totalT / 60)} sim minutes, ${Math.round(totalT / N / 60)} a run): slots ${save.slots}, gold ${save.gold}, heroes: ${lv}`);
+  console.log('dungeons:', Object.entries(save.dungeons).map(([k, d]) => `${k} cp${d.checkpoint} best ${d.best} boss x${d.cleared}`).join(' | '));
+  process.exit(bad ? 1 : 0);
+}

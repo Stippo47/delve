@@ -3,24 +3,29 @@
 // both directions; chunks left out are solid rock. Enemies wait in groups around the room until the party comes
 // near, and the party walks the room chunk by chunk before heading for the doors. After a room is cleared the party deals with what's in it (chest, fountain, a choice of
 // three things), then picks one of the doors ahead. Heroes keep HP and potions between rooms; downed heroes stay
-// down until the floor's boss is beaten, then come back at 10% HP.
+// down until the floor's last foe is beaten, then come back at 10% HP.
+// Round 8: 3 floors of 7 rooms; floors 1 and 2 end with a mini-boss (any kind, elites.js makeMiniBoss, or a boss kind
+// of its own), floor 3 with the dungeon's boss. Each floor is its own place (themes.js floorTheme). A run can start at
+// a checkpoint floor (opts.floor). Heroes go in at their permanent level and keep the XP they earn (levels give skill
+// points, not strength).
 import { makeWorld, spawn, step, alive, addStatus, hurt, puff, fx, scatterCoins, addDanger } from './sim.js';
-import { DEFS, xpToNext, levelHp, levelDmg, TRINKET_IDS } from './units.js';
+import { DEFS, levelHp, levelDmg, TRINKET_IDS } from './units.js';
 import { trinketHooks, raiseGhost, wears } from './trinkets.js';
 import { HEROES, STARTERS, treeFor, freeNodes } from './heroes.js';
 import { initKit, refreshKit, hooksOf } from './kits.js';
 import { rand, rrange, rint, pick, chance, dist, clamp, angleTo } from './util.js';
 import { buildGrid, circleRect, findPath } from './path.js';
 import { makeFloor, nodeAt, nextNodes, chooseDoor, advance, LAYERS } from './map.js';
-import { themeOf, weighted } from './themes.js';
+import { themeOf, floorTheme, weighted } from './themes.js';
 import { G, SPIKE_R, makeGrid, gridWalls, gridObstacles, hazardCell, dropObstacles, dropGridWalls } from './layout.js';
-import { makeElite } from './elites.js';
+import { makeElite, makeMiniBoss, setCostOf, ENEMY_TRINKETS, ELITE_TRINKET } from './elites.js';
+import { addXp } from './progress.js';
 
 export const H = 480;
 export const FLOORS = 3;
 
-// opts: { theme, party: [heroId...], mercs, depth }. (A number for opts is the old depth argument.)
-// Levels start at 1 every run: XP and levels live inside a run, and bought skill-tree nodes switch on as levels come.
+// opts: { theme, floor (1-3: a checkpoint to start at), party: [heroId...], mercs, depth, potions }. (A number for
+// opts is the old depth argument.) Each hero goes in at its saved level and XP.
 export function newRun(save, opts = {}) {
   if (typeof opts === 'number') opts = { depth: opts };
   const dp = debugParam('party'); // testing: ?party=a,b,c
@@ -30,17 +35,21 @@ export function newRun(save, opts = {}) {
   for (const k of hired) heroes[k] = { level: 1, xp: 0, hp: null, down: false, potions: 0, trinkets: [], best: 1, merc: true };
   for (const k of party) {
     const sv = (save.heroes && save.heroes[k]) || {};
-    heroes[k] = { level: 1, xp: 0, hp: null, down: false, potions: (opts.potions && opts.potions[k]) || 0, trinkets: (sv.trinkets || []).slice(), best: 1 };
+    const level = Math.max(1, Math.floor(sv.level || 1));
+    heroes[k] = { level, xp: sv.xp || 0, gained: 0, from: level, hp: null, maxHp: null, down: false, potions: (opts.potions && opts.potions[k]) || 0, trinkets: (sv.trinkets || []).slice(), best: level };
   }
   // testing: ?trinkets=a,b,c (or ?trinkets=all) puts those trinkets on every hero, whatever the slots
   const tq = typeof location !== 'undefined' && new URLSearchParams(location.search).get('trinkets');
   if (tq) for (const k of party) heroes[k].trinkets = tq === 'all' ? TRINKET_IDS.slice() : tq.split(',').filter((id) => TRINKET_IDS.includes(id));
   const theme = themeOf(opts.theme || debugParam('theme')).id;
-  const run = { depth: opts.depth || save.depth || 1, theme, mercs: !!opts.mercs, hired, party, floor: 1, map: makeFloor(themeOf(theme).kinds), coins: 0, gems: 0,
-    satchel: [], keys: 0, heroes, phase: 'fight', t: 0, fade: 1, save, kills: 0, banner: null, rooms: 0, leaving: false };
-  // testing: ?bossroom jumps straight to floor 3's boss room, ?lvl=N starts the heroes at level N
-  if (debugParam('bossroom') != null) { run.floor = FLOORS; run.map.L = LAYERS; run.map.i = 0; }
-  const lvl = +debugParam('lvl'); if (lvl > 1) for (const k of party) heroes[k].level = heroes[k].best = lvl;
+  const floor = Math.max(1, Math.min(FLOORS, Math.floor(+opts.floor || +debugParam('floor') || 1)));
+  const run = { depth: opts.depth || save.depth || 1, theme, mercs: !!opts.mercs, hired, party, floor, startFloor: floor, map: makeFloor(floorTheme(theme, floor).kinds), coins: 0, gems: 0,
+    satchel: [], keys: 0, heroes, phase: 'fight', t: 0, fade: 1, save, kills: 0, banner: null, rooms: 0, leaving: false,
+    floorDone: false, minis: [false, false], bossKilled: false };
+  // testing: ?bossroom jumps straight to a floor's last room (floor 3's, or ?floor=N's: a mini-boss), ?lvl=N starts the
+  // heroes at level N, ?floor=N starts at floor N
+  if (debugParam('bossroom') != null) { run.floor = opts.floor > 1 || debugParam('floor') ? floor : FLOORS; run.map.L = LAYERS; run.map.i = 0; }
+  const lvl = +debugParam('lvl'); if (lvl > 1) for (const k of party) heroes[k].level = heroes[k].best = heroes[k].from = lvl;
   buildRoom(run);
   return run;
 }
@@ -106,12 +115,13 @@ function inCell(w, cell, r, m = 110) {
 // cost/pack; these are for the older kinds in units.js).
 const OLD_COST = { rat: 1, slime: 2, slimeSmall: 1, skeleton: 3 }, OLD_PACK = { rat: [2, 4] };
 const costOf = (k) => DEFS[k].cost ?? OLD_COST[k] ?? 3;
+setCostOf((k) => (DEFS[k] ? costOf(k) : 3));
 const packOf = (k) => DEFS[k].pack || OLD_PACK[k] || null;
 // What a group is made of: kinds from the theme's roster for this floor, spending `budget`. harder: now and then
 // a kind from the next floor's roster (later waves bring heavier things).
 function rollKinds(run, budget, harder = 0) {
   const kinds = [];
-  const T = themeOf(run.theme), at = (f) => T.enemies[Math.min(T.enemies.length, f) - 1];
+  const at = (f) => floorTheme(run.theme, Math.min(FLOORS, f)).enemies;
   for (let guard = 0; budget > 0 && guard < 40; guard++) {
     const roster = chance(harder) ? at(run.floor + 1) : at(run.floor);
     const k = weighted(roster, rand), c = costOf(k), pk = packOf(k);
@@ -124,45 +134,66 @@ function rollKinds(run, budget, harder = 0) {
 }
 function enemyPack(w, run, budget, cell) {
   const c = inCell(w, cell, 40, 150);
-  for (const k of rollKinds(run, budget)) {
-    const p = placeFree(w, DEFS[k].r, c.x - 150, c.x + 150, Math.max(DEFS[k].r + 20, c.y - 150), Math.min(w.H - DEFS[k].r - 20, c.y + 150));
+  const kinds = rollKinds(run, budget);
+  for (const k of kinds) {
+    const p = placeFree(w, DEFS[k].r, c.x - 170, c.x + 170, Math.max(DEFS[k].r + 20, c.y - 160), Math.min(w.H - DEFS[k].r - 20, c.y + 160));
     const u = foe(w, run, k, p.x, p.y, {}, eliteP(run));
     u.facing = u.mvA = angleTo(p.x, p.y, w.doorIn.x, w.doorIn.y); // facing the way the party comes in
   }
+  return kinds.length;
 }
 
 // One enemy, maybe an elite: its kind's extra move on top of its kit, 2-3x as strong, 1.5x as fast, a gold rim
 // (enemies.js makeElite). opts.elite forces one.
 function foe(w, run, k, x, y, opts = {}, p = 0) {
   const u = spawn(w, k, x, y, { mult: w.mult, ...opts });
-  u.coinMul = 1 + 0.12 * (DUNGEON_RANK[run.theme] || 0); // harder dungeons pay better
-  if (opts.elite || (p > 0 && !DEFS[k].boss && chance(p))) makeElite(w, u);
+  u.coinMul = goldMul(run);
+  if (opts.mini) { makeMiniBoss(w, u); arm(u, chance(ELITE_TRINKET.mini) ? 1 : 0); }
+  else if (opts.elite || (p > 0 && !DEFS[k].boss && chance(p))) { makeElite(w, u); arm(u, chance(ELITE_TRINKET.two) ? 2 : chance(ELITE_TRINKET.one) ? 1 : 0); }
   return u;
 }
+// An elite carrying trinkets: it wears them (their hooks work for it as for a hero) and drops them when it dies.
+function arm(u, n) {
+  if (!n) return;
+  const list = [];
+  while (list.length < n) { const t = pick(ENEMY_TRINKETS); if (!list.includes(t)) list.push(t); }
+  u.trinkets = list; u.trinketHooks = trinketHooks(list); u.carried = list.slice();
+}
+// Harder dungeons and deeper floors pay better.
+const goldMul = (run) => 1 + 0.25 * (DUNGEON_RANK[run.theme] || 0) + 0.15 * (run.floor - 1);
 // How likely any one enemy is to be an elite (designer, round 7: "have elites show up more often"): more on deeper
 // floors, in harder dungeons and in later waves.
 // (testing: ?elites makes every enemy an elite)
-const eliteP = (run, wave = 0) => (debugParam('elites') != null ? 1 : Math.min(0.3, 0.05 + 0.025 * (run.floor - 1) + 0.012 * (DUNGEON_RANK[run.theme] || 0) + 0.03 * wave));
+const eliteP = (run, wave = 0) => (debugParam('elites') != null ? 1 : Math.min(0.32, 0.05 + 0.03 * (run.floor - 1) + 0.015 * (DUNGEON_RANK[run.theme] || 0) + 0.025 * wave));
 
 // How hard each dungeon type is, easiest first (designer, round 6: each dungeon harder than the last; round 7: three
-// harder ones after the Crypt).
+// harder ones after the Crypt; round 8: "make each dungeon and floor clearly harder than the last ... it has to be a
+// challenge"). Round 8: the party no longer levels up inside a run (its strength is the skill web it has bought), so
+// each dungeon is pitched at a party that has grown: the order is the order they open in.
 export const DUNGEON_RANK = { warren: 0, sewers: 1, crypt: 2, frost: 3, ember: 4, spire: 5 };
-// Enemy strength (hp and damage) for a room: the dungeon's rank, the run's depth, the floor, and the room layer.
-// The first three keep their round-6 steps; the deeper three climb steeply (they're for a party that has grown).
-// A dungeon's own step comes in over the first floor's first rooms (the party starts every run at level 1).
-export const RANK_MULT = [1, 1.12, 1.26, 1.8, 2.4, 3];
-// Deeper dungeons also climb more from floor to floor.
+// Enemy strength (hp x m, blows x 0.65 + 0.35 m) for a room: the dungeon, the floor, and how far into the floor.
+export const RANK_MULT = [1, 2.1, 3.3, 4.5, 5.6, 6.8];
+export const FLOOR_STEP = 0.32;  // each floor on from the first: +32% of the dungeon's own strength
+export const ROOM_STEP = 0.035;  // each room further into a floor: +3.5%
 export const enemyMult = (run, L) => {
   const rank = DUNGEON_RANK[run.theme] || 0;
-  return 1 + (RANK_MULT[rank] - 1) * (run.floor > 1 ? 1 : 0.35 + 0.65 * Math.min(1, L / 6)) + 0.22 * (run.depth - 1) + (0.25 + 0.08 * Math.max(0, rank - 2)) * (run.floor - 1) + 0.04 * L;
+  return RANK_MULT[rank] * (1 + FLOOR_STEP * (run.floor - 1) + ROOM_STEP * L) + 0.22 * (run.depth - 1);
 };
+// How many enemies, in budget points, for a fight room before the party-size scaling: more on later floors and in
+// later dungeons (round 8: +50% overall).
+export const COUNT_MUL = 1.5;
+// A smaller party meets fewer enemies and weaker floor foes (by party size 1-4).
+export const PARTY_SCALE = [0.3, 0.62, 0.92, 1.2];
+export const BOSS_HP = [0.45, 0.7, 0.9, 1.1];
+const roomBudget = (run, L, nCells) => (4 + run.depth * 2 + run.floor * 2.2 + (DUNGEON_RANK[run.theme] || 0) * 0.8 + L * 0.6) * (0.55 + 0.18 * nCells) * COUNT_MUL;
 
 function buildRoom(run) {
   const node = nodeAt(run.map);
   const kind = node.kind;
-  const T = themeOf(run.theme);
-  // the floor's last room: floors 1 and 2 end with the theme's warden, floor 3 with its boss (which may bring an arena)
-  const bossKind = kind === 'boss' ? (run.floor >= FLOORS ? T.boss : T.warden) : null;
+  const T = floorTheme(run.theme, run.floor);
+  if (node.L === 0) run.floorDone = false; // a new floor has begun
+  // the floor's last room: floors 1 and 2 end with the floor's mini-boss, floor 3 with the boss (which may bring an arena)
+  const bossKind = kind === 'boss' ? (run.floor >= FLOORS ? T.boss : T.mini || T.warden) : null;
   const arena = bossKind && DEFS[bossKind].arena;
   const sh = arena ? arenaShape(arena) : makeShape(kind);
   const w = makeWorld(sh.W, sh.H);
@@ -226,11 +257,14 @@ function buildRoom(run) {
   const y0 = w.doorIn.y, ys = [y0, y0 - 60, y0 + 60];
   [...run.party, ...run.hired].forEach((k, i) => {
     const hs = run.heroes[k];
-    // a downed hero stays out until the floor's boss falls; with the Wraith Veil, its ghost comes along
-    if (hs.down) { if (wears(hs.trinkets, 'wraithVeil')) raiseGhost(w, { kind: k, x: 70, y: ys[i % 3], level: hs.level, dmgMul: levelDmg(1, hs.level), fake: true }); return; }
+    // a downed hero stays out until the floor's last foe falls; with the Wraith Veil, its ghost comes along
+    if (hs.down) { if (wears(hs.trinkets, 'wraithVeil')) raiseGhost(w, { kind: k, x: 70, y: ys[i % 3], level: hs.level, dmgMul: 1, fake: true }); return; }
     const tank = hs.merc ? k === 'knight' : HEROES[k].role === 'tank';
-    const u = spawn(w, k, 70 + (tank ? 40 : 0), ys[i % 3] + Math.floor(i / 3) * 30, { level: hs.level, hp: hs.hp, potions: hs.potions, trinkets: hs.trinkets });
+    // level 1's numbers (round 8: levels bring skill points, the web brings the strength); mercs are middling
+    const u = spawn(w, k, 70 + (tank ? 40 : 0), ys[i % 3] + Math.floor(i / 3) * 30, { level: hs.merc ? MERC_LEVEL[DUNGEON_RANK[run.theme] || 0] : 1, potions: hs.potions, trinkets: hs.trinkets });
+    u.level = hs.level;
     if (!hs.merc) initKit(u, k, buildFor(run.save, k), hs.level);
+    hs.maxHp = u.maxHp;
     if (hs.hp != null) u.hp = Math.min(u.maxHp, hs.hp);
     u.facing = 0; u.mvA = 0;
   });
@@ -238,12 +272,16 @@ function buildRoom(run) {
   const far = pick(w.exits);
   if (kind === 'boss') {
     const fc = centre(far);
-    const partyScale = 0.12 + 0.28 * Math.min(4, run.party.length);
+    const partyScale = PARTY_SCALE[Math.min(4, run.party.length + run.hired.length) - 1] || 1;
     const bx = arena ? w.throne.x : w.W - 260, by = arena ? w.throne.y : fc.y;
     // a smaller party meets a weaker boss (the same party-size idea as the rooms' enemy budget)
-    const b = spawn(w, bossKind, bx, by, { mult: w.mult * (run.floor === FLOORS ? 1 : 0.75), hpMul: 0.4 + 0.2 * Math.min(3, run.party.length) });
-    b.facing = b.mvA = Math.PI;
-    if (!arena) for (let i = 0; i < Math.round((1 + run.floor + Math.floor(run.depth / 2)) * partyScale); i++) {
+    const own = DEFS[bossKind].boss; // a boss kind of its own (a warden, the dungeon's boss), or any kind made a mini-boss
+    const hpMul = BOSS_HP[Math.min(4, run.party.length + run.hired.length) - 1] || 1;
+    const b = own ? spawn(w, bossKind, bx, by, { mult: w.mult * (run.floor === FLOORS ? 1 : 0.8), hpMul })
+      : foe(w, run, bossKind, bx, by, { mini: true, hpMul });
+    b.facing = b.mvA = Math.PI; b.floorFoe = true;
+    const adds = Math.round((2 + run.floor + Math.floor(run.depth / 2)) * partyScale * COUNT_MUL);
+    if (!arena) for (let i = 0; i < adds; i++) {
       const p = inCell(w, far, 30, 90); const u = foe(w, run, pick(T.bossAdds), p.x, p.y, {}, eliteP(run)); u.facing = Math.PI;
     }
   } else if (kind === 'fight' || kind === 'hazard' || kind === 'elite' || kind === 'treasure') {
@@ -251,10 +289,14 @@ function buildRoom(run) {
     if (!homes.length) homes = [w.entry];
     if (kind === 'treasure') homes = [pick(homes)];
     // fewer enemies for a smaller party: one hero faces about 40% of what three do
-    const partyScale = 0.12 + 0.28 * Math.min(4, run.party.length + run.hired.length);
-    const total = ((kind === 'treasure' ? 3 : 4 + run.depth * 2 + run.floor * 2 + (DUNGEON_RANK[run.theme] || 0)) + L * 0.5) * (kind === 'treasure' ? 1 : 0.55 + 0.18 * sh.cells.length) * partyScale;
-    // the first lot is a little smaller than before round 6: the waves after it make up the rest
-    for (const cell of homes) enemyPack(w, run, Math.max(2, Math.round(total * (kind === 'treasure' ? 1 : 0.75) / homes.length * rrange(0.8, 1.25))), cell);
+    const partyScale = PARTY_SCALE[Math.min(4, run.party.length + run.hired.length) - 1] || 1;
+    const total = (kind === 'treasure' ? 3 + L * 0.5 + run.floor : roomBudget(run, L, sh.cells.length)) * partyScale;
+    // round 8: the room's enemies come as the first lot and then the waves, and no wave is smaller than the one before
+    // ("Each wave should have the same count of enemies or more"); the first lot is a share like a wave's
+    const nWaves = kind === 'treasure' ? 0 : kind === 'elite' ? 2 : rint(2, 3) + (chance(0.25 * (run.floor - 1)) ? 1 : 0);
+    const share = kind === 'treasure' ? 1 : 1 / (1 + nWaves * 1.1);
+    let count = 0;
+    for (const cell of homes) count += enemyPack(w, run, Math.max(2, Math.round(total * share / homes.length * rrange(0.85, 1.15))), cell);
     if (kind === 'elite') { // the elite room: the theme's big one, made elite, and a second elite of its own kind deeper in
       const p = inCell(w, far, 40);
       foe(w, run, T.elite, p.x, p.y, { elite: true }).facing = Math.PI;
@@ -263,7 +305,7 @@ function buildRoom(run) {
     // waves: once the room is clear, more come up out of the floor. Round 7: 2-3 more than before (3-4, a fifth now
     // and then deeper down; the elite room 2), each a bit harder than the last (bigger, heavier kinds, more elites);
     // the chest (if the room has one) shows up when the last wave is down
-    if (kind !== 'treasure') w.waves = { left: kind === 'elite' ? 2 : rint(3, 4) + (chance(0.2 * (run.floor - 1)) ? 1 : 0), budget: total * (0.17 + 0.012 * L), n: 0 };
+    if (kind !== 'treasure') w.waves = { left: nWaves, budget: total * share, n: 0, last: count };
     w.chest = kind === 'treasure' || kind === 'elite' || chance(0.3);
   }
   w.on.kill = (u) => onKill(run, u);
@@ -369,9 +411,9 @@ function grant(run, reward, hero) {
     const hs = w.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon).sort((a, b) => a.potions - b.potions || a.hp / a.maxHp - b.hp / b.maxHp);
     const h = hs[0]; if (h) { h.potions++; run.heroes[h.kind].potions = h.potions; }
   } else if (reward === 'xp') {
-    for (const h of w.units) if (h.team === 'hero' && alive(h)) giveXp(run, h, 30 + 20 * run.depth);
+    for (const h of w.units) if (h.team === 'hero' && alive(h)) giveXp(run, h, Math.round((30 + 20 * run.depth) * Math.sqrt(w.mult || 1)));
   } else if (reward === 'coins') {
-    const n = rint(10, 18) + run.depth * 6;
+    const n = Math.round((rint(10, 18) + run.depth * 6) * goldMul(run));
     scatterCoins(w, hero ? hero.x : w.W / 2, hero ? hero.y : w.H / 2, n);
   } else if (reward === 'trinket') {
     // it pops out onto the floor; a hero with room for it picks it up (grabTrinkets / doTasks)
@@ -415,28 +457,34 @@ function buildFor(save, k) {
   return { nodes: { ...freeNodes(k), ...((save.heroes && save.heroes[k] && save.heroes[k].nodes) || {}) } };
 }
 
+// XP: kept for good (round 8). A level gained is a skill point to spend at camp (no stronger in this run: "they go in
+// and stay at the same strength they left"); a ring of gold motes shows it.
 function giveXp(run, h, xp) {
   const w = run.world, sv = run.heroes[h.kind];
-  if (!sv || h.summon) return;
-  sv.xp += xp;
-  while (sv.xp >= xpToNext(sv.level)) {
-    sv.xp -= xpToNext(sv.level); sv.level++; sv.best = Math.max(sv.best, sv.level);
-    const ratio = h.hp / h.maxHp, grow = levelHp(h.def.hp, sv.level) / levelHp(h.def.hp, sv.level - 1);
-    h.maxHp = Math.round(h.maxHp * grow); h.hp = Math.min(h.maxHp, h.maxHp * ratio + h.maxHp * 0.25);
-    h.dmgMul *= levelDmg(1, sv.level) / levelDmg(1, sv.level - 1); h.level = sv.level;
-    refreshKit(h, sv.level);
-    for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; w.particles.push({ x: h.x, y: h.y, vx: Math.cos(a) * 120, vy: Math.sin(a) * 120, life: 0.6, max: 0.6, size: 4, color: '#FFE14D' }); }
-  }
+  if (!sv || h.summon || sv.merc) return;
+  const n = addXp(sv, xp);
+  if (!n) return;
+  sv.gained += n; sv.best = Math.max(sv.best, sv.level); h.level = sv.level;
+  for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; w.particles.push({ x: h.x, y: h.y, vx: Math.cos(a) * 120, vy: Math.sin(a) * 120, life: 0.6, max: 0.6, size: 4, color: '#FFE14D' }); }
 }
 
 function onKill(run, u) {
   run.kills++;
-  if (u.def.boss) run.gems += run.floor >= FLOORS ? 2 : 1; // gems: each floor's boss drops one, the last boss two (camp lane B)
-  if (u.def.onDeath) u.def.onDeath(run.world, u);
-  // tougher enemies (a harder dungeon, a deeper floor) are worth more
-  const xp = Math.round((u.def.xp || 0) * (1 + 0.15 * (run.depth - 1)) * Math.sqrt(run.world.mult || 1) * (u.elite ? 3 : 1));
-  for (const h of run.world.units) if (h.team === 'hero' && alive(h)) giveXp(run, h, xp);
+  const w = run.world;
+  if (u.floorFoe) { if (run.floor >= FLOORS) run.bossKilled = true; else run.minis[run.floor - 1] = true; }
+  if (u.def.onDeath) u.def.onDeath(w, u);
+  // an elite's trinkets drop where it fell
+  for (const id of u.carried || []) {
+    const a = rand() * Math.PI * 2;
+    w.pickups.push({ type: 'trinket', id, uid: Math.floor(rand() * 1e9), x: clamp(u.x + Math.cos(a) * 40, 40, w.W - 40), y: clamp(u.y + Math.sin(a) * 40, 40, w.H - 40), hop: 0.5 });
+  }
+  // tougher enemies (a harder dungeon, a deeper floor) are worth more; a mini-boss or boss a lot more
+  const xp = Math.round((u.def.xp || 0) * XP_MUL * (1 + 0.15 * (run.depth - 1)) * Math.sqrt(w.mult || 1) * (u.mini ? 8 : u.elite ? 3 : 1));
+  for (const h of w.units) if (h.team === 'hero' && alive(h)) giveXp(run, h, xp);
 }
+export const XP_MUL = 1.6;
+// Mercenaries' level (their numbers: they don't grow), by dungeon.
+const MERC_LEVEL = [2, 4, 6, 8, 10, 12];
 
 const heroesAlive = (run) => run.world.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon);
 function nearestHero(run, x, y) { let best = null, bd = Infinity; for (const h of heroesAlive(run)) { const d = dist(h.x, h.y, x, y); if (d < bd) { bd = d; best = h; } } return best; }
@@ -474,8 +522,8 @@ export function update(run, dt) {
   }
   if (run.phase === 'loot') { if (doTasks(run, dt)) { run.phase = 'choose'; run.t = 0; } return; }
   if (run.phase === 'choose') {
+    if (run.node.kind === 'boss') { finishRoomHp(run); endFloor(run); return; } // (leaving after it is free: the floor is done)
     if (run.leaving) { finishRoomHp(run); run.phase = 'retreated'; summarize(run); return; } // leaving: the room is done, out we go
-    if (run.node.kind === 'boss') { finishRoomHp(run); endFloor(run); return; }
     const hs = heroesAlive(run);
     if (run.doorK == null) {
       const hp = hs.reduce((a, h) => a + h.hp / h.maxHp, 0) / Math.max(1, run.party.length + run.hired.length);
@@ -572,15 +620,18 @@ function waveTick(run, dt) {
   if (!pd.spots && pd.t <= RIFT_T) {
     const hs = heroesAlive(run); if (!hs.length) return;
     let cx = 0, cy = 0; for (const h of hs) { cx += h.x; cy += h.y; } cx /= hs.length; cy /= hs.length;
-    // each wave a bit harder than the last: a bigger lot, heavier kinds from the next floor's roster, more elites
-    const kinds = rollKinds(run, Math.max(2, Math.round(wv.budget * (1 + 0.16 * (wv.n - 1)) * rrange(0.9, 1.1))), 0.12 + 0.12 * wv.n);
-    // one or two groups, each round a spot a fair way from the party, on open floor
-    const groups = kinds.length > 3 && chance(0.6) ? 2 : 1, centres = [];
-    for (let g = 0; g < groups; g++) centres.push(waveSpot(w, cx, cy, 60));
+    // each wave a bit harder than the last (round 8: and never fewer than the one before): a bigger lot, heavier
+    // kinds from the next floor's roster, more elites
+    const kinds = rollKinds(run, Math.max(2, Math.round(wv.budget * (1 + 0.1 * wv.n) * rrange(0.95, 1.1))), 0.1 + 0.1 * wv.n);
+    const cheap = floorTheme(run.theme, run.floor).enemies.slice().sort((a, b) => costOf(a[0]) - costOf(b[0]))[0][0];
+    while (kinds.length < wv.last) kinds.push(cheap);
+    wv.last = kinds.length;
+    // spread round the party: several spots at different bearings and distances, one to three at each
+    const nSpots = clamp(Math.ceil(kinds.length / 2), 2, 6), centres = waveSpots(w, cx, cy, nSpots);
     pd.spots = kinds.map((k, i) => {
-      const c = centres[i % groups], r = DEFS[k].r;
+      const c = centres[i % centres.length], r = DEFS[k].r;
       let p = null;
-      for (let tries = 0; tries < 30 && !p; tries++) { const a = rand() * Math.PI * 2, d = rrange(0, 50 + 12 * kinds.length / groups), x = c.x + Math.cos(a) * d, y = c.y + Math.sin(a) * d; if (freeSpot(w, x, y, r)) p = { x, y }; }
+      for (let tries = 0; tries < 30 && !p; tries++) { const a = rand() * Math.PI * 2, d = rrange(0, 70), x = c.x + Math.cos(a) * d, y = c.y + Math.sin(a) * d; if (freeSpot(w, x, y, r)) p = { x, y }; }
       p = p || c;
       fx(w, { type: 'rift', x: p.x, y: p.y, r: r * 1.1, at: RIFT_T, max: RIFT_T + 0.5 });
       return { k, ...p };
@@ -589,11 +640,24 @@ function waveTick(run, dt) {
   }
   if (pd.t > 0) return;
   for (const sp of pd.spots || []) {
-    const u = foe(w, run, sp.k, sp.x, sp.y, { mult: w.mult * (1 + 0.05 * (wv.n - 1)) }, eliteP(run, wv.n));
+    const u = foe(w, run, sp.k, sp.x, sp.y, { mult: w.mult * (1 + 0.05 * wv.n) }, eliteP(run, wv.n));
     u.aggro = true; u.facing = u.mvA = rand() * Math.PI * 2; u.flinchT = 0.35; // a moment to find its feet
     puff(w, sp.x, sp.y, '#3A2E44', 10, 120, 7, 0.5);
   }
   wv.pending = null;
+}
+// n spots on open floor round (cx, cy), at bearings spread round the circle (so a wave comes from several sides).
+function waveSpots(w, cx, cy, n) {
+  const out = [], a0 = rand() * Math.PI * 2;
+  for (let k = 0; k < n; k++) {
+    let best = null;
+    for (let i = 0; i < 40 && !best; i++) {
+      const a = a0 + (k + rrange(-0.3, 0.3)) / n * Math.PI * 2, d = rrange(240, 520), x = cx + Math.cos(a) * d, y = cy + Math.sin(a) * d;
+      if (freeSpot(w, x, y, 40) && w.cells.some((c) => x > c.x && x < c.x + c.w && y > c.y && y < c.y + c.h) && !out.some((o) => dist(o.x, o.y, x, y) < 120)) best = { x, y };
+    }
+    out.push(best || waveSpot(w, cx, cy, 40));
+  }
+  return out;
 }
 // A spot on open floor 260-420 from (cx, cy), out of the party's way.
 function waveSpot(w, cx, cy, r) {
@@ -685,9 +749,8 @@ function doTasks(run, dt) {
     if (task.type === 'chest') {
       // the lid flies open on an empty chest and the coins spill out all round it (they still have to be picked up)
       o.open = true;
-      scatterCoins(w, o.x, o.y, rint(6, 10) + run.depth * 3 + run.floor * 2, 1.15);
+      scatterCoins(w, o.x, o.y, Math.round((rint(6, 10) + run.depth * 3 + run.floor * 2) * goldMul(run)), 1.15);
       w.shake = Math.max(w.shake, 2);
-      if (chance(0.06)) run.gems++; // now and then a chest holds a gem
       if (chance(0.5)) grant(run, pick(['potion', 'potion', 'xp', 'trinket']), h);
     } else {
       grant(run, o.reward, h);
@@ -703,10 +766,12 @@ function finishRoomHp(run) {
 }
 
 function endFloor(run) {
+  run.floorDone = true; // the floor is finished: leaving now costs nothing
   if (run.floor >= FLOORS) { run.phase = 'won'; summarize(run); return; }
+  if (run.leaving) { run.phase = 'retreated'; summarize(run); return; }
   run.floor++;
-  run.map = makeFloor();
-  for (const k of run.party) { const hs = run.heroes[k]; if (hs.down) { hs.down = false; hs.hp = levelHp(DEFS[k].hp, hs.level) * 0.1; } }
+  run.map = makeFloor(floorTheme(run.theme, run.floor).kinds);
+  for (const k of run.party) { const hs = run.heroes[k]; if (hs.down) { hs.down = false; hs.hp = (hs.maxHp || DEFS[k].hp) * 0.1; } }
   run.banner = { s: 'Floor ' + run.floor, t: 1.8 };
   run.doorK = null;
   run.phase = 'transition'; run.fadeOut = 0; run.newFloor = true;
@@ -720,7 +785,8 @@ function nextRoom(run) {
 }
 
 // Leaving (the player taps Leave): the room is finished first, then the run ends as 'retreated'. Between rooms it ends
-// straight away. retreat(run, false) changes their mind.
+// straight away. retreat(run, false) changes their mind. Leaving before the floor is finished loses 20% of the run's
+// gold (progress.js leaveCost / applySummary); once the floor's last foe is down it's free (run.floorDone).
 export function retreat(run, on = true) {
   run.leaving = on;
   if (on && run.phase === 'transition') { run.phase = 'retreated'; summarize(run); }
@@ -730,12 +796,14 @@ export function retreat(run, on = true) {
 export function summarize(run) {
   if (run.summary) return run.summary;
   const levels = {}, downed = [];
-  for (const k of run.party) { levels[k] = run.heroes[k].best || run.heroes[k].level; if (run.heroes[k].down) downed.push(k); }
+  for (const k of run.party) { levels[k] = run.heroes[k].level; if (run.heroes[k].down) downed.push(k); }
   for (const u of (run.world ? run.world.units : [])) if (u.team === 'hero' && u.downed && !downed.includes(u.kind) && run.heroes[u.kind]) downed.push(u.kind);
-  const hp = {}; // how hurt each came out (0-1), for the camp's recovery timers
-  for (const k of run.party) { const u = run.world && run.world.units.find((x) => x.kind === k && x.team === 'hero' && !x.summon); const hs = run.heroes[k];
-    hp[k] = u ? Math.max(0, u.hp / u.maxHp) : hs.hp != null ? hs.hp / levelHp(DEFS[k].hp, hs.level) : 1; }
-  run.summary = { gold: run.coins, gems: run.gems || 0, kills: run.kills, floor: run.floor, rooms: run.rooms, levels, downed, hp, foundTrinkets: run.satchel.slice(), result: run.phase };
+  const hp = {}, heroes = {}; // how hurt each came out (0-1), for the camp's recovery timers; levels and XP to keep
+  for (const k of run.party) { const u = run.world && run.world.units.find((x) => x.kind === k && x.team === 'hero' && !x.summon && !x.gone); const hs = run.heroes[k];
+    hp[k] = u ? Math.max(0, u.hp / u.maxHp) : hs.hp != null && hs.maxHp ? hs.hp / hs.maxHp : 1;
+    heroes[k] = { level: hs.level, xp: hs.xp, gained: hs.gained || 0, from: hs.from || hs.level }; }
+  run.summary = { gold: run.coins, gems: 0, kills: run.kills, floor: run.floor, startFloor: run.startFloor || 1, rooms: run.rooms, levels, heroes, downed, hp,
+    foundTrinkets: run.satchel.slice(), result: run.phase, floorDone: !!run.floorDone || run.phase === 'won', minis: run.minis.slice(), bossKilled: !!run.bossKilled };
   return run.summary;
 }
 export { LAYERS };

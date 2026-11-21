@@ -138,6 +138,7 @@ export function unequip(save, heroId, slot) {
 // Heroes are bought with gold (the old gem prices x HERO_GOLD).
 export const HERO_GOLD = 350;
 export const heroPrice = (id) => ((HEROES[id].unlock && HEROES[id].unlock.gems) || 0) * HERO_GOLD;
+export const ownedCount = (save) => Object.values(save.heroes).filter((h) => h.owned).length;
 export function unlockHero(save, id) {
   const h = save.heroes[id], p = heroPrice(id);
   if (h.owned || !pay(save, p)) return false;

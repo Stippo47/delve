@@ -9,9 +9,14 @@ import { alive, opponents, allies, hurt, puff, sparks, flames, addDanger, spawn,
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange, chance } from './util.js';
 import { lineClear } from './path.js';
 
-// 2-3x as strong (hp x2.4, blows x1.8), 1.5x as fast (walking; attacks x1.2), a little bigger than a plain one but
-// less than the old elites (1.15), gold x0.8, XP x3 (dungeon.js).
-export const ELITE = { hp: 2.4, dmg: 1.8, speed: 1.5, atk: 1.2, scale: 1.05, gold: 0.8 };
+// 2-3x as strong (hp x2.4, blows x1.8), 1.5x as fast (walking; attacks x1.2), gold x0.8, XP x3 (dungeon.js).
+// Round 8: "Even bigger ... Base elites should be the size in between the normal and miniboss sized": 1.25.
+export const ELITE = { hp: 2.4, dmg: 1.8, speed: 1.5, atk: 1.2, scale: 1.25, gold: 0.8 };
+// Round 8, the mini-boss tier: "an even stronger version for the mini boss at the end of levels that anyone can be,
+// even bigger and stronger than elites and have an additional ability". Any kind: its elite move plus one of
+// MINI_MOVES (two when the kind has no elite move), bigger again, much tougher, and angry at half health. It counts as
+// a boss for the rules (shorter stuns and freezes, the boss bar): its def is a copy with boss: true, mini: true.
+export const MINI = { hp: 5.5, dmg: 2.3, speed: 1.25, atk: 1.25, scale: 1.6, gold: 7, mass: 3 };
 
 export function makeElite(w, u) {
   if (u.elite) return u;
@@ -25,6 +30,93 @@ export function makeElite(w, u) {
   u.el = u.el || {};
   return u;
 }
+
+export function makeMiniBoss(w, u) {
+  if (u.mini) return u;
+  u.mini = true; u.elite = true; // the elite's gold rim, on a bigger body
+  u.maxHp = Math.round(u.maxHp * MINI.hp); u.hp = u.maxHp;
+  u.dmgMul *= MINI.dmg; u.moveMul = (u.moveMul || 1) * MINI.speed; u.atkMul = (u.atkMul || 1) * MINI.atk;
+  u.r *= MINI.scale; u.vr *= MINI.scale; u.mass *= MINI.mass;
+  u.coinMul = (u.coinMul || 1) * MINI.gold;
+  u.def = { ...u.def, boss: true, mini: true };
+  const E = ELITES[u.kind] || ELITES[u.def.eliteAs];
+  const role = u.def.role === 'ranged' ? 'volley' : u.def.role === 'skirmish' ? 'charge' : 'quake';
+  const moves = [E, MINI_MOVES[role]];
+  if (!E || !E.tick) moves.push(MINI_MOVES.call);
+  const ticks = moves.filter((m) => m && m.tick).map((m) => m.tick);
+  u.eliteFn = (w2, v, dt) => { enrage(w2, v); for (const f of ticks) if (f(w2, v, dt)) return true; return false; };
+  u.eliteDeath = E && E.death ? E.death : null;
+  u.el = u.el || {};
+  return u;
+}
+// Below half health a mini-boss gets angry: faster at everything for the rest of the fight (a red flush, no text).
+function enrage(w, u) {
+  const e = E(u); if (e.enraged || u.hp > u.maxHp * 0.5) return;
+  e.enraged = true;
+  addBuff(u, { id: 'enraged', dur: 1e6, move: 1.2, atkSpeed: 1.3 });
+  puff(w, u.x, u.y, '#E0404B', 18, 160, 7, 0.6); w.shake = Math.max(w.shake, 4);
+}
+// The mini-boss's extra moves, by how it fights.
+export const MINI_MOVES = {
+  // a slam that shakes the floor all round it
+  quake: {
+    tick(w, u, dt) {
+      if (hold(u, dt)) return true;
+      if (!due(u, 'mquake', dt, 3) || !opponents(w, u).some((h) => dist(u.x, u.y, h.x, h.y) < 170 + h.r)) return false;
+      again(u, 'mquake', E(u).enraged ? 4.5 : 6.5, E(u).enraged ? 6 : 8.5);
+      around(w, u, { r: 175, tell: 0.9, kind: 'bone', hit: { dmg: 13, knock: 320, heavy: true, stagger: 70 },
+        fire: (w2, z) => { w2.shake = Math.max(w2.shake, 7); puff(w2, z.x, z.y, '#D9CDB0', 22, 260, 8, 0.55); } });
+      return true;
+    },
+  },
+  // a ring of shots out all round
+  volley: {
+    tick(w, u, dt) {
+      if (hold(u, dt)) return true;
+      if (!u.aggro || !due(u, 'mring', dt, 3)) return false;
+      again(u, 'mring', E(u).enraged ? 4.5 : 6, E(u).enraged ? 6 : 8);
+      const n = 14, a0 = rand() * TAU, kind = u.def.proj || 'bolt', color = u.def.projColor;
+      beginHold(u, 0.55, null, () => { for (let i = 0; i < n; i++) shoot(w, u, a0 + i / n * TAU, { kind, color, speed: 300, dmg: (u.def.dmg || 6) * 0.8, r: 7, life: 1.6, hitO: { knock: 90 } }); });
+      setAnim(u, 'cast', 0.55); puff(w, u.x, u.y, color || '#FFF1B0', 10, 80, 6, 0.5);
+      return true;
+    },
+  },
+  // a long charge with a short tell
+  charge: {
+    tick(w, u, dt) {
+      if (rushTick(w, u, dt)) return true;
+      const t = targetOf(w, u); if (!t || !due(u, 'mrush', dt, 2.5)) return false;
+      const g = gapTo(u, t); if (g < 70 || g > 340 || !lineClear(w, u.x, u.y, t.x, t.y, u.r * 0.8)) return false;
+      again(u, 'mrush', E(u).enraged ? 3.5 : 5, E(u).enraged ? 4.5 : 6.5);
+      rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 140, { tell: 0.45, dmg: 15, knock: 330, status: { stagger: 45 } });
+      return true;
+    },
+  },
+  // calls help from the floor's own roster
+  call: {
+    tick(w, u, dt) {
+      if (!u.aggro || !due(u, 'mcall', dt, 4)) return false;
+      again(u, 'mcall', 11, 14);
+      const list = (w.theme && w.theme.enemies) || [[u.kind, 1]];
+      const cheap = list.filter(([k]) => k !== u.kind && DEFS_COST(k) <= 3);
+      const pool = cheap.length ? cheap : list;
+      let tot = 0; for (const [, x] of pool) tot += x;
+      let r = rand() * tot, kind = pool[0][0]; for (const [k, x] of pool) { r -= x; if (r <= 0) { kind = k; break; } }
+      summon(w, u, kind, 2, { color: '#3A2E44', cap: 20 });
+      setAnim(u, 'cast', 0.5);
+      return false;
+    },
+  },
+};
+// what a kind is worth from a room's budget (set by dungeon.js, which knows the defs)
+let DEFS_COST = () => 3;
+export function setCostOf(f) { DEFS_COST = f; }
+
+// Elites may carry a trinket they use, and drop when they die (round 8: "elites may spawn with trinkets on them that
+// they will use. Even lower chance to spawn with 2x the trinkets"). Only trinkets that make sense on an enemy.
+export const ENEMY_TRINKETS = ['frostRing', 'emberRing', 'venomFang', 'tideShell', 'leadWeight', 'vampTooth', 'ironSkin', 'swiftBoots',
+  'thunderRing', 'whirlingKnives', 'brambleVest', 'cinderBoots', 'frostBloom', 'volatile', 'galeFeather', 'soulJar'];
+export const ELITE_TRINKET = { one: 0.25, two: 0.05, mini: 0.6 };
 
 // ---------------------------------------------------------------- toolkit
 export const turnTo = (u, a, rate, dt) => { u.facing = wrapAngle(u.facing + clamp(wrapAngle(a - u.facing), -rate * dt, rate * dt)); };
