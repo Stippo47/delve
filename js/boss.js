@@ -8,7 +8,7 @@ import { circleRect, buildGrid } from './path.js';
 
 const turnTo = (u, a, rate, dt) => { u.facing = wrapAngle(u.facing + clamp(wrapAngle(a - u.facing), -rate * dt, rate * dt)); };
 const stand = (u, dt) => { u.spd *= Math.exp(-dt * 10); u.dvx = Math.cos(u.mvA) * u.spd; u.dvy = Math.sin(u.mvA) * u.spd; };
-const heroes = (w) => w.units.filter((o) => o.team === 'hero' && alive(o));
+const heroes = (w, u) => w.units.filter((o) => o.team !== u.team && alive(o) && !o.ethereal); // its opponents, whichever side it's on (battle mode)
 
 // ---------------------------------------------------------------- the Bone King
 // Phases by health: 1 the Duel (cleave, grave lance), 2 the Court (adds from the graves, bone rows),
@@ -38,7 +38,7 @@ function kingBrain(w, u, dt) {
   // asleep on the throne until someone comes near or hurts him; then he rises
   if (k.st === 'asleep') {
     stand(u, dt);
-    if (u.aggro || heroes(w).some((h) => dist(h.x, h.y, u.x, u.y) < WAKE)) {
+    if (u.aggro || heroes(w, u).some((h) => dist(h.x, h.y, u.x, u.y) < WAKE)) {
       u.aggro = true; k.st = 'rise'; k.t = 1.0; setAnim(u, 'ability', 1.0);
       w.shake = Math.max(w.shake, 5); puff(w, u.x, u.y, '#CFC6B4', 18, 120, 7, 0.7);
     }
@@ -71,7 +71,7 @@ function kingBrain(w, u, dt) {
   // who he wants: whoever is taunting him, else the nearest, rethought every second
   if ((k.tgtT -= dt) <= 0 || !u.target || !alive(u.target)) {
     k.tgtT = 1;
-    const hs = heroes(w);
+    const hs = heroes(w, u);
     if (u.tauntBy && u.tauntT > 0 && alive(u.tauntBy)) u.target = u.tauntBy;
     else { let best = null, bd = Infinity; for (const h of hs) { const d = dist(h.x, h.y, u.x, u.y) - (h === u.target ? 60 : 0); if (d < bd) { bd = d; best = h; } } u.target = best; }
   }
@@ -81,7 +81,7 @@ function kingBrain(w, u, dt) {
   turnTo(u, at, 2, dt);
 
   if (k.cd <= 0 && angleDiff(u.facing, at) < 0.5) {
-    const far = heroes(w).filter((h) => dist(h.x, h.y, u.x, u.y) > 260);
+    const far = heroes(w, u).filter((h) => dist(h.x, h.y, u.x, u.y) > 260);
     const close = d < KING.cleave.r + t.r * 0.5 - 10;
     let pick = null;
     if (k.again) { pick = 'lance'; k.again = false; } // phase 4: a second lance straight after the first, at someone else
@@ -91,7 +91,7 @@ function kingBrain(w, u, dt) {
     else if (!close || far.length) pick = 'lance';
     if (pick) {
       let who = far.length && pick === 'lance' && !close ? far[Math.floor(rand() * far.length)] : t;
-      if (pick === 'lance' && k.lastLance && heroes(w).length > 1) { const o = heroes(w).filter((h) => h !== k.lastLance); if (o.length) who = o[Math.floor(rand() * o.length)]; }
+      if (pick === 'lance' && k.lastLance && heroes(w, u).length > 1) { const o = heroes(w, u).filter((h) => h !== k.lastLance); if (o.length) who = o[Math.floor(rand() * o.length)]; }
       start(w, u, k, pick, speed, who); return true;
     }
   }
@@ -131,7 +131,7 @@ function start(w, u, k, what, speed, t) {
     setAnim(u, 'thrust', tell + 0.3);
     addDanger(w, { shape: 'line', x1: u.x, y1: u.y, x2: end.x, y2: end.y, hw: L.hw, t: tell, team: u.team, src: u, kind: 'bone',
       onFire: (w2, z2) => {
-        for (const o of heroes(w2)) {
+        for (const o of heroes(w2, u)) {
           const side = Math.sign(Math.sin(angleTo(z2.x1, z2.y1, o.x, o.y) - a)) || (chance(0.5) ? 1 : -1);
           if (inLine(z2, o)) hurt(w2, o, L.dmg * u.dmgMul, u, { noDodge: true, knock: 300, kAngle: a + side * 1.25, heavy: true });
         }
@@ -147,7 +147,7 @@ function start(w, u, k, what, speed, t) {
       if (rand() < 0.7) w.particles.push({ x: u.x - Math.cos(a) * u.r, y: u.y - Math.sin(a) * u.r, vx: 0, vy: 0, life: 0.35, max: 0.35, size: 9, color: 'rgba(214,206,190,0.75)' });
     };
     k.after = () => {
-      if (k.phase >= 4) { boneWall(w, u, sx, sy, u.x, u.y); if (!second && heroes(w).length > 1) { k.again = true; k.rec = 0.55; } else k.lastLance = null; }
+      if (k.phase >= 4) { boneWall(w, u, sx, sy, u.x, u.y); if (!second && heroes(w, u).length > 1) { k.again = true; k.rec = 0.55; } else k.lastLance = null; }
       else k.lastLance = null;
       if (k.again) return; // the first of a pair: no stuck sword, he wrenches it straight out for the second
       u.shield = -L.open; u.shieldArc = Math.PI + 0.1; // stuck: every hit lands harder
@@ -161,7 +161,7 @@ function start(w, u, k, what, speed, t) {
     begin(u, k, tell + 0.4, R.rec, null);
     setAnim(u, 'ability', tell + 0.3);
     // three rows: at up to three heroes, else fanned round the one he wants
-    const hs = heroes(w).sort((p, q) => dist(p.x, p.y, u.x, u.y) - dist(q.x, q.y, u.x, u.y)).slice(0, 3);
+    const hs = heroes(w, u).sort((p, q) => dist(p.x, p.y, u.x, u.y) - dist(q.x, q.y, u.x, u.y)).slice(0, 3);
     const angs = hs.map((h) => angleTo(u.x, u.y, h.x, h.y));
     while (angs.length < 3) angs.push(a + (angs.length === 1 ? -0.5 : 0.5));
     for (const ra of angs) {
