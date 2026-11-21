@@ -13,7 +13,7 @@ import { POTIONS } from './potions.js';
 import { getSprite } from './sprites.js';
 import { view } from './render.js';
 import { I } from './ui-kit.js';
-import { unitNumbers } from './sim.js';
+import { numbersOf } from './numbers.js';
 import { numbersRow, runLine } from './stats-ui.js';
 
 const ROLE = { tank: 'Tank', melee: 'Fighter', skirmish: 'Skirmisher', ranged: 'Ranged', caster: 'Caster', support: 'Support' };
@@ -102,8 +102,8 @@ function body(u) {
   let html = `<div class="ip-head"><span class="ip-pic"><img src="${portrait(u.kind)}" alt=""></span><div><h2>${d.name}</h2><span class="cap">${sub}${u.downed ? ' · down' : ''}</span>
     <div class="bar hp"><i style="width:${100 * hp / max}%"></i><em>${hp}/${max}</em></div>
     ${hs && !hs.merc ? `<div class="xpline"><span class="lvl">${hs.level}</span><div class="bar xp"><i style="width:${Math.min(100, 100 * hs.xp / xpToNext(hs.level))}%"></i><em>${Math.floor(hs.xp)}/${xpToNext(hs.level)}</em></div></div>` : ''}</div></div>`;
-  // its real numbers right now (sim.js unitNumbers: the web, trinkets, buffs and statuses all in), and this run so far
-  html += numbersRow(unitNumbers(u));
+  // its real numbers right now (numbers.js, from sim.js unitNumbers: the web, trinkets, buffs and statuses all in), and this run so far
+  html += numbersRow(numbersOf(u));
   const rs = run.stats && u.team === 'hero' && !u.summon && run.stats.heroes[u.kind];
   if (rs) html += `<h3 class="cap">This run</h3>${runLine(rs)}`;
   // statuses

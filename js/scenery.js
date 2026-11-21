@@ -3,7 +3,7 @@
 // (throne, graves), the danger-zone telegraphs, and the light/fog mood over the room. render.js calls in here.
 // The look is the game's: warm, chunky, one heavy ink outline (OUTLINE), soft gradients lit from the left.
 import { INK, TAU, clamp } from './util.js';
-import { OUTLINE } from './render.js';
+import { OUTLINE, view } from './render.js';
 import { paintRoom, drawBlock, envVoid, envFogK } from './env.js';
 
 const DEF_PAL = { floor: ['#E2D6BE', '#D3C5A9'], tile: ['rgba(160,140,110,0.10)', 'rgba(255,255,255,0.08)'], grout: 'rgba(120,100,80,0.10)',
@@ -297,16 +297,20 @@ export function drawDanger(ctx, w) {
   ctx.restore(); ctx.globalAlpha = 1;
 }
 
-// Bone spikes that burst up out of the floor (the Bone King's rows): a ring of pale spikes that sinks back.
+// Bone spikes that burst up out of the floor (the Bone King's rows and bone walls). Round 9, in the effects style: a
+// knot of inked bone spikes standing up out of the floor (leaning up the screen like everything upright), then sinking.
 export function drawSpikeFx(ctx, f) {
   if (f.type !== 'spike') return false;
-  const k = f.t / f.max, up = k < 0.15 ? k / 0.15 : 1 - (k - 0.15) / 0.85;
-  ctx.save(); ctx.translate(f.x, f.y);
-  for (let i = 0; i < 6; i++) {
-    const a = i / 6 * TAU + f.x, L = f.r * (0.6 + 0.4 * ((i * 7) % 3) / 2) * up, bx = Math.cos(a) * 6, by = Math.sin(a) * 6;
-    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(bx - Math.sin(a) * 5, by + Math.cos(a) * 5); ctx.lineTo(bx + Math.cos(a) * L, by + Math.sin(a) * L); ctx.lineTo(bx + Math.sin(a) * 5, by - Math.cos(a) * 5); ctx.closePath(); }, BONE);
+  const k = f.t / f.max, up = k < 0.15 ? k / 0.15 : 1 - Math.max(0, (k - 0.4) / 0.6);
+  const rot = view.rot ? Math.PI / 2 : 0;
+  for (let i = 0; i < 4; i++) {
+    const a = i / 4 * TAU + f.x, d = i ? f.r * 0.32 : 0, h = (i ? 18 : 28) * (0.8 + 0.3 * ((i * 7 + Math.round(f.x)) % 3) / 2) * up, wd = i ? 5.5 : 8;
+    ctx.save(); ctx.translate(f.x + Math.cos(a) * d, f.y + Math.sin(a) * d); ctx.rotate(rot);
+    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-wd, 0); ctx.lineTo(0, -h); ctx.lineTo(wd, 0); ctx.quadraticCurveTo(0, wd * 0.6, -wd, 0); ctx.closePath(); }, BONE);
+    ctx.fillStyle = '#FFF8EA'; ctx.beginPath(); ctx.moveTo(-wd * 0.7, -1); ctx.lineTo(0, -h + 2); ctx.lineTo(-wd * 0.05, -1); ctx.closePath(); ctx.fill();
+    ctx.restore();
   }
-  ctx.restore(); return true;
+  return true;
 }
 
 // ---------------------------------------------------------------- the light: fog round the edges, the theme's tint

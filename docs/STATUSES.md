@@ -39,7 +39,7 @@ hex) are timers: their HUD ring shrinks from full as they run out.
 - `u.st.<status>` is the value; `statuses.js fillOf(u, id)` is 0..1 to the burst; `u.bursts[id]` is the time it last burst.
 - Burn: flames drawn on the body (`fx.js drawStatusFx`, 2-5 licks, taller as it builds) plus flame particles rising
   off it (`sim.js statusTick`), and an orange wash.
-- Radiance: a gold halo over the head, wider as it builds, and a pale gold wash. `u.radiantT` > 0 while the glow is on;
+- Radiance (round 9): golden glints twinkling on the body and thin beams of light rising off it, more as it builds (no halo), and a pale gold wash. `u.radiantT` > 0 while the glow is on;
   the glow itself is a world fx `{ type: 'aura', kind: 'radiance', unit, r, max }` (drawn by `fx.js aura`, riding on the unit).
 - Cursed: dark purple wisps curling up off the body, more as it builds, and a purple wash. `u.hexed` while the hex
   waits (an open purple eye over the head); fx `{ type: 'hex', kind: 'arm' | 'fire' | 'turn', unit }` when it arms,

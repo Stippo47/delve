@@ -27,8 +27,7 @@ import { makeScene } from './camp-scene.js';
 import { makeMap } from './camp-map.js';
 import * as LOOKS from './looks.js';
 import { resultStats, wireStats, numbersRow, lifetime, foeCount, num } from './stats-ui.js';
-import { heroProbe } from './dungeon.js';
-import { unitNumbers } from './sim.js';
+import { heroNumbers as probeNumbers } from './numbers.js';
 
 // ---------------------------------------------------------------- dungeons (themes)
 export let THEMES = {};
@@ -243,11 +242,11 @@ function aboutView(id) {
     ${row(`<span class="k-ico">${I.crown}</span>`, 'Trait', h.trait.name, h.trait.desc)}
     <div class="sec-h"><span class="cap">All runs</span></div>${lifetime(save, id)}`;
 }
-// The hero's real numbers: the hero as it would walk into a room (dungeon.js heroProbe), read the way the sim reads them.
+// The hero's real numbers: the hero as it would walk into a room, read the way the sim reads them (numbers.js).
 function heroNumbers(id) {
   try {
     const list = (save.heroes[id].trinkets || []).map((t) => { const lv = P.trinketLevel(save, t); return lv > 1 ? { id: t, lv } : t; });
-    return unitNumbers(heroProbe(save, id, list));
+    return probeNumbers(save, id, list);
   } catch (e) { return null; }
 }
 

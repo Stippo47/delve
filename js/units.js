@@ -71,6 +71,11 @@ Object.assign(DEFS, ENEMIES);
 // The raised skeleton (Raise Dead, the Bone Charm) wears the current skeleton art, the Rattler's; the old
 // art/skeleton.svg is gone (designer, round 7: "something is summoning the old skeleton visuals").
 Object.assign(DEFS.skeleton, { art: ENEMIES.rattler.art, headR: ENEMIES.rattler.headR, attackAnim: 'swing' });
+// Raise Dead's minions (round 9: "Summons shouldn't have their bottom jaw and be 25% smaller. And not have weapons. Just
+// punch. ... Each corpse is worth like 3 minion skeletons. They should be pretty weak overall."): the jawless rattler
+// with the spear taken out (art/summons/minion.svg), three quarters the size, weak.
+DEFS.minion = { ...DEFS.skeleton, team: 'hero', name: 'Minion', art: 'art/summons/minion.svg', headR: ENEMIES.rattler.headR,
+  r: DEFS.skeleton.r * 0.75, vr: (DEFS.skeleton.vr || DEFS.skeleton.r) * 0.75, mass: DEFS.skeleton.mass * 0.6, hp: 14, dmg: 3, range: 12, atkCd: 0.9, windup: 0, attackAnim: 'thrust', coins: [0, 0], xp: 0 };
 
 // Round 6 feel (designer, 2026-11-20): a much faster party (~3x; enemies faster too so fights still meet, ability
 // cooldowns unchanged), longer time-to-kill (more HP for everyone), longer attack and view range, slightly bigger

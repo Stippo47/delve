@@ -12,6 +12,7 @@ export const angleDiff = (a, b) => Math.abs(wrapAngle(a - b));
 // Seedable RNG so runs can be replayed in tests.
 let seed = (Math.random() * 2 ** 32) >>> 0;
 export function setSeed(s) { seed = s >>> 0; }
+export const getSeed = () => seed; // stats probes (numbers.js) put the run's dice back as they were
 export function rand() {
   seed = (seed + 0x6D2B79F5) >>> 0;
   let t = seed;

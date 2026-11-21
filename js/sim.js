@@ -2,7 +2,7 @@
 import { TAU, clamp, dist, dist2, angleTo, wrapAngle, angleDiff, rand, rrange, rint, chance, softmaxPick } from './util.js';
 import { DEFS, FEEL, levelHp, levelDmg } from './units.js';
 import { lineClear, pathClear, rayToRoundRect, circleRect, findPath, buildGrid } from './path.js';
-import { kitThink, kitTick, hooksOf, segDist } from './kits.js';
+import { kitThink, kitTick, hooksOf, segDist, heroAttack } from './kits.js';
 import { trinketHooks } from './trinkets.js';
 import { cue } from './sfx.js';
 import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE } from './statuses.js';
@@ -698,11 +698,12 @@ export function hurt(w, u, amount, src, o = {}) {
     // the impact point: on the body's edge facing the blow, or on the shield's face (pushed out a little further)
     const back = fromA + Math.PI;
     const sa = onShield ? u.facing + clamp(wrapAngle(back - u.facing), -0.7, 0.7) : back;
-    const sr = onShield ? u.r * 1.05 + 4 : u.r * 0.85;
+    const sr = o.omni ? 0 : onShield ? u.r * 1.05 + 4 : u.r * 0.85; // omni: a blow from everywhere at once (Smite, round 9)
     u.hitX = u.x + Math.cos(sa) * sr; u.hitY = u.y + Math.sin(sa) * sr;
     const big = o.heavy || o.crit || amt >= 14;
-    if (onShield) sparks(w, u.hitX, u.hitY, sa, 6, '#FFF4C8', 1.1); // a clang: sparks thrown back off the shield
-    else sparks(w, u.hitX, u.hitY, fromA + (rand() < 0.5 ? Math.PI : 0), big ? 6 : 3, o.crit ? '#FFE14D' : '#FFFFFF', big ? 1.2 : 0.9);
+    if (o.omni) { u.hitOmni = true; for (let i = 0; i < 6; i++) sparks(w, u.x, u.y, i / 6 * TAU, 1, o.crit ? '#FFE14D' : '#FFFBEA', 1); }
+    else if (onShield) sparks(w, u.hitX, u.hitY, sa, 6, '#FFF4C8', 1.1); // a clang: sparks thrown back off the shield
+    else { u.hitOmni = false; sparks(w, u.hitX, u.hitY, fromA + (rand() < 0.5 ? Math.PI : 0), big ? 6 : 3, o.crit ? '#FFE14D' : '#FFFFFF', big ? 1.2 : 0.9); }
     if (big) puff(w, u.hitX, u.hitY, '#EDE6D6', 4, 90, 4, 0.3);
     // punch without freezing the game: only a crit holds the frame, and only a hair; the shake is small
     if (o.crit) w.hitstop = Math.max(w.hitstop, 0.025);
@@ -888,6 +889,14 @@ function inMeleeArc(u, o, extra = 0) {
 
 function meleeSwing(w, u, single) {
   const d = u.def;
+  if (d.aoe) { // a blow that lands on the ground in front: everything in a small circle there (round 9: the Berserker's flail)
+    const cx = u.x + Math.cos(u.facing) * (u.r + d.range * 0.55), cy = u.y + Math.sin(u.facing) * (u.r + d.range * 0.55);
+    u.lungeT = 0.18;
+    w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, src: u, aoe: { x: cx, y: cy, r: d.aoe } });
+    for (const o of w.units) if (alive(o) && o.team !== u.team && !o.ethereal && dist(cx, cy, o.x, o.y) < d.aoe + o.r)
+      hurt(w, o, d.dmg * u.dmgMul * rrange(0.9, 1.1), u, { knock: d.knock || 40, kAngle: angleTo(cx, cy, o.x, o.y), heavy: d.heavy });
+    return;
+  }
   const targets = single ? (u.target && inMeleeArc(u, u.target, 6) ? [u.target] : []) : w.units.filter((o) => alive(o) && o.team !== u.team && inMeleeArc(u, o, 6));
   u.lungeT = 0.18;
   w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, color: u.team === 'hero' ? '#FFFFFF' : '#FFD2C2', src: u });
@@ -913,7 +922,8 @@ function tryAttack(w, u) {
   if (def.role === 'ranged') {
     if (d <= def.range && face < 0.35 && !blocked(w, u.x, u.y, t.x, t.y)) {
       const lead = d / 520;
-      fireArrow(w, u, angleTo(u.x, u.y, t.x + t.vx * lead, t.y + t.vy * lead) + rrange(-0.04, 0.04));
+      const aim = angleTo(u.x, u.y, t.x + t.vx * lead, t.y + t.vy * lead) + rrange(-0.04, 0.04);
+      if (!(u.kit && heroAttack(w, u, t, aim))) fireArrow(w, u, aim); // kits.js: a hero's own attack (round 9), else a plain shot
       setAnim(u, def.attackAnim || 'draw', 0.32);
       u.atkT = def.atkCd * rrange(0.9, 1.1); u.lastAttackT = w.time;
     }
@@ -1097,7 +1107,7 @@ function statusTick(w, u, dt) {
     if (u.radiantT <= 0) { u.radiantT = 0; u.radImmuneT = RADIANCE.immuneT; }
   } else if (u.radImmuneT > 0) u.radImmuneT -= dt;
   if (u.hexed && (u.hexT -= dt) <= 0) u.hexed = false;           // an unused hex wears off
-  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
+  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT', 'aimT', 'gasT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
   for (const b of u.buffs) b.t -= dt;
   if (u.buffs.length) u.buffs = u.buffs.filter((b) => b.t > 0);
   if (u.regenT > 0) { u.regenT -= dt; heal(w, u, u.regenRate * dt, u.regenSrc, { pab: u.regenAb }); }
@@ -1110,8 +1120,7 @@ function statusTick(w, u, dt) {
   if (u.later) { for (const l of u.later) { l.t -= dt; if (l.t <= 0 && !l.done) { l.done = true; l.f(); } } if (u.later.every((l) => l.done)) u.later = null; }
   for (const b of u.buffs) if (b.spinning) {                      // Whirl: hits everything round about, pulls with tier III
     u.spinT = (u.spinT || 0) - dt; if (u.spinT > 0) continue; u.spinT = 0.4;
-    for (let i = 0; i < 3; i++) { const a = rand() * TAU; sparks(w, u.x + Math.cos(a) * (u.r + 40), u.y + Math.sin(a) * (u.r + 40), a + Math.PI / 2, 2, '#FFFFFF'); } // the flail's arc, not a ring
-    for (const e of opponents(w, u)) if (dist(u.x, u.y, e.x, e.y) < u.r + e.r + 50) {
+    for (const e of opponents(w, u)) if (dist(u.x, u.y, e.x, e.y) < u.r + e.r + 50) { // sparks only where it hits (round 9)
       hurt(w, e, u.def.dmg * u.dmgMul * 0.6, u, { pab: b.id, kAngle: u.spinPull ? angleTo(e.x, e.y, u.x, u.y) : angleTo(u.x, u.y, e.x, e.y), knock: u.spinPull ? 80 : 120 });
     }
   }
@@ -1198,6 +1207,13 @@ function physics(w, dt) {
 function projectiles(w, dt) {
   for (const p of w.projectiles) {
     p.life -= dt;
+    // round 9 shot behaviours: home (turns towards a unit), accel (speeds up), drag (slows), grow (radius/s), fall (damage
+    // lost per second, the necromancer's dart)
+    if (p.home && alive(p.home) && p.turn) { const a = Math.atan2(p.vy, p.vx), want = angleTo(p.x, p.y, p.home.x, p.home.y), sp = Math.hypot(p.vx, p.vy), na = a + clamp(wrapAngle(want - a), -p.turn * dt, p.turn * dt); p.vx = Math.cos(na) * sp; p.vy = Math.sin(na) * sp; }
+    if (p.accel) { const m = 1 + p.accel * dt; p.vx *= m; p.vy *= m; }
+    if (p.drag) { const m = Math.exp(-p.drag * dt); p.vx *= m; p.vy *= m; }
+    if (p.grow) p.r = Math.max(2, p.r + p.grow * dt);
+    if (p.fall) p.dmg *= Math.exp(-p.fall * dt);
     p.x += p.vx * dt; p.y += p.vy * dt;
     if (p.x < 0 || p.y < 0 || p.x > w.W || p.y > w.H) p.life = 0;
     for (const pl of w.pillars) if (dist(p.x, p.y, pl.x, pl.y) < pl.r) p.life = 0;
@@ -1384,7 +1400,8 @@ export function step(w, dt) {
     if (f.tick) { f.acc = (f.acc || 0) + dt; while (f.acc >= (f.every || 0.5)) { f.acc -= f.every || 0.5; f.tick(f); } }
     if (f.follow && f.src) { const e = w.units.filter((o) => alive(o) && o.team !== f.src.team).sort((a, b) => dist(a.x, a.y, f.x, f.y) - dist(b.x, b.y, f.x, f.y))[0];
       if (e) { const a = angleTo(f.x, f.y, e.x, e.y); f.x += Math.cos(a) * 40 * dt; f.y += Math.sin(a) * 40 * dt; } }
-    if (f.ward && f.src) for (const e of w.units) if (alive(e) && e.team !== f.src.team && dist(e.x, e.y, f.x, f.y) < f.r + e.r) { const a = angleTo(f.x, f.y, e.x, e.y); e.kx += Math.cos(a) * 200 * dt * 6; e.ky += Math.sin(a) * 200 * dt * 6; }
+    // a ward eases enemies out of it (round 9: it used to fling them, and the slams and bowling hurt them)
+    if (f.ward && f.src) for (const e of w.units) if (alive(e) && e.team !== f.src.team && dist(e.x, e.y, f.x, f.y) < f.r + e.r) { const a = angleTo(f.x, f.y, e.x, e.y), d = f.r + e.r - dist(e.x, e.y, f.x, f.y); e.x += Math.cos(a) * Math.min(d, 260 * dt); e.y += Math.sin(a) * Math.min(d, 260 * dt); }
   }
   w.fx = w.fx.filter((f) => f.t < f.max);
   let wallsGone = false;
