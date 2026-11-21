@@ -13,7 +13,8 @@ const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 const n = +opt('n', 10), seed0 = +opt('seed', 1), depth = +opt('depth', 1), level = +opt('level', 0), startFloor = +opt('floor', 1);
 const boss = args.includes('--boss'), verbose = args.includes('--v');
-globalThis.location = { search: (boss ? '?bossroom' + (opt('floor') ? '&floor=' + opt('floor') : '') : '?x') };
+// --bossid <id> (lane B): that designed boss in the boss room (dungeon.js ?boss=), whatever the theme
+globalThis.location = { search: (boss ? '?bossroom' + (opt('floor') ? '&floor=' + opt('floor') : '') + (opt('bossid') ? '&boss=' + opt('bossid') : '') : '?x') };
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
 const feel = args.includes('--feel') ? { flips: 0, unitSecs: 0, stuck: 0, enemySecs: 0 } : null;
 const DT = 1 / 60;
@@ -89,7 +90,7 @@ function batch() {
       run.minis.forEach((m, j) => { if (m) res.minis[j]++; });
       res.gained += party.reduce((a, k) => a + (run.heroes[k].gained || 0), 0) / party.length;
       if (phase === 'lost') res.deaths.push(`${run.floor}.${run.map.L + 1}`);
-      if (verbose) console.log(`  ${theme} #${i}: ${phase} floor ${run.floor} room ${run.map.L + 1} (${run.node.kind}) rooms ${run.rooms} sim ${Math.round(t)}s gold ${run.coins} levels ${party.map((k) => run.heroes[k].level).join('/')}`);
+      if (verbose) console.log(`  ${theme} #${i}: ${phase} floor ${run.floor} room ${run.map.L + 1} (${run.node.kind}) rooms ${run.rooms} sim ${Math.round(t)}s gold ${run.coins} levels ${party.map((k) => run.heroes[k].level).join('/')}${run.world.bossLog ? ' | boss ' + run.world.bossLog() : ''}`);
       if (phase === 'stuck' || phase === 'error') bad++;
     }
     console.log(theme.padEnd(7), `won ${res.won}/${n} lost ${res.lost} stuck ${res.stuck} err ${res.error}`, `| ended on floor 1/2/3: ${res.floors.slice(1).join('/')}`,

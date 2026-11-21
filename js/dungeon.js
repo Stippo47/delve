@@ -22,6 +22,7 @@ import { G, SPIKE_R, makeGrid, gridWalls, gridObstacles, hazardCell, dropObstacl
 import { makeElite, makeMajor, setCostOf, ENEMY_TRINKETS, ELITE_TRINKET } from './elites.js';
 import { addXp } from './progress.js';
 import { freshStatuses } from './statuses.js';
+import { BOSS_ARENAS } from './bosses.js'; // lane B (bosses2)
 
 export const H = 480;
 export const FLOORS = 3;
@@ -212,7 +213,8 @@ function buildRoom(run) {
   const T = floorTheme(run.theme, run.floor);
   if (node.L === 0) run.floorDone = false; // a new floor has begun
   // the floor's last room: floors 1 and 2 end with the floor's mini-boss, floor 3 with the boss (which may bring an arena)
-  const bossKind = kind === 'boss' ? (run.floor >= FLOORS ? T.boss : T.mini || T.warden) : null;
+  // lane B (bosses2): ?boss=<id> puts that boss in floor 3's room, whatever the theme (testing; js/bosses.js)
+  const bossKind = kind === 'boss' ? (run.floor >= FLOORS ? (DEFS[debugParam('boss')] ? debugParam('boss') : T.boss) : T.mini || T.warden) : null;
   const arena = bossKind && DEFS[bossKind].arena;
   const sh = arena ? arenaShape(arena) : makeShape(kind);
   const w = makeWorld(sh.W, sh.H);
@@ -367,6 +369,7 @@ function dress(w, T, sh) {
       w.decor.push({ type, x, y, a: rand() * Math.PI * 2, s: rrange(0.8, 1.2), v: rint(0, 2) });
     }
   }
+  if (w.arenaDecor) w.decor.push(...w.arenaDecor); // lane B (bosses2): a designed boss's floor dressing
   if (w.arena === 'throne') {
     w.decor.push({ type: 'dais', x: w.throne.x + 30, y: w.throne.y, a: 0, s: 1, v: 0 });
     for (const sy of [-1, 1]) for (const dx of [-40, 60]) w.decor.push({ type: 'candles', x: w.throne.x + dx, y: w.throne.y + sy * 150, a: 0, s: 1.2, v: 1 });
@@ -383,6 +386,7 @@ function arenaShape(name) {
 }
 function buildArena(w, name) {
   w.arena = name; w.shape = name;
+  if (BOSS_ARENAS[name]) { BOSS_ARENAS[name](w); return; } // lane B (bosses2): a designed boss builds its own room (js/bosses.js)
   const W = w.W, Hh = w.H;
   if (name === 'grove') { // the Elder Ent's clearing (docs/BOSS-elder-ent.md): old trees round it, four seed beds, the ent at the far end
     w.throne = { x: W - 230, y: Hh / 2 };

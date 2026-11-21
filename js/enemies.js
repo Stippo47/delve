@@ -10,6 +10,7 @@ import { FOES } from './foes.js';
 import { WILDWOOD } from './wildwood.js';
 import { ELDER } from './elderent.js';
 import { FOES9, boulderBrain, dropBoulder } from './foes9.js';
+import { BOSS_DEFS } from './bosses.js'; // lane B (bosses2): the designed bosses, one file each (js/boss-*.js)
 
 const BONE = { poison: 0.35, burn: 0.8, chill: 1.2 }; // skeletons: poison barely takes, cold bites
 const SKELETON = { team: 'enemy', turn: 3.4, accel: 180, face: 3.4, mass: 1.3, temp: 0.3, commit: 1, res: BONE, headR: 60 };
@@ -263,4 +264,5 @@ export const ENEMIES = {
   ...FOES, // round 7: the three deeper dungeons' kinds and their wardens and bosses (js/foes.js)
   ...WILDWOOD, ...ELDER, // round 9: the Wildwood, the new first dungeon (js/wildwood.js, js/elderent.js)
   ...FOES9, // round 9: the approved additions for the Warren, the Sewers and the Crypt (js/foes9.js)
+  ...BOSS_DEFS, // lane B (bosses2): the designed bosses and their parts (js/bosses.js)
 };

@@ -18,6 +18,7 @@ import { DEFS } from './units.js';
 import { HEROES } from './heroes.js';
 import { buildGrid } from './path.js';
 import { setSeed, TAU } from './util.js';
+import { BOSS_ARENAS } from './bosses.js'; // lane B (bosses2): lab.html?m=boss
 
 const P = new URLSearchParams(location.search);
 const mode = P.get('m') || 'grid';
@@ -337,7 +338,22 @@ function setupKing() {
   tick = (dt) => { step(w, dt); for (const u of w.units) if (u.team === 'hero' && u.hp < u.maxHp * 0.4) u.hp = u.maxHp; if (k.hp < k.maxHp * [1, 0.7, 0.42, 0.18, 0.02][ph]) k.hp = k.maxHp * [1, 0.98, 0.64, 0.38, 0.14][ph]; };
 }
 
-if (mode === 'grid') setupGrid();
+// lane B (bosses2): a designed boss in its own room against four heroes: &boss=<id> (js/bosses.js), &bossphase=N starts
+// just above phase N, &lvl=N the heroes' level
+function setupBoss() {
+  const id = P.get('boss') || 'chieftain', def = DEFS[id] || DEFS.chieftain;
+  w = room(1300, 960); w.walls = []; w.mult = +(P.get('mult') || 1); w.bossAdds = ['goblin'];
+  if (BOSS_ARENAS[def.arena]) BOSS_ARENAS[def.arena](w); else w.throne = { x: 1100, y: 480 };
+  buildGrid(w);
+  const b = spawn(w, DEFS[id] ? id : 'chieftain', w.throne.x, w.throne.y, { mult: w.mult }); b.facing = Math.PI; b.floorFoe = true;
+  const lvl = +(P.get('lvl') || 20);
+  ['paladin', 'archer', 'cleric', 'twinfang'].forEach((h, i) => { const u = spawn(w, h, 160 + (i === 0 ? 60 : 0), 300 + i * 120, { level: lvl }); initKit(u, h, {}, lvl); u.facing = 0; });
+  setZoom(1); view.zoom = +(P.get('zoom') || 0.6);
+  tick = (dt) => { step(w, dt); for (const u of w.units) if (u.team === 'hero' && u.hp < u.maxHp * 0.4) u.hp = u.maxHp; };
+}
+
+if (mode === 'boss') setupBoss();
+else if (mode === 'grid') setupGrid();
 else if (mode === 'king') setupKing();
 else if (mode === 'looks') setupLooks();
 else if (mode === 'show') setupShow();
