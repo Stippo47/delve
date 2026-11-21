@@ -122,9 +122,11 @@ export function heal(w, u, amount, src, o) {
   }
   if (u.st.curse > 0) amount *= Math.max(0, 1 - CURSE.healCut * fillOf(u, 'curse')); // cursed: heals do less, then nothing
   if (amount <= 0) return 0;
+  if (u.def.cargo) amount /= 3; // lane C (convoy.js): heals mend the wagon at a third
   const before = u.hp; u.hp = Math.min(u.maxHp, u.hp + amount);
   if (w.stats) tallyHeal(w, u, src, u.hp - before, o);
-  if (u.hp - before > 2 && rand() < 0.5) w.particles.push({ x: u.x + rrange(-12, 12), y: u.y, vx: 0, vy: 0, rise: 50, up: 0, life: 0.6, max: 0.6, size: 4, color: '#9BE07A' });
+  // a healing cross rising off the edge of the body (round 10: "need outline and need to be spread out around his sprite")
+  if (u.hp - before > 2 && rand() < 0.5) { const a = rand() * Math.PI * 2, d = (u.vr || u.r) * (1 + 0.25 * rand()); w.particles.push({ x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d * 0.8, vx: 0, vy: 0, rise: 40, up: 0, life: 0.7, max: 0.7, size: 4.5, color: '#9BE07A', shape: 'plus' }); }
   return u.hp - before;
 }
 export function cleanse(u) { u.st = freshStatuses(); u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; }
@@ -729,7 +731,7 @@ export function hurt(w, u, amount, src, o = {}) {
   if (w.stats) tallyHurt(w, u, src, amt, o);
   if (!o.dot) cue('hit', u, src, { amt, crit: o.crit, heavy: o.heavy, shot: o.shot, blocked: u.blockedAt === w.time });
   if (!o.dot) {
-    u.hitT = 0.16; u.hitA = fromA; u.hitBlock = onShield;
+    u.hitT = 0.16; u.hitA = fromA; u.hitBlock = onShield; u.hitZap = !!o.shock; // (the renderer: no star for lightning, round 10)
     // the impact point: on the body's edge facing the blow, or on the shield's face (pushed out a little further)
     const back = fromA + Math.PI;
     const sa = onShield ? u.facing + clamp(wrapAngle(back - u.facing), -0.7, 0.7) : back;
@@ -1131,7 +1133,7 @@ function runAction(w, u, dt) {
     u.spd *= Math.exp(-dt * 6); u.dvx = Math.cos(u.mvA) * u.spd; u.dvy = Math.sin(u.mvA) * u.spd;
     if (a.t <= 0) { u.act = null; u.potions--; u.hp = Math.min(u.maxHp, u.hp + u.maxHp * 0.45 * Math.max(0, 1 - CURSE.healCut * fillOf(u, 'curse'))); puff(w, u.x, u.y, '#E0604B', 10, 70, 5, 0.6); emit(w, 'drank', u); }
   } else if (a.type === 'dash') {
-    const sp = u.def.speed * 2.1;
+    const sp = u.def.speed * 2.1 * (a.slide ? 0.15 + 1.7 * Math.max(0, a.t) / a.max : 1); // a slide (the archer's Roll) eases out
     u.dvx = Math.cos(a.a) * sp; u.dvy = Math.sin(a.a) * sp; u.vx = u.dvx; u.vy = u.dvy; u.mvA = a.a; u.spd = sp;
     if (rand() < 0.5) w.particles.push({ x: u.x - Math.cos(a.a) * u.r, y: u.y - Math.sin(a.a) * u.r, vx: 0, vy: 0, life: 0.25, max: 0.25, size: 5, color: 'rgba(200,190,170,0.7)' });
     if (a.t <= 0) { u.act = null; u.spd = u.def.speed; }
@@ -1331,7 +1333,10 @@ function projectiles(w, dt) {
     if (p.life <= 0 || p.noHit) continue; // noHit: only a look (a lobbed thing; its landing is a danger zone)
     for (const u of w.units) {
       if (!alive(u) || u === p.skip || u === p.owner || u.ethereal) continue;
-      if (p.team !== 'neutral' && u.team === p.team) continue;
+      if (p.team !== 'neutral' && u.team === p.team) { // round 10: a shot that does something to friends it passes (the Cleric's orbs heal)
+        if (p.allyHit && u !== p.owner && !(p.allySeen || (p.allySeen = new Set())).has(u) && dist(p.x, p.y, u.x, u.y) < u.r + p.r) { p.allySeen.add(u); p.allyHit(w, p, u); }
+        continue;
+      }
       if (p.hitSet && p.hitSet.has(u)) continue;
       if (dist(p.x, p.y, u.x, u.y) < u.r + p.r) {
         // round 10, the gilded golem: a shot that hits its front bounces back at whoever shot it
@@ -1385,7 +1390,7 @@ function hazards(w, dt) {
 export const COIN_LIFE = 25;
 const COIN_DRAG = 3.2, MAGNET = 110;
 function pickups(w, dt) {
-  const heroes = w.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon);
+  const heroes = w.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon && !u.def.cargo); // lane C (convoy): the wagon picks up nothing
   for (const h of heroes) h.coinGoal = null;
   for (const p of w.pickups) {
     // a chest falling in (dungeon.js drops one by the party when a room is won): a thump and a puff as it lands

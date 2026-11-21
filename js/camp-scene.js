@@ -15,6 +15,7 @@ import { headR } from './sprites.js';
 import { INK } from './util.js';
 import * as P from './progress.js';
 import * as M from './meta.js';
+import { paintWagon } from './convoy.js'; // lane C (convoy): the wagon parked at the camp's edge
 
 const TAU = Math.PI * 2;
 const HS = 0.46;            // a hero's sprite size in camp world units per sprite unit (a paladin is ~45 across)
@@ -41,7 +42,7 @@ export function makeScene(canvas, api) {
   let visitor = null;       // an unrecruited hero being looked at: stands at the camp's edge
 
   // ---- where things are (scaled to the screen's shape so everything stays on it)
-  const L = { trader: { x: 0, y: 0 }, book: { x: 0, y: 0 }, settings: { x: 0, y: 0 }, tent: { x: 0, y: 0 }, edge: { x: 0, y: 0 }, battle: { x: 0, y: 0 } };
+  const L = { trader: { x: 0, y: 0 }, book: { x: 0, y: 0 }, settings: { x: 0, y: 0 }, tent: { x: 0, y: 0 }, edge: { x: 0, y: 0 }, battle: { x: 0, y: 0 }, wagon: { x: 0, y: 0 } };
   function place() {
     const ox = Math.min(halfW - 62, 128), oy = Math.min(halfH - 110, 232);
     L.trader = { x: ox - 4, y: -oy + 6 };
@@ -50,6 +51,7 @@ export function makeScene(canvas, api) {
     L.tent = { x: ox - 8, y: oy - 8 };
     L.edge = { x: 0, y: oy + 34 };
     L.battle = { x: -8, y: -oy + 2 }; // the sparring ring (battle mode, round 10): between the book and the cart
+    L.wagon = { x: -ox * 0.42, y: oy + 6 }; // lane C (convoy): the wagon, parked at the bottom edge facing the road out
   }
   function resize() {
     const r = canvas.getBoundingClientRect();
@@ -121,7 +123,7 @@ export function makeScene(canvas, api) {
       const x = (r * 2 - 1) * (halfW - 30), y = (r2 * 2 - 1) * (halfH - 92) + 14;
       if (Math.hypot(x, y) < 118) continue;
       let d = Infinity;
-      for (const o of [L.trader, L.book, L.settings, L.tent, L.battle]) d = Math.min(d, Math.hypot(x - o.x, y - o.y) - 62);
+      for (const o of [L.trader, L.book, L.settings, L.tent, L.battle, L.wagon]) d = Math.min(d, Math.hypot(x - o.x, y - o.y) - 62);
       for (const o of figs.values()) if (o !== f && o.state !== 'sit') d = Math.min(d, Math.hypot(x - (o.goalKind ? o.gx : o.x), y - (o.goalKind ? o.gy : o.y)) - 40);
       if (d > bd) { bd = d; best = { x, y }; }
       if (d > 40) break;
@@ -238,7 +240,7 @@ export function makeScene(canvas, api) {
     try {
       g.setTransform(q, 0, 0, q, BX * q, BY * q);
       ground(); stones();
-      thing('tent'); thing('trader'); thing('book'); thing('settings'); thing('battle');
+      thing('tent'); thing('trader'); thing('book'); thing('settings'); thing('battle'); thing('wagon');
     } finally { g = main; }
     bg = { c, BX, BY }; bgKey = key;
     return bg;
@@ -403,6 +405,8 @@ export function makeScene(canvas, api) {
       for (const [sx, col] of [[-1, '#5FA8FF'], [1, '#FF6B5A']]) ink(() => { g.beginPath(); g.moveTo(sx * 28, -6); g.lineTo(sx * 28 + sx * 13, -1); g.lineTo(sx * 28, 4); g.closePath(); }, col, 1.1);
       for (const s of [-1, 1]) { g.save(); g.rotate(s * 0.75);
         ink(() => { g.beginPath(); g.rect(-1.8, -15, 3.6, 22); }, '#DCE2EC', 1.1); ink(() => { g.beginPath(); g.rect(-5.5, 7, 11, 2.6); g.rect(-1.6, 9.6, 3.2, 6.5); }, '#8A5A34', 1); g.restore(); }
+    } else if (kind === 'wagon') { // lane C (convoy): the trader's wagon, ox and all, nose to the road out (js/convoy.js paints it)
+      g.rotate(Math.PI / 2); g.scale(0.56, 0.56); g.translate(-30, 0); paintWagon(g);
     } else if (kind === 'settings') { // a tool chest with a lantern on it
       g.fillStyle = 'rgba(5,8,12,0.4)'; g.beginPath(); g.ellipse(3, 6, 30, 22, 0, 0, TAU); g.fill();
       ink(() => { g.beginPath(); g.roundRect ? g.roundRect(-26, -18, 52, 36, 5) : g.rect(-26, -18, 52, 36); }, '#4E5A78', 1.6);
@@ -467,7 +471,7 @@ export function makeScene(canvas, api) {
       g.globalAlpha = a; g.drawImage(w.c, Math.round((x - w.w / 2) * dpr) / dpr, Math.round((y - w.base) * dpr) / dpr, w.w, w.h); g.globalAlpha = 1;
     };
     if (groundA > 0.02) {
-      for (const [kind, name, dy] of [['trader', 'TRADER', 54], ['book', 'BOOK', 38], ['settings', 'SETTINGS', 34], ['tent', 'TENT', 46], ['battle', 'BATTLE', 46]]) {
+      for (const [kind, name, dy] of [['trader', 'TRADER', 54], ['book', 'BOOK', 38], ['settings', 'SETTINGS', 34], ['tent', 'TENT', 46], ['battle', 'BATTLE', 46], ['wagon', 'WAGON', 66]]) {
         if (kind === 'tent') continue;
         const p = toScreen(L[kind].x, L[kind].y + dy); word(name, p.x, p.y, 11, '#C9CEE4', groundA);
       }
@@ -562,6 +566,7 @@ export function makeScene(canvas, api) {
     if (best) return { type: 'hero', id: best.id };
     if (near({ x: 0, y: 0 }, 44)) return { type: 'fire' };
     for (const k of ['trader', 'book', 'settings', 'battle']) if (near(L[k], k === 'trader' ? 58 : 40)) return { type: k };
+    if (Math.abs(w.x - L.wagon.x) < 30 && w.y > L.wagon.y - 40 && w.y < L.wagon.y + 64) return { type: 'wagon' }; // lane C
     for (let i = 0; i < 4; i++) if (near(seatPos(i), 26)) return { type: 'fire' };
     return null;
   }

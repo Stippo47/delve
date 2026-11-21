@@ -80,3 +80,17 @@ V3 touches js/kits.js and js/fxkit.js, which lane H also edits: start it after H
 Update, same evening: the designer has a credit reset ("I have a reset. Just go"). Now running four: A (`art5`),
 H (`heroes2`), **R: roster** (`roster3`) and **B: bosses** (`bosses2`). Next as slots free: V3 (after H merges),
 then C (convoy).
+
+## Wave 11 (started 2026-11-21, after 0.12.0)
+Wave 10 is merged and live as 0.12.0 (heroes2, roster3, art5, bosses2, battle mode, the round 11 balance pass).
+Running now, each in its own worktree under ~/Dev/delve-wt/, commit and never push:
+| lane | branch | does |
+|---|---|---|
+| V3: visuals | `vis3` | the showcase 2 notes (round 10 in DECISIONS; the log docs/riffle-log/2026-11-21-round10-showcase2.txt is the spec): the kit changes asked for (Zeus Bolt, Roll, the cleric's orbs, the bone dart, Frost Arrow) and every visual note; Inked puddles as the default; boss spins that draw bone spikes; then re-record only the changed clips |
+| C: convoy | `convoy` | the wagon escort mode as a second mode, one biome, playable from the camp |
+| D: balance | `balance2` | the last three dungeons clearable on a sane curve; every boss about even at the level the campaign reaches it; the 37 new heroes' outliers, ability by ability, with tools/balance.mjs |
+| A: art | `art6` | real art for the kinds in docs/ART-NEEDED.md and the bosses in docs/ART-NEEDED-bosses.md, dungeon by dungeon |
+Rules for all (round 11): either kind of unit can be on either side (battle mode): never `team === 'hero'` for
+targets; summons take `team: u.team`. `node tools/battles.mjs` must end with 0 problems. Armour is js/armour.js.
+A hero's dmg stat drives all its damage; ROLE_TUNE in heroes.js is laid over the stats as written. Cooldowns are
+written on the old scale and stretched by CD_MUL.

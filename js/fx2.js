@@ -117,8 +117,9 @@ const DRAW = {
     const lift = u.hop || 0, [vx, vy] = upVec();
     ctx.save(); ctx.globalAlpha *= a; ctx.translate(u.x + vx * lift, u.y + vy * lift); ctx.rotate(u.facing - Math.PI / 2);
     for (const s of [-1, 1]) { ctx.save(); ctx.scale(s, 1); ctx.rotate((0.35 + beat) * spread - 0.2);
-      for (let i = 0; i < 4; i++) { const L = (u.r + 14 + i * 7) * spread, b = 0.6 + i * 0.32;
-        inked(ctx, () => { ctx.beginPath(); ctx.moveTo(6, -4); ctx.quadraticCurveTo(Math.cos(b) * L * 0.6 + 4, -Math.sin(b) * L * 0.2 - 10, Math.cos(b) * L, -Math.sin(b) * L * 0.45 - 4); ctx.quadraticCurveTo(Math.cos(b) * L * 0.5, 6, 6, 4); ctx.closePath(); }, i % 2 ? '#E9E2D2' : '#FFFFFF'); }
+      // round 10 (the heroes lane: "Wing Guard's wings are faint"): longer, reaching well past the body, in his own gold
+      for (let i = 0; i < 4; i++) { const L = (u.r + 28 + i * 11) * spread, b = 0.6 + i * 0.32;
+        inked(ctx, () => { ctx.beginPath(); ctx.moveTo(6, -4); ctx.quadraticCurveTo(Math.cos(b) * L * 0.6 + 4, -Math.sin(b) * L * 0.2 - 12, Math.cos(b) * L, -Math.sin(b) * L * 0.45 - 4); ctx.quadraticCurveTo(Math.cos(b) * L * 0.5, 8, 6, 4); ctx.closePath(); }, ['#F8EED8', '#FBD46E', '#F9CB5C', '#E09A2E'][i]); }
       ctx.restore(); }
     ctx.restore();
   },
@@ -166,12 +167,17 @@ const DRAW = {
 };
 // ----- batch 2
 // War Horn: three warm sound fronts rolling out across the floor
+// War Horn, Mock, Showboat: a blast of sound. Round 10 (the designer dislikes rings round heroes): no rings rolling out
+// round him; short curved sound lines burst out from him in every direction, three waves of them, and fade close by
 DRAW.horn = (ctx, f, w, layer) => {
-  if (layer !== 'ground') return; const k = k01(f.t / f.max);
-  for (let i = 0; i < 3; i++) { const q = k01(k * 1.6 - i * 0.25); if (q <= 0 || q >= 1) continue; const R = 30 + (f.r - 30) * easeOut(q);
-    ctx.save(); ctx.globalAlpha *= (1 - q) * 0.8; ctx.setLineDash([14, 10]);
-    inkLine(ctx, () => { ctx.beginPath(); ctx.arc(f.x, f.y, R, 0, TAU); }, i % 2 ? '#FFC85A' : '#FF9A55', 4 * (1 - q) + 1.5); ctx.restore(); }
-  if (k < 0.25) lit(ctx, () => glowDisc(ctx, f.x, f.y, 60, '#FFC85A', 0.5 * (1 - k / 0.25)));
+  if (layer !== 'air') return; const k = k01(f.t / f.max), u = f.unit && !f.unit.dead ? f.unit : f, r0 = (f.unit ? f.unit.vr : 20) + 8;
+  const fa = f.unit ? f.unit.facing : 0, dirs = [-1.35, -0.45, 0.45, 1.35]; // four bursts of lines, out to the front and sides: never a ring
+  for (let wv = 0; wv < 3; wv++) { const q = k01(k * 1.8 - wv * 0.28); if (q <= 0 || q >= 1) continue; const e = easeOut(q), R = r0 + 46 * e;
+    ctx.save(); ctx.globalAlpha *= (1 - q) * (1 - q);
+    for (const d of dirs) { const b = fa + d, half = 0.26 - 0.08 * q;
+      inkLine(ctx, () => { ctx.beginPath(); ctx.arc(u.x, u.y, R, b - half, b + half); }, wv % 2 ? '#FFC85A' : '#FF9A55', 3.6 * (1 - 0.5 * q) + 1); }
+    ctx.restore(); }
+  if (k < 0.2) lit(ctx, () => glowDisc(ctx, u.x, u.y, 50, '#FFC85A', 0.4 * (1 - k / 0.2)));
 };
 // speed lines behind a dash, in a colour
 DRAW.streak = (ctx, f, w, layer) => {
