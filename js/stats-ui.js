@@ -9,6 +9,7 @@ import { STATUS } from './statuses.js';
 import { icon, abilityGlyph, ABILITY_COLOR } from './icons.js';
 import { portrait } from './inspect.js';
 import { I, face } from './ui-kit.js';
+import { MERCS } from './progress.js';
 
 export const num = (n) => Math.round(n || 0).toLocaleString('en-US');
 const pct = (a, b) => { const p = b > 0 ? 100 * a / b : 0; return p > 0 && p < 1 ? '<1' : Math.round(p); };
@@ -18,9 +19,10 @@ const PET_ABS = ['callWolf', 'raiseDead'];
 // A hero's face (sellswords have no portrait card: their sprite).
 export function heroFace(id, size) {
   if (HEROES[id]) return face(id, size);
-  return `<span class="face" style="width:${size}px;height:${size}px;--rc:#8F97A3"><img src="${portrait(id)}" alt=""></span>`;
+  const m = MERCS.find((x) => x.kind === id);
+  return `<span class="face" style="width:${size}px;height:${size}px;--rc:#8F97A3"><img src="${m ? m.art : portrait(id)}" alt=""></span>`;
 }
-const heroName = (id) => (HEROES[id] ? HEROES[id].name : DEFS[id] ? DEFS[id].name : id);
+const heroName = (id) => (HEROES[id] ? HEROES[id].name : (MERCS.find((x) => x.kind === id) || DEFS[id] || { name: id }).name);
 
 // What a source key (stats.js) is: its name, its little picture, its colour.
 export function srcInfo(hero, key) {
@@ -61,12 +63,12 @@ const LEADS = [
 export function resultStats(S) {
   if (!S || !S.order || !S.order.length) return '';
   const ids = S.order.filter((k) => S.heroes[k]), H = (k) => S.heroes[k];
-  const lead = LEADS.map(([m, label, col]) => {
+  const leads = LEADS.map(([m, label, col]) => {
     const best = ids.reduce((b, k) => (H(k)[m] > (b ? H(b)[m] : 0) ? k : b), null);
     if (!best && m === 'downs') return `<div class="rs-lead calm"><span class="rs-ok">${I.check}</span><span class="cap">${label}</span><b>Nobody fell</b></div>`;
     if (!best) return '';
     return `<div class="rs-lead" style="--lc:${col}">${heroFace(best, 44)}<span class="cap">${label}</span><b>${num(H(best)[m])}</b><span class="rs-who">${heroName(best)}</span></div>`;
-  }).join('');
+  }).filter(Boolean);
   const max = (m) => Math.max(1, ...ids.map((k) => H(k)[m]));
   const bar = (k, m, label, cls) => `<div class="rs-bar ${cls}"><span>${label}</span><span class="bar"><i style="width:${100 * H(k)[m] / max(m)}%"></i></span><b>${num(H(k)[m])}</b></div>`;
   const rows = ids.map((k) => {
@@ -82,7 +84,7 @@ export function resultStats(S) {
   }).join('');
   return `<section class="rstats">
     <div class="rs-h"><span class="cap">Who did what</span></div>
-    <div class="rs-leads">${lead}</div>
+    <div class="rs-leads n${leads.length}">${leads.join('')}</div>
     <div class="rs-h"><span class="cap">The party</span><span class="quiet small">tap a hero for where it came from</span></div>
     ${rows}
     ${foesGrid(S.foes, 'Defeated')}</section>`;
