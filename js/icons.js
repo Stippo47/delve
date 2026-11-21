@@ -129,6 +129,14 @@ const STATUS = {
     <path d="M16 15l2 4.4 4.6.4-3.5 3 1.1 4.6L16 25l-4.2 2.4 1.1-4.6-3.5-3 4.6-.4z" fill="#FFF6C8"/>`,
   rage: `<path d="M8 14c0-4 3-6 5-6h7c3 0 5 2 5 5v6c0 5-4 9-9 9s-8-4-8-8z" fill="#E0604B"/><path d="M12 8v7M16 8v7M20 8v7" fill="none" stroke="${INK}" stroke-width="1.6" ${H}/>`,
   taunt: `<circle cx="16" cy="16" r="12" fill="#E0604B"/><circle cx="16" cy="16" r="7" fill="#FFFFFF" ${H}/><circle cx="16" cy="16" r="3" fill="#E0604B" ${H}/>`,
+  // round 8: radiance builds (a halo over a small sun), radiant is the burst's glow (rays all round)
+  radiance: `<ellipse cx="16" cy="8" rx="9" ry="3.4" fill="none" stroke="${INK}" stroke-width="5.4"/><ellipse cx="16" cy="8" rx="9" ry="3.4" fill="none" stroke="#FFE48A" stroke-width="2.4" ${H}/>
+    <circle cx="16" cy="20" r="7.5" fill="#FFE48A"/><circle cx="14" cy="18" r="2.6" fill="#FFF8DC" ${H}/>`,
+  radiant: `<path d="M16 2l2.6 7.4L26 6l-3.4 7.4L30 16l-7.4 2.6L26 26l-7.4-3.4L16 30l-2.6-7.4L6 26l3.4-7.4L2 16l7.4-2.6L6 6l7.4 3.4z" fill="#FFE48A"/><circle cx="16" cy="16" r="5.5" fill="#FFFFFF" ${H}/>`,
+  // cursed builds (a purple skull-drop), hexed is the armed curse (an eye in a ring)
+  curse: `<path d="M16 3c6 0 10 4.4 10 10 0 4-2 6.4-4 7.6V26h-12v-5.4C8 19.4 6 17 6 13 6 7.4 10 3 16 3z" fill="#9A5CC8"/><circle cx="12.2" cy="13.5" r="2.6" fill="${INK}" ${H}/><circle cx="19.8" cy="13.5" r="2.6" fill="${INK}" ${H}/><path d="M13 22v3M16 22v3M19 22v3" stroke="${INK}" stroke-width="1.6" ${H}/>`,
+  hexed: `<circle cx="16" cy="16" r="12" fill="none" stroke="${INK}" stroke-width="5.4"/><circle cx="16" cy="16" r="12" fill="none" stroke="#9A5CC8" stroke-width="2.6" ${H}/>
+    <path d="M6 16c3-5 6.4-7 10-7s7 2 10 7c-3 5-6.4 7-10 7s-7-2-10-7z" fill="#E6D2F6"/><circle cx="16" cy="16" r="3.6" fill="#5A2A80" ${H}/>`,
 };
 
 // ---------------------------------------------------------------- ability glyphs (by ability id; a few shapes shared)

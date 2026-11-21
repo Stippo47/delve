@@ -104,7 +104,7 @@ export const STATUSES = {
   frozen: { name: 'Frozen', desc: 'Can\'t move or act. A hard hit shatters it.' },
   poison: { name: 'Poisoned', desc: 'Loses health slowly, moves and attacks a little slower. Too much rots.' },
   wet: { name: 'Soaked', desc: 'Abilities come back slower, freezes easier, flies further when hit. Soaked through, it slips.' },
-  shock: { name: 'Shocked', desc: 'Stunned for a moment, again and again.' },
+  shock: { name: 'Shocked', desc: 'Stunned for a moment, again and again. Too much overloads: a long jolt that arcs to friends close by.' },
   stagger: { name: 'Staggered', desc: 'Reeling. Enough staggers knock it out.' },
   stun: { name: 'Stunned', desc: 'Can\'t move or act for a moment.' },
   root: { name: 'Rooted', desc: 'Held to the ground: can\'t move, can still fight.' },
@@ -116,4 +116,8 @@ export const STATUSES = {
   buff: { name: 'Strengthened', desc: 'Something is helping it right now.' },
   debuff: { name: 'Weakened', desc: 'Something is holding it back right now.' },
   rage: { name: 'Enraged', desc: 'Faster and tougher while it lasts.' },
+  radiance: { name: 'Radiance', desc: 'Dazzled by holy light: attacks slower and much weaker. Full up, it shines.' },
+  radiant: { name: 'Radiant', desc: 'Shining: can't attack, and everyone close by is dazzled by the glow.' },
+  curse: { name: 'Cursed', desc: 'Heals barely take, then not at all, and blows land harder. Full up, it is hexed.' },
+  hexed: { name: 'Hexed', desc: 'Its next attack or ability turns on it: blows hurt itself, heals hurt the friend, summons change sides.' },
 };

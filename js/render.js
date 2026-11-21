@@ -477,7 +477,10 @@ function washesOf(u, w) {
   const wet = clamp((st.wet || 0) / 100, 0, 1), shock = clamp((st.shock || 0) / 100, 0, 1);
   if (chill > 0.05) out.push(['#9FDDF6', 0.25 + 0.4 * chill]);
   if (poison > 0.05) out.push(['#9BCB3C', 0.2 + 0.35 * poison]);
-  if (burn > 0.3) out.push(['#FF7A2F', (0.12 + 0.2 * burn) * (0.7 + 0.3 * Math.sin(w.time * 25 + u.id))]);
+  if (burn > 0.05) out.push(['#FF7A2F', (0.12 + 0.2 * burn) * (0.7 + 0.3 * Math.sin(w.time * 25 + u.id))]);
+  const rad = u.radiantT > 0 ? 1 : clamp((st.radiance || 0) / 100, 0, 1), curse = u.hexed ? 1 : clamp((st.curse || 0) / 100, 0, 1); // round 8
+  if (rad > 0.03) out.push(['#FFF1B0', (0.15 + 0.35 * rad) * (u.radiantT > 0 ? 0.85 + 0.15 * Math.sin(w.time * 9) : 1)]);
+  if (curse > 0.03) out.push(['#5A2A80', 0.15 + 0.3 * curse]);
   if (wet > 0.05) out.push(['#3F8FD8', 0.1 + 0.22 * wet]);
   if (shock > 0.05 && Math.sin(w.time * 31 + u.id * 3) > 0.55) out.push(['#FFF3A0', 0.35 + 0.4 * shock]);
   if (u.ethereal) out.push(['#BFE6FF', 0.45]);

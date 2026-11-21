@@ -40,7 +40,7 @@ function fireball(w, u, a, o = {}) {
 }
 function firePatch(w, x, y, r = 40, t = 4) { if (!w.hazards.some((h) => h.type === 'fire' && dist(h.x, h.y, x, y) < r)) w.hazards.push({ type: 'fire', x, y, r, t, max: t }); }
 function smite(w, u, x, y, o = {}) { // a shaft of light from above: a circle fills, then it strikes
-  lob(w, u, x, y, { r: o.r || 70, tell: o.tell || 0.9, kind: 'holy', dust: '#FFF1B0', hit: { dmg: o.dmg || 14, knock: 220 },
+  lob(w, u, x, y, { r: o.r || 70, tell: o.tell || 0.9, kind: 'holy', dust: '#FFF1B0', hit: { dmg: o.dmg || 14, knock: 220, radiance: o.radiance ?? 30 },
     land: (w2, z) => fx(w2, { type: 'pillar', x: z.x, y: z.y, r: z.r * 0.8, kind: 'holy', max: 0.6 }) });
   setAnim(u, 'cast', 0.4);
 }
@@ -50,7 +50,7 @@ function raise(w, u, range, o = {}) {
   if (!c || crowd(w, u.team) >= (o.cap || 20)) return false;
   w.corpses.splice(w.corpses.indexOf(c), 1);
   fx(w, { type: 'pillar', x: c.x, y: c.y, r: 30, kind: 'holy', max: 0.8 });
-  later(w, c.x, c.y, 0.6, () => { const s = spawn(w, c.kind, c.x, c.y, { mult: w.mult, hpMul: 0.5 }); s.aggro = true; puff(w, c.x, c.y, '#FFF1B0', 14, 120, 6, 0.5); });
+  later(w, c.x, c.y, 0.6, () => { const s = spawn(w, c.kind, c.x, c.y, { mult: w.mult, hpMul: 0.5 }); s.aggro = true; s.summonBy = u; puff(w, c.x, c.y, '#FFF1B0', 14, 120, 6, 0.5); });
   setAnim(u, 'cast', 0.6);
   return true;
 }
@@ -75,12 +75,12 @@ export const FOES = {
     range: 250, keep: 170, atkCd: 999, dmg: 6, xp: 18, coins: [3, 7], cost: 6, onDeath: (w, u) => web(w, u.x, u.y, 60, 7),
     brain: (w, u, dt) => { every(w, u, dt, 'web', 3.5, 5, 300, (t) => webShot(w, u, t)); return false; } },
   banshee: { ...FOE, name: 'Banshee', art: ART('banshee'), headR: 56, r: 28, vr: 22, mass: 0.7, hp: 60, speed: 58, role: 'ranged', range: 200, keep: 140, atkCd: 999, dmg: 7,
-    xp: 15, coins: [3, 6], cost: 5, undead: true, res: { poison: 0, burn: 1.3, chill: 0.2 },
+    xp: 15, coins: [3, 6], cost: 5, undead: true, res: { poison: 0, burn: 1.3, chill: 0.2, curse: 0 },
     brain: (w, u, dt) => {
       if (hold(u, dt)) return true;
       const t = targetOf(w, u); if (!t || !due(u, 'wail', dt, 2.5) || dist(u.x, u.y, t.x, t.y) > 240) return false;
       again(u, 'wail', 4, 5.5);
-      cone(w, u, angleTo(u.x, u.y, t.x, t.y), { r: 250, arc: 1.1, tell: 0.6, kind: 'soul', hit: { dmg: 7, chill: 30, stagger: 35, knock: 120 } });
+      cone(w, u, angleTo(u.x, u.y, t.x, t.y), { r: 250, arc: 1.1, tell: 0.6, kind: 'soul', hit: { dmg: 7, curse: 32, stagger: 35, knock: 120 } }); // round 8: the wail curses
       return true;
     } },
   ogre: { ...FOE, name: 'Ogre', art: ART('ogre'), headR: 66, r: 42, vr: 31, turn: 2.6, accel: 150, face: 2.6, mass: 3, hp: 160, speed: 42, role: 'melee',
@@ -106,11 +106,11 @@ export const FOES = {
 
   // ---- the Gilded Spire: the host above; cherubs shooting from the back, angels with spears, seraphs casting
   cherub: { ...FOE, name: 'Cherub', art: ART('cherub'), headR: 46, r: 20, vr: 16, turn: 7, accel: 420, face: 7, mass: 0.6, hp: 24, speed: 66, role: 'ranged',
-    range: 260, keep: 180, atkCd: 1.4, dmg: 5, temp: 0.6, commit: 0.5, xp: 6, coins: [1, 3], cost: 2, pack: [2, 3], attackAnim: 'draw' },
+    range: 260, keep: 180, atkCd: 1.4, dmg: 5, temp: 0.6, commit: 0.5, xp: 6, coins: [1, 3], cost: 2, pack: [2, 3], attackAnim: 'draw', radiance: 12, res: { radiance: 0 } },
   angel: { ...FOE, name: 'Angel', art: ART('angel'), headR: 56, r: 31, vr: 23, hp: 80, speed: 60, role: 'melee', range: 40, atkCd: 1.3, windup: 0.25, dmg: 12, knock: 150, arc: 0.9,
-    xp: 16, coins: [3, 7], cost: 5, attackAnim: 'thrust', ability: 'dash', abilCd: 4.5 },
+    xp: 16, coins: [3, 7], cost: 5, attackAnim: 'thrust', ability: 'dash', abilCd: 4.5, radiance: 22, res: { radiance: 0 } },
   seraph: { ...FOE, name: 'Seraph', art: ART('seraph'), headR: 56, r: 31, vr: 23, hp: 60, speed: 52, role: 'ranged', range: 280, keep: 200, atkCd: 1.5, dmg: 7,
-    proj: 'bolt', projColor: '#FFF1B0', xp: 16, coins: [3, 7], cost: 5, attackAnim: 'cast' },
+    proj: 'bolt', projColor: '#FFF1B0', xp: 16, coins: [3, 7], cost: 5, attackAnim: 'cast', radiance: 20, res: { radiance: 0 } },
 
   // ---- wardens (floors 1 and 2) and bosses (floor 3): powered-up stand-ins
   broodQueen: { ...FOE, name: 'Brood Queen', art: ART('spider-momma'), headR: 58, r: 50, vr: 38, turn: 2.6, accel: 160, face: 2.6, mass: 4.5, hp: 400, speed: 44, role: 'melee',
@@ -155,7 +155,7 @@ export const FOES = {
       return false;
     } },
   archon: { ...FOE, name: 'Archon', art: ART('angel'), headR: 56, r: 48, vr: 36, turn: 2.8, accel: 170, face: 2.8, mass: 4.5, hp: 440, speed: 52, role: 'melee',
-    range: 44, atkCd: 1.4, windup: 0.35, dmg: 15, knock: 200, arc: 1.0, heavy: true, temp: 0.25, commit: 1.2, xp: 80, coins: [30, 45], boss: true, onDeath: courtFalls, attackAnim: 'thrust',
+    range: 44, atkCd: 1.4, windup: 0.35, dmg: 15, knock: 200, arc: 1.0, heavy: true, temp: 0.25, commit: 1.2, xp: 80, coins: [30, 45], boss: true, onDeath: courtFalls, attackAnim: 'thrust', radiance: 25, res: { radiance: 0 },
     brain: (w, u, dt) => {
       if (rushTick(w, u, dt)) return true;
       callAdds(w, u, dt, ['cherub', 'cherub', 'angel'], 16);
@@ -166,7 +166,7 @@ export const FOES = {
       return false;
     } },
   radiant: { ...FOE, name: 'The Radiant', art: ART('seraph'), headR: 56, r: 54, vr: 40, turn: 2.4, accel: 150, face: 2.4, mass: 6, hp: 920, speed: 46, role: 'melee',
-    range: 40, atkCd: 1.5, windup: 0.35, dmg: 18, knock: 220, arc: 1.2, heavy: true, temp: 0.2, commit: 1.4, xp: 160, coins: [60, 80], boss: true, onDeath: courtFalls, attackAnim: 'thrust',
+    range: 40, atkCd: 1.5, windup: 0.35, dmg: 18, knock: 220, arc: 1.2, heavy: true, temp: 0.2, commit: 1.4, xp: 160, coins: [60, 80], boss: true, onDeath: courtFalls, attackAnim: 'thrust', radiance: 25, res: { radiance: 0 },
     brain: (w, u, dt) => {
       if (hold(u, dt)) return true;
       callAdds(w, u, dt, ['angel', 'cherub', 'cherub'], 18);
@@ -174,7 +174,7 @@ export const FOES = {
       if (due(u, 'smite', dt, 3)) { again(u, 'smite', 4, 5.5); for (const h of opponents(w, u)) smite(w, u, h.x + (h.vx || 0) * 0.5, h.y + (h.vy || 0) * 0.5, { dmg: 15 }); }
       if (due(u, 'raise', dt, 8)) { again(u, 'raise', 10, 13); if (raise(w, u, 600)) raise(w, u, 600); }
       if (due(u, 'ring', dt, 7) && dist(u.x, u.y, t.x, t.y) < 320) { again(u, 'ring', 9, 11);
-        around(w, u, { r0: 90, r: 320, tell: 1.2, kind: 'holy', hit: { dmg: 20, knock: 280 }, fire: (w2, z) => { for (let i = 0; i < 10; i++) { const a = i / 10 * TAU; fx(w2, { type: 'pillar', x: z.x + Math.cos(a) * 200, y: z.y + Math.sin(a) * 200, r: 26, kind: 'holy', max: 0.5 }); } } }); return true; }
+        around(w, u, { r0: 90, r: 320, tell: 1.2, kind: 'holy', hit: { dmg: 20, knock: 280, radiance: 40 }, fire: (w2, z) => { for (let i = 0; i < 10; i++) { const a = i / 10 * TAU; fx(w2, { type: 'pillar', x: z.x + Math.cos(a) * 200, y: z.y + Math.sin(a) * 200, r: 26, kind: 'holy', max: 0.5 }); } } }); return true; }
       return false;
     } },
 };
@@ -214,7 +214,7 @@ Object.assign(ELITES, {
     const near = opponents(w, u).filter((h) => dist(u.x, u.y, h.x, h.y) < 340); if (!near.length) return false;
     again(u, 'pull', 7, 9);
     beginHold(u, 0.6, null, () => { fx(w, { type: 'ring', x: u.x, y: u.y, r: 340, color: '#B48CFF', max: 0.5 });
-      for (const h of opponents(w, u)) if (dist(u.x, u.y, h.x, h.y) < 340) { const a = angleTo(h.x, h.y, u.x, u.y); h.kx += Math.cos(a) * 420 / h.mass; h.ky += Math.sin(a) * 420 / h.mass; hurt(w, h, 4 * u.dmgMul, u, { chill: 25 }); } });
+      for (const h of opponents(w, u)) if (dist(u.x, u.y, h.x, h.y) < 340) { const a = angleTo(h.x, h.y, u.x, u.y); h.kx += Math.cos(a) * 420 / h.mass; h.ky += Math.sin(a) * 420 / h.mass; hurt(w, h, 4 * u.dmgMul, u, { curse: 22 }); } });
     setAnim(u, 'cast', 0.6); return true;
   } },
   // Ogre: splits the floor: a shockwave down a line.
@@ -247,7 +247,7 @@ Object.assign(ELITES, {
     again(u, 'breath', 6, 8); breath(w, u, angleTo(u.x, u.y, t.x, t.y), 250); return true;
   } },
   // Cherub: arrow rain: a circle on the floor peppered from above.
-  cherub: { tick(w, u, dt) { every(w, u, dt, 'rain', 4, 5.5, 420, (t) => lob(w, u, t.x, t.y, { r: 80, tell: 1.0, kind: 'holy', dust: '#FFF1B0', hit: { dmg: 9, knock: 80 },
+  cherub: { tick(w, u, dt) { every(w, u, dt, 'rain', 4, 5.5, 420, (t) => lob(w, u, t.x, t.y, { r: 80, tell: 1.0, kind: 'holy', dust: '#FFF1B0', hit: { dmg: 9, knock: 80, radiance: 18 },
     land: (w2, z) => { for (let i = 0; i < 12; i++) { const a = rand() * TAU, d = rand() * z.r; sparks(w2, z.x + Math.cos(a) * d, z.y + Math.sin(a) * d, rand() * TAU, 1, '#FFF1B0'); } } })); return false; } },
   // Angel: smites: a shaft of light where you stand.
   angel: { tick(w, u, dt) { every(w, u, dt, 'smite', 3.5, 5, 460, (t) => smite(w, u, t.x + (t.vx || 0) * 0.5, t.y + (t.vy || 0) * 0.5)); return false; } },

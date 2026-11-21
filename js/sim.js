@@ -5,6 +5,7 @@ import { lineClear, pathClear, rayToRoundRect, circleRect, findPath, buildGrid }
 import { kitThink, kitTick, hooksOf, segDist } from './kits.js';
 import { trinketHooks } from './trinkets.js';
 import { cue } from './sfx.js';
+import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE } from './statuses.js';
 
 let NEXT_ID = 1;
 const DIRS = 16;
@@ -41,7 +42,7 @@ export function spawn(w, kind, x, y, opts = {}) {
     dmgMul: hero ? levelDmg(1, lvl) : (0.65 + 0.35 * mult) * (team === 'enemy' ? FEEL.enemyDmg : 1), level: lvl,
     facing: team === 'hero' ? 0 : Math.PI, atkT: rand() * d.atkCd, abilT: (d.abilCd || 0) * rrange(0.3, 0.7),
     mode: 'wander', modeT: 0, thinkT: rand() * 0.4, abilThinkT: rand() * 0.5, target: null, targetT: 0,
-    st: { burn: 0, chill: 0, poison: 0, wet: 0, shock: 0, stagger: 0 }, frozenT: 0, stunT: 0, rootT: 0, sleepT: 0, koT: 0, buffs: [], later: null, freezeImmune: 0, dotAcc: 0,
+    st: freshStatuses(), frozenT: 0, stunT: 0, rootT: 0, sleepT: 0, koT: 0, buffs: [], later: null, freezeImmune: 0, dotAcc: 0,
     flashT: 0, invulnT: 0, act: null, dead: false, downed: false,
     trinkets: opts.trinkets || [], trinketHooks: trinketHooks(opts.trinkets), hasKey: !!opts.hasKey,
     strafeSign: chance(0.5) ? 1 : -1, wanderA: rand() * TAU, hazardT: 0, forcedGoal: null,
@@ -75,6 +76,7 @@ const atkRate = (u) => {
   for (const b of u.buffs) if (b.atkSpeed) r *= b.atkSpeed;
   for (const h of hooksOf(u)) if (h.atkSpeed) r *= h.atkSpeed(u);
   if (u.st.poison > 20) r *= 0.9;
+  if (u.st.radiance > 0) r *= 1 - RADIANCE.atkSlow * fillOf(u, 'radiance'); // radiant: attacks come slower
   return r;
 };
 const buffMul = (u, key) => { let m = 1; for (const b of u.buffs) if (b[key] != null) m *= b[key]; return m; };
@@ -89,11 +91,32 @@ export function addBuff(u, b) {
 export function stun(w, u, t) { if (!alive(u)) return; u.stunT = Math.max(u.stunT, u.def.boss ? t * 0.4 : t); u.act = u.act && u.act.type === 'drink' ? null : u.act; }
 export function heal(w, u, amount, src) {
   if (!alive(u) || amount <= 0) return 0;
+  // a hexed healer's heal turns: it hurts the friend instead (a tiny tick only turns inside a hex that has fired)
+  if (src && src !== u && alive(src) && src.team === u.team && (src.hexUntil > w.time || (amount >= 1.5 && hexFires(w, src)))) {
+    hurt(w, u, Math.min(amount, u.maxHp * CURSE.selfCap), null, { noDodge: true, hexTurned: true }); return 0;
+  }
+  if (u.st.curse > 0) amount *= Math.max(0, 1 - CURSE.healCut * fillOf(u, 'curse')); // cursed: heals do less, then nothing
+  if (amount <= 0) return 0;
   const before = u.hp; u.hp = Math.min(u.maxHp, u.hp + amount);
   if (u.hp - before > 2 && rand() < 0.5) w.particles.push({ x: u.x + rrange(-12, 12), y: u.y, vx: 0, vy: 0, rise: 50, up: 0, life: 0.6, max: 0.6, size: 4, color: '#9BE07A' });
   return u.hp - before;
 }
-export function cleanse(u) { u.st.burn = 0; u.st.chill = 0; u.st.poison = 0; u.st.wet = 0; u.st.shock = 0; u.st.stagger = 0; u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; }
+export function cleanse(u) { u.st = freshStatuses(); u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.hexed = false; u.radiantT = 0; }
+// Cursed's burst: an armed hex fires on the unit's next attack, heal or summon. hexFires() arms the window (everything
+// that action does in the next CURSE.windowT turns too) and says whether this one turns.
+function hexFires(w, u) {
+  if (u.hexUntil > w.time) return true;
+  if (!u.hexed) return false;
+  u.hexed = false; u.hexUntil = w.time + CURSE.windowT; u.hexSelf = 0;
+  fx(w, { type: 'hex', kind: 'fire', unit: u, x: u.x, y: u.y, r: u.vr * 1.3, max: 0.7 });
+  return true;
+}
+// A summon made by a hexed unit joins the other side (it keeps its life timer; a turned enemy add gets one).
+function turnSummon(w, s, by) {
+  s.team = by.team === 'hero' ? 'enemy' : 'hero'; s.summon = true; s.turned = true; s.turnedFrom = by; s.summonBy = null;
+  s.target = null; s.aggro = true; if (s.lifeT == null) s.lifeT = 12;
+  fx(w, { type: 'hex', kind: 'turn', unit: s, x: s.x, y: s.y, r: s.vr * 1.3, max: 0.8 });
+}
 // A visual effect, optionally with a tick (a lasting zone that does something every `every` seconds).
 export function fx(w, f) { f.t = 0; f.max = f.max ?? f.dur ?? 0.5; w.fx.push(f); return f; }
 export function zone(w, z) { return fx(w, { type: 'zone', ...z, max: z.dur, acc: 0 }); }
@@ -614,6 +637,15 @@ const KNOCK = 1.6; // every knockback, scaled (round 6: "more knockback, more ph
 const SHIELD_BEARERS = new Set(['paladin', 'tower', 'knight']); // heroes carrying a shield on the front
 export function hurt(w, u, amount, src, o = {}) {
   if (!alive(u) || u.invulnT > 0 || amount <= 0 || u.ethereal) return 0;
+  if (src && src !== u && !o.dot && !o.hexTurned && !o.noHex) {
+    if (src.radiantT > 0) return 0; // radiant: its glow is all it can do
+    if (alive(src) && hexFires(w, src)) { // hexed: the blow turns on the one who struck it
+      const room = Math.max(0, src.maxHp * CURSE.selfCap - (src.hexSelf || 0)), self = Math.min(amount * CURSE.selfMul, room);
+      src.hexSelf = (src.hexSelf || 0) + self;
+      if (self > 0) hurt(w, src, self, null, { noDodge: true, hexTurned: true, color: STATUS.curse.col });
+      return 0;
+    }
+  }
   if (u.team === 'enemy') wake(w, u);
   if (u.sleepT > 0 && !o.dot) u.sleepT = 0;
   // a hook can make the blow miss entirely (Blink Stone)
@@ -626,7 +658,9 @@ export function hurt(w, u, amount, src, o = {}) {
   if (u.act && u.act.type === 'drink' && !o.dot) u.act = null;
   if (!o.dot && !o.noDodge && u.def.dodge && chance(u.def.dodge)) { textU(w, u.x, u.y, u.r, 'dodge', '#CFE8FF', 0.8); return 0; }
   let amt = amount;
-  if (src && alive(src)) { for (const h of hooksOf(src)) if (h.dealt) amt = h.dealt(w, src, u, amt, o); amt *= buffMul(src, 'dealt'); }
+  if (src && alive(src)) { for (const h of hooksOf(src)) if (h.dealt) amt = h.dealt(w, src, u, amt, o); amt *= buffMul(src, 'dealt');
+    if (src.st.radiance > 0) amt *= 1 - RADIANCE.weaken * fillOf(src, 'radiance'); } // radiant: much weaker blows
+  if (u.st.curse > 0) amt *= 1 + CURSE.taken * fillOf(u, 'curse');             // cursed: blows land harder
   for (const h of hooksOf(u)) if (h.taken) amt = h.taken(w, u, src, amt, o);
   amt *= buffMul(u, 'taken');
   if (u.koT > 0) amt *= 1.5;                                 // knocked out: wide open
@@ -673,7 +707,7 @@ export function hurt(w, u, amount, src, o = {}) {
     const k = o.knock * KNOCK / u.mass * (u.st.wet > 60 ? 1.7 : 1) * (onShield ? 0.6 : 1);
     u.kx += Math.cos(a) * k; u.ky += Math.sin(a) * k;
   }
-  for (const s of ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger']) if (o[s]) addStatus(w, u, s, o[s], src);
+  for (const s of BUILD_IDS) if (o[s]) addStatus(w, u, s, o[s], src);
   if (src && alive(src) && !o.dot) for (const h of hooksOf(src)) if (h.hit) h.hit(w, src, u, amt, o);
   if (!o.dot) for (const h of hooksOf(u)) if (h.struck) h.struck(w, u, src, amt, o);
   if (u.hp <= 0 && hooksOf(u).some((h) => h.downed && h.downed(w, u, src))) return amt;
@@ -683,39 +717,65 @@ export function hurt(w, u, amount, src, o = {}) {
 
 export function addStatus(w, u, type, amount, src) {
   if (!alive(u) || u.ethereal || immuneTo(u, type)) return;
+  if (type === 'radiance' && (u.radiantT > 0 || u.radImmuneT > 0)) return; // glowing, or just was: its own aura can't feed it
   const res = (u.def.res && u.def.res[type]) ?? 1;
   const s = u.st;
   if (type === 'chill' && s.wet > 30) amount *= 1.5;          // wet freezes easier
   if (type === 'shock' && s.wet > 30 && src) for (const h of hooksOf(src)) if (h.shockMul) amount *= h.shockMul;
   s[type] = (s[type] || 0) + amount * res;
+  const need = needOf(u, type), after = STATUS[type].after;
+  const burst = () => { (u.bursts || (u.bursts = {}))[type] = w.time; }; // the HUD ring flashes when it bursts
   if (type === 'wet') {
     s.poison *= 0.5;                                             // water washes poison off
-    if (s.wet >= 100) {                                          // soaked through: slips, spins, leaves a puddle
-      s.wet = 60; u.act = { type: 'slip', t: 1, max: 1 }; u.stunT = Math.max(u.stunT, 1);
+    if (s.wet >= need) {                                         // soaked through: slips, spins, leaves a puddle
+      s.wet = after; burst(); u.act = { type: 'slip', t: 1, max: 1 }; u.stunT = Math.max(u.stunT, 1);
       // no new puddle on top of one: slipping in a puddle used to make puddles that soak and slip again, without end
       if (!w.hazards.some((h) => h.type === 'water' && dist(u.x, u.y, h.x, h.y) < h.r + 20)) w.hazards.push({ type: 'water', x: u.x, y: u.y, r: 42, t: 6, max: 6 });
       textU(w, u.x, u.y, u.r + 10, 'SLIP', '#8FD3FF', 1);
     }
     return;
   }
-  if (type === 'shock') { s.shock = Math.min(120, s.shock); return; }
+  if (type === 'shock') {
+    if (s.shock >= need) {                                       // overload: a long jolt that arcs to two friends close by
+      s.shock = after; burst(); stun(w, u, 1.0); u.act = null;
+      textU(w, u.x, u.y, u.r + 12, 'OVERLOAD', STATUS.shock.col, 1.2);
+      const near = w.units.filter((o) => o !== u && alive(o) && !o.ethereal && o.team === u.team && dist(o.x, o.y, u.x, u.y) < 140).slice(0, 2);
+      for (const o of near) { fx(w, { type: 'beam', kind: 'lightning', x1: u.x, y1: u.y, x2: o.x, y2: o.y, max: 0.25 }); addStatus(w, o, 'shock', 30, src); }
+    }
+    return;
+  }
   if (type === 'stagger') {
     u.stunT = Math.max(u.stunT, u.def.boss ? 0.05 : 0.15);
-    if (s.stagger >= 100) { s.stagger = 0; u.koT = u.def.boss ? 1.2 : 2.5; u.stunT = Math.max(u.stunT, u.koT); u.act = null; textU(w, u.x, u.y, u.r + 12, 'KO', '#FFE7A0', 1.2); }
+    if (s.stagger >= need) { s.stagger = after; burst(); u.koT = u.def.boss ? 1.2 : 2.5; u.stunT = Math.max(u.stunT, u.koT); u.act = null; textU(w, u.x, u.y, u.r + 12, 'KO', '#FFE7A0', 1.2); }
+    return;
+  }
+  if (type === 'radiance') {
+    if (s.radiance >= need) {                                    // RADIANT: a glow that can't attack, making others radiant
+      s.radiance = after; burst(); u.radiantT = RADIANCE.auraT; u.act = null;
+      textU(w, u.x, u.y, u.r + 12, 'RADIANT', STATUS.radiance.col, 1.2);
+      fx(w, { type: 'aura', kind: 'radiance', unit: u, x: u.x, y: u.y, r: RADIANCE.auraR, max: RADIANCE.auraT });
+    }
+    return;
+  }
+  if (type === 'curse') {
+    if (s.curse >= need) {                                       // HEXED: the next attack, heal or summon turns on it
+      s.curse = after; burst(); u.hexed = true; u.hexT = CURSE.armT;
+      textU(w, u.x, u.y, u.r + 12, 'HEXED', STATUS.curse.col, 1.2);
+      fx(w, { type: 'hex', kind: 'arm', unit: u, x: u.x, y: u.y, r: u.vr * 1.3, max: 0.8 });
+    }
     return;
   }
   if (type === 'burn') {
     if (u.frozenT > 0) { u.frozenT = 0; s.chill = 0; puff(w, u.x, u.y, 'rgba(235,240,245,0.8)', 10, 60, 9, 0.8); textU(w, u.x, u.y, u.r, 'thaw', '#DDEAF2', 0.8); }
     s.chill = Math.max(0, s.chill - amount);
-    if (s.burn >= 100) { s.burn = 20; textU(w, u.x, u.y, u.r + 12, 'SCORCH', '#FF7A2F', 1.2); hurt(w, u, 22, src, { noDodge: true }); explode(w, u.x, u.y, 60, 10, { burn: 24 }, src, '#FF7A2F', u); }
+    if (s.burn >= need) { s.burn = after; burst(); textU(w, u.x, u.y, u.r + 12, 'SCORCH', '#FF7A2F', 1.2); flames(w, u.x, u.y, 10, u.vr * 0.8, 90); hurt(w, u, 22, src, { noDodge: true, noHex: true }); explode(w, u.x, u.y, 60, 10, { burn: 24 }, src, '#FF7A2F', u); }
   } else if (type === 'chill') {
-    const need = 100 + u.freezeImmune;
     if (s.chill >= need && u.frozenT <= 0) {
-      u.frozenT = u.def.boss ? 1.6 : 3; s.chill = 0; s.burn = 0; u.freezeImmune += 45; u.act = null;
+      u.frozenT = u.def.boss ? 1.6 : 3; s.chill = after; s.burn = 0; u.freezeImmune += 45; u.act = null; burst();
       textU(w, u.x, u.y, u.r + 12, 'FREEZE', '#7FD6F5', 1.2); puff(w, u.x, u.y, '#BFEFFF', 10, 70, 4);
     }
   } else if (type === 'poison') {
-    if (s.poison >= 100) { s.poison = 30; textU(w, u.x, u.y, u.r + 12, 'ROT', '#9BCB3C', 1.2); hurt(w, u, u.maxHp * 0.15, src, { noDodge: true, color: '#9BCB3C' }); }
+    if (s.poison >= need) { s.poison = after; burst(); textU(w, u.x, u.y, u.r + 12, 'ROT', '#9BCB3C', 1.2); hurt(w, u, u.maxHp * 0.15, src, { noDodge: true, noHex: true, color: '#9BCB3C' }); }
   }
 }
 
@@ -776,7 +836,7 @@ function kill(w, u, src) {
   }
   if (u.summon) { u.dead = true; puff(w, u.x, u.y, '#A77BEA', 10, 80, 5, 0.5); return; } // summons just fade (purple: ours, round 7)
   if (u.team === 'hero') {
-    u.downed = true; u.act = null; u.frozenT = 0; u.st = { burn: 0, chill: 0, poison: 0 };
+    u.downed = true; u.act = null; u.frozenT = 0; u.st = freshStatuses(); u.hexed = false; u.radiantT = 0;
     textU(w, u.x, u.y, u.r + 10, 'DOWN', '#FF8A80', 1.1);
     emit(w, 'heroDown', u);
     return;
@@ -818,7 +878,7 @@ function meleeSwing(w, u, single) {
   u.lungeT = 0.18;
   w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, color: u.team === 'hero' ? '#FFFFFF' : '#FFD2C2' });
   for (const o of targets) {
-    hurt(w, o, d.dmg * u.dmgMul * rrange(0.9, 1.1), u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison });
+    hurt(w, o, d.dmg * u.dmgMul * rrange(0.9, 1.1), u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison, radiance: d.radiance, curse: d.curse });
   }
 }
 
@@ -827,7 +887,7 @@ function fireArrow(w, u, angle, o = {}) {
   u.recoilT = 0.14;
   w.projectiles.push({ kind: o.fire ? 'fireArrow' : (u.def.proj || 'arrow'), color: u.def.projColor, x: u.x + Math.cos(angle) * (u.r + 6), y: u.y + Math.sin(angle) * (u.r + 6),
     vx: Math.cos(angle) * sp, vy: Math.sin(angle) * sp, r: 6, team: u.team, owner: u, dmg: (o.dmg || u.def.dmg) * u.dmgMul,
-    o: { chill: o.fire ? 0 : u.def.chill, burn: o.fire ? 20 : 0, knock: 30 }, life: 1.2, a: angle });
+    o: { chill: o.fire ? 0 : u.def.chill, burn: o.fire ? 20 : 0, radiance: u.def.radiance, curse: u.def.curse, knock: 30 }, life: 1.2, a: angle });
 }
 
 function tryAttack(w, u) {
@@ -972,7 +1032,7 @@ function runAction(w, u, dt) {
     if (a.t <= 0) u.act = { type: 'charge', t: 0.55, max: 0.55, a: a.a, hit: new Set() };
   } else if (a.type === 'drink') {
     u.spd *= Math.exp(-dt * 6); u.dvx = Math.cos(u.mvA) * u.spd; u.dvy = Math.sin(u.mvA) * u.spd;
-    if (a.t <= 0) { u.act = null; u.potions--; u.hp = Math.min(u.maxHp, u.hp + u.maxHp * 0.45); puff(w, u.x, u.y, '#E0604B', 10, 70, 5, 0.6); emit(w, 'drank', u); }
+    if (a.t <= 0) { u.act = null; u.potions--; u.hp = Math.min(u.maxHp, u.hp + u.maxHp * 0.45 * Math.max(0, 1 - CURSE.healCut * fillOf(u, 'curse'))); puff(w, u.x, u.y, '#E0604B', 10, 70, 5, 0.6); emit(w, 'drank', u); }
   } else if (a.type === 'dash') {
     const sp = u.def.speed * 2.1;
     u.dvx = Math.cos(a.a) * sp; u.dvy = Math.sin(a.a) * sp; u.vx = u.dvx; u.vy = u.dvy; u.mvA = a.a; u.spd = sp;
@@ -1007,13 +1067,22 @@ function runAction(w, u, dt) {
 // ---------------------------------------------------------------- statuses over time
 function statusTick(w, u, dt) {
   const s = u.st;
-  if (s.wet > 0) s.wet = Math.max(0, s.wet - 6 * dt);
-  if (s.stagger > 0) s.stagger = Math.max(0, s.stagger - 12 * dt);
-  if (s.shock > 0) {                                             // a stun that comes back every so often
-    s.shock = Math.max(0, s.shock - 14 * dt);
+  if (s.wet > 0) s.wet = Math.max(0, s.wet - STATUS.wet.decay * dt);
+  if (s.stagger > 0) s.stagger = Math.max(0, s.stagger - STATUS.stagger.decay * dt);
+  if (s.shock > 0) {                                             // a stun that comes back every so often, once it has built a little
+    s.shock = Math.max(0, s.shock - STATUS.shock.decay * dt);
     u.shockT = (u.shockT ?? 0.4) - dt;
-    if (u.shockT <= 0) { u.shockT = 1.1; u.stunT = Math.max(u.stunT, u.def.boss ? 0.1 : 0.3); sparks(w, u.x, u.y, rand() * TAU, 4, '#FFF27A', 0.8); }
+    if (u.shockT <= 0 && s.shock >= 20) { u.shockT = 1.1; u.stunT = Math.max(u.stunT, u.def.boss ? 0.1 : 0.3); sparks(w, u.x, u.y, rand() * TAU, 4, '#FFF27A', 0.8); }
   }
+  if (s.radiance > 0) s.radiance = Math.max(0, s.radiance - STATUS.radiance.decay * dt);
+  if (s.curse > 0) s.curse = Math.max(0, s.curse - STATUS.curse.decay * dt);
+  if (u.radiantT > 0) {                                          // the radiant glow: everyone else close by turns radiant
+    u.radiantT -= dt;
+    if (rand() < dt * 10) w.particles.push({ x: u.x + rrange(-u.vr, u.vr), y: u.y + rrange(-u.vr, u.vr), vx: 0, vy: 0, rise: 40, up: 0, life: 0.7, max: 0.7, size: 4, color: '#FFF1B0' });
+    for (const o of w.units) if (o !== u && alive(o) && !o.ethereal && dist(o.x, o.y, u.x, u.y) < RADIANCE.auraR + o.r) addStatus(w, o, 'radiance', RADIANCE.auraRate * dt, u);
+    if (u.radiantT <= 0) { u.radiantT = 0; u.radImmuneT = RADIANCE.immuneT; }
+  } else if (u.radImmuneT > 0) u.radImmuneT -= dt;
+  if (u.hexed && (u.hexT -= dt) <= 0) u.hexed = false;           // an unused hex wears off
   for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
   for (const b of u.buffs) b.t -= dt;
   if (u.buffs.length) u.buffs = u.buffs.filter((b) => b.t > 0);
@@ -1034,10 +1103,15 @@ function statusTick(w, u, dt) {
   }
   for (const h of hooksOf(u)) if (h.tick) h.tick(w, u, dt);
   if (u.kit) kitTick(w, u, dt);
-  if (s.burn > 0) { s.burn = Math.max(0, s.burn - 7 * dt); if (s.burn >= 30) { hurt(w, u, (2 + s.burn * 0.05) * dt, null, { dot: true, color: '#FF9A55' });
-    if (rand() < dt * 9) flames(w, u.x, u.y - u.vr * 0.3, 1, u.vr * 0.6, 60); } }
-  if (s.chill > 0) s.chill = Math.max(0, s.chill - 6 * dt);
-  if (s.poison > 0) { s.poison = Math.max(0, s.poison - 4 * dt); hurt(w, u, s.poison * 0.07 * dt, null, { dot: true, color: '#9BCB3C' });
+  if (s.burn > 0) {
+    s.burn = Math.max(0, s.burn - STATUS.burn.decay * dt);
+    // burning: hurts from a little build-up (it used to wait for 30, so most burns never showed or hurt), and the body
+    // gives off licks of flame, more as it builds (fx.js drawStatusFx draws flames on the body too)
+    if (s.burn >= 8) hurt(w, u, (1.5 + s.burn * 0.06) * dt, null, { dot: true, color: '#FF9A55' });
+    if (s.burn > 4 && rand() < dt * (4 + 10 * fillOf(u, 'burn'))) flames(w, u.x, u.y - u.vr * 0.3, 1, u.vr * 0.6, 60);
+  }
+  if (s.chill > 0) s.chill = Math.max(0, s.chill - STATUS.chill.decay * dt);
+  if (s.poison > 0) { s.poison = Math.max(0, s.poison - STATUS.poison.decay * dt); hurt(w, u, s.poison * 0.07 * dt, null, { dot: true, color: '#9BCB3C' });
     if (s.poison > 25 && rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.7, y: u.y + rrange(-u.r, u.r) * 0.7, vx: 0, vy: -25, life: 0.6, max: 0.6, size: 4, color: '#9BCB3C' }); }
   if (u.frozenT > 0) u.frozenT -= dt;
   if (u.freezeImmune > 0) u.freezeImmune = Math.max(0, u.freezeImmune - 4 * dt);
@@ -1217,6 +1291,8 @@ function corpses(w, dt) {
 // ---------------------------------------------------------------- main step
 export function step(w, dt) {
   w.time += dt;
+  // a summon that came out of a hexed unit's ability joins the other side
+  for (const s of w.units) if (s.summonBy && !s.hexSeen) { s.hexSeen = true; const by = s.summonBy; if (alive(by) && (by.hexUntil > w.time || hexFires(w, by))) turnSummon(w, s, by); }
   w.shake = Math.max(0, w.shake - dt * 30);
   for (const u of w.units) {
     if (!alive(u)) continue;
@@ -1241,7 +1317,9 @@ export function step(w, dt) {
     movement(w, u, dt);
     if (u.rootT > 0) { u.dvx = u.dvy = 0; u.spd = 0; }
     updateFacing(u, dt);
-    if (u.kit) { u.abilThinkT -= dt; if (u.abilThinkT <= 0) { u.abilThinkT = 0.35; if (kitThink(w, u)) continue; } }
+    const radiant = u.radiantT > 0; // radiant: it glows, and can't attack or use an ability
+    if (radiant) { /* no attacks */ }
+    else if (u.kit) { u.abilThinkT -= dt; if (u.abilThinkT <= 0) { u.abilThinkT = 0.35; if (kitThink(w, u)) continue; } }
     else if (u.def.ability && u.abilT <= 0 && !u.forcedGoal) {
       u.abilThinkT -= dt;
       if (u.abilThinkT <= 0) {
@@ -1271,7 +1349,7 @@ export function step(w, dt) {
       let near = Infinity; for (const o of opponents(w, u)) near = Math.min(near, dist(u.x, u.y, o.x, o.y) - o.r);
       if (near > 150 && chance(dt * 3)) { u.act = { type: 'drink', t: 1, max: 1 }; }
     }
-    if (!u.act) tryAttack(w, u);
+    if (!u.act && !radiant) tryAttack(w, u);
   }
   physics(w, dt);
   dangerTick(w, dt);
@@ -1287,6 +1365,7 @@ export function step(w, dt) {
   for (const f of w.fx) {
     f.t += dt;
     // a beam tied to two units (a heal ray) follows them, and ends early if either falls
+    if (f.unit) { f.x = f.unit.x; f.y = f.unit.y; if (!alive(f.unit)) f.max = Math.min(f.max, f.t); } // an aura or mark riding on a unit
     if (f.from && f.to) { if (!alive(f.from) || !alive(f.to)) f.max = Math.min(f.max, f.t); f.x1 = f.from.x; f.y1 = f.from.y; f.x2 = f.to.x; f.y2 = f.to.y; }
     if (f.tick) { f.acc = (f.acc || 0) + dt; while (f.acc >= (f.every || 0.5)) { f.acc -= f.every || 0.5; f.tick(f); } }
     if (f.follow && f.src) { const e = w.units.filter((o) => alive(o) && o.team !== f.src.team).sort((a, b) => dist(a.x, a.y, f.x, f.y) - dist(b.x, b.y, f.x, f.y))[0];

@@ -193,7 +193,39 @@ export function drawAirFx(ctx, w) {
     else if (f.type === 'wall') wall(ctx, f, w.time);
     else if (f.type === 'wave') wave(ctx, f);
     else if (f.type === 'pillar') pillar(ctx, f, w.time);
+    else if (f.type === 'aura') aura(ctx, f, w.time);
+    else if (f.type === 'hex') hexMark(ctx, f, w.time);
   }
+}
+// Radiance's burst (sim.js, round 8): a warm glow round the radiant unit for its few seconds, its edge marking how far
+// it reaches (whoever stands inside turns radiant), slow rays turning in it.
+function aura(ctx, f, T) {
+  const a = life(f, 0.2, 0.5), r = f.r * (0.85 + 0.15 * easeOut(clamp(f.t / 0.3, 0, 1)));
+  ctx.save();
+  ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, f.x, f.y, r, '#FFE48A', 0.42 * a); ctx.restore();
+  ctx.globalAlpha = 0.55 * a;
+  for (let i = 0; i < 8; i++) { const an = T * 0.8 + i / 8 * TAU;
+    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(f.x + Math.cos(an) * r * 0.35, f.y + Math.sin(an) * r * 0.35); ctx.lineTo(f.x + Math.cos(an) * r * 0.8, f.y + Math.sin(an) * r * 0.8); }, '#FFF4C0', 2.2); }
+  ctx.globalAlpha = a * (0.7 + 0.3 * Math.sin(T * 6));
+  inkLine(ctx, () => { ctx.beginPath(); ctx.arc(f.x, f.y, r, 0, TAU); }, '#FFE48A', 2.6);
+  ctx.restore();
+}
+// Cursed's burst: 'arm' a purple ring closing onto the unit (it's hexed now), 'fire' a purple flare as the hex turns
+// its action round, 'turn' a swirl on a summon that changed sides.
+function hexMark(ctx, f, T) {
+  const k = clamp(f.t / f.max, 0, 1), a = 1 - k * k;
+  ctx.save(); ctx.globalAlpha = a;
+  if (f.kind === 'arm') {
+    const r = f.r * (2.2 - 1.2 * easeOut(k));
+    inkLine(ctx, () => { ctx.beginPath(); ctx.arc(f.x, f.y, r, 0, TAU); }, '#B07ADC', 3.2);
+    for (let i = 0; i < 6; i++) { const an = i / 6 * TAU - T * 2; inked(ctx, () => star(ctx, f.x + Math.cos(an) * r, f.y + Math.sin(an) * r, 4, 4, 0.4, an), '#E6D2F6'); }
+  } else {
+    const r = f.r * (0.6 + 1.6 * easeOut(k));
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, f.x, f.y, r * 1.2, '#9A5CC8', 0.6 * a); ctx.restore();
+    for (let i = 0; i < 3; i++) { const an = (f.kind === 'turn' ? T * 6 : 0) + i / 3 * TAU;
+      inkLine(ctx, () => { ctx.beginPath(); ctx.arc(f.x, f.y, r * (0.6 + 0.2 * i), an, an + 1.6); }, i % 2 ? '#E6D2F6' : '#9A5CC8', 3 * (1 - k) + 1.2); }
+  }
+  ctx.restore();
 }
 function ring(ctx, f) {
   const k = clamp(f.t / f.max, 0, 1), r = f.r * easeOut(k), wd = 7 * (1 - k) + 1.5;
@@ -408,6 +440,33 @@ export function drawStatusFx(ctx, u, T) {
       upright(ctx, px, py, () => inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -4.5); ctx.quadraticCurveTo(3.2, 0, 2.8, 1.6); ctx.arc(0, 1.6, 2.8, 0, Math.PI); ctx.quadraticCurveTo(-3.2, 0, 0, -4.5); ctx.closePath(); }, '#7EC8F0'));
     }
     ctx.globalAlpha = 1;
+  }
+  if ((st.burn || 0) > 4) { // burning (round 8: the flames on the body were gone): licks of fire on the body, more and taller as it builds
+    const f = clamp(st.burn / 100, 0, 1), n = 2 + Math.round(3 * f);
+    for (let i = 0; i < n; i++) {
+      const an = i / n * TAU + u.id * 0.7 + Math.sin(T * 1.3 + i) * 0.3, rr = vr * (0.45 + 0.2 * hash(i, u.id)), ph = (T * 2.2 + hash(u.id, i)) % 1;
+      const px = u.x + Math.cos(an) * rr + ux * vr * 0.15, py = u.y + Math.sin(an) * rr + uy * vr * 0.15;
+      const sz = (5 + 6 * f) * (0.75 + 0.35 * Math.sin(ph * Math.PI));
+      upright(ctx, px, py, () => flame(ctx, 0, 0, sz));
+    }
+  }
+  if ((st.radiance || 0) > 2 || u.radiantT > 0) { // radiance: a halo over the head, wider as it builds
+    const f = u.radiantT > 0 ? 1 : clamp(st.radiance / 100, 0, 1);
+    upright(ctx, u.x, u.y, () => { ctx.save(); ctx.globalAlpha = 0.5 + 0.5 * f;
+      inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(0, -vr * 1.15, vr * (0.3 + 0.35 * f), vr * (0.1 + 0.1 * f), 0, 0, TAU); }, '#FFE48A', 2.4 + 1.2 * f); ctx.restore(); });
+  }
+  if ((st.curse || 0) > 2 || u.hexed) { // cursed: dark wisps curling up off the body; hexed: an open eye over the head
+    const f = u.hexed ? 1 : clamp(st.curse / 100, 0, 1), n = 1 + Math.round(3 * f);
+    for (let i = 0; i < n; i++) {
+      const ph = (T * 0.9 + i / n + u.id * 0.31) % 1, an = (i * 2.1 + u.id) % TAU, rr = vr * 0.6;
+      const px = u.x + Math.cos(an) * rr + ux * ph * 22, py = u.y + Math.sin(an) * rr + uy * ph * 22;
+      ctx.globalAlpha = Math.sin(ph * Math.PI) * (0.55 + 0.45 * f);
+      inked(ctx, () => { ctx.beginPath(); ctx.arc(px + Math.sin(ph * 9 + i) * 3, py, 3.2 + 2.4 * f * (1 - ph), 0, TAU); }, i % 2 ? '#5A2A80' : '#9A5CC8');
+    }
+    ctx.globalAlpha = 1;
+    if (u.hexed) upright(ctx, u.x, u.y, () => { const y = -vr * 1.3, s = 1 + 0.12 * Math.sin(T * 7);
+      inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-8 * s, y); ctx.quadraticCurveTo(0, y - 7 * s, 8 * s, y); ctx.quadraticCurveTo(0, y + 7 * s, -8 * s, y); ctx.closePath(); }, '#E6D2F6');
+      ctx.fillStyle = '#5A2A80'; ctx.beginPath(); ctx.arc(0, y, 2.6 * s, 0, TAU); ctx.fill(); });
   }
   if ((st.shock || 0) > 5) { // little arcs crackling round the body
     const f = Math.floor(T / 0.07);
