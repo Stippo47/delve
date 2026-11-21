@@ -15,11 +15,11 @@ import { drawWurmHead, drawWurmSegment, drawDunes } from './fx-boss.js';
 
 export const SW = {
   body: [40, 39, 38, 36, 34, 32, 29, 26], gap: 4, share: 0.33,
-  surface: [4.5, 6], bite: { r: 165, arc: 1.3, tell: 0.7, dmg: 120, knock: 280, rec: 0.5 },
-  spit: { n: 3, r: 66, tell: 1.0, dmg: 80, cd: [3, 4.5] },
+  surface: [4.5, 6], bite: { r: 165, arc: 1.3, tell: 0.7, dmg: 100, knock: 280, rec: 0.5 },
+  spit: { n: 3, r: 66, tell: 1.0, dmg: 65, cd: [3, 4.5] },
   dive: { tell: 0.6, r: 110, dmg: 36 },
-  travel: 1.3, erupt: { r: 125, tell: 1.25, dmg: 140, knock: 380, line: 420, hw: 40, lineDmg: 100 },
-  tremor: { r0: 135, r1: 270, tell: 0.9, dmg: 70, knock: 220 },
+  travel: 1.3, erupt: { r: 125, tell: 1.25, dmg: 110, knock: 380, line: 420, hw: 40, lineDmg: 80 },
+  tremor: { r0: 135, r1: 270, tell: 0.9, dmg: 55, knock: 220 },
   pit: { r: 170, pull: 95, dur: 5, dmg: 120, knock: 420 },
 };
 export const PHASE_AT = [1, 0.65, 0.35];
@@ -177,7 +177,7 @@ function dunes(w) {
 
 export const WURM = {
   defs: {
-    sandWurm: { team: 'enemy', name: 'The Sand Wurm', r: 44, vr: 44, turn: 2.2, accel: 140, face: 2.2, mass: 12, hp: 900, speed: 60, role: 'melee', range: 30, atkCd: 999, arc: 2,
+    sandWurm: { team: 'enemy', name: 'The Sand Wurm', r: 44, vr: 44, turn: 2.2, accel: 140, face: 2.2, mass: 12, hp: 800, speed: 60, role: 'melee', range: 30, atkCd: 999, arc: 2,
       temp: 0.2, commit: 1.2, xp: 230, coins: [90, 110], boss: true, arena: 'dunes', noCorpse: true,
       res: { poison: 0.3, stagger: 0.4, wet: 1.4, burn: 0.8 }, draw: drawWurmHead, brain, onDeath: death },
     wurmSegment: PART('The Sand Wurm (body)', { r: 36, vr: 36, mass: 40, hp: 100, draw: drawWurmSegment }),

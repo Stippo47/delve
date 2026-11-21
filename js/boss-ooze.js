@@ -181,7 +181,7 @@ function cisternRoom(w) {
 
 export const OOZE = {
   defs: {
-    greatOoze: { team: 'enemy', name: 'The Great Ooze', r: 66, vr: 70, turn: 2, accel: 120, face: 2, mass: 7, hp: 1350, speed: 52, role: 'melee', range: 30, atkCd: 999, arc: 2,
+    greatOoze: { team: 'enemy', name: 'The Great Ooze', r: 66, vr: 70, turn: 2, accel: 120, face: 2, mass: 7, hp: 1150, speed: 52, role: 'melee', range: 30, atkCd: 999, arc: 2,
       temp: 0.2, commit: 1.2, xp: 160, coins: [60, 80], boss: true, arena: 'cistern', noCorpse: true, goo: '#7CC07A',
       res: { poison: 0, wet: 0, stagger: 0.4, burn: 1.4, chill: 1.2 }, draw: drawOoze, brain, onDeath: death },
   },

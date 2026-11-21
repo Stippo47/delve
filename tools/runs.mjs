@@ -90,7 +90,7 @@ function batch() {
       run.minis.forEach((m, j) => { if (m) res.minis[j]++; });
       res.gained += party.reduce((a, k) => a + (run.heroes[k].gained || 0), 0) / party.length;
       if (phase === 'lost') res.deaths.push(`${run.floor}.${run.map.L + 1}`);
-      if (verbose) console.log(`  ${theme} #${i}: ${phase} floor ${run.floor} room ${run.map.L + 1} (${run.node.kind}) rooms ${run.rooms} sim ${Math.round(t)}s gold ${run.coins} levels ${party.map((k) => run.heroes[k].level).join('/')}`);
+      if (verbose) console.log(`  ${theme} #${i}: ${phase} floor ${run.floor} room ${run.map.L + 1} (${run.node.kind}) rooms ${run.rooms} sim ${Math.round(t)}s gold ${run.coins} levels ${party.map((k) => run.heroes[k].level).join('/')}${run.world && run.world.bossLog ? ' boss ' + run.world.bossLog() : ''}`);
       if (phase === 'stuck' || phase === 'error') bad++;
     }
     console.log(theme.padEnd(7), `won ${res.won}/${n} lost ${res.lost} stuck ${res.stuck} err ${res.error}`, `| ended on floor 1/2/3: ${res.floors.slice(1).join('/')}`,

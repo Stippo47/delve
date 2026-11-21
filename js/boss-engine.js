@@ -16,13 +16,13 @@ import { drawEngineHead, drawEngineHand, drawFoundry, drawLaser } from './fx-bos
 export const GE = {
   hand: { side: 130, back: 30, hpK: 0.14, share: 0.4, rebuild: 12, every: [2, 3] },
   guard: [0.5, 1, 1.5], // what the head takes with 2 / 1 / 0 hands up
-  hammer: { r: 96, tell: 1.0, dmg: 115, stagger: 40, knock: 200 },
-  claw: { len: 420, hw: 44, tell: 0.85, dmg: 95, knock: 340 },
+  hammer: { r: 96, tell: 1.0, dmg: 105, stagger: 40, knock: 200 },
+  claw: { len: 420, hw: 44, tell: 0.85, dmg: 88, knock: 340 },
   vent: { r: 160, tell: 0.85, dmg: 70, burn: 30, knock: 260, cd: [5, 7] },
-  fist: { len: 640, hw: 34, tell: 0.9, speed: 1300, dmg: 120, knock: 360 },
+  fist: { len: 640, hw: 34, tell: 0.9, speed: 1300, dmg: 110, knock: 360 },
   spin: { dur: 3.6, r: 92, step: 0.3, dmg: 52, knock: 260, cd: [11, 13], speed: 1.5 },
   laser: { len: 640, hw: 26, tell: 1.1, sweep: 1.4, dur: 2.4, tick: 0.15, dmg: 24, burn: 10, cd: [9, 11] },
-  clap: { tell: 1.0, hw: 50, dmg: 120, cd: [8, 10] },
+  clap: { tell: 1.0, hw: 50, dmg: 110, cd: [8, 10] },
 };
 export const PHASE_AT = [1, 0.65, 0.35];
 const WAKE = 480;
@@ -185,7 +185,7 @@ function foundry(w) {
 const HAND = (name, o) => PART(name, { r: 40, vr: 40, mass: 30, hp: 100, draw: drawEngineHand, ...o });
 export const ENGINE = {
   defs: {
-    greatEngine: { team: 'enemy', name: 'The Great Engine', r: 52, vr: 52, turn: 2.5, accel: 140, face: 2.5, mass: 14, hp: 1000, speed: 46, role: 'melee', range: 30, atkCd: 999, arc: 2,
+    greatEngine: { team: 'enemy', name: 'The Great Engine', r: 52, vr: 52, turn: 2.5, accel: 140, face: 2.5, mass: 14, hp: 900, speed: 46, role: 'melee', range: 30, atkCd: 999, arc: 2,
       temp: 0.2, commit: 1.2, xp: 240, coins: [100, 120], boss: true, arena: 'foundry', noCorpse: true,
       res: { poison: 0, burn: 0.5, chill: 0.8, shock: 1.4, wet: 1.3, stagger: 0.4, radiance: 0.5, curse: 0.5 }, draw: drawEngineHead, brain, onDeath: death },
     engineHammer: HAND('The Great Engine (left hand)', { res: { shock: 1.4 } }),
