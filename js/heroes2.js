@@ -162,7 +162,7 @@ export const HEROES2 = {
       { id: 'forkCharge', name: 'Fork Charge', cd: 12, tags: 'ds', glyph: 'dash', desc: 'Runs with the fork lowered, skewering the first enemy and carrying it along.',
         tiers: ['Carries the first enemy.', 'Slams it down at the end: stunned.', 'Carries everything it meets.'] },
     ],
-    trait: { id: 'hardWork', name: 'Hard Work', desc: 'Each enemy he finishes heals him 5%.' },
+    trait: { id: 'hardWork', name: 'Hard Work', desc: 'Each enemy he finishes heals him 8%.' },
   },
   digger: {
     name: 'Digger', art: 'art/heroes/digger.svg', role: 'melee', unlock: { gems: 1 },
@@ -370,7 +370,7 @@ Object.assign(HEROES2, {
     stats: { hp: 105, speed: 56, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 150, atkCd: 1.3, dmg: 8 },
     attack: { name: 'Pot toss', anim: 'throw', desc: 'Throws a pot or a pan out of the pack.' },
     abilities: [
-      { id: 'resupply', name: 'Resupply', cd: 15, tags: 'h', glyph: 'vial', desc: 'Tosses a supply bundle to the ally who needs it most.',
+      { id: 'resupply', name: 'Resupply', cd: 18, tags: 'h', glyph: 'vial', desc: 'Tosses a supply bundle to the ally who needs it most.',
         tiers: ['Heals 10%, and a health potion if they have none.', 'Heals 18%.', 'A bundle each for two allies.'] },
       { id: 'oilBlades', name: 'Oil the Blades', cd: 16, tags: 's', glyph: 'flame', desc: 'Hands round lamp oil for the weapons: the allies near him set things alight with every blow.',
         tiers: ['Their blows burn a little for 8s.', 'They burn more.', 'And their blows heal them a little.'] },

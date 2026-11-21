@@ -151,7 +151,7 @@ function darts(w, u, t) {
 // ---------------------------------------------------------------- the kinds
 export const DUNES = {
   scarab: { ...FOE, name: 'Scarab', art: variantUrl(ART('spider-hunter'), { hue: 120, sat: 1.3, light: -0.06 }), headR: 52, r: 16, vr: 13, turn: 8, accel: 460, face: 8, mass: 0.5,
-    hp: 18, speed: 74, role: 'skirmish', range: 12, atkCd: 0.8, dmg: 4, arc: 1.4, temp: 0.6, commit: 0.5, xp: 4, coins: [1, 2], cost: 1.5, pack: [3, 5], attackAnim: 'thrust',
+    hp: 18, speed: 74, role: 'skirmish', range: 12, atkCd: 0.8, dmg: 3, arc: 1.4, temp: 0.6, commit: 0.5, xp: 4, coins: [1, 2], cost: 1.5, pack: [3, 5], attackAnim: 'thrust',
     sandy: true, brain: scarabBrain },
   scarabGold: { variantOf: 'scarab', name: 'Golden Scarab', hue: 210, sat: 2.6, light: 0.1, hp: 40, coins: [3, 6], xp: 8, cost: 2.5, pack: [1, 2], goldShell: true, res: ALL_ST },
   cobra: { ...FOE, name: 'Cobra', art: variantUrl('art/enemies/lizardman.svg', { hue: 40, sat: 0.8, light: 0.04 }), headR: 56, r: 26, vr: 19, turn: 6, accel: 360, face: 6, mass: 0.9,
@@ -183,7 +183,7 @@ export const DUNES = {
 Object.assign(ELITES, {
   scarab: { tick() { return false; } },       // a ring of sand that staggers when it surfaces (SCARAB_DIG.then reads u.elite)
   // Cobra: a spray of three spits and a pool of venom where it lands.
-  cobra: { tick(w, u, dt) { every(w, u, dt, 'spray', 4.5, 6, 340, (t) => { const a = angleTo(u.x, u.y, t.x, t.y); for (const da of [-0.25, 0, 0.25]) spit(w, u, a + da, { poison: 30 });
+  cobra: { tick(w, u, dt) { every(w, u, dt, 'spray', 6, 7.5, 340, (t) => { const a = angleTo(u.x, u.y, t.x, t.y); for (const da of [-0.25, 0, 0.25]) spit(w, u, a + da, { poison: 30 });
     later(w, t.x, t.y, 0.6, () => { if (!w.hazards.some((h) => h.type === 'gas' && dist(h.x, h.y, t.x, t.y) < 40)) w.hazards.push({ type: 'gas', x: t.x, y: t.y, r: 48, t: 4, max: 4 }); }, 20); }); return false; } },
   jackal: { tick() { return false; } },       // its counter is a wide sweep (jackalBrain reads u.elite)
   // Mummy: up close, a breath of tomb dust that curses everyone in front.

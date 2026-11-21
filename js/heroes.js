@@ -259,7 +259,7 @@ export const ROLE_TUNE = {
   skirmish: { dmg: 1.25, hp: 1.2 },   // in and out: the batches had them dying most and dealing least
   ranged: { dmg: 1.25 },              // deals it, from behind
   caster: { dmg: 1.12 },
-  support: { dmg: 0.9, heal: 0.75 },  // (healers carried every party they were in: all their healing a little down)
+  support: { dmg: 0.9, heal: 0.62 },  // (healers carried every party they were in: all their healing a little down)
 };
 // Armour: points off every blow, never more than 60% of it; damage over time ignores it, heavy and critical blows get
 // past half (sim.js hurt). Plate and big shields; the web's Armour nodes add to it.

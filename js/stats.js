@@ -59,6 +59,7 @@ export function tallyHurt(w, u, src, amt, o = {}) {
   if (S.battle) { const a = rowOf(S, src || o.by), b = rowOf(S, u); if (b && !u.summon) b.taken += eff; if (a && a !== b) a.dmg += eff; return; }
   // taken: a party hero's own body
   if (u.team === 'hero' && !u.summon && S.heroes[u.kind]) S.heroes[u.kind].taken += eff;
+  if (S.byFoe && u.team === 'hero' && !u.summon) { const r = ownerOf(src || o.by); add(S.byFoe, r ? r.kind : 'other', eff); } // (tools: who hurts the party)
   if (u.team !== 'enemy') return;
   const by = src || o.by, root = ownerOf(by), k = heroKey(S, root); if (!k) return;
   const h = S.heroes[k], s = sourceOf(by, root, o);

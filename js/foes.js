@@ -90,7 +90,7 @@ export const FOES = {
   // ---- the Ember Deep: fiends; imps in swarms flinging fire, fire slimes, devils, demons, dragonborn
   imp: { ...FOE, name: 'Imp', art: ART('imp'), headR: 44, r: 20, vr: 16, turn: 7, accel: 420, face: 7, mass: 0.6, hp: 26, speed: 70, role: 'ranged', range: 240, keep: 170,
     atkCd: 999, dmg: 4, temp: 0.6, commit: 0.5, xp: 5, coins: [1, 3], cost: 2, pack: [2, 3], res: { burn: 0 },
-    brain: (w, u, dt) => { every(w, u, dt, 'fire', 2.2, 3.2, 260, (t) => { setAnim(u, 'throw', 0.35); fireball(w, u, angleTo(u.x, u.y, t.x, t.y)); }); return false; } },
+    brain: (w, u, dt) => { every(w, u, dt, 'fire', 2.9, 3.9, 260, (t) => { setAnim(u, 'throw', 0.35); fireball(w, u, angleTo(u.x, u.y, t.x, t.y)); }); return false; } },
   fireSlime: { ...FOE, name: 'Fire Slime', art: ART('slime-fire'), headR: 60, r: 25, vr: 22, turn: 3, accel: 140, face: 3.5, mass: 1.6, hp: 50, speed: 40, role: 'melee',
     range: 16, atkCd: 1.4, dmg: 8, knock: 90, arc: 2.2, temp: 0.3, commit: 1, xp: 10, coins: [2, 4], cost: 4, res: { burn: 0, chill: 1.5 },
     onDeath: (w, u) => firePatch(w, u.x, u.y, 46, 4),
@@ -106,8 +106,8 @@ export const FOES = {
 
   // ---- the Gilded Spire: the host above; cherubs shooting from the back, angels with spears, seraphs casting
   cherub: { ...FOE, name: 'Cherub', art: ART('cherub'), headR: 46, r: 20, vr: 16, turn: 7, accel: 420, face: 7, mass: 0.6, hp: 24, speed: 66, role: 'ranged',
-    range: 260, keep: 180, atkCd: 1.4, dmg: 5, temp: 0.6, commit: 0.5, xp: 6, coins: [1, 3], cost: 2, pack: [2, 3], attackAnim: 'draw', radiance: 12, res: { radiance: 0 } },
-  angel: { ...FOE, name: 'Angel', art: ART('angel'), headR: 56, r: 31, vr: 23, hp: 80, speed: 60, role: 'melee', range: 40, atkCd: 1.3, windup: 0.25, dmg: 12, knock: 150, arc: 0.9,
+    range: 260, keep: 180, atkCd: 1.4, dmg: 4, temp: 0.6, commit: 0.5, xp: 6, coins: [1, 3], cost: 2, pack: [2, 3], attackAnim: 'draw', radiance: 12, res: { radiance: 0 } },
+  angel: { ...FOE, name: 'Angel', art: ART('angel'), headR: 56, r: 31, vr: 23, hp: 80, speed: 60, role: 'melee', range: 40, atkCd: 1.3, windup: 0.25, dmg: 10, knock: 150, arc: 0.9,
     xp: 16, coins: [3, 7], cost: 5, attackAnim: 'thrust', ability: 'dash', abilCd: 4.5, radiance: 22, res: { radiance: 0 } },
   seraph: { ...FOE, name: 'Seraph', art: ART('seraph'), headR: 56, r: 31, vr: 23, hp: 60, speed: 52, role: 'ranged', range: 280, keep: 200, atkCd: 1.5, dmg: 7,
     proj: 'bolt', projColor: '#FFF1B0', xp: 16, coins: [3, 7], cost: 5, attackAnim: 'cast', radiance: 20, res: { radiance: 0 } },
@@ -247,10 +247,10 @@ Object.assign(ELITES, {
     again(u, 'breath', 6, 8); breath(w, u, angleTo(u.x, u.y, t.x, t.y), 250); return true;
   } },
   // Cherub: arrow rain: a circle on the floor peppered from above.
-  cherub: { tick(w, u, dt) { every(w, u, dt, 'rain', 4, 5.5, 420, (t) => lob(w, u, t.x, t.y, { r: 80, tell: 1.0, kind: 'holy', dust: '#FFF1B0', hit: { dmg: 9, knock: 80, radiance: 18 },
+  cherub: { tick(w, u, dt) { every(w, u, dt, 'rain', 4, 5.5, 420, (t) => lob(w, u, t.x, t.y, { r: 80, tell: 1.0, kind: 'holy', dust: '#FFF1B0', hit: { dmg: 6, knock: 80, radiance: 18 },
     land: (w2, z) => { for (let i = 0; i < 12; i++) { const a = rand() * TAU, d = rand() * z.r; sparks(w2, z.x + Math.cos(a) * d, z.y + Math.sin(a) * d, rand() * TAU, 1, '#FFF1B0'); } } })); return false; } },
   // Angel: smites: a shaft of light where you stand.
-  angel: { tick(w, u, dt) { every(w, u, dt, 'smite', 3.5, 5, 460, (t) => smite(w, u, t.x + (t.vx || 0) * 0.5, t.y + (t.vy || 0) * 0.5)); return false; } },
+  angel: { tick(w, u, dt) { every(w, u, dt, 'smite', 4.5, 6, 460, (t) => smite(w, u, t.x + (t.vx || 0) * 0.5, t.y + (t.vy || 0) * 0.5)); return false; } },
   // Seraph: raises the fallen of its side.
   seraph: { tick(w, u, dt) { if (u.aggro && due(u, 'raise', dt, 4)) { again(u, 'raise', 9, 11); raise(w, u, 450); } return false; } },
 });

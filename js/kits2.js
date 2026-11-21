@@ -423,12 +423,12 @@ export const ABILITIES2 = {
       const list = foesNear(w, u, u.x, u.y, u.r + u.def.range + 30).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y)).slice(0, tier >= 3 ? 2 : 1);
       if (!list.length) return; u.facing = ang(u, list[0]); cast(u, 'ability', 0.6);
       list.forEach((e, i) => {
-        if (e.def.boss || e.def.brain || e.eliteFn || e.mass > 3.5) { hurt(w, e, dmgOf(u, 1.5), u, { knock: 200, stagger: 40, noDodge: true }); return; }
+        if (e.def.boss || e.def.brain || e.eliteFn || e.mass > 3.5) { hurt(w, e, dmgOf(u, 1.8), u, { knock: 200, stagger: 40, noDodge: true }); return; }
         const back = u.facing + Math.PI + (i ? 0.6 : -0.3), x1 = clamp(u.x + Math.cos(back) * 120, e.r, w.W - e.r), y1 = clamp(u.y + Math.sin(back) * 120, e.r, w.H - e.r);
         e.stunT = 0; e.target = null;
         e.act = { type: 'leap', t: 0.5, max: 0.5, x0: e.x, y0: e.y, x1, y1, land: () => {
           puff(w, e.x, e.y, '#E9DDC2', 8, 90, 5, 0.4); w.shake = Math.max(w.shake, 3);
-          hurt(w, e, dmgOf(u, tierOf(u, 'toss') >= 2 ? 1.9 : 1.1), u, { noDodge: true, knock: 30, stagger: tierOf(u, 'toss') >= 2 ? 50 : 0, ab: 'toss' });
+          hurt(w, e, dmgOf(u, tierOf(u, 'toss') >= 2 ? 2.2 : 1.4), u, { noDodge: true, knock: 30, stagger: tierOf(u, 'toss') >= 2 ? 50 : 0, ab: 'toss' });
         } };
       });
     },
@@ -457,12 +457,12 @@ export const ABILITIES2 = {
       const spot = (e, i) => { const b = a + (i ? (i % 2 ? 0.4 : -0.4) : 0); e.x = u.x + Math.cos(b) * (u.r + e.r + 4); e.y = u.y + Math.sin(b) * (u.r + e.r + 4); e.vx = e.vy = e.kx = e.ky = 0; };
       timer(u, 'forkCharge', T, () => {
         for (const e of foesNear(w, u, u.x, u.y, u.r + 16)) if (!held.includes(e) && (tierOf(u, 'forkCharge') >= 3 || !held.length)) {
-          held.push(e); hurt(w, e, dmgOf(u, 1.2), u, { noDodge: true, knock: 0, ab: 'forkCharge' });
+          held.push(e); hurt(w, e, dmgOf(u, 1.4), u, { noDodge: true, knock: 0, ab: 'forkCharge' });
         }
         held.forEach((e, i) => { if (alive(e) && e.mass <= 3.5 && !e.def.boss) spot(e, i); });
       }, () => {
         for (const e of held) if (alive(e)) {
-          hurt(w, e, dmgOf(u, tierOf(u, 'forkCharge') >= 2 ? 2 : 1.5), u, { noDodge: true, heavy: true, knock: 220, kAngle: a, ab: 'forkCharge' });
+          hurt(w, e, dmgOf(u, tierOf(u, 'forkCharge') >= 2 ? 2.4 : 1.8), u, { noDodge: true, heavy: true, knock: 220, kAngle: a, ab: 'forkCharge' });
           if (tierOf(u, 'forkCharge') >= 2) stun(w, e, 1);
         }
         if (held.length) { w.shake = Math.max(w.shake, 5); puff(w, u.x + Math.cos(a) * 40, u.y + Math.sin(a) * 40, '#E9DDC2', 10, 120, 6, 0.5); }
@@ -501,7 +501,7 @@ export const ABILITIES2 = {
         u.act = { type: 'leap', t: 0.7, max: 0.7, x0: u.x, y0: u.y, x1, y1, land: () => {
           u.hidden = false; u.ethereal = false; u.hop = 0; u.facing = ang(u, e);
           w.shake = Math.max(w.shake, 6); puff(w, u.x, u.y, '#9C7650', 16, 160, 7, 0.6);
-          ring(w, u, u.x, u.y, 105, dmgOf(u, 1.9), { knock: 300, heavy: true, stagger: tier >= 2 ? 45 : 0 }, '#9C7650');
+          ring(w, u, u.x, u.y, 105, dmgOf(u, 2.4), { knock: 300, heavy: true, stagger: tier >= 2 ? 45 : 0 }, '#9C7650');
           if (again) after(u, 0.3, () => dive(pick(u.x, u.y, e), false));
         } };
       };
@@ -518,7 +518,7 @@ export const ABILITIES2 = {
         if (!alive(t)) return;
         swingMark(w, u, u.r + u.def.range + 16, 1.6);
         const a = u.facing + 0.25;
-        hurt(w, t, dmgOf(u, 1.9), u, { knock: 760, kAngle: a, heavy: true, noDodge: true });
+        hurt(w, t, dmgOf(u, 2.2), u, { knock: 760, kAngle: a, heavy: true, noDodge: true });
         k2(w, { draw: 'bonk', x: t.x, y: t.y, unit: t, r: t.vr, max: 0.4 });
         const hit = new Set([t]);
         if (tier >= 2) timer(u, 'spadeBat', 0.7, () => { if (!alive(t)) return true; for (const o of foesNear(w, u, t.x, t.y, t.r + 20)) if (!hit.has(o)) { hit.add(o); hurt(w, o, dmgOf(u, 0.8), u, { knock: 280, kAngle: a, noDodge: true, ab: 'spadeBat' }); } });
@@ -1119,7 +1119,7 @@ export const ABILITIES2 = {
     use(w, u, t, tier) {
       const e = opponents(w, u).filter((o) => { const d = dist(u.x, u.y, o.x, o.y); return d > 120 && d < 400 && !blocked(w, u.x, u.y, o.x, o.y); }).sort((p, q) => (q.def.role === 'ranged' ? 1 : 0) - (p.def.role === 'ranged' ? 1 : 0))[0] || t; if (!e) return;
       cast(u, 'throw', 0.4);
-      shoot(w, u, ang(u, e), { kind: 'harpoon', speed: 720, r: 9, life: 0.7, dmg: dmgOf(u, 1.6), knock: 0, extra: { big: true, home: e, turn: 6, onHit: (w2, p, x) => {
+      shoot(w, u, ang(u, e), { kind: 'harpoon', speed: 720, r: 9, life: 0.7, dmg: dmgOf(u, 2), knock: 0, extra: { big: true, home: e, turn: 6, onHit: (w2, p, x) => {
         const big = x.def.boss || x.mass > 2.6;
         if (big) { const a = ang(u, x), d = dist(u.x, u.y, x.x, x.y) - u.r - x.r - 6; u.act = { type: 'leap', t: 0.35, max: 0.35, x0: u.x, y0: u.y, x1: u.x + Math.cos(a) * d, y1: u.y + Math.sin(a) * d, land: () => {} }; }
         else { const a = angleTo(x.x, x.y, u.x, u.y), d = dist(u.x, u.y, x.x, x.y) - u.r - x.r - 6; x.kx += Math.cos(a) * d * 5.4 / Math.max(1, Math.sqrt(x.mass)); x.ky += Math.sin(a) * d * 5.4 / Math.max(1, Math.sqrt(x.mass)); }
@@ -1150,7 +1150,7 @@ export const ABILITIES2 = {
       after(u, 0.55, () => {
         w.shake = Math.max(w.shake, 7);
         w.telegraphs.push({ type: 'blast', x, y, r, color: '#C9D2DE', t: 0.05, max: 0.05 });
-        for (const e of foesNear(w, u, x, y, r)) { hurt(w, e, dmgOf(u, 2.4), u, { heavy: true, noDodge: true, knock: 150, kAngle: angleTo(x, y, e.x, e.y) }); stun(w, e, 1.2); }
+        for (const e of foesNear(w, u, x, y, r)) { hurt(w, e, dmgOf(u, 2.8), u, { heavy: true, noDodge: true, knock: 150, kAngle: angleTo(x, y, e.x, e.y) }); stun(w, e, 1.2); }
       });
     },
     show: { far: true },
@@ -1715,7 +1715,7 @@ export const TRAITS2 = {
     evade(w, u) { const k = u.kit; if (w.time - (k.lastHurt ?? -9) > 3) { k.lastHurt = w.time; puff(w, u.x, u.y, '#5A4A7A', 10, 70, 6, 0.5); k.faded = w.time; return true; } return false; },
     taken(w, u, src, amt, o) { if (!o.dot) u.kit.lastHurt = w.time; return amt; },
   },
-  hardWork: { kill(w, u) { heal(w, u, u.maxHp * 0.05, u); } },
+  hardWork: { kill(w, u) { heal(w, u, u.maxHp * 0.08, u); } },
   seenItAll: { tick(w, u, dt) { for (const a of friendsNear(w, u, u.x, u.y, 170)) if (a.st.stagger > 0) a.st.stagger = Math.max(0, a.st.stagger - 12 * dt); } },
   catalyst: {
     hit(w, u, t, amt, o) { if (o.proc) return; for (const s of BUILDS) if (o[s]) addStatus(w, t, s, o[s] * 0.3, u); },
