@@ -13,6 +13,7 @@
 const queue = [];
 let on = false;
 export function listen(yes = true) { on = yes; if (!yes) queue.length = 0; }
+export const listening = () => on;
 export function cue(name, a, b, c) { if (on && queue.length < 400) queue.push({ name, a, b, c }); }
 export function drain() { const out = queue.splice(0); return out; }
 

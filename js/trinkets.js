@@ -9,6 +9,7 @@ import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange, chance } from './ut
 import { hurt, addStatus, spawn, alive, hpRatio, puff, explode, blocked, stun, heal, fx, zone } from './sim.js';
 import { shoot } from './kits.js';
 import { lineClear, circleRect } from './path.js';
+import { tagTrinket } from './stats.js';
 
 // ---------------------------------------------------------------- helpers
 const st = (u, id) => { const s = u.trs || (u.trs = {}); return s[id] || (s[id] = {}); };
@@ -452,7 +453,7 @@ function consume(u, id) {
 // The hook objects for a list of worn trinkets (ids, or { id, lv } items: lv is the trinket's level, bought in camp).
 export function trinketHooks(list) {
   const out = [];
-  for (const t of list || []) { const d = TRINKETS[t && t.id ? t.id : t]; if (d) out.push(t && t.lv > 1 ? leveled(d, t.lv) : d.hooks); }
+  for (const t of list || []) { const id = t && t.id ? t.id : t, d = TRINKETS[id]; if (d) out.push(tagTrinket(id, t && t.lv > 1 ? leveled(d, t.lv) : d.hooks)); } // tagTrinket: stats.js credit
   return out;
 }
 

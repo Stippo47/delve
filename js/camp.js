@@ -26,6 +26,8 @@ import { mountTree, setShowAll, showAll } from './skilltree.js';
 import { makeScene } from './camp-scene.js';
 import { makeMap } from './camp-map.js';
 import * as LOOKS from './looks.js';
+import { resultStats, wireStats, numbersRow, lifetime, foeCount, num } from './stats-ui.js';
+import { heroNumbers as probeNumbers } from './numbers.js';
 
 // ---------------------------------------------------------------- dungeons (themes)
 export let THEMES = {};
@@ -231,12 +233,21 @@ function aboutView(id) {
   const row = (ico, cap, name, desc, extra = '') => `<div class="krow">${ico}<div><span class="cap">${cap}</span><b>${name}</b><p>${desc}</p>${extra}</div></div>`;
   const sum = webSummary(id);
   return `<p class="blurb">${h.blurb}</p>
+    <div class="sec-h"><span class="cap">In a fight</span><span class="quiet small">with its web and trinkets</span></div>${numbersRow(heroNumbers(id))}
     ${sum ? `<div class="sec-h"><span class="cap">From the skill web</span>${P.respecPrice ? `<button class="linkbtn" data-act="respec:${id}">Unlearn all · ${gold(P.respecPrice(save, id))}</button>` : ''}</div>
       <div class="sumchips">${sum}</div><div class="sec-h"><span class="cap">Kit</span></div>` : ''}
     ${row(`<span class="k-ico">${I.sword}</span>`, 'Attack', h.attack.name, h.attack.desc)}
     ${h.abilities.map((ab, i) => row(`<span class="k-ico ab">${icon('ability', ab.id)}</span>`, `Ability ${i + 1} · ${ab.cd}s`, ab.name, ab.desc,
       `<ol class="tiers">${ab.tiers.map((t, k) => `<li class="${M.rank(save, id, `${ab.id}${k + 1}`) ? 'got' : ''}"><i>${roman(k + 1)}</i>${t}</li>`).join('')}</ol>`)).join('')}
-    ${row(`<span class="k-ico">${I.crown}</span>`, 'Trait', h.trait.name, h.trait.desc)}`;
+    ${row(`<span class="k-ico">${I.crown}</span>`, 'Trait', h.trait.name, h.trait.desc)}
+    <div class="sec-h"><span class="cap">All runs</span></div>${lifetime(save, id)}`;
+}
+// The hero's real numbers: the hero as it would walk into a room, read the way the sim reads them (numbers.js).
+function heroNumbers(id) {
+  try {
+    const list = (save.heroes[id].trinkets || []).map((t) => { const lv = P.trinketLevel(save, t); return lv > 1 ? { id: t, lv } : t; });
+    return probeNumbers(save, id, list);
+  } catch (e) { return null; }
 }
 
 // What the hero's learned nodes add up to, as chips ("+16% damage").
@@ -279,13 +290,13 @@ function traderView() {
 function bookView() {
   const kinds = Object.keys(DEFS).filter((k) => DEFS[k].team === 'enemy' && k !== 'boss' && k !== 'skeleton');
   const seen = save.seen || {};
-  const metN = kinds.filter((k) => seen[k] && seen[k].met).length;
+  const metN = kinds.filter((k) => (seen[k] && seen[k].met) || (foeCount(save, k) || {}).n).length; // defeated counts as met (stats.js tally)
   const segs = `<div class="seg"><button class="${bookTab === 'beasts' ? 'on' : ''}" data-act="booktab:beasts">Monsters ${metN}/${kinds.length}</button><button class="${bookTab === 'items' ? 'on' : ''}" data-act="booktab:items">Items</button><button class="${bookTab === 'status' ? 'on' : ''}" data-act="booktab:status">Statuses</button></div>`;
   let body = '';
   if (bookTab === 'beasts') {
     body = `<div class="bgrid">${kinds.map((k) => {
-      const s = seen[k], d = DEFS[k], met = s && s.met;
-      return `<div role="button" class="beast ${met ? '' : 'unknown'} ${d.boss ? 'boss' : ''}" ${met ? `data-act="beast:${k}"` : ''}><span class="b-pic"><img src="${portrait(k)}" alt=""></span><b>${met ? d.name : '???'}</b></div>`;
+      const s = seen[k], d = DEFS[k], fc = foeCount(save, k), met = (s && s.met) || (fc && fc.n);
+      return `<div role="button" class="beast ${met ? '' : 'unknown'} ${d.boss ? 'boss' : ''}" ${met ? `data-act="beast:${k}"` : ''}><span class="b-pic"><img src="${portrait(k)}" alt=""></span>${met && fc && fc.n ? `<i class="b-n">${num(fc.n)}</i>` : ''}<b>${met ? d.name : '???'}</b></div>`;
     }).join('')}</div>`;
   } else if (bookTab === 'items') {
     body = `<div class="entries">${P.shopTrinkets().map((t) => `<div class="entry" style="--rar:${P.RARITY[t.rarity].color}"><span class="e-ico">${icon('trinket', t.id, '', t.color)}</span><div><b>${t.name}</b><p>${t.desc}</p><em>${trinketFun(t.id)}</em></div></div>`).join('')
@@ -383,11 +394,12 @@ function respecSheet() {
 }
 
 function beastSheet() {
-  const k = sheet.kind, d = DEFS[k], s = (save.seen || {})[k] || { met: 0, beaten: 0 };
+  const k = sheet.kind, d = DEFS[k], s = (save.seen || {})[k] || { met: 0, beaten: 0 }, fc = foeCount(save, k);
+  const tally = fc && fc.n ? `<p class="sheet-p tallyline">${num(fc.n)} defeated in all${[fc.elite ? `${num(fc.elite)} elite` : '', fc.mini ? `${num(fc.mini)} as a mini-boss` : '', fc.boss ? `${num(fc.boss)} as the boss` : ''].filter(Boolean).map((x) => ' · ' + x).join('')}</p>` : '';
   const res = Object.entries(d.res || {}).filter(([, v]) => v !== 1);
   const word = { burn: 'fire', chill: 'cold', poison: 'poison', shock: 'lightning', wet: 'water' };
   return `<div class="sheet-h"><span class="big-ico b-pic"><img src="${portrait(k)}" alt=""></span><div><h2>${d.name}</h2><span class="quiet small">${d.boss ? 'Boss · ' : ''}${s.met} met · ${s.beaten} beaten</span></div></div>
-    <p class="sheet-fun">${beastFun(k)}</p><p class="sheet-p">${beastHabit(k)}</p>
+    ${tally}<p class="sheet-fun">${beastFun(k)}</p><p class="sheet-p">${beastHabit(k)}</p>
     ${res.length ? `<div class="reschips">${res.map(([key, v]) => `<span class="${v < 1 ? 'res' : 'weak'}">${icon('status', key)}${v === 0 ? 'Immune to' : v < 1 ? 'Shrugs off' : 'Weak to'} ${word[key] || key}</span>`).join('')}</div>` : ''}`;
 }
 
@@ -496,13 +508,16 @@ export function showResult(rep, done) {
   const newSeats = rep.slots && rep.slots.unlocked ? rep.slots.unlocked.length : 0;
   const news = [newSeats ? `${I.plus}<span>${newSeats > 1 ? newSeats + ' new seats' : 'A new seat'} by the fire</span>` : '', ...opened.map((t) => `${I.door}<span>${(THEMES[t] || {}).name || 'A new dungeon'} is open</span>`),
     rep.checkpoint ? `${I.flag}<span>Checkpoint: floor ${rep.checkpoint}</span>` : '', `${I.trader}<span>New wares at the trader</span>`].filter(Boolean).map((s) => `<div class="r-new">${s}</div>`).join('');
-  el.innerHTML = `<div class="rcard ${rep.result}">
+  // round 9 lane T: the card scrolls inside itself (the stats under the heroes), Back to camp stays in reach
+  el.innerHTML = `<div class="rcard ${rep.result}"><div class="r-scroll">
     <span class="cap">${theme ? theme.name : ''} · floor ${rep.floor} · ${rep.rooms} rooms · ${rep.kills} kills</span>
     <h1 class="t32">${TITLES[rep.result] || 'Run over'}</h1>
     <div class="r-gold">${coin}<b class="count">0</b><span class="quiet">gold</span></div>${lost}${merc}
     ${news}
     ${heroes ? `<div class="rheroes">${heroes}</div>` : ''}
-    <button class="btn primary wide" data-act="home">Back to camp</button></div>`;
+    ${resultStats(rep.stats)}</div>
+    <div class="r-foot"><button class="btn primary wide" data-act="home">Back to camp</button></div></div>`;
+  wireStats(el);
   const c = el.querySelector('.count'), to = rep.gold, t0 = performance.now();
   const step = (now) => { const k = Math.min(1, (now - t0 - 300) / 900); c.textContent = Math.round(to * Math.max(0, 1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); };
   requestAnimationFrame(step);

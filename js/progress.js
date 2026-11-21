@@ -18,6 +18,7 @@ import { TRINKET_LEVEL_MAX, trinketHooks } from './trinkets.js';
 import { POTIONS, POTION_MAX as BAG_MAX, CARRY_MAX, elixirKey } from './potions.js';
 import { DUNGEON_ORDER, THEMES } from './themes.js';
 import { slotsOf, START_POINTS } from './save.js';
+import { bankTally } from './stats.js';
 export { xpToNext, DUNGEON_ORDER, START_POINTS };
 
 // ---------------------------------------------------------------- paying
@@ -359,7 +360,8 @@ export function applySummary(save, run, result, now = Date.now()) {
     if (downed || hurt) h.recoverUntil = Math.max(h.recoverUntil || 0, now + (downed ? RECOVER_DOWN : RECOVER_HURT));
     heroes.push({ id, from, level: h.level, gained, points: h.points, record, downed, hurt });
   }
-  return { result, raw, lost, gold, mercCut: kept - gold, gems, firstClear, firstClearGems: 0,
+  bankTally(save, s.stats); // lifetime: enemies defeated, each hero's damage, healing, kills (stats.js)
+  return { result, raw, lost, gold, mercCut: kept - gold, gems, firstClear, firstClearGems: 0, stats: s.stats || null,
     kills: s.kills || 0, floor: s.floor || 0, rooms: s.rooms || 0, heroes, found: (s.foundTrinkets || []).map((t) => (t && t.id) || t), theme,
     floorDone: !!s.floorDone, checkpoint: d.checkpoint > oldCp ? d.checkpoint : null, minis: (s.minis || []).slice(), bossKilled: !!s.bossKilled,
     slots: { before: slotsBefore, after: save.slots, unlocked: newSlots }, opened };

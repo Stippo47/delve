@@ -211,9 +211,13 @@
 
 /* ---------------------------------------------------------------- the result card */
 #result { position: fixed; left: 0; top: 0; right: 0; bottom: auto; height: var(--app-h, 100%); z-index: 50; display: flex; align-items: center; justify-content: center;
-  padding: calc(16px + var(--st)) 16px calc(16px + var(--sb)); background: radial-gradient(circle at 50% 30%, #1D2347, #0A0C18 75%); overflow-y: auto; }
+  padding: calc(16px + var(--st)) 16px calc(16px + var(--sb)); background: radial-gradient(circle at 50% 30%, #1D2347, #0A0C18 75%); overflow: hidden; }
 #result.hidden { display: none; }
-.rcard { width: 100%; max-width: 420px; text-align: center; animation: up .4s cubic-bezier(.2,.8,.2,1); }
+.rcard { width: 100%; max-width: 420px; text-align: center; animation: up .4s cubic-bezier(.2,.8,.2,1);
+  display: flex; flex-direction: column; max-height: 100%; min-height: 0; }
+/* round 9 lane T: the card scrolls inside itself; Back to camp stays at the bottom */
+.r-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 2px 2px 8px; }
+.r-foot { flex: none; padding-top: 10px; }
 .rcard h1 { margin: 4px 0 10px; }
 .rcard.won h1 { color: var(--gold2); }
 .rcard.lost h1 { color: #FF9C88; }
@@ -230,6 +234,71 @@
 .rh-pts { flex: none; text-align: center; }
 .rh-pts .pts { font-size: 20px; }
 .rh-pts .cap { display: block; color: var(--teal); }
+
+/* ---------------------------------------------------------------- run stats (lane T) */
+.rstats { text-align: left; margin-top: 6px; }
+.rs-h { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 18px 2px 8px; }
+.rs-h .small { font-size: 12px; }
+.rs-leads { display: flex; flex-wrap: wrap; gap: 8px; }
+.rs-leads > .rs-lead { flex: 1 1 28%; }
+.rs-leads.n4 > .rs-lead { flex-basis: 40%; }
+.rs-lead { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 6px 9px; border-radius: var(--r-tile); background: var(--surf);
+  box-shadow: inset 0 0 0 1px var(--line), inset 0 2px 0 var(--lc, var(--line)); text-align: center; min-width: 0; }
+.rs-lead .face { margin-bottom: 2px; }
+.rs-lead .cap { font-size: 11px; line-height: 1.15; }
+.rs-lead b { font-size: 18px; color: var(--lc, var(--text)); }
+.rs-who { font-size: 12px; font-weight: 750; color: var(--quiet); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rs-lead.calm b { font-size: 14px; color: var(--teal); }
+.rs-ok { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 22%; background: rgba(79,216,200,.12); color: var(--teal); margin-bottom: 2px; }
+.rs-ok .ico { width: 24px; height: 24px; }
+.rs-row { padding: 10px 12px; margin-bottom: 8px; border-radius: var(--r-tile); background: var(--surf); box-shadow: inset 0 0 0 1px var(--line); cursor: pointer; }
+.rs-top { display: flex; gap: 10px; align-items: flex-start; }
+.rs-top > .face { flex: none; margin-top: 2px; }
+.rs-mid { flex: 1; min-width: 0; }
+.rs-name { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.rs-name b { font-size: 15px; }
+.rs-chev { margin-left: auto; width: 9px; height: 9px; border-right: 2px solid var(--quiet); border-bottom: 2px solid var(--quiet); transform: rotate(45deg); margin-top: -4px; transition: transform .2s; }
+.rs-row.open .rs-chev { transform: rotate(-135deg); margin-top: 4px; }
+.rs-bar { display: grid; grid-template-columns: 58px 1fr 52px; align-items: center; gap: 8px; height: 20px; }
+.rs-bar > span:first-child { font-size: 12px; font-weight: 750; color: var(--quiet); }
+.rs-bar .bar { height: 8px; }
+.rs-bar b { font-size: 13px; text-align: right; }
+.rs-bar.d .bar > i { background: linear-gradient(180deg, #FFCF66, #E09A2A); }
+.rs-bar.h .bar > i { background: linear-gradient(180deg, #7BDA6E, #46A646); }
+.rs-bar.t .bar > i { background: linear-gradient(180deg, #FF8A6E, #C8392A); }
+.rs-facts { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 5px; font-size: 12px; font-weight: 750; color: var(--quiet); }
+.rs-more { display: none; margin-top: 10px; padding-top: 4px; border-top: 1px solid var(--line); }
+.rs-row.open .rs-more { display: block; }
+.bd { margin-top: 10px; }
+.bd-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
+.bd-h b { font-size: 14px; }
+.bd-bar { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: rgba(0,0,0,.45); margin-bottom: 6px; }
+.bd-bar > i { display: block; height: 100%; min-width: 2px; }
+.bd-bar > i + i { box-shadow: inset 1px 0 0 rgba(10,12,24,.7); }
+.bd-row { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
+.si { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--surf2); box-shadow: inset 0 0 0 1.5px var(--sc, var(--line2)); color: var(--text); }
+.si .ico { width: 20px; height: 20px; display: block; }
+.si-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--quiet); }
+.bd-n { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.bd-n b { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bd-n span { font-size: 12px; font-weight: 700; color: var(--quiet); }
+.bd-v { flex: none; text-align: right; font-size: 14px; font-weight: 850; }
+.bd-v i { display: block; font-style: normal; font-size: 12px; font-weight: 700; color: var(--quiet); }
+.bd-box { padding: 2px 12px 10px; border-radius: var(--r-tile); background: var(--surf); box-shadow: inset 0 0 0 1px var(--line); }
+.foes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.foe { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px; border-radius: var(--r-tile); background: var(--surf); box-shadow: inset 0 0 0 1px var(--line); text-align: center; min-width: 0; }
+.foe.elite { box-shadow: inset 0 0 0 1.5px rgba(245,184,65,.55); }
+.foe.mini, .foe.boss { box-shadow: inset 0 0 0 2px var(--gold); background: linear-gradient(180deg, rgba(245,184,65,.14), var(--surf)); }
+.foe-pic { position: relative; display: block; width: 52px; height: 52px; border-radius: 50%; background: radial-gradient(circle at 50% 35%, #343C6A, #1B2038 75%); }
+.foe-pic img { position: absolute; left: 4%; top: 4%; width: 92%; height: 92%; object-fit: contain; }
+.foe-pic i { position: absolute; right: -8px; bottom: -4px; min-width: 26px; padding: 1px 5px; border-radius: 999px; background: var(--raise); box-shadow: 0 0 0 2px var(--surf);
+  font-style: normal; font-size: 13px; font-weight: 850; color: var(--text); }
+.foe b { font-size: 12px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
+.foe-tag { font-size: 11px; font-weight: 850; color: var(--gold2); line-height: 1.15; }
+.b-n { position: absolute; left: 50%; top: 48px; margin-left: 10px; min-width: 24px; padding: 1px 5px; border-radius: 999px; background: var(--raise); box-shadow: 0 0 0 2px var(--surf);
+  font-style: normal; font-size: 12px; font-weight: 850; color: var(--text); text-align: center; }
+.beast { position: relative; }
+.tallyline { color: var(--gold2); font-weight: 800; }
 
 /* ---------------------------------------------------------------- short phones (iPhone SE: 667 tall) */
 @media (max-height: 700px) {

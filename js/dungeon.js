@@ -9,6 +9,7 @@
 // a checkpoint floor (opts.floor). Heroes go in at their permanent level and keep the XP they earn (levels give skill
 // points, not strength).
 import { makeWorld, spawn, step, alive, addStatus, hurt, puff, fx, scatterCoins, addDanger } from './sim.js';
+import { newStats, finishStats, tallyFoe, tallyRevive } from './stats.js';
 import { DEFS, levelHp, levelDmg, TRINKET_IDS } from './units.js';
 import { trinketHooks, raiseGhost, wears } from './trinkets.js';
 import { HEROES, STARTERS, treeFor, freeNodes } from './heroes.js';
@@ -47,6 +48,7 @@ export function newRun(save, opts = {}) {
   const run = { depth: opts.depth || save.depth || 1, theme, mercs: !!opts.mercs, hired, party, floor, startFloor: floor, map: makeFloor(floorTheme(theme, floor).kinds), coins: 0, gems: 0,
     satchel: [], keys: 0, heroes, phase: 'fight', t: 0, fade: 1, save, kills: 0, banner: null, rooms: 0, leaving: false,
     floorDone: false, minis: [false, false], bossKilled: false };
+  run.stats = newStats([...party, ...hired], hired); // stats.js: who did what, for the result card
   // testing: ?bossroom jumps straight to a floor's last room (floor 3's, or ?floor=N's: a mini-boss), ?lvl=N starts the
   // heroes at level N, ?floor=N starts at floor N
   if (debugParam('bossroom') != null) { run.floor = opts.floor > 1 || debugParam('floor') ? floor : FLOORS; run.map.L = LAYERS; run.map.i = 0; }
@@ -215,7 +217,7 @@ function buildRoom(run) {
   const sh = arena ? arenaShape(arena) : makeShape(kind);
   const w = makeWorld(sh.W, sh.H);
   w.theme = T; w.bossAdds = T.bossAdds;
-  run.world = w; run.node = node; run.rooms++;
+  run.world = w; run.node = node; run.rooms++; w.stats = run.stats;
   w.cells = sh.cells; w.shape = sh.name;
   for (const c of sh.solid) w.walls.push({ x: c.x, y: c.y, w: c.w, h: c.h, solid: true, c: c.c, r: c.r });
   w.chunks = { nc: sh.nc, nr: sh.nr };
@@ -277,10 +279,7 @@ function buildRoom(run) {
     // a downed hero stays out until the floor's last foe falls; with the Wraith Veil, its ghost comes along
     if (hs.down) { if (wears(hs.trinkets, 'wraithVeil')) raiseGhost(w, { kind: k, x: 70, y: ys[i % 3], level: hs.level, dmgMul: 1, fake: true }); return; }
     const tank = hs.merc ? k === 'knight' : HEROES[k].role === 'tank';
-    // level 1's numbers (round 8: levels bring skill points, the web brings the strength); mercs are middling
-    const u = spawn(w, k, 70 + (tank ? 40 : 0), ys[i % 3] + Math.floor(i / 3) * 30, { level: hs.merc ? MERC_LEVEL[DUNGEON_RANK[run.theme] || 0] : 1, potions: hs.potions, trinkets: hs.trinkets });
-    u.level = hs.level;
-    if (!hs.merc) initKit(u, k, buildFor(run.save, k), hs.level);
+    const u = spawnHero(w, run.save, k, hs, 70 + (tank ? 40 : 0), ys[i % 3] + Math.floor(i / 3) * 30, run.theme);
     hs.maxHp = u.maxHp;
     if (hs.hp != null) u.hp = Math.min(u.maxHp, hs.hp);
     u.facing = 0; u.mvA = 0;
@@ -481,7 +480,21 @@ function grabTrinkets(run, dt) {
 function burst(w, x, y, color) { for (let i = 0; i < 18; i++) { const a = rand() * Math.PI * 2; w.particles.push({ x, y, vx: Math.cos(a) * 150, vy: Math.sin(a) * 150, life: 0.7, max: 0.7, size: 5, color }); } }
 
 // The skill-tree nodes a hero has bought (the save's), or everything with ?allnodes in the address (for testing).
-function buildFor(save, k) {
+// A party hero as it walks into a room (also the camp's About page, through heroProbe, so its numbers are the real ones).
+// level 1's numbers (round 8: levels bring skill points, the web brings the strength); mercs are middling.
+export function spawnHero(w, save, k, hs, x, y, theme) {
+  const u = spawn(w, k, x, y, { level: hs.merc ? MERC_LEVEL[DUNGEON_RANK[theme] || 0] : 1, potions: hs.potions, trinkets: hs.trinkets });
+  u.level = hs.level;
+  if (!hs.merc) initKit(u, k, buildFor(save, k), hs.level);
+  return u;
+}
+// The hero from the save, alone in an empty room: what unitNumbers (sim.js) reads for the camp. trinkets: the run's
+// list (ids, levelled ones as { id, lv }).
+export function heroProbe(save, k, trinkets) {
+  const w = makeWorld(400, 400), sv = (save.heroes && save.heroes[k]) || {};
+  return spawnHero(w, save, k, { level: Math.max(1, sv.level || 1), potions: 0, trinkets: trinkets || (sv.trinkets || []).slice() }, 200, 200);
+}
+export function buildFor(save, k) {
   if (typeof location !== 'undefined' && /[?&]allnodes/.test(location.search)) {
     const nodes = {}; for (const n of treeFor(k)) nodes[n.id] = n.max; return { nodes };
   }
@@ -500,7 +513,7 @@ function giveXp(run, h, xp) {
 }
 
 function onKill(run, u) {
-  run.kills++;
+  run.kills++; tallyFoe(run.stats, u);
   if (!u.minion) run.mainKills = (run.mainKills || 0) + 1; // called help doesn't count for the stand-off clock
   const w = run.world;
   if (u.floorFoe) { if (run.floor >= FLOORS) run.bossKilled = true; else run.minis[run.floor - 1] = true; }
@@ -627,7 +640,7 @@ function revive(run, dt) {
       if (rand() < dt * 14) w.particles.push({ x: d.x + rrange(-18, 18), y: d.y + rrange(-18, 18), vx: 0, vy: 0, rise: 40, life: 0.6, max: 0.6, size: 4, color: '#FFE7A0' });
       if (d.reviveT >= REVIVE_T) {
         d.downed = false; d.reviveT = 0; d.hp = d.maxHp * (d.reviveHp || REVIVE_HP); d.invulnT = 1.2; d.st = freshStatuses();
-        run.heroes[d.kind].down = false; helper.forcedGoal = null;
+        run.heroes[d.kind].down = false; helper.forcedGoal = null; tallyRevive(run.stats, helper);
         burst(w, d.x, d.y, '#FFE7A0');
       }
     }
@@ -839,9 +852,9 @@ export function summarize(run) {
   for (const k of run.party) { const u = run.world && run.world.units.find((x) => x.kind === k && x.team === 'hero' && !x.summon && !x.gone); const hs = run.heroes[k];
     hp[k] = u ? Math.max(0, u.hp / u.maxHp) : hs.hp != null && hs.maxHp ? hs.hp / hs.maxHp : 1;
     heroes[k] = { level: hs.level, xp: hs.xp, gained: hs.gained || 0, from: hs.from || hs.level }; }
-  run.summary = { gold: run.coins, gems: run.gems || 0, kills
-: run.kills, floor: run.floor, startFloor: run.startFloor || 1, rooms: run.rooms, levels, heroes, downed, hp,
-    foundTrinkets: run.satchel.slice(), result: run.phase, floorDone: !!run.floorDone || run.phase === 'won', minis: run.minis.slice(), bossKilled: !!run.bossKilled };
+  run.summary = { gold: run.coins, gems: run.gems || 0, kills: run.kills, floor: run.floor, startFloor: run.startFloor || 1, rooms: run.rooms, levels, heroes, downed, hp,
+    foundTrinkets: run.satchel.slice(), result: run.phase, floorDone: !!run.floorDone || run.phase === 'won', minis: run.minis.slice(), bossKilled: !!run.bossKilled,
+    stats: finishStats(run.stats) };
   return run.summary;
 }
 export { LAYERS };

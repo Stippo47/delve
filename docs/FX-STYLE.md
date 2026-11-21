@@ -96,3 +96,20 @@ lance), Miasma (a gas cloud), Cure (clean bubbles), Leeches (leeches flung and c
 - Screen shake stays small; hit-stop only on crits.
 - iPhone 11: no per-frame canvas filters, no shadowBlur, gradients only on things that are few at once; hashed
   noise instead of random() so nothing needs state; effects that can be many (impacts, arcs) are plain fills.
+
+## Round 9 (lane V)
+- **Ground bodies merge** (`js/puddles.js`): `drawPuddle` only queues a body; `flushPuddles` (render.js, after the ground
+  fx) paints every body of one kind into one offscreen layer a pass at a time (outline, dark, light, gloss), so
+  overlapping bodies become one body with one outline. Seven styles (Inked, Soft, Bands, Splat, Rimmed, Pixel,
+  Silhouette). Kinds: oil, fire, gas (and poison zones), water, mist, web, smoke (Twinfang), frost (lingering cold),
+  earth (Entangle's churned patch). Anything that stands up out of a body is drawn after it (fx.js `zoneAir`).
+- **Under the units**: Guard's chain, the Mending Ray, Hook's chain, Ground Pound / Leap / Old Bones III quakes (no
+  cracks anywhere now), Flame Wall (flames sorted back to front), Rage's roar lines, War Song's ring.
+- **Borders mean protection**: Guard (gold) and Unstoppable (white-gold) draw a border round the ink outline
+  (parts.js `border`). Elites and majors have none: drawn 8% / 16% bigger, a faint warm tint and a twinkle.
+- **Enemy HP** over the head: Bar, or Arc for tanky ones (style 5, the default).
+- **Statuses**: burn licks are born, climb, sway and die; radiance is glints on the body and light rising off it (no
+  halo); the radiant aura has no hard ring, its reach is a ring of twinkling stars.
+- **Bone King**: his cleave is one huge bone crescent, the lance a thrust with bone spikes bursting up along it, rows
+  and graves knots of bone spikes, the soul attacks a wave of blue soul fire with souls rising.
+- Bench: `lab.html?m=puddles&puddle=1..7`, `m=ehp&ehp=1..5`, `m=looks`, `m=king&phase=1..4`.

@@ -19,8 +19,7 @@ export const ELITE = { hp: 2.4, dmg: 1.8, speed: 1.5, atk: 1.2, scale: 1.25, gol
 // ends of floors 1 and 2 (their own defs).
 export const MAJOR = { hp: 5, dmg: 2.2, speed: 1.25, atk: 1.25, scale: 1.55, gold: 6, mass: 3 };
 // Look (round 9): no gold outline (a coloured border is for protection now). Elites and majors are just bigger, with a
-// faint tint and a twinkle: u.look = { tint, tintA, twinkle } for the renderer (the visuals lane draws it; sim.js
-// throws the twinkle's motes).
+// faint tint and a twinkle (render.js washesOf, fxkit.js draw both from u.elite / u.major); u.look carries the numbers.
 export const LOOK = { elite: { tint: '#FFE6A0', tintA: 0.1, twinkle: 1.2 }, major: { tint: '#FFD27A', tintA: 0.16, twinkle: 3 } };
 
 export function makeElite(w, u) {

@@ -1,13 +1,13 @@
 // Canvas renderer for one room. Everything is drawn in room units, scaled and (in portrait) turned so the
 // way out is at the top. One screen shows one chunk across (ACROSS units); a camera follows the party both ways.
 import { getSprite, headR, tinted, getProp } from './sprites.js';
-import { getRig, drawRig, poseFor, LIMP, composeRig, drawComposed } from './parts.js';
+import { getRig, drawRig, poseFor, LIMP, composeRig, drawComposed, bowNock } from './parts.js';
 import { DEFS } from './units.js';
-import { drawGroundFx, drawAirFx, drawProjectile as projectile, drawStatusFx, noteHits, drawLocal } from './fx.js';
+import { drawGroundFx, drawAirFx, drawProjectile as projectile, drawStatusFx, noteHits, drawLocal, drawBeam, hash } from './fx.js';
 import { INK, TAU, clamp } from './util.js';
 import { envId, obstacleFor } from './env.js';
-import { drawBodyFx, drawIceWall } from './fxkit.js';
-import { drawHazardPuddle } from './puddles.js';
+import { drawBodyFx, drawBodyGround, drawIceWall } from './fxkit.js';
+import { drawHazardPuddle, flushPuddles, drawPuddle } from './puddles.js';
 import { drawEnemyHp, hpWash } from './hpstyle.js';
 import { icon } from './icons.js';
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
@@ -121,7 +121,11 @@ function unitShadow() { // solid to 60% of the radius, then a short soft rim
   g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
   return (unitShadowImg = c);
 }
-const shadowSize = (u) => (u.downed ? u.vr * 1.35 : u.vr * 1.75) * (1 - Math.min(0.35, (u.hop || 0) / 120));
+// The old single-image sprites (the hired Knight and Rogue) are drawn bigger than their vr: their shadow is sized to
+// the sprite, else it hides under it (round 9: "you can't see the knight's shadow").
+const shadowSize = (u) => (u.downed ? u.vr * 1.35 : u.vr * (u.def.art ? 1.75 : 2.2)) * (1 - Math.min(0.35, (u.hop || 0) / 120)) * bigOf(u);
+// Elites and majors are just bigger versions of themselves (round 9: no gold outline).
+const bigOf = (u) => (u.major || u.mini ? 1.16 : u.elite ? 1.08 : 1);
 const SH = { c: null, box: null, half: 0.5 };
 function drawShadows(ctx, w, tf) {
   const cv = ctx.canvas, h = SH.half;
@@ -170,8 +174,9 @@ export function draw(ctx, w) {
   for (const h of w.hazards) if (!drawHazardPuddle(ctx, h, w.time) && !drawThemeHazard(ctx, h, w.time)) drawHazard(ctx, h, w.time); // puddles.js: the player's puddle style
   drawArena(ctx, w);
   drawDanger(ctx, w);
-  for (const p of w.pickups) drawPickup(ctx, p, w.time);
   drawGroundFx(ctx, w);
+  flushPuddles(ctx, tf); // puddles.js: every ground body queued above; bodies of a kind merge into one (round 9)
+  for (const p of w.pickups) drawPickup(ctx, p, w.time);
   // shadows straight down under each obstacle (top-down: never cast to one side)
   for (const p of w.pillars) { const R = p.r * 1.45; ctx.drawImage(softShadow(), p.x - R, p.y - R, R * 2, R * 2); }
   for (const p of w.pillars) drawPillar(ctx, p, w);
@@ -185,11 +190,14 @@ export function draw(ctx, w) {
   const order = [...w.units].sort((a, b) => (a.downed ? -1 : 0) - (b.downed ? -1 : 0) || screenDepth(a) - screenDepth(b));
   const dt = Math.min(0.05, Math.max(0, w.time - (w._lastDraw ?? w.time))); w._lastDraw = w.time; w._dt = dt;
   noteHits(w);
+  for (const u of order) drawBodyGround(ctx, u, w); // chains, rays and rings that lie under the units (round 9)
   for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.downed) drawTail(ctx, u, dt); drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawBodyFx(ctx, u, w); }
   for (const p of w.projectiles) projectile(ctx, p, w.time);
   for (const p of w.particles) drawParticle(ctx, p);
   ctx.globalAlpha = 1;
   drawAirFx(ctx, w);
+  // a ray a caster holds on its target (Life Drain, round 9): over the target, under the caster
+  for (const f of w.fx) if (f.type === 'beam' && f.over && !f.over.dead && w.units.includes(f.over)) { drawBeam(ctx, f, w.time); drawUnit(ctx, f.over, w); }
   drawLocal(ctx, dt);
   // melee swings and blasts are drawn as weapon arcs and bursts by fxkit.js (drawLocal), round 8
   for (const f of w.fx) drawSpikeFx(ctx, f);
@@ -463,6 +471,14 @@ const ease = (k) => Math.sin(k * Math.PI);
 // The motion every unit shares, in its own frame: the hit squash, the turn to its facing, lunges and recoils.
 function unitFrame(ctx, u, w) {
   ctx.translate(u.x, u.y);
+  const T = w.time;
+  // off the ground (a leap): the body lifts up the screen, its shadow stays where it really is (round 9)
+  if (u.hop > 0) { const [ux, uy] = upVec(); ctx.translate(ux * u.hop * 0.9, uy * u.hop * 0.9); }
+  // knocked out: a hard shake for a moment as the stagger bursts (round 9)
+  if (u.koT > 0 && u.bursts && T - (u.bursts.stagger ?? -9) < 0.6) { const q = 1 - (T - u.bursts.stagger) / 0.6, f = Math.floor(T * 40); ctx.translate((hash(f, u.id) - 0.5) * 8 * q, (hash(u.id, f) - 0.5) * 8 * q); }
+  // a full turn: Cleave, Reap, Fan of Knives (u.spin); the archer's Roll (round 9)
+  if (u.spin) { const k = (T - u.spin.t0) / u.spin.dur; if (k >= 0 && k < 1) ctx.rotate((u.spin.dir || 1) * TAU * k * k * (3 - 2 * k)); else if (k >= 1) u.spin = null; }
+  if (u.act && u.act.type === 'dash' && u.act.roll) { const k = 1 - u.act.t / u.act.max; ctx.rotate(TAU * k * k * (3 - 2 * k) * (u.act.dir || 1)); }
   // hit: squashed and shoved along the blow
   if (u.hitT > 0 && !u.downed) {
     const k = u.hitT / 0.16;
@@ -482,6 +498,10 @@ function unitFrame(ctx, u, w) {
   }
   if (u.act && u.act.type === 'charge') { fy += u.vr * 0.15; sc *= 1.04; }
   if (u.sleepT > 0) sc *= 1 + Math.sin(w.time * 2.4 + u.id) * 0.02;
+  else if (!u.downed && u.spd <= 6 && !u.act) sc *= 1 + Math.sin(T * 2.6 + u.id) * 0.016; // breathing while it stands: nobody freezes stiff (round 9)
+  // Granny leans her whole body into the scythe's sweep (round 9: "better animation of body too")
+  if (u.kind === 'granny' && u.anim && u.anim.kind === 'swing') { const k = u.anim.t / u.anim.dur; tilt += k < 0.25 ? -0.3 * (k / 0.25) : -0.3 + 0.75 * Math.min(1, (k - 0.25) / 0.3) - 0.45 * Math.max(0, (k - 0.55) / 0.45); }
+  sc *= bigOf(u);
   if (u.hop > 0) sc *= 1 + u.hop / 110; // a leap: off the ground, so drawn bigger (its shadow shrinks below)
   if (u.exiting) { const k = clamp(u.exiting.t / u.exiting.dur, 0, 1); sc *= 1 + 0.12 * Math.sin(Math.min(1, k * 3) * Math.PI) - 0.85 * k * k; } // through the door: a lift, then shrinking into the light
   ctx.translate(fx, fy); ctx.rotate(tilt); ctx.scale(sc, sc);
@@ -511,16 +531,25 @@ function washesOf(u, w) {
     else if (b.id === 'whirl') out.push(['#FFFFFF', 0.08]);
   }
   if (u.leechT > 0) out.push(['#C8453D', 0.12 + 0.08 * Math.sin(w.time * 8)]);
-  if (u.look && u.look.tintA && !u.downed) out.push([u.look.tint, u.look.tintA]); // an elite's or major's faint tint (round 9)
+  // being mended (the Cleric's ray, Sanctuary): the whole figure flashes a soft yellow-white, smoothly, on repeat
+  if (u.mendGlow > w.time) out.push(['#FFF6C8', 0.1 + 0.32 * (0.5 + 0.5 * Math.sin(w.time * 5))]);
+  // elites and majors: a faint warm tint (round 9; a major's a touch stronger)
+  if (u.elite && u.team === 'enemy') out.push(['#FFD27A', u.major || u.mini ? 0.16 : 0.09]);
   const hw = hpWash(u, w.time); if (hw) out.push(hw);
   return out;
 }
 
-// Round 9: elites and majors have no gold rim, they're just bigger with a faint tint (u.look, elites.js LOOK) and a
-// twinkle (sim.js). A coloured border is kept for protection (u.rim: set by whatever protects; the visuals lane).
-const ELITE_COL = '#FFC83A', ELITE_RIM = 1.16;
+// A coloured border round a unit's outline is kept for protection (round 9): Guard's gold, Unstoppable's white-gold.
+// Elites and majors no longer wear one: they are bigger (bigOf), with a faint tint (washesOf) and a twinkle (fxkit).
+function borderOf(u, w) {
+  if (u.downed) return null;
+  if (u.buffs && u.buffs.some((b) => b.id === 'unstoppable')) return { color: '#FFF4B8', a: 0.85 + 0.15 * Math.sin(w.time * 9) };
+  if (u.guardBy && u.guardT > 0 && !u.guardBy.dead && !u.guardBy.downed) return { color: '#F2C14E', a: 0.8 + 0.2 * Math.sin(w.time * 5) };
+  return null;
+}
 function drawUnit(ctx, u, w) {
   if (u.hidden) return; // round 9: gone in a smoke bomb (the Bandit Chief), not just see-through
+  if (u.gasT > 0) { drawPuddle(ctx, 'gas', u.x, u.y, u.vr * 1.5, w.time, 1, u.id * 7 + 1); return; } // Gas Form: he is a cloud (round 9)
   if (u.def.art) { drawPartsUnit(ctx, u, w); if (u.frozenT > 0) drawIce(ctx, u, w); return; }
   const s = view.scale * view.dpr;
   const kind = SPRITE_KIND[u.kind] || u.kind;
@@ -528,11 +557,11 @@ function drawUnit(ctx, u, w) {
   const spr = getSprite(kind, sizeU * s);
   ctx.save();
   unitFrame(ctx, u, w);
-  if (u.invulnT > 0) ctx.globalAlpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18));
+  if (u.invulnT > 0 && !u.act) ctx.globalAlpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18));
   if (u.downed) ctx.globalAlpha = 0.62;
   if (u.ethereal && !u.exiting) ctx.globalAlpha = 0.45;
   if (spr) {
-    if (u.rim && !u.downed) { const ga = ctx.globalAlpha, r = sizeU * ELITE_RIM; ctx.globalAlpha = ga * (0.7 + 0.3 * Math.sin(w.time * 5 + u.id)); ctx.drawImage(tinted(spr, ELITE_COL), -r / 2, -r / 2, r, r); ctx.globalAlpha = ga; }
+    const bd = borderOf(u, w); if (bd) { const ga = ctx.globalAlpha, r = sizeU * 1.1; ctx.globalAlpha = ga * bd.a; ctx.drawImage(tinted(spr, bd.color), -r / 2, -r / 2, r, r); ctx.globalAlpha = ga; }
     let img = u.downed ? spr.grey : u.flashT > 0.06 ? spr.flash : spr.img;
     ctx.drawImage(img, -sizeU / 2, -sizeU / 2, sizeU, sizeU);
     // status washes over the sprite itself rather than rings around it
@@ -565,16 +594,44 @@ function drawPartsUnit(ctx, u, w) {
   const k = sizeU / 220 * (1 + 0.05 * (pose.pop || 0));
   ctx.scale(k, k); ctx.translate(-100, -100);
   let alpha = 1;
-  if (u.invulnT > 0) alpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18));
+  if (u.invulnT > 0 && !u.act && !u.spin) alpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18)); // no flicker mid-leap or roll (round 9)
   if (u.downed) alpha = 0.62; // a hero who is down lies faint too (round 7)
   if (u.ethereal && !u.exiting) alpha *= 0.5;
   const mode = u.downed ? 'grey' : u.flashT > 0.06 ? 'flash' : 'normal';
-  if (u.rim && !u.downed) { // round 9: the elites' gold rim is gone (a coloured border is for protection now); u.rim is for that
-    ctx.save(); ctx.globalAlpha = alpha * (0.7 + 0.3 * Math.sin(w.time * 5 + u.id)); ctx.translate(100, 100); ctx.scale(ELITE_RIM, ELITE_RIM); ctx.translate(-100, -100);
-    drawComposed(ctx, composeRig(set, pose, 'normal', ELITE_COL)); ctx.restore();
-  }
-  drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w), shift: isOurs(u) });
+  if (u.act && u.act.type === 'dash' && u.kind === 'twinfang') afterimages(ctx, u, w, set, pose, sizeU);
+  else u._trail = null;
+  drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w), shift: isOurs(u), border: mode === 'normal' ? borderOf(u, w) : null });
   if (pose.glow && mode === 'normal') castGlow(ctx, pose.glow, w.time);
+  if (u.kind === 'archer' && mode === 'normal') nockedArrow(ctx, u, set, pose, sizeU);
+  ctx.restore();
+}
+
+// Twinfang's Dash (round 9): shadow copies of her left behind along the way, fading. Drawn from inside her own frame
+// (SVG units), so each copy undoes her frame and sets up its own.
+function afterimages(ctx, u, w, set, pose, sizeU) {
+  const T = w.time, tr = u._trail || (u._trail = []);
+  if (!tr.length || T - tr[tr.length - 1].t > 0.035) tr.push({ x: u.x, y: u.y, f: u.facing, t: T });
+  while (tr.length && T - tr[0].t > 0.24) tr.shift();
+  const k = composeRig(set, pose, 'sil', '#6E5E8E');
+  const m = ctx.getTransform();
+  for (const p of tr) { const age = (T - p.t) / 0.24; if (age < 0.12) continue;
+    ctx.save(); ctx.setTransform(m); ctx.translate(100, 100); ctx.scale(220 / sizeU, 220 / sizeU); ctx.rotate(-(u.facing - Math.PI / 2)); ctx.translate(p.x - u.x, p.y - u.y);
+    ctx.rotate(p.f - Math.PI / 2); ctx.scale(sizeU / 220, sizeU / 220); ctx.translate(-100, -100);
+    ctx.globalAlpha = 0.55 * (1 - age); drawComposed(ctx, k); ctx.restore(); }
+}
+// The archer's arrow on the string while she draws (round 9: "I want to see what the arrow drawn to scale looks
+// like"): the same size as the arrow that flies (44 room units), pointing forward (+y in the sprite's frame).
+function nockedArrow(ctx, u, set, pose, sizeU) {
+  if (!((!u.anim && (u._ready || 0) > 0.12) || u.aimT > 0)) return;
+  const n = bowNock(set, pose); if (!n) return;
+  const s = 220 / sizeU, L = 44 * s, x = n[0], y = n[1], wd = 2.4 * s, O = 6;
+  const shaft = () => { ctx.beginPath(); ctx.moveTo(x, y - 2 * s); ctx.lineTo(x, y + L - 9 * s); };
+  const head = () => { ctx.beginPath(); ctx.moveTo(x, y + L); ctx.lineTo(x - 4.5 * s, y + L - 10 * s); ctx.lineTo(x + 4.5 * s, y + L - 10 * s); ctx.closePath(); };
+  const fl = () => { ctx.beginPath(); for (const sd of [-1, 1]) { ctx.moveTo(x, y + 7 * s); ctx.lineTo(x + sd * 4.5 * s, y - 1 * s); ctx.lineTo(x + sd * 3 * s, y + 9 * s); ctx.closePath(); } };
+  ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = INK; ctx.fillStyle = INK;
+  ctx.lineWidth = wd + O * 2; shaft(); ctx.stroke(); ctx.lineWidth = O * 2; head(); ctx.fill(); ctx.stroke(); fl(); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = u.aimCol || '#C99A6A'; ctx.lineWidth = wd; shaft(); ctx.stroke();
+  ctx.fillStyle = u.aimHead || '#DCE0E6'; head(); ctx.fill(); ctx.fillStyle = '#F1E8DA'; fl(); ctx.fill();
   ctx.restore();
 }
 
@@ -684,7 +741,7 @@ function drawOverlay(ctx, u, dt = 0) {
       const k = 1 - u.act.t / u.act.max;
       // a warning mark drawn as a shape (no text in the arena): a bar and a dot over the head. Only on the enemy's
       // side: a raised skeleton of ours winds up the same way, but the red mark read as a threat (round 7)
-      const s = 1 + 0.35 * k, y0 = -u.vr - 14;
+      const s = 1 + 0.35 * k, y0 = -u.vr - (u.hp < u.maxHp ? 34 : 14); // over the health bar (round 9: it sits over the head now)
       inked(ctx, () => { ctx.beginPath(); roundRect(ctx, -2.6 * s, y0 - 15 * s, 5.2 * s, 10.5 * s, 2.4 * s); ctx.moveTo(2.8 * s, y0); ctx.arc(0, y0, 2.8 * s, 0, TAU); }, '#FF6B5A');
     }
     if (u.hasKey) inked(ctx, () => { ctx.beginPath(); ctx.arc(u.vr * 0.8, -u.vr * 0.8, 4.5, 0, TAU); }, '#FFD45A');

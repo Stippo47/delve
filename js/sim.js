@@ -2,10 +2,11 @@
 import { TAU, clamp, dist, dist2, angleTo, wrapAngle, angleDiff, rand, rrange, rint, chance, softmaxPick } from './util.js';
 import { DEFS, FEEL, levelHp, levelDmg } from './units.js';
 import { lineClear, pathClear, rayToRoundRect, circleRect, findPath, buildGrid } from './path.js';
-import { kitThink, kitTick, hooksOf, segDist } from './kits.js';
+import { kitThink, kitTick, hooksOf, segDist, heroAttack } from './kits.js';
 import { trinketHooks } from './trinkets.js';
 import { cue } from './sfx.js';
 import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE } from './statuses.js';
+import { tallyHurt, tallyHeal, tallyDown, noteStatus } from './stats.js';
 
 let NEXT_ID = 1;
 const DIRS = 16;
@@ -83,6 +84,16 @@ const atkRate = (u) => {
   return r;
 };
 const buffMul = (u, key) => { let m = 1; for (const b of u.buffs) if (b[key] != null) m *= b[key]; return m; };
+// A unit's plain blow before the target's side of it (lane T: the inspect panel and the About page read these through
+// unitNumbers, so they always match what the sim does): its weapon's damage, and what its buffs and statuses do to
+// everything it deals.
+const hitDmg = (u) => u.def.dmg * u.dmgMul;
+const blowMul = (u) => buffMul(u, 'dealt') * (u.st.radiance > 0 ? 1 - RADIANCE.weaken * fillOf(u, 'radiance') : 1); // radiant: much weaker blows
+// The numbers a unit fights with right now: damage per weapon hit (before the target's armour and situational traits),
+// weapon attacks per second (in reach), health, move speed (px/s) and reach.
+export function unitNumbers(u) {
+  return { hit: hitDmg(u) * blowMul(u), aps: atkRate(u) / (u.def.atkCd || 1), hp: u.maxHp, speed: speedOf(u), range: u.def.range || 0 };
+}
 const immuneTo = (u, type) => u.buffs.some((b) => b.statusImmune || (b.immune && b.immune.includes(type))) || hooksOf(u).some((h) => h.immune && h.immune.includes(type));
 const knockImmune = (u) => u.buffs.some((b) => b.knockImmune) || hooksOf(u).some((h) => h.knockImmune);
 
@@ -92,7 +103,7 @@ export function addBuff(u, b) {
   const nb = { ...b, t: b.dur }; u.buffs.push(nb); return nb;
 }
 export function stun(w, u, t) { if (!alive(u)) return; u.stunT = Math.max(u.stunT, u.def.boss ? t * 0.4 : t); u.act = u.act && u.act.type === 'drink' ? null : u.act; }
-export function heal(w, u, amount, src) {
+export function heal(w, u, amount, src, o) {
   if (!alive(u) || amount <= 0) return 0;
   // a hexed healer's heal turns: it hurts the friend instead (a tiny tick only turns inside a hex that has fired)
   if (src && src !== u && alive(src) && src.team === u.team && (src.hexUntil > w.time || (amount >= 1.5 && hexFires(w, src)))) {
@@ -101,6 +112,7 @@ export function heal(w, u, amount, src) {
   if (u.st.curse > 0) amount *= Math.max(0, 1 - CURSE.healCut * fillOf(u, 'curse')); // cursed: heals do less, then nothing
   if (amount <= 0) return 0;
   const before = u.hp; u.hp = Math.min(u.maxHp, u.hp + amount);
+  if (w.stats) tallyHeal(w, u, src, u.hp - before, o);
   if (u.hp - before > 2 && rand() < 0.5) w.particles.push({ x: u.x + rrange(-12, 12), y: u.y, vx: 0, vy: 0, rise: 50, up: 0, life: 0.6, max: 0.6, size: 4, color: '#9BE07A' });
   return u.hp - before;
 }
@@ -668,8 +680,7 @@ export function hurt(w, u, amount, src, o = {}) {
   if (u.act && u.act.type === 'drink' && !o.dot) u.act = null;
   if (!o.dot && !o.noDodge && u.def.dodge && chance(u.def.dodge)) { textU(w, u.x, u.y, u.r, 'dodge', '#CFE8FF', 0.8); return 0; }
   let amt = amount;
-  if (src && alive(src)) { for (const h of hooksOf(src)) if (h.dealt) amt = h.dealt(w, src, u, amt, o); amt *= buffMul(src, 'dealt');
-    if (src.st.radiance > 0) amt *= 1 - RADIANCE.weaken * fillOf(src, 'radiance'); } // radiant: much weaker blows
+  if (src && alive(src)) { for (const h of hooksOf(src)) if (h.dealt) amt = h.dealt(w, src, u, amt, o); amt *= blowMul(src); }
   if (u.st.curse > 0) amt *= 1 + CURSE.taken * fillOf(u, 'curse');             // cursed: blows land harder
   for (const h of hooksOf(u)) if (h.taken) amt = h.taken(w, u, src, amt, o);
   amt *= buffMul(u, 'taken');
@@ -690,17 +701,19 @@ export function hurt(w, u, amount, src, o = {}) {
   // shatter: a hard hit on a frozen unit
   if (u.frozenT > 0 && !o.dot && (o.heavy || amount >= 12 || (o.knock || 0) >= 150)) shatter(w, u, src);
   u.hp -= amt;
+  if (w.stats) tallyHurt(w, u, src, amt, o);
   if (!o.dot) cue('hit', u, src, { amt, crit: o.crit, heavy: o.heavy, shot: o.shot, blocked: u.blockedAt === w.time });
   if (!o.dot) {
     u.hitT = 0.16; u.hitA = fromA; u.hitBlock = onShield;
     // the impact point: on the body's edge facing the blow, or on the shield's face (pushed out a little further)
     const back = fromA + Math.PI;
     const sa = onShield ? u.facing + clamp(wrapAngle(back - u.facing), -0.7, 0.7) : back;
-    const sr = onShield ? u.r * 1.05 + 4 : u.r * 0.85;
+    const sr = o.omni ? 0 : onShield ? u.r * 1.05 + 4 : u.r * 0.85; // omni: a blow from everywhere at once (Smite, round 9)
     u.hitX = u.x + Math.cos(sa) * sr; u.hitY = u.y + Math.sin(sa) * sr;
     const big = o.heavy || o.crit || amt >= 14;
-    if (onShield) sparks(w, u.hitX, u.hitY, sa, 6, '#FFF4C8', 1.1); // a clang: sparks thrown back off the shield
-    else sparks(w, u.hitX, u.hitY, fromA + (rand() < 0.5 ? Math.PI : 0), big ? 6 : 3, o.crit ? '#FFE14D' : '#FFFFFF', big ? 1.2 : 0.9);
+    if (o.omni) { u.hitOmni = true; for (let i = 0; i < 6; i++) sparks(w, u.x, u.y, i / 6 * TAU, 1, o.crit ? '#FFE14D' : '#FFFBEA', 1); }
+    else if (onShield) sparks(w, u.hitX, u.hitY, sa, 6, '#FFF4C8', 1.1); // a clang: sparks thrown back off the shield
+    else { u.hitOmni = false; sparks(w, u.hitX, u.hitY, fromA + (rand() < 0.5 ? Math.PI : 0), big ? 6 : 3, o.crit ? '#FFE14D' : '#FFFFFF', big ? 1.2 : 0.9); }
     if (big) puff(w, u.hitX, u.hitY, '#EDE6D6', 4, 90, 4, 0.3);
     // punch without freezing the game: only a crit holds the frame, and only a hair; the shake is small
     if (o.crit) w.hitstop = Math.max(w.hitstop, 0.025);
@@ -722,7 +735,7 @@ export function hurt(w, u, amount, src, o = {}) {
   if (src && alive(src) && !o.dot) for (const h of hooksOf(src)) if (h.hit) h.hit(w, src, u, amt, o);
   if (!o.dot) for (const h of hooksOf(u)) if (h.struck) h.struck(w, u, src, amt, o);
   if (u.hp <= 0 && hooksOf(u).some((h) => h.downed && h.downed(w, u, src))) return amt;
-  if (u.hp <= 0) kill(w, u, src);
+  if (u.hp <= 0) { if (w.stats) tallyDown(w, u, src, o); kill(w, u, src); }
   return amt;
 }
 
@@ -732,6 +745,7 @@ export function addStatus(w, u, type, amount, src) {
   if (type === 'entangle' && (u.tangledT > 0 || u.tangleImmuneT > 0)) return; // held fast already, or just got free
   const res = (u.def.res && u.def.res[type]) ?? 1;
   const s = u.st;
+  noteStatus(u, type, src); // its ticks and bursts count for whoever put it on (stats.js)
   if (type === 'chill' && s.wet > 30) amount *= 1.5;          // wet freezes easier
   if (type === 'shock' && s.wet > 30 && src) for (const h of hooksOf(src)) if (h.shockMul) amount *= h.shockMul;
   s[type] = (s[type] || 0) + amount * res;
@@ -788,14 +802,14 @@ export function addStatus(w, u, type, amount, src) {
   if (type === 'burn') {
     if (u.frozenT > 0) { u.frozenT = 0; s.chill = 0; puff(w, u.x, u.y, 'rgba(235,240,245,0.8)', 10, 60, 9, 0.8); textU(w, u.x, u.y, u.r, 'thaw', '#DDEAF2', 0.8); }
     s.chill = Math.max(0, s.chill - amount);
-    if (s.burn >= need) { s.burn = after; burst(); textU(w, u.x, u.y, u.r + 12, 'SCORCH', '#FF7A2F', 1.2); flames(w, u.x, u.y, 10, u.vr * 0.8, 90); hurt(w, u, 22, src, { noDodge: true, noHex: true }); explode(w, u.x, u.y, 60, 10, { burn: 24 }, src, '#FF7A2F', u); }
+    if (s.burn >= need) { s.burn = after; burst(); textU(w, u.x, u.y, u.r + 12, 'SCORCH', '#FF7A2F', 1.2); flames(w, u.x, u.y, 10, u.vr * 0.8, 90); hurt(w, u, 22, src, { noDodge: true, noHex: true, stk: 'burn' }); explode(w, u.x, u.y, 60, 10, { burn: 24, stk: 'burn' }, src, '#FF7A2F', u); }
   } else if (type === 'chill') {
     if (s.chill >= need && u.frozenT <= 0) {
       u.frozenT = u.def.boss ? 1.6 : 3; s.chill = after; s.burn = 0; u.freezeImmune += 45; u.act = null; burst();
       textU(w, u.x, u.y, u.r + 12, 'FREEZE', '#7FD6F5', 1.2); puff(w, u.x, u.y, '#BFEFFF', 10, 70, 4);
     }
   } else if (type === 'poison') {
-    if (s.poison >= need) { s.poison = after; burst(); textU(w, u.x, u.y, u.r + 12, 'ROT', '#9BCB3C', 1.2); hurt(w, u, u.maxHp * 0.15, src, { noDodge: true, noHex: true, color: '#9BCB3C' }); }
+    if (s.poison >= need) { s.poison = after; burst(); textU(w, u.x, u.y, u.r + 12, 'ROT', '#9BCB3C', 1.2); hurt(w, u, u.maxHp * 0.15, src, { noDodge: true, noHex: true, color: '#9BCB3C', stk: 'poison' }); }
   }
 }
 
@@ -804,6 +818,7 @@ function shatter(w, u, src) {
   u.frozenT = 0; u.st.chill = 0;
   textU(w, u.x, u.y, u.r + 14, 'SHATTER', '#BFEFFF', 1.3);
   u.hp -= 26; u.flashT = 0.15;
+  if (w.stats) tallyHurt(w, u, src, 26, { stk: 'chill' });
   puff(w, u.x, u.y, '#E6F8FF', 18, 160, 5, 0.6);
   w.shake = Math.max(w.shake, 6);
   for (let i = 0; i < 8; i++) {
@@ -823,7 +838,7 @@ export function explode(w, x, y, r, dmg, statuses, src, color, skip) {
     if (dist(x, y, o.x, o.y) > r + o.r) continue;
     const friendly = src && o.team === src.team;
     hurt(w, o, dmg * (friendly ? 0.4 : 1), src, { noDodge: true, knock: 110, kAngle: angleTo(x, y, o.x, o.y),
-      ...Object.fromEntries(Object.entries(statuses).map(([k, v]) => [k, v * (friendly ? 0.4 : 1)])) });
+      ...Object.fromEntries(Object.entries(statuses).filter(([, v]) => typeof v === 'number').map(([k, v]) => [k, v * (friendly ? 0.4 : 1)])), stk: statuses.stk });
   }
   if (statuses.burn) igniteAround(w, x, y, r);
 }
@@ -903,11 +918,19 @@ function inMeleeArc(u, o, extra = 0) {
 
 function meleeSwing(w, u, single) {
   const d = u.def;
+  if (d.aoe) { // a blow that lands on the ground in front: everything in a small circle there (round 9: the Berserker's flail)
+    const cx = u.x + Math.cos(u.facing) * (u.r + d.range * 0.55), cy = u.y + Math.sin(u.facing) * (u.r + d.range * 0.55);
+    u.lungeT = 0.18;
+    w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, src: u, aoe: { x: cx, y: cy, r: d.aoe } });
+    for (const o of w.units) if (alive(o) && o.team !== u.team && !o.ethereal && dist(cx, cy, o.x, o.y) < d.aoe + o.r)
+      hurt(w, o, d.dmg * u.dmgMul * rrange(0.9, 1.1), u, { knock: d.knock || 40, kAngle: angleTo(cx, cy, o.x, o.y), heavy: d.heavy });
+    return;
+  }
   const targets = single ? (u.target && inMeleeArc(u, u.target, 6) ? [u.target] : []) : w.units.filter((o) => alive(o) && o.team !== u.team && inMeleeArc(u, o, 6));
   u.lungeT = 0.18;
   w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, color: u.team === 'hero' ? '#FFFFFF' : '#FFD2C2', src: u });
   for (const o of targets) {
-    hurt(w, o, d.dmg * u.dmgMul * rrange(0.9, 1.1), u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison, radiance: d.radiance, curse: d.curse,
+    hurt(w, o, hitDmg(u) * rrange(0.9, 1.1), u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison, radiance: d.radiance, curse: d.curse,
       burn: d.burn, entangle: d.entangle, stagger: d.stagger, wet: d.wet }); // round 9: a def's blow can carry any build-up
   }
 }
@@ -916,7 +939,7 @@ function fireArrow(w, u, angle, o = {}) {
   const sp = o.speed || 520;
   u.recoilT = 0.14;
   w.projectiles.push({ kind: o.fire ? 'fireArrow' : (u.def.proj || 'arrow'), color: u.def.projColor, x: u.x + Math.cos(angle) * (u.r + 6), y: u.y + Math.sin(angle) * (u.r + 6),
-    vx: Math.cos(angle) * sp, vy: Math.sin(angle) * sp, r: 6, team: u.team, owner: u, dmg: (o.dmg || u.def.dmg) * u.dmgMul,
+    vx: Math.cos(angle) * sp, vy: Math.sin(angle) * sp, r: 6, team: u.team, owner: u, dmg: o.dmg ? o.dmg * u.dmgMul : hitDmg(u),
     o: { chill: o.fire ? 0 : u.def.chill, burn: o.fire ? 20 : 0, radiance: u.def.radiance, curse: u.def.curse, knock: 30 }, life: 1.2, a: angle });
 }
 
@@ -929,7 +952,8 @@ function tryAttack(w, u) {
   if (def.role === 'ranged') {
     if (d <= def.range && face < 0.35 && !blocked(w, u.x, u.y, t.x, t.y)) {
       const lead = d / 520;
-      fireArrow(w, u, angleTo(u.x, u.y, t.x + t.vx * lead, t.y + t.vy * lead) + rrange(-0.04, 0.04));
+      const aim = angleTo(u.x, u.y, t.x + t.vx * lead, t.y + t.vy * lead) + rrange(-0.04, 0.04);
+      if (!(u.kit && heroAttack(w, u, t, aim))) fireArrow(w, u, aim); // kits.js: a hero's own attack (round 9), else a plain shot
       setAnim(u, def.attackAnim || 'draw', 0.32);
       u.atkT = def.atkCd * rrange(0.9, 1.1); u.lastAttackT = w.time;
     }
@@ -1115,22 +1139,21 @@ function statusTick(w, u, dt) {
     if (u.radiantT <= 0) { u.radiantT = 0; u.radImmuneT = RADIANCE.immuneT; }
   } else if (u.radImmuneT > 0) u.radImmuneT -= dt;
   if (u.hexed && (u.hexT -= dt) <= 0) u.hexed = false;           // an unused hex wears off
-  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT', 'focusT', 'charmCd']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
+  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT', 'aimT', 'gasT', 'focusT', 'charmCd']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
   for (const b of u.buffs) b.t -= dt;
   if (u.buffs.length) u.buffs = u.buffs.filter((b) => b.t > 0);
-  if (u.regenT > 0) { u.regenT -= dt; heal(w, u, u.regenRate * dt, u.regenSrc); }
+  if (u.regenT > 0) { u.regenT -= dt; heal(w, u, u.regenRate * dt, u.regenSrc, { pab: u.regenAb }); }
   if (u.leechT > 0) {                                            // leeches: drain this one, heal the leech-giver's side
-    u.leechT -= dt; const got = hurt(w, u, 3 * dt * (u.leechMul || 1), u.leechBy, { dot: true, color: '#C8553D' });
+    u.leechT -= dt; const got = hurt(w, u, 3 * dt * (u.leechMul || 1), u.leechBy, { dot: true, color: '#C8553D', pab: u.leechAb });
     const side = w.units.filter((a) => alive(a) && u.leechBy && a.team === u.leechBy.team).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
-    if (side) heal(w, side, got * 1.5 * (u.leechMul || 1), u.leechBy);
+    if (side) heal(w, side, got * 1.5 * (u.leechMul || 1), u.leechBy, { pab: u.leechAb });
   }
   if (u.lifeT != null) { u.lifeT -= dt; if (u.lifeT <= 0) { kill(w, u, null); return; } }
   if (u.later) { for (const l of u.later) { l.t -= dt; if (l.t <= 0 && !l.done) { l.done = true; l.f(); } } if (u.later.every((l) => l.done)) u.later = null; }
   for (const b of u.buffs) if (b.spinning) {                      // Whirl: hits everything round about, pulls with tier III
     u.spinT = (u.spinT || 0) - dt; if (u.spinT > 0) continue; u.spinT = 0.4;
-    for (let i = 0; i < 3; i++) { const a = rand() * TAU; sparks(w, u.x + Math.cos(a) * (u.r + 40), u.y + Math.sin(a) * (u.r + 40), a + Math.PI / 2, 2, '#FFFFFF'); } // the flail's arc, not a ring
-    for (const e of opponents(w, u)) if (dist(u.x, u.y, e.x, e.y) < u.r + e.r + 50) {
-      hurt(w, e, u.def.dmg * u.dmgMul * 0.6, u, { kAngle: u.spinPull ? angleTo(e.x, e.y, u.x, u.y) : angleTo(u.x, u.y, e.x, e.y), knock: u.spinPull ? 80 : 120 });
+    for (const e of opponents(w, u)) if (dist(u.x, u.y, e.x, e.y) < u.r + e.r + 50) { // sparks only where it hits (round 9)
+      hurt(w, e, u.def.dmg * u.dmgMul * 0.6, u, { pab: b.id, kAngle: u.spinPull ? angleTo(e.x, e.y, u.x, u.y) : angleTo(u.x, u.y, e.x, e.y), knock: u.spinPull ? 80 : 120 });
     }
   }
   for (const h of hooksOf(u)) if (h.tick) h.tick(w, u, dt);
@@ -1139,11 +1162,11 @@ function statusTick(w, u, dt) {
     s.burn = Math.max(0, s.burn - STATUS.burn.decay * dt);
     // burning: hurts from a little build-up (it used to wait for 30, so most burns never showed or hurt), and the body
     // gives off licks of flame, more as it builds (fx.js drawStatusFx draws flames on the body too)
-    if (s.burn >= 8) hurt(w, u, (1.5 + s.burn * 0.06) * dt, null, { dot: true, color: '#FF9A55' });
+    if (s.burn >= 8) hurt(w, u, (1.5 + s.burn * 0.06) * dt, null, { dot: true, color: '#FF9A55', by: u.stBy && u.stBy.burn, stk: 'burn' });
     if (s.burn > 4 && rand() < dt * (4 + 10 * fillOf(u, 'burn'))) flames(w, u.x, u.y - u.vr * 0.3, 1, u.vr * 0.6, 60);
   }
   if (s.chill > 0) s.chill = Math.max(0, s.chill - STATUS.chill.decay * dt);
-  if (s.poison > 0) { s.poison = Math.max(0, s.poison - STATUS.poison.decay * dt); hurt(w, u, s.poison * 0.07 * dt, null, { dot: true, color: '#9BCB3C' });
+  if (s.poison > 0) { s.poison = Math.max(0, s.poison - STATUS.poison.decay * dt); hurt(w, u, s.poison * 0.07 * dt, null, { dot: true, color: '#9BCB3C', by: u.stBy && u.stBy.poison, stk: 'poison' });
     if (s.poison > 25 && rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.7, y: u.y + rrange(-u.r, u.r) * 0.7, vx: 0, vy: -25, life: 0.6, max: 0.6, size: 4, color: '#9BCB3C' }); }
   if (u.frozenT > 0) u.frozenT -= dt;
   if (u.freezeImmune > 0) u.freezeImmune = Math.max(0, u.freezeImmune - 4 * dt);
@@ -1238,6 +1261,13 @@ function physics(w, dt) {
 function projectiles(w, dt) {
   for (const p of w.projectiles) {
     p.life -= dt;
+    // round 9 shot behaviours: home (turns towards a unit), accel (speeds up), drag (slows), grow (radius/s), fall (damage
+    // lost per second, the necromancer's dart)
+    if (p.home && alive(p.home) && p.turn) { const a = Math.atan2(p.vy, p.vx), want = angleTo(p.x, p.y, p.home.x, p.home.y), sp = Math.hypot(p.vx, p.vy), na = a + clamp(wrapAngle(want - a), -p.turn * dt, p.turn * dt); p.vx = Math.cos(na) * sp; p.vy = Math.sin(na) * sp; }
+    if (p.accel) { const m = 1 + p.accel * dt; p.vx *= m; p.vy *= m; }
+    if (p.drag) { const m = Math.exp(-p.drag * dt); p.vx *= m; p.vy *= m; }
+    if (p.grow) p.r = Math.max(2, p.r + p.grow * dt);
+    if (p.fall) p.dmg *= Math.exp(-p.fall * dt);
     p.x += p.vx * dt; p.y += p.vy * dt;
     if (p.x < 0 || p.y < 0 || p.x > w.W || p.y > w.H) p.life = 0;
     for (const pl of w.pillars) if (dist(p.x, p.y, pl.x, pl.y) < pl.r && p.life > 0) {
@@ -1254,7 +1284,7 @@ function projectiles(w, dt) {
       if (p.hitSet && p.hitSet.has(u)) continue;
       if (dist(p.x, p.y, u.x, u.y) < u.r + p.r) {
         const friendly = p.team === 'neutral' && p.owner && u.team === p.owner.team;
-        const o = { ...p.o, kAngle: Math.atan2(p.vy, p.vx), shot: true };
+        const o = { ...p.o, kAngle: Math.atan2(p.vy, p.vx), shot: true, pab: p.ab, tk: p.tk };
         if (friendly) { for (const k of ['chill', 'burn', 'poison']) if (o[k]) o[k] *= 0.4; }
         const mul = p.owner && p.owner.nextShotMul && !p.hitSet ? p.owner.nextShotMul : 1;
         if (mul > 1) p.owner.nextShotMul = 0;
@@ -1366,9 +1396,6 @@ export function step(w, dt) {
     if (u.frozenT > 0 || u.stunT > 0 || u.sleepT > 0) { if (!u.act || u.act.type !== 'slip') { u.dvx = u.dvy = 0; u.spd = 0; continue; } }
     // slimes (round 9: "All slimes move in forward burst, pause then move again"): a hop, then a rest; def.onHop(w, u)
     // when it lands
-    // an elite's or major's twinkle (round 9, elites.js LOOK): now and then a bright mote off it
-    if (u.look && u.look.twinkle && rand() < dt * u.look.twinkle) { const a = rand() * TAU, d = u.vr * rrange(0.3, 1);
-      w.particles.push({ x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d, vx: 0, vy: 0, rise: 26, up: 0, life: 0.55, max: 0.55, size: rrange(2.5, 4), color: u.look.tint, star: true }); }
     if (u.def.hops) {
       const per = u.def.hops, k = ((w.time + u.id * 0.37) % per) / per, was = u.pulse ?? 1;
       u.pulse = k < 0.34 ? 0.4 + 2.6 * Math.sin(Math.PI * k / 0.34) : 0.15;
@@ -1437,7 +1464,8 @@ export function step(w, dt) {
     if (f.tick) { f.acc = (f.acc || 0) + dt; while (f.acc >= (f.every || 0.5)) { f.acc -= f.every || 0.5; f.tick(f); } }
     if (f.follow && f.src) { const e = w.units.filter((o) => alive(o) && o.team !== f.src.team).sort((a, b) => dist(a.x, a.y, f.x, f.y) - dist(b.x, b.y, f.x, f.y))[0];
       if (e) { const a = angleTo(f.x, f.y, e.x, e.y); f.x += Math.cos(a) * 40 * dt; f.y += Math.sin(a) * 40 * dt; } }
-    if (f.ward && f.src) for (const e of w.units) if (alive(e) && e.team !== f.src.team && dist(e.x, e.y, f.x, f.y) < f.r + e.r) { const a = angleTo(f.x, f.y, e.x, e.y); e.kx += Math.cos(a) * 200 * dt * 6; e.ky += Math.sin(a) * 200 * dt * 6; }
+    // a ward eases enemies out of it (round 9: it used to fling them, and the slams and bowling hurt them)
+    if (f.ward && f.src) for (const e of w.units) if (alive(e) && e.team !== f.src.team && dist(e.x, e.y, f.x, f.y) < f.r + e.r) { const a = angleTo(f.x, f.y, e.x, e.y), d = f.r + e.r - dist(e.x, e.y, f.x, f.y); e.x += Math.cos(a) * Math.min(d, 260 * dt); e.y += Math.sin(a) * Math.min(d, 260 * dt); }
   }
   w.fx = w.fx.filter((f) => f.t < f.max);
   let wallsGone = false;
