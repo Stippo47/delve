@@ -9,6 +9,9 @@ SKIN = ("#F4CBA5", "#DCA27E")
 
 
 RED, EYES, FACE = False, True, False
+# round 7, dragonborn A ("horns look like they are floating"): HORNS_R7 attaches the horns (off here, so lizards6.py
+# still builds round 6; lizards7.py turns it on for version a). See dragonborn().
+HORNS_R7 = False
 
 
 def face_shade(S, y0, y1, col, brow):
@@ -61,11 +64,22 @@ def dragonborn():
         pts = [(132, 82), (150, 70), (158, 80), (166, 82), (166, 94), (174, 100), (164, 108), (166, 118), (140, 116)]
         if side < 0: pts = mx(pts)
         S.shape(blob(pts, 0.6), S.lg(*(("#F2B24A", "#C06A24") if RED else ("#5AD0C0", "#228A8A"))), sh=3, shade=0.2)
+    if HORNS_R7:
+        # round 7: the horns lay on top of the head with their thin roots ending on it and a drop shadow under them,
+        # so they looked like they floated over the head. Now they grow out of the skull: drawn under the head, the
+        # roots hidden by it, the same ivory horns coming out of the head's edge at the temples and sweeping back,
+        # a little longer so as much horn shows as before.
+        S.comment = S.comment.replace("two big ivory horns swept back off the brow", "two big ivory horns growing out of "
+                                      "the sides of the skull and sweeping back (round 7: they lay on top of the head)")
+        for side in (1, -1):
+            pts = [(116, 80), (124, 64), (140, 48), (154, 24), (152, 54), (140, 84)]
+            if side < 0: pts = mx(pts)
+            S.shape(blob(pts, 0.85), S.lg("#FFF4DC", "#C8B48E"), sh=4, shade=0.25, hi=0.3)
     S.shape(sym([(100, 50), (128, 54), (144, 74), (144, 100), (134, 122), (124, 144), (116, 164), (100, 170)]),
             S.lg(sc, scD), sh=5, hi=None if FACE else 0.35,
             decor=[f'<path d="{ell(100, 96, 12, 30)}" fill="{"#F4927C" if RED else "#7EAAEC"}" opacity="{0.45 if RED else 0.5}"/>']
             + ([face_shade(S, 50, 170, "#5A1418", 100)] if FACE else []))
-    for side in (1, -1):
+    for side in ((1, -1) if not HORNS_R7 else ()):
         pts = [(112, 70), (124, 62), (140, 50), (150, 30), (146, 56), (128, 80)]
         if side < 0: pts = mx(pts)
         S.shape(blob(pts, 0.85), S.lg("#FFF4DC", "#C8B48E"), sh=4, shade=0.25, hi=0.3)

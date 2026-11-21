@@ -10,6 +10,8 @@ BAT_R6 = True
 SPIDER_R6 = True
 SLIME_R6 = True
 SNOWMAN_R6 = True
+# round 7 ("weird red thing at back of snowman"): the scarf end trailing behind (#back) is gone; nothing else changed
+SNOWMAN_R7 = True
 
 
 # ----------------------------------------------------------------- slimes
@@ -171,8 +173,13 @@ def snowman():
                'smaller snowball head, a plain dark top hat (two shapes, no band), a red scarf with one end trailing '
                'behind, a carrot nose poking forward, a coal smile, stick arms with twig hands. No eyes. Parts: '
                '#back (the scarf end), #arm-l / #arm-r (sticks), #body. Front = DOWN (+y).')
-    S.group("back", (100, 92))
-    S.shape(blob([(118, 96), (132, 92), (150, 40), (156, 22, 'c'), (140, 30), (122, 80)], 0.8), S.lg("#E8545A", "#A8282E"), shadow=False, shade=0.2)
+    if SNOWMAN_R7:
+        S.comment = S.comment.replace("a red scarf with one end trailing behind", "a red scarf round the neck (round 7: its "
+                                      "end trailing behind is gone)").replace("#back (the scarf end), ", "").replace(
+                                      "a plain dark top hat (two shapes, no band)", "a blue knitted cap with a white bobble")
+    else:
+        S.group("back", (100, 92))
+        S.shape(blob([(118, 96), (132, 92), (150, 40), (156, 22, 'c'), (140, 30), (122, 80)], 0.8), S.lg("#E8545A", "#A8282E"), shadow=False, shade=0.2)
     for gid, side in (("arm-l", -1), ("arm-r", 1)):
         S.group(gid, (100 + side * 56, 100))
         pts = [(150, 104), (176, 128), (192, 158)]

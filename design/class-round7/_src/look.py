@@ -1,4 +1,4 @@
-"""Look tools for round 6 (scratch output goes to tools/riffle/out/r6, which git ignores).
+"""Look tools for round 7 (scratch output goes to tools/riffle/out/r7, which git ignores).
 
 python look.py zoom out.png "x y w h" a.svg b.svg ...     a crop of each design, big, side by side
 python look.py pair out.png before.svg after.svg ...      before/after pairs: big, 8 facings at 40px
@@ -11,7 +11,7 @@ ROOT = HERE.parents[2]
 sys.path.insert(0, str(ROOT / "tools" / "riffle"))
 import render_board as rb
 
-SCR = ROOT / "tools" / "riffle" / "out" / "r6"
+SCR = ROOT / "tools" / "riffle" / "out" / "r7"
 SCR.mkdir(parents=True, exist_ok=True)
 
 

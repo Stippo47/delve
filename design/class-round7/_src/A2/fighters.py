@@ -6,8 +6,21 @@ from common import *
 
 BRONZE = "#C98A3A"
 GLADIATOR_R6 = True
+# round 7 ("add some shine maybe"): a soft shine on the helmet's bronze, the same pale gold and softness as the
+# shield's: a long highlight following the dome on its lit (upper left) side, a brighter glint inside it.
+GLADIATOR_R7 = True
 WWH_R6 = True
+# round 7 ("beard and sideburns don't mesh together; they should"): the sideburns and the beard are one shape, a
+# horseshoe from under the hair at the temples down both sides of the face and round the jaw; its inner edge runs
+# down the cheeks straight into the beard's upper edge under the mouth (round 6 drew them as three shapes, so the beard's
+# top corners stuck out over the sideburns with a shadow line between them). Same colour, same outer edge and ragged
+# lower edge as round 6; nothing else changed.
+WWH_R7 = True
 WOLF_R6 = True
+# round 7 ("make the same colour as the werewolf man; remove the fangs"): the fur takes the human form's hair colour
+# (#6E6A6E), the lighter snout, its stripe and the pale muzzle the same greys in that colour, each as much lighter than
+# the fur as before; the two fangs are gone. Nothing else changed.
+WOLF_R7 = True
 EXE_R6 = True
 
 
@@ -298,8 +311,14 @@ def gladiator():
         helm = ("M 91.6 152.4 C 66 150 46 130 46 98 C 46 64 66 40 100 40 C 134 40 154 64 154 98 C 154 130 134 150 108.4 152.4 "
                 "L 108 128 C 108 122 112 119 118 118 L 128 117 C 134 116.5 136 112 135 108 C 132 103 118 101 100 101 "
                 "C 82 101 68 103 65 108 C 64 112 66 116.5 72 117 L 82 118 C 88 119 92 122 92 128 Z")
+        shine = ""
+        if GLADIATOR_R7:
+            shine = (f'<path d="{ell(72, 72, 17, 9)}" transform="rotate(-42 72 72)" fill="#F2C27A" opacity="0.75"/>'
+                     f'<path d="{ell(67, 76, 6.5, 3.5)}" transform="rotate(-42 67 76)" fill="#FFF0C8" opacity="0.7"/>')
+            S.comment = S.comment.replace("a bronze helmet", "a polished bronze helmet (round 7: a soft shine on it)")
         S.shape(helm, BRONZE, shadow=5,
-                decor=strokes("M 60 136 C 54 122 52 106 54 92 M 140 136 C 146 122 148 106 146 92", "#9A6224", 3, 0.5))
+                decor=strokes("M 60 136 C 54 122 52 106 54 92 M 140 136 C 146 122 148 106 146 92", "#9A6224", 3, 0.5)
+                      + shine)
         S.shape("M 95.5 98 L 104.5 98 L 103.2 124 C 102.8 127.5 97.2 127.5 96.8 124 Z", "#D6974A", shadow=2)
         crest = blob([(92, 94), (88, 72), (88, 40), (92, 14), (100, 6), (108, 14), (112, 40), (112, 72), (108, 94)], 0.8)
         S.shape(crest, "#C8323A", shadow=4,
@@ -371,6 +390,11 @@ def werewolf():
                "shaggy ruff over hunched shoulders, rags of the red shirt. No eyes (the snout and ears carry the read). "
                "No weapon: two big furry paws with white claws held forward (arm-l, arm-r, after #body). The human "
                "form is fighter-werewolf-human.svg. " + LAYOUT)
+    fur, pfur, snc, stripe = FUR, PFUR, "#9AA2B4", "#B6BDCC"
+    if WOLF_R7:
+        fur, pfur, snc, stripe = "#6E6A6E", "#B0ADB0", "#888488", "#A29EA2"
+        S.comment = S.comment.replace("a dark nose and two white fangs", "a dark nose and no fangs (round 7), the fur the "
+                                      "human form's dark grey hair colour (round 7; was blue-grey)")
     S.group("body")
     torn_shirt(S)
     ruff = cloud(100, 104, 52, 18, 0.62, 5)
@@ -397,17 +421,17 @@ def werewolf():
         # a separate ringed dome. The inner ears follow the ear's shape in a muted dusky pink instead of a round pink
         # spot. The fangs are two curved white fangs hanging from the upper jaw beside the nose (not flat triangles
         # stuck on the snout's sides). Shapes, sizes and colours otherwise as round 5.
-        S.shape(ruff, FUR, shadow=3, T="translate(100 104) scale(1.12 0.9) translate(-100 -104)")
+        S.shape(ruff, fur, shadow=3, T="translate(100 104) scale(1.12 0.9) translate(-100 -104)")
         for s in (-1, 1):
             ear = blob([(100 + s * 22, 74), (100 + s * 46, 40), (100 + s * 52, 54), (100 + s * 44, 82)], 0.6)
             inner = blob([(100 + s * 30, 72), (100 + s * 44, 49), (100 + s * 47, 57), (100 + s * 41, 76)], 0.6)
-            S.shape(ear, FUR, shadow=2, sop=0.18, decor=f'<path d="{inner}" fill="#9C7E8C" opacity="0.75"/>')
-        S.shape(ell(100, 100, 40, 40), FUR, shadow=3, sop=0.15)
+            S.shape(ear, fur, shadow=2, sop=0.18, decor=f'<path d="{inner}" fill="#9C7E8C" opacity="0.75"/>')
+        S.shape(ell(100, 100, 40, 40), fur, shadow=3, sop=0.15)
         snout = blob([(100, 104), (116, 112), (120, 136), (114, 162), (100, 174), (86, 162), (80, 136), (84, 112)], 0.85)
-        S.shape(snout, "#9AA2B4", shadow=4,
-                decor=f'<path d="M 78 138 C 90 152 110 152 122 138 L 122 182 L 78 182 Z" fill="{PFUR}"/>'
-                      + strokes("M 100 108 L 100 150", "#B6BDCC", 5, 0.7))
-        for s in (-1, 1):
+        S.shape(snout, snc, shadow=4,
+                decor=f'<path d="M 78 138 C 90 152 110 152 122 138 L 122 182 L 78 182 Z" fill="{pfur}"/>'
+                      + strokes("M 100 108 L 100 150", stripe, 5, 0.7))
+        for s in ((-1, 1) if not WOLF_R7 else ()):
             S.shape(f"M {100 + s * 9.5} 158 C {100 + s * 14.5} 158.5 {100 + s * 16} 162 {100 + s * 15} 166 "
                     f"C {100 + s * 14.5} 169.5 {100 + s * 13} 172.5 {100 + s * 12} 174.5 C {100 + s * 11.2} 170 {100 + s * 9.5} 165 "
                     f"{100 + s * 9.5} 158 Z", "#F4F1EA", shadow=1.5, sop=0.25, side=False)
@@ -417,7 +441,7 @@ def werewolf():
         T = frame(cx, cy, a)
         for dx in (-9, 0, 9):
             S.shape("M -3.5 0 L 3.5 0 L 0 15 Z", "#F4F1EA", T=f"{T} translate({dx} 10)", shadow=0, side=False)
-        S.shape(blob([(-15, -10), (0, -16), (15, -10), (16, 6), (0, 15), (-16, 6)], 0.9), FUR, T=T, shadow=3,
+        S.shape(blob([(-15, -10), (0, -16), (15, -10), (16, 6), (0, 15), (-16, 6)], 0.9), fur, T=T, shadow=3,
                 decor="" if WOLF_R6 else f'<path d="{ell(-4, -6, 7, 4)}" fill="#9AA2B4" opacity="0.6"/>')
     S.group("arm-l", PL, "paw")
     paw(46, 152, 10)
@@ -447,7 +471,7 @@ def werewolf_human():
     S.shape(cloud(100, 106, 44, 16, 0.6), "#8A8E9C", shadow=3)
     S.head()
     HAIR, DHAIR = "#6E6A6E", "#4E4A50"
-    for s in (-1, 1):
+    for s in ((-1, 1) if not (WWH_R6 and WWH_R7) else ()):
         S.shape(blob([(100 + s * 46, 88), (100 + s * 50, 112), (100 + s * 44, 136), (100 + s * 36, 128), (100 + s * 38, 100)], 0.8),
                 HAIR, shadow=3)
     hair = blob([(48, 112), (40, 96), (46, 84), (42, 66), (56, 58), (60, 40), (78, 42), (90, 28), (104, 38), (120, 28),
@@ -462,6 +486,17 @@ def werewolf_human():
                       (130, 136), (135, 126), (143, 122), (145, 136), (139, 146), (131, 151), (125, 149.5), (118, 156),
                       (111, 154), (105, 159), (100, 155), (95, 159), (89, 154), (82, 156), (75, 149.5), (69, 151),
                       (61, 146), (55, 136)], 0.55)
+        if WWH_R7:
+            # one horseshoe: outer edge from the temple (under the hair) down the side of the head into the beard's
+            # ragged lower edge; inner edge down the cheek and on round under the mouth (left half, then mirrored)
+            outer = [(54, 86), (50, 108), (51, 125), (55, 137), (61, 146), (69, 151), (75, 149.5), (82, 156), (89, 154),
+                     (95, 159), (100, 155)]
+            inner = [(100, 146.5), (90, 148), (80, 144), (70, 136.5), (65, 127), (63, 114), (62, 98)]
+            half_r = [(200 - x, y) for x, y in outer[::-1][1:]]
+            inner_r = [(200 - x, y) for x, y in inner[::-1]]
+            beard = blob(outer + half_r + inner_r + inner[1:], 0.55)
+            S.comment = S.comment.replace("long sideburns and stubble", "long sideburns running down into a short scruffy "
+                                          "beard round the jaw, one shape (round 7)")
         S.shape(beard, HAIR, shadow=3)
         S.shape(hair, HAIR, shadow=4)
         S.mouth(139, col="#9A6A58")

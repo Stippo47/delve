@@ -1,16 +1,16 @@
 """Look-over sheets: each design's -before.png (left) beside its new render (right), several designs per sheet.
-python pairs.py out-prefix name [name ...]   -> tools/riffle/out/r6/<out-prefix>-N.png   (scratch, git-ignored)"""
+python pairs.py out-prefix name [name ...]   -> tools/riffle/out/r7/<out-prefix>-N.png   (scratch, git-ignored)"""
 import sys, pathlib
 from PIL import Image
 
 HERE = pathlib.Path(__file__).resolve().parent
-R6 = HERE.parent
-SCR = HERE.parents[2] / "tools" / "riffle" / "out" / "r6"
+R7 = HERE.parent
+SCR = HERE.parents[2] / "tools" / "riffle" / "out" / "r7"
 SCR.mkdir(parents=True, exist_ok=True)
 
 
 def find(stem):
-    for folder in R6.iterdir():
+    for folder in R7.iterdir():
         p = folder / "renders" / f"{stem}.png"
         if p.exists():
             return p

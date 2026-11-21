@@ -12,6 +12,11 @@ CLAW = "#F2E6C4"
 # shading over the head: darker toward the top of the head (as under a hero's brim), light across the middle of the
 # snout, a touch darker at its tip, with no shine spot (heroes' faces have none). The rest is the round-4 lizard.
 EYES, FACE = True, False
+# round 7 switches (all off here, so lizards6.py still builds round 6; lizards7.py turns them on per design):
+# TEETH_IN, croc A ("bring teeth in, underneath head"): the side teeth that were drawn over everything, poking out
+# past the jaw onto the outline, are gone; the same three teeth a side are drawn under the head instead, so only
+# their points show along the jaw's edge.
+TEETH_IN = False
 
 
 def face_shade(S, y0, y1, col, brow):
@@ -154,16 +159,27 @@ def liz_c():
     head = blob([(100, 50), (130, 56), (146, 80), (144, 106), (136, 124), (134, 146), (128, 166), (112, 176),
                  (100, 177), (88, 176), (72, 166), (66, 146), (64, 124), (56, 106), (54, 80), (70, 56)], 1.0)
     # teeth along the jaw edges (drawn under the head so only the points show)
-    S.shape(" ".join(poly([(x - 4, y), (x + 4, y), (x + (5 if x > 100 else -5), y + 4)]) for x, y in
-                     ((134, 132), (133, 146), (131, 160), (66, 132), (67, 146), (69, 160))), "#FFF6E0",
-            shadow=False, shade=0,
-            tf=None)
+    if TEETH_IN:
+        # round 7: the side teeth, brought in under the head: each sits on the jaw's edge (x = the edge at that
+        # height), its root hidden under the head and its point showing 5 units past the edge, a little forward
+        teeth = [(134.9, 134), (133.7, 148), (130.4, 162)]
+        S.shape(" ".join(poly([(100 + s * (ex - 100 - 4), y - 4.5), (100 + s * (ex - 100 - 4), y + 4.5),
+                                (100 + s * (ex - 100 + 5), y + 2.5)]) for ex, y in teeth for s in (1, -1)), "#FFF6E0",
+                shadow=False, shade=0)
+        S.comment = S.comment.replace("a row of teeth showing along each side", "three teeth a side tucked under the jaw "
+                                      "so only their points show (round 7)")
+    else:
+        S.shape(" ".join(poly([(x - 4, y), (x + 4, y), (x + (5 if x > 100 else -5), y + 4)]) for x, y in
+                         ((134, 132), (133, 146), (131, 160), (66, 132), (67, 146), (69, 160))), "#FFF6E0",
+                shadow=False, shade=0,
+                tf=None)
     S.raw('')
     S.shape(head, S.lg(sc, scD), sh=5, hi=None if FACE else 0.3, shade=0.35,
             decor=[face_shade(S, 50, 177, "#2A3414", 96)] if FACE else None)
     # side teeth that poke out past the jaw
-    S.flat(" ".join(poly([(x, y - 4), (x, y + 4), (x + (7 if x > 100 else -7), y + 1)]) for x, y in
-                    ((137, 134), (135, 148), (132, 162), (63, 134), (65, 148), (68, 162))), "#FFF6E0")
+    if not TEETH_IN:
+        S.flat(" ".join(poly([(x, y - 4), (x, y + 4), (x + (7 if x > 100 else -7), y + 1)]) for x, y in
+                        ((137, 134), (135, 148), (132, 162), (63, 134), (65, 148), (68, 162))), "#FFF6E0")
     # armour ridges down the back of the head
     S.flat(" ".join(rr(x + (3 if i % 2 else 0), y, 7, 13, 3.5) for i, (x, y) in enumerate((92, y) for y in (60, 78, 96))), scDD, op=0.55)
     S.flat(" ".join(rr(x - (3 if i % 2 else 0), y, 7, 13, 3.5) for i, (x, y) in enumerate((108, y) for y in (60, 78, 96))), scDD, op=0.55)
