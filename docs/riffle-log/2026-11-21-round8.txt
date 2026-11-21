@@ -1,0 +1,123 @@
+Riffle round 8 answers (raw)
+
+delve / art / art-round6: "Art round 6: only what you asked"
+  fixes (Exactly your notes): GO, picked: Witch, Chef, Seer, Harpooner, Marksman A, Ninja, Pirate, Slinger, Trapper, Gladiator, Werewolf human, Bat, Angel B, A, Orc, Troll, Ogre, Demon, Goblin, Imp, Devil, Goblin, Imp, Devil, Goblin, Imp, Devil, Hobgoblin, Orc shaman, Orc, Troll, Ogre, Demon, Orc, Troll, Ogre, Demon (before), Orc, Troll, Ogre, Demon (before), Blade b (before), Croc a, Lizardman spear A, Spear b (before), Slime big, Snowman, Spider hunter
+      item ranged-marksman-a (Marksman A): "The Moustache above nose. Beard may be below head. In game the gun needs to be held in front of them. "
+      item fighter-gladiator (Gladiator): "Add some shine maybe "
+      item fighter-werewolf-human (Werewolf human): "Beard and side burns don’t mesh together. They should."
+      item fighter-werewolf (Werewolf): "Make the same colour as the werewolf man. Remove the fangs. "
+      item bat (Bat): "Remove body. Make head bigger. Maybe make ears different aswell/bigger"
+      item dragonborn-a (A): "Horns look like they are floating "
+      item ghost-before (Ghost (before)): "Overall doesnt look good. Ghosts can also have eyes. Before or after"
+      item greenskin-ogre-before (Orc, Troll, Ogre, Demon (before)): "Make hands simple then this could potentially work"
+      item greenskin-orc-before (Orc, Troll, Ogre, Demon (before)): "Tusks? Not in mouth"
+      item greenskin-troll (Orc, Troll, Ogre, Demon): "Looks weird "
+      item lizardman-blade-a (Blade a): "Remove eyes. Shoulder doesn’t look right nor do hands "
+      item lizardman-blade-b-before (Blade b (before)): "This one could look good if use the selected base lizard to fix up the spines on back and stuff. I like the hood looking bit "
+      item lizardman-croc-a (Croc a): "Bring teeth in, underneath head"
+      item lizardman-spear-b-before (Spear b (before)): "Fix back spines and could look good"
+      item snowman (Snowman): "Weird red thing at back of snowman"
+  DECK: done (1 of 1 answered)
+
+delve / runs / v08-report: "0.8.0: elites, deep dungeons, new camp"
+  combat (Elites and deep dungeons): GOOD on the card. Its parts: 6 good, 1 problem
+      part elites (Elites): GOOD, "Even bigger. And initially I meant the boss forms at the end of a floor was an “elite” but I like the mix in the levels. 
+I want an even stronger version for the mini boss at the end of levels that anyone can be that are even bigger and stronger than elites and have an additional ability. Base elites should be the size in between the normal and miniboss sized "
+      part deep (Three deep dungeons): GOOD
+      part scaling (Scaling): GOOD, "Dungeons and floors didnt seem to scale that strongly. Seemed pretty easy still. Each dungeon was about the same hardness as the last. 
+
+Waves within a room are weaker than the last wave. Less enemies. Each wave should have the same count of enemies or more. Currently another “wave” is like 3 enemies in 1 spot. 
+Increase enemy count overall by like 50%"
+      part waves (Waves and pace): GOOD
+      part door (Door exit): GOOD, "Make the bottom of the ring of light rounded the health bar in this clip is not in the game…
+Is also a bit too tall. Have it share its room with the xp bar "
+      part trinkets (Found trinkets): PROBLEM, "Should look like the trinket sprite "
+      part grid (Grid obstacles): GOOD
+  polish (Polish and the new camp): GOOD on the card. Its parts: 2 good, 1 problem, 2 decent
+      part shadows (Shadows and deaths): GOOD
+      part summons (Summons): GOOD
+      part hud (Hero cards): PROBLEM, "That’s not what is shown in the game"
+      part camp (Camp layouts): DECENT
+      part tree (Skill tree layouts): DECENT, "The web is more along the lines of what I want. Make area bigger and panable. In the future the web will have like 100 nodes per hero. 
+
+Remove the redundant elements. "
+  Deck notes: "Units consistently got stuck behind rocks and other obstacles on levels, fix navigation. 
+
+
+For summons for the outline don’t do purple anymore. Keep it black. Have their hue slightly shifted to another version when on your team. An allied skeleton would be more blue/greyish 
+
+
+I still see no hp or xp bar on units cards in the game like there was before. I still don’t know why u removed them in the first place. Move the level icon (yellow circle with number ) from the hero icon onto the xp bar left side. 
+
+
+Just double checking how status effects are working. They are a value from 0 to x, when the value reaches x a burst effect is applied and the status effect is removed or lowered. Currently it looks in the ui status effect immediately jump to 100% so idk what triggers the burst effect. 
+
+I want you to show me 4 ways to show an enemies hp in levels. Should only show when they have taken damage/ aren’t full hp. 
+
+The burn effect doesn’t seem to show the flames anymore. 
+
+I want you to rework how puddle and puddle like things on the ground look. Overhaul. Oil, fire, gas, water, etc. I want 4 styles I can choose from for each. Don’t do the rainbow on oil. 
+
+Every ability should be visual. Have something readable to it. And even if they already do but it’s very faint make them bigger. Examples are the necromancy bone spear. I rarely see it. Too small. Little effect. 
+
+Add 2 new status effects radiance (from angels), and cursed (some undead), makes it so you cant heal and you take increased damage, burst effect will make next attack or ability go against you/have opposite effect. Damage will hurt you, healing ally will instead hurt them, summon pet will be on opposite team. Etc. 
+Radiance will make it so u attack slower and much weaker. Burst effect will make a glowing aura around them for a short time (that does not effect them) that makes other things radiant. You can’t attack during this time.
+
+Ghosts will give curse. Angels will give radiance."
+  DECK: done (2 of 2 answered)
+
+delve: thoughts
+  mwn5k4xs-ae-61w2j0: "When I played lasts the archer got stuck a lot. Just froze in a wall.
+The jitter rapidly left and right when navigating to some positions, maybe only on diagonals."
+  mwoopr8w-0-o2jf4n: "The cleric should be ranged. Weak light orb. Should not be a front line melee fighter…
+First ability should be a ray to ally that heals over time. No burst healing for first ability."
+  mwooqrhw-3-g08ysg: "I should be able to pan my camera further than the dungeons bounds slightly. Like +1/3 dungeon width."
+  mwoorx4q-6-zuy0sk: "Add a “cheat” to give unlimited currency."
+  mwoosfpv-8-o5kiya: "Party members should not search areas without anyone in them. No need."
+  mwoouq3h-d-ne4kxq: "Better hero card ui in battles. Show current hp/ max hp on health bar. 
+Swap the place of heroes and the currencies and leave button."
+  mwoov7sz-g-n8pvg7: "Spikes should go down when dungeon is beat."
+  mwoovwaa-j-920gfi: "Make anything that is on the ground that is just decor not stand out as much, they look collidable or important."
+  mwoowzyl-m-8w0k3o: "Work on pathfinding and smoothness. Still see them rapidly spin back and forth sometimes."
+  mwooxh3h-o-zdg0of: "Have the chest apear near the party members when they win. No more key needed."
+  mwoozwze-s-f2968w: "Coins that are dropped should be scattered out more. Big random radius rather than clustered. 
+Should also be quickly attracted when a party member goes near it, homing in."
+  mwop1x0h-u-7k3y2n: "This is more for riffle but allow me to edit my thoughts. I wanted to add: show the cooldowns of abilities a the party members card in the battle ui. To a previous note relating to ui but I can’t."
+  mwop3g76-x-wz2e90: "More knockback, more physical “juice”"
+  mwop5v2p-11-4bmi3z: "Add bestiary with fun descriptions. Including fun descriptions for items."
+  mwop72mh-14-2szzli: "Collision effects should happen near the surface of entity. Especially if they have a shield up, currently it looks like stuff like arrows go through shields."
+  mwop9zz8-16-7frjsc: "Also show status effects on units ui in battles. (Shrinking rink with status icon in the middle). And show items in the ui too. No text just sprite."
+  mwopbfno-18-4ab7v1: "Should be able to pause in dungeons to see more details about party setup state/ inspect stuff like statuses, items and their descriptions, etc."
+  mwopc6xu-1b-sa70ok: "Trinkets should have levels too."
+  mwopcs02-1d-cvsowb: "I don’t like the aura effects around party members like the paladins protect ability"
+  mwopg0hc-1i-2nu0kx: "More potions to be bought. Various effects like haste, faster abilities, fire immunity, iron skin, etc"
+  mwophhuc-1k-75x0ge: "Their base movement speed should be like 3-4x but ability cooldown about the same."
+  mwopjfkz-1m-kn0sj3: "Add sound effects and ambient music"
+  mwopnikn-1o-40z7kv: "Better enemy navigation. They often just wander into corners and get stuck"
+  mwopp5zc-1q-n5bewm: "Longer ttk for everyone"
+  mwoprbmx-1s-vgy6bm: "Longer attack and view range for everyone. 
+Slightly bigger hit box collider too"
+  mwopwc5t-1y-k6xqrn: "Make each dungeon harder than the last, and each level harder too. 
+More enemy variety and abilities."
+  mwopxhii-20-suyq92: "Cleric shouldn’t be able to heal themselves with their base ability"
+  mwoq9m0t-2i-l7ueys: "Another potential genre. 
+Not a dungeon crawler but a wave survival game. Waves of enemies come from all around (or just from 1 size) and the party has to defend against them. 
+
+
+Ohh idea. They are transporting a wagon carrying goods through different environments, enemies constantly spawn from all around trying to destroy your wagon. 
+Each dungeon now becomes different biomes. 
+The wagon is always moving upwards at a steady pace. Enemies spawn in from off the screen and move towards the cart to attack it. The party members and Most enemies are 3x faster than the cart, it’s pretty slow. 
+
+More rogue like vibes. You start off with 1 party member. The wagon slowly makes it from safe zone to safe zone (camps) where another character or shop may be waiting. You can hire people with the coins you pick up within a game, upgrade your character at the fire, or buy trinkets from the shop. 
+Gold is dropped my enemies attacking the cart. Still needs to be picked up or it gets left behind. 
+
+There is still meta progression."
+  mwpxd8gq-3-icoqef: "I want a board of every ability, being used on a target dummy, by who uses it. Including basic attacks. A showcase. 
+
+I also currently feel like every enemy feels pretty similar. Need more variety and flavour."
+
+NEW THOUGHTS
+  mwpxd8gq-3-icoqef: "I want a board of every ability, being used on a target dummy, by who uses it. Including basic attacks. A showcase. 
+
+I also currently feel like every enemy feels pretty similar. Need more variety and flavour."
+

@@ -92,12 +92,12 @@ export function buildCards(run, artOf, tap) {
   c.innerHTML = list.map((k) => {
     const merc = run.heroes[k].merc, H = HEROES[k];
     const abil = H ? H.abilities.map((ab) => `<span class="ab" data-ab="${ab.id}" style="--ac:${ABILITY_COLOR[abilityGlyph(ab.id)]}">${icon('ability', ab.id)}</span>`).join('') : '';
-    return `<button class="hcard${merc ? ' merc' : ''}" id="hc-${k}" data-k="${k}">
+    return `<div role="button" tabindex="0" class="hcard${merc ? ' merc' : ''}" id="hc-${k}" data-k="${k}">
       <span class="hc-head"><span class="hc-face"><img src="${artOf(k)}" alt=""><b class="hc-lv"></b></span><span class="hc-items"></span></span>
       <span class="hc-hp"><i></i><em></em></span><span class="hc-xp"><i></i><em></em></span>
       ${abil ? `<span class="hc-abil">${abil}</span>` : ''}
       <span class="hc-st"></span>
-    </button>`;
+    </div>`; // a div, not a button: iPhone Safari doesn't lay a button's children out as a column, and the bars vanished
   }).join('');
   for (const el of c.querySelectorAll('.hcard')) el.onclick = () => onTap && onTap(el.dataset.k);
   built = list.join(',');

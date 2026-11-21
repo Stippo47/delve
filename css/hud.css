@@ -30,7 +30,7 @@
   padding: 7px calc(6px + var(--sr)) calc(7px + var(--sb)) calc(6px + var(--sl)); }
 #cards { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 5px; max-width: 560px; margin: 0 auto; }
 #cards.many { grid-auto-flow: row; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.hcard { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 5px 5px 6px; text-align: left; color: var(--ink);
+.hcard { cursor: pointer; -webkit-tap-highlight-color: transparent; font: inherit; display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 5px 5px 6px; text-align: left; color: var(--ink);
   background: var(--paper); border: 3px solid var(--ink); border-radius: 13px; box-shadow: 0 3px 0 rgba(0,0,0,.35); }
 .hcard:active { transform: translateY(2px); }
 .hcard.merc { background: #E2D7C1; }
@@ -45,12 +45,12 @@
 .it.lv2::after, .it.lv3::after { content: ''; position: absolute; right: -1px; bottom: -1px; width: 6px; height: 6px; border-radius: 50%;
   background: #FFE14D; border: 1.5px solid var(--ink); }
 .it.lv3::after { background: #FF9A3D; }
-.hc-hp { position: relative; height: 15px; border-radius: 6px; background: var(--ink); overflow: hidden; }
+.hc-hp { display: block; width: 100%; flex: none; min-height: 15px; position: relative; height: 15px; border-radius: 6px; background: var(--ink); overflow: hidden; }
 .hc-hp > i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(#9AD88C, #6DB35F); transition: width .15s; }
 .hcard.low .hc-hp > i { background: linear-gradient(#F08A6E, #D8573E); }
 .hc-hp > em { position: absolute; inset: 0; font: 800 10.5px/15px system-ui, sans-serif; font-style: normal; text-align: center; color: #fff;
   text-shadow: 0 1px 0 var(--ink), 1px 0 0 var(--ink), -1px 0 0 var(--ink), 0 -1px 0 var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -.2px; }
-.hc-xp { position: relative; height: 12px; border-radius: 5px; background: var(--ink); overflow: hidden; margin-top: -1px; }
+.hc-xp { display: block; width: 100%; flex: none; min-height: 12px; position: relative; height: 12px; border-radius: 5px; background: var(--ink); overflow: hidden; margin-top: -1px; }
 .hc-xp > i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(#FFE27A, #E8B53A); transition: width .15s; }
 .hc-xp > em { position: absolute; inset: 0; font: 800 9px/12px system-ui, sans-serif; font-style: normal; text-align: center; color: #fff;
   text-shadow: 0 1px 0 var(--ink), 1px 0 0 var(--ink), -1px 0 0 var(--ink), 0 -1px 0 var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -.2px; }
