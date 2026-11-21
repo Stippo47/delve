@@ -6,6 +6,10 @@ import { DEFS } from './units.js';
 import { drawGroundFx, drawAirFx, drawProjectile as projectile, drawStatusFx, noteHits, drawLocal } from './fx.js';
 import { INK, TAU, clamp } from './util.js';
 import { envId, obstacleFor } from './env.js';
+import { drawBodyFx, drawIceWall } from './fxkit.js';
+import { drawHazardPuddle } from './puddles.js';
+import { drawEnemyHp, hpWash } from './hpstyle.js';
+import { icon } from './icons.js';
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
 
 // One outline thickness for everything drawn here, in room units. Matches what the SVG heroes show.
@@ -162,8 +166,8 @@ export function draw(ctx, w) {
   const s = view.scale;
   ctx.drawImage(fl, -floorCache.pad, -floorCache.pad, fl.width / floorCache.s, fl.height / floorCache.s);
   drawDoors(ctx, w);
-  for (const r of w.walls) if (r.temp != null) drawWallThemed(ctx, r, w); // the rest are in the floor cache
-  for (const h of w.hazards) if (!drawThemeHazard(ctx, h, w.time)) drawHazard(ctx, h, w.time);
+  for (const r of w.walls) if (r.temp != null) { if (r.kind === 'ice') drawIceWall(ctx, r, w.time); else drawWallThemed(ctx, r, w); } // the rest are in the floor cache
+  for (const h of w.hazards) if (!drawHazardPuddle(ctx, h, w.time) && !drawThemeHazard(ctx, h, w.time)) drawHazard(ctx, h, w.time); // puddles.js: the player's puddle style
   drawArena(ctx, w);
   drawDanger(ctx, w);
   for (const p of w.pickups) drawPickup(ctx, p, w.time);
@@ -181,17 +185,17 @@ export function draw(ctx, w) {
   const order = [...w.units].sort((a, b) => (a.downed ? -1 : 0) - (b.downed ? -1 : 0) || screenDepth(a) - screenDepth(b));
   const dt = Math.min(0.05, Math.max(0, w.time - (w._lastDraw ?? w.time))); w._lastDraw = w.time; w._dt = dt;
   noteHits(w);
-  for (const u of order) { if (u.kind === 'rat' && !u.downed) drawTail(ctx, u, dt); drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); }
+  for (const u of order) { if (u.kind === 'rat' && !u.downed) drawTail(ctx, u, dt); drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawBodyFx(ctx, u, w); }
   for (const p of w.projectiles) projectile(ctx, p, w.time);
   for (const p of w.particles) drawParticle(ctx, p);
   ctx.globalAlpha = 1;
   drawAirFx(ctx, w);
   drawLocal(ctx, dt);
-  for (const t of w.telegraphs) if (t.type === 'swing') drawSwing(ctx, t); else if (t.type === 'blast') drawBlast(ctx, t);
+  // melee swings and blasts are drawn as weapon arcs and bursts by fxkit.js (drawLocal), round 8
   for (const f of w.fx) drawSpikeFx(ctx, f);
   drawMood(ctx, w, view.cw, view.ch, view.dpr);
   ctx.setTransform(d * m[0], d * m[1], d * m[2], d * m[3], d * m[4], d * m[5]);
-  for (const u of order) drawOverlay(ctx, u);
+  for (const u of order) drawOverlay(ctx, u, dt);
   // Words over the arena (damage numbers, ability names) are off: show, don't tell. drawText stays for later use.
 }
 const screenDepth = (u) => (view.rot ? -u.x : u.y);
@@ -389,15 +393,16 @@ function drawPickup(ctx, p, t) {
     });
   } else if (p.type === 'trinket') {
     // a found trinket lying on the floor (round 7: a hero with a free slot walks over and takes it; a full one leaves
-    // it for an ally): a violet gem on a soft glow, bobbing; flying out of the chest or off the plinth first
+    // it for an ally): its own sprite (icons.js, round 8) on a soft glow, bobbing; flying out of the chest first
     const hop = p.hop > 0 ? Math.sin(Math.PI * clamp(p.hop / 0.5, 0, 1)) * 22 : 0, b = Math.sin(t * 4 + p.x) * 2 + hop;
-    ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.35 + 0.15 * Math.sin(t * 3);
-    const gl = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 26); gl.addColorStop(0, '#C9A7FF'); gl.addColorStop(1, 'rgba(201,167,255,0)');
-    ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(p.x, p.y, 26, 0, TAU); ctx.fill(); ctx.restore();
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.3 + 0.12 * Math.sin(t * 3);
+    const gl = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 30); gl.addColorStop(0, '#FFF1C8'); gl.addColorStop(1, 'rgba(255,241,200,0)');
+    ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(p.x, p.y, 30, 0, TAU); ctx.fill(); ctx.restore();
+    const img = trinketImg(p.id);
     upright(ctx, p.x, p.y, () => {
       ctx.translate(0, -b);
+      if (img) { const S = 40; ctx.drawImage(img, -S / 2, -S / 2, S, S); return; }
       inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -11); ctx.lineTo(8, -2); ctx.lineTo(0, 9); ctx.lineTo(-8, -2); ctx.closePath(); }, '#B48CFF');
-      ctx.fillStyle = '#E9DCFF'; ctx.beginPath(); ctx.moveTo(0, -11); ctx.lineTo(-8, -2); ctx.lineTo(0, -2); ctx.closePath(); ctx.fill();
     });
   } else if (p.type === 'pedestal') {
     upright(ctx, p.x, p.y, () => {
@@ -419,6 +424,19 @@ function drawPickup(ctx, p, t) {
     drawChest(ctx, p, t);
     if (fall > 0) { ctx.restore(); ctx.globalAlpha = 1; }
   }
+}
+// A trinket's UI sprite (icons.js SVG) as an image for the floor, made once per trinket.
+const trinketImgs = new Map();
+function trinketImg(id) {
+  if (!id) return null;
+  let e = trinketImgs.get(id);
+  if (!e) {
+    e = { img: new Image(), ok: false }; trinketImgs.set(id, e);
+    const svg = icon('trinket', id).replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" ');
+    e.img.onload = () => { e.ok = true; };
+    e.img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  }
+  return e.ok ? e.img : null;
 }
 function drawCoin(ctx, p, t) {
   inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, 5.5, 0, TAU); }, '#F2B53A');
@@ -464,6 +482,7 @@ function unitFrame(ctx, u, w) {
   }
   if (u.act && u.act.type === 'charge') { fy += u.vr * 0.15; sc *= 1.04; }
   if (u.sleepT > 0) sc *= 1 + Math.sin(w.time * 2.4 + u.id) * 0.02;
+  if (u.hop > 0) sc *= 1 + u.hop / 110; // a leap: off the ground, so drawn bigger (its shadow shrinks below)
   if (u.exiting) { const k = clamp(u.exiting.t / u.exiting.dur, 0, 1); sc *= 1 + 0.12 * Math.sin(Math.min(1, k * 3) * Math.PI) - 0.85 * k * k; } // through the door: a lift, then shrinking into the light
   ctx.translate(fx, fy); ctx.rotate(tilt); ctx.scale(sc, sc);
 }
@@ -481,6 +500,15 @@ function washesOf(u, w) {
   if (wet > 0.05) out.push(['#3F8FD8', 0.1 + 0.22 * wet]);
   if (shock > 0.05 && Math.sin(w.time * 31 + u.id * 3) > 0.55) out.push(['#FFF3A0', 0.35 + 0.4 * shock]);
   if (u.ethereal) out.push(['#BFE6FF', 0.45]);
+  // buffs show on the body itself, never as a ring round it (round 8)
+  for (const b of u.buffs || []) {
+    if (b.id === 'rage') out.push(['#FF3A2A', 0.18 + 0.12 * Math.sin(w.time * 10 + u.id)]);
+    else if (b.id === 'unstoppable') out.push(['#FFE7A0', 0.2 + 0.12 * Math.sin(w.time * 12)]);
+    else if (b.id === 'warSong') out.push(['#FFD45A', 0.1]);
+    else if (b.id === 'whirl') out.push(['#FFFFFF', 0.08]);
+  }
+  if (u.leechT > 0) out.push(['#C8453D', 0.12 + 0.08 * Math.sin(w.time * 8)]);
+  const hw = hpWash(u, w.time); if (hw) out.push(hw);
   return out;
 }
 
@@ -518,9 +546,9 @@ export function warmArt(w) {
 }
 
 // A unit drawn from its SVG parts, arms moving with what it is doing (parts.js).
-// Summons wear a purple outline (round 7), so a raised skeleton or a called wolf reads as ours, not the enemy's.
-export const SUMMON_INK = '#7B3FD0';
-const summonInk = (u) => (u.summon && !u.ethereal ? SUMMON_INK : null);
+// Our summons keep the black outline and are hue-shifted towards blue-grey (round 8; round 7's purple outline is gone),
+// so a raised skeleton or a called wolf reads as ours, not the enemy's.
+const isOurs = (u) => !!(u.summon && u.team === 'hero' && !u.ethereal);
 function drawPartsUnit(ctx, u, w) {
   const sizeU = u.vr * 220 / (u.def.headR || headR(u.kind)); // def.headR: the head's radius in the art's SVG units
   const set = getRig(u.def.art, sizeU * view.scale * view.dpr * 1.04);
@@ -539,7 +567,7 @@ function drawPartsUnit(ctx, u, w) {
     ctx.save(); ctx.globalAlpha = alpha * (0.7 + 0.3 * Math.sin(w.time * 5 + u.id)); ctx.translate(100, 100); ctx.scale(ELITE_RIM, ELITE_RIM); ctx.translate(-100, -100);
     drawComposed(ctx, composeRig(set, pose, 'normal', ELITE_COL)); ctx.restore();
   }
-  drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w), ink: summonInk(u) });
+  drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w), shift: isOurs(u) });
   if (pose.glow && mode === 'normal') castGlow(ctx, pose.glow, w.time);
   ctx.restore();
 }
@@ -642,9 +670,10 @@ function drawCorpse(ctx, c) {
 // Bars, marks and status meters, upright above or below each unit.
 const STATUS = [['burn', '#FF7A2F'], ['chill', '#7FD6F5'], ['poison', '#9BCB3C']];
 const SHOW_BARS = false; // health and status bars live in the HUD now (designer, round 2)
-function drawOverlay(ctx, u) {
+function drawOverlay(ctx, u, dt = 0) {
   if (u.downed) return;
   upright(ctx, u.x, u.y, () => {
+    if (u.team === 'enemy') drawEnemyHp(ctx, u, dt); // hpstyle.js: only once it's hurt, in the player's chosen style
     if (u.team !== 'hero' && u.act && (u.act.type === 'windup' || u.act.type === 'slam')) {
       const k = 1 - u.act.t / u.act.max;
       // a warning mark drawn as a shape (no text in the arena): a bar and a dot over the head. Only on the enemy's
@@ -689,20 +718,10 @@ function drawParticle(ctx, p) {
   }
 }
 
-function drawSwing(ctx, t) {
-  const k = t.t / t.max;
-  ctx.save(); ctx.globalAlpha = 0.7 * k; ctx.strokeStyle = t.color; ctx.lineWidth = 6 * k + 2; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.arc(t.x, t.y, t.r, t.a - t.arc / 2, t.a + t.arc / 2); ctx.stroke(); ctx.restore();
-}
 function drawRing(ctx, t) {
   const k = 1 - t.t / t.max;
   ctx.save(); ctx.globalAlpha = 0.25 + 0.3 * k; ctx.fillStyle = t.color; ctx.beginPath(); ctx.arc(t.x, t.y, t.r * k, 0, TAU); ctx.fill();
   ctx.globalAlpha = 0.8; ctx.strokeStyle = t.color; ctx.lineWidth = 3; ctx.setLineDash([10, 8]); ctx.beginPath(); ctx.arc(t.x, t.y, t.r, 0, TAU); ctx.stroke(); ctx.restore();
-}
-function drawBlast(ctx, t) {
-  const k = 1 - t.t / t.max;
-  ctx.save(); ctx.globalAlpha = 0.5 * (1 - k); ctx.fillStyle = t.color || '#FFB347'; ctx.beginPath(); ctx.arc(t.x, t.y, t.r * (0.4 + 0.6 * k), 0, TAU); ctx.fill();
-  ctx.globalAlpha = 0.8 * (1 - k); ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.beginPath(); ctx.arc(t.x, t.y, t.r * (0.5 + 0.5 * k), 0, TAU); ctx.stroke(); ctx.restore();
 }
 function drawText(ctx, t) {
   const a = clamp(t.life / t.max * 1.6, 0, 1);

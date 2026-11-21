@@ -62,8 +62,8 @@ for (const [id, h] of Object.entries(HEROES)) {
     bard: ['note', '#FFD27A'], druid: ['thorn'], plague: ['vial', '#9BCB3C'], cleric: ['bolt', '#FFF1B0'] };
   if (PROJ[id]) { DEFS[id].proj = PROJ[id][0]; DEFS[id].projColor = PROJ[id][1]; }
 }
-// Summons. Every summon is drawn from parts with a purple outline (render.js SUMMON_INK, round 7), so it reads as
-// ours. The wolf's art is the round-5 beast tamer's wolf (design/class-round5/fighters), a stand-in until the
+// Summons. Every summon is drawn from parts, black-outlined and hue-shifted towards blue-grey (render.js, round 8), so
+// it reads as ours. The wolf's art is the round-5 beast tamer's wolf (design/class-round5/fighters), a stand-in until the
 // beasts are picked: before it the wolf had no art at all and drew nothing.
 DEFS.wolf = { team: 'hero', name: 'Wolf', art: 'art/summons/wolf.svg', headR: 40, attackAnim: 'thrust', r: 24, vr: 18, turn: 6, accel: 380, face: 6, mass: 1, hp: 60, speed: 92, role: 'skirmish',
   range: 14, atkCd: 0.8, dmg: 7, arc: 1.4, temp: 0.5, commit: 0.5 };

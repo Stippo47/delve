@@ -748,7 +748,7 @@ function kill(w, u, src) {
     for (const h of hooksOf(u)) if (h.fallen) h.fallen(w, u, src);
     for (const o of w.units) if (o !== u && o.team === u.team && alive(o)) for (const h of hooksOf(o)) if (h.allyDown) h.allyDown(w, o, u);
   }
-  if (u.summon) { u.dead = true; puff(w, u.x, u.y, '#A77BEA', 10, 80, 5, 0.5); return; } // summons just fade (purple: ours, round 7)
+  if (u.summon) { u.dead = true; puff(w, u.x, u.y, '#B8C8DA', 10, 80, 5, 0.5); return; } // summons just fade (blue-grey: ours, round 8)
   if (u.team === 'hero') {
     u.downed = true; u.act = null; u.frozenT = 0; u.st = { burn: 0, chill: 0, poison: 0 };
     textU(w, u.x, u.y, u.r + 10, 'DOWN', '#FF8A80', 1.1);
@@ -790,7 +790,7 @@ function meleeSwing(w, u, single) {
   const d = u.def;
   const targets = single ? (u.target && inMeleeArc(u, u.target, 6) ? [u.target] : []) : w.units.filter((o) => alive(o) && o.team !== u.team && inMeleeArc(u, o, 6));
   u.lungeT = 0.18;
-  w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, color: u.team === 'hero' ? '#FFFFFF' : '#FFD2C2' });
+  w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, color: u.team === 'hero' ? '#FFFFFF' : '#FFD2C2', src: u });
   for (const o of targets) {
     hurt(w, o, d.dmg * u.dmgMul * rrange(0.9, 1.1), u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison });
   }
