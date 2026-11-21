@@ -472,7 +472,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'cast', 0.4);
       const list = [u, ...allies(w, u)].filter((o) => !o.summon).sort((a, b) => hpRatio(a) - hpRatio(b)).slice(0, tier >= 3 ? 2 : 1);
-      for (const a of list) { a.regenT = 6; a.regenRate = a.maxHp * (tier >= 2 ? 0.45 : 0.3) / 6; a.regenSrc = u; fx(w, { type: 'zone', x: a.x, y: a.y, r: 26, kind: 'heal', max: 0.6 }); }
+      for (const a of list) { a.regenT = 6; a.regenRate = a.maxHp * (tier >= 2 ? 0.45 : 0.3) / 6; a.regenSrc = u; a.regenAb = u.kit && u.kit.using; fx(w, { type: 'zone', x: a.x, y: a.y, r: 26, kind: 'heal', max: 0.6 }); }
     },
   },
   callWolf: {
@@ -546,7 +546,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'throw', 0.4);
       const targets = [t, ...(tier >= 2 ? opponents(w, u).filter((e) => e !== t && dist(e.x, e.y, t.x, t.y) < 150).slice(0, 1) : [])];
-      for (const e of targets) { e.leechT = 5; e.leechBy = u; e.leechMul = tier >= 3 ? 2 : 1; }
+      for (const e of targets) { e.leechT = 5; e.leechBy = u; e.leechAb = u.kit && u.kit.using; e.leechMul = tier >= 3 ? 2 : 1; }
     },
   },
 };

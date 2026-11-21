@@ -13,11 +13,12 @@
 //     start at, 1-3), minis: [floor 1's mini-boss beaten, floor 2's] } },
 //   trinkets: [id...] (owned, not equipped), tlv: { [trinketId]: level }, elixirs: { [potionId]: n },
 //   runs, wins, speed, zoom, party: [heroId...], mercs, theme, seen: { [enemyKind]: { met, beaten } }, campLayout,
-//   treeLayout, cheat }
+//   treeLayout, cheat, tally: { foes, heroes } (lifetime run stats, js/stats.js) }
 // Gems are gone: a v2 save's gems become gold (GEM_GOLD each). A v2 save's levels lived inside runs, so its heroes
 // start at a level from their best run, with the points for it, and the gold spent on the old tree comes back.
 // A v1 save starts fresh but keeps its coins as gold.
 import { HEROES } from './heroes.js';
+import { cleanTally } from './stats.js';
 
 const KEY = 'delve-save-v3';
 const V2_KEY = 'delve-save-v2';
@@ -66,6 +67,7 @@ export function normalise(s) {
   out.elixirs = counts(s.elixirs); out.tlv = counts(s.tlv);
   out.seen = {};
   for (const [k, v] of Object.entries(s.seen && typeof s.seen === 'object' ? s.seen : {})) out.seen[k] = { met: +(v && v.met) || 0, beaten: +(v && v.beaten) || 0 };
+  out.tally = cleanTally(s.tally); // lifetime run stats (stats.js bankTally)
   out.cheat = !!s.cheat;
   out.unlocks = { ...f.unlocks, ...(s.unlocks || {}) };
   for (const k of Object.keys(out.unlocks)) out.unlocks[k] = !!out.unlocks[k];
