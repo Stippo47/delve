@@ -37,7 +37,9 @@ try {
   }, [party, level]);
   await shot('01-camp-wagon', 1200);
   // the wagon at the camp's edge, tapped through the canvas (the real way in)
-  await page.evaluate(() => GAME.openConvoy());
+  await page.mouse.click(W * 0.36, H * 0.765); // where the wagon is parked on a 390 x 844 screen
+  await page.waitForTimeout(500);
+  if (await page.evaluate(() => GAME.state) !== 'convoy') { errors.push('tapping the parked wagon did not open its page'); await page.evaluate(() => GAME.openConvoy()); }
   await shot('02-set-out');
   await tap('[data-cv="go"]');
   await page.waitForFunction(() => GAME.state === 'run' && GAME.run && GAME.run.mode === 'convoy');

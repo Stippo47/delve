@@ -18,18 +18,19 @@ import { rand, rrange, rint, pick, chance, dist, clamp, angleTo, TAU, INK } from
 // ---------------------------------------------------------------- the numbers
 export const THEME = 'wildwood';
 export const WAGON_SPEED = 21;   // px/s (a hero walks ~62: the party is ~3x faster)
-export const WAGON_HP = 900;
+export const WAGON_HP = 800;
 export const STRETCH_LEN = 2300; // road from the start to the gate, a stretch
 export const ROAD_W = 600;       // the world across (a screen and a bit)
 export const ROAD_HALF = 74;     // the track itself
 // The player's one say (the HUD's toggle): 'guard' keeps the party close and only sends someone for gold when nothing is
 // near the wagon; 'gather' lets them roam further and run for gold even while the wagon is under attack.
 export const STANCE = {
-  guard: { leash: 320, reach: 330, safe: 420 },
+  guard: { leash: 320, reach: 0, safe: 420 },   // (no runs for gold: only what they pass on the way)
   gather: { leash: 560, reach: 640, safe: 0 },
 };
 export const LEASH = STANCE.guard.leash;
-export const BEHIND = 430;       // gold this far behind the wagon (off the bottom of the screen) is left behind
+export const BEHIND = 380;       // gold this far behind the wagon (off the bottom of the screen) is left behind
+export const FLING = 2.2;        // coins burst this much further from a fallen foe than in a dungeon
 export const PAY = 200;          // delivery pay for a wagon in one piece (x its health left)
 export const LOSE_CUT = 0.2;     // lost or turned back: this share of the gold picked up is lost (the dungeon's 20%)
 export const DELIVER_XP = 60;    // each hero, on delivery
@@ -249,14 +250,15 @@ function coinsTick(run, party, foes) {
   let gone = false;
   for (const p of w.pickups) {
     if (p.type !== 'coin') continue;
-    if (!p.counted) { p.counted = true; run.dropped += p.v; }
+    if (!p.counted) { p.counted = true; run.dropped += p.v; p.vx *= FLING; p.vy *= FLING; } // (flung wider than in a room: off the track, into the verge)
     p.life = 20; // (sim.js fades coins after 25 s: not on the road)
     if (p.x < wg.x - BEHIND && !p.homing) { p.left = true; gone = true; run.behind += p.v; if (rand() < 0.3) puff(w, p.x, p.y, '#C9B27A', 3, 30, 3, 0.3); }
   }
   if (gone) w.pickups = w.pickups.filter((p) => !p.left);
   const S = stance(run), threat = S.safe > 0 && foes.some((e) => dist(e.x, e.y, wg.x, wg.y) < S.safe || (e.target && e.target === wg));
   for (const h of party) if (h.forcedGoal && h.forcedGoal.coin && (threat || !w.pickups.includes(h.forcedGoal.p))) h.forcedGoal = null;
-  if (threat) return;
+  if (!S.reach) for (const h of party) h.coinGoal = null; // guarding: nobody steps off for coins, only what's in reach as they pass (sim.js sets coinGoal)
+  if (threat || !S.reach) return;
   const loose = w.pickups.filter((p) => p.type === 'coin' && !p.homing && !(p.hop > 0) && p.x > wg.x - BEHIND + 30 && dist(p.x, p.y, wg.x, wg.y) < S.reach);
   for (const p of loose) {
     if (party.some((h) => h.forcedGoal && h.forcedGoal.coin && dist(h.forcedGoal.p.x, h.forcedGoal.p.y, p.x, p.y) < 120)) continue; // someone's on that patch
@@ -285,7 +287,7 @@ function carryDowned(run, dt) {
 // From ahead, a side (out of the trees), behind, or two at once; each a little bigger than the last.
 function spawnWave(run) {
   const w = run.world, wg = run.wagon, n = run.waveN++, T = floorTheme(THEME, STRETCHES[run.stretch].floor), mid = ROAD_W / 2;
-  const budget = (3 + 0.35 * n + 0.8 * run.stretch) * STRETCHES[run.stretch].budget * sizeScale(run) * rrange(0.9, 1.15);
+  const budget = (3.3 + 0.45 * n + 0.8 * run.stretch) * STRETCHES[run.stretch].budget * sizeScale(run) * rrange(0.9, 1.15);
   const kinds = rollKinds(T.enemies, budget);
   const dirs = n === 0 ? ['ahead'] : (() => { const r = rand(); return r < 0.32 ? ['ahead'] : r < 0.6 ? [pick(['left', 'right'])] : r < 0.75 ? ['behind'] : [pick(['ahead', 'behind']), pick(['left', 'right'])]; })();
   const mult = strength(run, n); w.mult = mult;
