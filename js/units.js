@@ -71,9 +71,9 @@ for (const [id, h] of Object.entries(HEROES)) {
   if (h.summons) for (const [k, sd] of Object.entries(h.summons)) DEFS[k] = { team: 'hero', temp: 0.3, commit: 1, ...sd };
 }
 // Summons. Every summon is drawn from parts, black-outlined and hue-shifted towards blue-grey (render.js, round 8), so
-// it reads as ours. The wolf's art is the round-5 beast tamer's wolf (design/class-round5/fighters), a stand-in until the
-// beasts are picked: before it the wolf had no art at all and drew nothing.
-DEFS.wolf = { team: 'hero', name: 'Wolf', art: 'art/summons/wolf.svg', headR: 40, attackAnim: 'thrust', r: 24, vr: 18, turn: 6, accel: 380, face: 6, mass: 1, hp: 60, speed: 92, role: 'skirmish',
+// it reads as ours. The wolf's art is the Wildwood's wolf (art round 8: capsule-shaped, in the werewolf's style, the
+// designer's note on Call Wolf).
+DEFS.wolf = { team: 'hero', name: 'Wolf', art: 'art/summons/wolf.svg', headR: 35, attackAnim: 'thrust', r: 24, vr: 18, turn: 6, accel: 380, face: 6, mass: 1, hp: 60, speed: 92, role: 'skirmish',
   range: 14, atkCd: 0.8, dmg: 7, arc: 1.4, temp: 0.5, commit: 0.5 };
 Object.assign(DEFS, ENEMIES);
 // The raised skeleton (Raise Dead, the Bone Charm) wears the current skeleton art, the Rattler's; the old

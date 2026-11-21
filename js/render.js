@@ -199,7 +199,8 @@ export function draw(ctx, w) {
   const dt = Math.min(0.05, Math.max(0, w.time - (w._lastDraw ?? w.time))); w._lastDraw = w.time; w._dt = dt;
   noteHits(w);
   for (const u of order) drawBodyGround(ctx, u, w); // chains, rays and rings that lie under the units (round 9)
-  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.downed) drawTail(ctx, u, dt); drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawBodyFx(ctx, u, w); }
+  // a rat drawn by hand gets its springy tail; the rat king's art (art round 8) has its own tails knotted in it
+  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.def.art && !u.downed) drawTail(ctx, u, dt); drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawBodyFx(ctx, u, w); }
   for (const p of w.projectiles) projectile(ctx, p, w.time);
   for (const p of w.particles) drawParticle(ctx, p);
   ctx.globalAlpha = 1;

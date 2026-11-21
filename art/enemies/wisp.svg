@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- GAME COPY (art round 8) of design/class-round8/enemies/wild-wisp.svg -->
+<!-- WISP (round 8): a floating light seen from above: a round glowing orb, pale lime at the heart and greener at the edge, a flickering flame-tail streaming back behind it (#back, sways) and two little wisps of flame for hands (arm-l, arm-r) that lift when it mends a beast. No face. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<radialGradient id="gWisp" cx="0.42" cy="0.4" r="0.65"><stop offset="0" stop-color="#FCFFE6"/><stop offset="0.45" stop-color="#E6FFAA"/><stop offset="1" stop-color="#9ED25A"/></radialGradient><linearGradient id="gWispTail" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#CFF08A"/><stop offset="1" stop-color="#7EBE48"/></linearGradient>
+<path id="s1" d="M 72 96 C 64.2 92.8 65.2 75.8 66 70 C 66.8 64.2 77 55 78 50 C 79 45 72.8 31.5 74 30 C 75.2 28.5 85.5 40 88 38 C 90.5 36 92 14.8 94 14 C 96 13.2 101.5 33 104 32 C 106.5 31 112 5.8 114 6 C 116 6.2 117.8 31.5 120 34 C 122.2 36.5 131 23.8 132 26 C 133 28.2 127.5 46.2 128 52 C 128.5 57.8 136 66.5 136 72 C 136 77.5 136 93 128 96 C 120 99 79.8 99.2 72 96 Z"/>
+<path id="s2" d="M 66 104 C 63.6 102.4 51.2 108.8 48 112 C 44.8 115.2 42 124.3 42 128 C 42 131.7 46.1 140 48 140 C 49.9 140 53.6 130.1 56 128 C 58.4 125.9 64.7 127.2 66 124 C 67.3 120.8 68.4 105.6 66 104 Z"/>
+<path id="s3" d="M 134 104 C 136.4 102.4 148.8 108.8 152 112 C 155.2 115.2 158 124.3 158 128 C 158 131.7 153.9 140 152 140 C 150.1 140 146.4 130.1 144 128 C 141.6 125.9 135.3 127.2 134 124 C 132.7 120.8 131.6 105.6 134 104 Z"/>
+<path id="s4" d="M 58 110 A 42 42 0 1 0 142 110 A 42 42 0 1 0 58 110 Z"/>
+<clipPath id="c4"><use href="#s4"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="back" data-pivot="100 96"><!-- flame tail -->
+<use href="#s1" fill="url(#gWispTail)"/>
+</g>
+<g id="arm-l" data-pivot="70 108"><!-- a wisp of flame -->
+<use href="#s2" fill="url(#gWispTail)"/>
+</g>
+<g id="arm-r" data-pivot="130 108"><!-- a wisp of flame -->
+<use href="#s3" fill="url(#gWispTail)"/>
+</g>
+<g id="body">
+<use href="#s4" fill="url(#gWisp)"/><g clip-path="url(#c4)"><path d="M 74 110 A 26 26 0 1 0 126 110 A 26 26 0 1 0 74 110 Z" fill="#FFFFF4" opacity="0.35"/></g>
+</g>
+</g>
+</svg>
