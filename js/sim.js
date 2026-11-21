@@ -815,7 +815,7 @@ export function addStatus(w, u, type, amount, src) {
   if (type === 'burn') {
     if (u.frozenT > 0) { u.frozenT = 0; s.chill = 0; puff(w, u.x, u.y, 'rgba(235,240,245,0.8)', 10, 60, 9, 0.8); textU(w, u.x, u.y, u.r, 'thaw', '#DDEAF2', 0.8); }
     s.chill = Math.max(0, s.chill - amount);
-    if (s.burn >= need) { s.burn = after; burst(); textU(w, u.x, u.y, u.r + 12, 'SCORCH', '#FF7A2F', 1.2); flames(w, u.x, u.y, 10, u.vr * 0.8, 90); hurt(w, u, 22, src, { noDodge: true, noHex: true, stk: 'burn' }); explode(w, u.x, u.y, 60, 10, { burn: 24, stk: 'burn' }, src, '#FF7A2F', u); }
+    if (s.burn >= need) { s.burn = after; burst(); textU(w, u.x, u.y, u.r + 12, 'SCORCH', '#FF7A2F', 1.2); flames(w, u.x, u.y, 10, u.vr * 0.8, 90); hurt(w, u, 22, src, { noDodge: true, noHex: true, stk: 'burn', proc: true }); /* (proc: a scorch never sets off on-hit hooks again: with a fire-weak target that looped for ever) */ explode(w, u.x, u.y, 60, 10, { burn: 24, stk: 'burn' }, src, '#FF7A2F', u); }
   } else if (type === 'chill') {
     if (s.chill >= need && u.frozenT <= 0) {
       u.frozenT = u.def.boss ? 1.6 : 3; s.chill = after; s.burn = 0; u.freezeImmune += 45; u.act = null; burst();

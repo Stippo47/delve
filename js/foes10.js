@@ -154,7 +154,7 @@ function pitLordBrain(w, u, dt) {
     for (let i = 0; i < 2 && mine + i * 2 < 6; i++) {
       const p = openSpot(w, t.x, t.y, 150, 300, 30); if (!p) continue;
       fx(w, { type: 'rift', x: p.x, y: p.y, r: 34, at: 1.2, max: 1.6 });
-      for (let k = 0; k < 2; k++) later(w, p.x, p.y, 1.0 + k * 0.6, () => { if (!alive(u) || crowd(w, u.team) >= 18) return; const s = spawn(w, 'imp', p.x + rrange(-14, 14), p.y + rrange(-14, 14), { mult: w.mult }); s.aggro = true; s.minion = true; s.court = true; s.calledBy = u; flames(w, p.x, p.y, 6, 20, 80); });
+      for (let k = 0; k < 2; k++) later(w, p.x, p.y, 1.0 + k * 0.6, () => { if (!alive(u) || crowd(w, u.team) >= 18) return; const s = spawn(w, 'imp', p.x + rrange(-14, 14), p.y + rrange(-14, 14), { team: u.team, mult: w.mult }); s.aggro = true; s.minion = true; s.court = true; s.calledBy = u; flames(w, p.x, p.y, 6, 20, 80); });
     }
   }
   const d = dist(u.x, u.y, t.x, t.y);
@@ -229,7 +229,7 @@ function heraldBrain(w, u, dt) {
   if (u.def.herald === 'light' && !u.twin) { // the light one brings its twin
     u.twin = true;
     const p = openSpot(w, u.x, u.y, 90, 160, u.r) || { x: u.x, y: clamp(u.y + 140, 60, w.H - 60) };
-    const f = spawn(w, 'heraldFallen', p.x, p.y, { mult: 1 });
+    const f = spawn(w, 'heraldFallen', p.x, p.y, { team: u.team, mult: 1 });
     f.maxHp = u.maxHp; f.hp = u.hp; f.dmgMul = u.dmgMul; f.facing = u.facing; f.twin = u; u.twin = f; f.court = false;
   }
   if (rushTick(w, u, dt)) return true;

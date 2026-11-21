@@ -116,7 +116,7 @@ function sandMageBrain(w, u, dt) {
       again(u, 'devil', 5, 6.5); setAnim(u, 'cast', 0.6);
       for (let i = 0; i < (u.elite ? 2 : 1); i++) {
         const a = angleTo(u.x, u.y, t.x, t.y) + (i ? 0.5 : 0) * (chance(0.5) ? 1 : -1), x = clamp(u.x + Math.cos(a) * (u.r + 40), 50, w.W - 50), y = clamp(u.y + Math.sin(a) * (u.r + 40), 50, w.H - 50);
-        later(w, x, y, 0.5, () => { if (!alive(u) || crowd(w, u.team) >= 22) return; const s = spawn(w, 'dustDevil', x, y, { mult: w.mult }); s.aggro = true; s.minion = true; s.calledBy = u; s.lifeT = 7;
+        later(w, x, y, 0.5, () => { if (!alive(u) || crowd(w, u.team) >= 22) return; const s = spawn(w, 'dustDevil', x, y, { team: u.team, mult: w.mult }); s.aggro = true; s.minion = true; s.calledBy = u; s.lifeT = 7;
           s.mvA = angleTo(x, y, t.x, t.y) + rrange(-0.15, 0.15); puff(w, x, y, SAND, 12, 120, 6, 0.5); });
       }
     } else again(u, 'devil', 1.5);
@@ -161,7 +161,7 @@ export const DUNES = {
     attackAnim: 'thrust', sandy: true, brain: jackalBrain },
   mummy: { ...FOE, name: 'Mummy', art: variantUrl('art/enemies/rattler.svg', { hue: 15, sat: 0.4, light: 0.16 }), headR: 60, r: 33, vr: 24, turn: 2.6, accel: 140, face: 2.6, mass: 1.8,
     hp: 110, speed: 34, role: 'melee', range: 22, atkCd: 1.6, windup: 0.4, dmg: 11, knock: 110, arc: 1.6, curse: 22, temp: 0.25, commit: 1.2, xp: 18, coins: [3, 7], cost: 6,
-    attackAnim: 'swing', res: { burn: 2.2, poison: 0, curse: 0 }, brain: mummyBrain },
+    attackAnim: 'swing', res: { burn: 1.8, poison: 0, curse: 0 }, brain: mummyBrain },
   sandMage: { ...FOE, name: 'Sand Mage', art: variantUrl('art/enemies/orc-shaman.svg', { hue: 35, sat: 0.6, light: 0.12 }), headR: 56, r: 31, vr: 23, turn: 3.4, accel: 180, face: 3.4,
     mass: 1.3, hp: 64, speed: 48, role: 'ranged', range: 300, keep: 230, atkCd: 999, dmg: 5, temp: 0.4, commit: 0.9, xp: 17, coins: [3, 7], cost: 5, sandy: true, brain: sandMageBrain },
   dustDevil: { ...FOE, name: 'Dust Devil', art: variantUrl('art/enemies/ghost.svg', { hue: 35, sat: 0.55, light: 0.08 }), headR: 58, r: 26, vr: 22, turn: 0, accel: 400, face: 0, mass: 3,

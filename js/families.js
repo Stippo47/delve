@@ -64,7 +64,7 @@ function layChain(w, u) {
   u.segs = []; u.trail = [{ x: u.x, y: u.y }];
   for (let d = 4; d <= (c.n + 1) * gap; d += 4) u.trail.push({ x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d });
   for (let i = 0; i < c.n; i++) {
-    const s = spawn(w, c.seg, u.x + Math.cos(a) * gap * (i + 1), u.y + Math.sin(a) * gap * (i + 1), { mult: w.mult, scale: k * (1 - 0.35 * (i / Math.max(1, c.n - 1)) * (c.taper || 0)) });
+    const s = spawn(w, c.seg, u.x + Math.cos(a) * gap * (i + 1), u.y + Math.sin(a) * gap * (i + 1), { team: u.team, mult: w.mult, scale: k * (1 - 0.35 * (i / Math.max(1, c.n - 1)) * (c.taper || 0)) });
     s.linkTo = u; s.idx = i; s.fixed = true; s.aggro = true; s.minion = true; s.facing = u.facing; s.dmgMul = u.dmgMul; s.look = u.look; s.gap = gap;
     u.segs.push(s);
   }
@@ -93,12 +93,13 @@ export const killChain = (w, u) => { for (const s of u.segs || []) if (alive(s))
 
 // ---------------------------------------------------------------- turrets (stationary and wall-mounted)
 // def.turret = { turn: rad/s, cd, aim (how close to on target it must be to fire), range, wall (mounted on the nearest
-// wall, half sunk into it, turning only within arc of straight out), arc, fire(w, u, t) }. It never moves; it finds its
+// wall, its back against it, turning only within arc of straight out), arc, fire(w, u, t) }. It never moves; it finds its
 // own target (the nearest it can see); it is slow to turn, so getting behind it (or beside a wall one) is safe.
 export function turretBrain(w, u, dt) {
   const T = u.def.turret;
   if (!u.placed) { u.placed = true; u.fixed = true; if (T.wall) mountOnWall(w, u); u.baseA = u.facing; }
   u.dvx = u.dvy = 0; u.spd = 0;
+  overheat(w, u, dt);
   if (hold(u, dt)) return true;
   // its own eyes: the nearest it can see (it can't walk to anything else)
   if (due(u, 'look', dt, 0.3)) {
@@ -116,11 +117,17 @@ export function turretBrain(w, u, dt) {
   if (off < (T.aim || 0.2) && due(u, 'fire', dt, T.cd * 0.5) && lineClear(w, u.x, u.y, t.x, t.y, 4)) { again(u, 'fire', T.cd * 0.85, T.cd * 1.15); T.fire(w, u, t); }
   return true;
 }
-// The nearest wall face (the room's edges, the walls inside it), within reach of where it was put: sunk half into it,
-// facing out into the room.
+// A stand-off that has gone on too long (w.stale): whatever can't walk in to end it burns itself out instead.
+export function overheat(w, u, dt) {
+  if (!w.stale || !u.aggro) return;
+  hurt(w, u, u.maxHp * 0.04 * dt, null, { dot: true, color: '#FFB347' });
+  if (rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.5, y: u.y + rrange(-u.r, u.r) * 0.5, vx: 0, vy: 0, rise: 40, up: 0, life: 0.7, max: 0.7, size: 7, color: 'rgba(200,200,205,0.6)' });
+}
+// The nearest wall face (the room's edges, the walls inside it), within reach of where it was put: its back against it
+// (not sunk in, so whatever it drops can be picked up), facing out into the room.
 function mountOnWall(w, u) {
   const cand = [];
-  const face = (x, y, nx, ny) => { const px = x + nx * u.r * 0.55, py = y + ny * u.r * 0.55; if (!solidAt(w, px + nx * (u.r * 0.5 + 6), py + ny * (u.r * 0.5 + 6), u.r * 0.5) && (!w.cells || w.cells.some((c) => px > c.x && px < c.x + c.w && py > c.y && py < c.y + c.h))) cand.push({ x: px, y: py, a: Math.atan2(ny, nx), d: dist(u.x, u.y, px, py) }); };
+  const face = (x, y, nx, ny) => { const px = x + nx * (u.r + 2), py = y + ny * (u.r + 2); if (!solidAt(w, px + nx * (u.r * 0.5 + 6), py + ny * (u.r * 0.5 + 6), u.r * 0.5) && (!w.cells || w.cells.some((c) => px > c.x && px < c.x + c.w && py > c.y && py < c.y + c.h))) cand.push({ x: px, y: py, a: Math.atan2(ny, nx), d: dist(u.x, u.y, px, py) }); };
   face(0, u.y, 1, 0); face(w.W, u.y, -1, 0); face(u.x, 0, 0, 1); face(u.x, w.H, 0, -1);
   for (const r of w.walls) {
     const cx = clamp(u.x, r.x + 30, r.x + r.w - 30), cy = clamp(u.y, r.y + 30, r.y + r.h - 30);
@@ -146,18 +153,19 @@ export function burrowTick(w, u, dt, o) {
       const x = clamp(t.x + Math.cos(a) * (t.r + u.r + d), 40, w.W - 40), y = clamp(t.y + Math.sin(a) * (t.r + u.r + d), 40, w.H - 40);
       b.at = solidAt(w, x, y, u.r) ? (openSpot(w, t.x, t.y, t.r + u.r + 20, t.r + u.r + d + 60, u.r) || { x: t.x, y: t.y }) : { x, y };
     }
+    if (!b.at && b.t < -4) b.at = { x: u.x, y: u.y }; // nobody to come up by: come up where it is
     if (b.at) {
       const d = dist(u.x, u.y, b.at.x, b.at.y), sp = u.def.speed * (o.speed || 2.2) * (u.moveMul || 1);
       if (d > 6) { const a = angleTo(u.x, u.y, b.at.x, b.at.y), st = Math.min(d, sp * dt); u.x += Math.cos(a) * st; u.y += Math.sin(a) * st; u.facing = a; }
       u.dvx = u.dvy = 0; u.vx = u.vy = 0; u.spd = 0;
       if ((b.dirtT = (b.dirtT || 0) - dt) <= 0) { b.dirtT = 0.07; w.particles.push({ x: u.x + rrange(-6, 6), y: u.y + rrange(-6, 6), vx: rrange(-10, 10), vy: rrange(-10, 10), life: rrange(1.8, 2.6), max: 2.6, size: rrange(5, 8), color: o.dirt || '#B59A6A', drag: 0.8 }); }
-      if (d <= 6 && !b.tell) { // under the spot: the ground shakes, then it comes up
+      if ((d <= 14 || b.t < -4) && !b.tell) { // under the spot (or it can't get there: a wall in the way): the ground shakes, then it comes up
         b.tell = true; const tl = o.tell || 0.55;
-        addDanger(w, { shape: 'circle', x: u.x, y: u.y, r: o.r || 58, t: tl, team: u.team, src: null, kind: 'bone', spawns: true, hit: o.hit ? { ...o.hit, dmg: (o.hit.dmg || 6) * u.dmgMul } : undefined,
+        addDanger(w, { shape: 'circle', x: u.x, y: u.y, r: o.r || 58, t: tl, team: u.team, src: u, kind: 'bone', spawns: true, hit: o.hit ? { ...o.hit, dmg: (o.hit.dmg || 6) * u.dmgMul } : undefined,
           onFire: () => { surface(w, u, o); } });
       }
     }
-    if ((b.t -= dt) < -6 && !b.tell) { b.at = { x: u.x, y: u.y }; } // can't get there: come up where it is
+    b.t -= dt;
     return true;
   }
   // up: fighting as usual; when the time runs out (and nothing holds it), it digs back in
@@ -210,6 +218,8 @@ export function spiritBrain(w, u, dt) {
     else if (el === 'ward') addBuff(a, { id: 'spirit-ward', dur: 0.5, taken: 0.35 });
   }
   if (rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.6, y: u.y + rrange(-u.r, u.r) * 0.6, vx: 0, vy: 0, rise: 30, up: 0, life: 0.6, max: 0.6, size: 3, color: S.col });
+  // with nobody of its side left to tend, it fades away (a lone spirit kiting the party would hold a room open for ever)
+  if (!allies(w, u).some((a) => !a.def.spirit && !a.def.segment && !a.def.trap) && u.aggro) hurt(w, u, u.maxHp * 0.06 * dt, null, { dot: true, color: S.col });
   return false;
 }
 export function spiritDeath(w, u) {
