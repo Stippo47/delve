@@ -1,5 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
-<!-- ORC (round 5): grass-green skin, no eyes; heavy brow, a big underbite jaw with two tusks coming out of the mouth (round 7), a black topknot with a braid trailing back, a brown fur mantle, a big cleaver. Parts: #back (braid), #arm-r (cleaver + fist, before #body), #body, #arm-l (free fist). Front = DOWN (+y). -->
+<!-- GAME COPY (art round 8) of design/class-round8/enemies/greenskin-orc.svg -->
+<!-- ORC (round 5): grass-green skin, no eyes; heavy brow, a big underbite jaw with two tusks coming out of the mouth (round 7), a wider mouth (round 8), a black topknot with a braid trailing back, a brown fur mantle, a big cleaver. Parts: #back (braid), #arm-r (cleaver + fist, before #body), #body, #arm-l (free fist). Front = DOWN (+y). -->
 <defs>
 <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#4A4250"/><stop offset="1" stop-color="#231C28"/></linearGradient>
@@ -93,7 +94,7 @@
 <g clip-path="url(#c46)"><use href="#p45" transform="translate(0 0)" fill="#2B2230" opacity="0.25"/></g>
 <use href="#p45" fill="url(#g40)"/>
 <g clip-path="url(#c47)"><use href="#p45" fill="url(#g44)"/></g>
-<path d="M84 140 Q100 136 116 140" fill="none" stroke="#40543C" stroke-width="3" stroke-linecap="round"/>
+<path d="M74 140 Q100 136 126 140" fill="none" stroke="#40543C" stroke-width="3" stroke-linecap="round"/>
 </g></g>
 <g id="arm-l" data-pivot="46 112"><g>
 <g clip-path="url(#c49)"><use href="#p48" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>

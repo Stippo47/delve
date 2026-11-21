@@ -1,6 +1,7 @@
 // Round 9: the approved additions for the Warren, the Sewers and the Crypt (deck roster2; the designer's notes word for
 // word in docs/riffle-log/2026-11-21-round9.txt). Each kind has a base kit and an elite move (ELITES, elites.js).
-// Variants are recolours of their base's art (recolor.js); everything here is PLACEHOLDER art until the real art comes.
+// Variants are recolours of their base's art (recolor.js). Art round 8 drew the rat king (a heap of rats), the croc (two
+// axes) and the crab (its blue and green kinds are it recoloured); the rest is PLACEHOLDER art until the real art comes.
 //   The Warren: the spear-thrower goblin ("throws spears (which come back immediately)"), the bomber, the suicide
 //     bomber ("Runs at enemy, stands next to them for a moment then explodes, needs to be killed quickly"), the wolf rider
 //     ("Uses spear"), the frost shaman, the rock troll (its rolling boulder; the base troll's breakable boulder), the
@@ -128,10 +129,14 @@ function totemBrain(w, u, dt) {
 // blocks shots and bodies); it's gone when the troll dies. The rock troll's can't be hurt; the base troll's has its own
 // health and breaks (then it fights bare-handed). The elite rock troll calls its boulder back, and its boulder is 25%
 // bigger.
+// Art round 8: the troll holds its boulder in both fists, so a held boulder sits HOLD of the troll's radius inside the
+// troll's collider, against the fists (the troll and its own held or rolling boulder don't push each other: sim.js).
+export const HOLD = -0.46;
 function boulderOf(w, u) {
   if (u.bould === undefined) {
     const big = u.elite && u.def.rock ? 1.25 : 1, r = Math.round(u.r * 0.62 * big);
-    const b = { x: u.x + Math.cos(u.facing) * (u.r + r + 8), y: u.y + Math.sin(u.facing) * (u.r + r + 8), r, prop: 'rock-2', boulder: true, owner: u, team: u.team, vx: 0, vy: 0, held: true, hits: new Set() };
+    const d = u.r * (1 + HOLD) + r + 8;
+    const b = { x: u.x + Math.cos(u.facing) * d, y: u.y + Math.sin(u.facing) * d, r, prop: 'troll-boulder', boulder: true, owner: u, team: u.team, vx: 0, vy: 0, held: true, hits: new Set() };
     if (!u.def.rock) { b.hp = b.maxHp = Math.round(55 * (w.mult || 1)); }
     u.bould = b; w.pillars.push(b);
   }
@@ -146,7 +151,7 @@ export function dropBoulder(w, u) { const b = u.bould; if (b) { const i = w.pill
 export function boulderBrain(w, u, dt) {
   const b = u.bould === null ? null : boulderOf(w, u);
   if (!b) return false;
-  const front = (k = 8) => ({ x: u.x + Math.cos(u.facing) * (u.r + b.r + k), y: u.y + Math.sin(u.facing) * (u.r + b.r + k) });
+  const front = (k = 8) => ({ x: u.x + Math.cos(u.facing) * (u.r * (1 + HOLD) + b.r + k), y: u.y + Math.sin(u.facing) * (u.r * (1 + HOLD) + b.r + k) });
   if (b.held) { // carried in front
     if (!(u.chg)) { const p = front(8 + Math.hypot(u.vx, u.vy) * dt * 3); b.x = p.x; b.y = p.y; }
   } else rollBoulder(w, u, b, dt);
@@ -399,7 +404,7 @@ export const FOES9 = {
   goblinSuicide: { variantOf: GOB, name: 'Suicide Bomber', hue: -150, sat: 0.9, light: -0.08, hp: 26, speed: 104, atkCd: 999, xp: 7, cost: 2.5, ability: null,
     brain: (w, u, dt) => fuseBrain(w, u, dt, { fuse: 1.1, r: u.elite ? 120 : 95 }), onDeath: (w, u) => blowUp(w, u, { r: u.elite ? 120 : 95, dmg: 26, fire: u.elite }) },
   drummer: { variantOf: GOB, name: 'Drummer', hue: -40, sat: 0.8, light: 0.05, role: 'ranged', range: 200, keep: 230, atkCd: 999, hp: 30, xp: 8, cost: 3, ability: null, brain: drumBrain },
-  wolfRider: { team: 'enemy', name: 'Wolf Rider', art: variantUrl(ART('wolf'), { hue: 18, sat: 1.2, light: -0.1 }), headR: 40, r: 30, vr: 22, turn: 5, accel: 320, face: 5, mass: 1.8,
+  wolfRider: { team: 'enemy', name: 'Wolf Rider', art: variantUrl('art/enemies/wolf.svg', { hue: 18, sat: 1.2, light: -0.1 }), headR: 34, r: 30, vr: 22, turn: 5, accel: 320, face: 5, mass: 1.8,
     hp: 64, speed: 78, role: 'melee', range: 40, atkCd: 1.2, windup: 0.25, dmg: 9, knock: 160, arc: 0.9, temp: 0.4, commit: 0.8, xp: 16, coins: [3, 6], cost: 5, attackAnim: 'thrust',
     beast: true, brain: riderBrain,
     onDeath: (w, u) => { const s = spawn(w, 'goblinSpear', u.x, u.y, { mult: w.mult }); s.aggro = true; s.minion = u.minion; s.kx = u.kx; s.ky = u.ky; if (u.elite) { s.elite = true; s.look = u.look; } } },
@@ -412,13 +417,13 @@ export const FOES9 = {
   // ---- the Sewers
   ratPlague: { variantOf: 'rat', name: 'Plague Rat', hue: 70, sat: 1.3, light: -0.04, poison: 14, xp: 5, cost: 1.3, ratMove: true, res: { poison: 0 },
     onDeath: (w, u) => w.hazards.push({ type: 'gas', x: u.x, y: u.y, r: 54, t: 4, max: 4 }) },
-  ratKing: { variantOf: 'rat', name: 'Rat King', size: 2.3, light: -0.12, sat: 0.8, hp: 100, speed: 54, dmg: 9, knock: 140, arc: 2, role: 'melee', ability: null, xp: 26, coins: [5, 10],
+  ratKing: { variantOf: 'rat', name: 'Rat King', art: 'art/enemies/rat-king.svg', headR: 66, size: 2.3, hp: 100, speed: 54, dmg: 9, knock: 140, arc: 2, role: 'melee', ability: null, xp: 26, coins: [5, 10],
     cost: 8, pack: null, ratMove: false, mass: 2.4, brain: ratKingBrain, onDeath: (w, u) => { u.hp = 0; looseRats(w, u, 3); } },
   slimeSludge: { variantOf: 'slime', name: 'Sludge Slime', hue: -150, sat: 0.55, light: -0.2, hp: 58, xp: 10, cost: 3, goo: '#5A5A30', res: { burn: 1.4 },
     brain: sludgeBrain, onDeath: sludgeDeath },
-  croc: { team: 'enemy', name: 'Croc', art: ART('croc'), headR: 56, r: 36, vr: 27, turn: 3.4, accel: 200, face: 3.4, mass: 2.2, hp: 110, speed: 54, role: 'melee', range: 22,
+  croc: { team: 'enemy', name: 'Croc', art: 'art/enemies/croc.svg', headR: 56, r: 36, vr: 27, turn: 3.4, accel: 200, face: 3.4, mass: 2.2, hp: 110, speed: 54, role: 'melee', range: 22,
     atkCd: 1.0, windup: 0.25, dmg: 9, knock: 120, arc: 1.8, temp: 0.3, commit: 1, xp: 22, coins: [4, 8], cost: 6, attackAnim: 'swing', res: { burn: 0.8, chill: 1.3 }, brain: crocBrain },
-  crab: { team: 'enemy', name: 'Sewer Crab', art: variantUrl('art/enemies/placeholder/spider-hunter.svg', { hue: -40, sat: 1.4, light: 0.06 }), headR: 52, r: 24, vr: 19, turn: 8,
+  crab: { team: 'enemy', name: 'Sewer Crab', art: 'art/enemies/crab.svg', headR: 57, r: 24, vr: 19, turn: 8,
     accel: 460, face: 8, mass: 1.2, hp: 38, speed: 78, role: 'melee', range: 14, atkCd: 0.9, windup: 0.15, dmg: 7, knock: 90, arc: 1.4, shield: 0.5, temp: 0.4, commit: 0.8,
     xp: 9, coins: [2, 4], cost: 3, pack: [1, 3], attackAnim: 'thrust', brain: crabBrain },
   crabBlue: { variantOf: 'crab', name: 'Blue Crab', hue: 180, xp: 10, bubbles: { n: 1, color: '#8FD3F0', hit: { wet: 40 } } },

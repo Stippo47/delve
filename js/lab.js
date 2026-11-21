@@ -110,8 +110,9 @@ function setupFight(n) {
   w = room(900, 480);
   w.walls = []; buildGrid(w);
   heroes.forEach((k, i) => { const u = spawn(w, k, 120 + (i % 2) * 40, 60 + i * (360 / heroes.length)); u.facing = 0; });
-  const foes = ['lab-rattler', 'lab-rattler-loosejaw', 'lab-rattler-jawless-spear', 'lab-rattler-jawless-bow', 'lab-gaper', 'lab-brute', 'lab-lizardman', 'lab-lizardman-blade'];
-  const m = n ? n - heroes.length : 6;
+  const foes = P.get('foes') ? P.get('foes').split(',') // &foes=troll,rockTroll: these kinds instead (art round 8)
+    : ['lab-rattler', 'lab-rattler-loosejaw', 'lab-rattler-jawless-spear', 'lab-rattler-jawless-bow', 'lab-gaper', 'lab-brute', 'lab-lizardman', 'lab-lizardman-blade'];
+  const m = P.get('foes') ? foes.length : n ? n - heroes.length : 6;
   for (let i = 0; i < m; i++) { const u = spawn(w, foes[i % foes.length], 380 + (i % 4) * 70, 60 + Math.floor(i / 4) * 80 + (i % 2) * 30); u.facing = Math.PI; u.aggro = true; }
   setZoom(+(P.get('zoom') || 0.8));
   tick = (dt) => { step(w, dt); for (const u of w.units) if (u.team === 'hero' && u.hp < u.maxHp * 0.3) u.hp = u.maxHp; };

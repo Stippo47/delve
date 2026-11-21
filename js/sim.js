@@ -366,7 +366,7 @@ function steer(w, u, gx, gy, opts = {}) {
       if (ad < spread) danger[i] = Math.max(danger[i], k * (1 - ad / (spread * 1.6)));
     }
   };
-  for (const p of w.pillars) avoidCircle(p.x, p.y, p.r, 1, 70);
+  for (const p of w.pillars) if (!ownBoulder(u, p)) avoidCircle(p.x, p.y, p.r, 1, 70);
   // telegraphed hits: don't walk into one (escaping one that's already under you is movement()'s job)
   if (w.danger.length) for (const z of w.danger) {
     if (!threatens(z, u) || inZone(z, u.x, u.y, R * 0.6)) continue;
@@ -451,6 +451,9 @@ function approachSpot(w, u, t) {
   return null;
 }
 
+// A troll's own boulder while it holds it, or while it is still rolling off (it starts inside the troll's collider):
+// they don't push each other apart, and the troll doesn't steer round it (art round 8, foes9.js HOLD).
+function ownBoulder(u, p) { return p.owner === u && (p.held || p.vx * p.vx + p.vy * p.vy > 10000); }
 // How far u can go along (dx, dy) before a wall, the room's edge or a pillar (up to max).
 function clearance(w, u, dx, dy, max) {
   let t = max;
@@ -461,6 +464,7 @@ function clearance(w, u, dx, dy, max) {
     t = Math.min(t, rayToRoundRect(u.x, u.y, dx, dy, r, u.r));
   }
   for (const p of w.pillars) {
+    if (ownBoulder(u, p)) continue;
     const ox = p.x - u.x, oy = p.y - u.y, along = ox * dx + oy * dy; if (along < 0) continue;
     const off2 = ox * ox + oy * oy - along * along, R = p.r + u.r;
     if (off2 < R * R) t = Math.min(t, Math.max(0, along - Math.sqrt(R * R - off2)));
@@ -1228,6 +1232,7 @@ function physics(w, dt) {
       if (into > 0) { wallHit(w, u, into); u.kx += c.nx * into * 1.25; u.ky += c.ny * into * 1.25; }
     }
     for (const p of w.pillars) {
+      if (ownBoulder(u, p)) continue; // art round 8: a troll's boulder rests in its fists, inside its collider
       const d = dist(u.x, u.y, p.x, p.y), m = u.r + p.r;
       if (d < m && d > 0) {
         const nx = (u.x - p.x) / d, ny = (u.y - p.y) / d;
