@@ -79,7 +79,7 @@ function hopTick(w, u, k, dt) {
   const e = rise * rise * (3 - 2 * rise);
   u.x = h.sx + (h.ex - h.sx) * e; u.y = h.sy + (h.ey - h.sy) * e; u.vx = u.vy = u.dvx = u.dvy = u.kx = u.ky = 0; u.spd = 0;
   u.hop = Math.sin(rise * Math.PI) * 120; u.squash = p < 0.25 ? p / 0.25 : 0;
-  u.ethereal = rise > 0.05 && rise < 0.95; // in the air: over everyone's heads
+  if (rise > 0.05 && rise < 0.95) u.invulnT = Math.max(u.invulnT, 0.05); // in the air: out of reach (not ethereal: battle mode counts ethereal units as gone)
   if (p >= 1) { k.hop = null; u.hop = 0; u.squash = 0; u.ethereal = false; beginHold(u, 0.6, null); }
   return true;
 }
