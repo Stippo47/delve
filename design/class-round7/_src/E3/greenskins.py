@@ -267,6 +267,83 @@ def troll():
     return S
 
 
+# round 7 (the troll: "Looks weird"): reworked, in two versions (troll7); the round-5/6 troll() is kept as it was.
+TROLL_R7 = True
+
+
+def troll7(take):
+    """Both: blue-teal skin, no eyes, built like the rest of the family (a head token on big shoulders, two plain fists,
+    a knotted log club in the right fist behind the body), a heavy underbite with two lower tusks coming out of the
+    mouth (their roots under the mouth line, as on the round-7 orc), a big round nose (round 6's long drooping nose
+    read as a trunk, and the dark patch above it as a hole; both gone).
+    a, "mohawk": a new take: a ragged rust-red crest of hair from the brow back over the head and on down the back,
+    long ears swept back and out, big tusks curving up and out.
+    b, "shaggy": round 6's hunched troll with its weird parts fixed: the head bigger (0.92, it was 0.8); the dark
+    moss-green hair, a patch on the hump that read like a wig, now covers the whole hunched back as a shaggy coat with
+    a ragged edge and grows on over the top of the head to a ragged fringe over the brow; drooping ears; smaller
+    tusks."""
+    skin = SKIN["troll"]
+    if take == "a":
+        S = Sprite('TROLL, mohawk (round 7): blue-teal skin, no eyes; a ragged rust-red crest of hair from the brow back '
+                   'over the head and on down the back, long ears swept back and out, a broad round nose, a heavy '
+                   'underbite with two big tusks curving up out of the mouth; hunched shoulders, big plain fists, a '
+                   'knotted log club. Parts: #arm-r (club + fist, before #body), #body, #arm-l (free fist). '
+                   'Front = DOWN (+y).')
+    else:
+        S = Sprite('TROLL, shaggy (round 7): blue-teal skin, no eyes; a huge hunched back under a shaggy coat of moss-dark '
+                   'hair with a ragged edge, the hair growing on over the top of the head to a ragged fringe over the brow; '
+                   'drooping ears, a big round nose, a heavy underbite with two lower tusks coming out of the mouth; big '
+                   'plain fists, a knotted log club. Parts: #arm-r (club + fist, before #body), #body, #arm-l (free fist). '
+                   'Front = DOWN (+y).')
+    S.group("arm-r", (156, 114))
+    club(S, 164, 144, 12, L=70, w0=14, w1=30)
+    gfist(S, 164, 142, 12, skin, w=30, h=32, plain=True)
+    S.group("body")
+    if take == "a":
+        tf = None
+        S.shape(sym([(100, 66), (148, 70), (182, 92), (188, 118), (170, 140), (100, 148)]), S.lg(lt(skin, 0.06), dk(skin, 0.3)),
+                shade=0.3)
+        ears(S, skin, [(140, 96), (168, 80), (204, 70, 'c'), (176, 96), (144, 112)])
+        bald_head(S, skin)
+        crest = sym([(100, 12), (108, 26), (116, 30, 'c'), (112, 44), (120, 50, 'c'), (114, 62), (121, 70, 'c'),
+                     (114, 80), (119, 90, 'c'), (108, 94), (100, 100)], 0.85)
+        S.shape(crest, S.lg("#D8583A", "#8E2A22"), sh=3, op=0.3, shade=0.25)
+        nose = blob([(93, 106), (107, 106), (114, 124), (108, 134), (100, 136), (92, 134), (86, 124)], 0.95)
+        th, tw = 30, 11
+    else:
+        tf = "translate(100 116) scale(0.92) translate(-100 -100)"
+        # the hunched back is all shaggy moss-dark fur: a ragged edge of tufts all round it
+        pts = []
+        for i in range(21):
+            a = math.radians(-90 + (i - 10) * 10.8)
+            r0 = (1.0, 0.97, 1.02)[i // 2 % 3] if i % 2 == 0 else 0.9
+            pts.append((100 + 90 * r0 * math.cos(a) * 1.0, 92 + 62 * r0 * math.sin(a), 'c' if i % 2 == 0 else None))
+        pts = [(x, y, c) if c else (x, y) for x, y, c in pts]
+        fur = pts + [(176, 128), (100, 140), (24, 128)]
+        S.shape(blob(fur, 0.8), S.lg("#6E8E5A", "#2E4632"), shade=0.3,
+                decor=[f'<path d="{blob([(70, 40), (96, 30), (104, 60), (84, 80), (66, 66)])}" fill="#86A66E" opacity="0.35"/>'])
+        ears(S, skin, [(138, 102), (162, 98), (180, 110, 'c'), (162, 120), (140, 120)], tf=tf)
+        bald_head(S, skin, tf=tf)
+        # the same fur grows over the top of the head, ending in a ragged fringe over the brow
+        cap = sym([(100, 30), (128, 34), (146, 52), (152, 76), (150, 98, 'c'), (140, 92), (132, 104, 'c'), (122, 96),
+                   (112, 106, 'c'), (100, 98)], 0.85)
+        S.shape(cap, S.lg("#6E8E5A", "#2E4632"), tf=tf, sh=4, op=0.3, shade=0.25)
+        nose = blob([(92, 108), (108, 108), (116, 124), (110, 138), (100, 141), (90, 138), (84, 124)], 0.95)
+        th, tw = 20, 9
+    jaw = blob([(70, 134), (100, 138), (130, 134), (136, 150), (122, 164), (100, 168), (78, 164), (64, 150)], 0.9)
+    S.shape(jaw, S.lg(lt(skin, 0.04), dk(skin, 0.24)), tf=tf, sh=3, op=0.32, shade=0.22)
+    tusk = [(116 - tw / 2, 148), (116 + tw / 2, 148), (116 + tw * 0.6, 148 - th * 0.55), (116 + tw * 0.9, 148 - th, 'c'),
+            (116 - tw * 0.15, 148 - th * 0.5)]
+    for pts in (tusk, mx(tusk)):
+        S.shape(blob(pts, 0.8), S.lg(*BONE), tf=tf, shadow=False, shade=0.15)
+    S.raw(f'<path d="M82 148 Q100 144 118 148" fill="none" stroke="{dk(skin, 0.55)}" stroke-width="3" stroke-linecap="round"'
+          + (f' transform="{tf}"' if tf else "") + '/>')
+    S.shape(nose, S.lg(lt(skin, 0.08), dk(skin, 0.22)), tf=tf, sh=3, op=0.28, shade=0.22)
+    S.group("arm-l", (44, 114))
+    gfist(S, 36, 144, -8, skin, w=30, h=32, knuckle=-1, plain=True)
+    return S
+
+
 def ogre():
     skin = SKIN["ogre"]
     S = Sprite('OGRE (round 5): drab moss skin, no eyes; a big round bald head, a heavy underbite with two stubby '
@@ -308,5 +385,9 @@ if __name__ == "__main__":
     for name, fn in (("goblin", goblin), ("hobgoblin", hobgoblin), ("orc", orc), ("orc-shaman", shaman),
                      ("troll", troll), ("ogre", ogre)):
         if want and name not in want:
+            continue
+        if name == "troll" and TROLL_R7:
+            for take in ("a", "b"):
+                print(troll7(take).write(f"greenskin-troll-{take}.svg"))
             continue
         print(fn().write(f"greenskin-{name}.svg"))
