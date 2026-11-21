@@ -356,6 +356,7 @@ function drawHazard(ctx, h, t) {
 
 function drawPillar(ctx, p, w) {
   if (p.snowball) { // round 10: a yeti's snowball (foes10.js): packed snow, a blue shade and a few clumps
+    if (prop(ctx, 'yeti-snowball', p.x, p.y, PROP_BOX, { sc: p.r / 30 })) return; // art round 9: its own prop, like the troll's boulder
     inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, '#F4FAFF');
     ctx.fillStyle = 'rgba(150,190,225,0.45)'; ctx.beginPath(); ctx.arc(p.x + p.r * 0.18, p.y + p.r * 0.2, p.r * 0.78, 0, TAU); ctx.fill();
     ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(p.x - p.r * 0.25, p.y - p.r * 0.28, p.r * 0.42, 0, TAU); ctx.fill();

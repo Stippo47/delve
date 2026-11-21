@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- GAME COPY (art round 9) of design/class-round9/enemies/frost-ice-slime.svg -->
+<!-- ICE SLIME (round 9): the game's slime (a round dome of jelly with its point at the front) made of ice: pale and glassy, almost white at the top left and clear blue at the edge, three ice shards frozen inside it, a bright shine; two icicles hang where its point would be. No eyes, no face. Parts: #body only (it hops whole). Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<radialGradient id="gIceSlime" cx="0.38" cy="0.32" r="0.78"><stop offset="0" stop-color="#FAFEFF"/><stop offset="0.5" stop-color="#CDEEFA"/><stop offset="1" stop-color="#86C4E4"/></radialGradient>
+<path id="s1" d="M 82 146 L 110 146 L 94 192 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#DBF3FC"/><stop offset="1" stop-color="#7AD5F6"/></linearGradient>
+<clipPath id="c1"><use href="#s1"/></clipPath>
+<path id="s2" d="M 108 146 L 128 146 L 122 176 Z"/>
+<clipPath id="c2"><use href="#s2"/></clipPath>
+<path id="s3" d="M100 42 C140 42 156 72 156 104 C156 138 134 158 100 160 C66 158 44 138 44 104 C44 72 60 42 100 42 Z"/>
+<clipPath id="c3"><use href="#s3"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="body">
+<use href="#s1" fill="url(#g1)"/><g clip-path="url(#c1)"><path d="M 96.0 146 L 110 146 L 94 192 Z" fill="#6EB8DC" opacity="0.4"/></g>
+<use href="#s2" fill="url(#g1)"/><g clip-path="url(#c2)"><path d="M 118.0 146 L 128 146 L 122 176 Z" fill="#6EB8DC" opacity="0.4"/></g>
+<use href="#s3" fill="url(#gIceSlime)"/><g clip-path="url(#c3)"><path d="M 78 124 A 40 34 0 1 0 158 124 A 40 34 0 1 0 78 124 Z" fill="#5E9CC8" opacity="0.2"/><path d="M 70 88 L 92 76 L 104 98 L 84 112 Z" fill="#E4F7FD" opacity="0.85"/><path d="M 92 76 L 104 98 L 84 112 Z" fill="#8CC8E6" opacity="0.55"/><path d="M 70 88 L 92 76 L 87.5 93 Z" fill="#FFFFFF" opacity="0.7"/><path d="M 104 108 L 128 96 L 138 122 L 116 136 Z" fill="#E4F7FD" opacity="0.85"/><path d="M 128 96 L 138 122 L 116 136 Z" fill="#8CC8E6" opacity="0.55"/><path d="M 104 108 L 128 96 L 121.5 115 Z" fill="#FFFFFF" opacity="0.7"/><path d="M 80 122 L 94 118 L 98 140 L 84 144 Z" fill="#E4F7FD" opacity="0.765"/><path d="M 94 118 L 98 140 L 84 144 Z" fill="#8CC8E6" opacity="0.49500000000000005"/><path d="M 80 122 L 94 118 L 89 131 Z" fill="#FFFFFF" opacity="0.7"/><path d="M 59 66 A 17 9 0 1 0 93 66 A 17 9 0 1 0 59 66 Z" transform="rotate(-30 76 66)" fill="#FFFFFF" opacity="0.8"/><circle cx="98" cy="56" r="3.5" fill="#FFFFFF" opacity="0.8"/></g>
+</g>
+</g>
+</svg>
