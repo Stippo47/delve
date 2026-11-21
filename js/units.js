@@ -99,10 +99,14 @@ for (const d of Object.values(DEFS)) {
 
 export const HERO_ORDER = ['knight', 'archer', 'rogue'];
 
-// Level scaling for heroes (levels inside a run; round 7: steeper, with the dungeons scaling harder to match).
+// Level scaling. Round 8: levels are permanent and only bring skill points ("xp is just what limits what upgrades can
+// be unlocked"), so a hero's strength comes from the skill web; heroes spawn at level 1's numbers (dungeon.js).
+// levelHp / levelDmg stay for summons and anything else that asks.
 export const levelHp = (base, lvl) => Math.round(base * (1 + 0.14 * (lvl - 1)));
 export const levelDmg = (base, lvl) => base * (1 + 0.11 * (lvl - 1));
-export const xpToNext = (lvl) => Math.round(40 * Math.pow(lvl, 1.45));
+// XP to go from lvl to lvl + 1 (progress.js addXp). Tuned with tools/runs.mjs --campaign.
+export const xpToNext = (lvl) => Math.round(XP_BASE * Math.pow(lvl, XP_POW));
+export const XP_BASE = 60, XP_POW = 1.5;
 
 // Trinkets live in trinkets.js (each is a set of hooks); re-exported here so older imports keep working.
 export { TRINKETS, TRINKET_IDS } from './trinkets.js';

@@ -1,38 +1,54 @@
-// The progression rules: prices, recovery, the skill tree's buying rules, and turning a finished run into what
-// the save keeps. Pure data and functions (no DOM), so camp.js shows them and tools can test them.
+// The progression rules: prices, recovery, the skill web's buying rules, levels and XP, party slots, dungeon order and
+// checkpoints, and turning a finished run into what the save keeps. Pure data and functions (no DOM), so the camp
+// shows them and tools can test them.
 //
-// Gold is kept forever, even on a loss. XP and levels only live inside a run; what lasts is gold spent on the tree,
-// gems spent on heroes, bought trinkets and potions, party seats, feats (a hero reached level 8 once) and records.
-import { HEROES, treeFor, freeNodes, FEAT_LEVEL } from './heroes.js';
-import { TRINKETS } from './units.js';
+// Round 8 (docs/BUILD-v4.md, "Shared contract (progression)"):
+// - Levels are permanent. A hero goes in at its level, keeps the XP it earns, and every level gained gives a skill
+//   point. Skill points buy nodes in the web (heroes.js treeFor); gold doesn't.
+// - Gold buys and upgrades equipment (trinkets), new heroes and potions. Gems are gone.
+// - Party slots are earned, not bought: the first dungeon's first mini-boss, the first dungeon's boss, the second
+//   dungeon's boss (save.unlocks).
+// - Dungeons open in order (themes.js DUNGEON_ORDER): beat one's boss to open the next.
+// - Checkpoints: reaching floor N of a dungeon lets later runs start at floor N.
+// - Leaving before the floor is finished (or falling) loses LEAVE_LOSS of the run's gold.
+import { HEROES, treeFor, freeNodes, statsFor, tierOf } from './heroes.js';
+import { TRINKETS, xpToNext } from './units.js';
 import { TRINKET_LEVEL_MAX, trinketHooks } from './trinkets.js';
 import { POTIONS, POTION_MAX as BAG_MAX, CARRY_MAX, elixirKey } from './potions.js';
+import { DUNGEON_ORDER, THEMES } from './themes.js';
+import { slotsOf, START_POINTS } from './save.js';
+export { xpToNext, DUNGEON_ORDER, START_POINTS };
 
 // ---------------------------------------------------------------- paying
+// Gold only: afford(save, n) / pay(save, n); the old (save, 'gold', n) form still works.
 // The unlimited-currency cheat (a settings toggle, save.cheat): everything is affordable and nothing is taken.
-// The real gold and gems stay as they were, so switching it off puts you back where you were.
-export const afford = (save, currency, n) => !!save.cheat || save[currency] >= n;
-export function pay(save, currency, n) {
-  if (!afford(save, currency, n)) return false;
-  if (!save.cheat) save[currency] -= n;
+const amount = (a, b) => (typeof a === 'number' ? a : b);
+export const afford = (save, a, b) => !!save.cheat || save.gold >= amount(a, b);
+export function pay(save, a, b) {
+  const n = amount(a, b);
+  if (!afford(save, n)) return false;
+  if (!save.cheat) save.gold -= n;
   return true;
 }
 
-// ---------------------------------------------------------------- party seats
-// Party size starts at 1; each seat after costs a lot more. Either gold or gems buys it.
+// ---------------------------------------------------------------- party slots
+// Start with 1; each of these adds one (flags in save.unlocks, set by applySummary).
 export const SLOT_MAX = 4;
-const SLOT_GOLD = [250, 900, 3000]; // buying seat 2, 3, 4
-const SLOT_GEMS = [2, 5, 12];
-export function slotPrice(save) {
-  const i = save.slots - 1;
-  return i < SLOT_GOLD.length ? { gold: SLOT_GOLD[i], gems: SLOT_GEMS[i] } : null;
-}
-export function buySlot(save, currency) {
-  const p = slotPrice(save); if (!p) return false;
-  if (!pay(save, currency, p[currency])) return false;
-  save.slots++;
-  return true;
-}
+export const SLOT_UNLOCKS = [
+  { key: 'slotMini1', dungeon: 0, what: 'mini', floor: 1 },   // the first dungeon's first mini-boss
+  { key: 'slotBoss1', dungeon: 0, what: 'boss' },             // the first dungeon's boss
+  { key: 'slotBoss2', dungeon: 1, what: 'boss' },             // the second dungeon's boss
+];
+export const slotCount = (save) => slotsOf(save);
+// For the camp's messaging: each slot, whether it's earned, and what earns it.
+export const slotUnlocks = (save) => SLOT_UNLOCKS.map((u) => {
+  const id = DUNGEON_ORDER[u.dungeon], t = THEMES[id];
+  return { ...u, theme: id, have: !!(save.unlocks && save.unlocks[u.key]),
+    text: u.what === 'mini' ? `Beat the first mini-boss of ${t ? t.name : id}` : `Beat the boss of ${t ? t.name : id}` };
+});
+// Slots are not for sale any more (kept so older views still run).
+export const slotPrice = () => null;
+export const buySlot = () => false;
 
 // ---------------------------------------------------------------- potions to bring in
 // Healing draughts are save.potions (as before); the other kinds are save.elixirs[id]. See potions.js.
@@ -119,13 +135,26 @@ export function unequip(save, heroId, slot) {
 }
 
 // ---------------------------------------------------------------- heroes
-export const heroPrice = (id) => (HEROES[id].unlock && HEROES[id].unlock.gems) || 0;
+// Heroes are bought with gold (the old gem prices x HERO_GOLD).
+export const HERO_GOLD = 350;
+export const heroPrice = (id) => ((HEROES[id].unlock && HEROES[id].unlock.gems) || 0) * HERO_GOLD;
 export function unlockHero(save, id) {
   const h = save.heroes[id], p = heroPrice(id);
-  if (h.owned || !pay(save, 'gems', p)) return false;
+  if (h.owned || !pay(save, p)) return false;
   h.owned = true;
   return true;
 }
+
+// ---------------------------------------------------------------- levels and XP
+// A hero's level is permanent. addXp works on anything with { level, xp } (a save hero or a run's hero state) and
+// returns how many levels it gained; the caller gives the points (the run counts them, applySummary banks them).
+export function addXp(h, xp) {
+  let gained = 0;
+  h.xp = (h.xp || 0) + Math.max(0, xp);
+  while (h.xp >= xpToNext(h.level)) { h.xp -= xpToNext(h.level); h.level++; gained++; }
+  return gained;
+}
+export const xpProgress = (h) => (h.xp || 0) / xpToNext(h.level || 1);
 
 // Recovery: a hero downed in a run rests a while; one that came out badly hurt rests a little. Gold speeds it up.
 // Round 6: 2-3 minutes, not 10.
@@ -142,43 +171,100 @@ export function speedUp(save, id, now = Date.now()) {
 }
 export const canGo = (save, id, now) => save.heroes[id].owned && !recoverLeft(save, id, now);
 
-// ---------------------------------------------------------------- the skill tree
-// Tier nodes need the tier before; tier III and the second trinket slot need the feat. A tier's level is when it
-// switches on inside a run, not a lock on buying it. Stat nodes can be bought up to their max, each rank dearer.
+// ---------------------------------------------------------------- the skill web
+// A node can be bought with skill points when: one linked node is owned (the root always is), its needs are owned (a
+// tier needs the tier before), the hero's level is at least node.level, it isn't maxed, and the hero has node.cost
+// points. Ranks: save.heroes[id].nodes[nodeId].
 const treeCache = {};
 export const tree = (id) => treeCache[id] || (treeCache[id] = treeFor(id));
-// Free nodes (every hero's first ability, tier I) are owned from the start and never charged for.
+export const nodeOf = (id, nodeId) => tree(id).find((n) => n.id === nodeId);
 const freeCache = {};
 const freeOf = (id) => freeCache[id] || (freeCache[id] = freeNodes(id));
 export const rank = (save, heroId, nodeId) => save.heroes[heroId].nodes[nodeId] || freeOf(heroId)[nodeId] || 0;
+export const points = (save, heroId) => save.heroes[heroId].points || 0;
 export function nodeState(save, heroId, node) {
   const r = rank(save, heroId, node.id), h = save.heroes[heroId];
   const needs = [];
-  if (node.req.node) needs.push({ what: 'node', id: node.req.node, ok: rank(save, heroId, node.req.node) > 0,
-    text: `Needs ${tree(heroId).find((n) => n.id === node.req.node).name}` });
-  if (node.req.feat) needs.push({ what: 'feat', ok: h.feat, text: `Needs the feat: reach level ${FEAT_LEVEL} in a dungeon` });
+  const linked = node.kind === 'root' || node.links.some((l) => rank(save, heroId, l) > 0);
+  needs.push({ what: 'link', ok: linked, text: 'Buy a node next to it first' });
+  for (const n of node.needs) needs.push({ what: 'node', id: n, ok: rank(save, heroId, n) > 0, text: `Needs ${nodeOf(heroId, n).name}` });
+  if (node.level) needs.push({ what: 'level', ok: h.level >= node.level, text: `Needs level ${node.level}` });
   if (!h.owned) needs.push({ what: 'owned', ok: false, text: 'Unlock the hero first' });
-  const maxed = r >= node.max, cost = maxed ? 0 : node.cost[Math.min(r, node.cost.length - 1)];
+  const maxed = r >= node.max, cost = maxed ? 0 : node.cost;
   const met = needs.every((n) => n.ok);
-  return { rank: r, maxed, cost, needs, met, canBuy: met && !maxed && afford(save, 'gold', cost) };
+  return { rank: r, maxed, cost, needs, met, reachable: linked, canBuy: met && !maxed && (h.points || 0) >= cost };
 }
 export function buyNode(save, heroId, nodeId) {
-  const node = tree(heroId).find((n) => n.id === nodeId); if (!node) return false;
+  const node = nodeOf(heroId, nodeId); if (!node) return false;
   const st = nodeState(save, heroId, node); if (!st.canBuy) return false;
-  pay(save, 'gold', st.cost); save.heroes[heroId].nodes[nodeId] = st.rank + 1;
+  const h = save.heroes[heroId];
+  h.points -= st.cost; h.nodes[nodeId] = st.rank + 1;
   return true;
 }
+// Points spent so far.
+export const spentPoints = (save, heroId) => tree(heroId).reduce((a, n) => a + (save.heroes[heroId].nodes[n.id] || 0) * n.cost, 0);
+// Take every node back for gold (RESPEC_GOLD a point): all the points come back.
+export const RESPEC_GOLD = 15;
+export const respecPrice = (save, heroId) => spentPoints(save, heroId) * RESPEC_GOLD;
+export function respec(save, heroId) {
+  const n = spentPoints(save, heroId); if (!n || !pay(save, n * RESPEC_GOLD)) return false;
+  const h = save.heroes[heroId]; h.points += n; h.nodes = {};
+  return true;
+}
+// What the hero's bought nodes add up to (heroes.js statsFor), for the camp to show.
+export const heroStats = (save, heroId) => statsFor(heroId, save.heroes[heroId].nodes);
 // How many tiers of each ability the hero owns (0-3), for the hero page's pips.
-export const abilityTiers = (save, heroId, abilityId) => [1, 2, 3].filter((t) => rank(save, heroId, `${abilityId}${t}`) > 0).length;
+export const abilityTiers = (save, heroId, abilityId) => tierOf(save.heroes[heroId].nodes, abilityId);
+// Spend a hero's points by itself: abilities first, then their tiers, the second trinket slot, keystones, then the
+// nearest stat node (prefer(node) -> a number breaks ties). Tools use it for test saves; the camp may offer it.
+const AUTO_ORDER = (n) => (n.kind === 'ability' ? 0 : n.kind === 'tier' ? 1 : n.kind === 'slot' ? 2 : n.kind === 'keystone' ? 3 : 4);
+export function autoSpend(save, heroId, prefer = null) {
+  let bought = 0;
+  for (let guard = 0; guard < 400; guard++) {
+    const can = tree(heroId).filter((n) => nodeState(save, heroId, n).canBuy);
+    if (!can.length) break;
+    can.sort((a, b) => AUTO_ORDER(a) - AUTO_ORDER(b) || (prefer ? (prefer(b) || 0) - (prefer(a) || 0) : 0) || Math.hypot(a.x, a.y) - Math.hypot(b.x, b.y));
+    buyNode(save, heroId, can[0].id); bought++;
+  }
+  return bought;
+}
+
+// ---------------------------------------------------------------- dungeons, checkpoints
+// The first dungeon is always open; each next one opens when the one before it has had its boss beaten.
+const dg = (save, id) => (save.dungeons && save.dungeons[id]) || { best: 0, cleared: 0, checkpoint: 1, minis: [false, false] };
+export function dungeonOpen(save, id) {
+  const i = DUNGEON_ORDER.indexOf(id);
+  if (i <= 0) return i === 0;
+  return dg(save, DUNGEON_ORDER[i - 1]).cleared > 0;
+}
+// { open, lockedBy (the dungeon to beat first), cleared, best, checkpoint, floors: [1..checkpoint], minis }
+export function dungeonState(save, id) {
+  const d = dg(save, id), i = DUNGEON_ORDER.indexOf(id), open = dungeonOpen(save, id);
+  const checkpoint = Math.max(1, Math.min(3, d.checkpoint || 1));
+  return { open, lockedBy: open ? null : DUNGEON_ORDER[i - 1] || null, cleared: d.cleared || 0, best: d.best || 0, checkpoint,
+    floors: Array.from({ length: checkpoint }, (_, k) => k + 1), minis: (d.minis || [false, false]).slice() };
+}
+export const openDungeons = (save) => DUNGEON_ORDER.filter((id) => dungeonOpen(save, id));
+
+// ---------------------------------------------------------------- leaving
+// Leaving before the floor is finished loses LEAVE_LOSS of the run's gold (falling too: a wipe is leaving early).
+// run.floorDone is true once the floor's last room is won (dungeon.js); then leaving is free.
+export const LEAVE_LOSS = 0.2;
+export function leaveCost(run) {
+  const done = !!(run.floorDone || (run.summary && run.summary.floorDone) || run.phase === 'won');
+  const gold = Math.max(0, Math.floor(run.coins || 0));
+  return { lose: done ? 0 : LEAVE_LOSS, gold: done ? 0 : Math.ceil(gold * LEAVE_LOSS) };
+}
 
 // ---------------------------------------------------------------- starting a run
-// What newRun gets: the party (heroes who can go, up to the seats), the theme, mercs, and the potions handed out.
+// What newRun gets: the party (heroes who can go, up to the slots), the theme, the floor to start at (a checkpoint),
+// mercs, and the potions handed out.
 // potionFor: { [heroId]: [potionId, ...] } from the camp (an old `true` means one healing draught).
 // opts.potions: { [heroId]: healing draughts } (newRun's contract); opts.elixirs: { [heroId]: [elixirId, ...] } and
 // opts.tlv: { [trinketId]: level } go onto run.heroes[id].trinkets through applyLoadout (main.js calls it).
-export function runOptions(save, theme, potionFor = {}) {
+export function runOptions(save, theme, potionFor = {}, floor = 1) {
   const now = Date.now();
-  const party = save.party.filter((id) => canGo(save, id, now)).slice(0, save.slots);
+  const party = save.party.filter((id) => canGo(save, id, now)).slice(0, slotCount(save));
   const potions = {}, elixirs = {};
   const left = { heal: save.potions, ...save.elixirs };
   for (const id of party) {
@@ -188,7 +274,9 @@ export function runOptions(save, theme, potionFor = {}) {
       if (p === 'heal') potions[id] = (potions[id] || 0) + 1; else (elixirs[id] || (elixirs[id] = [])).push(p);
     }
   }
-  return { theme, party, mercs: !!save.mercs, potions, elixirs, tlv: { ...save.tlv } };
+  // floor: where to start (a checkpoint reached before; never past it)
+  const fl = Math.max(1, Math.min(dungeonState(save, theme).checkpoint, Math.floor(+floor || 1)));
+  return { theme, floor: fl, party, mercs: !!save.mercs, potions, elixirs, tlv: { ...save.tlv } };
 }
 // The potions handed out are used up going in (drunk or not, they're the run's now).
 export function payForRun(save, opts) {
@@ -212,33 +300,62 @@ export function applyLoadout(run, opts) {
 }
 
 // ---------------------------------------------------------------- ending a run
-// run.summary = { gold, gems, kills, floor, rooms, levels: { [id]: level }, downed: [ids], foundTrinkets, hp?: { [id]: ratio } }
-// Returns what happened, for the result screen.
+// run.summary (dungeon.js summarize) = { gold, kills, floor, rooms, floorDone, minis: [bool, bool], bossKilled,
+//   heroes: { [id]: { level, xp, gained } }, levels: { [id]: level }, downed: [ids], foundTrinkets, hp: { [id]: ratio }, result }
+// Banks it into the save: gold (less the leaving loss and the mercs' cut), levels, XP and points, the dungeon's best
+// floor, checkpoint, mini-bosses and boss, slot unlocks, the next dungeon opening, recovery timers.
+// Returns what happened, for the result screen: { result, raw, lost (the leaving loss), gold (banked), mercCut, kills,
+//   floor, rooms, heroes: [{ id, from, level, gained, points, record, downed, hurt }], found, theme, floorDone,
+//   checkpoint (a new one, or null), minis, bossKilled, slots: { before, after, unlocked: [keys] }, opened: [dungeon ids] }
 export function applySummary(save, run, result, now = Date.now()) {
   const s = run.summary || {};
   const mercs = !!(run.hired ? run.hired.length : Array.isArray(run.mercs) ? run.mercs.length : run.mercs);
   const raw = Math.max(0, Math.floor(s.gold || 0));
-  const gold = mercs ? Math.floor(raw * (1 - MERC_CUT)) : raw;
+  const early = result !== 'won' && !s.floorDone;
+  const lost = early ? Math.ceil(raw * LEAVE_LOSS) : 0;
+  const kept = raw - lost;
+  const gold = mercs ? Math.floor(kept * (1 - MERC_CUT)) : kept;
   const theme = run.theme || 'unknown';
-  const d = save.dungeons[theme] || (save.dungeons[theme] = { best: 0, cleared: 0 });
-  const firstClear = result === 'won' && !d.cleared;
-  const gems = Math.max(0, Math.floor(s.gems || 0)) + (firstClear ? FIRST_CLEAR_GEMS : 0);
-  save.gold += gold; save.gems += gems;
-  if (result === 'won') { save.wins++; d.cleared++; }
-  d.best = Math.max(d.best, s.floor || 0);
+  const wasOpen = DUNGEON_ORDER.map((id) => dungeonOpen(save, id));
+  const d = save.dungeons[theme] || (save.dungeons[theme] = { best: 0, cleared: 0, checkpoint: 1, minis: [false, false] });
+  d.minis = d.minis || [false, false];
+  const won = result === 'won' || !!s.bossKilled;
+  const firstClear = won && !d.cleared;
+  save.gold += gold;
+  if (result === 'won') save.wins++;
+  if (won) d.cleared++;
+  d.best = Math.max(d.best || 0, s.floor || 0);
+  const oldCp = d.checkpoint || 1;
+  d.checkpoint = Math.max(oldCp, Math.min(3, s.floor || 1));
+  (s.minis || []).forEach((m, i) => { if (m && i < 2) d.minis[i] = true; });
+  // slots
+  const slotsBefore = slotsOf(save), newSlots = [];
+  save.unlocks = save.unlocks || {};
+  for (const u of SLOT_UNLOCKS) {
+    if (save.unlocks[u.key] || DUNGEON_ORDER[u.dungeon] !== theme) continue;
+    if (u.what === 'mini' ? d.minis[u.floor - 1] : d.cleared > 0) { save.unlocks[u.key] = true; newSlots.push(u.key); }
+  }
+  save.slots = slotsOf(save);
+  const opened = DUNGEON_ORDER.filter((id, i) => !wasOpen[i] && dungeonOpen(save, id));
+  // heroes: levels, XP, points; recovery
   const heroes = [];
   for (const id of run.party || []) {
     const h = save.heroes[id]; if (!h) continue;
-    const level = (s.levels && s.levels[id]) || 1;
-    const record = level > h.best; h.best = Math.max(h.best, level);
-    const feat = level >= FEAT_LEVEL && !h.feat; if (feat) h.feat = true;
+    const rh = (s.heroes && s.heroes[id]) || null;
+    const from = h.level;
+    if (rh && rh.level >= from) { h.level = rh.level; h.xp = rh.xp; }
+    const gained = h.level - from;
+    h.points = (h.points || 0) + gained;
+    const record = h.level > (h.best || 1); h.best = Math.max(h.best || 1, h.level);
     const downed = (s.downed || []).includes(id);
     const hurt = !downed && s.hp && s.hp[id] != null && s.hp[id] < HURT_BELOW;
     if (downed || hurt) h.recoverUntil = Math.max(h.recoverUntil || 0, now + (downed ? RECOVER_DOWN : RECOVER_HURT));
-    heroes.push({ id, level, record, feat, downed, hurt });
+    heroes.push({ id, from, level: h.level, gained, points: h.points, record, downed, hurt });
   }
-  return { result, raw, gold, mercCut: raw - gold, gems, firstClear, firstClearGems: firstClear ? FIRST_CLEAR_GEMS : 0,
-    kills: s.kills || 0, floor: s.floor || 0, rooms: s.rooms || 0, heroes, found: (s.foundTrinkets || []).map((t) => (t && t.id) || t), theme };
+  return { result, raw, lost, gold, mercCut: kept - gold, gems: 0, firstClear, firstClearGems: 0,
+    kills: s.kills || 0, floor: s.floor || 0, rooms: s.rooms || 0, heroes, found: (s.foundTrinkets || []).map((t) => (t && t.id) || t), theme,
+    floorDone: !!s.floorDone, checkpoint: d.checkpoint > oldCp ? d.checkpoint : null, minis: (s.minis || []).slice(), bossKilled: !!s.bossKilled,
+    slots: { before: slotsBefore, after: save.slots, unlocked: newSlots }, opened };
 }
-// Gems: bosses drop them in the run (dungeon.js); clearing a dungeon the first time gives these on top.
-export const FIRST_CLEAR_GEMS = 2;
+// Gems are gone (round 8); kept at 0 for older readers.
+export const FIRST_CLEAR_GEMS = 0;

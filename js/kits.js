@@ -16,21 +16,47 @@
 //   reviveRate, reviveHp                 numbers read by the revive code
 // Hit options worth knowing in hooks: o.dot (damage over time), o.shot (a projectile hit), o.proc (damage a trinket
 // made itself: trinkets that react to hits skip these, so they never set each other off in a loop).
-import { HEROES, STAT_STEP, TIER_CD } from './heroes.js';
+import { HEROES, TIER_CD, statsFor, tierOf } from './heroes.js';
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange, chance } from './util.js';
 import {
-  hurt, addStatus, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, textU,
-  stun, heal, addBuff, fx, zone, cleanse, wallRect,
+  hurt, addStatus as simAddStatus, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, textU,
+  stun, heal as simHeal, addBuff, fx, zone as simZone, cleanse, wallRect,
 } from './sim.js';
 import { lineClear } from './path.js';
 import { cue } from './sfx.js';
+
+// ---------------------------------------------------------------- the skill web's stat nodes (round 8)
+// u.kit.mods = statsFor(hero, nodes) (heroes.js). Generic stats go straight onto the unit in initKit; an ability's own
+// nodes (its damage, heal, statuses) apply while that ability is being used: kitThink sets u.kit.using around use(),
+// and what an ability leaves behind (a zone's ticks, a delayed blow, a ray, a shot) carries the ability with it.
+const abMod = (u, key, ab) => { const k = u && u.kit; if (!k || !k.mods) return 0; const a = k.mods.ab[ab || k.using]; return (a && a[key]) || 0; };
+function withAb(u, ab, f) {
+  if (!ab || !u.kit) return f;
+  return (...args) => { const k = u.kit, prev = k.using; k.using = ab; try { return f(...args); } finally { k.using = prev; } };
+}
+const healMul = (src) => (src && src.kit && src.kit.mods ? 1 + src.kit.mods.heal + abMod(src, 'abHeal') : 1);
+const statusMul = (src, ab) => (src && src.kit && src.kit.mods ? 1 + src.kit.mods.status + abMod(src, 'abStatus', ab) : 1);
+const heal = (w, t, amt, src) => simHeal(w, t, amt * healMul(src), src);
+const addStatus = (w, t, type, amt, src) => simAddStatus(w, t, type, amt * statusMul(src), src);
+const zone = (w, z) => { const u = z.src, ab = u && u.kit && u.kit.using; if (ab && z.tick) z.tick = withAb(u, ab, z.tick); return simZone(w, z); };
+const HIT_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger'];
+// The hook every hero with stat nodes wears: toughness, and statuses on its blows building faster.
+function statHook(mods) {
+  return {
+    taken: mods.armor ? (w, u, src, amt) => amt * Math.max(0.3, 1 - mods.armor) : undefined,
+    hit(w, u, t, amt, o) {
+      const m = statusMul(u, o.ab) - 1; if (m <= 0 || o.proc) return;
+      for (const s of HIT_STATUSES) if (o[s]) simAddStatus(w, t, s, o[s] * m, u);
+    },
+  };
+}
 
 // ---------------------------------------------------------------- helpers
 const near = (w, u, x, y, r, team) => w.units.filter((o) => alive(o) && !o.ethereal && o.team === team && dist(x, y, o.x, o.y) < r + o.r);
 const foesNear = (w, u, x, y, r) => near(w, u, x, y, r, u.team === 'hero' ? 'enemy' : 'hero');
 const friendsNear = (w, u, x, y, r) => near(w, u, x, y, r, u.team);
 const hurtMost = (list) => list.reduce((b, o) => (!b || hpRatio(o) < hpRatio(b) ? o : b), null);
-const dmgOf = (u, k) => (u.def.dmg || 8) * (u.dmgMul || 1) * k;
+const dmgOf = (u, k) => (u.def.dmg || 8) * (u.dmgMul || 1) * k * (1 + abMod(u, 'abDmg'));
 const ang = (u, t) => angleTo(u.x, u.y, t.x, t.y);
 const isUndead = (o) => /skeleton|rattler|gaper|brute|ghost|banshee|boss/.test(o.kind) || o.def.undead;
 
@@ -39,7 +65,7 @@ export function shoot(w, u, a, o) {
   const sp = o.speed || 480;
   w.projectiles.push({
     kind: o.kind || 'bolt', x: u.x + Math.cos(a) * (u.r + 6), y: u.y + Math.sin(a) * (u.r + 6), vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
-    r: o.r || 6, team: u.team, owner: u, dmg: o.dmg ?? dmgOf(u, 1), o: { knock: o.knock ?? 30, ...(o.st || {}), crit: o.crit, heavy: o.heavy },
+    r: o.r || 6, team: u.team, owner: u, dmg: o.dmg ?? dmgOf(u, 1), o: { knock: o.knock ?? 30, ...(o.st || {}), crit: o.crit, heavy: o.heavy, ab: u.kit && u.kit.using },
     life: o.life || 1.2, a, pierce: o.pierce || 0, hitSet: o.pierce ? new Set() : null, land: o.land, grow: o.grow,
   });
 }
@@ -534,7 +560,7 @@ export function kitTick(w, u, dt) {
     r.t -= dt;
     const ok = r.t > 0 && alive(r.to) && alive(u) && u.stunT <= 0 && u.frozenT <= 0 && dist(u.x, u.y, r.to.x, r.to.y) < RAY_RANGE && lineClear(w, u.x, u.y, r.to.x, r.to.y, 2);
     if (!ok) { r.t = 0; r.f.max = Math.min(r.f.max, r.f.t + 0.15); continue; }
-    heal(w, r.to, r.rate * dt, u);
+    withAb(u, r.ab, heal)(w, r.to, r.rate * dt, u);
     u.atkT = Math.max(u.atkT, 0.2); // busy holding the ray
   }
   u.rays = u.rays.filter((r) => r.t > 0);
@@ -588,33 +614,35 @@ const OLD_BONES = {
 };
 
 // ---------------------------------------------------------------- per-unit kit
-// build: { nodes: { nodeId: rank } } from the save; level: the hero's level in this run.
+// build: { nodes: { nodeId: rank } } from the save; level: the hero's level (permanent since round 8; it no longer
+// switches tiers on: a bought tier works from the start).
 export function initKit(u, heroId, build = {}, level = 1) {
   const h = HEROES[heroId]; if (!h) return;
   const nodes = build.nodes || {};
-  u.kit = { hero: heroId, nodes, cd: {}, tiers: {}, trait: TRAITS[h.trait.id] || {}, charges: 2 };
+  const mods = statsFor(heroId, nodes);
+  u.kit = { hero: heroId, nodes, mods, cd: {}, tiers: {}, trait: TRAITS[h.trait.id] || {}, charges: 2, using: null };
   for (const ab of h.abilities) u.kit.cd[ab.id] = rrange(1, 3);
-  // the tree's stat nodes (round 7: stronger steps; heroes.js BRANCHES carries the same numbers for the camp)
-  const might = nodes.might || 0, vigor = nodes.vigor || 0, haste = nodes.haste || 0;
-  u.dmgMul *= 1 + STAT_STEP.might * might;
-  const hpMul = 1 + STAT_STEP.vigor * vigor; u.maxHp = Math.round(u.maxHp * hpMul); u.hp = Math.min(u.maxHp, u.hp * hpMul);
-  u.atkMul = 1 + STAT_STEP.hasteAtk * haste; u.moveMul = 1 + STAT_STEP.hasteMove * haste;
+  u.dmgMul *= 1 + mods.dmg;
+  const hpMul = 1 + mods.hp; u.maxHp = Math.round(u.maxHp * hpMul); u.hp = Math.min(u.maxHp, u.hp * hpMul);
+  u.atkMul = 1 + mods.atkSpeed; u.moveMul = 1 + mods.moveSpeed;
+  if (mods.range) { const r = u.def.range; u.def = { ...u.def, range: r > 60 ? r * (1 + mods.range) : r + 60 * mods.range }; }
+  u.kit.statHook = mods.armor || mods.status || Object.values(mods.ab).some((a) => a.abStatus) ? statHook(mods) : null;
   refreshKit(u, level);
 }
-// Which tiers are switched on at this run level (bought nodes whose level requirement is met).
+// Which tier of each ability is on: the highest bought in a row.
 export function refreshKit(u, level) {
   if (!u.kit) return;
-  const h = HEROES[u.kit.hero];
-  for (const ab of h.abilities) {
-    let tier = 0;
-    for (let i = 1; i <= 3; i++) if (u.kit.nodes[`${ab.id}${i}`] && level >= [2, 5, 8][i - 1]) tier = i;
-    u.kit.tiers[ab.id] = tier;
-  }
+  for (const ab of HEROES[u.kit.hero].abilities) u.kit.tiers[ab.id] = tierOf(u.kit.nodes, ab.id);
+}
+// How long an ability takes to come round: its base, -10% per tier past I, the web's haste and its own cooldown nodes.
+export function cooldownOf(u, ab) {
+  const k = u.kit, m = k.mods || { haste: 0, ab: {} };
+  return ab.cd * (1 - TIER_CD * Math.max(0, (k.tiers[ab.id] || 1) - 1)) * Math.max(0.35, 1 - m.haste - abMod(u, 'abCd', ab.id));
 }
 // The hook objects active on a unit: its trait, Old Bones if it has it, and its trinkets' hooks.
 export function hooksOf(u) {
   const out = [];
-  if (u.kit) { out.push(u.kit.trait); if (u.kit.tiers.oldBones) out.push(OLD_BONES); }
+  if (u.kit) { out.push(u.kit.trait); if (u.kit.tiers.oldBones) out.push(OLD_BONES); if (u.kit.statHook) out.push(u.kit.statHook); }
   if (u.trinketHooks) out.push(...u.trinketHooks);
   return out;
 }
@@ -632,8 +660,13 @@ export function kitThink(w, u) {
   if (!best || bs < 0.3) return false;
   const lastOne = opponents(w, u).length === 1;
   if (!chance(clamp(0.25 + bs * 0.6, 0, 0.95)) && !lastOne) return false;
-  k.cd[best.id] = best.cd * (1 - TIER_CD * (k.tiers[best.id] - 1)); // round 7: higher tiers come round sooner too
-  ABILITIES[best.id].use(w, u, u.target, k.tiers[best.id]);
+  k.cd[best.id] = cooldownOf(u, best);
+  const hadLater = u.later, hadRays = u.rays;
+  k.using = best.id;
+  try { ABILITIES[best.id].use(w, u, u.target, k.tiers[best.id]); } finally { k.using = null; }
+  // what the ability left to happen later keeps its ability (its damage, heal and status nodes)
+  if (u.later && u.later !== hadLater) for (const l of u.later) if (!l.ab) { l.ab = best.id; l.f = withAb(u, best.id, l.f); }
+  if (u.rays && u.rays !== hadRays) for (const r of u.rays) if (!r.ab) r.ab = best.id;
   cue('ability', u, best.id);
   return true;
 }

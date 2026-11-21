@@ -10,10 +10,12 @@
 //   style (js/env.js: four looks, each with its own floor per theme) and palette.floor/wall/rock are its fallbacks,
 //   mood: { fog (vignette colour), fogK (how far in it reaches 0..1), tint (a wash over everything, or null) },
 //   kinds: { fight, hazard, treasure, fountain, decision, elite } (room mix, weights),
-//   enemies: [floor1, floor2, floor3] each [[kind, weight], ...] (kinds from enemies.js / units.js; each def has a
-//            cost, packs of small things come in groups),
-//   elite: kind (the elite room's big one), warden: kind (floors 1 and 2 end with it), boss: kind (floor 3),
-//   bossAdds: [kind, ...] (who comes with the warden),
+//   floors: [{ name, enemies: [[kind, weight], ...], mini (floors 1 and 2: who waits at the end; any kind, made a
+//            mini-boss unless it's a boss kind of its own), hazards, mood, props, water?, kinds?, obstacles?, palette? }]
+//            (round 8: each floor differs; floorTheme(id, floor) merges one over the dungeon), enemies: the floors'
+//            rosters (derived), minis: the floors' minis (derived),
+//   elite: kind (the elite room's big one), warden: kind (no longer used: floors end with their mini), boss: kind (floor 3),
+//   bossAdds: [kind, ...] (who comes with a floor's last foe),
 //   hazards: [[type, weight], ...] ('spikes' | 'oil' | 'mist' | 'gas' | 'snare' | 'fire' (burning ground) | 'web' (slows) |
 //            'beam' (a sigil that calls down light now and then); 'water' channels are separate),
 //   water: chance a room has a water channel (sewers),
@@ -32,10 +34,17 @@ export const THEMES = {
     floorStyle: 'flag', pillar: 'stone',
     mood: { fog: 'rgba(24,28,52,', fogK: 0.62, tint: 'rgba(70,90,140,0.06)' },
     kinds: { fight: 46, hazard: 13, treasure: 13, fountain: 10, decision: 13, elite: 5 },
-    enemies: [
-      [['rat', 3], ['rattler', 4], ['rattlerBow', 2], ['rattlerSpear', 1], ['ghost', 0.7]],
-      [['rat', 2], ['rattler', 3], ['rattlerBow', 2], ['rattlerSpear', 2], ['rattlerMace', 2], ['ghost', 2], ['gaper', 1]],
-      [['rattler', 2], ['rattlerBow', 2], ['rattlerSpear', 2], ['rattlerMace', 2], ['ghost', 2], ['gaper', 2], ['brute', 1.2]],
+    // round 8: each floor its own place (designer: "different types enemies, hazards, overall vibes")
+    floors: [
+      { name: 'The Vaults', enemies: [['rat', 3], ['rattler', 4], ['rattlerBow', 2.5], ['ghost', 0.6]], mini: 'rattlerMace',
+        hazards: [['mist', 3], ['spikes', 1]], mood: { fog: 'rgba(24,28,52,', fogK: 0.55, tint: 'rgba(70,90,140,0.05)' },
+        props: [['bones', 1.5], ['candles', 1.4], ['slab', 0.8], ['crack', 1.2]] },
+      { name: 'The Ossuary', enemies: [['rattlerSpear', 3], ['rattlerMace', 2.5], ['rattlerBow', 2], ['gaper', 1.6], ['ghost', 1.5], ['banshee', 0.8]], mini: 'graveWarden',
+        hazards: [['spikes', 3], ['oil', 1.5], ['mist', 0.6]], mood: { fog: 'rgba(30,22,40,', fogK: 0.62, tint: 'rgba(120,90,150,0.07)' },
+        props: [['bonepile', 1.4], ['skulls', 1.2], ['bones', 2], ['crack', 1]] },
+      { name: 'The Royal Tombs', enemies: [['brute', 2], ['gaper', 2.2], ['ghost', 2.5], ['banshee', 1.8], ['rattlerMace', 1.5], ['rattlerSpear', 1.5]],
+        hazards: [['mist', 2], ['spikes', 2], ['oil', 1]], mood: { fog: 'rgba(12,16,40,', fogK: 0.72, tint: 'rgba(60,110,170,0.09)' },
+        props: [['slab', 1.6], ['candles', 1.2], ['skulls', 0.8], ['web', 1]] },
     ],
     elite: 'brute', warden: 'graveWarden', boss: 'boneKing', bossAdds: ['rattler', 'rattlerBow', 'rattlerSpear'],
     hazards: [['spikes', 3], ['mist', 2], ['oil', 1]],
@@ -51,10 +60,16 @@ export const THEMES = {
     floorStyle: 'brick', pillar: 'pipe',
     mood: { fog: 'rgba(22,40,30,', fogK: 0.55, tint: 'rgba(90,140,60,0.07)' },
     kinds: { fight: 48, hazard: 16, treasure: 12, fountain: 9, decision: 12, elite: 4 },
-    enemies: [
-      [['rat', 5], ['slime', 3], ['lizardBlade', 1.2], ['lizardman', 0.6]],
-      [['rat', 4], ['slime', 3], ['lizardman', 2.5], ['lizardBlade', 2]],
-      [['rat', 3], ['slime', 2], ['lizardman', 3], ['lizardBlade', 3]],
+    floors: [
+      { name: 'The Drains', enemies: [['rat', 5], ['slime', 3], ['slimeSmall', 1.5]], mini: 'slime',
+        hazards: [['gas', 3], ['oil', 0.6]], water: 0.6, mood: { fog: 'rgba(22,40,30,', fogK: 0.5, tint: 'rgba(90,140,60,0.06)' },
+        props: [['grate', 1], ['moss', 2], ['puddle', 1.5], ['pipe', 0.8]] },
+      { name: 'The Cistern', enemies: [['lizardBlade', 3], ['lizardman', 2.2], ['rat', 2.5], ['slime', 1.2]], mini: 'lizardBlade',
+        hazards: [['oil', 2], ['spikes', 1]], water: 1, mood: { fog: 'rgba(14,34,44,', fogK: 0.58, tint: 'rgba(60,130,150,0.08)' },
+        props: [['puddle', 2], ['moss', 2], ['crack', 0.8], ['pipe', 0.5]] },
+      { name: 'The Nest', enemies: [['lizardman', 3], ['lizardBlade', 2.5], ['spiderHunter', 1.5], ['fireSlime', 1], ['slime', 1]],
+        hazards: [['gas', 2.5], ['spikes', 1.5], ['web', 1]], water: 0.5, mood: { fog: 'rgba(30,38,14,', fogK: 0.66, tint: 'rgba(150,150,40,0.08)' },
+        props: [['bones', 1.4], ['moss', 2.5], ['bonepile', 0.8], ['web', 0.6]] },
     ],
     elite: 'lizardman', warden: 'lizardChief', boss: 'lizardChief', bossAdds: ['lizardBlade', 'rat', 'rat', 'slime'],
     hazards: [['gas', 2], ['oil', 1], ['spikes', 0.5]],
@@ -71,10 +86,16 @@ export const THEMES = {
     floorStyle: 'dirt', pillar: 'barrel',
     mood: { fog: 'rgba(50,26,12,', fogK: 0.45, tint: 'rgba(255,150,60,0.05)' },
     kinds: { fight: 50, hazard: 15, treasure: 14, fountain: 8, decision: 10, elite: 5 },
-    enemies: [
-      [['goblin', 5], ['hobgoblin', 2], ['rat', 1], ['orc', 0.5]],
-      [['goblin', 4], ['hobgoblin', 3], ['orc', 2], ['orcShaman', 1.2]],
-      [['goblin', 3.5], ['hobgoblin', 2.5], ['orc', 3], ['orcShaman', 1.8], ['troll', 1.1]],
+    floors: [
+      { name: 'The Burrows', enemies: [['goblin', 5], ['rat', 2], ['hobgoblin', 1.2]], mini: 'hobgoblin',
+        hazards: [['snare', 3], ['spikes', 1]], mood: { fog: 'rgba(50,26,12,', fogK: 0.4, tint: 'rgba(255,150,60,0.04)' },
+        props: [['straw', 2.5], ['planks', 0.8], ['rubble', 1], ['crack', 0.6]] },
+      { name: 'The War Camp', enemies: [['goblin', 3.5], ['hobgoblin', 3], ['orc', 2.2], ['orcShaman', 1.2]], mini: 'orc',
+        hazards: [['oil', 2], ['fire', 1.5], ['snare', 1.5]], mood: { fog: 'rgba(56,18,8,', fogK: 0.5, tint: 'rgba(255,90,40,0.07)' },
+        props: [['firepit', 1], ['planks', 1.2], ['straw', 1.2], ['bonepile', 0.5]] },
+      { name: 'The Pit', enemies: [['orc', 3], ['orcShaman', 2], ['troll', 1.6], ['hobgoblin', 1.5], ['goblin', 2], ['ogre', 0.6]],
+        hazards: [['spikes', 3], ['fire', 1.2], ['snare', 1]], mood: { fog: 'rgba(30,14,8,', fogK: 0.62, tint: 'rgba(160,60,30,0.08)' },
+        props: [['bonepile', 1.4], ['rubble', 1.6], ['crack', 1], ['firepit', 0.4]] },
     ],
     elite: 'troll', warden: 'warboss', boss: 'warboss', bossAdds: ['goblin', 'goblin', 'hobgoblin', 'orc'],
     hazards: [['snare', 3], ['spikes', 2], ['oil', 1.5]],
@@ -91,10 +112,16 @@ export const THEMES = {
     floorStyle: 'flag', pillar: 'stone',
     mood: { fog: 'rgba(20,36,60,', fogK: 0.6, tint: 'rgba(140,190,255,0.07)' },
     kinds: { fight: 48, hazard: 14, treasure: 12, fountain: 9, decision: 12, elite: 6 },
-    enemies: [
-      [['bat', 4], ['spiderHunter', 3], ['snowman', 2], ['banshee', 0.8]],
-      [['bat', 3], ['spiderHunter', 3], ['snowman', 2.5], ['spiderMomma', 1.5], ['banshee', 1.5], ['ogre', 0.8]],
-      [['bat', 2.5], ['spiderHunter', 2.5], ['snowman', 2.5], ['spiderMomma', 2], ['banshee', 2], ['ogre', 1.6]],
+    floors: [
+      { name: 'The Ice Caves', enemies: [['bat', 4], ['snowman', 2.5], ['spiderHunter', 1.5]], mini: 'snowman',
+        hazards: [['mist', 3], ['spikes', 0.8]], mood: { fog: 'rgba(20,36,60,', fogK: 0.5, tint: 'rgba(140,190,255,0.06)' },
+        props: [['crack', 1.8], ['rubble', 1], ['puddle', 0.8]] },
+      { name: 'The Webbed Galleries', enemies: [['spiderHunter', 3.5], ['spiderMomma', 2], ['bat', 2], ['banshee', 1.4]], mini: 'broodQueen',
+        hazards: [['web', 3], ['spikes', 1.5]], mood: { fog: 'rgba(26,24,44,', fogK: 0.62, tint: 'rgba(150,130,200,0.07)' },
+        props: [['web', 2], ['bones', 1], ['crack', 1]] },
+      { name: 'The Giant\'s Hall', enemies: [['ogre', 2.4], ['snowman', 2.5], ['banshee', 2], ['troll', 1], ['bat', 1.5]],
+        hazards: [['mist', 2.5], ['spikes', 2]], mood: { fog: 'rgba(10,26,50,', fogK: 0.7, tint: 'rgba(120,200,255,0.1)' },
+        props: [['rubble', 1.6], ['crack', 1.4], ['bonepile', 0.6]] },
     ],
     elite: 'ogre', warden: 'broodQueen', boss: 'frostGiant', bossAdds: ['bat', 'spiderHunter', 'snowman'],
     hazards: [['mist', 3], ['spikes', 2], ['web', 1.5]],
@@ -110,10 +137,16 @@ export const THEMES = {
     floorStyle: 'dirt', pillar: 'stone',
     mood: { fog: 'rgba(48,12,6,', fogK: 0.58, tint: 'rgba(255,90,30,0.07)' },
     kinds: { fight: 48, hazard: 16, treasure: 11, fountain: 8, decision: 11, elite: 6 },
-    enemies: [
-      [['imp', 4], ['fireSlime', 3], ['devil', 1.5], ['dragonborn', 0.5]],
-      [['imp', 3.5], ['fireSlime', 2.5], ['devil', 2.5], ['dragonborn', 1.5], ['demon', 0.8]],
-      [['imp', 3], ['fireSlime', 2], ['devil', 2.5], ['dragonborn', 2.2], ['demon', 1.8]],
+    floors: [
+      { name: 'The Vents', enemies: [['imp', 4], ['fireSlime', 3], ['rat', 1]], mini: 'fireSlime',
+        hazards: [['fire', 3], ['oil', 0.8]], mood: { fog: 'rgba(48,12,6,', fogK: 0.5, tint: 'rgba(255,90,30,0.06)' },
+        props: [['crack', 2], ['rubble', 1]] },
+      { name: 'The Forges', enemies: [['devil', 3], ['imp', 2.5], ['dragonborn', 2], ['fireSlime', 1]], mini: 'pitLord',
+        hazards: [['oil', 2], ['fire', 2], ['spikes', 1]], mood: { fog: 'rgba(60,24,4,', fogK: 0.58, tint: 'rgba(255,150,40,0.08)' },
+        props: [['firepit', 1], ['crack', 1.5], ['rubble', 1.2]] },
+      { name: 'The Ash Throne', enemies: [['demon', 2.5], ['dragonborn', 2.5], ['devil', 2], ['imp', 1.5]],
+        hazards: [['fire', 2.5], ['spikes', 2]], mood: { fog: 'rgba(30,4,4,', fogK: 0.7, tint: 'rgba(200,30,20,0.1)' },
+        props: [['bonepile', 1], ['skulls', 0.8], ['crack', 2]] },
     ],
     elite: 'demon', warden: 'pitLord', boss: 'archfiend', bossAdds: ['imp', 'imp', 'devil'],
     hazards: [['fire', 3], ['oil', 1], ['spikes', 1.2]],
@@ -129,10 +162,16 @@ export const THEMES = {
     floorStyle: 'brick', pillar: 'stone',
     mood: { fog: 'rgba(40,32,70,', fogK: 0.45, tint: 'rgba(255,230,160,0.06)' },
     kinds: { fight: 48, hazard: 14, treasure: 12, fountain: 8, decision: 12, elite: 6 },
-    enemies: [
-      [['cherub', 4], ['angel', 2.5], ['seraph', 1]],
-      [['cherub', 3.5], ['angel', 3], ['seraph', 2]],
-      [['cherub', 3], ['angel', 3.5], ['seraph', 2.5]],
+    floors: [
+      { name: 'The Gilded Halls', enemies: [['cherub', 4], ['angel', 2.5], ['ghost', 0.8]], mini: 'angel',
+        hazards: [['beam', 3], ['spikes', 1]], mood: { fog: 'rgba(40,32,70,', fogK: 0.38, tint: 'rgba(255,230,160,0.05)' },
+        props: [['slab', 1.2], ['candles', 1.2]] },
+      { name: 'The Choir', enemies: [['seraph', 3], ['cherub', 3], ['angel', 2], ['banshee', 0.8]], mini: 'archon',
+        hazards: [['beam', 3.5], ['spikes', 1.5]], mood: { fog: 'rgba(50,40,90,', fogK: 0.48, tint: 'rgba(230,200,255,0.07)' },
+        props: [['candles', 2], ['slab', 0.8]] },
+      { name: 'The Summit', enemies: [['angel', 3], ['seraph', 3], ['dragonborn', 1.2], ['cherub', 2]],
+        hazards: [['beam', 3], ['spikes', 2], ['fire', 0.6]], mood: { fog: 'rgba(60,50,30,', fogK: 0.42, tint: 'rgba(255,240,180,0.09)' },
+        props: [['slab', 1.4], ['crack', 1], ['candles', 0.6]] },
     ],
     elite: 'angel', warden: 'archon', boss: 'radiant', bossAdds: ['cherub', 'cherub', 'angel'],
     hazards: [['beam', 3], ['spikes', 2]],
@@ -140,7 +179,26 @@ export const THEMES = {
     obstacles: [['rock', 1], ['brazier', 2], ['crate', 1]],
   },
 };
-for (const [id, t] of Object.entries(THEMES)) t.id = id;
+for (const [id, t] of Object.entries(THEMES)) {
+  t.id = id;
+  t.enemies = t.floors.map((f) => f.enemies); // the old per-floor rosters, for older readers
+  t.minis = t.floors.slice(0, 2).map((f) => f.mini);
+}
+// The order the dungeons open in (beat one's boss to open the next; progress.js). The Wildwood becomes the first once
+// the designer approves it (docs/ROSTER.md).
+export const DUNGEON_ORDER = ['warren', 'sewers', 'crypt', 'frost', 'ember', 'spire'];
+// One floor of a dungeon as its own theme: the dungeon's look with the floor's enemies, hazards, mood, dressing and
+// room mix laid over it. dungeon.js hands this to the room (w.theme), so the renderer draws the floor's mood.
+const floorCache = {};
+export function floorTheme(id, floor = 1) {
+  const T = themeOf(id), f = Math.max(1, Math.min(T.floors.length, floor)), key = T.id + f;
+  if (floorCache[key]) return floorCache[key];
+  const F = T.floors[f - 1];
+  return (floorCache[key] = { ...T, ...F, id: T.id, floor: f, floorName: F.name, name: T.name,
+    palette: { ...T.palette, ...(F.palette || {}) }, mood: { ...T.mood, ...(F.mood || {}) },
+    kinds: { ...T.kinds, ...(F.kinds || {}) }, props: F.props || T.props, hazards: F.hazards || T.hazards,
+    obstacles: F.obstacles || T.obstacles, water: F.water ?? T.water ?? 0 });
+}
 export const THEME_IDS = Object.keys(THEMES);
 export const DEFAULT_THEME = 'crypt';
 export const themeOf = (id) => THEMES[id] || THEMES[DEFAULT_THEME];
