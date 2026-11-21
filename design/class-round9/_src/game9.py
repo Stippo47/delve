@@ -33,6 +33,18 @@ COPIES = [
     ("enemies/spire-ward-spirit.svg", "enemies/spirit-ward.svg"),
     ("enemies/spire-herald-light.svg", "enemies/herald-light.svg"),
     ("enemies/spire-herald-fallen.svg", "enemies/herald-fallen.svg"),
+    # the Sunken Dunes
+    ("enemies/dunes-scarab.svg", "enemies/scarab.svg"),
+    ("enemies/dunes-cobra.svg", "enemies/cobra.svg"),
+    ("enemies/dunes-jackal.svg", "enemies/jackal.svg"),
+    ("enemies/dunes-mummy.svg", "enemies/mummy.svg"),
+    ("enemies/dunes-sand-mage.svg", "enemies/sand-mage.svg"),
+    ("enemies/dunes-dust-devil.svg", "enemies/dust-devil.svg"),
+    ("enemies/dunes-serpent-head.svg", "enemies/serpent-head.svg"),
+    ("enemies/dunes-serpent-coil.svg", "enemies/serpent-coil.svg"),
+    ("enemies/dunes-dart-trap.svg", "enemies/dart-trap.svg"),
+    ("enemies/dunes-venom-spirit.svg", "enemies/spirit-poison.svg"),
+    ("enemies/dunes-wind-spirit.svg", "enemies/spirit-haste.svg"),
 ]
 
 if __name__ == "__main__":

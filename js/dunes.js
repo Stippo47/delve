@@ -8,7 +8,8 @@
 //   the golem, and the poison and haste spirits.
 // Out: the golden cobra (IDK), the scorpion, the Tomb Guard and the Wurm Mother (RETHINK), the Sun Pharaoh (IDK). The sand
 // wurm ("Should probably be a boss") is lane B's Dunes boss: floors end on majors, and theme.bossKind is its hook.
-// Everything here wears PLACEHOLDER art (recoloured kinds; docs/ART-NEEDED.md).
+// Everything here wore PLACEHOLDER art (recoloured kinds; docs/ART-NEEDED.md) until art round 9 drew it (design/class-round9);
+// the golden scarab is the scarab's art with every green of its shell turned gold (an accent).
 import { alive, opponents, allies, hurt, puff, sparks, addStatus, setAnim, fx, addBuff, spawn, kill, addDanger, inZone } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, angleDiff, rand, rrange, chance } from './util.js';
 import { lineClear } from './path.js';
@@ -150,33 +151,33 @@ function darts(w, u, t) {
 
 // ---------------------------------------------------------------- the kinds
 export const DUNES = {
-  scarab: { ...FOE, name: 'Scarab', art: variantUrl(ART('spider-hunter'), { hue: 120, sat: 1.3, light: -0.06 }), headR: 52, r: 16, vr: 13, turn: 8, accel: 460, face: 8, mass: 0.5,
+  scarab: { ...FOE, name: 'Scarab', art: 'art/enemies/scarab.svg', headR: 36, r: 16, vr: 13, turn: 8, accel: 460, face: 8, mass: 0.5,
     hp: 18, speed: 74, role: 'skirmish', range: 12, atkCd: 0.8, dmg: 4, arc: 1.4, temp: 0.6, commit: 0.5, xp: 4, coins: [1, 2], cost: 1.5, pack: [3, 5], attackAnim: 'thrust',
     sandy: true, brain: scarabBrain },
-  scarabGold: { variantOf: 'scarab', name: 'Golden Scarab', hue: 210, sat: 2.6, light: 0.1, hp: 40, coins: [3, 6], xp: 8, cost: 2.5, pack: [1, 2], goldShell: true, res: ALL_ST },
-  cobra: { ...FOE, name: 'Cobra', art: variantUrl('art/enemies/lizardman.svg', { hue: 40, sat: 0.8, light: 0.04 }), headR: 56, r: 26, vr: 19, turn: 6, accel: 360, face: 6, mass: 0.9,
+  scarabGold: { variantOf: 'scarab', name: 'Golden Scarab', accent: { from: 165, range: 60, hue: 40, sat: 1.5, light: 0.08 }, hp: 40, coins: [3, 6], xp: 8, cost: 2.5, pack: [1, 2], goldShell: true, res: ALL_ST },
+  cobra: { ...FOE, name: 'Cobra', art: 'art/enemies/cobra.svg', headR: 48, r: 26, vr: 19, turn: 6, accel: 360, face: 6, mass: 0.9,
     hp: 40, speed: 62, role: 'ranged', range: 300, keep: 220, atkCd: 999, dmg: 5, temp: 0.45, commit: 0.6, xp: 11, coins: [2, 5], cost: 3.5, sandy: true, res: { poison: 0 }, brain: cobraBrain },
-  jackal: { ...FOE, name: 'Jackal Guard', art: variantUrl(ART('bandit'), { hue: 20, sat: 0.7, light: 0.08 }), headR: 54, r: 30, vr: 22, turn: 5, accel: 280, face: 5, mass: 1.4,
+  jackal: { ...FOE, name: 'Jackal Guard', art: 'art/enemies/jackal.svg', headR: 54, r: 30, vr: 22, turn: 5, accel: 280, face: 5, mass: 1.4,
     hp: 72, speed: 58, role: 'melee', range: 44, atkCd: 1.3, windup: 0.3, dmg: 11, knock: 150, arc: 0.8, shield: 0.5, temp: 0.35, commit: 0.9, xp: 15, coins: [3, 6], cost: 5,
     attackAnim: 'thrust', sandy: true, brain: jackalBrain },
-  mummy: { ...FOE, name: 'Mummy', art: variantUrl('art/enemies/rattler.svg', { hue: 15, sat: 0.4, light: 0.16 }), headR: 60, r: 33, vr: 24, turn: 2.6, accel: 140, face: 2.6, mass: 1.8,
+  mummy: { ...FOE, name: 'Mummy', art: 'art/enemies/mummy.svg', headR: 54, r: 33, vr: 24, turn: 2.6, accel: 140, face: 2.6, mass: 1.8,
     hp: 110, speed: 34, role: 'melee', range: 22, atkCd: 1.6, windup: 0.4, dmg: 11, knock: 110, arc: 1.6, curse: 22, temp: 0.25, commit: 1.2, xp: 18, coins: [3, 7], cost: 6,
     attackAnim: 'swing', res: { burn: 1.8, poison: 0, curse: 0 }, brain: mummyBrain },
-  sandMage: { ...FOE, name: 'Sand Mage', art: variantUrl('art/enemies/orc-shaman.svg', { hue: 35, sat: 0.6, light: 0.12 }), headR: 56, r: 31, vr: 23, turn: 3.4, accel: 180, face: 3.4,
+  sandMage: { ...FOE, name: 'Sand Mage', art: 'art/enemies/sand-mage.svg', headR: 55, r: 31, vr: 23, turn: 3.4, accel: 180, face: 3.4,
     mass: 1.3, hp: 64, speed: 48, role: 'ranged', range: 300, keep: 230, atkCd: 999, dmg: 5, temp: 0.4, commit: 0.9, xp: 17, coins: [3, 7], cost: 5, sandy: true, brain: sandMageBrain },
-  dustDevil: { ...FOE, name: 'Dust Devil', art: variantUrl('art/enemies/ghost.svg', { hue: 35, sat: 0.55, light: 0.08 }), headR: 58, r: 26, vr: 22, turn: 0, accel: 400, face: 0, mass: 3,
+  dustDevil: { ...FOE, name: 'Dust Devil', art: 'art/enemies/dust-devil.svg', headR: 68, r: 26, vr: 22, turn: 0, accel: 400, face: 0, mass: 3,
     hp: 40, speed: 78, role: 'melee', range: 0, atkCd: 999, dmg: 6, xp: 0, coins: [0, 0], cost: 99, noCorpse: true, noElite: true, sandy: true, goo: '#E2C690',
     res: { ...ALL_ST }, brain: devilBrain },
-  sandSerpent: { ...FOE, name: 'Sand Serpent', art: variantUrl(ART('croc'), { hue: 28, sat: 0.7, light: 0.1 }), headR: 56, r: 28, vr: 21, turn: 3.4, accel: 260, face: 4, mass: 2,
+  sandSerpent: { ...FOE, name: 'Sand Serpent', art: 'art/enemies/serpent-head.svg', headR: 40, r: 28, vr: 21, turn: 3.4, accel: 260, face: 4, mass: 2,
     hp: 150, speed: 60, role: 'melee', range: 18, atkCd: 1.2, windup: 0.25, dmg: 10, poison: 16, knock: 140, arc: 1.4, temp: 0.4, commit: 1, xp: 26, coins: [4, 9], cost: 7,
     attackAnim: 'thrust', sandy: true, chain: { n: 6, seg: 'serpentCoil', gap: 26, taper: 1 }, res: { poison: 0 }, brain: serpentBrain, onDeath: killChain },
-  serpentCoil: { variantOf: 'slimeSmall', name: 'Serpent Coil', hue: -170, sat: 0.55, light: 0.14, r: 24, vr: 20, mass: 2, hp: 999, speed: 0, atkCd: 999, dmg: 0, hops: null,
+  serpentCoil: { variantOf: 'slimeSmall', name: 'Serpent Coil', art: 'art/enemies/serpent-coil.svg', headR: 55, r: 24, vr: 20, mass: 2, hp: 999, speed: 0, atkCd: 999, dmg: 0, hops: null,
     xp: 0, coins: [0, 0], cost: 99, noCorpse: true, noElite: true, segment: true, touchDmg: 4, segTaken: 0.6, goo: '#E2C690', sandy: true, brain: segBrain },
-  dartTrap: { ...FOE, name: 'Dart Trap', art: variantUrl('art/enemies/mimic.svg', { hue: 10, sat: 0.35, light: 0.06 }), headR: 60, r: 24, vr: 20, turn: 0, accel: 0, face: 0, mass: 99,
+  dartTrap: { ...FOE, name: 'Dart Trap', art: 'art/enemies/dart-trap.svg', headR: 45, r: 24, vr: 20, turn: 0, accel: 0, face: 0, mass: 99,
     hp: 60, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 5, xp: 7, coins: [1, 3], cost: 3, noCorpse: true, construct: true, goo: '#B9AE9C',
     res: { poison: 0, curse: 0, chill: 0.5, wet: 0.5, stagger: 0 }, turret: { wall: true, arc: 0.45, turn: 0.6, cd: 2.4, aim: 0.5, range: 600, fire: darts }, brain: turretBrain },
-  spiritPoison: spirit('poison', 'Venom Spirit', { hue: -120, sat: 1.4, light: 0.04 }, { poison: 0 }),
-  spiritHaste: spirit('haste', 'Wind Spirit', { hue: 30, sat: 0.4, light: 0.2 }),
+  spiritPoison: { ...spirit('poison', 'Venom Spirit', { hue: -120, sat: 1.4, light: 0.04 }, { poison: 0 }), art: 'art/enemies/spirit-poison.svg', headR: 30 }, // art round 9
+  spiritHaste: { ...spirit('haste', 'Wind Spirit', { hue: 30, sat: 0.4, light: 0.2 }), art: 'art/enemies/spirit-haste.svg', headR: 30 }, // art round 9
 };
 
 // ---------------------------------------------------------------- their elite moves

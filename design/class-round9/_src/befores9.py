@@ -13,8 +13,16 @@ OUT = ROOT / "tools" / "riffle" / "out" / "r9" / "before"
 
 
 def recolor_rgb(r, g, b, spec):
-    """js/recolor.js recolorRGB (hue degrees added, sat x, light +; no def here uses an accent)."""
+    """js/recolor.js recolorRGB: hue degrees added, sat x, light +; an accent turns the colours within its range of
+    hues to its own (the golden scarab: every green of the scarab to gold)."""
     h, l, s = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
+    A = spec.get("accent")
+    if A and s > 0.12:
+        dh = abs(h * 360 - A["from"]) % 360
+        if min(dh, 360 - dh) <= A.get("range", 30):
+            h, s, l = A["hue"] / 360, max(0, min(1, s * A.get("sat", 1))), max(0, min(1, l + A.get("light", 0)))
+            R, G, B = colorsys.hls_to_rgb(h, l, s)
+            return round(R * 255), round(G * 255), round(B * 255)
     h = (h + spec.get("hue", 0) / 360 + 1) % 1
     s = max(0, min(1, s * spec.get("sat", 1)))
     l = max(0, min(1, l + spec.get("light", 0)))

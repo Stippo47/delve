@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- GAME COPY (art round 9) of design/class-round9/enemies/dunes-dart-trap.svg -->
+<!-- DART TRAP (round 9): a trap set in a tomb wall, seen from above: a carved sandstone slab against the wall behind it (#back: it stays put while the head turns), a stone cobra's head carved out of it, its hood spread, three dark dart holes in its mouth (#body, it turns a little to aim). No eyes. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="s1" d="M 23 40 H 177 A 9 9 0 0 1 186 49 V 71 A 9 9 0 0 1 177 80 H 23 A 9 9 0 0 1 14 71 V 49 A 9 9 0 0 1 23 40 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D7C3A2"/><stop offset="1" stop-color="#C19F66"/></linearGradient>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6F562B" stop-opacity="0"/><stop offset="1" stop-color="#6F562B" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c1"><use href="#s1"/></clipPath>
+<path id="s2" d="M 116.7 52.6 L 123.5 71.6 L 143.7 72.3 L 138 91.6 L 154 104 L 138 116.4 L 143.7 135.7 L 123.5 136.4 L 116.7 155.4 L 100 144 L 83.3 155.4 L 76.5 136.4 L 56.3 135.7 L 62 116.4 L 46 104 L 62 91.6 L 56.3 72.3 L 76.5 71.6 L 83.3 52.6 L 100 64 Z"/>
+<clipPath id="u2"><use href="#s1"/></clipPath>
+<path id="s3" d="M 60 108 A 40 40 0 1 0 140 108 A 40 40 0 1 0 60 108 Z"/>
+<clipPath id="u3"><use href="#s1"/><use href="#s2"/></clipPath>
+<clipPath id="c3"><use href="#s3"/></clipPath>
+<path id="s4" d="M 84 121 H 116 A 6 6 0 0 1 122 127 V 129 A 6 6 0 0 1 116 135 H 84 A 6 6 0 0 1 78 129 V 127 A 6 6 0 0 1 84 121 Z"/>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#33282C"/><stop offset="1" stop-color="#281F22"/></linearGradient>
+<path id="s5" d="M 83.5 128 L 92.5 128 L 88 142 Z"/>
+<linearGradient id="g4" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#DFE1E6"/><stop offset="1" stop-color="#A7AEBB"/></linearGradient>
+<path id="s6" d="M 95.5 128 L 104.5 128 L 100 142 Z"/>
+<path id="s7" d="M 107.5 128 L 116.5 128 L 112 142 Z"/>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="back" data-pivot="100 100"><!-- the wall slab -->
+<use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/><g clip-path="url(#c1)"><path d="M 28 60 L 172 60" fill="none" stroke="#8E7652" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/><path d="M 56 42 L 56 78 M 144 42 L 144 78" fill="none" stroke="#8E7652" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"/></g>
+</g>
+<g id="body">
+<g clip-path="url(#u2)"><use href="#s2" transform="translate(0 4) " fill="#2B2230" opacity="0.3"/></g><use href="#s2" fill="url(#g1)"/><use href="#s2" fill="url(#g2)"/>
+<g clip-path="url(#u3)"><use href="#s3" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s3" fill="url(#g1)"/><use href="#s3" fill="url(#g2)"/><g clip-path="url(#c3)"><path d="M 70 108 A 30 30 0 1 0 130 108 A 30 30 0 1 0 70 108 Z" fill="#8E7652" opacity="0.18"/><path d="M 100 84 L 100 112" fill="none" stroke="#8E7652" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/><path d="M 76 92 A 10 6 0 1 0 96 92 A 10 6 0 1 0 76 92 Z" fill="#FFFFFF" opacity="0.25"/></g>
+<use href="#s4" fill="url(#g3)"/>
+<use href="#s5" fill="url(#g4)"/>
+<use href="#s6" fill="url(#g4)"/>
+<use href="#s7" fill="url(#g4)"/>
+</g>
+</g>
+</svg>

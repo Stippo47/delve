@@ -31,24 +31,37 @@ add("frost-wolf", "Frost wolf", 18, 35)
 add("frost-ice-slime", "Ice slime", 22, 49, 22, 54)
 add("frost-spider", "Frost spider", 20, 54, 20, 52)
 add("frost-yeti", "Yeti", 31, 68, 31, 66)
-add("frost-icicle-wraith", "Icicle wraith", 22, 42, 22, 58)
-add("frost-spirit", "Frost spirit", 15, 34, 15, 58)
+add("frost-icicle-wraith", "Icicle wraith", 22, 37, 22, 58)
+add("frost-spirit", "Frost spirit", 15, 30, 15, 58)
 # the Ember Deep
 add("ember-fire-spider", "Fire spider", 20, 54, 20, 52)
 add("ember-hellhound", "Hellhound", 18, 35)
 add("ember-cinder-bat", "Cinder bat", 16, 44)
-add("ember-spirit", "Fire spirit", 15, 34, 15, 58)
+add("ember-spirit", "Fire spirit", 15, 30, 15, 58)
 add("ember-pit-lord", "The Pit Lord", 38, 68, 38, 64)
 # the Gilded Spire
 add("spire-fallen-angel", "Fallen angel", 23, 56)
 add("spire-sun-blade", "Sun blade", 17, 58, 17, 46)
-add("spire-choir-sprite", "Choir sprite", 16, 42, 16, 46)
+add("spire-choir-sprite", "Choir sprite", 16, 40, 16, 46)
 add("spire-golem", "Golem", 33, 66)
 add("spire-gilded-golem", "Gilded golem", 33, 66)
-add("spire-light-spirit", "Light spirit", 15, 34, 15, 58)
-add("spire-ward-spirit", "Ward spirit", 15, 34, 15, 58)
+add("spire-light-spirit", "Light spirit", 15, 30, 15, 58)
+add("spire-ward-spirit", "Ward spirit", 15, 30, 15, 58)
 add("spire-herald-light", "Herald of Light", 34, 56)
 add("spire-herald-fallen", "Fallen Herald", 34, 56)
+# the Sunken Dunes
+add("dunes-scarab", "Scarab", 13, 36, 13, 52)
+add("dunes-golden-scarab", "Golden scarab (the scarab turned gold)", 13, 36, 13, 52)
+add("dunes-cobra", "Cobra", 19, 48, 19, 56)
+add("dunes-jackal", "Jackal guard", 22, 54)
+add("dunes-mummy", "Mummy", 24, 54, 24, 60)
+add("dunes-sand-mage", "Sand mage", 23, 55, 23, 56)
+add("dunes-dust-devil", "Dust devil", 22, 68, 22, 58)
+add("dunes-serpent-head", "Sand serpent (head)", 21, 40, 21, 56)
+add("dunes-serpent-coil", "Sand serpent (a coil)", 20, 55, 20, 54)
+add("dunes-dart-trap", "Dart trap", 20, 45, 20, 60)
+add("dunes-venom-spirit", "Venom spirit", 15, 30, 15, 58)
+add("dunes-wind-spirit", "Wind spirit", 15, 30, 15, 58)
 
 
 # boards that show a design with what the game draws apart, as the game places it (round 8's troll and boulder)
@@ -79,7 +92,19 @@ def yeti_board():
     return out, (vr / hr / fit) / ARCHER
 
 
-COMPOSITE = {"frost-yeti": yeti_board}
+GOLD_SCARAB = {"accent": {"from": 165, "range": 60, "hue": 40, "sat": 1.5, "light": 0.08}}   # js/dunes.js scarabGold
+
+
+def golden_scarab():
+    """The golden scarab is the scarab's art turned gold by the game (its def's accent): that turn, for the board."""
+    BOARDS.mkdir(parents=True, exist_ok=True)
+    out = BOARDS / "dunes-golden-scarab.svg"
+    text = (R9 / "enemies" / "dunes-scarab.svg").read_text(encoding="utf-8")
+    out.write_text(befores9.recolor_text(text, GOLD_SCARAB), encoding="utf-8")
+    return out, (13 / 36) / ARCHER
+
+
+COMPOSITE = {"frost-yeti": yeti_board, "dunes-golden-scarab": golden_scarab}
 
 
 def board(src, lab, out, k):
@@ -121,9 +146,11 @@ def render(name):
     SHOOT.mkdir(parents=True, exist_ok=True)
     rb.OUT = SHOOT
     src = R9 / folder / f"{name}.svg"
+    if name in COMPOSITE and not src.exists():
+        src = COMPOSITE[name]()[0]
     if name in COMPOSITE:
         csrc, k = COMPOSITE[name]()
-        board(csrc, lab + ", with its snowball", out / f"{name}.png", k)
+        board(csrc, lab + (", with its snowball" if name == "frost-yeti" else ""), out / f"{name}.png", k)
     else:
         board(src, lab, out / f"{name}.png", (vr / hr) / ARCHER)
     rb.thumb(src, out / f"{name}-thumb.png")
@@ -136,5 +163,5 @@ def render(name):
 
 if __name__ == "__main__":
     want = sys.argv[1:]
-    for n in want or [n for n in D if (R9 / D[n][5] / f"{n}.svg").exists()]:
+    for n in want or [n for n in D if (R9 / D[n][5] / f"{n}.svg").exists() or n in COMPOSITE]:
         render(n)
