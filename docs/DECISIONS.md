@@ -281,3 +281,8 @@ Highlights: elites for every enemy kind; 3 harder dungeons; stronger upgrades an
   squares, barrels and boulders as circles. Dungeon order Warren < Sewers < Crypt < Frost Hollow < Ember Deep < Gilded
   Spire; the deep three ease in over floor 1's first rooms and pay more XP and gold. A fresh trio with tier I bought
   now wins the Warren about 1 in 4 and loses the deep three on floor 1; a fully bought trio wins all six most runs.
+
+## Round 8 (2026-11-21): the overhaul
+Plan, contracts and the designer's words: `docs/BUILD-v4.md`; raw answers: `docs/riffle-log/2026-11-21-round8.txt`; roster proposal: `docs/ROSTER.md` (deck roster2, gated).
+Key rulings: levels are permanent and give skill points (no levelling reset per run); the tree is a big web with stat nodes; gold buys equipment, heroes, potions; slots come from boss kills; beat a boss to open the next dungeon; 3 floors of 7 rooms, two mini-bosses then the boss, floors differ in kind; checkpoints per floor; leaving mid-floor costs 20%; a mini-boss tier any kind can be; waves never smaller, +50% enemies, much harder scaling; statuses Radiance (angels) and Cursed (ghosts); summons black-outlined with a hue shift; UI again from scratch; 4 puddle styles and 4 enemy-HP styles to pick from; a showcase of every ability.
+My calls: gems are dropped (gold only); hero cards were buttons, which iPhone Safari lays out wrongly: now divs (0.8.2).

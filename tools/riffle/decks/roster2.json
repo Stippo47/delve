@@ -1,0 +1,680 @@
+{
+  "title": "The enemy roster: every one described",
+  "topic": "runs",
+  "order": 10,
+  "priority": 1,
+  "tags": [
+    "first"
+  ],
+  "cards": [
+    {
+      "id": "rules",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "How the roster works",
+      "text": "Variants, elites with trinkets, mini-boss forms, and floors that differ. Mark any rule that's off.",
+      "why": "These rules decide how much art and how much variety the roster costs.",
+      "pick": "Go with these.",
+      "parts": [
+        {
+          "id": "variants",
+          "title": "Variants",
+          "text": "A variant is a recolour of a base enemy (a hue shift, maybe a small accent) with its own kit: the orange goblin, the golden skeleton, the fire spider. Cheap on art, big on variety."
+        },
+        {
+          "id": "elites",
+          "title": "Elites",
+          "text": "Any kind can be elite, as now, with its own extra move. Size sits between normal and mini-boss. Elites may spawn carrying a trinket they use (it shows on them, and drops when they die); rarely, two."
+        },
+        {
+          "id": "mini-bosses",
+          "title": "Mini-bosses",
+          "text": "Besides the named ones, any kind can show up as a mini-boss form: bigger than an elite, stronger, and with two extra moves."
+        },
+        {
+          "id": "floors",
+          "title": "Floors",
+          "text": "Each dungeon's three floors differ in enemies, hazards and mood, not only in strength (see each dungeon's floors). Floors 1 and 2 end in two different mini-bosses, floor 3 in the boss."
+        }
+      ]
+    },
+    {
+      "id": "wildwood",
+      "kind": "design",
+      "rarity": "uncommon",
+      "title": "1. The Wildwood",
+      "text": "A forest. The new first dungeon. Mark each enemy you'd change or cut.",
+      "why": "You asked to hear each one before it goes in. Every enemy is its own part.",
+      "pick": "Go with these.",
+      "details": "Floor 1, the forest edge: wolves, slimes, bandit scouts, brambles. Floor 2, the bandit camp: bandits, snares, campfires. Floor 3, the old grove: ents, sproutlings, wisps, grasping roots.",
+      "parts": [
+        {
+          "id": "wolf",
+          "title": "Wolf",
+          "text": "(new) Fast pack hunter. Circles a hero, then lunges. Its howl turns the whole pack onto one hero."
+        },
+        {
+          "id": "dire-wolf",
+          "title": "Dire wolf",
+          "text": "(variant of Wolf) Black and bigger. Pounces from far off and pins a hero for a second."
+        },
+        {
+          "id": "slime",
+          "title": "Slime",
+          "text": "(in) As now: splits in two when it dies."
+        },
+        {
+          "id": "moss-slime",
+          "title": "Moss slime",
+          "text": "(variant of Slime) Dark green. Leaves a trail of moss that slows; splits into three."
+        },
+        {
+          "id": "goblin",
+          "title": "Goblin",
+          "text": "(in) Small knife fighter, comes in groups."
+        },
+        {
+          "id": "orange-goblin",
+          "title": "Orange goblin",
+          "text": "(variant of Goblin) Yours: 1.5x as fast, weaves in and out of the fight and never stands still."
+        },
+        {
+          "id": "bandit",
+          "title": "Bandit",
+          "text": "(new) Sword and buckler. Blocks the first hit, and each hit steals a few coins: kill it to get them back."
+        },
+        {
+          "id": "bandit-archer",
+          "title": "Bandit archer",
+          "text": "(new) Shoots from behind cover and moves to a new spot after every shot."
+        },
+        {
+          "id": "poacher",
+          "title": "Poacher",
+          "text": "(variant of Bandit archer) Green hood. Lays snares on the floor and fires a net that pins a hero."
+        }
+      ]
+    },
+    {
+      "id": "wildwood-2",
+      "kind": "design",
+      "rarity": "uncommon",
+      "title": "1. The Wildwood, part 2",
+      "text": "The rest of it, with its mini-bosses and boss.",
+      "why": "You asked to hear each one before it goes in. Every enemy is its own part.",
+      "pick": "Go with these.",
+      "details": "Floor 1, the forest edge: wolves, slimes, bandit scouts, brambles. Floor 2, the bandit camp: bandits, snares, campfires. Floor 3, the old grove: ents, sproutlings, wisps, grasping roots.",
+      "parts": [
+        {
+          "id": "bandit-brute",
+          "title": "Bandit brute",
+          "text": "(new) Big club. A slow wind-up slam that sends heroes flying."
+        },
+        {
+          "id": "thornback-boar",
+          "title": "Thornback boar",
+          "text": "(new) Charges in a straight line. If it hits a wall or a rock it staggers itself."
+        },
+        {
+          "id": "sproutling",
+          "title": "Sproutling",
+          "text": "(new) A small walking sapling, always in groups. Roots itself to heal if left alone."
+        },
+        {
+          "id": "ent",
+          "title": "Ent",
+          "text": "(new) A huge slow tree. Slams roots up in a line. Takes extra from fire, and drops sproutlings when hit hard."
+        },
+        {
+          "id": "wisp",
+          "title": "Wisp",
+          "text": "(new) A floating light. Blinks about, zaps, and heals beasts near it: kill it first."
+        },
+        {
+          "id": "the-alpha",
+          "title": "The Alpha",
+          "text": "(mini-boss) A giant wolf. Calls packs in waves; its howl makes every wolf faster for a while."
+        },
+        {
+          "id": "the-bandit-chief",
+          "title": "The Bandit Chief",
+          "text": "(mini-boss) Smoke bombs that hide the room, a fan of thrown knives, and a whistle that brings archers."
+        },
+        {
+          "id": "the-elder-ent",
+          "title": "The Elder Ent",
+          "text": "(boss) Root cages that pin, falling branches you see coming, a grove of sproutlings that feed it. Set it alight and it rampages: faster, but burning down."
+        }
+      ]
+    },
+    {
+      "id": "warren",
+      "kind": "design",
+      "rarity": "uncommon",
+      "title": "2. The Warren",
+      "text": "Goblin tunnels. Mark each enemy you'd change or cut.",
+      "why": "You asked to hear each one before it goes in. Every enemy is its own part.",
+      "pick": "Go with these.",
+      "details": "Floor 1, the tunnels: goblins, rats, snares. Floor 2, the war camp: hobgoblins, orcs, wolf riders, firepits. Floor 3, the deep halls: trolls, shamans, the war drums.",
+      "parts": [
+        {
+          "id": "goblin-hobgoblin-orc-orc-shaman-troll-ra",
+          "title": "Goblin, Hobgoblin, Orc, Or",
+          "text": "Goblin, Hobgoblin, Orc, Orc shaman, Troll, Rat (in): As now (the hobgoblin's war cry, the orc's charge, the shaman's fireballs, the troll's regrowth)."
+        },
+        {
+          "id": "goblin-bomber",
+          "title": "Goblin bomber",
+          "text": "(variant of Goblin) Red cap. Lobs bombs with a lit fuse; they sit a moment before they blow."
+        },
+        {
+          "id": "wolf-rider",
+          "title": "Wolf rider",
+          "text": "(new) A goblin on a wolf. Charges through the party; when the wolf dies the goblin fights on foot."
+        },
+        {
+          "id": "frost-shaman",
+          "title": "Frost shaman",
+          "text": "(variant of Orc shaman) Blue. Chills instead of burns, and plants ice totems that slow everyone near."
+        },
+        {
+          "id": "rock-troll",
+          "title": "Rock troll",
+          "text": "(variant of Troll) Grey. Throws boulders. Stone skin shrugs off damage until it's staggered."
+        },
+        {
+          "id": "drummer",
+          "title": "Drummer",
+          "text": "(new) A goblin with a war drum. Does no damage; everything near it attacks faster while it plays."
+        },
+        {
+          "id": "the-beastmaster",
+          "title": "The Beastmaster",
+          "text": "(mini-boss) A hobgoblin with a whip and three wolves. The wolves get stronger each time one dies."
+        },
+        {
+          "id": "the-twin-trolls",
+          "title": "The Twin Trolls",
+          "text": "(mini-boss) Two trolls that heal each other. They have to go down close together."
+        },
+        {
+          "id": "the-warboss",
+          "title": "The Warboss",
+          "text": "(boss) A proper fight this time: charges, a spinning cleaver, and war drums round the room that call waves until they're smashed."
+        }
+      ]
+    },
+    {
+      "id": "sewers",
+      "kind": "design",
+      "rarity": "uncommon",
+      "title": "3. The Sewers",
+      "text": "Under the city. Mark each enemy you'd change or cut.",
+      "why": "You asked to hear each one before it goes in. Every enemy is its own part.",
+      "pick": "Go with these.",
+      "details": "Floor 1, the drains: rats, slimes, gas. Floor 2, the canals: lizardmen, crabs, deep water. Floor 3, the cistern: the drowned, crocs, the dark.",
+      "parts": [
+        {
+          "id": "rat-slime-lizardman-lizard-blade",
+          "title": "Rat, Slime, Lizardman, Liz",
+          "text": "Rat, Slime, Lizardman, Lizard blade (in): As now (the lizardman's tail spin soaks)."
+        },
+        {
+          "id": "plague-rat",
+          "title": "Plague rat",
+          "text": "(variant of Rat) Sickly green. Bursts into a poison cloud when it dies."
+        },
+        {
+          "id": "sludge-slime",
+          "title": "Sludge slime",
+          "text": "(variant of Slime) Brown. Leaves oil wherever it goes, and burns fiercely if lit."
+        },
+        {
+          "id": "croc",
+          "title": "Croc",
+          "text": "(new) Bites and holds, then rolls, dragging the hero. Fast in water, slow out of it."
+        },
+        {
+          "id": "sewer-crab",
+          "title": "Sewer crab",
+          "text": "(new) Armoured from the front. Sidesteps, then grabs with a pincer: hit it from behind."
+        }
+      ]
+    },
+    {
+      "id": "sewers-2",
+      "kind": "design",
+      "rarity": "uncommon",
+      "title": "3. The Sewers, part 2",
+      "text": "The rest of it, with its mini-bosses and boss.",
+      "why": "You asked to hear each one before it goes in. Every enemy is its own part.",
+      "pick": "Go with these.",
+      "details": "Floor 1, the drains: rats, slimes, gas. Floor 2, the canals: lizardmen, crabs, deep water. Floor 3, the cistern: the drowned, crocs, the dark.",
+      "parts": [
+        {
+          "id": "the-drowned",
+          "title": "The Drowned",
+          "text": "(new) A waterlogged corpse. Grabs a hero and drags them toward the water. Soaks."
+        },
+        {
+          "id": "leech",
+          "title": "Leech",
+          "text": "(new) Tiny. Latches onto a hero and drains them until an ally knocks it off."
+        },
+        {
+          "id": "the-rat-king",
+          "title": "The Rat King",
+          "text": "(mini-boss) A knot of rats. Splits into a swarm when hit and re-forms; hurt the swarm to hurt the king."
+        },
+        {
+          "id": "the-lizard-chief",
+          "title": "The Lizard Chief",
+          "text": "(mini-boss) Spear and tide: floods part of the room, and everything in the water with him is faster."
+        },
+        {
+          "id": "the-thing-in-the-cistern",
+          "title": "The Thing in the Cistern",
+          "text": "(boss) Never fully seen. Tentacles rise from the canals to slam and grab; the water level rises through the fight."
+        }
+      ]
+    },
+    {
+      "id": "crypt",
+      "kind": "design",
+      "rarity": "uncommon",
+      "title": "4. The Crypt",
+      "text": "Old graves under the hill. Mark each enemy you'd change or cut.",
+      "why": "You asked to hear each one before it goes in. Every enemy is its own part.",
+      "pick": "Go with these.",
+      "details": "Floor 1, the catacombs: rattlers, bone hounds, grave mist. Floor 2, the chapel: acolytes, cursed armour, ghosts. Floor 3, the royal tombs: golden dead, wraiths, the King.",
+      "parts": [
+        {
+          "id": "rattler-sword-bow-spear-mace-gaper-brute",
+          "title": "Rattler (sword, bow, spear",
+          "text": "Rattler (sword, bow, spear, mace), Gaper, Brute (in): As now."
+        },
+        {
+          "id": "ghost",
+          "title": "Ghost",
+          "text": "(in) Now gives Curse (no healing, more damage taken) instead of chill."
+        },
+        {
+          "id": "banshee",
+          "title": "Banshee",
+          "text": "(in) Moves here from the Frost Hollow as well: her scream slows and curses."
+        },
+        {
+          "id": "golden-skeleton",
+          "title": "Golden skeleton",
+          "text": "(variant of Rattler) Yours: drops double gold, and summons golden bones all round it that home in, go through heroes and hit 1.5x as hard."
+        },
+        {
+          "id": "bone-hound",
+          "title": "Bone hound",
+          "text": "(new) A fast skeletal dog. Falls apart when killed, then pulls itself together once."
+        },
+        {
+          "id": "acolyte",
+          "title": "Acolyte",
+          "text": "(new) A hooded cultist. Raises fallen skeletons back up: kill it first."
+        }
+      ]
+    },
+    {
+      "id": "crypt-2",
+      "kind": "design",
+      "rarity": "uncommon",
+      "title": "4. The Crypt, part 2",
+      "text": "The rest of it, with its mini-bosses and boss.",
+      "why": "You asked to hear each one before it goes in. Every enemy is its own part.",
+      "pick": "Go with these.",
+      "details": "Floor 1, the catacombs: rattlers, bone hounds, grave mist. Floor 2, the chapel: acolytes, cursed armour, ghosts. Floor 3, the royal tombs: golden dead, wraiths, the King.",
+      "parts": [
+        {
+          "id": "cursed-armour",
+          "title": "Cursed armour",
+          "text": "(new) An empty suit of armour. Collapses when beaten, and stands back up unless its helmet is hit while down."
+        },
+        {
+          "id": "wraith",
+          "title": "Wraith",
+          "text": "(variant of Ghost) Dark. Its curse also steals the healing meant for its target."
+        },
+        {
+          "id": "the-grave-warden",
+          "title": "The Grave Warden",
+          "text": "(mini-boss) As now, tuned up: raises a ring of dead and slams the ground."
+        },
+        {
+          "id": "the-ossuary",
+          "title": "The Ossuary",
+          "text": "(mini-boss) A heap of bones that builds itself bigger from every skeleton that dies near it."
+        },
+        {
+          "id": "the-bone-king",
+          "title": "The Bone King",
+          "text": "(boss) Stronger: a fourth phase after the dark one where he raises his whole court at once, and his lance leaves a wall of bone behind it."
+        }
+      ]
+    },
+    {
+      "id": "frost",
+      "kind": "design",
+      "rarity": "uncommon",
+      "title": "5. The Frost Hollow",
+      "text": "Ice caves. Mark each enemy you'd change or cut.",
+      "why": "You asked to hear each one before it goes in. Every enemy is its own part.",
+      "pick": "Go with these.",
+      "details": "Floor 1, the snowfield: frost wolves, snowmen, bats. Floor 2, the web caves: spiders, ice slimes, frozen pools. Floor 3, the glacier heart: yetis, ogres, blizzards.",
+      "parts": [
+        {
+          "id": "bat-snowman-hunter-spider-momma-spider-o",
+          "title": "Bat, Snowman, Hunter spide",
+          "text": "Bat, Snowman, Hunter spider, Momma spider, Ogre (in): As now."
+        },
+        {
+          "id": "frost-wolf",
+          "title": "Frost wolf",
+          "text": "(variant of Wolf) White. Its bite chills, and a pack can freeze a hero solid."
+        },
+        {
+          "id": "ice-slime",
+          "title": "Ice slime",
+          "text": "(variant of Slime) Pale blue. Leaves ice that makes heroes slip, and shatters into shards when killed."
+        },
+        {
+          "id": "frost-spider",
+          "title": "Frost spider",
+          "text": "(variant of Hunter spider) Its webs chill instead of only slowing."
+        },
+        {
+          "id": "yeti",
+          "title": "Yeti",
+          "text": "(new) Throws snow boulders from range, and roars to stagger anything close."
+        },
+        {
+          "id": "icicle-sprite",
+          "title": "Icicle sprite",
+          "text": "(new) Hangs back and drops icicles from above: a shadow shows where."
+        },
+        {
+          "id": "the-brood-queen",
+          "title": "The Brood Queen",
+          "text": "(mini-boss) A giant spider. Webs up the exits, and her eggs hatch unless they're broken."
+        },
+        {
+          "id": "old-frost",
+          "title": "Old Frost",
+          "text": "(mini-boss) An elder yeti. Rolls giant snowballs across the room that grow as they go."
+        },
+        {
+          "id": "the-winter-queen",
+          "title": "The Winter Queen",
+          "text": "(boss) An ice mage. Walls of ice split the party, a blizzard hides the room, and she must be reached while her mirror images shatter."
+        }
+      ]
+    },
+    {
+      "id": "ember",
+      "kind": "design",
+      "rarity": "uncommon",
+      "title": "6. The Ember Deep",
+      "text": "Fire and brimstone. Mark each enemy you'd change or cut.",
+      "why": "You asked to hear each one before it goes in. Every enemy is its own part.",
+      "pick": "Go with these.",
+      "details": "Floor 1, the ash wastes: imps, cinder bats, burning ground. Floor 2, the forges: devils, magma golems, lava flows. Floor 3, the pit: demons, dragonborn, the drake.",
+      "parts": [
+        {
+          "id": "imp-fire-slime-devil-demon-dragonborn",
+          "title": "Imp, Fire slime, Devil, De",
+          "text": "Imp, Fire slime, Devil, Demon, Dragonborn (in): As now."
+        },
+        {
+          "id": "fire-spider",
+          "title": "Fire spider",
+          "text": "(variant of Hunter spider) Yours: burns instead of poisons, and spits fireballs."
+        },
+        {
+          "id": "hellhound",
+          "title": "Hellhound",
+          "text": "(variant of Wolf) Leaves a trail of fire where it runs, and breathes a short cone of flame."
+        },
+        {
+          "id": "cinder-bat",
+          "title": "Cinder bat",
+          "text": "(variant of Bat) Dives at a hero and explodes."
+        },
+        {
+          "id": "magma-golem",
+          "title": "Magma golem",
+          "text": "(new) Slow, and leaves fire where it walks. Soak or chill it and it cracks: stunned and brittle."
+        },
+        {
+          "id": "ash-wraith",
+          "title": "Ash wraith",
+          "text": "(variant of Ghost) Throws ash that blinds: a blinded hero can only hit what's right next to it."
+        },
+        {
+          "id": "the-pit-lord",
+          "title": "The Pit Lord",
+          "text": "(mini-boss) As now, tuned up: a whip of fire and rifts that spit imps."
+        },
+        {
+          "id": "the-dragonborn-champion",
+          "title": "The Dragonborn Champion",
+          "text": "(mini-boss) A duellist. Marks one hero and hunts them; breaks off only when staggered."
+        },
+        {
+          "id": "cinder-the-old-drake",
+          "title": "Cinder, the Old Drake",
+          "text": "(boss) A dragon. Breath in a sweeping cone, a wing gust that scatters the party, and passes overhead that strafe a line of fire."
+        }
+      ]
+    },
+    {
+      "id": "spire",
+      "kind": "design",
+      "rarity": "uncommon",
+      "title": "7. The Gilded Spire",
+      "text": "A temple in the clouds. Mark each enemy you'd change or cut.",
+      "why": "You asked to hear each one before it goes in. Every enemy is its own part.",
+      "pick": "Go with these.",
+      "details": "Floor 1, the steps: cherubs, sun blades, sigils. Floor 2, the choir halls: angels, choir sprites, light beams. Floor 3, the sanctum: seraphs, golems, the fallen.",
+      "parts": [
+        {
+          "id": "cherub-angel-seraph",
+          "title": "Cherub, Angel, Seraph",
+          "text": "(in) Now give Radiance (slower, much weaker attacks; at full, a glowing aura that spreads it and stops you attacking)."
+        },
+        {
+          "id": "fallen-angel",
+          "title": "Fallen angel",
+          "text": "(variant of Angel) Dark wings. Gives Curse instead of Radiance."
+        },
+        {
+          "id": "sun-blade",
+          "title": "Sun blade",
+          "text": "(new) A floating sword. Spins through the party in straight lines; can't be staggered."
+        },
+        {
+          "id": "choir-sprite",
+          "title": "Choir sprite",
+          "text": "(new) Sings: everything in its song heals. Silenced by a stagger."
+        },
+        {
+          "id": "gilded-golem",
+          "title": "Gilded golem",
+          "text": "(new) A gold statue. Shots from the front bounce back at the shooter."
+        },
+        {
+          "id": "the-twin-heralds",
+          "title": "The Twin Heralds",
+          "text": "(mini-boss) One of light, one fallen. Each heals in the other's aura, so they have to be pulled apart."
+        },
+        {
+          "id": "the-archon",
+          "title": "The Archon",
+          "text": "(mini-boss) As now, tuned up: pillars of light that sweep the room like clock hands."
+        },
+        {
+          "id": "the-hollow-saint",
+          "title": "The Hollow Saint",
+          "text": "(boss) A statue with nothing inside. Radiance floods the room in pulses, and the only shade is behind the pillars it hasn't yet broken."
+        }
+      ]
+    },
+    {
+      "id": "dunes",
+      "kind": "design",
+      "rarity": "uncommon",
+      "title": "8. The Sunken Dunes (new)",
+      "text": "A desert tomb. Mark each enemy you'd change or cut.",
+      "why": "You asked to hear each one before it goes in. Every enemy is its own part.",
+      "pick": "Go with these.",
+      "details": "Floor 1, the dunes: scarabs, cobras, quicksand. Floor 2, the buried halls: jackal guards, mummies, dart traps. Floor 3, the sun chamber: sand mages, wurms, the Pharaoh.",
+      "parts": [
+        {
+          "id": "scarab",
+          "title": "Scarab",
+          "text": "(new) Small, in swarms. Burrows and pops up under a hero."
+        },
+        {
+          "id": "cobra",
+          "title": "Cobra",
+          "text": "(new) Spits poison from range and rears back out of reach."
+        },
+        {
+          "id": "golden-cobra",
+          "title": "Golden cobra",
+          "text": "(variant of Cobra) Its spit blinds instead; drops extra gold."
+        },
+        {
+          "id": "jackal-guard",
+          "title": "Jackal guard",
+          "text": "(new) Spear and shield. Sidesteps a blow, then counters."
+        },
+        {
+          "id": "mummy",
+          "title": "Mummy",
+          "text": "(new) Slow. Its wrappings pull a hero in, and its touch curses. Burns easily."
+        },
+        {
+          "id": "scorpion",
+          "title": "Scorpion",
+          "text": "(new) Pincers hold a hero still for the sting, which staggers."
+        }
+      ]
+    },
+    {
+      "id": "dunes-2",
+      "kind": "design",
+      "rarity": "uncommon",
+      "title": "8. The Sunken Dunes (new), part 2",
+      "text": "The rest of it, with its mini-bosses and boss.",
+      "why": "You asked to hear each one before it goes in. Every enemy is its own part.",
+      "pick": "Go with these.",
+      "details": "Floor 1, the dunes: scarabs, cobras, quicksand. Floor 2, the buried halls: jackal guards, mummies, dart traps. Floor 3, the sun chamber: sand mages, wurms, the Pharaoh.",
+      "parts": [
+        {
+          "id": "sand-mage",
+          "title": "Sand mage",
+          "text": "(new) Raises a sandstorm that shortens everyone's reach inside it."
+        },
+        {
+          "id": "sand-wurm",
+          "title": "Sand wurm",
+          "text": "(new) Burrows, then erupts under a hero: the ground shakes first."
+        },
+        {
+          "id": "the-tomb-guard",
+          "title": "The Tomb Guard",
+          "text": "(mini-boss) A giant jackal statue that wakes. Slow, heavy, and the floor traps are on its side."
+        },
+        {
+          "id": "the-wurm-mother",
+          "title": "The Wurm Mother",
+          "text": "(mini-boss) Dives in and out of the sand; only her tail can be hurt while she's under."
+        },
+        {
+          "id": "the-sun-pharaoh",
+          "title": "The Sun Pharaoh",
+          "text": "(boss) Burning sun discs that cross the room, a curse on whoever stands in his gaze, and a guard of mummies he calls from the walls."
+        }
+      ]
+    },
+    {
+      "id": "foundry",
+      "kind": "design",
+      "rarity": "uncommon",
+      "title": "9. The Clockwork Foundry (new)",
+      "text": "A factory that never stopped. Mark each enemy you'd change or cut.",
+      "why": "You asked to hear each one before it goes in. Every enemy is its own part.",
+      "pick": "Go with these.",
+      "details": "Floor 1, the scrapyard: gear sprites, bomb bots, crushers. Floor 2, the assembly line: automatons, turrets, conveyors. Floor 3, the engine room: tesla coils, smiths, steam.",
+      "parts": [
+        {
+          "id": "gear-sprite",
+          "title": "Gear sprite",
+          "text": "(new) A rolling cog. Bounces off walls and through the party."
+        },
+        {
+          "id": "bomb-bot",
+          "title": "Bomb bot",
+          "text": "(new) Walks up, ticks, and explodes. Knock it away in time and it blows up its own side."
+        },
+        {
+          "id": "automaton",
+          "title": "Automaton",
+          "text": "(new) A sword construct. Hits hard, then overheats and stands open for a moment."
+        },
+        {
+          "id": "steam-turret",
+          "title": "Steam turret",
+          "text": "(new) Doesn't move. Turns slowly to fire: get behind it."
+        },
+        {
+          "id": "tesla-coil",
+          "title": "Tesla coil",
+          "text": "(new) Shock that chains between heroes; much worse on anyone wet."
+        }
+      ]
+    },
+    {
+      "id": "foundry-2",
+      "kind": "design",
+      "rarity": "uncommon",
+      "title": "9. The Clockwork Foundry (new), part 2",
+      "text": "The rest of it, with its mini-bosses and boss.",
+      "why": "You asked to hear each one before it goes in. Every enemy is its own part.",
+      "pick": "Go with these.",
+      "details": "Floor 1, the scrapyard: gear sprites, bomb bots, crushers. Floor 2, the assembly line: automatons, turrets, conveyors. Floor 3, the engine room: tesla coils, smiths, steam.",
+      "parts": [
+        {
+          "id": "repair-drone",
+          "title": "Repair drone",
+          "text": "(new) Floats about mending constructs. Kill it first."
+        },
+        {
+          "id": "foundry-smith",
+          "title": "Foundry smith",
+          "text": "(new) A big brute with a red-hot hammer. Every hit burns."
+        },
+        {
+          "id": "the-foreman",
+          "title": "The Foreman",
+          "text": "(mini-boss) Rides a walking crane. Drops crates on heroes and winds up broken constructs again."
+        },
+        {
+          "id": "the-twin-pistons",
+          "title": "The Twin Pistons",
+          "text": "(mini-boss) Two great hammers that take turns slamming halves of the room."
+        },
+        {
+          "id": "the-great-engine",
+          "title": "The Great Engine",
+          "text": "(boss) Doesn't move. Arms that sweep, vents that scald, and a core that only opens when it overheats."
+        }
+      ]
+    }
+  ]
+}
