@@ -299,3 +299,17 @@ Rulings and lanes: `docs/BUILD-v5.md`; the designer's words (47 cards: roster, s
   orc, the Sewers' slime and lizard blade...) now meet a major of it until they get named mini-bosses. The golden
   skeleton keeps its homing bones on the base kind (the designer "might" move them to the elite). The rat king's
   sprite is a big recoloured rat for now (the designer asked for more than a stacked rat sprite: real art queued).
+
+## Round 10 (2026-11-21): showcase 2 answers
+The designer's words: `docs/riffle-log/2026-11-21-round10-showcase2.txt`. Settled: **puddles = Inked** (merging),
+**enemy health = the straight bar** on top ("Just the straight bar": no arc, tanky kinds included). 45 of 60 clips
+ticked; the notes below are lane V3's list (queued behind the art and hero lanes: weekly usage was at 96%).
+- Kit changes asked for: **Zeus Bolt** reworked: a bolt that jumps between enemies N times and shocks at every jump;
+  tier I one bolt, tier II 50% more jumps, tier III +2 bolts; no X hit mark on lightning. **Roll** (archer) slides
+  into position and shoots caltrops out. **Light orb** (cleric attack) spreads by angle, not position, and orbs that
+  pass through allies heal them slightly. **Bone dart** is no longer a bone: it starts bigger and slower. Frost Arrow
+  leaves no ice puddle. Plague Doctor's Gas Form: "Great" (the unrequested swap from Leeches stays).
+- Visual notes per ability are in the log (hands not head for the storm mage, weapons held out not in on Cleave and
+  Reap, smoke that fades and appears at both ends of Backstab, two more Shockwave variants, three wolf-bite variants,
+  the previous Entangle cast, Sanctuary as one ring through every point, simpler flail and Bone Spear, grey raised
+  dead with even hands, Life Drain that grows out to its targets first).

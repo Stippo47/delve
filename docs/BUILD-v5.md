@@ -71,3 +71,9 @@ their branches: resume them after the reset.
 The designer: "When the party leaves a dungeon I want to see stats about who did the most damage, healing, took most
 damage, most kills and deaths, etc. As well as a count of how many of each type of unit defeated overall. Also to see
 a unit's damage and attack speed."
+
+## Wave 10 (started 2026-11-21)
+Running: **A: art** (`art5`, worktree delve-wt/art5) and **H: heroes** (`heroes2`, delve-wt/heroes2). Queued, in this
+order, as slots and credits allow: **V3: showcase 2 notes** (round 10 in DECISIONS; the log is the spec; set the
+defaults to Inked puddles and the straight bar for every enemy, then re-record only the changed clips), R, B, C.
+V3 touches js/kits.js and js/fxkit.js, which lane H also edits: start it after H merges.
