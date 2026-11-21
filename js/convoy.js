@@ -18,7 +18,7 @@ import { rand, rrange, rint, pick, chance, dist, clamp, angleTo, TAU, INK } from
 // ---------------------------------------------------------------- the numbers
 export const THEME = 'wildwood';
 export const WAGON_SPEED = 21;   // px/s (a hero walks ~62: the party is ~3x faster)
-export const WAGON_HP = 800;
+export const WAGON_HP = 900;
 export const STRETCH_LEN = 2300; // road from the start to the gate, a stretch
 export const ROAD_W = 600;       // the world across (a screen and a bit)
 export const ROAD_HALF = 74;     // the track itself
