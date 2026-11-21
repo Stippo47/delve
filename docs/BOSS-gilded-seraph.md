@@ -52,7 +52,7 @@ She breaks apart in a burst of gold and dark; the blades fall.
 - The fall: the gold room goes dark for the last 15%.
 
 ## Numbers
-Health 950 (x1.4 for every boss, then the dungeon's strength and the party size), float 50, mass 6. Phases at 70%,
+Health 1100 (round 12; was 950) (x1.4 for every boss, then the dungeon's strength and the party size), float 50, mass 6. Phases at 70%,
 40%, 15%.
 
 Balance (`node tools/runs.mjs --boss --theme spire --bossid gildedSeraph --level 58 --party paladin,archer,cleric,twinfang`;

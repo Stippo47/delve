@@ -586,7 +586,7 @@ export const ABILITIES2 = {
     use(w, u, t, tier) {
       const a = hurtMost(allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 400)) || u;
       cast(u, 'throw', 0.4);
-      const dose = (o) => { heal(w, o, o.maxHp * (tierOf(u, 'elixir') >= 2 ? 0.25 : 0.15), u); addBuff(o, { id: 'elixir', dur: 4, move: 1.3, atkSpeed: 1.3, glow: '#FF7AC8' }); k2(w, { draw: 'splash', x: o.x, y: o.y, r: 30, col: '#FF7AC8', max: 0.5, ab: 'elixir' }); };
+      const dose = (o) => { heal(w, o, o.maxHp * (tierOf(u, 'elixir') >= 2 ? 0.2 : 0.12), u); addBuff(o, { id: 'elixir', dur: 4, move: 1.3, atkSpeed: 1.3, glow: '#FF7AC8' }); k2(w, { draw: 'splash', x: o.x, y: o.y, r: 30, col: '#FF7AC8', max: 0.5, ab: 'elixir' }); };
       if (a === u) { dose(u); return; }
       lob(w, u, a.x, a.y, 'flask', '#FF7AC8', () => { if (alive(a)) dose(a); if (tierOf(u, 'elixir') >= 3) for (const o of friendsNear(w, u, a.x, a.y, 100)) if (o !== a) dose(o); });
     },
@@ -956,7 +956,7 @@ export const ABILITIES2 = {
     use(w, u, t, tier) {
       cast(u, 'throw', 0.4);
       const list = [u, ...allies(w, u)].filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 400).sort((p, q) => hpRatio(p) - hpRatio(q)).slice(0, tier >= 3 ? 2 : 1);
-      const give = (a) => { heal(w, a, a.maxHp * (tierOf(u, 'resupply') >= 2 ? 0.18 : 0.1), u); if (!a.potions && a.resuppliedIn !== w) { a.potions = 1; a.resuppliedIn = w; } k2(w, { draw: 'crumbs', x: a.x, y: a.y, unit: a, max: 0.6, ab: 'resupply' }); };
+      const give = (a) => { heal(w, a, a.maxHp * (tierOf(u, 'resupply') >= 2 ? 0.12 : 0.06), u); if (!a.potions && a.resuppliedIn !== w) { a.potions = 1; a.resuppliedIn = w; } k2(w, { draw: 'crumbs', x: a.x, y: a.y, unit: a, max: 0.6, ab: 'resupply' }); };
       list.forEach((a, i) => after(u, i * 0.15, () => { if (!alive(a)) return; if (a === u) give(u); else lob(w, u, a.x, a.y, 'bundle', null, () => alive(a) && give(a)); }));
     },
     show: { ally: true },
@@ -1208,7 +1208,7 @@ export const ABILITIES2 = {
         if (!alive(u)) return; const e = t && alive(t) ? t : foesNear(w, u, u.x, u.y, u.def.range)[0]; if (!e) return;
         let first = true; u.recoilT = 0.2;
         k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: ang(u, e), max: 0.5 });
-        shoot(w, u, ang(u, e), { kind: 'bullet', speed: 1400, r: 7, life: 0.6, dmg: dmgOf(u, 3), crit: true, knock: 220, pierce: tierOf(u, 'aimedShot') >= 2 ? 9 : 1, extra: { big: true, onHit: (w2, p, x) => {
+        shoot(w, u, ang(u, e), { kind: 'bullet', speed: 1400, r: 7, life: 0.6, dmg: dmgOf(u, 2.5), crit: true, knock: 220, pierce: tierOf(u, 'aimedShot') >= 2 ? 9 : 1, extra: { big: true, onHit: (w2, p, x) => {
           if (first && tierOf(u, 'aimedShot') >= 3) { const d = x.def.boss ? 0.6 : 1.5; x.koT = Math.max(x.koT || 0, d); stun(w2, x, d); } first = false; } } });
       });
     },
@@ -1742,7 +1742,7 @@ export const TRAITS2 = {
     tick(w, u, dt) {
       const k = u.kit; k.stockT = (k.stockT ?? 20) - dt; if (k.stockT > 0) return;
       const a = friendsNear(w, u, u.x, u.y, 220).find((o) => !o.summon && !o.potions); if (!a) { k.stockT = 2; return; }
-      k.stockT = 90; a.potions = 1; k2(w, { draw: 'crumbs', x: a.x, y: a.y, unit: a, max: 0.6 });
+      k.stockT = 120; a.potions = 1; k2(w, { draw: 'crumbs', x: a.x, y: a.y, unit: a, max: 0.6 });
     },
   },
   armourPiercing: { dealt(w, u, t, amt) { return t.elite || t.major || t.def.boss ? amt * 1.25 : amt; } },

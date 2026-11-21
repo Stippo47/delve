@@ -107,7 +107,7 @@ Wild white hair, brass goggles, a strap of flasks. Every throw is a different br
 
 - **Attack: Unstable flask.** A lobbed flask that splashes where it lands; each one is a different brew: fire, frost or acid.
 - **Acid Flask** (9s). A flask of acid that shatters into a hissing pool. I: A pool for 4s that eats at what stands in it. II: It eats armour: they take 20% more. III: A bigger pool.
-- **Elixir** (12s). Throws a bright potion to an ally: it heals and quickens them. I: Heals 15%, 30% faster for 4s. II: Heals 25%. III: Splashes every ally near the one it hits.
+- **Elixir** (12s). Throws a bright potion to an ally: it heals and quickens them. I: Heals 12%, 30% faster for 4s. II: Heals 20%. III: Splashes every ally near the one it hits.
 - **Bang Flask** (13s). A sputtering flask that rolls to a stop, then blows up with a huge shove. I: A big blast that throws enemies back. II: It staggers. III: It splits into three blasts.
 - **Trait: Catalyst.** The statuses she causes build 30% faster.
 
@@ -187,10 +187,10 @@ A veiled hat, a copper smoker, and a great many friends who sting. Art: `art/her
 A pack bigger than he is. Keeps the party fed, armed and stocked, and throws the pots. Art: `art/heroes/quartermaster.svg`.
 
 - **Attack: Pot toss.** Throws a pot or a pan out of the pack.
-- **Resupply** (18s). Tosses a supply bundle to the ally who needs it most. I: Heals 10%, and a health potion if they have none. II: Heals 18%. III: A bundle each for two allies.
+- **Resupply** (22s). Tosses a supply bundle to the ally who needs it most. I: Heals 6%, and a health potion if they have none. II: Heals 12%. III: A bundle each for two allies.
 - **Oil the Blades** (16s). Hands round lamp oil for the weapons: the allies near him set things alight with every blow. I: Their blows burn a little for 8s. II: They burn more. III: And their blows heal them a little.
 - **Flare** (13s). Fires a red flare onto the enemies: whatever stands in its light is easy to hit. I: For 6s they take 20% more. II: They are dazzled and slowed too. III: A bigger patch of light.
-- **Trait: Well Stocked.** Every minute and a half, a friend near him who has no health potion gets one.
+- **Trait: Well Stocked.** Every two minutes, a friend near him who has no health potion gets one.
 
 ## Crossbowman (`crossbowman`, ranged, 700 gold)
 A heavy crossbow, a kettle hat and a tall shield on his back. Slow to load, hard to stop. Art: `art/heroes/crossbowman.svg`.
@@ -241,7 +241,7 @@ A coral headband, a ponytail, a bundle of javelins. Runs prey down. Art: `art/he
 A cavalier hat with a cream plume, a grey moustache, a very long musket. One shot, well placed. Art: `art/heroes/marksman.svg`.
 
 - **Attack: Musket.** One long, hard shot.
-- **Aimed Shot** (10s). Stands stock still, aims, and fires a shot that goes clean through. I: Triple damage through the first enemy. II: Through everything in the line. III: Knocks out the first one hit.
+- **Aimed Shot** (10s). Stands stock still, aims, and fires a shot that goes clean through. I: Two and a half times the damage through the first enemy. II: Through everything in the line. III: Knocks out the first one hit.
 - **Bayonet** (8s). Fixes the bayonet and stabs whatever got too close, shoving it away. I: A stab and a big shove. II: It staggers. III: Then a shot at it point blank.
 - **Ricochet** (12s). A shot aimed to glance off one enemy onto the next. I: Bounces three times. II: Five times. III: Each bounce hits harder.
 - **Trait: Deadeye.** His first hit on an enemy that hasn't been hurt yet is a critical hit.

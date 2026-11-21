@@ -173,7 +173,7 @@ export const HEROES = {
     abilities: [
       // the id stays 'mend' so bought nodes in saves keep working
       { id: 'mend', name: 'Mending Ray', cd: 7, desc: 'A ray of light to the most hurt ally that heals them slowly while it holds (never herself).',
-        tiers: ['Heals 17% over 4s.', 'Heals 26% over 4s.', 'Splits to a second ally.'] },
+        tiers: ['Heals 14% over 4s.', 'Heals 22% over 4s.', 'Splits to a second ally.'] },
       { id: 'sanctuary', name: 'Sanctuary', cd: 16, desc: 'A circle of light that heals allies standing in it.',
         tiers: ['For 5s.', 'Bigger, 7s.', 'Enemies can\'t step in.'] },
       { id: 'smite', name: 'Smite', cd: 9, desc: 'A pillar of light on an enemy: hurts, staggers and makes it radiant.',
@@ -205,7 +205,7 @@ export const HEROES = {
       { id: 'entangle', name: 'Entangle', cd: 10, desc: 'Vines burst up and hold enemies in place.',
         tiers: ['Holds for 1.5s.', 'Bigger patch.', 'The vines poison.'] },
       { id: 'rejuvenate', name: 'Rejuvenate', cd: 8, desc: 'Heals an ally slowly over time.',
-        tiers: ['16% over 6s.', '24%.', 'Two allies.'] },
+        tiers: ['13% over 6s.', '20%.', 'Two allies.'] },
       { id: 'callWolf', name: 'Call Wolf', cd: 22, desc: 'A summoning ring opens and a wolf steps out to fight beside the party for a while.',
         tiers: ['For 15s.', 'A bigger wolf.', 'Two wolves.'] },
     ],
