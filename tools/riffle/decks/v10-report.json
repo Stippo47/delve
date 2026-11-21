@@ -1,0 +1,71 @@
+{
+  "title": "0.10.0: the Wildwood, the camp, stats",
+  "topic": "runs",
+  "order": 12,
+  "priority": 1,
+  "tags": ["first"],
+  "cards": [
+    {
+      "id": "wildwood",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "The Wildwood and the roster",
+      "text": "The forest is the new first dungeon, with every enemy you approved. Majors are in. Live as 0.10.0.",
+      "why": "Your roster answers, built. New kinds are on placeholder art until the art round. Mark what plays wrong.",
+      "videos": ["../../../clips/r9/r9-wildwood-f1-forest-edge.mp4", "../../../clips/r9/r9-elder-ent.mp4"],
+      "details": "A test player from a fresh save beat the Wildwood's first mini-boss on run 8 and its boss on run 18, the Warren on run 24 and the Sewers on run 33. No errors in any batch.\n\nThe rat king is a big recoloured rat for now: real art is in the next wave.",
+      "parts": [
+        { "id": "kinds", "title": "Wildwood enemies", "text": "Wolves that circle and howl the pack onto one hero, dire wolves that pounce and pin, the big slime that spits and splits twice, the poison slime, the orange goblin, six bandits (shield, torch, greatsword, axe, spear, daggers), the poacher's net, the brute, the boar that dazes itself on walls, sproutlings that root into turrets, the ent, the wisp that mends beasts.", "videos": ["../../../clips/r9/r9-wildwood-f2-bandit-camp.mp4"] },
+        { "id": "entangle", "title": "Entangle", "text": "From the ent: slowed up to 70% and walking and attacking hurt while it builds; at the burst you're rooted for 3 seconds, attack at half speed and take damage, more per attack.", "videos": ["../../../clips/r9/r9-wildwood-f3-old-grove.mp4"] },
+        { "id": "minis", "title": "The Alpha and the Bandit Chief", "text": "The Alpha calls the pack, howls, pounces and pins. The Chief whistles up 3 bandits or a wolf, vanishes in smoke and comes out elsewhere, and throws a fan of knives.", "videos": ["../../../clips/r9/r9-alpha.mp4", "../../../clips/r9/r9-bandit-chief.mp4"] },
+        { "id": "ent", "title": "The Elder Ent", "text": "Three phases: sweeps, roots that leave grasping ground and falling branches; a sproutling grove that feeds it and a root cage; then fans of roots. Burning it doubles the damage it takes, but every blow burns and it speeds up. Immune to everything else.", "videos": ["../../../clips/r9/r9-elder-ent.mp4"] },
+        { "id": "majors", "title": "Majors", "text": "A major is an elite with one more move and two trinkets, no rage, on any floor (rare on floor 1). Elites always carry one trinket. No gold outline on either.", "videos": ["../../../clips/r9/r9-majors.mp4"] },
+        { "id": "warren", "title": "Warren additions", "text": "Spear-thrower, bomber and suicide bomber goblins, the wolf rider, the frost shaman's totems, the drummer, mice and dynamite mice, and trolls that walk behind a boulder (the rock troll's can't be broken).", "videos": ["../../../clips/r9/r9-warren-f2.mp4"] },
+        { "id": "sewers", "title": "Sewers and Crypt additions", "text": "Plague rats, the rat king that sheds rats, blue/sludge/toxic slimes, the croc with two axes and a dragging bite, three crabs that circle in, blood and brain leeches; the golden and harrowing skeletons.", "videos": ["../../../clips/r9/r9-sewers-f2.mp4", "../../../clips/r9/r9-crypt-f3.mp4"] },
+        { "id": "gems", "title": "Gems are back", "text": "1 from each floor's last foe, 2 from the boss, some chests and majors. Nothing spends them yet." }
+      ]
+    },
+    {
+      "id": "camp",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The camp ground and the trail",
+      "text": "The camp as a place: heroes about the fire, tap the fire for the party, Delve in the flames, a trail map of every dungeon.",
+      "why": "Built from your Nuclear Throne note. Mark what's off.",
+      "images": ["../../../clips/r9/camp/01-ground.png", "../../../clips/r9/camp/09-map.png"],
+      "videos": ["../../../clips/r9/camp/clip-camp-alive.mp4"],
+      "parts": [
+        { "id": "ground", "title": "Camp ground", "text": "The fire centred, the party on logs round it, other heroes wandering, the trader's cart, the book and a settings chest to tap.", "images": ["../../../clips/r9/camp/01-ground.png"] },
+        { "id": "fire", "title": "The fire", "text": "Zooms in; pick a hero then a seat and they walk over and swap. Potions and sellswords here. Delve flickers in the flames.", "images": ["../../../clips/r9/camp/02-fire.png"] },
+        { "id": "map", "title": "The trail", "text": "Scrolls up from the clearing through each dungeon. Rooms small dots, floor starts large, bosses a skull; white beaten, yellow your checkpoint, grey not yet. Tap a floor, then Set out.", "videos": ["../../../clips/r9/camp/clip-map-scroll.mp4"] },
+        { "id": "hero", "title": "Hero page", "text": "Tap a hero: they fill the top third, Gear, Skills and About below. The web hides nodes not next to one you know.", "images": ["../../../clips/r9/camp/13-hero-skills.png"] },
+        { "id": "trader", "title": "Trader", "text": "Three trinkets and two potion lots, sold once each, reshuffled after every mission.", "images": ["../../../clips/r9/camp/19-trader.png"] }
+      ]
+    },
+    {
+      "id": "stats",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Run stats",
+      "text": "After a run: who did the most, each hero's damage by weapon, ability, trinket and minions, and every enemy defeated.",
+      "why": "What you asked for, with the breakdown by source. Mark anything missing.",
+      "images": ["../../../clips/r9/stats/02-result-leaders.png", "../../../clips/r9/stats/04-result-hero-sources.png"],
+      "parts": [
+        { "id": "leaders", "title": "Who did what", "text": "Most damage, healing, damage taken, kills and downs, with the hero's face.", "images": ["../../../clips/r9/stats/02-result-leaders.png"] },
+        { "id": "sources", "title": "By source", "text": "Tap a hero: damage, healing and kills split into weapon, each ability, each trinket, minions and statuses.", "images": ["../../../clips/r9/stats/04-result-hero-sources.png"] },
+        { "id": "defeated", "title": "Defeated", "text": "Every enemy kind with its count; lifetime counts are in the Book.", "images": ["../../../clips/r9/stats/05-result-defeated.png"] },
+        { "id": "numbers", "title": "A unit's numbers", "text": "Damage per hit, hits per second, health, speed and reach, after skills, trinkets and buffs: pause and tap a unit, or a hero's About page.", "images": ["../../../clips/r9/stats/10-pause-hero-numbers.png"] }
+      ]
+    },
+    {
+      "id": "quests",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Quests: three questions",
+      "text": "The quest design is written (a notice board in the camp, three offers a mission). It ends with three questions.",
+      "why": "You asked for quests; I'd rather you see the shape before it's built.",
+      "pick": "Build it as written: hunt, gather, escort and reach quests, two held at most, gold, gem or trinket rewards.",
+      "details": "The full design is docs/QUESTS.md in the repo. In short: a notice board in the camp offers three quests, refreshed after each mission; you hold two at most; progress shows in the battle HUD; rewards are gold, gems or a trinket. Escort quests put a villager in the party's care for a floor. Comment with anything you'd change."
+    }
+  ]
+}
