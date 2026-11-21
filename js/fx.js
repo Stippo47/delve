@@ -509,16 +509,20 @@ function rolling(ctx, f, k, seed) {
 // Lullaby (round 9: the light cone underneath was disliked): three soft waves of notes drifting out across the cone,
 // each note swaying and leaving a little pale wisp, a few sleepy sparkles; nothing lit on the floor.
 function noteCone(ctx, f, T) {
-  const k = clamp(f.t / f.max, 0, 1), arc = f.arc || 1.6, seed = Math.round(f.x + f.y * 3);
+  // round 10 ("Particles die a bit abruptly and don't have any variation in end position"): each note has its own pace
+  // and its own end, some short of the edge, some past it; it slows, drifts up a little and fades and shrinks away
+  const k = clamp(f.t / f.max, 0, 1), arc = f.arc || 1.6, seed = Math.round(f.x + f.y * 3), [ux, uy] = upVec();
   ctx.save();
-  for (let wv = 0; wv < 3; wv++) { const q = clamp(k * 1.5 - wv * 0.2, 0, 1); if (q <= 0 || q >= 1) continue;
-    const e = easeOut(q), n = 4 + wv;
+  for (let wv = 0; wv < 3; wv++) { const n = 4 + wv;
     for (let i = 0; i < n; i++) {
-      const b = f.a + ((i + 0.5) / n - 0.5) * arc * 0.9 + Math.sin(T * 3 + i + wv) * 0.06, d = f.r * (0.2 + 0.8 * e), x = f.x + Math.cos(b) * d, y = f.y + Math.sin(b) * d;
-      ctx.globalAlpha = Math.sin(q * Math.PI);
-      ctx.fillStyle = 'rgba(215,205,255,0.45)'; ctx.beginPath(); ctx.ellipse(x - Math.cos(b) * 10, y - Math.sin(b) * 10, 9, 5, b, 0, TAU); ctx.fill();
-      upright(ctx, x, y, () => { ctx.rotate(Math.sin(T * 5 + i) * 0.4); inked(ctx, () => noteShape(ctx, 0.9), (i + wv) % 2 ? '#C9C2FF' : '#E6E0FF'); });
-      if ((i + wv) % 3 === 0) inked(ctx, () => star(ctx, x + Math.cos(b + 1.2) * 12, y + Math.sin(b + 1.2) * 12, 3, 4, 0.35, T * 2), '#FFF0B0');
+      const h = hash(seed, wv, i), h2 = hash(i, wv, seed), q = clamp((k * 1.35 - wv * 0.16 - h * 0.08) / (0.62 + 0.3 * h2), 0, 1); if (q <= 0 || q >= 1) continue;
+      const e = easeOut(q), end = f.r * (0.62 + 0.48 * h), b = f.a + ((i + 0.5) / n - 0.5) * arc * 0.9 + (h2 - 0.5) * 0.25 + Math.sin(T * 3 + i + wv) * 0.06;
+      const fade = 1 - (q > 0.45 ? (q - 0.45) / 0.55 : 0), lift = Math.max(0, q - 0.45) * 30 * (0.6 + 0.8 * h2), d = end * (0.2 + 0.8 * e);
+      const x = f.x + Math.cos(b) * d + ux * lift, y = f.y + Math.sin(b) * d + uy * lift, sc = 0.9 * (0.65 + 0.35 * fade);
+      ctx.globalAlpha = Math.min(1, q / 0.15) * fade * fade;
+      ctx.fillStyle = 'rgba(215,205,255,0.45)'; ctx.beginPath(); ctx.ellipse(x - Math.cos(b) * 10, y - Math.sin(b) * 10, 9 * sc, 5 * sc, b, 0, TAU); ctx.fill();
+      upright(ctx, x, y, () => { ctx.rotate(Math.sin(T * 5 + i) * 0.4); inked(ctx, () => noteShape(ctx, sc), (i + wv) % 2 ? '#C9C2FF' : '#E6E0FF'); });
+      if ((i + wv) % 3 === 0) inked(ctx, () => star(ctx, x + Math.cos(b + 1.2) * 12, y + Math.sin(b + 1.2) * 12, 3 * sc, 4, 0.35, T * 2), '#FFF0B0');
     }
   }
   ctx.restore();
@@ -666,12 +670,12 @@ export function drawProjectile(ctx, p, T) {
     }
     case 'note': {
       ctx.restore(); ctx.save();
-      const [ux, uy] = upVec(), b = Math.sin(T * 14 + p.x * 0.05) * 5;
+      const [ux, uy] = upVec(), b = Math.sin(T * 6 + p.x * 0.05) * 5; // round 10: "Wiggles up and down too fast"
       ctx.translate(p.x + ux * b, p.y + uy * b);
       ctx.save(); ctx.rotate(ang); trail(ctx, sp, 26, 5, '#FFD45A'); ctx.restore();
       ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, 0, 0, 20, '#FFD45A', 0.5); ctx.restore();
       if (view.rot) ctx.rotate(Math.PI / 2);
-      ctx.rotate(Math.sin(T * 9) * 0.2);
+      ctx.rotate(Math.sin(T * 4) * 0.2);
       inked(ctx, () => noteShape(ctx, 1.4), '#FFD45A');
       break;
     }

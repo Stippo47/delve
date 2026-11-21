@@ -484,7 +484,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'cast', 0.6);
       const arc = tier >= 3 ? 2.4 : 1.6, a = t ? ang(u, t) : u.facing;
-      fx(w, { type: 'wave', x: u.x, y: u.y, a, r: 180, arc, max: 0.6, kind: 'note' });
+      fx(w, { type: 'wave', x: u.x, y: u.y, a, r: 180, arc, max: 1.1, kind: 'note' }); // (round 10: longer, so the notes fade out softly)
       const hit = foesNear(w, u, u.x, u.y, 190).filter((e) => angleDiff(ang(u, e), a) < arc / 2);
       for (const e of hit) addBuff(e, { id: 'lullaby', dur: 4, move: 0.55, atkSpeed: 0.7 });
       if (tier >= 3) { for (const e of hit) if (!e.def.boss) e.sleepT = 3; } // round 9: everyone it reaches, at III
