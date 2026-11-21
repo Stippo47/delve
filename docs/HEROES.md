@@ -137,3 +137,48 @@ Horns, a gold sceptre and a demon-eye orb. Pays for power in his own blood. Art:
 - **Summon Imp** (18s). Tears open the floor and an imp climbs out to throw fire for him. I: One imp for 15s. II: A tougher imp. III: Two imps.
 - **Dark Bargain** (22s). Pays in his own blood: his other abilities are ready again at once. I: Pays 15% of his health. II: Pays 10%. III: What he pays heals the allies near him.
 - **Trait: Infernal.** Can't be set on fire.
+
+## Cultist (`cultist`, caster, 700 gold)
+A tall black hood, a curved dagger and a burning black candle. Pays in blood for the party's strength. Art: `art/heroes/cultist.svg`.
+
+- **Attack: Shadow bolt.** A bolt of violet shadow from the candle.
+- **Blood Pact** (15s). Cuts his palm: gives up some of his health so the allies near him hit harder. I: Pays 10%: allies near +30% damage for 6s. II: +40%. III: They heal from 15% of what they deal.
+- **Ritual Circle** (13s). Draws a burning circle under the enemies that curses whatever stands in it. I: A circle for 4s. II: When it closes it drags everything in it to its middle. III: Bigger.
+- **Soul Candle** (16s). The black candle flares: every enemy that dies near him for a while bursts into soul fire. I: For 6s. II: Bigger bursts. III: Each burst heals him.
+- **Trait: Black Candle.** Enemies close to him are slowly cursed.
+
+## Monk (`monk`, melee, 700 gold)
+Saffron robe, prayer beads, bare fists. Very calm. Very fast. Art: `art/heroes/monk.svg`.
+
+- **Attack: Fists.** Quick jabs with either fist.
+- **Flurry** (8s). A blur of punches into one enemy; each one heals him a little. I: Six punches. II: The last one sends it flying. III: Nine punches.
+- **Palm Strike** (9s). An open palm that drives the force right through: the enemy and everything behind it in a line are thrown back. I: Throws back a line. II: Staggers them. III: A longer line, and it stuns the first.
+- **Inner Peace** (16s). Sits and breathes: his statuses fall away and he heals. I: Clears his statuses and heals 15%. II: Allies near him too. III: Nothing can touch him while he sits.
+- **Trait: Deflect.** Swats aside 40% of the shots that reach him from the front.
+
+## Seer (`seer`, support, 700 gold)
+Blindfolded, silver-haired, a glowing crystal in her hand. Sees what's coming and tells the party. Art: `art/heroes/seer.svg`.
+
+- **Attack: Glimmer.** A crystal mote that glances off its target onto a second enemy.
+- **Foresight** (12s). Marks the strongest enemy in sight: the whole party hits it harder. I: Marked for 6s: allies hit it 25% harder. II: Its own blows often miss. III: Marks the two strongest.
+- **Premonition** (11s). Sees a blow coming: the ally in the most danger slips out of its way. I: The ally most beset is untouchable for 1.2s. II: Two allies. III: For 2s, and it heals them 10%.
+- **Starfall** (15s). Calls stars down out of nowhere onto the enemies round a spot. I: Six stars over 2s. II: They make enemies radiant. III: Ten stars.
+- **Trait: Third Eye.** Can't be blinded, and sees 15% of blows coming in time to step aside.
+
+## Chef (`chef`, support, 350 gold)
+A toque, a moustache, a frying pan and a wooden spoon. Feeds friends and flings pies at everyone else. Art: `art/heroes/chef.svg`.
+
+- **Attack: Frying pan.** A clanging whack with the pan.
+- **Hot Meal** (12s). Sets a hot plate down by a hurt ally; whoever eats it is healed. I: One meal: heals 30%. II: Two meals. III: Whoever eats hits 20% harder for 8s.
+- **Grease Fire** (13s). Flips the pan: hot grease splashes over the floor in front, slick and slow. I: Oil in a cone for 6s. II: The oil catches: it burns. III: A wider splash.
+- **Food Fight** (10s). Flings custard pies at several enemies. They splat. I: Three pies: slowed for 3s. II: Pie in the eyes: they miss. III: Five pies.
+- **Trait: Well Fed.** Allies near him heal 0.5% of their health a second.
+
+## Beekeeper (`beekeeper`, support, 700 gold)
+A veiled hat, a copper smoker, and a great many friends who sting. Art: `art/heroes/beekeeper.svg`.
+
+- **Attack: Bee.** Sends a bee buzzing after the target.
+- **Swarm** (11s). Opens the hive: bees pour out and chase the nearest enemies, stinging and slowing. I: Six bees. II: Their stings poison. III: Ten bees.
+- **Honey Pot** (13s). Throws a pot of honey: enemies get stuck in it, friends get a sweet treat. I: A pool for 5s that entangles enemies. II: Allies standing in it heal. III: Bigger.
+- **Royal Jelly** (14s). Feeds an ally royal jelly: it attacks much faster for a while. I: +40% attack speed for 6s. II: And +20% damage. III: Two allies.
+- **Trait: Bee Friends.** A few bees always buzz round him and sting enemies that come close.

@@ -272,6 +272,95 @@ Object.assign(HEROES2, {
   },
 });
 
+// ------------------------------------------------------------------ batch 4: the cultist and the helpers
+Object.assign(HEROES2, {
+  cultist: {
+    name: 'Cultist', art: 'art/heroes/cultist.svg', role: 'caster', unlock: { gems: 2 },
+    blurb: 'A tall black hood, a curved dagger and a burning black candle. Pays in blood for the party\'s strength.',
+    fun: 'Says the eye on his hood sees everything. It mostly sees the inside of the hood.',
+    stats: { hp: 78, speed: 62, r: 30, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1, range: 220, keep: 175, atkCd: 1.25, dmg: 8 },
+    proj: ['bolt', '#9A5CC8'], style: { glow: '#9A5CC8' },
+    attack: { name: 'Shadow bolt', anim: 'cast', desc: 'A bolt of violet shadow from the candle.' },
+    abilities: [
+      { id: 'bloodPact', name: 'Blood Pact', cd: 15, tags: 'h', glyph: 'drain', desc: 'Cuts his palm: gives up some of his health so the allies near him hit harder.',
+        tiers: ['Pays 10%: allies near +30% damage for 6s.', '+40%.', 'They heal from 15% of what they deal.'] },
+      { id: 'ritualCircle', name: 'Ritual Circle', cd: 13, tags: 's', glyph: 'skull', desc: 'Draws a burning circle under the enemies that curses whatever stands in it.',
+        tiers: ['A circle for 4s.', 'When it closes it drags everything in it to its middle.', 'Bigger.'] },
+      { id: 'soulCandle', name: 'Soul Candle', cd: 16, tags: 'd', glyph: 'flame', desc: 'The black candle flares: every enemy that dies near him for a while bursts into soul fire.',
+        tiers: ['For 6s.', 'Bigger bursts.', 'Each burst heals him.'] },
+    ],
+    trait: { id: 'blackCandle', name: 'Black Candle', desc: 'Enemies close to him are slowly cursed.' },
+  },
+  monk: {
+    name: 'Monk', art: 'art/heroes/monk.svg', role: 'melee', unlock: { gems: 2 },
+    blurb: 'Saffron robe, prayer beads, bare fists. Very calm. Very fast.',
+    fun: 'Has meditated in the middle of a goblin raid. The goblins left first.',
+    stats: { hp: 115, speed: 74, r: 30, vr: 22, turn: 5.5, accel: 320, face: 5.5, mass: 1.2, range: 16, atkCd: 0.5, dmg: 6, arc: 1.4, dodge: 0.12, knock: 60 },
+    weapon: 'thrust', style: { dual: true },
+    attack: { name: 'Fists', anim: 'punch', desc: 'Quick jabs with either fist.' },
+    abilities: [
+      { id: 'flurry', name: 'Flurry', cd: 8, tags: 'dh', glyph: 'fist', desc: 'A blur of punches into one enemy; each one heals him a little.',
+        tiers: ['Six punches.', 'The last one sends it flying.', 'Nine punches.'] },
+      { id: 'palmStrike', name: 'Palm Strike', cd: 9, tags: 'ds', glyph: 'wave', desc: 'An open palm that drives the force right through: the enemy and everything behind it in a line are thrown back.',
+        tiers: ['Throws back a line.', 'Staggers them.', 'A longer line, and it stuns the first.'] },
+      { id: 'innerPeace', name: 'Inner Peace', cd: 16, tags: 'h', glyph: 'sun', desc: 'Sits and breathes: his statuses fall away and he heals.',
+        tiers: ['Clears his statuses and heals 15%.', 'Allies near him too.', 'Nothing can touch him while he sits.'] },
+    ],
+    trait: { id: 'deflect', name: 'Deflect', desc: 'Swats aside 40% of the shots that reach him from the front.' },
+  },
+  seer: {
+    name: 'Seer', art: 'art/heroes/seer.svg', role: 'support', unlock: { gems: 2 },
+    blurb: 'Blindfolded, silver-haired, a glowing crystal in her hand. Sees what\'s coming and tells the party.',
+    fun: 'Wears the blindfold because the future is very bright and she forgot her hat.',
+    stats: { hp: 75, speed: 64, r: 30, vr: 22, turn: 4.5, accel: 240, face: 4.6, mass: 1, range: 230, keep: 180, atkCd: 1.2, dmg: 7 },
+    style: { glow: '#C9B8FF' },
+    attack: { name: 'Glimmer', anim: 'cast', desc: 'A crystal mote that glances off its target onto a second enemy.' },
+    abilities: [
+      { id: 'foresight', name: 'Foresight', cd: 12, tags: 'd', glyph: 'sun', desc: 'Marks the strongest enemy in sight: the whole party hits it harder.',
+        tiers: ['Marked for 6s: allies hit it 25% harder.', 'Its own blows often miss.', 'Marks the two strongest.'] },
+      { id: 'premonition', name: 'Premonition', cd: 11, tags: 'h', glyph: 'shield', desc: 'Sees a blow coming: the ally in the most danger slips out of its way.',
+        tiers: ['The ally most beset is untouchable for 1.2s.', 'Two allies.', 'For 2s, and it heals them 10%.'] },
+      { id: 'starfall', name: 'Starfall', cd: 15, tags: 'ds', glyph: 'sun', desc: 'Calls stars down out of nowhere onto the enemies round a spot.',
+        tiers: ['Six stars over 2s.', 'They make enemies radiant.', 'Ten stars.'] },
+    ],
+    trait: { id: 'thirdEye', name: 'Third Eye', desc: 'Can\'t be blinded, and sees 15% of blows coming in time to step aside.' },
+  },
+  chef: {
+    name: 'Chef', art: 'art/heroes/chef.svg', role: 'support', unlock: { gems: 1 },
+    blurb: 'A toque, a moustache, a frying pan and a wooden spoon. Feeds friends and flings pies at everyone else.',
+    fun: 'Has never once been asked to cook goblin. Has prepared anyway.',
+    stats: { hp: 120, speed: 56, r: 32, vr: 22, turn: 3.8, accel: 200, face: 4, mass: 1.6, range: 20, atkCd: 1.15, dmg: 10, knock: 160, arc: 1.6 },
+    weapon: 'heavy',
+    attack: { name: 'Frying pan', anim: 'swing', desc: 'A clanging whack with the pan.' },
+    abilities: [
+      { id: 'hotMeal', name: 'Hot Meal', cd: 12, tags: 'h', glyph: 'heart', desc: 'Sets a hot plate down by a hurt ally; whoever eats it is healed.',
+        tiers: ['One meal: heals 30%.', 'Two meals.', 'Whoever eats hits 20% harder for 8s.'] },
+      { id: 'greaseFire', name: 'Grease Fire', cd: 13, tags: 's', glyph: 'flame', desc: 'Flips the pan: hot grease splashes over the floor in front, slick and slow.',
+        tiers: ['Oil in a cone for 6s.', 'The oil catches: it burns.', 'A wider splash.'] },
+      { id: 'foodFight', name: 'Food Fight', cd: 10, tags: 's', glyph: 'burst', desc: 'Flings custard pies at several enemies. They splat.',
+        tiers: ['Three pies: slowed for 3s.', 'Pie in the eyes: they miss.', 'Five pies.'] },
+    ],
+    trait: { id: 'wellFed', name: 'Well Fed', desc: 'Allies near him heal 0.5% of their health a second.' },
+  },
+  beekeeper: {
+    name: 'Beekeeper', art: 'art/heroes/beekeeper.svg', role: 'support', unlock: { gems: 2 },
+    blurb: 'A veiled hat, a copper smoker, and a great many friends who sting.',
+    fun: 'Knows every one of the bees by name. They know him by smell.',
+    stats: { hp: 82, speed: 62, r: 31, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1.1, range: 210, keep: 170, atkCd: 1.0, dmg: 6 },
+    style: { glow: '#FFD45A' },
+    attack: { name: 'Bee', anim: 'throw', desc: 'Sends a bee buzzing after the target.' },
+    abilities: [
+      { id: 'swarm', name: 'Swarm', cd: 11, tags: 'ds', glyph: 'burst', desc: 'Opens the hive: bees pour out and chase the nearest enemies, stinging and slowing.',
+        tiers: ['Six bees.', 'Their stings poison.', 'Ten bees.'] },
+      { id: 'honeyPot', name: 'Honey Pot', cd: 13, tags: 'sh', glyph: 'vial', desc: 'Throws a pot of honey: enemies get stuck in it, friends get a sweet treat.',
+        tiers: ['A pool for 5s that entangles enemies.', 'Allies standing in it heal.', 'Bigger.'] },
+      { id: 'royalJelly', name: 'Royal Jelly', cd: 14, tags: 'h', glyph: 'up', desc: 'Feeds an ally royal jelly: it attacks much faster for a while.',
+        tiers: ['+40% attack speed for 6s.', 'And +20% damage.', 'Two allies.'] },
+    ],
+    trait: { id: 'beeFriend', name: 'Bee Friends', desc: 'A few bees always buzz round him and sting enemies that come close.' },
+  },
+});
+
 // The HUD glyph of each new ability (icons.js)
 export const GLYPH2 = {};
 for (const h of Object.values(HEROES2)) for (const ab of h.abilities) if (ab.glyph) GLYPH2[ab.id] = ab.glyph;
