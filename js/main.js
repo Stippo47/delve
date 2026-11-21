@@ -89,6 +89,7 @@ function updateHud() {
   $('where').textContent = `${th ? th.name + ' · ' : ''}Floor ${run.floor}/${FLOORS}`;
   drawMap();
   $('hCoins').textContent = run.coins;
+  { const g = $('hGems'); if (g) { g.textContent = run.gems || 0; g.parentNode.classList.toggle('hidden', !run.gems); } } // gems (round 9)
   const rb = $('retreatBtn'), leaving = !!run.leaving;
   if (rb.dataset.on !== String(leaving)) { rb.dataset.on = String(leaving); rb.innerHTML = leaving ? 'Stay' : I.door; rb.classList.toggle('leaving', leaving); }
   $('speedBtn').textContent = save.speed + '×';

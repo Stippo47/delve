@@ -5,7 +5,7 @@ import { lineClear, pathClear, rayToRoundRect, circleRect, findPath, buildGrid }
 import { kitThink, kitTick, hooksOf, segDist } from './kits.js';
 import { trinketHooks } from './trinkets.js';
 import { cue } from './sfx.js';
-import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE } from './statuses.js';
+import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE } from './statuses.js';
 
 let NEXT_ID = 1;
 const DIRS = 16;
@@ -64,10 +64,12 @@ const speedOf = (u) => {
   s *= 1 - Math.min(0.6, u.st.chill / 160);
   if (u.st.poison > 20) s *= 0.9;          // poison slows a little
   if (u.inOil) s *= 0.7;
+  if (u.st.entangle > 0) s *= 1 - ENTANGLE.slow * fillOf(u, 'entangle'); // entangled: very slow
+  if (u.pulse != null) s *= u.pulse;       // slimes move in hops (round 9): their brain sets the pulse
   for (const b of u.buffs) if (b.move) s *= b.move;
   if (u.flinchT > 0) s *= 0.5;            // just took a blow
   if (u.staleBoost) s *= 1.3;              // a stand-off that's gone on too long (dungeon.js w.stale)
-  if (u.rootT > 0 || u.stunT > 0 || u.sleepT > 0 || u.buffs.some((b) => b.root)) s = 0;
+  if (u.rootT > 0 || u.tangledT > 0 || u.stunT > 0 || u.sleepT > 0 || u.buffs.some((b) => b.root)) s = 0;
   return s;
 };
 // How fast attacks come round: haste, buffs, traits (Momentum), poison.
@@ -77,6 +79,7 @@ const atkRate = (u) => {
   for (const h of hooksOf(u)) if (h.atkSpeed) r *= h.atkSpeed(u);
   if (u.st.poison > 20) r *= 0.9;
   if (u.st.radiance > 0) r *= 1 - RADIANCE.atkSlow * fillOf(u, 'radiance'); // radiant: attacks come slower
+  if (u.tangledT > 0) r *= ENTANGLE.atkSlow;                                    // tangled: attacks slowly
   return r;
 };
 const buffMul = (u, key) => { let m = 1; for (const b of u.buffs) if (b[key] != null) m *= b[key]; return m; };
@@ -101,7 +104,7 @@ export function heal(w, u, amount, src) {
   if (u.hp - before > 2 && rand() < 0.5) w.particles.push({ x: u.x + rrange(-12, 12), y: u.y, vx: 0, vy: 0, rise: 50, up: 0, life: 0.6, max: 0.6, size: 4, color: '#9BE07A' });
   return u.hp - before;
 }
-export function cleanse(u) { u.st = freshStatuses(); u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.hexed = false; u.radiantT = 0; }
+export function cleanse(u) { u.st = freshStatuses(); u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.hexed = false; u.radiantT = 0; u.tangledT = 0; }
 // Cursed's burst: an armed hex fires on the unit's next attack, heal or summon. hexFires() arms the window (everything
 // that action does in the next CURSE.windowT turns too) and says whether this one turns.
 function hexFires(w, u) {
@@ -508,7 +511,7 @@ function movement(w, u, dt) {
         const gap = d - u.r - t.r;
         const spot = u.def.role !== 'ranged' && gap > u.def.range + 8 ? approachSpot(w, u, t) : null;
         [gx, gy] = spot ? goalVec(w, u, spot.x, spot.y) : goalVec(w, u, t.x, t.y); { const l = Math.hypot(gx, gy) || 1; gx /= l; gy /= l; }
-        if (u.kind === 'rat') {
+        if (u.kind === 'rat' || u.def.ratMove) {
           // rats dart side to side on the way in, then circle in close until their bite is ready
           const z = Math.sin(w.time * 7 + u.id * 1.7) * 0.85;
           gx += -ty * z; gy += tx * z;
@@ -718,6 +721,7 @@ export function hurt(w, u, amount, src, o = {}) {
 export function addStatus(w, u, type, amount, src) {
   if (!alive(u) || u.ethereal || immuneTo(u, type)) return;
   if (type === 'radiance' && (u.radiantT > 0 || u.radImmuneT > 0)) return; // glowing, or just was: its own aura can't feed it
+  if (type === 'entangle' && (u.tangledT > 0 || u.tangleImmuneT > 0)) return; // held fast already, or just got free
   const res = (u.def.res && u.def.res[type]) ?? 1;
   const s = u.st;
   if (type === 'chill' && s.wet > 30) amount *= 1.5;          // wet freezes easier
@@ -754,6 +758,14 @@ export function addStatus(w, u, type, amount, src) {
       s.radiance = after; burst(); u.radiantT = RADIANCE.auraT; u.act = null;
       textU(w, u.x, u.y, u.r + 12, 'RADIANT', STATUS.radiance.col, 1.2);
       fx(w, { type: 'aura', kind: 'radiance', unit: u, x: u.x, y: u.y, r: RADIANCE.auraR, max: RADIANCE.auraT });
+    }
+    return;
+  }
+  if (type === 'entangle') {
+    if (s.entangle >= need) {                                    // TANGLED: rooted, attacks slowly, hurts, and more when it attacks
+      s.entangle = after; burst(); u.tangledT = u.def.boss ? ENTANGLE.tangledT * 0.4 : ENTANGLE.tangledT; if (u.act && u.act.type !== 'drink') u.act = null;
+      textU(w, u.x, u.y, u.r + 12, 'TANGLED', STATUS.entangle.col, 1.2);
+      for (let i = 0; i < 10; i++) { const a = i / 10 * TAU; w.particles.push({ x: u.x + Math.cos(a) * u.r, y: u.y + Math.sin(a) * u.r, vx: -Math.cos(a) * 30, vy: -Math.sin(a) * 30, life: 0.6, max: 0.6, size: 4, color: '#7FA04A' }); }
     }
     return;
   }
@@ -836,7 +848,7 @@ function kill(w, u, src) {
   }
   if (u.summon) { u.dead = true; puff(w, u.x, u.y, '#B8C8DA', 10, 80, 5, 0.5); return; } // summons just fade (blue-grey: ours, round 8)
   if (u.team === 'hero') {
-    u.downed = true; u.act = null; u.frozenT = 0; u.st = freshStatuses(); u.hexed = false; u.radiantT = 0;
+    u.downed = true; u.act = null; u.frozenT = 0; u.st = freshStatuses(); u.hexed = false; u.radiantT = 0; u.tangledT = 0;
     textU(w, u.x, u.y, u.r + 10, 'DOWN', '#FF8A80', 1.1);
     emit(w, 'heroDown', u);
     return;
@@ -847,17 +859,23 @@ function kill(w, u, src) {
   const la = src && src !== u ? angleTo(src.x, src.y, u.x, u.y) : Math.atan2(u.ky, u.kx) || rand() * TAU;
   const kick = 140 / Math.max(0.6, u.mass);
   const cvx = u.kx * 1.3 + Math.cos(la) * kick, cvy = u.ky * 1.3 + Math.sin(la) * kick, cs = Math.hypot(cvx, cvy);
-  w.corpses.push({ kind: u.kind, x: u.x, y: u.y, r: u.r, vr: u.vr, facing: u.facing, tint: u.tint, kx: cvx, ky: cvy,
+  if (!u.def.noCorpse) w.corpses.push({ kind: u.kind, // slimes leave none (round 9) x: u.x, y: u.y, r: u.r, vr: u.vr, facing: u.facing, tint: u.tint, kx: cvx, ky: cvy,
     spin: (rand() < 0.5 ? -1 : 1) * Math.min(14, cs / 40), z: 0, vz: Math.min(260, 60 + cs * 0.45), age: 0, t: CORPSE_LIFE, max: CORPSE_LIFE });
   if (w.corpses.length > MAX_CORPSES) w.corpses.splice(0, w.corpses.length - MAX_CORPSES);
-  puff(w, u.x, u.y, u.kind.startsWith('slime') ? '#6CC9B0' : u.kind === 'rat' ? '#9C8676' : '#EDE4CD', 6, 110, 4, 0.4); // the body itself flies now: a small puff
+  // the body itself flies now: a small puff (a slime, which leaves no body, bursts into goo)
+  puff(w, u.x, u.y, u.def.goo || (u.kind.startsWith('slime') ? '#6FA6E6' : u.kind === 'rat' ? '#9C8676' : '#EDE4CD'), u.def.noCorpse ? 14 : 6, 110, 4, 0.4);
   if (u.st.poison > 40) w.hazards.push({ type: 'gas', x: u.x, y: u.y, r: 52, t: 4, max: 4 });
   if (u.eliteDeath) u.eliteDeath(w, u); // an elite's own end (elites.js: the elite slime bursts into four)
-  if (u.def.splits && u.gen === 0 && !(u.elite && u.eliteDeath)) {
+  // splits (once: gen 0 only) into two of def.splitsInto (slimelets unless it says); u.noSplit stops it (a sludge
+  // slime that dies burning); def.onSplit for what else it leaves (a poison slime's cloud)
+  if (u.def.splits && u.gen === 0 && !(u.elite && u.eliteDeath) && !u.noSplit) {
+    const into = u.def.splitsInto || 'slimeSmall';
     for (const s of [-1, 1]) {
-      const c = spawn(w, 'slimeSmall', u.x + s * 12, u.y + s * 4, { mult: w.mult, gen: 1 });
-      c.kx = s * 140; c.ky = rrange(-60, 60);
+      const c = spawn(w, into, u.x + s * 12, u.y + s * 4, { mult: w.mult, gen: DEFS[into].splits ? 0 : 1 });
+      c.kx = s * 140; c.ky = rrange(-60, 60); if (u.aggro) c.aggro = true;
+      if (u.minion) { c.minion = true; c.calledBy = u.calledBy; }
     }
+    if (u.def.onSplit) u.def.onSplit(w, u);
   }
   const [c0, c1] = u.def.coins || [0, 0];
   const coins = Math.round(rint(c0, c1) * (u.coinMul ?? 1)); // elites drop a little less (round 7)
@@ -910,7 +928,7 @@ function tryAttack(w, u) {
     else meleeSwing(w, u, def.role === 'skirmish');
     setAnim(u, def.attackAnim || (def.role === 'skirmish' ? 'thrust' : 'swing'), (def.windup || 0) + 0.28);
     u.atkT = def.atkCd * rrange(0.9, 1.1); u.lastAttackT = w.time;
-    if (u.kind === 'slime' || u.kind === 'slimeSmall') { u.kx += Math.cos(u.facing) * 60; u.ky += Math.sin(u.facing) * 60; }
+    if (u.kind === 'slime' || u.kind === 'slimeSmall' || u.def.spriteOf === 'slime' || u.def.spriteOf === 'slimeSmall') { u.kx += Math.cos(u.facing) * 60; u.ky += Math.sin(u.facing) * 60; }
   }
 }
 
@@ -1076,6 +1094,8 @@ function statusTick(w, u, dt) {
   }
   if (s.radiance > 0) s.radiance = Math.max(0, s.radiance - STATUS.radiance.decay * dt);
   if (s.curse > 0) s.curse = Math.max(0, s.curse - STATUS.curse.decay * dt);
+  entangleTick(w, u, dt);
+  if (!alive(u)) return;
   if (u.radiantT > 0) {                                          // the radiant glow: everyone else close by turns radiant
     u.radiantT -= dt;
     if (rand() < dt * 10) w.particles.push({ x: u.x + rrange(-u.vr, u.vr), y: u.y + rrange(-u.vr, u.vr), vx: 0, vy: 0, rise: 40, up: 0, life: 0.7, max: 0.7, size: 4, color: '#FFF1B0' });
@@ -1115,6 +1135,28 @@ function statusTick(w, u, dt) {
     if (s.poison > 25 && rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.7, y: u.y + rrange(-u.r, u.r) * 0.7, vx: 0, vy: -25, life: 0.6, max: 0.6, size: 4, color: '#9BCB3C' }); }
   if (u.frozenT > 0) u.frozenT -= dt;
   if (u.freezeImmune > 0) u.freezeImmune = Math.max(0, u.freezeImmune - 4 * dt);
+}
+
+// Entangle (statuses.js ENTANGLE): walking and attacking while it holds hurts a little; tangled, it hurts over time and
+// more on every attack. An attack or ability is seen as a new u.anim (every swing, shot and cast sets one).
+function entangleTick(w, u, dt) {
+  const s = u.st, fill = s.entangle > 0 ? fillOf(u, 'entangle') : 0;
+  if (s.entangle > 0) s.entangle = Math.max(0, s.entangle - STATUS.entangle.decay * dt);
+  if (u.tangleImmuneT > 0) u.tangleImmuneT -= dt;
+  const anim = u.anim && u.anim !== u._entAnim ? u.anim : null;
+  if (anim) u._entAnim = anim;
+  if (u.tangledT > 0) {
+    u.tangledT -= dt;
+    hurt(w, u, ENTANGLE.dot * dt, null, { dot: true, color: STATUS.entangle.col });
+    if (anim) hurt(w, u, ENTANGLE.tangledAtk, null, { dot: true, color: STATUS.entangle.col });
+    if (rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.8, y: u.y + rrange(-u.r, u.r) * 0.8, vx: 0, vy: 0, life: 0.5, max: 0.5, size: 4, color: '#5E7F32' });
+    if (u.tangledT <= 0) { u.tangledT = 0; u.tangleImmuneT = ENTANGLE.immuneT; }
+    return;
+  }
+  if (!fill) return;
+  const moved = Math.hypot(u.dvx || 0, u.dvy || 0) * dt;
+  if (moved > 0) hurt(w, u, ENTANGLE.walkDmg * fill * moved / 100, null, { dot: true, color: STATUS.entangle.col });
+  if (anim) hurt(w, u, ENTANGLE.atkDmg * fill, null, { dot: true, color: STATUS.entangle.col });
 }
 
 // ---------------------------------------------------------------- physics
@@ -1307,6 +1349,16 @@ export function step(w, dt) {
     if (!alive(u)) continue;
     if (u.anim) { u.anim.t += dt; if (u.anim.t >= u.anim.dur) u.anim = null; }
     if (u.frozenT > 0 || u.stunT > 0 || u.sleepT > 0) { if (!u.act || u.act.type !== 'slip') { u.dvx = u.dvy = 0; u.spd = 0; continue; } }
+    // slimes (round 9: "All slimes move in forward burst, pause then move again"): a hop, then a rest; def.onHop(w, u)
+    // when it lands
+    // an elite's or major's twinkle (round 9, elites.js LOOK): now and then a bright mote off it
+    if (u.look && u.look.twinkle && rand() < dt * u.look.twinkle) { const a = rand() * TAU, d = u.vr * rrange(0.3, 1);
+      w.particles.push({ x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d, vx: 0, vy: 0, rise: 26, up: 0, life: 0.55, max: 0.55, size: rrange(2.5, 4), color: u.look.tint, star: true }); }
+    if (u.def.hops) {
+      const per = u.def.hops, k = ((w.time + u.id * 0.37) % per) / per, was = u.pulse ?? 1;
+      u.pulse = k < 0.34 ? 0.4 + 2.6 * Math.sin(Math.PI * k / 0.34) : 0.15;
+      if (was > 0.5 && u.pulse <= 0.15 && u.def.onHop && u.aggro) u.def.onHop(w, u);
+    }
     // a unit with its own brain (bosses, special enemies) runs it first; returning true skips the usual brain
     if (u.eliteFn && u.eliteFn(w, u, dt)) continue; // an elite's extra move (elites.js)
     if (u.def.brain && u.def.brain(w, u, dt)) continue;

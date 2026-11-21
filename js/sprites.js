@@ -4,6 +4,7 @@
 import { INK } from './util.js';
 import { DEFS } from './units.js';
 import { loadArt } from './parts.js';
+import { recolorCanvas } from './recolor.js';
 
 // (the skeleton kind is drawn from parts now, in the Rattler's art: units.js)
 const SVG_KINDS = { archer: 'art/archer.svg', knight: 'art/knight.svg', rogue: 'art/rogue.svg', boss: 'art/boss.svg' };
@@ -94,10 +95,14 @@ function proceduralCanvas(kind, px) {
   const g = c.getContext('2d');
   const s = px / 220;
   g.setTransform(s, 0, 0, s, 10 * s, 10 * s);
+  // a variant (recolor.js) draws its base kind, then its colours are turned
+  const d = DEFS[kind], base = (d && d.spriteOf) || kind;
   // Outline widths chosen so the outline shows the same thickness in the world as the SVG heroes' (see OUTLINE in render.js).
-  if (kind === 'rat') drawRat(g, 16);
-  else if (kind === 'slime') drawSlime(g, ['#7FD9C2', '#3E9C86'], 12);
-  else if (kind === 'slimeSmall') drawSlime(g, ['#A6E8D6', '#58B49D'], 18);
+  // Round 9: "The base slime is blue".
+  if (base === 'rat') drawRat(g, 16);
+  else if (base === 'slime') drawSlime(g, ['#8EC2F2', '#3F7AC4'], 12);
+  else if (base === 'slimeSmall') drawSlime(g, ['#B4D6F6', '#5C92D2'], 18);
+  if (d && d.recolor && base !== kind) { g.setTransform(1, 0, 0, 1, 0, 0); recolorCanvas(c, d.recolor); }
   return c;
 }
 

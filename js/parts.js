@@ -6,6 +6,7 @@
 //
 // Coordinates: everything here is in SVG units, the sprite's own frame (220 box, centre 100,100, front = +y).
 import { INK, clamp, wrapAngle } from './util.js';
+import { parseVariantUrl, recolorSvgText } from './recolor.js';
 
 const LINE = 6;            // outline radius in SVG units (the #outline filter's; = OUTLINE in room units at hero scale)
 const B0 = -24, BOX = 248; // the raster box: the 220 box plus room for the outline
@@ -16,7 +17,9 @@ export function loadArt(url) {
   if (arts.has(url)) return arts.get(url).promise;
   const e = { promise: null, rig: null, sets: new Map() };
   arts.set(url, e);
-  e.promise = fetch(url).then((r) => r.text()).then((text) => { e.rig = splitSvg(text); }).catch(() => { e.rig = null; e.failed = true; });
+  // a variant (recolor.js): the base file, its colours turned before it is split into parts
+  const { file, spec } = parseVariantUrl(url);
+  e.promise = fetch(file).then((r) => r.text()).then((text) => { e.rig = splitSvg(recolorSvgText(text, spec)); }).catch(() => { e.rig = null; e.failed = true; });
   return e.promise;
 }
 

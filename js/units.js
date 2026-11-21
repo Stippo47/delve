@@ -2,6 +2,7 @@
 // Heroes come from heroes.js (one def per hero, built below); extra enemy kinds come from enemies.js.
 import { HEROES } from './heroes.js';
 import { ENEMIES } from './enemies.js';
+import { specOf, variantUrl, parseVariantUrl } from './recolor.js';
 // r: collider (covers shoulders), vr: head radius the sprite is sized from.
 // turn: how fast the movement heading swings (rad/s), accel: speed gained per second, face: sprite turn rate.
 // role: 'melee' stands and fights, 'ranged' keeps distance, 'skirmish' darts in and out.
@@ -29,11 +30,11 @@ export const DEFS = {
   },
   slime: {
     team: 'enemy', name: 'Slime', r: 25, vr: 22, turn: 3, accel: 140, face: 3.5, mass: 1.6, hp: 46, speed: 40, role: 'melee',
-    range: 16, atkCd: 1.4, dmg: 8, knock: 90, arc: 2.2, temp: 0.3, commit: 1, xp: 8, coins: [2, 4], splits: true,
+    range: 16, atkCd: 1.4, dmg: 8, knock: 90, arc: 2.2, temp: 0.3, commit: 1, xp: 8, coins: [2, 4], splits: true, noCorpse: true, hops: 1.1,
   },
   slimeSmall: {
     team: 'enemy', name: 'Slimelet', r: 16, vr: 14, turn: 5, accel: 260, face: 5, mass: 0.6, hp: 16, speed: 58, role: 'melee',
-    range: 12, atkCd: 1.0, dmg: 4, arc: 2.2, temp: 0.4, commit: 0.6, xp: 3, coins: [0, 1],
+    range: 12, atkCd: 1.0, dmg: 4, arc: 2.2, temp: 0.4, commit: 0.6, xp: 3, coins: [0, 1], noCorpse: true, hops: 0.8,
   },
   skeleton: {
     team: 'enemy', name: 'Skeleton', r: 34, vr: 24, turn: 3.4, accel: 180, face: 3.4, mass: 1.3, hp: 52, speed: 50, role: 'melee',
@@ -71,6 +72,26 @@ Object.assign(DEFS, ENEMIES);
 // The raised skeleton (Raise Dead, the Bone Charm) wears the current skeleton art, the Rattler's; the old
 // art/skeleton.svg is gone (designer, round 7: "something is summoning the old skeleton visuals").
 Object.assign(DEFS.skeleton, { art: ENEMIES.rattler.art, headR: ENEMIES.rattler.headR, attackAnim: 'swing' });
+
+// Variants (round 9, recolor.js): a def with variantOf takes everything from its base kind that it doesn't say itself
+// (its own name, numbers and kit on top), and wears the base's art with its colours turned (hue / sat / light /
+// accent): no new art. size: r, vr and mass x. An elite variant falls back on its base's elite move (eliteAs).
+// Procedural kinds (rats, slimes) are drawn as their base (spriteOf) and recoloured on the canvas (sprites.js).
+const PROC_HEAD = { rat: 50, slime: 54, slimeSmall: 54 };
+function resolveVariant(k) {
+  const d = DEFS[k];
+  if (!d || !d.variantOf || d.variantDone) return d;
+  const base = resolveVariant(d.variantOf);
+  if (!base) throw new Error(`variant ${k}: no base ${d.variantOf}`);
+  const spec = specOf(d), sz = d.size || 1;
+  const out = { ...base, eliteAs: base.eliteAs || d.variantOf, ...d, variantDone: true, base: base.base || d.variantOf };
+  for (const key of ['boss', 'mini', 'arena']) if (!(key in d)) delete out[key];
+  if (base.art) out.art = d.art || variantUrl(parseVariantUrl(base.art).file, spec);
+  else { out.spriteOf = base.spriteOf || d.variantOf; out.recolor = spec; out.headR = d.headR ?? base.headR ?? PROC_HEAD[out.spriteOf]; }
+  if (sz !== 1 && !('r' in d)) { out.r = base.r * sz; out.vr = (base.vr || base.r) * sz; out.mass = base.mass * sz * sz; }
+  return (DEFS[k] = out);
+}
+for (const k of Object.keys(DEFS)) resolveVariant(k);
 
 // Round 6 feel (designer, 2026-11-20): a much faster party (~3x; enemies faster too so fights still meet, ability
 // cooldowns unchanged), longer time-to-kill (more HP for everyone), longer attack and view range, slightly bigger

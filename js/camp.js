@@ -86,7 +86,7 @@ function render() {
   if (out.after) out.after();
   if (sheet) renderSheet();
 }
-const purse = () => `<span class="pill purse">${coin}<b id="cGold">${save.cheat ? '∞' : save.gold}</b></span>`;
+const purse = () => `<span class="pill purse">${coin}<b id="cGold">${save.cheat ? '∞' : save.gold}</b></span>${save.gems ? `<span class="pill purse gems"><span class="gem"></span><b>${save.gems}</b></span>` : ''}`; // gems: round 9
 const defaultTop = (title) => `<h1 class="top-title">${title}</h1>${purse()}`;
 const backTop = (title, sub = '') => `<button class="top-back" data-act="back" aria-label="back">${I.back}</button><div class="top-mid"><h1 class="top-title sm">${title}</h1>${sub}</div>${purse()}`;
 function go(t) { tab = t; page = null; closeSheet(); render(); mainEl.scrollTop = 0; }

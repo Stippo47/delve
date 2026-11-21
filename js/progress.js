@@ -5,7 +5,8 @@
 // Round 8 (docs/BUILD-v4.md, "Shared contract (progression)"):
 // - Levels are permanent. A hero goes in at its level, keeps the XP it earns, and every level gained gives a skill
 //   point. Skill points buy nodes in the web (heroes.js treeFor); gold doesn't.
-// - Gold buys and upgrades equipment (trinkets), new heroes and potions. Gems are gone.
+// - Gold buys and upgrades equipment (trinkets), new heroes and potions. Gems are back (round 9: "Gems stay. Maybe to
+//   unlock special skill tree abilities"): counted and kept (save.gems), nothing spends them yet.
 // - Party slots are earned, not bought: the first dungeon's first mini-boss, the first dungeon's boss, the second
 //   dungeon's boss (save.unlocks).
 // - Dungeons open in order (themes.js DUNGEON_ORDER): beat one's boss to open the next.
@@ -323,6 +324,8 @@ export function applySummary(save, run, result, now = Date.now()) {
   const won = result === 'won' || !!s.bossKilled;
   const firstClear = won && !d.cleared;
   save.gold += gold;
+  const gems = Math.max(0, Math.floor(s.gems || 0)); // gems aren't lost by leaving early: they're few and hard won
+  save.gems = (save.gems || 0) + gems;
   if (result === 'won') save.wins++;
   if (won) d.cleared++;
   d.best = Math.max(d.best || 0, s.floor || 0);
@@ -353,10 +356,11 @@ export function applySummary(save, run, result, now = Date.now()) {
     if (downed || hurt) h.recoverUntil = Math.max(h.recoverUntil || 0, now + (downed ? RECOVER_DOWN : RECOVER_HURT));
     heroes.push({ id, from, level: h.level, gained, points: h.points, record, downed, hurt });
   }
-  return { result, raw, lost, gold, mercCut: kept - gold, gems: 0, firstClear, firstClearGems: 0,
+  return { result, raw, lost, gold, mercCut: kept - gold, gems, firstClear, firstClearGems: 0,
     kills: s.kills || 0, floor: s.floor || 0, rooms: s.rooms || 0, heroes, found: (s.foundTrinkets || []).map((t) => (t && t.id) || t), theme,
     floorDone: !!s.floorDone, checkpoint: d.checkpoint > oldCp ? d.checkpoint : null, minis: (s.minis || []).slice(), bossKilled: !!s.bossKilled,
     slots: { before: slotsBefore, after: save.slots, unlocked: newSlots }, opened };
 }
-// Gems are gone (round 8); kept at 0 for older readers.
+// No first-clear gem bonus (the floor's last foe drops them instead: dungeon.js onKill).
 export const FIRST_CLEAR_GEMS = 0;
+

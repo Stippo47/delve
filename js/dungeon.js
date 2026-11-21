@@ -18,7 +18,7 @@ import { buildGrid, circleRect, findPath } from './path.js';
 import { makeFloor, nodeAt, nextNodes, chooseDoor, advance, LAYERS } from './map.js';
 import { themeOf, floorTheme, weighted } from './themes.js';
 import { G, SPIKE_R, makeGrid, gridWalls, gridObstacles, hazardCell, dropObstacles, dropGridWalls } from './layout.js';
-import { makeElite, makeMiniBoss, setCostOf, ENEMY_TRINKETS, ELITE_TRINKET } from './elites.js';
+import { makeElite, makeMajor, setCostOf, ENEMY_TRINKETS, ELITE_TRINKET } from './elites.js';
 import { addXp } from './progress.js';
 import { freshStatuses } from './statuses.js';
 
@@ -138,20 +138,22 @@ function enemyPack(w, run, budget, cell) {
   const kinds = rollKinds(run, budget);
   for (const k of kinds) {
     const p = placeFree(w, DEFS[k].r, c.x - 170, c.x + 170, Math.max(DEFS[k].r + 20, c.y - 160), Math.min(w.H - DEFS[k].r - 20, c.y + 160));
-    const u = foe(w, run, k, p.x, p.y, {}, eliteP(run));
+    const u = foe(w, run, k, p.x, p.y, {}, eliteP(run), majorP(run));
     u.facing = u.mvA = angleTo(p.x, p.y, w.doorIn.x, w.doorIn.y); // facing the way the party comes in
   }
   return kinds.length;
 }
 
-// One enemy, maybe an elite: its kind's extra move on top of its kit, 2-3x as strong, 1.5x as fast, a gold rim
-// (enemies.js makeElite). opts.elite forces one.
-function foe(w, run, k, x, y, opts = {}, p = 0) {
+// One enemy, maybe an elite (its kind's extra move on top of its kit, 2-3x as strong, 1.5x as fast, bigger; elites.js
+// makeElite) or now and then a major (round 9: a stronger elite with one more move, any floor; makeMajor). opts.elite /
+// opts.major force one. Elites carry one trinket, majors two (they use them, and drop them).
+function foe(w, run, k, x, y, opts = {}, p = 0, pm = 0) {
   const u = spawn(w, k, x, y, { mult: w.mult, ...opts });
   hardHitting(u, opts.mult || w.mult);
   u.coinMul = goldMul(run);
-  if (opts.mini) { makeMiniBoss(w, u); arm(u, chance(ELITE_TRINKET.mini) ? 1 : 0); }
-  else if (opts.elite || (p > 0 && !DEFS[k].boss && chance(p))) { makeElite(w, u); arm(u, chance(ELITE_TRINKET.two) ? 2 : chance(ELITE_TRINKET.one) ? 1 : 0); }
+  const can = !DEFS[k].boss && !DEFS[k].noElite;
+  if (opts.major || opts.mini || (can && pm > 0 && chance(pm))) { makeMajor(w, u); arm(u, ELITE_TRINKET.major); }
+  else if (opts.elite || (can && p > 0 && chance(p))) { makeElite(w, u); arm(u, ELITE_TRINKET.elite); }
   return u;
 }
 // Round 8: deep down, enemies hit harder rather than only soaking more (sim.js spawn gives hp x m, blows x 0.65 +
@@ -176,6 +178,9 @@ const goldMul = (run) => 1 + 0.25 * (DUNGEON_RANK[run.theme] || 0) + 0.15 * (run
 // floors, in harder dungeons and in later waves.
 // (testing: ?elites makes every enemy an elite)
 const eliteP = (run, wave = 0) => (debugParam('elites') != null ? 1 : Math.min(0.32, 0.05 + 0.03 * (run.floor - 1) + 0.015 * (DUNGEON_RANK[run.theme] || 0) + 0.025 * wave));
+// A major (round 9: "Majors can appear on any floor"): rare, a little more often deeper and in later waves (?majors
+// makes every enemy one).
+const majorP = (run, wave = 0) => (debugParam('majors') != null ? 1 : Math.min(0.06, 0.008 + 0.006 * (run.floor - 1) + 0.003 * (DUNGEON_RANK[run.theme] || 0) + 0.005 * wave));
 
 // How hard each dungeon type is, easiest first (designer, round 6: each dungeon harder than the last; round 7: three
 // harder ones after the Crypt; round 8: "make each dungeon and floor clearly harder than the last ... it has to be a
@@ -295,7 +300,7 @@ function buildRoom(run) {
     b.facing = b.mvA = Math.PI; b.floorFoe = true;
     const adds = Math.round((2 + run.floor + Math.floor(run.depth / 2)) * partyScale * COUNT_MUL);
     if (!arena) for (let i = 0; i < adds; i++) {
-      const p = inCell(w, far, 30, 90); const u = foe(w, run, pick(T.bossAdds), p.x, p.y, {}, eliteP(run)); u.facing = Math.PI;
+      const p = inCell(w, far, 30, 90); const u = foe(w, run, pick(T.bossAdds), p.x, p.y, {}, eliteP(run), majorP(run)); u.facing = Math.PI;
     }
   } else if (kind === 'fight' || kind === 'hazard' || kind === 'elite' || kind === 'treasure') {
     let homes = sh.cells.filter((c) => c !== w.entry);
@@ -313,7 +318,9 @@ function buildRoom(run) {
     if (kind === 'elite') { // the elite room: the theme's big one, made elite, and a second elite of its own kind deeper in
       const p = inCell(w, far, 40);
       foe(w, run, T.elite, p.x, p.y, { elite: true }).facing = Math.PI;
-      if (run.floor > 1) { const q = inCell(w, far, 40); foe(w, run, T.elite, q.x, q.y, { elite: true }).facing = Math.PI; }
+      // deeper down a second one, and from floor 2 now and then a major of the floor's own roster instead
+      if (run.floor > 1) { const q = inCell(w, far, 40); const mk = chance(0.35) ? weighted(T.enemies, rand) : null;
+        foe(w, run, mk || T.elite, q.x, q.y, mk ? { major: true } : { elite: true }).facing = Math.PI; }
     }
     // waves: once the room is clear, more come up out of the floor. Round 7: 2-3 more than before (3-4, a fifth now
     // and then deeper down; the elite room 2), each a bit harder than the last (bigger, heavier kinds, more elites);
@@ -493,7 +500,11 @@ function onKill(run, u) {
     w.pickups.push({ type: 'trinket', id, uid: Math.floor(rand() * 1e9), x: clamp(u.x + Math.cos(a) * 40, 40, w.W - 40), y: clamp(u.y + Math.sin(a) * 40, 40, w.H - 40), hop: 0.5 });
   }
   // tougher enemies (a harder dungeon, a deeper floor) are worth more; a mini-boss or boss a lot more
-  const xp = Math.round((u.def.xp || 0) * XP_MUL * (1 + 0.15 * (run.depth - 1)) * Math.sqrt(w.mult || 1) * (u.mini ? 8 : u.elite ? 3 : 1));
+  const xp = Math.round((u.def.xp || 0) * XP_MUL * (1 + 0.15 * (run.depth - 1)) * Math.sqrt(w.mult || 1) * (u.major ? 7 : u.elite ? 3 : 1));
+  // gems (round 9: "Gems stay"): each floor's last foe drops one, the dungeon's boss two; a major now and then
+  if (u.floorFoe) run.gems += run.floor >= FLOORS ? 2 : 1;
+  else if (u.major && chance(0.15)) run.gems++;
+
   for (const h of w.units) if (h.team === 'hero' && alive(h)) giveXp(run, h, xp);
 }
 export const XP_MUL = 1.6;
@@ -654,7 +665,7 @@ function waveTick(run, dt) {
   }
   if (pd.t > 0) return;
   for (const sp of pd.spots || []) {
-    const u = foe(w, run, sp.k, sp.x, sp.y, { mult: w.mult * (1 + 0.05 * wv.n) }, eliteP(run, wv.n));
+    const u = foe(w, run, sp.k, sp.x, sp.y, { mult: w.mult * (1 + 0.05 * wv.n) }, eliteP(run, wv.n), majorP(run, wv.n));
     u.aggro = true; u.facing = u.mvA = rand() * Math.PI * 2; u.flinchT = 0.35; // a moment to find its feet
     puff(w, sp.x, sp.y, '#3A2E44', 10, 120, 7, 0.5);
   }
@@ -766,6 +777,7 @@ function doTasks(run, dt) {
       scatterCoins(w, o.x, o.y, Math.round((rint(6, 10) + run.depth * 3 + run.floor * 2) * goldMul(run)), 1.15);
       w.shake = Math.max(w.shake, 2);
       if (chance(0.5)) grant(run, pick(['potion', 'potion', 'xp', 'trinket']), h);
+      if (chance(0.06)) run.gems++; // now and then a chest holds a gem
     } else {
       grant(run, o.reward, h);
       w.pickups = w.pickups.filter((p) => p.type !== 'pedestal');
@@ -816,7 +828,8 @@ export function summarize(run) {
   for (const k of run.party) { const u = run.world && run.world.units.find((x) => x.kind === k && x.team === 'hero' && !x.summon && !x.gone); const hs = run.heroes[k];
     hp[k] = u ? Math.max(0, u.hp / u.maxHp) : hs.hp != null && hs.maxHp ? hs.hp / hs.maxHp : 1;
     heroes[k] = { level: hs.level, xp: hs.xp, gained: hs.gained || 0, from: hs.from || hs.level }; }
-  run.summary = { gold: run.coins, gems: 0, kills: run.kills, floor: run.floor, startFloor: run.startFloor || 1, rooms: run.rooms, levels, heroes, downed, hp,
+  run.summary = { gold: run.coins, gems: run.gems || 0, kills
+: run.kills, floor: run.floor, startFloor: run.startFloor || 1, rooms: run.rooms, levels, heroes, downed, hp,
     foundTrinkets: run.satchel.slice(), result: run.phase, floorDone: !!run.floorDone || run.phase === 'won', minis: run.minis.slice(), bossKilled: !!run.bossKilled };
   return run.summary;
 }

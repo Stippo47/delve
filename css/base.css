@@ -114,3 +114,6 @@ b, strong { font-weight: 850; }
   *, *::before, *::after { animation-duration: .01s !important; transition-duration: .01s !important; }
 }
 @keyframes up { from { opacity: 0; transform: translateY(14px); } }
+/* gems (round 9): a small cut violet stone, beside the gold */
+.gem { display: inline-block; width: .8em; height: .95em; vertical-align: -.12em; flex: none; background: linear-gradient(160deg, #E6D6FF, #9B6BE0 55%, #5E3AA8);
+  clip-path: polygon(50% 0, 100% 38%, 50% 100%, 0 38%); }

@@ -185,7 +185,7 @@ export function draw(ctx, w) {
   const order = [...w.units].sort((a, b) => (a.downed ? -1 : 0) - (b.downed ? -1 : 0) || screenDepth(a) - screenDepth(b));
   const dt = Math.min(0.05, Math.max(0, w.time - (w._lastDraw ?? w.time))); w._lastDraw = w.time; w._dt = dt;
   noteHits(w);
-  for (const u of order) { if (u.kind === 'rat' && !u.downed) drawTail(ctx, u, dt); drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawBodyFx(ctx, u, w); }
+  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.downed) drawTail(ctx, u, dt); drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawBodyFx(ctx, u, w); }
   for (const p of w.projectiles) projectile(ctx, p, w.time);
   for (const p of w.particles) drawParticle(ctx, p);
   ctx.globalAlpha = 1;
@@ -511,11 +511,13 @@ function washesOf(u, w) {
     else if (b.id === 'whirl') out.push(['#FFFFFF', 0.08]);
   }
   if (u.leechT > 0) out.push(['#C8453D', 0.12 + 0.08 * Math.sin(w.time * 8)]);
+  if (u.look && u.look.tintA && !u.downed) out.push([u.look.tint, u.look.tintA]); // an elite's or major's faint tint (round 9)
   const hw = hpWash(u, w.time); if (hw) out.push(hw);
   return out;
 }
 
-// Elites (round 7) are marked by a gold rim round the figure (no text in the arena).
+// Round 9: elites and majors have no gold rim, they're just bigger with a faint tint (u.look, elites.js LOOK) and a
+// twinkle (sim.js). A coloured border is kept for protection (u.rim: set by whatever protects; the visuals lane).
 const ELITE_COL = '#FFC83A', ELITE_RIM = 1.16;
 function drawUnit(ctx, u, w) {
   if (u.def.art) { drawPartsUnit(ctx, u, w); if (u.frozenT > 0) drawIce(ctx, u, w); return; }
@@ -529,7 +531,7 @@ function drawUnit(ctx, u, w) {
   if (u.downed) ctx.globalAlpha = 0.62;
   if (u.ethereal && !u.exiting) ctx.globalAlpha = 0.45;
   if (spr) {
-    if (u.elite && !u.downed) { const ga = ctx.globalAlpha, r = sizeU * ELITE_RIM; ctx.globalAlpha = ga * (0.7 + 0.3 * Math.sin(w.time * 5 + u.id)); ctx.drawImage(tinted(spr, ELITE_COL), -r / 2, -r / 2, r, r); ctx.globalAlpha = ga; }
+    if (u.rim && !u.downed) { const ga = ctx.globalAlpha, r = sizeU * ELITE_RIM; ctx.globalAlpha = ga * (0.7 + 0.3 * Math.sin(w.time * 5 + u.id)); ctx.drawImage(tinted(spr, ELITE_COL), -r / 2, -r / 2, r, r); ctx.globalAlpha = ga; }
     let img = u.downed ? spr.grey : u.flashT > 0.06 ? spr.flash : spr.img;
     ctx.drawImage(img, -sizeU / 2, -sizeU / 2, sizeU, sizeU);
     // status washes over the sprite itself rather than rings around it
@@ -566,7 +568,7 @@ function drawPartsUnit(ctx, u, w) {
   if (u.downed) alpha = 0.62; // a hero who is down lies faint too (round 7)
   if (u.ethereal && !u.exiting) alpha *= 0.5;
   const mode = u.downed ? 'grey' : u.flashT > 0.06 ? 'flash' : 'normal';
-  if (u.elite && !u.downed) { // an elite: a gold rim round the whole figure, outside its ink outline, softly pulsing
+  if (u.rim && !u.downed) { // round 9: the elites' gold rim is gone (a coloured border is for protection now); u.rim is for that
     ctx.save(); ctx.globalAlpha = alpha * (0.7 + 0.3 * Math.sin(w.time * 5 + u.id)); ctx.translate(100, 100); ctx.scale(ELITE_RIM, ELITE_RIM); ctx.translate(-100, -100);
     drawComposed(ctx, composeRig(set, pose, 'normal', ELITE_COL)); ctx.restore();
   }

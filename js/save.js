@@ -14,7 +14,7 @@
 //   trinkets: [id...] (owned, not equipped), tlv: { [trinketId]: level }, elixirs: { [potionId]: n },
 //   runs, wins, speed, zoom, party: [heroId...], mercs, theme, seen: { [enemyKind]: { met, beaten } }, campLayout,
 //   treeLayout, cheat }
-// Gems are gone: a v2 save's gems become gold (GEM_GOLD each). A v2 save's levels lived inside runs, so its heroes
+// Gems (round 9: back): save.gems, kept through every migration (a v2 save keeps its gems as gems). A v2 save's levels lived inside runs, so its heroes
 // start at a level from their best run, with the points for it, and the gold spent on the old tree comes back.
 // A v1 save starts fresh but keeps its coins as gold.
 import { HEROES } from './heroes.js';
@@ -32,7 +32,7 @@ export function freshHero(id) {
 export function freshSave() {
   const heroes = {};
   for (const id of Object.keys(HEROES)) heroes[id] = freshHero(id);
-  return { v: 3, gold: 0, slots: 1, unlocks: { slotMini1: false, slotBoss1: false, slotBoss2: false }, potions: 0, heroes,
+  return { v: 3, gold: 0, gems: 0, slots: 1, unlocks: { slotMini1: false, slotBoss1: false, slotBoss2: false }, potions: 0, heroes,
     trinkets: [], dungeons: {}, runs: 0, wins: 0, speed: 1, zoom: null, party: [Object.keys(HEROES).find((k) => HEROES[k].starter)],
     mercs: false, theme: null, elixirs: {}, tlv: {}, seen: {}, campLayout: 'clearing', treeLayout: 'grove', cheat: false };
 }
@@ -70,13 +70,14 @@ export function normalise(s) {
   out.unlocks = { ...f.unlocks, ...(s.unlocks || {}) };
   for (const k of Object.keys(out.unlocks)) out.unlocks[k] = !!out.unlocks[k];
   out.slots = slotsOf(out);
-  delete out.gems; delete out.look; delete out.treeLook;
+  out.gems = int(s.gems); delete out.look; delete out.treeLook;
   if (out.campLayout !== 'fireside') out.campLayout = 'clearing';
   if (out.treeLayout !== 'wheel') out.treeLayout = 'grove';
   const cap = Date.now() + 3 * 60e3;
   for (const h of Object.values(out.heroes)) if (h.recoverUntil > cap) h.recoverUntil = cap;
   out.party = (Array.isArray(s.party) ? s.party : f.party).filter((id) => out.heroes[id] && out.heroes[id].owned).slice(0, out.slots);
-  for (const k of ['gold', 'potions', 'runs', 'wins']) out[k] = int(out[k]);
+  for (const k of ['gold', 'gems', 'potions', 'runs', 'wins']) out[k] = int(out[k]);
+
   return out;
 }
 
@@ -86,7 +87,7 @@ export function normalise(s) {
 const V2_TIER_GOLD = [60, 160, 320], V2_STAT_GOLD = 120;
 export function fromV2(old) {
   const s = normalise({});
-  s.gold = int(old.gold) + int(old.gems) * GEM_GOLD;
+  s.gold = int(old.gold); s.gems = int(old.gems);
   for (const id of Object.keys(HEROES)) {
     const o = old.heroes && old.heroes[id]; if (!o) continue;
     const h = s.heroes[id];
