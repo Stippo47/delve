@@ -185,7 +185,8 @@ export function mountTree(host, o) {
     cancelAnimationFrame(anim);
     try { svgEl.setPointerCapture(e.pointerId); } catch {}
     ptr.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (ptr.size === 1) down = { x: e.clientX, y: e.clientY, t: performance.now(), n: (e.target.closest && e.target.closest('[data-n]') || {}).dataset?.n, moved: false };
+    const hit = e.target && e.target.closest ? e.target.closest('[data-n]') : null;
+    if (ptr.size === 1) down = { x: e.clientX, y: e.clientY, t: performance.now(), n: hit ? hit.dataset.n : null, moved: false };
     if (ptr.size === 2) { const [a, b] = [...ptr.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), k: v.k }; if (down) down.moved = true; }
   });
   svgEl.addEventListener('pointermove', (e) => {
