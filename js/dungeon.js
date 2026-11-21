@@ -858,3 +858,38 @@ export function summarize(run) {
   return run.summary;
 }
 export { LAYERS };
+
+// ---------------------------------------------------------------- battle mode (battle.js)
+// One open room in a dungeon's look for a pinned fight: no doors, a few obstacles down the middle band only (so
+// nobody starts inside one), or a boss's own hall (arena: 'throne' | 'grove'). big: two screens across.
+export function battleRoom(themeId, { arena = null, big = false, obstacles = 2 } = {}) {
+  const T = floorTheme(themeId, 1);
+  const W = big ? 1040 : 960, Hh = big ? 2 * ROW : ROW;
+  const sh = arena ? arenaShape(arena) : { name: 'battle', nr: 1, nc: 1, W, H: Hh, cells: [{ c: 0, r: 0, x: 0, y: 0, w: W, h: Hh }], solid: [] };
+  const w = makeWorld(sh.W, sh.H);
+  w.theme = T; w.cells = sh.cells; w.shape = sh.name; w.chunks = { nc: sh.nc, nr: sh.nr };
+  w.entry = sh.cells[0]; w.exits = [sh.cells[sh.cells.length - 1]]; w.doorIn = { x: 0, y: sh.H / 2 }; w.doors = []; w.mult = 1;
+  if (arena) buildArena(w, arena);
+  else {
+    makeGrid(w);
+    gridObstacles(w, obstacles, T.obstacles || [['crate', 1], ['barrel', 1], ['rock', 1]]);
+    // keep the two starting grounds clear: only what stands near the middle stays
+    const mid = (x) => Math.abs(x - sh.W / 2) < 110;
+    w.walls = w.walls.filter((r) => !r.grid || mid(r.x + r.w / 2)); w.pillars = w.pillars.filter((p) => !p.grid || mid(p.x));
+  }
+  buildGrid(w);
+  dress(w, T, sh);
+  w.toVisit = []; w.wp = null;
+  return w;
+}
+// An enemy for a battle, as strong as it is on the first floor of the dungeon it comes from. rank: 0 plain, 1 elite, 2 major.
+export function battleFoe(w, kind, x, y, mult = 1, rank = 0) {
+  const u = spawn(w, kind, x, y, { mult });
+  hardHitting(u, mult);
+  const can = !DEFS[kind].boss && !DEFS[kind].noElite;
+  if (can && rank >= 2) { makeMajor(w, u); arm(u, ELITE_TRINKET.major); }
+  else if (can && rank === 1) { makeElite(w, u); arm(u, ELITE_TRINKET.elite); }
+  u.carried = null; // nothing drops in a battle
+  return u;
+}
+export { freeSpot };

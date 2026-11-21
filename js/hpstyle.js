@@ -31,14 +31,17 @@ export function ehpStyle() {
 export function setEhpStyle(n) { cur = clamp(Math.round(+n) || DEFAULT, 1, N); try { localStorage.setItem(KEY, String(cur)); } catch {} return cur; }
 
 const RED = '#E0604B', LOST = '#FFE7D6', BACK = '#3A2F3E';
-const shows = (u) => u.team === 'enemy' && !u.def.boss && !u.downed && !u.dead && u.hp < u.maxHp - 0.01 && !u.ethereal;
+// Battle mode (battle.js): every unit on both sides carries a straight bar in its side's colour, hurt or not.
+let SIDES = null; const BLUE = '#5FA8FF';
+export function setHpSides(s) { SIDES = s || null; }
+const shows = (u) => (SIDES ? !u.downed && !u.dead && !u.ethereal && u.team !== 'neutral' : u.team === 'enemy' && !u.def.boss && !u.downed && !u.dead && u.hp < u.maxHp - 0.01 && !u.ethereal);
 // tanky: an elite or a major, or a big, heavy body
 export const tanky = (u) => !!(u.elite || u.major || u.mini || u.maxHp >= 170 || (u.def.mass || 1) >= 2.8);
 function rr(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); }
 
 // Style 4 is a wash over the sprite: render.js's washesOf asks for it.
 export function hpWash(u, T) {
-  if (ehpStyle() !== 4 || !shows(u)) return null;
+  if (SIDES || ehpStyle() !== 4 || !shows(u)) return null;
   const f = clamp(1 - u.hp / u.maxHp, 0, 1);
   const pulse = u.hp / u.maxHp < 0.3 ? 0.12 * (0.5 + 0.5 * Math.sin(T * 9 + u.id)) : 0;
   return ['#6A1424', 0.12 + 0.48 * f + pulse];
@@ -52,7 +55,8 @@ export function drawEnemyHp(ctx, u, dt) {
   if (u._hpSeen != null && u.hp < u._hpSeen) u._hpWait = 0.35;
   u._hpSeen = u.hp;
   if ((u._hpWait = (u._hpWait || 0) - dt) <= 0) u._hpLag = Math.max(u.hp, u._hpLag - u.maxHp * 1.2 * dt);
-  if (!shows(u) || st === 4) return;
+  if (!shows(u) || (st === 4 && !SIDES)) return;
+  if (SIDES) st = 1;
   if (st === 5) st = tanky(u) ? 2 : 1;
   const f = clamp(u.hp / u.maxHp, 0, 1), lag = clamp(u._hpLag / u.maxHp, 0, 1), vr = u.vr * (u.major || u.mini ? 1.16 : u.elite ? 1.08 : 1);
   if (st === 1) { // over the head
@@ -60,7 +64,7 @@ export function drawEnemyHp(ctx, u, dt) {
     ctx.fillStyle = INK; rr(ctx, -bw / 2 - OUTLINE, y - OUTLINE, bw + OUTLINE * 2, bh + OUTLINE * 2, bh); ctx.fill();
     ctx.fillStyle = BACK; rr(ctx, -bw / 2, y, bw, bh, bh / 2); ctx.fill();
     if (lag > f) { ctx.fillStyle = LOST; rr(ctx, -bw / 2, y, bw * lag, bh, bh / 2); ctx.fill(); }
-    ctx.fillStyle = RED; rr(ctx, -bw / 2, y, Math.max(bh * 0.6, bw * f), bh, bh / 2); ctx.fill();
+    ctx.fillStyle = SIDES && SIDES[u.team] === 'a' ? BLUE : RED; rr(ctx, -bw / 2, y, Math.max(bh * 0.6, bw * f), bh, bh / 2); ctx.fill();
   } else if (st === 2) { // a curve over the head, a little away from the body; it empties from its right end
     const R = vr + 15, a0 = -Math.PI / 2 - 0.9, a1 = -Math.PI / 2 + 0.9, span = a1 - a0;
     ctx.lineCap = 'round';

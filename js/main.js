@@ -10,6 +10,8 @@ import { buildCards, updateCards } from './hud.js';
 import { initAudio, audioFrame } from './audio.js';
 import * as M from './meta.js';
 import { I } from './ui-kit.js';
+import { newBattle, updateBattle, callBattle } from './battle.js';
+import { initBattleUI, openSetup, buildBattleDock, updateBattleDock, showBattleResult, battleTitle } from './battle-ui.js';
 import { initInspect, openInspect, closeInspect, inspecting, selected, select, unitAt, drawSelection, panelHeight, refreshInspect } from './inspect.js';
 
 const $ = (id) => document.getElementById(id);
@@ -27,6 +29,8 @@ function show(s) {
   state = s;
   $('camp').classList.toggle('hidden', s !== 'camp');
   $('result').classList.toggle('hidden', s !== 'result');
+  $('battle').classList.toggle('hidden', s !== 'setup');
+  document.body.classList.toggle('battle', s === 'run' && !!run && run.mode === 'battle');
   $('hud').classList.toggle('hidden', s !== 'run');
   $('dock').classList.toggle('hidden', s !== 'run');
   $('leaveAsk').classList.add('hidden');
@@ -47,10 +51,30 @@ function startRun(opts) {
   show('run');
 }
 
+// ---------------------------------------------------------------- battle mode (battle.js, battle-ui.js)
+const isBattle = () => !!run && run.mode === 'battle';
+function startBattle(setup) {
+  run = newBattle(save, setup);
+  if (save.zoom) setZoom(save.zoom);
+  warmArt(run.world);
+  buildChips();
+  show('run');
+}
+function endBattle() {
+  const r = run, setup = r.setup;
+  setPaused(false);
+  if (view.zoom) save.zoom = view.zoom;
+  writeSave(save);
+  window.GAME.lastResult = r.summary.winner; window.GAME.lastReport = r.summary;
+  showBattleResult(r.summary, { again: () => startBattle(setup), change: () => { run = null; openSetup(); show('setup'); }, camp: () => { run = null; show('camp'); } });
+  show('result');
+}
+
 const members = (r) => [...r.party, ...(r.hired || [])];
 const artOf = (k) => (DEFS[k] && DEFS[k].art) || (MERCS.find((m) => m.kind === k) || {}).art || `art/${k}.svg`;
 // The hero cards live in the dock along the bottom (hud.js); tapping one pauses and inspects that hero.
 function buildChips() {
+  if (isBattle()) { buildBattleDock(run, (u) => { if (inspecting() && selected() === u) setPaused(false); else setPaused(true, u); }); return; }
   buildCards(run, artOf, (k) => {
     const u = run.world.units.find((x) => x.kind === k && x.team === 'hero' && !x.summon && !x.dead);
     if (inspecting() && selected() === u) { setPaused(false); return; }
@@ -83,6 +107,14 @@ let hudT = 0;
 function updateHud() {
   if (!run) return;
   const w = run.world;
+  if (isBattle()) { // no map, no purse, no boss bar: the time, and the strip below (battle-ui.js)
+    if (!updateBattleDock(run)) buildChips();
+    $('where').textContent = battleTitle(run);
+    $('speedBtn').textContent = save.speed + '×';
+    const rb = $('retreatBtn'); if (rb.dataset.on !== 'battle') { rb.dataset.on = 'battle'; rb.innerHTML = I.flag; rb.classList.remove('leaving'); }
+    $('bossBar').classList.add('hidden'); $('banner').classList.add('hidden');
+    return;
+  }
   if (!updateCards(run)) buildChips();
   noteBeasts(w);
   const th = THEMES[run.theme];
@@ -107,6 +139,7 @@ $('speedBtn').onclick = () => { save.speed = SPEEDS[(SPEEDS.indexOf(save.speed) 
 // the gold (round 8: 20%), so that asks first, with the numbers.
 $('retreatBtn').onclick = () => {
   if (!run || run.summary) return;
+  if (isBattle()) { callBattle(run); return; } // stop the battle here: on to the result
   if (run.leaving) { retreat(run, false); updateHud(); return; }
   if (!M.leaveCost(run).lose) { retreat(run, true); updateHud(); return; }
   askLeave();
@@ -227,7 +260,7 @@ function drawRun(dt, live) {
     if (!paused) {
       acc += dt * (live ? save.speed : 1);
       let n = 0;
-      while (acc >= STEP && n < 16) { update(run, STEP); acc -= STEP; n++; if (run.summary) break; }
+      while (acc >= STEP && n < 16) { (run.mode === 'battle' ? updateBattle : update)(run, STEP); acc -= STEP; n++; if (run.summary) break; }
       if (acc > STEP * 16) acc = 0;
     }
     draw(ctx, run.world);
@@ -237,7 +270,8 @@ function drawRun(dt, live) {
       ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0); ctx.fillStyle = `rgba(14,17,32,${Math.min(1, a)})`; ctx.fillRect(0, 0, view.cw, view.ch);
     }
     hudT -= dt; if (hudT <= 0) { hudT = 0.1; updateHud(); }
-    if (live && (run.phase === 'won' || run.phase === 'lost' || run.phase === 'retreated')) endRun(run.phase);
+    if (live && run.mode === 'battle') { if (run.summary) endBattle(); }
+    else if (live && (run.phase === 'won' || run.phase === 'lost' || run.phase === 'retreated')) endRun(run.phase);
   }
 }
 
@@ -245,19 +279,20 @@ document.addEventListener('visibilitychange', () => { last = performance.now(); 
 
 window.GAME = {
   get save() { return save; }, get run() { return run; }, get state() { return state; },
-  startRun, endRun, setSpeed: (s) => { save.speed = s; },
+  startRun, endRun, startBattle, openBattle: () => { openSetup(); show('setup'); }, setSpeed: (s) => { save.speed = s; },
   // Recording clips: stop the live loop, then step and draw one frame at a time (tools/clip.mjs).
   record(on = true) { recording = on; acc = 0; },
   recFrame(dt) { if (run) drawRun(dt, false); },
   pause(on = true, kind) { const u = kind && run && run.world.units.find((x) => x.kind === kind && !x.dead); setPaused(on, u); },
-  fastForward(seconds) { const n = Math.round(seconds / STEP); for (let i = 0; i < n && run && !run.summary; i++) update(run, STEP); },
+  fastForward(seconds) { const n = Math.round(seconds / STEP); for (let i = 0; i < n && run && !run.summary; i++) (run.mode === 'battle' ? updateBattle : update)(run, STEP); },
   // debug: change the camp's save while testing, e.g. GAME.cheat({ gold: 999 })
   cheat(o) { Object.assign(save, o); writeSave(save); if (state === 'camp') showCamp(); },
   ask: () => askLeave(),
 };
 
 (async function boot() {
-  initCamp({ save, onSetOut: (opts) => startRun(opts) });
+  initCamp({ save, onSetOut: (opts) => startRun(opts), onBattle: () => { openSetup(); show('setup'); } });
+  initBattleUI({ save: () => save, persist: () => writeSave(save), onFight: (setup) => startBattle(setup), onClose: () => show('camp') });
   initAudio();
   initInspect(() => setPaused(false));
   await Promise.all([loadSprites(), loadThemes()]);
