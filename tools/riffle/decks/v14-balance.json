@@ -1,0 +1,40 @@
+{
+  "title": "0.14.0: the whole game can be beaten",
+  "topic": "runs",
+  "order": 21,
+  "priority": 1,
+  "tags": ["first"],
+  "cards": [
+    {
+      "id": "curve",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "The campaign curve",
+      "text": "A test player now beats all nine dungeons. Before, nobody got past the Gilded Spire. Live as 0.14.0.",
+      "why": "You asked for progression that's a challenge. This makes the late game reachable while nothing falls on a first visit. Mark what feels too fast or too slow when you play.",
+      "details": "The test plays a fresh save run after run like a player would, four times over with different luck.\n\nRuns to beat each dungeon, counted from when it opens (the middle of the four): Wildwood 12, Warren 8, Sewers 16, Crypt 26, Frost Hollow 9, Ember Deep 10, Gilded Spire 21, Sunken Dunes 10, Clockwork Foundry 6. The last boss falls after about 120 to 130 runs, with heroes around level 55 to 60.\n\nIt's still uneven: the Crypt and the Spire are walls, Frost and Ember go quickly, and luck moves any one dungeon a lot (the Crypt took between 12 and 34 runs).\n\nThe Warren is harder than it was (the second dungeon was falling in 2 to 4 runs).",
+      "parts": [
+        { "id": "late", "title": "The late dungeons", "text": "The Spire, Dunes and Foundry were far too strong: even with every skill bought, a party couldn't clear them. Their strength is cut, and a few enemies that hit too hard for their place were softened (cherubs, angels, scarabs, automatons, the smith)." },
+        { "id": "bosses", "title": "Bosses", "text": "Every boss now wins about half its fights against a party at the level you'd reach it, in 2 to 4 minutes. The Great Engine went from winning every fight to about 6 in 10; the Great Ooze from losing every fight to about half." },
+        { "id": "weak", "title": "Weak heroes", "text": "The weakest heroes had abilities that did almost nothing. Jester, Gladiator, Digger, Haymaker, Harpooner, Bandit, Witch, Cultist and Granny Reaper all hit properly with their abilities now." },
+        { "id": "roles", "title": "Roles held", "text": "Tanks still deal about 24% of a party's damage and take about 43% of what's dealt to it; shooters deal about 42%." }
+      ]
+    },
+    {
+      "id": "healers",
+      "kind": "options",
+      "rarity": "rare",
+      "title": "Healers still carry",
+      "text": "After halving their healing, the Cleric and Quartermaster still add about 2 rooms a run. What should I do?",
+      "why": "Numbers alone aren't fixing it. A party with a healer simply lasts longer, and in a party of three or four one healer covers everyone. More cuts would make healing feel useless without making healers less necessary.",
+      "options": [
+        { "id": "accept", "label": "Leave it: a healer should be worth bringing" },
+        { "id": "pressure", "label": "Add enemies and bosses that punish or block healing" },
+        { "id": "limits", "label": "Limit healing by rule (each ally can only be healed so much a room)" },
+        { "id": "cut", "label": "Keep cutting the numbers until they're average" }
+      ],
+      "pick": ["pressure"],
+      "details": "Curse already turns healing down on the heroes it's on, so enemies that curse are the natural tool: more of them in the dungeons where healers shine most.\n\nPart of the Quartermaster's lead is from the tests themselves: he hands out potions, and the test parties carry none of their own."
+    }
+  ]
+}

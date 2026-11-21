@@ -375,3 +375,14 @@ three two-minute stretches up a Wildwood road, the wagon a unit with its own hea
 left behind when it scrolls off, a Guard / Gather switch (the lane's addition), roadside camps with a pick of one
 from three, the Bandit Chief's barricade at the end, real gold and XP worth about a floor. Live as 0.13.0. Open with
 the designer (deck v13-convoy): the switch, one road or many, the roadside camp as a shop, downed heroes riding.
+
+## Round 12 (2026-11-21): the campaign curve, the bosses, hero outliers (lane D)
+Everything changed and why: `docs/balance/r12-notes.md`; tables: `docs/balance/r12-tier1.txt`, `r12-tier3.txt`.
+- **All nine dungeons can be beaten** by `runs.mjs --campaign 150` on four seeds (before, nobody passed the Spire).
+  RANK_MULT is now `[0.75, 2, 2.75, 3.2, 3.75, 4, 3.95, 4.6, 4.2]`: the numbers fold in how hard each dungeon's own
+  enemies are, so they no longer rise in order. A few late enemies hit softer. The Warren is harder (x1.6 to x2).
+- **Bosses**: each about even (7 to 12 hero wins in 20) at the level the campaign reaches it, 2 to 4 minutes.
+- **Heroes**: the weak ones' abilities were doing nothing measurable and now do their share; the healers' numbers
+  were roughly halved (ROLE_TUNE support heal 0.62) and they still lead by about 2 rooms. Asked the designer how to
+  handle that (deck v14-balance): my pick is enemies that punish healing, not more cuts.
+- runs.mjs calls a room stuck at 420 s now, not 300 s.
