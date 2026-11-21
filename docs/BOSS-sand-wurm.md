@@ -51,7 +51,7 @@ It collapses on the sand; the segments go with it.
 - The sinkhole: the whole party sliding into the middle, running against the drag.
 
 ## Numbers
-Health 800 (round 12; was 900) (x1.4 for every boss, then the dungeon's strength and party size), walk 60, mass 12. Phases at 65% and 35%.
+Health 760 (round 12; was 900) (x1.4 for every boss, then the dungeon's strength and party size), walk 60, mass 12. Phases at 65% and 35%.
 
 Balance (`node tools/runs.mjs --boss --theme spire --bossid sandWurm --level 62 --party paladin,archer,cleric,twinfang`:
 the Spire's strength stands in for the Dunes', which roster3 is adding; level 62 is a guess a little past the Spire):

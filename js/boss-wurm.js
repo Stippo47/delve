@@ -177,7 +177,7 @@ function dunes(w) {
 
 export const WURM = {
   defs: {
-    sandWurm: { team: 'enemy', name: 'The Sand Wurm', r: 44, vr: 44, turn: 2.2, accel: 140, face: 2.2, mass: 12, hp: 800, speed: 60, role: 'melee', range: 30, atkCd: 999, arc: 2,
+    sandWurm: { team: 'enemy', name: 'The Sand Wurm', r: 44, vr: 44, turn: 2.2, accel: 140, face: 2.2, mass: 12, hp: 760, speed: 60, role: 'melee', range: 30, atkCd: 999, arc: 2,
       temp: 0.2, commit: 1.2, xp: 230, coins: [90, 110], boss: true, arena: 'dunes', noCorpse: true,
       res: { poison: 0.3, stagger: 0.4, wet: 1.4, burn: 0.8 }, draw: drawWurmHead, brain, onDeath: death },
     wurmSegment: PART('The Sand Wurm (body)', { r: 36, vr: 36, mass: 40, hp: 100, draw: drawWurmSegment }),

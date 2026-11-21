@@ -275,7 +275,7 @@ export const ABILITIES = {
       for (let i = 0; i < n; i++) u.later.push({ t: 0.18 * i + 0.1, f: () => {
         const x = u.x + Math.cos(a) * (60 + i * 55), y = u.y + Math.sin(a) * (60 + i * 55);
         fx(w, { type: 'wave', x, y, a, r: 50, max: 0.35 });
-        for (const e of foesNear(w, u, x, y, 50)) hurt(w, e, dmgOf(u, 0.8), u, { knock: 160, kAngle: a, noDodge: true, stagger: tier >= 3 ? 35 : 0 });
+        for (const e of foesNear(w, u, x, y, 50)) hurt(w, e, dmgOf(u, 1), u, { knock: 160, kAngle: a, noDodge: true, stagger: tier >= 3 ? 35 : 0 });
       } });
     },
   },
@@ -317,7 +317,7 @@ export const ABILITIES = {
       u.later = [{ t: 0.3, f: () => { for (const e of far) { if (!alive(e)) continue;
         const a = angleTo(e.x, e.y, u.x, u.y), d = dist(u.x, u.y, e.x, e.y) - u.r - e.r - 6;
         e.kx += Math.cos(a) * d * 5.4 / Math.max(1, Math.sqrt(e.mass)); e.ky += Math.sin(a) * d * 5.4 / Math.max(1, Math.sqrt(e.mass));
-        hurt(w, e, dmgOf(u, 1), u, { noDodge: true, stagger: tier >= 2 ? 70 : 40 });
+        hurt(w, e, dmgOf(u, 1.3), u, { noDodge: true, stagger: tier >= 2 ? 70 : 40 });
       } } }];
     },
   },

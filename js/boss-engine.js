@@ -185,7 +185,7 @@ function foundry(w) {
 const HAND = (name, o) => PART(name, { r: 40, vr: 40, mass: 30, hp: 100, draw: drawEngineHand, ...o });
 export const ENGINE = {
   defs: {
-    greatEngine: { team: 'enemy', name: 'The Great Engine', r: 52, vr: 52, turn: 2.5, accel: 140, face: 2.5, mass: 14, hp: 900, speed: 46, role: 'melee', range: 30, atkCd: 999, arc: 2,
+    greatEngine: { team: 'enemy', name: 'The Great Engine', r: 52, vr: 52, turn: 2.5, accel: 140, face: 2.5, mass: 14, hp: 1050, speed: 46, role: 'melee', range: 30, atkCd: 999, arc: 2,
       temp: 0.2, commit: 1.2, xp: 240, coins: [100, 120], boss: true, arena: 'foundry', noCorpse: true,
       res: { poison: 0, burn: 0.5, chill: 0.8, shock: 1.4, wet: 1.3, stagger: 0.4, radiance: 0.5, curse: 0.5 }, draw: drawEngineHead, brain, onDeath: death },
     engineHammer: HAND('The Great Engine (left hand)', { res: { shock: 1.4 } }),

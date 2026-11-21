@@ -82,7 +82,7 @@ A pitchfork, a straw hat, and the shoulders of a man who throws hay all day. Art
 - **Toss** (9s). Forks the nearest enemy and throws it over his shoulder. I: Throws it behind him. II: It lands hard: hurt and staggered. III: Throws two.
 - **Pitch Hay** (11s). Flings a forkful of hay over the enemies in front: they are slowed, and the dry hay catches fire easily. I: Slows those in a cone for 4s. II: Fire burns them twice as fast for 6s. III: A wider cone, and it staggers.
 - **Fork Charge** (12s). Runs with the fork lowered, skewering the first enemy and carrying it along. I: Carries the first enemy. II: Slams it down at the end: stunned. III: Carries everything it meets.
-- **Trait: Hard Work.** Each enemy he finishes heals him 5%.
+- **Trait: Hard Work.** Each enemy he finishes heals him 8%.
 
 ## Digger (`digger`, melee, 350 gold)
 A long-handled spade. Digs, flings, bats, and finds coins in the floor. Art: `art/heroes/digger.svg`.
@@ -115,7 +115,7 @@ Wild white hair, brass goggles, a strap of flasks. Every throw is a different br
 A winged totem on his back and a feather spirit-stick. Calls on the ancestors and the rain. Art: `art/heroes/shaman.svg`.
 
 - **Attack: Spirit bolt.** A teal spirit; a little of what it deals heals the most hurt ally.
-- **Healing Totem** (14s). Plants a carved totem that heals the allies near it. I: 3% a second for 6s. II: For 9s. III: It zaps enemies that come near it.
+- **Healing Totem** (14s). Plants a carved totem that heals the allies near it. I: 2.2% a second for 6s. II: For 9s. III: It zaps enemies that come near it.
 - **Spirit Link** (16s). Binds allies together with spirit threads: a blow on one is shared out among them all. I: Up to three allies, for 5s. II: Linked allies take 10% less. III: Up to five, for 7s.
 - **Rain Dance** (15s). Calls a rain cloud over the enemies: it soaks them and puts fires out. I: Rain for 4s. II: Allies under it heal. III: Bigger, and lightning strikes the soaked.
 - **Trait: Ancestral Spirits.** When an ally goes down, the spirits heal everyone else 10%.
@@ -127,7 +127,7 @@ A crooked violet hat and a broom. Turns problems into frogs. Art: `art/heroes/wi
 - **Hex** (12s). Turns an enemy into a frog: it can't attack, hops slowly and takes more damage. I: A frog for 2s. II: For 3s. III: The hex jumps on to a second enemy.
 - **Cursed Brew** (13s). Sets down a bubbling cauldron whose fumes curse whatever breathes them. I: Cursed fumes for 5s. II: Bigger. III: Enemies that die in it burst, cursing those near.
 - **Broom Ride** (10s). Hops on the broom and flies out of trouble. I: Flies clear of the enemies near her. II: Drops three hex bolts on the way. III: Further, and nothing can touch her meanwhile.
-- **Trait: Crone.** Cursed enemies take 25% more from her.
+- **Trait: Crone.** Cursed enemies take 40% more from her.
 
 ## Warlock (`warlock`, caster, 1050 gold)
 Horns, a gold sceptre and a demon-eye orb. Pays for power in his own blood. Art: `art/heroes/warlock.svg`.
@@ -160,7 +160,7 @@ Saffron robe, prayer beads, bare fists. Very calm. Very fast. Art: `art/heroes/m
 Blindfolded, silver-haired, a glowing crystal in her hand. Sees what's coming and tells the party. Art: `art/heroes/seer.svg`.
 
 - **Attack: Glimmer.** A crystal mote that glances off its target onto a second enemy.
-- **Foresight** (12s). Marks the strongest enemy in sight: the whole party hits it harder. I: Marked for 6s: allies hit it 25% harder. II: Its own blows often miss. III: Marks the two strongest.
+- **Foresight** (12s). Marks the strongest enemy in sight: the whole party hits it harder. I: Marked for 6s: allies hit it 35% harder. II: Its own blows often miss. III: Marks the two strongest.
 - **Premonition** (11s). Sees a blow coming: the ally in the most danger slips out of its way. I: The ally most beset is untouchable for 1.2s. II: Two allies. III: For 2s, and it heals them 10%.
 - **Starfall** (15s). Calls stars down out of nowhere onto the enemies round a spot. I: Six stars over 2s. II: They make enemies radiant. III: Ten stars.
 - **Trait: Third Eye.** Can't be blinded, and sees 15% of blows coming in time to step aside.
@@ -187,10 +187,10 @@ A veiled hat, a copper smoker, and a great many friends who sting. Art: `art/her
 A pack bigger than he is. Keeps the party fed, armed and stocked, and throws the pots. Art: `art/heroes/quartermaster.svg`.
 
 - **Attack: Pot toss.** Throws a pot or a pan out of the pack.
-- **Resupply** (12s). Tosses a supply bundle to the ally who needs it most. I: Heals 15%, and a health potion if they have none. II: Heals 25%. III: A bundle each for two allies.
+- **Resupply** (18s). Tosses a supply bundle to the ally who needs it most. I: Heals 10%, and a health potion if they have none. II: Heals 18%. III: A bundle each for two allies.
 - **Oil the Blades** (16s). Hands round lamp oil for the weapons: the allies near him set things alight with every blow. I: Their blows burn a little for 8s. II: They burn more. III: And their blows heal them a little.
 - **Flare** (13s). Fires a red flare onto the enemies: whatever stands in its light is easy to hit. I: For 6s they take 20% more. II: They are dazzled and slowed too. III: A bigger patch of light.
-- **Trait: Well Stocked.** Once a minute, a friend near him who has no health potion gets one.
+- **Trait: Well Stocked.** Every minute and a half, a friend near him who has no health potion gets one.
 
 ## Crossbowman (`crossbowman`, ranged, 700 gold)
 A heavy crossbow, a kettle hat and a tall shield on his back. Slow to load, hard to stop. Art: `art/heroes/crossbowman.svg`.
@@ -286,7 +286,7 @@ A fur cap with the flaps down, a short rifle and a jaw trap. Catches things. Art
 A crested bronze helm, a gladius and a little round shield. Plays to the crowd. Art: `art/heroes/gladiator.svg`.
 
 - **Attack: Gladius.** A short, quick stab.
-- **Net Throw** (10s). Casts a net over one enemy: it is held and he stabs it harder. I: Held for 2s; he hits it 30% harder. II: Held 3s. III: Two nets.
+- **Net Throw** (10s). Casts a net over one enemy: it is held and he stabs it harder. I: Held for 2s; he hits it 40% harder. II: Held 3s. III: Two nets.
 - **Showboat** (14s). Raises the gladius to the crowd: enemies near turn on him and he braces. I: Taunts those near for 3s; takes 30% less. II: Heals 15%. III: Each blow he takes meanwhile is answered.
 - **Shield Rush** (9s). Rushes in behind the round shield and stabs. I: A short rush and a stab. II: The rush knocks aside what it meets. III: Stuns the one stabbed.
 - **Trait: Arena.** Hits 5% harder for each enemy near him, up to 25%.
@@ -296,7 +296,7 @@ A three-pointed cap with bells and a marotte on a stick. Makes enemies look fool
 
 - **Attack: Marotte.** A bonk with the jester's stick.
 - **Mock** (11s). Pulls a face and blows a raspberry: enemies near can't help chasing him. I: Taunts those near for 3s; he dodges more meanwhile. II: Wider. III: They swing slower in their rage.
-- **Befuddle** (14s). Tells an enemy a joke so bad it turns on its own friends for a moment. I: For 2.5s. II: For 4s. III: Two enemies.
+- **Befuddle** (14s). Tells an enemy a joke so bad it turns on its own friends for a moment. I: For 3.5s. II: For 5s. III: Two enemies.
 - **Juggling Act** (10s). Throws his juggling balls: they bounce from enemy to enemy. I: Three balls, each bouncing twice. II: They daze: slowed. III: Five balls.
 - **Trait: Pratfall.** The first time each room a blow would down him, he trips out of its way.
 
