@@ -124,7 +124,10 @@ export function part(w, core, kind, x, y, o = {}) {
 export function endParts(w, core) { for (const o of w.units) if (o.partOf === core && alive(o)) { o.partOf = null; kill(w, o, null); } }
 // A part kind: no brain of its own (the boss moves it), no loot, drawn by `draw`.
 export const PART = (name, o) => ({ team: 'enemy', name, r: 30, vr: 30, turn: 0, accel: 0, face: 0, mass: 30, hp: 100, speed: 0, role: 'melee', range: 0,
-  atkCd: 999, temp: 0.2, commit: 1, xp: 0, coins: [0, 0], noElite: true, noCorpse: true, part: true, brain: () => true, ...o });
+  atkCd: 999, temp: 0.2, commit: 1, xp: 0, coins: [0, 0], noElite: true, noCorpse: true, part: true, brain: () => true, ...o,
+  // statuses don't take on parts: touching parts set each other off (a scorch burst burns its neighbours, which burst
+  // in turn), and a rot burst is a share of the part's own health, passed on to the boss
+  res: { burn: 0, chill: 0, poison: 0, wet: 0, shock: 0, stagger: 0, radiance: 0, curse: 0, entangle: 0, ...(o.res || {}) } });
 // A unit moved by hand: put it at (x, y), facing a, with no slide of its own.
 export function place(u, x, y, a) { u.x = x; u.y = y; u.vx = u.vy = u.dvx = u.dvy = u.kx = u.ky = 0; u.spd = 0; if (a != null) { u.facing = a; u.mvA = a; } }
 
