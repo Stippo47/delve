@@ -868,7 +868,8 @@ function kill(w, u, src) {
   const la = src && src !== u ? angleTo(src.x, src.y, u.x, u.y) : Math.atan2(u.ky, u.kx) || rand() * TAU;
   const kick = 140 / Math.max(0.6, u.mass);
   const cvx = u.kx * 1.3 + Math.cos(la) * kick, cvy = u.ky * 1.3 + Math.sin(la) * kick, cs = Math.hypot(cvx, cvy);
-  if (!u.def.noCorpse) w.corpses.push({ kind: u.kind, // slimes leave none (round 9) x: u.x, y: u.y, r: u.r, vr: u.vr, facing: u.facing, tint: u.tint, kx: cvx, ky: cvy,
+  // slimes leave no body (round 9)
+  if (!u.def.noCorpse) w.corpses.push({ kind: u.kind, x: u.x, y: u.y, r: u.r, vr: u.vr, facing: u.facing, tint: u.tint, kx: cvx, ky: cvy,
     spin: (rand() < 0.5 ? -1 : 1) * Math.min(14, cs / 40), z: 0, vz: Math.min(260, 60 + cs * 0.45), age: 0, t: CORPSE_LIFE, max: CORPSE_LIFE });
   if (w.corpses.length > MAX_CORPSES) w.corpses.splice(0, w.corpses.length - MAX_CORPSES);
   // the body itself flies now: a small puff (a slime, which leaves no body, bursts into goo)
