@@ -59,7 +59,7 @@ export const PUDDLE_TYPES = ['oil', 'fire', 'gas', 'water', 'mist', 'web', 'smok
 export const PUDDLE_COL = COL;
 const ORDER = ['earth', 'oil', 'water', 'frost', 'web', 'fire', 'gas', 'mist', 'smoke'];
 const CLOUD = { gas: 1, mist: 1, smoke: 1 };
-const LAYER_A = { gas: 0.82, mist: 0.7, smoke: 0.88, web: 0.55, frost: 0.8 };
+const LAYER_A = { gas: 0.82, mist: 0.7, smoke: 0.88, web: 0.55, frost: 0.8, earth: 0.55 };
 
 // ---------------------------------------------------------------- the queue
 const Q = [];

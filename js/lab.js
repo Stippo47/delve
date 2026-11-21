@@ -322,7 +322,23 @@ function setupLooks() {
   tick = (dt) => { w.time += dt; for (const u of w.units) { u.bob += dt * 3; } };
 }
 
+// The Bone King fighting three heroes, for his attacks' looks (round 9): &phase=1..4 starts him in that phase.
+function setupKing() {
+  w = room(1000, 600); w.walls = []; w.throne = { x: 830, y: 300 };
+  w.graves = []; for (const fx of [0.25, 0.7]) for (const fy of [90, 510]) w.graves.push({ x: 1000 * fx, y: fy, a: 0, open: false });
+  buildGrid(w); w.bossAdds = ['rattler'];
+  const ph = +(P.get('phase') || 1);
+  const k = spawn(w, 'boneKing', 700, 300); k.aggro = true; k.facing = Math.PI;
+  k.hp = k.maxHp * [1, 0.98, 0.64, 0.38, 0.14][ph];
+  k.k = { phase: ph, st: 'idle', t: 0, cd: 0.6, cleaves: 0, last: null, tgtT: 0, addT: 3, ghostT: 4, novaNext: P.get('nova') !== '0' };
+  if (ph >= 3) { k.crown = true; w.mood = 'unbound'; }
+  ['paladin', 'archer', 'cleric'].forEach((h, i) => { const u = spawn(w, h, 300 + (i === 0 ? 180 : 0), 180 + i * 120, { level: 9 }); initKit(u, h, {}, 9); u.facing = 0; });
+  setZoom(1); view.zoom = +(P.get('zoom') || 0.75);
+  tick = (dt) => { step(w, dt); for (const u of w.units) if (u.team === 'hero' && u.hp < u.maxHp * 0.4) u.hp = u.maxHp; if (k.hp < k.maxHp * [1, 0.7, 0.42, 0.18, 0.02][ph]) k.hp = k.maxHp * [1, 0.98, 0.64, 0.38, 0.14][ph]; };
+}
+
 if (mode === 'grid') setupGrid();
+else if (mode === 'king') setupKing();
 else if (mode === 'looks') setupLooks();
 else if (mode === 'show') setupShow();
 else if (mode === 'puddles') setupPuddles();

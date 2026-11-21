@@ -652,7 +652,7 @@ const ATTACKS = {
   },
   // four notes in a spread, slower, all of them going through
   bard(w, u, t, a) {
-    for (let i = 0; i < 4; i++) shoot(w, u, a + (i - 1.5) * 0.17, { kind: 'note', speed: 250, r: 7, life: 1.3, dmg: A(u, 0.5), pierce: 3, knock: 20 });
+    for (let i = 0; i < 4; i++) shoot(w, u, a + (i - 1.5) * 0.26, { kind: 'note', speed: 250, r: 7, life: 1.3, dmg: A(u, 0.5), pierce: 3, knock: 20 });
   },
   // a thorn that entangles a little
   druid(w, u, t, a) {
@@ -736,7 +736,7 @@ const OLD_BONES = {
     const tier = u.kit.tiers.oldBones || 0; if (!tier || u.kit.oldBonesUsed) return false;
     u.kit.oldBonesUsed = true; u.hp = 1 + (tier >= 2 ? u.maxHp * 0.2 : 0); u.invulnT = 1;
     textU(w, u.x, u.y, u.r + 10, 'NOT YET', '#E8E2D0', 1.1);
-    if (tier >= 3) ring(w, u, u.x, u.y, 130, dmgOf(u, 1), { knock: 300, heavy: true }, '#E8E2D0');
+    if (tier >= 3) { ring(w, u, u.x, u.y, 130, dmgOf(u, 1), { knock: 300, heavy: true }, '#E8E2D0'); w.fx[w.fx.length - 1].ab = 'oldBones'; } // drawn as a quake under the units
     return true;
   },
 };

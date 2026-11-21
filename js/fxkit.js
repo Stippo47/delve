@@ -732,7 +732,7 @@ export function drawBodyFx(ctx, u, w) {
         ctx.save(); ctx.globalAlpha = Math.sin(ph * Math.PI);
         upright(ctx, u.x + Math.cos(an) * rr + ux * ph * 34, u.y + Math.sin(an) * rr + uy * ph * 34, () => {
           ctx.rotate(Math.sin(ph * 8 + i) * 0.35); ctx.scale(0.7 + 0.5 * Math.sin(ph * Math.PI), 0.7 + 0.5 * Math.sin(ph * Math.PI));
-          ctx.font = '900 15px system-ui, -apple-system, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+          ctx.font = '900 21px system-ui, -apple-system, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
           ctx.lineWidth = OUTLINE * 2; ctx.strokeStyle = INK; ctx.strokeText(ch, 0, 0); ctx.fillStyle = i % 2 ? '#FF8A3D' : '#E0604B'; ctx.fillText(ch, 0, 0); });
         ctx.restore(); }
     } else if (b.id === 'unstoppable') { // round 9: a better sparkle: star glints that grow and shrink all over the body

@@ -136,9 +136,6 @@ function zone(ctx, f, T) {
     case 'snow': { // round 9: Frost Arrow's and Frost Nova's lingering cold: a rime on the floor, snowflakes drifting down
       ctx.globalAlpha = 1; const la = clamp(Math.min(f.t / 0.2, (f.max - f.t) / 0.8), 0, 1);
       drawPuddle(ctx, 'frost', x, y, f.r * 0.85, T, la, seed);
-      const [ux, uy] = upVec();
-      for (let i = 0; i < Math.max(6, Math.round(f.r / 9)); i++) { const ph = (T * 0.5 + hash(i, seed)) % 1, b = hash(seed, i) * TAU, d = f.r * Math.sqrt(hash(i, seed, 3));
-        ctx.globalAlpha = la * Math.sin(ph * Math.PI); snowflake(ctx, x + Math.cos(b) * d + ux * (1 - ph) * 26 + Math.sin(ph * 5 + i) * 4, y + Math.sin(b) * d + uy * (1 - ph) * 26, 3 + 1.5 * hash(seed, i, 5), ph * 3 + i); }
       break;
     }
     case 'summon': { // round 9: Call Wolf's summoning ring: a ring of leaves and light drawn on the floor, then the wolf steps out
@@ -183,20 +180,7 @@ function zone(ctx, f, T) {
       // round 9 redo (the flat spiral of lines was disliked): churned earth, then thick thorned tendrils whipping up out of
       // it all over the patch, each curling over at the top; at the end they wither back down, never just vanish
       if (f.ab === 'roll') break;
-      ctx.globalAlpha = 1; drawPuddle(ctx, 'earth', x, y, r * 0.95, T, a, seed);
-      const n = Math.max(6, Math.round(r / 12)), grow = easeOut(clamp(f.t / 0.35, 0, 1)), wither = clamp((f.max - f.t) / 0.5, 0, 1), [ux, uy] = upVec();
-      for (let i = 0; i < n; i++) {
-        const b = hash(seed, i) * TAU, d = r * 0.8 * Math.sqrt(hash(i, seed, 1)), bx = x + Math.cos(b) * d, by = y + Math.sin(b) * d;
-        const g = clamp(grow * 1.3 - hash(i, seed, 2) * 0.3, 0, 1) * wither; if (g <= 0) continue;
-        const H = (22 + 14 * hash(seed, i, 3)) * g, sw = hash(i, seed, 4) > 0.5 ? 1 : -1, wav = Math.sin(T * 3 + i) * 3;
-        const tip = [bx + ux * H + (view.rot ? 0 : sw * 9 + wav), by + uy * H + (view.rot ? sw * 9 + wav : 0)];
-        const path = () => { ctx.beginPath(); ctx.moveTo(bx, by); ctx.quadraticCurveTo(bx + ux * H * 0.6 - (view.rot ? 0 : sw * 6), by + uy * H * 0.6 - (view.rot ? sw * 6 : 0), tip[0], tip[1]); };
-        const col = wither < 1 ? '#7A6A3A' : i % 2 ? '#5E9E3E' : '#4A8433';
-        inkLine(ctx, path, col, 6 * g + 1);
-        inked(ctx, () => { ctx.beginPath(); ctx.arc(tip[0], tip[1], 3.4 * g + 0.5, 0, TAU); }, col); // the curled tip
-        if (g > 0.6) { leaf(ctx, bx + ux * H * 0.45 + (view.rot ? 0 : -sw * 5), by + uy * H * 0.45 + (view.rot ? -sw * 5 : 0), -sw * 0.8 - Math.PI / 2 * (view.rot ? 0 : 1), 6.5 * wither);
-          inked(ctx, () => star(ctx, bx + ux * H * 0.7, by + uy * H * 0.7, 3, 3, 0.3, i), '#3E6E2A'); }
-      }
+      ctx.globalAlpha = 1; drawPuddle(ctx, 'earth', x, y, r * 0.8, T, a, seed); // the tendrils: zoneAir
       break;
     }
     case 'holy': { // Consecrate: a warm glow of holy ground, motes rising, and (round 9) no cracks; a faint ring at its edge
@@ -220,6 +204,32 @@ function zone(ctx, f, T) {
       break;
     }
     case 'heal': motes(ctx, f, x, y, r, T, a, seed, true); break;
+  }
+  ctx.restore();
+}
+// Things standing up out of a zone, drawn over the ground bodies (the puddle layer goes down after the ground fx)
+function zoneAir(ctx, f, T) {
+  const a = life(f, 0.25, 0.45), r = f.r * (0.55 + 0.45 * easeOut(clamp(f.t / 0.3, 0, 1))), x = f.x, y = f.y, seed = Math.round(x * 7 + y * 13);
+  ctx.save(); ctx.globalAlpha = a;
+  if (f.kind === 'vines') {
+      const n = Math.max(6, Math.round(r / 12)), grow = easeOut(clamp(f.t / 0.35, 0, 1)), wither = clamp((f.max - f.t) / 0.5, 0, 1), [ux, uy] = upVec();
+      for (let i = 0; i < n; i++) {
+        const b = hash(seed, i) * TAU, d = r * 0.8 * Math.sqrt(hash(i, seed, 1)), bx = x + Math.cos(b) * d, by = y + Math.sin(b) * d;
+        const g = clamp(grow * 1.3 - hash(i, seed, 2) * 0.3, 0, 1) * wither; if (g <= 0) continue;
+        const H = (22 + 14 * hash(seed, i, 3)) * g, sw = hash(i, seed, 4) > 0.5 ? 1 : -1, wav = Math.sin(T * 3 + i) * 3;
+        const tip = [bx + ux * H + (view.rot ? 0 : sw * 9 + wav), by + uy * H + (view.rot ? sw * 9 + wav : 0)];
+        const path = () => { ctx.beginPath(); ctx.moveTo(bx, by); ctx.quadraticCurveTo(bx + ux * H * 0.6 - (view.rot ? 0 : sw * 6), by + uy * H * 0.6 - (view.rot ? sw * 6 : 0), tip[0], tip[1]); };
+        const col = wither < 1 ? '#7A6A3A' : i % 2 ? '#5E9E3E' : '#4A8433';
+        inkLine(ctx, path, col, 6 * g + 1);
+        inked(ctx, () => { ctx.beginPath(); ctx.arc(tip[0], tip[1], 3.4 * g + 0.5, 0, TAU); }, col); // the curled tip
+        if (g > 0.6) { leaf(ctx, bx + ux * H * 0.45 + (view.rot ? 0 : -sw * 5), by + uy * H * 0.45 + (view.rot ? -sw * 5 : 0), -sw * 0.8 - Math.PI / 2 * (view.rot ? 0 : 1), 6.5 * wither);
+          inked(ctx, () => star(ctx, bx + ux * H * 0.7, by + uy * H * 0.7, 3, 3, 0.3, i), '#3E6E2A'); }
+      }
+  } else if (f.kind === 'snow') {
+    const la = clamp(Math.min(f.t / 0.2, (f.max - f.t) / 0.8), 0, 1);
+      const [ux, uy] = upVec();
+      for (let i = 0; i < Math.max(6, Math.round(f.r / 9)); i++) { const ph = (T * 0.5 + hash(i, seed)) % 1, b = hash(seed, i) * TAU, d = f.r * Math.sqrt(hash(i, seed, 3));
+        ctx.globalAlpha = la * Math.sin(ph * Math.PI); snowflake(ctx, x + Math.cos(b) * d + ux * (1 - ph) * 26 + Math.sin(ph * 5 + i) * 4, y + Math.sin(b) * d + uy * (1 - ph) * 26, 3 + 1.5 * hash(seed, i, 5), ph * 3 + i); }
   }
   ctx.restore();
 }
@@ -250,6 +260,7 @@ export function drawAirFx(ctx, w) {
     else if (f.type === 'soulOrb') soulOrb(ctx, f);
     else if (f.type === 'cure') cureFx(ctx, f, w.time);
     else if (f.type === 'zone' && (f.ab === 'rejuvenate' || f.ab === 'cure')) abilityZoneAir(ctx, f, w.time);
+    else if (f.type === 'zone' && (f.kind === 'snow' || (f.kind === 'vines' && f.ab !== 'roll'))) zoneAir(ctx, f, w.time);
     else if (f.type === 'wave') { if (f.ab === 'shockwave') eruption(ctx, f, 'air'); else if (f.kind === 'note') noteCone(ctx, f, w.time); else wave(ctx, f); }
     else if (f.type === 'pillar') pillar(ctx, f, w.time);
     else if (f.type === 'aura') aura(ctx, f, w.time);

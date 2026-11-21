@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
-<!-- NECROMANCER (round 5, redone; new staff): a deep black-violet hood edged in bone-white, with a ragged front edge and a long drooping point; dark violet robe; a staff made of a spine (stacked vertebrae) topped with a horned skull, green fire in its sockets, in the right fist (behind the body); a green ghost flame over the open left fist. -->
+<!-- NECROMANCER (round 5, redone; new staff): a deep black-violet hood edged in bone-white, with a ragged front edge and a long drooping point; dark violet robe; a staff made of a spine (stacked vertebrae) topped with a horned skull, green fire in its sockets, in the right fist (behind the body); an open left fist (round 9: its green flame is what he throws now, so it is gone from the hand; the staff is held lower down). -->
 <!-- Parts: groups inside #sprite in draw order; weapon arms come before #body so the weapon sits under the body and only the fist shows. Pivots: the shoulder points. Front = down (+y), centre (100,100). -->
 <defs>
 <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -30,10 +30,12 @@
 </defs>
 <g id="sprite" filter="url(#outline)">
 <g id="arm-r" data-pivot="154 108">
+<g transform="translate(-7 21)">
 <use href="#s2" fill="url(#g1)"/><use href="#s2" fill="url(#sR)"/>
 <use href="#s4" fill="url(#g3)"/><use href="#s4" fill="url(#sRl)"/>
 <use href="#s6" fill="url(#g5)"/><use href="#s6" fill="url(#sRl)"/>
 <use href="#s8" fill="url(#g7)"/><g clip-path="url(#c9)"><g transform="translate(150.0 150.0) rotate(18.78)"><ellipse cx="-6" cy="19" rx="5" ry="5.5" fill="#2E3A2A"/><ellipse cx="6" cy="19" rx="5" ry="5.5" fill="#2E3A2A"/><circle cx="-6" cy="19.5" r="3" fill="#A8F060"/><circle cx="6" cy="19.5" r="3" fill="#A8F060"/><path d="M -2 28 L 0 24 L 2 28 Z" fill="#3A3346"/></g></g><use href="#s8" fill="url(#sRl)"/>
+</g>
 <g clip-path="url(#c10)"><rect x="142.8" y="131.6" width="20" height="25" rx="8" transform="rotate(18.8 152.8 141.6)" fill="#2B2230" opacity="0.28"/></g><rect x="142.8" y="129.1" width="20" height="25" rx="8" transform="rotate(18.8 152.8 141.6)" fill="url(#gHand)"/><rect x="142.8" y="129.1" width="20" height="25" rx="8" transform="rotate(18.8 152.8 141.6)" fill="url(#gUnder)"/>
 </g>
 <g id="body">
@@ -43,7 +45,6 @@
 <g clip-path="url(#c18)"><use href="#s17" transform="translate(0 5)" fill="#1A1030" opacity="0.42"/></g><use href="#s17" fill="url(#g16)"/><g clip-path="url(#c19)"><path d="M 56 60 C 46 80 44 104 48 130 L 58 126 C 54 104 56 82 64 62 Z" fill="#B898E0" opacity="0.18"/><path d="M 56 134 L 62 116 C 70 104 82 98 100 98 C 118 98 130 104 138 116 L 144 134" fill="none" stroke="#E8DEC4" stroke-width="9" stroke-linejoin="round"/></g><use href="#s17" fill="url(#sR)"/>
 </g>
 <g id="arm-l" data-pivot="46 108">
-<use href="#s21" fill="url(#g20)"/><g clip-path="url(#c22)"><path d="M 58 180 C 52 180 49 175 51 169 C 53 165 56 163 57 158 C 61 163 64 168 64 172 C 65 177 62 180 58 180 Z" fill="#F0FFD8" opacity="0.85"/></g><use href="#s21" fill="url(#sRl)"/>
 <g clip-path="url(#c23)"><rect x="45.0" y="132.0" width="24" height="21" rx="8" transform="rotate(0.0 57.0 140.0)" fill="#2B2230" opacity="0.28"/></g><rect x="45.0" y="129.5" width="24" height="21" rx="8" transform="rotate(0.0 57.0 140.0)" fill="url(#gHand)"/>
 </g>
 </g>
