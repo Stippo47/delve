@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- COG SPRITE (round 9): the gear sprite's brass cousin, a different cog: seven big blunt teeth, three spokes with dark windows between them, a steel hub. Seen from straight above, it spins as it rolls. No face. Parts: #body only. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="s1" d="M 89.6 47 L 96.3 26.1 L 128.7 31.8 L 127.9 53.8 L 135 58.8 L 155.5 51 L 171.2 80 L 153.5 93 L 154 101.7 L 172.9 112.8 L 160.1 143.2 L 138.9 137.5 L 132.3 143.2 L 135.4 165 L 103.7 173.9 L 94.9 153.8 L 86.4 152.2 L 71.3 168.2 L 44.5 149 L 54.8 129.6 L 50.6 121.9 L 28.8 120 L 27.1 87.2 L 48.7 83.1 L 52.1 75.1 L 39.9 56.8 L 64.6 35 L 81.2 49.4 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#DDAE62"/><stop offset="1" stop-color="#D19128"/></linearGradient>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#704C13" stop-opacity="0"/><stop offset="1" stop-color="#704C13" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c1"><use href="#s1"/></clipPath>
+<path id="s2" d="M 82 100 A 18 18 0 1 0 118 100 A 18 18 0 1 0 82 100 Z"/>
+<clipPath id="u2"><use href="#s1"/></clipPath>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D3D8DF"/><stop offset="1" stop-color="#9BA8B7"/></linearGradient>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4A5768" stop-opacity="0"/><stop offset="1" stop-color="#4A5768" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c2"><use href="#s2"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="body">
+<use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/><g clip-path="url(#c1)"><path d="M 50 100 A 50 50 0 1 0 150 100 A 50 50 0 1 0 50 100 Z" fill="none" stroke="#A8762A" stroke-width="5" opacity="0.6"/><circle cx="117" cy="70.6" r="7.5" fill="#6A4A1E"/><circle cx="134" cy="100" r="7.5" fill="#6A4A1E"/><circle cx="117" cy="129.4" r="7.5" fill="#6A4A1E"/><circle cx="83" cy="129.4" r="7.5" fill="#6A4A1E"/><circle cx="66" cy="100" r="7.5" fill="#6A4A1E"/><circle cx="83" cy="70.6" r="7.5" fill="#6A4A1E"/><path d="M 62 70 A 16 9 0 1 0 94 70 A 16 9 0 1 0 62 70 Z" fill="#FFF6D0" opacity="0.4"/></g>
+<g clip-path="url(#u2)"><use href="#s2" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s2" fill="url(#g3)"/><use href="#s2" fill="url(#g4)"/><g clip-path="url(#c2)"><circle cx="100" cy="90" r="2.8" fill="#6E747E" opacity="0.85"/><circle cx="108.7" cy="105" r="2.8" fill="#6E747E" opacity="0.85"/><circle cx="91.3" cy="105" r="2.8" fill="#6E747E" opacity="0.85"/></g>
+</g>
+</g>
+</svg>

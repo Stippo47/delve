@@ -44,6 +44,7 @@ export function layout(canvas, w, topPad, bottomPad = 10, sidePad = 10) {
   if (heroes.length) { tx = ty = 0; for (const h of heroes) { tx += h.x; ty += h.y; } tx /= heroes.length; ty /= heroes.length; }
   const halfX = along / (2 * s), halfY = across / (2 * s);
   const fit = (v, half, size) => { const lo = half - pad, hi = size - half + pad; return lo > hi ? size / 2 : clamp(v, lo, hi); };
+  if (w.camAt) { tx = w.camAt.x; ty = w.camAt.y; } // lane C (convoy.js): the camera rides with the wagon
   tx = fit(tx, halfX, w.W); ty = fit(ty, halfY, w.H);
   // the player's drag wins for a while, then the camera eases back to the party
   const now = performance.now(), fdt = Math.min(0.1, (now - (view.lastT || now)) / 1000); view.lastT = now;
@@ -85,6 +86,7 @@ function floor(w) {
   const g = c.getContext('2d');
   g.scale(s, s); g.translate(pad, pad);
   paintFloor(g, w, pad);
+  if (w.paintGround) w.paintGround(g, w); // lane C (convoy.js): the road, painted into the cache
   floorCache = { key, c, w, pad, s };
   return c;
 }
@@ -356,6 +358,7 @@ function drawHazard(ctx, h, t) {
 
 function drawPillar(ctx, p, w) {
   if (p.snowball) { // round 10: a yeti's snowball (foes10.js): packed snow, a blue shade and a few clumps
+    if (prop(ctx, 'yeti-snowball', p.x, p.y, PROP_BOX, { sc: p.r / 30 })) return; // art round 9: its own prop, like the troll's boulder
     inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, '#F4FAFF');
     ctx.fillStyle = 'rgba(150,190,225,0.45)'; ctx.beginPath(); ctx.arc(p.x + p.r * 0.18, p.y + p.r * 0.2, p.r * 0.78, 0, TAU); ctx.fill();
     ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(p.x - p.r * 0.25, p.y - p.r * 0.28, p.r * 0.42, 0, TAU); ctx.fill();

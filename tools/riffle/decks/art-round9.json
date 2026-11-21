@@ -1,0 +1,858 @@
+{
+  "title": "Art round 9: the later dungeons",
+  "topic": "art",
+  "order": 20,
+  "priority": 3,
+  "cards": [
+    {
+      "id": "frost",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Frost Hollow",
+      "text": "Frost wolf, ice slime, frost spider, the yeti and its snowball, the icicle wraith, the frost spirit.",
+      "why": "Pale creatures on a pale floor: they read by their outlines. Tick the ones that fit the heroes' style; comment on any that don't.",
+      "pick": [
+        "frost-ice-slime",
+        "frost-icicle-wraith",
+        "frost-spider",
+        "frost-spirit",
+        "frost-wolf",
+        "frost-yeti"
+      ],
+      "items": [
+        {
+          "id": "frost-ice-slime",
+          "label": "Ice slime",
+          "image": "../../../design/class-round9/enemies/renders/frost-ice-slime.png",
+          "text": "Ice slime (enemies/frost-ice-slime.svg, art/enemies/ice-slime.svg, headR 49): the game's slime shape made of ice: glassy, white at the top left going clear blue at the edge, three shards frozen inside, a bright shine, two icicles where the slimes' point is. Was the slime drawn in code, turned pale.",
+          "thumb": "../../../design/class-round9/enemies/renders/frost-ice-slime-thumb.png"
+        },
+        {
+          "id": "frost-ice-slime-before",
+          "label": "Ice slime (before)",
+          "image": "../../../design/class-round9/enemies/renders/frost-ice-slime-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "frost-icicle-wraith",
+          "label": "Icicle wraith",
+          "image": "../../../design/class-round9/enemies/renders/frost-icicle-wraith.png",
+          "text": "Icicle wraith (enemies/frost-icicle-wraith.svg, art/enemies/icicle-wraith.svg, headR 42): Ghost B, the cold ghost the designer picked and round 8 kept for this (\"Make this the wraith. Cold ghost that spawns icicles\"), exactly as it was, with icicles hanging off its shroud: a fringe of icy points along both sides and two at each sleeve's end, their roots tucked under the cloth. Was Ghost A turned b",
+          "thumb": "../../../design/class-round9/enemies/renders/frost-icicle-wraith-thumb.png"
+        },
+        {
+          "id": "frost-icicle-wraith-before",
+          "label": "Icicle wraith (before)",
+          "image": "../../../design/class-round9/enemies/renders/frost-icicle-wraith-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "frost-spider",
+          "label": "Frost spider",
+          "image": "../../../design/class-round9/enemies/renders/frost-spider.png",
+          "text": "Frost spider (enemies/frost-spider.svg, art/enemies/frost-spider.svg, headR 54): a new spider in round 8's creature build (round abdomen, small head, two fangs, four smooth jointed legs a side; the front pair in the arm parts, so they strike): pale ice-blue, the legs frosted white from the knee down, a white frost-flake on the abdomen. Was the round-5 hunter spider turned blue.",
+          "thumb": "../../../design/class-round9/enemies/renders/frost-spider-thumb.png"
+        },
+        {
+          "id": "frost-spider-before",
+          "label": "Frost spider (before)",
+          "image": "../../../design/class-round9/enemies/renders/frost-spider-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "frost-spirit",
+          "label": "Frost spirit",
+          "image": "../../../design/class-round9/enemies/renders/frost-spirit.png",
+          "text": "Frost spirit (enemies/frost-spirit.svg, art/enemies/spirit-frost.svg, headR 34): the spirits' one shared shape, a comma: a round glowing core with the element's mark in it and a wisp of a tail sweeping back, tapering and curling to a point (#back, it sways); ice blue with a white six-armed snowflake. Every spirit is this shape in its element's colours with its own mark. Was Ghost A turned blue.",
+          "thumb": "../../../design/class-round9/enemies/renders/frost-spirit-thumb.png"
+        },
+        {
+          "id": "frost-spirit-before",
+          "label": "Frost spirit (before)",
+          "image": "../../../design/class-round9/enemies/renders/frost-spirit-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "frost-wolf",
+          "label": "Frost wolf",
+          "image": "../../../design/class-round9/enemies/renders/frost-wolf.png",
+          "text": "Frost wolf (enemies/frost-wolf.svg, art/enemies/frost-wolf.svg, headR 35 as the wolf): the round-8 wolf as a white wolf of the ice: a pale blue-white coat, a shaggy mane of pointed white tufts, a cluster of ice shards grown along its back, a blue-grey tail tip, ice-blue claws. Was the wolf turned pale.",
+          "thumb": "../../../design/class-round9/enemies/renders/frost-wolf-thumb.png"
+        },
+        {
+          "id": "frost-wolf-before",
+          "label": "Frost wolf (before)",
+          "image": "../../../design/class-round9/enemies/renders/frost-wolf-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "frost-yeti",
+          "label": "Yeti",
+          "image": "../../../design/class-round9/enemies/renders/frost-yeti.png",
+          "text": "Yeti (enemies/frost-yeti.svg, art/enemies/yeti.svg, headR 68), with its snowball (props/yeti-snowball.svg, art/props/yeti-snowball.svg): the round-8 troll's body plan (the designer: \"the same shape and fighting style as trolls\") in white fur: a huge hunched back under a tufted white coat, a small blue-grey face under a white fur hood with a scalloped fringe, a broad flat nose and two fangs down fr",
+          "thumb": "../../../design/class-round9/enemies/renders/frost-yeti-thumb.png"
+        },
+        {
+          "id": "frost-yeti-before",
+          "label": "Yeti (before)",
+          "image": "../../../design/class-round9/enemies/renders/frost-yeti-before.png",
+          "text": "The stand-in the game showed until now."
+        }
+      ]
+    },
+    {
+      "id": "ember",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Ember Deep",
+      "text": "Fire spider, hellhound, cinder bat, fire spirit and the Pit Lord.",
+      "why": "Each sits beside the recoloured stand-in it replaces. Live in 0.13.1. Tick the ones that fit the heroes' style; comment on any that don't.",
+      "pick": [
+        "ember-cinder-bat",
+        "ember-fire-spider",
+        "ember-hellhound",
+        "ember-pit-lord",
+        "ember-spirit"
+      ],
+      "items": [
+        {
+          "id": "ember-cinder-bat",
+          "label": "Cinder bat",
+          "image": "../../../design/class-round9/enemies/renders/ember-cinder-bat.png",
+          "text": "Cinder bat (enemies/ember-cinder-bat.svg, art/enemies/cinder-bat.svg, headR 44 as the bat): the round-7 bat the designer picked, its shapes as they were (check9.py: the copied code still gives that bat), charred black: the wing bones glowing orange like embers, a glowing rim on the wings, ears glowing inside, cracks round the back and sides of the head (none on the face: two over the eyes' place r",
+          "thumb": "../../../design/class-round9/enemies/renders/ember-cinder-bat-thumb.png"
+        },
+        {
+          "id": "ember-cinder-bat-before",
+          "label": "Cinder bat (before)",
+          "image": "../../../design/class-round9/enemies/renders/ember-cinder-bat-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "ember-fire-spider",
+          "label": "Fire spider",
+          "image": "../../../design/class-round9/enemies/renders/ember-fire-spider.png",
+          "text": "Fire spider (enemies/ember-fire-spider.svg, art/enemies/fire-spider.svg, headR 54): the frost spider's build as a spider of the pit: coal black, every knee glowing like a coal, a glowing orange hourglass and cracks on the abdomen, orange-hot fangs. Was the hunter spider turned red.",
+          "thumb": "../../../design/class-round9/enemies/renders/ember-fire-spider-thumb.png"
+        },
+        {
+          "id": "ember-fire-spider-before",
+          "label": "Fire spider (before)",
+          "image": "../../../design/class-round9/enemies/renders/ember-fire-spider-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "ember-hellhound",
+          "label": "Hellhound",
+          "image": "../../../design/class-round9/enemies/renders/ember-hellhound.png",
+          "text": "Hellhound (enemies/ember-hellhound.svg, art/enemies/hellhound.svg, headR 35 as the wolf): the round-8 wolf made lean (a narrower capsule) and coal black, a burning mane of flame tongues streaming back round the neck, its tail ending in a flame, an ember stripe down the snout, dark red inner ears, bone claws. Was the wolf turned dark red.",
+          "thumb": "../../../design/class-round9/enemies/renders/ember-hellhound-thumb.png"
+        },
+        {
+          "id": "ember-hellhound-before",
+          "label": "Hellhound (before)",
+          "image": "../../../design/class-round9/enemies/renders/ember-hellhound-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "ember-pit-lord",
+          "label": "The Pit Lord",
+          "image": "../../../design/class-round9/enemies/renders/ember-pit-lord.png",
+          "text": "The Pit Lord (enemies/ember-pit-lord.svg, art/enemies/pit-lord.svg, headR 68; the Forges' mini-boss, which wore the round-5 demon): a big demon in the heroes' bust build: dark red skin, no eyes, a dark scalp coming to a point on the brow, two great black ridged horns sweeping out and back, a grim mouth with two fangs, black iron pauldrons with spikes and forge-lit edges, molten cracks on the arms,",
+          "thumb": "../../../design/class-round9/enemies/renders/ember-pit-lord-thumb.png"
+        },
+        {
+          "id": "ember-pit-lord-before",
+          "label": "The Pit Lord (before)",
+          "image": "../../../design/class-round9/enemies/renders/ember-pit-lord-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "ember-spirit",
+          "label": "Fire spirit",
+          "image": "../../../design/class-round9/enemies/renders/ember-spirit.png",
+          "text": "Fire spirit (enemies/ember-spirit.svg, art/enemies/spirit-fire.svg, headR 34): the spirits' comma in flame orange with a pale flame in the core. Was Ghost A turned orange.",
+          "thumb": "../../../design/class-round9/enemies/renders/ember-spirit-thumb.png"
+        },
+        {
+          "id": "ember-spirit-before",
+          "label": "Fire spirit (before)",
+          "image": "../../../design/class-round9/enemies/renders/ember-spirit-before.png",
+          "text": "The stand-in the game showed until now."
+        }
+      ]
+    },
+    {
+      "id": "spire",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Gilded Spire",
+      "text": "Fallen angel, the Twin Heralds, choir sprite, sun blade, both golems, the light and ward spirits.",
+      "why": "Each sits beside the recoloured stand-in it replaces. Live in 0.13.1. Tick the ones that fit the heroes' style; comment on any that don't.",
+      "pick": [
+        "spire-choir-sprite",
+        "spire-fallen-angel",
+        "spire-gilded-golem",
+        "spire-golem",
+        "spire-herald-fallen",
+        "spire-herald-light",
+        "spire-light-spirit",
+        "spire-sun-blade",
+        "spire-ward-spirit"
+      ],
+      "items": [
+        {
+          "id": "spire-choir-sprite",
+          "label": "Choir sprite",
+          "image": "../../../design/class-round9/enemies/renders/spire-choir-sprite.png",
+          "text": "Choir sprite (enemies/spire-choir-sprite.svg, art/enemies/choir-sprite.svg, headR 42): a tiny singing cherub: golden curls, no eyes, its mouth open in an \"o\", a white collar with a gold edge, small white wings (#back), two little hands held up (they lift when it sings). Was the cherub turned pale.",
+          "thumb": "../../../design/class-round9/enemies/renders/spire-choir-sprite-thumb.png"
+        },
+        {
+          "id": "spire-choir-sprite-before",
+          "label": "Choir sprite (before)",
+          "image": "../../../design/class-round9/enemies/renders/spire-choir-sprite-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "spire-fallen-angel",
+          "label": "Fallen angel",
+          "image": "../../../design/class-round9/enemies/renders/spire-fallen-angel.png",
+          "text": "Fallen angel (enemies/spire-fallen-angel.svg, art/enemies/fallen-angel.svg, headR 56 as the angel): one of the host in the heroes' bust build, fallen: ashen skin, no eyes, long black hair, a dark violet robe with a dull violet trim, two dark wings rising behind, ragged (torn feathers of uneven length, gaps, notches), a dark spear with a pale violet blade under the right shoulder (it thrusts). Was ",
+          "thumb": "../../../design/class-round9/enemies/renders/spire-fallen-angel-thumb.png"
+        },
+        {
+          "id": "spire-fallen-angel-before",
+          "label": "Fallen angel (before)",
+          "image": "../../../design/class-round9/enemies/renders/spire-fallen-angel-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "spire-gilded-golem",
+          "label": "Gilded golem",
+          "image": "../../../design/class-round9/enemies/renders/spire-gilded-golem.png",
+          "text": "Gilded golem (enemies/spire-gilded-golem.svg, art/enemies/gilded-golem.svg, headR 66): the golem's own shapes plated in gold: polished plates on the shoulder boulders and the fists, a polished gold front plate over its chest (the front that turns shots back), the rune white. Its own file, still the golem's design (ART-NEEDED: \"the golem in gold plate\"). Was the ogre turned gold.",
+          "thumb": "../../../design/class-round9/enemies/renders/spire-gilded-golem-thumb.png"
+        },
+        {
+          "id": "spire-gilded-golem-before",
+          "label": "Gilded golem (before)",
+          "image": "../../../design/class-round9/enemies/renders/spire-gilded-golem-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "spire-golem",
+          "label": "Golem",
+          "image": "../../../design/class-round9/enemies/renders/spire-golem.png",
+          "text": "Golem (enemies/spire-golem.svg, art/enemies/golem.svg, headR 66): a stone golem in the heroes' bust build: two great boulders for shoulders, a body stone behind a squarish head stone with a rune glowing on its brow (a diamond, no eyes), two great stone fists (they swing), weathered grey with a little moss. Was the ogre turned grey.",
+          "thumb": "../../../design/class-round9/enemies/renders/spire-golem-thumb.png"
+        },
+        {
+          "id": "spire-golem-before",
+          "label": "Golem (before)",
+          "image": "../../../design/class-round9/enemies/renders/spire-golem-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "spire-herald-fallen",
+          "label": "The Twin Heralds",
+          "image": "../../../design/class-round9/enemies/renders/spire-herald-fallen.png",
+          "text": "The Twin Heralds (enemies/spire-herald-light.svg, spire-herald-fallen.svg; art/enemies/herald-light.svg, herald-fallen.svg, headR 56): the same shape twice (ART-NEEDED: \"its fallen twin: the same shape, dark wings, purple\"): a tall herald in the bust build, gold plate on the shoulders over a robe, a winged helm with a plume, great wings rising behind, a long spear (it thrusts); the Herald of Light",
+          "thumb": "../../../design/class-round9/enemies/renders/spire-herald-fallen-thumb.png"
+        },
+        {
+          "id": "spire-herald-fallen-before",
+          "label": "The Twin Heralds (before)",
+          "image": "../../../design/class-round9/enemies/renders/spire-herald-fallen-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "spire-herald-light",
+          "label": "The Twin Heralds",
+          "image": "../../../design/class-round9/enemies/renders/spire-herald-light.png",
+          "text": "The Twin Heralds (enemies/spire-herald-light.svg, spire-herald-fallen.svg; art/enemies/herald-light.svg, herald-fallen.svg, headR 56): the same shape twice (ART-NEEDED: \"its fallen twin: the same shape, dark wings, purple\"): a tall herald in the bust build, gold plate on the shoulders over a robe, a winged helm with a plume, great wings rising behind, a long spear (it thrusts); the Herald of Light",
+          "thumb": "../../../design/class-round9/enemies/renders/spire-herald-light-thumb.png"
+        },
+        {
+          "id": "spire-herald-light-before",
+          "label": "The Twin Heralds (before)",
+          "image": "../../../design/class-round9/enemies/renders/spire-herald-light-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "spire-light-spirit",
+          "label": "Light spirit",
+          "image": "../../../design/class-round9/enemies/renders/spire-light-spirit.png",
+          "text": "Light spirit and ward spirit (enemies/spire-light-spirit.svg, spire-ward-spirit.svg; art/enemies/spirit-heal.svg, spirit-ward.svg, headR 34): the spirits' comma, pale gold with a little sun, violet with a pale shield. Were Ghost A turned gold and violet.",
+          "thumb": "../../../design/class-round9/enemies/renders/spire-light-spirit-thumb.png"
+        },
+        {
+          "id": "spire-light-spirit-before",
+          "label": "Light spirit (before)",
+          "image": "../../../design/class-round9/enemies/renders/spire-light-spirit-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "spire-sun-blade",
+          "label": "Sun blade",
+          "image": "../../../design/class-round9/enemies/renders/spire-sun-blade.png",
+          "text": "Sun blade (enemies/spire-sun-blade.svg, art/enemies/sun-blade.svg, headR 58): a floating golden sword seen from above, centred on its guard so it spins about it: a broad gold blade with pale glowing edges, a crossguard behind a sun disc with eight rays, a grip and a round pommel. Was the cherub turned gold.",
+          "thumb": "../../../design/class-round9/enemies/renders/spire-sun-blade-thumb.png"
+        },
+        {
+          "id": "spire-sun-blade-before",
+          "label": "Sun blade (before)",
+          "image": "../../../design/class-round9/enemies/renders/spire-sun-blade-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "spire-ward-spirit",
+          "label": "Light spirit",
+          "image": "../../../design/class-round9/enemies/renders/spire-ward-spirit.png",
+          "text": "Light spirit and ward spirit (enemies/spire-light-spirit.svg, spire-ward-spirit.svg; art/enemies/spirit-heal.svg, spirit-ward.svg, headR 34): the spirits' comma, pale gold with a little sun, violet with a pale shield. Were Ghost A turned gold and violet.",
+          "thumb": "../../../design/class-round9/enemies/renders/spire-ward-spirit-thumb.png"
+        },
+        {
+          "id": "spire-ward-spirit-before",
+          "label": "Light spirit (before)",
+          "image": "../../../design/class-round9/enemies/renders/spire-ward-spirit-before.png",
+          "text": "The stand-in the game showed until now."
+        }
+      ]
+    },
+    {
+      "id": "dunes",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Sunken Dunes",
+      "text": "Scarab, cobra, jackal guard, mummy, sand mage and dust devil, the sand serpent, dart trap, two spirits.",
+      "why": "Each sits beside the recoloured stand-in it replaces. Live in 0.13.1. Tick the ones that fit the heroes' style; comment on any that don't.",
+      "pick": [
+        "dunes-cobra",
+        "dunes-dart-trap",
+        "dunes-dust-devil",
+        "dunes-jackal",
+        "dunes-mummy",
+        "dunes-sand-mage",
+        "dunes-scarab",
+        "dunes-serpent-coil",
+        "dunes-serpent-head",
+        "dunes-venom-spirit",
+        "dunes-wind-spirit"
+      ],
+      "items": [
+        {
+          "id": "dunes-cobra",
+          "label": "Cobra",
+          "image": "../../../design/class-round9/enemies/renders/dunes-cobra.png",
+          "text": "Cobra (enemies/dunes-cobra.svg, art/enemies/cobra.svg, headR 48): a cobra reared with its hood spread, seen from above: a wide sandy hood with dark bands across it and a pale front edge, a small head with a forked tongue; behind it the body lies in a loose darker coil with pale bands, ending in a thin tail (#back). No eyes, no eye-spots on the hood. Was the lizardman turned sandy.",
+          "thumb": "../../../design/class-round9/enemies/renders/dunes-cobra-thumb.png"
+        },
+        {
+          "id": "dunes-cobra-before",
+          "label": "Cobra (before)",
+          "image": "../../../design/class-round9/enemies/renders/dunes-cobra-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "dunes-dart-trap",
+          "label": "Dart trap",
+          "image": "../../../design/class-round9/enemies/renders/dunes-dart-trap.png",
+          "text": "Dart trap (enemies/dunes-dart-trap.svg, art/enemies/dart-trap.svg, headR 45): set in a tomb wall: a sandstone slab along the wall behind it (#back: it stays on the wall while the head aims, as the game's turrets do), a round carved sun face with rays (no eyes) and a dark slot of a mouth with three dart points in it; the slab's back edge sits on the wall at the distance the game mounts it. Was the ",
+          "thumb": "../../../design/class-round9/enemies/renders/dunes-dart-trap-thumb.png"
+        },
+        {
+          "id": "dunes-dart-trap-before",
+          "label": "Dart trap (before)",
+          "image": "../../../design/class-round9/enemies/renders/dunes-dart-trap-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "dunes-dust-devil",
+          "label": "Dust devil",
+          "image": "../../../design/class-round9/enemies/renders/dunes-dust-devil.png",
+          "text": "Dust devil (enemies/dunes-dust-devil.svg, art/enemies/dust-devil.svg, headR 68): a small whirlwind seen from above: three curved arms of sand sweeping round into a darker eye, paler at their outer edges (it spins whole). Was Ghost A turned sandy.",
+          "thumb": "../../../design/class-round9/enemies/renders/dunes-dust-devil-thumb.png"
+        },
+        {
+          "id": "dunes-dust-devil-before",
+          "label": "Dust devil (before)",
+          "image": "../../../design/class-round9/enemies/renders/dunes-dust-devil-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "dunes-jackal",
+          "label": "Jackal guard",
+          "image": "../../../design/class-round9/enemies/renders/dunes-jackal.png",
+          "text": "Jackal guard (enemies/dunes-jackal.svg, art/enemies/jackal.svg, headR 54): a tomb guard with a jackal's head in the heroes' bust build: black fur, a long snout with a gold stripe, tall ears standing up with gold inside, a broad gold, turquoise and lapis collar over white linen; a gold-tipped spear under the right shoulder (it thrusts), a round bronze shield with a sun boss on the left. Was the Ban",
+          "thumb": "../../../design/class-round9/enemies/renders/dunes-jackal-thumb.png"
+        },
+        {
+          "id": "dunes-jackal-before",
+          "label": "Jackal guard (before)",
+          "image": "../../../design/class-round9/enemies/renders/dunes-jackal-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "dunes-mummy",
+          "label": "Mummy",
+          "image": "../../../design/class-round9/enemies/renders/dunes-mummy.png",
+          "text": "Mummy (enemies/dunes-mummy.svg, art/enemies/mummy.svg, headR 54): the bust build wrapped from head to fists in greyish old linen (greyer than the sand floor), bands round the head and no face showing, wrapped arms and fists (they swing), a long loose strip of bandage trailing back from the right shoulder and a short one on the left (#back). Was the Rattler turned cream.",
+          "thumb": "../../../design/class-round9/enemies/renders/dunes-mummy-thumb.png"
+        },
+        {
+          "id": "dunes-mummy-before",
+          "label": "Mummy (before)",
+          "image": "../../../design/class-round9/enemies/renders/dunes-mummy-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "dunes-sand-mage",
+          "label": "Sand mage",
+          "image": "../../../design/class-round9/enemies/renders/dunes-sand-mage.png",
+          "text": "Sand mage (enemies/dunes-sand-mage.svg, art/enemies/sand-mage.svg, headR 55): a robed desert mage in the bust build: an ochre hood and robe with a turquoise border, a cream veil over the lower face, a staff with a gold sun disc wound round by a spiral of blown sand (right hand), a smaller spiral of sand over the open left hand; both lift when it casts. Was the orc shaman turned sandy.",
+          "thumb": "../../../design/class-round9/enemies/renders/dunes-sand-mage-thumb.png"
+        },
+        {
+          "id": "dunes-sand-mage-before",
+          "label": "Sand mage (before)",
+          "image": "../../../design/class-round9/enemies/renders/dunes-sand-mage-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "dunes-scarab",
+          "label": "Scarab",
+          "image": "../../../design/class-round9/enemies/renders/dunes-scarab.png",
+          "text": "Scarab (enemies/dunes-scarab.svg, art/enemies/scarab.svg, headR 36): a scarab beetle in round 8's creature build: an iridescent shell, teal-green going to blue at the back with a sheen, split into its two wing cases, a rounded shield behind the head, two curved mandibles, six short dark legs (the front pair in the arm parts, they jab). Was the hunter spider turned green.",
+          "thumb": "../../../design/class-round9/enemies/renders/dunes-scarab-thumb.png"
+        },
+        {
+          "id": "dunes-scarab-before",
+          "label": "Scarab (before)",
+          "image": "../../../design/class-round9/enemies/renders/dunes-scarab-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "dunes-serpent-coil",
+          "label": "Sand serpent",
+          "image": "../../../design/class-round9/enemies/renders/dunes-serpent-coil.png",
+          "text": "Sand serpent, a chain: the head (enemies/dunes-serpent-head.svg, art/enemies/serpent-head.svg, headR 40): a broad flat wedge of a head, sandy with dark diamonds down the middle of its back (marks at the sides read as eyes), a pale lip, two fangs and a forked tongue, a round neck behind; a coil (enemies/dunes-serpent-coil.svg, art/enemies/serpent-coil.svg, headR 55; serpentCoil, each segment of the",
+          "thumb": "../../../design/class-round9/enemies/renders/dunes-serpent-coil-thumb.png"
+        },
+        {
+          "id": "dunes-serpent-coil-before",
+          "label": "Sand serpent (before)",
+          "image": "../../../design/class-round9/enemies/renders/dunes-serpent-coil-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "dunes-serpent-head",
+          "label": "Sand serpent",
+          "image": "../../../design/class-round9/enemies/renders/dunes-serpent-head.png",
+          "text": "Sand serpent, a chain: the head (enemies/dunes-serpent-head.svg, art/enemies/serpent-head.svg, headR 40): a broad flat wedge of a head, sandy with dark diamonds down the middle of its back (marks at the sides read as eyes), a pale lip, two fangs and a forked tongue, a round neck behind; a coil (enemies/dunes-serpent-coil.svg, art/enemies/serpent-coil.svg, headR 55; serpentCoil, each segment of the",
+          "thumb": "../../../design/class-round9/enemies/renders/dunes-serpent-head-thumb.png"
+        },
+        {
+          "id": "dunes-serpent-head-before",
+          "label": "Sand serpent (before)",
+          "image": "../../../design/class-round9/enemies/renders/dunes-serpent-head-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "dunes-venom-spirit",
+          "label": "Venom spirit",
+          "image": "../../../design/class-round9/enemies/renders/dunes-venom-spirit.png",
+          "text": "Venom spirit and wind spirit (enemies/dunes-venom-spirit.svg, dunes-wind-spirit.svg; art/enemies/spirit-poison.svg, spirit-haste.svg, headR 30): the spirits' comma, lime green with a dark drop, white with a blue swirl. Were Ghost A turned green and pale.",
+          "thumb": "../../../design/class-round9/enemies/renders/dunes-venom-spirit-thumb.png"
+        },
+        {
+          "id": "dunes-venom-spirit-before",
+          "label": "Venom spirit (before)",
+          "image": "../../../design/class-round9/enemies/renders/dunes-venom-spirit-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "dunes-wind-spirit",
+          "label": "Venom spirit",
+          "image": "../../../design/class-round9/enemies/renders/dunes-wind-spirit.png",
+          "text": "Venom spirit and wind spirit (enemies/dunes-venom-spirit.svg, dunes-wind-spirit.svg; art/enemies/spirit-poison.svg, spirit-haste.svg, headR 30): the spirits' comma, lime green with a dark drop, white with a blue swirl. Were Ghost A turned green and pale.",
+          "thumb": "../../../design/class-round9/enemies/renders/dunes-wind-spirit-thumb.png"
+        },
+        {
+          "id": "dunes-wind-spirit-before",
+          "label": "Venom spirit (before)",
+          "image": "../../../design/class-round9/enemies/renders/dunes-wind-spirit-before.png",
+          "text": "The stand-in the game showed until now."
+        }
+      ]
+    },
+    {
+      "id": "foundry",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Clockwork Foundry",
+      "text": "Gears, bomb bot, automaton, turrets and mortar, tesla coil, drone, smith, saw, drill, bees, the crawler.",
+      "why": "Each sits beside the recoloured stand-in it replaces. Live in 0.13.1. Tick the ones that fit the heroes' style; comment on any that don't.",
+      "pick": [
+        "foundry-automaton",
+        "foundry-bee",
+        "foundry-bomb-bot",
+        "foundry-cog-sprite",
+        "foundry-crawler-head",
+        "foundry-crawler-plate",
+        "foundry-drill-bot",
+        "foundry-gear-sprite",
+        "foundry-hornet",
+        "foundry-mortar",
+        "foundry-repair-drone",
+        "foundry-saw-blade",
+        "foundry-smith",
+        "foundry-storm-spirit",
+        "foundry-tesla-coil",
+        "foundry-turret-flame",
+        "foundry-turret-gun",
+        "foundry-turret-laser",
+        "foundry-turret-steam",
+        "foundry-wasp"
+      ],
+      "items": [
+        {
+          "id": "foundry-automaton",
+          "label": "Automaton",
+          "image": "../../../design/class-round9/enemies/renders/foundry-automaton.png",
+          "text": "Automaton (enemies/foundry-automaton.svg, art/enemies/automaton.svg, headR 54): a sword construct in the heroes' bust build: an iron dome of a head with a copper crest and a dark vent grille at the front (no eyes), brass shoulder plates, a copper boiler on its back with one stack and vent slats (#back), a broad sword in an iron gauntlet (it swings), an iron gauntlet on the left. Was the Rattler tu",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-automaton-thumb.png"
+        },
+        {
+          "id": "foundry-automaton-before",
+          "label": "Automaton (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-automaton-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-bee",
+          "label": "Bee",
+          "image": "../../../design/class-round9/enemies/renders/foundry-bee.png",
+          "text": "Bee, wasp and hornet (enemies/foundry-bee.svg, foundry-wasp.svg, foundry-hornet.svg; art/enemies/bee.svg, wasp.svg, hornet.svg, headR 48, 50, 52): mechanical insects in copper, drawn once each so the game's turns make them bronze and steel: the bee round with iron bands and a short stinger; the wasp thin with a long pointed abdomen and a long stinger; the hornet big and heavy with mandibles; wings",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-bee-thumb.png"
+        },
+        {
+          "id": "foundry-bee-before",
+          "label": "Bee (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-bee-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-bomb-bot",
+          "label": "Bomb bot",
+          "image": "../../../design/class-round9/enemies/renders/foundry-bomb-bot.png",
+          "text": "Bomb bot (enemies/foundry-bomb-bot.svg, art/enemies/bomb-bot.svg, headR 45): a round black iron bomb with a ring of rivets on four stubby legs with brass feet (the front pair swing as it runs), a brass fuse cap on top (seen from above, its middle) and a short fuse curling back; the game draws the sparks. The auto bomb bot is it recoloured as before (boards/foundry-auto-bomb.svg: the brass turns bl",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-bomb-bot-thumb.png"
+        },
+        {
+          "id": "foundry-bomb-bot-before",
+          "label": "Bomb bot (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-bomb-bot-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-cog-sprite",
+          "label": "Cog sprite",
+          "image": "../../../design/class-round9/enemies/renders/foundry-cog-sprite.png",
+          "text": "Cog sprite (enemies/foundry-cog-sprite.svg, art/enemies/cog-sprite.svg): its brass cousin, a different cog (ART-NEEDED: \"a different tooth count\"): seven big blunt teeth, a ring of six holes, a steel hub (three windows read as a radiation sign). Its own art now, not a recolour of the gear. Was the slimelet, brass.",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-cog-sprite-thumb.png"
+        },
+        {
+          "id": "foundry-cog-sprite-before",
+          "label": "Cog sprite (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-cog-sprite-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-crawler-head",
+          "label": "Chain crawler",
+          "image": "../../../design/class-round9/enemies/renders/foundry-crawler-head.png",
+          "text": "Chain crawler, a chain: the head (enemies/foundry-crawler-head.svg, art/enemies/crawler-head.svg, headR 40): a broad steel head plate with a ridge and a crease (no eyes), short feelers, the first legs, two big curved mandibles (arm parts: they snap forward when it bites); a plate (enemies/foundry-crawler-plate.svg, art/enemies/crawler-plate.svg, headR 46): a rounded steel plate with a ridge, rivet",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-crawler-head-thumb.png"
+        },
+        {
+          "id": "foundry-crawler-head-before",
+          "label": "Chain crawler (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-crawler-head-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-crawler-plate",
+          "label": "Chain crawler",
+          "image": "../../../design/class-round9/enemies/renders/foundry-crawler-plate.png",
+          "text": "Chain crawler, a chain: the head (enemies/foundry-crawler-head.svg, art/enemies/crawler-head.svg, headR 40): a broad steel head plate with a ridge and a crease (no eyes), short feelers, the first legs, two big curved mandibles (arm parts: they snap forward when it bites); a plate (enemies/foundry-crawler-plate.svg, art/enemies/crawler-plate.svg, headR 46): a rounded steel plate with a ridge, rivet",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-crawler-plate-thumb.png"
+        },
+        {
+          "id": "foundry-crawler-plate-before",
+          "label": "Chain crawler (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-crawler-plate-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-drill-bot",
+          "label": "Drill bot",
+          "image": "../../../design/class-round9/enemies/renders/foundry-drill-bot.png",
+          "text": "Drill bot (enemies/foundry-drill-bot.svg, art/enemies/drill-bot.svg, headR 49): a squat round body with a hazard stripe, a track down each side, a conical drill bit with spiral grooves (arm-r: it drives forward when it strikes). Was the fire slime, steel.",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-drill-bot-thumb.png"
+        },
+        {
+          "id": "foundry-drill-bot-before",
+          "label": "Drill bot (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-drill-bot-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-gear-sprite",
+          "label": "Gear sprite",
+          "image": "../../../design/class-round9/enemies/renders/foundry-gear-sprite.png",
+          "text": "Gear sprite (enemies/foundry-gear-sprite.svg, art/enemies/gear-sprite.svg, headR 65): a steel cog seen from straight above (the designer: \"top down so u see it as a circle\"): ten square teeth, a darker rim, four round holes, a brass hub. It spins as it rolls. Was the slimelet drawn in code, grey.",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-gear-sprite-thumb.png"
+        },
+        {
+          "id": "foundry-gear-sprite-before",
+          "label": "Gear sprite (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-gear-sprite-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-hornet",
+          "label": "Bee",
+          "image": "../../../design/class-round9/enemies/renders/foundry-hornet.png",
+          "text": "Bee, wasp and hornet (enemies/foundry-bee.svg, foundry-wasp.svg, foundry-hornet.svg; art/enemies/bee.svg, wasp.svg, hornet.svg, headR 48, 50, 52): mechanical insects in copper, drawn once each so the game's turns make them bronze and steel: the bee round with iron bands and a short stinger; the wasp thin with a long pointed abdomen and a long stinger; the hornet big and heavy with mandibles; wings",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-hornet-thumb.png"
+        },
+        {
+          "id": "foundry-hornet-before",
+          "label": "Bee (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-hornet-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-mortar",
+          "label": "Mortar",
+          "image": "../../../design/class-round9/enemies/renders/foundry-mortar.png",
+          "text": "Mortar (enemies/foundry-mortar.svg, art/enemies/mortar.svg, headR 60): a round base ring in #back, a brass yoke and a short fat iron tube tilted up and forward, a brass band round its muzzle (a ring with a dark middle read as an eye, so the tube shows its length). The fire and gas mortars are it with the brass trim turned red and green by an accent (boards/foundry-mortar-fire.svg, -gas.svg; foundr",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-mortar-thumb.png"
+        },
+        {
+          "id": "foundry-mortar-before",
+          "label": "Mortar (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-mortar-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-repair-drone",
+          "label": "Repair drone",
+          "image": "../../../design/class-round9/enemies/renders/foundry-repair-drone.png",
+          "text": "Repair drone (enemies/foundry-repair-drone.svg, art/enemies/repair-drone.svg, headR 55): four rotors on struts, a round steel shell with a hazard stripe and a green work light, a wrench arm (right) and a welding torch (left) that lift when it mends. Was the bat turned grey.",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-repair-drone-thumb.png"
+        },
+        {
+          "id": "foundry-repair-drone-before",
+          "label": "Repair drone (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-repair-drone-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-saw-blade",
+          "label": "Saw blade",
+          "image": "../../../design/class-round9/enemies/renders/foundry-saw-blade.png",
+          "text": "Saw blade (enemies/foundry-saw-blade.svg, art/enemies/saw-blade.svg, headR 67): a steel disc with a ring of small hooked teeth, a groove, three slots and a brass hub; it spins as it runs along a wall. Was the slimelet, pale.",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-saw-blade-thumb.png"
+        },
+        {
+          "id": "foundry-saw-blade-before",
+          "label": "Saw blade (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-saw-blade-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-smith",
+          "label": "Foundry smith",
+          "image": "../../../design/class-round9/enemies/renders/foundry-smith.png",
+          "text": "Foundry smith (enemies/foundry-smith.svg, art/enemies/smith.svg, headR 66): a big smith in the bust build: broad bare sooty shoulders under the straps of a leather apron, a grey cap on the back of the head, a short black beard (no eyes), a big hammer with a glowing red-hot head (it swings), a leather-gloved left fist. Was the bandit brute turned sooty.",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-smith-thumb.png"
+        },
+        {
+          "id": "foundry-smith-before",
+          "label": "Foundry smith (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-smith-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-storm-spirit",
+          "label": "Storm spirit",
+          "image": "../../../design/class-round9/enemies/renders/foundry-storm-spirit.png",
+          "text": "Storm spirit (enemies/foundry-storm-spirit.svg, art/enemies/spirit-shock.svg, headR 30): the spirits' comma in pale yellow with a white bolt. Was Ghost A turned yellow.",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-storm-spirit-thumb.png"
+        },
+        {
+          "id": "foundry-storm-spirit-before",
+          "label": "Storm spirit (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-storm-spirit-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-tesla-coil",
+          "label": "Tesla coil",
+          "image": "../../../design/class-round9/enemies/renders/foundry-tesla-coil.png",
+          "text": "Tesla coil (enemies/foundry-tesla-coil.svg, art/enemies/tesla-coil.svg, headR 52): a square iron base with bolts, copper coil rings round the column, a grey-blue insulator and a copper ball on top. Was the snowman turned dark.",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-tesla-coil-thumb.png"
+        },
+        {
+          "id": "foundry-tesla-coil-before",
+          "label": "Tesla coil (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-tesla-coil-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-turret-flame",
+          "label": "Steam turret",
+          "image": "../../../design/class-round9/enemies/renders/foundry-turret-flame.png",
+          "text": "Steam turret and flame turret (enemies/foundry-turret-steam.svg, foundry-turret-flame.svg; art/enemies/turret-steam.svg, turret-flame.svg, headR 60): floor turrets: a riveted base plate in #back (the game keeps it still while the top turns: parts.js turret) and a top that turns; the steam turret a round iron housing with a stubby barrel, a brass muzzle ring, a pressure gauge and a valve wheel; the",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-turret-flame-thumb.png"
+        },
+        {
+          "id": "foundry-turret-flame-before",
+          "label": "Steam turret (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-turret-flame-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-turret-gun",
+          "label": "Gun turret",
+          "image": "../../../design/class-round9/enemies/renders/foundry-turret-gun.png",
+          "text": "Gun turret and laser turret (enemies/foundry-turret-gun.svg, foundry-turret-laser.svg; art/enemies/turret-gun.svg, turret-laser.svg, headR 60): wall turrets: a riveted plate in #back with its back edge where the game mounts them on the wall (families.js mountOnWall: 83 units behind the centre at headR 60), so it stays on the wall while the top turns; a dark dome with twin barrels; a finned housing",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-turret-gun-thumb.png"
+        },
+        {
+          "id": "foundry-turret-gun-before",
+          "label": "Gun turret (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-turret-gun-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-turret-laser",
+          "label": "Gun turret",
+          "image": "../../../design/class-round9/enemies/renders/foundry-turret-laser.png",
+          "text": "Gun turret and laser turret (enemies/foundry-turret-gun.svg, foundry-turret-laser.svg; art/enemies/turret-gun.svg, turret-laser.svg, headR 60): wall turrets: a riveted plate in #back with its back edge where the game mounts them on the wall (families.js mountOnWall: 83 units behind the centre at headR 60), so it stays on the wall while the top turns; a dark dome with twin barrels; a finned housing",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-turret-laser-thumb.png"
+        },
+        {
+          "id": "foundry-turret-laser-before",
+          "label": "Gun turret (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-turret-laser-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-turret-steam",
+          "label": "Steam turret",
+          "image": "../../../design/class-round9/enemies/renders/foundry-turret-steam.png",
+          "text": "Steam turret and flame turret (enemies/foundry-turret-steam.svg, foundry-turret-flame.svg; art/enemies/turret-steam.svg, turret-flame.svg, headR 60): floor turrets: a riveted base plate in #back (the game keeps it still while the top turns: parts.js turret) and a top that turns; the steam turret a round iron housing with a stubby barrel, a brass muzzle ring, a pressure gauge and a valve wheel; the",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-turret-steam-thumb.png"
+        },
+        {
+          "id": "foundry-turret-steam-before",
+          "label": "Steam turret (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-turret-steam-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "foundry-wasp",
+          "label": "Bee",
+          "image": "../../../design/class-round9/enemies/renders/foundry-wasp.png",
+          "text": "Bee, wasp and hornet (enemies/foundry-bee.svg, foundry-wasp.svg, foundry-hornet.svg; art/enemies/bee.svg, wasp.svg, hornet.svg, headR 48, 50, 52): mechanical insects in copper, drawn once each so the game's turns make them bronze and steel: the bee round with iron bands and a short stinger; the wasp thin with a long pointed abdomen and a long stinger; the hornet big and heavy with mandibles; wings",
+          "thumb": "../../../design/class-round9/enemies/renders/foundry-wasp-thumb.png"
+        },
+        {
+          "id": "foundry-wasp-before",
+          "label": "Bee (before)",
+          "image": "../../../design/class-round9/enemies/renders/foundry-wasp-before.png",
+          "text": "The stand-in the game showed until now."
+        }
+      ]
+    },
+    {
+      "id": "boss",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Bosses",
+      "text": "The Goblin Chieftain as a goblin, the Winter Queen, the Gilded Seraph (and her fallen look) and her singers.",
+      "why": "The Chieftain kept the mohawk troll's build but has goblin skin, nose, grin and ears, a cleaver and war paint. Tick the ones that fit; comment on any that don't.",
+      "pick": [
+        "boss-choir-singer",
+        "boss-gilded-seraph-fallen",
+        "boss-gilded-seraph",
+        "boss-goblin-chieftain",
+        "boss-winter-queen"
+      ],
+      "items": [
+        {
+          "id": "boss-choir-singer",
+          "label": "Choir singer",
+          "image": "../../../design/class-round9/enemies/renders/boss-choir-singer.png",
+          "text": "Choir singer (enemies/boss-choir-singer.svg, art/bosses/choir-singer.svg, headR 40; boss-seraph.js seraphSinger): the choir sprite's kin: golden curls, no eyes, its mouth open in an \"o\", a white robe with a gold collar, gold-tipped wings, an open hymn book held in both hands. Was the cherub turned gold.",
+          "thumb": "../../../design/class-round9/enemies/renders/boss-choir-singer-thumb.png"
+        },
+        {
+          "id": "boss-choir-singer-before",
+          "label": "Choir singer (before)",
+          "image": "../../../design/class-round9/enemies/renders/boss-choir-singer-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "boss-gilded-seraph-fallen",
+          "label": "The Gilded Seraph",
+          "image": "../../../design/class-round9/enemies/renders/boss-gilded-seraph-fallen.png",
+          "text": "The Gilded Seraph (enemies/boss-gilded-seraph.svg, art/bosses/gilded-seraph.svg, headR 58; boss-seraph.js): six golden wings, three a side, spread round her back like a sunburst (#back); a sun headdress, no halo (the designer: \"radiance has no halo\"): a gold diadem with a sun jewel and rays standing out from it back over her pale gold hair; a white robe with gold trim and gold shoulder plates; han",
+          "thumb": "../../../design/class-round9/enemies/renders/boss-gilded-seraph-fallen-thumb.png"
+        },
+        {
+          "id": "boss-gilded-seraph",
+          "label": "The Gilded Seraph",
+          "image": "../../../design/class-round9/enemies/renders/boss-gilded-seraph.png",
+          "text": "The Gilded Seraph (enemies/boss-gilded-seraph.svg, art/bosses/gilded-seraph.svg, headR 58; boss-seraph.js): six golden wings, three a side, spread round her back like a sunburst (#back); a sun headdress, no halo (the designer: \"radiance has no halo\"): a gold diadem with a sun jewel and rays standing out from it back over her pale gold hair; a white robe with gold trim and gold shoulder plates; han",
+          "thumb": "../../../design/class-round9/enemies/renders/boss-gilded-seraph-thumb.png"
+        },
+        {
+          "id": "boss-gilded-seraph-before",
+          "label": "The Gilded Seraph (before)",
+          "image": "../../../design/class-round9/enemies/renders/boss-gilded-seraph-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "boss-goblin-chieftain",
+          "label": "The Goblin Chieftain",
+          "image": "../../../design/class-round9/enemies/renders/boss-goblin-chieftain.png",
+          "text": "The Goblin Chieftain (enemies/boss-goblin-chieftain.svg, art/bosses/goblin-chieftain.svg, headR 67; boss-chieftain.js): built on round 8's greenskin-chieftain (the mohawk troll the designer said to keep \"but not as a troll\"), its drawing step for step (_src/E3/bosses9e.py, each change in a CHANGE comment; check9.py checks the copied code still gives the round-8 file). Kept: the hunched shoulders, ",
+          "thumb": "../../../design/class-round9/enemies/renders/boss-goblin-chieftain-thumb.png"
+        },
+        {
+          "id": "boss-goblin-chieftain-before",
+          "label": "The Goblin Chieftain (before)",
+          "image": "../../../design/class-round9/enemies/renders/boss-goblin-chieftain-before.png",
+          "text": "The stand-in the game showed until now."
+        },
+        {
+          "id": "boss-winter-queen",
+          "label": "The Winter Queen",
+          "image": "../../../design/class-round9/enemies/renders/boss-winter-queen.png",
+          "text": "The Winter Queen (enemies/boss-winter-queen.svg, art/bosses/winter-queen.svg, headR 57; boss-queen.js, her mirror images wear it too): in the heroes' bust build: pale cold skin, no eyes, long silver-lilac hair, a crown of tall ice crystals, a ring of ice shards behind her head, an ice-blue gown with white frost trim and a long train behind her with a frosted hem (#back, sways), her hands out to ca",
+          "thumb": "../../../design/class-round9/enemies/renders/boss-winter-queen-thumb.png"
+        },
+        {
+          "id": "boss-winter-queen-before",
+          "label": "The Winter Queen (before)",
+          "image": "../../../design/class-round9/enemies/renders/boss-winter-queen-before.png",
+          "text": "The stand-in the game showed until now."
+        }
+      ]
+    }
+  ]
+}

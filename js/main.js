@@ -12,6 +12,9 @@ import * as M from './meta.js';
 import { I } from './ui-kit.js';
 import { newBattle, updateBattle, callBattle } from './battle.js';
 import { initBattleUI, openSetup, buildBattleDock, updateBattleDock, showBattleResult, battleTitle } from './battle-ui.js';
+// lane C (convoy): the wagon mode
+import { newConvoy, updateConvoy, turnBack, applyConvoy, takeChoice } from './convoy.js';
+import { initConvoyUI, openSetOut, openRoadside, convoyHud, hideConvoyHud, showConvoyResult } from './convoy-ui.js';
 import { initInspect, openInspect, closeInspect, inspecting, selected, select, unitAt, drawSelection, panelHeight, refreshInspect } from './inspect.js';
 
 const $ = (id) => document.getElementById(id);
@@ -31,6 +34,9 @@ function show(s) {
   $('result').classList.toggle('hidden', s !== 'result');
   $('battle').classList.toggle('hidden', s !== 'setup');
   document.body.classList.toggle('battle', s === 'run' && !!run && run.mode === 'battle');
+  { const cv = document.getElementById('convoy'); if (cv) cv.classList.toggle('hidden', s !== 'convoy'); } // lane C (convoy)
+  document.body.classList.toggle('convoy', !!run && run.mode === 'convoy');
+  if (!run || run.mode !== 'convoy') hideConvoyHud();
   $('hud').classList.toggle('hidden', s !== 'run');
   $('dock').classList.toggle('hidden', s !== 'run');
   $('leaveAsk').classList.add('hidden');
@@ -67,6 +73,44 @@ function endBattle() {
   writeSave(save);
   window.GAME.lastResult = r.summary.winner; window.GAME.lastReport = r.summary;
   showBattleResult(r.summary, { again: () => startBattle(setup), change: () => { run = null; openSetup(); show('setup'); }, camp: () => { run = null; show('camp'); } });
+  show('result');
+}
+
+// ---------------------------------------------------------------- the wagon (lane C: convoy.js, convoy-ui.js)
+const isConvoy = () => !!run && run.mode === 'convoy';
+const stepOf = (r) => (r.mode === 'battle' ? updateBattle : r.mode === 'convoy' ? updateConvoy : update);
+function openConvoy() { run = null; openSetOut(); show('convoy'); }
+function startConvoy(opts = {}) { // (opts: tools only, e.g. { stretch: 2 } to start up the road)
+  run = newConvoy(save, opts);
+  if (!run.party.length) { run = null; return; }
+  save.runs++; writeSave(save);
+  if (save.zoom) setZoom(save.zoom);
+  met = new Set(); beaten = new Set();
+  warmArt(run.world);
+  buildChips();
+  show('run');
+}
+function roadside() { // the stop for the night: one frame with the wagon and the camp past the gate in view above the page
+  setPaused(false);
+  const w = run.world; if (w.camAt && run.wagon && state === 'run') { w.camAt.x = run.wagon.x - 300; snapCamera(); drawRun(0, false); }
+  openRoadside(run); show('convoy');
+}
+function convoyPick(choice) {
+  if (!run || run.phase !== 'roadside') return;
+  noteBeasts(run.world);
+  takeChoice(run, choice);
+  warmArt(run.world); buildChips(); snapCamera(); lastWorld = run.world;
+  show('run');
+}
+function endConvoy() {
+  const r = run;
+  setPaused(false);
+  if (r.world) noteBeasts(r.world);
+  if (view.zoom) save.zoom = view.zoom;
+  const rep = applyConvoy(save, r);
+  writeSave(save);
+  window.GAME.lastResult = rep.result; window.GAME.lastReport = rep;
+  showConvoyResult(rep, { again: () => { run = null; openConvoy(); }, camp: () => { run = null; show('camp'); } });
   show('result');
 }
 
@@ -117,6 +161,16 @@ function updateHud() {
   }
   if (!updateCards(run)) buildChips();
   noteBeasts(w);
+  if (isConvoy()) { // lane C: the wagon's strip, the purse; no floor map
+    convoyHud(run);
+    $('speedBtn').textContent = save.speed + '×';
+    const rb = $('retreatBtn'); if (rb.dataset.on !== 'convoy') { rb.dataset.on = 'convoy'; rb.innerHTML = I.flag; rb.classList.remove('leaving'); }
+    const chief = w.units.find((u) => u.chief && !u.dead && u.aggro);
+    $('bossBar').classList.toggle('hidden', !chief);
+    if (chief) { $('bossName').textContent = chief.def.name; $('bossBar').querySelector('i').style.width = Math.max(0, 100 * chief.hp / chief.maxHp) + '%'; }
+    const b = $('banner'); if (run.banner) { b.textContent = run.banner.s; b.classList.remove('hidden', 'soft'); } else b.classList.add('hidden');
+    return;
+  }
   const th = THEMES[run.theme];
   $('where').textContent = `${th ? th.name + ' · ' : ''}Floor ${run.floor}/${FLOORS}`;
   drawMap();
@@ -140,10 +194,27 @@ $('speedBtn').onclick = () => { save.speed = SPEEDS[(SPEEDS.indexOf(save.speed) 
 $('retreatBtn').onclick = () => {
   if (!run || run.summary) return;
   if (isBattle()) { callBattle(run); return; } // stop the battle here: on to the result
+  if (isConvoy()) { askTurnBack(); return; } // lane C
   if (run.leaving) { retreat(run, false); updateHud(); return; }
   if (!M.leaveCost(run).lose) { retreat(run, true); updateHud(); return; }
   askLeave();
 };
+function askTurnBack() { // lane C (convoy): the flag turns the wagon back, after asking
+  const el = $('leaveAsk'), cut = Math.ceil(run.coins * 0.2), wasPaused = paused;
+  if (paused) setPaused(false);
+  paused = true;
+  el.innerHTML = `<div class="la-panel"><h2>Turn back?</h2>
+    <p>The wagon goes home undelivered: no pay, and you lose 20% of the gold picked up.</p>
+    <div class="la-sum"><span class="coin"></span><span>${run.coins - cut} kept</span><span class="lose">−${cut}</span></div>
+    <div class="la-actions"><button class="btn" data-la="stay">Keep going</button><button class="btn danger" data-la="go">Turn back</button></div></div>`;
+  el.classList.remove('hidden');
+  el.onclick = (e) => {
+    const b = e.target.closest('[data-la]'); if (!b && e.target !== el) return;
+    el.classList.add('hidden'); el.onclick = null;
+    paused = false;
+    if (b && b.dataset.la === 'go') turnBack(run); else if (wasPaused) setPaused(true);
+  };
+}
 function askLeave() {
   const el = $('leaveAsk'), cut = M.leaveCost(run).gold, wasPaused = paused;
   if (paused) setPaused(false);
@@ -217,7 +288,7 @@ window.addEventListener('pointermove', (e) => {
 const lift = (e) => {
   if (press && touches.size === 1 && run && Math.hypot(e.clientX - press.x, e.clientY - press.y) < 10 && performance.now() - press.t < 400) {
     const u = unitAt(run.world, e.clientX, e.clientY);
-    if (u) { if (paused) select(u); else setPaused(true, u); }
+    if (u && !u.def.cargo) { if (paused) select(u); else setPaused(true, u); } // (lane C: the wagon has no page)
   }
   press = null;
   touches.delete(e.pointerId); if (touches.size < 2) pinch = null;
@@ -260,7 +331,7 @@ function drawRun(dt, live) {
     if (!paused) {
       acc += dt * (live ? save.speed : 1);
       let n = 0;
-      while (acc >= STEP && n < 16) { (run.mode === 'battle' ? updateBattle : update)(run, STEP); acc -= STEP; n++; if (run.summary) break; }
+      while (acc >= STEP && n < 16) { stepOf(run)(run, STEP); acc -= STEP; n++; if (run.summary || run.phase === 'roadside') break; } // (lane C: stepOf)
       if (acc > STEP * 16) acc = 0;
     }
     draw(ctx, run.world);
@@ -271,6 +342,7 @@ function drawRun(dt, live) {
     }
     hudT -= dt; if (hudT <= 0) { hudT = 0.1; updateHud(); }
     if (live && run.mode === 'battle') { if (run.summary) endBattle(); }
+    else if (live && run.mode === 'convoy') { if (run.summary) endConvoy(); else if (run.phase === 'roadside') roadside(); } // lane C
     else if (live && (run.phase === 'won' || run.phase === 'lost' || run.phase === 'retreated')) endRun(run.phase);
   }
 }
@@ -284,14 +356,17 @@ window.GAME = {
   record(on = true) { recording = on; acc = 0; },
   recFrame(dt) { if (run) drawRun(dt, false); },
   pause(on = true, kind) { const u = kind && run && run.world.units.find((x) => x.kind === kind && !x.dead); setPaused(on, u); },
-  fastForward(seconds) { const n = Math.round(seconds / STEP); for (let i = 0; i < n && run && !run.summary; i++) (run.mode === 'battle' ? updateBattle : update)(run, STEP); },
+  fastForward(seconds) { const n = Math.round(seconds / STEP); for (let i = 0; i < n && run && !run.summary && run.phase !== 'roadside'; i++) stepOf(run)(run, STEP); },
+  // lane C (convoy): the wagon's pages, for tools/clip.mjs and tools/convoy-shots.mjs
+  openConvoy, startConvoy, convoyPick, roadside: () => { if (run && run.phase === 'roadside') roadside(); },
   // debug: change the camp's save while testing, e.g. GAME.cheat({ gold: 999 })
   cheat(o) { Object.assign(save, o); writeSave(save); if (state === 'camp') showCamp(); },
   ask: () => askLeave(),
 };
 
 (async function boot() {
-  initCamp({ save, onSetOut: (opts) => startRun(opts), onBattle: () => { openSetup(); show('setup'); } });
+  initCamp({ save, onSetOut: (opts) => startRun(opts), onBattle: () => { openSetup(); show('setup'); }, onConvoy: () => openConvoy() });
+  initConvoyUI({ save: () => save, run: () => run, onSetOut: () => startConvoy(), onClose: () => show('camp'), onPick: (c) => convoyPick(c) }); // lane C
   initBattleUI({ save: () => save, persist: () => writeSave(save), onFight: (setup) => startBattle(setup), onClose: () => show('camp') });
   initAudio();
   initInspect(() => setPaused(false));

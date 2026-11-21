@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- GAME COPY (art round 9) of design/class-round9/enemies/dunes-serpent-head.svg -->
+<!-- SAND SERPENT, head (round 9): the head of a great desert snake seen from above, flat and wide: a broad wedge of a head, sandy scales with a dark diamond down its back, a heavy brow ridge on each side, a pale lip, two curved fangs showing at the front and a dark forked tongue; behind it a short round neck, where the first coil of its body sits (its coils are dunes-serpent-coil). No eyes. Parts: #body only. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="s1" d="M 72 96 A 28 24 0 1 0 128 96 A 28 24 0 1 0 72 96 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D9B578"/><stop offset="1" stop-color="#CC973B"/></linearGradient>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6F501B" stop-opacity="0"/><stop offset="1" stop-color="#6F501B" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c1"><use href="#s1"/></clipPath>
+<path id="s2" d="M 88 168 C 87.2 166.9 80.8 167.9 80 170 C 79.2 172.1 81.1 181.3 82 184 C 82.9 186.7 86.5 190.8 87 190 C 87.5 189.2 85.9 180.9 86 178 C 86.1 175.1 88.8 169.1 88 168 Z"/>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#FBF9F3"/><stop offset="1" stop-color="#E6D7A9"/></linearGradient>
+<path id="s3" d="M 112 168 C 112.8 166.9 119.2 167.9 120 170 C 120.8 172.1 118.9 181.3 118 184 C 117.1 186.7 113.5 190.8 113 190 C 112.5 189.2 114.1 180.9 114 178 C 113.9 175.1 111.2 169.1 112 168 Z"/>
+<path id="s4" d="M 100 98 C 109.1 98 124.3 99.2 132 102 C 139.7 104.8 150.9 112.9 154 118 C 157.1 123.1 156.6 132.1 154 138 C 151.4 143.9 141.4 154.6 136 160 C 130.6 165.4 121.1 173 116 176 C 110.9 179 104.5 181 100 181 C 95.5 181 89.1 179 84 176 C 78.9 173 69.4 165.4 64 160 C 58.6 154.6 48.5 143.9 46 138 C 43.5 132.1 42.9 123.1 46 118 C 49.1 112.9 60.4 104.8 68 102 C 75.7 99.2 90.9 98 100 98 Z"/>
+<clipPath id="u4"><use href="#s1"/><use href="#s2"/><use href="#s3"/></clipPath>
+<clipPath id="c4"><use href="#s4"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="body">
+<use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/><g clip-path="url(#c1)"><path d="M 100 76 L 108 92 L 100 108 L 92 92 Z" fill="#7A5430" opacity="0.85"/></g>
+<path d="M 100 182 L 100 198 M 100 198 L 93 207 M 100 198 L 107 207" fill="none" stroke="#7A2E3A" stroke-width="3.5" stroke-linecap="round"/>
+<use href="#s2" fill="url(#g3)"/>
+<use href="#s3" fill="url(#g3)"/>
+<g clip-path="url(#u4)"><use href="#s4" transform="translate(0 4) " fill="#2B2230" opacity="0.3"/></g><use href="#s4" fill="url(#g1)"/><use href="#s4" fill="url(#g2)"/><g clip-path="url(#c4)"><path d="M 100 104 L 116 124 L 100 146 L 84 124 Z" fill="#7A5430" opacity="0.85"/><path d="M 100 148 L 107 158 L 100 166 L 93 158 Z" fill="#7A5430" opacity="0.6"/><path d="M 62 158 C 65.7 156.7 89.9 168 100 168 C 110.1 168 134.3 156.7 138 158 C 141.7 159.3 133.1 174.3 128 178 C 122.9 181.7 107.5 186 100 186 C 92.5 186 77.1 181.7 72 178 C 66.9 174.3 58.3 159.3 62 158 Z" fill="#EAD2A0"/></g>
+</g>
+</g>
+</svg>

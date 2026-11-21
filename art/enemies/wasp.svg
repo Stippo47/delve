@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- GAME COPY (art round 9) of design/class-round9/enemies/foundry-wasp.svg -->
+<!-- WASP (round 9): a thinner mechanical wasp seen from above, in copper: a long pointed striped abdomen with a long iron stinger, a thin waist, a thorax, a round head; long narrow plate wings (arm-l, arm-r: they flap). The bronze and steel wasps are this art turned by the game. No eyes. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="s1" d="M 0 -5.8 C 3.4 -5.5 11 10.2 13 15.5 C 14.9 20.8 15.3 28.9 14.4 34.1 C 13.5 39.3 8.4 50.8 6.5 54.6 C 4.6 58.3 1.8 62.2 0 62 C -1.8 61.8 -5.4 57 -7.2 53.3 C -9 49.6 -13 39.4 -13.7 34.1 C -14.4 28.8 -14.1 19 -12.2 13.6 C -10.4 8.3 -3.4 -6 0 -5.8 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F5F7FA"/><stop offset="1" stop-color="#B3C3D6"/></linearGradient>
+<clipPath id="c1"><use href="#s1" transform="translate(88 112) rotate(112)"/></clipPath>
+<path id="s2" d="M 0 -4.7 C 2.7 -4.5 9 7.9 10.5 12.1 C 12.1 16.3 12.4 22.5 11.7 26.6 C 11 30.7 6.8 39.7 5.3 42.6 C 3.7 45.5 1.5 48.5 0 48.4 C -1.5 48.2 -4.4 44.5 -5.9 41.6 C -7.3 38.7 -10.6 30.7 -11.1 26.6 C -11.7 22.5 -11.4 14.8 -9.9 10.6 C -8.5 6.5 -2.7 -4.9 0 -4.7 Z"/>
+<clipPath id="c2"><use href="#s2" transform="translate(90 104) rotate(140)"/></clipPath>
+<path id="s3" d="M 0 -5.8 C 3.4 -5.5 11 10.2 13 15.5 C 14.9 20.8 15.3 28.9 14.4 34.1 C 13.5 39.3 8.4 50.8 6.5 54.6 C 4.6 58.3 1.8 62.2 0 62 C -1.8 61.8 -5.4 57 -7.2 53.3 C -9 49.6 -13 39.4 -13.7 34.1 C -14.4 28.8 -14.1 19 -12.2 13.6 C -10.4 8.3 -3.4 -6 0 -5.8 Z"/>
+<clipPath id="c3"><use href="#s3" transform="translate(112 112) rotate(-112)"/></clipPath>
+<path id="s4" d="M 0 -4.7 C 2.7 -4.5 9 7.9 10.5 12.1 C 12.1 16.3 12.4 22.5 11.7 26.6 C 11 30.7 6.8 39.7 5.3 42.6 C 3.7 45.5 1.5 48.5 0 48.4 C -1.5 48.2 -4.4 44.5 -5.9 41.6 C -7.3 38.7 -10.6 30.7 -11.1 26.6 C -11.7 22.5 -11.4 14.8 -9.9 10.6 C -8.5 6.5 -2.7 -4.9 0 -4.7 Z"/>
+<clipPath id="c4"><use href="#s4" transform="translate(110 104) rotate(-140)"/></clipPath>
+<path id="s5" d="M 100 18 C 104.2 18 111 33.1 114 40 C 117 46.9 120 57.4 120 64 C 120 70.6 117 79.8 114 84 C 111 88.2 104.2 92 100 92 C 95.8 92 89 88.2 86 84 C 83 79.8 80 70.6 80 64 C 80 57.4 83 46.9 86 40 C 89 33.1 95.8 18 100 18 Z"/>
+<linearGradient id="g2" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#CE824E"/><stop offset="1" stop-color="#B1632D"/></linearGradient>
+<linearGradient id="g3" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5E3316" stop-opacity="0"/><stop offset="1" stop-color="#5E3316" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c5"><use href="#s5"/></clipPath>
+<path id="s6" d="M 96 22 L 104 22 L 100 2 Z"/>
+<linearGradient id="g4" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#515661"/><stop offset="1" stop-color="#3F434C"/></linearGradient>
+<linearGradient id="g5" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#212328" stop-opacity="0"/><stop offset="1" stop-color="#212328" stop-opacity="0.42"/></linearGradient>
+<path id="s7" d="M 99 89 H 101 A 4 4 0 0 1 105 93 V 99 A 4 4 0 0 1 101 103 H 99 A 4 4 0 0 1 95 99 V 93 A 4 4 0 0 1 99 89 Z"/>
+<clipPath id="u7"><use href="#s1" transform="translate(88 112) rotate(112)"/><use href="#s2" transform="translate(90 104) rotate(140)"/><use href="#s3" transform="translate(112 112) rotate(-112)"/><use href="#s4" transform="translate(110 104) rotate(-140)"/><use href="#s5"/><use href="#s6"/></clipPath>
+<path id="s8" d="M 83 116 A 17 19 0 1 0 117 116 A 17 19 0 1 0 83 116 Z"/>
+<clipPath id="u8"><use href="#s1" transform="translate(88 112) rotate(112)"/><use href="#s2" transform="translate(90 104) rotate(140)"/><use href="#s3" transform="translate(112 112) rotate(-112)"/><use href="#s4" transform="translate(110 104) rotate(-140)"/><use href="#s5"/><use href="#s6"/><use href="#s7"/></clipPath>
+<linearGradient id="g6" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#98512A"/><stop offset="1" stop-color="#793F1F"/></linearGradient>
+<linearGradient id="g7" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#40210F" stop-opacity="0"/><stop offset="1" stop-color="#40210F" stop-opacity="0.42"/></linearGradient>
+<path id="s9" d="M 85 144 A 15 13 0 1 0 115 144 A 15 13 0 1 0 85 144 Z"/>
+<clipPath id="u9"><use href="#s1" transform="translate(88 112) rotate(112)"/><use href="#s2" transform="translate(90 104) rotate(140)"/><use href="#s3" transform="translate(112 112) rotate(-112)"/><use href="#s4" transform="translate(110 104) rotate(-140)"/><use href="#s5"/><use href="#s6"/><use href="#s7"/><use href="#s8"/></clipPath>
+<clipPath id="c9"><use href="#s9"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-l" data-pivot="88 112"><!-- wings -->
+<use href="#s1" transform="translate(88 112) rotate(112)" fill="url(#g1)"/><g clip-path="url(#c1)"><g transform="translate(88 112) rotate(112)"><path d="M 0 7.4 L 0 55.8 M -7.2 24.8 L 7.2 24.8" stroke="#A8B2BE" stroke-width="2.5" opacity="0.8"/></g></g>
+<use href="#s2" transform="translate(90 104) rotate(140)" fill="url(#g1)"/><g clip-path="url(#c2)"><g transform="translate(90 104) rotate(140)"><path d="M 0 5.8 L 0 43.5 M -5.9 19.3 L 5.9 19.3" stroke="#A8B2BE" stroke-width="2.5" opacity="0.8"/></g></g>
+</g>
+<g id="arm-r" data-pivot="112 112"><!-- wings -->
+<use href="#s3" transform="translate(112 112) rotate(-112)" fill="url(#g1)"/><g clip-path="url(#c3)"><g transform="translate(112 112) rotate(-112)"><path d="M 0 7.4 L 0 55.8 M -7.2 24.8 L 7.2 24.8" stroke="#A8B2BE" stroke-width="2.5" opacity="0.8"/></g></g>
+<use href="#s4" transform="translate(110 104) rotate(-140)" fill="url(#g1)"/><g clip-path="url(#c4)"><g transform="translate(110 104) rotate(-140)"><path d="M 0 5.8 L 0 43.5 M -5.9 19.3 L 5.9 19.3" stroke="#A8B2BE" stroke-width="2.5" opacity="0.8"/></g></g>
+</g>
+<g id="body">
+<use href="#s5" fill="url(#g2)"/><use href="#s5" fill="url(#g3)"/><g clip-path="url(#c5)"><path d="M 82 52 Q 100 46 118 52 M 80 70 Q 100 64 120 70" fill="none" stroke="#3A3434" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity="1"/><path d="M 86 56 A 6 12 0 1 0 98 56 A 6 12 0 1 0 86 56 Z" fill="#FFFFFF" opacity="0.25"/></g>
+<use href="#s6" fill="url(#g4)"/><use href="#s6" fill="url(#g5)"/>
+<g clip-path="url(#u7)"><use href="#s7" transform="translate(0 2) " fill="#2B2230" opacity="0.3"/></g><use href="#s7" fill="url(#g4)"/><use href="#s7" fill="url(#g5)"/>
+<g clip-path="url(#u8)"><use href="#s8" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s8" fill="url(#g6)"/><use href="#s8" fill="url(#g7)"/>
+<g clip-path="url(#u9)"><use href="#s9" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s9" fill="url(#g2)"/><use href="#s9" fill="url(#g3)"/><g clip-path="url(#c9)"><path d="M 90 140 A 5 3.5 0 1 0 100 140 A 5 3.5 0 1 0 90 140 Z" fill="#FFFFFF" opacity="0.3"/></g>
+</g>
+</g>
+</svg>

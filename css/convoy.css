@@ -1,0 +1,100 @@
+/* The wagon (convoy mode, round 11: a try): the Set out page, the strip on the road, the roadside camp, the result.
+   iPhone Safari: no flex buttons with children that must keep a size (divs with role="button"), no inset, no :has. */
+#convoy { position: fixed; left: 0; right: 0; top: 0; bottom: auto; height: var(--app-h, 100%); z-index: 30; }
+.cv-wagon { display: block; }
+.cv-face { position: relative; display: block; flex: none; width: 46px; height: 46px; border-radius: 22%; background: radial-gradient(circle at 50% 30%, #343C6A, #1B2038 75%); box-shadow: inset 0 0 0 1.5px var(--line2); overflow: hidden; }
+.cv-face > img { position: absolute; left: 6%; top: 6%; width: 88%; height: 88%; object-fit: contain; }
+.cv-face.sm { width: 34px; height: 34px; }
+
+/* ---- set out */
+.cv-page { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; flex-direction: column; max-width: 640px; margin: 0 auto;
+  background: radial-gradient(120% 70% at 50% 0%, #22301E, var(--ink) 72%); }
+.cv-bar { flex: none; display: flex; align-items: center; gap: 8px; min-height: calc(var(--toph) + var(--st)); padding: var(--st) calc(14px + var(--sr)) 0 calc(14px + var(--sl)); }
+.cv-bar .top-back { cursor: pointer; }
+.cv-bar .top-title { flex: 1; }
+.cv-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 4px calc(14px + var(--sr)) 10px calc(14px + var(--sl)); }
+.cv-hero-art { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: var(--r-panel); background: var(--surf); box-shadow: inset 0 0 0 1px var(--line); }
+.cv-hero-art .cv-wagon { flex: none; width: 52px; height: 98px; }
+.cv-pitch p { margin-top: 4px; font-size: 14px; font-weight: 650; color: var(--text); line-height: 1.35; }
+.cv-road { margin: 12px 0; padding: 4px 0 4px 22px; position: relative; }
+.cv-road::before { content: ''; position: absolute; left: 33px; top: 18px; bottom: 18px; width: 4px; border-radius: 2px; background: repeating-linear-gradient(180deg, #B49B6C 0 10px, transparent 10px 16px); }
+.cv-leg { position: relative; display: flex; align-items: center; gap: 12px; padding: 7px 0; }
+.cv-leg i { position: relative; z-index: 1; flex: none; display: block; width: 26px; height: 26px; border-radius: 50%; background: #5C7A36; color: #F2E8D2; font-style: normal; font-weight: 900; font-size: 13px; line-height: 26px; text-align: center; box-shadow: 0 0 0 3px var(--ink); }
+.cv-leg:first-child i { background: #B8423A; }
+.cv-leg b { display: block; font-size: 15px; }
+.cv-leg em { display: block; font-style: normal; font-size: 12.5px; font-weight: 700; color: var(--quiet); }
+.cv-pay { display: flex; gap: 8px; }
+.cv-pay > div { flex: 1; min-width: 0; padding: 10px 12px; border-radius: var(--r-tile); background: var(--surf); box-shadow: inset 0 0 0 1px var(--line); }
+.cv-pay b { display: block; margin: 2px 0; font-size: 24px; font-weight: 900; color: var(--gold2); }
+.cv-pay b .coin { margin-right: 6px; }
+.cv-pay b.lose { color: #FF9C88; }
+.cv-pay .small { display: block; line-height: 1.25; }
+.cv-party { margin-top: 12px; }
+.cv-party .cap { display: block; margin: 0 2px 8px; }
+.cv-hero { display: flex; align-items: center; gap: 12px; padding: 8px 10px; margin-bottom: 6px; border-radius: var(--r-tile); background: var(--surf2); box-shadow: inset 0 0 0 1px var(--line); }
+.cv-hero b { flex: 1; min-width: 0; }
+.cv-foot { flex: none; padding: 8px calc(16px + var(--sr)) calc(14px + var(--sb)) calc(16px + var(--sl)); text-align: center; }
+.cv-foot p { margin-bottom: 8px; }
+.cv-foot .btn { text-align: center; cursor: pointer; }
+
+/* ---- the strip on the road: the wagon, its health, the road so far, Guard / Gather */
+#cvBar { display: flex; align-items: center; gap: 8px; margin: 6px auto 0; width: 94%; max-width: 460px; padding: 5px 6px 5px 8px; border-radius: 14px;
+  background: rgba(14,17,32,.82); box-shadow: inset 0 0 0 1px var(--line); pointer-events: auto; }
+.cvb-w { flex: none; width: 18px; height: 34px; }
+.cvb-w .cv-wagon { width: 18px; height: 34px; }
+.cvb-mid { flex: 1 1 auto; min-width: 0; }
+.cvb-hp { height: 13px; }
+.cvb-hp > i { background: linear-gradient(180deg, #E8C26A, #B98A2E); transition: width .2s; }
+.cvb-hp > em { font-size: 9.5px; font-weight: 900; line-height: 13px; color: #fff; text-shadow: 0 1px 2px #000; }
+#cvBar.low .cvb-hp > i { background: linear-gradient(180deg, #FF8A6E, #C8392A); }
+#cvBar.held .cvb-w { animation: cvheld .6s ease-in-out infinite alternate; }
+@keyframes cvheld { from { opacity: 1; } to { opacity: .45; } }
+.cvb-road { position: relative; height: 6px; margin: 6px 4px 1px; border-radius: 3px; background: repeating-linear-gradient(90deg, rgba(180,155,108,.55) 0 calc(33.33% - 2px), var(--ink) calc(33.33% - 2px) 33.33%); }
+.cvb-dot { position: absolute; top: -3px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 2px var(--ink); }
+.cvb-st { flex: none; display: block; white-space: nowrap; padding: 3px; border-radius: 999px; background: var(--surf); box-shadow: inset 0 0 0 1px var(--line); font-size: 0; }
+.cvb-st > div { display: inline-block; height: 30px; padding: 0 10px; border-radius: 999px; font-size: 12.5px; font-weight: 900; line-height: 30px; color: var(--quiet); cursor: pointer; }
+.cvb-st > div.on { background: var(--gold); color: var(--gold-ink); }
+body.convoy .hud-gem, body.convoy #mapCanvas { display: none; }
+
+/* ---- the roadside camp */
+.cv-stop { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; align-items: flex-end; justify-content: center; background: rgba(5,7,15,.55); }
+.cv-panel { width: 100%; max-width: 520px; max-height: 92%; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 16px calc(16px + var(--sb));
+  border-radius: 22px 22px 0 0; background: linear-gradient(180deg, #2A2418, var(--surf) 120px); box-shadow: 0 -10px 40px rgba(0,0,0,.5), inset 0 3px 0 #E8A54A; animation: rise .24s cubic-bezier(.2,.8,.2,1); }
+.cv-panel h2 { margin: 2px 0 4px; font-size: 24px; font-weight: 850; }
+.cv-wagonrow { display: flex; align-items: center; gap: 12px; margin: 12px 0 8px; }
+.cv-wagonrow .cv-wagon { flex: none; width: 24px; height: 46px; }
+.cv-wagonrow > div:nth-child(2) { flex: 1; min-width: 0; }
+.cv-whp { height: 14px; margin-top: 4px; }
+.cv-whp > i { background: linear-gradient(180deg, #E8C26A, #B98A2E); }
+.cv-whp > em { font-size: 10px; font-weight: 900; line-height: 14px; }
+.cv-gold { flex: none; font-size: 22px; font-weight: 900; color: var(--gold2); }
+.cv-gold .coin { margin-right: 5px; }
+.cv-rheroes { display: flex; gap: 8px; margin-bottom: 12px; }
+.cv-rh { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; padding: 5px 7px; border-radius: 12px; background: var(--surf2); }
+.cv-rh .bar { flex: 1; min-width: 0; height: 7px; }
+.cv-pickcap { display: block; margin: 0 2px 6px; }
+.cv-choice { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 12px; margin-bottom: 8px; border-radius: var(--r-tile); background: var(--surf2); box-shadow: inset 0 0 0 1.5px var(--line2); cursor: pointer; }
+.cv-choice:active { transform: scale(.98); }
+.cv-choice.on { box-shadow: inset 0 0 0 2px var(--gold); background: #2E2A1C; }
+.cv-ci { flex: none; display: block; width: 44px; height: 44px; padding: 10px; border-radius: 12px; background: var(--raise); color: var(--gold2); }
+.cv-ci svg, .cv-ci .ico { display: block; width: 24px; height: 24px; }
+.cv-ci.repair { color: #E8C26A; } .cv-ci.potions { color: #FF8A7A; } .cv-ci.trinket { color: #C9A7FF; } .cv-ci.sellsword { color: #9FC4FF; }
+.cv-ct { flex: 1; min-width: 0; }
+.cv-ct b { display: block; font-size: 16px; }
+.cv-ct .small { display: block; margin-top: 2px; }
+.cv-next { margin-top: 6px; text-align: center; }
+
+/* ---- the result */
+.rcard.convoy { max-width: 440px; }
+.cv-rwagon { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 2px auto 10px; max-width: 240px; }
+.cv-rwagon .cv-wagon { flex: none; width: 22px; height: 42px; }
+.cv-rwagon .bar { flex: 1; }
+.cv-lines { margin: 10px 0 4px; padding: 6px 12px; border-radius: var(--r-tile); background: var(--surf); box-shadow: inset 0 0 0 1px var(--line); text-align: left; }
+.cv-line { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; font-size: 14px; font-weight: 750; }
+.cv-line + .cv-line { border-top: 1px solid var(--line); }
+.cv-line b { white-space: nowrap; }
+.cv-line.good b { color: var(--gold2); }
+.cv-line.bad b { color: #FF9C88; }
+.cv-line.quietv b { color: var(--quiet); }
+.cv-picks { margin-top: 8px; }
+.rcard.convoy .r-foot .btn { text-align: center; cursor: pointer; }

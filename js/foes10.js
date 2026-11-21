@@ -277,46 +277,46 @@ const SPIRIT = { ...FOE, art: variantUrl('art/enemies/ghost.svg', { hue: 0, sat:
   res: { poison: 0, curse: 0 }, brain: spiritBrain, onDeath: spiritDeath };
 const spirit = (el, name, spec, res = {}) => ({ ...SPIRIT, spirit: el, name, art: variantUrl('art/enemies/ghost.svg', spec), res: { ...SPIRIT.res, ...res }, goo: null });
 export { spirit, SPIRIT };
-const GOLEM = { ...FOE, name: 'Golem', art: variantUrl(ART('ogre'), { sat: 0.12, light: 0.04 }), headR: 66, r: 44, vr: 33, turn: 2, accel: 120, face: 2, mass: 4.5,
+const GOLEM = { ...FOE, name: 'Golem', art: 'art/enemies/golem.svg', headR: 66, r: 44, vr: 33, turn: 2, accel: 120, face: 2, mass: 4.5,
   hp: 210, speed: 34, role: 'melee', range: 28, atkCd: 2.1, windup: 0.6, dmg: 17, knock: 260, arc: 2.0, heavy: true, stagger: 35, temp: 0.2, commit: 1.4, xp: 34, coins: [6, 12],
   cost: 8, attackAnim: 'swing', construct: true, dust: '#B9AE9C', res: { poison: 0, burn: 0.6, chill: 0.6, curse: 0, wet: 0.5 }, brain: golemBrain };
 const HERALD = { ...FOE, headR: 56, r: 46, vr: 34, turn: 3, accel: 200, face: 3, mass: 4, hp: 300, speed: 56, role: 'melee', range: 40, atkCd: 1.3, windup: 0.3, dmg: 13,
   knock: 180, arc: 1.0, heavy: true, temp: 0.25, commit: 1.1, xp: 60, coins: [18, 26], boss: true, attackAnim: 'thrust', brain: heraldBrain };
 export const FOES10 = {
   // ---- the Frost Hollow
-  frostWolf: { variantOf: 'wolf', name: 'Frost Wolf', hue: 175, sat: 0.3, light: 0.3, chill: 20, hp: 30, xp: 9, cost: 2.5, res: { chill: 0.2, burn: 1.3 } },
-  slimeIce: { variantOf: 'slime', name: 'Ice Slime', hue: -12, sat: 0.5, light: 0.24, hp: 54, splits: false, xp: 10, cost: 3, goo: '#DFF6FF', res: { chill: 0, burn: 1.4 },
+  frostWolf: { variantOf: 'wolf', name: 'Frost Wolf', art: 'art/enemies/frost-wolf.svg', chill: 20, hp: 30, xp: 9, cost: 2.5, res: { chill: 0.2, burn: 1.3 } },
+  slimeIce: { variantOf: 'slime', name: 'Ice Slime', art: 'art/enemies/ice-slime.svg', headR: 49, hp: 54, splits: false, xp: 10, cost: 3, goo: '#DFF6FF', res: { chill: 0, burn: 1.4 },
     onHop: (w, u) => coldPatch(w, u.x, u.y, 36, 2.4), onDeath: (w, u) => shards(w, u, 7) },
-  spiderFrost: { variantOf: 'spiderHunter', name: 'Frost Spider', hue: 150, sat: 0.6, light: 0.18, poison: 0, chill: 22, xp: 10, res: { chill: 0.2 },
+  spiderFrost: { variantOf: 'spiderHunter', name: 'Frost Spider', art: 'art/enemies/frost-spider.svg', headR: 54, poison: 0, chill: 22, xp: 10, res: { chill: 0.2 },
     onDeath: (w, u) => w.hazards.push({ type: 'web', cold: true, x: u.x, y: u.y, r: 48, t: 6, max: 6 }) },
-  yeti: { ...FOE, name: 'Yeti', art: variantUrl('art/enemies/troll.svg', { hue: 170, sat: 0.12, light: 0.34 }), headR: 66, r: 42, vr: 31, turn: 2.6, accel: 150, face: 2.6, mass: 3,
+  yeti: { ...FOE, name: 'Yeti', art: 'art/enemies/yeti.svg', headR: 68, r: 42, vr: 31, turn: 2.6, accel: 150, face: 2.6, mass: 3,
     hp: 180, speed: 46, role: 'melee', range: 30, atkCd: 1.7, windup: 0.45, dmg: 15, knock: 220, arc: 2.2, stagger: 30, temp: 0.25, commit: 1.2, xp: 32, coins: [6, 12], cost: 8,
     attackAnim: 'swing', res: { chill: 0, burn: 1.3 }, brain: yetiBrain, onDeath: (w, u) => { const b = snowOf(w, u); if (b) burstSnow(w, u, b); } },
-  frostWraith: { variantOf: 'ghost', name: 'Icicle Wraith', hue: 175, sat: 0.7, light: 0.16, role: 'ranged', range: 320, keep: 240, hp: 44, xp: 14, cost: 4,
+  frostWraith: { variantOf: 'ghost', name: 'Icicle Wraith', art: 'art/enemies/icicle-wraith.svg', headR: 37, role: 'ranged', range: 320, keep: 240, hp: 44, xp: 14, cost: 4,
     res: { poison: 0, burn: 1.5, chill: 0, curse: 0 }, brain: wraithBrain },
-  spiritFrost: spirit('frost', 'Frost Spirit', { hue: 175, sat: 0.8, light: 0.2 }, { chill: 0 }),
+  spiritFrost: { ...spirit('frost', 'Frost Spirit', { hue: 175, sat: 0.8, light: 0.2 }, { chill: 0 }), art: 'art/enemies/spirit-frost.svg', headR: 30 }, // art round 9
   // ---- the Ember Deep
-  spiderFire: { variantOf: 'spiderHunter', name: 'Fire Spider', hue: -40, sat: 1.5, light: 0.02, poison: 0, burn: 20, xp: 11, cost: 3.5, res: { burn: 0 },
+  spiderFire: { variantOf: 'spiderHunter', name: 'Fire Spider', art: 'art/enemies/fire-spider.svg', headR: 54, poison: 0, burn: 20, xp: 11, cost: 3.5, res: { burn: 0 },
     onDeath: (w, u) => firePatch(w, u.x, u.y, 40, 3.5),
     brain: (w, u, dt) => { every(w, u, dt, 'spit', 3, 4.2, 320, (t) => { setAnim(u, 'throw', 0.3); fireball(w, u, angleTo(u.x, u.y, t.x + (t.vx || 0) * 0.4, t.y + (t.vy || 0) * 0.4)); }); return false; } },
-  hellhound: { variantOf: 'wolf', name: 'Hellhound', hue: -25, sat: 1.7, light: -0.16, burn: 14, hp: 40, dmg: 7, xp: 11, cost: 3, pack: [2, 3], res: { burn: 0, chill: 1.4 }, brain: houndBrain },
-  cinderBat: { variantOf: 'bat', name: 'Cinder Bat', hue: -30, sat: 1.6, light: 0.05, hp: 20, xp: 6, cost: 2, pack: [2, 3], ability: null, atkCd: 999, res: { burn: 0 }, brain: cinderBrain },
-  spiritFire: spirit('fire', 'Fire Spirit', { hue: -40, sat: 1.8, light: 0.1 }, { burn: 0 }),
-  pitLord: { ...FOES.pitLord, brain: pitLordBrain },
+  hellhound: { variantOf: 'wolf', name: 'Hellhound', art: 'art/enemies/hellhound.svg', burn: 14, hp: 40, dmg: 7, xp: 11, cost: 3, pack: [2, 3], res: { burn: 0, chill: 1.4 }, brain: houndBrain },
+  cinderBat: { variantOf: 'bat', name: 'Cinder Bat', art: 'art/enemies/cinder-bat.svg', hp: 20, xp: 6, cost: 2, pack: [2, 3], ability: null, atkCd: 999, res: { burn: 0 }, brain: cinderBrain },
+  spiritFire: { ...spirit('fire', 'Fire Spirit', { hue: -40, sat: 1.8, light: 0.1 }, { burn: 0 }), art: 'art/enemies/spirit-fire.svg', headR: 30 }, // art round 9
+  pitLord: { ...FOES.pitLord, art: 'art/enemies/pit-lord.svg', headR: 68, brain: pitLordBrain }, // art round 9: its own art (it wore the round-5 demon)
   // ---- the Gilded Spire
-  angelFallen: { variantOf: 'angel', name: 'Fallen Angel', hue: 230, sat: 0.55, light: -0.3, radiance: 0, curse: 22, xp: 17, res: { radiance: 0, curse: 0 } },
-  sunBlade: { ...FOE, name: 'Sun Blade', art: variantUrl(ART('cherub'), { hue: 18, sat: 1.4, light: 0.16 }), headR: 46, r: 22, vr: 17, turn: 6, accel: 360, face: 6, mass: 0.8,
+  angelFallen: { variantOf: 'angel', name: 'Fallen Angel', art: 'art/enemies/fallen-angel.svg', radiance: 0, curse: 22, xp: 17, res: { radiance: 0, curse: 0 } },
+  sunBlade: { ...FOE, name: 'Sun Blade', art: 'art/enemies/sun-blade.svg', headR: 58, r: 22, vr: 17, turn: 6, accel: 360, face: 6, mass: 0.8,
     hp: 46, speed: 70, role: 'skirmish', range: 14, atkCd: 999, dmg: 9, temp: 0.6, commit: 0.5, xp: 12, coins: [2, 5], cost: 4, noCorpse: true, goo: '#FFE7A0',
     res: { stagger: 0, radiance: 0, poison: 0, curse: 0 }, brain: bladeBrain },
-  choirSprite: { ...FOE, name: 'Choir Sprite', art: variantUrl(ART('cherub'), { hue: -45, sat: 0.7, light: 0.14 }), headR: 46, r: 20, vr: 16, turn: 6, accel: 320, face: 6, mass: 0.5,
+  choirSprite: { ...FOE, name: 'Choir Sprite', art: 'art/enemies/choir-sprite.svg', headR: 40, r: 20, vr: 16, turn: 6, accel: 320, face: 6, mass: 0.5,
     hp: 34, speed: 58, role: 'ranged', range: 260, keep: 240, atkCd: 999, dmg: 0, temp: 0.5, commit: 0.6, xp: 11, coins: [2, 4], cost: 3.5, res: { radiance: 0 }, brain: choirBrain },
   golem: GOLEM,
-  gildedGolem: { variantOf: 'golem', name: 'Gilded Golem', hue: -36, sat: 2.2, light: 0.12, mirror: 1.2, shield: 0.35, hp: 180, radiance: 18, xp: 38, cost: 9, dust: '#E8C65A',
+  gildedGolem: { variantOf: 'golem', name: 'Gilded Golem', art: 'art/enemies/gilded-golem.svg', mirror: 1.2, shield: 0.35, hp: 180, radiance: 18, xp: 38, cost: 9, dust: '#E8C65A',
     res: { poison: 0, burn: 0.6, chill: 0.6, curse: 0, wet: 0.5, radiance: 0 } },
-  spiritHeal: spirit('heal', 'Light Spirit', { hue: 40, sat: 1.6, light: 0.22 }, { radiance: 0 }),
-  spiritWard: spirit('ward', 'Ward Spirit', { hue: -100, sat: 1.2, light: 0.08 }, { radiance: 0 }),
-  heraldLight: { ...HERALD, name: 'Herald of Light', herald: 'light', art: variantUrl(ART('angel'), { light: 0.14, sat: 1.3 }), radiance: 24, res: { radiance: 0 } },
-  heraldFallen: { ...HERALD, name: 'Fallen Herald', herald: 'fallen', art: variantUrl(ART('angel'), { hue: 230, sat: 0.55, light: -0.3 }), curse: 24, res: { radiance: 0, curse: 0 } },
+  spiritHeal: { ...spirit('heal', 'Light Spirit', { hue: 40, sat: 1.6, light: 0.22 }, { radiance: 0 }), art: 'art/enemies/spirit-heal.svg', headR: 30 }, // art round 9
+  spiritWard: { ...spirit('ward', 'Ward Spirit', { hue: -100, sat: 1.2, light: 0.08 }, { radiance: 0 }), art: 'art/enemies/spirit-ward.svg', headR: 30 }, // art round 9
+  heraldLight: { ...HERALD, name: 'Herald of Light', herald: 'light', art: 'art/enemies/herald-light.svg', radiance: 24, res: { radiance: 0 } },
+  heraldFallen: { ...HERALD, name: 'Fallen Herald', herald: 'fallen', art: 'art/enemies/herald-fallen.svg', curse: 24, res: { radiance: 0, curse: 0 } },
 };
 
 // ---------------------------------------------------------------- their elite moves

@@ -1,5 +1,9 @@
 # Art needed (round 10, lane R: the rest of the roster)
 
+**Done in art round 9 (lane A, wave 11):** every kind below has real art now (design/class-round9, its notes.md
+says what each one is and what is still weak); the variants stay recolours of their new base. The code-drawn
+hazards at the end are unchanged.
+
 Every kind below went in on PLACEHOLDER art: an existing sprite recoloured at load (js/recolor.js `variantUrl`), so no
 new files were drawn. The real sprite for each should be in the heroes' top-down bust style, no eyes, one ink outline.
 Variants (a recolour of a real base sprite, e.g. the frost wolf) only need art if the designer wants them to differ in

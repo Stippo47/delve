@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- GAME COPY (art round 9) of design/class-round9/enemies/foundry-turret-flame.svg -->
+<!-- FLAME TURRET (round 9): a squat red iron turret on the floor, seen from above: a base plate that stays still (#back), a squat rounded housing painted red with a black-and-yellow hazard band, a fuel tank on its back, a long flamethrower nozzle with a flared mouth and a little pilot flame. Parts: #back (the base), #body (housing, tank and nozzle). Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="s1" d="M 58 30 H 142 A 28 28 0 0 1 170 58 V 142 A 28 28 0 0 1 142 170 H 58 A 28 28 0 0 1 30 142 V 58 A 28 28 0 0 1 58 30 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#515661"/><stop offset="1" stop-color="#3F434C"/></linearGradient>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#212328" stop-opacity="0"/><stop offset="1" stop-color="#212328" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c1"><use href="#s1"/></clipPath>
+<linearGradient id="gFlame" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB23A"/><stop offset="1" stop-color="#E8542A"/></linearGradient><linearGradient id="gFlameUp" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FFD25A"/><stop offset="0.55" stop-color="#FF8A2E"/><stop offset="1" stop-color="#D8402A"/></linearGradient>
+<path id="s2" d="M 98 115 H 102 A 7 7 0 0 1 109 122 V 178 A 7 7 0 0 1 102 185 H 98 A 7 7 0 0 1 91 178 V 122 A 7 7 0 0 1 98 115 Z"/>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#888D98"/><stop offset="1" stop-color="#686E79"/></linearGradient>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#363940" stop-opacity="0"/><stop offset="1" stop-color="#363940" stop-opacity="0.42"/></linearGradient>
+<path id="s3" d="M 86 178 C 89.4 176.4 110.6 176.4 114 178 C 117.4 179.6 123.4 192.4 120 194 C 116.6 195.6 83.4 195.6 80 194 C 76.6 192.4 82.6 179.6 86 178 Z"/>
+<clipPath id="u3"><use href="#s1"/><use href="#s2"/></clipPath>
+<path id="s4" d="M 0 -2.1 C 1.9 -2 5.9 1.2 6.6 2.5 C 7.4 3.9 5.7 5.7 4.9 7 C 4.1 8.3 2 10.4 1.3 11.5 C 0.5 12.5 0.5 14.3 0 14 C -0.5 13.7 -1.3 11 -2.1 9.8 C -2.9 8.6 -5 7 -5.6 5.9 C -6.2 4.7 -7.1 3.3 -6.3 2.1 C -5.5 0.9 -1.9 -2.2 0 -2.1 Z"/>
+<path id="s5" d="M 84 37 H 116 A 15 15 0 0 1 131 52 V 56 A 15 15 0 0 1 116 71 H 84 A 15 15 0 0 1 69 56 V 52 A 15 15 0 0 1 84 37 Z"/>
+<linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#86332C"/><stop offset="1" stop-color="#6B2621"/></linearGradient>
+<linearGradient id="g6" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#391310" stop-opacity="0"/><stop offset="1" stop-color="#391310" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c5"><use href="#s5"/></clipPath>
+<path id="s6" d="M 78 64 H 122 A 26 26 0 0 1 148 90 V 118 A 26 26 0 0 1 122 144 H 78 A 26 26 0 0 1 52 118 V 90 A 26 26 0 0 1 78 64 Z"/>
+<clipPath id="u6"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4" transform="translate(100 192) rotate(0)"/><use href="#s5"/></clipPath>
+<linearGradient id="g7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#B94B40"/><stop offset="1" stop-color="#933930"/></linearGradient>
+<linearGradient id="g8" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4E1D18" stop-opacity="0"/><stop offset="1" stop-color="#4E1D18" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c6"><use href="#s6"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="back" data-pivot="100 100"><!-- base plate (stays still) -->
+<use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/><g clip-path="url(#c1)"><circle cx="46" cy="46" r="5" fill="#9AA0AA" opacity="0.85"/><circle cx="154" cy="46" r="5" fill="#9AA0AA" opacity="0.85"/><circle cx="46" cy="154" r="5" fill="#9AA0AA" opacity="0.85"/><circle cx="154" cy="154" r="5" fill="#9AA0AA" opacity="0.85"/><path d="M 42 100 A 58 58 0 1 0 158 100 A 58 58 0 1 0 42 100 Z" fill="#2A2C32" opacity="0.5"/></g>
+</g>
+<g id="body">
+<use href="#s2" fill="url(#g3)"/><use href="#s2" fill="url(#g4)"/>
+<g clip-path="url(#u3)"><use href="#s3" transform="translate(0 2) " fill="#2B2230" opacity="0.3"/></g><use href="#s3" fill="url(#g1)"/><use href="#s3" fill="url(#g2)"/>
+<use href="#s4" transform="translate(100 192) rotate(0)" fill="url(#gFlameUp)"/>
+<use href="#s5" fill="url(#g5)"/><use href="#s5" fill="url(#g6)"/><g clip-path="url(#c5)"><path d="M 76 54 L 124 54" fill="none" stroke="#A8443A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/></g>
+<g clip-path="url(#u6)"><use href="#s6" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s6" fill="url(#g7)"/><use href="#s6" fill="url(#g8)"/><g clip-path="url(#c6)"><path d="M 52 124 L 148 124 L 148 136 L 52 136 Z" fill="#E8B43A"/><path d="M 58 124 L 66 124 L 54 136 L 46 136 Z" fill="#2A2228"/><path d="M 74 124 L 82 124 L 70 136 L 62 136 Z" fill="#2A2228"/><path d="M 90 124 L 98 124 L 86 136 L 78 136 Z" fill="#2A2228"/><path d="M 106 124 L 114 124 L 102 136 L 94 136 Z" fill="#2A2228"/><path d="M 122 124 L 130 124 L 118 136 L 110 136 Z" fill="#2A2228"/><path d="M 138 124 L 146 124 L 134 136 L 126 136 Z" fill="#2A2228"/><path d="M 62 82 A 18 9 0 1 0 98 82 A 18 9 0 1 0 62 82 Z" fill="#FFFFFF" opacity="0.2"/></g>
+</g>
+</g>
+</svg>

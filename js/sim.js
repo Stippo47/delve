@@ -122,6 +122,7 @@ export function heal(w, u, amount, src, o) {
   }
   if (u.st.curse > 0) amount *= Math.max(0, 1 - CURSE.healCut * fillOf(u, 'curse')); // cursed: heals do less, then nothing
   if (amount <= 0) return 0;
+  if (u.def.cargo) amount /= 3; // lane C (convoy.js): heals mend the wagon at a third
   const before = u.hp; u.hp = Math.min(u.maxHp, u.hp + amount);
   if (w.stats) tallyHeal(w, u, src, u.hp - before, o);
   // a healing cross rising off the edge of the body (round 10: "need outline and need to be spread out around his sprite")
@@ -1389,7 +1390,7 @@ function hazards(w, dt) {
 export const COIN_LIFE = 25;
 const COIN_DRAG = 3.2, MAGNET = 110;
 function pickups(w, dt) {
-  const heroes = w.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon);
+  const heroes = w.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon && !u.def.cargo); // lane C (convoy): the wagon picks up nothing
   for (const h of heroes) h.coinGoal = null;
   for (const p of w.pickups) {
     // a chest falling in (dungeon.js drops one by the party when a room is won): a thump and a puff as it lands

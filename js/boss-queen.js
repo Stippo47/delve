@@ -1,7 +1,7 @@
 // The Winter Queen: the Frost Hollow's boss (floor 3). Design and numbers: docs/BOSS-winter-queen.md. The designer
 // answered the card "IDK" (round 9), so she's built as proposed in ROSTER.md and shown to them: "An ice mage. Walls of
 // ice split the party, a blizzard hides the room, and she must be reached while her mirror images shatter."
-// Art: PLACEHOLDER, the Frost Mage hero's art turned pale and bigger (art/heroes/frost.svg via recolor.js).
+// Art: art round 9's Winter Queen (art/bosses/winter-queen.svg, design/class-round9).
 import { alive, hurt, puff, sparks, setAnim, addDanger, spawn, kill } from './sim.js';
 import { TAU, clamp, dist, angleTo, rand, rrange, chance } from './util.js';
 import { buildGrid, circleRect } from './path.js';
@@ -181,14 +181,14 @@ function glacier(w) {
   w.arenaAir = (ctx, w2) => { if (w2.blizzard) { w2.blizzard = Math.min(1, w2.blizzard + (w2._dt || 0.016) * 0.5); drawBlizzard(ctx, w2); } };
 }
 
-const ART = variantUrl('art/heroes/frost.svg', { hue: 12, sat: 0.55, light: 0.16 });
+const ART = 'art/bosses/winter-queen.svg'; // art round 9 (design/class-round9); her images wear it too
 export const QUEEN = {
   defs: {
-    winterQueen: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 54, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 5, hp: 680, speed: 50, role: 'ranged', range: 300,
+    winterQueen: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 57, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 5, hp: 680, speed: 50, role: 'ranged', range: 300,
       atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 180, coins: [70, 90], boss: true, arena: 'glacier', attackAnim: 'cast',
       res: { chill: 0, wet: 0.5, burn: 1.3, stagger: 0.6, poison: 0.3 }, brain, onDeath: death },
     // her mirror image: the same look, half her lances, shatters when broken
-    queenImage: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 54, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 3, hp: 60, speed: 50, role: 'ranged', range: 300,
+    queenImage: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 57, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 3, hp: 60, speed: 50, role: 'ranged', range: 300,
       atkCd: 999, temp: 0.2, commit: 1.2, xp: 0, coins: [0, 0], noElite: true, noCorpse: true, attackAnim: 'cast', res: { chill: 0 }, brain: imageBrain, onDeath: shatterImage },
   },
   arenas: { glacier },
