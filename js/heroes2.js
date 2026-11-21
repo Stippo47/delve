@@ -168,7 +168,7 @@ export const HEROES2 = {
     name: 'Digger', art: 'art/heroes/digger.svg', role: 'melee', unlock: { gems: 1 },
     blurb: 'A long-handled spade. Digs, flings, bats, and finds coins in the floor.',
     fun: 'Came down here looking for turnips. Found a dungeon. Kept digging.',
-    stats: { hp: 115, speed: 58, r: 32, vr: 22, turn: 3.8, accel: 200, face: 4, mass: 1.6, range: 28, atkCd: 1.2, dmg: 12, knock: 160, arc: 1.7 },
+    stats: { hp: 115, speed: 58, r: 32, vr: 22, turn: 3.8, accel: 200, face: 4, mass: 1.6, range: 28, atkCd: 1.2, dmg: 13, knock: 160, arc: 1.7 },
     weapon: 'heavy',
     attack: { name: 'Spade', anim: 'swing', desc: 'A swing with the flat of the spade.' },
     abilities: [
@@ -240,7 +240,7 @@ Object.assign(HEROES2, {
     name: 'Witch', art: 'art/heroes/witch.svg', role: 'caster', unlock: { gems: 2 },
     blurb: 'A crooked violet hat and a broom. Turns problems into frogs.',
     fun: 'The frogs in the dungeon all used to be something. Do not ask them what.',
-    stats: { hp: 68, speed: 64, r: 30, vr: 22, turn: 4.5, accel: 240, face: 4.6, mass: 1, range: 230, keep: 180, atkCd: 1.2, dmg: 8 },
+    stats: { hp: 68, speed: 64, r: 30, vr: 22, turn: 4.5, accel: 240, face: 4.6, mass: 1, range: 230, keep: 180, atkCd: 1.2, dmg: 9 },
     style: { hand: 'arm-l', glow: '#B07BE0' },
     attack: { name: 'Hex bolt', anim: 'cast', desc: 'A wobbling green spark that curves after its target.' },
     abilities: [
@@ -278,7 +278,7 @@ Object.assign(HEROES2, {
     name: 'Cultist', art: 'art/heroes/cultist.svg', role: 'caster', unlock: { gems: 2 },
     blurb: 'A tall black hood, a curved dagger and a burning black candle. Pays in blood for the party\'s strength.',
     fun: 'Says the eye on his hood sees everything. It mostly sees the inside of the hood.',
-    stats: { hp: 78, speed: 62, r: 30, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1, range: 220, keep: 175, atkCd: 1.25, dmg: 8 },
+    stats: { hp: 78, speed: 62, r: 30, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1, range: 220, keep: 175, atkCd: 1.25, dmg: 9 },
     proj: ['bolt', '#9A5CC8'], style: { glow: '#9A5CC8' },
     attack: { name: 'Shadow bolt', anim: 'cast', desc: 'A bolt of violet shadow from the candle.' },
     abilities: [
@@ -346,7 +346,7 @@ Object.assign(HEROES2, {
     name: 'Beekeeper', art: 'art/heroes/beekeeper.svg', role: 'support', unlock: { gems: 2 },
     blurb: 'A veiled hat, a copper smoker, and a great many friends who sting.',
     fun: 'Knows every one of the bees by name. They know him by smell.',
-    stats: { hp: 82, speed: 62, r: 31, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1.1, range: 210, keep: 170, atkCd: 1.0, dmg: 6 },
+    stats: { hp: 82, speed: 62, r: 31, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1.1, range: 210, keep: 170, atkCd: 1.0, dmg: 7 },
     style: { glow: '#FFD45A' },
     attack: { name: 'Bee', anim: 'throw', desc: 'Sends a bee buzzing after the target.' },
     abilities: [
@@ -468,7 +468,7 @@ Object.assign(HEROES2, {
     name: 'Marksman', art: 'art/heroes/marksman.svg', role: 'ranged', unlock: { gems: 3 },
     blurb: 'A cavalier hat with a cream plume, a grey moustache, a very long musket. One shot, well placed.',
     fun: 'Has never missed. Has occasionally hit something he did not mean to, which he does not count.',
-    stats: { hp: 72, speed: 60, r: 31, vr: 22, turn: 4.2, accel: 220, face: 4.2, mass: 1, range: 330, keep: 220, atkCd: 2.2, dmg: 22 },
+    stats: { hp: 72, speed: 60, r: 31, vr: 22, turn: 4.2, accel: 220, face: 4.2, mass: 1, range: 330, keep: 220, atkCd: 2.2, dmg: 19 }, // (round 11: dmg 22 -> 19; he dealt well over half his party's damage)
     attack: { name: 'Musket', anim: 'shoot', desc: 'One long, hard shot.' },
     abilities: [
       { id: 'aimedShot', name: 'Aimed Shot', cd: 10, tags: 'ds', glyph: 'arrows', desc: 'Stands stock still, aims, and fires a shot that goes clean through.',

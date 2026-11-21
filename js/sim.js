@@ -5,6 +5,7 @@ import { lineClear, pathClear, rayToRoundRect, circleRect, findPath, buildGrid }
 import { kitThink, kitTick, hooksOf, segDist, heroAttack } from './kits.js';
 import { trinketHooks } from './trinkets.js';
 import { cue } from './sfx.js';
+import { ARMOUR_CAP, ENEMY_ARMOUR } from './armour.js';
 import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON } from './statuses.js';
 import { tallyHurt, tallyHeal, tallyDown, noteStatus } from './stats.js';
 
@@ -51,7 +52,7 @@ export function spawn(w, kind, x, y, opts = {}) {
     trinkets: opts.trinkets || [], trinketHooks: trinketHooks(opts.trinkets), hasKey: !!opts.hasKey,
     strafeSign: chance(0.5) ? 1 : -1, wanderA: rand() * TAU, hazardT: 0, forcedGoal: null,
     gen: opts.gen || 0, bob: rand() * TAU, lastAttackT: -9, aggro: team === 'hero' || !!w.battle, potions: opts.potions || 0, path: null, pathT: 0, pathGoal: null,
-    armor: (d.armor || 0) * (hero ? 1 : Math.sqrt(Math.max(1, mult))), // (an enemy's grows a little with its dungeon's strength)
+    armor: ((d.armor ?? ENEMY_ARMOUR[kind]) || 0) * (hero ? 1 : Math.sqrt(Math.max(1, mult))), // armour.js (an enemy's grows a little with its dungeon's strength)
     home: { x, y }, atkMul: 1, moveMul: 1, mvA: hero ? 0 : Math.PI, spd: 0, sdx: 0, sdy: 0, lungeT: 0, recoilT: 0, hitT: 0, hitA: 0, tauntBy: null, tauntT: 0,
   };
   if (w.battle && !opts.team) u.adopt = true; // (step: takes the side of whoever it says called it)
@@ -100,7 +101,7 @@ const hitDmg = (u) => u.def.dmg * u.dmgMul;
 const blowMul = (u) => buffMul(u, 'dealt') * (u.st.radiance > 0 ? 1 - RADIANCE.weaken * fillOf(u, 'radiance') : 1) * (u.sickT > 0 ? 1 - POISON.weaken : 1); // radiant: much weaker blows; sickened: weaker
 // The numbers a unit fights with right now: damage per weapon hit (before the target's armour and situational traits),
 // weapon attacks per second (in reach), health, move speed (px/s) and reach.
-export const ARMOUR_CAP = 0.6;
+export { ARMOUR_CAP };
 export function unitNumbers(u) {
   return { hit: hitDmg(u) * blowMul(u), aps: atkRate(u) / (u.def.atkCd || 1), hp: u.maxHp, speed: speedOf(u), range: u.def.range || 0, armor: u.armor || 0 };
 }

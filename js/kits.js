@@ -552,8 +552,8 @@ export const ABILITIES = {
         if (!alive(t) || dist(u.x, u.y, t.x, t.y) > 280) { u.act = null; return; }
         hold(u, t, false);
         const got = hurt(w, t, dmgOf(u, tier >= 3 ? 0.55 : 0.4), u, { dot: true, color: '#9BE07A' });
-        heal(w, u, got, u);
-        if (tier >= 2) for (const a of friendsNear(w, u, u.x, u.y, 140)) heal(w, a, got * 0.5, u);
+        heal(w, u, got * 0.6, u); // (round 11: 60% of what it takes, not all of it; friends 30%, not 50%)
+        if (tier >= 2) for (const a of friendsNear(w, u, u.x, u.y, 140)) heal(w, a, got * 0.3, u);
         // three thinner tendrils bounce off the target onto those round it, each a quarter as strong
         for (const e of opponents(w, u).filter((o) => o !== t && dist(o.x, o.y, t.x, t.y) < 150).slice(0, 3)) {
           hold(t, e, true); const g2 = hurt(w, e, dmgOf(u, tier >= 3 ? 0.55 : 0.4) / 4, u, { dot: true, color: '#9BE07A' }); heal(w, u, g2, u);

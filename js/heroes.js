@@ -62,7 +62,7 @@ export const HEROES = {
   twinfang: {
     name: 'Twinfang', art: 'art/heroes/twinfang.svg', role: 'skirmish', starter: true,
     blurb: 'Hooked daggers. Picks off the ones on their own.',
-    stats: { hp: 100, speed: 96, r: 29, vr: 20, turn: 7, accel: 420, face: 7, mass: 0.9, range: 16, atkCd: 0.55, dmg: 8, arc: 1.4, dodge: 0.18 },
+    stats: { hp: 100, speed: 96, r: 29, vr: 20, turn: 7, accel: 420, face: 7, mass: 0.9, range: 16, atkCd: 0.55, dmg: 8, arc: 1.4, dodge: 0.25 }, // (round 11: dodge .18 -> .25; she went down more than anyone)
     attack: { name: 'Twin daggers', anim: 'thrust', desc: 'Quick stabs.' },
     abilities: [
       { id: 'backstab', name: 'Backstab', cd: 11, desc: 'Steps into the shadows and appears behind the target.',
@@ -107,7 +107,7 @@ export const HEROES = {
   granny: {
     name: 'Granny Reaper', art: 'art/heroes/granny.svg', role: 'melee', unlock: { gems: 3 },
     blurb: 'Scythe. Sweeps all the way round.',
-    stats: { hp: 95, speed: 54, r: 31, vr: 22, turn: 3.6, accel: 180, face: 3.6, mass: 1.2, range: 34, atkCd: 1.5, dmg: 12, arc: 2.8 },
+    stats: { hp: 110, speed: 54, r: 31, vr: 22, turn: 3.6, accel: 180, face: 3.6, mass: 1.2, range: 34, atkCd: 1.5, dmg: 14, arc: 2.8 }, // (round 11: hp 95 -> 110, dmg 12 -> 14; the weakest in the batches)
     attack: { name: 'Scythe', anim: 'swing', desc: 'A long sweep in front.' },
     abilities: [
       { id: 'reap', name: 'Reap', cd: 8, desc: 'She spins, sweeping all the way round her; a red orb flies home from each one hit.',
@@ -254,12 +254,12 @@ for (const h of Object.values(HEROES)) for (const ab of h.abilities) ab.cd = Mat
 // hero was first written; these are laid over them once, here, so the roles can be balanced in one place
 // (measured with tools/balance.mjs: each role's share of a party's damage, healing and damage taken).
 export const ROLE_TUNE = {
-  tank: { dmg: 0.72, hp: 1.08 },      // takes it: hits a good deal softer, a little more health, and armour (below)
-  melee: { dmg: 1.05 },
-  skirmish: { dmg: 1.15, hp: 1.1 },   // in and out: the batches had them dying most and dealing least
+  tank: { dmg: 0.65, hp: 1.08 },      // takes it: hits a good deal softer, a little more health, and armour (below)
+  melee: { dmg: 1.1, hp: 1.08 },      // (second most likely to go down, after the skirmishers)
+  skirmish: { dmg: 1.2, hp: 1.15 },   // in and out: the batches had them dying most and dealing least
   ranged: { dmg: 1.25 },              // deals it, from behind
   caster: { dmg: 1.12 },
-  support: { dmg: 0.9, heal: 0.85 },  // (healers carried every party they were in: all their healing a little down)
+  support: { dmg: 0.9, heal: 0.75 },  // (healers carried every party they were in: all their healing a little down)
 };
 // Armour: points off every blow, never more than 60% of it; damage over time ignores it, heavy and critical blows get
 // past half (sim.js hurt). Plate and big shields; the web's Armour nodes add to it.
