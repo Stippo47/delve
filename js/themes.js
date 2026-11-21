@@ -151,17 +151,22 @@ export const THEMES = {
     mood: { fog: 'rgba(20,36,60,', fogK: 0.6, tint: 'rgba(140,190,255,0.07)' },
     kinds: { fight: 48, hazard: 14, treasure: 12, fountain: 9, decision: 12, elite: 6 },
     floors: [
-      { name: 'The Ice Caves', enemies: [['bat', 4], ['snowman', 2.5], ['spiderHunter', 1.5]], mini: 'snowman',
+      // round 10 (lane R): the snowfield: frost wolves, snowmen, bats, ice slimes
+      { name: 'The Snowfield', enemies: [['frostWolf', 3.5], ['bat', 2.5], ['snowman', 2.5], ['slimeIce', 2], ['spiritFrost', 0.5]], mini: 'snowman',
         hazards: [['mist', 3], ['spikes', 0.8]], mood: { fog: 'rgba(20,36,60,', fogK: 0.5, tint: 'rgba(140,190,255,0.06)' },
         props: [['crack', 1.8], ['rubble', 1], ['puddle', 0.8]] },
-      { name: 'The Webbed Galleries', enemies: [['spiderHunter', 3.5], ['spiderMomma', 2], ['bat', 2], ['banshee', 1.4]], mini: 'broodQueen',
+      // the web caves: spiders (the frost spider's webs chill), ice slimes, icicle wraiths. (The Brood Queen was a
+      // RETHINK: the floor ends on a major Momma Spider for now.)
+      { name: 'The Web Caves', enemies: [['spiderHunter', 2.4], ['spiderFrost', 2.2], ['spiderMomma', 1.6], ['slimeIce', 1.5], ['bat', 1.2], ['frostWraith', 1.2]], mini: 'spiderMomma',
         hazards: [['web', 3], ['spikes', 1.5]], mood: { fog: 'rgba(26,24,44,', fogK: 0.62, tint: 'rgba(150,130,200,0.105)' },
         props: [['web', 2], ['bones', 1], ['crack', 1]] },
-      { name: 'The Giant\'s Hall', enemies: [['ogre', 2.4], ['snowman', 2.5], ['banshee', 2], ['troll', 1], ['bat', 1.5]],
+      // the glacier heart: yetis, icicle wraiths, frost wolves, frost spirits ("Ogre no")
+      { name: 'The Glacier Heart', enemies: [['yeti', 2.4], ['frostWraith', 2], ['frostWolf', 2], ['snowman', 1.6], ['spiritFrost', 1.1], ['spiderFrost', 1], ['banshee', 0.8]],
         hazards: [['mist', 2.5], ['spikes', 2]], mood: { fog: 'rgba(10,26,50,', fogK: 0.7, tint: 'rgba(120,200,255,0.18)' },
         props: [['rubble', 1.6], ['crack', 1.4], ['bonepile', 0.6]] },
     ],
-    elite: 'ogre', warden: 'broodQueen', boss: 'frostGiant', bossAdds: ['bat', 'spiderHunter', 'snowman'],
+    elite: 'yeti', warden: 'spiderMomma', boss: 'frostGiant', bossAdds: ['frostWolf', 'spiderFrost', 'snowman'],
+    bossKind: null, // lane B: the designed boss (js/boss-frost.js) goes here; until then floor 3 ends with T.boss
     hazards: [['mist', 3], ['spikes', 2], ['web', 1.5]],
     props: [['crack', 1.6], ['rubble', 1], ['web', 0.8], ['bones', 0.6], ['puddle', 0.6]],
     obstacles: [['rock', 4], ['crate', 1], ['barrel', 0.6]],
@@ -176,17 +181,20 @@ export const THEMES = {
     mood: { fog: 'rgba(48,12,6,', fogK: 0.58, tint: 'rgba(255,90,30,0.07)' },
     kinds: { fight: 48, hazard: 16, treasure: 11, fountain: 8, decision: 11, elite: 6 },
     floors: [
-      { name: 'The Vents', enemies: [['imp', 4], ['fireSlime', 3], ['rat', 1]], mini: 'fireSlime',
+      // round 10 (lane R): the ash wastes: imps, cinder bats, hellhounds, fire slimes, burning ground
+      { name: 'The Ash Wastes', enemies: [['imp', 3.5], ['cinderBat', 2.4], ['fireSlime', 2.4], ['hellhound', 1.8], ['spiritFire', 0.5]], mini: 'fireSlime',
         hazards: [['fire', 3], ['oil', 0.8]], mood: { fog: 'rgba(48,12,6,', fogK: 0.5, tint: 'rgba(255,90,30,0.06)' },
         props: [['crack', 2], ['rubble', 1]] },
-      { name: 'The Forges', enemies: [['devil', 3], ['imp', 2.5], ['dragonborn', 2], ['fireSlime', 1]], mini: 'pitLord',
+      // the forges: devils, dragonborn, fire spiders, hellhounds; the Pit Lord (tuned up: a fire whip, rifts that spit imps)
+      { name: 'The Forges', enemies: [['devil', 2.6], ['imp', 2], ['dragonborn', 1.8], ['spiderFire', 2], ['hellhound', 1.4], ['fireSlime', 0.8], ['spiritFire', 0.7]], mini: 'pitLord',
         hazards: [['oil', 2], ['fire', 2], ['spikes', 1]], mood: { fog: 'rgba(60,24,4,', fogK: 0.58, tint: 'rgba(255,150,40,0.12)' },
         props: [['firepit', 1], ['crack', 1.5], ['rubble', 1.2]] },
-      { name: 'The Ash Throne', enemies: [['demon', 2.5], ['dragonborn', 2.5], ['devil', 2], ['imp', 1.5]],
+      { name: 'The Ash Throne', enemies: [['demon', 2.5], ['dragonborn', 2.4], ['devil', 1.8], ['hellhound', 1.6], ['spiderFire', 1.2], ['spiritFire', 1.1], ['cinderBat', 1.2], ['imp', 1]],
         hazards: [['fire', 2.5], ['spikes', 2]], mood: { fog: 'rgba(30,4,4,', fogK: 0.7, tint: 'rgba(200,30,20,0.18)' },
         props: [['bonepile', 1], ['skulls', 0.8], ['crack', 2]] },
     ],
-    elite: 'demon', warden: 'pitLord', boss: 'archfiend', bossAdds: ['imp', 'imp', 'devil'],
+    elite: 'demon', warden: 'pitLord', boss: 'archfiend', bossAdds: ['imp', 'hellhound', 'devil'],
+    bossKind: null, // lane B: Cinder, the Old Drake (js/boss-ember.js) goes here; until then floor 3 ends with T.boss
     hazards: [['fire', 3], ['oil', 1], ['spikes', 1.2]],
     props: [['crack', 2], ['rubble', 1.2], ['bonepile', 0.6], ['firepit', 0.5], ['skulls', 0.4]],
     obstacles: [['rock', 3], ['brazier', 2], ['barrel', 0.5]],
@@ -201,20 +209,88 @@ export const THEMES = {
     mood: { fog: 'rgba(40,32,70,', fogK: 0.45, tint: 'rgba(255,230,160,0.06)' },
     kinds: { fight: 48, hazard: 14, treasure: 12, fountain: 8, decision: 12, elite: 6 },
     floors: [
-      { name: 'The Gilded Halls', enemies: [['cherub', 3], ['angel', 2.5], ['ghost', 1.2], ['rattler', 1]], mini: 'angel',
+      // round 10 (lane R): the steps: cherubs, angels, sun blades, choir sprites, sigils
+      { name: 'The Steps', enemies: [['cherub', 3], ['angel', 2.4], ['sunBlade', 1.8], ['choirSprite', 1.2]], mini: 'angel',
         hazards: [['beam', 3], ['spikes', 1]], mood: { fog: 'rgba(40,32,70,', fogK: 0.38, tint: 'rgba(255,230,160,0.05)' },
         props: [['slab', 1.2], ['candles', 1.2]] },
-      { name: 'The Choir', enemies: [['seraph', 3], ['cherub', 3], ['angel', 2], ['banshee', 0.8]], mini: 'archon',
+      // the choir halls: seraphs, choir sprites, fallen angels, light spirits; the Twin Heralds (the Archon was an IDK)
+      { name: 'The Choir Halls', enemies: [['seraph', 2.6], ['cherub', 2.4], ['angel', 1.8], ['choirSprite', 1.8], ['angelFallen', 1.4], ['spiritHeal', 0.8], ['sunBlade', 0.8]], mini: 'heraldLight',
         hazards: [['beam', 3.5], ['spikes', 1.5]], mood: { fog: 'rgba(50,40,90,', fogK: 0.48, tint: 'rgba(230,200,255,0.105)' },
         props: [['candles', 2], ['slab', 0.8]] },
-      { name: 'The Summit', enemies: [['angel', 3], ['seraph', 3], ['dragonborn', 1.2], ['cherub', 2]],
+      // the sanctum: seraphs, golems and gilded golems, the fallen, ward spirits
+      { name: 'The Sanctum', enemies: [['seraph', 2.2], ['angel', 2], ['angelFallen', 1.8], ['gildedGolem', 1.4], ['golem', 0.9], ['sunBlade', 1.4], ['spiritWard', 0.9], ['cherub', 1.2]],
         hazards: [['beam', 3], ['spikes', 2], ['fire', 0.6]], mood: { fog: 'rgba(60,50,30,', fogK: 0.42, tint: 'rgba(255,240,180,0.162)' },
         props: [['slab', 1.4], ['crack', 1], ['candles', 0.6]] },
     ],
-    elite: 'angel', warden: 'archon', boss: 'radiant', bossAdds: ['cherub', 'cherub', 'angel'],
+    elite: 'gildedGolem', warden: 'heraldLight', boss: 'radiant', bossAdds: ['cherub', 'cherub', 'angel', 'angelFallen'],
+    bossKind: null, // lane B: the Spire's designed boss (js/boss-spire.js) goes here; until then floor 3 ends with T.boss
     hazards: [['beam', 3], ['spikes', 2]],
     props: [['slab', 1.2], ['candles', 1], ['crack', 0.8]],
     obstacles: [['rock', 1], ['brazier', 2], ['crate', 1]],
+  },
+  // ---- round 10 (lane R): two dungeons after the Spire (their kinds: js/dunes.js, js/foundry.js, js/families.js; PLACEHOLDER art).
+  // Floors 1 and 2 end on a major of a floor kind; floor 3's boss slot is a major too until lane B's boss fills bossKind.
+  dunes: {
+    name: 'The Sunken Dunes', blurb: 'A tomb under the sand. The sand moves, and so does everything buried in it.', rank: 7, unlockAfter: 'spire',
+    palette: {
+      floor: ['#E2C690', '#D0B27A'], tile: ['rgba(120,90,40,0.12)', 'rgba(255,250,220,0.10)'], grout: 'rgba(120,90,40,0.2)',
+      wall: ['#C7A26A', '#A0804E'], wallTop: 'rgba(255,240,200,0.18)', rock: ['#8A6A40', '#2E2214'], void: '#2E2214', accent: '#F2B84A',
+    },
+    floorStyle: 'dirt', pillar: 'stone',
+    mood: { fog: 'rgba(60,40,14,', fogK: 0.42, tint: 'rgba(255,200,110,0.06)' },
+    kinds: { fight: 48, hazard: 15, treasure: 12, fountain: 8, decision: 11, elite: 6 },
+    floors: [
+      // the dunes: scarabs under the sand, cobras, the sand serpent; quicksand. Bright and hot.
+      { name: 'The Dunes', enemies: [['scarab', 3.5], ['cobra', 2.4], ['scarabGold', 0.8], ['sandSerpent', 1], ['spiritHaste', 0.6]], mini: 'cobra',
+        hazards: [['quicksand', 3], ['spikes', 0.5]], mood: { fog: 'rgba(70,46,14,', fogK: 0.34, tint: 'rgba(255,210,120,0.07)' },
+        props: [['ripple', 2.4], ['bones', 0.5], ['rubble', 0.6]], obstacles: [['rock', 3], ['crate', 0.4]] },
+      // the buried halls: jackal guards, mummies, dart traps in the walls, the golem; spike plates. Torchlit stone.
+      { name: 'The Buried Halls', enemies: [['jackal', 3], ['mummy', 2.4], ['scarab', 1.6], ['dartTrap', 1.4], ['golem', 0.9], ['spiritPoison', 0.8], ['cobra', 1]], mini: 'jackal',
+        hazards: [['spikes', 3], ['quicksand', 1]], mood: { fog: 'rgba(40,24,10,', fogK: 0.56, tint: 'rgba(255,160,80,0.1)' },
+        props: [['pottery', 1.4], ['bones', 1], ['crack', 1.2], ['candles', 0.6]], obstacles: [['brazier', 2], ['rock', 1.5], ['crate', 1]] },
+      // the sun chamber: sand mages and their dust devils, mummies, jackals, the serpent; burning sun-floor
+      { name: 'The Sun Chamber', enemies: [['sandMage', 2.2], ['mummy', 2], ['jackal', 2], ['sandSerpent', 1.4], ['golem', 1.2], ['scarabGold', 1.2], ['spiritHaste', 0.8], ['spiritPoison', 0.6], ['dartTrap', 0.8]],
+        hazards: [['quicksand', 2], ['fire', 1], ['spikes', 1]], mood: { fog: 'rgba(80,50,10,', fogK: 0.46, tint: 'rgba(255,190,60,0.15)' },
+        props: [['ripple', 1.4], ['pottery', 0.8], ['slab', 0.8], ['crack', 0.8]], obstacles: [['brazier', 1.5], ['rock', 2]] },
+    ],
+    elite: 'golem', warden: 'jackal', boss: 'sandSerpent', bossAdds: ['scarab', 'scarab', 'cobra', 'mummy'],
+    bossKind: null, // lane B: the sand wurm (js/boss-dunes.js) goes here; until then floor 3 ends on a major Sand Serpent
+    hazards: [['quicksand', 3], ['spikes', 1.5]],
+    props: [['ripple', 2], ['pottery', 0.8], ['bones', 0.6], ['crack', 0.8]],
+    obstacles: [['rock', 3], ['brazier', 1], ['crate', 0.6]],
+  },
+  foundry: {
+    name: 'The Clockwork Foundry', blurb: 'A factory that never stopped. Everything in it still works, and all of it wants you gone.', rank: 8, unlockAfter: 'dunes',
+    palette: {
+      floor: ['#9A9890', '#86847C'], tile: ['rgba(40,40,44,0.14)', 'rgba(255,240,210,0.08)'], grout: 'rgba(40,38,36,0.3)',
+      wall: ['#6E6A64', '#4E4A44'], wallTop: 'rgba(255,220,170,0.14)', rock: ['#3A3632', '#1A1816'], void: '#1A1816', accent: '#E8923A',
+    },
+    floorStyle: 'flag', pillar: 'pipe',
+    mood: { fog: 'rgba(30,22,14,', fogK: 0.55, tint: 'rgba(255,150,60,0.06)' },
+    kinds: { fight: 48, hazard: 16, treasure: 11, fountain: 8, decision: 11, elite: 6 },
+    floors: [
+      // the scrapyard: gear and cog sprites, bomb bots, copper bees, saw blades in the walls, the drill bot
+      { name: 'The Scrapyard', enemies: [['gearSprite', 2.4], ['cogSprite', 1.4], ['bombBot', 2.2], ['bee', 2.4], ['wasp', 1.4], ['drillBot', 1.4], ['sawBlade', 0.8]], mini: 'automaton',
+        hazards: [['oil', 2], ['spikes', 1.5], ['vent', 1]], mood: { fog: 'rgba(36,28,18,', fogK: 0.46, tint: 'rgba(255,170,90,0.05)' },
+        props: [['gears', 1.6], ['bolts', 1.6], ['rubble', 1], ['planks', 0.6]], obstacles: [['crate', 2], ['barrel', 2], ['rock', 1]] },
+      // the assembly line: automatons, turrets (steam and flame on the floor, guns on the walls), mortars, repair
+      // drones, bronze bees; conveyors and saw blades
+      { name: 'The Assembly Line', enemies: [['automaton', 2.6], ['turretSteam', 1.4], ['turretFlame', 1], ['turretGun', 1.2], ['mortar', 1], ['autoBomb', 1.4], ['repairDrone', 1],
+        ['beeBronze', 1.8], ['waspBronze', 1.2], ['hornetBronze', 0.8], ['sawBlade', 0.8]], mini: 'foundrySmith',
+        hazards: [['conveyor', 3], ['vent', 1.5], ['spikes', 1]], mood: { fog: 'rgba(30,24,20,', fogK: 0.52, tint: 'rgba(255,200,120,0.08)' },
+        props: [['gears', 1.2], ['bolts', 1.4], ['pipe', 1], ['crack', 0.6]], obstacles: [['crate', 2.5], ['pipe', 1.5], ['barrel', 1]] },
+      // the engine room: tesla coils, smiths, laser turrets, fire and gas mortars, the chain crawler, steel bees, storm
+      // spirits; steam vents everywhere
+      { name: 'The Engine Room', enemies: [['teslaCoil', 1.4], ['foundrySmith', 1.8], ['automaton', 1.8], ['turretLaser', 1], ['mortarFire', 0.9], ['mortarPoison', 0.9], ['chainCrawler', 1.1],
+        ['beeSteel', 1.6], ['waspSteel', 1.1], ['hornetSteel', 1], ['spiritShock', 1], ['repairDrone', 0.8]],
+        hazards: [['vent', 3], ['oil', 1.2], ['conveyor', 1]], mood: { fog: 'rgba(40,14,6,', fogK: 0.66, tint: 'rgba(255,110,40,0.14)' },
+        props: [['gears', 1], ['bolts', 1], ['pipe', 1.4], ['crack', 1]], obstacles: [['pipe', 2], ['crate', 1.5], ['barrel', 1]] },
+    ],
+    elite: 'foundrySmith', warden: 'automaton', boss: 'chainCrawler', bossAdds: ['bee', 'bee', 'automaton', 'bombBot'],
+    bossKind: null, // lane B: the Foundry's Skeletron-style head and hands (js/boss-foundry.js) go here; until then floor 3 ends on a major Chain Crawler
+    hazards: [['vent', 2], ['conveyor', 1.5], ['oil', 1]],
+    props: [['gears', 1.4], ['bolts', 1.4], ['pipe', 0.8], ['crack', 0.6]],
+    obstacles: [['crate', 2], ['barrel', 2], ['pipe', 1.5]],
   },
 };
 for (const [id, t] of Object.entries(THEMES)) {
@@ -223,7 +299,7 @@ for (const [id, t] of Object.entries(THEMES)) {
   t.minis = t.floors.slice(0, 2).map((f) => f.mini);
 }
 // The order the dungeons open in (beat one's boss to open the next; progress.js). Round 9: the Wildwood is the first.
-export const DUNGEON_ORDER = ['wildwood', 'warren', 'sewers', 'crypt', 'frost', 'ember', 'spire'];
+export const DUNGEON_ORDER = ['wildwood', 'warren', 'sewers', 'crypt', 'frost', 'ember', 'spire', 'dunes', 'foundry']; // (meta.dungeonOrder skips any not built)
 // One floor of a dungeon as its own theme: the dungeon's look with the floor's enemies, hazards, mood, dressing and
 // room mix laid over it. dungeon.js hands this to the room (w.theme), so the renderer draws the floor's mood.
 const floorCache = {};

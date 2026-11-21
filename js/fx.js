@@ -378,6 +378,13 @@ function beam(ctx, f, T) {
     for (let i = 0; i < (f.thin ? 2 : 4); i++) { const k = 1 - ((T * 0.9 + i / 4) % 1), o = Math.sin(k * 9 + T * 4) * 9 * th * Math.sin(k * Math.PI);
       inked(ctx, () => { ctx.beginPath(); ctx.arc(x1 + (x2 - x1) * k + nx * o, y1 + (y2 - y1) * k + ny * o, 4.6 * th + 0.6, 0, TAU); }, '#E0604B'); }
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x2, y2, 24 * th, '#E0604B', 0.4); ctx.restore();
+  } else if (f.kind === 'ray') {
+    // round 10: an elemental spirit's ray to the friend it lends its element: a thin wavering line in its colour
+    const c = f.col || '#FFF1B0', an = Math.atan2(y2 - y1, x2 - x1), nx = -Math.sin(an), ny = Math.cos(an);
+    const path = (ph, amp) => { ctx.beginPath(); for (let i = 0; i <= 16; i++) { const k = i / 16, o = Math.sin(k * 7 + ph) * amp * Math.sin(k * Math.PI); const px = x1 + (x2 - x1) * k + nx * o, py = y1 + (y2 - y1) * k + ny * o; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } };
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = a * 0.35; ctx.strokeStyle = c; ctx.lineWidth = 12; ctx.lineCap = 'round'; path(T * 5, 5); ctx.stroke(); ctx.restore();
+    inkLine(ctx, () => path(T * 5, 5), c, 3.6);
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x2, y2, 18, c, 0.45); ctx.restore();
   } else if (f.kind === 'heal') {
     // round 9: the mending ray is a plain straight beam lying under the units: a soft light and a bright core line
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.lineCap = 'round';

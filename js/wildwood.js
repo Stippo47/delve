@@ -31,14 +31,14 @@ const pillarAt = (w, x, y, r) => w.pillars.some((p) => dist(x, y, p.x, p.y) < p.
 // ---------------------------------------------------------------- shared habits
 // Wolves: a howl that turns the pack onto one hero (round 8 roster: "Its howl turns the whole pack onto one hero"), and
 // a lunge: a short straight bite-rush after circling (the skirmisher's in-and-out does the circling).
-function howl(w, u, t, o = {}) {
+export function howl(w, u, t, o = {}) {
   const pack = allies(w, u).filter((a) => a.def.wolf && dist(a.x, a.y, u.x, u.y) < (o.r || 460));
   for (const a of [u, ...pack]) { a.focus = t; a.focusT = o.focusT || 4.5; if (o.buff) addBuff(a, { id: 'howl', dur: o.buff, move: 1.3, atkSpeed: 1.25 }); }
   fx(w, { type: 'ring', x: u.x, y: u.y, r: o.r || 460, color: o.color || '#C9C2B4', max: 0.6 });
   setAnim(u, 'cast', 0.5);
   return pack.length;
 }
-function wolfBrain(w, u, dt) {
+export function wolfBrain(w, u, dt) {
   if (rushTick(w, u, dt)) return true;
   const t = targetOf(w, u); if (!t || !u.aggro) return false;
   if (due(u, 'howl', dt, 3) && allies(w, u).filter((a) => a.def.wolf && dist(a.x, a.y, u.x, u.y) < 460).length >= 2) { again(u, 'howl', 11, 14); howl(w, u, t, { buff: u.elite ? 4 : 0 }); }
