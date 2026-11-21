@@ -106,7 +106,7 @@ export const levelHp = (base, lvl) => Math.round(base * (1 + 0.14 * (lvl - 1)));
 export const levelDmg = (base, lvl) => base * (1 + 0.11 * (lvl - 1));
 // XP to go from lvl to lvl + 1 (progress.js addXp). Tuned with tools/runs.mjs --campaign.
 export const xpToNext = (lvl) => Math.round(XP_BASE * Math.pow(lvl, XP_POW));
-export const XP_BASE = 60, XP_POW = 1.5;
+export const XP_BASE = 60, XP_POW = 1.35;
 
 // Trinkets live in trinkets.js (each is a set of hooks); re-exported here so older imports keep working.
 export { TRINKETS, TRINKET_IDS } from './trinkets.js';

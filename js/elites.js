@@ -197,6 +197,7 @@ export function rushTick(w, u, dt) {
 // Called out of the floor next to the unit (a rift opens first, then they climb out). Capped so a room can't flood.
 export function summon(w, u, kind, n, o = {}) {
   const cap = o.cap || 22;
+  if (w.stale) return; // a stand-off that's gone on too long: nobody calls more help (dungeon.js w.stale)
   for (let i = 0; i < n; i++) {
     if (crowd(w, u.team) >= cap) return;
     const a = rand() * TAU, d = u.r + rrange(30, 70), x = clamp(u.x + Math.cos(a) * d, 50, w.W - 50), y = clamp(u.y + Math.sin(a) * d, 50, w.H - 50);
@@ -213,6 +214,7 @@ export function shoot(w, u, a, o = {}) {
 }
 // A blink: gone in a puff, back somewhere else.
 export function blink(w, u, x, y, color = 'rgba(60,40,90,0.85)') {
+  if (w.stale && u.team === 'enemy') return; // a stand-off that's gone on too long: no more slipping away
   puff(w, u.x, u.y, color, 12, 80, 7, 0.5);
   u.x = clamp(x, u.r, w.W - u.r); u.y = clamp(y, u.r, w.H - u.r); u.vx = u.vy = 0; u.kx = u.ky = 0; u.spd = 0;
   puff(w, u.x, u.y, color, 12, 80, 7, 0.5);

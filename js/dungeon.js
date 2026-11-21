@@ -470,6 +470,7 @@ function giveXp(run, h, xp) {
 
 function onKill(run, u) {
   run.kills++;
+  if (!u.minion) run.mainKills = (run.mainKills || 0) + 1; // called help doesn't count for the stand-off clock
   const w = run.world;
   if (u.floorFoe) { if (run.floor >= FLOORS) run.bossKilled = true; else run.minis[run.floor - 1] = true; }
   if (u.def.onDeath) u.def.onDeath(w, u);
@@ -506,7 +507,7 @@ export function update(run, dt) {
   const enemies = w.units.filter((u) => u.team === 'enemy' && alive(u));
   // a fight that's gone quiet (someone stuck, a group never met): everyone left comes looking
   if (run.phase === 'fight') {
-    if (run.kills !== run.lastKills) { run.lastKills = run.kills; run.quietT = 0; } else run.quietT = (run.quietT || 0) + dt;
+    if (run.mainKills !== run.lastKills) { run.lastKills = run.mainKills; run.quietT = 0; } else run.quietT = (run.quietT || 0) + dt;
     if (run.quietT > 25) for (const e of enemies) e.aggro = true;
     // still nobody falling after a long while (a lone shooter kiting a regrowing troll, say): the enemies press in
     // harder (faster, no backing off, no regrowing) so a stand-off always ends
