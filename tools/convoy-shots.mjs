@@ -23,7 +23,7 @@ try {
   page.on('response', (r) => { if (r.status() === 404 && !/favicon/.test(r.url())) errors.push('missing: ' + r.url()); });
   const shot = async (name, ms = 450) => { await page.waitForTimeout(ms); await page.screenshot({ path: path.join(out, name + '.png') }); console.log('shot', name); };
   const tap = (sel) => page.evaluate((s) => { const e = document.querySelector(s); if (!e) throw new Error('nothing matches ' + s); e.click(); }, sel);
-  await page.goto(`http://localhost:${site}/?seed=${seed}`);
+  await page.goto(`http://localhost:${site}/?seed=${seed}&allnodes`); // (every skill: a fresh save's heroes have none, and fall before the stills)
   await page.waitForFunction(() => window.GAME && GAME.ready, null, { timeout: 120000 });
   await page.evaluate(() => localStorage.clear()); await page.reload();
   await page.waitForFunction(() => window.GAME && GAME.ready, null, { timeout: 120000 });
@@ -49,7 +49,7 @@ try {
   await page.evaluate(() => { document.querySelector('[data-st="gather"]').click(); GAME.fastForward(14); });
   await shot('05-road-gather', 700);
   // on to the end of the stretch: the roadside camp
-  await page.evaluate(() => { const r = GAME.run; for (let i = 0; i < 400 && r.phase === 'road'; i++) { r.wagon.hp = Math.max(r.wagon.hp, r.wagon.maxHp * 0.5); for (const u of r.world.units) if (u.team === r.wagon.team && !u.downed && !u.dead) u.hp = Math.max(u.hp, u.maxHp * 0.5); GAME.fastForward(1); }
+  await page.evaluate(() => { const r = GAME.run; for (let i = 0; i < 1600 && r.phase === "road"; i++) { r.wagon.hp = Math.max(r.wagon.hp, r.wagon.maxHp * 0.5); for (const u of r.world.units) if (u.team === r.wagon.team && !u.downed && !u.dead) u.hp = Math.max(u.hp, u.maxHp * 0.6); GAME.fastForward(0.25); }
     if (r.phase === 'roadside') { r.wagonHp = Math.round(r.wagonMax * 0.45); if (!r.offer.includes('repair')) r.offer[0] = 'repair'; } });
   await page.waitForFunction(() => GAME.state === 'convoy' || (GAME.run && GAME.run.phase !== 'road'), null, { timeout: 30000 });
   await page.evaluate(() => GAME.roadside());
