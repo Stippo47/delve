@@ -644,6 +644,108 @@ DRAW.anchor = (ctx, f, w, layer) => {
   });
 };
 
+// ----- batches 6 and 7
+Object.assign(EL2, { runningThrow: 'earth', bound: 'earth', prey: 'blood', aimedShot: 'steel', bayonet: 'steel', ricochet: 'steel',
+  shurikenFan: 'shadow', substitution: 'shadow', caltrops: 'steel', pointBlank: 'fire', grog: 'song', broadside: 'fire',
+  stunStone: 'earth', ramCharge: 'earth', gravel: 'earth', jawTrap: 'steel', snareNet: 'nature', tripwire: 'steel',
+  netThrow: 'nature', showboat: 'holy', shieldRush: 'earth', mock: 'song', befuddle: 'song', juggle: 'song',
+  iaido: 'steel', focus: 'holy', crescentCut: 'steel', valkyrieCall: 'holy', spearThrow: 'storm', skyDive: 'holy' });
+Object.assign(ALIAS2, { javelin: 'arrow', bullet: 'arrow', shuriken: 'dagger', stone: 'bone', net: 'thorn', ball: 'note', crescent: 'shard', spear: 'arrow', trapThrown: 'bone' });
+const stick = (ctx, L, wd, col) => inked(ctx, () => roundRect(ctx, -L, -wd / 2, L * 2, wd, wd / 2), col);
+PROJ2.javelin = (ctx, p, T, ang, sp) => { ctx.rotate(ang); const s = p.big ? 1.5 : 1.25; trail(ctx, sp, 50 * s, 4 * s, '#FFFFFF'); ctx.scale(s, s); stick(ctx, 18, 3.4, '#B07A45'); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(26, 0); ctx.lineTo(16, -4.5); ctx.lineTo(16, 4.5); ctx.closePath(); }, '#C9D2DE'); };
+PROJ2.spear = (ctx, p, T, ang, sp) => { ctx.rotate(ang); trail(ctx, sp, 70, 7, p.o && p.o.shock ? '#FFE66B' : '#FFFFFF'); if (p.o && p.o.shock) lit(ctx, () => glowDisc(ctx, 14, 0, 24, '#FFE66B', 0.5)); ctx.scale(1.6, 1.6); stick(ctx, 22, 3.6, '#8A5A30');
+  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(34, 0); ctx.lineTo(20, -6); ctx.lineTo(22, 0); ctx.lineTo(20, 6); ctx.closePath(); }, '#EEF3F8'); };
+PROJ2.bullet = (ctx, p, T, ang, sp) => { ctx.rotate(ang); trail(ctx, sp, p.big ? 110 : 70, p.big ? 5 : 3.5, '#FFF4C8'); if (p.big) lit(ctx, () => glowDisc(ctx, 0, 0, 18, '#FFF4C8', 0.6)); inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, p.big ? 7 : 5, p.big ? 4.5 : 3.5, 0, 0, TAU); }, '#8A94A6'); };
+PROJ2.shuriken = (ctx, p, T, ang, sp) => { ctx.save(); ctx.rotate(ang); trail(ctx, sp, 26, 5, '#C9D2DE'); ctx.restore(); const s = p.big ? 1.4 : 1.1; ctx.scale(s, s); ctx.rotate(T * 26);
+  inked(ctx, () => star(ctx, 0, 0, 10, 4, 0.32, 0), '#A8B0BA'); disc(ctx, 0, 0, 2.2, '#2B2230'); };
+PROJ2.stone = (ctx, p, T, ang, sp) => { ctx.save(); ctx.rotate(ang); trail(ctx, sp, 26, p.r * 0.8, '#E9DDC2'); ctx.restore(); inked(ctx, () => blob(ctx, 0, 0, p.r * (p.big ? 1.25 : 1), 6, p.x * 0.05, 1), '#A99C8B'); disc(ctx, -p.r * 0.3, -p.r * 0.3, p.r * 0.35, '#D8CDB8'); };
+PROJ2.net = (ctx, p, T) => { ctx.rotate(T * 5); const r = 14; inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, r, 0, TAU); }, 'rgba(201,160,112,0.35)');
+  ctx.strokeStyle = '#C9A070'; ctx.lineWidth = 1.6; for (let i = -2; i <= 2; i++) { ctx.beginPath(); ctx.moveTo(i * 5, -r); ctx.lineTo(i * 5, r); ctx.moveTo(-r, i * 5); ctx.lineTo(r, i * 5); ctx.stroke(); } };
+PROJ2.trapThrown = (ctx, p, T) => { ctx.rotate(T * 9); inkLine(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 9, 0, TAU); }, '#6E7680', 3); };
+PROJ2.ball = (ctx, p, T) => { inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 7.5, 0, TAU); }, p.color || '#C8453D'); disc(ctx, -2.5, -2.5, 2.4, '#FFFFFF'); };
+PROJ2.crescent = (ctx, p, T, ang, sp) => { ctx.rotate(ang); lit(ctx, () => glowDisc(ctx, 0, 0, 30, '#FFFFFF', 0.4));
+  inked(ctx, () => { ctx.beginPath(); ctx.arc(-14, 0, 26, -1.1, 1.1); ctx.arc(-24, 0, 26, 0.95, -0.95, true); ctx.closePath(); }, '#EEF3F8');
+  ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(-14, 0, 24, -0.7, 0.7); ctx.arc(-18, 0, 24, 0.6, -0.6, true); ctx.closePath(); ctx.fill(); };
+// a gun's flash and a puff of powder smoke at the muzzle
+DRAW.muzzle = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), u = f.unit, d = (u ? u.r : 30) + 22, x = f.x + Math.cos(f.a) * d, y = f.y + Math.sin(f.a) * d;
+  if (k < 0.25) { lit(ctx, () => glowDisc(ctx, x, y, 30, '#FFE08A', 0.9 * (1 - k / 0.25))); inked(ctx, () => star(ctx, x, y, 12 * (1 - k * 2), 5, 0.4, f.a), '#FFF4C8'); }
+  ctx.save(); ctx.globalAlpha *= 0.7 * (1 - k);
+  for (let i = 0; i < 4; i++) { const b = f.a + (hash(i, 4) - 0.5) * 1.2, r = 6 + 14 * k; disc(ctx, x + Math.cos(b) * 16 * k * (i + 1) * 0.6, y + Math.sin(b) * 16 * k * (i + 1) * 0.6, r, '#D8D4CC'); }
+  ctx.restore();
+};
+// Aimed Shot: a thin red line held on the target while he aims
+DRAW.aimLine = (ctx, f, w, layer) => {
+  if (layer !== 'air' || !f.from || !f.to) return; const k = k01(f.t / f.max);
+  ctx.save(); ctx.globalAlpha *= 0.35 + 0.5 * k; ctx.setLineDash([5, 7]); ctx.strokeStyle = '#FF5A3D'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(f.from.x, f.from.y); ctx.lineTo(f.to.x, f.to.y); ctx.stroke();
+  ctx.setLineDash([]); ctx.beginPath(); ctx.arc(f.to.x, f.to.y, f.to.r + 12 - 8 * k, 0, TAU); ctx.stroke(); ctx.restore();
+};
+// Substitution: the log left behind where she stood
+DRAW.log = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const a = life(f, 0.02, 0.4); ctx.save(); ctx.globalAlpha *= a; ctx.translate(f.x, f.y); ctx.rotate(0.5);
+  inked(ctx, () => roundRect(ctx, -16, -7, 32, 14, 6), '#8A5A30'); inked(ctx, () => { ctx.beginPath(); ctx.ellipse(16, 0, 4, 7, 0, 0, TAU); }, '#D8B080'); ctx.restore();
+};
+// Caltrops: little iron spikes scattered on the floor
+DRAW.caltrops = (ctx, f, w, layer) => {
+  if (layer !== 'ground') return; ctx.save(); ctx.globalAlpha *= life(f, 0.1, 0.4);
+  for (let i = 0; i < 16; i++) { const b = hash(i, 1) * TAU, d = f.r * Math.sqrt(hash(i, 2)); inked(ctx, () => star(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 5, 4, 0.3, i), '#6E7680'); }
+  ctx.restore();
+};
+// Broadside: a cannonball's growing shadow and the warning ring, the ball dropping in
+DRAW.shell = (ctx, f, w, layer) => {
+  const k = k01(f.t / f.max), [vx, vy] = upVec(), h = (1 - k * k) * 220;
+  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.2 + 0.4 * k; ctx.fillStyle = '#2B2230'; ctx.beginPath(); ctx.ellipse(f.x, f.y, 16 * k + 4, 11 * k + 3, 0, 0, TAU); ctx.fill();
+    ctx.setLineDash([6, 6]); ctx.strokeStyle = '#FF6B5A'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, TAU); ctx.stroke(); ctx.restore(); return; }
+  inked(ctx, () => { ctx.beginPath(); ctx.arc(f.x + vx * h, f.y + vy * h, 10, 0, TAU); }, '#3A3440');
+};
+// the Slinger's ram: a woolly cream ram with curled horns, charging
+DRAW.ram = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const bob = Math.abs(Math.sin(f.t * 22)) * 3; ctx.save(); ctx.globalAlpha *= life(f, 0.05, 0.15); ctx.translate(f.x, f.y); ctx.rotate(f.a);
+  inked(ctx, () => blob(ctx, -6, 0, 20 + bob * 0.3, 9, 1, 1), '#F2E8DA');
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(16, 0, 10, 8, 0, 0, TAU); }, '#7A6A58');
+  for (const s of [-1, 1]) inked(ctx, () => { ctx.beginPath(); ctx.arc(14, s * 9, 6, 0, TAU); }, '#C9B898');
+  ctx.restore();
+  ctx.save(); ctx.globalAlpha *= 0.6; for (let i = 0; i < 3; i++) disc(ctx, f.x - Math.cos(f.a) * (30 + i * 12) + (hash(i, f.t * 10 | 0) - 0.5) * 16, f.y - Math.sin(f.a) * (30 + i * 12), 6 - i, '#E9DDC2'); ctx.restore();
+};
+// Jaw Trap: steel jaws open on the floor; shut once it has caught something
+DRAW.trap = (ctx, f, w, layer) => {
+  if (layer !== 'ground') return; const shut = f.snapT != null, x = f.held && !f.held.dead ? f.held.x : f.x, y = f.held && !f.held.dead ? f.held.y : f.y;
+  ctx.save(); ctx.globalAlpha *= life(f, 0.1, 0.3); ctx.translate(x, y);
+  inkLine(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 16, 0, TAU); }, '#6E7680', 3);
+  const o = shut ? 2 : 14;
+  for (const s of [-1, 1]) inkLine(ctx, () => { ctx.beginPath(); for (let i = -3; i <= 3; i++) { const xx = i * 4, yy = s * (o - (i % 2 ? 3 : 0)); i === -3 ? ctx.moveTo(xx, yy) : ctx.lineTo(xx, yy); } }, '#A8B0BA', 2.4);
+  ctx.restore();
+  if (shut && f.t - f.snapT < 0.3) lit(ctx, () => glowDisc(ctx, x, y, 40, '#FFFFFF', 0.7 * (1 - (f.t - f.snapT) / 0.3)));
+};
+// a net spread over the floor or over a held enemy
+DRAW.netOn = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const e = f.unit, x = e ? e.x : f.x, y = e ? e.y : f.y, r = f.r, a = life(f, 0.05, 0.3);
+  ctx.save(); ctx.globalAlpha *= 0.85 * a; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.clip();
+  ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 3.2; for (let i = -6; i <= 6; i++) { ctx.beginPath(); ctx.moveTo(x + i * 10 - r, y - r); ctx.lineTo(x + i * 10 + r, y + r); ctx.moveTo(x + i * 10 + r, y - r); ctx.lineTo(x + i * 10 - r, y + r); ctx.stroke(); }
+  ctx.strokeStyle = '#C9A070'; ctx.lineWidth = 1.6; for (let i = -6; i <= 6; i++) { ctx.beginPath(); ctx.moveTo(x + i * 10 - r, y - r); ctx.lineTo(x + i * 10 + r, y + r); ctx.moveTo(x + i * 10 + r, y - r); ctx.lineTo(x + i * 10 - r, y + r); ctx.stroke(); }
+  ctx.restore();
+};
+// Tripwire: a taut wire between two pegs
+DRAW.wire = (ctx, f, w, layer) => {
+  if (layer !== 'ground') return; ctx.save(); ctx.globalAlpha *= life(f, 0.15, 0.4);
+  inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(f.x1, f.y1); ctx.lineTo(f.x2, f.y2); }, '#C9D2DE', 2);
+  for (const [x, y] of [[f.x1, f.y1], [f.x2, f.y2]]) inked(ctx, () => { ctx.beginPath(); ctx.arc(x, y, 5, 0, TAU); }, '#8A5A30');
+  ctx.restore();
+};
+// Befuddle: stars and birds going round the confused one's head
+DRAW.swirlStars = (ctx, f, w, layer) => {
+  if (layer !== 'air' || !f.unit) return; const e = f.unit, [vx, vy] = upVec(), hx = e.x + vx * (e.vr + 12), hy = e.y + vy * (e.vr + 12);
+  ctx.save(); ctx.globalAlpha *= life(f, 0.1, 0.3);
+  for (let i = 0; i < 4; i++) { const b = i / 4 * TAU + f.t * 5; inked(ctx, () => star(ctx, hx + Math.cos(b) * 18, hy + Math.sin(b) * 7, 4.5, 5, 0.45, b), i % 2 ? '#E05AB8' : '#FFD45A'); }
+  ctx.restore();
+};
+// Iaido: the white line of the cut left hanging in the air
+DRAW.slashLine = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), a = Math.atan2(f.y2 - f.y1, f.x2 - f.x1), L = Math.hypot(f.x2 - f.x1, f.y2 - f.y1);
+  ctx.save(); ctx.globalAlpha *= 1 - k; K.streak(ctx, f.x1, f.y1, a, 0, L * (0.6 + 0.4 * easeOut(Math.min(1, k * 4))), 7 * (1 - k) + 1.5, '#EEF3F8', '#FFFFFF'); ctx.restore();
+  if (k < 0.2) lit(ctx, () => glowDisc(ctx, f.x2, f.y2, 30, '#FFFFFF', 0.6 * (1 - k / 0.2)));
+};
+
 export function drawK2(ctx, f, w, layer) { const d = DRAW[f.draw]; if (d) { ctx.save(); d(ctx, f, w, layer); ctx.restore(); } }
 
 // ---------------------------------------------------------------- signatures at the cast

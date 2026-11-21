@@ -227,3 +227,93 @@ A yellow sou'wester, a puffy grey moustache, a barbed harpoon on a rope. Art: `a
 - **Rogue Wave** (12s). Calls up a wave of sea water that crashes over the enemies in front. I: Soaks and shoves them back. II: A bigger wave. III: It leaves water on the floor.
 - **Drop Anchor** (14s). Swings a ship's anchor round on its chain and drops it on the enemies. I: A heavy slam that stuns those under it. II: Wider. III: The chain sweeps round first, knocking back.
 - **Trait: Old Salt.** Can't be soaked, and hits wet enemies 20% harder.
+
+## Javelin Huntress (`huntress`, ranged, 700 gold)
+A coral headband, a ponytail, a bundle of javelins. Runs prey down. Art: `art/heroes/huntress.svg`.
+
+- **Attack: Javelin.** A hard-thrown javelin that knocks its target back.
+- **Running Throw** (9s). Sprints round her target and puts a javelin in its back. I: One throw from behind, a critical hit. II: It staggers. III: Two throws on the run.
+- **Bound** (8s). Leaps back out of reach and throws a javelin at the top of the leap. I: A leap back and a throw. II: The javelin pierces. III: She lands lightly: 2s faster.
+- **Prey** (14s). Picks out the weakest enemy and hunts it down. I: For 8s she runs 40% faster and hits it 50% harder. II: She ignores everything else. III: When it falls she heals 15%.
+- **Trait: Finisher.** Hits enemies below half health 25% harder.
+
+## Marksman (`marksman`, ranged, 1050 gold)
+A cavalier hat with a cream plume, a grey moustache, a very long musket. One shot, well placed. Art: `art/heroes/marksman.svg`.
+
+- **Attack: Musket.** One long, hard shot.
+- **Aimed Shot** (10s). Stands stock still, aims, and fires a shot that goes clean through. I: Triple damage through the first enemy. II: Through everything in the line. III: Knocks out the first one hit.
+- **Bayonet** (8s). Fixes the bayonet and stabs whatever got too close, shoving it away. I: A stab and a big shove. II: It staggers. III: Then a shot at it point blank.
+- **Ricochet** (12s). A shot aimed to glance off one enemy onto the next. I: Bounces three times. II: Five times. III: Each bounce hits harder.
+- **Trait: Deadeye.** His first hit on an enemy that hasn't been hurt yet is a critical hit.
+
+## Ninja (`ninja`, ranged, 1050 gold)
+Charcoal hood, crimson scarf, a shuriken in each hand. Hard to pin down. Art: `art/heroes/ninja.svg`.
+
+- **Attack: Shuriken.** Quick shuriken from either hand.
+- **Shuriken Fan** (9s). Throws a fan of shuriken, then vanishes in smoke and appears a little way off. I: Three shuriken and a smoke blink. II: Five shuriken. III: They poison.
+- **Substitution** (12s). When a big blow lands, it was a log all along: she is somewhere else. I: Escapes one big blow. II: The log bursts into smoke that blinds. III: Ready again much sooner.
+- **Caltrops** (12s). Scatters iron caltrops round her feet. I: A patch for 5s that hurts and slows. II: Bigger. III: They poison.
+- **Trait: Assassin.** Her shuriken hit 50% harder from behind.
+
+## Pirate (`pirate`, skirmish, 700 gold)
+Tricorn, cutlass, flintlock. Fights dirty, drinks worse, calls in the ship's guns. Art: `art/heroes/pirate.svg`.
+
+- **Attack: Cutlass.** Fast cutlass slashes.
+- **Point Blank** (7s). Jams the flintlock against an enemy and fires. I: A big hit and a shove. II: It staggers. III: The second pistol at another enemy.
+- **Grog** (16s). A long swig of grog. Things hurt less for a while. I: Heals 20%; takes 20% less for 5s. II: Nothing knocks her about meanwhile. III: Heals 30%.
+- **Broadside** (15s). Whistles to the ship: cannonballs come down round a spot. I: Three cannonballs. II: Bigger blasts. III: Five.
+- **Trait: Dirty Fighting.** Hits staggered, stunned, slowed or rooted enemies 30% harder.
+
+## Slinger (`slinger`, ranged, 350 gold)
+A shepherd in a ram's fleece with a sling and a crook. Stones, and the flock behind him. Art: `art/heroes/slinger.svg`.
+
+- **Attack: Sling.** A whirl and a stone.
+- **Stunning Stone** (8s). Whirls the sling hard and lets fly a stone at the head. I: Stuns for 0.6s. II: Stuns for 1s. III: It glances on to a second enemy.
+- **Ram** (13s). Whistles, and a big ram charges through a line of enemies. I: One ram, knocking them aside. II: It staggers. III: Two rams.
+- **Gravel** (10s). Slings a handful of gravel in a wide spray. I: Many small stones in a cone. II: They knock back. III: Wider, more stones.
+- **Trait: Watchful.** Allies near him shake off stuns and sleep 40% faster.
+
+## Trapper (`trapper`, ranged, 700 gold)
+A fur cap with the flaps down, a short rifle and a jaw trap. Catches things. Art: `art/heroes/trapper.svg`.
+
+- **Attack: Short rifle.** A rifle shot.
+- **Jaw Trap** (9s). Sets a jaw trap where the enemies are coming; the first to step in is caught. I: Holds it for 2s. II: Holds 3s and bites harder. III: Two traps.
+- **Weighted Net** (12s). Throws a weighted net over a group of enemies. I: It entangles those under it. II: A bigger net. III: They are tangled at once.
+- **Tripwire** (13s). Strings a wire across the enemies' way: whatever runs into it goes down. I: Knocks them down for 1s. II: A longer wire. III: Down for 1.6s.
+- **Trait: Trapper's Eye.** Enemies that are held, rooted or tangled take 30% more from him.
+
+## Gladiator (`gladiator`, melee, 700 gold)
+A crested bronze helm, a gladius and a little round shield. Plays to the crowd. Art: `art/heroes/gladiator.svg`.
+
+- **Attack: Gladius.** A short, quick stab.
+- **Net Throw** (10s). Casts a net over one enemy: it is held and he stabs it harder. I: Held for 2s; he hits it 30% harder. II: Held 3s. III: Two nets.
+- **Showboat** (14s). Raises the gladius to the crowd: enemies near turn on him and he braces. I: Taunts those near for 3s; takes 30% less. II: Heals 15%. III: Each blow he takes meanwhile is answered.
+- **Shield Rush** (9s). Rushes in behind the round shield and stabs. I: A short rush and a stab. II: The rush knocks aside what it meets. III: Stuns the one stabbed.
+- **Trait: Arena.** Hits 5% harder for each enemy near him, up to 25%.
+
+## Jester (`jester`, skirmish, 1050 gold)
+A three-pointed cap with bells and a marotte on a stick. Makes enemies look foolish, then fight each other. Art: `art/heroes/jester.svg`.
+
+- **Attack: Marotte.** A bonk with the jester's stick.
+- **Mock** (11s). Pulls a face and blows a raspberry: enemies near can't help chasing him. I: Taunts those near for 3s; he dodges more meanwhile. II: Wider. III: They swing slower in their rage.
+- **Befuddle** (14s). Tells an enemy a joke so bad it turns on its own friends for a moment. I: For 2.5s. II: For 4s. III: Two enemies.
+- **Juggling Act** (10s). Throws his juggling balls: they bounce from enemy to enemy. I: Three balls, each bouncing twice. II: They daze: slowed. III: Five balls.
+- **Trait: Pratfall.** The first time each room a blow would down him, he trips out of its way.
+
+## Samurai (`samurai`, melee, 1050 gold)
+An indigo kabuto with gold horns and a long katana. Waits, then cuts. Art: `art/heroes/samurai.svg`.
+
+- **Attack: Katana.** A clean, wide cut.
+- **Iaido** (10s). Sheathes the blade, then flashes straight through a line of enemies, cutting every one. I: One dash through. II: Each cut is a critical hit. III: Dashes back through again.
+- **Focus** (12s). Breathes in and settles: his next cut lands with everything. I: The next cut does triple. II: And it cuts all round him. III: And it heals him 15%.
+- **Crescent Cut** (11s). A cut so fast it flies off the blade as a crescent through the enemies. I: One crescent. II: It staggers. III: Three crescents.
+- **Trait: Bushido.** Below 35% health he cuts 40% faster.
+
+## Valkyrie (`valkyrie`, melee, 1050 gold)
+A winged helm, long plaits and a big spear. Carries the fallen back into the fight. Art: `art/heroes/valkyrie.svg`.
+
+- **Attack: Spear.** A long spear thrust.
+- **Valkyrie's Call** (30s). Calls a fallen ally back to their feet at once. I: Back up at 25% health, once a room. II: At 40%. III: They are untouchable for 2s after.
+- **Spear of the Sky** (9s). Hurls the spear down a line; it flies back to her hand. I: Through a line of enemies. II: It shocks. III: It nails the last one hit to the floor.
+- **Sky Dive** (12s). Leaps high on her wings and dives spear-first onto an enemy. I: A dive that hits hard where she lands. II: It staggers those round. III: She heals 15% on landing.
+- **Trait: Chooser of the Slain.** Revives the fallen twice as fast, at 30% health.

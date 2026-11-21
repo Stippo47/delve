@@ -7,7 +7,7 @@
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange } from './util.js';
 import { hurt, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, stun, addBuff, fx, cleanse, textU, sparks, scatterCoins } from './sim.js';
 import { lineClear } from './path.js';
-import { foesNear, friendsNear, hurtMost, dmgOf, ang, ring, cast, heal, addStatus, zone, shoot } from './kits.js';
+import { foesNear, friendsNear, hurtMost, dmgOf, ang, ring, cast, heal, addStatus, zone, shoot, segDist } from './kits.js';
 
 // ---------------------------------------------------------------- helpers
 const k2 = (w, o) => fx(w, { type: 'k2', ...o });                 // a look of our own (fx2.js DRAW[o.draw])
@@ -1155,6 +1155,428 @@ export const ABILITIES2 = {
     },
     show: { far: true },
   },
+  // ----- Javelin Huntress
+  runningThrow: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 260 && t.target && t.target !== u ? 0.6 : t && dist(u.x, u.y, t.x, t.y) < 220 ? 0.3 : 0),
+    use(w, u, t, tier) {
+      if (!t) return;
+      const side = rand() < 0.5 ? 1 : -1, b = angleTo(t.x, t.y, u.x, u.y) + side * 1.9, gx = clamp(t.x + Math.cos(b) * (t.r + u.r + 70), u.r, w.W - u.r), gy = clamp(t.y + Math.sin(b) * (t.r + u.r + 70), u.r, w.H - u.r);
+      u.act = { type: 'dash', t: 0.28, max: 0.28, a: angleTo(u.x, u.y, gx, gy) };
+      k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a: u.act.a, max: 0.4, col: '#E0A060' });
+      const throwIt = (big) => { if (!alive(t)) return; u.facing = ang(u, t); setAnim(u, 'throw', 0.3);
+        shoot(w, u, ang(u, t), { kind: 'javelin', speed: 640, r: 7, dmg: dmgOf(u, 1.4) * 2, crit: true, knock: 140, st: { stagger: tierOf(u, 'runningThrow') >= 2 ? 45 : 0 }, extra: { big } }); };
+      after(u, 0.3, () => throwIt(true));
+      if (tier >= 3) after(u, 0.5, () => throwIt(false));
+    },
+    show: { far: true },
+  },
+  bound: {
+    score: (w, u) => (foesNear(w, u, u.x, u.y, 95).length ? 0.85 : 0),
+    use(w, u, t, tier) {
+      const f = foesNear(w, u, u.x, u.y, 150); let ax = 0, ay = 0; for (const e of f) { ax += u.x - e.x; ay += u.y - e.y; }
+      const a = f.length ? Math.atan2(ay, ax) : u.facing + Math.PI, x1 = clamp(u.x + Math.cos(a) * 170, u.r, w.W - u.r), y1 = clamp(u.y + Math.sin(a) * 170, u.r, w.H - u.r);
+      u.act = { type: 'leap', t: 0.45, max: 0.45, x0: u.x, y0: u.y, x1, y1, land: () => puff(w, u.x, u.y, '#E9DDC2', 6, 70, 4, 0.35) };
+      u.invulnT = Math.max(u.invulnT, 0.3);
+      after(u, 0.2, () => { const e = t && alive(t) ? t : foesNear(w, u, u.x, u.y, 300)[0]; if (!e) return; u.facing = ang(u, e);
+        shoot(w, u, ang(u, e), { kind: 'javelin', speed: 620, r: 7, dmg: dmgOf(u, 1.3), knock: 100, pierce: tierOf(u, 'bound') >= 2 ? 4 : 0 }); });
+      if (tier >= 3) u.kit.cd.bound = Math.max(0, (u.kit.cd.bound || 0) - 2);
+    },
+  },
+  prey: {
+    score: (w, u) => { const e = foesNear(w, u, u.x, u.y, 380).sort((p, q) => hpRatio(p) - hpRatio(q))[0]; return e && hpRatio(e) < 0.6 && !(u.kit.prey && u.kit.prey.until > w.time) ? 0.65 : 0; },
+    use(w, u, t, tier) {
+      const e = foesNear(w, u, u.x, u.y, 400).sort((p, q) => hpRatio(p) - hpRatio(q))[0]; if (!e) return;
+      cast(u, 'cast', 0.3); u.kit.prey = { e, until: w.time + 8 }; u.target = e;
+      addBuff(u, { id: 'prey', dur: 8, move: 1.4 });
+      k2(w, { draw: 'eye', unit: e, x: e.x, y: e.y, r: e.vr, max: 8, col: '#E0A060', ab: 'prey' });
+    },
+    hook: {
+      dealt(w, u, t, amt) { const p = u.kit.prey; return p && p.e === t && p.until > w.time ? amt * 1.5 : amt; },
+      tick(w, u) { const p = u.kit.prey; if (p && p.until > w.time && alive(p.e) && tierOf(u, 'prey') >= 2) u.target = p.e; },
+      kill(w, u, v) { const p = u.kit.prey; if (p && p.e === v) { if (tierOf(u, 'prey') >= 3) heal(w, u, u.maxHp * 0.15, u); u.kit.prey = null; u.buffs = u.buffs.filter((b) => b.id !== 'prey'); } },
+    },
+    show: { single: true, attacks: true },
+  },
+  // ----- Marksman
+  aimedShot: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && !blocked(w, u.x, u.y, t.x, t.y) && !foesNear(w, u, u.x, u.y, 110).length ? 0.6 + (t.elite || t.def.boss ? 0.2 : 0) : 0),
+    use(w, u, t, tier) {
+      if (!t) return; setAnim(u, 'shoot', 1.1);
+      k2(w, { draw: 'aimLine', from: u, to: t, x: u.x, y: u.y, max: 0.9 });
+      u.act = { type: 'channel', t: 0.9, max: 0.9, target: t, every: 0.9, acc: 0, tick: () => {} };
+      after(u, 0.9, () => {
+        if (!alive(u)) return; const e = t && alive(t) ? t : foesNear(w, u, u.x, u.y, u.def.range)[0]; if (!e) return;
+        let first = true; u.recoilT = 0.2;
+        k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: ang(u, e), max: 0.5 });
+        shoot(w, u, ang(u, e), { kind: 'bullet', speed: 1400, r: 7, life: 0.6, dmg: dmgOf(u, 3), crit: true, knock: 220, pierce: tierOf(u, 'aimedShot') >= 2 ? 9 : 1, extra: { big: true, onHit: (w2, p, x) => {
+          if (first && tierOf(u, 'aimedShot') >= 3) { const d = x.def.boss ? 0.6 : 1.5; x.koT = Math.max(x.koT || 0, d); stun(w2, x, d); } first = false; } } });
+      });
+    },
+    show: { far: true, single: true },
+  },
+  bayonet: {
+    score: (w, u) => (foesNear(w, u, u.x, u.y, u.r + 55).length ? 0.85 : 0),
+    use(w, u, t, tier) {
+      const e = foesNear(w, u, u.x, u.y, u.r + 70).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0]; if (!e) return;
+      u.facing = ang(u, e); setAnim(u, 'thrust', 0.35); u.kx += Math.cos(u.facing) * 120; u.ky += Math.sin(u.facing) * 120;
+      hurt(w, e, dmgOf(u, 0.8), u, { knock: 420, heavy: true, noDodge: true, stagger: tier >= 2 ? 50 : 0 });
+      k2(w, { draw: 'parry', x: e.x - Math.cos(u.facing) * e.r * 0.6, y: e.y - Math.sin(u.facing) * e.r * 0.6, a: u.facing, max: 0.3 });
+      if (tier >= 3) after(u, 0.3, () => { if (!alive(e)) return; u.facing = ang(u, e); setAnim(u, 'shoot', 0.3); k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: u.facing, max: 0.4 }); shoot(w, u, u.facing, { kind: 'bullet', speed: 1300, r: 6, dmg: dmgOf(u, 1.2), knock: 120 }); });
+    },
+    show: { single: true },
+  },
+  ricochet: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && foesNear(w, u, t.x, t.y, 220).length >= 2 ? 0.6 : 0),
+    use(w, u, t, tier) {
+      if (!t) return; setAnim(u, 'shoot', 0.4); const hit = new Set();
+      k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: ang(u, t), max: 0.4 });
+      const fire = (x, y, e, k, left, skip) => {
+        const a = angleTo(x, y, e.x, e.y);
+        w.projectiles.push({ kind: 'bullet', x, y, vx: Math.cos(a) * 1100, vy: Math.sin(a) * 1100, r: 6, team: u.team, owner: u, skip, dmg: dmgOf(u, k), o: { knock: 90, ab: 'ricochet' }, life: 0.5, a, ab: 'ricochet', tier,
+          onHit: (w2, p, hitE) => { hit.add(hitE); if (left <= 0) return; const n = opponents(w2, u).filter((o) => !hit.has(o) && dist(o.x, o.y, hitE.x, hitE.y) < 230).sort((p1, q) => dist(hitE.x, hitE.y, p1.x, p1.y) - dist(hitE.x, hitE.y, q.x, q.y))[0];
+            sparks(w2, hitE.x, hitE.y, a, 4, '#FFF4C8', 1); if (n) fire(hitE.x, hitE.y, n, k * (tierOf(u, 'ricochet') >= 3 ? 1.25 : 0.85), left - 1, hitE); } });
+      };
+      fire(u.x + Math.cos(ang(u, t)) * u.r, u.y + Math.sin(ang(u, t)) * u.r, t, 1.3, tier >= 2 ? 5 : 3, null);
+    },
+    show: { far: true },
+  },
+  // ----- Ninja
+  shurikenFan: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 220 ? 0.45 + 0.15 * foesNear(w, u, t.x, t.y, 90).length : 0),
+    use(w, u, t, tier) {
+      if (!t) return; const n = tier >= 2 ? 5 : 3, a0 = ang(u, t); setAnim(u, 'throw', 0.3);
+      for (let i = 0; i < n; i++) shoot(w, u, a0 + (i - (n - 1) / 2) * 0.2, { kind: 'shuriken', speed: 560, r: 7, life: 0.8, dmg: dmgOf(u, 1.4), knock: 30, st: tier >= 3 ? { poison: 18 } : {}, extra: { big: true } });
+      after(u, 0.18, () => {
+        zone(w, { x: u.x, y: u.y, r: 46, dur: 1.2, kind: 'smoke', src: u, smoke: true });
+        const s = rand() < 0.5 ? 1 : -1, b = a0 + s * Math.PI / 2 + Math.PI * 0.15 * s;
+        u.x = clamp(u.x + Math.cos(b) * 110, u.r, w.W - u.r); u.y = clamp(u.y + Math.sin(b) * 110, u.r, w.H - u.r); u.vx = u.vy = 0;
+        puff(w, u.x, u.y, '#5A5560', 10, 80, 7, 0.45);
+      });
+    },
+    show: { far: true },
+  },
+  substitution: {
+    passiveTier: true, score: () => 0, use() {},
+    hook: {
+      taken(w, u, src, amt, o) {
+        const k = u.kit; if (o.dot || amt < u.maxHp * 0.07 || (k.subReady || 0) > w.time) return amt;
+        const tier = tierOf(u, 'substitution'), cd = tier >= 3 ? 7 : 12; k.subReady = w.time + cd; k.cd.substitution = cd;
+        k2(w, { draw: 'log', x: u.x, y: u.y, max: 1.4, ab: 'substitution' }); puff(w, u.x, u.y, '#5A5560', 12, 90, 7, 0.5);
+        if (tier >= 2) for (const e of foesNear(w, u, u.x, u.y, 80)) addBuff(e, { id: 'logSmoke', dur: 2, blind: true });
+        const a = src ? angleTo(src.x, src.y, u.x, u.y) + rrange(-0.6, 0.6) : rand() * TAU;
+        u.x = clamp(u.x + Math.cos(a) * 120, u.r, w.W - u.r); u.y = clamp(u.y + Math.sin(a) * 120, u.r, w.H - u.r); u.vx = u.vy = 0; u.invulnT = Math.max(u.invulnT, 0.3);
+        return 0;
+      },
+    },
+    show: { hitme: true },
+  },
+  caltrops: {
+    score: (w, u) => (foesNear(w, u, u.x, u.y, 110).length >= 2 ? 0.6 : 0),
+    use(w, u, t, tier) {
+      setAnim(u, 'throw', 0.3); const x = u.x, y = u.y, r = tier >= 2 ? 100 : 72; let acc = 0;
+      k2(w, { draw: 'caltrops', x, y, r, max: 5, ab: 'caltrops' });
+      timer(u, 'caltrops', 5, (dt) => { acc += dt; if (acc < 0.3) return; acc -= 0.3;
+        for (const e of foesNear(w, u, x, y, r)) { addBuff(e, { id: 'caltrops', dur: 0.4, move: 0.55 }); if (e.spd > 10) hurt(w, e, dmgOf(u, 0.35), u, { dot: true, poison: tierOf(u, 'caltrops') >= 3 ? 6 : 0, ab: 'caltrops' }); } });
+    },
+  },
+  // ----- Pirate
+  pointBlank: {
+    score: (w, u) => (foesNear(w, u, u.x, u.y, u.r + 60).length ? 0.6 : 0),
+    use(w, u, t, tier) {
+      const list = foesNear(w, u, u.x, u.y, u.r + 70).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y));
+      const bang = (e, side) => { if (!e || !alive(e)) return; u.facing = ang(u, e); setAnim(u, 'shoot', 0.3);
+        k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: u.facing, max: 0.45, side });
+        hurt(w, e, dmgOf(u, 2.2), u, { knock: 400, heavy: true, noDodge: true, stagger: tierOf(u, 'pointBlank') >= 2 ? 50 : 0 }); w.shake = Math.max(w.shake, 4); };
+      bang(list[0] || t, 1);
+      if (tier >= 3) after(u, 0.25, () => bang(list[1] || list[0], -1));
+    },
+    show: { single: true },
+  },
+  grog: {
+    score: (w, u) => (hpRatio(u) < 0.5 && foesNear(w, u, u.x, u.y, 200).length ? 0.8 : 0),
+    use(w, u, t, tier) {
+      setAnim(u, 'ability', 0.5);
+      heal(w, u, u.maxHp * (tier >= 3 ? 0.3 : 0.2), u);
+      addBuff(u, { id: 'grog', dur: 5, taken: 0.8, knockImmune: tier >= 2, glow: '#E0A060' });
+      k2(w, { draw: 'splash', x: u.x, y: u.y, r: 30, col: '#C8902A', max: 0.5 });
+    },
+  },
+  broadside: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 340 && foesNear(w, u, t.x, t.y, 130).length >= 2 ? 0.7 : 0),
+    use(w, u, t, tier) {
+      if (!t) return; cast(u, 'cast', 0.5);
+      const n = tier >= 3 ? 5 : 3, cx = t.x, cy = t.y, r = tier >= 2 ? 75 : 58;
+      for (let i = 0; i < n; i++) {
+        const near = foesNear(w, u, cx, cy, 130), e = near[i % Math.max(1, near.length)];
+        const x = e ? e.x + rrange(-15, 15) : cx + rrange(-80, 80), y = e ? e.y + rrange(-15, 15) : cy + rrange(-80, 80);
+        after(u, 0.2 + i * 0.22, () => { k2(w, { draw: 'shell', x, y, r, max: 0.6, ab: 'broadside' }); after(u, 0.6, () => blast(w, u, x, y, r, 1.4, {}, 'broadside')); });
+      }
+    },
+    show: { far: true },
+  },
+  // ----- Slinger
+  stunStone: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range ? 0.4 + (foeWinding(w, t) ? 0.45 : 0) : 0),
+    use(w, u, t, tier) {
+      if (!t) return; setAnim(u, 'spin', 0.35); u.spin = { t0: w.time, dur: 0.35, dir: 1 };
+      after(u, 0.3, () => { const e = t && alive(t) ? t : null; if (!e) return; setAnim(u, 'throw', 0.25);
+        shoot(w, u, ang(u, e), { kind: 'stone', speed: 640, r: 7, dmg: dmgOf(u, 1.3), knock: 60, extra: { big: true, onHit: (w2, p, x) => {
+          interrupt(w2, x); stun(w2, x, tierOf(u, 'stunStone') >= 2 ? 1 : 0.6); k2(w2, { draw: 'bonk', x: x.x, y: x.y, unit: x, r: x.vr, max: 0.6, ab: 'stunStone' });
+          if (tierOf(u, 'stunStone') >= 3 && !p.bounced) { const n = opponents(w2, u).filter((o) => o !== x && dist(o.x, o.y, x.x, x.y) < 200)[0];
+            if (n) { const b = angleTo(x.x, x.y, n.x, n.y); w2.projectiles.push({ kind: 'stone', x: x.x, y: x.y, vx: Math.cos(b) * 560, vy: Math.sin(b) * 560, r: 6, team: u.team, owner: u, skip: x, dmg: dmgOf(u, 0.8), o: { knock: 40 }, life: 0.5, a: b, bounced: true,
+              onHit: (w3, p3, y3) => { stun(w3, y3, 0.6); } }); } }
+        } } }); });
+    },
+    show: { far: true },
+  },
+  ramCharge: {
+    score(w, u, t) { if (!t) return 0; const a = ang(u, t); return opponents(w, u).filter((e) => angleDiff(ang(u, e), a) < 0.35 && dist(u.x, u.y, e.x, e.y) < 380).length >= 2 ? 0.65 : 0; },
+    use(w, u, t, tier) {
+      if (!t) return; cast(u, 'cast', 0.4);
+      const run = (off) => {
+        const a = ang(u, t), nx = -Math.sin(a) * off, ny = Math.cos(a) * off, x0 = u.x - Math.cos(a) * 40 + nx, y0 = u.y - Math.sin(a) * 40 + ny, hit = new Set(); let s = 0;
+        const f = k2(w, { draw: 'ram', x: x0, y: y0, a, max: 1, ab: 'ramCharge' });
+        timer(u, 'ram' + off, 0.95, (dt) => { s += 540 * dt; f.x = x0 + Math.cos(a) * s; f.y = y0 + Math.sin(a) * s;
+          for (const e of foesNear(w, u, f.x, f.y, 34)) if (!hit.has(e)) { hit.add(e); const side = Math.sign(Math.sin(angleTo(f.x, f.y, e.x, e.y) - a)) || 1;
+            hurt(w, e, dmgOf(u, 1), u, { knock: 380, kAngle: a + side * 0.7, heavy: true, noDodge: true, stagger: tierOf(u, 'ramCharge') >= 2 ? 50 : 0, ab: 'ramCharge' }); } });
+      };
+      run(0); if (tier >= 3) after(u, 0.2, () => run(46));
+    },
+    show: { far: true },
+  },
+  gravel: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 200 && foesNear(w, u, t.x, t.y, 90).length >= 2 ? 0.65 : 0),
+    use(w, u, t, tier) {
+      if (!t) return; setAnim(u, 'throw', 0.35);
+      const n = tier >= 3 ? 14 : 9, arc = tier >= 3 ? 1.3 : 0.9, a0 = ang(u, t);
+      for (let i = 0; i < n; i++) shoot(w, u, a0 + (rand() - 0.5) * arc, { kind: 'stone', speed: rrange(460, 640), r: 5, life: 0.5, dmg: dmgOf(u, 0.4), knock: tier >= 2 ? 110 : 20 });
+    },
+    show: { far: true },
+  },
+  // ----- Trapper
+  jawTrap: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 300 && t.def.role !== 'ranged' && (u.kit.traps || 0) < 3 ? 0.55 : 0),
+    use(w, u, t, tier) {
+      if (!t) return; setAnim(u, 'throw', 0.35);
+      const n = tier >= 3 ? 2 : 1;
+      for (let i = 0; i < n; i++) {
+        const k = 0.55 + i * 0.12, off = (i ? 40 : 0), a = ang(u, t) + Math.PI / 2;
+        const x = u.x + (t.x - u.x) * k + Math.cos(a) * off, y = u.y + (t.y - u.y) * k + Math.sin(a) * off;
+        u.kit.traps = (u.kit.traps || 0) + 1;
+        lob(w, u, x, y, 'trapThrown', null, () => {
+          const f = k2(w, { draw: 'trap', x, y, max: 14, ab: 'jawTrap' });
+          timer(u, 'trap' + Math.round(x * 7 + y), 14, () => {
+            const e = foesNear(w, u, x, y, 22)[0]; if (!e) return;
+            const T = tierOf(u, 'jawTrap') >= 2 ? 3 : 2; e.rootT = Math.max(e.rootT || 0, e.def.boss ? T * 0.4 : T); e.x = x; e.y = y; e.vx = e.vy = 0;
+            hurt(w, e, dmgOf(u, tierOf(u, 'jawTrap') >= 2 ? 1.6 : 1), u, { noDodge: true, knock: 0, ab: 'jawTrap' });
+            f.snapT = f.t; f.max = f.t + T; f.held = e; return true;
+          }, () => { u.kit.traps = Math.max(0, (u.kit.traps || 1) - 1); if (!f.snapT) f.max = Math.min(f.max, f.t + 0.3); });
+        });
+      }
+    },
+    show: { far: true, mob: 'walk' },
+  },
+  snareNet: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 280 && foesNear(w, u, t.x, t.y, 80).length >= 2 ? 0.65 : 0),
+    use(w, u, t, tier) {
+      if (!t) return; setAnim(u, 'throw', 0.4); const r = tier >= 2 ? 95 : 70;
+      lob(w, u, t.x, t.y, 'net', null, (x, y) => {
+        k2(w, { draw: 'netOn', x, y, r, max: 2, ab: 'snareNet' });
+        for (const e of foesNear(w, u, x, y, r)) addStatus(w, e, 'entangle', tierOf(u, 'snareNet') >= 3 ? 120 : 65, u);
+      });
+    },
+    show: { far: true },
+  },
+  tripwire: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) > 120 && dist(u.x, u.y, t.x, t.y) < 320 && foesNear(w, u, t.x, t.y, 120).length >= 2 ? 0.6 : 0),
+    use(w, u, t, tier) {
+      if (!t) return; setAnim(u, 'throw', 0.35);
+      const a = ang(u, t), cx = u.x + (t.x - u.x) * 0.6, cy = u.y + (t.y - u.y) * 0.6, L = tier >= 2 ? 130 : 85, px = -Math.sin(a), py = Math.cos(a);
+      const x1 = cx + px * L, y1 = cy + py * L, x2 = cx - px * L, y2 = cy - py * L, done = new Set();
+      k2(w, { draw: 'wire', x: cx, y: cy, x1, y1, x2, y2, max: 7, ab: 'tripwire' });
+      timer(u, 'tripwire', 7, () => { for (const e of opponents(w, u)) if (!done.has(e) && segDist(e.x, e.y, x1, y1, x2, y2) < e.r * 0.6 + 6) {
+        done.add(e); const d = (tierOf(u, 'tripwire') >= 3 ? 1.6 : 1) * (e.def.boss ? 0.4 : 1); e.koT = Math.max(e.koT || 0, d); stun(w, e, d); interrupt(w, e);
+        hurt(w, e, dmgOf(u, 0.5), u, { noDodge: true, knock: 60, ab: 'tripwire' }); k2(w, { draw: 'bonk', x: e.x, y: e.y, unit: e, r: e.vr, max: d, ab: 'tripwire' }); } });
+    },
+    show: { far: true, mob: 'walk' },
+  },
+  // ----- Gladiator
+  netThrow: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 220 && !(t.rootT > 0) ? 0.55 : 0),
+    use(w, u, t, tier) {
+      if (!t) return; setAnim(u, 'throw', 0.35);
+      const list = [t]; if (tier >= 3) { const n = opponents(w, u).filter((o) => o !== t && dist(u.x, u.y, o.x, o.y) < 240)[0]; if (n) list.push(n); }
+      for (const e of list) shoot(w, u, ang(u, e), { kind: 'net', speed: 480, r: 12, life: 0.8, dmg: dmgOf(u, 0.3), knock: 0, extra: { home: e, turn: 4, onHit: (w2, p, x) => {
+        const d = (tierOf(u, 'netThrow') >= 2 ? 3 : 2) * (x.def.boss ? 0.4 : 1); x.rootT = Math.max(x.rootT || 0, d); x.netUntil = w2.time + d;
+        k2(w2, { draw: 'netOn', unit: x, x: x.x, y: x.y, r: x.r + 10, max: d, ab: 'netThrow' });
+      } } });
+    },
+    hook: { dealt(w, u, t, amt) { return t.netUntil > w.time ? amt * 1.3 : amt; } },
+    show: { far: true, single: true },
+  },
+  showboat: {
+    score: (w, u) => (foesNear(w, u, u.x, u.y, 200).length >= 2 && hpRatio(u) > 0.35 ? 0.65 : 0),
+    use(w, u, t, tier) {
+      cast(u, 'ability', 0.6); u.kit.showUntil = w.time + 3;
+      for (const e of foesNear(w, u, u.x, u.y, 210)) { e.tauntBy = u; e.tauntT = 3; e.target = u; }
+      addBuff(u, { id: 'showboat', dur: 3, taken: 0.7, glow: '#F2C14E' });
+      if (tier >= 2) heal(w, u, u.maxHp * 0.15, u);
+      k2(w, { draw: 'rally', unit: u, x: u.x, y: u.y, r: u.vr, max: 1, cols: ['#F2C14E', '#C8453D'] });
+      k2(w, { draw: 'horn', unit: u, x: u.x, y: u.y, r: 200, max: 0.8 });
+    },
+    hook: {
+      struck(w, u, src) {
+        if (!(u.kit.showUntil > w.time) || tierOf(u, 'showboat') < 3 || !src || !alive(src) || w.time - (u.kit.showHit || -9) < 0.2) return;
+        if (dist(u.x, u.y, src.x, src.y) - u.r - src.r > 60) return;
+        u.kit.showHit = w.time; u.facing = angleTo(u.x, u.y, src.x, src.y); setAnim(u, 'thrust', 0.2);
+        hurt(w, src, dmgOf(u, 0.9), u, { knock: 120, noDodge: true, proc: true, ab: 'showboat' });
+      },
+    },
+    show: { hitme: true },
+  },
+  shieldRush: {
+    score(w, u, t) { if (!t) return 0; const g = dist(u.x, u.y, t.x, t.y) - u.r - t.r; return g > 40 && g < 220 && lineClear(w, u.x, u.y, t.x, t.y, u.r) ? 0.6 : 0; },
+    use(w, u, t, tier) {
+      if (!t) return; const a = ang(u, t), hit = new Set(); u.facing = a;
+      u.act = { type: 'dash', t: 0.25, max: 0.25, a }; addBuff(u, { id: 'shieldRush', dur: 0.3, raise: true, frontBlock: 0.5 });
+      k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a, max: 0.4 });
+      timer(u, 'shieldRush', 0.3, () => {
+        if (tierOf(u, 'shieldRush') >= 2) for (const e of foesNear(w, u, u.x, u.y, u.r + 10)) if (e !== t && !hit.has(e)) { hit.add(e); hurt(w, e, dmgOf(u, 0.5), u, { knock: 260, kAngle: a + (Math.sin(ang(u, e) - a) > 0 ? 0.8 : -0.8), noDodge: true, ab: 'shieldRush' }); }
+      }, () => {
+        if (!alive(t) || dist(u.x, u.y, t.x, t.y) - u.r - t.r > 70) return;
+        u.facing = ang(u, t); setAnim(u, 'thrust', 0.3);
+        hurt(w, t, dmgOf(u, 1.6), u, { knock: 160, noDodge: true, heavy: true, ab: 'shieldRush' }); if (tierOf(u, 'shieldRush') >= 3) stun(w, t, 1);
+      });
+    },
+    show: { far: true, single: true },
+  },
+  // ----- Jester
+  mock: {
+    score: (w, u) => (allies(w, u).some((a) => !a.summon && hpRatio(a) < 0.5 && opponents(w, u).some((e) => e.target === a && dist(u.x, u.y, e.x, e.y) < 240)) ? 0.85 : foesNear(w, u, u.x, u.y, 200).length >= 3 ? 0.45 : 0),
+    use(w, u, t, tier) {
+      cast(u, 'ability', 0.6); const r = tier >= 2 ? 250 : 180; u.kit.mockUntil = w.time + 3;
+      for (const e of foesNear(w, u, u.x, u.y, r)) { e.tauntBy = u; e.tauntT = 3; e.target = u; if (tier >= 3) addBuff(e, { id: 'mocked', dur: 3, atkSpeed: 0.7 }); }
+      k2(w, { draw: 'bubble', unit: u, x: u.x, y: u.y, r: u.vr, max: 1, talk: true });
+      k2(w, { draw: 'horn', unit: u, x: u.x, y: u.y, r, max: 0.8 });
+    },
+    hook: { evade(w, u, src, amt, o) { if (u.kit.mockUntil > w.time && !o.dot && rand() < 0.35) { puff(w, u.x, u.y, '#FFD45A', 6, 60, 4, 0.35); return true; } return false; } },
+  },
+  befuddle: {
+    score: (w, u, t) => (t && !t.def.boss && !t.major && dist(u.x, u.y, t.x, t.y) < 220 && foesNear(w, u, t.x, t.y, 160).length >= 2 ? 0.6 + (t.elite ? 0.2 : 0) : 0),
+    use(w, u, t, tier) {
+      cast(u, 'cast', 0.5);
+      const list = (t && !t.def.boss && !t.major ? [t] : []).concat(tier >= 3 ? opponents(w, u).filter((o) => o !== t && !o.def.boss && !o.major && dist(u.x, u.y, o.x, o.y) < 240).slice(0, 1) : []);
+      const dur = tier >= 2 ? 4 : 2.5;
+      for (const e of list) {
+        if (e.befuddled) continue;
+        const was = e.team; e.befuddled = { was, until: w.time + dur }; e.team = u.team; e.target = null; e.tauntBy = null; e.tauntT = 0; e.aggro = true;
+        k2(w, { draw: 'swirlStars', unit: e, x: e.x, y: e.y, r: e.vr, max: dur, ab: 'befuddle' });
+        timer(u, 'befuddle' + e.id, dur, null, () => { if (e.befuddled) { e.team = e.befuddled.was; e.befuddled = null; e.target = null; } });
+      }
+    },
+    hook: { fallen(w, u) { for (const e of w.units) if (e.befuddled) { e.team = e.befuddled.was; e.befuddled = null; e.target = null; } } },
+    show: { far: true, single: true },
+  },
+  juggle: {
+    score: (w, u) => (foesNear(w, u, u.x, u.y, 240).length >= 2 ? 0.55 : 0),
+    use(w, u, t, tier) {
+      setAnim(u, 'throw', 0.4); const n = tier >= 3 ? 5 : 3, foes = foesNear(w, u, u.x, u.y, 260); if (!foes.length) return;
+      const ball = (x, y, e, left, skip, col) => {
+        const a = angleTo(x, y, e.x, e.y);
+        w.projectiles.push({ kind: 'ball', x, y, vx: Math.cos(a) * 520, vy: Math.sin(a) * 520, r: 7, team: u.team, owner: u, skip, dmg: dmgOf(u, 0.8), o: { knock: 70, ab: 'juggle' }, life: 0.7, a, ab: 'juggle', tier, color: col,
+          onHit: (w2, p, h) => { if (tierOf(u, 'juggle') >= 2) addBuff(h, { id: 'dazed', dur: 2, move: 0.6 }); if (left <= 0) return;
+            const nx = opponents(w2, u).filter((o) => o !== h && dist(o.x, o.y, h.x, h.y) < 200)[0]; if (nx) ball(h.x, h.y, nx, left - 1, h, col); } });
+      };
+      const cols = ['#C8453D', '#FFD45A', '#5B8CDB', '#7FCB3A', '#E05AB8'];
+      for (let i = 0; i < n; i++) ball(u.x, u.y, foes[i % foes.length], 2, null, cols[i]);
+    },
+    show: { far: true },
+  },
+  // ----- Samurai
+  iaido: {
+    score(w, u, t) { if (!t) return 0; const a = ang(u, t); return dist(u.x, u.y, t.x, t.y) < 280 && lineClear(w, u.x, u.y, t.x, t.y, u.r) ? 0.4 + 0.2 * opponents(w, u).filter((e) => angleDiff(ang(u, e), a) < 0.35 && dist(u.x, u.y, e.x, e.y) < 300).length : 0; },
+    use(w, u, t, tier) {
+      if (!t) return;
+      const go = (a) => {
+        const x0 = u.x, y0 = u.y, cut = new Set(); u.facing = a;
+        u.act = { type: 'dash', t: 0.24, max: 0.24, a }; u.invulnT = Math.max(u.invulnT, 0.3); setAnim(u, 'swing', 0.3);
+        timer(u, 'iaido', 0.26, () => { for (const e of opponents(w, u)) if (!cut.has(e) && dist(u.x, u.y, e.x, e.y) < u.r + e.r + 14) { cut.add(e);
+          const crit = tierOf(u, 'iaido') >= 2; hurt(w, e, dmgOf(u, 1.6) * (crit ? 2 : 1), u, { crit, noDodge: true, knock: 70, kAngle: a + Math.PI / 2, ab: 'iaido' }); } },
+          () => k2(w, { draw: 'slashLine', x: x0, y: y0, x1: x0, y1: y0, x2: u.x, y2: u.y, max: 0.5, ab: 'iaido' }));
+      };
+      const a = ang(u, t); cast(u, 'ability', 0.2); after(u, 0.12, () => go(a));
+      if (tier >= 3) after(u, 0.55, () => alive(u) && go(a + Math.PI));
+    },
+    show: { far: true },
+  },
+  focus: {
+    score: (w, u, t) => (!u.kit.focus && t && (t.elite || t.def.boss || t.maxHp > 120) && dist(u.x, u.y, t.x, t.y) < 200 ? 0.7 : !u.kit.focus && foesNear(w, u, u.x, u.y, 200).length ? 0.35 : 0),
+    use(w, u, t, tier) {
+      cast(u, 'cast', 0.5); u.kit.focus = true;
+      k2(w, { draw: 'gather', unit: u, x: u.x, y: u.y, r: 30, max: 0.6, col: '#FFFFFF' });
+      k2(w, { draw: 'peace', unit: u, x: u.x, y: u.y, r: u.vr * 2, max: 1 });
+      u.atkT = Math.min(u.atkT, 0.2);
+    },
+    hook: {
+      dealt(w, u, t, amt, o) {
+        if (!u.kit.focus || o.dot || o.shot || o.proc) return amt; u.kit.focus = false; o.crit = true;
+        const tier = tierOf(u, 'focus');
+        if (tier >= 2) for (const e of foesNear(w, u, u.x, u.y, u.r + 70)) if (e !== t) hurt(w, e, dmgOf(u, 1.5), u, { noDodge: true, knock: 140, kAngle: ang(u, e), proc: true, ab: 'focus' });
+        if (tier >= 2) fx(w, { type: 'ring', x: u.x, y: u.y, r: u.r + 70, color: '#FFFFFF', max: 0.35, a: u.facing, unit: u });
+        if (tier >= 3) heal(w, u, u.maxHp * 0.15, u);
+        return amt * 3;
+      },
+    },
+    show: { attacks: true },
+  },
+  crescentCut: {
+    score(w, u, t) { if (!t || dist(u.x, u.y, t.x, t.y) > 320) return 0; const a = ang(u, t); return 0.3 + 0.2 * opponents(w, u).filter((e) => angleDiff(ang(u, e), a) < 0.4 && dist(u.x, u.y, e.x, e.y) < 340).length; },
+    use(w, u, t, tier) {
+      if (!t) return; cast(u, 'swing', 0.35); const a0 = ang(u, t), n = tier >= 3 ? 3 : 1;
+      after(u, 0.1, () => { for (let i = 0; i < n; i++) shoot(w, u, a0 + (i - (n - 1) / 2) * 0.3, { kind: 'crescent', speed: 620, r: 14, life: 0.55, pierce: 9, dmg: dmgOf(u, 1.4), knock: 120, st: { stagger: tierOf(u, 'crescentCut') >= 2 ? 40 : 0 } }); });
+    },
+    show: { far: true },
+  },
+  // ----- Valkyrie
+  valkyrieCall: {
+    score: (w, u) => (u.kit.callW !== w && w.units.some((a) => a.team === u.team && a.downed && !a.dead && !a.summon) ? 1 : 0),
+    use(w, u, t, tier) {
+      const d = w.units.filter((a) => a.team === u.team && a.downed && !a.dead && !a.summon).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0]; if (!d) return;
+      u.kit.callW = w; cast(u, 'cast', 0.7);
+      fx(w, { type: 'pillar', x: d.x, y: d.y, r: 34, kind: 'holy', max: 0.6 });
+      after(u, 0.3, () => { if (!d.downed || d.dead) return; cleanse(d); d.downed = false; d.reviveT = 0; d.hp = d.maxHp * (tier >= 2 ? 0.4 : 0.25); d.invulnT = tier >= 3 ? 2 : 1; d.revivedByKit = true;
+        k2(w, { draw: 'rally', unit: d, x: d.x, y: d.y, r: d.vr, max: 1, ab: 'valkyrieCall' }); k2(w, { draw: 'wings', unit: d, x: d.x, y: d.y, r: d.r, max: 0.9, flap: true }); });
+    },
+    show: { ally: true, downed: true },
+  },
+  spearThrow: {
+    score(w, u, t) { if (!t || dist(u.x, u.y, t.x, t.y) > 340 || blocked(w, u.x, u.y, t.x, t.y)) return 0; const a = ang(u, t); return 0.3 + 0.2 * opponents(w, u).filter((e) => angleDiff(ang(u, e), a) < 0.3 && dist(u.x, u.y, e.x, e.y) < 340).length; },
+    use(w, u, t, tier) {
+      if (!t) return; cast(u, 'throw', 0.45); const a = ang(u, t); let last = null;
+      after(u, 0.14, () => shoot(w, u, a, { kind: 'spear', speed: 680, r: 9, life: 0.55, pierce: 9, dmg: dmgOf(u, 1.4), knock: 120, st: { shock: tier >= 2 ? 30 : 0 }, extra: { onHit: (w2, p, e) => { last = e; } }, land: (p) => {
+        if (last && alive(last) && tierOf(u, 'spearThrow') >= 3) { last.rootT = Math.max(last.rootT || 0, 1.5); k2(w, { draw: 'pin', unit: last, x: last.x, y: last.y, r: last.vr, a, max: 1.5, ab: 'spearThrow' }); }
+        const b = angleTo(p.x, p.y, u.x, u.y);
+        w.projectiles.push({ kind: 'spear', x: p.x, y: p.y, vx: Math.cos(b) * 700, vy: Math.sin(b) * 700, r: 9, team: u.team, owner: u, dmg: dmgOf(u, 0.7), o: { knock: 60, ab: 'spearThrow' }, life: 1.4, a: b, pierce: 9, hitSet: new Set(), home: u, turn: 14, catchBy: u, ab: 'spearThrow', tier });
+      } }));
+    },
+    show: { far: true },
+  },
+  skyDive: {
+    score(w, u, t) { if (!t) return 0; const d = dist(u.x, u.y, t.x, t.y); return d > 130 && d < 380 ? 0.55 + 0.15 * foesNear(w, u, t.x, t.y, 90).length : 0; },
+    use(w, u, t, tier) {
+      if (!t) return; cast(u, 'ability', 0.7);
+      const a = ang(u, t), x1 = t.x - Math.cos(a) * (u.r + t.r) * 0.6, y1 = t.y - Math.sin(a) * (u.r + t.r) * 0.6;
+      k2(w, { draw: 'wings', unit: u, x: u.x, y: u.y, r: u.r, max: 0.7, flap: true });
+      u.act = { type: 'leap', t: 0.65, max: 0.65, x0: u.x, y0: u.y, x1, y1, land: () => {
+        w.shake = Math.max(w.shake, 7);
+        if (alive(t)) hurt(w, t, dmgOf(u, 1.8), u, { heavy: true, noDodge: true, knock: 200, crit: true });
+        ring(w, u, u.x, u.y, 95, dmgOf(u, 0.8), { knock: 240, stagger: tier >= 2 ? 45 : 0 }, '#EEF3F8');
+        if (tier >= 3) heal(w, u, u.maxHp * 0.15, u);
+      } };
+      u.invulnT = Math.max(u.invulnT, 0.6);
+    },
+    show: { far: true },
+  },
 };
 // a bomb's blast at x, y: radius r, damage k x his own, extra hit options; drawn as the kit's blast
 function blast(w, u, x, y, r, k, o, ab) {
@@ -1229,6 +1651,18 @@ export const TRAITS2 = {
   birdsEye: { tick(w, u) { if (u.kit.birdsEye) return; u.kit.birdsEye = true; u.def = { ...u.def, range: u.def.range * 1.25, keep: (u.def.keep || 150) * 1.15 }; } },
   demolition: { dealt(w, u, t, amt, o) { if (o.blast && o.knock) o.knock *= 2; return amt; } },
   oldSalt: { immune: ['wet'], dealt(w, u, t, amt) { return t.st && t.st.wet > 20 ? amt * 1.2 : amt; } },
+  finisher: { dealt(w, u, t, amt) { return hpRatio(t) < 0.5 ? amt * 1.25 : amt; } },
+  deadeye: { dealt(w, u, t, amt, o) { if (!o.dot && t.hp >= t.maxHp * 0.999) { o.crit = true; return amt * 2; } return amt; } },
+  assassin: { dealt(w, u, t, amt, o) { return o.shot && angleDiff(angleTo(t.x, t.y, u.x, u.y), t.facing) > 1.9 ? amt * 1.5 : amt; } },
+  dirtyFighting: { dealt(w, u, t, amt) { return (t.st.stagger || 0) > 30 || t.stunT > 0 || t.rootT > 0 || t.koT > 0 || t.buffs.some((b) => b.move && b.move < 1) ? amt * 1.3 : amt; } },
+  watchful: { tick(w, u, dt) { for (const a of friendsNear(w, u, u.x, u.y, 170)) { if (a.stunT > 0) a.stunT = Math.max(0, a.stunT - 0.4 * dt); if (a.sleepT > 0) a.sleepT = Math.max(0, a.sleepT - 0.4 * dt); } } },
+  trappersEye: { dealt(w, u, t, amt) { return t.rootT > 0 || t.tangledT > 0 || t.koT > 0 ? amt * 1.3 : amt; } },
+  arena: { dealt(w, u, t, amt) { return amt * (1 + Math.min(0.25, 0.05 * foesNear(w, u, u.x, u.y, 160).length)); } },
+  pratfall: {
+    downed(w, u) { if (u.kit.pratW === w) return false; u.kit.pratW = w; u.hp = Math.max(1, u.maxHp * 0.1); u.invulnT = 1; setAnim(u, 'spin', 0.5); u.spin = { t0: w.time, dur: 0.5, dir: 1 }; puff(w, u.x, u.y, '#FFD45A', 10, 90, 5, 0.5); return true; },
+  },
+  bushido: { atkSpeed: (u) => (hpRatio(u) < 0.35 ? 1.4 : 1) },
+  chooser: { reviveRate: 2, reviveHp: 0.3 },
   wellFed: { tick(w, u, dt) { for (const a of friendsNear(w, u, u.x, u.y, 150)) if (!a.summon) heal(w, a, a.maxHp * 0.005 * dt, u); } },
   beeFriend: {
     tick(w, u, dt) {
@@ -1300,6 +1734,16 @@ export const ATTACKS2 = {
   },
   // a thrown barbed harpoon on its rope
   harpooner(w, u, t, a) { shoot(w, u, a, { kind: 'harpoon', speed: 620, r: 7, life: 0.6, dmg: A(u, 1), knock: 40 }); },
+  // a hard-thrown javelin
+  huntress(w, u, t, a) { shoot(w, u, a, { kind: 'javelin', speed: 600, r: 7, dmg: A(u, 1), knock: 110 }); },
+  // one long, hard musket shot
+  marksman(w, u, t, a) { k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a, max: 0.45 }); shoot(w, u, a, { kind: 'bullet', speed: 1200, r: 6, life: 0.6, dmg: A(u, 1), knock: 120 }); },
+  // a shuriken from either hand
+  ninja(w, u, t, a) { shoot(w, u, a + rrange(-0.05, 0.05), { kind: 'shuriken', speed: 560, r: 6, life: 0.7, dmg: A(u, 1), knock: 15 }); },
+  // a whirl and a stone
+  slinger(w, u, t, a) { shoot(w, u, a, { kind: 'stone', speed: 580, r: 6, dmg: A(u, 1), knock: 50 }); },
+  // a rifle shot
+  trapper(w, u, t, a) { k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a, max: 0.4 }); shoot(w, u, a, { kind: 'bullet', speed: 1100, r: 6, life: 0.6, dmg: A(u, 1), knock: 80 }); },
   // a magenta pact bolt: a third of what it deals heals him
   warlock(w, u, t, a) {
     shoot(w, u, a, { kind: 'bolt', speed: 470, r: 7, dmg: A(u, 1), color: '#E05AB8', knock: 25, extra: { onHit: (w2, p) => heal(w2, u, p.dmg * 0.33, u) } });

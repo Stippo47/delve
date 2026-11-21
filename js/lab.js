@@ -271,6 +271,7 @@ function setupShow() {
       if (sh.hitme) { d0.facing = Math.atan2(u.y - d0.y, u.x - d0.x); hurt(w, u, 4, d0, { knock: 0 }); }
       else { const a = Math.atan2(u.y - d0.y, u.x - d0.x); w.projectiles.push({ kind: 'arrow', x: d0.x + Math.cos(a) * 30, y: d0.y + Math.sin(a) * 30, vx: Math.cos(a) * 420, vy: Math.sin(a) * 420, r: 6, team: 'enemy', owner: d0, dmg: 4, o: { knock: 10 }, life: 1.2, a }); }
     }
+    if (sh.mob === 'walk' && cast) for (const d of dummies) d.home.x = Math.max(u.x + 70, d.home.x - 70 * dt);
     if (sh.killDummy && cast && w.time - SHOW_AT > 0.6 && !u._killed) { u._killed = true; hurt(w, dummies[1], 99999, u, { noDodge: true }); hurt(w, dummies[2], 99999, u, { noDodge: true }); }
     if (sh.hitDummy && cast && Math.floor(w.time / 0.45) !== Math.floor((w.time - dt) / 0.45)) hurt(w, dummies[0], 14, null, { noDodge: true });
     step(w, dt);
