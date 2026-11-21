@@ -94,7 +94,7 @@ of his court still standing crumble with him, and so do his bone walls. A shower
   round them while the whole court is out and the soul fire curses.
 
 ## Numbers (tuned in tests)
-HP 1100 (round 8; was 950) x the room's multiplier (floor 3 of depth 1 is about x1.47) x party size (0.4 + 0.2 per
+HP 1000 (round 12; round 8 had 1100, before that 950) x the room's multiplier (floor 3 of depth 1 is about x1.47) x party size (0.4 + 0.2 per
 hero: 1.0 for three). Cleave 20, Lance 27 (480 long), Bone spike 13 + stagger, Soul Nova/Ring 25 + chill 45 (phase 4:
 curse 40 instead), the Last Court's call 14 + curse 30, a bone wall block shoving you 6 + curse 20 (each x his damage
 multiplier, about 1.16). Speed 48, turns slowly (2 rad/s). Phases at 66%, 40% and 16%. Adds use the room's

@@ -26,15 +26,15 @@ Iron floor, four boiler pillars, a conveyor band across the middle. It hangs at 
 The hands take turns, one every 2-3 s:
 | hand | move | tell | shape | hit |
 |---|---|---|---|---|
-| left | **Hammer** | 1.0 s: the hand rises over a hero | a circle 96 where it comes down | 115, staggered |
-| right | **Claw** | 0.85 s: it draws back | a rake along a line 420 through the hero, 88 wide | 95, thrown hard |
+| left | **Hammer** | 1.0 s: the hand rises over a hero | a circle 96 where it comes down | 105, staggered |
+| right | **Claw** | 0.85 s: it draws back | a rake along a line 420 through the hero, 88 wide | 88, thrown hard |
 Kill the hand while it's winding up and the blow never lands.
 The head: **Steam Vent** when a hero comes close: a circle 160 round it (0.85 s): 70, burn 30, thrown. It floats after
 its mark, keeping 150-260 off.
 
 ## Phase 2: Overdrive (65% to 35%)
 **Turn:** a blast of steam round the head (a circle 220) and **both hands rebuilt at once**. Then:
-- **Rocket Fist**: a hand aims (0.9 s, a line 640 shows) and fires down it at a hero, then flies back: 120, thrown.
+- **Rocket Fist**: a hand aims (0.9 s, a line 640 shows) and fires down it at a hero, then flies back: 110, thrown.
   Hands now sometimes go for someone other than the head's mark.
 - **Spin**: every 11-13 s the head whirls after its mark for 3.6 s, a circle 92 going down just ahead of it the whole
   way (52 a hit, thrown); then it stops, venting steam: 1.2 s open.
@@ -43,7 +43,7 @@ its mark, keeping 150-260 off.
 **Turn:** steam, both hands rebuilt; the furnace glows. Then:
 - **The Eye**: every 9-11 s a beam from the head (1.1 s tell) sweeps 1.4 rad across the room over 2.4 s, stopped by
   pillars: 24 every 0.15 s and burn while you're in it.
-- **Clap**: both hands come together on a hero from either side (a line 480 through them, 1.0 s): 120, staggered.
+- **Clap**: both hands come together on a hero from either side (a line 480 through them, 1.0 s): 110, staggered.
 - Hands are rebuilt faster, and everything is 15% quicker.
 
 ## Death
@@ -56,7 +56,7 @@ It drops, venting steam; its hands fall with it.
 - The spin chasing one hero, then the Eye sweeping the room.
 
 ## Numbers
-Health 1000 (x1.4 for every boss, then the dungeon's strength and party size), float 46, mass 14. Phases at 65% and 35%.
+Health 900 (round 12; was 1000) (x1.4 for every boss, then the dungeon's strength and party size), float 46, mass 14. Phases at 65% and 35%.
 
 Balance (`node tools/runs.mjs --boss --theme spire --bossid greatEngine --level 66 --party paladin,archer,cleric,twinfang`:
 the Spire's strength stands in for the Foundry's; level 66 is a guess past the Dunes):

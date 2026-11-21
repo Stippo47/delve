@@ -32,8 +32,8 @@ window). Between attacks it walks at its mark. It picks the nearest hero, or who
 ## Phase 1: the Old Wood (100% to 65%)
 | attack | when | tell | shape | hit |
 |---|---|---|---|---|
-| Sweep | a hero within 120 | 0.8 s | a cone in front, 230 long, 2.4 rad wide | 28, thrown back hard |
-| Roots | its mark within 640, every 4.5-6 s | 0.9 s | a line 560 long, 80 wide | 18 and 65 entangle; the roots stay up 5 s as grasping ground (each patch entangles who stands in it) |
+| Sweep | a hero within 120 | 0.8 s | a cone in front, 230 long, 2.4 rad wide | 25, thrown back hard |
+| Roots | its mark within 640, every 4.5-6 s | 0.9 s | a line 560 long, 80 wide | 17 and 65 entangle; the roots stay up 5 s as grasping ground (each patch entangles who stands in it) |
 | Falling branches | every 7.5-9.5 s | 1.05 s (each a little later than the last) | 4 circles (70 across) on the heroes and round them | 24 and 45 stagger |
 
 ## Phase 2: the Grove Wakes (65% to 35%)
@@ -59,7 +59,7 @@ Flames lick up off its bark the whole time. So fire is the party's best weapon a
 the fight goes quick, but every hit it lands sets you alight too.
 
 ## Numbers
-Health 1350 (x1.4 for every boss, then the dungeon's strength and the party size), walk 38, mass 9 (no knockback),
+Health 1850 (round 12; was 1350) (x1.4 for every boss, then the dungeon's strength and the party size), walk 38, mass 9 (no knockback),
 range 34. Balance (tools/runs.mjs `--theme wildwood --boss`, a fresh room, the starting trio with their points spent):
 level 5 wins 7 of 8 (about 74 s), level 8 and up wins every time (about 55 s); on a real run the party arrives hurt
 from floor 3.

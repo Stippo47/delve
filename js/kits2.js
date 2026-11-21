@@ -767,7 +767,7 @@ export const ABILITIES2 = {
       if (!t) return; cast(u, 'cast', 0.6);
       const x = t.x, y = t.y, r = tier >= 3 ? 140 : 105; let acc = 0;
       k2(w, { draw: 'circle', x, y, r, max: 4, ab: 'ritualCircle' });
-      timer(u, 'ritualCircle', 4, (dt) => { acc += dt; if (acc < 0.3) return; acc -= 0.3; for (const e of foesNear(w, u, x, y, r)) addStatus(w, e, 'curse', 22, u); }, () => {
+      timer(u, 'ritualCircle', 4, (dt) => { acc += dt; if (acc < 0.3) return; acc -= 0.3; for (const e of foesNear(w, u, x, y, r)) addStatus(w, e, 'curse', 28, u); }, () => {
         if (tierOf(u, 'ritualCircle') < 2) return;
         for (const e of foesNear(w, u, x, y, r + 10)) { const a = angleTo(e.x, e.y, x, y), d = dist(e.x, e.y, x, y); e.kx += Math.cos(a) * d * 5; e.ky += Math.sin(a) * d * 5; addStatus(w, e, 'stagger', 30, u); }
         k2(w, { draw: 'markBurst', x, y, r: 30, max: 0.5, ab: 'ritualCircle' });

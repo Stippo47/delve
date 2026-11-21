@@ -202,7 +202,7 @@ function pit(w) {
 
 export const CINDER = {
   defs: {
-    cinder: { team: 'enemy', name: 'Cinder, the Old Drake', r: 46, vr: 46, turn: 1.6, accel: 110, face: 1.6, mass: 12, hp: 1400, speed: 42, role: 'melee', range: 30, atkCd: 999, arc: 2,
+    cinder: { team: 'enemy', name: 'Cinder, the Old Drake', r: 46, vr: 46, turn: 1.6, accel: 110, face: 1.6, mass: 12, hp: 1250, speed: 42, role: 'melee', range: 30, atkCd: 999, arc: 2,
       temp: 0.2, commit: 1.2, xp: 200, coins: [80, 100], boss: true, arena: 'pit', noCorpse: true,
       res: { burn: 0, chill: 1.3, wet: 1.3, stagger: 0.4, poison: 0.25 }, draw: drawDrakeHead, brain, onDeath: death },
     drakeSegment: PART('Cinder (body)', { r: 40, vr: 40, mass: 40, hp: 100, res: { burn: 0 }, draw: drawDrakeSegment }),

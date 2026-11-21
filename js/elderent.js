@@ -13,8 +13,8 @@ import { variantUrl } from './recolor.js';
 // Every attack: a tell (a shape fills on the ground), the hit, a short recovery (the hold). Burning: tells and
 // cooldowns x BURN.k, blows burn, twice the damage taken.
 export const EE = {
-  sweep: { r: 230, arc: 2.4, tell: 0.8, dmg: 27, knock: 320, rec: 0.6 },
-  roots: { len: 560, hw: 40, tell: 0.9, dmg: 18, entangle: 65, rec: 0.4, patch: 5, patchR: 44 },
+  sweep: { r: 230, arc: 2.4, tell: 0.8, dmg: 25, knock: 320, rec: 0.6 },
+  roots: { len: 560, hw: 40, tell: 0.9, dmg: 17, entangle: 65, rec: 0.4, patch: 5, patchR: 44 },
   branch: { r: 70, tell: 1.05, dmg: 24, stagger: 45 },
   cage: { r: 84, tell: 0.95, dmg: 14, entangle: 110 },
   stomp: { r: 240, tell: 0.9, dmg: 16, knock: 360 },
@@ -138,7 +138,7 @@ function grove(w, u, k, dt) {
 
 export const ELDER = {
   elderEnt: { team: 'enemy', name: 'The Elder Ent', art: 'art/enemies/elder-ent.svg', headR: 66, r: 64, vr: 48, turn: 1.4, accel: 90,
-    face: 1.4, mass: 9, hp: 2100, speed: 38, role: 'melee', range: 34, atkCd: 999, arc: 2, temp: 0.2, commit: 1.4, xp: 160, coins: [60, 80], boss: true, arena: 'grove',
+    face: 1.4, mass: 9, hp: 1850, speed: 38, role: 'melee', range: 34, atkCd: 999, arc: 2, temp: 0.2, commit: 1.4, xp: 160, coins: [60, 80], boss: true, arena: 'grove',
     res: { burn: 1, chill: 0, poison: 0, wet: 0, shock: 0, stagger: 0, radiance: 0, curse: 0, entangle: 0 }, onDeath: (w, u) => { courtFalls(w); for (let i = 0; i < 20; i++) rootPuff(w, u.x + rrange(-u.r, u.r), u.y + rrange(-u.r, u.r), 2); },
     brain },
 };

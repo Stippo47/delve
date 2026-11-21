@@ -31,8 +31,8 @@ tells and cooldowns, so smashing the drums slows him down as well as stopping th
 ## Phase 1: the Chief (100% to 70%)
 | move | when | tell | shape | hit | after |
 |---|---|---|---|---|---|
-| **Chop** | a hero within 110 | 0.85 s, cleaver raised | a cone in front, 175 long, 1.9 rad | 30, thrown back hard | 0.7 s |
-| **Charge** | every 6.5-8.5 s, at his mark if it's out of reach, else now and then at the furthest | 0.85 s, head down | a line his width, up to 620, cut short by a pillar or wall | 34, thrown aside | runs into a pillar or wall: **dazed 1.7 s, takes 35% more** |
+| **Chop** | a hero within 110 | 0.85 s, cleaver raised | a cone in front, 175 long, 1.9 rad | 27, thrown back hard | 0.7 s |
+| **Charge** | every 6.5-8.5 s, at his mark if it's out of reach, else now and then at the furthest | 0.85 s, head down | a line his width, up to 620, cut short by a pillar or wall | 30, thrown aside | runs into a pillar or wall: **dazed 1.7 s, takes 35% more** |
 | **Spear** | every 4.5-6 s, at the furthest hero | 0.75 s | a line 640 long, 52 wide | 22 | the spear **flies straight back** to his hand down the same line 0.5 s later: a second line to dodge |
 
 The counterplay: stand near a bonfire pillar and he charges into it.
@@ -70,7 +70,7 @@ He topples; the drums burst and the goblins he called go with him. Coins.
 - The spin chases one hero across the room, then he's dizzy and wide open.
 
 ## Numbers
-Health 1300 (x1.4 for every boss, then the dungeon's strength and the party size), walk 54, mass 6, no knockback,
+Health 1100 (round 12; was 1300) (x1.4 for every boss, then the dungeon's strength and the party size), walk 54, mass 6, no knockback,
 stagger half, chill 0.7, poison 0.3 (a rot burst is 15% of its health: the Bone King has 0.3 too). Phases at 70%, 45%, 20%.
 
 Balance (`node tools/runs.mjs --boss --theme warren --level 15 --party paladin,archer,cleric`, a fresh room: the

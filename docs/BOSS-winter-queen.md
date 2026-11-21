@@ -58,7 +58,7 @@ She shatters in a burst of ice; her images go with her and her walls melt.
 - The blizzard: the last 20% is a scramble under falling hail.
 
 ## Numbers
-Health 1000 (x1.4 for every boss, then the dungeon's strength and party size), walk 50, mass 5, no knockback.
+Health 760 (round 12; was 1000) (x1.4 for every boss, then the dungeon's strength and party size), walk 50, mass 5, no knockback.
 Phases at 70%, 45%, 20%.
 
 Balance (`node tools/runs.mjs --boss --theme frost --bossid winterQueen --level 41 --party paladin,archer,cleric,twinfang`;

@@ -117,7 +117,7 @@ export const HEROES = {
       { id: 'oldBones', name: 'Old Bones', cd: 20, desc: 'When she would go down, she shrugs it off.',
         tiers: ['Stays up at 1 HP once per room.', 'Heals 20% when it saves her.', 'Knocks everything around back too.'] },
     ],
-    trait: { id: 'grim', name: 'Grim', desc: 'Finishes off any enemy her hits leave below 12% health.' },
+    trait: { id: 'grim', name: 'Grim', desc: 'Finishes off any enemy her hits leave below 15% health.' },
   },
   pyromancer: {
     name: 'Pyromancer', art: 'art/heroes/pyromancer.svg', role: 'caster', unlock: { gems: 2 },
@@ -188,7 +188,7 @@ export const HEROES = {
     attack: { name: 'Sour note', anim: 'cast', desc: 'Strums four slow notes in a spread; every one goes through.' },
     abilities: [
       { id: 'warSong', name: 'War Song', cd: 14, desc: 'Allies near attack faster for a while.',
-        tiers: ['+35% for 6s.', '+50%.', 'They move faster too.'] },
+        tiers: ['+40% for 6s.', '+50%.', 'They move faster too.'] },
       { id: 'lullaby', name: 'Lullaby', cd: 13, desc: 'Enemies in front grow slow and drowsy.',
         tiers: ['Slows for 4s.', 'Puts the weakest to sleep.', 'Wider, and puts everyone it reaches to sleep.'] },
       { id: 'encore', name: 'Encore', cd: 20, desc: 'An ally\'s ability is ready again.',

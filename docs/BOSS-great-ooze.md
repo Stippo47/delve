@@ -60,7 +60,7 @@ It bursts into a wide slick of ooze; its slimes go with it.
 - Fire plays: its slicks are oil, its last-phase gas explodes.
 
 ## Numbers
-Health 1350 (x1.4 for every boss, then the dungeon's strength and party size), walk 52 (in surges), mass 7, no
+Health 1150 (round 12; was 1350) (x1.4 for every boss, then the dungeon's strength and party size), walk 52 (in surges), mass 7, no
 knockback. Phases at 70%, 45%, 20%.
 
 Balance (`node tools/runs.mjs --boss --theme sewers --bossid greatOoze --level 17 --party paladin,archer,cleric,twinfang`;

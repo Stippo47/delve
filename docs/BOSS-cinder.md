@@ -52,7 +52,7 @@ It sags; the body plates crack apart. Coins.
 - The fire call fills the floor with circles and then with flames; by the end its own trail has carved the pit up.
 
 ## Numbers
-Health 1200 (x1.4 for every boss, then the dungeon's strength and the party size), crawl 42, mass 12. Phases at 65%
+Health 1250 (round 12; was 1200) (x1.4 for every boss, then the dungeon's strength and the party size), crawl 42, mass 12. Phases at 65%
 and 35%.
 
 Balance (`node tools/runs.mjs --boss --theme ember --bossid cinder --level 50 --party paladin,archer,cleric,twinfang`;

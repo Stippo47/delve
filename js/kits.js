@@ -302,7 +302,7 @@ export const ABILITIES = {
       // round 9: a spin, a little slower; a red orb pops off each one hit and flies home to her
       const r = u.r + (tier >= 2 ? 85 : 60); setAnim(u, 'spin', 0.5); u.spin = { t0: w.time, dur: 0.5, dir: 1 };
       fx(w, { type: 'ring', x: u.x, y: u.y, r, color: '#E8E2D0', max: 0.5, a: u.facing, unit: u });
-      let n = 0; for (const e of foesNear(w, u, u.x, u.y, r)) { hurt(w, e, dmgOf(u, 1.8), u, { knock: 120, kAngle: ang(u, e) }); fx(w, { type: 'soulOrb', x: e.x, y: e.y, to: u, delay: 0.12 + n * 0.06, max: 1.1 }); n++; }
+      let n = 0; for (const e of foesNear(w, u, u.x, u.y, r)) { hurt(w, e, dmgOf(u, 2.2), u, { knock: 120, kAngle: ang(u, e) }); fx(w, { type: 'soulOrb', x: e.x, y: e.y, to: u, delay: 0.12 + n * 0.06, max: 1.1 }); n++; }
       if (tier >= 3 && n) heal(w, u, u.maxHp * 0.05 * n, u);
     },
   },
@@ -476,7 +476,7 @@ export const ABILITIES = {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 320).length >= 2 && friendsNear(w, u, u.x, u.y, 220).length >= 1 ? 0.7 : 0),
     use(w, u, t, tier) {
       cast(u, 'cast', 0.6);
-      for (const a of [u, ...friendsNear(w, u, u.x, u.y, 220)]) { addBuff(a, { id: 'warSong', dur: 6, atkSpeed: tier >= 2 ? 1.5 : 1.35, move: tier >= 3 ? 1.2 : 1, glow: '#FFD27A' }); puff(w, a.x, a.y, '#FFD27A', 6, 70, 4, 0.5); }
+      for (const a of [u, ...friendsNear(w, u, u.x, u.y, 220)]) { addBuff(a, { id: 'warSong', dur: 6, atkSpeed: tier >= 2 ? 1.5 : 1.4, move: tier >= 3 ? 1.2 : 1, glow: '#FFD27A' }); puff(w, a.x, a.y, '#FFD27A', 6, 70, 4, 0.5); }
     },
   },
   lullaby: {
@@ -750,7 +750,7 @@ export const TRAITS = {
     hit(w, u) { u.lastHitT = w.time; u.momentum = Math.min(10, (u.momentum || 0) + 1); },
     atkSpeed: (u) => 1 + 0.05 * (u.momentum || 0),
   },
-  grim: { hit(w, u, t) { if (alive(t) && !t.def.boss && hpRatio(t) < 0.12) { textU(w, t.x, t.y, t.r + 8, 'REAPED', '#E8E2D0', 1); hurt(w, t, t.hp + 1, u, { noDodge: true, dot: true }); } } },
+  grim: { hit(w, u, t) { if (alive(t) && !t.def.boss && hpRatio(t) < 0.15) { textU(w, t.x, t.y, t.r + 8, 'REAPED', '#E8E2D0', 1); hurt(w, t, t.hp + 1, u, { noDodge: true, dot: true }); } } },
   kindling: { dealt(w, u, t, amt) { return t.st.burn > 10 ? amt * 1.2 : amt; } },
   coldBlood: { immune: ['chill'] },
   conductor: { shockMul: 2 },

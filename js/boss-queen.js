@@ -184,7 +184,7 @@ function glacier(w) {
 const ART = variantUrl('art/heroes/frost.svg', { hue: 12, sat: 0.55, light: 0.16 });
 export const QUEEN = {
   defs: {
-    winterQueen: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 54, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 5, hp: 850, speed: 50, role: 'ranged', range: 300,
+    winterQueen: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 54, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 5, hp: 760, speed: 50, role: 'ranged', range: 300,
       atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 180, coins: [70, 90], boss: true, arena: 'glacier', attackAnim: 'cast',
       res: { chill: 0, wet: 0.5, burn: 1.3, stagger: 0.6, poison: 0.3 }, brain, onDeath: death },
     // her mirror image: the same look, half her lances, shatters when broken
