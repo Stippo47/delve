@@ -685,9 +685,10 @@ const ATTACKS = {
   druid(w, u, t, a) {
     shoot(w, u, a, { kind: 'thorn', speed: 520, dmg: A(u, 1), knock: 30, extra: { onHit: (w2, p, e) => { if (STATUS.entangle) addStatus(w2, e, 'entangle', 12, u); else addBuff(e, { id: 'thorned', dur: 1.2, move: 0.75 }); } } });
   },
-  // the green flame from his hand, round a bone: a little curse; it shrinks and speeds up, stronger the closer it hits
+  // the green flame from his hand: a little curse; it shrinks and speeds up, stronger the closer it hits. Round 10: "Remove
+  // the bone... No longer a bone dart. Have it start out bigger and slower": a ball of soul fire, bigger and slower at first
   necromancer(w, u, t, a) {
-    shoot(w, u, a, { kind: 'bone', speed: 230, r: 9, life: 1.5, dmg: A(u, 1.35), st: { curse: 8 }, knock: 30, extra: { accel: 1.3, grow: -3.5, fall: 0.9, necro: true } });
+    shoot(w, u, a, { kind: 'bone', speed: 165, r: 13, life: 1.7, dmg: A(u, 1.35), st: { curse: 8 }, knock: 30, extra: { accel: 1.4, grow: -5, fall: 0.9, necro: true } });
   },
   // a bubbling cluster of poison: starts small and fast, grows and slows, pops in a small cloud of poison where it ends;
   // after a Cure it carries what Cure drew out, as strong

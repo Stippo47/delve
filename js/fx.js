@@ -372,7 +372,8 @@ function boltTree(ctx, x1, y1, x2, y2, T, seed, width, arms, color = '#FFF3A0', 
 }
 export function drawBeam(ctx, f, T) { beam(ctx, f, T); }
 function beam(ctx, f, T) {
-  const a = f.from ? clamp(Math.min(f.t / 0.08, (f.max - f.t) / 0.25), 0, 1) : f.kind === 'lightning' ? clamp(Math.min(f.t / 0.03, (f.max - f.t) / 0.1), 0, 1) : life(f, 0.08, 0.2), { x1, y1, x2, y2 } = f, seed = Math.round(x1 + y2);
+  const a = f.from ? clamp(Math.min(f.t / 0.08, (f.max - f.t) / 0.25), 0, 1) : f.kind === 'lightning' ? clamp(Math.min(f.t / 0.03, (f.max - f.t) / 0.1), 0, 1) : life(f, 0.08, 0.2), seed = Math.round(f.x1 + f.y2);
+  let { x1, y1, x2, y2 } = f;
   ctx.save(); ctx.globalAlpha = a;
   if (f.kind === 'lightning') {
     // round 10: the Storm Mage's Zap "Thinner. Small arms. More visible. Less transparent" (full strength until its last
@@ -389,6 +390,9 @@ function beam(ctx, f, T) {
     // and thin tendrils from the target on to those round it (f.thin)
     const th = f.thin ? 0.5 : 1;
     const an = Math.atan2(y2 - y1, x2 - x1), nx = -Math.sin(an), ny = Math.cos(an);
+    // round 10 (Life Drain: "Should grow out towards them first"): the ribbon reaches out from him to them, then holds
+    if (f.ab === 'lifeDrain' && f.t < 0.3) { const g = easeOut(clamp(f.t / 0.3, 0, 1)); x2 = x1 + (x2 - x1) * g; y2 = y1 + (y2 - y1) * g;
+      inked(ctx, () => { ctx.beginPath(); ctx.arc(x2, y2, 6 * th + 1, 0, TAU); }, '#C8453D'); }
     const path = (ph, amp) => { ctx.beginPath(); for (let i = 0; i <= 20; i++) { const k = i / 20, o = Math.sin(k * 9 + ph) * amp * Math.sin(k * Math.PI); const px = x1 + (x2 - x1) * k + nx * o, py = y1 + (y2 - y1) * k + ny * o; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } };
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = 'rgba(214,72,90,0.22)'; ctx.lineWidth = 16 * th; ctx.lineCap = 'round'; path(T * 4, 8 * th); ctx.stroke(); ctx.restore();
     inkLine(ctx, () => path(T * 4, 9 * th), '#8E3B5B', 5.5 * th);
@@ -575,7 +579,7 @@ function pillar(ctx, f, T) {
       inked(ctx, () => { ctx.beginPath(); ctx.arc(f.x + Math.cos(b) * d + ux * ph * 60, f.y + Math.sin(b) * d + uy * ph * 60, 6 * (1 - ph) + 1.5, 0, TAU); }, i % 2 ? '#D8DEE4' : '#A8B0BA'); }
     for (let i = 0; i < 5; i++) { const b = hash(seed, i) * TAU, d = 8 + 40 * e, hop = Math.sin(k * Math.PI) * 20;
       ctx.save(); ctx.translate(f.x + Math.cos(b) * d + ux * hop, f.y + Math.sin(b) * d + uy * hop); ctx.rotate(b + k * 7);
-      inked(ctx, () => { ctx.beginPath(); ctx.rect(-5, -1.6, 10, 3.2); for (const sx of [-1, 1]) for (const sy of [-1, 1]) { ctx.moveTo(sx * 5 + 2, sy * 2); ctx.arc(sx * 5, sy * 2, 2, 0, TAU); } }, '#EDE4CD'); ctx.restore(); }
+      inked(ctx, () => { ctx.beginPath(); ctx.rect(-5, -1.6, 10, 3.2); for (const sx of [-1, 1]) for (const sy of [-1, 1]) { ctx.moveTo(sx * 5 + 2, sy * 2); ctx.arc(sx * 5, sy * 2, 2, 0, TAU); } }, '#D8DEE4'); ctx.restore(); } // (round 10: grey bones)
   } else { // a shaft of light from above, seen from overhead: it leans up the screen; its foot is a rounded pool
     ctx.globalAlpha = a;
     const smite = f.ab === 'smite', col = f.kind === 'fire' ? '#FF9A3D' : '#FFE7A0';
@@ -780,30 +784,27 @@ function frostMotes(ctx, T, len, spread, seed) {
 }
 // The Necromancer's dart (round 9): the green flame from his hand, wrapped round a small bone, shrinking as it speeds up
 function necroDart(ctx, sp, T, s) {
-  s = clamp(s, 0.45, 1.2);
-  trail(ctx, sp, 34 * s, 7 * s, '#A8F060');
-  ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, 0, 0, 22 * s, '#A8F060', 0.55); ctx.restore();
-  ctx.save(); ctx.rotate(-Math.PI / 2); flame(ctx, 0, 8 * s, 9 * s * (1 + 0.08 * Math.sin(T * 30)), '#6FCF3A', '#E8FFC8'); ctx.restore();
-  ctx.save(); ctx.scale(s, s); inked(ctx, () => { ctx.beginPath(); ctx.rect(-7, -1.6, 14, 3.2); for (const sx of [-1, 1]) for (const sy of [-1, 1]) { ctx.moveTo(sx * 7 + 2.6, sy * 2); ctx.arc(sx * 7, sy * 2, 2.6, 0, TAU); } }, '#EDE4CD'); ctx.restore();
+  // round 10: no bone any more: a ball of green soul fire, its flames streaming back, a bright heart
+  s = clamp(s, 0.45, 1.5);
+  trail(ctx, sp, 34 * s, 8 * s, '#A8F060');
+  ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, 0, 0, 24 * s, '#A8F060', 0.55); ctx.restore();
+  for (let i = 0; i < 3; i++) { const o = (i - 1) * 4.5 * s, L = (11 - Math.abs(i - 1) * 3) * s * (1 + 0.12 * Math.sin(T * 26 + i * 2));
+    ctx.save(); ctx.translate(-4 * s, o); ctx.rotate(Math.PI / 2); flame(ctx, 0, -L * 0.2, L * 0.55, '#4FB02A', '#C8F59A'); ctx.restore(); }
+  inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 8 * s, 0, TAU); }, '#6FCF3A');
+  ctx.fillStyle = '#C8F59A'; ctx.beginPath(); ctx.arc(1.2 * s, -1 * s, 4.6 * s, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#F2FFE4'; ctx.beginPath(); ctx.arc(2 * s, -2 * s, 2 * s, 0, TAU); ctx.fill();
 }
-// The Bone Spear (round 9: "I don't like the sprite"): a spine of linked vertebrae ending in a long curved fang, soul
-// fire flaring off the back, a violet wake
+// The Bone Spear (round 9: "I don't like the sprite"; round 10: "Too complex now"): one long tapering spike of bone, a
+// knuckle at its back end and a single highlight down it, in a violet wake. No vertebrae, no flames.
 function boneLance(ctx, sp, T, tier) {
   const s = tier >= 3 ? 1.3 : 1.1;
   ctx.save(); ctx.globalCompositeOperation = 'lighter';
-  const g = ctx.createLinearGradient(-110 * s, 0, 0, 0); g.addColorStop(0, 'rgba(155,123,214,0)'); g.addColorStop(1, 'rgba(155,123,214,0.7)');
-  ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-110 * s, 0); ctx.lineTo(-24 * s, -10 * s); ctx.lineTo(0, -6 * s); ctx.lineTo(0, 6 * s); ctx.lineTo(-24 * s, 10 * s); ctx.closePath(); ctx.fill();
-  glowDisc(ctx, 20 * s, 0, 26 * s, '#9B7BD6', 0.45);
+  const g = ctx.createLinearGradient(-100 * s, 0, 0, 0); g.addColorStop(0, 'rgba(155,123,214,0)'); g.addColorStop(1, 'rgba(155,123,214,0.65)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-100 * s, 0); ctx.lineTo(-26 * s, -9 * s); ctx.lineTo(0, -6 * s); ctx.lineTo(0, 6 * s); ctx.lineTo(-26 * s, 9 * s); ctx.closePath(); ctx.fill();
   ctx.restore();
-  ctx.save(); ctx.rotate(Math.PI / 2); for (let i = 0; i < 3; i++) flame(ctx, (i - 1) * 4 * s, 30 * s + Math.sin(T * 20 + i) * 2, (6 - Math.abs(i - 1) * 1.5) * s, '#9B7BD6', '#E2D8FF'); ctx.restore();
   ctx.scale(s, s);
-  // the spine: vertebrae, each a rounded block with little side spurs, joined in a row
-  for (let i = 0; i < 6; i++) { const x = -28 + i * 7.2;
-    inked(ctx, () => { ctx.beginPath(); ctx.ellipse(x, 0, 3.6, 4.2, 0, 0, TAU); ctx.moveTo(x - 1, -3.5); ctx.lineTo(x + 1.5, -7); ctx.lineTo(x + 2.5, -3); ctx.moveTo(x - 1, 3.5); ctx.lineTo(x + 1.5, 7); ctx.lineTo(x + 2.5, 3); }, i % 2 ? '#E2D8C0' : '#EDE4CD'); }
-  // the fang: long, curved, serrated on its inside edge
-  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(14, -5); ctx.quadraticCurveTo(30, -5, 40, 2); ctx.lineTo(34, 1.5); ctx.lineTo(31, 4); ctx.lineTo(27, 3); ctx.lineTo(23, 5.5); ctx.lineTo(19, 4.5); ctx.lineTo(14, 5.5); ctx.closePath(); }, '#F4EEDD');
-  ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.moveTo(16, -3.5); ctx.quadraticCurveTo(29, -3.5, 37, 1); ctx.lineTo(30, -0.5); ctx.lineTo(16, -1); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = '#B9AD94'; ctx.fillRect(12, -5, 3, 10.5);
+  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(40, 0); ctx.quadraticCurveTo(6, -6.5, -22, -4.2); ctx.arc(-26, -3.4, 4.4, -1.2, -Math.PI); ctx.arc(-26, 3.4, 4.4, Math.PI, 1.2); ctx.quadraticCurveTo(6, 6.5, 40, 0); ctx.closePath(); }, '#EDE4CD');
+  ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.moveTo(34, -0.8); ctx.quadraticCurveTo(6, -4.6, -20, -2.4); ctx.lineTo(-20, -0.6); ctx.quadraticCurveTo(6, -1.8, 34, -0.8); ctx.closePath(); ctx.fill();
 }
 export function roundRect(g, x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); }
 // a fading streak behind a flying thing (in its own frame, +x forward)

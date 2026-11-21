@@ -215,7 +215,7 @@ export const HEROES = {
     name: 'Necromancer', art: 'art/heroes/necromancer.svg', role: 'caster', unlock: { gems: 3 },
     blurb: 'The dead fight for him.',
     stats: { hp: 70, speed: 62, r: 30, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1, range: 230, keep: 180, atkCd: 1.3, dmg: 8 },
-    attack: { name: 'Bone dart', anim: 'cast', desc: 'The green flame from his hand round a bone: a little curse. It shrinks and speeds up as it flies, and hits harder the closer it lands.' },
+    attack: { name: 'Soul flame', anim: 'cast', desc: 'A ball of green flame from his hand: a little curse. It starts big and slow, shrinks and speeds up as it flies, and hits harder the closer it lands.' },
     abilities: [
       { id: 'raiseDead', name: 'Raise Dead', cd: 12, desc: 'Each fallen body gets up as three small, weak skeletons that punch, for a while.',
         tiers: ['One body, 12s.', 'Two bodies.', 'They explode when they fall.'] },

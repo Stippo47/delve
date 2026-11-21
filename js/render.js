@@ -618,7 +618,7 @@ function drawPartsUnit(ctx, u, w) {
   const mode = u.downed ? 'grey' : u.flashT > 0.06 ? 'flash' : 'normal';
   if (u.act && u.act.type === 'dash' && u.kind === 'twinfang') afterimages(ctx, u, w, set, pose, sizeU);
   else u._trail = null;
-  drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w), shift: isOurs(u), border: mode === 'normal' ? borderOf(u, w) : null });
+  drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w), shift: isOurs(u) && u.kind !== 'minion', /* round 10: the raised dead stay plain grey */ border: mode === 'normal' ? borderOf(u, w) : null });
   if (pose.glow && mode === 'normal') castGlow(ctx, pose.glow, w.time);
   if (u.kind === 'archer' && mode === 'normal') nockedArrow(ctx, u, set, pose, sizeU);
   ctx.restore();

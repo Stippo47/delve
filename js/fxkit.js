@@ -134,7 +134,7 @@ export function noteWorld(w) {
   const now = new Set(w.projectiles);
   if (w._proj) for (const p of w._proj) if (!now.has(p) && !p.lab) {
     if (p.noHit) continue; // a lobbed thing: its landing is the danger zone's strike
-    push({ type: 'impact', kind: p.kind, ab: p.ab, x: p.x, y: p.y, a: Math.atan2(p.vy, p.vx), col: p.color, max: p.ab ? 0.45 : 0.32, seed: Math.round(p.x * 3 + p.y) });
+    push({ type: 'impact', kind: p.necro ? 'soulFlame' : p.kind, ab: p.ab, x: p.x, y: p.y, a: Math.atan2(p.vy, p.vx), col: p.color, max: p.ab ? 0.45 : 0.32, seed: Math.round(p.x * 3 + p.y) });
   }
   w._proj = now;
   // a danger zone striking: a burst shaped to its kind
@@ -299,7 +299,7 @@ function slamAir(ctx, m, k) {
 // ---------------------------------------------------------------- impacts where shots stop
 export const IMPACT_ALIAS = {}; // kinds2: new shots that burst like an older kind (a crossbow bolt like an arrow)
 export const IMPACT_EL = { arrow: 'steel', fireArrow: 'fire', fireball: 'fire', shard: 'frost', icicle: 'frost', dagger: 'steel', vial: 'poison', thorn: 'nature', note: 'song', bone: 'bone', water: 'water',
-  spark: 'fire', frostbolt: 'frost', orb: 'holy', zeus: 'storm', cluster: 'poison' };
+  spark: 'fire', frostbolt: 'frost', orb: 'holy', zeus: 'storm', cluster: 'poison', soulFlame: 'poison' };
 function impact(ctx, m, k) {
   const big = !!m.ab, kind = IMPACT_ALIAS[m.kind] || m.kind, e = easeOut(k), x = m.x, y = m.y, a = m.a;
   const el = EL[kind === 'bolt' ? null : IMPACT_EL[kind]] || null;
@@ -315,6 +315,11 @@ function impact(ctx, m, k) {
   }
   if (kind === 'frostbolt') { // a puff of snow (the shards bursting out behind are real shots)
     for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + m.seed, d = 4 + 16 * e; inkDisc(ctx, x + Math.cos(b) * d, y + Math.sin(b) * d, 4.5 * (1 - 0.6 * k), i % 2 ? '#FFFFFF' : '#DDF6FF'); }
+    return;
+  }
+  if (kind === 'soulFlame') { // round 10: the Necromancer's flame (no bone): a puff of green flame licks
+    for (let i = 0; i < 5; i++) { const b = a + Math.PI + (i - 2) * 0.6 + hash(m.seed, i) * 0.3, d = 5 + 16 * e;
+      upright(ctx, x + Math.cos(b) * d, y + Math.sin(b) * d, () => flame(ctx, 0, 0, 6 * (1 - 0.7 * k), '#4FB02A', '#C8F59A')); }
     return;
   }
   if (kind === 'orb') { // a little holy sparkle
