@@ -161,7 +161,7 @@ export const THEMES = {
         hazards: [['mist', 2.5], ['spikes', 2]], mood: { fog: 'rgba(10,26,50,', fogK: 0.7, tint: 'rgba(120,200,255,0.18)' },
         props: [['rubble', 1.6], ['crack', 1.4], ['bonepile', 0.6]] },
     ],
-    elite: 'ogre', warden: 'broodQueen', boss: 'frostGiant', bossAdds: ['bat', 'spiderHunter', 'snowman'],
+    elite: 'ogre', warden: 'broodQueen', boss: 'winterQueen', // lane B (bosses2): was 'frostGiant' (js/boss-queen.js) bossAdds: ['bat', 'spiderHunter', 'snowman'],
     hazards: [['mist', 3], ['spikes', 2], ['web', 1.5]],
     props: [['crack', 1.6], ['rubble', 1], ['web', 0.8], ['bones', 0.6], ['puddle', 0.6]],
     obstacles: [['rock', 4], ['crate', 1], ['barrel', 0.6]],
