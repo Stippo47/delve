@@ -62,6 +62,8 @@ const friendsNear = (w, u, x, y, r) => near(w, u, x, y, r, u.team);
 const hurtMost = (list) => list.reduce((b, o) => (!b || hpRatio(o) < hpRatio(b) ? o : b), null);
 const dmgOf = (u, k) => (u.def.dmg || 8) * (u.dmgMul || 1) * k * (1 + abMod(u, 'abDmg'));
 const ang = (u, t) => angleTo(u.x, u.y, t.x, t.y);
+// where a caster's hands are, held out towards t (round 10: the storm mage's lightning comes from her hands)
+const handPt = (u, t) => { const a = t ? ang(u, t) : u.facing, d = u.r + 6; return { x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d }; };
 const isUndead = (o) => /skeleton|rattler|gaper|brute|ghost|banshee|boss/.test(o.kind) || o.def.undead;
 
 // A projectile with its own look and what happens when it lands.
@@ -180,7 +182,7 @@ export const ABILITIES = {
       u.later = [{ t: 0.45, f: () => {
         u.aimT = 0; u.recoilT = 0.14;
         shoot(w, u, t && alive(t) ? ang(u, t) : u.facing, { kind: 'shard', speed: 560, dmg: dmgOf(u, 1.2), st: { chill: tier >= 2 ? 110 : 60 },
-          land: (p) => { fx(w, { type: 'zone', kind: 'snow', x: p.x, y: p.y, r: tier >= 3 ? 80 : 45, max: 2 });
+          land: (p) => { // round 10: "Remove the ice puddle" (the lingering rime it left)
             if (tier >= 3) { fx(w, { type: 'ring', x: p.x, y: p.y, r: 80, color: '#BFEFFF', max: 0.4 }); for (const e of foesNear(w, u, p.x, p.y, 80)) addStatus(w, e, 'chill', 50, u); } } });
       } }];
     },
@@ -190,9 +192,11 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       const f = foesNear(w, u, u.x, u.y, 90); let ax = 0, ay = 0; for (const e of f) { ax += u.x - e.x; ay += u.y - e.y; }
       const a = Math.atan2(ay, ax);
-      u.act = { type: 'dash', t: 0.3, max: 0.3, a, roll: true, dir: Math.sin(a - u.facing) < 0 ? -1 : 1 }; u.invulnT = Math.max(u.invulnT, 0.3); // a full roll (round 9)
+      // round 10: "Slide into position": she slides back on her feet, still facing them, fast then slowing (sim.js)
+      u.act = { type: 'dash', t: 0.34, max: 0.34, a, slide: true }; u.invulnT = Math.max(u.invulnT, 0.3);
       if (tier >= 2) u.nextShotMul = 2;
-      if (tier >= 3) zone(w, { x: u.x, y: u.y, r: 55, dur: 5, kind: 'vines', src: u, every: 0.25, tick(z) { for (const e of foesNear(w, u, z.x, z.y, z.r)) addStatus(w, e, 'chill', 10, u); } });
+      // III: "Should shoot caltrops out from out of it": they fly out of her as she slides and land where she was (fxkit)
+      if (tier >= 3) zone(w, { x: u.x, y: u.y, r: 55, dur: 5, kind: 'vines', src: u, every: 0.25, from: u, tick(z) { for (const e of foesNear(w, u, z.x, z.y, z.r)) addStatus(w, e, 'chill', 10, u); } });
     },
   },
   // ----- Twinfang
@@ -204,6 +208,7 @@ export const ABILITIES = {
       const back = t.facing + Math.PI;
       u.x = clamp(t.x + Math.cos(back) * (t.r + u.r + 6), u.r, w.W - u.r); u.y = clamp(t.y + Math.sin(back) * (t.r + u.r + 6), u.r, w.H - u.r);
       u.vx = u.vy = 0; u.facing = u.mvA = ang(u, t); u.spd = 0; cast(u, 'thrust', 0.25);
+      zone(w, { x: u.x, y: u.y, r: 48, dur: 1.2, kind: 'smoke', src: u }); // round 10: a puff where she comes back in too
       hurt(w, t, dmgOf(u, 3.6), u, { crit: true, noDodge: true, poison: tier >= 2 ? 40 : 0 });
       if (tier >= 3 && !alive(t)) u.kit.cd.backstab = 0.5;
       u.atkT = u.def.atkCd; u.mode = 'retreat'; u.modeT = 0;
@@ -391,7 +396,7 @@ export const ABILITIES = {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && !blocked(w, u.x, u.y, t.x, t.y) ? 0.3 + 0.2 * foesNear(w, u, t.x, t.y, 160).length : 0),
     use(w, u, t, tier) {
       cast(u, 'cast', 0.4);
-      const jumps = tier >= 2 ? 5 : 3; let cur = t, prev = u; const hit = new Set();
+      const jumps = tier >= 2 ? 5 : 3; let cur = t, prev = handPt(u, t); const hit = new Set(); // round 10: "From hands not head"
       for (let i = 0; i <= jumps && cur; i++) {
         fx(w, { type: 'beam', x1: prev.x, y1: prev.y, x2: cur.x, y2: cur.y, kind: 'lightning', max: 0.3 });
         hurt(w, cur, dmgOf(u, 1.1), u, { noDodge: true, shock: 40 }); hit.add(cur);
@@ -410,25 +415,26 @@ export const ABILITIES = {
       w.shake = Math.max(w.shake, 5);
     },
   },
-  // Zeus Bolt (round 9, the designer: Storm Cloud "reworked ... 3 charges of a Zeus bolt projectile, which will mark
-  // targets. The main attack will bounce between anyone who has been marked dealing heavy shock to them. Mark will go
-  // away after it's been used once."). The id stays 'stormCloud' so bought nodes in saves keep working.
+  // Zeus Bolt (round 10 rework, the designer: "Bolts will jump between enemies repeatedly x amount of times (upgrades
+  // boost it) and shock everytime they do. Will only shoot 1 lvl 1, 50% more bounces lvl 2, + 2 bolts lvl 3"). A bolt
+  // flies to an enemy, then leaps on to the nearest other one, again and again, shocking each it strikes. The id stays
+  // 'stormCloud' so bought nodes in saves keep working.
   stormCloud: {
     score(w, u, t) {
       if (!t || dist(u.x, u.y, t.x, t.y) > u.def.range + 40 || blocked(w, u.x, u.y, t.x, t.y)) return 0;
-      const fresh = opponents(w, u).filter((e) => !(e.stormMark > w.time) && dist(u.x, u.y, e.x, e.y) < u.def.range + 40).length;
-      return fresh >= 2 ? 0.7 : fresh ? 0.4 : 0;
+      const n = foesNear(w, u, t.x, t.y, ZEUS_REACH).length;
+      return n >= 2 ? 0.7 : 0.35;
     },
     use(w, u, t, tier) {
       cast(u, 'throw', 0.6);
-      const near = opponents(w, u).filter((e) => dist(u.x, u.y, e.x, e.y) < u.def.range + 60 && !blocked(w, u.x, u.y, e.x, e.y))
-        .sort((a, b) => (a.stormMark > w.time ? 1 : 0) - (b.stormMark > w.time ? 1 : 0) || dist(t.x, t.y, a.x, a.y) - dist(t.x, t.y, b.x, b.y)).slice(0, 3);
-      if (!near.length) near.push(t);
-      u.later = [0, 1, 2].map((i) => ({ t: 0.08 + i * 0.17, f: () => {
-        const e = alive(near[i % near.length]) ? near[i % near.length] : t; if (!alive(e)) return;
-        shoot(w, u, ang(u, e), { kind: 'zeus', speed: 640, r: 9, life: 1, dmg: dmgOf(u, tier >= 2 ? 1.1 : 0.75), st: { shock: 20 }, knock: 60,
-          extra: { onHit: (w2, p, x) => { x.stormMark = w2.time + (tier >= 3 ? 10 : 6); x.stormMarkHeavy = tier >= 3; } } });
-      } }));
+      const jumps = tier >= 2 ? 6 : 4, n = tier >= 3 ? 3 : 1;
+      const first = [t, ...opponents(w, u).filter((e) => e !== t && dist(u.x, u.y, e.x, e.y) < u.def.range + 60 && !blocked(w, u.x, u.y, e.x, e.y)).sort((a, b) => dist(t.x, t.y, a.x, a.y) - dist(t.x, t.y, b.x, b.y))];
+      u.later = [];
+      for (let i = 0; i < n; i++) u.later.push({ t: 0.08 + i * 0.15, f: () => {
+        const e = alive(first[i % first.length]) ? first[i % first.length] : t; if (!alive(e)) return;
+        const a = ang(u, e), x = u.x + Math.cos(a) * (u.r + 8), y = u.y + Math.sin(a) * (u.r + 8);
+        zeusBolt(w, u, x, y, e, jumps, null);
+      } });
     },
   },
   // ----- Cleric
@@ -478,7 +484,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'cast', 0.6);
       const arc = tier >= 3 ? 2.4 : 1.6, a = t ? ang(u, t) : u.facing;
-      fx(w, { type: 'wave', x: u.x, y: u.y, a, r: 180, arc, max: 0.6, kind: 'note' });
+      fx(w, { type: 'wave', x: u.x, y: u.y, a, r: 180, arc, max: 1.1, kind: 'note' }); // (round 10: longer, so the notes fade out softly)
       const hit = foesNear(w, u, u.x, u.y, 190).filter((e) => angleDiff(ang(u, e), a) < arc / 2);
       for (const e of hit) addBuff(e, { id: 'lullaby', dur: 4, move: 0.55, atkSpeed: 0.7 });
       if (tier >= 3) { for (const e of hit) if (!e.def.boss) e.sleepT = 3; } // round 9: everyone it reaches, at III
@@ -610,6 +616,20 @@ export const ABILITIES = {
   },
 };
 ABILITIES.oldBones = { score: () => 0, use() {} };
+// Zeus Bolt's bolt: flies from (x, y) at e; where it strikes it shocks and leaps on to the nearest other foe in reach
+// (never straight back to the one it came from), `left` more times.
+const ZEUS_REACH = 260;
+function zeusBolt(w, u, x, y, e, left, from, hit = new Set()) {
+  const a = angleTo(x, y, e.x, e.y), sp = from ? 380 : 520; // its leaps a little slower, so each one reads
+  w.projectiles.push({ kind: 'zeus', x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: 8, team: u.team, owner: u, skip: from, dmg: dmgOf(u, 0.45),
+    o: { knock: 40, shock: 14, noDodge: true, ab: u.kit && u.kit.using }, life: 0.9, a, home: e, turn: 6,
+    onHit: (w2, p, hitU) => { hit.add(hitU); if (left <= 0) return;
+      // the nearest one it hasn't struck yet; once it has struck them all, round it goes again
+      const ok = opponents(w2, u).filter((o) => o !== hitU && !o.ethereal && dist(hitU.x, hitU.y, o.x, o.y) < ZEUS_REACH && !blocked(w2, hitU.x, hitU.y, o.x, o.y));
+      const fresh = ok.filter((o) => !hit.has(o)); if (!fresh.length) hit.clear();
+      const nx = (fresh.length ? fresh : ok).sort((p1, p2) => dist(hitU.x, hitU.y, p1.x, p1.y) - dist(hitU.x, hitU.y, p2.x, p2.y))[0];
+      if (nx) zeusBolt(w2, u, hitU.x, hitU.y, nx, left - 1, hitU, hit); } });
+}
 Object.assign(ABILITIES, ABILITIES2); // round 10 (lane H): the new heroes' abilities
 const RAY_T = 4, RAY_RANGE = 380;
 const CURE_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse'];
@@ -636,23 +656,25 @@ const ATTACKS = {
       extra: { onHit: (w2, p, e) => { const n = 2 + (rand() < 0.5 ? 1 : 0);
         for (let i = 0; i < n; i++) { const b = a + (i - (n - 1) / 2) * 0.45; w2.projectiles.push({ kind: 'icicle', x: e.x + Math.cos(b) * e.r, y: e.y + Math.sin(b) * e.r, vx: Math.cos(b) * 330, vy: Math.sin(b) * 330, r: 5, team: u.team, owner: u, skip: e, dmg: A(u, 0.3), o: { chill: 8, knock: 20 }, life: 0.35 }); } } } });
   },
-  // a chain of lightning from her to the target (no bolt), then on to every marked enemy (Zeus Bolt), shocking them hard
+  // a zap of lightning from her hands to the target, a little shock (round 10: the Zeus Bolt marks are gone: Zeus Bolt
+  // bounces on its own now; "Zap should come from hands not head")
   storm(w, u, t) {
-    let prev = u; const done = new Set();
-    const hit = (e, marked) => { fx(w, { type: 'beam', kind: 'lightning', x1: prev.x, y1: prev.y, x2: e.x, y2: e.y, max: marked ? 0.3 : 0.2, small: !marked });
-      hurt(w, e, A(u, marked ? 0.9 : 1), u, { noDodge: true, shock: marked ? (e.stormMarkHeavy ? 60 : 45) : 8 }); done.add(e); prev = e; };
-    const m0 = t.stormMark > w.time; if (m0) t.stormMark = 0; hit(t, m0);
-    for (;;) { const nx = opponents(w, u).filter((e) => !done.has(e) && e.stormMark > w.time && dist(prev.x, prev.y, e.x, e.y) < 320).sort((p, q) => dist(prev.x, prev.y, p.x, p.y) - dist(prev.x, prev.y, q.x, q.y))[0];
-      if (!nx) break; nx.stormMark = 0; hit(nx, true); }
+    const h = handPt(u, t);
+    fx(w, { type: 'beam', kind: 'lightning', x1: h.x, y1: h.y, x2: t.x, y2: t.y, max: 0.24, small: true });
+    hurt(w, t, A(u, 1), u, { noDodge: true, shock: 8 });
     u.recoilT = 0.1;
   },
-  // three small slow orbs, one after another with a little spread, each homing a little; all three on one target: radiance
+  // three small slow orbs, one after another, each homing a little; all three on one target: radiance. Round 10: "Larger
+  // spread in angle, not position. Orbs can also hit allies slightly healing them": they leave her hands fanned wide and
+  // curve in, and a friend an orb passes through is healed a little (it flies on)
   cleric(w, u, t, a) {
     const volley = new Map();
     u.later = [0, 1, 2].map((i) => ({ t: i * 0.13, f: () => {
       const aim = t && alive(t) ? ang(u, t) : a;
-      shoot(w, u, aim + (i - 1) * 0.22, { kind: 'orb', speed: 210, r: 5, life: 2, dmg: A(u, 0.34), knock: 10, color: '#FFF1B0',
-        extra: { home: t, turn: 2.4, onHit: (w2, p, e) => { const n = (volley.get(e) || 0) + 1; volley.set(e, n); if (n === 3) addStatus(w2, e, 'radiance', 25, u); } } });
+      shoot(w, u, aim + (i - 1) * 0.5, { kind: 'orb', speed: 210, r: 5, life: 2, dmg: A(u, 0.34), knock: 10, color: '#FFF1B0',
+        extra: { home: t, turn: 2.2, allyHit: (w2, p, f) => { heal(w2, f, p.dmg * 0.5, u); f.mendGlow = w2.time + 0.3;
+          w2.particles.push({ x: p.x, y: p.y, vx: 0, vy: 0, rise: 40, up: 0, life: 0.6, max: 0.6, size: 4.5, color: '#9BE07A', shape: 'plus' }); },
+          onHit: (w2, p, e) => { const n = (volley.get(e) || 0) + 1; volley.set(e, n); if (n === 3) addStatus(w2, e, 'radiance', 25, u); } } });
     } }));
   },
   // four notes in a spread, slower, all of them going through
@@ -663,9 +685,10 @@ const ATTACKS = {
   druid(w, u, t, a) {
     shoot(w, u, a, { kind: 'thorn', speed: 520, dmg: A(u, 1), knock: 30, extra: { onHit: (w2, p, e) => { if (STATUS.entangle) addStatus(w2, e, 'entangle', 12, u); else addBuff(e, { id: 'thorned', dur: 1.2, move: 0.75 }); } } });
   },
-  // the green flame from his hand, round a bone: a little curse; it shrinks and speeds up, stronger the closer it hits
+  // the green flame from his hand: a little curse; it shrinks and speeds up, stronger the closer it hits. Round 10: "Remove
+  // the bone... No longer a bone dart. Have it start out bigger and slower": a ball of soul fire, bigger and slower at first
   necromancer(w, u, t, a) {
-    shoot(w, u, a, { kind: 'bone', speed: 230, r: 9, life: 1.5, dmg: A(u, 1.35), st: { curse: 8 }, knock: 30, extra: { accel: 1.3, grow: -3.5, fall: 0.9, necro: true } });
+    shoot(w, u, a, { kind: 'bone', speed: 165, r: 13, life: 1.7, dmg: A(u, 1.35), st: { curse: 8 }, knock: 30, extra: { accel: 1.4, grow: -5, fall: 0.9, necro: true } });
   },
   // a bubbling cluster of poison: starts small and fast, grows and slows, pops in a small cloud of poison where it ends;
   // after a Cure it carries what Cure drew out, as strong
@@ -674,7 +697,7 @@ const ATTACKS = {
     const st = { poison: 8 }; if (cured) for (const k in cured) st[k] = (st[k] || 0) + cured[k];
     shoot(w, u, a, { kind: 'cluster', speed: 470, r: 4, life: 0.8, dmg: A(u, 0.9), st, knock: 20, extra: { drag: 1.6, grow: 10, cured: cured ? Object.keys(cured) : null },
       land: (p) => { const r = 24 + p.r * 1.8; for (const e of opponents(w, u)) if (dist(p.x, p.y, e.x, e.y) < r + e.r) hurt(w, e, A(u, 0.35), u, { noDodge: true, poison: 6, kAngle: angleTo(p.x, p.y, e.x, e.y), knock: 30 });
-        fx(w, { type: 'pop', kind: 'poison', x: p.x, y: p.y, r, max: 0.4 }); } });
+        fx(w, { type: 'pop', kind: 'poison', x: p.x, y: p.y, r, max: 0.7 }); } }); // (round 10: a longer, softer fade)
   },
 };
 Object.assign(ATTACKS, ATTACKS2);
@@ -697,6 +720,9 @@ export function kitTick(w, u, dt) {
     const ok = r.t > 0 && alive(r.to) && alive(u) && u.stunT <= 0 && u.frozenT <= 0 && dist(u.x, u.y, r.to.x, r.to.y) < RAY_RANGE && lineClear(w, u.x, u.y, r.to.x, r.to.y, 2);
     if (!ok) { r.t = 0; r.f.max = Math.min(r.f.max, r.f.t + 0.15); continue; }
     withAb(u, r.ab, heal)(w, r.to, r.rate * dt, u); r.to.mendGlow = w.time + 0.2;
+    // healing crosses rising round the one it mends (round 10: spread round the body, inked; render.js 'plus')
+    r.pT = (r.pT || 0) - dt; if (r.pT <= 0) { r.pT = 0.22; const a = rand() * TAU, d = (r.to.vr || r.to.r) * (1 + 0.25 * rand());
+      w.particles.push({ x: r.to.x + Math.cos(a) * d, y: r.to.y + Math.sin(a) * d * 0.8, vx: 0, vy: 0, rise: 40, up: 0, life: 0.7, max: 0.7, size: 4.5, color: '#9BE07A', shape: 'plus' }); }
     u.atkT = Math.max(u.atkT, 0.2); // busy holding the ray
   }
   u.rays = u.rays.filter((r) => r.t > 0);

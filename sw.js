@@ -1,5 +1,5 @@
 // Keeps the whole game on the phone so it opens with no signal. Bump VERSION on every release.
-const VERSION = '0.12.0';
+const VERSION = '0.12.1';
 const CACHE = `delve-${VERSION}`;
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-192.png',
   'icons/icon-512.png', 'js/armour.js', 'js/audio.js', 'js/battle-ui.js', 'js/battle.js', 'js/bestiary.js',
@@ -7,13 +7,13 @@ const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png',
   'js/boss-queen.js', 'js/boss-seraph.js', 'js/boss-wurm.js', 'js/boss.js', 'js/bosses.js', 'js/camp-art.js',
   'js/camp-map.js', 'js/camp-scene.js', 'js/camp.js', 'js/dunes.js', 'js/dungeon.js', 'js/elderent.js',
   'js/elites.js', 'js/enemies.js', 'js/env.js', 'js/families.js', 'js/foes.js', 'js/foes10.js', 'js/foes9.js',
-  'js/foundry.js', 'js/fx-boss.js', 'js/fx.js', 'js/fx2.js', 'js/fxkit.js', 'js/fxtag.js', 'js/heroes.js',
-  'js/heroes2.js', 'js/hpstyle.js', 'js/hud.js', 'js/icons.js', 'js/inspect.js', 'js/kits.js', 'js/kits2.js',
-  'js/layout.js', 'js/looks.js', 'js/main.js', 'js/map.js', 'js/meta.js', 'js/numbers.js', 'js/parts.js',
-  'js/path.js', 'js/potions.js', 'js/progress.js', 'js/puddles.js', 'js/recolor.js', 'js/render.js', 'js/save.js',
-  'js/scenery.js', 'js/sfx.js', 'js/sim.js', 'js/skilltree.js', 'js/sprites.js', 'js/stats-ui.js', 'js/stats.js',
-  'js/statuses.js', 'js/stock.js', 'js/themes.js', 'js/trinkets.js', 'js/ui-kit.js', 'js/units.js', 'js/util.js',
-  'js/wildwood.js', 'css/base.css', 'css/battle.css', 'css/camp.css', 'css/hud.css', 'css/tree.css',
+  'js/foundry.js', 'js/fx-boss.js', 'js/fx.js', 'js/fx2.js', 'js/fxkit.js', 'js/fxtag.js', 'js/fxvar.js',
+  'js/heroes.js', 'js/heroes2.js', 'js/hpstyle.js', 'js/hud.js', 'js/icons.js', 'js/inspect.js', 'js/kits.js',
+  'js/kits2.js', 'js/layout.js', 'js/looks.js', 'js/main.js', 'js/map.js', 'js/meta.js', 'js/numbers.js',
+  'js/parts.js', 'js/path.js', 'js/potions.js', 'js/progress.js', 'js/puddles.js', 'js/recolor.js', 'js/render.js',
+  'js/save.js', 'js/scenery.js', 'js/sfx.js', 'js/sim.js', 'js/skilltree.js', 'js/sprites.js', 'js/stats-ui.js',
+  'js/stats.js', 'js/statuses.js', 'js/stock.js', 'js/themes.js', 'js/trinkets.js', 'js/ui-kit.js', 'js/units.js',
+  'js/util.js', 'js/wildwood.js', 'css/base.css', 'css/battle.css', 'css/camp.css', 'css/hud.css', 'css/tree.css',
   'art/archer.svg', 'art/boss.svg', 'art/bosses/bone-king.svg', 'art/enemies/alpha.svg',
   'art/enemies/bandit-axe.svg', 'art/enemies/bandit-brute.svg', 'art/enemies/bandit-chief.svg',
   'art/enemies/bandit-daggers.svg', 'art/enemies/bandit-greatsword.svg', 'art/enemies/bandit-spear.svg',

@@ -235,16 +235,18 @@ function strokeString(g, pts, color, w) {
 // Paint a figure into g, whose transform maps SVG units. mode: 'normal' | 'flash' (all white) | 'grey' (downed) |
 // 'sil' (the parts' own silhouette, for washing with a colour afterwards). ink: the outline's colour, INK when not
 // given. shift: our summons' cool hue (round 8; they wore a purple outline in round 7).
+const hidden = (pose, L) => !!(pose && pose[L.id] && pose[L.id].hide); // a part that's away (the Falconer's falcon in flight)
 export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = false, border = null) {
   const Ls = set.layers, str = set.string ? stringPts(set, pose) : null, strLayer = set.string && set.string.layer;
   if (border && mode === 'normal') {
     const ga = g.globalAlpha; g.globalAlpha = ga * (border.a ?? 1);
-    for (const L of Ls) { const b = bordered(L, set.k, border.color), p = b.pad / set.k;
+    for (const L of Ls) { if (hidden(pose, L)) continue; const b = bordered(L, set.k, border.color), p = b.pad / set.k;
       g.save(); place(g, L, pose[L.id]); g.drawImage(b.c, L.x - p, L.y - p, L.w + p * 2, L.h + p * 2); g.restore(); }
     g.globalAlpha = ga;
   }
   if (mode !== 'sil') {
     for (const L of Ls) {
+      if (hidden(pose, L)) continue;
       g.save(); place(g, L, pose[L.id]);
       g.drawImage(mode === 'flash' ? filled(L, '#FFFFFF') : ink ? filled(L, ink) : L.ink, L.x, L.y, L.w, L.h);
       g.restore();
@@ -253,6 +255,7 @@ export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = fals
     if (mode === 'flash') return;
   }
   for (const L of Ls) {
+    if (hidden(pose, L)) continue;
     if (str && L.id === strLayer) strokeString(g, str, mode === 'grey' ? '#9A929C' : set.string.color, set.string.w);
     g.save(); place(g, L, pose[L.id]);
     g.drawImage(mode === 'grey' ? washed(L, 'rgb(120,112,125)', 0.72) : shift ? shifted(L) : L.img, L.x, L.y, L.w, L.h);
@@ -379,8 +382,10 @@ export function poseFor(u, w, dt) {
   else off = { r: -main.r * 0.12, dy: -main.dy * 0.2 };
   // ---- round 9 touches
   const T = w ? w.time : 0;
-  if (u.anim && u.anim.kind === 'spin') { main = scaleP(S, 1.15); off = dual ? scaleP(S, 1.15) : { r: -0.2, dy: 6 }; } // arms out for a full turn
-  if (sty.bow) off = addP(off, { dy: 7 });                       // the bow held a little forward
+  // arms out for a full turn; round 10 (Cleave, Reap: "they hold sword in not out"): a single weapon is held straight out
+  // to the side, not across the body
+  if (u.anim && u.anim.kind === 'spin') { main = dual ? scaleP(S, 1.15) : { r: -1.25, dy: 8 }; off = dual ? scaleP(S, 1.15) : { r: -0.2, dy: 6 }; }
+  if (sty.bow) off = addP(off, { dy: 22 });                      // the bow held forward (round 10: "Move bow forwards more")
   if (u.kind === 'bard' && u.anim && u.anim.kind === 'cast') {    // the strumming hand goes over the strings
     const t = u.anim.t; main = { r: 0.16 * Math.sin(t * 48), dy: 6 + 3 * Math.abs(Math.sin(t * 24)) }; off = { dy: 2 };
   }
@@ -399,6 +404,9 @@ export function poseFor(u, w, dt) {
   if (u.sleepT > 0 || (u.st && u.st.stagger >= 100)) { main = addP(main, { r: -0.35, dy: -4 }); off = addP(off, { r: -0.35, dy: -4 }); }
   pose[hand] = hand === 'arm-r' ? main : mirror(main);
   pose[other] = other === 'arm-r' ? off : mirror(off);
+  // round 10 (the heroes lane: "the falcon still shows on the Falconer's arm while it flies"): the bird rides the
+  // left fist as its own part, and is gone from it while it's out hunting (kits2.js looseFalcon)
+  pose['arm-l-bird'] = u.kit && u.kit.falconOut ? { hide: true } : pose['arm-l'];
   // a cape lags behind turns
   const df = u._pf == null ? 0 : wrapAngle(u.facing - u._pf); u._pf = u.facing;
   const capeT = clamp(-df / Math.max(dt, 1e-3) * 0.05, -0.16, 0.16);
@@ -413,4 +421,4 @@ export function poseFor(u, w, dt) {
 }
 
 // Corpses and the downed: arms flung out.
-export const LIMP = { 'arm-r': { r: -0.55, dy: -6 }, 'arm-l': { r: 0.55, dy: -6 }, back: { r: 0 } };
+export const LIMP = { 'arm-r': { r: -0.55, dy: -6 }, 'arm-l': { r: 0.55, dy: -6 }, 'arm-l-bird': { r: 0.55, dy: -6 }, back: { r: 0 } };
