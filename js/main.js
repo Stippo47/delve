@@ -93,7 +93,7 @@ function updateHud() {
   const rb = $('retreatBtn'), leaving = !!run.leaving;
   if (rb.dataset.on !== String(leaving)) { rb.dataset.on = String(leaving); rb.innerHTML = leaving ? 'Stay' : I.door; rb.classList.toggle('leaving', leaving); }
   $('speedBtn').textContent = save.speed + '×';
-  const boss = w.units.find((u) => u.def.boss && !u.dead);
+  const boss = w.units.find((u) => (u.def.boss || u.floorFoe) && !u.dead); // (a floor's last foe can be a major now: round 9)
   $('bossBar').classList.toggle('hidden', !boss);
   if (boss) { $('bossName').textContent = boss.def.name; $('bossBar').querySelector('i').style.width = Math.max(0, 100 * boss.hp / boss.maxHp) + '%'; }
   const b = $('banner');

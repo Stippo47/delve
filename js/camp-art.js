@@ -39,6 +39,7 @@ export const fire = `<div class="fire" aria-hidden="true"><svg viewBox="0 0 60 6
 
 // A dungeon's doorway: its wall stone round an arch, its light inside, and a motif of the place.
 const MOTIF = {
+  wildwood: (a) => `<path d="M60 46l14 22h-8l12 18H42l12-18h-8z" fill="${a}" opacity=".9"/><path d="M57 86h6v8h-6z" fill="${a}"/>`, // round 9: a pine
   warren: (a) => `<path d="M38 92l6-12 6 12zM54 92l6-14 6 14zM70 92l6-12 6 12z" fill="${a}" opacity=".9"/>`,
   sewers: (a) => `<path d="M30 70h60" stroke="${a}" stroke-width="6" opacity=".55"/><circle cx="48" cy="80" r="3" fill="${a}"/><circle cx="70" cy="86" r="2.4" fill="${a}"/><path d="M32 96q14-6 28 0t28 0" stroke="${a}" stroke-width="3" fill="none"/>`,
   crypt: (a) => `<path d="M60 52v40M48 64h24" stroke="${a}" stroke-width="6" stroke-linecap="round"/>`,
