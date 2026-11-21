@@ -637,7 +637,7 @@ export function refreshKit(u, level) {
 // How long an ability takes to come round: its base, -10% per tier past I, the web's haste and its own cooldown nodes.
 export function cooldownOf(u, ab) {
   const k = u.kit, m = k.mods || { haste: 0, ab: {} };
-  return ab.cd * (1 - TIER_CD * Math.max(0, (k.tiers[ab.id] || 1) - 1)) * Math.max(0.35, 1 - m.haste - abMod(u, 'abCd', ab.id));
+  return ab.cd * (1 - TIER_CD * Math.max(0, (k.tiers[ab.id] || 1) - 1)) * Math.max(0.5, 1 - m.haste - abMod(u, 'abCd', ab.id));
 }
 // The hook objects active on a unit: its trait, Old Bones if it has it, and its trinkets' hooks.
 export function hooksOf(u) {

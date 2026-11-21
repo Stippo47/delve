@@ -268,12 +268,12 @@ export const STATS = {
   atkSpeed: { name: 'Attack speed', per: 0.07, max: 4, line: (p) => `Weapon attacks ${p}% faster` },
   moveSpeed: { name: 'Move speed', per: 0.06, max: 3, line: (p) => `Moves ${p}% faster` },
   range: { name: 'Reach', per: 0.08, max: 3, line: (p) => `+${p}% attack range` },
-  haste: { name: 'Ability haste', per: 0.05, max: 4, line: (p) => `Every ability comes round ${p}% sooner` },
+  haste: { name: 'Ability haste', per: 0.04, max: 4, line: (p) => `Every ability comes round ${p}% sooner` },
   heal: { name: 'Healing', per: 0.12, max: 3, line: (p) => `Heals ${p}% more` },
   status: { name: 'Potency', per: 0.15, max: 3, line: (p) => `Statuses you apply build ${p}% faster` },
   armor: { name: 'Toughness', per: 0.05, max: 4, line: (p) => `Takes ${p}% less damage` },
   abDmg: { name: 'power', per: 0.12, max: 3, line: (p, ab) => `${ab}: +${p}% damage` },
-  abCd: { name: 'cooldown', per: 0.08, max: 3, line: (p, ab) => `${ab}: comes round ${p}% sooner` },
+  abCd: { name: 'cooldown', per: 0.06, max: 3, line: (p, ab) => `${ab}: comes round ${p}% sooner` },
   abHeal: { name: 'mending', per: 0.15, max: 3, line: (p, ab) => `${ab}: heals ${p}% more` },
   abStatus: { name: 'potency', per: 0.2, max: 3, line: (p, ab) => `${ab}: its statuses build ${p}% faster` },
 };
@@ -335,8 +335,8 @@ export function treeFor(id) {
     const s3 = pow[2] ? abNode(`${ab.id}Pow3`, pow[2], ab, P(480, a + 13), { branch }) : statNode(`${ab.id}Atk`, 'atkSpeed', P(480, a + 13), { branch, max: 2 });
     const tipK = pow[0], S = STATS[tipK];
     add({ id: `${ab.id}Mastery`, kind: 'stat', ability: ab.id, branch, name: `${ab.name} mastery`,
-      desc: `${S.line(pct(0.1), ab.name)}, and comes round 6% sooner`, max: 2, level: TIP_LEVEL,
-      stats: [{ k: tipK, ab: ab.id, per: 0.1 }, { k: 'abCd', ab: ab.id, per: 0.06 }], ...P(650, a) });
+      desc: `${S.line(pct(0.1), ab.name)}, and comes round 5% sooner`, max: 2, level: TIP_LEVEL,
+      stats: [{ k: tipK, ab: ab.id, per: 0.1 }, { k: 'abCd', ab: ab.id, per: 0.05 }], ...P(650, a) });
     link('root', `${ab.id}1`); link(`${ab.id}1`, `${ab.id}Cd`); link(`${ab.id}Cd`, `${ab.id}2`);
     link(`${ab.id}Cd`, s1.id); link(`${ab.id}Cd`, s2.id);
     link(`${ab.id}2`, `${ab.id}Pow`); link(`${ab.id}Pow`, `${ab.id}3`); link(`${ab.id}Pow`, s3.id); link(`${ab.id}3`, `${ab.id}Mastery`);

@@ -198,10 +198,13 @@ export function rushTick(w, u, dt) {
 export function summon(w, u, kind, n, o = {}) {
   const cap = o.cap || 22;
   if (w.stale) return; // a stand-off that's gone on too long: nobody calls more help (dungeon.js w.stale)
+  // round 8: no more than four of one caller's own at a time (rooms are fuller now; imps kept a room going for ever)
+  const mine = () => w.units.reduce((k, o) => k + (o.calledBy === u && alive(o) ? 1 : 0), 0) + (u.el && u.el.coming || 0);
   for (let i = 0; i < n; i++) {
-    if (crowd(w, u.team) >= cap) return;
+    if (crowd(w, u.team) >= cap || mine() >= (o.own || 4)) return;
+    E(u).coming = (E(u).coming || 0) + 1;
     const a = rand() * TAU, d = u.r + rrange(30, 70), x = clamp(u.x + Math.cos(a) * d, 50, w.W - 50), y = clamp(u.y + Math.sin(a) * d, 50, w.H - 50);
-    later(w, x, y, 0.6, () => { const s = spawn(w, kind, x, y, { mult: w.mult, hpMul: o.hpMul, scale: o.scale }); s.aggro = true; s.minion = true; s.facing = a; puff(w, x, y, o.color || '#3A2E44', 8, 90, 6, 0.4); });
+    later(w, x, y, 0.6, () => { E(u).coming = Math.max(0, (E(u).coming || 0) - 1); const s = spawn(w, kind, x, y, { mult: w.mult, hpMul: o.hpMul, scale: o.scale }); s.aggro = true; s.minion = true; s.calledBy = u; s.facing = a; puff(w, x, y, o.color || '#3A2E44', 8, 90, 6, 0.4); });
   }
 }
 // Something that happens in a moment at (x, y), shown by a small rift (counts as "still coming" for a room's end).

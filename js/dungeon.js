@@ -511,7 +511,7 @@ export function update(run, dt) {
     if (run.quietT > 25) for (const e of enemies) e.aggro = true;
     // still nobody falling after a long while (a lone shooter kiting a regrowing troll, say): the enemies press in
     // harder (faster, no backing off, no regrowing) so a stand-off always ends
-    w.stale = run.quietT > 45;
+    w.stale = run.quietT > 45 || (run.t > 150 && run.node.kind !== 'boss'); // round 8: a room that has dragged on that long presses in too, kills or not
   }
   revive(run, dt);
   if (run.phase === 'fight') nextWaypoint(w);
