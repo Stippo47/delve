@@ -697,7 +697,7 @@ const ATTACKS = {
     const st = { poison: 8 }; if (cured) for (const k in cured) st[k] = (st[k] || 0) + cured[k];
     shoot(w, u, a, { kind: 'cluster', speed: 470, r: 4, life: 0.8, dmg: A(u, 0.9), st, knock: 20, extra: { drag: 1.6, grow: 10, cured: cured ? Object.keys(cured) : null },
       land: (p) => { const r = 24 + p.r * 1.8; for (const e of opponents(w, u)) if (dist(p.x, p.y, e.x, e.y) < r + e.r) hurt(w, e, A(u, 0.35), u, { noDodge: true, poison: 6, kAngle: angleTo(p.x, p.y, e.x, e.y), knock: 30 });
-        fx(w, { type: 'pop', kind: 'poison', x: p.x, y: p.y, r, max: 0.4 }); } });
+        fx(w, { type: 'pop', kind: 'poison', x: p.x, y: p.y, r, max: 0.7 }); } }); // (round 10: a longer, softer fade)
   },
 };
 Object.assign(ATTACKS, ATTACKS2);

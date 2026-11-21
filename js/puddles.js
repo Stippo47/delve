@@ -65,9 +65,10 @@ const LAYER_A = { gas: 0.82, mist: 0.7, smoke: 0.88, web: 0.55, frost: 0.8, eart
 const Q = [];
 // Queue one body. a: how present it is (0..1): a fading body shrinks rather than going see-through, so where it
 // overlaps another the two stay one body to the end.
-export function drawPuddle(ctx, type, x, y, r, T, a = 1, seed = 0) {
+// fade: this body fades out with a (its own layer) instead of shrinking with it (round 10: the plague cluster's poof)
+export function drawPuddle(ctx, type, x, y, r, T, a = 1, seed = 0, fade = false) {
   if (!COL[type] || r < 1 || a <= 0.01) return;
-  Q.push({ type, x, y, r, T, a: clamp(a, 0, 1), seed: seed || Math.round(x * 7 + y * 13) });
+  Q.push({ type, x, y, r, T, a: clamp(a, 0, 1), seed: seed || Math.round(x * 7 + y * 13), fade });
 }
 
 // a ragged splat outline: radius jumps by vertex, smoothed with quadratic curves
@@ -125,8 +126,9 @@ export function flushPuddles(ctx, tf) {
     const col = COL[type];
     // round 10 (Backstab: "Smoke doesn't fade out"): a smoke cloud fades away rather than shrinking to a blob, so each
     // one is its own layer at its own alpha (two clouds no longer join; they hardly ever meet)
-    const smoke = type === 'smoke';
-    for (const bs of smoke ? all.map((q) => [q]) : [all]) {
+    const groups = type === 'smoke' ? all.map((q) => [q]) : [...all.filter((q) => q.fade).map((q) => [q]), all.filter((q) => !q.fade)].filter((g) => g.length);
+    for (const bs of groups) {
+    const smoke = type === 'smoke' || bs[0].fade;
     let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
     for (const q of bs) {
       q.R = q.r * (smoke ? 0.85 + 0.15 * q.a : 0.35 + 0.65 * q.a); q._l = null;

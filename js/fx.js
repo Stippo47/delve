@@ -93,13 +93,15 @@ export function drawGroundFx(ctx, w) {
   }
   drawMarks(ctx, 0, 'ground');
 }
+const sm01 = (k) => k * k * (3 - 2 * k);
 // A small burst where a shot ends (round 9: the Pyromancer's spark, the Plague Doctor's cluster)
 function pop(ctx, f, T, layer) {
   const k = clamp(f.t / f.max, 0, 1), e = easeOut(k), seed = Math.round(f.x * 3 + f.y);
   if (f.kind === 'poison') {
-    if (layer === 'ground') { drawPuddle(ctx, 'gas', f.x, f.y, f.r * (0.6 + 0.5 * e), T, 1 - k * k, seed); return; }
+    // round 10 ("The poof doesn't fade out nicely"): the cloud fades away as it spreads (it used to shrink and blink out)
+    if (layer === 'ground') { drawPuddle(ctx, 'gas', f.x, f.y, f.r * (0.6 + 0.5 * e), T, 1 - sm01(k), seed, true); return; }
     const [ux, uy] = upVec();
-    ctx.save(); ctx.globalAlpha = 1 - k;
+    ctx.save(); ctx.globalAlpha = 1 - sm01(k);
     for (let i = 0; i < 8; i++) { const b = i / 8 * TAU + seed, d = f.r * (0.3 + 0.8 * e); inked(ctx, () => { ctx.beginPath(); ctx.arc(f.x + Math.cos(b) * d + ux * e * 10, f.y + Math.sin(b) * d + uy * e * 10, 4 * (1 - k) + 1, 0, TAU); }, i % 2 ? '#BCE070' : '#82B23A'); }
     ctx.restore(); return;
   }
