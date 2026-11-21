@@ -173,10 +173,10 @@ const ABILITY_GLYPH = {
   barrage: 'arrows', frostArrow: 'snow', roll: 'dash', backstab: 'dagger', dash: 'dash', fanOfKnives: 'dagger',
   rage: 'fist', leap: 'up', cleave: 'swirl', shockwave: 'wave', whirl: 'swirl', unstoppable: 'shield',
   reap: 'swirl', hook: 'hook', oldBones: 'skull', fireball: 'flame', flameWall: 'flame', inferno: 'flame',
-  iceShard: 'snow', frostNova: 'snow', iceWall: 'wall', chainLightning: 'bolt', thunderclap: 'bolt', stormCloud: 'cloud',
+  iceShard: 'snow', frostNova: 'snow', iceWall: 'wall', chainLightning: 'bolt', thunderclap: 'bolt', stormCloud: 'bolt',
   mend: 'heart', sanctuary: 'sun', smite: 'sun', warSong: 'note', lullaby: 'sleep', encore: 'note',
   entangle: 'vines', rejuvenate: 'leaf', callWolf: 'paw', raiseDead: 'skull', lifeDrain: 'drain', boneSpear: 'skull',
-  miasma: 'vial', cure: 'heart', leeches: 'drain',
+  miasma: 'vial', cure: 'heart', leeches: 'cloud',
 };
 // A colour per ability glyph for its ring in the HUD.
 export const ABILITY_COLOR = { shield: '#5B8CDB', sun: '#F2C84A', dash: '#C8C0B0', burst: '#E0B070', arrows: '#D8C08A', snow: '#7FD6F5',

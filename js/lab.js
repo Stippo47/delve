@@ -203,8 +203,8 @@ DEFS['lab-dummy'] = { team: 'enemy', name: 'Dummy', art: 'art/lab/dummy.svg', he
   role: 'melee', range: 0, atkCd: 999, dmg: 0, arc: 1, temp: 0, commit: 0 };
 // where the dummies stand: next to the hero (melee, and moves round itself) or across the room (shots, leaps, pulls)
 const FAR = new Set(['charge', 'leap', 'hook', 'backstab', 'dash', 'barrage', 'frostArrow', 'fireball', 'flameWall', 'iceShard', 'iceWall',
-  'chainLightning', 'thunderclap', 'stormCloud', 'smite', 'entangle', 'raiseDead', 'lifeDrain', 'boneSpear', 'miasma', 'leeches', 'mend', 'rejuvenate', 'cure', 'encore']);
-const NEEDS_ALLY = new Set(['guard', 'mend', 'sanctuary', 'warSong', 'encore', 'rejuvenate', 'cure', 'leeches', 'consecrate']);
+  'chainLightning', 'thunderclap', 'stormCloud', 'smite', 'entangle', 'raiseDead', 'lifeDrain', 'boneSpear', 'miasma', 'mend', 'rejuvenate', 'cure', 'encore']);
+const NEEDS_ALLY = new Set(['guard', 'mend', 'sanctuary', 'warSong', 'encore', 'rejuvenate', 'cure', 'consecrate']);
 const SINGLE = new Set(['shieldBash', 'backstab', 'smite', 'hook', 'mend', 'encore', 'rejuvenate', 'cure', 'guard']);
 const SHOW_AT = 0.45; // when the ability goes off, seconds into the loop
 function setupShow() {
@@ -251,7 +251,9 @@ function setupShow() {
       for (const k in u.kit.cd) u.kit.cd[k] = 999;
       pin = { x: u.x, y: u.y };
     }
-    if (ab !== 'attack') u.atkT = Math.max(u.atkT, 0.5); // only the ability, no plain attacks
+    // only the ability, no plain attacks; but Zeus Bolt is shown with the Zap that bounces between the marks after it
+    if (ab === 'stormCloud' && w.time > SHOW_AT + 1.0) { if (!u._zapped) { u._zapped = true; u.atkT = 0; } else u.atkT = Math.max(u.atkT, 0.5); }
+    else if (ab !== 'attack') u.atkT = Math.max(u.atkT, 0.5);
     else if (!ranged) { // melee: the brain won't swing while pinned in place, so the bench swings on a beat
       u.atkT = 9; const d = DEFS[hero], beat = d.role === 'skirmish' ? 0.5 : 1.1, t0 = w.time - SHOW_AT;
       if (t0 >= 0 && Math.floor(t0 / beat) !== Math.floor((t0 - dt) / beat || -1) && t0 < loop - 0.9) {
@@ -265,7 +267,11 @@ function setupShow() {
     if (u.downed) { u.downed = false; u.hp = u.maxHp; }
     for (const d of dummies) {
       d.atkT = 999; d.target = ally && d.target === ally ? ally : null;
-      d.x += (d.home.x - d.x) * Math.min(1, dt * 1.6); d.y += (d.home.y - d.y) * Math.min(1, dt * 1.6);
+      // round 9: a dummy that is knocked or pulled is let go for a moment (the hook seemed weak: the bench was pulling
+      // the dummies back home every frame)
+      if (Math.hypot(d.kx, d.ky) > 20) d._free = 1.4;
+      if (d._free > 0) d._free -= dt;
+      else { d.x += (d.home.x - d.x) * Math.min(1, dt * 1.6); d.y += (d.home.y - d.y) * Math.min(1, dt * 1.6); }
       if (d.hp < d.maxHp * 0.12) d.hp = d.maxHp;
       if (!w.units.includes(d)) { d.dead = false; d.hp = d.maxHp; w.units.push(d); }
     }
@@ -277,9 +283,11 @@ function setupShow() {
 function setupPuddles() {
   w = room(540, 400); w.walls = []; buildGrid(w);
   const st = puddleStyle();
-  info.textContent = 'puddles · style ' + st + ' ' + PUDDLE_STYLES[st - 1].name + ' · oil, burning ground, gas / water, mist, web';
+  info.textContent = 'puddles · style ' + st + ' ' + PUDDLE_STYLES[st - 1].name + ' · oil, fire, gas, water / mist, web, smoke, frost';
   info.style.cssText = 'font-size:14px;opacity:1;left:10px;top:8px;text-shadow:0 1px 0 #2B2230,0 -1px 0 #2B2230,1px 0 0 #2B2230,-1px 0 0 #2B2230';
-  PUDDLE_TYPES.forEach((type, i) => w.hazards.push({ type, x: 105 + (i % 3) * 165, y: 125 + Math.floor(i / 3) * 165, r: 54 }));
+  // round 9: each kind as two or three overlapping bodies, so the merging shows (one body, one outline round the lot)
+  PUDDLE_TYPES.forEach((type, i) => { const cx = 75 + (i % 4) * 130, cy = 120 + Math.floor(i / 4) * 175;
+    w.hazards.push({ type, x: cx - 14, y: cy - 10, r: 40 }, { type, x: cx + 22, y: cy + 18, r: 32 }, { type, x: cx - 8, y: cy + 38, r: 20 }); });
   setZoom(1); view.zoom = +(P.get('zoom') || 1.62);
   tick = (dt) => { w.time += dt; };
 }
@@ -291,12 +299,31 @@ function setupEhp() {
   info.style.cssText = 'font-size:14px;opacity:1;left:10px;top:8px;text-shadow:0 1px 0 #2B2230,0 -1px 0 #2B2230,1px 0 0 #2B2230,-1px 0 0 #2B2230';
   const kinds = ['rattler', 'goblin', 'orc', 'rattlerBow', 'brute', 'lizardman', 'slime', 'ghost'];
   const hp = [1, 0.85, 0.6, 0.35, 0.15, 0.7, 0.5, 0.25];
-  kinds.forEach((k, i) => { if (!DEFS[k]) return; const e = spawn(w, k, 105 + (i % 4) * 110, 120 + Math.floor(i / 4) * 160); e.facing = Math.PI / 2; e.hp = e.maxHp * hp[i]; e.atkT = 999; e._hpLag = e.maxHp * Math.min(1, hp[i] + 0.15); e._hpSeen = e.hp; e._hpWait = 99; });
+  kinds.forEach((k, i) => { if (!DEFS[k]) return; const e = spawn(w, k, 105 + (i % 4) * 110, 120 + Math.floor(i / 4) * 160); e.facing = Math.PI / 2; e.hp = e.maxHp * hp[i]; e.atkT = 999; e._hpLag = e.maxHp * Math.min(1, hp[i] + 0.15); e._hpSeen = e.hp; e._hpWait = 99;
+    if (i === 2 || i === 6) { e.elite = true; } });
   setZoom(1); view.zoom = +(P.get('zoom') || 1.62);
   tick = (dt) => { w.time += dt; };
 }
 
+// round 9 looks: a plain enemy, an elite, a major; a guarded and an unstoppable hero; radiance, burn (&m=looks)
+function setupLooks() {
+  w = room(560, 360); w.walls = []; buildGrid(w);
+  info.textContent = 'plain · elite · major  /  guarded · unstoppable · radiance · burning';
+  info.style.cssText = 'font-size:14px;opacity:1;left:10px;top:8px;text-shadow:0 1px 0 #2B2230,0 -1px 0 #2B2230,1px 0 0 #2B2230,-1px 0 0 #2B2230';
+  const foe = P.get('foe') || 'orc';
+  [0, 1, 2].forEach((i) => { const e = spawn(w, DEFS[foe] ? foe : 'rattler', 120 + i * 150, 110); e.facing = Math.PI / 2; e.atkT = 999; e.aggro = false; if (i) e.elite = true; if (i === 2) e.major = true; e.hp = e.maxHp * 0.6; });
+  const pal = spawn(w, 'paladin', 40, 260); pal.facing = 0; pal.atkT = 999;
+  const g = spawn(w, 'archer', 110, 260); g.facing = 0; g.guardBy = pal; g.guardT = 999; pal.guardOf = g;
+  const b = spawn(w, 'berserker', 230, 260); b.facing = 0; b.buffs.push({ id: 'unstoppable', t: 999, dur: 999, statusImmune: true });
+  const r = spawn(w, 'cleric', 350, 260); r.facing = 0; r.st.radiance = 70;
+  const f = spawn(w, 'wildmane', 470, 260); f.facing = 0; f.st.burn = 70;
+  for (const u of w.units) u.home = { x: u.x, y: u.y };
+  setZoom(1); view.zoom = +(P.get('zoom') || 1.5);
+  tick = (dt) => { w.time += dt; for (const u of w.units) { u.bob += dt * 3; } };
+}
+
 if (mode === 'grid') setupGrid();
+else if (mode === 'looks') setupLooks();
 else if (mode === 'show') setupShow();
 else if (mode === 'puddles') setupPuddles();
 else if (mode === 'ehp') setupEhp();

@@ -7,6 +7,7 @@
 import { INK, TAU, clamp } from './util.js';
 import { OUTLINE, view } from './render.js';
 import { hash, rgba, upright, upVec, inked, inkLine, flame, blob, star, glowDisc, bolt, easeOut, leaf } from './fx.js';
+import { drawPuddle } from './puddles.js';
 
 // ---------------------------------------------------------------- palette (FX-STYLE.md): dark, main, light, core
 export const EL = {
@@ -25,18 +26,21 @@ function disc(ctx, x, y, r, col) { ctx.fillStyle = col; ctx.beginPath(); ctx.arc
 function inkDisc(ctx, x, y, r, col) { inked(ctx, () => { ctx.beginPath(); ctx.arc(x, y, Math.max(0.1, r), 0, TAU); }, col); }
 
 // A crescent band from angle aT (its pointed tail) to aH (its rounded head), outer radius R, thickest (th) at the head.
-function bandPath(ctx, cx, cy, R, aT, aH, th) {
+// pointed: the head ends in a point instead of a round cap (round 9: the greatsword's end was "too round").
+function bandPath(ctx, cx, cy, R, aT, aH, th, pointed = false) {
   const span = aH - aT, n = Math.max(6, Math.ceil(Math.abs(span) * 9)), dir = span >= 0 ? 1 : -1;
   ctx.beginPath();
   for (let i = 0; i <= n; i++) { const a = aT + span * i / n; ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); }
-  const rm = R - th / 2; ctx.arc(cx + Math.cos(aH) * rm, cy + Math.sin(aH) * rm, th / 2, aH, aH + Math.PI * dir, dir < 0);
+  const rm = R - th / 2;
+  if (pointed) { const b = aH + dir * Math.min(0.22, th / R * 0.9); ctx.lineTo(cx + Math.cos(b) * (R - th * 0.35), cy + Math.sin(b) * (R - th * 0.35)); }
+  else ctx.arc(cx + Math.cos(aH) * rm, cy + Math.sin(aH) * rm, th / 2, aH, aH + Math.PI * dir, dir < 0);
   for (let i = n; i >= 0; i--) { const s = i / n, a = aT + span * s; const r = R - th * Math.pow(s, 0.85); ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r); }
   ctx.closePath();
 }
-function slashBand(ctx, cx, cy, R, aT, aH, th, main, core) {
+function slashBand(ctx, cx, cy, R, aT, aH, th, main, core, pointed = false) {
   if (Math.abs(aH - aT) < 0.02 || th < 0.6) return;
-  inked(ctx, () => bandPath(ctx, cx, cy, R, aT, aH, th), main);
-  ctx.fillStyle = core; bandPath(ctx, cx, cy, R - th * 0.1, aT + (aH - aT) * 0.3, aH, th * 0.36); ctx.fill();
+  inked(ctx, () => bandPath(ctx, cx, cy, R, aT, aH, th, pointed), main);
+  ctx.fillStyle = core; bandPath(ctx, cx, cy, R - th * 0.1, aT + (aH - aT) * 0.3, aH, th * 0.36, pointed); ctx.fill();
 }
 // A pointed streak from (x,y) along a: base at r0, tip at r1, wd wide at its fattest (near the tip).
 function streakPath(ctx, x, y, a, r0, r1, wd) {
@@ -64,7 +68,7 @@ function crack(ctx, x, y, a, len, seed, wd = 3, col = 'rgba(43,34,48,0.55)') {
   for (let i = 1; i <= 4; i++) { b += (hash(seed, i) - 0.5) * 0.9; const d = len / 4; px += Math.cos(b) * d; py += Math.sin(b) * d; ctx.lineTo(px, py); }
   ctx.stroke(); ctx.restore();
 }
-function dustPuffs(ctx, x, y, r, k, seed, n = 7, col = '#E9DDC2') {
+export function dustPuffs(ctx, x, y, r, k, seed, n = 7, col = '#E9DDC2') {
   ctx.save(); ctx.globalAlpha *= 1 - k;
   for (let i = 0; i < n; i++) { const a = (i + hash(seed, i)) / n * TAU, d = r * (0.4 + 0.75 * easeOut(k)) * (0.8 + 0.4 * hash(i, seed)), pr = r * 0.22 * (1 - 0.6 * k) + 2;
     inkDisc(ctx, x + Math.cos(a) * d, y + Math.sin(a) * d, pr, i % 3 ? col : '#FFF8E6'); }
@@ -109,11 +113,16 @@ export function noteWorld(w) {
     if (t._seen) continue; t._seen = true;
     if (t.type === 'swing') {
       const u = t.src, shape = u ? weaponOf(u) : 'blade';
-      const odd = u ? (u._n || 0) % 2 : 0;
+      // which hand: parts.js counts a blow when it first draws the new anim, which is after this, so look one ahead
+      // (round 9: Twinfang's stabs came from the wrong dagger)
+      const n = u ? (u._n || 0) + (u.anim && u.anim !== u._lastAnim ? 1 : 0) : 0, odd = n % 2;
       const team = u && u.team === 'hero' ? 'hero' : 'enemy';
       let col = SLASH_COL[team];
       if (shape === 'scythe') col = SLASH_COL.scythe; else if (shape === 'smack') col = u && u.kind === 'fireSlime' ? SLASH_COL.fire : SLASH_COL.smack; else if (u && u.kind === 'ghost') col = SLASH_COL.ghost;
-      push({ type: 'slash', u, x: t.x, y: t.y, R: t.r, a: t.a, arc: t.arc, shape, dir: (shape === 'twin' || shape === 'twinBlade') && odd ? -1 : 1, side: odd ? -1 : 1, col, max: shape === 'heavy' || shape === 'great' ? 0.34 : 0.28, seed: Math.round(t.x * 7 + t.y) });
+      if (t.aoe) { push({ type: 'slam', u, x: t.aoe.x, y: t.aoe.y, r: t.aoe.r, a: t.a, max: 0.42, seed: Math.round(t.x * 7 + t.y) }); continue; }
+      // arm-l is on the +normal side of the facing, arm-r on the -normal side (the art's left/right, front = +y)
+      push({ type: 'slash', u, x: t.x, y: t.y, R: t.r, a: t.a, arc: t.arc, shape, dir: (shape === 'twin' || shape === 'twinBlade') && odd ? -1 : 1, side: odd ? 1 : -1, col,
+        max: shape === 'great' ? 0.22 : shape === 'heavy' ? 0.24 : 0.28, seed: Math.round(t.x * 7 + t.y) });
     } else if (t.type === 'blast') {
       push({ type: 'blast', x: t.x, y: t.y, r: t.r, color: t.color || '#FFB347', ab: t.ab, max: t.ab === 'fireball' ? 0.6 : 0.45, seed: Math.round(t.x + t.y * 3) });
     }
@@ -133,7 +142,7 @@ export function noteWorld(w) {
     if (u._slam && !slam && !u.downed) push({ type: 'quake', x: u.x, y: u.y, r: 125, max: 0.8, seed: u.id, col: EL.earth });
     u._slam = slam;
     // Granny's Old Bones saved her
-    if (u.kit && u.kit.oldBonesUsed && !u._oldBones) push({ type: 'oldBones', u, x: u.x, y: u.y, max: 0.9, seed: u.id });
+    if (u.kit && u.kit.oldBonesUsed && !u._oldBones) push({ type: 'oldBones', u, x: u.x, y: u.y, max: 1.1, seed: u.id });
     if (u.kit) u._oldBones = !!u.kit.oldBonesUsed;
   }
 }
@@ -143,9 +152,10 @@ export function drawMarks(ctx, dt, layer) {
     if (layer === 'air') m.t += dt;
     const k = k01(m.t / m.max);
     ctx.save();
-    if (layer === 'ground') { if (m.type === 'quake') quake(ctx, m.x, m.y, m.r, k, m.seed, m.col); else if (m.type === 'strike') strikeGround(ctx, m, k); }
+    if (layer === 'ground') { if (m.type === 'quake') quake(ctx, m.x, m.y, m.r, k, m.seed, m.col); else if (m.type === 'strike') strikeGround(ctx, m, k); else if (m.type === 'slam') slamGround(ctx, m, k); }
     else switch (m.type) {
       case 'slash': slash(ctx, m, k); break;
+      case 'slam': slamAir(ctx, m, k); break;
       case 'impact': impact(ctx, m, k); break;
       case 'strike': strike(ctx, m, k); break;
       case 'blast': blast(ctx, m, k); break;
@@ -163,21 +173,30 @@ function slash(ctx, m, k) {
   const [main, core] = m.col;
   const sh = m.shape;
   if (sh === 'thrust' || sh === 'twin') {
-    const r0 = (u ? u.r : 20) * 0.55, r1 = m.R + 16;
-    const tip = r0 + (r1 - r0) * easeOut(k01(k / 0.32)), base = r0 + (tip - r0) * sm(k01((k - 0.22) / 0.78));
-    const off = sh === 'twin' ? m.side * 9 : 0, nx = -Math.sin(m.a) * off, ny = Math.cos(m.a) * off;
-    streak(ctx, x + nx, y + ny, m.a, base, tip, (sh === 'twin' ? 7 : 9) * (1 - 0.35 * k), main, core);
+    // round 9: the stab starts at the dagger's point, in the hand that strikes, and runs on along the line of it
+    const vr = u ? u.vr : 20, twin = sh === 'twin';
+    const r0 = twin ? vr * 1.25 : (u ? u.r : 20) * 0.55, r1 = m.R + (twin ? 22 : 16);
+    const tip = r0 + (r1 - r0) * easeOut(k01(k / 0.3)), base = r0 + (tip - r0) * sm(k01((k - 0.2) / 0.8));
+    const off = twin ? m.side * vr * 0.62 : 0, nx = -Math.sin(m.a) * off, ny = Math.cos(m.a) * off;
+    const a = twin ? m.a - m.side * 0.12 : m.a; // a hooked dagger stabs a little inward
+    if (twin && k < 0.3) lit(ctx, () => glowDisc(ctx, x + nx + Math.cos(a) * r0, y + ny + Math.sin(a) * r0, 12, '#FFFFFF', 0.5 * (1 - k / 0.3)));
+    streak(ctx, x + nx, y + ny, a, base, tip, (twin ? 5.5 : 9) * (1 - 0.35 * k), main, core);
     return;
   }
   if (sh === 'bite' || sh === 'claw') {
     const reach = m.R * 0.85, px = x + Math.cos(m.a) * reach, py = y + Math.sin(m.a) * reach, s = clamp(m.R / 40, 0.6, 1.4);
-    if (sh === 'bite') { // two curved jaws snapping shut
-      const shut = easeOut(k01(k / 0.35)), gap = (1 - shut) * 12 * s + 2, fade = k01((1 - k) / 0.5);
+    if (sh === 'bite') { // round 9: two jaws of fangs snapping shut on the target
+      const shut = easeOut(k01(k / 0.3)), gap = (1 - shut) * 14 * s + 1.5, fade = k01((1 - k) / 0.45);
       ctx.globalAlpha *= fade;
       for (const sd of [-1, 1]) {
-        const cx = px - Math.sin(m.a) * gap * sd, cy = py + Math.cos(m.a) * gap * sd, aa = m.a + Math.PI / 2 * sd;
-        slashBand(ctx, cx, cy, 13 * s, aa - 1.2, aa + 1.2, 6 * s, main, core);
+        ctx.save(); ctx.translate(px - Math.sin(m.a) * gap * sd, py + Math.cos(m.a) * gap * sd); ctx.rotate(m.a + (sd > 0 ? Math.PI : 0)); // fangs (+y) towards the other jaw
+        // a jaw: a curved gum line with four fangs pointing at the other jaw
+        inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-14 * s, -2 * s); ctx.quadraticCurveTo(0, 6 * s * -sd * 0 - 5 * s, 14 * s, -2 * s);
+          for (let i = 3; i >= 0; i--) { const fx0 = -11 * s + i * 7.4 * s; ctx.lineTo(fx0 + 3 * s, -1 * s); ctx.lineTo(fx0, 6 * s); ctx.lineTo(fx0 - 3 * s, -1 * s); }
+          ctx.closePath(); }, '#FFF8F0');
+        ctx.restore();
       }
+      if (shut > 0.95 && k < 0.5) inked(ctx, () => star(ctx, px, py, 10 * (1 - k), 4, 0.3, m.a), '#FFFFFF');
     } else { // three claw rakes across the front
       const fade = k01((1 - k) / 0.45);
       ctx.globalAlpha *= fade;
@@ -190,33 +209,76 @@ function slash(ctx, m, k) {
     return;
   }
   // a crescent sweeping across the weapon's arc, in the way the arm moves
-  let th = 18, R = m.R, extra = 0.4;
+  let th = 18, R = m.R, extra = 0.4, span0 = m.arc, pointed = false;
   if (sh === 'heavy') { th = 26; R *= 0.96; extra = 0.15; }
-  else if (sh === 'great') { th = 24; R *= 1.06; extra = 0.5; }
+  else if (sh === 'great') { th = 22; R *= 1.04; extra = 0; span0 = m.arc * 0.72; pointed = true; } // round 9: narrower, ends in a point
   else if (sh === 'flail') { th = 18; R *= 1.04; extra = 0.45; }
-  else if (sh === 'scythe') { th = 13; R *= 1.12; extra = 0.7; }
+  else if (sh === 'scythe') { th = 20; R *= 1.12; extra = 0.7; } // round 9: a wider line
   else if (sh === 'smack') { th = 20; R *= 0.9; extra = 0; }
   else if (sh === 'twinBlade') { th = 16; extra = 0.3; }
-  const span = m.arc + extra, a0 = m.a - m.dir * span / 2;
-  const head = a0 + m.dir * span * easeOut(k01(k / 0.42)), tail = a0 + m.dir * span * sm(k01((k - 0.18) / 0.82));
-  slashBand(ctx, x, y, R, tail, head, th * (1 - 0.3 * k), main, core);
+  const span = span0 + extra, a0 = m.a - m.dir * span / 2;
+  // the heavy blow: round 9 "remove that last frame": the tail catches the head sooner and nothing lingers after
+  const hk = sh === 'heavy' ? 0.36 : 0.42, tk = sh === 'heavy' ? 0.12 : 0.18;
+  const head = a0 + m.dir * span * easeOut(k01(k / hk)), tail = a0 + m.dir * span * sm(k01((k - tk) / (1 - tk)));
+  slashBand(ctx, x, y, R, tail, head, th * (1 - 0.3 * k), main, core, pointed);
   const hx = x + Math.cos(head) * (R - th * 0.4), hy = y + Math.sin(head) * (R - th * 0.4);
   if (sh === 'flail') inked(ctx, () => { star(ctx, hx, hy, 11, 8, 0.62, k * 9); }, '#8D949C');
-  if (sh === 'heavy' && k > 0.38) { // the blow lands: dust thrown up and the floor cracks where it ends
-    const kk = k01((k - 0.38) / 0.62);
-    dustPuffs(ctx, hx, hy, 22, kk, m.seed, 6);
+}
+// The Berserker's flail (round 9): "his attack should be a radius on the ground in front of him. Can have spikey rings
+// around it. Is an aoe attack. Small radius". The spiked head slams down; a ring of spikes and dust bursts round it.
+function slamGround(ctx, m, k) {
+  const e = easeOut(k01(k / 0.5)), R = m.r * (0.5 + 0.55 * e);
+  ctx.save(); ctx.globalAlpha *= 1 - k;
+  ctx.fillStyle = 'rgba(70,56,44,0.3)'; ctx.beginPath(); ctx.arc(m.x, m.y, m.r * 0.9, 0, TAU); ctx.fill();
+  // the spiky ring: a jagged star outline rolling out to the blow's edge
+  ctx.lineJoin = 'miter'; const n = 14;
+  inkLine(ctx, () => { ctx.beginPath(); for (let i = 0; i <= n * 2; i++) { const a = i / (n * 2) * TAU + m.seed, rr = i % 2 ? R * 0.8 : R * 1.06; i ? ctx.lineTo(m.x + Math.cos(a) * rr, m.y + Math.sin(a) * rr) : ctx.moveTo(m.x + Math.cos(a) * rr, m.y + Math.sin(a) * rr); } }, '#E9DDC2', 3 * (1 - k) + 1.2);
+  ctx.restore();
+}
+function slamAir(ctx, m, k) {
+  const drop = k01(k / 0.14), e = easeOut(k01((k - 0.12) / 0.6));
+  if (k < 0.14) { // the head coming down onto the spot
+    const [ux, uy] = upVec(), h = (1 - drop) * 26;
+    inked(ctx, () => star(ctx, m.x + ux * h, m.y + uy * h, 13, 9, 0.66, k * 8), '#6E737A');
+    return;
   }
+  if (k < 0.3) lit(ctx, () => glowDisc(ctx, m.x, m.y, m.r * 1.3, '#FFF4DC', 0.6 * (1 - (k - 0.14) / 0.16)));
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  for (let i = 0; i < 9; i++) { const b = i / 9 * TAU + m.seed, d = m.r * (0.35 + 0.75 * e); spike(ctx, m.x + Math.cos(b) * d, m.y + Math.sin(b) * d, 12 * (1 - e) + 3, 4, '#B9AD94', '#EDE4CD'); }
+  dustPuffs(ctx, m.x, m.y, m.r, e, m.seed, 7);
+  inked(ctx, () => star(ctx, m.x, m.y, 13 * (1 - 0.4 * e), 9, 0.66, 0.4), '#6E737A');
+  ctx.fillStyle = '#C9D2DE'; ctx.beginPath(); ctx.arc(m.x - 3, m.y - 3, 3.5, 0, TAU); ctx.fill();
+  ctx.restore();
 }
 
 // ---------------------------------------------------------------- impacts where shots stop
-const IMPACT_EL = { arrow: 'steel', fireArrow: 'fire', fireball: 'fire', shard: 'frost', icicle: 'frost', dagger: 'steel', vial: 'poison', thorn: 'nature', note: 'song', bone: 'bone', water: 'water' };
+const IMPACT_EL = { arrow: 'steel', fireArrow: 'fire', fireball: 'fire', shard: 'frost', icicle: 'frost', dagger: 'steel', vial: 'poison', thorn: 'nature', note: 'song', bone: 'bone', water: 'water',
+  spark: 'fire', frostbolt: 'frost', orb: 'holy', zeus: 'storm', cluster: 'poison' };
 function impact(ctx, m, k) {
   const big = !!m.ab, kind = m.kind, e = easeOut(k), x = m.x, y = m.y, a = m.a;
   const el = EL[kind === 'bolt' ? null : IMPACT_EL[kind]] || null;
   const col = m.col || (el ? el[1] : '#C9A7FF'), light = el ? el[2] : '#FFFFFF';
   const S = big ? 1.7 : 1;
+  if (kind === 'cluster') return; // its pop is its own fx (fx.js 'pop')
   if (k < 0.3) lit(ctx, () => glowDisc(ctx, x, y, (16 + 12 * e) * S, kind === 'arrow' || kind === 'dagger' ? '#FFF4DC' : col, 0.45 * (1 - k / 0.3)));
   ctx.globalAlpha *= 1 - k * k;
+  if (kind === 'spark') { // round 9: a small fire pop, no white star over it
+    for (let i = 0; i < 5; i++) { const b = a + Math.PI + (i - 2) * 0.55 + hash(m.seed, i) * 0.3, d = 6 + 18 * e;
+      upright(ctx, x + Math.cos(b) * d, y + Math.sin(b) * d, () => flame(ctx, 0, 0, 5.5 * (1 - 0.7 * k))); }
+    return;
+  }
+  if (kind === 'frostbolt') { // a puff of snow (the shards bursting out behind are real shots)
+    for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + m.seed, d = 4 + 16 * e; inkDisc(ctx, x + Math.cos(b) * d, y + Math.sin(b) * d, 4.5 * (1 - 0.6 * k), i % 2 ? '#FFFFFF' : '#DDF6FF'); }
+    return;
+  }
+  if (kind === 'orb') { // a little holy sparkle
+    for (let i = 0; i < 4; i++) { const b = i / 4 * TAU + 0.4, d = 3 + 12 * e; inked(ctx, () => star(ctx, x + Math.cos(b) * d, y + Math.sin(b) * d, 4 * (1 - k) + 1, 4, 0.35, b), EL.holy[2]); }
+    return;
+  }
+  if (kind === 'zeus') { // the bolt cracks on: a flash of forks
+    for (let i = 0; i < 4; i++) { const b = i / 4 * TAU + m.seed, L = 26 * e + 6; bolt(ctx, x, y, x + Math.cos(b) * L, y + Math.sin(b) * L, m.t, m.seed + i, 2); }
+    return;
+  }
   if (kind === 'arrow' || kind === 'dagger') {
     for (let i = 0; i < 4; i++) { const b = a + Math.PI + (hash(m.seed, i) - 0.5) * 2.2, d = (6 + 20 * e) * S; streak(ctx, x + Math.cos(b) * d * 0.3, y + Math.sin(b) * d * 0.3, b, 0, 4 + 8 * (1 - k), 2.2, i % 2 ? '#C99A6A' : '#EEF3F8', '#FFFFFF'); }
     if (k < 0.5) inked(ctx, () => star(ctx, x, y, (12 + 6 * e) * S * (1 - k), 4, 0.3, a), '#FFFFFF');
@@ -247,9 +309,9 @@ function impact(ctx, m, k) {
   } else if (kind === 'thorn') {
     for (let i = 0; i < 4; i++) { const b = a + Math.PI + (hash(m.seed, i) - 0.5) * 2.4, d = 6 + 20 * e; leaf(ctx, x + Math.cos(b) * d, y + Math.sin(b) * d, b + k * 4, 5 * (1 - 0.4 * k)); }
     inked(ctx, () => star(ctx, x, y, 11 * (1 - k), 4, 0.3, a), '#E4F5C8');
-  } else { // a magic bolt: a star of its own colour bursting
+  } else { // a magic bolt: a star of its own colour bursting (round 9: no big white star over it)
     inked(ctx, () => star(ctx, x, y, (10 + 14 * e) * S * (1 - 0.5 * k), 6, 0.42, k * 2), col);
-    ctx.fillStyle = '#FFFFFF'; star(ctx, x, y, (5 + 6 * e) * S * (1 - k), 6, 0.42, k * 2); ctx.fill();
+    ctx.fillStyle = light; star(ctx, x, y, (3 + 3 * e) * S * (1 - k), 6, 0.42, k * 2); ctx.fill();
     for (let i = 0; i < 5; i++) { const b = i / 5 * TAU + m.seed, d = (10 + 24 * e) * S; inkDisc(ctx, x + Math.cos(b) * d, y + Math.sin(b) * d, 3 * (1 - k) + 0.5, col); }
   }
 }
@@ -292,16 +354,67 @@ function zonePoints(z, step) {
   }
   return out;
 }
+// round 9: no cracks in the floor (the designer disliked them everywhere); a soft scorch of dust where a blow landed
 function strikeGround(ctx, m, k) {
   const z = m.z;
-  if (m.kind === 'bone' || m.kind === 'blade' || m.kind === 'ice') { // the floor cracks under it
-    ctx.globalAlpha *= 1 - k;
-    const pts = zonePoints(z, 70);
-    for (let i = 0; i < pts.length; i++) crack(ctx, pts[i][0], pts[i][1], hash(m.seed, i) * TAU, 22, m.seed + i, 2.6);
+  if (m.kind === 'bone' || m.kind === 'blade' || m.kind === 'ice') {
+    ctx.globalAlpha *= (1 - k) * 0.5; ctx.fillStyle = 'rgba(70,56,44,0.5)';
+    if (z.shape === 'line') { ctx.lineCap = 'round'; ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = z.hw * 1.1; ctx.beginPath(); ctx.moveTo(z.x1, z.y1); ctx.lineTo(z.x2, z.y2); ctx.stroke(); }
+    else if (z.shape === 'circle') { ctx.beginPath(); ctx.arc(z.x, z.y, z.r * 0.8, 0, TAU); ctx.fill(); }
   }
+  if (m.kind === 'soul') { // the soul fire's cold glow on the floor
+    const rr = z.shape === 'ring' ? (z.r0 + z.r1) / 2 : z.r;
+    lit(ctx, () => glowDisc(ctx, z.x, z.y, rr * 1.1, '#6FC8FF', 0.4 * (1 - k)));
+  }
+}
+// ---- the Bone King in the effects style (round 9: "needs a visual overhaul for some abilities")
+const SOUL = ['#3E7FC0', '#6FC8FF', '#BFEFFF', '#F2FCFF'];
+function soulFlame(ctx, x, y, r) { flame(ctx, x, y, r, SOUL[1], SOUL[3]); }
+function kingStrike(ctx, m, k) {
+  const z = m.z, e = easeOut(k), seed = m.seed, [ux, uy] = upVec();
+  if (m.kind === 'bone' && z.shape === 'cone') { // the great cleave: one huge bone-white crescent sweeping the cone
+    const span = z.arc, a0 = z.a - span / 2;
+    const head = a0 + span * easeOut(k01(k / 0.3)), tail = a0 + span * sm(k01((k - 0.12) / 0.6));
+    slashBand(ctx, z.x, z.y, z.r * 0.95, tail, head, 40 * (1 - 0.4 * k), '#EDE4CD', '#FFFFFF', true);
+    if (k > 0.2) dustPuffs(ctx, z.x + Math.cos(z.a) * z.r * 0.8, z.y + Math.sin(z.a) * z.r * 0.8, 46, k01((k - 0.2) / 0.8), seed, 9);
+    return true;
+  }
+  if (m.kind === 'bone' && z.shape === 'line') { // the grave lance: a long thrust, then bone spikes bursting up along it
+    const a = Math.atan2(z.y2 - z.y1, z.x2 - z.x1), L = Math.hypot(z.x2 - z.x1, z.y2 - z.y1);
+    const tip = L * easeOut(k01(k / 0.2)), base = L * sm(k01((k - 0.15) / 0.5));
+    if (tip - base > 2) streak(ctx, z.x1, z.y1, a, base, tip + 12, z.hw * 0.5, '#EDE4CD', '#FFFFFF');
+    const n = Math.max(3, Math.round(L / 46));
+    for (let i = 0; i < n; i++) { const q = (i + 0.5) / n, kk = k01((k - q * 0.25) / 0.6); if (kk <= 0) continue;
+      const up = kk < 0.25 ? easeOut(kk / 0.25) : 1 - sm(k01((kk - 0.45) / 0.55)), px = z.x1 + Math.cos(a) * L * q, py = z.y1 + Math.sin(a) * L * q;
+      for (const sd of [-1, 0, 1]) { const o = sd * z.hw * 0.55, h = hash(seed, i, sd + 2);
+        spike(ctx, px - Math.sin(a) * o, py + Math.cos(a) * o, (30 + 16 * h) * up * (sd ? 0.7 : 1), 7 + 3 * h, EL.bone[1], EL.bone[2]); } }
+    return true;
+  }
+  if (m.kind === 'bone' && z.shape === 'circle') { // a row's step or a grave bursting: a knot of bone spikes and dust
+    const up = k < 0.18 ? easeOut(k / 0.18) : 1 - sm(k01((k - 0.45) / 0.55)), n = z.r > 50 ? 7 : 4;
+    if (k < 0.2) lit(ctx, () => glowDisc(ctx, z.x, z.y, z.r * 1.2, '#FFF8EA', 0.5 * (1 - k / 0.2)));
+    dustPuffs(ctx, z.x, z.y, z.r * 0.9, k, seed, 6);
+    for (let i = 0; i < n; i++) { const b = i / n * TAU + seed, d = i ? z.r * 0.45 : 0, h = hash(seed, i);
+      spike(ctx, z.x + Math.cos(b) * d, z.y + Math.sin(b) * d, (i ? 26 : 40) * (0.8 + 0.4 * h) * up, i ? 7 : 10, EL.bone[1], EL.bone[2]); }
+    return true;
+  }
+  if (m.kind === 'soul') { // soul fire: a wave of blue flame rolling out over the shape, souls rising off it
+    const ring = z.shape === 'ring', rr = ring ? z.r0 + (z.r1 - z.r0) * e : z.r * (0.25 + 0.75 * e);
+    if (k < 0.18) lit(ctx, () => glowDisc(ctx, z.x, z.y, (ring ? z.r1 : z.r) * 1.1, SOUL[2], 0.7 * (1 - k / 0.18)));
+    lit(ctx, () => { ctx.strokeStyle = rgba(SOUL[1], 0.5 * (1 - k)); ctx.lineWidth = 30 * (1 - k) + 4; ctx.beginPath(); ctx.arc(z.x, z.y, rr, 0, TAU); ctx.stroke(); });
+    ctx.save(); ctx.globalAlpha *= 1 - k * k;
+    const n = Math.max(14, Math.round(rr / 12));
+    for (let i = 0; i < n; i++) { const b = i / n * TAU + seed * 0.1, h = hash(seed, i); upright(ctx, z.x + Math.cos(b) * rr, z.y + Math.sin(b) * rr, () => soulFlame(ctx, 0, 0, (10 + 5 * h) * (1 - 0.6 * k))); }
+    for (let i = 0; i < 8; i++) { const b = hash(i, seed) * TAU, d = (ring ? z.r0 + (z.r1 - z.r0) * hash(seed, i, 2) : z.r * hash(seed, i, 2)), ph = k01(k * 1.4 - hash(i, seed, 3) * 0.3);
+      ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); inkDisc(ctx, z.x + Math.cos(b) * d + ux * ph * 50, z.y + Math.sin(b) * d + uy * ph * 50, 6 * (1 - ph) + 2, i % 2 ? SOUL[2] : SOUL[3]); ctx.restore(); }
+    ctx.restore();
+    return true;
+  }
+  return false;
 }
 function strike(ctx, m, k) {
   const z = m.z, el = EL[STRIKE_EL[m.kind]] || EL.bone, e = easeOut(k), seed = m.seed;
+  if ((m.kind === 'bone' || m.kind === 'soul') && kingStrike(ctx, m, k)) return;
   if (m.kind === 'blade' && z.shape === 'line') { // a blade streak along the line
     const a = Math.atan2(z.y2 - z.y1, z.x2 - z.x1), L = Math.hypot(z.x2 - z.x1, z.y2 - z.y1);
     const tip = L * easeOut(k01(k / 0.3)), base = L * sm(k01((k - 0.2) / 0.8));
@@ -341,12 +454,10 @@ function strike(ctx, m, k) {
 }
 
 // ---------------------------------------------------------------- a quake (ground slams, Ground Pound, Leap's landing)
-function quake(ctx, x, y, R, k, seed, col = EL.earth) {
+// round 9: no cracks, and it lies under the units (drawn on the ground layer); a dark dent where the blow landed
+export function quake(ctx, x, y, R, k, seed, col = EL.earth) {
   const e = easeOut(k01(k / 0.6));
-  ctx.save(); ctx.globalAlpha *= 1 - k;
-  const n = 7;
-  for (let i = 0; i < n; i++) crack(ctx, x, y, (i + hash(seed, i) * 0.6) / n * TAU, R * 0.55 * easeOut(k01(k / 0.25)), seed * 3 + i, 3.2);
-  ctx.restore();
+  ctx.save(); ctx.globalAlpha *= (1 - k) * 0.5; ctx.fillStyle = 'rgba(70,56,44,0.55)'; ctx.beginPath(); ctx.arc(x, y, R * 0.3 * (0.6 + 0.4 * e), 0, TAU); ctx.fill(); ctx.restore();
   // the dust wave rolling out to the edge
   const r = R * (0.3 + 0.7 * e), th = 16 * (1 - k) + 3;
   ctx.save(); ctx.globalAlpha *= (1 - k) * 0.9;
@@ -359,58 +470,89 @@ function quake(ctx, x, y, R, k, seed, col = EL.earth) {
   for (let i = 0; i < 9; i++) { const b = (i + 0.5) / 9 * TAU + seed, d = r - th * 0.6, hop = Math.sin(k01(k * 1.6 - hash(i, seed) * 0.3) * Math.PI) * 16;
     ctx.save(); ctx.globalAlpha *= 1 - k; inkDisc(ctx, x + Math.cos(b) * d + ux * hop, y + Math.sin(b) * d + uy * hop, 3.4 * (1 - k) + 1, i % 2 ? col[1] : col[0]); ctx.restore(); }
 }
+// Old Bones (round 9 redo; the bones and balls were disliked): death comes for her and is turned away. A pale skull
+// rises out of her, grins, and cracks apart into wisps; she flashes white. The same at every tier; at III the shove
+// round her (a ring of dust on the ground) comes with it.
+function skullPath(ctx, s) {
+  ctx.beginPath(); ctx.moveTo(-11 * s, 2 * s); ctx.bezierCurveTo(-13 * s, -16 * s, 13 * s, -16 * s, 11 * s, 2 * s);
+  ctx.lineTo(8 * s, 6 * s); ctx.lineTo(7 * s, 12 * s); ctx.lineTo(-7 * s, 12 * s); ctx.lineTo(-8 * s, 6 * s); ctx.closePath();
+}
 function oldBones(ctx, m, k) {
-  const u = m.u, x = u && !u.dead ? u.x : m.x, y = u && !u.dead ? u.y : m.y, e = easeOut(k);
-  if (k < 0.25) lit(ctx, () => glowDisc(ctx, x, y, 90, '#FFF8EA', 1 - k / 0.25));
-  ctx.globalAlpha *= 1 - k;
-  for (let i = 0; i < 8; i++) { const b = i / 8 * TAU + 0.2, d = 20 + 60 * e;
-    ctx.save(); ctx.translate(x + Math.cos(b) * d, y + Math.sin(b) * d); ctx.rotate(b + k * 5); inked(ctx, () => boneShape(ctx, 12, 4), EL.bone[1]); ctx.restore(); }
-  const [ux, uy] = upVec();
-  for (let i = 0; i < 4; i++) { const ph = k01(k * 1.3 - i * 0.08); inkDisc(ctx, x + (i - 1.5) * 10 + ux * ph * 50, y + uy * ph * 50 + (view.rot ? (i - 1.5) * 10 : 0), 5 * (1 - ph) + 1, '#FFF8EA'); }
+  const u = m.u, x = u && !u.dead ? u.x : m.x, y = u && !u.dead ? u.y : m.y, [ux, uy] = upVec();
+  if (k < 0.2) lit(ctx, () => glowDisc(ctx, x, y, 80, '#FFF8EA', 1 - k / 0.2));
+  const rise = easeOut(k01(k / 0.35)), crackK = k01((k - 0.5) / 0.5), s = 1.5 + 0.3 * rise;
+  const sx = x + ux * (u ? u.vr : 22) * (0.4 + 1.3 * rise), sy = y + uy * (u ? u.vr : 22) * (0.4 + 1.3 * rise);
+  ctx.save(); ctx.globalAlpha *= (k < 0.1 ? k / 0.1 : 1) * (1 - crackK) * 0.92;
+  for (const sd of [-1, 1]) { // two halves that split apart as it cracks
+    upright(ctx, sx + (view.rot ? 0 : sd * crackK * 10), sy + (view.rot ? sd * crackK * 10 : 0), () => {
+      ctx.rotate(sd * crackK * 0.5);
+      ctx.save(); ctx.beginPath(); ctx.rect(sd < 0 ? -30 : 0, -40, 30, 80); ctx.clip();
+      inked(ctx, () => skullPath(ctx, s), '#F4EEDD');
+      ctx.fillStyle = '#2B2230'; ctx.beginPath(); ctx.ellipse(-4.5 * s, -1 * s, 3.2 * s, 3.8 * s, 0, 0, TAU); ctx.ellipse(4.5 * s, -1 * s, 3.2 * s, 3.8 * s, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#9FE4FF'; ctx.beginPath(); ctx.arc(-4.5 * s, -0.5 * s, 1.2 * s, 0, TAU); ctx.arc(4.5 * s, -0.5 * s, 1.2 * s, 0, TAU); ctx.fill();
+      ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 1.4; ctx.beginPath(); for (let i = -2; i <= 2; i++) { ctx.moveTo(i * 2.6 * s, 7 * s); ctx.lineTo(i * 2.6 * s, 11.5 * s); } ctx.stroke();
+      ctx.restore();
+    });
+  }
+  ctx.restore();
+  if (crackK > 0) { ctx.save(); ctx.globalAlpha *= 1 - crackK; // wisps out of the crack
+    for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + 0.3, d = 8 + 34 * easeOut(crackK); inkDisc(ctx, sx + Math.cos(b) * d + ux * crackK * 14, sy + Math.sin(b) * d + uy * crackK * 14, 4 * (1 - crackK) + 1.5, i % 2 ? '#FFF8EA' : '#BFEFFF'); }
+    ctx.restore(); }
 }
 
 // ---------------------------------------------------------------- ability signatures ('sig' fx, fxtag.js)
-// How long each one plays (the fx lives 1.4s; a sig draws nothing after its own time).
-const SIG_T = { shieldBash: 0.4, guard: 0.8, consecrate: 0.5, holdTheLine: 0.7, charge: 0.4, groundPound: 0.2, barrage: 0.3, frostArrow: 0.3,
-  roll: 0.45, backstab: 0.55, dash: 0.35, fanOfKnives: 0.35, rage: 0.6, leap: 0.4, cleave: 0.2, shockwave: 0.3, whirl: 0.4,
-  unstoppable: 0.7, reap: 0.2, hook: 0.3, fireball: 0.35, flameWall: 0.4, inferno: 0.3, iceShard: 0.3, frostNova: 0.3, iceWall: 0.6,
+// How long each one plays (the fx lives 1.4s; a sig draws nothing after its own time). Round 9: some abilities have a
+// charge before they go off (Barrage, Frost Arrow, Fireball, Frost Nova): CHARGE is how long, the sig shows it.
+const SIG_T = { shieldBash: 0.45, guard: 1.1, consecrate: 0.5, holdTheLine: 0.7, charge: 0.4, groundPound: 0.2, barrage: 0.7, frostArrow: 0.75,
+  roll: 0.45, backstab: 0.7, dash: 0.35, fanOfKnives: 0.3, rage: 0.6, leap: 0.4, cleave: 0.2, shockwave: 0.3, whirl: 0.4,
+  unstoppable: 0.7, reap: 0.2, hook: 0.3, fireball: 0.7, flameWall: 0.4, inferno: 0.3, iceShard: 0.3, frostNova: 0.65, iceWall: 0.6,
   chainLightning: 0.3, thunderclap: 0.25, stormCloud: 0.5, mend: 0.4, sanctuary: 0.6, smite: 0.3, warSong: 0.9, lullaby: 0.3,
-  encore: 0.35, entangle: 0.5, rejuvenate: 0.4, callWolf: 0.8, raiseDead: 0.5, lifeDrain: 0.3, boneSpear: 0.3, miasma: 0.3,
-  cure: 0.5, leeches: 0.45 };
+  encore: 0.35, entangle: 0.5, rejuvenate: 0.4, callWolf: 0.4, raiseDead: 0.5, lifeDrain: 0.3, boneSpear: 0.3, miasma: 0.3,
+  cure: 0.3, leeches: 0.5 };
+const CHARGE = { barrage: 0.4, frostArrow: 0.45, fireball: 0.4, frostNova: 0.35 };
 const CAST_EL = { shieldBash: 'holy', guard: 'holy', consecrate: 'holy', holdTheLine: 'earth', charge: 'earth', groundPound: 'earth', barrage: 'steel',
   frostArrow: 'frost', roll: 'earth', backstab: 'shadow', dash: 'shadow', fanOfKnives: 'steel', rage: 'blood', leap: 'earth', cleave: 'steel',
   shockwave: 'earth', whirl: 'steel', unstoppable: 'holy', reap: 'bone', hook: 'steel', fireball: 'fire', flameWall: 'fire', inferno: 'fire',
   iceShard: 'frost', frostNova: 'frost', iceWall: 'frost', chainLightning: 'storm', thunderclap: 'storm', stormCloud: 'storm', mend: 'holy',
   sanctuary: 'holy', smite: 'holy', warSong: 'song', lullaby: 'song', encore: 'song', entangle: 'nature', rejuvenate: 'nature', callWolf: 'nature',
-  raiseDead: 'necro', lifeDrain: 'blood', boneSpear: 'necro', miasma: 'poison', cure: 'water', leeches: 'blood' };
+  raiseDead: 'cold', lifeDrain: 'blood', boneSpear: 'necro', miasma: 'poison', cure: 'water', leeches: 'poison' };
+EL.cold = ['#6E7680', '#A8B0BA', '#D8DEE4', '#F2F5F8']; // Raise Dead (round 9: "more of an unsaturated cold grey")
 export const abilityEl = (id) => EL[CAST_EL[id]] || EL.steel;
 
 // A burst of light in front of the caster's hands as an ability goes off (every cast gets one: the tell's end).
-function castFlash(ctx, f, k, el) {
-  if (k > 0.35) return;
-  const u = f.u, x = (u && !u.dead ? u.x : f.x) + Math.cos(f.a) * 30, y = (u && !u.dead ? u.y : f.y) + Math.sin(f.a) * 30, q = 1 - k / 0.35;
+function castFlash(ctx, f, k, el, at = 0) {
+  const dur = 0.35 * (SIG_T[f.ab] || 0.4), t = f.t - at; if (t < 0 || t > dur) return;
+  const q = 1 - t / dur;
+  const u = f.u, x = (u && !u.dead ? u.x : f.x) + Math.cos(f.a) * 30, y = (u && !u.dead ? u.y : f.y) + Math.sin(f.a) * 30;
   lit(ctx, () => glowDisc(ctx, x, y, 34 * (0.6 + 0.4 * q), el[1], 0.7 * q));
   inked(ctx, () => star(ctx, x, y, 13 * q + 2, 4, 0.32, f.a), el[3]);
+}
+// motes drawn in from all round onto a point (the charges: frost into the bow, cold into the mage)
+function drawIn(ctx, x, y, R, q, n, seed, cols, s = 3.2) {
+  for (let i = 0; i < n; i++) { const ph = (q * 1.6 + hash(seed, i)) % 1, b = hash(i, seed) * TAU + ph * 1.2, d = R * (1 - easeOut(ph)), px = x + Math.cos(b) * d, py = y + Math.sin(b) * d;
+    ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI) * clamp(q * 3, 0, 1);
+    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + Math.cos(b) * 9 * (1 - ph), py + Math.sin(b) * 9 * (1 - ph)); }, cols[i % cols.length], s * (1 - 0.5 * ph));
+    ctx.restore(); }
 }
 export function drawSigGround(ctx, f, w) {
   const T = SIG_T[f.ab] || 0.4; if (f.t > T) return;
   const k = f.t / T, el = abilityEl(f.ab), e = easeOut(k);
   ctx.save();
   switch (f.ab) {
-    case 'holdTheLine': { // the shield planted: the floor cracks in front of him
-      const x = f.x + Math.cos(f.a) * 34, y = f.y + Math.sin(f.a) * 34;
-      ctx.globalAlpha *= 1 - k * k;
-      for (let i = 0; i < 5; i++) crack(ctx, x, y, f.a + (i - 2) * 0.45, 40 * easeOut(k01(k / 0.2)), i + 9, 3.4);
-      dustPuffs(ctx, x, y, 34, k, 5, 8);
-      break;
-    }
     case 'charge': case 'roll': case 'leap': case 'dash': { // a kick of dust where it set off
       dustPuffs(ctx, f.x, f.y, f.ab === 'dash' ? 20 : 30, k, Math.round(f.x), 7, f.ab === 'dash' && f.u && f.u.kind === 'twinfang' ? '#9B86C9' : '#E9DDC2');
       break;
     }
-    case 'raiseDead': case 'callWolf': {
+    case 'rage': { // the roar: red lines bursting out along the floor, under everyone (round 9)
+      const u = f.u, x = u && !u.dead ? u.x : f.x, y = u && !u.dead ? u.y : f.y;
       ctx.globalAlpha *= 1 - k;
-      lit(ctx, () => glowDisc(ctx, f.x, f.y, 70, el[1], 0.45));
+      for (let i = 0; i < 14; i++) { const b = i / 14 * TAU + 0.1, r0 = (u ? u.vr : 22) + 6 + 34 * e; streak(ctx, x + Math.cos(b) * r0, y + Math.sin(b) * r0, b, 0, 22 * (1 - k) + 4, 3.4, i % 2 ? el[1] : el[2], '#FFF0E8'); }
+      if (k < 0.3) lit(ctx, () => glowDisc(ctx, x, y, 70, '#FF5A3D', 0.6 * (1 - k / 0.3)));
+      break;
+    }
+    case 'raiseDead': {
+      ctx.globalAlpha *= 1 - k;
+      lit(ctx, () => glowDisc(ctx, f.x, f.y, 70, el[1], 0.3));
       break;
     }
   }
@@ -419,25 +561,37 @@ export function drawSigGround(ctx, f, w) {
 export function drawSigAir(ctx, f, w) {
   const T = SIG_T[f.ab] || 0.4; if (f.t > T) return;
   const k = f.t / T, el = abilityEl(f.ab), e = easeOut(k), u = f.u, live = u && !u.dead && !u.downed;
-  const ux0 = live ? u.x : f.x, uy0 = live ? u.y : f.y, seed = Math.round(f.x * 3 + f.y);
+  const ux0 = live ? u.x : f.x, uy0 = live ? u.y : f.y, seed = Math.round(f.x * 3 + f.y), [vx, vy] = upVec();
+  const fa = live ? u.facing : f.a;
   ctx.save();
   switch (f.ab) {
-    case 'shieldBash': { // a gold shove the shape of the shield's face
-      const R = u.r + 14 + 34 * e;
-      ctx.globalAlpha *= 1 - k * k;
-      slashBand(ctx, ux0, uy0, R, f.a - 0.75, f.a + 0.75, 22 * (1 - 0.5 * k), el[2], el[3]);
-      for (let i = -1; i <= 1; i++) streak(ctx, ux0 + Math.cos(f.a + i * 0.5) * (R - 8), uy0 + Math.sin(f.a + i * 0.5) * (R - 8), f.a, 4, 4 + 22 * e, 2.6, el[2], '#FFFFFF');
+    case 'shieldBash': { // round 9: "doesn't look like a bash": the shield itself rams forward and stops dead on the foe
+      const reach = (u ? u.r : 30) + 22, q = easeOut(k01(k / 0.25)), hit = k01((k - 0.22) / 0.78);
+      const d = (u ? u.vr * 0.6 : 14) + reach * q, x = ux0 + Math.cos(fa) * d, y = uy0 + Math.sin(fa) * d;
+      ctx.save(); ctx.globalAlpha *= 1 - hit * hit;
+      for (let i = 1; i <= 3; i++) { ctx.save(); ctx.globalAlpha *= 0.25 * (1 - i / 4) * (1 - hit); ctx.translate(x - Math.cos(fa) * i * 9, y - Math.sin(fa) * i * 9); ctx.rotate(fa - Math.PI / 2); inked(ctx, () => shieldShape(ctx, 1.9), el[2]); ctx.restore(); }
+      ctx.translate(x, y); ctx.rotate(fa - Math.PI / 2);
+      inked(ctx, () => shieldShape(ctx, 1.9 * (1 + 0.15 * Math.sin(hit * Math.PI))), el[1]);
+      ctx.fillStyle = el[3]; ctx.beginPath(); ctx.arc(0, 0, 5, 0, TAU); ctx.fill();
+      ctx.restore();
+      if (hit > 0 && hit < 0.8) { // the bonk: a white flash on the face and impact lines thrown out in front
+        const p = hit / 0.8, cx = x + Math.cos(fa) * 20, cy = y + Math.sin(fa) * 20;
+        if (p < 0.4) lit(ctx, () => glowDisc(ctx, cx, cy, 50, '#FFFFFF', 0.8 * (1 - p / 0.4)));
+        ctx.save(); ctx.globalAlpha *= 1 - p;
+        for (let i = -3; i <= 3; i++) { const b = fa + i * 0.32; streak(ctx, cx + Math.cos(b) * (8 + 26 * easeOut(p)), cy + Math.sin(b) * (8 + 26 * easeOut(p)), b, 0, 16 * (1 - p) + 4, 3, '#FFFFFF', el[3]); }
+        ctx.restore();
+      }
       break;
     }
-    case 'guard': { // a shield glint pops on the guarded ally
+    case 'guard': { // round 9: the shield, no "+", directly over the one guarded: fades in and grows, then fades out
       const a = u && u.guardOf; if (!a || a.dead) break;
-      const s = k < 0.25 ? easeOut(k / 0.25) * 1.25 : 1.25 - 0.25 * k01((k - 0.25) / 0.2);
-      ctx.globalAlpha *= k01((1 - k) / 0.3);
-      lit(ctx, () => glowDisc(ctx, a.x, a.y, 40, el[2], 0.5));
-      upright(ctx, a.x, a.y - 0, () => { ctx.translate(0, -a.vr - 16); inked(ctx, () => shieldShape(ctx, 1.25 * s), el[1]); ctx.fillStyle = '#FFFBEA'; ctx.fillRect(-1.6 * s, -9 * s, 3.2 * s, 17 * s); ctx.fillRect(-8 * s, -3 * s, 16 * s, 3.2 * s); });
+      const s = 0.7 + 0.85 * easeOut(k01(k / 0.55)), al = k < 0.2 ? k / 0.2 : 1 - sm(k01((k - 0.45) / 0.55));
+      ctx.globalAlpha *= al * 0.9;
+      if (k < 0.35) lit(ctx, () => glowDisc(ctx, a.x, a.y, 46, el[2], 0.5 * (1 - k / 0.35)));
+      upright(ctx, a.x, a.y, () => { inked(ctx, () => shieldShape(ctx, 1.5 * s), el[1]); ctx.fillStyle = el[2]; shieldShape(ctx, 1.05 * s); ctx.fill(); ctx.fillStyle = '#FFFBEA'; ctx.beginPath(); ctx.ellipse(-4 * s, -6 * s, 3 * s, 5 * s, -0.3, 0, TAU); ctx.fill(); });
       break;
     }
-    case 'consecrate': case 'sanctuary': case 'smite': case 'mend': case 'unstoppable': case 'encore':
+    case 'consecrate': case 'sanctuary': case 'smite': case 'mend': case 'unstoppable':
       castFlash(ctx, f, k, el);
       if (f.ab === 'unstoppable') { // gold shards break away from the body
         ctx.globalAlpha *= 1 - k;
@@ -446,7 +600,7 @@ export function drawSigAir(ctx, f, w) {
           inked(ctx, () => { ctx.beginPath(); ctx.moveTo(s, 0); ctx.lineTo(-s * 0.6, -s * 0.7); ctx.lineTo(-s * 0.4, s * 0.6); ctx.closePath(); }, i % 2 ? el[1] : el[2]); ctx.restore(); }
       }
       break;
-    case 'holdTheLine': { // a flash of the shield face, and red streaks to everything it taunts
+    case 'holdTheLine': { // a flash off the raised shield, and red streaks to everything it taunts (no cracks: round 9)
       for (const e2 of w.units) if (e2.tauntBy === u && !e2.dead && k < 0.6) {
         ctx.save(); ctx.globalAlpha *= 1 - k / 0.6;
         const tip = easeOut(k01(k / 0.35));
@@ -454,106 +608,148 @@ export function drawSigAir(ctx, f, w) {
         upright(ctx, e2.x, e2.y, () => inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-6, -e2.vr - 22); ctx.lineTo(0, -e2.vr - 12); ctx.lineTo(6, -e2.vr - 22); }, '#FF6B5A'));
         ctx.restore();
       }
-      ctx.globalAlpha *= 1 - k;
-      slashBand(ctx, ux0, uy0, u.r + 22, f.a - 0.8, f.a + 0.8, 14 * (1 - k), el[2], '#FFFFFF');
+      if (k < 0.3) lit(ctx, () => glowDisc(ctx, ux0 + Math.cos(fa) * (u.r + 10), uy0 + Math.sin(fa) * (u.r + 10), 40, '#FFF4C8', 0.7 * (1 - k / 0.3)));
       break;
     }
-    case 'barrage': case 'frostArrow': case 'iceShard': case 'boneSpear': case 'fireball': case 'chainLightning': case 'miasma': case 'leeches': {
-      castFlash(ctx, f, k, el);
-      if (f.ab === 'leeches' && f.tgt) { // three leeches flung at the target
-        for (let i = 0; i < 3; i++) { const q = k01(k * 1.4 - i * 0.12); if (q <= 0 || q >= 1) continue;
-          const x = ux0 + (f.tgt.x - ux0) * q, y = uy0 + (f.tgt.y - uy0) * q, [vx, vy] = upVec(), hop = Math.sin(q * Math.PI) * 30;
-          ctx.save(); ctx.translate(x + vx * hop + (i - 1) * 6, y + vy * hop); ctx.rotate(q * 10 + i); inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 7, 4, 0, 0, TAU); }, '#7A2C40'); ctx.restore(); }
+    case 'barrage': { // round 9: the charge: arrows gather one by one in a fan on the bow, glowing; then they fly
+      const c = CHARGE.barrage, tier = f.tier || 1, n = tier >= 2 ? 7 : 5;
+      if (f.t < c) { const q = f.t / c, bx = ux0 + Math.cos(fa) * (u.r + 4), by = uy0 + Math.sin(fa) * (u.r + 4);
+        lit(ctx, () => glowDisc(ctx, bx, by, 26 + 16 * q, tier >= 2 ? '#FF9A3D' : '#FFF4DC', 0.25 + 0.35 * q));
+        for (let i = 0; i < n; i++) { const on = k01(q * (n + 1) - i); if (on <= 0) continue; const b = fa + (i - (n - 1) / 2) * 0.16, L = 22 + 8 * on, x = bx + Math.cos(b) * L, y = by + Math.sin(b) * L;
+          ctx.save(); ctx.globalAlpha *= on; ctx.translate(x, y); ctx.rotate(b); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(8, 0); ctx.lineTo(-2, -4.5); ctx.lineTo(-2, 4.5); ctx.closePath(); }, tier >= 2 ? '#FFD45A' : '#EEF3F8');
+          lit(ctx, () => glowDisc(ctx, 2, 0, 10, tier >= 2 ? '#FF9A3D' : '#FFFFFF', 0.5 * Math.sin(on * Math.PI))); ctx.restore(); }
+      }
+      castFlash(ctx, f, k, el, c);
+      break;
+    }
+    case 'frostArrow': { // round 9: a readable charge: cold drawn into the top of the bow from all round her
+      const c = CHARGE.frostArrow;
+      if (f.t < c) { const q = f.t / c, bx = ux0 + Math.cos(fa) * (u.r + 2), by = uy0 + Math.sin(fa) * (u.r + 2);
+        drawIn(ctx, bx, by, 80, q, 14, seed, ['#DDF6FF', '#FFFFFF', '#9FDDF6']);
+        lit(ctx, () => glowDisc(ctx, bx, by, 18 + 22 * q, '#DDF6FF', 0.3 + 0.5 * q));
+        for (let i = 0; i < 3; i++) { const b = q * 4 + i / 3 * TAU, d = 16 * (1 - q) + 6; ctx.save(); ctx.globalAlpha *= q; snowflakeK(ctx, bx + Math.cos(b) * d, by + Math.sin(b) * d, 3.5, b); ctx.restore(); }
+      }
+      castFlash(ctx, f, k, el, c);
+      break;
+    }
+    case 'fireball': { // round 9: a slight charge up: fire gathering into a ball in front of her hands
+      const c = CHARGE.fireball;
+      if (f.t < c) { const q = f.t / c, bx = ux0 + Math.cos(fa) * (u.r + 8), by = uy0 + Math.sin(fa) * (u.r + 8), r = 4 + 9 * easeOut(q);
+        lit(ctx, () => glowDisc(ctx, bx, by, r * 3, '#FF9A3D', 0.6 * q));
+        for (let i = 0; i < 5; i++) { const b = q * 9 + i / 5 * TAU, d = r + 18 * (1 - q); upright(ctx, bx + Math.cos(b) * d, by + Math.sin(b) * d, () => flame(ctx, 0, 0, 4 + 2 * q)); }
+        inked(ctx, () => blob(ctx, bx, by, r, 6, q * 20, 1), '#E8582A'); ctx.fillStyle = '#FFC85A'; ctx.beginPath(); ctx.arc(bx + 1, by - 1, r * 0.55, 0, TAU); ctx.fill();
+      }
+      castFlash(ctx, f, k, el, c);
+      break;
+    }
+    case 'frostNova': { // round 9: charge up: the cold drawn into her from all round, ice forming in a closing ring
+      const c = CHARGE.frostNova;
+      if (f.t < c) { const q = f.t / c;
+        drawIn(ctx, ux0, uy0, 140, q, 20, seed, ['#DDF6FF', '#FFFFFF', '#9FDDF6'], 3.6);
+        lit(ctx, () => glowDisc(ctx, ux0, uy0, 40 + 40 * q, '#DDF6FF', 0.25 + 0.4 * q));
+        for (let i = 0; i < 8; i++) { const b = i / 8 * TAU + q, d = (u.vr + 10) + 50 * (1 - easeOut(q)), s = 5 + 3 * q;
+          ctx.save(); ctx.globalAlpha *= q; ctx.translate(ux0 + Math.cos(b) * d, uy0 + Math.sin(b) * d); ctx.rotate(b);
+          inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-s * 1.4, 0); ctx.lineTo(0, -s * 0.5); ctx.lineTo(s * 0.6, 0); ctx.lineTo(0, s * 0.5); ctx.closePath(); }, '#BFE9F8'); ctx.restore(); }
       }
       break;
     }
-    case 'backstab': { // smoke where she steps out, and a cross of two cuts on the target
-      ctx.save(); ctx.globalAlpha *= 1 - k;
-      for (let i = 0; i < 7; i++) { const b = i / 7 * TAU + seed, d = 10 + 26 * e; inkDisc(ctx, ux0 + Math.cos(b) * d, uy0 + Math.sin(b) * d, 10 * (1 - k) + 2, i % 2 ? '#5A4A7A' : '#3A2E50'); }
-      ctx.restore();
+    case 'iceShard': case 'boneSpear': case 'chainLightning': case 'miasma': case 'stormCloud':
+      castFlash(ctx, f, k, el); break;
+    case 'backstab': { // round 9: she goes in the smoke left behind (a body, puddles.js) and comes out of a different
+      // shadow: wisps of dark violet pulled in to the spot behind the target, then a sharp pop, and the cross of two cuts
+      if (k < 0.3) { const q = k / 0.3;
+        for (let i = 0; i < 10; i++) { const b = i / 10 * TAU + seed, d = 50 * (1 - easeOut(q)) + 6;
+          ctx.save(); ctx.globalAlpha *= 1 - q * 0.5; streak(ctx, ux0 + Math.cos(b) * (d + 18), uy0 + Math.sin(b) * (d + 18), b + Math.PI, 0, 18, 3.2, i % 2 ? '#5A4A7A' : '#2E2440', '#9B86C9'); ctx.restore(); } }
+      else if (k < 0.55) { const q = (k - 0.3) / 0.25; ctx.save(); ctx.globalAlpha *= 1 - q;
+        for (let i = 0; i < 8; i++) { const b = i / 8 * TAU + seed, d = 10 + 30 * easeOut(q); inked(ctx, () => star(ctx, ux0 + Math.cos(b) * d, uy0 + Math.sin(b) * d, 5 * (1 - q) + 1, 4, 0.3, b), '#C9B8F0'); }
+        ctx.restore(); }
       const t = f.tgt; if (!t) break;
       const tx = t.dead ? f.tx : t.x, ty = t.dead ? f.ty : t.y;
-      for (const sd of [-1, 1]) { const a = f.a + sd * 0.8, q = easeOut(k01((k - (sd > 0 ? 0.08 : 0)) / 0.3)), fade = k01((1 - k) / 0.5);
-        ctx.save(); ctx.globalAlpha *= fade; streak(ctx, tx - Math.cos(a) * 34, ty - Math.sin(a) * 34, a, 0, 68 * q, 6, el[2], '#FFFFFF'); ctx.restore(); }
-      if (k < 0.3) lit(ctx, () => glowDisc(ctx, tx, ty, 46, el[2], 0.8 * (1 - k / 0.3)));
+      for (const sd of [-1, 1]) { const a = f.a + sd * 0.8, q = easeOut(k01((k - 0.25 - (sd > 0 ? 0.06 : 0)) / 0.3)), fade = k01((1 - k) / 0.45);
+        if (q <= 0) continue; ctx.save(); ctx.globalAlpha *= fade; streak(ctx, tx - Math.cos(a) * 34, ty - Math.sin(a) * 34, a, 0, 68 * q, 6, el[2], '#FFFFFF'); ctx.restore(); }
+      if (k > 0.25 && k < 0.5) lit(ctx, () => glowDisc(ctx, tx, ty, 46, el[2], 0.8 * (1 - (k - 0.25) / 0.25)));
       break;
     }
-    case 'fanOfKnives': { // a glint of blades all round her
-      ctx.globalAlpha *= 1 - k;
-      for (let i = 0; i < 12; i++) { const b = i / 12 * TAU, r0 = u.r + 2 + 30 * e; streak(ctx, ux0 + Math.cos(b) * r0, uy0 + Math.sin(b) * r0, b, 0, 16 * (1 - k) + 2, 3, el[2], '#FFFFFF'); }
-      if (k < 0.3) lit(ctx, () => glowDisc(ctx, ux0, uy0, 60, '#FFFFFF', 0.5 * (1 - k / 0.3)));
-      break;
-    }
-    case 'rage': { // a roar: red lines bursting out from her
-      ctx.globalAlpha *= 1 - k;
-      for (let i = 0; i < 14; i++) { const b = i / 14 * TAU + 0.1, r0 = u.vr + 6 + 30 * e; streak(ctx, ux0 + Math.cos(b) * r0, uy0 + Math.sin(b) * r0, b, 0, 22 * (1 - k) + 4, 3.4, i % 2 ? el[1] : el[2], '#FFF0E8'); }
-      if (k < 0.3) lit(ctx, () => glowDisc(ctx, ux0, uy0, 70, '#FF5A3D', 0.6 * (1 - k / 0.3)));
+    case 'fanOfKnives': { // a glint off the first knife (the rest come out one by one as she spins)
+      if (k < 0.4) lit(ctx, () => glowDisc(ctx, ux0, uy0, 50, '#FFFFFF', 0.4 * (1 - k / 0.4)));
       break;
     }
     case 'whirl': castFlash(ctx, f, k, el); break;
-    case 'flameWall': case 'inferno': case 'frostNova': case 'iceWall': case 'thunderclap': case 'stormCloud': case 'lullaby': case 'entangle': case 'rejuvenate': case 'cure': case 'lifeDrain': case 'hook':
+    case 'flameWall': case 'inferno': case 'iceWall': case 'thunderclap': case 'lullaby': case 'entangle': case 'rejuvenate': case 'lifeDrain': case 'hook':
       castFlash(ctx, f, k, el); break;
     case 'warSong': { // notes fly from the lute to each ally it reaches
       castFlash(ctx, f, k, el);
       const list = w.units.filter((a) => a.team === u.team && a !== u && !a.dead && !a.downed && Math.hypot(a.x - f.x, a.y - f.y) < 230);
       list.forEach((a, i) => {
-        for (let j = 0; j < 2; j++) { const q = k01(k * 1.5 - j * 0.18 - i * 0.05); if (q <= 0) continue;
-          const [vx, vy] = upVec(), hop = Math.sin(q * Math.PI) * 26, x = f.x + (a.x - f.x) * easeOut(q) + vx * hop, y = f.y + (a.y - f.y) * easeOut(q) + vy * hop;
+        for (let j = 0; j < 3; j++) { const q = k01(k * 1.5 - j * 0.14 - i * 0.05); if (q <= 0) continue;
+          const hop = Math.sin(q * Math.PI) * (20 + j * 8), x = f.x + (a.x - f.x) * easeOut(q) + vx * hop, y = f.y + (a.y - f.y) * easeOut(q) + vy * hop;
           if (q >= 1) continue;
-          upright(ctx, x, y, () => { ctx.rotate(Math.sin(q * 9) * 0.3); inked(ctx, () => noteShape(ctx, 1.1), j ? el[2] : el[1]); });
+          upright(ctx, x, y, () => { ctx.rotate(Math.sin(q * 9) * 0.3); inked(ctx, () => noteShape(ctx, 1.1), j % 2 ? el[2] : el[1]); });
         }
         const land = k01(k * 1.5 - 0.95 - i * 0.05);
         if (land > 0 && land < 1) { ctx.save(); ctx.globalAlpha *= 1 - land; inked(ctx, () => star(ctx, a.x, a.y, 16 * easeOut(land) + 4, 5, 0.4, 0), el[2]); ctx.restore(); }
       });
       break;
     }
-    case 'callWolf': case 'raiseDead': { // a swirl of leaves (the wolf) / of spirit (the dead) where they come
-      const spots = f.ab === 'raiseDead' ? w.units.filter((s) => s.summonBy === u && s.kind === 'skeleton' && !s.dead) : w.units.filter((s) => s.summonBy === u && !s.dead);
-      for (const s of spots.slice(0, 2)) {
+    case 'raiseDead': {
+      const spots = w.units.filter((s) => s.summonBy === u && s.kind === 'minion' && !s.dead);
+      for (const s of spots.slice(0, 6)) {
         ctx.save(); ctx.globalAlpha *= 1 - k;
-        for (let i = 0; i < 9; i++) { const b = i / 9 * TAU + k * 7, d = 14 + 34 * (1 - e), [vx, vy] = upVec(), up = e * 30;
-          const x = s.x + Math.cos(b) * d + vx * up, y = s.y + Math.sin(b) * d * 0.7 + vy * up;
-          if (f.ab === 'callWolf') leaf(ctx, x, y, b + 1.6, 7); else inkDisc(ctx, x, y, 4.5 * (1 - k) + 1, i % 2 ? EL.necro[2] : '#B8C8DA'); }
-        if (k < 0.3) lit(ctx, () => glowDisc(ctx, s.x, s.y, 56, f.ab === 'callWolf' ? EL.nature[2] : '#B8C8DA', 0.6 * (1 - k / 0.3)));
+        for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + k * 7, d = 10 + 24 * (1 - e), up = e * 26;
+          inkDisc(ctx, s.x + Math.cos(b) * d + vx * up, s.y + Math.sin(b) * d * 0.7 + vy * up, 3.5 * (1 - k) + 1, i % 2 ? EL.cold[2] : EL.cold[1]); }
         ctx.restore();
       }
       castFlash(ctx, f, k, el);
       break;
     }
+    case 'leeches': { // Gas Form: a pop of gas as he comes apart
+      ctx.globalAlpha *= 1 - k;
+      for (let i = 0; i < 8; i++) { const b = i / 8 * TAU + seed, d = 10 + 40 * e; inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 6 * (1 - k) + 1.5, i % 2 ? EL.poison[2] : EL.poison[1]); }
+      break;
+    }
+    case 'callWolf': case 'encore': case 'cure': castFlash(ctx, f, k, el); break;
     default: castFlash(ctx, f, k, el);
   }
+  ctx.restore();
+}
+function snowflakeK(ctx, x, y, s, rot) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.lineCap = 'round';
+  const arms = () => { ctx.beginPath(); for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI; ctx.moveTo(Math.cos(a) * s, Math.sin(a) * s); ctx.lineTo(-Math.cos(a) * s, -Math.sin(a) * s); } };
+  ctx.strokeStyle = INK; ctx.lineWidth = 1.4 + OUTLINE * 1.2; arms(); ctx.stroke(); ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 1.6; arms(); ctx.stroke();
   ctx.restore();
 }
 
 // ---------------------------------------------------------------- body effects (read off a unit each frame)
 // No rings or auras round a hero (designer, round 6): buffs show as things coming off the body, or on the sprite.
+const GRAWLIX = ['#', '%', '?', '!', '$', '@'];
 export function drawBodyFx(ctx, u, w) {
   if (u.downed || u.dead) return;
   const T = w.time, [ux, uy] = upVec();
   for (const b of u.buffs || []) {
-    if (b.id === 'rage') { // red steam rising off her
-      for (let i = 0; i < 3; i++) { const ph = (T * 1.4 + i / 3 + u.id * 0.3) % 1, an = (i * 2.1 + u.id) % TAU, rr = u.vr * 0.6;
-        ctx.save(); ctx.globalAlpha = Math.sin(ph * Math.PI) * 0.85;
-        inkDisc(ctx, u.x + Math.cos(an) * rr + ux * ph * 30, u.y + Math.sin(an) * rr + uy * ph * 30, 3 + 5 * ph, i % 2 ? '#FF8A7A' : '#E0604B'); ctx.restore(); }
-    } else if (b.id === 'unstoppable') {
-      if (Math.floor(T * 8 + u.id) % 3 === 0) { const an = hash(Math.floor(T * 8), u.id) * TAU, rr = u.vr + 4; inked(ctx, () => star(ctx, u.x + Math.cos(an) * rr, u.y + Math.sin(an) * rr, 6, 4, 0.3, an), '#FFE7A0'); }
-    } else if (b.id === 'warSong') {
-      const ph = (T * 0.8 + u.id * 0.37) % 1;
-      if (ph < 0.7) { ctx.save(); ctx.globalAlpha = Math.sin(ph / 0.7 * Math.PI); upright(ctx, u.x, u.y, () => { ctx.translate(u.vr * 0.7, -u.vr - 6 - ph * 22); inked(ctx, () => noteShape(ctx, 0.75), EL.song[1]); }); ctx.restore(); }
+    if (b.id === 'rage') { // round 9: the steam became cursing: "#%?!$" signs rising off her
+      for (let i = 0; i < 3; i++) { const ph = (T * 1.2 + i / 3 + u.id * 0.3) % 1, cyc = Math.floor(T * 1.2 + i / 3 + u.id * 0.3), an = hash(cyc, i, u.id) * TAU, rr = u.vr * 0.55;
+        const ch = GRAWLIX[Math.floor(hash(i, cyc, u.id) * GRAWLIX.length)];
+        ctx.save(); ctx.globalAlpha = Math.sin(ph * Math.PI);
+        upright(ctx, u.x + Math.cos(an) * rr + ux * ph * 34, u.y + Math.sin(an) * rr + uy * ph * 34, () => {
+          ctx.rotate(Math.sin(ph * 8 + i) * 0.35); ctx.scale(0.7 + 0.5 * Math.sin(ph * Math.PI), 0.7 + 0.5 * Math.sin(ph * Math.PI));
+          ctx.font = '900 15px system-ui, -apple-system, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+          ctx.lineWidth = OUTLINE * 2; ctx.strokeStyle = INK; ctx.strokeText(ch, 0, 0); ctx.fillStyle = i % 2 ? '#FF8A3D' : '#E0604B'; ctx.fillText(ch, 0, 0); });
+        ctx.restore(); }
+    } else if (b.id === 'unstoppable') { // round 9: a better sparkle: star glints that grow and shrink all over the body
+      for (let i = 0; i < 4; i++) { const per = 0.5, ph = (T / per + i / 4 + u.id * 0.17) % 1, cyc = Math.floor(T / per + i / 4 + u.id * 0.17);
+        const an = hash(cyc, i, u.id) * TAU, rr = u.vr * (0.3 + 0.8 * hash(i, cyc, u.id)), s = Math.sin(ph * Math.PI);
+        const x = u.x + Math.cos(an) * rr, y = u.y + Math.sin(an) * rr;
+        lit(ctx, () => glowDisc(ctx, x, y, 12 * s + 2, '#FFF4B8', 0.6 * s));
+        ctx.save(); ctx.globalAlpha = s; inked(ctx, () => star(ctx, x, y, 9 * s + 1, 4, 0.18, 0), i % 2 ? '#FFFFFF' : '#FFF4B8'); ctx.restore(); }
+      { const ph = (T * 1.1 + u.id * 0.3) % 1; ctx.save(); ctx.globalAlpha = Math.sin(ph * Math.PI) * 0.9; inkDisc(ctx, u.x + Math.sin(T * 5 + u.id) * u.vr * 0.4 + ux * ph * 32, u.y + uy * ph * 32, 2.6, '#FFE7A0'); ctx.restore(); }
+    } else if (b.id === 'warSong') { // more of it (round 9): notes rising and sparkles off the body
+      for (let i = 0; i < 2; i++) { const ph = (T * 0.8 + i * 0.5 + u.id * 0.37) % 1;
+        if (ph < 0.8) { ctx.save(); ctx.globalAlpha = Math.sin(ph / 0.8 * Math.PI); upright(ctx, u.x, u.y, () => { ctx.translate((i ? -1 : 1) * u.vr * 0.7 + Math.sin(ph * 6) * 3, -u.vr - 4 - ph * 26); inked(ctx, () => noteShape(ctx, 0.75), i ? EL.song[2] : EL.song[1]); }); ctx.restore(); } }
+      if (Math.floor(T * 6 + u.id) % 2 === 0) { const an = hash(Math.floor(T * 6), u.id) * TAU; inked(ctx, () => star(ctx, u.x + Math.cos(an) * u.vr, u.y + Math.sin(an) * u.vr, 3.5, 4, 0.35, an), '#FFF0B0'); }
     } else if (b.id === 'lullaby') {
       const ph = (T * 0.6 + u.id * 0.29) % 1;
       ctx.save(); ctx.globalAlpha = Math.sin(ph * Math.PI) * 0.9; upright(ctx, u.x, u.y, () => { ctx.translate(-u.vr * 0.6 + Math.sin(ph * 6) * 4, -u.vr - 4 - ph * 20); inked(ctx, () => noteShape(ctx, 0.65), '#BFC8FF'); }); ctx.restore();
-    } else if (b.id === 'holdTheLine') { // the planted shield's face glints now and then (in front only)
-      const g = 0.5 + 0.5 * Math.sin(T * 6 + u.id);
-      ctx.save(); ctx.globalAlpha = 0.35 + 0.4 * g;
-      slashBand(ctx, u.x, u.y, u.r + 16, u.facing - 0.7, u.facing + 0.7, 7, '#FFE7A0', '#FFFFFF'); ctx.restore();
     } else if (b.spinning) whirlArcs(ctx, u, T);
-  }
-  // Guard: a thin gold tether from the paladin to the one he guards
-  if (u.guardBy && u.guardT > 0 && !u.guardBy.dead && !u.guardBy.downed) {
-    const g = u.guardBy, q = 0.55 + 0.25 * Math.sin(T * 7);
-    ctx.save(); ctx.globalAlpha = q; ctx.setLineDash([10, 8]); ctx.lineDashOffset = -T * 40;
-    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(g.x, g.y); ctx.lineTo(u.x, u.y); }, '#FFE7A0', 2.6); ctx.restore();
   }
   // Leeches clinging to the edge of the body, pulsing
   if (u.leechT > 0) for (let i = 0; i < 3; i++) {
@@ -562,25 +758,72 @@ export function drawBodyFx(ctx, u, w) {
     inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 7.5 * s, 4.2, 0, 0, TAU); }, '#7A2C40');
     ctx.fillStyle = '#B0505A'; ctx.beginPath(); ctx.ellipse(-1.5, -1.2, 3.5, 1.4, 0, 0, TAU); ctx.fill(); ctx.restore();
   }
-  // Rejuvenate: leaves drifting up off the one being mended
-  if (u.regenT > 0) for (let i = 0; i < 2; i++) {
-    const ph = (T * 0.9 + i * 0.5 + u.id * 0.21) % 1, an = (i * 3.1 + u.id + T * 0.5) % TAU, rr = u.vr * (0.5 + 0.5 * ph);
+  // Rejuvenate (round 9): more leaves, coming off any part of the body, not a line through its middle
+  if (u.regenT > 0) for (let i = 0; i < 4; i++) {
+    const per = 1.1, ph = (T / per + i / 4 + u.id * 0.21) % 1, cyc = Math.floor(T / per + i / 4 + u.id * 0.21);
+    const an = hash(cyc, i, u.id) * TAU, rr = u.vr * 1.05 * Math.sqrt(hash(i, cyc, u.id + 3));
     ctx.save(); ctx.globalAlpha = Math.sin(ph * Math.PI);
-    leaf(ctx, u.x + Math.cos(an) * rr + ux * ph * 28, u.y + Math.sin(an) * rr + uy * ph * 28, an + ph * 4, 6.5); ctx.restore();
+    leaf(ctx, u.x + Math.cos(an) * rr + ux * ph * 30 + Math.sin(ph * 6 + i) * 4, u.y + Math.sin(an) * rr + uy * ph * 30, an + ph * 5, 6); ctx.restore();
   }
   // a charge or a dash: speed lines streaming off behind
   const act = u.act;
-  if (act && (act.type === 'charge' || act.type === 'dash')) {
+  if (act && (act.type === 'charge' || act.type === 'dash') && !act.roll && !act.gas) {
     const a = act.a + Math.PI, shadow = u.kind === 'twinfang';
     for (let i = 0; i < 4; i++) { const off = (i - 1.5) * u.vr * 0.5, ph = (T * 7 + i * 0.37) % 1, d = u.vr * 0.8 + ph * 34;
       const x = u.x + Math.cos(a) * d - Math.sin(a) * off, y = u.y + Math.sin(a) * d + Math.cos(a) * off;
       ctx.save(); ctx.globalAlpha = 0.85 * (1 - ph); streak(ctx, x, y, a, 0, 26, 3.2, shadow ? '#9B86C9' : '#EEF3F8', '#FFFFFF'); ctx.restore(); }
   }
+  // Zeus Bolt's mark: a little lightning bolt over the head, flickering
+  if (u.stormMark > T) {
+    const fl = Math.sin(T * 22 + u.id) > -0.6 ? 1 : 0.4;
+    upright(ctx, u.x, u.y, () => { ctx.translate(0, -u.vr - 16); ctx.globalAlpha = fl; lit(ctx, () => glowDisc(ctx, 0, 0, 16, '#FFF3A0', 0.5));
+      inked(ctx, () => { ctx.beginPath(); ctx.moveTo(3, -10); ctx.lineTo(-5, 1); ctx.lineTo(0, 1); ctx.lineTo(-3, 10); ctx.lineTo(6, -2); ctx.lineTo(1, -2); ctx.closePath(); }, '#FFE66B'); });
+  }
+  // an elite or a major: now and then a twinkle on its edge (round 9: no gold outline)
+  if (u.elite && u.team === 'enemy') {
+    const per = u.major || u.mini ? 1.1 : 1.7, ph = (T / per + u.id * 0.13) % 1, cyc = Math.floor(T / per + u.id * 0.13);
+    if (ph < 0.3) { const q = Math.sin(ph / 0.3 * Math.PI), an = hash(cyc, u.id) * TAU, x = u.x + Math.cos(an) * u.vr * 0.85, y = u.y + Math.sin(an) * u.vr * 0.85;
+      lit(ctx, () => glowDisc(ctx, x, y, 14 * q, '#FFF4C8', 0.7 * q));
+      ctx.save(); ctx.globalAlpha = q; inked(ctx, () => star(ctx, x, y, 8 * q + 1, 4, 0.16, 0.2), '#FFFFFF'); ctx.restore(); }
+  }
+}
+// Under the units (render.js, round 9): Guard's chain, War Song's ring.
+export function drawBodyGround(ctx, u, w) {
+  if (u.downed || u.dead) return;
+  const T = w.time;
+  // Guard: a chain of gold loops from the paladin to the one he guards, lying under them (round 9: "each dash a chain
+  // loop", wider)
+  if (u.guardBy && u.guardT > 0 && !u.guardBy.dead && !u.guardBy.downed) {
+    const g = u.guardBy, L = Math.hypot(u.x - g.x, u.y - g.y), a = Math.atan2(u.y - g.y, u.x - g.x), n = Math.max(2, Math.floor(L / 15));
+    ctx.save(); ctx.globalAlpha = 0.85 * clamp(u.guardT / 0.4, 0, 1);
+    for (let i = 0; i < n; i++) { const q = (i + 0.5) / n, sag = Math.sin(q * Math.PI) * 6 * Math.sin(T * 2);
+      ctx.save(); ctx.translate(g.x + (u.x - g.x) * q - Math.sin(a) * sag, g.y + (u.y - g.y) * q + Math.cos(a) * sag); ctx.rotate(a);
+      if (i % 2) inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-7, 0); ctx.lineTo(7, 0); }, '#E8C46A', 3.4);
+      else inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 9, 5.5, 0, 0, TAU); }, '#F2C14E', 3.4);
+      ctx.restore(); }
+    ctx.restore();
+  }
+  // War Song: a gold ring of notes turning under anyone it lifts
+  if (u.buffs && u.buffs.some((b) => b.id === 'warSong')) {
+    const R = u.vr * 1.35;
+    ctx.save(); ctx.globalAlpha = 0.55 + 0.15 * Math.sin(T * 4 + u.id);
+    lit(ctx, () => { ctx.strokeStyle = rgba(EL.song[1], 0.5); ctx.lineWidth = 7; ctx.beginPath(); ctx.arc(u.x, u.y, R, 0, TAU); ctx.stroke(); });
+    ctx.strokeStyle = rgba(EL.song[2], 0.9); ctx.lineWidth = 2; ctx.setLineDash([10, 9]); ctx.lineDashOffset = -T * 30; ctx.beginPath(); ctx.arc(u.x, u.y, R, 0, TAU); ctx.stroke();
+    ctx.restore();
+  }
+}
+// Whirl (round 9): bigger balls, the shape of his flail's head (a spiked iron ball on a chain)
+function flailHead(ctx, x, y, r, rot) {
+  inked(ctx, () => star(ctx, x, y, r * 1.35, 10, 0.72, rot), '#5E636A');
+  inked(ctx, () => { ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); }, '#7A8089');
+  ctx.fillStyle = '#C9D2DE'; ctx.beginPath(); ctx.arc(x - r * 0.35, y - r * 0.35, r * 0.32, 0, TAU); ctx.fill();
 }
 function whirlArcs(ctx, u, T) {
   const R = u.r + 46, a = T * 13;
-  for (let i = 0; i < 2; i++) { const b = a + i * Math.PI; slashBand(ctx, u.x, u.y, R, b - 1.6, b, 16, '#DCE3EC', '#FFFFFF');
-    inked(ctx, () => star(ctx, u.x + Math.cos(b) * (R - 7), u.y + Math.sin(b) * (R - 7), 10, 8, 0.62, T * 9), '#8D949C'); }
+  for (let i = 0; i < 2; i++) { const b = a + i * Math.PI, hx = u.x + Math.cos(b) * (R - 9), hy = u.y + Math.sin(b) * (R - 9);
+    slashBand(ctx, u.x, u.y, R, b - 1.6, b, 16, '#DCE3EC', '#FFFFFF');
+    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(u.x + Math.cos(b) * u.vr * 0.8, u.y + Math.sin(b) * u.vr * 0.8); ctx.lineTo(hx, hy); }, '#8D949C', 2.6);
+    flailHead(ctx, hx, hy, 11, T * 9); }
 }
 
 // ---------------------------------------------------------------- ability-shaped versions of the plain fx
@@ -588,14 +831,13 @@ function whirlArcs(ctx, u, T) {
 export function abilityRing(ctx, f) {
   const k = k01(f.t / f.max), e = easeOut(k), seed = Math.round(f.x * 3 + f.y);
   switch (f.ab) {
-    case 'cleave': case 'reap': { // a full circle of the blade (the scythe's thinner, bone white)
-      const scy = f.ab === 'reap', q = k;
-      const head = hash(seed) * TAU, span = TAU + 0.4;
-      const h = head + span * easeOut(k01(q / 0.5)), t = head + span * sm(k01((q - 0.2) / 0.8));
-      slashBand(ctx, f.x, f.y, f.r + (scy ? 6 : 0), t, h, (scy ? 14 : 22) * (1 - 0.3 * q), scy ? EL.bone[1] : '#DCE3EC', '#FFFFFF');
+    case 'cleave': case 'reap': { // round 9: the blade's circle follows her as she spins (render.js u.spin), the scythe's in bone
+      const scy = f.ab === 'reap', a0 = f.a != null ? f.a : hash(seed) * TAU;
+      const h = a0 + TAU * sm(k01(k / 0.92)), t = a0 + TAU * sm(k01((k - 0.25) / 0.75)) - 0.15;
+      slashBand(ctx, f.x, f.y, f.r + (scy ? 6 : 0), Math.min(t, h - 0.05), h, (scy ? 18 : 22) * (1 - 0.3 * k), scy ? EL.bone[1] : '#DCE3EC', '#FFFFFF', !scy);
       return true;
     }
-    case 'groundPound': case 'leap': case 'oldBones': quake(ctx, f.x, f.y, f.r, k, seed); return true;
+    case 'groundPound': case 'leap': case 'oldBones': return true; // on the ground layer (abilityRingGround)
     case 'inferno': { // a nova of flame tongues rolling out
       if (k < 0.2) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r, '#FFF0B0', 0.8 * (1 - k / 0.2)));
       const r = f.r * (0.25 + 0.75 * e), n = Math.max(12, Math.round(f.r / 9));
@@ -623,45 +865,60 @@ export function abilityRing(ctx, f) {
   }
   return false;
 }
+// The ground-layer half: Ground Pound, Leap's landing, Old Bones III (round 9: under the units, no cracks)
+export function abilityRingGround(ctx, f) {
+  if (f.ab !== 'groundPound' && f.ab !== 'leap' && f.ab !== 'oldBones') return false;
+  quake(ctx, f.x, f.y, f.r, k01(f.t / f.max), Math.round(f.x * 3 + f.y));
+  return true;
+}
+// Hook (round 9): the chain lies under her, the hook is a scythe blade, it flies out slower and reels the foe in
+export function hookGround(ctx, f, T) {
+  const k = k01(f.t / f.max), outK = k01(f.t / 0.3), back = sm(k01((f.t - 0.3) / 0.45));
+  const s = f.hookFrom && !f.hookFrom.dead ? f.hookFrom : { x: f.x1, y: f.y1 }, tg = f.hookTo && !f.hookTo.dead ? f.hookTo : { x: f.x2, y: f.y2 };
+  const tx = f.t < 0.3 ? f.x1 + (f.x2 - f.x1) * easeOut(outK) : tg.x, ty = f.t < 0.3 ? f.y1 + (f.y2 - f.y1) * easeOut(outK) : tg.y;
+  const x2 = s.x + (tx - s.x) * (1 - back * 0.9), y2 = s.y + (ty - s.y) * (1 - back * 0.9);
+  const L = Math.hypot(x2 - s.x, y2 - s.y), a = Math.atan2(y2 - s.y, x2 - s.x), n = Math.max(1, Math.floor(L / 11));
+  ctx.save(); ctx.globalAlpha *= 1 - sm(k01((k - 0.85) / 0.15));
+  for (let i = 0; i < n; i++) { const q = (i + 0.5) / n; ctx.save(); ctx.translate(s.x + (x2 - s.x) * q, s.y + (y2 - s.y) * q); ctx.rotate(a);
+    inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 6, i % 2 ? 2 : 3.6, 0, 0, TAU); }, '#9AA3AE'); ctx.restore(); }
+  // the scythe blade on the end, hooked back towards her
+  ctx.translate(x2, y2); ctx.rotate(a);
+  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-3, 0); ctx.quadraticCurveTo(14, -4, 18, 14); ctx.quadraticCurveTo(8, 2, -6, 4); ctx.closePath(); }, EL.bone[1]);
+  ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.moveTo(0, 0.5); ctx.quadraticCurveTo(12, -2, 16, 11); ctx.quadraticCurveTo(9, 1, 0, 2); ctx.closePath(); ctx.fill();
+  ctx.restore();
+  return true;
+}
 export function abilityBeam(ctx, f, T) {
   const k = k01(f.t / f.max);
-  if (f.ab === 'hook') { // a chain thrown out, the hook biting, then reeled in
-    const out = easeOut(k01(k / 0.35)), back = sm(k01((k - 0.45) / 0.55)), reach = out * (1 - back * 0.85);
-    const x2 = f.x1 + (f.x2 - f.x1) * reach, y2 = f.y1 + (f.y2 - f.y1) * reach, L = Math.hypot(x2 - f.x1, y2 - f.y1), a = Math.atan2(y2 - f.y1, x2 - f.x1);
-    const n = Math.max(1, Math.floor(L / 11));
-    for (let i = 0; i < n; i++) { const q = (i + 0.5) / n; ctx.save(); ctx.translate(f.x1 + (x2 - f.x1) * q, f.y1 + (y2 - f.y1) * q); ctx.rotate(a);
-      inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 6, i % 2 ? 2 : 3.6, 0, 0, TAU); }, '#9AA3AE'); ctx.restore(); }
-    ctx.save(); ctx.translate(x2, y2); ctx.rotate(a);
-    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-4, 0); ctx.lineTo(6, 0); ctx.arc(6, 8, 8, -Math.PI / 2, Math.PI * 0.6); }, '#D9DEE4', 3.6);
-    ctx.restore(); return true;
-  }
-  if (f.ab === 'encore') { // a shooting star from the lute to the ally
-    const q = easeOut(k01(k / 0.6)), x = f.x1 + (f.x2 - f.x1) * q, y = f.y1 + (f.y2 - f.y1) * q, a = Math.atan2(f.y2 - f.y1, f.x2 - f.x1);
-    lit(ctx, () => { const g = ctx.createLinearGradient(x - Math.cos(a) * 80, y - Math.sin(a) * 80, x, y); g.addColorStop(0, rgba(EL.song[1], 0)); g.addColorStop(1, rgba(EL.song[2], 0.8)); ctx.strokeStyle = g; ctx.lineWidth = 10; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x - Math.cos(a) * 80 * q, y - Math.sin(a) * 80 * q); ctx.lineTo(x, y); ctx.stroke(); });
-    inked(ctx, () => star(ctx, x, y, 11, 5, 0.45, T * 5), EL.song[1]);
-    if (k > 0.6) { const g = k01((k - 0.6) / 0.4); ctx.save(); ctx.globalAlpha *= 1 - g; inked(ctx, () => star(ctx, f.x2, f.y2, 8 + 22 * easeOut(g), 5, 0.4, 0.3), EL.song[2]); ctx.restore(); }
+  if (f.ab === 'hook') return true; // on the ground (hookGround)
+  if (f.ab === 'encore') { // round 9: a shooting star arcing from the lute to the ally, a trail of little stars, a burst round them
+    const fly = 0.62, q = easeOut(k01(k / fly)), [ux, uy] = upVec(), L = Math.hypot(f.x2 - f.x1, f.y2 - f.y1);
+    const pt = (t) => { const h = Math.sin(t * Math.PI) * L * 0.35; return [f.x1 + (f.x2 - f.x1) * t + ux * h, f.y1 + (f.y2 - f.y1) * t + uy * h]; };
+    if (k < fly) {
+      for (let i = 1; i <= 7; i++) { const t2 = q - i * 0.045; if (t2 <= 0) break; const [x, y] = pt(t2); ctx.save(); ctx.globalAlpha *= 1 - i / 8; inked(ctx, () => star(ctx, x, y, 5 - i * 0.5, 4, 0.4, T * 6 + i), i % 2 ? EL.song[2] : '#FFFFFF'); ctx.restore(); }
+      const [x, y] = pt(q), s = 1 + 0.25 * Math.sin(T * 30);
+      lit(ctx, () => glowDisc(ctx, x, y, 26, EL.song[1], 0.7));
+      inked(ctx, () => star(ctx, x, y, 12 * s, 5, 0.45, T * 9), EL.song[1]); ctx.fillStyle = '#FFFFFF'; star(ctx, x, y, 5 * s, 5, 0.45, T * 9); ctx.fill();
+    } else { const g = k01((k - fly) / (1 - fly)), e = easeOut(g);
+      ctx.save(); ctx.globalAlpha *= 1 - g;
+      for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + g * 2, d = 10 + 34 * e; inked(ctx, () => star(ctx, f.x2 + Math.cos(b) * d, f.y2 + Math.sin(b) * d, 6 * (1 - g) + 2, 5, 0.42, b + g * 4), i % 2 ? EL.song[2] : EL.song[1]); }
+      // a turning arrow of light round them: their ability is ready again
+      inkLine(ctx, () => { ctx.beginPath(); ctx.arc(f.x2, f.y2, 28 + 6 * e, g * 6, g * 6 + 4.2); }, '#FFF0B0', 3.4);
+      const ea = g * 6 + 4.2, ex = f.x2 + Math.cos(ea) * (28 + 6 * e), ey = f.y2 + Math.sin(ea) * (28 + 6 * e);
+      inked(ctx, () => { ctx.beginPath(); ctx.moveTo(ex + Math.cos(ea + Math.PI / 2) * 7, ey + Math.sin(ea + Math.PI / 2) * 7); ctx.lineTo(ex + Math.cos(ea) * 5, ey + Math.sin(ea) * 5); ctx.lineTo(ex - Math.cos(ea) * 5, ey - Math.sin(ea) * 5); ctx.closePath(); }, '#FFF0B0');
+      ctx.restore(); }
     return true;
   }
-  if (f.ab === 'guard') return true; // the tether and the shield glint show it (drawBodyFx, the sig)
+  if (f.ab === 'guard') return true; // the chain and the shield show it (drawBodyGround, the sig)
   return false;
 }
 // zones an ability made that want their own look
 export function abilityZone(ctx, f, T) {
-  const k = k01(f.t / f.max);
-  if (f.ab === 'rejuvenate' || f.ab === 'cure') { // a quick swirl at the ally: leaves, or clean bubbles
-    const e = easeOut(k), [ux, uy] = upVec();
-    ctx.save(); ctx.globalAlpha *= 1 - k;
-    for (let i = 0; i < 8; i++) { const b = i / 8 * TAU + k * 4, d = 10 + 26 * e, up = e * 24, x = f.x + Math.cos(b) * d + ux * up, y = f.y + Math.sin(b) * d + uy * up;
-      if (f.ab === 'rejuvenate') leaf(ctx, x, y, b + 1.5, 7); else { inkDisc(ctx, x, y, 5 * (1 - 0.5 * k), i % 2 ? '#BFE9F8' : '#E6FFF4'); ctx.fillStyle = '#FFFFFF'; disc(ctx, x - 1.5, y - 1.5, 1.6, '#FFFFFF'); } }
-    if (k < 0.3) lit(ctx, () => glowDisc(ctx, f.x, f.y, 50, f.ab === 'rejuvenate' ? EL.nature[2] : EL.water[2], 0.6 * (1 - k / 0.3)));
-    ctx.restore(); return true;
-  }
-  if (f.smoke) { // Dash II's smoke: grey-violet puffs, enemies lose her in it
-    const a = clamp(Math.min(f.t / 0.2, (f.max - f.t) / 0.6), 0, 1), seed = Math.round(f.x * 3 + f.y);
-    ctx.save(); ctx.globalAlpha *= a * 0.85;
-    for (let i = 0; i < 9; i++) { const b = i / 9 * TAU + T * 0.4 + seed, rr = f.r * (0.35 + 0.3 * hash(i, seed)), pr = f.r * (0.42 + 0.1 * Math.sin(T * 1.3 + i));
-      disc(ctx, f.x + Math.cos(b) * rr, f.y + Math.sin(b) * rr, pr, i % 2 ? 'rgba(90,74,122,0.55)' : 'rgba(58,46,80,0.55)'); }
-    ctx.restore(); return true;
+  if (f.ab === 'rejuvenate' || f.ab === 'cure') return true; // drawn over the units (abilityZoneAir, round 9)
+  if (f.smoke || f.kind === 'smoke') { // Twinfang's smoke: a body like the puddles (puddles.js), merging with any other
+    const a = clamp(Math.min(f.t / 0.15, (f.max - f.t) / 0.7), 0, 1);
+    drawPuddle(ctx, 'smoke', f.x, f.y, f.r * (0.7 + 0.3 * easeOut(clamp(f.t / 0.25, 0, 1))), T, a, Math.round(f.x * 3 + f.y));
+    return true;
   }
   if (f.ab === 'roll' && f.kind === 'vines') { // caltrops scattered where she rolled
     const a = clamp(Math.min(f.t / 0.15, (f.max - f.t) / 0.5), 0, 1), seed = Math.round(f.x * 3 + f.y);
@@ -671,18 +928,50 @@ export function abilityZone(ctx, f, T) {
   }
   return false;
 }
+// a quick swirl at the ally, over everything (round 9: Rejuvenate's ring "show above entities")
+export function abilityZoneAir(ctx, f, T) {
+  if (f.ab !== 'rejuvenate' && f.ab !== 'cure') return;
+  const k = k01(f.t / f.max), e = easeOut(k), [ux, uy] = upVec();
+  ctx.save(); ctx.globalAlpha *= 1 - k;
+  for (let i = 0; i < 10; i++) { const b = i / 10 * TAU + k * 4, d = 12 + 26 * e, up = e * 24, x = f.x + Math.cos(b) * d + ux * up, y = f.y + Math.sin(b) * d + uy * up;
+    if (f.ab === 'rejuvenate') leaf(ctx, x, y, b + 1.5, 7); else { inkDisc(ctx, x, y, 5 * (1 - 0.5 * k), i % 2 ? '#BFE9F8' : '#E6FFF4'); disc(ctx, x - 1.5, y - 1.5, 1.6, '#FFFFFF'); } }
+  if (k < 0.3) lit(ctx, () => glowDisc(ctx, f.x, f.y, 50, f.ab === 'rejuvenate' ? EL.nature[2] : EL.water[2], 0.6 * (1 - k / 0.3)));
+  ctx.restore();
+}
 
-// Ice Wall (Frost Mage): a ridge of ice crystals along the wall's rectangle, rising fast, melting at the end.
+// Reap's red orbs (round 9): one pops off each foe hit and homes into her
+export function soulOrb(ctx, f) {
+  const t = f.t - (f.delay || 0); if (t < 0) return;
+  const k = k01(t / (f.max - (f.delay || 0))), to = f.to && !f.to.dead ? f.to : null; if (!to) return;
+  const pop = k01(k / 0.2), q = sm(k01((k - 0.15) / 0.85)), [ux, uy] = upVec(), seed = Math.round(f.x + f.y);
+  const side = hash(seed) < 0.5 ? -1 : 1, a = Math.atan2(to.y - f.y, to.x - f.x), L = Math.hypot(to.x - f.x, to.y - f.y);
+  const hop = Math.sin(q * Math.PI) * (26 + L * 0.2), nx = -Math.sin(a) * side * Math.sin(q * Math.PI) * L * 0.25;
+  const ny = Math.cos(a) * side * Math.sin(q * Math.PI) * L * 0.25;
+  const x = f.x + (to.x - f.x) * q + ux * hop * 0.5 + nx, y = f.y + (to.y - f.y) * q + uy * hop * 0.5 + ny;
+  if (q >= 0.98) { lit(ctx, () => glowDisc(ctx, to.x, to.y, 30, '#FF5A4A', 0.6)); return; }
+  lit(ctx, () => glowDisc(ctx, x, y, 16, '#FF5A4A', 0.6));
+  inkDisc(ctx, x, y, 5.5 * (0.6 + 0.4 * pop), '#E0403A'); disc(ctx, x - 1.6, y - 1.6, 2, '#FFB0A0');
+}
+
+// Ice Wall (round 9): about five ragged ice chunks, like boulders, thrown out from her into a line; melting at the end.
 export function drawIceWall(ctx, r, T) {
   if (r._t0 == null) r._t0 = r.temp;
-  const age = r._t0 - r.temp, rise = easeOut(k01(age / 0.3)), melt = k01(r.temp / 0.6);
-  const horiz = r.w >= r.h, L = horiz ? r.w : r.h, n = Math.max(3, Math.round(L / 24)), seed = Math.round(r.x + r.y * 3);
+  const age = r._t0 - r.temp, melt = k01(r.temp / 0.6);
+  const horiz = r.w >= r.h, L = horiz ? r.w : r.h, n = 5, seed = Math.round(r.x + r.y * 3);
+  const fx0 = r.fromX ?? r.x + r.w / 2, fy0 = r.fromY ?? r.y + r.h / 2, [ux, uy] = upVec();
   ctx.save(); ctx.globalAlpha *= melt;
-  ctx.fillStyle = 'rgba(191,233,248,0.35)'; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(r.x - 4, r.y - 4, r.w + 8, r.h + 8, 10) : ctx.rect(r.x, r.y, r.w, r.h); ctx.fill();
   for (let i = 0; i < n; i++) {
-    const q = (i + 0.5) / n, x = horiz ? r.x + r.w * q : r.x + r.w / 2 + (hash(i, seed) - 0.5) * 6, y = horiz ? r.y + r.h / 2 + (hash(i, seed) - 0.5) * 6 : r.y + r.h * q;
-    const h = (24 + 12 * hash(seed, i)) * rise, wd = 10 + 3 * hash(i, seed, 2);
-    spike(ctx, x, y + 4, h, wd, i % 2 ? '#BFE9F8' : '#9FDDF6', '#FFFFFF');
+    const q = (i + 0.5) / n, tx = horiz ? r.x + r.w * q : r.x + r.w / 2 + (hash(i, seed) - 0.5) * 8, ty = horiz ? r.y + r.h / 2 + (hash(i, seed) - 0.5) * 8 : r.y + r.h * q;
+    const fly = easeOut(k01((age - Math.abs(i - 2) * 0.05) / 0.28)); if (fly <= 0) continue;
+    const hop = Math.sin(fly * Math.PI) * 28, x = fx0 + (tx - fx0) * fly + ux * hop, y = fy0 + (ty - fy0) * fly + uy * hop;
+    const s = (L / n) * 0.62 * (0.85 + 0.25 * hash(seed, i)) * (0.6 + 0.4 * fly), rot = hash(i, seed, 3) * TAU + (1 - fly) * 4;
+    if (fly >= 1 && age < 0.45) { ctx.save(); ctx.globalAlpha *= 1 - (age - 0.3) / 0.15; dustPuffs(ctx, x, y, s, k01((age - 0.28) / 0.17), seed + i, 4, '#DDF6FF'); ctx.restore(); }
+    ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+    const m = 7, pts = []; for (let j = 0; j < m; j++) { const a = j / m * TAU, rr = s * (0.72 + 0.38 * hash(seed, i, j)); pts.push([Math.cos(a) * rr, Math.sin(a) * rr]); }
+    inked(ctx, () => { ctx.beginPath(); pts.forEach(([px, py], j) => (j ? ctx.lineTo(px, py) : ctx.moveTo(px, py))); ctx.closePath(); }, '#9FDDF6');
+    ctx.fillStyle = '#BFE9F8'; ctx.beginPath(); ctx.moveTo(0, 0); for (let j = 3; j <= 6; j++) ctx.lineTo(pts[j % m][0] * 0.95, pts[j % m][1] * 0.95); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#EAF9FF'; ctx.beginPath(); ctx.moveTo(-s * 0.15, -s * 0.15); ctx.lineTo(pts[4][0] * 0.7, pts[4][1] * 0.7); ctx.lineTo(pts[5][0] * 0.7, pts[5][1] * 0.7); ctx.closePath(); ctx.fill();
+    ctx.restore();
   }
   ctx.restore();
 }

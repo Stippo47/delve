@@ -182,6 +182,15 @@ function shifted(L) {
     return c;
   });
 }
+// A border round the figure's ink outline (round 9: protection, Guard's gold): the ink silhouette grown once more,
+// on a canvas with room round it, filled with the colour. { c, pad (pixels) }.
+function bordered(L, k, color) {
+  return colored(L, 'b' + color, () => {
+    const pad = Math.ceil(LINE * k * 0.9) + 2, src = canvas(L.ink.width + pad * 2, L.ink.height + pad * 2);
+    src.getContext('2d').drawImage(L.ink, pad, pad);
+    return { c: grow(src, LINE * k * 0.85, color), pad };
+  });
+}
 function filled(L, color) {
   return colored(L, 'f' + color, () => {
     const c = canvas(L.ink.width, L.ink.height), g = c.getContext('2d');
@@ -204,9 +213,14 @@ function stringPts(set, pose) {
   const st = set.string, bow = set.layers.find((l) => l.id === st.layer), hand = set.layers.find((l) => l.id === 'arm-r');
   if (!bow) return null;
   const pb = pose[bow.id], a = xf(bow, pb, ...st.pts[0]), c = xf(bow, pb, ...st.pts[2]);
-  const b = hand ? xf(hand, pose['arm-r'], st.pts[1][0], st.pts[1][1]) : xf(bow, pb, ...st.pts[1]);
+  // round 9: the string is straight at rest (it used to bow forward to the hand's resting point); drawing, the
+  // middle comes back with the drawing hand
+  const pull = hand && pose['arm-r'] ? Math.min(0, pose['arm-r'].dy || 0) : 0;
+  const b = [(a[0] + c[0]) / 2, (a[1] + c[1]) / 2 + pull];
   return [a, b, c];
 }
+// Where an arrow sits on the bow string (the string's middle), in SVG units, or null for a figure with no string.
+export function bowNock(set, pose) { if (!set.string) return null; const p = stringPts(set, pose); return p && p[1]; }
 function strokeString(g, pts, color, w) {
   g.beginPath(); g.moveTo(...pts[0]); g.lineTo(...pts[1]); g.lineTo(...pts[2]);
   g.lineCap = 'round'; g.lineJoin = 'round'; g.strokeStyle = color; g.lineWidth = w; g.stroke();
@@ -215,8 +229,14 @@ function strokeString(g, pts, color, w) {
 // Paint a figure into g, whose transform maps SVG units. mode: 'normal' | 'flash' (all white) | 'grey' (downed) |
 // 'sil' (the parts' own silhouette, for washing with a colour afterwards). ink: the outline's colour, INK when not
 // given. shift: our summons' cool hue (round 8; they wore a purple outline in round 7).
-export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = false) {
+export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = false, border = null) {
   const Ls = set.layers, str = set.string ? stringPts(set, pose) : null, strLayer = set.string && set.string.layer;
+  if (border && mode === 'normal') {
+    const ga = g.globalAlpha; g.globalAlpha = ga * (border.a ?? 1);
+    for (const L of Ls) { const b = bordered(L, set.k, border.color), p = b.pad / set.k;
+      g.save(); place(g, L, pose[L.id]); g.drawImage(b.c, L.x - p, L.y - p, L.w + p * 2, L.h + p * 2); g.restore(); }
+    g.globalAlpha = ga;
+  }
   if (mode !== 'sil') {
     for (const L of Ls) {
       g.save(); place(g, L, pose[L.id]);
@@ -237,14 +257,14 @@ export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = fals
 // A scratch canvas for figures that must be composed first (see-through, or washed with a colour).
 const SCR0 = -60, SCR = 320;
 let scratch = null;
-export function composeRig(set, pose, mode, wash, ink = null, shift = false) {
+export function composeRig(set, pose, mode, wash, ink = null, shift = false, border = null) {
   const px = Math.ceil(SCR * set.k);
   if (!scratch || scratch.width < px) scratch = canvas(px, px);
   const g = scratch.getContext('2d');
   g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
   g.clearRect(0, 0, px, px);
   g.setTransform(set.k, 0, 0, set.k, -SCR0 * set.k, -SCR0 * set.k);
-  paintRig(g, set, pose, mode, ink, shift);
+  paintRig(g, set, pose, mode, ink, shift, border);
   if (wash) { g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = wash; g.fillRect(0, 0, px, px); g.globalCompositeOperation = 'source-over'; }
   return { c: scratch, sx: px, x: SCR0, s: SCR };
 }
@@ -255,8 +275,8 @@ export function drawComposed(ctx, k) { ctx.drawImage(k.c, 0, 0, k.sx, k.sx, k.x,
 // shift (our summons' cool hue) }
 export function drawRig(ctx, set, pose, o = {}) {
   const alpha = o.alpha ?? 1;
-  if (alpha >= 0.999) paintRig(ctx, set, pose, o.mode || 'normal', o.ink, o.shift);
-  else { const k = composeRig(set, pose, o.mode || 'normal', null, o.ink, o.shift); const a = ctx.globalAlpha; ctx.globalAlpha = a * alpha; drawComposed(ctx, k); ctx.globalAlpha = a; }
+  if (alpha >= 0.999) paintRig(ctx, set, pose, o.mode || 'normal', o.ink, o.shift, o.border);
+  else { const k = composeRig(set, pose, o.mode || 'normal', null, o.ink, o.shift, o.border); const a = ctx.globalAlpha; ctx.globalAlpha = a * alpha; drawComposed(ctx, k); ctx.globalAlpha = a; }
   if (o.washes) for (const [col, a] of o.washes) {
     if (a <= 0.01) continue;
     const k = composeRig(set, pose, 'sil', col); const ga = ctx.globalAlpha; ctx.globalAlpha = ga * a * alpha; drawComposed(ctx, k); ctx.globalAlpha = ga;
@@ -349,6 +369,18 @@ export function poseFor(u, w, dt) {
   else if (sty.off === 'shield') off = { dy: Math.max(0, main.dy) * 0.4 + 2 * Math.max(0, -main.r) };
   else if (dual) off = { dy: -main.dy * 0.3 };
   else off = { r: -main.r * 0.12, dy: -main.dy * 0.2 };
+  // ---- round 9 touches
+  const T = w ? w.time : 0;
+  if (u.anim && u.anim.kind === 'spin') { main = scaleP(S, 1.15); off = dual ? scaleP(S, 1.15) : { r: -0.2, dy: 6 }; } // arms out for a full turn
+  if (sty.bow) off = addP(off, { dy: 7 });                       // the bow held a little forward
+  if (u.kind === 'bard' && u.anim && u.anim.kind === 'cast') {    // the strumming hand goes over the strings
+    const t = u.anim.t; main = { r: 0.16 * Math.sin(t * 48), dy: 6 + 3 * Math.abs(Math.sin(t * 24)) }; off = { dy: 2 };
+  }
+  if (u.kind === 'necromancer' && base === 'cast') main = { r: 0, dy: (main.dy || 0) * 1.25 }; // the staff thrust forward, not waved
+  if (sty.off === 'shield' && ((u.buffs && u.buffs.some((b) => b.id === 'holdTheLine')) || (u.act && u.act.type === 'charge'))) {
+    off = { r: 0.85, dy: 20, dx: 6 }; main = addP(main, { r: -0.2, dy: -6 }); // the shield held out in front
+  }
+  if (!u.anim && !u.downed && u.spd <= 6) { const s = Math.sin(T * 2.2 + u.id) * 1.4; main = addP(main, { dy: s }); off = addP(off, { dy: -s }); } // idle: the arms breathe too
   // walking: the arms swing a little, opposite each other; less while fighting
   if (!u.downed && u.spd > 6) {
     const k = clamp(u.spd / (d.speed || 60), 0, 1.3) * (1 - Math.max(u._ready, u.anim ? 1 : 0) * 0.85), s = Math.sin(u.bob);
