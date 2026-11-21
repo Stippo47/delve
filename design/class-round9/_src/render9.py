@@ -62,6 +62,30 @@ add("dunes-serpent-coil", "Sand serpent (a coil)", 20, 55, 20, 54)
 add("dunes-dart-trap", "Dart trap", 20, 45, 20, 60)
 add("dunes-venom-spirit", "Venom spirit", 15, 30, 15, 58)
 add("dunes-wind-spirit", "Wind spirit", 15, 30, 15, 58)
+# the Clockwork Foundry
+add("foundry-gear-sprite", "Gear sprite", 18, 65, 18, 54)
+add("foundry-cog-sprite", "Cog sprite", 18, 65, 18, 54)
+add("foundry-bomb-bot", "Bomb bot", 19, 45, 19, 60)
+add("foundry-auto-bomb", "Auto bomb bot (the bomb bot recoloured)", 19, 45, 19, 60)
+add("foundry-automaton", "Automaton", 24, 54, 24, 60)
+add("foundry-turret-steam", "Steam turret", 22, 60)
+add("foundry-turret-flame", "Flame turret", 22, 60)
+add("foundry-turret-gun", "Gun turret (on a wall)", 22, 60)
+add("foundry-turret-laser", "Laser turret (on a wall)", 22, 60)
+add("foundry-mortar", "Mortar", 22, 60)
+add("foundry-mortar-fire", "Fire mortar (the mortar, trim turned red)", 22, 60)
+add("foundry-mortar-gas", "Gas mortar (the mortar, trim turned green)", 22, 60)
+add("foundry-tesla-coil", "Tesla coil", 20, 52, 20, 60)
+add("foundry-repair-drone", "Repair drone", 15, 55, 15, 44)
+add("foundry-smith", "Foundry smith", 30, 66, 30, 54)
+add("foundry-bee", "Bee (copper)", 12, 48, 12, 44)
+add("foundry-wasp", "Wasp (copper)", 12, 50, 12, 44)
+add("foundry-hornet", "Hornet (copper)", 15, 52, 15, 44)
+add("foundry-saw-blade", "Saw blade", 20, 67, 20, 54)
+add("foundry-crawler-head", "Chain crawler (head)", 23, 40, 23, 52)
+add("foundry-crawler-plate", "Chain crawler (a plate)", 22, 46, 22, 54)
+add("foundry-drill-bot", "Drill bot", 20, 49, 20, 60)
+add("foundry-storm-spirit", "Storm spirit", 15, 30, 15, 58)
 
 
 # boards that show a design with what the game draws apart, as the game places it (round 8's troll and boulder)
@@ -104,7 +128,26 @@ def golden_scarab():
     return out, (13 / 36) / ARCHER
 
 
-COMPOSITE = {"frost-yeti": yeti_board, "dunes-golden-scarab": golden_scarab}
+# The Foundry's recolours (js/foundry.js): the auto bomb bot, the fire and gas mortars (their brass trim turned by an
+# accent), as the game turns them.
+AUTO_BOMB = {"hue": 200, "sat": 0.6, "light": -0.02}
+MORTAR_FIRE = {"accent": {"from": 40, "range": 30, "hue": 8, "sat": 1.25, "light": -0.04}}
+MORTAR_GAS = {"accent": {"from": 40, "range": 30, "hue": 95, "sat": 1.0, "light": -0.06}}
+
+
+def recoloured(name, base, spec, vr, hr):
+    def make():
+        BOARDS.mkdir(parents=True, exist_ok=True)
+        out = BOARDS / f"{name}.svg"
+        out.write_text(befores9.recolor_text((R9 / "enemies" / f"{base}.svg").read_text(encoding="utf-8"), spec), encoding="utf-8")
+        return out, (vr / hr) / ARCHER
+    return make
+
+
+COMPOSITE = {"frost-yeti": yeti_board, "dunes-golden-scarab": golden_scarab,
+             "foundry-auto-bomb": recoloured("foundry-auto-bomb", "foundry-bomb-bot", AUTO_BOMB, 19, 45),
+             "foundry-mortar-fire": recoloured("foundry-mortar-fire", "foundry-mortar", MORTAR_FIRE, 22, 60),
+             "foundry-mortar-gas": recoloured("foundry-mortar-gas", "foundry-mortar", MORTAR_GAS, 22, 60)}
 
 
 def board(src, lab, out, k):

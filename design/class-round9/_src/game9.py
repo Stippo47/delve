@@ -45,6 +45,27 @@ COPIES = [
     ("enemies/dunes-dart-trap.svg", "enemies/dart-trap.svg"),
     ("enemies/dunes-venom-spirit.svg", "enemies/spirit-poison.svg"),
     ("enemies/dunes-wind-spirit.svg", "enemies/spirit-haste.svg"),
+    # the Clockwork Foundry
+    ("enemies/foundry-gear-sprite.svg", "enemies/gear-sprite.svg"),
+    ("enemies/foundry-cog-sprite.svg", "enemies/cog-sprite.svg"),
+    ("enemies/foundry-bomb-bot.svg", "enemies/bomb-bot.svg"),
+    ("enemies/foundry-automaton.svg", "enemies/automaton.svg"),
+    ("enemies/foundry-turret-steam.svg", "enemies/turret-steam.svg"),
+    ("enemies/foundry-turret-flame.svg", "enemies/turret-flame.svg"),
+    ("enemies/foundry-turret-gun.svg", "enemies/turret-gun.svg"),
+    ("enemies/foundry-turret-laser.svg", "enemies/turret-laser.svg"),
+    ("enemies/foundry-mortar.svg", "enemies/mortar.svg"),
+    ("enemies/foundry-tesla-coil.svg", "enemies/tesla-coil.svg"),
+    ("enemies/foundry-repair-drone.svg", "enemies/repair-drone.svg"),
+    ("enemies/foundry-smith.svg", "enemies/smith.svg"),
+    ("enemies/foundry-bee.svg", "enemies/bee.svg"),
+    ("enemies/foundry-wasp.svg", "enemies/wasp.svg"),
+    ("enemies/foundry-hornet.svg", "enemies/hornet.svg"),
+    ("enemies/foundry-saw-blade.svg", "enemies/saw-blade.svg"),
+    ("enemies/foundry-crawler-head.svg", "enemies/crawler-head.svg"),
+    ("enemies/foundry-crawler-plate.svg", "enemies/crawler-plate.svg"),
+    ("enemies/foundry-drill-bot.svg", "enemies/drill-bot.svg"),
+    ("enemies/foundry-storm-spirit.svg", "enemies/spirit-shock.svg"),
 ]
 
 if __name__ == "__main__":
