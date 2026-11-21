@@ -1,3 +1,4 @@
+import { HEROES2 } from './heroes2.js';
 // The hero roster: who each hero is, what they do, and their skill tree. Pure data; sim.js runs the kits
 // (attack, abilities, trait), camp.js shows them and sells the tree nodes.
 //
@@ -241,6 +242,7 @@ export const HEROES = {
     trait: { id: 'immunity', name: 'Immunity', desc: 'Can\'t be poisoned, and his poison spreads to enemies nearby.' },
   },
 };
+Object.assign(HEROES, HEROES2); // round 10 (lane H): the rest of the picked heroes, heroes2.js
 export const HERO_IDS = Object.keys(HEROES);
 export const STARTERS = HERO_IDS.filter((k) => HEROES[k].starter);
 
@@ -291,6 +293,7 @@ export const ABILITY_TAGS = {
   entangle: 'sd', rejuvenate: 'h', callWolf: 'd', raiseDead: 'd', lifeDrain: 'dh', boneSpear: 'ds',
   miasma: 'ds', cure: 'h', leeches: 's',
 };
+for (const h of Object.values(HEROES2)) for (const ab of h.abilities) if (ab.tags) ABILITY_TAGS[ab.id] = ab.tags;
 const POW = { d: 'abDmg', h: 'abHeal', s: 'abStatus' };
 export const TIER_LEVEL = [0, 4, 9];   // the hero level each tier can be bought from
 const TIER_COST = [1, 1, 2];

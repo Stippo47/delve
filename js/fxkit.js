@@ -8,6 +8,7 @@ import { INK, TAU, clamp } from './util.js';
 import { OUTLINE, view } from './render.js';
 import { hash, rgba, upright, upVec, inked, inkLine, flame, blob, star, glowDisc, bolt, easeOut, leaf } from './fx.js';
 import { drawPuddle } from './puddles.js';
+import { SIG2, installFx2 } from './fx2.js';
 
 // ---------------------------------------------------------------- palette (FX-STYLE.md): dark, main, light, core
 export const EL = {
@@ -95,6 +96,7 @@ const WEAPON = {
 };
 export function weaponOf(u) {
   const d = u.def; if (WEAPON[u.kind]) return WEAPON[u.kind];
+  if (d.weapon) return d.weapon; // heroes2.js says its own
   if (d.attackAnim === 'thrust') return 'thrust';
   if (!d.art || !d.attackAnim) return 'claw';
   if (d.heavy || d.mass >= 2.8) return 'heavy';
@@ -252,10 +254,11 @@ function slamAir(ctx, m, k) {
 }
 
 // ---------------------------------------------------------------- impacts where shots stop
-const IMPACT_EL = { arrow: 'steel', fireArrow: 'fire', fireball: 'fire', shard: 'frost', icicle: 'frost', dagger: 'steel', vial: 'poison', thorn: 'nature', note: 'song', bone: 'bone', water: 'water',
+export const IMPACT_ALIAS = {}; // kinds2: new shots that burst like an older kind (a crossbow bolt like an arrow)
+export const IMPACT_EL = { arrow: 'steel', fireArrow: 'fire', fireball: 'fire', shard: 'frost', icicle: 'frost', dagger: 'steel', vial: 'poison', thorn: 'nature', note: 'song', bone: 'bone', water: 'water',
   spark: 'fire', frostbolt: 'frost', orb: 'holy', zeus: 'storm', cluster: 'poison' };
 function impact(ctx, m, k) {
-  const big = !!m.ab, kind = m.kind, e = easeOut(k), x = m.x, y = m.y, a = m.a;
+  const big = !!m.ab, kind = IMPACT_ALIAS[m.kind] || m.kind, e = easeOut(k), x = m.x, y = m.y, a = m.a;
   const el = EL[kind === 'bolt' ? null : IMPACT_EL[kind]] || null;
   const col = m.col || (el ? el[1] : '#C9A7FF'), light = el ? el[2] : '#FFFFFF';
   const S = big ? 1.7 : 1;
@@ -503,14 +506,14 @@ function oldBones(ctx, m, k) {
 // ---------------------------------------------------------------- ability signatures ('sig' fx, fxtag.js)
 // How long each one plays (the fx lives 1.4s; a sig draws nothing after its own time). Round 9: some abilities have a
 // charge before they go off (Barrage, Frost Arrow, Fireball, Frost Nova): CHARGE is how long, the sig shows it.
-const SIG_T = { shieldBash: 0.45, guard: 1.1, consecrate: 0.5, holdTheLine: 0.7, charge: 0.4, groundPound: 0.2, barrage: 0.7, frostArrow: 0.75,
+export const SIG_T = { shieldBash: 0.45, guard: 1.1, consecrate: 0.5, holdTheLine: 0.7, charge: 0.4, groundPound: 0.2, barrage: 0.7, frostArrow: 0.75,
   roll: 0.45, backstab: 0.7, dash: 0.35, fanOfKnives: 0.3, rage: 0.6, leap: 0.4, cleave: 0.2, shockwave: 0.3, whirl: 0.4,
   unstoppable: 0.7, reap: 0.2, hook: 0.3, fireball: 0.7, flameWall: 0.4, inferno: 0.3, iceShard: 0.3, frostNova: 0.65, iceWall: 0.6,
   chainLightning: 0.3, thunderclap: 0.25, stormCloud: 0.5, mend: 0.4, sanctuary: 0.6, smite: 0.3, warSong: 0.9, lullaby: 0.3,
   encore: 0.35, entangle: 0.5, rejuvenate: 0.4, callWolf: 0.4, raiseDead: 0.5, lifeDrain: 0.3, boneSpear: 0.3, miasma: 0.3,
   cure: 0.3, leeches: 0.5 };
 const CHARGE = { barrage: 0.4, frostArrow: 0.45, fireball: 0.4, frostNova: 0.35 };
-const CAST_EL = { shieldBash: 'holy', guard: 'holy', consecrate: 'holy', holdTheLine: 'earth', charge: 'earth', groundPound: 'earth', barrage: 'steel',
+export const CAST_EL = { shieldBash: 'holy', guard: 'holy', consecrate: 'holy', holdTheLine: 'earth', charge: 'earth', groundPound: 'earth', barrage: 'steel',
   frostArrow: 'frost', roll: 'earth', backstab: 'shadow', dash: 'shadow', fanOfKnives: 'steel', rage: 'blood', leap: 'earth', cleave: 'steel',
   shockwave: 'earth', whirl: 'steel', unstoppable: 'holy', reap: 'bone', hook: 'steel', fireball: 'fire', flameWall: 'fire', inferno: 'fire',
   iceShard: 'frost', frostNova: 'frost', iceWall: 'frost', chainLightning: 'storm', thunderclap: 'storm', stormCloud: 'storm', mend: 'holy',
@@ -518,6 +521,7 @@ const CAST_EL = { shieldBash: 'holy', guard: 'holy', consecrate: 'holy', holdThe
   raiseDead: 'cold', lifeDrain: 'blood', boneSpear: 'necro', miasma: 'poison', cure: 'water', leeches: 'poison' };
 EL.cold = ['#6E7680', '#A8B0BA', '#D8DEE4', '#F2F5F8']; // Raise Dead (round 9: "more of an unsaturated cold grey")
 export const abilityEl = (id) => EL[CAST_EL[id]] || EL.steel;
+installFx2({ SIG_T, CAST_EL, IMPACT_EL, IMPACT_ALIAS, EL, castFlash, streak, dustPuffs, drawIn });
 
 // A burst of light in front of the caster's hands as an ability goes off (every cast gets one: the tell's end).
 function castFlash(ctx, f, k, el, at = 0) {
@@ -708,7 +712,7 @@ export function drawSigAir(ctx, f, w) {
       break;
     }
     case 'callWolf': case 'encore': case 'cure': castFlash(ctx, f, k, el); break;
-    default: castFlash(ctx, f, k, el);
+    default: if (!(SIG2[f.ab] && SIG2[f.ab](ctx, f, k, el, w) === false)) castFlash(ctx, f, k, el);
   }
   ctx.restore();
 }

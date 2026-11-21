@@ -2,6 +2,7 @@
 // colour, a soft highlight, a heavy ink outline. Each is the inside of a 32x32 SVG; icon(id) wraps it.
 //   icon(kind, id, cls)   kind: 'trinket' | 'potion' | 'status' | 'ability'  -> '<svg ...>' markup
 // Anything without a drawing falls back to a gem in the item's colour, so new trinkets still show.
+import { GLYPH2 } from './heroes2.js';
 const INK = '#2B2230';
 const O = `stroke="${INK}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke"`;
 const H = 'stroke="none"'; // highlights: no outline
@@ -187,7 +188,7 @@ export const ABILITY_COLOR = { shield: '#5B8CDB', sun: '#F2C84A', dash: '#C8C0B0
   dagger: '#B8C4D4', flame: '#FF7A2F', bolt: '#F2E04A', cloud: '#9AA8BC', heart: '#7CC06F', note: '#FFD27A', leaf: '#7FA04A',
   skull: '#D9D2C0', vial: '#9BCB3C', swirl: '#D8DEE8', hook: '#A8A8B0', fist: '#E0604B', up: '#E8B53A', paw: '#A0683A',
   drain: '#C8553D', wall: '#9FDDF6', sleep: '#C9B8FF', vines: '#7FA04A', wave: '#E0B070' };
-export const abilityGlyph = (id) => ABILITY_GLYPH[id] || 'burst';
+export const abilityGlyph = (id) => ABILITY_GLYPH[id] || GLYPH2[id] || 'burst';
 
 // ---------------------------------------------------------------- the one entry point
 const gemFallback = (color = '#9B7BD6') => `<path d="M16 3l11 9-11 17L5 12z" fill="${color}"/><path d="M16 3l11 9H5z" fill="#FFFFFF" opacity=".45" ${H}/>`;

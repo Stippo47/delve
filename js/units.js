@@ -62,6 +62,12 @@ for (const [id, h] of Object.entries(HEROES)) {
   const PROJ = { pyromancer: ['bolt', '#FF8A3D'], frost: ['bolt', '#8FD3FF'], storm: ['bolt', '#FFF27A'], necromancer: ['bone'],
     bard: ['note', '#FFD27A'], druid: ['thorn'], plague: ['vial', '#9BCB3C'], cleric: ['bolt', '#FFF1B0'] };
   if (PROJ[id]) { DEFS[id].proj = PROJ[id][0]; DEFS[id].projColor = PROJ[id][1]; }
+  // the new heroes (heroes2.js) say these themselves: their shot, their pose touches, a second form, their summons
+  if (h.proj) { DEFS[id].proj = h.proj[0]; DEFS[id].projColor = h.proj[1]; }
+  if (h.style) DEFS[id].style = h.style;
+  if (h.weapon) DEFS[id].weapon = h.weapon;
+  if (h.form) DEFS[h.form.id] = { ...DEFS[id], ...h.form.stats, name: h.form.name, art: h.form.art, attackAnim: h.form.anim || 'swing', form: true, style: h.form.style };
+  if (h.summons) for (const [k, sd] of Object.entries(h.summons)) DEFS[k] = { team: 'hero', temp: 0.3, commit: 1, ...sd };
 }
 // Summons. Every summon is drawn from parts, black-outlined and hue-shifted towards blue-grey (render.js, round 8), so
 // it reads as ours. The wolf's art is the round-5 beast tamer's wolf (design/class-round5/fighters), a stand-in until the

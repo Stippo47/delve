@@ -26,6 +26,7 @@ import { lineClear } from './path.js';
 import { cue } from './sfx.js';
 import { tagAbility } from './fxtag.js';
 import { STATUS } from './statuses.js';
+import { ABILITIES2, TRAITS2, ATTACKS2, kit2Tick } from './kits2.js';
 
 // ---------------------------------------------------------------- the skill web's stat nodes (round 8)
 // u.kit.mods = statsFor(hero, nodes) (heroes.js). Generic stats go straight onto the unit in initKit; an ability's own
@@ -89,6 +90,8 @@ function ring(w, u, x, y, r, dmg, o = {}, color = '#FFFFFF') {
   return n;
 }
 const cast = (u, kind = 'cast', dur = 0.45) => setAnim(u, kind, dur);
+// for kits2.js (the new heroes' abilities)
+export { near, foesNear, friendsNear, hurtMost, dmgOf, ang, isUndead, arcHit, ring, cast, heal, addStatus, zone, withAb, abMod, rectGap };
 
 // ---------------------------------------------------------------- abilities
 export const ABILITIES = {
@@ -606,6 +609,7 @@ export const ABILITIES = {
   },
 };
 ABILITIES.oldBones = { score: () => 0, use() {} };
+Object.assign(ABILITIES, ABILITIES2); // round 10 (lane H): the new heroes' abilities
 const RAY_T = 4, RAY_RANGE = 380;
 const CURE_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse'];
 // how far a unit is from the edge of a rectangle (0 inside)
@@ -672,6 +676,7 @@ const ATTACKS = {
         fx(w, { type: 'pop', kind: 'poison', x: p.x, y: p.y, r, max: 0.4 }); } });
   },
 };
+Object.assign(ATTACKS, ATTACKS2);
 export const hasOwnAttack = (kind) => !!ATTACKS[kind]; // numbers.js measures these
 export function heroAttack(w, u, t, a) {
   const f = ATTACKS[u.kind]; if (!f || u.summon) return false;
@@ -681,6 +686,7 @@ const rayable = (w, u, o) => dist(u.x, u.y, o.x, o.y) < RAY_RANGE - 40 && !block
 
 // Every step, for a unit with a kit: abilities that last (the Cleric's rays).
 export function kitTick(w, u, dt) {
+  kit2Tick(w, u, dt);
   if (u.gasForm) { const g = u.gasForm;
     if (u.gasT > 0) { if (dist(u.x, u.y, g.lx, g.ly) > 34) { g.lx = u.x; g.ly = u.y; drop(w, u, g.tier); } }
     else { if (g.heal) heal(w, u, u.maxHp * 0.15, u); u.gasForm = null; puff(w, u.x, u.y, '#BCE070', 10, 80, 6, 0.5); } }
@@ -731,6 +737,7 @@ export const TRAITS = {
       for (const e of foesNear(w, u, u.x, u.y, 260)) if (e.st.poison > 30) for (const f of foesNear(w, u, e.x, e.y, 90)) if (f !== e && f.st.poison < e.st.poison) addStatus(w, f, 'poison', 10, u); },
   },
 };
+Object.assign(TRAITS, TRAITS2);
 // Granny's Old Bones is an ability on paper but works like a trait once bought.
 const OLD_BONES = {
   downed(w, u) {
@@ -762,6 +769,8 @@ export function initKit(u, heroId, build = {}, level = 1) {
 export function refreshKit(u, level) {
   if (!u.kit) return;
   for (const ab of HEROES[u.kit.hero].abilities) u.kit.tiers[ab.id] = tierOf(u.kit.nodes, ab.id);
+  // kits2.js: an ability that also works all the time once bought (its hook), like Old Bones
+  u.kit.extra = HEROES[u.kit.hero].abilities.filter((ab) => u.kit.tiers[ab.id] && ABILITIES[ab.id] && ABILITIES[ab.id].hook).map((ab) => ABILITIES[ab.id].hook);
 }
 // How long an ability takes to come round: its base, -10% per tier past I, the web's haste and its own cooldown nodes.
 export function cooldownOf(u, ab) {
@@ -771,7 +780,7 @@ export function cooldownOf(u, ab) {
 // The hook objects active on a unit: its trait, Old Bones if it has it, and its trinkets' hooks.
 export function hooksOf(u) {
   const out = [];
-  if (u.kit) { out.push(u.kit.trait); if (u.kit.tiers.oldBones) out.push(OLD_BONES); if (u.kit.statHook) out.push(u.kit.statHook); }
+  if (u.kit) { out.push(u.kit.trait); if (u.kit.tiers.oldBones) out.push(OLD_BONES); if (u.kit.statHook) out.push(u.kit.statHook); if (u.kit.extra) out.push(...u.kit.extra); }
   if (u.trinketHooks) out.push(...u.trinketHooks);
   return out;
 }
