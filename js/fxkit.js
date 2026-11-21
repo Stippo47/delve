@@ -473,34 +473,30 @@ export function quake(ctx, x, y, R, k, seed, col = EL.earth) {
   for (let i = 0; i < 9; i++) { const b = (i + 0.5) / 9 * TAU + seed, d = r - th * 0.6, hop = Math.sin(k01(k * 1.6 - hash(i, seed) * 0.3) * Math.PI) * 16;
     ctx.save(); ctx.globalAlpha *= 1 - k; inkDisc(ctx, x + Math.cos(b) * d + ux * hop, y + Math.sin(b) * d + uy * hop, 3.4 * (1 - k) + 1, i % 2 ? col[1] : col[0]); ctx.restore(); }
 }
-// Old Bones (round 9 redo; the bones and balls were disliked): death comes for her and is turned away. A pale skull
-// rises out of her, grins, and cracks apart into wisps; she flashes white. The same at every tier; at III the shove
-// round her (a ring of dust on the ground) comes with it.
-function skullPath(ctx, s) {
-  ctx.beginPath(); ctx.moveTo(-11 * s, 2 * s); ctx.bezierCurveTo(-13 * s, -16 * s, 13 * s, -16 * s, 11 * s, 2 * s);
-  ctx.lineTo(8 * s, 6 * s); ctx.lineTo(7 * s, 12 * s); ctx.lineTo(-7 * s, 12 * s); ctx.lineTo(-8 * s, 6 * s); ctx.closePath();
-}
+// Old Bones (round 9 redo; the bones and balls were disliked; round 10: "Don't like the skull effect"): her soul starts
+// to leave her and is yanked back in. A pale wisp of soul fire slips up out of her and slows, sways, then is snapped
+// back down into her body: a white flash, a ring of pale sparks. The same at every tier; at III the shove round her (a
+// ring of dust on the ground) comes with it.
 function oldBones(ctx, m, k) {
-  const u = m.u, x = u && !u.dead ? u.x : m.x, y = u && !u.dead ? u.y : m.y, [ux, uy] = upVec();
-  if (k < 0.2) lit(ctx, () => glowDisc(ctx, x, y, 80, '#FFF8EA', 1 - k / 0.2));
-  const rise = easeOut(k01(k / 0.35)), crackK = k01((k - 0.5) / 0.5), s = 1.5 + 0.3 * rise;
-  const sx = x + ux * (u ? u.vr : 22) * (0.4 + 1.3 * rise), sy = y + uy * (u ? u.vr : 22) * (0.4 + 1.3 * rise);
-  ctx.save(); ctx.globalAlpha *= (k < 0.1 ? k / 0.1 : 1) * (1 - crackK) * 0.92;
-  for (const sd of [-1, 1]) { // two halves that split apart as it cracks
-    upright(ctx, sx + (view.rot ? 0 : sd * crackK * 10), sy + (view.rot ? sd * crackK * 10 : 0), () => {
-      ctx.rotate(sd * crackK * 0.5);
-      ctx.save(); ctx.beginPath(); ctx.rect(sd < 0 ? -30 : 0, -40, 30, 80); ctx.clip();
-      inked(ctx, () => skullPath(ctx, s), '#F4EEDD');
-      ctx.fillStyle = '#2B2230'; ctx.beginPath(); ctx.ellipse(-4.5 * s, -1 * s, 3.2 * s, 3.8 * s, 0, 0, TAU); ctx.ellipse(4.5 * s, -1 * s, 3.2 * s, 3.8 * s, 0, 0, TAU); ctx.fill();
-      ctx.fillStyle = '#9FE4FF'; ctx.beginPath(); ctx.arc(-4.5 * s, -0.5 * s, 1.2 * s, 0, TAU); ctx.arc(4.5 * s, -0.5 * s, 1.2 * s, 0, TAU); ctx.fill();
-      ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 1.4; ctx.beginPath(); for (let i = -2; i <= 2; i++) { ctx.moveTo(i * 2.6 * s, 7 * s); ctx.lineTo(i * 2.6 * s, 11.5 * s); } ctx.stroke();
-      ctx.restore();
-    });
+  const u = m.u, x = u && !u.dead ? u.x : m.x, y = u && !u.dead ? u.y : m.y, [ux, uy] = upVec(), vr = u ? u.vr : 22;
+  const OUT = 0.5, BACK = 0.62; // rises until OUT, snapped back by BACK, then the flash
+  const rise = k < OUT ? easeOut(k / OUT) : 1 - sm(k01((k - OUT) / (BACK - OUT))), sway = Math.sin(k * 14) * 5 * (k < BACK ? 1 : 0);
+  if (k < BACK) {
+    const h = vr * (0.2 + 1.9 * rise), sx = x + ux * h + (view.rot ? 0 : sway), sy = y + uy * h + (view.rot ? sway : 0);
+    ctx.save(); ctx.globalAlpha *= 0.9 * k01(k / 0.08);
+    // the thread that still ties it to her
+    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo((x + sx) / 2 + (view.rot ? 0 : -sway), (y + sy) / 2 + (view.rot ? -sway : 0), sx, sy); }, '#DDE8F6', 2.4);
+    lit(ctx, () => glowDisc(ctx, sx, sy, 30, '#BFEFFF', 0.45));
+    upright(ctx, sx, sy, () => { ctx.rotate(sway * 0.03); ctx.scale(1.5, 1.5); flame(ctx, 0, 0, 11 + 3 * rise, '#E8F2FA', '#FFFFFF');
+      ctx.fillStyle = '#2B2230'; ctx.beginPath(); ctx.ellipse(-3.6, -2, 1.6, 2.4, 0, 0, TAU); ctx.ellipse(3.6, -2, 1.6, 2.4, 0, 0, TAU); ctx.fill(); });
+    ctx.restore();
+    return;
   }
+  const p = k01((k - BACK) / (1 - BACK)), e = easeOut(p);
+  if (p < 0.35) lit(ctx, () => glowDisc(ctx, x, y, 60 + 30 * e, '#FFF8EA', 1 - p / 0.35));
+  ctx.save(); ctx.globalAlpha *= 1 - p * p;
+  for (let i = 0; i < 10; i++) { const b = i / 10 * TAU + 0.2, d = vr * 0.6 + 40 * e; inked(ctx, () => star(ctx, x + Math.cos(b) * d, y + Math.sin(b) * d, 5 * (1 - p) + 1.5, 4, 0.35, b), i % 2 ? '#FFF8EA' : '#BFEFFF'); }
   ctx.restore();
-  if (crackK > 0) { ctx.save(); ctx.globalAlpha *= 1 - crackK; // wisps out of the crack
-    for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + 0.3, d = 8 + 34 * easeOut(crackK); inkDisc(ctx, sx + Math.cos(b) * d + ux * crackK * 14, sy + Math.sin(b) * d + uy * crackK * 14, 4 * (1 - crackK) + 1.5, i % 2 ? '#FFF8EA' : '#BFEFFF'); }
-    ctx.restore(); }
 }
 
 // ---------------------------------------------------------------- ability signatures ('sig' fx, fxtag.js)
@@ -961,16 +957,31 @@ export function abilityZoneAir(ctx, f, T) {
   ctx.restore();
 }
 
-// Reap's red orbs (round 9): one pops off each foe hit and homes into her
+// Reap's red orbs (round 9): one pops off each foe hit and homes into her. Round 10: "Blood orbs should pop when they get
+// to her. Also 'drip' as they travel": drops fall off behind them on the way, and each bursts in a splash on arrival.
 export function soulOrb(ctx, f) {
   const t = f.t - (f.delay || 0); if (t < 0) return;
   const k = k01(t / (f.max - (f.delay || 0))), to = f.to && !f.to.dead ? f.to : null; if (!to) return;
-  const pop = k01(k / 0.2), q = sm(k01((k - 0.15) / 0.85)), [ux, uy] = upVec(), seed = Math.round(f.x + f.y);
+  const ARR = 0.8, pop = k01(k / 0.2), q = sm(k01((k - 0.12) / (ARR - 0.12))), [ux, uy] = upVec(), seed = Math.round(f.x + f.y);
   const side = hash(seed) < 0.5 ? -1 : 1, a = Math.atan2(to.y - f.y, to.x - f.x), L = Math.hypot(to.x - f.x, to.y - f.y);
-  const hop = Math.sin(q * Math.PI) * (26 + L * 0.2), nx = -Math.sin(a) * side * Math.sin(q * Math.PI) * L * 0.25;
-  const ny = Math.cos(a) * side * Math.sin(q * Math.PI) * L * 0.25;
-  const x = f.x + (to.x - f.x) * q + ux * hop * 0.5 + nx, y = f.y + (to.y - f.y) * q + uy * hop * 0.5 + ny;
-  if (q >= 0.98) { lit(ctx, () => glowDisc(ctx, to.x, to.y, 30, '#FF5A4A', 0.6)); return; }
+  const at = (qq) => { const hop = Math.sin(qq * Math.PI) * (26 + L * 0.2), sw = side * Math.sin(qq * Math.PI) * L * 0.25;
+    return [f.x + (to.x - f.x) * qq + ux * hop * 0.5 - Math.sin(a) * sw, f.y + (to.y - f.y) * qq + uy * hop * 0.5 + Math.cos(a) * sw]; };
+  // the drips: each leaves the orb at its moment and falls (down the screen), shrinking
+  for (let i = 0; i < 6; i++) { const qi = 0.08 + i * 0.14, da = (q >= 1 ? 1 + (k - ARR) * 3 : q) - qi; if (da <= 0 || da > 0.32) continue;
+    const g = da / 0.32, [dx, dy] = at(qi), fall = 24 * g * g + 4 * g;
+    ctx.save(); ctx.globalAlpha *= 1 - g * g;
+    inked(ctx, () => { const x = dx - ux * fall + (hash(seed, i) - 0.5) * 6, y = dy - uy * fall, r = 3.4 * (1 - 0.45 * g) + 0.6;
+      ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.moveTo(x - r * 0.8, y + uy * r * 0.4 + ux * 0); ctx.lineTo(x + ux * r * 2.2, y + uy * r * 2.2); ctx.lineTo(x + r * 0.8, y); }, '#C8302E');
+    ctx.restore(); }
+  if (k >= ARR) { // the pop: a flash on her, a ring of droplets flung out, gone
+    const p = k01((k - ARR) / (1 - ARR)), e = easeOut(p);
+    if (p < 0.4) lit(ctx, () => glowDisc(ctx, to.x, to.y, 24 + 16 * e, '#FF5A4A', 0.7 * (1 - p / 0.4)));
+    ctx.save(); ctx.globalAlpha *= 1 - p * p;
+    for (let i = 0; i < 7; i++) { const b = i / 7 * TAU + seed, d = 6 + 24 * e; inkDisc(ctx, to.x + Math.cos(b) * d, to.y + Math.sin(b) * d, 3.2 * (1 - 0.6 * p) + 0.5, i % 2 ? '#E0403A' : '#FF8A7A'); }
+    if (p < 0.3) inkDisc(ctx, to.x, to.y, 6 * (1 - p / 0.3) + 1, '#E0403A');
+    ctx.restore(); return;
+  }
+  const [x, y] = at(q);
   lit(ctx, () => glowDisc(ctx, x, y, 16, '#FF5A4A', 0.6));
   inkDisc(ctx, x, y, 5.5 * (0.6 + 0.4 * pop), '#E0403A'); disc(ctx, x - 1.6, y - 1.6, 2, '#FFB0A0');
 }

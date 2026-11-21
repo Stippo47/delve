@@ -379,7 +379,9 @@ export function poseFor(u, w, dt) {
   else off = { r: -main.r * 0.12, dy: -main.dy * 0.2 };
   // ---- round 9 touches
   const T = w ? w.time : 0;
-  if (u.anim && u.anim.kind === 'spin') { main = scaleP(S, 1.15); off = dual ? scaleP(S, 1.15) : { r: -0.2, dy: 6 }; } // arms out for a full turn
+  // arms out for a full turn; round 10 (Cleave, Reap: "they hold sword in not out"): a single weapon is held straight out
+  // to the side, not across the body
+  if (u.anim && u.anim.kind === 'spin') { main = dual ? scaleP(S, 1.15) : { r: -1.25, dy: 8 }; off = dual ? scaleP(S, 1.15) : { r: -0.2, dy: 6 }; }
   if (sty.bow) off = addP(off, { dy: 22 });                      // the bow held forward (round 10: "Move bow forwards more")
   if (u.kind === 'bard' && u.anim && u.anim.kind === 'cast') {    // the strumming hand goes over the strings
     const t = u.anim.t; main = { r: 0.16 * Math.sin(t * 48), dy: 6 + 3 * Math.abs(Math.sin(t * 24)) }; off = { dy: 2 };
