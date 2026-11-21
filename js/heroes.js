@@ -188,7 +188,7 @@ export const HEROES = {
     attack: { name: 'Sour note', anim: 'cast', desc: 'Strums four slow notes in a spread; every one goes through.' },
     abilities: [
       { id: 'warSong', name: 'War Song', cd: 14, desc: 'Allies near attack faster for a while.',
-        tiers: ['+25% for 6s.', '+40%.', 'They move faster too.'] },
+        tiers: ['+35% for 6s.', '+50%.', 'They move faster too.'] },
       { id: 'lullaby', name: 'Lullaby', cd: 13, desc: 'Enemies in front grow slow and drowsy.',
         tiers: ['Slows for 4s.', 'Puts the weakest to sleep.', 'Wider, and puts everyone it reaches to sleep.'] },
       { id: 'encore', name: 'Encore', cd: 20, desc: 'An ally\'s ability is ready again.',

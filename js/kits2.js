@@ -838,7 +838,7 @@ export const ABILITIES2 = {
       cast(u, 'cast', 0.5);
       const list = foesNear(w, u, u.x, u.y, 380).sort((p, q) => q.maxHp - p.maxHp).slice(0, tier >= 3 ? 2 : 1);
       for (const e of list) {
-        addBuff(e, { id: 'foresight', dur: 6, taken: 1.25, blind: tier >= 2 });
+        addBuff(e, { id: 'foresight', dur: 6, taken: 1.35, blind: tier >= 2 });
         k2(w, { draw: 'eye', unit: e, x: e.x, y: e.y, r: e.vr, max: 6, ab: 'foresight' });
       }
     },

@@ -317,7 +317,7 @@ Object.assign(HEROES2, {
     attack: { name: 'Glimmer', anim: 'cast', desc: 'A crystal mote that glances off its target onto a second enemy.' },
     abilities: [
       { id: 'foresight', name: 'Foresight', cd: 12, tags: 'd', glyph: 'sun', desc: 'Marks the strongest enemy in sight: the whole party hits it harder.',
-        tiers: ['Marked for 6s: allies hit it 25% harder.', 'Its own blows often miss.', 'Marks the two strongest.'] },
+        tiers: ['Marked for 6s: allies hit it 35% harder.', 'Its own blows often miss.', 'Marks the two strongest.'] },
       { id: 'premonition', name: 'Premonition', cd: 11, tags: 'h', glyph: 'shield', desc: 'Sees a blow coming: the ally in the most danger slips out of its way.',
         tiers: ['The ally most beset is untouchable for 1.2s.', 'Two allies.', 'For 2s, and it heals them 10%.'] },
       { id: 'starfall', name: 'Starfall', cd: 15, tags: 'ds', glyph: 'sun', desc: 'Calls stars down out of nowhere onto the enemies round a spot.',
