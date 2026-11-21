@@ -101,7 +101,8 @@ function buildStretch(run) {
   w.doorIn = { x: 0, y: mid }; w.doors = []; w.toVisit = []; w.wp = null;
   // rocks along the verges, never on the track
   for (let x = 330; x < W - 120; x += rrange(150, 300)) {
-    const side = chance(0.5) ? -1 : 1, r = rrange(26, 40), y = side < 0 ? rrange(40, mid - ROAD_HALF - 70) : rrange(mid + ROAD_HALF + 70, H - 40);
+    const side = chance(0.5) ? -1 : 1, r = rrange(30, 42), // (30+: env.js draws anything smaller as a brazier)
+      y = side < 0 ? rrange(40, mid - ROAD_HALF - 70) : rrange(mid + ROAD_HALF + 70, H - 40);
     if (!w.pillars.some((p) => dist(p.x, p.y, x, y) < p.r + r + 60)) w.pillars.push({ x, y, r });
   }
   // dressing off the track

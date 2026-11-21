@@ -92,7 +92,7 @@ function startConvoy(opts = {}) { // (opts: tools only, e.g. { stretch: 2 } to s
 }
 function roadside() { // the stop for the night: one frame with the wagon and the camp past the gate in view above the page
   setPaused(false);
-  const w = run.world; if (w.camAt && run.wagon) { w.camAt.x = run.wagon.x - 300; snapCamera(); drawRun(0, false); }
+  const w = run.world; if (w.camAt && run.wagon && state === 'run') { w.camAt.x = run.wagon.x - 300; snapCamera(); drawRun(0, false); }
   openRoadside(run); show('convoy');
 }
 function convoyPick(choice) {
