@@ -368,3 +368,10 @@ instantly."
   as a party hero); the hero Bandit's id clashing with the Wildwood's bandit (now `rogueBandit`).
 - **The lead's call on a lane's rule**: roster3 added "enemies wither if a room drags on" (60 s without a kill or
   200 s, 4% a second). Softened to 90 s / 240 s / 3%, and flagged to the designer.
+
+## Round 11b (2026-11-21): the wagon (convoy mode), a try
+Built by lane C as a prototype (js/convoy.js; docs/CONVOY.md has the design; `node tools/convoys.mjs` checks it):
+three two-minute stretches up a Wildwood road, the wagon a unit with its own health, waves from every side, gold
+left behind when it scrolls off, a Guard / Gather switch (the lane's addition), roadside camps with a pick of one
+from three, the Bandit Chief's barricade at the end, real gold and XP worth about a floor. Live as 0.13.0. Open with
+the designer (deck v13-convoy): the switch, one road or many, the roadside camp as a shop, downed heroes riding.

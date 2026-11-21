@@ -1,0 +1,63 @@
+{
+  "title": "0.13.0: the wagon (convoy mode)",
+  "topic": "runs",
+  "order": 19,
+  "priority": 1,
+  "tags": ["first"],
+  "cards": [
+    {
+      "id": "convoy",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "The wagon: a try",
+      "text": "Escort a slow wagon up a forest road while enemies come from every side. Playable from the camp. Live as 0.13.0.",
+      "why": "You asked to try the convoy mode. This is a prototype in one biome so you can feel it and say yes, no, or what to change.",
+      "videos": ["../../../clips/r11/convoy/convoy-stretch1.mp4", "../../../clips/r11/convoy/convoy-gather.mp4", "../../../clips/r11/convoy/convoy-chief.mp4"],
+      "images": ["../../../clips/r11/convoy/still-04-road-fight.png"],
+      "details": "In tests, random parties of three at level 3 to 5 deliver the wagon about half the time. A trip takes 5 to 6 minutes, pays about what a Wildwood floor does (200 to 300 gold) and gives about two levels a hero at level 3 or 4. Losses split evenly between the wagon breaking and the party falling, mostly in the third stretch.\n\nWhat I'd add next if you like it: a roadside shop that spends the gold picked up on the trip, a set-piece or two per stretch (a fallen tree across the road, an ambush), an arrow at the screen's edge for waves coming from off screen, and each stretch looking more its own.",
+      "parts": [
+        { "id": "camp", "title": "At the camp", "text": "A wagon is parked at the bottom edge of the camp. Tap it for the trip's page: the three stretches, the pay, your party, Set out.", "images": ["../../../clips/r11/convoy/still-01-camp-wagon.png", "../../../clips/r11/convoy/still-02-set-out.png"] },
+        { "id": "road", "title": "The road", "text": "Three stretches of about 2 minutes. The wagon rolls at a third of a hero's pace and has its own health; it stops while something stands in its way or it's hit hard. Waves come from ahead, the sides and behind, each bigger than the last.", "videos": ["../../../clips/r11/convoy/convoy-stretch1.mp4"] },
+        { "id": "gold", "title": "Gold on the road", "text": "Gold is flung wide where enemies fall and anything that drops behind the wagon is gone. The Guard / Gather switch at the top decides whether the party stays close or runs for it.", "videos": ["../../../clips/r11/convoy/convoy-gather.mp4"], "images": ["../../../clips/r11/convoy/still-05-road-gather.png"] },
+        { "id": "roadside", "title": "Roadside camps", "text": "Between stretches everyone gets a quarter of their health back and the downed get up. Pick one of three: mend the wagon, a potion each, a trinket, or a sellsword for the next stretch.", "images": ["../../../clips/r11/convoy/still-06-roadside.png"] },
+        { "id": "end", "title": "The end of the road", "text": "The Bandit Chief's barricade blocks the road. Beat him and the wagon is delivered: 200 gold times the wagon's health left, plus what you picked up, plus a gem.", "videos": ["../../../clips/r11/convoy/convoy-chief.mp4"], "images": ["../../../clips/r11/convoy/still-09-result.png"] }
+      ]
+    },
+    {
+      "id": "stance",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Wagon: Guard or Gather",
+      "text": "Should you get a Guard / Gather switch, or should the heroes decide for themselves?",
+      "why": "It's the only thing you control during a stretch. Without it the party picked up about 90% of the gold anyway, so chasing gold against guarding the wagon was never a real choice.",
+      "pick": "Keep the switch: Guard holds the party by the wagon, Gather lets them run for gold."
+    },
+    {
+      "id": "biomes",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Wagon: one road or many",
+      "text": "One road per dungeon, or one long trip that climbs through several biomes?",
+      "why": "Your first note said \"upward through biomes\". One trip keeps it a single mode that grows as you beat dungeons; a road per dungeon would be nine separate short trips.",
+      "pick": "One trip, one biome a stretch, with new stretches opening as you beat dungeons."
+    },
+    {
+      "id": "roadsidecamp",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Wagon: the roadside camp",
+      "text": "What should a roadside camp be: a pick of one from three, or a shop?",
+      "why": "Your note listed a hero to hire, a shop and the fire to upgrade. Right now gold only matters when the trip ends; a shop would make it matter during the trip too.",
+      "pick": "A small shop that spends the gold picked up on this trip (repairs, potions, a trinket), plus a sellsword to hire."
+    },
+    {
+      "id": "downed",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Wagon: downed heroes",
+      "text": "A downed hero rides on the wagon until the next roadside camp, with no reviving mid-stretch. Keep that?",
+      "why": "It's simple to read and makes losing a hero cost something for the rest of the stretch. In a dungeon, heroes revive each other instead.",
+      "pick": "Keep it: they ride the wagon and get up at the roadside camp with 30% health."
+    }
+  ]
+}
