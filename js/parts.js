@@ -50,7 +50,7 @@ function splitSvg(text) {
     }
     root.setAttribute('viewBox', `${B0} ${B0} ${BOX} ${BOX}`);
     root.removeAttribute('width'); root.removeAttribute('height');
-    layers.push({ id, pivot, moves: /^(arm-|back|front)/.test(id) && el.hasAttribute('data-pivot'), text: ser.serializeToString(root) });
+    layers.push({ id, pivot, moves: /^(arm-|back|front|top)/.test(id) && el.hasAttribute('data-pivot'), text: ser.serializeToString(root) });
   });
   return { layers, string, has: Object.fromEntries(layers.map((l) => [l.id, true])) };
 }
@@ -317,6 +317,8 @@ const MOVES = {
   throw: { W: { r: -0.75, dy: -16 }, S: { r: 0.5, dy: 18 }, strike: 0.07, hold: 0.04 },
   cast: { W: { r: -0.3, dy: -10 }, S: { r: 0.38, dy: 22 }, strike: 0.08, hold: 0.1 },
   draw: { W: { dy: -26 }, S: { dy: 6 }, strike: 0.04, hold: 0.02 },
+  shoot: { W: { dy: 4 }, S: { dy: -12, r: -0.05 }, strike: 0.03, hold: 0.06 },   // a gun: held still, then the kick back
+  punch: { W: { dy: -10, r: -0.1 }, S: { dy: 30, r: 0.1 }, strike: 0.05, hold: 0.04 }, // fists: a straight jab
 };
 
 // How far into its swing a unit is "readying" before the blow lands (the sim attacks at once, so the wind-up is shown
@@ -332,7 +334,7 @@ function readyTarget(u) {
 }
 
 export function poseFor(u, w, dt) {
-  const d = u.def, sty = STYLE[u.kind] || {}, url = d.art;
+  const d = u.def, sty = STYLE[u.kind] || d.style || {}, url = d.art; // d.style: the new heroes' touches (heroes2.js)
   const pose = {};
   if (u.frozenT > 0 && u._pose) return u._pose;          // frozen stiff
   const kind = (u.anim && u.anim.kind) || d.attackAnim || (d.role === 'ranged' ? 'draw' : d.role === 'skirmish' ? 'thrust' : 'swing');
@@ -342,7 +344,7 @@ export function poseFor(u, w, dt) {
   // which arm this blow uses
   if (u.anim && u.anim !== u._lastAnim) { u._lastAnim = u.anim; u._n = (u._n || 0) + 1; u._ready = 0; }
   const dual = sty.dual && rigHas(url, 'arm-l');
-  let hand = rigHas(url, 'arm-r') ? 'arm-r' : 'arm-l';
+  let hand = sty.hand && rigHas(url, sty.hand) ? sty.hand : rigHas(url, 'arm-r') ? 'arm-r' : 'arm-l'; // sty.hand: a weapon held in the left hand
   if (dual && (u._n || 0) % 2) hand = 'arm-l';
   const other = hand === 'arm-r' ? 'arm-l' : 'arm-r';
   // readiness, eased
@@ -383,7 +385,7 @@ export function poseFor(u, w, dt) {
     const t = u.anim.t; main = { r: 0.16 * Math.sin(t * 48), dy: 6 + 3 * Math.abs(Math.sin(t * 24)) }; off = { dy: 2 };
   }
   if (u.kind === 'necromancer' && base === 'cast') main = { r: 0, dy: (main.dy || 0) * 1.25 }; // the staff thrust forward, not waved
-  if (sty.off === 'shield' && ((u.buffs && u.buffs.some((b) => b.id === 'holdTheLine')) || (u.act && u.act.type === 'charge'))) {
+  if (sty.off === 'shield' && ((u.buffs && u.buffs.some((b) => b.id === 'holdTheLine' || b.raise)) || (u.act && u.act.type === 'charge'))) {
     off = { r: 0.85, dy: 20, dx: 6 }; main = addP(main, { r: -0.2, dy: -6 }); // the shield held out in front
   }
   if (!u.anim && !u.downed && u.spd <= 6) { const s = Math.sin(T * 2.2 + u.id) * 1.4; main = addP(main, { dy: s }); off = addP(off, { dy: -s }); } // idle: the arms breathe too
@@ -402,6 +404,7 @@ export function poseFor(u, w, dt) {
   const capeT = clamp(-df / Math.max(dt, 1e-3) * 0.05, -0.16, 0.16);
   u._cape = (u._cape || 0) + (capeT - (u._cape || 0)) * (1 - Math.exp(-dt * 6));
   pose.back = { r: u._cape };
+  if (d.turret) pose.back = { r: wrapAngle((u.baseA ?? u.facing) - u.facing) }; // a turret's legs stay put while its top turns
   pose.glow = glow > 0.02 ? { a: glow, color: sty.glow || '#FFF1B0' } : null;
   pose.pop = pop;
   if (u._force) Object.assign(pose, u._force); // the lab's test poses

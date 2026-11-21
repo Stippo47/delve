@@ -687,6 +687,7 @@ export function hurt(w, u, amount, src, o = {}) {
     hurt(w, u.guardBy, share, src, { ...o, guarded: true, knock: 0 });
   }
   if (u.act && u.act.type === 'drink' && !o.dot) u.act = null;
+  if (src && !o.dot && src.buffs && src.buffs.some((b) => b.blind) && chance(0.6)) { textU(w, u.x, u.y, u.r, 'miss', '#CFE8FF', 0.8); return 0; } // blinded (kits2: Digger's dirt, Bandit's smoke)
   if (!o.dot && !o.noDodge && u.def.dodge && chance(u.def.dodge)) { textU(w, u.x, u.y, u.r, 'dodge', '#CFE8FF', 0.8); return 0; }
   let amt = amount;
   if (src && alive(src)) { for (const h of hooksOf(src)) if (h.dealt) amt = h.dealt(w, src, u, amt, o); amt *= blowMul(src); }

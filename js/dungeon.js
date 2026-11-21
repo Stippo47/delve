@@ -623,6 +623,7 @@ function exitTick(run, h, dt) {
 const REVIVE_T = 3, REVIVE_HP = 0.1;
 function revive(run, dt) {
   const w = run.world;
+  for (const u of w.units) if (u.revivedByKit) { u.revivedByKit = false; if (run.heroes[u.kind]) run.heroes[u.kind].down = false; } // kits2.js: Valkyrie's Call
   const downed = w.units.filter((u) => u.team === 'hero' && u.downed && !u.dead);
   for (const h of heroesAlive(run)) if (h.forcedGoal && h.forcedGoal.revive && !downed.includes(h.forcedGoal.who)) h.forcedGoal = null;
   for (const d of downed) {
