@@ -664,13 +664,17 @@ const ATTACKS = {
     hurt(w, t, A(u, 1), u, { noDodge: true, shock: 8 });
     u.recoilT = 0.1;
   },
-  // three small slow orbs, one after another with a little spread, each homing a little; all three on one target: radiance
+  // three small slow orbs, one after another, each homing a little; all three on one target: radiance. Round 10: "Larger
+  // spread in angle, not position. Orbs can also hit allies slightly healing them": they leave her hands fanned wide and
+  // curve in, and a friend an orb passes through is healed a little (it flies on)
   cleric(w, u, t, a) {
     const volley = new Map();
     u.later = [0, 1, 2].map((i) => ({ t: i * 0.13, f: () => {
       const aim = t && alive(t) ? ang(u, t) : a;
-      shoot(w, u, aim + (i - 1) * 0.22, { kind: 'orb', speed: 210, r: 5, life: 2, dmg: A(u, 0.34), knock: 10, color: '#FFF1B0',
-        extra: { home: t, turn: 2.4, onHit: (w2, p, e) => { const n = (volley.get(e) || 0) + 1; volley.set(e, n); if (n === 3) addStatus(w2, e, 'radiance', 25, u); } } });
+      shoot(w, u, aim + (i - 1) * 0.5, { kind: 'orb', speed: 210, r: 5, life: 2, dmg: A(u, 0.34), knock: 10, color: '#FFF1B0',
+        extra: { home: t, turn: 2.2, allyHit: (w2, p, f) => { heal(w2, f, p.dmg * 0.5, u); f.mendGlow = w2.time + 0.3;
+          w2.particles.push({ x: p.x, y: p.y, vx: 0, vy: 0, rise: 40, up: 0, life: 0.6, max: 0.6, size: 4.5, color: '#9BE07A', shape: 'plus' }); },
+          onHit: (w2, p, e) => { const n = (volley.get(e) || 0) + 1; volley.set(e, n); if (n === 3) addStatus(w2, e, 'radiance', 25, u); } } });
     } }));
   },
   // four notes in a spread, slower, all of them going through
@@ -715,6 +719,9 @@ export function kitTick(w, u, dt) {
     const ok = r.t > 0 && alive(r.to) && alive(u) && u.stunT <= 0 && u.frozenT <= 0 && dist(u.x, u.y, r.to.x, r.to.y) < RAY_RANGE && lineClear(w, u.x, u.y, r.to.x, r.to.y, 2);
     if (!ok) { r.t = 0; r.f.max = Math.min(r.f.max, r.f.t + 0.15); continue; }
     withAb(u, r.ab, heal)(w, r.to, r.rate * dt, u); r.to.mendGlow = w.time + 0.2;
+    // healing crosses rising round the one it mends (round 10: spread round the body, inked; render.js 'plus')
+    r.pT = (r.pT || 0) - dt; if (r.pT <= 0) { r.pT = 0.22; const a = rand() * TAU, d = (r.to.vr || r.to.r) * (1 + 0.25 * rand());
+      w.particles.push({ x: r.to.x + Math.cos(a) * d, y: r.to.y + Math.sin(a) * d * 0.8, vx: 0, vy: 0, rise: 40, up: 0, life: 0.7, max: 0.7, size: 4.5, color: '#9BE07A', shape: 'plus' }); }
     u.atkT = Math.max(u.atkT, 0.2); // busy holding the ray
   }
   u.rays = u.rays.filter((r) => r.t > 0);

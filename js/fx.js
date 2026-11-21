@@ -197,11 +197,12 @@ function zone(ctx, f, T) {
     case 'sanctuary': { // a fence of light posts round the place she blessed (gold stakes with light rising), a soft wash inside
       ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x, y, r, EL.holy[2], 0.14); ctx.restore();
       const n = Math.max(8, Math.round(r / 16)), [ux, uy] = upVec();
+      // round 10 ("A ring around the entire effect passing through each point"): one ring of light through every post
+      ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = rgba(EL.holy[1], 0.35); ctx.lineWidth = 9; ctx.beginPath(); ctx.arc(x, y, r * 0.92, 0, TAU); ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.strokeStyle = rgba(EL.holy[2], 0.9); ctx.lineWidth = 2.6; ctx.beginPath(); ctx.arc(x, y, r * 0.92, 0, TAU); ctx.stroke(); ctx.restore();
       for (let i = 0; i < n; i++) { const an = i / n * TAU + seed * 0.1, px = x + Math.cos(an) * r * 0.92, py = y + Math.sin(an) * r * 0.92, h = 30 + 6 * Math.sin(T * 3 + i);
         const g = ctx.createLinearGradient(px, py, px + ux * h, py + uy * h); g.addColorStop(0, rgba(EL.holy[1], 0.9)); g.addColorStop(1, rgba(EL.holy[2], 0));
         ctx.strokeStyle = g; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + ux * h, py + uy * h); ctx.stroke();
-        // round 9: a faint ring round each star point
-        ctx.save(); ctx.globalAlpha *= 0.5 + 0.2 * Math.sin(T * 3 + i); ctx.strokeStyle = rgba(EL.holy[2], 0.7); ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(px, py, 11 + Math.sin(T * 3 + i) * 1.5, 0, TAU); ctx.stroke(); ctx.restore();
         inked(ctx, () => star(ctx, px, py, 6.5, 4, 0.4, 0), EL.holy[2]); }
       motes(ctx, f, x, y, r, T, a, seed, false);
       break;
@@ -391,10 +392,12 @@ function beam(ctx, f, T) {
     inkLine(ctx, () => path(T * 5, 5), c, 3.6);
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x2, y2, 18, c, 0.45); ctx.restore();
   } else if (f.kind === 'heal') {
-    // round 9: the mending ray is a plain straight beam lying under the units: a soft light and a bright core line
+    // round 9: the mending ray is a plain straight beam lying under the units: a soft light and a bright core line.
+    // Round 10: "Give outline": an inked warm gold band with the bright core down its middle
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.lineCap = 'round';
-    ctx.strokeStyle = 'rgba(255,240,170,0.3)'; ctx.lineWidth = 16; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
-    ctx.strokeStyle = 'rgba(255,250,225,0.85)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.restore();
+    ctx.strokeStyle = 'rgba(255,240,170,0.3)'; ctx.lineWidth = 18; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.restore();
+    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); }, '#FFE7A0', 7 + Math.sin(T * 9) * 0.8);
+    ctx.save(); ctx.strokeStyle = '#FFFBEA'; ctx.lineWidth = 2.6; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.restore();
   } else { // holy: a straight shaft of light
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.lineCap = 'round';
     ctx.strokeStyle = 'rgba(255,225,140,0.3)'; ctx.lineWidth = 30; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.restore();

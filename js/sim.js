@@ -124,7 +124,8 @@ export function heal(w, u, amount, src, o) {
   if (amount <= 0) return 0;
   const before = u.hp; u.hp = Math.min(u.maxHp, u.hp + amount);
   if (w.stats) tallyHeal(w, u, src, u.hp - before, o);
-  if (u.hp - before > 2 && rand() < 0.5) w.particles.push({ x: u.x + rrange(-12, 12), y: u.y, vx: 0, vy: 0, rise: 50, up: 0, life: 0.6, max: 0.6, size: 4, color: '#9BE07A' });
+  // a healing cross rising off the edge of the body (round 10: "need outline and need to be spread out around his sprite")
+  if (u.hp - before > 2 && rand() < 0.5) { const a = rand() * Math.PI * 2, d = (u.vr || u.r) * (1 + 0.25 * rand()); w.particles.push({ x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d * 0.8, vx: 0, vy: 0, rise: 40, up: 0, life: 0.7, max: 0.7, size: 4.5, color: '#9BE07A', shape: 'plus' }); }
   return u.hp - before;
 }
 export function cleanse(u) { u.st = freshStatuses(); u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; }
@@ -1331,7 +1332,10 @@ function projectiles(w, dt) {
     if (p.life <= 0 || p.noHit) continue; // noHit: only a look (a lobbed thing; its landing is a danger zone)
     for (const u of w.units) {
       if (!alive(u) || u === p.skip || u === p.owner || u.ethereal) continue;
-      if (p.team !== 'neutral' && u.team === p.team) continue;
+      if (p.team !== 'neutral' && u.team === p.team) { // round 10: a shot that does something to friends it passes (the Cleric's orbs heal)
+        if (p.allyHit && u !== p.owner && !(p.allySeen || (p.allySeen = new Set())).has(u) && dist(p.x, p.y, u.x, u.y) < u.r + p.r) { p.allySeen.add(u); p.allyHit(w, p, u); }
+        continue;
+      }
       if (p.hitSet && p.hitSet.has(u)) continue;
       if (dist(p.x, p.y, u.x, u.y) < u.r + p.r) {
         // round 10, the gilded golem: a shot that hits its front bounces back at whoever shot it

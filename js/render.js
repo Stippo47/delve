@@ -788,6 +788,12 @@ function drawParticle(ctx, p) {
   if (p.shape === 'flame') {
     const [ux, uy] = upVec();
     upright(ctx, p.x + ux * (p.up || 0), p.y + uy * (p.up || 0), () => flameShape(ctx, 0, 0, p.size * (0.35 + 0.65 * k), k > 0.5 ? '#FF8A3D' : '#E8582A', '#FFE08A'));
+  } else if (p.shape === 'plus') { // a healing cross, inked, rising (round 10)
+    const [ux, uy] = upVec(), s = p.size * (0.6 + 0.4 * Math.min(1, (1 - k) * 5)), t = s * 0.36;
+    ctx.save(); ctx.globalAlpha = Math.min(1, k * 2.2); ctx.translate(p.x + ux * (p.up || 0), p.y + uy * (p.up || 0));
+    const cross = () => { ctx.beginPath(); ctx.rect(-s, -t, s * 2, t * 2); ctx.rect(-t, -s, t * 2, s * 2); };
+    ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; cross(); ctx.stroke();
+    ctx.fillStyle = p.color; cross(); ctx.fill(); ctx.restore(); ctx.globalAlpha = 1;
   } else if (p.shape === 'spark') {
     const a = Math.atan2(p.vy, p.vx), len = 6 + 10 * k;
     ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(a); ctx.globalAlpha = Math.min(1, k * 1.6);
