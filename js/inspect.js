@@ -1,4 +1,4 @@
-// Pause and inspect (round 6): while the dungeon is paused, a panel over the bottom of the screen shows one unit in
+// Pause and inspect (round 6; UI v3 look): while the dungeon is paused, a panel over the bottom of the screen shows one unit in
 // full: health, level, statuses (what each does and how long it has left), abilities with their cooldowns, the trait,
 // trinkets and potions with their descriptions and fun lines; enemies get their bestiary page. Tap a face along the
 // top of the panel, a hero card, or any unit in the arena to look at it. The arena keeps no words: the chosen unit
@@ -12,6 +12,7 @@ import { STATUSES, beastFun, beastHabit, trinketFun, POTION_FUN } from './bestia
 import { POTIONS } from './potions.js';
 import { getSprite } from './sprites.js';
 import { view } from './render.js';
+import { I } from './ui-kit.js';
 
 const ROLE = { tank: 'Tank', melee: 'Fighter', skirmish: 'Skirmisher', ranged: 'Ranged', caster: 'Caster', support: 'Support' };
 const roman = (n) => ['', 'I', 'II', 'III'][n] || '';
@@ -87,47 +88,46 @@ function render() {
   const party = partyUnits(run);
   const foes = w.units.filter((u) => u.team === 'enemy' && !u.dead && !u.summon);
   const face = (u) => `<button class="ip-face ${u === sel ? 'on' : ''} ${u.team} ${u.downed ? 'down' : ''}" data-ip="unit:${u.id}"><img src="${portrait(u.kind)}" alt=""></button>`;
-  const strip = `<div class="ip-strip">${party.map(face).join('')}${foes.length ? '<i class="ip-sep"></i>' : ''}${foes.slice(0, 8).map(face).join('')}</div>`;
-  el.innerHTML = `<div class="ip-panel">${strip}<div class="ip-body">${sel ? body(sel) : '<p class="muted">Tap someone.</p>'}</div>
-    <button class="btn big ip-go" data-ip="resume"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 3l15 9-15 9z" fill="#2B2230"/></svg>Play on</button></div>`;
+  const strip = `<div class="ip-strip">${party.map(face).join('')}${foes.length ? '<i class="ip-sep"></i>' : ''}${foes.slice(0, 10).map(face).join('')}</div>`;
+  el.innerHTML = `<div class="ip-panel">${strip}<div class="ip-body">${sel ? body(sel) : '<p class="ip-p">Tap someone.</p>'}</div>
+    <div class="ip-foot"><button class="btn primary" data-ip="resume">${I.play}Play on</button></div></div>`;
 }
 
 function body(u) {
   const d = u.def, hero = HEROES[u.kind], hs = run.heroes[u.kind];
   const hp = Math.max(0, Math.ceil(u.hp)), max = Math.round(u.maxHp);
-  const sub = hero ? `${ROLE[hero.role]} · level ${u.level || 1}` : u.team === 'hero' ? `Hired hand · level ${u.level || 1}` : d.boss ? 'Boss' : 'Enemy';
-  let html = `<div class="ip-head"><img src="${portrait(u.kind)}" alt=""><div><h2>${d.name}</h2><span class="muted">${sub}${u.downed ? ' · down' : ''}</span>
-    <span class="ip-hp"><i style="width:${100 * hp / max}%"></i><em>${hp}/${max}</em></span>
-    ${hs && !hs.merc ? `<span class="ip-xp"><i style="width:${Math.min(100, 100 * hs.xp / xpToNext(hs.level))}%"></i><em>${Math.floor(hs.xp)}/${xpToNext(hs.level)}</em></span>` : ''}</div></div>`;
+  const sub = hero ? ROLE[hero.role] : u.team === 'hero' ? `Hired hand · level ${u.level || 1}` : d.boss ? 'Boss' : u.elite ? 'Elite' : 'Enemy';
+  let html = `<div class="ip-head"><span class="ip-pic"><img src="${portrait(u.kind)}" alt=""></span><div><h2>${d.name}</h2><span class="cap">${sub}${u.downed ? ' · down' : ''}</span>
+    <div class="bar hp"><i style="width:${100 * hp / max}%"></i><em>${hp}/${max}</em></div>
+    ${hs && !hs.merc ? `<div class="xpline"><span class="lvl">${hs.level}</span><div class="bar xp"><i style="width:${Math.min(100, 100 * hs.xp / xpToNext(hs.level))}%"></i><em>${Math.floor(hs.xp)}/${xpToNext(hs.level)}</em></div></div>` : ''}</div></div>`;
   // statuses
   const sts = unitStatuses(u);
-  if (sts.length) html += `<h3>Right now</h3><ul class="ip-list">${sts.map((s) => {
+  if (sts.length) html += `<h3 class="cap">Right now</h3><ul class="ip-list">${sts.map((s) => {
     const info = s.potion ? { name: POTIONS[s.potion].name, desc: POTIONS[s.potion].desc } : STATUSES[s.icon] || STATUSES.buff;
     const left = s.left != null ? secs(s.left) : s.potion ? 'this room' : '';
     return `<li>${ringSvg(s, 30)}<span><b>${info.name}</b>${left ? `<i class="ip-t">${left}</i>` : ''}<span>${info.desc}</span></span></li>`;
   }).join('')}</ul>`;
   if (hero) {
-    html += `<h3>Abilities</h3><ul class="ip-list">${hero.abilities.map((ab) => {
+    html += `<h3 class="cap">Abilities</h3><ul class="ip-list">${hero.abilities.map((ab) => {
       const tier = u.kit ? u.kit.tiers[ab.id] || 0 : 0, cd = u.kit ? Math.max(0, u.kit.cd[ab.id] || 0) : 0;
-      const owned = [1, 2, 3].filter((t) => (u.kit && u.kit.nodes[`${ab.id}${t}`]) || (ab === hero.abilities[0] && t === 1 && !u.kit)).length;
-      const state = tier ? (cd > 0 ? secs(cd) : 'ready') : owned ? `wakes at level ${[2, 5, 8][0]}` : 'not learned';
+      const state = tier ? (cd > 0 ? secs(cd) : 'ready') : 'not learned';
       return `<li class="${tier ? '' : 'dim'}"><span class="ab big ${tier && cd <= 0 ? 'ready' : ''}" style="--ac:${ABILITY_COLOR[abilityGlyph(ab.id)]};--p:${tier ? Math.min(1, cd / ab.cd) : 0}">${icon('ability', ab.id)}</span>
         <span><b>${ab.name}</b>${tier ? `<i class="ip-tier">${roman(tier)}</i>` : ''}<i class="ip-t">${state}</i><span>${ab.desc}${tier ? ' ' + ab.tiers[tier - 1] : ''}</span></span></li>`;
     }).join('')}</ul>
-    <h3>Trait</h3><p class="ip-p"><b>${hero.trait.name}.</b> ${hero.trait.desc}</p>`;
+    <h3 class="cap">Trait</h3><p class="ip-p"><b>${hero.trait.name}.</b> ${hero.trait.desc}</p>`;
   }
   if (u.team === 'hero') {
     const items = unitItems(run, u.kind, u);
-    html += `<h3>Carrying</h3>${items.length ? `<ul class="ip-list">${items.map((i) => {
+    html += `<h3 class="cap">Carrying</h3>${items.length ? `<ul class="ip-list">${items.map((i) => {
       if (i.kind === 'potion') { const p = POTIONS[i.id]; return `<li><span class="it big">${icon('potion', i.id)}</span><span><b>${p.name}</b><span>${p.desc}</span><em>${POTION_FUN[i.id] || ''}</em></span></li>`; }
       const t = TRINKETS[i.id] || { name: i.id, desc: '' };
       return `<li><span class="it big">${icon('trinket', i.id, '', t.color)}</span><span><b>${t.name}</b>${i.lv > 1 ? `<i class="ip-tier">${roman(i.lv)}</i>` : ''}${i.found ? '<i class="ip-t">found here</i>' : ''}<span>${t.desc}</span><em>${trinketFun(i.id)}</em></span></li>`;
-    }).join('')}</ul>` : '<p class="ip-p muted">Nothing.</p>'}`;
+    }).join('')}</ul>` : '<p class="ip-p">Nothing.</p>'}`;
   } else {
     const res = Object.entries(d.res || {}).filter(([, v]) => v !== 1);
     const word = { burn: 'fire', chill: 'cold', poison: 'poison', shock: 'lightning', wet: 'water' };
-    html += `<h3>From the bestiary</h3><p class="ip-p"><em>${beastFun(u.kind)}</em></p>${beastHabit(u.kind) ? `<p class="ip-p">${beastHabit(u.kind)}</p>` : ''}
-      ${res.length ? `<div class="ip-chips">${res.map(([k, v]) => `<span class="${v < 1 ? 'res' : 'weak'}">${icon('status', k)}${v === 0 ? 'Immune to' : v < 1 ? 'Shrugs off' : 'Weak to'} ${word[k] || k}</span>`).join('')}</div>` : ''}`;
+    html += `<h3 class="cap">From the bestiary</h3><p class="ip-p"><em>${beastFun(u.kind)}</em></p>${beastHabit(u.kind) ? `<p class="ip-p">${beastHabit(u.kind)}</p>` : ''}
+      ${res.length ? `<div class="reschips">${res.map(([k, v]) => `<span class="${v < 1 ? 'res' : 'weak'}">${icon('status', k)}${v === 0 ? 'Immune to' : v < 1 ? 'Shrugs off' : 'Weak to'} ${word[k] || k}</span>`).join('')}</div>` : ''}`;
   }
   return html;
 }
