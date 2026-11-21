@@ -1,5 +1,9 @@
 # Art the designed bosses need (lane B, round 10)
 
+**Art round 9 (lane A, wave 11)** drew the Goblin Chieftain, the Winter Queen, the Gilded Seraph (and her fallen
+look, not swapped in yet) and her choir singer (design/class-round9, art/bosses/). The rest below is still to do:
+the drums, the tunnel mouths and stage, the ice dais and wall, the sun blades, and the bosses drawn in code.
+
 Everything below is a PLACEHOLDER today: either an existing sprite recoloured and scaled (`js/recolor.js`), or simple
 parts drawn in code in `js/fx-boss.js`. Real art in the game's style: top-down bust, matte, ink outline, **no eyes**,
 built in parts like the heroes (`art/heroes/*.svg`, `js/parts.js`) where a unit has arms that move. Parts that are their
