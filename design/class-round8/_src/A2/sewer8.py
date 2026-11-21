@@ -17,14 +17,15 @@ def rat(S, x, y, a, k=1.0, fur="#9C8676", curl=0.0):
     pointed head turned `curl` degrees on its neck, two round pink ears, a pink nose. Its tail is drawn by the caller
     (the tails knot in the middle)."""
     T = f"{frame(x, y, a)} scale({k})"
-    TH = f"{T} rotate({curl} 0 18)"
-    S.shape(ell(0, 6, 15, 17), fur, T=T, shadow=3)
+    TH = f"{T} rotate({curl} 0 20)"
+    # a big round body and a smaller pointed head (round 8 look-over: a head as big as the rump read as a cone)
+    S.shape(ell(0, 6, 18, 23), fur, T=T, shadow=3)
     for s in (-1, 1):
-        S.shape(circ(s * 11, 26, 6.5), EAR, T=TH, shadow=2, side=False,
-                decor=f'<path d="{circ(s * 11, 27, 3.5)}" fill="#C98E86"/>')
-    S.shape(blob([(-12, 18), (0, 14), (12, 18), (9, 34), (4, 44), (0, 48), (-4, 44), (-9, 34)], 0.85), light(fur, 1.05), T=TH,
+        S.shape(circ(s * 10, 27, 5.5), EAR, T=TH, shadow=2, side=False,
+                decor=f'<path d="{circ(s * 10, 28, 3)}" fill="#C98E86"/>')
+    S.shape(blob([(-10, 22), (0, 18), (10, 22), (8, 33), (3, 43), (0, 46), (-3, 43), (-8, 33)], 0.85), light(fur, 1.04), T=TH,
             shadow=3)
-    S.shape(circ(0, 46, 3.4), NOSE, T=TH, shadow=0, side=False)
+    S.shape(circ(0, 44, 3), NOSE, T=TH, shadow=0, side=False)
 
 
 def rat_king():
