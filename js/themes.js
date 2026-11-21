@@ -211,7 +211,8 @@ export const THEMES = {
         hazards: [['beam', 3], ['spikes', 2], ['fire', 0.6]], mood: { fog: 'rgba(60,50,30,', fogK: 0.42, tint: 'rgba(255,240,180,0.162)' },
         props: [['slab', 1.4], ['crack', 1], ['candles', 0.6]] },
     ],
-    elite: 'angel', warden: 'archon', boss: 'radiant', bossAdds: ['cherub', 'cherub', 'angel'],
+    elite: 'angel', warden: 'archon', boss: 'gildedSeraph', // lane B (bosses2): was 'radiant' (js/boss-seraph.js)
+    bossAdds: ['cherub', 'cherub', 'angel'],
     hazards: [['beam', 3], ['spikes', 2]],
     props: [['slab', 1.2], ['candles', 1], ['crack', 0.8]],
     obstacles: [['rock', 1], ['brazier', 2], ['crate', 1]],
