@@ -243,7 +243,7 @@ export const ABILITIES2 = {
       after(u, 0.22, () => {
         if (!alive(t)) return;
         swingMark(w, u, u.r + u.def.range + 14, 0.8, { x: t.x, y: t.y, r: tier >= 3 ? 90 : 42 });
-        hurt(w, t, dmgOf(u, 2), u, { heavy: true, knock: 110, noDodge: true });
+        hurt(w, t, dmgOf(u, 1.7), u, { heavy: true, knock: 110, noDodge: true });
         stun(w, t, tier >= 2 ? 1.6 : 1); w.shake = Math.max(w.shake, 6);
         if (tier >= 3) for (const e of foesNear(w, u, t.x, t.y, 90)) if (e !== t) hurt(w, e, dmgOf(u, 0.6), u, { stagger: 50, knock: 140, kAngle: angleTo(t.x, t.y, e.x, e.y), noDodge: true });
       });
@@ -1236,7 +1236,7 @@ export const ABILITIES2 = {
           onHit: (w2, p, hitE) => { hit.add(hitE); if (left <= 0) return; const n = opponents(w2, u).filter((o) => !hit.has(o) && dist(o.x, o.y, hitE.x, hitE.y) < 230).sort((p1, q) => dist(hitE.x, hitE.y, p1.x, p1.y) - dist(hitE.x, hitE.y, q.x, q.y))[0];
             sparks(w2, hitE.x, hitE.y, a, 4, '#FFF4C8', 1); if (n) fire(hitE.x, hitE.y, n, k * (tierOf(u, 'ricochet') >= 3 ? 1.25 : 0.85), left - 1, hitE); } });
       };
-      fire(u.x + Math.cos(ang(u, t)) * u.r, u.y + Math.sin(ang(u, t)) * u.r, t, 1.3, tier >= 2 ? 5 : 3, null);
+      fire(u.x + Math.cos(ang(u, t)) * u.r, u.y + Math.sin(ang(u, t)) * u.r, t, 1.1, tier >= 2 ? 5 : 3, null);
     },
     show: { far: true },
   },

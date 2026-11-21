@@ -13,9 +13,9 @@ import { drawDrum, drawWarcamp, drawSpears } from './fx-boss.js';
 
 // Every move: a tell (a shape fills on the ground), the hit, a recovery (the hold: the party's window).
 export const CH = {
-  chop: { r: 175, arc: 1.9, tell: 0.85, dmg: 24, knock: 280, rec: 0.7 },
-  charge: { len: 620, tell: 0.85, dmg: 27, knock: 340, dazed: 1.7, open: 1.35, rec: 0.5 },
-  spear: { len: 640, hw: 26, tell: 0.75, dmg: 20, back: 0.5, rec: 0.35 },
+  chop: { r: 175, arc: 1.9, tell: 0.85, dmg: 26, knock: 280, rec: 0.7 },
+  charge: { len: 620, tell: 0.85, dmg: 29, knock: 340, dazed: 1.7, open: 1.35, rec: 0.5 },
+  spear: { len: 640, hw: 26, tell: 0.75, dmg: 21, back: 0.5, rec: 0.35 },
   roar: { r: 230, tell: 0.9, dmg: 10, stagger: 40, knock: 300 },
   drum: { every: 14, calls: 2, cap: 5, hp: 110, haste: 0.06 },
   mice: { n: 3, every: 11 },

@@ -56,7 +56,7 @@ It drops, venting steam; its hands fall with it.
 - The spin chasing one hero, then the Eye sweeping the room.
 
 ## Numbers
-Health 1050 (round 12; was 1000) (x1.4 for every boss, then the dungeon's strength and party size), float 46, mass 14. Phases at 65% and 35%.
+Health 950 (round 12; was 1000) (x1.4 for every boss, then the dungeon's strength and party size), float 46, mass 14. Phases at 65% and 35%.
 
 Balance (`node tools/runs.mjs --boss --theme spire --bossid greatEngine --level 66 --party paladin,archer,cleric,twinfang`:
 the Spire's strength stands in for the Foundry's; level 66 is a guess past the Dunes):

@@ -173,7 +173,7 @@ export const HEROES = {
     abilities: [
       // the id stays 'mend' so bought nodes in saves keep working
       { id: 'mend', name: 'Mending Ray', cd: 7, desc: 'A ray of light to the most hurt ally that heals them slowly while it holds (never herself).',
-        tiers: ['Heals 14% over 4s.', 'Heals 22% over 4s.', 'Splits to a second ally.'] },
+        tiers: ['Heals 14% over 4s.', 'Heals 18% over 4s.', 'Splits to a second ally.'] },
       { id: 'sanctuary', name: 'Sanctuary', cd: 16, desc: 'A circle of light that heals allies standing in it.',
         tiers: ['For 5s.', 'Bigger, 7s.', 'Enemies can\'t step in.'] },
       { id: 'smite', name: 'Smite', cd: 9, desc: 'A pillar of light on an enemy: hurts, staggers and makes it radiant.',

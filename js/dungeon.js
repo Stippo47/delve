@@ -197,7 +197,7 @@ export const DUNGEON_RANK = { wildwood: 0, warren: 1, sewers: 2, crypt: 3, frost
 // Round 12 (the campaign curve, tools/runs.mjs --campaign): set so each dungeon takes a fresh save about the same number
 // of runs as the one before (the Warren up, the Crypt on down). The numbers fold in how hard each dungeon's own kinds
 // are: the Spire's angels and the Foundry's floor 3 hit harder than their place in the list, so their numbers sit lower.
-export const RANK_MULT = [0.75, 2, 2.9, 3.3, 3.75, 4, 3.95, 4.6, 4.2];
+export const RANK_MULT = [0.75, 2, 2.75, 3.2, 3.75, 4, 3.95, 4.6, 4.2];
 export const FLOOR_STEP = 0.3;   // each floor on from the first: +30% of the dungeon's own strength
 export const ROOM_STEP = 0.035;  // each room further into a floor: +3.5%
 // (opts.asRank, for the balance batches in tools/balance.mjs: a dungeon's own enemies and rooms at another dungeon's
