@@ -1,3 +1,4 @@
+import { HEROES2 } from './heroes2.js';
 // The hero roster: who each hero is, what they do, and their skill tree. Pure data; sim.js runs the kits
 // (attack, abilities, trait), camp.js shows them and sells the tree nodes.
 //
@@ -7,7 +8,8 @@
 //
 // stats: hp, speed (units/s), r (collider), vr (head radius the sprite is sized from), turn/accel/face (momentum),
 // mass, role ('tank' | 'melee' | 'skirmish' | 'ranged' | 'caster' | 'support'), range, keep (ranged: how far it keeps),
-// atkCd (s), dmg, plus optional dodge, arc (melee swing width, rad), knock.
+// atkCd (s), dmg, plus optional dodge, arc (melee swing width, rad), knock, armor (points off every blow, sim.js hurt).
+// Ability cooldowns (cd) are written on the old scale and stretched by CD_MUL below.
 // attack.anim: how the sprite moves when it attacks: 'swing' (arm-r swings round its pivot), 'thrust' (arm-r jabs
 // forward), 'draw' (arm-r pulls back, then releases: bows), 'cast' (both arms lift), 'throw'.
 
@@ -21,7 +23,7 @@ export const HEROES = {
       { id: 'shieldBash', name: 'Shield Bash', cd: 7, desc: 'Lunges into an enemy with the shield, knocking it back.',
         tiers: ['Knocks back and staggers.', 'Stuns for a moment as well.', 'Hits everything in front, not just one.'] },
       { id: 'guard', name: 'Guard', cd: 12, desc: 'Stands beside a hurt ally and takes part of the damage meant for them.',
-        tiers: ['Takes 40% of their damage for 5s.', 'Takes 60%.', 'Also heals them 15% when it starts.'] },
+        tiers: ['Takes 40% of their damage for 5s.', 'Takes 60%.', 'Also heals them 10% when it starts.'] },
       { id: 'consecrate', name: 'Consecrate', cd: 14, desc: 'Holy ground around him: hurts enemies, mends allies.',
         tiers: ['A ring of light for 4s.', 'Bigger and lasts 6s.', 'Undead in it burn.'] },
     ],
@@ -241,6 +243,33 @@ export const HEROES = {
     trait: { id: 'immunity', name: 'Immunity', desc: 'Can\'t be poisoned, and his poison spreads to enemies nearby.' },
   },
 };
+Object.assign(HEROES, HEROES2); // round 10 (lane H): the rest of the picked heroes, heroes2.js
+// Round 11 (the designer: "Increase all ability cooldowns by like 20-25%"): every cooldown above is on the old scale;
+// they are all stretched here, once, so new heroes written on the old scale are stretched with the rest.
+export const CD_MUL = 1.22;
+for (const h of Object.values(HEROES)) for (const ab of h.abilities) ab.cd = Math.round(ab.cd * CD_MUL * 10) / 10;
+// Round 11, what each role is for (the designer: the Paladin "should be balanced so he is more of a tank than damage
+// dealer or healer. Those are secondary. Then someone like an archer should have more damage"). A hero's dmg stat
+// drives its weapon and every ability's damage, so one number a role moves all of it. The stats above are as each
+// hero was first written; these are laid over them once, here, so the roles can be balanced in one place
+// (measured with tools/balance.mjs: each role's share of a party's damage, healing and damage taken).
+export const ROLE_TUNE = {
+  tank: { dmg: 0.72, hp: 1.08 },      // takes it: hits a good deal softer, a little more health, and armour (below)
+  melee: { dmg: 1.05 },
+  skirmish: { dmg: 1.15, hp: 1.1 },   // in and out: the batches had them dying most and dealing least
+  ranged: { dmg: 1.25 },              // deals it, from behind
+  caster: { dmg: 1.12 },
+  support: { dmg: 0.9, heal: 0.85 },  // (healers carried every party they were in: all their healing a little down)
+};
+// Armour: points off every blow, never more than 60% of it; damage over time ignores it, heavy and critical blows get
+// past half (sim.js hurt). Plate and big shields; the web's Armour nodes add to it.
+export const ARMOUR = { paladin: 6, tower: 8, oldguard: 6, dame: 4, griffon: 5, bulwark: 6, warhelm: 3, gladiator: 2, samurai: 2, valkyrie: 2, bearskin: 2 };
+for (const [id, h] of Object.entries(HEROES)) {
+  const t = ROLE_TUNE[h.role] || {};
+  if (t.dmg) h.stats.dmg = Math.round(h.stats.dmg * t.dmg * 10) / 10;
+  if (t.hp) h.stats.hp = Math.round(h.stats.hp * t.hp);
+  if (ARMOUR[id]) h.stats.armor = ARMOUR[id];
+}
 export const HERO_IDS = Object.keys(HEROES);
 export const STARTERS = HERO_IDS.filter((k) => HEROES[k].starter);
 
@@ -273,7 +302,8 @@ export const STATS = {
   haste: { name: 'Ability haste', per: 0.04, max: 4, line: (p) => `Every ability comes round ${p}% sooner` },
   heal: { name: 'Healing', per: 0.12, max: 3, line: (p) => `Heals ${p}% more` },
   status: { name: 'Potency', per: 0.15, max: 3, line: (p) => `Statuses you apply build ${p}% faster` },
-  armor: { name: 'Toughness', per: 0.05, max: 4, line: (p) => `Takes ${p}% less damage` },
+  // (round 11: armour is points off every blow, to at most 60% of it; damage over time ignores it. per 0.02 = 2 points)
+  armor: { name: 'Armour', per: 0.02, max: 4, line: (p) => `+${p} armour: every blow loses that much (never more than 60% of it)` },
   abDmg: { name: 'power', per: 0.12, max: 3, line: (p, ab) => `${ab}: +${p}% damage` },
   abCd: { name: 'cooldown', per: 0.06, max: 3, line: (p, ab) => `${ab}: comes round ${p}% sooner` },
   abHeal: { name: 'mending', per: 0.15, max: 3, line: (p, ab) => `${ab}: heals ${p}% more` },
@@ -291,6 +321,7 @@ export const ABILITY_TAGS = {
   entangle: 'sd', rejuvenate: 'h', callWolf: 'd', raiseDead: 'd', lifeDrain: 'dh', boneSpear: 'ds',
   miasma: 'ds', cure: 'h', leeches: 's',
 };
+for (const h of Object.values(HEROES2)) for (const ab of h.abilities) if (ab.tags) ABILITY_TAGS[ab.id] = ab.tags;
 const POW = { d: 'abDmg', h: 'abHeal', s: 'abStatus' };
 export const TIER_LEVEL = [0, 4, 9];   // the hero level each tier can be bought from
 const TIER_COST = [1, 1, 2];
@@ -298,7 +329,7 @@ export const KEYSTONE_LEVEL = 12, TIP_LEVEL = 15, OUTER_LEVEL = 6;
 const ARM_NAMES = ['attack', 'survival', 'utility'];
 const KEYSTONES = [
   { id: 'slot2', kind: 'slot', name: 'Second trinket', desc: 'Wear a second trinket.', stats: [] },
-  { id: 'juggernaut', kind: 'keystone', name: 'Juggernaut', desc: '+20% health and takes 8% less damage.', stats: [{ k: 'hp', per: 0.2 }, { k: 'armor', per: 0.08 }] },
+  { id: 'juggernaut', kind: 'keystone', name: 'Juggernaut', desc: '+20% health and +3 armour.', stats: [{ k: 'hp', per: 0.2 }, { k: 'armor', per: 0.03 }] },
   { id: 'fury', kind: 'keystone', name: 'Fury', desc: '+15% damage and attacks 10% faster.', stats: [{ k: 'dmg', per: 0.15 }, { k: 'atkSpeed', per: 0.1 }] },
 ];
 const pct = (f) => Math.round(f * 100);

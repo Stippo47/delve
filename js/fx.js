@@ -6,6 +6,7 @@ import { OUTLINE, view } from './render.js';
 import { STYLE } from './parts.js';
 import { noteWorld, drawMarks, drawSigGround, drawSigAir, abilityRing, abilityBeam, abilityZone, EL, abilityRingGround, hookGround, abilityZoneAir, soulOrb, dustPuffs } from './fxkit.js';
 import { drawPuddle, snowflake } from './puddles.js';
+import { PROJ2, drawK2 } from './fx2.js';
 
 export function easeOut(k) { return 1 - (1 - k) * (1 - k) * (1 - k); }
 // a stable pseudo-random number from integers (flicker that doesn't need state)
@@ -87,6 +88,7 @@ export function drawGroundFx(ctx, w) {
     else if (f.type === 'beam' && f.kind === 'heal') beam(ctx, f, w.time);
     else if (f.type === 'wall' && f.kind === 'fire') wall(ctx, f, w.time);
     else if (f.type === 'pop') pop(ctx, f, w.time, 'ground');
+    else if (f.type === 'k2') drawK2(ctx, f, w, 'ground');
   }
   drawMarks(ctx, 0, 'ground');
 }
@@ -267,6 +269,7 @@ export function drawAirFx(ctx, w) {
     else if (f.type === 'hex') hexMark(ctx, f, w.time);
     else if (f.type === 'zone' && f.kind === 'storm') stormCloud(ctx, f, w.time);
     else if (f.type === 'sig') drawSigAir(ctx, f, w);
+    else if (f.type === 'k2') drawK2(ctx, f, w, 'air');
   }
 }
 // Radiance's burst (sim.js, round 8): a warm glow round the radiant unit for its few seconds, its edge marking how far
@@ -375,6 +378,13 @@ function beam(ctx, f, T) {
     for (let i = 0; i < (f.thin ? 2 : 4); i++) { const k = 1 - ((T * 0.9 + i / 4) % 1), o = Math.sin(k * 9 + T * 4) * 9 * th * Math.sin(k * Math.PI);
       inked(ctx, () => { ctx.beginPath(); ctx.arc(x1 + (x2 - x1) * k + nx * o, y1 + (y2 - y1) * k + ny * o, 4.6 * th + 0.6, 0, TAU); }, '#E0604B'); }
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x2, y2, 24 * th, '#E0604B', 0.4); ctx.restore();
+  } else if (f.kind === 'ray') {
+    // round 10: an elemental spirit's ray to the friend it lends its element: a thin wavering line in its colour
+    const c = f.col || '#FFF1B0', an = Math.atan2(y2 - y1, x2 - x1), nx = -Math.sin(an), ny = Math.cos(an);
+    const path = (ph, amp) => { ctx.beginPath(); for (let i = 0; i <= 16; i++) { const k = i / 16, o = Math.sin(k * 7 + ph) * amp * Math.sin(k * Math.PI); const px = x1 + (x2 - x1) * k + nx * o, py = y1 + (y2 - y1) * k + ny * o; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } };
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = a * 0.35; ctx.strokeStyle = c; ctx.lineWidth = 12; ctx.lineCap = 'round'; path(T * 5, 5); ctx.stroke(); ctx.restore();
+    inkLine(ctx, () => path(T * 5, 5), c, 3.6);
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x2, y2, 18, c, 0.45); ctx.restore();
   } else if (f.kind === 'heal') {
     // round 9: the mending ray is a plain straight beam lying under the units: a soft light and a bright core line
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.lineCap = 'round';
@@ -542,6 +552,7 @@ export function drawProjectile(ctx, p, T) {
   }
   ctx.save(); ctx.translate(p.x + lx, p.y + ly);
   const ab = p.ab;
+  if (PROJ2[p.kind]) { PROJ2[p.kind](ctx, p, T, ang, sp); ctx.restore(); return; } // fx2.js: the new heroes' shots
   switch (p.kind) {
     case 'icicle': case 'shard': {
       ctx.rotate(ang);
@@ -730,9 +741,9 @@ function boneLance(ctx, sp, T, tier) {
   ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.moveTo(16, -3.5); ctx.quadraticCurveTo(29, -3.5, 37, 1); ctx.lineTo(30, -0.5); ctx.lineTo(16, -1); ctx.closePath(); ctx.fill();
   ctx.fillStyle = '#B9AD94'; ctx.fillRect(12, -5, 3, 10.5);
 }
-function roundRect(g, x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); }
+export function roundRect(g, x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); }
 // a fading streak behind a flying thing (in its own frame, +x forward)
-function trail(ctx, sp, len, wd, col) {
+export function trail(ctx, sp, len, wd, col) {
   const L = Math.min(len, sp * 0.08 + 8);
   const g = ctx.createLinearGradient(-L, 0, 0, 0); g.addColorStop(0, rgba(col, 0)); g.addColorStop(1, rgba(col, 0.7));
   ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-L, 0); ctx.lineTo(0, -wd); ctx.lineTo(0, wd); ctx.closePath(); ctx.fill();

@@ -30,7 +30,7 @@ function kindsOf(T) {
   const add = (k, list = kinds) => { if (k && DEFS[k] && DEFS[k].team !== 'hero' && !kinds.includes(k) && !bosses.includes(k)) (DEFS[k].boss ? bosses : list).push(k); };
   for (const F of T.floors || []) { for (const [k] of F.enemies || []) add(k); add(F.elite); for (const k of F.bossAdds || []) add(k); }
   for (const F of T.floors || []) add(F.mini);
-  add(T.elite); for (const k of T.bossAdds || []) add(k); add(T.warden); add(T.boss);
+  add(T.elite); for (const k of T.bossAdds || []) add(k); add(T.warden); add(T.boss); add(T.bossKind); // lane B: a theme's designed boss (bossKind) too
   return { kinds, bosses };
 }
 // { heroes: [id...], dungeons: [{ id, name, open, kinds: [kind...], bosses: [kind...] }] }. A kind is listed under the

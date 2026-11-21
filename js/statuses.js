@@ -15,6 +15,10 @@ export const STATUS = {
   curse: { need: 100, after: 0, decay: 5, col: '#9A5CC8' },
   entangle: { need: 100, after: 0, decay: 6, col: '#7FA04A' },
 };
+// Poison's burst (round 11; it used to take 15% of max health at once): SICKENED for sickT seconds. The unit loses
+// `drain` of its max health over that time (not at once: it can be healed through), deals `weaken` less damage and
+// moves and attacks `slow` slower. Anything that cleans statuses off ends it.
+export const POISON = { sickT: 6, drain: 0.1, weaken: 0.3, slow: 0.2 };
 export const BUILD_IDS = Object.keys(STATUS);
 export const needOf = (u, id) => { const n = STATUS[id].need; return typeof n === 'function' ? n(u) : n; };
 // 0..1: how close a unit's status is to bursting.

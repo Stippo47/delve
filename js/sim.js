@@ -5,10 +5,11 @@ import { lineClear, pathClear, rayToRoundRect, circleRect, findPath, buildGrid }
 import { kitThink, kitTick, hooksOf, segDist, heroAttack } from './kits.js';
 import { trinketHooks } from './trinkets.js';
 import { cue } from './sfx.js';
-import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE } from './statuses.js';
+import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON } from './statuses.js';
 import { tallyHurt, tallyHeal, tallyDown, noteStatus } from './stats.js';
 
 let NEXT_ID = 1;
+let arcing = false; // an overload's arcs are landing (addStatus)
 const DIRS = 16;
 const DIR_X = [], DIR_Y = [];
 for (let i = 0; i < DIRS; i++) { DIR_X.push(Math.cos(i / DIRS * TAU)); DIR_Y.push(Math.sin(i / DIRS * TAU)); }
@@ -50,6 +51,7 @@ export function spawn(w, kind, x, y, opts = {}) {
     trinkets: opts.trinkets || [], trinketHooks: trinketHooks(opts.trinkets), hasKey: !!opts.hasKey,
     strafeSign: chance(0.5) ? 1 : -1, wanderA: rand() * TAU, hazardT: 0, forcedGoal: null,
     gen: opts.gen || 0, bob: rand() * TAU, lastAttackT: -9, aggro: team === 'hero' || !!w.battle, potions: opts.potions || 0, path: null, pathT: 0, pathGoal: null,
+    armor: (d.armor || 0) * (hero ? 1 : Math.sqrt(Math.max(1, mult))), // (an enemy's grows a little with its dungeon's strength)
     home: { x, y }, atkMul: 1, moveMul: 1, mvA: hero ? 0 : Math.PI, spd: 0, sdx: 0, sdy: 0, lungeT: 0, recoilT: 0, hitT: 0, hitA: 0, tauntBy: null, tauntT: 0,
   };
   if (w.battle && !opts.team) u.adopt = true; // (step: takes the side of whoever it says called it)
@@ -70,7 +72,7 @@ const speedOf = (u) => {
   let s = u.def.speed * (u.moveMul || 1);
   for (const h of hooksOf(u)) if (h.moveSpeed) s *= h.moveSpeed(u);
   s *= 1 - Math.min(0.6, u.st.chill / 160);
-  if (u.st.poison > 20) s *= 0.9;          // poison slows a little
+  if (u.sickT > 0) s *= 1 - POISON.slow; else if (u.st.poison > 20) s *= 0.9; // poison slows a little; sickened (its burst), a lot
   if (u.inOil) s *= 0.7;
   if (u.st.entangle > 0) s *= 1 - ENTANGLE.slow * fillOf(u, 'entangle'); // entangled: very slow
   if (u.pulse != null) s *= u.pulse;       // slimes move in hops (round 9): their brain sets the pulse
@@ -85,7 +87,7 @@ const atkRate = (u) => {
   let r = u.atkMul || 1;
   for (const b of u.buffs) if (b.atkSpeed) r *= b.atkSpeed;
   for (const h of hooksOf(u)) if (h.atkSpeed) r *= h.atkSpeed(u);
-  if (u.st.poison > 20) r *= 0.9;
+  if (u.sickT > 0) r *= 1 - POISON.slow; else if (u.st.poison > 20) r *= 0.9;
   if (u.st.radiance > 0) r *= 1 - RADIANCE.atkSlow * fillOf(u, 'radiance'); // radiant: attacks come slower
   if (u.tangledT > 0) r *= ENTANGLE.atkSlow;                                    // tangled: attacks slowly
   return r;
@@ -95,11 +97,12 @@ const buffMul = (u, key) => { let m = 1; for (const b of u.buffs) if (b[key] != 
 // unitNumbers, so they always match what the sim does): its weapon's damage, and what its buffs and statuses do to
 // everything it deals.
 const hitDmg = (u) => u.def.dmg * u.dmgMul;
-const blowMul = (u) => buffMul(u, 'dealt') * (u.st.radiance > 0 ? 1 - RADIANCE.weaken * fillOf(u, 'radiance') : 1); // radiant: much weaker blows
+const blowMul = (u) => buffMul(u, 'dealt') * (u.st.radiance > 0 ? 1 - RADIANCE.weaken * fillOf(u, 'radiance') : 1) * (u.sickT > 0 ? 1 - POISON.weaken : 1); // radiant: much weaker blows; sickened: weaker
 // The numbers a unit fights with right now: damage per weapon hit (before the target's armour and situational traits),
 // weapon attacks per second (in reach), health, move speed (px/s) and reach.
+export const ARMOUR_CAP = 0.6;
 export function unitNumbers(u) {
-  return { hit: hitDmg(u) * blowMul(u), aps: atkRate(u) / (u.def.atkCd || 1), hp: u.maxHp, speed: speedOf(u), range: u.def.range || 0 };
+  return { hit: hitDmg(u) * blowMul(u), aps: atkRate(u) / (u.def.atkCd || 1), hp: u.maxHp, speed: speedOf(u), range: u.def.range || 0, armor: u.armor || 0 };
 }
 const immuneTo = (u, type) => u.buffs.some((b) => b.statusImmune || (b.immune && b.immune.includes(type))) || hooksOf(u).some((h) => h.immune && h.immune.includes(type));
 const knockImmune = (u) => u.buffs.some((b) => b.knockImmune) || hooksOf(u).some((h) => h.knockImmune);
@@ -123,7 +126,7 @@ export function heal(w, u, amount, src, o) {
   if (u.hp - before > 2 && rand() < 0.5) w.particles.push({ x: u.x + rrange(-12, 12), y: u.y, vx: 0, vy: 0, rise: 50, up: 0, life: 0.6, max: 0.6, size: 4, color: '#9BE07A' });
   return u.hp - before;
 }
-export function cleanse(u) { u.st = freshStatuses(); u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.hexed = false; u.radiantT = 0; u.tangledT = 0; }
+export function cleanse(u) { u.st = freshStatuses(); u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; }
 // Cursed's burst: an armed hex fires on the unit's next attack, heal or summon. hexFires() arms the window (everything
 // that action does in the next CURSE.windowT turns too) and says whether this one turns.
 function hexFires(w, u) {
@@ -662,6 +665,9 @@ const KNOCK = 1.6; // every knockback, scaled (round 6: "more knockback, more ph
 const SHIELD_BEARERS = new Set(['paladin', 'tower', 'knight']); // heroes carrying a shield on the front
 export function hurt(w, u, amount, src, o = {}) {
   if (!alive(u) || u.invulnT > 0 || amount <= 0 || u.ethereal) return 0;
+  // round 10, chains (families.js): a body segment flinches, but the blow lands on its head (no shove: it follows)
+  if (u.linkTo) { if (!alive(u.linkTo)) return 0; u.flashT = 0.12; u.hitT = 0.16; u.hitA = src ? angleTo(src.x, src.y, u.x, u.y) : 0; u.hitX = u.x; u.hitY = u.y;
+    return hurt(w, u.linkTo, amount * (u.def.segTaken ?? 0.6), src, { ...o, knock: 0 }); }
   // a brain leech's host (round 9, foes9.js): its friends' blows go to the leech; the shove still lands (a hard one
   // knocks the leech off)
   if (u.charmed && src && src.team === u.charmTeam && !o.dot && alive(u.charmed)) {
@@ -687,6 +693,7 @@ export function hurt(w, u, amount, src, o = {}) {
     hurt(w, u.guardBy, share, src, { ...o, guarded: true, knock: 0 });
   }
   if (u.act && u.act.type === 'drink' && !o.dot) u.act = null;
+  if (src && !o.dot && src.buffs && src.buffs.some((b) => b.blind) && chance(0.6)) { textU(w, u.x, u.y, u.r, 'miss', '#CFE8FF', 0.8); return 0; } // blinded (kits2: Digger's dirt, Bandit's smoke)
   if (!o.dot && !o.noDodge && u.def.dodge && chance(u.def.dodge)) { textU(w, u.x, u.y, u.r, 'dodge', '#CFE8FF', 0.8); return 0; }
   let amt = amount;
   if (src && alive(src)) { for (const h of hooksOf(src)) if (h.dealt) amt = h.dealt(w, src, u, amt, o); amt *= blowMul(src); }
@@ -709,6 +716,10 @@ export function hurt(w, u, amount, src, o = {}) {
   if (!o.dot && src && !onShield && (u.buffs.some((b) => b.frontBlock) || SHIELD_BEARERS.has(u.kind)) && angleDiff(fromA + Math.PI, u.facing) < 1.1) onShield = true;
   // shatter: a hard hit on a frozen unit
   if (u.frozenT > 0 && !o.dot && (o.heavy || amount >= 12 || (o.knock || 0) >= 150)) shatter(w, u, src);
+  // Armour (round 11): every blow loses the wearer's armour in points, but never more than ARMOUR_CAP of itself: a
+  // swarm's nips mostly bounce off, a heavy blow mostly goes through. A blow marked heavy, or a critical one, gets past
+  // half of it. Burning, poison and the like (damage over time) ignore it.
+  if (!o.dot && u.armor > 0) amt -= Math.min(u.armor * (o.heavy || o.crit ? 0.5 : 1), amt * ARMOUR_CAP);
   u.hp -= amt;
   if (w.stats) tallyHurt(w, u, src, amt, o);
   if (!o.dot) cue('hit', u, src, { amt, crit: o.crit, heavy: o.heavy, shot: o.shot, blocked: u.blockedAt === w.time });
@@ -750,6 +761,7 @@ export function hurt(w, u, amount, src, o = {}) {
 
 export function addStatus(w, u, type, amount, src) {
   if (!alive(u) || u.ethereal || immuneTo(u, type)) return;
+  if (u.linkTo) { if (alive(u.linkTo)) addStatus(w, u.linkTo, type, amount * (u.def.segTaken ?? 0.6), src); return; } // a chain's segment: its head takes it
   if (type === 'radiance' && (u.radiantT > 0 || u.radImmuneT > 0)) return; // glowing, or just was: its own aura can't feed it
   if (type === 'entangle' && (u.tangledT > 0 || u.tangleImmuneT > 0)) return; // held fast already, or just got free
   const res = (u.def.res && u.def.res[type]) ?? 1;
@@ -774,8 +786,15 @@ export function addStatus(w, u, type, amount, src) {
     if (s.shock >= need) {                                       // overload: a long jolt that arcs to two friends close by
       s.shock = after; burst(); stun(w, u, 1.0); u.act = null;
       textU(w, u.x, u.y, u.r + 12, 'OVERLOAD', STATUS.shock.col, 1.2);
-      const near = w.units.filter((o) => o !== u && alive(o) && !o.ethereal && o.team === u.team && dist(o.x, o.y, u.x, u.y) < 140).slice(0, 2);
-      for (const o of near) { fx(w, { type: 'beam', kind: 'lightning', x1: u.x, y1: u.y, x2: o.x, y2: o.y, max: 0.25 }); addStatus(w, o, 'shock', 30, src); }
+      // (round 11: an arc that overloads its target doesn't arc again. With shock built up fast enough two units used to
+      // overload each other back and forth without end, until the game fell over.)
+      if (!arcing) {
+        arcing = true;
+        try {
+          const near = w.units.filter((o) => o !== u && alive(o) && !o.ethereal && o.team === u.team && dist(o.x, o.y, u.x, u.y) < 140).slice(0, 2);
+          for (const o of near) { fx(w, { type: 'beam', kind: 'lightning', x1: u.x, y1: u.y, x2: o.x, y2: o.y, max: 0.25 }); addStatus(w, o, 'shock', 30, src); }
+        } finally { arcing = false; }
+      }
     }
     return;
   }
@@ -811,14 +830,15 @@ export function addStatus(w, u, type, amount, src) {
   if (type === 'burn') {
     if (u.frozenT > 0) { u.frozenT = 0; s.chill = 0; puff(w, u.x, u.y, 'rgba(235,240,245,0.8)', 10, 60, 9, 0.8); textU(w, u.x, u.y, u.r, 'thaw', '#DDEAF2', 0.8); }
     s.chill = Math.max(0, s.chill - amount);
-    if (s.burn >= need) { s.burn = after; burst(); textU(w, u.x, u.y, u.r + 12, 'SCORCH', '#FF7A2F', 1.2); flames(w, u.x, u.y, 10, u.vr * 0.8, 90); hurt(w, u, 22, src, { noDodge: true, noHex: true, stk: 'burn' }); explode(w, u.x, u.y, 60, 10, { burn: 24, stk: 'burn' }, src, '#FF7A2F', u); }
+    if (s.burn >= need) { s.burn = after; burst(); textU(w, u.x, u.y, u.r + 12, 'SCORCH', '#FF7A2F', 1.2); flames(w, u.x, u.y, 10, u.vr * 0.8, 90); hurt(w, u, 22, src, { noDodge: true, noHex: true, stk: 'burn', proc: true }); /* (proc: a scorch never sets off on-hit hooks again: with a fire-weak target that looped for ever) */ explode(w, u.x, u.y, 60, 10, { burn: 24, stk: 'burn' }, src, '#FF7A2F', u); }
   } else if (type === 'chill') {
     if (s.chill >= need && u.frozenT <= 0) {
       u.frozenT = u.def.boss ? 1.6 : 3; s.chill = after; s.burn = 0; u.freezeImmune += 45; u.act = null; burst();
       textU(w, u.x, u.y, u.r + 12, 'FREEZE', '#7FD6F5', 1.2); puff(w, u.x, u.y, '#BFEFFF', 10, 70, 4);
     }
   } else if (type === 'poison') {
-    if (s.poison >= need) { s.poison = after; burst(); textU(w, u.x, u.y, u.r + 12, 'ROT', '#9BCB3C', 1.2); hurt(w, u, u.maxHp * 0.15, src, { noDodge: true, noHex: true, color: '#9BCB3C', stk: 'poison' }); }
+    // round 11: no more 15% of its health at once. It is SICKENED: drained slowly, weaker and slower for a while.
+    if (s.poison >= need) { s.poison = after; burst(); textU(w, u.x, u.y, u.r + 12, 'SICK', '#9BCB3C', 1.2); u.sickT = POISON.sickT; }
   }
 }
 
@@ -870,11 +890,16 @@ export function scatterCoins(w, x, y, n, reach = 1) {
   }
 }
 function kill(w, u, src) {
+  // (round 11: once only. Two exploding minions side by side used to kill each other back and forth without end: each
+  // blast hurt the other while it was still mid-death, until the game fell over.)
+  if (u.dying) return;
+  u.dying = true;
   const was = w.actor; w.actor = u; // (battle mode: what it leaves behind is its side's)
-  try { killNow(w, u, src); } finally { w.actor = was; }
+  try { killNow(w, u, src); } finally { w.actor = was; if (!u.dead) u.dying = false; } // (a downed hero can fall again once it's back up)
 }
 function killNow(w, u, src) {
   u.hp = 0;
+  if (u.befuddled) { u.team = u.befuddled.was; u.befuddled = null; } // (the Jester's Befuddle, kits2.js: it dies as what it is, not as one of ours)
   if (u.charmed) { const l = u.charmed; u.team = u.charmTeam; u.charmed = null; if (l.host === u) { l.host = null; l.mass = l.def.mass; } } // a leech's host goes down as itself
   if (u.host) { const h = u.host; u.host = null; if (h.charmed === u) { h.team = h.charmTeam; h.charmed = null; h.target = null; h.charmCd = 6; } } // a leech dies: its host is itself again
   if (src && src !== u && alive(src)) for (const h of hooksOf(src)) if (h.kill) h.kill(w, src, u);
@@ -886,7 +911,7 @@ function killNow(w, u, src) {
   }
   if (u.summon) { u.dead = true; puff(w, u.x, u.y, '#B8C8DA', 10, 80, 5, 0.5); return; } // summons just fade (blue-grey: ours, round 8)
   if (u.team === 'hero' && !w.battle) {
-    u.downed = true; u.act = null; u.frozenT = 0; u.st = freshStatuses(); u.hexed = false; u.radiantT = 0; u.tangledT = 0;
+    u.downed = true; u.act = null; u.frozenT = 0; u.st = freshStatuses(); u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0;
     textU(w, u.x, u.y, u.r + 10, 'DOWN', '#FF8A80', 1.1);
     emit(w, 'heroDown', u);
     return;
@@ -944,7 +969,7 @@ function meleeSwing(w, u, single) {
   w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, color: u.team === 'hero' ? '#FFFFFF' : '#FFD2C2', src: u });
   for (const o of targets) {
     hurt(w, o, hitDmg(u) * rrange(0.9, 1.1), u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison, radiance: d.radiance, curse: d.curse,
-      burn: d.burn, entangle: d.entangle, stagger: d.stagger, wet: d.wet }); // round 9: a def's blow can carry any build-up
+      burn: d.burn, entangle: d.entangle, stagger: d.stagger, wet: d.wet, chill: d.team === 'enemy' ? d.chill : 0 }); // round 9: a def's blow can carry any build-up (round 10: an enemy's chill too, the frost wolf's bite)
   }
 }
 
@@ -1179,6 +1204,11 @@ function statusTick(w, u, dt) {
     if (s.burn > 4 && rand() < dt * (4 + 10 * fillOf(u, 'burn'))) flames(w, u.x, u.y - u.vr * 0.3, 1, u.vr * 0.6, 60);
   }
   if (s.chill > 0) s.chill = Math.max(0, s.chill - STATUS.chill.decay * dt);
+  if (u.sickT > 0) { // sickened (poison's burst): a slow drain; it is weaker and slower meanwhile (blowMul, speedOf, atkRate)
+    u.sickT = Math.max(0, u.sickT - dt);
+    hurt(w, u, u.maxHp * POISON.drain / POISON.sickT * dt * (u.def.boss ? 0.4 : 1), null, { dot: true, color: '#9BCB3C', by: u.stBy && u.stBy.poison, stk: 'poison' });
+    if (rand() < dt * 9) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.8, y: u.y + rrange(-u.r, u.r) * 0.8, vx: rrange(-12, 12), vy: -32, life: 0.8, max: 0.8, size: 5, color: '#B6E05A' });
+  }
   if (s.poison > 0) { s.poison = Math.max(0, s.poison - STATUS.poison.decay * dt); hurt(w, u, s.poison * 0.07 * dt, null, { dot: true, color: '#9BCB3C', by: u.stBy && u.stBy.poison, stk: 'poison' });
     if (s.poison > 25 && rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.7, y: u.y + rrange(-u.r, u.r) * 0.7, vx: 0, vy: -25, life: 0.6, max: 0.6, size: 4, color: '#9BCB3C' }); }
   if (u.frozenT > 0) u.frozenT -= dt;
@@ -1222,6 +1252,7 @@ function physics(w, dt) {
   const us = w.units;
   for (const u of us) {
     if (u.dead || u.downed) continue;
+    if (u.fixed) { u.vx = u.vy = u.kx = u.ky = 0; continue; } // round 10: set in place by its brain (a turret on a wall, a chain's segment)
     const frozen = u.frozenT > 0;
     const acc = Math.min(1, dt * 20);
     if (frozen) { u.vx *= 0.8; u.vy *= 0.8; }
@@ -1255,10 +1286,11 @@ function physics(w, dt) {
     const a = us[i]; if (a.dead || a.downed || a.ethereal) continue;
     for (let j = i + 1; j < us.length; j++) {
       const b = us[j]; if (b.dead || b.downed || b.ethereal) continue;
+      if (a.def.pass || b.def.pass || (a.fixed && b.fixed) || (a.linkTo && a.linkTo === b.linkTo)) continue; // round 10: things that roll through (gear sprites), chains
       const dx = b.x - a.x, dy = b.y - a.y; const d2 = dx * dx + dy * dy; const m = a.r + b.r;
       if (d2 >= m * m || d2 === 0) continue;
       const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, over = m - d;
-      const ta = b.mass / (a.mass + b.mass), tb = 1 - ta;
+      const ta = a.fixed ? 0 : b.fixed ? 1 : b.mass / (a.mass + b.mass), tb = 1 - ta;
       a.x -= nx * over * ta; a.y -= ny * over * ta; b.x += nx * over * tb; b.y += ny * over * tb;
       // bowling: a fast knocked body transfers momentum
       const ka = Math.hypot(a.kx, a.ky), kb = Math.hypot(b.kx, b.ky);
@@ -1296,6 +1328,13 @@ function projectiles(w, dt) {
       if (p.team !== 'neutral' && u.team === p.team) continue;
       if (p.hitSet && p.hitSet.has(u)) continue;
       if (dist(p.x, p.y, u.x, u.y) < u.r + p.r) {
+        // round 10, the gilded golem: a shot that hits its front bounces back at whoever shot it
+        if (u.def.mirror && !p.noMirror && angleDiff(Math.atan2(-p.vy, -p.vx), u.facing) < (u.def.mirror || 1.2)) {
+          const back = p.owner && alive(p.owner) ? angleTo(p.x, p.y, p.owner.x, p.owner.y) : Math.atan2(-p.vy, -p.vx), sp = Math.hypot(p.vx, p.vy);
+          p.vx = Math.cos(back) * sp; p.vy = Math.sin(back) * sp; p.a = back; p.team = u.team; p.owner = u; p.noMirror = true; p.home = null; p.life = Math.max(p.life, 1);
+          if (p.hitSet) p.hitSet.clear(); u.blockedAt = w.time; sparks(w, p.x, p.y, back, 6, '#FFF1B0', 1.1);
+          break;
+        }
         const friendly = p.team === 'neutral' && p.owner && u.team === p.owner.team;
         const o = { ...p.o, kAngle: Math.atan2(p.vy, p.vx), shot: true, pab: p.ab, tk: p.tk };
         if (friendly) { for (const k of ['chill', 'burn', 'poison']) if (o[k]) o[k] *= 0.4; }

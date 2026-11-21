@@ -8,7 +8,7 @@
 // of its own), floor 3 with the dungeon's boss. Each floor is its own place (themes.js floorTheme). A run can start at
 // a checkpoint floor (opts.floor). Heroes go in at their permanent level and keep the XP they earn (levels give skill
 // points, not strength).
-import { makeWorld, spawn, step, alive, addStatus, hurt, puff, fx, scatterCoins, addDanger } from './sim.js';
+import { makeWorld, spawn, step, alive, addStatus, hurt, puff, fx, scatterCoins, addDanger, kill } from './sim.js';
 import { newStats, finishStats, tallyFoe, tallyRevive } from './stats.js';
 import { DEFS, levelHp, levelDmg, TRINKET_IDS } from './units.js';
 import { trinketHooks, raiseGhost, wears } from './trinkets.js';
@@ -48,7 +48,7 @@ export function newRun(save, opts = {}) {
   const floor = Math.max(1, Math.min(FLOORS, Math.floor(+opts.floor || +debugParam('floor') || 1)));
   const run = { depth: opts.depth || save.depth || 1, theme, mercs: !!opts.mercs, hired, party, floor, startFloor: floor, map: makeFloor(floorTheme(theme, floor).kinds), coins: 0, gems: 0,
     satchel: [], keys: 0, heroes, phase: 'fight', t: 0, fade: 1, save, kills: 0, banner: null, rooms: 0, leaving: false,
-    floorDone: false, minis: [false, false], bossKilled: false };
+    floorDone: false, minis: [false, false], bossKilled: false, asRank: opts.asRank, bare: !!opts.bare }; // (bare: the balance batches: nobody picks up trinkets or is handed potions)
   run.stats = newStats([...party, ...hired], hired); // stats.js: who did what, for the result card
   // testing: ?bossroom jumps straight to a floor's last room (floor 3's, or ?floor=N's: a mini-boss), ?lvl=N starts the
   // heroes at level N, ?floor=N starts at floor N
@@ -125,7 +125,8 @@ const packOf = (k) => DEFS[k].pack || OLD_PACK[k] || null;
 // a kind from the next floor's roster (later waves bring heavier things).
 function rollKinds(run, budget, harder = 0) {
   const kinds = [];
-  const at = (f) => floorTheme(run.theme, Math.min(FLOORS, f)).enemies;
+  const only = debugParam('foes'); // testing: ?foes=kind,kind (only these, for clips of new kinds)
+  const at = (f) => (only ? only.split(',').filter((k) => DEFS[k]).map((k) => [k, 1]) : floorTheme(run.theme, Math.min(FLOORS, f)).enemies);
   for (let guard = 0; budget > 0 && guard < 40; guard++) {
     const roster = chance(harder) ? at(run.floor + 1) : at(run.floor);
     const k = weighted(roster, rand), c = costOf(k), pk = packOf(k);
@@ -176,27 +177,31 @@ function arm(u, n) {
   u.trinkets = list; u.trinketHooks = trinketHooks(list); u.carried = list.slice();
 }
 // Harder dungeons and deeper floors pay better.
-const goldMul = (run) => 1 + 0.25 * (DUNGEON_RANK[run.theme] || 0) + 0.15 * (run.floor - 1);
+const goldMul = (run) => 1 + 0.25 * rankOf(run) + 0.15 * (run.floor - 1);
 // How likely any one enemy is to be an elite (designer, round 7: "have elites show up more often"): more on deeper
 // floors, in harder dungeons and in later waves.
 // (testing: ?elites makes every enemy an elite)
-const eliteP = (run, wave = 0) => (debugParam('elites') != null ? 1 : Math.min(0.32, 0.05 + 0.03 * (run.floor - 1) + 0.015 * (DUNGEON_RANK[run.theme] || 0) + 0.025 * wave));
+const eliteP = (run, wave = 0) => (debugParam('elites') != null ? 1 : Math.min(0.32, 0.05 + 0.03 * (run.floor - 1) + 0.015 * rankOf(run) + 0.025 * wave));
 // A major (round 9: "Majors can appear on any floor"): rare, a little more often deeper and in later waves (?majors
 // makes every enemy one).
-const majorP = (run, wave = 0) => (debugParam('majors') != null ? 1 : Math.min(0.06, 0.008 + 0.006 * (run.floor - 1) + 0.003 * (DUNGEON_RANK[run.theme] || 0) + 0.005 * wave));
+const majorP = (run, wave = 0) => (debugParam('majors') != null ? 1 : Math.min(0.06, 0.008 + 0.006 * (run.floor - 1) + 0.003 * rankOf(run) + 0.005 * wave));
 
 // How hard each dungeon type is, easiest first (designer, round 6: each dungeon harder than the last; round 7: three
 // harder ones after the Crypt; round 8: "make each dungeon and floor clearly harder than the last ... it has to be a
 // challenge"). Round 8: the party no longer levels up inside a run (its strength is the skill web it has bought), so
 // each dungeon is pitched at a party that has grown: the order is the order they open in.
 // Round 9: the Wildwood is the first (rank 0) and everything after it moves up one; the Warren, now the second, a bit harder.
-export const DUNGEON_RANK = { wildwood: 0, warren: 1, sewers: 2, crypt: 3, frost: 4, ember: 5, spire: 6 };
+export const DUNGEON_RANK = { wildwood: 0, warren: 1, sewers: 2, crypt: 3, frost: 4, ember: 5, spire: 6, dunes: 7, foundry: 8 };
 // Enemy strength (hp x m, blows x 0.65 + 0.35 m) for a room: the dungeon, the floor, and how far into the floor.
-export const RANK_MULT = [0.75, 1.6, 2.35, 3.8, 4.6, 5.4, 5.9];
+// Round 10: the Sunken Dunes and the Clockwork Foundry after the Spire, each about one ordinary step (+0.8 to +0.9) harder.
+export const RANK_MULT = [0.75, 1.6, 2.35, 3.8, 4.6, 5.4, 5.9, 7.4, 8.4];
 export const FLOOR_STEP = 0.3;   // each floor on from the first: +30% of the dungeon's own strength
 export const ROOM_STEP = 0.035;  // each room further into a floor: +3.5%
+// (opts.asRank, for the balance batches in tools/balance.mjs: a dungeon's own enemies and rooms at another dungeon's
+// strength, numbers and elite odds, so every dungeon can be tried with the same party)
+export const rankOf = (run) => run.asRank ?? DUNGEON_RANK[run.theme] ?? 0;
 export const enemyMult = (run, L) => {
-  const rank = DUNGEON_RANK[run.theme] || 0;
+  const rank = rankOf(run);
   return RANK_MULT[rank] * (1 + FLOOR_STEP * (run.floor - 1) + ROOM_STEP * L) + 0.22 * (run.depth - 1);
 };
 // How many enemies, in budget points, for a fight room before the party-size scaling: more on later floors and in
@@ -205,7 +210,7 @@ export const COUNT_MUL = 1.5;
 // A smaller party meets fewer enemies and weaker floor foes (by party size 1-4).
 export const PARTY_SCALE = [0.3, 0.62, 0.92, 1.2];
 export const BOSS_HP = [0.45, 0.7, 0.9, 1.1];
-const roomBudget = (run, L, nCells) => (4 + run.depth * 2 + run.floor * 1.7 + (DUNGEON_RANK[run.theme] || 0) * 0.8 + L * 0.6) * (0.55 + 0.18 * nCells) * COUNT_MUL;
+const roomBudget = (run, L, nCells) => (4 + run.depth * 2 + run.floor * 1.7 + rankOf(run) * 0.8 + L * 0.6) * (0.55 + 0.18 * nCells) * COUNT_MUL;
 
 function buildRoom(run) {
   const node = nodeAt(run.map);
@@ -213,8 +218,9 @@ function buildRoom(run) {
   const T = floorTheme(run.theme, run.floor);
   if (node.L === 0) run.floorDone = false; // a new floor has begun
   // the floor's last room: floors 1 and 2 end with the floor's mini-boss, floor 3 with the boss (which may bring an arena)
+  // (round 10: a theme's bossKind, when it names a kind that exists, is its designed boss: lane B fills it; until then T.boss)
   // lane B (bosses2): ?boss=<id> puts that boss in floor 3's room, whatever the theme (testing; js/bosses.js)
-  const bossKind = kind === 'boss' ? (run.floor >= FLOORS ? (DEFS[debugParam('boss')] ? debugParam('boss') : T.boss) : T.mini || T.warden) : null;
+  const bossKind = kind === 'boss' ? (run.floor >= FLOORS ? (DEFS[debugParam('boss')] ? debugParam('boss') : T.bossKind && DEFS[T.bossKind] ? T.bossKind : T.boss) : T.mini || T.warden) : null;
   const arena = bossKind && DEFS[bossKind].arena;
   const sh = arena ? arenaShape(arena) : makeShape(kind);
   const w = makeWorld(sh.W, sh.H);
@@ -248,7 +254,7 @@ function buildRoom(run) {
       continue;
     }
     const r = HAZ_R[type] ? rrange(...HAZ_R[type]) : rrange(24, 34);
-    const p = placeFree(w, r, 280, w.W - 240); if (freeSpot(w, p.x, p.y, r)) w.hazards.push({ type, x: p.x, y: p.y, r, hidden: type === 'snare' });
+    const p = placeFree(w, r, 280, w.W - 240); if (freeSpot(w, p.x, p.y, r)) w.hazards.push({ type, x: p.x, y: p.y, r, hidden: type === 'snare', a: type === 'conveyor' ? Math.floor(rand() * 4) * Math.PI / 2 : undefined });
   }
   if (T.water && !arena && (busy || kind === 'treasure') && chance(kind === 'hazard' ? 1 : T.water)) addWater(w);
   // what the room holds
@@ -332,7 +338,7 @@ function buildRoom(run) {
   }
   w.on.kill = (u) => onKill(run, u);
   w.on.coin = (p) => { run.coins += p.v; };
-  w.on.drank = (u) => { run.heroes[u.kind].potions = u.potions; };
+  w.on.drank = (u) => { const hs = run.heroes[u.kind]; if (hs) hs.potions = u.potions; };
   run.phase = 'fight'; run.t = 0; run.fade = 1; run.task = null; run.quietT = 0; run.through = 0; run.exitDone = 0; run.trinketT = 0;
 }
 
@@ -340,7 +346,8 @@ function buildRoom(run) {
 // Hazard sizes. 'mist' (crypt): cold grave mist, chills. 'gas' (sewers): a standing cloud of sewer gas (poisons; fire
 // sets it off). 'snare' (warren): a hidden goblin trap that holds whoever steps on it for a moment, then it's spent.
 // Round 9, the Wildwood: 'bramble' (thorns: slows like oil and scratches) and 'roots' (grasping roots: entangle whoever stands in them).
-const HAZ_R = { oil: [34, 52], spikes: [24, 34], mist: [58, 82], gas: [44, 60], snare: [15, 17], fire: [36, 52], web: [44, 60], beam: [46, 58], bramble: [40, 58], roots: [42, 60] };
+const HAZ_R = { oil: [34, 52], spikes: [24, 34], mist: [58, 82], gas: [44, 60], snare: [15, 17], fire: [36, 52], web: [44, 60], beam: [46, 58], bramble: [40, 58], roots: [42, 60],
+  quicksand: [52, 74], vent: [34, 44], conveyor: [56, 70] }; // round 10: the Dunes' quicksand, the Foundry's steam vents and conveyor plates
 
 // Sewer water: a channel running across the room. Wading through it soaks you and slows you down.
 function addWater(w) {
@@ -404,6 +411,15 @@ function buildArena(w, name) {
 // Each tick, after the sim: the theme's own hazards.
 function themeTick(w, dt) {
   // the Spire's sigils: now and then one calls down a shaft of light (a circle fills first; it strikes both sides)
+  // the Foundry's vents (round 10): now and then a jet of scalding steam (a circle fills first; it burns and soaks)
+  for (const h of w.hazards) if (h.type === 'vent' && !w.cleared) {
+    if (h.lit > 0) h.lit -= dt;
+    h.cd = (h.cd ?? rrange(2, 6)) - dt;
+    if (h.cd > 0 || !w.units.some((u) => alive(u) && dist(u.x, u.y, h.x, h.y) < 380)) continue;
+    h.cd = rrange(4.5, 6.5); h.lit = 1.6;
+    addDanger(w, { shape: 'circle', x: h.x, y: h.y, r: h.r * 1.5, t: 0.9, team: 'neutral', kind: 'water', hit: { dmg: 9 * (0.65 + 0.35 * w.mult), knock: 160, burn: 26, wet: 30 },
+      onFire: (w2) => { for (let i = 0; i < 14; i++) { const a = rand() * Math.PI * 2, sp = rrange(30, 90); w2.particles.push({ x: h.x, y: h.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, rise: 50, up: 0, life: rrange(0.6, 1.1), max: 1.1, size: rrange(8, 14), color: 'rgba(236,240,244,0.6)', drag: 0.9 }); } } });
+  }
   for (const h of w.hazards) if (h.type === 'beam' && !w.cleared) {
     if (h.lit > 0) h.lit -= dt;
     h.cd = (h.cd ?? rrange(2, 5)) - dt;
@@ -416,6 +432,15 @@ function themeTick(w, dt) {
     if (!alive(u)) continue;
     for (const h of w.hazards) {
       if (h.type === 'mist') { if (dist(u.x, u.y, h.x, h.y) < h.r + u.r * 0.3) addStatus(w, u, 'chill', 15 * dt); }
+      else if (h.type === 'web' && h.cold) { if (dist(u.x, u.y, h.x, h.y) < h.r + u.r * 0.3) addStatus(w, u, 'chill', 14 * dt); } // round 10: a frost spider's web chills
+      else if (h.type === 'quicksand') { // round 10, the Dunes: sand that drags you down: slow, and it pulls towards the middle
+        const d = dist(u.x, u.y, h.x, h.y);
+        if (d < h.r + u.r * 0.3 && !u.def.sandy && !u.fixed) { u.inOil = true; u.sinkT = (u.sinkT || 0) + dt; const a = angleTo(u.x, u.y, h.x, h.y); u.x += Math.cos(a) * Math.min(d, 26 * dt); u.y += Math.sin(a) * Math.min(d, 26 * dt);
+          if (rand() < dt * 5) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.6, y: u.y + rrange(-u.r, u.r) * 0.6, vx: 0, vy: 0, life: 0.5, max: 0.5, size: 5, color: 'rgba(214,186,130,0.8)' }); }
+      }
+      else if (h.type === 'conveyor') { // round 10, the Foundry: a plate that carries whatever stands on it one way
+        if (dist(u.x, u.y, h.x, h.y) < h.r + u.r * 0.3 && !u.fixed && !u.def.pass) { u.x += Math.cos(h.a || 0) * 70 * dt; u.y += Math.sin(h.a || 0) * 70 * dt; }
+      }
       else if (h.type === 'roots') { if (dist(u.x, u.y, h.x, h.y) < h.r + u.r * 0.3 && u.team === 'hero') addStatus(w, u, 'entangle', 22 * dt); }
       else if (h.type === 'bramble') { if (dist(u.x, u.y, h.x, h.y) < h.r + u.r * 0.3 && !u.def.beast && u.def.base !== 'slime') { u.inOil = true; if (u.spd > 20) hurt(w, u, 3 * dt, null, { dot: true, color: '#9BCB3C' }); } }
       else if (h.type === 'beam') continue; // below, once per tick
@@ -441,6 +466,7 @@ export function rollTrinket() { return { id: pick(TRINKET_IDS), uid: Math.floor(
 function grant(run, reward, hero) {
   const w = run.world;
   burst(w, hero ? hero.x : w.W / 2, hero ? hero.y : w.H / 2, { potion: '#E0604B', xp: '#FFE14D', coins: '#F2B53A', trinket: '#C9A7FF' }[reward]);
+  if (reward === 'potion' && run.bare) return;
   if (reward === 'potion') {
     const hs = w.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon).sort((a, b) => a.potions - b.potions || a.hp / a.maxHp - b.hp / b.maxHp);
     const h = hs[0]; if (h) { h.potions++; run.heroes[h.kind].potions = h.potions; }
@@ -460,7 +486,7 @@ function grant(run, reward, hero) {
 // it for an ally. Worn for the rest of the run only (summary.foundTrinkets lists them; found trinkets aren't kept).
 export const trinketSlots = (run, k) => 1 + (buildFor(run.save, k).nodes.slot2 ? 1 : 0);
 export const FOUND_EXTRA = 1;
-const roomFor = (run, k) => run.party.includes(k) && run.heroes[k] && !run.heroes[k].down && run.heroes[k].trinkets.length < trinketSlots(run, k) + FOUND_EXTRA;
+const roomFor = (run, k) => !run.bare && run.party.includes(k) && run.heroes[k] && !run.heroes[k].down && run.heroes[k].trinkets.length < trinketSlots(run, k) + FOUND_EXTRA;
 function equipFound(run, id, k) {
   run.heroes[k].trinkets.push(id);
   const u = run.world.units.find((o) => o.kind === k && !o.summon && o.team === 'hero');
@@ -537,7 +563,7 @@ function onKill(run, u) {
 }
 export const XP_MUL = 1.6;
 // Mercenaries' level (their numbers: they don't grow), by dungeon.
-const MERC_LEVEL = [2, 3, 4, 6, 8, 10, 12];
+const MERC_LEVEL = [2, 3, 4, 6, 8, 10, 12, 14, 16];
 
 const heroesAlive = (run) => run.world.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon);
 function nearestHero(run, x, y) { let best = null, bd = Infinity; for (const h of heroesAlive(run)) { const d = dist(h.x, h.y, x, y); if (d < bd) { bd = d; best = h; } } return best; }
@@ -556,7 +582,7 @@ export function update(run, dt) {
   grabTrinkets(run, dt);
   for (const u of w.units) if (u.team === 'hero' && u.downed && run.heroes[u.kind]) run.heroes[u.kind].down = true;
   if (heroesAlive(run).length === 0 && !run.through && !w.units.some((u) => u.charmed && alive(u))) { run.phase = 'lost'; summarize(run); return; } // (a hero a brain leech holds is still ours)
-  const enemies = w.units.filter((u) => u.team === 'enemy' && alive(u));
+  const enemies = w.units.filter((u) => u.team === 'enemy' && alive(u) && !u.def.trap); // (round 10: traps, the saw blades, don't hold a room open)
   // a fight that's gone quiet (someone stuck, a group never met): everyone left comes looking
   if (run.phase === 'fight') {
     if (run.mainKills !== run.lastKills) { run.lastKills = run.mainKills; run.quietT = 0; } else run.quietT = (run.quietT || 0) + dt;
@@ -564,6 +590,9 @@ export function update(run, dt) {
     // still nobody falling after a long while (a lone shooter kiting a regrowing troll, say): the enemies press in
     // harder (faster, no backing off, no regrowing) so a stand-off always ends
     w.stale = run.quietT > 45 || (run.t > 150 && run.node.kind !== 'boss'); // round 8: a room that has dragged on that long presses in too, kills or not
+    // round 10: and a stand-off nobody can break (a last archer kiting round a wall from a mummy, a turret it can't see)
+    // wears the enemies down after a while, so a room always ends
+    if ((run.quietT > 60 || run.t > 200) && run.node.kind !== 'boss') for (const e of enemies) hurt(w, e, e.maxHp * 0.04 * dt, null, { dot: true, color: '#B9AE9C' });
   }
   revive(run, dt);
   if (run.phase === 'fight') nextWaypoint(w);
@@ -623,6 +652,7 @@ function exitTick(run, h, dt) {
 const REVIVE_T = 3, REVIVE_HP = 0.1;
 function revive(run, dt) {
   const w = run.world;
+  for (const u of w.units) if (u.revivedByKit) { u.revivedByKit = false; if (run.heroes[u.kind]) run.heroes[u.kind].down = false; } // kits2.js: Valkyrie's Call
   const downed = w.units.filter((u) => u.team === 'hero' && u.downed && !u.dead);
   for (const h of heroesAlive(run)) if (h.forcedGoal && h.forcedGoal.revive && !downed.includes(h.forcedGoal.who)) h.forcedGoal = null;
   for (const d of downed) {
@@ -644,7 +674,7 @@ function revive(run, dt) {
       if (rand() < dt * 14) w.particles.push({ x: d.x + rrange(-18, 18), y: d.y + rrange(-18, 18), vx: 0, vy: 0, rise: 40, life: 0.6, max: 0.6, size: 4, color: '#FFE7A0' });
       if (d.reviveT >= REVIVE_T) {
         d.downed = false; d.reviveT = 0; d.hp = d.maxHp * (d.reviveHp || REVIVE_HP); d.invulnT = 1.2; d.st = freshStatuses();
-        run.heroes[d.kind].down = false; helper.forcedGoal = null; tallyRevive(run.stats, helper);
+        if (run.heroes[d.kind]) run.heroes[d.kind].down = false; helper.forcedGoal = null; tallyRevive(run.stats, helper);
         burst(w, d.x, d.y, '#FFE7A0');
       }
     }
@@ -657,7 +687,7 @@ function nextWaypoint(w) {
   const hs = w.units.filter((u) => u.team === 'hero' && alive(u)); if (!hs.length) return;
   let cx = 0, cy = 0; for (const h of hs) { cx += h.x; cy += h.y; } cx /= hs.length; cy /= hs.length;
   let best = null, bd = Infinity;
-  for (const e of w.units) if (e.team === 'enemy' && alive(e)) { const d = dist(e.x, e.y, cx, cy); if (d < bd) { bd = d; best = e; } }
+  for (const e of w.units) if (e.team === 'enemy' && alive(e) && !e.def.trap && !e.hidden) { const d = dist(e.x, e.y, cx, cy); if (d < bd) { bd = d; best = e; } }
   w.wp = best ? { x: best.x, y: best.y } : { x: cx, y: cy };
 }
 
@@ -725,6 +755,7 @@ function waveSpot(w, cx, cy, r) {
 function roomWon(run) {
   const w = run.world;
   w.cleared = true; run.phase = 'loot'; run.t = 0;
+  for (const u of w.units) if (u.def.trap && alive(u)) kill(w, u, null); // the saw blades wind down with the room
   for (const h of heroesAlive(run)) h.target = null;
   for (const h of w.hazards) if (h.type === 'spikes' && h.up !== false) { h.up = false; puff(w, h.x, h.y, '#B9AE9C', 6, 60, 5, 0.4); }
   if (w.chest) {

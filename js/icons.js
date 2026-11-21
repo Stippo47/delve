@@ -2,6 +2,7 @@
 // colour, a soft highlight, a heavy ink outline. Each is the inside of a 32x32 SVG; icon(id) wraps it.
 //   icon(kind, id, cls)   kind: 'trinket' | 'potion' | 'status' | 'ability'  -> '<svg ...>' markup
 // Anything without a drawing falls back to a gem in the item's colour, so new trinkets still show.
+import { GLYPH2 } from './heroes2.js';
 const INK = '#2B2230';
 const O = `stroke="${INK}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke"`;
 const H = 'stroke="none"'; // highlights: no outline
@@ -133,6 +134,8 @@ const STATUS = {
   radiance: `<ellipse cx="16" cy="8" rx="9" ry="3.4" fill="none" stroke="${INK}" stroke-width="5.4"/><ellipse cx="16" cy="8" rx="9" ry="3.4" fill="none" stroke="#FFE48A" stroke-width="2.4" ${H}/>
     <circle cx="16" cy="20" r="7.5" fill="#FFE48A"/><circle cx="14" cy="18" r="2.6" fill="#FFF8DC" ${H}/>`,
   radiant: `<path d="M16 2l2.6 7.4L26 6l-3.4 7.4L30 16l-7.4 2.6L26 26l-7.4-3.4L16 30l-2.6-7.4L6 26l3.4-7.4L2 16l7.4-2.6L6 6l7.4 3.4z" fill="#FFE48A"/><circle cx="16" cy="16" r="5.5" fill="#FFFFFF" ${H}/>`,
+  // round 11: sickened, poison's burst (a green drop with a queasy line through it, bubbles coming off)
+  sick: `<path d="M15 3c5 7 9 11 9 16a9 9 0 0 1-18 0c0-5 4-9 9-16z" fill="#9BCB3C"/><path d="M9.5 19.5c2-2.2 3.6 2.2 5.5 0s3.600 2.2 5.5 0" fill="none" stroke="${INK}" stroke-width="2" stroke-linecap="round" ${H}/><circle cx="25" cy="7" r="2.6" fill="#B6E05A"/><circle cx="28" cy="13.500" r="1.7" fill="#B6E05A"/>`,
   // cursed builds (a purple skull-drop), hexed is the armed curse (an eye in a ring)
   curse: `<path d="M16 3c6 0 10 4.4 10 10 0 4-2 6.4-4 7.6V26h-12v-5.4C8 19.4 6 17 6 13 6 7.4 10 3 16 3z" fill="#9A5CC8"/><circle cx="12.2" cy="13.5" r="2.6" fill="${INK}" ${H}/><circle cx="19.8" cy="13.5" r="2.6" fill="${INK}" ${H}/><path d="M13 22v3M16 22v3M19 22v3" stroke="${INK}" stroke-width="1.6" ${H}/>`,
   // round 9: entangle builds (a curl of vine), tangled is the burst (roots wrapped round a foot)
@@ -187,7 +190,7 @@ export const ABILITY_COLOR = { shield: '#5B8CDB', sun: '#F2C84A', dash: '#C8C0B0
   dagger: '#B8C4D4', flame: '#FF7A2F', bolt: '#F2E04A', cloud: '#9AA8BC', heart: '#7CC06F', note: '#FFD27A', leaf: '#7FA04A',
   skull: '#D9D2C0', vial: '#9BCB3C', swirl: '#D8DEE8', hook: '#A8A8B0', fist: '#E0604B', up: '#E8B53A', paw: '#A0683A',
   drain: '#C8553D', wall: '#9FDDF6', sleep: '#C9B8FF', vines: '#7FA04A', wave: '#E0B070' };
-export const abilityGlyph = (id) => ABILITY_GLYPH[id] || 'burst';
+export const abilityGlyph = (id) => ABILITY_GLYPH[id] || GLYPH2[id] || 'burst';
 
 // ---------------------------------------------------------------- the one entry point
 const gemFallback = (color = '#9B7BD6') => `<path d="M16 3l11 9-11 17L5 12z" fill="${color}"/><path d="M16 3l11 9H5z" fill="#FFFFFF" opacity=".45" ${H}/>`;

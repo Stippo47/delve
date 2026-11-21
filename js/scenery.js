@@ -134,6 +134,24 @@ function decor(g, d, P) {
       const glow = g.createRadialGradient(x, y, 1, x, y, 15 * s); glow.addColorStop(0, 'rgba(255,140,60,0.85)'); glow.addColorStop(1, 'rgba(255,90,30,0)');
       g.fillStyle = glow; g.beginPath(); g.arc(x, y, 15 * s, 0, TAU); g.fill();
     } break;
+    // round 10: the Dunes' sand ripples and broken pots, the Foundry's gears and bolts
+    case 'ripple': {
+      g.strokeStyle = 'rgba(120,90,40,0.22)'; g.lineWidth = 2.4; g.lineCap = 'round';
+      for (let i = 0; i < 3; i++) { g.beginPath(); const oy = (i - 1) * 9 * s; for (let k = 0; k <= 8; k++) { const px = x + (k - 4) * 7 * s, py = y + oy + Math.sin(k * 0.9 + a) * 3 * s; k ? g.lineTo(px, py) : g.moveTo(px, py); } g.stroke(); }
+    } break;
+    case 'pottery': for (let i = 0; i < 3; i++) {
+      const sx = x + Math.cos(a + i * 2.1) * 11 * s, sy = y + Math.sin(a + i * 2.1) * 8 * s;
+      inked(g, () => { g.beginPath(); g.moveTo(sx - 6 * s, sy - 3 * s); g.lineTo(sx + 6 * s, sy - 4 * s); g.lineTo(sx + 3 * s, sy + 5 * s); g.closePath(); }, i % 2 ? '#B8693E' : '#9C5532');
+    } break;
+    case 'gears': {
+      for (let i = 0; i <= v % 2; i++) { const gx = x + i * 18 * s, gy = y + i * 9 * s, R = (11 - i * 3) * s;
+        inked(g, () => { g.beginPath(); for (let k = 0; k < 16; k++) { const b = a + k / 16 * TAU, r = k % 2 ? R : R * 1.25; k ? g.lineTo(gx + Math.cos(b) * r, gy + Math.sin(b) * r) : g.moveTo(gx + Math.cos(b) * r, gy + Math.sin(b) * r); } g.closePath(); }, '#8A8F96');
+        g.fillStyle = '#4A4E56'; g.beginPath(); g.arc(gx, gy, R * 0.35, 0, TAU); g.fill(); }
+    } break;
+    case 'bolts': for (let i = 0; i < 5; i++) {
+      const sx = x + (hash(i, x) - 0.5) * 34 * s, sy = y + (hash(y, i) - 0.5) * 22 * s;
+      g.fillStyle = 'rgba(60,62,70,0.55)'; g.beginPath(); g.arc(sx, sy, 2.6 * s, 0, TAU); g.fill();
+    } break;
     case 'rubble': for (let i = 0; i < 4; i++) {
       const sx = x + Math.cos(a + i * 1.6) * 12 * s, sy = y + Math.sin(a + i * 1.6) * 9 * s, r = (5 + hash(i, x) * 4) * s;
       inked(g, () => { g.beginPath(); g.ellipse(sx, sy, r, r * 0.8, a + i, 0, TAU); }, lin(g, sx - r, sy - r, sx + r, sy + r, '#B9A58A', '#8A7660'));
@@ -245,6 +263,33 @@ export function drawThemeHazard(ctx, h, t) {
         ctx.quadraticCurveTo(Math.cos(b + 0.6 + wig) * h.r * 0.5, Math.sin(b + 0.6 + wig) * h.r * 0.5, Math.cos(b + 1.1) * h.r * 0.18, Math.sin(b + 1.1) * h.r * 0.18); }
       ctx.stroke();
     }
+    ctx.restore(); return true;
+  }
+  if (h.type === 'quicksand') {
+    // round 10, the Dunes: a sunken swirl of loose sand that pulls you in
+    ctx.save(); ctx.translate(h.x, h.y);
+    ctx.globalAlpha = 0.5; ctx.fillStyle = '#B8935A'; ctx.beginPath(); ctx.arc(0, 0, h.r, 0, TAU); ctx.fill();
+    ctx.globalAlpha = 0.45; ctx.fillStyle = '#8E6C3C'; ctx.beginPath(); ctx.arc(0, 0, h.r * 0.55, 0, TAU); ctx.fill();
+    ctx.globalAlpha = 0.6; ctx.strokeStyle = '#E8D0A0'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+    for (let i = 0; i < 3; i++) { const b0 = t * 0.8 + i * TAU / 3; ctx.beginPath(); for (let k = 0; k <= 14; k++) { const b = b0 + k * 0.32, r = h.r * (0.9 - k * 0.055); k ? ctx.lineTo(Math.cos(b) * r, Math.sin(b) * r) : ctx.moveTo(Math.cos(b) * r, Math.sin(b) * r); } ctx.stroke(); }
+    ctx.restore(); ctx.globalAlpha = 1; return true;
+  }
+  if (h.type === 'vent') {
+    // round 10, the Foundry: an iron grate that breathes steam; brighter while it builds to a jet
+    ctx.save(); ctx.translate(h.x, h.y);
+    inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, h.r, 0, TAU); }, '#5A5E66');
+    ctx.fillStyle = '#2E3036'; for (let i = -1; i <= 1; i++) ctx.fillRect(i * h.r * 0.45 - 3, -h.r * 0.7, 6, h.r * 1.4);
+    if (h.lit > 0) { ctx.globalAlpha = 0.5 * Math.min(1, h.lit); ctx.fillStyle = '#F2F4F8'; ctx.beginPath(); ctx.arc(0, 0, h.r * 0.8, 0, TAU); ctx.fill(); }
+    ctx.restore(); ctx.globalAlpha = 1; return true;
+  }
+  if (h.type === 'conveyor') {
+    // round 10, the Foundry: a plate of rollers with chevrons running the way it carries
+    ctx.save(); ctx.translate(h.x, h.y); ctx.rotate(h.a || 0);
+    inked(ctx, () => { ctx.beginPath(); ctx.rect(-h.r, -h.r * 0.7, h.r * 2, h.r * 1.4); }, '#4A4E56');
+    ctx.beginPath(); ctx.rect(-h.r, -h.r * 0.7, h.r * 2, h.r * 1.4); ctx.clip();
+    ctx.strokeStyle = '#E8B84A'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+    const off = (t * 40) % 24;
+    for (let k = -h.r - 24; k < h.r + 24; k += 24) { const x0 = k + off; ctx.beginPath(); ctx.moveTo(x0 - 6, -h.r * 0.4); ctx.lineTo(x0 + 4, 0); ctx.lineTo(x0 - 6, h.r * 0.4); ctx.stroke(); }
     ctx.restore(); return true;
   }
   if (h.type === 'snare') {

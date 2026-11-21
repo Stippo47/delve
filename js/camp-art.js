@@ -45,6 +45,8 @@ const MOTIF = {
   crypt: (a) => `<path d="M60 52v40M48 64h24" stroke="${a}" stroke-width="6" stroke-linecap="round"/>`,
   frost: (a) => `<path d="M34 46l5 18 5-18zM52 46l4 26 4-26zM68 46l5 16 5-16zM82 46l3 10 3-10z" fill="${a}"/>`,
   ember: (a) => `<path d="M60 52c6 10 14 14 14 26a14 14 0 0 1-28 0c0-6 4-10 6-12 0 4 2 6 4 6 0-8-2-12 4-20z" fill="${a}"/>`,
+  dunes: (a) => `<path d="M34 92l26-40 26 40z" fill="${a}" opacity=".9"/><path d="M30 96q30-8 60 0" stroke="${a}" stroke-width="3" fill="none"/>`, // round 10: a pyramid
+  foundry: (a) => `<circle cx="60" cy="72" r="16" fill="none" stroke="${a}" stroke-width="7" stroke-dasharray="6 4"/><circle cx="60" cy="72" r="5" fill="${a}"/>`, // a gear
   spire: (a) => `<path d="M60 44l10 18v30H50V62z" fill="${a}" opacity=".9"/><circle cx="60" cy="70" r="4" fill="#fff" opacity=".8"/>`,
 };
 export function doorway(t, id) {

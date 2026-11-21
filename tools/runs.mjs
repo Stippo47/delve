@@ -1,9 +1,9 @@
 // Headless batch of full runs in Node (no browser): checks nothing gets stuck, and measures how hard things are.
-//   node tools/runs.mjs [--n 10] [--theme warren|sewers|crypt|frost|ember|spire|all] [--seed 1] [--party paladin,archer,twinfang]
+//   node tools/runs.mjs [--n 10] [--theme wildwood|warren|sewers|crypt|frost|ember|spire|dunes|foundry|all] [--seed 1] [--party paladin,archer,twinfang]
 //     [--floor N] (start at floor N, a checkpoint) [--depth 1] [--boss] (start in floor 3's boss room)
 //     [--level N] (every hero at level N with its points spent by progress.js autoSpend) [--max] (every node bought)
 //     [--first] (level 1, the one starting point spent: tier I of the first ability) [--feel] (count jitter and stuck units)
-//     [--v] (a line per run)
+//     [--allnodes] (every hero with every skill node, the game's ?allnodes) [--foes a,b] (only those kinds in rooms) [--v] (a line per run)
 //   node tools/runs.mjs --campaign 60 [--seed 1] [--v]
 //     plays a fresh save run after run like a player would: the newest open dungeon from its furthest checkpoint, the
 //     highest-level heroes that fit the slots, points spent with autoSpend, heroes bought with gold when there's enough,
@@ -14,7 +14,7 @@ const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i
 const n = +opt('n', 10), seed0 = +opt('seed', 1), depth = +opt('depth', 1), level = +opt('level', 0), startFloor = +opt('floor', 1);
 const boss = args.includes('--boss'), verbose = args.includes('--v');
 // --bossid <id> (lane B): that designed boss in the boss room (dungeon.js ?boss=), whatever the theme
-globalThis.location = { search: (boss ? '?bossroom' + (opt('floor') ? '&floor=' + opt('floor') : '') + (opt('bossid') ? '&boss=' + opt('bossid') : '') : '?x') };
+globalThis.location = { search: (boss ? '?bossroom' + (opt('floor') ? '&floor=' + opt('floor') : '') + (opt('bossid') ? '&boss=' + opt('bossid') : '') : '?x') + (args.includes('--allnodes') ? '&allnodes' : '') + (opt('foes') ? '&foes=' + opt('foes') : '') };
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
 const feel = args.includes('--feel') ? { flips: 0, unitSecs: 0, stuck: 0, enemySecs: 0 } : null;
 const DT = 1 / 60;
@@ -90,7 +90,7 @@ function batch() {
       run.minis.forEach((m, j) => { if (m) res.minis[j]++; });
       res.gained += party.reduce((a, k) => a + (run.heroes[k].gained || 0), 0) / party.length;
       if (phase === 'lost') res.deaths.push(`${run.floor}.${run.map.L + 1}`);
-      if (verbose) console.log(`  ${theme} #${i}: ${phase} floor ${run.floor} room ${run.map.L + 1} (${run.node.kind}) rooms ${run.rooms} sim ${Math.round(t)}s gold ${run.coins} levels ${party.map((k) => run.heroes[k].level).join('/')}${run.world.bossLog ? ' | boss ' + run.world.bossLog() : ''}`);
+      if (verbose) console.log(`  ${theme} #${i}: ${phase} floor ${run.floor} room ${run.map.L + 1} (${run.node.kind}) rooms ${run.rooms} sim ${Math.round(t)}s gold ${run.coins} levels ${party.map((k) => run.heroes[k].level).join('/')}`);
       if (phase === 'stuck' || phase === 'error') bad++;
     }
     console.log(theme.padEnd(7), `won ${res.won}/${n} lost ${res.lost} stuck ${res.stuck} err ${res.error}`, `| ended on floor 1/2/3: ${res.floors.slice(1).join('/')}`,

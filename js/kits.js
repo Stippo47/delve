@@ -16,7 +16,7 @@
 //   reviveRate, reviveHp                 numbers read by the revive code
 // Hit options worth knowing in hooks: o.dot (damage over time), o.shot (a projectile hit), o.proc (damage a trinket
 // made itself: trinkets that react to hits skip these, so they never set each other off in a loop).
-import { HEROES, TIER_CD, statsFor, tierOf } from './heroes.js';
+import { HEROES, TIER_CD, ROLE_TUNE, statsFor, tierOf } from './heroes.js';
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange, chance } from './util.js';
 import {
   hurt, addStatus as simAddStatus, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, textU,
@@ -26,6 +26,7 @@ import { lineClear } from './path.js';
 import { cue } from './sfx.js';
 import { tagAbility } from './fxtag.js';
 import { STATUS } from './statuses.js';
+import { ABILITIES2, TRAITS2, ATTACKS2, kit2Tick } from './kits2.js';
 
 // ---------------------------------------------------------------- the skill web's stat nodes (round 8)
 // u.kit.mods = statsFor(hero, nodes) (heroes.js). Generic stats go straight onto the unit in initKit; an ability's own
@@ -36,16 +37,17 @@ function withAb(u, ab, f) {
   if (!ab || !u.kit) return f;
   return (...args) => { const k = u.kit, prev = k.using; k.using = ab; try { return f(...args); } finally { k.using = prev; } };
 }
-const healMul = (src) => (src && src.kit && src.kit.mods ? 1 + src.kit.mods.heal + abMod(src, 'abHeal') : 1);
+// (round 11: a role can heal less or more across the board: heroes.js ROLE_TUNE[role].heal)
+const roleHeal = (src) => { const h = src && src.kit && HEROES[src.kit.hero], t = h && ROLE_TUNE[h.role]; return (t && t.heal) || 1; };
+const healMul = (src) => (src && src.kit && src.kit.mods ? (1 + src.kit.mods.heal + abMod(src, 'abHeal')) * roleHeal(src) : 1);
 const statusMul = (src, ab) => (src && src.kit && src.kit.mods ? 1 + src.kit.mods.status + abMod(src, 'abStatus', ab) : 1);
 const heal = (w, t, amt, src) => simHeal(w, t, amt * healMul(src), src);
 const addStatus = (w, t, type, amt, src) => simAddStatus(w, t, type, amt * statusMul(src), src);
 const zone = (w, z) => { const u = z.src, ab = u && u.kit && u.kit.using; if (ab && z.tick) z.tick = withAb(u, ab, z.tick); return simZone(w, z); };
 const HIT_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger'];
-// The hook every hero with stat nodes wears: toughness, and statuses on its blows building faster.
+// The hook every hero with stat nodes wears: statuses on its blows building faster. (Armour nodes add to u.armor in initKit.)
 function statHook(mods) {
   return {
-    taken: mods.armor ? (w, u, src, amt) => amt * Math.max(0.3, 1 - mods.armor) : undefined,
     hit(w, u, t, amt, o) {
       const m = statusMul(u, o.ab) - 1; if (m <= 0 || o.proc) return;
       for (const s of HIT_STATUSES) if (o[s]) simAddStatus(w, t, s, o[s] * m, u);
@@ -89,6 +91,8 @@ function ring(w, u, x, y, r, dmg, o = {}, color = '#FFFFFF') {
   return n;
 }
 const cast = (u, kind = 'cast', dur = 0.45) => setAnim(u, kind, dur);
+// for kits2.js (the new heroes' abilities)
+export { near, foesNear, friendsNear, hurtMost, dmgOf, ang, isUndead, arcHit, ring, cast, heal, addStatus, zone, withAb, abMod, rectGap };
 
 // ---------------------------------------------------------------- abilities
 export const ABILITIES = {
@@ -109,7 +113,7 @@ export const ABILITIES = {
       cast(u, 'ability', 0.3);
       a.guardBy = u; a.guardT = 5; a.guardShare = tier >= 2 ? 0.6 : 0.4;
       u.forcedGoal = null; u.guardOf = a; u.guardOfT = 5;
-      if (tier >= 3) heal(w, a, a.maxHp * 0.15, u);
+      if (tier >= 3) heal(w, a, a.maxHp * 0.1, u);
       fx(w, { type: 'beam', x1: u.x, y1: u.y, x2: a.x, y2: a.y, kind: 'holy', max: 0.5 });
     },
   },
@@ -119,8 +123,8 @@ export const ABILITIES = {
       cast(u, 'ability', 0.5);
       const r = tier >= 2 ? 140 : 105, dur = tier >= 2 ? 6 : 4;
       zone(w, { x: u.x, y: u.y, r, dur, kind: 'holy', src: u, every: 0.5, tick(z) {
-        for (const e of foesNear(w, u, z.x, z.y, z.r)) hurt(w, e, dmgOf(u, 0.35) * (tier >= 3 && isUndead(e) ? 2.5 : 1), u, { dot: true, color: '#FFE7A0', burn: tier >= 3 && isUndead(e) ? 12 : 0 });
-        for (const a of friendsNear(w, u, z.x, z.y, z.r)) heal(w, a, a.maxHp * 0.02, u);
+        for (const e of foesNear(w, u, z.x, z.y, z.r)) hurt(w, e, dmgOf(u, 0.3) * (tier >= 3 && isUndead(e) ? 2.5 : 1), u, { dot: true, color: '#FFE7A0', burn: tier >= 3 && isUndead(e) ? 12 : 0 });
+        for (const a of friendsNear(w, u, z.x, z.y, z.r)) heal(w, a, a.maxHp * 0.01, u); // (round 11: half what it was; he's a tank first)
       } });
     },
   },
@@ -606,6 +610,7 @@ export const ABILITIES = {
   },
 };
 ABILITIES.oldBones = { score: () => 0, use() {} };
+Object.assign(ABILITIES, ABILITIES2); // round 10 (lane H): the new heroes' abilities
 const RAY_T = 4, RAY_RANGE = 380;
 const CURE_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse'];
 // how far a unit is from the edge of a rectangle (0 inside)
@@ -672,6 +677,7 @@ const ATTACKS = {
         fx(w, { type: 'pop', kind: 'poison', x: p.x, y: p.y, r, max: 0.4 }); } });
   },
 };
+Object.assign(ATTACKS, ATTACKS2);
 export const hasOwnAttack = (kind) => !!ATTACKS[kind]; // numbers.js measures these
 export function heroAttack(w, u, t, a) {
   const f = ATTACKS[u.kind]; if (!f || u.summon) return false;
@@ -681,6 +687,7 @@ const rayable = (w, u, o) => dist(u.x, u.y, o.x, o.y) < RAY_RANGE - 40 && !block
 
 // Every step, for a unit with a kit: abilities that last (the Cleric's rays).
 export function kitTick(w, u, dt) {
+  kit2Tick(w, u, dt);
   if (u.gasForm) { const g = u.gasForm;
     if (u.gasT > 0) { if (dist(u.x, u.y, g.lx, g.ly) > 34) { g.lx = u.x; g.ly = u.y; drop(w, u, g.tier); } }
     else { if (g.heal) heal(w, u, u.maxHp * 0.15, u); u.gasForm = null; puff(w, u.x, u.y, '#BCE070', 10, 80, 6, 0.5); } }
@@ -731,6 +738,7 @@ export const TRAITS = {
       for (const e of foesNear(w, u, u.x, u.y, 260)) if (e.st.poison > 30) for (const f of foesNear(w, u, e.x, e.y, 90)) if (f !== e && f.st.poison < e.st.poison) addStatus(w, f, 'poison', 10, u); },
   },
 };
+Object.assign(TRAITS, TRAITS2);
 // Granny's Old Bones is an ability on paper but works like a trait once bought.
 const OLD_BONES = {
   downed(w, u) {
@@ -755,13 +763,16 @@ export function initKit(u, heroId, build = {}, level = 1) {
   const hpMul = 1 + mods.hp; u.maxHp = Math.round(u.maxHp * hpMul); u.hp = Math.min(u.maxHp, u.hp * hpMul);
   u.atkMul = 1 + mods.atkSpeed; u.moveMul = 1 + mods.moveSpeed;
   if (mods.range) { const r = u.def.range; u.def = { ...u.def, range: r > 60 ? r * (1 + mods.range) : r + 60 * mods.range }; }
-  u.kit.statHook = mods.armor || mods.status || Object.values(mods.ab).some((a) => a.abStatus) ? statHook(mods) : null;
+  u.armor = (u.armor || 0) + Math.round(mods.armor * 100); // the web's Armour nodes: points (stored as hundredths, like every stat)
+  u.kit.statHook = mods.status || Object.values(mods.ab).some((a) => a.abStatus) ? statHook(mods) : null;
   refreshKit(u, level);
 }
 // Which tier of each ability is on: the highest bought in a row.
 export function refreshKit(u, level) {
   if (!u.kit) return;
   for (const ab of HEROES[u.kit.hero].abilities) u.kit.tiers[ab.id] = tierOf(u.kit.nodes, ab.id);
+  // kits2.js: an ability that also works all the time once bought (its hook), like Old Bones
+  u.kit.extra = HEROES[u.kit.hero].abilities.filter((ab) => u.kit.tiers[ab.id] && ABILITIES[ab.id] && ABILITIES[ab.id].hook).map((ab) => ABILITIES[ab.id].hook);
 }
 // How long an ability takes to come round: its base, -10% per tier past I, the web's haste and its own cooldown nodes.
 export function cooldownOf(u, ab) {
@@ -771,7 +782,7 @@ export function cooldownOf(u, ab) {
 // The hook objects active on a unit: its trait, Old Bones if it has it, and its trinkets' hooks.
 export function hooksOf(u) {
   const out = [];
-  if (u.kit) { out.push(u.kit.trait); if (u.kit.tiers.oldBones) out.push(OLD_BONES); if (u.kit.statHook) out.push(u.kit.statHook); }
+  if (u.kit) { out.push(u.kit.trait); if (u.kit.tiers.oldBones) out.push(OLD_BONES); if (u.kit.statHook) out.push(u.kit.statHook); if (u.kit.extra) out.push(...u.kit.extra); }
   if (u.trinketHooks) out.push(...u.trinketHooks);
   return out;
 }
