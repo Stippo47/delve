@@ -17,6 +17,13 @@ EYES, FACE = True, False
 # past the jaw onto the outline, are gone; the same three teeth a side are drawn under the head instead, so only
 # their points show along the jaw's edge.
 TEETH_IN = False
+# BLADE_R7, blade A ("remove eyes; shoulder doesn't look right, nor do hands"): the two round eye mounds are gone
+# (round 6 only took the eyes off them); the shoulders are built like the picked spear lizard's (A): an upper arm
+# rounding out from under each side of the head, so the hands hang from something, and the dark bands on the
+# shoulders are spots like the tail's (they were long dark bars); the red sash is a cloth band lying over the left
+# shoulder from behind the head to the front (it was a fat red blob over the outside of the shoulder); the sword hand
+# is a plain fist (no knuckle bumps), like the heroes'. Head, tail, colours, scimitar and the claw hand as they were.
+BLADE_R7 = False
 
 
 def face_shade(S, y0, y1, col, brow):
@@ -109,19 +116,30 @@ def liz_b():
     # blade: runs forward, then the tip sweeps IN (toward -x local = toward the centre line)
     S.shape(blob([(-6, 15, 'c'), (6, 15), (10, 30), (9, 44), (2, 56), (-10, 62), (-24, 64, 'c'), (-14, 54), (-8, 44),
                   (-7, 30)], 0.75), S.lg(*IRON, x2=1, y2=0.2), tf=tf, shadow=False, shade=0.25)
-    fist(S, 152, 138, a, S.lg(sc, scD), w=22, h=25, knuckle=1)
+    fist(S, 152, 138, a, S.lg(sc, scD), w=22, h=25, knuckle=0 if BLADE_R7 else 1)
     S.group("body")
-    S.shape(SHOULDERS, S.lg(scD, "#9A7034"), shade=0.35,
-            decor=[f'<path d="{rr(48, 104, 12, 30, 5)} {rr(152, 104, 12, 30, 5)}" fill="{band}" opacity="0.6"/>'])
-    # sash over the left shoulder
-    S.shape(blob([(36, 96), (52, 84), (70, 92), (62, 116), (46, 128), (34, 118)], 0.9), S.lg("#D84A3A", "#9A2A22"),
-            sh=3, shade=0.2)
+    if BLADE_R7:
+        S.shape(SHOULDERS, S.lg(scD, "#9A7034"), shade=0.35,
+                decor=[f'<path d="{ell(46, 98, 6, 4.5)} {ell(40, 114, 5, 4)} {ell(154, 98, 6, 4.5)} {ell(160, 114, 5, 4)}" '
+                       f'fill="{band}" opacity="0.6"/>'])
+        for x in (65, 135):
+            S.shape(ell(x, 104, 13, 12), S.lg(sc, scD), sh=4)
+        S.shape(stroke_path([(84, 80), (66, 94), (50, 112), (42, 130)], 12, 11), S.lg("#D84A3A", "#9A2A22"), sh=3, shade=0.2)
+        S.comment = (S.comment.replace("big amber eyes set on the top of the head, ", "")
+                     .replace("a red cloth sash over one shoulder", "a red cloth sash lying over the left shoulder, an upper "
+                              "arm rounding out from under each side of the head (round 7)"))
+    else:
+        S.shape(SHOULDERS, S.lg(scD, "#9A7034"), shade=0.35,
+                decor=[f'<path d="{rr(48, 104, 12, 30, 5)} {rr(152, 104, 12, 30, 5)}" fill="{band}" opacity="0.6"/>'])
+        # sash over the left shoulder
+        S.shape(blob([(36, 96), (52, 84), (70, 92), (62, 116), (46, 128), (34, 118)], 0.9), S.lg("#D84A3A", "#9A2A22"),
+                sh=3, shade=0.2)
     head = blob([(100, 54), (128, 58), (144, 80), (142, 106), (130, 128), (118, 150), (100, 162), (82, 150), (70, 128),
                  (58, 106), (56, 80), (72, 58)], 1.0)
     S.shape(head, S.lg(sc, scD), sh=5, hi=None if FACE else 0.4, shade=0.35,
             decor=[f'<path d="{ell(100, 66, 20, 9)} {ell(100, 88, 14, 7)} {ell(100, 136, 8, 5)}" fill="{band}" opacity="0.7"/>']
             + ([face_shade(S, 54, 162, "#7A4A1E", 106)] if FACE else []))
-    for x in (76, 124):
+    for x in ((76, 124) if not BLADE_R7 else ()):
         S.shape(circ(x, 112, 12), S.lg(sc, scD), sh=3, shade=0.25, decor=[face_shade(S, 54, 162, "#7A4A1E", 106)] if FACE else None)
         if EYES:
             S.flat(circ(x, 112, 8), "#F29A2A")

@@ -16,6 +16,14 @@ SKULL = ("M 100 44 C 128 44 146 62 146 90 C 146 108 138 120 128 126 C 122 150 11
 PLATE = ("M 56 104 C 50 66 72 44 100 44 C 128 44 150 66 144 104 C 136 112 124 108 118 116 C 112 112 106 110 100 110 "
          "C 94 110 88 112 82 116 C 76 108 64 112 56 104 Z")
 
+# round 7 (blade b: "could look good if [you] use the selected base lizard to fix up the spines on back and stuff. I like
+# the hood looking bit"; spear b: "fix back spines and could look good"; both notes on the round-5 versions): CREST_R7
+# swaps the three separate cones down the back of the head for the picked lizard's crest (lizardman-spear-a, round 6):
+# one jagged crest of three tiers, its tip just past the back of the head, and the same crest line running on down the
+# tail in dashes. Same crest colours, set on the hood plate (kept as it was). Off here (round 5); lizards7.py turns it on.
+CREST_R7 = False
+BASE_CREST = ("M100 40 L108 56 L104 58 L111 72 L106 74 L112 88 L100 96 L88 88 L94 74 L89 72 L96 58 L92 56 Z")  # spear A's
+
 
 def head(S, skin, ver, crest, plate_col=None, snout=SKULL, horns=None):
     """The lizard head: skull and snout in one token (front = the snout tip at y 172)."""
@@ -30,16 +38,23 @@ def head(S, skin, ver, crest, plate_col=None, snout=SKULL, horns=None):
     # nostrils: two small dark slits near the snout tip (the only marks on the face)
     for side in (1, -1):
         S.flat(ell(100 + side * 7, 160, 2.2, 3.4), dk(skin, 0.6), op=0.7)
-    if crest:
+    if crest and CREST_R7:
+        # spear A's crest sits on a head whose back edge is at y 52; this head's is at 44, so it moves up 8
+        S.shape(BASE_CREST, S.lg(lt(crest, 0.1), dk(crest, 0.25), x2=0, y2=1), tf="translate(0 -8)", sh=3, shade=0.25)
+    elif crest:
         for i, (y, h) in enumerate(((44, 20), (62, 18), (80, 15))):
             S.shape(blob([(100, y - h, 'c'), (106, y - h * 0.3), (105, y + 8), (95, y + 8), (94, y - h * 0.3)], 0.7),
                     S.lg(lt(crest, 0.1), dk(crest, 0.25)), sh=3, shade=0.2)
 
 
-def tail(S, skin, sway=1):
+def tail(S, skin, sway=1, crest=None):
     S.group("back", (100, 86))
+    dash = None
+    if CREST_R7 and crest:  # the crest line running on down the tail, dashed, as on spear A's tail
+        dash = [f'<path d="M101 33 C103 26 108 18 123 8" fill="none" stroke="{dk(crest, 0.25)}" stroke-width="5" '
+                f'stroke-linecap="round" stroke-dasharray="6 7"/>']
     S.shape(stroke_path([(100, 96), (97, 60), (104, 30), (120, 10), (136, 2)], 34, 4), S.lg(lt(skin, 0.1), dk(skin, 0.3)),
-            shadow=False, shade=0.3)
+            shadow=False, shade=0.3, decor=dash)
 
 
 def lfist(S, x, y, a, skin, kn=1):
@@ -83,7 +98,7 @@ def lizard_spear(ver):
                + ('Plain head: one scaly token lit from the left, brow bumps, nostrils. ' if ver == "a" else
                   'Face shaded like the humans: a darker scale plate over the top of the head, the snout under it with the heroes\' face gradient. ')
                + 'Parts: #back (tail, sways), #arm-r (spear + fist, before #body), #body, #arm-l (free fist). Front = DOWN (+y).')
-    tail(S, skin)
+    tail(S, skin, crest=crest)
     S.group("arm-r", (150, 110))
     spear(S, 154, 120, 6)
     lfist(S, 154, 142, 6, skin)
@@ -103,7 +118,7 @@ def lizard_blade(ver):
                f'the right way (the edge bows inward, the tip flicks out). '
                + ('Plain head. ' if ver == "a" else 'Face shaded like the humans (darker plate over the top, face gradient on the snout). ')
                + 'Parts: #back (tail), #arm-r (scimitar + fist, before #body), #body, #arm-l (free fist). Front = DOWN (+y).')
-    tail(S, skin)
+    tail(S, skin, crest=crest)
     S.group("arm-r", (150, 110))
     scimitar(S, 152, 142, 12)
     lfist(S, 152, 138, 12, skin)

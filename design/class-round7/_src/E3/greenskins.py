@@ -26,13 +26,25 @@ SKIN = {
 SCALP = ("M 52.5 108 C 50 70 70 47.8 100 47.8 C 130 47.8 150 70 147.5 108 C 136 100 120 96 100 98 "
          "C 80 96 64 100 52.5 108 Z")
 
+# round 7: the designer's notes on the ogre and orc were left on their "(before)" tiles, the round-5 versions, so these
+# two go back to round 5 (no round-6 change: the brow crease is back, and the orc keeps its knuckled fists) and get
+# only the round-7 note:
+#   OGRE_R7 "make hands simple then this could potentially work": the heroes' plain fists (no knuckle bumps), the
+#           iron cuffs as they were.
+#   ORC_R7  "tusks? not in mouth": the two tusks come out of the mouth: their roots on the mouth line, inside its
+#           ends (they stood on the chin below it, either side of the mouth), pointing up past the upper lip; the
+#           mouth line is drawn over their roots. Same tusks (size, lean, colour).
+OGRE_R7 = True
+ORC_R7 = True
+
 
 def lgs(S, skin):
     return S.lg(lt(skin, 0.12), dk(skin, 0.22))
 
 
-def gfist(S, x, y, a, skin, w=21, h=24, knuckle=1):
-    return fist(S, x, y, a, lgs(S, skin), w=w, h=h, knuckle=0 if HEROES6 else knuckle)
+def gfist(S, x, y, a, skin, w=21, h=24, knuckle=1, plain=None):
+    plain = HEROES6 if plain is None else plain
+    return fist(S, x, y, a, lgs(S, skin), w=w, h=h, knuckle=0 if plain else knuckle)
 
 
 def scalp(S, skin, d=SCALP, tf=None):
@@ -49,12 +61,12 @@ def ears(S, skin, pts, inner=None, tf=None):
             S.flat(blob(q, 0.9), dk(skin, 0.25), tf=tf, op=0.55)
 
 
-def tusks(S, xs=(84, 116), y=150, h=16, w=8, lean=4):
+def tusks(S, xs=(84, 116), y=150, h=16, w=8, lean=4, sh=2):
     """Lower tusks rising from the jaw at the front, pointing back up toward the brow."""
     for x in xs:
         s = 1 if x > 100 else -1
         S.shape(blob([(x - w / 2, y), (x + w / 2, y), (x + s * lean * 0.5 + w * 0.18, y - h * 0.6), (x + s * lean, y - h, 'c'),
-                      (x + s * lean * 0.5 - w * 0.3, y - h * 0.55)], 0.8), S.lg(*BONE), sh=2, op=0.25, shade=0.15)
+                      (x + s * lean * 0.5 - w * 0.3, y - h * 0.55)], 0.8), S.lg(*BONE), sh=sh, op=0.25, shade=0.15)
 
 
 # ----------------------------------------------------------------- weapons
@@ -157,9 +169,14 @@ def orc():
                '(cleaver + fist, before #body), #body, #arm-l (free fist). Front = DOWN (+y).')
     S.group("back", (100, 70))
     S.shape(stroke_path([(100, 60), (98, 40), (102, 20), (99, 2)], 15, 7), S.lg("#4A4250", "#231C28"), shadow=False, shade=0.2)
+    r5 = ORC_R7  # round 7: the round-5 orc (see ORC_R7)
+    plain = False if r5 else None
+    if r5:
+        S.comment = S.comment.replace("a big underbite jaw with two tusks", "a big underbite jaw with two tusks coming "
+                                      "out of the mouth (round 7)")
     S.group("arm-r", (154, 110))
     cleaver(S, 154, 142, 18)
-    gfist(S, 154, 138, 18, skin, w=24, h=26)
+    gfist(S, 154, 138, 18, skin, w=24, h=26, plain=plain)
     S.group("body")
     bumps = []
     for i in range(13):
@@ -167,7 +184,7 @@ def orc():
         bumps.append((100 + math.cos(t) * 84, 112 + math.sin(t) * 46))
     fur = blob([(100, 150), (40, 140), (14, 116)] + bumps[1:-1] + [(186, 116), (160, 140)], 0.8)
     S.shape(fur, S.lg("#9A7652", "#5E4430"), decor=['<path d="M10 128 C60 146 140 146 190 128 L190 160 L10 160 Z" fill="#4A3424" opacity="0.4"/>'])
-    if HEROES6:
+    if HEROES6 and not r5:
         bald_head(S, skin)
     else:
         face(S, skin)
@@ -175,10 +192,17 @@ def orc():
     S.shape(circ(100, 62, 15), S.lg("#4A4250", "#231C28"), sh=3, shade=0.2)
     jaw = blob([(70, 128), (100, 132), (130, 128), (136, 144), (122, 160), (100, 164), (78, 160), (64, 144)], 0.9)
     S.shape(jaw, S.lg(lt(skin, 0.04), dk(skin, 0.24)), sh=3, op=0.32, shade=0.22)
-    S.raw(f'<path d="M84 140 Q100 136 116 140" fill="none" stroke="{dk(skin, 0.55)}" stroke-width="3" stroke-linecap="round"/>')
-    tusks(S, (84, 116), 150, 20, 10, 5)
+    mline = f'<path d="M84 140 Q100 136 116 140" fill="none" stroke="{dk(skin, 0.55)}" stroke-width="3" stroke-linecap="round"/>'
+    if r5:
+        # the mouth line runs x 84..116, at y 138.8 where the tusks stand (x 90, 110): their roots are on it, hidden
+        # by it (so no contact shadow peeks out below it)
+        tusks(S, (90, 110), 138.4, 20, 10, 5, sh=0)
+        S.raw(mline)
+    else:
+        S.raw(mline)
+        tusks(S, (84, 116), 150, 20, 10, 5)
     S.group("arm-l", (46, 112))
-    gfist(S, 44, 146, -6, skin, w=24, h=26, knuckle=-1)
+    gfist(S, 44, 146, -6, skin, w=24, h=26, knuckle=-1, plain=plain)
     return S
 
 
@@ -255,7 +279,11 @@ def ogre():
                    '<circle cx="50" cy="126" r="6" fill="#7A5634" opacity="0.6"/>'])
     head = "M 100 40 C 136 40 156 64 156 98 C 156 130 134 156 100 156 C 66 156 44 130 44 98 C 44 64 64 40 100 40 Z"
     ears(S, skin, [(150, 94), (166, 90), (170, 102), (160, 110), (150, 108)])
-    if HEROES6:
+    r5 = OGRE_R7  # round 7: the round-5 ogre (its brow crease back) with the plain fists (see OGRE_R7)
+    if r5:
+        S.comment = S.comment.replace("two huge fists in iron cuffs", "two huge plain fists in iron cuffs (round 7: no "
+                                      "knuckle bumps)")
+    if HEROES6 and not r5:
         bald_head(S, skin, d=head)
     else:
         S.shape(head, face_fill(S, skin, 96, 156), sh=5, op=0.32, shade=0,
@@ -270,7 +298,7 @@ def ogre():
     for gid, x, kn in (("arm-l", 30, -1), ("arm-r", 170, 1)):
         S.group(gid, (40 if x < 100 else 160, 114))
         S.shape(rr(x, 136, 30, 16, 6), S.lg("#9AA0AA", "#5E6472"), sh=3, shade=0.3)
-        gfist(S, x, 154, 0, skin, w=30, h=34, knuckle=kn)
+        gfist(S, x, 154, 0, skin, w=30, h=34, knuckle=kn, plain=True if r5 else None)
     return S
 
 

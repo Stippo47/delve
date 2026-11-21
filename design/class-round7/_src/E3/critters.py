@@ -7,6 +7,10 @@ from lib import *
 BONE = ("#F4EBD2", "#C9B98E")
 WOOD = ("#9A6A40", "#5E3C22")
 BAT_R6 = True
+# round 7 ("remove body; make head bigger; maybe make ears different as well / bigger"): no body behind the head;
+# the head (with its snout, nose and fangs) 1.28x as big, sitting where head and body were; the long ears swept
+# straight back become big broad pointed ears standing up and out from the top of the head. Wings as they were.
+BAT_R7 = True
 SPIDER_R6 = True
 SLIME_R6 = True
 SNOWMAN_R6 = True
@@ -61,6 +65,24 @@ def bat():
             b = bone if side > 0 else mx(bone)
             S.shape(stroke_path(b, 9, 5), S.lg(lt(mem, 0.35), lt(mem, 0.1)), shadow=False, shade=0)
     S.group("body")
+    if BAT_R7:
+        S.comment = S.comment.replace("a round furry head with two big ears swept back", "a big round furry head with no "
+                                      "body behind it (round 7), two big broad pointed ears standing up and out").replace(
+                                      "#body (head and fur)", "#body (head and ears)")
+        hk = 1.28                                       # the head, its snout, nose and fangs: 1.28x, centred at (100, 106)
+        htf = f"translate(100 106) scale({hk}) translate(-100 -112)"
+        for side in (1, -1):
+            ear = [(104, 82), (110, 62), (126, 38), (148, 16, 'c'), (150, 44), (142, 70), (128, 88)]
+            inner = [(112, 78), (118, 60), (130, 42), (143, 27, 'c'), (143, 48), (136, 68), (126, 80)]
+            S.shape(blob(ear if side > 0 else mx(ear), 0.8), S.lg(lt(fur, 0.12), dk(fur, 0.28)), shadow=False, shade=0.25,
+                    decor=[f'<path d="{blob(inner if side > 0 else mx(inner), 0.8)}" fill="#C78A9A" opacity="0.6"/>'])
+        S.shape(circ(100, 112, 36), S.lg(lt(fur, 0.22), dk(fur, 0.12)), tf=htf, sh=4, shade=0.3)
+        S.shape(ell(100, 140, 14, 11), S.lg(lt(fur, 0.2), dk(fur, 0.1)), tf=htf, sh=3, shade=0.2)
+        S.shape("M 93.5 135.5 C 93.5 131.5 106.5 131.5 106.5 135.5 C 106.5 139 102.5 141.5 100 141.5 C 97.5 141.5 93.5 139 93.5 135.5 Z",
+                S.lg(dk(fur, 0.45), dk(fur, 0.65)), tf=htf, sh=1.5, op=0.25, shade=0)
+        for x in (94, 106):
+            S.shape(poly([(x - 3, 146), (x + 3, 146), (x, 155)]), S.lg("#FFFFFF", "#D8D0E0"), tf=htf, shadow=False, shade=0)
+        return S
     S.shape(ell(100, 82, 26, 30), S.lg(lt(fur, 0.1), dk(fur, 0.3)), shadow=False, shade=0.3)
     for side in (1, -1):
         pts = [(110, 92), (124, 84), (134, 52, 'c'), (116, 70)]
