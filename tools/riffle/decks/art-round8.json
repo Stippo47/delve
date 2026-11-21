@@ -1,0 +1,384 @@
+{
+  "title": "Art round 8: notes, and real enemy art",
+  "topic": "art",
+  "order": 15,
+  "priority": 3,
+  "cards": [
+    {
+      "id": "notes",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Your round-7 notes",
+      "text": "The orc's mouth, both ghosts, the troll with its boulder, and the mohawk one as the Chieftain.",
+      "why": "Each starts from the exact tile your note was on and changes only that. Tick the ones that are right now.",
+      "details": "The troll is now twice the archer across in the game (it was 1.4 times), with a round nose, an underbite and a boulder in both fists.\n\nThe mohawk troll is kept exactly as drawn and named the Warren's Chieftain, but it still has the trolls' teal skin. If 'not as a troll' meant a different look, say so.",
+      "pick": [
+        "ghost-a",
+        "ghost-b",
+        "greenskin-chieftain",
+        "greenskin-orc",
+        "greenskin-troll"
+      ],
+      "items": [
+        {
+          "id": "ghost-a",
+          "label": "Ghost A",
+          "image": "../../../design/class-round8/enemies/renders/ghost-a.png",
+          "text": "Ghost A and Ghost B (enemies/ghost-a.svg, ghost-b.svg), \"Remove the sliver on their back for this and the other ghost I liked\": the narrow darker fold that ran from the middle of the head back into the tail is gone on both. Nothing else.",
+          "thumb": "../../../design/class-round8/enemies/renders/ghost-a-thumb.png"
+        },
+        {
+          "id": "ghost-a-before",
+          "label": "Ghost A (before)",
+          "image": "../../../design/class-round8/enemies/renders/ghost-a-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "ghost-b",
+          "label": "Ghost A",
+          "image": "../../../design/class-round8/enemies/renders/ghost-b.png",
+          "text": "Ghost A and Ghost B (enemies/ghost-a.svg, ghost-b.svg), \"Remove the sliver on their back for this and the other ghost I liked\": the narrow darker fold that ran from the middle of the head back into the tail is gone on both. Nothing else.",
+          "thumb": "../../../design/class-round8/enemies/renders/ghost-b-thumb.png"
+        },
+        {
+          "id": "ghost-b-before",
+          "label": "Ghost A (before)",
+          "image": "../../../design/class-round8/enemies/renders/ghost-b-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "greenskin-chieftain",
+          "label": "Troll A",
+          "image": "../../../design/class-round8/enemies/renders/greenskin-chieftain.png",
+          "text": "Troll A, mohawk -> the Chieftain (enemies/greenskin-chieftain.svg), \"Keep this but not as a troll\": kept exactly (the same shapes and colours, only its comment differs) and made the Warren's chieftain, the boss the designer renamed (\"The Warboss: Chieftain. More abilities.\"): the red war crest, the big tusks and the club read as the tribe's chief, and beside the Warren's hunched trolls it stands u",
+          "thumb": "../../../design/class-round8/enemies/renders/greenskin-chieftain-thumb.png"
+        },
+        {
+          "id": "greenskin-chieftain-before",
+          "label": "Troll A (before)",
+          "image": "../../../design/class-round8/enemies/renders/greenskin-chieftain-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "greenskin-orc",
+          "label": "Orc",
+          "image": "../../../design/class-round8/enemies/renders/greenskin-orc.png",
+          "text": "Orc (enemies/greenskin-orc.svg), \"Wider mouth\": the mouth line runs x 74..126 (it ran 84..116), same height, bow and line; the tusks stay where they were, still coming up out of the mouth. Nothing else.",
+          "thumb": "../../../design/class-round8/enemies/renders/greenskin-orc-thumb.png"
+        },
+        {
+          "id": "greenskin-orc-before",
+          "label": "Orc (before)",
+          "image": "../../../design/class-round8/enemies/renders/greenskin-orc-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "greenskin-troll",
+          "label": "Troll",
+          "image": "../../../design/class-round8/enemies/renders/greenskin-troll.png",
+          "text": "Troll (enemies/greenskin-troll.svg, its boulder props/troll-boulder.svg, the board boards/greenskin-troll-boulder.svg), on the round-6 troll (\"Liked this ones overall shape more. Fix face and make like 2x bigger overall and will look pretty good. Also needs a boulder\"): the round-6 hump, moss patch, small head and ears as they were; the face: the drooping nose (it read as a trunk) and the dark pat",
+          "thumb": "../../../design/class-round8/enemies/renders/greenskin-troll-thumb.png"
+        },
+        {
+          "id": "greenskin-troll-before",
+          "label": "Troll (before)",
+          "image": "../../../design/class-round8/enemies/renders/greenskin-troll-before.png",
+          "text": "The version you saw last round, for comparison."
+        }
+      ]
+    },
+    {
+      "id": "real",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Real art for placeholders",
+      "text": "Wolves, six bandits, poacher, brute and Chief, boar, sproutling, ent, wisp, Elder Ent, rat king, croc, crab.",
+      "why": "These were recoloured stand-ins in 0.10.0. All are live in 0.12.0 in the heroes' style, no eyes. Tick the ones that fit; comment on any that don't.",
+      "details": "Weak spots I know of: the bandits differ by headgear and weapon only; the greatsword is short; the rat king reads as a heap of rats up close and a spiky blob at game size; the ent and the Elder Ent share a build.",
+      "pick": [
+        "bandit-axe",
+        "bandit-brute",
+        "bandit-chief",
+        "bandit-daggers",
+        "bandit-greatsword",
+        "bandit-poacher",
+        "bandit-spear",
+        "bandit-sword",
+        "bandit-torch",
+        "sewer-crab",
+        "sewer-croc",
+        "sewer-rat-king",
+        "wild-alpha",
+        "wild-boar",
+        "wild-dire-wolf",
+        "wild-elder-ent",
+        "wild-ent",
+        "wild-sproutling",
+        "wild-wisp",
+        "wild-wolf"
+      ],
+      "items": [
+        {
+          "id": "bandit-axe",
+          "label": "Axe bandit",
+          "image": "../../../design/class-round8/enemies/renders/bandit-axe.png",
+          "text": "Axe bandit (enemies/bandit-axe.svg): a fur cap with a pale fur rim; a big hand axe under the right shoulder, the blade turned in (the designer's way with the werewolf's hatchet), the left hand free.",
+          "thumb": "../../../design/class-round8/enemies/renders/bandit-axe-thumb.png"
+        },
+        {
+          "id": "bandit-axe-before",
+          "label": "Axe bandit (before)",
+          "image": "../../../design/class-round8/enemies/renders/bandit-axe-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "bandit-brute",
+          "label": "Bandit brute",
+          "image": "../../../design/class-round8/enemies/renders/bandit-brute.png",
+          "text": "Bandit brute (enemies/bandit-brute.svg): the gang's heavy: bald and scarred over the red bandanna, broad patched leather shoulders with a shaggy collar; a big studded club with short iron spikes, a bare fist in leather wraps.",
+          "thumb": "../../../design/class-round8/enemies/renders/bandit-brute-thumb.png"
+        },
+        {
+          "id": "bandit-brute-before",
+          "label": "Bandit brute (before)",
+          "image": "../../../design/class-round8/enemies/renders/bandit-brute-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "bandit-chief",
+          "label": "The Bandit Chief",
+          "image": "../../../design/class-round8/enemies/renders/bandit-chief.png",
+          "text": "The Bandit Chief (enemies/bandit-chief.svg): a black tricorn with a gold edge and a red plume, the gang's red bandanna, a black coat with a high collar and gold trim, throwing knives on a bandolier over the left shoulder; a gold-hilted cutlass and a smoke bomb with a lit fuse.",
+          "thumb": "../../../design/class-round8/enemies/renders/bandit-chief-thumb.png"
+        },
+        {
+          "id": "bandit-chief-before",
+          "label": "The Bandit Chief (before)",
+          "image": "../../../design/class-round8/enemies/renders/bandit-chief-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "bandit-daggers",
+          "label": "Knife bandit",
+          "image": "../../../design/class-round8/enemies/renders/bandit-daggers.png",
+          "text": "Knife bandit (enemies/bandit-daggers.svg): a dark slate hood drawn low; a dagger in each hand, both under the shoulders, a little apart.",
+          "thumb": "../../../design/class-round8/enemies/renders/bandit-daggers-thumb.png"
+        },
+        {
+          "id": "bandit-daggers-before",
+          "label": "Knife bandit (before)",
+          "image": "../../../design/class-round8/enemies/renders/bandit-daggers-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "bandit-greatsword",
+          "label": "Greatsword bandit",
+          "image": "../../../design/class-round8/enemies/renders/bandit-greatsword.png",
+          "text": "Greatsword bandit (enemies/bandit-greatsword.svg): an iron kettle hat with a round brim; a big two-handed sword held in front the Old Guard's way, both fists on the long grip, the wide blade across the front.",
+          "thumb": "../../../design/class-round8/enemies/renders/bandit-greatsword-thumb.png"
+        },
+        {
+          "id": "bandit-greatsword-before",
+          "label": "Greatsword bandit (before)",
+          "image": "../../../design/class-round8/enemies/renders/bandit-greatsword-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "bandit-poacher",
+          "label": "Poacher",
+          "image": "../../../design/class-round8/enemies/renders/bandit-poacher.png",
+          "text": "Poacher (enemies/bandit-poacher.svg): a woodland hunter, not one of the masked gang: a drab olive hood (not the archer's leaf green) with its tail lying back, a short scruffy beard, a grey fur mantle; a short dark recurve bow in front with its string (the game draws it to the drawing hand) and an arrow; a rolled net on the back for the net it throws.",
+          "thumb": "../../../design/class-round8/enemies/renders/bandit-poacher-thumb.png"
+        },
+        {
+          "id": "bandit-poacher-before",
+          "label": "Poacher (before)",
+          "image": "../../../design/class-round8/enemies/renders/bandit-poacher-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "bandit-spear",
+          "label": "Spear bandit",
+          "image": "../../../design/class-round8/enemies/renders/bandit-spear.png",
+          "text": "Spear bandit (enemies/bandit-spear.svg): a leather cap with a red feather lying back; a long spear under the right shoulder, the point well forward.",
+          "thumb": "../../../design/class-round8/enemies/renders/bandit-spear-thumb.png"
+        },
+        {
+          "id": "bandit-spear-before",
+          "label": "Spear bandit (before)",
+          "image": "../../../design/class-round8/enemies/renders/bandit-spear-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "bandit-sword",
+          "label": "Bandit",
+          "image": "../../../design/class-round8/enemies/renders/bandit-sword.png",
+          "text": "Bandit, sword and shield (enemies/bandit-sword.svg): the gang's look on the heroes' base (rag-edged leather tunic, the Bandit hero's red bandanna, no eyes), brown hair under the navy head scarf knotted at the back; a short sword under the right shoulder, a round wooden buckler with an iron boss in the left hand.",
+          "thumb": "../../../design/class-round8/enemies/renders/bandit-sword-thumb.png"
+        },
+        {
+          "id": "bandit-sword-before",
+          "label": "Bandit (before)",
+          "image": "../../../design/class-round8/enemies/renders/bandit-sword-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "bandit-torch",
+          "label": "Torch bandit",
+          "image": "../../../design/class-round8/enemies/renders/bandit-torch.png",
+          "text": "Torch bandit (enemies/bandit-torch.svg): the same gang look under a rust-brown hood with its tail lying back; a short sword and a burning torch held out in front.",
+          "thumb": "../../../design/class-round8/enemies/renders/bandit-torch-thumb.png"
+        },
+        {
+          "id": "bandit-torch-before",
+          "label": "Torch bandit (before)",
+          "image": "../../../design/class-round8/enemies/renders/bandit-torch-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "sewer-crab",
+          "label": "Sewer crab",
+          "image": "../../../design/class-round8/enemies/renders/sewer-crab.png",
+          "text": "Sewer crab (enemies/sewer-crab.svg): a wide rusty-red shell with a smooth armoured front lip (\"armoured from the front\"), four jointed legs a side (#back), two big pincers forward (arm parts, they snap when it pinches); its blue and green kinds are this art turned by the game (hue 180 and 90), which lands on blue and green.",
+          "thumb": "../../../design/class-round8/enemies/renders/sewer-crab-thumb.png"
+        },
+        {
+          "id": "sewer-crab-before",
+          "label": "Sewer crab (before)",
+          "image": "../../../design/class-round8/enemies/renders/sewer-crab-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "sewer-croc",
+          "label": "Croc",
+          "image": "../../../design/class-round8/enemies/renders/sewer-croc.png",
+          "text": "Croc (enemies/sewer-croc.svg), \"Has 2 axes, bite is an ability\": the picked Croc A (round 7) with a heavy axe in each clawed fist, both under the shoulders, the blades turned in; the bone club and the turtle shell are gone (CROC_R8).",
+          "thumb": "../../../design/class-round8/enemies/renders/sewer-croc-thumb.png"
+        },
+        {
+          "id": "sewer-croc-before",
+          "label": "Croc (before)",
+          "image": "../../../design/class-round8/enemies/renders/sewer-croc-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "sewer-rat-king",
+          "label": "Rat king",
+          "image": "../../../design/class-round8/enemies/renders/sewer-rat-king.png",
+          "text": "Rat king (enemies/sewer-rat-king.svg), \"a jumble of rats ... more effort than the rat sprite layered on itself\": a heap of rats of different sizes, furs and poses (each with its own round rump, pointed head turned on its neck, round pink ears, pink nose), heads out unevenly on all sides, their pink tails knotted over the middle and loose ends hanging out behind; the king on top at the front, bigge",
+          "thumb": "../../../design/class-round8/enemies/renders/sewer-rat-king-thumb.png"
+        },
+        {
+          "id": "sewer-rat-king-before",
+          "label": "Rat king (before)",
+          "image": "../../../design/class-round8/enemies/renders/sewer-rat-king-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "wild-alpha",
+          "label": "The Alpha",
+          "image": "../../../design/class-round8/enemies/renders/wild-alpha.png",
+          "text": "The Alpha (enemies/wild-alpha.svg): the giant wolf in pale silver, a great tufted mane, one ear torn, an old scar across the brow in one darker shade, bigger paws.",
+          "thumb": "../../../design/class-round8/enemies/renders/wild-alpha-thumb.png"
+        },
+        {
+          "id": "wild-alpha-before",
+          "label": "The Alpha (before)",
+          "image": "../../../design/class-round8/enemies/renders/wild-alpha-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "wild-boar",
+          "label": "Thornback boar",
+          "image": "../../../design/class-round8/enemies/renders/wild-boar.png",
+          "text": "Thornback boar (enemies/wild-boar.svg): the wolves' capsule build: a dark bristly body with two staggered rows of big pale thorns down the spine (the thorns its elite sheds), a tufted tail, small ears, a pink-grey snout disc, two big curved tusks (a #front part, over the swinging front legs), two hooves.",
+          "thumb": "../../../design/class-round8/enemies/renders/wild-boar-thumb.png"
+        },
+        {
+          "id": "wild-boar-before",
+          "label": "Thornback boar (before)",
+          "image": "../../../design/class-round8/enemies/renders/wild-boar-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "wild-dire-wolf",
+          "label": "Dire wolf",
+          "image": "../../../design/class-round8/enemies/renders/wild-dire-wolf.png",
+          "text": "Dire wolf (enemies/wild-dire-wolf.svg): the wolf in black and smoke grey with a mane of pointed tufts lying back over the shoulders (the game draws it 1.25x).",
+          "thumb": "../../../design/class-round8/enemies/renders/wild-dire-wolf-thumb.png"
+        },
+        {
+          "id": "wild-dire-wolf-before",
+          "label": "Dire wolf (before)",
+          "image": "../../../design/class-round8/enemies/renders/wild-dire-wolf-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "wild-elder-ent",
+          "label": "The Elder Ent",
+          "image": "../../../design/class-round8/enemies/renders/wild-elder-ent.png",
+          "text": "The Elder Ent (enemies/wild-elder-ent.svg), big, built in parts: a great crown of dark leaves over its back (#back, sways), a massive grey-brown trunk with moss and pale shelf fungus on the shoulders, antler-like branches from the brow, a broad bark face with a deep knot-hole mouth over a ragged mossy beard, two huge branch arms with root claws (arm-l, arm-r, swing).",
+          "thumb": "../../../design/class-round8/enemies/renders/wild-elder-ent-thumb.png"
+        },
+        {
+          "id": "wild-elder-ent-before",
+          "label": "The Elder Ent (before)",
+          "image": "../../../design/class-round8/enemies/renders/wild-elder-ent-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "wild-ent",
+          "label": "Ent",
+          "image": "../../../design/class-round8/enemies/renders/wild-ent.png",
+          "text": "Ent (enemies/wild-ent.svg): a walking tree: a leafy crown on its back (#back, sways), bark shoulders with moss, a bark head with a dark knot-hole mouth and two branch stubs from the brow, thick branch arms with knotty wooden fists and twig fingers.",
+          "thumb": "../../../design/class-round8/enemies/renders/wild-ent-thumb.png"
+        },
+        {
+          "id": "wild-ent-before",
+          "label": "Ent (before)",
+          "image": "../../../design/class-round8/enemies/renders/wild-ent-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "wild-sproutling",
+          "label": "Sproutling",
+          "image": "../../../design/class-round8/enemies/renders/wild-sproutling.png",
+          "text": "Sproutling (enemies/wild-sproutling.svg): a small walking sapling: a round green bud with two big seed leaves fanned back over it and a curled shoot between them, a collar of small leaves for shoulders, twig arms ending in leafy hands. No face.",
+          "thumb": "../../../design/class-round8/enemies/renders/wild-sproutling-thumb.png"
+        },
+        {
+          "id": "wild-sproutling-before",
+          "label": "Sproutling (before)",
+          "image": "../../../design/class-round8/enemies/renders/wild-sproutling-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "wild-wisp",
+          "label": "Wisp",
+          "image": "../../../design/class-round8/enemies/renders/wild-wisp.png",
+          "text": "Wisp (enemies/wild-wisp.svg): a floating light: a round glowing lime orb, a flickering flame tail streaming back (#back), two little wisps of flame for hands. No face.",
+          "thumb": "../../../design/class-round8/enemies/renders/wild-wisp-thumb.png"
+        },
+        {
+          "id": "wild-wisp-before",
+          "label": "Wisp (before)",
+          "image": "../../../design/class-round8/enemies/renders/wild-wisp-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        },
+        {
+          "id": "wild-wolf",
+          "label": "Wolf",
+          "image": "../../../design/class-round8/enemies/renders/wild-wolf.png",
+          "text": "Wolf (enemies/wild-wolf.svg): the designer on Call Wolf, \"capsule shaped ... too complex ... match the werewolf\": one rounded capsule of a warm grey body, a bushy tail with a dark tip, the werewolf's round skull, laid-back ears with the dusky inner ear, long snout with a pale muzzle and dark nose, his scalloped ruff and his paws with three short white claws. The druid's called wolf wears it too.",
+          "thumb": "../../../design/class-round8/enemies/renders/wild-wolf-thumb.png"
+        },
+        {
+          "id": "wild-wolf-before",
+          "label": "Wolf (before)",
+          "image": "../../../design/class-round8/enemies/renders/wild-wolf-before.png",
+          "text": "What the game showed until now (a recoloured stand-in)."
+        }
+      ]
+    }
+  ]
+}

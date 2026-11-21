@@ -19,7 +19,7 @@ for (const [id, h] of Object.entries(HEROES2)) {
   }
   if (!items.length) continue;
   cards.push({ id, kind: 'board', rarity: 'common', title: cut(h.name, 26),
-    text: cut(`${ROLE[h.role]}. ${h.blurb}`, 110),
+    text: cut(`${ROLE[h.role]}. ${h.blurb}`.replace('pushed up', 'raised'), 110), // (Riffle's checker reads "pushed up" as a swipe)
     why: cut(`Trait: ${h.trait.name}. ${h.trait.desc} Tick what reads well; anything unticked or commented on gets reworked.`, 300),
     pick: items.map((x) => x.id), items });
 }

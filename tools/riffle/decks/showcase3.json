@@ -1409,7 +1409,7 @@
       "kind": "board",
       "rarity": "common",
       "title": "Engineer",
-      "text": "Fighter. An orange work suit, a welding mask pushed up and a very big wrench. Builds a turret and keeps it.",
+      "text": "Fighter. An orange work suit, a welding mask raised and a very big wrench. Builds a turret and keeps it.",
       "why": "Trait: Handy. Things he builds or calls take 30% less damage. Tick what reads well; anything unticked or commented on gets reworked.",
       "pick": [
         "engineer-attack",

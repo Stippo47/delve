@@ -1,0 +1,65 @@
+{
+  "title": "0.12.0: balance, armour, poison",
+  "topic": "runs",
+  "order": 16,
+  "priority": 1,
+  "tags": ["first"],
+  "cards": [
+    {
+      "id": "balance",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "The balance pass",
+      "text": "Every hero tested at ability tier I and III. Tanks now deal a quarter of party damage, shooters over 40%.",
+      "why": "You said the Paladin should be a tank first and an archer should deal more. Mark what still feels off when you play.",
+      "details": "The test: each of the 52 heroes leads a party of three with two random others. Everyone has all three abilities at the tier and nothing else: no trinkets, no potions, no other skill nodes. Each party plays all nine dungeons, every dungeon at the same strength, about 1,900 runs a pass. It counts rooms cleared and each hero's share of its party's damage, healing and damage taken.\n\nBefore: tanks dealt 31% of their party's damage (an even third), shooters 43%, skirmishers 25%. Healers added 3 to 4 rooms a run over average; skirmishers and plain fighters went down most.\n\nAfter three passes: tanks 24%, shooters 41 to 44%, fighters 37%, skirmishers 35%, casters 36%, supports 21%.\n\nStill off: healers (Druid, Cleric, Quartermaster) are still the best pick by 2 to 3 rooms, and the weakest are the Jester, Gladiator, Digger, Haymaker and Harpooner. The 37 new heroes were written before this pass and only got stat changes; their abilities haven't been tuned one by one.",
+      "parts": [
+        { "id": "roles", "title": "Roles", "text": "A role's damage is now one number. Tanks deal 35% less than written and have 8% more health; shooters deal 25% more, casters 12%, fighters 10%, skirmishers 25% with 20% more health; supports deal 10% less and heal 25% less." },
+        { "id": "paladin", "title": "The Paladin", "text": "He dealt 31% of his party's damage and most of its healing. Now 24%: his blows and Shield Bash are softer, Consecrate mends half as much, Guard's heal is 10% not 15%, and he wears 6 armour." },
+        { "id": "archer", "title": "The Archer", "text": "Deals 25% more with the bow and every ability, like all shooters. She is now average for party success; the Marksman is the strongest shooter and was toned down." },
+        { "id": "cooldowns", "title": "Cooldowns", "text": "Every ability's cooldown is 22% longer, new heroes included." },
+        { "id": "outliers", "title": "Single heroes", "text": "Down: Marksman's damage, the Necromancer's Life Drain healing, the Druid's and Cleric's heals, the Quartermaster's free potions (one per ally a room). Up: Granny Reaper, Twinfang, and eight of the weakest new heroes." },
+        { "id": "crashes", "title": "Crashes found", "text": "The tests found four crashes and they're fixed: exploding minions killing each other without end, a lightning loop, the Jester's side-flip, and the hero Bandit being overwritten by the Wildwood's bandit." }
+      ]
+    },
+    {
+      "id": "armour",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "Armour",
+      "text": "A real stat now: each blow loses that many points, but never more than 60% of the blow.",
+      "why": "You asked for armour that isn't a flat percentage. This way a swarm's small bites mostly bounce off a tank, and one heavy blow mostly goes through. Fast light hitters are weak against it; slow heavy ones aren't.",
+      "pick": "Keep it: points off every blow, capped at 60%, with heavy and critical blows getting past half.",
+      "details": "Heavy blows and critical hits ignore half the armour. Burning, poison and other damage over time ignore it completely.\n\nHeroes: Tower 8, Paladin, Old Guard and Bulwark 6, Griffon 5, Dame 4, Warhelm 3, Gladiator, Samurai, Valkyrie and Bearskin 2. The skill web's Toughness nodes (5% less damage each) became Armour nodes: +2 a rank.\n\nEnemies: crabs, scarabs, bone brutes, the rock troll, golems, and the Foundry's metal. Its bees come in copper (none), bronze (2) and steel (4). An enemy's armour grows with its dungeon's strength.\n\nArmour shows in a unit's numbers when you pause and tap it."
+    },
+    {
+      "id": "poison",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "Poison's burst: Sickened",
+      "text": "Poison no longer takes 15% of health at once. The burst sickens for 6 seconds instead.",
+      "why": "You said the instant drain had to go. Sickened is a slow loss you can heal through, plus a weakness, so poison wears a fight down rather than chunking it.",
+      "pick": "Sickened for 6 s: loses 10% of max health over that time, hits 30% weaker, moves and attacks 20% slower.",
+      "details": "Bosses lose 4% instead of 10%. Anything that cleans statuses off ends it early. Poison then drops to 30 as before.\n\nThe build-up is unchanged: slow damage, and 10% slower once it's past a fifth."
+    },
+    {
+      "id": "camp",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "The camp's lag",
+      "text": "Fixed in 0.11.1. The camp rebuilt hero sprites every frame after zooming to the fire or a hero.",
+      "why": "You said the camp was very laggy. Mark this if it still is on your phone.",
+      "details": "The cause was a bug in the sprite cache: once a hero's sprite existed at three sizes, any new size was thrown away the moment it was made and built again on the next frame. Zooming the camp triggered it, and so would pinching in during a battle.\n\nIn a slowed-down test the fire and hero pages went from about 6 frames a second to 60 or more. The camp's ground is also painted once now instead of every frame."
+    },
+    {
+      "id": "wither",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Rooms that drag on",
+      "text": "Should enemies start losing health when a room drags on too long?",
+      "why": "The roster work added this to end stand-offs, like a last archer kiting something round a wall for ever. It also means a very long fight ends itself, which you may not want.",
+      "pick": "Yes, but late: after 90 s without a kill, or 4 minutes in the room, enemies lose 3% of their health a second. Never in boss rooms.",
+      "details": "It was first set to 60 seconds without a kill or 200 seconds in the room, at 4% a second. I moved it later because a party that only healed could sit a room out."
+    }
+  ]
+}

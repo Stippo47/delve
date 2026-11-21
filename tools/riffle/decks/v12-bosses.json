@@ -1,0 +1,97 @@
+{
+  "title": "0.12.0: a boss for every dungeon",
+  "topic": "runs",
+  "order": 17,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "chieftain",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The Goblin Chieftain",
+      "text": "The Warren's boss, with more moves as you asked: charges, a returning spear, war drums, dynamite mice.",
+      "why": "One clip per phase. Mark the moves that read badly or feel unfair.",
+      "videos": ["../../../clips/r10/bosses/chieftain-p1.mp4", "../../../clips/r10/bosses/chieftain-p2.mp4", "../../../clips/r10/bosses/chieftain-p3.mp4", "../../../clips/r10/bosses/chieftain-p4.mp4"],
+      "details": "Four phases. He chops, charges (and is dazed and open if the charge hits a pillar), and throws a spear that flies back to his hand. From phase 2 war drums call goblins from tunnel mouths and speed him up until they're smashed, and he whistles up dynamite mice. Later a cleaver spin that leaves him dizzy, a bomb barrage, and paired charges at the end.\n\nIn tests a level-15 party of three won 4 fights in 10, about 4 minutes each. The fights are long.\n\nHe is the orc recoloured for now. The clips were recorded before the balance pass, so the numbers on screen are a little out of date."
+    },
+    {
+      "id": "ooze",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The Great Ooze",
+      "text": "The Sewers' boss. It shrinks as it's hurt, and the Thing in the Cistern's tentacles are its third phase.",
+      "why": "You picked the Great Ooze and liked the Thing without rising water, so the Thing is folded in. Mark what's off.",
+      "videos": ["../../../clips/r10/bosses/greatOoze-p1.mp4", "../../../clips/r10/bosses/greatOoze-p2.mp4", "../../../clips/r10/bosses/greatOoze-p3.mp4", "../../../clips/r10/bosses/greatOoze-p4.mp4"],
+      "details": "Four phases. A hop slam that leaves slicks, a spit, a smother. From phase 2 it sheds slimes that crawl home to heal it. In phase 3 tentacles slam out of the canals and drag heroes into the water. In phase 4 it melts: faster, and its hops leave gas.\n\nIn tests a level-17 party won 10 fights in 10: too easy now, to be toughened."
+    },
+    {
+      "id": "queen",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "The Winter Queen",
+      "text": "Frost Hollow's boss, built as the roster proposed because your answer was \"IDK\". Keep her?",
+      "why": "She needed to exist for the dungeon to have a boss, but she is my call, not yours. Say no and I'll design something else.",
+      "pick": "Keep the Winter Queen as Frost Hollow's boss.",
+      "videos": ["../../../clips/r10/bosses/winterQueen-p1.mp4", "../../../clips/r10/bosses/winterQueen-p2.mp4", "../../../clips/r10/bosses/winterQueen-p3.mp4", "../../../clips/r10/bosses/winterQueen-p4.mp4"],
+      "details": "Four phases: ice lances; a frost nova, then she blinks away; a wall of ice through the middle of the party with a spike on whoever is cut off; mirror images that cast and shatter; a blizzard with hail.\n\nIn tests a level-41 party won 2 fights in 10 after the balance pass (7 before): too hard, to be eased. She is the Frost Mage's art recoloured for now."
+    },
+    {
+      "id": "cinder",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Cinder, the Old Drake",
+      "text": "Ember Deep's boss: a wingless drake in parts. Head, five armoured segments, and a tail you can break.",
+      "why": "You asked for a wingless drake made of several parts. Mark what's off.",
+      "videos": ["../../../clips/r10/bosses/cinder-p1.mp4", "../../../clips/r10/bosses/cinder-p2.mp4", "../../../clips/r10/bosses/cinder-p3.mp4"],
+      "details": "Three phases. The head is the boss; the body segments pass a fifth of each blow through; the tail has its own health and breaking it stuns the drake. Bite; Scorch, a narrow flame cone that turns slowly and stops at pillars; a tail lash; fireballs from the sky that leave burning ground; a coil rush; and a molten body that drips fire.\n\nIn tests a level-50 party won 5 fights in 10."
+    },
+    {
+      "id": "seraph",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "The Gilded Seraph",
+      "text": "A new boss for the Gilded Spire, since the Hollow Saint was a rethink. Keep her?",
+      "why": "This one is designed from scratch without you, so it needs your yes or no before it gets real art.",
+      "pick": "Keep the Gilded Seraph as the Spire's boss.",
+      "videos": ["../../../clips/r10/bosses/gildedSeraph-p1.mp4", "../../../clips/r10/bosses/gildedSeraph-p2.mp4", "../../../clips/r10/bosses/gildedSeraph-p3.mp4", "../../../clips/r10/bosses/gildedSeraph-p4.mp4"],
+      "details": "Four phases: three breakable sun blades that circle her and fly at heroes; smite; beams of light that sweep like clock hands; a dive; a choir whose song shields her until it's silenced; and a fall, where her radiance turns to curse.\n\nIn tests a level-58 party won 2 fights in 10 after the balance pass: too hard and too long, to be eased."
+    },
+    {
+      "id": "wurm",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The Sand Wurm",
+      "text": "The Sunken Dunes' boss, as you asked: it burrows, runs at its mark under the sand, and erupts.",
+      "why": "Mark what's off. The clips show it on the Spire's floor: they were recorded before the Dunes existed.",
+      "videos": ["../../../clips/r10/bosses/sandWurm-p1.mp4", "../../../clips/r10/bosses/sandWurm-p2.mp4", "../../../clips/r10/bosses/sandWurm-p3.mp4"],
+      "details": "Three phases. A head and eight segments that follow it. It dives, a mound with a dug trail runs at its mark, the ground shakes, then it erupts and rears along a line. Phase 2: double eruptions and a tremor ring. Phase 3: a sinkhole that drags the party to the middle.\n\nAt the Dunes' own strength a level-62 party won 1 fight in 10: far too hard, to be eased once the last dungeons are balanced."
+    },
+    {
+      "id": "engine",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The Great Engine",
+      "text": "The Clockwork Foundry's boss: a floating head and two hands that attack on their own.",
+      "why": "Your Skeletron idea. Mark what's off. The clips show it on the Spire's floor: they were recorded before the Foundry existed.",
+      "videos": ["../../../clips/r10/bosses/greatEngine-p1.mp4", "../../../clips/r10/bosses/greatEngine-p2.mp4", "../../../clips/r10/bosses/greatEngine-p3.mp4"],
+      "details": "Three phases. The head takes half damage while both hands are up, full with one gone, and half again more with none. A hammer hand and a claw hand act separately, can be broken, and are rebuilt after 12 seconds; breaking a hand as it winds up cancels its blow. Rocket fists, a head spin, a sweeping eye beam, a clap.\n\nAt the Foundry's own strength a level-66 party won 0 fights in 10: far too hard, to be eased once the last dungeons are balanced."
+    },
+    {
+      "id": "dungeons",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Two new dungeons",
+      "text": "The Sunken Dunes and the Clockwork Foundry are in, after the Spire, with the rest of the approved roster.",
+      "why": "Your roster answers, built. All new enemies are recoloured stand-ins until their art round. Mark what plays wrong.",
+      "videos": ["../../../clips/r10/roster/dunes-halls.mp4", "../../../clips/r10/roster/foundry-assembly.mp4"],
+      "details": "Left out because you marked them rethink or unsure with no replacement: the Brood Queen, Old Frost as a mini-boss, the magma golem, ash wraith, Dragonborn Champion, Archon, Hollow Saint, golden cobra, scorpion, Tomb Guard, Wurm Mother and Sun Pharaoh.\n\nKnown problem: a fully skilled starting trio can't clear the Spire, the Dunes or the Foundry yet. The last three dungeons need their own balance pass.",
+      "parts": [
+        { "id": "frost", "title": "Frost Hollow", "text": "Frost wolves, ice slimes that leave cold patches, frost spiders, the yeti rolling a snowball you can break, the icicle wraith that drops icicles on a shadow, frost spirits. The ogre is gone.", "videos": ["../../../clips/r10/roster/frost-glacier.mp4", "../../../clips/r10/roster/frost-webcaves.mp4"] },
+        { "id": "ember", "title": "Ember Deep", "text": "Fire spiders, hellhounds that leave a fire trail and breathe a flame cone, cinder bats that dive and explode, fire spirits. The Pit Lord has a fire whip and rifts that spit imps.", "videos": ["../../../clips/r10/roster/ember-forges.mp4", "../../../clips/r10/roster/ember-ash.mp4"] },
+        { "id": "spire", "title": "Gilded Spire", "text": "Fallen angels that curse, sun blades that spin through the party, choir sprites whose song heals until staggered, golems, a gilded golem that bounces shots back, and the Twin Heralds as the floor 2 mini-boss.", "videos": ["../../../clips/r10/roster/spire-sanctum.mp4", "../../../clips/r10/roster/spire-heralds.mp4"] },
+        { "id": "dunes", "title": "Sunken Dunes", "text": "Scarabs that burrow and come up beside you, cobras that spit poison, jackal guards that sidestep and counter, mummies that pull you in, sand mages with dust devils, a sand serpent, dart traps on the walls, quicksand.", "videos": ["../../../clips/r10/roster/dunes-dunes.mp4", "../../../clips/r10/roster/dunes-halls.mp4"] },
+        { "id": "foundry", "title": "Clockwork Foundry", "text": "Rolling gears, bomb bots, automatons that overheat after three blows, floor and wall turrets, mortars, tesla coils, repair drones, the smith, bees, wasps and hornets in copper, bronze and steel, a saw blade on the wall, steam vents and conveyors.", "videos": ["../../../clips/r10/roster/foundry-assembly.mp4", "../../../clips/r10/roster/foundry-engine.mp4"] }
+      ]
+    }
+  ]
+}
