@@ -1,0 +1,475 @@
+{
+  "title": "Showcase 4: your showcase 2 notes",
+  "topic": "art",
+  "order": 18,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "shockwave",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Shockwave: pick one",
+      "text": "You asked for two more Shockwave variants. Three to choose from.",
+      "why": "Tick the one to keep (or more than one, and I'll blend them).",
+      "pick": [
+        "berserker-shockwave-v2"
+      ],
+      "items": [
+        {
+          "id": "berserker-shockwave",
+          "label": "1 Ridge",
+          "video": "../../../clips/showcase4/berserker-shockwave.mp4",
+          "text": "The one you saw."
+        },
+        {
+          "id": "berserker-shockwave-v2",
+          "label": "2 Slabs",
+          "video": "../../../clips/showcase4/berserker-shockwave-v2.mp4",
+          "text": "Rock slabs thrust up out of the floor."
+        },
+        {
+          "id": "berserker-shockwave-v3",
+          "label": "3 Rolling",
+          "video": "../../../clips/showcase4/berserker-shockwave-v3.mp4",
+          "text": "A hump of earth rolls forward, pebbles hopping off it."
+        }
+      ]
+    },
+    {
+      "id": "wolfbite",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Wolf bite: pick one",
+      "text": "You asked for three variations of the wolf's bite. Four to choose from.",
+      "why": "Tick the one to keep. The wolf's body partly hides the bite on these dummies; it shows better in a real fight.",
+      "pick": [
+        "druid-callWolf-v3"
+      ],
+      "items": [
+        {
+          "id": "druid-callWolf",
+          "label": "1 Jaws",
+          "video": "../../../clips/showcase4/druid-callWolf.mp4",
+          "text": "The one you saw."
+        },
+        {
+          "id": "druid-callWolf-v2",
+          "label": "2 Chomp",
+          "video": "../../../clips/showcase4/druid-callWolf-v2.mp4",
+          "text": "A big jaw outline closing, tooth marks left."
+        },
+        {
+          "id": "druid-callWolf-v3",
+          "label": "3 Rake",
+          "video": "../../../clips/showcase4/druid-callWolf-v3.mp4",
+          "text": "Three curved fang streaks across the enemy."
+        },
+        {
+          "id": "druid-callWolf-v4",
+          "label": "4 Snap",
+          "video": "../../../clips/showcase4/druid-callWolf-v4.mp4",
+          "text": "A white crescent and tufts of fur."
+        }
+      ]
+    },
+    {
+      "id": "tower",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Tower",
+      "text": "Tower: the clips that changed from your notes.",
+      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
+      "pick": [
+        "tower-holdTheLine"
+      ],
+      "items": [
+        {
+          "id": "tower-holdTheLine",
+          "label": "Hold the Line",
+          "video": "../../../clips/showcase4/tower-holdTheLine.mp4",
+          "text": "The red lines to the taunted enemies are gone; a red mark pops in over each one's head instead."
+        }
+      ]
+    },
+    {
+      "id": "archer",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Archer",
+      "text": "Archer: the clips that changed from your notes.",
+      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
+      "pick": [
+        "archer-attack",
+        "archer-frostArrow",
+        "archer-roll"
+      ],
+      "items": [
+        {
+          "id": "archer-attack",
+          "label": "Bow (attack)",
+          "video": "../../../clips/showcase4/archer-attack.mp4",
+          "text": "The bow is held further forward."
+        },
+        {
+          "id": "archer-frostArrow",
+          "label": "Frost Arrow",
+          "video": "../../../clips/showcase4/archer-frostArrow.mp4",
+          "text": "No ice puddle left on the floor."
+        },
+        {
+          "id": "archer-roll",
+          "label": "Roll",
+          "video": "../../../clips/showcase4/archer-roll.mp4",
+          "text": "She slides back on her feet, and at tier III the caltrops fly out of the slide."
+        }
+      ]
+    },
+    {
+      "id": "twinfang",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Twinfang",
+      "text": "Twinfang: the clips that changed from your notes.",
+      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
+      "pick": [
+        "twinfang-backstab"
+      ],
+      "items": [
+        {
+          "id": "twinfang-backstab",
+          "label": "Backstab",
+          "video": "../../../clips/showcase4/twinfang-backstab.mp4",
+          "text": "The smoke fades out, and a second puff appears where she comes back in."
+        }
+      ]
+    },
+    {
+      "id": "wildmane",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Wildmane",
+      "text": "Wildmane: the clips that changed from your notes.",
+      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
+      "pick": [
+        "wildmane-cleave"
+      ],
+      "items": [
+        {
+          "id": "wildmane-cleave",
+          "label": "Cleave",
+          "video": "../../../clips/showcase4/wildmane-cleave.mp4",
+          "text": "The greatsword is held straight out through the spin."
+        }
+      ]
+    },
+    {
+      "id": "berserker",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Berserker",
+      "text": "Berserker: the clips that changed from your notes.",
+      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
+      "pick": [
+        "berserker-attack",
+        "berserker-whirl"
+      ],
+      "items": [
+        {
+          "id": "berserker-attack",
+          "label": "Flail (attack)",
+          "video": "../../../clips/showcase4/berserker-attack.mp4",
+          "text": "Simpler: the head comes down, a dent and some dust."
+        },
+        {
+          "id": "berserker-whirl",
+          "label": "Whirl",
+          "video": "../../../clips/showcase4/berserker-whirl.mp4",
+          "text": "No strings; the heads match the flail in his hand."
+        }
+      ]
+    },
+    {
+      "id": "granny",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Granny Reaper",
+      "text": "Granny Reaper: the clips that changed from your notes.",
+      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
+      "pick": [
+        "granny-reap",
+        "granny-oldBones"
+      ],
+      "items": [
+        {
+          "id": "granny-reap",
+          "label": "Reap",
+          "video": "../../../clips/showcase4/granny-reap.mp4",
+          "text": "The scythe is held out; the blood orbs drip on the way and pop when they reach her."
+        },
+        {
+          "id": "granny-oldBones",
+          "label": "Old Bones",
+          "video": "../../../clips/showcase4/granny-oldBones.mp4",
+          "text": "No skull: a pale wisp rises out of her and is pulled back in with a flash."
+        }
+      ]
+    },
+    {
+      "id": "frost",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Frost Mage",
+      "text": "Frost Mage: the clips that changed from your notes.",
+      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
+      "pick": [
+        "frost-iceShard"
+      ],
+      "items": [
+        {
+          "id": "frost-iceShard",
+          "label": "Ice Shard",
+          "video": "../../../clips/showcase4/frost-iceShard.mp4",
+          "text": "Each spike has a frost trail; chilled units shed slow snowflakes."
+        }
+      ]
+    },
+    {
+      "id": "storm",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Storm Mage",
+      "text": "Storm Mage: the clips that changed from your notes.",
+      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
+      "pick": [
+        "storm-attack",
+        "storm-chainLightning",
+        "storm-stormCloud-tier1",
+        "storm-stormCloud"
+      ],
+      "items": [
+        {
+          "id": "storm-attack",
+          "label": "Zap (attack)",
+          "video": "../../../clips/showcase4/storm-attack.mp4",
+          "text": "Thinner, small arms, stronger yellow, and it starts at her hands."
+        },
+        {
+          "id": "storm-chainLightning",
+          "label": "Chain Lightning",
+          "video": "../../../clips/showcase4/storm-chainLightning.mp4",
+          "text": "Starts at her hands. No X where lightning hits."
+        },
+        {
+          "id": "storm-stormCloud-tier1",
+          "label": "Zeus Bolt, tier I",
+          "video": "../../../clips/showcase4/storm-stormCloud-tier1.mp4",
+          "text": "Reworked: one bolt that leaps between enemies 4 times, shocking each."
+        },
+        {
+          "id": "storm-stormCloud",
+          "label": "Zeus Bolt, tier III",
+          "video": "../../../clips/showcase4/storm-stormCloud.mp4",
+          "text": "Three bolts, 6 leaps each. Busy on four dummies standing close; reads better in a room."
+        }
+      ]
+    },
+    {
+      "id": "cleric",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Cleric",
+      "text": "Cleric: the clips that changed from your notes.",
+      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
+      "pick": [
+        "cleric-attack",
+        "cleric-mend",
+        "cleric-sanctuary"
+      ],
+      "items": [
+        {
+          "id": "cleric-attack",
+          "label": "Light orb (attack)",
+          "video": "../../../clips/showcase4/cleric-attack.mp4",
+          "text": "The orbs fan out by angle and curve in; one passing through an ally heals it a little."
+        },
+        {
+          "id": "cleric-mend",
+          "label": "Mending Ray",
+          "video": "../../../clips/showcase4/cleric-mend.mp4",
+          "text": "An outlined gold band; the heal symbols are outlined crosses spread round the target."
+        },
+        {
+          "id": "cleric-sanctuary",
+          "label": "Sanctuary",
+          "video": "../../../clips/showcase4/cleric-sanctuary.mp4",
+          "text": "One ring of light through every post."
+        }
+      ]
+    },
+    {
+      "id": "bard",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Bard",
+      "text": "Bard: the clips that changed from your notes.",
+      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
+      "pick": [
+        "bard-attack",
+        "bard-lullaby"
+      ],
+      "items": [
+        {
+          "id": "bard-attack",
+          "label": "Sour note (attack)",
+          "video": "../../../clips/showcase4/bard-attack.mp4",
+          "text": "Sways more slowly."
+        },
+        {
+          "id": "bard-lullaby",
+          "label": "Lullaby",
+          "video": "../../../clips/showcase4/bard-lullaby.mp4",
+          "text": "Each note has its own pace and end point, then drifts and fades."
+        }
+      ]
+    },
+    {
+      "id": "druid",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Druid",
+      "text": "Druid: the clips that changed from your notes.",
+      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
+      "pick": [
+        "druid-entangle"
+      ],
+      "items": [
+        {
+          "id": "druid-entangle",
+          "label": "Entangle",
+          "video": "../../../clips/showcase4/druid-entangle.mp4",
+          "text": "The earlier cast is back, with the newer entangled look on the enemies."
+        }
+      ]
+    },
+    {
+      "id": "necromancer",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Necromancer",
+      "text": "Necromancer: the clips that changed from your notes.",
+      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
+      "pick": [
+        "necromancer-attack",
+        "necromancer-raiseDead",
+        "necromancer-lifeDrain",
+        "necromancer-boneSpear"
+      ],
+      "items": [
+        {
+          "id": "necromancer-attack",
+          "label": "Soul flame (attack)",
+          "video": "../../../clips/showcase4/necromancer-attack.mp4",
+          "text": "No longer a bone: green soul fire that starts big and slow, then shrinks and speeds up."
+        },
+        {
+          "id": "necromancer-raiseDead",
+          "label": "Raise Dead",
+          "video": "../../../clips/showcase4/necromancer-raiseDead.mp4",
+          "text": "The raised dead are plain grey, with even hands."
+        },
+        {
+          "id": "necromancer-lifeDrain",
+          "label": "Life Drain",
+          "video": "../../../clips/showcase4/necromancer-lifeDrain.mp4",
+          "text": "The ribbon grows out to its target first."
+        },
+        {
+          "id": "necromancer-boneSpear",
+          "label": "Bone Spear",
+          "video": "../../../clips/showcase4/necromancer-boneSpear.mp4",
+          "text": "Simpler: one tapering bone spike."
+        }
+      ]
+    },
+    {
+      "id": "plague",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Plague Doctor",
+      "text": "Plague Doctor: the clips that changed from your notes.",
+      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
+      "pick": [
+        "plague-attack"
+      ],
+      "items": [
+        {
+          "id": "plague-attack",
+          "label": "Poison cluster (attack)",
+          "video": "../../../clips/showcase4/plague-attack.mp4",
+          "text": "The poof fades out."
+        }
+      ]
+    },
+    {
+      "id": "others",
+      "kind": "board",
+      "rarity": "common",
+      "title": "New heroes and bosses",
+      "text": "Fixes from the heroes and boss work: the falcon, the rings round heroes, the bosses' spins.",
+      "why": "You've disliked rings round heroes before, so three new abilities that drew them now burst short sound lines instead. Tick what's right.",
+      "pick": [
+        "falconer-looseFalcon",
+        "warhelm-warHorn",
+        "jester-mock",
+        "gladiator-showboat",
+        "griffon-wingShield",
+        "boss-chieftain-spin",
+        "boss-greatEngine-spin"
+      ],
+      "items": [
+        {
+          "id": "falconer-looseFalcon",
+          "label": "Loose the Falcon",
+          "video": "../../../clips/showcase4/falconer-looseFalcon.mp4",
+          "text": "The bird leaves his arm while it hunts."
+        },
+        {
+          "id": "warhelm-warHorn",
+          "label": "War Horn",
+          "video": "../../../clips/showcase4/warhelm-warHorn.mp4",
+          "text": "Short sound lines to the front and sides, not a ring round him."
+        },
+        {
+          "id": "jester-mock",
+          "label": "Mock",
+          "video": "../../../clips/showcase4/jester-mock.mp4",
+          "text": "Short sound lines, not a ring round him."
+        },
+        {
+          "id": "gladiator-showboat",
+          "label": "Showboat",
+          "video": "../../../clips/showcase4/gladiator-showboat.mp4",
+          "text": "Short sound lines, not a ring round him."
+        },
+        {
+          "id": "griffon-wingShield",
+          "label": "Wing Guard",
+          "video": "../../../clips/showcase4/griffon-wingShield.mp4",
+          "text": "The wings are longer and in his gold."
+        },
+        {
+          "id": "boss-chieftain-spin",
+          "label": "Chieftain's spin",
+          "video": "../../../clips/showcase4/boss-chieftain-spin.mp4",
+          "text": "A spinning blade now sweeps two crescents; bone spikes are only for bone."
+        },
+        {
+          "id": "boss-greatEngine-spin",
+          "label": "Great Engine's spin",
+          "video": "../../../clips/showcase4/boss-greatEngine-spin.mp4",
+          "text": "The same blade sweep on the Engine's head spin."
+        }
+      ]
+    }
+  ]
+}
