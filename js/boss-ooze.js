@@ -40,7 +40,7 @@ function brain(w, u, dt) {
   const d = dist(u.x, u.y, t.x, t.y), gap = d - u.r - t.r, at = angleTo(u.x, u.y, t.x, t.y);
   const melt = k.phase >= 4;
   // crowded: it heaves and smothers everything touching it
-  const close = heroesOf(w).filter((h) => dist(h.x, h.y, u.x, u.y) - h.r - u.r < OZ.smother.reach * 0.7).length;
+  const close = heroesOf(w, u).filter((h) => dist(h.x, h.y, u.x, u.y) - h.r - u.r < OZ.smother.reach * 0.7).length;
   if (close && due(u, 'smother', dt, 1.5) && (close >= 2 || chance(0.6))) {
     again(u, 'smother', ...OZ.smother.cd);
     around(w, u, { r: u.r + OZ.smother.reach, tell: OZ.smother.tell, kind: 'poison', after: 0.4, hit: { dmg: OZ.smother.dmg, poison: OZ.smother.poison, knock: OZ.smother.knock },
@@ -84,7 +84,7 @@ function hopTick(w, u, k, dt) {
   return true;
 }
 function spit(w, u) {
-  const hs = heroesOf(w);
+  const hs = heroesOf(w, u);
   for (let i = 0; i < OZ.spit.n && hs.length; i++) {
     const h = hs[i % hs.length], p = lead(h, 0.5), a = rand() * TAU, off = i < hs.length ? 0 : rrange(60, 120), q = inside(w, p.x + Math.cos(a) * off, p.y + Math.sin(a) * off);
     lob(w, u, q.x, q.y, { r: OZ.spit.r, tell: OZ.spit.tell + i * 0.15, kind: 'poison', proj: 'vial', color: '#7CC07A', dust: '#7CC07A', hit: { dmg: OZ.spit.dmg, poison: OZ.spit.poison, knock: 90 },
@@ -97,7 +97,7 @@ function shed(w, u, k, n, x = u.x, y = u.y, delay = 0.5) {
   for (let i = 0; i < n; i++) {
     if (w.units.filter((o) => o.broodOf === u && alive(o)).length >= OZ.brood.cap || crowd(w, u.team) > 18) return;
     const a = rand() * TAU, d = u.r + 30, px = clamp(x + Math.cos(a) * d, 40, w.W - 40), py = clamp(y + Math.sin(a) * d, 40, w.H - 40);
-    later(w, px, py, delay + i * 0.2, () => { const s = spawn(w, chance(0.3) ? 'slimeSludge' : 'slime', px, py, { mult: w.mult * 0.8 }); s.aggro = true; s.court = true; s.broodOf = u; s.gen = 1; s.kx = Math.cos(a) * 160; s.ky = Math.sin(a) * 160; puff(w, px, py, '#7CC07A', 8, 90, 6, 0.4); });
+    later(w, px, py, delay + i * 0.2, () => { const s = spawn(w, chance(0.3) ? 'slimeSludge' : 'slime', px, py, { mult: w.mult * 0.8, team: u.team }); s.aggro = true; s.court = true; s.broodOf = u; s.gen = 1; s.kx = Math.cos(a) * 160; s.ky = Math.sin(a) * 160; puff(w, px, py, '#7CC07A', 8, 90, 6, 0.4); });
   }
 }
 function brood(w, u, k, dt) {
@@ -124,7 +124,7 @@ function cistern(w, u, k, dt) {
   const near = (h) => canals.slice().sort((a, b) => Math.abs(h.x - (a.x + a.w / 2)) - Math.abs(h.x - (b.x + b.w / 2)))[0];
   if (due(u, 'tentacle', dt, 1.5)) {
     again(u, 'tentacle', ...OZ.tentacle.cd.map((x) => x * (k.phase >= 4 ? 0.8 : 1)));
-    const hs = heroesOf(w).slice(0, 2);
+    const hs = heroesOf(w, u).slice(0, 2);
     for (const h of hs) {
       const c = near(h), e = edge(c, h), a = angleTo(e.x, e.y, h.x, h.y), x2 = e.x + Math.cos(a) * OZ.tentacle.len, y2 = e.y + Math.sin(a) * OZ.tentacle.len;
       tentacleFx(w, e.x, e.y, x2, y2, OZ.tentacle.tell);
@@ -135,13 +135,13 @@ function cistern(w, u, k, dt) {
   }
   if (due(u, 'grab', dt, 4)) {
     again(u, 'grab', ...OZ.grab.cd);
-    const h = heroesOf(w).filter((o) => { const c = near(o); return Math.abs(o.x - (c.x + c.w / 2)) < OZ.grab.reach; })[0];
+    const h = heroesOf(w, u).filter((o) => { const c = near(o); return Math.abs(o.x - (c.x + c.w / 2)) < OZ.grab.reach; })[0];
     if (!h) return;
     const c = near(h), cx = c.x + c.w / 2, p = lead(h, 0.4);
     tentacleFx(w, cx, p.y, p.x, p.y, OZ.grab.tell, true);
     addDanger(w, { shape: 'circle', x: p.x, y: p.y, r: OZ.grab.r, t: OZ.grab.tell, team: u.team, src: u, kind: 'water',
       onFire: (w2, z) => {
-        for (const o of heroesOf(w2)) if (dist(o.x, o.y, z.x, z.y) < z.r + o.r * 0.5) { // caught: dragged into the canal
+        for (const o of heroesOf(w2, u)) if (dist(o.x, o.y, z.x, z.y) < z.r + o.r * 0.5) { // caught: dragged into the canal
           hurt(w2, o, OZ.grab.dmg * u.dmgMul, u, { noDodge: true, wet: OZ.grab.wet, knock: 30 + Math.abs(o.x - cx) * 2.6, kAngle: angleTo(o.x, o.y, cx, o.y) });
           o.rootT = Math.max(o.rootT || 0, 0.25);
         }

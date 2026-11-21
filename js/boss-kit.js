@@ -10,7 +10,8 @@ import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange } from './util.js';
 import { circleRect } from './path.js';
 import { stand } from './elites.js';
 
-export const heroesOf = (w) => w.units.filter((o) => o.team === 'hero' && alive(o) && !o.ethereal);
+// the boss's opponents (whichever side it is on: battle mode can put a boss on either team)
+export const heroesOf = (w, u) => w.units.filter((o) => alive(o) && !o.ethereal && o.team !== u.team);
 export const H = (u, hit) => (hit ? { ...hit, dmg: (hit.dmg || 0) * u.dmgMul } : undefined);
 const param = (k) => { try { return typeof location !== 'undefined' ? new URLSearchParams(location.search).get(k) : null; } catch { return null; } };
 
@@ -23,7 +24,7 @@ export function steady(u) { if (!u.trinketHooks.includes(STEADY)) u.trinketHooks
 export function asleep(w, u, k, range, PHASE_AT, onWake) {
   if (k.phase > 0) return false;
   stand(u, 0.016);
-  if (!(u.aggro || heroesOf(w).some((h) => dist(h.x, h.y, u.x, u.y) < range))) return true;
+  if (!(u.aggro || heroesOf(w, u).some((h) => dist(h.x, h.y, u.x, u.y) < range))) return true;
   u.aggro = true; k.phase = 1;
   const n = Math.round(+param('bossphase') || 1);
   if (n > 1 && n <= PHASE_AT.length) { u.hp = u.maxHp * (PHASE_AT[n - 1] + 0.005); k.phase = n - 1; k.skipTo = n; }
@@ -44,14 +45,14 @@ export function pickTarget(w, u, k, dt, every = 1.1, score) {
     if (u.tauntBy && u.tauntT > 0 && alive(u.tauntBy) && !u.tauntBy.ethereal) u.target = u.tauntBy;
     else {
       let best = null, bd = Infinity;
-      for (const h of heroesOf(w)) { const d = score ? score(h) : dist(h.x, h.y, u.x, u.y) - (h === u.target ? 60 : 0); if (d < bd) { bd = d; best = h; } }
+      for (const h of heroesOf(w, u)) { const d = score ? score(h) : dist(h.x, h.y, u.x, u.y) - (h === u.target ? 60 : 0); if (d < bd) { bd = d; best = h; } }
       u.target = best;
     }
   }
   return u.target && alive(u.target) && !u.target.ethereal ? u.target : null;
 }
-export const farthest = (w, u) => heroesOf(w).sort((a, b) => dist(b.x, b.y, u.x, u.y) - dist(a.x, a.y, u.x, u.y))[0] || null;
-export const randomHero = (w, not) => { const hs = heroesOf(w).filter((h) => h !== not); return hs.length ? hs[Math.floor(rand() * hs.length)] : heroesOf(w)[0] || null; };
+export const farthest = (w, u) => heroesOf(w, u).sort((a, b) => dist(b.x, b.y, u.x, u.y) - dist(a.x, a.y, u.x, u.y))[0] || null;
+export const randomHero = (w, u, not) => { const hs = heroesOf(w, u).filter((h) => h !== not); return hs.length ? hs[Math.floor(rand() * hs.length)] : heroesOf(w, u)[0] || null; };
 export const lead = (t, s) => ({ x: t.x + (t.vx || 0) * s, y: t.y + (t.vy || 0) * s });
 
 // Where a line from (x, y) at angle a stops: its full length, or the first pillar, wall or room edge in the way.
@@ -81,7 +82,7 @@ export function chargeTick(w, u, k, dt) {
   if (c.t > 0) { c.t -= dt; stand(u, dt); u.facing = wrapAngle(u.facing + clamp(wrapAngle(c.a - u.facing), -8 * dt, 8 * dt)); return true; }
   u.dvx = Math.cos(c.a) * c.sp; u.dvy = Math.sin(c.a) * c.sp; u.vx = u.dvx; u.vy = u.dvy; u.mvA = c.a; u.spd = c.sp; u.facing = c.a;
   if (rand() < 0.6) w.particles.push({ x: u.x - Math.cos(c.a) * u.r, y: u.y - Math.sin(c.a) * u.r, vx: 0, vy: 0, life: 0.35, max: 0.35, size: 8, color: c.o.trail || 'rgba(214,196,160,0.75)' });
-  for (const h of heroesOf(w)) {
+  for (const h of heroesOf(w, u)) {
     if (c.hit.has(h) || dist(u.x, u.y, h.x, h.y) > u.r + h.r + 6) continue;
     c.hit.add(h);
     const side = Math.sign(Math.sin(angleTo(u.x, u.y, h.x, h.y) - c.a)) || 1;
@@ -105,7 +106,7 @@ export function thud(w, x, y, col = '#D9CDB0', n = 16, shake = 6) {
 // blow goes on to the boss. o.pool: the part has its own health and can be broken (onBreak); else it never loses any.
 // The boss's death takes its parts with it (endParts).
 export function part(w, core, kind, x, y, o = {}) {
-  const p = spawn(w, kind, x, y, { mult: w.mult || 1, hpMul: o.hpMul || 1 });
+  const p = spawn(w, kind, x, y, { mult: w.mult || 1, hpMul: o.hpMul || 1, team: core.team });
   p.core = core; p.aggro = true; p.partOf = core; p.facing = core.facing; p.mvA = core.facing;
   p.dmgMul = core.dmgMul;
   if (o.hp) { p.maxHp = Math.round(o.hp); p.hp = p.maxHp; }

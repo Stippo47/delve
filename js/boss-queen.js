@@ -18,7 +18,7 @@ export const WQ = {
   wall: { len: 760, size: 40, dur: 7, tell: 1.1, dmg: 16, chill: 30, cd: [9, 11] },
   spike: { r: 64, tell: 1.0, dmg: 45, chill: 40 },
   image: { n: 2, hpK: 0.04, every: 16, shatter: 115, shDmg: 28 },
-  hail: { r: 56, tell: 1.0, dmg: 28, chill: 22, every: 0.65 },
+  hail: { r: 56, tell: 1.0, dmg: 24, chill: 22, every: 0.8 },
   storm: { k: 0.8 },
 };
 export const PHASE_AT = [1, 0.7, 0.45, 0.2];
@@ -36,7 +36,7 @@ function brain(w, u, dt) {
   if (!t) { stand(u, dt); return true; }
   const K = k.phase >= 4 ? WQ.storm.k : 1;
   const d = dist(u.x, u.y, t.x, t.y), at = angleTo(u.x, u.y, t.x, t.y);
-  const near = heroesOf(w).filter((h) => dist(h.x, h.y, u.x, u.y) < WQ.nova.r * 0.85);
+  const near = heroesOf(w, u).filter((h) => dist(h.x, h.y, u.x, u.y) < WQ.nova.r * 0.85);
   // crowded: a frost nova, then she blinks away
   if (near.length && due(u, 'nova', dt, 1.5)) {
     again(u, 'nova', ...WQ.nova.cd.map((x) => x * K));
@@ -76,7 +76,7 @@ function nova(w, u, x, y, after) {
   beginHold(u, N.tell + 0.2, null, after); setAnim(u, 'cast', N.tell + 0.2);
 }
 function away(w, u) {
-  const hs = heroesOf(w); if (!hs.length) return;
+  const hs = heroesOf(w, u); if (!hs.length) return;
   let best = null, bd = -1;
   for (let i = 0; i < 8; i++) { const p = openSpot(w, u.x, u.y, ...WQ.blink.d, u.r + 10); if (!p) continue; const m = Math.min(...hs.map((h) => dist(h.x, h.y, p.x, p.y))); if (m > bd) { bd = m; best = p; } }
   if (best) blink(w, u, best.x, best.y, 'rgba(221,246,255,0.9)');
@@ -84,7 +84,7 @@ function away(w, u) {
 // A wall of ice blocks across the room, through the middle of the party, at right angles to her; heroes on it are
 // shoved off to their side. It melts after 7 s. Then a spike falls on whoever's on the far side from her.
 function iceWall(w, u, k) {
-  const hs = heroesOf(w); if (!hs.length) return;
+  const hs = heroesOf(w, u); if (!hs.length) return;
   const cx = hs.reduce((s, h) => s + h.x, 0) / hs.length, cy = hs.reduce((s, h) => s + h.y, 0) / hs.length;
   const a = angleTo(u.x, u.y, cx, cy) + Math.PI / 2, W2 = WQ.wall;
   const x1 = cx - Math.cos(a) * W2.len / 2, y1 = cy - Math.sin(a) * W2.len / 2, x2 = cx + Math.cos(a) * W2.len / 2, y2 = cy + Math.sin(a) * W2.len / 2;
@@ -122,7 +122,7 @@ function images(w, u, k, dt) {
   puff(w, u.x, u.y, '#DDF6FF', 16, 120, 7, 0.5);
   blink(w, u, mineAt.x, mineAt.y, 'rgba(221,246,255,0.9)');
   for (const p of spots) {
-    const m = spawn(w, 'queenImage', p.x, p.y, { mult: w.mult }); m.imageOf = u; m.court = true; m.aggro = true; m.dmgMul = u.dmgMul * 0.5;
+    const m = spawn(w, 'queenImage', p.x, p.y, { mult: w.mult, team: u.team }); m.imageOf = u; m.court = true; m.aggro = true; m.dmgMul = u.dmgMul * 0.5;
     m.maxHp = m.hp = Math.round(u.maxHp * WQ.image.hpK); m.facing = u.facing;
     puff(w, p.x, p.y, '#DDF6FF', 16, 120, 7, 0.5);
   }
@@ -141,15 +141,15 @@ function imageBrain(w, m, dt) {
 function shatterImage(w, m) {
   const q = m.imageOf; if (!q || !alive(q)) return; // (images going down with her don't burst)
   puff(w, m.x, m.y, '#DDF6FF', 20, 200, 7, 0.6);
-  addDanger(w, { shape: 'circle', x: m.x, y: m.y, r: WQ.image.shatter, t: 0.5, team: 'enemy', src: null, kind: 'ice', hit: { dmg: WQ.image.shDmg * q.dmgMul, chill: 30, knock: 160 },
-    onFire: (w2, z) => { for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; w2.projectiles.push({ kind: 'icicle', x: z.x, y: z.y, vx: Math.cos(a) * 340, vy: Math.sin(a) * 340, r: 5, team: 'enemy', owner: q, dmg: 6 * q.dmgMul, o: { chill: 20, noDodge: true }, life: 0.6 }); } } });
+  addDanger(w, { shape: 'circle', x: m.x, y: m.y, r: WQ.image.shatter, t: 0.5, team: m.team, src: m, kind: 'ice', hit: { dmg: WQ.image.shDmg * q.dmgMul, chill: 30, knock: 160 },
+    onFire: (w2, z) => { for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; w2.projectiles.push({ kind: 'icicle', x: z.x, y: z.y, vx: Math.cos(a) * 340, vy: Math.sin(a) * 340, r: 5, team: m.team, owner: q, dmg: 6 * q.dmgMul, o: { chill: 20, noDodge: true }, life: 0.6 }); } } });
 }
 // The blizzard (phase 4): hail falls round the heroes all the time, and the room goes white.
 function hail(w, u, k, dt) {
   k.hailT = (k.hailT ?? 1) - dt;
   if (k.hailT > 0) return;
   k.hailT = WQ.hail.every * rrange(0.8, 1.2);
-  const h = randomHero(w); if (!h) return;
+  const h = randomHero(w, u); if (!h) return;
   const a = rand() * TAU, off = rrange(0, 130), p = inside(w, h.x + (h.vx || 0) * 0.6 + Math.cos(a) * off, h.y + (h.vy || 0) * 0.6 + Math.sin(a) * off);
   addDanger(w, { shape: 'circle', x: p.x, y: p.y, r: WQ.hail.r, t: WQ.hail.tell, team: u.team, src: null, kind: 'ice', hit: H(u, { dmg: WQ.hail.dmg, chill: WQ.hail.chill, knock: 80 }),
     onFire: (w2, z) => { puff(w2, z.x, z.y, '#EAF8FF', 8, 110, 6, 0.4); sparks(w2, z.x, z.y, rand() * TAU, 3, '#FFFFFF'); } });
@@ -184,9 +184,9 @@ function glacier(w) {
 const ART = variantUrl('art/heroes/frost.svg', { hue: 12, sat: 0.55, light: 0.16 });
 export const QUEEN = {
   defs: {
-    winterQueen: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 54, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 5, hp: 2600, speed: 50, role: 'ranged', range: 300,
+    winterQueen: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 54, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 5, hp: 1000, speed: 50, role: 'ranged', range: 300,
       atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 180, coins: [70, 90], boss: true, arena: 'glacier', attackAnim: 'cast',
-      res: { chill: 0, wet: 0.5, burn: 1.3, stagger: 0.6 }, brain, onDeath: death },
+      res: { chill: 0, wet: 0.5, burn: 1.3, stagger: 0.6, poison: 0.3 }, brain, onDeath: death },
     // her mirror image: the same look, half her lances, shatters when broken
     queenImage: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 54, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 3, hp: 60, speed: 50, role: 'ranged', range: 300,
       atkCd: 999, temp: 0.2, commit: 1.2, xp: 0, coins: [0, 0], noElite: true, noCorpse: true, attackAnim: 'cast', res: { chill: 0 }, brain: imageBrain, onDeath: shatterImage },

@@ -186,7 +186,7 @@ export const THEMES = {
         hazards: [['fire', 2.5], ['spikes', 2]], mood: { fog: 'rgba(30,4,4,', fogK: 0.7, tint: 'rgba(200,30,20,0.18)' },
         props: [['bonepile', 1], ['skulls', 0.8], ['crack', 2]] },
     ],
-    elite: 'demon', warden: 'pitLord', boss: 'archfiend', bossAdds: ['imp', 'imp', 'devil'],
+    elite: 'demon', warden: 'pitLord', boss: 'cinder', // lane B (bosses2): was 'archfiend' (js/boss-cinder.js) bossAdds: ['imp', 'imp', 'devil'],
     hazards: [['fire', 3], ['oil', 1], ['spikes', 1.2]],
     props: [['crack', 2], ['rubble', 1.2], ['bonepile', 0.6], ['firepit', 0.5], ['skulls', 0.4]],
     obstacles: [['rock', 3], ['brazier', 2], ['barrel', 0.5]],

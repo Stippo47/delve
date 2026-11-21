@@ -6,8 +6,9 @@
 import { CHIEFTAIN } from './boss-chieftain.js';
 import { OOZE } from './boss-ooze.js';
 import { QUEEN } from './boss-queen.js';
+import { CINDER } from './boss-cinder.js';
 
-const BOSS_FILES = [CHIEFTAIN, OOZE, QUEEN];
+const BOSS_FILES = [CHIEFTAIN, OOZE, QUEEN, CINDER];
 
 // every boss (and its parts and adds) by kind
 export const BOSS_DEFS = Object.assign({}, ...BOSS_FILES.map((b) => b.defs));

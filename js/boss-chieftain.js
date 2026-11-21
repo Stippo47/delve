@@ -74,7 +74,7 @@ function brain(w, u, dt) {
 function startCharge(w, u, k, t, K, pair) {
   const p = lead(t, 0.35), a = angleTo(u.x, u.y, p.x, p.y);
   setAnim(u, 'ability', CH.charge.tell * K + 0.6);
-  const end = () => { if (pair && !k.secondCharge && heroesOf(w).length > 1) { k.secondCharge = true; const o = randomHero(w, t); if (o) { startCharge(w, u, k, o, K * 0.8, true); return; } } k.secondCharge = false; beginHold(u, CH.charge.rec, null); };
+  const end = () => { if (pair && !k.secondCharge && heroesOf(w, u).length > 1) { k.secondCharge = true; const o = randomHero(w, u, t); if (o) { startCharge(w, u, k, o, K * 0.8, true); return; } } k.secondCharge = false; beginHold(u, CH.charge.rec, null); };
   charge(w, u, k, a, CH.charge.len, { tell: CH.charge.tell * K, dmg: CH.charge.dmg, knock: CH.charge.knock, speed: 640, kind: 'blade', trail: 'rgba(205,176,137,0.8)',
     onEnd: end,
     onWall: () => { // into a wall or a pillar: he staggers, dazed and open
@@ -124,7 +124,7 @@ function spinTick(w, u, k, dt) {
   return true;
 }
 function bombs(w, u, K) {
-  const hs = heroesOf(w);
+  const hs = heroesOf(w, u);
   for (let i = 0; i < CH.bombs.n && hs.length; i++) {
     const h = hs[i % hs.length], off = i < hs.length ? 0 : rrange(70, 150), a = rand() * TAU, p = lead(h, 0.5);
     const q = inside(w, p.x + Math.cos(a) * off, p.y + Math.sin(a) * off);
@@ -140,7 +140,7 @@ function whistle(w, u) {
     const tn = ts.length ? ts[Math.floor(rand() * ts.length)] : { x: u.x, y: u.y, a: 0 };
     if (tn.openT != null) tn.openT = 1.2;
     const x = tn.x + Math.cos(tn.a - Math.PI / 2) * 30, y = tn.y + Math.sin(tn.a - Math.PI / 2) * 30;
-    later(w, x, y, 0.5 + i * 0.25, () => { const m = spawn(w, 'dynamouse', x, y, { mult: w.mult }); m.aggro = true; m.court = true; m.minion = true; m.calledBy = u; });
+    later(w, x, y, 0.5 + i * 0.25, () => { const m = spawn(w, 'dynamouse', x, y, { mult: w.mult, team: u.team }); m.aggro = true; m.court = true; m.minion = true; m.calledBy = u; });
   }
 }
 // The war drums (phase 2 on): each still standing beats, and every so often calls goblins out of the nearest tunnel.
@@ -166,7 +166,7 @@ function callFrom(w, u, d, n) {
   tn.openT = 1.5;
   for (let i = 0; i < n; i++) {
     const x = tn.x + Math.cos(tn.a - Math.PI / 2) * 34 + rrange(-14, 14), y = tn.y + Math.sin(tn.a - Math.PI / 2) * 34 + rrange(-14, 14);
-    later(w, x, y, 0.6 + i * 0.3, () => { const g = spawn(w, ADDS[Math.floor(rand() * ADDS.length)], x, y, { mult: w.mult }); g.aggro = true; g.court = true; g.facing = angleTo(x, y, w.W / 2, w.H / 2); puff(w, x, y, '#8E6A46', 8, 90, 6, 0.5); });
+    later(w, x, y, 0.6 + i * 0.3, () => { const g = spawn(w, ADDS[Math.floor(rand() * ADDS.length)], x, y, { mult: w.mult, team: u.team }); g.aggro = true; g.court = true; g.facing = angleTo(x, y, w.W / 2, w.H / 2); puff(w, x, y, '#8E6A46', 8, 90, 6, 0.5); });
   }
 }
 
@@ -205,7 +205,7 @@ export const CHIEFTAIN = {
   defs: {
     chieftain: { team: 'enemy', name: 'The Goblin Chieftain', art: variantUrl('art/enemies/orc.svg', { hue: 28, sat: 1.15, light: -0.1 }), headR: 62, r: 50, vr: 38, turn: 2.4, accel: 160, face: 2.6, mass: 6,
       hp: 1300, speed: 54, role: 'melee', range: 30, atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 160, coins: [60, 80], boss: true, arena: 'warcamp', attackAnim: 'swing',
-      res: { stagger: 0.5, chill: 0.7 }, brain: (w, u, dt) => { if (!u.ch) placeDrums(w, u); return brain(w, u, dt); }, onDeath: death },
+      res: { stagger: 0.5, chill: 0.7, poison: 0.3 }, brain: (w, u, dt) => { if (!u.ch) placeDrums(w, u); return brain(w, u, dt); }, onDeath: death },
     // a war drum: stands where it's put, beats, calls goblins; smash it
     warDrum: PART('War Drum', { r: 30, vr: 30, hp: CH.drum.hp, mass: 40, draw: drawDrum }),
   },
@@ -213,5 +213,5 @@ export const CHIEFTAIN = {
 };
 // The drums go down with the room the first time the chief thinks (they're the room's, not his parts).
 function placeDrums(w, u) {
-  for (const p of w.drumAt || []) { const d = spawn(w, 'warDrum', p.x, p.y); d.maxHp = d.hp = Math.round(CH.drum.hp * Math.sqrt(w.mult || 1)); d.aggro = true; d.court = true; d.dmgMul = 0; d.ethereal = true; } // quiet (not there to hit) until phase 2 wakes them
+  for (const p of w.drumAt || []) { const d = spawn(w, 'warDrum', p.x, p.y, { team: u.team }); d.maxHp = d.hp = Math.round(CH.drum.hp * Math.sqrt(w.mult || 1)); d.aggro = true; d.court = true; d.dmgMul = 0; d.ethereal = true; } // quiet (not there to hit) until phase 2 wakes them
 }
