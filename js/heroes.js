@@ -205,7 +205,7 @@ export const HEROES = {
       { id: 'entangle', name: 'Entangle', cd: 10, desc: 'Vines burst up and hold enemies in place.',
         tiers: ['Holds for 1.5s.', 'Bigger patch.', 'The vines poison.'] },
       { id: 'rejuvenate', name: 'Rejuvenate', cd: 8, desc: 'Heals an ally slowly over time.',
-        tiers: ['30% over 6s.', '45%.', 'Two allies.'] },
+        tiers: ['25% over 6s.', '38%.', 'Two allies.'] },
       { id: 'callWolf', name: 'Call Wolf', cd: 22, desc: 'A summoning ring opens and a wolf steps out to fight beside the party for a while.',
         tiers: ['For 15s.', 'A bigger wolf.', 'Two wolves.'] },
     ],
@@ -256,7 +256,7 @@ for (const h of Object.values(HEROES)) for (const ab of h.abilities) ab.cd = Mat
 export const ROLE_TUNE = {
   tank: { dmg: 0.65, hp: 1.08 },      // takes it: hits a good deal softer, a little more health, and armour (below)
   melee: { dmg: 1.1, hp: 1.08 },      // (second most likely to go down, after the skirmishers)
-  skirmish: { dmg: 1.2, hp: 1.15 },   // in and out: the batches had them dying most and dealing least
+  skirmish: { dmg: 1.25, hp: 1.2 },   // in and out: the batches had them dying most and dealing least
   ranged: { dmg: 1.25 },              // deals it, from behind
   caster: { dmg: 1.12 },
   support: { dmg: 0.9, heal: 0.75 },  // (healers carried every party they were in: all their healing a little down)

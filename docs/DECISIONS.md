@@ -334,3 +334,37 @@ defeated. So I can make a team of 10 skeletons and necromancer vs a knight and t
 - **Ending.** A side with nobody standing loses. After 75 seconds everyone presses in (no fleeing, mending or calling);
   at 4 minutes, or when the flag button is tapped, the side with more of its health left takes it.
 - **Result.** Per side and per kind: how many are left, damage dealt and taken, kills, healing; Again, Change sides, Camp.
+
+## Round 11 (2026-11-21): the balance pass, armour, poison, the camp's lag
+The designer: "The main menu camp is very laggy. I want you to stress test every unit with every ability at lvl 1
+then at lvl 3 (only abilities no trinkets or other upgrades) with random party members multiple times in a row in
+different dungeons to see if the layout is balanced. Currently it seems like the paladin is very strong. Should be
+balanced so he is more of a tank than damage dealer or healer. Those are secondary. Then someone like an archer
+should have more damage. Is there an armour stat? If not maybe there should be. And not a simple 20% off all
+damage. Increase all ability cooldowns by like 20-25%. Also rework poison. Its burst effect is draining 15% of ur hp
+instantly."
+- **The camp's lag** (0.11.1): parts.js threw away any fourth size of a sprite the moment it was made and rebuilt it
+  every frame (a new set arrived with `used = 0`); zooming to the fire or a hero triggered it. Also: the still ground
+  is one cached picture, words and the points mark are cached sprites, nobody off screen is drawn.
+  `node tools/camp-perf.mjs --gpu --slow 6` measures it.
+- **The batches**: `tools/balance.mjs` / `bash tools/balance-all.sh <dir>`. Every hero leads a party of three with two
+  random others; everyone has all three abilities at the tier and nothing else (run option `bare`: no trinkets picked
+  up, no potions handed out); every dungeon at one strength (run option `asRank`), tier I at the Wildwood's, tier III
+  at the Warren's. It reports rooms cleared against the average and each hero's share of its party's damage, healing
+  and damage taken, by hero and by role.
+- **Roles** (heroes.js ROLE_TUNE, laid over the stats as written): a hero's dmg stat drives its weapon and all its
+  abilities' damage, so a role's damage is one number. Tanks deal much less and have a little more health and armour;
+  shooters and casters deal more; melee and skirmishers got damage and health (they went down most); supports deal a
+  little less and all their healing is scaled down (healers carried every party they were in).
+- **Armour** (js/armour.js): points off every blow, never more than 60% of the blow; heavy and critical blows get past
+  half; damage over time ignores it. Tanks 4-8, a few plated fighters 2-3; the web's Toughness nodes became Armour
+  (+2 a rank; Juggernaut +3). Enemies: shells, stone and the Foundry's metal (copper none, bronze 2, steel 4), growing
+  with the square root of the dungeon's strength.
+- **Cooldowns**: every ability's x1.22 (heroes.js CD_MUL, applied once to the numbers as written).
+- **Poison**: the burst no longer takes 15% of max health at once. SICKENED for 6 s: loses 10% of max health over that
+  time (bosses 4%), deals 30% less, moves and attacks 20% slower; anything that cleans statuses ends it.
+- **Crashes found by the batches and fixed**: two exploding minions killing each other without end (kill() runs once
+  per unit); two units overloading each other with shock without end; the Jester's Befuddle (a flipped enemy treated
+  as a party hero); the hero Bandit's id clashing with the Wildwood's bandit (now `rogueBandit`).
+- **The lead's call on a lane's rule**: roster3 added "enemies wither if a room drags on" (60 s without a kill or
+  200 s, 4% a second). Softened to 90 s / 300 s / 3%, and flagged to the designer.

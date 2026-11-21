@@ -453,7 +453,7 @@ export const ABILITIES = {
       cast(u, 'ability', 0.5);
       const r = tier >= 2 ? 185 : 145; // round 9: the radius was too small
       zone(w, { x: u.x, y: u.y, r, dur: tier >= 2 ? 7 : 5, kind: 'sanctuary', src: u, every: 0.5, ward: tier >= 3, tick(z) {
-        for (const a of [u, ...allies(w, u)]) if (dist(a.x, a.y, z.x, z.y) < z.r) { heal(w, a, a.maxHp * 0.03, u); a.mendGlow = w.time + 0.6; }
+        for (const a of [u, ...allies(w, u)]) if (dist(a.x, a.y, z.x, z.y) < z.r) { heal(w, a, a.maxHp * 0.025, u); a.mendGlow = w.time + 0.6; }
       } });
     },
   },
@@ -508,7 +508,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'cast', 0.4);
       const list = [u, ...allies(w, u)].filter((o) => !o.summon).sort((a, b) => hpRatio(a) - hpRatio(b)).slice(0, tier >= 3 ? 2 : 1);
-      for (const a of list) { a.regenT = 6; a.regenRate = a.maxHp * (tier >= 2 ? 0.45 : 0.3) / 6; a.regenSrc = u; a.regenAb = u.kit && u.kit.using; fx(w, { type: 'zone', x: a.x, y: a.y, r: 26, kind: 'heal', max: 0.6 }); }
+      for (const a of list) { a.regenT = 6; a.regenRate = a.maxHp * (tier >= 2 ? 0.38 : 0.25) / 6; a.regenSrc = u; a.regenAb = u.kit && u.kit.using; fx(w, { type: 'zone', x: a.x, y: a.y, r: 26, kind: 'heal', max: 0.6 }); }
     },
   },
   callWolf: {

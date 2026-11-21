@@ -117,7 +117,7 @@ export const HEROES2 = {
     name: 'Bandit', art: 'art/heroes/bandit.svg', role: 'skirmish', unlock: { gems: 1 },
     blurb: 'A cutlass, a red bandanna and very quick hands. Fights dirty and comes home richer.',
     fun: 'Has never stolen from a friend. Has made a great many friends very briefly.',
-    stats: { hp: 105, speed: 92, r: 29, vr: 20, turn: 6.5, accel: 400, face: 6.5, mass: 0.9, range: 18, atkCd: 0.7, dmg: 9, arc: 1.5, dodge: 0.15 },
+    stats: { hp: 105, speed: 92, r: 29, vr: 20, turn: 6.5, accel: 400, face: 6.5, mass: 0.9, range: 18, atkCd: 0.7, dmg: 10, arc: 1.5, dodge: 0.15 },
     weapon: 'blade',
     attack: { name: 'Cutlass', anim: 'swing', desc: 'Quick cutlass slashes.' },
     abilities: [
@@ -151,7 +151,7 @@ export const HEROES2 = {
     name: 'Haymaker', art: 'art/heroes/haymaker.svg', role: 'melee', unlock: { gems: 1 },
     blurb: 'A pitchfork, a straw hat, and the shoulders of a man who throws hay all day.',
     fun: 'Treats goblins the way he treats hay: in forkfuls, over the shoulder, without looking.',
-    stats: { hp: 120, speed: 60, r: 32, vr: 22, turn: 3.8, accel: 200, face: 4, mass: 1.6, range: 34, atkCd: 1.1, dmg: 12, knock: 150, arc: 1 },
+    stats: { hp: 120, speed: 60, r: 32, vr: 22, turn: 3.8, accel: 200, face: 4, mass: 1.6, range: 34, atkCd: 1.1, dmg: 13, knock: 150, arc: 1 },
     weapon: 'thrust',
     attack: { name: 'Pitchfork', anim: 'thrust', desc: 'A long jab with the fork.' },
     abilities: [
@@ -240,7 +240,7 @@ Object.assign(HEROES2, {
     name: 'Witch', art: 'art/heroes/witch.svg', role: 'caster', unlock: { gems: 2 },
     blurb: 'A crooked violet hat and a broom. Turns problems into frogs.',
     fun: 'The frogs in the dungeon all used to be something. Do not ask them what.',
-    stats: { hp: 68, speed: 64, r: 30, vr: 22, turn: 4.5, accel: 240, face: 4.6, mass: 1, range: 230, keep: 180, atkCd: 1.2, dmg: 9 },
+    stats: { hp: 68, speed: 64, r: 30, vr: 22, turn: 4.5, accel: 240, face: 4.6, mass: 1, range: 230, keep: 180, atkCd: 1.2, dmg: 10 },
     style: { hand: 'arm-l', glow: '#B07BE0' },
     attack: { name: 'Hex bolt', anim: 'cast', desc: 'A wobbling green spark that curves after its target.' },
     abilities: [
@@ -278,7 +278,7 @@ Object.assign(HEROES2, {
     name: 'Cultist', art: 'art/heroes/cultist.svg', role: 'caster', unlock: { gems: 2 },
     blurb: 'A tall black hood, a curved dagger and a burning black candle. Pays in blood for the party\'s strength.',
     fun: 'Says the eye on his hood sees everything. It mostly sees the inside of the hood.',
-    stats: { hp: 78, speed: 62, r: 30, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1, range: 220, keep: 175, atkCd: 1.25, dmg: 9 },
+    stats: { hp: 78, speed: 62, r: 30, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1, range: 220, keep: 175, atkCd: 1.25, dmg: 10 },
     proj: ['bolt', '#9A5CC8'], style: { glow: '#9A5CC8' },
     attack: { name: 'Shadow bolt', anim: 'cast', desc: 'A bolt of violet shadow from the candle.' },
     abilities: [
@@ -346,7 +346,7 @@ Object.assign(HEROES2, {
     name: 'Beekeeper', art: 'art/heroes/beekeeper.svg', role: 'support', unlock: { gems: 2 },
     blurb: 'A veiled hat, a copper smoker, and a great many friends who sting.',
     fun: 'Knows every one of the bees by name. They know him by smell.',
-    stats: { hp: 82, speed: 62, r: 31, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1.1, range: 210, keep: 170, atkCd: 1.0, dmg: 7 },
+    stats: { hp: 82, speed: 62, r: 31, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1.1, range: 210, keep: 170, atkCd: 1.0, dmg: 8 },
     style: { glow: '#FFD45A' },
     attack: { name: 'Bee', anim: 'throw', desc: 'Sends a bee buzzing after the target.' },
     abilities: [
@@ -553,7 +553,7 @@ Object.assign(HEROES2, {
     name: 'Gladiator', art: 'art/heroes/gladiator.svg', role: 'melee', unlock: { gems: 2 },
     blurb: 'A crested bronze helm, a gladius and a little round shield. Plays to the crowd.',
     fun: 'Hears cheering in every fight. There is never anyone there.',
-    stats: { hp: 130, speed: 64, r: 33, vr: 23, turn: 4, accel: 230, face: 4.2, mass: 1.8, range: 22, atkCd: 0.9, dmg: 12, knock: 120, arc: 1.6 },
+    stats: { hp: 130, speed: 64, r: 33, vr: 23, turn: 4, accel: 230, face: 4.2, mass: 1.8, range: 22, atkCd: 0.9, dmg: 13, knock: 120, arc: 1.6 },
     weapon: 'blade', style: { off: 'shield' },
     attack: { name: 'Gladius', anim: 'thrust', desc: 'A short, quick stab.' },
     abilities: [
@@ -570,7 +570,7 @@ Object.assign(HEROES2, {
     name: 'Jester', art: 'art/heroes/jester.svg', role: 'skirmish', unlock: { gems: 3 },
     blurb: 'A three-pointed cap with bells and a marotte on a stick. Makes enemies look foolish, then fight each other.',
     fun: 'The marotte has its own little jester on top. That one has a marotte too. It goes on.',
-    stats: { hp: 100, speed: 84, r: 30, vr: 21, turn: 6, accel: 360, face: 6, mass: 1, range: 18, atkCd: 0.75, dmg: 8, arc: 1.6, dodge: 0.2 },
+    stats: { hp: 100, speed: 84, r: 30, vr: 21, turn: 6, accel: 360, face: 6, mass: 1, range: 18, atkCd: 0.75, dmg: 9, arc: 1.6, dodge: 0.2 },
     weapon: 'heavy',
     attack: { name: 'Marotte', anim: 'swing', desc: 'A bonk with the jester\'s stick.' },
     abilities: [
