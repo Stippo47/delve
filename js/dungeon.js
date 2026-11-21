@@ -182,7 +182,7 @@ const eliteP = (run, wave = 0) => (debugParam('elites') != null ? 1 : Math.min(0
 // each dungeon is pitched at a party that has grown: the order is the order they open in.
 export const DUNGEON_RANK = { warren: 0, sewers: 1, crypt: 2, frost: 3, ember: 4, spire: 5 };
 // Enemy strength (hp x m, blows x 0.65 + 0.35 m) for a room: the dungeon, the floor, and how far into the floor.
-export const RANK_MULT = [1, 2.3, 3.8, 4.6, 5.4, 6.1];
+export const RANK_MULT = [1, 2.3, 3.8, 4.6, 5.4, 5.9];
 export const FLOOR_STEP = 0.3;   // each floor on from the first: +30% of the dungeon's own strength
 export const ROOM_STEP = 0.035;  // each room further into a floor: +3.5%
 export const enemyMult = (run, L) => {
