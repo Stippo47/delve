@@ -467,6 +467,20 @@ function kingStrike(ctx, m, k) {
 function strike(ctx, m, k) {
   const z = m.z, el = EL[STRIKE_EL[m.kind]] || EL.bone, e = easeOut(k), seed = m.seed;
   if ((m.kind === 'bone' || m.kind === 'soul') && kingStrike(ctx, m, k)) return;
+  if (m.kind === 'blade' && z.shape === 'circle') { // round 10 (the boss lane: bone spikes looked wrong on the Goblin
+    // Chieftain's cleaver spin and the Great Engine's head spin): a circle of blade is a spin: two blade crescents sweep
+    // once round it, warm steel like every enemy arc, and are gone
+    const a0 = seed * 0.7, R = z.r * 0.95, th = Math.max(14, Math.min(26, z.r * 0.22)) * (1 - 0.35 * k);
+    if (k < 0.18) lit(ctx, () => glowDisc(ctx, z.x, z.y, z.r, '#FFF4E8', 0.35 * (1 - k / 0.18)));
+    for (const off of [0, Math.PI]) { const h = a0 + off + TAU * 0.75 * easeOut(k01(k / 0.6)), t = a0 + off + TAU * 0.75 * sm(k01((k - 0.15) / 0.85));
+      slashBand(ctx, z.x, z.y, R, Math.min(t, h - 0.05), h, th, '#FFCDBD', '#FFF6F2', true); }
+    return;
+  }
+  if (m.kind === 'blade' && z.shape === 'cone') { // and a blade cone is a chop: one warm crescent sweeping it (no bone spikes)
+    const span = z.arc, a0 = z.a - span / 2, head = a0 + span * easeOut(k01(k / 0.3)), tail = a0 + span * sm(k01((k - 0.12) / 0.6));
+    slashBand(ctx, z.x, z.y, z.r * 0.92, tail, head, Math.max(16, Math.min(34, z.r * 0.25)) * (1 - 0.4 * k), '#FFCDBD', '#FFF6F2', true);
+    return;
+  }
   if (m.kind === 'blade' && z.shape === 'line') { // a blade streak along the line
     const a = Math.atan2(z.y2 - z.y1, z.x2 - z.x1), L = Math.hypot(z.x2 - z.x1, z.y2 - z.y1);
     const tip = L * easeOut(k01(k / 0.3)), base = L * sm(k01((k - 0.2) / 0.8));
