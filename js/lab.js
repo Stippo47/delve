@@ -271,6 +271,7 @@ function setupShow() {
       if (sh.hitme) { d0.facing = Math.atan2(u.y - d0.y, u.x - d0.x); hurt(w, u, 4, d0, { knock: 0 }); }
       else { const a = Math.atan2(u.y - d0.y, u.x - d0.x); w.projectiles.push({ kind: 'arrow', x: d0.x + Math.cos(a) * 30, y: d0.y + Math.sin(a) * 30, vx: Math.cos(a) * 420, vy: Math.sin(a) * 420, r: 6, team: 'enemy', owner: d0, dmg: 4, o: { knock: 10 }, life: 1.2, a }); }
     }
+    if (sh.hitDummy && cast && Math.floor(w.time / 0.45) !== Math.floor((w.time - dt) / 0.45)) hurt(w, dummies[0], 14, null, { noDodge: true });
     step(w, dt);
     if (u.act) pin = { x: u.x, y: u.y };
     else if (!u.downed) { u.x = pin.x; u.y = pin.y; u.vx = u.vy = 0; }
