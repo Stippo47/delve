@@ -7,6 +7,7 @@ import { STYLE } from './parts.js';
 import { noteWorld, drawMarks, drawSigGround, drawSigAir, abilityRing, abilityBeam, abilityZone, EL, abilityRingGround, hookGround, abilityZoneAir, soulOrb, dustPuffs } from './fxkit.js';
 import { drawPuddle, snowflake } from './puddles.js';
 import { PROJ2, drawK2 } from './fx2.js';
+import { variant } from './fxvar.js';
 
 export function easeOut(k) { return 1 - (1 - k) * (1 - k) * (1 - k); }
 // a stable pseudo-random number from integers (flicker that doesn't need state)
@@ -448,6 +449,9 @@ function eruption(ctx, f, layer) {
     ctx.fillStyle = 'rgba(70,56,44,0.35)'; blob(ctx, f.x, f.y, f.r * 0.9, 7, seed, 0.8); ctx.fill();
     ctx.restore(); return;
   }
+  const v = variant('shockwave'); // round 10: "Try 2 more variants" (js/fxvar.js)
+  if (v === 2) { slabs(ctx, f, k, seed); ctx.restore(); return; }
+  if (v === 3) { rolling(ctx, f, k, seed); ctx.restore(); return; }
   // round 9 (the spikes were disliked): the floor heaves up in a crescent of earth (a raised, inked ridge), throws up
   // rubble and dust, and settles
   ctx.globalAlpha = 1 - clamp((k - 0.55) / 0.45, 0, 1);
@@ -462,6 +466,37 @@ function eruption(ctx, f, layer) {
   for (let i = 0; i < 6; i++) { const b = f.a + (hash(seed, i) - 0.5) * 2.4, d = 14 + 30 * e, hop = Math.sin(k * Math.PI) * 18 * hash(i, seed);
     inked(ctx, () => { ctx.beginPath(); ctx.arc(f.x + Math.cos(b) * d + ux * hop, f.y + Math.sin(b) * d + uy * hop, 4 * (1 - k) + 1.2, 0, TAU); }, i % 2 ? '#E9DDC2' : '#A99C8B'); }
   ctx.restore();
+}
+// Shockwave, variant 2 (Slabs): three or four flat rock slabs thrust up out of the floor across the way it runs, tilted
+// away from him (their lit top face and a dark side face show the tilt), dust spilling off them; they sink back.
+function slabs(ctx, f, k, seed) {
+  const up = k < 0.2 ? easeOut(k / 0.2) : 1 - clamp((k - 0.55) / 0.45, 0, 1), nx = -Math.sin(f.a), ny = Math.cos(f.a), ca = Math.cos(f.a), sa = Math.sin(f.a);
+  ctx.globalAlpha = clamp(up * 1.6, 0, 1);
+  dustPuffs(ctx, f.x, f.y, f.r * 0.75, k, seed, 6);
+  for (let i = 0; i < 4; i++) { const o = (i - 1.5) * f.r * 0.42, h = hash(seed, i), L = f.r * (0.34 + 0.12 * h), W = 9 + 5 * hash(i, seed);
+    const cx = f.x + nx * o + ca * (h - 0.5) * 12, cy = f.y + ny * o + sa * (h - 0.5) * 12, lift = (10 + 6 * h) * up, tilt = 0.25 * (i - 1.5);
+    // the slab: a long rock seen from above, its back edge (towards him) lifted, so the lit top face grows with the lift
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(f.a + tilt);
+    const face = (w2, d) => { ctx.beginPath(); ctx.moveTo(-w2 * 0.5 - d, -L / 2); ctx.lineTo(w2 * 0.5, -L / 2 + 3); ctx.lineTo(w2 * 0.6, L / 2 - 2); ctx.lineTo(-w2 * 0.4 - d, L / 2); ctx.closePath(); };
+    inked(ctx, () => face(W + lift * 0.9, lift * 0.6), '#6E5A46');
+    ctx.fillStyle = '#A08A6E'; face(W * 0.9 + lift * 0.5, lift * 0.6); ctx.fill();
+    ctx.fillStyle = '#C9B699'; ctx.beginPath(); ctx.moveTo(-W * 0.3 - lift * 0.6, -L / 2 + 2); ctx.lineTo(-W * 0.05, -L / 2 + 4); ctx.lineTo(-W * 0.05, L / 2 - 3); ctx.lineTo(-W * 0.2 - lift * 0.6, L / 2 - 2); ctx.closePath(); ctx.fill();
+    ctx.restore(); }
+}
+// Shockwave, variant 3 (Rolling): a hump of earth that rolls forward under the floor: a short crescent of churned dirt
+// sliding outward with dust curling off its front and pebbles hopping off it, a dark furrow left behind.
+function rolling(ctx, f, k, seed) {
+  const e = easeOut(k), half = 0.75, x0 = f.x - Math.cos(f.a) * f.r * 0.6, y0 = f.y - Math.sin(f.a) * f.r * 0.6, R = f.r * (0.3 + 0.95 * e), th = 12 * (1 - 0.5 * k) + 4;
+  ctx.globalAlpha = 1 - k * k;
+  ctx.fillStyle = 'rgba(70,56,44,0.3)'; ctx.beginPath(); ctx.arc(x0, y0, R, f.a - half, f.a + half); ctx.arc(x0, y0, Math.max(1, R * 0.45), f.a + half, f.a - half, true); ctx.closePath(); ctx.fill();
+  const band = (r0, r1) => { ctx.beginPath(); ctx.arc(x0, y0, r1, f.a - half, f.a + half); ctx.arc(x0, y0, r0, f.a + half, f.a - half, true); ctx.closePath(); };
+  inked(ctx, () => band(R - th, R), '#8A7258');
+  ctx.fillStyle = '#B9A68A'; band(R - th * 0.75, R - th * 0.35); ctx.fill();
+  const [ux, uy] = upVec();
+  for (let i = 0; i < 7; i++) { const b = f.a + (i / 6 - 0.5) * half * 1.8, hop = Math.sin(clamp(k * 2.2 - hash(i, seed) * 0.6, 0, 1) * Math.PI) * (10 + 10 * hash(seed, i)), d = R + 4;
+    inked(ctx, () => { ctx.beginPath(); ctx.arc(x0 + Math.cos(b) * d + ux * hop, y0 + Math.sin(b) * d + uy * hop, 3 * (1 - k) + 1.4, 0, TAU); }, i % 2 ? '#6E5A46' : '#A08A6E'); }
+  for (let i = 0; i < 5; i++) { const b = f.a + (i / 4 - 0.5) * half * 1.5, d = R + 8 + 6 * hash(i, seed);
+    inked(ctx, () => { ctx.beginPath(); ctx.arc(x0 + Math.cos(b) * d, y0 + Math.sin(b) * d, (7 + 4 * hash(seed, i)) * (1 - 0.5 * k), 0, TAU); }, i % 2 ? '#E9DDC2' : '#FFF8E6'); }
 }
 // Lullaby: a soft cone of drifting notes rolling out in front of the bard
 // Lullaby (round 9: the light cone underneath was disliked): three soft waves of notes drifting out across the cone,

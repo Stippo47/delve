@@ -230,26 +230,23 @@ function slash(ctx, m, k) {
 // around it. Is an aoe attack. Small radius". The spiked head slams down; a ring of spikes and dust bursts round it.
 function slamGround(ctx, m, k) {
   const e = easeOut(k01(k / 0.5)), R = m.r * (0.5 + 0.55 * e);
+  // round 10 ("Simpler"): no spiky ring; a soft dent where the head lands, the blow's reach a faint dust edge
   ctx.save(); ctx.globalAlpha *= 1 - k;
-  ctx.fillStyle = 'rgba(70,56,44,0.3)'; ctx.beginPath(); ctx.arc(m.x, m.y, m.r * 0.9, 0, TAU); ctx.fill();
-  // the spiky ring: a jagged star outline rolling out to the blow's edge
-  ctx.lineJoin = 'miter'; const n = 14;
-  inkLine(ctx, () => { ctx.beginPath(); for (let i = 0; i <= n * 2; i++) { const a = i / (n * 2) * TAU + m.seed, rr = i % 2 ? R * 0.8 : R * 1.06; i ? ctx.lineTo(m.x + Math.cos(a) * rr, m.y + Math.sin(a) * rr) : ctx.moveTo(m.x + Math.cos(a) * rr, m.y + Math.sin(a) * rr); } }, '#E9DDC2', 3 * (1 - k) + 1.2);
+  ctx.fillStyle = 'rgba(70,56,44,0.28)'; ctx.beginPath(); ctx.arc(m.x, m.y, R * 0.85, 0, TAU); ctx.fill();
   ctx.restore();
 }
 function slamAir(ctx, m, k) {
   const drop = k01(k / 0.14), e = easeOut(k01((k - 0.12) / 0.6));
+  // round 10 ("Simpler"): just the head coming down, a small flash and a ring of dust; no spikes thrown up
   if (k < 0.14) { // the head coming down onto the spot
     const [ux, uy] = upVec(), h = (1 - drop) * 26;
-    inked(ctx, () => star(ctx, m.x + ux * h, m.y + uy * h, 13, 9, 0.66, k * 8), '#6E737A');
+    flailHead(ctx, m.x + ux * h, m.y + uy * h, 8, k * 8);
     return;
   }
-  if (k < 0.3) lit(ctx, () => glowDisc(ctx, m.x, m.y, m.r * 1.3, '#FFF4DC', 0.6 * (1 - (k - 0.14) / 0.16)));
+  if (k < 0.26) lit(ctx, () => glowDisc(ctx, m.x, m.y, m.r * 1.1, '#FFF4DC', 0.5 * (1 - (k - 0.14) / 0.12)));
   ctx.save(); ctx.globalAlpha *= 1 - k * k;
-  for (let i = 0; i < 9; i++) { const b = i / 9 * TAU + m.seed, d = m.r * (0.35 + 0.75 * e); spike(ctx, m.x + Math.cos(b) * d, m.y + Math.sin(b) * d, 12 * (1 - e) + 3, 4, '#B9AD94', '#EDE4CD'); }
-  dustPuffs(ctx, m.x, m.y, m.r, e, m.seed, 7);
-  inked(ctx, () => star(ctx, m.x, m.y, 13 * (1 - 0.4 * e), 9, 0.66, 0.4), '#6E737A');
-  ctx.fillStyle = '#C9D2DE'; ctx.beginPath(); ctx.arc(m.x - 3, m.y - 3, 3.5, 0, TAU); ctx.fill();
+  dustPuffs(ctx, m.x, m.y, m.r, e, m.seed, 6);
+  ctx.globalAlpha *= 1 - k01((k - 0.4) / 0.4); flailHead(ctx, m.x, m.y, 8, 0.4);
   ctx.restore();
 }
 
@@ -819,18 +816,31 @@ export function drawBodyGround(ctx, u, w) {
     ctx.restore();
   }
 }
-// Whirl (round 9): bigger balls, the shape of his flail's head (a spiked iron ball on a chain)
-function flailHead(ctx, x, y, r, rot) {
-  inked(ctx, () => star(ctx, x, y, r * 1.35, 10, 0.72, rot), '#5E636A');
-  inked(ctx, () => { ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); }, '#7A8089');
-  ctx.fillStyle = '#C9D2DE'; ctx.beginPath(); ctx.arc(x - r * 0.35, y - r * 0.35, r * 0.32, 0, TAU); ctx.fill();
+// Whirl (round 9): bigger balls, the shape of his flail's head. Round 10: "Remove strings. They also look like they are
+// in a different style than what he's holding": no chains, and the head drawn like the one in his hand (art/heroes/
+// berserker.svg): a pale steel ball, six fat cone spikes round it, a four-faced spike on top lit from the top left.
+export function flailHead(ctx, x, y, r, rot) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+  inked(ctx, () => { for (let i = 0; i < 6; i++) { const a = i / 6 * TAU, c = Math.cos(a), s2 = Math.sin(a), w2 = 0.42;
+    ctx.moveTo(Math.cos(a - w2) * r * 0.86, Math.sin(a - w2) * r * 0.86); ctx.lineTo(c * r * 1.62, s2 * r * 1.62); ctx.lineTo(Math.cos(a + w2) * r * 0.86, Math.sin(a + w2) * r * 0.86); ctx.closePath(); }
+    ctx.moveTo(r, 0); ctx.arc(0, 0, r, 0, TAU); }, '#A9B2C1');
+  ctx.restore();
+  // lit faces of the spikes and the top pyramid stay lit from the top left whatever the spin
+  ctx.save(); ctx.translate(x, y);
+  ctx.fillStyle = '#7F8898'; ctx.beginPath(); ctx.arc(0, 0, r, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#C3CAD4'; ctx.beginPath(); ctx.arc(-r * 0.08, -r * 0.08, r * 0.88, 0, TAU); ctx.fill();
+  const p = r * 0.7;
+  ctx.fillStyle = '#F6F8FB'; ctx.beginPath(); ctx.moveTo(-p, 0); ctx.lineTo(0, -p); ctx.lineTo(0, 0); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#D9DEE6'; ctx.beginPath(); ctx.moveTo(0, -p); ctx.lineTo(p, 0); ctx.lineTo(0, 0); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#A4ACB9'; ctx.beginPath(); ctx.moveTo(-p, 0); ctx.lineTo(0, p); ctx.lineTo(0, 0); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#8D96A6'; ctx.beginPath(); ctx.moveTo(p, 0); ctx.lineTo(0, p); ctx.lineTo(0, 0); ctx.closePath(); ctx.fill();
+  ctx.restore();
 }
 function whirlArcs(ctx, u, T) {
   const R = u.r + 46, a = T * 13;
   for (let i = 0; i < 2; i++) { const b = a + i * Math.PI, hx = u.x + Math.cos(b) * (R - 9), hy = u.y + Math.sin(b) * (R - 9);
     slashBand(ctx, u.x, u.y, R, b - 1.6, b, 16, '#DCE3EC', '#FFFFFF');
-    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(u.x + Math.cos(b) * u.vr * 0.8, u.y + Math.sin(b) * u.vr * 0.8); ctx.lineTo(hx, hy); }, '#8D949C', 2.6);
-    flailHead(ctx, hx, hy, 11, T * 9); }
+    flailHead(ctx, hx, hy, 9, b); }
 }
 
 // ---------------------------------------------------------------- ability-shaped versions of the plain fx
