@@ -53,10 +53,15 @@ def scaled_sheet(src, lab, out, k):
     rb.shoot(html, out, w, h)
 
 
+SHOOT = ROOT / "tools" / "riffle" / "out" / "r8" / "shoot"   # Edge's page and profile go here (git-ignored), never
+# beside the renders: a headless Edge can outlive the call and keep its profile locked
+
+
 def render(folder, stem, before=None, k=None, src=None, lab=None):
     out = R8 / folder / "renders"
     out.mkdir(parents=True, exist_ok=True)
-    rb.OUT = out
+    SHOOT.mkdir(parents=True, exist_ok=True)
+    rb.OUT = SHOOT
     src = pathlib.Path(src) if src else R8 / folder / f"{stem}.svg"
     lab = lab or label(stem)
     if k:
@@ -64,14 +69,13 @@ def render(folder, stem, before=None, k=None, src=None, lab=None):
     else:
         rb.sheet(src, lab, out / f"{stem}.png")
     rb.thumb(src, out / f"{stem}-thumb.png")
-    shutil.rmtree(out / "_profile", ignore_errors=True)
     if before:
         b = pathlib.Path(before)
         if b.suffix == ".png":
             shutil.copyfile(b, out / f"{stem}-before.png")
         else:  # a placeholder svg: render it the plain way as the before
             rb.sheet(b, lab + " (before: placeholder)", out / f"{stem}-before.png")
-            shutil.rmtree(out / "_profile", ignore_errors=True)
+    shutil.rmtree(SHOOT / "_profile", ignore_errors=True)
     print("rendered", folder, stem, "| before:", pathlib.Path(before).relative_to(ROOT).as_posix() if before else None)
 
 
