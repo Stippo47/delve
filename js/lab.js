@@ -257,9 +257,8 @@ function setupShow() {
       for (const k in u.kit.cd) u.kit.cd[k] = 999;
       pin = { x: u.x, y: u.y };
     }
-    // only the ability, no plain attacks; but Zeus Bolt is shown with the Zap that bounces between the marks after it
-    if (ab === 'stormCloud' && w.time > SHOW_AT + 1.0) { if (!u._zapped) { u._zapped = true; u.atkT = 0; } else u.atkT = Math.max(u.atkT, 0.5); }
-    else if (ab !== 'attack' && !(sh.attacks && cast)) u.atkT = Math.max(u.atkT, 0.5);
+    // only the ability, no plain attacks (round 10: Zeus Bolt bounces on its own; no Zap after it)
+    if (ab !== 'attack' && !(sh.attacks && cast)) u.atkT = Math.max(u.atkT, 0.5);
     else if (!ranged) { // melee: the brain won't swing while pinned in place, so the bench swings on a beat
       u.atkT = 9; const d = DEFS[hero], beat = d.role === 'skirmish' ? 0.5 : 1.1, t0 = w.time - SHOW_AT;
       if (t0 >= 0 && Math.floor(t0 / beat) !== Math.floor((t0 - dt) / beat || -1) && t0 < loop - 0.9) {

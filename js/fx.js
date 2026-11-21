@@ -340,18 +340,18 @@ function ring(ctx, f) {
 // A branching bolt drawn as one shape (round 9: "each arm of lightning should merge with main branch having 1 outline.
 // Base of these arms should also come directly from the main chain"): the main jag and its arms are built first, the
 // arms starting on the main jag's own corners; then every line gets its ink, then every line its colour, then the core.
-function boltTree(ctx, x1, y1, x2, y2, T, seed, width, arms, color = '#FFF3A0') {
+function boltTree(ctx, x1, y1, x2, y2, T, seed, width, arms, color = '#FFF3A0', armK = 1, glowA = 0.22) {
   const L = Math.hypot(x2 - x1, y2 - y1), nx = -(y2 - y1) / (L || 1), ny = (x2 - x1) / (L || 1), f = Math.floor(T / 0.06), n = 8, amp = 0.09;
   const main = [[x1, y1]];
   for (let i = 1; i < n; i++) { const k = i / n, o = (hash(f, i, seed) - 0.5) * 2 * L * amp * Math.sin(k * Math.PI); main.push([x1 + (x2 - x1) * k + nx * o, y1 + (y2 - y1) * k + ny * o]); }
   main.push([x2, y2]);
   const lines = [[main, width]], an0 = Math.atan2(y2 - y1, x2 - x1);
-  for (let b = 0; b < arms; b++) { const j = 2 + Math.floor(hash(f, b, seed + 3) * (n - 3)), p = main[j], an = an0 + (hash(b, f, seed) < 0.5 ? -1 : 1) * (0.5 + 0.5 * hash(f, b, 7)), al = L * (0.18 + 0.14 * hash(b, seed, f));
+  for (let b = 0; b < arms; b++) { const j = 2 + Math.floor(hash(f, b, seed + 3) * (n - 3)), p = main[j], an = an0 + (hash(b, f, seed) < 0.5 ? -1 : 1) * (0.5 + 0.5 * hash(f, b, 7)), al = L * (0.18 + 0.14 * hash(b, seed, f)) * armK;
     const pts = [p]; for (let i = 1; i <= 3; i++) { const k = i / 3, o = (hash(f, b, i + 11) - 0.5) * al * 0.3; pts.push([p[0] + Math.cos(an) * al * k - Math.sin(an) * o, p[1] + Math.sin(an) * al * k + Math.cos(an) * o]); }
     lines.push([pts, width * 0.55]); }
   const path = (pts) => { ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); };
   ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = rgba(color, 0.22); for (const [pts, wd] of lines) { ctx.lineWidth = wd * 5; path(pts); ctx.stroke(); } ctx.restore();
+  ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = rgba(color, glowA); for (const [pts, wd] of lines) { ctx.lineWidth = wd * 5; path(pts); ctx.stroke(); } ctx.restore();
   ctx.strokeStyle = INK; for (const [pts, wd] of lines) { ctx.lineWidth = wd + OUTLINE * 2; path(pts); ctx.stroke(); }
   ctx.strokeStyle = color; for (const [pts, wd] of lines) { ctx.lineWidth = wd; path(pts); ctx.stroke(); }
   ctx.strokeStyle = '#FFFFFF'; for (const [pts, wd] of lines) { ctx.lineWidth = wd * 0.4; path(pts); ctx.stroke(); }
@@ -359,14 +359,18 @@ function boltTree(ctx, x1, y1, x2, y2, T, seed, width, arms, color = '#FFF3A0') 
 }
 export function drawBeam(ctx, f, T) { beam(ctx, f, T); }
 function beam(ctx, f, T) {
-  const a = f.from ? clamp(Math.min(f.t / 0.08, (f.max - f.t) / 0.25), 0, 1) : life(f, 0.08, 0.2), { x1, y1, x2, y2 } = f, seed = Math.round(x1 + y2);
+  const a = f.from ? clamp(Math.min(f.t / 0.08, (f.max - f.t) / 0.25), 0, 1) : f.kind === 'lightning' ? clamp(Math.min(f.t / 0.03, (f.max - f.t) / 0.1), 0, 1) : life(f, 0.08, 0.2), { x1, y1, x2, y2 } = f, seed = Math.round(x1 + y2);
   ctx.save(); ctx.globalAlpha = a;
   if (f.kind === 'lightning') {
-    const big = f.ab ? 1.5 : f.small ? 0.8 : 1.1;
-    boltTree(ctx, x1, y1, x2, y2, T, seed, 3.6 * big, f.small ? 1 : 2);
-    const f6 = Math.floor(T / 0.06);
-    ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x2, y2, 32 * big, '#FFF3A0', 0.8); ctx.restore();
-    inked(ctx, () => star(ctx, x2, y2, 12 * big * (0.8 + 0.2 * Math.sin(T * 40)), 4, 0.3, f6), '#FFFBEA');
+    // round 10: the Storm Mage's Zap "Thinner. Small arms. More visible. Less transparent" (full strength until its last
+    // 0.1 s, a stronger yellow); and no X-shaped star where lightning hits, anywhere: a flash of light and a few sparks
+    const big = f.ab ? 1.5 : f.small ? 0.6 : 1.1;
+    if (f.small) boltTree(ctx, x1, y1, x2, y2, T, seed, 3.6 * big, 2, '#FFE14A', 0.35, 0.3);
+    else boltTree(ctx, x1, y1, x2, y2, T, seed, 3.6 * big, 2);
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x2, y2, (f.small ? 22 : 30) * big, '#FFF3A0', 0.75); ctx.restore();
+    const f6 = Math.floor(T / 0.06), an = Math.atan2(y2 - y1, x2 - x1);
+    for (let i = 0; i < 3; i++) { const b = an + (hash(f6, i, seed) - 0.5) * 2.4, L = (8 + 8 * hash(i, f6, seed)) * big;
+      inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x2 + Math.cos(b) * 6 * big, y2 + Math.sin(b) * 6 * big); ctx.lineTo(x2 + Math.cos(b) * (6 * big + L), y2 + Math.sin(b) * (6 * big + L)); }, '#FFF3A0', 1.8 * big); }
   } else if (f.kind === 'drain') {
     // a dark red ribbon, with blobs of life flowing back to the caster (x1, y1). Round 9: held steady (no blinking),
     // and thin tendrils from the target on to those round it (f.thin)
@@ -892,7 +896,7 @@ function burstColor(u) {
 export function noteHits(w) {
   noteWorld(w);
   for (const u of w.units) {
-    if (u.hitT > (u._seenHit || 0) + 0.02 && !u.downed) {
+    if (u.hitT > (u._seenHit || 0) + 0.02 && !u.downed && !u.hitZap) { // round 10: "I don't like the X hit effect of lightning"
       // at the point the sim worked out: the body's edge facing the blow, or the face of a raised shield
       const r = u.r * 0.85, x = u.hitX ?? u.x - Math.cos(u.hitA) * r, y = u.hitY ?? u.y - Math.sin(u.hitA) * r;
       local.push({ type: 'impact', x, y, a: u.hitA, t: 0, max: u.hitBlock ? 0.16 : 0.13, big: u.flinchT > 0.15, block: u.hitBlock, fa: u.facing });

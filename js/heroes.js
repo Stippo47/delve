@@ -153,15 +153,15 @@ export const HEROES = {
     name: 'Storm Mage', art: 'art/heroes/storm.svg', role: 'caster', unlock: { gems: 3 },
     blurb: 'Lightning that jumps. Loves wet enemies.',
     stats: { hp: 65, speed: 66, r: 30, vr: 22, turn: 4.5, accel: 240, face: 4.6, mass: 1, range: 240, keep: 180, atkCd: 1.25, dmg: 9 },
-    attack: { name: 'Zap', anim: 'cast', desc: 'A chain of lightning to the target, a little shock; it jumps on to every marked enemy, shocking them hard.' },
+    attack: { name: 'Zap', anim: 'cast', desc: 'A zap of lightning from her hands to the target: a little shock.' },
     abilities: [
       { id: 'chainLightning', name: 'Chain Lightning', cd: 8, desc: 'A bolt that jumps from enemy to enemy, shocking.',
         tiers: ['Jumps 3 times.', 'Jumps 5 times.', 'Jumps back to enemies already hit.'] },
       { id: 'thunderclap', name: 'Thunderclap', cd: 11, desc: 'A crack of thunder around a target.',
         tiers: ['Staggers.', 'Bigger.', 'Shocks too.'] },
       // round 9: Storm Cloud reworked into Zeus Bolt (the id stays for saves)
-      { id: 'stormCloud', name: 'Zeus Bolt', cd: 14, desc: 'Throws three bolts that mark the enemies they hit. Her Zap jumps between everyone marked, shocking hard, and uses the mark up.',
-        tiers: ['Three marking bolts.', 'The bolts hit harder.', 'Marks last longer and shock harder.'] },
+      { id: 'stormCloud', name: 'Zeus Bolt', cd: 14, desc: 'A bolt that leaps from enemy to enemy, shocking each one it strikes.',
+        tiers: ['One bolt, four leaps.', 'Half as many leaps again.', 'Two more bolts.'] },
     ],
     trait: { id: 'conductor', name: 'Conductor', desc: 'Shock lasts twice as long on wet enemies.' },
   },

@@ -62,6 +62,8 @@ const friendsNear = (w, u, x, y, r) => near(w, u, x, y, r, u.team);
 const hurtMost = (list) => list.reduce((b, o) => (!b || hpRatio(o) < hpRatio(b) ? o : b), null);
 const dmgOf = (u, k) => (u.def.dmg || 8) * (u.dmgMul || 1) * k * (1 + abMod(u, 'abDmg'));
 const ang = (u, t) => angleTo(u.x, u.y, t.x, t.y);
+// where a caster's hands are, held out towards t (round 10: the storm mage's lightning comes from her hands)
+const handPt = (u, t) => { const a = t ? ang(u, t) : u.facing, d = u.r + 6; return { x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d }; };
 const isUndead = (o) => /skeleton|rattler|gaper|brute|ghost|banshee|boss/.test(o.kind) || o.def.undead;
 
 // A projectile with its own look and what happens when it lands.
@@ -394,7 +396,7 @@ export const ABILITIES = {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && !blocked(w, u.x, u.y, t.x, t.y) ? 0.3 + 0.2 * foesNear(w, u, t.x, t.y, 160).length : 0),
     use(w, u, t, tier) {
       cast(u, 'cast', 0.4);
-      const jumps = tier >= 2 ? 5 : 3; let cur = t, prev = u; const hit = new Set();
+      const jumps = tier >= 2 ? 5 : 3; let cur = t, prev = handPt(u, t); const hit = new Set(); // round 10: "From hands not head"
       for (let i = 0; i <= jumps && cur; i++) {
         fx(w, { type: 'beam', x1: prev.x, y1: prev.y, x2: cur.x, y2: cur.y, kind: 'lightning', max: 0.3 });
         hurt(w, cur, dmgOf(u, 1.1), u, { noDodge: true, shock: 40 }); hit.add(cur);
@@ -413,25 +415,26 @@ export const ABILITIES = {
       w.shake = Math.max(w.shake, 5);
     },
   },
-  // Zeus Bolt (round 9, the designer: Storm Cloud "reworked ... 3 charges of a Zeus bolt projectile, which will mark
-  // targets. The main attack will bounce between anyone who has been marked dealing heavy shock to them. Mark will go
-  // away after it's been used once."). The id stays 'stormCloud' so bought nodes in saves keep working.
+  // Zeus Bolt (round 10 rework, the designer: "Bolts will jump between enemies repeatedly x amount of times (upgrades
+  // boost it) and shock everytime they do. Will only shoot 1 lvl 1, 50% more bounces lvl 2, + 2 bolts lvl 3"). A bolt
+  // flies to an enemy, then leaps on to the nearest other one, again and again, shocking each it strikes. The id stays
+  // 'stormCloud' so bought nodes in saves keep working.
   stormCloud: {
     score(w, u, t) {
       if (!t || dist(u.x, u.y, t.x, t.y) > u.def.range + 40 || blocked(w, u.x, u.y, t.x, t.y)) return 0;
-      const fresh = opponents(w, u).filter((e) => !(e.stormMark > w.time) && dist(u.x, u.y, e.x, e.y) < u.def.range + 40).length;
-      return fresh >= 2 ? 0.7 : fresh ? 0.4 : 0;
+      const n = foesNear(w, u, t.x, t.y, ZEUS_REACH).length;
+      return n >= 2 ? 0.7 : 0.35;
     },
     use(w, u, t, tier) {
       cast(u, 'throw', 0.6);
-      const near = opponents(w, u).filter((e) => dist(u.x, u.y, e.x, e.y) < u.def.range + 60 && !blocked(w, u.x, u.y, e.x, e.y))
-        .sort((a, b) => (a.stormMark > w.time ? 1 : 0) - (b.stormMark > w.time ? 1 : 0) || dist(t.x, t.y, a.x, a.y) - dist(t.x, t.y, b.x, b.y)).slice(0, 3);
-      if (!near.length) near.push(t);
-      u.later = [0, 1, 2].map((i) => ({ t: 0.08 + i * 0.17, f: () => {
-        const e = alive(near[i % near.length]) ? near[i % near.length] : t; if (!alive(e)) return;
-        shoot(w, u, ang(u, e), { kind: 'zeus', speed: 640, r: 9, life: 1, dmg: dmgOf(u, tier >= 2 ? 1.1 : 0.75), st: { shock: 20 }, knock: 60,
-          extra: { onHit: (w2, p, x) => { x.stormMark = w2.time + (tier >= 3 ? 10 : 6); x.stormMarkHeavy = tier >= 3; } } });
-      } }));
+      const jumps = tier >= 2 ? 6 : 4, n = tier >= 3 ? 3 : 1;
+      const first = [t, ...opponents(w, u).filter((e) => e !== t && dist(u.x, u.y, e.x, e.y) < u.def.range + 60 && !blocked(w, u.x, u.y, e.x, e.y)).sort((a, b) => dist(t.x, t.y, a.x, a.y) - dist(t.x, t.y, b.x, b.y))];
+      u.later = [];
+      for (let i = 0; i < n; i++) u.later.push({ t: 0.08 + i * 0.15, f: () => {
+        const e = alive(first[i % first.length]) ? first[i % first.length] : t; if (!alive(e)) return;
+        const a = ang(u, e), x = u.x + Math.cos(a) * (u.r + 8), y = u.y + Math.sin(a) * (u.r + 8);
+        zeusBolt(w, u, x, y, e, jumps, null);
+      } });
     },
   },
   // ----- Cleric
@@ -613,6 +616,20 @@ export const ABILITIES = {
   },
 };
 ABILITIES.oldBones = { score: () => 0, use() {} };
+// Zeus Bolt's bolt: flies from (x, y) at e; where it strikes it shocks and leaps on to the nearest other foe in reach
+// (never straight back to the one it came from), `left` more times.
+const ZEUS_REACH = 260;
+function zeusBolt(w, u, x, y, e, left, from, hit = new Set()) {
+  const a = angleTo(x, y, e.x, e.y), sp = from ? 380 : 520; // its leaps a little slower, so each one reads
+  w.projectiles.push({ kind: 'zeus', x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: 8, team: u.team, owner: u, skip: from, dmg: dmgOf(u, 0.45),
+    o: { knock: 40, shock: 14, noDodge: true, ab: u.kit && u.kit.using }, life: 0.9, a, home: e, turn: 6,
+    onHit: (w2, p, hitU) => { hit.add(hitU); if (left <= 0) return;
+      // the nearest one it hasn't struck yet; once it has struck them all, round it goes again
+      const ok = opponents(w2, u).filter((o) => o !== hitU && !o.ethereal && dist(hitU.x, hitU.y, o.x, o.y) < ZEUS_REACH && !blocked(w2, hitU.x, hitU.y, o.x, o.y));
+      const fresh = ok.filter((o) => !hit.has(o)); if (!fresh.length) hit.clear();
+      const nx = (fresh.length ? fresh : ok).sort((p1, p2) => dist(hitU.x, hitU.y, p1.x, p1.y) - dist(hitU.x, hitU.y, p2.x, p2.y))[0];
+      if (nx) zeusBolt(w2, u, hitU.x, hitU.y, nx, left - 1, hitU, hit); } });
+}
 Object.assign(ABILITIES, ABILITIES2); // round 10 (lane H): the new heroes' abilities
 const RAY_T = 4, RAY_RANGE = 380;
 const CURE_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse'];
@@ -639,14 +656,12 @@ const ATTACKS = {
       extra: { onHit: (w2, p, e) => { const n = 2 + (rand() < 0.5 ? 1 : 0);
         for (let i = 0; i < n; i++) { const b = a + (i - (n - 1) / 2) * 0.45; w2.projectiles.push({ kind: 'icicle', x: e.x + Math.cos(b) * e.r, y: e.y + Math.sin(b) * e.r, vx: Math.cos(b) * 330, vy: Math.sin(b) * 330, r: 5, team: u.team, owner: u, skip: e, dmg: A(u, 0.3), o: { chill: 8, knock: 20 }, life: 0.35 }); } } } });
   },
-  // a chain of lightning from her to the target (no bolt), then on to every marked enemy (Zeus Bolt), shocking them hard
+  // a zap of lightning from her hands to the target, a little shock (round 10: the Zeus Bolt marks are gone: Zeus Bolt
+  // bounces on its own now; "Zap should come from hands not head")
   storm(w, u, t) {
-    let prev = u; const done = new Set();
-    const hit = (e, marked) => { fx(w, { type: 'beam', kind: 'lightning', x1: prev.x, y1: prev.y, x2: e.x, y2: e.y, max: marked ? 0.3 : 0.2, small: !marked });
-      hurt(w, e, A(u, marked ? 0.9 : 1), u, { noDodge: true, shock: marked ? (e.stormMarkHeavy ? 60 : 45) : 8 }); done.add(e); prev = e; };
-    const m0 = t.stormMark > w.time; if (m0) t.stormMark = 0; hit(t, m0);
-    for (;;) { const nx = opponents(w, u).filter((e) => !done.has(e) && e.stormMark > w.time && dist(prev.x, prev.y, e.x, e.y) < 320).sort((p, q) => dist(prev.x, prev.y, p.x, p.y) - dist(prev.x, prev.y, q.x, q.y))[0];
-      if (!nx) break; nx.stormMark = 0; hit(nx, true); }
+    const h = handPt(u, t);
+    fx(w, { type: 'beam', kind: 'lightning', x1: h.x, y1: h.y, x2: t.x, y2: t.y, max: 0.24, small: true });
+    hurt(w, t, A(u, 1), u, { noDodge: true, shock: 8 });
     u.recoilT = 0.1;
   },
   // three small slow orbs, one after another with a little spread, each homing a little; all three on one target: radiance

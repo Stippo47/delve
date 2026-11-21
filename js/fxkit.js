@@ -275,8 +275,9 @@ function impact(ctx, m, k) {
     for (let i = 0; i < 4; i++) { const b = i / 4 * TAU + 0.4, d = 3 + 12 * e; inked(ctx, () => star(ctx, x + Math.cos(b) * d, y + Math.sin(b) * d, 4 * (1 - k) + 1, 4, 0.35, b), EL.holy[2]); }
     return;
   }
-  if (kind === 'zeus') { // the bolt cracks on: a flash of forks
-    for (let i = 0; i < 4; i++) { const b = i / 4 * TAU + m.seed, L = 26 * e + 6; bolt(ctx, x, y, x + Math.cos(b) * L, y + Math.sin(b) * L, m.t, m.seed + i, 2); }
+  if (kind === 'zeus') { // round 10 ("I don't like the X hit effect of lightning"): a flash and a few sparks flying off
+    for (let i = 0; i < 3; i++) { const b = a + Math.PI + (i - 1) * 0.9 + (hash(m.seed, i) - 0.5) * 0.5, d = 8 + 16 * e;
+      inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x + Math.cos(b) * d, y + Math.sin(b) * d); ctx.lineTo(x + Math.cos(b) * (d + 7 * (1 - k) + 2), y + Math.sin(b) * (d + 7 * (1 - k) + 2)); }, '#FFE66B', 2.2); }
     return;
   }
   if (kind === 'arrow' || kind === 'dagger') {
