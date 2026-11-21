@@ -206,6 +206,7 @@ export const ABILITIES = {
       const back = t.facing + Math.PI;
       u.x = clamp(t.x + Math.cos(back) * (t.r + u.r + 6), u.r, w.W - u.r); u.y = clamp(t.y + Math.sin(back) * (t.r + u.r + 6), u.r, w.H - u.r);
       u.vx = u.vy = 0; u.facing = u.mvA = ang(u, t); u.spd = 0; cast(u, 'thrust', 0.25);
+      zone(w, { x: u.x, y: u.y, r: 48, dur: 1.2, kind: 'smoke', src: u }); // round 10: a puff where she comes back in too
       hurt(w, t, dmgOf(u, 3.2), u, { crit: true, noDodge: true, poison: tier >= 2 ? 40 : 0 });
       if (tier >= 3 && !alive(t)) u.kit.cd.backstab = 0.5;
       u.atkT = u.def.atkCd; u.mode = 'retreat'; u.modeT = 0;

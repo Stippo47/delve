@@ -121,11 +121,15 @@ export function flushPuddles(ctx, tf) {
   const c = layer(lw, lh), g = c.getContext('2d');
   const [a, b2, c2, d, e, f] = tf.map((v) => v * h), k = Math.hypot(a, b2);
   for (const type of ORDER) {
-    const bs = Q.filter((q) => q.type === type); if (!bs.length) continue;
+    const all = Q.filter((q) => q.type === type); if (!all.length) continue;
     const col = COL[type];
+    // round 10 (Backstab: "Smoke doesn't fade out"): a smoke cloud fades away rather than shrinking to a blob, so each
+    // one is its own layer at its own alpha (two clouds no longer join; they hardly ever meet)
+    const smoke = type === 'smoke';
+    for (const bs of smoke ? all.map((q) => [q]) : [all]) {
     let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
     for (const q of bs) {
-      q.R = q.r * (0.35 + 0.65 * q.a); q._l = null;
+      q.R = q.r * (smoke ? 0.85 + 0.15 * q.a : 0.35 + 0.65 * q.a); q._l = null;
       const sx = a * q.x + c2 * q.y + e, sy = b2 * q.x + d * q.y + f, sr = (q.r * 1.5 + 12) * k;
       x0 = Math.min(x0, sx - sr); y0 = Math.min(y0, sy - sr); x1 = Math.max(x1, sx + sr); y1 = Math.max(y1, sy + sr);
     }
@@ -135,11 +139,12 @@ export function flushPuddles(ctx, tf) {
     g.setTransform(a, b2, c2, d, e, f);
     paintLayer(g, bs, st, col, type);
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.globalAlpha = (LAYER_A[type] || 1) * (st === 2 ? 0.9 : st === 7 ? 0.9 : 1);
+    ctx.globalAlpha = (LAYER_A[type] || 1) * (st === 2 ? 0.9 : st === 7 ? 0.9 : 1) * (smoke ? bs[0].a : 1);
     ctx.imageSmoothingEnabled = st !== 6;
     ctx.drawImage(c, x0, y0, x1 - x0, y1 - y0, x0 / h, y0 / h, (x1 - x0) / h, (y1 - y0) / h);
     ctx.restore();
     for (const q of bs) details(ctx, q, st, col);
+    }
   }
   Q.length = 0;
 }
