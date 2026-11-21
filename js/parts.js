@@ -136,7 +136,10 @@ export function getRig(url, px220) {
   let s = e.sets.get(px);
   if (!s) {
     s = { pending: true }; e.sets.set(px, s);
-    buildSet(e.rig, px).then((r) => { if (r) { Object.assign(s, r); s.pending = false; s.ready = true; } else e.sets.delete(px); prune(e); });
+    // (0.11.1: a new set counts as just used. It used to arrive with used = 0, so once an art had three sizes ready any
+    // fourth was thrown out the moment it was made and built again on the next frame, for ever: the camp crawled after
+    // zooming to the fire or a hero, and a battle after pinching in.)
+    buildSet(e.rig, px).then((r) => { if (r) { Object.assign(s, r); s.used = performance.now(); s.pending = false; s.ready = true; } else e.sets.delete(px); prune(e); });
   }
   s.used = performance.now();
   if (s.ready) return s;
