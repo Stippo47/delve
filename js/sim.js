@@ -690,6 +690,7 @@ export function hurt(w, u, amount, src, o = {}) {
     hurt(w, u.guardBy, share, src, { ...o, guarded: true, knock: 0 });
   }
   if (u.act && u.act.type === 'drink' && !o.dot) u.act = null;
+  if (src && !o.dot && src.buffs && src.buffs.some((b) => b.blind) && chance(0.6)) { textU(w, u.x, u.y, u.r, 'miss', '#CFE8FF', 0.8); return 0; } // blinded (kits2: Digger's dirt, Bandit's smoke)
   if (!o.dot && !o.noDodge && u.def.dodge && chance(u.def.dodge)) { textU(w, u.x, u.y, u.r, 'dodge', '#CFE8FF', 0.8); return 0; }
   let amt = amount;
   if (src && alive(src)) { for (const h of hooksOf(src)) if (h.dealt) amt = h.dealt(w, src, u, amt, o); amt *= blowMul(src); }
@@ -874,8 +875,12 @@ export function scatterCoins(w, x, y, n, reach = 1) {
   }
 }
 function kill(w, u, src) {
+  // (round 11: once only. Two exploding minions side by side used to kill each other back and forth without end: each
+  // blast hurt the other while it was still mid-death, until the game fell over.)
+  if (u.dying) return;
+  u.dying = true;
   const was = w.actor; w.actor = u; // (battle mode: what it leaves behind is its side's)
-  try { killNow(w, u, src); } finally { w.actor = was; }
+  try { killNow(w, u, src); } finally { w.actor = was; if (!u.dead) u.dying = false; } // (a downed hero can fall again once it's back up)
 }
 function killNow(w, u, src) {
   u.hp = 0;

@@ -6,6 +6,7 @@ import { OUTLINE, view } from './render.js';
 import { STYLE } from './parts.js';
 import { noteWorld, drawMarks, drawSigGround, drawSigAir, abilityRing, abilityBeam, abilityZone, EL, abilityRingGround, hookGround, abilityZoneAir, soulOrb, dustPuffs } from './fxkit.js';
 import { drawPuddle, snowflake } from './puddles.js';
+import { PROJ2, drawK2 } from './fx2.js';
 
 export function easeOut(k) { return 1 - (1 - k) * (1 - k) * (1 - k); }
 // a stable pseudo-random number from integers (flicker that doesn't need state)
@@ -87,6 +88,7 @@ export function drawGroundFx(ctx, w) {
     else if (f.type === 'beam' && f.kind === 'heal') beam(ctx, f, w.time);
     else if (f.type === 'wall' && f.kind === 'fire') wall(ctx, f, w.time);
     else if (f.type === 'pop') pop(ctx, f, w.time, 'ground');
+    else if (f.type === 'k2') drawK2(ctx, f, w, 'ground');
   }
   drawMarks(ctx, 0, 'ground');
 }
@@ -267,6 +269,7 @@ export function drawAirFx(ctx, w) {
     else if (f.type === 'hex') hexMark(ctx, f, w.time);
     else if (f.type === 'zone' && f.kind === 'storm') stormCloud(ctx, f, w.time);
     else if (f.type === 'sig') drawSigAir(ctx, f, w);
+    else if (f.type === 'k2') drawK2(ctx, f, w, 'air');
   }
 }
 // Radiance's burst (sim.js, round 8): a warm glow round the radiant unit for its few seconds, its edge marking how far
@@ -549,6 +552,7 @@ export function drawProjectile(ctx, p, T) {
   }
   ctx.save(); ctx.translate(p.x + lx, p.y + ly);
   const ab = p.ab;
+  if (PROJ2[p.kind]) { PROJ2[p.kind](ctx, p, T, ang, sp); ctx.restore(); return; } // fx2.js: the new heroes' shots
   switch (p.kind) {
     case 'icicle': case 'shard': {
       ctx.rotate(ang);
@@ -737,9 +741,9 @@ function boneLance(ctx, sp, T, tier) {
   ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.moveTo(16, -3.5); ctx.quadraticCurveTo(29, -3.5, 37, 1); ctx.lineTo(30, -0.5); ctx.lineTo(16, -1); ctx.closePath(); ctx.fill();
   ctx.fillStyle = '#B9AD94'; ctx.fillRect(12, -5, 3, 10.5);
 }
-function roundRect(g, x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); }
+export function roundRect(g, x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); }
 // a fading streak behind a flying thing (in its own frame, +x forward)
-function trail(ctx, sp, len, wd, col) {
+export function trail(ctx, sp, len, wd, col) {
   const L = Math.min(len, sp * 0.08 + 8);
   const g = ctx.createLinearGradient(-L, 0, 0, 0); g.addColorStop(0, rgba(col, 0)); g.addColorStop(1, rgba(col, 0.7));
   ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-L, 0); ctx.lineTo(0, -wd); ctx.lineTo(0, wd); ctx.closePath(); ctx.fill();

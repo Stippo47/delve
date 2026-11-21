@@ -233,7 +233,7 @@ function aboutView(id) {
   const h = HEROES[id];
   const row = (ico, cap, name, desc, extra = '') => `<div class="krow">${ico}<div><span class="cap">${cap}</span><b>${name}</b><p>${desc}</p>${extra}</div></div>`;
   const sum = webSummary(id);
-  return `<p class="blurb">${h.blurb}</p>
+  return `<p class="blurb">${h.blurb}</p>${h.fun ? `<p class="quiet small fun">${h.fun}</p>` : ''}
     <div class="sec-h"><span class="cap">In a fight</span><span class="quiet small">with its web and trinkets</span></div>${numbersRow(heroNumbers(id))}
     ${sum ? `<div class="sec-h"><span class="cap">From the skill web</span>${P.respecPrice ? `<button class="linkbtn" data-act="respec:${id}">Unlearn all · ${gold(P.respecPrice(save, id))}</button>` : ''}</div>
       <div class="sumchips">${sum}</div><div class="sec-h"><span class="cap">Kit</span></div>` : ''}
