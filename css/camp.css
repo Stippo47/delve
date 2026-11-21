@@ -1,6 +1,8 @@
 /* The camp (round 9): one canvas scene (the camp ground, the fire, the trail map), a thin top strip over it, and one
-   panel that rises over the lower part of the screen for whatever is zoomed on. Plain CSS for iPhone Safari 15+. */
-#camp { position: fixed; left: 0; top: 0; right: 0; bottom: 0; background: #131A22; z-index: 10; overflow: hidden; }
+   panel that rises over the lower part of the screen for whatever is zoomed on. Plain CSS for iPhone Safari 15+.
+   #camp takes the real screen height (--app-h, v0.9.1); everything inside is placed against #camp, so the scene
+   reaches the very bottom and only tappable things keep the safe-area padding. */
+#camp { position: fixed; left: 0; top: 0; right: 0; bottom: auto; height: var(--app-h, 100%); background: #131A22; z-index: 10; overflow: hidden; }
 #campCanvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; touch-action: none; }
 
 /* ---------------------------------------------------------------- the top strip: back, title, gold and gems */
@@ -208,7 +210,7 @@
 .rar { font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
 
 /* ---------------------------------------------------------------- the result card */
-#result { position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
+#result { position: fixed; left: 0; top: 0; right: 0; bottom: auto; height: var(--app-h, 100%); z-index: 50; display: flex; align-items: center; justify-content: center;
   padding: calc(16px + var(--st)) 16px calc(16px + var(--sb)); background: radial-gradient(circle at 50% 30%, #1D2347, #0A0C18 75%); overflow-y: auto; }
 #result.hidden { display: none; }
 .rcard { width: 100%; max-width: 420px; text-align: center; animation: up .4s cubic-bezier(.2,.8,.2,1); }
