@@ -158,7 +158,7 @@ export const BEASTS = {
   gildedGolem: { fun: 'Gold all the way through. You would think that would make it softer. It does not.',
     habit: 'A golem whose front throws shots straight back at whoever fired them. Get round it.' },
   spiritHeal: { fun: 'A little sunbeam with a job to do.', habit: 'Its ray mends a friend for as long as it holds. Kill it first.' },
-  spiritWard: { fun: 'Small, shy, and the reason that angel won\'t go down.', habit: 'Its ray takes most of the harm off a friend for as long as it holds.' },
+  spiritWard: { fun: 'Small, shy, and the reason that angel won\'t go down.', habit: 'Its ray takes half the harm off a friend for as long as it holds.' },
   heraldLight: { fun: 'One of a pair. Finishes its twin\'s sentences, and its twin\'s enemies.',
     habit: 'With its fallen twin: each mends while the other is near, so pull them apart. It blinks far off and calls light down on the party.' },
   // ---- round 10: the Sunken Dunes

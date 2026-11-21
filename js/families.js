@@ -215,7 +215,7 @@ export function spiritBrain(w, u, dt) {
     if (S.st) { addBuff(a, { id: 'spirit-' + el, dur: 0.5, immune: [S.st] }); a.spiritSt = { st: S.st, n: S.n, until: w.time + 0.5 }; ensureHook(a, SPIRIT_HIT); }
     else if (el === 'heal') { if (!w.stale && a.hp < a.maxHp) heal(w, a, a.maxHp * 0.03 * dt, u); }
     else if (el === 'haste') addBuff(a, { id: 'spirit-haste', dur: 0.5, move: 1.35, atkSpeed: 1.35 });
-    else if (el === 'ward') addBuff(a, { id: 'spirit-ward', dur: 0.5, taken: 0.35 });
+    else if (el === 'ward') addBuff(a, { id: 'spirit-ward', dur: 0.5, taken: 0.5 });
   }
   if (rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.6, y: u.y + rrange(-u.r, u.r) * 0.6, vx: 0, vy: 0, rise: 30, up: 0, life: 0.6, max: 0.6, size: 3, color: S.col });
   // with nobody of its side left to tend, it fades away (a lone spirit kiting the party would hold a room open for ever)

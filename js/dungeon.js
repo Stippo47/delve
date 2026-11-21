@@ -193,7 +193,7 @@ const majorP = (run, wave = 0) => (debugParam('majors') != null ? 1 : Math.min(0
 export const DUNGEON_RANK = { wildwood: 0, warren: 1, sewers: 2, crypt: 3, frost: 4, ember: 5, spire: 6, dunes: 7, foundry: 8 };
 // Enemy strength (hp x m, blows x 0.65 + 0.35 m) for a room: the dungeon, the floor, and how far into the floor.
 // Round 10: the Sunken Dunes and the Clockwork Foundry after the Spire, each about one ordinary step (+0.8 to +0.9) harder.
-export const RANK_MULT = [0.75, 1.6, 2.35, 3.8, 4.6, 5.4, 5.9, 6.8, 7.6];
+export const RANK_MULT = [0.75, 1.6, 2.35, 3.8, 4.6, 5.4, 5.9, 7.4, 8.4];
 export const FLOOR_STEP = 0.3;   // each floor on from the first: +30% of the dungeon's own strength
 export const ROOM_STEP = 0.035;  // each room further into a floor: +3.5%
 export const enemyMult = (run, L) => {
@@ -582,6 +582,9 @@ export function update(run, dt) {
     // still nobody falling after a long while (a lone shooter kiting a regrowing troll, say): the enemies press in
     // harder (faster, no backing off, no regrowing) so a stand-off always ends
     w.stale = run.quietT > 45 || (run.t > 150 && run.node.kind !== 'boss'); // round 8: a room that has dragged on that long presses in too, kills or not
+    // round 10: and a stand-off nobody can break (a last archer kiting round a wall from a mummy, a turret it can't see)
+    // wears the enemies down after a while, so a room always ends
+    if ((run.quietT > 60 || run.t > 200) && run.node.kind !== 'boss') for (const e of enemies) hurt(w, e, e.maxHp * 0.04 * dt, null, { dot: true, color: '#B9AE9C' });
   }
   revive(run, dt);
   if (run.phase === 'fight') nextWaypoint(w);
