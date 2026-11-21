@@ -242,43 +242,150 @@ export const HEROES = {
 export const HERO_IDS = Object.keys(HEROES);
 export const STARTERS = HERO_IDS.filter((k) => HEROES[k].starter);
 
-// ---------------------------------------------------------------- skill trees
-// Nodes marked `free` are owned from the start (the camp shows them bought). None are since round 6 (the first
-// ability is cheap instead); kept so saves and the camp's code that read it still work.
-export const freeNodes = (id) => Object.fromEntries(treeFor(id).filter((n) => n.free).map((n) => [n.id, 1]));
-// Every hero's tree has the same shape: three branches, one per ability, each with the ability's three tiers and
-// a stat node that can be bought more than once. Tier nodes need the one before and a level reached in the run before
-// they switch on; tier III also needs a feat (the hero once reached level 8 in a dungeon). The trinket-slot node needs
-// that feat too. Costs are in gold.
-// Round 7: stronger steps ("have the upgrades have stronger scaling", matched by harder dungeons and floors).
-export const STAT_STEP = { might: 0.14, vigor: 0.16, hasteAtk: 0.09, hasteMove: 0.05 };
-export const TIER_CD = 0.1; // each tier past I takes 10% off its ability's cooldown
-export const BRANCHES = [
-  { id: 'attack', name: 'Attack', ability: 0, stat: { id: 'might', name: 'Might', desc: '+14% damage', max: 5, cost: [40, 70, 110, 160, 220] } },
-  { id: 'survival', name: 'Survival', ability: 1, stat: { id: 'vigor', name: 'Vigor', desc: '+16% health', max: 5, cost: [40, 70, 110, 160, 220] } },
-  { id: 'utility', name: 'Utility', ability: 2, stat: { id: 'haste', name: 'Haste', desc: '+9% attack speed, +5% move speed', max: 3, cost: [60, 110, 170] } },
+// ---------------------------------------------------------------- skill trees (round 8: a web)
+// Designer, round 8: "The simple ones like better damage or hp, should be nodes in the large tree, add more base stat
+// increases, like attack speed, weapon attack speed, specific ability damage, heal percentage, attack range, specific
+// ability cooldown buff, applied status effect increase, etc." and the tree is a web ("~100 nodes per hero in time").
+// Nodes are bought with skill points (one per level gained, levels are permanent); gold no longer buys nodes.
+//
+// treeFor(id) -> [{ id, x, y, kind: 'root'|'ability'|'tier'|'stat'|'keystone'|'slot', name, desc, max, cost (points per
+//   rank), links: [ids] (both ways), needs: [ids] (must all be owned too: a tier needs the tier before), level (the hero
+//   level it can be bought from, 0 = any), stats: [{ k, ab?, per }] (what one rank adds, see STATS), ability?, tier?,
+//   plus old fields kept so older views still read it: branch, req: { node, level, feat } }]
+// A node can be bought when one linked node is owned (the root always is), its needs are owned, the hero's level is
+// high enough, it isn't maxed and the hero has the points. x/y: layout units on a pannable board, root at 0,0, the
+// three ability arms pointing up, lower right and lower left; about 650 units out to the tips and keystones.
+//
+// The shape, the same for every hero: from the root, three arms (one per ability: tier I, cooldown, tier II, the
+// ability's power, tier III, a mastery tip, side nodes), and between each pair of arms a spoke of plain stats running
+// out to a keystone (one of the three keystones is the second trinket slot). Side nodes join each arm to the spokes
+// beside it, which makes the web.
+
+// What one rank of a stat adds. per is a fraction (0.08 = 8%).
+export const STATS = {
+  dmg: { name: 'Damage', per: 0.08, max: 4, line: (p) => `+${p}% damage` },
+  hp: { name: 'Health', per: 0.1, max: 4, line: (p) => `+${p}% health` },
+  atkSpeed: { name: 'Attack speed', per: 0.07, max: 4, line: (p) => `Weapon attacks ${p}% faster` },
+  moveSpeed: { name: 'Move speed', per: 0.06, max: 3, line: (p) => `Moves ${p}% faster` },
+  range: { name: 'Reach', per: 0.08, max: 3, line: (p) => `+${p}% attack range` },
+  haste: { name: 'Ability haste', per: 0.05, max: 4, line: (p) => `Every ability comes round ${p}% sooner` },
+  heal: { name: 'Healing', per: 0.12, max: 3, line: (p) => `Heals ${p}% more` },
+  status: { name: 'Potency', per: 0.15, max: 3, line: (p) => `Statuses you apply build ${p}% faster` },
+  armor: { name: 'Toughness', per: 0.05, max: 4, line: (p) => `Takes ${p}% less damage` },
+  abDmg: { name: 'power', per: 0.12, max: 3, line: (p, ab) => `${ab}: +${p}% damage` },
+  abCd: { name: 'cooldown', per: 0.08, max: 3, line: (p, ab) => `${ab}: comes round ${p}% sooner` },
+  abHeal: { name: 'mending', per: 0.15, max: 3, line: (p, ab) => `${ab}: heals ${p}% more` },
+  abStatus: { name: 'potency', per: 0.2, max: 3, line: (p, ab) => `${ab}: its statuses build ${p}% faster` },
+};
+// What each ability does, for its arm's nodes: d (damage), h (healing), s (applies statuses: burn, chill, poison, wet,
+// shock, stagger, stun, slow). The first letter is the arm's main power node.
+export const ABILITY_TAGS = {
+  shieldBash: 'ds', guard: 'h', consecrate: 'dh', holdTheLine: 'd', charge: 'ds', groundPound: 'ds',
+  barrage: 'ds', frostArrow: 'ds', roll: 's', backstab: 'ds', dash: 's', fanOfKnives: 'ds',
+  rage: 'h', leap: 'ds', cleave: 'd', shockwave: 'ds', whirl: 'd', unstoppable: 'h',
+  reap: 'dh', hook: 'ds', oldBones: 'h', fireball: 'ds', flameWall: 'ds', inferno: 'ds',
+  iceShard: 'ds', frostNova: 'sd', iceWall: 's', chainLightning: 'ds', thunderclap: 'ds', stormCloud: 'ds',
+  mend: 'h', sanctuary: 'h', smite: 'ds', warSong: 's', lullaby: 's', encore: 'h',
+  entangle: 'sd', rejuvenate: 'h', callWolf: 'd', raiseDead: 'd', lifeDrain: 'dh', boneSpear: 'ds',
+  miasma: 'ds', cure: 'h', leeches: 'dh',
+};
+const POW = { d: 'abDmg', h: 'abHeal', s: 'abStatus' };
+export const TIER_LEVEL = [0, 4, 9];   // the hero level each tier can be bought from
+const TIER_COST = [1, 1, 2];
+export const KEYSTONE_LEVEL = 12, TIP_LEVEL = 15, OUTER_LEVEL = 6;
+const ARM_NAMES = ['attack', 'survival', 'utility'];
+const KEYSTONES = [
+  { id: 'slot2', kind: 'slot', name: 'Second trinket', desc: 'Wear a second trinket.', stats: [] },
+  { id: 'juggernaut', kind: 'keystone', name: 'Juggernaut', desc: '+20% health and takes 8% less damage.', stats: [{ k: 'hp', per: 0.2 }, { k: 'armor', per: 0.08 }] },
+  { id: 'fury', kind: 'keystone', name: 'Fury', desc: '+15% damage and attacks 10% faster.', stats: [{ k: 'dmg', per: 0.15 }, { k: 'atkSpeed', per: 0.1 }] },
 ];
-const TIER_LEVEL = [2, 5, 8];        // the run level each tier switches on at
-const TIER_COST = [60, 160, 320];
-const FIRST_COST = 20;               // tier I of a hero's first ability
-export const FEAT_LEVEL = 8;
+const pct = (f) => Math.round(f * 100);
 
 export function treeFor(id) {
   const h = HEROES[id];
-  const nodes = [];
-  for (const b of BRANCHES) {
-    const ab = h.abilities[b.ability];
+  const nodes = [], by = {};
+  const add = (n) => { const m = { links: [], needs: [], level: 0, cost: 1, max: 1, stats: [], ...n }; nodes.push(m); by[m.id] = m; return m; };
+  const link = (a, b) => { by[a].links.push(b); by[b].links.push(a); };
+  const P = (r, deg) => ({ x: Math.round(Math.cos(deg * Math.PI / 180) * r), y: Math.round(Math.sin(deg * Math.PI / 180) * r) });
+  const statNode = (nid, k, at, extra = {}) => {
+    const S = STATS[k];
+    return add({ id: nid, kind: 'stat', name: S.name, desc: S.line(pct(S.per)), max: S.max, stats: [{ k, per: S.per }], ...at, ...extra });
+  };
+  const abNode = (nid, k, ab, at, extra = {}) => {
+    const S = STATS[k];
+    return add({ id: nid, kind: 'stat', name: `${ab.name} ${S.name}`, desc: S.line(pct(S.per), ab.name), max: S.max, ability: ab.id, stats: [{ k, ab: ab.id, per: S.per }], ...at, ...extra });
+  };
+  const healer = h.abilities.some((ab) => (ABILITY_TAGS[ab.id] || '').includes('h'));
+  add({ id: 'root', kind: 'root', name: h.name, desc: h.blurb, max: 1, cost: 0, x: 0, y: 0, free: true, branch: 'root' });
+  const arm = (b) => -90 + b * 120;
+  // the three arms
+  h.abilities.forEach((ab, b) => {
+    const a = arm(b), tags = (ABILITY_TAGS[ab.id] || 'd').split(''), branch = ARM_NAMES[b];
+    const pow = tags.map((t) => POW[t]);
     ab.tiers.forEach((t, i) => {
-      // the first ability's tier I is cheap, so a new hero gets a move after a run or two (not free: designer, round 6)
-      const cheap = b.ability === 0 && i === 0;
-      nodes.push({
-        id: `${ab.id}${i + 1}`, branch: b.id, kind: 'tier', ability: ab.id, tier: i + 1, free: false,
-        name: `${ab.name} ${'I'.repeat(i + 1)}`, desc: i === 0 ? `${ab.desc} ${t}` : t,
-        cost: [cheap ? FIRST_COST : TIER_COST[i]], max: 1, req: { node: i ? `${ab.id}${i}` : null, level: TIER_LEVEL[i], feat: i === 2 },
-      });
+      add({ id: `${ab.id}${i + 1}`, kind: i ? 'tier' : 'ability', ability: ab.id, tier: i + 1, branch,
+        name: `${ab.name} ${'I'.repeat(i + 1)}`, desc: i === 0 ? `${ab.desc} ${t}` : t, cost: TIER_COST[i], level: TIER_LEVEL[i],
+        needs: i ? [`${ab.id}${i}`] : [], ...P([130, 330, 540][i], a), req: { node: i ? `${ab.id}${i}` : null, level: TIER_LEVEL[i], feat: false } });
     });
-    nodes.push({ id: b.stat.id, branch: b.id, kind: 'stat', name: b.stat.name, desc: b.stat.desc, cost: b.stat.cost, max: b.stat.max, req: {} });
-  }
-  nodes.push({ id: 'slot2', branch: 'utility', kind: 'slot', name: 'Second trinket', desc: 'Wear a second trinket.', cost: [400], max: 1, req: { feat: true } });
+    abNode(`${ab.id}Cd`, 'abCd', ab, P(232, a), { branch });
+    abNode(`${ab.id}Pow`, pow[0], ab, P(436, a), { branch });
+    // the sides: the ability's second power if it has one, else plain damage; health; its third power, else attack speed
+    const s1 = pow[1] ? abNode(`${ab.id}Pow2`, pow[1], ab, P(290, a + 16), { branch }) : statNode(`${ab.id}Dmg`, 'dmg', P(290, a + 16), { branch, max: 2 });
+    const s2 = statNode(`${ab.id}Hp`, 'hp', P(290, a - 16), { branch, max: 2 });
+    const s3 = pow[2] ? abNode(`${ab.id}Pow3`, pow[2], ab, P(480, a + 13), { branch }) : statNode(`${ab.id}Atk`, 'atkSpeed', P(480, a + 13), { branch, max: 2 });
+    const tipK = pow[0], S = STATS[tipK];
+    add({ id: `${ab.id}Mastery`, kind: 'stat', ability: ab.id, branch, name: `${ab.name} mastery`,
+      desc: `${S.line(pct(0.1), ab.name)}, and comes round 6% sooner`, max: 2, level: TIP_LEVEL,
+      stats: [{ k: tipK, ab: ab.id, per: 0.1 }, { k: 'abCd', ab: ab.id, per: 0.06 }], ...P(650, a) });
+    link('root', `${ab.id}1`); link(`${ab.id}1`, `${ab.id}Cd`); link(`${ab.id}Cd`, `${ab.id}2`);
+    link(`${ab.id}Cd`, s1.id); link(`${ab.id}Cd`, s2.id);
+    link(`${ab.id}2`, `${ab.id}Pow`); link(`${ab.id}Pow`, `${ab.id}3`); link(`${ab.id}Pow`, s3.id); link(`${ab.id}3`, `${ab.id}Mastery`);
+  });
+  // the spokes between the arms: offence (arms 1-2), defence (2-3), utility (3-1), each out to a keystone
+  const SPOKES = [['dmg', 'atkSpeed', 'range', 'dmg'], ['hp', 'armor', 'hp', 'moveSpeed'], ['haste', healer ? 'heal' : 'status', 'haste', healer ? 'heal' : 'status']];
+  const GAP_NAMES = ['offence', 'defence', 'utility'];
+  SPOKES.forEach((ks, g) => {
+    const a = arm(g) + 60, left = h.abilities[g], right = h.abilities[(g + 1) % 3], branch = GAP_NAMES[g];
+    const ids = ks.map((k, j) => statNode(`${branch}${j}`, k, P([125, 260, 390, 510][j], a), { branch, level: j === 3 ? OUTER_LEVEL : 0 }).id);
+    const K = KEYSTONES[g];
+    add({ id: K.id, kind: K.kind, name: K.name, desc: K.desc, stats: K.stats, cost: 2, level: KEYSTONE_LEVEL, branch, ...P(640, a) });
+    link('root', ids[0]); link(ids[0], ids[1]); link(ids[1], ids[2]); link(ids[2], ids[3]); link(ids[3], K.id);
+    // the web: the side nodes either side of this spoke join it
+    link(ids[1], by[`${left.id}Pow2`] ? `${left.id}Pow2` : `${left.id}Dmg`);
+    link(ids[1], `${right.id}Hp`);
+    link(ids[3], by[`${left.id}Pow3`] ? `${left.id}Pow3` : `${left.id}Atk`);
+  });
+  for (const n of nodes) if (!n.req) n.req = { node: null, level: n.level, feat: false };
   return nodes;
 }
+// Owned from the start: the root.
+export const freeNodes = (id) => Object.fromEntries(treeFor(id).filter((n) => n.free).map((n) => [n.id, 1]));
+
+// What a set of bought nodes adds up to: { dmg, hp, atkSpeed, moveSpeed, range, haste, heal, status, armor (fractions),
+// ab: { [abilityId]: { abDmg, abCd, abHeal, abStatus } } }. kits.js applies it to the unit; the camp can show it.
+const treeCache = {};
+export function statsFor(id, nodes = {}) {
+  const t = treeCache[id] || (treeCache[id] = treeFor(id));
+  const out = { dmg: 0, hp: 0, atkSpeed: 0, moveSpeed: 0, range: 0, haste: 0, heal: 0, status: 0, armor: 0, ab: {} };
+  for (const n of t) {
+    const r = Math.min(n.max, nodes[n.id] || 0); if (!r) continue;
+    for (const s of n.stats) {
+      if (s.ab) { const a = out.ab[s.ab] || (out.ab[s.ab] = { abDmg: 0, abCd: 0, abHeal: 0, abStatus: 0 }); a[s.k] += s.per * r; }
+      else out[s.k] += s.per * r;
+    }
+  }
+  return out;
+}
+// The highest tier of an ability owned in a row (I, then II, then III).
+export function tierOf(nodes, abilityId) { let t = 0; for (let i = 1; i <= 3; i++) { if (nodes[`${abilityId}${i}`]) t = i; else break; } return t; }
+
+// Kept for older views and tools (the round 7 tree's names); nothing in the game reads them now.
+export const BRANCHES = [
+  { id: 'attack', name: 'Attack', ability: 0, stat: { id: 'offence0', name: 'Damage' } },
+  { id: 'survival', name: 'Survival', ability: 1, stat: { id: 'defence0', name: 'Health' } },
+  { id: 'utility', name: 'Utility', ability: 2, stat: { id: 'utility0', name: 'Ability haste' } },
+];
+export const STAT_STEP = { might: 0.08, vigor: 0.1, hasteAtk: 0.07, hasteMove: 0.06 };
+export const TIER_CD = 0.1; // each tier past I takes 10% off its ability's cooldown
+export const FEAT_LEVEL = 8; // no longer gates anything (round 8)
+
