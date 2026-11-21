@@ -653,6 +653,9 @@ const KNOCK = 1.6; // every knockback, scaled (round 6: "more knockback, more ph
 const SHIELD_BEARERS = new Set(['paladin', 'tower', 'knight']); // heroes carrying a shield on the front
 export function hurt(w, u, amount, src, o = {}) {
   if (!alive(u) || u.invulnT > 0 || amount <= 0 || u.ethereal) return 0;
+  // round 10, chains (families.js): a body segment flinches, but the blow lands on its head (no shove: it follows)
+  if (u.linkTo) { if (!alive(u.linkTo)) return 0; u.flashT = 0.12; u.hitT = 0.16; u.hitA = src ? angleTo(src.x, src.y, u.x, u.y) : 0; u.hitX = u.x; u.hitY = u.y;
+    return hurt(w, u.linkTo, amount * (u.def.segTaken ?? 0.6), src, { ...o, knock: 0 }); }
   // a brain leech's host (round 9, foes9.js): its friends' blows go to the leech; the shove still lands (a hard one
   // knocks the leech off)
   if (u.charmed && src && src.team === u.charmTeam && !o.dot && alive(u.charmed)) {
@@ -741,6 +744,7 @@ export function hurt(w, u, amount, src, o = {}) {
 
 export function addStatus(w, u, type, amount, src) {
   if (!alive(u) || u.ethereal || immuneTo(u, type)) return;
+  if (u.linkTo) { if (alive(u.linkTo)) addStatus(w, u.linkTo, type, amount * (u.def.segTaken ?? 0.6), src); return; } // a chain's segment: its head takes it
   if (type === 'radiance' && (u.radiantT > 0 || u.radImmuneT > 0)) return; // glowing, or just was: its own aura can't feed it
   if (type === 'entangle' && (u.tangledT > 0 || u.tangleImmuneT > 0)) return; // held fast already, or just got free
   const res = (u.def.res && u.def.res[type]) ?? 1;
@@ -931,7 +935,7 @@ function meleeSwing(w, u, single) {
   w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, color: u.team === 'hero' ? '#FFFFFF' : '#FFD2C2', src: u });
   for (const o of targets) {
     hurt(w, o, hitDmg(u) * rrange(0.9, 1.1), u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison, radiance: d.radiance, curse: d.curse,
-      burn: d.burn, entangle: d.entangle, stagger: d.stagger, wet: d.wet }); // round 9: a def's blow can carry any build-up
+      burn: d.burn, entangle: d.entangle, stagger: d.stagger, wet: d.wet, chill: d.team === 'enemy' ? d.chill : 0 }); // round 9: a def's blow can carry any build-up (round 10: an enemy's chill too, the frost wolf's bite)
   }
 }
 
@@ -1209,6 +1213,7 @@ function physics(w, dt) {
   const us = w.units;
   for (const u of us) {
     if (u.dead || u.downed) continue;
+    if (u.fixed) { u.vx = u.vy = u.kx = u.ky = 0; continue; } // round 10: set in place by its brain (a turret on a wall, a chain's segment)
     const frozen = u.frozenT > 0;
     const acc = Math.min(1, dt * 20);
     if (frozen) { u.vx *= 0.8; u.vy *= 0.8; }
@@ -1242,10 +1247,11 @@ function physics(w, dt) {
     const a = us[i]; if (a.dead || a.downed || a.ethereal) continue;
     for (let j = i + 1; j < us.length; j++) {
       const b = us[j]; if (b.dead || b.downed || b.ethereal) continue;
+      if (a.def.pass || b.def.pass || (a.fixed && b.fixed) || (a.linkTo && a.linkTo === b.linkTo)) continue; // round 10: things that roll through (gear sprites), chains
       const dx = b.x - a.x, dy = b.y - a.y; const d2 = dx * dx + dy * dy; const m = a.r + b.r;
       if (d2 >= m * m || d2 === 0) continue;
       const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, over = m - d;
-      const ta = b.mass / (a.mass + b.mass), tb = 1 - ta;
+      const ta = a.fixed ? 0 : b.fixed ? 1 : b.mass / (a.mass + b.mass), tb = 1 - ta;
       a.x -= nx * over * ta; a.y -= ny * over * ta; b.x += nx * over * tb; b.y += ny * over * tb;
       // bowling: a fast knocked body transfers momentum
       const ka = Math.hypot(a.kx, a.ky), kb = Math.hypot(b.kx, b.ky);
@@ -1283,6 +1289,13 @@ function projectiles(w, dt) {
       if (p.team !== 'neutral' && u.team === p.team) continue;
       if (p.hitSet && p.hitSet.has(u)) continue;
       if (dist(p.x, p.y, u.x, u.y) < u.r + p.r) {
+        // round 10, the gilded golem: a shot that hits its front bounces back at whoever shot it
+        if (u.def.mirror && !p.noMirror && angleDiff(Math.atan2(-p.vy, -p.vx), u.facing) < (u.def.mirror || 1.2)) {
+          const back = p.owner && alive(p.owner) ? angleTo(p.x, p.y, p.owner.x, p.owner.y) : Math.atan2(-p.vy, -p.vx), sp = Math.hypot(p.vx, p.vy);
+          p.vx = Math.cos(back) * sp; p.vy = Math.sin(back) * sp; p.a = back; p.team = u.team; p.owner = u; p.noMirror = true; p.home = null; p.life = Math.max(p.life, 1);
+          if (p.hitSet) p.hitSet.clear(); u.blockedAt = w.time; sparks(w, p.x, p.y, back, 6, '#FFF1B0', 1.1);
+          break;
+        }
         const friendly = p.team === 'neutral' && p.owner && u.team === p.owner.team;
         const o = { ...p.o, kAngle: Math.atan2(p.vy, p.vx), shot: true, pab: p.ab, tk: p.tk };
         if (friendly) { for (const k of ['chill', 'burn', 'poison']) if (o[k]) o[k] *= 0.4; }

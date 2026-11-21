@@ -345,6 +345,13 @@ function drawHazard(ctx, h, t) {
 }
 
 function drawPillar(ctx, p, w) {
+  if (p.snowball) { // round 10: a yeti's snowball (foes10.js): packed snow, a blue shade and a few clumps
+    inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, '#F4FAFF');
+    ctx.fillStyle = 'rgba(150,190,225,0.45)'; ctx.beginPath(); ctx.arc(p.x + p.r * 0.18, p.y + p.r * 0.2, p.r * 0.78, 0, TAU); ctx.fill();
+    ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(p.x - p.r * 0.25, p.y - p.r * 0.28, p.r * 0.42, 0, TAU); ctx.fill();
+    ctx.fillStyle = 'rgba(170,200,230,0.7)'; for (let i = 0; i < 5; i++) { const a = (p.spin || 0) + i * 1.3; ctx.beginPath(); ctx.arc(p.x + Math.cos(a) * p.r * 0.6, p.y + Math.sin(a) * p.r * 0.6, p.r * 0.1, 0, TAU); ctx.fill(); }
+    return;
+  }
   if (p.fountain) {
     if (prop(ctx, p.used ? 'fountain-used' : 'fountain', p.x, p.y, PROP_BOX, { sc: p.r / 38 })) return;
     inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, '#A99C8B');

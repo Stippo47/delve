@@ -18,7 +18,7 @@ export const EHP_STYLES = [
   { id: 4, name: 'Wash', blurb: 'No gauge: the figure darkens and reddens as it is hurt.' },
   { id: 5, name: 'Bar + Arc', blurb: 'The bar over most enemies, the arc over the tanky ones.' },
 ];
-const N = EHP_STYLES.length, DEFAULT = 5;
+const N = EHP_STYLES.length, DEFAULT = 1; // round 10: "Just the straight bar" for every enemy, tanky ones too
 const KEY = 'delve.ehp';
 let cur = 0;
 export function ehpStyle() {
