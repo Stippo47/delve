@@ -45,7 +45,7 @@ whichever is nearest, so breaking images is part of the fight (and stepping out 
 
 ## Phase 4: the Blizzard (20% to 0)
 **Turn:** a nova and a blink. The room goes white: snow drives across it and a pale veil lies over everything.
-- **Hail** falls round the heroes all the time: a circle 56 every ~0.65 s near a hero (1.0 s, 28, chill 22).
+- **Hail** falls round the heroes all the time: a circle 56 every ~0.8 s near a hero (1.0 s, 24, chill 22).
 - Her tells and cooldowns x0.8. Walls and images go on.
 
 ## Death
@@ -58,14 +58,15 @@ She shatters in a burst of ice; her images go with her and her walls melt.
 - The blizzard: the last 20% is a scramble under falling hail.
 
 ## Numbers
-Health 2600 (x1.4 for every boss, then the dungeon's strength and party size), walk 50, mass 5, no knockback.
+Health 1000 (x1.4 for every boss, then the dungeon's strength and party size), walk 50, mass 5, no knockback.
 Phases at 70%, 45%, 20%.
 
 Balance (`node tools/runs.mjs --boss --theme frost --bossid winterQueen --level 41 --party paladin,archer,cleric,twinfang`;
 the campaign meets the Frost Hollow's boss with four heroes at about level 41):
 | | won | fight length |
 |---|---|---|
-| 12 fights, level 41 | 8 of 12 | avg 158 s; losses in phase 4 |
+| 10 fights, level 41 (final: health 1000, poison 0.3) | 7 of 10 | avg 260 s; losses in phase 4 |
+| 12 fights, level 41 (health 2600, before the poison resistance: a rot burst was doing most of the work) | 8 of 12 | avg 158 s |
 Tuning showed her to be swingy: hail at 0.55 s and +15% damage took her to 2 of 12; the blizzard's hail is the knob
 that moves her most (`WQ.hail`), then health.
 

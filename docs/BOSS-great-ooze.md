@@ -26,7 +26,7 @@ Tell -> hit -> recovery, as every boss. It goes for the nearest hero (or a taunt
 ## Phase 1: the Ooze (100% to 70%)
 | move | when | tell | shape | hit |
 |---|---|---|---|---|
-| **Hop Slam** | every 4-5 s | 1.2 s: it crouches, then it's in the air (over everyone's heads) | a circle 130 across on its mark's path | 60, thrown hard; it leaves a **slick** of itself (62 across, 8 s: slows, and burns like oil) |
+| **Hop Slam** | every 4-5 s | 1.2 s: it crouches, then it's in the air (over everyone's heads: nothing can hurt it in the air) | a circle 130 across on its mark's path | 60, thrown hard; it leaves a **slick** of itself (62 across, 8 s: slows, and burns like oil) |
 | **Spit** | every 5.5-7 s, its mark 160+ off | 1.0 s, a little later each | 3 globs lobbed on and round the heroes, circles 58 | 28 and poison 30; a small slick each |
 | **Smother** | two heroes touching it (or one, often) | 0.8 s | a ring round it, its size + 54 | 42, poison 36, thrown off |
 
@@ -67,6 +67,7 @@ Balance (`node tools/runs.mjs --boss --theme sewers --bossid greatOoze --level 1
 the campaign meets the Sewers' boss with four heroes averaging about level 17):
 | | won | fight length |
 |---|---|---|
+| 10 fights, level 17 (final: the hop makes it untouchable rather than ethereal) | 8 of 10 | avg 189 s |
 | 12 fights, level 17 | 10 of 12 | 152-250 s (avg 195); both losses in phase 4, the ooze at 3% and 9% |
 | 12 fights, level 20 (earlier, weaker numbers) | 12 of 12 | 142-265 s |
 Very sensitive to level (points in the web): at 17 it's a real fight, at 20 it's won. Knobs: damage in `OZ`, the

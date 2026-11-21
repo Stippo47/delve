@@ -6,7 +6,7 @@ import { TAU, clamp, INK } from './util.js';
 import { inked, inkLine, glowDisc, flame, blob, upright, hash, rgba, upVec } from './fx.js';
 const view_up = () => upVec();
 
-const flash = (u) => u.flashT > 0.06;
+const flash = (u) => u.flashT > 0.09; // (only the first frames of a hit: a boss hit all the time read as solid white)
 const lit = (c, u) => (flash(u) ? '#FFFFFF' : c);
 
 // ---------------------------------------------------------------- the Warren: the war camp

@@ -71,13 +71,14 @@ He topples; the drums burst and the goblins he called go with him. Coins.
 
 ## Numbers
 Health 1300 (x1.4 for every boss, then the dungeon's strength and the party size), walk 54, mass 6, no knockback,
-stagger and chill half. Phases at 70%, 45%, 20%.
+stagger half, chill 0.7, poison 0.3 (a rot burst is 15% of its health: the Bone King has 0.3 too). Phases at 70%, 45%, 20%.
 
-Balance (`node tools/runs.mjs --boss --theme warren --level 16 --party paladin,archer,cleric`, a fresh room: the
-campaign reaches the Warren's boss with a party of three at about level 16):
+Balance (`node tools/runs.mjs --boss --theme warren --level 15 --party paladin,archer,cleric`, a fresh room: the
+campaign (`--campaign 110`) first reaches the Warren's boss with three heroes averaging about level 14-15):
 | | won | fight length |
 |---|---|---|
-| 12 fights, level 16 | 8 of 12 | 192-317 s (avg 235); every fight reaches phase 3, every win phase 4 |
+| 10 fights, level 15 (final numbers) | 7 of 10 | avg 230 s |
+| 12 fights, level 16 (before the poison resistance) | 8 of 12 | 192-317 s (avg 235); every fight reaches phase 3, every win phase 4 |
 Phase 1 ends about 45 s in, phase 2 runs 60-100 s (the drums), the last two about 40 s each. On a real run the party
 comes in hurt from floor 3, which should bring the first-try rate down to about half.
 Knobs: `CH.drum` (how often they call, how many at once), damage in `CH`, health in the def, `PHASE_AT`.
