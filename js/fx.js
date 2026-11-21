@@ -593,8 +593,14 @@ export function drawProjectile(ctx, p, T) {
       ctx.rotate(ang);
       if (ab === 'frostArrow') { frostArrow(ctx, sp, T); break; }
       const L = ab === 'iceShard' ? (p.big ? 2.9 : 2.2) : p.kind === 'shard' ? 1.5 : 1.15;
-      trail(ctx, sp, 26 * L, 5 * L, '#BFE9F8');
-      if (ab === 'iceShard') frostMotes(ctx, T, 12 * L, 6 * L, p.x); // round 9: particle trails
+      if (ab === 'iceShard') { // round 10: "Give each spike a trail effect": a long frost streak behind each one, a bright core
+        const TL = 30 * L, wd = 4.2 * L;
+        const g = ctx.createLinearGradient(-TL - 8 * L, 0, -6 * L, 0); g.addColorStop(0, 'rgba(159,221,246,0)'); g.addColorStop(1, 'rgba(191,233,248,0.95)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-TL - 8 * L, 0); ctx.quadraticCurveTo(-TL * 0.4, -wd, -6 * L, -wd * 0.9); ctx.lineTo(-6 * L, wd * 0.9); ctx.quadraticCurveTo(-TL * 0.4, wd, -TL - 8 * L, 0); ctx.fill();
+        const g2 = ctx.createLinearGradient(-TL * 0.7, 0, -6 * L, 0); g2.addColorStop(0, 'rgba(255,255,255,0)'); g2.addColorStop(1, 'rgba(255,255,255,0.95)');
+        ctx.fillStyle = g2; ctx.beginPath(); ctx.moveTo(-TL * 0.7, 0); ctx.lineTo(-6 * L, -wd * 0.35); ctx.lineTo(-6 * L, wd * 0.35); ctx.closePath(); ctx.fill();
+        frostMotes(ctx, T, 12 * L, 6 * L, p.x); // round 9: particle trails
+      } else trail(ctx, sp, 26 * L, 5 * L, '#BFE9F8');
       if (ab) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, 0, 0, 14 * L, '#DDF6FF', 0.55); ctx.restore(); }
       inked(ctx, () => { ctx.beginPath(); ctx.moveTo(12 * L, 0); ctx.lineTo(-8 * L, -3.8 * L); ctx.lineTo(-11 * L, 0); ctx.lineTo(-8 * L, 3.8 * L); ctx.closePath(); }, '#BFE9F8');
       ctx.fillStyle = '#F2FCFF'; ctx.beginPath(); ctx.moveTo(11 * L, 0); ctx.lineTo(-8 * L, -3.2 * L); ctx.lineTo(-6 * L, 0); ctx.closePath(); ctx.fill();

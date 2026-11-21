@@ -771,6 +771,14 @@ export function drawBodyFx(ctx, u, w) {
       const x = u.x + Math.cos(a) * d - Math.sin(a) * off, y = u.y + Math.sin(a) * d + Math.cos(a) * off;
       ctx.save(); ctx.globalAlpha = 0.85 * (1 - ph); streak(ctx, x, y, a, 0, 26, 3.2, shadow ? '#9B86C9' : '#EEF3F8', '#FFFFFF'); ctx.restore(); }
   }
+  // Cold (chill building, or frozen): round 10 (Ice Shard: "When cold units should create the snow flake particles
+  // slowly"): a few snowflakes drift slowly down off the body, swaying, more the colder it is
+  const cold = u.frozenT > 0 ? 1 : clamp(((u.st && u.st.chill) || 0) / 60, 0, 1);
+  if (cold > 0.08) { const n = 1 + Math.round(cold * 3);
+    for (let i = 0; i < n; i++) { const per = 2.4, ph = (T / per + i / n + u.id * 0.19) % 1, cyc = Math.floor(T / per + i / n + u.id * 0.19);
+      const an = hash(cyc, i, u.id + 7) * TAU, rr = u.vr * (0.4 + 0.7 * hash(i, cyc, u.id)), sway = Math.sin(ph * 5 + i) * 6;
+      const x = u.x + Math.cos(an) * rr - ux * ph * 26 + (view.rot ? 0 : sway), y = u.y + Math.sin(an) * rr * 0.6 - uy * (ph * 26 - u.vr * 0.5) + (view.rot ? sway : 0);
+      ctx.save(); ctx.globalAlpha = Math.sin(ph * Math.PI) * clamp(cold * 1.5, 0, 1); snowflakeK(ctx, x, y, 4.2, ph * 2 + i); ctx.restore(); } }
   // Zeus Bolt's mark: a little lightning bolt over the head, flickering
   if (u.stormMark > T) {
     const fl = Math.sin(T * 22 + u.id) > -0.6 ? 1 : 0.4;
