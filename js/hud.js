@@ -27,13 +27,11 @@ function peaked(u, id, v) {
   if (!p[id] || v > p[id]) p[id] = v;
   return v / p[id];
 }
-export function unitStatuses(u, now) {
+export function unitStatuses(u, now = 0) {
   const out = [];
   if (!u || u.dead) return out;
-  u._now = now;
   const add = (id, v, extra = {}) => { const f = peaked(u, id, v); if (f > 0) out.push({ id, kind: 'status', icon: id, frac: f, color: STATUS_COL[id], ...extra }); };
   const s = u.st || {};
-  const now = u._now ?? 0;
   const build = (id, show) => { // a build-up: the ring is how close it is to bursting
     const burst = u.bursts && u.bursts[id] != null && now - u.bursts[id] < 0.5;
     if (show || burst) out.push({ id, kind: 'status', icon: id, frac: burst ? 1 : fillOf(u, id), color: STATUS[id].col, amount: s[id], build: true, burst });
