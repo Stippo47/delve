@@ -592,9 +592,9 @@ export function update(run, dt) {
     w.stale = run.quietT > 45 || (run.t > 150 && run.node.kind !== 'boss'); // round 8: a room that has dragged on that long presses in too, kills or not
     // round 10: and a stand-off nobody can break (a last archer kiting round a wall from a mummy, a turret it can't see)
     // wears the enemies down after a while, so a room always ends
-    // (the lead, round 11: 90 s without a kill or 300 s in the room, 3% a second; at 60 / 200 / 4% a party that only
+    // (the lead, round 11: 90 s without a kill or 240 s in the room, 3% a second; at 60 / 200 / 4% a party that only
     // healed could sit a room out, and a long fight with a major ended itself)
-    if ((run.quietT > 90 || run.t > 300) && run.node.kind !== 'boss') for (const e of enemies) hurt(w, e, e.maxHp * 0.03 * dt, null, { dot: true, color: '#B9AE9C' });
+    if ((run.quietT > 90 || run.t > 240) && run.node.kind !== 'boss') for (const e of enemies) hurt(w, e, e.maxHp * 0.03 * dt, null, { dot: true, color: '#B9AE9C' });
   }
   revive(run, dt);
   if (run.phase === 'fight') nextWaypoint(w);

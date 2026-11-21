@@ -1,0 +1,1488 @@
+{
+  "title": "Showcase 3: the 37 new heroes",
+  "topic": "art",
+  "order": 14,
+  "priority": 3,
+  "cards": [
+    {
+      "id": "oldguard",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Old Guard",
+      "text": "Tank. A greatsword held in both hands, and forty years of knowing where to put it.",
+      "why": "Trait: Old Soldier. Allies standing near him take 10% less damage. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "oldguard-attack",
+        "oldguard-greatSweep",
+        "oldguard-rallyCry",
+        "oldguard-pommelStrike"
+      ],
+      "items": [
+        {
+          "id": "oldguard-attack",
+          "label": "Greatsword (attack)",
+          "video": "../../../clips/showcase3/oldguard-attack.mp4",
+          "text": "Old Guard: Greatsword (attack). A slow, wide two-handed cut in front."
+        },
+        {
+          "id": "oldguard-greatSweep",
+          "label": "Great Sweep",
+          "video": "../../../clips/showcase3/oldguard-greatSweep.mp4",
+          "text": "Old Guard: Great Sweep. Draws the greatsword back, then sweeps it round in one huge arc in front of him. Shown at tier III."
+        },
+        {
+          "id": "oldguard-rallyCry",
+          "label": "Rally",
+          "video": "../../../clips/showcase3/oldguard-rallyCry.mp4",
+          "text": "Old Guard: Rally. An old soldier's shout: allies near him shake off stuns and staggers and stand firm. Shown at tier III."
+        },
+        {
+          "id": "oldguard-pommelStrike",
+          "label": "Pommel Strike",
+          "video": "../../../clips/showcase3/oldguard-pommelStrike.mp4",
+          "text": "Old Guard: Pommel Strike. A quick blow with the pommel that breaks off whatever an enemy was winding up. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "dame",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Dame",
+      "text": "Tank. Kite shield, leaf sword, perfect manners. Answers every blow.",
+      "why": "Trait: Grace. Every third blow she lands is a critical hit. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "dame-attack",
+        "dame-riposte",
+        "dame-challenge",
+        "dame-disarm"
+      ],
+      "items": [
+        {
+          "id": "dame-attack",
+          "label": "Leaf sword (attack)",
+          "video": "../../../clips/showcase3/dame-attack.mp4",
+          "text": "Dame: Leaf sword (attack). A quick, neat cut."
+        },
+        {
+          "id": "dame-riposte",
+          "label": "Riposte",
+          "video": "../../../clips/showcase3/dame-riposte.mp4",
+          "text": "Dame: Riposte. Raises the shield; every blow it stops from the front is answered with a thrust. Shown at tier III."
+        },
+        {
+          "id": "dame-challenge",
+          "label": "Challenge",
+          "video": "../../../clips/showcase3/dame-challenge.mp4",
+          "text": "Dame: Challenge. Calls out the strongest enemy near: it has to fight her, and she hits it harder. Shown at tier III."
+        },
+        {
+          "id": "dame-disarm",
+          "label": "Disarm",
+          "video": "../../../clips/showcase3/dame-disarm.mp4",
+          "text": "Dame: Disarm. A flick of the blade at an enemy's weapon hand: its blows land far softer for a while. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "griffon",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Griffon",
+      "text": "Tank. Winged helm, warhammer, shield. Drops out of the sky onto whoever is bothering his friends.",
+      "why": "Trait: Skyborn. Can't be rooted or entangled. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "griffon-attack",
+        "griffon-swoop",
+        "griffon-hammerThrow",
+        "griffon-wingShield"
+      ],
+      "items": [
+        {
+          "id": "griffon-attack",
+          "label": "Warhammer (attack)",
+          "video": "../../../clips/showcase3/griffon-attack.mp4",
+          "text": "Griffon: Warhammer (attack). A heavy hammer blow."
+        },
+        {
+          "id": "griffon-swoop",
+          "label": "Swoop",
+          "video": "../../../clips/showcase3/griffon-swoop.mp4",
+          "text": "Griffon: Swoop. Spreads his wings and flies to the ally in the most trouble, landing beside them with a slam that throws their attackers off. Shown at tier III."
+        },
+        {
+          "id": "griffon-hammerThrow",
+          "label": "Stormhammer",
+          "video": "../../../clips/showcase3/griffon-hammerThrow.mp4",
+          "text": "Griffon: Stormhammer. Hurls the hammer down a line; it spins out and comes back to his hand, hitting everything both ways. Shown at tier III."
+        },
+        {
+          "id": "griffon-wingShield",
+          "label": "Wing Guard",
+          "video": "../../../clips/showcase3/griffon-wingShield.mp4",
+          "text": "Griffon: Wing Guard. Raises the shield with his wings spread: shots that reach him from the front are caught and thrown back. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "bulwark",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Bulwark",
+      "text": "Tank. A winged spear and a big shield. Nothing gets past the end of the spear.",
+      "why": "Trait: Phalanx. Takes 10% less damage for each ally close by, up to 30%. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "bulwark-attack",
+        "bulwark-brace",
+        "bulwark-shieldWall",
+        "bulwark-impale"
+      ],
+      "items": [
+        {
+          "id": "bulwark-attack",
+          "label": "Winged spear (attack)",
+          "video": "../../../clips/showcase3/bulwark-attack.mp4",
+          "text": "Bulwark: Winged spear (attack). A long thrust that reaches past the front line."
+        },
+        {
+          "id": "bulwark-brace",
+          "label": "Brace",
+          "video": "../../../clips/showcase3/bulwark-brace.mp4",
+          "text": "Bulwark: Brace. Sets the spear and waits: whatever comes into its reach is struck hard and stopped dead. Shown at tier III."
+        },
+        {
+          "id": "bulwark-shieldWall",
+          "label": "Shield Wall",
+          "video": "../../../clips/showcase3/bulwark-shieldWall.mp4",
+          "text": "Bulwark: Shield Wall. Plants the shield: he can't be moved, and allies close to him take less damage. Shown at tier III."
+        },
+        {
+          "id": "bulwark-impale",
+          "label": "Impale",
+          "video": "../../../clips/showcase3/bulwark-impale.mp4",
+          "text": "Bulwark: Impale. A heavy thrust that pins one enemy to the spot. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "bearskin",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Bearskin",
+      "text": "Fighter. A studded club and a bear on his back. Hits like the bear did.",
+      "why": "Trait: Thick Hide. Statuses build half as fast on him. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "bearskin-attack",
+        "bearskin-maul",
+        "bearskin-hibernate",
+        "bearskin-bearRoar"
+      ],
+      "items": [
+        {
+          "id": "bearskin-attack",
+          "label": "Studded club (attack)",
+          "video": "../../../clips/showcase3/bearskin-attack.mp4",
+          "text": "Bearskin: Studded club (attack). A heavy club blow."
+        },
+        {
+          "id": "bearskin-maul",
+          "label": "Maul",
+          "video": "../../../clips/showcase3/bearskin-maul.mp4",
+          "text": "Bearskin: Maul. Raises the club high and brings it straight down on one enemy. Shown at tier III."
+        },
+        {
+          "id": "bearskin-hibernate",
+          "label": "Hibernate",
+          "video": "../../../clips/showcase3/bearskin-hibernate.mp4",
+          "text": "Bearskin: Hibernate. Curls up under the pelt: takes far less damage and heals while he lies there. Shown at tier III."
+        },
+        {
+          "id": "bearskin-bearRoar",
+          "label": "Bear Roar",
+          "video": "../../../clips/showcase3/bearskin-bearRoar.mp4",
+          "text": "Bearskin: Bear Roar. A roar that takes the fight out of the enemies round him. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "warhelm",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Warhelm",
+      "text": "Fighter. A beard, a helm, a hammer the size of a sheep. Knocks things a long way.",
+      "why": "Trait: Iron Will. Below 30% health he can't be stunned or staggered and hits 25% harder. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "warhelm-attack",
+        "warhelm-thunderBlow",
+        "warhelm-warHorn",
+        "warhelm-skullSplitter"
+      ],
+      "items": [
+        {
+          "id": "warhelm-attack",
+          "label": "Warhammer (attack)",
+          "video": "../../../clips/showcase3/warhelm-attack.mp4",
+          "text": "Warhelm: Warhammer (attack). A huge hammer blow that knocks enemies back."
+        },
+        {
+          "id": "warhelm-thunderBlow",
+          "label": "Thunder Blow",
+          "video": "../../../clips/showcase3/warhelm-thunderBlow.mp4",
+          "text": "Warhelm: Thunder Blow. Brings the hammer down so hard that everything in front of him is thrown back. Shown at tier III."
+        },
+        {
+          "id": "warhelm-warHorn",
+          "label": "War Horn",
+          "video": "../../../clips/showcase3/warhelm-warHorn.mp4",
+          "text": "Warhelm: War Horn. Blows the horn: allies near him hit harder for a while. Shown at tier III."
+        },
+        {
+          "id": "warhelm-skullSplitter",
+          "label": "Skull Splitter",
+          "video": "../../../clips/showcase3/warhelm-skullSplitter.mp4",
+          "text": "Warhelm: Skull Splitter. Two blows: one up under the chin, then one straight down. The second hits double on a staggered foe. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "rogueBandit",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Bandit",
+      "text": "Skirmisher. A cutlass, a red bandanna and very quick hands. Fights dirty and comes home richer.",
+      "why": "Trait: Light Fingers. Enemies she finishes drop half again as much gold. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "rogueBandit-attack",
+        "rogueBandit-smokeBomb",
+        "rogueBandit-pickpocket",
+        "rogueBandit-lowBlow"
+      ],
+      "items": [
+        {
+          "id": "rogueBandit-attack",
+          "label": "Cutlass (attack)",
+          "video": "../../../clips/showcase3/bandit-attack.mp4",
+          "text": "Bandit: Cutlass (attack). Quick cutlass slashes."
+        },
+        {
+          "id": "rogueBandit-smokeBomb",
+          "label": "Smoke Bomb",
+          "video": "../../../clips/showcase3/bandit-smokeBomb.mp4",
+          "text": "Bandit: Smoke Bomb. Throws a smoke bomb into the enemies: inside the cloud they can't see who to hit. Shown at tier III."
+        },
+        {
+          "id": "rogueBandit-pickpocket",
+          "label": "Pickpocket",
+          "video": "../../../clips/showcase3/bandit-pickpocket.mp4",
+          "text": "Bandit: Pickpocket. Darts past an enemy and cuts its purse: coins spill out. Shown at tier III."
+        },
+        {
+          "id": "rogueBandit-lowBlow",
+          "label": "Low Blow",
+          "video": "../../../clips/showcase3/bandit-lowBlow.mp4",
+          "text": "Bandit: Low Blow. A kick where it hurts: the enemy goes down for a moment. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "shade",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Shade",
+      "text": "Skirmisher. Two mirrored daggers and a cape the colour of a shadow. Hard to find, harder to hit.",
+      "why": "Trait: Fade. After 3s without being hit, the next blow meant for her finds only shadow. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "shade-attack",
+        "shade-shadowWalk",
+        "shade-blackout",
+        "shade-deathMark"
+      ],
+      "items": [
+        {
+          "id": "shade-attack",
+          "label": "Twin daggers (attack)",
+          "video": "../../../clips/showcase3/shade-attack.mp4",
+          "text": "Shade: Twin daggers (attack). Quick stabs with either hand."
+        },
+        {
+          "id": "shade-shadowWalk",
+          "label": "Shadow Walk",
+          "video": "../../../clips/showcase3/shade-shadowWalk.mp4",
+          "text": "Shade: Shadow Walk. Becomes a shadow and runs straight through the enemies, cutting each one she passes. Nothing can touch her meanwhile. Shown at tier III."
+        },
+        {
+          "id": "shade-blackout",
+          "label": "Blackout",
+          "video": "../../../clips/showcase3/shade-blackout.mp4",
+          "text": "Shade: Blackout. Snuffs out the light round her: enemies in the dark hit softer and she hits them harder. Shown at tier III."
+        },
+        {
+          "id": "shade-deathMark",
+          "label": "Death Mark",
+          "video": "../../../clips/showcase3/shade-deathMark.mp4",
+          "text": "Shade: Death Mark. Marks an enemy. After 3s the mark bursts for part of everything it took meanwhile. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "haymaker",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Haymaker",
+      "text": "Fighter. A pitchfork, a straw hat, and the shoulders of a man who throws hay all day.",
+      "why": "Trait: Hard Work. Each enemy he finishes heals him 5%. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "haymaker-attack",
+        "haymaker-toss",
+        "haymaker-pitchHay",
+        "haymaker-forkCharge"
+      ],
+      "items": [
+        {
+          "id": "haymaker-attack",
+          "label": "Pitchfork (attack)",
+          "video": "../../../clips/showcase3/haymaker-attack.mp4",
+          "text": "Haymaker: Pitchfork (attack). A long jab with the fork."
+        },
+        {
+          "id": "haymaker-toss",
+          "label": "Toss",
+          "video": "../../../clips/showcase3/haymaker-toss.mp4",
+          "text": "Haymaker: Toss. Forks the nearest enemy and throws it over his shoulder. Shown at tier III."
+        },
+        {
+          "id": "haymaker-pitchHay",
+          "label": "Pitch Hay",
+          "video": "../../../clips/showcase3/haymaker-pitchHay.mp4",
+          "text": "Haymaker: Pitch Hay. Flings a forkful of hay over the enemies in front: they are slowed, and the dry hay catches fire easily. Shown at tier III."
+        },
+        {
+          "id": "haymaker-forkCharge",
+          "label": "Fork Charge",
+          "video": "../../../clips/showcase3/haymaker-forkCharge.mp4",
+          "text": "Haymaker: Fork Charge. Runs with the fork lowered, skewering the first enemy and carrying it along. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "digger",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Digger",
+      "text": "Fighter. A long-handled spade. Digs, flings, bats, and finds coins in the floor.",
+      "why": "Trait: Prospector. Now and then digs a coin out of the floor while he fights. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "digger-attack",
+        "digger-dirtFling",
+        "digger-burrow",
+        "digger-spadeBat"
+      ],
+      "items": [
+        {
+          "id": "digger-attack",
+          "label": "Spade (attack)",
+          "video": "../../../clips/showcase3/digger-attack.mp4",
+          "text": "Digger: Spade (attack). A swing with the flat of the spade."
+        },
+        {
+          "id": "digger-dirtFling",
+          "label": "Dirt Fling",
+          "video": "../../../clips/showcase3/digger-dirtFling.mp4",
+          "text": "Digger: Dirt Fling. Digs up a spadeful of dirt and flings it in the enemies' faces. Shown at tier III."
+        },
+        {
+          "id": "digger-burrow",
+          "label": "Burrow",
+          "video": "../../../clips/showcase3/digger-burrow.mp4",
+          "text": "Digger: Burrow. Dives into the ground and tunnels to a far enemy, bursting up under it. Shown at tier III."
+        },
+        {
+          "id": "digger-spadeBat",
+          "label": "Spade Bat",
+          "video": "../../../clips/showcase3/digger-spadeBat.mp4",
+          "text": "Digger: Spade Bat. A full swing with the flat of the spade that bats an enemy across the room. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "grandpa",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Grandpa Sickle",
+      "text": "Support. A sickle, a sheaf of wheat and a bag of bread. Feeds the party and trims the enemy.",
+      "why": "Trait: Seen It All. Allies near him shake off stagger twice as fast. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "grandpa-attack",
+        "grandpa-breadToss",
+        "grandpa-harvest",
+        "grandpa-oldTales"
+      ],
+      "items": [
+        {
+          "id": "grandpa-attack",
+          "label": "Sickle (attack)",
+          "video": "../../../clips/showcase3/grandpa-attack.mp4",
+          "text": "Grandpa Sickle: Sickle (attack). A short hooked cut."
+        },
+        {
+          "id": "grandpa-breadToss",
+          "label": "Bread Toss",
+          "video": "../../../clips/showcase3/grandpa-breadToss.mp4",
+          "text": "Grandpa Sickle: Bread Toss. Lobs a loaf of fresh bread to a hurt ally; it heals them where it lands. Shown at tier III."
+        },
+        {
+          "id": "grandpa-harvest",
+          "label": "Harvest",
+          "video": "../../../clips/showcase3/grandpa-harvest.mp4",
+          "text": "Grandpa Sickle: Harvest. A low sweep round his feet that cuts at the legs of everything close. Shown at tier III."
+        },
+        {
+          "id": "grandpa-oldTales",
+          "label": "Old Tales",
+          "video": "../../../clips/showcase3/grandpa-oldTales.mp4",
+          "text": "Grandpa Sickle: Old Tales. Tells the party one of his stories. Somehow it helps. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "alchemist",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Alchemist",
+      "text": "Caster. Wild white hair, brass goggles, a strap of flasks. Every throw is a different brew.",
+      "why": "Trait: Catalyst. The statuses she causes build 30% faster. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "alchemist-attack",
+        "alchemist-acidFlask",
+        "alchemist-elixir",
+        "alchemist-bangFlask"
+      ],
+      "items": [
+        {
+          "id": "alchemist-attack",
+          "label": "Unstable flask (attack)",
+          "video": "../../../clips/showcase3/alchemist-attack.mp4",
+          "text": "Alchemist: Unstable flask (attack). A lobbed flask that splashes where it lands; each one is a different brew: fire, frost or acid."
+        },
+        {
+          "id": "alchemist-acidFlask",
+          "label": "Acid Flask",
+          "video": "../../../clips/showcase3/alchemist-acidFlask.mp4",
+          "text": "Alchemist: Acid Flask. A flask of acid that shatters into a hissing pool. Shown at tier III."
+        },
+        {
+          "id": "alchemist-elixir",
+          "label": "Elixir",
+          "video": "../../../clips/showcase3/alchemist-elixir.mp4",
+          "text": "Alchemist: Elixir. Throws a bright potion to an ally: it heals and quickens them. Shown at tier III."
+        },
+        {
+          "id": "alchemist-bangFlask",
+          "label": "Bang Flask",
+          "video": "../../../clips/showcase3/alchemist-bangFlask.mp4",
+          "text": "Alchemist: Bang Flask. A sputtering flask that rolls to a stop, then blows up with a huge shove. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "shaman",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Shaman",
+      "text": "Support. A winged totem on his back and a feather spirit-stick. Calls on the ancestors and the rain.",
+      "why": "Trait: Ancestral Spirits. When an ally goes down, the spirits heal everyone else 10%. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "shaman-attack",
+        "shaman-healTotem",
+        "shaman-spiritLink",
+        "shaman-rainDance"
+      ],
+      "items": [
+        {
+          "id": "shaman-attack",
+          "label": "Spirit bolt (attack)",
+          "video": "../../../clips/showcase3/shaman-attack.mp4",
+          "text": "Shaman: Spirit bolt (attack). A teal spirit; a little of what it deals heals the most hurt ally."
+        },
+        {
+          "id": "shaman-healTotem",
+          "label": "Healing Totem",
+          "video": "../../../clips/showcase3/shaman-healTotem.mp4",
+          "text": "Shaman: Healing Totem. Plants a carved totem that heals the allies near it. Shown at tier III."
+        },
+        {
+          "id": "shaman-spiritLink",
+          "label": "Spirit Link",
+          "video": "../../../clips/showcase3/shaman-spiritLink.mp4",
+          "text": "Shaman: Spirit Link. Binds allies together with spirit threads: a blow on one is shared out among them all. Shown at tier III."
+        },
+        {
+          "id": "shaman-rainDance",
+          "label": "Rain Dance",
+          "video": "../../../clips/showcase3/shaman-rainDance.mp4",
+          "text": "Shaman: Rain Dance. Calls a rain cloud over the enemies: it soaks them and puts fires out. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "witch",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Witch",
+      "text": "Caster. A crooked violet hat and a broom. Turns problems into frogs.",
+      "why": "Trait: Crone. Cursed enemies take 25% more from her. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "witch-attack",
+        "witch-frogHex",
+        "witch-cursedBrew",
+        "witch-broomRide"
+      ],
+      "items": [
+        {
+          "id": "witch-attack",
+          "label": "Hex bolt (attack)",
+          "video": "../../../clips/showcase3/witch-attack.mp4",
+          "text": "Witch: Hex bolt (attack). A wobbling green spark that curves after its target."
+        },
+        {
+          "id": "witch-frogHex",
+          "label": "Hex",
+          "video": "../../../clips/showcase3/witch-frogHex.mp4",
+          "text": "Witch: Hex. Turns an enemy into a frog: it can't attack, hops slowly and takes more damage. Shown at tier III."
+        },
+        {
+          "id": "witch-cursedBrew",
+          "label": "Cursed Brew",
+          "video": "../../../clips/showcase3/witch-cursedBrew.mp4",
+          "text": "Witch: Cursed Brew. Sets down a bubbling cauldron whose fumes curse whatever breathes them. Shown at tier III."
+        },
+        {
+          "id": "witch-broomRide",
+          "label": "Broom Ride",
+          "video": "../../../clips/showcase3/witch-broomRide.mp4",
+          "text": "Witch: Broom Ride. Hops on the broom and flies out of trouble. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "warlock",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Warlock",
+      "text": "Caster. Horns, a gold sceptre and a demon-eye orb. Pays for power in his own blood.",
+      "why": "Trait: Infernal. Can't be set on fire. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "warlock-attack",
+        "warlock-eldritchBeam",
+        "warlock-summonImp",
+        "warlock-darkBargain"
+      ],
+      "items": [
+        {
+          "id": "warlock-attack",
+          "label": "Pact bolt (attack)",
+          "video": "../../../clips/showcase3/warlock-attack.mp4",
+          "text": "Warlock: Pact bolt (attack). A magenta bolt; a third of what it deals heals him."
+        },
+        {
+          "id": "warlock-eldritchBeam",
+          "label": "Eldritch Beam",
+          "video": "../../../clips/showcase3/warlock-eldritchBeam.mp4",
+          "text": "Warlock: Eldritch Beam. Holds a beam on an enemy that grows hotter the longer it holds. Shown at tier III."
+        },
+        {
+          "id": "warlock-summonImp",
+          "label": "Summon Imp",
+          "video": "../../../clips/showcase3/warlock-summonImp.mp4",
+          "text": "Warlock: Summon Imp. Tears open the floor and an imp climbs out to throw fire for him. Shown at tier III."
+        },
+        {
+          "id": "warlock-darkBargain",
+          "label": "Dark Bargain",
+          "video": "../../../clips/showcase3/warlock-darkBargain.mp4",
+          "text": "Warlock: Dark Bargain. Pays in his own blood: his other abilities are ready again at once. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "cultist",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Cultist",
+      "text": "Caster. A tall black hood, a curved dagger and a burning black candle. Pays in blood for the party's strength.",
+      "why": "Trait: Black Candle. Enemies close to him are slowly cursed. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "cultist-attack",
+        "cultist-bloodPact",
+        "cultist-ritualCircle",
+        "cultist-soulCandle"
+      ],
+      "items": [
+        {
+          "id": "cultist-attack",
+          "label": "Shadow bolt (attack)",
+          "video": "../../../clips/showcase3/cultist-attack.mp4",
+          "text": "Cultist: Shadow bolt (attack). A bolt of violet shadow from the candle."
+        },
+        {
+          "id": "cultist-bloodPact",
+          "label": "Blood Pact",
+          "video": "../../../clips/showcase3/cultist-bloodPact.mp4",
+          "text": "Cultist: Blood Pact. Cuts his palm: gives up some of his health so the allies near him hit harder. Shown at tier III."
+        },
+        {
+          "id": "cultist-ritualCircle",
+          "label": "Ritual Circle",
+          "video": "../../../clips/showcase3/cultist-ritualCircle.mp4",
+          "text": "Cultist: Ritual Circle. Draws a burning circle under the enemies that curses whatever stands in it. Shown at tier III."
+        },
+        {
+          "id": "cultist-soulCandle",
+          "label": "Soul Candle",
+          "video": "../../../clips/showcase3/cultist-soulCandle.mp4",
+          "text": "Cultist: Soul Candle. The black candle flares: every enemy that dies near him for a while bursts into soul fire. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "monk",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Monk",
+      "text": "Fighter. Saffron robe, prayer beads, bare fists. Very calm. Very fast.",
+      "why": "Trait: Deflect. Swats aside 40% of the shots that reach him from the front. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "monk-attack",
+        "monk-flurry",
+        "monk-palmStrike",
+        "monk-innerPeace"
+      ],
+      "items": [
+        {
+          "id": "monk-attack",
+          "label": "Fists (attack)",
+          "video": "../../../clips/showcase3/monk-attack.mp4",
+          "text": "Monk: Fists (attack). Quick jabs with either fist."
+        },
+        {
+          "id": "monk-flurry",
+          "label": "Flurry",
+          "video": "../../../clips/showcase3/monk-flurry.mp4",
+          "text": "Monk: Flurry. A blur of punches into one enemy; each one heals him a little. Shown at tier III."
+        },
+        {
+          "id": "monk-palmStrike",
+          "label": "Palm Strike",
+          "video": "../../../clips/showcase3/monk-palmStrike.mp4",
+          "text": "Monk: Palm Strike. An open palm that drives the force right through: the enemy and everything behind it in a line are thrown back. Shown at tier III."
+        },
+        {
+          "id": "monk-innerPeace",
+          "label": "Inner Peace",
+          "video": "../../../clips/showcase3/monk-innerPeace.mp4",
+          "text": "Monk: Inner Peace. Sits and breathes: his statuses fall away and he heals. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "seer",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Seer",
+      "text": "Support. Blindfolded, silver-haired, a glowing crystal in her hand. Sees what's coming and tells the party.",
+      "why": "Trait: Third Eye. Can't be blinded, and sees 15% of blows coming in time to step aside. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "seer-attack",
+        "seer-foresight",
+        "seer-premonition",
+        "seer-starfall"
+      ],
+      "items": [
+        {
+          "id": "seer-attack",
+          "label": "Glimmer (attack)",
+          "video": "../../../clips/showcase3/seer-attack.mp4",
+          "text": "Seer: Glimmer (attack). A crystal mote that glances off its target onto a second enemy."
+        },
+        {
+          "id": "seer-foresight",
+          "label": "Foresight",
+          "video": "../../../clips/showcase3/seer-foresight.mp4",
+          "text": "Seer: Foresight. Marks the strongest enemy in sight: the whole party hits it harder. Shown at tier III."
+        },
+        {
+          "id": "seer-premonition",
+          "label": "Premonition",
+          "video": "../../../clips/showcase3/seer-premonition.mp4",
+          "text": "Seer: Premonition. Sees a blow coming: the ally in the most danger slips out of its way. Shown at tier III."
+        },
+        {
+          "id": "seer-starfall",
+          "label": "Starfall",
+          "video": "../../../clips/showcase3/seer-starfall.mp4",
+          "text": "Seer: Starfall. Calls stars down out of nowhere onto the enemies round a spot. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "chef",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Chef",
+      "text": "Support. A toque, a moustache, a frying pan and a wooden spoon. Feeds friends and flings pies at everyone.",
+      "why": "Trait: Well Fed. Allies near him heal 0.5% of their health a second. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "chef-attack",
+        "chef-hotMeal",
+        "chef-greaseFire",
+        "chef-foodFight"
+      ],
+      "items": [
+        {
+          "id": "chef-attack",
+          "label": "Frying pan (attack)",
+          "video": "../../../clips/showcase3/chef-attack.mp4",
+          "text": "Chef: Frying pan (attack). A clanging whack with the pan."
+        },
+        {
+          "id": "chef-hotMeal",
+          "label": "Hot Meal",
+          "video": "../../../clips/showcase3/chef-hotMeal.mp4",
+          "text": "Chef: Hot Meal. Sets a hot plate down by a hurt ally; whoever eats it is healed. Shown at tier III."
+        },
+        {
+          "id": "chef-greaseFire",
+          "label": "Grease Fire",
+          "video": "../../../clips/showcase3/chef-greaseFire.mp4",
+          "text": "Chef: Grease Fire. Flips the pan: hot grease splashes over the floor in front, slick and slow. Shown at tier III."
+        },
+        {
+          "id": "chef-foodFight",
+          "label": "Food Fight",
+          "video": "../../../clips/showcase3/chef-foodFight.mp4",
+          "text": "Chef: Food Fight. Flings custard pies at several enemies. They splat. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "beekeeper",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Beekeeper",
+      "text": "Support. A veiled hat, a copper smoker, and a great many friends who sting.",
+      "why": "Trait: Bee Friends. A few bees always buzz round him and sting enemies that come close. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "beekeeper-attack",
+        "beekeeper-swarm",
+        "beekeeper-honeyPot",
+        "beekeeper-royalJelly"
+      ],
+      "items": [
+        {
+          "id": "beekeeper-attack",
+          "label": "Bee (attack)",
+          "video": "../../../clips/showcase3/beekeeper-attack.mp4",
+          "text": "Beekeeper: Bee (attack). Sends a bee buzzing after the target."
+        },
+        {
+          "id": "beekeeper-swarm",
+          "label": "Swarm",
+          "video": "../../../clips/showcase3/beekeeper-swarm.mp4",
+          "text": "Beekeeper: Swarm. Opens the hive: bees pour out and chase the nearest enemies, stinging and slowing. Shown at tier III."
+        },
+        {
+          "id": "beekeeper-honeyPot",
+          "label": "Honey Pot",
+          "video": "../../../clips/showcase3/beekeeper-honeyPot.mp4",
+          "text": "Beekeeper: Honey Pot. Throws a pot of honey: enemies get stuck in it, friends get a sweet treat. Shown at tier III."
+        },
+        {
+          "id": "beekeeper-royalJelly",
+          "label": "Royal Jelly",
+          "video": "../../../clips/showcase3/beekeeper-royalJelly.mp4",
+          "text": "Beekeeper: Royal Jelly. Feeds an ally royal jelly: it attacks much faster for a while. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "quartermaster",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Quartermaster",
+      "text": "Support. A pack bigger than he is. Keeps the party fed, armed and stocked, and throws the pots.",
+      "why": "Trait: Well Stocked. Once a minute, a friend near him who has no health potion gets one. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "quartermaster-attack",
+        "quartermaster-resupply",
+        "quartermaster-oilBlades",
+        "quartermaster-flare"
+      ],
+      "items": [
+        {
+          "id": "quartermaster-attack",
+          "label": "Pot toss (attack)",
+          "video": "../../../clips/showcase3/quartermaster-attack.mp4",
+          "text": "Quartermaster: Pot toss (attack). Throws a pot or a pan out of the pack."
+        },
+        {
+          "id": "quartermaster-resupply",
+          "label": "Resupply",
+          "video": "../../../clips/showcase3/quartermaster-resupply.mp4",
+          "text": "Quartermaster: Resupply. Tosses a supply bundle to the ally who needs it most. Shown at tier III."
+        },
+        {
+          "id": "quartermaster-oilBlades",
+          "label": "Oil the Blades",
+          "video": "../../../clips/showcase3/quartermaster-oilBlades.mp4",
+          "text": "Quartermaster: Oil the Blades. Hands round lamp oil for the weapons: the allies near him set things alight with every blow. Shown at tier III."
+        },
+        {
+          "id": "quartermaster-flare",
+          "label": "Flare",
+          "video": "../../../clips/showcase3/quartermaster-flare.mp4",
+          "text": "Quartermaster: Flare. Fires a red flare onto the enemies: whatever stands in its light is easy to hit. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "crossbowman",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Crossbowman",
+      "text": "Shooter. A heavy crossbow, a kettle hat and a tall shield on his back. Slow to load, hard to stop.",
+      "why": "Trait: Armour Piercing. His bolts hit elites, majors and bosses 25% harder. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "crossbowman-attack",
+        "crossbowman-pavise",
+        "crossbowman-pinBolt",
+        "crossbowman-crankUp"
+      ],
+      "items": [
+        {
+          "id": "crossbowman-attack",
+          "label": "Heavy bolt (attack)",
+          "video": "../../../clips/showcase3/crossbowman-attack.mp4",
+          "text": "Crossbowman: Heavy bolt (attack). A heavy crossbow bolt that goes through the first enemy it hits."
+        },
+        {
+          "id": "crossbowman-pavise",
+          "label": "Pavise",
+          "video": "../../../clips/showcase3/crossbowman-pavise.mp4",
+          "text": "Crossbowman: Pavise. Plants the tall shield in front of him and shoots from behind it. Shown at tier III."
+        },
+        {
+          "id": "crossbowman-pinBolt",
+          "label": "Pinning Bolt",
+          "video": "../../../clips/showcase3/crossbowman-pinBolt.mp4",
+          "text": "Crossbowman: Pinning Bolt. A barbed bolt that nails an enemy to the floor. Shown at tier III."
+        },
+        {
+          "id": "crossbowman-crankUp",
+          "label": "Crank Up",
+          "video": "../../../clips/showcase3/crossbowman-crankUp.mp4",
+          "text": "Crossbowman: Crank Up. Cranks the crossbow hard and loads blasting bolts. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "falconer",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Falconer",
+      "text": "Shooter. A rust beret, a leather gauntlet and a slate-grey falcon. The falcon does the hunting.",
+      "why": "Trait: Bird's Eye. Sees and throws 25% further than anyone else. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "falconer-attack",
+        "falconer-looseFalcon",
+        "falconer-keenEye",
+        "falconer-flock"
+      ],
+      "items": [
+        {
+          "id": "falconer-attack",
+          "label": "Throwing knife (attack)",
+          "video": "../../../clips/showcase3/falconer-attack.mp4",
+          "text": "Falconer: Throwing knife (attack). A thrown hunting knife."
+        },
+        {
+          "id": "falconer-looseFalcon",
+          "label": "Loose the Falcon",
+          "video": "../../../clips/showcase3/falconer-looseFalcon.mp4",
+          "text": "Falconer: Loose the Falcon. Sends the falcon at the furthest enemy: it marks it and pecks at it. Shown at tier III."
+        },
+        {
+          "id": "falconer-keenEye",
+          "label": "Keen Eye",
+          "video": "../../../clips/showcase3/falconer-keenEye.mp4",
+          "text": "Falconer: Keen Eye. Takes careful aim for a while: every throw goes further and some land just right. Shown at tier III."
+        },
+        {
+          "id": "falconer-flock",
+          "label": "Call the Flock",
+          "video": "../../../clips/showcase3/falconer-flock.mp4",
+          "text": "Falconer: Call the Flock. Whistles up a flock of small birds that sweeps through a line of enemies, pecking. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "grenadier",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Grenadier",
+      "text": "Shooter. A tall mitre cap, a handlebar moustache and a lit bomb, always. Solves problems loudly.",
+      "why": "Trait: Demolition. His blasts throw enemies twice as far. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "grenadier-attack",
+        "grenadier-bigBomb",
+        "grenadier-stickyBomb",
+        "grenadier-blastOff"
+      ],
+      "items": [
+        {
+          "id": "grenadier-attack",
+          "label": "Bomb (attack)",
+          "video": "../../../clips/showcase3/grenadier-attack.mp4",
+          "text": "Grenadier: Bomb (attack). Lobs a small bomb that bursts where it lands."
+        },
+        {
+          "id": "grenadier-bigBomb",
+          "label": "Big Bomb",
+          "video": "../../../clips/showcase3/grenadier-bigBomb.mp4",
+          "text": "Grenadier: Big Bomb. Lobs a huge bomb with a long fuse. Everyone sees it coming. It doesn't help. Shown at tier III."
+        },
+        {
+          "id": "grenadier-stickyBomb",
+          "label": "Sticky Bomb",
+          "video": "../../../clips/showcase3/grenadier-stickyBomb.mp4",
+          "text": "Grenadier: Sticky Bomb. Sticks a bomb to an enemy; it goes off a moment later. Shown at tier III."
+        },
+        {
+          "id": "grenadier-blastOff",
+          "label": "Blast Off",
+          "video": "../../../clips/showcase3/grenadier-blastOff.mp4",
+          "text": "Grenadier: Blast Off. Drops a bomb at his own feet and rides the blast out of trouble. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "harpooner",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Harpooner",
+      "text": "Shooter. A yellow sou'wester, a puffy grey moustache, a barbed harpoon on a rope.",
+      "why": "Trait: Old Salt. Can't be soaked, and hits wet enemies 20% harder. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "harpooner-attack",
+        "harpooner-reelIn",
+        "harpooner-rogueWave",
+        "harpooner-anchorDrop"
+      ],
+      "items": [
+        {
+          "id": "harpooner-attack",
+          "label": "Harpoon (attack)",
+          "video": "../../../clips/showcase3/harpooner-attack.mp4",
+          "text": "Harpooner: Harpoon (attack). A thrown barbed harpoon, pulled back on its rope."
+        },
+        {
+          "id": "harpooner-reelIn",
+          "label": "Reel In",
+          "video": "../../../clips/showcase3/harpooner-reelIn.mp4",
+          "text": "Harpooner: Reel In. Harpoons a far enemy and hauls on the rope: a small one is dragged to him, a big one drags him to it. Shown at tier III."
+        },
+        {
+          "id": "harpooner-rogueWave",
+          "label": "Rogue Wave",
+          "video": "../../../clips/showcase3/harpooner-rogueWave.mp4",
+          "text": "Harpooner: Rogue Wave. Calls up a wave of sea water that crashes over the enemies in front. Shown at tier III."
+        },
+        {
+          "id": "harpooner-anchorDrop",
+          "label": "Drop Anchor",
+          "video": "../../../clips/showcase3/harpooner-anchorDrop.mp4",
+          "text": "Harpooner: Drop Anchor. Swings a ship's anchor round on its chain and drops it on the enemies. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "huntress",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Javelin Huntress",
+      "text": "Shooter. A coral headband, a ponytail, a bundle of javelins. Runs prey down.",
+      "why": "Trait: Finisher. Hits enemies below half health 25% harder. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "huntress-attack",
+        "huntress-runningThrow",
+        "huntress-bound",
+        "huntress-prey"
+      ],
+      "items": [
+        {
+          "id": "huntress-attack",
+          "label": "Javelin (attack)",
+          "video": "../../../clips/showcase3/huntress-attack.mp4",
+          "text": "Javelin Huntress: Javelin (attack). A hard-thrown javelin that knocks its target back."
+        },
+        {
+          "id": "huntress-runningThrow",
+          "label": "Running Throw",
+          "video": "../../../clips/showcase3/huntress-runningThrow.mp4",
+          "text": "Javelin Huntress: Running Throw. Sprints round her target and puts a javelin in its back. Shown at tier III."
+        },
+        {
+          "id": "huntress-bound",
+          "label": "Bound",
+          "video": "../../../clips/showcase3/huntress-bound.mp4",
+          "text": "Javelin Huntress: Bound. Leaps back out of reach and throws a javelin at the top of the leap. Shown at tier III."
+        },
+        {
+          "id": "huntress-prey",
+          "label": "Prey",
+          "video": "../../../clips/showcase3/huntress-prey.mp4",
+          "text": "Javelin Huntress: Prey. Picks out the weakest enemy and hunts it down. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "marksman",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Marksman",
+      "text": "Shooter. A cavalier hat with a cream plume, a grey moustache, a very long musket. One shot, well placed.",
+      "why": "Trait: Deadeye. His first hit on an enemy that hasn't been hurt yet is a critical hit. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "marksman-attack",
+        "marksman-aimedShot",
+        "marksman-bayonet",
+        "marksman-ricochet"
+      ],
+      "items": [
+        {
+          "id": "marksman-attack",
+          "label": "Musket (attack)",
+          "video": "../../../clips/showcase3/marksman-attack.mp4",
+          "text": "Marksman: Musket (attack). One long, hard shot."
+        },
+        {
+          "id": "marksman-aimedShot",
+          "label": "Aimed Shot",
+          "video": "../../../clips/showcase3/marksman-aimedShot.mp4",
+          "text": "Marksman: Aimed Shot. Stands stock still, aims, and fires a shot that goes clean through. Shown at tier III."
+        },
+        {
+          "id": "marksman-bayonet",
+          "label": "Bayonet",
+          "video": "../../../clips/showcase3/marksman-bayonet.mp4",
+          "text": "Marksman: Bayonet. Fixes the bayonet and stabs whatever got too close, shoving it away. Shown at tier III."
+        },
+        {
+          "id": "marksman-ricochet",
+          "label": "Ricochet",
+          "video": "../../../clips/showcase3/marksman-ricochet.mp4",
+          "text": "Marksman: Ricochet. A shot aimed to glance off one enemy onto the next. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "ninja",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Ninja",
+      "text": "Shooter. Charcoal hood, crimson scarf, a shuriken in each hand. Hard to pin down.",
+      "why": "Trait: Assassin. Her shuriken hit 50% harder from behind. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "ninja-attack",
+        "ninja-shurikenFan",
+        "ninja-substitution",
+        "ninja-caltrops"
+      ],
+      "items": [
+        {
+          "id": "ninja-attack",
+          "label": "Shuriken (attack)",
+          "video": "../../../clips/showcase3/ninja-attack.mp4",
+          "text": "Ninja: Shuriken (attack). Quick shuriken from either hand."
+        },
+        {
+          "id": "ninja-shurikenFan",
+          "label": "Shuriken Fan",
+          "video": "../../../clips/showcase3/ninja-shurikenFan.mp4",
+          "text": "Ninja: Shuriken Fan. Throws a fan of shuriken, then vanishes in smoke and appears a little way off. Shown at tier III."
+        },
+        {
+          "id": "ninja-substitution",
+          "label": "Substitution",
+          "video": "../../../clips/showcase3/ninja-substitution.mp4",
+          "text": "Ninja: Substitution. When a big blow lands, it was a log all along: she is somewhere else. Shown at tier III."
+        },
+        {
+          "id": "ninja-caltrops",
+          "label": "Caltrops",
+          "video": "../../../clips/showcase3/ninja-caltrops.mp4",
+          "text": "Ninja: Caltrops. Scatters iron caltrops round her feet. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "pirate",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Pirate",
+      "text": "Skirmisher. Tricorn, cutlass, flintlock. Fights dirty, drinks worse, calls in the ship's guns.",
+      "why": "Trait: Dirty Fighting. Hits staggered, stunned, slowed or rooted enemies 30% harder. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "pirate-attack",
+        "pirate-pointBlank",
+        "pirate-grog",
+        "pirate-broadside"
+      ],
+      "items": [
+        {
+          "id": "pirate-attack",
+          "label": "Cutlass (attack)",
+          "video": "../../../clips/showcase3/pirate-attack.mp4",
+          "text": "Pirate: Cutlass (attack). Fast cutlass slashes."
+        },
+        {
+          "id": "pirate-pointBlank",
+          "label": "Point Blank",
+          "video": "../../../clips/showcase3/pirate-pointBlank.mp4",
+          "text": "Pirate: Point Blank. Jams the flintlock against an enemy and fires. Shown at tier III."
+        },
+        {
+          "id": "pirate-grog",
+          "label": "Grog",
+          "video": "../../../clips/showcase3/pirate-grog.mp4",
+          "text": "Pirate: Grog. A long swig of grog. Things hurt less for a while. Shown at tier III."
+        },
+        {
+          "id": "pirate-broadside",
+          "label": "Broadside",
+          "video": "../../../clips/showcase3/pirate-broadside.mp4",
+          "text": "Pirate: Broadside. Whistles to the ship: cannonballs come down round a spot. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "slinger",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Slinger",
+      "text": "Shooter. A shepherd in a ram's fleece with a sling and a crook. Stones, and the flock behind him.",
+      "why": "Trait: Watchful. Allies near him shake off stuns and sleep 40% faster. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "slinger-attack",
+        "slinger-stunStone",
+        "slinger-ramCharge",
+        "slinger-gravel"
+      ],
+      "items": [
+        {
+          "id": "slinger-attack",
+          "label": "Sling (attack)",
+          "video": "../../../clips/showcase3/slinger-attack.mp4",
+          "text": "Slinger: Sling (attack). A whirl and a stone."
+        },
+        {
+          "id": "slinger-stunStone",
+          "label": "Stunning Stone",
+          "video": "../../../clips/showcase3/slinger-stunStone.mp4",
+          "text": "Slinger: Stunning Stone. Whirls the sling hard and lets fly a stone at the head. Shown at tier III."
+        },
+        {
+          "id": "slinger-ramCharge",
+          "label": "Ram",
+          "video": "../../../clips/showcase3/slinger-ramCharge.mp4",
+          "text": "Slinger: Ram. Whistles, and a big ram charges through a line of enemies. Shown at tier III."
+        },
+        {
+          "id": "slinger-gravel",
+          "label": "Gravel",
+          "video": "../../../clips/showcase3/slinger-gravel.mp4",
+          "text": "Slinger: Gravel. Slings a handful of gravel in a wide spray. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "trapper",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Trapper",
+      "text": "Shooter. A fur cap with the flaps down, a short rifle and a jaw trap. Catches things.",
+      "why": "Trait: Trapper's Eye. Enemies that are held, rooted or tangled take 30% more from him. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "trapper-attack",
+        "trapper-jawTrap",
+        "trapper-snareNet",
+        "trapper-tripwire"
+      ],
+      "items": [
+        {
+          "id": "trapper-attack",
+          "label": "Short rifle (attack)",
+          "video": "../../../clips/showcase3/trapper-attack.mp4",
+          "text": "Trapper: Short rifle (attack). A rifle shot."
+        },
+        {
+          "id": "trapper-jawTrap",
+          "label": "Jaw Trap",
+          "video": "../../../clips/showcase3/trapper-jawTrap.mp4",
+          "text": "Trapper: Jaw Trap. Sets a jaw trap where the enemies are coming; the first to step in is caught. Shown at tier III."
+        },
+        {
+          "id": "trapper-snareNet",
+          "label": "Weighted Net",
+          "video": "../../../clips/showcase3/trapper-snareNet.mp4",
+          "text": "Trapper: Weighted Net. Throws a weighted net over a group of enemies. Shown at tier III."
+        },
+        {
+          "id": "trapper-tripwire",
+          "label": "Tripwire",
+          "video": "../../../clips/showcase3/trapper-tripwire.mp4",
+          "text": "Trapper: Tripwire. Strings a wire across the enemies' way: whatever runs into it goes down. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "gladiator",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Gladiator",
+      "text": "Fighter. A crested bronze helm, a gladius and a little round shield. Plays to the crowd.",
+      "why": "Trait: Arena. Hits 5% harder for each enemy near him, up to 25%. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "gladiator-attack",
+        "gladiator-netThrow",
+        "gladiator-showboat",
+        "gladiator-shieldRush"
+      ],
+      "items": [
+        {
+          "id": "gladiator-attack",
+          "label": "Gladius (attack)",
+          "video": "../../../clips/showcase3/gladiator-attack.mp4",
+          "text": "Gladiator: Gladius (attack). A short, quick stab."
+        },
+        {
+          "id": "gladiator-netThrow",
+          "label": "Net Throw",
+          "video": "../../../clips/showcase3/gladiator-netThrow.mp4",
+          "text": "Gladiator: Net Throw. Casts a net over one enemy: it is held and he stabs it harder. Shown at tier III."
+        },
+        {
+          "id": "gladiator-showboat",
+          "label": "Showboat",
+          "video": "../../../clips/showcase3/gladiator-showboat.mp4",
+          "text": "Gladiator: Showboat. Raises the gladius to the crowd: enemies near turn on him and he braces. Shown at tier III."
+        },
+        {
+          "id": "gladiator-shieldRush",
+          "label": "Shield Rush",
+          "video": "../../../clips/showcase3/gladiator-shieldRush.mp4",
+          "text": "Gladiator: Shield Rush. Rushes in behind the round shield and stabs. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "jester",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Jester",
+      "text": "Skirmisher. A three-pointed cap with bells and a marotte on a stick. Makes enemies look foolish, then fight.",
+      "why": "Trait: Pratfall. The first time each room a blow would down him, he trips out of its way. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "jester-attack",
+        "jester-mock",
+        "jester-befuddle",
+        "jester-juggle"
+      ],
+      "items": [
+        {
+          "id": "jester-attack",
+          "label": "Marotte (attack)",
+          "video": "../../../clips/showcase3/jester-attack.mp4",
+          "text": "Jester: Marotte (attack). A bonk with the jester's stick."
+        },
+        {
+          "id": "jester-mock",
+          "label": "Mock",
+          "video": "../../../clips/showcase3/jester-mock.mp4",
+          "text": "Jester: Mock. Pulls a face and blows a raspberry: enemies near can't help chasing him. Shown at tier III."
+        },
+        {
+          "id": "jester-befuddle",
+          "label": "Befuddle",
+          "video": "../../../clips/showcase3/jester-befuddle.mp4",
+          "text": "Jester: Befuddle. Tells an enemy a joke so bad it turns on its own friends for a moment. Shown at tier III."
+        },
+        {
+          "id": "jester-juggle",
+          "label": "Juggling Act",
+          "video": "../../../clips/showcase3/jester-juggle.mp4",
+          "text": "Jester: Juggling Act. Throws his juggling balls: they bounce from enemy to enemy. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "samurai",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Samurai",
+      "text": "Fighter. An indigo kabuto with gold horns and a long katana. Waits, then cuts.",
+      "why": "Trait: Bushido. Below 35% health he cuts 40% faster. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "samurai-attack",
+        "samurai-iaido",
+        "samurai-focus",
+        "samurai-crescentCut"
+      ],
+      "items": [
+        {
+          "id": "samurai-attack",
+          "label": "Katana (attack)",
+          "video": "../../../clips/showcase3/samurai-attack.mp4",
+          "text": "Samurai: Katana (attack). A clean, wide cut."
+        },
+        {
+          "id": "samurai-iaido",
+          "label": "Iaido",
+          "video": "../../../clips/showcase3/samurai-iaido.mp4",
+          "text": "Samurai: Iaido. Sheathes the blade, then flashes straight through a line of enemies, cutting every one. Shown at tier III."
+        },
+        {
+          "id": "samurai-focus",
+          "label": "Focus",
+          "video": "../../../clips/showcase3/samurai-focus.mp4",
+          "text": "Samurai: Focus. Breathes in and settles: his next cut lands with everything. Shown at tier III."
+        },
+        {
+          "id": "samurai-crescentCut",
+          "label": "Crescent Cut",
+          "video": "../../../clips/showcase3/samurai-crescentCut.mp4",
+          "text": "Samurai: Crescent Cut. A cut so fast it flies off the blade as a crescent through the enemies. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "valkyrie",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Valkyrie",
+      "text": "Fighter. A winged helm, long plaits and a big spear. Carries the fallen back into the fight.",
+      "why": "Trait: Chooser of the Slain. Revives the fallen twice as fast, at 30% health. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "valkyrie-attack",
+        "valkyrie-valkyrieCall",
+        "valkyrie-spearThrow",
+        "valkyrie-skyDive"
+      ],
+      "items": [
+        {
+          "id": "valkyrie-attack",
+          "label": "Spear (attack)",
+          "video": "../../../clips/showcase3/valkyrie-attack.mp4",
+          "text": "Valkyrie: Spear (attack). A long spear thrust."
+        },
+        {
+          "id": "valkyrie-valkyrieCall",
+          "label": "Valkyrie's Call",
+          "video": "../../../clips/showcase3/valkyrie-valkyrieCall.mp4",
+          "text": "Valkyrie: Valkyrie's Call. Calls a fallen ally back to their feet at once. Shown at tier III."
+        },
+        {
+          "id": "valkyrie-spearThrow",
+          "label": "Spear of the Sky",
+          "video": "../../../clips/showcase3/valkyrie-spearThrow.mp4",
+          "text": "Valkyrie: Spear of the Sky. Hurls the spear down a line; it flies back to her hand. Shown at tier III."
+        },
+        {
+          "id": "valkyrie-skyDive",
+          "label": "Sky Dive",
+          "video": "../../../clips/showcase3/valkyrie-skyDive.mp4",
+          "text": "Valkyrie: Sky Dive. Leaps high on her wings and dives spear-first onto an enemy. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "engineer",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Engineer",
+      "text": "Fighter. An orange work suit, a welding mask pushed up and a very big wrench. Builds a turret and keeps it.",
+      "why": "Trait: Handy. Things he builds or calls take 30% less damage. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "engineer-attack",
+        "engineer-deployTurret",
+        "engineer-tinker",
+        "engineer-shockMine"
+      ],
+      "items": [
+        {
+          "id": "engineer-attack",
+          "label": "Wrench (attack)",
+          "video": "../../../clips/showcase3/engineer-attack.mp4",
+          "text": "Engineer: Wrench (attack). A clanging swing of the wrench."
+        },
+        {
+          "id": "engineer-deployTurret",
+          "label": "Deploy Turret",
+          "video": "../../../clips/showcase3/engineer-deployTurret.mp4",
+          "text": "Engineer: Deploy Turret. Sets down a turret that swivels and shoots the nearest enemy. Shown at tier III."
+        },
+        {
+          "id": "engineer-tinker",
+          "label": "Tinker",
+          "video": "../../../clips/showcase3/engineer-tinker.mp4",
+          "text": "Engineer: Tinker. A few smart knocks with the wrench: his turrets are patched up, and so is a friend. Shown at tier III."
+        },
+        {
+          "id": "engineer-shockMine",
+          "label": "Shock Mine",
+          "video": "../../../clips/showcase3/engineer-shockMine.mp4",
+          "text": "Engineer: Shock Mine. Tosses out a mine that goes off with a crackle when an enemy comes near. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "werewolf",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Werewolf",
+      "text": "Fighter. A woodsman with a hatchet and a torn red shirt. Then, when it matters, a great grey wolf.",
+      "why": "Trait: Moonblood. Heals 1% of his health a second while fighting. Tick what reads well; anything unticked or commented on gets reworked.",
+      "pick": [
+        "werewolf-attack",
+        "werewolf-turnWolf",
+        "werewolf-frenzy",
+        "werewolf-pounce"
+      ],
+      "items": [
+        {
+          "id": "werewolf-attack",
+          "label": "Hatchet (attack)",
+          "video": "../../../clips/showcase3/werewolf-attack.mp4",
+          "text": "Werewolf: Hatchet (attack). A woodsman's chop. As a wolf: quick raking claws with either paw."
+        },
+        {
+          "id": "werewolf-turnWolf",
+          "label": "Turn",
+          "video": "../../../clips/showcase3/werewolf-turnWolf.mp4",
+          "text": "Werewolf: Turn. Lets the wolf out: faster, and the claws come twice as fast as the hatchet. Shown at tier III."
+        },
+        {
+          "id": "werewolf-frenzy",
+          "label": "Frenzy",
+          "video": "../../../clips/showcase3/werewolf-frenzy.mp4",
+          "text": "Werewolf: Frenzy. Each blow in a row comes faster than the last. Shown at tier III."
+        },
+        {
+          "id": "werewolf-pounce",
+          "label": "Pounce",
+          "video": "../../../clips/showcase3/werewolf-pounce.mp4",
+          "text": "Werewolf: Pounce. Leaps onto a far enemy and pins it to the floor. Shown at tier III."
+        }
+      ]
+    }
+  ]
+}

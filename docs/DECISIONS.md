@@ -367,4 +367,4 @@ instantly."
   per unit); two units overloading each other with shock without end; the Jester's Befuddle (a flipped enemy treated
   as a party hero); the hero Bandit's id clashing with the Wildwood's bandit (now `rogueBandit`).
 - **The lead's call on a lane's rule**: roster3 added "enemies wither if a room drags on" (60 s without a kill or
-  200 s, 4% a second). Softened to 90 s / 300 s / 3%, and flagged to the designer.
+  200 s, 4% a second). Softened to 90 s / 240 s / 3%, and flagged to the designer.

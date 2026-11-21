@@ -57,7 +57,7 @@ A beard, a helm, a hammer the size of a sheep. Knocks things a long way. Art: `a
 - **Skull Splitter** (10s). Two blows: one up under the chin, then one straight down. The second hits double on a staggered foe. I: Two blows. II: The first staggers much harder. III: The second shakes everything round the target too.
 - **Trait: Iron Will.** Below 30% health he can't be stunned or staggered and hits 25% harder.
 
-## Bandit (`bandit`, skirmish, 350 gold)
+## Bandit (`rogueBandit`, skirmish, 350 gold)
 A cutlass, a red bandanna and very quick hands. Fights dirty and comes home richer. Art: `art/heroes/bandit.svg`.
 
 - **Attack: Cutlass.** Quick cutlass slashes.
