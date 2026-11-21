@@ -3,7 +3,7 @@
 // design to be judged: the host of the Spire, six gold wings, three sun blades that circle her (they can be broken), the
 // Archon's light-pillars sweeping like clock hands folded in, a choir that shields her, and a fall at the end (radiance
 // turns to curse).
-// Art: PLACEHOLDER, the seraph recoloured gold and bigger (art/enemies/placeholder/seraph.svg); the blades are drawn.
+// Art: art round 9's Gilded Seraph and choir singer (art/bosses/, design/class-round9); the blades are drawn.
 import { alive, hurt, puff, sparks, setAnim, addDanger, spawn, fx, kill } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, angleDiff, rand, rrange, chance } from './util.js';
 import { lineClear } from './path.js';
@@ -195,14 +195,14 @@ function sanctum(w) {
   w.arenaAir = (ctx, w2) => drawHands(ctx, w2);
 }
 
-const ART = variantUrl('art/enemies/placeholder/seraph.svg', { hue: 10, sat: 1.2, light: 0.08 });
+const ART = 'art/bosses/gilded-seraph.svg'; // art round 9 (design/class-round9; her fallen look is art/bosses/gilded-seraph-fallen.svg, not swapped in yet)
 export const SERAPH = {
   defs: {
-    gildedSeraph: { team: 'enemy', name: 'The Gilded Seraph', art: ART, headR: 56, r: 48, vr: 38, turn: 3, accel: 180, face: 3, mass: 6, hp: 950, speed: 50, role: 'ranged', range: 300,
+    gildedSeraph: { team: 'enemy', name: 'The Gilded Seraph', art: ART, headR: 58, r: 48, vr: 38, turn: 3, accel: 180, face: 3, mass: 6, hp: 950, speed: 50, role: 'ranged', range: 300,
       atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 220, coins: [90, 110], boss: true, arena: 'sanctum', attackAnim: 'cast',
       res: { radiance: 0, curse: 0.5, poison: 0.3, stagger: 0.5 }, brain, onDeath: death },
     sunBlade: PART('Sun Blade', { r: 22, vr: 22, mass: 20, hp: 100, res: { radiance: 0 }, draw: drawSunBlade }),
-    seraphSinger: { team: 'enemy', name: 'Choir Singer', art: variantUrl('art/enemies/placeholder/cherub.svg', { hue: 10, sat: 1.1, light: 0.1 }), headR: 46, r: 26, vr: 20, turn: 3, accel: 100, face: 3, mass: 2,
+    seraphSinger: { team: 'enemy', name: 'Choir Singer', art: 'art/bosses/choir-singer.svg', headR: 40, r: 26, vr: 20, turn: 3, accel: 100, face: 3, mass: 2,
       hp: 60, speed: 0, role: 'ranged', range: 300, atkCd: 999, temp: 0.2, commit: 1, xp: 6, coins: [0, 0], noElite: true, res: { radiance: 0 }, brain: singerBrain },
   },
   arenas: { sanctum },

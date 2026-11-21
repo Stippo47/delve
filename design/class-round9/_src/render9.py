@@ -86,6 +86,12 @@ add("foundry-crawler-head", "Chain crawler (head)", 23, 40, 23, 52)
 add("foundry-crawler-plate", "Chain crawler (a plate)", 22, 46, 22, 54)
 add("foundry-drill-bot", "Drill bot", 20, 49, 20, 60)
 add("foundry-storm-spirit", "Storm spirit", 15, 30, 15, 58)
+# the bosses that wore recoloured art
+add("boss-goblin-chieftain", "The Goblin Chieftain", 38, 67, 38, 62)
+add("boss-winter-queen", "The Winter Queen", 34, 57, 34, 54)
+add("boss-gilded-seraph", "The Gilded Seraph", 38, 58, 38, 56)
+add("boss-gilded-seraph-fallen", "The Gilded Seraph, fallen (not used yet)", 38, 58)
+add("boss-choir-singer", "Choir singer (the Seraph's)", 20, 40, 20, 46)
 
 
 # boards that show a design with what the game draws apart, as the game places it (round 8's troll and boulder)

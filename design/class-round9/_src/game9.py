@@ -66,6 +66,12 @@ COPIES = [
     ("enemies/foundry-crawler-plate.svg", "enemies/crawler-plate.svg"),
     ("enemies/foundry-drill-bot.svg", "enemies/drill-bot.svg"),
     ("enemies/foundry-storm-spirit.svg", "enemies/spirit-shock.svg"),
+    # the bosses that wore recoloured art (the Seraph's fallen look is not swapped in by the game yet)
+    ("enemies/boss-goblin-chieftain.svg", "bosses/goblin-chieftain.svg"),
+    ("enemies/boss-winter-queen.svg", "bosses/winter-queen.svg"),
+    ("enemies/boss-gilded-seraph.svg", "bosses/gilded-seraph.svg"),
+    ("enemies/boss-gilded-seraph-fallen.svg", "bosses/gilded-seraph-fallen.svg"),
+    ("enemies/boss-choir-singer.svg", "bosses/choir-singer.svg"),
 ]
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 // the Warboss card): "Chieftain. More abilities." From the roster: charges, a spinning cleaver, and war drums round
 // the room that call waves until they're smashed; from the Warren deck note: spears that come back, and dynamite mice
 // ("the boss could summon them").
-// Art: PLACEHOLDER, the orc recoloured (art/enemies/orc.svg via recolor.js); the drums are drawn in code (fx-boss.js).
+// Art: art round 9's Goblin Chieftain (art/bosses/goblin-chieftain.svg, design/class-round9); the drums are drawn in code (fx-boss.js).
 import { alive, hurt, puff, sparks, setAnim, addDanger, addBuff, spawn, kill } from './sim.js';
 import { TAU, dist, angleTo, rand, rrange, chance } from './util.js';
 import { lob, cone, line, around, hold, beginHold, due, again, crowd, stand, turnTo, later } from './elites.js';
@@ -203,7 +203,7 @@ function warcamp(w) {
 
 export const CHIEFTAIN = {
   defs: {
-    chieftain: { team: 'enemy', name: 'The Goblin Chieftain', art: variantUrl('art/enemies/orc.svg', { hue: 28, sat: 1.15, light: -0.1 }), headR: 62, r: 50, vr: 38, turn: 2.4, accel: 160, face: 2.6, mass: 6,
+    chieftain: { team: 'enemy', name: 'The Goblin Chieftain', art: 'art/bosses/goblin-chieftain.svg', headR: 67, r: 50, vr: 38, turn: 2.4, accel: 160, face: 2.6, mass: 6,
       hp: 1300, speed: 54, role: 'melee', range: 30, atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 160, coins: [60, 80], boss: true, arena: 'warcamp', attackAnim: 'swing',
       res: { stagger: 0.5, chill: 0.7, poison: 0.3 }, brain: (w, u, dt) => { if (!u.ch) placeDrums(w, u); return brain(w, u, dt); }, onDeath: death },
     // a war drum: stands where it's put, beats, calls goblins; smash it
