@@ -13,7 +13,8 @@ RB = ROOT / "tools" / "riffle" / "render_board.py"
 # notes left on the "(before)" tile (the round-5 version): their before is that tile
 ON_BEFORE = {"greenskin-ogre", "greenskin-orc", "lizardman-blade-b", "lizardman-spear-b", "ghost"}
 # a design in two versions (or under a new name) -> the design the note was on
-ALT = {"ghost-a": "ghost", "ghost-b": "ghost", "greenskin-troll-a": "greenskin-troll", "greenskin-troll-b": "greenskin-troll"}
+ALT = {"ghost-a": "ghost", "ghost-b": "ghost", "greenskin-troll-a": "greenskin-troll", "greenskin-troll-b": "greenskin-troll",
+       "ranged-marksman-a-beard": "ranged-marksman-a"}
 
 
 def label(stem):

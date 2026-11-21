@@ -3,6 +3,7 @@ snowman. All seen from straight above, chunky shapes, lit from the left, contact
 python critters.py   (writes ../../enemies/*.svg)
 """
 from lib import *
+import math
 
 BONE = ("#F4EBD2", "#C9B98E")
 WOOD = ("#9A6A40", "#5E3C22")
@@ -130,6 +131,61 @@ def ghost():
     return S
 
 
+# round 7 (on the "(before)" tile, the round-5 ghost: "Overall doesnt look good. Ghosts can also have eyes. Before or
+# after"): a new ghost, with eyes, in two versions; the round-5/6 ghost() is kept as it was.
+GHOST_R7 = True
+
+
+def ghost7(take):
+    """Both versions are a teardrop seen from above, the head and its trailing sheet one shape (no seam between them),
+    lit from the top left, with the eyes and mouth at the front of the head and two stubby arms (before #body, so the
+    sheet covers where they join).
+    a, "sheet": a white sheet ghost: two big dark round eye holes and a small "o" mouth; the sheet narrows behind the
+    head into a plump tail whose tip flicks to the side (the shape of the picked round-3 ghost, tail reworked).
+    b, "wisp": a pale blue spirit: two tall dark eyes and no mouth; the tail ends in a small round curl; its arms are
+    rounded sleeves reaching forward and out (a's stick out at the sides)."""
+    if take == "a":
+        c1, c2, fold = "#FFFFFF", "#CBCDEA", "#A2A6D2"
+        S = Sprite('GHOST, sheet (round 7): a white sheet ghost seen from above, with eyes: a teardrop, the round head at '
+                   'the front with two big dark eye holes and a small dark "o" mouth, the sheet narrowing behind it into a '
+                   'plump tail whose tip flicks to the side; two stubby sheet arms reach out at the sides. Parts: '
+                   '#arm-l / #arm-r (the arms, before #body), #body (sheet and face). Front = DOWN (+y).')
+        out = [(100, 163), (62, 147), (53, 116), (59, 86), (74, 60), (86, 38), (96, 18), (112, 6), (132, 5, 'c'),
+               (118, 14), (112, 30), (120, 52), (136, 78), (147, 112), (138, 147)]
+        eyes, ery, mouth_at = (83, 117), 10.5, (100, 151)
+        armc = (c1, c2)
+    else:
+        c1, c2, fold = "#F6FBFF", "#A9C2E8", "#8AA6D6"
+        S = Sprite('GHOST, wisp (round 7): a pale blue spirit seen from above, with eyes: a teardrop, the round head at the '
+                   'front with two tall dark eyes and no mouth, the body narrowing behind it into a plump tail that ends in '
+                   'a small round curl; two rounded sleeves of arms reach forward and out. Parts: #arm-l / #arm-r (the arms, before '
+                   '#body), #body (head, tail and face). Front = DOWN (+y).')
+        out = [(100, 163), (62, 147), (53, 116), (59, 86), (74, 60), (88, 40), (96, 22), (108, 8), (126, 6), (136, 18),
+               (132, 30), (122, 32), (120, 24), (114, 26), (114, 38), (124, 56), (138, 80), (147, 112), (138, 147)]
+        eyes, ery, mouth_at = (84, 116), 13, None
+        armc = (c1, c2)
+    for gid, side in (("arm-l", -1), ("arm-r", 1)):
+        S.group(gid, (100 + side * 36, 120))
+        if take == "a":  # stubby arms out at the sides
+            arm = [(132, 112), (150, 116), (164, 128), (168, 142), (160, 148), (145, 143), (131, 134)]
+        else:            # rounded sleeves reaching forward and out
+            arm = [(130, 114), (147, 120), (160, 134), (167, 152), (161, 160), (150, 156), (139, 144), (128, 132)]
+        S.shape(blob(arm if side > 0 else mx(arm), 0.9), S.lg(lt(armc[0], 0.0), dk(armc[1], 0.04)), shadow=False, shade=0.25)
+    S.group("body")
+    body = blob(out, 0.9)
+    lit = ug(S, [(0, c1), (0.55, mix(c1, c2, 0.45)), (1, c2)], 60, 20, 150, 160)
+    glow = S.rg("#FFFFFF", "#FFFFFF", 0.5, 0.5, 0.5, 0.85, 0)
+    S.shape(body, lit, shadow=False, shade=0.3,
+            decor=[f'<path d="M 92 92 C 96 70 104 46 118 18 C 110 44 108 70 106 94 Z" fill="{fold}" opacity="0.3"/>',
+                   f'<rect x="40" y="-10" width="120" height="96" fill="{ug(S, [(0, fold, 0.35), (1, fold, 0)], 0, 0, 0, 96)}"/>',
+                   f'<circle cx="92" cy="114" r="46" fill="{glow}"/>'])
+    for x in eyes:
+        S.flat(ell(x, 130, 8 if take == "a" else 7, ery), "#2B2230")
+    if mouth_at:
+        S.flat(ell(*mouth_at, 4.5, 5.5), "#2B2230")
+    return S
+
+
 # ----------------------------------------------------------------- spiders
 LEGS = [((124, 134), (166, 148), (164, 192)),
         ((134, 124), (182, 120), (200, 148)),
@@ -243,7 +299,11 @@ if __name__ == "__main__":
     for kind in ("big", "small", "fire"):
         print(slime(kind).write(f"slime-{kind}.svg"))
     print(bat().write("bat.svg"))
-    print(ghost().write("ghost.svg"))
+    if GHOST_R7:
+        for take in ("a", "b"):
+            print(ghost7(take).write(f"ghost-{take}.svg"))
+    else:
+        print(ghost().write("ghost.svg"))
     for kind in ("hunter", "momma"):
         print(spider(kind).write(f"spider-{kind}.svg"))
     print(snowman().write("snowman.svg"))

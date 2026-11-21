@@ -11,6 +11,11 @@ PIRATE_R6 = True
 SLINGER_R6 = True
 TRAPPER_R6 = True
 GUN_BACK, GUN_FWD = 16, 6
+# round 7, Marksman A ("The Moustache above nose. Beard may be below head. In game the gun needs to be held in front
+# of them."): see marksman_a(). MARKSMAN_R7 turns the round-7 changes on; BEARD adds a small beard below the head
+# (the -beard version).
+MARKSMAN_R7 = True
+BEARD = False
 MOUSTACHE_SKINNY = ("M 100 128.6 C 96 126.4 90 126.2 85 127 C 82 127.4 80.2 126 79.8 122.8 C 77.8 126.6 79.4 131 83.8 131.6 "
                     "C 90 132.4 95.8 131.8 100 130.4 C 104.2 131.8 110 132.4 116.2 131.6 C 120.6 131 122.2 126.6 "
                     "120.2 122.8 C 119.8 126 118 127.4 115 127 C 110 126.2 104 126.4 100 128.6 Z")
@@ -254,6 +259,8 @@ def marksman_a():
                "plume sweeping back, crimson coat with a gold crossbelt, white cravat. A long musket at the right "
                "shoulder (arm-r, drawn after #body so all of it shows), both fists on it, the barrel well out in "
                "front. arm-l left out. " + LAYOUT)
+    if MARKSMAN_R7:
+        return marksman_a7(S)
     S.group("body")
     S.shape(SHOULDERS, "#A8323A", decor='<path d="M 40 86 L 54 82 L 150 140 L 132 140 Z" fill="#F2B53A"/>')
     S.shape(blob([(84, 132), (100, 126), (116, 132), (112, 152), (100, 160), (88, 152)], 0.9), "#F1ECE2", shadow=3)
@@ -279,6 +286,48 @@ def marksman_a():
     else:
         gun(S, frame(160, 90, 4), "#9A6034", "#A9B2C0", BRASS)
     return save_r("marksman-a", S)
+
+
+def marksman_a7(S):
+    """Round 7 Marksman A: the round-6 design with only the round-8-log note applied.
+    - "The Moustache above nose": the designer's word for the small curve on these faces is "nose" (Harpooner: "remove
+      nose"; Pirate: "nose makes it look like they are smiling"), and the moustache sat above it. The same moustache now
+      sits under it, 13 units lower, its flicked-up ends rising either side of the curve.
+    - "Beard may be below head": BEARD (the -beard version) adds a small pointed grey beard hanging from the chin past
+      the head's front edge, in the moustache's grey.
+    - "In game the gun needs to be held in front of them": the same musket, held in front of the face instead of on
+      the right shoulder at the body's edge: it points straight forward along x 130 (it was at x 160), its stock tucked
+      under the hat brim at the right cheek, so it crosses in front of the right side of the face: the trigger fist under
+      the brim, the dark lock, the fore-stock and the front fist in front of the chin, the barrel well out ahead. arm-r
+      is drawn after #body (in front of the face) and the hat and plume are a #front part drawn over it, so the stock
+      slides under the brim, not over the hat; in the game a draw-back pulls the gun in under the hat brim."""
+    S.comment = (S.comment.replace("A long musket at the right shoulder (arm-r, drawn after #body so all of it shows), "
+                                   "both fists on it, the barrel well out in front. arm-l left out.",
+                                   "A long musket held in front of the face, aimed straight ahead from the right cheek "
+                                   "(arm-r, drawn after #body), both fists on it, the barrel well out in front; the hat "
+                                   "and plume are #front, drawn over the musket's stock. arm-l left out. Round 7: the "
+                                   "skinny grey moustache sits under the nose curve" + (", a small pointed grey beard "
+                                   "hangs below the chin" if BEARD else "") + "."))
+    S.group("body")
+    S.shape(SHOULDERS, "#A8323A", decor='<path d="M 40 86 L 54 82 L 150 140 L 132 140 Z" fill="#F2B53A"/>')
+    S.shape(blob([(84, 132), (100, 126), (116, 132), (112, 152), (100, 160), (88, 152)], 0.9), "#F1ECE2", shadow=3)
+    head(S)
+    S.shape(MOUSTACHE_SKINNY, "#9C9894", T="translate(0 13)", shadow=2)
+    if BEARD:
+        S.shape("M 92.5 145 C 96 147 104 147 107.5 145 C 108.5 153 106 162 100 170 C 94 162 91.5 153 92.5 145 Z",
+                "#9C9894", shadow=2)
+    mouth(S)
+    S.group("arm-r", PR, "musket held in front, both hands (arm-l left out)")
+    gun_long(S, frame(130, 92, 0), "#9A6034", "#A9B2C0", BRASS, back=GUN_BACK, fwd=GUN_FWD)
+    S.group("front", None, "the hat and plume, over the musket's stock")
+    S.shape(ell(100, 64, 68, 50), "#2C7A7B", shadow=5,
+            decor=f'<path d="{ell(100, 60, 56, 38)}" fill="#3A9192" opacity="0.5"/>')
+    S.shape("M 34 70 C 30 40 52 16 84 12 C 60 26 48 48 50 78 Z", "#246668", shadow=3)
+    S.shape(circ(102, 62, 30), "#246668", shadow=4,
+            decor=f'<path d="{ell(90, 50, 12, 8)}" fill="#3E9C9C" opacity="0.7"/>'
+                  '<path d="M 66 74 C 82 84 122 84 138 74 L 138 96 L 66 96 Z" fill="#1E3E40" opacity="0.8"/>')
+    plume(S, (118, 86), (172, 72), (164, -4))
+    return save_r("marksman-a" + ("-beard" if BEARD else ""), S)
 
 
 def marksman_b():
