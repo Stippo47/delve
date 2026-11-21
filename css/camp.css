@@ -1,5 +1,5 @@
 /* The camp (UI v3): frame, tabs, Delve home, heroes, trader, book, settings, sheets' contents, the result card. */
-#camp { position: fixed; left: 0; top: 0; right: 0; bottom: 0; display: flex; flex-direction: column; background: var(--ink); z-index: 10; }
+#camp { position: fixed; left: 0; top: 0; right: 0; bottom: auto; height: var(--app-h, 100%); display: flex; flex-direction: column; background: var(--ink); z-index: 10; }
 
 /* ---------------------------------------------------------------- frame */
 .topbar { flex: none; display: flex; align-items: center; gap: 10px; min-height: calc(var(--toph) + var(--st));
@@ -257,7 +257,7 @@
 .rar { font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
 
 /* ---------------------------------------------------------------- the result card */
-#result { position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
+#result { position: fixed; left: 0; top: 0; right: 0; bottom: auto; height: var(--app-h, 100%); z-index: 50; display: flex; align-items: center; justify-content: center;
   padding: calc(16px + var(--st)) 16px calc(16px + var(--sb)); background: radial-gradient(circle at 50% 30%, #1D2347, #0A0C18 75%); overflow-y: auto; }
 #result.hidden { display: none; }
 .rcard { width: 100%; max-width: 420px; text-align: center; animation: up .4s cubic-bezier(.2,.8,.2,1); }
