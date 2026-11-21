@@ -36,15 +36,30 @@
 <div id="banner" class="hidden"></div>
 
 <div id="camp" class="hidden">
+  <canvas id="campCanvas"></canvas>
   <header class="topbar" id="campTop"></header>
-  <main id="campMain"></main>
-  <div id="campThumb" class="thumb hidden"></div>
-  <nav id="tabbar" class="tabbar"></nav>
+  <p id="campHint" class="ground-hint">Tap the fire to choose your party</p>
+  <div id="campPanel" class="hidden"></div>
 </div>
 <div id="sheet" class="hidden"></div>
 
 <div id="result" class="hidden"></div>
 
+<script>
+// An iPhone home-screen app with a see-through status bar reports a viewport one status bar short of the screen.
+// Measure the real height for css/base.css (--app-h). Only when launched from the home screen.
+(function () {
+  function fit() {
+    var standalone = window.navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+    if (!standalone) return;
+    var portrait = window.innerHeight >= window.innerWidth;
+    var full = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+    var h = Math.max(window.innerHeight, /iP(hone|ad|od)/.test(navigator.userAgent) || navigator.maxTouchPoints > 1 && /Mac/.test(navigator.userAgent) ? full : 0);
+    document.documentElement.style.setProperty('--app-h', h + 'px');
+  }
+  fit(); window.addEventListener('resize', fit); window.addEventListener('orientationchange', function () { setTimeout(fit, 250); });
+})();
+</script>
 <script type="module" src="js/main.js"></script>
 </body>
 </html>

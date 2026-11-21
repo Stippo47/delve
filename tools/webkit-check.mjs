@@ -23,9 +23,13 @@ try {
   await page.evaluate(() => { const s = GAME.save; s.gold = 900; s.unlocks = { slotMini1: true, slotBoss1: true }; s.party = ['paladin', 'archer'];
     s.heroes.paladin.level = 5; s.heroes.paladin.points = 2; s.heroes.archer.level = 3; GAME.cheat({}); });
   await shot('wk-01-camp');
-  for (const t of ['heroes', 'trader', 'book', 'settings']) { await page.click(`[data-act="tab:${t}"]`); await shot('wk-02-' + t); }
-  await page.click('[data-act="tab:heroes"]'); await page.click('[data-act="hero:paladin"]'); await shot('wk-03-hero-skills');
-  await page.click('[data-act="tab:camp"]');
+  // the camp ground (round 9): everything is a thing in the scene; CAMP.setMode drives the same views a tap opens
+  for (const m of ['fire', 'map', 'trader', 'book', 'settings']) { await page.evaluate((m) => CAMP.setMode(m), m); await shot('wk-02-' + m); }
+  await page.evaluate(() => CAMP.setMode('hero', { id: 'paladin' })); await shot('wk-03-hero-skills');
+  const panel = await page.evaluate(() => { const r = document.getElementById('campPanel').getBoundingClientRect(), c = document.getElementById('campCanvas').getBoundingClientRect(); return { top: Math.round(r.top), h: Math.round(r.height), canvas: [Math.round(c.width), Math.round(c.height)] }; });
+  console.log('hero panel', JSON.stringify(panel));
+  if (panel.h < 500 || panel.canvas[1] < 800) errors.push('hero zoom layout off: ' + JSON.stringify(panel));
+  await page.evaluate(() => CAMP.setMode('ground'));
   await page.evaluate(() => { GAME.record(true); GAME.startRun({ theme: 'warren', party: ['paladin', 'archer'], mercs: true, potions: {}, elixirs: {}, tlv: {} }); for (let i = 0; i < 60; i++) GAME.recFrame(1 / 30); });
   await shot('wk-04-hud');
   const bars = await page.evaluate(() => [...document.querySelectorAll('.hcard')].map((c) => {
