@@ -45,3 +45,29 @@ PLACEHOLDER; variants are recolours.
 Art (the round-7 notes: orc's wider mouth, ghosts without the back sliver, the liked troll shape twice as big with a
 boulder, the mohawk one kept as something else; real art for the new kinds), the rest of the roster (Frost, Ember,
 Spire, Dunes, Foundry changes), the remaining heroes with kits, a designed boss per dungeon, the convoy mode.
+
+## After this wave (the designer, 2026-11-21: "Start those other things after you finish this wave of work automatically. I'll try to make sure I'm awake to reset credits on time.")
+When foes2, vis2 and camp3 are merged, released and reported, start the next wave **without asking**:
+- **A: art** (Opus, highest effort, change only what each note asks): the art-round7 notes in the round 9 log (orc's
+  wider mouth; remove the back sliver on both ghosts; the troll "before" shape with its face fixed, about 2x bigger,
+  with a boulder; Troll A mohawk kept as something that isn't a troll), then real art for the new kinds that went in
+  on placeholders (wolf, bandits x6, boar, sproutling, ent, wisp, the Alpha, the Bandit Chief, the Elder Ent, the rat
+  king as a knot of rats, crabs, leeches...), in the heroes' top-down bust style, no eyes.
+- **R: the rest of the roster**: the approved Frost Hollow, Ember Deep, Gilded Spire, Sunken Dunes and Clockwork
+  Foundry kinds with the designer's notes (round 9 log, roster2), the two new dungeons, and the deck-note families
+  (snake/chain enemies, wall-mounted and stationary turrets, burrowers, elemental support spirits, a normal golem,
+  the bee family in copper/bronze/steel, the saw blade).
+- **H: the remaining heroes into the game**: kits (1 attack, 3 abilities with tiers, 1 trait) and skill webs for the
+  picked heroes not yet playable, using the round 5-7 art; put the kits in a Riffle deck as they go in.
+- **B: a designed boss per dungeon** (Warren chieftain with more abilities, the Great Ooze for the Sewers, the Thing
+  in the Cistern without rising water, Winter Queen or as answered, Cinder the wingless multi-part drake, the Spire,
+  the sand wurm as the Dunes boss, the Foundry's Skeletron-style head and two hands).
+- **C: the convoy (wagon escort) mode** prototype as a second mode, one biome.
+- Quests: build from docs/QUESTS.md once the designer has seen it.
+Run at most 4 at once; check usage first; if the weekly limit stops agents mid-work their commits are kept on
+their branches: resume them after the reset.
+
+## Lane T: run stats (added 2026-11-21, branch `stats`)
+The designer: "When the party leaves a dungeon I want to see stats about who did the most damage, healing, took most
+damage, most kills and deaths, etc. As well as a count of how many of each type of unit defeated overall. Also to see
+a unit's damage and attack speed."

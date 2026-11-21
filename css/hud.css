@@ -23,7 +23,7 @@
 #bossBar .bar > i { background: linear-gradient(180deg, #FF8A6E, #C8392A); transition: width .2s; }
 
 /* ---------------------------------------------------------------- the cards */
-#dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding: 18px calc(6px + var(--sr)) calc(6px + var(--sb)) calc(6px + var(--sl));
+#dock { position: fixed; left: 0; right: 0; bottom: calc(100% - var(--app-h, 100%)); z-index: 5; padding: 18px calc(6px + var(--sr)) calc(6px + var(--sb)) calc(6px + var(--sl));
   background: linear-gradient(180deg, rgba(14,17,32,0), rgba(14,17,32,.7) 22px, rgba(14,17,32,.92)); pointer-events: none; }
 #cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; max-width: 640px; margin: 0 auto; }
 #cards.n1 { grid-template-columns: minmax(0, 190px); justify-content: center; }
@@ -75,7 +75,7 @@
 body.paused #dock { display: none; }
 
 /* ---------------------------------------------------------------- pause and inspect */
-#inspect { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; }
+#inspect { position: fixed; left: 0; right: 0; bottom: calc(100% - var(--app-h, 100%)); z-index: 6; }
 .ip-panel { max-height: 58vh; display: flex; flex-direction: column; background: var(--surf); border-radius: 22px 22px 0 0;
   box-shadow: 0 -10px 40px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08); padding-bottom: var(--sb); animation: rise .22s cubic-bezier(.2,.8,.2,1); }
 .ip-strip { flex: none; display: flex; gap: 6px; align-items: center; padding: 12px 12px 8px; overflow-x: auto; scrollbar-width: none; }
@@ -115,7 +115,7 @@ body.paused #dock { display: none; }
 .ip-foot .btn .ico { width: 18px; height: 18px; vertical-align: -3px; margin-right: 4px; }
 
 /* ---------------------------------------------------------------- leaving early */
-#leaveAsk { position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 8; display: flex; align-items: flex-end; background: rgba(5,7,15,.55); }
+#leaveAsk { position: fixed; left: 0; top: 0; right: 0; bottom: auto; height: var(--app-h, 100%); z-index: 8; display: flex; align-items: flex-end; background: rgba(5,7,15,.55); }
 #leaveAsk.hidden { display: none; }
 .la-panel { width: 100%; padding: 18px 18px calc(18px + var(--sb)); background: var(--surf); border-radius: 22px 22px 0 0; animation: rise .22s cubic-bezier(.2,.8,.2,1); }
 .la-panel h2 { font-size: 22px; margin-bottom: 6px; }
