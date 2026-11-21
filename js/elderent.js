@@ -24,7 +24,7 @@ export const PHASE_AT = [1, 0.65, 0.35];
 export const BURN = { k: 0.7, taken: 2, move: 1.35, atk: 1.4, hitBurn: 22, at: 8 };
 const WAKE = 420;
 
-const heroes = (w) => w.units.filter((o) => o.team === 'hero' && alive(o) && !o.ethereal);
+const heroes = (w, u) => w.units.filter((o) => o.team !== u.team && alive(o) && !o.ethereal); // its opponents, whichever side it's on (battle mode)
 const rootPuff = (w, x, y, n = 6) => puff(w, x, y, '#6E8F3A', n, 90, 5, 0.45);
 // Immune to everything but fire: the build-ups by its res (all 0 but burn), and the timers cleared every tick.
 const STEADY = { tick(w, u) { u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.koT = 0; u.frozenT = 0; u.tangledT = 0; }, knockImmune: true };
@@ -40,7 +40,7 @@ function brain(w, u, dt) {
   // asleep among the trees until someone comes near or hurts it
   if (k.st === 'asleep') {
     stand(u, dt);
-    if (u.aggro || heroes(w).some((h) => dist(h.x, h.y, u.x, u.y) < WAKE)) {
+    if (u.aggro || heroes(w, u).some((h) => dist(h.x, h.y, u.x, u.y) < WAKE)) {
       u.aggro = true; k.st = 'awake'; k.phase = 1; beginHold(u, 1.2, null); setAnim(u, 'ability', 1.2);
       w.shake = Math.max(w.shake, 6); for (let i = 0; i < 14; i++) { const a = i / 14 * TAU; rootPuff(w, u.x + Math.cos(a) * u.r * 1.2, u.y + Math.sin(a) * u.r * 1.2, 2); }
     }
@@ -71,7 +71,7 @@ function brain(w, u, dt) {
   // root cage: a ring of roots springs up round a hero (two in the last phase): tangled at once if it's caught
   if (k.phase >= 2 && due(u, 'cage', dt, 3)) {
     again(u, 'cage', 7 * K, 9 * K);
-    const hs = heroes(w).sort((a, b) => dist(a.x, a.y, u.x, u.y) - dist(b.x, b.y, u.x, u.y));
+    const hs = heroes(w, u).sort((a, b) => dist(a.x, a.y, u.x, u.y) - dist(b.x, b.y, u.x, u.y));
     const picks = [t, ...(k.phase >= 3 ? hs.filter((h) => h !== t).slice(-1) : [])];
     for (const h of picks) lob(w, u, h.x + (h.vx || 0) * 0.3, h.y + (h.vy || 0) * 0.3, { r: EE.cage.r, tell: EE.cage.tell * K, kind: 'root', dust: '#6E8F3A', hit: hit({ dmg: EE.cage.dmg, entangle: EE.cage.entangle }),
       land: (w2, z) => { for (let i = 0; i < 10; i++) { const a = i / 10 * TAU; rootPuff(w2, z.x + Math.cos(a) * z.r, z.y + Math.sin(a) * z.r, 2); } } });
@@ -92,7 +92,7 @@ function brain(w, u, dt) {
   // falling branches: circles on the floor under heroes, then the branches come down
   if (due(u, 'branch', dt, 4)) {
     again(u, 'branch', 7.5 * K, 9.5 * K);
-    const hs = heroes(w), n = k.phase >= 3 ? 8 : k.phase >= 2 ? 6 : 4;
+    const hs = heroes(w, u), n = k.phase >= 3 ? 8 : k.phase >= 2 ? 6 : 4;
     for (let i = 0; i < n; i++) {
       const h = hs[i % hs.length], off = i < hs.length ? 0 : rrange(60, 140), a = rand() * TAU;
       const x = clamp(h.x + (h.vx || 0) * 0.4 + Math.cos(a) * off, 40, w.W - 40), y = clamp(h.y + (h.vy || 0) * 0.4 + Math.sin(a) * off, 40, w.H - 40);
@@ -111,7 +111,7 @@ function pickTarget(w, u, k, dt) {
   if ((k.tgtT = (k.tgtT || 0) - dt) <= 0 || !u.target || !alive(u.target) || u.target.ethereal) {
     k.tgtT = 1.2;
     if (u.tauntBy && u.tauntT > 0 && alive(u.tauntBy)) u.target = u.tauntBy;
-    else { let best = null, bd = Infinity; for (const h of heroes(w)) { const dd = dist(h.x, h.y, u.x, u.y) - (h === u.target ? 60 : 0); if (dd < bd) { bd = dd; best = h; } } u.target = best; }
+    else { let best = null, bd = Infinity; for (const h of heroes(w, u)) { const dd = dist(h.x, h.y, u.x, u.y) - (h === u.target ? 60 : 0); if (dd < bd) { bd = dd; best = h; } } u.target = best; }
   }
   return u.target && alive(u.target) ? u.target : null;
 }

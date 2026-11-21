@@ -309,6 +309,7 @@ export function drawThemeHazard(ctx, h, t) {
 
 // ---------------------------------------------------------------- an arena's moving parts (graves, the throne's king)
 export function drawArena(ctx, w) {
+  if (w.arenaDraw) w.arenaDraw(ctx, w); // lane B (bosses2): a designed boss's arena (js/fx-boss.js)
   for (const g of w.graves || []) {
     ctx.save(); ctx.translate(g.x, g.y); ctx.rotate(g.a);
     inked(ctx, () => rr(ctx, -44, -26, 88, 52, 8), lin(ctx, -44, -26, 44, 26, '#A29D97', '#7A7570'));

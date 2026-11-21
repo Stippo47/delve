@@ -13,7 +13,8 @@ const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 const n = +opt('n', 10), seed0 = +opt('seed', 1), depth = +opt('depth', 1), level = +opt('level', 0), startFloor = +opt('floor', 1);
 const boss = args.includes('--boss'), verbose = args.includes('--v');
-globalThis.location = { search: (boss ? '?bossroom' + (opt('floor') ? '&floor=' + opt('floor') : '') : '?x') + (args.includes('--allnodes') ? '&allnodes' : '') + (opt('foes') ? '&foes=' + opt('foes') : '') };
+// --bossid <id> (lane B): that designed boss in the boss room (dungeon.js ?boss=), whatever the theme
+globalThis.location = { search: (boss ? '?bossroom' + (opt('floor') ? '&floor=' + opt('floor') : '') + (opt('bossid') ? '&boss=' + opt('bossid') : '') : '?x') + (args.includes('--allnodes') ? '&allnodes' : '') + (opt('foes') ? '&foes=' + opt('foes') : '') };
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
 const feel = args.includes('--feel') ? { flips: 0, unitSecs: 0, stuck: 0, enemySecs: 0 } : null;
 const DT = 1 / 60;

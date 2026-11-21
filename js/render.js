@@ -204,6 +204,7 @@ export function draw(ctx, w) {
   for (const p of w.projectiles) projectile(ctx, p, w.time);
   for (const p of w.particles) drawParticle(ctx, p);
   ctx.globalAlpha = 1;
+  if (w.arenaAir) w.arenaAir(ctx, w); // lane B (bosses2): a boss arena's things in the air (falling fire, snow)
   drawAirFx(ctx, w);
   // a ray a caster holds on its target (Life Drain, round 9): over the target, under the caster
   for (const f of w.fx) if (f.type === 'beam' && f.over && !f.over.dead && w.units.includes(f.over)) { drawBeam(ctx, f, w.time); drawUnit(ctx, f.over, w); }
@@ -565,6 +566,7 @@ function borderOf(u, w) {
 }
 function drawUnit(ctx, u, w) {
   if (u.hidden) return; // round 9: gone in a smoke bomb (the Bandit Chief), not just see-through
+  if (u.def.draw) { u.def.draw(ctx, u, w); return; } // lane B (bosses2): a boss part drawn in code (js/fx-boss.js)
   if (u.gasT > 0) { drawPuddle(ctx, 'gas', u.x, u.y, u.vr * 1.5, w.time, 1, u.id * 7 + 1); return; } // Gas Form: he is a cloud (round 9)
   if (u.def.art) { drawPartsUnit(ctx, u, w); if (u.frozenT > 0) drawIce(ctx, u, w); return; }
   const s = view.scale * view.dpr;

@@ -13,6 +13,7 @@ import { FOES9, boulderBrain, dropBoulder } from './foes9.js';
 import { FOES10 } from './foes10.js';
 import { DUNES } from './dunes.js';
 import { FOUNDRY } from './foundry.js';
+import { BOSS_DEFS } from './bosses.js'; // lane B (bosses2): the designed bosses, one file each (js/boss-*.js)
 
 const BONE = { poison: 0.35, burn: 0.8, chill: 1.2 }; // skeletons: poison barely takes, cold bites
 const SKELETON = { team: 'enemy', turn: 3.4, accel: 180, face: 3.4, mass: 1.3, temp: 0.3, commit: 1, res: BONE, headR: 60 };
@@ -271,4 +272,5 @@ export const ENEMIES = {
   ...DUNES, // round 10: the Sunken Dunes (js/dunes.js)
   ...FOUNDRY, // round 10: the Clockwork Foundry (js/foundry.js)
   ...FOES10, // round 10: the Frost Hollow, Ember Deep and Gilded Spire kinds and the shared families (js/foes10.js, js/families.js)
+  ...BOSS_DEFS, // lane B (bosses2): the designed bosses and their parts (js/bosses.js)
 };

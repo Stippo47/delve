@@ -107,6 +107,7 @@ export const THEMES = {
         props: [['bones', 1.4], ['moss', 2.5], ['bonepile', 0.8], ['web', 0.6]] },
     ],
     elite: 'lizardman', warden: 'lizardChief', boss: 'lizardChief', bossAdds: ['lizardBlade', 'rat', 'ratPlague', 'slime', 'crab'],
+    bossKind: 'greatOoze', // lane B: the Great Ooze (js/boss-ooze.js, docs/BOSS-great-ooze.md)
     hazards: [['gas', 2], ['oil', 1], ['spikes', 0.5]],
     water: 0.75,
     props: [['grate', 0.8], ['moss', 2.5], ['puddle', 1.2], ['pipe', 0.6], ['crack', 0.8], ['bones', 0.4]],
@@ -136,6 +137,7 @@ export const THEMES = {
         props: [['bonepile', 1.4], ['rubble', 1.6], ['crack', 1], ['firepit', 0.4]] },
     ],
     elite: 'troll', warden: 'warboss', boss: 'warboss', bossAdds: ['goblin', 'goblin', 'hobgoblin', 'orc'],
+    bossKind: 'chieftain', // lane B: the Goblin Chieftain (js/boss-chieftain.js, docs/BOSS-chieftain.md)
     hazards: [['snare', 3], ['spikes', 2], ['oil', 1.5]],
     props: [['straw', 2], ['planks', 0.7], ['firepit', 0.4], ['rubble', 1.2], ['bonepile', 0.6], ['crack', 0.6]],
     obstacles: [['crate', 3], ['barrel', 2], ['rock', 1]],
@@ -166,7 +168,7 @@ export const THEMES = {
         props: [['rubble', 1.6], ['crack', 1.4], ['bonepile', 0.6]] },
     ],
     elite: 'yeti', warden: 'spiderMomma', boss: 'frostGiant', bossAdds: ['frostWolf', 'spiderFrost', 'snowman'],
-    bossKind: null, // lane B: the designed boss (js/boss-frost.js) goes here; until then floor 3 ends with T.boss
+    bossKind: 'winterQueen', // lane B: the Winter Queen (js/boss-queen.js, docs/BOSS-winter-queen.md)
     hazards: [['mist', 3], ['spikes', 2], ['web', 1.5]],
     props: [['crack', 1.6], ['rubble', 1], ['web', 0.8], ['bones', 0.6], ['puddle', 0.6]],
     obstacles: [['rock', 4], ['crate', 1], ['barrel', 0.6]],
@@ -194,7 +196,7 @@ export const THEMES = {
         props: [['bonepile', 1], ['skulls', 0.8], ['crack', 2]] },
     ],
     elite: 'demon', warden: 'pitLord', boss: 'archfiend', bossAdds: ['imp', 'hellhound', 'devil'],
-    bossKind: null, // lane B: Cinder, the Old Drake (js/boss-ember.js) goes here; until then floor 3 ends with T.boss
+    bossKind: 'cinder', // lane B: Cinder, the Old Drake (js/boss-cinder.js, docs/BOSS-cinder.md)
     hazards: [['fire', 3], ['oil', 1], ['spikes', 1.2]],
     props: [['crack', 2], ['rubble', 1.2], ['bonepile', 0.6], ['firepit', 0.5], ['skulls', 0.4]],
     obstacles: [['rock', 3], ['brazier', 2], ['barrel', 0.5]],
@@ -223,7 +225,7 @@ export const THEMES = {
         props: [['slab', 1.4], ['crack', 1], ['candles', 0.6]] },
     ],
     elite: 'gildedGolem', warden: 'heraldLight', boss: 'radiant', bossAdds: ['cherub', 'cherub', 'angel', 'angelFallen'],
-    bossKind: null, // lane B: the Spire's designed boss (js/boss-spire.js) goes here; until then floor 3 ends with T.boss
+    bossKind: 'gildedSeraph', // lane B: the Gilded Seraph (js/boss-seraph.js, docs/BOSS-gilded-seraph.md)
     hazards: [['beam', 3], ['spikes', 2]],
     props: [['slab', 1.2], ['candles', 1], ['crack', 0.8]],
     obstacles: [['rock', 1], ['brazier', 2], ['crate', 1]],
@@ -254,7 +256,7 @@ export const THEMES = {
         props: [['ripple', 1.4], ['pottery', 0.8], ['slab', 0.8], ['crack', 0.8]], obstacles: [['brazier', 1.5], ['rock', 2]] },
     ],
     elite: 'golem', warden: 'jackal', boss: 'sandSerpent', bossAdds: ['scarab', 'scarab', 'cobra', 'mummy'],
-    bossKind: null, // lane B: the sand wurm (js/boss-dunes.js) goes here; until then floor 3 ends on a major Sand Serpent
+    bossKind: 'sandWurm', // lane B: the Sand Wurm (js/boss-wurm.js, docs/BOSS-sand-wurm.md)
     hazards: [['quicksand', 3], ['spikes', 1.5]],
     props: [['ripple', 2], ['pottery', 0.8], ['bones', 0.6], ['crack', 0.8]],
     obstacles: [['rock', 3], ['brazier', 1], ['crate', 0.6]],
@@ -287,7 +289,7 @@ export const THEMES = {
         props: [['gears', 1], ['bolts', 1], ['pipe', 1.4], ['crack', 1]], obstacles: [['pipe', 2], ['crate', 1.5], ['barrel', 1]] },
     ],
     elite: 'foundrySmith', warden: 'automaton', boss: 'chainCrawler', bossAdds: ['bee', 'bee', 'automaton', 'bombBot'],
-    bossKind: null, // lane B: the Foundry's Skeletron-style head and hands (js/boss-foundry.js) go here; until then floor 3 ends on a major Chain Crawler
+    bossKind: 'greatEngine', // lane B: the Great Engine (js/boss-engine.js, docs/BOSS-great-engine.md)
     hazards: [['vent', 2], ['conveyor', 1.5], ['oil', 1]],
     props: [['gears', 1.4], ['bolts', 1.4], ['pipe', 0.8], ['crack', 0.6]],
     obstacles: [['crate', 2], ['barrel', 2], ['pipe', 1.5]],
