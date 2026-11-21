@@ -13,11 +13,11 @@ import { variantUrl } from './recolor.js';
 // Every attack: a tell (a shape fills on the ground), the hit, a short recovery (the hold). Burning: tells and
 // cooldowns x BURN.k, blows burn, twice the damage taken.
 export const EE = {
-  sweep: { r: 205, arc: 2.0, tell: 1.0, dmg: 20, knock: 300, rec: 0.6 },
-  roots: { len: 540, hw: 34, tell: 1.0, dmg: 12, entangle: 60, rec: 0.4 },
-  branch: { r: 64, tell: 1.3, dmg: 16, stagger: 40 },
-  cage: { r: 80, tell: 1.15, dmg: 8, entangle: 110 },
-  stomp: { r: 230, tell: 0.9, dmg: 10, knock: 340 },
+  sweep: { r: 230, arc: 2.4, tell: 0.8, dmg: 28, knock: 320, rec: 0.6 },
+  roots: { len: 560, hw: 40, tell: 0.9, dmg: 18, entangle: 65, rec: 0.4, patch: 5, patchR: 44 },
+  branch: { r: 70, tell: 1.05, dmg: 24, stagger: 45 },
+  cage: { r: 84, tell: 0.95, dmg: 14, entangle: 110 },
+  stomp: { r: 240, tell: 0.9, dmg: 16, knock: 360 },
   grove: { every: 13, feed: 0.012, reach: 320, cap: 6 },
 };
 export const PHASE_AT = [1, 0.65, 0.35];
@@ -63,14 +63,14 @@ function brain(w, u, dt) {
   const d = dist(u.x, u.y, t.x, t.y), gap = d - u.r - t.r, at = angleTo(u.x, u.y, t.x, t.y);
   const hit = (h) => (u.hitBurn ? { ...h, burn: u.hitBurn } : h);
   // up close: the sweep
-  if (gap < 110 && due(u, 'sweep', dt, 1)) {
-    again(u, 'sweep', 3.4 * K, 4.4 * K);
+  if (gap < 120 && due(u, 'sweep', dt, 1)) {
+    again(u, 'sweep', 2.8 * K, 3.8 * K);
     cone(w, u, at, { r: EE.sweep.r, arc: EE.sweep.arc, tell: EE.sweep.tell * K, kind: 'bone', anim: 'ability', after: EE.sweep.rec, hit: hit({ dmg: EE.sweep.dmg, knock: EE.sweep.knock, heavy: true }) });
     return true;
   }
   // root cage: a ring of roots springs up round a hero (two in the last phase): tangled at once if it's caught
   if (k.phase >= 2 && due(u, 'cage', dt, 3)) {
-    again(u, 'cage', 8 * K, 10 * K);
+    again(u, 'cage', 7 * K, 9 * K);
     const hs = heroes(w).sort((a, b) => dist(a.x, a.y, u.x, u.y) - dist(b.x, b.y, u.x, u.y));
     const picks = [t, ...(k.phase >= 3 ? hs.filter((h) => h !== t).slice(-1) : [])];
     for (const h of picks) lob(w, u, h.x + (h.vx || 0) * 0.3, h.y + (h.vy || 0) * 0.3, { r: EE.cage.r, tell: EE.cage.tell * K, kind: 'root', dust: '#6E8F3A', hit: hit({ dmg: EE.cage.dmg, entangle: EE.cage.entangle }),
@@ -80,16 +80,19 @@ function brain(w, u, dt) {
   }
   // roots: a line (three fanned in the last phase) that entangles
   if (d < 640 && due(u, 'roots', dt, 2)) {
-    again(u, 'roots', 6 * K, 7.5 * K);
+    again(u, 'roots', 4.5 * K, 6 * K);
     const fan = k.phase >= 3 ? [-0.32, 0, 0.32] : [0];
     for (const da of fan) line(w, u, at + da, EE.roots.len, { tell: EE.roots.tell * K, hw: EE.roots.hw, kind: 'root', anim: 'ability', after: EE.roots.rec,
-      hit: hit({ dmg: EE.roots.dmg, entangle: EE.roots.entangle, knock: 60 }), fire: (w2, z) => { for (let q = 0.1; q < 1; q += 0.1) rootPuff(w2, z.x1 + (z.x2 - z.x1) * q, z.y1 + (z.y2 - z.y1) * q, 2); } });
+      hit: hit({ dmg: EE.roots.dmg, entangle: EE.roots.entangle, knock: 60 }), fire: (w2, z) => {
+        // the roots stay up a while where they broke through: grasping ground (dungeon.js 'roots' hazard)
+        for (let q = 0.18; q < 1; q += 0.2) { const x = z.x1 + (z.x2 - z.x1) * q, y = z.y1 + (z.y2 - z.y1) * q; rootPuff(w2, x, y, 3);
+          if (w2.hazards.filter((h) => h.type === 'roots' && h.t != null).length < 18) w2.hazards.push({ type: 'roots', x, y, r: EE.roots.patchR, t: EE.roots.patch, max: EE.roots.patch }); } } });
     return true;
   }
   // falling branches: circles on the floor under heroes, then the branches come down
   if (due(u, 'branch', dt, 4)) {
-    again(u, 'branch', 9 * K, 11 * K);
-    const hs = heroes(w), n = k.phase >= 2 ? 5 : 3;
+    again(u, 'branch', 7.5 * K, 9.5 * K);
+    const hs = heroes(w), n = k.phase >= 3 ? 8 : k.phase >= 2 ? 6 : 4;
     for (let i = 0; i < n; i++) {
       const h = hs[i % hs.length], off = i < hs.length ? 0 : rrange(60, 140), a = rand() * TAU;
       const x = clamp(h.x + (h.vx || 0) * 0.4 + Math.cos(a) * off, 40, w.W - 40), y = clamp(h.y + (h.vy || 0) * 0.4 + Math.sin(a) * off, 40, w.H - 40);
@@ -135,7 +138,7 @@ function grove(w, u, k, dt) {
 
 export const ELDER = {
   elderEnt: { team: 'enemy', name: 'The Elder Ent', art: variantUrl('art/enemies/troll.svg', { hue: -78, sat: 0.65, light: -0.14 }), headR: 66, r: 64, vr: 48, turn: 1.4, accel: 90,
-    face: 1.4, mass: 9, hp: 560, speed: 30, role: 'melee', range: 34, atkCd: 999, arc: 2, temp: 0.2, commit: 1.4, xp: 160, coins: [60, 80], boss: true, arena: 'grove',
+    face: 1.4, mass: 9, hp: 1350, speed: 38, role: 'melee', range: 34, atkCd: 999, arc: 2, temp: 0.2, commit: 1.4, xp: 160, coins: [60, 80], boss: true, arena: 'grove',
     res: { burn: 1, chill: 0, poison: 0, wet: 0, shock: 0, stagger: 0, radiance: 0, curse: 0, entangle: 0 }, onDeath: (w, u) => { courtFalls(w); for (let i = 0; i < 20; i++) rootPuff(w, u.x + rrange(-u.r, u.r), u.y + rrange(-u.r, u.r), 2); },
     brain },
 };
