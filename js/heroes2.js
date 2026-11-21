@@ -361,6 +361,91 @@ Object.assign(HEROES2, {
   },
 });
 
+// ------------------------------------------------------------------ batch 5: the quartermaster and four ranged
+Object.assign(HEROES2, {
+  quartermaster: {
+    name: 'Quartermaster', art: 'art/heroes/quartermaster.svg', role: 'support', unlock: { gems: 1 },
+    blurb: 'A pack bigger than he is. Keeps the party fed, armed and stocked, and throws the pots.',
+    fun: 'Has a receipt for everything in the pack. Including the pack.',
+    stats: { hp: 105, speed: 56, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 150, atkCd: 1.3, dmg: 8 },
+    attack: { name: 'Pot toss', anim: 'throw', desc: 'Throws a pot or a pan out of the pack.' },
+    abilities: [
+      { id: 'resupply', name: 'Resupply', cd: 12, tags: 'h', glyph: 'vial', desc: 'Tosses a supply bundle to the ally who needs it most.',
+        tiers: ['Heals 15%, and a health potion if they have none.', 'Heals 25%.', 'A bundle each for two allies.'] },
+      { id: 'oilBlades', name: 'Oil the Blades', cd: 16, tags: 's', glyph: 'flame', desc: 'Hands round lamp oil for the weapons: the allies near him set things alight with every blow.',
+        tiers: ['Their blows burn a little for 8s.', 'They burn more.', 'And their blows heal them a little.'] },
+      { id: 'flare', name: 'Flare', cd: 13, tags: 'd', glyph: 'sun', desc: 'Fires a red flare onto the enemies: whatever stands in its light is easy to hit.',
+        tiers: ['For 6s they take 20% more.', 'They are dazzled and slowed too.', 'A bigger patch of light.'] },
+    ],
+    trait: { id: 'wellStocked', name: 'Well Stocked', desc: 'Once a minute, a friend near him who has no health potion gets one.' },
+  },
+  crossbowman: {
+    name: 'Crossbowman', art: 'art/heroes/crossbowman.svg', role: 'ranged', unlock: { gems: 2 },
+    blurb: 'A heavy crossbow, a kettle hat and a tall shield on his back. Slow to load, hard to stop.',
+    fun: 'Has counted every turn of the crank since he was nine. He is on four hundred thousand and six.',
+    stats: { hp: 85, speed: 60, r: 31, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1.3, range: 280, keep: 180, atkCd: 1.7, dmg: 15 },
+    attack: { name: 'Heavy bolt', anim: 'shoot', desc: 'A heavy crossbow bolt that goes through the first enemy it hits.' },
+    abilities: [
+      { id: 'pavise', name: 'Pavise', cd: 13, tags: 'd', glyph: 'shield', desc: 'Plants the tall shield in front of him and shoots from behind it.',
+        tiers: ['For 6s: 60% less damage from the front.', 'He reloads 35% faster behind it.', 'For 9s.'] },
+      { id: 'pinBolt', name: 'Pinning Bolt', cd: 10, tags: 'ds', glyph: 'arrows', desc: 'A barbed bolt that nails an enemy to the floor.',
+        tiers: ['Pinned for 1.5s.', 'Staggered too.', 'Pinned for 2.5s.'] },
+      { id: 'crankUp', name: 'Crank Up', cd: 15, tags: 'd', glyph: 'burst', desc: 'Cranks the crossbow hard and loads blasting bolts.',
+        tiers: ['His next three bolts burst where they hit.', 'Bigger bursts.', 'Five bolts.'] },
+    ],
+    trait: { id: 'armourPiercing', name: 'Armour Piercing', desc: 'His bolts hit elites, majors and bosses 25% harder.' },
+  },
+  falconer: {
+    name: 'Falconer', art: 'art/heroes/falconer.svg', role: 'ranged', unlock: { gems: 2 },
+    blurb: 'A rust beret, a leather gauntlet and a slate-grey falcon. The falcon does the hunting.',
+    fun: 'Speaks fluent falcon. The falcon pretends not to understand.',
+    stats: { hp: 78, speed: 68, r: 31, vr: 22, turn: 4.8, accel: 250, face: 4.8, mass: 1, range: 250, keep: 175, atkCd: 1.0, dmg: 8, dodge: 0.12 },
+    style: { hand: 'arm-r' },
+    attack: { name: 'Throwing knife', anim: 'throw', desc: 'A thrown hunting knife.' },
+    abilities: [
+      { id: 'looseFalcon', name: 'Loose the Falcon', cd: 10, tags: 'ds', glyph: 'up', desc: 'Sends the falcon at the furthest enemy: it marks it and pecks at it.',
+        tiers: ['Marked for 5s: everyone hits it 20% harder.', 'It goes for the eyes: blinded.', 'Then it dives on a second enemy.'] },
+      { id: 'keenEye', name: 'Keen Eye', cd: 14, tags: 'd', glyph: 'sun', desc: 'Takes careful aim for a while: every throw goes further and some land just right.',
+        tiers: ['For 6s: 30% of his throws are critical hits.', 'He throws 30% faster.', 'Half of them are critical.'] },
+      { id: 'flock', name: 'Call the Flock', cd: 13, tags: 's', glyph: 'wave', desc: 'Whistles up a flock of small birds that sweeps through a line of enemies, pecking.',
+        tiers: ['One flock: slows those it passes.', 'They peck at eyes: blinded.', 'Two flocks.'] },
+    ],
+    trait: { id: 'birdsEye', name: 'Bird\'s Eye', desc: 'Sees and throws 25% further than anyone else.' },
+  },
+  grenadier: {
+    name: 'Grenadier', art: 'art/heroes/grenadier.svg', role: 'ranged', unlock: { gems: 2 },
+    blurb: 'A tall mitre cap, a handlebar moustache and a lit bomb, always. Solves problems loudly.',
+    fun: 'Has been told to put that down. Has never once put that down.',
+    stats: { hp: 85, speed: 60, r: 31, vr: 22, turn: 4.3, accel: 230, face: 4.4, mass: 1.3, range: 220, keep: 175, atkCd: 1.7, dmg: 12 },
+    attack: { name: 'Bomb', anim: 'throw', desc: 'Lobs a small bomb that bursts where it lands.' },
+    abilities: [
+      { id: 'bigBomb', name: 'Big Bomb', cd: 11, tags: 'ds', glyph: 'burst', desc: 'Lobs a huge bomb with a long fuse. Everyone sees it coming. It doesn\'t help.',
+        tiers: ['A huge blast.', 'It burns.', 'It scatters four small bombs too.'] },
+      { id: 'stickyBomb', name: 'Sticky Bomb', cd: 10, tags: 'd', glyph: 'burst', desc: 'Sticks a bomb to an enemy; it goes off a moment later.',
+        tiers: ['It blows after 2s.', 'A bigger blast.', 'Two sticky bombs.'] },
+      { id: 'blastOff', name: 'Blast Off', cd: 12, tags: 'ds', glyph: 'up', desc: 'Drops a bomb at his own feet and rides the blast out of trouble.',
+        tiers: ['Throws him clear and hurts those near.', 'The blast staggers.', 'He lands with a second blast.'] },
+    ],
+    trait: { id: 'demolition', name: 'Demolition', desc: 'His blasts throw enemies twice as far.' },
+  },
+  harpooner: {
+    name: 'Harpooner', art: 'art/heroes/harpooner.svg', role: 'ranged', unlock: { gems: 2 },
+    blurb: 'A yellow sou\'wester, a puffy grey moustache, a barbed harpoon on a rope.',
+    fun: 'Came down here after the one that got away. It was a rat. It was a very big rat.',
+    stats: { hp: 100, speed: 58, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 140, atkCd: 1.4, dmg: 12 },
+    attack: { name: 'Harpoon', anim: 'throw', desc: 'A thrown barbed harpoon, pulled back on its rope.' },
+    abilities: [
+      { id: 'reelIn', name: 'Reel In', cd: 10, tags: 'ds', glyph: 'hook', desc: 'Harpoons a far enemy and hauls on the rope: a small one is dragged to him, a big one drags him to it.',
+        tiers: ['Drags it in (or him to it).', 'It\'s staggered when it lands.', 'The rope holds it near him for 4s.'] },
+      { id: 'rogueWave', name: 'Rogue Wave', cd: 12, tags: 's', glyph: 'wave', desc: 'Calls up a wave of sea water that crashes over the enemies in front.',
+        tiers: ['Soaks and shoves them back.', 'A bigger wave.', 'It leaves water on the floor.'] },
+      { id: 'anchorDrop', name: 'Drop Anchor', cd: 14, tags: 'ds', glyph: 'fist', desc: 'Swings a ship\'s anchor round on its chain and drops it on the enemies.',
+        tiers: ['A heavy slam that stuns those under it.', 'Wider.', 'The chain sweeps round first, knocking back.'] },
+    ],
+    trait: { id: 'oldSalt', name: 'Old Salt', desc: 'Can\'t be soaked, and hits wet enemies 20% harder.' },
+  },
+});
+
 // The HUD glyph of each new ability (icons.js)
 export const GLYPH2 = {};
 for (const h of Object.values(HEROES2)) for (const ab of h.abilities) if (ab.glyph) GLYPH2[ab.id] = ab.glyph;

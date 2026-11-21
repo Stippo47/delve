@@ -244,6 +244,7 @@ function setupShow() {
   };
   build(); restartFn = () => { build(); snapCamera(); };
   setZoom(1); view.zoom = +(P.get('zoom') || 1.9);
+  const sh = (ABILITIES[ab] && ABILITIES[ab].show) || {};
   tick = (dt) => {
     if (w.time >= loop) { build(); snapCamera(); }
     if (!cast && w.time >= SHOW_AT && ab !== 'attack') {
@@ -256,7 +257,7 @@ function setupShow() {
     }
     // only the ability, no plain attacks; but Zeus Bolt is shown with the Zap that bounces between the marks after it
     if (ab === 'stormCloud' && w.time > SHOW_AT + 1.0) { if (!u._zapped) { u._zapped = true; u.atkT = 0; } else u.atkT = Math.max(u.atkT, 0.5); }
-    else if (ab !== 'attack') u.atkT = Math.max(u.atkT, 0.5);
+    else if (ab !== 'attack' && !(sh.attacks && cast)) u.atkT = Math.max(u.atkT, 0.5);
     else if (!ranged) { // melee: the brain won't swing while pinned in place, so the bench swings on a beat
       u.atkT = 9; const d = DEFS[hero], beat = d.role === 'skirmish' ? 0.5 : 1.1, t0 = w.time - SHOW_AT;
       if (t0 >= 0 && Math.floor(t0 / beat) !== Math.floor((t0 - dt) / beat || -1) && t0 < loop - 0.9) {
@@ -265,7 +266,6 @@ function setupShow() {
       }
     }
     // kits2 abilities that answer blows or shots: the first dummy strikes or shoots at the hero on a beat
-    const sh = (ABILITIES[ab] && ABILITIES[ab].show) || {};
     if ((sh.hitme || sh.shootme) && cast && Math.floor(w.time / 0.45) !== Math.floor((w.time - dt) / 0.45)) {
       const d0 = dummies[0];
       if (sh.hitme) { d0.facing = Math.atan2(u.y - d0.y, u.x - d0.x); hurt(w, u, 4, d0, { knock: 0 }); }

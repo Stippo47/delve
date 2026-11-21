@@ -783,10 +783,10 @@ export const ABILITIES2 = {
     },
     hook: {
       death(w, u, v) {
-        if (!(u.kit.candleUntil > w.time) || v.team === u.team || dist(u.x, u.y, v.x, v.y) > 240) return;
+        if (!(u.kit.candleUntil > w.time) || v.team === u.team || v._souled || dist(u.x, u.y, v.x, v.y) > 240) return; v._souled = true;
         const tier = tierOf(u, 'soulCandle'), r = tier >= 2 ? 95 : 65;
         k2(w, { draw: 'markBurst', x: v.x, y: v.y, r: 20, max: 0.5, col: '#6FC8FF', ab: 'soulCandle' });
-        for (const e of foesNear(w, u, v.x, v.y, r)) hurt(w, e, dmgOf(u, 1.2), u, { noDodge: true, knock: 120, kAngle: angleTo(v.x, v.y, e.x, e.y), curse: 10, ab: 'soulCandle' });
+        for (const e of foesNear(w, u, v.x, v.y, r)) if (e !== v && e.hp > 0) hurt(w, e, dmgOf(u, 1.2), u, { noDodge: true, knock: 120, kAngle: angleTo(v.x, v.y, e.x, e.y), curse: 10, ab: 'soulCandle' });
         if (tier >= 3) heal(w, u, u.maxHp * 0.04, u);
       },
     },
@@ -875,9 +875,10 @@ export const ABILITIES2 = {
       cast(u, 'throw', 0.4);
       const list = [u, ...allies(w, u)].filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 380).sort((p, q) => hpRatio(p) - hpRatio(q)).slice(0, tier >= 2 ? 2 : 1);
       list.forEach((a, i) => {
-        const b = angleTo(a.x, a.y, u.x, u.y), x = a.x + Math.cos(b) * 24, y = a.y + Math.sin(b) * 24;
+        const b = angleTo(a.x, a.y, u.x, u.y); let x = a.x + Math.cos(b) * 70, y = a.y + Math.sin(b) * 70;
         const f = k2(w, { draw: 'meal', x, y, max: 10, ab: 'hotMeal' });
-        timer(u, 'meal' + i, 10, () => {
+        timer(u, 'meal' + i, 10, (dt) => {
+          if (alive(a)) { const c = angleTo(x, y, a.x, a.y), d = dist(x, y, a.x, a.y); x += Math.cos(c) * Math.min(d, 45 * dt); y += Math.sin(c) * Math.min(d, 45 * dt); f.x = x; f.y = y; }
           const who = [u, ...allies(w, u)].find((o) => !o.summon && dist(o.x, o.y, x, y) < o.r + 22); if (!who) return;
           heal(w, who, who.maxHp * 0.3, u); k2(w, { draw: 'crumbs', x: who.x, y: who.y, unit: who, max: 0.6, ab: 'hotMeal' });
           if (tierOf(u, 'hotMeal') >= 3) addBuff(who, { id: 'hotMeal', dur: 8, dealt: 1.2, glow: '#FFB070' });
@@ -907,7 +908,7 @@ export const ABILITIES2 = {
       cast(u, 'throw', 0.5);
       const list = foesNear(w, u, u.x, u.y, 330).filter((e) => !blocked(w, u.x, u.y, e.x, e.y)).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y)).slice(0, tier >= 3 ? 5 : 3);
       list.forEach((e, i) => after(u, i * 0.1, () => { if (!alive(e)) return; setAnim(u, 'throw', 0.2);
-        shoot(w, u, ang(u, e), { kind: 'pie', speed: 420, r: 9, life: 1.2, dmg: dmgOf(u, 0.7), knock: 60, extra: { home: e, turn: 3, onHit: (w2, p, x) => {
+        shoot(w, u, ang(u, e), { kind: 'pie', speed: 420, r: 9, color: '#FFF4D0', life: 1.2, dmg: dmgOf(u, 0.7), knock: 60, extra: { home: e, turn: 3, onHit: (w2, p, x) => {
           addBuff(x, { id: 'pied', dur: 3, move: 0.6, blind: tierOf(u, 'foodFight') >= 2 });
           k2(w2, { draw: 'splash', x: x.x, y: x.y, r: 30, col: '#FFF4D0', max: 0.5, ab: 'foodFight' }); k2(w2, { draw: 'pieFace', unit: x, x: x.x, y: x.y, r: x.vr, max: 3, ab: 'foodFight' });
         } } }); }));
@@ -949,7 +950,218 @@ export const ABILITIES2 = {
     },
     show: { ally: true },
   },
+  // ----- Quartermaster
+  resupply: {
+    score: (w, u) => { const a = hurtMost([u, ...allies(w, u)].filter((o) => !o.summon)); return a && (hpRatio(a) < 0.65 || (a.potions === 0 && hpRatio(a) < 0.85)) ? 0.8 : 0; },
+    use(w, u, t, tier) {
+      cast(u, 'throw', 0.4);
+      const list = [u, ...allies(w, u)].filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 400).sort((p, q) => hpRatio(p) - hpRatio(q)).slice(0, tier >= 3 ? 2 : 1);
+      const give = (a) => { heal(w, a, a.maxHp * (tierOf(u, 'resupply') >= 2 ? 0.25 : 0.15), u); if (a.team === 'hero' && !a.potions) a.potions = 1; k2(w, { draw: 'crumbs', x: a.x, y: a.y, unit: a, max: 0.6, ab: 'resupply' }); };
+      list.forEach((a, i) => after(u, i * 0.15, () => { if (!alive(a)) return; if (a === u) give(u); else lob(w, u, a.x, a.y, 'bundle', null, () => alive(a) && give(a)); }));
+    },
+    show: { ally: true },
+  },
+  oilBlades: {
+    score: (w, u) => (foesNear(w, u, u.x, u.y, 320).length >= 2 && friendsNear(w, u, u.x, u.y, 230).filter((a) => a !== u && a.def.role !== 'ranged').length ? 0.65 : 0),
+    use(w, u, t, tier) {
+      cast(u, 'throw', 0.5);
+      for (const a of [u, ...friendsNear(w, u, u.x, u.y, 240)]) {
+        if (!a.kit) continue;
+        a.hitBurn = tier >= 2 ? 12 : 7; if (tier >= 3) addBuff(a, { id: 'oilBlades', dur: 8, lifesteal: 0.06 });
+        timer(a, 'oilBlades', 8, null, () => { a.hitBurn = 0; });
+        k2(w, { draw: 'oilGlow', unit: a, x: a.x, y: a.y, r: a.vr, max: 8 });
+      }
+    },
+    show: { ally: true },
+  },
+  flare: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 320 && foesNear(w, u, t.x, t.y, 110).length >= 2 ? 0.65 : 0),
+    use(w, u, t, tier) {
+      if (!t) return; cast(u, 'throw', 0.4);
+      lob(w, u, t.x, t.y, 'flare', null, (x, y) => {
+        const r = tier >= 3 ? 150 : 110;
+        k2(w, { draw: 'flare', x, y, r, max: 6, ab: 'flare' });
+        timer(u, 'flare' + Math.round(x + y), 6, () => { for (const e of foesNear(w, u, x, y, r)) addBuff(e, { id: 'flared', dur: 0.35, taken: 1.2, move: tierOf(u, 'flare') >= 2 ? 0.75 : 1 }); });
+      });
+    },
+    show: { far: true },
+  },
+  // ----- Crossbowman
+  pavise: {
+    score: (w, u) => (opponents(w, u).filter((e) => e.target === u).length >= 1 || w.projectiles.some((p) => p.team !== u.team && dist(p.x, p.y, u.x, u.y) < 300) ? 0.6 : 0),
+    use(w, u, t, tier) {
+      if (t) u.facing = ang(u, t);
+      const dur = tier >= 3 ? 9 : 6;
+      addBuff(u, { id: 'pavise', dur, frontBlock: 0.6, root: true, atkSpeed: tier >= 2 ? 1.35 : 1 });
+      puff(w, u.x + Math.cos(u.facing) * (u.r + 10), u.y + Math.sin(u.facing) * (u.r + 10), '#E9DDC2', 8, 90, 5, 0.4);
+      k2(w, { draw: 'pavise', unit: u, x: u.x, y: u.y, a: u.facing, max: dur });
+    },
+    show: { shootme: true },
+  },
+  pinBolt: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && !blocked(w, u.x, u.y, t.x, t.y) && !(t.rootT > 0) ? 0.5 + (t.def.role !== 'ranged' && t.target && t.target !== u ? 0.2 : 0) : 0),
+    use(w, u, t, tier) {
+      if (!t) return; setAnim(u, 'shoot', 0.4);
+      shoot(w, u, ang(u, t), { kind: 'cbolt', speed: 760, r: 8, dmg: dmgOf(u, 1.3), knock: 30, extra: { big: true, onHit: (w2, p, e) => {
+        e.rootT = Math.max(e.rootT || 0, tier >= 3 ? 2.5 : 1.5); e.kx = e.ky = 0;
+        if (tier >= 2) addStatus(w2, e, 'stagger', 40, u);
+        k2(w2, { draw: 'pin', unit: e, x: e.x, y: e.y, r: e.vr, a: p.a, max: tier >= 3 ? 2.5 : 1.5, ab: 'pinBolt' });
+      } } });
+    },
+    show: { far: true, single: true },
+  },
+  crankUp: {
+    score: (w, u, t) => (!(u.kit.crank > 0) && t && foesNear(w, u, t.x, t.y, 90).length >= 2 ? 0.6 : 0),
+    use(w, u, t, tier) {
+      setAnim(u, 'ability', 0.6); u.kit.crank = tier >= 3 ? 5 : 3; u.kit.crankR = tier >= 2 ? 80 : 55;
+      k2(w, { draw: 'gather', unit: u, x: u.x, y: u.y, r: 30, max: 0.6, col: '#FF9A3D' });
+      u.atkT = Math.min(u.atkT, 0.3);
+    },
+    show: { far: true, attacks: true },
+  },
+  // ----- Falconer
+  looseFalcon: {
+    score: (w, u) => (opponents(w, u).some((e) => dist(u.x, u.y, e.x, e.y) < 440) && !u.kit.falconOut ? 0.6 : 0),
+    use(w, u, t, tier) {
+      const far = (not) => opponents(w, u).filter((e) => e !== not && dist(u.x, u.y, e.x, e.y) < 460).sort((p, q) => dist(u.x, u.y, q.x, q.y) - dist(u.x, u.y, p.x, p.y))[0];
+      let e = far(null); if (!e) return; cast(u, 'throw', 0.4);
+      const f = k2(w, { draw: 'falcon', x: u.x, y: u.y, a: u.facing, max: 9, ab: 'looseFalcon' });
+      let phase = 'fly', pt = 0, hits = 0, second = tier >= 3; u.kit.falconOut = true;
+      timer(u, 'falcon', 8.5, (dt) => {
+        const goal = phase === 'home' ? u : e;
+        if (phase !== 'home' && !alive(e)) { const n = second ? far(e) : null; if (n) { e = n; second = false; phase = 'fly'; } else phase = 'home'; return; }
+        const a = angleTo(f.x, f.y, goal.x, goal.y), d = dist(f.x, f.y, goal.x, goal.y);
+        if (phase === 'peck') { pt += dt; f.x = e.x + Math.cos(pt * 5) * (e.r + 6); f.y = e.y + Math.sin(pt * 5) * (e.r + 6); f.a = pt * 5 + Math.PI / 2;
+          if (pt > 0.5 * (hits + 1)) { hits++; hurt(w, e, dmgOf(u, 0.5), u, { noDodge: true, knock: 20, ab: 'looseFalcon' }); }
+          if (pt > 2.5) { if (second) { const n = far(e); second = false; if (n) { e = n; phase = 'fly'; pt = 0; hits = 0; return; } } phase = 'home'; }
+          return; }
+        f.a = a; const sp = 560 * dt; f.x += Math.cos(a) * Math.min(sp, d); f.y += Math.sin(a) * Math.min(sp, d);
+        if (d < goal.r + 8) {
+          if (phase === 'home') { f.max = f.t; return true; }
+          phase = 'peck'; pt = 0; hits = 0;
+          addBuff(e, { id: 'falconMark', dur: 5, taken: 1.2, blind: tierOf(u, 'looseFalcon') >= 2 });
+          hurt(w, e, dmgOf(u, 0.9), u, { noDodge: true, knock: 60, ab: 'looseFalcon' });
+          k2(w, { draw: 'eye', unit: e, x: e.x, y: e.y, r: e.vr, max: 5, col: '#E0A060', ab: 'looseFalcon' });
+        }
+      }, () => { f.max = Math.min(f.max, f.t + 0.05); u.kit.falconOut = false; });
+    },
+    show: { far: true },
+  },
+  keenEye: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && foesNear(w, u, u.x, u.y, 300).length >= 2 ? 0.6 : 0),
+    use(w, u, t, tier) {
+      cast(u, 'cast', 0.4); u.kit.keenUntil = w.time + 6;
+      if (tier >= 2) addBuff(u, { id: 'keenEye', dur: 6, atkSpeed: 1.3 });
+      k2(w, { draw: 'eye', unit: u, x: u.x, y: u.y, r: u.vr, max: 6, col: '#FFE7A0' });
+      u.atkT = Math.min(u.atkT, 0.2);
+    },
+    show: { far: true, attacks: true },
+  },
+  flock: {
+    score(w, u, t) { if (!t) return 0; const a = ang(u, t); return opponents(w, u).filter((e) => angleDiff(ang(u, e), a) < 0.35 && dist(u.x, u.y, e.x, e.y) < 360).length >= 2 ? 0.65 : 0; },
+    use(w, u, t, tier) {
+      if (!t) return; cast(u, 'cast', 0.4);
+      const send = (a) => {
+        const x0 = u.x, y0 = u.y, hit = new Set(); let s = 0;
+        const f = k2(w, { draw: 'flock', x: x0, y: y0, a, max: 0.9, ab: 'flock' });
+        timer(u, 'flock' + a.toFixed(2), 0.85, (dt) => {
+          s += 460 * dt; f.x = x0 + Math.cos(a) * s; f.y = y0 + Math.sin(a) * s;
+          for (const e of foesNear(w, u, f.x, f.y, 44)) if (!hit.has(e)) { hit.add(e); hurt(w, e, dmgOf(u, 0.7), u, { noDodge: true, knock: 70, kAngle: a, ab: 'flock' }); addBuff(e, { id: 'pecked', dur: 3, move: 0.65, blind: tierOf(u, 'flock') >= 2 }); }
+        });
+      };
+      const a = ang(u, t); send(a);
+      if (tier >= 3) after(u, 0.3, () => { send(a + 0.3); send(a - 0.3); });
+    },
+    show: { far: true },
+  },
+  // ----- Grenadier
+  bigBomb: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 300 && foesNear(w, u, t.x, t.y, 120).length >= 3 ? 0.8 : 0),
+    use(w, u, t, tier) {
+      if (!t) return; cast(u, 'throw', 0.5);
+      lob(w, u, t.x, t.y, 'bomb', 'big', (x, y) => {
+        k2(w, { draw: 'fuse', x, y, r: 120, max: 0.75, bomb: true, ab: 'bigBomb' });
+        timer(u, 'bigBomb', 0.75, null, () => {
+          blast(w, u, x, y, 120, 2, { burn: tierOf(u, 'bigBomb') >= 2 ? 30 : 0, stagger: 30 }, 'bigBomb');
+          if (tierOf(u, 'bigBomb') >= 3) for (let i = 0; i < 4; i++) { const b = i / 4 * TAU + 0.4, x2 = x + Math.cos(b) * 110, y2 = y + Math.sin(b) * 110;
+            lob(w, u, x2, y2, 'bomb', null, () => after(u, 0.2, () => blast(w, u, x2, y2, 55, 0.8, {}, 'bigBomb'))); }
+        });
+      });
+    },
+    show: { far: true },
+  },
+  stickyBomb: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && !t.sticky ? 0.5 + (t.elite || t.def.boss ? 0.25 : 0) : 0),
+    use(w, u, t, tier) {
+      if (!t) return; cast(u, 'throw', 0.4);
+      const targets = [t]; if (tier >= 3) { const n = opponents(w, u).filter((o) => o !== t && dist(u.x, u.y, o.x, o.y) < u.def.range + 40)[0]; if (n) targets.push(n); }
+      targets.forEach((e) => shoot(w, u, ang(u, e), { kind: 'bomb', speed: 520, r: 8, dmg: dmgOf(u, 0.4), knock: 10, extra: { home: e, turn: 5, onHit: (w2, p, x) => {
+        x.sticky = true; k2(w2, { draw: 'sticky', unit: x, x: x.x, y: x.y, r: x.vr, max: 2, ab: 'stickyBomb' });
+        timer(u, 'sticky' + x.id, 2, null, () => { x.sticky = false; blast(w, u, x.x, x.y, tierOf(u, 'stickyBomb') >= 2 ? 100 : 72, 1.9, {}, 'stickyBomb'); });
+      } } }));
+    },
+    show: { far: true },
+  },
+  blastOff: {
+    score: (w, u) => (foesNear(w, u, u.x, u.y, 90).length ? 0.85 : 0),
+    use(w, u, t, tier) {
+      const f = foesNear(w, u, u.x, u.y, 160); let ax = 0, ay = 0; for (const e of f) { ax += u.x - e.x; ay += u.y - e.y; }
+      const a = f.length ? Math.atan2(ay, ax) : u.facing + Math.PI;
+      blast(w, u, u.x, u.y, 95, 0.9, { stagger: tier >= 2 ? 45 : 0 }, 'blastOff');
+      const x1 = clamp(u.x + Math.cos(a) * 190, u.r, w.W - u.r), y1 = clamp(u.y + Math.sin(a) * 190, u.r, w.H - u.r);
+      u.invulnT = Math.max(u.invulnT, 0.55);
+      u.act = { type: 'leap', t: 0.5, max: 0.5, x0: u.x, y0: u.y, x1, y1, land: () => { if (tierOf(u, 'blastOff') >= 3) blast(w, u, u.x, u.y, 75, 0.7, {}, 'blastOff'); puff(w, u.x, u.y, '#E9DDC2', 8, 90, 5, 0.4); } };
+    },
+  },
+  // ----- Harpooner
+  reelIn: {
+    score(w, u) { return opponents(w, u).some((e) => { const d = dist(u.x, u.y, e.x, e.y); return d > 150 && d < 380 && !blocked(w, u.x, u.y, e.x, e.y); }) ? 0.6 : 0; },
+    use(w, u, t, tier) {
+      const e = opponents(w, u).filter((o) => { const d = dist(u.x, u.y, o.x, o.y); return d > 120 && d < 400 && !blocked(w, u.x, u.y, o.x, o.y); }).sort((p, q) => (q.def.role === 'ranged' ? 1 : 0) - (p.def.role === 'ranged' ? 1 : 0))[0] || t; if (!e) return;
+      cast(u, 'throw', 0.4);
+      shoot(w, u, ang(u, e), { kind: 'harpoon', speed: 720, r: 9, life: 0.7, dmg: dmgOf(u, 1), knock: 0, extra: { big: true, home: e, turn: 6, onHit: (w2, p, x) => {
+        const big = x.def.boss || x.mass > 2.6;
+        if (big) { const a = ang(u, x), d = dist(u.x, u.y, x.x, x.y) - u.r - x.r - 6; u.act = { type: 'leap', t: 0.35, max: 0.35, x0: u.x, y0: u.y, x1: u.x + Math.cos(a) * d, y1: u.y + Math.sin(a) * d, land: () => {} }; }
+        else { const a = angleTo(x.x, x.y, u.x, u.y), d = dist(u.x, u.y, x.x, x.y) - u.r - x.r - 6; x.kx += Math.cos(a) * d * 5.4 / Math.max(1, Math.sqrt(x.mass)); x.ky += Math.sin(a) * d * 5.4 / Math.max(1, Math.sqrt(x.mass)); }
+        if (tier >= 2) addStatus(w2, x, 'stagger', 55, u);
+        k2(w2, { draw: 'rope', from: u, to: x, x: u.x, y: u.y, max: tier >= 3 ? 4 : 0.5, ab: 'reelIn' });
+        if (tier >= 3 && !big) timer(u, 'tether', 4, () => { if (!alive(x)) return true; const d = dist(u.x, u.y, x.x, x.y); if (d > 140) { const a = angleTo(x.x, x.y, u.x, u.y); x.x += Math.cos(a) * (d - 140) * 0.3; x.y += Math.sin(a) * (d - 140) * 0.3; } });
+      } } });
+    },
+    show: { far: true, single: true },
+  },
+  rogueWave: {
+    score: (w, u) => (foesNear(w, u, u.x, u.y, 200).filter((e) => inFront(u, e, 1.4)).length >= 2 ? 0.65 : 0),
+    use(w, u, t, tier) {
+      if (t) u.facing = ang(u, t); cast(u, 'cast', 0.5);
+      const a = u.facing, R = tier >= 2 ? 250 : 190, arc = tier >= 2 ? 1.6 : 1.2;
+      k2(w, { draw: 'wave', x: u.x, y: u.y, a, r: R, arc, max: 0.7, ab: 'rogueWave' });
+      for (const e of foesNear(w, u, u.x, u.y, R)) if (inFront(u, e, arc + 0.2)) { addStatus(w, e, 'wet', 60, u); hurt(w, e, dmgOf(u, 0.6), u, { knock: 340, kAngle: a, noDodge: true }); }
+      if (tier >= 3) for (const d of [80, 140, 200]) w.hazards.push({ type: 'water', x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d, r: 44, t: 8, max: 8 });
+    },
+  },
+  anchorDrop: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 260 && foesNear(w, u, t.x, t.y, 100).length >= 2 ? 0.7 : 0),
+    use(w, u, t, tier) {
+      if (!t) return; cast(u, 'ability', 0.7);
+      const x = t.x, y = t.y, r = tier >= 2 ? 115 : 85;
+      if (tier >= 3) { setAnim(u, 'spin', 0.4); u.spin = { t0: w.time, dur: 0.4, dir: 1 }; ring(w, u, u.x, u.y, 130, dmgOf(u, 0.6), { knock: 240 }, '#8A94A6'); }
+      k2(w, { draw: 'anchor', from: u, x, y, r, max: 0.65, ab: 'anchorDrop' });
+      after(u, 0.55, () => {
+        w.shake = Math.max(w.shake, 7);
+        w.telegraphs.push({ type: 'blast', x, y, r, color: '#C9D2DE', t: 0.05, max: 0.05 });
+        for (const e of foesNear(w, u, x, y, r)) { hurt(w, e, dmgOf(u, 1.8), u, { heavy: true, noDodge: true, knock: 150, kAngle: angleTo(x, y, e.x, e.y) }); stun(w, e, 1.2); }
+      });
+    },
+    show: { far: true },
+  },
 };
+// a bomb's blast at x, y: radius r, damage k x his own, extra hit options; drawn as the kit's blast
+function blast(w, u, x, y, r, k, o, ab) {
+  w.telegraphs.push({ type: 'blast', x, y, r, color: '#FFB347', t: 0.05, max: 0.05, ab });
+  for (const e of foesNear(w, u, x, y, r)) hurt(w, e, dmgOf(u, k), u, { knock: 260, kAngle: angleTo(x, y, e.x, e.y), heavy: true, noDodge: true, blast: true, ...o, ab });
+  w.shake = Math.max(w.shake, r > 90 ? 8 : 4);
+}
 // a lobbed thing (no hit on the way; it lands where it was thrown): kind, colour, land(x, y)
 function lob(w, u, x, y, kind, color, land) {
   const d = Math.max(30, dist(u.x, u.y, x, y)), a = angleTo(u.x, u.y, x, y), sp = Math.max(260, d * 1.6);
@@ -1006,6 +1218,17 @@ export const TRAITS2 = {
     tick(w, u) { if (u.buffs.some((b) => b.blind)) u.buffs = u.buffs.filter((b) => !b.blind); },
     evade(w, u, src, amt, o) { if (o.dot || rand() > 0.15) return false; puff(w, u.x, u.y, '#C9B8FF', 6, 60, 4, 0.35); return true; },
   },
+  wellStocked: {
+    tick(w, u, dt) {
+      const k = u.kit; k.stockT = (k.stockT ?? 20) - dt; if (k.stockT > 0) return;
+      const a = friendsNear(w, u, u.x, u.y, 220).find((o) => o.team === 'hero' && !o.summon && !o.potions); if (!a) { k.stockT = 2; return; }
+      k.stockT = 60; a.potions = 1; k2(w, { draw: 'crumbs', x: a.x, y: a.y, unit: a, max: 0.6 });
+    },
+  },
+  armourPiercing: { dealt(w, u, t, amt) { return t.elite || t.major || t.def.boss ? amt * 1.25 : amt; } },
+  birdsEye: { tick(w, u) { if (u.kit.birdsEye) return; u.kit.birdsEye = true; u.def = { ...u.def, range: u.def.range * 1.25, keep: (u.def.keep || 150) * 1.15 }; } },
+  demolition: { dealt(w, u, t, amt, o) { if (o.blast && o.knock) o.knock *= 2; return amt; } },
+  oldSalt: { immune: ['wet'], dealt(w, u, t, amt) { return t.st && t.st.wet > 20 ? amt * 1.2 : amt; } },
   wellFed: { tick(w, u, dt) { for (const a of friendsNear(w, u, u.x, u.y, 150)) if (!a.summon) heal(w, a, a.maxHp * 0.005 * dt, u); } },
   beeFriend: {
     tick(w, u, dt) {
@@ -1058,6 +1281,25 @@ export const ATTACKS2 = {
   beekeeper(w, u, t, a) {
     shoot(w, u, a + rrange(-0.4, 0.4), { kind: 'bee', speed: 320, r: 6, life: 1.6, dmg: A(u, 0.95), knock: 10, extra: { home: t, turn: 6 } });
   },
+  // a pot or a pan out of the pack
+  quartermaster(w, u, t, a) { shoot(w, u, a, { kind: 'pot', speed: 430, r: 8, dmg: A(u, 1), knock: 70 }); },
+  // a heavy bolt through the first enemy; after Crank Up it bursts
+  crossbowman(w, u, t, a) {
+    const k = u.kit, boom = k.crank > 0; if (boom) k.crank--;
+    shoot(w, u, a, { kind: 'cbolt', speed: 720, r: 7, dmg: A(u, 1), knock: 50, pierce: 1, extra: { boom, onHit: boom ? (w2, p, e) => { if (p.boomed) return; p.boomed = true; blast(w2, u, e.x, e.y, k.crankR || 55, 0.6, { knock: 160 }, 'crankUp'); } : null } });
+  },
+  // a thrown hunting knife; under Keen Eye some land just right
+  falconer(w, u, t, a) {
+    const keen = u.kit.keenUntil > w.time && rand() < (tierOf(u, 'keenEye') >= 3 ? 0.5 : 0.3);
+    shoot(w, u, a, { kind: 'dagger', speed: 560, r: 6, dmg: A(u, 1) * (keen ? 2 : 1), crit: keen, knock: 30, extra: { big: keen } });
+  },
+  // a small lobbed bomb that bursts where it lands
+  grenadier(w, u, t, a) {
+    const x = t.x + (t.vx || 0) * 0.3, y = t.y + (t.vy || 0) * 0.3;
+    lob(w, u, x, y, 'bomb', null, () => blast(w, u, x, y, 50, 1.1, { knock: 150, heavy: false }, null));
+  },
+  // a thrown barbed harpoon on its rope
+  harpooner(w, u, t, a) { shoot(w, u, a, { kind: 'harpoon', speed: 620, r: 7, life: 0.6, dmg: A(u, 1), knock: 40 }); },
   // a magenta pact bolt: a third of what it deals heals him
   warlock(w, u, t, a) {
     shoot(w, u, a, { kind: 'bolt', speed: 470, r: 7, dmg: A(u, 1), color: '#E05AB8', knock: 25, extra: { onHit: (w2, p) => heal(w2, u, p.dmg * 0.33, u) } });

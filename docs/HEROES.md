@@ -182,3 +182,48 @@ A veiled hat, a copper smoker, and a great many friends who sting. Art: `art/her
 - **Honey Pot** (13s). Throws a pot of honey: enemies get stuck in it, friends get a sweet treat. I: A pool for 5s that entangles enemies. II: Allies standing in it heal. III: Bigger.
 - **Royal Jelly** (14s). Feeds an ally royal jelly: it attacks much faster for a while. I: +40% attack speed for 6s. II: And +20% damage. III: Two allies.
 - **Trait: Bee Friends.** A few bees always buzz round him and sting enemies that come close.
+
+## Quartermaster (`quartermaster`, support, 350 gold)
+A pack bigger than he is. Keeps the party fed, armed and stocked, and throws the pots. Art: `art/heroes/quartermaster.svg`.
+
+- **Attack: Pot toss.** Throws a pot or a pan out of the pack.
+- **Resupply** (12s). Tosses a supply bundle to the ally who needs it most. I: Heals 15%, and a health potion if they have none. II: Heals 25%. III: A bundle each for two allies.
+- **Oil the Blades** (16s). Hands round lamp oil for the weapons: the allies near him set things alight with every blow. I: Their blows burn a little for 8s. II: They burn more. III: And their blows heal them a little.
+- **Flare** (13s). Fires a red flare onto the enemies: whatever stands in its light is easy to hit. I: For 6s they take 20% more. II: They are dazzled and slowed too. III: A bigger patch of light.
+- **Trait: Well Stocked.** Once a minute, a friend near him who has no health potion gets one.
+
+## Crossbowman (`crossbowman`, ranged, 700 gold)
+A heavy crossbow, a kettle hat and a tall shield on his back. Slow to load, hard to stop. Art: `art/heroes/crossbowman.svg`.
+
+- **Attack: Heavy bolt.** A heavy crossbow bolt that goes through the first enemy it hits.
+- **Pavise** (13s). Plants the tall shield in front of him and shoots from behind it. I: For 6s: 60% less damage from the front. II: He reloads 35% faster behind it. III: For 9s.
+- **Pinning Bolt** (10s). A barbed bolt that nails an enemy to the floor. I: Pinned for 1.5s. II: Staggered too. III: Pinned for 2.5s.
+- **Crank Up** (15s). Cranks the crossbow hard and loads blasting bolts. I: His next three bolts burst where they hit. II: Bigger bursts. III: Five bolts.
+- **Trait: Armour Piercing.** His bolts hit elites, majors and bosses 25% harder.
+
+## Falconer (`falconer`, ranged, 700 gold)
+A rust beret, a leather gauntlet and a slate-grey falcon. The falcon does the hunting. Art: `art/heroes/falconer.svg`.
+
+- **Attack: Throwing knife.** A thrown hunting knife.
+- **Loose the Falcon** (10s). Sends the falcon at the furthest enemy: it marks it and pecks at it. I: Marked for 5s: everyone hits it 20% harder. II: It goes for the eyes: blinded. III: Then it dives on a second enemy.
+- **Keen Eye** (14s). Takes careful aim for a while: every throw goes further and some land just right. I: For 6s: 30% of his throws are critical hits. II: He throws 30% faster. III: Half of them are critical.
+- **Call the Flock** (13s). Whistles up a flock of small birds that sweeps through a line of enemies, pecking. I: One flock: slows those it passes. II: They peck at eyes: blinded. III: Two flocks.
+- **Trait: Bird's Eye.** Sees and throws 25% further than anyone else.
+
+## Grenadier (`grenadier`, ranged, 700 gold)
+A tall mitre cap, a handlebar moustache and a lit bomb, always. Solves problems loudly. Art: `art/heroes/grenadier.svg`.
+
+- **Attack: Bomb.** Lobs a small bomb that bursts where it lands.
+- **Big Bomb** (11s). Lobs a huge bomb with a long fuse. Everyone sees it coming. It doesn't help. I: A huge blast. II: It burns. III: It scatters four small bombs too.
+- **Sticky Bomb** (10s). Sticks a bomb to an enemy; it goes off a moment later. I: It blows after 2s. II: A bigger blast. III: Two sticky bombs.
+- **Blast Off** (12s). Drops a bomb at his own feet and rides the blast out of trouble. I: Throws him clear and hurts those near. II: The blast staggers. III: He lands with a second blast.
+- **Trait: Demolition.** His blasts throw enemies twice as far.
+
+## Harpooner (`harpooner`, ranged, 700 gold)
+A yellow sou'wester, a puffy grey moustache, a barbed harpoon on a rope. Art: `art/heroes/harpooner.svg`.
+
+- **Attack: Harpoon.** A thrown barbed harpoon, pulled back on its rope.
+- **Reel In** (10s). Harpoons a far enemy and hauls on the rope: a small one is dragged to him, a big one drags him to it. I: Drags it in (or him to it). II: It's staggered when it lands. III: The rope holds it near him for 4s.
+- **Rogue Wave** (12s). Calls up a wave of sea water that crashes over the enemies in front. I: Soaks and shoves them back. II: A bigger wave. III: It leaves water on the floor.
+- **Drop Anchor** (14s). Swings a ship's anchor round on its chain and drops it on the enemies. I: A heavy slam that stuns those under it. II: Wider. III: The chain sweeps round first, knocking back.
+- **Trait: Old Salt.** Can't be soaked, and hits wet enemies 20% harder.
