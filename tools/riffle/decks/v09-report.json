@@ -1,0 +1,62 @@
+{
+  "title": "0.9.0: the overhaul",
+  "topic": "runs",
+  "order": 11,
+  "priority": 1,
+  "tags": ["first"],
+  "cards": [
+    {
+      "id": "loop",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "The game loop",
+      "text": "Levels are kept, skill points, 3 floors of 7 rooms with mini-bosses, checkpoints, locked dungeons. Live as 0.9.0.",
+      "why": "This is the loop you described. Mark any part that's off.",
+      "videos": ["../../../clips/r8/loop/mini-warren-f1.mp4"],
+      "images": ["../../../clips/r8/ui/camp-390-01-home.png"],
+      "details": "A test player starting fresh beat the Warren's first mini-boss on run 6, the Warren on run 15, the Sewers on run 32, the Crypt on 38, the Frost Hollow on 67, the Ember Deep on 85 and the Spire on 148. A level-1 hero alone falls in the Warren's first rooms; a pair at level 10 beats its first mini-boss and falls on floor 2. Say if that's too slow or too fast.\n\nOld saves are carried over: gems became gold, old tree gold was refunded, levels start at half the best run level.",
+      "parts": [
+        { "id": "levels", "title": "Levels and points", "text": "A hero keeps its level and XP between runs and enters at that level. Each level gained gives one skill point. Strength comes from what you learn in the web, not from the level itself." },
+        { "id": "web", "title": "The skill web", "text": "43 nodes per hero so far: the three abilities with their tiers and cooldown, power and mastery nodes, and spokes of stat nodes (damage, health, attack speed, move speed, reach, ability haste, healing, status strength, toughness) out to keystones. Pan and zoom it.", "images": ["../../../clips/r8/ui/camp-390-08-hero-skills.png", "../../../clips/r8/ui/camp-390-09-hero-node.png"] },
+        { "id": "floors", "title": "Floors", "text": "3 floors of 7 rooms. Floors 1 and 2 end in two different mini-bosses, floor 3 in the boss. Each floor has its own enemies, hazards and mood.", "videos": ["../../../clips/r8/loop/crypt-floor2.mp4"] },
+        { "id": "minis", "title": "Mini-bosses and elites", "text": "Any kind can be a mini-boss: 1.6x the size, far tougher, two extra moves, and it enrages at half health. Elites are sized in between. Elites sometimes carry a trinket they use and drop (no picture of it on them yet)." },
+        { "id": "gates", "title": "Unlocks", "text": "Beat a dungeon's boss to open the next. Seats: the Warren's first mini-boss, the Warren's boss, the Sewers' boss. Reaching a floor lets you start there next time. Leaving or falling before a floor is finished costs 20% of the run's gold (falling too is my call, or wiping would beat leaving).", "images": ["../../../clips/r8/ui/camp-390-05-locked-dungeon.png", "../../../clips/r8/ui/hud-390-07-leave-ask.png"] },
+        { "id": "waves", "title": "Waves and numbers", "text": "No wave is smaller than the one before, waves arrive at several spots round the party, and there are 50% more enemies. Each dungeon and floor is much harder than the last." },
+        { "id": "gold", "title": "Gold only", "text": "Gold buys and upgrades equipment, heroes and potions. Gems are gone." }
+      ]
+    },
+    {
+      "id": "ui",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The UI, from scratch",
+      "text": "One design, rebuilt rather than restyled: camp, heroes, the web, trader, book, and the battle HUD.",
+      "why": "You said start from scratch. The reasoning is written up in docs/UI-v3.md. Mark what still isn't right.",
+      "images": ["../../../clips/r8/ui/camp-390-01-home.png", "../../../clips/r8/ui/hud-390-02-hud-fight.png"],
+      "parts": [
+        { "id": "camp", "title": "Camp", "text": "The party at the fire with levels and potion pockets; locked seats say what opens them; a dungeon carousel; a floor picker; one Delve button.", "images": ["../../../clips/r8/ui/camp-390-01-home.png"] },
+        { "id": "heroes", "title": "Heroes", "text": "A grid of portraits with level, unspent points and price; a hero page with Skills, Gear and About tabs.", "images": ["../../../clips/r8/ui/camp-390-07-heroes.png", "../../../clips/r8/ui/camp-390-11-hero-gear.png"] },
+        { "id": "trader", "title": "Trader and Book", "text": "Equipment with levels to upgrade, potions, and the book of monsters, items and statuses.", "images": ["../../../clips/r8/ui/camp-390-15-trader.png", "../../../clips/r8/ui/camp-390-18-book.png"] },
+        { "id": "hud", "title": "Battle HUD", "text": "Hero cards with a slim HP bar, the level badge on the left of the XP bar, cooldown dials, item sprites, and status rings that fill toward the burst.", "images": ["../../../clips/r8/ui/hud-390-03-cards-zoom.png", "../../../clips/r8/ui/hud-390-04-pause-hero.png"] },
+        { "id": "result", "title": "Result", "text": "Gold counted up, what was lost for leaving, new seats, opened dungeons, checkpoints, and each hero's levels and points.", "images": ["../../../clips/r8/ui/camp-390-24-result-won.png"] }
+      ]
+    },
+    {
+      "id": "combat",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Combat fixes",
+      "text": "Units no longer stick behind rocks, statuses build up visibly, Radiance and Cursed are in, the Bone King has a fourth phase.",
+      "why": "From your 0.8 notes. Mark any that still looks wrong on the phone.",
+      "videos": ["../../../clips/r8/s-nav-warren.mp4"],
+      "parts": [
+        { "id": "nav", "title": "Navigation", "text": "Heroes were stuck about 9% of their moving time, now under 1%: they froze in the corners of crates and walls and tried to squeeze between boulders." },
+        { "id": "status", "title": "Status build-up", "text": "The rings were always drawn full. They now fill as the status builds and flash at the burst. Shock gained a burst (a stun that arcs to two friends). All numbers are in docs/STATUSES.md." },
+        { "id": "radiance", "title": "Radiance", "text": "From angels: attacks slower and weaker as it builds; at the burst the unit glows for 3 seconds, can't attack, and spreads radiance to others.", "videos": ["../../../clips/r8/s-radiance-spire.mp4"] },
+        { "id": "curse", "title": "Cursed", "text": "From ghosts and the banshee: healing fades to nothing and blows land harder; at the burst the next attack, heal or summon turns on its user." },
+        { "id": "burn", "title": "Burn", "text": "Burning starts sooner and the flames are back on burning units.", "videos": ["../../../clips/r8/s-burn-ember.mp4"] },
+        { "id": "king", "title": "The Bone King", "text": "A fourth phase at 16% health: every grave opens, lances come in pairs and leave bone walls, and his soul attacks curse. A level-6 trio dropped straight in won half its fights.", "videos": ["../../../clips/r8/s-boneking-phase4b.mp4"] }
+      ]
+    }
+  ]
+}
