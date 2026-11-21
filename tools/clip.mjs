@@ -42,11 +42,22 @@ if (battle) {
     for (const part of (nodes || '').split(',').filter(Boolean)) { const [h, list] = part.split(':'); if (GAME.save.heroes[h]) GAME.save.heroes[h].nodes = Object.fromEntries(list.split('+').map((n) => [n, 1])); }
     GAME.record(true); GAME.startBattle({ arena, a: parse(blue), b: parse(red) });
   }, [battle, opt('arena', 'crypt'), opt('nodes', '')]);
+} else if (args.includes('--convoy')) {
+  // --convoy [--party paladin,archer,cleric] [--level 5] [--stretch 0-2] [--gather]: the wagon mode (js/convoy.js); at a
+  // roadside camp the first choice offered is taken (or --pick repair|potions|trinket|sellsword)
+  await page.evaluate(([party, level, stretch, gather]) => {
+    const s = GAME.save; s.unlocks = { ...(s.unlocks || {}), slotMini1: true, slotBoss1: true };
+    for (const id of party) { const h = s.heroes[id]; h.owned = true; h.level = level; }
+    s.party = party.slice();
+    GAME.record(true); GAME.startConvoy({ party, stretch, stance: gather ? 'gather' : 'guard' });
+  }, [opt('party', 'paladin,archer,cleric').split(','), +opt('level', 5), +opt('stretch', 0), args.includes('--gather')]);
 } else await page.evaluate((d) => { GAME.record(true); GAME.startRun(d); }, depth);
-if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) GAME.recFrame(1 / 30); }, skip);
+const convoyStep = () => page.evaluate((pick) => { const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick(r.offer.includes(pick) ? pick : r.offer[0]); }, opt('pick', ''));
+if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) { GAME.recFrame(1 / 30); const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick(r.offer[0]); } }, skip);
 const n = Math.round(secs * fps);
 for (let i = 0; i < n; i++) {
   await page.evaluate((dt) => GAME.recFrame(dt), speed / fps);
+  await convoyStep();
   await page.screenshot({ path: path.join(frames, `f${String(i).padStart(4, '0')}.png`) });
 }
 // a plain kill() leaves Edge running on Windows: take its whole process tree down

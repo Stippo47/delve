@@ -37,6 +37,7 @@ export async function loadThemes() {
 }
 
 // ---------------------------------------------------------------- state
+let onConvoy = null; // lane C (convoy): the wagon at the camp's edge
 let save = null, onSetOut = null, onBattle = null, root = null, topEl = null, panelEl = null, sheetEl = null, hintEl = null;
 let scene = null, map = null;
 let mode = 'ground';        // ground | fire | map | hero | trader | book | settings
@@ -51,7 +52,7 @@ let tree = null;
 let ticker = 0;
 
 export function initCamp(opts) {
-  save = opts.save; onSetOut = opts.onSetOut; onBattle = opts.onBattle || null;
+  save = opts.save; onSetOut = opts.onSetOut; onBattle = opts.onBattle || null; onConvoy = opts.onConvoy || null;
   root = document.getElementById('camp');
   topEl = document.getElementById('campTop');
   panelEl = document.getElementById('campPanel');
@@ -112,6 +113,7 @@ function onScene(h) {
     case 'trader': case 'book': case 'settings': cue('tap'); go(h.type); break;
     case 'delve': cue('tap'); go('map'); break;
     case 'battle': cue('tap'); if (onBattle) onBattle(); break; // the sparring ring: battle mode (battle-ui.js)
+    case 'wagon': cue('tap'); if (onConvoy) onConvoy(); break; // lane C: the wagon (convoy-ui.js)
     case 'seat': seatTap(h.i, h.open); break;
     case 'back': back(); break;
     case 'mapfloor': mapPick = { theme: h.theme, floor: h.floor }; map.setPick({ t: h.theme, f: h.floor }); cue('tap'); render(); break;

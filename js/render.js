@@ -44,6 +44,7 @@ export function layout(canvas, w, topPad, bottomPad = 10, sidePad = 10) {
   if (heroes.length) { tx = ty = 0; for (const h of heroes) { tx += h.x; ty += h.y; } tx /= heroes.length; ty /= heroes.length; }
   const halfX = along / (2 * s), halfY = across / (2 * s);
   const fit = (v, half, size) => { const lo = half - pad, hi = size - half + pad; return lo > hi ? size / 2 : clamp(v, lo, hi); };
+  if (w.camAt) { tx = w.camAt.x; ty = w.camAt.y; } // lane C (convoy.js): the camera rides with the wagon
   tx = fit(tx, halfX, w.W); ty = fit(ty, halfY, w.H);
   // the player's drag wins for a while, then the camera eases back to the party
   const now = performance.now(), fdt = Math.min(0.1, (now - (view.lastT || now)) / 1000); view.lastT = now;
@@ -85,6 +86,7 @@ function floor(w) {
   const g = c.getContext('2d');
   g.scale(s, s); g.translate(pad, pad);
   paintFloor(g, w, pad);
+  if (w.paintGround) w.paintGround(g, w); // lane C (convoy.js): the road, painted into the cache
   floorCache = { key, c, w, pad, s };
   return c;
 }
