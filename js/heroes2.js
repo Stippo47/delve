@@ -228,7 +228,7 @@ Object.assign(HEROES2, {
     attack: { name: 'Spirit bolt', anim: 'cast', desc: 'A teal spirit; a little of what it deals heals the most hurt ally.' },
     abilities: [
       { id: 'healTotem', name: 'Healing Totem', cd: 14, tags: 'h', glyph: 'leaf', desc: 'Plants a carved totem that heals the allies near it.',
-        tiers: ['3% a second for 6s.', 'For 9s.', 'It zaps enemies that come near it.'] },
+        tiers: ['2.2% a second for 6s.', 'For 9s.', 'It zaps enemies that come near it.'] },
       { id: 'spiritLink', name: 'Spirit Link', cd: 16, tags: 'h', glyph: 'heart', desc: 'Binds allies together with spirit threads: a blow on one is shared out among them all.',
         tiers: ['Up to three allies, for 5s.', 'Linked allies take 10% less.', 'Up to five, for 7s.'] },
       { id: 'rainDance', name: 'Rain Dance', cd: 15, tags: 's', glyph: 'cloud', desc: 'Calls a rain cloud over the enemies: it soaks them and puts fires out.',
@@ -251,7 +251,7 @@ Object.assign(HEROES2, {
       { id: 'broomRide', name: 'Broom Ride', cd: 10, tags: 'ds', glyph: 'dash', desc: 'Hops on the broom and flies out of trouble.',
         tiers: ['Flies clear of the enemies near her.', 'Drops three hex bolts on the way.', 'Further, and nothing can touch her meanwhile.'] },
     ],
-    trait: { id: 'crone', name: 'Crone', desc: 'Cursed enemies take 25% more from her.' },
+    trait: { id: 'crone', name: 'Crone', desc: 'Cursed enemies take 40% more from her.' },
   },
   warlock: {
     name: 'Warlock', art: 'art/heroes/warlock.svg', role: 'caster', unlock: { gems: 3 },
@@ -370,14 +370,14 @@ Object.assign(HEROES2, {
     stats: { hp: 105, speed: 56, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 150, atkCd: 1.3, dmg: 8 },
     attack: { name: 'Pot toss', anim: 'throw', desc: 'Throws a pot or a pan out of the pack.' },
     abilities: [
-      { id: 'resupply', name: 'Resupply', cd: 12, tags: 'h', glyph: 'vial', desc: 'Tosses a supply bundle to the ally who needs it most.',
-        tiers: ['Heals 15%, and a health potion if they have none.', 'Heals 25%.', 'A bundle each for two allies.'] },
+      { id: 'resupply', name: 'Resupply', cd: 15, tags: 'h', glyph: 'vial', desc: 'Tosses a supply bundle to the ally who needs it most.',
+        tiers: ['Heals 10%, and a health potion if they have none.', 'Heals 18%.', 'A bundle each for two allies.'] },
       { id: 'oilBlades', name: 'Oil the Blades', cd: 16, tags: 's', glyph: 'flame', desc: 'Hands round lamp oil for the weapons: the allies near him set things alight with every blow.',
         tiers: ['Their blows burn a little for 8s.', 'They burn more.', 'And their blows heal them a little.'] },
       { id: 'flare', name: 'Flare', cd: 13, tags: 'd', glyph: 'sun', desc: 'Fires a red flare onto the enemies: whatever stands in its light is easy to hit.',
         tiers: ['For 6s they take 20% more.', 'They are dazzled and slowed too.', 'A bigger patch of light.'] },
     ],
-    trait: { id: 'wellStocked', name: 'Well Stocked', desc: 'Once a minute, a friend near him who has no health potion gets one.' },
+    trait: { id: 'wellStocked', name: 'Well Stocked', desc: 'Every minute and a half, a friend near him who has no health potion gets one.' },
   },
   crossbowman: {
     name: 'Crossbowman', art: 'art/heroes/crossbowman.svg', role: 'ranged', unlock: { gems: 2 },
@@ -558,7 +558,7 @@ Object.assign(HEROES2, {
     attack: { name: 'Gladius', anim: 'thrust', desc: 'A short, quick stab.' },
     abilities: [
       { id: 'netThrow', name: 'Net Throw', cd: 10, tags: 's', glyph: 'vines', desc: 'Casts a net over one enemy: it is held and he stabs it harder.',
-        tiers: ['Held for 2s; he hits it 30% harder.', 'Held 3s.', 'Two nets.'] },
+        tiers: ['Held for 2s; he hits it 40% harder.', 'Held 3s.', 'Two nets.'] },
       { id: 'showboat', name: 'Showboat', cd: 14, tags: 'h', glyph: 'up', desc: 'Raises the gladius to the crowd: enemies near turn on him and he braces.',
         tiers: ['Taunts those near for 3s; takes 30% less.', 'Heals 15%.', 'Each blow he takes meanwhile is answered.'] },
       { id: 'shieldRush', name: 'Shield Rush', cd: 9, tags: 'ds', glyph: 'shield', desc: 'Rushes in behind the round shield and stabs.',
@@ -577,7 +577,7 @@ Object.assign(HEROES2, {
       { id: 'mock', name: 'Mock', cd: 11, tags: 's', glyph: 'note', desc: 'Pulls a face and blows a raspberry: enemies near can\'t help chasing him.',
         tiers: ['Taunts those near for 3s; he dodges more meanwhile.', 'Wider.', 'They swing slower in their rage.'] },
       { id: 'befuddle', name: 'Befuddle', cd: 14, tags: 's', glyph: 'swirl', desc: 'Tells an enemy a joke so bad it turns on its own friends for a moment.',
-        tiers: ['For 2.5s.', 'For 4s.', 'Two enemies.'] },
+        tiers: ['For 3.5s.', 'For 5s.', 'Two enemies.'] },
       { id: 'juggle', name: 'Juggling Act', cd: 10, tags: 'd', glyph: 'burst', desc: 'Throws his juggling balls: they bounce from enemy to enemy.',
         tiers: ['Three balls, each bouncing twice.', 'They daze: slowed.', 'Five balls.'] },
     ],

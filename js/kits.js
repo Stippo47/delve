@@ -443,7 +443,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'cast', 0.4);
       const list = allies(w, u).filter((o) => !o.summon && rayable(w, u, o)).sort((a, b) => hpRatio(a) - hpRatio(b)).slice(0, tier >= 3 ? 2 : 1);
-      const pct = tier >= 2 ? 0.4 : 0.25;
+      const pct = tier >= 2 ? 0.26 : 0.17;
       u.rays = list.map((a) => ({ to: a, t: RAY_T, rate: a.maxHp * pct / RAY_T, f: fx(w, { type: 'beam', kind: 'heal', from: u, to: a, x1: u.x, y1: u.y, x2: a.x, y2: a.y, max: RAY_T }) }));
     },
   },
@@ -508,7 +508,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'cast', 0.4);
       const list = [u, ...allies(w, u)].filter((o) => !o.summon).sort((a, b) => hpRatio(a) - hpRatio(b)).slice(0, tier >= 3 ? 2 : 1);
-      for (const a of list) { a.regenT = 6; a.regenRate = a.maxHp * (tier >= 2 ? 0.38 : 0.25) / 6; a.regenSrc = u; a.regenAb = u.kit && u.kit.using; fx(w, { type: 'zone', x: a.x, y: a.y, r: 26, kind: 'heal', max: 0.6 }); }
+      for (const a of list) { a.regenT = 6; a.regenRate = a.maxHp * (tier >= 2 ? 0.24 : 0.16) / 6; a.regenSrc = u; a.regenAb = u.kit && u.kit.using; fx(w, { type: 'zone', x: a.x, y: a.y, r: 26, kind: 'heal', max: 0.6 }); }
     },
   },
   callWolf: {
@@ -520,7 +520,7 @@ export const ABILITIES = {
       for (const p of spots) fx(w, { type: 'zone', kind: 'summon', x: p.x, y: p.y, r: 34, max: 1.1 });
       u.later = [{ t: 0.7, f: () => { for (const p of spots) {
         const s = spawn(w, 'wolf', p.x, p.y, { team: u.team, scale: tier >= 2 ? 1.25 : 1, hpMul: tier >= 2 ? 1.5 : 1 });
-        s.summon = true; s.summonBy = u; s.lifeT = 15; s.aggro = true; s.dmgMul = u.dmgMul * (tier >= 2 ? 1.3 : 1);
+        s.summon = true; s.summonBy = u; s.lifeT = 15; s.aggro = true; s.dmgMul = u.dmgMul * (tier >= 2 ? 1.1 : 0.9);
       } } }];
     },
   },
@@ -728,7 +728,7 @@ export const TRAITS = {
   kindling: { dealt(w, u, t, amt) { return t.st.burn > 10 ? amt * 1.2 : amt; } },
   coldBlood: { immune: ['chill'] },
   conductor: { shockMul: 2 },
-  raiser: { reviveRate: 3, reviveHp: 0.4 },
+  raiser: { reviveRate: 3, reviveHp: 0.3 },
   rhythm: { tick(w, u, dt) { for (const a of friendsNear(w, u, u.x, u.y, 180)) addBuff(a, { id: 'rhythm', dur: 0.3, move: 1.1 }); } },
   barkskin: { taken(w, u, src, amt) { return u.spd < 8 ? amt * 0.7 : amt; } },
   soulHarvest: { death(w, u) { if (u.kit) for (const k in u.kit.cd) u.kit.cd[k] = Math.max(0, u.kit.cd[k] - 0.8); } },

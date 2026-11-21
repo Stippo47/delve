@@ -8,7 +8,7 @@
 //     plays a fresh save run after run like a player would: the newest open dungeon from its furthest checkpoint, the
 //     highest-level heroes that fit the slots, points spent with autoSpend, heroes bought with gold when there's enough,
 //     a trinket each when gold is spare; reports when each slot, boss and dungeon came.
-// A run is stuck if no room is finished for 300 simulated seconds, or 600 in a boss room.
+/// A run is stuck if no room is finished for 420 simulated seconds (a weak party's room can pass 300: enemies only wither\n// from 240 s), or 600 in a boss room.
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 const n = +opt('n', 10), seed0 = +opt('seed', 1), depth = +opt('depth', 1), level = +opt('level', 0), startFloor = +opt('floor', 1);
@@ -47,13 +47,13 @@ function play(save, opts) {
       update(run, DT); t += DT;
       if (feel) feelTick(run.world, t);
       if (run.rooms !== lastRooms) { lastRooms = run.rooms; lastT = t; }
-      if (t - lastT > (run.node.kind === 'boss' ? 600 : 300)) { run.was = run.phase + (run.task ? ' task ' + run.task.type : '') + ' pickups ' + run.world.pickups.map((p) => p.type).join(',') + ' fx ' + run.world.fx.filter((f) => f.spawns && !f.done).length + ' danger ' + run.world.danger.filter((z) => z.spawns && !z.done).length; run.phase = 'stuck'; break; }
+      if (t - lastT > (run.node.kind === 'boss' ? 600 : 420)) { run.was = run.phase + (run.task ? ' task ' + run.task.type : '') + ' pickups ' + run.world.pickups.map((p) => p.type).join(',') + ' fx ' + run.world.fx.filter((f) => f.spawns && !f.done).length + ' danger ' + run.world.danger.filter((z) => z.spawns && !z.done).length; run.phase = 'stuck'; break; }
     }
   } catch (e) { err = e; run.phase = 'error'; }
   if (run.phase === 'stuck' || run.phase === 'error') {
     const w = run.world;
     console.log(`  ${run.theme} ${run.phase} floor ${run.floor} room ${run.map.L} kind ${run.node.kind} shape ${w.shape}`, err ? err.stack : '',
-      w.units.filter((u) => !u.dead).map((u) => `${u.kind}@${Math.round(u.x)},${Math.round(u.y)}${u.downed ? 'D' : ''}${u.minion ? 'm' : ''}[${u.mode}${u.target ? '>' + u.target.kind : ''}${u.forcedGoal ? ' forced' : ''} hp${Math.round(100 * u.hp / u.maxHp)}${['atkT', 'stunT', 'rootT', 'tangledT', 'frozenT', 'flinchT'].filter((k) => u[k] > 0.05).map((k) => ' ' + k + u[k].toFixed(1)).join('')}${u.act ? ' act ' + u.act.type : ''}${u.ethereal ? ' eth' : ''}]`).join(' '), 'phase', run.phase, 'waves', JSON.stringify(w.waves && { left: w.waves.left, pending: !!w.waves.pending }), 'quiet', Math.round(run.quietT || 0), 'was', run.was);
+      w.units.filter((u) => !u.dead).map((u) => `${u.kind}@${Math.round(u.x)},${Math.round(u.y)}${u.downed ? 'D' : ''}${u.minion ? 'm' : ''}[${u.mode}${u.target ? '>' + u.target.kind : ''}${u.forcedGoal ? ' forced' : ''} hp${Math.round(100 * u.hp / u.maxHp)}${['atkT', 'stunT', 'rootT', 'tangledT', 'frozenT', 'flinchT'].filter((k) => u[k] > 0.05).map((k) => ' ' + k + u[k].toFixed(1)).join('')}${u.act ? ' act ' + u.act.type : ''}${u.ethereal ? ' eth' : ''}]`).join(' '), 'phase', run.phase, 'waves', JSON.stringify(w.waves && { left: w.waves.left, pending: !!w.waves.pending }), 'quiet', Math.round(run.quietT || 0), 'was', run.was, 'hitstop', w.hitstop, 'roomT', Math.round(run.t), 'node', run.node.kind, 'through', run.through, 'exitT', run.exitT);
   }
   return { run, t, phase: run.phase };
 }
