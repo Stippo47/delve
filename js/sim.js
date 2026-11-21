@@ -848,6 +848,7 @@ export function scatterCoins(w, x, y, n, reach = 1) {
 function kill(w, u, src) {
   u.hp = 0;
   if (u.charmed) { const l = u.charmed; u.team = u.charmTeam; u.charmed = null; if (l.host === u) { l.host = null; l.mass = l.def.mass; } } // a leech's host goes down as itself
+  if (u.host) { const h = u.host; u.host = null; if (h.charmed === u) { h.team = h.charmTeam; h.charmed = null; h.target = null; h.charmCd = 6; } } // a leech dies: its host is itself again
   if (src && src !== u && alive(src)) for (const h of hooksOf(src)) if (h.kill) h.kill(w, src, u);
   for (const o of w.units) if (o !== u && alive(o) && dist(o.x, o.y, u.x, u.y) < 260) for (const h of hooksOf(o)) if (h.death) h.death(w, o, u);
   if (u.boom) explode(w, u.x, u.y, 80, 16, {}, u.summonBy || null, '#9BE07A', u);
@@ -1114,7 +1115,7 @@ function statusTick(w, u, dt) {
     if (u.radiantT <= 0) { u.radiantT = 0; u.radImmuneT = RADIANCE.immuneT; }
   } else if (u.radImmuneT > 0) u.radImmuneT -= dt;
   if (u.hexed && (u.hexT -= dt) <= 0) u.hexed = false;           // an unused hex wears off
-  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT', 'focusT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
+  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT', 'focusT', 'charmCd']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
   for (const b of u.buffs) b.t -= dt;
   if (u.buffs.length) u.buffs = u.buffs.filter((b) => b.t > 0);
   if (u.regenT > 0) { u.regenT -= dt; heal(w, u, u.regenRate * dt, u.regenSrc); }
