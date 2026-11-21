@@ -515,7 +515,7 @@ export const ABILITIES = {
       const spots = []; for (let i = 0; i < (tier >= 3 ? 2 : 1); i++) { const a = u.facing + (i ? -1 : 1) * 0.9; spots.push({ x: clamp(u.x + Math.cos(a) * 60, 30, w.W - 30), y: clamp(u.y + Math.sin(a) * 60, 30, w.H - 30) }); }
       for (const p of spots) fx(w, { type: 'zone', kind: 'summon', x: p.x, y: p.y, r: 34, max: 1.1 });
       u.later = [{ t: 0.7, f: () => { for (const p of spots) {
-        const s = spawn(w, 'wolf', p.x, p.y, { team: 'hero', scale: tier >= 2 ? 1.25 : 1, hpMul: tier >= 2 ? 1.5 : 1 });
+        const s = spawn(w, 'wolf', p.x, p.y, { team: u.team, scale: tier >= 2 ? 1.25 : 1, hpMul: tier >= 2 ? 1.5 : 1 });
         s.summon = true; s.summonBy = u; s.lifeT = 15; s.aggro = true; s.dmgMul = u.dmgMul * (tier >= 2 ? 1.3 : 1);
       } } }];
     },
@@ -531,7 +531,7 @@ export const ABILITIES = {
       // round 9: each body is worth three small, weak, jawless minions that punch (units.js 'minion'), in a cold grey
       for (const c of spots) {
         for (let i = 0; i < 3; i++) { const a = i / 3 * TAU + 0.5;
-          const s = spawn(w, 'minion', c.x + Math.cos(a) * 18, c.y + Math.sin(a) * 18, { team: 'hero' });
+          const s = spawn(w, 'minion', c.x + Math.cos(a) * 18, c.y + Math.sin(a) * 18, { team: u.team });
           s.summon = true; s.summonBy = u; s.lifeT = 12; s.aggro = true; s.dmgMul = u.dmgMul; s.boom = tier >= 3; s.facing = a; }
         fx(w, { type: 'pillar', x: c.x, y: c.y, r: 24, kind: 'drain', max: 0.5 }); puff(w, c.x, c.y, '#B8C0C8', 12, 70, 6, 0.6);
       }

@@ -77,3 +77,6 @@ Running: **A: art** (`art5`, worktree delve-wt/art5) and **H: heroes** (`heroes2
 order, as slots and credits allow: **V3: showcase 2 notes** (round 10 in DECISIONS; the log is the spec; set the
 defaults to Inked puddles and the straight bar for every enemy, then re-record only the changed clips), R, B, C.
 V3 touches js/kits.js and js/fxkit.js, which lane H also edits: start it after H merges.
+Update, same evening: the designer has a credit reset ("I have a reset. Just go"). Now running four: A (`art5`),
+H (`heroes2`), **R: roster** (`roster3`) and **B: bosses** (`bosses2`). Next as slots free: V3 (after H merges),
+then C (convoy).

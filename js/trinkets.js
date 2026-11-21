@@ -63,7 +63,7 @@ const GHOST = {
   knockImmune: true,
 };
 export function raiseGhost(w, body) {
-  const g = spawn(w, body.kind, body.x, body.y, { team: 'hero', level: body.level || 1 });
+  const g = spawn(w, body.kind, body.x, body.y, { team: body.team || 'hero', level: body.level || 1 });
   Object.assign(g, { summon: true, ghostOf: body.fake ? null : body, ethereal: true, aggro: true, potions: 0, abilT: Infinity,
     dmgMul: (body.dmgMul || 1) * 0.25, facing: body.facing || 0, mvA: body.facing || 0, trinketHooks: [GHOST], trinkets: [] });
   fx(w, { type: 'pillar', x: body.x, y: body.y, r: 26, kind: 'holy', max: 0.7 });

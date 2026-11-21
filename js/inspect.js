@@ -87,9 +87,11 @@ export function portrait(kind) {
 function render() {
   if (!el || !run) return;
   const w = run.world;
-  const party = partyUnits(run);
-  const foes = w.units.filter((u) => u.team === 'enemy' && !u.dead && !u.summon);
-  const face = (u) => `<button class="ip-face ${u === sel ? 'on' : ''} ${u.team} ${u.downed ? 'down' : ''}" data-ip="unit:${u.id}"><img src="${portrait(u.kind)}" alt=""></button>`;
+  // a battle (battle.js): Blue's units, then Red's, whatever they are
+  const sd = w.battle ? w.battle.side : null, live = (u) => !u.dead && !u.summon && !u.ethereal;
+  const party = sd ? w.units.filter((u) => live(u) && sd[u.team] === 'a').slice(0, 8) : partyUnits(run);
+  const foes = sd ? w.units.filter((u) => live(u) && sd[u.team] === 'b') : w.units.filter((u) => u.team === 'enemy' && !u.dead && !u.summon);
+  const face = (u) => `<button class="ip-face ${u === sel ? 'on' : ''} ${sd ? (sd[u.team] === 'a' ? 'hero side-a' : 'enemy side-b') : u.team} ${u.downed ? 'down' : ''}" data-ip="unit:${u.id}"><img src="${portrait(u.kind)}" alt=""></button>`;
   const strip = `<div class="ip-strip">${party.map(face).join('')}${foes.length ? '<i class="ip-sep"></i>' : ''}${foes.slice(0, 10).map(face).join('')}</div>`;
   el.innerHTML = `<div class="ip-panel">${strip}<div class="ip-body">${sel ? body(sel) : '<p class="ip-p">Tap someone.</p>'}</div>
     <div class="ip-foot"><button class="btn primary" data-ip="resume">${I.play}Play on</button></div></div>`;
@@ -98,7 +100,8 @@ function render() {
 function body(u) {
   const d = u.def, hero = HEROES[u.kind], hs = run.heroes[u.kind];
   const hp = Math.max(0, Math.ceil(u.hp)), max = Math.round(u.maxHp);
-  const sub = hero ? ROLE[hero.role] : u.team === 'hero' ? `Hired hand · level ${u.level || 1}` : d.boss ? 'Boss' : u.elite ? 'Elite' : 'Enemy';
+  const bt = run.world.battle, mine = bt ? d.team === 'hero' : u.team === 'hero';
+  const sub = (bt ? (bt.side[u.team] === 'a' ? 'Blue · ' : 'Red · ') : '') + (hero ? ROLE[hero.role] : mine ? (bt ? 'Called help' : `Hired hand · level ${u.level || 1}`) : d.boss ? 'Boss' : u.major ? 'Major' : u.elite ? 'Elite' : bt ? 'Monster' : 'Enemy');
   let html = `<div class="ip-head"><span class="ip-pic"><img src="${portrait(u.kind)}" alt=""></span><div><h2>${d.name}</h2><span class="cap">${sub}${u.downed ? ' · down' : ''}</span>
     <div class="bar hp"><i style="width:${100 * hp / max}%"></i><em>${hp}/${max}</em></div>
     ${hs && !hs.merc ? `<div class="xpline"><span class="lvl">${hs.level}</span><div class="bar xp"><i style="width:${Math.min(100, 100 * hs.xp / xpToNext(hs.level))}%"></i><em>${Math.floor(hs.xp)}/${xpToNext(hs.level)}</em></div></div>` : ''}</div></div>`;
@@ -122,7 +125,7 @@ function body(u) {
     }).join('')}</ul>
     <h3 class="cap">Trait</h3><p class="ip-p"><b>${hero.trait.name}.</b> ${hero.trait.desc}</p>`;
   }
-  if (u.team === 'hero') {
+  if (mine) {
     const items = unitItems(run, u.kind, u);
     html += `<h3 class="cap">Carrying</h3>${items.length ? `<ul class="ip-list">${items.map((i) => {
       if (i.kind === 'potion') { const p = POTIONS[i.id]; return `<li><span class="it big">${icon('potion', i.id)}</span><span><b>${p.name}</b><span>${p.desc}</span><em>${POTION_FUN[i.id] || ''}</em></span></li>`; }
