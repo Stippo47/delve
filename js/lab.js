@@ -117,7 +117,8 @@ function setupFx() {
   const zones = ['holy', 'fire', 'poison', 'ice', 'storm', 'vines', 'heal', 'sanctuary'];
   const statuses = [['wet', (u) => { u.st.wet = 80; }], ['shock', (u) => { u.st.shock = 70; }], ['stagger', (u) => { u.st.stagger = 60; }],
     ['ko', (u) => { u.st.stagger = 100; }], ['root', (u) => { u.rootT = 9; }], ['sleep', (u) => { u.sleepT = 9; }], ['ethereal', (u) => { u.ethereal = true; }],
-    ['burn', (u) => { u.st.burn = 70; }], ['chill', (u) => { u.st.chill = 70; }], ['poison', (u) => { u.st.poison = 70; }], ['frozen', (u) => { u.frozenT = 9; }]];
+    ['burn', (u) => { u.st.burn = 70; }], ['chill', (u) => { u.st.chill = 70; }], ['poison', (u) => { u.st.poison = 70; }], ['frozen', (u) => { u.frozenT = 9; }],
+    ['radiance', (u) => { u.st.radiance = 70; }], ['radiant', (u) => { u.radiantT = 99; w.fx.push({ type: 'aura', kind: 'radiance', unit: u, x: u.x, y: u.y, r: 120, t: 0, max: 99 }); }], ['curse', (u) => { u.st.curse = 70; }], ['hexed', (u) => { u.hexed = true; u.hexT = 99; }]];
   const kinds = ['paladin', 'archer', 'twinfang', 'wildmane', 'frost', 'storm', 'druid', 'tower', 'cleric', 'granny', 'bard'];
   statuses.forEach(([n, f], i) => { const u = spawn(w, kinds[i % kinds.length], 880 - Math.floor(i / 4) * 95, 70 + (i % 4) * 110); u.facing = 0; u.team = 'hero'; f(u); u.label = n; });
   const proj = ['arrow', 'fireArrow', 'bolt', 'fireball', 'shard', 'dagger', 'vial', 'thorn', 'note', 'bone', 'water', 'icicle'];
@@ -169,12 +170,31 @@ function setupProps() {
   tick = (dt) => { w.time += dt; };
 }
 
+// ---------------------------------------------------------------- status bench (lane S, round 8)
+// Real fights from the sim that build statuses to their bursts: heroes against angels (radiance) on the left, against
+// ghosts and a banshee (curse) on the right, a fire patch in each for burn. Heroes are topped up so it runs on.
+// &foe=angel|ghost to have one side only.
+function setupStatus() {
+  w = room(1100, 560);
+  w.walls = [{ x: 530, y: 0, w: 40, h: 560 }]; buildGrid(w);
+  const sides = [[0, ['angel', 'cherub', 'seraph']], [570, ['ghost', 'ghost', 'banshee']]];
+  for (const [x0, foes] of sides) {
+    ['paladin', 'archer', 'cleric'].forEach((k, i) => { const u = spawn(w, k, x0 + 90, 140 + i * 140, { level: 6 }); u.facing = 0; });
+    foes.forEach((k, i) => { const u = spawn(w, k, x0 + 400, 140 + i * 140, { mult: 1.2 }); u.facing = Math.PI; u.aggro = true; });
+    w.hazards.push({ type: 'fire', x: x0 + 250, y: 470, r: 46 });
+  }
+  setZoom(+(P.get('zoom') || 0.5));
+  tick = (dt) => { step(w, dt);
+    for (const u of w.units) { if (u.team === 'hero' && u.hp < u.maxHp * 0.3) u.hp = u.maxHp; if (u.team === 'enemy' && u.hp < u.maxHp * 0.2) u.hp = u.maxHp; } };
+}
+
 if (mode === 'grid') setupGrid();
 else if (mode === 'props') setupProps();
 else if (mode === 'sheet') setupSheet();
 else if (mode === 'fx') setupFx();
 else if (mode === 'fight') setupFight(0);
 else if (mode === 'perf') setupFight(+(P.get('n') || 30));
+else if (mode === 'status') setupStatus();
 
 let last = 0, drawMs = [], live = !P.has('rec');
 function frame(dt) {
