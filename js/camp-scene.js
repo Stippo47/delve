@@ -31,7 +31,7 @@ export const seatPos = (i) => ({ x: Math.cos(SEAT_A[i]) * SEAT_R, y: Math.sin(SE
 // ---------------------------------------------------------------- the scene
 // api: { save(), onTap(hit), map (camp-map.js instance) }
 export function makeScene(canvas, api) {
-  const g = canvas.getContext('2d');
+  let g = canvas.getContext('2d'); // (let: the still background is painted through the same helpers into its own canvas)
   let W = 390, H = 844, dpr = 1, s0 = 1, halfW = 195, halfH = 422, st = 0;
   const cam = { fx: 0, fy: 0, ax: 195, ay: 422, k: 1 }, want = { ...cam };
   let mode = 'ground', focus = null, running = false, raf = 0, last = 0, time = 0;
@@ -41,7 +41,7 @@ export function makeScene(canvas, api) {
   let visitor = null;       // an unrecruited hero being looked at: stands at the camp's edge
 
   // ---- where things are (scaled to the screen's shape so everything stays on it)
-  const L = { trader: { x: 0, y: 0 }, book: { x: 0, y: 0 }, settings: { x: 0, y: 0 }, tent: { x: 0, y: 0 }, edge: { x: 0, y: 0 } };
+  const L = { trader: { x: 0, y: 0 }, book: { x: 0, y: 0 }, settings: { x: 0, y: 0 }, tent: { x: 0, y: 0 }, edge: { x: 0, y: 0 }, battle: { x: 0, y: 0 } };
   function place() {
     const ox = Math.min(halfW - 62, 128), oy = Math.min(halfH - 110, 232);
     L.trader = { x: ox - 4, y: -oy + 6 };
@@ -49,6 +49,7 @@ export function makeScene(canvas, api) {
     L.settings = { x: -ox + 10, y: oy - 14 };
     L.tent = { x: ox - 8, y: oy - 8 };
     L.edge = { x: 0, y: oy + 34 };
+    L.battle = { x: -8, y: -oy + 2 }; // the sparring ring (battle mode, round 10): between the book and the cart
   }
   function resize() {
     const r = canvas.getBoundingClientRect();
@@ -120,7 +121,7 @@ export function makeScene(canvas, api) {
       const x = (r * 2 - 1) * (halfW - 30), y = (r2 * 2 - 1) * (halfH - 92) + 14;
       if (Math.hypot(x, y) < 118) continue;
       let d = Infinity;
-      for (const o of [L.trader, L.book, L.settings, L.tent]) d = Math.min(d, Math.hypot(x - o.x, y - o.y) - 62);
+      for (const o of [L.trader, L.book, L.settings, L.tent, L.battle]) d = Math.min(d, Math.hypot(x - o.x, y - o.y) - 62);
       for (const o of figs.values()) if (o !== f && o.state !== 'sit') d = Math.min(d, Math.hypot(x - (o.goalKind ? o.gx : o.x), y - (o.goalKind ? o.gy : o.y)) - 40);
       if (d > bd) { bd = d; best = { x, y }; }
       if (d > 40) break;
@@ -205,10 +206,9 @@ export function makeScene(canvas, api) {
     g.fillStyle = '#131A22'; g.fillRect(0, 0, W, H);
     g.save();
     g.translate(cam.ax, cam.ay); g.scale(cam.k, cam.k); g.translate(-cam.fx, -cam.fy);
-    ground();
-    stones();
+    const b = background(); // the ground, the fire's stones and the camp's things: painted once, not every frame
+    g.drawImage(b.c, -b.BX, -b.BY, b.BX * 2, b.BY * 2);
     for (let i = 0; i < 4; i++) seatLog(i);
-    thing('tent'); thing('trader'); thing('book'); thing('settings');
     shadows();
     const list = [...figs.values()];
     if (visitor) list.push(visitor);
@@ -222,6 +222,27 @@ export function makeScene(canvas, api) {
     if (mode === 'fire') delveText();
   }
 
+  // Everything in the camp that never moves, kept as one picture (0.11.1: painting ~250 shapes at 3x a frame made the
+  // camp crawl on a phone). Repainted when the screen's size changes or the number of bedrolls by the tent does.
+  let bg = null, bgKey = '';
+  function background() {
+    const save = api.save(), resting = HERO_IDS.filter((h) => save.heroes[h].owned && P.recoverLeft(save, h) > 0 && !save.party.includes(h)).length;
+    const key = [W, H, dpr, resting].join('|');
+    if (bg && bgKey === key) return bg;
+    const BX = halfW + 150, BY = halfH + 150;
+    let q = s0 * dpr * 1.3; // a little finer than the screen, so zooming in on a hero doesn't blur it much
+    const px = BX * 2 * q * BY * 2 * q; if (px > 6e6) q *= Math.sqrt(6e6 / px);
+    const c = (bg && bg.c) || document.createElement('canvas');
+    c.width = Math.ceil(BX * 2 * q); c.height = Math.ceil(BY * 2 * q);
+    const main = g; g = c.getContext('2d');
+    try {
+      g.setTransform(q, 0, 0, q, BX * q, BY * q);
+      ground(); stones();
+      thing('tent'); thing('trader'); thing('book'); thing('settings'); thing('battle');
+    } finally { g = main; }
+    bg = { c, BX, BY }; bgKey = key;
+    return bg;
+  }
   // the clearing: night grass, a trodden ring round the fire, trees closing in at the edges
   function ground() {
     const R = Math.max(halfW, halfH) + 400;
@@ -309,10 +330,18 @@ export function makeScene(canvas, api) {
     g.fillStyle = lg; g.beginPath(); g.arc(lx, ly, 70, 0, TAU); g.fill();
     g.restore();
   }
-  function vignette() {
-    const gr = g.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.72);
-    gr.addColorStop(0, 'rgba(6,8,16,0)'); gr.addColorStop(1, 'rgba(6,8,16,0.62)');
-    g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  let vig = null, vigKey = '';
+  function vignette() { // (0.11.1: painted once, small, and stretched: a full-screen gradient a frame is a lot of pixels at 3x)
+    const key = W + 'x' + H;
+    if (!vig || vigKey !== key) {
+      vig = vig || document.createElement('canvas'); vigKey = key;
+      const k = 1 / 6; vig.width = Math.ceil(W * k); vig.height = Math.ceil(H * k);
+      const x = vig.getContext('2d'); x.setTransform(k, 0, 0, k, 0, 0);
+      const gr = x.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.72);
+      gr.addColorStop(0, 'rgba(6,8,16,0)'); gr.addColorStop(1, 'rgba(6,8,16,0.62)');
+      x.fillStyle = gr; x.fillRect(0, 0, W, H);
+    }
+    g.imageSmoothingEnabled = true; g.drawImage(vig, 0, 0, W, H);
   }
 
   // a seat: a short log on its side round the fire; a locked one is darker, with a padlock
@@ -365,6 +394,15 @@ export function makeScene(canvas, api) {
       g.fillStyle = '#B9AE96'; for (let k = 0; k < 4; k++) { g.fillRect(-14, -7 + k * 5, 10, 1.4); g.fillRect(4, -7 + k * 5, 10, 1.4); }
       g.fillStyle = '#C8453D'; g.fillRect(-1, 9, 2.4, 9);
       g.restore();
+    } else if (kind === 'battle') { // a sparring ring: a roped circle of posts on trodden sand, a blue and a red flag, two crossed blades
+      g.fillStyle = 'rgba(5,8,12,0.4)'; g.beginPath(); g.ellipse(3, 6, 34, 30, 0, 0, TAU); g.fill();
+      ink(() => { g.beginPath(); g.arc(0, 0, 28, 0, TAU); }, '#B79F74', 1.6);
+      g.fillStyle = '#A38B62'; g.beginPath(); g.arc(0, 0, 19, 0, TAU); g.fill();
+      g.strokeStyle = '#E9DCC0'; g.lineWidth = 2; g.setLineDash([5, 4]); g.beginPath(); g.arc(0, 0, 28, 0, TAU); g.stroke(); g.setLineDash([]);
+      for (let k = 0; k < 6; k++) { const a = k / 6 * TAU + 0.5; ink(() => { g.beginPath(); g.arc(Math.cos(a) * 28, Math.sin(a) * 28, 3.6, 0, TAU); }, '#6E4A30', 1.1); }
+      for (const [sx, col] of [[-1, '#5FA8FF'], [1, '#FF6B5A']]) ink(() => { g.beginPath(); g.moveTo(sx * 28, -6); g.lineTo(sx * 28 + sx * 13, -1); g.lineTo(sx * 28, 4); g.closePath(); }, col, 1.1);
+      for (const s of [-1, 1]) { g.save(); g.rotate(s * 0.75);
+        ink(() => { g.beginPath(); g.rect(-1.8, -15, 3.6, 22); }, '#DCE2EC', 1.1); ink(() => { g.beginPath(); g.rect(-5.5, 7, 11, 2.6); g.rect(-1.6, 9.6, 3.2, 6.5); }, '#8A5A34', 1); g.restore(); }
     } else if (kind === 'settings') { // a tool chest with a lantern on it
       g.fillStyle = 'rgba(5,8,12,0.4)'; g.beginPath(); g.ellipse(3, 6, 30, 22, 0, 0, TAU); g.fill();
       ink(() => { g.beginPath(); g.roundRect ? g.roundRect(-26, -18, 52, 36, 5) : g.rect(-26, -18, 52, 36); }, '#4E5A78', 1.6);
@@ -400,7 +438,15 @@ export function makeScene(canvas, api) {
   }
   function drawFig(f) {
     const def = f.def, sizeU = def.vr * 220 / headR(f.id) * HS;
-    const set = getRig(def.art, sizeU * cam.k * dpr * 1.04); if (!set) return;
+    // 0.11.1: nobody off the screen is drawn, and only the hero being looked at gets a sprite made at the zoomed
+    // size. (Every hero's parts were re-made at up to 640 px whenever the camp zoomed in, on screen or not: some 250 MB
+    // of pictures, and the fire and the hero pages ran at a few frames a second.)
+    const sp = toScreen(f.x, f.y), rad = sizeU * cam.k * 0.75;
+    if (sp.x < -rad || sp.x > W + rad || sp.y < -rad || sp.y > H + rad) return;
+    const looked = mode === 'focus' && focus && focus.type === 'hero' && focus.id === f.id;
+    const fine = looked || (mode === 'fire' && (f.state === 'sit' || f.goalKind === 'sit'));
+    // (asked for at the zoom the camera is heading to, not each size it passes through on the way)
+    const set = getRig(def.art, sizeU * (fine ? want.k : Math.min(want.k, s0 * 1.25)) * dpr * 1.04); if (!set) return;
     const lying = f.state === 'rest';
     const pose = lying ? LIMP : poseFor(f.u, {}, 1 / 60);
     g.save(); g.translate(f.x, f.y);
@@ -415,12 +461,13 @@ export function makeScene(canvas, api) {
   function labels() {
     const save = api.save(), zoomed = cam.k / s0, groundA = clamp(1.6 - zoomed * 0.75, 0, 1), now = Date.now();
     g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+    // (0.11.1: each word is painted once into its own little picture; outlined text every frame is slow on a phone)
     const word = (txt, x, y, size, col, a = 1, weight = 850) => {
-      g.globalAlpha = a; g.font = `${weight} ${size}px ui-rounded, "SF Pro Rounded", system-ui, sans-serif`;
-      g.lineWidth = 3.4; g.strokeStyle = 'rgba(8,10,20,0.85)'; g.lineJoin = 'round'; g.strokeText(txt, x, y); g.fillStyle = col; g.fillText(txt, x, y); g.globalAlpha = 1;
+      const w = wordSprite(txt, size, col, weight);
+      g.globalAlpha = a; g.drawImage(w.c, Math.round((x - w.w / 2) * dpr) / dpr, Math.round((y - w.base) * dpr) / dpr, w.w, w.h); g.globalAlpha = 1;
     };
     if (groundA > 0.02) {
-      for (const [kind, name, dy] of [['trader', 'TRADER', 54], ['book', 'BOOK', 38], ['settings', 'SETTINGS', 34], ['tent', 'TENT', 46]]) {
+      for (const [kind, name, dy] of [['trader', 'TRADER', 54], ['book', 'BOOK', 38], ['settings', 'SETTINGS', 34], ['tent', 'TENT', 46], ['battle', 'BATTLE', 46]]) {
         if (kind === 'tent') continue;
         const p = toScreen(L[kind].x, L[kind].y + dy); word(name, p.x, p.y, 11, '#C9CEE4', groundA);
       }
@@ -437,8 +484,7 @@ export function makeScene(canvas, api) {
       const pts = M.points(save, f.id);
       if (pts > 0 && pts !== Infinity && nameA > 0.02 && !(focus && focus.id === f.id)) {
         const y = p.y - r - (left > 0 ? 20 : 6);
-        g.save(); g.globalAlpha = nameA; g.translate(p.x, y); g.rotate(Math.PI / 4); g.fillStyle = '#4FD8C8'; g.shadowColor = 'rgba(79,216,200,.8)'; g.shadowBlur = 8;
-        g.fillRect(-4, -4, 8, 8); g.restore();
+        const m = pointMark(); g.globalAlpha = nameA; g.drawImage(m, p.x - 16, y - 16, 32, 32); g.globalAlpha = 1; // (no canvas shadow: a blur a hero a frame is slow on a phone)
       }
     }
     // locked seats: what opens them (the next one at ground level, all of them at the fire)
@@ -460,6 +506,29 @@ export function makeScene(canvas, api) {
       lines.forEach((l, k) => word(l, x, y0 + k * lh, size, '#9BA2C0', a, 750));
     }
     function later(i) { const u = P.slotUnlocks(save).filter((x) => !x.have); return (u[i - n] || {}).text || ''; }
+  }
+  const wordCache = new Map(); let wordDpr = 0;
+  function wordSprite(txt, size, col, weight) {
+    if (wordDpr !== dpr || wordCache.size > 240) { wordCache.clear(); wordDpr = dpr; }
+    const key = weight + '|' + size + '|' + col + '|' + txt;
+    let w = wordCache.get(key); if (w) return w;
+    const font = `${weight} ${size}px ui-rounded, "SF Pro Rounded", system-ui, sans-serif`;
+    g.font = font; const tw = Math.ceil(g.measureText(txt).width) + 10, th = Math.ceil(size * 1.5) + 8, base = Math.ceil(size * 1.1) + 4;
+    const c = document.createElement('canvas'); c.width = Math.ceil(tw * dpr); c.height = Math.ceil(th * dpr);
+    const x = c.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0);
+    x.font = font; x.textAlign = 'center'; x.textBaseline = 'alphabetic'; x.lineJoin = 'round';
+    x.lineWidth = 3.4; x.strokeStyle = 'rgba(8,10,20,0.85)'; x.strokeText(txt, tw / 2, base); x.fillStyle = col; x.fillText(txt, tw / 2, base);
+    w = { c, w: tw, h: th, base }; wordCache.set(key, w); return w;
+  }
+  let markImg = null, markDpr = 0;
+  function pointMark() { // a teal diamond with a soft glow: unspent skill points
+    if (markImg && markDpr === dpr) return markImg;
+    const c = document.createElement('canvas'); c.width = c.height = Math.ceil(32 * dpr); markDpr = dpr;
+    const x = c.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 16 * dpr, 16 * dpr);
+    const gr = x.createRadialGradient(0, 0, 2, 0, 0, 15); gr.addColorStop(0, 'rgba(79,216,200,0.6)'); gr.addColorStop(1, 'rgba(79,216,200,0)');
+    x.fillStyle = gr; x.beginPath(); x.arc(0, 0, 15, 0, TAU); x.fill();
+    x.rotate(Math.PI / 4); x.fillStyle = '#4FD8C8'; x.fillRect(-4, -4, 8, 8);
+    return (markImg = c);
   }
   function delveText() {
     const p = toScreen(0, -2), k = clamp((cam.k / s0 - 1.2) / 0.8, 0, 1); if (k < 0.05) return;
@@ -492,7 +561,7 @@ export function makeScene(canvas, api) {
     for (const f of figs.values()) { const d = Math.hypot(w.x - f.x, w.y - (f.y - 3)); if (d < bd) { bd = d; best = f; } }
     if (best) return { type: 'hero', id: best.id };
     if (near({ x: 0, y: 0 }, 44)) return { type: 'fire' };
-    for (const k of ['trader', 'book', 'settings']) if (near(L[k], k === 'trader' ? 58 : 40)) return { type: k };
+    for (const k of ['trader', 'book', 'settings', 'battle']) if (near(L[k], k === 'trader' ? 58 : 40)) return { type: k };
     for (let i = 0; i < 4; i++) if (near(seatPos(i), 26)) return { type: 'fire' };
     return null;
   }

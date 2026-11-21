@@ -37,7 +37,7 @@ export async function loadThemes() {
 }
 
 // ---------------------------------------------------------------- state
-let save = null, onSetOut = null, root = null, topEl = null, panelEl = null, sheetEl = null, hintEl = null;
+let save = null, onSetOut = null, onBattle = null, root = null, topEl = null, panelEl = null, sheetEl = null, hintEl = null;
 let scene = null, map = null;
 let mode = 'ground';        // ground | fire | map | hero | trader | book | settings
 let heroId = null, sub = 'skills', heroFrom = 'ground';
@@ -51,7 +51,7 @@ let tree = null;
 let ticker = 0;
 
 export function initCamp(opts) {
-  save = opts.save; onSetOut = opts.onSetOut;
+  save = opts.save; onSetOut = opts.onSetOut; onBattle = opts.onBattle || null;
   root = document.getElementById('camp');
   topEl = document.getElementById('campTop');
   panelEl = document.getElementById('campPanel');
@@ -111,6 +111,7 @@ function onScene(h) {
     case 'hero': cue('tap'); go('hero', { id: h.id }); break;
     case 'trader': case 'book': case 'settings': cue('tap'); go(h.type); break;
     case 'delve': cue('tap'); go('map'); break;
+    case 'battle': cue('tap'); if (onBattle) onBattle(); break; // the sparring ring: battle mode (battle-ui.js)
     case 'seat': seatTap(h.i, h.open); break;
     case 'back': back(); break;
     case 'mapfloor': mapPick = { theme: h.theme, floor: h.floor }; map.setPick({ t: h.theme, f: h.floor }); cue('tap'); render(); break;

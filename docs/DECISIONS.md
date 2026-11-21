@@ -299,3 +299,38 @@ Rulings and lanes: `docs/BUILD-v5.md`; the designer's words (47 cards: roster, s
   orc, the Sewers' slime and lizard blade...) now meet a major of it until they get named mini-bosses. The golden
   skeleton keeps its homing bones on the base kind (the designer "might" move them to the elite). The rat king's
   sprite is a big recoloured rat for now (the designer asked for more than a stacked rat sprite: real art queued).
+
+## Round 10 (2026-11-21): showcase 2 answers
+The designer's words: `docs/riffle-log/2026-11-21-round10-showcase2.txt`. Settled: **puddles = Inked** (merging),
+**enemy health = the straight bar** on top ("Just the straight bar": no arc, tanky kinds included). 45 of 60 clips
+ticked; the notes below are lane V3's list (queued behind the art and hero lanes: weekly usage was at 96%).
+- Kit changes asked for: **Zeus Bolt** reworked: a bolt that jumps between enemies N times and shocks at every jump;
+  tier I one bolt, tier II 50% more jumps, tier III +2 bolts; no X hit mark on lightning. **Roll** (archer) slides
+  into position and shoots caltrops out. **Light orb** (cleric attack) spreads by angle, not position, and orbs that
+  pass through allies heal them slightly. **Bone dart** is no longer a bone: it starts bigger and slower. Frost Arrow
+  leaves no ice puddle. Plague Doctor's Gas Form: "Great" (the unrequested swap from Leeches stays).
+- Visual notes per ability are in the log (hands not head for the storm mage, weapons held out not in on Cleave and
+  Reap, smoke that fades and appears at both ends of Backstab, two more Shockwave variants, three wolf-bite variants,
+  the previous Entangle cast, Sanctuary as one ring through every point, simpler flail and Bone Spear, grey raised
+  dead with even hands, Life Drain that grows out to its targets first).
+
+## Round 10 (2026-11-21): battle mode
+The designer: "Add a battle game mode. I can pin any unit against each other and any enemy whose dungeon I have
+defeated. So I can make a team of 10 skeletons and necromancer vs a knight and tower." Built as `js/battle.js`
+(rules), `js/battle-ui.js` and `css/battle.css` (screens); checks: `node tools/battles.mjs`. Calls made, all easy to change:
+- **Where.** A sparring ring in the camp, between the book and the trader's cart. Two sides, Blue (bottom of the
+  field) and Red (top); a side holds 20 units at most, 12 of one kind.
+- **Who.** Heroes you own, any number of each, on either side, with the skills and trinkets they have at camp (no
+  potions). Every enemy kind of a dungeon whose boss you have beaten, its mini-bosses and boss included; a kind is
+  listed under the first dungeon it appears in and fights as strong as on that dungeon's first floor. A monster's
+  tag cycles plain, elite, major (elites and majors carry their trinkets). The fighting ground is any open dungeon's look.
+- **Nothing is earned or lost**: no gold, XP, drops, book counts or resting. In a battle heroes die like anyone.
+- **Bosses on one side only** for now: a boss's moves are written against "the heroes", so a battle gives the boss's
+  side the sim's enemy team; two bosses facing each other waits for the boss lane's rewrite. A boss with its own
+  hall (the Bone King, the Elder Ent) brings it.
+- **Sides.** What a unit makes mid-fight (a split slime, called wolves, raised dead, a rat king's rats) joins its
+  maker's side (sim.js `w.actor`). Both sides carry a straight health bar and a floor ring in their colour (no body
+  outline: that stays reserved for protection).
+- **Ending.** A side with nobody standing loses. After 75 seconds everyone presses in (no fleeing, mending or calling);
+  at 4 minutes, or when the flag button is tapped, the side with more of its health left takes it.
+- **Result.** Per side and per kind: how many are left, damage dealt and taken, kills, healing; Again, Change sides, Camp.

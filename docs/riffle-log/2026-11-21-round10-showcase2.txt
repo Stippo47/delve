@@ -1,0 +1,61 @@
+delve / art / showcase2: "Showcase 2: your notes applied"
+  puddles (Puddles that merge: 7 styles): GO, picked: Inked
+  ehp (Enemy health, on top): GO, picked: Bar
+      "Just the straight bar"
+  paladin (Paladin): GO, picked: Sword (attack), Shield Bash, Guard, Consecrate
+  tower (Tower): GO, picked: Flanged mace (attack), Charge, Ground Pound
+      item tower-holdTheLine (Hold the Line): "Animation good. Weird line effect"
+  archer (Archer): GO, picked: Frost Arrow, Roll
+      item archer-attack (Bow (attack)): "Move bow forwards more "
+      item archer-frostArrow (Frost Arrow): "Remove the ice puddle. "
+      item archer-roll (Roll): "Should shoot caltrops out from out of it. Slide into position. "
+  twinfang (Twinfang): GO, picked: Twin daggers (attack), Fan of Knives
+      item twinfang-backstab (Backstab): "Smoke doesn’t fade out., doesnt make one where he spawns back in "
+  wildmane (Wildmane): GO, picked: Greatsword (attack), Rage, Leap, Cleave
+      item wildmane-cleave (Cleave): "Good except they hold sword in not out."
+  berserker (Berserker): GO, picked: Whirl, Unstoppable
+      item berserker-attack (Flail (attack)): "Simpler. "
+      item berserker-shockwave (Shockwave): "Try 2 more variants"
+      item berserker-whirl (Whirl): "Remove strings.
+They also look like they are in a different style than what he’s holding"
+  granny (Granny Reaper): GO, picked: Scythe (attack), Reap, Hook
+      item granny-reap (Reap): "Holds scythe in not out.
+Blood orbs should pop when they get to her. Also “drip” as they travel "
+      item granny-oldBones (Old Bones): "Don’t like the skull effect. "
+  pyromancer (Pyromancer): GO, picked: Spark (attack), Fireball, Flame Wall, Inferno
+  frost (Frost Mage): GO, picked: Snow bolt (attack), Ice Shard, Frost Nova
+      item frost-iceShard (Ice Shard): "When cold units should create the snow flake particles slowly.
+Give each spike a trail effect"
+  storm (Storm Mage): GO, picked: Chain Lightning, Thunderclap
+      item storm-attack (Zap (attack)): "Thinner. Small arms. More visible. Less transparent. Zap should come from hands not head ."
+      item storm-chainLightning (Chain Lightning): "From hands not head"
+      item storm-stormCloud (Zeus Bolt): "Ok rework. Bolts will jump between enemies repeatedly x amount of times (upgrades boost it) and shock everytime they do. 
+Will only shoot 1 lvl 1 
+50% more bounces lvl 2 
++ 2 bolts lvl 3
+
+I don’t like the X hit effect of lightning. "
+  cleric (Cleric): GO, picked: Light orb (attack), Mending Ray, Smite
+      item cleric-attack (Light orb (attack)): "Larger spread in angle, not position. 
+Orbs can also hit allies slightly healing them. "
+      item cleric-mend (Mending Ray): "Give outline. 
+Remove green stuff on nights face. If those are healing symbols. Need outline and need to be spread out around his sprite. "
+      item cleric-sanctuary (Sanctuary): "Not what I meant. A ring around the entire effect passing through each point "
+      item cleric-smite (Smite): "Good "
+  bard (Bard): GO, picked: Sour note (attack), War Song, Lullaby, Encore
+      item bard-attack (Sour note (attack)): "Wiggles up and down to fast. "
+      item bard-lullaby (Lullaby): "Particles die a bit abruptly and don’t have any variation in end position "
+  druid (Druid): GO, picked: Thorn (attack), Rejuvenate, Call Wolf
+      item druid-entangle (Entangle): "Effect looks good. Ability doesnt. Previous was better"
+      item druid-callWolf (Call Wolf): "Better. Work on the bite effect. Maybe show me 3 variations. U are close"
+  necromancer (Necromancer): GO, picked: Raise Dead, Life Drain
+      item necromancer-attack (Bone dart (attack)): "Remove the bone… 
+No longer a bone dart. Have it start out bigger and slower"
+      item necromancer-raiseDead (Raise Dead): "Just make grey. Also their hands are uneven "
+      item necromancer-lifeDrain (Life Drain): "Should grow out towards them first "
+      item necromancer-boneSpear (Bone Spear): "Too complex now"
+  plague (Plague Doctor): GO, picked: Poison cluster (attack), Miasma, Cure, Gas Form
+      item plague-attack (Poison cluster (attack)): "The poof doesnt fade out nicely "
+      item plague-leeches (Gas Form): "Great "
+  DECK: done (17 of 17 answered)
+
