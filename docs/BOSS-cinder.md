@@ -52,7 +52,7 @@ It sags; the body plates crack apart. Coins.
 - The fire call fills the floor with circles and then with flames; by the end its own trail has carved the pit up.
 
 ## Numbers
-Health 1250 (round 12; was 1200) (x1.4 for every boss, then the dungeon's strength and the party size), crawl 42, mass 12. Phases at 65%
+Health 1150 (round 12; was 1200) (x1.4 for every boss, then the dungeon's strength and the party size), crawl 42, mass 12. Phases at 65%
 and 35%.
 
 Balance (`node tools/runs.mjs --boss --theme ember --bossid cinder --level 50 --party paladin,archer,cleric,twinfang`;
@@ -65,3 +65,5 @@ Swingy from 4 to 6 of 10 on small changes; the knobs are health, the scorch's ti
 
 ## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
 Re-measured, not retuned (the lead tunes hero numbers first): level 50: won 5 of 10, avg 182 s. Same command as above.
+
+Round 12 (lane D): health 1200 to 1150 (the Ember Deep went from x5.4 to x4.0). The campaign meets it with the starter four (paladin, archer, cleric, twinfang) at about level 43: `--level 43 --n 20` won 8 of 20, wins about 170 s.

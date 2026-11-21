@@ -198,7 +198,7 @@ function sanctum(w) {
 const ART = variantUrl('art/enemies/placeholder/seraph.svg', { hue: 10, sat: 1.2, light: 0.08 });
 export const SERAPH = {
   defs: {
-    gildedSeraph: { team: 'enemy', name: 'The Gilded Seraph', art: ART, headR: 56, r: 48, vr: 38, turn: 3, accel: 180, face: 3, mass: 6, hp: 1100, speed: 50, role: 'ranged', range: 300,
+    gildedSeraph: { team: 'enemy', name: 'The Gilded Seraph', art: ART, headR: 56, r: 48, vr: 38, turn: 3, accel: 180, face: 3, mass: 6, hp: 1000, speed: 50, role: 'ranged', range: 300,
       atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 220, coins: [90, 110], boss: true, arena: 'sanctum', attackAnim: 'cast',
       res: { radiance: 0, curse: 0.5, poison: 0.3, stagger: 0.5 }, brain, onDeath: death },
     sunBlade: PART('Sun Blade', { r: 22, vr: 22, mass: 20, hp: 100, res: { radiance: 0 }, draw: drawSunBlade }),

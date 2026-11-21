@@ -56,7 +56,7 @@ It drops, venting steam; its hands fall with it.
 - The spin chasing one hero, then the Eye sweeping the room.
 
 ## Numbers
-Health 950 (round 12; was 1000) (x1.4 for every boss, then the dungeon's strength and party size), float 46, mass 14. Phases at 65% and 35%.
+Health 880 (round 12; was 1000) (x1.4 for every boss, then the dungeon's strength and party size), float 46, mass 14. Phases at 65% and 35%.
 
 Balance (`node tools/runs.mjs --boss --theme spire --bossid greatEngine --level 66 --party paladin,archer,cleric,twinfang`:
 the Spire's strength stands in for the Foundry's; level 66 is a guess past the Dunes):
@@ -68,3 +68,5 @@ merges (knobs: `GE.hand.every`, the hands' damage, `GE.guard`).
 
 ## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
 Re-measured, not retuned (the lead tunes hero numbers first): the Foundry' own strength (`--theme foundry`), level 66: won 0 of 10, avg 86 s. Same command as above.
+
+Round 12 (lane D): health 1000 to 880, Hammer 115 to 105, Claw 95 to 88, Rocket Fist 120 to 110, Clap 120 to 110 (the Foundry went from x8.4 to x4.2). The campaign meets it with the starter four (paladin, archer, cleric, twinfang) at about level 58: `--level 58 --n 20` won 8 of 20, wins about 213 s.

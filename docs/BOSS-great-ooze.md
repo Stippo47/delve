@@ -60,7 +60,7 @@ It bursts into a wide slick of ooze; its slimes go with it.
 - Fire plays: its slicks are oil, its last-phase gas explodes.
 
 ## Numbers
-Health 1150 (round 12; was 1350) (x1.4 for every boss, then the dungeon's strength and party size), walk 52 (in surges), mass 7, no
+Health 1050 (round 12; was 1350) (x1.4 for every boss, then the dungeon's strength and party size), walk 52 (in surges), mass 7, no
 knockback. Phases at 70%, 45%, 20%.
 
 Balance (`node tools/runs.mjs --boss --theme sewers --bossid greatOoze --level 17 --party paladin,archer,cleric,twinfang`;
@@ -79,3 +79,5 @@ that slam, grab and sweep, and a mouth that surfaces in a canal now and then as 
 
 ## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
 Re-measured, not retuned (the lead tunes hero numbers first): level 17, 4 heroes: won 10 of 10, avg 188 s. Same command as above.
+
+Round 12 (lane D): health 1350 to 1050 (the Sewers went from x2.35 to x2.75). The campaign meets it with the starter four (paladin, archer, cleric, twinfang) at about level 25: `--level 25 --n 20` won 10 of 20, wins about 163 s.

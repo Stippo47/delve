@@ -58,7 +58,7 @@ She shatters in a burst of ice; her images go with her and her walls melt.
 - The blizzard: the last 20% is a scramble under falling hail.
 
 ## Numbers
-Health 760 (round 12; was 1000) (x1.4 for every boss, then the dungeon's strength and party size), walk 50, mass 5, no knockback.
+Health 680 (round 12; was 1000) (x1.4 for every boss, then the dungeon's strength and party size), walk 50, mass 5, no knockback.
 Phases at 70%, 45%, 20%.
 
 Balance (`node tools/runs.mjs --boss --theme frost --bossid winterQueen --level 41 --party paladin,archer,cleric,twinfang`;
@@ -75,3 +75,5 @@ Real art (her, the images, the dais; docs/ART-NEEDED-bosses.md). The designer's 
 
 ## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
 Re-measured, not retuned (the lead tunes hero numbers first): level 41: won 2 of 10, avg 207 s. Same command as above.
+
+Round 12 (lane D): health 1000 to 680 (the Frost Hollow went from x4.6 to x3.75). The campaign meets her with the starter four (paladin, archer, cleric, twinfang) at about level 38: `--level 38 --n 20` won 9 of 20, wins about 162 s.

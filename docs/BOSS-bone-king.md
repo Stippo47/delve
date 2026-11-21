@@ -116,3 +116,5 @@ unit of the other side steers out of it once it has been showing for that unit's
 (`dangerEscape`, used by `movement()`; `steer()` also won't walk into one). Escaping is a scramble: twice the turn
 rate and acceleration and 10% more speed while running out, so a tank facing him can still turn and go. Any enemy can use it (the Gaper's
 charge line uses it too).
+
+Round 12 (lane D): HP 1100 to 1000 (the Crypt went from x3.8 to x3.2). The campaign meets him with the starter four (paladin, archer, cleric, twinfang) at about level 33: `node tools/runs.mjs --boss --theme crypt --level 33 --party paladin,archer,cleric,twinfang --n 20` won 11 of 20, wins about 179 s.

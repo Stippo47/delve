@@ -65,3 +65,5 @@ While under the sand its head is hidden but its round floor shadow still shows; 
 
 ## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
 Re-measured, not retuned (the lead tunes hero numbers first): the Dunes' own strength (`--theme dunes`), level 62: won 1 of 10, avg 214 s. Same command as above.
+
+Round 12 (lane D): health 900 to 760, Bite 120 to 100, Spit 80 to 65, Erupt 140 to 110 (the rear 100 to 80), Tremor 70 to 55 (the Dunes went from x7.4 to x4.6). The campaign meets it with the starter four (paladin, archer, cleric, twinfang) at about level 54: `--level 54 --n 20` won 12 of 20, wins about 248 s. Phase 2 (the double eruptions and tremors) was where every r11 fight ended.

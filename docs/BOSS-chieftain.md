@@ -89,3 +89,5 @@ visuals lane: the cone strikes with the bone-spike burst every 'blade' danger us
 
 ## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
 Re-measured, not retuned (the lead tunes hero numbers first): level 15, 3 heroes: won 4 of 10, avg 246 s. Same command as above.
+
+Round 12 (lane D): health 1300 to 1000, Chop 30 to 26, Charge 34 to 29, Spear 22 to 21 (the Warren itself went from x1.6 to x2.0). The campaign meets him with three heroes at about level 17: `--level 17 --party paladin,archer,cleric --n 20` won 8 of 20, wins about 218 s.

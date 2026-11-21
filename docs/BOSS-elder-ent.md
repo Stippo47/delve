@@ -67,3 +67,5 @@ from floor 3.
 ## Still to do
 Real art (a giant tree, not a recoloured troll); its own look for the roots and the branch fall (the visuals lane);
 maybe a fourth phase or more abilities, as the designer asked for the other bosses.
+
+Round 12 (lane D): health 1350 to 1850, Sweep 28 to 25, Roots 18 to 17: a longer fight that hits a little softer. The campaign meets it with two heroes at about level 11 (`node tools/runs.mjs --boss --theme wildwood --level 11 --party paladin,archer --n 20`): won 10 of 20, wins about 110 s. (Before: two heroes at level 10 won 9 of 10 in 82 s.)

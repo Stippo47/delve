@@ -52,7 +52,7 @@ She breaks apart in a burst of gold and dark; the blades fall.
 - The fall: the gold room goes dark for the last 15%.
 
 ## Numbers
-Health 1100 (round 12; was 950) (x1.4 for every boss, then the dungeon's strength and the party size), float 50, mass 6. Phases at 70%,
+Health 1000 (round 12; was 950) (x1.4 for every boss, then the dungeon's strength and the party size), float 50, mass 6. Phases at 70%,
 40%, 15%.
 
 Balance (`node tools/runs.mjs --boss --theme spire --bossid gildedSeraph --level 58 --party paladin,archer,cleric,twinfang`;
@@ -64,3 +64,5 @@ the campaign hasn't reached the Spire in 110 runs: about level 58 is the guess f
 
 ## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
 Re-measured, not retuned (the lead tunes hero numbers first): level 58: won 2 of 10, avg 272 s. Same command as above.
+
+Round 12 (lane D): health 950 to 1000 (the Spire went from x5.9 to x3.95). The campaign now reaches her with the starter four (paladin, archer, cleric, twinfang) at about level 49: `--level 49 --n 20` won 7 of 20, wins about 206 s (all fights about 248 s: the choir phase is still the long one).
