@@ -9,6 +9,18 @@ import { I, roman } from './ui-kit.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const views = {}; // camera per hero, kept between visits: { x, y, k }
+// Round 9: nodes that aren't next to a known node (learned, or the hero at the middle) stay hidden; a dev cheat in
+// the settings shows the whole web (kept in localStorage, so it stays a per-device switch, not part of the save).
+let ALL = false;
+try { ALL = localStorage.getItem('delve.webAll') === '1'; } catch {}
+export const showAll = () => ALL;
+export function setShowAll(on) { ALL = !!on; try { localStorage.setItem('delve.webAll', ALL ? '1' : '0'); } catch {} }
+function visibleSet(save, id, w) {
+  if (ALL) return null;
+  const known = new Set(w.nodes.filter((n) => n.kind === 'root' || M.rank(save, id, n.id) > 0).map((n) => n.id)), vis = new Set(known);
+  for (const k of known) for (const l of w.by[k].links) vis.add(l);
+  return vis;
+}
 const R = { root: 46, tier: 30, ability: 30, stat: 19, keystone: 30, slot: 24 };
 const sizeOf = (n) => R[n.kind] || 19;
 
@@ -89,7 +101,7 @@ function linkSvg(a, b, sa, sb) {
 }
 
 function contentSvg(save, id, sel) {
-  const w = M.web(id), st = {};
+  const w = M.web(id), st = {}, vis = visibleSet(save, id, w), shown = (n) => !vis || vis.has(n.id);
   for (const n of w.nodes) st[n.id] = M.nodeState(save, id, n);
   let maxR = 0; for (const n of w.nodes) maxR = Math.max(maxR, Math.hypot(n.x - w.root.x, n.y - w.root.y));
   // faint rings every 150 units: the wheel the web grows on
@@ -98,11 +110,11 @@ function contentSvg(save, id, sel) {
   let links = '';
   const seen = new Set();
   for (const n of w.nodes) for (const l of n.links) {
-    const k = n.id < l ? n.id + '|' + l : l + '|' + n.id; if (seen.has(k) || !w.by[l]) continue; seen.add(k);
+    const k = n.id < l ? n.id + '|' + l : l + '|' + n.id; if (seen.has(k) || !w.by[l] || !shown(n) || !shown(w.by[l])) continue; seen.add(k);
     links += linkSvg(n, w.by[l], st[n.id], st[l]);
   }
   // draw the dim ones first so lit paths sit on top
-  const order = w.nodes.slice().sort((a, b) => (st[a.id].state === 'locked') - (st[b.id].state === 'locked')).reverse();
+  const order = w.nodes.filter(shown).sort((a, b) => (st[a.id].state === 'locked') - (st[b.id].state === 'locked')).reverse();
   return { html: `<g class="rings">${rings}</g><g class="links">${links}</g><g class="nodes">${order.map((n) => nodeSvg(save, id, n, st[n.id], sel)).join('')}</g>`, maxR, st };
 }
 
@@ -157,7 +169,7 @@ export function mountTree(host, o) {
     const need = !s.owned ? 'Recruit this hero first' : !miss ? '' : miss.what === 'link' ? 'Learn a node next to it first' : miss.text;
     const ico = n.kind === 'tier' || n.kind === 'ability' ? `<span class="np-ico ab">${icon('ability', n.ability || n.id)}</span>` : `<span class="np-ico ${n.kind}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${n.kind === 'keystone' ? '<path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="currentColor" stroke="none"/>' : n.kind === 'slot' ? '<path d="M12 3l8 6-8 12-8-12z"/>' : glyph(n)}</svg></span>`;
     const btn = s.maxed ? `<button class="btn wide no" disabled>${I.check} Learned</button>`
-      : `<button class="btn wide ${s.can ? 'teal' : 'no'}" data-learn="${n.id}">${s.can ? `Learn · ${s.cost} ${s.cost === 1 ? 'point' : 'points'}` : need || `Needs ${s.cost} ${s.cost === 1 ? 'point' : 'points'}`}</button>`;
+      : `<button class="btn wide ${s.can ? 'teal' : 'no'}" data-learn="${n.id}">${s.can ? `Learn - ${s.cost} ${s.cost === 1 ? 'point' : 'points'}` : need || `Needs ${s.cost} ${s.cost === 1 ? 'point' : 'points'}`}</button>`;
     panel.innerHTML = `<div class="np-head">${ico}<div><b class="np-name">${n.name}</b><span class="cap">${kind}${rankTxt}</span></div><button class="np-x" data-close aria-label="close">×</button></div>
       <p class="np-desc">${n.desc || ''}</p>${btn}`;
   }
