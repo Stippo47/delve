@@ -9,7 +9,7 @@ import { BOSSES } from './boss.js';
 import { FOES } from './foes.js';
 import { WILDWOOD } from './wildwood.js';
 import { ELDER } from './elderent.js';
-import { FOES9 } from './foes9.js';
+import { FOES9, boulderBrain, dropBoulder } from './foes9.js';
 
 const BONE = { poison: 0.35, burn: 0.8, chill: 1.2 }; // skeletons: poison barely takes, cold bites
 const SKELETON = { team: 'enemy', turn: 3.4, accel: 180, face: 3.4, mass: 1.3, temp: 0.3, commit: 1, res: BONE, headR: 60 };
@@ -243,7 +243,8 @@ export const ENEMIES = {
     hp: 60, speed: 48, role: 'ranged', range: 250, keep: 190, atkCd: 999, dmg: 5, temp: 0.4, commit: 0.9, xp: 16, coins: [3, 7], cost: 5, brain: shamanBrain },
   troll: { team: 'enemy', name: 'Troll', art: 'art/enemies/troll.svg', headR: 66, r: 42, vr: 31, turn: 2.6, accel: 150, face: 2.6, mass: 3, hp: 170, speed: 46,
     role: 'melee', range: 30, atkCd: 1.7, windup: 0.45, dmg: 16, knock: 200, arc: 2.4, temp: 0.25, commit: 1.2, xp: 30, coins: [6, 12], cost: 8,
-    attackAnim: 'swing', res: { burn: 1.4 }, brain: trollBrain },
+    attackAnim: 'swing', res: { burn: 1.4 }, // round 9: "The base troll should also attack with a boulder. But its boulder has a health pool and can break" (foes9.js)
+    brain: (w, u, dt) => { const busy = boulderBrain(w, u, dt); trollBrain(w, u, dt); return busy; }, onDeath: (w, u) => dropBoulder(w, u) },
 
   // ---- wardens: the end of floors 1 and 2 (and, until each theme has a boss of its own, floor 3 too)
   graveWarden: { ...SKELETON, name: 'Grave Warden', art: 'art/enemies/brute.svg', r: 50, vr: 36, mass: 4.5, turn: 2.2, face: 2.2, hp: 420, speed: 42,
@@ -256,7 +257,7 @@ export const ENEMIES = {
   warboss: { team: 'enemy', name: 'Orc Warboss', art: 'art/enemies/orc.svg', headR: 62, r: 50, vr: 37, turn: 2.4, accel: 150, face: 2.4, mass: 4.5,
     hp: 400, speed: 48, role: 'melee', range: 26, atkCd: 1.8, windup: 0.55, dmg: 16, knock: 240, arc: 2, heavy: true, temp: 0.25, commit: 1.2, xp: 80, coins: [30, 45],
     boss: true, onDeath: courtFalls, attackAnim: 'swing',
-    brain: (w, u, dt) => { callAdds(w, u, dt, ['goblin', 'goblin', 'hobgoblin'], 20, 1); return slam(w, u, dt, { r: 145, tell: 0.95, dmg: 18, cdMin: 6.5, cdMax: 8.5 }); } },
+    brain: (w, u, dt) => { callAdds(w, u, dt, ['goblin', 'goblin', 'hobgoblin', 'dynamouse', 'dynamouse'], 20, 1); return slam(w, u, dt, { r: 145, tell: 0.95, dmg: 18, cdMin: 6.5, cdMax: 8.5 }); } },
 
   ...BOSSES,
   ...FOES, // round 7: the three deeper dungeons' kinds and their wardens and bosses (js/foes.js)

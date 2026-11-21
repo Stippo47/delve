@@ -641,6 +641,12 @@ const KNOCK = 1.6; // every knockback, scaled (round 6: "more knockback, more ph
 const SHIELD_BEARERS = new Set(['paladin', 'tower', 'knight']); // heroes carrying a shield on the front
 export function hurt(w, u, amount, src, o = {}) {
   if (!alive(u) || u.invulnT > 0 || amount <= 0 || u.ethereal) return 0;
+  // a brain leech's host (round 9, foes9.js): its friends' blows go to the leech; the shove still lands (a hard one
+  // knocks the leech off)
+  if (u.charmed && src && src.team === u.charmTeam && !o.dot && alive(u.charmed)) {
+    if (o.knock && !knockImmune(u)) { const a = o.kAngle != null ? o.kAngle : angleTo(src.x, src.y, u.x, u.y), k = o.knock * KNOCK / u.mass; u.kx += Math.cos(a) * k; u.ky += Math.sin(a) * k; }
+    return hurt(w, u.charmed, amount, src, { ...o, knock: 0 });
+  }
   if (src && src !== u && !o.dot && !o.hexTurned && !o.noHex) {
     if (src.radiantT > 0) return 0; // radiant: its glow is all it can do
     if (alive(src) && hexFires(w, src)) { // hexed: the blow turns on the one who struck it
@@ -841,6 +847,7 @@ export function scatterCoins(w, x, y, n, reach = 1) {
 }
 function kill(w, u, src) {
   u.hp = 0;
+  if (u.charmed) { const l = u.charmed; u.team = u.charmTeam; u.charmed = null; if (l.host === u) { l.host = null; l.mass = l.def.mass; } } // a leech's host goes down as itself
   if (src && src !== u && alive(src)) for (const h of hooksOf(src)) if (h.kill) h.kill(w, src, u);
   for (const o of w.units) if (o !== u && alive(o) && dist(o.x, o.y, u.x, u.y) < 260) for (const h of hooksOf(o)) if (h.death) h.death(w, o, u);
   if (u.boom) explode(w, u.x, u.y, 80, 16, {}, u.summonBy || null, '#9BE07A', u);
@@ -1231,7 +1238,10 @@ function projectiles(w, dt) {
     p.life -= dt;
     p.x += p.vx * dt; p.y += p.vy * dt;
     if (p.x < 0 || p.y < 0 || p.x > w.W || p.y > w.H) p.life = 0;
-    for (const pl of w.pillars) if (dist(p.x, p.y, pl.x, pl.y) < pl.r) p.life = 0;
+    for (const pl of w.pillars) if (dist(p.x, p.y, pl.x, pl.y) < pl.r && p.life > 0) {
+      p.life = 0;
+      if (pl.hp != null && !p.noHit && p.team !== pl.team) { pl.hp -= p.dmg || 0; pl.hitT = 0.12; } // round 9: a troll's boulder can be shot to pieces
+    }
     for (const r of w.walls) if (p.x > r.x && p.x < r.x + r.w && p.y > r.y && p.y < r.y + r.h) p.life = 0;
     if (p.life <= 0 && p.land && !p.landed) { p.landed = true; p.land(p); }
     if (p.kind === 'fireArrow') for (const h of w.hazards) if ((h.type === 'oil' || h.type === 'gas') && dist(p.x, p.y, h.x, h.y) < h.r) { igniteAround(w, p.x, p.y, 4); p.life = Math.min(p.life, 0.02); }

@@ -538,7 +538,7 @@ export function update(run, dt) {
   themeTick(w, dt);
   grabTrinkets(run, dt);
   for (const u of w.units) if (u.team === 'hero' && u.downed && run.heroes[u.kind]) run.heroes[u.kind].down = true;
-  if (heroesAlive(run).length === 0 && !run.through) { run.phase = 'lost'; summarize(run); return; }
+  if (heroesAlive(run).length === 0 && !run.through && !w.units.some((u) => u.charmed && alive(u))) { run.phase = 'lost'; summarize(run); return; } // (a hero a brain leech holds is still ours)
   const enemies = w.units.filter((u) => u.team === 'enemy' && alive(u));
   // a fight that's gone quiet (someone stuck, a group never met): everyone left comes looking
   if (run.phase === 'fight') {
