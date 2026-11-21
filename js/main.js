@@ -4,10 +4,12 @@ import { newRun, update, retreat, summarize, FLOORS } from './dungeon.js';
 import { loadSave, writeSave } from './save.js';
 import { DEFS, xpToNext, levelHp } from './units.js';
 import { setSeed } from './util.js';
-import { initCamp, showCamp, hideCamp, showResult, loadThemes, THEMES, applyLook } from './camp.js';
+import { initCamp, showCamp, hideCamp, showResult, loadThemes, THEMES } from './camp.js';
 import { applySummary, applyLoadout, MERCS } from './progress.js';
 import { buildCards, updateCards } from './hud.js';
 import { initAudio, audioFrame } from './audio.js';
+import * as M from './meta.js';
+import { I } from './ui-kit.js';
 import { initInspect, openInspect, closeInspect, inspecting, selected, select, unitAt, drawSelection, panelHeight, refreshInspect } from './inspect.js';
 
 const $ = (id) => document.getElementById(id);
@@ -27,6 +29,7 @@ function show(s) {
   $('result').classList.toggle('hidden', s !== 'result');
   $('hud').classList.toggle('hidden', s !== 'run');
   $('dock').classList.toggle('hidden', s !== 'run');
+  $('leaveAsk').classList.add('hidden');
   if (s !== 'run') setPaused(false);
   if (s === 'camp') showCamp(); else hideCamp();
 }
@@ -85,12 +88,9 @@ function updateHud() {
   const th = THEMES[run.theme];
   $('where').textContent = `${th ? th.name + ' · ' : ''}Floor ${run.floor}/${FLOORS}`;
   drawMap();
-  $('hCoins').textContent = run.coins; $('hKeys').textContent = run.keys; $('hBag').textContent = run.satchel.length;
-  $('hKeys').parentElement.classList.toggle('hidden', !run.keys);
-  $('hBag').parentElement.classList.toggle('hidden', !run.satchel.length);
-  $('hGems').textContent = run.gems || 0;
-  $('retreatBtn').textContent = run.leaving ? 'Stay' : 'Leave';
-  $('retreatBtn').classList.toggle('leaving', !!run.leaving);
+  $('hCoins').textContent = run.coins;
+  const rb = $('retreatBtn'), leaving = !!run.leaving;
+  if (rb.dataset.on !== String(leaving)) { rb.dataset.on = String(leaving); rb.innerHTML = leaving ? 'Stay' : I.door; rb.classList.toggle('leaving', leaving); }
   $('speedBtn').textContent = save.speed + '×';
   const boss = w.units.find((u) => u.def.boss && !u.dead);
   $('bossBar').classList.toggle('hidden', !boss);
@@ -102,8 +102,31 @@ function updateHud() {
 
 $('pauseBtn').onclick = () => setPaused(!paused);
 $('speedBtn').onclick = () => { save.speed = SPEEDS[(SPEEDS.indexOf(save.speed) + 1) % SPEEDS.length]; writeSave(save); updateHud(); };
-// Leave: the room is finished first; tap again to stay after all.
-$('retreatBtn').onclick = () => { if (run && !run.summary) { retreat(run, !run.leaving); updateHud(); } };
+// Leave: the room is finished first; tap again to stay after all. Leaving before the floor is done costs a cut of
+// the gold (round 8: 20%), so that asks first, with the numbers.
+$('retreatBtn').onclick = () => {
+  if (!run || run.summary) return;
+  if (run.leaving) { retreat(run, false); updateHud(); return; }
+  if (!M.leaveCost(run).lose) { retreat(run, true); updateHud(); return; }
+  askLeave();
+};
+function askLeave() {
+  const el = $('leaveAsk'), cut = M.leaveCost(run).gold, wasPaused = paused;
+  if (paused) setPaused(false);
+  paused = true; // hold the fight while asking, without the inspect panel
+  el.innerHTML = `<div class="la-panel"><h2>Leave the dungeon?</h2>
+    <p>Floor ${run.floor} isn't finished: leaving costs ${Math.round(M.LEAVE_CUT * 100)}% of this run's gold. The party goes once this room is clear. Finish the floor to keep it all.</p>
+    <div class="la-sum"><span class="coin"></span><span>${run.coins - cut} kept</span><span class="lose">−${cut}</span></div>
+    <div class="la-actions"><button class="btn" data-la="stay">Keep going</button><button class="btn danger" data-la="go">Leave</button></div></div>`;
+  el.classList.remove('hidden');
+  el.onclick = (e) => {
+    const b = e.target.closest('[data-la]'); if (!b && e.target !== el) return;
+    el.classList.add('hidden'); el.onclick = null;
+    if (b && b.dataset.la === 'go') { retreat(run, true); }
+    paused = false; if (wasPaused) setPaused(true);
+    updateHud();
+  };
+}
 
 function endRun(result) {
   const r = run;
@@ -120,7 +143,7 @@ function endRun(result) {
 
 // ---------------------------------------------------------------- the floor's map, in the HUD
 // Layers run left to right; the rooms you passed are filled, the one you're in is ringed, doors are lines.
-const MAP_COL = { fight: '#C8553D', hazard: '#E0884B', elite: '#8E3B5B', treasure: '#F2B53A', fountain: '#5DB7E0', decision: '#9B7BD6', boss: '#2B2230' };
+const MAP_COL = { fight: '#E8604C', hazard: '#E0884B', elite: '#C060A0', treasure: '#F5B841', fountain: '#5DB7E0', decision: '#9B7BD6', boss: '#FF4A3A', mini: '#FF8A3A' };
 function drawMap() {
   const c = $('mapCanvas'); if (!c || !run) return;
   const dpr = Math.min(window.devicePixelRatio || 1, 3), cw = c.clientWidth, ch = c.clientHeight;
@@ -129,14 +152,14 @@ function drawMap() {
   // one dot per layer: the rooms you went through, where you are, how many to go, then the boss
   const m = run.map, nL = m.layers.length;
   const X = (L) => 8 + (cw - 16) * L / (nL - 1), y = ch / 2;
-  g.strokeStyle = 'rgba(237,230,216,0.25)'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(X(0), y); g.lineTo(X(nL - 1), y); g.stroke();
-  g.strokeStyle = 'rgba(237,230,216,0.9)'; g.beginPath(); g.moveTo(X(0), y); g.lineTo(X(m.L), y); g.stroke();
+  g.strokeStyle = 'rgba(242,232,210,0.2)'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(X(0), y); g.lineTo(X(nL - 1), y); g.stroke();
+  g.strokeStyle = 'rgba(245,184,65,0.9)'; g.beginPath(); g.moveTo(X(0), y); g.lineTo(X(m.L), y); g.stroke();
   for (let L = 0; L < nL; L++) {
     const been = L <= m.L, step = m.path[L], n = step ? m.layers[step[0]][step[1]] : null;
     const boss = L === nL - 1;
-    g.fillStyle = been && n ? MAP_COL[n.kind] || '#999' : boss ? MAP_COL.boss : 'rgba(237,230,216,0.35)';
+    g.fillStyle = been && n ? MAP_COL[n.kind] || '#999' : boss ? MAP_COL.boss : 'rgba(242,232,210,0.3)';
     g.beginPath(); g.arc(X(L), y, boss ? 5 : been ? 3.8 : 2.6, 0, Math.PI * 2); g.fill();
-    if (L === m.L) { g.strokeStyle = '#FFE14D'; g.lineWidth = 2; g.beginPath(); g.arc(X(L), y, 7, 0, Math.PI * 2); g.stroke(); g.lineWidth = 1.5; }
+    if (L === m.L) { g.strokeStyle = '#F5B841'; g.lineWidth = 2; g.beginPath(); g.arc(X(L), y, 7, 0, Math.PI * 2); g.stroke(); g.lineWidth = 1.5; }
   }
 }
 
@@ -210,7 +233,7 @@ function drawRun(dt, live) {
     if (paused) drawSelection(ctx, performance.now() / 1000);
     if (run.phase === 'transition' || run.fade > 0) {
       const a = run.phase === 'transition' ? run.fadeOut : run.fade;
-      ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0); ctx.fillStyle = `rgba(47,39,52,${Math.min(1, a)})`; ctx.fillRect(0, 0, view.cw, view.ch);
+      ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0); ctx.fillStyle = `rgba(14,17,32,${Math.min(1, a)})`; ctx.fillRect(0, 0, view.cw, view.ch);
     }
     hudT -= dt; if (hudT <= 0) { hudT = 0.1; updateHud(); }
     if (live && (run.phase === 'won' || run.phase === 'lost' || run.phase === 'retreated')) endRun(run.phase);
@@ -227,8 +250,9 @@ window.GAME = {
   recFrame(dt) { if (run) drawRun(dt, false); },
   pause(on = true, kind) { const u = kind && run && run.world.units.find((x) => x.kind === kind && !x.dead); setPaused(on, u); },
   fastForward(seconds) { const n = Math.round(seconds / STEP); for (let i = 0; i < n && run && !run.summary; i++) update(run, STEP); },
-  // debug: change the camp's save while testing, e.g. GAME.cheat({ gold: 999, gems: 9 })
-  cheat(o) { Object.assign(save, o); writeSave(save); applyLook(save); if (state === 'camp') showCamp(); },
+  // debug: change the camp's save while testing, e.g. GAME.cheat({ gold: 999 })
+  cheat(o) { Object.assign(save, o); writeSave(save); if (state === 'camp') showCamp(); },
+  ask: () => askLeave(),
 };
 
 (async function boot() {

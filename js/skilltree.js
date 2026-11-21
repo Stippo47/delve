@@ -1,178 +1,232 @@
-// The skill tree, drawn two ways (round 7, lane C: "an actual tree or web ... interesting to look at and tap").
-// Both read the same nodes (progress.js tree() -> heroes.js treeFor), so new nodes or costs show up by themselves.
-//   Grove: a tree growing up out of the hero. Each ability is a bough you climb: tier I, II, III sit on the bands of
-//          the run level they wake at (Lv 2, 5, 8); the Lv 8 band is the feat line. Bought boughs glow; the next step
-//          you can afford is a lit dashed path. The repeatable training (and the second trinket slot) are the roots.
-//          Tap a node for its sheet.
-//   Star wheel: the hero at the hub; three spokes (one per ability) cross three rings, one per run level, the
-//          outer ring the feat ring. Training stars sit between the spokes. Tap a spoke or a star and the wheel turns
-//          that branch to the top; its path is listed underneath with buy buttons in thumb reach.
-import { HEROES, BRANCHES, FEAT_LEVEL } from './heroes.js';
-import * as P from './progress.js';
+// The skill web (UI v3, docs/UI-v3.md): the hero at the middle of a big canvas, every node of its tree around it,
+// joined by their links. Drag to pan, pinch (or the wheel) to zoom, tap a node to see it in the panel at the bottom
+// and learn it there. Owned paths glow gold; what can be learned now glows teal; the rest waits in the dark.
+// Nodes come from meta.web(id) (x/y in layout units), so a tree of 100+ nodes just works.
+import * as M from './meta.js';
+import { HEROES } from './heroes.js';
 import { icon } from './icons.js';
-import { I, gold, roman } from './camp-kit.js';
+import { I, roman } from './ui-kit.js';
 
-export function treeHtml(kind, o) { return kind === 'wheel' ? wheel(o) : grove(o); }
+const NS = 'http://www.w3.org/2000/svg';
+const views = {}; // camera per hero, kept between visits: { x, y, k }
+const R = { root: 46, tier: 30, ability: 30, stat: 19, keystone: 30, slot: 24 };
+const sizeOf = (n) => R[n.kind] || 19;
 
-// A node's state as a class: owned, part (some ranks), ready (can buy now), poor (could, no gold), locked.
-function cls(st) { return st.maxed ? 'owned' : st.rank ? 'part' : !st.met ? 'locked' : st.canBuy ? 'ready' : 'poor'; }
-// A ring of ticks round a repeatable node: one per rank, lit when bought.
-function rankRing(n, rank, r = 46) {
-  const segs = [], gap = 10, span = (360 - gap * n) / n;
-  for (let k = 0; k < n; k++) {
-    const a0 = -90 + k * (span + gap) + gap / 2, a1 = a0 + span;
-    const p = (a) => `${50 + r * Math.cos(a * Math.PI / 180)} ${50 + r * Math.sin(a * Math.PI / 180)}`;
-    segs.push(`<path d="M${p(a0)}A${r} ${r} 0 0 1 ${p(a1)}" class="${k < rank ? 'on' : ''}"/>`);
+// A tiny glyph for a stat node from what it raises (heroes.js STATS keys first, then words).
+const SWORD = '<path d="M14.5 4.5H19.5v5L10.5 18.5l-5-5z"/><path d="M4.5 19.5l3-3"/>', CLOCK = '<circle cx="12" cy="12.5" r="6.5"/><path d="M12 9v3.8l2.4 1.6"/>',
+  CROSS = '<path d="M12 6v12M6 12h12" stroke-width="3.4"/>', DROP = '<path d="M12 4.5c3 4 5.5 6.8 5.5 9.7a5.5 5.5 0 0 1-11 0c0-2.9 2.5-5.7 5.5-9.7z"/>';
+const BYKEY = {
+  dmg: SWORD, abDmg: SWORD, haste: CLOCK, abCd: CLOCK, heal: CROSS, abHeal: CROSS, status: DROP, abStatus: DROP,
+  hp: '<path d="M12 19s-7-4.4-7-9.2A3.8 3.8 0 0 1 12 7.6a3.8 3.8 0 0 1 7 2.2C19 14.6 12 19 12 19z" fill="currentColor" stroke="none"/>',
+  atkSpeed: '<path d="M6 7l5 5-5 5M12 7l5 5-5 5"/>', moveSpeed: '<path d="M5 15l5-5 3 3 6-6M14 7h5v5"/>',
+  range: '<circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/>',
+  armor: '<path d="M12 4l7 3v5c0 4-3 6.6-7 8-4-1.4-7-4-7-8V7z"/>',
+};
+const GLYPH = [
+  [/heal|mend/i, '<path d="M12 6v12M6 12h12" stroke-width="3.4"/>'],
+  [/health|hp|vigor|life/i, '<path d="M12 19s-7-4.4-7-9.2A3.8 3.8 0 0 1 12 7.6a3.8 3.8 0 0 1 7 2.2C19 14.6 12 19 12 19z" fill="currentColor" stroke="none"/>'],
+  [/cool|cd|quick/i, '<circle cx="12" cy="12.5" r="6.5"/><path d="M12 9v3.8l2.4 1.6"/>'],
+  [/range|reach/i, '<circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/>'],
+  [/move|speed.*move|swift/i, '<path d="M5 15l5-5 3 3 6-6M14 7h5v5"/>'],
+  [/attack speed|haste|as\b/i, '<path d="M6 7l5 5-5 5M12 7l5 5-5 5"/>'],
+  [/status|burn|poison|chill|shock|apply/i, '<path d="M12 4.5c3 4 5.5 6.8 5.5 9.7a5.5 5.5 0 0 1-11 0c0-2.9 2.5-5.7 5.5-9.7z"/>'],
+  [/armou?r|guard|block|defen/i, '<path d="M12 4l7 3v5c0 4-3 6.6-7 8-4-1.4-7-4-7-8V7z"/>'],
+  [/dmg|damage|might|power/i, '<path d="M14.5 4.5H19.5v5L10.5 18.5l-5-5z"/><path d="M4.5 19.5l3-3"/>'],
+];
+function glyph(n) {
+  if (n.id && /Mastery$/.test(n.id)) return '<path d="M12 3.5l2.5 5.2 5.7.8-4.1 4 1 5.6-5.1-2.7-5.1 2.7 1-5.6-4.1-4 5.7-.8z"/>';
+  const k = n.stats && n.stats[0] && n.stats[0].k;
+  if (k && BYKEY[k]) return BYKEY[k];
+  const s = `${n.stat || ''} ${n.id} ${n.name}`;
+  for (const [re, d] of GLYPH) if (re.test(s)) return d;
+  return '<path d="M12 6v12M6 12h12" stroke-width="3"/>';
+}
+
+// ---------------------------------------------------------------- drawing
+function nodeSvg(save, id, n, st, sel) {
+  const r = sizeOf(n), cls = `wn ${n.kind} ${st.state}${n.id === sel ? ' sel' : ''}`;
+  let shape = '', inner = '';
+  if (n.kind === 'root') {
+    return `<g class="${cls}" data-n="${n.id}" transform="translate(${n.x} ${n.y})">
+      <circle r="${r + 10}" class="halo"/><circle r="${r}" class="body"/>
+      <clipPath id="wclip"><circle r="${r - 4}"/></clipPath>
+      <image href="${HEROES[id].art}" x="${-r}" y="${-r + 2}" width="${2 * r}" height="${2 * r}" clip-path="url(#wclip)"/>
+      <circle r="${r}" class="rim"/></g>`;
   }
-  return `<svg class="rring" viewBox="0 0 100 100">${segs.join('')}</svg>`;
-}
-function face(n) {
-  if (n.kind === 'tier') return `${icon('ability', n.ability, 'nico')}<i class="rn">${roman(n.tier)}</i>`;
-  if (n.kind === 'slot') return '<span class="gem" style="--g:#C9A7FF"></span>';
-  return `<b class="plus">+</b>`;
-}
-function costTag(save, id, n, st) {
-  if (st.maxed) return `<span class="ntag got">${n.max > 1 ? 'All' : 'Owned'}</span>`;
-  return `<span class="ntag">${gold(st.cost)}</span>`;
-}
-function lockBadge(save, id, n, st) {
-  if (st.met || st.rank) return '';
-  const feat = n.req.feat && !save.heroes[id].feat;
-  return `<span class="nlock ${feat ? 'feat' : ''}">${feat ? I.star : I.lock}</span>`;
-}
-
-// ================================================================ grove
-// Laid out on a 360 x 730 board, scaled to the width.
-const GW = 360, GH = 730, COLX = [62, 180, 298], BAND = { 1: 380, 2: 236, 3: 94 }, HERO_Y = 496, GROUND = 556, ROOT_Y = 642;
-const ROOTX = [45, 135, 225, 315];
-const pct = (x, y) => `left:${(x / GW * 100).toFixed(3)}%;top:${(y / GH * 100).toFixed(3)}%`;
-
-function grove({ save, id, sel }) {
-  const nodes = P.tree(id), h = HEROES[id], feat = save.heroes[id].feat;
-  const tiers = (b) => nodes.filter((n) => n.branch === b.id && n.kind === 'tier').sort((a, c) => a.tier - c.tier);
-  const rest = nodes.filter((n) => n.kind !== 'tier');
-  let svg = '', html = '';
-  // the bands: the run level each tier wakes at; the top one is the feat line
-  for (const t of [1, 2, 3]) {
-    const y = BAND[t], lvl = tiers(BRANCHES[0])[t - 1] ? tiers(BRANCHES[0])[t - 1].req.level : [2, 5, 8][t - 1];
-    svg += `<line class="band ${t === 3 ? 'featband' : ''} ${t === 3 && feat ? 'met' : ''}" x1="6" x2="${GW - 6}" y1="${y}" y2="${y}"/>`;
-    html += `<span class="bandtag ${t === 3 ? 'feat' : ''} ${t === 3 && feat ? 'met' : ''}" style="${pct(121, y)}">Lv ${lvl}${t === 3 ? ` ${I.star}` : ''}</span>`;
+  if (n.kind === 'tier' || n.kind === 'ability') {
+    shape = `<rect x="${-r}" y="${-r}" width="${2 * r}" height="${2 * r}" rx="${r * 0.42}" class="body"/>`;
+    const ic = icon('ability', n.ability || n.id).replace('<svg ', `<svg x="${-r * 0.66}" y="${-r * 0.66}" width="${r * 1.32}" height="${r * 1.32}" `);
+    inner = ic + (n.tier ? `<g transform="translate(${r * 0.72} ${-r * 0.72})"><circle r="11" class="tierdot"/><text y="4" class="tiert">${roman(n.tier)}</text></g>` : '');
+  } else if (n.kind === 'keystone') {
+    shape = `<rect x="${-r * 0.8}" y="${-r * 0.8}" width="${r * 1.6}" height="${r * 1.6}" rx="7" transform="rotate(45)" class="body"/>`;
+    inner = `<path d="M0 -11L3.4 -3.4 11 0 3.4 3.4 0 11 -3.4 3.4 -11 0 -3.4 -3.4z" class="gl fillgl"/>`;
+  } else if (n.kind === 'slot') {
+    const p = Array.from({ length: 6 }, (_, i) => { const a = Math.PI / 6 + i * Math.PI / 3; return `${(Math.cos(a) * r).toFixed(1)},${(Math.sin(a) * r).toFixed(1)}`; }).join(' ');
+    shape = `<polygon points="${p}" class="body"/>`;
+    inner = `<path d="M0 -9L8 -2 0 10 -8 -2z" class="gl gem"/>`;
+  } else {
+    shape = `<circle r="${r}" class="body"/>`;
+    inner = `<svg x="-12" y="-12" width="24" height="24" viewBox="0 0 24 24" class="gl" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${glyph(n)}</svg>`;
   }
-  // the ground and the roots
-  svg += `<rect class="soil" x="0" y="${GROUND}" width="${GW}" height="${GH - GROUND}" rx="18"/>`;
-  svg += `<path class="grass" d="M0 ${GROUND + 2}${Array.from({ length: 30 }, (_, i) => ` l6 -${4 + (i * 7) % 6} l6 ${4 + (i * 7) % 6}`).join('')}"/>`;
-  rest.forEach((n, k) => {
-    const x = ROOTX[k % 4], st = P.nodeState(save, id, n), on = st.rank > 0;
-    svg += `<path class="root ${on ? 'lit' : ''}" d="M180 ${HERO_Y + 30} C180 ${GROUND + 20} ${x} ${GROUND + 10} ${x} ${ROOT_Y}"/>`;
-  });
-  // the boughs: hero -> I -> II -> III; lit when the node they lead to is owned, marching when it's the next buy
-  BRANCHES.forEach((b, bi) => {
-    const x = COLX[bi];
-    let px = 180, py = HERO_Y - 40;
-    tiers(b).forEach((n, k) => {
-      const st = P.nodeState(save, id, n), y = BAND[n.tier];
-      const d = k === 0 ? `M${px} ${py} C${px} ${py - 50} ${x} ${y + 60} ${x} ${y}` : `M${px} ${py} C${px + (bi - 1) * -14} ${py - 50} ${x + (bi - 1) * 16} ${y + 50} ${x} ${y}`;
-      const w = [13, 10, 7][k];
-      svg += `<path class="bark" d="${d}" style="stroke-width:${w + 5}"/><path class="bough ${cls(st)}" d="${d}" style="stroke-width:${w}"/>`;
-      // a couple of leaves along the way
-      const lx = (px + x) / 2, ly = (py + y) / 2;
-      svg += `<ellipse class="leaf ${st.rank ? 'lit' : ''}" cx="${lx + (bi === 2 ? -12 : 12)}" cy="${ly}" rx="9" ry="4.5" transform="rotate(${bi === 2 ? 30 : -30} ${lx + (bi === 2 ? -12 : 12)} ${ly})"/>`;
-      px = x; py = y;
-    });
-    // a twig past the top, so the bough doesn't stop dead
-    svg += `<path class="bark" d="M${px} ${py} q${(bi - 1) * 10} -30 ${(bi - 1) * 6} -50" style="stroke-width:6"/>`;
-  });
-  // the nodes
-  BRANCHES.forEach((b, bi) => {
-    const ab = h.abilities[b.ability];
-    html += `<span class="bhead" style="${pct(COLX[bi], 26)}">${icon('ability', ab.id, 'bico')}<b>${ab.name}</b><span>${b.name}</span></span>`;
-    for (const n of tiers(b)) html += gnode(save, id, n, COLX[bi], BAND[n.tier], sel);
-  });
-  rest.forEach((n, k) => { html += gnode(save, id, n, ROOTX[k % 4], ROOT_Y, sel, true); });
-  html += `<span class="soiltag" style="${pct(14, GROUND + 22)}">Roots: training, bought again and again</span>`;
-  html += `<span class="ghero" style="${pct(180, HERO_Y)}"><span class="halo"></span><img src="${h.art}" alt=""></span>`;
-  return `<div class="grove" style="aspect-ratio:${GW}/${GH}"><svg class="gsvg" viewBox="0 0 ${GW} ${GH}" preserveAspectRatio="none">${svg}</svg>${html}</div>
-    <p class="treekey"><span class="k owned"></span>owned <span class="k ready"></span>can buy <span class="k poor"></span>short of gold <span class="k locked"></span>locked</p>`;
-}
-function gnode(save, id, n, x, y, sel, root = false) {
-  const st = P.nodeState(save, id, n);
-  const ring = n.max > 1 ? rankRing(n.max, st.rank) : '';
-  return `<button class="gnode ${n.kind} ${cls(st)} ${sel === n.id ? 'sel' : ''} ${root ? 'rootnode' : ''}" data-act="node:${n.id}" data-node="${n.id}" style="${pct(x, y)}">
-    <span class="nface">${ring}${face(n)}</span>${lockBadge(save, id, n, st)}
-    ${root ? `<span class="nname">${n.name}</span>` : ''}${costTag(save, id, n, st)}</button>`;
-}
-
-// ================================================================ star wheel
-const WR = { 1: 76, 2: 130, 3: 184 }, WS = 420, C = WS / 2, STAT_R = 103;
-const wpos = (ang, r) => ({ x: C + Math.cos(ang * Math.PI / 180) * r, y: C + Math.sin(ang * Math.PI / 180) * r });
-const wp = (p) => `left:${(p.x / WS * 100).toFixed(3)}%;top:${(p.y / WS * 100).toFixed(3)}%`;
-// The angle the wheel is turned to, to bring branch b to the top, taken the short way round from where it was.
-export function wheelAngle(b, from = 0) {
-  let to = -120 * b;
-  while (to - from > 180) to -= 360;
-  while (to - from < -180) to += 360;
-  return to;
-}
-
-function wheel({ save, id, pick, shown, sel }) {
-  const nodes = P.tree(id), h = HEROES[id], feat = save.heroes[id].feat;
-  const from = shown[id] ?? -120 * pick, to = wheelAngle(pick, from); shown[id] = to;
-  let svg = '', html = '';
-  // the rings
-  for (const t of [1, 2, 3]) svg += `<circle class="wring ${t === 3 ? 'featring' : ''} ${t === 3 && feat ? 'met' : ''}" cx="${C}" cy="${C}" r="${WR[t]}"/>`;
-  // a faint web between the tiers of neighbouring spokes (looks only: no rule behind it)
-  for (const t of [1, 2, 3]) for (let b = 0; b < 3; b++) {
-    const a = wpos(-90 + b * 120, WR[t]), c = wpos(-90 + ((b + 1) % 3) * 120, WR[t]);
-    svg += `<path class="web" d="M${a.x} ${a.y}Q${C} ${C} ${c.x} ${c.y}"/>`;
-  }
-  BRANCHES.forEach((b, bi) => {
-    const ang = -90 + bi * 120, mine = nodes.filter((n) => n.branch === b.id);
-    const tiers = mine.filter((n) => n.kind === 'tier').sort((a, c) => a.tier - c.tier);
-    let r0 = 44;
-    for (const n of tiers) {
-      const st = P.nodeState(save, id, n), a = wpos(ang, r0), c = wpos(ang, WR[n.tier]);
-      svg += `<line class="spoke ${cls(st)}" x1="${a.x}" y1="${a.y}" x2="${c.x}" y2="${c.y}"/>`;
-      html += wnode(save, id, n, c, bi, sel);
-      r0 = WR[n.tier];
+  // ranks: a tick per rank round the node
+  let ticks = '';
+  if (st.max > 1 && (st.rank || st.state !== 'locked')) {
+    const rr = r + 7, gap = 0.32, span = (Math.PI * 2 - gap * st.max) / st.max;
+    for (let k = 0; k < st.max; k++) {
+      const a0 = -Math.PI / 2 + k * (span + gap) + gap / 2, a1 = a0 + span;
+      ticks += `<path d="M${(Math.cos(a0) * rr).toFixed(1)} ${(Math.sin(a0) * rr).toFixed(1)}A${rr} ${rr} 0 0 1 ${(Math.cos(a1) * rr).toFixed(1)} ${(Math.sin(a1) * rr).toFixed(1)}" class="tick ${k < st.rank ? 'on' : ''}"/>`;
     }
-    // training (and the second slot) sit between the spokes, a little round from their own
-    mine.filter((n) => n.kind !== 'tier').forEach((n) => {
-      const st = P.nodeState(save, id, n), p = wpos(ang + 60, n.kind === 'slot' ? WR[3] : STAT_R), hub = wpos(ang + 60, 44);
-      svg += `<line class="tether ${cls(st)}" x1="${hub.x}" y1="${hub.y}" x2="${p.x}" y2="${p.y}"/>`;
-      html += wnode(save, id, n, p, bi, sel);
-    });
-  });
-  // labels that don't turn: the run level beside each ring, at the top spoke
-  const tags = [1, 2, 3].map((t) => `<span class="ringtag ${t === 3 ? 'feat' : ''} ${t === 3 && feat ? 'met' : ''}" style="${wp({ x: C + 31, y: C - WR[t] })}">Lv ${[2, 5, 8][t - 1]}${t === 3 ? ` ${I.star}${feat ? '' : '<em>feat</em>'}` : ''}</span>`).join('');
-  const hub = `<span class="whub"><span class="halo"></span><img src="${h.art}" alt=""></span>`;
-  return `<div class="wheelbox"><div class="wheel">
-      <div class="wheel-rot" style="--turn:${from}deg" data-turn-to="${to}"><svg class="wsvg" viewBox="0 0 ${WS} ${WS}">${svg}</svg>${html}</div>
-      ${hub}${tags}<i class="pointer"></i></div>
-    ${branchPanel(save, id, pick, sel)}</div>`;
-}
-function wnode(save, id, n, p, bi, sel) {
-  const st = P.nodeState(save, id, n), ring = n.max > 1 ? rankRing(n.max, st.rank) : '';
-  return `<button class="wnode ${n.kind} ${cls(st)} ${sel === n.id ? 'sel' : ''}" data-act="spin:${bi}:${n.id}" data-node="${n.id}" style="${wp(p)}">
-    <span class="up"><span class="nface">${ring}${face(n)}</span>${lockBadge(save, id, n, st)}</span></button>`;
+  }
+  const lock = !st.lvOk && st.state !== 'owned' ? `<g class="lk" transform="translate(${r * 0.7} ${r * 0.7})"><circle r="9"/><path d="M-3.4 -0.5v-2a3.4 3.4 0 0 1 6.8 0v2M-4.6 -0.5h9.2v6h-9.2z"/></g>` : '';
+  return `<g class="${cls}" data-n="${n.id}" transform="translate(${n.x} ${n.y})"><circle r="${r + 14}" class="hit"/>
+    ${st.state === 'open' ? `<circle r="${r + 6}" class="glow"/>` : ''}${shape}${inner}${ticks}${lock}</g>`;
 }
 
-// Under the wheel: the branch at the top, its path step by step, buyable right there.
-function branchPanel(save, id, pick, sel) {
-  const h = HEROES[id], b = BRANCHES[pick], ab = h.abilities[b.ability];
-  const mine = P.tree(id).filter((n) => n.branch === b.id);
-  const tabs = BRANCHES.map((x, i) => `<button class="wtab ${i === pick ? 'on' : ''}" data-act="spin:${i}">${icon('ability', h.abilities[x.ability].id, 'bico')}<span><b>${h.abilities[x.ability].name}</b><span>${x.name}</span></span></button>`).join('');
-  const rows = mine.sort((a, c) => (a.kind === 'tier' ? a.tier : 9) - (c.kind === 'tier' ? c.tier : 9)).map((n) => {
-    const st = P.nodeState(save, id, n), c = cls(st);
-    const head = n.kind === 'tier' ? `<span class="step">${roman(n.tier)}</span>` : n.kind === 'slot' ? '<span class="step gemstep"><span class="gem" style="--g:#C9A7FF"></span></span>' : '<span class="step plus">+</span>';
-    const when = n.kind === 'tier' ? `<span class="wake">Wakes at Lv ${n.req.level}</span>` : n.max > 1 ? `<span class="pips">${Array.from({ length: n.max }, (_, k) => `<i class="${k < st.rank ? 'on' : ''}"></i>`).join('')}</span>` : '';
-    const need = st.needs.filter((x) => !x.ok).map((x) => `<span class="need">${x.what === 'feat' ? I.star : I.lock}${x.text}</span>`).join('');
-    const btn = st.maxed ? `<span class="done">${I.check}${n.max > 1 ? 'All bought' : 'Owned'}</span>`
-      : `<button class="btn buy ${st.canBuy ? '' : 'poor'}" data-act="buynode:${n.id}">${gold(st.cost)}</button>`;
-    return `<div class="prow2 ${c} ${sel === n.id ? 'sel' : ''}" data-node="${n.id}">${head}<span class="ptext"><b>${n.kind === 'tier' ? `Tier ${roman(n.tier)}` : n.name}</b>${when}
-      <span class="pdesc">${n.kind === 'tier' ? ab.tiers[n.tier - 1] : n.desc}</span>${need}</span>${btn}</div>`;
+function linkSvg(a, b, sa, sb) {
+  const ao = sa.rank > 0, bo = sb.rank > 0;
+  const cls = ao && bo ? 'own' : (ao && sb.state === 'open') || (bo && sa.state === 'open') ? 'open' : ao || bo ? 'near' : '';
+  return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="wl ${cls}"/>`;
+}
+
+function contentSvg(save, id, sel) {
+  const w = M.web(id), st = {};
+  for (const n of w.nodes) st[n.id] = M.nodeState(save, id, n);
+  let maxR = 0; for (const n of w.nodes) maxR = Math.max(maxR, Math.hypot(n.x - w.root.x, n.y - w.root.y));
+  // faint rings every 150 units: the wheel the web grows on
+  let rings = '';
+  for (let r = 150; r <= maxR + 60; r += 150) rings += `<circle cx="${w.root.x}" cy="${w.root.y}" r="${r}" class="ring"/>`;
+  let links = '';
+  const seen = new Set();
+  for (const n of w.nodes) for (const l of n.links) {
+    const k = n.id < l ? n.id + '|' + l : l + '|' + n.id; if (seen.has(k) || !w.by[l]) continue; seen.add(k);
+    links += linkSvg(n, w.by[l], st[n.id], st[l]);
+  }
+  // draw the dim ones first so lit paths sit on top
+  const order = w.nodes.slice().sort((a, b) => (st[a.id].state === 'locked') - (st[b.id].state === 'locked')).reverse();
+  return { html: `<g class="rings">${rings}</g><g class="links">${links}</g><g class="nodes">${order.map((n) => nodeSvg(save, id, n, st[n.id], sel)).join('')}</g>`, maxR, st };
+}
+
+// ---------------------------------------------------------------- the component
+// mountTree(host, { save, id, sel, onSelect(nodeId|null), onLearn(nodeId) }) -> { refresh(save, sel), focus(nodeId) }
+export function mountTree(host, o) {
+  const { id } = o;
+  let save = o.save, sel = o.sel || null, maxR = contentSvg(o.save, id, null).maxR;
+  host.innerHTML = `<svg class="web" xmlns="${NS}"><defs><radialGradient id="wbg" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#1D2347"/><stop offset="1" stop-color="#0E1120"/></radialGradient></defs>
+      <rect class="bg" width="100%" height="100%" fill="url(#wbg)"/><g class="stars"></g><g class="cam"></g></svg>
+    <div class="web-hud"><span class="pill wp">${I.lock}</span><button class="pill wcenter" aria-label="centre">${I.center}</button></div>
+    <div class="web-panel hidden"></div>`;
+  const svgEl = host.querySelector('svg.web'), cam = svgEl.querySelector('.cam'), panel = host.querySelector('.web-panel');
+  // stars: fixed to the screen, so panning feels like moving over the sky
+  svgEl.querySelector('.stars').innerHTML = Array.from({ length: 70 }, (_, i) => {
+    const x = (i * 97.13) % 100, y = (i * 61.7 + (i % 7) * 13) % 100, r = 0.5 + (i % 5) * 0.28;
+    return `<circle cx="${x}%" cy="${y}%" r="${r}" fill="#fff" opacity="${0.1 + (i % 4) * 0.08}"/>`;
   }).join('');
-  return `<div class="wtabs">${tabs}</div>
-    <div class="bpanel"><div class="bp-head">${icon('ability', ab.id, 'bico big')}<span><b>${ab.name}</b><span class="muted">${ab.desc}</span></span></div>
-      <div class="path">${rows}</div>
-      <p class="muted">Tier III and the second trinket slot need the feat: reach level ${FEAT_LEVEL} in a dungeon.</p></div>`;
+
+  const W = () => host.clientWidth || 390, Hh = () => host.clientHeight || 600;
+  let v = views[id];
+  const fitK = () => Math.max(0.42, Math.min(1, (Math.min(W(), Hh() - 120) / 2 - 24) / Math.min(400, Math.max(200, maxR + 40))));
+  if (!v) { v = views[id] = { k: fitK(), x: 0, y: 0 }; const w = M.web(id); v.x = W() / 2 - w.root.x * v.k; v.y = (Hh() - 40) / 2 - w.root.y * v.k; }
+  const apply = () => { cam.setAttribute('transform', `translate(${v.x.toFixed(1)} ${v.y.toFixed(1)}) scale(${v.k.toFixed(4)})`); };
+  const clamp = () => {
+    const w = M.web(id), cx = w.root.x, cy = w.root.y, pad = (maxR + 80) * v.k;
+    const sx = cx * v.k + v.x, sy = cy * v.k + v.y;
+    const nx = Math.max(W() / 2 - pad, Math.min(W() / 2 + pad, sx)), ny = Math.max(Hh() / 2 - pad, Math.min(Hh() / 2 + pad, sy));
+    v.x += nx - sx; v.y += ny - sy;
+  };
+  const zoomAt = (k, px, py) => {
+    k = Math.max(0.28, Math.min(2.4, k));
+    v.x = px - (px - v.x) * (k / v.k); v.y = py - (py - v.y) * (k / v.k); v.k = k; clamp(); apply();
+  };
+
+  function draw() {
+    const c = contentSvg(save, id, sel); maxR = c.maxR;
+    cam.innerHTML = c.html;
+    const p = M.points(save, id);
+    host.querySelector('.wp').innerHTML = `<span class="pts">${M.pointsShown(save, id)}</span><span class="quiet small">${p === 1 ? 'point' : 'points'}</span>`;
+    drawPanel(c.st);
+    apply();
+  }
+  function drawPanel(st) {
+    const n = sel && M.web(id).by[sel];
+    panel.classList.toggle('hidden', !n || n.kind === 'root');
+    if (!n || n.kind === 'root') { panel.innerHTML = ''; return; }
+    const s = st[n.id];
+    const kind = n.kind === 'tier' || n.kind === 'ability' ? `Ability${n.tier ? ' · tier ' + roman(n.tier) : ''}` : n.kind === 'keystone' ? 'Keystone' : n.kind === 'slot' ? 'Trinket slot' : 'Training';
+    const rankTxt = s.max > 1 ? ` · ${s.rank}/${s.max}` : s.maxed ? ' · learned' : '';
+    const miss = (s.needs || []).find((x) => !x.ok);
+    const need = !s.owned ? 'Recruit this hero first' : !miss ? '' : miss.what === 'link' ? 'Learn a node next to it first' : miss.text;
+    const ico = n.kind === 'tier' || n.kind === 'ability' ? `<span class="np-ico ab">${icon('ability', n.ability || n.id)}</span>` : `<span class="np-ico ${n.kind}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${n.kind === 'keystone' ? '<path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="currentColor" stroke="none"/>' : n.kind === 'slot' ? '<path d="M12 3l8 6-8 12-8-12z"/>' : glyph(n)}</svg></span>`;
+    const btn = s.maxed ? `<button class="btn wide no" disabled>${I.check} Learned</button>`
+      : `<button class="btn wide ${s.can ? 'teal' : 'no'}" data-learn="${n.id}">${s.can ? `Learn · ${s.cost} ${s.cost === 1 ? 'point' : 'points'}` : need || `Needs ${s.cost} ${s.cost === 1 ? 'point' : 'points'}`}</button>`;
+    panel.innerHTML = `<div class="np-head">${ico}<div><b class="np-name">${n.name}</b><span class="cap">${kind}${rankTxt}</span></div><button class="np-x" data-close aria-label="close">×</button></div>
+      <p class="np-desc">${n.desc || ''}</p>${btn}`;
+  }
+
+  // ---- easing the camera to a node (it sits above the panel)
+  let anim = 0;
+  function focus(nodeId) {
+    const n = M.web(id).by[nodeId]; if (!n) return;
+    const tx = W() / 2 - n.x * v.k, ty = (Hh() - (nodeId === 'root' ? 0 : 200)) / 2 - n.y * v.k;
+    const fx = v.x, fy = v.y, t0 = performance.now();
+    cancelAnimationFrame(anim);
+    const step = (now) => { const t = Math.min(1, (now - t0) / 260), e = 1 - Math.pow(1 - t, 3); v.x = fx + (tx - fx) * e; v.y = fy + (ty - fy) * e; apply(); if (t < 1) anim = requestAnimationFrame(step); };
+    anim = requestAnimationFrame(step);
+  }
+  function choose(nodeId) {
+    sel = nodeId && nodeId !== 'root' ? nodeId : null;
+    draw();
+    if (sel) focus(sel);
+    o.onSelect && o.onSelect(sel);
+  }
+
+  // ---- touch: one finger pans, two pinch, a still tap picks
+  const ptr = new Map(); let pinch = null, down = null;
+  svgEl.addEventListener('pointerdown', (e) => {
+    cancelAnimationFrame(anim);
+    try { svgEl.setPointerCapture(e.pointerId); } catch {}
+    ptr.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const hit = e.target && e.target.closest ? e.target.closest('[data-n]') : null;
+    if (ptr.size === 1) down = { x: e.clientX, y: e.clientY, t: performance.now(), n: hit ? hit.dataset.n : null, moved: false };
+    if (ptr.size === 2) { const [a, b] = [...ptr.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), k: v.k }; if (down) down.moved = true; }
+  });
+  svgEl.addEventListener('pointermove', (e) => {
+    const p = ptr.get(e.pointerId); if (!p) return;
+    const r = svgEl.getBoundingClientRect();
+    if (ptr.size === 2 && pinch) {
+      ptr.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      const [a, b] = [...ptr.values()];
+      zoomAt(pinch.k * Math.hypot(a.x - b.x, a.y - b.y) / Math.max(20, pinch.d), (a.x + b.x) / 2 - r.left, (a.y + b.y) / 2 - r.top);
+      return;
+    }
+    const dx = e.clientX - p.x, dy = e.clientY - p.y;
+    ptr.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 8) down.moved = true;
+    if (down && down.moved) { v.x += dx; v.y += dy; clamp(); apply(); }
+  });
+  const up = (e) => {
+    if (!ptr.has(e.pointerId)) return;
+    ptr.delete(e.pointerId);
+    if (ptr.size < 2) pinch = null;
+    if (ptr.size === 0 && down && !down.moved && performance.now() - down.t < 500) choose(down.n || null);
+    if (ptr.size === 0) down = null;
+  };
+  svgEl.addEventListener('pointerup', up); svgEl.addEventListener('pointercancel', up);
+  svgEl.addEventListener('wheel', (e) => { e.preventDefault(); const r = svgEl.getBoundingClientRect(); zoomAt(v.k * Math.exp(-e.deltaY * 0.0015), e.clientX - r.left, e.clientY - r.top); }, { passive: false });
+  host.querySelector('.wcenter').onclick = () => { v.k = fitK(); focus('root'); };
+  panel.addEventListener('click', (e) => {
+    if (e.target.closest('[data-close]')) { choose(null); return; }
+    const b = e.target.closest('[data-learn]'); if (!b) return;
+    if (b.classList.contains('no')) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); o.onDeny && o.onDeny(); return; }
+    o.onLearn && o.onLearn(b.dataset.learn);
+  });
+
+  draw();
+  if (sel) focus(sel);
+  return {
+    refresh(s, pulse) {
+      save = s; draw();
+      if (pulse) { const g = cam.querySelector(`[data-n="${pulse}"]`); if (g) g.classList.add('justgot'); }
+    },
+    focus, select: choose,
+  };
 }
