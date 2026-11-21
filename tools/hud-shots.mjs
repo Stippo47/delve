@@ -25,7 +25,7 @@ try {
   await page.goto(`http://localhost:${site}/?seed=${seed}&lvl=6${q ? '&' + q : ''}`);
   await page.waitForFunction(() => window.GAME && GAME.ready, null, { timeout: 120000 });
   await page.evaluate(([party, MERCS]) => {
-    const s = GAME.save; s.slots = 4; s.party = party; s.potions = 4; s.elixirs = { haste: 2, ironskin: 1, quick: 1 };
+    const s = GAME.save; s.unlocks = { slotMini1: true, slotBoss1: true, slotBoss2: true }; s.party = party; s.potions = 4; s.elixirs = { haste: 2, ironskin: 1, quick: 1 };
     const H = { paladin: ['shieldBash', 'guard', 'consecrate'], archer: ['barrage', 'frostArrow', 'roll'], pyromancer: ['fireball', 'flameWall', 'inferno'], cleric: ['mend', 'sanctuary', 'smite'] };
     for (const id of party) { s.heroes[id].owned = true; s.heroes[id].nodes = Object.fromEntries((H[id] || []).flatMap((a, i) => (i < 2 ? [[a + '1', 1]] : []))); }
     s.heroes[party[0]].trinkets = ['ironSkin', 'frostRing']; s.heroes[party[0]].nodes.slot2 = 1;

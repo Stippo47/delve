@@ -6,7 +6,7 @@
 //   Settings sound, dungeon look, puddles, enemy health, the cheat
 // Plain DOM redrawn from the save after every action; one click handler reads data-act. Rules live in progress.js,
 // read through meta.js.
-import { HEROES, HERO_IDS } from './heroes.js';
+import { HEROES, HERO_IDS, STATS } from './heroes.js';
 import * as P from './progress.js';
 import * as M from './meta.js';
 import { writeSave } from './save.js';
@@ -26,6 +26,7 @@ import * as LOOKS from './looks.js';
 export let THEMES = {};
 export async function loadThemes() {
   try { const m = await import('./themes.js'); if (m.THEMES) THEMES = m.THEMES; } catch (e) { /* the camp still opens */ }
+  await LOOKS.loadLooks();
 }
 
 // ---------------------------------------------------------------- state
@@ -119,7 +120,7 @@ function campTab() {
 function seatHtml(i, n) {
   if (i >= n) {
     const hint = i === n ? M.nextSlotHint(save) : null;
-    return `<div class="seat locked s${i}" data-act="lockedseat">${'<span class="seat-ring">' + I.lock + '</span>'}<span class="seat-hint">${hint ? hint : 'Later'}</span></div>`;
+    return `<div class="seat locked s${i} ${hint ? '' : 'later'}" data-act="lockedseat">${'<span class="seat-ring">' + I.lock + '</span>'}${hint ? `<span class="seat-hint">${hint}</span>` : ''}</div>`;
   }
   const id = save.party[i];
   if (!id) return `<div class="seat empty s${i}" data-act="seat:${i}"><span class="seat-ring">${I.plus}</span><span class="seat-name quiet">Empty seat</span></div>`;
@@ -132,7 +133,7 @@ function seatHtml(i, n) {
 }
 
 function dungeonCard(t, i) {
-  const th = THEMES[t], open = M.dungeonOpen(save, t), r = M.record(save, t), c = themeColors(th);
+  const th = THEMES[t], r = M.dungeonState(save, t), open = r.open, c = themeColors(th);
   const status = !open ? `${I.lock}<span>${M.dungeonLockText(t)}</span>`
     : r.cleared ? `${I.crown}<span>Cleared${r.cleared > 1 ? ' ×' + r.cleared : ''}</span>` : r.best ? `${I.flag}<span>Reached floor ${r.best}</span>` : '<span>New</span>';
   return `<div class="dcard ${open ? '' : 'locked'} ${t === pick.theme ? 'on' : ''}" data-act="theme:${t}" data-theme="${t}" style="--acc:${c.accent};--rock:${c.rock};--wall:${c.wall}">
@@ -239,11 +240,25 @@ function gearView(id) {
 function aboutView(id) {
   const h = HEROES[id];
   const row = (ico, cap, name, desc, extra = '') => `<div class="krow">${ico}<div><span class="cap">${cap}</span><b>${name}</b><p>${desc}</p>${extra}</div></div>`;
+  const sum = webSummary(id);
   return `<div class="pad"><p class="blurb">${h.blurb}</p>
+    ${sum ? `<div class="sec-h"><span class="cap">From the skill web</span></div><div class="sumchips">${sum}</div><div class="sec-h"><span class="cap">Kit</span></div>` : ''}
     ${row(`<span class="k-ico">${I.sword}</span>`, 'Attack', h.attack.name, h.attack.desc)}
     ${h.abilities.map((ab, i) => row(`<span class="k-ico ab">${icon('ability', ab.id)}</span>`, `Ability ${i + 1} · ${ab.cd}s`, ab.name, ab.desc,
       `<ol class="tiers">${ab.tiers.map((t, k) => `<li class="${M.rank(save, id, `${ab.id}${k + 1}`) ? 'got' : ''}"><i>${roman(k + 1)}</i>${t}</li>`).join('')}</ol>`)).join('')}
     ${row(`<span class="k-ico">${I.crown}</span>`, 'Trait', h.trait.name, h.trait.desc)}</div>`;
+}
+
+// What the hero's learned nodes add up to, as chips ("+16% damage").
+function webSummary(id) {
+  if (!P.heroStats || !STATS) return '';
+  const s = P.heroStats(save, id), pct = (f) => Math.round(f * 100), chips = [];
+  for (const [k, v] of Object.entries(s)) if (k !== 'ab' && v > 0 && STATS[k]) chips.push(STATS[k].line(pct(v)));
+  for (const [ab, o] of Object.entries(s.ab || {})) {
+    const name = (HEROES[id].abilities.find((a) => a.id === ab) || {}).name || ab;
+    for (const [k, v] of Object.entries(o)) if (v > 0 && STATS[k]) chips.push(STATS[k].line(pct(v), name));
+  }
+  return chips.map((c) => `<span>${c}</span>`).join('');
 }
 
 // ================================================================ Trader
@@ -300,7 +315,7 @@ function settingsTab() {
     <section class="group">${soundSettingsHtml()}</section>
     <section class="group"><h3 class="cap">Dungeon look</h3>${looks(ENV_STYLES, envId(), 'env', envSw)}</section>
     <section class="group"><h3 class="cap">Puddles and spills</h3>${looks(LOOKS.puddleStyles(), LOOKS.puddleStyle(), 'puddle', LOOKS.puddleSwatch)}</section>
-    <section class="group"><h3 class="cap">Enemy health</h3>${looks(LOOKS.hpStyles(), LOOKS.hpStyle(), 'hpstyle', LOOKS.hpSwatch)}</section>
+    <section class="group"><h3 class="cap">Enemy health, once hurt</h3>${looks(LOOKS.hpStyles(), LOOKS.hpStyle(), 'hpstyle', LOOKS.hpSwatch)}</section>
     <section class="group"><h3 class="cap">Cheats</h3>
       <button class="rowbtn ${save.cheat ? 'on' : ''}" data-act="cheat"><div><b>Unlimited gold and points</b><span class="quiet small">Everything is free while it's on. Your real purse is kept for when you switch it off.</span></div><span class="switch"><i></i></span></button></section>
     <p class="faint small version">Delve · UI v3</p></div>`;
@@ -490,8 +505,8 @@ function tick() {
 }
 
 // ================================================================ after a run
-// rep (progress.js applySummary): { result, gold, raw, mercCut, leaveCut?, theme, floor, rooms, kills,
-//   heroes: [{ id, level, from?, xp?, points?, downed, hurt }], found, slotUnlocked?, opened?, checkpoint? }
+// rep (progress.js applySummary): { result, gold, raw, lost, mercCut, theme, floor, rooms, kills, checkpoint,
+//   heroes: [{ id, from, level, gained, points, downed, hurt }], slots: { unlocked: [...] }, opened: [ids] }
 let resultDone = null;
 const TITLES = { won: 'Dungeon cleared', lost: 'The party fell', retreated: 'Out safely' };
 export function showResult(rep, done) {
@@ -500,16 +515,18 @@ export function showResult(rep, done) {
   const theme = THEMES[rep.theme];
   const heroes = (rep.heroes || []).map((h, i) => {
     const H = HEROES[h.id], to = h.level || M.level(save, h.id), from = h.from || to, need = M.xpNeed(to), x = h.xp != null ? h.xp : M.xp(save, h.id);
-    const gained = h.points != null ? h.points : Math.max(0, to - from);
+    const gained = h.gained != null ? h.gained : Math.max(0, to - from);
     return `<div class="rhero" style="--d:${0.35 + i * 0.12}s">${face(h.id, 52)}
       <div class="rh-mid"><b>${H.name}</b>
         <div class="xpline"><span class="lvl">${to}</span><div class="bar xp"><i style="width:${Math.min(100, 100 * x / need)}%"></i><em>${Math.floor(x)}/${need}</em></div></div>
         <span class="quiet small">${to > from ? `Level ${from} → ${to}` : `Level ${to}`}${h.downed ? ' · downed, resting' : h.hurt ? ' · hurt, resting' : ''}</span></div>
       ${gained ? `<span class="rh-pts"><span class="pts">+${gained}</span><span class="cap">${gained === 1 ? 'point' : 'points'}</span></span>` : ''}</div>`;
   }).join('');
-  const lost = rep.leaveCut ? `<p class="r-cut">Left before the floor was done: −${rep.leaveCut} (${Math.round(M.LEAVE_CUT * 100)}%)</p>` : '';
+  const lost = rep.lost ? `<p class="r-cut">${rep.result === 'lost' ? 'Fell' : 'Left'} before the floor was done: −${rep.lost} (${Math.round(M.LEAVE_CUT * 100)}%)</p>` : '';
   const merc = rep.mercCut ? `<p class="quiet small">The sellswords took ${rep.mercCut}.</p>` : '';
-  const news = [rep.slotUnlocked ? `${I.plus}<span>A new seat by the fire</span>` : '', rep.opened ? `${I.door}<span>${(THEMES[rep.opened] || {}).name || 'A new dungeon'} is open</span>` : '',
+  const opened = Array.isArray(rep.opened) ? rep.opened : rep.opened ? [rep.opened] : [];
+  const newSeats = rep.slots && rep.slots.unlocked ? rep.slots.unlocked.length : 0;
+  const news = [newSeats ? `${I.plus}<span>${newSeats > 1 ? newSeats + ' new seats' : 'A new seat'} by the fire</span>` : '', ...opened.map((t) => `${I.door}<span>${(THEMES[t] || {}).name || 'A new dungeon'} is open</span>`),
     rep.checkpoint ? `${I.flag}<span>Checkpoint: floor ${rep.checkpoint}</span>` : ''].filter(Boolean).map((s) => `<div class="r-new">${s}</div>`).join('');
   el.innerHTML = `<div class="rcard ${rep.result}">
     <span class="cap">${theme ? theme.name : ''} · floor ${rep.floor} · ${rep.rooms} rooms · ${rep.kills} kills</span>

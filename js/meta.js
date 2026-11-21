@@ -1,14 +1,12 @@
 // What the camp and the HUD ask about progression (round 8 contract, docs/BUILD-v4.md), in one place. The rules live
-// in progress.js (lane L); this file only reads them, with small stand-ins for anything progress.js doesn't export
-// yet, so the UI never has to know which version of the rules it is talking to.
+// in progress.js (lane L); this file only reads them and shapes them for the screens (plus the cheat for points and
+// ?web=N, a made-up web of N nodes to try the canvas at the size the designer wants).
 //   save.heroes[id] = { owned, level, xp, points, nodes: { nodeId: rank }, trinkets, recoverUntil }
 //   treeFor(id) -> [{ id, x, y, kind: 'root'|'ability'|'tier'|'stat'|'keystone'|'slot', name, desc, max, cost, links, level? }]
 import * as P from './progress.js';
-import { HEROES, HERO_IDS, treeFor } from './heroes.js';
-import { xpToNext } from './units.js';
+import { HEROES, HERO_IDS } from './heroes.js';
 import { THEMES } from './themes.js';
 
-const has = (name) => typeof P[name] === 'function';
 
 // ---------------------------------------------------------------- money
 export const cheat = (save) => !!save.cheat;
@@ -17,73 +15,56 @@ export const afford = (save, n) => P.afford(save, 'gold', n);
 // ---------------------------------------------------------------- hero levels (permanent)
 export const level = (save, id) => Math.max(1, (save.heroes[id] && save.heroes[id].level) || 1);
 export const xp = (save, id) => Math.max(0, (save.heroes[id] && save.heroes[id].xp) || 0);
-export const xpNeed = (lv) => (has('xpToNext') ? P.xpToNext(lv) : xpToNext(lv));
+export const xpNeed = (lv) => P.xpToNext(lv);
 export const points = (save, id) => (cheat(save) ? Infinity : Math.max(0, (save.heroes[id] && save.heroes[id].points) || 0));
 export const pointsShown = (save, id) => (cheat(save) ? '∞' : String(points(save, id)));
 
 // ---------------------------------------------------------------- heroes for gold
-// (before the round 8 rules land, prices were gems: shown as gold at 150 a gem)
-export const heroPrice = (id) => {
-  const u = HEROES[id].unlock || {};
-  if (u.gold != null) return u.gold;
-  if (has('heroGold')) return P.heroGold(id);
-  const p = has('heroPrice') ? P.heroPrice(id) : u.gems || 0;
-  const n = typeof p === 'number' ? p : p && p.gold != null ? p.gold : 0;
-  return n < 20 ? n * 150 : n;
-};
-export function recruit(save, id) {
-  if (has('buyHero')) return P.buyHero(save, id);
-  if (has('unlockHero') && P.unlockHero.length >= 2) {
-    const before = save.heroes[id].owned; const ok = P.unlockHero(save, id);
-    if (ok || before !== save.heroes[id].owned) return ok;
-  }
-  if (save.heroes[id].owned || !P.pay(save, 'gold', heroPrice(id))) return false;
-  save.heroes[id].owned = true; return true;
-}
+export const heroPrice = (id) => P.heroPrice(id);
+export const recruit = (save, id) => P.unlockHero(save, id);
 
 // ---------------------------------------------------------------- the skill web
-// Nodes with x/y come straight from treeFor. Older trees (branches and tiers, no x/y) are laid out as a star round
-// the hero so the web still has something to show.
+// treeFor(id) nodes: { id, x, y, kind, name, desc, max, cost, links, needs, level, stats, ability?, tier? }.
 const webCache = {};
 export function web(id) {
   if (webCache[id]) return webCache[id];
-  let nodes = (P.tree ? P.tree(id) : treeFor(id)).map((n) => ({ ...n }));
   const demo = demoSize();
-  if (demo) nodes = demoWeb(id, demo);
-  else if (!nodes.every((n) => typeof n.x === 'number')) nodes = starLayout(id, nodes);
-  if (!nodes.some((n) => n.kind === 'root')) nodes.unshift({ id: 'root', kind: 'root', x: 0, y: 0, name: HEROES[id].name, desc: '', max: 1, cost: 0, links: [] });
+  const nodes = demo ? demoWeb(id, demo) : P.tree(id).map((n) => ({ ...n }));
   const by = {};
-  for (const n of nodes) { n.links = (n.links || []).slice(); by[n.id] = n; }
-  for (const n of nodes) for (const l of n.links) if (by[l] && !by[l].links.includes(n.id)) by[l].links.push(n.id); // links go both ways
-  return (webCache[id] = { nodes, by, root: nodes.find((n) => n.kind === 'root') });
+  for (const n of nodes) { n.links = (n.links || []).slice(); n.needs = n.needs || []; by[n.id] = n; }
+  for (const n of nodes) for (const l of n.links) if (by[l] && !by[l].links.includes(n.id)) by[l].links.push(n.id); // both ways
+  return (webCache[id] = { nodes, by, root: nodes.find((n) => n.kind === 'root'), demo: !!demo });
 }
-const costOf = (n, rank) => (Array.isArray(n.cost) ? n.cost[Math.min(rank, n.cost.length - 1)] : n.cost == null ? 1 : n.cost);
-export const rank = (save, id, nodeId) => {
-  const w = web(id), n = w.by[nodeId];
-  if (n && n.kind === 'root') return 1;
-  return (save.heroes[id].nodes || {})[nodeId] || 0;
-};
-// A node can be learned when one linked node is owned (the hero itself counts), the hero has the points, and it
-// isn't at its max yet. n.level (optional) is the hero level it needs.
+export const rank = (save, id, nodeId) => (web(id).by[nodeId] && web(id).by[nodeId].kind === 'root' ? 1 : P.rank(save, id, nodeId));
+// One node for the web's drawing: owned (all ranks), part (some), open (learn it now), near (linked, but short of
+// points, a level or a node it needs), locked (not linked yet). The cheat makes points free.
 export function nodeState(save, id, n) {
-  const r = rank(save, id, n.id), max = n.max || 1, maxed = r >= max;
-  const linked = n.kind === 'root' || n.links.some((l) => rank(save, id, l) > 0);
-  const cost = maxed ? 0 : costOf(n, r);
-  const lvOk = !n.level || level(save, id) >= n.level;
-  const owned = save.heroes[id].owned;
-  const can = owned && linked && lvOk && !maxed && points(save, id) >= cost;
-  return { rank: r, max, maxed, cost, linked, lvOk, owned, can, state: maxed ? 'owned' : r ? 'part' : can ? 'open' : linked && lvOk ? 'near' : 'locked' };
+  const st = web(id).demo ? demoState(save, id, n) : P.nodeState(save, id, n);
+  const need = (w) => st.needs.find((x) => x.what === w);
+  const lv = need('level'), linked = st.reachable !== false, owned = save.heroes[id].owned;
+  const lvOk = !lv || lv.ok;
+  const needsOk = st.needs.every((x) => x.ok || x.what === 'owned');
+  const can = st.canBuy || (cheat(save) && st.met && !st.maxed);
+  const max = n.max || 1;
+  return { rank: st.rank, max, maxed: st.maxed, cost: st.cost, linked, lvOk, owned, can, needs: st.needs,
+    state: st.maxed ? 'owned' : st.rank ? 'part' : can ? 'open' : linked && needsOk ? 'near' : 'locked' };
 }
 export function learn(save, id, nodeId) {
   const n = web(id).by[nodeId]; if (!n) return false;
-  if (has('learnNode')) return P.learnNode(save, id, nodeId);
   const st = nodeState(save, id, n); if (!st.can) return false;
   const h = save.heroes[id];
-  if (!cheat(save)) h.points = (h.points || 0) - st.cost;
-  h.nodes = { ...h.nodes, [nodeId]: st.rank + 1 };
-  return true;
+  if (web(id).demo) { h.nodes = { ...h.nodes, [nodeId]: st.rank + 1 }; if (!cheat(save)) h.points -= st.cost; return true; }
+  if (cheat(save)) h.points = (h.points || 0) + st.cost; // the cheat: the point comes back as it's spent
+  return P.buyNode(save, id, nodeId);
 }
 export const learnedCount = (save, id) => web(id).nodes.filter((n) => n.kind !== 'root' && rank(save, id, n.id) > 0).length;
+function demoState(save, id, n) {
+  const r = n.kind === 'root' ? 1 : (save.heroes[id].nodes || {})[n.id] || 0, max = n.max || 1, maxed = r >= max;
+  const linked = n.kind === 'root' || n.links.some((l) => rank(save, id, l) > 0);
+  const needs = [{ what: 'link', ok: linked, text: 'Buy a node next to it first' }];
+  const met = linked && save.heroes[id].owned;
+  return { rank: r, maxed, cost: maxed ? 0 : n.cost || 1, needs, met, reachable: linked, canBuy: met && !maxed && (save.heroes[id].points || 0) >= (n.cost || 1) };
+}
 
 // ?web=100 fills every tree with a made-up web of that size, to try the canvas at the size the designer wants.
 function demoSize() { try { const n = +new URLSearchParams(location.search).get('web'); return n > 10 ? Math.min(400, n) : 0; } catch { return 0; } }
@@ -125,69 +106,31 @@ function demoWeb(id, size) {
   }));
   return nodes;
 }
-// The old three-branch tree as a star: each ability's tiers out along a spoke, its training beside tier I.
-function starLayout(id, old) {
-  const out = [{ id: 'root', kind: 'root', x: 0, y: 0, name: HEROES[id].name, desc: '', links: [] }];
-  const branches = [...new Set(old.map((n) => n.branch))];
-  for (const n of old) {
-    const b = Math.max(0, branches.indexOf(n.branch)), a = -Math.PI / 2 + b * Math.PI * 2 / Math.max(3, branches.length);
-    let r = 150, da = 0;
-    if (n.kind === 'tier') r = 70 + n.tier * 110;
-    else if (n.kind === 'stat') { r = 170; da = 0.42; } else { r = 300; da = -0.5; }
-    const links = n.req && n.req.node ? [n.req.node] : n.kind === 'tier' ? ['root'] : [old.find((o) => o.branch === n.branch && o.kind === 'tier').id];
-    out.push({ ...n, kind: n.kind === 'tier' ? 'tier' : n.kind, x: Math.cos(a + da) * r, y: Math.sin(a + da) * r, links, cost: 1, level: undefined });
-  }
-  return out;
-}
-
 // ---------------------------------------------------------------- party slots (from boss kills)
-export const SLOT_MAX = 4;
-export const slots = (save) => Math.max(1, Math.min(SLOT_MAX, has('partySlots') ? P.partySlots(save) : save.slots || 1));
-// What opens the next seat: a line for the locked seat.
+export const SLOT_MAX = P.SLOT_MAX;
+export const slots = (save) => P.slotCount(save);
+// What opens the next seat, for the locked seat's line (null when every seat is open).
 export function nextSlotHint(save) {
-  if (has('nextSlot')) { const s = P.nextSlot(save); if (s) return typeof s === 'string' ? s : s.text; return null; }
-  const order = dungeonOrder();
-  const n = slots(save);
-  if (n >= SLOT_MAX) return null;
-  const a = THEMES[order[0]], b = THEMES[order[1]];
-  return [`Beat the ${short(a)} first mini-boss`, `Beat the ${short(a)} boss`, `Beat the ${short(b)} boss`][n - 1];
+  const u = P.slotUnlocks(save).find((x) => !x.have);
+  return u ? u.text : null;
 }
 
 // ---------------------------------------------------------------- dungeons, gating and checkpoints
-export function dungeonOrder() {
-  if (P.DUNGEON_ORDER) return P.DUNGEON_ORDER.filter((t) => THEMES[t]);
-  return Object.keys(THEMES).sort((a, b) => (THEMES[a].rank ?? 9) - (THEMES[b].rank ?? 9));
-}
-const rec = (save, t) => (save.dungeons && save.dungeons[t]) || { best: 0, cleared: 0 };
-export function dungeonOpen(save, t) {
-  if (has('dungeonOpen')) return P.dungeonOpen(save, t);
-  const order = dungeonOrder(), i = order.indexOf(t);
-  return i <= 0 || rec(save, order[i - 1]).cleared > 0;
-}
-export const dungeonLockText = (t) => { const order = dungeonOrder(), i = order.indexOf(t); return i > 0 ? `Beat the ${short(THEMES[order[i - 1]])} boss` : ''; };
-const short = (th) => th.name.replace(/^The /, '');
-// The deepest floor a run can start on (1 = the top).
-export function checkpoint(save, t) {
-  if (has('checkpoint')) return Math.max(1, P.checkpoint(save, t) || 1);
-  const r = rec(save, t);
-  return Math.max(1, Math.min(FLOORS, r.checkpoint || r.best || 1));
-}
+export const dungeonOrder = () => P.DUNGEON_ORDER.filter((t) => THEMES[t]);
+export const dungeonOpen = (save, t) => P.dungeonOpen(save, t);
+export const dungeonState = (save, t) => P.dungeonState(save, t);
+export const dungeonLockText = (t, save) => {
+  const order = dungeonOrder(), prev = order[order.indexOf(t) - 1];
+  return prev ? `Beat the boss of ${THEMES[prev].name}` : '';
+};
+export const checkpoint = (save, t) => P.dungeonState(save, t).checkpoint;
 export const FLOORS = 3;
 export const ROOMS = 7;
-export const record = rec;
 
 // ---------------------------------------------------------------- going in, and leaving early
-export const LEAVE_CUT = P.LEAVE_CUT != null ? P.LEAVE_CUT : 0.2;
-export function runOptions(save, theme, potionFor, floor) {
-  const o = P.runOptions(save, theme, potionFor, floor);
-  o.floor = floor || 1; o.startFloor = o.floor;
-  return o;
-}
-// Would leaving now cost the cut? Not once the floor is done (between floors), or when the run is over.
-export function leaveCosts(run) {
-  if (!run || run.summary) return false;
-  if (typeof run.floorDone === 'boolean') return !run.floorDone;
-  return true;
-}
+export const LEAVE_CUT = P.LEAVE_LOSS;
+export const runOptions = (save, theme, potionFor, floor) => P.runOptions(save, theme, potionFor, floor);
+// What leaving now would cost: { lose: fraction, gold }.
+export const leaveCost = (run) => (run && !run.summary ? P.leaveCost(run) : { lose: 0, gold: 0 });
 
 export { HERO_IDS, HEROES };

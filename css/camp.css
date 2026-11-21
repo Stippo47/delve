@@ -32,7 +32,7 @@
 .foot-note, .empty-note { margin: 14px 16px; }
 
 /* ---------------------------------------------------------------- Delve: the fire and the seats */
-.fireside { position: relative; height: 248px; overflow: hidden; }
+.fireside { position: relative; height: 232px; overflow: hidden; }
 .fireside .sky { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
 .fire { position: absolute; left: 50%; bottom: 62px; width: 64px; height: 64px; margin-left: -32px; }
 .fire svg { width: 100%; height: 100%; display: block; overflow: visible; }
@@ -42,7 +42,7 @@
 @keyframes flick { from { transform: scale(.94, .9) skewX(-3deg); } to { transform: scale(1.04, 1.08) skewX(3deg); } }
 .seats { position: absolute; left: 0; right: 0; bottom: 10px; height: 150px; }
 .seat { position: absolute; width: 86px; margin-left: -43px; text-align: center; animation: up .4s cubic-bezier(.2,.8,.2,1) backwards; }
-.seat.s0 { left: 12%; bottom: 30px; } .seat.s1 { left: 34%; bottom: 0; } .seat.s2 { left: 66%; bottom: 0; } .seat.s3 { left: 88%; bottom: 30px; }
+.seat.s0 { left: 12%; top: 4px; } .seat.s1 { left: 33%; top: 30px; } .seat.s2 { left: 67%; top: 30px; } .seat.s3 { left: 88%; top: 4px; }
 .seat-face { position: relative; width: 64px; height: 64px; margin: 0 auto; }
 .seat-face .face { box-shadow: inset 0 0 0 2.5px var(--rc), 0 6px 14px rgba(0,0,0,.45); }
 .seat-face .lvl { position: absolute; left: -6px; bottom: -4px; }
@@ -85,7 +85,9 @@
 .dc-status { margin-top: auto; display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 850; color: var(--acc); }
 .dc-status .ico { width: 15px; height: 15px; flex: none; }
 .dcard.locked .dc-art { filter: grayscale(1) brightness(.45); }
-.dcard.locked h2, .dcard.locked p { color: var(--faint); }
+.dcard.locked h2 { color: var(--faint); }
+.dcard.locked p { display: none; }
+.seat.later .seat-ring { opacity: .45; }
 .dcard.locked .dc-status { color: var(--quiet); }
 .dots { display: flex; justify-content: center; gap: 6px; margin: 6px 0 2px; }
 .dots i { width: 6px; height: 6px; border-radius: 3px; background: var(--line2); transition: width .2s; }
@@ -140,6 +142,8 @@
 .chip.rest { color: var(--quiet); }
 .hseg { flex: none; margin: 0 calc(16px + var(--sr)) 10px calc(16px + var(--sl)); }
 .blurb { margin: 4px 0 14px; color: var(--quiet); font-weight: 600; }
+.sumchips { display: flex; flex-wrap: wrap; gap: 6px; }
+.sumchips span { padding: 5px 10px; border-radius: 999px; background: rgba(245,184,65,.1); box-shadow: inset 0 0 0 1px rgba(245,184,65,.35); color: var(--gold2); font-size: 13px; font-weight: 800; }
 .krow { display: flex; gap: 12px; padding: 12px; margin-bottom: 8px; border-radius: var(--r-tile); background: var(--surf); box-shadow: inset 0 0 0 1px var(--line); }
 .krow b { display: block; font-size: 16px; margin: 1px 0 2px; }
 .krow p { font-size: 14px; color: var(--text); font-weight: 600; opacity: .85; }
@@ -221,7 +225,7 @@
 .look .small { display: block; font-size: 12px; line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
 .lk-sw { display: flex; gap: 4px; height: 30px; }
 .lk-sw > i { flex: 1; border-radius: 6px; }
-.lk-sw svg { width: 100%; height: 100%; }
+.lk-sw svg { width: 100%; height: 100%; display: block; }
 .version { text-align: center; margin-top: 6px; }
 
 /* ---------------------------------------------------------------- sheets' contents */
@@ -272,3 +276,19 @@
 .rh-pts { flex: none; text-align: center; }
 .rh-pts .pts { font-size: 20px; }
 .rh-pts .cap { display: block; color: var(--teal); }
+
+/* ---------------------------------------------------------------- short phones (iPhone SE: 667 tall) */
+@media (max-height: 700px) {
+  :root { --toph: 46px; --tabh: 58px; }
+  .top-title { font-size: 21px; }
+  .fireside { height: 206px; }
+  .seat.s0, .seat.s3 { top: 0; } .seat.s1, .seat.s2 { top: 22px; }
+  .fire { bottom: 50px; }
+  .hhead { padding-bottom: 6px; }
+  .hhead .face { width: 48px !important; height: 48px !important; }
+  .hseg { margin-bottom: 6px; }
+  .hseg > button { height: 30px; }
+  .delve-go, .bagbtn { height: 50px; }
+  .dcard { height: 128px; }
+  .dc-art { width: 92px; height: 104px; }
+}

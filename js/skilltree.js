@@ -12,7 +12,16 @@ const views = {}; // camera per hero, kept between visits: { x, y, k }
 const R = { root: 46, tier: 30, ability: 30, stat: 19, keystone: 30, slot: 24 };
 const sizeOf = (n) => R[n.kind] || 19;
 
-// A tiny glyph for a stat node from what it raises.
+// A tiny glyph for a stat node from what it raises (heroes.js STATS keys first, then words).
+const SWORD = '<path d="M14.5 4.5H19.5v5L10.5 18.5l-5-5z"/><path d="M4.5 19.5l3-3"/>', CLOCK = '<circle cx="12" cy="12.5" r="6.5"/><path d="M12 9v3.8l2.4 1.6"/>',
+  CROSS = '<path d="M12 6v12M6 12h12" stroke-width="3.4"/>', DROP = '<path d="M12 4.5c3 4 5.5 6.8 5.5 9.7a5.5 5.5 0 0 1-11 0c0-2.9 2.5-5.7 5.5-9.7z"/>';
+const BYKEY = {
+  dmg: SWORD, abDmg: SWORD, haste: CLOCK, abCd: CLOCK, heal: CROSS, abHeal: CROSS, status: DROP, abStatus: DROP,
+  hp: '<path d="M12 19s-7-4.4-7-9.2A3.8 3.8 0 0 1 12 7.6a3.8 3.8 0 0 1 7 2.2C19 14.6 12 19 12 19z" fill="currentColor" stroke="none"/>',
+  atkSpeed: '<path d="M6 7l5 5-5 5M12 7l5 5-5 5"/>', moveSpeed: '<path d="M5 15l5-5 3 3 6-6M14 7h5v5"/>',
+  range: '<circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/>',
+  armor: '<path d="M12 4l7 3v5c0 4-3 6.6-7 8-4-1.4-7-4-7-8V7z"/>',
+};
 const GLYPH = [
   [/heal|mend/i, '<path d="M12 6v12M6 12h12" stroke-width="3.4"/>'],
   [/health|hp|vigor|life/i, '<path d="M12 19s-7-4.4-7-9.2A3.8 3.8 0 0 1 12 7.6a3.8 3.8 0 0 1 7 2.2C19 14.6 12 19 12 19z" fill="currentColor" stroke="none"/>'],
@@ -25,6 +34,9 @@ const GLYPH = [
   [/dmg|damage|might|power/i, '<path d="M14.5 4.5H19.5v5L10.5 18.5l-5-5z"/><path d="M4.5 19.5l3-3"/>'],
 ];
 function glyph(n) {
+  if (n.id && /Mastery$/.test(n.id)) return '<path d="M12 3.5l2.5 5.2 5.7.8-4.1 4 1 5.6-5.1-2.7-5.1 2.7 1-5.6-4.1-4 5.7-.8z"/>';
+  const k = n.stats && n.stats[0] && n.stats[0].k;
+  if (k && BYKEY[k]) return BYKEY[k];
   const s = `${n.stat || ''} ${n.id} ${n.name}`;
   for (const [re, d] of GLYPH) if (re.test(s)) return d;
   return '<path d="M12 6v12M6 12h12" stroke-width="3"/>';
@@ -141,10 +153,8 @@ export function mountTree(host, o) {
     const s = st[n.id];
     const kind = n.kind === 'tier' || n.kind === 'ability' ? `Ability${n.tier ? ' · tier ' + roman(n.tier) : ''}` : n.kind === 'keystone' ? 'Keystone' : n.kind === 'slot' ? 'Trinket slot' : 'Training';
     const rankTxt = s.max > 1 ? ` · ${s.rank}/${s.max}` : s.maxed ? ' · learned' : '';
-    let need = '';
-    if (!s.owned) need = 'Recruit this hero first.';
-    else if (!s.linked) need = 'Learn a node next to it first.';
-    else if (!s.lvOk) need = `Needs level ${n.level}.`;
+    const miss = (s.needs || []).find((x) => !x.ok);
+    const need = !s.owned ? 'Recruit this hero first' : !miss ? '' : miss.what === 'link' ? 'Learn a node next to it first' : miss.text;
     const ico = n.kind === 'tier' || n.kind === 'ability' ? `<span class="np-ico ab">${icon('ability', n.ability || n.id)}</span>` : `<span class="np-ico ${n.kind}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${n.kind === 'keystone' ? '<path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="currentColor" stroke="none"/>' : n.kind === 'slot' ? '<path d="M12 3l8 6-8 12-8-12z"/>' : glyph(n)}</svg></span>`;
     const btn = s.maxed ? `<button class="btn wide no" disabled>${I.check} Learned</button>`
       : `<button class="btn wide ${s.can ? 'teal' : 'no'}" data-learn="${n.id}">${s.can ? `Learn · ${s.cost} ${s.cost === 1 ? 'point' : 'points'}` : need || `Needs ${s.cost} ${s.cost === 1 ? 'point' : 'points'}`}</button>`;

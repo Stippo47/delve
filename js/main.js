@@ -107,11 +107,11 @@ $('speedBtn').onclick = () => { save.speed = SPEEDS[(SPEEDS.indexOf(save.speed) 
 $('retreatBtn').onclick = () => {
   if (!run || run.summary) return;
   if (run.leaving) { retreat(run, false); updateHud(); return; }
-  if (!M.leaveCosts(run)) { retreat(run, true); updateHud(); return; }
+  if (!M.leaveCost(run).lose) { retreat(run, true); updateHud(); return; }
   askLeave();
 };
 function askLeave() {
-  const el = $('leaveAsk'), cut = Math.round(run.coins * M.LEAVE_CUT), wasPaused = paused;
+  const el = $('leaveAsk'), cut = M.leaveCost(run).gold, wasPaused = paused;
   if (paused) setPaused(false);
   paused = true; // hold the fight while asking, without the inspect panel
   el.innerHTML = `<div class="la-panel"><h2>Leave the dungeon?</h2>

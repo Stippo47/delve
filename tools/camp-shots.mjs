@@ -37,15 +37,15 @@ const scroll = (y) => page.evaluate((y) => { document.getElementById('campMain')
 // a save with some progress (the round 8 contract: permanent levels, xp, skill points)
 const setup = () => page.evaluate(() => {
   const s = GAME.save;
-  s.gold = 1240; s.slots = 3; s.potions = 2; s.elixirs = { haste: 1, ironskin: 2, fireproof: 1 }; s.runs = 6; s.wins = 1;
+  s.gold = 1240; s.unlocks = { slotMini1: true, slotBoss1: true, slotBoss2: false }; s.potions = 2; s.elixirs = { haste: 1, ironskin: 2, fireproof: 1 }; s.runs = 6; s.wins = 1;
   s.party = ['paladin', 'archer']; s.heroes.cleric.owned = true; s.heroes.tower.owned = true; s.heroes.twinfang.owned = true;
   const lv = { paladin: [7, 210, 3], archer: [5, 120, 1], cleric: [3, 40, 0], tower: [2, 10, 2], twinfang: [4, 60, 0] };
   for (const [id, [l, x, p]] of Object.entries(lv)) Object.assign(s.heroes[id], { level: l, xp: x, points: p });
   s.heroes.twinfang.recoverUntil = Date.now() + 2 * 60e3 + 20e3;
-  s.heroes.paladin.nodes = { shieldBash1: 1, shieldBash2: 1, might: 2, guard1: 1 };
+  s.heroes.paladin.nodes = { shieldBash1: 1, shieldBashCd: 2, shieldBash2: 1, guard1: 1, offence0: 2 };
   s.heroes.archer.nodes = { barrage1: 1 };
   s.trinkets = ['frostRing', 'swiftBoots', 'frostRing']; s.heroes.paladin.trinkets = ['ironSkin']; s.tlv = { ironSkin: 2 };
-  s.dungeons = { warren: { best: 3, cleared: 1 }, sewers: { best: 2, cleared: 0 } }; s.mercs = false;
+  s.dungeons = { warren: { best: 3, cleared: 1, checkpoint: 3, minis: [true, true] }, sewers: { best: 2, cleared: 0, checkpoint: 2, minis: [true, false] } }; s.mercs = false;
   s.seen = { rat: { met: 9, beaten: 9 }, rattler: { met: 12, beaten: 11 }, rattlerBow: { met: 4, beaten: 4 }, ghost: { met: 2, beaten: 2 }, graveWarden: { met: 1, beaten: 1 }, slime: { met: 3, beaten: 3 }, goblin: { met: 8, beaten: 8 } };
   GAME.cheat({});
 });
@@ -80,7 +80,7 @@ await tap('[data-act="tab:heroes"]');
 await shot('07-heroes');
 await tap('[data-act="hero:paladin"]');
 await shot('08-hero-skills', 700);
-await page.evaluate(() => { const g = document.querySelector('.wn[data-n="guard2"]') || document.querySelector('.wn.open'); const r = g.getBoundingClientRect(); window.__tapAt = [r.left + r.width / 2, r.top + r.height / 2]; });
+await page.evaluate(() => { const g = document.querySelector('.wn.open:not(.ability)') || document.querySelector('.wn.open'); const r = g.getBoundingClientRect(); window.__tapAt = [r.left + r.width / 2, r.top + r.height / 2]; });
 const at = await page.evaluate(() => window.__tapAt);
 await page.mouse.click(at[0], at[1]);
 await shot('09-hero-node', 700);
@@ -120,14 +120,14 @@ await page.evaluate(async () => {
   const m = await import('./js/camp.js');
   document.getElementById('camp').classList.add('hidden');
   document.getElementById('result').classList.remove('hidden');
-  m.showResult({ result: 'retreated', gold: 312, raw: 390, leaveCut: 78, theme: 'sewers', floor: 2, rooms: 10, kills: 64, checkpoint: 2,
-    heroes: [{ id: 'paladin', from: 6, level: 7, xp: 210, points: 1 }, { id: 'archer', from: 4, level: 5, xp: 120, points: 1, hurt: true }], found: [] }, () => {});
+  m.showResult({ result: 'retreated', gold: 312, raw: 390, lost: 78, theme: 'sewers', floor: 2, rooms: 10, kills: 64, checkpoint: 2,
+    heroes: [{ id: 'paladin', from: 6, level: 7, gained: 1 }, { id: 'archer', from: 4, level: 5, gained: 1, hurt: true }], slots: { unlocked: [] }, opened: [], found: [] }, () => {});
 });
 await shot('23-result-left', 1500);
 await page.evaluate(async () => {
   const m = await import('./js/camp.js');
-  m.showResult({ result: 'won', gold: 940, raw: 940, theme: 'warren', floor: 3, rooms: 21, kills: 188, slotUnlocked: true, opened: 'sewers',
-    heroes: [{ id: 'paladin', from: 5, level: 7, xp: 30, points: 2 }, { id: 'archer', from: 5, level: 6, xp: 300, points: 1 }, { id: 'cleric', from: 3, level: 3, xp: 80, points: 0, downed: true }], found: [] }, () => {});
+  m.showResult({ result: 'won', gold: 940, raw: 940, theme: 'warren', floor: 3, rooms: 21, kills: 188, slots: { unlocked: ['slotBoss1'] }, opened: ['sewers'],
+    heroes: [{ id: 'paladin', from: 5, level: 7, gained: 2 }, { id: 'archer', from: 5, level: 6, gained: 1 }, { id: 'cleric', from: 3, level: 3, gained: 0, downed: true }], found: [] }, () => {});
 });
 await shot('24-result-won', 1500);
 

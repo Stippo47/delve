@@ -16,7 +16,7 @@ import { elixirOf, POTIONS } from './potions.js';
 // Timed statuses shrink against the highest value seen since they began.
 const STATUS_COL = { burn: '#FF7A2F', chill: '#7FD6F5', frozen: '#BFEFFF', poison: '#9BCB3C', wet: '#6FB7E8', shock: '#FFF27A',
   stagger: '#E8E2D0', stun: '#FFE14D', root: '#7FA04A', sleep: '#C9B8FF', ko: '#FFE7A0', guard: '#5B8CDB', invuln: '#FFE07A',
-  taunt: '#E0604B', buff: '#7CC06F', debuff: '#C8553D', rage: '#E0604B', radiance: '#FFF3B0', cursed: '#A070E0' };
+  taunt: '#E0604B', buff: '#7CC06F', debuff: '#C8553D', rage: '#E0604B', radiance: '#FFE48A', curse: '#9A5CC8' };
 const peaks = new WeakMap();
 function peaked(u, id, v) {
   let p = peaks.get(u); if (!p) peaks.set(u, (p = {}));
@@ -26,7 +26,8 @@ function peaked(u, id, v) {
 }
 // sim.js bursts every build-up status at 100 (round 7); lane S may give a unit its own.
 const burstOf = (u, id) => (u.stMax && u.stMax[id]) || (u.burstAt && u.burstAt[id]) || 100;
-export function unitStatuses(u) {
+// now: the world's time (lane S's build-up rings flash for a moment when they burst).
+export function unitStatuses(u, now) {
   const out = [];
   if (!u || u.dead) return out;
   const add = (id, v, extra = {}) => { const f = peaked(u, id, v); if (f > 0) out.push({ id, kind: 'status', icon: id, frac: f, color: STATUS_COL[id], ...extra }); };
@@ -42,7 +43,7 @@ export function unitStatuses(u) {
   build('shock', s.shock || 0, 4);
   build('stagger', s.stagger || 0, 6);
   if (s.radiance != null) build('radiance', s.radiance, 2);
-  if (s.cursed != null) build('cursed', s.cursed, 2);
+  if (s.curse != null) build('curse', s.curse, 2);
   add('ko', u.koT, { left: u.koT });
   add('stun', u.stunT > 0.05 && !(u.koT > 0) && !(u.frozenT > 0) ? u.stunT : 0, { left: u.stunT });
   add('root', u.rootT, { left: u.rootT });
@@ -67,7 +68,10 @@ export function ringSvg(st, size = 24) {
   return `<span class="sring" data-sid="${st.id}" style="width:${size}px;height:${size}px"><svg viewBox="0 0 24 24" width="${size}" height="${size}"><circle cx="12" cy="12" r="11.4" class="bg"/><circle cx="12" cy="12" r="10.2" class="trk"/>
     <circle cx="12" cy="12" r="10.2" class="arc" style="stroke:${st.color}" stroke-dasharray="${(st.frac * RC).toFixed(2)} ${RC.toFixed(2)}" transform="rotate(-90 12 12)"/></svg>${icon(st.kind, st.icon)}</span>`;
 }
-function setRing(el, st) { const arc = el && el.querySelector('.arc'); if (arc) arc.setAttribute('stroke-dasharray', `${(st.frac * RC).toFixed(2)} ${RC.toFixed(2)}`); }
+function setRing(el, st) {
+  const arc = el && el.querySelector('.arc'); if (arc) arc.setAttribute('stroke-dasharray', `${(st.frac * RC).toFixed(2)} ${RC.toFixed(2)}`);
+  if (el) el.classList.toggle('burst', !!st.burst); // a build-up that just burst: the ring flashes full
+}
 
 // ---------------------------------------------------------------- items a hero carries
 // Trinkets (worn or found) and potions not drunk yet: { kind, id, lv, found }
@@ -146,7 +150,7 @@ export function updateCards(run) {
       ib.innerHTML = items.slice(0, 6).map((i) => `<span class="it${i.lv > 1 ? ' lv' : ''}">${icon(i.kind, i.id)}</span>`).join('');
     }
     // statuses: rings rebuilt when the set changes, arcs updated in place otherwise
-    const sts = down || !u ? [] : unitStatuses(u).slice(0, 4);
+    const sts = down || !u ? [] : unitStatuses(u, w.time).slice(0, 4);
     const skey = sts.map((s) => s.id).join('|');
     const sb = el.querySelector('.hc-st');
     if (sb.dataset.key !== skey) { sb.dataset.key = skey; sb.innerHTML = sts.map((s) => ringSvg(s, 24)).join(''); }
