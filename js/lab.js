@@ -239,6 +239,8 @@ function setupShow() {
       if (ab === 'cure') { ally.st.poison = 70; ally.st.burn = 50; }
       if (ab === 'guard') { ally.target = dummies[0]; dummies[0].target = ally; }
     }
+    // round 10: the Cleric's orbs heal a friend they pass through: one stands in the line of fire
+    if (hero === 'cleric' && ab === 'attack') { ally = spawn(w, 'paladin', 230, 140, { level: 9 }); initKit(ally, 'paladin', {}, 1); for (const k in ally.kit.cd) ally.kit.cd[k] = 9; ally.hp = ally.maxHp * 0.5; ally.facing = 0; ally.home = { x: ally.x, y: ally.y }; }
     if (sh.mob === 'ally' && ally) dummies.forEach((d, i) => { const a = -0.6 + i * 0.9; d.x = d.home.x = ally.x + Math.cos(a) * 62; d.y = d.home.y = ally.y - 40 + Math.sin(a) * 50; });
     if (sh.downed && ally) { ally.downed = true; ally.hp = 0; }
     pin = { x: u.x, y: u.y }; cast = false; u.target = dummies[0];
@@ -257,9 +259,8 @@ function setupShow() {
       for (const k in u.kit.cd) u.kit.cd[k] = 999;
       pin = { x: u.x, y: u.y };
     }
-    // only the ability, no plain attacks; but Zeus Bolt is shown with the Zap that bounces between the marks after it
-    if (ab === 'stormCloud' && w.time > SHOW_AT + 1.0) { if (!u._zapped) { u._zapped = true; u.atkT = 0; } else u.atkT = Math.max(u.atkT, 0.5); }
-    else if (ab !== 'attack' && !(sh.attacks && cast)) u.atkT = Math.max(u.atkT, 0.5);
+    // only the ability, no plain attacks (round 10: Zeus Bolt bounces on its own; no Zap after it)
+    if (ab !== 'attack' && !(sh.attacks && cast)) u.atkT = Math.max(u.atkT, 0.5);
     else if (!ranged) { // melee: the brain won't swing while pinned in place, so the bench swings on a beat
       u.atkT = 9; const d = DEFS[hero], beat = d.role === 'skirmish' ? 0.5 : 1.1, t0 = w.time - SHOW_AT;
       if (t0 >= 0 && Math.floor(t0 / beat) !== Math.floor((t0 - dt) / beat || -1) && t0 < loop - 0.9) {

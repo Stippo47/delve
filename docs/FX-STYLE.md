@@ -113,3 +113,35 @@ lance), Miasma (a gas cloud), Cure (clean bubbles), Leeches (leeches flung and c
 - **Bone King**: his cleave is one huge bone crescent, the lance a thrust with bone spikes bursting up along it, rows
   and graves knots of bone spikes, the soul attacks a wave of blue soul fire with souls rising.
 - Bench: `lab.html?m=puddles&puddle=1..7`, `m=ehp&ehp=1..5`, `m=looks`, `m=king&phase=1..4`.
+
+## Round 10 (lane V3): showcase 2 notes
+The designer's words: `docs/riffle-log/2026-11-21-round10-showcase2.txt`. Each note changed only what it asked.
+- **No X star where lightning hits**, anywhere: a lightning beam ends in a flash and a few sparks; a blow that carries
+  shock leaves no impact star (sim.js `u.hitZap`). Lightning beams stay at full strength until their last 0.1 s.
+- **Zeus Bolt** (id `stormCloud`): a bolt that flies to an enemy and leaps on to the nearest one it hasn't struck,
+  shocking each (kits.js `zeusBolt`); I one bolt, 4 leaps; II 6 leaps; III three bolts. The marks and the Zap's bounce
+  are gone. The Zap and Chain Lightning start at her hands (kits.js `handPt`); the Zap is thin, a stronger yellow.
+- **Roll** is a slide (`act.slide`: fast, then slowing; dust off her feet, under her); at III the caltrops are flung out
+  of her as she slides and land where she was. **Frost Arrow** leaves no rime. The bow is held further forward.
+- **Healing** shows as inked green crosses rising off the edge of the body (render.js particle `shape: 'plus'`), for
+  every heal. The Mending Ray is an inked gold band. Sanctuary: one ring of light through every post.
+- **Light orb**: fanned wide (±0.5 rad) and curving in; a friend an orb passes through is healed a little (sim.js
+  `p.allyHit`, a shot that does something to friends it passes).
+- **Smoke** (Backstab, Dash) fades out (puddles.js: smoke bodies are their own layer, faded by their alpha); Backstab
+  puffs smoke where she comes back in too. `drawPuddle(..., fade)` does the same for any one body (the cluster's poof).
+- **Spins hold the weapon out** (parts.js: a single weapon straight out to the side). Reap's orbs drip on the way and
+  burst when they reach her. **Old Bones**: her soul (a pale wisp) slips up out of her and is yanked back in.
+- **Berserker**: the flail blow is the head, a dent and dust; Whirl's heads are drawn like the one he holds
+  (fxkit `flailHead`), no chains. **Ice Shard**: frost streaks behind each spike; anything cold sheds slow snowflakes.
+- **Lullaby**'s notes each end in their own place, drifting up and fading; the sour note sways slower.
+- **Entangle**: the round 8 patch and coiling vines are back (the entangled look on units stays).
+- **Necromancer**: the attack is a ball of soul fire (no bone), big and slow, shrinking and speeding up; the raised
+  dead are cold grey with two matching fists (art/summons/minion.svg, no hue shift); Life Drain's ribbon reaches out
+  first; Bone Spear is one plain bone spike in a violet wake.
+- **Enemy blade strikes**: a circle of blade is a spin (two warm crescents sweep round it), a cone a chop crescent; bone
+  spikes only for bone.
+- **Heroes lane**: the Falconer's bird is its own part (`arm-l-bird`, hidden while `u.kit.falconOut`); War Horn, Mock and
+  Showboat burst short sound lines out to the front and sides (no rings); Wing Guard's wings are longer and gold.
+- **Variants** (js/fxvar.js, `?v_<key>=N`, the showcase records them with `--q v_shockwave=2`): Shockwave 1 Ridge (as
+  it was), 2 Slabs, 3 Rolling; the wolf's bite 1 Jaws (as it was), 2 Chomp, 3 Rake, 4 Snap. Once one is picked, make
+  it the default in fxvar.js.

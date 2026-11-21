@@ -81,6 +81,8 @@
 <g id="arm-l" data-pivot="46 108"><!-- gauntlet + falcon -->
 <g clip-path="url(#u9)"><use href="#s9" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s9" fill="url(#g13)"/><use href="#s9" fill="url(#g14)"/>
 <g clip-path="url(#u10)"><use href="#s10" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s10" fill="url(#g15)"/><use href="#s10" fill="url(#g16)"/>
+</g>
+<g id="arm-l-bird" data-pivot="46 108"><!-- round 10: the falcon on the gauntlet, its own part so it can leave the fist while it flies (parts.js) -->
 <g clip-path="url(#u11)"><use href="#s11" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s11" fill="url(#g17)"/><use href="#s11" fill="url(#g18)"/><g clip-path="url(#c11)"><path d="M 16 130 L -8 142 L 4 164 L 14 158 Z" fill="#4A5468"/></g>
 <g clip-path="url(#u12)"><use href="#s12" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s12" fill="url(#g17)"/><use href="#s12" fill="url(#g18)"/><g clip-path="url(#c12)"><path d="M 72 130 L 96 142 L 84 164 L 74 158 Z" fill="#4A5468"/></g>
 <g clip-path="url(#u13)"><use href="#s13" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s13" fill="url(#g19)"/><use href="#s13" fill="url(#g20)"/><g clip-path="url(#c13)"><path d="M 38 160 Q 44 164 50 160 M 39 152 Q 44 156 49 152" stroke="#6A7890" stroke-width="2.5" fill="none"/></g>
