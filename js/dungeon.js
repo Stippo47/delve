@@ -186,9 +186,10 @@ const majorP = (run, wave = 0) => (debugParam('majors') != null ? 1 : Math.min(0
 // harder ones after the Crypt; round 8: "make each dungeon and floor clearly harder than the last ... it has to be a
 // challenge"). Round 8: the party no longer levels up inside a run (its strength is the skill web it has bought), so
 // each dungeon is pitched at a party that has grown: the order is the order they open in.
-export const DUNGEON_RANK = { warren: 0, sewers: 1, crypt: 2, frost: 3, ember: 4, spire: 5 };
+// Round 9: the Wildwood is the first (rank 0) and everything after it moves up one; the Warren, now the second, a bit harder.
+export const DUNGEON_RANK = { wildwood: 0, warren: 1, sewers: 2, crypt: 3, frost: 4, ember: 5, spire: 6 };
 // Enemy strength (hp x m, blows x 0.65 + 0.35 m) for a room: the dungeon, the floor, and how far into the floor.
-export const RANK_MULT = [1, 2.3, 3.8, 4.6, 5.4, 5.9];
+export const RANK_MULT = [0.75, 1.6, 2.35, 3.8, 4.6, 5.4, 5.9];
 export const FLOOR_STEP = 0.3;   // each floor on from the first: +30% of the dungeon's own strength
 export const ROOM_STEP = 0.035;  // each room further into a floor: +3.5%
 export const enemyMult = (run, L) => {
@@ -337,7 +338,8 @@ function buildRoom(run) {
 // ---------------------------------------------------------------- dungeon types: hazards, water, dressing, arenas
 // Hazard sizes. 'mist' (crypt): cold grave mist, chills. 'gas' (sewers): a standing cloud of sewer gas (poisons; fire
 // sets it off). 'snare' (warren): a hidden goblin trap that holds whoever steps on it for a moment, then it's spent.
-const HAZ_R = { oil: [34, 52], spikes: [24, 34], mist: [58, 82], gas: [44, 60], snare: [15, 17], fire: [36, 52], web: [44, 60], beam: [46, 58] };
+// Round 9, the Wildwood: 'bramble' (thorns: slows like oil and scratches) and 'roots' (grasping roots: entangle whoever stands in them).
+const HAZ_R = { oil: [34, 52], spikes: [24, 34], mist: [58, 82], gas: [44, 60], snare: [15, 17], fire: [36, 52], web: [44, 60], beam: [46, 58], bramble: [40, 58], roots: [42, 60] };
 
 // Sewer water: a channel running across the room. Wading through it soaks you and slows you down.
 function addWater(w) {
@@ -383,6 +385,13 @@ function arenaShape(name) {
 function buildArena(w, name) {
   w.arena = name; w.shape = name;
   const W = w.W, Hh = w.H;
+  if (name === 'grove') { // the Elder Ent's clearing (docs/BOSS-elder-ent.md): old trees round it, four seed beds, the ent at the far end
+    w.throne = { x: W - 230, y: Hh / 2 };
+    for (const [fx, fy] of [[0.34, 0.2], [0.34, 0.8], [0.58, 0.12], [0.58, 0.88], [0.5, 0.5]]) w.pillars.push({ x: W * fx, y: Hh * fy, r: fx === 0.5 ? 46 : 40, tree: true });
+    w.beds = [[0.62, 0.3], [0.62, 0.7], [0.86, 0.16], [0.86, 0.84]].map(([fx, fy]) => ({ x: W * fx, y: Hh * fy }));
+    for (const b of w.beds) w.hazards.push({ type: 'roots', x: b.x, y: b.y, r: 40, bed: true });
+    return;
+  }
   w.throne = { x: W - 170, y: Hh / 2 };
   for (const fx of [0.36, 0.62]) for (const fy of [230, Hh - 230]) w.pillars.push({ x: W * fx, y: fy, r: 34 });
   w.graves = [];
@@ -404,6 +413,8 @@ function themeTick(w, dt) {
     if (!alive(u)) continue;
     for (const h of w.hazards) {
       if (h.type === 'mist') { if (dist(u.x, u.y, h.x, h.y) < h.r + u.r * 0.3) addStatus(w, u, 'chill', 15 * dt); }
+      else if (h.type === 'roots') { if (dist(u.x, u.y, h.x, h.y) < h.r + u.r * 0.3 && u.team === 'hero') addStatus(w, u, 'entangle', 22 * dt); }
+      else if (h.type === 'bramble') { if (dist(u.x, u.y, h.x, h.y) < h.r + u.r * 0.3 && !u.def.beast && u.def.base !== 'slime') { u.inOil = true; if (u.spd > 20) hurt(w, u, 3 * dt, null, { dot: true, color: '#9BCB3C' }); } }
       else if (h.type === 'beam') continue; // below, once per tick
       else if (h.type === 'snare' && !h.sprung && dist(u.x, u.y, h.x, h.y) < h.r + u.r * 0.35) {
         h.sprung = true; h.t = 5; h.max = 5; h.hidden = false;
@@ -509,7 +520,7 @@ function onKill(run, u) {
 }
 export const XP_MUL = 1.6;
 // Mercenaries' level (their numbers: they don't grow), by dungeon.
-const MERC_LEVEL = [2, 4, 6, 8, 10, 12];
+const MERC_LEVEL = [2, 3, 4, 6, 8, 10, 12];
 
 const heroesAlive = (run) => run.world.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon);
 function nearestHero(run, x, y) { let best = null, bd = Infinity; for (const h of heroesAlive(run)) { const d = dist(h.x, h.y, x, y); if (d < bd) { bd = d; best = h; } } return best; }

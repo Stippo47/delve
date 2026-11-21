@@ -52,7 +52,7 @@ function play(save, opts) {
   if (run.phase === 'stuck' || run.phase === 'error') {
     const w = run.world;
     console.log(`  ${run.theme} ${run.phase} floor ${run.floor} room ${run.map.L} kind ${run.node.kind} shape ${w.shape}`, err ? err.stack : '',
-      w.units.filter((u) => !u.dead).map((u) => `${u.kind}@${Math.round(u.x)},${Math.round(u.y)}${u.downed ? 'D' : ''}${u.minion ? 'm' : ''}[${u.mode}${u.target ? '>' + u.target.kind : ''}${u.forcedGoal ? ' forced' : ''} hp${Math.round(100 * u.hp / u.maxHp)}]`).join(' '), 'phase', run.phase, 'waves', JSON.stringify(w.waves && { left: w.waves.left, pending: !!w.waves.pending }), 'quiet', Math.round(run.quietT || 0), 'was', run.was);
+      w.units.filter((u) => !u.dead).map((u) => `${u.kind}@${Math.round(u.x)},${Math.round(u.y)}${u.downed ? 'D' : ''}${u.minion ? 'm' : ''}[${u.mode}${u.target ? '>' + u.target.kind : ''}${u.forcedGoal ? ' forced' : ''} hp${Math.round(100 * u.hp / u.maxHp)}${['atkT', 'stunT', 'rootT', 'tangledT', 'frozenT', 'flinchT'].filter((k) => u[k] > 0.05).map((k) => ' ' + k + u[k].toFixed(1)).join('')}${u.act ? ' act ' + u.act.type : ''}${u.ethereal ? ' eth' : ''}]`).join(' '), 'phase', run.phase, 'waves', JSON.stringify(w.waves && { left: w.waves.left, pending: !!w.waves.pending }), 'quiet', Math.round(run.quietT || 0), 'was', run.was);
   }
   return { run, t, phase: run.phase };
 }

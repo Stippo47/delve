@@ -520,6 +520,7 @@ function washesOf(u, w) {
 // twinkle (sim.js). A coloured border is kept for protection (u.rim: set by whatever protects; the visuals lane).
 const ELITE_COL = '#FFC83A', ELITE_RIM = 1.16;
 function drawUnit(ctx, u, w) {
+  if (u.hidden) return; // round 9: gone in a smoke bomb (the Bandit Chief), not just see-through
   if (u.def.art) { drawPartsUnit(ctx, u, w); if (u.frozenT > 0) drawIce(ctx, u, w); return; }
   const s = view.scale * view.dpr;
   const kind = SPRITE_KIND[u.kind] || u.kind;

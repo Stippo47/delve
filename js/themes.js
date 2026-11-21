@@ -25,6 +25,38 @@
 //   rank: how hard (DUNGEON_RANK in dungeon.js), unlockAfter: the dungeon to clear first (for the camp, if it locks them) }
 
 export const THEMES = {
+  // ---- round 9: the Wildwood, the new first dungeon (its kinds: js/wildwood.js; the boss: js/elderent.js; PLACEHOLDER art)
+  wildwood: {
+    name: 'The Wildwood', blurb: 'An old forest. Wolves run in it, bandits camp in it, and the trees themselves are awake.', rank: 0,
+    palette: {
+      floor: ['#A9B37C', '#919D66'], tile: ['rgba(60,80,30,0.14)', 'rgba(255,255,220,0.09)'], grout: 'rgba(50,60,30,0.22)',
+      wall: ['#6E7F4A', '#536238'], wallTop: 'rgba(230,255,190,0.14)', rock: ['#4A5634', '#1C2414'], void: '#1C2414', accent: '#9BCB3C',
+    },
+    floorStyle: 'dirt', pillar: 'stone',
+    mood: { fog: 'rgba(24,40,18,', fogK: 0.45, tint: 'rgba(150,200,90,0.05)' },
+    kinds: { fight: 50, hazard: 14, treasure: 14, fountain: 9, decision: 10, elite: 5 },
+    floors: [
+      // the forest edge: wolves, slimes, goblins; brambles. Light and green.
+      { name: 'The Forest Edge', enemies: [['wolf', 3], ['slime', 3.5], ['goblin', 3], ['goblinOrange', 0.8], ['slimeBig', 0.6], ['slimePoison', 0.7]], mini: 'alpha',
+        bossAdds: ['wolf', 'wolf'], elite: 'slimeBig',
+        hazards: [['bramble', 3], ['snare', 0.6]], mood: { fog: 'rgba(24,40,18,', fogK: 0.38, tint: 'rgba(170,220,110,0.05)' },
+        props: [['moss', 2], ['straw', 0.6], ['rubble', 0.6], ['crack', 0.4]], obstacles: [['rock', 3], ['crate', 0.4]] },
+      // the bandit camp: six kinds of bandit, poachers and their snares, the brute; campfires. Warm, smoky.
+      { name: 'The Bandit Camp', enemies: [['bandit', 2], ['banditDagger', 2], ['banditSpear', 1.5], ['banditTorch', 1.4], ['banditAxe', 1.2], ['banditGreat', 1],
+        ['poacher', 2], ['banditBrute', 0.9], ['wolf', 0.8]], mini: 'banditChief', bossAdds: ['bandit', 'banditDagger', 'poacher'], elite: 'banditBrute',
+        hazards: [['snare', 3], ['fire', 1.2], ['oil', 0.6]], mood: { fog: 'rgba(48,30,14,', fogK: 0.48, tint: 'rgba(255,170,80,0.08)' },
+        props: [['firepit', 1], ['planks', 1.2], ['straw', 1.2], ['moss', 0.6]], obstacles: [['crate', 2.5], ['barrel', 2], ['rock', 1]] },
+      // the old grove: ents, sproutlings, wisps, dire wolves, boars; grasping roots. Dim and deep green.
+      { name: 'The Old Grove', enemies: [['ent', 1.6], ['sproutling', 3], ['wisp', 1.5], ['direWolf', 2], ['boar', 2], ['wolf', 1.4], ['slimePoison', 0.8]],
+        bossAdds: ['sproutling', 'sproutling', 'wisp'], elite: 'ent',
+        hazards: [['roots', 3], ['bramble', 1.5]], mood: { fog: 'rgba(8,24,10,', fogK: 0.62, tint: 'rgba(60,140,60,0.14)' },
+        props: [['moss', 2.6], ['rubble', 0.6], ['crack', 0.6]], obstacles: [['rock', 3]] },
+    ],
+    elite: 'banditBrute', warden: 'alpha', boss: 'elderEnt', bossAdds: ['wolf', 'sproutling'],
+    hazards: [['bramble', 3], ['snare', 1], ['roots', 1]],
+    props: [['moss', 2], ['straw', 0.6], ['rubble', 0.6]],
+    obstacles: [['rock', 3], ['crate', 1], ['barrel', 0.5]],
+  },
   crypt: {
     name: 'The Crypt', blurb: 'Old graves under the hill. The dead here don\'t stay down.',
     palette: {
@@ -52,7 +84,7 @@ export const THEMES = {
     obstacles: [['rock', 3], ['brazier', 1.5], ['crate', 1]],
   },
   sewers: {
-    name: 'The Sewers', blurb: 'Under the city. Wet, green and full of teeth.', rank: 1,
+    name: 'The Sewers', blurb: 'Under the city. Wet, green and full of teeth.', rank: 2,
     palette: {
       floor: ['#B5B796', '#9C9F7E'], tile: ['rgba(60,80,50,0.14)', 'rgba(255,255,230,0.09)'], grout: 'rgba(48,62,44,0.22)',
       wall: ['#7C8468', '#5A604B'], wallTop: 'rgba(230,255,200,0.12)', rock: ['#4F5644', '#1E2620'], void: '#1E2620', accent: '#8FD16A',
@@ -78,7 +110,7 @@ export const THEMES = {
     obstacles: [['barrel', 2], ['crate', 2], ['pipe', 1], ['rock', 1]],
   },
   warren: {
-    name: 'The Warren', blurb: 'Goblin tunnels. Loud, crowded and mean, and the floor is full of traps.', rank: 0,
+    name: 'The Warren', blurb: 'Goblin tunnels. Loud, crowded and mean, and the floor is full of traps.', rank: 1,
     palette: {
       floor: ['#CDB089', '#B4946C'], tile: ['rgba(110,74,40,0.14)', 'rgba(255,240,200,0.10)'], grout: 'rgba(90,60,30,0.15)',
       wall: ['#9A7650', '#73543A'], wallTop: 'rgba(255,230,180,0.14)', rock: ['#6E5038', '#2C2019'], void: '#2C2019', accent: '#F2A23A',
@@ -104,7 +136,7 @@ export const THEMES = {
   },
   // ---- round 7: three harder dungeons after the Crypt (their enemies and bosses: js/foes.js; PLACEHOLDER art)
   frost: {
-    name: 'The Frost Hollow', blurb: 'Caves of old ice. Things hang from the roof, and the cold gets into everything.', rank: 3, unlockAfter: 'crypt',
+    name: 'The Frost Hollow', blurb: 'Caves of old ice. Things hang from the roof, and the cold gets into everything.', rank: 4, unlockAfter: 'crypt',
     palette: {
       floor: ['#CFDDE6', '#B6C8D4'], tile: ['rgba(60,90,120,0.12)', 'rgba(255,255,255,0.10)'], grout: 'rgba(60,80,110,0.22)',
       wall: ['#8EA7BC', '#6A8296'], wallTop: 'rgba(255,255,255,0.18)', rock: ['#4C6074', '#1A2430'], void: '#1A2430', accent: '#9FE3FF',
@@ -129,7 +161,7 @@ export const THEMES = {
     obstacles: [['rock', 4], ['crate', 1], ['barrel', 0.6]],
   },
   ember: {
-    name: 'The Ember Deep', blurb: 'Down where the rock glows. Imps, demons, and fire that never goes out.', rank: 4, unlockAfter: 'frost',
+    name: 'The Ember Deep', blurb: 'Down where the rock glows. Imps, demons, and fire that never goes out.', rank: 5, unlockAfter: 'frost',
     palette: {
       floor: ['#8E6A5C', '#76554A'], tile: ['rgba(60,20,10,0.16)', 'rgba(255,200,150,0.08)'], grout: 'rgba(40,16,10,0.3)',
       wall: ['#6E4A40', '#4E322A'], wallTop: 'rgba(255,170,120,0.14)', rock: ['#4A2A22', '#1C0F0D'], void: '#1C0F0D', accent: '#FF7A2F',
@@ -154,7 +186,7 @@ export const THEMES = {
     obstacles: [['rock', 3], ['brazier', 2], ['barrel', 0.5]],
   },
   spire: {
-    name: 'The Gilded Spire', blurb: 'A tower of gold and white stone. Its host does not want you here.', rank: 5, unlockAfter: 'ember',
+    name: 'The Gilded Spire', blurb: 'A tower of gold and white stone. Its host does not want you here.', rank: 6, unlockAfter: 'ember',
     palette: {
       floor: ['#E6DCC4', '#D4C7AA'], tile: ['rgba(120,100,60,0.12)', 'rgba(255,255,255,0.12)'], grout: 'rgba(120,100,60,0.2)',
       wall: ['#C9B98F', '#A8976C'], wallTop: 'rgba(255,255,230,0.2)', rock: ['#5A5070', '#2E2840'], void: '#2E2840', accent: '#F2C84A',
@@ -184,9 +216,8 @@ for (const [id, t] of Object.entries(THEMES)) {
   t.enemies = t.floors.map((f) => f.enemies); // the old per-floor rosters, for older readers
   t.minis = t.floors.slice(0, 2).map((f) => f.mini);
 }
-// The order the dungeons open in (beat one's boss to open the next; progress.js). The Wildwood becomes the first once
-// the designer approves it (docs/ROSTER.md).
-export const DUNGEON_ORDER = ['warren', 'sewers', 'crypt', 'frost', 'ember', 'spire'];
+// The order the dungeons open in (beat one's boss to open the next; progress.js). Round 9: the Wildwood is the first.
+export const DUNGEON_ORDER = ['wildwood', 'warren', 'sewers', 'crypt', 'frost', 'ember', 'spire'];
 // One floor of a dungeon as its own theme: the dungeon's look with the floor's enemies, hazards, mood, dressing and
 // room mix laid over it. dungeon.js hands this to the room (w.theme), so the renderer draws the floor's mood.
 const floorCache = {};

@@ -220,6 +220,33 @@ export function drawThemeHazard(ctx, h, t) {
     ctx.fillStyle = '#F2C84A'; for (let i = 0; i < 6; i++) { const b = i / 6 * TAU; ctx.beginPath(); ctx.arc(Math.cos(b) * h.r * 0.92, Math.sin(b) * h.r * 0.92, 3, 0, TAU); ctx.fill(); }
     ctx.restore(); ctx.globalAlpha = 1; return true;
   }
+  if (h.type === 'bramble') {
+    // round 9, the Wildwood: a low tangle of thorny stems (slows, scratches)
+    ctx.save(); ctx.translate(h.x, h.y); ctx.lineCap = 'round';
+    const n = 9;
+    for (const [col, lw] of [[INK, 5.5], ['#5E7432', 2.6]]) {
+      ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath();
+      for (let i = 0; i < n; i++) { const b = i / n * TAU + h.x * 0.013, r1 = h.r * (0.55 + 0.4 * ((i * 7) % 5) / 5);
+        ctx.moveTo(Math.cos(b) * h.r * 0.15, Math.sin(b) * h.r * 0.15); ctx.quadraticCurveTo(Math.cos(b + 0.5) * r1 * 0.7, Math.sin(b + 0.5) * r1 * 0.7, Math.cos(b + 0.2) * r1, Math.sin(b + 0.2) * r1); }
+      ctx.stroke();
+    }
+    ctx.fillStyle = '#E8E0C8';
+    for (let i = 0; i < n; i++) { const b = i / n * TAU + h.x * 0.013 + 0.25, r1 = h.r * 0.6; ctx.beginPath(); ctx.arc(Math.cos(b) * r1, Math.sin(b) * r1, 1.8, 0, TAU); ctx.fill(); }
+    ctx.restore(); return true;
+  }
+  if (h.type === 'roots') {
+    // round 9, the Wildwood: grasping roots breaking up through the floor (entangle whoever stands in them)
+    ctx.save(); ctx.translate(h.x, h.y); ctx.lineCap = 'round';
+    ctx.globalAlpha = 0.3; ctx.fillStyle = '#3E4A22'; ctx.beginPath(); ctx.arc(0, 0, h.r * 0.95, 0, TAU); ctx.fill(); ctx.globalAlpha = 1;
+    const n = 6, wig = Math.sin(t * 2 + h.x) * 0.08;
+    for (const [col, lw] of [[INK, 8], ['#7A5A3A', 4.5]]) {
+      ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath();
+      for (let i = 0; i < n; i++) { const b = i / n * TAU + h.y * 0.01; ctx.moveTo(Math.cos(b) * h.r * 0.95, Math.sin(b) * h.r * 0.95);
+        ctx.quadraticCurveTo(Math.cos(b + 0.6 + wig) * h.r * 0.5, Math.sin(b + 0.6 + wig) * h.r * 0.5, Math.cos(b + 1.1) * h.r * 0.18, Math.sin(b + 1.1) * h.r * 0.18); }
+      ctx.stroke();
+    }
+    ctx.restore(); return true;
+  }
   if (h.type === 'snare') {
     // a goblin snare: iron jaws half buried in the dirt, easy to miss; once sprung, shut and spent
     ctx.save(); ctx.translate(h.x, h.y);
@@ -264,7 +291,7 @@ export function drawArena(ctx, w) {
 
 // ---------------------------------------------------------------- danger zones (sim.js addDanger)
 // The shape shows at once, dashed; inside it a fill grows from nothing to the edge as the hit comes; then a flash.
-const ZONE_COL = { bone: '#E0604B', blade: '#E0604B', soul: '#7FD6F5', water: '#5DB7E0', fire: '#FF7A2F', holy: '#F2C84A', ice: '#8FD3FF', web: '#B9AFD6', poison: '#9BCB3C' };
+const ZONE_COL = { bone: '#E0604B', blade: '#E0604B', soul: '#7FD6F5', water: '#5DB7E0', fire: '#FF7A2F', holy: '#F2C84A', ice: '#8FD3FF', web: '#B9AFD6', poison: '#9BCB3C', root: '#7FA04A' };
 function zonePath(ctx, z, k) {
   ctx.beginPath();
   if (z.shape === 'circle') ctx.arc(z.x, z.y, Math.max(0.1, z.r * k), 0, TAU);

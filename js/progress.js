@@ -234,10 +234,13 @@ export function autoSpend(save, heroId, prefer = null) {
 // ---------------------------------------------------------------- dungeons, checkpoints
 // The first dungeon is always open; each next one opens when the one before it has had its boss beaten.
 const dg = (save, id) => (save.dungeons && save.dungeons[id]) || { best: 0, cleared: 0, checkpoint: 1, minis: [false, false] };
+// Round 9: the Wildwood came in front of the Warren. A dungeon a save has already been into stays open (so a save from
+// before the Wildwood keeps every dungeon it had), and beating a dungeon's boss opens the next as before.
 export function dungeonOpen(save, id) {
   const i = DUNGEON_ORDER.indexOf(id);
   if (i <= 0) return i === 0;
-  return dg(save, DUNGEON_ORDER[i - 1]).cleared > 0;
+  const own = dg(save, id);
+  return dg(save, DUNGEON_ORDER[i - 1]).cleared > 0 || own.best > 0 || own.cleared > 0;
 }
 // { open, lockedBy (the dungeon to beat first), cleared, best, checkpoint, floors: [1..checkpoint], minis }
 export function dungeonState(save, id) {

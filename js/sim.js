@@ -181,6 +181,7 @@ function chooseTarget(w, u) {
     }
     else if (k === 'rat') { s += o.kind === 'archer' ? 0.35 : 0; }
     if (u.team === 'enemy' && u.tauntT > 0 && u.tauntBy === o) s += 0.85; // the knight drew its attention
+    if (u.focusT > 0 && u.focus === o) s += 1.2; // round 9: a howl (wolves) or a call turns a pack onto one hero
     if (o === u.target) s += 0.35; // stickiness
     if (s > bestS) { bestS = s; best = o; }
   }
@@ -711,6 +712,7 @@ export function hurt(w, u, amount, src, o = {}) {
     u.kx += Math.cos(a) * k; u.ky += Math.sin(a) * k;
   }
   for (const s of BUILD_IDS) if (o[s]) addStatus(w, u, s, o[s], src);
+  if (src && src.hitBurn && !o.dot && src !== u) addStatus(w, u, 'burn', src.hitBurn, src); // round 9: a burning Elder Ent's every blow burns
   if (src && alive(src) && !o.dot) for (const h of hooksOf(src)) if (h.hit) h.hit(w, src, u, amt, o);
   if (!o.dot) for (const h of hooksOf(u)) if (h.struck) h.struck(w, u, src, amt, o);
   if (u.hp <= 0 && hooksOf(u).some((h) => h.downed && h.downed(w, u, src))) return amt;
@@ -896,7 +898,8 @@ function meleeSwing(w, u, single) {
   u.lungeT = 0.18;
   w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, color: u.team === 'hero' ? '#FFFFFF' : '#FFD2C2', src: u });
   for (const o of targets) {
-    hurt(w, o, d.dmg * u.dmgMul * rrange(0.9, 1.1), u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison, radiance: d.radiance, curse: d.curse });
+    hurt(w, o, d.dmg * u.dmgMul * rrange(0.9, 1.1), u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison, radiance: d.radiance, curse: d.curse,
+      burn: d.burn, entangle: d.entangle, stagger: d.stagger, wet: d.wet }); // round 9: a def's blow can carry any build-up
   }
 }
 
@@ -1103,7 +1106,7 @@ function statusTick(w, u, dt) {
     if (u.radiantT <= 0) { u.radiantT = 0; u.radImmuneT = RADIANCE.immuneT; }
   } else if (u.radImmuneT > 0) u.radImmuneT -= dt;
   if (u.hexed && (u.hexT -= dt) <= 0) u.hexed = false;           // an unused hex wears off
-  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
+  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT', 'focusT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
   for (const b of u.buffs) b.t -= dt;
   if (u.buffs.length) u.buffs = u.buffs.filter((b) => b.t > 0);
   if (u.regenT > 0) { u.regenT -= dt; heal(w, u, u.regenRate * dt, u.regenSrc); }

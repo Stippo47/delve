@@ -39,7 +39,9 @@ export function makeElite(w, u) {
 export function makeMajor(w, u) {
   if (u.major) return u;
   u.major = true; u.elite = true; u.look = LOOK.major;
-  u.maxHp = Math.round(u.maxHp * MAJOR.hp); u.hp = u.maxHp;
+  // a big kind made major gets less on top (a major ent was a boss's worth of health): x5 for the small, about x2.7 for the biggest
+  const cost = DEFS_COST(u.kind);
+  u.maxHp = Math.round(u.maxHp * MAJOR.hp / (1 + 0.12 * Math.max(0, cost - 2))); u.hp = u.maxHp;
   u.dmgMul *= MAJOR.dmg; u.moveMul = (u.moveMul || 1) * MAJOR.speed; u.atkMul = (u.atkMul || 1) * MAJOR.atk;
   u.r *= MAJOR.scale; u.vr *= MAJOR.scale; u.mass *= MAJOR.mass;
   u.coinMul = (u.coinMul || 1) * MAJOR.gold;
