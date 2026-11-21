@@ -461,8 +461,10 @@ function movement(w, u, dt) {
     let md = dist(u.x, u.y, wx, wy); for (const a of al) md += dist(a.x, a.y, wx, wy); md /= al.length + 1;
     const ahead = md - dist(u.x, u.y, wx, wy);
     [gx, gy] = goalVec(w, u, wx, wy);
-    if (dist(u.x, u.y, wx, wy) < 60) { gx *= 0.2; gy *= 0.2; }
+    const wd = dist(u.x, u.y, wx, wy);
     mult = ahead > 90 ? 0.15 : ahead < -60 ? 0.85 : 0.6;
+    // ease in and stop at the waypoint (it circled round it, turning back and forth, until dungeon.js moved it on)
+    if (wd < 50) { gx = gy = 0; } else mult *= clamp(wd / 160, 0.4, 1);
   } else if (!t || u.mode === 'wander') {
     u.wanderA += Math.sin(w.time * 0.7 + u.id * 2.3) * 0.9 * dt; // a slow meander, not a random jitter
     // idle enemies mill about near where they were put, and turn away from walls before they reach them
