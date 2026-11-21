@@ -242,7 +242,8 @@ function aboutView(id) {
   const row = (ico, cap, name, desc, extra = '') => `<div class="krow">${ico}<div><span class="cap">${cap}</span><b>${name}</b><p>${desc}</p>${extra}</div></div>`;
   const sum = webSummary(id);
   return `<div class="pad"><p class="blurb">${h.blurb}</p>
-    ${sum ? `<div class="sec-h"><span class="cap">From the skill web</span></div><div class="sumchips">${sum}</div><div class="sec-h"><span class="cap">Kit</span></div>` : ''}
+    ${sum ? `<div class="sec-h"><span class="cap">From the skill web</span>${P.respecPrice ? `<button class="linkbtn" data-act="respec:${id}">Unlearn all · ${gold(P.respecPrice(save, id))}</button>` : ''}</div>
+      <div class="sumchips">${sum}</div><div class="sec-h"><span class="cap">Kit</span></div>` : ''}
     ${row(`<span class="k-ico">${I.sword}</span>`, 'Attack', h.attack.name, h.attack.desc)}
     ${h.abilities.map((ab, i) => row(`<span class="k-ico ab">${icon('ability', ab.id)}</span>`, `Ability ${i + 1} · ${ab.cd}s`, ab.name, ab.desc,
       `<ol class="tiers">${ab.tiers.map((t, k) => `<li class="${M.rank(save, id, `${ab.id}${k + 1}`) ? 'got' : ''}"><i>${roman(k + 1)}</i>${t}</li>`).join('')}</ol>`)).join('')}
@@ -327,7 +328,7 @@ function onInput() { /* sound sliders handle themselves (audio.js) */ }
 function openSheet(s) { sheet = s; renderSheet(); }
 function closeSheet() { sheet = null; if (sheetEl) { sheetEl.classList.add('hidden'); sheetEl.innerHTML = ''; } }
 function renderSheet() {
-  const body = { seat: seatSheet, pack: packSheet, trinket: trinketSheet, ware: wareSheet, beast: beastSheet }[sheet.type]();
+  const body = { seat: seatSheet, pack: packSheet, trinket: trinketSheet, ware: wareSheet, beast: beastSheet, respec: respecSheet }[sheet.type]();
   const was = !sheetEl.classList.contains('hidden');
   sheetEl.innerHTML = `<div class="backdrop" data-act="closesheet"></div><div class="panel ${was ? '' : 'rise'}"><span class="grip"></span>${body}</div>`;
   sheetEl.classList.remove('hidden');
@@ -396,6 +397,13 @@ function wareSheet() {
     ${have ? `<p class="quiet small">${n ? `${n} in the chest` : ''}${n && worn.length ? ' · ' : ''}${worn.length ? 'worn by ' + worn.join(', ') : ''}</p>` : ''}${lvRow}
     <div class="sheet-actions">${have && up != null ? `<button class="btn ${P.afford(save, 'gold', up) ? 'primary' : 'off'}" data-act="upt:${id}">Level ${roman(lv + 1)} · ${gold(up)}</button>` : ''}
       <button class="btn ${have ? '' : 'primary'} ${P.afford(save, 'gold', t.price) ? '' : 'off'}" data-act="buyt:${id}">Buy${have ? ' another' : ''} · ${gold(t.price)}</button></div>`;
+}
+
+function respecSheet() {
+  const id = sheet.hero, n = P.spentPoints(save, id), price = P.respecPrice(save, id);
+  return `<div class="sheet-h"><h2>Unlearn ${HEROES[id].name}'s web?</h2></div>
+    <p class="sheet-p">Every node goes, and all ${n} ${n === 1 ? 'point comes' : 'points come'} back to spend again.</p>
+    <div class="sheet-actions"><button class="btn ghost" data-act="closesheet">Keep it</button><button class="btn primary ${M.afford(save, price) ? '' : 'off'}" data-act="respec:${id}">Unlearn · ${gold(price)}</button></div>`;
 }
 
 function beastSheet() {
@@ -473,6 +481,10 @@ function onClick(e) {
       P.payForRun(save, opts); save.theme = pick.theme; potionFor = {};
       persist(); hideCamp(); onSetOut(opts); break;
     }
+    case 'respec':
+      if (sheet && sheet.type === 'respec') { closeSheet(); if (P.respec(save, arg)) { ok(); popGold(); toast('Every point is back. Spend them again in the web.'); } else { no(); toast('Not enough gold.'); } }
+      else openSheet({ type: 'respec', hero: arg });
+      break;
     case 'recruit': if (M.recruit(save, arg)) { cue('buy'); page.sub = 'skills'; ok(); popGold(); } else { no(); toast('Not enough gold.'); } break;
     case 'tslot': openSheet({ type: 'trinket', hero: page.id, slot: +arg }); break;
     case 'equip': if (P.equip(save, sheet.hero, arg, sheet.slot)) { closeSheet(); cue('tap'); ok(); } else no(); break;

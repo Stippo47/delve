@@ -115,6 +115,18 @@ await scroll(9999);
 await shot('22-settings-bottom');
 await tap('[data-act="tab:camp"]');
 
+// a real run, fast-forwarded, to its result card (the round 8 report from progress.js)
+await tap('[data-act="tab:camp"]');
+await page.evaluate(() => GAME.record(true));
+await tap('[data-act="enter"]');
+await page.evaluate(() => { for (let i = 0; i < 40; i++) GAME.recFrame(1 / 30); });
+await shot('23a-run');
+await page.evaluate(() => { GAME.fastForward(240); const r = GAME.run; if (!r.summary) { r.leaving = true; GAME.fastForward(200); }
+  GAME.endRun(r.phase === 'won' || r.phase === 'lost' ? r.phase : 'retreated'); });
+await shot('23b-result-real', 1600);
+await tap('[data-act="home"]');
+await shot('23c-camp-after');
+
 // the result card, from a made-up report in the round 8 shape
 await page.evaluate(async () => {
   const m = await import('./js/camp.js');
