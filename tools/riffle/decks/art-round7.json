@@ -1,0 +1,273 @@
+{
+  "title": "Art round 7: your round-6 notes",
+  "topic": "art",
+  "order": 9,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "fixes",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Exactly your notes",
+      "text": "Each design changed only where your note said, shown beside the version you saw.",
+      "why": "Tick the ones that are right now. Each 'before' tile is the last version, for comparing.",
+      "details": "Each design starts from the tile your note was on (the before tile shows it) and changes only that. Where a note left a choice there are two versions: Marksman with and without the beard, two ghosts, two trolls.",
+      "pick": [
+        "ranged-marksman-a-beard",
+        "ranged-marksman-a",
+        "fighter-gladiator",
+        "fighter-werewolf-human",
+        "fighter-werewolf",
+        "bat",
+        "dragonborn-a",
+        "ghost-a",
+        "ghost-b",
+        "greenskin-ogre",
+        "greenskin-orc",
+        "greenskin-troll-a",
+        "greenskin-troll-b",
+        "lizardman-blade-a",
+        "lizardman-blade-b",
+        "lizardman-croc-a",
+        "lizardman-spear-b",
+        "snowman"
+      ],
+      "items": [
+        {
+          "id": "ranged-marksman-a-beard",
+          "label": "Marksman A, beard",
+          "image": "../../../design/class-round7/ranged/renders/ranged-marksman-a-beard.png",
+          "thumb": "../../../design/class-round7/ranged/renders/ranged-marksman-a-beard-thumb.png",
+          "text": "Marksman A, beard (ranged-marksman-a-beard.svg). The same, and \"beard may be below head\": a small pointed grey beard, the moustache's grey, hanging from the chin past the edge of the head."
+        },
+        {
+          "id": "ranged-marksman-a-beard-before",
+          "label": "Marksman A, beard (before)",
+          "image": "../../../design/class-round7/ranged/renders/ranged-marksman-a-beard-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "ranged-marksman-a",
+          "label": "Marksman A",
+          "image": "../../../design/class-round7/ranged/renders/ranged-marksman-a.png",
+          "thumb": "../../../design/class-round7/ranged/renders/ranged-marksman-a-thumb.png",
+          "text": "Marksman A (ranged-marksman-a.svg), picked. \"The Moustache above nose. Beard may be below head. In game the gun needs to be held in front of them\": your word for the small curve on these faces is \"nose\" (Harpooner: \"remove nose\"; Pirate: \"nose makes it look like they are smiling\"), and the moustache sat above it; the same skinny grey moustache now sits under it, its flicked-up ends either side of the curve. The same musket is held in front of the face, pointing straight ahead from the right cheek (it lay along the right shoulder at the body's edge); its stock tucks under the hat brim: the gun part (#arm-r, both fists) is drawn over the face and the hat and plume are now a #front part drawn over the stock, so in the game the gun sits in front and a draw-back slides it in under the brim. No beard here (see the next line)."
+        },
+        {
+          "id": "ranged-marksman-a-before",
+          "label": "Marksman A (before)",
+          "image": "../../../design/class-round7/ranged/renders/ranged-marksman-a-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "fighter-gladiator",
+          "label": "Gladiator",
+          "image": "../../../design/class-round7/fighters/renders/fighter-gladiator.png",
+          "thumb": "../../../design/class-round7/fighters/renders/fighter-gladiator-thumb.png",
+          "text": "Gladiator (fighter-gladiator.svg), picked. \"Add some shine maybe\": a soft pale-gold shine on the helmet's dome where the light comes from (upper left), with a brighter glint inside it, the same colours as the shield's shine. Nothing else."
+        },
+        {
+          "id": "fighter-gladiator-before",
+          "label": "Gladiator (before)",
+          "image": "../../../design/class-round7/fighters/renders/fighter-gladiator-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "fighter-werewolf-human",
+          "label": "Werewolf human",
+          "image": "../../../design/class-round7/fighters/renders/fighter-werewolf-human.png",
+          "thumb": "../../../design/class-round7/fighters/renders/fighter-werewolf-human-thumb.png",
+          "text": "Werewolf human (fighter-werewolf-human.svg), picked. \"Beard and side burns don't mesh together. They should\": the sideburns and the beard are one shape, a horseshoe of hair from under the hair at the temples down both sides of the face and round the jaw; its inner edge runs down the cheeks straight into the beard under the mouth (they were three shapes, and the beard's top corners stuck out over the sideburns). Same colour, same ragged lower edge."
+        },
+        {
+          "id": "fighter-werewolf-human-before",
+          "label": "Werewolf human (before)",
+          "image": "../../../design/class-round7/fighters/renders/fighter-werewolf-human-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "fighter-werewolf",
+          "label": "Werewolf",
+          "image": "../../../design/class-round7/fighters/renders/fighter-werewolf.png",
+          "thumb": "../../../design/class-round7/fighters/renders/fighter-werewolf-thumb.png",
+          "text": "Werewolf (fighter-werewolf.svg). \"Make the same colour as the werewolf man. Remove the fangs\": the fur is the man's dark grey hair colour (it was blue-grey); the lighter snout, its stripe and the pale muzzle are the same greys in that colour, each as much lighter than the fur as before; the two fangs are gone. The inner ears keep their dusky pink."
+        },
+        {
+          "id": "fighter-werewolf-before",
+          "label": "Werewolf (before)",
+          "image": "../../../design/class-round7/fighters/renders/fighter-werewolf-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "bat",
+          "label": "Bat",
+          "image": "../../../design/class-round7/enemies/renders/bat.png",
+          "thumb": "../../../design/class-round7/enemies/renders/bat-thumb.png",
+          "text": "Bat (bat.svg), picked. \"Remove body. Make head bigger. Maybe make ears different aswell/bigger\": no body behind the head; the head (with its snout, nose and fangs) 1.28x as big, where head and body were; the long ears swept straight back are now big broad pointed ears standing up and out from the top of the head. The wings as they were."
+        },
+        {
+          "id": "bat-before",
+          "label": "Bat (before)",
+          "image": "../../../design/class-round7/enemies/renders/bat-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "dragonborn-a",
+          "label": "Dragonborn A",
+          "image": "../../../design/class-round7/enemies/renders/dragonborn-a.png",
+          "thumb": "../../../design/class-round7/enemies/renders/dragonborn-a-thumb.png",
+          "text": "Dragonborn A (dragonborn-a.svg), picked. \"Horns look like they are floating\": they lay on top of the head on thin roots, a drop shadow under them; now they grow out of the skull: drawn under the head with their roots hidden, coming out of the head's edge at the temples and sweeping back, a little longer so as much horn shows. Nothing else."
+        },
+        {
+          "id": "dragonborn-a-before",
+          "label": "Dragonborn A (before)",
+          "image": "../../../design/class-round7/enemies/renders/dragonborn-a-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "ghost-a",
+          "label": "Ghost A, sheet",
+          "image": "../../../design/class-round7/enemies/renders/ghost-a.png",
+          "thumb": "../../../design/class-round7/enemies/renders/ghost-a-thumb.png",
+          "text": "Ghost A, sheet (ghost-a.svg). On the \"(before)\" tile: \"Overall doesnt look good. Ghosts can also have eyes. Before or after\": a new ghost, with eyes. A teardrop seen from above: the round head and the sheet trailing behind it are one shape (no seam), the sheet narrowing into a plump tail whose tip flicks to the side; two big dark round eye holes and a small \"o\" mouth; stubby arms out at the sides. White with cool lilac shading. The shape of the round-3 ghost you picked (\"tail could use work\"), with the tail redone."
+        },
+        {
+          "id": "ghost-a-before",
+          "label": "Ghost A, sheet (before)",
+          "image": "../../../design/class-round7/enemies/renders/ghost-a-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "ghost-b",
+          "label": "Ghost B, wisp",
+          "image": "../../../design/class-round7/enemies/renders/ghost-b.png",
+          "thumb": "../../../design/class-round7/enemies/renders/ghost-b-thumb.png",
+          "text": "Ghost B, wisp (ghost-b.svg). Same note: the same teardrop in pale blue, two tall dark eyes and no mouth, the tail ending in a small round curl, rounded sleeves of arms reaching forward and out."
+        },
+        {
+          "id": "ghost-b-before",
+          "label": "Ghost B, wisp (before)",
+          "image": "../../../design/class-round7/enemies/renders/ghost-b-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "greenskin-ogre",
+          "label": "Ogre",
+          "image": "../../../design/class-round7/enemies/renders/greenskin-ogre.png",
+          "thumb": "../../../design/class-round7/enemies/renders/greenskin-ogre-thumb.png",
+          "text": "Ogre (greenskin-ogre.svg), picked (before). On the \"(before)\" tile: \"Make hands simple then this could potentially work\": back to the round-5 ogre (its brow line is back), with the heroes' plain fists (no knuckle bumps) in the same iron cuffs."
+        },
+        {
+          "id": "greenskin-ogre-before",
+          "label": "Ogre (before)",
+          "image": "../../../design/class-round7/enemies/renders/greenskin-ogre-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "greenskin-orc",
+          "label": "Orc",
+          "image": "../../../design/class-round7/enemies/renders/greenskin-orc.png",
+          "thumb": "../../../design/class-round7/enemies/renders/greenskin-orc-thumb.png",
+          "text": "Orc (greenskin-orc.svg), picked (before). On the \"(before)\" tile: \"Tusks? Not in mouth\": back to the round-5 orc; the two tusks now come out of the mouth: their roots sit on the mouth line, inside its ends, hidden under it (they stood on the chin below the mouth), pointing up past the upper lip. Same tusks. Its knuckled fists stay (only the tusks were noted)."
+        },
+        {
+          "id": "greenskin-orc-before",
+          "label": "Orc (before)",
+          "image": "../../../design/class-round7/enemies/renders/greenskin-orc-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "greenskin-troll-a",
+          "label": "Troll A, mohawk",
+          "image": "../../../design/class-round7/enemies/renders/greenskin-troll-a.png",
+          "thumb": "../../../design/class-round7/enemies/renders/greenskin-troll-a-thumb.png",
+          "text": "Troll A, mohawk (greenskin-troll-a.svg). \"Looks weird\": reworked. Round 6's long drooping nose read as a trunk, the dark patch above it as a hole, and the small head sat on a huge mound under a wig-like patch of hair. This one keeps the family build (a head on big shoulders, plain fists, the knotted log club behind the body): bald, a ragged rust-red crest from the brow down the back, long ears swept back and out, a broad round nose, a heavy underbite with two big tusks curving up out of the mouth."
+        },
+        {
+          "id": "greenskin-troll-a-before",
+          "label": "Troll A, mohawk (before)",
+          "image": "../../../design/class-round7/enemies/renders/greenskin-troll-a-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "greenskin-troll-b",
+          "label": "Troll B, shaggy",
+          "image": "../../../design/class-round7/enemies/renders/greenskin-troll-b.png",
+          "thumb": "../../../design/class-round7/enemies/renders/greenskin-troll-b-thumb.png",
+          "text": "Troll B, shaggy (greenskin-troll-b.svg). Same note: round 6's hunched troll with those parts fixed: the head bigger (0.92, it was 0.8), a big round nose, no dark patch, two tusks out of the mouth, and the moss-dark hair covering the whole hunched back as a shaggy coat and growing on over the head to a ragged fringe over the brow (it was a patch on the hump)."
+        },
+        {
+          "id": "greenskin-troll-b-before",
+          "label": "Troll B, shaggy (before)",
+          "image": "../../../design/class-round7/enemies/renders/greenskin-troll-b-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "lizardman-blade-a",
+          "label": "Lizard blade A",
+          "image": "../../../design/class-round7/enemies/renders/lizardman-blade-a.png",
+          "thumb": "../../../design/class-round7/enemies/renders/lizardman-blade-a-thumb.png",
+          "text": "Lizard blade A (lizardman-blade-a.svg). \"Remove eyes. Shoulder doesn't look right nor do hands\": the two round eye mounds are gone (round 6 had only taken the eyes off them); the shoulders are built like spear A's: an upper arm rounding out from under each side of the head, spots where the long dark bars were; the red sash is a cloth band lying over the left shoulder (it was a fat blob over the shoulder's outside); the sword hand is a plain fist. Head, tail, colours, scimitar and the claw hand as they were."
+        },
+        {
+          "id": "lizardman-blade-a-before",
+          "label": "Lizard blade A (before)",
+          "image": "../../../design/class-round7/enemies/renders/lizardman-blade-a-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "lizardman-blade-b",
+          "label": "Lizard blade B",
+          "image": "../../../design/class-round7/enemies/renders/lizardman-blade-b.png",
+          "thumb": "../../../design/class-round7/enemies/renders/lizardman-blade-b-thumb.png",
+          "text": "Lizard blade B (lizardman-blade-b.svg), picked (before). On the \"(before)\" tile: \"This one could look good if use the selected base lizard to fix up the spines on back and stuff. I like the hood looking bit\": the round-5 blade B, hood plate kept, with the picked spear A's crest: one jagged three-tier crest down the back of the head instead of three separate cones, and its dashed line running on down the tail. Same gold."
+        },
+        {
+          "id": "lizardman-blade-b-before",
+          "label": "Lizard blade B (before)",
+          "image": "../../../design/class-round7/enemies/renders/lizardman-blade-b-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "lizardman-croc-a",
+          "label": "Croc A",
+          "image": "../../../design/class-round7/enemies/renders/lizardman-croc-a.png",
+          "thumb": "../../../design/class-round7/enemies/renders/lizardman-croc-a-thumb.png",
+          "text": "Croc A (lizardman-croc-a.svg), picked. \"Bring teeth in, underneath head\": the side teeth were drawn over everything and stuck out past the jaw onto the outline; the same three teeth a side are now under the head, their roots hidden, only the points showing along the jaw's edge."
+        },
+        {
+          "id": "lizardman-croc-a-before",
+          "label": "Croc A (before)",
+          "image": "../../../design/class-round7/enemies/renders/lizardman-croc-a-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "lizardman-spear-b",
+          "label": "Lizard spear B",
+          "image": "../../../design/class-round7/enemies/renders/lizardman-spear-b.png",
+          "thumb": "../../../design/class-round7/enemies/renders/lizardman-spear-b-thumb.png",
+          "text": "Lizard spear B (lizardman-spear-b.svg), picked (before). On the \"(before)\" tile: \"Fix back spines and could look good\": the round-5 spear B with the same fix: spear A's jagged crest and the dashed line down the tail, in its orange."
+        },
+        {
+          "id": "lizardman-spear-b-before",
+          "label": "Lizard spear B (before)",
+          "image": "../../../design/class-round7/enemies/renders/lizardman-spear-b-before.png",
+          "text": "The version you saw last round, for comparison."
+        },
+        {
+          "id": "snowman",
+          "label": "Snowman",
+          "image": "../../../design/class-round7/enemies/renders/snowman.png",
+          "thumb": "../../../design/class-round7/enemies/renders/snowman-thumb.png",
+          "text": "Snowman (snowman.svg), picked. \"Weird red thing at back of snowman\": the scarf's end trailing behind (#back) is gone; the scarf ring round the neck stays. Nothing else."
+        },
+        {
+          "id": "snowman-before",
+          "label": "Snowman (before)",
+          "image": "../../../design/class-round7/enemies/renders/snowman-before.png",
+          "text": "The version you saw last round, for comparison."
+        }
+      ]
+    }
+  ]
+}

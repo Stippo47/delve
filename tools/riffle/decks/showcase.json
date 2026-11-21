@@ -1,0 +1,682 @@
+{
+  "title": "Showcase: every ability, and style picks",
+  "topic": "art",
+  "order": 8,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "puddles",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Ground puddles: 4 styles",
+      "text": "Oil, fire, gas, water, mist and webs, four ways. Pick one (all four are in settings).",
+      "why": "You asked for 4 styles to choose from. No rainbow on the oil.",
+      "pick": [
+        "puddles1"
+      ],
+      "items": [
+        {
+          "id": "puddles1",
+          "label": "Inked",
+          "image": "../../../clips/r8/puddles-style1.png",
+          "text": "Oil, fire, gas, water, mist and web on the ground, style 1: Inked."
+        },
+        {
+          "id": "puddles2",
+          "label": "Soft",
+          "image": "../../../clips/r8/puddles-style2.png",
+          "text": "Oil, fire, gas, water, mist and web on the ground, style 2: Soft."
+        },
+        {
+          "id": "puddles3",
+          "label": "Bands",
+          "image": "../../../clips/r8/puddles-style3.png",
+          "text": "Oil, fire, gas, water, mist and web on the ground, style 3: Bands."
+        },
+        {
+          "id": "puddles4",
+          "label": "Splat",
+          "image": "../../../clips/r8/puddles-style4.png",
+          "text": "Oil, fire, gas, water, mist and web on the ground, style 4: Splat."
+        }
+      ]
+    },
+    {
+      "id": "ehp",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Enemy health: 4 ways",
+      "text": "Four ways to show an enemy's health, only once it has taken damage. Pick one.",
+      "why": "You asked for 4 ways. Bosses keep their own bar at the top.",
+      "pick": [
+        "ehp1"
+      ],
+      "items": [
+        {
+          "id": "ehp1",
+          "label": "Bar",
+          "image": "../../../clips/r8/ehp-style1.png",
+          "text": "An enemy's health, shown once it's hurt, style 1: Bar."
+        },
+        {
+          "id": "ehp2",
+          "label": "Arc",
+          "image": "../../../clips/r8/ehp-style2.png",
+          "text": "An enemy's health, shown once it's hurt, style 2: Arc."
+        },
+        {
+          "id": "ehp3",
+          "label": "Pips",
+          "image": "../../../clips/r8/ehp-style3.png",
+          "text": "An enemy's health, shown once it's hurt, style 3: Pips."
+        },
+        {
+          "id": "ehp4",
+          "label": "Wash",
+          "image": "../../../clips/r8/ehp-style4.png",
+          "text": "An enemy's health, shown once it's hurt, style 4: Wash."
+        }
+      ]
+    },
+    {
+      "id": "paladin",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Paladin",
+      "text": "Paladin's attack and three abilities on target dummies. Tick the ones that read well.",
+      "why": "Anything you leave unticked or comment on gets reworked.",
+      "pick": [
+        "paladin-attack",
+        "paladin-shieldBash",
+        "paladin-guard",
+        "paladin-consecrate"
+      ],
+      "items": [
+        {
+          "id": "paladin-attack",
+          "label": "Sword (attack)",
+          "video": "../../../clips/showcase/paladin-attack.mp4",
+          "text": "Paladin: Sword (attack)."
+        },
+        {
+          "id": "paladin-shieldBash",
+          "label": "Shield Bash",
+          "video": "../../../clips/showcase/paladin-shieldBash.mp4",
+          "text": "Paladin: Shield Bash. Shown at tier III."
+        },
+        {
+          "id": "paladin-guard",
+          "label": "Guard",
+          "video": "../../../clips/showcase/paladin-guard.mp4",
+          "text": "Paladin: Guard. Shown at tier III."
+        },
+        {
+          "id": "paladin-consecrate",
+          "label": "Consecrate",
+          "video": "../../../clips/showcase/paladin-consecrate.mp4",
+          "text": "Paladin: Consecrate. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "tower",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Tower",
+      "text": "Tower's attack and three abilities on target dummies. Tick the ones that read well.",
+      "why": "Anything you leave unticked or comment on gets reworked.",
+      "pick": [
+        "tower-attack",
+        "tower-holdTheLine",
+        "tower-charge",
+        "tower-groundPound"
+      ],
+      "items": [
+        {
+          "id": "tower-attack",
+          "label": "Flanged mace (attack)",
+          "video": "../../../clips/showcase/tower-attack.mp4",
+          "text": "Tower: Flanged mace (attack)."
+        },
+        {
+          "id": "tower-holdTheLine",
+          "label": "Hold the Line",
+          "video": "../../../clips/showcase/tower-holdTheLine.mp4",
+          "text": "Tower: Hold the Line. Shown at tier III."
+        },
+        {
+          "id": "tower-charge",
+          "label": "Charge",
+          "video": "../../../clips/showcase/tower-charge.mp4",
+          "text": "Tower: Charge. Shown at tier III."
+        },
+        {
+          "id": "tower-groundPound",
+          "label": "Ground Pound",
+          "video": "../../../clips/showcase/tower-groundPound.mp4",
+          "text": "Tower: Ground Pound. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "archer",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Archer",
+      "text": "Archer's attack and three abilities on target dummies. Tick the ones that read well.",
+      "why": "Anything you leave unticked or comment on gets reworked.",
+      "pick": [
+        "archer-attack",
+        "archer-barrage",
+        "archer-frostArrow",
+        "archer-roll"
+      ],
+      "items": [
+        {
+          "id": "archer-attack",
+          "label": "Bow (attack)",
+          "video": "../../../clips/showcase/archer-attack.mp4",
+          "text": "Archer: Bow (attack)."
+        },
+        {
+          "id": "archer-barrage",
+          "label": "Barrage",
+          "video": "../../../clips/showcase/archer-barrage.mp4",
+          "text": "Archer: Barrage. Shown at tier III."
+        },
+        {
+          "id": "archer-frostArrow",
+          "label": "Frost Arrow",
+          "video": "../../../clips/showcase/archer-frostArrow.mp4",
+          "text": "Archer: Frost Arrow. Shown at tier III."
+        },
+        {
+          "id": "archer-roll",
+          "label": "Roll",
+          "video": "../../../clips/showcase/archer-roll.mp4",
+          "text": "Archer: Roll. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "twinfang",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Twinfang",
+      "text": "Twinfang's attack and three abilities on target dummies. Tick the ones that read well.",
+      "why": "Anything you leave unticked or comment on gets reworked.",
+      "pick": [
+        "twinfang-attack",
+        "twinfang-backstab",
+        "twinfang-dash",
+        "twinfang-fanOfKnives"
+      ],
+      "items": [
+        {
+          "id": "twinfang-attack",
+          "label": "Twin daggers (attack)",
+          "video": "../../../clips/showcase/twinfang-attack.mp4",
+          "text": "Twinfang: Twin daggers (attack)."
+        },
+        {
+          "id": "twinfang-backstab",
+          "label": "Backstab",
+          "video": "../../../clips/showcase/twinfang-backstab.mp4",
+          "text": "Twinfang: Backstab. Shown at tier III."
+        },
+        {
+          "id": "twinfang-dash",
+          "label": "Dash",
+          "video": "../../../clips/showcase/twinfang-dash.mp4",
+          "text": "Twinfang: Dash. Shown at tier III."
+        },
+        {
+          "id": "twinfang-fanOfKnives",
+          "label": "Fan of Knives",
+          "video": "../../../clips/showcase/twinfang-fanOfKnives.mp4",
+          "text": "Twinfang: Fan of Knives. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "wildmane",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Wildmane",
+      "text": "Wildmane's attack and three abilities on target dummies. Tick the ones that read well.",
+      "why": "Anything you leave unticked or comment on gets reworked.",
+      "pick": [
+        "wildmane-attack",
+        "wildmane-rage",
+        "wildmane-leap",
+        "wildmane-cleave"
+      ],
+      "items": [
+        {
+          "id": "wildmane-attack",
+          "label": "Greatsword (attack)",
+          "video": "../../../clips/showcase/wildmane-attack.mp4",
+          "text": "Wildmane: Greatsword (attack)."
+        },
+        {
+          "id": "wildmane-rage",
+          "label": "Rage",
+          "video": "../../../clips/showcase/wildmane-rage.mp4",
+          "text": "Wildmane: Rage. Shown at tier III."
+        },
+        {
+          "id": "wildmane-leap",
+          "label": "Leap",
+          "video": "../../../clips/showcase/wildmane-leap.mp4",
+          "text": "Wildmane: Leap. Shown at tier III."
+        },
+        {
+          "id": "wildmane-cleave",
+          "label": "Cleave",
+          "video": "../../../clips/showcase/wildmane-cleave.mp4",
+          "text": "Wildmane: Cleave. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "berserker",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Berserker",
+      "text": "Berserker's attack and three abilities on target dummies. Tick the ones that read well.",
+      "why": "Anything you leave unticked or comment on gets reworked.",
+      "pick": [
+        "berserker-attack",
+        "berserker-shockwave",
+        "berserker-whirl",
+        "berserker-unstoppable"
+      ],
+      "items": [
+        {
+          "id": "berserker-attack",
+          "label": "Flail (attack)",
+          "video": "../../../clips/showcase/berserker-attack.mp4",
+          "text": "Berserker: Flail (attack)."
+        },
+        {
+          "id": "berserker-shockwave",
+          "label": "Shockwave",
+          "video": "../../../clips/showcase/berserker-shockwave.mp4",
+          "text": "Berserker: Shockwave. Shown at tier III."
+        },
+        {
+          "id": "berserker-whirl",
+          "label": "Whirl",
+          "video": "../../../clips/showcase/berserker-whirl.mp4",
+          "text": "Berserker: Whirl. Shown at tier III."
+        },
+        {
+          "id": "berserker-unstoppable",
+          "label": "Unstoppable",
+          "video": "../../../clips/showcase/berserker-unstoppable.mp4",
+          "text": "Berserker: Unstoppable. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "granny",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Granny Reaper",
+      "text": "Granny Reaper's attack and three abilities on target dummies. Tick the ones that read well.",
+      "why": "Anything you leave unticked or comment on gets reworked.",
+      "pick": [
+        "granny-attack",
+        "granny-reap",
+        "granny-hook",
+        "granny-oldBones"
+      ],
+      "items": [
+        {
+          "id": "granny-attack",
+          "label": "Scythe (attack)",
+          "video": "../../../clips/showcase/granny-attack.mp4",
+          "text": "Granny Reaper: Scythe (attack)."
+        },
+        {
+          "id": "granny-reap",
+          "label": "Reap",
+          "video": "../../../clips/showcase/granny-reap.mp4",
+          "text": "Granny Reaper: Reap. Shown at tier III."
+        },
+        {
+          "id": "granny-hook",
+          "label": "Hook",
+          "video": "../../../clips/showcase/granny-hook.mp4",
+          "text": "Granny Reaper: Hook. Shown at tier III."
+        },
+        {
+          "id": "granny-oldBones",
+          "label": "Old Bones",
+          "video": "../../../clips/showcase/granny-oldBones.mp4",
+          "text": "Granny Reaper: Old Bones. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "pyromancer",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Pyromancer",
+      "text": "Pyromancer's attack and three abilities on target dummies. Tick the ones that read well.",
+      "why": "Anything you leave unticked or comment on gets reworked.",
+      "pick": [
+        "pyromancer-attack",
+        "pyromancer-fireball",
+        "pyromancer-flameWall",
+        "pyromancer-inferno"
+      ],
+      "items": [
+        {
+          "id": "pyromancer-attack",
+          "label": "Spark (attack)",
+          "video": "../../../clips/showcase/pyromancer-attack.mp4",
+          "text": "Pyromancer: Spark (attack)."
+        },
+        {
+          "id": "pyromancer-fireball",
+          "label": "Fireball",
+          "video": "../../../clips/showcase/pyromancer-fireball.mp4",
+          "text": "Pyromancer: Fireball. Shown at tier III."
+        },
+        {
+          "id": "pyromancer-flameWall",
+          "label": "Flame Wall",
+          "video": "../../../clips/showcase/pyromancer-flameWall.mp4",
+          "text": "Pyromancer: Flame Wall. Shown at tier III."
+        },
+        {
+          "id": "pyromancer-inferno",
+          "label": "Inferno",
+          "video": "../../../clips/showcase/pyromancer-inferno.mp4",
+          "text": "Pyromancer: Inferno. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "frost",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Frost Mage",
+      "text": "Frost Mage's attack and three abilities on target dummies. Tick the ones that read well.",
+      "why": "Anything you leave unticked or comment on gets reworked.",
+      "pick": [
+        "frost-attack",
+        "frost-iceShard",
+        "frost-frostNova",
+        "frost-iceWall"
+      ],
+      "items": [
+        {
+          "id": "frost-attack",
+          "label": "Snow bolt (attack)",
+          "video": "../../../clips/showcase/frost-attack.mp4",
+          "text": "Frost Mage: Snow bolt (attack)."
+        },
+        {
+          "id": "frost-iceShard",
+          "label": "Ice Shard",
+          "video": "../../../clips/showcase/frost-iceShard.mp4",
+          "text": "Frost Mage: Ice Shard. Shown at tier III."
+        },
+        {
+          "id": "frost-frostNova",
+          "label": "Frost Nova",
+          "video": "../../../clips/showcase/frost-frostNova.mp4",
+          "text": "Frost Mage: Frost Nova. Shown at tier III."
+        },
+        {
+          "id": "frost-iceWall",
+          "label": "Ice Wall",
+          "video": "../../../clips/showcase/frost-iceWall.mp4",
+          "text": "Frost Mage: Ice Wall. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "storm",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Storm Mage",
+      "text": "Storm Mage's attack and three abilities on target dummies. Tick the ones that read well.",
+      "why": "Anything you leave unticked or comment on gets reworked.",
+      "pick": [
+        "storm-attack",
+        "storm-chainLightning",
+        "storm-thunderclap",
+        "storm-stormCloud"
+      ],
+      "items": [
+        {
+          "id": "storm-attack",
+          "label": "Zap (attack)",
+          "video": "../../../clips/showcase/storm-attack.mp4",
+          "text": "Storm Mage: Zap (attack)."
+        },
+        {
+          "id": "storm-chainLightning",
+          "label": "Chain Lightning",
+          "video": "../../../clips/showcase/storm-chainLightning.mp4",
+          "text": "Storm Mage: Chain Lightning. Shown at tier III."
+        },
+        {
+          "id": "storm-thunderclap",
+          "label": "Thunderclap",
+          "video": "../../../clips/showcase/storm-thunderclap.mp4",
+          "text": "Storm Mage: Thunderclap. Shown at tier III."
+        },
+        {
+          "id": "storm-stormCloud",
+          "label": "Storm Cloud",
+          "video": "../../../clips/showcase/storm-stormCloud.mp4",
+          "text": "Storm Mage: Storm Cloud. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "cleric",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Cleric",
+      "text": "Cleric's attack and three abilities on target dummies. Tick the ones that read well.",
+      "why": "Anything you leave unticked or comment on gets reworked.",
+      "pick": [
+        "cleric-attack",
+        "cleric-mend",
+        "cleric-sanctuary",
+        "cleric-smite"
+      ],
+      "items": [
+        {
+          "id": "cleric-attack",
+          "label": "Light orb (attack)",
+          "video": "../../../clips/showcase/cleric-attack.mp4",
+          "text": "Cleric: Light orb (attack)."
+        },
+        {
+          "id": "cleric-mend",
+          "label": "Mending Ray",
+          "video": "../../../clips/showcase/cleric-mend.mp4",
+          "text": "Cleric: Mending Ray. Shown at tier III."
+        },
+        {
+          "id": "cleric-sanctuary",
+          "label": "Sanctuary",
+          "video": "../../../clips/showcase/cleric-sanctuary.mp4",
+          "text": "Cleric: Sanctuary. Shown at tier III."
+        },
+        {
+          "id": "cleric-smite",
+          "label": "Smite",
+          "video": "../../../clips/showcase/cleric-smite.mp4",
+          "text": "Cleric: Smite. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "bard",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Bard",
+      "text": "Bard's attack and three abilities on target dummies. Tick the ones that read well.",
+      "why": "Anything you leave unticked or comment on gets reworked.",
+      "pick": [
+        "bard-attack",
+        "bard-warSong",
+        "bard-lullaby",
+        "bard-encore"
+      ],
+      "items": [
+        {
+          "id": "bard-attack",
+          "label": "Sour note (attack)",
+          "video": "../../../clips/showcase/bard-attack.mp4",
+          "text": "Bard: Sour note (attack)."
+        },
+        {
+          "id": "bard-warSong",
+          "label": "War Song",
+          "video": "../../../clips/showcase/bard-warSong.mp4",
+          "text": "Bard: War Song. Shown at tier III."
+        },
+        {
+          "id": "bard-lullaby",
+          "label": "Lullaby",
+          "video": "../../../clips/showcase/bard-lullaby.mp4",
+          "text": "Bard: Lullaby. Shown at tier III."
+        },
+        {
+          "id": "bard-encore",
+          "label": "Encore",
+          "video": "../../../clips/showcase/bard-encore.mp4",
+          "text": "Bard: Encore. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "druid",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Druid",
+      "text": "Druid's attack and three abilities on target dummies. Tick the ones that read well.",
+      "why": "Anything you leave unticked or comment on gets reworked.",
+      "pick": [
+        "druid-attack",
+        "druid-entangle",
+        "druid-rejuvenate",
+        "druid-callWolf"
+      ],
+      "items": [
+        {
+          "id": "druid-attack",
+          "label": "Thorn (attack)",
+          "video": "../../../clips/showcase/druid-attack.mp4",
+          "text": "Druid: Thorn (attack)."
+        },
+        {
+          "id": "druid-entangle",
+          "label": "Entangle",
+          "video": "../../../clips/showcase/druid-entangle.mp4",
+          "text": "Druid: Entangle. Shown at tier III."
+        },
+        {
+          "id": "druid-rejuvenate",
+          "label": "Rejuvenate",
+          "video": "../../../clips/showcase/druid-rejuvenate.mp4",
+          "text": "Druid: Rejuvenate. Shown at tier III."
+        },
+        {
+          "id": "druid-callWolf",
+          "label": "Call Wolf",
+          "video": "../../../clips/showcase/druid-callWolf.mp4",
+          "text": "Druid: Call Wolf. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "necromancer",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Necromancer",
+      "text": "Necromancer's attack and three abilities on target dummies. Tick the ones that read well.",
+      "why": "Anything you leave unticked or comment on gets reworked.",
+      "pick": [
+        "necromancer-attack",
+        "necromancer-raiseDead",
+        "necromancer-lifeDrain",
+        "necromancer-boneSpear"
+      ],
+      "items": [
+        {
+          "id": "necromancer-attack",
+          "label": "Bone dart (attack)",
+          "video": "../../../clips/showcase/necromancer-attack.mp4",
+          "text": "Necromancer: Bone dart (attack)."
+        },
+        {
+          "id": "necromancer-raiseDead",
+          "label": "Raise Dead",
+          "video": "../../../clips/showcase/necromancer-raiseDead.mp4",
+          "text": "Necromancer: Raise Dead. Shown at tier III."
+        },
+        {
+          "id": "necromancer-lifeDrain",
+          "label": "Life Drain",
+          "video": "../../../clips/showcase/necromancer-lifeDrain.mp4",
+          "text": "Necromancer: Life Drain. Shown at tier III."
+        },
+        {
+          "id": "necromancer-boneSpear",
+          "label": "Bone Spear",
+          "video": "../../../clips/showcase/necromancer-boneSpear.mp4",
+          "text": "Necromancer: Bone Spear. Shown at tier III."
+        }
+      ]
+    },
+    {
+      "id": "plague",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Plague Doctor",
+      "text": "Plague Doctor's attack and three abilities on target dummies. Tick the ones that read well.",
+      "why": "Anything you leave unticked or comment on gets reworked.",
+      "pick": [
+        "plague-attack",
+        "plague-miasma",
+        "plague-cure",
+        "plague-leeches"
+      ],
+      "items": [
+        {
+          "id": "plague-attack",
+          "label": "Vial (attack)",
+          "video": "../../../clips/showcase/plague-attack.mp4",
+          "text": "Plague Doctor: Vial (attack)."
+        },
+        {
+          "id": "plague-miasma",
+          "label": "Miasma",
+          "video": "../../../clips/showcase/plague-miasma.mp4",
+          "text": "Plague Doctor: Miasma. Shown at tier III."
+        },
+        {
+          "id": "plague-cure",
+          "label": "Cure",
+          "video": "../../../clips/showcase/plague-cure.mp4",
+          "text": "Plague Doctor: Cure. Shown at tier III."
+        },
+        {
+          "id": "plague-leeches",
+          "label": "Leeches",
+          "video": "../../../clips/showcase/plague-leeches.mp4",
+          "text": "Plague Doctor: Leeches. Shown at tier III."
+        }
+      ]
+    }
+  ]
+}
