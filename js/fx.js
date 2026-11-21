@@ -183,6 +183,18 @@ function zone(ctx, f, T) {
       // round 9 redo (the flat spiral of lines was disliked): churned earth, then thick thorned tendrils whipping up out of
       // it all over the patch, each curling over at the top; at the end they wither back down, never just vanish
       if (f.ab === 'roll') break;
+      if (f.ab === 'entangle') { // round 10 (Entangle: "Effect looks good. Ability doesn't. Previous was better"): the round 8
+        // cast is back: a dark green patch and thorned vines bursting out of its middle and coiling outward, leaves on them
+        ctx.fillStyle = 'rgba(52,70,34,0.3)'; blob(ctx, x, y, r, 8, seed, 0.92); ctx.fill();
+        const n = 8, g = easeOut(clamp(f.t / 0.3, 0, 1));
+        for (let i = 0; i < n; i++) {
+          const a0 = i / n * TAU + seed, sw = (hash(i, seed) > 0.5 ? 1 : -1);
+          const path = () => { ctx.beginPath(); for (let s = 0; s <= 12 * g; s++) { const k = s / 12, rr = r * (0.12 + 0.85 * k), an = a0 + sw * k * 2.2 + Math.sin(T * 1.5 + i) * 0.05; s ? ctx.lineTo(x + Math.cos(an) * rr, y + Math.sin(an) * rr) : ctx.moveTo(x + Math.cos(an) * rr, y + Math.sin(an) * rr); } };
+          inkLine(ctx, path, i % 2 ? '#5E9E3E' : '#4A8433', 5.2);
+          if (g > 0.5) for (const k of [0.45, 0.8]) { const rr = r * (0.12 + 0.85 * k), an = a0 + sw * k * 2.2; leaf(ctx, x + Math.cos(an) * rr, y + Math.sin(an) * rr, an + sw * 1.2, 8); }
+        }
+        break;
+      }
       ctx.globalAlpha = 1; drawPuddle(ctx, 'earth', x, y, r * 0.8, T, a, seed); // the tendrils: zoneAir
       break;
     }
@@ -264,7 +276,7 @@ export function drawAirFx(ctx, w) {
     else if (f.type === 'soulOrb') soulOrb(ctx, f);
     else if (f.type === 'cure') cureFx(ctx, f, w.time);
     else if (f.type === 'zone' && (f.ab === 'rejuvenate' || f.ab === 'cure')) abilityZoneAir(ctx, f, w.time);
-    else if (f.type === 'zone' && (f.kind === 'snow' || (f.kind === 'vines' && f.ab !== 'roll'))) zoneAir(ctx, f, w.time);
+    else if (f.type === 'zone' && (f.kind === 'snow' || (f.kind === 'vines' && f.ab !== 'roll' && f.ab !== 'entangle'))) zoneAir(ctx, f, w.time);
     else if (f.type === 'wave') { if (f.ab === 'shockwave') eruption(ctx, f, 'air'); else if (f.kind === 'note') noteCone(ctx, f, w.time); else wave(ctx, f); }
     else if (f.type === 'pillar') pillar(ctx, f, w.time);
     else if (f.type === 'aura') aura(ctx, f, w.time);

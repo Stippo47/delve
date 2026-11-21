@@ -9,6 +9,7 @@ import { OUTLINE, view } from './render.js';
 import { hash, rgba, upright, upVec, inked, inkLine, flame, blob, star, glowDisc, bolt, easeOut, leaf } from './fx.js';
 import { drawPuddle } from './puddles.js';
 import { SIG2, installFx2 } from './fx2.js';
+import { variant } from './fxvar.js';
 
 // ---------------------------------------------------------------- palette (FX-STYLE.md): dark, main, light, core
 export const EL = {
@@ -187,6 +188,8 @@ function slash(ctx, m, k) {
   }
   if (sh === 'bite' || sh === 'claw') {
     const reach = m.R * 0.85, px = x + Math.cos(m.a) * reach, py = y + Math.sin(m.a) * reach, s = clamp(m.R / 40, 0.6, 1.4);
+    const bv = sh === 'bite' && u && u.kind === 'wolf' ? variant('wolfBite') : 1; // round 10, Call Wolf: "show me 3 variations"
+    if (bv > 1) { const d2 = m.R + 10; wolfBite(ctx, m, k, x + Math.cos(m.a) * d2, y + Math.sin(m.a) * d2, s * 1.25, bv); return; } // on the foe, past the muzzle
     if (sh === 'bite') { // round 9: two jaws of fangs snapping shut on the target
       const shut = easeOut(k01(k / 0.3)), gap = (1 - shut) * 14 * s + 1.5, fade = k01((1 - k) / 0.45);
       ctx.globalAlpha *= fade;
@@ -225,6 +228,49 @@ function slash(ctx, m, k) {
   slashBand(ctx, x, y, R, tail, head, th * (1 - 0.3 * k), main, core, pointed);
   const hx = x + Math.cos(head) * (R - th * 0.4), hy = y + Math.sin(head) * (R - th * 0.4);
   if (sh === 'flail') inked(ctx, () => { star(ctx, hx, hy, 11, 8, 0.62, k * 9); }, '#8D949C');
+}
+// The wolf's bite, variants 2-4 (js/fxvar.js; 1 is the two rows of fangs above):
+//   2 Chomp  a big muzzle-shaped bite outline closing over the foe, then two rows of tooth dents left on it, fading
+//   3 Rake   three curved fang streaks crossing the foe from the jaw's side, like a bite tearing across
+//   4 Snap   a quick white crescent (the snap of the jaws) and a puff of fur tufts thrown off
+function wolfBite(ctx, m, k, px, py, s, v) {
+  const a = m.a, ca = Math.cos(a), sa = Math.sin(a), nx = -sa, ny = ca;
+  if (v === 2) {
+    const shut = easeOut(k01(k / 0.28)), fade = k01((1 - k) / 0.5), R = 17 * s;
+    ctx.save(); ctx.globalAlpha *= fade; ctx.translate(px, py); ctx.rotate(a);
+    for (const sd of [-1, 1]) { // the upper and lower jaw: arcs of a big mouth closing, fangs on their inner edge
+      const open = (1 - shut) * 0.9 + 0.12;
+      ctx.save(); ctx.rotate(sd * open);
+      inked(ctx, () => { ctx.beginPath(); ctx.arc(-R * 0.6, 0, R, sd > 0 ? 0.15 : -1.35, sd > 0 ? 1.35 : -0.15);
+        for (let i = 3; i >= 0; i--) { const b = (sd > 0 ? 0.25 : -0.25) + sd * i * 0.33, fx0 = -R * 0.6 + Math.cos(b) * R, fy0 = Math.sin(b) * R;
+          ctx.lineTo(fx0 - Math.cos(b) * 2, fy0 - Math.sin(b) * 2); ctx.lineTo(fx0 - Math.cos(b) * 8 * s, fy0 - Math.sin(b) * 8 * s); } ctx.closePath(); }, '#FFF8F0');
+      ctx.restore(); }
+    ctx.restore();
+    if (shut > 0.95) { ctx.save(); ctx.globalAlpha *= fade * 0.8; // tooth dents left on it
+      for (let i = -2; i <= 2; i++) for (const sd of [-1, 1]) inkDisc(ctx, px + nx * i * 4.5 * s + ca * sd * 5 * s, py + ny * i * 4.5 * s + sa * sd * 5 * s, 1.6 * s, '#C8453D');
+      ctx.restore(); }
+    return;
+  }
+  if (v === 3) {
+    const fade = k01((1 - k) / 0.45);
+    ctx.save(); ctx.globalAlpha *= fade;
+    for (let i = -1; i <= 1; i++) { const g = easeOut(k01((k - (i + 1) * 0.05) / 0.28)); if (g < 0.05) continue;
+      const b = a + 1.3 + i * 0.12, ox = px + nx * i * 7 * s - Math.cos(b) * 15 * s - ca * 4 * s, oy = py + ny * i * 7 * s - Math.sin(b) * 15 * s - sa * 4 * s;
+      ctx.save(); ctx.translate(ox, oy); ctx.rotate(b);
+      inked(ctx, () => { const L = 30 * s * g; ctx.beginPath(); ctx.moveTo(0, -2); ctx.quadraticCurveTo(L * 0.5, -7 * s, L, 0); ctx.quadraticCurveTo(L * 0.5, -2 * s, 0, 2); ctx.closePath(); }, i ? '#FFF8F0' : '#FFFFFF');
+      ctx.restore(); }
+    ctx.restore();
+    return;
+  }
+  // 4 Snap
+  const q = easeOut(k01(k / 0.22)), fade = k01((1 - k) / 0.5);
+  ctx.save(); ctx.globalAlpha *= fade;
+  if (k < 0.25) lit(ctx, () => glowDisc(ctx, px, py, 24 * s, '#FFFFFF', 0.6 * (1 - k / 0.25)));
+  const R = 15 * s; slashBand(ctx, px - ca * R * 0.7, py - sa * R * 0.7, R, a - 1.4 + 2.8 * (1 - q) * 0, a - 1.4 + 2.8 * q, 7 * s * (1 - 0.4 * k), '#FFF8F0', '#FFFFFF', true);
+  for (let i = 0; i < 6; i++) { const b = a + (hash(m.seed, i) - 0.5) * 2.6, d = 8 * s + 22 * s * easeOut(k);
+    ctx.save(); ctx.translate(px + Math.cos(b) * d, py + Math.sin(b) * d); ctx.rotate(b + k * 3);
+    inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 4.5 * s * (1 - 0.5 * k), 2 * s, 0, 0, TAU); }, i % 2 ? '#9A8C7E' : '#C9BBA8'); ctx.restore(); }
+  ctx.restore();
 }
 // The Berserker's flail (round 9): "his attack should be a radius on the ground in front of him. Can have spikey rings
 // around it. Is an aoe attack. Small radius". The spiked head slams down; a ring of spikes and dust bursts round it.
