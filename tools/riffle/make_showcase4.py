@@ -57,10 +57,18 @@ for cid, title, text, why, opts, pick in [
     ("wolfbite", "Wolf bite: pick one", "You asked for three variations of the wolf's bite. Four to choose from.", "Tick the one to keep. The wolf's body partly hides the bite on these dummies; it shows better in a real fight.", bite, "druid-callWolf-v3")]:
     items = [{"id": n, "label": lab, "video": vid(n), "text": t} for n, lab, t in opts if has(n)]
     cards.append({"id": cid, "kind": "board", "rarity": "uncommon", "title": title, "text": text, "why": why, "pick": [pick], "items": items})
+singles = []  # a board needs two tiles: heroes with one changed clip share a board
 for hid, name in HEROES:
-    names = [n for n in WHAT if n.startswith(hid + "-")]
-    c = board(hid, name, f"{name}: the clips that changed from your notes.", names)
-    if c: cards.append(c)
+    names = [n for n in WHAT if n.startswith(hid + "-") and has(n)]
+    if len(names) < 2:
+        singles += names
+        continue
+    cards.append(board(hid, name, f"{name}: the clips that changed from your notes.", names))
+if len(singles) >= 2:
+    c = board("singles", "One fix each", "Tower, Twinfang, Wildmane, Frost Mage, Druid and Plague Doctor: one changed clip each.", singles)
+    for it in c["items"]:
+        it["label"] = (dict(HEROES)[it["id"].split("-")[0]] + ": " + it["label"])[:36]
+    cards.append(c)
 c = board("others", "New heroes and bosses", "Fixes from the heroes and boss work: the falcon, the rings round heroes, the bosses' spins.",
           ["falconer-looseFalcon", "warhelm-warHorn", "jester-mock", "gladiator-showboat", "griffon-wingShield", "boss-chieftain-spin", "boss-greatEngine-spin"],
           why="You've disliked rings round heroes before, so three new abilities that drew them now burst short sound lines instead. Tick what's right.")

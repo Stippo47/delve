@@ -73,25 +73,6 @@
       ]
     },
     {
-      "id": "tower",
-      "kind": "board",
-      "rarity": "common",
-      "title": "Tower",
-      "text": "Tower: the clips that changed from your notes.",
-      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
-      "pick": [
-        "tower-holdTheLine"
-      ],
-      "items": [
-        {
-          "id": "tower-holdTheLine",
-          "label": "Hold the Line",
-          "video": "../../../clips/showcase4/tower-holdTheLine.mp4",
-          "text": "The red lines to the taunted enemies are gone; a red mark pops in over each one's head instead."
-        }
-      ]
-    },
-    {
       "id": "archer",
       "kind": "board",
       "rarity": "common",
@@ -121,44 +102,6 @@
           "label": "Roll",
           "video": "../../../clips/showcase4/archer-roll.mp4",
           "text": "She slides back on her feet, and at tier III the caltrops fly out of the slide."
-        }
-      ]
-    },
-    {
-      "id": "twinfang",
-      "kind": "board",
-      "rarity": "common",
-      "title": "Twinfang",
-      "text": "Twinfang: the clips that changed from your notes.",
-      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
-      "pick": [
-        "twinfang-backstab"
-      ],
-      "items": [
-        {
-          "id": "twinfang-backstab",
-          "label": "Backstab",
-          "video": "../../../clips/showcase4/twinfang-backstab.mp4",
-          "text": "The smoke fades out, and a second puff appears where she comes back in."
-        }
-      ]
-    },
-    {
-      "id": "wildmane",
-      "kind": "board",
-      "rarity": "common",
-      "title": "Wildmane",
-      "text": "Wildmane: the clips that changed from your notes.",
-      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
-      "pick": [
-        "wildmane-cleave"
-      ],
-      "items": [
-        {
-          "id": "wildmane-cleave",
-          "label": "Cleave",
-          "video": "../../../clips/showcase4/wildmane-cleave.mp4",
-          "text": "The greatsword is held straight out through the spin."
         }
       ]
     },
@@ -211,25 +154,6 @@
           "label": "Old Bones",
           "video": "../../../clips/showcase4/granny-oldBones.mp4",
           "text": "No skull: a pale wisp rises out of her and is pulled back in with a flash."
-        }
-      ]
-    },
-    {
-      "id": "frost",
-      "kind": "board",
-      "rarity": "common",
-      "title": "Frost Mage",
-      "text": "Frost Mage: the clips that changed from your notes.",
-      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
-      "pick": [
-        "frost-iceShard"
-      ],
-      "items": [
-        {
-          "id": "frost-iceShard",
-          "label": "Ice Shard",
-          "video": "../../../clips/showcase4/frost-iceShard.mp4",
-          "text": "Each spike has a frost trail; chilled units shed slow snowflakes."
         }
       ]
     },
@@ -333,25 +257,6 @@
       ]
     },
     {
-      "id": "druid",
-      "kind": "board",
-      "rarity": "common",
-      "title": "Druid",
-      "text": "Druid: the clips that changed from your notes.",
-      "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
-      "pick": [
-        "druid-entangle"
-      ],
-      "items": [
-        {
-          "id": "druid-entangle",
-          "label": "Entangle",
-          "video": "../../../clips/showcase4/druid-entangle.mp4",
-          "text": "The earlier cast is back, with the newer entangled look on the enemies."
-        }
-      ]
-    },
-    {
       "id": "necromancer",
       "kind": "board",
       "rarity": "common",
@@ -392,19 +297,54 @@
       ]
     },
     {
-      "id": "plague",
+      "id": "singles",
       "kind": "board",
       "rarity": "common",
-      "title": "Plague Doctor",
-      "text": "Plague Doctor: the clips that changed from your notes.",
+      "title": "One fix each",
+      "text": "Tower, Twinfang, Wildmane, Frost Mage, Druid and Plague Doctor: one changed clip each.",
       "why": "Each changed only where your note said. Tick the ones that are right now; comment on any that aren't.",
       "pick": [
+        "tower-holdTheLine",
+        "twinfang-backstab",
+        "wildmane-cleave",
+        "frost-iceShard",
+        "druid-entangle",
         "plague-attack"
       ],
       "items": [
         {
+          "id": "tower-holdTheLine",
+          "label": "Tower: Hold the Line",
+          "video": "../../../clips/showcase4/tower-holdTheLine.mp4",
+          "text": "The red lines to the taunted enemies are gone; a red mark pops in over each one's head instead."
+        },
+        {
+          "id": "twinfang-backstab",
+          "label": "Twinfang: Backstab",
+          "video": "../../../clips/showcase4/twinfang-backstab.mp4",
+          "text": "The smoke fades out, and a second puff appears where she comes back in."
+        },
+        {
+          "id": "wildmane-cleave",
+          "label": "Wildmane: Cleave",
+          "video": "../../../clips/showcase4/wildmane-cleave.mp4",
+          "text": "The greatsword is held straight out through the spin."
+        },
+        {
+          "id": "frost-iceShard",
+          "label": "Frost Mage: Ice Shard",
+          "video": "../../../clips/showcase4/frost-iceShard.mp4",
+          "text": "Each spike has a frost trail; chilled units shed slow snowflakes."
+        },
+        {
+          "id": "druid-entangle",
+          "label": "Druid: Entangle",
+          "video": "../../../clips/showcase4/druid-entangle.mp4",
+          "text": "The earlier cast is back, with the newer entangled look on the enemies."
+        },
+        {
           "id": "plague-attack",
-          "label": "Poison cluster (attack)",
+          "label": "Plague Doctor: Poison cluster (attac",
           "video": "../../../clips/showcase4/plague-attack.mp4",
           "text": "The poof fades out."
         }
