@@ -39,6 +39,16 @@ add("ember-hellhound", "Hellhound", 18, 35)
 add("ember-cinder-bat", "Cinder bat", 16, 44)
 add("ember-spirit", "Fire spirit", 15, 34, 15, 58)
 add("ember-pit-lord", "The Pit Lord", 38, 68, 38, 64)
+# the Gilded Spire
+add("spire-fallen-angel", "Fallen angel", 23, 56)
+add("spire-sun-blade", "Sun blade", 17, 58, 17, 46)
+add("spire-choir-sprite", "Choir sprite", 16, 42, 16, 46)
+add("spire-golem", "Golem", 33, 66)
+add("spire-gilded-golem", "Gilded golem", 33, 66)
+add("spire-light-spirit", "Light spirit", 15, 34, 15, 58)
+add("spire-ward-spirit", "Ward spirit", 15, 34, 15, 58)
+add("spire-herald-light", "Herald of Light", 34, 56)
+add("spire-herald-fallen", "Fallen Herald", 34, 56)
 
 
 # boards that show a design with what the game draws apart, as the game places it (round 8's troll and boulder)

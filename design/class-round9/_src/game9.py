@@ -23,6 +23,16 @@ COPIES = [
     ("enemies/ember-cinder-bat.svg", "enemies/cinder-bat.svg"),
     ("enemies/ember-spirit.svg", "enemies/spirit-fire.svg"),
     ("enemies/ember-pit-lord.svg", "enemies/pit-lord.svg"),
+    # the Gilded Spire
+    ("enemies/spire-fallen-angel.svg", "enemies/fallen-angel.svg"),
+    ("enemies/spire-sun-blade.svg", "enemies/sun-blade.svg"),
+    ("enemies/spire-choir-sprite.svg", "enemies/choir-sprite.svg"),
+    ("enemies/spire-golem.svg", "enemies/golem.svg"),
+    ("enemies/spire-gilded-golem.svg", "enemies/gilded-golem.svg"),
+    ("enemies/spire-light-spirit.svg", "enemies/spirit-heal.svg"),
+    ("enemies/spire-ward-spirit.svg", "enemies/spirit-ward.svg"),
+    ("enemies/spire-herald-light.svg", "enemies/herald-light.svg"),
+    ("enemies/spire-herald-fallen.svg", "enemies/herald-fallen.svg"),
 ]
 
 if __name__ == "__main__":
