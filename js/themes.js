@@ -163,7 +163,7 @@ export const THEMES = {
     mood: { fog: 'rgba(40,32,70,', fogK: 0.45, tint: 'rgba(255,230,160,0.06)' },
     kinds: { fight: 48, hazard: 14, treasure: 12, fountain: 8, decision: 12, elite: 6 },
     floors: [
-      { name: 'The Gilded Halls', enemies: [['cherub', 4], ['angel', 2.5], ['ghost', 0.8]], mini: 'angel',
+      { name: 'The Gilded Halls', enemies: [['cherub', 3], ['angel', 2.5], ['ghost', 1.2], ['rattler', 1]], mini: 'angel',
         hazards: [['beam', 3], ['spikes', 1]], mood: { fog: 'rgba(40,32,70,', fogK: 0.38, tint: 'rgba(255,230,160,0.05)' },
         props: [['slab', 1.2], ['candles', 1.2]] },
       { name: 'The Choir', enemies: [['seraph', 3], ['cherub', 3], ['angel', 2], ['banshee', 0.8]], mini: 'archon',

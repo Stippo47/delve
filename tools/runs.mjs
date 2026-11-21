@@ -46,13 +46,13 @@ function play(save, opts) {
       update(run, DT); t += DT;
       if (feel) feelTick(run.world, t);
       if (run.rooms !== lastRooms) { lastRooms = run.rooms; lastT = t; }
-      if (t - lastT > (run.node.kind === 'boss' ? 600 : 300)) { run.phase = 'stuck'; break; }
+      if (t - lastT > (run.node.kind === 'boss' ? 600 : 300)) { run.was = run.phase + (run.task ? ' task ' + run.task.type : '') + ' pickups ' + run.world.pickups.map((p) => p.type).join(',') + ' fx ' + run.world.fx.filter((f) => f.spawns && !f.done).length + ' danger ' + run.world.danger.filter((z) => z.spawns && !z.done).length; run.phase = 'stuck'; break; }
     }
   } catch (e) { err = e; run.phase = 'error'; }
   if (run.phase === 'stuck' || run.phase === 'error') {
     const w = run.world;
     console.log(`  ${run.theme} ${run.phase} floor ${run.floor} room ${run.map.L} kind ${run.node.kind} shape ${w.shape}`, err ? err.stack : '',
-      w.units.filter((u) => !u.dead).map((u) => `${u.kind}@${Math.round(u.x)},${Math.round(u.y)}${u.downed ? 'D' : ''}${u.minion ? 'm' : ''}[${u.mode}${u.target ? '>' + u.target.kind : ''}${u.forcedGoal ? ' forced' : ''} hp${Math.round(100 * u.hp / u.maxHp)}]`).join(' '), 'phase', run.phase, 'waves', JSON.stringify(w.waves && { left: w.waves.left, pending: !!w.waves.pending }), 'quiet', Math.round(run.quietT || 0));
+      w.units.filter((u) => !u.dead).map((u) => `${u.kind}@${Math.round(u.x)},${Math.round(u.y)}${u.downed ? 'D' : ''}${u.minion ? 'm' : ''}[${u.mode}${u.target ? '>' + u.target.kind : ''}${u.forcedGoal ? ' forced' : ''} hp${Math.round(100 * u.hp / u.maxHp)}]`).join(' '), 'phase', run.phase, 'waves', JSON.stringify(w.waves && { left: w.waves.left, pending: !!w.waves.pending }), 'quiet', Math.round(run.quietT || 0), 'was', run.was);
   }
   return { run, t, phase: run.phase };
 }

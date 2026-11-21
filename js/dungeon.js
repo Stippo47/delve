@@ -147,10 +147,20 @@ function enemyPack(w, run, budget, cell) {
 // (enemies.js makeElite). opts.elite forces one.
 function foe(w, run, k, x, y, opts = {}, p = 0) {
   const u = spawn(w, k, x, y, { mult: w.mult, ...opts });
+  hardHitting(u, opts.mult || w.mult);
   u.coinMul = goldMul(run);
   if (opts.mini) { makeMiniBoss(w, u); arm(u, chance(ELITE_TRINKET.mini) ? 1 : 0); }
   else if (opts.elite || (p > 0 && !DEFS[k].boss && chance(p))) { makeElite(w, u); arm(u, chance(ELITE_TRINKET.two) ? 2 : chance(ELITE_TRINKET.one) ? 1 : 0); }
   return u;
+}
+// Round 8: deep down, enemies hit harder rather than only soaking more (sim.js spawn gives hp x m, blows x 0.65 +
+// 0.35 m): hp comes down to m^0.85 and blows go up by HIT_STEP per step of m, so late fights are dangerous, not long.
+export const HP_POW = 0.85, HIT_STEP = 0.05;
+function hardHitting(u, m) {
+  if (!(m > 1)) return;
+  const k = Math.pow(m, HP_POW - 1);
+  u.maxHp = Math.max(1, Math.round(u.maxHp * k)); u.hp = Math.min(u.hp, u.maxHp);
+  u.dmgMul *= 1 + HIT_STEP * (m - 1);
 }
 // An elite carrying trinkets: it wears them (their hooks work for it as for a hero) and drops them when it dies.
 function arm(u, n) {
@@ -172,8 +182,8 @@ const eliteP = (run, wave = 0) => (debugParam('elites') != null ? 1 : Math.min(0
 // each dungeon is pitched at a party that has grown: the order is the order they open in.
 export const DUNGEON_RANK = { warren: 0, sewers: 1, crypt: 2, frost: 3, ember: 4, spire: 5 };
 // Enemy strength (hp x m, blows x 0.65 + 0.35 m) for a room: the dungeon, the floor, and how far into the floor.
-export const RANK_MULT = [1, 2.1, 3.3, 4.5, 5.6, 6.8];
-export const FLOOR_STEP = 0.32;  // each floor on from the first: +32% of the dungeon's own strength
+export const RANK_MULT = [1, 2.3, 3.8, 4.6, 5.4, 6.1];
+export const FLOOR_STEP = 0.3;   // each floor on from the first: +30% of the dungeon's own strength
 export const ROOM_STEP = 0.035;  // each room further into a floor: +3.5%
 export const enemyMult = (run, L) => {
   const rank = DUNGEON_RANK[run.theme] || 0;
@@ -185,7 +195,7 @@ export const COUNT_MUL = 1.5;
 // A smaller party meets fewer enemies and weaker floor foes (by party size 1-4).
 export const PARTY_SCALE = [0.3, 0.62, 0.92, 1.2];
 export const BOSS_HP = [0.45, 0.7, 0.9, 1.1];
-const roomBudget = (run, L, nCells) => (4 + run.depth * 2 + run.floor * 2.2 + (DUNGEON_RANK[run.theme] || 0) * 0.8 + L * 0.6) * (0.55 + 0.18 * nCells) * COUNT_MUL;
+const roomBudget = (run, L, nCells) => (4 + run.depth * 2 + run.floor * 1.7 + (DUNGEON_RANK[run.theme] || 0) * 0.8 + L * 0.6) * (0.55 + 0.18 * nCells) * COUNT_MUL;
 
 function buildRoom(run) {
   const node = nodeAt(run.map);
@@ -277,8 +287,10 @@ function buildRoom(run) {
     // a smaller party meets a weaker boss (the same party-size idea as the rooms' enemy budget)
     const own = DEFS[bossKind].boss; // a boss kind of its own (a warden, the dungeon's boss), or any kind made a mini-boss
     const hpMul = BOSS_HP[Math.min(4, run.party.length + run.hired.length) - 1] || 1;
-    const b = own ? spawn(w, bossKind, bx, by, { mult: w.mult * (run.floor === FLOORS ? 1 : 0.8), hpMul })
+    const bm = w.mult * (run.floor === FLOORS ? 1 : 0.8);
+    const b = own ? spawn(w, bossKind, bx, by, { mult: bm, hpMul })
       : foe(w, run, bossKind, bx, by, { mini: true, hpMul });
+    if (own) hardHitting(b, bm);
     b.facing = b.mvA = Math.PI; b.floorFoe = true;
     const adds = Math.round((2 + run.floor + Math.floor(run.depth / 2)) * partyScale * COUNT_MUL);
     if (!arena) for (let i = 0; i < adds; i++) {
