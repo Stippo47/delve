@@ -66,3 +66,8 @@ When foes2, vis2 and camp3 are merged, released and reported, start the next wav
 - Quests: build from docs/QUESTS.md once the designer has seen it.
 Run at most 4 at once; check usage first; if the weekly limit stops agents mid-work their commits are kept on
 their branches: resume them after the reset.
+
+## Lane T: run stats (added 2026-11-21, branch `stats`)
+The designer: "When the party leaves a dungeon I want to see stats about who did the most damage, healing, took most
+damage, most kills and deaths, etc. As well as a count of how many of each type of unit defeated overall. Also to see
+a unit's damage and attack speed."
