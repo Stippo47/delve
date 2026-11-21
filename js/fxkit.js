@@ -318,12 +318,12 @@ function strike(ctx, m, k) {
       else { const [ux, uy] = upVec(); inkDisc(ctx, x + ux * e * 26, y + uy * e * 26, 5 * (1 - k) + 1, i % 2 ? el[2] : '#FFFFFF'); } });
     return;
   }
-  const pts = zonePoints(z, m.kind === 'web' ? 999 : 44);
+  const pts = zonePoints(z, m.kind === 'web' ? 999 : 50);
   const up = k < 0.2 ? easeOut(k / 0.2) : 1 - sm(k01((k - 0.55) / 0.45));
   pts.forEach(([x, y, a], i) => {
     const h = hash(seed, i);
-    if (m.kind === 'bone' || m.kind === 'blade') spike(ctx, x, y, (18 + 14 * h) * up, 6 + 3 * h, EL.bone[1], EL.bone[2]);
-    else if (m.kind === 'ice') spike(ctx, x, y, (20 + 14 * h) * up, 7 + 3 * h, '#BFE9F8', '#FFFFFF');
+    if (m.kind === 'bone' || m.kind === 'blade') spike(ctx, x, y, (28 + 18 * h) * up, 8 + 4 * h, EL.bone[1], EL.bone[2]);
+    else if (m.kind === 'ice') spike(ctx, x, y, (28 + 18 * h) * up, 9 + 4 * h, '#BFE9F8', '#FFFFFF');
     else if (m.kind === 'fire') upright(ctx, x, y, () => flame(ctx, 0, 0, (9 + 5 * h) * up));
     else if (m.kind === 'water' || m.kind === 'poison') {
       ctx.save(); ctx.globalAlpha *= 1 - k;
