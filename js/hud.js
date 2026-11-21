@@ -8,7 +8,7 @@ import { HEROES } from './heroes.js';
 import { DEFS, xpToNext, levelHp } from './units.js';
 import { icon, abilityGlyph, ABILITY_COLOR } from './icons.js';
 import { elixirOf, POTIONS } from './potions.js';
-import { STATUS, fillOf, RADIANCE, CURSE } from './statuses.js';
+import { STATUS, fillOf, RADIANCE, CURSE, POISON } from './statuses.js';
 
 // ---------------------------------------------------------------- statuses on a unit
 // Every status as { id, kind, icon, frac (1 = full ring, shrinking to 0), color, left (s, when known) }.
@@ -43,6 +43,7 @@ export function unitStatuses(u, now) {
   build('burn', s.burn > 2);
   build('chill', s.chill > 2 && !(u.frozenT > 0));
   build('poison', s.poison > 2);
+  if (u.sickT > 0) out.push({ id: 'sick', kind: 'status', icon: 'sick', frac: u.sickT / POISON.sickT, color: STATUS.poison.col, left: u.sickT });
   build('wet', s.wet > 2);
   build('shock', s.shock > 2);
   build('stagger', s.stagger > 3);

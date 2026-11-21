@@ -333,7 +333,7 @@ function buildRoom(run) {
   }
   w.on.kill = (u) => onKill(run, u);
   w.on.coin = (p) => { run.coins += p.v; };
-  w.on.drank = (u) => { run.heroes[u.kind].potions = u.potions; };
+  w.on.drank = (u) => { const hs = run.heroes[u.kind]; if (hs) hs.potions = u.potions; };
   run.phase = 'fight'; run.t = 0; run.fade = 1; run.task = null; run.quietT = 0; run.through = 0; run.exitDone = 0; run.trinketT = 0;
 }
 
@@ -645,7 +645,7 @@ function revive(run, dt) {
       if (rand() < dt * 14) w.particles.push({ x: d.x + rrange(-18, 18), y: d.y + rrange(-18, 18), vx: 0, vy: 0, rise: 40, life: 0.6, max: 0.6, size: 4, color: '#FFE7A0' });
       if (d.reviveT >= REVIVE_T) {
         d.downed = false; d.reviveT = 0; d.hp = d.maxHp * (d.reviveHp || REVIVE_HP); d.invulnT = 1.2; d.st = freshStatuses();
-        run.heroes[d.kind].down = false; helper.forcedGoal = null; tallyRevive(run.stats, helper);
+        if (run.heroes[d.kind]) run.heroes[d.kind].down = false; helper.forcedGoal = null; tallyRevive(run.stats, helper);
         burst(w, d.x, d.y, '#FFE7A0');
       }
     }

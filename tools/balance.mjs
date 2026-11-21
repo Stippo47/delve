@@ -38,6 +38,17 @@ const blank = () => ({ n: 0, lead: 0, rooms: 0, secs: 0, dmg: 0, heal: 0, taken:
 const H = Object.fromEntries(HERO_IDS.map((k) => [k, blank()]));
 const T = Object.fromEntries(themes.map((t) => [t, { n: 0, rooms: 0, secs: 0, wipes: 0 }]));
 let runs = 0, bad = 0, allRooms = 0;
+// --merge a.json,b.json: add up batches run side by side (each with its own --heroes) and print the one table
+if (opt('merge')) {
+  for (const f of opt('merge').split(',')) {
+    const d = JSON.parse(fs.readFileSync(f, 'utf8')); runs += d.runs; bad += d.bad; allRooms += d.allRooms;
+    for (const [k, h] of Object.entries(d.heroes)) { const t = H[k] || (H[k] = blank());
+      for (const f2 of ['n', 'lead', 'rooms', 'secs', 'dmg', 'heal', 'taken', 'downs', 'kills', 'rawDmg', 'rawHeal', 'rawTaken']) t[f2] += h[f2];
+      for (const [x, v] of Object.entries(h.src)) t.src[x] = (t.src[x] || 0) + v;
+      for (const [x, v] of Object.entries(h.by)) { const o = t.by[x] || (t.by[x] = { n: 0, rooms: 0 }); o.n += v.n; o.rooms += v.rooms; } }
+    for (const [k, v] of Object.entries(d.themes)) { const t = T[k] || (T[k] = { n: 0, rooms: 0, secs: 0, wipes: 0 }); for (const f2 of ['n', 'rooms', 'secs', 'wipes']) t[f2] += v[f2]; }
+  }
+} else
 for (const lead of leads) for (const theme of themes) for (let r = 0; r < reps; r++) {
   const others = HERO_IDS.filter((k) => k !== lead), party = [lead];
   while (party.length < size) party.push(others.splice(Math.floor(rnd() * others.length), 1)[0]);
@@ -66,7 +77,11 @@ for (const lead of leads) for (const theme of themes) for (let r = 0; r < reps; 
 const mean = allRooms / Math.max(1, runs - bad);
 const pct = (x) => (100 * x).toFixed(0).padStart(3) + '%';
 console.log(`tier ${tier}, parties of ${size}, every dungeon at rank ${rank}: ${runs} runs, ${bad} errors, ${mean.toFixed(2)} rooms a run on average`);
-console.log('dungeons: ' + themes.map((t) => `${t} ${(T[t].rooms / Math.max(1, T[t].n)).toFixed(1)} rooms`).join(', '));
+console.log('dungeons: ' + themes.filter((t) => T[t].n).map((t) => `${t} ${(T[t].rooms / Math.max(1, T[t].n)).toFixed(1)} rooms`).join(', '));
+{ // by role: what the designer asked about (tanks take it, shooters deal it)
+  const R = {}; for (const k of HERO_IDS) { const h = H[k]; if (!h.n) continue; const r = R[HEROES[k].role] || (R[HEROES[k].role] = { n: 0, rooms: 0, dmg: 0, heal: 0, taken: 0, downs: 0 }); r.n += h.n; r.rooms += h.rooms; r.dmg += h.dmg; r.heal += h.heal; r.taken += h.taken; r.downs += h.downs; }
+  for (const [r, v] of Object.entries(R)) console.log(`  ${r.padEnd(9)} rooms ${(v.rooms / v.n).toFixed(2)}  damage ${pct(v.dmg / v.n)}  healing ${pct(v.heal / v.n)}  taken ${pct(v.taken / v.n)}  downs ${(v.downs / v.n).toFixed(2)}`);
+}
 console.log('hero          role      runs  rooms  vs avg   dmg  heal taken  downs  dmg/s  top sources of its damage');
 const rows = HERO_IDS.filter((k) => H[k].n).map((k) => ({ k, ...H[k], avg: H[k].rooms / H[k].n })).sort((a, b) => b.avg - a.avg);
 for (const h of rows) {
@@ -74,5 +89,5 @@ for (const h of rows) {
   const top = Object.entries(h.src).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([s, v]) => `${s.replace('ab:', '').replace('st:', '~')} ${Math.round(100 * v / srcTot)}%`).join(', ');
   console.log(`${h.k.padEnd(13)} ${HEROES[h.k].role.padEnd(9)} ${String(h.n).padStart(4)}  ${h.avg.toFixed(2).padStart(5)}  ${((h.avg - mean) >= 0 ? '+' : '') + (h.avg - mean).toFixed(2).padStart(5)}  ${pct(h.dmg / h.n)}  ${pct(h.heal / h.n)}  ${pct(h.taken / h.n)}  ${(h.downs / h.n).toFixed(2).padStart(5)}  ${(h.rawDmg / h.n).toFixed(1).padStart(5)}  ${top}`);
 }
-if (opt('out')) fs.writeFileSync(opt('out'), JSON.stringify({ tier, size, rank, runs, bad, mean, heroes: H, themes: T }, null, 1));
+if (opt('out')) fs.writeFileSync(opt('out'), JSON.stringify({ tier, size, rank, runs, bad, mean, allRooms, heroes: H, themes: T }));
 process.exit(bad ? 1 : 0);

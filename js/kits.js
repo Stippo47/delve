@@ -16,7 +16,7 @@
 //   reviveRate, reviveHp                 numbers read by the revive code
 // Hit options worth knowing in hooks: o.dot (damage over time), o.shot (a projectile hit), o.proc (damage a trinket
 // made itself: trinkets that react to hits skip these, so they never set each other off in a loop).
-import { HEROES, TIER_CD, statsFor, tierOf } from './heroes.js';
+import { HEROES, TIER_CD, ROLE_TUNE, statsFor, tierOf } from './heroes.js';
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange, chance } from './util.js';
 import {
   hurt, addStatus as simAddStatus, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, textU,
@@ -37,16 +37,17 @@ function withAb(u, ab, f) {
   if (!ab || !u.kit) return f;
   return (...args) => { const k = u.kit, prev = k.using; k.using = ab; try { return f(...args); } finally { k.using = prev; } };
 }
-const healMul = (src) => (src && src.kit && src.kit.mods ? 1 + src.kit.mods.heal + abMod(src, 'abHeal') : 1);
+// (round 11: a role can heal less or more across the board: heroes.js ROLE_TUNE[role].heal)
+const roleHeal = (src) => { const h = src && src.kit && HEROES[src.kit.hero], t = h && ROLE_TUNE[h.role]; return (t && t.heal) || 1; };
+const healMul = (src) => (src && src.kit && src.kit.mods ? (1 + src.kit.mods.heal + abMod(src, 'abHeal')) * roleHeal(src) : 1);
 const statusMul = (src, ab) => (src && src.kit && src.kit.mods ? 1 + src.kit.mods.status + abMod(src, 'abStatus', ab) : 1);
 const heal = (w, t, amt, src) => simHeal(w, t, amt * healMul(src), src);
 const addStatus = (w, t, type, amt, src) => simAddStatus(w, t, type, amt * statusMul(src), src);
 const zone = (w, z) => { const u = z.src, ab = u && u.kit && u.kit.using; if (ab && z.tick) z.tick = withAb(u, ab, z.tick); return simZone(w, z); };
 const HIT_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger'];
-// The hook every hero with stat nodes wears: toughness, and statuses on its blows building faster.
+// The hook every hero with stat nodes wears: statuses on its blows building faster. (Armour nodes add to u.armor in initKit.)
 function statHook(mods) {
   return {
-    taken: mods.armor ? (w, u, src, amt) => amt * Math.max(0.3, 1 - mods.armor) : undefined,
     hit(w, u, t, amt, o) {
       const m = statusMul(u, o.ab) - 1; if (m <= 0 || o.proc) return;
       for (const s of HIT_STATUSES) if (o[s]) simAddStatus(w, t, s, o[s] * m, u);
@@ -112,7 +113,7 @@ export const ABILITIES = {
       cast(u, 'ability', 0.3);
       a.guardBy = u; a.guardT = 5; a.guardShare = tier >= 2 ? 0.6 : 0.4;
       u.forcedGoal = null; u.guardOf = a; u.guardOfT = 5;
-      if (tier >= 3) heal(w, a, a.maxHp * 0.15, u);
+      if (tier >= 3) heal(w, a, a.maxHp * 0.1, u);
       fx(w, { type: 'beam', x1: u.x, y1: u.y, x2: a.x, y2: a.y, kind: 'holy', max: 0.5 });
     },
   },
@@ -122,8 +123,8 @@ export const ABILITIES = {
       cast(u, 'ability', 0.5);
       const r = tier >= 2 ? 140 : 105, dur = tier >= 2 ? 6 : 4;
       zone(w, { x: u.x, y: u.y, r, dur, kind: 'holy', src: u, every: 0.5, tick(z) {
-        for (const e of foesNear(w, u, z.x, z.y, z.r)) hurt(w, e, dmgOf(u, 0.35) * (tier >= 3 && isUndead(e) ? 2.5 : 1), u, { dot: true, color: '#FFE7A0', burn: tier >= 3 && isUndead(e) ? 12 : 0 });
-        for (const a of friendsNear(w, u, z.x, z.y, z.r)) heal(w, a, a.maxHp * 0.02, u);
+        for (const e of foesNear(w, u, z.x, z.y, z.r)) hurt(w, e, dmgOf(u, 0.3) * (tier >= 3 && isUndead(e) ? 2.5 : 1), u, { dot: true, color: '#FFE7A0', burn: tier >= 3 && isUndead(e) ? 12 : 0 });
+        for (const a of friendsNear(w, u, z.x, z.y, z.r)) heal(w, a, a.maxHp * 0.01, u); // (round 11: half what it was; he's a tank first)
       } });
     },
   },
@@ -762,7 +763,8 @@ export function initKit(u, heroId, build = {}, level = 1) {
   const hpMul = 1 + mods.hp; u.maxHp = Math.round(u.maxHp * hpMul); u.hp = Math.min(u.maxHp, u.hp * hpMul);
   u.atkMul = 1 + mods.atkSpeed; u.moveMul = 1 + mods.moveSpeed;
   if (mods.range) { const r = u.def.range; u.def = { ...u.def, range: r > 60 ? r * (1 + mods.range) : r + 60 * mods.range }; }
-  u.kit.statHook = mods.armor || mods.status || Object.values(mods.ab).some((a) => a.abStatus) ? statHook(mods) : null;
+  u.armor = (u.armor || 0) + Math.round(mods.armor * 100); // the web's Armour nodes: points (stored as hundredths, like every stat)
+  u.kit.statHook = mods.status || Object.values(mods.ab).some((a) => a.abStatus) ? statHook(mods) : null;
   refreshKit(u, level);
 }
 // Which tier of each ability is on: the highest bought in a row.

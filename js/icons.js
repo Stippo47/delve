@@ -134,6 +134,8 @@ const STATUS = {
   radiance: `<ellipse cx="16" cy="8" rx="9" ry="3.4" fill="none" stroke="${INK}" stroke-width="5.4"/><ellipse cx="16" cy="8" rx="9" ry="3.4" fill="none" stroke="#FFE48A" stroke-width="2.4" ${H}/>
     <circle cx="16" cy="20" r="7.5" fill="#FFE48A"/><circle cx="14" cy="18" r="2.6" fill="#FFF8DC" ${H}/>`,
   radiant: `<path d="M16 2l2.6 7.4L26 6l-3.4 7.4L30 16l-7.4 2.6L26 26l-7.4-3.4L16 30l-2.6-7.4L6 26l3.4-7.4L2 16l7.4-2.6L6 6l7.4 3.4z" fill="#FFE48A"/><circle cx="16" cy="16" r="5.5" fill="#FFFFFF" ${H}/>`,
+  // round 11: sickened, poison's burst (a green drop with a queasy line through it, bubbles coming off)
+  sick: `<path d="M15 3c5 7 9 11 9 16a9 9 0 0 1-18 0c0-5 4-9 9-16z" fill="#9BCB3C"/><path d="M9.5 19.5c2-2.2 3.6 2.2 5.5 0s3.600 2.2 5.5 0" fill="none" stroke="${INK}" stroke-width="2" stroke-linecap="round" ${H}/><circle cx="25" cy="7" r="2.6" fill="#B6E05A"/><circle cx="28" cy="13.500" r="1.7" fill="#B6E05A"/>`,
   // cursed builds (a purple skull-drop), hexed is the armed curse (an eye in a ring)
   curse: `<path d="M16 3c6 0 10 4.4 10 10 0 4-2 6.4-4 7.6V26h-12v-5.4C8 19.4 6 17 6 13 6 7.4 10 3 16 3z" fill="#9A5CC8"/><circle cx="12.2" cy="13.5" r="2.6" fill="${INK}" ${H}/><circle cx="19.8" cy="13.5" r="2.6" fill="${INK}" ${H}/><path d="M13 22v3M16 22v3M19 22v3" stroke="${INK}" stroke-width="1.6" ${H}/>`,
   // round 9: entangle builds (a curl of vine), tangled is the burst (roots wrapped round a foot)

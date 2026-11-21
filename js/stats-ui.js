@@ -114,8 +114,9 @@ export function wireStats(el) {
 export function numbersRow(n) {
   if (!n) return '';
   const f1 = (v) => (v >= 10 ? Math.round(v) : (Math.round(v * 10) / 10).toFixed(1));
-  const cells = [['Per hit', f1(n.hit)], ['Hits / s', (Math.round(n.aps * 100) / 100).toFixed(2)], ['Health', num(n.hp)], ['Speed', Math.round(n.speed)], ['Reach', Math.round(n.range)]];
-  return `<div class="numrow">${cells.map(([k, v]) => `<div><span class="cap">${k}</span><b>${v}</b></div>`).join('')}</div>`;
+  // (round 11: armour joins them, so two rows of three: what it deals, then what it takes)
+  const cells = [['Per hit', f1(n.hit)], ['Hits / s', (Math.round(n.aps * 100) / 100).toFixed(2)], ['Reach', Math.round(n.range)], ['Health', num(n.hp)], ['Armour', Math.round((n.armor || 0) * 10) / 10], ['Speed', Math.round(n.speed)]];
+  return `<div class="numrow six">${cells.map(([k, v]) => `<div><span class="cap">${k}</span><b>${v}</b></div>`).join('')}</div>`;
 }
 // This run so far (the pause panel): a few chips.
 export function runLine(h) {

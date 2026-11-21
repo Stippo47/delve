@@ -113,7 +113,7 @@ export const HEROES2 = {
     ],
     trait: { id: 'ironWill', name: 'Iron Will', desc: 'Below 30% health he can\'t be stunned or staggered and hits 25% harder.' },
   },
-  bandit: {
+  rogueBandit: { // (not 'bandit': that id is the Wildwood's enemy, and the two overwrote each other)
     name: 'Bandit', art: 'art/heroes/bandit.svg', role: 'skirmish', unlock: { gems: 1 },
     blurb: 'A cutlass, a red bandanna and very quick hands. Fights dirty and comes home richer.',
     fun: 'Has never stolen from a friend. Has made a great many friends very briefly.',
