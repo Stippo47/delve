@@ -870,8 +870,12 @@ export function scatterCoins(w, x, y, n, reach = 1) {
   }
 }
 function kill(w, u, src) {
+  // (round 11: once only. Two exploding minions side by side used to kill each other back and forth without end: each
+  // blast hurt the other while it was still mid-death, until the game fell over.)
+  if (u.dying) return;
+  u.dying = true;
   const was = w.actor; w.actor = u; // (battle mode: what it leaves behind is its side's)
-  try { killNow(w, u, src); } finally { w.actor = was; }
+  try { killNow(w, u, src); } finally { w.actor = was; if (!u.dead) u.dying = false; } // (a downed hero can fall again once it's back up)
 }
 function killNow(w, u, src) {
   u.hp = 0;

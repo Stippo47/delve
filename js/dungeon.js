@@ -47,7 +47,7 @@ export function newRun(save, opts = {}) {
   const floor = Math.max(1, Math.min(FLOORS, Math.floor(+opts.floor || +debugParam('floor') || 1)));
   const run = { depth: opts.depth || save.depth || 1, theme, mercs: !!opts.mercs, hired, party, floor, startFloor: floor, map: makeFloor(floorTheme(theme, floor).kinds), coins: 0, gems: 0,
     satchel: [], keys: 0, heroes, phase: 'fight', t: 0, fade: 1, save, kills: 0, banner: null, rooms: 0, leaving: false,
-    floorDone: false, minis: [false, false], bossKilled: false };
+    floorDone: false, minis: [false, false], bossKilled: false, asRank: opts.asRank, bare: !!opts.bare }; // (bare: the balance batches: nobody picks up trinkets or is handed potions)
   run.stats = newStats([...party, ...hired], hired); // stats.js: who did what, for the result card
   // testing: ?bossroom jumps straight to a floor's last room (floor 3's, or ?floor=N's: a mini-boss), ?lvl=N starts the
   // heroes at level N, ?floor=N starts at floor N
@@ -175,14 +175,14 @@ function arm(u, n) {
   u.trinkets = list; u.trinketHooks = trinketHooks(list); u.carried = list.slice();
 }
 // Harder dungeons and deeper floors pay better.
-const goldMul = (run) => 1 + 0.25 * (DUNGEON_RANK[run.theme] || 0) + 0.15 * (run.floor - 1);
+const goldMul = (run) => 1 + 0.25 * rankOf(run) + 0.15 * (run.floor - 1);
 // How likely any one enemy is to be an elite (designer, round 7: "have elites show up more often"): more on deeper
 // floors, in harder dungeons and in later waves.
 // (testing: ?elites makes every enemy an elite)
-const eliteP = (run, wave = 0) => (debugParam('elites') != null ? 1 : Math.min(0.32, 0.05 + 0.03 * (run.floor - 1) + 0.015 * (DUNGEON_RANK[run.theme] || 0) + 0.025 * wave));
+const eliteP = (run, wave = 0) => (debugParam('elites') != null ? 1 : Math.min(0.32, 0.05 + 0.03 * (run.floor - 1) + 0.015 * rankOf(run) + 0.025 * wave));
 // A major (round 9: "Majors can appear on any floor"): rare, a little more often deeper and in later waves (?majors
 // makes every enemy one).
-const majorP = (run, wave = 0) => (debugParam('majors') != null ? 1 : Math.min(0.06, 0.008 + 0.006 * (run.floor - 1) + 0.003 * (DUNGEON_RANK[run.theme] || 0) + 0.005 * wave));
+const majorP = (run, wave = 0) => (debugParam('majors') != null ? 1 : Math.min(0.06, 0.008 + 0.006 * (run.floor - 1) + 0.003 * rankOf(run) + 0.005 * wave));
 
 // How hard each dungeon type is, easiest first (designer, round 6: each dungeon harder than the last; round 7: three
 // harder ones after the Crypt; round 8: "make each dungeon and floor clearly harder than the last ... it has to be a
@@ -194,8 +194,11 @@ export const DUNGEON_RANK = { wildwood: 0, warren: 1, sewers: 2, crypt: 3, frost
 export const RANK_MULT = [0.75, 1.6, 2.35, 3.8, 4.6, 5.4, 5.9];
 export const FLOOR_STEP = 0.3;   // each floor on from the first: +30% of the dungeon's own strength
 export const ROOM_STEP = 0.035;  // each room further into a floor: +3.5%
+// (opts.asRank, for the balance batches in tools/balance.mjs: a dungeon's own enemies and rooms at another dungeon's
+// strength, numbers and elite odds, so every dungeon can be tried with the same party)
+export const rankOf = (run) => run.asRank ?? DUNGEON_RANK[run.theme] ?? 0;
 export const enemyMult = (run, L) => {
-  const rank = DUNGEON_RANK[run.theme] || 0;
+  const rank = rankOf(run);
   return RANK_MULT[rank] * (1 + FLOOR_STEP * (run.floor - 1) + ROOM_STEP * L) + 0.22 * (run.depth - 1);
 };
 // How many enemies, in budget points, for a fight room before the party-size scaling: more on later floors and in
@@ -204,7 +207,7 @@ export const COUNT_MUL = 1.5;
 // A smaller party meets fewer enemies and weaker floor foes (by party size 1-4).
 export const PARTY_SCALE = [0.3, 0.62, 0.92, 1.2];
 export const BOSS_HP = [0.45, 0.7, 0.9, 1.1];
-const roomBudget = (run, L, nCells) => (4 + run.depth * 2 + run.floor * 1.7 + (DUNGEON_RANK[run.theme] || 0) * 0.8 + L * 0.6) * (0.55 + 0.18 * nCells) * COUNT_MUL;
+const roomBudget = (run, L, nCells) => (4 + run.depth * 2 + run.floor * 1.7 + rankOf(run) * 0.8 + L * 0.6) * (0.55 + 0.18 * nCells) * COUNT_MUL;
 
 function buildRoom(run) {
   const node = nodeAt(run.map);
@@ -437,6 +440,7 @@ export function rollTrinket() { return { id: pick(TRINKET_IDS), uid: Math.floor(
 function grant(run, reward, hero) {
   const w = run.world;
   burst(w, hero ? hero.x : w.W / 2, hero ? hero.y : w.H / 2, { potion: '#E0604B', xp: '#FFE14D', coins: '#F2B53A', trinket: '#C9A7FF' }[reward]);
+  if (reward === 'potion' && run.bare) return;
   if (reward === 'potion') {
     const hs = w.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon).sort((a, b) => a.potions - b.potions || a.hp / a.maxHp - b.hp / b.maxHp);
     const h = hs[0]; if (h) { h.potions++; run.heroes[h.kind].potions = h.potions; }
@@ -456,7 +460,7 @@ function grant(run, reward, hero) {
 // it for an ally. Worn for the rest of the run only (summary.foundTrinkets lists them; found trinkets aren't kept).
 export const trinketSlots = (run, k) => 1 + (buildFor(run.save, k).nodes.slot2 ? 1 : 0);
 export const FOUND_EXTRA = 1;
-const roomFor = (run, k) => run.party.includes(k) && run.heroes[k] && !run.heroes[k].down && run.heroes[k].trinkets.length < trinketSlots(run, k) + FOUND_EXTRA;
+const roomFor = (run, k) => !run.bare && run.party.includes(k) && run.heroes[k] && !run.heroes[k].down && run.heroes[k].trinkets.length < trinketSlots(run, k) + FOUND_EXTRA;
 function equipFound(run, id, k) {
   run.heroes[k].trinkets.push(id);
   const u = run.world.units.find((o) => o.kind === k && !o.summon && o.team === 'hero');
