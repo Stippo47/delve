@@ -117,7 +117,7 @@ export const STATUSES = {
   debuff: { name: 'Weakened', desc: 'Something is holding it back right now.' },
   rage: { name: 'Enraged', desc: 'Faster and tougher while it lasts.' },
   radiance: { name: 'Radiance', desc: 'Dazzled by holy light: attacks slower and much weaker. Full up, it shines.' },
-  radiant: { name: 'Radiant', desc: 'Shining: can't attack, and everyone close by is dazzled by the glow.' },
+  radiant: { name: 'Radiant', desc: 'Shining: it cannot attack, and everyone close by is dazzled by the glow.' },
   curse: { name: 'Cursed', desc: 'Heals barely take, then not at all, and blows land harder. Full up, it is hexed.' },
   hexed: { name: 'Hexed', desc: 'Its next attack or ability turns on it: blows hurt itself, heals hurt the friend, summons change sides.' },
 };
