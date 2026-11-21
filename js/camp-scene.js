@@ -174,7 +174,7 @@ export function makeScene(canvas, api) {
     const list = [...figs.values()].filter((f) => f.state === 'idle' || f.state === 'walk');
     for (let i = 0; i < list.length; i++) for (let j = i + 1; j < list.length; j++) {
       const a = list[i], b = list[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1;
-      if (d < 34) { const p = (34 - d) * 0.25; a.x -= dx / d * p; a.y -= dy / d * p; b.x += dx / d * p; b.y += dy / d * p; }
+      if (d < 44) { const p = (44 - d) * 0.25; a.x -= dx / d * p; a.y -= dy / d * p; b.x += dx / d * p; b.y += dy / d * p; }
     }
   }
 
@@ -183,6 +183,7 @@ export function makeScene(canvas, api) {
     if (!running) return;
     raf = requestAnimationFrame(frame);
     const dt = Math.min(0.05, (now - last) / 1000 || 0.016); last = now;
+    if (Math.abs(canvas.clientHeight - H) > 1 || Math.abs(canvas.clientWidth - W) > 1) resize(); // --app-h set late, rotation
     step(dt); render(dt);
   }
   function step(dt) {
