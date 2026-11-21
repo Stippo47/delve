@@ -286,3 +286,6 @@ Highlights: elites for every enemy kind; 3 harder dungeons; stronger upgrades an
 Plan, contracts and the designer's words: `docs/BUILD-v4.md`; raw answers: `docs/riffle-log/2026-11-21-round8.txt`; roster proposal: `docs/ROSTER.md` (deck roster2, gated).
 Key rulings: levels are permanent and give skill points (no levelling reset per run); the tree is a big web with stat nodes; gold buys equipment, heroes, potions; slots come from boss kills; beat a boss to open the next dungeon; 3 floors of 7 rooms, two mini-bosses then the boss, floors differ in kind; checkpoints per floor; leaving mid-floor costs 20%; a mini-boss tier any kind can be; waves never smaller, +50% enemies, much harder scaling; statuses Radiance (angels) and Cursed (ghosts); summons black-outlined with a hue shift; UI again from scratch; 4 puddle styles and 4 enemy-HP styles to pick from; a showcase of every ability.
 My calls: gems are dropped (gold only); hero cards were buttons, which iPhone Safari lays out wrongly: now divs (0.8.2).
+
+## Round 9 (2026-11-21)
+Rulings and lanes: `docs/BUILD-v5.md`; the designer's words (47 cards: roster, showcase, art, 0.9 report): `docs/riffle-log/2026-11-21-round9.txt`.

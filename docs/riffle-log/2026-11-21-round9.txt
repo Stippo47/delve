@@ -1,0 +1,446 @@
+Riffle round 9 answers (raw)
+
+delve / art / art-round7: "Art round 7: your round-6 notes"
+  fixes (Exactly your notes): GO, picked: Marksman A, beard, Gladiator, Werewolf human, Werewolf, Bat, Dragonborn A, Ghost A, sheet, Ghost B, wisp, Ogre, Orc, Troll A, mohawk, Troll A, mohawk (before), Lizard blade A, Lizard blade B, Croc A, Lizard spear B, Snowman
+      item ghost-b (Ghost B, wisp): " Remove the sliver on their back for this and the other ghost I liked. "
+      item greenskin-orc (Orc): "Wider mouth "
+      item greenskin-troll-a (Troll A, mohawk): "Keep this but not as a troll "
+      item greenskin-troll-a-before (Troll A, mohawk (before)): "Liked this ones overall shape more. Fix face and make like 2x bigger overall and will look pretty good . Also needs a boulder "
+  DECK: done (1 of 1 answered)
+
+delve / runs / roster2: "The enemy roster: every one described"
+  rules (How the roster works): YES on the card. Its parts: 4 yes
+      part variants (Variants): YES
+      part elites (Elites): YES
+      part mini-bosses (Mini-bosses): YES, "1 extra move than the elites"
+      part floors (Floors): YES
+  wildwood (1. The Wildwood): YES on the card. Its parts: 6 yes, 2 rethink, 1 idk
+      part wolf (Wolf): YES
+      part dire-wolf (Dire wolf): YES
+      part slime (Slime): YES, "Shouldn’t leave a corpse"
+      part moss-slime (Moss slime): RETHINK, "Big slime. Spits into 2 normal slimes which split into 2 small slimelits. Can spit slime balls. 
+Note This is not an elite. 
+
+And poison slime, adds poison to those it touches, when it splits it leaves behind a poison aura for a bit. Ofc immune to poison. "
+      part goblin (Goblin): YES
+      part orange-goblin (Orange goblin): YES
+      part bandit (Bandit): RETHINK, "Many variants 
+
+1 sword and torch
+Great sword 
+Axe
+Sword and shield 
+Spear
+2 daggers"
+      part bandit-archer (Bandit archer): IDK, "“Behind cover” more trouble than it’s worth."
+      part poacher (Poacher): YES, "Net is an ability on cooldown. Attack is a bow. Elite variant will leave snares"
+  wildwood-2 (1. The Wildwood, part 2): YES on the card. Its parts: 8 yes
+      part bandit-brute (Bandit brute): YES
+      part thornback-boar (Thornback boar): YES
+      part sproutling (Sproutling): YES, "Attack is a short ranged dash.
+When rooted shoots a slow projectile/becomes a weak turret"
+      part ent (Ent): YES, "Roots entangle status effect 
+
+Entangle, makes it so you move very slow and your attacks and movement cause slight damage. 
+Burst effect makes it so you are rooted, no movement for a bit but can still attack slowly while taking a bit of damage overtime and more damage when you attack. "
+      part wisp (Wisp): YES, "Doesnt zap. "
+      part the-alpha (The Alpha): YES
+      part the-bandit-chief (The Bandit Chief): YES, "Whistle summons 3 random lower bandits or a wolf. 
+
+Smoke bomb on self appears somewhere else seconds later"
+      part the-elder-ent (The Elder Ent): YES, "When burning takes double damage, all of its attacks do burn, and attacks faster. Immune to all other effects"
+  warren (2. The Warren): YES on the card. Its parts: 8 yes, 1 idk
+      "Goblin that throws spears (which come back immediately), suicide bomber. Runs at enemy, stands next to them for a moment then explodes, needs to be killed quickly, mice (as now) goblins keep them as pets, and dynomice (mice strapped with a stick of dynomite, mouse variant, the boss could summon them)"
+      part goblin-hobgoblin-orc-orc-shaman-troll-ra (Goblin, Hobgoblin, Orc, Or): YES
+      part goblin-bomber (Goblin bomber): YES
+      part wolf-rider (Wolf rider): YES, "Uses spear."
+      part frost-shaman (Frost shaman): YES
+      part rock-troll (Rock troll): YES, "Its boulders stagger. Rolls boulders slowly. Walks around with a boulder infront of it rolling it, turning slowly like a car. When enemy stands in front of it it will either roll the boulder towards them (they let go) heavy knockback and stagger or charge at them with the boulder. When they roll the boulder at enemy it will eventually slow down and they will go grab it again. Their boulder is immune to damage and has its own hit box, boulder disappears when troll dies. 
+
+The base troll should also attack with a boulder. But its boulder has a health pool and can break. 
+
+The elite version can attract the boulder back and boulder is 25% bigger"
+      part drummer (Drummer): YES
+      part the-beastmaster (The Beastmaster): IDK
+      part the-twin-trolls (The Twin Trolls): YES, "Expand upon. "
+      part the-warboss (The Warboss): YES, "Chieftain. 
+
+More abilities. "
+  sewers (3. The Sewers): YES on the card. Its parts: 5 yes
+      part rat-slime-lizardman-lizard-blade (Rat, Slime, Lizardman, Liz): YES
+      part plague-rat (Plague rat): YES, "Also rat king. Jumble of rats all  packed together, as it takes damage it releases a rat say it has 10 rats inside of it and 100hp, if it takes 50 damage it would release 5 rats all at once. On death drops 3 more rats for a total of 13. The sprite shouldn’t just look like the rat sprite now layered ontop of itself a few times, more effort than that. "
+      part sludge-slime (Sludge slime): YES, "The base slime is blue, sludge is a dark brownish green, toxic slime is lime green. 
+
+Sludge slime moves 2x as fast when burning and on death leaves an oil puddle which immediately burns if it dies burning leaving no small slimes. "
+      part croc (Croc): YES, "“Rolls”? Should just drag instead. Does more damage to wet enemies 
+Has 2 axes, bite is an ability. "
+      part sewer-crab (Sewer crab): YES, "Circles in, in wide circles. Like 80 circle 20% forward. Always faces target. When target is close pinches them. Quite fast. 
+
+Blue crab shoots slow moving bubbles that wet. 
+
+Green crab like blue but poison bubbles. Shoots 2 in a row"
+  sewers-2 (3. The Sewers, part 2): YES on the card. Its parts: 2 rethink, 3 yes
+      part the-drowned (The Drowned): RETHINK
+      part leech (Leech): YES, "Brain leach. Makes target fight allies, can still be knocked off, any damage from allies to controlled ally will go to leach. 
+
+Blood leach. Red. Leaches, gets off then shoots the blood as projectiles, then repeats. "
+      part the-rat-king (The Rat King): RETHINK, "Oh I accidentally made this idea. Design a new boss. Maybe the slime king? The great ooze"
+      part the-lizard-chief (The Lizard Chief): YES, "More abilities "
+      part the-thing-in-the-cistern (The Thing in the Cistern): YES, "Good except the water level rises idea."
+  crypt (4. The Crypt): YES on the card. Its parts: 4 yes, 2 rethink
+      part rattler-sword-bow-spear-mace-gaper-brute (Rattler (sword, bow, spear): YES
+      part ghost (Ghost): YES
+      part banshee (Banshee): YES, "Maybe gives a new status fear? Makes run away, at burst will give terror will waste an ability on nothing/ misfire. "
+      part golden-skeleton (Golden skeleton): YES
+      part bone-hound (Bone hound): RETHINK, "Ability could be given to skeleton variant though. Harrowing skeletons. Revive 1 time after death. On revival makes small burst of curse around them. "
+      part acolyte (Acolyte): RETHINK
+  crypt-2 (4. The Crypt, part 2): YES on the card. Its parts: 3 rethink, 2 yes
+      part cursed-armour (Cursed armour): RETHINK, "Already a gimmick.  Maybe hands and what’s in them are their own invulnerable entities that float around them attacking on their own. Like a sword and shield floating 0-2 body widths away, can bring in and out. 
+Can open hood to shoot a straight beam of fire. "
+      part wraith (Wraith): RETHINK
+      part the-grave-warden (The Grave Warden): YES
+      part the-ossuary (The Ossuary): RETHINK
+      part the-bone-king (The Bone King): YES
+  frost (5. The Frost Hollow): YES on the card. Its parts: 6 yes, 1 rethink, 2 idk
+      part bat-snowman-hunter-spider-momma-spider-o (Bat, Snowman, Hunter spide): YES, "Ogre no"
+      part frost-wolf (Frost wolf): YES
+      part ice-slime (Ice slime): YES, "No leaves ice trails. 
+
+All slimes shoot move in forward burst, pause then move again. When this slime does it will spawn a small cold aura around itself where it “lands” "
+      part frost-spider (Frost spider): YES
+      part yeti (Yeti): YES, "Should have the same shape and fighting style as trolls. It instead rolls its “boulders” as large snowballs it always throws, can fight melee too hits stagger, snowballs heavy cold. No roar "
+      part icicle-sprite (Icicle sprite): YES, "Make this the wraith. Cold ghost that spawns icicles."
+      part the-brood-queen (The Brood Queen): RETHINK
+      part old-frost (Old Frost): IDK
+      part the-winter-queen (The Winter Queen): IDK
+  ember (6. The Ember Deep): YES on the card. Its parts: 6 yes, 2 rethink, 1 idk
+      part imp-fire-slime-devil-demon-dragonborn (Imp, Fire slime, Devil, De): YES
+      part fire-spider (Fire spider): YES
+      part hellhound (Hellhound): YES
+      part cinder-bat (Cinder bat): YES
+      part magma-golem (Magma golem): RETHINK
+      part ash-wraith (Ash wraith): IDK
+      part the-pit-lord (The Pit Lord): YES
+      part the-dragonborn-champion (The Dragonborn Champion): RETHINK
+      part cinder-the-old-drake (Cinder, the Old Drake): YES, "Very large, made of multiple components. No wings. No flying. 
+Fire call that drops fireballs from the sky as an ability. 
+Scorch. Shoots a narrow cone of flames forwards head turning slowly. Obstacles block it. 
+
+More abilities."
+  spire (7. The Gilded Spire): YES on the card. Its parts: 6 yes, 1 idk, 1 rethink
+      part cherub-angel-seraph (Cherub, Angel, Seraph): YES
+      part fallen-angel (Fallen angel): YES
+      part sun-blade (Sun blade): YES
+      part choir-sprite (Choir sprite): YES
+      part gilded-golem (Gilded golem): YES
+      part the-twin-heralds (The Twin Heralds): YES, "They have abilities that separate them. "
+      part the-archon (The Archon): IDK
+      part the-hollow-saint (The Hollow Saint): RETHINK
+  dunes (8. The Sunken Dunes (new)): YES on the card. Its parts: 4 yes, 1 idk, 1 rethink
+      part scarab (Scarab): YES, "Near hero. 
+Golden variant that is immune to status effects completely and has more hp. Give this quality to the golden skeleton. I might remove the bone ability from the skeleton and only have it on the elite version "
+      part cobra (Cobra): YES
+      part golden-cobra (Golden cobra): IDK
+      part jackal-guard (Jackal guard): YES
+      part mummy (Mummy): YES
+      part scorpion (Scorpion): RETHINK
+  dunes-2 (8. The Sunken Dunes (new), part 2): YES on the card. Its parts: 3 rethink, 1 yes, 1 idk
+      part sand-mage (Sand mage): RETHINK, "Summons dust devils, spin quickly, moves straight, heavy knock back. Blocks projectiles. "
+      part sand-wurm (Sand wurm): YES, "Should probably be a boss"
+      part the-tomb-guard (The Tomb Guard): RETHINK
+      part the-wurm-mother (The Wurm Mother): RETHINK
+      part the-sun-pharaoh (The Sun Pharaoh): IDK
+  foundry (9. The Clockwork Foundry (new)): YES on the card. Its parts: 5 yes
+      "Saw blade. Runs along the walls quickly, half submerged hurting enemies hit."
+      part gear-sprite (Gear sprite): YES, "Doesnt target just moves. Pierces. 
+Cog sprite, slightly homes in on target in direction of movement. 
+
+Both are top down so u see it as a circle and bounces off walls in a diagonal "
+      part bomb-bot (Bomb bot): YES, "Lights its fuse when it noticed you and runs in a straight line. And explodes after a set time. 
+
+Auto bomb bot, can turn itself off if it over shoots at the end of the burn timer, turning slowly to face target again starting over. 
+
+Both explode when burned"
+      part automaton (Automaton): YES
+      part steam-turret (Steam turret): YES, "More turret variants. Flame thrower, machine gun, laser, etc. 
+
+Mortar. Shoots balls into the sky that fall back down on targets position. Has a fire and poison variant. "
+      part tesla-coil (Tesla coil): YES
+  foundry-2 (9. The Clockwork Foundry (new), part 2): YES on the card. Its parts: 4 yes, 1 rethink
+      "Bee themed enemies. 
+
+Bee (metallic) spawns in swarms does a long ranged straight dash. Moves around in zigzags. Wasp circles around target shooting weak short ranged “stingers” 
+Hornet, like wasp but shoots 5 on repeat and can do the bee dash. Alternates. 
+All 3 come in 3 variations copper, bronze, and steel, each more hp and damage then the last."
+      part repair-drone (Repair drone): YES
+      part foundry-smith (Foundry smith): YES
+      part the-foreman (The Foreman): YES
+      part the-twin-pistons (The Twin Pistons): YES
+      part the-great-engine (The Great Engine): RETHINK, "You know the terraria skeleton boss? Yeah do that here. Separate hands and head. Can have different abilities, but the body plan should be that. "
+  Deck notes: "Snake enemies/ chains. Follow the leader segments, each with its own hit box. 
+
+Wall mounted enemies. Stationary enemies/ turrets. 
+
+Burrowing enemies (leave being trail of dug up dirt) 
+
+Spirits. Elemental. Support. shoot a ray to closest target granting their attacks with their element, on death burst with their elemental effect. Also makes them immune from that element, Can even have healing and haste spirits, and immunity spirits (reduces damage by a lot until killed) 
+
+Normal golem. "
+  DECK: done (15 of 15 answered)
+
+delve / art / showcase: "Showcase: every ability, and style picks"
+  puddles (Ground puddles: 4 styles): IDK
+      "Not fully happy. Make more variants/styles. 
+
+Also requirement, when 2 bodies overlap with each other they should merge into 1 body, they can’t be fixed sprites. The dark parts of oil will merge with dark parts and the lighter will merge after with each other, then the outline will go around everything."
+  ehp (Enemy health: 4 ways): GO, picked: Bar, Arc
+      item ehp1 (Bar): "Show onto of them. "
+      item ehp2 (Arc): "Maybe tankier enemies could get these versions. Also flipped to be ontop. Also moved a bit away from them so they arent so close. "
+  paladin (Paladin): GO, picked: Sword (attack), Guard, Consecrate
+      item paladin-attack (Sword (attack)): "Slash is pretty good. "
+      item paladin-shieldBash (Shield Bash): "Doesnt look like a bash. "
+      item paladin-guard (Guard): "Make each dash look like a chain loop and render underneath. Should be wider. Protected entity should get a golden border around their outline (which should be removed from elites, as they should simply just be bigger versions of themselves, maybe with a tint or twinkle) a coloured border around their border should now be kinda reserved for protection/ invulnerability.
+
+I don’t like the shield icon that should up. Remove the +. Have it appear directly over them, and fade in and grow then fade out"
+      item paladin-consecrate (Consecrate): "Don’t like the cracks under them everything else if fine. Maybe add a faint ring around the aura. "
+  tower (Tower): GO, picked: Flanged mace (attack), Charge, Ground Pound
+      item tower-attack (Flanged mace (attack)): " Maybe a bit faster. Remove that last frame in the slash effect. "
+      item tower-holdTheLine (Hold the Line): "Not good. Should for 1 hold shield in front. "
+      item tower-charge (Charge): "Don’t like the animation they do but everything else is good "
+      item tower-groundPound (Ground Pound): "Don’t like the cracks and it’s rendering ontop of them. Should show below entities. "
+  archer (Archer): GO, picked: Bow (attack), Barrage, Frost Arrow, Roll
+      "Overall pretty nice"
+      item archer-attack (Bow (attack)): "How should be held slight forward a bit, I want to see what the arrow drawn to scale looks like while being drawn.
+Bow string is also bends forwards a bit instead of being straight. 
+
+Otherwise good "
+      item archer-barrage (Barrage): "Speed of each arrow should be staggered. 
+Should show something unique when charging the attack."
+      item archer-frostArrow (Frost Arrow): "Slightly Longer shaft. 
+Also needs a readable charge visual. Maybe like cold particles going into the top of the bow from all around Them.
+
+Burst particles look really nice, except that inner ring not going all the way around, stopping on the dummy. It looks like a star. Intentional? Looks good. 
+Maybe add some snowflake particles around that linger? "
+      item archer-roll (Roll): "Good. Looks more like a dash though. Maybe have them do a 360? "
+  twinfang (Twinfang): GO, picked: Fan of Knives
+      item twinfang-attack (Twin daggers (attack)): "Don’t slash effects. Doesnt even look like it comes from dagger. Improve. "
+      item twinfang-backstab (Backstab): "Smoke cloud left behind too small. 
+Different style for the one they appear in and disappear in "
+      item twinfang-dash (Dash): "Meh. 
+Also layered circles should be a union. 
+This cloud also needs to follow design pattern of whatever I choose for the puddles design art. "
+      item twinfang-fanOfKnives (Fan of Knives): "Good. Maybe should rapidly go 1 at a time in a circle as they rapidly spin. 360. 
+
+Thrown daggers could also look a bit better. "
+  wildmane (Wildmane): GO, picked: Greatsword (attack), Rage, Leap
+      item wildmane-attack (Greatsword (attack)): "Sweep arc too wide. Slash lingers for a frame or 2 too long also end of slash might be too round. "
+      item wildmane-rage (Rage): "Have the ring particles render underneath entities. 
+
+Make bubbles turn into “#%?!$” signs. "
+      item wildmane-leap (Leap): "Vertical y offset slightly, shadow stays in true position. 
+
+Crack problem like the tower I believe. 
+They also fade in and out rapidly which looks off"
+      item wildmane-cleave (Cleave): "Animation not good. Poorest of the bunch. Should spin or something. The animation of the body also just looks bad. "
+  berserker (Berserker): GO, picked: Unstoppable
+      item berserker-attack (Flail (attack)): "Weird slash effect. Also his attack should be a radius on the ground in front of him. Can have spikey rings around it. Is an aoe attack. Small radius"
+      item berserker-shockwave (Shockwave): "Meh. Don’t like the spikes. "
+      item berserker-whirl (Whirl): "Bigger balls. Should match the style of his weapons head. Particles are showing up where they aren’t hitting anything. They can attack with their hand while this is happening right? "
+      item berserker-unstoppable (Unstoppable): "Get a white yellow border around their black border. Needs better sparkle effect. 
+Also weird side effect they don’t seem to idle animation while in this state?"
+  granny (Granny Reaper): GO, picked: Scythe (attack), Reap, Hook, Old Bones, (your pick, nothing tapped)
+      item granny-attack (Scythe (attack)): "Wider slash line width. Better animation of body too if u can "
+      item granny-reap (Reap): "Should do a spin. Red orbs should pop off each enemy hit and home into her. 
+Maybe slash is also a bit too fast. "
+      item granny-hook (Hook): "Chains underneath her. 
+Hooks should pull stronger (do dummies just have strong anchoring? If so turn it off) should also stagger. 
+The hooks shooting out should be slower. 
+
+Maybe make hooks look like scythe blades "
+      item granny-oldBones (Old Bones): "Don’t like. 
+Don’t like the bones or the ball particle effect. 
+What does it look like at lvl 1? "
+  pyromancer (Pyromancer): GO, picked: Fireball, Flame Wall, Inferno
+      item pyromancer-attack (Spark (attack)): "Meh. Also white star blocks most of its unique hit effect. 
+
+Should apply slight burn to targets. 
+Projectile will have a slight aoe. "
+      item pyromancer-fireball (Fireball): "Needs a better trail. 
+Also a slight charge up animation "
+      item pyromancer-flameWall (Flame Wall): "Front flames should render ontop back flames. 
+Also more variation/ stagger them. 
+Flames should render behind entities. "
+  frost (Frost Mage): GO, picked: Frost Nova
+      item frost-attack (Snow bolt (attack)): "Same as fire mage 
+
+should apply slight cold to target. 
+Shards will burst out from behind target. Same ones when someone shatters. Only like 2-3 of them "
+      item frost-iceShard (Ice Shard): "Particle trails.
+Middle spike should be slightly bigger (and maybe higher stats) "
+      item frost-frostNova (Frost Nova): "Lingering snow flakes/ cold aura visual. 
+Charge up animation? 
+Maybe a bit more visually "
+      item frost-iceWall (Ice Wall): "Got someone cold who wasn’t even near it. Ice wall shoulf also only be like 5 elements top down. Ice chunks. Ragged. Not spikes. Like look boulders. 
+Should also show a visual of them coming from him outwards"
+  storm (Storm Mage): GO, picked: Chain Lightning, Thunderclap
+      item storm-attack (Zap (attack)): "Should shoot a chain of lighting from them to target that slightly shocks. Not a zap projectile "
+      item storm-chainLightning (Chain Lightning): "Each arm of lighting should merge with main branch having 1 outline. 
+Base of these arms should also come directly from the main chain. "
+      item storm-stormCloud (Storm Cloud): "I want this ability reworked/ changed to something different. I don’t like it rn. 
+Maybe 3 charges of a “Zeus bolt” projectile. Which will mark targets. The main attack will bounce between anyone who has been marked dealing heavy shock to them. Mark will go away after it’s been used once. "
+  cleric (Cleric): GO, picked: Light orb (attack), Mending Ray, Sanctuary, Smite, (your pick, nothing tapped)
+      item cleric-attack (Light orb (attack)): "Should shoot 3 out with a slight spread 1 after the other in a short duration. Each has slight homing. Each is fairly slow. Each is 1/3 as strong and half as big as original projectile. Should apply slight radiance if all 3 hit 1 target. "
+      item cleric-mend (Mending Ray): "Should render underneath. Should just be a straight beam. Don’t like how busy this one is.
+Entity being healed should slowly flash yellow  white on repeat. Smooth transition. Same frequency as the glow effect on the night but entire sprite. "
+      item cleric-sanctuary (Sanctuary): "Why is only the back target taking damage? 
+Radius is too small. 
+Maybe have a faint ring around each of the star points.
+The flashing heating effect should show on all allies inside of it (preview should show the knight damaged)"
+      item cleric-smite (Smite): "The bottom of ray should be rounded more so it’s a full half circle. 
+Hit effects are being shown from 1 side when the effect is directionless. 
+
+Should give radiance. 
+
+Also staggered enemies should shake rapidly when bursted. "
+  bard (Bard): GO, picked: Sour note (attack), War Song, Lullaby, Encore, (your pick, nothing tapped)
+      item bard-attack (Sour note (attack)): "Should be slower, shoot out 4 in a spread, all of which pierce. 
+Hand on guitar should strum it."
+      item bard-warSong (War Song): "More particle effect. Maybe a ring under anyone affected. 
+Also looks like animation of night freezes when effected by status effect "
+      item bard-lullaby (Lullaby): "Should put everyone to sleep at lvl 3
+Don’t like the light arc effect shown underneath. Improve "
+      item bard-encore (Encore): "Don’t like. Too simple overall. Star doesnt animate right."
+  druid (Druid): GO, picked: Rejuvenate
+      item druid-attack (Thorn (attack)): "Entangle slightly "
+      item druid-entangle (Entangle): "Not good overall. Especially don’t like the vines.
+Does the entangled effect just vanish abruptly like that ? "
+      item druid-rejuvenate (Rejuvenate): "Ring show above entities. More leaves coming off and from any part in their hit box. Looks like the only appear on a line about their middle."
+      item druid-callWolf (Call Wolf): "Ok they will be changed but I don’t like the wolf sprites. They should be capsule shaped but they are too complex also make sure the ware wolf and them match in style. 
+The bite visual also looks bad. 
+
+She should show a summoning ring then they appear. Not instant."
+  necromancer (Necromancer): GO, picked: Bone dart (attack), Raise Dead, Life Drain, Bone Spear, (your pick, nothing tapped)
+      item necromancer-attack (Bone dart (attack)): "The flame in their right hand should be what’s shot (and removed from hand in base sprite), also hold their staff lower down. 
+Projectile will give slight curse. 
+Keep the bone projectile though.
+The cast should have them thrust staff forwards a bit. Projectile will shrink slightly overtime and speed up. It will be stronger closer to them. "
+      item necromancer-raiseDead (Raise Dead): "Too coloured. More of an unsaturated cold grey. 
+
+Summons shouldn’t have their bottom jaw and be 25% smaller. And not have weapons. Just punch. 
+But in turn they should summon more for each corpse raised. Each corpse is worth like 3 minion skeletons. They should be pretty weak overall. "
+      item necromancer-lifeDrain (Life Drain): "Render underneath necromancer but ontop of target. Less blinky. 
+3 smaller thinner tentacles should bounce of main dummy onto the ones surrounding it each are 1/4th as strong as main one. "
+      item necromancer-boneSpear (Bone Spear): "I don’t like the sprite "
+  plague (Plague Doctor): GO, picked: Miasma
+      item plague-attack (Vial (attack)): "Spawn poison cluster instead of vial. Bubbly looking. Slight poison. Starts off fast and small, grows and gets slower. At max range if it hits something it will pop dealing aoe. "
+      item plague-miasma (Miasma): "Once linger looks better this will be good, need potion vial green to match puddle green"
+      item plague-cure (Cure): "Don’t like visually. 
+
+Next attack should get all effects cleared at same strength. "
+      item plague-leeches (Leeches): "I don’t know if I like this ability. Especially with leaches becoming an entity. 
+Rework. 
+Maybe turn into a gas cloud dash off in a direction and become the doctor again. "
+  Deck notes: "New status effect with oil. 
+Sticky slow movement, easy to catch on fire. 
+Burst effect, tarred. For a short duration leave trail of small oil patches around."
+  DECK: done (17 of 17 answered)
+
+delve / runs / v09-report: "0.9.0: the overhaul"
+  loop (The game loop): GOOD on the card. Its parts: 7 good
+      part levels (Levels and points): GOOD
+      part web (The skill web): GOOD, "Hide the nodes that are not adjacent to known nodes. 
+
+Add a dev cheat to show all like how it is now. 
+
+I don’t like the button. Learn - 1 point"
+      part floors (Floors): GOOD, "Note in this clip I noticed u can’t see the knights shadow. "
+      part minis (Mini-bosses and elites): GOOD, "Ok these “mini bosses” will actually become “majors”. Mini bosses are the custom ones at the end of a floor. Majors are just stronger better elites. Majors carry 2 trinkets. Elites 1. No rage mechanic. 
+Majors can appear on any floor. 
+Note look into how you do the golden outlines for elites rn because they look wrong. "
+      part gates (Unlocks): GOOD
+      part waves (Waves and numbers): GOOD
+      part gold (Gold only): GOOD, "Gems stay. Maybe to unlock special skill tree abilities. "
+  ui (The UI, from scratch): GOOD on the card. Its parts: 1 words only, 2 decent, 2 good
+      part camp (Camp): no mark, "Do you know nuclear throne. I want the camp to have that vibe. All units are situated somewhere around a camp. Book, trader, setting, etc are all things around the camp.
+To start a run you tap the camp fire, the heroes that are going are closely circling the fire, this is where you can choose your party (the screen zooms in shows a list of everyone you have, u can select 1, then a seat around the campfire, which will swap them, if some is already there. 
+Campfire will be centred on the screen. 
+
+Any hero that isnt a part of the selected party won’t be in 1 of the 4 seats of the campfire. Will maybe be wandering around the “camp ground” 
+
+When zoomed into the fire it will show the text delve in the flames. Select it and it will show you a top down scroll able view of each dungeon in order on a map. Scrolls bottom up. On the map it will show a forest, at the bottom a clearing with a fire in the middle, then a trail up with nodes on it winding left and rights slightly but mostly up. Each biome will show on this map. 
+Each end of a floor starts as a large dot on the map, each room shows as a smaller dot, and the final boss shows as a simple skull. Every defeated level before highest checkpoint shows in white, current highest checkpoint in yellow, and undefeated in grey. "
+      part heroes (Heroes): DECENT, "Probably not going to use this but it’s good. 
+
+Instead on the camp ground u can click a hero, it will zoom in on them, having them take up the top 1/3 of the screen and the gear skills and about will show below 2/3rds "
+      part trader (Trader and Book): DECENT, "Book decent. 
+
+Trader should only show a stock of a few things, trades will reshuffle after every mission.
+
+
+Speaking of missions there should be quests. Like deliver x peasant from x to x without them dying, or kill 25 slimes, or collect x. "
+      part hud (Battle HUD): GOOD
+      part result (Result): GOOD
+  combat (Combat fixes): GOOD on the card. Its parts: 4 good, 2 problem
+      part nav (Navigation): GOOD
+      part status (Status build-up): GOOD
+      part radiance (Radiance): PROBLEM, "Don’t like how it looks. No halo "
+      part curse (Cursed): GOOD
+      part burn (Burn): PROBLEM, "Burn looks worse with flames static "
+      part king (The Bone King): GOOD, "Needs a visual overhaul for some abilities"
+  DECK: done (3 of 3 answered)
+
+delve: SENT at 2026-11-21T11:40: they answered everything in the pack and pressed Send (47 cards).
+  Start on it now. Run riffle started --pack delve --note "what you start on" first: their pack shows Working. When you have nothing left but to wait, riffle wait shows it Done.
+
+delve: thoughts
+  mwn5k4xs-ae-61w2j0: "When I played lasts the archer got stuck a lot. Just froze in a wall.
+The jitter rapidly left and right when navigating to some positions, maybe only on diagonals."
+  mwoopr8w-0-o2jf4n: "The cleric should be ranged. Weak light orb. Should not be a front line melee fighter…
+First ability should be a ray to ally that heals over time. No burst healing for first ability."
+  mwooqrhw-3-g08ysg: "I should be able to pan my camera further than the dungeons bounds slightly. Like +1/3 dungeon width."
+  mwoorx4q-6-zuy0sk: "Add a “cheat” to give unlimited currency."
+  mwoosfpv-8-o5kiya: "Party members should not search areas without anyone in them. No need."
+  mwoouq3h-d-ne4kxq: "Better hero card ui in battles. Show current hp/ max hp on health bar. 
+Swap the place of heroes and the currencies and leave button."
+  mwoov7sz-g-n8pvg7: "Spikes should go down when dungeon is beat."
+  mwoovwaa-j-920gfi: "Make anything that is on the ground that is just decor not stand out as much, they look collidable or important."
+  mwoowzyl-m-8w0k3o: "Work on pathfinding and smoothness. Still see them rapidly spin back and forth sometimes."
+  mwooxh3h-o-zdg0of: "Have the chest apear near the party members when they win. No more key needed."
+  mwoozwze-s-f2968w: "Coins that are dropped should be scattered out more. Big random radius rather than clustered. 
+Should also be quickly attracted when a party member goes near it, homing in."
+  mwop1x0h-u-7k3y2n: "This is more for riffle but allow me to edit my thoughts. I wanted to add: show the cooldowns of abilities a the party members card in the battle ui. To a previous note relating to ui but I can’t."
+  mwop3g76-x-wz2e90: "More knockback, more physical “juice”"
+  mwop5v2p-11-4bmi3z: "Add bestiary with fun descriptions. Including fun descriptions for items."
+  mwop72mh-14-2szzli: "Collision effects should happen near the surface of entity. Especially if they have a shield up, currently it looks like stuff like arrows go through shields."
+  mwop9zz8-16-7frjsc: "Also show status effects on units ui in battles. (Shrinking rink with status icon in the middle). And show items in the ui too. No text just sprite."
+  mwopbfno-18-4ab7v1: "Should be able to pause in dungeons to see more details about party setup state/ inspect stuff like statuses, items and their descriptions, etc."
+  mwopc6xu-1b-sa70ok: "Trinkets should have levels too."
+  mwopcs02-1d-cvsowb: "I don’t like the aura effects around party members like the paladins protect ability"
+  mwopg0hc-1i-2nu0kx: "More potions to be bought. Various effects like haste, faster abilities, fire immunity, iron skin, etc"
+  mwophhuc-1k-75x0ge: "Their base movement speed should be like 3-4x but ability cooldown about the same."
+  mwopjfkz-1m-kn0sj3: "Add sound effects and ambient music"
+  mwopnikn-1o-40z7kv: "Better enemy navigation. They often just wander into corners and get stuck"
+  mwopp5zc-1q-n5bewm: "Longer ttk for everyone"
+  mwoprbmx-1s-vgy6bm: "Longer attack and view range for everyone. 
+Slightly bigger hit box collider too"
+  mwopwc5t-1y-k6xqrn: "Make each dungeon harder than the last, and each level harder too. 
+More enemy variety and abilities."
+  mwopxhii-20-suyq92: "Cleric shouldn’t be able to heal themselves with their base ability"
+  mwoq9m0t-2i-l7ueys: "Another potential genre. 
+Not a dungeon crawler but a wave survival game. Waves of enemies come from all around (or just from 1 size) and the party has to defend against them. 
+
+
+Ohh idea. They are transporting a wagon carrying goods through different environments, enemies constantly spawn from all around trying to destroy your wagon. 
+Each dungeon now becomes different biomes. 
+The wagon is always moving upwards at a steady pace. Enemies spawn in from off the screen and move towards the cart to attack it. The party members and Most enemies are 3x faster than the cart, it’s pretty slow. 
+
+More rogue like vibes. You start off with 1 party member. The wagon slowly makes it from safe zone to safe zone (camps) where another character or shop may be waiting. You can hire people with the coins you pick up within a game, upgrade your character at the fire, or buy trinkets from the shop. 
+Gold is dropped my enemies attacking the cart. Still needs to be picked up or it gets left behind. 
+
+There is still meta progression."
+  mwpxd8gq-3-icoqef: "I want a board of every ability, being used on a target dummy, by who uses it. Including basic attacks. A showcase. 
+
+I also currently feel like every enemy feels pretty similar. Need more variety and flavour."
+
+NEW THOUGHTS
+  
