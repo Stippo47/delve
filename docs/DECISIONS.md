@@ -313,3 +313,24 @@ ticked; the notes below are lane V3's list (queued behind the art and hero lanes
   Reap, smoke that fades and appears at both ends of Backstab, two more Shockwave variants, three wolf-bite variants,
   the previous Entangle cast, Sanctuary as one ring through every point, simpler flail and Bone Spear, grey raised
   dead with even hands, Life Drain that grows out to its targets first).
+
+## Round 10 (2026-11-21): battle mode
+The designer: "Add a battle game mode. I can pin any unit against each other and any enemy whose dungeon I have
+defeated. So I can make a team of 10 skeletons and necromancer vs a knight and tower." Built as `js/battle.js`
+(rules), `js/battle-ui.js` and `css/battle.css` (screens); checks: `node tools/battles.mjs`. Calls made, all easy to change:
+- **Where.** A sparring ring in the camp, between the book and the trader's cart. Two sides, Blue (bottom of the
+  field) and Red (top); a side holds 20 units at most, 12 of one kind.
+- **Who.** Heroes you own, any number of each, on either side, with the skills and trinkets they have at camp (no
+  potions). Every enemy kind of a dungeon whose boss you have beaten, its mini-bosses and boss included; a kind is
+  listed under the first dungeon it appears in and fights as strong as on that dungeon's first floor. A monster's
+  tag cycles plain, elite, major (elites and majors carry their trinkets). The fighting ground is any open dungeon's look.
+- **Nothing is earned or lost**: no gold, XP, drops, book counts or resting. In a battle heroes die like anyone.
+- **Bosses on one side only** for now: a boss's moves are written against "the heroes", so a battle gives the boss's
+  side the sim's enemy team; two bosses facing each other waits for the boss lane's rewrite. A boss with its own
+  hall (the Bone King, the Elder Ent) brings it.
+- **Sides.** What a unit makes mid-fight (a split slime, called wolves, raised dead, a rat king's rats) joins its
+  maker's side (sim.js `w.actor`). Both sides carry a straight health bar and a floor ring in their colour (no body
+  outline: that stays reserved for protection).
+- **Ending.** A side with nobody standing loses. After 75 seconds everyone presses in (no fleeing, mending or calling);
+  at 4 minutes, or when the flag button is tapped, the side with more of its health left takes it.
+- **Result.** Per side and per kind: how many are left, damage dealt and taken, kills, healing; Again, Change sides, Camp.

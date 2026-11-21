@@ -32,6 +32,10 @@ export function ownerOf(u) {
   }
   return o;
 }
+// Battle mode (battle.js): S = { battle: true, rows: { [key]: { dmg, taken, heal, kills, lost } } }, one row for each
+// kind of unit on each side (u.bkey; what a unit makes mid-fight carries its maker's key, and counts for its row).
+export function battleStats(keys) { const rows = {}; for (const k of keys) rows[k] = { dmg: 0, taken: 0, heal: 0, kills: 0, lost: 0 }; return { battle: true, rows }; }
+const rowOf = (S, u) => { if (!u) return null; const r = ownerOf(u); return S.rows[(r && r.bkey) || u.bkey] || null; };
 const heroKey = (S, r) => (r && r.team === 'hero' && !r.turned && S.heroes[r.kind] ? r.kind : null);
 
 // Which part of the hero did it. src: the unit that struck (or healed); root: its owner; o: the hit's options.
@@ -52,6 +56,7 @@ const add = (m, k, n) => { m[k] = (m[k] || 0) + n; };
 export function tallyHurt(w, u, src, amt, o = {}) {
   const S = w.stats; if (!S || !(amt > 0)) return;
   const eff = Math.min(amt, Math.max(0, u.hp + amt));
+  if (S.battle) { const a = rowOf(S, src || o.by), b = rowOf(S, u); if (b && !u.summon) b.taken += eff; if (a && a !== b) a.dmg += eff; return; }
   // taken: a party hero's own body
   if (u.team === 'hero' && !u.summon && S.heroes[u.kind]) S.heroes[u.kind].taken += eff;
   if (u.team !== 'enemy') return;
@@ -62,7 +67,9 @@ export function tallyHurt(w, u, src, amt, o = {}) {
 }
 // sim.js heal: what actually came back. o.pab: the ability a lasting heal (regrowth, leeches) came from.
 export function tallyHeal(w, u, src, got, o = {}) {
-  const S = w.stats; if (!S || !(got > 0) || u.team !== 'hero') return;
+  const S = w.stats; if (!S || !(got > 0)) return;
+  if (S.battle) { const a = rowOf(S, src || u); if (a) a.heal += got; return; }
+  if (u.team !== 'hero') return;
   const root = ownerOf(src), k = heroKey(S, root); if (!k) return;
   const h = S.heroes[k], s = sourceOf(src, root, o);
   h.heal += got; add(h.src.heal, s, got);
@@ -70,6 +77,7 @@ export function tallyHeal(w, u, src, got, o = {}) {
 // sim.js hurt, just before kill(): a party hero going down, or an enemy killed (credited to the hero behind the blow).
 export function tallyDown(w, u, src, o = {}) {
   const S = w.stats; if (!S) return;
+  if (S.battle) { const a = rowOf(S, src || o.by), b = rowOf(S, u); if (b && !u.summon && u.bkey) b.lost++; if (a && a !== b) a.kills++; return; }
   if (u.team === 'hero' && !u.summon) { if (S.heroes[u.kind]) S.heroes[u.kind].downs++; return; }
   if (u.team !== 'enemy') return;
   const by = src || o.by, root = ownerOf(by), k = heroKey(S, root); if (!k) return;

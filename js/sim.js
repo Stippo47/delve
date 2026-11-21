@@ -32,7 +32,9 @@ const emit = (w, ev, ...a) => w.on[ev] && w.on[ev](...a);
 // ---------------------------------------------------------------- spawning
 export function spawn(w, kind, x, y, opts = {}) {
   const d = DEFS[kind];
-  const team = opts.team || d.team;
+  // Battle mode (battle.js): whatever a unit makes mid-fight (a split, called help, a raised body) joins its maker's
+  // side: w.actor is the unit acting or dying right now (set in step, kill and the delayed callbacks).
+  const team = opts.team || (w.battle && w.actor ? w.actor.team : d.team);
   const hero = d.team === 'hero';
   const lvl = opts.level || 1;
   const mult = opts.mult || 1;
@@ -40,19 +42,24 @@ export function spawn(w, kind, x, y, opts = {}) {
   const u = {
     id: NEXT_ID++, kind, def: d, team, x, y, vx: 0, vy: 0, kx: 0, ky: 0, dvx: 0, dvy: 0,
     r: d.r * (opts.scale || 1), vr: (d.vr || d.r) * (opts.scale || 1), mass: d.mass * (opts.scale || 1), maxHp, hp: opts.hp != null ? Math.min(opts.hp, maxHp) : maxHp,
-    dmgMul: hero ? levelDmg(1, lvl) : (0.65 + 0.35 * mult) * (team === 'enemy' ? FEEL.enemyDmg : 1), level: lvl,
+    dmgMul: hero ? levelDmg(1, lvl) : (0.65 + 0.35 * mult) * (team === 'enemy' || w.battle ? FEEL.enemyDmg : 1), level: lvl,
     facing: team === 'hero' ? 0 : Math.PI, atkT: rand() * d.atkCd, abilT: (d.abilCd || 0) * rrange(0.3, 0.7),
     mode: 'wander', modeT: 0, thinkT: rand() * 0.4, abilThinkT: rand() * 0.5, target: null, targetT: 0,
     st: freshStatuses(), frozenT: 0, stunT: 0, rootT: 0, sleepT: 0, koT: 0, buffs: [], later: null, freezeImmune: 0, dotAcc: 0,
     flashT: 0, invulnT: 0, act: null, dead: false, downed: false,
     trinkets: opts.trinkets || [], trinketHooks: trinketHooks(opts.trinkets), hasKey: !!opts.hasKey,
     strafeSign: chance(0.5) ? 1 : -1, wanderA: rand() * TAU, hazardT: 0, forcedGoal: null,
-    gen: opts.gen || 0, bob: rand() * TAU, lastAttackT: -9, aggro: team === 'hero', potions: opts.potions || 0, path: null, pathT: 0, pathGoal: null,
+    gen: opts.gen || 0, bob: rand() * TAU, lastAttackT: -9, aggro: team === 'hero' || !!w.battle, potions: opts.potions || 0, path: null, pathT: 0, pathGoal: null,
     home: { x, y }, atkMul: 1, moveMul: 1, mvA: hero ? 0 : Math.PI, spd: 0, sdx: 0, sdy: 0, lungeT: 0, recoilT: 0, hitT: 0, hitA: 0, tauntBy: null, tauntT: 0,
   };
+  if (w.battle && !opts.team) u.adopt = true; // (step: takes the side of whoever it says called it)
+  if (w.battle && w.actor) u.bkey = w.actor.bkey; // (stats.js: what a unit makes counts for its row)
   w.units.push(u);
   return u;
 }
+// In a battle either kind of unit can be on either side, so what a unit is (a hero, or a monster) can't be read off
+// its side there. In a run it is the side, as ever.
+const heroic = (w, u) => (w.battle ? u.def.team === 'hero' : u.team === 'hero');
 
 const alive = (u) => !u.dead && !u.downed;
 // Ethereal units (a Wraith Veil ghost) are nobody's opponent or ally: they can't be targeted, hit or helped.
@@ -133,7 +140,9 @@ function turnSummon(w, s, by) {
   fx(w, { type: 'hex', kind: 'turn', unit: s, x: s.x, y: s.y, r: s.vr * 1.3, max: 0.8 });
 }
 // A visual effect, optionally with a tick (a lasting zone that does something every `every` seconds).
-export function fx(w, f) { f.t = 0; f.max = f.max ?? f.dur ?? 0.5; w.fx.push(f); return f; }
+export function fx(w, f) { f.t = 0; f.max = f.max ?? f.dur ?? 0.5; if (w.battle && !f.by) f.by = w.actor || null; w.fx.push(f); return f; }
+// Run a delayed callback as the unit it belongs to (battle mode: what it spawns is that unit's side's).
+function actAs(w, by, fn) { const was = w.actor; w.actor = by || was; try { return fn(); } finally { w.actor = was; } }
 export function zone(w, z) { return fx(w, { type: 'zone', ...z, max: z.dur, acc: 0 }); }
 // A wall that melts away after a while (the A* grid is rebuilt when it comes and goes).
 export function wallRect(w, r, dur, kind) {
@@ -177,7 +186,7 @@ function chooseTarget(w, u) {
     // how many of my side are already on it, and how many of its side stand around it
     let on = 0; for (const a of mates) if (a.target === o) on++;
     let crowd = 0; for (const q of opp) if (q !== o && dist(q.x, q.y, o.x, o.y) < 95) crowd++;
-    if (u.team === 'hero') {
+    if (heroic(w, u)) {
       s -= on * 0.22;                                   // spread out: prefer enemies nobody is on yet
       s -= crowd * (k === 'rogue' ? 0.4 : 0.08);        // don't dive into a pack (the rogue most of all)
       if (k === 'rogue' && crowd === 0) s += 0.45;      // the rogue hunts the ones on their own, even far off
@@ -189,10 +198,10 @@ function chooseTarget(w, u) {
     else if (k === 'knight') {
       s += o.target && o.target.kind !== 'knight' ? 0.35 : 0;
       // protect: go for whoever is on a hurt teammate
-      if (o.target && o.target.team === 'hero' && o.target !== u && hpRatio(o.target) < 0.45) s += 0.9;
+      if (o.target && o.target.team === (w.battle ? u.team : 'hero') && o.target !== u && hpRatio(o.target) < 0.45) s += 0.9;
     }
     else if (k === 'rat') { s += o.kind === 'archer' ? 0.35 : 0; }
-    if (u.team === 'enemy' && u.tauntT > 0 && u.tauntBy === o) s += 0.85; // the knight drew its attention
+    if ((u.team === 'enemy' || w.battle) && u.tauntT > 0 && u.tauntBy === o) s += 0.85; // the knight drew its attention
     if (u.focusT > 0 && u.focus === o) s += 1.2; // round 9: a howl (wolves) or a call turns a pack onto one hero
     if (o === u.target) s += 0.35; // stickiness
     if (s > bestS) { bestS = s; best = o; }
@@ -227,7 +236,7 @@ function scoreModes(w, u) {
     const inRange = gap <= u.def.range;
     sc.approach = inRange ? 0.1 : 1;
     sc.hold = inRange ? 1.05 : 0;
-    if (u.team === 'hero' && hpRatio(u) < 0.18) sc.retreat = 0.5;
+    if (heroic(w, u) && hpRatio(u) < 0.18) sc.retreat = 0.5;
   } else if (role === 'ranged') {
     let near = Infinity;
     for (const o of opponents(w, u)) near = Math.min(near, dist(u.x, u.y, o.x, o.y) - o.r);
@@ -286,7 +295,7 @@ function quietSide(w, u) {
 //   + { t (seconds to the hit), max, team (who made it), src?, kind ('bone' | 'soul' | 'blade' | 'water': the colour),
 //       hit?: { dmg, ...hurt options }, onFire?(w, z) }
 // Pushed with addDanger; the sim counts t down, strikes at 0 (only if src is still standing), and drops it soon after.
-export function addDanger(w, z) { z.max = z.max || z.t; z.age = 0; w.danger.push(z); return z; }
+export function addDanger(w, z) { z.max = z.max || z.t; z.age = 0; if (w.battle && !z.by) z.by = z.src || w.actor || null; w.danger.push(z); return z; }
 export function inZone(z, x, y, pad = 0) {
   switch (z.shape) {
     case 'circle': return dist2(x, y, z.x, z.y) < (z.r + pad) ** 2;
@@ -308,7 +317,7 @@ function dangerTick(w, dt) {
     z.done = true;
     if (z.src && (z.src.dead || z.src.downed)) { z.cancelled = true; continue; }
     if (z.hit) for (const o of w.units) if (alive(o) && o.team !== z.team && inZone(z, o.x, o.y, o.r * 0.5)) hurt(w, o, z.hit.dmg, z.src || null, { noDodge: true, ...z.hit });
-    if (z.onFire) z.onFire(w, z);
+    if (z.onFire) actAs(w, z.src || z.by, () => z.onFire(w, z));
   }
   w.danger = w.danger.filter((z) => z.t > -0.3);
 }
@@ -383,13 +392,13 @@ function steer(w, u, gx, gy, opts = {}) {
     }
     for (let i = 0; i < DIRS; i++) { const tt = rayToRoundRect(u.x, u.y, DIR_X[i], DIR_Y[i], r, R); if (tt < look) danger[i] = Math.max(danger[i], 1 - tt / look); }
   }
-  const fear = u.team === 'hero' ? 0.9 : 0.45;
-  for (const h of w.hazards) if (!h.hidden && h.up !== false && h.type !== 'beam' && ((h.type !== 'oil' && h.type !== 'web') || u.team === 'hero')) avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' || h.type === 'web' ? 0.35 : fear, 40);
+  const fear = heroic(w, u) ? 0.9 : 0.45;
+  for (const h of w.hazards) if (!h.hidden && h.up !== false && h.type !== 'beam' && ((h.type !== 'oil' && h.type !== 'web') || heroic(w, u))) avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' || h.type === 'web' ? 0.35 : fear, 40);
   for (const o of w.units) {
     if (o === u || !alive(o) || o.ethereal || u.ethereal) continue;
-    if (o.team === u.team) avoidCircle(o.x, o.y, o.r + (u.team === 'hero' ? 14 : 0), 0.45, 18);
+    if (o.team === u.team) avoidCircle(o.x, o.y, o.r + (heroic(w, u) ? 14 : 0), 0.45, 18);
     else if (u.def.role === 'ranged' && o !== u.target) avoidCircle(o.x, o.y, o.r, 0.7, 60);
-    else if (u.def.role === 'skirmish' && u.team === 'hero' && o !== u.target) avoidCircle(o.x, o.y, o.r, 0.75, 55);
+    else if (u.def.role === 'skirmish' && heroic(w, u) && o !== u.target) avoidCircle(o.x, o.y, o.r, 0.75, 55);
   }
   // Commitment: directions close to where it's already heading score a little higher, so two near-equal ways round
   // an obstacle (or a goal right between two of the 16 slots: diagonals) don't win in turn tick after tick, which
@@ -562,7 +571,7 @@ function movement(w, u, dt) {
     }
   }
   // formation, lightly: an archer nearer the enemy than the knight leans back towards him
-  if (roleAlias(u) === 'archer' && u.team === 'hero' && t && !u.forcedGoal) {
+  if (roleAlias(u) === 'archer' && heroic(w, u) && t && !u.forcedGoal) {
     const kn = w.units.find((o) => o.team === u.team && (o.kind === 'knight' || o.def.heroRole === 'tank') && alive(o));
     if (kn) {
       const da = dist(u.x, u.y, t.x, t.y), dk = dist(kn.x, kn.y, t.x, t.y);
@@ -722,8 +731,8 @@ export function hurt(w, u, amount, src, o = {}) {
     if (o.crit) w.hitstop = Math.max(w.hitstop, 0.025);
     if (big) w.shake = Math.max(w.shake, 1.5);
     // the body reacts: its stride breaks for a moment (heroes only on big hits, so a swarm can't pin them in place)
-    if (u.team !== 'hero' || big) { u.flinchT = Math.max(u.flinchT || 0, onShield ? 0.06 : big ? 0.2 : 0.1); u.spd *= onShield ? 0.85 : 0.6; }
-    if (src && (src.kind === 'knight' || src.def.heroRole === 'tank') && u.team === 'enemy') { u.tauntBy = src; u.tauntT = 3; }
+    if (!heroic(w, u) || big) { u.flinchT = Math.max(u.flinchT || 0, onShield ? 0.06 : big ? 0.2 : 0.1); u.spd *= onShield ? 0.85 : 0.6; }
+    if (src && (src.kind === 'knight' || src.def.heroRole === 'tank') && (w.battle ? u.team !== src.team : u.team === 'enemy')) { u.tauntBy = src; u.tauntT = 3; }
     u.flashT = 0.12; textU(w, u.x + rrange(-6, 6), u.y, u.r + 4, Math.round(amt), o.crit ? '#FFE14D' : '#FFFFFF', o.crit ? 1.3 : 1, true); }
   else { u.dotAcc += amt; if (u.dotAcc >= 4) { textU(w, u.x, u.y, u.r, Math.round(u.dotAcc), o.color || '#FF9A55', 0.75); u.dotAcc = 0; } }
   if (src && alive(src)) { const ls = src.buffs.reduce((a, b) => a + (b.lifesteal || 0), 0); if (ls) heal(w, src, amt * ls, src); }
@@ -865,6 +874,10 @@ export function scatterCoins(w, x, y, n, reach = 1) {
   }
 }
 function kill(w, u, src) {
+  const was = w.actor; w.actor = u; // (battle mode: what it leaves behind is its side's)
+  try { killNow(w, u, src); } finally { w.actor = was; }
+}
+function killNow(w, u, src) {
   u.hp = 0;
   if (u.charmed) { const l = u.charmed; u.team = u.charmTeam; u.charmed = null; if (l.host === u) { l.host = null; l.mass = l.def.mass; } } // a leech's host goes down as itself
   if (u.host) { const h = u.host; u.host = null; if (h.charmed === u) { h.team = h.charmTeam; h.charmed = null; h.target = null; h.charmCd = 6; } } // a leech dies: its host is itself again
@@ -876,7 +889,7 @@ function kill(w, u, src) {
     for (const o of w.units) if (o !== u && o.team === u.team && alive(o)) for (const h of hooksOf(o)) if (h.allyDown) h.allyDown(w, o, u);
   }
   if (u.summon) { u.dead = true; puff(w, u.x, u.y, '#B8C8DA', 10, 80, 5, 0.5); return; } // summons just fade (blue-grey: ours, round 8)
-  if (u.team === 'hero') {
+  if (u.team === 'hero' && !w.battle) {
     u.downed = true; u.act = null; u.frozenT = 0; u.st = freshStatuses(); u.hexed = false; u.radiantT = 0; u.tangledT = 0;
     textU(w, u.x, u.y, u.r + 10, 'DOWN', '#FF8A80', 1.1);
     emit(w, 'heroDown', u);
@@ -909,7 +922,7 @@ function kill(w, u, src) {
   }
   const [c0, c1] = u.def.coins || [0, 0];
   const coins = Math.round(rint(c0, c1) * (u.coinMul ?? 1)); // elites drop a little less (round 7)
-  scatterCoins(w, u.x, u.y, coins);
+  if (!w.battle) scatterCoins(w, u.x, u.y, coins);
   emit(w, 'kill', u, src);
 }
 
@@ -989,7 +1002,7 @@ function abilityScore(w, u) {
       const a = angleTo(u.x, u.y, t.x, t.y);
       let n = 0;
       for (const o of opp) { const od = dist(u.x, u.y, o.x, o.y); const off = Math.abs(Math.sin(angleTo(u.x, u.y, o.x, o.y) - a)) * od; if (od < d + 40 && off < 40) n++; }
-      const protect = t.target && t.target.team === 'hero' && t.target !== u ? 0.25 : 0;
+      const protect = t.target && t.target.team === (w.battle ? u.team : 'hero') && t.target !== u ? 0.25 : 0;
       // a hazard or wall just past the target: the charge will slam it into it
       let behind = 0;
       const bx = t.x + Math.cos(a) * 90, by = t.y + Math.sin(a) * 90;
@@ -1030,7 +1043,7 @@ function useAbility(w, u) {
     case 'charge': {
       const a = angleTo(u.x, u.y, t.x, t.y);
       u.facing = a;
-      if (u.team === 'enemy') {
+      if (!heroic(w, u)) {
         // an enemy shows its charge first (a lane on the floor the heroes can step out of), then goes
         const len = u.def.speed * 1.9 * 0.55;
         u.act = { type: 'chargeTell', t: 0.45, max: 0.45, a };
@@ -1281,7 +1294,7 @@ function projectiles(w, dt) {
       if (pl.hp != null && !p.noHit && p.team !== pl.team) { pl.hp -= p.dmg || 0; pl.hitT = 0.12; } // round 9: a troll's boulder can be shot to pieces
     }
     for (const r of w.walls) if (p.x > r.x && p.x < r.x + r.w && p.y > r.y && p.y < r.y + r.h) p.life = 0;
-    if (p.life <= 0 && p.land && !p.landed) { p.landed = true; p.land(p); }
+    if (p.life <= 0 && p.land && !p.landed) { p.landed = true; actAs(w, p.owner, () => p.land(p)); }
     if (p.kind === 'fireArrow') for (const h of w.hazards) if ((h.type === 'oil' || h.type === 'gas') && dist(p.x, p.y, h.x, h.y) < h.r) { igniteAround(w, p.x, p.y, 4); p.life = Math.min(p.life, 0.02); }
     if (p.life <= 0 || p.noHit) continue; // noHit: only a look (a lobbed thing; its landing is a danger zone)
     for (const u of w.units) {
@@ -1305,14 +1318,14 @@ function projectiles(w, dt) {
         if (p.onHit) p.onHit(w, p, u); // a projectile with an effect of its own (water that soaks, a fireball that bursts)
         if (p.hitSet && p.pierce > 0) { p.hitSet.add(u); p.pierce--; continue; }
         p.life = 0;
-        if (p.land && !p.landed) { p.landed = true; p.land(p); }
+        if (p.land && !p.landed) { p.landed = true; actAs(w, p.owner, () => p.land(p)); }
         if (p.kind === 'fireArrow') puff(w, p.x, p.y, '#FF8A3D', 4, 60, 4, 0.3);
         else puff(w, p.x, p.y, p.kind === 'icicle' ? '#DFF6FF' : '#F2E6CC', 3, 50, 3, 0.25);
         break;
       }
     }
   }
-  for (const p of w.projectiles) if (p.life <= 0 && p.land && !p.landed) { p.landed = true; p.land(p); }
+  for (const p of w.projectiles) if (p.life <= 0 && p.land && !p.landed) { p.landed = true; actAs(w, p.owner, () => p.land(p)); }
   w.projectiles = w.projectiles.filter((p) => p.life > 0);
 }
 
@@ -1394,9 +1407,11 @@ export function step(w, dt) {
   // a summon that came out of a hexed unit's ability joins the other side
   for (const s of w.units) if (s.summonBy && !s.hexSeen) { s.hexSeen = true; const by = s.summonBy; if (alive(by) && (by.hexUntil > w.time || hexFires(w, by))) turnSummon(w, s, by); }
   w.shake = Math.max(0, w.shake - dt * 30);
+  if (w.battle) for (const s of w.units) if (s.adopt) { s.adopt = false; const by = s.calledBy || s.summonBy || s.feeds; if (by && by.team && by.team !== 'neutral') s.team = by.team; s.aggro = true; }
   for (const u of w.units) {
     if (!alive(u)) continue;
-    u.staleBoost = !!w.stale && u.team === 'enemy';
+    w.actor = u;
+    u.staleBoost = !!w.stale && (u.team === 'enemy' || !!w.battle);
     u.flashT = Math.max(0, u.flashT - dt); u.invulnT = Math.max(0, u.invulnT - dt);
     u.atkT -= dt * atkRate(u); u.abilT -= dt;
     if (u.kit) for (const k in u.kit.cd) u.kit.cd[k] -= dt * (1 - Math.min(0.5, u.st.wet / 200)); // wet slows abilities
@@ -1458,6 +1473,7 @@ export function step(w, dt) {
     }
     if (!u.act && !radiant) tryAttack(w, u);
   }
+  w.actor = null;
   physics(w, dt);
   dangerTick(w, dt);
   projectiles(w, dt);
@@ -1474,7 +1490,7 @@ export function step(w, dt) {
     // a beam tied to two units (a heal ray) follows them, and ends early if either falls
     if (f.unit) { f.x = f.unit.x; f.y = f.unit.y; if (!alive(f.unit)) f.max = Math.min(f.max, f.t); } // an aura or mark riding on a unit
     if (f.from && f.to) { if (!alive(f.from) || !alive(f.to)) f.max = Math.min(f.max, f.t); f.x1 = f.from.x; f.y1 = f.from.y; f.x2 = f.to.x; f.y2 = f.to.y; }
-    if (f.tick) { f.acc = (f.acc || 0) + dt; while (f.acc >= (f.every || 0.5)) { f.acc -= f.every || 0.5; f.tick(f); } }
+    if (f.tick) { f.acc = (f.acc || 0) + dt; while (f.acc >= (f.every || 0.5)) { f.acc -= f.every || 0.5; actAs(w, f.src || f.by, () => f.tick(f)); } }
     if (f.follow && f.src) { const e = w.units.filter((o) => alive(o) && o.team !== f.src.team).sort((a, b) => dist(a.x, a.y, f.x, f.y) - dist(b.x, b.y, f.x, f.y))[0];
       if (e) { const a = angleTo(f.x, f.y, e.x, e.y); f.x += Math.cos(a) * 40 * dt; f.y += Math.sin(a) * 40 * dt; } }
     // a ward eases enemies out of it (round 9: it used to fling them, and the slams and bowling hurt them)

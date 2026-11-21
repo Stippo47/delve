@@ -31,7 +31,18 @@ page.on('pageerror', (e) => errors.push(String(e)));
 const q = opt('q', ''); // extra address parameters
 await page.goto(`http://localhost:${site}/?seed=${seed}${q ? '&' + q : ''}`);
 await page.waitForFunction(() => window.GAME && GAME.state === 'camp' && GAME.ready, null, { timeout: 180000 }); // sprites loaded, camp shown
-await page.evaluate((d) => { GAME.record(true); GAME.startRun(d); }, depth);
+// --battle "rattler*10,necromancer|paladin,tower" [--arena crypt]: a battle (js/battle.js), Red's stacks then Blue's; kind*count@rank.
+// Everything is fieldable for the clip (the cheat save), and --nodes "paladin:guard1+shieldBash1,..." gives heroes skills.
+const battle = opt('battle', '');
+if (battle) {
+  await page.evaluate(([b, arena, nodes]) => {
+    const parse = (s) => s.split(',').filter(Boolean).map((x) => { const [kn, rank] = x.split('@'), [k, n] = kn.split('*'); return { k, n: +n || 1, rank: +rank || 0 }; });
+    const [red, blue] = b.split('|');
+    GAME.save.cheat = true;
+    for (const part of (nodes || '').split(',').filter(Boolean)) { const [h, list] = part.split(':'); if (GAME.save.heroes[h]) GAME.save.heroes[h].nodes = Object.fromEntries(list.split('+').map((n) => [n, 1])); }
+    GAME.record(true); GAME.startBattle({ arena, a: parse(blue), b: parse(red) });
+  }, [battle, opt('arena', 'crypt'), opt('nodes', '')]);
+} else await page.evaluate((d) => { GAME.record(true); GAME.startRun(d); }, depth);
 if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) GAME.recFrame(1 / 30); }, skip);
 const n = Math.round(secs * fps);
 for (let i = 0; i < n; i++) {

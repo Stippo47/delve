@@ -8,7 +8,7 @@ import { INK, TAU, clamp } from './util.js';
 import { envId, obstacleFor } from './env.js';
 import { drawBodyFx, drawBodyGround, drawIceWall } from './fxkit.js';
 import { drawHazardPuddle, flushPuddles, drawPuddle } from './puddles.js';
-import { drawEnemyHp, hpWash } from './hpstyle.js';
+import { drawEnemyHp, hpWash, setHpSides } from './hpstyle.js';
 import { icon } from './icons.js';
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
 
@@ -38,7 +38,8 @@ export function layout(canvas, w, topPad, bottomPad = 10, sidePad = 10) {
   const s = base * view.zoom;
   view.scale = s; view.base = base;
   // the camera follows the party's middle, never further than the walls
-  const heroes = w.units.filter((u) => u.team === 'hero' && !u.downed);
+  // (a battle: the middle of everyone still standing, both sides)
+  const heroes = w.battle ? w.units.filter((u) => !u.dead && !u.ethereal && u.team !== 'neutral') : w.units.filter((u) => u.team === 'hero' && !u.downed);
   let tx = w.W / 2, ty = w.H / 2;
   if (heroes.length) { tx = ty = 0; for (const h of heroes) { tx += h.x; ty += h.y; } tx /= heroes.length; ty /= heroes.length; }
   const halfX = along / (2 * s), halfY = across / (2 * s);
@@ -157,8 +158,11 @@ function drawShadows(ctx, w, tf) {
 
 const SPRITE_KIND = { boss: 'boss', slimeSmall: 'slimeSmall' };
 
+let w_battle = false; // battle mode (battle.js): both sides carry bars and a ring in their colour
+const SIDE_RING = { a: 'rgba(95,168,255,0.85)', b: 'rgba(255,107,90,0.85)' };
 export function draw(ctx, w) {
   const d = view.dpr, m = view.m;
+  w_battle = !!w.battle; setHpSides(w.battle ? w.battle.side : null);
   ctx.setTransform(d, 0, 0, d, 0, 0);
   ctx.fillStyle = voidColor(w); ctx.fillRect(0, 0, view.cw, view.ch);
   // screen shake, kept small (round 6: punchy hits without heavy shake)
@@ -185,6 +189,10 @@ export function draw(ctx, w) {
   // a round shadow straight under every unit (top-down: no side cast), all of them merged; a leaping unit's shrinks
   // as it rises
   drawShadows(ctx, w, tf);
+  if (w.battle) { // whose side: a thin ring on the floor round each unit's feet (an outline round the body is kept for protection)
+    ctx.lineWidth = 2.4;
+    for (const u of w.units) { const c = SIDE_RING[w.battle.side[u.team]]; if (!c || u.dead || u.ethereal) continue; ctx.strokeStyle = c; ctx.beginPath(); ctx.arc(u.x, u.y, u.vr * 1.12 + 3, 0, TAU); ctx.stroke(); }
+  }
   for (const t of w.telegraphs) if (t.type === 'ring') drawRing(ctx, t);
   for (const c of w.corpses) drawCorpse(ctx, c);
   const order = [...w.units].sort((a, b) => (a.downed ? -1 : 0) - (b.downed ? -1 : 0) || screenDepth(a) - screenDepth(b));
@@ -743,7 +751,7 @@ const SHOW_BARS = false; // health and status bars live in the HUD now (designer
 function drawOverlay(ctx, u, dt = 0) {
   if (u.downed) return;
   upright(ctx, u.x, u.y, () => {
-    if (u.team === 'enemy') drawEnemyHp(ctx, u, dt); // hpstyle.js: only once it's hurt, in the player's chosen style
+    if (u.team === 'enemy' || w_battle) drawEnemyHp(ctx, u, dt); // hpstyle.js: only once it's hurt, in the player's chosen style
     if (u.team !== 'hero' && u.act && (u.act.type === 'windup' || u.act.type === 'slam')) {
       const k = 1 - u.act.t / u.act.max;
       // a warning mark drawn as a shape (no text in the arena): a bar and a dot over the head. Only on the enemy's

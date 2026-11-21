@@ -1,0 +1,47 @@
+{
+  "title": "0.11.0: battle mode",
+  "topic": "runs",
+  "order": 13,
+  "priority": 1,
+  "tags": ["first"],
+  "cards": [
+    {
+      "id": "battle",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Battle mode",
+      "text": "Pin any units against each other from a sparring ring in the camp. Live as 0.11.0.",
+      "why": "What you asked for: 10 skeletons and a necromancer against a paladin and a tower, or anything else. Mark what's off.",
+      "videos": ["../../../clips/r10/battle/battle-example.mp4", "../../../clips/r10/battle/battle-monsters.mp4"],
+      "images": ["../../../clips/r10/battle/06-setup-filled.png"],
+      "details": "Nothing is won or lost in a battle: no gold, no XP, no drops, nobody needs rest after.\n\nBosses can only be on one side for now. Their moves are written against 'the heroes', so two bosses can't face each other until the boss work that's running lands.\n\nWhat a unit makes during the fight joins its side: a split slime's halves, called wolves, raised dead, the rat king's rats.",
+      "parts": [
+        { "id": "ring", "title": "The ring", "text": "A sparring ring in the camp, between the book and the trader's cart. Tap it.", "images": ["../../../clips/r10/battle/01-camp-ring.png"] },
+        { "id": "setup", "title": "Two sides", "text": "Red at the top, Blue at the bottom, as on the field. 20 units a side, 12 of one kind. The count buttons add and take away; Swap sides flips them.", "images": ["../../../clips/r10/battle/06-setup-filled.png"] },
+        { "id": "picker", "title": "Who you can pick", "text": "Your heroes, and every monster of a dungeon whose boss you've beaten, its bosses too. Other dungeons show a lock.", "images": ["../../../clips/r10/battle/04-picker-crypt.png", "../../../clips/r10/battle/05-picker-locked.png"] },
+        { "id": "ranks", "title": "Elites and majors", "text": "A monster's tag on its tile cycles plain, elite, major, so you can field 2 major trolls or an elite rat king." },
+        { "id": "fight", "title": "The fight", "text": "Both sides carry a health bar and a floor ring in their colour. The strip below shows each kind and how many are left; tap one to pause on it.", "videos": ["../../../clips/r10/battle/battle-example.mp4"], "images": ["../../../clips/r10/battle/09-battle-paused.png"] },
+        { "id": "result", "title": "The result", "text": "Who won, and for each kind on each side: how many are left, damage dealt and taken, kills, healing. Again, Change sides or Camp.", "images": ["../../../clips/r10/battle/10-result.png"] },
+        { "id": "ground", "title": "The ground", "text": "The Ground button picks which dungeon's look the fight is in. A boss with its own hall brings it.", "videos": ["../../../clips/r10/battle/battle-monsters.mp4"] }
+      ]
+    },
+    {
+      "id": "battle-heroes",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Battle: which heroes?",
+      "text": "Should a battle let you field heroes you haven't recruited yet?",
+      "why": "Monsters have to be earned by beating their dungeon. Heroes you don't own would be a free way to try them before buying, which could be a feature or could spoil the purchase.",
+      "pick": "Only heroes you own, with the skills and trinkets they have at camp."
+    },
+    {
+      "id": "battle-strength",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Battle: how strong?",
+      "text": "How strong should a monster be in a battle?",
+      "why": "In a run, a crypt skeleton is several times as strong as a Wildwood wolf. Keeping that makes battles a true test of your heroes; evening it out makes monster against monster fights fairer.",
+      "pick": "As strong as on its own dungeon's first floor, with the elite and major tags for tougher ones."
+    }
+  ]
+}
