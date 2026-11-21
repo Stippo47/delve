@@ -144,7 +144,7 @@ function boulderOf(w, u) {
 }
 export function dropBoulder(w, u) { const b = u.bould; if (b) { const i = w.pillars.indexOf(b); if (i >= 0) w.pillars.splice(i, 1); puff(w, b.x, b.y, '#9A9088', 14, 150, 6, 0.5); } u.bould = null; }
 export function boulderBrain(w, u, dt) {
-  const b = boulderOf(w, u);
+  const b = u.bould === null ? null : boulderOf(w, u);
   if (!b) return false;
   const front = (k = 8) => ({ x: u.x + Math.cos(u.facing) * (u.r + b.r + k), y: u.y + Math.sin(u.facing) * (u.r + b.r + k) });
   if (b.held) { // carried in front
@@ -171,10 +171,12 @@ export function boulderBrain(w, u, dt) {
     turnTo(u, angleTo(u.x, u.y, b.x, b.y), 3, dt);
     return true;
   }
-  if (w.stale) return false;
+  if (w.stale) { dropBoulder(w, u); return false; } // a stand-off gone on too long: it lets the boulder go and fights bare-handed
   const t = targetOf(w, u); if (!t || !u.aggro || !due(u, 'boulder', dt, 2)) return false;
   const d = dist(u.x, u.y, t.x, t.y), off = Math.abs(wrapAngle(angleTo(u.x, u.y, t.x, t.y) - u.facing));
-  if (d < 120 || d > 420 || off > 0.4 || !lineClear(w, b.x, b.y, t.x, t.y, b.r * 0.7)) { again(u, 'boulder', 0.3); return false; }
+  // a hero pressed up against the boulder gets it rolled into them point blank (else the boulder kept them off for ever)
+  const pressed = dist(t.x, t.y, b.x, b.y) < b.r + t.r + 24;
+  if (!pressed && (d < 120 || d > 420 || off > 0.4 || !lineClear(w, b.x, b.y, t.x, t.y, b.r * 0.7))) { again(u, 'boulder', 0.3); return false; }
   again(u, 'boulder', 5, 7);
   const a = angleTo(u.x, u.y, t.x, t.y);
   if (u.def.rock && chance(0.4)) { // charge behind it
