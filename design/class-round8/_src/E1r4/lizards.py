@@ -24,6 +24,24 @@ TEETH_IN = False
 # shoulder from behind the head to the front (it was a fat red blob over the outside of the shoulder); the sword hand
 # is a plain fist (no knuckle bumps), like the heroes'. Head, tail, colours, scimitar and the claw hand as they were.
 BLADE_R7 = False
+# round 8 (roster2, the croc: "Has 2 axes, bite is an ability"): the picked Croc A (round 7) with a heavy axe in each
+# hand in place of the bone club and the turtle-shell shield: both under the shoulders, the blades turned in, the clawed
+# fists showing where they come out. Head, teeth, tail, hide, ridges as round 7.
+CROC_R8 = False
+RUST_AXE = ("#B0A89C", "#7A7066")
+
+
+def croc_axe(S, cx, cy, a, sc, scD, side):
+    """A heavy axe in a clawed fist: haft forward along angle a, the bearded blade on the inner side."""
+    tf = frame(cx, cy, a)
+    S.shape(rr(0, 22, 10, 66, 4), S.lg("#8A5E38", "#5E3E24", x2=1, y2=0), tf=tf, shadow=False, shade=0.25)
+    s = -side  # the blade faces in towards the body's middle
+    blade = blob([(0, 28), (s * 16, 24), (s * 34, 14), (s * 42, 30), (s * 42, 50), (s * 34, 64), (s * 16, 52), (0, 52)], 0.7)
+    S.shape(blade, S.lg(*RUST_AXE, x2=1, y2=0.3), tf=tf, shadow=False, shade=0.25,
+            decor=[f'<path d="M {s * 37} 20 C {s * 44} 32 {s * 44} 48 {s * 37} 60" fill="none" stroke="#EEF0F2" '
+                   f'stroke-width="4" stroke-linecap="round" opacity="0.8"/>'])
+    S.shape(rr(0, 40, 15, 26, 4), S.lg("#6E6A64", "#4A4642"), tf=tf, shadow=False, shade=0.2)
+    fist(S, cx, cy, a, S.lg(sc, scD), w=22, h=26, knuckle=side)
 
 
 def face_shade(S, y0, y1, col, brow):
@@ -163,14 +181,26 @@ def liz_c():
     S.shape("M78 86 C76 62 84 40 98 24 C104 18 110 14 116 12 C112 24 112 40 116 54 C120 66 122 76 122 86 Z",
             S.lg(sc, scD), shadow=False, shade=0.3,
             decor=[f'<path d="{" ".join(poly([(x - 5, y + 4), (x, y - 6), (x + 5, y + 4)]) for x, y in ((104, 30), (106, 46), (108, 62)))}" fill="{scDD}" opacity="0.7"/>'])
-    S.group("arm-r", (160, 108))
-    a = -10
-    tf = frame(156, 138, a)
-    S.shape(rr(0, -6, 9, 36, 4), S.lg(*BONE, x2=1, y2=0), tf=tf, shadow=False, shade=0.2)
-    S.shape(blob([(-8, 10), (8, 10), (14, 26), (16, 44), (10, 56), (0, 60), (-10, 56), (-16, 44), (-14, 26)], 0.9),
-            S.lg(*BONE, x2=1, y2=0.2), tf=tf, shadow=False, shade=0.3)
-    S.shape(" ".join(circ(x, y, 3.5) for x, y in ((-9, 34), (9, 40), (-4, 50))), "#B0A07A", tf=tf, shadow=False, shade=0)
-    fist(S, 156, 138, a, S.lg(sc, scD), w=22, h=26, knuckle=1)
+    if CROC_R8:
+        S.comment = S.comment.replace(
+            "A turtle-shell shield in front (hand hidden) and a bone club behind the right shoulder. Parts: #back = "
+            "thick tail, #arm-r = club + fist (before #body), #body, #arm-l = shield.",
+            "Two heavy axes (round 8: the designer, \"Has 2 axes, bite is an ability\"), one in each clawed fist, both "
+            "under the shoulders with the blades turned in. Parts: #back = thick tail, #arm-r and #arm-l = axe + fist "
+            "(before #body), #body.")
+        S.group("arm-r", (160, 108))
+        croc_axe(S, 160, 136, -24, sc, scD, 1)
+        S.group("arm-l", (40, 108))
+        croc_axe(S, 40, 136, 24, sc, scD, -1)
+    else:
+        S.group("arm-r", (160, 108))
+        a = -10
+        tf = frame(156, 138, a)
+        S.shape(rr(0, -6, 9, 36, 4), S.lg(*BONE, x2=1, y2=0), tf=tf, shadow=False, shade=0.2)
+        S.shape(blob([(-8, 10), (8, 10), (14, 26), (16, 44), (10, 56), (0, 60), (-10, 56), (-16, 44), (-14, 26)], 0.9),
+                S.lg(*BONE, x2=1, y2=0.2), tf=tf, shadow=False, shade=0.3)
+        S.shape(" ".join(circ(x, y, 3.5) for x, y in ((-9, 34), (9, 40), (-4, 50))), "#B0A07A", tf=tf, shadow=False, shade=0)
+        fist(S, 156, 138, a, S.lg(sc, scD), w=22, h=26, knuckle=1)
     S.group("body")
     S.shape("M24 108 C24 82 54 76 100 76 C146 76 176 82 176 108 C176 134 146 142 100 142 C54 142 24 134 24 108 Z",
             S.lg(scD, scDD), shade=0.35)
@@ -207,6 +237,8 @@ def liz_c():
             S.flat(ell(x, 102, 5.5, 6.5), "#E8D24A")
             S.flat(ell(x + 0.5, 102.5, 1.6, 5.5), INK)
     S.flat(f"{ell(92, 168, 3, 3.5)} {ell(108, 168, 3, 3.5)}", "#2E3A18")
+    if CROC_R8:
+        return S
     S.group("arm-l", (40, 108))
     # turtle-shell shield in front, the hand hidden behind it
     sh = circ(38, 152, 28)
