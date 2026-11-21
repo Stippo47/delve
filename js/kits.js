@@ -180,7 +180,7 @@ export const ABILITIES = {
       u.later = [{ t: 0.45, f: () => {
         u.aimT = 0; u.recoilT = 0.14;
         shoot(w, u, t && alive(t) ? ang(u, t) : u.facing, { kind: 'shard', speed: 560, dmg: dmgOf(u, 1.2), st: { chill: tier >= 2 ? 110 : 60 },
-          land: (p) => { fx(w, { type: 'zone', kind: 'snow', x: p.x, y: p.y, r: tier >= 3 ? 80 : 45, max: 2 });
+          land: (p) => { // round 10: "Remove the ice puddle" (the lingering rime it left)
             if (tier >= 3) { fx(w, { type: 'ring', x: p.x, y: p.y, r: 80, color: '#BFEFFF', max: 0.4 }); for (const e of foesNear(w, u, p.x, p.y, 80)) addStatus(w, e, 'chill', 50, u); } } });
       } }];
     },
@@ -190,9 +190,11 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       const f = foesNear(w, u, u.x, u.y, 90); let ax = 0, ay = 0; for (const e of f) { ax += u.x - e.x; ay += u.y - e.y; }
       const a = Math.atan2(ay, ax);
-      u.act = { type: 'dash', t: 0.3, max: 0.3, a, roll: true, dir: Math.sin(a - u.facing) < 0 ? -1 : 1 }; u.invulnT = Math.max(u.invulnT, 0.3); // a full roll (round 9)
+      // round 10: "Slide into position": she slides back on her feet, still facing them, fast then slowing (sim.js)
+      u.act = { type: 'dash', t: 0.34, max: 0.34, a, slide: true }; u.invulnT = Math.max(u.invulnT, 0.3);
       if (tier >= 2) u.nextShotMul = 2;
-      if (tier >= 3) zone(w, { x: u.x, y: u.y, r: 55, dur: 5, kind: 'vines', src: u, every: 0.25, tick(z) { for (const e of foesNear(w, u, z.x, z.y, z.r)) addStatus(w, e, 'chill', 10, u); } });
+      // III: "Should shoot caltrops out from out of it": they fly out of her as she slides and land where she was (fxkit)
+      if (tier >= 3) zone(w, { x: u.x, y: u.y, r: 55, dur: 5, kind: 'vines', src: u, every: 0.25, from: u, tick(z) { for (const e of foesNear(w, u, z.x, z.y, z.r)) addStatus(w, e, 'chill', 10, u); } });
     },
   },
   // ----- Twinfang

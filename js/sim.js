@@ -1131,7 +1131,7 @@ function runAction(w, u, dt) {
     u.spd *= Math.exp(-dt * 6); u.dvx = Math.cos(u.mvA) * u.spd; u.dvy = Math.sin(u.mvA) * u.spd;
     if (a.t <= 0) { u.act = null; u.potions--; u.hp = Math.min(u.maxHp, u.hp + u.maxHp * 0.45 * Math.max(0, 1 - CURSE.healCut * fillOf(u, 'curse'))); puff(w, u.x, u.y, '#E0604B', 10, 70, 5, 0.6); emit(w, 'drank', u); }
   } else if (a.type === 'dash') {
-    const sp = u.def.speed * 2.1;
+    const sp = u.def.speed * 2.1 * (a.slide ? 0.15 + 1.7 * Math.max(0, a.t) / a.max : 1); // a slide (the archer's Roll) eases out
     u.dvx = Math.cos(a.a) * sp; u.dvy = Math.sin(a.a) * sp; u.vx = u.dvx; u.vy = u.dvy; u.mvA = a.a; u.spd = sp;
     if (rand() < 0.5) w.particles.push({ x: u.x - Math.cos(a.a) * u.r, y: u.y - Math.sin(a.a) * u.r, vx: 0, vy: 0, life: 0.25, max: 0.25, size: 5, color: 'rgba(200,190,170,0.7)' });
     if (a.t <= 0) { u.act = null; u.spd = u.def.speed; }

@@ -380,7 +380,7 @@ export function poseFor(u, w, dt) {
   // ---- round 9 touches
   const T = w ? w.time : 0;
   if (u.anim && u.anim.kind === 'spin') { main = scaleP(S, 1.15); off = dual ? scaleP(S, 1.15) : { r: -0.2, dy: 6 }; } // arms out for a full turn
-  if (sty.bow) off = addP(off, { dy: 7 });                       // the bow held a little forward
+  if (sty.bow) off = addP(off, { dy: 22 });                      // the bow held forward (round 10: "Move bow forwards more")
   if (u.kind === 'bard' && u.anim && u.anim.kind === 'cast') {    // the strumming hand goes over the strings
     const t = u.anim.t; main = { r: 0.16 * Math.sin(t * 48), dy: 6 + 3 * Math.abs(Math.sin(t * 24)) }; off = { dy: 2 };
   }

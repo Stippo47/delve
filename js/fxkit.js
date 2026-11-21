@@ -604,12 +604,13 @@ export function drawSigAir(ctx, f, w) {
           inked(ctx, () => { ctx.beginPath(); ctx.moveTo(s, 0); ctx.lineTo(-s * 0.6, -s * 0.7); ctx.lineTo(-s * 0.4, s * 0.6); ctx.closePath(); }, i % 2 ? el[1] : el[2]); ctx.restore(); }
       }
       break;
-    case 'holdTheLine': { // a flash off the raised shield, and red streaks to everything it taunts (no cracks: round 9)
-      for (const e2 of w.units) if (e2.tauntBy === u && !e2.dead && k < 0.6) {
-        ctx.save(); ctx.globalAlpha *= 1 - k / 0.6;
-        const tip = easeOut(k01(k / 0.35));
-        inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(ux0, uy0); ctx.lineTo(ux0 + (e2.x - ux0) * tip, uy0 + (e2.y - uy0) * tip); }, '#FF8A7A', 3);
-        upright(ctx, e2.x, e2.y, () => inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-6, -e2.vr - 22); ctx.lineTo(0, -e2.vr - 12); ctx.lineTo(6, -e2.vr - 22); }, '#FF6B5A'));
+    case 'holdTheLine': { // a flash off the raised shield, and a red mark over everything it taunts (no cracks: round 9;
+      // round 10: "weird line effect": no lines from him to them any more, the mark pops in over each one's head)
+      for (const e2 of w.units) if (e2.tauntBy === u && !e2.dead && k < 0.75) {
+        const q = k01(k / 0.15), s = 0.6 + 0.6 * easeOut(q) - 0.2 * k01((k - 0.15) / 0.3);
+        ctx.save(); ctx.globalAlpha *= q * (1 - sm(k01((k - 0.45) / 0.3)));
+        upright(ctx, e2.x, e2.y, () => { ctx.translate(0, -e2.vr - 16); ctx.scale(s, s);
+          inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-8, -8); ctx.lineTo(0, 4); ctx.lineTo(8, -8); ctx.lineTo(0, -2); ctx.closePath(); }, '#FF6B5A'); });
         ctx.restore();
       }
       if (k < 0.3) lit(ctx, () => glowDisc(ctx, ux0 + Math.cos(fa) * (u.r + 10), uy0 + Math.sin(fa) * (u.r + 10), 40, '#FFF4C8', 0.7 * (1 - k / 0.3)));
@@ -771,7 +772,7 @@ export function drawBodyFx(ctx, u, w) {
   }
   // a charge or a dash: speed lines streaming off behind
   const act = u.act;
-  if (act && (act.type === 'charge' || act.type === 'dash') && !act.roll && !act.gas) {
+  if (act && (act.type === 'charge' || act.type === 'dash') && !act.roll && !act.slide && !act.gas) {
     const a = act.a + Math.PI, shadow = u.kind === 'twinfang';
     for (let i = 0; i < 4; i++) { const off = (i - 1.5) * u.vr * 0.5, ph = (T * 7 + i * 0.37) % 1, d = u.vr * 0.8 + ph * 34;
       const x = u.x + Math.cos(a) * d - Math.sin(a) * off, y = u.y + Math.sin(a) * d + Math.cos(a) * off;
@@ -806,6 +807,12 @@ export function drawBodyGround(ctx, u, w) {
       else inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 9, 5.5, 0, 0, TAU); }, '#F2C14E', 3.4);
       ctx.restore(); }
     ctx.restore();
+  }
+  if (u.act && u.act.slide) { // round 10: the archer's slide: dust kicked up off her feet, thinning as she slows
+    const act = u.act, q = act.t / act.max, a = act.a + Math.PI;
+    for (let i = 0; i < 3; i++) { const ph = (w.time * 9 + i / 3) % 1, off = (i - 1) * u.vr * 0.45, d = u.vr * 0.5 + ph * 26;
+      ctx.save(); ctx.globalAlpha = (1 - ph) * clamp(q * 2, 0, 1);
+      inkDisc(ctx, u.x + Math.cos(a) * d - Math.sin(a) * off, u.y + Math.sin(a) * d + Math.cos(a) * off, (4 + 5 * ph) * (0.5 + q), i % 2 ? '#E9DDC2' : '#FFF8E6'); ctx.restore(); }
   }
   // War Song: a gold ring of notes turning under anyone it lifts
   if (u.buffs && u.buffs.some((b) => b.id === 'warSong')) {
@@ -924,10 +931,21 @@ export function abilityZone(ctx, f, T) {
     drawPuddle(ctx, 'smoke', f.x, f.y, f.r * (0.7 + 0.3 * easeOut(clamp(f.t / 0.25, 0, 1))), T, a, Math.round(f.x * 3 + f.y));
     return true;
   }
-  if (f.ab === 'roll' && f.kind === 'vines') { // caltrops scattered where she rolled
-    const a = clamp(Math.min(f.t / 0.15, (f.max - f.t) / 0.5), 0, 1), seed = Math.round(f.x * 3 + f.y);
+  if (f.ab === 'roll' && f.kind === 'vines') { // caltrops scattered where she slid from
+    // round 10: "shoot caltrops out from out of it": each one is flung out of her as she slides, one after another,
+    // hops through the air and lands in the patch (where it leaves her is noted the moment it goes: f._from)
+    const a = clamp((f.max - f.t) / 0.5, 0, 1), seed = Math.round(f.x * 3 + f.y), [ux, uy] = upVec();
+    if (!f._from) f._from = [];
     ctx.save(); ctx.globalAlpha *= a;
-    for (let i = 0; i < 9; i++) { const b = hash(seed, i) * TAU, rr = f.r * Math.sqrt(hash(i, seed)); inked(ctx, () => star(ctx, f.x + Math.cos(b) * rr, f.y + Math.sin(b) * rr, 6, 4, 0.3, b), '#9AA3AE'); }
+    for (let i = 0; i < 9; i++) { const b = hash(seed, i) * TAU, rr = f.r * Math.sqrt(hash(i, seed)), lx = f.x + Math.cos(b) * rr, ly = f.y + Math.sin(b) * rr;
+      const t0 = 0.03 + i * 0.026, q = k01((f.t - t0) / 0.24); if (q <= 0) continue;
+      const src = f.from && !f.from.dead ? f.from : f;
+      if (!f._from[i]) f._from[i] = [src.x, src.y];
+      const [sx, sy] = f._from[i], e = easeOut(q), hop = Math.sin(q * Math.PI) * 22;
+      const x = sx + (lx - sx) * e + ux * hop, y = sy + (ly - sy) * e + uy * hop, rot = b + (1 - q) * 9;
+      if (q >= 1 && f.t - t0 < 0.4) { ctx.save(); ctx.globalAlpha *= 1 - (f.t - t0 - 0.24) / 0.16; dustPuffs(ctx, x, y, 8, k01((f.t - t0 - 0.24) / 0.16), seed + i, 3); ctx.restore(); }
+      inked(ctx, () => star(ctx, x, y, 6, 4, 0.3, rot), '#9AA3AE');
+      ctx.fillStyle = '#DCE3EC'; ctx.beginPath(); ctx.arc(x - 1, y - 1, 1.4, 0, TAU); ctx.fill(); }
     ctx.restore(); return true;
   }
   return false;
