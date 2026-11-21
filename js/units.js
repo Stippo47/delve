@@ -67,6 +67,7 @@ for (const [id, h] of Object.entries(HEROES)) {
   if (h.style) DEFS[id].style = h.style;
   if (h.weapon) DEFS[id].weapon = h.weapon;
   if (h.form) DEFS[h.form.id] = { ...DEFS[id], ...h.form.stats, name: h.form.name, art: h.form.art, attackAnim: h.form.anim || 'swing', form: true, style: h.form.style };
+  if (h.form) DEFS[id].formDef = DEFS[h.form.id];
   if (h.summons) for (const [k, sd] of Object.entries(h.summons)) DEFS[k] = { team: 'hero', temp: 0.3, commit: 1, ...sd };
 }
 // Summons. Every summon is drawn from parts, black-outlined and hue-shifted towards blue-grey (render.js, round 8), so

@@ -732,7 +732,7 @@ export const ABILITIES2 = {
       const spots = []; for (let i = 0; i < (tier >= 3 ? 2 : 1); i++) { const a = u.facing + (i ? -1 : 1) * 0.8; spots.push({ x: clamp(u.x + Math.cos(a) * 60, 30, w.W - 30), y: clamp(u.y + Math.sin(a) * 60, 30, w.H - 30) }); }
       for (const p of spots) k2(w, { draw: 'gate', x: p.x, y: p.y, r: 30, max: 1.1 });
       after(u, 0.7, () => { for (const p of spots) {
-        const s = spawn(w, 'imp', p.x, p.y, { team: 'hero', scale: tier >= 2 ? 1.2 : 1, hpMul: tier >= 2 ? 2 : 1.2 });
+        const s = spawn(w, 'imp', p.x, p.y, { team: u.team, scale: tier >= 2 ? 1.2 : 1, hpMul: tier >= 2 ? 2 : 1.2 });
         s.summon = true; s.summonBy = u; s.lifeT = 15; s.aggro = true; s.dmgMul = u.dmgMul * (tier >= 2 ? 1.3 : 1);
       } });
     },
@@ -956,7 +956,7 @@ export const ABILITIES2 = {
     use(w, u, t, tier) {
       cast(u, 'throw', 0.4);
       const list = [u, ...allies(w, u)].filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 400).sort((p, q) => hpRatio(p) - hpRatio(q)).slice(0, tier >= 3 ? 2 : 1);
-      const give = (a) => { heal(w, a, a.maxHp * (tierOf(u, 'resupply') >= 2 ? 0.25 : 0.15), u); if (a.team === 'hero' && !a.potions) a.potions = 1; k2(w, { draw: 'crumbs', x: a.x, y: a.y, unit: a, max: 0.6, ab: 'resupply' }); };
+      const give = (a) => { heal(w, a, a.maxHp * (tierOf(u, 'resupply') >= 2 ? 0.25 : 0.15), u); if (!a.potions) a.potions = 1; k2(w, { draw: 'crumbs', x: a.x, y: a.y, unit: a, max: 0.6, ab: 'resupply' }); };
       list.forEach((a, i) => after(u, i * 0.15, () => { if (!alive(a)) return; if (a === u) give(u); else lob(w, u, a.x, a.y, 'bundle', null, () => alive(a) && give(a)); }));
     },
     show: { ally: true },
@@ -1577,7 +1577,105 @@ export const ABILITIES2 = {
     },
     show: { far: true },
   },
+  // ----- Engineer
+  deployTurret: {
+    score: (w, u) => (foesNear(w, u, u.x, u.y, 380).length >= 2 && !w.units.some((o) => o.summonBy === u && o.kind === 'turret' && alive(o)) ? 0.75 : 0),
+    use(w, u, t, tier) {
+      cast(u, 'ability', 0.7);
+      const n = tier >= 3 ? 2 : 1, a0 = t ? ang(u, t) : u.facing;
+      for (let i = 0; i < n; i++) {
+        const a = a0 + (n > 1 ? (i ? -0.9 : 0.9) : 0), x = clamp(u.x + Math.cos(a) * (u.r + 40), 30, w.W - 30), y = clamp(u.y + Math.sin(a) * (u.r + 40), 30, w.H - 30);
+        k2(w, { draw: 'gate', x, y, r: 24, max: 0.6, col: 'steel' });
+        after(u, 0.35, () => {
+          const s = spawn(w, 'turret', x, y, { team: u.team, hpMul: 1 });
+          s.summon = true; s.summonBy = u; s.lifeT = tierOf(u, 'deployTurret') >= 2 ? 25 : 15; s.aggro = true; s.dmgMul = u.dmgMul; s.facing = a0; s.baseA = a0; s.mvA = a0;
+          if (tierOf(u, 'deployTurret') >= 2) s.atkMul = 1.4;
+          puff(w, x, y, '#C9D2DE', 10, 90, 5, 0.4);
+        });
+      }
+    },
+  },
+  tinker: {
+    score(w, u) {
+      const tur = w.units.filter((o) => o.summonBy === u && o.kind === 'turret' && alive(o) && hpRatio(o) < 0.6).length;
+      const a = hurtMost(allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 260));
+      return tur || (a && hpRatio(a) < 0.6) ? 0.7 : 0;
+    },
+    use(w, u, t, tier) {
+      cast(u, 'swing', 0.4);
+      for (const s of w.units) if (s.summonBy === u && s.kind === 'turret' && alive(s)) { s.hp = s.maxHp; if (tier >= 3) s.hitBurn = 8; k2(w, { draw: 'bonk', x: s.x, y: s.y, unit: s, r: s.vr, max: 0.4 }); fx(w, { type: 'beam', kind: 'lightning', x1: u.x, y1: u.y, x2: s.x, y2: s.y, max: 0.2 }); }
+      const a = hurtMost([u, ...allies(w, u)].filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 280));
+      if (a) { heal(w, a, a.maxHp * 0.12, u); if (tier >= 2) addBuff(a, { id: 'tinker', dur: 5, taken: 0.75, glow: '#C9D2DE' }); k2(w, { draw: 'crumbs', x: a.x, y: a.y, unit: a, max: 0.6 }); }
+    },
+    show: { ally: true },
+  },
+  shockMine: {
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 300 && (u.kit.mines || 0) < 3 ? 0.5 : 0),
+    use(w, u, t, tier) {
+      if (!t) return; setAnim(u, 'throw', 0.35);
+      for (let i = 0; i < (tier >= 3 ? 2 : 1); i++) {
+        const a = ang(u, t) + (i ? 0.5 : 0), d = Math.min(dist(u.x, u.y, t.x, t.y) * 0.6, 160) + i * 20, x = u.x + Math.cos(a) * d, y = u.y + Math.sin(a) * d;
+        u.kit.mines = (u.kit.mines || 0) + 1;
+        lob(w, u, x, y, 'trapThrown', null, () => {
+          const f = k2(w, { draw: 'mine', x, y, max: 15, ab: 'shockMine' });
+          timer(u, 'mine' + Math.round(x * 7 + y), 15, () => {
+            if (!foesNear(w, u, x, y, 40).length) return;
+            w.telegraphs.push({ type: 'blast', x, y, r: 80, color: '#FFE66B', t: 0.05, max: 0.05, ab: 'shockMine' });
+            for (const e of foesNear(w, u, x, y, 80)) { hurt(w, e, dmgOf(u, 1.3), u, { noDodge: true, knock: 160, kAngle: angleTo(x, y, e.x, e.y), shock: tierOf(u, 'shockMine') >= 2 ? 45 : 0, ab: 'shockMine' }); stun(w, e, 1); }
+            fx(w, { type: 'pillar', x, y, r: 26, kind: 'lightning', max: 0.3 }); f.max = f.t; return true;
+          }, () => { u.kit.mines = Math.max(0, (u.kit.mines || 1) - 1); f.max = Math.min(f.max, f.t + 0.2); });
+        });
+      }
+    },
+    show: { far: true, mob: 'walk' },
+  },
+  // ----- Werewolf
+  turnWolf: {
+    score: (w, u) => (!u.kit.wolfUntil && foesNear(w, u, u.x, u.y, 260).length >= 2 ? 0.8 : 0),
+    use(w, u, t, tier) {
+      const dur = tier >= 2 ? 14 : 10, human = u.def, beast = WOLF_FORM(u);
+      if (!beast) return;
+      u.kit.wolfUntil = w.time + dur; u.def = beast; setAnim(u, 'ability', 0.5); w.shake = Math.max(w.shake, 4);
+      if (tier >= 2) heal(w, u, u.maxHp * 0.2, u);
+      k2(w, { draw: 'roar', unit: u, x: u.x, y: u.y, r: 120, max: 0.6 }); puff(w, u.x, u.y, '#6E6A6A', 16, 130, 7, 0.6);
+      timer(u, 'turnWolf', dur, null, () => { u.def = human; u.kit.wolfUntil = 0; puff(w, u.x, u.y, '#6E6A6A', 12, 100, 6, 0.5); });
+    },
+    hook: { hit(w, u, t, amt, o) { if (u.kit.wolfUntil > w.time && tierOf(u, 'turnWolf') >= 3 && !o.dot && !o.proc) addStatus(w, t, 'poison', 12, u); } },
+  },
+  frenzy: {
+    score: (w, u, t) => (inReach(u, t, 30) ? 0.6 : 0),
+    use(w, u, t, tier) {
+      cast(u, 'ability', 0.4); u.kit.frenzy = { until: w.time + 6, n: 0, howled: false };
+      addBuff(u, { id: 'frenzy', dur: 6, lifesteal: tier >= 2 ? 0.12 : 0, glow: '#C8453D' });
+    },
+    hook: {
+      hit(w, u, t, amt, o) {
+        const f = u.kit.frenzy; if (!f || f.until < w.time || o.dot || o.proc) return;
+        f.n = Math.min(6, f.n + 1);
+        if (f.n >= 6 && !f.howled && tierOf(u, 'frenzy') >= 3) { f.howled = true; for (const e of foesNear(w, u, u.x, u.y, 160)) addStatus(w, e, 'stagger', 60, u); k2(w, { draw: 'roar', unit: u, x: u.x, y: u.y, r: 160, max: 0.6, ab: 'frenzy' }); }
+      },
+      atkSpeed: (u) => { const f = u.kit && u.kit.frenzy; return f && f.until > (u._wt || 0) ? 1 + 0.1 * f.n : 1; },
+      tick(w, u) { u._wt = w.time; },
+    },
+    show: { attacks: true, single: true },
+  },
+  pounce: {
+    score(w, u, t) { if (!t) return 0; const d = dist(u.x, u.y, t.x, t.y); return d > 120 && d < 340 && !t.def.boss ? 0.6 : 0; },
+    use(w, u, t, tier) {
+      if (!t) return; cast(u, 'ability', 0.6); const a = ang(u, t);
+      u.act = { type: 'leap', t: 0.45, max: 0.45, x0: u.x, y0: u.y, x1: t.x - Math.cos(a) * (u.r + t.r) * 0.7, y1: t.y - Math.sin(a) * (u.r + t.r) * 0.7, land: () => {
+        if (!alive(t)) return; const d = (tier >= 2 ? 1.6 : 1) * (t.def.boss ? 0.4 : 1);
+        hurt(w, t, dmgOf(u, 1.4), u, { noDodge: true, heavy: true, knock: 0 }); stun(w, t, d); t.rootT = Math.max(t.rootT || 0, d); interrupt(w, t);
+        k2(w, { draw: 'bonk', x: t.x, y: t.y, unit: t, r: t.vr, max: d });
+        if (tier >= 3) for (let i = 1; i <= 4; i++) after(u, i * d / 5, () => { if (alive(t)) { setAnim(u, 'swing', 0.15); hurt(w, t, dmgOf(u, 0.5), u, { noDodge: true, knock: 0, ab: 'pounce' }); } });
+      } };
+      u.invulnT = Math.max(u.invulnT, 0.4);
+    },
+    show: { far: true, single: true },
+  },
 };
+// the Werewolf's other shape (units.js builds it from heroes2.js form and hangs it on the hero's def)
+const WOLF_FORM = (u) => u.def.formDef || null;
 // a bomb's blast at x, y: radius r, damage k x his own, extra hit options; drawn as the kit's blast
 function blast(w, u, x, y, r, k, o, ab) {
   w.telegraphs.push({ type: 'blast', x, y, r, color: '#FFB347', t: 0.05, max: 0.05, ab });
@@ -1643,7 +1741,7 @@ export const TRAITS2 = {
   wellStocked: {
     tick(w, u, dt) {
       const k = u.kit; k.stockT = (k.stockT ?? 20) - dt; if (k.stockT > 0) return;
-      const a = friendsNear(w, u, u.x, u.y, 220).find((o) => o.team === 'hero' && !o.summon && !o.potions); if (!a) { k.stockT = 2; return; }
+      const a = friendsNear(w, u, u.x, u.y, 220).find((o) => !o.summon && !o.potions); if (!a) { k.stockT = 2; return; }
       k.stockT = 60; a.potions = 1; k2(w, { draw: 'crumbs', x: a.x, y: a.y, unit: a, max: 0.6 });
     },
   },
@@ -1651,6 +1749,8 @@ export const TRAITS2 = {
   birdsEye: { tick(w, u) { if (u.kit.birdsEye) return; u.kit.birdsEye = true; u.def = { ...u.def, range: u.def.range * 1.25, keep: (u.def.keep || 150) * 1.15 }; } },
   demolition: { dealt(w, u, t, amt, o) { if (o.blast && o.knock) o.knock *= 2; return amt; } },
   oldSalt: { immune: ['wet'], dealt(w, u, t, amt) { return t.st && t.st.wet > 20 ? amt * 1.2 : amt; } },
+  handy: { tick(w, u) { for (const s of w.units) if (s.summonBy === u && alive(s)) addBuff(s, { id: 'handy', dur: 0.3, taken: 0.7 }); } },
+  moonblood: { tick(w, u, dt) { if (foesNear(w, u, u.x, u.y, 260).length) heal(w, u, u.maxHp * 0.01 * dt, u); } },
   finisher: { dealt(w, u, t, amt) { return hpRatio(t) < 0.5 ? amt * 1.25 : amt; } },
   deadeye: { dealt(w, u, t, amt, o) { if (!o.dot && t.hp >= t.maxHp * 0.999) { o.crit = true; return amt * 2; } return amt; } },
   assassin: { dealt(w, u, t, amt, o) { return o.shot && angleDiff(angleTo(t.x, t.y, u.x, u.y), t.facing) > 1.9 ? amt * 1.5 : amt; } },

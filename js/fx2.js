@@ -405,9 +405,10 @@ DRAW.ebeam = (ctx, f, w, layer) => {
 // Summon Imp: a red-hot crack opening in the floor, then shutting
 DRAW.gate = (ctx, f, w, layer) => {
   if (layer !== 'ground') return; const k = k01(f.t / f.max), o = Math.sin(k * Math.PI);
-  lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 2, '#FF5A3D', 0.5 * o));
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(f.x, f.y, f.r * o, f.r * 0.45 * o, 0, 0, TAU); }, '#2B1A1A');
-  ctx.fillStyle = '#FF8A3D'; ctx.beginPath(); ctx.ellipse(f.x, f.y, f.r * 0.7 * o, f.r * 0.25 * o, 0, 0, TAU); ctx.fill();
+  const st = f.col === 'steel';
+  lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 2, st ? '#DCE3EC' : '#FF5A3D', 0.5 * o));
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(f.x, f.y, f.r * o, f.r * 0.45 * o, 0, 0, TAU); }, st ? '#6E7680' : '#2B1A1A');
+  ctx.fillStyle = st ? '#FFF4C8' : '#FF8A3D'; ctx.beginPath(); ctx.ellipse(f.x, f.y, f.r * 0.7 * o, f.r * 0.25 * o, 0, 0, TAU); ctx.fill();
 };
 // Dark Bargain: blood drawn out of him in a swirl, then pulled into his hands
 DRAW.bargain = (ctx, f, w, layer) => {
@@ -744,6 +745,16 @@ DRAW.slashLine = (ctx, f, w, layer) => {
   if (layer !== 'air') return; const k = k01(f.t / f.max), a = Math.atan2(f.y2 - f.y1, f.x2 - f.x1), L = Math.hypot(f.x2 - f.x1, f.y2 - f.y1);
   ctx.save(); ctx.globalAlpha *= 1 - k; K.streak(ctx, f.x1, f.y1, a, 0, L * (0.6 + 0.4 * easeOut(Math.min(1, k * 4))), 7 * (1 - k) + 1.5, '#EEF3F8', '#FFFFFF'); ctx.restore();
   if (k < 0.2) lit(ctx, () => glowDisc(ctx, f.x2, f.y2, 30, '#FFFFFF', 0.6 * (1 - k / 0.2)));
+};
+
+// ----- batch 8
+Object.assign(EL2, { deployTurret: 'steel', tinker: 'storm', shockMine: 'storm', turnWolf: 'blood', frenzy: 'blood', pounce: 'earth' });
+// Shock Mine: a squat steel mine on the floor, its light blinking
+DRAW.mine = (ctx, f, w, layer) => {
+  if (layer !== 'ground') return; ctx.save(); ctx.globalAlpha *= life(f, 0.1, 0.2);
+  inked(ctx, () => { ctx.beginPath(); ctx.arc(f.x, f.y, 11, 0, TAU); }, '#6E7680'); disc(ctx, f.x, f.y, 6, '#A8B0BA');
+  if (Math.sin(f.t * 8) > 0) lit(ctx, () => glowDisc(ctx, f.x, f.y, 12, '#FFE66B', 0.9));
+  ctx.restore();
 };
 
 export function drawK2(ctx, f, w, layer) { const d = DRAW[f.draw]; if (d) { ctx.save(); d(ctx, f, w, layer); ctx.restore(); } }

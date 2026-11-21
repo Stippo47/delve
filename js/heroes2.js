@@ -619,6 +619,50 @@ Object.assign(HEROES2, {
   },
 });
 
+// ------------------------------------------------------------------ batch 8: the engineer and the werewolf
+Object.assign(HEROES2, {
+  engineer: {
+    name: 'Engineer', art: 'art/heroes/engineer.svg', role: 'melee', unlock: { gems: 3 },
+    blurb: 'An orange work suit, a welding mask pushed up and a very big wrench. Builds a turret and keeps it running.',
+    fun: 'Can fix anything with a wrench. Has fixed several things that were not broken.',
+    stats: { hp: 115, speed: 60, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 22, atkCd: 1.1, dmg: 11, knock: 150, arc: 1.6 },
+    weapon: 'heavy',
+    attack: { name: 'Wrench', anim: 'swing', desc: 'A clanging swing of the wrench.' },
+    summons: {
+      turret: { name: 'Turret', art: 'art/summons/turret.svg', headR: 52, turret: true, attackAnim: 'shoot', proj: 'bullet', r: 24, vr: 20, turn: 6, accel: 0, face: 7, mass: 8,
+        hp: 70, speed: 0, role: 'ranged', range: 260, keep: 0, atkCd: 0.6, dmg: 5 },
+    },
+    abilities: [
+      { id: 'deployTurret', name: 'Deploy Turret', cd: 20, tags: 'd', glyph: 'burst', desc: 'Sets down a turret that swivels and shoots the nearest enemy.',
+        tiers: ['One turret for 15s.', 'It shoots faster and lasts 25s.', 'Two turrets.'] },
+      { id: 'tinker', name: 'Tinker', cd: 10, tags: 'h', glyph: 'heart', desc: 'A few smart knocks with the wrench: his turrets are patched up, and so is a friend.',
+        tiers: ['Turrets back to full; a friend heals 12%.', 'The friend takes 25% less for 5s.', 'The turrets\' shots burn for 6s.'] },
+      { id: 'shockMine', name: 'Shock Mine', cd: 12, tags: 'ds', glyph: 'bolt', desc: 'Tosses out a mine that goes off with a crackle when an enemy comes near.',
+        tiers: ['A blast that stuns for 1s.', 'It shocks everything round it.', 'Two mines.'] },
+    ],
+    trait: { id: 'handy', name: 'Handy', desc: 'Things he builds or calls take 30% less damage.' },
+  },
+  werewolf: {
+    name: 'Werewolf', art: 'art/heroes/werewolf.svg', role: 'melee', unlock: { gems: 3 },
+    blurb: 'A woodsman with a hatchet and a torn red shirt. Then, when it matters, a great grey wolf.',
+    fun: 'Buys his shirts in bulk.',
+    stats: { hp: 130, speed: 64, r: 33, vr: 23, turn: 4, accel: 230, face: 4.2, mass: 1.8, range: 22, atkCd: 1.1, dmg: 12, knock: 130, arc: 1.6 },
+    weapon: 'blade',
+    form: { id: 'werewolfBeast', name: 'Werewolf', art: 'art/heroes/werewolf-beast.svg', anim: 'swing',
+      stats: { speed: 84, turn: 5.5, accel: 340, face: 5.5, range: 18, atkCd: 0.55, dmg: 10, knock: 90, arc: 2, weapon: 'claw' }, style: { dual: true } },
+    attack: { name: 'Hatchet', anim: 'swing', desc: 'A woodsman\'s chop. As a wolf: quick raking claws with either paw.' },
+    abilities: [
+      { id: 'turnWolf', name: 'Turn', cd: 22, tags: 'h', glyph: 'paw', desc: 'Lets the wolf out: faster, and the claws come twice as fast as the hatchet.',
+        tiers: ['A wolf for 10s.', 'For 14s, and he heals 20% as he turns.', 'The claws make them bleed (poison).'] },
+      { id: 'frenzy', name: 'Frenzy', cd: 14, tags: 'h', glyph: 'fist', desc: 'Each blow in a row comes faster than the last.',
+        tiers: ['For 6s, up to 60% faster.', 'His blows heal him a little.', 'At full speed he howls: everything near is staggered.'] },
+      { id: 'pounce', name: 'Pounce', cd: 10, tags: 'ds', glyph: 'up', desc: 'Leaps onto a far enemy and pins it to the floor.',
+        tiers: ['Pins it for 1s.', 'Pins it for 1.6s.', 'Mauls it while it\'s pinned.'] },
+    ],
+    trait: { id: 'moonblood', name: 'Moonblood', desc: 'Heals 1% of his health a second while fighting.' },
+  },
+});
+
 // The HUD glyph of each new ability (icons.js)
 export const GLYPH2 = {};
 for (const h of Object.values(HEROES2)) for (const ab of h.abilities) if (ab.glyph) GLYPH2[ab.id] = ab.glyph;

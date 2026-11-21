@@ -317,3 +317,21 @@ A winged helm, long plaits and a big spear. Carries the fallen back into the fig
 - **Spear of the Sky** (9s). Hurls the spear down a line; it flies back to her hand. I: Through a line of enemies. II: It shocks. III: It nails the last one hit to the floor.
 - **Sky Dive** (12s). Leaps high on her wings and dives spear-first onto an enemy. I: A dive that hits hard where she lands. II: It staggers those round. III: She heals 15% on landing.
 - **Trait: Chooser of the Slain.** Revives the fallen twice as fast, at 30% health.
+
+## Engineer (`engineer`, melee, 1050 gold)
+An orange work suit, a welding mask pushed up and a very big wrench. Builds a turret and keeps it running. Art: `art/heroes/engineer.svg`.
+
+- **Attack: Wrench.** A clanging swing of the wrench.
+- **Deploy Turret** (20s). Sets down a turret that swivels and shoots the nearest enemy. I: One turret for 15s. II: It shoots faster and lasts 25s. III: Two turrets.
+- **Tinker** (10s). A few smart knocks with the wrench: his turrets are patched up, and so is a friend. I: Turrets back to full; a friend heals 12%. II: The friend takes 25% less for 5s. III: The turrets' shots burn for 6s.
+- **Shock Mine** (12s). Tosses out a mine that goes off with a crackle when an enemy comes near. I: A blast that stuns for 1s. II: It shocks everything round it. III: Two mines.
+- **Trait: Handy.** Things he builds or calls take 30% less damage.
+
+## Werewolf (`werewolf`, melee, 1050 gold)
+A woodsman with a hatchet and a torn red shirt. Then, when it matters, a great grey wolf. Art: `art/heroes/werewolf.svg`, and `art/heroes/werewolf-beast.svg` (Werewolf).
+
+- **Attack: Hatchet.** A woodsman's chop. As a wolf: quick raking claws with either paw.
+- **Turn** (22s). Lets the wolf out: faster, and the claws come twice as fast as the hatchet. I: A wolf for 10s. II: For 14s, and he heals 20% as he turns. III: The claws make them bleed (poison).
+- **Frenzy** (14s). Each blow in a row comes faster than the last. I: For 6s, up to 60% faster. II: His blows heal him a little. III: At full speed he howls: everything near is staggered.
+- **Pounce** (10s). Leaps onto a far enemy and pins it to the floor. I: Pins it for 1s. II: Pins it for 1.6s. III: Mauls it while it's pinned.
+- **Trait: Moonblood.** Heals 1% of his health a second while fighting.
