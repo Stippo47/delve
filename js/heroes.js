@@ -179,7 +179,7 @@ export const HEROES = {
       { id: 'smite', name: 'Smite', cd: 9, desc: 'A pillar of light on an enemy: hurts, staggers and makes it radiant.',
         tiers: ['Hurts and staggers.', 'Hurts more.', 'Undead take triple.'] },
     ],
-    trait: { id: 'raiser', name: 'Raiser', desc: 'Revives the downed three times faster, at 30% health.' },
+    trait: { id: 'raiser', name: 'Raiser', desc: 'Revives the downed twice as fast, at 20% health.' },
   },
   bard: {
     name: 'Bard', art: 'art/heroes/bard.svg', role: 'support', unlock: { gems: 2 },
@@ -207,9 +207,9 @@ export const HEROES = {
       { id: 'rejuvenate', name: 'Rejuvenate', cd: 8, desc: 'Heals an ally slowly over time.',
         tiers: ['13% over 6s.', '20%.', 'Two allies.'] },
       { id: 'callWolf', name: 'Call Wolf', cd: 22, desc: 'A summoning ring opens and a wolf steps out to fight beside the party for a while.',
-        tiers: ['For 15s.', 'A bigger wolf.', 'Two wolves.'] },
+        tiers: ['For 12s.', 'A bigger wolf.', 'Two wolves.'] },
     ],
-    trait: { id: 'barkskin', name: 'Barkskin', desc: 'Takes 30% less damage while standing still.' },
+    trait: { id: 'barkskin', name: 'Barkskin', desc: 'Takes 20% less damage while standing still.' },
   },
   necromancer: {
     name: 'Necromancer', art: 'art/heroes/necromancer.svg', role: 'caster', unlock: { gems: 3 },

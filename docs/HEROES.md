@@ -187,9 +187,9 @@ A veiled hat, a copper smoker, and a great many friends who sting. Art: `art/her
 A pack bigger than he is. Keeps the party fed, armed and stocked, and throws the pots. Art: `art/heroes/quartermaster.svg`.
 
 - **Attack: Pot toss.** Throws a pot or a pan out of the pack.
-- **Resupply** (22s). Tosses a supply bundle to the ally who needs it most. I: Heals 6%, and a health potion if they have none. II: Heals 12%. III: A bundle each for two allies.
+- **Resupply** (28s). Tosses a supply bundle to the ally who needs it most. I: Heals 6%, and a health potion if they have none. II: Heals 12%. III: A bundle each for two allies.
 - **Oil the Blades** (16s). Hands round lamp oil for the weapons: the allies near him set things alight with every blow. I: Their blows burn a little for 8s. II: They burn more. III: And their blows heal them a little.
-- **Flare** (13s). Fires a red flare onto the enemies: whatever stands in its light is easy to hit. I: For 6s they take 20% more. II: They are dazzled and slowed too. III: A bigger patch of light.
+- **Flare** (13s). Fires a red flare onto the enemies: whatever stands in its light is easy to hit. I: For 6s they take 15% more. II: They are dazzled and slowed too. III: A bigger patch of light.
 - **Trait: Well Stocked.** Every two minutes, a friend near him who has no health potion gets one.
 
 ## Crossbowman (`crossbowman`, ranged, 700 gold)

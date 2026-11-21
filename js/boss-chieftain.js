@@ -13,9 +13,9 @@ import { drawDrum, drawWarcamp, drawSpears } from './fx-boss.js';
 
 // Every move: a tell (a shape fills on the ground), the hit, a recovery (the hold: the party's window).
 export const CH = {
-  chop: { r: 175, arc: 1.9, tell: 0.85, dmg: 27, knock: 280, rec: 0.7 },
-  charge: { len: 620, tell: 0.85, dmg: 30, knock: 340, dazed: 1.7, open: 1.35, rec: 0.5 },
-  spear: { len: 640, hw: 26, tell: 0.75, dmg: 22, back: 0.5, rec: 0.35 },
+  chop: { r: 175, arc: 1.9, tell: 0.85, dmg: 24, knock: 280, rec: 0.7 },
+  charge: { len: 620, tell: 0.85, dmg: 27, knock: 340, dazed: 1.7, open: 1.35, rec: 0.5 },
+  spear: { len: 640, hw: 26, tell: 0.75, dmg: 20, back: 0.5, rec: 0.35 },
   roar: { r: 230, tell: 0.9, dmg: 10, stagger: 40, knock: 300 },
   drum: { every: 14, calls: 2, cap: 5, hp: 110, haste: 0.06 },
   mice: { n: 3, every: 11 },
@@ -204,7 +204,7 @@ function warcamp(w) {
 export const CHIEFTAIN = {
   defs: {
     chieftain: { team: 'enemy', name: 'The Goblin Chieftain', art: variantUrl('art/enemies/orc.svg', { hue: 28, sat: 1.15, light: -0.1 }), headR: 62, r: 50, vr: 38, turn: 2.4, accel: 160, face: 2.6, mass: 6,
-      hp: 1100, speed: 54, role: 'melee', range: 30, atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 160, coins: [60, 80], boss: true, arena: 'warcamp', attackAnim: 'swing',
+      hp: 1000, speed: 54, role: 'melee', range: 30, atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 160, coins: [60, 80], boss: true, arena: 'warcamp', attackAnim: 'swing',
       res: { stagger: 0.5, chill: 0.7, poison: 0.3 }, brain: (w, u, dt) => { if (!u.ch) placeDrums(w, u); return brain(w, u, dt); }, onDeath: death },
     // a war drum: stands where it's put, beats, calls goblins; smash it
     warDrum: PART('War Drum', { r: 30, vr: 30, hp: CH.drum.hp, mass: 40, draw: drawDrum }),

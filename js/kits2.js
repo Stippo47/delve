@@ -981,7 +981,7 @@ export const ABILITIES2 = {
       lob(w, u, t.x, t.y, 'flare', null, (x, y) => {
         const r = tier >= 3 ? 150 : 110;
         k2(w, { draw: 'flare', x, y, r, max: 6, ab: 'flare' });
-        timer(u, 'flare' + Math.round(x + y), 6, () => { for (const e of foesNear(w, u, x, y, r)) addBuff(e, { id: 'flared', dur: 0.35, taken: 1.2, move: tierOf(u, 'flare') >= 2 ? 0.75 : 1 }); });
+        timer(u, 'flare' + Math.round(x + y), 6, () => { for (const e of foesNear(w, u, x, y, r)) addBuff(e, { id: 'flared', dur: 0.35, taken: 1.15, move: tierOf(u, 'flare') >= 2 ? 0.75 : 1 }); });
       });
     },
     show: { far: true },

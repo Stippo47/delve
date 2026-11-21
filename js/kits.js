@@ -459,7 +459,7 @@ export const ABILITIES = {
       cast(u, 'ability', 0.5);
       const r = tier >= 2 ? 185 : 145; // round 9: the radius was too small
       zone(w, { x: u.x, y: u.y, r, dur: tier >= 2 ? 7 : 5, kind: 'sanctuary', src: u, every: 0.5, ward: tier >= 3, tick(z) {
-        for (const a of [u, ...allies(w, u)]) if (dist(a.x, a.y, z.x, z.y) < z.r) { heal(w, a, a.maxHp * 0.025, u); a.mendGlow = w.time + 0.6; }
+        for (const a of [u, ...allies(w, u)]) if (dist(a.x, a.y, z.x, z.y) < z.r) { heal(w, a, a.maxHp * 0.02, u); a.mendGlow = w.time + 0.6; }
       } });
     },
   },
@@ -468,7 +468,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'cast', 0.45);
       fx(w, { type: 'pillar', x: t.x, y: t.y, r: 30, kind: 'holy', max: 0.45 });
-      hurt(w, t, dmgOf(u, tier >= 2 ? 3.4 : 2.4) * (tier >= 3 && isUndead(t) ? 3 : 1), u, { noDodge: true, stagger: 50, radiance: 35, omni: true });
+      hurt(w, t, dmgOf(u, tier >= 2 ? 2.8 : 2) * (tier >= 3 && isUndead(t) ? 3 : 1), u, { noDodge: true, stagger: 50, radiance: 35, omni: true });
     },
   },
   // ----- Bard
@@ -526,7 +526,7 @@ export const ABILITIES = {
       for (const p of spots) fx(w, { type: 'zone', kind: 'summon', x: p.x, y: p.y, r: 34, max: 1.1 });
       u.later = [{ t: 0.7, f: () => { for (const p of spots) {
         const s = spawn(w, 'wolf', p.x, p.y, { team: u.team, scale: tier >= 2 ? 1.25 : 1, hpMul: tier >= 2 ? 1.25 : 1 });
-        s.summon = true; s.summonBy = u; s.lifeT = 15; s.aggro = true; s.dmgMul = u.dmgMul * (tier >= 2 ? 1 : 0.8);
+        s.summon = true; s.summonBy = u; s.lifeT = 12; s.aggro = true; s.dmgMul = u.dmgMul * (tier >= 2 ? 1 : 0.8);
       } } }];
     },
   },
@@ -754,9 +754,9 @@ export const TRAITS = {
   kindling: { dealt(w, u, t, amt) { return t.st.burn > 10 ? amt * 1.2 : amt; } },
   coldBlood: { immune: ['chill'] },
   conductor: { shockMul: 2 },
-  raiser: { reviveRate: 3, reviveHp: 0.3 },
+  raiser: { reviveRate: 2, reviveHp: 0.2 },
   rhythm: { tick(w, u, dt) { for (const a of friendsNear(w, u, u.x, u.y, 180)) addBuff(a, { id: 'rhythm', dur: 0.3, move: 1.1 }); } },
-  barkskin: { taken(w, u, src, amt) { return u.spd < 8 ? amt * 0.7 : amt; } },
+  barkskin: { taken(w, u, src, amt) { return u.spd < 8 ? amt * 0.8 : amt; } },
   soulHarvest: { death(w, u) { if (u.kit) for (const k in u.kit.cd) u.kit.cd[k] = Math.max(0, u.kit.cd[k] - 0.8); } },
   immunity: {
     immune: ['poison'],
