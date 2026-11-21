@@ -1375,7 +1375,10 @@ export function step(w, dt) {
   w.fx = w.fx.filter((f) => f.t < f.max);
   let wallsGone = false;
   for (const r of w.walls) if (r.temp != null) { r.temp -= dt; if (r.temp <= 0) wallsGone = true; }
-  if (wallsGone) { w.walls = w.walls.filter((r) => r.temp == null || r.temp > 0); buildGrid(w); }
+  if (wallsGone) {
+    for (const r of w.walls) if (r.kind === 'bone' && r.temp <= 0) puff(w, r.x + r.w / 2, r.y + r.h / 2, '#E6DCC4', 6, 70, 5, 0.5); // a bone wall crumbles
+    w.walls = w.walls.filter((r) => r.temp == null || r.temp > 0); buildGrid(w);
+  }
   for (const t of w.telegraphs) t.t -= dt;
   w.telegraphs = w.telegraphs.filter((t) => t.t > 0);
   w.units = w.units.filter((u) => !u.dead);
