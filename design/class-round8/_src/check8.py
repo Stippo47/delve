@@ -1,7 +1,7 @@
 """Check the round-8 generators against the files the designer saw.
-1. A copy of this _src with every round-8 switch turned off (*_R8) must give the round-7 orc and ghosts and the round-6
-   troll (the "(before)" tile the troll note was on; also the game's art/enemies/troll.svg) byte for byte, so each
-   round-8 change is only what its switch adds.
+1. A copy of this _src with every round-8 switch turned off (*_R8) must give the round-7 orc and ghosts, the round-7
+   Croc A (the croc's two axes are CROC_R8) and the round-6 troll (the "(before)" tile the troll note was on, and the
+   game's troll before this round) byte for byte, so each round-8 change is only what its switch adds.
 2. build8.py must rebuild the committed round-8 files byte for byte.
 The copies are built in design/_check8 (deleted afterwards). python check8.py   (paths relative to this file)"""
 import re, sys, shutil, subprocess, pathlib
@@ -31,7 +31,7 @@ def copy_src(off):
 bad, n = [], 0
 try:
     src, found = copy_src(True)
-    need = {"ORC_R8", "GHOST_R8", "TROLL_R8"}
+    need = {"ORC_R8", "GHOST_R8", "TROLL_R8", "CROC_R8"}
     if need - found:
         bad.append(f"switches not found: {sorted(need - found)}")
     out = TMP / "off"
@@ -45,16 +45,17 @@ import greenskins as g, critters as c
 (out / "greenskin-troll.svg").write_text(g.troll().svg(), encoding="utf-8")
 for t in "ab":
     (out / f"ghost-{t}.svg").write_text(c.ghost7(t).svg(), encoding="utf-8")
-""", str(src / "E3"), str(out)], check=True, stdout=subprocess.DEVNULL)
+sys.path.insert(0, sys.argv[3])
+import croc8
+(out / "lizardman-croc-a.svg").write_text(croc8.croc(False), encoding="utf-8")
+""", str(src / "E3"), str(out), str(src)], check=True, stdout=subprocess.DEVNULL)
     refs = {"greenskin-orc.svg": R7 / "enemies/greenskin-orc.svg", "ghost-a.svg": R7 / "enemies/ghost-a.svg",
-            "ghost-b.svg": R7 / "enemies/ghost-b.svg", "greenskin-troll.svg": R6 / "enemies/greenskin-troll.svg"}
+            "ghost-b.svg": R7 / "enemies/ghost-b.svg", "greenskin-troll.svg": R6 / "enemies/greenskin-troll.svg",
+            "lizardman-croc-a.svg": R7 / "enemies/lizardman-croc-a.svg"}
     for name, ref in refs.items():
         n += 1
         if (out / name).read_bytes() != ref.read_bytes():
             bad.append(f"[off] {name} differs from {ref.relative_to(DESIGN).as_posix()}")
-    n += 1
-    if (R6 / "enemies/greenskin-troll.svg").read_bytes() != (HERE.parents[2] / "art/enemies/troll.svg").read_bytes():
-        bad.append("[off] the round-6 troll is not the game's art/enemies/troll.svg")
     # 2. build8.py -> the committed files
     src, _ = copy_src(False)
     subprocess.run([sys.executable, str(src / "build8.py")], check=True, stdout=subprocess.DEVNULL, cwd=src)

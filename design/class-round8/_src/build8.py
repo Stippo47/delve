@@ -73,6 +73,16 @@ def build(want=()):
         BOARDS.mkdir(parents=True, exist_ok=True)
         (BOARDS / "greenskin-troll-boulder.svg").write_text(both, encoding="utf-8")
         made.append(BOARDS / "greenskin-troll-boulder.svg")
+    # part 2: the new generators (each writes its own files into ../enemies), and the croc (Croc A with two axes)
+    import subprocess
+    if not want or any(n.startswith(("wild-", "bandit-", "sewer-")) for n in want):
+        for script in ("A2/wild8.py", "A2/bandits8.py", "A2/bandits8_more.py", "A2/grove8.py", "A2/sewer8.py"):
+            out = subprocess.run([sys.executable, str(HERE / script)], check=True, capture_output=True, text=True).stdout
+            made += [R8 / line.strip() for line in out.splitlines() if line.strip().endswith(".svg")]
+        import croc8
+        ENEMIES.mkdir(parents=True, exist_ok=True)
+        (ENEMIES / "sewer-croc.svg").write_text(croc8.croc(), encoding="utf-8")
+        made.append(ENEMIES / "sewer-croc.svg")
     return made
 
 

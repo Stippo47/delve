@@ -76,7 +76,7 @@ def dagger(S, T, L=44):
     fist(S, 0, -6, T=T)
 
 
-def greatsword(S, T, L=72):
+def greatsword(S, T, L=84):
     S.shape(rr(0, -8, 10, 46, 4), "#4A3226", T=T, shadow=0)
     S.shape(circ(0, -32, 6.5), BRASS, T=T, shadow=0)
     blade = [(-11, 20), (11, 20), (10, L), (0, L + 18), (-10, L)]
@@ -125,8 +125,8 @@ def hood(S, col, tail=True):
 
 
 def kettle_hat(S, col="#8E96A4"):
-    S.shape(ell(100, 80, 62, 48), col, shadow=5, decor=f'<path d="{ell(100, 80, 52, 38)}" fill="{shade(col, 0.85)}" opacity="0.5"/>')
-    S.shape(ell(100, 76, 40, 36), col, shadow=4, decor=f'<path d="{ell(88, 64, 16, 11)}" fill="#F4F6FA" opacity="0.35"/>')
+    S.shape(ell(100, 78, 56, 44), col, shadow=5, decor=f'<path d="{ell(100, 78, 47, 35)}" fill="{shade(col, 0.85)}" opacity="0.5"/>')
+    S.shape(ell(100, 74, 37, 33), col, shadow=4, decor=f'<path d="{ell(89, 63, 15, 10)}" fill="#F4F6FA" opacity="0.3"/>')
 
 
 def fur_cap(S, col="#8A6A4A"):
@@ -178,13 +178,14 @@ def bandit_torch():
 
 def bandit_greatsword():
     S = Sprite("GREATSWORD BANDIT (round 8): the gang's tunic and red bandanna under an iron kettle hat with a broad round "
-               "brim; a big two-handed sword, both fists on the long grip at the right side, the blade forward and in "
-               "across the front (arm-r, before #body; no arm-l). " + LAYOUT)
-    S.group("arm-r", PR, "greatsword, both hands")
-    greatsword(S, frame(150, 126, 30))
+               "brim; a big two-handed sword held in front the Old Guard's way (the designer: two-handed weapons are held "
+               "in the middle, in front): both fists on the long grip at the front right, the wide blade forward and in "
+               "across the front (arm-r, after #body; no arm-l). " + LAYOUT)
     body(S, hair=False)
     masked(S)
     kettle_hat(S)
+    S.group("arm-r", PR, "greatsword, both hands, in front")
+    greatsword(S, frame(146, 116, 40))
     return save("enemies", "bandit-greatsword", S)
 
 

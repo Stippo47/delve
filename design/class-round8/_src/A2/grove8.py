@@ -202,9 +202,10 @@ def elder_ent():
             decor=strokes("M 82 58 L 86 96 M 118 58 L 114 96 M 100 54 L 100 82", DOLD, 3.5, 0.45)
                   + f'<path d="{ell(100, 102, 42, 10)}" fill="{DOLD}" opacity="0.4"/>')
     # the long mossy beard over the chest, the mouth above it
-    beard = blob([(70, 128), (86, 134), (100, 136), (114, 134), (130, 128), (134, 146), (126, 164), (116, 178), (106, 190),
-                  (100, 198), (94, 190), (84, 178), (74, 164), (66, 146)], 0.75)
-    S.shape(beard, "#5E7E44", shadow=4, decor=strokes("M 84 140 L 92 180 M 100 142 L 100 192 M 116 140 L 108 180", "#4A6A36", 3, 0.6))
+    # a ragged mossy beard: tufts hanging in uneven points (round 8: one smooth point read as a leaf)
+    beard = blob([(68, 128), (86, 134), (100, 136), (114, 134), (132, 128), (136, 146), (130, 164), (124, 160), (120, 178),
+                  (112, 172), (106, 192), (100, 182), (94, 194), (88, 172), (80, 178), (76, 160), (70, 164), (64, 146)], 0.6)
+    S.shape(beard, "#5E7E44", shadow=4, decor=strokes("M 86 140 L 90 168 M 100 142 L 100 178 M 114 140 L 110 166", "#4A6A36", 3, 0.6))
     S.shape(blob([(86, 112), (100, 108), (114, 112), (118, 126), (100, 134), (82, 126)], 0.9), "#241C1A", shadow=0, side=False)
     S.shape(ell(122, 66, 12, 7), MOSS, shadow=2)
     return save("enemies", "wild-elder-ent", S)
