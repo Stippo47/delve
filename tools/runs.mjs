@@ -9,6 +9,9 @@
 //     highest-level heroes that fit the slots, points spent with autoSpend, heroes bought with gold when there's enough,
 //     a trinket each when gold is spare; reports when each slot, boss and dungeon came.
 //   [--rooms file.json] (round 14, lane L: every room's fight time, and snapshots of the long ones, for tools/long-rooms.mjs)
+//   [--watch i:room[:every[:from]]] (one room of one run printed in full: run i as --v counts them (a campaign's from 1),
+//     room as the room log's n; LR_WATCHV=1 adds each unit's steering. Replay a batch's run i with the batch's own --n and
+//     --seed: earlier runs in a batch move the dice)
 // A run is stuck if no room is finished for 420 simulated seconds, or 600 in a boss room.
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
