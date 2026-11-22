@@ -6,7 +6,7 @@
 // Everything here is drawn by the renderer from what the sim leaves in the world; nothing here changes the game.
 import { INK, TAU, clamp } from './util.js';
 import { OUTLINE, view } from './render.js';
-import { hash, rgba, upright, upVec, inked, inkLine, flame, blob, star, glowDisc, bolt, easeOut, leaf } from './fx.js';
+import { hash, rgba, upright, upVec, inked, inkLine, flame, blob, star, glowDisc, bolt, easeOut, leaf, snowBurst } from './fx.js';
 import { drawPuddle } from './puddles.js';
 import { SIG2, installFx2 } from './fx2.js';
 import { variant } from './fxvar.js';
@@ -135,6 +135,7 @@ export function noteWorld(w) {
   if (w._proj) for (const p of w._proj) if (!now.has(p) && !p.lab) {
     if (p.noHit) continue; // a lobbed thing: its landing is the danger zone's strike
     push({ type: 'impact', kind: p.necro ? 'soulFlame' : p.kind, ab: p.ab, x: p.x, y: p.y, a: Math.atan2(p.vy, p.vx), col: p.color, max: p.ab ? 0.45 : 0.32, seed: Math.round(p.x * 3 + p.y) });
+    if (p.ab === 'frostArrow') snowBurst(p.x, p.y, 44, 18); // round 13: snow thrown out where it bursts, hanging a moment
   }
   w._proj = now;
   // a danger zone striking: a burst shaped to its kind
@@ -1015,24 +1016,32 @@ export function abilityZone(ctx, f, T) {
     drawPuddle(ctx, 'smoke', f.x, f.y, f.r * (0.7 + 0.3 * easeOut(clamp(f.t / 0.25, 0, 1))), T, a, Math.round(f.x * 3 + f.y));
     return true;
   }
-  if (f.ab === 'roll' && f.kind === 'vines') { // caltrops scattered where she slid from
-    // round 10: "shoot caltrops out from out of it": each one is flung out of her as she slides, one after another,
-    // hops through the air and lands in the patch (where it leaves her is noted the moment it goes: f._from)
-    const a = clamp((f.max - f.t) / 0.5, 0, 1), seed = Math.round(f.x * 3 + f.y), [ux, uy] = upVec();
+  if (f.ab === 'roll' && f.kind === 'vines') { // the Archer's caltrops (Roll III)
+    // round 13 ("They should slide out"): each one leaves her as she rolls, one after another, and skids along the floor
+    // to its place, turning, slowing, a scuff of dust behind it; it settles with a glint. Drawn as a caltrop from above:
+    // three steel spikes on the floor and the fourth standing up at you.
+    const a = clamp((f.max - f.t) / 0.5, 0, 1), seed = Math.round(f.x * 3 + f.y), N = 8;
     if (!f._from) f._from = [];
     ctx.save(); ctx.globalAlpha *= a;
-    for (let i = 0; i < 9; i++) { const b = hash(seed, i) * TAU, rr = f.r * Math.sqrt(hash(i, seed)), lx = f.x + Math.cos(b) * rr, ly = f.y + Math.sin(b) * rr;
-      const t0 = 0.03 + i * 0.026, q = k01((f.t - t0) / 0.24); if (q <= 0) continue;
+    for (let i = 0; i < N; i++) { const b = (i + 0.5 * hash(seed, i)) / N * TAU, rr = f.r * (0.22 + 0.72 * hash(i, seed)), lx = f.x + Math.cos(b) * rr, ly = f.y + Math.sin(b) * rr;
+      const t0 = 0.02 + i * 0.03, q = k01((f.t - t0) / 0.3); if (q <= 0) continue;
       const src = f.from && !f.from.dead ? f.from : f;
       if (!f._from[i]) f._from[i] = [src.x, src.y];
-      const [sx, sy] = f._from[i], e = easeOut(q), hop = Math.sin(q * Math.PI) * 22;
-      const x = sx + (lx - sx) * e + ux * hop, y = sy + (ly - sy) * e + uy * hop, rot = b + (1 - q) * 9;
-      if (q >= 1 && f.t - t0 < 0.4) { ctx.save(); ctx.globalAlpha *= 1 - (f.t - t0 - 0.24) / 0.16; dustPuffs(ctx, x, y, 8, k01((f.t - t0 - 0.24) / 0.16), seed + i, 3); ctx.restore(); }
-      inked(ctx, () => star(ctx, x, y, 6, 4, 0.3, rot), '#9AA3AE');
-      ctx.fillStyle = '#DCE3EC'; ctx.beginPath(); ctx.arc(x - 1, y - 1, 1.4, 0, TAU); ctx.fill(); }
+      const [sx, sy] = f._from[i], e = easeOut(q), x = sx + (lx - sx) * e, y = sy + (ly - sy) * e, rot = b + (1 - e) * 7;
+      if (q < 1) { const ta = Math.atan2(ly - sy, lx - sx); // the scuff it leaves while it skids
+        for (let j = 1; j <= 3; j++) { ctx.save(); ctx.globalAlpha *= (1 - q) * (1 - j / 4); inkDisc(ctx, x - Math.cos(ta) * j * 7, y - Math.sin(ta) * j * 7, 3.4 - j * 0.6, '#E9DDC2'); ctx.restore(); } }
+      caltrop(ctx, x, y, 9, rot);
+      const g = (f.t - t0 - 0.3) / 0.22; if (g > 0 && g < 1) { ctx.save(); ctx.globalAlpha *= Math.sin(g * Math.PI); lit(ctx, () => glowDisc(ctx, x, y, 12, '#FFFFFF', 0.7)); inked(ctx, () => star(ctx, x - 2, y - 2, 4.5, 4, 0.22, 0.4), '#FFFFFF'); ctx.restore(); } }
     ctx.restore(); return true;
   }
   return false;
+}
+function caltrop(ctx, x, y, s, rot) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+  inked(ctx, () => { ctx.beginPath(); for (let i = 0; i < 3; i++) { const b = i / 3 * TAU; ctx.moveTo(Math.cos(b - 1.25) * s * 0.34, Math.sin(b - 1.25) * s * 0.34); ctx.lineTo(Math.cos(b) * s, Math.sin(b) * s); ctx.lineTo(Math.cos(b + 1.25) * s * 0.34, Math.sin(b + 1.25) * s * 0.34); ctx.closePath(); } }, '#A9B2C1');
+  ctx.fillStyle = '#DCE3EC'; ctx.beginPath(); for (let i = 0; i < 3; i++) { const b = i / 3 * TAU; ctx.moveTo(0, 0); ctx.lineTo(Math.cos(b) * s * 0.92, Math.sin(b) * s * 0.92); ctx.lineTo(Math.cos(b - 1.25) * s * 0.3, Math.sin(b - 1.25) * s * 0.3); ctx.closePath(); } ctx.fill();
+  ctx.restore();
+  inkDisc(ctx, x, y, s * 0.3, '#EEF3F8'); disc(ctx, x - s * 0.08, y - s * 0.08, s * 0.13, '#FFFFFF'); // the spike standing up
 }
 // a quick swirl at the ally, over everything (round 9: Rejuvenate's ring "show above entities")
 export function abilityZoneAir(ctx, f, T) {

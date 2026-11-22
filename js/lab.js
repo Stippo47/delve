@@ -220,12 +220,13 @@ function setupShow() {
     w = room(470, 350); w.walls = []; buildGrid(w);
     const sh = (ABILITIES[ab] && ABILITIES[ab].show) || {}; // kits2.js: an ability says how the bench should stage it
     const far = ab === 'attack' ? ranged : FAR.has(ab) || sh.far;
-    u = spawn(w, hero, 110, 175, { level: 9 });
+    const hx = ab === 'roll' ? 215 : 110; // (round 13: room behind her to roll into)
+    u = spawn(w, hero, hx, 175, { level: 9 });
     const nodes = {}; for (const a of H.abilities) for (let i = 1; i <= tier; i++) nodes[a.id + i] = 1;
     initKit(u, hero, { nodes }, 9);
     for (const k in u.kit.cd) u.kit.cd[k] = 999;
     u.facing = u.mvA = 0;
-    const mx = far ? (ab === 'charge' ? 270 : 340) : 110 + u.r + 28 + (ab === 'attack' ? Math.max(8, DEFS[hero].range - 6) : 14);
+    const mx = far ? (ab === 'charge' ? 270 : 340) : hx + u.r + 28 + (ab === 'attack' ? Math.max(8, DEFS[hero].range - 6) : 14);
     const spots = [[mx, 175], [mx + (far ? 30 : 22), 105], [mx + (far ? 30 : 22), 245]];
     if (ab !== 'attack' && !SINGLE.has(ab) && !sh.single) spots.push([mx + 66, 175]);
     dummies = spots.map(([x, y]) => { const d = spawn(w, 'lab-dummy', x, y); d.facing = Math.PI; d.home = { x, y }; d.aggro = false; return d; });

@@ -624,15 +624,15 @@ export function drawProjectile(ctx, p, T) {
   switch (p.kind) {
     case 'icicle': case 'shard': {
       ctx.rotate(ang);
-      if (ab === 'frostArrow') { frostArrow(ctx, sp, T); break; }
+      if (ab === 'frostArrow') { snowTrail(p, 8, 7); frostArrow(ctx, sp, T); break; }
       const L = ab === 'iceShard' ? (p.big ? 2.9 : 2.2) : p.kind === 'shard' ? 1.5 : 1.15;
       if (ab === 'iceShard') { // round 10: "Give each spike a trail effect": a long frost streak behind each one, a bright core
-        const TL = 30 * L, wd = 4.2 * L;
+        const TL = 22 * L, wd = 3.6 * L;
         const g = ctx.createLinearGradient(-TL - 8 * L, 0, -6 * L, 0); g.addColorStop(0, 'rgba(159,221,246,0)'); g.addColorStop(1, 'rgba(191,233,248,0.95)');
         ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-TL - 8 * L, 0); ctx.quadraticCurveTo(-TL * 0.4, -wd, -6 * L, -wd * 0.9); ctx.lineTo(-6 * L, wd * 0.9); ctx.quadraticCurveTo(-TL * 0.4, wd, -TL - 8 * L, 0); ctx.fill();
         const g2 = ctx.createLinearGradient(-TL * 0.7, 0, -6 * L, 0); g2.addColorStop(0, 'rgba(255,255,255,0)'); g2.addColorStop(1, 'rgba(255,255,255,0.95)');
         ctx.fillStyle = g2; ctx.beginPath(); ctx.moveTo(-TL * 0.7, 0); ctx.lineTo(-6 * L, -wd * 0.35); ctx.lineTo(-6 * L, wd * 0.35); ctx.closePath(); ctx.fill();
-        frostMotes(ctx, T, 12 * L, 6 * L, p.x); // round 9: particle trails
+        snowTrail(p, p.big ? 9 : 12, 4.5 * L); // round 13 ("Should have a snow particle trail"): snowflakes left along its path
       } else trail(ctx, sp, 26 * L, 5 * L, '#BFE9F8');
       if (ab) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, 0, 0, 14 * L, '#DDF6FF', 0.55); ctx.restore(); }
       inked(ctx, () => { ctx.beginPath(); ctx.moveTo(12 * L, 0); ctx.lineTo(-8 * L, -3.8 * L); ctx.lineTo(-11 * L, 0); ctx.lineTo(-8 * L, 3.8 * L); ctx.closePath(); }, '#BFE9F8');
@@ -776,7 +776,6 @@ export function drawProjectile(ctx, p, T) {
 function frostArrow(ctx, sp, T) {
   trail(ctx, sp, 60, 9, '#BFE9F8');
   ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, 14, 0, 24, '#DDF6FF', 0.6); ctx.restore();
-  for (let i = 0; i < 4; i++) { const d = 14 + ((T * 90 + i * 13) % 52); ctx.fillStyle = `rgba(242,252,255,${0.9 - d / 70})`; star(ctx, -d, Math.sin(i * 2.3 + T * 8) * 6, 3, 4, 0.4, d); ctx.fill(); }
   ctx.scale(1.35, 1.35);
   inked(ctx, () => { roundRect(ctx, -25, -1.7, 32, 3.4, 1.7); }, '#9FB7C8'); // round 9: a slightly longer shaft
   inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-25, 0); ctx.lineTo(-30, -5); ctx.lineTo(-20, -2); ctx.lineTo(-20, 2); ctx.lineTo(-30, 5); ctx.closePath(); }, '#F2FCFF');
@@ -818,6 +817,36 @@ export function trail(ctx, sp, len, wd, col) {
   const L = Math.min(len, sp * 0.08 + 8);
   const g = ctx.createLinearGradient(-L, 0, 0, 0); g.addColorStop(0, rgba(col, 0)); g.addColorStop(1, rgba(col, 0.7));
   ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-L, 0); ctx.lineTo(0, -wd); ctx.lineTo(0, wd); ctx.closePath(); ctx.fill();
+}
+
+// ---------------------------------------------------------------- snow left in the air (round 13)
+// The designer on the Frost Arrow: "No snow particles on the trail or on explosion", and on Ice Shard: "Should have a
+// snow particle trail". Real particles: a cold shot drops snowflakes along its path as it is drawn, and they stay where
+// they were dropped, drift, sink and fade; a burst throws them out and they hang a moment. Nothing is left on the floor.
+const flakes = [];
+let flakeN = 0;
+function flake(x, y, vx, vy, max, s) { if (flakes.length > 240) flakes.shift(); flakes.push({ x, y, vx, vy, t: 0, max, s, n: flakeN++ }); }
+export function snowTrail(p, every = 10, spread = 6) {
+  if (p._sx == null) { p._sx = p.x; p._sy = p.y; return; }
+  const dx = p.x - p._sx, dy = p.y - p._sy, L = Math.hypot(dx, dy); if (L < every) return;
+  const n = Math.min(8, Math.floor(L / every)), nx = -dy / L, ny = dx / L;
+  for (let i = 1; i <= n; i++) { const k = i / n, h = hash(flakeN, 3), h2 = hash(flakeN, 7), o = (h - 0.5) * 2 * spread;
+    flake(p._sx + dx * k + nx * o, p._sy + dy * k + ny * o, nx * (h2 - 0.5) * 30 + dx / L * 16, ny * (h2 - 0.5) * 30 + dy / L * 16, 0.6 + 0.55 * h2, 2.8 + 2.4 * h); }
+  p._sx = p.x; p._sy = p.y;
+}
+export function snowBurst(x, y, r, n) {
+  for (let i = 0; i < n; i++) { const h = hash(flakeN, 11), a = i / n * TAU + h * 0.9, sp = r * (1.4 + 2.2 * hash(flakeN, 5));
+    flake(x + Math.cos(a) * 8, y + Math.sin(a) * 8, Math.cos(a) * sp, Math.sin(a) * sp, 1 + 0.8 * h, 3.2 + 2.6 * hash(flakeN, 9)); }
+}
+function drawFlakes(ctx, dt) {
+  const [ux, uy] = upVec(), drag = Math.exp(-dt * 3.6);
+  for (const f of flakes) { f.t += dt; const k = f.t / f.max; if (k >= 1) continue;
+    f.vx *= drag; f.vy *= drag; f.x += (f.vx - ux * 13) * dt; f.y += (f.vy - uy * 13) * dt; // slowing, then sinking down the screen
+    const sway = Math.sin(f.t * 5 + f.n) * 2.5;
+    ctx.globalAlpha = k < 0.12 ? k / 0.12 : 1 - (k - 0.12) / 0.88;
+    snowflake(ctx, f.x + (view.rot ? 0 : sway), f.y + (view.rot ? sway : 0), f.s * (1 - 0.25 * k), f.t * 2 + f.n); }
+  ctx.globalAlpha = 1;
+  for (let i = flakes.length - 1; i >= 0; i--) if (flakes[i].t >= flakes[i].max) flakes.splice(i, 1);
 }
 
 // ---------------------------------------------------------------- status looks (after the unit is drawn)
@@ -965,6 +994,7 @@ function deathBurst(ctx, f, k) {
 }
 export function drawLocal(ctx, dt) {
   drawMarks(ctx, dt, 'air');
+  drawFlakes(ctx, dt);
   for (const f of local) {
     f.t += dt; const k = clamp(f.t / f.max, 0, 1);
     if (f.type === 'impact') {

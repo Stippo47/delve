@@ -168,9 +168,9 @@ export const ABILITIES = {
     },
     use(w, u, t, tier) {
       // round 9: a short charge first (the bow drawn, arrows gathering on it: fxkit), then the fan, each arrow at its own speed
-      const n = tier >= 2 ? 7 : 5; cast(u, 'draw', 0.5); u.aimT = 0.42; u.aimCol = tier >= 2 ? '#FF8A3D' : null; u.aimHead = tier >= 2 ? '#FFD45A' : null;
+      const n = tier >= 2 ? 7 : 5; u.aimT = u.aimMax = 0.42; u.aimCol = tier >= 2 ? '#FF8A3D' : null; u.aimHead = tier >= 2 ? '#FFD45A' : null; // (round 13: the bow is drawn back while it charges: parts.js)
       u.later = [{ t: 0.4, f: () => {
-        const base = t && alive(t) ? ang(u, t) : u.facing; u.aimT = 0; u.recoilT = 0.14;
+        const base = t && alive(t) ? ang(u, t) : u.facing; u.aimT = 0; u.recoilT = 0.14; cast(u, 'draw', 0.3);
         for (let i = 0; i < n; i++) shoot(w, u, base + (i - (n - 1) / 2) * 0.08, { kind: tier >= 2 ? 'fireArrow' : 'arrow', speed: 360 + ((i * 3) % n) / (n - 1) * 300, dmg: dmgOf(u, 0.8), st: tier >= 2 ? { burn: 20 } : {}, pierce: tier >= 3 ? 2 : 0 });
       } }];
     },
@@ -179,9 +179,11 @@ export const ABILITIES = {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && !blocked(w, u.x, u.y, t.x, t.y) ? 0.35 + (t.def.boss ? 0.3 : 0) + 0.15 * foesNear(w, u, t.x, t.y, 80).length : 0),
     use(w, u, t, tier) {
       // round 9: a readable charge (cold drawn into the bow from all round her: fxkit), and snowflakes that linger
-      cast(u, 'draw', 0.55); u.aimT = 0.47; u.aimCol = '#9FB7C8'; u.aimHead = '#BFE9F8';
+      // round 13 ("Doesnt charge back bow"): the string and the arrow come back with her hand through the charge
+      // (parts.js reads u.aimT), and the loose plays when the arrow goes
+      u.aimT = u.aimMax = 0.47; u.aimCol = '#9FB7C8'; u.aimHead = '#BFE9F8';
       u.later = [{ t: 0.45, f: () => {
-        u.aimT = 0; u.recoilT = 0.14;
+        u.aimT = 0; u.recoilT = 0.14; cast(u, 'draw', 0.3);
         shoot(w, u, t && alive(t) ? ang(u, t) : u.facing, { kind: 'shard', speed: 560, dmg: dmgOf(u, 1.2), st: { chill: tier >= 2 ? 110 : 60 },
           land: (p) => { // round 10: "Remove the ice puddle" (the lingering rime it left)
             if (tier >= 3) { fx(w, { type: 'ring', x: p.x, y: p.y, r: 80, color: '#BFEFFF', max: 0.4 }); for (const e of foesNear(w, u, p.x, p.y, 80)) addStatus(w, e, 'chill', 50, u); } } });
@@ -193,11 +195,16 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       const f = foesNear(w, u, u.x, u.y, 90); let ax = 0, ay = 0; for (const e of f) { ax += u.x - e.x; ay += u.y - e.y; }
       const a = Math.atan2(ay, ax);
-      // round 10: "Slide into position": she slides back on her feet, still facing them, fast then slowing (sim.js)
-      u.act = { type: 'dash', t: 0.34, max: 0.34, a, slide: true }; u.invulnT = Math.max(u.invulnT, 0.3);
+      // round 10: "Slide into position"; round 13: "They should slide out. Archer also needs to roll... spin": she rolls
+      // back out of reach (a full turn as she goes, fast then slowing: sim.js act.slide, render.js u.spin), and at III
+      // the caltrops skid out of her along the floor to where they lie (fxkit)
+      const dur = 0.4;
+      u.act = { type: 'dash', t: dur, max: dur, a, slide: true }; u.invulnT = Math.max(u.invulnT, 0.34);
+      u.spin = { t0: w.time, dur, dir: Math.sin(a - u.facing) >= 0 ? 1 : -1 };
       if (tier >= 2) u.nextShotMul = 2;
-      // III: "Should shoot caltrops out from out of it": they fly out of her as she slides and land where she was (fxkit)
-      if (tier >= 3) zone(w, { x: u.x, y: u.y, r: 55, dur: 5, kind: 'vines', src: u, every: 0.25, from: u, tick(z) { for (const e of foesNear(w, u, z.x, z.y, z.r)) addStatus(w, e, 'chill', 10, u); } });
+      if (tier >= 3) zone(w, { x: u.x, y: u.y, r: 58, dur: 5, kind: 'vines', src: u, every: 0.25, from: u, tick(z) {
+        if (z.t < 0.35) return; // still skidding out
+        for (const e of foesNear(w, u, z.x, z.y, z.r)) { addBuff(e, { id: 'caltrops', dur: 0.45, move: 0.55 }); if (e.spd > 10) hurt(w, e, dmgOf(u, 0.14), u, { dot: true, color: '#DCE3EC', stagger: 5 }); } } });
     },
   },
   // ----- Twinfang
