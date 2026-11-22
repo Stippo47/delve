@@ -1,0 +1,43 @@
+{
+  "title": "0.20.0: the wagon, round three",
+  "topic": "runs",
+  "order": 34,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "wagon3",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The wagon, round three",
+      "text": "Narrower, half speed, enemies trickling in from all four sides, heroes guarding a side each, a solid wagon.",
+      "why": "Your wagon notes, built. Each part has a clip. The tree line is the next card, as three takes to pick from.",
+      "videos": ["../../../clips/r14/convoy/guard-two-sides-party3.mp4", "../../../clips/r14/convoy/fight-new-pace.mp4"],
+      "details": "How hard it is now: at level 4 the wagon arrives in 83 of 100 test trips (it was about 90 before); levels 3 and 5 are within a few points of before.\n\nCalls I made that you didn't specify:\n- The road is shorter. At half speed the old road was an 11-minute trip; it is about 8 now (it was 6).\n- A blow on the wagon's body counts 0.6 of one on its middle. Three times as many enemies can reach it now, and at full damage it broke in half the trips.\n- The Bandit Chief ignores the side rules: he was hiding at the trees, out of every guard's reach.\n- With nothing about, each hero stands at its post instead of walking ahead of the oxen.\n- The wagon can't be charmed, confused, put to sleep, frightened or made to bleed.\n\nWeak spots: bursts are small crowds of 3 to 6, not large waves, because I held the total difficulty where it was; a strong party's first stretch looks quiet. Say if you want more bodies and I'll make each one weaker. Not checked: whether an ability that throws a hero can carry it across the wagon.",
+      "parts": [
+        { "id": "pace", "title": "Width and pace", "text": "The open ground is 15% less wide. On the road everyone moves at half speed, heroes, enemies and the wagon; attack rates are unchanged.", "videos": ["../../../clips/r14/convoy/fight-new-pace.mp4"], "images": ["../../../clips/r14/convoy/still-03-road-start.png"] },
+        { "id": "spawns", "title": "Trickle and bursts", "text": "Half the enemies trickle in one at a time from a random side, never the same side twice running. The rest come as a burst every 40 seconds or so, sometimes from two sides at once. All four sides, and all still walk out from under the trees. Clips at double speed.", "videos": ["../../../clips/r14/convoy/trickle-and-burst-x2.mp4", "../../../clips/r14/convoy/burst-second-leg-x2.mp4"] },
+        { "id": "guard", "title": "Guarding a side each", "text": "Your quadrants as written: four overlapping regions cut along the wagon's edges, one hero each. The sturdiest takes the front, a healer a flank. Nobody chases past 640 from the wagon. With three heroes the flank guards share the rear. The second clip draws the regions.", "videos": ["../../../clips/r14/convoy/guard-two-sides-party3.mp4", "../../../clips/r14/convoy/guard-two-sides-lines.mp4", "../../../clips/r14/convoy/guard-two-sides.mp4"] },
+        { "id": "solid", "title": "A solid wagon", "text": "The wagon and oxen are solid all round for heroes and enemies; they walk round by the nearest corner. A blow on any part of it lands on the wagon.", "videos": ["../../../clips/r14/convoy/solid-wagon.mp4"] },
+        { "id": "ground", "title": "Grass", "text": "No dark tufts and no puddles, in every country. The patches, flowers and road are as they were.", "images": ["../../../clips/r14/convoy/ground-wildwood.png"] }
+      ]
+    },
+    {
+      "id": "edge",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Tree line: pick one",
+      "text": "You didn't like the look and asked for larger, simpler trees that hide the ground, on a faster parallax.",
+      "why": "Three takes, all big flat shapes in two rows that slide faster than the ground. Tick one, or none and say what's off. The first is in the game until you pick.",
+      "pick": ["crowns"],
+      "items": [
+        { "id": "crowns", "label": "1 Crowns", "image": "../../../clips/r14/convoy/edge-crowns-wildwood.png", "text": "Round crowns about four times the size of the old trees." },
+        { "id": "firs", "label": "2 Firs", "image": "../../../clips/r14/convoy/edge-firs-wildwood.png", "text": "Dark pointed firs seen from above. The busiest of the three." },
+        { "id": "bank", "label": "3 Bank", "image": "../../../clips/r14/convoy/edge-bank-wildwood.png", "text": "One continuous bank of foliage. Reads least like single trees." },
+        { "id": "crowns-move", "label": "1 Crowns, moving", "video": "../../../clips/r14/convoy/edge-crowns-wildwood-x4.mp4", "text": "At four times speed so the slide shows; at true pace the wagon is slow and it is subtle." },
+        { "id": "firs-move", "label": "2 Firs, moving", "video": "../../../clips/r14/convoy/edge-firs-wildwood-x4.mp4", "text": "At four times speed." },
+        { "id": "bank-move", "label": "3 Bank, moving", "video": "../../../clips/r14/convoy/edge-bank-wildwood-x4.mp4", "text": "At four times speed." },
+        { "id": "lands", "label": "Crowns in the other lands", "image": "../../../clips/r14/convoy/edge-crowns-other-lands.png", "text": "The first take carried to the other countries. In Frost the snowy crowns are low-contrast against the snow." }
+      ]
+    }
+  ]
+}
