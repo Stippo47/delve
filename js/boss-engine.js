@@ -35,7 +35,7 @@ const IRON = '#B9B4AE';
 function brain(w, u, dt) {
   const k = u.ge || (u.ge = make(w, u));
   steady(u); logOf(w, u, k); stage(w, 'engine', drawFoundryFloor, drawEngineAir);
-  k.t += dt;
+  k.t += dt; u.shadowK = 0.7; // (its shadow sits under the dome and cog, not out past them)
   // the head's guard: how many hands are up
   const up = k.arm.filter((a) => a.hand && alive(a.hand)).length;
   addBuff(u, { id: 'engineGuard', dur: 0.2, taken: GE.guard[2 - up] });
