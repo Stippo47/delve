@@ -464,3 +464,35 @@ shows by name; damage blocked counted apart; Tangled merged into Rooted, the rad
 after the sickness, armour a point and 2% a point capped at 60%, the wither rule removed. The lane's own calls (charm
 blocks from a third full; bosses and a side's last unit are stunned, not turned; Sleepy's and Confused's bursts) are
 put to the designer in deck v16-statuses.
+
+## Round 14 (2026-11-22): the Riffle answers to 0.14.1-0.16.1
+The designer's words: `docs/riffle-log/2026-11-22-round14.txt`. The plan and the lanes: `docs/BUILD-v7.md`.
+- **XP and catching up** (the designer picked "low heroes earn XP much faster", and described it: higher dungeons drop
+  more XP, everyone in the party gets the same for a kill, three level 40s carry a level 1 who levels as they go, and
+  in the first dungeon high heroes barely gain while a level 1 goes at a normal pace). Built so it falls out of the
+  curve, with no rule about who is behind: each level asks 10% more than the last (`units.js xpToNext`, 100 x 1.1^L),
+  and a kill's XP is scaled to the place's level (`dungeon.js FOE_LEVEL`, `xpScale`: the level a party has in each
+  dungeon, from the round 12 campaign), so a party at the level a dungeon expects levels at the pace measured before.
+  The downed get the XP too: a level 1 hero falls in a late dungeon's first room, and would learn nothing while carried.
+  **Not taken: more XP for the killing blow.** It would put damage dealers levels ahead of the tank and the healer in
+  the same party, which is the falling-behind this was meant to fix.
+  Old saves: XP held towards the next level keeps its share of the way (`save.js`, `xpv`).
+  Check: `node tools/carry.mjs` (three level 33s carrying a level 1 Archer in the Crypt: 8, 15, 18, 24, 27, 29, 30, 31
+  after runs 1-8, while the carriers went 33 to 39).
+- **Wither**: "I said no. I said to fix the source not the symptom." No rule ends a long room. Lane L finds the causes.
+- **Charm**: bosses immune; a floor's last enemy fully charmed counts as beaten and follows the party on.
+- **Confused**: turns at random; while burst, abilities trigger at random instead of all at once; swirls on the body
+  while building, question marks when burst.
+- **Sleepy**: wind-ups and anything charged take about 40% longer too. **Fear**: must visibly back away; the burst
+  turns and runs, and spreads fear to those near. **Bleeding**: the look is rejected, a set to pick from.
+- The ghost gives sleepiness instead of a curse. A bite's chomp starts open and is turned 90 degrees. The Succubus's
+  charm-on-hit is on a cooldown. Healer hunters lean to the healer, they don't lock on. Poison drops to 20%.
+- **The Book and the hero page are one unit page** (tabs: main, upgrades, preview, stats for heroes; overview, preview,
+  stats for monsters with base / elite / major on top; grids to pick from, no strip of faces); every stat with an icon;
+  previews show the effect, not words; locked abilities still preview; dev controls in one place.
+- **Icons**: a handful in more than one style first.
+- **The wagon**: 15% less wide, everyone about 50% slower, enemies trickling in from all sides with bursts, each hero
+  guarding a side of the wagon, the wagon solid, a new forest edge (larger, simpler trees on a faster parallax), no
+  dark tufts or puddles.
+- **Art**: the picks and notes of art round 10 and its second pass (lane A).
+- The Enchantress is kept as built ("YES").
