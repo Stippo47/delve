@@ -150,7 +150,7 @@ const STATUS = {
   charmed: `<path d="M16 27C7 21 4 16.5 4 12.5a6 6 0 0 1 12-1.4 6 6 0 0 1 12 1.4C28 16.5 25 21 16 27z" fill="#FF5AAE"/><path d="M9 11a4 4 0 0 1 4-3" fill="none" stroke="#FFE0F0" stroke-width="2" ${H}/>
     <path d="M5 4l1 2.4L8.4 7 6 8 5 10.4 4 8 1.6 7 4 6zM27 3l1 2.4 2.4.6L28 7l-1 2.4L26 7l-2.4-1 2.4-.6zM28 22l.8 1.8 1.8.6-1.8.6-.8 1.8-.8-1.8-1.8-.6 1.8-.6z" fill="#FFE7A0"/>`,
   // confused builds (a lilac question mark), addled is the burst (two spirals spinning the other way)
-  confused: `<path d="M10 11a6 6 0 1 1 9.4 5c-2 1.4-3.4 2.6-3.4 5" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/><path d="M10 11a6 6 0 1 1 9.4 5c-2 1.4-3.4 2.6-3.4 5" fill="none" stroke="#C9A8F0" stroke-width="3.4" stroke-linecap="round" ${H}/><circle cx="16" cy="27" r="2.8" fill="#C9A8F0"/>`,
+  confuse: `<path d="M10 11a6 6 0 1 1 9.4 5c-2 1.4-3.4 2.6-3.4 5" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/><path d="M10 11a6 6 0 1 1 9.4 5c-2 1.4-3.4 2.6-3.4 5" fill="none" stroke="#C9A8F0" stroke-width="3.4" stroke-linecap="round" ${H}/><circle cx="16" cy="27" r="2.8" fill="#C9A8F0"/>`,
   addled: `<path d="M10 16a4 4 0 1 1 4 4 6 6 0 1 1 6-6" fill="none" stroke="${INK}" stroke-width="5.6" stroke-linecap="round"/><path d="M10 16a4 4 0 1 1 4 4 6 6 0 1 1 6-6" fill="none" stroke="#C9A8F0" stroke-width="2.4" stroke-linecap="round" ${H}/>
     <path d="M25 4l1.2 2.6 2.8.4-2 2 .5 2.8-2.5-1.3-2.5 1.3.5-2.8-2-2 2.8-.4zM6 24l1 2 2.2.3-1.6 1.5.4 2.2L6 29l-2 1 .4-2.2-1.6-1.5 2.2-.3z" fill="#FFE14D"/>`,
   // sleepy builds (a drooping eyelid and a small z); asleep keeps the moon
