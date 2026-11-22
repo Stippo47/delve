@@ -5,6 +5,10 @@ globalThis.location = { search: '?x' };
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
+// the page's own modules can't load in Node (they need the DOM), so at least their syntax is checked
+{ const { execFileSync } = await import('node:child_process'); const fs = await import('node:fs'); const os = await import('node:os'); const path = await import('node:path');
+  for (const f of ['js/book.js', 'js/preview.js', 'js/camp.js']) { const tmp = path.join(os.tmpdir(), 'delve-check-' + path.basename(f, '.js') + '.mjs'); fs.copyFileSync(f, tmp);
+    try { execFileSync(process.execPath, ['--check', tmp], { stdio: 'pipe' }); } catch (e) { console.log('SYNTAX ' + f + ': ' + String(e.stderr).split(String.fromCharCode(10)).slice(0, 4).join(' | ')); process.exitCode = 1; } finally { fs.rmSync(tmp, { force: true }); } } }
 const PS = await import('../js/preview-sim.js');
 const { setSeed } = await import('../js/util.js');
 const { listen } = await import('../js/sfx.js').catch(() => ({ listen: null }));
@@ -43,6 +47,6 @@ if (!opt('only') || opt('only') === 'hero') {
     const pairs = [sigs[0] === sigs[1] ? 'I=II' : '', sigs[1] === sigs[2] ? 'II=III' : ''].filter(Boolean);
     if (pairs.length) same.push(`${id}:${ab.id} ${pairs.join(' ')}  (${ab.tiers.map((t, k) => ['I', 'II', 'III'][k] + ': ' + t).join(' | ')})`);
   } }
-  console.log(`tiers that make the same things: ${same.length}`); for (const x of same) console.log('  ' + x);
+  console.log(`tier steps that make the same things (shown on the stage only as the tier's words, on the cast): ${same.length}`); for (const x of same) console.log('  ' + x);
 }
-process.exitCode = bad.length || quiet.length ? 1 : 0; // a preview that doesn't fire every loop fails the check
+if (bad.length || quiet.length) process.exitCode = 1; // a preview that doesn't fire every loop fails the check

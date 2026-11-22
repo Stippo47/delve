@@ -27,7 +27,7 @@ import { I, ROLE, ROLE_COL, roman, face, gold } from './ui-kit.js';
 import { foeCount, num } from './stats-ui.js';
 import { cue } from './sfx.js';
 import { makePlayer } from './preview.js';
-import { heroMoves, foeMoves, foeGroups, statusIds, statusHow, canRank, sceneOf, MAJOR_KEY, makeStage, specKey } from './preview-sim.js';
+import { heroMoves, foeMoves, foeGroups, statusIds, statusHow, canRank, sceneOf, MAJOR_KEY, makeStage, specKey, foeTrinkets, traitNote } from './preview-sim.js';
 import { setSeed } from './util.js';
 
 const TABS = [['heroes', 'Heroes'], ['monsters', 'Monsters'], ['statuses', 'Statuses'], ['items', 'Items']];
@@ -183,7 +183,8 @@ function heroPage() {
   let ladder = '';
   if (cur.kind === 'ability') ladder = `<ol class="mv-tiers">${cur.ab.tiers.map((t, k) => `<li class="${k + 1 <= tier ? 'got' : ''} ${k + 1 === tier ? 'now' : ''}"><i>${roman(k + 1)}</i><span>${t}</span></li>`).join('')}</ol>`
     + (tier < 1 ? `<p class="mv-note">${I.lock} Tier 0 has no abilities yet. Pick tier I, II or III below to see it.</p>` : '');
-  if (cur.kind === 'trait') ladder = `<p class="mv-note">Shown in a short spar: the dummies hit back${/down|fall|reviv|friend|ally/i.test(desc) ? ', and someone goes down' : ''}.</p>`;
+  if (cur.kind === 'trait') ladder = `<p class="mv-note">Shown in a short spar set up for it; each time it acts, its words rise off ${h.name}.${traitNote(id) ? ' ' + traitNote(id) : ''}</p>`;
+  if (cur.kind === 'ability' && tier >= 1) ladder += `<p class="mv-note">On the cast, what tier ${roman(tier)} adds rises off ${h.name}.</p>`;
   const now = `<div class="bk-now"><span class="mv-ico ${cur.kind === 'ability' ? 'ab' : ''}">${icoOf(cur)}</span><div class="mv-mid"><span class="cap">${capOf(cur)}</span><b>${cur.name}</b></div>
       <span class="bk-who">${face(id, 34)}</span></div><p class="mv-desc">${desc}</p>${ladder}`;
   // the moves, as a bar of big buttons just over the tier dial (under the thumb)
@@ -211,7 +212,7 @@ function canStage(spec) {
   const key = specKey(spec);
   if (!stageCache.has(key)) {
     let ok = false;
-    try { ok = quietly(() => { setSeed(7); const S = makeStage(spec); for (let i = 0, n = Math.ceil(S.loop * 60) + 6; i < n && !S.loopsFired && !(S.fired() && S.loops === 0); i++) S.step(1 / 30); return S.loopsFired > 0 || S.fired(); }); // within two loops } catch (e) { ok = false; }
+    try { ok = quietly(() => { setSeed(7); const S = makeStage(spec); for (let i = 0, n = Math.ceil(S.loop * 60) + 6; i < n && !S.loopsFired && !(S.fired() && S.loops === 0); i++) S.step(1 / 30); return S.loopsFired > 0 || S.fired(); }); } catch (e) { ok = false; } // within two loops
     stageCache.set(key, ok);
   }
   return stageCache.get(key);
@@ -238,18 +239,20 @@ function foePage() {
   const cur = moves.find((m) => m.move === st.fmove);
   const g = foeGroupsCached().find((x) => x.kinds.includes(k));
   const words = (m) => m.move === 'attack' ? attackWords(d) : m.move === 'kit' ? (beastHabit(k) || 'How it fights.')
-    : m.move === 'kit' && !staged.length ? (beastHabit(k) || '') + ' (It doesn't fight yet: what you see is all it does for now.)'
+    : m.move === 'kit' && !staged.length ? (beastHabit(k) || '') + ' (It does not fight yet: what you see is all it does for now.)'
     : m.move === 'elite' ? (ELITE_MOVE[k] || ELITE_MOVE[d.eliteAs] || 'Something extra on top of its kit.')
     : MAJOR_WORDS[m.key] + (m.call ? ' ' + MAJOR_WORDS.call : '');
   const title = { attack: 'Attack', kit: 'How it fights', elite: 'Elite move', major: 'Major move' };
   const ico = { attack: I.sword, kit: I.skull, elite: '<span class="star">★</span>', major: I.crown };
+  const carry = (() => { try { return quietly(() => foeTrinkets(k, rk)); } catch (e) { return []; } })(); // the same trinkets as its stage
   const now = `<div class="bk-now"><span class="mv-ico">${ico[cur.move]}</span><div class="mv-mid"><span class="cap">${d.name} · ${RANKS[rk].toLowerCase()}</span><b>${title[cur.move]}</b></div>
-      <span class="bk-who"><span class="b-pic sm"><img src="${portrait(k)}" alt=""></span></span></div><p class="mv-desc">${words(cur)}</p>`;
+      <span class="bk-who"><span class="b-pic sm"><img src="${portrait(k)}" alt=""></span></span></div><p class="mv-desc">${words(cur)}</p>${carry.length ? `<p class="bk-carry">${carry.map((t) => `<span style="--rar:${P.RARITY[P.trinketInfo(t).rarity].color}">${icon('trinket', t, '', P.trinketInfo(t).color)}${P.trinketInfo(t).name}</span>`).join('')}<em>carried: ${carry.map((t) => P.trinketInfo(t).desc.replace(/\.$/, '').toLowerCase()).join('; ')}</em></p>` : ''}`;
   const short = { attack: 'Attack', kit: 'How it fights', elite: 'Elite move', major: 'Major move' };
   const bar = moves.map((m) => `<div role="button" class="mb ${m.move === st.fmove ? 'on' : ''}" data-bk="fmove:${m.move}"><span class="mb-ico">${ico[m.move]}</span><span class="mb-n">${short[m.move]}</span></div>`).join('');
   const n = foeNumbersAt(k, rk), base = rk ? foeNumbersAt(k, 0) : null;
   const res = Object.entries(d.res || {}).filter(([, v]) => v !== 1);
-  const rankNote = rk === 1 ? `An elite: ${ELITE.hp}x health, ${ELITE.dmg}x damage, ${ELITE.speed}x as quick, one trinket.` : rk === 2 ? `A major: ${MAJOR.hp}x health (less for big kinds), ${MAJOR.dmg}x damage, two trinkets.` : '';
+  const rankNote0 = rk === 1 ? `An elite: ${ELITE.hp}x health, ${ELITE.dmg}x damage, ${ELITE.speed}x as quick, one trinket.` : rk === 2 ? `A major: ${MAJOR.hp}x health (less for big kinds), ${MAJOR.dmg}x damage, two trinkets.` : '';
+  const rankNote = rankNote0;
   const html = `<div class="bk-card">${now}</div>
     <div class="bk-head"><span class="b-pic"><img src="${portrait(k)}" alt=""></span><div class="bk-hm"><b class="bk-name">${d.name}</b><span class="cap">${g ? g.name : ''}${d.boss ? ' · boss' : ''}</span></div>
       <span class="bk-tierbig">${fc && fc.n ? num(fc.n) + ' <small>defeated</small>' : s.met + ' <small>met</small>'}</span></div>

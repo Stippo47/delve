@@ -156,3 +156,9 @@
 .mb-n { display: block; margin-top: 3px; font-size: 11px; font-weight: 850; line-height: 1.15; color: var(--quiet); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .mb.on .mb-n { color: var(--text); }
 .bk-dial { border-top: 0; padding-top: 4px; }
+
+/* what an elite or major carries (the same every loop of its preview) */
+.bk-carry { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 0 0; }
+.bk-carry span { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 5px; border-radius: 999px; font-size: 12.5px; font-weight: 850; background: var(--surf); box-shadow: inset 0 0 0 1.5px var(--rar, var(--line2)); }
+.bk-carry .ico, .bk-carry svg { width: 18px; height: 18px; }
+.bk-carry em { flex-basis: 100%; font-style: normal; font-size: 12.5px; color: var(--quiet); }

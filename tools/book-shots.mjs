@@ -30,7 +30,13 @@ try {
     if (!want(name)) return;
     await page.evaluate((s) => BOOK.set(s), set);
     await page.waitForTimeout(700); // art arrives
-    await page.evaluate((s) => { BOOK.player.restart(); BOOK.player.stop(); BOOK.player.advance(s); }, secs);
+    await page.evaluate((s) => {
+      BOOK.player.restart(); BOOK.player.stop();
+      if (typeof s === 'string' && s.startsWith('fire+')) { // until its move goes off, then a moment more
+        const S = BOOK.player.stage; for (let i = 0; i < 600 && !S.fired(); i++) BOOK.player.advance(1 / 30, 1 / 30);
+        BOOK.player.advance(+s.slice(5));
+      } else BOOK.player.advance(s);
+    }, secs);
     await page.screenshot({ path: path.join(out, name + '.png') }); console.log('shot', name);
   };
   await page.goto(`http://localhost:${site}/?seed=4`);
@@ -41,7 +47,7 @@ try {
     const s = GAME.save;
     for (const id of ['paladin', 'archer', 'necromancer', 'storm']) { s.heroes[id].owned = true; s.heroes[id].level = 6; }
     s.seen = s.seen || {};
-    for (const k of ['rat', 'slime', 'wolf', 'direWolf', 'goblin', 'orcShaman', 'bandit', 'ent', 'elderEnt', 'rattler', 'rattlerBow', 'gaper', 'ghost', 'sproutling', 'alpha']) s.seen[k] = { met: 3, beaten: 2 };
+    for (const k of ['rat', 'slime', 'wolf', 'direWolf', 'goblin', 'orcShaman', 'bandit', 'ent', 'elderEnt', 'rattler', 'rattlerBow', 'gaper', 'ghost', 'sproutling', 'alpha', 'jackal', 'banditAxe', 'wolfRider']) s.seen[k] = { met: 3, beaten: 2 };
     s.trinkets = ['thunderRing', 'phoenixFeather']; s.potions = { heal: 2 };
   });
   await page.evaluate(() => CAMP.setMode('book'));
@@ -55,8 +61,12 @@ try {
   await pose('06-hero-chain-t3', { tab: 'heroes', hero: 'storm', tier: 3, hmove: 'chainLightning' }, 0.75);
   await pose('07-hero-raise-t3', { tab: 'heroes', hero: 'necromancer', tier: 3, hmove: 'raiseDead' }, 1.8);
   await pose('08-hero-trait', { tab: 'heroes', hero: 'paladin', tier: 2, hmove: 'trait' }, 2);
+  await pose('08b-trait-revive', { tab: 'heroes', hero: 'cleric', tier: 1, hmove: 'trait' }, 2.95);
+  await pose('08c-trait-quartermaster', { tab: 'heroes', hero: 'quartermaster', tier: 0, hmove: 'trait' }, 1.5);
   await pose('09-monsters-normal', { tab: 'monsters', foe: 'orcShaman', rank: 0, fmove: 'kit' }, 2.5);
   await pose('10-monsters-elite', { tab: 'monsters', foe: 'orcShaman', rank: 1, fmove: 'elite' }, 2.5);
+  await pose('10b-jackal-elite-counter', { tab: 'monsters', foe: 'jackal', rank: 1, fmove: 'elite' }, 'fire+0.25');
+  await pose('10c-banditaxe-elite', { tab: 'monsters', foe: 'banditAxe', rank: 1, fmove: 'elite' }, 'fire+0.3');
   await pose('11-monsters-major', { tab: 'monsters', foe: 'wolf', rank: 2, fmove: 'major' }, 3);
   await pose('12-monsters-boss', { tab: 'monsters', foe: 'elderEnt', rank: 0, fmove: 'kit' }, 4);
   await pose('13-status-burn', { tab: 'statuses', status: 'burn' }, 1.6);
@@ -116,6 +126,8 @@ try {
     await film('clip-storm-chain-t1', { tab: 'heroes', hero: 'storm', tier: 1, hmove: 'chainLightning' }, 3.4);
     await film('clip-storm-chain-t3', { tab: 'heroes', hero: 'storm', tier: 3, hmove: 'chainLightning' }, 3.4);
     await film('clip-orcshaman-elite', { tab: 'monsters', foe: 'orcShaman', rank: 1, fmove: 'elite' }, 6.5);
+    await film('clip-trait-paladin-bulwark', { tab: 'heroes', hero: 'paladin', tier: 1, hmove: 'trait' }, 5.2);
+    await film('clip-jackal-elite', { tab: 'monsters', foe: 'jackal', rank: 1, fmove: 'elite' }, 7);
     await film('clip-status-chill', { tab: 'statuses', status: 'frozen' }, 6);
   }
 } catch (e) { errors.push('script: ' + (e.stack || e)); }
