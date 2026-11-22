@@ -222,12 +222,13 @@ function setupShow() {
     w = room(470, 350); w.walls = []; buildGrid(w);
     const sh = ab === 'trait' ? traitShow(hero) : (ABILITIES[ab] && ABILITIES[ab].show) || {}; // kits2.js: an ability says how the bench should stage it (lane H2: 'trait', a trait's bench)
     const far = ab === 'attack' || ab === 'trait' ? ranged : FAR.has(ab) || sh.far;
-    u = spawn(w, hero, 110, 175, { level: 9 });
+    const hx = ab === 'roll' ? 215 : 110; // (round 13: room behind her to roll into)
+    u = spawn(w, hero, hx, 175, { level: 9 });
     const nodes = {}; for (const a of H.abilities) for (let i = 1; i <= tier; i++) nodes[a.id + i] = 1;
     initKit(u, hero, { nodes }, 9);
     for (const k in u.kit.cd) u.kit.cd[k] = 999;
     u.facing = u.mvA = 0;
-    const mx = far ? (ab === 'charge' ? 270 : 340) : 110 + u.r + 28 + (ab === 'attack' ? Math.max(8, DEFS[hero].range - 6) : 14);
+    const mx = far ? (ab === 'charge' ? 270 : 340) : hx + u.r + 28 + (ab === 'attack' ? Math.max(8, DEFS[hero].range - 6) : 14);
     const spots = [[mx, 175], [mx + (far ? 30 : 22), 105], [mx + (far ? 30 : 22), 245]];
     if (ab !== 'attack' && ab !== 'trait' && !SINGLE.has(ab) && !sh.single) spots.push([mx + 66, 175]);
     dummies = spots.map(([x, y]) => { const d = spawn(w, 'lab-dummy', x, y); d.facing = Math.PI; d.home = { x, y }; d.aggro = false; return d; });
@@ -242,7 +243,7 @@ function setupShow() {
       if (ab === 'guard') { ally.target = dummies[0]; dummies[0].target = ally; }
     }
     // round 10: the Cleric's orbs heal a friend they pass through: one stands in the line of fire
-    if (hero === 'cleric' && ab === 'attack') { ally = spawn(w, 'paladin', 230, 140, { level: 9 }); initKit(ally, 'paladin', {}, 1); for (const k in ally.kit.cd) ally.kit.cd[k] = 9; ally.hp = ally.maxHp * 0.5; ally.facing = 0; ally.home = { x: ally.x, y: ally.y }; }
+    if (hero === 'cleric' && ab === 'attack') { ally = spawn(w, 'paladin', 200, 126, { level: 9 }); /* round 13: where the upper of the three orbs meets it */ initKit(ally, 'paladin', {}, 1); for (const k in ally.kit.cd) ally.kit.cd[k] = 9; ally.hp = ally.maxHp * 0.5; ally.facing = 0; ally.home = { x: ally.x, y: ally.y }; }
     if (sh.mob === 'ally' && ally) dummies.forEach((d, i) => { const a = -0.6 + i * 0.9; d.x = d.home.x = ally.x + Math.cos(a) * 62; d.y = d.home.y = ally.y - 40 + Math.sin(a) * 50; });
     if (sh.downed && ally) { ally.downed = true; ally.hp = 0; }
     if (sh.hurt) u.hp = u.maxHp * sh.hurt; // lane H2 (round 13): a hero that heals itself starts hurt

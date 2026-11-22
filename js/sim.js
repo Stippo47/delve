@@ -779,7 +779,7 @@ export function hurt(w, u, amount, src, o = {}) {
   if (u.koT > 0) amt *= 1.5;                                 // knocked out: wide open
   if (u.frozenT > 0 && u.frozenBonus) amt *= u.frozenBonus;  // Frost Nova III
   if (!o.dot && src) for (const b of u.buffs) if (b.frontBlock && angleDiff(angleTo(u.x, u.y, src.x, src.y), u.facing) < 1.3) {
-    kept += amt * b.frontBlock; amt *= 1 - b.frontBlock; u.blockedAt = w.time; if (b.reflect && alive(src) && src !== u) hurt(w, src, amount * b.reflect, u, { noDodge: true, dot: true });
+    kept += amt * b.frontBlock; amt *= 1 - b.frontBlock; u.blockedAt = w.time; if (b.reflect && alive(src) && src !== u) hurt(w, src, amount * b.reflect, u, { noDodge: true, dot: true, pab: b.id }); // (lane H1, round 13: pab, so the stats name the ability)
   }
   // where the blow comes from: a shot's own heading, else the line from whoever struck
   const fromA = o.kAngle != null && (o.shot || !src) ? o.kAngle : src ? angleTo(src.x, src.y, u.x, u.y) : o.kAngle != null ? o.kAngle : rand() * TAU;
@@ -1274,7 +1274,7 @@ function runAction(w, u, dt) {
       if (dist(u.x, u.y, o.x, o.y) < u.r + o.r + 6) {
         a.hit.add(o);
         const side = Math.sign(Math.sin(angleTo(u.x, u.y, o.x, o.y) - a.a)) || 1;
-        hurt(w, o, 18 * u.dmgMul * (a.power || 1), u, { knock: 340 * (a.power || 1), kAngle: a.a + side * 0.6, heavy: true, stagger: a.stagger || 0 });
+        hurt(w, o, (a.dmg ?? 18 * u.dmgMul) * (a.power || 1), u, { knock: 340 * (a.power || 1), kAngle: a.a + side * 0.6, heavy: true, stagger: a.stagger || 0, pab: a.ab }); // lane H1 (round 13) hook: a.ab names the ability for the stats, a.dmg its blow
         w.shake = Math.max(w.shake, 5);
       }
     }

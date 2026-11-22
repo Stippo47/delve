@@ -248,6 +248,27 @@ one("slime", "Slime: the picked slime, tail removed, in the game's blue", 22, 64
     before="class-round6/enemies/slime-big.svg", blabel="The slime you picked (round 6: the tail removed)")
 one("slime-small", "Slimelet: the same slime, paler, no bone", 14, 64)
 
+# ================================================================== the second pass
+one("foundry-automaton", "Automaton", 24, 54, before=r9 + "foundry-automaton.svg")
+one("foundry-bomb-bot", "Bomb bot", 19, 45, before=r9 + "foundry-bomb-bot.svg")
+one("foundry-turret-flame", "Flame turret", 22, 60, before=r9 + "foundry-turret-flame.svg")
+one("foundry-turret-laser", "Laser turret (on a wall)", 22, 60, before=r9 + "foundry-turret-laser.svg")
+one("foundry-mortar", "Mortar", 22, 60, before=r9 + "foundry-mortar.svg")
+one("foundry-tesla-coil", "Tesla coil", 20, 52, before=r9 + "foundry-tesla-coil.svg")
+one("foundry-repair-drone", "Repair drone", 15, 55, before=r9 + "foundry-repair-drone.svg")
+one("foundry-smith", "Foundry smith", 30, 66, before=r9 + "foundry-smith.svg")
+one("foundry-saw-blade", "Saw blade", 20, 67, before=r9 + "foundry-saw-blade.svg")
+one("foundry-crawler-head", "Chain crawler (the head)", 23, 40, before=r9 + "foundry-crawler-head.svg")
+one("foundry-crawler-plate", "Chain crawler (a body plate)", 22, 46, before=r9 + "foundry-crawler-plate.svg")
+one("foundry-drill-bot", "Drill bot", 20, 49, before=r9 + "foundry-drill-bot.svg")
+one("foundry-chain-crawler", "Chain crawler: head and eight plates as the game lays them", 78, 100, folder="boards")
+one("frost-ice-slime", "Ice slime: the picked slime, in ice", 22, 64, before=r9 + "frost-ice-slime.svg", bhr=49)
+one("dunes-sand-mage", "Sand mage", 23, 55, before=r9 + "dunes-sand-mage.svg")
+one("dunes-dart-trap", "Dart trap (in a wall)", 20, 45, before=r9 + "dunes-dart-trap.svg")
+one("spire-seraph", "Seraph (the Spire's)", 23, 56, before="../art/enemies/placeholder/seraph.svg", blabel="Seraph (before: the stand-in)")
+one("spire-cherub", "Cherub", 16, 40, before="../art/enemies/placeholder/cherub.svg", bhr=46, blabel="Cherub (before: the stand-in)")
+one("ember-pit-lord", "The Pit Lord", 38, 68, before=r9 + "ember-pit-lord.svg")
+
 if __name__ == "__main__":
     want = sys.argv[1:]
     for n in want or (list(SINGLE) + list(VARS)):

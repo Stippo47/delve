@@ -389,6 +389,9 @@ export function poseFor(u, w, dt) {
   // arms out for a full turn; round 10 (Cleave, Reap: "they hold sword in not out"): a single weapon is held straight out
   // to the side, not across the body
   if (u.anim && u.anim.kind === 'spin') { main = dual ? scaleP(S, 1.15) : { r: -1.25, dy: 8 }; off = dual ? scaleP(S, 1.15) : { r: -0.2, dy: 6 }; }
+  // round 13 (Frost Arrow: "Doesnt charge back bow"): while a shot charges (kits.js u.aimT) the drawing hand comes all the
+  // way back and holds, the string and the nocked arrow with it
+  if (sty.bow && u.aimT > 0) { const q = clamp(1 - u.aimT / (u.aimMax || 0.45), 0, 1); main = scaleP(W, 1.15 * easeOut(clamp(q * 2.2, 0, 1))); off = { dy: main.dy * 0.08 }; }
   if (sty.bow) off = addP(off, { dy: 22 });                      // the bow held forward (round 10: "Move bow forwards more")
   if (u.kind === 'bard' && u.anim && u.anim.kind === 'cast') {    // the strumming hand goes over the strings
     const t = u.anim.t; main = { r: 0.16 * Math.sin(t * 48), dy: 6 + 3 * Math.abs(Math.sin(t * 24)) }; off = { dy: 2 };

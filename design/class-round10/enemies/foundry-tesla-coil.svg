@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- TESLA COIL (round 10): seen from above: a square iron base with a pale ceramic insulator at each corner, and in the middle the coil: a fat ribbed copper ring (the top of the coil is a ring, not a ball) with a crackling blue-white spark at its heart, and two arcs of lightning jumping from the ring to the insulators. Parts: #body only. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="s1" d="M 60 38 H 140 A 22 22 0 0 1 162 60 V 140 A 22 22 0 0 1 140 162 H 60 A 22 22 0 0 1 38 140 V 60 A 22 22 0 0 1 60 38 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#515661"/><stop offset="1" stop-color="#3F434C"/></linearGradient>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#212328" stop-opacity="0"/><stop offset="1" stop-color="#212328" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c1"><use href="#s1"/></clipPath>
+<path id="s2" d="M 40 54 A 14 14 0 1 0 68 54 A 14 14 0 1 0 40 54 Z"/>
+<clipPath id="u2"><use href="#s1"/></clipPath>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F4F7FA"/><stop offset="1" stop-color="#AEC6DE"/></linearGradient>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3A6795" stop-opacity="0"/><stop offset="1" stop-color="#3A6795" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c2"><use href="#s2"/></clipPath>
+<path id="s3" d="M 132 54 A 14 14 0 1 0 160 54 A 14 14 0 1 0 132 54 Z"/>
+<clipPath id="u3"><use href="#s1"/><use href="#s2"/></clipPath>
+<clipPath id="c3"><use href="#s3"/></clipPath>
+<path id="s4" d="M 40 146 A 14 14 0 1 0 68 146 A 14 14 0 1 0 40 146 Z"/>
+<clipPath id="u4"><use href="#s1"/><use href="#s2"/><use href="#s3"/></clipPath>
+<clipPath id="c4"><use href="#s4"/></clipPath>
+<path id="s5" d="M 132 146 A 14 14 0 1 0 160 146 A 14 14 0 1 0 132 146 Z"/>
+<clipPath id="u5"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4"/></clipPath>
+<clipPath id="c5"><use href="#s5"/></clipPath>
+<path id="s6" d="M 70 100 A 30 30 0 1 0 130 100 A 30 30 0 1 0 70 100 Z"/>
+<linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#403B46"/><stop offset="1" stop-color="#322E37"/></linearGradient>
+<linearGradient id="g6" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1A181D" stop-opacity="0"/><stop offset="1" stop-color="#1A181D" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c6"><use href="#s6"/></clipPath>
+<path id="s7" d="M 54 100 A 46 46 0 1 0 146 100 A 46 46 0 1 0 54 100 Z M 75 100 A 25 25 0 1 0 125 100 A 25 25 0 1 0 75 100 Z" fill-rule="evenodd" clip-rule="evenodd"/>
+<clipPath id="u7"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4"/><use href="#s5"/><use href="#s6"/></clipPath>
+<linearGradient id="g7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#CE824E"/><stop offset="1" stop-color="#B1632D"/></linearGradient>
+<linearGradient id="g8" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5E3316" stop-opacity="0"/><stop offset="1" stop-color="#5E3316" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c7"><use href="#s7"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="body">
+<use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/><g clip-path="url(#c1)"><path d="M 48 52 A 22 7 0 1 0 92 52 A 22 7 0 1 0 48 52 Z" fill="#FFFFFF" opacity="0.08"/></g>
+<g clip-path="url(#u2)"><use href="#s2" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s2" fill="url(#g3)"/><use href="#s2" fill="url(#g4)"/><g clip-path="url(#c2)"><circle cx="54" cy="54" r="8" fill="none" stroke="#9AAEC4" stroke-width="3"/><circle cx="54" cy="54" r="3.5" fill="#6E747E"/></g>
+<g clip-path="url(#u3)"><use href="#s3" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s3" fill="url(#g3)"/><use href="#s3" fill="url(#g4)"/><g clip-path="url(#c3)"><circle cx="146" cy="54" r="8" fill="none" stroke="#9AAEC4" stroke-width="3"/><circle cx="146" cy="54" r="3.5" fill="#6E747E"/></g>
+<g clip-path="url(#u4)"><use href="#s4" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s4" fill="url(#g3)"/><use href="#s4" fill="url(#g4)"/><g clip-path="url(#c4)"><circle cx="54" cy="146" r="8" fill="none" stroke="#9AAEC4" stroke-width="3"/><circle cx="54" cy="146" r="3.5" fill="#6E747E"/></g>
+<g clip-path="url(#u5)"><use href="#s5" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s5" fill="url(#g3)"/><use href="#s5" fill="url(#g4)"/><g clip-path="url(#c5)"><circle cx="146" cy="146" r="8" fill="none" stroke="#9AAEC4" stroke-width="3"/><circle cx="146" cy="146" r="3.5" fill="#6E747E"/></g>
+<use href="#s6" fill="url(#g5)"/><use href="#s6" fill="url(#g6)"/><g clip-path="url(#c6)"><circle cx="100" cy="100" r="22" fill="#6ED0FF" opacity="0.35"/><circle cx="100" cy="100" r="13" fill="#BFF2FF"/><path d="M 100 83 L 103.5 96.5 L 117 100 L 103.5 103.5 L 100 117 L 96.5 103.5 L 83 100 L 96.5 96.5 Z" fill="#FFFFFF"/></g>
+<g clip-path="url(#u7)"><use href="#s7" transform="translate(0 4) " fill="#2B2230" opacity="0.3"/></g><use href="#s7" fill="url(#g7)"/><use href="#s7" fill="url(#g8)"/><g clip-path="url(#c7)"><path d="M 62 84 A 40 40 0 0 1 94 61" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" opacity="0.4"/><path d="M 126.1 107 L 143.5 111.6" stroke="#8A4A26" stroke-width="3" opacity="0.55"/><path d="M 119.1 119.1 L 131.8 131.8" stroke="#8A4A26" stroke-width="3" opacity="0.55"/><path d="M 107 126.1 L 111.6 143.5" stroke="#8A4A26" stroke-width="3" opacity="0.55"/><path d="M 93 126.1 L 88.4 143.5" stroke="#8A4A26" stroke-width="3" opacity="0.55"/><path d="M 80.9 119.1 L 68.2 131.8" stroke="#8A4A26" stroke-width="3" opacity="0.55"/><path d="M 73.9 107 L 56.5 111.6" stroke="#8A4A26" stroke-width="3" opacity="0.55"/><path d="M 73.9 93 L 56.5 88.4" stroke="#8A4A26" stroke-width="3" opacity="0.55"/><path d="M 80.9 80.9 L 68.2 68.2" stroke="#8A4A26" stroke-width="3" opacity="0.55"/><path d="M 93 73.9 L 88.4 56.5" stroke="#8A4A26" stroke-width="3" opacity="0.55"/><path d="M 107 73.9 L 111.6 56.5" stroke="#8A4A26" stroke-width="3" opacity="0.55"/><path d="M 119.1 80.9 L 131.8 68.2" stroke="#8A4A26" stroke-width="3" opacity="0.55"/><path d="M 126.1 93 L 143.5 88.4" stroke="#8A4A26" stroke-width="3" opacity="0.55"/></g>
+<path d="M 132 68 L 130 58 L 139 60 L 138 50 L 146 54 M 68 132 L 58 130 L 60 139 L 50 138 L 54 146" fill="none" stroke="#DFF8FF" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+</g>
+</g>
+</svg>

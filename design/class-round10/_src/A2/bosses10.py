@@ -1,5 +1,5 @@
 """Round 10, the art-round9 notes on the bosses drawn with the A2 library:
-  the choir singer   "Flip book. Hair weird": bosses9.choir_singer(r10=True): the picked cherub's hair, the book turned;
+  the choir singer   "Flip book. Hair weird": bosses9.choir_singer(r10=True): the round-4 cherub's hair, the book turned;
   the Gilded Seraph  "Looks decent as a base. Could be improved upon. Up the quality. Make more interesting": the same
                      seraph (six gold wings, a sun headdress, white and gold, hands out to cast) drawn again: the wings
                      are the picked angel's two-layer wings, three pairs set as a seraph's are (a pair raised over her

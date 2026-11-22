@@ -74,6 +74,9 @@ try {
     }
   }
 } finally {
+  // (round 13, lane H1: over CDP close() only lets go of the browser, and the pid Edge was started with has usually handed
+  // over to another process by now, so taskkill found nothing: every run left a headless Edge behind. Ask it to quit.)
+  try { const cs = await browser.newBrowserCDPSession(); await cs.send('Browser.close'); } catch {}
   await browser.close().catch(() => {});
   try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); }
   // (lane H2, round 13: headless Edge hands itself on to a second browser process that the taskkill above misses, so each

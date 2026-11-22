@@ -163,3 +163,47 @@ Every note and what was built: `docs/HEROES-r13.md`. What is new in the style's 
 - **New effects' marks**: Whirled (white wind curls at the feet), Dirty (smears and crumbs), Targeted/Tracked
   (crosshairs, red/amber), Spun (a slow gold spiral over the head), Weakened (grey chevrons sinking), KO (stars round
   the head, fx-status.js).
+
+## Round 13 (lane H1): showcase 4 notes
+The designer's words: `docs/riffle-log/2026-11-22-round12.txt` (deck showcase4). Each note changed only what it asked;
+where a card came back with "none of them" the direction changed, not the polish.
+- **Shockwave** is a wave that travels (the designer's own first words: "a repeating shockwave forwards"): kits.js runs
+  each wave as a front moving out from the slam, the fx carries its reach, time and width, and fx.js draws the front
+  where the blows land. No earth comes out of the floor in any variant.
+- **Whirl**: the crescents are white again. `flailHead` never began its own path, so it inked over whatever was drawn
+  last (the crescent's core): that was the "changed more than what I asked". The heads are the size the round 9 balls
+  were. The blows knock back the way the flail turns (kits.js `whirlTick`; sim.js no longer strikes them).
+- **The flail blow**: no second flail head on the ground; a flash, a dent and dust.
+- **A bow being charged is drawn back** (parts.js reads `u.aimT` / `u.aimMax`): the string and the nocked arrow come back
+  with the hand through the charge, and the loose plays when the shot goes.
+- **Snow is real particles** (fx.js `snowTrail`, `snowBurst`): a cold shot drops snowflakes along its path, they stay
+  where they fell, drift, sink and fade; the Frost Arrow throws them out where it bursts. Nothing is left on the floor.
+  Used by the Frost Arrow and Ice Shard.
+- **Roll** is a roll: a full turn as she goes (render.js `u.spin`), and the caltrops skid out along the floor to their
+  places, a scuff behind each, a glint as it settles; drawn as caltrops (three spikes down, one up).
+- **Chain Lightning** is one shape: the bolt, every leap and the arcs an overloaded foe throws are built first and drawn
+  with one glow, one outline, one colour, one core (fx.js `chainBolt`); no spark lines. Zeus Bolt shoves hard the way
+  it flies.
+- **Light orb**: all three leave the one point at her hands, 45 degrees apart; an orb that meets a friend heals it and
+  ends there. **Sanctuary**: the same ring through every post, drawing itself round as it is cast, light pooling
+  towards it, a pulse from the middle with every mend, glints running the ring, taller posts whose stars twinkle in turn.
+- **Life Drain**'s thin tendrils start once the ribbon has reached its target. **Hold the Line**'s red V stays over each
+  one he holds until the taunt runs out (fxkit `drawBodyFx`, `u.vMarkT`).
+- **Cleave and Reap**: the crescent rides on the blade (it turns with the sprite, from where the weapon is held out)
+  and starts at the blade's tip; the reach came in to what the blade sweeps (Cleave u.r + 38 / 52, Reap u.r + 46 / 62).
+  Reap's orbs burst clear of her on the side they came from.
+- **Entangle**: the same patch and vines coiling out over the floor, with drawn vines: tapering stems walked out from
+  the middle, each its own length and bend, a curled tip, thorns and leaves; they go brown and draw back in at the end.
+- **A buff can carry a protection border** (`border: colour`; render.js `borderOf`, the one hook added there).
+- **Variants** (js/fxvar.js, `?v_<key>=N`; `tools/showcase.mjs --q v_<key>=N`); make the pick the default there:
+  - `shockwave`: 1 Arcs (a pale crescent of force, inked like a weapon's arc, running out and growing, two echoes
+    behind it), 2 Ripples (the same front as a soft dust ripple under the units, like Ground Pound's wave), 3 Stomps
+    (no front drawn: the floor pounded where it passes, three blows marching out).
+  - `wolfBite`: drawn on the one bitten, as big as it is, over half a second. 1 Fangs (two jaws with gums and long
+    canines open wide and snap shut), 2 Crunch (no teeth: the foe pinched, two rows of tooth holes left), 3 Clamp (two
+    great curved fangs swing shut like pincers).
+  - `boneSpear`: 1 Spear (a bone shaft, a knuckle at the butt, a broad leaf head lashed on), 2 Femur (one thigh bone
+    snapped to a point), 3 Fang (a great curved fang, hollow at the root).
+  - `oldBones`: nothing floats over her any more; she wears a bone-white protection border for the second she is
+    untouchable. 1 Stand (a flash, dust stamped out from under her, chips thrown off), 2 Creak (comic crack marks snap
+    out round her), 3 Glance (the blow clangs off the side it came from).

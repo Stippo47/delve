@@ -455,3 +455,76 @@ Rules and numbers: `docs/STATUSES.md` (the "Round 13" sections list every call t
   sprite's song (sleepy), the hellhound's bite and the hunter spider's pounce (bleeding; both hunt the party's healer).
 - **Helpful states shown**: every buff by name, icon and numbers; sixteen non-buff states (Regrowing, Gas Form...).
 - **Damage blocked** counted apart from damage taken (stats, battle result, balance `blk`).
+
+## Round 13, lane S, released as 0.16.0 (2026-11-22)
+Rules and numbers: docs/STATUSES.md. Charm, Confused, Sleepy, Bleeding and Fear as build-ups with bursts; one path for
+side changes (sim.js turnSide / restoreSide, `u.trueTeam`); the Enchantress (js/kits-charm.js); the Succubus (Ember
+Deep) and the Cupid (the cherub's elite); hellhounds and hunter spiders hunt healers; every buff and helpful state
+shows by name; damage blocked counted apart; Tangled merged into Rooted, the radiant glow under units, poison to 0
+after the sickness, armour a point and 2% a point capped at 60%, the wither rule removed. The lane's own calls (charm
+blocks from a third full; bosses and a side's last unit are stunned, not turned; Sleepy's and Confused's bursts) are
+put to the designer in deck v16-statuses.
+
+## Round 14 (2026-11-22): the Riffle answers to 0.14.1-0.16.1
+The designer's words: `docs/riffle-log/2026-11-22-round14.txt`. The plan and the lanes: `docs/BUILD-v7.md`.
+- **XP and catching up** (the designer picked "low heroes earn XP much faster", and described it: higher dungeons drop
+  more XP, everyone in the party gets the same for a kill, three level 40s carry a level 1 who levels as they go, and
+  in the first dungeon high heroes barely gain while a level 1 goes at a normal pace). Built so it falls out of the
+  curve, with no rule about who is behind: each level asks 10% more than the last (`units.js xpToNext`, 100 x 1.1^L),
+  and a kill's XP is scaled to the place's level (`dungeon.js FOE_LEVEL`, `xpScale`: the level a party has in each
+  dungeon, from the round 12 campaign), so a party at the level a dungeon expects levels at the pace measured before.
+  The downed get the XP too: a level 1 hero falls in a late dungeon's first room, and would learn nothing while carried.
+  **Not taken: more XP for the killing blow.** It would put damage dealers levels ahead of the tank and the healer in
+  the same party, which is the falling-behind this was meant to fix.
+  Old saves: XP held towards the next level keeps its share of the way (`save.js`, `xpv`).
+  Check: `node tools/carry.mjs` (three level 33s carrying a level 1 Archer in the Crypt: 8, 15, 18, 24, 27, 29, 30, 31
+  after runs 1-8, while the carriers went 33 to 39).
+- **Wither**: "I said no. I said to fix the source not the symptom." No rule ends a long room. Lane L finds the causes.
+- **Charm**: bosses immune; a floor's last enemy fully charmed counts as beaten and follows the party on.
+- **Confused**: turns at random; while burst, abilities trigger at random instead of all at once; swirls on the body
+  while building, question marks when burst.
+- **Sleepy**: wind-ups and anything charged take about 40% longer too. **Fear**: must visibly back away; the burst
+  turns and runs, and spreads fear to those near. **Bleeding**: the look is rejected, a set to pick from.
+- The ghost gives sleepiness instead of a curse. A bite's chomp starts open and is turned 90 degrees. The Succubus's
+  charm-on-hit is on a cooldown. Healer hunters lean to the healer, they don't lock on. Poison drops to 20%.
+- **The Book and the hero page are one unit page** (tabs: main, upgrades, preview, stats for heroes; overview, preview,
+  stats for monsters with base / elite / major on top; grids to pick from, no strip of faces); every stat with an icon;
+  previews show the effect, not words; locked abilities still preview; dev controls in one place.
+- **Icons**: a handful in more than one style first.
+- **The wagon**: 15% less wide, everyone about 50% slower, enemies trickling in from all sides with bursts, each hero
+  guarding a side of the wagon, the wagon solid, a new forest edge (larger, simpler trees on a faster parallax), no
+  dark tufts or puddles.
+- **Art**: the picks and notes of art round 10 and its second pass (lane A).
+- The Enchantress is kept as built ("YES").
+
+## Round 13, lane H1 (2026-11-22): the first 15 heroes: the showcase 4 answers, every ability worth having
+The designer's words: `docs/riffle-log/2026-11-22-round12.txt` (decks showcase4 and v12-report) and the message in
+`docs/BUILD-v6.md`. The looks: `docs/FX-STYLE.md`, "Round 13". The numbers: `docs/balance/r13-abilities.md`.
+- **Showcase 4.** Each note changed only what it asked. Where a card came back "none of them" the direction changed:
+  Shockwave is waves that travel (their own first words: "a repeating shockwave forwards"), with no earth out of the
+  floor; the wolf's bite is drawn on the one bitten, as big as it is; Old Bones puts nothing over her head and shows a
+  protection border; Bone Spear has three shapes. Variants wait on picks: `?v_shockwave`, `?v_wolfBite`, `?v_boneSpear`,
+  `?v_oldBones` (js/fxvar.js); the first of each is the default.
+- **Whirl's "changed more than what I asked"** was a drawing fault, not a choice: the flail head's path took in the
+  crescent drawn before it and inked it over. Fixed; the balls are the round 9 size again.
+- **Kit changes the notes asked for**: Whirl knocks back; Zeus Bolt shoves hard the way it flies and hits a little
+  harder; the Cleric's orbs leave one point 45 degrees apart and stop on a friend (the front line now eats some of her
+  shots: her damage share fell from 14-15% to 13-14%); Roll is a roll and its caltrops skid out.
+- **Reach follows the look** (my call): Cleave's and Reap's crescents were drawn far out past the blade ("Slash is too far
+  ahead from sword"). Drawn at the blade's tip they showed less reach than the blow had, so the blows' reach came in to
+  what the blade sweeps (Cleave u.r + 38 / 52, Reap u.r + 46 / 62) and their damage went up to pay for it.
+- **Measuring an ability** (the designer: "turning a skill on and off to see its impact"): `tools/ability-worth.mjs`
+  plays the same parties from the same seeds with all of a hero's abilities and with each one switched off in turn.
+  sim.js got two hooks so Charge and Hold the Line's struck-back blows are counted as theirs (they were the mace's).
+- **The Tower is the health tank, the Paladin the shield tank** (the designer: "more hp based (tanking hits) or protection/
+  shield based (negating hits)"). The Tower took 40-57% of a blow against the Paladin's 26-37% on barely more health, so
+  the Paladin was the better wall as well as the healer. Now: health 310 (was 180), armour 5 (was 8), mace 12.5 (was
+  11); Charge is 2x his blow and grows with his nodes (it was a flat 18 that the web's Charge nodes did nothing for);
+  those Hold the Line taunts hit 20% softer; its taunt is wider. Duels at tiers 0-3 and party batches in the balance doc.
+- **The Archer**: bow unchanged; Barrage is loosed at a lone enemy too, the Frost Arrow hits 1.9x (was 1.2x) and its
+  burst hurts. Her abilities deal about a third of her damage at tier I and about half at tier III (were a quarter and
+  two fifths); she clears as many rooms as the average shooter.
+- **Other calls**: Ice Wall goes up only against a brawler coming for her (raised across the party's own line of fire
+  it was worth less than nothing); the Bard's Rhythm quickens attacks by 8% as well; Twinfang is untouchable mid-dash
+  and as she steps out of a Backstab; the Druid's and Cleric's mending and the Necromancer's drain trimmed (all three
+  sat 1.5 to 2 rooms over the average at tier I).

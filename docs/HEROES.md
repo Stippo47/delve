@@ -9,7 +9,7 @@ A greatsword held in both hands, and forty years of knowing where to put it. Art
 - **Attack: Greatsword.** A slow, wide two-handed cut in front.
 - **Great Sweep** (8s). Draws the greatsword back, then sweeps it round in one huge arc in front of him. I: Hits everything in a wide arc and knocks it back. II: Staggers what it hits. III: Sweeps straight back the other way.
 - **Rally** (15s). An old soldier's shout: allies near him shake off stuns and staggers and stand firm. I: Clears stuns, roots and stagger; nothing knocks them back for 5s. II: Haste too: they move and strike 30% faster, and it all lasts 8s. III: Heals them 12% too.
-- **Parry** (9s). Sets the greatsword across him: the next blow or shot that reaches him within 4s is caught. A shot flies back at whoever loosed it; a blow's force goes back into the one who struck. I: One parry. II: Two parries. III: What he sends back hits twice as hard.
+- **Parry** (9s). Sets the greatsword across him: the next blow or shot that reaches him within 4s is caught. A shot flies back at whoever loosed it; a blow's force goes back into the one who struck. I: One parry. II: Two parries. III: What he sends back hits 60% harder.
 - **Trait: Last Stand.** Once a room, when he is the last of the party standing: he can't be stopped or knocked about and is hasted for 10s, and all his abilities are ready again at once.
 
 ## Dame (`dame`, tank, 700 gold)
@@ -117,7 +117,7 @@ A winged totem on his back and a feather spirit-stick. Calls on the ancestors an
 - **Attack: Spirit bolt.** A teal spirit; when it strikes near a hurt friend it leaps on to that friend and mends it.
 - **Healing Totem** (14s). Throws a winged totem like the one on his back to the friend in the most trouble. It stands (100 health, blows on it do half): every blow on a friend within its reach lands on the totem instead, and it mends them a little. I: It stands 8s. II: It stands 12s. III: It cleans statuses off friends near it.
 - **Spirit Link** (16s). Binds friends, and his totem, together with spirit threads: a blow on one is shared out among them all. I: Up to three friends, for 5s. II: Linked friends take 10% less. III: Up to five, for 7s.
-- **Ancestors' Call** (20s). Calls the ancestors in spirit shape: a bear that fights beside them and shelters friends near it (they take 20% less), a wolf that hunts, an eagle that follows the most hurt friend and mends it, and a beaver that spins and shoots homing spirit orbs. I: For 8s. II: For 12s. III: The spirits are half as strong again.
+- **Ancestors' Call** (20s). Calls the ancestors in spirit shape: a bear that fights beside them and shelters friends near it (they take 20% less), a wolf that hunts, an eagle that follows the most hurt friend and mends it, and a beaver that spins and shoots homing spirit orbs. I: For 7s. II: For 10s. III: The spirits are a third as strong again.
 - **Trait: Ancestral Spirits.** When an ally goes down, the spirits heal everyone else 10%.
 
 ## Witch (`witch`, caster, 700 gold)
@@ -134,7 +134,7 @@ Horns, a gold sceptre and a demon-eye orb. Pays for power in his own blood. Art:
 
 - **Attack: Pact bolt.** An eye of magenta fire like the one on his sceptre: it flies out through the enemies and comes back to his hand, hitting on the way back too; a third of what it deals heals him. His imp throws smaller ones.
 - **Eldritch Beam** (10s). His imp holds a writhing magenta ray on an enemy (he does, if it is gone): it burns hotter the longer it holds, shoving the enemy back, and bursts at the end. I: For 2.5s, then it bursts. II: It grows hotter faster. III: A bigger burst.
-- **Awaken** (18s). The imp climbs into him and he becomes the demon: a big demonic sword whose blows explode on what they hit, a blink to his foe, fireballs spat at those further off. Every kill starts the time again. I: For 8s. II: For 11s. III: Bigger explosions that burn.
+- **Awaken** (18s). The imp climbs into him and he becomes the demon: a big demonic sword whose blows explode on what they hit, a blink to his foe, fireballs spat at those further off; he takes 40% less as the demon. Every kill starts the time again. I: For 8s. II: For 11s. III: Bigger explosions that burn.
 - **Dark Bargain** (18s). Pays a fifth of his health in blood to his imp: both of them strike far faster for a while, and every blow of theirs bursts round what it hits. I: For 6s. II: For 8s. III: The imp grows on the blood: tougher.
 - **Trait: Familiar.** A small imp is always with him, darting at his shoulder and throwing little eye bolts at his foes. If it falls, another climbs out of the floor 8s later.
 
@@ -297,7 +297,7 @@ A three-pointed cap with bells and a marotte on a stick. Makes enemies look fool
 - **Attack: Marotte.** A bonk with the jester's stick; each one leaves a little of something odd on it (a random status).
 - **Swap** (11s). A puff of confetti and he trades places: with a friend in trouble (it is hasted and shielded) or, if none, with an enemy (a shooter first), which is left confused. I: Haste 3.5s, a shield of 20 / confused. II: Haste 5s, a shield of 35 / more confused. III: The enemy is stunned too.
 - **Befuddle** (10s). When a blow is about to land on him, he is behind whoever swung it instead, and boots it forward, confused. I: Ready every 10s. II: Every 8s. III: Every 6s, and the kick hurts more.
-- **Juggling Act** (10s). Throws his juggling balls straight out: they go through whatever they meet and bounce off the walls three times. I: Three balls. II: They daze: slowed. III: Five balls, and the first one each ball hits is whisked to where it next bounces.
+- **Juggling Act** (10s). Throws his juggling balls straight out: they go through whatever they meet and bounce off the walls three times. I: Three balls. II: They daze: slowed. III: Four balls, and the first one each ball hits is whisked to where it next bounces.
 - **Trait: Pratfall.** A quarter of the blows swung at him miss, and whoever swung is spun round to face away.
 
 ## Samurai (`samurai`, melee, 1050 gold)
@@ -316,9 +316,9 @@ A winged helm, long plaits and a big spear. Carries the fallen back into the fig
 - **Valkyrie's Call** (30s). Flies to a fallen friend and brings it back to its feet in a burst of light that throws the enemies round back and makes them radiant. I: Back up at 25% health, once a room. II: At 40%. III: She takes it up and flies the two of them clear of the fight.
 - **Spear of the Sky** (9s). Flies spear-first along the line to the friend most hurt, striking every enemy in the way, and cleanses and steels that friend (hasted, a shield). I: A shield of 28. II: The strikes shock. III: A shield of 45.
 - **Sky Dive** (12s). Up on her wings for a moment, then down beside the friend most beset in a burst of light: the enemies round are struck and made radiant. I: A dive and a burst. II: It staggers those round. III: She heals 15% on landing.
-- **Trait: Light of Valhalla.** While a friend is near her, she and the friends near heal 1.2% a second, a soft glow under her. She revives the fallen twice as fast, at 30% health.
+- **Trait: Light of Valhalla.** While a friend is near her, she and the friends near heal 0.9% a second, a soft glow under her. She revives the fallen twice as fast, at 30% health.
 
-## Engineer (`engineer`, melee, 1050 gold)
+## Engineer (`engineer`, ranged, 1050 gold)
 An orange work suit, a welding mask pushed up and a very big wrench. Builds a turret and keeps it running. Art: `art/heroes/engineer.svg`.
 
 - **Attack: Wrench and cogs.** Close up, a clanging swing of the wrench; further off, a cog thrown that bounces on to a second enemy.

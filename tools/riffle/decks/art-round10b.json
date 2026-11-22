@@ -1,0 +1,298 @@
+{
+  "title": "Art round 10, part two",
+  "topic": "art",
+  "order": 26,
+  "priority": 3,
+  "cards": [
+    {
+      "id": "foundry2",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "The rest of the Foundry",
+      "text": "You marked the Foundry redo: the eleven kinds I hadn't redrawn the first time, now done.",
+      "why": "Live in 0.16.1. Tick the ones that are right; comment on any that still aren't.",
+      "pick": [
+        "foundry-automaton",
+        "foundry-bomb-bot",
+        "foundry-turret-flame",
+        "foundry-turret-laser",
+        "foundry-mortar",
+        "foundry-tesla-coil",
+        "foundry-repair-drone",
+        "foundry-smith",
+        "foundry-saw-blade",
+        "foundry-crawler-head",
+        "foundry-drill-bot"
+      ],
+      "items": [
+        {
+          "id": "foundry-automaton",
+          "label": "Automaton",
+          "image": "../../../design/class-round10/enemies/renders/foundry-automaton.png",
+          "text": "A clockwork knight: steel helm, one amber visor slit, a cog for each shoulder, a wind-up key.",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-automaton-thumb.png"
+        },
+        {
+          "id": "foundry-automaton-before",
+          "label": "Automaton (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-automaton-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "foundry-bomb-bot",
+          "label": "Bomb bot",
+          "image": "../../../design/class-round10/enemies/renders/foundry-bomb-bot.png",
+          "text": "One black bomb with a hazard band, a fuse, a key and two brass feet.",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-bomb-bot-thumb.png"
+        },
+        {
+          "id": "foundry-bomb-bot-before",
+          "label": "Bomb bot (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-bomb-bot-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "foundry-turret-flame",
+          "label": "Flame turret",
+          "image": "../../../design/class-round10/enemies/renders/foundry-turret-flame.png",
+          "text": "A dark burner between two red fuel tanks, with a pilot flame.",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-turret-flame-thumb.png"
+        },
+        {
+          "id": "foundry-turret-flame-before",
+          "label": "Flame turret (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-turret-flame-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "foundry-turret-laser",
+          "label": "Laser turret",
+          "image": "../../../design/class-round10/enemies/renders/foundry-turret-laser.png",
+          "text": "In the gun turret's wall socket: a finned capsule with a red charge window and a long barrel.",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-turret-laser-thumb.png"
+        },
+        {
+          "id": "foundry-turret-laser-before",
+          "label": "Laser turret (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-turret-laser-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "foundry-mortar",
+          "label": "Mortar",
+          "image": "../../../design/class-round10/enemies/renders/foundry-mortar.png",
+          "text": "A fat tilted tube with a brass muzzle band and two spare shells.",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-mortar-thumb.png"
+        },
+        {
+          "id": "foundry-mortar-before",
+          "label": "Mortar (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-mortar-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "foundry-tesla-coil",
+          "label": "Tesla coil",
+          "image": "../../../design/class-round10/enemies/renders/foundry-tesla-coil.png",
+          "text": "A ribbed copper ring with a blue-white spark at its heart.",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-tesla-coil-thumb.png"
+        },
+        {
+          "id": "foundry-tesla-coil-before",
+          "label": "Tesla coil (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-tesla-coil-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "foundry-repair-drone",
+          "label": "Repair drone",
+          "image": "../../../design/class-round10/enemies/renders/foundry-repair-drone.png",
+          "text": "One white shell with a green cross, two rotors, a wrench and a torch.",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-repair-drone-thumb.png"
+        },
+        {
+          "id": "foundry-repair-drone-before",
+          "label": "Repair drone (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-repair-drone-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "foundry-smith",
+          "label": "Foundry smith",
+          "image": "../../../design/class-round10/enemies/renders/foundry-smith.png",
+          "text": "No longer brown on brown: ginger beard, red sweatband, dark apron, a red-hot hammer.",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-smith-thumb.png"
+        },
+        {
+          "id": "foundry-smith-before",
+          "label": "Foundry smith (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-smith-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "foundry-saw-blade",
+          "label": "Saw blade",
+          "image": "../../../design/class-round10/enemies/renders/foundry-saw-blade.png",
+          "text": "Twelve big hooked teeth, three curved slots, a red hub.",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-saw-blade-thumb.png"
+        },
+        {
+          "id": "foundry-saw-blade-before",
+          "label": "Saw blade (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-saw-blade-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "foundry-crawler-head",
+          "label": "Chain crawler",
+          "image": "../../../design/class-round10/enemies/renders/foundry-crawler-head.png",
+          "text": "A mechanical centipede: a head plate with pincers and overlapping body plates.",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-crawler-head-thumb.png"
+        },
+        {
+          "id": "foundry-crawler-head-before",
+          "label": "Chain crawler (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-crawler-head-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "foundry-drill-bot",
+          "label": "Drill bot",
+          "image": "../../../design/class-round10/enemies/renders/foundry-drill-bot.png",
+          "text": "A yellow chevroned body on tracks and a drill as wide as the body.",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-drill-bot-thumb.png"
+        },
+        {
+          "id": "foundry-drill-bot-before",
+          "label": "Drill bot (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-drill-bot-before.png",
+          "text": "What the game showed before."
+        }
+      ]
+    },
+    {
+      "id": "others2",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Mummy, Spire, Pit Lord",
+      "text": "The mummy redrawn, three Frost and Dunes kinds that fell short, the Spire's seraph and cherub, the Pit Lord.",
+      "why": "Live in 0.16.1. Tick the ones that are right; comment on any that still aren't.",
+      "pick": [
+        "dunes-mummy",
+        "frost-ice-slime",
+        "dunes-sand-mage",
+        "dunes-dart-trap",
+        "spire-seraph",
+        "spire-cherub",
+        "ember-pit-lord",
+        "bandit-daggers"
+      ],
+      "items": [
+        {
+          "id": "dunes-mummy",
+          "label": "Mummy",
+          "image": "../../../design/class-round10/enemies/renders/dunes-mummy.png",
+          "text": "A wrapped person in the heroes' build: bandaged head with one dark slit, a gold and turquoise collar, loose wrappings trailing.",
+          "thumb": "../../../design/class-round10/enemies/renders/dunes-mummy-thumb.png"
+        },
+        {
+          "id": "dunes-mummy-before",
+          "label": "Mummy (before)",
+          "image": "../../../design/class-round10/enemies/renders/dunes-mummy-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "frost-ice-slime",
+          "label": "Ice slime",
+          "image": "../../../design/class-round10/enemies/renders/frost-ice-slime.png",
+          "text": "The slime you picked, in ice, with three shards frozen inside.",
+          "thumb": "../../../design/class-round10/enemies/renders/frost-ice-slime-thumb.png"
+        },
+        {
+          "id": "frost-ice-slime-before",
+          "label": "Ice slime (before)",
+          "image": "../../../design/class-round10/enemies/renders/frost-ice-slime-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "dunes-sand-mage",
+          "label": "Sand mage",
+          "image": "../../../design/class-round10/enemies/renders/dunes-sand-mage.png",
+          "text": "A teal turban with a brooch and plume, a veil, a sun staff and an orb of sand.",
+          "thumb": "../../../design/class-round10/enemies/renders/dunes-sand-mage-thumb.png"
+        },
+        {
+          "id": "dunes-sand-mage-before",
+          "label": "Sand mage (before)",
+          "image": "../../../design/class-round10/enemies/renders/dunes-sand-mage-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "dunes-dart-trap",
+          "label": "Dart trap",
+          "image": "../../../design/class-round10/enemies/renders/dunes-dart-trap.png",
+          "text": "A sandstone block with a socket holding a round head with a winged sun and three darts.",
+          "thumb": "../../../design/class-round10/enemies/renders/dunes-dart-trap-thumb.png"
+        },
+        {
+          "id": "dunes-dart-trap-before",
+          "label": "Dart trap (before)",
+          "image": "../../../design/class-round10/enemies/renders/dunes-dart-trap-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "spire-seraph",
+          "label": "Seraph",
+          "image": "../../../design/class-round10/enemies/renders/spire-seraph.png",
+          "text": "Its own caster on your picked angel's build: four wings, pale gold hair, a halo ring over the hair.",
+          "thumb": "../../../design/class-round10/enemies/renders/spire-seraph-thumb.png"
+        },
+        {
+          "id": "spire-seraph-before",
+          "label": "Seraph (before)",
+          "image": "../../../design/class-round10/enemies/renders/spire-seraph-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "spire-cherub",
+          "label": "Cherub",
+          "image": "../../../design/class-round10/enemies/renders/spire-cherub.png",
+          "text": "Kin to the choir sprite: a rose sash, a gold bow, a heart-tipped arrow.",
+          "thumb": "../../../design/class-round10/enemies/renders/spire-cherub-thumb.png"
+        },
+        {
+          "id": "spire-cherub-before",
+          "label": "Cherub (before)",
+          "image": "../../../design/class-round10/enemies/renders/spire-cherub-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "ember-pit-lord",
+          "label": "The Pit Lord",
+          "image": "../../../design/class-round10/enemies/renders/ember-pit-lord.png",
+          "text": "Black obsidian cracked with lava, a molten grin, huge bone horns, red wings.",
+          "thumb": "../../../design/class-round10/enemies/renders/ember-pit-lord-thumb.png"
+        },
+        {
+          "id": "ember-pit-lord-before",
+          "label": "The Pit Lord (before)",
+          "image": "../../../design/class-round10/enemies/renders/ember-pit-lord-before.png",
+          "text": "What the game showed before."
+        },
+        {
+          "id": "bandit-daggers",
+          "label": "Knife bandit",
+          "image": "../../../design/class-round10/enemies/renders/bandit-daggers.png",
+          "text": "A slate kerchief and a gold earring instead of hair that looked like Twinfang's.",
+          "thumb": "../../../design/class-round10/enemies/renders/bandit-daggers-thumb.png"
+        },
+        {
+          "id": "bandit-daggers-before",
+          "label": "Knife bandit (before)",
+          "image": "../../../design/class-round10/enemies/renders/bandit-daggers-before.png",
+          "text": "What the game showed before."
+        }
+      ]
+    }
+  ]
+}
