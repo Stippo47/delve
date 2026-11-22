@@ -65,7 +65,7 @@ export const HEROES2 = {
     trait: { id: 'skyborn', name: 'Skyborn', desc: 'Can\'t be rooted or entangled.' },
   },
   bulwark: {
-    name: 'Bulwark', art: 'art/heroes/bulwark.svg', role: 'tank', unlock: { gems: 2 },
+    name: 'Bulwark', art: 'art/heroes/r12/bulwark.svg', role: 'tank', unlock: { gems: 2 },
     blurb: 'A winged spear and a big shield. Nothing gets past the end of the spear.',
     fun: 'Has stood in the same doorway for so long that the door now leans on him.',
     stats: { hp: 160, speed: 52, r: 34, vr: 24, turn: 3.1, accel: 160, face: 3.3, mass: 2.4, range: 40, atkCd: 1.2, dmg: 12, knock: 170, arc: 0.9 },
@@ -82,7 +82,7 @@ export const HEROES2 = {
     trait: { id: 'returnThrust', name: 'Return Thrust', desc: 'Every blow he takes winds him up, up to five. His next thrust lets it go: twice the reach, through everything in a line, and 30% harder for each.' },
   },
   bearskin: {
-    name: 'Bearskin', art: 'art/heroes/bearskin.svg', role: 'melee', unlock: { gems: 2 },
+    name: 'Bearskin', art: 'art/heroes/r12/bearskin.svg', role: 'melee', unlock: { gems: 2 },
     blurb: 'A studded club and a bear on his back. Hits like the bear did.',
     fun: 'The bear was not killed. The bear lent him the coat and is waiting outside.',
     stats: { hp: 135, speed: 60, r: 34, vr: 24, turn: 3.4, accel: 190, face: 3.6, mass: 2, range: 26, atkCd: 1.35, dmg: 16, knock: 170, arc: 1.8 },
@@ -100,7 +100,7 @@ export const HEROES2 = {
   },
   // ------------------------------------------------------------------ batch 2: warhelm, the rogues, the diggers
   warhelm: {
-    name: 'Warhelm', art: 'art/heroes/warhelm.svg', role: 'melee', unlock: { gems: 2 },
+    name: 'Warhelm', art: 'art/heroes/r12/warhelm.svg', role: 'melee', unlock: { gems: 2 },
     blurb: 'A beard, a helm, a hammer the size of a sheep. Knocks things a long way.',
     fun: 'Nobody has seen his face. There is a rumour it is also a helm.',
     stats: { hp: 140, speed: 56, r: 34, vr: 24, turn: 3.2, accel: 170, face: 3.4, mass: 2.2, range: 28, atkCd: 1.45, dmg: 17, knock: 230, arc: 1.8, aoe: 46 },
@@ -163,7 +163,7 @@ export const HEROES2 = {
     weapon: 'fork', // round 13: "Should show 3 stab slashes. Should dash forwards slightly too" (fxkit: three tines; kits2: a lunge)
     attack: { name: 'Pitchfork', anim: 'thrust', desc: 'A lunging jab with the fork: three tines.' },
     summons: { // Fork Charge's slot: the hay bale he rides (kits2.js BRAINS.haybale; drawn in fx2.js)
-      haybale: { name: 'Hay bale', pass: true, r: 34, vr: 30, turn: 2, accel: 200, face: 2, mass: 6, hp: 45, speed: 60, role: 'melee', range: 0, atkCd: 999, dmg: 0, res: { burn: 3 } },
+      haybale: { name: 'Hay bale', art: 'art/summons/haybale.svg', headR: 76, ownLook: true, pass: true, r: 34, vr: 30, turn: 2, accel: 200, face: 2, mass: 6, hp: 45, speed: 60, role: 'melee', range: 0, atkCd: 999, dmg: 0, res: { burn: 3 } },
     },
     abilities: [
       { id: 'toss', name: 'Toss', cd: 9, tags: 'ds', glyph: 'up', desc: 'Forks the nearest enemy and throws it high over his shoulder: it turns head over heels and lands hard behind him.',
@@ -238,11 +238,11 @@ Object.assign(HEROES2, {
     style: { hand: 'arm-l', glow: '#7FE0D0' },
     attack: { name: 'Spirit bolt', anim: 'cast', desc: 'A teal spirit; when it strikes near a hurt friend it leaps on to that friend and mends it.' },
     summons: { // round 13: the Healing Totem and the Ancestors' Call spirits (light blue; kits2.js BRAINS, fx2.js LOOK2)
-      totem: { name: 'Totem', r: 20, vr: 26, turn: 0, accel: 0, face: 0, mass: 60, hp: 50, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
-      spiritBear: { name: 'Spirit bear', r: 30, vr: 26, turn: 4, accel: 260, face: 4, mass: 3, hp: 45, speed: 62, role: 'melee', range: 18, atkCd: 1.1, dmg: 10, knock: 170, arc: 1.7, weapon: 'claw', attackAnim: 'swing' },
+      totem: { name: 'Totem', art: 'art/summons/totem.svg', headR: 66, ownLook: true, upright: true, r: 20, vr: 26, turn: 0, accel: 0, face: 0, mass: 60, hp: 50, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
+      spiritBear: { name: 'Spirit bear', art: 'art/summons/spirit-bear.svg', headR: 66, ownLook: true, r: 30, vr: 26, turn: 4, accel: 260, face: 4, mass: 3, hp: 45, speed: 62, role: 'melee', range: 18, atkCd: 1.1, dmg: 10, knock: 170, arc: 1.7, weapon: 'claw', attackAnim: 'swing' },
       spiritWolf: { name: 'Spirit wolf', art: 'art/summons/wolf.svg', headR: 35, wash: ['#9FE4FF', 0.55], attackAnim: 'thrust', weapon: 'bite', r: 24, vr: 18, turn: 6, accel: 380, face: 6, mass: 1, hp: 25, speed: 92, role: 'skirmish', range: 14, atkCd: 0.8, dmg: 7, arc: 1.4 },
-      spiritEagle: { name: 'Spirit eagle', pass: true, r: 16, vr: 22, turn: 6, accel: 400, face: 6, mass: 0.6, hp: 20, speed: 120, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
-      spiritBeaver: { name: 'Spirit beaver', r: 20, vr: 20, turn: 5, accel: 300, face: 5, mass: 1, hp: 20, speed: 60, role: 'melee', range: 0, atkCd: 999, dmg: 6 },
+      spiritEagle: { name: 'Spirit eagle', art: 'art/summons/spirit-eagle.svg', headR: 56, ownLook: true, pass: true, r: 16, vr: 22, turn: 6, accel: 400, face: 6, mass: 0.6, hp: 20, speed: 120, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
+      spiritBeaver: { name: 'Spirit beaver', art: 'art/summons/spirit-beaver.svg', headR: 51, ownLook: true, r: 20, vr: 20, turn: 5, accel: 300, face: 5, mass: 1, hp: 20, speed: 60, role: 'melee', range: 0, atkCd: 999, dmg: 6 },
     },
     abilities: [
       { id: 'healTotem', name: 'Healing Totem', cd: 14, tags: 'h', glyph: 'leaf', desc: 'Throws a winged totem like the one on his back to the friend in the most trouble. It stands (70 health, blows on it do half): every blow on a friend within its reach lands on the totem instead, and it mends them a little.',
@@ -261,7 +261,7 @@ Object.assign(HEROES2, {
     stats: { hp: 68, speed: 64, r: 30, vr: 22, turn: 4.5, accel: 240, face: 4.6, mass: 1, range: 230, keep: 180, atkCd: 1.2, dmg: 10 },
     style: { hand: 'arm-l', glow: '#B07BE0' },
     attack: { name: 'Hex bolt', anim: 'cast', desc: 'Three hexes in quick succession, each a different witch\'s sign, curving after the target.' },
-    summons: { cauldron: { name: 'Cauldron', r: 22, vr: 24, turn: 0, accel: 0, face: 0, mass: 60, hp: 30, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 } }, // round 13: Cursed Brew's pot
+    summons: { cauldron: { name: 'Cauldron', art: 'art/summons/cauldron.svg', headR: 61, ownLook: true, upright: true, r: 22, vr: 24, turn: 0, accel: 0, face: 0, mass: 60, hp: 30, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 } }, // round 13: Cursed Brew's pot
     abilities: [
       { id: 'frogHex', name: 'Hex', cd: 12, tags: 's', glyph: 'skull', desc: "A hex that turns an enemy into a frog: it can't attack, takes 50% more, and hops about wherever it likes.",
         tiers: ['A frog for 2s.', 'For 3s.', 'The hex jumps on to a second enemy.'] },
@@ -274,13 +274,14 @@ Object.assign(HEROES2, {
   },
   warlock: {
     name: 'Warlock', art: 'art/heroes/warlock.svg', role: 'caster', unlock: { gems: 3 },
+    forms: ['art/heroes/r12/warlock-demon.svg'], // round 15 (lane E): Awaken's demon form (kits2.js summonImp), its picture got ready with his (render.js warmArt)
     blurb: 'Horns, a gold sceptre and a demon-eye orb. Pays for power in his own blood.',
     fun: 'Read the contract very carefully. Twice. Signed it anyway.',
     stats: { hp: 75, speed: 62, r: 30, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1, range: 230, keep: 180, atkCd: 1.3, dmg: 9 },
     style: { glow: '#E05AB8' },
     attack: { name: 'Pact bolt', anim: 'cast', desc: 'An eye of magenta fire like the one on his sceptre: it flies out through the enemies and comes back to his hand, hitting on the way back too; a third of what it deals heals him. His imp throws smaller ones.' },
     summons: { // round 13: the imp that is always with him (his trait); the Ember Deep's imp art
-      warlockImp: { name: 'Imp', art: 'art/enemies/placeholder/imp.svg', headR: 44, r: 20, vr: 16, turn: 7, accel: 420, face: 7, mass: 0.6, hp: 25, speed: 80, role: 'ranged', range: 240, keep: 0, atkCd: 1.3, dmg: 4, attackAnim: 'throw', res: { burn: 0 } },
+      warlockImp: { name: 'Imp', art: 'art/summons/warlock-imp.svg', headR: 44, r: 20, vr: 16, turn: 7, accel: 420, face: 7, mass: 0.6, hp: 25, speed: 80, role: 'ranged', range: 240, keep: 0, atkCd: 1.3, dmg: 4, attackAnim: 'throw', res: { burn: 0 } },
     },
     abilities: [
       { id: 'eldritchBeam', name: 'Eldritch Beam', cd: 10, tags: 'd', glyph: 'drain', desc: 'His imp holds a writhing magenta ray on an enemy (he does, if it is gone): it burns hotter the longer it holds, shoving the enemy back, and bursts at the end.',
@@ -372,7 +373,7 @@ Object.assign(HEROES2, {
     stats: { hp: 82, speed: 62, r: 31, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1.1, range: 210, keep: 170, atkCd: 1.0, dmg: 8 },
     style: { glow: '#FFD45A' },
     attack: { name: 'Bee', anim: 'throw', desc: 'Sends a bee at the target: it stings, then stays buzzing round it, stinging now and then.' },
-    summons: { beehive: { name: 'Beehive', r: 20, vr: 22, turn: 0, accel: 0, face: 0, mass: 60, hp: 35, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 } },
+    summons: { beehive: { name: 'Beehive', art: 'art/summons/beehive.svg', headR: 56, ownLook: true, upright: true, r: 20, vr: 22, turn: 0, accel: 0, face: 0, mass: 60, hp: 35, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 } },
     abilities: [
       { id: 'swarm', name: 'Smoker', cd: 11, tags: 's', glyph: 'cloud', desc: 'Pumps the smoker: a cone of thick white smoke rolls over the enemies in front. They grow sleepy and slow, and drop off if it builds.',
         tiers: ['Sleepy and slowed.', 'Sleepier.', 'They swing slower too.'] },
@@ -396,8 +397,8 @@ Object.assign(HEROES2, {
     stats: { hp: 105, speed: 56, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 150, atkCd: 1.3, dmg: 8 },
     attack: { name: 'Pack toss', anim: 'throw', desc: 'Throws whatever is on top of the pack: a pot, a pan, a boot, a tin cup, a ladle.' },
     summons: {
-      crate: { name: 'Supply crate', r: 20, vr: 22, turn: 0, accel: 0, face: 0, mass: 60, hp: 20, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
-      barricade: { name: 'Barricade', r: 34, vr: 34, turn: 0, accel: 0, face: 0, mass: 99, hp: 55, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
+      crate: { name: 'Supply crate', art: 'art/summons/supply-crate.svg', headR: 56, ownLook: true, upright: true, r: 20, vr: 22, turn: 0, accel: 0, face: 0, mass: 60, hp: 20, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
+      barricade: { name: 'Barricade', art: 'art/summons/barricade.svg', headR: 57, ownLook: true, r: 34, vr: 34, turn: 0, accel: 0, face: 0, mass: 99, hp: 55, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
     },
     abilities: [
       { id: 'resupply', name: 'Supply Crate', cd: 16, tags: 'h', glyph: 'vial', desc: "Drops a supply crate by the friend whose abilities are furthest off; each friend's first touch brings its abilities round sooner and patches it up 5%. Friends with abilities waiting walk over to it.",
@@ -415,7 +416,7 @@ Object.assign(HEROES2, {
     blurb: 'A heavy crossbow, a kettle hat and a tall shield on his back. Slow to load, hard to stop.',
     fun: 'Has counted every turn of the crank since he was nine. He is on four hundred thousand and six.',
     stats: { hp: 85, speed: 60, r: 31, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1.3, range: 280, keep: 180, atkCd: 1.7, dmg: 15 },
-    summons: { pavise: { name: 'Pavise', r: 20, vr: 26, turn: 0, accel: 0, face: 0, mass: 99, hp: 30, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 } },
+    summons: { pavise: { name: 'Pavise', art: 'art/summons/pavise.svg', headR: 64, ownLook: true, r: 20, vr: 26, turn: 0, accel: 0, face: 0, mass: 99, hp: 30, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 } },
     attack: { name: 'Heavy bolt', anim: 'shoot', desc: 'A heavy crossbow bolt that goes through the first enemy it hits.' },
     abilities: [
       { id: 'pavise', name: 'Pavise', cd: 13, tags: 'd', glyph: 'shield', desc: "Plants the tall shield in front of him as a thing of its own (60 health): his side's shots go through it, the enemy's stop on it.",
@@ -458,7 +459,7 @@ Object.assign(HEROES2, {
       { id: 'blastOff', name: 'Blast Off', cd: 12, tags: 'ds', glyph: 'up', desc: 'Drops a bomb at his own feet and rides the blast out of trouble.',
         tiers: ['Throws him clear and hurts those near.', 'The blast staggers.', 'He lands with a second blast.'] },
     ],
-    summons: { bigBomb: { name: 'Big bomb', r: 18, vr: 20, turn: 0, accel: 0, face: 0, mass: 99, hp: 15, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 } },
+    summons: { bigBomb: { name: 'Big bomb', art: 'art/summons/big-bomb.svg', headR: 51, ownLook: true, upright: true, r: 18, vr: 20, turn: 0, accel: 0, face: 0, mass: 99, hp: 15, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 } },
     trait: { id: 'powderKeg', name: 'Powder Keg', desc: 'Whatever he kills blows up a moment later, hurting and staggering those round it: one blast sets off the next through a pack.' },
   },
   harpooner: {
@@ -568,7 +569,7 @@ Object.assign(HEROES2, {
 // ------------------------------------------------------------------ batch 7: the trapper and the fighters
 Object.assign(HEROES2, {
   trapper: {
-    name: 'Trapper', art: 'art/heroes/trapper.svg', role: 'ranged', unlock: { gems: 2 },
+    name: 'Trapper', art: 'art/heroes/r12/trapper.svg', role: 'ranged', unlock: { gems: 2 },
     blurb: 'A fur cap with the flaps down, a short rifle and a jaw trap. Catches things.',
     fun: 'Knows where every trap he ever set is. Mostly. Walks carefully.',
     stats: { hp: 88, speed: 62, r: 31, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1.2, range: 180, keep: 120, atkCd: 1.4, dmg: 12 },
@@ -619,7 +620,7 @@ Object.assign(HEROES2, {
     trait: { id: 'pratfall', name: 'Pratfall', desc: 'A quarter of the blows swung at him miss, and whoever swung is spun round to face away.' },
   },
   samurai: {
-    name: 'Samurai', art: 'art/heroes/samurai.svg', role: 'melee', unlock: { gems: 3 },
+    name: 'Samurai', art: 'art/heroes/r12/samurai.svg', role: 'melee', unlock: { gems: 3 },
     blurb: 'An indigo kabuto with gold horns and a long katana. Waits, then cuts.',
     fun: 'Has polished the katana every night for twenty years. It has never been dirty. He polishes anyway.',
     stats: { hp: 120, speed: 66, r: 32, vr: 22, turn: 4.4, accel: 250, face: 4.6, mass: 1.5, range: 28, atkCd: 1.1, dmg: 14, knock: 100, arc: 2 },
@@ -636,7 +637,7 @@ Object.assign(HEROES2, {
     trait: { id: 'keenEdge', name: 'Keen Edge', desc: 'Every blow also takes 3% of its target\'s greatest health (a boss 1%).' },
   },
   valkyrie: {
-    name: 'Valkyrie', art: 'art/heroes/valkyrie.svg', role: 'support', unlock: { gems: 3 }, // round 13: "Is more of a support."
+    name: 'Valkyrie', art: 'art/heroes/r12/valkyrie.svg', role: 'support', unlock: { gems: 3 }, // round 13: "Is more of a support."
     blurb: 'A winged helm, long plaits and a big spear. Carries the fallen back into the fight.',
     fun: 'Has been to Valhalla twice. Says the food is good but the seating is a nightmare.',
     stats: { hp: 125, speed: 66, r: 32, vr: 22, turn: 4.2, accel: 240, face: 4.4, mass: 1.6, range: 34, atkCd: 1.15, dmg: 12, knock: 130, arc: 1 },
@@ -667,12 +668,12 @@ Object.assign(HEROES2, {
       turret: { name: 'Turret', art: 'art/summons/turret.svg', headR: 52, turret: true, attackAnim: 'shoot', proj: 'bullet', r: 24, vr: 20, turn: 1, accel: 0, face: 1, mass: 8,
         hp: 70, speed: 0, role: 'ranged', range: 260, keep: 0, atkCd: 0.6, dmg: 5 },
       // round 13: Tinker's four towers and the wind-up drones (kits2.js BRAINS, fx2.js LOOK2)
-      torcher: { name: 'Torcher', r: 26, vr: 26, turn: 0, accel: 0, face: 0, mass: 99, hp: 70, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 6 },
-      tesla: { name: 'Tesla tower', r: 22, vr: 24, turn: 0, accel: 0, face: 0, mass: 99, hp: 35, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 6 },
-      mortar: { name: 'Snowball mortar', r: 24, vr: 24, turn: 0, accel: 0, face: 0, mass: 99, hp: 35, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 6 },
-      medbay: { name: 'Medbay', r: 24, vr: 24, turn: 0, accel: 0, face: 0, mass: 99, hp: 35, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
-      medDrone: { name: 'Med drone', pass: true, r: 12, vr: 14, turn: 0, accel: 0, face: 0, mass: 0.4, hp: 6, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
-      windup: { name: 'Wind-up drone', r: 13, vr: 14, turn: 0, accel: 0, face: 0, mass: 0.5, hp: 8, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 6 },
+      torcher: { name: 'Torcher', art: 'art/summons/engineer-torcher.svg', headR: 66, ownLook: true, turret: true, r: 26, vr: 26, turn: 0, accel: 0, face: 0, mass: 99, hp: 70, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 6 },
+      tesla: { name: 'Tesla tower', art: 'art/summons/engineer-tesla.svg', headR: 61, ownLook: true, upright: true, r: 22, vr: 24, turn: 0, accel: 0, face: 0, mass: 99, hp: 35, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 6 },
+      snowMortar: { name: 'Snowball mortar', art: 'art/summons/engineer-mortar.svg', headR: 61, ownLook: true, turret: true, r: 24, vr: 24, turn: 0, accel: 0, face: 0, mass: 99, hp: 35, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 6 },
+      medbay: { name: 'Medbay', art: 'art/summons/engineer-medbay.svg', headR: 61, ownLook: true, upright: true, r: 24, vr: 24, turn: 0, accel: 0, face: 0, mass: 99, hp: 35, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
+      medDrone: { name: 'Med drone', art: 'art/summons/engineer-med-drone.svg', headR: 36, ownLook: true, upright: true, pass: true, r: 12, vr: 14, turn: 0, accel: 0, face: 0, mass: 0.4, hp: 6, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
+      windup: { name: 'Wind-up drone', art: 'art/summons/engineer-windup.svg', headR: 36, ownLook: true, r: 13, vr: 14, turn: 0, accel: 0, face: 0, mass: 0.5, hp: 8, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 6 },
     },
     abilities: [
       { id: 'deployTurret', name: 'Deploy Turret', cd: 20, tags: 'd', glyph: 'burst', desc: 'Throws a turret into a spot round her: it lands, turns slowly to the nearest enemy and fires in rapid bursts of five, its barrels spinning.',

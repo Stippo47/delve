@@ -557,7 +557,9 @@ export const ABILITIES2 = {
     score: (w, u) => (!u.kit.storm && foesNear(w, u, u.x, u.y, 200).length >= 2 ? 0.7 : !u.kit.storm && foesNear(w, u, u.x, u.y, 120).length ? 0.4 : 0),
     use(w, u, t, tier) {
       const dur = tier >= 2 ? 9 : 6, human = u.def; cast(u, 'ability', 0.5);
-      u.def = { ...human, attackAnim: 'punch', weapon: 'thrust', aoe: 0, atkCd: 0.55, range: 24, style: { ...(human.style || {}), hand: 'arm-r', slam: null } };
+      // (round 15, lane E: style.dual, his two fists take turns, now that art round 12's hammer is its own part and his
+      // left fist stays when it goes: "punches with his fist alternating"; the pose only, parts.js)
+      u.def = { ...human, attackAnim: 'punch', weapon: 'thrust', aoe: 0, atkCd: 0.55, range: 24, style: { ...(human.style || {}), hand: 'arm-r', slam: null, dual: true } };
       const S = u.kit.storm = { a: 0, dart: null, next: w.time + 0.6, x: u.x, y: u.y, until: w.time + dur, human };
       k2(w, { draw: 'stormHammer', unit: u, x: u.x, y: u.y, max: dur + 0.2, S, ab: 'warHorn' });
       timer(u, 'stormBorn', dur, (dt) => {
@@ -1100,10 +1102,13 @@ export const ABILITIES2 = {
     use(w, u, t, tier) {
       const dur = tier >= 2 ? 11 : 8, human = u.def, imp = mine(w, u, 'warlockImp')[0];
       if (imp) { k2(w, { draw: 'impInto', from: imp, to: u, x: imp.x, y: imp.y, max: 0.4 }); imp.hidden = true; imp.ethereal = true; imp.inHim = true; }
-      u.def = { ...human, role: 'melee', range: 34, atkCd: 0.85, dmg: human.dmg * 1.7, knock: 260, arc: 2.6, weapon: 'great', attackAnim: 'swing', keep: 0, speed: human.speed * 1.15, style: { ...(human.style || {}), glow: '#FF3A5A' } };
+      // (round 15, lane E: drawn with art round 12's demon form, art/heroes/r12/warlock-demon.svg, horns, wings and the
+      // sword in his right hand; it takes the place of the red wash and the sword drawn in code: fx2.js demonForm keeps
+      // the red glow and the embers)
+      u.def = { ...human, art: 'art/heroes/r12/warlock-demon.svg', headR: 56, role: 'melee', range: 34, atkCd: 0.85, dmg: human.dmg * 1.7, knock: 260, arc: 2.6, weapon: 'great', attackAnim: 'swing', keep: 0, speed: human.speed * 1.15, style: { ...(human.style || {}), glow: '#FF3A5A' } };
       const D = u.kit.demon = { human, until: w.time + dur, dur, imp, blinkT: 1.2, spitT: 0.8 };
       w.shake = Math.max(w.shake, 6); setAnim(u, 'ability', 0.6);
-      addBuff(u, { id: 'demon', dur: 60, knockImmune: true, taken: 0.6, wash: (T) => ['#B0204A', 0.3 + 0.08 * Math.sin(T * 7)] });
+      addBuff(u, { id: 'demon', dur: 60, knockImmune: true, taken: 0.6 });
       k2(w, { draw: 'demonForm', unit: u, x: u.x, y: u.y, r: u.vr, max: 60, D });
     },
     hook: {
@@ -2167,9 +2172,9 @@ export const ABILITIES2 = {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 360).length >= 1 && !w.units.some((o) => o.summonBy === u && TOWERS.includes(o.kind) && alive(o)) ? 0.6 : 0),
     use(w, u, t, tier) {
       cast(u, 'swing', 0.5); const hurtN = [u, ...allies(w, u)].filter((o) => !o.summon && hpRatio(o) < 0.6).length;
-      const kind = hurtN >= 1 && rand() < 0.6 ? 'medbay' : ['torcher', 'tesla', 'mortar'][Math.floor(rand() * 3)];
+      const kind = hurtN >= 1 && rand() < 0.6 ? 'medbay' : ['torcher', 'tesla', 'snowMortar'][Math.floor(rand() * 3)];
       const a = t ? ang(u, t) : u.facing, x = clamp(u.x + Math.cos(a) * 50, 30, w.W - 30), y = clamp(u.y + Math.sin(a) * 50, 30, w.H - 30);
-      const s2 = summon(w, u, kind, x, y, { life: tier >= 2 ? 12 : 9, hp: kind === 'torcher' ? 140 : 70, hit: kind === 'torcher' ? 0.35 : kind === 'tesla' ? 0.7 : kind === 'mortar' ? 0.9 : 0 });
+      const s2 = summon(w, u, kind, x, y, { life: tier >= 2 ? 12 : 9, hp: kind === 'torcher' ? 140 : 70, hit: kind === 'torcher' ? 0.35 : kind === 'tesla' ? 0.7 : kind === 'snowMortar' ? 0.9 : 0 });
       s2.fixed = true; s2.facing = a; s2.tier = tier; k2(w, { draw: 'buildSparks', x, y, max: 0.6 }); puff(w, x, y, '#C9D2DE', 10, 90, 5, 0.4);
       if (kind === 'torcher') onUnit(w, s2, 'armorFront', 99, { taken: (w2, u2, src, amt, o) => (src && angleDiff(angleTo(u2.x, u2.y, src.x, src.y), u2.facing) < 1.2 ? amt * 0.35 : amt * 1.8) });
     },
@@ -2515,7 +2520,7 @@ function juggleTick(w, u, dt) {
 // the Werewolf back to a man (the wolf's time up, or his trait bringing him back)
 function wolfBack(w, u) { const k = u.kit; if (!k.wolfUntil) return; u.def = k.human || u.def; k.wolfUntil = 0; if (k.size) { u.r = k.size.r; u.vr = k.size.vr; k.size = null; } puff(w, u.x, u.y, '#6E6A6A', 12, 100, 6, 0.5); }
 // the Engineer's towers (Tinker) and drones
-const TOWERS = ['torcher', 'tesla', 'mortar', 'medbay'];
+const TOWERS = ['torcher', 'tesla', 'snowMortar', 'medbay'];
 const turnTo = (s2, want, rate, dt) => { const d = Math.atan2(Math.sin(want - s2.facing), Math.cos(want - s2.facing)); s2.facing += clamp(d, -rate * dt, rate * dt); return Math.abs(d); };
 const nearestFoe = (w, s2, R) => opponents(w, s2).filter((e) => dist(e.x, e.y, s2.x, s2.y) < R && !blocked(w, s2.x, s2.y, e.x, e.y)).sort((p, q) => dist(s2.x, s2.y, p.x, p.y) - dist(s2.x, s2.y, q.x, q.y))[0];
 // the turret: turns slowly to the nearest enemy and fires bursts of five
@@ -2543,7 +2548,7 @@ BRAINS.tesla = function (w, s2, dt) {
   s2.zapT = w.time; return true;
 };
 // the snowball mortar: every 1.6 s a snowball lobbed high onto an enemy: a chilling burst
-BRAINS.mortar = function (w, s2, dt) {
+BRAINS.snowMortar = function (w, s2, dt) {
   s2.vx = s2.vy = 0; s2.acc = (s2.acc || 0) + dt; const e = opponents(w, s2).filter((o) => dist(o.x, o.y, s2.x, s2.y) < 340).sort(() => rand() - 0.5)[0]; if (e) turnTo(s2, angleTo(s2.x, s2.y, e.x, e.y), 2, dt);
   if (s2.acc < 1.6 || !e) return true; s2.acc = 0; s2.recoil = w.time; const x = e.x, y = e.y, u = s2.summonBy;
   const p = lob(w, s2, x, y, 'snowball', null, () => { k2(w, { draw: 'snowBurst', x, y, r: 55, max: 0.5 }); for (const o of foesNear(w, s2, x, y, 55)) hurt(w, o, s2.def.dmg * s2.dmgMul, u, { noDodge: true, chill: 35, knock: 80, kAngle: angleTo(x, y, o.x, o.y) }); });
@@ -2948,9 +2953,11 @@ export function kit2Tick(w, u, dt) {
   if (!u.kit) return;
   // Bear Claws: the club goes away while he claws (round 13: "(club goes away)"): its arm is hidden (the art has the club
   // in that hand: docs/HEROES-r13.md asks for the club as its own part)
-  if (u.kind === 'bearskin') { const on = u.kit.clawsT > w.time; if (on) u._force = { 'arm-r': { hide: true } }; else if (u._force && u._force['arm-r']) u._force = null; }
-  // Warhelm: his hammer is out of his hand while it circles him (Storm Born) or flies ahead (Skull Splitter)
-  if (u.kind === 'warhelm') { const out = !!u.kit.storm || u.kit.splitT > w.time; if (out) u._force = { 'arm-l': { hide: true } }; else if (u._force && u._force['arm-l']) u._force = null; }
+  // (round 15, lane E: art round 12 gave the club its own part, #arm-r-club: parts.js hides that alone while u.kit.clawsT
+  // runs, and the paw on his fist claws)
+  // Warhelm: his hammer is out of his hand while it circles him (Storm Born) or flies ahead (Skull Splitter). (Round 15,
+  // lane E: art round 12 split it from his fist, #arm-l-hammer: parts.js hides the hammer alone, his fist stays and punches.)
+  if (u.kind === 'warhelm') u.kit.hammerOut = !!u.kit.storm || u.kit.splitT > w.time;
   // the Alchemist's hand shows the next flask she'll throw (round 13: "Bottle in hand should change to what she will throw")
   if (u.kind === 'alchemist' && (u.kit.handW !== w || !u.kit.handFx || u.kit.handFx.t >= u.kit.handFx.max)) { u.kit.handW = w; u.kit.handFx = k2(w, { draw: 'handFlask', unit: u, x: u.x, y: u.y, max: 1e9 }); }
   // the Chef's plates: a friend who walks over one eats it (healed; the rest past whole is extra health); hurt friends

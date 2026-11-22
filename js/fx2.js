@@ -8,7 +8,10 @@
 import { TAU, clamp } from './util.js';
 import { inked, inkLine, glowDisc, star, upright, upVec, hash, easeOut, flame, blob, trail, roundRect } from './fx.js';
 import { drawPuddle } from './puddles.js';
-import { LOOK2 } from './looks2.js';
+import { ART2 } from './looks2.js';
+// round 15 (lane E): a thing that stands (render.js def.upright): world units straight down the screen from it
+const downAt = (u, d) => { const [vx, vy] = upVec(); return [u.x - vx * d, u.y - vy * d]; };
+const crackAt = (ctx, u, x0, y0, x1, y1) => { ctx.save(); ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(u.x + x0, u.y + y0); ctx.lineTo(u.x + x1, u.y + y1); ctx.stroke(); ctx.restore(); };
 
 const k01 = (v) => clamp(v, 0, 1);
 const lit = (ctx, fn) => { ctx.save(); ctx.globalCompositeOperation = 'lighter'; fn(); ctx.restore(); };
@@ -968,18 +971,20 @@ DRAW.buried = (ctx, f, w, layer) => {
   for (let i = 0; i < 4; i++) { const b = i / 4 * TAU + 0.5; disc(ctx, x + Math.cos(b) * f.r * 0.4 + wob, y + Math.sin(b) * f.r * 0.3, 3, '#6E5034'); }
   ctx.restore();
 };
-// the Haymaker's hay bale, seen from above as it rolls: a round bale lying across its way, its straw bands rolling over
-LOOK2.haybale = (ctx, u, w) => {
-  const a = u.facing || 0, L = u.vr * 1.15, R = u.vr * 0.95, roll = (u.roll || 0) * 0.12, fl = u.flashT > 0.06;
-  ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(a);
-  inked(ctx, () => roundRect(ctx, -R, -L, R * 2, L * 2, R * 0.55), fl ? '#FFFFFF' : '#E2BE58');
-  ctx.save(); ctx.beginPath(); roundRect(ctx, -R, -L, R * 2, L * 2, R * 0.55); ctx.clip();
-  for (let i = -3; i <= 3; i++) { const xx = ((i * 11 + roll * 30) % 77 + 77) % 77 - 38; ctx.fillStyle = i % 2 ? '#C9A040' : '#F2DC8A'; ctx.fillRect(xx - 2.5, -L, 5, L * 2); }
-  ctx.strokeStyle = '#8A6A2A'; ctx.lineWidth = 2.6; for (const yy of [-L * 0.45, L * 0.45]) { ctx.beginPath(); ctx.moveTo(-R, yy); ctx.lineTo(R, yy); ctx.stroke(); }
-  ctx.restore();
-  for (let i = 0; i < 5; i++) { const yy = -L + (i + 0.5) * L * 0.4, sd = i % 2 ? 1 : -1; inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(sd * R, yy); ctx.lineTo(sd * (R + 6), yy + 3); }, '#E8C860', 2); }
-  ctx.restore();
-  if (u.st && u.st.burn > 10) { ctx.save(); ctx.globalAlpha = Math.min(1, u.st.burn / 60); for (let i = 0; i < 3; i++) upright(ctx, u.x + (i - 1) * 12, u.y - 6, () => flame(ctx, 0, 0, 8)); ctx.restore(); }
+// the Haymaker's hay bale (round 15, lane E: art round 12's art/summons/haybale.svg, a rolled bale lying across its way,
+// two twine bands; the code drawing's straw rolling over it and its flames are kept): straw lines in the picture's own
+// two colours run over its body as it rolls (u.roll, its way in room units), between the bands, as the old stripes did
+ART2.haybale = {
+  top(ctx, u) {
+    const o = ((u.roll || 0) / 0.395) % 38, curve = (x, y) => y - 3 * (1 - ((x - 100) / 72) ** 2);
+    ctx.save(); ctx.beginPath(); ctx.moveTo(58, 39); ctx.lineTo(142, 39); ctx.arc(142, 75, 36, -Math.PI / 2, 0); ctx.lineTo(178, 125); ctx.arc(142, 125, 36, 0, Math.PI / 2); ctx.lineTo(58, 161); ctx.arc(58, 125, 36, Math.PI / 2, Math.PI); ctx.lineTo(22, 75); ctx.arc(58, 75, 36, Math.PI, Math.PI * 1.5); ctx.clip();
+    ctx.lineCap = 'round'; ctx.lineWidth = 3.6;
+    for (let i = -1; i < 4; i++) { const y = 43 + o + i * 38;
+      for (const [yy, col, a] of [[y, '#B88E2E', 0.6], [y + 19, '#F6E6A0', 0.7]]) { ctx.globalAlpha = a; ctx.strokeStyle = col; ctx.beginPath();
+        for (const [x0, x1] of [[24, 57], [71, 129], [143, 176]]) { ctx.moveTo(x0, curve(x0, yy)); ctx.quadraticCurveTo((x0 + x1) / 2, curve((x0 + x1) / 2, yy) - 1, x1, curve(x1, yy)); } ctx.stroke(); } }
+    ctx.restore();
+  },
+  over(ctx, u) { if (u.st && u.st.burn > 10) { ctx.save(); ctx.globalAlpha = Math.min(1, u.st.burn / 60); for (let i = 0; i < 3; i++) upright(ctx, u.x + (i - 1) * 12, u.y - 6, () => flame(ctx, 0, 0, 8)); ctx.restore(); } },
 };
 
 // Old Tales: his story book open over his head, its pages turning
@@ -1061,18 +1066,11 @@ DRAW.monster = (ctx, f, w, layer) => {
 // ---------------------------------------------------------------- the Shaman (round 13)
 const SPIRIT = ['#5FB8E8', '#9FE4FF', '#DDF6FF']; // the ancestors' light blue: dark, main, light
 const spiritA = (u) => (u.lifeT != null ? clamp(u.lifeT / 0.6, 0, 1) : 1) * 0.92;
-// the winged totem (like the one on his back): a carved pole of stacked faces, teal wings at the top
-LOOK2.totem = (ctx, u, w) => {
-  const fl = u.flashT > 0.06, rise = easeOut(k01((w.time - (u.bornT ?? (u.bornT = w.time))) / 0.25));
-  upright(ctx, u.x, u.y, () => { ctx.scale(1, rise);
-    ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(0, 6, 18, 7, 0, 0, TAU); ctx.fill(); ctx.restore();
-    for (const sd of [-1, 1]) inked(ctx, () => { ctx.beginPath(); ctx.moveTo(sd * 8, -34); ctx.quadraticCurveTo(sd * 30, -48, sd * 34, -30); ctx.quadraticCurveTo(sd * 24, -30, sd * 26, -22); ctx.quadraticCurveTo(sd * 16, -26, sd * 8, -22); ctx.closePath(); }, fl ? '#FFFFFF' : '#2FB3A4');
-    inked(ctx, () => roundRect(ctx, -10, -40, 20, 46, 4), fl ? '#FFFFFF' : '#A0705A');
-    ctx.fillStyle = '#D7713C'; ctx.fillRect(-10, -26, 20, 4); ctx.fillRect(-10, -8, 20, 4);
-    ctx.fillStyle = '#F4EEDC'; for (const yy of [-33, -16]) { ctx.fillRect(-6, yy, 4, 3); ctx.fillRect(2, yy, 4, 3); ctx.fillRect(-4, yy + 6, 8, 2.4); }
-    inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -42, 5, 0, TAU); }, '#2FB3A4');
-  });
-  if (u.hp < u.maxHp * 0.5) { ctx.save(); ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(u.x - 5, u.y - 10); ctx.lineTo(u.x + 2, u.y - 2); ctx.stroke(); ctx.restore(); }
+// the winged totem (round 15, lane E: art round 12's art/summons/totem.svg, a carved spirit pole that stands, foot down
+// the screen; the code drawing's rise out of the floor and its crack under half health are kept)
+ART2.totem = {
+  frame(ctx, u, w) { const rise = easeOut(k01((w.time - (u.bornT ?? w.time)) / 0.25)), foot = 33; ctx.translate(0, foot); ctx.scale(1, rise); ctx.translate(0, -foot); },
+  over(ctx, u) { if (u.hp < u.maxHp * 0.5) crackAt(ctx, u, -5, -10, 2, -2); },
 };
 // the totem's reach: a faint teal glow on the floor round it with motes drifting in (no ring)
 DRAW.totemReach = (ctx, f, w, layer) => {
@@ -1104,44 +1102,23 @@ DRAW.spiritRise = (ctx, f, w, layer) => {
   for (let i = 0; i < 7; i++) { const ph = (k * 1.4 + hash(i, 3)) % 1, b = hash(i, 7) * TAU; disc(ctx, f.x + Math.cos(b) * f.r * 0.6 + vx * ph * 50, f.y + Math.sin(b) * f.r * 0.4 + vy * ph * 50, 3 * (1 - ph) + 1, SPIRIT[2]); }
   ctx.restore();
 };
-// the spirit bear, from above: a round light-blue body, shoulders, a snout, round ears; it rocks as it walks
-LOOK2.spiritBear = (ctx, u, w) => {
-  const fl = u.flashT > 0.06, rock = Math.sin(u.bob || 0) * 0.08 * clamp(u.spd / 40, 0, 1), swing = u.anim ? Math.sin(Math.min(1, u.anim.t / u.anim.dur) * Math.PI) : 0;
-  ctx.save(); ctx.globalAlpha *= spiritA(u); ctx.translate(u.x, u.y); ctx.rotate(u.facing + rock);
-  lit(ctx, () => glowDisc(ctx, 0, 0, u.vr * 1.7, SPIRIT[1], 0.25));
-  for (const sd of [-1, 1]) inked(ctx, () => { ctx.beginPath(); ctx.ellipse(10 + (sd > 0 ? swing * 10 : 0), sd * 17, 8, 6, 0, 0, TAU); }, SPIRIT[0]);
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-4, 0, 24, 21, 0, 0, TAU); }, fl ? '#FFFFFF' : SPIRIT[1]);
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(14, 0, 13, 12, 0, 0, TAU); }, fl ? '#FFFFFF' : SPIRIT[1]);
-  for (const sd of [-1, 1]) inked(ctx, () => { ctx.beginPath(); ctx.arc(10, sd * 10, 4.5, 0, TAU); }, SPIRIT[1]);
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(24, 0, 5.5, 5, 0, 0, TAU); }, SPIRIT[2]); disc(ctx, 28, 0, 2, '#2B2230');
-  ctx.restore();
+// The three spirits (round 15, lane E: art round 12's art/summons/spirit-bear, -eagle, -beaver.svg). Kept from their code
+// drawings: drawn see-through (spiritA, fading out at the end of their life), a light-blue glow under each, the bear's
+// rocking walk, the eagle lifted by u.hop (the rig does that) with its wings beating (the picture drawn narrower and
+// wider across), the beaver's full turn when it shoots (u.spin: the rig does that). The bear's paw swing has no paw of
+// its own in the picture: the rig's lunge on each blow takes its place.
+const spiritGlow = (ctx, u, r) => { ctx.save(); ctx.globalAlpha *= spiritA(u); lit(ctx, () => glowDisc(ctx, 0, 0, r, SPIRIT[1], 0.25)); ctx.restore(); };
+ART2.spiritBear = {
+  frame(ctx, u) { spiritGlow(ctx, u, u.vr * 1.7); ctx.rotate(Math.sin(u.bob || 0) * 0.08 * clamp(u.spd / 40, 0, 1)); },
+  alpha: (u) => spiritA(u),
 };
-// the spirit eagle, wings spread, beating, high over the friend it mends
-LOOK2.spiritEagle = (ctx, u, w) => {
-  const beat = Math.sin(w.time * 11 + u.id) * 0.35, [vx, vy] = upVec(), up = u.hop || 0;
-  ctx.save(); ctx.globalAlpha *= 0.25; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y, 14, 6, 0, 0, TAU); ctx.fill(); ctx.restore();
-  ctx.save(); ctx.globalAlpha *= spiritA(u); ctx.translate(u.x + vx * up, u.y + vy * up); ctx.rotate(u.facing);
-  lit(ctx, () => glowDisc(ctx, 0, 0, 34, SPIRIT[1], 0.25));
-  for (const sd of [-1, 1]) { ctx.save(); ctx.scale(1, sd); ctx.rotate(-beat);
-    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(4, 2); ctx.quadraticCurveTo(-2, 18, -10, 30); ctx.lineTo(-6, 22); ctx.lineTo(-14, 24); ctx.lineTo(-8, 16); ctx.lineTo(-14, 14); ctx.quadraticCurveTo(-6, 6, -4, 2); ctx.closePath(); }, SPIRIT[1]); ctx.restore(); }
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 13, 6, 0, 0, TAU); }, SPIRIT[1]);
-  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-12, 0); ctx.lineTo(-22, -6); ctx.lineTo(-20, 0); ctx.lineTo(-22, 6); ctx.closePath(); }, SPIRIT[0]);
-  inked(ctx, () => { ctx.beginPath(); ctx.arc(11, 0, 5.5, 0, TAU); }, SPIRIT[2]); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(15, -2); ctx.lineTo(21, 1); ctx.lineTo(15, 2.5); ctx.closePath(); }, '#F2C14E');
-  ctx.restore();
+ART2.spiritEagle = {
+  frame(ctx, u, w) { spiritGlow(ctx, u, 34); ctx.scale(1 - 0.16 * (0.5 + 0.5 * Math.sin(w.time * 11 + u.id)), 1); },
+  alpha: (u) => spiritA(u),
 };
-// the spirit beaver: a round body, a flat paddle tail, two front teeth; it spins when it shoots
-LOOK2.spiritBeaver = (ctx, u, w) => {
-  const fl = u.flashT > 0.06; let rot = u.facing;
-  if (u.spin) { const k = (w.time - u.spin.t0) / u.spin.dur; if (k >= 0 && k < 1) rot += TAU * k; }
-  ctx.save(); ctx.globalAlpha *= spiritA(u); ctx.translate(u.x, u.y); ctx.rotate(rot);
-  lit(ctx, () => glowDisc(ctx, 0, 0, 30, SPIRIT[1], 0.25));
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-20, 0, 10, 7, 0, 0, TAU); }, SPIRIT[0]);
-  ctx.strokeStyle = 'rgba(43,34,48,0.35)'; ctx.lineWidth = 1.4; for (let i = -1; i <= 1; i++) { ctx.beginPath(); ctx.moveTo(-26, i * 3); ctx.lineTo(-14, i * 3); ctx.stroke(); }
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-2, 0, 15, 13, 0, 0, TAU); }, fl ? '#FFFFFF' : SPIRIT[1]);
-  inked(ctx, () => { ctx.beginPath(); ctx.arc(12, 0, 8, 0, TAU); }, fl ? '#FFFFFF' : SPIRIT[1]);
-  inked(ctx, () => roundRect(ctx, 18, -2.5, 4, 5, 1), '#FFFFFF');
-  for (const sd of [-1, 1]) disc(ctx, 13, sd * 4, 1.6, '#2B2230');
-  ctx.restore();
+ART2.spiritBeaver = {
+  frame(ctx, u) { spiritGlow(ctx, u, 30); },
+  alpha: (u) => spiritA(u),
 };
 // the totem in the air (thrown on an arc) and the beaver's homing spirit orb
 PROJ2.totemFly = (ctx, p, T) => { lobUp(ctx, p, 60); ctx.rotate(T * 9); inked(ctx, () => roundRect(ctx, -5, -16, 10, 26, 3), '#A0705A'); for (const sd of [-1, 1]) inked(ctx, () => { ctx.beginPath(); ctx.ellipse(sd * 9, -12, 7, 4, sd * 0.4, 0, TAU); }, '#2FB3A4'); };
@@ -1182,17 +1159,12 @@ DRAW.frog = (ctx, f, w, layer) => {
   for (const sd of [-1, 1]) { inked(ctx, () => { ctx.beginPath(); ctx.arc(8, sd * 5.5, 4, 0, TAU); }, '#E8F5C8'); disc(ctx, 9, sd * 5.5, 2, '#2B2230'); }
   ctx.restore();
 };
-// the Witch's cauldron on the floor: black iron on three stubby legs, green brew bubbling, a little fire under it
-LOOK2.cauldron = (ctx, u, w) => {
-  const fl = u.flashT > 0.06;
-  ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y + 6, 24, 9, 0, 0, TAU); ctx.fill(); ctx.restore();
-  for (let i = 0; i < 3; i++) upright(ctx, u.x + (i - 1) * 10, u.y + 10, () => flame(ctx, 0, 0, 5 + Math.sin(w.time * 20 + i) * 1));
-  upright(ctx, u.x, u.y, () => {
-    inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 20, 0, TAU); }, fl ? '#FFFFFF' : '#3A3440');
-    inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, -4, 16, 9, 0, 0, TAU); }, '#7FCB3A');
-    for (let i = 0; i < 3; i++) { const ph = (w.time * 1.6 + i / 3) % 1; ctx.save(); ctx.globalAlpha *= 1 - ph; inkDisc(ctx, (i - 1) * 7, -4 - ph * 4, 2 + 3 * ph, '#C9F59A'); ctx.restore(); }
-    ctx.fillStyle = '#6A6470'; ctx.fillRect(-20, -6, 40, 3);
-  });
+// the Witch's cauldron (round 15, lane E: art round 12's art/summons/cauldron.svg, black iron on three stub feet, green
+// brew to the brim; it stands, foot down the screen): the code drawing's little fire under it and the bubbles rising
+// off the brew are kept (the brew's middle is where the code's was: 4 up from its centre)
+ART2.cauldron = {
+  frame(ctx, u, w) { for (let i = 0; i < 3; i++) { ctx.save(); ctx.translate((i - 1) * 10, 10); flame(ctx, 0, 0, 5 + Math.sin(w.time * 20 + i) * 1); ctx.restore(); } },
+  over(ctx, u, w) { upright(ctx, u.x, u.y, () => { for (let i = 0; i < 3; i++) { const ph = (w.time * 1.6 + i / 3) % 1; ctx.save(); ctx.globalAlpha *= 1 - ph; inkDisc(ctx, (i - 1) * 7, -4 - ph * 4, 2 + 3 * ph, '#C9F59A'); ctx.restore(); } }); },
 };
 // Cursed Brew's fumes: purple wisps curling up off the pot and drifting out over its reach
 DRAW.fumes = (ctx, f, w, layer) => {
@@ -1260,14 +1232,10 @@ DRAW.eyeBurst = (ctx, f, w, layer) => {
 // the imp going into him, or out of him: a streak of magenta fire
 DRAW.impInto = (ctx, f, w, layer) => { if (layer !== 'air' || !f.from || !f.to) return; const k = k01(f.t / f.max), a = Math.atan2(f.to.y - f.from.y, f.to.x - f.from.x), L = Math.hypot(f.to.x - f.from.x, f.to.y - f.from.y); ctx.save(); ctx.globalAlpha *= 1 - k; K.streak(ctx, f.from.x, f.from.y, a, L * k * 0.7, L * Math.min(1, k * 2), 8, '#E05AB8', '#FFE0F2'); ctx.restore(); };
 // Awaken: the demon: a big black-and-red blade held out from his hand (swung with his arm), horns of flame, embers
+// (round 15, lane E: the sword in his hand and the red wash are art round 12's demon form now, kits2.js summonImp: the
+// red glow and the embers stay)
 DRAW.demonForm = (ctx, f, w, layer) => {
   const u = f.unit; if (!alive2(u) || !u.kit || u.kit.demon !== f.D) { ended(f, true); return; } if (layer !== 'air') return;
-  const an = u.anim, sw = an && an.kind === 'swing' ? Math.sin(Math.min(1, an.t / an.dur) * Math.PI) : 0, b = u.facing - 0.9 + sw * 1.9, hx = u.x + Math.cos(u.facing + 0.6) * u.r * 0.7, hy = u.y + Math.sin(u.facing + 0.6) * u.r * 0.7;
-  ctx.save(); ctx.translate(hx, hy); ctx.rotate(b);
-  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(4, -4); ctx.lineTo(54, -7); ctx.lineTo(66, 0); ctx.lineTo(54, 7); ctx.lineTo(4, 4); ctx.closePath(); }, '#3A1A2A');
-  ctx.fillStyle = '#E0304A'; ctx.beginPath(); ctx.moveTo(8, -1.5); ctx.lineTo(56, -2.5); ctx.lineTo(62, 0); ctx.lineTo(56, 2.5); ctx.lineTo(8, 1.5); ctx.closePath(); ctx.fill();
-  inked(ctx, () => roundRect(ctx, -3, -9, 6, 18, 2), '#8A1E28'); inked(ctx, () => roundRect(ctx, -12, -2.5, 10, 5, 2), '#3A1A2A');
-  ctx.restore();
   lit(ctx, () => glowDisc(ctx, u.x, u.y, u.vr * 1.6, '#E0304A', 0.18 + 0.06 * Math.sin(f.t * 8)));
   const [vx, vy] = upVec(); for (let i = 0; i < 4; i++) { const ph = (f.t * 1.2 + i / 4) % 1, a2 = hash(i, u.id) * TAU; ctx.save(); ctx.globalAlpha *= 1 - ph; disc(ctx, u.x + Math.cos(a2) * u.vr * 0.8 + vx * ph * 30, u.y + Math.sin(a2) * u.vr * 0.6 + vy * ph * 30, 2.4, '#FF6A3A'); ctx.restore(); }
 };
@@ -1405,16 +1373,10 @@ DRAW.smoker = (ctx, f, w, layer) => {
   for (let i = 0; i < 9; i++) { const ph = (f.t * 0.8 + i / 9) % 1, b = f.a + (hash(i, 2) - 0.5) * f.arc, d = 20 + f.r * ph, s3 = 6 + 12 * ph; ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, s3, i % 2 ? '#F4F4F4' : '#DADDE4'); ctx.restore(); }
   ctx.restore();
 };
-// the Beekeeper's hive: a straw skep, bees coming and going
-LOOK2.beehive = (ctx, u, w) => {
-  const fl = u.flashT > 0.06;
-  upright(ctx, u.x, u.y, () => {
-    ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(0, 6, 20, 7, 0, 0, TAU); ctx.fill(); ctx.restore();
-    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-18, 6); ctx.quadraticCurveTo(-20, -26, 0, -30); ctx.quadraticCurveTo(20, -26, 18, 6); ctx.closePath(); }, fl ? '#FFFFFF' : '#E0B050');
-    ctx.strokeStyle = '#A8802A'; ctx.lineWidth = 2; for (let i = 0; i < 4; i++) { const y = -22 + i * 7; ctx.beginPath(); ctx.moveTo(-15 + (3 - i) * -1.2, y); ctx.lineTo(15 - (3 - i) * -1.2, y); ctx.stroke(); }
-    inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 4, Math.PI, 0); ctx.closePath(); }, '#3A2A1A');
-  });
-  for (let i = 0; i < 3; i++) { const b = w.time * (3 + i) + i * 2, x = u.x + Math.cos(b) * (18 + i * 5), y = u.y - 14 + Math.sin(b) * 10; ctx.save(); ctx.translate(x, y); ctx.rotate(b + Math.PI / 2); beeShape(ctx, w.time + i, 0.7); ctx.restore(); }
+// the Beekeeper's hive (round 15, lane E: art round 12's art/summons/beehive.svg, a straw skep that stands, foot down the
+// screen): the code drawing's three bees going round it are kept
+ART2.beehive = {
+  over(ctx, u, w) { for (let i = 0; i < 3; i++) { const b = w.time * (3 + i) + i * 2, x = u.x + Math.cos(b) * (18 + i * 5), y = u.y - 14 + Math.sin(b) * 10; ctx.save(); ctx.translate(x, y); ctx.rotate(b + Math.PI / 2); beeShape(ctx, w.time + i, 0.7); ctx.restore(); } },
 };
 PROJ2.hiveFly = (ctx, p, T) => { lobUp(ctx, p, 50); ctx.rotate(Math.sin(T * 8) * 0.4); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-10, 4); ctx.quadraticCurveTo(-11, -14, 0, -16); ctx.quadraticCurveTo(11, -14, 10, 4); ctx.closePath(); }, '#E0B050'); };
 PROJ2.honeyJar = (ctx, p, T) => { lobUp(ctx, p, 40); ctx.rotate(T * 9); inked(ctx, () => roundRect(ctx, -6, -6, 12, 13, 4), '#F2B42A'); inked(ctx, () => roundRect(ctx, -6.5, -9, 13, 4, 1.5), '#C9A070'); };
@@ -1434,23 +1396,16 @@ const ITEM = [(ctx) => { inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 8, 0,
   (ctx) => { inked(ctx, () => roundRect(ctx, -6, -7, 12, 13, 2), '#C9D2DE'); inkLine(ctx, () => { ctx.beginPath(); ctx.arc(7, 0, 4, -1.2, 1.2); }, '#8A94A6', 2.2); },
   (ctx) => { inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-6, 0, 6, 5, 0, 0, TAU); }, '#A8B0BA'); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(16, 0); }, '#8A94A6', 3); }];
 PROJ2.pot = (ctx, p, T) => { ctx.rotate(T * 12); ITEM[p.item ?? 0](ctx); };
-LOOK2.crate = (ctx, u, w) => {
-  const fl = u.flashT > 0.06; ctx.save(); ctx.translate(u.x, u.y);
-  ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.fillRect(-18, -12, 38, 32); ctx.restore();
-  inked(ctx, () => roundRect(ctx, -18, -18, 36, 36, 3), fl ? '#FFFFFF' : '#B8884A'); ctx.strokeStyle = '#7A5A30'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-18, -18); ctx.lineTo(18, 18); ctx.moveTo(18, -18); ctx.lineTo(-18, 18); ctx.stroke();
-  inked(ctx, () => { ctx.beginPath(); ctx.rect(-5, -12, 10, 24); ctx.rect(-12, -5, 24, 10); }, '#E8E2D0'); ctx.fillStyle = '#C8453D'; ctx.fillRect(-3.5, -10, 7, 20); ctx.fillRect(-10, -3.5, 20, 7);
-  ctx.restore(); if (Math.sin(w.time * 5) > 0.5) lit(ctx, () => glowDisc(ctx, u.x, u.y, 26, '#FFE7A0', 0.3));
-};
+// the supply crate (round 15, lane E: art round 12's art/summons/supply-crate.svg; never turned, as the code drew it):
+// the code drawing's slow gold pulse is kept
+ART2.crate = { over(ctx, u, w) { if (Math.sin(w.time * 5) > 0.5) lit(ctx, () => glowDisc(ctx, u.x, u.y, 26, '#FFE7A0', 0.3)); } };
 PROJ2.crateFly = (ctx, p, T) => { lobUp(ctx, p, 50); ctx.rotate(T * 5); inked(ctx, () => roundRect(ctx, -10, -10, 20, 20, 2), '#B8884A'); };
-LOOK2.barricade = (ctx, u, w) => {
-  const fl = u.flashT > 0.06, a = (u.facing || 0) + Math.PI / 2, L = u.r * 1.7;
-  ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(a);
-  ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.fillRect(-L, -4, L * 2, 18); ctx.restore();
-  for (let i = -3; i <= 3; i++) inked(ctx, () => roundRect(ctx, i * L / 3.5 - 6, -11, 12, 22, 3), fl ? '#FFFFFF' : i % 2 ? '#A0703A' : '#B8884A');
-  ctx.fillStyle = '#6E4A2A'; ctx.fillRect(-L, -6, L * 2, 4); ctx.fillRect(-L, 3, L * 2, 4);
-  if (u.spikes) for (let i = -3; i <= 3; i++) inked(ctx, () => { ctx.beginPath(); ctx.moveTo(i * L / 3.5 - 3, -11); ctx.lineTo(i * L / 3.5, -20); ctx.lineTo(i * L / 3.5 + 3, -11); ctx.closePath(); }, '#C9D2DE');
-  ctx.restore();
-  const k = u.hp / u.maxHp; if (k < 0.5) { ctx.save(); ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(u.x - 10, u.y - 6); ctx.lineTo(u.x + 4, u.y + 6); ctx.stroke(); ctx.restore(); }
+// the barricade (round 15, lane E: art round 12's art/summons/barricade.svg, and barricade-spiked.svg when it has its
+// spikes, u.spikes; a plank wall across its way, turned to it as the code's was): the crack under half health is kept
+const BARRICADE_SPIKED = 'art/summons/barricade-spiked.svg';
+ART2.barricade = {
+  art: (u) => (u.spikes ? BARRICADE_SPIKED : null), arts: [BARRICADE_SPIKED],
+  over(ctx, u) { if (u.hp / u.maxHp < 0.5) crackAt(ctx, u, -10, -6, 4, 6); },
 };
 PROJ2.potFly = (ctx, p, T) => { lobUp(ctx, p, 46); ctx.rotate(T * 9); ITEM[1](ctx); };
 // Pot Helmet: the pot upside down over its head, rattling as it blunders about
@@ -1485,11 +1440,9 @@ DRAW.crank = (ctx, f, w, layer) => { const u = f.unit; if (layer !== 'air' || !a
   ctx.save(); ctx.globalAlpha *= 1 - k * k; ctx.translate(x, y); ctx.rotate(f.t * 14); inked(ctx, () => star(ctx, 0, 0, 11, 8, 0.72, 0), '#A8B0BA'); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 4, 0, TAU); }, '#6E7680'); ctx.restore();
   ctx.save(); ctx.globalAlpha *= 1 - k; for (let i = 0; i < 3; i++) { const ph = (f.t * 3 + i / 3) % 1, b = i * 2.1; inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x + Math.cos(b) * (14 + ph * 12), y + Math.sin(b) * (14 + ph * 12)); ctx.lineTo(x + Math.cos(b) * (20 + ph * 12), y + Math.sin(b) * (20 + ph * 12)); }, '#EEF3F8', 2.4); } ctx.restore(); };
 // the pavise: a tall painted shield standing on its own (seen from above: a long plank across the way, its prop behind)
-LOOK2.pavise = (ctx, u, w) => { const fl = u.flashT > 0.06; ctx.save(); ctx.translate(u.x, u.y); ctx.rotate((u.facing || 0) + Math.PI / 2);
-  ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.fillRect(-27, 0, 54, 14); ctx.restore();
-  inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(0, 2); ctx.lineTo(0, 16); }, '#6E4A2A', 4);
-  inked(ctx, () => roundRect(ctx, -27, -7, 54, 12, 4), fl ? '#FFFFFF' : '#6E7F98'); ctx.fillStyle = '#C8453D'; ctx.fillRect(-6, -7, 12, 12); ctx.fillStyle = '#E8E2D0'; ctx.fillRect(-27, -2.5, 54, 2.6);
-  ctx.restore(); if (u.hp < u.maxHp * 0.5) { ctx.save(); ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(u.x - 8, u.y - 3); ctx.lineTo(u.x + 6, u.y + 2); ctx.stroke(); ctx.restore(); } };
+// (round 15, lane E: art round 12's art/summons/pavise.svg, its face to its front, turned to it as the code's was; the
+// crack under half health is kept)
+ART2.pavise = { over(ctx, u) { if (u.hp < u.maxHp * 0.5) crackAt(ctx, u, -8, -3, 6, 2); } };
 // the hunting knife: a broad blade turning end over end, a glint along it; gold under Keen Eye
 PROJ2.knife = (ctx, p, T, ang, sp) => { ctx.save(); ctx.rotate(ang); trail(ctx, sp, 26, 6, p.keen ? '#FFE7A0' : '#EEF3F8'); ctx.restore(); if (p.keen) lit(ctx, () => glowDisc(ctx, 0, 0, 16, '#FFD45A', 0.5)); ctx.rotate(T * 22); ctx.scale(1.25, 1.25);
   inked(ctx, () => { ctx.beginPath(); ctx.moveTo(12, 0); ctx.quadraticCurveTo(4, -5, -2, -4); ctx.lineTo(-2, 4); ctx.quadraticCurveTo(4, 5, 12, 0); ctx.closePath(); }, p.keen ? '#FFE7A0' : '#DCE3EC'); inked(ctx, () => roundRect(ctx, -10, -2.2, 8, 4.4, 2), '#6A4A2C'); ctx.fillStyle = '#FFFFFF'; ctx.fillRect(1, -1.6, 7, 1.2); };
@@ -1517,10 +1470,14 @@ DRAW.flockForm = (ctx, f, w, layer) => { const u = f.unit; if (!alive2(u)) retur
 PROJ2.bomb = (ctx, p, T) => { lobUp(ctx, p, p.color === 'big' ? 56 : 44); const s2 = p.color === 'big' ? 1.6 : 1; ctx.rotate(T * 8); ctx.scale(s2, s2);
   inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 8, 0, TAU); }, '#3A3440'); disc(ctx, -2.5, -2.5, 2.6, '#6A6470'); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(4, -6); ctx.quadraticCurveTo(8, -10, 7, -13); }, '#C9A070', 2); lit(ctx, () => glowDisc(ctx, 7, -13, 7, '#FFC85A', 0.9)); };
 // the big bomb sitting where it landed: a great iron ball, its fuse fizzing down
-LOOK2.bigBomb = (ctx, u, w) => { const fl = u.flashT > 0.06, k = u.lifeT != null ? 1 - clamp(u.lifeT / 2, 0, 1) : 0, sw = 1 + 0.08 * Math.sin(w.time * (10 + 30 * k));
-  ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y + 4, 20, 8, 0, 0, TAU); ctx.fill(); ctx.restore();
-  upright(ctx, u.x, u.y, () => { ctx.scale(sw, sw); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -6, 17, 0, TAU); }, fl ? '#FFFFFF' : '#3A3440'); disc(ctx, -6, -12, 5, '#6A6470');
-    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(8, -19); ctx.quadraticCurveTo(14, -26, 12 - 6 * k, -30 + 8 * k); }, '#C9A070', 2.6); lit(ctx, () => glowDisc(ctx, 12 - 6 * k, -30 + 8 * k, 9, '#FFC85A', 0.9)); }); };
+// (round 15, lane E: art round 12's art/summons/big-bomb.svg, standing as the code's did. Kept: it swells faster as the
+// fuse burns, and the spark's glow, which creeps down the picture's fuse from its tip, (121.7, 49.7) in its SVG units,
+// towards the cap, (100, 64.5), as the code's spark did)
+const bombK = (u) => (u.lifeT != null ? 1 - clamp(u.lifeT / 2, 0, 1) : 0);
+ART2.bigBomb = {
+  frame(ctx, u, w) { const sw = 1 + 0.08 * Math.sin(w.time * (10 + 30 * bombK(u))); ctx.scale(sw, sw); },
+  top(ctx, u) { const k = bombK(u) * 0.75; lit(ctx, () => glowDisc(ctx, 121.7 - 21.7 * k, 49.7 + 14.8 * k, 23, '#FFC85A', 0.9)); },
+};
 // a grey burst of smoke and iron (the Grenadier: "Not fire themed"): a flash, a ring of grey smoke puffs rolling out,
 // iron bits thrown; the floor layer gets a scorch
 DRAW.smokeBlast = (ctx, f, w, layer) => {
@@ -1740,24 +1697,32 @@ const turretBarrels = (ctx, u, w) => { const fire = (u.firing || 0) > w.time, sw
   if (swap) inked(ctx, () => roundRect(ctx, 6, -2.2, L + 2, 4.4, 1.5), '#8A94A6'); else for (const o of [-5.5, 5.5]) inked(ctx, () => roundRect(ctx, 6, o - 2.2, L + 2, 4.4, 1.5), '#8A94A6');
   if (fire) lit(ctx, () => glowDisc(ctx, 8 + L + 4, 0, 12, '#FFE7A0', 0.8)); ctx.restore(); };
 DRAW.turretTop = (ctx, f, w, layer) => { const u = f.unit; if (layer !== 'air' || !alive2(u)) { if (!alive2(u)) ended(f, true); return; } turretBarrels(ctx, u, w); };
-// the four towers and the drones, drawn in code
-const towerBase = (ctx, u, col, fl) => { ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y + 4, u.vr * 0.95, u.vr * 0.45, 0, 0, TAU); ctx.fill(); ctx.restore(); inked(ctx, () => { ctx.beginPath(); ctx.arc(u.x, u.y, u.vr * 0.85, 0, TAU); }, fl ? '#FFFFFF' : col); };
-LOOK2.torcher = (ctx, u, w) => { const fl = u.flashT > 0.06; towerBase(ctx, u, '#6E7680', fl); ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(u.facing);
-  inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, u.vr * 0.95, -1.1, 1.1); ctx.lineTo(0, 0); ctx.closePath(); }, '#A8B0BA'); inked(ctx, () => roundRect(ctx, 10, -5, 22, 10, 3), '#3A3440'); disc(ctx, 32, 0, 3.5, '#FF8A3D');
-  ctx.restore(); if (u.flaming) { const L = 180; ctx.save(); for (let i = 0; i < 9; i++) { const q = ((w.time * 3 + i / 9) % 1), d = 30 + q * L; upright(ctx, u.x + Math.cos(u.facing) * d + Math.sin(i * 7) * 6, u.y + Math.sin(u.facing) * d + Math.cos(i * 5) * 6, () => flame(ctx, 0, 0, 6 + 8 * q)); } ctx.restore(); } };
-LOOK2.tesla = (ctx, u, w) => { const fl = u.flashT > 0.06; towerBase(ctx, u, '#5A6070', fl); upright(ctx, u.x, u.y, () => { inked(ctx, () => roundRect(ctx, -4, -36, 8, 34, 3), '#8A94A6'); for (const yy of [-30, -22, -14]) inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, yy, 9, 3, 0, 0, TAU); }, '#C8784A'); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -40, 7, 0, TAU); }, '#DCE3EC'); });
-  const z = (w.time - (u.zapT || -9)); if (z < 0.3 || Math.sin(w.time * 20) > 0.7) lit(ctx, () => glowDisc(ctx, u.x, u.y - 40, 18, '#FFE66B', 0.7)); };
-LOOK2.mortar = (ctx, u, w) => { const fl = u.flashT > 0.06, rec = Math.max(0, 1 - (w.time - (u.recoil || -9)) / 0.3); towerBase(ctx, u, '#6E7680', fl); ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(u.facing);
-  inked(ctx, () => roundRect(ctx, -6 - rec * 4, -9, 26, 18, 6), '#4A5468'); inked(ctx, () => { ctx.beginPath(); ctx.arc(20 - rec * 4, 0, 7, 0, TAU); }, '#2B2230'); disc(ctx, 20 - rec * 4, 0, 4, '#F2FBFF'); ctx.restore(); };
-LOOK2.medbay = (ctx, u, w) => { const fl = u.flashT > 0.06; towerBase(ctx, u, '#EEF3F8', fl); ctx.save(); ctx.translate(u.x, u.y); inked(ctx, () => { ctx.beginPath(); ctx.rect(-4, -12, 8, 24); ctx.rect(-12, -4, 24, 8); }, '#9BE07A'); ctx.restore();
-  if (Math.sin(w.time * 4) > 0.5) lit(ctx, () => glowDisc(ctx, u.x, u.y, 28, '#9BE07A', 0.35)); };
-LOOK2.medDrone = (ctx, u, w) => { const [vx, vy] = upVec(), h = u.hop || 18; ctx.save(); ctx.globalAlpha *= 0.25; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y, 9, 4, 0, 0, TAU); ctx.fill(); ctx.restore();
-  ctx.save(); ctx.translate(u.x + vx * h, u.y + vy * h); ctx.rotate(Math.sin(w.time * 9 + u.id) * 0.4); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 8, 0, TAU); }, '#EEF3F8'); ctx.fillStyle = '#9BE07A'; ctx.fillRect(-1.5, -5, 3, 10); ctx.fillRect(-5, -1.5, 10, 3);
-  for (const sd of [-1, 1]) inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(sd * 8, 0); ctx.lineTo(sd * 14, Math.sin(w.time * 40) * 3); }, '#A8B0BA', 2); ctx.restore(); };
-LOOK2.windup = (ctx, u, w) => { const fl = u.flashT > 0.06, step = Math.sin((u.key || 0)) * 2; ctx.save(); ctx.globalAlpha *= 0.25; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y + 3, 11, 5, 0, 0, TAU); ctx.fill(); ctx.restore();
-  ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(u.facing || 0); for (const sd of [-1, 1]) inked(ctx, () => roundRect(ctx, -3 + sd * step, sd * 9 - 2, 6, 4, 2), '#3A3440');
-  inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 9, 0, TAU); }, fl ? '#FFFFFF' : '#E0B050'); disc(ctx, 4, -3, 2, '#2B2230'); disc(ctx, 4, 3, 2, '#2B2230');
-  ctx.save(); ctx.rotate((u.key || 0) * 0.6); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-9, 0); ctx.lineTo(-16, 0); ctx.moveTo(-16, -4); ctx.lineTo(-16, 4); }, '#8A94A6', 2.4); ctx.restore(); ctx.restore(); };
+// the four towers and the drones (round 15, lane E: art round 12's art/summons/engineer-*.svg, each tower on the
+// Engineer's round wooden deck, #back. The torcher and the mortar turn their top, #top, the deck staying put (def.turret,
+// the deck held where it was set down: u.baseA); the tesla and the medbay stand and never turn, as the code drew them.
+// Kept from the code drawings: the torcher's jet of flames along its facing while it flames, the tesla's glow at its ball
+// when it zaps, the mortar's kick back after a shot, the medbay's slow green pulse, the med drone's wobble and spinning
+// rotors (it rides u.hop, the rig does that), the wind-up drone's key turning and its waddle as it steps)
+const towerSet = (u) => { if (u.baseA == null) u.baseA = u.facing; }; // (where the deck was set down: the way it faced then)
+ART2.torcher = {
+  pose(u) { towerSet(u); },
+  over(ctx, u, w) { if (u.flaming) { const L = 180; ctx.save(); for (let i = 0; i < 9; i++) { const q = ((w.time * 3 + i / 9) % 1), d = 30 + q * L; upright(ctx, u.x + Math.cos(u.facing) * d + Math.sin(i * 7) * 6, u.y + Math.sin(u.facing) * d + Math.cos(i * 5) * 6, () => flame(ctx, 0, 0, 6 + 8 * q)); } ctx.restore(); } },
+};
+ART2.tesla = { over(ctx, u, w) { const z = (w.time - (u.zapT || -9)); if (z < 0.3 || Math.sin(w.time * 20) > 0.7) { const [x, y] = downAt(u, -18); lit(ctx, () => glowDisc(ctx, x, y, 18, '#FFE66B', 0.7)); } } }; // (the ball: 18 up the screen from its middle)
+ART2.snowMortar = {
+  pose(u, w, pose) { towerSet(u); const rec = Math.max(0, 1 - (w.time - (u.recoil || -9)) / 0.3); if (rec > 0) pose.top = { dy: -rec * 10 }; }, // (the code's 4 room units back)
+};
+ART2.medbay = { over(ctx, u, w) { if (Math.sin(w.time * 4) > 0.5) lit(ctx, () => glowDisc(ctx, u.x, u.y, 28, '#9BE07A', 0.35)); } };
+ART2.medDrone = {
+  frame(ctx, u, w) { ctx.rotate(Math.sin(w.time * 9 + u.id) * 0.4); },
+  top(ctx, u, w) { ctx.save(); ctx.lineCap = 'round'; ctx.lineWidth = 2.6; ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+    for (const [x, sd] of [[71.2, 1], [128.8, -1]]) { const b = w.time * 40 * sd; ctx.beginPath(); ctx.moveTo(x - Math.cos(b) * 10, 98.3 - Math.sin(b) * 10); ctx.lineTo(x + Math.cos(b) * 10, 98.3 + Math.sin(b) * 10); ctx.stroke(); }
+    ctx.restore(); },
+};
+ART2.windup = {
+  frame(ctx, u) { ctx.rotate(Math.sin(u.key || 0) * 0.12); },
+  pose(u, w, pose) { pose.back = { sx: Math.max(0.15, Math.abs(Math.cos((u.key || 0) * 0.6))) }; },
+};
 
 export function drawK2(ctx, f, w, layer) { const d = DRAW[f.draw]; if (d) { ctx.save(); d(ctx, f, w, layer); ctx.restore(); } }
 export const DRAW2 = DRAW; // round 15 (lane N): fx3.js adds the six newer heroes' looks to the same table

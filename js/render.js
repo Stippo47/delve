@@ -12,7 +12,8 @@ import { drawEnemyHp, hpWash, setHpSides } from './hpstyle.js';
 import { icon } from './icons.js';
 import { heartPath, drawStatusMarks, bleedFlash, bleedLook } from './fx-status.js'; // round 13 (lane S): the new statuses' marks
 import { drawMarks3 } from './fx3.js'; // round 15 (lane N): Shackled's irons
-import { WALL2 } from './looks2.js';
+import { WALL2, ART2 } from './looks2.js';
+import { HEROES } from './heroes.js';
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
 import { drawFoeGround, snowRoll, drawFoe } from './foe-draw.js'; // round 13 (lane E): the newer enemies' extra drawing
 
@@ -513,7 +514,9 @@ function unitFrame(ctx, u, w) {
     const k = u.hitT / 0.16;
     ctx.rotate(u.hitA); ctx.translate((u.hitBlock ? 3 : 8) * k, 0); ctx.scale(1 - 0.2 * k, 1 + 0.12 * k); ctx.rotate(-u.hitA);
   }
-  ctx.rotate(u.downed ? u.facing - Math.PI / 2 + 0.6 : u.facing - Math.PI / 2);
+  // (round 15, lane E: def.upright, a thing that stands, drawn as its file is, foot down the screen, whatever it faces:
+  // the totem, the cauldron, the hive; the code drew them upright() and never turned them)
+  ctx.rotate(u.downed ? u.facing - Math.PI / 2 + 0.6 : u.def.upright ? (view.rot ? Math.PI / 2 : 0) : u.facing - Math.PI / 2);
   // in the sprite's own frame forward is +y
   let fx = 0, fy = 0, sc = 1, tilt = 0;
   if (!u.downed && u.spd > 6) { // a small step bounce, no side-to-side wobble; the arms swing (parts.js)
@@ -632,6 +635,10 @@ const RH = { drawUnit, unitFrame: (ctx, u, w) => unitFrame(ctx, u, w), washesOf:
 // Ask for every unit's art at its current size, so it's ready by the time the room fades in.
 export function warmArt(w) {
   for (const u of w.units) if (u.def.art) getRig(u.def.art, u.vr * 220 / (u.def.headR || headR(u.kind)) * view.scale * view.dpr * 1.04);
+  // round 15 (lane E): and what the party's heroes can call up or put down (their summons are art now), so a totem's
+  // rise out of the floor isn't missed while its picture renders
+  for (const u of w.units) { const F = HEROES[u.kind] && HEROES[u.kind].forms; if (F) for (const a of F) getRig(a, u.vr * 220 / 56 * view.scale * view.dpr * 1.04); } // (a form he can take: the Warlock's demon)
+  for (const u of w.units) { const S = HEROES[u.kind] && HEROES[u.kind].summons; if (S) for (const k in S) { const d = DEFS[k]; if (!d || !d.art) continue; const px = d.vr * 220 / (d.headR || headR(k)) * view.scale * view.dpr * 1.04; getRig(d.art, px); if (ART2[k] && ART2[k].arts) for (const a of ART2[k].arts) getRig(a, px); } }
 }
 
 // A unit drawn from its SVG parts, arms moving with what it is doing (parts.js).
@@ -639,25 +646,35 @@ export function warmArt(w) {
 // so a raised skeleton or a called wolf reads as ours, not the enemy's.
 const isOurs = (u) => !!(u.summon && u.team === 'hero' && !u.ethereal && !u.partOf); // (round 15, the Mob: its other bodies are the hero, not summons: no blue-grey shift)
 function drawPartsUnit(ctx, u, w) {
+  const X = ART2[u.kind]; // round 15 (lane E): what a summon's code drawing did that its picture doesn't (looks2.js, fx2.js)
+  if (X && u.bornT == null) u.bornT = w.time; // (when it was first drawn, whether or not its picture is ready yet: the totem rises from then)
+  const url = (X && X.art && X.art(u)) || u.def.art;
   const sizeU = u.vr * 220 / (u.def.headR || headR(u.kind)); // def.headR: the head's radius in the art's SVG units
-  const set = getRig(u.def.art, sizeU * view.scale * view.dpr * 1.04);
+  const set = getRig(url, sizeU * view.scale * view.dpr * 1.04);
+  if (set && X && X.under) X.under(ctx, u, w);
   ctx.save();
   unitFrame(ctx, u, w);
   if (!set) { ctx.restore(); return; } // still rendering (a fraction of a second): draw nothing rather than a placeholder
   const pose = u.downed ? LIMP : poseFor(u, w, w._dt ?? 1 / 60);
+  if (X && X.pose && !u.downed) X.pose(u, w, pose);
+  if (X && X.frame) X.frame(ctx, u, w);
   const k = sizeU / 220 * (1 + 0.05 * (pose.pop || 0));
   ctx.scale(k, k); if (u.def.style && u.def.style.flip) ctx.scale(-1, 1); ctx.translate(-100, -100); // lane H2 (round 13): style.flip mirrors the sprite (the Griffon)
   let alpha = 1;
   if (u.invulnT > 0 && !u.act && !u.spin) alpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18)); // no flicker mid-leap or roll (round 9)
   if (u.downed) alpha = 0.62; // a hero who is down lies faint too (round 7)
   if (u.ethereal && !u.exiting && !u.hiddenIn) alpha *= 0.5;
+  if (X && X.alpha) alpha *= X.alpha(u, w);
   const mode = u.downed ? 'grey' : u.flashT > (u.def.flashAt ?? 0.06) ? 'flash' : 'normal'; // (lane B, bosses3: def.flashAt, as in washesOf)
   if (u.act && u.act.type === 'dash' && u.kind === 'twinfang') afterimages(ctx, u, w, set, pose, sizeU);
   else u._trail = null;
-  drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w), shift: isOurs(u) && u.kind !== 'minion', /* round 10: the raised dead stay plain grey */ border: mode === 'normal' ? borderOf(u, w) : null });
+  // (round 15, lane E: def.ownLook, a summon drawn in its own colours: the code drawings it replaces were never turned blue-grey)
+  drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w), shift: isOurs(u) && u.kind !== 'minion' && !u.def.ownLook, /* round 10: the raised dead stay plain grey */ border: mode === 'normal' ? borderOf(u, w) : null });
   if (pose.glow && mode === 'normal') castGlow(ctx, pose.glow, w.time);
   if (u.kind === 'archer' && mode === 'normal') nockedArrow(ctx, u, set, pose, sizeU);
+  if (X && X.top && mode !== 'grey') X.top(ctx, u, w);
   ctx.restore();
+  if (X && X.over) X.over(ctx, u, w);
 }
 
 // Twinfang's Dash (round 9): shadow copies of her left behind along the way, fading. Drawn from inside her own frame

@@ -210,8 +210,8 @@ function filled(L, color) {
 
 const swayOf = (pose, L) => (pose && pose.sway && (L.id === 'front' || L.id.startsWith('top')) ? pose.sway : null); // art round 11: the cobra
 function place(g, L, p) {
-  if (!p || (!p.r && !p.dx && !p.dy)) return;
-  g.translate(L.pivot[0] + (p.dx || 0), L.pivot[1] + (p.dy || 0)); g.rotate(p.r || 0); g.translate(-L.pivot[0], -L.pivot[1]);
+  if (!p || (!p.r && !p.dx && !p.dy && !p.sx)) return;
+  g.translate(L.pivot[0] + (p.dx || 0), L.pivot[1] + (p.dy || 0)); g.rotate(p.r || 0); if (p.sx) g.scale(p.sx, 1); g.translate(-L.pivot[0], -L.pivot[1]); // (round 15, lane E: sx, a part squeezed across: the wind-up drone's key turning)
 }
 function xf(L, p, x, y) {
   if (!p) return [x, y];
@@ -419,6 +419,11 @@ export function poseFor(u, w, dt) {
   // round 10 (the heroes lane: "the falcon still shows on the Falconer's arm while it flies"): the bird rides the
   // left fist as its own part, and is gone from it while it's out hunting (kits2.js looseFalcon)
   pose['arm-l-bird'] = u.kit && u.kit.falconOut ? { hide: true } : pose['arm-l'];
+  // round 15 (lane E, art round 12): Warhelm's hammer is its own part that rides his left fist, and is gone from it while
+  // it circles him or flies (kits2.js kit2Tick sets hammerOut; his fist stays and punches); Bearskin's club is its own
+  // part on his right paw, and is put away while he claws (Bear Claws)
+  pose['arm-l-hammer'] = u.kit && u.kit.hammerOut ? { hide: true } : pose['arm-l'];
+  pose['arm-r-club'] = u.kit && u.kit.clawsT > (w ? w.time : 0) ? { hide: true } : pose['arm-r'];
   // a cape lags behind turns
   const df = u._pf == null ? 0 : wrapAngle(u.facing - u._pf); u._pf = u.facing;
   const capeT = clamp(-df / Math.max(dt, 1e-3) * 0.05, -0.16, 0.16);
@@ -437,4 +442,4 @@ export function poseFor(u, w, dt) {
 }
 
 // Corpses and the downed: arms flung out.
-export const LIMP = { 'arm-r': { r: -0.55, dy: -6 }, 'arm-l': { r: 0.55, dy: -6 }, 'arm-l-bird': { r: 0.55, dy: -6 }, back: { r: 0 } };
+export const LIMP = { 'arm-r': { r: -0.55, dy: -6 }, 'arm-l': { r: 0.55, dy: -6 }, 'arm-l-bird': { r: 0.55, dy: -6 }, 'arm-l-hammer': { r: 0.55, dy: -6 }, 'arm-r-club': { r: -0.55, dy: -6 }, back: { r: 0 } };

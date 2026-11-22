@@ -2,6 +2,11 @@
 // Needs the dev server on :8811 and `npm i --no-save playwright-core` in tools/. Drives the installed Edge.
 //   node tools/clip.mjs <out.mp4> [--seed N] [--depth D] [--secs S] [--skip S] [--speed 2] [--w 390 --h 844] [--fps 30]
 //   [--q 'theme=crypt&bossroom&lvl=6'] (extra address parameters for the game's test switches)
+// Round 15 (lane E): the heroes' skill points are spent by default, the way tools/runs.mjs --level N spends them
+// (progress.js autoSpend, with every point their level brings: START_POINTS + level - 1), so a clip shows the party
+// runs.mjs measures: the run's and the convoy's party (--party, or the save's own) at --level, and in a battle every
+// hero not named in --nodes, at its save's level (1). A hero named in --nodes keeps exactly those nodes.
+// --nospend: the old way (levels set, no points spent; a battle's heroes only what --nodes gives them).
 import { openEdge, sweepProfile } from './edge.mjs';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -44,28 +49,37 @@ await loadGame(page, `http://localhost:${site}/?seed=${seed}${q ? '&' + q : ''}`
 // --battle "rattler*10,necromancer|paladin,tower" [--arena crypt]: a battle (js/battle.js), Red's stacks then Blue's; kind*count@rank.
 // Everything is fieldable for the clip (the cheat save), and --nodes "paladin:guard1+shieldBash1,..." gives heroes skills.
 const battle = opt('battle', '');
+const spend = !args.includes('--nospend'); // (round 15, lane E: see the header)
+// in the page: a hero's points for its level (START_POINTS + level - 1, less what it has spent already) spent with
+// progress.js autoSpend, as runs.mjs buildSave does
+const SPEND = `async (s, ids) => { const P = await import('./js/progress.js'); for (const id of ids) { const h = s.heroes[id]; if (!h) continue; h.points = Math.max(0, P.START_POINTS + h.level - 1 - P.spentPoints(s, id)); P.autoSpend(s, id); } }`;
 if (battle) {
-  await page.evaluate(([b, arena, nodes]) => {
+  await page.evaluate(async ([b, arena, nodes, spend, SPEND]) => {
     const parse = (s) => s.split(',').filter(Boolean).map((x) => { const [kn, rank] = x.split('@'), [k, n] = kn.split('*'); return { k, n: +n || 1, rank: +rank || 0 }; });
     const [red, blue] = b.split('|');
     GAME.save.cheat = true;
-    for (const part of (nodes || '').split(',').filter(Boolean)) { const [h, list] = part.split(':'); if (GAME.save.heroes[h]) GAME.save.heroes[h].nodes = Object.fromEntries(list.split('+').map((n) => [n, 1])); }
+    const named = new Set();
+    for (const part of (nodes || '').split(',').filter(Boolean)) { const [h, list] = part.split(':'); if (GAME.save.heroes[h]) { GAME.save.heroes[h].nodes = Object.fromEntries(list.split('+').map((n) => [n, 1])); named.add(h); } }
+    if (spend) { const ids = [...new Set([...parse(red), ...parse(blue)].map((s) => s.k))].filter((k) => GAME.save.heroes[k] && !named.has(k)); for (const k of ids) GAME.save.heroes[k].owned = true; await (0, eval)(SPEND)(GAME.save, ids); }
     GAME.record(true); GAME.startBattle({ arena, a: parse(blue), b: parse(red) });
-  }, [battle, opt('arena', 'crypt'), opt('nodes', '')]);
+  }, [battle, opt('arena', 'crypt'), opt('nodes', ''), spend, SPEND]);
 } else if (args.includes('--convoy')) {
   // --convoy [--party paladin,archer,cleric] [--level 5] [--stretch 0-2] [--lands wildwood,warren]: the wagon mode
   // (js/convoy.js); at a roadside camp it shops as convoys.mjs does (or buys --pick repair|potion|trinket|sellsword first)
-  await page.evaluate(([party, level, stretch, lands]) => {
+  await page.evaluate(async ([party, level, stretch, lands, spend, SPEND]) => {
     const s = GAME.save; s.unlocks = { ...(s.unlocks || {}), slotMini1: true, slotBoss1: true };
     for (const id of party) { const h = s.heroes[id]; h.owned = true; h.level = level; }
     s.party = party.slice();
+    if (spend) await (0, eval)(SPEND)(s, party);
     GAME.record(true); GAME.startConvoy({ party, stretch, lands: lands ? lands.split(',') : undefined });
-  }, [opt('party', 'paladin,archer,cleric').split(','), +opt('level', 5), +opt('stretch', 0), opt('lands', '')]);
-} else await page.evaluate(([d, party, level, quiet]) => { // [--party a,b,c] [--level N]: a dungeon run with that party (lane W)
-  if (party) { const s = GAME.save; s.unlocks = { ...(s.unlocks || {}), slotMini1: true, slotBoss1: true }; for (const id of party.split(',')) { s.heroes[id].owned = true; s.heroes[id].level = level; } s.party = party.split(','); }
+  }, [opt('party', 'paladin,archer,cleric').split(','), +opt('level', 5), +opt('stretch', 0), opt('lands', ''), spend, SPEND]);
+} else await page.evaluate(async ([d, party, level, quiet, spend, SPEND]) => { // [--party a,b,c] [--level N]: a dungeon run with that party (lane W)
+  const s = GAME.save;
+  if (party) { s.unlocks = { ...(s.unlocks || {}), slotMini1: true, slotBoss1: true }; for (const id of party.split(',')) { s.heroes[id].owned = true; s.heroes[id].level = level; } s.party = party.split(','); }
+  if (spend) await (0, eval)(SPEND)(s, s.party || []); // (no --party: the save's own party, at its own levels)
   GAME.record(true); GAME.startRun(d);
   if (quiet) { const w = GAME.run.world; w.wp = null; for (const u of w.units) if (u.team !== 'hero' && u.team !== 'neutral') { u.x = w.W + 4000; u.aggro = false; u.ethereal = true; } } // --quiet: the room's foes taken out of sight (the walk with nothing about)
-  }, [depth, opt('party', ''), +opt('level', 5), args.includes('--quiet')]);
+  }, [depth, opt('party', ''), +opt('level', 5), args.includes('--quiet'), spend, SPEND]);
 if (opt('zoom')) await page.evaluate(async (z) => { (await import('./js/render.js')).setZoom(+z); }, opt('zoom')); // --zoom 1.4: the camera closer in (0.5 to 1.5)
 const convoyStep = () => page.evaluate((pick) => { const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick(pick || 'auto'); }, opt('pick', ''));
 if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) { GAME.recFrame(1 / 30); const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick('auto'); } }, skip);

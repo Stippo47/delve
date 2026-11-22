@@ -1,6 +1,8 @@
 // Screenshots or a clip of the renderer bench (lab.html), frame-stepped in headless Edge.
 //   node tools/labshot.mjs <out.png|out.mp4> --q "m=sheet&kinds=paladin,archer" [--port 8821] [--w 390 --h 844]
 //        [--secs S (mp4)] [--fps 30] [--pre S (seconds stepped before the first shot)] [--dpr 2] [--stats]
+//        [--eval "js"] (round 15, lane E: run in the page once the bench is up, before the stepping: staging; may be async)
+//        [--probe "js expression"] (evaluated in the page after the shot, printed as JSON: where something stands on screen)
 import { openEdge } from './edge.mjs';
 import { execFileSync, spawn } from 'node:child_process';
 import fs from 'node:fs';
@@ -21,9 +23,14 @@ page.on('pageerror', (e) => errors.push(String(e)));
 page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
 await page.goto(`http://localhost:${site}/lab.html?rec=1&${q}`);
 await page.waitForFunction(() => window.LAB && LAB.ready, null, { timeout: 20000 });
+if (opt('eval')) await page.evaluate(async (js) => { await (0, eval)(`(async () => { ${js} })()`); }, opt('eval'));
 if (pre) await page.evaluate((s) => { for (let i = 0; i < Math.round(s * 30); i++) LAB.frame(1 / 30); }, pre);
 await page.evaluate(() => LAB.frame(0));
 await new Promise((r) => setTimeout(r, 300));
+// (round 15, lane E: a picture first asked for during the stepping is fetched in the first wait and only then rendered
+// at its size: a second wait, so a summon or a form that came up mid-step is drawn, not left out)
+await page.evaluate(() => LAB.frame(0));
+await new Promise((r) => setTimeout(r, 400));
 await page.evaluate(() => { LAB.frame(0); LAB.reset(); });
 if (!secs) { await page.evaluate(() => LAB.frame(0)); await page.screenshot({ path: out }); }
 else {
@@ -34,6 +41,7 @@ else {
     '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '22', '-movflags', '+faststart', out]);
   fs.rmSync(frames, { recursive: true, force: true });
 }
+if (opt('probe')) console.log('probe', JSON.stringify(await page.evaluate(async (js) => (0, eval)(`(async () => (${js}))()`), opt('probe'))));
 if (args.includes('--stats')) console.log(JSON.stringify(await page.evaluate(() => LAB.stats())));
 // a plain kill() leaves Edge's process tree running on Windows (art round 8 found hundreds left over): take it all down
 await edge.close();

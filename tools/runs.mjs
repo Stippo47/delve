@@ -154,6 +154,7 @@ function campaign(N) {
     const opts = P.runOptions(save, theme, potionFor, floor);
     P.payForRun(save, opts);
     opts.party = party;
+    const lvIn = party.map((k) => save.heroes[k].level); // (round 15, lane E: the levels it went in at, which its strength comes from: points spent at camp)
     const { run, t, phase } = play(save, opts, { label: 'campaign', i });
     totalT += t;
     if (opts.floor === st.checkpoint && run.floor === opts.floor && run.map.L < 2 && phase !== 'won') walls[key] = (walls[key] || 0) + 1;
@@ -164,8 +165,8 @@ function campaign(N) {
     if (rep.slots.unlocked.length) note(i, `slot ${rep.slots.after} (${rep.slots.unlocked.join(',')})`);
     if (rep.opened.length) note(i, `opened ${rep.opened.join(',')}`);
     if (rep.minis.some(Boolean)) rep.minis.forEach((m, j) => { if (m) note(i, `${theme} mini ${j + 1}`); });
-    if (rep.bossKilled) note(i, `${theme} BOSS`);
-    if (verbose) console.log(`  #${String(i + 1).padStart(3)} ${theme.padEnd(6)} from f${opts.floor} ${run.phase.padEnd(9)} f${run.floor}.${run.map.L + 1} party ${party.map((k) => k.slice(0, 4) + save.heroes[k].level).join(' ')} gold +${rep.gold} (-${rep.lost}) bank ${save.gold} ${Math.round(t)}s`);
+    if (rep.bossKilled) note(i, `${theme} BOSS (went in at ${party.map((k, j) => k.slice(0, 4) + lvIn[j]).join(' ')})`);
+    if (verbose) console.log(`  #${String(i + 1).padStart(3)} ${theme.padEnd(6)} from f${opts.floor} ${run.phase.padEnd(9)} f${run.floor}.${run.map.L + 1} party ${party.map((k) => k.slice(0, 4) + save.heroes[k].level).join(' ')} in ${lvIn.join('/')}${run.node.kind === 'boss' ? ' (boss room)' : ''} gold +${rep.gold} (-${rep.lost}) bank ${save.gold} ${Math.round(t)}s`);
   }
   console.log(events.join('\n'));
   const lv = Object.entries(save.heroes).filter(([, h]) => h.owned).map(([k, h]) => `${k} ${h.level}`).join(', ');
