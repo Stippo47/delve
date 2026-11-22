@@ -141,6 +141,8 @@ hand is on the shaft, so that is what was drawn.
 - The Valkyrie's spearhead now lies over the end of her right plait.
 - The drones are 14 room units across: at that size they are a white dot with a green cross and a brass dot with a key.
 - None of this was seen running: the lane was told not to wire it or open the game.
+- `sw.js` was regenerated after merging main (`tools/build-sw.py` lists every SVG under `art/`), so it now lists the 27
+  new files: about 400 KB that phones cache before any kind uses them. Hold the files back from the list if that matters.
 
 ## The deck
 `tools/riffle/make_art_round12.py` -> `tools/riffle/decks/art-round12.json` (checked with `riffle check`, not sent): one
