@@ -241,7 +241,7 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
 - Healing Totem: "Not good overall. Doesn't even match the one on his back… Should throw to ally, In an arc. Has 100 hp.
   Any ally in its radius that takes damage will go to it instead. At lvl 3 cleanse status effects too. It has its own hit
   box. Damage directly to it is 50%" -> a winged totem drawn like his (carved pole, stacked faces, teal wings, his
-  orange bands), thrown on an arc to the friend under the most attack; a summon with 100 health and its own body; every
+  orange bands), thrown on an arc to the friend under the most attack; a summon with 70 health and its own body; every
   blow on a friend within 115 lands on the totem instead (a teal streak from the friend to it); blows on it do half;
   it still mends those near a little. 8 s (II 12 s); III it cleans statuses off them every 1.5 s. Clip: shaman-healTotem.
 - Spirit Link: "Show underneath. Give outline. Can link to totem" -> inked teal threads on the floor under the units,
@@ -361,8 +361,8 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
   - **Beehive** (honeyPot's slot): a straw skep thrown among the enemies (70 health) for 8 s (II 12 s): a bee streams out
     at something near every 0.7 s; whoever strikes the hive is mobbed by three; III its bees pester. Clip:
     beekeeper-honeyPot.
-  - **Honey Glaze** (royalJelly's slot): honey drizzled over the friend under the most attack: it heals 16% over 4 s (II
-    25%) and whatever strikes it gets stuck (entangle, slowed); III two friends. Clip: beekeeper-royalJelly.
+  - **Honey Glaze** (royalJelly's slot): honey drizzled over the friend under the most attack: it heals 13% over 4 s (II
+    20%) and whatever strikes it gets stuck (entangle, slowed); III two friends. Clip: beekeeper-royalJelly.
 
 ### Quartermaster (REDO)
 - "Overall don't like. Visuals or abilities. Giving out hp potions is very strong. Needs to be more unique" -> a new kit
@@ -568,7 +568,7 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
 
 ### Engineer
 - "Trait doesnt make sense. Overclock. If all abilities are used up 1 random ability will come back faster. Boosted rate"
-  -> **Overclock** (id overclock): when none of her abilities is ready, one at random comes round three times as fast;
+  -> **Overclock** (id overclock): when none of her abilities is ready, one at random comes round twice as fast;
   gears spin over her.
 - Wrench: "Hits she. Close. Throw bouncing cogs from afar" -> she is a shooter now (role ranged, reach 190: she keeps
   her distance like the Slinger); the wrench when an enemy is on her, else a cog that bounces on to a second enemy.
@@ -579,7 +579,7 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
 - Tinker: "Nope. Makes 1 of 4 special towers" -> one of four, bolted together on the spot: a **torcher** (tough from the
   front x0.35, weak behind x1.8, turning very slowly, a jet of fire out of its front), a **tesla** (a bolt every 1.2 s
   that leaps on to two more, shocking), a **snowball mortar** (a snowball lobbed every 1.6 s: chill), a **medbay** (when
-  friends are hurt: a wobbly healing drone every 3 s that flies to the most hurt and heals it 5%). 12 s (II 16 s).
+  friends are hurt: a wobbly healing drone every 3 s that flies to the most hurt and heals it 4%). 9 s (II 12 s).
 - Shock Mine: "Spawn 4 small wind up drones that walk towards target and go pop, shocking a bit. He throws them in random
   directions around himself. Are slow." -> **Wind-up Drones** (id shockMine): four (III six) thrown round her; they
   waddle slowly at the nearest enemy, a key turning on their backs, and pop (a thunderclap, shock 20; II 30).

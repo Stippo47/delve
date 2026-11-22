@@ -949,7 +949,7 @@ export const ABILITIES2 = {
       const a = [u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo && dist(u.x, u.y, o.x, o.y) < 360).sort((p, q) => opponents(w, u).filter((e) => e.target === q).length - opponents(w, u).filter((e) => e.target === p).length || hpRatio(p) - hpRatio(q))[0] || u;
       const b = angleTo(a.x, a.y, u.x, u.y), x = clamp(a.x + Math.cos(b) * (a.r + 30), 30, w.W - 30), y = clamp(a.y + Math.sin(b) * (a.r + 30), 30, w.H - 30);
       lob(w, u, x, y, 'totemFly', null, () => {
-        const s2 = summon(w, u, 'totem', x, y, { life: tier >= 2 ? 12 : 8, hp: 100 }); s2.fixed = true; s2.tier = tier; s2.R = 115;
+        const s2 = summon(w, u, 'totem', x, y, { life: tier >= 2 ? 12 : 8, hp: 70 }); s2.fixed = true; s2.tier = tier; s2.R = 115;
         onUnit(w, s2, 'totemSkin', 99, { taken: (w2, u2, src, amt, o) => (o.redirected ? amt : amt * 0.5) });
         puff(w, x, y, '#A0705A', 10, 100, 5, 0.45); w.shake = Math.max(w.shake, 3);
         k2(w, { draw: 'totemReach', unit: s2, x, y, r: s2.R, max: tier >= 2 ? 12 : 8 });
@@ -1162,7 +1162,7 @@ export const ABILITIES2 = {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 280 && foesNear(w, u, t.x, t.y, 100).length >= 2 ? 0.65 : 0),
     use(w, u, t, tier) {
       if (!t) return; cast(u, 'cast', 0.6);
-      const x = t.x, y = t.y, r = tier >= 3 ? 125 : 105; let acc = 0; const held = tier >= 3 ? foesNear(w, u, x, y, r) : [];
+      const x = t.x, y = t.y, r = tier >= 3 ? 115 : 105; let acc = 0; const held = tier >= 3 ? foesNear(w, u, x, y, r) : [];
       k2(w, { draw: 'circle', x, y, r, max: 4, ab: 'ritualCircle' });
       timer(u, 'ritualCircle', 4, (dt) => {
         for (const e of held) if (alive(e) && dist(e.x, e.y, x, y) > r - e.r * 0.5) { const a = angleTo(x, y, e.x, e.y), d = r - e.r * 0.5; e.x = x + Math.cos(a) * d; e.y = y + Math.sin(a) * d; e.kx *= 0.3; e.ky *= 0.3; }
@@ -1192,7 +1192,7 @@ export const ABILITIES2 = {
         else hurt(w, e, e.hp + 1, u, { noDodge: true, crit: true, knock: 120, ab: 'soulCandle' });
         heal(w, u, u.maxHp * 0.15, u); w.shake = Math.max(w.shake, 5);
         if (tier >= 3) { setAnim(u, 'spin', 0.4); u.spin = { t0: w.time, dur: 0.4, dir: 1 }; k2(w, { draw: 'spray', x: u.x, y: u.y, a: 0, arc: TAU, r: 110, max: 0.6, cols: ['#C8453D', '#8A1E28', '#FF8A7A'] });
-          for (const o of foesNear(w, u, u.x, u.y, 110)) { hurt(w, o, dmgOf(u, 0.8), u, { noDodge: true, knock: 120, kAngle: ang(u, o), ab: 'soulCandle' }); addStatus(w, o, 'bleed', 35, u); } }
+          for (const o of foesNear(w, u, u.x, u.y, 110)) { hurt(w, o, dmgOf(u, 0.6), u, { noDodge: true, knock: 120, kAngle: ang(u, o), ab: 'soulCandle' }); addStatus(w, o, 'bleed', 25, u); } }
       } };
     },
     show: { far: true, single: true },
@@ -1388,7 +1388,7 @@ export const ABILITIES2 = {
       cast(u, 'throw', 0.4);
       const list = [u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo && dist(u.x, u.y, o.x, o.y) < 360).sort((p, q) => opponents(w, u).filter((e) => e.target === q).length - opponents(w, u).filter((e) => e.target === p).length || hpRatio(p) - hpRatio(q)).slice(0, tier >= 3 ? 2 : 1);
       for (const a of list) {
-        const glaze = () => { if (!alive(a)) return; a.regenT = 4; a.regenRate = a.maxHp * (tier >= 2 ? 0.25 : 0.16) / 4; a.regenSrc = u;
+        const glaze = () => { if (!alive(a)) return; a.regenT = 4; a.regenRate = a.maxHp * (tier >= 2 ? 0.2 : 0.13) / 4; a.regenSrc = u;
           k2(w, { draw: 'honeyOn', unit: a, x: a.x, y: a.y, r: a.vr, max: 4 });
           onUnit(w, a, 'honey', 4, { struck(w2, u2, src) { if (src && alive(src) && src !== u2 && !src.fixed && dist(src.x, src.y, u2.x, u2.y) < u2.r + src.r + 60) { addStatus(w2, src, 'entangle', 30, u); addBuff(src, { id: 'honeyed', dur: 2, move: 0.5 }); k2(w2, { draw: 'honeyOn', unit: src, x: src.x, y: src.y, r: src.vr, max: 2 }); } } }); };
         if (a === u) glaze(); else lob(w, u, a.x, a.y, 'honeyJar', null, glaze);
@@ -2151,7 +2151,7 @@ export const ABILITIES2 = {
       cast(u, 'throw', 0.5); const n = tier >= 3 ? 2 : 1;
       for (let i = 0; i < n; i++) { const a = rand() * TAU, d = rrange(60, 130), x = clamp(u.x + Math.cos(a) * d, 30, w.W - 30), y = clamp(u.y + Math.sin(a) * d, 30, w.H - 30);
         after(u, i * 0.15, () => lob(w, u, x, y, 'turretFly', null, () => {
-          const s2 = summon(w, u, 'turret', x, y, { life: tier >= 2 ? 25 : 15, hit: 0.35 }); s2.fixed = true; s2.facing = t ? angleTo(x, y, t.x, t.y) : a; s2.baseA = s2.facing; s2.mvA = s2.facing;
+          const s2 = summon(w, u, 'turret', x, y, { life: tier >= 2 ? 16 : 10, hit: 0.35 }); s2.fixed = true; s2.facing = t ? angleTo(x, y, t.x, t.y) : a; s2.baseA = s2.facing; s2.mvA = s2.facing;
           if (tier >= 2) s2.atkMul = 1.3; puff(w, x, y, '#C9D2DE', 10, 90, 5, 0.4); w.shake = Math.max(w.shake, 2); k2(w, { draw: 'turretTop', unit: s2, x, y, max: 1e9 }); })); }
     },
     show: { secs: 4 },
@@ -2166,7 +2166,7 @@ export const ABILITIES2 = {
       cast(u, 'swing', 0.5); const hurtN = [u, ...allies(w, u)].filter((o) => !o.summon && hpRatio(o) < 0.6).length;
       const kind = hurtN >= 1 && rand() < 0.6 ? 'medbay' : ['torcher', 'tesla', 'mortar'][Math.floor(rand() * 3)];
       const a = t ? ang(u, t) : u.facing, x = clamp(u.x + Math.cos(a) * 50, 30, w.W - 30), y = clamp(u.y + Math.sin(a) * 50, 30, w.H - 30);
-      const s2 = summon(w, u, kind, x, y, { life: tier >= 2 ? 16 : 12, hp: kind === 'torcher' ? 140 : 70, hit: kind === 'torcher' ? 0.35 : kind === 'tesla' ? 0.7 : kind === 'mortar' ? 0.9 : 0 });
+      const s2 = summon(w, u, kind, x, y, { life: tier >= 2 ? 12 : 9, hp: kind === 'torcher' ? 140 : 70, hit: kind === 'torcher' ? 0.35 : kind === 'tesla' ? 0.7 : kind === 'mortar' ? 0.9 : 0 });
       s2.fixed = true; s2.facing = a; s2.tier = tier; k2(w, { draw: 'buildSparks', x, y, max: 0.6 }); puff(w, x, y, '#C9D2DE', 10, 90, 5, 0.4);
       if (kind === 'torcher') onUnit(w, s2, 'armorFront', 99, { taken: (w2, u2, src, amt, o) => (src && angleDiff(angleTo(u2.x, u2.y, src.x, src.y), u2.facing) < 1.2 ? amt * 0.35 : amt * 1.8) });
     },
@@ -2457,9 +2457,9 @@ BRAINS.barricade = function (w, b, dt) {
 // a bee (the Beekeeper's): it flies to its foe and stings; a pestering bee keeps buzzing round it, stinging now and then
 function bee(w, u, from, e, k, pester) {
   const a = angleTo(from.x, from.y, e.x, e.y) + rrange(-0.6, 0.6);
-  w.projectiles.push({ kind: 'bee', x: from.x + Math.cos(a) * 14, y: from.y + Math.sin(a) * 14, vx: Math.cos(a) * 300, vy: Math.sin(a) * 300, r: 6, team: u.team, owner: u, dmg: dmgOf(u, k), o: { knock: 10, poison: 6 }, life: 1.8, a, home: e, turn: 7,
+  w.projectiles.push({ kind: 'bee', x: from.x + Math.cos(a) * 14, y: from.y + Math.sin(a) * 14, vx: Math.cos(a) * 300, vy: Math.sin(a) * 300, r: 6, team: u.team, owner: u, dmg: dmgOf(u, k), o: { knock: 10, poison: 3 }, life: 1.8, a, home: e, turn: 7,
     onHit: (w2, p, x) => { if (!pester || !alive(x)) return; const hk = hookOf(x, 'pester'); if (hk) { hk.until = w2.time + 3; hk.n = Math.min(2, hk.n + 1); return; }
-      let acc = 0; const h = onUnit(w2, x, 'pester', 3, { n: 1, tick(w3, u3, dt) { acc += dt; if (acc < 0.7) return; acc = 0; if (alive(u)) hurt(w3, u3, dmgOf(u, k * 0.25) * this.n, u, { noDodge: true, knock: 0, pester: true, poison: 4 }); } });
+      let acc = 0; const h = onUnit(w2, x, 'pester', 3, { n: 1, tick(w3, u3, dt) { acc += dt; if (acc < 0.7) return; acc = 0; if (alive(u)) hurt(w3, u3, dmgOf(u, k * 0.25) * this.n, u, { noDodge: true, knock: 0, pester: true, poison: 2 }); } });
       k2(w2, { draw: 'pester', unit: x, x: x.x, y: x.y, r: x.vr, max: 30, hk: h }); } });
 }
 // Pollen (the Beekeeper's trait): every sixth sting of his bees mends the friend most hurt near him
@@ -2550,7 +2550,7 @@ BRAINS.mortar = function (w, s2, dt) {
 BRAINS.medbay = function (w, s2, dt) {
   s2.vx = s2.vy = 0; s2.acc = (s2.acc || 0) + dt; if (s2.acc < 3) return true; s2.acc = 0;
   const u = s2.summonBy; if (!u || w.units.filter((o) => o.kind === 'medDrone' && o.summonBy === u && alive(o)).length >= 3) return true;
-  const d = summon(w, u, 'medDrone', s2.x, s2.y - 20, { life: 10 }); d.fixed = true; d.heal = 0.05 * (s2.tier >= 3 ? 1.5 : 1); return true;
+  const d = summon(w, u, 'medDrone', s2.x, s2.y - 20, { life: 10 }); d.fixed = true; d.heal = 0.04 * (s2.tier >= 3 ? 1.5 : 1); return true;
 };
 BRAINS.medDrone = function (w, d, dt) {
   const a = w.units.filter((o) => alive(o) && o.team === d.team && !o.summon && !o.def.cargo && hpRatio(o) < 1).sort((p, q) => hpRatio(p) - hpRatio(q))[0];
@@ -2737,7 +2737,7 @@ export const TRAITS2 = {
       const k = u.kit, ids = Object.keys(k.cd); if (!ids.length) return;
       if (ids.some((id) => k.cd[id] <= 0.3)) { k.oc = null; return; }
       if (!k.oc || !(k.cd[k.oc] > 0.3)) { k.oc = ids[Math.floor(rand() * ids.length)]; k2(w, { draw: 'overclock', unit: u, x: u.x, y: u.y, r: u.vr, max: 1.5 }); }
-      k.cd[k.oc] -= 2 * dt;
+      k.cd[k.oc] -= dt;
     },
   },
   // Back From the Wild (round 13, the designer: "When they die in werewolf form they come back as a human at 10% hp

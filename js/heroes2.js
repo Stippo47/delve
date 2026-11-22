@@ -49,7 +49,7 @@ export const HEROES2 = {
     name: 'Griffon', art: 'art/heroes/griffon.svg', role: 'tank', unlock: { gems: 3 },
     blurb: 'Winged helm, warhammer, shield. Drops out of the sky onto whoever is bothering his friends.',
     fun: 'The wings on the helm are not real. Nobody has told the helm.',
-    stats: { hp: 165, speed: 58, r: 34, vr: 24, turn: 3.4, accel: 180, face: 3.6, mass: 2.2, range: 24, atkCd: 1.3, dmg: 14, knock: 190, arc: 1.7, aoe: 40 },
+    stats: { hp: 165, speed: 58, r: 34, vr: 24, turn: 3.4, accel: 180, face: 3.6, mass: 2.2, range: 24, atkCd: 1.3, dmg: 15, knock: 190, arc: 1.7, aoe: 40 },
     // round 13: "Flip his sprite. Should be an aoe slam on the ground like the berserker" (his own hammer slam, fx2 SLAM2)
     weapon: 'heavy', style: { hand: 'arm-l', off: 'shield', flip: true, slam: 'hammer' },
     attack: { name: 'Warhammer', anim: 'swing', desc: 'A heavy hammer slammed into the floor in front: everything there is hit.' },
@@ -137,7 +137,7 @@ export const HEROES2 = {
     name: 'Shade', art: 'art/heroes/shade.svg', role: 'skirmish', unlock: { gems: 3 },
     blurb: 'Two mirrored daggers and a cape the colour of a shadow. Hard to find, harder to hit.',
     fun: 'Arrives before the door opens and leaves after it closes. Nobody has seen the in between.',
-    stats: { hp: 100, speed: 98, r: 29, vr: 20, turn: 7, accel: 430, face: 7, mass: 0.85, range: 16, atkCd: 0.8, dmg: 7, arc: 1.4, dodge: 0.2 },
+    stats: { hp: 100, speed: 98, r: 29, vr: 20, turn: 7, accel: 430, face: 7, mass: 0.85, range: 16, atkCd: 0.8, dmg: 8, arc: 1.4, dodge: 0.2 },
     weapon: 'twin', style: { dual: true, straight: true }, // round 13: "Should not cross blades. Attacks in 2 stabs at a time"
     attack: { name: 'Twin daggers', anim: 'thrust', desc: 'Two quick stabs, one from each hand, one right after the other.' },
     summons: { // Death Mark's shadow clones (round 13): her own figure, dark; they pass through everything (kits2.js shadowCloneBrain)
@@ -244,7 +244,7 @@ Object.assign(HEROES2, {
       spiritBeaver: { name: 'Spirit beaver', r: 20, vr: 20, turn: 5, accel: 300, face: 5, mass: 1, hp: 20, speed: 60, role: 'melee', range: 0, atkCd: 999, dmg: 6 },
     },
     abilities: [
-      { id: 'healTotem', name: 'Healing Totem', cd: 14, tags: 'h', glyph: 'leaf', desc: 'Throws a winged totem like the one on his back to the friend in the most trouble. It stands (100 health, blows on it do half): every blow on a friend within its reach lands on the totem instead, and it mends them a little.',
+      { id: 'healTotem', name: 'Healing Totem', cd: 14, tags: 'h', glyph: 'leaf', desc: 'Throws a winged totem like the one on his back to the friend in the most trouble. It stands (70 health, blows on it do half): every blow on a friend within its reach lands on the totem instead, and it mends them a little.',
         tiers: ['It stands 8s.', 'It stands 12s.', 'It cleans statuses off friends near it.'] },
       { id: 'spiritLink', name: 'Spirit Link', cd: 16, tags: 'h', glyph: 'heart', desc: 'Binds friends, and his totem, together with spirit threads: a blow on one is shared out among them all.',
         tiers: ['Up to three friends, for 5s.', 'Linked friends take 10% less.', 'Up to five, for 7s.'] },
@@ -378,7 +378,7 @@ Object.assign(HEROES2, {
       { id: 'honeyPot', name: 'Beehive', cd: 14, tags: 'ds', glyph: 'burst', desc: 'Throws a hive down among the enemies (its own health): bees stream out at whatever is near, and whoever strikes the hive is mobbed.',
         tiers: ['A hive for 8s.', 'For 12s.', 'Its bees stay on their foes, stinging.'] },
       { id: 'royalJelly', name: 'Honey Glaze', cd: 12, tags: 'h', glyph: 'heart', desc: 'Drizzles honey over the friend under the most attack: it heals over 4s, and whatever strikes it gets stuck in the honey.',
-        tiers: ['Heals 16% over 4s.', 'Heals 25%.', 'Two friends.'] },
+        tiers: ['Heals 13% over 4s.', 'Heals 20%.', 'Two friends.'] },
     ],
     trait: { id: 'pollen', name: 'Pollen', desc: 'Every sixth sting of his bees carries pollen back: the friend most hurt near him heals 5%.' },
   },
@@ -464,7 +464,7 @@ Object.assign(HEROES2, {
     name: 'Harpooner', art: 'art/heroes/harpooner.svg', role: 'ranged', unlock: { gems: 2 },
     blurb: 'A yellow sou\'wester, a puffy grey moustache, a barbed harpoon on a rope.',
     fun: 'Came down here after the one that got away. It was a rat. It was a very big rat.',
-    stats: { hp: 110, speed: 58, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 140, atkCd: 1.4, dmg: 13 },
+    stats: { hp: 125, speed: 58, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 140, atkCd: 1.4, dmg: 13 },
     attack: { name: 'Harpoon', anim: 'throw', desc: 'The barbed harpoon thrown on its rope: it tugs the enemy a little way in, and is hauled back.' },
     abilities: [
       { id: 'reelIn', name: 'Reel In', cd: 10, tags: 'ds', glyph: 'hook', desc: 'Harpoons a far enemy, the harpoon stuck in it and the rope across the floor, and hauls: a small one is dragged to him, a big one drags him to it.',
@@ -675,13 +675,13 @@ Object.assign(HEROES2, {
     },
     abilities: [
       { id: 'deployTurret', name: 'Deploy Turret', cd: 20, tags: 'd', glyph: 'burst', desc: 'Throws a turret into a spot round her: it lands, turns slowly to the nearest enemy and fires in rapid bursts of five, its barrels spinning.',
-        tiers: ['One turret for 15s.', 'It fires faster and lasts 25s.', 'Two turrets.'] },
+        tiers: ['One turret for 10s.', 'It fires faster and lasts 16s.', 'Two turrets.'] },
       { id: 'tinker', name: 'Tinker', cd: 16, tags: 'dh', glyph: 'heart', desc: 'Bolts together one of four towers on the spot: a torcher (very tough from the front, weak behind, turning slowly, a jet of fire out of its front), a tesla (chain lightning), a snowball mortar, or a medbay (when friends are hurt) that sends out wobbly little drones that fly to them and heal them.',
-        tiers: ['A tower for 12s.', 'For 16s.', 'The medbay\'s drones heal half as much again.'] },
+        tiers: ['A tower for 9s.', 'For 12s.', 'The medbay\'s drones heal half as much again.'] },
       { id: 'shockMine', name: 'Wind-up Drones', cd: 12, tags: 'ds', glyph: 'bolt', desc: 'Throws little wind-up drones out round her; they waddle slowly at the nearest enemy and pop, shocking.',
         tiers: ['Four drones.', 'They shock harder.', 'Six drones.'] },
     ],
-    trait: { id: 'overclock', name: 'Overclock', desc: 'When none of her abilities is ready, one of them at random comes round three times as fast.' },
+    trait: { id: 'overclock', name: 'Overclock', desc: 'When none of her abilities is ready, one of them at random comes round twice as fast.' },
   },
   werewolf: {
     name: 'Werewolf', art: 'art/heroes/werewolf.svg', role: 'melee', unlock: { gems: 3 },

@@ -115,7 +115,7 @@ Wild white hair, brass goggles, a strap of flasks. Every throw is a different br
 A winged totem on his back and a feather spirit-stick. Calls on the ancestors and the rain. Art: `art/heroes/shaman.svg`.
 
 - **Attack: Spirit bolt.** A teal spirit; when it strikes near a hurt friend it leaps on to that friend and mends it.
-- **Healing Totem** (14s). Throws a winged totem like the one on his back to the friend in the most trouble. It stands (100 health, blows on it do half): every blow on a friend within its reach lands on the totem instead, and it mends them a little. I: It stands 8s. II: It stands 12s. III: It cleans statuses off friends near it.
+- **Healing Totem** (14s). Throws a winged totem like the one on his back to the friend in the most trouble. It stands (70 health, blows on it do half): every blow on a friend within its reach lands on the totem instead, and it mends them a little. I: It stands 8s. II: It stands 12s. III: It cleans statuses off friends near it.
 - **Spirit Link** (16s). Binds friends, and his totem, together with spirit threads: a blow on one is shared out among them all. I: Up to three friends, for 5s. II: Linked friends take 10% less. III: Up to five, for 7s.
 - **Ancestors' Call** (20s). Calls the ancestors in spirit shape: a bear that fights beside them and shelters friends near it (they take 20% less), a wolf that hunts, an eagle that follows the most hurt friend and mends it, and a beaver that spins and shoots homing spirit orbs. I: For 7s. II: For 10s. III: The spirits are a third as strong again.
 - **Trait: Ancestral Spirits.** When an ally goes down, the spirits heal everyone else 10%.
@@ -180,7 +180,7 @@ A veiled hat, a copper smoker, and a great many friends who sting. Calms the ene
 - **Attack: Bee.** Sends a bee at the target: it stings, then stays buzzing round it, stinging now and then.
 - **Smoker** (11s). Pumps the smoker: a cone of thick white smoke rolls over the enemies in front. They grow sleepy and slow, and drop off if it builds. I: Sleepy and slowed. II: Sleepier. III: They swing slower too.
 - **Beehive** (14s). Throws a hive down among the enemies (its own health): bees stream out at whatever is near, and whoever strikes the hive is mobbed. I: A hive for 8s. II: For 12s. III: Its bees stay on their foes, stinging.
-- **Honey Glaze** (12s). Drizzles honey over the friend under the most attack: it heals over 4s, and whatever strikes it gets stuck in the honey. I: Heals 16% over 4s. II: Heals 25%. III: Two friends.
+- **Honey Glaze** (12s). Drizzles honey over the friend under the most attack: it heals over 4s, and whatever strikes it gets stuck in the honey. I: Heals 13% over 4s. II: Heals 20%. III: Two friends.
 - **Trait: Pollen.** Every sixth sting of his bees carries pollen back: the friend most hurt near him heals 5%.
 
 ## Quartermaster (`quartermaster`, support, 350 gold)
@@ -322,10 +322,10 @@ A winged helm, long plaits and a big spear. Carries the fallen back into the fig
 An orange work suit, a welding mask pushed up and a very big wrench. Builds a turret and keeps it running. Art: `art/heroes/engineer.svg`.
 
 - **Attack: Wrench and cogs.** Close up, a clanging swing of the wrench; further off, a cog thrown that bounces on to a second enemy.
-- **Deploy Turret** (20s). Throws a turret into a spot round her: it lands, turns slowly to the nearest enemy and fires in rapid bursts of five, its barrels spinning. I: One turret for 15s. II: It fires faster and lasts 25s. III: Two turrets.
-- **Tinker** (16s). Bolts together one of four towers on the spot: a torcher (very tough from the front, weak behind, turning slowly, a jet of fire out of its front), a tesla (chain lightning), a snowball mortar, or a medbay (when friends are hurt) that sends out wobbly little drones that fly to them and heal them. I: A tower for 12s. II: For 16s. III: The medbay's drones heal half as much again.
+- **Deploy Turret** (20s). Throws a turret into a spot round her: it lands, turns slowly to the nearest enemy and fires in rapid bursts of five, its barrels spinning. I: One turret for 10s. II: It fires faster and lasts 16s. III: Two turrets.
+- **Tinker** (16s). Bolts together one of four towers on the spot: a torcher (very tough from the front, weak behind, turning slowly, a jet of fire out of its front), a tesla (chain lightning), a snowball mortar, or a medbay (when friends are hurt) that sends out wobbly little drones that fly to them and heal them. I: A tower for 9s. II: For 12s. III: The medbay's drones heal half as much again.
 - **Wind-up Drones** (12s). Throws little wind-up drones out round her; they waddle slowly at the nearest enemy and pop, shocking. I: Four drones. II: They shock harder. III: Six drones.
-- **Trait: Overclock.** When none of her abilities is ready, one of them at random comes round three times as fast.
+- **Trait: Overclock.** When none of her abilities is ready, one of them at random comes round twice as fast.
 
 ## Werewolf (`werewolf`, melee, 1050 gold)
 A woodsman with a hatchet and a torn red shirt. Then, when it matters, a great grey wolf. Art: `art/heroes/werewolf.svg`, and `art/heroes/werewolf-beast.svg` (Werewolf).
