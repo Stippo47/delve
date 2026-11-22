@@ -82,3 +82,44 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
   he takes 25% less and whoever strikes him is blasted back (knock 620, x(1 + whirl fill)); II: slamming into a wall,
   the edge or a pillar hurts them (1.2x his damage); III: they burst there (a thunderclap hurting their friends near).
   The wings: his helm's cream-and-gold, six rounded lobes a side, spread out and wrapped forward. Clip: griffon-wingShield.
+
+### Bulwark
+- "Don't like trait. Should be more of a hybrid dps tank" -> **Return Thrust** (id returnThrust): every blow he takes
+  winds him up (up to 5; a glint grows on the spear's head); his next thrust lets it go: twice the reach, through
+  everything in a line, 30% harder for each, heavier knockback. He trades blows, then hits back hard. Book scene added.
+- Winged spear: "Starts too close to them" -> the stab starts out at the spear's head (`style.reach0`). "Holding spear
+  too close to tip" is the art (the grip in the SVG): **for the art lane**.
+- Brace, Shield Wall, Impale: not ticked and no note: left as they were (balance only). Ask the designer whether the
+  hybrid ask means these should change too.
+
+### Bearskin
+- Studded club: "The bear paws of his outfit should be on his hands. Move with it. I didn't like this club." -> **art
+  lane** (paws on the hands, a new weapon, and the club as its own part so it can be put away). Not done here.
+- Maul: "Uses berserkers effect. Even shows the mace ball in the middle." -> its own slam (fx2 SLAM2.maul): the club
+  comes down into a crater with a rim, cracks run out, brown dust and chunks; no flail ball. Clip: bearskin-maul.
+- Hibernate: "Should give self sleeping status effect. Will heal when sleeping at any time, also needs to take more
+  damage than they are healing to wake up. Leveled up will be immune to status effects" -> he falls asleep (the sim's
+  sleep, deep so a blow doesn't break it); asleep however it happens (a lullaby, Sleepy) he heals 7% a second; his own
+  sleep holds until what he has taken since outweighs what he healed, or he is whole (8 s at most). II: statuses can't
+  touch him while asleep. III (kept): he wakes with a roar that throws them back. Clip: bearskin-hibernate.
+- Bear Roar: "I want a rapid claw attack. Dashes forwards Does a burst of like 6 swings (club goes away). At max level
+  get 6 more, and does a bite at the end that applies bleed" -> **Bear Claws** in its slot (id bearRoar): a dash in,
+  six claw rakes (four-streak rakes, alternating sides); II they catch everything in front; III six more and a bite
+  (two rows of fangs) that adds 70 bleeding. The club's arm is hidden meanwhile (the art can't hide just the club).
+  Clip: bearskin-bearRoar.
+
+### Warhelm
+- Warhammer: "Needs to do a slam on the ground" -> a slam on the floor in front (aoe 46), the hammer look (SLAM2.hammer).
+  Clip: warhelm-attack.
+- Thunder Blow: "Needs its own slam visual. Don't use Beserkerd for everything... Actually change that, does a headbutt
+  forwards dealing heavy knockback and stagger." -> a lunge and a headbutt: 1.7x, knock 560, stagger 60 (a white star
+  and sparks off the helm). II shocks; III the one thrown knocks down what it hits. Clip: warhelm-thunderBlow.
+- War Horn: "Change. Storm born. Hammer float around him rotating dashing to a target in an interval around him. While he
+  punches with his fist alternating applying shock and knockback" -> **Storm Born** in its slot (id warHorn): for 6 s
+  (II 9 s) the hammer circles him in the air, crackling, darting at the nearest enemy every 0.9 s (1x, shock 25); he
+  fights with his fists meanwhile (quick punches, +15 shock, knock 260). III: each dart bursts in a thunderclap. His
+  hammer arm is hidden while the hammer flies; "alternating" fists need the hammer as its own part in the art (**art
+  lane**): for now one fist punches. Clip: warhelm-warHorn.
+- Skull Splitter: "Should throw hammer forward then leap towards it doing a slam. Hammer shocks anything hit." -> the
+  hammer is hurled ahead (shock 30 on all it passes, yellow sparks), lies where it fell, he leaps after it and slams
+  there (1.9x). II staggers, III wider and stuns. Clip: warhelm-skullSplitter.

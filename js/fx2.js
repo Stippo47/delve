@@ -263,6 +263,14 @@ DRAW.mound = (ctx, f, w, layer) => {
 Object.assign(EL2, { thunderBlow: 'storm', warHorn: 'fire', skullSplitter: 'earth', smokeBomb: 'shadow', pickpocket: 'song', lowBlow: 'earth',
   shadowWalk: 'shadow', blackout: 'shadow', deathMark: 'necro', toss: 'earth', pitchHay: 'song', forkCharge: 'earth', dirtFling: 'earth', burrow: 'earth', spadeBat: 'earth' });
 // the smoke bomb: a black ball with a lit fuse
+// Warhelm's warhammer flying head over heels, crackling with shock
+PROJ2.warhammer = (ctx, p, T, ang, sp) => {
+  ctx.save(); ctx.rotate(ang); trail(ctx, sp, 50, 14, '#FFE66B'); ctx.restore();
+  lit(ctx, () => glowDisc(ctx, 0, 0, 30, '#FFE66B', 0.4));
+  ctx.rotate(T * 18 + p.x * 0.01); ctx.scale(1.6, 1.6);
+  inked(ctx, () => roundRect(ctx, -2.4, -2, 4.8, 22, 2), '#7A4A28');
+  inked(ctx, () => roundRect(ctx, -12, -13, 24, 13, 3), '#8E98A6'); ctx.fillStyle = '#C9D2DE'; ctx.fillRect(-10, -12, 20, 3.4);
+};
 PROJ2.smokeBomb = (ctx, p, T, ang) => {
   ctx.rotate(T * 10); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 8, 0, TAU); }, '#3A3440');
   ctx.fillStyle = '#6A6470'; ctx.beginPath(); ctx.arc(-2.5, -2.5, 3, 0, TAU); ctx.fill();
@@ -787,8 +795,35 @@ export const SLAM2 = {
     ctx.restore();
   },
 };
+// Maul (Bearskin): the club driven straight down: a crater with a raised rim, cracks running out, brown dust and chunks
+SLAM2.maul = (ctx, m, k, layer) => {
+  const e = easeOut(k01((k - 0.1) / 0.6)), R = m.r;
+  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 1 - k * 0.8;
+    ctx.fillStyle = 'rgba(52,40,30,0.38)'; ctx.beginPath(); ctx.arc(m.x, m.y, R * 0.55, 0, TAU); ctx.fill();
+    ctx.strokeStyle = 'rgba(169,156,139,0.55)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(m.x, m.y, R * 0.6, 0, TAU); ctx.stroke();
+    ctx.strokeStyle = 'rgba(43,34,48,0.55)'; ctx.lineWidth = 2.6;
+    for (let i = 0; i < 7; i++) { const b = i / 7 * TAU + hash(m.seed, i) * 0.5, L = R * (0.75 + 0.45 * hash(i, m.seed)) * Math.min(1, k * 4); ctx.beginPath(); ctx.moveTo(m.x + Math.cos(b) * R * 0.55, m.y + Math.sin(b) * R * 0.55);
+      ctx.lineTo(m.x + Math.cos(b + 0.12) * (R * 0.55 + L * 0.5), m.y + Math.sin(b + 0.12) * (R * 0.55 + L * 0.5)); ctx.lineTo(m.x + Math.cos(b - 0.05) * (R * 0.55 + L), m.y + Math.sin(b - 0.05) * (R * 0.55 + L)); ctx.stroke(); }
+    ctx.restore(); return; }
+  if (k < 0.1) { const [ux, uy] = upVec(), h = (1 - k / 0.1) * 34; inked(ctx, () => { ctx.beginPath(); ctx.ellipse(m.x + ux * h, m.y + uy * h, 13, 10, 0, 0, TAU); }, '#8A5A30'); return; }
+  if (k < 0.26) lit(ctx, () => glowDisc(ctx, m.x, m.y, R * 1.3, '#FFE9C8', 0.6 * (1 - (k - 0.1) / 0.16)));
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  K.dustPuffs(ctx, m.x, m.y, R * 1.15, e, m.seed, 9, '#C9A47A');
+  for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + hash(i, m.seed), d = R * (0.4 + 0.8 * e), hh = Math.sin(k01(k * 1.5) * Math.PI) * 22 * (0.5 + hash(m.seed, i)), [ux, uy] = upVec();
+    inked(ctx, () => blob(ctx, m.x + Math.cos(b) * d + ux * hh, m.y + Math.sin(b) * d + uy * hh, 4.5, 5, i, 1), i % 2 ? '#7A6A58' : '#5A4634'); }
+  ctx.restore();
+};
 // IMPACT2D[kind](ctx, m, k): where a new kind of shot stops (fxkit impact)
 export const IMPACT2D = {
+  // Warhelm's hammer: yellow sparks thrown off and stone chips (it shocks what it hits)
+  warhammer(ctx, m, k) {
+    const e = easeOut(k);
+    if (k < 0.25) lit(ctx, () => glowDisc(ctx, m.x, m.y, 40, '#FFF7C2', 0.6 * (1 - k / 0.25)));
+    ctx.save(); ctx.globalAlpha *= 1 - k * k;
+    for (let i = 0; i < 5; i++) { const b = m.a + Math.PI + (i - 2) * 0.7 + hash(m.seed, i) * 0.4, d = 8 + 22 * e;
+      inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(m.x + Math.cos(b) * d, m.y + Math.sin(b) * d); ctx.lineTo(m.x + Math.cos(b + 0.3) * (d + 8), m.y + Math.sin(b + 0.3) * (d + 8)); ctx.lineTo(m.x + Math.cos(b) * (d + 15), m.y + Math.sin(b) * (d + 15)); }, '#FFE66B', 2.6); }
+    ctx.restore();
+  },
   // the Stormhammer: white puffy clouds bursting out where it strikes (round 13: "Should be white puffy clouds when hit")
   hammer(ctx, m, k) {
     const e = easeOut(k), S = m.ab ? 1.3 : 1;
@@ -939,6 +974,70 @@ DRAW.clap = (ctx, f, w, layer) => {
   for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + hash(i, f.x | 0), d = f.r * (0.2 + 0.7 * e);
     inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(f.x + Math.cos(b) * d, f.y + Math.sin(b) * d); ctx.lineTo(f.x + Math.cos(b + 0.25) * (d + 9), f.y + Math.sin(b + 0.25) * (d + 9)); ctx.lineTo(f.x + Math.cos(b) * (d + 16), f.y + Math.sin(b) * (d + 16)); }, '#FFE66B', 2.6);
     if (i % 2) inked(ctx, () => { ctx.beginPath(); ctx.arc(f.x + Math.cos(b + 0.5) * d * 0.7, f.y + Math.sin(b + 0.5) * d * 0.7, 7 * (1 - 0.5 * k), 0, TAU); }, '#FFFFFF'); }
+  ctx.restore();
+};
+
+// Bear Claws: four claw rakes torn across the enemy, alternating sides, each one fast
+DRAW.clawRake = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), b = f.a + Math.PI / 2 + f.side * 0.55;
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  for (let i = -1.5; i <= 1.5; i++) { const g = easeOut(k01((k - (i + 1.5) * 0.04) / 0.35)), L = 34, ox = f.x - Math.cos(f.a) * 6 + Math.cos(f.a) * i * 7 - Math.cos(b) * L / 2, oy = f.y - Math.sin(f.a) * 6 + Math.sin(f.a) * i * 7 - Math.sin(b) * L / 2;
+    if (g > 0.05) K.streak(ctx, ox, oy, b, 0, L * g, 3.4, '#FFF8F0', '#FFFFFF'); }
+  if (k < 0.2) lit(ctx, () => glowDisc(ctx, f.x, f.y, 24, '#FFFFFF', 0.5 * (1 - k / 0.2)));
+  ctx.restore();
+};
+// a bite: two rows of fangs snapping shut on it, and drops of blood flung off
+DRAW.bite = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), shut = easeOut(k01(k / 0.3)), s = clamp(f.r / 20, 0.8, 1.6), gap = (1 - shut) * 14 * s + 1.5;
+  ctx.save(); ctx.globalAlpha *= k01((1 - k) / 0.4);
+  for (const sd of [-1, 1]) { ctx.save(); ctx.translate(f.x - Math.sin(f.a) * gap * sd, f.y + Math.cos(f.a) * gap * sd); ctx.rotate(f.a + (sd > 0 ? Math.PI : 0));
+    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-14 * s, -2 * s); ctx.quadraticCurveTo(0, -5 * s, 14 * s, -2 * s); for (let i = 3; i >= 0; i--) { const x0 = -11 * s + i * 7.4 * s; ctx.lineTo(x0 + 3 * s, -1 * s); ctx.lineTo(x0, 6 * s); ctx.lineTo(x0 - 3 * s, -1 * s); } ctx.closePath(); }, '#FFF8F0'); ctx.restore(); }
+  if (shut > 0.95) for (let i = 0; i < 5; i++) { const b = f.a + (hash(i, 7) - 0.5) * 2.4, d = 8 + 26 * easeOut(k01((k - 0.3) / 0.7)); inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 3 * (1 - k) + 1, '#C8453D'); }
+  ctx.restore();
+};
+// Return Thrust: a glint on the spear's head that grows with each blow he takes, until the thrust lets it go
+DRAW.spearCharge = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) { if (!alive2(u)) ended(f, true); return; }
+  const n = (u.kit && u.kit.pent) || 0; ended(f, n <= 0); if (n <= 0) return;
+  const d = u.r + (u.def.range || 40) * 0.6, x = u.x + Math.cos(u.facing) * d, y = u.y + Math.sin(u.facing) * d, p = 0.5 + 0.5 * Math.sin(f.t * (6 + n * 2));
+  lit(ctx, () => glowDisc(ctx, x, y, 10 + 5 * n + 4 * p, n >= 5 ? '#FFE7A0' : '#FFFFFF', 0.25 + 0.1 * n));
+  ctx.save(); ctx.globalAlpha *= 0.6 + 0.4 * p; inked(ctx, () => star(ctx, x, y, 4 + n * 1.6, 4, 0.3, f.t * 2), '#FFFFFF'); ctx.restore();
+};
+// Return Thrust let go: a long white thrust streak through the whole line, thicker the more was wound up
+DRAW.thrustLine = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), tip = f.r * easeOut(k01(k / 0.3)), base = f.r * 0.15 + tip * 0.6 * k01((k - 0.2) / 0.8);
+  ctx.save(); ctx.globalAlpha *= 1 - k * k; K.streak(ctx, f.x, f.y, f.a, base, tip, (8 + f.n * 2.5) * (1 - 0.4 * k), '#DCE3EC', '#FFFFFF'); ctx.restore();
+  if (k < 0.25) lit(ctx, () => glowDisc(ctx, f.x + Math.cos(f.a) * tip, f.y + Math.sin(f.a) * tip, 30, '#FFFFFF', 0.6 * (1 - k / 0.25)));
+};
+
+// Thunder Blow: the helm's crack on the skull: a white flash, a burst of sparks thrown back off the helm, short speed lines
+DRAW.headbutt = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
+  if (k < 0.3) lit(ctx, () => glowDisc(ctx, f.x, f.y, 46, '#FFFFFF', 0.8 * (1 - k / 0.3)));
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  inked(ctx, () => star(ctx, f.x, f.y, (16 + 14 * e) * (1 - 0.4 * k), 7, 0.45, 0.2), '#FFF7C2');
+  for (let i = -2; i <= 2; i++) { const b = f.a + i * 0.45; K.streak(ctx, f.x + Math.cos(b) * 10, f.y + Math.sin(b) * 10, b, 0, 14 + 26 * e, 3, '#FFE66B', '#FFFFFF'); }
+  ctx.restore();
+};
+// Storm Born: his warhammer circling him in the air, crackling; it darts out at an enemy and back (f.S: where it is)
+DRAW.stormHammer = (ctx, f, w, layer) => {
+  const u = f.unit, S = f.S; if (!alive2(u) || !S) { ended(f, true); return; } ended(f, !u.kit || u.kit.storm !== S);
+  const a = life(f, 0.15, 0.25), [vx, vy] = upVec(), hh = 18 + 4 * Math.sin(f.t * 5);
+  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= a * 0.3; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(S.x, S.y, 12, 6, 0, 0, TAU); ctx.fill(); ctx.restore(); return; }
+  const x = S.x + vx * hh, y = S.y + vy * hh, rot = S.dart ? Math.atan2(S.y - u.y, S.x - u.x) + f.t * 18 : S.a + Math.PI / 2;
+  ctx.save(); ctx.globalAlpha *= a;
+  lit(ctx, () => glowDisc(ctx, x, y, 26, '#FFE66B', 0.35 + 0.15 * Math.sin(f.t * 30)));
+  ctx.translate(x, y); ctx.rotate(rot); ctx.scale(1.5, 1.5);
+  inked(ctx, () => roundRect(ctx, -2.4, -2, 4.8, 22, 2), '#7A4A28');
+  inked(ctx, () => roundRect(ctx, -12, -13, 24, 13, 3), '#8E98A6'); ctx.fillStyle = '#C9D2DE'; ctx.fillRect(-10, -12, 20, 3.4);
+  ctx.restore();
+  if (Math.sin(f.t * 23) > 0.6) { ctx.save(); ctx.globalAlpha *= a; inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x - 10, y - 4); ctx.lineTo(x - 2, y + 3); ctx.lineTo(x + 3, y - 6); ctx.lineTo(x + 11, y + 2); }, '#FFE66B', 2.2); ctx.restore(); }
+};
+// Skull Splitter: the thrown hammer lying where it fell, its head in the floor, until he lands on it
+DRAW.hammerDown = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const a = life(f, 0.02, 0.1);
+  ctx.save(); ctx.globalAlpha *= a; ctx.translate(f.x, f.y); ctx.rotate(f.a + Math.PI / 2);
+  inked(ctx, () => roundRect(ctx, -2.6, -26, 5.2, 24, 2), '#7A4A28'); inked(ctx, () => roundRect(ctx, -13, -4, 26, 14, 3), '#8E98A6');
   ctx.restore();
 };
 

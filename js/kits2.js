@@ -451,85 +451,142 @@ export const ABILITIES2 = {
     show: { single: true },
   },
   // ----- Bearskin
+  // Maul (round 13: "Uses berserkers effect. Even shows the mace ball in the middle."): its own look, the club brought
+  // straight down into a crater (fx2 SLAM2.maul), never the Berserker's flail
   maul: {
     score: (w, u, t) => (inReach(u, t, 20) ? 0.55 + (foeWinding(w, t) ? 0.3 : 0) : 0),
     use(w, u, t, tier) {
       if (!t) return; u.facing = ang(u, t); cast(u, 'ability', 0.6);
       after(u, 0.22, () => {
         if (!alive(t)) return;
-        swingMark(w, u, u.r + u.def.range + 14, 0.8, { x: t.x, y: t.y, r: tier >= 3 ? 90 : 42 });
-        hurt(w, t, dmgOf(u, 1.7), u, { heavy: true, knock: 110, noDodge: true });
+        swingMark(w, u, u.r + u.def.range + 14, 0.8, { x: t.x, y: t.y, r: tier >= 3 ? 90 : 46, look: 'maul' });
+        hurt(w, t, dmgOf(u, 2.2), u, { heavy: true, knock: 110, noDodge: true });
         stun(w, t, tier >= 2 ? 1.6 : 1); w.shake = Math.max(w.shake, 6);
-        if (tier >= 3) for (const e of foesNear(w, u, t.x, t.y, 90)) if (e !== t) hurt(w, e, dmgOf(u, 0.6), u, { stagger: 50, knock: 140, kAngle: angleTo(t.x, t.y, e.x, e.y), noDodge: true });
+        k2(w, { draw: 'bonk', x: t.x, y: t.y, unit: t, r: t.vr, max: tier >= 2 ? 1.6 : 1 });
+        if (tier >= 3) for (const e of foesNear(w, u, t.x, t.y, 90)) if (e !== t) hurt(w, e, dmgOf(u, 0.8), u, { stagger: 50, knock: 140, kAngle: angleTo(t.x, t.y, e.x, e.y), noDodge: true });
       });
     },
     show: { single: true },
   },
+  // Hibernate (round 13: "Should give self sleeping status effect. Will heal when sleeping at any time, also needs to
+  // take more damage than they are healing to wake up. Leveled up will be immune to status effects"): he falls asleep.
+  // Asleep, from this or anything else (a lullaby, Sleepy), he heals 7% a second; his own sleep holds until the blows
+  // he takes outweigh the healing (or he is whole again)
   hibernate: {
-    score: (w, u) => (hpRatio(u) < 0.45 && !u.act ? 0.95 : 0),
+    score: (w, u) => (hpRatio(u) < 0.45 && !u.act && !(u.sleepT > 0) ? 0.95 : 0),
     use(w, u, t, tier) {
-      const pct = tier >= 2 ? 0.35 : 0.25;
-      addBuff(u, { id: 'hibernate', dur: 3, taken: 0.4, root: true });
-      u.act = { type: 'channel', t: 3, max: 3, every: 0.25, acc: 0, tick: () => heal(w, u, u.maxHp * pct / 12, u) };
+      u.sleepT = Math.max(u.sleepT, 8); u.deepT = 8; u.act = null;
+      u.kit.hib = { took: 0, healed: 0, t0: w.time, until: w.time + 8 };
       setAnim(u, 'ability', 0.4);
-      k2(w, { draw: 'hibernate', unit: u, x: u.x, y: u.y, r: u.vr, max: 3 });
-      if (tier >= 3) after(u, 3, () => { if (!alive(u)) return; setAnim(u, 'ability', 0.4); ring(w, u, u.x, u.y, 130, dmgOf(u, 0.6), { knock: 300, heavy: true }, '#A0683A'); k2(w, { draw: 'roar', unit: u, x: u.x, y: u.y, r: 130, max: 0.6, ab: 'hibernate' }); });
+      k2(w, { draw: 'hibernate', unit: u, x: u.x, y: u.y, r: u.vr, max: 8 });
     },
+    hook: {
+      tick(w, u, dt) {
+        const H = u.kit.hib, tier = tierOf(u, 'hibernate');
+        if (u.sleepT > 0) {
+          const got = heal(w, u, u.maxHp * 0.07 * dt, u); if (H) H.healed += got || 0;
+          if (tier >= 2) addBuff(u, { id: 'hibernate', dur: 0.2, statusImmune: true });
+        }
+        if (!H) return;
+        const whole = u.hp >= u.maxHp - 0.5 && w.time - H.t0 > 1.5;
+        if (H.took > H.healed + 0.5 || whole || w.time > H.until || !(u.sleepT > 0)) {
+          u.kit.hib = null; u.sleepT = 0; u.deepT = 0;
+          for (const f of w.fx) if (f.draw === 'hibernate' && f.unit === u) f.max = Math.min(f.max, f.t + 0.3);
+          if (tier >= 3 && alive(u)) { setAnim(u, 'ability', 0.4); ring(w, u, u.x, u.y, 130, dmgOf(u, 0.8), { knock: 300, heavy: true }, '#A0683A'); w.fx[w.fx.length - 1].ab = 'hibernate'; k2(w, { draw: 'roar', unit: u, x: u.x, y: u.y, r: 130, max: 0.6, ab: 'hibernate' }); }
+          return;
+        }
+        u.sleepT = Math.max(u.sleepT, 0.2); u.deepT = Math.max(u.deepT || 0, 0.2);
+      },
+      taken(w, u, src, amt, o) { if (u.kit.hib) u.kit.hib.took += amt; return amt; },
+    },
+    show: { hurt: 0.35, hitme: true },
   },
+  // Bear Claws, in Bear Roar's slot (round 13: "I want a rapid claw attack. Dashes forwards Does a burst of like 6 swings
+  // (club goes away). At max level get 6 more, and does a bite at the end that applies bleed"); the id stays for saves
   bearRoar: {
-    score: (w, u) => (foesNear(w, u, u.x, u.y, 140).length >= 2 ? 0.75 : 0),
+    score: (w, u, t) => { if (!t) return 0; const g = dist(u.x, u.y, t.x, t.y) - u.r - t.r; return g < 160 ? 0.6 + (t.elite || t.def.boss ? 0.2 : 0) : 0; },
     use(w, u, t, tier) {
-      cast(u, 'ability', 0.5); w.shake = Math.max(w.shake, 4);
-      const r = tier >= 3 ? 175 : 135;
-      for (const e of foesNear(w, u, u.x, u.y, r)) {
-        addBuff(e, { id: 'cowed', dur: 5, dealt: 0.7 });
-        if (tier >= 2) addStatus(w, e, 'stagger', 45, u);
-        if (tier >= 3) hurt(w, e, dmgOf(u, 0.3), u, { knock: 260, kAngle: ang(u, e), noDodge: true });
-      }
-      k2(w, { draw: 'roar', unit: u, x: u.x, y: u.y, r, max: 0.6 });
+      if (!t) return; const a = ang(u, t), g = Math.max(0, dist(u.x, u.y, t.x, t.y) - u.r - t.r - 4), T = clamp(g / 380, 0.08, 0.32), n = tier >= 3 ? 12 : 6;
+      u.facing = a; u.act = { type: 'dash', t: T, max: T, a }; u.kit.clawsT = w.time + T + n * 0.085 + (tier >= 3 ? 0.4 : 0.1);
+      k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a, max: T + 0.3, col: '#A0683A' });
+      for (let i = 0; i < n; i++) after(u, T + 0.02 + i * 0.085, () => {
+        if (!alive(t)) return; u.facing = ang(u, t); setAnim(u, 'punch', 0.09);
+        const list = tier >= 2 ? foesNear(w, u, u.x, u.y, u.r + u.def.range + 30).filter((e) => inFront(u, e, 1.6)) : inReach(u, t, 30) ? [t] : [];
+        for (const e of list) hurt(w, e, dmgOf(u, 0.42), u, { knock: 30, noDodge: true, ab: 'bearRoar' });
+        if (list.length) k2(w, { draw: 'clawRake', x: t.x, y: t.y, a: u.facing, side: i % 2 ? 1 : -1, max: 0.28, ab: 'bearRoar' });
+      });
+      if (tier >= 3) after(u, T + n * 0.085 + 0.1, () => {
+        if (!alive(t) || !inReach(u, t, 30)) return; setAnim(u, 'thrust', 0.25);
+        hurt(w, t, dmgOf(u, 1), u, { knock: 160, heavy: true, noDodge: true, ab: 'bearRoar' }); bleed(w, t, 70, u);
+        k2(w, { draw: 'bite', x: t.x, y: t.y, a: ang(u, t), r: t.vr, max: 0.45, ab: 'bearRoar' });
+      });
     },
+    show: { single: true },
   },
   // ----- Warhelm
+  // Thunder Blow (round 13, the designer: "Actually change that, does a headbutt forwards dealing heavy knockback and
+  // stagger"): a lunge and a helmeted headbutt into the one in front
   thunderBlow: {
-    score: (w, u) => { const n = foesNear(w, u, u.x, u.y, u.r + 110).filter((e) => inFront(u, e, 1.7)).length; return n >= 2 ? 0.8 : n ? 0.35 : 0; },
+    score: (w, u, t) => (inReach(u, t, 34) ? 0.55 + (foeWinding(w, t) ? 0.3 : 0) + (t.elite || t.def.boss ? 0.1 : 0) : 0),
     use(w, u, t, tier) {
-      if (t) u.facing = ang(u, t); cast(u, 'ability', 0.55);
-      after(u, 0.2, () => {
-        const a = u.facing, cx = u.x + Math.cos(a) * (u.r + 30), cy = u.y + Math.sin(a) * (u.r + 30);
-        swingMark(w, u, u.r + 40, 0.8, { x: cx, y: cy, r: 46 });
-        fx(w, { type: 'wave', x: u.x, y: u.y, a, r: u.r + 120, arc: 1.7, max: 0.4 });
-        w.shake = Math.max(w.shake, 7);
-        const hit = foesNear(w, u, u.x, u.y, u.r + 120).filter((e) => inFront(u, e, 1.8));
-        for (const e of hit) hurt(w, e, dmgOf(u, 1.2), u, { knock: 400, kAngle: ang(u, e), heavy: true, noDodge: true, shock: tier >= 2 ? 35 : 0 });
-        if (tier >= 3) after(u, 0.25, () => { for (const e of hit) if (alive(e)) stun(w, e, 1); });
-      });
-    },
-  },
-  warHorn: {
-    score: (w, u) => (foesNear(w, u, u.x, u.y, 300).length >= 2 && friendsNear(w, u, u.x, u.y, 240).length ? 0.7 : 0),
-    use(w, u, t, tier) {
-      cast(u, 'ability', 0.7);
-      for (const a of [u, ...friendsNear(w, u, u.x, u.y, 240)]) addBuff(a, { id: 'warHorn', dur: 6, dealt: tier >= 2 ? 1.35 : 1.25, taken: tier >= 2 ? 0.9 : 1, glow: '#FF9A55' });
-      if (tier >= 3) for (const e of foesNear(w, u, u.x, u.y, 160)) addStatus(w, e, 'stagger', 40, u);
-      k2(w, { draw: 'horn', unit: u, x: u.x, y: u.y, r: 240, max: 0.9 });
-    },
-    show: { ally: true },
-  },
-  skullSplitter: {
-    score: (w, u, t) => (inReach(u, t, 20) ? 0.5 + (t.elite || t.def.boss ? 0.2 : 0) : 0),
-    use(w, u, t, tier) {
-      if (!t) return; u.facing = ang(u, t); cast(u, 'swing', 0.3);
-      after(u, 0.1, () => { if (!alive(t)) return; swingMark(w, u, u.r + u.def.range + 14, 1.2); hurt(w, t, dmgOf(u, 1), u, { knock: 50, noDodge: true, stagger: tier >= 2 ? 80 : 45 }); });
-      after(u, 0.45, () => {
-        if (!alive(t)) return; setAnim(u, 'ability', 0.45);
-        const m = (t.st.stagger || 0) >= 50 || t.koT > 0 ? 2 : 1;
-        swingMark(w, u, u.r + u.def.range + 14, 0.7, { x: t.x, y: t.y, r: tier >= 3 ? 80 : 40 });
-        hurt(w, t, dmgOf(u, 1.4) * m, u, { heavy: true, knock: 90, noDodge: true, crit: m > 1 });
-        if (tier >= 3) for (const e of foesNear(w, u, t.x, t.y, 80)) if (e !== t) hurt(w, e, dmgOf(u, 0.5), u, { stagger: 30, knock: 120, kAngle: angleTo(t.x, t.y, e.x, e.y), noDodge: true });
-        w.shake = Math.max(w.shake, 5);
+      if (!t) return; const a = ang(u, t); u.facing = a; setAnim(u, 'ability', 0.4);
+      u.act = { type: 'dash', t: 0.12, max: 0.12, a }; u.lungeT = 0.3;
+      after(u, 0.13, () => {
+        if (!alive(t) || dist(u.x, u.y, t.x, t.y) - u.r - t.r > 40) return;
+        const hx = u.x + Math.cos(a) * u.r, hy = u.y + Math.sin(a) * u.r;
+        hurt(w, t, dmgOf(u, 1.7), u, { knock: 560, kAngle: a, heavy: true, noDodge: true, stagger: 60, shock: tier >= 2 ? 35 : 0 });
+        k2(w, { draw: 'headbutt', x: hx, y: hy, a, max: 0.45, ab: 'thunderBlow' }); w.shake = Math.max(w.shake, 7);
+        if (tier >= 3) flung(w, u, t, 0.8, null, (o) => { hurt(w, o, dmgOf(u, 0.8), u, { knock: 300, kAngle: a, noDodge: true, stagger: 40 }); stun(w, o, 0.6); });
       });
     },
     show: { single: true },
+  },
+  // Storm Born, in War Horn's slot (round 13: "Change. Storm born. Hammer float around him rotating dashing to a target
+  // in an interval around him. While he punches with his fist alternating applying shock and knockback"): the hammer
+  // leaves his hand and circles him, darting at an enemy near now and then; he fights with his fists meanwhile
+  warHorn: {
+    score: (w, u) => (!u.kit.storm && foesNear(w, u, u.x, u.y, 200).length >= 2 ? 0.7 : !u.kit.storm && foesNear(w, u, u.x, u.y, 120).length ? 0.4 : 0),
+    use(w, u, t, tier) {
+      const dur = tier >= 2 ? 9 : 6, human = u.def; cast(u, 'ability', 0.5);
+      u.def = { ...human, attackAnim: 'punch', weapon: 'thrust', aoe: 0, atkCd: 0.55, range: 24, style: { ...(human.style || {}), hand: 'arm-r', slam: null } };
+      const S = u.kit.storm = { a: 0, dart: null, next: w.time + 0.6, x: u.x, y: u.y, until: w.time + dur, human };
+      k2(w, { draw: 'stormHammer', unit: u, x: u.x, y: u.y, max: dur + 0.2, S, ab: 'warHorn' });
+      timer(u, 'stormBorn', dur, (dt) => {
+        S.a += dt * 4.2;
+        const hx = u.x + Math.cos(S.a) * 52, hy = u.y + Math.sin(S.a) * 52;
+        if (S.dart) { // out to its target and back
+          const D = S.dart; D.t += dt; const q = D.t / 0.42, k = q < 0.5 ? q * 2 : 2 - q * 2, tx = alive(D.e) ? D.e.x : D.x, ty = alive(D.e) ? D.e.y : D.y;
+          S.x = hx + (tx - hx) * k; S.y = hy + (ty - hy) * k;
+          if (!D.hit && q >= 0.5) { D.hit = true; if (alive(D.e)) { hurt(w, D.e, dmgOf(u, 1), u, { knock: 240, kAngle: angleTo(u.x, u.y, D.e.x, D.e.y), noDodge: true, shock: 25, ab: 'warHorn' });
+            if (tierOf(u, 'warHorn') >= 3) { k2(w, { draw: 'clap', x: D.e.x, y: D.e.y, r: 60, max: 0.4, ab: 'warHorn' }); for (const o of foesNear(w, u, D.e.x, D.e.y, 60)) if (o !== D.e) hurt(w, o, dmgOf(u, 0.5), u, { knock: 160, kAngle: angleTo(D.e.x, D.e.y, o.x, o.y), noDodge: true, shock: 15, ab: 'warHorn' }); } } }
+          if (q >= 1) S.dart = null;
+        } else {
+          S.x = hx; S.y = hy;
+          if (w.time >= S.next) { const e = foesNear(w, u, u.x, u.y, 220).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0]; S.next = w.time + 0.9; if (e) S.dart = { e, x: e.x, y: e.y, t: 0, hit: false }; }
+        }
+      }, () => { u.def = S.human; u.kit.storm = null; });
+    },
+    show: { attacks: true, secs: 4 },
+    hook: { dealt(w, u, t, amt, o) { if (u.kit.storm && !o.dot && !o.proc && !o.ab && !o.pab && !u.kit.using) { o.shock = (o.shock || 0) + 15; o.knock = Math.max(o.knock || 0, 260); } return amt; } },
+  },
+  // Skull Splitter (round 13: "Should throw hammer forward then leap towards it doing a slam. Hammer shocks anything hit.")
+  skullSplitter: {
+    score: (w, u, t) => { if (!t) return 0; const d = dist(u.x, u.y, t.x, t.y); return d < 300 && !u.kit.storm && !blocked(w, u.x, u.y, t.x, t.y) ? 0.45 + 0.15 * foesNear(w, u, t.x, t.y, 90).length : 0; },
+    use(w, u, t, tier) {
+      if (!t) return; const a = ang(u, t), L = clamp(dist(u.x, u.y, t.x, t.y) + 30, 120, 300); u.facing = a; cast(u, 'throw', 0.4);
+      u.kit.splitT = w.time + 1.4;
+      after(u, 0.12, () => shoot(w, u, a, { kind: 'warhammer', speed: 760, r: 14, life: L / 760, pierce: 9, dmg: dmgOf(u, 0.9), knock: 120, st: { shock: 30 }, land: (p) => {
+        const x1 = clamp(p.x, u.r, w.W - u.r), y1 = clamp(p.y, u.r, w.H - u.r);
+        k2(w, { draw: 'hammerDown', x: x1, y: y1, a, max: 0.55 });
+        u.act = { type: 'leap', t: 0.45, max: 0.45, x0: u.x, y0: u.y, x1, y1, land: () => {
+          const R = tier >= 3 ? 105 : 80; w.shake = Math.max(w.shake, 8); u.kit.splitT = 0;
+          swingMark(w, u, u.r + 20, 0.6, { x: u.x, y: u.y, r: R, look: 'hammer' });
+          for (const e of foesNear(w, u, u.x, u.y, R)) { hurt(w, e, dmgOf(u, 1.9), u, { knock: 300, kAngle: ang(u, e), heavy: true, noDodge: true, stagger: tier >= 2 ? 55 : 0, shock: 20 }); if (tier >= 3) stun(w, e, 0.8); }
+        } };
+        u.invulnT = Math.max(u.invulnT, 0.45);
+      } }));
+    },
+    show: { far: true },
   },
   // ----- Bandit
   smokeBomb: {
@@ -1928,7 +1985,22 @@ export const TRAITS2 = {
     },
   },
   skyborn: { immune: ['entangle'], tick(w, u) { u.rootT = 0; u.tangledT = 0; } },
-  phalanx: { taken(w, u, src, amt) { const n = friendsNear(w, u, u.x, u.y, 130).filter((a) => a !== u).length; return amt * (1 - Math.min(0.3, 0.1 * n)); } },
+  // Return Thrust (round 13, the designer: "Don't like trait. Should be more of a hybrid dps tank"): every blow he takes
+  // winds him up (up to 5); his next spear thrust lets it all go: twice the reach, through everything in a line, 30%
+  // harder for each
+  returnThrust: {
+    taken(w, u, src, amt, o) { if (!o.dot && src && src !== u && amt > 0) { const k = u.kit; k.pent = Math.min(5, (k.pent || 0) + 1); if (k.pent === 1) k2(w, { draw: 'spearCharge', unit: u, x: u.x, y: u.y, r: u.r, max: 60 }); } return amt; },
+    dealt(w, u, t, amt, o) {
+      const k = u.kit, n = k.pent || 0;
+      if (!n || o.dot || o.proc || o.shot || o.ab || o.pab || k.using) return amt;
+      k.pent = 0; const a = u.facing, L = u.r + (u.def.range || 40) * 2 + 40, ex = u.x + Math.cos(a) * L, ey = u.y + Math.sin(a) * L;
+      k2(w, { draw: 'thrustLine', x: u.x, y: u.y, a, r: L, n, max: 0.35 });
+      for (const e of opponents(w, u)) if (e !== t && segDist(e.x, e.y, u.x, u.y, ex, ey) < e.r + 14 && inFront(u, e, 1.2))
+        hurt(w, e, dmgOf(u, 1) * (1 + 0.3 * n), u, { knock: 220, kAngle: a, noDodge: true, proc: true });
+      o.knock = (o.knock || 0) + 60 * n; if (n >= 3) o.heavy = true;
+      return amt * (1 + 0.3 * n);
+    },
+  },
   thickHide: {
     tick(w, u) {
       const p = u.kit.hide || (u.kit.hide = {});
@@ -2084,6 +2156,11 @@ export function kit2Tick(w, u, dt) {
     u.k2 = u.k2.filter((k) => k.t > 0); if (!u.k2.length) u.k2 = null;
   }
   if (!u.kit) return;
+  // Bear Claws: the club goes away while he claws (round 13: "(club goes away)"): its arm is hidden (the art has the club
+  // in that hand: docs/HEROES-r13.md asks for the club as its own part)
+  if (u.kind === 'bearskin') { const on = u.kit.clawsT > w.time; if (on) u._force = { 'arm-r': { hide: true } }; else if (u._force && u._force['arm-r']) u._force = null; }
+  // Warhelm: his hammer is out of his hand while it circles him (Storm Born) or flies ahead (Skull Splitter)
+  if (u.kind === 'warhelm') { const out = !!u.kit.storm || u.kit.splitT > w.time; if (out) u._force = { 'arm-l': { hide: true } }; else if (u._force && u._force['arm-l']) u._force = null; }
   // Stormhammer: while the hammer is out of his hand it isn't drawn in it (round 13: "doesnt show in their hand when thrown")
   if (u.kind === 'griffon') {
     const out = w.projectiles.some((p) => p.owner === u && p.kind === 'hammer' && p.life > 0);

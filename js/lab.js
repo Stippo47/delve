@@ -243,6 +243,7 @@ function setupShow() {
     if (hero === 'cleric' && ab === 'attack') { ally = spawn(w, 'paladin', 230, 140, { level: 9 }); initKit(ally, 'paladin', {}, 1); for (const k in ally.kit.cd) ally.kit.cd[k] = 9; ally.hp = ally.maxHp * 0.5; ally.facing = 0; ally.home = { x: ally.x, y: ally.y }; }
     if (sh.mob === 'ally' && ally) dummies.forEach((d, i) => { const a = -0.6 + i * 0.9; d.x = d.home.x = ally.x + Math.cos(a) * 62; d.y = d.home.y = ally.y - 40 + Math.sin(a) * 50; });
     if (sh.downed && ally) { ally.downed = true; ally.hp = 0; }
+    if (sh.hurt) u.hp = u.maxHp * sh.hurt; // lane H2 (round 13): a hero that heals itself starts hurt
     pin = { x: u.x, y: u.y }; cast = false; u.target = dummies[0];
     w.time = 0;
   };
