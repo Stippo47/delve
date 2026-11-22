@@ -286,7 +286,7 @@ const HERALD = { ...FOE, headR: 56, r: 46, vr: 34, turn: 3, accel: 200, face: 3,
 export const FOES10 = {
   // ---- the Frost Hollow
   frostWolf: { variantOf: 'wolf', name: 'Frost Wolf', art: 'art/enemies/frost-wolf.svg', chill: 20, hp: 30, xp: 9, cost: 2.5, res: { chill: 0.2, burn: 1.3 } },
-  slimeIce: { variantOf: 'slime', name: 'Ice Slime', art: 'art/enemies/ice-slime.svg', headR: 49, hp: 54, splits: false, xp: 10, cost: 3, goo: '#DFF6FF', res: { chill: 0, burn: 1.4 },
+  slimeIce: { variantOf: 'slime', name: 'Ice Slime', art: 'art/enemies/ice-slime.svg', headR: 64, hp: 54, splits: false, xp: 10, cost: 3, goo: '#DFF6FF', res: { chill: 0, burn: 1.4 },
     onHop: (w, u) => coldPatch(w, u.x, u.y, 36, 2.4), onDeath: (w, u) => shards(w, u, 7) },
   spiderFrost: { variantOf: 'spiderHunter', name: 'Frost Spider', art: 'art/enemies/frost-spider.svg', headR: 54, poison: 0, chill: 22, xp: 10, res: { chill: 0.2 },
     onDeath: (w, u) => w.hazards.push({ type: 'web', cold: true, x: u.x, y: u.y, r: 48, t: 6, max: 6 }) },

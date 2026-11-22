@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- DRILL BOT (round 10): a burrowing machine seen from above, two parts: one squat rounded body in safety yellow with two black chevrons pointing forward, a track down each side and a short exhaust stack behind (#back); and a great conical steel drill as wide as the body on an iron collar (arm-r: it drives forward when it strikes). Parts: #back (stack), #body, #arm-r (drill). Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="s1" d="M 95 31 H 105 A 8 8 0 0 1 113 39 V 45 A 8 8 0 0 1 105 53 H 95 A 8 8 0 0 1 87 45 V 39 A 8 8 0 0 1 95 31 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#515661"/><stop offset="1" stop-color="#3F434C"/></linearGradient>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#212328" stop-opacity="0"/><stop offset="1" stop-color="#212328" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c1"><use href="#s1"/></clipPath>
+<path id="s2" d="M 49 46 H 55 A 11 11 0 0 1 66 57 V 131 A 11 11 0 0 1 55 142 H 49 A 11 11 0 0 1 38 131 V 57 A 11 11 0 0 1 49 46 Z"/>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#403B46"/><stop offset="1" stop-color="#322E37"/></linearGradient>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1A181D" stop-opacity="0"/><stop offset="1" stop-color="#1A181D" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c2"><use href="#s2"/></clipPath>
+<path id="s3" d="M 145 46 H 151 A 11 11 0 0 1 162 57 V 131 A 11 11 0 0 1 151 142 H 145 A 11 11 0 0 1 134 131 V 57 A 11 11 0 0 1 145 46 Z"/>
+<clipPath id="c3"><use href="#s3"/></clipPath>
+<path id="s4" d="M 90 45 H 110 A 34 34 0 0 1 144 79 V 101 A 34 34 0 0 1 110 135 H 90 A 34 34 0 0 1 56 101 V 79 A 34 34 0 0 1 90 45 Z"/>
+<clipPath id="u4"><use href="#s1"/><use href="#s2"/><use href="#s3"/></clipPath>
+<linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#EBBE54"/><stop offset="1" stop-color="#E4A615"/></linearGradient>
+<linearGradient id="g6" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7A5808" stop-opacity="0"/><stop offset="1" stop-color="#7A5808" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c4"><use href="#s4"/></clipPath>
+<path id="s5" d="M 70 129 H 130 A 8 8 0 0 1 138 137 V 139 A 8 8 0 0 1 130 147 H 70 A 8 8 0 0 1 62 139 V 137 A 8 8 0 0 1 70 129 Z"/>
+<clipPath id="u5"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4"/></clipPath>
+<path id="s6" d="M 66 146 L 134 146 L 100 208 Z"/>
+<clipPath id="u6"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4"/><use href="#s5"/></clipPath>
+<linearGradient id="g7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D3D8DF"/><stop offset="1" stop-color="#9BA8B7"/></linearGradient>
+<linearGradient id="g8" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4A5768" stop-opacity="0"/><stop offset="1" stop-color="#4A5768" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c6"><use href="#s6"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="back" data-pivot="100 70"><!-- exhaust stack -->
+<use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/><g clip-path="url(#c1)"><path d="M 88 37 A 6 3 0 1 0 100 37 A 6 3 0 1 0 88 37 Z" fill="#FFFFFF" opacity="0.2"/></g>
+</g>
+<g id="body">
+<use href="#s2" fill="url(#g3)"/><use href="#s2" fill="url(#g4)"/><g clip-path="url(#c2)"><path d="M 38 56 L 66 56 M 38 70 L 66 70 M 38 84 L 66 84 M 38 98 L 66 98 M 38 112 L 66 112 M 38 126 L 66 126" fill="none" stroke="#8A8492" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/></g>
+<use href="#s3" fill="url(#g3)"/><use href="#s3" fill="url(#g4)"/><g clip-path="url(#c3)"><path d="M 134 56 L 162 56 M 134 70 L 162 70 M 134 84 L 162 84 M 134 98 L 162 98 M 134 112 L 162 112 M 134 126 L 162 126" fill="none" stroke="#8A8492" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/></g>
+<g clip-path="url(#u4)"><use href="#s4" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s4" fill="url(#g5)"/><use href="#s4" fill="url(#g6)"/><g clip-path="url(#c4)"><path d="M 68 64 L 100 84 L 132 64 M 68 90 L 100 110 L 132 90" fill="none" stroke="#2A2C32" stroke-width="10" stroke-linecap="butt" stroke-linejoin="round" opacity="1"/><path d="M 66 58 A 14 6 0 1 0 94 58 A 14 6 0 1 0 66 58 Z" fill="#FFFFFF" opacity="0.4"/></g>
+</g>
+<g id="arm-r" data-pivot="100 120"><!-- the drill -->
+<g clip-path="url(#u5)"><use href="#s5" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s5" fill="url(#g1)"/><use href="#s5" fill="url(#g2)"/>
+<g clip-path="url(#u6)"><use href="#s6" transform="translate(0 2) " fill="#2B2230" opacity="0.3"/></g><use href="#s6" fill="url(#g7)"/><use href="#s6" fill="url(#g8)"/><g clip-path="url(#c6)"><path d="M 60 158 L 140 150 M 68 176 L 132 166 M 80 194 L 122 184" fill="none" stroke="#6E747E" stroke-width="5.5" stroke-linecap="butt" stroke-linejoin="round" opacity="0.9"/><path d="M 66 146 L 78 146 L 100 208 Z" fill="#FFFFFF" opacity="0.3"/></g>
+</g>
+</g>
+</svg>

@@ -58,6 +58,25 @@ COPIES = [
     ("enemies/spire-sun-blade.svg", "enemies/sun-blade.svg"),
     ("enemies/slime.svg", "enemies/slime.svg"),
     ("enemies/slime-small.svg", "enemies/slime-small.svg"),
+    # the second pass: the rest of the Foundry, the kinds with no note that fell short, the Spire's seraph and cherub, the Pit Lord
+    ("enemies/foundry-automaton.svg", "enemies/automaton.svg"),
+    ("enemies/foundry-bomb-bot.svg", "enemies/bomb-bot.svg"),
+    ("enemies/foundry-turret-flame.svg", "enemies/turret-flame.svg"),
+    ("enemies/foundry-turret-laser.svg", "enemies/turret-laser.svg"),
+    ("enemies/foundry-mortar.svg", "enemies/mortar.svg"),
+    ("enemies/foundry-tesla-coil.svg", "enemies/tesla-coil.svg"),
+    ("enemies/foundry-repair-drone.svg", "enemies/repair-drone.svg"),
+    ("enemies/foundry-saw-blade.svg", "enemies/saw-blade.svg"),
+    ("enemies/foundry-crawler-head.svg", "enemies/crawler-head.svg"),
+    ("enemies/foundry-crawler-plate.svg", "enemies/crawler-plate.svg"),
+    ("enemies/foundry-drill-bot.svg", "enemies/drill-bot.svg"),
+    ("enemies/foundry-smith.svg", "enemies/smith.svg"),
+    ("enemies/frost-ice-slime.svg", "enemies/ice-slime.svg"),
+    ("enemies/dunes-sand-mage.svg", "enemies/sand-mage.svg"),
+    ("enemies/dunes-dart-trap.svg", "enemies/dart-trap.svg"),
+    ("enemies/spire-seraph.svg", "enemies/seraph.svg"),
+    ("enemies/spire-cherub.svg", "enemies/cherub.svg"),
+    ("enemies/ember-pit-lord.svg", "enemies/pit-lord.svg"),
 ]
 
 if __name__ == "__main__":
