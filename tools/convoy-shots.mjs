@@ -46,7 +46,7 @@ try {
   await shot('03-road-start', 1200);
   await page.evaluate(() => GAME.fastForward(28));
   await shot('04-road-fight', 700);
-  await page.evaluate(() => { const r = GAME.run; for (let i = 0; i < 80; i++) { if (!r.world.units.some((u) => u.team !== r.wagon.team && !u.dead && !u.downed && u.team !== 'neutral')) break; GAME.fastForward(0.5); } r.waveT = 30; GAME.fastForward(5); });
+  await page.evaluate(() => { const r = GAME.run; for (let i = 0; i < 80; i++) { if (!r.world.units.some((u) => u.team !== r.wagon.team && !u.dead && !u.downed && u.team !== 'neutral')) break; GAME.fastForward(0.5); } r.waveT = 40; GAME.fastForward(14); });
   await shot('05-road-quiet', 700);
   // on to the end of the stretch: the roadside camp
   await page.evaluate(() => { const r = GAME.run; for (let i = 0; i < 1600 && r.phase === "road"; i++) { r.wagon.hp = Math.max(r.wagon.hp, r.wagon.maxHp * 0.5); for (const u of r.world.units) if (u.team === r.wagon.team && !u.downed && !u.dead) u.hp = Math.max(u.hp, u.maxHp * 0.6); GAME.fastForward(0.25); }

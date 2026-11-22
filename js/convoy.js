@@ -234,7 +234,7 @@ export function updateConvoy(run, dt) {
   // the camera rides ahead of the wagon, and leans across towards where the party is
   const py = party.reduce((a, h) => a + h.y, 0) / party.length;
   w.camAt.x = wg.x + AHEAD; w.camAt.y = MID + clamp(0.35 * (wg.y - MID) + 0.65 * (py - MID), -(ROAD_W / 2 - EDGE), ROAD_W / 2 - EDGE);
-  w.wp = { x: Math.min(w.W - 80, wg.x + 300), y: wg.y }; // (ahead of the oxen: sim.js spreads the party round it)
+  w.wp = { x: Math.min(w.W - 80, wg.x + 400), y: wg.y }; // (ahead of the oxen: sim.js spreads the party round it)
   leash(run, party);
   coinsTick(run, party, seen);
   // raiders go for the wagon first (they want what's in it)
@@ -395,7 +395,7 @@ function downedTick(run, dt, party) {
 // or two at once; each a little bigger than the last. Nothing appears on open ground.
 function spawnWave(run) {
   const w = run.world, wg = run.wagon, n = run.waveN++, S = legOf(run), T = floorTheme(S.theme, S.floor), H = w.H;
-  const budget = (3.6 + 0.45 * n + 0.8 * run.stretch) * S.budget * sizeScale(run) * rrange(0.9, 1.15);
+  const budget = (3.8 + 0.5 * n + 0.8 * run.stretch) * S.budget * sizeScale(run) * rrange(0.9, 1.15);
   const kinds = rollKinds(T.enemies, budget);
   const dirs = n === 0 ? ['ahead'] : (() => { const r = rand(); return r < 0.32 ? ['ahead'] : r < 0.6 ? [pick(['left', 'right'])] : r < 0.75 ? ['behind'] : [pick(['ahead', 'behind']), pick(['left', 'right'])]; })();
   const mult = strength(run, n); w.mult = mult;
