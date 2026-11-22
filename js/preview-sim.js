@@ -353,7 +353,7 @@ const TRAIT_SCENE = {
   powderKeg: { words: 'it blew up', kill: true },
   longShot: { words: 'a long shot' },
   plunder: { words: 'extra coins', kill: true },
-  duelist: { words: 'one on one' },
+  duelist: { words: 'one on one', abilities: true },
   keenEdge: { words: '+3% of its health' },
   valhalla: { words: 'the glow heals' },
   overclock: { words: 'overclocked', abilities: true },
@@ -364,7 +364,7 @@ const TRAIT_SCENE = {
   thickHide: { words: 'statuses half', hitSt: { burn: 16, chill: 16 } },
   ironWill: { words: 'low: +25%' },
   lightFingers: { words: 'more gold', start: (d) => { d.def = { ...d.def, coins: [2, 3] }; }, kill: true },
-  fade: { words: 'a shadow', hitsFrom: 4.4, quiet: 3.6 }, // (round 13: she becomes a shadow after 3 s without striking or being hurt)
+  fade: { words: 'a shadow', hitsFrom: 4.4, quiet: 3.6, shotEvery: 50 }, // (round 13: she becomes a shadow after 3 s without striking or being hurt)
   hardWork: { words: 'healed 8%', hero: (u) => { u.hp = u.maxHp * 0.6; }, kill: true },
   prospector: { words: 'dug up a coin' },
   seenItAll: { words: 'stagger shaken', friend: (w, a) => { a.st.stagger = 90; } },

@@ -2254,7 +2254,7 @@ function lob(w, u, x, y, kind, color, land) {
 // The Shade's shadow: unseen (nobody's target: ethereal) and dark, until she strikes (the Fade trait), or for `dur`
 function shadowForm(w, u, dur) {
   if (!alive(u)) return; const k = u.kit; k.shadow = { until: dur ? w.time + dur : 0, anim: u.anim, t0: w.time };
-  u.ethereal = true; addBuff(u, { id: 'shadowForm', dur: dur || 60, wash: ['#140E1E', 0.72] });
+  u.ethereal = true; addBuff(u, { id: 'shadowForm', dur: dur || 60, wash: ['#140E1E', 0.72] }); k2(w, { draw: 'poof', x: u.x, y: u.y, r: 18, col: '#5A4A7A', max: 0.5 });
   puff(w, u.x, u.y, '#2E2440', 12, 80, 7, 0.5);
 }
 function leaveShadow(w, u) { const k = u.kit; if (!k || !k.shadow) return; k.shadow = null; u.ethereal = false; u.buffs = u.buffs.filter((b) => b.id !== 'shadowForm'); puff(w, u.x, u.y, '#2E2440', 10, 90, 6, 0.45); k.lastHurt = w.time; }
@@ -2497,7 +2497,7 @@ function juggleTick(w, u, dt) {
     for (const pl of w.pillars) if (dist(nx, ny, pl.x, pl.y) < pl.r + p.r) { const a = angleTo(pl.x, pl.y, p.x, p.y), d = p.vx * Math.cos(a) + p.vy * Math.sin(a); p.vx -= 2 * d * Math.cos(a); p.vy -= 2 * d * Math.sin(a); bx = by = false; p.bounced = true; }
     if (bx) p.vx = -p.vx; if (by) p.vy = -p.vy;
     if (bx || by || p.bounced) { p.bounced = false; p.juggle.left--; p.hitSet.clear(); p.a = Math.atan2(p.vy, p.vx); sparks(w, p.x, p.y, p.a, 5, p.color || '#FFD45A', 0.9); k2(w, { draw: 'confetti', x: p.x, y: p.y, max: 0.4, small: true });
-      const c = p.juggle.carry; if (c && alive(c)) { k2(w, { draw: 'confetti', x: c.x, y: c.y, max: 0.5 }); c.x = clamp(p.x, c.r, w.W - c.r); c.y = clamp(p.y, c.r, w.H - c.r); c.vx = c.vy = c.kx = c.ky = 0; stun(w, c, 0.5); p.juggle.carry = 'done'; }
+      const c = p.juggle.carry; if (c && typeof c === 'object' && alive(c)) { k2(w, { draw: 'confetti', x: c.x, y: c.y, max: 0.5 }); c.x = clamp(p.x, c.r, w.W - c.r); c.y = clamp(p.y, c.r, w.H - c.r); c.vx = c.vy = c.kx = c.ky = 0; stun(w, c, 0.5); p.juggle.carry = 'done'; }
       if (p.juggle.left < 0) p.life = 0; else p.life = Math.max(p.life, 0.6); }
   }
 }
@@ -2559,6 +2559,7 @@ BRAINS.windup = function (w, d, dt) {
     for (const o of foesNear(w, d, d.x, d.y, 46)) hurt(w, o, d.def.dmg * d.dmgMul, u, { noDodge: true, shock: d.tier >= 2 ? 30 : 20, knock: 140, kAngle: angleTo(d.x, d.y, o.x, o.y) }); kill(w, d, null); }
   return true;
 };
+const oneOnOne = (w, u, foe) => !opponents(w, u).some((e) => e !== foe && e.target === u && dist(e.x, e.y, u.x, u.y) < 200);
 // the Bandit's Snatch: its weapon flung out of its hand; it must walk over and pick it up before it can attack again
 function snatch(w, u, e) {
   if (!alive(e) || e.def.boss || e.fixed || e.def.brain || isOn(w, e, 'snatched')) return;
@@ -2579,7 +2580,7 @@ export const TRAITS2 = {
   lastStand: {
     allyDown(w, u, v) {
       if (u.kit.lastW === w || v.summon || !alive(u) || !opponents(w, u).length) return;
-      if (allies(w, u).some((a) => !a.summon && !a.def.cargo)) return;
+      if (allies(w, u).some((a) => a !== v && !a.summon && !a.def.cargo)) return; // (v is still standing as the hook runs)
       u.kit.lastW = w;
       addBuff(u, { id: 'unstoppable', dur: 10, statusImmune: true, knockImmune: true, glow: '#FFE7A0' });
       haste(w, u, 10, 1.35);
@@ -2715,7 +2716,7 @@ export const TRAITS2 = {
   huntingPartner: { hit(w, u, t, amt, o) { if (!o.shot || o.proc) return; const k = u.kit; k.throwN = (k.throwN || 0) + 1; if (k.throwN % 4 === 0 && !k.falconOut && alive(t)) partnerDive(w, u, t); } },
   // Powder Keg (round 13, the designer: "Needs different trait. That's just what his bombs do."): whatever his blasts kill
   // blows up too, hurting those round it (a chain through a pack)
-  powderKeg: { kill(w, u, v, o) { if (!v || v.summon || v._kegged) return; v._kegged = true; const x = v.x, y = v.y; after(u, 0.15, () => blast(w, u, x, y, 64, 0.9, { stagger: 20, keg: true }, 'powderKeg')); } },
+  powderKeg: { kill(w, u, v, o) { if (!v || v.summon || v._kegged) return; v._kegged = true; const x = v.x, y = v.y; k2(w, { draw: 'poof', x, y, r: 14, col: '#FFC85A', max: 0.3 }); after(u, 0.15, () => blast(w, u, x, y, 64, 0.9, { stagger: 20, keg: true }, 'powderKeg')); } },
   oldSalt: { immune: ['wet'], dealt(w, u, t, amt) { return t.st && t.st.wet > 20 ? amt * 1.2 : amt; } },
   // Overclock (round 13, the designer: "Trait doesnt make sense. Overclock. If all abilities are used up 1 random ability
   // will come back faster. Boosted rate"): when none of her abilities is ready, one of them (at random) comes round
@@ -2739,7 +2740,7 @@ export const TRAITS2 = {
   // have very long range."): his reach is 40% longer, and a shot hits up to 60% harder the nearer the edge of it
   longShot: {
     tick(w, u) { if (u.kit.longDef === u.def) return; u.def = { ...u.def, range: u.def.range * 1.4, keep: (u.def.keep || 200) * 1.2 }; u.kit.longDef = u.def; },
-    dealt(w, u, t, amt, o) { if (o.dot || !o.shot) return amt; const k = clamp((dist(u.x, u.y, t.x, t.y) / (u.def.range || 300) - 0.55) / 0.4, 0, 1); return amt * (1 + 0.6 * k); },
+    dealt(w, u, t, amt, o) { if (o.dot || !o.shot) return amt; const k = clamp((dist(u.x, u.y, t.x, t.y) / (u.def.range || 300) - 0.2) / 0.75, 0, 1); return amt * (1 + 0.6 * k); },
   },
   assassin: { dealt(w, u, t, amt, o) { return o.shot && angleDiff(angleTo(t.x, t.y, u.x, u.y), t.facing) > 1.9 ? amt * 1.5 : amt; } },
   // Plunder (round 13, the designer: "Enemies have a chance to drop more coins when he is in the party"): with her in the
@@ -2747,17 +2748,17 @@ export const TRAITS2 = {
   plunder: {
     tick(w, u) {
       const k = u.kit, seen = k.plunderSeen || (k.plunderSeen = new Map());
-      for (const e of opponents(w, u)) if (!e.summon && e.def.coins) seen.set(e, { x: e.x, y: e.y });
-      for (const [e, p] of seen) if (e.dead || !w.units.includes(e)) { seen.delete(e); if (e.dead && !w.battle && rand() < 0.35) { const c = e.def.coins; scatterCoins(w, p.x, p.y, Math.max(1, Math.round((c[0] + c[1]) / 3)), 0.9); k2(w, { draw: 'coinPop', x: p.x, y: p.y, r: 16, max: 0.7 }); } }
+      for (const e of opponents(w, u)) if (!e.summon) seen.set(e, { x: e.x, y: e.y });
+      for (const [e, p] of seen) if (e.dead || !w.units.includes(e)) { seen.delete(e); if (e.dead && !w.battle && (k.plN = (k.plN || 0) + 1) % 3 === 1) { const c = e.def.coins || [1, 2]; scatterCoins(w, p.x, p.y, Math.max(1, Math.round((c[0] + c[1]) / 3)), 0.9); k2(w, { draw: 'coinPop', x: p.x, y: p.y, r: 16, max: 0.7 }); } }
     },
   },
   watchful: { tick(w, u, dt) { for (const a of friendsNear(w, u, u.x, u.y, 170)) { if (a.stunT > 0) a.stunT = Math.max(0, a.stunT - 0.4 * dt); if (a.sleepT > 0) a.sleepT = Math.max(0, a.sleepT - 0.4 * dt); } } },
   trappersEye: { dealt(w, u, t, amt) { return t.rootT > 0 || t.tangledT > 0 || t.koT > 0 ? amt * 1.3 : amt; } },
-  // Duelist (round 13, the designer: "Trait should make him stronger 1 on 1"): with only one enemy within 180 of him he
-  // hits 35% harder and takes 25% less
+  // Duelist (round 13, the designer: "Trait should make him stronger 1 on 1"): while no enemy but the one he fights is on
+  // him (none other within 200 with him as its target), he hits it 35% harder and takes 25% less from it
   duelist: {
-    dealt(w, u, t, amt, o) { return !o.dot && foesNear(w, u, u.x, u.y, 180).length <= 1 ? amt * 1.35 : amt; },
-    taken(w, u, src, amt, o) { return !o.dot && foesNear(w, u, u.x, u.y, 180).length <= 1 ? amt * 0.75 : amt; },
+    dealt(w, u, t, amt, o) { return !o.dot && oneOnOne(w, u, t) ? amt * 1.35 : amt; },
+    taken(w, u, src, amt, o) { return !o.dot && src && oneOnOne(w, u, src) ? amt * 0.75 : amt; },
   },
   // Pratfall (round 13, the designer: "25% of simple melee hits that should hit him flips target around instead"): a
   // quarter of the blows swung at him miss, and the one who swung is spun round to face away
@@ -2895,7 +2896,7 @@ export const ATTACKS2 = {
   },
   // the shotgun (round 13: "I want them to have a shotgun... Short range. Many pellets (each one is a projectile)")
   trapper(w, u, t, a) { k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a, max: 0.45, big: true }); u.recoilT = 0.2;
-    for (let i = 0; i < 6; i++) shoot(w, u, a + (rand() - 0.5) * 0.5, { kind: 'pellet', speed: rrange(640, 820), r: 4, life: 0.28, dmg: A(u, 0.22), knock: 40 }); },
+    for (let i = 0; i < 6; i++) shoot(w, u, a + (rand() - 0.5) * 0.5, { kind: 'pellet', speed: rrange(660, 820), r: 4, life: 0.34, dmg: A(u, 0.22), knock: 40 }); },
 
   // the Cultist (round 13: "Does a dagger swipe when close, and shadow bolt when far. Dagger applies bleed. If the bolt
   // hits a bleeding target they instantly burst.")

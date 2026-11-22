@@ -544,7 +544,7 @@ Object.assign(HEROES2, {
       { id: 'broadside', name: 'Broadside', cd: 15, tags: 'd', glyph: 'burst', desc: 'Whistles to the ship out of sight: cannonballs come in high from the edge of the room and land round a spot.',
         tiers: ['Three cannonballs.', 'Bigger blasts.', 'Five.'] },
     ],
-    trait: { id: 'plunder', name: 'Plunder', desc: 'With her in the party, every enemy that falls has a chance to spill extra coins. A gatherer: on the wagon road she goes for loose gold before a fight, and further for it.' },
+    trait: { id: 'plunder', name: 'Plunder', desc: 'With her in the party, one enemy in three that falls spills extra coins. A gatherer: on the wagon road she goes for loose gold before a fight, and further for it.' },
     gatherer: true, // lane W (round 13): see the Quartermaster
   },
   slinger: {
@@ -570,7 +570,7 @@ Object.assign(HEROES2, {
     name: 'Trapper', art: 'art/heroes/trapper.svg', role: 'ranged', unlock: { gems: 2 },
     blurb: 'A fur cap with the flaps down, a short rifle and a jaw trap. Catches things.',
     fun: 'Knows where every trap he ever set is. Mostly. Walks carefully.',
-    stats: { hp: 88, speed: 62, r: 31, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1.2, range: 150, keep: 110, atkCd: 1.4, dmg: 12 },
+    stats: { hp: 88, speed: 62, r: 31, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1.2, range: 180, keep: 120, atkCd: 1.4, dmg: 12 },
     // round 13: "I want them to have a shotgun... Short range. Many pellets" (the shotgun held in two hands and the trap on his hip are the art lane's)
     attack: { name: 'Shotgun', anim: 'shoot', desc: 'A short-range blast of six pellets.' },
     abilities: [
@@ -598,7 +598,7 @@ Object.assign(HEROES2, {
       { id: 'shieldRush', name: 'Shield Rush', cd: 9, tags: 'ds', glyph: 'shield', desc: 'A long rush behind the round shield: the first one it meets is carried along on it and slammed down at the end, staggered.',
         tiers: ['A long rush and a slam.', 'The rush knocks aside what else it meets.', 'Stuns the one slammed.'] },
     ],
-    trait: { id: 'duelist', name: 'Duelist', desc: 'With only one enemy near him he hits 35% harder and takes 25% less.' },
+    trait: { id: 'duelist', name: 'Duelist', desc: 'One on one, with no other enemy on him, he hits his foe 35% harder and takes 25% less from it.' },
   },
   jester: {
     name: 'Jester', art: 'art/heroes/jester.svg', role: 'skirmish', unlock: { gems: 3 },
