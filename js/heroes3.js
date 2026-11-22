@@ -15,9 +15,9 @@ const art = (file) => ART + file + '.svg';
 // own unit; the other three are its bodies. The fighters' share of ROLE_TUNE (x1.1 damage) is already in these numbers.
 const BODY = { r: 19, vr: 14, turn: 5, accel: 300, face: 5, mass: 0.7, hp: 40, speed: 62, role: 'melee', mobBody: true };
 const MOB_BODIES = {
-  mobPitchfork: { ...BODY, name: 'The Mob (pitchfork)', art: art('mob-pitchfork'), range: 26, atkCd: 1.25, dmg: 5.1, knock: 120, arc: 0.9, attackAnim: 'thrust', weapon: 'fork' },
-  mobAxe: { ...BODY, name: 'The Mob (axe)', art: art('mob-axe'), range: 16, atkCd: 1.5, dmg: 6.8, knock: 150, arc: 1.7, attackAnim: 'swing', weapon: 'blade', heavy: true, stagger: 8 },
-  mobDagger: { ...BODY, name: 'The Mob (dagger)', art: art('mob-dagger'), range: 12, atkCd: 0.6, dmg: 2.5, knock: 20, arc: 1.2, attackAnim: 'thrust', bleed: 5 },
+  mobPitchfork: { ...BODY, name: 'The Mob (pitchfork)', art: art('mob-pitchfork'), range: 30, atkCd: 1.25, dmg: 5.6, knock: 120, arc: 0.9, attackAnim: 'thrust', weapon: 'fork' },
+  mobAxe: { ...BODY, name: 'The Mob (axe)', art: art('mob-axe'), range: 20, atkCd: 1.5, dmg: 7.5, knock: 150, arc: 1.7, attackAnim: 'swing', weapon: 'blade', heavy: true, stagger: 8 },
+  mobDagger: { ...BODY, name: 'The Mob (dagger)', art: art('mob-dagger'), range: 16, atkCd: 0.7, dmg: 3.1, knock: 20, arc: 1.2, attackAnim: 'thrust', bleed: 6 },
 };
 
 export const HEROES3 = {
@@ -30,7 +30,7 @@ export const HEROES3 = {
     blurb: 'Four angry villagers with a torch, a pitchfork, an axe and a dagger. One hero, four pairs of boots.',
     fun: 'Came about the taxes. Stayed for the dungeon. Nobody remembers who brought the torch.',
     // (the torch-bearer's own numbers; hp is the one pool the four share: 4 x 30% of a fighter's 150 = 180)
-    stats: { hp: 180, speed: 62, r: 19, vr: 14, turn: 5, accel: 300, face: 5, mass: 0.7, range: 16, atkCd: 1.1, dmg: 3.8, knock: 60, arc: 1.5, burn: 6 },
+    stats: { hp: 180, speed: 62, r: 19, vr: 14, turn: 5, accel: 300, face: 5, mass: 0.7, range: 20, atkCd: 1.1, dmg: 4.2, knock: 60, arc: 1.5, burn: 6 },
     weapon: 'blade', style: { torch: true },
     bodies: Object.keys(MOB_BODIES), summons: MOB_BODIES,
     attack: { name: 'Torch, pitchfork, axe and dagger', anim: 'swing', desc: 'Each of the four strikes with what it carries: the torch burns, the pitchfork jabs from further off and shoves, the axe is slow and heavy, the dagger is quick and makes them bleed. Each is about a third of a fighter.' },
@@ -39,10 +39,10 @@ export const HEROES3 = {
         tiers: ['They hold it for 2.2s.', 'For 3s.', 'When they let go they throw it: it flies, and it is knocked out where it lands.'] },
       { id: 'surround', name: 'Surround', cd: 13, tags: 'ds', glyph: 'swirl', desc: 'The four run out to four sides of the enemies and close in at once, shoving everything they meet into one knot in the middle.',
         tiers: ['Herds the enemies together; each one shoved is hit.', 'The torch sets the ground alight where they meet, for 4s.', 'Those herded together are knocked off their feet for 1.2s.'] },
-      { id: 'scatter', name: 'Scatter', cd: 16, tags: 'h', glyph: 'dash', desc: 'They bolt in four directions. Whoever was after them loses them, and for a few seconds each runs on its own and takes 50% less; then they find each other again.',
-        tiers: ['Apart for 3s.', 'They get their breath back as they regroup: healed 14%.', 'Apart, each strikes twice as fast.'] },
+      { id: 'scatter', name: 'Scatter', cd: 16, tags: 'h', glyph: 'dash', desc: 'They bolt in four directions. Whoever was after them loses them, and for 3s each runs on its own and takes 50% less; then they find each other again and get their breath back.',
+        tiers: ['Healed 10% as they regroup.', 'Healed 20%.', 'Apart, each strikes twice as fast.'] },
     ],
-    trait: { id: 'strengthInNumbers', name: 'Strength in Numbers', desc: 'Each of the four hits 9% harder for every other one of them shoulder to shoulder with it: 27% when all four stand together, nothing when they are scattered.' },
+    trait: { id: 'strengthInNumbers', name: 'Strength in Numbers', desc: 'Each of the four hits 9% harder, and is hurt 7% less, for every other one of them shoulder to shoulder with it: 27% and 21% when all four stand together, nothing when they are scattered.' },
   },
   // ------------------------------------------------------------------ the Clockwork hero
   // The designer: "Clock work hero. Influence time."
@@ -136,7 +136,7 @@ export const HEROES3 = {
         tiers: ['A quake for 3s.', 'Wider, and for 4.5s.', 'It ends with the floor heaving up: everything on it is thrown off its feet.'] },
       { id: 'spikeChain', name: 'Spike Chain', cd: 9, tags: 'ds', glyph: 'spike', desc: 'A line of stone spikes bursts out of the floor one after another, running from her to an enemy; from there it runs on to the next enemy, and the next.',
         tiers: ['Runs through three enemies.', 'Through five.', 'The last spike under each holds it fast: rooted for 1.4s.'] },
-      { id: 'stoneWall', name: 'Stone Wall', cd: 15, tags: 's', glyph: 'wall', desc: 'A wall of stone slabs heaves up out of the floor across the way of whoever is coming for the party, striking and throwing back whatever stands where it comes up. It is a real wall: nothing walks or shoots through it.',
+      { id: 'stoneWall', name: 'Stone Wall', cd: 15, tags: 's', glyph: 'wall', desc: 'A wall of stone slabs heaves up out of the floor across the way of whoever is coming for the party, striking and throwing back whatever stands where it comes up. It is a real wall: nothing walks through it and the enemy can\'t shoot through it; the party shoots over it.',
         tiers: ['Stands for 6s.', 'A longer wall, for 8s.', 'When it comes down it falls on the enemies\' side: those near it are hurt and staggered.'] },
     ],
     trait: { id: 'aftershock', name: 'Aftershock', desc: 'The ground remembers. A moment after one of her abilities hurts an enemy, a stone spike comes up under it.' },

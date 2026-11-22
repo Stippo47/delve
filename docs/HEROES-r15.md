@@ -35,13 +35,21 @@ switching it off (`tools/ability-worth.mjs`, the tables at the end).
 - "Is 4 peasants. Is the collective of all 4." -> four bodies in the room that are one hero: one slot in the party, one
   card on the HUD, one health bar, one set of abilities, one entry in the save. The torch-bearer is the hero's own
   unit; the pitchfork, the axe and the dagger are its other three bodies (`mobPitchfork`, `mobAxe`, `mobDagger`).
-- "Each is like 30% the strength of 1 normal hero." -> on paper the four together strike for 16.6 a second against a
-  plain fighter's 13.0 (the Haymaker): 32% each. The pool is 388 health against a fighter's 314: 31% each. Each body is
-  64% of a hero's size.
+- "Each is like 30% the strength of 1 normal hero." -> the pool is 388 health against a plain fighter's 314 (the
+  Haymaker): 31% each. Their blows were first set at 30% each on paper, and in real runs the Mob came out the weakest
+  hero in the game: four small bodies each spend part of every fight finding a place to stand, and are in reach of more
+  enemies. So the blows were raised, three times: on paper the four now strike for 18.1 a second against the
+  Haymaker's 13.0 (35% each), and in runs the Mob is inside the fighters' spread but still on its weak side (0.64 rooms
+  under the batch average at tier I, 0.85 under at tier III; the numbers at the end). **So "30% each" is, if anything,
+  generous to what they are worth in a fight; the numbers on the page are a little over it.** Each body is 64% of a
+  hero's size.
 - "Torch, pitchfork, axe, and dagger." -> each strikes with its own: the **torch** burns (6 burn a blow), the
-  **pitchfork** jabs from further off (reach 34 against 24) and shoves, the **axe** is slow and heavy (a heavy blow:
-  it gets past half of armour, and staggers a little), the **dagger** is quick (a blow every 0.6 s) and makes them
+  **pitchfork** jabs from further off (reach 30 against 20) and shoves, the **axe** is slow and heavy (a heavy blow:
+  it gets past half of armour, and staggers a little), the **dagger** is quick (a blow every 0.7 s) and makes them
   bleed. Clip: mob-attack.
+- **Armour, my call, please check:** an enemy's armour takes its points off every blow, so it would take them off the
+  Mob four times where it takes them off a fighter once. Against one of the Mob's bodies armour counts 35%
+  (`mob.js MOB.armour`).
 - "They are strongly attracted to each other." -> a leash: a body more than 96 from the middle of the other three leans
   back towards them, and past 150 it drops what it was doing and runs back faster than it walks (x1.35). Knock one
   away and it comes sprinting back. With nothing to fight the three keep station just behind and beside the
@@ -50,8 +58,9 @@ switching it off (`tools/ability-worth.mjs`, the tables at the end).
 - "They share 1 health pool." -> one pool. A blow on any body comes off it. **My call, please check:** one blow (or one
   tick of a burning floor) that catches several bodies lands in full on the first and 30% on each more, so a slam that
   catches all four does 190%, not 400%. Without a rule every area attack in the game would hit this hero four times.
-  Measured in runs, this adds about a tenth to what the Mob takes. Clip: mob-area (a blast over all four, then one blow
-  on one body, the same damage each: the bar drops 1.9 times as far for the blast).
+  Measured in runs, this adds about a tenth to what the Mob takes. Checked in `tools/test/mob-pool.mjs`: a blow of 40
+  on one body takes 40, the same blow over all four takes 76, a heal of 30 that reaches all four heals 30, a stun on
+  one body holds all four. Clip: mob-area (a blast over all four, then one blow on one body).
 - **Pile On** (`pileOn`): all four jump on one enemy, hold it down by the arms and legs and lay into it in turn, each
   with what it carries. It can't move, turn, strike or use anything, and everyone hits it 25% harder meanwhile. I: held
   2.2 s (a boss 40% of that); II: 3 s; III: when they let go they throw it, and it is knocked out where it lands.
@@ -61,10 +70,12 @@ switching it off (`tools/ability-worth.mjs`, the tables at the end).
   4 s; III: those herded are knocked off their feet for 1.2 s. The job: bunching enemies up for everyone's area
   attacks. Their pull to each other is the move. Clip: mob-surround.
 - **Scatter** (`scatter`): they bolt four ways. Whoever was after them loses them, the leash is let go for 3 s, each
-  fights on its own and they take half damage. II: healed 14% as they regroup; III: apart, each strikes twice as fast.
+  fights on its own and they take half damage; they get their breath back as they regroup (I: healed 10%; II: 20%);
+  III: apart, each strikes twice as fast.
   The job: getting out from under a pile or a slam about to land. Clip: mob-scatter.
-- Trait **Strength in Numbers** (`strengthInNumbers`): each hits 9% harder for every other one within arm's reach: 27%
-  with all four together, nothing scattered (red steam comes off them when all four are shoulder to shoulder). Clip:
+- Trait **Strength in Numbers** (`strengthInNumbers`): each hits 9% harder, and is hurt 7% less, for every other one
+  within arm's reach: 27% and 21% with all four together, nothing scattered (red steam comes off them when all four
+  are shoulder to shoulder). Clip:
   mob-trait (three are knocked away mid-fight: the steam stops, they sprint back, it starts again).
 - Being downed and lifted: mob-revive. Walking with a party: mob-walk.
 
@@ -75,8 +86,8 @@ switching it off (`tools/ability-worth.mjs`, the tables at the end).
    statuses, charm, being downed, being lifted and leaving the room work on "the hero" with no code of their own.
 2. `sim.js spawn`: a kind with `def.bodies` gets its other bodies made beside it, wherever it is spawned (a run, a
    battle, the wagon road, the Book's stages, the lab, the unit page's probe).
-3. `sim.js hurt`: the several-bodies rule; and the fall, the cheat-death hooks and the stats are the hero's whichever
-   body took the blow.
+3. `sim.js hurt`: the several-bodies rule; armour counted once across its four small blows; and the fall, the
+   cheat-death hooks and the stats are the hero's whichever body took the blow.
 4. `sim.js addStatus`: a status lands on the hero whichever body it caught; the same several-bodies rule for clouds and
    burning floors.
 5. `sim.js heal`: a heal on any body is the hero's, and one heal that reaches several bodies counts once.
@@ -152,7 +163,7 @@ switching it off (`tools/ability-worth.mjs`, the tables at the end).
   strengthens them and washes the statuses off friends in the ring; III: 5 s, and the silenced take 20% more.
   Clip: warden-nullify (tier II: two raging orcs, a burning poisoned friend, a volley in the air).
 - **Chain Gang** (`chainGang`): a hold. Chains fly to the enemies round him: they are leashed to him (120 at most),
-  have to fight him, and he takes 20% less while he holds them. I: three for 5 s; II: five; III: at the end he hauls
+  have to fight him, strike 25% slower with the chain dragging at them, and he takes 35% less while he holds them. I: three for 5 s; II: five; III: at the end he hauls
   them in and they reel. Clip: warden-chainGang.
 - Trait **Ball and Chain** (`ballAndChain`): whatever he shackles drags an iron ball: 40% slower, and it can't dash,
   leap or charge. Clip: warden-trait.
@@ -168,8 +179,8 @@ switching it off (`tools/ability-worth.mjs`, the tables at the end).
   its friends: it and what it lands on are hurt. I: 2 s; II: 3 s, and it takes 20% more while it hangs; III: two at
   once. A boss is too heavy: pressed down and slowed instead. Clip: telekinetic-levitate.
 - **Mind Shield** (`mindShield`): a shelter. A dome round her and the friends beside her: enemy shots that reach it
-  stop dead and hang there, enemies that walk in are pushed out, and when it drops everything it caught flies back at
-  whoever loosed it. She stands still to hold it. I: 3.5 s; II: 5 s, thrown back 50% harder; III: it ends with a shove.
+  stop dead and hang there, enemies that walk in are pushed out, every blow that does land on someone inside is 30%
+  softer, and when it drops everything it caught flies back at whoever loosed it. She stands still to hold it. I: 3.5 s; II: 5 s, thrown back 50% harder; III: it ends with a shove.
   Clip: telekinetic-mindShield.
 - Trait **Poltergeist** (`poltergeist`): when an enemy dies near her its body is flung at the nearest of its friends
   (the real body: it flies, spins and lands). Clip: telekinetic-trait.
@@ -183,11 +194,36 @@ switching it off (`tools/ability-worth.mjs`, the tables at the end).
 - **Spike Chain** (`spikeChain`): the damage. A line of stone spikes bursts out of the floor running from her to an
   enemy, and from there on to the next, and the next; what stands on the line is caught too. I: three enemies; II:
   five; III: the last spike under each holds it fast (rooted 1.4 s). Clip: earthMage-spikeChain.
-- **Stone Wall** (`stoneWall`): a real wall (the room's own kind: nothing walks or shoots through it, and enemies have
-  to go round) heaved up across the way of a brawler coming for one of the party's soft ones. I: 6 s; II: longer, 8 s;
-  III: it comes down on the enemies' side. She only raises it for that: thrown up at every chance it would stand in
-  the party's own line of fire (the Frost Mage's Ice Wall taught that in round 13). Clip: earthMage-stoneWall.
+- **Stone Wall** (`stoneWall`): a real wall (the room's own kind: nothing walks through it, the enemy can't see or
+  shoot through it, and enemies have to go round) heaved up across the way of a brawler coming for one of the party's
+  soft ones. It comes up hard: what stands where it rises is struck, staggered and thrown back. It is raised low on
+  her own side: the party sees and shoots over it (as a plain wall it measured as a loss: it stood in the party's own
+  line of fire, as the Frost Mage's Ice Wall did in round 13). I: 6 s; II: longer, 8 s; III: it comes down on the
+  enemies' side. Clip: earthMage-stoneWall.
 - Trait **Aftershock** (`aftershock`): a moment after one of her abilities hurts an enemy, the floor cracks under it
   and a stone spike comes up. Clip: earthMage-trait.
 
-NUMBERS
+## The numbers
+
+All of it is in `docs/balance/r15-newheroes.txt` (Node only, merged 0.20.2 code): what each is on paper, a
+`tools/balance.mjs` batch at tier I and at tier III with the existing spread for each role beside it, each of the six
+against the existing heroes of its role in the same party on the same seeds (`tools/test/hero-vs.mjs`), every ability
+switched off in turn (`tools/ability-worth.mjs`), and a plain verdict. In short:
+
+| hero | role | tier I: rooms vs average, damage share | tier III | plainly |
+|---|---|---|---|---|
+| Earth Mage | caster | +1.11, 41% | -0.29, 40% | inside the casters' spread; strong at tier I |
+| Clockmaker | support | +0.41, 21% | +0.67, 19% | inside; fair |
+| Air Mage | caster | +0.13, 33% | -0.49, 36% | inside; fair, a little under at tier III |
+| Telekinetic | caster | -0.35, 35% | +1.19, 37% | strong at tier III: above the old caster top (+1.01). Hurl III. Flagged, not eased |
+| Warden | tank | -0.63, 19% | +0.05, 21% | inside for rooms; the lowest-damage tank (a point under the role at tier I) |
+| The Mob | melee | -0.64, 31% | -0.85, 37% | inside, on the weak side at both; takes 56-57% of its party's damage |
+
+Abilities: none of the eighteen measured negative. Weakest: the Warden's Nullify (+0.00 rooms at tier I, +0.71 at
+tier III; what it does shows as damage the party is spared, 0.50 and 0.94 a second, the largest of the eighteen) and
+Chain Gang (+0.62 and +0.42, inside the noise of about 0.6). Inside the noise at one tier: Gale and Slow Time and
+Spike Chain at tier I, Cyclone, Stop the Clock and Surround at tier III.
+
+Tests added: `tools/test/mob-pool.mjs` (the pool's rules, 17 checks), `tools/test/shackle.mjs` (Shackled, 15 checks),
+`tools/test/newheroes-smoke.mjs` (all 18 abilities at all three tiers in a fight: nothing throws, nothing stops being
+a number).

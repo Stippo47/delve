@@ -14,12 +14,14 @@ const { freshSave } = await import('../../js/save.js');
 let bad = 0;
 const ok = (name, cond, got) => { console.log(`  ${cond ? 'ok  ' : 'FAIL'} ${name}${got != null ? ' (' + got + ')' : ''}`); if (!cond) bad++; };
 const near = (a, b) => Math.abs(a - b) < 0.01;
-const mk = () => { const w = makeWorld(900, 500); buildGrid(w); const u = spawn(w, 'mob', 300, 250, { level: 1 }); initKit(u, 'mob', { nodes: {} }, 1); const e = spawn(w, 'rattler', 700, 250, { mult: 1 }); return { w, u, e, all: [u, ...u.bodies] }; };
+// (trait: false leaves Strength in Numbers off, so the pool's own arithmetic shows: together, the trait takes 7% off a blow for each neighbour)
+const mk = (trait = false) => { const w = makeWorld(900, 500); buildGrid(w); const u = spawn(w, 'mob', 300, 250, { level: 1 }); initKit(u, 'mob', { nodes: {} }, 1); if (!trait) u.kit.trait = {}; const e = spawn(w, 'rattler', 700, 250, { mult: 1 }); return { w, u, e, all: [u, ...u.bodies] }; };
 { const { w, u } = mk(); ok('a Mob is four units, one of them the hero', w.units.filter((x) => x.team === 'hero').length === 4 && u.bodies.length === 3 && u.bodies.every((b) => b.partOf === u && b.summon)); }
 { const { w, u, e } = mk(); const h0 = u.hp; hurt(w, u.bodies[0], 40, e, { noDodge: true }); ok('a blow on one body comes off the pool in full', near(h0 - u.hp, 40) && u.bodies.every((b) => b.hp === u.hp), (h0 - u.hp).toFixed(1)); }
 { const { w, u, e, all } = mk(); const h0 = u.hp; for (const b of all) hurt(w, b, 40, e, { noDodge: true }); ok('one blow that catches all four: 1 + 3 x share', near(h0 - u.hp, 40 * (1 + 3 * MOB.share)), (h0 - u.hp).toFixed(1)); }
 { const { w, u, e } = mk(); const h0 = u.hp; explode(w, u.x - 20, u.y, 120, 40, {}, e, '#fff'); ok('a blast over all four: the same', near(h0 - u.hp, 40 * (1 + 3 * MOB.share)), (h0 - u.hp).toFixed(1)); }
 { const { w, u, e, all } = mk(); const h0 = u.hp; for (const b of all) hurt(w, b, 40, e, { noDodge: true }); step(w, 1 / 60); hurt(w, u.bodies[1], 40, e, { noDodge: true }); ok('the next blow, a moment later, is a new blow: in full', near(h0 - u.hp, 40 * (2 + 3 * MOB.share) ) || h0 - u.hp > 40 * (1.99 + 3 * MOB.share), (h0 - u.hp).toFixed(1)); }
+{ const { w, u, e } = mk(true); const h0 = u.hp; hurt(w, u.bodies[0], 40, e, { noDodge: true }); ok('with its trait, all four together: a blow is 21% softer', near(h0 - u.hp, 40 * (1 - 0.21)), (h0 - u.hp).toFixed(1)); }
 { const { w, u, e, all } = mk(); for (const b of all) addStatus(w, b, 'burn', 20, e); ok('a cloud over all four builds 1 + 3 x share, on the hero', near(u.st.burn, 20 * (1 + 3 * MOB.share)) && u.bodies.every((b) => b.st === u.st), u.st.burn.toFixed(1)); }
 { const { w, u, e, all } = mk(); u.hp = 100; for (const b of all) heal(w, b, 30, e); ok('a heal that reaches all four counts once', near(u.hp, 130), (u.hp - 100).toFixed(1)); }
 { const { w, u, all } = mk(); addBuff(u.bodies[2], { id: 'x', dur: 3, dealt: 2 }); stun(w, u.bodies[1], 1.5); ok('a buff or a stun on one body is on the hero', all.every((b) => b.buffs.length === 1 && b.stunT === 1.5)); }

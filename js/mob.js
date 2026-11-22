@@ -16,6 +16,7 @@
 // Pure: no imports (sim.js, kits3.js, render.js and stats.js all read this).
 export const MOB = {
   share: 0.3,        // one blow (or one tick of a zone) that catches several bodies: in full on the first, this much on each more
+  armour: 0.35,      // an enemy's armour counts this much against one body's blow (four small blows are one hero's: without it armour takes its points off four times)
   slot: 34,          // with nothing to fight, the three keep this far from the lead (behind and beside it)
   leash: 96,         // further than this from the middle of the four, a body is drawn back in
   far: 150,          // and past this it drops everything and runs back, faster than it walks

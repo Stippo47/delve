@@ -130,7 +130,7 @@ export const ABILITIES3 = {
       timer(u, 'pile', T0 + hold, (dt) => {
         el += dt; if (!alive(t)) return true; if (el < T0) return false;
         B.forEach((b, i) => { if (!b.act || !b.act.mob) return; const [x, y, a] = spot(b, i); b.x = x; b.y = y; b.vx = b.vy = b.kx = b.ky = 0; b.facing = a + Math.PI; });
-        stabT -= dt; if (stabT <= 0) { stabT = 0.3; const b = B[turn++ % B.length]; setAnim(b, b.def.attackAnim || 'swing', 0.2); hurt(w, t, D(u, 0.52), b, { knock: 0, noDodge: true, pab: 'pileOn', ...(WITH[b.kind] || {}) }); }
+        stabT -= dt; if (stabT <= 0) { stabT = 0.3; const b = B[turn++ % B.length]; setAnim(b, b.def.attackAnim || 'swing', 0.2); hurt(w, t, D(u, 0.6), b, { knock: 0, noDodge: true, pab: 'pileOn', ...(WITH[b.kind] || {}) }); }
         return false;
       }, () => {
         u.kit.pile = null; for (const b of B) release(b); offUnit(t, 'piled');
@@ -164,7 +164,7 @@ export const ABILITIES3 = {
           if (hit.has(e)) continue; const d = dist(e.x, e.y, cx, cy); if (d > R + 20 || d + e.r * 0.4 < r - 6) continue;
           hit.add(e); const by = S.reduce((p, s) => (dist(s.b.x, s.b.y, e.x, e.y) < dist(p.b.x, p.b.y, e.x, e.y) ? s : p)).b, a = angleTo(e.x, e.y, cx, cy);
           setAnim(by, by.def.attackAnim || 'swing', 0.25);
-          hurt(w, e, D(u, 1.5), by, { knock: 0, noDodge: true, stagger: 14, pab: 'surround' });
+          hurt(w, e, D(u, 1.7), by, { knock: 0, noDodge: true, stagger: 14, pab: 'surround' });
           if (!bossy(e)) { const pull = 5 * Math.max(0, d - 24) * (e.mass >= 3 ? 0.5 : 1); e.kx += Math.cos(a) * pull; e.ky += Math.sin(a) * pull; }
         }
         return false;
@@ -200,7 +200,7 @@ export const ABILITIES3 = {
       for (const e of opponents(w, u)) if (e.target && (e.target === u || e.target.partOf === u)) { e.target = null; e.tauntBy = null; e.tauntT = 0; e.thinkT = rrange(0.35, 0.8); e.act = e.act && (e.act.type === 'windup' || e.act.type === 'chargeTell') ? null : e.act; }
       timer(u, 'scatter', dur, () => { for (const b of B) { if (b.runTo && b.runTo.until > w.time && !b.act) b.forcedGoal = b.runTo; else if (b.forcedGoal && b.forcedGoal === b.runTo) { b.forcedGoal = null; b.runTo = null; } } return false; },
         () => { for (const b of B) { if (b.forcedGoal === b.runTo) b.forcedGoal = null; b.runTo = null; }
-          if (tier >= 2 && alive(u)) { heal(w, u, u.maxHp * 0.14, u); for (const b of B) k2(w, { draw: 'rally', unit: b, x: b.x, y: b.y, r: b.vr, max: 0.8, cols: ['#9BE07A', '#D6F5BE'] }); } });
+          if (alive(u)) { heal(w, u, u.maxHp * (tier >= 2 ? 0.2 : 0.1), u); for (const b of B) k2(w, { draw: 'rally', unit: b, x: b.x, y: b.y, r: b.vr, max: 0.8, cols: ['#9BE07A', '#D6F5BE'] }); } });
     },
     show: { hitme: true },
   },
@@ -554,7 +554,8 @@ export const ABILITIES3 = {
     },
     show: { far: true },
   },
-  // Stone Wall: a real wall, across the way of whoever is coming for the party's soft ones.
+  // Stone Wall: a real wall, across the way of whoever is coming for the party's soft ones: nothing walks through it,
+  // the enemy can't see or shoot through it, the party shoots over it.
   stoneWall: {
     score(w, u) { const P = wallPlan(w, u); return P ? 0.72 : 0; },
     use(w, u, t, tier) {
@@ -564,6 +565,7 @@ export const ABILITIES3 = {
       cast(u, 'ability', 0.6);
       const rect = horiz ? { x: clamp(cx - L / 2, 4, w.W - L - 4), y: cy - 15, w: L, h: 30 } : { x: cx - 15, y: clamp(cy - L / 2, 4, w.H - L - 4), w: 30, h: L };
       const wl = wallRect(w, rect, dur, 'stone'); wl.max = dur; wl.side = horiz ? Math.sign(foe.y - cy) || 1 : Math.sign(foe.x - cx) || 1; wl.horiz = horiz;
+      wl.over = u.team; // (raised low on her side: the party sees and shoots over it, the enemy doesn't)
       w.shake = Math.max(w.shake, 4);
       // it comes up hard: whatever stands on it or just beyond it is struck, staggered and thrown back the way it came
       k2(w, { draw: 'wallRise', x: rect.x + rect.w / 2, y: rect.y + rect.h / 2, w: rect.w, h: rect.h, horiz, max: 0.45 });
@@ -596,9 +598,10 @@ function wallPlan(w, u) {
 
 // ---------------------------------------------------------------- traits
 export const TRAITS3 = {
-  // Strength in Numbers: each of the four hits 9% harder for every other one within arm's reach of it.
+  // Strength in Numbers: each of the four hits 9% harder, and is hurt 7% less, for every other one within arm's reach of it.
   strengthInNumbers: {
     dealt(w, u, t, amt, o) { if (o.dot) return amt; let n = 0; for (const b of bodiesOf(u)) if (b !== u && dist(b.x, b.y, u.x, u.y) < 70) n++; return amt * (1 + 0.09 * n); },
+    taken(w, u, src, amt, o) { if (o.dot) return amt; let n = 0; for (const b of bodiesOf(u)) if (b !== u && dist(b.x, b.y, u.x, u.y) < 70) n++; return amt * (1 - 0.07 * n); },
     // all four shoulder to shoulder: angry steam off them (the look of it; the numbers are above)
     tick(w, u, dt) { const B = bodiesOf(u), m = mobMid(u); if (B.length < 4 || !u.target || B.some((b) => dist(b.x, b.y, m.x, m.y) > 62)) return;
       if (rand() < dt * 5) { const b = B[Math.floor(rand() * B.length)]; w.particles.push({ x: b.x + rrange(-6, 6), y: b.y - b.vr * 0.4, vx: rrange(-10, 10), vy: 0, rise: 46, up: 0, life: 0.5, max: 0.5, size: 4.5, color: 'rgba(255,120,90,0.8)' }); } },

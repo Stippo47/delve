@@ -799,9 +799,20 @@ hero, with every clip: `docs/HEROES-r15.md`. The numbers: `docs/balance/r15-newh
 - **One blow that catches several of its bodies** lands in full on the first and 30% on each more (a slam on all four:
   190%). The designer said one health pool and nothing about area attacks; without a rule every area attack in the game
   hits this hero four times. **Open: is 190% the right price, or should a blow only ever land once?**
-- **"Each is like 30%"** was read as: four together are about 120-130% of a plain fighter, in blows (16.6 a second on
-  paper against the Haymaker's 13.0) and in health (388 against 314). In real runs four small blows lose more to armour
-  and the Mob is in reach of more enemies, so it comes out level with the fighters, not ahead (the tables).
+- **"Each is like 30%"** was read as what each is worth in a fight. Health: 388 against a plain fighter's 314 (31%
+  each). Blows: at 30% each on paper the Mob measured as the weakest hero in the game (four small bodies spend part of
+  every fight finding a place to stand, and are in reach of more enemies), so they were raised three times: 18.1 a
+  second on paper against the Haymaker's 13.0 (35% each). Strength in Numbers also takes 7% off a blow for each
+  neighbour, and Scatter heals from tier I, for the same reason. It is now inside the fighters' spread and still on
+  the weak side of it (below).
+- **Where they ended** (`docs/balance/r15-newheroes.txt`, section 7): all six inside their role's existing spread at
+  tier I and tier III but one. **Strong:** the Telekinetic at tier III (+1.19 rooms against the batch, over the old
+  caster top of +1.01; Hurl III), flagged and not eased; the Earth Mage at tier I (+1.11, inside). **Weak:** the Mob
+  (-0.64 and -0.85, it takes 56-57% of its party's damage); the Warden's damage at tier I (19%, a point under the
+  tanks); and two of the Warden's abilities by rooms cleared, Nullify (+0.00 at tier I, though it spares the party the
+  most damage of any of the eighteen) and Chain Gang (inside the noise at both tiers). **Open: ease Hurl III, lift the Mob again?**
+- **Armour against the Mob's blows** counts 35% (`mob.js MOB.armour`): armour takes its points off every blow, which
+  is four times for the Mob and once for a fighter. **Open: or should small blows just bounce off armour, as a swarm's do?**
 - **A heal that reaches several bodies counts once**; a status lands on the hero whichever body it caught; charmed,
   down, lifted and through a door they go as one.
 - **Names**: the "Clock work hero" is the **Clockmaker** (id `clockwork`). **Open: the name.**
@@ -817,8 +828,10 @@ hero, with every clip: `docs/HEROES-r15.md`. The numbers: `docs/balance/r15-newh
 - **No words pop up** for anything new: Shackled has no "SHACKLED" text, the Mob's and the mages' effects are drawn.
 - **Hurl really takes the rock** out of the room (the way through opens, the path grid is rebuilt). Not fountains,
   trees, a boss room's pillars, a troll's boulder or anything with health of its own.
-- **Stone Wall is a real wall** (`sim.js wallRect`, the Ice Wall's kind): nothing walks or shoots through it, the
-  party's shots included, so she only raises it across the way of a brawler coming for a soft friend.
+- **Stone Wall is a real wall** (`sim.js wallRect`, the Ice Wall's kind): nothing walks through it and the enemy
+  can't see or shoot through it. As a plain wall it measured as a loss (it stood in the party's own line of fire), so
+  it is raised low on her side: the party sees and shoots over it (`wall.over`, read by `path.js lineClear` and the
+  shot loop in sim.js). She still only raises it across the way of a brawler coming for a soft friend.
 - **Mind Shield holds her still** while it is up: the dome is round her, and a hero who kites would walk it off the
   friends it shelters.
 - **Rewind's revive** (tier III) is once a room and only for a friend who fell within the last 5 s; his own trait is

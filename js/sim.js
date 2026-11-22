@@ -212,8 +212,8 @@ export function wallRect(w, r, dur, kind) {
 }
 
 // ---------------------------------------------------------------- line of sight
-function blocked(w, ax, ay, bx, by) {
-  if (!lineClear(w, ax, ay, bx, by, 2)) return true;
+function blocked(w, ax, ay, bx, by, team) { // (team, round 15 lane N: a shooter of that side sees over walls raised low for it: path.js lineClear)
+  if (!lineClear(w, ax, ay, bx, by, 2, team)) return true;
   for (const p of w.pillars) {
     const dx = bx - ax, dy = by - ay; const L2 = dx * dx + dy * dy || 1;
     let t = ((p.x - ax) * dx + (p.y - ay) * dy) / L2; t = clamp(t, 0, 1);
@@ -275,7 +275,7 @@ function chooseTarget(w, u) {
       // it shows, not for its brood (the scarabs took the party's blows through every window it was out)
       if ((o.partOf || o).wurmOut) s += WINDOW_PULL;
     }
-    if (k === 'archer') { s += (1 - hpRatio(o)) * 0.5; if (d <= u.def.range && !blocked(w, u.x, u.y, o.x, o.y)) s += 0.6; }
+    if (k === 'archer') { s += (1 - hpRatio(o)) * 0.5; if (d <= u.def.range && !blocked(w, u.x, u.y, o.x, o.y, u.team)) s += 0.6; }
     else if (k === 'rogue') { s += (1 - hpRatio(o)) * 1.1 + (o.target && o.target !== u ? 0.5 : 0) - (o.def.boss ? 0.3 : 0); }
     else if (k === 'knight') {
       s += o.target && o.target.kind !== 'knight' ? 0.35 : 0;
@@ -303,7 +303,7 @@ function reachCheck(w, u) {
   const t = u.target;
   if (!t || u.forcedGoal) { u.chase = null; return; }
   const d = dist(u.x, u.y, t.x, t.y), gap = d - u.r - t.r;
-  const canHit = u.def.role === 'ranged' ? d <= (u.def.range || 0) && !blocked(w, u.x, u.y, t.x, t.y) : gap <= (u.def.range || 20) + 10;
+  const canHit = u.def.role === 'ranged' ? d <= (u.def.range || 0) && !blocked(w, u.x, u.y, t.x, t.y, u.team) : gap <= (u.def.range || 20) + 10;
   const c = u.chase;
   if (canHit || !c || c.t !== t || gap < c.best - 30) { u.chase = { t, best: c && c.t === t ? Math.min(c.best, gap) : gap, since: w.time }; return; }
   if (w.time - c.since < REACH_T) return;
@@ -347,7 +347,7 @@ function scoreModes(w, u) {
   } else if (role === 'ranged') {
     let near = Infinity;
     for (const o of opponents(w, u)) near = Math.min(near, dist(u.x, u.y, o.x, o.y) - o.r);
-    const los = !blocked(w, u.x, u.y, t.x, t.y);
+    const los = !blocked(w, u.x, u.y, t.x, t.y, u.team);
     sc.kite = near < u.def.keep && !u.staleBoost ? 0.5 + 1.1 * (1 - near / u.def.keep) : 0;
     sc.approach = d > u.def.range * 0.92 || !los ? 1 : 0.05;
     sc.strafe = d <= u.def.range ? (los ? 0.75 : 0.9) : 0.15;
@@ -723,7 +723,7 @@ function movement(w, u, dt) {
         if (gap < u.def.range * 0.6) {
           // round 14 (lane L): a shooter this close with something in the way (a rock, a troll's boulder, a wall's corner)
           // steps round it to find a line, instead of standing behind it for ever
-          if (u.def.role === 'ranged' && blocked(w, u.x, u.y, t.x, t.y)) {
+          if (u.def.role === 'ranged' && blocked(w, u.x, u.y, t.x, t.y, u.team)) {
             if (clearance(w, u, -ty * u.strafeSign, tx * u.strafeSign, 60) < 40) u.strafeSign = -u.strafeSign;
             gx = -ty * u.strafeSign + tx * 0.25; gy = tx * u.strafeSign + ty * 0.25; mult = 0.8;
           } else { gx = gy = 0; }
@@ -958,7 +958,7 @@ export function hurt(w, u, amount, src, o = {}) {
   // Armour (round 11; round 13, the designer: "A combination of the 2. % and fixed?"): each point takes one point off a
   // blow and ARMOUR_PCT (2%) off it as well, the whole cut never more than ARMOUR_CAP of the blow. A blow marked heavy,
   // or a critical one, gets past half of both. Burning, poison and the like (damage over time) ignore it.
-  if (!o.dot && u.armor > 0) { const c = armourCut(u.armor, amt, o.heavy || o.crit); kept += c; amt -= c; }
+  if (!o.dot && u.armor > 0) { const c = armourCut(u.armor * (src && (src.partOf || src.bodies) ? MOB.armour : 1), amt, o.heavy || o.crit); kept += c; amt -= c; } // (round 15, the Mob: armour's points count once across its four small blows, not four times)
   if (kept > 0) blockedBy(w, u, src, kept, o);
   u.hp -= amt;
   if (w.stats) tallyHurt(w, me, src, amt, o);
@@ -1368,7 +1368,7 @@ function tryAttack(w, u) {
   const def = u.def;
   if (def.role === 'ranged') {
     if (mirrorFront(w, u, t)) return; // (round 14: round to its side first: the mirror sends the shot back)
-    if (d <= def.range && face < 0.35 && !blocked(w, u.x, u.y, t.x, t.y)) {
+    if (d <= def.range && face < 0.35 && !blocked(w, u.x, u.y, t.x, t.y, u.team)) {
       const lead = d / 520;
       const aim = angleTo(u.x, u.y, t.x + t.vx * lead, t.y + t.vy * lead) + rrange(-0.04, 0.04);
       if (!(u.kit && heroAttack(w, u, t, aim))) fireArrow(w, u, aim); // kits.js: a hero's own attack (round 9), else a plain shot
@@ -1726,7 +1726,7 @@ function projectiles(w, dt) {
       if (pl.hp != null && !p.noHit && p.team !== pl.team) { pl.hp -= p.dmg || 0; pl.hitT = 0.12; } // round 9: a troll's boulder can be shot to pieces
       if (pl.onShot && !p.noHit && p.team !== pl.team) pl.onShot(w, pl, p); // round 13 (lane E): a yeti's snowball is knocked off course (foes10.js)
     }
-    for (const r of w.walls) if (p.x > r.x && p.x < r.x + r.w && p.y > r.y && p.y < r.y + r.h) p.life = 0;
+    for (const r of w.walls) if (p.x > r.x && p.x < r.x + r.w && p.y > r.y && p.y < r.y + r.h && !(r.over && r.over === p.team)) p.life = 0; // (round 15, lane N: r.over, a wall its own side shoots over)
     if (p.life <= 0 && p.land && !p.landed) { p.landed = true; actAs(w, p.owner, () => p.land(p)); }
     if (p.kind === 'fireArrow') for (const h of w.hazards) if ((h.type === 'oil' || h.type === 'gas') && dist(p.x, p.y, h.x, h.y) < h.r) { igniteAround(w, p.x, p.y, 4); p.life = Math.min(p.life, 0.02); }
     if (p.life <= 0 || p.noHit) continue; // noHit: only a look (a lobbed thing; its landing is a danger zone)
