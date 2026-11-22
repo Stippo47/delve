@@ -1,7 +1,7 @@
 // Screenshots or a clip of the renderer bench (lab.html), frame-stepped in headless Edge.
 //   node tools/labshot.mjs <out.png|out.mp4> --q "m=sheet&kinds=paladin,archer" [--port 8821] [--w 390 --h 844]
 //        [--secs S (mp4)] [--fps 30] [--pre S (seconds stepped before the first shot)] [--dpr 2] [--stats]
-import { chromium } from 'playwright-core';
+import { openEdge } from './edge.mjs';
 import { execFileSync, spawn } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -12,12 +12,8 @@ const out = path.resolve(args[0] || 'lab.png');
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 const site = +opt('port', 8821), q = opt('q', 'm=grid'), W = +opt('w', 390), H = +opt('h', 844);
 const secs = +opt('secs', 0), fps = +opt('fps', 30), pre = +opt('pre', 0), dpr = +opt('dpr', 2);
-const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
-const port = 9300 + Math.floor(Math.random() * 500);
-const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'delve-edge-'));
-const edge = spawn(EDGE, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio', `--remote-debugging-port=${port}`, `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
-let browser;
-for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
+const edge = await openEdge({ flags: ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio'] }); // tools/edge.mjs: one headless Edge, closed cleanly
+const browser = edge.browser;
 const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: dpr });
 const page = await ctx.newPage();
 const errors = [];
@@ -40,5 +36,5 @@ else {
 }
 if (args.includes('--stats')) console.log(JSON.stringify(await page.evaluate(() => LAB.stats())));
 // a plain kill() leaves Edge's process tree running on Windows (art round 8 found hundreds left over): take it all down
-await browser.close(); try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); } try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
+await edge.close();
 console.log(errors.length ? 'page errors:\n' + errors.join('\n') : 'no page errors', '->', out);

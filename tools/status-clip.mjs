@@ -3,7 +3,7 @@
 // to be in the clip). Also writes a few still frames (--stills 1.2,3.5) beside the mp4 for checking by eye.
 //   node tools/status-clip.mjs out.mp4 --battle "red|blue" [--arena crypt] [--tier 3] [--secs 8] [--port 8885]
 //        [--inject "js using w, t (seconds), U(kind, team)"] [--stills 1,2,3] [--w 520 --h 640] [--zoom 1]
-import { chromium } from 'playwright-core';
+import { openEdge } from './edge.mjs';
 import { execFileSync, spawn } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -15,12 +15,8 @@ const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i
 const site = +opt('port', 8885), secs = +opt('secs', 8), fps = 30, W = +opt('w', 520), H = +opt('h', 640);
 const stills = (opt('stills', '') || '').split(',').filter(Boolean).map(Number);
 const frames = fs.mkdtempSync(path.join(path.dirname(out), '.frames-'));
-const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
-const port = 9300 + Math.floor(Math.random() * 500);
-const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'delve-edge-'));
-const edge = spawn(EDGE, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio', `--remote-debugging-port=${port}`, `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
-let browser;
-for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
+const edge = await openEdge({ flags: ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio'] }); // tools/edge.mjs: one headless Edge, closed cleanly
+const browser = edge.browser;
 const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2 });
 const page = await ctx.newPage();
 const errors = [];
@@ -47,7 +43,7 @@ for (let i = 0; i < n; i++) {
   await page.screenshot({ path: file });
   for (const s of stills) if (Math.round(s * fps) === i) fs.copyFileSync(file, out.replace(/\.mp4$/, `-${s}s.png`));
 }
-await browser.close(); try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); } try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
+await edge.close();
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', path.join(frames, 'f%04d.png'),
   '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '24', '-movflags', '+faststart', out]);
 fs.rmSync(frames, { recursive: true, force: true });

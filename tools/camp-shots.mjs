@@ -3,7 +3,7 @@
 // alive (with the zoom to the fire) and the map scrolling. Needs the dev server running and playwright-core in
 // tools/node_modules; ffmpeg on the path for the clips.
 //   node tools/camp-shots.mjs <outDir> [--port 8854] [--w 390 --h 844] [--no-clips] [--no-run]
-import { chromium } from 'playwright-core';
+import { openEdge } from './edge.mjs';
 import { spawn, execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -16,16 +16,10 @@ const site = +opt('port', 8854), W = +opt('w', 390), H = +opt('h', 844);
 const clips = !args.includes('--no-clips'), runIt = !args.includes('--no-run');
 fs.mkdirSync(out, { recursive: true });
 
-const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
-const port = 9300 + Math.floor(Math.random() * 500);
-const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'delve-edge-'));
-const edge = spawn(EDGE, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio', `--remote-debugging-port=${port}`, `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
-const cleanup = () => { try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); } try { fs.rmSync(prof, { recursive: true, force: true }); } catch {} };
-process.on('exit', cleanup);
+const edge = await openEdge({ flags: ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio'] }); // tools/edge.mjs: one headless Edge, closed cleanly
 process.on('uncaughtException', (e) => { console.error(e); process.exit(1); });
 process.on('unhandledRejection', (e) => { console.error(e); process.exit(1); });
-let browser;
-for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
+const browser = edge.browser;
 const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2, hasTouch: true });
 const page = await ctx.newPage();
 const errors = [];
@@ -208,5 +202,5 @@ if (runIt) {
   await shot('31-trader-new-stock', 1000);
 }
 
-await browser.close().catch(() => {});
+await edge.close();
 console.log(errors.length ? 'errors:\n' + errors.join('\n') : 'no page errors');
