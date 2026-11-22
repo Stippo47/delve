@@ -130,7 +130,7 @@ export const BEASTS = {
   spiderFrost: { fun: 'Spins its webs out of frost. They are beautiful. They are also a trap. Mostly a trap.',
     habit: 'Its bite chills, and the web it dies into chills whoever walks through.' },
   yeti: { fun: 'Has never seen a snowball fight it didn\'t win. Has never seen a snowball fight end.',
-    habit: 'Pushes a big snowball before it and rolls it at you (heavy cold, a big shove), then packs another. Its fists stagger.' },
+    habit: 'Pushes a heavy snowball before it, slow to get going and slow to turn, then runs it at you and lets it go (a line shows first): it bowls over whoever is in its way (heavy cold, a big shove) and bursts on a wall it hits hard. Shots knock the ball off course and chip it. Without one it fights with its fists (they stagger) and stoops to pack another; hit it hard while it packs and the snow falls apart.' },
   frostWraith: { fun: 'Haunts the roof of the cave. Drops by now and then, sharply.',
     habit: 'Hangs back and drops icicles from above: a shadow shows where.' },
   spiritFrost: { fun: 'A breath of winter that decided to help. It is not helping you.',

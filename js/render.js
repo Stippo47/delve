@@ -12,6 +12,7 @@ import { drawEnemyHp, hpWash, setHpSides } from './hpstyle.js';
 import { icon } from './icons.js';
 import { heartPath, drawStatusMarks } from './fx-status.js'; // round 13 (lane S): the new statuses' marks
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
+import { drawFoeGround, snowRoll } from './foe-draw.js'; // round 13 (lane E): the newer enemies' extra drawing
 
 // One outline thickness for everything drawn here, in room units. Matches what the SVG heroes show.
 export const OUTLINE = 2.4;
@@ -184,6 +185,7 @@ export function draw(ctx, w) {
   drawArena(ctx, w);
   drawDanger(ctx, w);
   drawGroundFx(ctx, w);
+  drawFoeGround(ctx, w); // round 13 (lane E): snow tracks, burrow mounds
   flushPuddles(ctx, tf); // puddles.js: every ground body queued above; bodies of a kind merge into one (round 9)
   for (const p of w.pickups) drawPickup(ctx, p, w.time);
   // shadows straight down under each obstacle (top-down: never cast to one side)
@@ -362,7 +364,7 @@ function drawHazard(ctx, h, t) {
 
 function drawPillar(ctx, p, w) {
   if (p.snowball) { // round 10: a yeti's snowball (foes10.js): packed snow, a blue shade and a few clumps
-    if (prop(ctx, 'yeti-snowball', p.x, p.y, PROP_BOX, { sc: p.r / 30 })) return; // art round 9: its own prop, like the troll's boulder
+    if (prop(ctx, 'yeti-snowball', p.x, p.y, PROP_BOX, { sc: p.r / 30 })) { snowRoll(ctx, p); return; } // art round 9: its own prop, like the troll's boulder; round 13 (lane E): it turns as it rolls
     inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, '#F4FAFF');
     ctx.fillStyle = 'rgba(150,190,225,0.45)'; ctx.beginPath(); ctx.arc(p.x + p.r * 0.18, p.y + p.r * 0.2, p.r * 0.78, 0, TAU); ctx.fill();
     ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(p.x - p.r * 0.25, p.y - p.r * 0.28, p.r * 0.42, 0, TAU); ctx.fill();
@@ -517,6 +519,7 @@ function unitFrame(ctx, u, w) {
   }
   if (u.lungeT > 0) { const k = ease(1 - u.lungeT / 0.18); fy += u.vr * 0.5 * k; sc *= 1 + 0.08 * k; }
   if (u.recoilT > 0) { fy -= u.vr * 0.22 * (u.recoilT / 0.14); }
+  if (u.lean) fy += u.vr * u.lean; // round 13 (lane E): leaning into something (a yeti pushing its snowball)
   if (u.act && (u.act.type === 'windup' || u.act.type === 'slam' || u.act.type === 'chargeTell')) {
     const k = 1 - u.act.t / u.act.max; fy -= u.vr * 0.3 * k; sc *= 1 + 0.1 * k; tilt += Math.sin(w.time * 40) * 0.03 * k;
   }

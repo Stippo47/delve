@@ -1491,6 +1491,7 @@ function projectiles(w, dt) {
     for (const pl of w.pillars) if (dist(p.x, p.y, pl.x, pl.y) < pl.r && p.life > 0) {
       p.life = 0;
       if (pl.hp != null && !p.noHit && p.team !== pl.team) { pl.hp -= p.dmg || 0; pl.hitT = 0.12; } // round 9: a troll's boulder can be shot to pieces
+      if (pl.onShot && !p.noHit && p.team !== pl.team) pl.onShot(w, pl, p); // round 13 (lane E): a yeti's snowball is knocked off course (foes10.js)
     }
     for (const r of w.walls) if (p.x > r.x && p.x < r.x + r.w && p.y > r.y && p.y < r.y + r.h) p.life = 0;
     if (p.life <= 0 && p.land && !p.landed) { p.landed = true; actAs(w, p.owner, () => p.land(p)); }

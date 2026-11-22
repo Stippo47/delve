@@ -16,8 +16,8 @@
 //     that separate them").
 // Out (RETHINK / IDK with no replacement): the Brood Queen, Old Frost (as a mini), the Winter Queen (lane B), the magma
 // golem, the ash wraith, the Dragonborn Champion, the Archon, the Hollow Saint.
-import { alive, opponents, allies, hurt, puff, sparks, flames, addStatus, setAnim, fx, addBuff, explode, spawn, heal, kill, addDanger } from './sim.js';
-import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange, chance } from './util.js';
+import { alive, opponents, allies, hurt, puff, sparks, flames, addStatus, setAnim, fx, addBuff, explode, spawn, heal, kill, addDanger, drive, steer, goalVec } from './sim.js';
+import { TAU, clamp, dist, angleTo, wrapAngle, angleDiff, rand, rrange, chance } from './util.js';
 import { lineClear } from './path.js';
 import { ELITES, lob, cone, line, around, rush, rushTick, summon, shoot, blink, openSpot, pounce, hold, beginHold, due, again, targetOf, gapTo, crowd, stand, turnTo, later } from './elites.js';
 import { slam, courtFalls } from './enemies.js';
@@ -42,60 +42,270 @@ function fireball(w, u, a, o = {}) {
 }
 
 // ---------------------------------------------------------------- the Frost Hollow
-// The yeti: a snowball packed in front of it (a round body in the room, like the troll's boulder: it has its own hit
-// circle and blocks shots, and it can be shot to pieces), always thrown: with a hero in front it rolls it at them
-// (heavy cold, stagger, a big shove) and it bursts on whatever it hits; then it packs a new one. In between it fights
-// with its fists (they stagger). The elite rolls a bigger one that bursts into ice.
-function snowOf(w, u) { return u.snow && w.pillars.includes(u.snow) ? u.snow : (u.snow = null); }
-function packSnow(w, u) {
-  const big = u.elite ? 1.3 : 1, r = Math.round(u.r * 0.55 * big);
-  const b = { x: u.x + Math.cos(u.facing) * (u.r + r + 8), y: u.y + Math.sin(u.facing) * (u.r + r + 8), r, snowball: true, owner: u, team: u.team, vx: 0, vy: 0, held: true, hp: Math.round(40 * (w.mult || 1) ** 0.7), maxHp: 0, spin: 0 };
-  b.maxHp = b.hp; u.snow = b; w.pillars.push(b);
-  puff(w, b.x, b.y, '#F4FBFF', 12, 90, 6, 0.5);
-}
-function burstSnow(w, u, b) {
-  const i = w.pillars.indexOf(b); if (i >= 0) w.pillars.splice(i, 1);
-  if (u && u.snow === b) u.snow = null;
-  puff(w, b.x, b.y, '#F4FBFF', 20, 200, 8, 0.6); w.shake = Math.max(w.shake, 3);
-  for (const h of opponents(w, u)) if (dist(h.x, h.y, b.x, b.y) < b.r + h.r + 40) addStatus(w, h, 'chill', 16, u);
-  if (b.big && u) shards(w, u, 7, { x: b.x, y: b.y, dmg: 5, chill: 20 });
-}
-function yetiBrain(w, u, dt) {
-  // the loose ones roll on their own (and are its, even while it stands through a throw)
-  for (const b of w.pillars.filter((p) => p.snowball && p.owner === u && !p.held)) {
-    const sp = Math.hypot(b.vx, b.vy);
-    if (b.hp <= 0 || sp < 70) { burstSnow(w, u, b); continue; }
-    const k = Math.exp(-0.55 * dt); b.vx *= k; b.vy *= k; b.spin += sp * dt / b.r;
-    const nx = b.x + b.vx * dt, ny = b.y + b.vy * dt;
-    if (nx < b.r || ny < b.r || nx > w.W - b.r || ny > w.H - b.r || w.walls.some((r) => nx > r.x - b.r && nx < r.x + r.w + b.r && ny > r.y - b.r && ny < r.y + r.h + b.r)
-      || w.pillars.some((p) => p !== b && dist(nx, ny, p.x, p.y) < p.r + b.r)) { burstSnow(w, u, b); continue; }
-    b.x = nx; b.y = ny;
-    if (rand() < dt * 12) w.particles.push({ x: b.x, y: b.y, vx: 0, vy: 0, life: 0.5, max: 0.5, size: 6, color: 'rgba(240,248,255,0.8)' });
-    const h = opponents(w, u).find((o) => dist(o.x, o.y, b.x, b.y) < b.r + o.r + 4);
-    if (h) { hurt(w, h, (b.big ? 20 : 16) * u.dmgMul, u, { knock: 380, kAngle: Math.atan2(b.vy, b.vx), heavy: true, stagger: 45, chill: b.big ? 70 : 55 }); burstSnow(w, u, b); }
-  }
-  let b = snowOf(w, u);
-  if (b && b.hp <= 0) { burstSnow(w, u, b); b = null; }
-  if (b && b.held) { const p = { x: u.x + Math.cos(u.facing) * (u.r + b.r + 8), y: u.y + Math.sin(u.facing) * (u.r + b.r + 8) }; b.x = p.x; b.y = p.y; }
-  if (hold(u, dt)) return true;
-  if (!b) { // pack another
-    if (w.stale || !u.aggro || !due(u, 'pack', dt, 1.2)) return false;
-    again(u, 'pack', 2.5, 3.5);
-    beginHold(u, 0.9, null, () => { if (alive(u) && !snowOf(w, u)) packSnow(w, u); });
-    setAnim(u, 'ability', 0.9); puff(w, u.x, u.y, '#F4FBFF', 8, 60, 5, 0.4);
-    return true;
-  }
-  const t = targetOf(w, u); if (!t || !due(u, 'roll', dt, 1.5)) return false;
-  const d = dist(u.x, u.y, t.x, t.y), off = Math.abs(wrapAngle(angleTo(u.x, u.y, t.x, t.y) - u.facing));
-  const pressed = dist(t.x, t.y, b.x, b.y) < b.r + t.r + 24;
-  if (!pressed && (d < 110 || d > 460 || off > 0.45 || !lineClear(w, b.x, b.y, t.x, t.y, b.r * 0.7))) { again(u, 'roll', 0.3); return false; }
-  again(u, 'roll', 1, 1.5);
-  const a = angleTo(u.x, u.y, t.x + (t.vx || 0) * 0.3, t.y + (t.vy || 0) * 0.3);
-  addDanger(w, { shape: 'line', x1: b.x, y1: b.y, x2: b.x + Math.cos(a) * 460, y2: b.y + Math.sin(a) * 460, hw: b.r + 6, t: 0.45, team: u.team, src: u, kind: 'ice' });
-  beginHold(u, 0.45, a, () => { const bb = snowOf(w, u); if (!bb) return; bb.held = false; bb.big = !!u.elite; bb.vx = Math.cos(a) * 400; bb.vy = Math.sin(a) * 400; u.snow = null; });
-  setAnim(u, 'throw', 0.45);
+// The yeti and its snowball. Round 13 (lane E; the designer on 0.12: "the biggest one was how the yeti moved with the
+// snowball. The ball is its own entity. Should not move like it's nothing"). The ball is a heavy body of its own: a
+// round obstacle in the room (w.pillars: its own hit circle; it blocks bodies and shots) with its own update (snowTick,
+// run from a w.fx entry, so it rolls on whatever its yeti is doing, and after it falls):
+//  - it rolls: what speed it is given it keeps, losing SNOW.fric a second, and it can't turn by itself; it grows as it
+//    rolls (up to SNOW.grow times its packed size) and presses a track into the floor;
+//  - the yeti pushes it: it walks round behind the ball (solid to it then), leans in with both hands and pushes it along
+//    the line from its own middle through the ball's, slowly (SNOW.push of its pace, starting slower still) and turning
+//    slowly, so to steer the ball it has to work its way round it;
+//  - the heave: with a hero ahead of the ball and a clear line, the line shows on the floor; the yeti runs behind the
+//    ball building speed, then heaves it off at SNOW.heave. The ball bowls through whoever is in its way (heavy cold, a
+//    big shove; a body slows it and turns it a little), bursts on a wall or pillar it hits hard, and otherwise thuds to a
+//    stop against it or rolls to rest out in the room, where the yeti walks over to it again;
+//  - shots and blasts knock it off course and chip it; broken or burst, it's gone, and the yeti fights with its fists
+//    until it packs a new one where it stands: a long stoop over a growing ball, knocked apart by a hard enough blow;
+//  - a hero beside or behind it while it pushes: it leaves the ball where it is and fights bare-handed a while.
+// The elite's ball is bigger and bursts into ice.
+const SNOW = { r: 0.62, elite: 1.15, grow: 1.3, growK: 0.0011, push: 0.55, turn: 1.2, fric: 200, heave: 400, hurtSp: 130, burstSp: 220, pack: 1.4, reach: 0.82,
+  hp: 50, dmg: 25, track: 7 };
+// pathClear (path.js) for the ball: walls and the other round things, not itself
+function pathClear(w, ax, ay, bx, by, pad, self) {
+  if (!lineClear(w, ax, ay, bx, by, pad)) return false;
+  const dx = bx - ax, dy = by - ay, L2 = dx * dx + dy * dy || 1;
+  for (const p of w.pillars) { if (p === self) continue; const k = clamp(((p.x - ax) * dx + (p.y - ay) * dy) / L2, 0, 1), qx = ax + dx * k - p.x, qy = ay + dy * k - p.y; if (qx * qx + qy * qy < (p.r + pad) ** 2) return false; }
   return true;
 }
+// A line on the floor that only warns, until the ball is let go: the ball is the blow, so nothing strikes along the line
+// when it runs out (a cancelled zone: no strike drawn or heard, no flash).
+const WARN = { cancelled: true };
+const snowOf = (w, u) => (u.snow && w.pillars.includes(u.snow) ? u.snow : (u.snow = null));
+const handsOn = (u, b) => u.r * SNOW.reach + b.r; // the ball against its hands (just inside its collider: sim.js ownBoulder)
+// Which way the ball has to go to reach (tx, ty): straight, or round the walls and rocks (the path finder, asked for a
+// body the ball's size; the ball itself taken out of the room while it asks)
+function ballWay(w, b, tx, ty) {
+  const nav = b.nav || (b.nav = { path: null, pathT: 0, pathGoal: null });
+  nav.x = b.x; nav.y = b.y; nav.r = b.r;
+  const i = w.pillars.indexOf(b); if (i >= 0) w.pillars.splice(i, 1);
+  try { const [gx, gy] = goalVec(w, nav, tx, ty); return Math.atan2(gy, gx); } finally { if (i >= 0) w.pillars.splice(i, 0, b); }
+}
+function newSnow(w, u, r0) {
+  const p = { x: u.x + Math.cos(u.facing) * (u.r * SNOW.reach + 4), y: u.y + Math.sin(u.facing) * (u.r * SNOW.reach + 4) };
+  const hp = Math.round(SNOW.hp * (r0 / 26) ** 2 * (w.mult || 1) ** 0.7);
+  const b = { x: p.x, y: p.y, r: 4, r0, snowball: true, owner: u, team: u.team, vx: 0, vy: 0, roll: 0, rollA: u.facing, held: true, packing: true, big: !!u.elite,
+    hp, maxHp: hp, hits: new Map(), onShot: snowShot, seen: new Set(), lastX: p.x, lastY: p.y };
+  w.pillars.push(b); u.snow = b;
+  b.drv = fx(w, { type: 'snowDrive', every: 1 / 60, max: 1e9, tick: () => snowTick(w, b, 1 / 60) });
+  return b;
+}
+function dropSnow(w, b) { // gone (burst, broken, melted)
+  const i = w.pillars.indexOf(b); if (i >= 0) w.pillars.splice(i, 1);
+  if (b.drv) b.drv.max = b.drv.t;
+  if (b.owner && b.owner.snow === b) b.owner.snow = null;
+}
+function burstSnow(w, b, loud = true) {
+  dropSnow(w, b);
+  const u = b.owner, by = u && alive(u) ? u : null;
+  puff(w, b.x, b.y, '#F4FBFF', loud ? 22 : 12, loud ? 220 : 120, 8, 0.6);
+  for (let i = 0; i < 8; i++) { const a = rand() * TAU, s = rrange(90, 220); w.particles.push({ x: b.x, y: b.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 0.55, max: 0.55, size: rrange(5, 9) * b.r / 26, color: '#EEF7FF' }); }
+  if (!loud) return;
+  w.shake = Math.max(w.shake, 3);
+  for (const h of opponents(w, b)) if (dist(h.x, h.y, b.x, b.y) < b.r + h.r + 40) addStatus(w, h, 'chill', 16, by);
+  if (b.big && by) shards(w, by, 7, { x: b.x, y: b.y, dmg: 5, chill: 20 }); // (the elite's: into ice)
+}
+// A shot that hits the ball chips it (sim.js) and knocks it along the shot's way, more the smaller it is.
+function snowShot(w, b, p) {
+  const sp = Math.hypot(p.vx, p.vy) || 1, k = clamp((p.dmg || 4) * 7, 25, 110) * (26 / b.r) ** 2;
+  if (!b.packing) { b.vx += p.vx / sp * k; b.vy += p.vy / sp * k; b.held = false; } // (in its maker's hands, it only chips)
+  w.particles.push({ x: p.x, y: p.y, vx: -p.vx / sp * 60, vy: -p.vy / sp * 60, life: 0.35, max: 0.35, size: 5, color: '#FFFFFF' });
+}
+// The ball's own update: pushed, rolling, hitting, growing, leaving a track; and when its yeti is gone, it melts away.
+function snowTick(w, b, dt) {
+  if (!w.pillars.includes(b)) { if (b.drv) b.drv.max = b.drv.t; return; }
+  const u = b.owner, up = u && alive(u);
+  if (b.hitT > 0) b.hitT = Math.max(0, b.hitT - dt);
+  if (b.hp <= 0) { burstSnow(w, b); return; }
+  // blasts nearby throw it about (an explosion this frame: sim.js explode leaves a 'blast' telegraph)
+  for (const t of w.telegraphs) if (t.type === 'blast' && !b.seen.has(t) && dist(t.x, t.y, b.x, b.y) < t.r + b.r) {
+    b.seen.add(t); const a = angleTo(t.x, t.y, b.x, b.y); b.vx += Math.cos(a) * 160 * (26 / b.r); b.vy += Math.sin(a) * 160 * (26 / b.r); b.hp -= 8; b.held = false;
+  }
+  if (b.packing) return; // in the yeti's hands, still being made (yetiBrain)
+  // pushed: the yeti's hands press into it, so it goes along the line from the yeti's middle through its own
+  if (b.held && up) {
+    const d = dist(u.x, u.y, b.x, b.y), want = handsOn(u, b);
+    if (d < want && d > 0.01) {
+      const nx = (b.x - u.x) / d, ny = (b.y - u.y) / d, vn = u.vx * nx + u.vy * ny, bn = b.vx * nx + b.vy * ny;
+      b.x = u.x + nx * want; b.y = u.y + ny * want;
+      if (bn < vn) { b.vx += nx * (vn - bn); b.vy += ny * (vn - bn); }
+    }
+  } else if (!up) b.held = false;
+  let sp = Math.hypot(b.vx, b.vy);
+  if (sp > 0) { const s2 = Math.max(0, sp - SNOW.fric * dt); b.vx *= s2 / sp; b.vy *= s2 / sp; sp = s2; }
+  if (sp < 1) { b.vx = b.vy = 0; if (!up) { b.melt = (b.melt || 0) + dt; b.r = Math.max(2, b.r - b.r0 * dt / 3.5); if (b.r <= 3) { burstSnow(w, b, false); } } return; }
+  const nx = b.x + b.vx * dt, ny = b.y + b.vy * dt;
+  // a wall, the room's edge or another obstacle: it bursts if it hits hard, else it stops against it (a small bounce)
+  const blocked = nx < b.r || ny < b.r || nx > w.W - b.r || ny > w.H - b.r || w.walls.some((r) => nx > r.x - b.r && nx < r.x + r.w + b.r && ny > r.y - b.r && ny < r.y + r.h + b.r)
+    || w.pillars.some((p) => p !== b && !p.painted && dist(nx, ny, p.x, p.y) < p.r + b.r);
+  if (blocked) {
+    if (sp > SNOW.burstSp && !b.held) { burstSnow(w, b); return; }
+    if (sp > 60) { puff(w, b.x + b.vx / sp * b.r, b.y + b.vy / sp * b.r, '#F4FBFF', 6, 70, 5, 0.4); w.shake = Math.max(w.shake, 1.5); }
+    b.vx *= -0.15; b.vy *= -0.15; b.hits.clear(); return;
+  }
+  const step = Math.hypot(nx - b.x, ny - b.y);
+  b.x = nx; b.y = ny; b.roll += step / b.r; b.rollA = Math.atan2(b.vy, b.vx);
+  if (b.r < b.r0 * SNOW.grow) b.r = Math.min(b.r0 * SNOW.grow, b.r + step * SNOW.growK * b.r0); // it picks up snow as it goes
+  // its track, pressed into the floor (foe-draw.js draws w.snowTrack under everything)
+  if (dist(b.x, b.y, b.lastX, b.lastY) > 9) {
+    const tr = w.snowTrack || (w.snowTrack = []);
+    tr.push({ x1: b.lastX, y1: b.lastY, x2: b.x, y2: b.y, r: b.r * 0.72, t: w.time }); b.lastX = b.x; b.lastY = b.y;
+    while (tr.length && (tr.length > 260 || w.time - tr[0].t > SNOW.track)) tr.shift();
+  }
+  if (sp > 120 && rand() < dt * 30) { const s = rand() < 0.5 ? 1 : -1, a = b.rollA + Math.PI + s * 0.6; w.particles.push({ x: b.x - Math.cos(b.rollA) * b.r * 0.8 + Math.cos(a + s) * b.r * 0.6, y: b.y - Math.sin(b.rollA) * b.r * 0.8 + Math.sin(a + s) * b.r * 0.6, vx: Math.cos(a) * 50, vy: Math.sin(a) * 50, life: 0.45, max: 0.45, size: rrange(3, 6), color: 'rgba(244,250,255,0.9)' }); }
+  // bodies in its way: fast, it bowls them over (each once a run); it is slowed and turned a little by each
+  if (sp < SNOW.hurtSp) return;
+  for (const h of opponents(w, b)) {
+    const d = dist(h.x, h.y, b.x, b.y); if (d > b.r + h.r + 2) continue;
+    if ((b.hits.get(h) || -9) > w.time - 1) continue;
+    b.hits.set(h, w.time);
+    const a = b.rollA, side = Math.sign(Math.sin(angleTo(b.x, b.y, h.x, h.y) - a)) || 1, k = clamp(sp / 340, 0.5, 1.25) * (b.r / 26);
+    hurt(w, h, SNOW.dmg * k * (up ? u.dmgMul : 1), up ? u : null, { knock: 260 + 160 * k, kAngle: a + side * 0.45, heavy: true, stagger: 45, chill: b.big ? 70 : 55 });
+    puff(w, h.x, h.y, '#F4FBFF', 10, 140, 6, 0.45);
+    // the body it hit: the ball loses a share of its speed (more for a heavy one) and glances off it
+    const n = { x: (h.x - b.x) / (d || 1), y: (h.y - b.y) / (d || 1) }, into = b.vx * n.x + b.vy * n.y, m = clamp((h.mass || 1) / 6, 0.12, 0.6);
+    if (into > 0) { b.vx -= n.x * into * (0.5 + m); b.vy -= n.y * into * (0.5 + m); }
+    b.vx *= 1 - m * 0.5; b.vy *= 1 - m * 0.5;
+  }
+}
+// Packing a new ball where it stands: a stoop over a growing ball. A hard blow (or a stun, a freeze, a shove) knocks
+// it apart before it's done.
+function packTick(w, u, Y, dt) {
+  const b = snowOf(w, u);
+  const skipped = w.time - Y.last > 0.12; Y.last = w.time; // it was stunned, frozen or asleep meanwhile (its brain didn't run)
+  if (!b || b.hp <= 0 || skipped || u.hp < Y.hp0 - u.maxHp * 0.07 || Math.hypot(u.kx, u.ky) > 140) { // knocked apart
+    if (b) { burstSnow(w, b, false); }
+    Y.st = 'bare'; again(u, 'pack', 2, 3); u._force = null; u.lean = 0;
+    textOf(w, u, 'knocked apart');
+    return false;
+  }
+  Y.t += dt; stand(u, dt);
+  const k = clamp(Y.t / (SNOW.pack * (u.elite ? 0.8 : 1)), 0, 1);
+  b.r = 4 + (b.r0 - 4) * (1 - (1 - k) * (1 - k));
+  const fr = u.r * SNOW.reach + b.r * 0.75; b.x = u.x + Math.cos(u.facing) * fr; b.y = u.y + Math.sin(u.facing) * fr;
+  // stooped, its hands patting the snow round the ball
+  const s = Math.sin(Y.t * 11), c = Math.cos(Y.t * 11);
+  u.lean = 0.16; u._force = { 'arm-r': { dy: 4 + 7 * Math.max(0, s), r: 0.3 + 0.2 * s }, 'arm-l': { dy: 4 + 7 * Math.max(0, -s), r: -0.3 + 0.2 * c } };
+  if ((Y.puffT = (Y.puffT || 0) - dt) <= 0) { Y.puffT = 0.16; w.particles.push({ x: b.x + rrange(-b.r, b.r), y: b.y + rrange(-b.r, b.r), vx: rrange(-40, 40), vy: rrange(-40, 40), life: 0.4, max: 0.4, size: rrange(3, 6), color: '#F4FBFF' }); }
+  if (k >= 1) { b.packing = false; b.r = b.r0; b.vx = b.vy = 0; Y.st = 'ball'; puff(w, b.x, b.y, '#F4FBFF', 8, 70, 5, 0.4); }
+  return true;
+}
+const textOf = (w, u, s) => {}; // (no words over the arena: show, don't tell)
+function yetiBrain(w, u, dt) {
+  const Y = u.yt || (u.yt = { st: 'bare', brawl: 0, last: 0, pushT: 0 });
+  if (Y.st !== 'pack') { u._force = null; u.lean = 0; }
+  if (hold(u, dt)) { Y.last = w.time; return true; }
+  if (Y.st === 'pack') return packTick(w, u, Y, dt);
+  Y.last = w.time;
+  let b = snowOf(w, u);
+  if (b && b.packing) { burstSnow(w, b, false); b = null; } // (a ball left half-made)
+  const t = targetOf(w, u);
+  // ---- no ball: fists, until it can stop to pack another
+  if (!b) {
+    Y.st = 'bare';
+    if (w.stale || !u.aggro || u.anim || !due(u, 'pack', dt, 1)) return false;
+    again(u, 'pack', 1.2, 2); // (the wait after the next one is lost)
+    const r0 = Math.round(u.r * SNOW.r * (u.elite ? SNOW.elite : 1));
+    newSnow(w, u, r0);
+    Y.st = 'pack'; Y.t = 0; Y.hp0 = u.hp; Y.last = w.time; Y.puffT = 0;
+    puff(w, u.x + Math.cos(u.facing) * u.r * 0.6, u.y + Math.sin(u.facing) * u.r * 0.6, '#F4FBFF', 8, 60, 5, 0.4);
+    return true;
+  }
+  // ---- the heave under way: a tell, then a run behind the ball building speed, then it lets go
+  const H = Y.heave;
+  if (H) {
+    const a = H.a;
+    if (H.tell > 0) { // it shuffles round behind the ball onto the line, and crouches to drive
+      H.tell -= dt; b.held = true;
+      const want = handsOn(u, b) + 2, px = b.x - Math.cos(a) * want, py = b.y - Math.sin(a) * want, dd = dist(u.x, u.y, px, py);
+      if (dd > 4) { const m = angleTo(u.x, u.y, px, py), sp = Math.min(dd / dt, u.def.speed * 2.2); u.dvx = Math.cos(m) * sp; u.dvy = Math.sin(m) * sp; u.mvA = m; u.spd = sp; } else stand(u, dt);
+      turnTo(u, angleTo(u.x, u.y, b.x, b.y), 6, dt);
+      u.lean = 0.2; u._force = { 'arm-r': { dy: 2, r: 0.18 }, 'arm-l': { dy: 2, r: -0.18 } }; // crouched behind it, about to drive
+      return true;
+    }
+    H.t += dt; b.held = true;
+    const sp = u.def.speed * (u.moveMul || 1) * (0.7 + 1.9 * clamp(H.t / H.run, 0, 1)); // building speed
+    u.dvx = Math.cos(a) * sp; u.dvy = Math.sin(a) * sp; u.vx = u.dvx; u.vy = u.dvy; u.mvA = a; u.spd = sp; turnTo(u, a, 6, dt);
+    u.lean = 0.24; const st = Math.sin(H.t * 16); u._force = { 'arm-r': { dy: 9 + 2 * st, r: 0.12 }, 'arm-l': { dy: 9 - 2 * st, r: -0.12 } };
+    const ahead = !pathClear(w, b.x, b.y, b.x + Math.cos(a) * 30, b.y + Math.sin(a) * 30, b.r * 0.95, b);
+    if (H.t >= H.run || ahead || dist(u.x, u.y, b.x, b.y) > handsOn(u, b) + 30) { // let go: the heave
+      const go = SNOW.heave * (u.elite ? 1.1 : 1) * (ahead ? 0.6 : 1);
+      b.held = false; b.vx = Math.cos(a) * go; b.vy = Math.sin(a) * go; b.hits.clear();
+      Y.heave = null; Y.rest = 0.55; u.spd *= 0.3;
+      setAnim(u, 'throw', 0.4); puff(w, b.x, b.y, '#F4FBFF', 10, 110, 6, 0.4);
+    }
+    return true;
+  }
+  if (Y.rest > 0) { Y.rest -= dt; stand(u, dt); u.lean = 0.1; u._force = { 'arm-r': { dy: 12 * Y.rest / 0.55, r: 0.1 }, 'arm-l': { dy: 12 * Y.rest / 0.55, r: -0.1 } }; return true; }
+  // ---- fighting bare-handed beside its ball: a hero at its side or back while it pushes
+  const opp = opponents(w, u);
+  const flank = opp.find((h) => gapTo(u, h) < 22 && angleDiff(angleTo(u.x, u.y, h.x, h.y), angleTo(u.x, u.y, b.x, b.y)) > 0.9);
+  Y.calm = (Y.calm || 0) - dt;
+  if (flank && Y.brawl <= 0 && Y.calm <= 0 && !w.stale) { Y.brawl = rrange(2.5, 4); b.held = false; }
+  if (Y.brawl > 0) { // (then back to the ball a while, whoever is at its back)
+    Y.brawl -= dt; b.held = false; if (Y.brawl <= 0) Y.calm = rrange(4, 6);
+    return false;
+  }
+  if (w.stale && !b.held && dist(u.x, u.y, b.x, b.y) > 160) return false; // a stand-off gone on too long: no fetching
+  // its ball rolled off far, and the party is on it: it leaves that one to melt and packs another where it stands
+  if (!b.held && dist(u.x, u.y, b.x, b.y) > 300 && opp.some((h) => dist(u.x, u.y, h.x, h.y) < 240)) { b.owner = null; u.snow = null; again(u, 'pack', 0.6, 1.2); return false; }
+  if (!u.aggro) { b.held = false; return false; } // (the plain brain notices the party)
+  // its own eyes while it works the ball (the plain brain, which picks targets, doesn't run meanwhile): the nearest
+  // (the nearest to the ball, and better one it can roll the ball at without walking round it)
+  if (due(u, 'look', dt, 0.2)) {
+    again(u, 'look', 0.6);
+    const ub = angleTo(u.x, u.y, b.x, b.y), cost = (h) => dist(b.x, b.y, h.x, h.y) + 150 * angleDiff(ub, angleTo(b.x, b.y, h.x, h.y));
+    const n = opp.filter((h) => !h.ethereal).sort((p, q) => cost(p) - cost(q))[0];
+    if (n && (!t || cost(n) < cost(t) - 80)) u.target = n;
+  }
+  if (!targetOf(w, u)) return false;
+  const tg = targetOf(w, u);
+  // ---- point blank: a hero pressed against the front of the ball gets it shoved into them
+  const ba = angleTo(u.x, u.y, b.x, b.y), dB = dist(u.x, u.y, b.x, b.y), behind = dB < handsOn(u, b) + 14;
+  const pressed = behind && opp.find((h) => dist(h.x, h.y, b.x, b.y) < b.r + h.r + 16 && angleDiff(angleTo(b.x, b.y, h.x, h.y), ba) < 0.9);
+  if (pressed && due(u, 'shove', dt, 0.6)) {
+    again(u, 'shove', 2.2, 3);
+    Y.heave = { a: angleTo(b.x, b.y, pressed.x, pressed.y), tell: 0.3, run: 0.15, t: 0 };
+    addDanger(w, { shape: 'line', x1: b.x, y1: b.y, x2: b.x + Math.cos(Y.heave.a) * 200, y2: b.y + Math.sin(Y.heave.a) * 200, hw: b.r + 6, t: 0.45, team: u.team, src: u, kind: 'ice', ...WARN });
+    return true;
+  }
+  // ---- round behind the ball, then push it on towards the target
+  const straight = pathClear(w, b.x, b.y, tg.x, tg.y, b.r * 0.9, b); // (round the rocks and walls when it must)
+  const A = straight ? angleTo(b.x, b.y, tg.x, tg.y) : ballWay(w, b, tg.x, tg.y), want = handsOn(u, b), side = angleDiff(ba, A);
+  const px = b.x - Math.cos(A) * (want + 4), py = b.y - Math.sin(A) * (want + 4);
+  b.held = dB < u.r + b.r + 16 && side < 1.1; // its hands go on it only from behind; otherwise it's in the way (solid)
+  const lined = b.held && side < 0.55 && dB < want + 10;
+  // the heave, when a hero is ahead with room to roll (a little off its line will do: it shuffles round as it crouches)
+  const d = dist(b.x, b.y, tg.x, tg.y);
+  if (b.held && dB < want + 14 && d > 90 && d < 520 && side < 0.85 && straight && due(u, 'heave', dt, 0.4)) {
+    again(u, 'heave', 0.8, 1.4);
+    const a = angleTo(b.x, b.y, tg.x + (tg.vx || 0) * 0.4, tg.y + (tg.vy || 0) * 0.4);
+    let len = 140; while (len < 620 && pathClear(w, b.x, b.y, b.x + Math.cos(a) * (len + 40), b.y + Math.sin(a) * (len + 40), b.r * 0.9, b)) len += 40;
+    Y.heave = { a, tell: 0.55, run: 0.6, t: 0 };
+    addDanger(w, { shape: 'line', x1: b.x, y1: b.y, x2: b.x + Math.cos(a) * len, y2: b.y + Math.sin(a) * len, hw: b.r + 8, t: 1.15, team: u.team, src: u, kind: 'ice', ...WARN });
+    return true;
+  }
+  if (!lined) { // walk round to the far side of it, or up to it
+    Y.pushT = 0;
+    const touching = b.held && dB < want + 6;
+    const [gx, gy] = goalVec(w, u, px, py), [sx, sy] = steer(w, u, gx, gy);
+    drive(u, sx, sy, u.def.speed * (u.moveMul || 1) * (touching ? SNOW.push : 1), dt);
+    turnTo(u, dB < 150 ? ba : u.mvA, touching ? SNOW.turn : 3, dt);
+    if (touching) { u.lean = 0.12; u._force = pushPose(u); }
+    return true;
+  }
+  Y.pushT += dt;
+  // pushing: slow to get going, slow to turn, and only ever along the line through the ball
+  const sp = u.def.speed * (u.moveMul || 1) * SNOW.push * (0.45 + 0.55 * clamp(Y.pushT / 1.2, 0, 1));
+  const aim = angleTo(u.x, u.y, px + Math.cos(A) * 60, py + Math.sin(A) * 60);
+  const [sx, sy] = steer(w, u, Math.cos(aim), Math.sin(aim));
+  drive(u, sx, sy, sp, dt, 0.5);
+  turnTo(u, ba, SNOW.turn, dt);
+  u.lean = 0.14; u._force = pushPose(u);
+  return true;
+}
+// Both hands on the ball, shoving with each step.
+const pushPose = (u) => { const s = Math.sin(u.bob); return { 'arm-r': { dy: 7 + 2.5 * s, r: 0.16 }, 'arm-l': { dy: 7 - 2.5 * s, r: -0.16 } }; };
 // The icicle wraith: hangs back and drops icicles on the party from above (a shadow shows where); cold to the touch.
 function wraithBrain(w, u, dt) {
   every(w, u, dt, 'ice', 2.4, 3.2, 460, (t) => { const p = lead(t, 0.7); setAnim(u, 'cast', 0.4); icicle(w, u, p.x, p.y, 1); });
@@ -292,7 +502,7 @@ export const FOES10 = {
     onDeath: (w, u) => w.hazards.push({ type: 'web', cold: true, x: u.x, y: u.y, r: 48, t: 6, max: 6 }) },
   yeti: { ...FOE, name: 'Yeti', art: 'art/enemies/yeti.svg', headR: 68, r: 42, vr: 31, turn: 2.6, accel: 150, face: 2.6, mass: 3,
     hp: 180, speed: 46, role: 'melee', range: 30, atkCd: 1.7, windup: 0.45, dmg: 15, knock: 220, arc: 2.2, stagger: 30, temp: 0.25, commit: 1.2, xp: 32, coins: [6, 12], cost: 8,
-    attackAnim: 'swing', res: { chill: 0, burn: 1.3 }, brain: yetiBrain, onDeath: (w, u) => { const b = snowOf(w, u); if (b) burstSnow(w, u, b); } },
+    attackAnim: 'swing', res: { chill: 0, burn: 1.3 }, brain: yetiBrain, onDeath: (w, u) => { const b = snowOf(w, u); if (b && b.packing) burstSnow(w, b, false); else if (b) b.held = false; } }, // (its ball rolls on, and melts)
   frostWraith: { variantOf: 'ghost', name: 'Icicle Wraith', art: 'art/enemies/icicle-wraith.svg', headR: 37, role: 'ranged', range: 320, keep: 240, hp: 44, xp: 14, cost: 4,
     res: { poison: 0, burn: 1.5, chill: 0, curse: 0 }, brain: wraithBrain },
   spiritFrost: { ...spirit('frost', 'Frost Spirit', { hue: 175, sat: 0.8, light: 0.2 }, { chill: 0 }), art: 'art/enemies/spirit-frost.svg', headR: 30 }, // art round 9
