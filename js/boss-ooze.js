@@ -17,7 +17,7 @@ export const OZ = {
   hop: { r: 132, tell: 1.15, dmg: 74, knock: 320, puddle: 60, puddleT: 8, cd: [4.2, 5.4], lift: 120 },
   roll: { tell: 0.95, speed: 560, legs: 3, leg: 640, dmg: 58, knock: 340, cd: [8, 10], rest: 0.9 },
   heave: { reach: 56, tell: 0.8, dmg: 40, poison: 30, knock: 280, cd: [3.4, 4.4] },
-  brood: { every: 12, n: 2, cap: 5, absorb: 0.012, home: [8, 11] },
+  brood: { every: 16, n: 2, cap: 3, /* round 14 (lane L): every 12 -> 16, cap 5 -> 3: see BOSS_ADDS in dungeon.js */ absorb: 0.012, home: [8, 11] },
   split: { size: 0.72, dur: 13, again: 9, mergeTell: 1.4, mergeHw: 62, mergeSpeed: 520, splashR: 185, dmg: 84, knock: 420, dazed: 1.3, dazedTaken: 1.35 },
   melt: { gas: 60, gasT: 6, speed: 1.35, k: 0.8, legs: 5 },
 };

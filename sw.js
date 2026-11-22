@@ -1,5 +1,5 @@
 // Keeps the whole game on the phone so it opens with no signal. Bump VERSION on every release.
-const VERSION = '0.20.0';
+const VERSION = '0.20.2';
 const CACHE = `delve-${VERSION}`;
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-192.png',
   'icons/icon-512.png', 'js/armour.js', 'js/audio.js', 'js/battle-ui.js', 'js/battle.js', 'js/bestiary.js',
@@ -68,8 +68,11 @@ const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png',
   'art/heroes/harpooner.svg', 'art/heroes/haymaker.svg', 'art/heroes/huntress.svg', 'art/heroes/jester.svg',
   'art/heroes/marksman.svg', 'art/heroes/monk.svg', 'art/heroes/necromancer.svg', 'art/heroes/ninja.svg',
   'art/heroes/oldguard.svg', 'art/heroes/paladin.svg', 'art/heroes/pirate.svg', 'art/heroes/plague.svg',
-  'art/heroes/pyromancer.svg', 'art/heroes/quartermaster.svg', 'art/heroes/samurai.svg', 'art/heroes/seer.svg',
-  'art/heroes/shade.svg', 'art/heroes/shaman.svg', 'art/heroes/slinger.svg', 'art/heroes/standin/airMage.svg',
+  'art/heroes/pyromancer.svg', 'art/heroes/quartermaster.svg', 'art/heroes/r12/bearskin.svg',
+  'art/heroes/r12/bulwark.svg', 'art/heroes/r12/samurai.svg', 'art/heroes/r12/trapper.svg',
+  'art/heroes/r12/valkyrie.svg', 'art/heroes/r12/warhelm-hammer.svg', 'art/heroes/r12/warhelm.svg',
+  'art/heroes/r12/warlock-demon.svg', 'art/heroes/samurai.svg', 'art/heroes/seer.svg', 'art/heroes/shade.svg',
+  'art/heroes/shaman.svg', 'art/heroes/slinger.svg', 'art/heroes/standin/airMage.svg',
   'art/heroes/standin/clockwork.svg', 'art/heroes/standin/earthMage.svg', 'art/heroes/standin/mob-axe.svg',
   'art/heroes/standin/mob-dagger.svg', 'art/heroes/standin/mob-pitchfork.svg', 'art/heroes/standin/mob-torch.svg',
   'art/heroes/standin/mob.svg', 'art/heroes/standin/telekinetic.svg', 'art/heroes/standin/warden.svg',
@@ -85,8 +88,13 @@ const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png',
   'art/props/hazard-oil.svg', 'art/props/obstacle-crates.svg', 'art/props/obstacle-pillar.svg',
   'art/props/obstacle-rock.svg', 'art/props/pedestal.svg', 'art/props/rock-1.svg', 'art/props/rock-2.svg',
   'art/props/rock-3.svg', 'art/props/rock-4.svg', 'art/props/trap-spikes-down.svg', 'art/props/trap-spikes-up.svg',
-  'art/props/troll-boulder.svg', 'art/props/yeti-snowball.svg', 'art/rogue.svg', 'art/summons/minion.svg',
-  'art/summons/turret.svg', 'art/summons/wolf.svg'];
+  'art/props/troll-boulder.svg', 'art/props/yeti-snowball.svg', 'art/rogue.svg', 'art/summons/barricade-spiked.svg',
+  'art/summons/barricade.svg', 'art/summons/beehive.svg', 'art/summons/big-bomb.svg', 'art/summons/cauldron.svg',
+  'art/summons/engineer-med-drone.svg', 'art/summons/engineer-medbay.svg', 'art/summons/engineer-mortar.svg',
+  'art/summons/engineer-tesla.svg', 'art/summons/engineer-torcher.svg', 'art/summons/engineer-windup.svg',
+  'art/summons/haybale.svg', 'art/summons/minion.svg', 'art/summons/pavise.svg', 'art/summons/spirit-bear.svg',
+  'art/summons/spirit-beaver.svg', 'art/summons/spirit-eagle.svg', 'art/summons/supply-crate.svg',
+  'art/summons/totem.svg', 'art/summons/turret.svg', 'art/summons/warlock-imp.svg', 'art/summons/wolf.svg'];
 self.addEventListener('install', (e) => e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES.map((f) => new Request(f, { cache: 'reload' })))).then(() => self.skipWaiting())));
 self.addEventListener('activate', (e) => e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k.startsWith('delve-') && k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())));
 self.addEventListener('fetch', (e) => { if (e.request.method !== 'GET') return; e.respondWith(caches.match(e.request, { ignoreSearch: true }).then((r) => r || fetch(e.request))); });

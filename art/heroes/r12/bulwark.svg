@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- GAME COPY (art round 12, not wired yet) of design/class-round12/props/hero-bulwark.svg -->
+<!-- Round 4: the spear is held further back on the shaft (bare shaft between the fist and the head); the fist wraps the shaft. -->
+<!-- Round 3 (was Bastion B): the brush-like spear is now a thin-shafted winged spear with a sharp kite-shaped steel head; drawn before #body (butt shows behind the right shoulder); shield in front. -->
+<!-- KNIGHT Bastion B 'Bulwark' (round 2): tank knight: wide-brimmed steel kettle hat, big round bronze pauldrons, round green shield with a gold boss on the left arm (hand hidden), long spear in the right hand. -->
+<!-- Parts layout: #back, #body, #arm-l, #arm-r, #front inside #sprite; the outline comes from the #outline filter over the whole figure (no outline strokes in the shapes). Facing = DOWN (+y), centre (100,100). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+<linearGradient id="gFace" x1="0" y1="94.8" x2="0" y2="153.1" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient>
+<linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#9C6B45"/><stop offset="1" stop-color="#6E4428"/></linearGradient>
+<path id="s1" data-part="shoulders (leather)" d="M 26 108 C 26 82 54 76 100 76 C 146 76 174 82 174 108 C 174 134 146 140 100 140 C 54 140 26 134 26 108 Z"/>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3A1F12" stop-opacity="0"/><stop offset="1" stop-color="#3A1F12" stop-opacity="0.4"/></linearGradient>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E6AE62"/><stop offset="1" stop-color="#A8692C"/></linearGradient>
+<path id="s2" data-part="pauldron" d="M 10 110 C 10 92.3 23.4 78 40 78 C 56.6 78 70 92.3 70 110 C 70 127.7 56.6 142 40 142 C 23.4 142 10 127.7 10 110 Z"/>
+<clipPath id="u3"><use href="#s1"/></clipPath>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6E3E14" stop-opacity="0"/><stop offset="1" stop-color="#6E3E14" stop-opacity="0.5"/></linearGradient>
+<clipPath id="c4"><use href="#s2"/></clipPath>
+<path id="s5" data-part="pauldron" d="M 130 110 C 130 92.3 143.4 78 160 78 C 176.6 78 190 92.3 190 110 C 190 127.7 176.6 142 160 142 C 143.4 142 130 127.7 130 110 Z"/>
+<clipPath id="u6"><use href="#s1"/><use href="#s2"/></clipPath>
+<clipPath id="c7"><use href="#s5"/></clipPath>
+<path id="s8" data-part="head" d="M 100 47.8 C 129.6 47.8 147.8 68.7 147.8 98.3 C 147.8 122.6 136.5 140 120.9 147.8 C 113.9 151.3 107 153.1 100 153.1 C 93 153.1 86.1 151.3 79.1 147.8 C 63.5 140 52.1 122.6 52.1 98.3 C 52.1 68.7 70.4 47.8 100 47.8 Z"/>
+<clipPath id="u9"><use href="#s1"/><use href="#s2"/><use href="#s5"/></clipPath>
+<clipPath id="c10"><use href="#s8"/></clipPath>
+<linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#C9D0DA"/><stop offset="1" stop-color="#8C96A6"/></linearGradient>
+<path id="s11" data-part="kettle hat brim" d="M 40 84 C 40 57.5 66.9 36 100 36 C 133.1 36 160 57.5 160 84 C 160 110.5 133.1 132 100 132 C 66.9 132 40 110.5 40 84 Z"/>
+<clipPath id="u12"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/></clipPath>
+<linearGradient id="g6" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4A5468" stop-opacity="0"/><stop offset="1" stop-color="#4A5468" stop-opacity="0.5"/></linearGradient>
+<linearGradient id="g7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F0F3F7"/><stop offset="1" stop-color="#B6BFCB"/></linearGradient>
+<path id="s13" data-part="kettle hat crown" d="M 64 78 C 64 59.8 80.1 45 100 45 C 119.9 45 136 59.8 136 78 C 136 96.2 119.9 111 100 111 C 80.1 111 64 96.2 64 78 Z"/>
+<clipPath id="u14"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/><use href="#s11"/></clipPath>
+<linearGradient id="g8" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4A5468" stop-opacity="0"/><stop offset="1" stop-color="#4A5468" stop-opacity="0.45"/></linearGradient>
+<clipPath id="c15"><use href="#s13"/></clipPath>
+<linearGradient id="g9" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F9CB5C"/><stop offset="1" stop-color="#E09A2E"/></linearGradient>
+<linearGradient id="g10" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#4FA35A"/><stop offset="1" stop-color="#2C6E3A"/></linearGradient>
+<path id="s16" data-part="round shield" d="M 6 154 C 6 131.9 23.9 114 46 114 C 68.1 114 86 131.9 86 154 C 86 176.1 68.1 194 46 194 C 23.9 194 6 176.1 6 154 Z"/>
+<clipPath id="u17"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s13"/></clipPath>
+<linearGradient id="g11" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A86A16" stop-opacity="0"/><stop offset="1" stop-color="#A86A16" stop-opacity="0.45"/></linearGradient>
+<clipPath id="c18"><use href="#s16"/></clipPath>
+<linearGradient id="g12" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#B57944"/><stop offset="1" stop-color="#7E4A24"/></linearGradient>
+<path id="s19" data-part="spear shaft" d="M 163.7 88.3 L 164.7 88.5 C 166.8 88.8 168.3 90.9 167.9 93.1 L 153.3 175.8 C 152.9 178 150.9 179.4 148.7 179.1 L 147.7 178.9 C 145.5 178.5 144.1 176.4 144.5 174.2 L 159 91.5 C 159.4 89.3 161.5 87.9 163.7 88.3 Z"/>
+<clipPath id="u20"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s13"/><use href="#s16"/></clipPath>
+<linearGradient id="g13" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4A2A12" stop-opacity="0"/><stop offset="1" stop-color="#4A2A12" stop-opacity="0.4"/></linearGradient>
+<linearGradient id="g14" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E3E7ED"/><stop offset="1" stop-color="#A9B2C0"/></linearGradient>
+<path id="s21" data-part="spear head" d="M 152.7 153.4 C 166 169.9 162.6 189.6 144 202.6 C 131 184.1 134.5 164.4 152.7 153.4 Z"/>
+<clipPath id="u22"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s13"/><use href="#s16"/><use href="#s19"/></clipPath>
+<linearGradient id="g15" x1="0.5" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4A5468" stop-opacity="0"/><stop offset="1" stop-color="#4A5468" stop-opacity="0.55"/></linearGradient>
+<path id="s23" d="M 148.5 148.6 L 158.3 150.3 C 160 150.6 161 152.1 160.8 153.8 L 160.1 157.7 C 159.8 159.3 158.2 160.4 156.6 160.1 L 146.7 158.4 C 145.1 158.1 144 156.6 144.3 154.9 L 145 151 C 145.3 149.4 146.8 148.3 148.5 148.6 Z"/>
+<clipPath id="u24"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s13"/><use href="#s16"/><use href="#s19"/><use href="#s21"/></clipPath>
+<linearGradient id="g16" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A86A16" stop-opacity="0"/><stop offset="1" stop-color="#A86A16" stop-opacity="0.4"/></linearGradient>
+<path id="s25" d="M 156 101.5 L 164 101.5 C 168.4 101.5 172 105.1 172 109.5 L 172 114.5 C 172 118.9 168.4 122.5 164 122.5 L 156 122.5 C 151.6 122.5 148 118.9 148 114.5 L 148 109.5 C 148 105.1 151.6 101.5 156 101.5 Z"/>
+<clipPath id="u26"><use href="#s1"/><use href="#s2"/><use href="#s5"/><use href="#s8"/><use href="#s11"/><use href="#s13"/><use href="#s16"/><use href="#s19"/><use href="#s21"/><use href="#s23"/></clipPath>
+<path id="bHead" d="M -3.22 30 L 3.22 30 L 11.96 45.64 L 0 67.72 L -11.96 45.64 Z"/>
+<clipPath id="bcHead"><use href="#bHead"/></clipPath>
+<clipPath id="bcShaft"><rect x="-3" y="-104" width="6" height="134"/><rect x="-4.5" y="22" width="9" height="8"/></clipPath>
+<clipPath id="bcWpn"><g transform="translate(190 122) rotate(4)"><g transform="translate(0 14)"><rect x="-4.5" y="-108" width="9" height="138"/><use href="#bHead"/><path d="M -12 25.5 L 12 25.5 L 10 30.5 L -10 30.5 Z"/></g><use href="#fistR"/></g></clipPath>
+<path id="fistR" d="M -4.5 -13.5 L 5.3 -13.5 Q 7.9 -13.5 7.9 -10.5 A 3.52 3.52 0 0 1 7.9 -5.25 A 3.52 3.52 0 0 1 7.9 0 A 3.52 3.52 0 0 1 7.9 5.25 A 3.52 3.52 0 0 1 7.9 10.5 Q 7.9 13.5 5.3 13.5 L -4.5 13.5 Q -10.5 13.5 -10.5 7.5 L -10.5 -7.5 Q -10.5 -13.5 -4.5 -13.5 Z"/>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-r" data-pivot="150 108">
+  <!-- round 12 ("Holding spear too close to tip"): the same spear, slid forward through the fist (bare shaft between the hand and the head now); the hand sits at the pauldron's outer edge -->
+  <g transform="translate(190 122) rotate(4)">
+    <g transform="translate(0 14)">
+    <rect x="-3" y="-104" width="6" height="134" rx="3" fill="url(#g12)"/>
+    <rect x="-3" y="-104" width="6" height="134" rx="3" fill="url(#g13)"/>
+    <rect x="-4.5" y="-108" width="9" height="8" rx="3" fill="url(#g5)"/>
+    <use href="#bHead" fill="url(#g14)"/>
+    <g clip-path="url(#bcHead)"><rect x="0" y="0" width="14" height="80" fill="#5A6478" opacity="0.5"/></g>
+    <path d="M -12 25.5 L 12 25.5 L 10 30.5 L -10 30.5 Z" fill="url(#g5)"/>
+    <rect x="-4.5" y="22" width="9" height="8" rx="2" fill="url(#g5)"/>
+    <g clip-path="url(#bcShaft)"><use href="#fistR" transform="translate(0 -11)" fill="#2B2230" opacity="0.3"/></g>
+    </g>
+    <use href="#fistR" fill="url(#gHand)"/>
+  </g>
+</g>
+<g id="body">
+  <!-- shadow of the body on the spear where it comes out from under it -->
+  <g clip-path="url(#bcWpn)"><use href="#s5" transform="translate(-2 5)" fill="#2B2230" opacity="0.32"/><use href="#s8" transform="translate(0 5)" fill="#2B2230" opacity="0.32"/><use href="#s11" transform="translate(-2 5)" fill="#2B2230" opacity="0.32"/></g>
+  <!-- shoulders (leather) -->
+  <use href="#s1" fill="url(#g1)"/>
+  <use href="#s1" fill="url(#g2)"/>
+  <!-- pauldron -->
+  <g clip-path="url(#u3)"><use href="#s2" transform="translate(0 3)" fill="#2B2230" opacity="0.28"/></g>
+  <use href="#s2" fill="url(#g3)"/>
+  <use href="#s2" fill="url(#g4)"/>
+  <g clip-path="url(#c4)"><path d="M 10 130 C 10 122.3 23.4 116 40 116 C 56.6 116 70 122.3 70 130 C 70 137.7 56.6 144 40 144 C 23.4 144 10 137.7 10 130 Z" fill="#9A5E26" opacity="0.45"/></g>
+  <!-- pauldron -->
+  <g clip-path="url(#u6)"><use href="#s5" transform="translate(0 3)" fill="#2B2230" opacity="0.28"/></g>
+  <use href="#s5" fill="url(#g3)"/>
+  <use href="#s5" fill="url(#g4)"/>
+  <g clip-path="url(#c7)"><path d="M 130 130 C 130 122.3 143.4 116 160 116 C 176.6 116 190 122.3 190 130 C 190 137.7 176.6 144 160 144 C 143.4 144 130 137.7 130 130 Z" fill="#9A5E26" opacity="0.45"/></g>
+  <!-- head -->
+  <g clip-path="url(#u9)"><use href="#s8" transform="translate(0 5)" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#s8" fill="url(#gFace)"/>
+  <g clip-path="url(#c10)"><rect x="100" y="40" width="56" height="120" fill="url(#gFaceSide)"/></g>
+  <path d="M96 136.5 Q100 139 104 136.5" fill="none" stroke="#C98868" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- kettle hat brim -->
+  <g clip-path="url(#u12)"><use href="#s11" transform="translate(0 5)" fill="#2B2230" opacity="0.32"/></g>
+  <use href="#s11" fill="url(#g5)"/>
+  <use href="#s11" fill="url(#g6)"/>
+  <!-- kettle hat crown -->
+  <g clip-path="url(#u14)"><use href="#s13" transform="translate(0 4)" fill="#2B2230" opacity="0.3"/></g>
+  <use href="#s13" fill="url(#g7)"/>
+  <use href="#s13" fill="url(#g8)"/>
+  <g clip-path="url(#c15)"><path d="M 74 70 C 74 64.5 80.3 60 88 60 C 95.7 60 102 64.5 102 70 C 102 75.5 95.7 80 88 80 C 80.3 80 74 75.5 74 70 Z" fill="#FFFFFF" opacity="0.4"/></g>
+</g>
+<g id="arm-l" data-pivot="50 108">
+  <!-- round shield -->
+  <g clip-path="url(#u17)"><use href="#s16" transform="translate(0 4)" fill="#2B2230" opacity="0.35"/></g>
+  <use href="#s16" fill="url(#g9)"/>
+  <use href="#s16" fill="url(#g11)"/>
+  <g clip-path="url(#c18)"><path d="M 13 154 C 13 135.8 27.8 121 46 121 C 64.2 121 79 135.8 79 154 C 79 172.2 64.2 187 46 187 C 27.8 187 13 172.2 13 154 Z" fill="url(#g10)"/><path d="M 46 100 L 100 100 L 100 210 L 46 210 Z" fill="#16401F" opacity="0.3"/><path d="M 33 154 C 33 146.8 38.8 141 46 141 C 53.2 141 59 146.8 59 154 C 59 161.2 53.2 167 46 167 C 38.8 167 33 161.2 33 154 Z" fill="url(#g9)"/></g>
+</g>
+</g>
+</svg>

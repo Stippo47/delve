@@ -3,7 +3,7 @@
 //   node tools/hud-shots.mjs <outDir> [--port 8854] [--seed 4] [--w 390 --h 844] [--q 'theme=crypt']
 //     [--party paladin,archer,cleric,pyromancer] [--mercs] [--clip 8] (records that many seconds as hud-clip.mp4)
 //     [--inject 'js with w, S, GAME'] (run before the zoom and pause shots: put statuses or buffs on someone)
-import { chromium } from 'playwright-core';
+import { openEdge } from './edge.mjs';
 import { spawn, execFileSync } from 'node:child_process';
 import fs from 'node:fs'; import os from 'node:os'; import path from 'node:path';
 const args = process.argv.slice(2);
@@ -12,12 +12,8 @@ const out = path.resolve(args[0] || 'hud-shots'); fs.mkdirSync(out, { recursive:
 const site = +opt('port', 8854), seed = +opt('seed', 4), q = opt('q', ''), W = +opt('w', 390), H = +opt('h', 844);
 const party = opt('party', 'paladin,archer,pyromancer,cleric').split(',');
 const tag = opt('tag', '');
-const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
-const port = 9300 + Math.floor(Math.random() * 500);
-const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'delve-edge-'));
-const edge = spawn(EDGE, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio', `--remote-debugging-port=${port}`, `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
-let browser;
-for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
+const edge = await openEdge({ flags: ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio'] }); // tools/edge.mjs: one headless Edge, closed cleanly
+const browser = edge.browser;
 const errors = [];
 try {
   const page = await (await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2, hasTouch: true })).newPage();
@@ -72,6 +68,6 @@ try {
   await page.evaluate(() => { GAME.run.coins = 137; GAME.ask(); for (let i = 0; i < 4; i++) GAME.recFrame(1 / 30); });
   await shot('07-leave-ask');
 } finally {
-  await browser.close().catch(() => {}); try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); } try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
+  await edge.close();
   console.log(errors.length ? 'errors:\n' + errors.join('\n') : 'no page errors');
 }

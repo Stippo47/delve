@@ -3,7 +3,7 @@
 // a hero's About page (its real numbers and lifetime totals) and the book with the defeated counts.
 //   node tools/stats-shots.mjs <outDir> [--port 8854] [--seed 4] [--w 390 --h 844] [--theme crypt] [--secs 260]
 //     [--party paladin,necromancer,pyromancer,cleric] [--mercs]
-import { chromium } from 'playwright-core';
+import { openEdge } from './edge.mjs';
 import { spawn, execFileSync } from 'node:child_process';
 import fs from 'node:fs'; import os from 'node:os'; import path from 'node:path';
 const args = process.argv.slice(2);
@@ -11,12 +11,8 @@ const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i
 const out = path.resolve(args[0] || 'stats-shots'); fs.mkdirSync(out, { recursive: true });
 const site = +opt('port', 8854), seed = +opt('seed', 4), W = +opt('w', 390), H = +opt('h', 844), theme = opt('theme', 'crypt'), secs = +opt('secs', 260);
 const party = opt('party', 'paladin,necromancer,pyromancer,cleric').split(',');
-const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
-const port = 9300 + Math.floor(Math.random() * 500);
-const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'delve-edge-'));
-const edge = spawn(EDGE, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio', `--remote-debugging-port=${port}`, `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
-let browser;
-for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
+const edge = await openEdge({ flags: ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio'] }); // tools/edge.mjs: one headless Edge, closed cleanly
+const browser = edge.browser;
 const errors = [];
 try {
   const page = await (await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2, hasTouch: true })).newPage();
@@ -66,6 +62,6 @@ try {
   await page.click('[data-act^="beast:"] >> nth=0', { force: true }).catch(() => {});
   await shot('09-beast-sheet', 600);
 } finally {
-  await browser.close().catch(() => {}); try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); } try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
+  await edge.close();
   console.log(errors.length ? 'errors:\n' + errors.join('\n') : 'no page errors');
 }
