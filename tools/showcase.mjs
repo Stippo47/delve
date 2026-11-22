@@ -34,12 +34,12 @@ const made = [];
 try {
   for (const hero of heroes) {
     const h = HEROES[hero]; if (!h) { console.log('no hero', hero); continue; }
-    const list = ['attack', ...h.abilities.map((a) => a.id)].filter((a) => !only.length || only.includes(a));
+    const list = ['attack', ...h.abilities.map((a) => a.id), 'trait'].filter((a) => (!only.length && a !== 'trait') || only.includes(a)); // (lane H2: --abs trait records the trait's bench)
     const rows = [];
     for (const ab of list) {
       const file = path.join(out, `${hero}-${ab}.mp4`);
       await page.goto(`http://localhost:${site}/lab.html?rec=1&m=show&hero=${hero}&ab=${ab}&tier=${tier}&loop=${secs}${extra ? '&' + extra : ''}`);
-      await page.waitForFunction(() => window.LAB && LAB.ready, null, { timeout: 20000 });
+      await page.waitForFunction(() => window.LAB && LAB.ready, null, { timeout: 90000 }); // (lane H2: a loaded machine can take longer than 20 s)
       // the bench steps a few frames while the art loads: start the loop clean
       await page.evaluate(() => { LAB.restart && LAB.restart(); LAB.frame(0); });
       await new Promise((r) => setTimeout(r, 250));

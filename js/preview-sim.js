@@ -341,13 +341,30 @@ const TRAIT_SCENE = {
   soulHarvest: { words: 'cooldowns -0.8s' },
   immunity: { words: 'poison spreads', hitSt: { poison: 40 }, first: (d) => { d.st.poison = Math.max(d.st.poison, 70); } },
   oldSoldier: { words: 'ally takes -10%' },
+  lastStand: { words: 'LAST STAND' },
+  returnThrust: { words: 'wound up: let go' },
+  snatch: { words: 'weapon snatched' },
+  dirtIn: { words: 'dirt rubbed in', abilities: true },
+  familiar: { words: 'an imp' },
+  bloodRite: { words: 'blood heals', abilities: true },
+  pollen: { words: 'pollen heals' },
+  requisition: { words: 'kit handed out' },
+  huntingPartner: { words: 'the falcon rakes' },
+  powderKeg: { words: 'it blew up', kill: true },
+  longShot: { words: 'a long shot' },
+  plunder: { words: 'extra coins', kill: true },
+  duelist: { words: 'one on one', abilities: true },
+  keenEdge: { words: '+3% of its health' },
+  valhalla: { words: 'the glow heals' },
+  overclock: { words: 'overclocked', abilities: true },
+  fromTheWild: { words: 'back as a man', abilities: true }, // (lane H2, round 13: the new heroes' new traits)
   grace: { words: '3rd blow: crit' },
   skyborn: { words: 'no roots', hitSt: { entangle: 45 } },
   phalanx: { words: 'ally near: -10%' },
   thickHide: { words: 'statuses half', hitSt: { burn: 16, chill: 16 } },
   ironWill: { words: 'low: +25%' },
   lightFingers: { words: 'more gold', start: (d) => { d.def = { ...d.def, coins: [2, 3] }; }, kill: true },
-  fade: { words: 'slipped away', hitsFrom: 3.3 },
+  fade: { words: 'a shadow', hitsFrom: 4.4, quiet: 3.6, shotEvery: 50 }, // (round 13: she becomes a shadow after 3 s without striking or being hurt)
   hardWork: { words: 'healed 8%', hero: (u) => { u.hp = u.maxHp * 0.6; }, kill: true },
   prospector: { words: 'dug up a coin' },
   seenItAll: { words: 'stagger shaken', friend: (w, a) => { a.st.stagger = 90; } },
@@ -424,7 +441,7 @@ function traitStage(S, spec) {
       if (sc.first) sc.first(dummies[0]);
       if (!ranged && !did.free) {
         u.atkT = 9; const d = DEFS[id], b = d.role === 'skirmish' ? 0.5 : 0.9;
-        if (S.t > 0.3 && beat(b) && S.t < S.loop - 0.6 && !u.downed) { const t = dummies.find((o) => w2.units.includes(o)) || dummies[0]; u.facing = Math.atan2(t.y - u.y, t.x - u.x); u.target = t; meleeSwing(w2, u, d.role === 'skirmish'); setAnim(u, d.attackAnim || 'swing', (d.windup || 0) + 0.28); }
+        if (S.t > 0.3 && beat(b) && S.t < S.loop - 0.6 && !u.downed && !(sc.quiet && S.t < sc.quiet)) { /* sc.quiet: lane H2 */ const t = dummies.find((o) => w2.units.includes(o)) || dummies[0]; u.facing = Math.atan2(t.y - u.y, t.x - u.x); u.target = t; meleeSwing(w2, u, d.role === 'skirmish'); setAnim(u, d.attackAnim || 'swing', (d.windup || 0) + 0.28); }
       }
       if (S.t > (sc.hitsFrom ?? 0.5) && beat(sc.hitEvery || 0.7) && !u.downed && !did.free) {
         const d0 = dummies[0]; d0.facing = Math.atan2(u.y - d0.y, u.x - d0.x); setAnim(d0, 'swing', 0.25);

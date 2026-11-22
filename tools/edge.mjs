@@ -13,7 +13,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-export const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
+export const EDGE = ['C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Microsoft/Edge/Application/msedge.exe'].find((p) => fs.existsSync(p)) || 'msedge';
 
 // The ids of running processes whose command line names this profile folder (Windows: through PowerShell's CIM query).
 export function profileProcesses(prof) {

@@ -529,6 +529,36 @@ The designer's words: `docs/riffle-log/2026-11-22-round12.txt` (decks showcase4 
   and as she steps out of a Backstab; the Druid's and Cleric's mending and the Necromancer's drain trimmed (all three
   sat 1.5 to 2 rooms over the average at tier I).
 
+## Round 13, lane H2 (2026-11-22): the 37 newer heroes against the showcase 3 answers
+The designer's words: `docs/riffle-log/2026-11-22-round12.txt` (deck showcase3). Hero by hero, each note quoted with
+what was built and its clip: `docs/HEROES-r13.md`. The looks: `docs/FX-STYLE.md`, "Round 13 (lane H2)". The clips:
+`clips/showcase5/` (one per changed attack and ability, one per new trait).
+- **The three REDOs** (Bandit, Beekeeper, Quartermaster) are new kits on the same ids, slots and art: the Bandit takes
+  things off enemies (Snatch flings their weapon away, Bolas trips a runner, Dirty Trick bowls one into its friends,
+  Stick 'Em Up shuts one down); the Beekeeper calms with smoke, sets a hive on them, glazes friends in honey, and his
+  bees stay pestering; the Quartermaster is the man with the pack (no potions): kit handed out, a supply crate, a
+  barricade, a pot over an enemy's head.
+- **Statuses the notes asked for** are each hero's own effect behind one function in kits2.js (whirl, dirty, targeted,
+  tracked, trapped, spin, ward, weaken), ready to lift into statuses.js; the list is in HEROES-r13.md. Warded is my
+  name for the protection status (a pale blue border: the border means protection). Shackled waits for its hero.
+- **Ids kept** when a slot got a new ability or trait (saves keep their nodes); names, words and behaviour changed. The
+  trait ids did change (seventeen new traits): old ids no longer resolve, which only matters to a save that stored one.
+- **Role calls**: the Valkyrie is a support now (the note: "Is more of a support"); the Engineer moves as a shooter
+  (her wrench is for what reaches her, cogs from afar: as a melee mover her 190 reach drew the wrench's swing across the
+  room); the Chef, Trapper and Engineer shoot from shorter range (200, 180, 190).
+- **Balance** (tools/balance.mjs, the 37 as leads, tier I at rank 0 and tier III at rank 1; before and after in
+  `docs/balance/r13-h2-*.txt`, the after run 4 reps on the merged code). Five passes. Healers and pet makers came down
+  (Beekeeper, Shaman, Chef, the Engineer's cogs, turrets, towers and medbay, the Valkyrie's glow); the Cultist's bolt
+  bursts only built-up bleeding (it burst every bolt: a third of a boss's health); Point Blank, the falcon, Juggling
+  Act III and Parry III trimmed; the low ones went up a step of health or damage (Gladiator, Slinger, Jester, Griffon,
+  Haymaker, Harpooner, Dame, Grandpa, Werewolf, Shade, Seer, Grenadier); the Warlock takes 40% less as the demon (he
+  went down three times a run, in melee on a caster's health); Old Tales 4 s (II 6 s): at 2 s it measured worth less
+  than nothing (tools/ability-worth.mjs). Before: Engineer +4.8, Beekeeper +4.3, Shaman +3.9 rooms over the average at
+  tier I, Griffon -2.4 at tier III. After: role shares tanks 23-24%, shooters 41-42%, supports 18-20% of the party's
+  damage; everyone within 1.5 rooms of the average but Chef +2.1, Beekeeper +1.9, Valkyrie +1.8, Shaman +1.8 and
+  Crossbowman +1.6 at tier I and Pirate +2.0, Beekeeper +1.9 at tier III (the batches move a hero about a room run to
+  run; healers sit over the average in every lane: the Druid +1.6 at tier I in the same run).
+
 ## Round 13, lane B (2026-11-22): the seven designed bosses again (bosses3)
 The designer's verdicts are the v12-bosses answers in `docs/riffle-log/2026-11-22-round12.txt`; each boss's doc
 (`docs/BOSS-*.md`) opens with its words and what was done. The calls the lane made:
