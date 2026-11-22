@@ -153,7 +153,7 @@ function enemyPack(w, run, budget, cell) {
 // opts.major force one. Elites carry one trinket, majors two (they use them, and drop them).
 function foe(w, run, k, x, y, opts = {}, p = 0, pm = 0) {
   const u = spawn(w, k, x, y, { mult: w.mult, ...opts });
-  hardHitting(u, opts.mult || w.mult);
+  hardHitting(u, opts.mult || w.mult, opts.mini);
   u.coinMul = goldMul(run);
   const can = !DEFS[k].boss && !DEFS[k].noElite;
   if (opts.major || opts.mini || (can && pm > 0 && chance(pm))) { makeMajor(w, u); arm(u, ELITE_TRINKET.major); }
@@ -166,12 +166,21 @@ function foe(w, run, k, x, y, opts = {}, p = 0, pm = 0) {
 // Dunes and the Foundry ground on for four to seven minutes, kills coming steadily, a party with a healer never in
 // danger. One more step the same way, 0.85 -> 0.75 and 0.05 -> 0.09: at the Foundry's floor 3 (m ~7.8) health is 19%
 // lower and blows 20% harder, so a fight costs the party about what it did (health x damage, within 3%) in less time.
-export const HP_POW = 0.75, HIT_STEP = 0.09;
-function hardHitting(u, m) {
+// BOSS_ADDS (round 14, lane L): the stand-off clock that went (below, in update) switched off every boss's own adds 45 s
+// into its fight, before most of them begin, so the bosses were measured without them. Three came out much harder once
+// their adds ran the whole fight (benches of the starter four at the level the campaign meets each, 20 fights): the Great
+// Ooze 7 -> 3 wins, the angel 12 -> 7, the Sand Wurm 9 -> 0. Their adds are lighter now: the angel's Host every 45 s (30),
+// 12 wins; the Ooze's Brood every 16 s, three at most (12 s, five), 12 wins; the Wurm's Brood one scarab at a time at 30%
+// health (two a hole, five, full), 3 wins: still well under, and without its Brood it wins 8: lane B's to settle.
+// The floors' last foes (the mini-bosses and the bosses) keep round 8's numbers: their fights were not where rooms
+// dragged, and lanes B and D tuned each to be about even at the level the campaign meets it (with the new step the Winter
+// Queen's and Cinder's benches fell from 9 and 10 wins in 20 to 5).
+export const HP_POW = 0.75, HIT_STEP = 0.09, BOSS_HP_POW = 0.85, BOSS_HIT_STEP = 0.05;
+function hardHitting(u, m, boss = false) {
   if (!(m > 1)) return;
-  const k = Math.pow(m, HP_POW - 1);
+  const k = Math.pow(m, (boss ? BOSS_HP_POW : HP_POW) - 1);
   u.maxHp = Math.max(1, Math.round(u.maxHp * k)); u.hp = Math.min(u.hp, u.maxHp);
-  u.dmgMul *= 1 + HIT_STEP * (m - 1);
+  u.dmgMul *= 1 + (boss ? BOSS_HIT_STEP : HIT_STEP) * (m - 1);
 }
 // An elite carrying trinkets: it wears them (their hooks work for it as for a hero) and drops them when it dies.
 function arm(u, n) {
@@ -321,7 +330,7 @@ function buildRoom(run) {
     const bm = w.mult * (run.floor === FLOORS ? 1 : 0.8);
     const b = own ? spawn(w, bossKind, bx, by, { mult: bm, hpMul })
       : foe(w, run, bossKind, bx, by, { mini: true, hpMul });
-    if (own) hardHitting(b, bm);
+    if (own) hardHitting(b, bm, true);
     b.facing = b.mvA = Math.PI; b.floorFoe = true;
     const adds = Math.round((2 + run.floor + Math.floor(run.depth / 2)) * partyScale * COUNT_MUL);
     if (!arena) for (let i = 0; i < adds; i++) {
@@ -671,13 +680,13 @@ function exitTick(run, h, dt) {
 // isn't fighting goes over; enemies close by keep them away.
 // Round 14, lane L (rooms that dragged on: a helper stood for minutes "on its way" to a friend it never reached, not
 // fighting): what keeps a helper away is an enemy that can hurt it there: one close to the friend on the floor, one at
-// the helper's heels, or one that has the helper in its sights and in reach (a wasp circling it, a turret). A saw blade
+// the helper's heels, or a shooter (not a boss) with the helper in its sights and in reach (a wasp circling it). A saw blade
 // on its rail doesn't chase and doesn't count. Once kept away it stays away a moment (it used to flip between going and
 // fighting every tick as a blade or a bouncing gear passed the 260 mark, and stood still between the two); a helper
 // that gets no closer for a few seconds gives that friend up for a while and fights.
 const REVIVE_T = 3, REVIVE_HP = 0.1, REVIVE_HOLD = 2, REVIVE_GIVEUP = 4, REVIVE_REST = 8;
 const menace = (e) => e.team === 'enemy' && !e.dead && !e.downed && e.aggro && !e.def.trap && !e.ethereal && !e.hidden;
-const inReachOf = (e, h) => e.target === h && dist(e.x, e.y, h.x, h.y) - e.r - h.r < Math.max(160, (e.def.range || 0) + 60);
+const inReachOf = (e, h) => e.def.role === 'ranged' && !e.def.boss && e.target === h && dist(e.x, e.y, h.x, h.y) - e.r - h.r < (e.def.range || 0) + 60; // (a shooter: a boss's reach is its own business, and blocking every revive it eyed cost boss fights)
 function revive(run, dt) {
   const w = run.world;
   for (const u of w.units) if (u.revivedByKit) { u.revivedByKit = false; if (run.heroes[u.kind]) run.heroes[u.kind].down = false; } // kits2.js: Valkyrie's Call
