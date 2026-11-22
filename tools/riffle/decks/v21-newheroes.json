@@ -1,0 +1,488 @@
+{
+  "title": "0.21.0: six new heroes",
+  "topic": "art",
+  "order": 38,
+  "priority": 1,
+  "tags": [
+    "first"
+  ],
+  "cards": [
+    {
+      "id": "all",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "Six new heroes",
+      "text": "The Mob, the Clockmaker, the Air Mage, the Warden, the Telekinetic and the Earth Mage. Live as 0.21.0.",
+      "why": "The six heroes from your deck notes, each a full kit with previews and a trait scene. They wear recoloured stand-ins until you pick from the art deck.",
+      "details": "Each kit was held to your past notes: three abilities that do three different jobs, every effect drawn and none shown as a word, every ability measured by switching it off. None of the eighteen measured as a loss.\n\nNot measured: how they do in battle mode and on the wagon (they only ran without errors), and with trinkets.\n\nFive tier steps look the same on the Book's stage as the tier below (the difference is a number): Rewind I to II and II to III, Slow Time I to II, Stop the Clock II to III, Gale I to II, Nullify I to II.",
+      "parts": [
+        {
+          "id": "strength",
+          "title": "How strong they are",
+          "text": "Against the average hero, in rooms cleared per run. Earth Mage: strong at tier I. Clockmaker and Air Mage: fair. Warden: fair, a little low on damage at tier I. Telekinetic: the strongest caster at tier III (Hurl). The Mob: weak at both tiers after three raises."
+        },
+        {
+          "id": "mob30",
+          "title": "The Mob and “30% each”",
+          "text": "At 30% each the Mob was the weakest hero in the game: four small bodies each lose time finding a place to stand. Their blows are at 35% each now and it is still on the weak side. Say if you want it lifted further past your number."
+        },
+        {
+          "id": "mobarea",
+          "title": "The Mob: area hits",
+          "text": "One blow that catches several bodies lands in full on the first and 30% on each more (all four: 190%, not 400%). Without a rule every slam in the game would hit this hero four times. A heal that reaches several counts once."
+        },
+        {
+          "id": "mobarmour",
+          "title": "The Mob: enemy armour",
+          "text": "Armour takes its points off every blow, so it would come off the Mob four times. Against one of its bodies armour counts 35%."
+        },
+        {
+          "id": "name",
+          "title": "The Clockmaker's name",
+          "text": "My pick for the clockwork hero's name. Say if you want another."
+        },
+        {
+          "id": "weak",
+          "title": "Weakest abilities",
+          "text": "The Warden's Nullify adds nothing to rooms cleared at tier I, though it spares the party the most damage of the eighteen. His Chain Gang is inside the noise at both tiers."
+        }
+      ],
+      "videos": [
+        "../../../clips/r15/heroes/mob-surround.mp4",
+        "../../../clips/r15/heroes/clockwork-stopClock.mp4"
+      ]
+    },
+    {
+      "id": "mob",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "The Mob",
+      "text": "Four peasants who are one hero: one health pool, one card, four small bodies that stick together.",
+      "why": "Your line, built as a full kit on stand-in art. Each move is a part with a clip.",
+      "pick": "Keep them as built: Pile On, Surround, Scatter, and Strength in Numbers.",
+      "videos": [
+        "../../../clips/r15/heroes/mob-area.mp4",
+        "../../../clips/r15/heroes/mob-pileOn.mp4"
+      ],
+      "parts": [
+        {
+          "id": "four-who-are-one",
+          "title": "Four who are one",
+          "text": "\"Is 4 peasants. Is the collective of all 4.\" Built: four bodies in the room that are one hero: one slot in the party, one card on the HUD, one health bar, one set of abilities, one entry in the save. The torch-bearer is the hero's own unit; the pitchfork, the axe and the dagger are its other three bodies."
+        },
+        {
+          "id": "30-each",
+          "title": "30% each",
+          "text": "\"Each is like 30% the strength of 1 normal hero.\" Built: the pool is 388 health against a plain fighter's 314 (the Haymaker): 31% each. Their blows were first set at 30% each on paper, and in real runs the Mob came out the weakest hero in the game: four small bodies each spend part of every fight finding a place to stand, and are in reach of more enemies. So the blows were raised, three times: on paper the four now strike for 18.1 a second against the Haymaker's 13.0 (35% each), and in runs the Mob is inside the fighters' spread but still on its weak side (0.64 rooms under the batch average at tier I, 0.85 under at tier III; the numbers at the end). So \"30% each\" is, if anything, generous to"
+        },
+        {
+          "id": "what-each-carries",
+          "title": "What each carries",
+          "text": "\"Torch, pitchfork, axe, and dagger.\" Built: each strikes with its own: the torch burns (6 burn a blow), the pitchfork jabs from further off (reach 30 against 20) and shoves, the axe is slow and heavy (a heavy blow: it gets past half of armour, and staggers a little), the dagger is quick (a blow every 0.7 s) and makes them bleed.",
+          "videos": [
+            "../../../clips/r15/heroes/mob-attack.mp4"
+          ]
+        },
+        {
+          "id": "enemy-armour-my-call",
+          "title": "Enemy armour: my call",
+          "text": "Armour, my call, please check: an enemy's armour takes its points off every blow, so it would take them off the Mob four times where it takes them off a fighter once. Against one of the Mob's bodies armour counts 35%."
+        },
+        {
+          "id": "drawn-to-each-other",
+          "title": "Drawn to each other",
+          "text": "\"They are strongly attracted to each other.\" Built: a leash: a body more than 96 from the middle of the other three leans back towards them, and past 150 it drops what it was doing and runs back faster than it walks (x1.35). Knock one away and it comes sprinting back. With nothing to fight the three keep station just behind and beside the torch-bearer. They fight what the torch-bearer fights; a body that can't reach it fights whatever is at arm's length."
+        },
+        {
+          "id": "all-melee",
+          "title": "All melee",
+          "text": "\"All melee.\" Built: all four."
+        },
+        {
+          "id": "one-health-pool",
+          "title": "One health pool",
+          "text": "\"They share 1 health pool.\" Built: one pool. A blow on any body comes off it. My call, please check: one blow (or one tick of a burning floor) that catches several bodies lands in full on the first and 30% on each more, so a slam that catches all four does 190%, not 400%. Without a rule every area attack in the game would hit this hero four times. Measured in runs, this adds about a tenth to what the Mob takes. Checked: a blow of 40 on one body takes 40, the same blow over all four takes 76, a heal of 30 that reaches all four heals 30, a stun on one body holds all four.",
+          "videos": [
+            "../../../clips/r15/heroes/mob-area.mp4"
+          ]
+        },
+        {
+          "id": "pile-on",
+          "title": "Pile On",
+          "text": "Pile On: all four jump on one enemy, pin it by the arms and legs and lay into it in turn, each with what it carries. It can't move, turn, strike or use anything, and everyone hits it 25% harder meanwhile. I: held 2.2 s (a boss 40% of that); II: 3 s; III: when they let go they throw it, and it is knocked out where it lands. The job: one dangerous enemy taken out of the fight.",
+          "videos": [
+            "../../../clips/r15/heroes/mob-pileOn.mp4"
+          ]
+        },
+        {
+          "id": "surround",
+          "title": "Surround",
+          "text": "Surround: the four run out to four sides of the enemies and close in at once, shoving everything they meet into one knot in the middle (each one shoved is hit). II: the torch sets the floor alight where they meet, 4 s; III: those herded are knocked off their feet for 1.2 s. The job: bunching enemies up for everyone's area attacks. Their pull to each other is the move.",
+          "videos": [
+            "../../../clips/r15/heroes/mob-surround.mp4"
+          ]
+        },
+        {
+          "id": "scatter",
+          "title": "Scatter",
+          "text": "Scatter: they bolt four ways. Whoever was after them loses them, the leash is let go for 3 s, each fights on its own and they take half damage; they get their breath back as they regroup (I: healed 10%; II: 20%); III: apart, each strikes twice as fast. The job: getting out from under a pile or a slam about to land.",
+          "videos": [
+            "../../../clips/r15/heroes/mob-scatter.mp4"
+          ]
+        },
+        {
+          "id": "trait-strength-in-number",
+          "title": "Trait: Strength in Numbers",
+          "text": "Trait Strength in Numbers: each hits 9% harder, and is hurt 7% less, for every other one within arm's reach: 27% and 21% with all four together, nothing scattered (red steam comes off them when all four are shoulder to shoulder).",
+          "videos": [
+            "../../../clips/r15/heroes/mob-trait.mp4"
+          ]
+        }
+      ],
+      "details": "Being downed and lifted: mob-revive. Walking with a party: mob-walk. Every place that had to be taught about a hero with four bodies (each is marked \"round 15 (the Mob)\" in the code): 1. js/mob.js (new): the rules' numbers, and bindBody: the other three bodies' health, statuses, buffs, kit, trinkets, web numbers, side, and every \"held\" state (stunned, frozen, rooted, asleep, afraid, shackled, down, dead, through the door) are the torch-bearer's own fields. That one binding is what makes heals, buffs, cleanses, statuses, charm, being downed, being lifted and leaving the room work on \"the hero\" with no code of their own. 2. sim.js spawn: a kind with def.bodies gets its other bodies made beside it, wherever it is spawned (a run, a battle, the wagon road, the Book's stages, the lab, the unit page's probe). 3. sim.js hurt: the several-bodies rule; armour counted once across its four small blows; and the fall, the cheat-death hooks and the stats are the hero's whichever body took the blow. 4. sim.js addStatus: a status lands on the hero whichever body it caught; the same several-bodies rule for clouds and burning floors. 5. sim.js heal: a heal on any body is the hero's, and one heal that reaches several bodies counts once. 6. sim.js kill / killNow: the four go down as one, each lies where it fell; in a battle each leaves its own body. 7. sim.js turnSide / restoreSide: charmed, the four change sides as one. 8. sim.js allies: the other bodies are not more friends (a \"most hurt friend\" is the hero, once). 9. sim.js chooseTarget: what a body fights. sim.js movement: keeping station, the leash, the run back. 10. sim.js step: the pool's clocks, statuses, kit, trait and trinkets tick once, with the torch-bearer; a body doesn't drink potions or pick abilities. 11. sim.js unitNumbers:"
+    },
+    {
+      "id": "clockwork",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "Clockmaker",
+      "text": "The clockwork hero is the Clockmaker, a support who rewinds friends, slows a patch of the room and stops the c",
+      "why": "Your line, built as a full kit on stand-in art. Each move is a part with a clip.",
+      "pick": "Keep him as built: Rewind, Slow Time, Stop the Clock, and Spare Second.",
+      "videos": [
+        "../../../clips/r15/heroes/clockwork-rewind.mp4",
+        "../../../clips/r15/heroes/clockwork-rewind3.mp4"
+      ],
+      "parts": [
+        {
+          "id": "your-words",
+          "title": "Your words",
+          "text": "\"Clock work hero. Influence time.\" Built: every move is a real change to time, not a slow with a new name."
+        },
+        {
+          "id": "attack-clock-hand",
+          "title": "Attack: Clock hand",
+          "text": "Attack Clock hand: a thrown brass hand; whatever it hits loses a moment (its next blow comes 0.33 s later; a boss 0.12 s).",
+          "videos": [
+            "../../../clips/r15/heroes/clockwork-attack.mp4"
+          ]
+        },
+        {
+          "id": "rewind",
+          "title": "Rewind",
+          "text": "Rewind: one friend is put back where they stood a few seconds ago with the health they had then; what statuses they picked up since are gone. He keeps a note of where and how everyone was, four times a second, six seconds back. I: 3 s back, at most 35% of their health; II: 5 s, at most 50%; III: once a room, a friend who has just fallen is turned back to before the blow. Afterimages run back along the way they came; a dial under them turns backwards.",
+          "videos": [
+            "../../../clips/r15/heroes/clockwork-rewind.mp4",
+            "../../../clips/r15/heroes/clockwork-rewind3.mp4"
+          ]
+        },
+        {
+          "id": "slow-time",
+          "title": "Slow Time",
+          "text": "Slow Time: a bubble over the enemies where their clocks run at 45%: walking, striking, winding up, recharging, and their shots crawl through it. I: 5 s; II: time runs 30% fast for friends inside; III: wider, 7 s. The bubble's look comes in two takes: 1 Dial (the game's), 2 Glass. Clip of take 2: timeBubble-2-glass.",
+          "videos": [
+            "../../../clips/r15/heroes/clockwork-timeBubble.mp4"
+          ]
+        },
+        {
+          "id": "stop-the-clock",
+          "title": "Stop the Clock",
+          "text": "Stop the Clock: every enemy and every enemy shot in the room hangs where it is while the party carries on. I: 1.4 s (a boss 0.6 s); II: 2 s; III: when time starts again each takes at once a third of what it was dealt while it stood still.",
+          "videos": [
+            "../../../clips/r15/heroes/clockwork-stopClock.mp4"
+          ]
+        },
+        {
+          "id": "trait-spare-second",
+          "title": "Trait: Spare Second",
+          "text": "Trait Spare Second: once a room, the blow that would bring him down never happened: he is back where he stood three seconds ago with the health he had then (never less than 30%).",
+          "videos": [
+            "../../../clips/r15/heroes/clockwork-trait.mp4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "airMage",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "Air Mage",
+      "text": "A caster built on Whirled: she shoves enemies along a lane, lifts them, and pulls them in.",
+      "why": "Your line, built as a full kit on stand-in art. Each move is a part with a clip.",
+      "pick": "Keep her as built: Gale, Updraft, Cyclone, and Eye of the Storm.",
+      "videos": [
+        "../../../clips/r15/heroes/airMage-gale.mp4",
+        "../../../clips/r15/heroes/airMage-updraft.mp4"
+      ],
+      "parts": [
+        {
+          "id": "your-words",
+          "title": "Your words",
+          "text": "\"Air mage. Whirled effect\" Built: Whirled is the Griffon's (shoves go further as it builds; at 100 it is flung about three times); she is the hero built on it. Everything she does adds to it."
+        },
+        {
+          "id": "attack-gust",
+          "title": "Attack: Gust",
+          "text": "Attack Gust: a crescent of wind through the first enemy to the one behind: a small shove, 12 Whirled each.",
+          "videos": [
+            "../../../clips/r15/heroes/airMage-attack.mp4"
+          ]
+        },
+        {
+          "id": "gale",
+          "title": "Gale",
+          "text": "Gale: a push. A wall of wind down a wide lane: everything in it is blown far back and whirled 40, and what is blown into a wall or a rock is hurt by it. II: enemy shots in the lane are blown back at whoever loosed them; III: a wider lane, whirled 60.",
+          "videos": [
+            "../../../clips/r15/heroes/airMage-gale.mp4"
+          ]
+        },
+        {
+          "id": "updraft",
+          "title": "Updraft",
+          "text": "Updraft: a lift. An enemy hangs helpless in the air for 1.8 s, then is dropped (hurt, staggered). II: everything close to it too; III: slammed down: knocked out, and a whirled one bursts.",
+          "videos": [
+            "../../../clips/r15/heroes/airMage-updraft.mp4"
+          ]
+        },
+        {
+          "id": "cyclone",
+          "title": "Cyclone",
+          "text": "Cyclone: a pull. A whirlwind wanders after the enemies, drags them into itself, batters and whirls them until they are flung out. I: 5 s; II: stronger pull, 7 s; III: it bursts as it dies.",
+          "videos": [
+            "../../../clips/r15/heroes/airMage-cyclone.mp4"
+          ]
+        },
+        {
+          "id": "trait-eye-of-the-storm",
+          "title": "Trait: Eye of the Storm",
+          "text": "Trait Eye of the Storm: when an enemy she whirled is flung about, a clap of wind goes off round it: its neighbours are hit and whirled 30.",
+          "videos": [
+            "../../../clips/r15/heroes/airMage-trait.mp4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "warden",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "Warden",
+      "text": "A tank with a chain. He shackles, silences and strips buffs, and carries the new Shackled status.",
+      "why": "Your line, built as a full kit on stand-in art. Each move is a part with a clip.",
+      "pick": "Keep him as built: Manacles, Nullify, Chain Gang, and Ball and Chain.",
+      "videos": [
+        "../../../clips/r15/heroes/shackled-2-wound.mp4",
+        "../../../clips/r15/heroes/shackled-3-staked.mp4"
+      ],
+      "parts": [
+        {
+          "id": "your-words",
+          "title": "Your words",
+          "text": "\"uses a lot or shackles and restraints. Nullification themed\" Built: chains on everything he does, and a move that undoes what the enemy is doing."
+        },
+        {
+          "id": "shackled",
+          "title": "Shackled",
+          "text": "Shackled is his (the status: docs/STATUSES.md, \"Round 15\"). The rule as you gave it: no basic attacks, and ability cooldowns set back 50%, once, when the irons lock; 4 s. While it builds, cooldowns run slower (my call). Bosses: 40% of the time, a quarter of a cooldown, 12 s before the next. Its look in three takes: 1 Irons (the game's), 2 Wound, 3 Staked. In the Book: Statuses, \"Shackles\" and \"Shackled\", each with a preview.",
+          "videos": [
+            "../../../clips/r15/heroes/shackled-1-irons.mp4",
+            "../../../clips/r15/heroes/shackled-2-wound.mp4",
+            "../../../clips/r15/heroes/shackled-3-staked.mp4"
+          ]
+        },
+        {
+          "id": "attack-iron-chain",
+          "title": "Attack: Iron chain",
+          "text": "Attack Iron chain: a weighted chain swung in a wide arc (the links fly out along it); every blow adds 28 Shackled (about five blows on one enemy lock it).",
+          "videos": [
+            "../../../clips/r15/heroes/warden-attack.mp4"
+          ]
+        },
+        {
+          "id": "manacles",
+          "title": "Manacles",
+          "text": "Manacles: a shutdown. A pair of manacles thrown at the enemy with the most to lose (a caster, a shooter, one in the middle of something): Shackled at once. II: staked to the floor too (it can't move); III: a second pair flies on to the next.",
+          "videos": [
+            "../../../clips/r15/heroes/warden-manacle.mp4"
+          ]
+        },
+        {
+          "id": "nullify",
+          "title": "Nullify",
+          "text": "Nullify: an undoing. In a wide ring round him enemy shots drop out of the air, what enemies were winding up is broken off, and they can use no ability for 3 s (a padlock on each). II: it strips what protects and strengthens them and washes the statuses off friends in the ring; III: 5 s, and the silenced take 20% more.",
+          "videos": [
+            "../../../clips/r15/heroes/warden-nullify.mp4"
+          ]
+        },
+        {
+          "id": "chain-gang",
+          "title": "Chain Gang",
+          "text": "Chain Gang: a hold. Chains fly to the enemies round him: they are leashed to him (120 at most), have to fight him, strike 25% slower with the chain dragging at them, and he takes 35% less while he holds them. I: three for 5 s; II: five; III: at the end he hauls them in and they reel.",
+          "videos": [
+            "../../../clips/r15/heroes/warden-chainGang.mp4"
+          ]
+        },
+        {
+          "id": "trait-ball-and-chain",
+          "title": "Trait: Ball and Chain",
+          "text": "Trait Ball and Chain: whatever he shackles drags an iron ball: 40% slower, and it can't dash, leap or charge.",
+          "videos": [
+            "../../../clips/r15/heroes/warden-trait.mp4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "telekinetic",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "Telekinetic",
+      "text": "A caster who throws the room's own boulders, lifts enemies and catches shots in a dome.",
+      "why": "Your line, built as a full kit on stand-in art. Each move is a part with a clip.",
+      "pick": "Keep her as built: Hurl, Levitate, Mind Shield, and Poltergeist.",
+      "videos": [
+        "../../../clips/r15/heroes/telekinetic-hurl.mp4",
+        "../../../clips/r15/heroes/telekinetic-levitate.mp4"
+      ],
+      "parts": [
+        {
+          "id": "your-words",
+          "title": "Your words",
+          "text": "\"Telekinetic.\" Built: lifting and throwing things and enemies, holding one in the air, catching shots."
+        },
+        {
+          "id": "attack-flung-stone",
+          "title": "Attack: Flung stone",
+          "text": "Attack Flung stone: a stone lifts off the floor beside her and is flung.",
+          "videos": [
+            "../../../clips/r15/heroes/telekinetic-attack.mp4"
+          ]
+        },
+        {
+          "id": "hurl",
+          "title": "Hurl",
+          "text": "Hurl: a blast. She picks up the nearest heavy thing standing in the room (a rock, a barrel, a post: it is really taken out of the room and the way through opens) or, with none in reach, tears a slab out of the floor, and hurls it into the enemies. I: one; II: a second straight after; III: it bursts into shrapnel: wider, and it staggers. Not fountains, trees, a boss room's pillars or a troll's boulder.",
+          "videos": [
+            "../../../clips/r15/heroes/telekinetic-hurl.mp4"
+          ]
+        },
+        {
+          "id": "levitate",
+          "title": "Levitate",
+          "text": "Levitate: a hold and a throw. An enemy hangs helpless in the air, then is flung at the thickest of its friends: it and what it lands on are hurt. I: 2 s; II: 3 s, and it takes 20% more while it hangs; III: two at once. A boss is too heavy: pressed down and slowed instead.",
+          "videos": [
+            "../../../clips/r15/heroes/telekinetic-levitate.mp4"
+          ]
+        },
+        {
+          "id": "mind-shield",
+          "title": "Mind Shield",
+          "text": "Mind Shield: a shelter. A dome round her and the friends beside her: enemy shots that reach it stop dead and hang there, enemies that walk in are pushed out, every blow that does land on someone inside is 30% softer, and when it drops everything it caught flies back at whoever loosed it. She stands still to hold it. I: 3.5 s; II: 5 s, thrown back 50% harder; III: it ends with a shove.",
+          "videos": [
+            "../../../clips/r15/heroes/telekinetic-mindShield.mp4"
+          ]
+        },
+        {
+          "id": "trait-poltergeist",
+          "title": "Trait: Poltergeist",
+          "text": "Trait Poltergeist: when an enemy dies near her its body is flung at the nearest of its friends (the real body: it flies, spins and lands).",
+          "videos": [
+            "../../../clips/r15/heroes/telekinetic-trait.mp4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "earthMage",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "Earth Mage",
+      "text": "A caster with one ability for each thing you named: earthquake, a chain of spikes, a stone wall.",
+      "why": "Your line, built as a full kit on stand-in art. Each move is a part with a clip.",
+      "pick": "Keep her as built: Earthquake, Spike Chain, Stone Wall, and Aftershock.",
+      "videos": [
+        "../../../clips/r15/heroes/earthMage-earthquake.mp4",
+        "../../../clips/r15/heroes/earthMage-spikeChain.mp4"
+      ],
+      "parts": [
+        {
+          "id": "your-words",
+          "title": "Your words",
+          "text": "\"earth quakes, chains of spikes from the ground, spawn stone walls.\" Built: one ability each, as written."
+        },
+        {
+          "id": "attack-rock",
+          "title": "Attack: Rock",
+          "text": "Attack Rock: a lump of rock, a solid knock, a little stagger.",
+          "videos": [
+            "../../../clips/r15/heroes/earthMage-attack.mp4"
+          ]
+        },
+        {
+          "id": "earthquake",
+          "title": "Earthquake",
+          "text": "Earthquake: a stumble. The floor under the enemies shakes: slowed to half, staggered again and again (it knocks them out if they stay), hurt. I: 3 s; II: wider, 4.5 s; III: it ends with the floor heaving up and throwing them off their feet.",
+          "videos": [
+            "../../../clips/r15/heroes/earthMage-earthquake.mp4"
+          ]
+        },
+        {
+          "id": "spike-chain",
+          "title": "Spike Chain",
+          "text": "Spike Chain: the damage. A line of stone spikes bursts out of the floor running from her to an enemy, and from there on to the next, and the next; what stands on the line is caught too. I: three enemies; II: five; III: the last spike under each holds it fast (rooted 1.4 s).",
+          "videos": [
+            "../../../clips/r15/heroes/earthMage-spikeChain.mp4"
+          ]
+        },
+        {
+          "id": "stone-wall",
+          "title": "Stone Wall",
+          "text": "Stone Wall: a real wall (the room's own kind: nothing walks through it, the enemy can't see or shoot through it, and enemies have to go round) heaved up across the way of a brawler coming for one of the party's soft ones. It comes up hard: what stands where it rises is struck, staggered and thrown back. It is raised low on her own side: the party sees and shoots over it (as a plain wall it measured as a loss: it stood in the party's own line of fire, as the Frost Mage's Ice Wall did in round 13). I: 6 s; II: longer, 8 s; III: it comes down on the enemies' side.",
+          "videos": [
+            "../../../clips/r15/heroes/earthMage-stoneWall.mp4"
+          ]
+        },
+        {
+          "id": "trait-aftershock",
+          "title": "Trait: Aftershock",
+          "text": "Trait Aftershock: a moment after one of her abilities hurts an enemy, the floor cracks under it and a stone spike comes up.",
+          "videos": [
+            "../../../clips/r15/heroes/earthMage-trait.mp4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shackled",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Shackled: pick a look",
+      "text": "Your status: no basic attacks, and every ability cooldown set back by half. The Warden builds it.",
+      "why": "Three looks for it. Tick one, or none and say what's off. The first is in the game until you pick.",
+      "pick": [
+        "shackled-1-irons"
+      ],
+      "items": [
+        {
+          "id": "shackled-1-irons",
+          "label": "1 Irons",
+          "video": "../../../clips/r15/heroes/shackled-1-irons.mp4",
+          "text": "Irons close on its wrists blow by blow, then lock."
+        },
+        {
+          "id": "shackled-2-wound",
+          "label": "2 Wound",
+          "video": "../../../clips/r15/heroes/shackled-2-wound.mp4",
+          "text": "A chain winds round its body."
+        },
+        {
+          "id": "shackled-3-staked",
+          "label": "3 Staked",
+          "video": "../../../clips/r15/heroes/shackled-3-staked.mp4",
+          "text": "A chain runs from it to a stake in the floor."
+        }
+      ],
+      "details": "It builds up like the other statuses; the Warden's chain adds 28 a blow. When it bursts: 4 seconds of no basic attacks, and each cooldown is set back once by half its own length, never past one full cooldown.\n\nMy addition, say if you'd rather not: while it builds, the target's cooldowns already run up to 50% slower.\n\nBosses: 40% of the time, a quarter of a cooldown, and 12 seconds before it can build again. A few enemies that keep a private clock (the Bone King's phases, some turrets) aren't reached by it yet."
+    }
+  ]
+}
