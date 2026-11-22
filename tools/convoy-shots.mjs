@@ -24,9 +24,9 @@ try {
   const shot = async (name, ms = 450) => { await page.waitForTimeout(ms); await page.screenshot({ path: path.join(out, name + '.png') }); console.log('shot', name); };
   const tap = (sel) => page.evaluate((s) => { const e = document.querySelector(s); if (!e) throw new Error('nothing matches ' + s); e.click(); }, sel);
   await page.goto(`http://localhost:${site}/?seed=${seed}&allnodes`); // (every skill: a fresh save's heroes have none, and fall before the stills)
-  await page.waitForFunction(() => window.GAME && GAME.ready, null, { timeout: 120000 });
+  await page.waitForFunction(() => window.GAME && GAME.ready, null, { timeout: 120000, polling: 200 });
   await page.evaluate(() => localStorage.clear()); await page.reload();
-  await page.waitForFunction(() => window.GAME && GAME.ready, null, { timeout: 120000 });
+  await page.waitForFunction(() => window.GAME && GAME.ready, null, { timeout: 120000, polling: 200 });
   await page.evaluate(([party, level]) => {
     const s = GAME.save;
     s.unlocks = { ...(s.unlocks || {}) }; for (const k of ['slotMini1', 'slotBoss1']) s.unlocks[k] = true; s.slots = 3;
@@ -42,16 +42,16 @@ try {
   if (await page.evaluate(() => GAME.state) !== 'convoy') { errors.push('tapping the parked wagon did not open its page'); await page.evaluate(() => GAME.openConvoy()); }
   await shot('02-set-out');
   await tap('[data-cv="go"]');
-  await page.waitForFunction(() => GAME.state === 'run' && GAME.run && GAME.run.mode === 'convoy');
+  await page.waitForFunction(() => GAME.state === 'run' && GAME.run && GAME.run.mode === 'convoy', null, { polling: 200 });
   await shot('03-road-start', 1200);
   await page.evaluate(() => GAME.fastForward(28));
   await shot('04-road-fight', 700);
-  await page.evaluate(() => { const r = GAME.run; for (let i = 0; i < 80; i++) { if (!r.world.units.some((u) => u.team !== r.wagon.team && !u.dead && !u.downed && u.team !== 'neutral')) break; GAME.fastForward(0.5); } r.waveT = 40; GAME.fastForward(14); });
+  await page.evaluate(() => { const r = GAME.run; for (let i = 0; i < 80; i++) { if (!r.world.units.some((u) => u.team !== r.wagon.team && !u.dead && !u.downed && u.team !== 'neutral')) break; GAME.fastForward(0.5); } r.calm = 60; GAME.fastForward(22); });
   await shot('05-road-quiet', 700);
   // on to the end of the stretch: the roadside camp
   await page.evaluate(() => { const r = GAME.run; for (let i = 0; i < 1600 && r.phase === "road"; i++) { r.wagon.hp = Math.max(r.wagon.hp, r.wagon.maxHp * 0.5); for (const u of r.world.units) if (u.team === r.wagon.team && !u.downed && !u.dead) u.hp = Math.max(u.hp, u.maxHp * 0.6); GAME.fastForward(0.25); }
     if (r.phase === 'roadside') { r.wagonHp = Math.round(r.wagonMax * 0.45); r.coins = Math.max(r.coins, 90); } });
-  await page.waitForFunction(() => GAME.state === 'convoy' || (GAME.run && GAME.run.phase !== 'road'), null, { timeout: 30000 });
+  await page.waitForFunction(() => GAME.state === 'convoy' || (GAME.run && GAME.run.phase !== 'road'), null, { timeout: 30000, polling: 200 });
   await page.evaluate(() => GAME.roadside());
   console.log('diag', await page.evaluate(() => JSON.stringify({ st: GAME.state, ph: GAME.run && GAME.run.phase, res: GAME.run && GAME.run.result, cv: (document.getElementById('convoy')||{}).className, n: document.querySelectorAll('.cv-choice').length })));
   await shot('06-roadside', 900);
@@ -60,20 +60,20 @@ try {
   const fit = await page.evaluate(() => { const p = document.querySelector('.cv-panel'); p.scrollTop = 1e4; const b = document.querySelector('.cv-go').getBoundingClientRect(); return { bottom: b.bottom, h: innerHeight }; });
   if (fit.bottom > fit.h + 1) errors.push('roadside: the set-off button is off screen');
   await tap('[data-cv="go-on"]');
-  await page.waitForFunction(() => GAME.state === 'run' && GAME.run.phase === 'road' && GAME.run.stretch === 1);
+  await page.waitForFunction(() => GAME.state === 'run' && GAME.run.phase === 'road' && GAME.run.stretch === 1, null, { polling: 200 });
   await shot('07-stretch2', 1500);
   // the last stretch, from its start (a second trip): the Bandit Chief's barricade
   await page.evaluate(([party]) => { GAME.startConvoy({ party, stretch: 2 }); }, [party]);
-  await page.waitForFunction(() => GAME.state === 'run' && GAME.run.stretch === 2);
+  await page.waitForFunction(() => GAME.state === 'run' && GAME.run.stretch === 2, null, { polling: 200 });
   await page.evaluate(() => { const r = GAME.run; r.wagon.x = r.barricade.x - 1000; for (const u of r.world.units) if (u.team === r.wagon.team && !u.def.cargo) u.x = r.wagon.x + 60; for (let i = 0; i < 40 && !r.chiefSeen && r.phase === 'road'; i++) GAME.fastForward(1); GAME.fastForward(5); });
   await shot('08-chief', 900);
   await page.evaluate(() => { const r = GAME.run; if (r.chief) r.chief.hp = 1; for (let i = 0; i < 400 && !GAME.run.summary; i++) GAME.fastForward(1); });
-  await page.waitForFunction(() => GAME.state === 'result', null, { timeout: 30000 });
+  await page.waitForFunction(() => GAME.state === 'result', null, { timeout: 30000, polling: 200 });
   await shot('09-result', 1200);
   const fr = await page.evaluate(() => { const b = document.querySelector('.r-foot .btn').getBoundingClientRect(); return { btnBottom: b.bottom, h: innerHeight }; });
   if (fr.btnBottom > fr.h + 1) errors.push('result: the buttons are off screen');
   await tap('[data-cr="camp"]');
-  await page.waitForFunction(() => GAME.state === 'camp');
+  await page.waitForFunction(() => GAME.state === 'camp', null, { polling: 200 });
   await shot('10-camp-after', 900);
 } catch (e) { errors.push('script: ' + (e.stack || e)); }
 console.log(errors.length ? 'ERRORS\n' + errors.join('\n') : 'no errors');

@@ -32,7 +32,7 @@ export const LOOKS = {
     ground: ['#8A9478', '#98A286', '#76806A'], tuft: '#5E6E50', flower: ['#D8D0E8'], road: ['#ABA294', '#8E8678'], floor: '#1E2624',
     crowns: { broad: [['#1C3632', '#2C5048', '#4E7A68']], pine: [['#183430', '#28504A', '#4A7A6C']], dead: [['#3A3236', '#5A5056', '#8A8088']] },
     trunk: ['#3E3436', '#625658'], under: ['#2E4A3E', '#4E6E56'], rock: ['#5A5A62', '#8A8A94', '#BCBCC6'], cap: '#4E6E56' },
-  frost: { kinds: { pine: 0.82, dead: 0.18 }, snow: true,
+  frost: { kinds: { pine: 0.82, dead: 0.18 }, snow: true, shade: '#3A5068', edge: [['#2A6458', '#DCE8F2', '#FFFFFF'], ['#306A5E', '#CFDFEC', '#F6FAFE']], // (edge: the tree line's values when they aren't a kind's: snow on dark firs)
     ground: ['#DCE6EE', '#EEF4F8', '#C4D2DE'], tuft: '#A8B8C8', flower: [], road: ['#B4BCC6', '#9AA4B0'], floor: '#9AAABA',
     crowns: { pine: [['#173E3A', '#2A6458', '#4E8A78'], ['#1C4440', '#306A5E', '#56927E']], dead: [['#4A3E38', '#6E5E54', '#A09080']] },
     trunk: ['#4A3A30', '#6E5848'], under: ['#9AB0BE', '#D6E2EC'], rock: ['#5E6A78', '#8E9AA8', '#C4CED8'], cap: '#F4F8FC' },
@@ -40,11 +40,11 @@ export const LOOKS = {
     ground: ['#6E6A66', '#827C76', '#4E4A48'], tuft: '#4A4644', flower: [], road: ['#86827E', '#6A6662'], floor: '#1C1818',
     crowns: { charred: [['#262222', '#423C3A', '#6E6662']], dead: [['#1E1A1A', '#3A3230', '#5E5450']] },
     trunk: ['#1E1A1A', '#3A3230'], under: ['#3A3634', '#5A5450'], rock: ['#3E3A38', '#625C58', '#8E8680'], cap: '#4A4644', glow: '#FF7A2E' },
-  spire: { kinds: { crag: 0.8, pine: 0.2 },
+  spire: { kinds: { crag: 0.8, pine: 0.2 }, shade: '#4A4638',
     ground: ['#C8C2B0', '#D8D2C0', '#B4AE9C'], tuft: '#9AA078', flower: ['#F6E6A8', '#C8B0F0'], road: ['#E2D8C0', '#C8BEA4'], floor: '#6E6A5E',
     crowns: { crag: [['#8A8478', '#B2ACA0', '#E8E2D4']], pine: [['#2A4A3A', '#3E6A50', '#6A9A74']] },
     trunk: ['#6E6458', '#8E8476'], under: ['#9AA078', '#BCC092'], rock: ['#8A8478', '#B2ACA0', '#E8E2D4'], cap: '#E8E2D4' },
-  dunes: { kinds: { mound: 0.72, palm: 0.28 },
+  dunes: { kinds: { mound: 0.72, palm: 0.28 }, shade: '#6A5030',
     ground: ['#E2C68A', '#EED6A0', '#D2B478'], tuft: '#B8A060', flower: ['#E87A4A'], road: ['#C8A46A', '#B08E58'], floor: '#A88A52',
     crowns: { mound: [['#C29858', '#DEB874', '#F6E0A8']], palm: [['#2E5A2A', '#4C8236', '#8CBB52']] },
     trunk: ['#8A6A44', '#AE8A5C'], under: ['#A8A058', '#C8C070'], rock: ['#A07850', '#C49A6A', '#E8C894'], cap: '#F2DCA6' },
@@ -56,38 +56,12 @@ export const LOOKS = {
 export const lookOf = (theme) => LOOKS[theme] || LOOKS.wildwood;
 const pickKind = (look, k) => { let a = 0; const e = Object.entries(look.kinds), tot = e.reduce((s, [, v]) => s + v, 0); for (const [n, v] of e) { a += v / tot; if (k < a) return n; } return e[e.length - 1][0]; };
 
-// ---------------------------------------------------------------- the edge's layout
-// The things that line the road, decided once per stretch from the world's size: three depths a side, the deepest
-// first, so the front row overlaps the ones behind. Each: { x, y, r, row, side, k, kind }. Now and then a fallen trunk
-// reaches from under the trees onto the verge ({ fallen: true, x, a, L }).
-export function edgeLayout(W, H, EDGE, look) {
-  const out = [];
-  const hills = look.kinds.mound || look.kinds.crag;
-  const rows = hills ? [[-30, 70, 100, 120], [EDGE * 0.45, 66, 96, 104], [EDGE - 36, 48, 76, 78]] : [[-10, 70, 100, 104], [EDGE * 0.5, 62, 90, 88], [EDGE - 28, 44, 74, 64]];
-  rows.forEach(([d, r0, r1, step], row) => {
-    for (const side of [-1, 1]) {
-      let i = 0;
-      for (let x = -80 + hz(row, side) * step; x < W + 120; x += step * (0.7 + 0.6 * hz(row * 31 + i, side + 5)), i++) {
-        const k = hz(x | 0, row * 7 + side + 11), j = hz(i, row + side * 3), kind = pickKind(look, hz(i * 3 + row, side * 7 + 2));
-        let r = r0 + (r1 - r0) * k, dd = d + (j - 0.5) * (row === 2 ? 70 : 60);
-        if (kind === 'round') r *= 0.8; else if (kind === 'dead') r *= 0.85; else if (kind === 'pine') r *= 0.9;
-        if (row === 2) {
-          if (hz(i, side + 40) < 0.12) continue; // a gap in the front row: the shade and the undergrowth behind show
-          if (hz(i, side + 50) < 0.16) { r *= 1.3; dd += 22; } // an old tree leaning out over the verge
-          else if (j < 0.3) { r *= 0.8; dd -= 14; } // a young one set back
-        }
-        out.push({ x, y: side < 0 ? dd : H - dd, r, row, side, k, kind, hue: hz(i, row * 13 + side + 7) });
-      }
-    }
-  });
-  if (look.fallen) for (const side of [-1, 1]) for (let x = 500 + hz(side, 90) * 600; x < W - 200; x += 900 + hz(x | 0, 91) * 700) out.push({ fallen: true, side, x, a: (hz(x | 0, 92) - 0.5) * 1.1, L: 200 + hz(x | 0, 93) * 90, r: 15 + hz(x | 0, 94) * 4, row: -1 });
-  return out;
-}
-
 // ---------------------------------------------------------------- the ground (into render.js's floor cache)
-// g is in world units. Broad soft patches, not specks: a few big tufts, flowers in small drifts; the road worn in; the
-// forest floor and the canopy's shade at the edge; roots, bushes and fallen trunks where the trees meet the verge.
-export function paintRoadGround(g, w, { EDGE, ROAD_HALF, look, trees }) {
+// g is in world units. Quiet (round 14, the designer: "not a fan of the grass texture. Remove the dark green tufts of
+// grass. Don't like the puddles"): broad soft patches of lighter and darker ground, flowers in a few small drifts, the
+// road worn in, and the wood's own floor and its shade where the tree line stands over it. No tufts, no puddles, and
+// nothing fussy at the trees' foot (round 13's bushes and fallen trunks went with its tree line).
+export function paintRoadGround(g, w, { EDGE, ROAD_HALF, look }) {
   const W = w.W, H = w.H, mid = H / 2;
   g.fillStyle = look.ground[0]; g.fillRect(-60, -60, W + 120, H + 120);
   for (let i = 0; i < W * H / 60000; i++) { // big soft patches, lighter and darker
@@ -96,15 +70,14 @@ export function paintRoadGround(g, w, { EDGE, ROAD_HALF, look, trees }) {
     g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2);
   }
   if (look.embers) emberGround(g, W, H, EDGE, mid, ROAD_HALF, look);
-  // the forest floor under the trees, and the shade the canopy throws on the verge
+  // the wood's floor (the tree line covers it), and its shade thinning out onto the verge
+  const sh = look.shade || '#0E140A';
   for (const side of [-1, 1]) {
-    const e = side < 0 ? EDGE : H - EDGE, y0 = side < 0 ? -60 : e + 30;
-    g.fillStyle = look.floor; g.fillRect(-60, y0, W + 120, EDGE + 30);
-    const fg = g.createLinearGradient(0, e - side * 30, 0, e + side * 40); fg.addColorStop(0, look.floor); fg.addColorStop(1, hexA(look.floor, 0));
-    g.fillStyle = fg; g.fillRect(-60, Math.min(e - side * 30, e + side * 40), W + 120, 70);
-    const sg = g.createLinearGradient(0, e - side * 30, 0, e + side * 140);
-    sg.addColorStop(0, 'rgba(14,20,10,0.58)'); sg.addColorStop(0.35, 'rgba(14,20,10,0.26)'); sg.addColorStop(1, 'rgba(14,20,10,0)');
-    g.fillStyle = sg; g.fillRect(-60, Math.min(e - side * 30, e + side * 140), W + 120, 170);
+    const e = side < 0 ? EDGE : H - EDGE;
+    g.fillStyle = look.floor; if (side < 0) g.fillRect(-60, -60, W + 120, e - 40 + 60); else g.fillRect(-60, e + 40, W + 120, EDGE + 20);
+    const sg = g.createLinearGradient(0, e + side * 42, 0, e - side * 130); // (side -1: the wood is at the low y's, the open ground past e)
+    sg.addColorStop(0, look.floor); sg.addColorStop(0.3, hexA(sh, 0.36)); sg.addColorStop(0.6, hexA(sh, 0.12)); sg.addColorStop(1, hexA(sh, 0));
+    g.fillStyle = sg; g.fillRect(-60, Math.min(e + side * 42, e - side * 130), W + 120, 172);
   }
   // the road worn into the ground: a ragged edge, a lighter middle, two ruts, a grassy strip down the middle
   const edgeAt = (x, s) => ROAD_HALF + 10 * Math.sin(x * 0.013 + s * 2) + 7 * Math.sin(x * 0.041 + s * 5) + 4 * Math.sin(x * 0.11 + s);
@@ -117,77 +90,17 @@ export function paintRoadGround(g, w, { EDGE, ROAD_HALF, look, trees }) {
     g.strokeStyle = 'rgba(50,36,20,0.24)'; g.lineWidth = 4; g.stroke();
   }
   if (!look.snow && !look.embers) { g.beginPath(); for (let x = -60; x <= W + 60; x += 20) g.lineTo(x, mid + 4 * Math.sin(x * 0.017)); g.strokeStyle = hexA(look.tuft, 0.35); g.lineWidth = 22; g.stroke(); }
-  for (let x = 300; x < W; x += (420 + hz(x, 6) * 500) / (look.puddles || 1)) {
-    const y = mid + (hz(x, 7) - 0.5) * 90, rx = 24 + hz(x, 8) * 26;
-    g.fillStyle = 'rgba(60,46,30,0.30)'; g.beginPath(); g.ellipse(x, y, rx + 4, rx * 0.5 + 3, 0, 0, TAU); g.fill();
-    g.fillStyle = look.snow ? '#C8DCEA' : look.water || '#7E9AA0'; g.beginPath(); g.ellipse(x, y, rx, rx * 0.5, 0, 0, TAU); g.fill();
-    g.fillStyle = 'rgba(255,255,255,0.3)'; g.beginPath(); g.ellipse(x + rx * 0.2, y - rx * 0.15, rx * 0.45, rx * 0.12, 0, 0, TAU); g.fill();
-  }
-  // a few big tufts of grass, and flowers in small drifts
-  for (let i = 0; i < W * H / 22000; i++) {
-    const x = hz(i, 21) * W, y = EDGE + 20 + hz(i, 22) * (H - 2 * EDGE - 40);
-    if (Math.abs(y - mid) < ROAD_HALF + 10) continue;
-    g.strokeStyle = look.tuft; g.lineWidth = 3.2;
-    g.beginPath(); for (let b = -2; b <= 2; b++) { g.moveTo(x, y); g.lineTo(x + 11 + hz(i, b + 30) * 5, y + b * 4.5); } g.stroke();
-  }
+  // flowers in small drifts
   if (look.flower.length) for (let i = 0; i < W * H / 420000; i++) {
-    const cx = hz(i, 41) * W, cy = EDGE + 60 + hz(i, 42) * (H - 2 * EDGE - 120); if (Math.abs(cy - mid) < ROAD_HALF + 30) continue;
+    const cx = hz(i, 41) * W, cy = EDGE + 110 + hz(i, 42) * (H - 2 * EDGE - 220); if (Math.abs(cy - mid) < ROAD_HALF + 30) continue;
     const col = look.flower[Math.floor(hz(i, 43) * look.flower.length)];
     for (let j = 0; j < 6; j++) { const x = cx + (hz(i, j + 50) - 0.5) * 70, y = cy + (hz(i, j + 60) - 0.5) * 70; g.fillStyle = 'rgba(40,40,20,0.25)'; g.beginPath(); g.arc(x - 1.4, y + 2, 6.4, 0, TAU); g.fill(); g.fillStyle = col; g.beginPath(); g.arc(x, y, 5.6, 0, TAU); g.fill(); g.fillStyle = '#F6C94A'; g.beginPath(); g.arc(x, y, 2.2, 0, TAU); g.fill(); }
   }
   if (look.graves) for (let x = 200; x < W; x += 160 + hz(x, 70) * 220) for (const s of [-1, 1]) { // the graveyard over the crypt: headstones on the verge
-    const y = s < 0 ? EDGE + 50 + hz(x, 71) * 160 : H - EDGE - 50 - hz(x, 72) * 160;
+    const y = s < 0 ? EDGE + 110 + hz(x, 71) * 160 : H - EDGE - 110 - hz(x, 72) * 160;
     g.fillStyle = 'rgba(20,24,20,0.35)'; g.beginPath(); g.ellipse(x - 8, y + 10, 18, 12, 0, 0, TAU); g.fill();
     inked(g, () => { g.beginPath(); g.moveTo(x - 12, y - 16); g.lineTo(x + 8, y - 16); g.arc(x + 8, y, 16, -Math.PI / 2, Math.PI / 2); g.lineTo(x - 12, y + 16); g.closePath(); }, lin(g, x - 12, y, x + 24, y, '#C2C0B8', '#8E8C86'), 2.2);
   }
-  // where the trees meet the verge: roots, fallen trunks, bushes
-  for (const t of trees) {
-    if (t.fallen) { fallenTrunk(g, t, H, EDGE, look); continue; }
-    if (t.row !== 2) continue;
-    const s = t.side;
-    // (roots were tried here: at game size they read as thorns, so they're out; root() is kept for a later pass)
-  }
-  for (const side of [-1, 1]) { // undergrowth in little clumps along the verge
-    const ey = side < 0 ? EDGE : H - EDGE;
-    for (let x = 60 + hz(side, 81) * 120; x < W; x += 150 + hz(x | 0, 82) * 160) {
-      const n = 1 + Math.floor(hz(x | 0, 83) * 3);
-      for (let j = 0; j < n; j++) bush(g, x + j * 44 + (hz(x | 0, j + 84) - 0.5) * 20, ey - side * (62 + hz(x | 0, j + 85) * 46), 24 + hz(x | 0, j + 86) * 14, look);
-    }
-  }
-}
-// A root: a tapered, slightly curved limb reaching from under the crown out across the verge, inked, bark-shaded.
-function root(g, t, j, look) {
-  const dir = t.side < 0 ? 1 : -1, a = (j ? 1 : -1) * (0.3 + hz(t.x | 0, j + 5) * 0.55), L = 55 + hz(t.x | 0, j + 9) * 45;
-  const x0 = t.x + Math.sin(a) * t.r * 0.45, y0 = t.y + dir * t.r * 0.62, x1 = x0 + Math.sin(a) * L, y1 = y0 + dir * Math.cos(a) * L;
-  const ux = (x1 - x0) / L, uy = (y1 - y0) / L, px = -uy, py = ux, bend = (hz(t.x | 0, j + 12) - 0.5) * 14;
-  const mx = (x0 + x1) / 2 + px * bend, my = (y0 + y1) / 2 + py * bend, w0 = 11, w1 = 2.5, wm = (w0 + w1) / 2;
-  const path = () => { g.beginPath(); g.moveTo(x0 + px * w0, y0 + py * w0); g.quadraticCurveTo(mx + px * wm, my + py * wm, x1, y1); g.quadraticCurveTo(mx - px * wm, my - py * wm, x0 - px * w0, y0 - py * w0); g.closePath(); };
-  g.save(); g.lineJoin = 'round'; g.fillStyle = 'rgba(14,20,10,0.3)'; g.translate(-LX * 4, -LY * 4); path(); g.fill(); g.restore();
-  g.save(); g.lineJoin = 'round'; g.strokeStyle = INK; g.lineWidth = 4.4; path(); g.stroke(); g.fillStyle = lin(g, x0 + px * w0, y0 + py * w0, x0 - px * w0, y0 - py * w0, look.trunk[1], look.trunk[0]); g.fill(); g.restore();
-}
-function fallenTrunk(g, t, H, EDGE, look) {
-  const s = t.side, ey = s < 0 ? EDGE : H - EDGE, dir = s < 0 ? 1 : -1;
-  const x0 = t.x, y0 = ey - dir * 70, x1 = x0 + Math.sin(t.a) * t.L, y1 = y0 + dir * Math.cos(t.a) * t.L, ang = Math.atan2(y1 - y0, x1 - x0), L = Math.hypot(x1 - x0, y1 - y0), R = t.r;
-  g.save(); g.translate(x0, y0); g.rotate(ang);
-  g.fillStyle = 'rgba(14,20,10,0.32)'; g.beginPath(); g.ellipse(L / 2 - 4, R * 0.9, L / 2 + 6, R + 4, 0, 0, TAU); g.fill();
-  inked(g, () => { g.beginPath(); g.roundRect ? g.roundRect(0, -R, L, R * 2, R) : g.rect(0, -R, L, R * 2); }, lin(g, 0, -R, 0, R, look.trunk[1], look.trunk[0]), 2.4);
-  g.strokeStyle = 'rgba(30,20,12,0.35)'; g.lineWidth = 2; for (let i = 0; i < 4; i++) { const y = -R * 0.6 + i * R * 0.4; g.beginPath(); g.moveTo(R, y); g.lineTo(L - R * 1.4, y + (hz(i, x0 | 0) - 0.5) * 4); g.stroke(); }
-  inked(g, () => { g.beginPath(); g.ellipse(L - R * 0.4, 0, R * 0.55, R * 0.95, 0, 0, TAU); }, '#C8A878', 2); // the broken end
-  g.strokeStyle = 'rgba(120,84,50,0.6)'; g.lineWidth = 1.6; g.beginPath(); g.ellipse(L - R * 0.4, 0, R * 0.3, R * 0.55, 0, 0, TAU); g.stroke();
-  inked(g, () => { g.beginPath(); g.moveTo(L * 0.45, -R * 0.8); g.lineTo(L * 0.52, -R * 2.1); g.lineTo(L * 0.58, -R * 0.8); g.closePath(); }, look.trunk[1], 1.6); // a snapped branch
-  if (!look.snow && !look.embers) { g.fillStyle = hexA(look.under[1], 0.85); g.beginPath(); g.ellipse(L * 0.3, -R * 0.35, R * 1.1, R * 0.45, 0, 0, TAU); g.fill(); }
-  if (look.snow) { g.fillStyle = '#F4F8FC'; g.beginPath(); g.ellipse(L * 0.5, -R * 0.4, L * 0.4, R * 0.45, 0, 0, TAU); g.fill(); }
-  g.restore();
-}
-function bush(g, x, y, r, look) {
-  const [dark, lite] = look.under;
-  const lobes = [[0, 0, 0.8], [-0.62, 0.3, 0.6], [0.6, 0.28, 0.62], [0.08, -0.55, 0.58], [-0.3, -0.4, 0.5]];
-  g.fillStyle = 'rgba(14,20,10,0.32)'; g.beginPath(); g.ellipse(x - 6, y + 8, r * 1.25, r * 0.95, 0, 0, TAU); g.fill();
-  g.fillStyle = INK; g.beginPath(); for (const [dx, dy, k] of lobes) { g.moveTo(x + dx * r + k * r + 4, y + dy * r); g.arc(x + dx * r, y + dy * r, k * r + 4, 0, TAU); } g.fill();
-  const gr = g.createRadialGradient(x + LX * r * 0.5, y + LY * r * 0.5, 1, x, y, r * 1.3); gr.addColorStop(0, lite); gr.addColorStop(1, dark);
-  g.fillStyle = gr; g.beginPath(); for (const [dx, dy, k] of lobes) { g.moveTo(x + dx * r + k * r, y + dy * r); g.arc(x + dx * r, y + dy * r, k * r, 0, TAU); } g.fill();
-  if (look.flower.length && hz(x | 0, y | 0) < 0.5) for (let i = 0; i < 3; i++) { const a = i * 2.1 + x; g.fillStyle = look.flower[i % look.flower.length]; g.beginPath(); g.arc(x + Math.cos(a) * r * 0.5, y + Math.sin(a) * r * 0.5, 3.4, 0, TAU); g.fill(); }
-  if (look.snow) { g.fillStyle = 'rgba(250,252,255,0.85)'; g.beginPath(); g.ellipse(x + LX * r * 0.3, y + LY * r * 0.3, r * 0.6, r * 0.38, 0.6, 0, TAU); g.fill(); }
 }
 // Ash and embers: scorched patches and glowing coals scattered over the grey (painted once, like the rest).
 function emberGround(g, W, H, EDGE, mid, half, look) {
@@ -224,119 +137,158 @@ export function paintRock(g, x, y, r, look, seed = 0) {
   g.save(); g.lineJoin = 'round'; g.strokeStyle = INK; g.lineWidth = 4.8; poly(out); g.stroke(); g.restore();
 }
 
-// ---------------------------------------------------------------- the canopy (over the units)
-// Two strips, one a side, each its own cached canvas at the screen's scale. Three rows, deepest first, all drawn the
-// same way, the deeper ones darker; the front row reaches a little past EDGE, over the verge. Each thing casts its
-// shade down-screen onto what's behind it, and from the front row onto the verge and whoever stands there.
-let cache = null;
+// ---------------------------------------------------------------- the tree line (round 14; drawn over the units)
+// The designer, on round 13's edge: "Don't like look. I think I also want larger less complex trees. Where you can't
+// see the ground beneath them. Have them on a parallax where they move faster." So: big, simple shapes in three flat
+// values with the game's ink line (like the heroes: no gradients, no per-leaf detail), two rows a side that overlap so
+// only the dark of the wood shows between them, and each row is a layer nearer the camera than the ground: it slides
+// past faster than the ground as the wagon rolls, the front row fastest.
+// Three takes, picked by the address (?edge=crowns | firs | bank):
+//   crowns: big round crowns, one lit mass each (hills and dunes are the same shape in their colours; crags are a
+//           faceted rock)
+//   firs:   tall dark firs seen from above, three flat tiers each, a jagged wall
+//   bank:   no single trees: scalloped banks of canopy one behind the other, a lit rim, a shadow lip
+// Each layer is one tile PER long for each side, painted once into its own canvas and repeated along the road; a frame
+// only copies tiles, shifted (never repainted: a pinch zoom doesn't repaint them either).
+export const EDGE_STYLES = ['crowns', 'firs', 'bank'];
+export const EDGE_DEFAULT = 'crowns';
+export function edgeStyle() { try { const q = new URLSearchParams(location.search).get('edge'); if (EDGE_STYLES.includes(q)) return q; } catch {} return EDGE_DEFAULT; }
+const PER = 2400;         // a tile along the road (longer than a screen is tall at the default zoom, so no repeat shows at once)
+const OVER = 150, OUT = 80, LAP = 3; // a tile reaches this far over the open ground, this far past the world's edge; tiles overlap a hair (no seam)
+export const PARALLAX = [0.5, 1]; // how much faster than the ground each row slides (the back row, the front row)
+// each take's two rows: the size of its things, how far their rim comes (from the tree line: + is over the open
+// ground), how deep the notch between two neighbours may go, how much of a thing's radius is solid all round (K)
+const ROWS = {
+  crowns: [{ r: [155, 205], reach: [-120, -40], cusp: -215, K: 0.8, ink: 5 }, { r: [150, 200], reach: [30, 80], cusp: -40, K: 0.8, ink: 6.5 }],
+  firs: [{ r: [165, 215], reach: [-110, -30], cusp: -230, K: 0.6, ink: 5 }, { r: [155, 205], reach: [40, 92], cusp: -44, K: 0.6, ink: 6.5 }],
+  bank: [{ r: [70, 120], reach: [34, 70], cusp: -4, K: 1, ink: 6.5 }, { r: [70, 120], reach: [-80, -44], cusp: -104, K: 1, ink: 6 }],
+};
+// One row along a tile: things { x, d, r, k }, d = how far in from the world's edge the centre is. Each is put just far
+// enough along from the last that their rims cross no deeper than the row's notch (so nothing shows between them), and
+// the row closes on itself at PER.
+function rowOf(seed, EDGE, cfg) {
+  const out = []; let x = 0, prev = null;
+  const mk = (i) => { const r = cfg.r[0] + (cfg.r[1] - cfg.r[0]) * hz(seed, i * 3 + 1); return { r, d: EDGE + cfg.reach[0] + (cfg.reach[1] - cfg.reach[0]) * hz(seed, i * 3 + 2) - r, k: hz(seed, i * 3 + 3) }; };
+  const gap = (a, b, i) => { const c = EDGE + cfg.cusp + 18 * hz(seed, i * 7 + 5), half = (t) => Math.sqrt(Math.max(0, (t.r * cfg.K) ** 2 - (c - t.d) ** 2)); return Math.max(60, half(a) + half(b)); };
+  for (let i = 0; i < 60; i++) {
+    const t = mk(i);
+    if (prev) x += gap(prev, t, i);
+    if (x > PER - 110) break;
+    t.x = x; out.push(t); prev = t;
+  }
+  const total = prev.x + gap(prev, out[0], 99);
+  for (const t of out) t.x *= PER / total; // (a few percent: the notches stay covered, the row's K has the margin)
+  return out;
+}
+const palsOf = (look, style) => (style === 'firs' && look.crowns.pine) || look.edge || look.crowns[Object.entries(look.kinds).sort((a, b) => b[1] - a[1])[0][0]] || Object.values(look.crowns)[0];
+const deepOf = (look) => look.deep || shade(look.floor, 0.72);
+
+let tiles = null;
 export function drawCanopy(ctx, w, view, opt) {
-  const { EDGE, look, trees } = opt, W = w.W, H = w.H, depth = EDGE + 140, pad = 60;
+  const { EDGE, look } = opt, H = w.H, style = opt.style || edgeStyle(), D = OUT + EDGE + OVER;
   let s = view.base * view.dpr; // (not the zoom: a pinch must not repaint it)
-  if ((W + pad * 2) * depth * s * s > 3.2e6) s = Math.sqrt(3.2e6 / ((W + pad * 2) * depth));
+  if ((PER + LAP) * D * s * s > 1.5e6) s = Math.sqrt(1.5e6 / ((PER + LAP) * D));
   s = Math.round(s * 20) / 20;
-  const key = `${W}x${H}:${s}:${opt.key}`;
-  if (!cache || cache.key !== key || cache.w !== w) {
-    const strips = [-1, 1].map((side) => {
-      const c = document.createElement('canvas'); c.width = Math.ceil((W + pad * 2) * s); c.height = Math.ceil(depth * s);
-      const g = c.getContext('2d'); g.scale(s, s);
-      const y0 = side < 0 ? -40 : H - depth + 40; g.translate(pad, -y0);
-      paintEdge(g, W, H, EDGE, look, trees.filter((t) => t.side === side && !t.fallen), side);
-      return { c, y0 };
-    });
-    cache = { key, w, strips, s, pad };
-  }
-  for (const st of cache.strips) ctx.drawImage(st.c, -cache.pad, st.y0, st.c.width / cache.s, st.c.height / cache.s);
-}
-export function paintEdge(g, W, H, EDGE, look, trees, side) {
-  const ey = side < 0 ? EDGE : H - EDGE;
-  g.fillStyle = shade(look.floor, 0.7); g.fillRect(-60, side < 0 ? -60 : ey + 40, W + 120, EDGE + 40); // the deep wood behind everything
-  const out = (t) => (side < 0 ? t.y + t.r : H - t.y + t.r);
-  const order = trees.slice().sort((a, b) => a.row - b.row || (a.row === 2 ? out(a) - out(b) : 0));
-  for (const t of order) {
-    g.fillStyle = `rgba(8,12,6,${t.row === 2 ? 0.30 : 0.4})`; g.beginPath(); g.arc(t.x - LX * 22, t.y - LY * 22, t.r * 1.02, 0, TAU); g.fill();
-    thing(g, t, look);
+  const key = `${EDGE}:${s}:${style}:${opt.key}`;
+  if (!tiles || tiles.key !== key) tiles = { key, c: [0, 1].map((layer) => [-1, 1].map((side) => paintTile(layer, side, style, look, EDGE, s))) };
+  const half = (view.rot ? view.ch : view.cw) / view.scale / 2 + 60, x0 = view.camX - half, x1 = view.camX + half;
+  ctx.fillStyle = deepOf(look); // the deep wood past the tiles (a camera dragged past the world's edge)
+  ctx.fillRect(x0, -3000, x1 - x0, 3000 - OUT + 2); ctx.fillRect(x0, H + OUT - 2, x1 - x0, 3000);
+  for (let layer = 0; layer < 2; layer++) {
+    const shift = -PARALLAX[layer] * (view.camX - (opt.from || 0));
+    for (let k = Math.floor((x0 - shift) / PER); k * PER + shift < x1; k++) {
+      ctx.drawImage(tiles.c[layer][0], k * PER + shift, -OUT, PER + LAP, D);
+      ctx.drawImage(tiles.c[layer][1], k * PER + shift, H - EDGE - OVER, PER + LAP, D);
+    }
   }
 }
-function thing(g, t, look) {
-  const pals = look.crowns[t.kind] || Object.values(look.crowns)[0], pal = pals[Math.floor(t.k * pals.length) % pals.length];
-  const dim = (t.row === 0 ? 0.55 : t.row === 1 ? 0.76 : 1) * (0.93 + 0.14 * (t.hue || 0.5));
-  const P = pal.map((c) => shade(c, dim));
-  switch (t.kind) {
-    case 'pine': return pine(g, t, P, look);
-    case 'dead': return dead(g, t, P, look);
-    case 'palm': return palm(g, t, P);
-    case 'crag': return paintRock(g, t.x, t.y, t.r, { ...look, rock: P, cap: look.cap }, (t.x * 7) | 0);
-    case 'mound': return crown(g, t, P, look, { n: 4, body: 0.72, lobe: [0.42, 0.5], at: 0.5, masses: 1, burrow: look.burrows });
-    case 'round': return crown(g, t, P, look, { n: 10, body: 0.7, lobe: [0.24, 0.3], at: 0.76, masses: 1 });
-    case 'charred': return crown(g, t, P, look, { n: 7, body: 0.6, lobe: [0.3, 0.4], at: 0.66, masses: 1, embers: true });
-    default: return crown(g, t, P, look, { n: 6 + Math.floor(t.k * 2), body: 0.6, lobe: [0.38, 0.46], at: 0.62, masses: 2 });
+// One tile: a row of one side's wood, in a frame where x runs along the road and d in from the world's edge (the far
+// side's tile is the same drawing turned over, lit from the same sky).
+function paintTile(layer, side, style, look, EDGE, s) {
+  const D = OUT + EDGE + OVER, c = document.createElement('canvas'); c.width = Math.ceil((PER + LAP) * s); c.height = Math.ceil(D * s);
+  const g = c.getContext('2d'); g.scale(s, s);
+  if (side < 0) g.translate(0, OUT); else { g.translate(0, EDGE + OVER); g.scale(1, -1); }
+  const L = { x: LX, d: side < 0 ? LY : -LY }, cfg = ROWS[style][layer], deep = deepOf(look);
+  const pals = palsOf(look, style).map((p) => (layer ? p : p.map((col) => shade(col, 0.7))));
+  const row = rowOf((side < 0 ? 11 : 37) + layer * 100 + style.length, EDGE, cfg), all = [];
+  for (const t of row) for (const o of [-PER, 0, PER]) if (style === 'bank' || (t.x + o > -t.r * 1.2 - 60 && t.x + o < PER + LAP + t.r * 1.2 + 60)) all.push({ ...t, x: t.x + o, pal: pals[Math.floor(t.k * 7.3) % pals.length] });
+  all.sort((a, b) => b.x - a.x); // (each one laps over the one further up the road)
+  g.lineJoin = 'round';
+  if (!layer) { g.fillStyle = deep; g.fillRect(-20, -OUT - 20, PER + LAP + 40, OUT + 20 + EDGE - 62); } // the dark of the wood: no ground under the trees
+  const crag = style === 'crowns' && palsOf(look) === look.crowns.crag;
+  const sil = style === 'firs' ? firSil : style === 'bank' ? bankSil : crag ? cragSil : crownSil;
+  // the row's shade on the verge, and on whoever stands under its rim: one flat shape
+  const lip = hexA(look.shade || '#10140C', 0.3), lipD = side < 0 ? 36 : 16;
+  if (layer || style === 'bank') { g.fillStyle = lip; g.beginPath(); for (const t of all) sil(g, t.x - 20, t.d + lipD, t.r, t.k, 0); g.fill(); }
+  if (style === 'bank') { paintBank(g, all, pals[0], cfg, L, layer, lip, lipD); return c; }
+  for (const t of all) (style === 'firs' ? paintFir : paintCrown)(g, t, sil, cfg.ink, L, look, layer);
+  return c;
+}
+// A big crown from above: a round body and five lobes as one outline; inked; three flat values: the shadow value, the
+// body value over all of it but a crescent on the side away from the light, and one lit mass towards the light.
+function crownSil(g, x, d, r, k, grow) {
+  g.moveTo(x + r * 0.8 + grow, d); g.arc(x, d, r * 0.8 + grow, 0, TAU);
+  for (let i = 0; i < 5; i++) {
+    const a = (i + k) / 5 * TAU + (hz(i, (k * 977) | 0) - 0.5) * 0.5, R = r * (0.38 + 0.09 * hz(i + 5, (k * 977) | 0)), px = x + Math.cos(a) * r * 0.58, pd = d + Math.sin(a) * r * 0.58;
+    g.moveTo(px + R + grow, pd); g.arc(px, pd, R + grow, 0, TAU);
   }
 }
-// A crown from above, drawn like the heroes: one silhouette with a thick ink line, scalloped by its lobes; a gradient
-// from the shadow value to the body value towards the light, a soft crescent of shade on the far side, and one or two
-// big soft lit masses on the near side (no per-lobe creases: they read as broccoli at game size).
-function crown(g, t, [c0, c1, c2], look, o) {
-  const { x, y, r } = t, lobes = [];
-  for (let i = 0; i < o.n; i++) {
-    const a = i / o.n * TAU + t.k * 6, b = o.lobe[0] + (o.lobe[1] - o.lobe[0]) * hz(i, (x * 3) | 0), d = o.at + 0.05 * hz(i + 9, x | 0);
-    lobes.push([Math.cos(a) * d, Math.sin(a) * d, b]);
+// A crag: one faceted rock, the same three flat values (its top facet is the lit one).
+function cragSil(g, x, d, r, k, grow) {
+  const n = 8;
+  for (let i = 0; i < n; i++) { const a = (i + k) / n * TAU, R = (r + grow) * (0.86 + 0.18 * hz(i, (k * 977) | 0)); i ? g.lineTo(x + Math.cos(a) * R, d + Math.sin(a) * R) : g.moveTo(x + Math.cos(a) * R, d + Math.sin(a) * R); }
+  g.closePath();
+}
+function paintCrown(g, t, sil, ink, L, look) {
+  const { x, d, r, k } = t, [c0, c1, c2] = t.pal, path = (dx, dd, rr = r) => { g.beginPath(); sil(g, x + dx, d + dd, rr, k, 0); };
+  g.strokeStyle = INK; g.fillStyle = INK; g.lineWidth = ink * 2; path(0, 0); g.fill(); g.stroke();
+  g.fillStyle = c0; path(0, 0); g.fill();
+  g.save(); path(0, 0); g.clip();
+  g.fillStyle = c1; path(L.x * r * 0.15, L.d * r * 0.15); g.fill();
+  if (sil === cragSil) { g.fillStyle = c2; path(L.x * r * 0.3, L.d * r * 0.3, r * 0.52); g.fill(); }
+  else { g.fillStyle = c2; path(L.x * r * 0.3, L.d * r * 0.3, r * 0.5); g.fill(); } // the lit mass: the crown's own shape, half the size, towards the light
+  if (look.glow) { // embers still alight in the burnt crown: flat sparks on its dark side
+    for (let i = 0; i < 4; i++) { const a = hz(i, (k * 991) | 0) * TAU, q = r * (0.25 + 0.45 * hz(i + 4, (k * 991) | 0)), ex = x - L.x * r * 0.2 + Math.cos(a) * q, ed = d - L.d * r * 0.2 + Math.sin(a) * q, R = r * (0.045 + 0.03 * hz(i + 8, (k * 991) | 0));
+      g.fillStyle = look.glow; g.beginPath(); g.arc(ex, ed, R, 0, TAU); g.fill(); g.fillStyle = '#FFD9A0'; g.beginPath(); g.arc(ex + L.x * R * 0.3, ed + L.d * R * 0.3, R * 0.45, 0, TAU); g.fill(); }
   }
-  const shape = (grow) => { g.beginPath(); g.moveTo(x + r * o.body + grow, y); g.arc(x, y, r * o.body + grow, 0, TAU); for (const [dx, dy, b] of lobes) { g.moveTo(x + dx * r + b * r + grow, y + dy * r); g.arc(x + dx * r, y + dy * r, b * r + grow, 0, TAU); } };
-  g.fillStyle = INK; shape(4.8); g.fill();
-  const gr = g.createRadialGradient(x + LX * r * 0.4, y + LY * r * 0.4, r * 0.05, x, y, r * 1.1); gr.addColorStop(0, c1); gr.addColorStop(1, c0);
-  g.fillStyle = gr; shape(0); g.fill();
-  g.save(); shape(0); g.clip();
-  g.fillStyle = 'rgba(4,8,2,0.28)'; g.beginPath(); g.arc(x - LX * r * 0.4, y - LY * r * 0.4, r * 0.98, 0, TAU); g.arc(x + LX * r * 0.14, y + LY * r * 0.14, r * 0.92, 0, TAU, true); g.fill('evenodd');
-  const masses = o.masses === 2 ? [[0.26, 0.6], [-0.05, 0.32, 0.55]] : [[0.3, 0.55]];
-  masses.forEach(([k, R, off = 0]) => {
-    const cx = x + LX * r * k + (off ? -LY * r * off * 0.6 : 0), cy = y + LY * r * k + (off ? LX * r * off * 0.6 : 0), RR = r * R;
-    const lg = g.createRadialGradient(cx + LX * RR * 0.35, cy + LY * RR * 0.35, 0, cx, cy, RR);
-    lg.addColorStop(0, c2); lg.addColorStop(0.5, hexA(c2, 0.45)); lg.addColorStop(1, hexA(c2, 0));
-    g.fillStyle = lg; g.beginPath(); g.arc(cx, cy, RR, 0, TAU); g.fill();
-  });
-  if (o.embers && look.glow) { g.globalCompositeOperation = 'lighter'; for (let i = 0; i < 6; i++) { const a = hz(i, x | 0) * TAU, d = r * (0.2 + 0.6 * hz(i + 3, x | 0)), ex = x + Math.cos(a) * d, ey = y + Math.sin(a) * d; const eg = g.createRadialGradient(ex, ey, 0, ex, ey, r * 0.16); eg.addColorStop(0, 'rgba(255,200,120,0.9)'); eg.addColorStop(0.4, hexA(look.glow, 0.55)); eg.addColorStop(1, hexA(look.glow, 0)); g.fillStyle = eg; g.fillRect(ex - r * 0.16, ey - r * 0.16, r * 0.32, r * 0.32); } g.globalCompositeOperation = 'source-over'; }
-  if (look.snow) { g.fillStyle = 'rgba(246,250,254,0.9)'; g.beginPath(); g.ellipse(x + LX * r * 0.35, y + LY * r * 0.35, r * 0.45, r * 0.28, 0.6, 0, TAU); g.fill(); }
-  if (o.burrow && hz(x | 0, 99) < 0.35 && t.row === 2) { g.fillStyle = '#2A2418'; g.beginPath(); g.ellipse(x - LX * r * 0.2, y - LY * r * 0.2 + (t.side < 0 ? r * 0.35 : -r * 0.35), r * 0.2, r * 0.13, 0, 0, TAU); g.fill(); }
   g.restore();
 }
-function pine(g, t, [c0, c1, c2], look) { // tiers of spiky stars; snow on the lit side of each tier where it snows
-  const { x, y, r, k } = t;
-  for (let tier = 0; tier < 3; tier++) {
-    const R = r * (1 - tier * 0.28), n = 9 - tier, rot = k * 5 + tier * 0.4;
-    const star = () => { g.beginPath(); for (let i = 0; i < n * 2; i++) { const a = i / (n * 2) * TAU + rot, rr = i % 2 ? R * 0.64 : R; g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } g.closePath(); };
-    g.fillStyle = INK; g.lineJoin = 'round'; g.strokeStyle = INK; g.lineWidth = 8; star(); g.fill(); g.stroke();
-    const gr = g.createRadialGradient(x + LX * R * 0.4, y + LY * R * 0.4, 0, x, y, R); gr.addColorStop(0, tier === 2 ? c2 : c1); gr.addColorStop(1, c0);
-    g.fillStyle = gr; star(); g.fill();
-    if (look.snow && tier === 2) { g.save(); star(); g.clip(); g.fillStyle = 'rgba(244,249,253,0.92)'; g.beginPath(); g.arc(x + LX * R * 0.4, y + LY * R * 0.4, R * 0.7, 0, TAU); g.fill(); g.restore(); }
-    else if (look.snow) { g.fillStyle = 'rgba(244,249,253,0.55)'; g.beginPath(); g.arc(x + LX * R * 0.72, y + LY * R * 0.72, R * 0.16, 0, TAU); g.fill(); }
-  }
+// A fir from above: two flat tiers, each an eight-pointed star with deep notches, the top one a little towards the light
+// on the skirt (so it leans like a cone), dark at the skirt and lit at the top; a small tip.
+function firSil(g, x, d, r, k, grow) {
+  const n = 8, rot = k * TAU;
+  for (let i = 0; i < n * 2; i++) { const a = i / (n * 2) * TAU + rot, R = (i % 2 ? r * 0.62 : r) + grow; i ? g.lineTo(x + Math.cos(a) * R, d + Math.sin(a) * R) : g.moveTo(x + Math.cos(a) * R, d + Math.sin(a) * R); }
+  g.closePath();
 }
-function dead(g, t, [c0, c1, c2], look) { // bare branches from a trunk top, forking once; embers glowing in the cracks where it burns
-  const { x, y, r, k } = t;
-  const limbs = [];
-  for (let i = 0; i < 4; i++) { // four uneven limbs, each bending once and forking at its end
-    const a = i / 4 * TAU + k * 4 + (hz(i, (x * 5) | 0) - 0.5) * 0.9, L = r * (0.45 + 0.55 * hz(i, x | 0)), bend = (hz(i + 7, x | 0) - 0.5) * 0.9;
-    const mx = x + Math.cos(a) * L * 0.55, my = y + Math.sin(a) * L * 0.55, ex = mx + Math.cos(a + bend) * L * 0.5, ey = my + Math.sin(a + bend) * L * 0.5;
-    limbs.push([x, y, mx, my, 14], [mx, my, ex, ey, 10]);
-    limbs.push([ex, ey, ex + Math.cos(a + bend - 0.6) * L * 0.35, ey + Math.sin(a + bend - 0.6) * L * 0.35, 6]);
-    if (hz(i + 3, x | 0) < 0.6) limbs.push([mx, my, mx + Math.cos(a - bend + 0.8) * L * 0.4, my + Math.sin(a - bend + 0.8) * L * 0.4, 6]);
-  }
-  g.lineCap = 'round';
-  for (const [a0, b0, a1, b1, wd] of limbs) { g.strokeStyle = INK; g.lineWidth = wd + 5; g.beginPath(); g.moveTo(a0, b0); g.lineTo(a1, b1); g.stroke(); }
-  for (const [a0, b0, a1, b1, wd] of limbs) { g.strokeStyle = c1; g.lineWidth = wd; g.beginPath(); g.moveTo(a0, b0); g.lineTo(a1, b1); g.stroke(); g.strokeStyle = hexA(c2, 0.6); g.lineWidth = wd * 0.35; g.beginPath(); g.moveTo(a0 + 1.5, b0 - 1.5); g.lineTo(a1 + 1.5, b1 - 1.5); g.stroke(); }
-  if (look.glow) { g.save(); g.globalCompositeOperation = 'lighter'; for (const [a0, b0, a1, b1, wd] of limbs) if (wd > 10) { g.strokeStyle = hexA(look.glow, 0.7); g.lineWidth = 3; g.beginPath(); g.moveTo(a0 + (a1 - a0) * 0.2, b0 + (b1 - b0) * 0.2); g.lineTo(a0 + (a1 - a0) * 0.7, b0 + (b1 - b0) * 0.7); g.stroke(); } g.restore(); }
-  inked(g, () => { g.beginPath(); g.arc(x, y, r * 0.24, 0, TAU); }, lin(g, x + r * 0.2, y - r * 0.2, x - r * 0.2, y + r * 0.2, c2, c0), 2.4);
-  g.strokeStyle = 'rgba(30,20,12,0.4)'; g.lineWidth = 1.5; g.beginPath(); g.arc(x, y, r * 0.13, 0, TAU); g.stroke();
+function paintFir(g, t, sil, ink, L, look) {
+  const { x, d, r, k } = t, [c0, c1, c2] = look.snow ? [t.pal[0], '#DCE8F2', '#FFFFFF'] : t.pal; // (snow on the upper tier)
+  [[1, 0, ink, c0], [0.56, 0.1, ink * 0.7, c1]].forEach(([q, off, lw, col], i) => {
+    g.beginPath(); firSil(g, x + L.x * r * off, d + L.d * r * off, r * q, k + i * 0.0625, 0);
+    g.strokeStyle = INK; g.fillStyle = INK; g.lineWidth = lw * 2; g.fill(); g.stroke();
+    g.fillStyle = col; g.fill();
+  });
+  g.fillStyle = c2; g.beginPath(); firSil(g, x + L.x * r * 0.17, d + L.d * r * 0.17, r * 0.2, k + 0.125, 0); g.fill();
+  if (look.glow) for (let i = 0; i < 3; i++) { const a = hz(i, (k * 991) | 0) * TAU, q = r * (0.66 + 0.1 * hz(i + 4, (k * 991) | 0)), R = r * 0.05; g.fillStyle = look.glow; g.beginPath(); g.arc(x + Math.cos(a) * q, d + Math.sin(a) * q, R, 0, TAU); g.fill(); }
 }
-function palm(g, t, [c0, c1, c2]) { // a palm from above: long fronds round a crown
-  const { x, y, r, k } = t;
-  for (let i = 0; i < 7; i++) {
-    const a = i / 7 * TAU + k * 3, ex = x + Math.cos(a) * r, ey = y + Math.sin(a) * r, nx = -Math.sin(a) * r * 0.2, ny = Math.cos(a) * r * 0.2;
-    const leaf = () => { g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo((x + ex) / 2 + nx, (y + ey) / 2 + ny, ex, ey); g.quadraticCurveTo((x + ex) / 2 - nx, (y + ey) / 2 - ny, x, y); g.closePath(); };
-    g.save(); g.lineJoin = 'round'; g.strokeStyle = INK; g.lineWidth = 4.8; leaf(); g.stroke(); g.fillStyle = lin(g, x, y, ex, ey, c1, c0); g.fill(); g.restore();
-    g.strokeStyle = hexA(c2, 0.7); g.lineWidth = 2; g.beginPath(); g.moveTo(x, y); g.lineTo(ex * 0.9 + x * 0.1, ey * 0.9 + y * 0.1); g.stroke();
-  }
-  inked(g, () => { g.beginPath(); g.arc(x, y, r * 0.16, 0, TAU); }, '#8A6A44', 2);
+// A bank of canopy: no single trees. A row of small rounds run together is one ribbon of leaf with a bumpy front, inked
+// along its outline, flat (its body value, and the next value down in a crescent under each bump, away from the light).
+// Four ribbons step up and back from the road, as a wood's edge does (low at the verge, tall inside), each lighter than
+// the one below and throwing its shade on it: the lowest along the road is the slower layer, the three over it the faster.
+function bankSil(g, x, d, r, k, grow) { g.moveTo(x + r + grow, d); g.arc(x, d, r + grow, 0, TAU); }
+function paintBank(g, all, pal, cfg, L, layer, lip, lipD) {
+  const lo = Math.min(...all.map((t) => t.d));
+  const ribbon = (body, under, lift, slide, shadow) => {
+    const path = (dx, dd) => { g.beginPath(); for (const t of all) bankSil(g, t.x + slide + dx, t.d + lift + dd, t.r, t.k, 0); g.rect(-400, -OUT - 400, PER + 800, OUT + 400 + lo + lift + dd); };
+    if (shadow) { g.fillStyle = lip; path(-20, lipD); g.fill(); }
+    g.strokeStyle = INK; g.fillStyle = INK; g.lineWidth = cfg.ink * 2; path(0, 0); g.fill(); g.stroke();
+    g.fillStyle = under; path(0, 0); g.fill();
+    g.save(); path(0, 0); g.clip(); g.fillStyle = body; path(L.x * 20, L.d * 20); g.fill(); g.restore();
+  };
+  const [c0, c1, c2] = pal;
+  if (!layer) return ribbon(c1, c0, 0, 0, false);
+  ribbon(c1, c0, 0, 0, false);
+  ribbon(mix(c1, c2, 0.5), c1, -98, 170, true);
+  ribbon(c2, mix(c1, c2, 0.5), -196, 395, true);
 }
 
 // ---------------------------------------------------------------- the wagon
@@ -401,5 +353,6 @@ export function paintWagon(ctx, { roll = 0, hurt = 0, flash = false } = {}) {
 function inked(g, fn, fill, lw = 2.4) { g.save(); g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = lw * 2; g.lineJoin = 'round'; fn(); g.fill(); g.stroke(); g.restore(); g.fillStyle = fill; fn(); g.fill(); }
 function lin(g, x0, y0, x1, y1, a, b) { const gr = g.createLinearGradient(x0, y0, x1, y1); gr.addColorStop(0, a); gr.addColorStop(1, b); return gr; }
 function poly(g, x, y, r, n, k) { for (let i = 0; i <= n; i++) { const a = i / n * TAU + k, rr = r * (0.82 + 0.18 * hz(i, (k * 100) | 0)); i ? g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr) : g.moveTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } g.closePath(); }
+function mix(a, b, t) { const p = parseInt(a.slice(1), 16), q = parseInt(b.slice(1), 16), f = (sh) => Math.round(((p >> sh) & 255) * (1 - t) + ((q >> sh) & 255) * t); return '#' + ((1 << 24) | (f(16) << 16) | (f(8) << 8) | f(0)).toString(16).slice(1); }
 function shade(hex, k) { if (k === 1) return hex; const n = parseInt(hex.slice(1), 16); const f = (v) => Math.round(clamp(v * k, 0, 255)); return `rgb(${f(n >> 16)},${f((n >> 8) & 255)},${f(n & 255)})`; }
 function hexA(c, a) { if (c[0] === '#') { const n = parseInt(c.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; } return c.replace('rgb(', 'rgba(').replace(')', `,${a})`); }

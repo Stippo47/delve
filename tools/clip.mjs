@@ -27,10 +27,14 @@ for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connec
 const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2 });
 const page = await ctx.newPage();
 const errors = [];
+// (round 14, lane W: whatever goes wrong below, Edge is taken down before this exits: a failed run used to leave it running)
+const killEdge = () => { try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); } try { fs.rmSync(prof, { recursive: true, force: true }); } catch {} };
+process.on('uncaughtException', (e) => { console.error(e); killEdge(); try { fs.rmSync(frames, { recursive: true, force: true }); } catch {} process.exit(1); });
+process.on('unhandledRejection', (e) => { console.error(e); killEdge(); try { fs.rmSync(frames, { recursive: true, force: true }); } catch {} process.exit(1); });
 page.on('pageerror', (e) => errors.push(String(e)));
 const q = opt('q', ''); // extra address parameters
 await page.goto(`http://localhost:${site}/?seed=${seed}${q ? '&' + q : ''}`);
-await page.waitForFunction(() => window.GAME && GAME.state === 'camp' && GAME.ready, null, { timeout: 180000 }); // sprites loaded, camp shown
+await page.waitForFunction(() => window.GAME && GAME.state === 'camp' && GAME.ready, null, { timeout: 180000, polling: 200 }); // sprites loaded, camp shown (polled on a timer: a headless page's frames can stall on a busy machine)
 // --battle "rattler*10,necromancer|paladin,tower" [--arena crypt]: a battle (js/battle.js), Red's stacks then Blue's; kind*count@rank.
 // Everything is fieldable for the clip (the cheat save), and --nodes "paladin:guard1+shieldBash1,..." gives heroes skills.
 const battle = opt('battle', '');
@@ -60,9 +64,15 @@ const convoyStep = () => page.evaluate((pick) => { const r = GAME.run; if (r && 
 if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) { GAME.recFrame(1 / 30); const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick('auto'); } }, skip);
 // --down N (convoy): after the skip, the second hero drops N behind the wagon (a revive, or one left behind) and the
 // waves hold off for 20 s, so the clip shows the downed hero's ring and what becomes of them
-if (args.includes('--convoy') && opt('down')) await page.evaluate((back) => { const r = GAME.run, wg = r.wagon; r.waveT = 20;
+if (args.includes('--convoy') && opt('down')) await page.evaluate((back) => { const r = GAME.run, wg = r.wagon; r.calm = 20;
   const h = r.world.units.filter((u) => u.team === wg.team && !u.def.cargo && !u.downed && !u.dead && r.heroes[u.kind])[1];
   if (h) { h.x = wg.x - back; h.y = wg.y + 150; h.hp = 0; h.downed = true; h.target = null; h.forcedGoal = null; } }, +opt('down'));
+// --lean X (convoy): hold the camera across the road (-1 the left wood .. 1 the right); --calm S: no foes for S seconds
+if (args.includes('--convoy') && (opt('lean') != null || opt('calm') != null)) await page.evaluate(([lean, calm]) => { const r = GAME.run; if (lean != null) r.lean = +lean; if (calm != null) r.calm = +calm; }, [opt('lean', null), opt('calm', null)]);
+// --send left:5,right:5 (convoy): after the skip, a crowd from each side named (ahead | behind | left | right), n foes each
+if (args.includes('--convoy') && opt('send')) await page.evaluate((list) => { for (const part of list.split(',')) { const [dir, n] = part.split(':'); GAME.run.send(dir, +n || 5); } }, opt('send'));
+// --eval "js": run in the page after the skip (staging a clip: GAME.run is the trip)
+if (opt('eval')) await page.evaluate((js) => { (0, eval)(js); }, opt('eval'));
 const n = Math.round(secs * fps);
 for (let i = 0; i < n; i++) {
   await page.evaluate((dt) => GAME.recFrame(dt), speed / fps);
@@ -70,7 +80,7 @@ for (let i = 0; i < n; i++) {
   await page.screenshot({ path: path.join(frames, `f${String(i).padStart(4, '0')}.png`) });
 }
 // a plain kill() leaves Edge running on Windows: take its whole process tree down
-await browser.close(); try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); } try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
+try { await browser.close(); } catch {} killEdge();
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', path.join(frames, 'f%04d.png'),
   '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '24', '-movflags', '+faststart', out]);
 fs.rmSync(frames, { recursive: true, force: true });
