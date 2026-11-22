@@ -1198,45 +1198,73 @@ export const ABILITIES2 = {
     show: { far: true, single: true },
   },
   // ----- Monk
+  // Flurry (round 13: "Better visual. Looks too sharp. Moves forward while doing it."): soft round bursts of force where
+  // the fists land (no sharp streaks), and he steps in with every punch
   flurry: {
     score: (w, u, t) => (inReach(u, t, 14) ? 0.6 + (hpRatio(u) < 0.6 ? 0.2 : 0) : 0),
     use(w, u, t, tier) {
       if (!t) return; const n = tier >= 3 ? 9 : 6;
       for (let i = 0; i < n; i++) after(u, i * 0.075, () => {
-        if (!alive(t)) return; u.facing = ang(u, t); setAnim(u, 'punch', 0.1);
+        if (!alive(t)) return; const a = ang(u, t); u.facing = a; setAnim(u, 'punch', 0.1); u.kx += Math.cos(a) * 60; u.ky += Math.sin(a) * 60;
         const last = i === n - 1;
-        hurt(w, t, dmgOf(u, 0.6), u, { knock: last && tier >= 2 ? 460 : 25, heavy: last, noDodge: true, ab: 'flurry' });
+        hurt(w, t, dmgOf(u, 0.6), u, { knock: last && tier >= 2 ? 460 : 40, heavy: last, noDodge: true, ab: 'flurry' });
         heal(w, u, u.maxHp * 0.012, u);
-        k2(w, { draw: 'parry', x: t.x - Math.cos(u.facing) * t.r * 0.6, y: t.y - Math.sin(u.facing) * t.r * 0.6, a: u.facing + (i % 2 ? 0.4 : -0.4), max: 0.2, ab: 'flurry' });
+        k2(w, { draw: 'forcePuff', x: t.x - Math.cos(a) * t.r * 0.5 + rrange(-6, 6), y: t.y - Math.sin(a) * t.r * 0.5 + rrange(-6, 6), a, r: last ? 26 : 16, max: 0.3, ab: 'flurry' });
       });
     },
     show: { single: true },
   },
+  // Palm Strike (round 13: "Better visual. Should hit everyone in range. Everyone is spun around to face away. Adds New
+  // status effect that makes entities turn very slowly. Burst effect: makes them walk in the direction they are facing
+  // for a bit very quickly. Can't attack."): an open palm thrust out; everything in reach is struck, turned to face away
+  // from him and Spun (kits2 spin())
   palmStrike: {
-    score(w, u, t) { if (!inReach(u, t, 20)) return 0; const a = ang(u, t); return 0.4 + 0.2 * opponents(w, u).filter((e) => angleDiff(ang(u, e), a) < 0.4 && dist(u.x, u.y, e.x, e.y) < 200).length; },
+    score: (w, u) => { const n = foesNear(w, u, u.x, u.y, u.r + 80).length; return n >= 2 ? 0.75 : n ? 0.4 : 0; },
     use(w, u, t, tier) {
-      if (!t) return; const a = ang(u, t), L = tier >= 3 ? 250 : 170; u.facing = a; cast(u, 'punch', 0.35);
-      fx(w, { type: 'wave', x: u.x, y: u.y, a, r: L, arc: 0.5, max: 0.4 });
-      const line = opponents(w, u).filter((e) => angleDiff(ang(u, e), a) < 0.45 && dist(u.x, u.y, e.x, e.y) - e.r < L).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y));
-      line.forEach((e, i) => { hurt(w, e, dmgOf(u, i ? 0.9 : 1.4), u, { knock: 380, kAngle: a, noDodge: true, stagger: tier >= 2 ? 45 : 0 }); if (!i && tier >= 3) stun(w, e, 1); });
+      if (t) u.facing = ang(u, t); cast(u, 'punch', 0.35);
+      const R = u.r + (tier >= 3 ? 110 : 80);
+      k2(w, { draw: 'palmWave', x: u.x, y: u.y, a: u.facing, r: R, max: 0.45, ab: 'palmStrike' });
+      for (const e of foesNear(w, u, u.x, u.y, R)) {
+        const a = ang(u, e);
+        hurt(w, e, dmgOf(u, 1.3), u, { knock: 380, kAngle: a, noDodge: true, stagger: tier >= 2 ? 40 : 0, ab: 'palmStrike' });
+        if (!alive(e)) continue; e.facing = a; e.mvA = a; spin(w, e, tier >= 3 ? 60 : 45);
+        k2(w, { draw: 'palmPrint', x: e.x, y: e.y, a, max: 0.5 });
+      }
       w.shake = Math.max(w.shake, 4);
     },
     show: { single: false },
   },
+  // Inner Peace (round 13: "Put hands together. Heals himself. All projectiles are deflected back. And melee attack will
+  // have them launched backwards. Lvl 3 heals with an aura around him and clears negative effects. Lvl 2 is a longer
+  // duration"): he sits with his palms pressed together; shots that reach him fly back, whoever strikes him is thrown
   innerPeace: {
-    score: (w, u) => { const bad = (o) => (o.st.burn + o.st.poison + o.st.chill + (o.st.curse || 0) + (o.st.stagger || 0)) > 50; return bad(u) || hpRatio(u) < 0.45 || (tierOf(u, 'innerPeace') >= 2 && allies(w, u).some((a) => bad(a) && dist(u.x, u.y, a.x, a.y) < 160)) ? 0.85 : 0; },
+    score: (w, u) => { const bad = (o) => (o.st.burn + o.st.poison + o.st.chill + (o.st.curse || 0) + (o.st.stagger || 0) + (o.st.bleed || 0)) > 50; const shots = w.projectiles.filter((p) => p.team !== u.team && !p.noHit && dist(p.x, p.y, u.x, u.y) < 260).length;
+      return bad(u) || hpRatio(u) < 0.45 || shots >= 2 || opponents(w, u).filter((e) => e.target === u && dist(e.x, e.y, u.x, u.y) < 90).length >= 3 ? 0.85 : 0; },
     use(w, u, t, tier) {
-      const list = tier >= 2 ? [u, ...friendsNear(w, u, u.x, u.y, 170)] : [u];
-      for (const a of list) { cleanse(a); heal(w, a, a.maxHp * 0.15, u); }
-      addBuff(u, { id: 'innerPeace', dur: 2, root: true, taken: 0.7 });
-      u.act = { type: 'channel', t: 2, max: 2, every: 1, acc: 0, tick: () => {} };
-      if (tier >= 3) u.invulnT = Math.max(u.invulnT, 2);
+      const dur = tier >= 2 ? 4 : 2.5;
+      cleanse(u); u.kit.peaceUntil = w.time + dur;
+      addBuff(u, { id: 'innerPeace', dur, root: true, taken: 0.7 });
+      u.act = { type: 'channel', t: dur, max: dur, every: 0.25, acc: 0, tick: () => {
+        heal(w, u, u.maxHp * 0.15 / (dur * 4), u);
+        if (tier >= 3) for (const a of friendsNear(w, u, u.x, u.y, 150)) if (a !== u && !a.summon) { heal(w, a, a.maxHp * 0.02, u); if ((a.st.burn + a.st.poison + a.st.chill + (a.st.curse || 0) + (a.st.bleed || 0)) > 10 || a.sickT > 0) cleanse(a); }
+      } };
       setAnim(u, 'ability', 0.5);
-      k2(w, { draw: 'peace', unit: u, x: u.x, y: u.y, r: tier >= 2 ? 170 : u.vr * 2, max: 2 });
+      k2(w, { draw: 'peace', unit: u, x: u.x, y: u.y, r: tier >= 3 ? 150 : u.vr * 2, aura: tier >= 3, max: dur });
     },
-    show: { ally: true },
+    hook: {
+      struck(w, u, src, amt, o) {
+        if (!(u.kit.peaceUntil > w.time) || !src || src === u || !alive(src) || o.shot || o.proc || (src.peaceHitT || 0) > w.time) return;
+        src.peaceHitT = w.time + 0.4; const a = angleTo(u.x, u.y, src.x, src.y);
+        hurt(w, src, dmgOf(u, 0.5), u, { knock: 640, kAngle: a, heavy: true, noDodge: true, proc: true, ab: 'innerPeace' });
+        k2(w, { draw: 'forcePuff', x: src.x, y: src.y, a, r: 26, max: 0.35 });
+      },
+    },
+    show: { hitme: true, shootme: true, hurt: 0.5 },
   },
-  // ----- Seer
+  // ----- Seer (round 13: "Overall not too exciting/ interesting. Maybe an ability that blinds everyone around her. Or
+  // making it so enemies attacks can 'accidentally' hit each other friendly fire on." Both are in: Blinding Flash in
+  // Premonition's slot ("Meh"), Ill Omen in Starfall's)
+  // Foresight (round 13: "Better visual."): a great violet eye opens over the marked one, rays of light pinning it
   foresight: {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 360).some((e) => !e.buffs.some((b) => b.id === 'foresight') && (e.elite || e.def.boss || e.maxHp > 120)) ? 0.75 : foesNear(w, u, u.x, u.y, 300).length >= 3 ? 0.45 : 0),
     use(w, u, t, tier) {
@@ -1244,34 +1272,44 @@ export const ABILITIES2 = {
       const list = foesNear(w, u, u.x, u.y, 380).sort((p, q) => q.maxHp - p.maxHp).slice(0, tier >= 3 ? 2 : 1);
       for (const e of list) {
         addBuff(e, { id: 'foresight', dur: 6, taken: 1.35, blind: tier >= 2 });
-        k2(w, { draw: 'eye', unit: e, x: e.x, y: e.y, r: e.vr, max: 6, ab: 'foresight' });
+        k2(w, { draw: 'seerEye', unit: e, from: u, x: e.x, y: e.y, r: e.vr, max: 6, ab: 'foresight' });
       }
     },
     show: { single: true },
   },
+  // Blinding Flash, in Premonition's slot: the crystal flares: everything round her is blinded (most of its blows miss)
   premonition: {
-    score(w, u) { const a = [u, ...allies(w, u)].filter((o) => !o.summon && hpRatio(o) < 0.7 && opponents(w, u).filter((e) => e.target === o && dist(e.x, e.y, o.x, o.y) < 140).length >= 2); return a.length ? 0.85 : 0; },
+    score: (w, u) => { const n = foesNear(w, u, u.x, u.y, 150).length; return n >= 2 ? 0.8 : n ? 0.45 : 0; },
     use(w, u, t, tier) {
-      cast(u, 'cast', 0.4);
-      const threat = (o) => opponents(w, u).filter((e) => e.target === o && dist(e.x, e.y, o.x, o.y) < 160).length + (1 - hpRatio(o));
-      const list = [u, ...allies(w, u)].filter((o) => !o.summon).sort((p, q) => threat(q) - threat(p)).slice(0, tier >= 2 ? 2 : 1);
-      for (const a of list) { a.invulnT = Math.max(a.invulnT, tier >= 3 ? 2 : 1.2); if (tier >= 3) heal(w, a, a.maxHp * 0.1, u); k2(w, { draw: 'ward', unit: a, x: a.x, y: a.y, r: a.vr, max: tier >= 3 ? 2 : 1.2 }); }
+      cast(u, 'cast', 0.4); const R = 160, d = tier >= 2 ? 3.5 : 2.5;
+      k2(w, { draw: 'flash', x: u.x, y: u.y, r: R, max: 0.6, ab: 'premonition' });
+      for (const e of foesNear(w, u, u.x, u.y, R)) {
+        hurt(w, e, dmgOf(u, 0.8), u, { noDodge: true, omni: true, knock: 60, kAngle: ang(u, e), radiance: tier >= 3 ? 30 : 0, ab: 'premonition' });
+        addBuff(e, { id: 'blinded', dur: d, blind: true }); interrupt(w, e); if (e.target === u) e.target = null;
+        k2(w, { draw: 'blindOn', unit: e, x: e.x, y: e.y, r: e.vr, max: d });
+      }
     },
-    show: { ally: true },
   },
+  // Ill Omen, in Starfall's slot: a dark star over the enemies: for 5s their blows go astray: each one they strike with
+  // also lands on a friend of theirs near, and they grow confused
   starfall: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 320 && foesNear(w, u, t.x, t.y, 110).length >= 2 ? 0.7 : 0),
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 320 && foesNear(w, u, t.x, t.y, 120).length >= 3 ? 0.75 : 0),
     use(w, u, t, tier) {
-      if (!t) return; cast(u, 'cast', 0.8);
-      const n = tier >= 3 ? 10 : 6, cx = t.x, cy = t.y;
-      for (let i = 0; i < n; i++) after(u, 0.15 + i * 2 / n, () => {
-        const near = foesNear(w, u, cx, cy, 120), e = near.length && rand() < 0.7 ? near[Math.floor(rand() * near.length)] : null;
-        const x = e ? e.x + rrange(-10, 10) : cx + rrange(-90, 90), y = e ? e.y + rrange(-10, 10) : cy + rrange(-90, 90);
-        k2(w, { draw: 'star', x, y, max: 0.55, ab: 'starfall' });
-        after(u, 0.25, () => { for (const o of foesNear(w, u, x, y, 42)) hurt(w, o, dmgOf(u, 0.95), u, { noDodge: true, omni: true, radiance: tierOf(u, 'starfall') >= 2 ? 16 : 0, ab: 'starfall' }); });
+      if (!t) return; cast(u, 'cast', 0.7); const x = t.x, y = t.y, R = tier >= 3 ? 150 : 120, dur = 5;
+      k2(w, { draw: 'omen', x, y, r: R, max: dur, ab: 'starfall' }); let acc = 0;
+      timer(u, 'illOmen', dur, (dt) => {
+        acc += dt; const tickNow = acc >= 0.5; if (tickNow) acc -= 0.5;
+        for (const e of foesNear(w, u, x, y, R)) {
+          if (tickNow) addStatus(w, e, 'confuse', tierOf(u, 'starfall') >= 2 ? 16 : 10, u);
+          onUnit(w, e, 'omen', 0.3, { hit(w2, a2, v, amt, o) {
+            if (o.dot || o.proc || o.omenHit) return;
+            const f = w2.units.find((q) => q !== a2 && q !== v && alive(q) && q.team === a2.team && !q.ethereal && dist(q.x, q.y, a2.x, a2.y) < a2.r + q.r + (a2.def.range || 20) + 30);
+            if (f) { hurt(w2, f, amt * 0.8, a2, { noDodge: true, omenHit: true, knock: o.knock || 40 }); k2(w2, { draw: 'oops', unit: f, x: f.x, y: f.y, r: f.vr, max: 0.6 }); }
+          } });
+        }
       });
     },
-    show: { far: true },
+    show: { far: true, attacks: false, foesFight: true },
   },
   // ----- Chef
   hotMeal: {
@@ -2560,6 +2598,16 @@ export function kit2Tick(w, u, dt) {
     u.kit.hammerOut = out;
     if (out) u._force = { 'arm-l': { hide: true } }; else if (u._force && u._force['arm-l'] && u._force['arm-l'].hide) u._force = null;
   }
+  // Inner Peace (Monk): shots that reach him fly back at whoever loosed them; his palms are pressed together meanwhile
+  if (u.kit.peaceUntil > w.time) {
+    for (const p of w.projectiles) {
+      if (p.team === u.team || p.noHit || p.life <= 0 || p.team === 'neutral' || dist(p.x, p.y, u.x, u.y) > u.r + p.r + 16) continue;
+      const o = p.owner, sp = Math.hypot(p.vx, p.vy) * 1.1, a = o && alive(o) ? angleTo(p.x, p.y, o.x, o.y) : Math.atan2(-p.vy, -p.vx);
+      p.team = u.team; p.owner = u; p.vx = Math.cos(a) * sp; p.vy = Math.sin(a) * sp; p.a = a; p.life = Math.max(p.life, 1); p.home = o && alive(o) ? o : null; p.turn = p.turn || 6; if (p.hitSet) p.hitSet = new Set();
+      sparks(w, p.x, p.y, a, 6, '#FFE7A0', 1);
+    }
+    u._force = { 'arm-r': { r: 0.95, dy: 10, dx: 2 }, 'arm-l': { r: -0.95, dy: 10, dx: -2 } }; u.kit.palms = true;
+  } else if (u.kit.palms) { u.kit.palms = false; u._force = null; }
   // Parry (Old Guard): a shot reaching him while he parries flies back at whoever loosed it
   const PR = u.kit.parry;
   if (PR && PR.until > w.time && PR.n > 0) for (const p of w.projectiles) {

@@ -1418,6 +1418,80 @@ DRAW.sacrifice = (ctx, f, w, layer) => {
   ctx.restore();
 };
 
+// ---------------------------------------------------------------- the Monk and the Seer (round 13)
+// a soft round burst of force where a fist lands (Flurry: "Looks too sharp"): puffs fanned out the way the blow goes
+DRAW.forcePuff = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
+  if (k < 0.3) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 1.5, '#FFF4DC', 0.6 * (1 - k / 0.3)));
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  for (let i = 0; i < 6; i++) { const b = f.a + (i - 2.5) * 0.45, d = f.r * (0.2 + 0.8 * e); inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, f.r * 0.28 * (1 - 0.5 * k) + 1, i % 2 ? '#EEF3F8' : '#FFFFFF'); }
+  ctx.restore();
+};
+// Palm Strike: a wall of force rolling out from his open palm, soft white curls across his front
+DRAW.palmWave = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  for (let i = 0; i < 9; i++) { const b = f.a + (i - 4) * 0.36, d = 20 + f.r * e, s2 = 9 * (1 - 0.5 * k) + 3; inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, s2, i % 2 ? '#FFF4DC' : '#FFFFFF'); }
+  if (k < 0.25) { const px = f.x + Math.cos(f.a) * 30, py = f.y + Math.sin(f.a) * 30; lit(ctx, () => glowDisc(ctx, px, py, 40, '#FFF4DC', 0.7 * (1 - k / 0.25))); }
+  ctx.restore();
+};
+// the print of the open palm on whatever it struck: a hand of gold light, fading
+DRAW.palmPrint = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max);
+  ctx.save(); ctx.globalAlpha *= (1 - k) * 0.9; ctx.translate(f.x, f.y); ctx.rotate(f.a - Math.PI / 2); const s2 = 1 + 0.3 * easeOut(k);  ctx.scale(s2, s2);
+  inked(ctx, () => { roundRect(ctx, -8, -6, 16, 14, 5); }, '#FFE7A0');
+  for (let i = 0; i < 4; i++) inked(ctx, () => roundRect(ctx, -8 + i * 4.2, -15, 3.4, 10, 1.7), '#FFE7A0');
+  inked(ctx, () => { ctx.save(); ctx.rotate(-0.8); roundRect(ctx, 6, -3, 3.4, 9, 1.7); ctx.restore(); }, '#FFE7A0');
+  ctx.restore();
+};
+// Foresight (round 13: "Better visual."): a great violet eye opens over the marked one; three beams of pale light pin it
+DRAW.seerEye = (ctx, f, w, layer) => {
+  const e = f.unit; if (!alive2(e)) { ended(f, true); return; } const [vx, vy] = upVec(), up = e.vr + 30, o = life(f, 0.05, 0.4), open = easeOut(k01(f.t / 0.35)), blink = Math.abs(Math.sin(f.t * 1.1)) > 0.985 ? 0.15 : 1;
+  const ex = e.x + vx * up, ey = e.y + vy * up;
+  if (layer === 'ground') { lit(ctx, () => glowDisc(ctx, e.x, e.y, e.vr * 1.6, '#C9B8FF', 0.25 * o)); return; }
+  ctx.save(); ctx.globalAlpha *= o;
+  lit(ctx, () => { for (let i = -1; i <= 1; i++) { ctx.globalAlpha = 0.3 * o; ctx.strokeStyle = '#E2D8FF'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(e.x + i * e.r * 0.6, e.y); ctx.stroke(); } glowDisc(ctx, ex, ey, 30, '#C9B8FF', 0.5); });
+  upright(ctx, ex, ey, () => { const h = 10 * open * blink;
+    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-19, 0); ctx.quadraticCurveTo(0, -h * 1.6, 19, 0); ctx.quadraticCurveTo(0, h * 1.6, -19, 0); ctx.closePath(); }, '#F4EEFF');
+    if (h > 1) { disc(ctx, 0, 0, Math.min(8, h * 0.8), '#7A5AC8'); disc(ctx, 0, 0, Math.min(4, h * 0.4), '#2E2440'); disc(ctx, -2, -2, 1.6, '#FFFFFF'); }
+    for (let i = 0; i < 5; i++) { const b = -Math.PI / 2 + (i - 2) * 0.35; inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(Math.cos(b) * 14 * open, Math.sin(b) * 12 * open); ctx.lineTo(Math.cos(b) * 21 * open, Math.sin(b) * 18 * open); }, '#9B86C9', 2); } });
+  ctx.restore();
+};
+// Blinding Flash: a white-violet flare bursting off her crystal, crystal shards flung out
+DRAW.flash = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
+  if (k < 0.4) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * (0.5 + 0.7 * e), '#FFFFFF', 0.85 * (1 - k / 0.4)));
+  ctx.save(); ctx.globalAlpha *= 1 - k;
+  for (let i = 0; i < 10; i++) { const b = i / 10 * TAU + 0.2, d = 16 + f.r * 0.8 * e; ctx.save(); ctx.translate(f.x + Math.cos(b) * d, f.y + Math.sin(b) * d); ctx.rotate(b); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(8, 0); ctx.lineTo(0, -3.5); ctx.lineTo(-6, 0); ctx.lineTo(0, 3.5); ctx.closePath(); }, i % 2 ? '#E2D8FF' : '#FFFFFF'); ctx.restore(); }
+  ctx.restore();
+};
+// blinded: a bar of light across its eyes and little stars swimming round it
+DRAW.blindOn = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const [vx, vy] = upVec(), up = u.vr * 0.35;
+  ctx.save(); ctx.globalAlpha *= life(f, 0.1, 0.3);
+  upright(ctx, u.x + vx * up, u.y + vy * up, () => { lit(ctx, () => { ctx.globalAlpha *= 0.6; ctx.fillStyle = '#FFFFFF'; roundRect(ctx, -u.vr * 0.8, -4, u.vr * 1.6, 8, 4); ctx.fill(); }); });
+  for (let i = 0; i < 3; i++) { const b = f.t * 3 + i / 3 * TAU; inked(ctx, () => star(ctx, u.x + vx * (u.vr + 8) + Math.cos(b) * 14, u.y + vy * (u.vr + 8) + Math.sin(b) * 5, 3.5, 4, 0.4, b), '#F4EEFF'); }
+  ctx.restore();
+};
+// Ill Omen: a dark star turning slowly over the enemies, its shadow on the floor
+DRAW.omen = (ctx, f, w, layer) => {
+  const a = life(f, 0.3, 0.5), [vx, vy] = upVec();
+  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.3 * a; ctx.fillStyle = '#2E2440'; star(ctx, f.x, f.y, f.r, 7, 0.55, f.t * 0.3); ctx.fill(); ctx.restore(); return; }
+  const h = 60 + 4 * Math.sin(f.t * 2);
+  ctx.save(); ctx.globalAlpha *= a;
+  lit(ctx, () => glowDisc(ctx, f.x + vx * h, f.y + vy * h, 40, '#9B86C9', 0.35));
+  inked(ctx, () => star(ctx, f.x + vx * h, f.y + vy * h, 20, 7, 0.45, f.t * 0.6), '#2E2440');
+  ctx.fillStyle = '#9B86C9'; star(ctx, f.x + vx * h, f.y + vy * h, 8, 7, 0.45, f.t * 0.6); ctx.fill();
+  ctx.restore();
+};
+// Ill Omen: a blow gone astray onto a friend: a little "!?" popping over the one hit
+DRAW.oops = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const k = k01(f.t / f.max), [vx, vy] = upVec(), up = u.vr + 14 + 10 * easeOut(k);
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  upright(ctx, u.x + vx * up, u.y + vy * up, () => { ctx.font = 'bold 15px sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3.5; ctx.strokeStyle = '#2B2230'; ctx.strokeText('!?', 0, 5); ctx.fillStyle = '#C9B8FF'; ctx.fillText('!?', 0, 5); });
+  ctx.restore();
+};
+
 export function drawK2(ctx, f, w, layer) { const d = DRAW[f.draw]; if (d) { ctx.save(); d(ctx, f, w, layer); ctx.restore(); } }
 
 // ---------------------------------------------------------------- signatures at the cast

@@ -302,3 +302,34 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
   everyone near." -> **Sacrifice** (id soulCandle): a bound at an enemy below 25% (II 35%) and the dagger finishes it
   (a boss, major or mini-boss is cut deep instead: 4x); he heals 15%; III he spins as he lands, blood flung out, 50
   bleeding on everything near. Clip: cultist-soulCandle.
+
+### Monk
+- "For traits you should also show them off" -> every new or kept trait gets a clip: `trait` clips (lab.js
+  `ab=trait`), Deflect included (see the end of this file).
+- Fists: "Different visual. High knockback" -> weapon 'palm': a soft burst of force where the fist lands (fxkit,
+  marked), knockback 240 (was 60). Clip: monk-attack.
+- Flurry: "Better visual. Looks too sharp. Moves forward while doing it." -> soft round bursts of force (no streaks) and
+  he steps in with every punch. Clip: monk-flurry.
+- Palm Strike: "Better visual. Should hit everyone in range. Everyone is spun around to face away. Adds New status effect
+  that makes entities turn very slowly. Burst effect: makes them walk in the direction they are facing for a bit very
+  quickly. Can't attack." -> everything within reach round him (110 at III) is struck (1.3x, knock 380), turned to face
+  away from him and **Spun** 45 (III 60): turns very slowly as it builds; at 100 it marches off the way it faces, fast,
+  for 1.2 s and can't attack. Looks: a wall of force rolling out, a gold palm print on each one hit, a slow gold spiral
+  over a spun head. Clip: monk-palmStrike.
+- Inner Peace: "Put hands together. Heals himself. All projectiles are deflected back. And melee attack will have them
+  launched backwards. Lvl 3 heals with an aura around him and clears negative effects. Lvl 2 is a longer duration" -> he
+  sits with his palms pressed together (both arms forced in, parts pose); cleansed, heals 15% over it; every shot
+  reaching him flies back at its shooter; whoever strikes him is thrown far back (knock 640). 2.5 s (was 2), II 4 s; III
+  a warm glow round him heals friends within 150 and clears their statuses. Clip: monk-innerPeace.
+
+### Seer (IDK)
+- "Overall not too exciting/ interesting. Maybe an ability that blinds everyone around her. Or making it so enemies
+  attacks can accidentally hit each other friendly fire on." -> both: **Blinding Flash** in Premonition's slot (its
+  note was "Meh"; id premonition): her crystal flares, everything within 160 is struck (0.8x) and blinded 2.5 s (II
+  3.5 s; III radiance too), shards of light flung out, a bar of light over their eyes. **Ill Omen** in Starfall's slot
+  (not ticked, no note; id starfall): a dark star hangs over the enemies 5 s: every blow one of them lands also lands
+  (0.8x) on a friend of theirs near ("!?" pops over it), and they grow Confused (the statuses lane's). Clips:
+  seer-premonition, seer-starfall (the bench's dummies don't fight, so the stray blows show in real fights).
+- Foresight: "Better visual." -> a great violet eye opens over the marked one, lashes of light round it and three pale
+  beams pinning it, a glow under it. Clip: seer-foresight.
+- Premonition: "Meh." -> replaced (above).
