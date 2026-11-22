@@ -139,8 +139,8 @@ export function noteWorld(w) {
     if (p.ab === 'frostArrow') snowBurst(p.x, p.y, 44, 18); // round 13: snow thrown out where it bursts, hanging a moment
   }
   w._proj = now;
-  // a danger zone striking: a burst shaped to its kind
-  for (const z of w.danger || []) if (z.t <= 0 && !z._struck) { z._struck = true; if (!z.cancelled) push({ type: 'strike', z, kind: z.kind, max: 0.55, seed: Math.round((z.x ?? z.x1) * 5 + (z.y ?? z.y1)) }); }
+  // a danger zone striking: a burst shaped to its kind (lane B, bosses3: z.quiet: the boss draws its own blow)
+  for (const z of w.danger || []) if (z.t <= 0 && !z._struck) { z._struck = true; if (!z.cancelled && !z.quiet) push({ type: 'strike', z, kind: z.kind, max: 0.55, seed: Math.round((z.x ?? z.x1) * 5 + (z.y ?? z.y1)) }); }
   for (const u of w.units) {
     // an enemy's ground slam (sim.js 'slam' act) lands
     const slam = u.act && u.act.type === 'slam';

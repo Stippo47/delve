@@ -344,6 +344,7 @@ export function poseFor(u, w, dt) {
   const d = u.def, sty = STYLE[u.kind] || d.style || {}, url = d.art; // d.style: the new heroes' touches (heroes2.js)
   const pose = {};
   if (u.frozenT > 0 && u._pose) return u._pose;          // frozen stiff
+  if (d.pose) return (u._pose = d.pose(u, w, dt));      // lane B (bosses3): a boss that poses its own parts (the angel's wheels)
   const kind = (u.anim && u.anim.kind) || d.attackAnim || (d.role === 'ranged' ? 'draw' : d.role === 'skirmish' ? 'thrust' : 'swing');
   const base = kind === 'ability' ? (d.attackAnim || 'swing') : kind;
   const mv = MOVES[base] || MOVES.swing;
