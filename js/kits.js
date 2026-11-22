@@ -912,18 +912,15 @@ function fireAbility(w, u, best) {
   if (u.rays && u.rays !== hadRays) for (const r of u.rays) if (!r.ab) r.ab = best.id;
   cue('ability', u, best.id);
 }
-// Confused's burst (round 13, the designer: "uses all available abilities at once"): every learned ability that is
-// ready goes off now, whether it's worth it or not, at whatever it was looking at (or the nearest foe).
-export function kitFireAll(w, u) {
-  const k = u.kit; if (!k) return 0;
+// Addled (Confused's burst). Round 13 fired every ready ability at once; round 14 (the designer: "Instead of using all
+// abilities at once, will have a chance to trigger randomly while bursted"): kitReady says how many are ready, and
+// kitFireRandom lets off ONE of them, picked at random, whether it's worth it or not, at whatever it is looking at
+// (or the nearest foe). sim.js rolls the chance each tick while it is addled.
+const readyAbs = (u) => { const k = u.kit; return k ? HEROES[k.hero].abilities.filter((ab) => { const A = ABILITIES[ab.id]; return k.tiers[ab.id] && !(k.cd[ab.id] > 0) && A && !A.passiveTier && A.use; }) : []; };
+export const kitReady = (u) => readyAbs(u).length;
+export function kitFireRandom(w, u) {
+  const list = readyAbs(u); if (!list.length) return false;
   if (!u.target || !alive(u.target)) { const o = opponents(w, u).sort((a, b) => dist(u.x, u.y, a.x, a.y) - dist(u.x, u.y, b.x, b.y))[0]; if (o) u.target = o; }
-  let n = 0;
-  for (const ab of HEROES[k.hero].abilities) {
-    const tier = k.tiers[ab.id]; if (!tier || k.cd[ab.id] > 0) continue;
-    const A = ABILITIES[ab.id]; if (!A || A.passiveTier || (A.hook && !A.use)) continue;
-    if (!A.use) continue;
-    u.act = null;
-    try { fireAbility(w, u, ab); n++; } catch (e) { /* an ability that needs a target it hasn't got just doesn't go */ }
-  }
-  return n;
+  u.act = null;
+  try { fireAbility(w, u, list[Math.floor(rand() * list.length)]); return true; } catch (e) { return false; } // (an ability that needs a target it hasn't got just doesn't go)
 }

@@ -8,6 +8,7 @@
 import { alive, opponents, allies, hurt, puff, sparks, flames, addDanger, spawn, addStatus, setAnim, fx, zone, addBuff, heal, explode, kill } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange, chance } from './util.js';
 import { lineClear } from './path.js';
+import { windMul } from './statuses.js'; // round 14: sleepy, every tell lasts longer
 
 // 2-3x as strong (hp x2.4, blows x1.8), 1.5x as fast (walking; attacks x1.2), gold x0.8, XP x3 (dungeon.js).
 // Round 8: "Even bigger ... Base elites should be the size in between the normal and miniboss sized": 1.25.
@@ -130,7 +131,7 @@ export function again(u, key, a, b = a) { E(u)[key] = rrange(a, b); }
 // Standing still through a tell: true while it lasts (the caller returns true so the usual brain waits).
 export function hold(u, dt) {
   const e = E(u); if (!(e.holdT > 0)) return false;
-  e.holdT -= dt; stand(u, dt); if (e.face != null) turnTo(u, e.face, 7, dt);
+  u.winding = true; e.holdT -= dt / windMul(u); stand(u, dt); if (e.face != null) turnTo(u, e.face, 7, dt); // (round 14: sleepy, a tell lasts longer: sim.js slows its danger zone with it)
   if (e.holdT <= 0 && e.then) { const f = e.then; e.then = null; f(); }
   return true;
 }
@@ -145,7 +146,7 @@ export const crowd = (w, team) => w.units.reduce((n, o) => n + (o.team === team 
 // A thing thrown in an arc at (x, y): a circle fills on the ground where it will land (the heroes can step out),
 // the thing flies there, and it lands with o.hit and o.land(w, z). It lands even if the thrower falls meanwhile.
 export function lob(w, u, x, y, o = {}) {
-  const tell = o.tell || 0.9, a = angleTo(u.x, u.y, x, y), d = dist(u.x, u.y, x, y);
+  const tell = (o.tell || 0.9) * windMul(u), a = angleTo(u.x, u.y, x, y), d = dist(u.x, u.y, x, y); // (round 14: a sleepy thrower's lob hangs longer)
   x = clamp(x, 30, w.W - 30); y = clamp(y, 30, w.H - 30);
   addDanger(w, { shape: 'circle', x, y, r: o.r || 60, t: tell, team: u.team, src: null, kind: o.kind || 'bone', spawns: !!o.spawns,
     hit: hitOf(u, o.hit), onFire: (w2, z) => { if (o.dust !== false) puff(w2, x, y, o.dust || '#CDBFA6', 10, 120, 6, 0.4); if (o.land) o.land(w2, z); } });
@@ -183,7 +184,7 @@ export function rush(w, u, a, len, o = {}) {
 }
 export function rushTick(w, u, dt) {
   const r = E(u).rush; if (!r) return false;
-  if (r.tell > 0) { r.tell -= dt; stand(u, dt); turnTo(u, r.a, 9, dt); return true; }
+  if (r.tell > 0) { u.winding = true; r.tell -= dt / windMul(u); stand(u, dt); turnTo(u, r.a, 9, dt); return true; }
   u.dvx = Math.cos(r.a) * r.sp; u.dvy = Math.sin(r.a) * r.sp; u.vx = u.dvx; u.vy = u.dvy; u.mvA = r.a; u.spd = r.sp; u.facing = r.a;
   if (rand() < 0.5) w.particles.push({ x: u.x - Math.cos(r.a) * u.r, y: u.y - Math.sin(r.a) * u.r, vx: 0, vy: 0, life: 0.3, max: 0.3, size: 6, color: r.o.trail || 'rgba(220,214,200,0.7)' });
   for (const o of opponents(w, u)) {

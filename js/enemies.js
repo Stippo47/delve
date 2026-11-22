@@ -133,13 +133,14 @@ export function tailSpin(w, u, dt, o = {}) {
   return true;
 }
 
-// Ghost: drifts in and curses what it brushes against (round 8: ghosts curse, they no longer chill).
+// Ghost: drifts in and makes drowsy what it brushes against (round 8: ghosts curse, they no longer chill; round 14, the
+// designer: "Ghost should give sleepiness instead of curse": the same 30 a touch, as Sleepy).
 export function ghostBrain(w, u, dt) {
   u.gT = (u.gT ?? rrange(0.4, 1.2)) - dt;
   const t = u.target;
   if (t && alive(t) && u.gT <= 0 && dist(u.x, u.y, t.x, t.y) - u.r - t.r < 18) {
     u.gT = u.def.touchCd;
-    hurt(w, t, u.def.touchDmg * u.dmgMul, u, { curse: 30, knock: 50 });
+    hurt(w, t, u.def.touchDmg * u.dmgMul, u, { sleepy: 30, knock: 50 });
     setAnim(u, 'cast', 0.35);
     puff(w, t.x, t.y, '#B48CE0', 6, 50, 5, 0.5);
   }

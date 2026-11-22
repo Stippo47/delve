@@ -4,7 +4,7 @@
 import { INK, TAU, clamp } from './util.js';
 import { OUTLINE, view } from './render.js';
 import { STYLE } from './parts.js';
-import { drawStatusBurst } from './fx-status.js'; // round 13 (lane S)
+import { drawStatusBurst, drawBloodGround } from './fx-status.js'; // round 13 (lane S); round 14: blood on the floor
 import { noteWorld, drawMarks, drawSigGround, drawSigAir, abilityRing, abilityBeam, abilityZone, EL, abilityRingGround, hookGround, abilityZoneAir, soulOrb, dustPuffs } from './fxkit.js';
 import { drawPuddle, snowflake } from './puddles.js';
 import { PROJ2, drawK2 } from './fx2.js';
@@ -79,6 +79,7 @@ const ZONE = {
   holy: '#F2C14E', fire: '#E8582A', poison: '#7DB83A', ice: '#9FDDF6', storm: '#5B6C9A', vines: '#4E8A3A', heal: '#8BE07A', sanctuary: '#FFF1B0',
 };
 export function drawGroundFx(ctx, w) {
+  drawBloodGround(ctx, w); // round 14 (lane S): bleeding's splats and pools, under everything else
   for (const f of w.fx || []) {
     if (f.type === 'zone') { if (!(f.ab || f.smoke || f.kind === 'smoke') || !abilityZone(ctx, f, w.time)) zone(ctx, f, w.time); }
     else if (f.type === 'rift') rift(ctx, f, w.time);
@@ -90,7 +91,7 @@ export function drawGroundFx(ctx, w) {
     else if (f.type === 'beam' && f.kind === 'heal') beam(ctx, f, w.time);
     else if (f.type === 'wall' && f.kind === 'fire') wall(ctx, f, w.time);
     else if (f.type === 'pop') pop(ctx, f, w.time, 'ground');
-    else if (f.type === 'statusBurst') drawStatusBurst(ctx, f, w.time, 'ground');
+    else if (f.type === 'statusBurst') drawStatusBurst(ctx, f, w.time, 'ground', w);
     else if (f.type === 'aura') aura(ctx, f, w.time); // round 13 (lane S; the designer: "Make it so the radiance glow appears below"): under the units
     else if (f.type === 'k2') drawK2(ctx, f, w, 'ground');
   }
@@ -314,7 +315,7 @@ export function drawAirFx(ctx, w) {
     else if (f.type === 'wave') { if (f.ab === 'shockwave') shockwave(ctx, f, 'air'); else if (f.kind === 'note') noteCone(ctx, f, w.time); else wave(ctx, f); }
     else if (f.type === 'pillar') pillar(ctx, f, w.time);
     else if (f.type === 'hex') hexMark(ctx, f, w.time);
-    else if (f.type === 'statusBurst') drawStatusBurst(ctx, f, w.time, 'air'); // round 13 (lane S): fx-status.js
+    else if (f.type === 'statusBurst') drawStatusBurst(ctx, f, w.time, 'air', w); // round 13 (lane S): fx-status.js
     else if (f.type === 'zone' && f.kind === 'storm') stormCloud(ctx, f, w.time);
     else if (f.type === 'sig') drawSigAir(ctx, f, w);
     else if (f.type === 'k2') drawK2(ctx, f, w, 'air');

@@ -126,7 +126,7 @@ export function noteWorld(w) {
       // arm-l is on the +normal side of the facing, arm-r on the -normal side (the art's left/right, front = +y)
       const sty = (u && u.def.style) || {}, back = sty.backhand || sty.flip ? -1 : 1; // lane H2 (round 13): a backhand swing (Dame, Pirate), a mirrored sprite (Griffon)
       push({ type: 'slash', u, x: t.x, y: t.y, R: t.r, a: t.a, arc: t.arc, shape, dir: ((shape === 'twin' || shape === 'twinBlade') && odd ? -1 : 1) * back, side: odd ? 1 : -1, col, r0k: sty.reach0,
-        max: shape === 'bite' && u && u.kind === 'wolf' ? 0.5 : shape === 'great' ? 0.22 : shape === 'heavy' ? 0.24 : 0.28, seed: Math.round(t.x * 7 + t.y) });
+        max: shape === 'bite' && u && u.kind === 'wolf' ? 0.5 : shape === 'bite' ? 0.42 /* round 14: open, then the snap */ : shape === 'great' ? 0.22 : shape === 'heavy' ? 0.24 : 0.28, seed: Math.round(t.x * 7 + t.y) });
     } else if (t.type === 'blast') {
       push({ type: 'blast', x: t.x, y: t.y, r: t.r, color: t.color || '#FFB347', ab: t.ab, max: t.ab === 'fireball' ? 0.6 : 0.45, seed: Math.round(t.x + t.y * 3) });
     }
@@ -194,17 +194,21 @@ function slash(ctx, m, k) {
     const reach = m.R * 0.85, px = x + Math.cos(m.a) * reach, py = y + Math.sin(m.a) * reach, s = clamp(m.R / 40, 0.6, 1.4);
     if (sh === 'bite' && u && u.kind === 'wolf') { wolfBite(ctx, m, k, x, y); return; } // round 13: the wolf's own bite (three takes, fxvar.js)
     if (sh === 'bite') { // round 9: two jaws of fangs snapping shut on the target
-      const shut = easeOut(k01(k / 0.3)), gap = (1 - shut) * 14 * s + 1.5, fade = k01((1 - k) / 0.45);
-      ctx.globalAlpha *= fade;
+      // round 14 (the designer: "Have the chomp effect of bites start open, and rotate 90 degrees"): the jaws show wide
+      // open first (they open a touch wider for a beat), then snap; and the whole chomp is turned a quarter round, so
+      // the jaws close along the line of the bite (one on the biter's side, one beyond), not across it
+      const open = easeOut(k01(k / 0.22)), shut = k < 0.36 ? 0 : easeOut(k01((k - 0.36) / 0.14)), gap = (1 - shut) * (13 + 6 * open) * s + 1.5, fade = k01((1 - k) / 0.4);
+      const b = m.a + Math.PI / 2; // (the old chomp's angle, turned 90 degrees)
+      ctx.globalAlpha *= fade * Math.min(1, 0.35 + open);
       for (const sd of [-1, 1]) {
-        ctx.save(); ctx.translate(px - Math.sin(m.a) * gap * sd, py + Math.cos(m.a) * gap * sd); ctx.rotate(m.a + (sd > 0 ? Math.PI : 0)); // fangs (+y) towards the other jaw
+        ctx.save(); ctx.translate(px - Math.sin(b) * gap * sd, py + Math.cos(b) * gap * sd); ctx.rotate(b + (sd > 0 ? Math.PI : 0)); // fangs (+y) towards the other jaw
         // a jaw: a curved gum line with four fangs pointing at the other jaw
         inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-14 * s, -2 * s); ctx.quadraticCurveTo(0, 6 * s * -sd * 0 - 5 * s, 14 * s, -2 * s);
           for (let i = 3; i >= 0; i--) { const fx0 = -11 * s + i * 7.4 * s; ctx.lineTo(fx0 + 3 * s, -1 * s); ctx.lineTo(fx0, 6 * s); ctx.lineTo(fx0 - 3 * s, -1 * s); }
           ctx.closePath(); }, '#FFF8F0');
         ctx.restore();
       }
-      if (shut > 0.95 && k < 0.5) inked(ctx, () => star(ctx, px, py, 10 * (1 - k), 4, 0.3, m.a), '#FFFFFF');
+      if (shut > 0.95 && k < 0.66) inked(ctx, () => star(ctx, px, py, 10 * (1.3 - k), 4, 0.3, m.a), '#FFFFFF');
     } else { // three claw rakes across the front
       const fade = k01((1 - k) / 0.45);
       ctx.globalAlpha *= fade;
