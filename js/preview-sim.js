@@ -162,7 +162,7 @@ export function foeMoves(k, rank = 0) {
 }
 // Every status the Book names, and how each is shown. Build-ups (statuses.js STATUS) build to their burst; the states
 // a burst leaves (frozen, sickened...) are shown by building their cause; the rest are put on directly.
-const FROM_BURST = { frozen: 'chill', sick: 'poison', radiant: 'radiance', hexed: 'curse', tangled: 'entangle', ko: 'stagger' };
+const FROM_BURST = { frozen: 'chill', sick: 'poison', radiant: 'radiance', hexed: 'curse', ko: 'stagger', charmed: 'charm', addled: 'confuse', terrified: 'fear' }; // (round 13, lane S: tangled is rooted now; the new bursts)
 const PUT_ON = {
   root: (w, s) => { s.rootT = 3; },
   sleep: (w, s) => { s.sleepT = 3; },

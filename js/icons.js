@@ -138,12 +138,44 @@ const STATUS = {
   sick: `<path d="M15 3c5 7 9 11 9 16a9 9 0 0 1-18 0c0-5 4-9 9-16z" fill="#9BCB3C"/><path d="M9.5 19.5c2-2.2 3.6 2.2 5.5 0s3.600 2.2 5.5 0" fill="none" stroke="${INK}" stroke-width="2" stroke-linecap="round" ${H}/><circle cx="25" cy="7" r="2.6" fill="#B6E05A"/><circle cx="28" cy="13.500" r="1.7" fill="#B6E05A"/>`,
   // cursed builds (a purple skull-drop), hexed is the armed curse (an eye in a ring)
   curse: `<path d="M16 3c6 0 10 4.4 10 10 0 4-2 6.4-4 7.6V26h-12v-5.4C8 19.4 6 17 6 13 6 7.4 10 3 16 3z" fill="#9A5CC8"/><circle cx="12.2" cy="13.5" r="2.6" fill="${INK}" ${H}/><circle cx="19.8" cy="13.5" r="2.6" fill="${INK}" ${H}/><path d="M13 22v3M16 22v3M19 22v3" stroke="${INK}" stroke-width="1.6" ${H}/>`,
-  // round 9: entangle builds (a curl of vine), tangled is the burst (roots wrapped round a foot)
+  // round 9: entangle builds (a curl of vine); round 13: its burst roots (tangled and rooted are one state: the root icon)
   entangle: `<path d="M8 26c0-8 4-12 9-12 4 0 6-3 6-6" fill="none" stroke="${INK}" stroke-width="5.6" stroke-linecap="round"/><path d="M8 26c0-8 4-12 9-12 4 0 6-3 6-6" fill="none" stroke="#7FA04A" stroke-width="2.6" stroke-linecap="round" ${H}/>
     <path d="M13 17c-3-1-5-3-5-6 3 0 5 2 5 6zM20 12c1-3 4-4 6-3-1 3-3 4-6 3z" fill="#9BCB3C"/>`,
-  tangled: `<path d="M10 6h8v14h6v6H10z" fill="#C9B8A0"/><path d="M5 14c6 4 16 4 22 0M5 21c6 4 16 4 22 0" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M5 14c6 4 16 4 22 0M5 21c6 4 16 4 22 0" fill="none" stroke="#7A5A3A" stroke-width="2.4" stroke-linecap="round" ${H}/>`,
   hexed: `<circle cx="16" cy="16" r="12" fill="none" stroke="${INK}" stroke-width="5.4"/><circle cx="16" cy="16" r="12" fill="none" stroke="#9A5CC8" stroke-width="2.6" ${H}/>
     <path d="M6 16c3-5 6.4-7 10-7s7 2 10 7c-3 5-6.4 7-10 7s-7-2-10-7z" fill="#E6D2F6"/><circle cx="16" cy="16" r="3.6" fill="#5A2A80" ${H}/>`,
+  // ---- round 13 (lane S): the new build-ups and their bursts
+  // charm builds (a pink heart pierced by a little arrow), charmed is the burst (the heart with a halo of sparks)
+  charm: `<path d="M16 28C6 21 3 16 3 11.5a6.5 6.5 0 0 1 13-1.5 6.5 6.5 0 0 1 13 1.5C29 16 26 21 16 28z" fill="#FF8AC8"/><path d="M8 10a4 4 0 0 1 4-3" fill="none" stroke="#FFE0F0" stroke-width="2" ${H}/>
+    <path d="M3 27L27 5" fill="none" stroke="${INK}" stroke-width="4.6"/><path d="M3 27L27 5" fill="none" stroke="#F2E6C8" stroke-width="2" ${H}/><path d="M29 3l-7 1.6 5.4 5.4z" fill="#E8EEF6"/><path d="M3 27l1-5 4 4z" fill="#FF8AC8"/>`,
+  charmed: `<path d="M16 27C7 21 4 16.5 4 12.5a6 6 0 0 1 12-1.4 6 6 0 0 1 12 1.4C28 16.5 25 21 16 27z" fill="#FF5AAE"/><path d="M9 11a4 4 0 0 1 4-3" fill="none" stroke="#FFE0F0" stroke-width="2" ${H}/>
+    <path d="M5 4l1 2.4L8.4 7 6 8 5 10.4 4 8 1.6 7 4 6zM27 3l1 2.4 2.4.6L28 7l-1 2.4L26 7l-2.4-1 2.4-.6zM28 22l.8 1.8 1.8.6-1.8.6-.8 1.8-.8-1.8-1.8-.6 1.8-.6z" fill="#FFE7A0"/>`,
+  // confused builds (a lilac question mark), addled is the burst (two spirals spinning the other way)
+  confuse: `<path d="M10 11a6 6 0 1 1 9.4 5c-2 1.4-3.4 2.6-3.4 5" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/><path d="M10 11a6 6 0 1 1 9.4 5c-2 1.4-3.4 2.6-3.4 5" fill="none" stroke="#C9A8F0" stroke-width="3.4" stroke-linecap="round" ${H}/><circle cx="16" cy="27" r="2.8" fill="#C9A8F0"/>`,
+  addled: `<path d="M10 16a4 4 0 1 1 4 4 6 6 0 1 1 6-6" fill="none" stroke="${INK}" stroke-width="5.6" stroke-linecap="round"/><path d="M10 16a4 4 0 1 1 4 4 6 6 0 1 1 6-6" fill="none" stroke="#C9A8F0" stroke-width="2.4" stroke-linecap="round" ${H}/>
+    <path d="M25 4l1.2 2.6 2.8.4-2 2 .5 2.8-2.5-1.3-2.5 1.3.5-2.8-2-2 2.8-.4zM6 24l1 2 2.2.3-1.6 1.5.4 2.2L6 29l-2 1 .4-2.2-1.6-1.5 2.2-.3z" fill="#FFE14D"/>`,
+  // sleepy builds (a drooping eyelid and a small z); asleep keeps the moon
+  sleepy: `<path d="M4 15c4-6 8-8 12-8s8 2 12 8c-4 6-8 8-12 8s-8-2-12-8z" fill="#E8E2F6"/><path d="M4 15c4-6 8-8 12-8s8 2 12 8z" fill="#A99CD8" ${H}/><path d="M4 15h24" stroke="${INK}" stroke-width="2.4" ${H}/>
+    <circle cx="16" cy="17.400" r="3" fill="#5A4A7A" ${H}/><path d="M21 24h6l-6 6h6" fill="none" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/><path d="M21 24h6l-6 6h6" fill="none" stroke="#C9B8FF" stroke-width="2" ${H}/>`,
+  // bleeding builds (blood running in two drops); its burst is a moment, not a state (no icon of its own)
+  bleed: `<path d="M11 3c3 5 6 8 6 12a6 6 0 0 1-12 0c0-4 3-7 6-12z" fill="#C8453D"/><path d="M22 12c2.6 4 5 6.4 5 9.6a5 5 0 0 1-10 0c0-3.2 2.4-5.6 5-9.6z" fill="#A02A30"/>
+    <path d="M8 15a3 3 0 0 0 2 3" fill="none" stroke="#FF9A8A" stroke-width="1.8" ${H}/>`,
+  // fear builds (a pale face, eyes wide, a drop of sweat), terrified is the burst (the face running off, speed lines)
+  fear: `<path d="M16 3c6.6 0 11 5 11 12 0 6-3 12-11 13-8-1-11-7-11-13 0-7 4.400-12 11-12z" fill="#E8EEE0"/><circle cx="12" cy="14" r="3.2" fill="#FFFFFF" ${H}/><circle cx="20" cy="14" r="3.2" fill="#FFFFFF" ${H}/>
+    <circle cx="12" cy="14" r="1.3" fill="${INK}" ${H}/><circle cx="20" cy="14" r="1.3" fill="${INK}" ${H}/><ellipse cx="16" cy="22" rx="2.6" ry="3.2" fill="${INK}" ${H}/><path d="M26 4c1.6 2.4 2.6 3.8 2.6 5a2.6 2.6 0 0 1-5.2 0c0-1.2 1-2.6 2.6-5z" fill="#9FDDF6"/>`,
+  terrified: `<path d="M18 4c6 0 10 4.6 10 11 0 5.6-2.8 11-10 12-7.200-1-10-6.400-10-12 0-6.400 4-11 10-11z" fill="#DCE4D0"/><circle cx="14.400" cy="13" r="2.8" fill="#FFFFFF" ${H}/><circle cx="21.600" cy="13" r="2.8" fill="#FFFFFF" ${H}/>
+    <circle cx="14.400" cy="13" r="1.1" fill="${INK}" ${H}/><circle cx="21.600" cy="13" r="1.1" fill="${INK}" ${H}/><ellipse cx="18" cy="21" rx="3" ry="3.800" fill="${INK}" ${H}/><path d="M1 12h5M2 18h5M1 24h5" fill="none" stroke="#DCE4D0" stroke-width="2.4"/>`,
+  // ---- round 13: helpful states (shown on the cards and in the pause panel with their own names: bestiary.js BUFFS)
+  haste: `<path d="M4 10h9M2 16h11M4 22h9" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M4 10h9M2 16h11M4 22h9" fill="none" stroke="#FFF0A0" stroke-width="2" stroke-linecap="round" ${H}/><path d="M14 5l14 11-14 11 4-11z" fill="#E8D84A"/>`,
+  might: `<path d="M16 2l4.400 4.400V20h-8.800V6.400z" fill="#E8EEF6"/><path d="M16 5v14" stroke="#FFFFFF" stroke-width="1.6" ${H}/><path d="M7 20h18v3.400H7z" fill="#E8B53A"/><path d="M14 23.400h4V30h-4z" fill="#8A5A30"/>`,
+  ward: `<circle cx="16" cy="16" r="13" fill="#BFE9F8" opacity=".55"/><circle cx="16" cy="16" r="13" fill="none" stroke="#5DB7E0" stroke-width="2.2" ${H}/>
+    <path d="M16 7l7 2.600v5c0 4.600-3 7.600-7 9-4-1.400-7-4.400-7-9v-5z" fill="#5B8CDB"/><path d="M11 10a14 14 0 0 1 4-1.4" fill="none" stroke="#FFFFFF" stroke-width="1.6" ${H}/>`,
+  stance: `<path d="M16 3l10 3.600v9c0 6.400-4.600 10.400-10 12-5.400-1.600-10-5.600-10-12v-9z" fill="#8F97A3"/><path d="M16 7v17M10 12h12" fill="none" stroke="#D8DCE2" stroke-width="2.4" ${H}/><path d="M2 29h28" fill="none" stroke="${INK}" stroke-width="4"/><path d="M2 29h28" fill="none" stroke="#A99C8B" stroke-width="1.8" ${H}/>`,
+  regen: `<circle cx="16" cy="16" r="12" fill="#7CC06F"/><path d="M16 9v14M9 16h14" fill="none" stroke="#FFFFFF" stroke-width="3.6" ${H}/><path d="M24 3c3 0 5 2 5 5-3 0-5-2-5-5z" fill="#A9D47A"/>`,
+  lifesteal: `<path d="M16 3c4 7 9 11 9 17a9 9 0 0 1-18 0c0-6 5-10 9-17z" fill="#C8453D"/><path d="M16 25c-4-3-6-5-6-7.400a3 3 0 0 1 6-.6 3 3 0 0 1 6 .6c0 2.400-2 4.400-6 7.400z" fill="#FFB0A8" ${H}/>`,
+  focus: `<path d="M3 16c4-6.400 8.400-9 13-9s9 2.600 13 9c-4 6.400-8.400 9-13 9s-9-2.600-13-9z" fill="#FFFFFF"/><circle cx="16" cy="16" r="5" fill="#E8B53A" ${H}/><circle cx="16" cy="16" r="2.200" fill="${INK}" ${H}/><path d="M16 1v4M16 27v4M1 16h3M28 16h3" fill="none" stroke="#FFE7A0" stroke-width="2"/>`,
+  immune: `<path d="M16 3l11 4v8c0 7-5 12-11 14C10 27 5 22 5 15V7z" fill="#FFE07A"/><path d="M10 15.400l4.400 4.400L23 11" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M10 15.400l4.400 4.400L23 11" fill="none" stroke="#FFFFFF" stroke-width="2.400" stroke-linecap="round" ${H}/>`,
+  hidden: `<path d="M2 26c3-8 8-12 14-12s11 4 14 12z" fill="#9C7650"/><path d="M8 22c2-3 5-5 8-5" fill="none" stroke="#C8A070" stroke-width="2" ${H}/><circle cx="9" cy="10" r="2" fill="#9C7650"/><circle cx="22" cy="7" r="2.400" fill="#9C7650"/>`,
+  form: `<ellipse cx="16" cy="21" rx="7" ry="6" fill="#6E6A6A"/><circle cx="8" cy="13" r="3" fill="#6E6A6A"/><circle cx="13" cy="8" r="3" fill="#6E6A6A"/><circle cx="19" cy="8" r="3" fill="#6E6A6A"/><circle cx="24" cy="13" r="3" fill="#6E6A6A"/><path d="M14 19a3 3 0 0 1 4 0" fill="none" stroke="#A8A4A4" stroke-width="1.6" ${H}/>`,
 };
 
 // ---------------------------------------------------------------- ability glyphs (by ability id; a few shapes shared)
@@ -174,6 +206,11 @@ const G = {
   sleep: STATUS.sleep,
   vines: STATUS.root,
   wave: `<path d="M3 20c4-6 8-6 12 0s8 6 14 0" fill="none" stroke="${INK}" stroke-width="7"/><path d="M3 20c4-6 8-6 12 0s8 6 14 0" fill="none" stroke="#E0B070" stroke-width="3.4" ${H}/><path d="M6 11h20" fill="none" stroke="#E0B070" stroke-width="2.4"/>`,
+  // round 13 (lane S): the Enchantress
+  kiss: `<path d="M16 28C6 21 3 16 3 11.5a6.5 6.5 0 0 1 13-1.5 6.5 6.5 0 0 1 13 1.5C29 16 26 21 16 28z" fill="#FF8AC8"/><path d="M10 15c2 2 4 2 6 0 2 2 4 2 6 0-2 3.6-10 3.6-12 0z" fill="#C8306E" ${H}/><path d="M8 10a4 4 0 0 1 4-3" fill="none" stroke="#FFE0F0" stroke-width="2" ${H}/>`,
+  string: `<path d="M4 26C10 20 8 10 16 10s6 10 12 4" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M4 26C10 20 8 10 16 10s6 10 12 4" fill="none" stroke="#FF8AC8" stroke-width="2.2" stroke-linecap="round" ${H}/>
+    <path d="M24 9c-2.400-3.400 1-6 3-3.600 2-2.400 5.400.2 3 3.600l-3 3z" fill="#FF5AAE"/>`,
+  heartbreak: `<path d="M15 28C6 21 3 16 3 11.5a6.5 6.5 0 0 1 12-3.400L12 15l4 3-2 6z" fill="#FF5AAE"/><path d="M18 27l2-5-4-4 3-5-2-4.600A6.5 6.5 0 0 1 29 11.5C29 16 26 21 18 27z" fill="#FF8AC8"/>`,
 };
 const ABILITY_GLYPH = {
   shieldBash: 'shield', guard: 'shield', consecrate: 'sun', holdTheLine: 'shield', charge: 'dash', groundPound: 'wave',
@@ -189,7 +226,7 @@ const ABILITY_GLYPH = {
 export const ABILITY_COLOR = { shield: '#5B8CDB', sun: '#F2C84A', dash: '#C8C0B0', burst: '#E0B070', arrows: '#D8C08A', snow: '#7FD6F5',
   dagger: '#B8C4D4', flame: '#FF7A2F', bolt: '#F2E04A', cloud: '#9AA8BC', heart: '#7CC06F', note: '#FFD27A', leaf: '#7FA04A',
   skull: '#D9D2C0', vial: '#9BCB3C', swirl: '#D8DEE8', hook: '#A8A8B0', fist: '#E0604B', up: '#E8B53A', paw: '#A0683A',
-  drain: '#C8553D', wall: '#9FDDF6', sleep: '#C9B8FF', vines: '#7FA04A', wave: '#E0B070' };
+  drain: '#C8553D', wall: '#9FDDF6', sleep: '#C9B8FF', vines: '#7FA04A', wave: '#E0B070', kiss: '#FF8AC8', string: '#FF8AC8', heartbreak: '#FF5AAE' };
 export const abilityGlyph = (id) => ABILITY_GLYPH[id] || GLYPH2[id] || 'burst';
 
 // ---------------------------------------------------------------- the one entry point

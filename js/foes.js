@@ -69,7 +69,7 @@ export const FOES = {
     range: 290, keep: 190, atkCd: 999, dmg: 6, xp: 12, coins: [2, 5], cost: 4, res: { chill: 0.1, burn: 1.6 },
     brain: (w, u, dt) => { every(w, u, dt, 'snow', 2.2, 3, 300, (t) => { setAnim(u, 'throw', 0.35); snowball(w, u, angleTo(u.x, u.y, t.x + (t.vx || 0) * 0.5, t.y + (t.vy || 0) * 0.5)); }); return false; } },
   spiderHunter: { ...FOE, name: 'Hunter Spider', art: ART('spider-hunter'), headR: 52, r: 26, vr: 20, turn: 7, accel: 420, face: 7, mass: 0.9, hp: 40, speed: 72, role: 'skirmish',
-    range: 14, atkCd: 0.9, dmg: 6, poison: 22, arc: 1.4, temp: 0.55, commit: 0.5, xp: 9, coins: [2, 4], cost: 3, attackAnim: 'thrust', ability: 'dash', abilCd: 3.4,
+    range: 14, atkCd: 0.9, dmg: 6, poison: 22, arc: 1.4, temp: 0.55, commit: 0.5, xp: 9, coins: [2, 4], cost: 3, attackAnim: 'thrust', ability: 'dash', abilCd: 3.4, hunter: 1.4, // (round 13: it hunts the party's healer)
     onDeath: (w, u) => web(w, u.x, u.y, 44, 5) }, // its bite poisons; it dies into a web
   spiderMomma: { ...FOE, name: 'Momma Spider', art: ART('spider-momma'), headR: 58, r: 34, vr: 26, turn: 3.4, accel: 200, face: 3.4, mass: 1.8, hp: 90, speed: 46, role: 'ranged',
     range: 250, keep: 170, atkCd: 999, dmg: 6, xp: 18, coins: [3, 7], cost: 6, onDeath: (w, u) => web(w, u.x, u.y, 60, 7),
@@ -80,7 +80,7 @@ export const FOES = {
       if (hold(u, dt)) return true;
       const t = targetOf(w, u); if (!t || !due(u, 'wail', dt, 2.5) || dist(u.x, u.y, t.x, t.y) > 240) return false;
       again(u, 'wail', 4, 5.5);
-      cone(w, u, angleTo(u.x, u.y, t.x, t.y), { r: 250, arc: 1.1, tell: 0.6, kind: 'soul', hit: { dmg: 7, curse: 32, stagger: 35, knock: 120 } }); // round 8: the wail curses
+      cone(w, u, angleTo(u.x, u.y, t.x, t.y), { r: 250, arc: 1.1, tell: 0.6, kind: 'soul', hit: { dmg: 7, curse: 32, stagger: 35, fear: 45, knock: 120 } }); // round 8: the wail curses (round 13: and frightens)
       return true;
     } },
   ogre: { ...FOE, name: 'Ogre', art: ART('ogre'), headR: 66, r: 42, vr: 31, turn: 2.6, accel: 150, face: 2.6, mass: 3, hp: 160, speed: 42, role: 'melee',
@@ -97,6 +97,21 @@ export const FOES = {
     brain: (w, u, dt) => { if (u.aggro && u.spd > 20 && due(u, 'drip', dt, 1)) { again(u, 'drip', 1.1, 1.5); firePatch(w, u.x - Math.cos(u.mvA) * u.r, u.y - Math.sin(u.mvA) * u.r, 22, 2.5); } return false; } },
   devil: { ...FOE, name: 'Devil', art: ART('devil'), headR: 56, r: 32, vr: 24, hp: 70, speed: 62, role: 'melee', range: 44, atkCd: 1.3, windup: 0.3, dmg: 11, knock: 150, arc: 0.8,
     xp: 15, coins: [3, 6], cost: 5, attackAnim: 'thrust', ability: 'dash', abilCd: 4, res: { burn: 0.2 } },
+  // round 13 (lane S): the Succubus (the designer: "Succubus enemies will also charm who hits them and deal extra damage
+  // to charmed foes"). Whoever lands a blow on her is charmed a little (8, once a second each), so soon they can't hurt
+  // her; she hunts the charmed, hits them 40% harder, and every few seconds blows a kiss at the most charmed hero in reach to
+  // tip it over into fighting for her. Placeholder art: the Devil recoloured rose (docs/ART-NEEDED.md).
+  succubus: { variantOf: 'devil', name: 'Succubus', accent: { from: 0, range: 30, hue: 322, sat: 1.05, light: 0.1 }, hp: 60, dmg: 9, speed: 64, charm: 8, charmBonus: 0.4,
+    xp: 18, coins: [3, 7], cost: 5, ability: 'dash', abilCd: 5,
+    struck: (w, u, src) => { if (!src || src.team === u.team || !src.st) return; const m = u.kissed || (u.kissed = new Map()); if ((m.get(src.id) || -9) > w.time - 1) return; m.set(src.id, w.time); addStatus(w, src, 'charm', 8, u); },
+    brain: (w, u, dt) => {
+      if (!u.aggro || !due(u, 'kiss', dt, 3)) return false;
+      const list = opponents(w, u).filter((h) => !h.summon && dist(u.x, u.y, h.x, h.y) < 300 && lineClear(w, u.x, u.y, h.x, h.y, 4) && !(h.charmImmuneT > 0) && h.flipKind !== 'charm');
+      const t = list.sort((a, b) => (b.st.charm || 0) - (a.st.charm || 0))[0]; if (!t) return false;
+      again(u, 'kiss', 8, 10); setAnim(u, 'cast', 0.4);
+      shoot(w, u, angleTo(u.x, u.y, t.x, t.y), { kind: 'kiss', color: '#FF5AAE', speed: 300, dmg: 2, r: 9, life: 1.4, hitO: { charm: 22, knock: 10 } });
+      return false;
+    } },
   demon: { ...FOE, name: 'Demon', art: ART('demon'), headR: 64, r: 40, vr: 30, turn: 2.8, accel: 160, face: 2.8, mass: 2.6, hp: 150, speed: 46, role: 'melee',
     range: 26, atkCd: 1.8, windup: 0.5, dmg: 17, knock: 240, arc: 2.0, heavy: true, temp: 0.25, commit: 1.2, xp: 28, coins: [6, 11], cost: 8, attackAnim: 'swing', res: { burn: 0.2 },
     brain: (w, u, dt) => slam(w, u, dt, { r: 130, tell: 0.9, dmg: 15, cdMin: 7, cdMax: 9 }) },
@@ -105,11 +120,11 @@ export const FOES = {
     ability: 'charge', abilCd: 9, res: { burn: 0.3 } },
 
   // ---- the Gilded Spire: the host above; cherubs shooting from the back, angels with spears, seraphs casting
-  cherub: { ...FOE, name: 'Cherub', art: ART('cherub'), headR: 46, r: 20, vr: 16, turn: 7, accel: 420, face: 7, mass: 0.6, hp: 24, speed: 66, role: 'ranged',
+  cherub: { ...FOE, name: 'Cherub', art: 'art/enemies/cherub.svg', headR: 40, r: 20, vr: 16, turn: 7, accel: 420, face: 7, mass: 0.6, hp: 24, speed: 66, role: 'ranged',
     range: 260, keep: 180, atkCd: 1.4, dmg: 4, temp: 0.6, commit: 0.5, xp: 6, coins: [1, 3], cost: 2, pack: [2, 3], attackAnim: 'draw', radiance: 12, res: { radiance: 0 } },
   angel: { ...FOE, name: 'Angel', art: ART('angel'), headR: 56, r: 31, vr: 23, hp: 80, speed: 60, role: 'melee', range: 40, atkCd: 1.3, windup: 0.25, dmg: 10, knock: 150, arc: 0.9,
     xp: 16, coins: [3, 7], cost: 5, attackAnim: 'thrust', ability: 'dash', abilCd: 4.5, radiance: 22, res: { radiance: 0 } },
-  seraph: { ...FOE, name: 'Seraph', art: ART('seraph'), headR: 56, r: 31, vr: 23, hp: 60, speed: 52, role: 'ranged', range: 280, keep: 200, atkCd: 1.5, dmg: 7,
+  seraph: { ...FOE, name: 'Seraph', art: 'art/enemies/seraph.svg', headR: 56, r: 31, vr: 23, hp: 60, speed: 52, role: 'ranged', range: 280, keep: 200, atkCd: 1.5, dmg: 7,
     proj: 'bolt', projColor: '#FFF1B0', xp: 16, coins: [3, 7], cost: 5, attackAnim: 'cast', radiance: 20, res: { radiance: 0 } },
 
   // ---- wardens (floors 1 and 2) and bosses (floor 3): powered-up stand-ins
@@ -199,12 +214,12 @@ Object.assign(ELITES, {
   bat: { tick(w, u, dt) {
     if (hold(u, dt)) return true;
     const t = targetOf(w, u); if (!t || !due(u, 'screech', dt, 3) || dist(u.x, u.y, t.x, t.y) > 200) return false;
-    again(u, 'screech', 5.5, 7); cone(w, u, angleTo(u.x, u.y, t.x, t.y), { r: 220, arc: 1.3, tell: 0.5, kind: 'soul', hit: { dmg: 4, stagger: 75 } }); return true;
+    again(u, 'screech', 5.5, 7); cone(w, u, angleTo(u.x, u.y, t.x, t.y), { r: 220, arc: 1.3, tell: 0.5, kind: 'soul', hit: { dmg: 4, stagger: 75, confuse: 40 } }); return true; // (round 13: the screech confuses too)
   } },
   // Snowman: a blizzard: a big lob that leaves a patch of freezing air.
   snowman: { tick(w, u, dt) { every(w, u, dt, 'blizz', 5, 7, 420, (t) => blizzard(w, u, t.x, t.y, 90)); return false; } },
   // Hunter spider: leaps onto you from a distance.
-  spiderHunter: { tick(w, u, dt) { return pounce(w, u, dt, { min: 120, max: 320, every: [3.5, 5], r: 52, dmg: 10, status: { poison: 30 } }); } },
+  spiderHunter: { tick(w, u, dt) { return pounce(w, u, dt, { min: 120, max: 320, every: [3.5, 5], r: 52, dmg: 10, status: { poison: 30, bleed: 40 } }); } }, // (round 13: the pounce opens a wound)
   // Momma spider: her brood hatches: spiderlings come out of her.
   spiderMomma: { tick(w, u, dt) { if (u.aggro && due(u, 'brood', dt, 4)) { again(u, 'brood', 9, 11); summon(w, u, 'spiderHunter', 2, { scale: 0.7, hpMul: 0.45, color: '#5A4A5E' }); } return false; } },
   // Banshee: a cry that drags everyone close by towards her.
@@ -246,8 +261,9 @@ Object.assign(ELITES, {
     const t = targetOf(w, u); if (!t || !due(u, 'breath', dt, 3) || dist(u.x, u.y, t.x, t.y) > 240) return false;
     again(u, 'breath', 6, 8); breath(w, u, angleTo(u.x, u.y, t.x, t.y), 250); return true;
   } },
-  // Cherub: arrow rain: a circle on the floor peppered from above.
-  cherub: { tick(w, u, dt) { every(w, u, dt, 'rain', 4, 5.5, 420, (t) => lob(w, u, t.x, t.y, { r: 80, tell: 1.0, kind: 'holy', dust: '#FFF1B0', hit: { dmg: 6, knock: 80, radiance: 18 },
+  // Cherub: arrow rain: a circle on the floor peppered from above. Round 13 (the designer: "Elite Cupid enemies will shoot
+  // love arrows that charm"): the elite's own arrows are love arrows (charm 18 a hit, no radiance; sim.js fireArrow).
+  cherub: { tick(w, u, dt) { u.loveShots = 18; every(w, u, dt, 'rain', 4, 5.5, 420, (t) => lob(w, u, t.x, t.y, { r: 80, tell: 1.0, kind: 'holy', dust: '#FFF1B0', hit: { dmg: 6, knock: 80, radiance: 18 },
     land: (w2, z) => { for (let i = 0; i < 12; i++) { const a = rand() * TAU, d = rand() * z.r; sparks(w2, z.x + Math.cos(a) * d, z.y + Math.sin(a) * d, rand() * TAU, 1, '#FFF1B0'); } } })); return false; } },
   // Angel: smites: a shaft of light where you stand.
   angel: { tick(w, u, dt) { every(w, u, dt, 'smite', 4.5, 6, 460, (t) => smite(w, u, t.x + (t.vx || 0) * 0.5, t.y + (t.vy || 0) * 0.5)); return false; } },

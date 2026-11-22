@@ -8,7 +8,8 @@ import { HEROES } from './heroes.js';
 import { DEFS, xpToNext, levelHp } from './units.js';
 import { icon, abilityGlyph, ABILITY_COLOR } from './icons.js';
 import { elixirOf, POTIONS } from './potions.js';
-import { STATUS, fillOf, RADIANCE, CURSE, POISON } from './statuses.js';
+import { STATUS, fillOf, RADIANCE, CURSE, POISON, CHARM, CONFUSE, FEAR } from './statuses.js';
+import { BUFFS, STATES } from './bestiary.js';
 
 // ---------------------------------------------------------------- statuses on a unit
 // Every status as { id, kind, icon, frac (1 = full ring, shrinking to 0), color, left (s, when known) }.
@@ -17,7 +18,7 @@ import { STATUS, fillOf, RADIANCE, CURSE, POISON } from './statuses.js';
 // Timed statuses shrink against the highest value seen since they began.
 const STATUS_COL = { burn: '#FF7A2F', chill: '#7FD6F5', frozen: '#BFEFFF', poison: '#9BCB3C', wet: '#6FB7E8', shock: '#FFF27A',
   stagger: '#E8E2D0', stun: '#FFE14D', root: '#7FA04A', sleep: '#C9B8FF', ko: '#FFE7A0', guard: '#5B8CDB', invuln: '#FFE07A',
-  taunt: '#E0604B', buff: '#7CC06F', debuff: '#C8553D', rage: '#E0604B', radiance: '#FFE48A', curse: '#9A5CC8', entangle: '#7FA04A', tangled: '#7A5A3A' };
+  taunt: '#E0604B', buff: '#7CC06F', debuff: '#C8553D', rage: '#E0604B', radiance: '#FFE48A', curse: '#9A5CC8', entangle: '#7FA04A' };
 const peaks = new WeakMap();
 function peaked(u, id, v) {
   let p = peaks.get(u); if (!p) peaks.set(u, (p = {}));
@@ -49,8 +50,16 @@ export function unitStatuses(u, now) {
   build('stagger', s.stagger > 3);
   build('radiance', s.radiance > 2);
   build('curse', s.curse > 2);
-  build('entangle', s.entangle > 2 && !(u.tangledT > 0)); // round 9
-  add('tangled', u.tangledT, { left: u.tangledT });
+  build('entangle', s.entangle > 2); // round 9 (round 13: its burst roots: the one Rooted below)
+  // round 13 (lane S): the new five; charm, confusion and fear have a burst state that lasts, bleeding's is a moment
+  if (u.flipKind === 'charm') out.push({ id: 'charmed', kind: 'status', icon: 'charmed', frac: Math.max(0, (u.flipUntil - (now ?? u.flipUntil)) / CHARM.dur), color: STATUS.charm.col, left: u.flipUntil != null && now != null ? u.flipUntil - now : null });
+  else build('charm', s.charm > 2);
+  if (u.addledT > 0) out.push({ id: 'addled', kind: 'status', icon: 'addled', frac: u.addledT / CONFUSE.addledT, color: STATUS.confuse.col, left: u.addledT });
+  else build('confuse', s.confuse > 2);
+  build('sleepy', s.sleepy > 2);
+  build('bleed', s.bleed > 2);
+  if (u.fearT > 0) out.push({ id: 'terrified', kind: 'status', icon: 'terrified', frac: u.fearT / FEAR.terrT, color: STATUS.fear.col, left: u.fearT });
+  else build('fear', s.fear > 2);
   add('ko', u.koT, { left: u.koT });
   add('stun', u.stunT > 0.05 && !(u.koT > 0) && !(u.frozenT > 0) ? u.stunT : 0, { left: u.stunT });
   add('root', u.rootT, { left: u.rootT });
@@ -64,11 +73,65 @@ export function unitStatuses(u, now) {
     const frac = long ? 1 : Math.min(1, b.t / (b.dur || b.t));
     if (b.potion) { out.push({ id: b.id, kind: 'potion', icon: b.potion, frac, color: POTIONS[b.potion].color, potion: b.potion }); continue; }
     if (b.id === 'rhythm') continue; // the bard's always-on hum: too constant to be worth a ring
-    const bad = (b.move && b.move < 1) || (b.atkSpeed && b.atkSpeed < 1) || (b.taken && b.taken > 1) || (b.dealt && b.dealt < 1) || b.root;
-    const ic = b.root ? 'root' : bad ? 'debuff' : b.id === 'rage' ? 'rage' : (b.taken && b.taken < 1) || b.frontBlock ? 'guard' : 'buff';
-    out.push({ id: b.id, kind: 'status', icon: ic, frac, color: STATUS_COL[ic], left: long ? null : b.t, buff: b });
+    // round 13 ("Some positive status effects don't show"): every buff by its own name and icon (bestiary.js BUFFS), with
+    // what its numbers do; a stance that holds the hero still is a help, not "Rooted"
+    const info = BUFFS[b.id], bad = info ? !!info.bad : badBuff(b);
+    const ic = (info && info.icon) || (bad ? 'debuff' : autoIcon(b));
+    out.push({ id: b.id, kind: 'status', icon: ic, frac, color: STATUS_COL[ic] || (bad ? STATUS_COL.debuff : '#7CC06F'), left: long ? null : b.t, buff: b,
+      name: info ? info.name : nameOf(b.id), desc: [info && info.desc, buffLine(b)].filter(Boolean).join(' ') });
+  }
+  // round 13: helpful states that aren't buffs (an ability or a trait switched on)
+  for (const [id, f] of Object.entries(STATE_TESTS)) {
+    const v = f(u, now); if (!v) continue;
+    const st = STATES[id], c = STATE_COL[st.icon] || '#7CC06F';
+    out.push({ id, kind: 'status', icon: st.icon, frac: typeof v === 'object' ? Math.max(0, Math.min(1, v.frac)) : 1, color: c, left: typeof v === 'object' ? v.left : null, name: v.name || st.name, desc: v.desc || st.desc });
   }
   return out;
+}
+const STATE_COL = { regen: '#7CC06F', guard: '#5B8CDB', immune: '#FFE07A', hidden: '#9C7650', focus: '#FFE7A0', might: '#E8B53A', haste: '#E8D84A', ward: '#5DB7E0', form: '#8A8484', lifesteal: '#C8453D', stance: '#8F97A3' };
+Object.assign(STATUS_COL, { charm: STATUS.charm.col, charmed: STATUS.charm.col, confuse: STATUS.confuse.col, addled: STATUS.confuse.col, sleepy: STATUS.sleepy.col, bleed: STATUS.bleed.col, fear: STATUS.fear.col, terrified: STATUS.fear.col }, STATE_COL);
+const until = (t, now, dur) => (t > now ? { frac: (t - now) / dur, left: t - now } : null);
+// Each returns false, true (full ring) or { frac, left }.
+const STATE_TESTS = {
+  regen: (u) => u.regenT > 0 && { frac: u.regenT / 6, left: u.regenT },
+  guarding: (u) => u.guardOf && u.guardOfT > 0 && { frac: u.guardOfT / 5, left: u.guardOfT },
+  gasForm: (u) => u.gasForm && u.gasT > 0 && { frac: Math.min(1, u.gasT / 4), left: u.gasT },
+  burrowed: (u) => !!(u.hidden && u.kit),
+  steadyAim: (u) => !!u.aimed,
+  loaded: (u) => u.nextShotMul > 1,
+  momentum: (u) => u.momentum > 0 && { frac: u.momentum / 10, name: `Momentum x${u.momentum}`, desc: `${u.momentum} hits in a row: attacks ${u.momentum * 5}% faster.` },
+  barkskin: (u) => !!(u.kit && u.kit.trait && u.kit.trait.taken && u.kit.hero && HEROES[u.kit.hero] && HEROES[u.kit.hero].trait.id === 'barkskin' && u.spd < 8),
+  duel: (u, now) => u.kit && u.kit.duel && until(u.kit.duel.until, now, 6),
+  candle: (u, now) => u.kit && until(u.kit.candleUntil, now, 6),
+  cranked: (u) => u.kit && u.kit.crank > 0 && { frac: u.kit.crank / 5, name: `Cranked Up x${u.kit.crank}` },
+  keen: (u, now) => u.kit && !u.buffs.some((b) => b.id === 'keenEye') && until(u.kit.keenUntil, now, 6),
+  mocking: (u, now) => u.kit && until(u.kit.mockUntil, now, 3),
+  focus: (u) => !!(u.kit && u.kit.focus),
+  wolfForm: (u, now) => u.kit && until(u.kit.wolfUntil, now, 14),
+  link: (u, now) => u.kit && u.kit.link && until(u.kit.link.until, now, 7),
+};
+const pc = (x) => Math.round(Math.abs(x) * 100);
+const badBuff = (b) => (b.move && b.move < 1) || (b.atkSpeed && b.atkSpeed < 1) || (b.taken && b.taken > 1) || (b.dealt && b.dealt < 1) || b.blind || (b.healTaken && b.healTaken < 1);
+const autoIcon = (b) => (b.lifesteal ? 'lifesteal' : b.frontBlock || b.root ? 'stance' : b.taken && b.taken < 1 ? 'ward' : b.statusImmune || b.immune ? 'immune' : b.dealt > 1 ? 'might' : b.atkSpeed > 1 || b.move > 1 ? 'haste' : 'buff');
+const nameOf = (id) => id.replace(/([A-Z])/g, ' $1').replace(/^./, (c) => c.toUpperCase());
+// What a buff's numbers do, in words (so every tier reads right).
+export function buffLine(b) {
+  const out = [];
+  if (b.taken != null && b.taken !== 1) out.push(b.taken < 1 ? `takes ${pc(1 - b.taken)}% less damage` : `takes ${pc(b.taken - 1)}% more damage`);
+  if (b.frontBlock) out.push(`blows from the front lose ${pc(b.frontBlock)}%`);
+  if (b.reflect) out.push(`and ${pc(b.reflect)}% goes back at the striker`);
+  if (b.dealt != null && b.dealt !== 1) out.push(b.dealt > 1 ? `hits ${pc(b.dealt - 1)}% harder` : `hits ${pc(1 - b.dealt)}% weaker`);
+  if (b.atkSpeed != null && b.atkSpeed !== 1) out.push(b.atkSpeed > 1 ? `attacks ${pc(b.atkSpeed - 1)}% faster` : `attacks ${pc(1 - b.atkSpeed)}% slower`);
+  if (b.move != null && b.move !== 1) out.push(b.move > 1 ? `moves ${pc(b.move - 1)}% faster` : `moves ${pc(1 - b.move)}% slower`);
+  if (b.lifesteal) out.push(`heals ${pc(b.lifesteal)}% of what it deals`);
+  if (b.healTaken != null && b.healTaken < 1) out.push(`heals do ${pc(1 - b.healTaken)}% less`);
+  if (b.statusImmune) out.push('no status can touch it');
+  else if (b.immune) out.push(`can't be ${b.immune.map((s) => ({ burn: 'burnt', chill: 'chilled', poison: 'poisoned', wet: 'soaked', shock: 'shocked' }[s] || s)).join(' or ')}`);
+  if (b.knockImmune) out.push("can't be knocked back");
+  if (b.root) out.push('stands its ground');
+  if (b.blind) out.push('misses most of its blows');
+  if (!out.length) return '';
+  const s = out.join(', '); return s[0].toUpperCase() + s.slice(1) + '.';
 }
 const RC = 2 * Math.PI * 10.2;
 export function ringSvg(st, size = 24) {
@@ -98,7 +161,7 @@ export function unitItems(run, k, u) {
 
 // ---------------------------------------------------------------- the cards
 const members = (r) => [...r.party, ...(r.hired || [])];
-const heroUnit = (w, k) => w.units.find((x) => x.kind === k && x.team === 'hero' && !x.summon);
+const heroUnit = (w, k) => w.units.find((x) => x.kind === k && (x.trueTeam || x.team) === 'hero' && !x.summon);
 let built = '', onTap = null;
 export function buildCards(run, artOf, tap) {
   onTap = tap;

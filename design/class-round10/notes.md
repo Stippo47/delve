@@ -56,7 +56,8 @@ Variants waiting for a pick (the game is unchanged):
 In the game (`_src/game10.py`):
 - **Orc** (`greenskin-orc.svg` -> art/enemies/orc.svg), "Move tusks to the side... While at it fixe hair": the two tusks
   stand at the corners of the mouth (they stood in the middle of it); the topknot is tied with a bone ring and a thick
-  tail of hair falls back from it to a tuft (it was a ball with a thin stick behind it). Nothing else.
+  tail of hair falls back from it to a tuft (it was a ball with a thin stick behind it). Second pass: the cleaver sits 16 units further back,
+  so its whole blade is inside the box.
 - **Croc** (`sewer-croc.svg` -> art/enemies/croc.svg), "Fix axe": the two grey slabs half under the snout (cut off by the
   box) are real axes clear of the head: a shorter haft, one bearded steel blade turned out with a bright edge, a dark
   iron eye and a small poll. Same fists and places.
@@ -74,8 +75,9 @@ In the game (`_src/game10.py`):
     bearded axe, the blade turned out.
   - `bandit-spear.svg`: a moss-green hood with a long tail and a scalloped mantle; a long spear with a rag of red tied
     under its head.
-  - `bandit-daggers.svg`: the cutpurse, bare-headed: dark auburn hair swept back in a wave and tied in a long tail (it
-    sways), a gold ring in one ear, a slate scarf collar; a long curved knife in each hand.
+  - `bandit-daggers.svg`: the cutpurse: a slate-blue kerchief tied close over the head and knotted to one side at
+    the back (it sways), a tuft of dark hair at the brow, a gold ring in one ear, a slate scarf collar; a long curved
+    knife in each hand. (Second pass: its swept-back hair and tail were close to the hero Twinfang's.)
   - `bandit-poacher.svg`: an olive hunter's cap with a pointed turned-up brim and a long pheasant feather, a scruffy
     beard (no mask: not one of the gang), a wolf-fur mantle, the bow in front, the net on the back.
   - `bandit-brute.svg`: bald and scarred, a spiked iron pauldron strapped on the right shoulder, a fur collar; a great
@@ -124,7 +126,7 @@ In the game (`_src/game10.py`):
 
 ### The Gilded Spire
 - **Choir sprite** (`spire-choir-sprite.svg` -> art/enemies/choir-sprite.svg), "Weird hair": the lumpy cap with spiral
-  squiggles is the picked cherub's hair (round 4's): a cap of soft curls, each bump one arc, a parted fringe. Nothing
+  squiggles is the round-4 cherub's hair: a cap of soft curls, each bump one arc, a parted fringe. Nothing
   else. In the game.
 - **Fallen angel** (`spire-fallen-angel.svg` -> art/enemies/fallen-angel.svg), "Meh. I think u could do better": drawn
   again on the picked angel's build: its two-layer wings gone dark violet and torn, the left one half gone; ashen skin,
@@ -152,10 +154,11 @@ In the game (`_src/game10.py`):
   same shape and colours drawn again: a head the size of the heroes' (it was a small ball), a broad snout with the gold
   stripe, tall ears broad at the root with gold inside, the collar as four clean bands (gold, turquoise, lapis, gold)
   over white linen, a bigger gold-bladed spear, a bronze shield with a rim, spokes and a gold boss. In the game.
-- **Mummy** (`dunes-mummy.svg` -> art/enemies/mummy.svg), "No": drawn again in the heroes' bust build: a head wound in
-  broad crossing bands with one dark slit across it (nothing in it), a loose end by its cheek, a turquoise scarab on a
-  gold collar, both arms held straight out in front with big wrapped fists, a long strip flying back from one shoulder
-  and a short one from the other. In the game.
+- **Mummy** (`dunes-mummy.svg` -> art/enemies/mummy.svg), "No": drawn again, twice. The first take (arms held straight
+  out, strips from the shoulders) read as a table with legs at game size. The second is a wrapped person drawn as the
+  heroes are: shoulders in old linen under a broad gold and turquoise collar, a bandaged head with one dark slit across
+  it (nothing in it), two wrapped fists where a hero's are, and two long loose wrappings trailing back together from
+  the back of its head (#back). In the game.
 - **Sand serpent**, "Wth is that snake enemy" (v12-bosses deck): a proper snake. The head (`dunes-serpent-head.svg` ->
   art/enemies/serpent-head.svg): a broad arrow of a head, widest at the jaws, a blunt snout, two brow ridges, nostril
   pits, a pale lip, a forked tongue, and the neck with the body's pattern. A body segment (`dunes-serpent-coil.svg` ->
@@ -186,12 +189,11 @@ In the game (`_src/game10.py`):
   boiler: the same base plate; a round copper boiler bound with two riveted brass straps, a flared brass nozzle like a
   horn's bell, one pressure gauge on top, a red valve wheel on a pipe at its side, a relief valve at the back with a
   puff of steam. In the game.
-- The rest of the Foundry (automaton, bomb bot, flame and laser turrets, mortar, tesla coil, repair drone, smith, saw
-  blade, chain crawler, drill bot) had no note of its own and is as it was: see "Still weak".
+- The rest of the Foundry: see "4. The second pass".
 
 ### The bosses
 - **Choir singer** (`boss-choir-singer.svg` -> art/bosses/choir-singer.svg), "Flip book. Hair weird": the book is turned
-  the other way up (its pages fall open towards the singer, who reads it) and the hair is the picked cherub's, as the
+  the other way up (its pages fall open towards the singer, who reads it) and the hair is the round-4 cherub's, as the
   choir sprite's. In the game.
 - **The Gilded Seraph, fallen**, "??? Wrong sprite?": the tile showed the right file (her fallen look, dark wings, black
   and violet, which the game does not use), but the deck gave it the gold seraph's label and text ("The Gilded Seraph
@@ -241,24 +243,90 @@ In the game (`_src/game10.py`):
   two leeches (still stand-ins: they are slimelets turned red and pink). The ice slime and the fire slime keep their own
   art. Checked: a lab sheet of all of them.
 
-## Not done
-- Step 4 of the brief (the Spire's plain angel, cherub and seraph, which still wear round-5 stand-ins; the Pit Lord).
-- The rest of the Foundry (see below).
+## 4. The second pass (after the lead's review)
+
+### The rest of the Clockwork Foundry
+The card was REDO with only the storm spirit and the gun turret ticked, so every other kind is rejected, not only the
+four with notes ("U are losing the style. Too many segments. 1 maybe 2 body segments"; "weren't very interesting").
+All twelve drawn again (`A2/foundry10b.py`): few big shapes, one or two body parts, one thing of its own each; dark
+iron, brass, and one amber-lit slit where a face would be. Each keeps its round-9 parts and body width, so headR and
+sizes stand. All in the game.
+- **Automaton** (`foundry-automaton.svg`): a clockwork knight: a smooth steel helm with a brass crest and one amber visor
+  slit, a big brass cog for each pauldron, a wind-up key in its back (#back), a broad sword in an iron gauntlet.
+- **Bomb bot** (`foundry-bomb-bot.svg`): one round black bomb with a hazard band across its front, a brass fuse cap and
+  a fuse curling to a spark, a wind-up key behind, two stubby brass feet. The auto bomb bot is it turned blue by the
+  game as before (checked).
+- **Flame turret** (`foundry-turret-flame.svg`): a dark burner with a gauge between two red fuel tanks, a hazard band, a
+  flared scorched nozzle with a pilot flame, on the base plate.
+- **Laser turret** (`foundry-turret-laser.svg`): in the gun turret's bulkhead and socket: a capsule housing with fins
+  and a red charge window, a long barrel with three brass focusing rings and a red lens.
+- **Mortar** (`foundry-mortar.svg`): a short fat tube tilted forward, a brass muzzle band with the dark mouth, a brass
+  yoke, a round breech; two spare shells lying on the base. The fire and gas mortars are it with the brass (band, yoke,
+  shell noses) turned red and green by the game (checked).
+- **Tesla coil** (`foundry-tesla-coil.svg`): a square base with a ceramic insulator at each corner, a fat ribbed copper
+  ring (a coil's top is a ring) with a crackling blue-white spark at its heart, two arcs to the insulators.
+- **Repair drone** (`foundry-repair-drone.svg`): one round white shell with a green cross, a rotor at each side, a wrench
+  and a welding torch in front (they lift when it mends).
+- **Foundry smith** (`foundry-smith.svg`): no longer brown on brown: bare sooty shoulders, a dark apron bib and straps
+  with brass rivets, a bald head under a red sweatband, a great ginger beard and moustache, a hammer with a red-hot
+  face, a thick glove.
+- **Saw blade** (`foundry-saw-blade.svg`): twelve big hooked teeth, three curved slots, a red hub with a brass nut.
+- **Chain crawler** (`foundry-crawler-head.svg`, `foundry-crawler-plate.svg`): a mechanical centipede: the head one
+  rounded steel plate with a brass ridge and an amber slit, two great iron pincers (they snap); each body plate a
+  rounded link a little longer than the step between plates, a brass stud, one pointed leg a side.
+  `boards/foundry-chain-crawler.svg` shows the head and eight plates as the game lays them.
+- **Drill bot** (`foundry-drill-bot.svg`): two parts: a squat yellow body with two black chevrons, tracks and a stack;
+  and a great conical drill as wide as the body (it drives forward).
+
+### The Frost and Dunes kinds with no note that were not ticked (both cards IDK)
+Looked at again at game size beside the ticked wolf, fire spider and the heroes.
+- **Ice slime** (`frost-ice-slime.svg` -> art/enemies/ice-slime.svg, headR 49 -> 64), redone: it followed the old slime
+  shape with its point, which the designer has since had removed; it is now the picked slime in ice: the same rounded
+  cube, glassy, three shards frozen inside where the slime has its bone, a frosted rim.
+- **Sand mage** (`dunes-sand-mage.svg` -> art/enemies/sand-mage.svg), redone: it was a brown hood over a blank cream
+  face. Now a teal turban in big folds with a gold brooch and a white plume, its tail lying back (#back), a cream veil
+  over the lower face, an ochre robe with a turquoise border, a staff topped with a gold sun, an orb of whirling sand
+  in the other hand.
+- **Dart trap** (`dunes-dart-trap.svg` -> art/enemies/dart-trap.svg), redone: it was a spiky sun face on a thin slab. Now
+  built like the Foundry's wall turrets: a carved sandstone block out from the wall with a turquoise band and a round
+  socket (#back), and half in the socket a round stone head with a gold winged sun and a dark mouth holding three darts.
+- Left as they were, and why: the **frost wolf** and the **frost spider** (the ticked wolf's and the ticked fire
+  spider's builds in their own colours; they read as well as those do); the **scarab** (three clean shapes, a strong
+  colour, it reads at its small size); the **dust devil** (a whirlwind can only be a swirl from above; it reads as one
+  in motion, though standing still it is close to a pastry: see "Still weak").
+
+### Step 4: the Spire's stand-ins, and the Pit Lord
+- **Angel**: left exactly as it is. The game's angel (art/enemies/placeholder/angel.svg) is the designer's pick: Angel A
+  was ticked in the round-7 answers (art-round5 deck) and Angel B in the round-8 answers. Its file sits in the
+  placeholder folder under a header that says otherwise, which is wrong; the art is approved.
+- **Seraph** (`spire-seraph.svg` -> art/enemies/seraph.svg; js/foes.js seraph points at it): it wore the angel with the
+  thin halo the designer sent back ("Halo is behind, not layered properly"). Now its own design on the picked angel's
+  build, a caster: four of the angel's two-layer wings (a pair spread, a pair swept down), long pale gold hair, a gold
+  halo ring worn over the hair as the picked Angel B wears it, a white robe with a gold collar, both hands out in gold
+  cuffs (no spear).
+- **Cherub** (`spire-cherub.svg` -> art/enemies/cherub.svg; js/foes.js cherub points at it, headR 46 -> 40): round 4's
+  was never picked. Drawn again as kin to the choir sprite: its build, wings and cap of curls, a white wrap with a rose
+  sash, a gold bow held out in front (with its string, which the game draws to the drawing hand) and an arrow tipped
+  with a heart.
+- **The Pit Lord** (`ember-pit-lord.svg` -> art/enemies/pit-lord.svg), drawn again to stand apart from the red devil and
+  the demon: black obsidian cracked through with glowing lava, a jagged molten grin, two huge pale bone horns, a heavy
+  iron collar, red bat wings spread behind, the whip of fire as it was, bone claws.
+- Checked on `python -m http.server 8897`: lab sheets of every second-pass kind and recolour in every pose: no page
+  errors; `node tools/battles.mjs`: 0 problems.
 
 ## Still weak
-- The Foundry card was REDO and only the four notes on it were redrawn; the automaton, bomb bot, flame and laser
-  turrets, mortar, tesla coil, repair drone, smith, saw blade, chain crawler and drill bot are round 9's.
-- The gun turret is "in the wall" by building the wall out to it; set truly into the wall it would need the game to
-  mount wall turrets with their centre on the wall's face (families.js mountOnWall), and then a different back plate.
-- The sand serpent's segments are separate units, each with its own outline, so the body shows a dark line between
-  links; one outline round the whole snake would need the game to draw a chain's inks together.
-- The fallen angel has one wing half gone: lopsided on purpose, but at game size it can read as a wing hidden rather
-  than torn. It and the Fallen Herald are dark on dark.
-- The troll's "slightly smaller" is read as the whole troll (10%); if the heads were meant, the three heads are already
-  drawn at the old head's size and only the game numbers differ. Picking a troll also needs the boulder's size freed
-  from the troll's (js/foes9.js boulderOf: 0.62 of the troll's collider; 0.69 keeps today's boulder beside a troll of
-  r 54).
-- The knife bandit and the hero Twinfang both wear swept-back hair and a tail; hers is navy with a red cape.
-- The mummy's wrappings are bands of shade, not separate strips; up close they are flat.
+- The gun and laser turrets and the dart trap are "in the wall" by building the wall out to them; set truly into the
+  wall they would need the game to mount wall turrets with their centre on the wall's face (families.js mountOnWall).
+- The serpent's and the crawler's segments are separate units, each with its own outline, so the body shows a dark line
+  between links; one outline round the whole chain would need the game to draw a chain's inks together.
+- The machines' wind-up key (automaton, bomb bot) is a butterfly of two brass wings; small, it can read as a bow.
+- The automaton's and the crawler's faces are the same brass ridge over an amber slit: a family look, but a "T" both times.
+- The dust devil was left: a swirl of three arms, close to a pastry when it stands still.
+- The fallen angel has one wing half gone: at game size it can read as a wing hidden rather than torn. It and the
+  Fallen Herald are dark on dark.
+- The Spire's seraph and the boss Gilded Seraph are kin by design; the boss is bigger, gold-winged and six-winged.
+- The mummy's trailing wrappings rise from the back of its head and can read as a topknot; its bands are flat shade.
+- The troll's "slightly smaller" is read as the whole troll (10%). Picking a troll also needs the boulder's size freed
+  from the troll's (js/foes9.js boulderOf: 0.62 of the troll's collider; 0.69 keeps today's boulder beside r 54).
 - The Elder Ent at r 80 is big for the paths of its clearing: untested in a full boss fight beyond `tools/battles.mjs`.
-- The orc's cleaver still runs out of the bottom of its box on the boards (it did in round 8; not in the note).
+- The yeti's lower fangs are small at game size.

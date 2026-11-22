@@ -1,0 +1,65 @@
+{
+  "title": "0.16.0: new statuses, the Enchantress",
+  "topic": "statuses",
+  "order": 25,
+  "priority": 1,
+  "tags": ["first"],
+  "cards": [
+    {
+      "id": "statuses",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "Five new statuses",
+      "text": "Charm, Confused, Sleepy, Bleeding and Fear are in, each with a build-up and a burst. Live as 0.16.0.",
+      "why": "Your list, built. Each part has its rules and a clip. Mark any that reads weakly or plays wrong; the calls I made are in the details.",
+      "videos": ["../../../clips/r13/statuses/charm.mp4", "../../../clips/r13/statuses/bleed.mp4"],
+      "details": "Fear was never built before; it's in now.\n\nCalls made that you didn't specify:\n- Charm only blocks hits once it's a third full, so the first blows still land (from the first point, the Succubus was nearly unkillable).\n- Bosses, and the last unit left on a side, don't change sides: they are stunned 1.5 s instead. Bosses only cower from Fear. Bleeding's burst takes at most 6% of a boss's health.\n- Sleepy's burst is sleep for 4 s, and nothing wakes it for the first 2.\n- Confused's burst fires every ready ability at whatever it was aiming at.\n\nWeak spots: the confused burst hitting allies is real but hard to see; Sleepy has the quietest look of the five.",
+      "parts": [
+        { "id": "charm", "title": "Charm", "text": "Once it's a third full the unit can't hurt whoever is charming it and picks another target. Burst: it fights for the charmer's side for 5 seconds (elites 4, majors 3), then comes back.", "videos": ["../../../clips/r13/statuses/charm.mp4"] },
+        { "id": "confused", "title": "Confused", "text": "Shots go wide, it lurches to random headings, and it swings at the air when nothing is in reach. Burst: for 4 seconds its weapon hits friends too, and it fires every ready ability at once.", "videos": ["../../../clips/r13/statuses/confused.mp4", "../../../clips/r13/statuses/confused-t3.mp4"] },
+        { "id": "sleepy", "title": "Sleepy", "text": "Attacks up to 40% slower and far fewer ability uses; its head nods. Burst: asleep for 4 seconds.", "videos": ["../../../clips/r13/statuses/sleepy.mp4"] },
+        { "id": "bleeding", "title": "Bleeding", "text": "Drains health, and every blow it takes stops the bleed fading for 1.5 seconds. Healing does up to half as much. Burst: it loses 33% of its remaining health at once.", "videos": ["../../../clips/r13/statuses/bleed.mp4"] },
+        { "id": "fear", "title": "Fear", "text": "It backs away from whoever frightened it and trembles. Burst: it runs for 3 seconds, can't attack or use abilities, and its cooldowns restart.", "videos": ["../../../clips/r13/statuses/fear.mp4"] },
+        { "id": "who", "title": "Who uses them", "text": "Charm: the Enchantress, elite Cupids, the Succubus. Confused: the bat's screech. Sleepy: the Bard's Lullaby and the choir sprite's song. Bleeding: hellhound bites and the hunter spider's pounce. Fear: the banshee's wail.", "videos": ["../../../clips/r13/statuses/banshee.mp4", "../../../clips/r13/statuses/bats.mp4"] }
+      ]
+    },
+    {
+      "id": "enchantress",
+      "kind": "design",
+      "rarity": "rare",
+      "title": "The Enchantress",
+      "text": "The charming hero: a support who turns enemies with a thread, shields an ally with charm, then breaks hearts.",
+      "why": "You asked for a charming hero and left the kit to me. Each ability uses charm a different way. She wears a recoloured Witch until her art is drawn.",
+      "pick": "Keep her as built: Blown kiss, Heartstring, Sweetheart, Heartbreak, and First Impression.",
+      "videos": ["../../../clips/r13/statuses/enchantress.mp4", "../../../clips/r13/statuses/enchantress-t1.mp4"],
+      "details": "Attack, Blown kiss: a slow pink heart that hurts and charms a little.\n\nHeartstring: a thread to the most dangerous enemy nearby that charms it fast and pulls it out of its pack. At tier III the thread jumps to the next enemy once the first turns.\n\nSweetheart: the ally taking the most hits becomes beloved; each blow on them charms the attacker, so attackers soon can't hit them. Tier II heals them 10%; tier III covers two allies.\n\nHeartbreak: every charmed enemy takes heavy damage and swoons; every enemy fighting for you snaps back in a blast that hurts its own friends. Tier III heals the party a little for each broken heart.\n\nTrait, First Impression: the first blow any enemy lands on her charms it heavily."
+    },
+    {
+      "id": "foes",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Cupid, Succubus, hunters",
+      "text": "Elite cherubs shoot love arrows. The Succubus charms whoever hits her. Hounds and hunter spiders go for healers.",
+      "why": "From your list and your healer answer. Mark what's unfair or dull.",
+      "videos": ["../../../clips/r13/statuses/cupid.mp4", "../../../clips/r13/statuses/succubus.mp4"],
+      "parts": [
+        { "id": "cupid", "title": "The Cupid", "text": "The cherub's elite. Its arrows are love arrows that charm instead of dazzling; it keeps its arrow rain.", "videos": ["../../../clips/r13/statuses/cupid.mp4"] },
+        { "id": "succubus", "title": "The Succubus", "text": "Ember Deep, floors 2 and 3. Every blow on her charms the attacker a little; she goes for the charmed, hits them 40% harder, and blows a kiss at the most charmed hero to tip them over. A recoloured Devil for now.", "videos": ["../../../clips/r13/statuses/succubus.mp4"] },
+        { "id": "hunters", "title": "Healer hunters", "text": "Hellhounds and hunter spiders now go for the party's healer, and their bleed halves healing.", "images": ["../../../clips/r13/statuses/hunters-6s.png"] }
+      ]
+    },
+    {
+      "id": "buffs",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Good statuses now show",
+      "text": "Every buff has its own name, icon and numbers. Before, they all showed as one generic mark, or not at all.",
+      "why": "You said some positive statuses don't show. About 75 buffs and 16 states were affected; stances like Hold the Line even showed as Rooted, a harm.",
+      "images": ["../../../clips/r13/statuses/hud-cards.png", "../../../clips/r13/statuses/hud-pause.png"],
+      "parts": [
+        { "id": "blocked", "title": "Damage blocked", "text": "Blocked damage (shields, blocks, armour, wards, dodges) is now counted apart from damage taken, in run stats, the pause panel and battle results. The Paladin blocks 58% of what comes at him." },
+        { "id": "rulings", "title": "Your rulings", "text": "Tangled is gone: Entangle's burst roots. The radiant glow draws under units. Poison drops to nothing when the sickness ends. Armour takes a point and 2% off a blow per point, capped at 60%. Enemies no longer wither when a room drags on." }
+      ]
+    }
+  ]
+}

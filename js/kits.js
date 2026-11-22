@@ -25,8 +25,9 @@ import {
 import { lineClear } from './path.js';
 import { cue } from './sfx.js';
 import { tagAbility } from './fxtag.js';
-import { STATUS } from './statuses.js';
+import { STATUS, SLEEPY, fillOf } from './statuses.js';
 import { ABILITIES2, TRAITS2, ATTACKS2, kit2Tick } from './kits2.js';
+import { CHARM_ABILITIES, CHARM_TRAITS, CHARM_ATTACKS, charmTick } from './kits-charm.js'; // round 13 (lane S): the Enchantress
 
 // ---------------------------------------------------------------- the skill web's stat nodes (round 8)
 // u.kit.mods = statsFor(hero, nodes) (heroes.js). Generic stats go straight onto the unit in initKit; an ability's own
@@ -136,7 +137,9 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       const dur = tier >= 2 ? 6 : 4; // round 9: no swing; he simply holds the shield out in front (parts.js)
       addBuff(u, { id: 'holdTheLine', dur, frontBlock: 0.6, root: true, reflect: tier >= 3 ? 0.5 : 0 });
-      for (const e of foesNear(w, u, u.x, u.y, tier >= 2 ? 300 : 200)) { e.tauntBy = u; e.tauntT = dur; e.target = u; }
+      // (round 13, "The v should remain over them": fxkit draws the mark while e.vMarkT runs and he still holds them)
+      for (const e of foesNear(w, u, u.x, u.y, tier >= 2 ? 320 : 240)) { e.tauntBy = u; e.tauntT = dur; e.target = u; e.vMarkBy = u; e.vMarkT0 = w.time; e.vMarkT = w.time + dur;
+        addBuff(e, { id: 'cowed', dur, dealt: 0.8 }); } // (round 13: those he holds hit softer: what an hp tank does for the others)
       puff(w, u.x, u.y, '#FFE7A0', 10, 140, 5, 0.45); // no ring round him (round 6): a burst of dust as the shield plants
     },
   },
@@ -147,15 +150,15 @@ export const ABILITIES = {
     },
     use(w, u, t, tier) {
       const a = ang(u, t); u.facing = a; // round 9: no arm swing; the shield is held out in front while he charges (parts.js)
-      u.act = { type: 'charge', t: tier >= 2 ? 0.7 : 0.55, max: 0.7, a, hit: new Set(), stagger: tier >= 3 ? 60 : 0, power: tier >= 2 ? 1.3 : 1 };
+      u.act = { type: 'charge', t: tier >= 2 ? 0.7 : 0.55, max: 0.7, a, hit: new Set(), stagger: tier >= 3 ? 45 : 0, power: tier >= 2 ? 1.3 : 1, ab: 'charge', dmg: dmgOf(u, 2) }; // (round 13: his own blow, 2.6 of the mace's; it was a flat 18)
     },
   },
   groundPound: {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 120).length >= 2 ? 0.7 : 0),
     use(w, u, t, tier) {
       cast(u, 'ability', 0.4); w.shake = Math.max(w.shake, 7);
-      ring(w, u, u.x, u.y, 125, dmgOf(u, 1), { knock: 300, heavy: true, stagger: tier >= 2 ? 40 : 0 }, '#E8D8B0');
-      if (tier >= 3) u.later = [{ t: 0.5, f: () => ring(w, u, u.x, u.y, 170, dmgOf(u, 0.6), { knock: 220, stagger: 30 }, '#E8D8B0') }];
+      ring(w, u, u.x, u.y, 125, dmgOf(u, 1.2), { knock: 300, heavy: true, stagger: tier >= 2 ? 40 : 0 }, '#E8D8B0');
+      if (tier >= 3) u.later = [{ t: 0.5, f: () => ring(w, u, u.x, u.y, 170, dmgOf(u, 0.6), { knock: 220, stagger: 20 }, '#E8D8B0') }];
     },
   },
   // ----- Archer
@@ -163,14 +166,14 @@ export const ABILITIES = {
     score(w, u, t) {
       if (!t || dist(u.x, u.y, t.x, t.y) > u.def.range || blocked(w, u.x, u.y, t.x, t.y)) return 0;
       let fuel = 0; for (const h of w.hazards) if ((h.type === 'oil' || h.type === 'gas') && foesNear(w, u, h.x, h.y, h.r).length) fuel = 0.4;
-      return 0.1 + 0.35 * (foesNear(w, u, t.x, t.y, 90).length - 1) + fuel;
+      return 0.34 + 0.3 * (foesNear(w, u, t.x, t.y, 90).length - 1) + fuel; // (round 13: on a lone enemy too; it was only loosed at a crowd)
     },
     use(w, u, t, tier) {
       // round 9: a short charge first (the bow drawn, arrows gathering on it: fxkit), then the fan, each arrow at its own speed
-      const n = tier >= 2 ? 7 : 5; cast(u, 'draw', 0.5); u.aimT = 0.42; u.aimCol = tier >= 2 ? '#FF8A3D' : null; u.aimHead = tier >= 2 ? '#FFD45A' : null;
+      const n = tier >= 2 ? 7 : 5; u.aimT = u.aimMax = 0.42; u.aimCol = tier >= 2 ? '#FF8A3D' : null; u.aimHead = tier >= 2 ? '#FFD45A' : null; // (round 13: the bow is drawn back while it charges: parts.js)
       u.later = [{ t: 0.4, f: () => {
-        const base = t && alive(t) ? ang(u, t) : u.facing; u.aimT = 0; u.recoilT = 0.14;
-        for (let i = 0; i < n; i++) shoot(w, u, base + (i - (n - 1) / 2) * 0.08, { kind: tier >= 2 ? 'fireArrow' : 'arrow', speed: 360 + ((i * 3) % n) / (n - 1) * 300, dmg: dmgOf(u, 0.8), st: tier >= 2 ? { burn: 20 } : {}, pierce: tier >= 3 ? 2 : 0 });
+        const base = t && alive(t) ? ang(u, t) : u.facing; u.aimT = 0; u.recoilT = 0.14; cast(u, 'draw', 0.3);
+        for (let i = 0; i < n; i++) shoot(w, u, base + (i - (n - 1) / 2) * 0.08, { kind: tier >= 2 ? 'fireArrow' : 'arrow', speed: 360 + ((i * 3) % n) / (n - 1) * 300, dmg: dmgOf(u, 0.75), st: tier >= 2 ? { burn: 20 } : {}, pierce: tier >= 3 ? 2 : 0 });
       } }];
     },
   },
@@ -178,12 +181,14 @@ export const ABILITIES = {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && !blocked(w, u.x, u.y, t.x, t.y) ? 0.35 + (t.def.boss ? 0.3 : 0) + 0.15 * foesNear(w, u, t.x, t.y, 80).length : 0),
     use(w, u, t, tier) {
       // round 9: a readable charge (cold drawn into the bow from all round her: fxkit), and snowflakes that linger
-      cast(u, 'draw', 0.55); u.aimT = 0.47; u.aimCol = '#9FB7C8'; u.aimHead = '#BFE9F8';
+      // round 13 ("Doesnt charge back bow"): the string and the arrow come back with her hand through the charge
+      // (parts.js reads u.aimT), and the loose plays when the arrow goes
+      u.aimT = u.aimMax = 0.47; u.aimCol = '#9FB7C8'; u.aimHead = '#BFE9F8';
       u.later = [{ t: 0.45, f: () => {
-        u.aimT = 0; u.recoilT = 0.14;
-        shoot(w, u, t && alive(t) ? ang(u, t) : u.facing, { kind: 'shard', speed: 560, dmg: dmgOf(u, 1.2), st: { chill: tier >= 2 ? 110 : 60 },
+        u.aimT = 0; u.recoilT = 0.14; cast(u, 'draw', 0.3);
+        shoot(w, u, t && alive(t) ? ang(u, t) : u.facing, { kind: 'shard', speed: 560, dmg: dmgOf(u, 1.9), st: { chill: tier >= 2 ? 110 : 60 },
           land: (p) => { // round 10: "Remove the ice puddle" (the lingering rime it left)
-            if (tier >= 3) { fx(w, { type: 'ring', x: p.x, y: p.y, r: 80, color: '#BFEFFF', max: 0.4 }); for (const e of foesNear(w, u, p.x, p.y, 80)) addStatus(w, e, 'chill', 50, u); } } });
+            if (tier >= 3) { fx(w, { type: 'ring', x: p.x, y: p.y, r: 80, color: '#BFEFFF', max: 0.4 }); for (const e of foesNear(w, u, p.x, p.y, 80)) { hurt(w, e, dmgOf(u, 0.7), u, { noDodge: true, kAngle: angleTo(p.x, p.y, e.x, e.y), knock: 60 }); addStatus(w, e, 'chill', 50, u); } } } });
       } }];
     },
   },
@@ -192,11 +197,16 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       const f = foesNear(w, u, u.x, u.y, 90); let ax = 0, ay = 0; for (const e of f) { ax += u.x - e.x; ay += u.y - e.y; }
       const a = Math.atan2(ay, ax);
-      // round 10: "Slide into position": she slides back on her feet, still facing them, fast then slowing (sim.js)
-      u.act = { type: 'dash', t: 0.34, max: 0.34, a, slide: true }; u.invulnT = Math.max(u.invulnT, 0.3);
+      // round 10: "Slide into position"; round 13: "They should slide out. Archer also needs to roll... spin": she rolls
+      // back out of reach (a full turn as she goes, fast then slowing: sim.js act.slide, render.js u.spin), and at III
+      // the caltrops skid out of her along the floor to where they lie (fxkit)
+      const dur = 0.4;
+      u.act = { type: 'dash', t: dur, max: dur, a, slide: true }; u.invulnT = Math.max(u.invulnT, 0.34);
+      u.spin = { t0: w.time, dur, dir: Math.sin(a - u.facing) >= 0 ? 1 : -1 };
       if (tier >= 2) u.nextShotMul = 2;
-      // III: "Should shoot caltrops out from out of it": they fly out of her as she slides and land where she was (fxkit)
-      if (tier >= 3) zone(w, { x: u.x, y: u.y, r: 55, dur: 5, kind: 'vines', src: u, every: 0.25, from: u, tick(z) { for (const e of foesNear(w, u, z.x, z.y, z.r)) addStatus(w, e, 'chill', 10, u); } });
+      if (tier >= 3) zone(w, { x: u.x, y: u.y, r: 58, dur: 5, kind: 'vines', src: u, every: 0.25, from: u, tick(z) {
+        if (z.t < 0.35) return; // still skidding out
+        for (const e of foesNear(w, u, z.x, z.y, z.r)) { addBuff(e, { id: 'caltrops', dur: 0.45, move: 0.55 }); if (e.spd > 10) hurt(w, e, dmgOf(u, 0.14), u, { dot: true, color: '#DCE3EC', stagger: 5 }); } } });
     },
   },
   // ----- Twinfang
@@ -209,9 +219,9 @@ export const ABILITIES = {
       u.x = clamp(t.x + Math.cos(back) * (t.r + u.r + 6), u.r, w.W - u.r); u.y = clamp(t.y + Math.sin(back) * (t.r + u.r + 6), u.r, w.H - u.r);
       u.vx = u.vy = 0; u.facing = u.mvA = ang(u, t); u.spd = 0; cast(u, 'thrust', 0.25);
       zone(w, { x: u.x, y: u.y, r: 48, dur: 1.2, kind: 'smoke', src: u }); // round 10: a puff where she comes back in too
-      hurt(w, t, dmgOf(u, 3.6), u, { crit: true, noDodge: true, poison: tier >= 2 ? 40 : 0 });
+      hurt(w, t, dmgOf(u, 4), u, { crit: true, noDodge: true, poison: tier >= 2 ? 40 : 0 });
       if (tier >= 3 && !alive(t)) u.kit.cd.backstab = 0.5;
-      u.atkT = u.def.atkCd; u.mode = 'retreat'; u.modeT = 0;
+      u.atkT = u.def.atkCd; u.mode = 'retreat'; u.modeT = 0; u.invulnT = Math.max(u.invulnT, 0.5); // (round 13: out of the shadow untouchable for a moment; she went down more than anyone)
     },
   },
   dash: {
@@ -219,23 +229,25 @@ export const ABILITIES = {
       if (!t) return 0;
       const close = foesNear(w, u, u.x, u.y, 60).length, gap = dist(u.x, u.y, t.x, t.y) - u.r - t.r;
       if (u.mode === 'retreat' && close) return 0.95;
-      return u.mode !== 'retreat' && gap > 130 && gap < 320 && lineClear(w, u.x, u.y, t.x, t.y, u.r) ? 0.8 : 0;
+      // (round 13: in only at one that is busy with someone else, as her trait wants: switched off, Dash made no
+      // difference or a small one for the better at both tiers, before and after: she dashed in alone and went down)
+      return u.mode !== 'retreat' && gap > 130 && gap < 320 && t.target && t.target !== u && lineClear(w, u.x, u.y, t.x, t.y, u.r) ? 0.8 : 0;
     },
     use(w, u, t, tier) {
       const close = foesNear(w, u, u.x, u.y, 60);
       const a = u.mode === 'retreat' && close.length ? angleTo(close[0].x, close[0].y, u.x, u.y) : ang(u, t);
-      u.act = { type: 'dash', t: 0.2, max: 0.2, a };
+      u.act = { type: 'dash', t: 0.2, max: 0.2, a }; u.invulnT = Math.max(u.invulnT, 0.3); // (round 13: nothing lands on her mid-dash; Dash was worth nothing and she went down most)
       if (tier >= 2) { zone(w, { x: u.x, y: u.y, r: 64, dur: 2.5, kind: 'smoke', src: u, smoke: true }); for (const e of foesNear(w, u, u.x, u.y, 90)) if (e.target === u) e.target = null; }
       if (tier >= 3) { u.kit.charges = (u.kit.charges ?? 1) - 1; if (u.kit.charges > 0) u.kit.cd.dash = 0.6; else u.kit.charges = 2; }
     },
   },
   fanOfKnives: {
-    score: (w, u) => (foesNear(w, u, u.x, u.y, 150).length >= 3 ? 0.8 : 0),
+    score: (w, u) => { const n = foesNear(w, u, u.x, u.y, 150).length; return n >= 3 ? 0.8 : n >= 2 ? 0.5 : 0; },
     use(w, u, t, tier) {
       // round 9: she spins once, throwing the knives one at a time round the circle as she turns
       const n = tier >= 3 ? 12 : 8, T = 0.42, a0 = u.facing; setAnim(u, 'spin', T); u.spin = { t0: w.time, dur: T, dir: 1 };
       u.later = [];
-      for (let i = 0; i < n; i++) u.later.push({ t: (i + 0.5) / n * T, f: () => shoot(w, u, a0 + (i + 0.5) / n * TAU, { kind: 'dagger', speed: 520, life: 0.45, dmg: dmgOf(u, 1.4), st: tier >= 2 ? { poison: 25 } : {}, pierce: tier >= 3 ? 1 : 0 }) });
+      for (let i = 0; i < n; i++) u.later.push({ t: (i + 0.5) / n * T, f: () => shoot(w, u, a0 + (i + 0.5) / n * TAU, { kind: 'dagger', speed: 520, life: 0.45, dmg: dmgOf(u, 1.8), st: tier >= 2 ? { poison: 25 } : {}, pierce: tier >= 3 ? 1 : 0 }) });
     },
   },
   // ----- Wildmane
@@ -243,7 +255,7 @@ export const ABILITIES = {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 130).length >= 2 || hpRatio(u) < 0.5 ? 0.8 : 0),
     use(w, u, t, tier) {
       cast(u, 'ability', 0.45); w.shake = Math.max(w.shake, 4);
-      addBuff(u, { id: 'rage', dur: tier >= 3 ? 8 : 5, taken: 0.7, atkSpeed: 1.4, move: 1.25, lifesteal: tier >= 2 ? 0.15 : 0, knockImmune: tier >= 3, glow: '#FF5A3D' });
+      addBuff(u, { id: 'rage', dur: tier >= 3 ? 8 : 5, taken: 0.62, atkSpeed: 1.4, move: 1.25, lifesteal: tier >= 2 ? 0.15 : 0, knockImmune: tier >= 3, glow: '#FF5A3D' });
       puff(w, u.x, u.y, '#FF6B4A', 16, 120, 6, 0.6);
     },
   },
@@ -252,17 +264,17 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'ability', 0.6);
       u.act = { type: 'leap', t: 0.5, max: 0.5, x0: u.x, y0: u.y, x1: t.x - Math.cos(ang(u, t)) * (u.r + t.r), y1: t.y - Math.sin(ang(u, t)) * (u.r + t.r),
-        land: () => { w.shake = Math.max(w.shake, 7); ring(w, u, u.x, u.y, 110, dmgOf(u, 1.3), { knock: 260, heavy: true, stagger: tier >= 2 ? 50 : 0 }, '#E8C9A0');
+        land: () => { w.shake = Math.max(w.shake, 7); ring(w, u, u.x, u.y, 110, dmgOf(u, 1.6), { knock: 260, heavy: true, stagger: tier >= 2 ? 50 : 0 }, '#E8C9A0');
           if (tier >= 3 && !u.leapAgain) { u.leapAgain = true; u.kit.cd.leap = 0.4; } else u.leapAgain = false; } };
       u.invulnT = Math.max(u.invulnT, 0.4);
     },
   },
   cleave: {
-    score: (w, u) => (foesNear(w, u, u.x, u.y, u.r + 50).length >= 2 ? 0.75 : 0),
+    score: (w, u) => (foesNear(w, u, u.x, u.y, u.r + 40).length >= 2 ? 0.75 : 0),
     use(w, u, t, tier) {
       // round 9: she spins round with the sword out (render.js u.spin), the blade's circle trailing it
-      const spin = () => { setAnim(u, 'spin', 0.36); u.spin = { t0: w.time, dur: 0.36, dir: 1 }; fx(w, { type: 'ring', x: u.x, y: u.y, r: u.r + (tier >= 2 ? 70 : 50), color: '#FFFFFF', max: 0.36, a: u.facing, unit: u });
-        for (const e of foesNear(w, u, u.x, u.y, u.r + (tier >= 2 ? 70 : 50))) hurt(w, e, dmgOf(u, 1.3), u, { knock: tier >= 2 ? 220 : 90, kAngle: ang(u, e) }); };
+      const spin = () => { setAnim(u, 'spin', 0.36); u.spin = { t0: w.time, dur: 0.36, dir: 1 }; fx(w, { type: 'ring', x: u.x, y: u.y, r: CLEAVE_R(u, tier), color: '#FFFFFF', max: 0.36, a: u.facing, unit: u });
+        for (const e of foesNear(w, u, u.x, u.y, CLEAVE_R(u, tier))) hurt(w, e, dmgOf(u, 2.3), u, { knock: tier >= 2 ? 220 : 90, kAngle: ang(u, e) }); };
       spin(); if (tier >= 3) u.later = [{ t: 0.35, f: spin }];
     },
   },
@@ -270,20 +282,21 @@ export const ABILITIES = {
   shockwave: {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 260 && foesNear(w, u, t.x, t.y, 100).length >= 2 ? 0.75 : 0),
     use(w, u, t, tier) {
+      // round 13 (three looks of earth coming up out of the floor all came back): the designer's own words for it were
+      // "Slams ground sending out a repeating shockwave forwards", so the waves travel. He slams once; each wave is a
+      // front that runs out along the floor from the slam, fanning wider, hits what it passes once and shoves it on.
       const a = ang(u, t), n = tier >= 2 ? 5 : 3; u.facing = a; cast(u, 'ability', 0.4); w.shake = Math.max(w.shake, 5);
+      const ox = u.x + Math.cos(a) * (u.r + 12), oy = u.y + Math.sin(a) * (u.r + 12);
       u.later = [];
-      for (let i = 0; i < n; i++) u.later.push({ t: 0.18 * i + 0.1, f: () => {
-        const x = u.x + Math.cos(a) * (60 + i * 55), y = u.y + Math.sin(a) * (60 + i * 55);
-        fx(w, { type: 'wave', x, y, a, r: 50, max: 0.35 });
-        for (const e of foesNear(w, u, x, y, 50)) hurt(w, e, dmgOf(u, 1), u, { knock: 160, kAngle: a, noDodge: true, stagger: tier >= 3 ? 35 : 0 });
-      } });
+      for (let i = 0; i < n; i++) u.later.push({ t: 0.12 + 0.2 * i, f: () => shockFront(w, u, ox, oy, a, tier) });
     },
   },
   whirl: {
     score: (w, u) => { const n = foesNear(w, u, u.x, u.y, 120).length; return n >= 2 ? 0.85 : n ? 0.4 : 0; },
     use(w, u, t, tier) {
-      addBuff(u, { id: 'whirl', dur: tier >= 2 ? 5 : 3, move: 0.85, spinning: true, glow: '#FFFFFF' });
-      u.spinHit = 0; u.spinPull = tier >= 3;
+      // (round 13: the blows are struck here now, kitTick below, not in sim.js: they knock back the way the flail turns)
+      addBuff(u, { id: 'whirl', dur: tier >= 2 ? 5 : 3, move: 0.85, whirling: true, taken: 0.8, glow: '#FFFFFF' }); // (round 13: the flail keeps them off him a little)
+      u.kit.whirl = { t: 0, pull: tier >= 3 };
     },
   },
   unstoppable: {
@@ -297,12 +310,13 @@ export const ABILITIES = {
   },
   // ----- Granny Reaper
   reap: {
-    score: (w, u) => { const n = foesNear(w, u, u.x, u.y, u.r + 60).length; return n >= 2 ? 0.9 : n ? 0.5 : 0; },
+    score: (w, u) => { const n = foesNear(w, u, u.x, u.y, u.r + 46).length; return n >= 2 ? 0.9 : n ? 0.5 : 0; },
     use(w, u, t, tier) {
       // round 9: a spin, a little slower; a red orb pops off each one hit and flies home to her
-      const r = u.r + (tier >= 2 ? 85 : 60); setAnim(u, 'spin', 0.5); u.spin = { t0: w.time, dur: 0.5, dir: 1 };
+      // (round 13: the reach the scythe's own length sweeps, u.r + 46 / 62; it was 60 / 85, and drawn far out past the blade)
+      const r = u.r + (tier >= 2 ? 62 : 46); setAnim(u, 'spin', 0.5); u.spin = { t0: w.time, dur: 0.5, dir: 1 };
       fx(w, { type: 'ring', x: u.x, y: u.y, r, color: '#E8E2D0', max: 0.5, a: u.facing, unit: u });
-      let n = 0; for (const e of foesNear(w, u, u.x, u.y, r)) { hurt(w, e, dmgOf(u, 2.6), u, { knock: 120, kAngle: ang(u, e) }); fx(w, { type: 'soulOrb', x: e.x, y: e.y, to: u, delay: 0.12 + n * 0.06, max: 1.1 }); n++; }
+      let n = 0; for (const e of foesNear(w, u, u.x, u.y, r)) { hurt(w, e, dmgOf(u, 2.9), u, { knock: 120, kAngle: ang(u, e) }); fx(w, { type: 'soulOrb', x: e.x, y: e.y, to: u, delay: 0.12 + n * 0.1, max: 1.1 }); n++; }
       if (tier >= 3 && n) heal(w, u, u.maxHp * 0.05 * n, u);
     },
   },
@@ -317,7 +331,7 @@ export const ABILITIES = {
       u.later = [{ t: 0.3, f: () => { for (const e of far) { if (!alive(e)) continue;
         const a = angleTo(e.x, e.y, u.x, u.y), d = dist(u.x, u.y, e.x, e.y) - u.r - e.r - 6;
         e.kx += Math.cos(a) * d * 5.4 / Math.max(1, Math.sqrt(e.mass)); e.ky += Math.sin(a) * d * 5.4 / Math.max(1, Math.sqrt(e.mass));
-        hurt(w, e, dmgOf(u, 1.3), u, { noDodge: true, stagger: tier >= 2 ? 70 : 40 });
+        hurt(w, e, dmgOf(u, 1.9), u, { noDodge: true, stagger: tier >= 2 ? 70 : 40 });
       } } }];
     },
   },
@@ -350,7 +364,7 @@ export const ABILITIES = {
     score: (w, u) => { const n = foesNear(w, u, u.x, u.y, 120).length; return n >= 2 ? 0.9 : n ? 0.55 : 0; },
     use(w, u, t, tier) {
       cast(u, 'ability', 0.5);
-      ring(w, u, u.x, u.y, 140, dmgOf(u, 1.5), { burn: 45, knock: tier >= 2 ? 260 : 60 }, '#FF8A3D');
+      ring(w, u, u.x, u.y, 140, dmgOf(u, 2.6), { burn: 45, knock: tier >= 2 ? 260 : 60 }, '#FF8A3D');
       if (tier >= 3) addBuff(u, { id: 'fireproof', dur: 6, immune: ['burn'] });
     },
   },
@@ -361,7 +375,7 @@ export const ABILITIES = {
       cast(u, 'cast', 0.4);
       const n = tier >= 3 ? 3 : 1, a0 = ang(u, t);
       for (let i = 0; i < n; i++) { const mid = n === 1 || i === 1; // round 9: the middle spike is bigger and hits harder
-        shoot(w, u, a0 + (i - (n - 1) / 2) * 0.18, { kind: 'shard', speed: 620, r: mid ? 8 : 6, dmg: dmgOf(u, mid ? 1.7 : 1.3), st: { chill: tier >= 2 ? 55 : 35 }, pierce: 4, extra: { big: mid && n > 1 } }); }
+        shoot(w, u, a0 + (i - (n - 1) / 2) * 0.18, { kind: 'shard', speed: 620, r: mid ? 8 : 6, dmg: dmgOf(u, mid ? 1.8 : 1.3), st: { chill: tier >= 2 ? 55 : 35 }, pierce: 4, extra: { big: mid && n > 1 } }); }
     },
   },
   frostNova: {
@@ -373,15 +387,18 @@ export const ABILITIES = {
       u.later = [{ t: 0.35, f: () => {
         fx(w, { type: 'ring', x: u.x, y: u.y, r, color: '#BFEFFF', max: 0.5 });
         fx(w, { type: 'zone', kind: 'snow', x: u.x, y: u.y, r: r * 0.9, max: 2.6 });
-        for (const e of foesNear(w, u, u.x, u.y, r)) { addStatus(w, e, 'chill', 140, u); if (tier >= 3) e.frozenBonus = 2; }
+        for (const e of foesNear(w, u, u.x, u.y, r)) { hurt(w, e, dmgOf(u, 1.2), u, { noDodge: true, knock: 0 }); addStatus(w, e, 'chill', 140, u); if (tier >= 3) e.frozenBonus = 2; }
       } }];
     },
   },
   iceWall: {
-    score: (w, u, t) => (t && foesNear(w, u, u.x, u.y, 200).length >= 2 && dist(u.x, u.y, t.x, t.y) > 80 ? 0.6 : 0),
+    // (round 13: only against a brawler coming for her: thrown up whenever two enemies were near, it stood in the
+    // party's own line of fire and was worth less than nothing in the batches)
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) > 80 && foesNear(w, u, u.x, u.y, 170).some((e) => e.target === u && (e.def.range || 0) < 80) ? 0.7 : 0),
     use(w, u, t, tier) {
       cast(u, 'cast', 0.5);
-      const a = ang(u, t), d = Math.min(110, dist(u.x, u.y, t.x, t.y) * 0.5), cx = u.x + Math.cos(a) * d, cy = u.y + Math.sin(a) * d;
+      const foe = foesNear(w, u, u.x, u.y, 170).find((e) => e.target === u && (e.def.range || 0) < 80) || t; // across the way of whoever is coming for her
+      const a = ang(u, foe), d = Math.min(110, Math.max(46, dist(u.x, u.y, foe.x, foe.y) * 0.5)), cx = u.x + Math.cos(a) * d, cy = u.y + Math.sin(a) * d;
       const L = tier >= 2 ? 200 : 130, dur = tier >= 2 ? 8 : 5;
       // walls are axis-aligned: lay it across the way the enemies come, rounded to the nearer axis
       const horiz = Math.abs(Math.cos(a)) < Math.abs(Math.sin(a));
@@ -396,14 +413,22 @@ export const ABILITIES = {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && !blocked(w, u.x, u.y, t.x, t.y) ? 0.3 + 0.2 * foesNear(w, u, t.x, t.y, 160).length : 0),
     use(w, u, t, tier) {
       cast(u, 'cast', 0.4);
-      const jumps = tier >= 2 ? 5 : 3; let cur = t, prev = handPt(u, t); const hit = new Set(); // round 10: "From hands not head"
+      // round 13 ("Each arm bouncing off should have a merged sprite with main lightning bolt. Also no line particle
+      // effects"): the whole chain is one effect (fx.js chainBolt draws the bolt and every leap as one inked shape), and
+      // the spark lines a blow throws off are taken back out
+      const jumps = tier >= 2 ? 5 : 3; let cur = t; const hit = new Set(), pts = [handPt(u, t)], fx0 = w.fx.length; // round 10: "From hands not head"
       for (let i = 0; i <= jumps && cur; i++) {
-        fx(w, { type: 'beam', x1: prev.x, y1: prev.y, x2: cur.x, y2: cur.y, kind: 'lightning', max: 0.3 });
-        hurt(w, cur, dmgOf(u, 1.1), u, { noDodge: true, shock: 40 }); hit.add(cur);
-        prev = cur;
-        const next = opponents(w, u).filter((e) => e !== cur && (tier >= 3 || !hit.has(e)) && dist(cur.x, cur.y, e.x, e.y) < 170).sort((a, b) => dist(cur.x, cur.y, a.x, a.y) - dist(cur.x, cur.y, b.x, b.y))[0];
-        cur = next;
+        pts.push({ x: cur.x, y: cur.y });
+        const n0 = w.particles.length;
+        hurt(w, cur, dmgOf(u, 1.35), u, { noDodge: true, shock: 40 }); hit.add(cur);
+        for (let j = w.particles.length - 1; j >= n0; j--) if (w.particles[j].shape === 'spark') w.particles.splice(j, 1);
+        const here = cur;
+        cur = opponents(w, u).filter((e) => e !== here && (tier >= 3 || !hit.has(e)) && dist(here.x, here.y, e.x, e.y) < 170).sort((a, b) => dist(here.x, here.y, a.x, a.y) - dist(here.x, here.y, b.x, b.y))[0];
       }
+      // a struck foe whose shock overloads arcs to its neighbours (sim.js): those arcs are arms of this bolt too
+      const arms = [];
+      for (let j = w.fx.length - 1; j >= fx0; j--) { const b = w.fx[j]; if (b.type === 'beam' && b.kind === 'lightning' && !b.pts) { arms.push([b.x1, b.y1, b.x2, b.y2]); w.fx.splice(j, 1); } }
+      fx(w, { type: 'beam', kind: 'lightning', pts, arms, x1: pts[0].x, y1: pts[0].y, x2: pts[1].x, y2: pts[1].y, max: 0.36 });
     },
   },
   thunderclap: {
@@ -411,7 +436,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'cast', 0.45);
       fx(w, { type: 'pillar', x: t.x, y: t.y, r: 30, kind: 'lightning', max: 0.35 });
-      ring(w, u, t.x, t.y, tier >= 2 ? 120 : 85, dmgOf(u, 1.2), { stagger: 55, shock: tier >= 3 ? 50 : 0, knock: 120 }, '#FFF27A');
+      ring(w, u, t.x, t.y, tier >= 2 ? 120 : 85, dmgOf(u, 1.9), { stagger: 55, shock: tier >= 3 ? 50 : 0, knock: 120 }, '#FFF27A');
       w.shake = Math.max(w.shake, 5);
     },
   },
@@ -449,7 +474,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'cast', 0.4);
       const list = allies(w, u).filter((o) => !o.summon && rayable(w, u, o)).sort((a, b) => hpRatio(a) - hpRatio(b)).slice(0, tier >= 3 ? 2 : 1);
-      const pct = tier >= 2 ? 0.18 : 0.14;
+      const pct = tier >= 2 ? 0.16 : 0.12; // (round 13: 14% / 18%; she was 1.5 rooms over the average at tier I)
       u.rays = list.map((a) => ({ to: a, t: RAY_T, rate: a.maxHp * pct / RAY_T, f: fx(w, { type: 'beam', kind: 'heal', from: u, to: a, x1: u.x, y1: u.y, x2: a.x, y2: a.y, max: RAY_T }) }));
     },
   },
@@ -476,7 +501,7 @@ export const ABILITIES = {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 320).length >= 2 && friendsNear(w, u, u.x, u.y, 220).length >= 1 ? 0.7 : 0),
     use(w, u, t, tier) {
       cast(u, 'cast', 0.6);
-      for (const a of [u, ...friendsNear(w, u, u.x, u.y, 220)]) { addBuff(a, { id: 'warSong', dur: 6, atkSpeed: tier >= 2 ? 1.5 : 1.4, move: tier >= 3 ? 1.2 : 1, glow: '#FFD27A' }); puff(w, a.x, a.y, '#FFD27A', 6, 70, 4, 0.5); }
+      for (const a of [u, ...friendsNear(w, u, u.x, u.y, 220)]) { addBuff(a, { id: 'warSong', dur: 8, atkSpeed: tier >= 2 ? 1.6 : 1.5, move: tier >= 3 ? 1.2 : 1, glow: '#FFD27A' }); puff(w, a.x, a.y, '#FFD27A', 6, 70, 4, 0.5); }
     },
   },
   lullaby: {
@@ -486,7 +511,7 @@ export const ABILITIES = {
       const arc = tier >= 3 ? 2.4 : 1.6, a = t ? ang(u, t) : u.facing;
       fx(w, { type: 'wave', x: u.x, y: u.y, a, r: 180, arc, max: 1.1, kind: 'note' }); // (round 10: longer, so the notes fade out softly)
       const hit = foesNear(w, u, u.x, u.y, 190).filter((e) => angleDiff(ang(u, e), a) < arc / 2);
-      for (const e of hit) addBuff(e, { id: 'lullaby', dur: 4, move: 0.55, atkSpeed: 0.7 });
+      for (const e of hit) { addBuff(e, { id: 'lullaby', dur: 4, move: 0.55, atkSpeed: 0.7 }); addStatus(w, e, 'sleepy', 45, u); } // (round 13: the lullaby makes them sleepy before it puts them to sleep)
       if (tier >= 3) { for (const e of hit) if (!e.def.boss) e.sleepT = 3; } // round 9: everyone it reaches, at III
       else if (tier >= 2) { const weak = hit.sort((p, q) => p.hp - q.hp)[0]; if (weak && !weak.def.boss) weak.sleepT = 3; }
     },
@@ -514,7 +539,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'cast', 0.4);
       const list = [u, ...allies(w, u)].filter((o) => !o.summon).sort((a, b) => hpRatio(a) - hpRatio(b)).slice(0, tier >= 3 ? 2 : 1);
-      for (const a of list) { a.regenT = 6; a.regenRate = a.maxHp * (tier >= 2 ? 0.2 : 0.13) / 6; a.regenSrc = u; a.regenAb = u.kit && u.kit.using; fx(w, { type: 'zone', x: a.x, y: a.y, r: 26, kind: 'heal', max: 0.6 }); }
+      for (const a of list) { a.regenT = 6; a.regenRate = a.maxHp * (tier >= 2 ? 0.15 : 0.09) / 6; a.regenSrc = u; a.regenAb = u.kit && u.kit.using; fx(w, { type: 'zone', x: a.x, y: a.y, r: 26, kind: 'heal', max: 0.6 }); }
     },
   },
   callWolf: {
@@ -558,10 +583,11 @@ export const ABILITIES = {
         if (!alive(t) || dist(u.x, u.y, t.x, t.y) > 280) { u.act = null; return; }
         hold(u, t, false);
         const got = hurt(w, t, dmgOf(u, tier >= 3 ? 0.55 : 0.4), u, { dot: true, color: '#9BE07A' });
-        heal(w, u, got * 0.6, u); // (round 11: 60% of what it takes, not all of it; friends 30%, not 50%)
-        if (tier >= 2) for (const a of friendsNear(w, u, u.x, u.y, 140)) heal(w, a, got * 0.3, u);
-        // three thinner tendrils bounce off the target onto those round it, each a quarter as strong
-        for (const e of opponents(w, u).filter((o) => o !== t && dist(o.x, o.y, t.x, t.y) < 150).slice(0, 3)) {
+        heal(w, u, got * 0.5, u); // (round 11: 60% of what it takes, not all of it; friends 30%, not 50%. Round 13: 50% and 25%; he was 1.3 to 1.9 rooms over the average at tier I)
+        if (tier >= 2) for (const a of friendsNear(w, u, u.x, u.y, 140)) heal(w, a, got * 0.25, u);
+        // three thinner tendrils bounce off the target onto those round it, each a quarter as strong (round 13: "little
+        // tendrils should wait for the main one to make contact": the ribbon takes 0.3 s to reach it)
+        if (u.act && u.act.max - u.act.t >= 0.4) for (const e of opponents(w, u).filter((o) => o !== t && dist(o.x, o.y, t.x, t.y) < 150).slice(0, 3)) {
           hold(t, e, true); const g2 = hurt(w, e, dmgOf(u, tier >= 3 ? 0.55 : 0.4) / 4, u, { dot: true, color: '#9BE07A' }); heal(w, u, g2, u);
         }
       } };
@@ -621,8 +647,9 @@ ABILITIES.oldBones = { score: () => 0, use() {} };
 const ZEUS_REACH = 260;
 function zeusBolt(w, u, x, y, e, left, from, hit = new Set()) {
   const a = angleTo(x, y, e.x, e.y), sp = from ? 380 : 520; // its leaps a little slower, so each one reads
-  w.projectiles.push({ kind: 'zeus', x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: 8, team: u.team, owner: u, skip: from, dmg: dmgOf(u, 0.45),
-    o: { knock: 40, shock: 14, noDodge: true, ab: u.kit && u.kit.using }, life: 0.9, a, home: e, turn: 6,
+  w.projectiles.push({ kind: 'zeus', x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: 8, team: u.team, owner: u, skip: from, dmg: dmgOf(u, 0.6),
+    // (round 13: "Should deal high kb in direction of travel. Also probably a bit more damage": a shot's shove goes the way it flies)
+    o: { knock: 300, shock: 14, noDodge: true, ab: u.kit && u.kit.using }, life: 0.9, a, home: e, turn: 6,
     onHit: (w2, p, hitU) => { hit.add(hitU); if (left <= 0) return;
       // the nearest one it hasn't struck yet; once it has struck them all, round it goes again
       const ok = opponents(w2, u).filter((o) => o !== hitU && !o.ethereal && dist(hitU.x, hitU.y, o.x, o.y) < ZEUS_REACH && !blocked(w2, hitU.x, hitU.y, o.x, o.y));
@@ -630,9 +657,42 @@ function zeusBolt(w, u, x, y, e, left, from, hit = new Set()) {
       const nx = (fresh.length ? fresh : ok).sort((p1, p2) => dist(hitU.x, hitU.y, p1.x, p1.y) - dist(hitU.x, hitU.y, p2.x, p2.y))[0];
       if (nx) zeusBolt(w2, u, hitU.x, hitU.y, nx, left - 1, hitU, hit); } });
 }
+// Cleave's reach (round 13, "Slash is too far ahead from sword": the crescent is drawn at the blade's tip now, so the
+// blow reaches what the blade sweeps: it was u.r + 50 / 70)
+const CLEAVE_R = (u, tier) => u.r + (tier >= 2 ? 52 : 38);
+// Shockwave's wave (round 13): a front that runs SHOCK.reach out from (ox, oy) along a in SHOCK.T seconds, SHOCK.w0 wide
+// each side where it starts and widening by SHOCK.wk a unit; whatever it reaches is hit once and knocked on the way it
+// runs. The fx carries the numbers, so the renderer draws the front where the blows land (fx.js shockwave).
+export const SHOCK = { reach: 300, T: 0.46, w0: 36, wk: 0.15 };
+function shockFront(w, u, ox, oy, a, tier) {
+  const ca = Math.cos(a), sa = Math.sin(a), hit = new Set();
+  fx(w, { type: 'wave', x: ox, y: oy, a, r: SHOCK.reach, travel: SHOCK.T, w0: SHOCK.w0, wk: SHOCK.wk, max: SHOCK.T + 0.22, src: u, every: 0.03, tick(f) {
+    const d = Math.min(1, f.t / SHOCK.T) * SHOCK.reach;
+    for (const e of opponents(w, u)) {
+      if (hit.has(e) || e.ethereal) continue;
+      const dx = e.x - ox, dy = e.y - oy, along = dx * ca + dy * sa, side = Math.abs(dy * ca - dx * sa);
+      if (along < -e.r || along - e.r > d || side > SHOCK.w0 + Math.max(0, along) * SHOCK.wk + e.r) continue;
+      hit.add(e); hurt(w, e, dmgOf(u, 0.9), u, { knock: 170, kAngle: a, noDodge: true, stagger: tier >= 3 ? 35 : 0 });
+    }
+  } });
+}
+// Whirl's blows (round 13; they were struck in sim.js): every 0.4 s everything in the flail's reach is hit and knocked
+// away and round the way the flail turns (the designer: "Should also deal some kb"); at III what stands just out of
+// reach is drawn in towards him first.
+function whirlTick(w, u, dt) {
+  const k = u.kit.whirl; if (!u.buffs.some((b) => b.whirling)) { u.kit.whirl = null; return; }
+  if (k.pull) for (const e of opponents(w, u)) {
+    const gap = dist(u.x, u.y, e.x, e.y) - u.r - e.r; if (gap < 36 || gap > 170 || e.def.boss || e.ethereal) continue;
+    const a = angleTo(e.x, e.y, u.x, u.y), f = 620 * dt / Math.max(1, Math.sqrt(e.mass)); e.kx += Math.cos(a) * f; e.ky += Math.sin(a) * f;
+  }
+  k.t -= dt; if (k.t > 0) return; k.t = 0.4;
+  withAb(u, 'whirl', () => { for (const e of opponents(w, u)) if (!e.ethereal && dist(u.x, u.y, e.x, e.y) < u.r + e.r + 50)
+    hurt(w, e, dmgOf(u, 0.6), u, { kAngle: angleTo(u.x, u.y, e.x, e.y) + 0.9, knock: k.pull ? 150 : 200 }); })();
+}
 Object.assign(ABILITIES, ABILITIES2); // round 10 (lane H): the new heroes' abilities
+Object.assign(ABILITIES, CHARM_ABILITIES); // round 13 (lane S)
 const RAY_T = 4, RAY_RANGE = 380;
-const CURE_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse'];
+const CURE_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse', 'entangle', 'charm', 'confuse', 'sleepy', 'bleed', 'fear'];
 // how far a unit is from the edge of a rectangle (0 inside)
 const rectGap = (o, r) => Math.hypot(Math.max(r.x - o.x, 0, o.x - r.x - r.w), Math.max(r.y - o.y, 0, o.y - r.y - r.h));
 // Gas Form's trail: a body of poison gas left where he drifts (puddles.js merges them into one cloud)
@@ -668,13 +728,17 @@ const ATTACKS = {
   // spread in angle, not position. Orbs can also hit allies slightly healing them": they leave her hands fanned wide and
   // curve in, and a friend an orb passes through is healed a little (it flies on)
   cleric(w, u, t, a) {
+    // round 13 ("Should spawn in 1 point with like a 45 degree angle offset from each other. Also on collision with ally
+    // they stop"): all three leave the one point at her hands, 45 degrees apart, and curve in; an orb that meets a friend
+    // heals it a little and ends there
     const volley = new Map();
-    u.later = [0, 1, 2].map((i) => ({ t: i * 0.13, f: () => {
-      const aim = t && alive(t) ? ang(u, t) : a;
-      shoot(w, u, aim + (i - 1) * 0.5, { kind: 'orb', speed: 210, r: 5, life: 2, dmg: A(u, 0.34), knock: 10, color: '#FFF1B0',
-        extra: { home: t, turn: 2.2, allyHit: (w2, p, f) => { heal(w2, f, p.dmg * 0.25, u); f.mendGlow = w2.time + 0.3;
-          w2.particles.push({ x: p.x, y: p.y, vx: 0, vy: 0, rise: 40, up: 0, life: 0.6, max: 0.6, size: 4.5, color: '#9BE07A', shape: 'plus' }); },
-          onHit: (w2, p, e) => { const n = (volley.get(e) || 0) + 1; volley.set(e, n); if (n === 3) addStatus(w2, e, 'radiance', 25, u); } } });
+    u.later = [0, 1, 2].map((i) => ({ t: i * 0.1, f: () => {
+      const tt = t && alive(t) ? t : null, aim = tt ? ang(u, tt) : a, hp = { x: u.x + Math.cos(aim) * (u.r + 6), y: u.y + Math.sin(aim) * (u.r + 6) };
+      const p = shoot(w, u, aim + (i - 1) * Math.PI / 4, { kind: 'orb', speed: 210, r: 5, life: 2, dmg: A(u, 0.34), knock: 10, color: '#FFF1B0',
+        extra: { home: t, turn: 2.6, allyHit: (w2, p2, f) => { heal(w2, f, p2.dmg * 0.6, u); f.mendGlow = w2.time + 0.3; p2.life = 0;
+          w2.particles.push({ x: p2.x, y: p2.y, vx: 0, vy: 0, rise: 40, up: 0, life: 0.6, max: 0.6, size: 4.5, color: '#9BE07A', shape: 'plus' }); },
+          onHit: (w2, p2, e) => { const n = (volley.get(e) || 0) + 1; volley.set(e, n); if (n === 3) addStatus(w2, e, 'radiance', 25, u); } } });
+      p.x = hp.x; p.y = hp.y;
     } }));
   },
   // four notes in a spread, slower, all of them going through
@@ -701,6 +765,7 @@ const ATTACKS = {
   },
 };
 Object.assign(ATTACKS, ATTACKS2);
+Object.assign(ATTACKS, CHARM_ATTACKS); // round 13 (lane S)
 export const hasOwnAttack = (kind) => !!ATTACKS[kind]; // numbers.js measures these
 export function heroAttack(w, u, t, a) {
   const f = ATTACKS[u.kind]; if (!f || u.summon) return false;
@@ -711,6 +776,8 @@ const rayable = (w, u, o) => dist(u.x, u.y, o.x, o.y) < RAY_RANGE - 40 && !block
 // Every step, for a unit with a kit: abilities that last (the Cleric's rays).
 export function kitTick(w, u, dt) {
   kit2Tick(w, u, dt);
+  if (u.kit && u.kit.string) charmTick(w, u, dt); // round 13: the Enchantress's Heartstring
+  if (u.kit && u.kit.whirl) whirlTick(w, u, dt);
   if (u.gasForm) { const g = u.gasForm;
     if (u.gasT > 0) { if (dist(u.x, u.y, g.lx, g.ly) > 34) { g.lx = u.x; g.ly = u.y; drop(w, u, g.tier); } }
     else { if (g.heal) heal(w, u, u.maxHp * 0.15, u); u.gasForm = null; puff(w, u.x, u.y, '#BCE070', 10, 80, 6, 0.5); } }
@@ -755,7 +822,7 @@ export const TRAITS = {
   coldBlood: { immune: ['chill'] },
   conductor: { shockMul: 2 },
   raiser: { reviveRate: 2, reviveHp: 0.2 },
-  rhythm: { tick(w, u, dt) { for (const a of friendsNear(w, u, u.x, u.y, 180)) addBuff(a, { id: 'rhythm', dur: 0.3, move: 1.1 }); } },
+  rhythm: { tick(w, u, dt) { for (const a of friendsNear(w, u, u.x, u.y, 180)) addBuff(a, { id: 'rhythm', dur: 0.3, move: 1.1, atkSpeed: 1.08 }); } }, // (round 13: their attacks too; her songs were worth nothing measurable)
   barkskin: { taken(w, u, src, amt) { return u.spd < 8 ? amt * 0.8 : amt; } },
   soulHarvest: { death(w, u) { if (u.kit) for (const k in u.kit.cd) u.kit.cd[k] = Math.max(0, u.kit.cd[k] - 0.8); } },
   immunity: {
@@ -765,11 +832,13 @@ export const TRAITS = {
   },
 };
 Object.assign(TRAITS, TRAITS2);
+Object.assign(TRAITS, CHARM_TRAITS); // round 13 (lane S)
 // Granny's Old Bones is an ability on paper but works like a trait once bought.
 const OLD_BONES = {
   downed(w, u) {
     const tier = u.kit.tiers.oldBones || 0; if (!tier || u.kit.oldBonesUsed) return false;
     u.kit.oldBonesUsed = true; u.hp = 1 + (tier >= 2 ? u.maxHp * 0.2 : 0); u.invulnT = 1;
+    addBuff(u, { id: 'oldBones', dur: 1, border: '#F6EEDC' }); // round 13: untouchable for a second, shown as a protection border (render.js borderOf)
     textU(w, u.x, u.y, u.r + 10, 'NOT YET', '#E8E2D0', 1.1);
     if (tier >= 3) { ring(w, u, u.x, u.y, 130, dmgOf(u, 1), { knock: 300, heavy: true }, '#E8E2D0'); w.fx[w.fx.length - 1].ab = 'oldBones'; } // drawn as a quake under the units
     return true;
@@ -826,6 +895,13 @@ export function kitThink(w, u) {
   if (!best || bs < 0.3) return false;
   const lastOne = opponents(w, u).length === 1;
   if (!chance(clamp(0.25 + bs * 0.6, 0, 0.95)) && !lastOne) return false;
+  if (u.st.sleepy > 0 && chance(SLEEPY.abilCut * fillOf(u, 'sleepy'))) return false; // sleepy (round 13): fewer abilities
+  fireAbility(w, u, best);
+  return true;
+}
+// Use one ability now (kitThink's pick, or every ready one at once when a confusion bursts).
+function fireAbility(w, u, best) {
+  const k = u.kit;
   k.cd[best.id] = cooldownOf(u, best);
   const hadLater = u.later, hadRays = u.rays;
   k.using = best.id;
@@ -834,5 +910,19 @@ export function kitThink(w, u) {
   if (u.later && u.later !== hadLater) for (const l of u.later) if (!l.ab) { l.ab = best.id; l.f = withAb(u, best.id, l.f); }
   if (u.rays && u.rays !== hadRays) for (const r of u.rays) if (!r.ab) r.ab = best.id;
   cue('ability', u, best.id);
-  return true;
+}
+// Confused's burst (round 13, the designer: "uses all available abilities at once"): every learned ability that is
+// ready goes off now, whether it's worth it or not, at whatever it was looking at (or the nearest foe).
+export function kitFireAll(w, u) {
+  const k = u.kit; if (!k) return 0;
+  if (!u.target || !alive(u.target)) { const o = opponents(w, u).sort((a, b) => dist(u.x, u.y, a.x, a.y) - dist(u.x, u.y, b.x, b.y))[0]; if (o) u.target = o; }
+  let n = 0;
+  for (const ab of HEROES[k.hero].abilities) {
+    const tier = k.tiers[ab.id]; if (!tier || k.cd[ab.id] > 0) continue;
+    const A = ABILITIES[ab.id]; if (!A || A.passiveTier || (A.hook && !A.use)) continue;
+    if (!A.use) continue;
+    u.act = null;
+    try { fireAbility(w, u, ab); n++; } catch (e) { /* an ability that needs a target it hasn't got just doesn't go */ }
+  }
+  return n;
 }

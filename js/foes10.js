@@ -217,6 +217,7 @@ function choirBrain(w, u, dt) {
     if (!w.stale && a.hp < a.maxHp) heal(w, a, a.maxHp * 0.04, u);
     if (u.elite) addBuff(a, { id: 'choir', dur: 1.2, move: 1.2, atkSpeed: 1.2 });
   }
+  for (const h of opponents(w, u)) if (dist(h.x, h.y, u.x, u.y) < R + h.r) addStatus(w, h, 'sleepy', 8, u); // round 13: its lovely song makes the party sleepy
   u.beat = (u.beat || 0) + 1;
   if (u.beat % 2 === 0) { fx(w, { type: 'ring', x: u.x, y: u.y, r: R, color: '#FFE7A0', max: 0.6 }); setAnim(u, 'cast', 0.4); }
   for (let i = 0; i < 3; i++) w.particles.push({ x: u.x + rrange(-14, 14), y: u.y + rrange(-10, 10), vx: rrange(-20, 20), vy: 0, rise: 40, up: 0, life: 0.9, max: 0.9, size: 4, color: '#FFE7A0' });
@@ -285,7 +286,7 @@ const HERALD = { ...FOE, headR: 56, r: 46, vr: 34, turn: 3, accel: 200, face: 3,
 export const FOES10 = {
   // ---- the Frost Hollow
   frostWolf: { variantOf: 'wolf', name: 'Frost Wolf', art: 'art/enemies/frost-wolf.svg', chill: 20, hp: 30, xp: 9, cost: 2.5, res: { chill: 0.2, burn: 1.3 } },
-  slimeIce: { variantOf: 'slime', name: 'Ice Slime', art: 'art/enemies/ice-slime.svg', headR: 49, hp: 54, splits: false, xp: 10, cost: 3, goo: '#DFF6FF', res: { chill: 0, burn: 1.4 },
+  slimeIce: { variantOf: 'slime', name: 'Ice Slime', art: 'art/enemies/ice-slime.svg', headR: 64, hp: 54, splits: false, xp: 10, cost: 3, goo: '#DFF6FF', res: { chill: 0, burn: 1.4 },
     onHop: (w, u) => coldPatch(w, u.x, u.y, 36, 2.4), onDeath: (w, u) => shards(w, u, 7) },
   spiderFrost: { variantOf: 'spiderHunter', name: 'Frost Spider', art: 'art/enemies/frost-spider.svg', headR: 54, poison: 0, chill: 22, xp: 10, res: { chill: 0.2 },
     onDeath: (w, u) => w.hazards.push({ type: 'web', cold: true, x: u.x, y: u.y, r: 48, t: 6, max: 6 }) },
@@ -299,7 +300,7 @@ export const FOES10 = {
   spiderFire: { variantOf: 'spiderHunter', name: 'Fire Spider', art: 'art/enemies/fire-spider.svg', headR: 54, poison: 0, burn: 20, xp: 11, cost: 3.5, res: { burn: 0 },
     onDeath: (w, u) => firePatch(w, u.x, u.y, 40, 3.5),
     brain: (w, u, dt) => { every(w, u, dt, 'spit', 3, 4.2, 320, (t) => { setAnim(u, 'throw', 0.3); fireball(w, u, angleTo(u.x, u.y, t.x + (t.vx || 0) * 0.4, t.y + (t.vy || 0) * 0.4)); }); return false; } },
-  hellhound: { variantOf: 'wolf', name: 'Hellhound', art: 'art/enemies/hellhound.svg', burn: 14, hp: 40, dmg: 7, xp: 11, cost: 3, pack: [2, 3], res: { burn: 0, chill: 1.4 }, brain: houndBrain },
+  hellhound: { variantOf: 'wolf', name: 'Hellhound', art: 'art/enemies/hellhound.svg', burn: 14, bleed: 16, hunter: 1.4, hp: 40, /* round 13: its bite bleeds; it hunts the party's healer */ dmg: 7, xp: 11, cost: 3, pack: [2, 3], res: { burn: 0, chill: 1.4 }, brain: houndBrain },
   cinderBat: { variantOf: 'bat', name: 'Cinder Bat', art: 'art/enemies/cinder-bat.svg', hp: 20, xp: 6, cost: 2, pack: [2, 3], ability: null, atkCd: 999, res: { burn: 0 }, brain: cinderBrain },
   spiritFire: { ...spirit('fire', 'Fire Spirit', { hue: -40, sat: 1.8, light: 0.1 }, { burn: 0 }), art: 'art/enemies/spirit-fire.svg', headR: 30 }, // art round 9
   pitLord: { ...FOES.pitLord, art: 'art/enemies/pit-lord.svg', headR: 68, brain: pitLordBrain }, // art round 9: its own art (it wore the round-5 demon)

@@ -57,7 +57,7 @@ export function breakdown(hero, map, title, whole) {
 
 // ---------------------------------------------------------------- the result card
 const LEADS = [
-  ['dmg', 'Most damage', '#F5B841'], ['heal', 'Most healing', '#5CC45A'], ['taken', 'Took the most', '#E8604C'],
+  ['dmg', 'Most damage', '#F5B841'], ['heal', 'Most healing', '#5CC45A'], ['taken', 'Took the most', '#E8604C'], ['blocked', 'Blocked the most', '#7FB8E8'], // (round 13: blocked apart from taken)
   ['kills', 'Most kills', '#F2E8D2'], ['downs', 'Most downs', '#9BA2C0'],
 ];
 export function resultStats(S) {
@@ -69,8 +69,8 @@ export function resultStats(S) {
     if (!best) return '';
     return `<div class="rs-lead" style="--lc:${col}">${heroFace(best, 44)}<span class="cap">${label}</span><b>${num(H(best)[m])}</b><span class="rs-who">${heroName(best)}</span></div>`;
   }).filter(Boolean);
-  const max = (m) => Math.max(1, ...ids.map((k) => H(k)[m]));
-  const bar = (k, m, label, cls) => `<div class="rs-bar ${cls}"><span>${label}</span><span class="bar"><i style="width:${100 * H(k)[m] / max(m)}%"></i></span><b>${num(H(k)[m])}</b></div>`;
+  const max = (m) => Math.max(1, ...ids.map((k) => H(k)[m] || 0));
+  const bar = (k, m, label, cls) => `<div class="rs-bar ${cls}"><span>${label}</span><span class="bar"><i style="width:${100 * (H(k)[m] || 0) / max(m)}%"></i></span><b>${num(H(k)[m] || 0)}</b></div>`;
   const rows = ids.map((k) => {
     const h = H(k), merc = (S.mercs || []).includes(k);
     const facts = [`${h.kills} ${h.kills === 1 ? 'kill' : 'kills'}`, h.downs ? `${h.downs} ${h.downs === 1 ? 'down' : 'downs'}` : '', h.revives ? `${h.revives} ${h.revives === 1 ? 'revive' : 'revives'}` : '',
@@ -78,7 +78,7 @@ export function resultStats(S) {
     const more = breakdown(k, h.src.dmg, 'Damage', h.dmg) + breakdown(k, h.src.heal, 'Healing', h.heal) + breakdown(k, h.src.kills, 'Kills', h.kills);
     return `<div class="rs-row" role="button" data-rs="${k}">
       <div class="rs-top">${heroFace(k, 40)}<div class="rs-mid"><div class="rs-name"><b>${heroName(k)}</b>${merc ? '<span class="cap">sellsword</span>' : ''}<span class="rs-chev"></span></div>
-        ${bar(k, 'dmg', 'Damage', 'd')}${bar(k, 'heal', 'Healing', 'h')}${bar(k, 'taken', 'Taken', 't')}
+        ${bar(k, 'dmg', 'Damage', 'd')}${bar(k, 'heal', 'Healing', 'h')}${bar(k, 'taken', 'Taken', 't')}${bar(k, 'blocked', 'Blocked', 'b')}
         <div class="rs-facts">${facts.map((f) => `<span>${f}</span>`).join('')}</div></div></div>
       ${more ? `<div class="rs-more">${more}</div>` : ''}</div>`;
   }).join('');
@@ -121,14 +121,14 @@ export function numbersRow(n) {
 // This run so far (the pause panel): a few chips.
 export function runLine(h) {
   if (!h) return '';
-  const bits = [['Damage', num(h.dmg)], h.heal ? ['Healing', num(h.heal)] : null, ['Taken', num(h.taken)], ['Kills', h.kills]].filter(Boolean);
+  const bits = [['Damage', num(h.dmg)], h.heal ? ['Healing', num(h.heal)] : null, ['Taken', num(h.taken)], h.blocked >= 1 ? ['Blocked', num(h.blocked)] : null, ['Kills', h.kills]].filter(Boolean);
   return `<div class="numrow run" style="grid-template-columns:repeat(${bits.length},minmax(0,1fr))">${bits.map(([k, v]) => `<div><span class="cap">${k}</span><b>${v}</b></div>`).join('')}</div>`;
 }
 // The About page's lifetime totals and where they came from.
 export function lifetime(save, id) {
   const t = save.tally && save.tally.heroes && save.tally.heroes[id];
   if (!t || !t.runs) return `<p class="quiet small empty-note">No runs yet.</p>`;
-  const cells = [['Runs', t.runs], ['Damage', num(t.dmg)], ['Healing', num(t.heal)], ['Kills', num(t.kills)], ['Taken', num(t.taken)], ['Downs', t.downs], ['Revives', t.revives], ['Best hit', num(t.best)]];
+  const cells = [['Runs', t.runs], ['Damage', num(t.dmg)], ['Healing', num(t.heal)], ['Kills', num(t.kills)], ['Taken', num(t.taken)], ['Blocked', num(t.blocked || 0)], ['Downs', t.downs], ['Revives', t.revives], ['Best hit', num(t.best)]];
   return `<div class="numrow life">${cells.map(([k, v]) => `<div><span class="cap">${k}</span><b>${v}</b></div>`).join('')}</div>
     <div class="bd-box">${breakdown(id, t.src.dmg, 'Damage by source', t.dmg)}${breakdown(id, t.src.heal, 'Healing by source', t.heal)}</div>`;
 }

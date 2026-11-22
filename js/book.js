@@ -35,8 +35,8 @@ const RANKS = ['Normal', 'Elite', 'Major'];
 // the major's moves in words (elites.js MAJOR_MOVES, the comments there)
 const MAJOR_WORDS = { quake: 'A slam that shakes the floor all round it.', volley: 'A ring of shots out all round.',
   charge: 'A long charge with a short tell.', call: 'Calls help from its dungeon\'s own roster.' };
-const STATUS_WORDS = { burn: 'fire', chill: 'cold', poison: 'poison', shock: 'lightning', wet: 'water', curse: 'curses', radiance: 'holy light', entangle: 'roots', stagger: 'staggering' };
-const FROM_WORDS = { frozen: 'chill', sick: 'poison', radiant: 'radiance', hexed: 'curse', tangled: 'entangle', ko: 'stagger' };
+const STATUS_WORDS = { burn: 'fire', chill: 'cold', poison: 'poison', shock: 'lightning', wet: 'water', curse: 'curses', radiance: 'holy light', entangle: 'roots', stagger: 'staggering', charm: 'charm', confuse: 'confusion', sleepy: 'drowsiness', bleed: 'bleeding', fear: 'fear' };
+const FROM_WORDS = { frozen: 'chill', sick: 'poison', radiant: 'radiance', hexed: 'curse', ko: 'stagger', charmed: 'charm', addled: 'confuse', terrified: 'fear' }; // (round 13, lane S)
 const SCENE_WORDS = { down: 'The wearer takes a blow that would bring them down.', low: 'The wearer is knocked below a third of their health.',
   kill: 'The wearer fells dummies.', friendDown: 'A friend goes down.', crowd: 'Dummies crowd round the wearer.', burnFoe: 'The dummies are burning.',
   fire: 'The wearer stands in flames.', poison: 'The dummies\' blows poison.', ranged: 'An archer shoots down a line of dummies.',

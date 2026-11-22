@@ -242,14 +242,14 @@ def bandit_spear():
 
 
 def bandit_daggers():
-    S = Sprite("KNIFE BANDIT, two daggers (round 10): the gang's cutpurse, bare-headed: the red bandanna, dark auburn hair "
-               "swept back off the brow in a wave and tied in a long tail that lies back (#back, sways), a gold ring in one "
-               "ear, a slate-blue scarf collar over dark leather; a long curved knife in each hand, both under the "
-               "shoulders, curving out (arm-l, arm-r, before #body). No eyes. " + LAYOUT)
-    SLATE, AUB = "#56506C", "#6A3428"
-    S.group("back", (100, 56), "the tail of hair")
-    S.shape(blob([(88, 60), (84, 40), (90, 22), (102, 8), (120, -2), (116, 14), (120, 30), (114, 46), (112, 60)], 0.85), AUB, shadow=0,
-            decor=strokes("M 98 54 C 96 36 102 22 112 10", light(AUB, 1.5), 3, 0.5))
+    S = Sprite("KNIFE BANDIT, two daggers (round 10): the gang's cutpurse: the red bandanna, a slate-blue kerchief tied close "
+               "over the head, knotted at the back to one side with two short ends (#back, sway), a tuft of dark hair showing at the "
+               "brow, a gold ring in one ear, a slate scarf collar over dark leather; a long curved knife in each hand, both "
+               "under the shoulders, curving out (arm-l, arm-r, before #body). No eyes. " + LAYOUT)
+    SLATE, DHAIR = "#5A5674", "#3A2A26"
+    S.group("back", (130, 56), "the kerchief's knot")
+    S.shape("M116 52 C122 34 140 18 164 18 C156 28 160 38 150 46 C160 46 166 54 170 62 C152 64 138 62 126 62 Z", shade(SLATE, 0.85), shadow=0)
+    S.shape(circ(138, 52, 10), shade(SLATE, 0.8), shadow=0)
     S.group("arm-r", PR, "knife")
     dagger(S, frame(158, 134, 6), s=1)
     S.group("arm-l", PL, "knife")
@@ -261,12 +261,10 @@ def bandit_daggers():
     head(S)
     mask(S)
     S.shape(circ(149, 112, 6.5) + " " + circ(149, 112, 3), GOLD, shadow=2, rule="evenodd")     # the earring
-    # the hair: swept back off the brow, its front edge one wave, a parting; the tie where the tail leaves it
-    S.shape(blob([(50, 106), (46, 74), (60, 48), (100, 38), (140, 48), (154, 74), (150, 106), (142, 92), (128, 84), (112, 92),
-                  (98, 84), (82, 94), (68, 86), (58, 94)], 0.85), AUB, shadow=4,
-            decor=f'<path d="{ell(80, 56, 20, 10)}" fill="#FFFFF4" opacity="0.14"/>'
-                  + strokes("M 104 44 C 100 58 100 72 104 86", shade(AUB, 0.65), 3, 0.6))
-    S.shape(rr(101, 50, 26, 10, 5), RED, shadow=2)
+    S.shape(blob([(60, 100), (72, 92), (86, 104), (100, 94), (114, 104), (128, 92), (140, 100), (132, 86), (100, 80), (68, 86)], 0.7), DHAIR, shadow=3)
+    S.shape(blob([(50, 96), (46, 68), (62, 44), (100, 34), (138, 44), (154, 68), (150, 96), (128, 88), (100, 86), (72, 88)], 0.85), SLATE, shadow=4,
+            decor=f'<path d="{ell(80, 54, 20, 10)}" fill="#FFFFF4" opacity="0.14"/>'
+                  + strokes("M 52 84 C 74 74 126 74 148 84", light(SLATE, 1.5), 4, 0.7))
     return save("enemies", "bandit-daggers", S)
 
 

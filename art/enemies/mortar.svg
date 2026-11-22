@@ -1,37 +1,52 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
-<!-- GAME COPY (art round 9) of design/class-round9/enemies/foundry-mortar.svg -->
-<!-- MORTAR (round 9): a short fat mortar tube on the floor, seen from above (it fires up into the sky): a round base ring with bolts that stays still (#back), a brass yoke and a thick iron tube tilted a little towards its target, its dark bore with a shell inside, a brass band round the muzzle. The fire and gas mortars are this art with the brass turned red and green (js/foundry.js). Parts: #back (the base), #body (yoke and tube). Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<!-- GAME COPY (art round 10) of design/class-round10/enemies/foundry-mortar.svg -->
+<!-- MORTAR (round 10): a floor mortar seen from above: the riveted base plate that stays still with two spare shells lying on it (#back), and on it the part that turns: a short fat iron tube tilted up and forward, a brass band round its muzzle and the dark mouth showing, a brass yoke across it, a round breech behind. The fire and gas mortars are this art with the brass (the band, the yoke, the shells' noses) turned red and green by the game. Parts: #back (the base and shells), #body (yoke and tube). Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
 <defs>
 <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
-<path id="s1" d="M 30 100 A 70 70 0 1 0 170 100 A 70 70 0 1 0 30 100 Z"/>
+<path id="s1" d="M 58 30 H 142 A 28 28 0 0 1 170 58 V 142 A 28 28 0 0 1 142 170 H 58 A 28 28 0 0 1 30 142 V 58 A 28 28 0 0 1 58 30 Z"/>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#515661"/><stop offset="1" stop-color="#3F434C"/></linearGradient>
 <linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#212328" stop-opacity="0"/><stop offset="1" stop-color="#212328" stop-opacity="0.42"/></linearGradient>
 <clipPath id="c1"><use href="#s1"/></clipPath>
-<path id="s2" d="M 55 74 H 61 A 7 7 0 0 1 68 81 V 111 A 7 7 0 0 1 61 118 H 55 A 7 7 0 0 1 48 111 V 81 A 7 7 0 0 1 55 74 Z"/>
-<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#DEAF59"/><stop offset="1" stop-color="#CE9324"/></linearGradient>
-<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6E4E11" stop-opacity="0"/><stop offset="1" stop-color="#6E4E11" stop-opacity="0.42"/></linearGradient>
-<path id="s3" d="M 139 74 H 145 A 7 7 0 0 1 152 81 V 111 A 7 7 0 0 1 145 118 H 139 A 7 7 0 0 1 132 111 V 81 A 7 7 0 0 1 139 74 Z"/>
-<path id="s4" d="M 97 66 H 103 A 30 30 0 0 1 133 96 V 128 A 30 30 0 0 1 103 158 H 97 A 30 30 0 0 1 67 128 V 96 A 30 30 0 0 1 97 66 Z"/>
-<clipPath id="u4"><use href="#s1"/><use href="#s2"/><use href="#s3"/></clipPath>
-<linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#79808A"/><stop offset="1" stop-color="#5E646D"/></linearGradient>
-<linearGradient id="g6" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#313439" stop-opacity="0"/><stop offset="1" stop-color="#313439" stop-opacity="0.42"/></linearGradient>
-<clipPath id="c4"><use href="#s4"/></clipPath>
-<path id="s5" d="M 76 138 H 124 A 11 11 0 0 1 135 149 V 151 A 11 11 0 0 1 124 162 H 76 A 11 11 0 0 1 65 151 V 149 A 11 11 0 0 1 76 138 Z"/>
-<clipPath id="u5"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4"/></clipPath>
-<path id="s6" d="M 74 152 A 26 9 0 1 0 126 152 A 26 9 0 1 0 74 152 Z"/>
-<linearGradient id="g7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#212128"/><stop offset="1" stop-color="#1A1A1F"/></linearGradient>
+<path id="s2" d="M -1 -15 H 1 A 6 6 0 0 1 7 -9 V 9 A 6 6 0 0 1 1 15 H -1 A 6 6 0 0 1 -7 9 V -9 A 6 6 0 0 1 -1 -15 Z"/>
+<clipPath id="u2"><use href="#s1"/></clipPath>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#9A9FA9"/><stop offset="1" stop-color="#737B89"/></linearGradient>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3C4048" stop-opacity="0"/><stop offset="1" stop-color="#3C4048" stop-opacity="0.42"/></linearGradient>
+<path id="s3" d="M -7 10 C -5.4 8.7 5.4 8.7 7 10 C 8.6 11.3 5.9 18 5 20 C 4.1 22 1.3 25 0 25 C -1.3 25 -4.1 22 -5 20 C -5.9 18 -8.6 11.3 -7 10 Z"/>
+<linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#DEAF59"/><stop offset="1" stop-color="#CE9324"/></linearGradient>
+<linearGradient id="g6" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6E4E11" stop-opacity="0"/><stop offset="1" stop-color="#6E4E11" stop-opacity="0.42"/></linearGradient>
+<path id="s4" d="M -1 -15 H 1 A 6 6 0 0 1 7 -9 V 9 A 6 6 0 0 1 1 15 H -1 A 6 6 0 0 1 -7 9 V -9 A 6 6 0 0 1 -1 -15 Z"/>
+<clipPath id="u4"><use href="#s1"/><use href="#s2" transform="translate(46 62) rotate(-18)"/><use href="#s3" transform="translate(46 62) rotate(-18)"/></clipPath>
+<path id="s5" d="M -7 10 C -5.4 8.7 5.4 8.7 7 10 C 8.6 11.3 5.9 18 5 20 C 4.1 22 1.3 25 0 25 C -1.3 25 -4.1 22 -5 20 C -5.9 18 -8.6 11.3 -7 10 Z"/>
+<path id="s6" d="M 60 92 H 140 A 10 10 0 0 1 150 102 V 106 A 10 10 0 0 1 140 116 H 60 A 10 10 0 0 1 50 106 V 102 A 10 10 0 0 1 60 92 Z"/>
+<clipPath id="u6"><use href="#s1"/><use href="#s2" transform="translate(46 62) rotate(-18)"/><use href="#s3" transform="translate(46 62) rotate(-18)"/><use href="#s4" transform="translate(62 50) rotate(-18)"/><use href="#s5" transform="translate(62 50) rotate(-18)"/></clipPath>
+<clipPath id="c6"><use href="#s6"/></clipPath>
+<path id="s7" d="M 81 66 A 19 19 0 1 0 119 66 A 19 19 0 1 0 81 66 Z"/>
+<clipPath id="u7"><use href="#s1"/><use href="#s2" transform="translate(46 62) rotate(-18)"/><use href="#s3" transform="translate(46 62) rotate(-18)"/><use href="#s4" transform="translate(62 50) rotate(-18)"/><use href="#s5" transform="translate(62 50) rotate(-18)"/><use href="#s6"/></clipPath>
+<linearGradient id="g7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#444951"/><stop offset="1" stop-color="#353940"/></linearGradient>
+<linearGradient id="g8" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1C1E22" stop-opacity="0"/><stop offset="1" stop-color="#1C1E22" stop-opacity="0.42"/></linearGradient>
+<path id="s8" d="M 96 66 H 104 A 22 22 0 0 1 126 88 V 140 A 22 22 0 0 1 104 162 H 96 A 22 22 0 0 1 74 140 V 88 A 22 22 0 0 1 96 66 Z"/>
+<clipPath id="u8"><use href="#s1"/><use href="#s2" transform="translate(46 62) rotate(-18)"/><use href="#s3" transform="translate(46 62) rotate(-18)"/><use href="#s4" transform="translate(62 50) rotate(-18)"/><use href="#s5" transform="translate(62 50) rotate(-18)"/><use href="#s6"/><use href="#s7"/></clipPath>
+<linearGradient id="g9" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#79808A"/><stop offset="1" stop-color="#5E646D"/></linearGradient>
+<linearGradient id="g10" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#313439" stop-opacity="0"/><stop offset="1" stop-color="#313439" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c8"><use href="#s8"/></clipPath>
+<path id="s9" d="M 77 144 H 123 A 8 8 0 0 1 131 152 V 156 A 8 8 0 0 1 123 164 H 77 A 8 8 0 0 1 69 156 V 152 A 8 8 0 0 1 77 144 Z"/>
+<clipPath id="u9"><use href="#s1"/><use href="#s2" transform="translate(46 62) rotate(-18)"/><use href="#s3" transform="translate(46 62) rotate(-18)"/><use href="#s4" transform="translate(62 50) rotate(-18)"/><use href="#s5" transform="translate(62 50) rotate(-18)"/><use href="#s6"/><use href="#s7"/><use href="#s8"/></clipPath>
+<clipPath id="c9"><use href="#s9"/></clipPath>
 </defs>
 <g id="sprite" filter="url(#outline)">
-<g id="back" data-pivot="100 100"><!-- base ring (stays still) -->
-<use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/><g clip-path="url(#c1)"><circle cx="123" cy="44.6" r="4.5" fill="#9AA0AA" opacity="0.85"/><circle cx="155.4" cy="77" r="4.5" fill="#9AA0AA" opacity="0.85"/><circle cx="155.4" cy="123" r="4.5" fill="#9AA0AA" opacity="0.85"/><circle cx="123" cy="155.4" r="4.5" fill="#9AA0AA" opacity="0.85"/><circle cx="77" cy="155.4" r="4.5" fill="#9AA0AA" opacity="0.85"/><circle cx="44.6" cy="123" r="4.5" fill="#9AA0AA" opacity="0.85"/><circle cx="44.6" cy="77" r="4.5" fill="#9AA0AA" opacity="0.85"/><circle cx="77" cy="44.6" r="4.5" fill="#9AA0AA" opacity="0.85"/></g>
+<g id="back" data-pivot="100 100"><!-- base plate (stays still) -->
+<use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/><g clip-path="url(#c1)"><circle cx="46" cy="46" r="5" fill="#9AA0AA" opacity="0.85"/><circle cx="154" cy="46" r="5" fill="#9AA0AA" opacity="0.85"/><circle cx="46" cy="154" r="5" fill="#9AA0AA" opacity="0.85"/><circle cx="154" cy="154" r="5" fill="#9AA0AA" opacity="0.85"/><path d="M 42 100 A 58 58 0 1 0 158 100 A 58 58 0 1 0 42 100 Z" fill="#2A2C32" opacity="0.5"/></g>
+<g clip-path="url(#u2)"><use href="#s2" transform="translate(0 2) translate(46 62) rotate(-18)" fill="#2B2230" opacity="0.3"/></g><use href="#s2" transform="translate(46 62) rotate(-18)" fill="url(#g3)"/><use href="#s2" transform="translate(46 62) rotate(-18)" fill="url(#g4)"/>
+<use href="#s3" transform="translate(46 62) rotate(-18)" fill="url(#g5)"/><use href="#s3" transform="translate(46 62) rotate(-18)" fill="url(#g6)"/>
+<g clip-path="url(#u4)"><use href="#s4" transform="translate(0 2) translate(62 50) rotate(-18)" fill="#2B2230" opacity="0.3"/></g><use href="#s4" transform="translate(62 50) rotate(-18)" fill="url(#g3)"/><use href="#s4" transform="translate(62 50) rotate(-18)" fill="url(#g4)"/>
+<use href="#s5" transform="translate(62 50) rotate(-18)" fill="url(#g5)"/><use href="#s5" transform="translate(62 50) rotate(-18)" fill="url(#g6)"/>
 </g>
 <g id="body">
-<use href="#s2" fill="url(#g3)"/><use href="#s2" fill="url(#g4)"/>
-<use href="#s3" fill="url(#g3)"/><use href="#s3" fill="url(#g4)"/>
-<g clip-path="url(#u4)"><use href="#s4" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s4" fill="url(#g5)"/><use href="#s4" fill="url(#g6)"/><g clip-path="url(#c4)"><path d="M 72 88 A 12 18 0 1 0 96 88 A 12 18 0 1 0 72 88 Z" fill="#FFFFFF" opacity="0.2"/><path d="M 70 100 L 130 100" fill="none" stroke="#4A4E58" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/></g>
-<g clip-path="url(#u5)"><use href="#s5" transform="translate(0 2) " fill="#2B2230" opacity="0.3"/></g><use href="#s5" fill="url(#g3)"/><use href="#s5" fill="url(#g4)"/>
-<use href="#s6" fill="url(#g7)"/>
+<g clip-path="url(#u6)"><use href="#s6" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s6" fill="url(#g5)"/><use href="#s6" fill="url(#g6)"/><g clip-path="url(#c6)"><circle cx="58" cy="104" r="4" fill="#8A6A2A" opacity="0.85"/><circle cx="142" cy="104" r="4" fill="#8A6A2A" opacity="0.85"/></g>
+<g clip-path="url(#u7)"><use href="#s7" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s7" fill="url(#g7)"/><use href="#s7" fill="url(#g8)"/>
+<g clip-path="url(#u8)"><use href="#s8" transform="translate(0 4) " fill="#2B2230" opacity="0.3"/></g><use href="#s8" fill="url(#g9)"/><use href="#s8" fill="url(#g10)"/><g clip-path="url(#c8)"><rect x="82" y="70" width="9" height="76" rx="4.5" fill="#FFFFFF" opacity="0.22"/></g>
+<g clip-path="url(#u9)"><use href="#s9" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s9" fill="url(#g5)"/><use href="#s9" fill="url(#g6)"/><g clip-path="url(#c9)"><path d="M 80 157 A 20 6.5 0 1 0 120 157 A 20 6.5 0 1 0 80 157 Z" fill="#22202A"/></g>
 </g>
 </g>
 </svg>

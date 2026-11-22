@@ -545,11 +545,11 @@ Object.assign(HEROES2, {
       { id: 'jawTrap', name: 'Jaw Trap', cd: 9, tags: 'ds', glyph: 'hook', desc: 'Sets a jaw trap where the enemies are coming; the first to step in is caught.',
         tiers: ['Holds it for 2s.', 'Holds 3s and bites harder.', 'Two traps.'] },
       { id: 'snareNet', name: 'Weighted Net', cd: 12, tags: 's', glyph: 'vines', desc: 'Throws a weighted net over a group of enemies.',
-        tiers: ['It entangles those under it.', 'A bigger net.', 'They are tangled at once.'] },
+        tiers: ['It entangles those under it.', 'A bigger net.', 'They are rooted at once.'] },
       { id: 'tripwire', name: 'Tripwire', cd: 13, tags: 's', glyph: 'wave', desc: 'Strings a wire across the enemies\' way: whatever runs into it goes down.',
         tiers: ['Knocks them down for 1s.', 'A longer wire.', 'Down for 1.6s.'] },
     ],
-    trait: { id: 'trappersEye', name: 'Trapper\'s Eye', desc: 'Enemies that are held, rooted or tangled take 30% more from him.' },
+    trait: { id: 'trappersEye', name: 'Trapper\'s Eye', desc: 'Enemies that are held or rooted take 30% more from him.' },
   },
   gladiator: {
     name: 'Gladiator', art: 'art/heroes/gladiator.svg', role: 'melee', unlock: { gems: 2 },
@@ -662,6 +662,29 @@ Object.assign(HEROES2, {
         tiers: ['Pins it for 1s.', 'Pins it for 1.6s.', 'Mauls it while it\'s pinned.'] },
     ],
     trait: { id: 'moonblood', name: 'Moonblood', desc: 'Heals 1% of his health a second while fighting.' },
+  },
+});
+// ------------------------------------------------------------------ round 13 (lane S): the charming hero
+// The designer: "Add a charming hero. New charm status, can't hurt who is charming them, burst effect makes them fight
+// for you for a bit." Kit: js/kits-charm.js; looks: js/fx-status.js. Placeholder art: the Witch recoloured pink
+// (docs/ART-NEEDED.md).
+Object.assign(HEROES2, {
+  enchantress: {
+    name: 'Enchantress', art: 'art/heroes/enchantress.svg', role: 'support', unlock: { gems: 3 },
+    blurb: 'Rose silk, a heart-shaped locket and a smile. Nobody who meets her wants to hurt her, and before long they fight for her.',
+    fun: 'Has never once paid for a drink. Has been proposed to by two trolls, a mimic and, on one confusing night, a door.',
+    stats: { hp: 78, speed: 64, r: 30, vr: 22, turn: 4.5, accel: 240, face: 4.6, mass: 1, range: 220, keep: 170, atkCd: 1.2, dmg: 8 },
+    style: { hand: 'arm-l', glow: '#FF8AC8' },
+    attack: { name: 'Blown kiss', anim: 'cast', desc: 'A slow pink heart that floats to its target: a little damage, and a little charm.' },
+    abilities: [
+      { id: 'heartstring', name: 'Heartstring', cd: 13, tags: 's', glyph: 'string', desc: 'Ties a pink thread to the most dangerous enemy near her: it is drawn out of its pack towards her while charm pours into it, until it fights for the party.',
+        tiers: ['The thread holds 4s.', 'It holds 6s.', 'Once that enemy is won, the thread jumps to the next one.'] },
+      { id: 'sweetheart', name: 'Sweetheart', cd: 14, tags: 'sh', glyph: 'kiss', desc: 'Blows a kiss to the friend taking the most blows: whoever keeps hitting that friend falls for them, and can\'t bring itself to hit them any more.',
+        tiers: ['For 6s.', 'For 8s, and the kiss heals 10%.', 'Two friends.'] },
+      { id: 'heartbreak', name: 'Heartbreak', cd: 15, tags: 'ds', glyph: 'heartbreak', desc: 'Breaks every heart she has won at once. The charmed take damage (more the more they were charmed) and swoon; the enthralled come to their senses in a burst that hurts their own friends.',
+        tiers: ['They swoon for 1s.', 'For 1.6s.', 'Every broken heart heals the party a little.'] },
+    ],
+    trait: { id: 'firstImpression', name: 'First Impression', desc: 'The first blow any enemy lands on her charms it a lot: it soon can\'t bring itself to hit her again.' },
   },
 });
 

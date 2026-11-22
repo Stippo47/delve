@@ -7,6 +7,8 @@ files and prints their paths:
   A2/frost10.py, E3/frost10e.py, A2/spire10.py, A2/dunes10.py, A2/foundry10.py, A2/bosses10.py, E3/bosses10e.py
                    the art-round9 notes, dungeon by dungeon
   A2/misc10.py     the big sun blade, the slime
+  A2/foundry10b.py the rest of the Foundry (second pass)
+  A2/second10.py   the ice slime, sand mage, dart trap, the Spire's seraph and cherub, the Pit Lord (second pass)
 Then the boards that show a design with what the game draws apart (the trolls with their boulder) go into boards/.
 check10.py checks the copied round-8 and round-9 code still gives the files the designer saw, and that this rebuilds the
 folder byte for byte. python build10.py [module ...]   (paths relative to this file; no names = every generator)"""
@@ -15,7 +17,8 @@ import sys, subprocess, pathlib
 HERE = pathlib.Path(__file__).resolve().parent
 R10 = HERE.parent
 GENERATORS = ["E3/fix10e.py", "croc8.py", "A2/bandits10.py", "A2/wild10.py", "A2/frost10.py", "E3/frost10e.py",
-              "A2/spire10.py", "A2/dunes10.py", "A2/foundry10.py", "A2/bosses10.py", "E3/bosses10e.py", "A2/misc10.py"]
+              "A2/spire10.py", "A2/dunes10.py", "A2/foundry10.py", "A2/bosses10.py", "E3/bosses10e.py", "A2/misc10.py",
+              "A2/foundry10b.py", "A2/second10.py"]
 FEEL_R = 1.1   # js/units.js FEEL.collider
 
 

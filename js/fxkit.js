@@ -6,7 +6,7 @@
 // Everything here is drawn by the renderer from what the sim leaves in the world; nothing here changes the game.
 import { INK, TAU, clamp } from './util.js';
 import { OUTLINE, view } from './render.js';
-import { hash, rgba, upright, upVec, inked, inkLine, flame, blob, star, glowDisc, bolt, easeOut, leaf } from './fx.js';
+import { hash, rgba, upright, upVec, inked, inkLine, flame, blob, star, glowDisc, bolt, easeOut, leaf, snowBurst } from './fx.js';
 import { drawPuddle } from './puddles.js';
 import { SIG2, installFx2 } from './fx2.js';
 import { variant } from './fxvar.js';
@@ -125,7 +125,7 @@ export function noteWorld(w) {
       if (t.aoe) { push({ type: 'slam', u, x: t.aoe.x, y: t.aoe.y, r: t.aoe.r, a: t.a, max: 0.42, seed: Math.round(t.x * 7 + t.y) }); continue; }
       // arm-l is on the +normal side of the facing, arm-r on the -normal side (the art's left/right, front = +y)
       push({ type: 'slash', u, x: t.x, y: t.y, R: t.r, a: t.a, arc: t.arc, shape, dir: (shape === 'twin' || shape === 'twinBlade') && odd ? -1 : 1, side: odd ? 1 : -1, col,
-        max: shape === 'great' ? 0.22 : shape === 'heavy' ? 0.24 : 0.28, seed: Math.round(t.x * 7 + t.y) });
+        max: shape === 'bite' && u && u.kind === 'wolf' ? 0.5 : shape === 'great' ? 0.22 : shape === 'heavy' ? 0.24 : 0.28, seed: Math.round(t.x * 7 + t.y) });
     } else if (t.type === 'blast') {
       push({ type: 'blast', x: t.x, y: t.y, r: t.r, color: t.color || '#FFB347', ab: t.ab, max: t.ab === 'fireball' ? 0.6 : 0.45, seed: Math.round(t.x + t.y * 3) });
     }
@@ -135,6 +135,7 @@ export function noteWorld(w) {
   if (w._proj) for (const p of w._proj) if (!now.has(p) && !p.lab) {
     if (p.noHit) continue; // a lobbed thing: its landing is the danger zone's strike
     push({ type: 'impact', kind: p.necro ? 'soulFlame' : p.kind, ab: p.ab, x: p.x, y: p.y, a: Math.atan2(p.vy, p.vx), col: p.color, max: p.ab ? 0.45 : 0.32, seed: Math.round(p.x * 3 + p.y) });
+    if (p.ab === 'frostArrow') snowBurst(p.x, p.y, 44, 18); // round 13: snow thrown out where it bursts, hanging a moment
   }
   w._proj = now;
   // a danger zone striking: a burst shaped to its kind (lane B, bosses3: z.quiet: the boss draws its own blow)
@@ -145,7 +146,7 @@ export function noteWorld(w) {
     if (u._slam && !slam && !u.downed) push({ type: 'quake', x: u.x, y: u.y, r: 125, max: 0.8, seed: u.id, col: EL.earth });
     u._slam = slam;
     // Granny's Old Bones saved her
-    if (u.kit && u.kit.oldBonesUsed && !u._oldBones) push({ type: 'oldBones', u, x: u.x, y: u.y, max: 1.1, seed: u.id });
+    if (u.kit && u.kit.oldBonesUsed && !u._oldBones) push({ type: 'oldBones', u, x: u.x, y: u.y, max: 1.1, seed: u.id, ha: u.hitA });
     if (u.kit) u._oldBones = !!u.kit.oldBonesUsed;
   }
 }
@@ -155,7 +156,7 @@ export function drawMarks(ctx, dt, layer) {
     if (layer === 'air') m.t += dt;
     const k = k01(m.t / m.max);
     ctx.save();
-    if (layer === 'ground') { if (m.type === 'quake') quake(ctx, m.x, m.y, m.r, k, m.seed, m.col); else if (m.type === 'strike') strikeGround(ctx, m, k); else if (m.type === 'slam') slamGround(ctx, m, k); }
+    if (layer === 'ground') { if (m.type === 'quake') quake(ctx, m.x, m.y, m.r, k, m.seed, m.col); else if (m.type === 'strike') strikeGround(ctx, m, k); else if (m.type === 'slam') slamGround(ctx, m, k); else if (m.type === 'oldBones') oldBonesGround(ctx, m, k); }
     else switch (m.type) {
       case 'slash': slash(ctx, m, k); break;
       case 'slam': slamAir(ctx, m, k); break;
@@ -188,8 +189,7 @@ function slash(ctx, m, k) {
   }
   if (sh === 'bite' || sh === 'claw') {
     const reach = m.R * 0.85, px = x + Math.cos(m.a) * reach, py = y + Math.sin(m.a) * reach, s = clamp(m.R / 40, 0.6, 1.4);
-    const bv = sh === 'bite' && u && u.kind === 'wolf' ? variant('wolfBite') : 1; // round 10, Call Wolf: "show me 3 variations"
-    if (bv > 1) { const d2 = m.R + 10; wolfBite(ctx, m, k, x + Math.cos(m.a) * d2, y + Math.sin(m.a) * d2, s * 1.25, bv); return; } // on the foe, past the muzzle
+    if (sh === 'bite' && u && u.kind === 'wolf') { wolfBite(ctx, m, k, x, y); return; } // round 13: the wolf's own bite (three takes, fxvar.js)
     if (sh === 'bite') { // round 9: two jaws of fangs snapping shut on the target
       const shut = easeOut(k01(k / 0.3)), gap = (1 - shut) * 14 * s + 1.5, fade = k01((1 - k) / 0.45);
       ctx.globalAlpha *= fade;
@@ -229,48 +229,55 @@ function slash(ctx, m, k) {
   const hx = x + Math.cos(head) * (R - th * 0.4), hy = y + Math.sin(head) * (R - th * 0.4);
   if (sh === 'flail') inked(ctx, () => { star(ctx, hx, hy, 11, 8, 0.62, k * 9); }, '#8D949C');
 }
-// The wolf's bite, variants 2-4 (js/fxvar.js; 1 is the two rows of fangs above):
-//   2 Chomp  a big muzzle-shaped bite outline closing over the foe, then two rows of tooth dents left on it, fading
-//   3 Rake   three curved fang streaks crossing the foe from the jaw's side, like a bite tearing across
-//   4 Snap   a quick white crescent (the snap of the jaws) and a puff of fur tufts thrown off
-function wolfBite(ctx, m, k, px, py, s, v) {
-  const a = m.a, ca = Math.cos(a), sa = Math.sin(a), nx = -sa, ny = ca;
-  if (v === 2) {
-    const shut = easeOut(k01(k / 0.28)), fade = k01((1 - k) / 0.5), R = 17 * s;
-    ctx.save(); ctx.globalAlpha *= fade; ctx.translate(px, py); ctx.rotate(a);
-    for (const sd of [-1, 1]) { // the upper and lower jaw: arcs of a big mouth closing, fangs on their inner edge
-      const open = (1 - shut) * 0.9 + 0.12;
-      ctx.save(); ctx.rotate(sd * open);
-      inked(ctx, () => { ctx.beginPath(); ctx.arc(-R * 0.6, 0, R, sd > 0 ? 0.15 : -1.35, sd > 0 ? 1.35 : -0.15);
-        for (let i = 3; i >= 0; i--) { const b = (sd > 0 ? 0.25 : -0.25) + sd * i * 0.33, fx0 = -R * 0.6 + Math.cos(b) * R, fy0 = Math.sin(b) * R;
-          ctx.lineTo(fx0 - Math.cos(b) * 2, fy0 - Math.sin(b) * 2); ctx.lineTo(fx0 - Math.cos(b) * 8 * s, fy0 - Math.sin(b) * 8 * s); } ctx.closePath(); }, '#FFF8F0');
+// The wolf's bite (Call Wolf). Round 9: "The bite visual also looks bad"; round 10, of two rows of fangs: "Work on the
+// bite effect... U are close"; round 13, of Jaws, Chomp, Rake and Snap: "none of them". All four were a small tooth
+// glyph, turned to the wolf's heading and laid over its own head, there for three frames: they read as a scrap of white.
+// These are drawn on the one bitten (not on the wolf), as big as it is, and they take their time (noteWorld gives a
+// wolf's bite 0.5 s). Three takes that differ in kind (js/fxvar.js, ?v_wolfBite=N):
+//   1 Fangs  the "close" one done properly: two jaws, gums and white teeth with long canines, open wide either side of
+//            the foe, snap shut on it, hold with a shake, and go
+//   2 Crunch no teeth at all: the bite is its mark: the foe is pinched (a white burst squeezed flat along the wolf's
+//            heading) and two rows of red tooth holes are left on it
+//   3 Clamp  two great curved fangs swing shut on it from either side like pincers and cross
+function wolfBite(ctx, m, k, x, y) {
+  const u = m.u, tg = u && u.target && !u.target.dead && Math.hypot(u.target.x - x, u.target.y - y) < m.R + 60 ? u.target : null;
+  const px = tg ? tg.x : x + Math.cos(m.a) * (m.R + 8), py = tg ? tg.y : y + Math.sin(m.a) * (m.R + 8), S = clamp(tg ? tg.vr : 20, 16, 30), v = variant('wolfBite');
+  const shut = k < 0.18 ? 0 : easeOut(k01((k - 0.18) / 0.12)), fade = k01((1 - k) / 0.3), inn = k01(k / 0.1), bit = k01((k - 0.3) / 0.7);
+  ctx.save(); ctx.translate(px, py); ctx.rotate(m.a);
+  if (v === 2) { // Crunch
+    if (k > 0.18) { const q = k01((k - 0.18) / 0.3);
+      if (q < 1) { lit(ctx, () => { ctx.save(); ctx.scale(1.5, 0.55); glowDisc(ctx, 0, 0, S * 1.6, '#FFFFFF', 0.9 * (1 - q)); ctx.restore(); });
+        ctx.save(); ctx.globalAlpha *= 1 - q;
+        for (const sd of [-1, 1]) for (let i = -1; i <= 1; i++) { const b = sd > 0 ? i * 0.5 : Math.PI + i * 0.5, d = S * (0.7 + 0.9 * easeOut(q)); streak(ctx, Math.cos(b) * d, Math.sin(b) * d * 0.5, b, 0, S * 0.5 * (1 - q) + 4, 3, '#FFFFFF', '#FFF4E8'); }
+        ctx.restore(); }
+      ctx.save(); ctx.globalAlpha *= fade; // the holes it leaves: a row either side of the bite's line
+      for (const sd of [-1, 1]) for (let i = -2; i <= 2; i++) inkDisc(ctx, i * S * 0.24, sd * S * (0.34 - 0.04 * i * i), (i === -2 || i === 2 ? 3 : 2.3) * (1 - 0.3 * bit), '#C8453D');
       ctx.restore(); }
-    ctx.restore();
-    if (shut > 0.95) { ctx.save(); ctx.globalAlpha *= fade * 0.8; // tooth dents left on it
-      for (let i = -2; i <= 2; i++) for (const sd of [-1, 1]) inkDisc(ctx, px + nx * i * 4.5 * s + ca * sd * 5 * s, py + ny * i * 4.5 * s + sa * sd * 5 * s, 1.6 * s, '#C8453D');
-      ctx.restore(); }
-    return;
+    ctx.restore(); return;
   }
-  if (v === 3) {
-    const fade = k01((1 - k) / 0.45);
-    ctx.save(); ctx.globalAlpha *= fade;
-    for (let i = -1; i <= 1; i++) { const g = easeOut(k01((k - (i + 1) * 0.05) / 0.28)); if (g < 0.05) continue;
-      const b = a + 1.3 + i * 0.12, ox = px + nx * i * 7 * s - Math.cos(b) * 15 * s - ca * 4 * s, oy = py + ny * i * 7 * s - Math.sin(b) * 15 * s - sa * 4 * s;
-      ctx.save(); ctx.translate(ox, oy); ctx.rotate(b);
-      inked(ctx, () => { const L = 30 * s * g; ctx.beginPath(); ctx.moveTo(0, -2); ctx.quadraticCurveTo(L * 0.5, -7 * s, L, 0); ctx.quadraticCurveTo(L * 0.5, -2 * s, 0, 2); ctx.closePath(); }, i ? '#FFF8F0' : '#FFFFFF');
+  if (v === 3) { // Clamp
+    ctx.globalAlpha *= inn * fade;
+    for (const sd of [-1, 1]) { ctx.save(); ctx.scale(1, sd); ctx.translate(-S * 0.95, -S * 1.05); ctx.rotate(-0.95 * (1 - shut) + 0.12 * shut);
+      inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-S * 0.1, -S * 0.34); ctx.quadraticCurveTo(S * 1.1, -S * 0.5, S * 1.5, S * 1.2); ctx.quadraticCurveTo(S * 0.75, S * 0.2, -S * 0.2, S * 0.22); ctx.closePath(); }, '#FFFDF6');
+      ctx.fillStyle = '#E6DCC6'; ctx.beginPath(); ctx.moveTo(S * 1.42, S * 1.05); ctx.quadraticCurveTo(S * 0.75, S * 0.1, -S * 0.1, S * 0.12); ctx.quadraticCurveTo(S * 0.7, S * 0.36, S * 1.42, S * 1.05); ctx.closePath(); ctx.fill();
       ctx.restore(); }
-    ctx.restore();
-    return;
+    if (shut > 0.9 && k < 0.5) { const q = k01((k - 0.3) / 0.2); lit(ctx, () => glowDisc(ctx, S * 0.4, 0, S * 1.5, '#FFFFFF', 0.8 * (1 - q))); }
+    ctx.restore(); return;
   }
-  // 4 Snap
-  const q = easeOut(k01(k / 0.22)), fade = k01((1 - k) / 0.5);
-  ctx.save(); ctx.globalAlpha *= fade;
-  if (k < 0.25) lit(ctx, () => glowDisc(ctx, px, py, 24 * s, '#FFFFFF', 0.6 * (1 - k / 0.25)));
-  const R = 15 * s; slashBand(ctx, px - ca * R * 0.7, py - sa * R * 0.7, R, a - 1.4 + 2.8 * (1 - q) * 0, a - 1.4 + 2.8 * q, 7 * s * (1 - 0.4 * k), '#FFF8F0', '#FFFFFF', true);
-  for (let i = 0; i < 6; i++) { const b = a + (hash(m.seed, i) - 0.5) * 2.6, d = 8 * s + 22 * s * easeOut(k);
-    ctx.save(); ctx.translate(px + Math.cos(b) * d, py + Math.sin(b) * d); ctx.rotate(b + k * 3);
-    inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 4.5 * s * (1 - 0.5 * k), 2 * s, 0, 0, TAU); }, i % 2 ? '#9A8C7E' : '#C9BBA8'); ctx.restore(); }
+  // 1 Fangs
+  const shake = shut >= 1 && k < 0.6 ? Math.sin(k * 90) * 1.6 : 0, gap = (1 - shut) * S * 0.95 + S * 0.1;
+  ctx.globalAlpha *= inn * fade; ctx.translate(0, shake);
+  for (const sd of [-1, 1]) { ctx.save(); ctx.scale(1, sd); ctx.translate(0, -gap - S * 0.42);
+    // the gum: a curved bar bowed away from the bite; the teeth hang from it towards the other jaw
+    const teeth = () => { ctx.beginPath(); ctx.moveTo(-S, S * 0.1);
+      for (let i = 0; i < 5; i++) { const x0 = -S + i * S * 0.4, big = i === 0 || i === 4, L = big ? S * 0.62 : S * 0.36; ctx.lineTo(x0 + S * 0.05, S * 0.1); ctx.lineTo(x0 + S * 0.2, S * 0.1 + L); ctx.lineTo(x0 + S * 0.35, S * 0.1); }
+      ctx.lineTo(S, S * 0.1); ctx.lineTo(S, -S * 0.02); ctx.lineTo(-S, -S * 0.02); ctx.closePath(); };
+    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-S * 1.1, S * 0.14); ctx.quadraticCurveTo(0, -S * 0.42, S * 1.1, S * 0.14); ctx.lineTo(S * 1.02, -S * 0.1); ctx.quadraticCurveTo(0, -S * 0.66, -S * 1.02, -S * 0.1); ctx.closePath(); }, '#B8453F');
+    inked(ctx, teeth, '#FFFDF6');
+    ctx.restore(); }
   ctx.restore();
+  if (shut >= 1 && k < 0.5) { const q = k01((k - 0.3) / 0.2); lit(ctx, () => glowDisc(ctx, px, py, S * 1.8, '#FFFFFF', 0.75 * (1 - q)));
+    ctx.save(); ctx.globalAlpha *= 1 - q; for (const sd of [-1, 1]) inked(ctx, () => star(ctx, px + Math.cos(m.a) * sd * S * 1.15, py + Math.sin(m.a) * sd * S * 1.15, 7 * (1 - q) + 2, 4, 0.3, m.a), '#FFFFFF'); ctx.restore(); }
 }
 // The Berserker's flail (round 9): "his attack should be a radius on the ground in front of him. Can have spikey rings
 // around it. Is an aoe attack. Small radius". The spiked head slams down; a ring of spikes and dust bursts round it.
@@ -282,17 +289,13 @@ function slamGround(ctx, m, k) {
   ctx.restore();
 }
 function slamAir(ctx, m, k) {
-  const drop = k01(k / 0.14), e = easeOut(k01((k - 0.12) / 0.6));
-  // round 10 ("Simpler"): just the head coming down, a small flash and a ring of dust; no spikes thrown up
-  if (k < 0.14) { // the head coming down onto the spot
-    const [ux, uy] = upVec(), h = (1 - drop) * 26;
-    flailHead(ctx, m.x + ux * h, m.y + uy * h, 8, k * 8);
-    return;
-  }
+  const e = easeOut(k01((k - 0.12) / 0.6));
+  // round 10 ("Simpler"): a small flash and a ring of dust; no spikes thrown up. Round 13 ("Don't show spike ball on the
+  // ground"): no second flail head drawn where the blow lands; the one in his hand is the only one.
+  if (k < 0.14) return; // the arm is still coming down
   if (k < 0.26) lit(ctx, () => glowDisc(ctx, m.x, m.y, m.r * 1.1, '#FFF4DC', 0.5 * (1 - (k - 0.14) / 0.12)));
   ctx.save(); ctx.globalAlpha *= 1 - k * k;
   dustPuffs(ctx, m.x, m.y, m.r, e, m.seed, 6);
-  ctx.globalAlpha *= 1 - k01((k - 0.4) / 0.4); flailHead(ctx, m.x, m.y, 8, 0.4);
   ctx.restore();
 }
 
@@ -536,30 +539,52 @@ export function quake(ctx, x, y, R, k, seed, col = EL.earth) {
   for (let i = 0; i < 9; i++) { const b = (i + 0.5) / 9 * TAU + seed, d = r - th * 0.6, hop = Math.sin(k01(k * 1.6 - hash(i, seed) * 0.3) * Math.PI) * 16;
     ctx.save(); ctx.globalAlpha *= 1 - k; inkDisc(ctx, x + Math.cos(b) * d + ux * hop, y + Math.sin(b) * d + uy * hop, 3.4 * (1 - k) + 1, i % 2 ? col[1] : col[0]); ctx.restore(); }
 }
-// Old Bones (round 9 redo; the bones and balls were disliked; round 10: "Don't like the skull effect"): her soul starts
-// to leave her and is yanked back in. A pale wisp of soul fire slips up out of her and slows, sways, then is snapped
-// back down into her body: a white flash, a ring of pale sparks. The same at every tier; at III the shove round her (a
-// ring of dust on the ground) comes with it.
+// Old Bones. Round 9: "Don't like the bones or the ball particle effect"; round 10: "Don't like the skull effect";
+// round 13: the soul leaving and coming back was not ticked either. Three things floating over her, three noes: so
+// nothing floats over her now. While it holds she is untouchable, and the designer's own rule is that a border round the
+// outline means protection: she wears a bone-white border for that second (kits.js: a buff with `border`; render.js
+// borderOf). What happens in the moment is one of three (js/fxvar.js, ?v_oldBones=N):
+//   1 Stand   she plants her feet: a white flash off her, a ring of dust stamped out from under her, bone-white chips
+//             of the blow thrown off
+//   2 Creak   the joke in the name: comic crack marks snap out round her, the way the Rage's curses do
+//   3 Glance  the blow that should have felled her glances off: a hard clang on the side it came from, sparks thrown
+//             back along it
+// The same at every tier; at III the shove round her (a wave of dust on the ground) comes with it.
 function oldBones(ctx, m, k) {
-  const u = m.u, x = u && !u.dead ? u.x : m.x, y = u && !u.dead ? u.y : m.y, [ux, uy] = upVec(), vr = u ? u.vr : 22;
-  const OUT = 0.5, BACK = 0.62; // rises until OUT, snapped back by BACK, then the flash
-  const rise = k < OUT ? easeOut(k / OUT) : 1 - sm(k01((k - OUT) / (BACK - OUT))), sway = Math.sin(k * 14) * 5 * (k < BACK ? 1 : 0);
-  if (k < BACK) {
-    const h = vr * (0.2 + 1.9 * rise), sx = x + ux * h + (view.rot ? 0 : sway), sy = y + uy * h + (view.rot ? sway : 0);
-    ctx.save(); ctx.globalAlpha *= 0.9 * k01(k / 0.08);
-    // the thread that still ties it to her
-    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo((x + sx) / 2 + (view.rot ? 0 : -sway), (y + sy) / 2 + (view.rot ? -sway : 0), sx, sy); }, '#DDE8F6', 2.4);
-    lit(ctx, () => glowDisc(ctx, sx, sy, 30, '#BFEFFF', 0.45));
-    upright(ctx, sx, sy, () => { ctx.rotate(sway * 0.03); ctx.scale(1.5, 1.5); flame(ctx, 0, 0, 11 + 3 * rise, '#E8F2FA', '#FFFFFF');
-      ctx.fillStyle = '#2B2230'; ctx.beginPath(); ctx.ellipse(-3.6, -2, 1.6, 2.4, 0, 0, TAU); ctx.ellipse(3.6, -2, 1.6, 2.4, 0, 0, TAU); ctx.fill(); });
+  const u = m.u, x = u && !u.dead ? u.x : m.x, y = u && !u.dead ? u.y : m.y, vr = u ? u.vr : 22, v = variant('oldBones'), e = easeOut(k01(k / 0.6));
+  if (v === 2) {
+    for (let i = 0; i < 4; i++) { const t0 = i * 0.09, q = k01((k - t0) / 0.42); if (q <= 0 || q >= 1) continue;
+      const b = [-2.5, -0.6, 2.4, 0.75][i] + (hash(m.seed, i) - 0.5) * 0.3, d = vr * 1.12, s = (0.6 + 0.6 * easeOut(k01(q / 0.2))) * (i % 2 ? 0.9 : 1.15);
+      ctx.save(); ctx.globalAlpha *= q < 0.6 ? 1 : 1 - (q - 0.6) / 0.4;
+      for (let j = -1; j <= 1; j++) { const c = b + j * 0.5; streak(ctx, x + Math.cos(b) * d, y + Math.sin(b) * d, c, 5 * s, (j ? 15 : 19) * s, 3.2 * s, '#FFFFFF', '#FFF8EA'); }
+      ctx.restore(); }
+    if (k < 0.2) lit(ctx, () => glowDisc(ctx, x, y, vr * 2.4, '#FFF8EA', 0.6 * (1 - k / 0.2)));
+    return;
+  }
+  if (v === 3) {
+    const back = (m.ha ?? 0) + Math.PI, px = x + Math.cos(back) * vr * 1.1, py = y + Math.sin(back) * vr * 1.1, q = k01(k / 0.45);
+    if (q >= 1) return;
+    if (q < 0.4) lit(ctx, () => glowDisc(ctx, px, py, 46, '#FFFBEA', 0.9 * (1 - q / 0.4)));
+    ctx.save(); ctx.globalAlpha *= 1 - q * q;
+    inkLine(ctx, () => { ctx.beginPath(); ctx.arc(x, y, vr * 1.2 + 6 * easeOut(q), back - 0.95, back + 0.95); }, '#FFF8EA', 5 * (1 - q) + 1.5);
+    for (let i = -3; i <= 3; i++) { const b = back + i * 0.3, d = 10 + 34 * easeOut(q); streak(ctx, px + Math.cos(b) * d, py + Math.sin(b) * d, b, 0, 16 * (1 - q) + 4, 3, '#FFFFFF', '#FFF8EA'); }
+    inked(ctx, () => star(ctx, px, py, 15 * (1 - q) + 3, 4, 0.3, back), '#FFFFFF');
     ctx.restore();
     return;
   }
-  const p = k01((k - BACK) / (1 - BACK)), e = easeOut(p);
-  if (p < 0.35) lit(ctx, () => glowDisc(ctx, x, y, 60 + 30 * e, '#FFF8EA', 1 - p / 0.35));
-  ctx.save(); ctx.globalAlpha *= 1 - p * p;
-  for (let i = 0; i < 10; i++) { const b = i / 10 * TAU + 0.2, d = vr * 0.6 + 40 * e; inked(ctx, () => star(ctx, x + Math.cos(b) * d, y + Math.sin(b) * d, 5 * (1 - p) + 1.5, 4, 0.35, b), i % 2 ? '#FFF8EA' : '#BFEFFF'); }
-  ctx.restore();
+  // 1 Stand
+  if (k < 0.22) lit(ctx, () => glowDisc(ctx, x, y, vr * 2.8, '#FFF8EA', 0.9 * (1 - k / 0.22)));
+  if (k < 0.75) { ctx.save(); ctx.globalAlpha *= 1 - k / 0.75;
+    for (let i = 0; i < 8; i++) { const b = i / 8 * TAU + 0.3 + hash(m.seed, i) * 0.4, d = vr + 6 + 44 * e, s = 6.5 * (1 - 0.5 * k);
+      ctx.save(); ctx.translate(x + Math.cos(b) * d, y + Math.sin(b) * d); ctx.rotate(b + k * 7);
+      inked(ctx, () => { ctx.beginPath(); ctx.moveTo(s, 0); ctx.lineTo(-s * 0.5, -s * 0.6); ctx.lineTo(-s * 0.3, s * 0.55); ctx.closePath(); }, i % 2 ? '#EDE4CD' : '#FFF8EA'); ctx.restore(); }
+    ctx.restore(); }
+}
+// (the dust she stamps out, under the units: variant 1)
+function oldBonesGround(ctx, m, k) {
+  if (variant('oldBones') !== 1) return;
+  const u = m.u, x = u && !u.dead ? u.x : m.x, y = u && !u.dead ? u.y : m.y, vr = u ? u.vr : 22, q = k01(k / 0.6);
+  ctx.save(); ctx.globalAlpha *= 1 - q; dustPuffs(ctx, x, y, vr * 2.1, q, m.seed, 10, '#EDE4CD'); ctx.restore();
 }
 
 // ---------------------------------------------------------------- ability signatures ('sig' fx, fxtag.js)
@@ -663,15 +688,7 @@ export function drawSigAir(ctx, f, w) {
           inked(ctx, () => { ctx.beginPath(); ctx.moveTo(s, 0); ctx.lineTo(-s * 0.6, -s * 0.7); ctx.lineTo(-s * 0.4, s * 0.6); ctx.closePath(); }, i % 2 ? el[1] : el[2]); ctx.restore(); }
       }
       break;
-    case 'holdTheLine': { // a flash off the raised shield, and a red mark over everything it taunts (no cracks: round 9;
-      // round 10: "weird line effect": no lines from him to them any more, the mark pops in over each one's head)
-      for (const e2 of w.units) if (e2.tauntBy === u && !e2.dead && k < 0.75) {
-        const q = k01(k / 0.15), s = 0.6 + 0.6 * easeOut(q) - 0.2 * k01((k - 0.15) / 0.3);
-        ctx.save(); ctx.globalAlpha *= q * (1 - sm(k01((k - 0.45) / 0.3)));
-        upright(ctx, e2.x, e2.y, () => { ctx.translate(0, -e2.vr - 16); ctx.scale(s, s);
-          inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-8, -8); ctx.lineTo(0, 4); ctx.lineTo(8, -8); ctx.lineTo(0, -2); ctx.closePath(); }, '#FF6B5A'); });
-        ctx.restore();
-      }
+    case 'holdTheLine': { // a flash off the raised shield (the red mark over each one it taunts is drawBodyFx's now: round 13)
       if (k < 0.3) lit(ctx, () => glowDisc(ctx, ux0 + Math.cos(fa) * (u.r + 10), uy0 + Math.sin(fa) * (u.r + 10), 40, '#FFF4C8', 0.7 * (1 - k / 0.3)));
       break;
     }
@@ -739,6 +756,12 @@ export function drawSigAir(ctx, f, w) {
       break;
     }
     case 'whirl': castFlash(ctx, f, k, el); break;
+    case 'shockwave': { // the slam the waves run out from: a flash and a kick of dust where the flail comes down
+      const x = f.x + Math.cos(f.a) * ((u ? u.r : 30) + 12), y = f.y + Math.sin(f.a) * ((u ? u.r : 30) + 12);
+      if (k < 0.4) lit(ctx, () => glowDisc(ctx, x, y, 44, '#FFF4DC', 0.7 * (1 - k / 0.4)));
+      ctx.save(); ctx.globalAlpha *= 1 - k * k; dustPuffs(ctx, x, y, 30, e, seed, 7); ctx.restore();
+      break;
+    }
     case 'flameWall': case 'inferno': case 'iceWall': case 'thunderclap': case 'lullaby': case 'entangle': case 'rejuvenate': case 'lifeDrain': case 'hook':
       castFlash(ctx, f, k, el); break;
     case 'warSong': { // notes fly from the lute to each ally it reaches
@@ -813,7 +836,16 @@ export function drawBodyFx(ctx, u, w) {
     } else if (b.id === 'lullaby') {
       const ph = (T * 0.6 + u.id * 0.29) % 1;
       ctx.save(); ctx.globalAlpha = Math.sin(ph * Math.PI) * 0.9; upright(ctx, u.x, u.y, () => { ctx.translate(-u.vr * 0.6 + Math.sin(ph * 6) * 4, -u.vr - 4 - ph * 20); inked(ctx, () => noteShape(ctx, 0.65), '#BFC8FF'); }); ctx.restore();
-    } else if (b.spinning) whirlArcs(ctx, u, T);
+    } else if (b.whirling) whirlArcs(ctx, u, T);
+  }
+  // Hold the Line's mark (round 10: it pops in over the head; round 13, "The v should remain over them"): the red V stays
+  // over everything he holds for as long as he holds it, bobbing a little, and fades as the taunt runs out
+  if (u.vMarkT > T && u.tauntBy && u.tauntBy === u.vMarkBy && !u.tauntBy.dead && !u.tauntBy.downed) {
+    const age = T - u.vMarkT0, left = u.vMarkT - T, q = k01(age / 0.15), s = 0.6 + 0.6 * easeOut(q) - 0.2 * k01((age - 0.15) / 0.3);
+    ctx.save(); ctx.globalAlpha = q * k01(left / 0.35);
+    upright(ctx, u.x, u.y, () => { ctx.translate(0, -u.vr - 17 + Math.sin(T * 5 + u.id) * 1.6); ctx.scale(s, s);
+      inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-8, -8); ctx.lineTo(0, 4); ctx.lineTo(8, -8); ctx.lineTo(0, -2); ctx.closePath(); }, '#FF6B5A'); });
+    ctx.restore();
   }
   // Leeches clinging to the edge of the body, pulsing
   if (u.leechT > 0) for (let i = 0; i < 3; i++) {
@@ -895,7 +927,9 @@ export function drawBodyGround(ctx, u, w) {
 // berserker.svg): a pale steel ball, six fat cone spikes round it, a four-faced spike on top lit from the top left.
 export function flailHead(ctx, x, y, r, rot) {
   ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
-  inked(ctx, () => { for (let i = 0; i < 6; i++) { const a = i / 6 * TAU, c = Math.cos(a), s2 = Math.sin(a), w2 = 0.42;
+  // (round 13: this path never began anew, so it took in whatever was drawn last: Whirl's white crescent came out inked
+  // over and striped, which is the "changed more than what I asked")
+  inked(ctx, () => { ctx.beginPath(); for (let i = 0; i < 6; i++) { const a = i / 6 * TAU, c = Math.cos(a), s2 = Math.sin(a), w2 = 0.42;
     ctx.moveTo(Math.cos(a - w2) * r * 0.86, Math.sin(a - w2) * r * 0.86); ctx.lineTo(c * r * 1.62, s2 * r * 1.62); ctx.lineTo(Math.cos(a + w2) * r * 0.86, Math.sin(a + w2) * r * 0.86); ctx.closePath(); }
     ctx.moveTo(r, 0); ctx.arc(0, 0, r, 0, TAU); }, '#A9B2C1');
   ctx.restore();
@@ -914,18 +948,25 @@ function whirlArcs(ctx, u, T) {
   const R = u.r + 46, a = T * 13;
   for (let i = 0; i < 2; i++) { const b = a + i * Math.PI, hx = u.x + Math.cos(b) * (R - 9), hy = u.y + Math.sin(b) * (R - 9);
     slashBand(ctx, u.x, u.y, R, b - 1.6, b, 16, '#DCE3EC', '#FFFFFF');
-    flailHead(ctx, hx, hy, 9, b); }
+    flailHead(ctx, hx, hy, 10.5, T * 9); } // (round 13: as big as the round 9 balls were, and turning as they did)
 }
 
+// where a weapon held out for a full turn points, from the way its holder faces (parts.js: arm-r turned out to the side)
+const SPIN_AT = { cleave: -1.1, reap: -1.1 };
 // ---------------------------------------------------------------- ability-shaped versions of the plain fx
 // fx.js asks here first for anything an ability made (f.ab); true = drawn.
 export function abilityRing(ctx, f) {
   const k = k01(f.t / f.max), e = easeOut(k), seed = Math.round(f.x * 3 + f.y);
   switch (f.ab) {
     case 'cleave': case 'reap': { // round 9: the blade's circle follows her as she spins (render.js u.spin), the scythe's in bone
-      const scy = f.ab === 'reap', a0 = f.a != null ? f.a : hash(seed) * TAU;
-      const h = a0 + TAU * sm(k01(k / 0.92)), t = a0 + TAU * sm(k01((k - 0.25) / 0.75)) - 0.15;
-      slashBand(ctx, f.x, f.y, f.r + (scy ? 6 : 0), Math.min(t, h - 0.05), h, (scy ? 18 : 22) * (1 - 0.3 * k), scy ? EL.bone[1] : '#DCE3EC', '#FFFFFF', !scy);
+      // round 13 (Cleave: "Slash is too far ahead from sword"): the crescent's head is where the blade is: it turns with
+      // the sprite (the same easing as render.js's spin) from where the weapon is held out (SPIN_AT, measured off the
+      // art), and its tail trails behind by at most a third of a turn
+      const scy = f.ab === 'reap', a0 = f.a != null ? f.a : hash(seed) * TAU, turn = TAU * sm(k), at = scy ? SPIN_AT.reap : SPIN_AT.cleave;
+      const x = f.unit && !f.unit.dead ? f.unit.x : f.x, y = f.unit && !f.unit.dead ? f.unit.y : f.y;
+      const h = a0 + at + turn, len = Math.min(turn, 2.1) * (1 - sm(k01((k - 0.8) / 0.2)));
+      // (and it starts at the blade's tip, not far out past it: kits.js brought the reach in to what a blade that long sweeps)
+      slashBand(ctx, x, y, f.r, h - Math.max(0.05, len), h, ((f.tier || 1) >= 2 ? 34 : 24) * (1 - 0.2 * k), scy ? EL.bone[1] : '#DCE3EC', '#FFFFFF', !scy);
       return true;
     }
     case 'groundPound': case 'leap': case 'oldBones': return true; // on the ground layer (abilityRingGround)
@@ -1011,24 +1052,32 @@ export function abilityZone(ctx, f, T) {
     drawPuddle(ctx, 'smoke', f.x, f.y, f.r * (0.7 + 0.3 * easeOut(clamp(f.t / 0.25, 0, 1))), T, a, Math.round(f.x * 3 + f.y));
     return true;
   }
-  if (f.ab === 'roll' && f.kind === 'vines') { // caltrops scattered where she slid from
-    // round 10: "shoot caltrops out from out of it": each one is flung out of her as she slides, one after another,
-    // hops through the air and lands in the patch (where it leaves her is noted the moment it goes: f._from)
-    const a = clamp((f.max - f.t) / 0.5, 0, 1), seed = Math.round(f.x * 3 + f.y), [ux, uy] = upVec();
+  if (f.ab === 'roll' && f.kind === 'vines') { // the Archer's caltrops (Roll III)
+    // round 13 ("They should slide out"): each one leaves her as she rolls, one after another, and skids along the floor
+    // to its place, turning, slowing, a scuff of dust behind it; it settles with a glint. Drawn as a caltrop from above:
+    // three steel spikes on the floor and the fourth standing up at you.
+    const a = clamp((f.max - f.t) / 0.5, 0, 1), seed = Math.round(f.x * 3 + f.y), N = 8;
     if (!f._from) f._from = [];
     ctx.save(); ctx.globalAlpha *= a;
-    for (let i = 0; i < 9; i++) { const b = hash(seed, i) * TAU, rr = f.r * Math.sqrt(hash(i, seed)), lx = f.x + Math.cos(b) * rr, ly = f.y + Math.sin(b) * rr;
-      const t0 = 0.03 + i * 0.026, q = k01((f.t - t0) / 0.24); if (q <= 0) continue;
+    for (let i = 0; i < N; i++) { const b = (i + 0.5 * hash(seed, i)) / N * TAU, rr = f.r * (0.22 + 0.72 * hash(i, seed)), lx = f.x + Math.cos(b) * rr, ly = f.y + Math.sin(b) * rr;
+      const t0 = 0.02 + i * 0.03, q = k01((f.t - t0) / 0.3); if (q <= 0) continue;
       const src = f.from && !f.from.dead ? f.from : f;
       if (!f._from[i]) f._from[i] = [src.x, src.y];
-      const [sx, sy] = f._from[i], e = easeOut(q), hop = Math.sin(q * Math.PI) * 22;
-      const x = sx + (lx - sx) * e + ux * hop, y = sy + (ly - sy) * e + uy * hop, rot = b + (1 - q) * 9;
-      if (q >= 1 && f.t - t0 < 0.4) { ctx.save(); ctx.globalAlpha *= 1 - (f.t - t0 - 0.24) / 0.16; dustPuffs(ctx, x, y, 8, k01((f.t - t0 - 0.24) / 0.16), seed + i, 3); ctx.restore(); }
-      inked(ctx, () => star(ctx, x, y, 6, 4, 0.3, rot), '#9AA3AE');
-      ctx.fillStyle = '#DCE3EC'; ctx.beginPath(); ctx.arc(x - 1, y - 1, 1.4, 0, TAU); ctx.fill(); }
+      const [sx, sy] = f._from[i], e = easeOut(q), x = sx + (lx - sx) * e, y = sy + (ly - sy) * e, rot = b + (1 - e) * 7;
+      if (q < 1) { const ta = Math.atan2(ly - sy, lx - sx); // the scuff it leaves while it skids
+        for (let j = 1; j <= 3; j++) { ctx.save(); ctx.globalAlpha *= (1 - q) * (1 - j / 4); inkDisc(ctx, x - Math.cos(ta) * j * 7, y - Math.sin(ta) * j * 7, 3.4 - j * 0.6, '#E9DDC2'); ctx.restore(); } }
+      caltrop(ctx, x, y, 9, rot);
+      const g = (f.t - t0 - 0.3) / 0.22; if (g > 0 && g < 1) { ctx.save(); ctx.globalAlpha *= Math.sin(g * Math.PI); lit(ctx, () => glowDisc(ctx, x, y, 12, '#FFFFFF', 0.7)); inked(ctx, () => star(ctx, x - 2, y - 2, 4.5, 4, 0.22, 0.4), '#FFFFFF'); ctx.restore(); } }
     ctx.restore(); return true;
   }
   return false;
+}
+function caltrop(ctx, x, y, s, rot) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+  inked(ctx, () => { ctx.beginPath(); for (let i = 0; i < 3; i++) { const b = i / 3 * TAU; ctx.moveTo(Math.cos(b - 1.25) * s * 0.34, Math.sin(b - 1.25) * s * 0.34); ctx.lineTo(Math.cos(b) * s, Math.sin(b) * s); ctx.lineTo(Math.cos(b + 1.25) * s * 0.34, Math.sin(b + 1.25) * s * 0.34); ctx.closePath(); } }, '#A9B2C1');
+  ctx.fillStyle = '#DCE3EC'; ctx.beginPath(); for (let i = 0; i < 3; i++) { const b = i / 3 * TAU; ctx.moveTo(0, 0); ctx.lineTo(Math.cos(b) * s * 0.92, Math.sin(b) * s * 0.92); ctx.lineTo(Math.cos(b - 1.25) * s * 0.3, Math.sin(b - 1.25) * s * 0.3); ctx.closePath(); } ctx.fill();
+  ctx.restore();
+  inkDisc(ctx, x, y, s * 0.3, '#EEF3F8'); disc(ctx, x - s * 0.08, y - s * 0.08, s * 0.13, '#FFFFFF'); // the spike standing up
 }
 // a quick swirl at the ally, over everything (round 9: Rejuvenate's ring "show above entities")
 export function abilityZoneAir(ctx, f, T) {
@@ -1061,8 +1110,8 @@ export function soulOrb(ctx, f) {
     const p = k01((k - ARR) / (1 - ARR)), e = easeOut(p);
     if (p < 0.4) lit(ctx, () => glowDisc(ctx, to.x, to.y, 24 + 16 * e, '#FF5A4A', 0.7 * (1 - p / 0.4)));
     ctx.save(); ctx.globalAlpha *= 1 - p * p;
-    for (let i = 0; i < 7; i++) { const b = i / 7 * TAU + seed, d = 6 + 24 * e; inkDisc(ctx, to.x + Math.cos(b) * d, to.y + Math.sin(b) * d, 3.2 * (1 - 0.6 * p) + 0.5, i % 2 ? '#E0403A' : '#FF8A7A'); }
-    if (p < 0.3) inkDisc(ctx, to.x, to.y, 6 * (1 - p / 0.3) + 1, '#E0403A');
+    // (round 13: thrown out past her edge, on the side the orb came in from, and few: four orbs' worth made a ring of beads on her face)
+    for (let i = 0; i < 4; i++) { const b = a + Math.PI + (i - 1.5) * 0.5 + (hash(seed, i) - 0.5) * 0.3, d = (to.vr || 22) * 0.95 + 20 * e; inkDisc(ctx, to.x + Math.cos(b) * d, to.y + Math.sin(b) * d, 2.8 * (1 - 0.6 * p) + 0.5, i % 2 ? '#E0403A' : '#FF8A7A'); }
     ctx.restore(); return;
   }
   const [x, y] = at(q);

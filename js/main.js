@@ -123,7 +123,7 @@ const artOf = (k) => (DEFS[k] && DEFS[k].art) || (MERCS.find((m) => m.kind === k
 function buildChips() {
   if (isBattle()) { buildBattleDock(run, (u) => { if (inspecting() && selected() === u) setPaused(false); else setPaused(true, u); }); return; }
   buildCards(run, artOf, (k) => {
-    const u = run.world.units.find((x) => x.kind === k && x.team === 'hero' && !x.summon && !x.dead);
+    const u = run.world.units.find((x) => x.kind === k && (x.trueTeam || x.team) === 'hero' && !x.summon && !x.dead);
     if (inspecting() && selected() === u) { setPaused(false); return; }
     setPaused(true, u);
   });
@@ -143,7 +143,7 @@ function setPaused(on, unit) {
 let met = new Set(), beaten = new Set();
 function noteBeasts(w) {
   for (const u of w.units) {
-    if (u.team !== 'enemy' || u.summon) continue;
+    if ((u.trueTeam || u.team) !== 'enemy' || u.summon) continue;
     const s = save.seen[u.kind] || (save.seen[u.kind] = { met: 0, beaten: 0 });
     if (u.aggro && !met.has(u)) { met.add(u); s.met++; }
     if (u.dead && !beaten.has(u)) { beaten.add(u); s.beaten++; }

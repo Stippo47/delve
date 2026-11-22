@@ -8,6 +8,7 @@
 // only in what lives in them. A hero's numbers count every run it was in, as the lead or as a random member.
 //   rooms: rooms the party got through (how much a hero helps a party is rooms against the average)
 //   dmg / heal / taken: the hero's share of its party's damage, healing and damage taken (a third each would be even)
+//   blk: of everything that came at the hero, the part its shields, blocks, armour, wards and dodges kept off (round 13)
 //   downs: times it went down a run;  src: where its damage came from
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
@@ -34,7 +35,7 @@ function buildSave(party) {
   s.party = party.slice(); s.trinkets = []; s.potions = 0; s.unlocks = { slotMini1: true, slotBoss1: true, slotBoss2: true };
   return s;
 }
-const blank = () => ({ n: 0, lead: 0, rooms: 0, secs: 0, dmg: 0, heal: 0, taken: 0, downs: 0, kills: 0, rawDmg: 0, rawHeal: 0, rawTaken: 0, src: {}, by: {} });
+const blank = () => ({ n: 0, lead: 0, rooms: 0, secs: 0, dmg: 0, heal: 0, taken: 0, downs: 0, kills: 0, rawDmg: 0, rawHeal: 0, rawTaken: 0, rawBlocked: 0, src: {}, by: {} });
 const H = Object.fromEntries(HERO_IDS.map((k) => [k, blank()]));
 const T = Object.fromEntries(themes.map((t) => [t, { n: 0, rooms: 0, secs: 0, wipes: 0 }]));
 let runs = 0, bad = 0, allRooms = 0;
@@ -43,7 +44,7 @@ if (opt('merge')) {
   for (const f of opt('merge').split(',')) {
     const d = JSON.parse(fs.readFileSync(f, 'utf8')); runs += d.runs; bad += d.bad; allRooms += d.allRooms;
     for (const [k, h] of Object.entries(d.heroes)) { const t = H[k] || (H[k] = blank());
-      for (const f2 of ['n', 'lead', 'rooms', 'secs', 'dmg', 'heal', 'taken', 'downs', 'kills', 'rawDmg', 'rawHeal', 'rawTaken']) t[f2] += h[f2];
+      for (const f2 of ['n', 'lead', 'rooms', 'secs', 'dmg', 'heal', 'taken', 'downs', 'kills', 'rawDmg', 'rawHeal', 'rawTaken', 'rawBlocked']) t[f2] += h[f2] || 0;
       for (const [x, v] of Object.entries(h.src)) t.src[x] = (t.src[x] || 0) + v;
       for (const [x, v] of Object.entries(h.by)) { const o = t.by[x] || (t.by[x] = { n: 0, rooms: 0 }); o.n += v.n; o.rooms += v.rooms; } }
     for (const [k, v] of Object.entries(d.themes)) { const t = T[k] || (T[k] = { n: 0, rooms: 0, secs: 0, wipes: 0 }); for (const f2 of ['n', 'rooms', 'secs', 'wipes']) t[f2] += v[f2]; }
@@ -67,7 +68,7 @@ for (const lead of leads) for (const theme of themes) for (let r = 0; r < reps; 
     const h = H[k], s = S.heroes[k];
     h.n++; if (k === lead) h.lead++; h.rooms += done; h.secs += t; h.downs += s.downs; h.kills += s.kills;
     h.dmg += tot.dmg ? s.dmg / tot.dmg : 0; h.heal += tot.heal ? s.heal / tot.heal : 0; h.taken += tot.taken ? s.taken / tot.taken : 0;
-    h.rawDmg += s.dmg / t; h.rawHeal += s.heal / t; h.rawTaken += s.taken / t;
+    h.rawDmg += s.dmg / t; h.rawHeal += s.heal / t; h.rawTaken += s.taken / t; h.rawBlocked += (s.blocked || 0) / t;
     for (const [src, v] of Object.entries(s.src.dmg)) h.src[src] = (h.src[src] || 0) + v;
     const b = h.by[theme] || (h.by[theme] = { n: 0, rooms: 0 }); b.n++; b.rooms += done;
   }
@@ -82,12 +83,12 @@ console.log('dungeons: ' + themes.filter((t) => T[t].n).map((t) => `${t} ${(T[t]
   const R = {}; for (const k of HERO_IDS) { const h = H[k]; if (!h.n) continue; const r = R[HEROES[k].role] || (R[HEROES[k].role] = { n: 0, rooms: 0, dmg: 0, heal: 0, taken: 0, downs: 0 }); r.n += h.n; r.rooms += h.rooms; r.dmg += h.dmg; r.heal += h.heal; r.taken += h.taken; r.downs += h.downs; }
   for (const [r, v] of Object.entries(R)) console.log(`  ${r.padEnd(9)} rooms ${(v.rooms / v.n).toFixed(2)}  damage ${pct(v.dmg / v.n)}  healing ${pct(v.heal / v.n)}  taken ${pct(v.taken / v.n)}  downs ${(v.downs / v.n).toFixed(2)}`);
 }
-console.log('hero          role      runs  rooms  vs avg   dmg  heal taken  downs  dmg/s  top sources of its damage');
+console.log('hero          role      runs  rooms  vs avg   dmg  heal taken   blk  downs  dmg/s  top sources of its damage');
 const rows = HERO_IDS.filter((k) => H[k].n).map((k) => ({ k, ...H[k], avg: H[k].rooms / H[k].n })).sort((a, b) => b.avg - a.avg);
 for (const h of rows) {
   const srcTot = Object.values(h.src).reduce((a, b) => a + b, 0) || 1;
   const top = Object.entries(h.src).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([s, v]) => `${s.replace('ab:', '').replace('st:', '~')} ${Math.round(100 * v / srcTot)}%`).join(', ');
-  console.log(`${h.k.padEnd(13)} ${HEROES[h.k].role.padEnd(9)} ${String(h.n).padStart(4)}  ${h.avg.toFixed(2).padStart(5)}  ${((h.avg - mean) >= 0 ? '+' : '') + (h.avg - mean).toFixed(2).padStart(5)}  ${pct(h.dmg / h.n)}  ${pct(h.heal / h.n)}  ${pct(h.taken / h.n)}  ${(h.downs / h.n).toFixed(2).padStart(5)}  ${(h.rawDmg / h.n).toFixed(1).padStart(5)}  ${top}`);
+  console.log(`${h.k.padEnd(13)} ${HEROES[h.k].role.padEnd(9)} ${String(h.n).padStart(4)}  ${h.avg.toFixed(2).padStart(5)}  ${((h.avg - mean) >= 0 ? '+' : '') + (h.avg - mean).toFixed(2).padStart(5)}  ${pct(h.dmg / h.n)}  ${pct(h.heal / h.n)}  ${pct(h.taken / h.n)}  ${pct(h.rawBlocked / Math.max(1e-9, h.rawBlocked + h.rawTaken))}  ${(h.downs / h.n).toFixed(2).padStart(5)}  ${(h.rawDmg / h.n).toFixed(1).padStart(5)}  ${top}`);
 }
 if (opt('out')) fs.writeFileSync(opt('out'), JSON.stringify({ tier, size, rank, runs, bad, mean, allRooms, heroes: H, themes: T }));
 process.exit(bad ? 1 : 0);

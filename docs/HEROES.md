@@ -190,7 +190,7 @@ A pack bigger than he is. Keeps the party fed, armed and stocked, and throws the
 - **Resupply** (28s). Tosses a supply bundle to the ally who needs it most. I: Heals 6%, and a health potion if they have none. II: Heals 12%. III: A bundle each for two allies.
 - **Oil the Blades** (16s). Hands round lamp oil for the weapons: the allies near him set things alight with every blow. I: Their blows burn a little for 8s. II: They burn more. III: And their blows heal them a little.
 - **Flare** (13s). Fires a red flare onto the enemies: whatever stands in its light is easy to hit. I: For 6s they take 15% more. II: They are dazzled and slowed too. III: A bigger patch of light.
-- **Trait: Well Stocked.** Every two minutes, a friend near him who has no health potion gets one.
+- **Trait: Well Stocked.** Every two minutes, a friend near him who has no health potion gets one. A gatherer: on the wagon road he goes for loose gold before a fight, and further for it.
 
 ## Crossbowman (`crossbowman`, ranged, 700 gold)
 A heavy crossbow, a kettle hat and a tall shield on his back. Slow to load, hard to stop. Art: `art/heroes/crossbowman.svg`.
@@ -262,7 +262,7 @@ Tricorn, cutlass, flintlock. Fights dirty, drinks worse, calls in the ship's gun
 - **Point Blank** (7s). Jams the flintlock against an enemy and fires. I: A big hit and a shove. II: It staggers. III: The second pistol at another enemy.
 - **Grog** (16s). A long swig of grog. Things hurt less for a while. I: Heals 20%; takes 20% less for 5s. II: Nothing knocks her about meanwhile. III: Heals 30%.
 - **Broadside** (15s). Whistles to the ship: cannonballs come down round a spot. I: Three cannonballs. II: Bigger blasts. III: Five.
-- **Trait: Dirty Fighting.** Hits staggered, stunned, slowed or rooted enemies 30% harder.
+- **Trait: Dirty Fighting.** Hits staggered, stunned, slowed or rooted enemies 30% harder. A gatherer: on the wagon road she goes for loose gold before a fight, and further for it.
 
 ## Slinger (`slinger`, ranged, 350 gold)
 A shepherd in a ram's fleece with a sling and a crook. Stones, and the flock behind him. Art: `art/heroes/slinger.svg`.
@@ -278,9 +278,9 @@ A fur cap with the flaps down, a short rifle and a jaw trap. Catches things. Art
 
 - **Attack: Short rifle.** A rifle shot.
 - **Jaw Trap** (9s). Sets a jaw trap where the enemies are coming; the first to step in is caught. I: Holds it for 2s. II: Holds 3s and bites harder. III: Two traps.
-- **Weighted Net** (12s). Throws a weighted net over a group of enemies. I: It entangles those under it. II: A bigger net. III: They are tangled at once.
+- **Weighted Net** (12s). Throws a weighted net over a group of enemies. I: It entangles those under it. II: A bigger net. III: They are rooted at once.
 - **Tripwire** (13s). Strings a wire across the enemies' way: whatever runs into it goes down. I: Knocks them down for 1s. II: A longer wire. III: Down for 1.6s.
-- **Trait: Trapper's Eye.** Enemies that are held, rooted or tangled take 30% more from him.
+- **Trait: Trapper's Eye.** Enemies that are held or rooted take 30% more from him.
 
 ## Gladiator (`gladiator`, melee, 700 gold)
 A crested bronze helm, a gladius and a little round shield. Plays to the crowd. Art: `art/heroes/gladiator.svg`.
@@ -335,3 +335,12 @@ A woodsman with a hatchet and a torn red shirt. Then, when it matters, a great g
 - **Frenzy** (14s). Each blow in a row comes faster than the last. I: For 6s, up to 60% faster. II: His blows heal him a little. III: At full speed he howls: everything near is staggered.
 - **Pounce** (10s). Leaps onto a far enemy and pins it to the floor. I: Pins it for 1s. II: Pins it for 1.6s. III: Mauls it while it's pinned.
 - **Trait: Moonblood.** Heals 1% of his health a second while fighting.
+
+## Enchantress (`enchantress`, support, 1050 gold)
+Rose silk, a heart-shaped locket and a smile. Nobody who meets her wants to hurt her, and before long they fight for her. Art: `art/heroes/enchantress.svg`.
+
+- **Attack: Blown kiss.** A slow pink heart that floats to its target: a little damage, and a little charm.
+- **Heartstring** (13s). Ties a pink thread to the most dangerous enemy near her: it is drawn out of its pack towards her while charm pours into it, until it fights for the party. I: The thread holds 4s. II: It holds 6s. III: Once that enemy is won, the thread jumps to the next one.
+- **Sweetheart** (14s). Blows a kiss to the friend taking the most blows: whoever keeps hitting that friend falls for them, and can't bring itself to hit them any more. I: For 6s. II: For 8s, and the kiss heals 10%. III: Two friends.
+- **Heartbreak** (15s). Breaks every heart she has won at once. The charmed take damage (more the more they were charmed) and swoon; the enthralled come to their senses in a burst that hurts their own friends. I: They swoon for 1s. II: For 1.6s. III: Every broken heart heals the party a little.
+- **Trait: First Impression.** The first blow any enemy lands on her charms it a lot: it soon can't bring itself to hit her again.

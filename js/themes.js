@@ -188,10 +188,10 @@ export const THEMES = {
         hazards: [['fire', 3], ['oil', 0.8]], mood: { fog: 'rgba(48,12,6,', fogK: 0.5, tint: 'rgba(255,90,30,0.06)' },
         props: [['crack', 2], ['rubble', 1]] },
       // the forges: devils, dragonborn, fire spiders, hellhounds; the Pit Lord (tuned up: a fire whip, rifts that spit imps)
-      { name: 'The Forges', enemies: [['devil', 2.6], ['imp', 2], ['dragonborn', 1.8], ['spiderFire', 2], ['hellhound', 1.4], ['fireSlime', 0.8], ['spiritFire', 0.7]], mini: 'pitLord',
+      { name: 'The Forges', enemies: [['devil', 2.6], ['imp', 2], ['dragonborn', 1.8], ['spiderFire', 2], ['hellhound', 1.4], ['fireSlime', 0.8], ['spiritFire', 0.7], ['succubus', 1.2]], mini: 'pitLord', // (round 13: the Succubus)
         hazards: [['oil', 2], ['fire', 2], ['spikes', 1]], mood: { fog: 'rgba(60,24,4,', fogK: 0.58, tint: 'rgba(255,150,40,0.12)' },
         props: [['firepit', 1], ['crack', 1.5], ['rubble', 1.2]] },
-      { name: 'The Ash Throne', enemies: [['demon', 2.5], ['dragonborn', 2.4], ['devil', 1.8], ['hellhound', 1.6], ['spiderFire', 1.2], ['spiritFire', 1.1], ['cinderBat', 1.2], ['imp', 1]],
+      { name: 'The Ash Throne', enemies: [['demon', 2.5], ['dragonborn', 2.4], ['devil', 1.8], ['hellhound', 1.6], ['spiderFire', 1.2], ['spiritFire', 1.1], ['cinderBat', 1.2], ['imp', 1], ['succubus', 1.4]],
         hazards: [['fire', 2.5], ['spikes', 2]], mood: { fog: 'rgba(30,4,4,', fogK: 0.7, tint: 'rgba(200,30,20,0.18)' },
         props: [['bonepile', 1], ['skulls', 0.8], ['crack', 2]] },
     ],
