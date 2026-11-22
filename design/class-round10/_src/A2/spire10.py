@@ -1,5 +1,5 @@
 """Round 10, the art-round9 notes on the Gilded Spire:
-  the choir sprite   "Weird hair": spire9.choir_sprite(hair10=True), the picked cherub's hair;
+  the choir sprite   "Weird hair": spire9.choir_sprite(hair10=True), the round-4 cherub's hair;
   the fallen angel   "Meh. I think u could do better": drawn again on the picked angel's build (its two-layer wings);
   the golem          "First get down basic golems body. Make 3 variants. Then make gilded. Note I love the eye.": three
                      bodies, each with the eye (the diamond rune) where it was, and each one gilded;

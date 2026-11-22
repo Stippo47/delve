@@ -105,11 +105,11 @@ export const FOES = {
     ability: 'charge', abilCd: 9, res: { burn: 0.3 } },
 
   // ---- the Gilded Spire: the host above; cherubs shooting from the back, angels with spears, seraphs casting
-  cherub: { ...FOE, name: 'Cherub', art: ART('cherub'), headR: 46, r: 20, vr: 16, turn: 7, accel: 420, face: 7, mass: 0.6, hp: 24, speed: 66, role: 'ranged',
+  cherub: { ...FOE, name: 'Cherub', art: 'art/enemies/cherub.svg', headR: 40, r: 20, vr: 16, turn: 7, accel: 420, face: 7, mass: 0.6, hp: 24, speed: 66, role: 'ranged',
     range: 260, keep: 180, atkCd: 1.4, dmg: 4, temp: 0.6, commit: 0.5, xp: 6, coins: [1, 3], cost: 2, pack: [2, 3], attackAnim: 'draw', radiance: 12, res: { radiance: 0 } },
   angel: { ...FOE, name: 'Angel', art: ART('angel'), headR: 56, r: 31, vr: 23, hp: 80, speed: 60, role: 'melee', range: 40, atkCd: 1.3, windup: 0.25, dmg: 10, knock: 150, arc: 0.9,
     xp: 16, coins: [3, 7], cost: 5, attackAnim: 'thrust', ability: 'dash', abilCd: 4.5, radiance: 22, res: { radiance: 0 } },
-  seraph: { ...FOE, name: 'Seraph', art: ART('seraph'), headR: 56, r: 31, vr: 23, hp: 60, speed: 52, role: 'ranged', range: 280, keep: 200, atkCd: 1.5, dmg: 7,
+  seraph: { ...FOE, name: 'Seraph', art: 'art/enemies/seraph.svg', headR: 56, r: 31, vr: 23, hp: 60, speed: 52, role: 'ranged', range: 280, keep: 200, atkCd: 1.5, dmg: 7,
     proj: 'bolt', projColor: '#FFF1B0', xp: 16, coins: [3, 7], cost: 5, attackAnim: 'cast', radiance: 20, res: { radiance: 0 } },
 
   // ---- wardens (floors 1 and 2) and bosses (floor 3): powered-up stand-ins

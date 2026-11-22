@@ -193,8 +193,9 @@ def orc():
         S.comment = S.comment.replace("a big underbite jaw with two tusks", "a big underbite jaw with two tusks coming "
                                       "out of the mouth (round 7)")
     S.group("arm-r", (154, 110))
-    cleaver(S, 154, 142, 18)
-    gfist(S, 154, 138, 18, skin, w=24, h=26, plain=plain)
+    cy = 126 if ORC_R10 else 142   # round 10: the cleaver 16 units further back, so its whole blade is inside the box
+    cleaver(S, 154, cy, 18)
+    gfist(S, 154, cy - 4, 18, skin, w=24, h=26, plain=plain)
     S.group("body")
     bumps = []
     for i in range(13):

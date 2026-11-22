@@ -1,27 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
-<!-- GAME COPY (art round 9) of design/class-round9/enemies/foundry-crawler-plate.svg -->
-<!-- CHAIN CRAWLER, plate (round 9): one plated segment of the chain crawler seen from above (the chain of them follows its head, each its own hit circle): a rounded steel plate with a raised ridge across it and rivets, two little jointed legs out each side. Front = towards the head. Parts: #body only. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<!-- GAME COPY (art round 10) of design/class-round10/enemies/foundry-crawler-plate.svg -->
+<!-- CHAIN CRAWLER, a body plate (round 10): one plate of the centipede's body seen from above: a rounded steel plate a little longer than the step between plates, so each overlaps the next and they read as one body, a brass stud on its spine, a darker band along its back edge, and one pointed iron leg out at each side. No parts. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
 <defs>
 <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
-<path id="s1" d="M 55.5 81.8 C 53 79.9 34.6 72.8 30.6 74.5 C 26.6 76.3 21.7 94 21.2 96.9 C 20.8 99.8 25.4 100.9 26.8 99.1 C 28.2 97.3 30.4 82.5 33.4 81.5 C 36.4 80.4 49.9 90.2 52.5 90.2 C 55 90.3 58.1 83.6 55.5 81.8 Z"/>
-<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#636A75"/><stop offset="1" stop-color="#4D525C"/></linearGradient>
-<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#282B30" stop-opacity="0"/><stop offset="1" stop-color="#282B30" stop-opacity="0.42"/></linearGradient>
-<path id="s2" d="M 55.5 109.8 C 53 107.9 34.6 100.8 30.6 102.5 C 26.6 104.3 21.7 122 21.2 124.9 C 20.8 127.8 25.4 128.9 26.8 127.1 C 28.2 125.3 30.4 110.5 33.4 109.5 C 36.4 108.4 49.9 118.2 52.5 118.2 C 55 118.3 58.1 111.6 55.5 109.8 Z"/>
-<path id="s3" d="M 147.5 90.2 C 150.1 90.2 163.6 80.4 166.6 81.5 C 169.6 82.5 171.8 97.3 173.2 99.1 C 174.6 100.9 179.2 99.8 178.8 96.9 C 178.3 94 173.4 76.3 169.4 74.5 C 165.4 72.8 147 79.9 144.5 81.8 C 141.9 83.6 145 90.3 147.5 90.2 Z"/>
-<path id="s4" d="M 147.5 118.2 C 150.1 118.2 163.6 108.4 166.6 109.5 C 169.6 110.5 171.8 125.3 173.2 127.1 C 174.6 128.9 179.2 127.8 178.8 124.9 C 178.3 122 173.4 104.3 169.4 102.5 C 165.4 100.8 147 107.9 144.5 109.8 C 141.9 111.6 145 118.3 147.5 118.2 Z"/>
-<path id="s5" d="M 76 63 H 124 A 30 30 0 0 1 154 93 V 107 A 30 30 0 0 1 124 137 H 76 A 30 30 0 0 1 46 107 V 93 A 30 30 0 0 1 76 63 Z"/>
-<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#9AA1AB"/><stop offset="1" stop-color="#737D8C"/></linearGradient>
-<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3C4149" stop-opacity="0"/><stop offset="1" stop-color="#3C4149" stop-opacity="0.42"/></linearGradient>
-<clipPath id="c5"><use href="#s5"/></clipPath>
+<path id="s1" d="M 60.2 95.2 C 56.2 93.4 40.2 84.2 33.5 84.5 C 26.7 84.8 18.6 90.8 15.2 97.2 C 11.9 103.7 11.6 123.1 11.2 127.8 C 10.8 132.4 10.8 132 12.8 128.2 C 14.8 124.5 21.5 107.7 24.8 102.8 C 28 97.8 29.3 96.4 34.5 95.5 C 39.8 94.6 56 96.8 59.8 96.8 C 63.7 96.8 64.1 97 60.2 95.2 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#515661"/><stop offset="1" stop-color="#3F434C"/></linearGradient>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#212328" stop-opacity="0"/><stop offset="1" stop-color="#212328" stop-opacity="0.42"/></linearGradient>
+<path id="s2" d="M 140.2 96.8 C 144 96.8 160.2 94.6 165.5 95.5 C 170.7 96.4 172 97.8 175.2 102.8 C 178.5 107.7 185.2 124.5 187.2 128.2 C 189.2 132 189.2 132.4 188.8 127.8 C 188.4 123.1 188.1 103.7 184.8 97.2 C 181.4 90.8 173.3 84.8 166.5 84.5 C 159.8 84.2 143.8 93.4 139.8 95.2 C 135.9 97 136.3 96.8 140.2 96.8 Z"/>
+<path id="s3" d="M 82 57 H 118 A 36 36 0 0 1 154 93 V 107 A 36 36 0 0 1 118 143 H 82 A 36 36 0 0 1 46 107 V 93 A 36 36 0 0 1 82 57 Z"/>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#9A9FA9"/><stop offset="1" stop-color="#737B89"/></linearGradient>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3C4048" stop-opacity="0"/><stop offset="1" stop-color="#3C4048" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c3"><use href="#s3"/></clipPath>
+<path id="s4" d="M 90 108 A 10 10 0 1 0 110 108 A 10 10 0 1 0 90 108 Z"/>
+<clipPath id="u4"><use href="#s1"/><use href="#s2"/><use href="#s3"/></clipPath>
+<linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#DEAF59"/><stop offset="1" stop-color="#CE9324"/></linearGradient>
+<linearGradient id="g6" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6E4E11" stop-opacity="0"/><stop offset="1" stop-color="#6E4E11" stop-opacity="0.42"/></linearGradient>
 </defs>
 <g id="sprite" filter="url(#outline)">
 <g id="body">
 <use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/>
 <use href="#s2" fill="url(#g1)"/><use href="#s2" fill="url(#g2)"/>
-<use href="#s3" fill="url(#g1)"/><use href="#s3" fill="url(#g2)"/>
-<use href="#s4" fill="url(#g1)"/><use href="#s4" fill="url(#g2)"/>
-<use href="#s5" fill="url(#g3)"/><use href="#s5" fill="url(#g4)"/><g clip-path="url(#c5)"><path d="M 56 93 H 144 A 10 10 0 0 1 154 103 V 105 A 10 10 0 0 1 144 115 H 56 A 10 10 0 0 1 46 105 V 103 A 10 10 0 0 1 56 93 Z" fill="#5A606A" opacity="0.55"/><circle cx="60" cy="86" r="3.4" fill="#E4E8EE" opacity="0.85"/><circle cx="140" cy="86" r="3.4" fill="#E4E8EE" opacity="0.85"/><circle cx="60" cy="116" r="3.4" fill="#E4E8EE" opacity="0.85"/><circle cx="140" cy="116" r="3.4" fill="#E4E8EE" opacity="0.85"/><path d="M 64 80 A 16 7 0 1 0 96 80 A 16 7 0 1 0 64 80 Z" fill="#FFFFFF" opacity="0.3"/></g>
+<use href="#s3" fill="url(#g3)"/><use href="#s3" fill="url(#g4)"/><g clip-path="url(#c3)"><path d="M 40 50 L 160 50 L 160 72 Q 100 84 40 72 Z" fill="#5A606A" opacity="0.6"/><circle cx="62" cy="106" r="3.2" fill="#E4E8EE" opacity="0.85"/><circle cx="138" cy="106" r="3.2" fill="#E4E8EE" opacity="0.85"/><path d="M 62 92 A 14 6 0 1 0 90 92 A 14 6 0 1 0 62 92 Z" fill="#FFFFFF" opacity="0.25"/></g>
+<g clip-path="url(#u4)"><use href="#s4" transform="translate(0 2) " fill="#2B2230" opacity="0.3"/></g><use href="#s4" fill="url(#g5)"/><use href="#s4" fill="url(#g6)"/>
 </g>
 </g>
 </svg>

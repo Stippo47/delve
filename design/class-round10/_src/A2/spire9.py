@@ -133,7 +133,7 @@ def herald(fallen):
 
 # ================================================================== the choir sprite
 # round 10 (art-round9 deck: the Choir sprite, "Weird hair"; the Choir singer, "Flip book. Hair weird"): hair10 swaps the
-# lumpy cap with spiral squiggles for the picked cherub's hair (round 4's, the designer's pick): a cap of soft curls, each
+# lumpy cap with spiral squiggles for the round-4 cherub's hair: a cap of soft curls, each
 # bump one arc, with a parted fringe over the brow. Nothing else.
 def cherub_hair():
     pts = [(100 + math.cos(math.radians(160 + i * 24.4)) * 48, 90 + math.sin(math.radians(160 + i * 24.4)) * 42) for i in range(10)]

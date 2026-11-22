@@ -94,37 +94,34 @@ def jackal():
 
 # ================================================================== mummy
 def mummy():
-    LIN, DLIN, SHADE = "#D4CCB2", "#ACA288", "#857A62"
-    S = Sprite("MUMMY (round 10): the heroes' bust build wrapped head to fists in old grey-green linen: a head wound in "
-               "broad crossing bands with one dark slit across it where the eyes would be (nothing in it), a loose end "
-               "hanging by its cheek, a turquoise scarab on a gold collar; both arms held straight out in front, big "
-               "wrapped fists (arm-l, arm-r, they swing); a long strip of bandage flying back from one shoulder and a short one from the other (#back, "
-               "sway). " + LAYOUT)
-    def stripes(x0, x1, y0, y1, step, slope, col=SHADE, op=0.3, w=None):
-        """Alternate bands of a wrapping: every other band shaded."""
-        w = w or step
-        out = ""
-        y = y0
+    LIN, DLIN, SHADE = "#D8D0B6", "#B4AA90", "#857A62"
+    S = Sprite("MUMMY (round 10, second take: the first read as a table with legs): a wrapped person in the heroes' bust "
+               "build, drawn as the heroes are: shoulders in old linen under a broad gold and turquoise collar, a bandaged "
+               "head with one dark slit across it where the eyes would be (nothing in it), two wrapped fists in front where "
+               "a hero's are (arm-l, arm-r, they swing), and two long loose wrappings trailing back together from the back "
+               "of its head like a scarf's tails (#back, sway). " + LAYOUT)
+
+    def stripes(x0, x1, y0, y1, step, slope, op=0.3):
+        out, y = "", y0
         while y < y1:
-            out += f'<path d="M {x0} {f(y)} L {x1} {f(y + slope)} L {x1} {f(y + slope + w)} L {x0} {f(y + w)} Z" fill="{col}" opacity="{op}"/>'
+            out += f'<path d="M {x0} {f(y)} L {x1} {f(y + slope)} L {x1} {f(y + slope + step)} L {x0} {f(y + step)} Z" fill="{SHADE}" opacity="{op}"/>'
             y += step * 2
         return out
-    S.group("back", (100, 90), "trailing strips")
-    for pts in ([(150, 98), (170, 82), (166, 60), (184, 42), (178, 20)], [(52, 100), (32, 90), (30, 70), (20, 58)]):
-        S.shape(band(pts, 7), LIN, shadow=0, decor=stripes(20, 180, 4, 100, 10, 4, op=0.22))
+    S.group("back", (100, 76), "trailing wrappings")
+    for pts, w in (([(106, 72), (124, 54), (144, 44), (166, 44)], 8), ([(100, 66), (112, 44), (126, 26), (146, 14)], 7.5)):
+        S.shape(band(pts, w), LIN, shadow=0, decor=stripes(40, 160, 0, 90, 9, 5, 0.22))
     S.group("body")
-    S.shape(SHOULDERS, DLIN, decor=stripes(20, 180, 70, 150, 9, -10))
-    S.shape(blob([(60, 108), (100, 100), (140, 108), (134, 126), (100, 134), (66, 126)], 0.85), GOLD, shadow=3)
-    S.shape(blob([(138, 116), (150, 120), (154, 140), (148, 158), (140, 150), (138, 132)], 0.8), LIN, shadow=3)   # a loose end by the cheek
+    S.shape(SHOULDERS, DLIN, decor=stripes(20, 180, 66, 150, 9, -10, 0.32))
+    S.shape(blob([(36, 106), (58, 86), (100, 80), (142, 86), (164, 106), (152, 126), (100, 136), (48, 126)], 0.85), GOLD, shadow=3)
+    S.shape(blob([(48, 106), (66, 92), (100, 87), (134, 92), (152, 106), (142, 118), (100, 126), (58, 118)], 0.85), TURQ, shadow=0)
     S.shape(HEAD, LIN, shadow=5,
             decor=stripes(40, 160, 40, 92, 11, 8) + stripes(40, 160, 118, 160, 10, -7)
-                  + f'<path d="M 46 98 Q 100 90 154 98 L 154 112 Q 100 106 46 112 Z" fill="#2A262E"/>')
-    S.shape(ell(100, 148, 9.5, 7), TURQ, shadow=2, decor='<path d="M 100 141 L 100 155 M 92 148 L 108 148" stroke="#2A8A7E" stroke-width="2"/>')
-    for g, s in (("arm-l", -1), ("arm-r", 1)):
-        S.group(g, (100 + s * 54, 112), "wrapped arm")
-        x = 100 + s * 48
-        S.shape(rr(x, 138, 27, 46, 11), DLIN, shadow=3, decor=stripes(x - 20, x + 20, 112, 166, 7, s * 5, op=0.35))
-        S.shape(rr(x, 164, 31, 29, 11), LIN, shadow=3, decor=stripes(x - 20, x + 20, 150, 182, 6, s * 4, op=0.28))
+                  + '<path d="M 46 98 Q 100 90 154 98 L 154 112 Q 100 106 46 112 Z" fill="#2A262E"/>'
+                  + f'<path d="{ell(80, 66, 16, 8)}" fill="#FFFFFF" opacity="0.22"/>')
+    for g, s, pv in (("arm-l", -1, PL), ("arm-r", 1, PR)):
+        S.group(g, pv, "wrapped fist")
+        x = 100 + s * 50
+        S.shape(rr(x, 146, 25, 29, 9), LIN, T=f"rotate({-s * 6} {x} 146)", shadow=3, decor=stripes(x - 20, x + 20, 128, 164, 6, s * 4, 0.34))
     return save("enemies", "dunes-mummy", S)
 
 
