@@ -409,6 +409,16 @@ export function statsFor(id, nodes = {}) {
   }
   return out;
 }
+// A whole build by tier (round 13, the designer: "0 is no upgrades. 1 is all in first shell/ all abilities, 2 are all
+// upgrades on the 2nd abilities shell and so on"): every node of the web out to the Nth shell at full rank. Shell 1
+// holds the three abilities at tier I and the stats beside them, shell 2 their tier II, shell 3 everything.
+// The battle page and the Book both use this, so "tier 2" means one thing. Returns { nodeId: rank }.
+export const TIER_SHELL = [0, 200, 400, Infinity]; // a shell's outer edge, in the web's own units from its middle
+export function tierBuild(id, tier) {
+  const out = {}, R = TIER_SHELL[Math.max(0, Math.min(3, tier | 0))];
+  if (R > 0) for (const n of treeFor(id)) if (!n.free && Math.hypot(n.x, n.y) <= R) out[n.id] = n.max;
+  return out;
+}
 // The highest tier of an ability owned in a row (I, then II, then III).
 export function tierOf(nodes, abilityId) { let t = 0; for (let i = 1; i <= 3; i++) { if (nodes[`${abilityId}${i}`]) t = i; else break; } return t; }
 

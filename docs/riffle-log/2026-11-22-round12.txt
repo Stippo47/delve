@@ -1,0 +1,513 @@
+
+delve / art / art-round8: "Art round 8: notes, and real enemy art"
+  notes (Your round-7 notes): GO, picked: Ghost A, Ghost A, Troll A, Orc, Troll
+      item ghost-a (Ghost A): "Tail is still a bit weird. Try 3 types. "
+      item ghost-b (Ghost A): "Same thing "
+      item greenskin-orc (Orc): "Move tusks to the side… 
+While at it fixe hair"
+      item greenskin-troll (Troll): "Try different heads. Make them slightly smaller keep boulder same size. 
+Make version without arms. Just hands "
+  real (Real art for placeholders): GO, picked: The Alpha, Dire wolf, The Elder Ent, Ent, Wisp, Wolf
+      "Overall the bandits were all bad quality. Everything else not selected had 1 problem or another or was just overall bad quality or does the match style."
+      item bandit-chief (The Bandit Chief): "Meh. Could be done better "
+      item sewer-croc (Croc): "Fix axe"
+      item wild-alpha (The Alpha): "Show me wolves without paws. Change face scar "
+      item wild-boar (Thornback boar): "I could see it almost working. Don’t like it rn yet. Make variants. "
+      item wild-dire-wolf (Dire wolf): "Mane not big enough. Body also 10% bigger "
+      item wild-elder-ent (The Elder Ent): "Change face. 3 versions. 
+They should also be very big"
+      item wild-ent (Ent): "Face variants "
+      item wild-sproutling (Sproutling): "Don’t like."
+  DECK: done (2 of 2 answered)
+
+delve / art / art-round9: "Art round 9: the later dungeons"
+  frost (Frost Hollow): IDK
+      item frost-icicle-wraith (Icicle wraith): "Different look. Maybe more banshee looking "
+      item frost-spirit (Frost spirit): "That tail should be like that rat tail where it’s wiggly/ follows behind"
+      item frost-yeti (Yeti): "Meh. Not great. 
+Don’t like little balls on snow ball for 1. Face is a. Little weird. 
+That nose looks like an eye. Weird fangs/mouth"
+  ember (Ember Deep): GO, picked: Cinder bat, Fire spider, Fire spirit
+  spire (Gilded Spire): IDK
+      item spire-choir-sprite (Choir sprite): "Weird hair"
+      item spire-fallen-angel (Fallen angel): "Meh. I think u could do better"
+      item spire-gilded-golem (Gilded golem): "Looks good. I think you could do better. First get down basic golems body. Make 3 variants. Then make gilded. Note I love the eye."
+      item spire-golem (Golem): "Oh nvm. Yeah not quite. Like I said do variants "
+      item spire-herald-fallen (The Twin Heralds): "Meh"
+      item spire-herald-light (The Twin Heralds): "Meh. Could do better. More interesting design (and better quality)"
+  dunes (Sunken Dunes): IDK
+      item dunes-cobra (Cobra): "Meh"
+      item dunes-jackal (Jackal guard): "Good overall shape and colours, bad quality "
+      item dunes-mummy (Mummy): "No "
+  foundry (Clockwork Foundry): REDO, picked: Storm spirit, Gun turret
+      "Just a note for the bees. U are losing the style. Too many segments. 1 maybe 2 body segments. Not 3. 
+
+Cogs weren’t horrible but also weren’t very interesting/ could be done better"
+      item foundry-turret-gun (Gun turret): "Almost good. Turret part shoukd be in the wall more. Circle half way in. Could add more detail/ parts. "
+      item foundry-turret-steam (Steam turret): "Meh. Not horrible "
+  boss (Bosses): IDK
+      item boss-choir-singer (Choir singer): "Flip book. Hair weird "
+      item boss-gilded-seraph-fallen (The Gilded Seraph): "??? Wrong sprite?"
+      item boss-gilded-seraph (The Gilded Seraph): "Looks decent as a base. Could be improved upon. Up the quality. Make more interesting "
+      item boss-goblin-chieftain (The Goblin Chieftain): "Are those feathers in hair? 
+Fix teeth. 
+Better weapons and dual wielding. 
+More and better war paint. 1 clipped ear"
+  DECK: done (6 of 6 answered)
+
+delve / art / roster: "Who each unit is"
+  Their phone tidied this deck away into Archived, three days after Deck's done.
+
+delve / art / showcase3: "Showcase 3: the 37 new heroes"
+  oldguard (Old Guard): GO, picked: Greatsword (attack), Great Sweep, Rally, Pommel Strike
+      "Trait should be last stand. When last one in party gets a long unstoppable and haste buff, all abilities are reset. 
+Should have a parry ability. The next attack is blocked and deflected back if it was a projectile, melee just go back to target. When leveled up gets 2 charges. Maybe instead of pommel strike and the shackled ability goes to someone else. Maybe the executioner"
+      item oldguard-rallyCry (Rally): "Get a haste boost when leveled up. Effect remains for a little bit."
+      item oldguard-pommelStrike (Pommel Strike): "Kinda weak. Don’t think it would really do much but you can test it. Shackled status effect, target can’t do basic attacks, ability cooldowns are set back 50% "
+  dame (Dame): GO, picked: Leaf sword (attack), Riposte, Challenge, Disarm
+      item dame-attack (Leaf sword (attack)): "Should swipe the opposite way. "
+      item dame-challenge (Challenge): "Decent. Maybe it is a dash to nearest ally about to die, pushes them away and heals them slightly, the nearest enemy is taunted. No challenge status."
+  griffon (Griffon): GO, picked: Swoop, Stormhammer
+      item griffon-attack (Warhammer (attack)): "Flip his sprite. Should be an aoe slam on the ground like the berserker "
+      item griffon-swoop (Swoop): "Should spin after they land making a wind swirl. Applies a new status whirled (makes them take extra knock-back from all sources) and knocks them back. 
+Burst effect of whirled will have them boosted around randomly 3 times in a short duration. Applies a small aoe burst around area before the dash. They don’t have control of it. "
+      item griffon-hammerThrow (Stormhammer): "Should apply whirled. And have a small aoe burst on all targets hit (when upgraded). Lvl 3 will have it home between targets on the way out and back. 
+I don’t like the bones coming off of it. Should be white puffy clouds when hit 
+Hammer also needs a yellow line on it. And maybe doesnt show in their hand when thrown. "
+      item griffon-wingShield (Wing Guard): "Don’t like. 
+Anyone that hits him will take heavy knockback (even more when whirled ofc) when upgraded they will take damage if they hit an obstacle. Lvl 3 will have them burst when they hit an obstacle"
+  bulwark (Bulwark): GO, picked: Winged spear (attack)
+      "Don’t like trait. 
+
+Should be more of a hybrid dps tank"
+      item bulwark-attack (Winged spear (attack)): "Starts too close to them. Holding spear too close to tip. "
+  bearskin (Bearskin): GO, picked: Hibernate
+      item bearskin-attack (Studded club (attack)): "The bear paws of his outfit should be on his hands. Move with it. I didn’t like this club. "
+      item bearskin-maul (Maul): "Uses berserkers effect. Even shows the mace ball in the middle. "
+      item bearskin-hibernate (Hibernate): "Should give self sleeping status effect. Will heal when sleeping at any time, also needs to take more damage than they are healing to wake up. Leveled up will be immune to status effects "
+      item bearskin-bearRoar (Bear Roar): "I want a rapid claw attack. Dashes forwards Does a burst of like 6 swings (club goes away). At max level get 6 more, and does a bite at the end that applies bleed"
+  warhelm (Warhelm): GO, picked: Warhammer (attack), Thunder Blow, War Horn, Skull Splitter, (your pick, nothing tapped)
+      item warhelm-attack (Warhammer (attack)): "Needs to do a slam on the ground"
+      item warhelm-thunderBlow (Thunder Blow): "Needs its own slam visual. Don’t use Beserkerd for everything. Make a square aoe. Nothing in the middle like the spike ball. 
+
+Actually change that,  does a headbutt forwards dealing heavy knockback and stagger. "
+      item warhelm-warHorn (War Horn): "Change. Storm born. Hammer float around him rotating dashing to a target in an interval around him. While he punches with his fist alternating applying shock and knockback "
+      item warhelm-skullSplitter (Skull Splitter): "Should throw hammer forward then leap towards it doing a slam. Hammer shocks anything hit. "
+  rogueBandit (Bandit): REDO, none of them
+      "Don’t like trait. Overall don’t like hero"
+      item rogueBandit-attack (Cutlass (attack)): "Animation is weird. Doesnt even hit."
+  shade (Shade): GO, picked: Twin daggers (attack), Shadow Walk, Blackout, Death Mark, (your pick, nothing tapped)
+      "After 3 seconds of not attacking or taking damage becomes a shadow."
+      item shade-attack (Twin daggers (attack)): "Should not cross blades. 
+Attacks in 2 stabs at a time, quickly 1 after the other. "
+      item shade-shadowWalk (Shadow Walk): "Shadow should be a union. Not overlapping circles. 
+Should not return. 
+Level 3 should have them do 3 dashes in a row. "
+      item shade-blackout (Blackout): "She should become a shadow at lvl 3. Also aura should apply weakness debuff (which needs visual effects)"
+      item shade-deathMark (Death Mark): "Should create shadow clones that fight for them. Very fast and moves through entities and obstacles. Deal decent damage and have pretty low hp. They strafe around quickly "
+  haymaker (Haymaker): GO, picked: Pitchfork (attack), Toss
+      item haymaker-attack (Pitchfork (attack)): "Should show 3 stab slashes. Should dash forwards slightly too "
+      item haymaker-toss (Toss): "Should toss enemy backwards. Needs better animation "
+      item haymaker-forkCharge (Fork Charge): "Doesnt show it off. 
+
+Different idea. Summons a large hay bail underneath them, walks on it dealing high knockback and damage to those he walks over. Slow turn radius, but flips instantly when he hits a wall. It has its own go that decays overtime, burns easily. When it dies it burst into hay"
+  digger (Digger): GO, picked: Spade (attack), Dirt Fling, Burrow, Spade Bat, (your pick, nothing tapped)
+      "Rub some dirt in it. Every ability he uses applies a dirty effect to him.. Acts as a 1 time shield but attack speed is slow until it’s cleared. Basic attack doesnt apply it.
+Makes him immune to poison and fire until removed."
+      item digger-attack (Spade (attack)): "Slash also creates 3 dirt projectiles with short range. "
+      item digger-dirtFling (Dirt Fling): "Doesnt look great. Does it knock out? Is so knock out doesnt have a visual effect. 
+
+If done to ally removes some effects like burn and poison. Applies dirty to them "
+      item digger-burrow (Burrow): "Don’t like the dirt mound. Trail should also linger. It just vanishes. Overall improve visual. It will be used by more than just him. 
+Don’t like burst "
+      item digger-spadeBat (Spade Bat): "Burry. 
+Slams shovel down in an aoe in front of him. Anyone hit will be pushed into the ground for a short duration. They can’t move or be hit "
+  grandpa (Grandpa Sickle): GO, picked: Sickle (attack), Bread Toss
+      item grandpa-breadToss (Bread Toss): "Doesnt look the best overall "
+      item grandpa-harvest (Harvest): "Dashes to ally when he does it. "
+      item grandpa-oldTales (Old Tales): "What does it do? 
+Doesnt look the best "
+  alchemist (Alchemist): GO, picked: Unstable flask (attack), Acid Flask, Elixir, Bang Flask, (your pick, nothing tapped)
+      item alchemist-attack (Unstable flask (attack)): "Bottle in hand should change to what she will throw"
+      item alchemist-acidFlask (Acid Flask): "Bad. Is just the plague doctors.
+
+Throws 2 lingering pools of liquid in a spread. Has 6 possible ones they can choose. 
+Acid
+Cold
+Fire 
+Whirling 
+Shocking 
+Water 
+
+Make look better. "
+      item alchemist-elixir (Elixir): "Gives 1 of 3 buffs. 
+Haste/rage 
+Cleanse and heal
+Or swiftness and temporary shield. (Like 30 negate). What’s a good name for a protection status effect? 
+Make look better"
+      item alchemist-bangFlask (Bang Flask): "They drink 4 an unstable concoction becoming a monstrosity. Bigger fast, rapid melee attacks. Drains hp quickly when in form but are immune to damage and status effect, takes less knockback. Will leave form when they lose 33% of their max hp over 8 seconds. Attacks deal ANY status effect each hit at max level. 
+Also gets a dash when in this form."
+  shaman (Shaman): GO, picked: Spirit bolt (attack), Spirit Link
+      item shaman-attack (Spirit bolt (attack)): "Jumps to ally if they are near and heals them. Otherwise no heal "
+      item shaman-healTotem (Healing Totem): "Not good overall. Doesn’t even match the one on his back…
+Should throw to ally, In an arc. Has 100 hp. Any ally in its radius that takes damage will go to it instead. At lvl 3 cleanse status effects too. It has its own hit box. Damage directly to it is 50% "
+      item shaman-spiritLink (Spirit Link): "Show underneath. Give outline. 
+Can link to totem"
+      item shaman-rainDance (Rain Dance): "Don’t like. Doesnt look good. 
+
+Make ancestors call. Summons a light blue bear, eagle, wolf, and beaver.
+
+Eagle, follows ally healing them. 
+Wolf, works like current wolf
+Bear, melee. Negates all damage around him by 20%
+Beaver. Spins and shoots out 3 homing orbs. "
+  witch (Witch): GO, picked: Hex bolt (attack), Hex, Cursed Brew, Broom Ride, (your pick, nothing tapped)
+      item witch-attack (Hex bolt (attack)): "Shoots 3 hexs in quick succession. Have each one look like 1 of 5 possible symbols."
+      item witch-frogHex (Hex): "Does not look good at all. Interesting concept. Needs unique visual not the leach. 
+Frogs should hop around randomly. "
+      item witch-cursedBrew (Cursed Brew): "Doesnt look good. Pot should deal knockback and have a hit box and hp. "
+      item witch-broomRide (Broom Ride): "Should fly above everything for a bit. Circling around. Dropping hex bombs below it. 
+
+Doesnt look like they are ridding it. 
+
+Not targetable when flying "
+  warlock (Warlock): IDK
+      "Trait. Has a small imp always with him. Follows closely. If it dies it will respawn after a short cooldown."
+      item warlock-attack (Pact bolt (attack)): "Should return back to him. 
+Make look like the eye on his sceptre. 
+Make the imp shoot a smaller version."
+      item warlock-eldritchBeam (Eldritch Beam): "Doesnt look good. Should deal kb. At the end it should burst. No second ray. 
+
+Ray should come from imp."
+      item warlock-summonImp (Summon Imp): "Change to awaken. Imp enters his body turning him into a stronger version of himself. Becomes melee with a large demonic sword, can teleport and does a large melee swing that explodes on hit targets, can spit fireballs. Kills resets duration in form. "
+      item warlock-darkBargain (Dark Bargain): "Gives 20% of his max hp go to his imp. Gets a huge attack speed boost for both of them and attack does aoe. "
+  cultist (Cultist): GO, picked: Shadow bolt (attack)
+      "Don’t like trait. 
+Should heal when they trigger a blood burst"
+      item cultist-attack (Shadow bolt (attack)): "Does a dagger swipe when close, and shadow bolt when far. Dagger applies bleed. 
+
+If the bolt hits a bleeding target they instantly burst."
+      item cultist-bloodPact (Blood Pact): "Meh.
+
+Applies bleed to self to give everyone becomes enraged. "
+      item cultist-ritualCircle (Ritual Circle): "They can’t leave circle.  At max level.
+Applied bleed instead. "
+      item cultist-soulCandle (Soul Candle): "Sacrifice. Dashes at enemy on low hp. Instantly kills them and heals. At lvl 3 spins and applies bleed to everyone near."
+  monk (Monk): GO, picked: Flurry, Inner Peace
+      "For traits you should also show them off"
+      item monk-attack (Fists (attack)): "Different visual. High knockback"
+      item monk-flurry (Flurry): "Better visual. Looks too sharp. Moves forward while doing it."
+      item monk-palmStrike (Palm Strike): "Better visual. Should hit everyone in range. 
+Everyone is spun around to face away.  
+
+Adds New status effect that makes entities turn very slowly. Burst effect: makes them walk in the direction they are facing for a bit very quickly. Can’t attack. "
+      item monk-innerPeace (Inner Peace): "Put hands together. Heals himself. All projectiles are deflected back. And melee attack will have them launched backwards. 
+
+Lvl 3 heals with an aura around him and clears negative effects. 
+Lvl 2 is a longer duration (longer than what it is right now) "
+  seer (Seer): IDK
+      "Overall not too exciting/ interesting. Maybe an ability that blinds everyone around her. Or making it so enemies attacks can “accidentally” hit each other friendly fire on."
+      item seer-foresight (Foresight): "Better visual. "
+      item seer-premonition (Premonition): "Meh. "
+  chef (Chef): GO, picked: Grease Fire
+      item chef-attack (Frying pan (attack)): "Should be ranged. Throws random foods. All same effect. Hurts enemies, heals allies"
+      item chef-hotMeal (Hot Meal): "Doesnt look good. 
+Should throw food pick ups randomly around dungeon to be picked up. If at full hp will get over health. "
+      item chef-foodFight (Food Fight): "Stops any movement abilities from anyone hit and applies a slight slow. "
+  beekeeper (Beekeeper): REDO, none of them
+      "Overall don’t like. Visuals or abilities or animations."
+  quartermaster (Quartermaster): REDO, none of them
+      "Overall don’t like. Visuals or abilities.
+Giving out hp potions is very strong. 
+
+Needs to be more unique"
+  crossbowman (Crossbowman): GO, picked: Crank Up
+      "If enemies have armour as well his attacks ignore them."
+      item crossbowman-attack (Heavy bolt (attack)): "Needs better animation. 
+Remove tail from arrow "
+      item crossbowman-pavise (Pavise): "Better visual. Doesnt look like he’s shooting through it. It has its own hp. At lvl 3 he places 3 in a row slight titles to surround him. 
+Allies can attack through it. Enemies can’t"
+      item crossbowman-pinBolt (Pinning Bolt): "Heavy bolt, hits an enemy, then makes them fly backwards into a wall stunning them in place for a bit. Does heavy damage. Enemy being flung does heavy kb to anyone it hits as they fly "
+      item crossbowman-crankUp (Crank Up): "Bomb at the end. Not fire themed. Staggering. Better visual "
+  falconer (Falconer): IDK
+      "Different trait."
+      item falconer-attack (Throwing knife (attack)): "Better visual "
+      item falconer-looseFalcon (Loose the Falcon): "Doesnt look good. Falcon should leave hand. 
+Should show a crosshair on target “tracked” stops them from going invisible/un targetable, underground. All attacks do additional fixed damage to target"
+      item falconer-keenEye (Keen Eye): "Don’t like eye."
+      item falconer-flock (Call the Flock): "Not good. 
+Should become a flock of birds for a bit. Birds don’t look good"
+  grenadier (Grenadier): GO, picked: Bomb (attack), Big Bomb, Sticky Bomb, Blast Off
+      "Needs different trait. That’s just what his bombs do."
+      item grenadier-attack (Bomb (attack)): "Not fire themed. Stagger. Looks good. Make sure shadow style matches "
+      item grenadier-bigBomb (Big Bomb): "Secondary bombs don’t look good. Big bomb should be an entity with a small health pool. Explodes if it is broken or after 2 seconds of landing "
+      item grenadier-stickyBomb (Sticky Bomb): "Doesnt look very sticky "
+      item grenadier-blastOff (Blast Off): "Explosion effect should happen underneath him "
+  harpooner (Harpooner): GO, picked: Harpoon (attack), Reel In, Drop Anchor
+      item harpooner-attack (Harpoon (attack)): "Rope needs an outline. Render underneath him. 
+Target pulled forwards a bit and then it returns.  Harpoon should look like the one he is holding"
+      item harpooner-reelIn (Reel In): "Make harpoon render stuck in them. 
+Rope underneath "
+      item harpooner-rogueWave (Rogue Wave): "Give better visual. 
+Closer targets are launched further and take more damage. 
+They get hit before the wave even reaches them "
+      item harpooner-anchorDrop (Drop Anchor): "Make anchor look better. 
+Have it jump from him to targets position. Make it look bigger. 
+Improve visuals "
+  huntress (Javelin Huntress): GO, picked: Javelin (attack), Bound
+      item huntress-attack (Javelin (attack)): "Make look better. Throw particles. 
+Every third attack throws a razer javalin applying bleed"
+      item huntress-runningThrow (Running Throw): "Description doesn’t match what I see. 
+Give a spear lunge attack. Pierce through targets. 2 charges at lvl 3"
+      item huntress-bound (Bound): "Make javalin bigger and hit harder "
+      item huntress-prey (Prey): "Don’t like "
+  marksman (Marksman): GO, picked: Musket (attack), Aimed Shot, Bayonet, Ricochet
+      "Don’t like trait. 
+Gets additional damage when target is near max range. Should have very long range."
+      item marksman-attack (Musket (attack)): "More impact. "
+      item marksman-aimedShot (Aimed Shot): "Applied target effect. Shows crosshair on them. Movement abilities are limited and they take additional damage. Bullets pierce through targeted entities "
+      item marksman-bayonet (Bayonet): "Improve "
+      item marksman-ricochet (Ricochet): "Only bounces between targets within already 75 degrees of last target. Can’t turn 180 degrees. 
+Lvl 3 makes it so it does more damage to each consecutive target. "
+  ninja (Ninja): GO, picked: Caltrops
+      item ninja-attack (Shuriken (attack)): "Animations is off. Flickers. Should throw 1 then 2 at a time, then 3 at a time on repeat "
+      item ninja-shurikenFan (Shuriken Fan): "Not good"
+      item ninja-substitution (Substitution): "… doesnt show this happening. Good idea though "
+      item ninja-caltrops (Caltrops): "Doesnt look good. Should be shown spreading around her. Each one does slight damage and stagger"
+  pirate (Pirate): GO, picked: Cutlass (attack), Point Blank, Grog, Broadside
+      "Trait: Enemies have a chance to drop more coins when he is in the party"
+      item pirate-attack (Cutlass (attack)): "Swing other way"
+      item pirate-pointBlank (Point Blank): "Doesnt look great but yea. Should apply targeted "
+      item pirate-grog (Grog): "Not good implementation. Lvl 3 throws 1 to ally "
+      item pirate-broadside (Broadside): "They should come in from an arc off the screen"
+  slinger (Slinger): GO, picked: Sling (attack), Stunning Stone
+      item slinger-attack (Sling (attack)): "Bone particles bad. 
+Has a 25% chance to throw a large stone which staggers. 
+
+Up close he hits with cane "
+      item slinger-stunStone (Stunning Stone): "Not good. Don’t like how it is done. "
+      item slinger-ramCharge (Ram): "Concept good. Execution poor"
+      item slinger-gravel (Gravel): "Not good. 
+Needs ability that applied sleep"
+  trapper (Trapper): GO, picked: Jaw Trap
+      item trapper-attack (Short rifle (attack)): "I want them to have a shotgun. Should hold with 2 hands. Trap sits on their back hip. Behind shoulder. Short range. Many pellets (each one is a projectile) "
+      item trapper-jawTrap (Jaw Trap): "That doesnt look like what he is holding. Applies trapped. Target can’t turn or move but can’t use abilities and attack(straight) 
+A trap shouldn’t steal from another trap that is active."
+      item trapper-snareNet (Weighted Net): "Don’t like at all "
+      item trapper-tripwire (Tripwire): "Don’t like. 
+
+Need ability that turns them into a bush. Enemies quickly lose aggro on him. Used to get away. Healing slightly (rejuvenation) "
+  gladiator (Gladiator): GO, picked: Gladius (attack), Shield Rush
+      "Trait should make him stronger 1 on 1"
+      item gladiator-attack (Gladius (attack)): "Does a slash, stab on repeat "
+      item gladiator-netThrow (Net Throw): "Nope. 
+Shoukd throw a large piercing spear. Ares spear"
+      item gladiator-showboat (Showboat): "Should make a ring that pushes out allies and any enemy more than 1. Projectiles are blocked. 1 on 1 battle "
+      item gladiator-shieldRush (Shield Rush): "Make very long. Grab first target hit and drags them along with him. Slams at end of dash that staggers "
+  jester (Jester): GO, picked: Juggling Act
+      "25% of simple melee hits that should hit him flips target around instead"
+      item jester-attack (Marotte (attack)): "Could be more interesting. Maybe can apply random status effect? "
+      item jester-mock (Mock): "Swap places with ally boosting them. Or with enemy confusing them. "
+      item jester-befuddle (Befuddle): "Instead of taking damage will teleport behind target and kick them forwards confusing them. "
+      item jester-juggle (Juggling Act): "Different particles effects. Should pierce and bounce a few times. Not from target to target. Just off walls. Lvl 3 will teleport hit target to next wall the ball hits"
+  samurai (Samurai): GO, picked: Katana (attack), Iaido
+      "Does percentage damage + a base."
+      item samurai-attack (Katana (attack)): "Should dash forwards. Should hold with 2 hands in front of him"
+      item samurai-iaido (Iaido): "Done poorly. Instant teleport in a straight line towards enemies. Targets are staggered for a split second then take 10% of their max hp in damage. 
+Lvl 3 has them do it 2 times. 
+Make look good. 
+Charge up before dash/teleport "
+      item samurai-focus (Focus): "Don’t like.
+
+When focusing will deflect 1 melee or ranged attack every 1 second. After a successful block next attack will deal 40% more damage. "
+      item samurai-crescentCut (Crescent Cut): "Will dash towards target and deal a heavy slash to them 10% of max hp + 20 damage. lvl 3 If it kills it will trigger again. "
+  valkyrie (Valkyrie): GO, picked: Spear (attack), Valkyrie's Call
+      "Heals themselves and ally passively when near ally. Has a glowing aura.
+
+Is more of a support."
+      item valkyrie-attack (Spear (attack)): "Hold spear better "
+      item valkyrie-valkyrieCall (Valkyrie's Call): "Flies to recently fallen ally, revives them and knocks all targets back and applies radiance. 
+Lvl 3 has her grab ally and flies them both to another safer position. "
+      item valkyrie-spearThrow (Spear of the Sky): "Dash from current position all the way to most hurt allies position hitting anyone in the way. Cleanses ally and buffs them. "
+      item valkyrie-skyDive (Sky Dive): "Flies in air for a moment then lands by ally. Applied radiance. "
+  engineer (Engineer): GO, picked: Wrench (attack), Deploy Turret
+      "Trait doesnt make sense. 
+
+Overclock. If all abilities are used up 1 random ability will come back faster. Boosted rate"
+      item engineer-attack (Wrench (attack)): "Hits she. Close. Throw bouncing cogs from afar"
+      item engineer-deployTurret (Deploy Turret): "Make summoning better. Should throw them into their spot. 
+Turrets should shoot in rapid bursts of 5. Make barrel swap between showing 2 and 1 (with 2 dark barrels below) to look like it’s spinning. They should turn slowly. 
+Should summon them in random positions."
+      item engineer-tinker (Tinker): "Nope. 
+Makes 1 of 4 special towers 
+Spawns a torcher. Tanky turret with a fire laser on the front of it. Turns very slowly. Tanky from the front, very weak from behind.
+A Tesla. (Zaps with chain lighting) 
+Snow ball mortar. 
+Or a medbay. Spawns healing wobbly drones that home in on allies and heal them. "
+      item engineer-shockMine (Shock Mine): "Spawn 4 small wind up drones that walk towards target and go pop, shocking a bit. 
+He throws them in random directions around himself. Are slow. "
+  werewolf (Werewolf): GO, picked: Turn
+      "When they die in werewolf form they come back as a human at 10% hp everytime."
+      item werewolf-turnWolf (Turn): "Make 15% bigger. 
+
+Can’t heal when in this form. "
+      item werewolf-frenzy (Frenzy): "Each successful hit comes out faster than the last. As ware wolf. As human each hit heals more the lower his hp. Is always active. "
+      item werewolf-pounce (Pounce): "As human does a forwards dash with a cleave at the end. 
+As werewolf does a leap and gives self haste."
+  Deck notes: "Make new hero. Mob. Is 4 peasants. Is the collective of all 4. Each is like 30% the strength of 1 normal hero. 
+Torch, pitchfork, axe, and dagger. 
+
+They are strongly attracted to each other. All melee. They share 1 health pool. 
+
+
+Clock work hero. Influence time. 
+
+Air mage. Whirled effect 
+
+Warden (uses a lot or shackles and restraints. Nullification themed) 
+
+Telekinetic. 
+
+Earth mage (earth quakes, chains of spikes from the ground, spawn stone walls.)"
+  DECK: done (37 of 37 answered)
+
+delve / art / showcase4: "Showcase 4: your showcase 2 notes"
+  shockwave (Shockwave: pick one): REDO, none of them
+  wolfbite (Wolf bite: pick one): REDO, none of them
+  archer (Archer): IDK
+      item archer-frostArrow (Frost Arrow): "Doesnt charge back bow. 
+No snow particles on the trail or on explosion"
+      item archer-roll (Roll): "They should slide out. Archer also needs to roll… spin. 
+Overall meh quality "
+  berserker (Berserker): REDO, none of them
+      item berserker-attack (Flail (attack)): "Don’t show spike ball on the ground. "
+      item berserker-whirl (Whirl): "U changed more than what I asked. 
+Shoukd also deal some kb "
+  granny (Granny Reaper): REDO, none of them
+  storm (Storm Mage): GO, picked: Zap (attack), Chain Lightning, Zeus Bolt, tier I, Zeus Bolt, tier III
+      item storm-chainLightning (Chain Lightning): "Each arm bouncing off shoukd have a merged sprite with main lightning bold. Also no line particle effects "
+      item storm-stormCloud-tier1 (Zeus Bolt, tier I): "Shoukd deal high kb in direction of travel.
+Also probably a bit more damage "
+  cleric (Cleric): GO, picked: Mending Ray, Sanctuary
+      item cleric-attack (Light orb (attack)): "No. Doesnt look right. Should spawn in 1 point with like a 45 degree angle offset from each other. Also on collision with ally they stop. "
+      item cleric-sanctuary (Sanctuary): "Could look a bit better "
+  bard (Bard): GO, picked: Sour note (attack), Lullaby
+  necromancer (Necromancer): GO, picked: Raise Dead, Life Drain
+      item necromancer-lifeDrain (Life Drain): "Good except little tendrils shoukd wait for the main one to make contact "
+      item necromancer-boneSpear (Bone Spear): "Still not it. Make 3 variations."
+  singles (One fix each): GO, picked: Tower: Hold the Line, Wildmane: Cleave, Frost Mage: Ice Shard, Plague Doctor: Poison cluster (attac
+      item tower-holdTheLine (Tower: Hold the Line): "The v should remain over them. "
+      item wildmane-cleave (Wildmane: Cleave): "Slash is too far ahead from sword "
+      item frost-iceShard (Frost Mage: Ice Shard): "Should have a snow particle trail "
+      item druid-entangle (Druid: Entangle): "Nope. I said it looked better but remember originally i didnt like it. That means try again but maybe stay closer to this style."
+  others (New heroes and bosses): IDK
+      item falconer-looseFalcon (Loose the Falcon): "Make the falcon that flies look like the one he was holding… "
+      item griffon-wingShield (Wing Guard): "U can’t even see the wings and they are too sharp for what I can see. Should look similar to the ones on his sprite. But bigger and maybe more segments "
+      item boss-chieftain-spin (Chieftain's spin): "The radiant glow is over his sprite. "
+      item boss-greatEngine-spin (Great Engine's spin): "Does not look good at all "
+  DECK: done (11 of 11 answered)
+
+delve / runs / stage2b-report: "Stage 2b: your map notes"
+  Their phone tidied this deck away into Archived, three days after Deck's done.
+
+delve / statuses / statuses: "Status effects"
+  Their phone tidied this deck away into Archived, three days after Deck's done.
+
+delve / runs / v11-battle: "0.11.0: battle mode"
+  battle (Battle mode): GOOD on the card. Its parts: 3 good, 3 decent, 1 problem
+      part ring (The ring): GOOD
+      part setup (Two sides): DECENT, "Ux not terrible great"
+      part picker (Who you can pick): GOOD, "Add dev unlock. "
+      part ranks (Elites and majors): PROBLEM, "2 major slimes and 1 normal slime and 3 elites? How to do? "
+      part fight (The fight): GOOD
+      part result (The result): DECENT, "Don’t like this screen layout "
+      part ground (The ground): DECENT, "Bigger arenas "
+  battle-heroes (Battle: which heroes?): GO
+  battle-strength (Battle: how strong?): GO
+      "Both. Toggles scaled stats on and off."
+  DECK: done (3 of 3 answered)
+
+delve / runs / v12-bosses: "0.12.0: a boss for every dungeon"
+  chieftain (The Goblin Chieftain): DECENT
+      "Nothing read horribly but the art/ visuals arent good. All of the abilities seem kinda samey. 
+
+As for the time. Make it last like 2 minutes. Increase his damage but lose hp. Similar ttk"
+  ooze (The Great Ooze): DECENT
+      "Shadow too big. Overall doesnt look very good. 
+I do not like the tentacles.
+Yeah too easy. Don’t like the ability pool quality"
+  queen (The Winter Queen): IDK
+      "Don’t like all of the abilities. All seem very similar. U can keep her just improve quality worthy of a boss. 
+Clones shoukd also look different"
+  cinder (Cinder, the Old Drake): PROBLEM
+      "Everything is off. The art. The attacks visuals. How it is stuck in 1 spot. And so on"
+  seraph (The Gilded Seraph): IDK
+      "I want one of those biblically accurate angels. 
+
+1 of it’s abilities shoukd have horns. 
+4 chains from the corner of arena shoot out and if they hit something they drag them towards that corner. 
+
+The quality of this boss that was made was poor"
+  wurm (The Sand Wurm): PROBLEM
+      "Just no. Bad not even going to comment."
+  engine (The Great Engine): PROBLEM
+      "Redo from scratch. Also the should have arm segment between head and hands. Look at photos if you have to"
+  dungeons (Two new dungeons): DECENT on the card. Its parts: 4 decent, 1 problem
+      part frost (Frost Hollow): DECENT, "Many problems but biggest one was how the yeti moved with the snowball. The ball is its own entity. Shoukd not move like it’s nothing "
+      part ember (Ember Deep): DECENT
+      part spire (Gilded Spire): DECENT
+      part dunes (Sunken Dunes): PROBLEM, "Wth is that snake enemy. "
+      part foundry (Clockwork Foundry): DECENT
+  DECK: done (8 of 8 answered)
+
+delve / runs / v12-report: "0.12.0: balance, armour, poison"
+  balance (The balance pass): GOOD on the card. Its parts: 1 words only, 5 good
+      part roles (Roles): no mark, "Wdym than written? As in you could only know if u read the code or are u scaling the stats rn? "
+      part paladin (The Paladin): GOOD
+      part archer (The Archer): GOOD
+      part cooldowns (Cooldowns): GOOD, "Go through and make sure every ability at lvl 1 and lvl 3 are balanced. Everything should be useful. Somethings can’t be tested with base stats like evasion stuff. But I could maybe test based off turning a skill on and off to see its impact? 
+Damage Abilities should do similar damage as the main weapon or better on average. Ofc abilities have more utility so balance it around that. "
+      part outliers (Single heroes): GOOD
+      part crashes (Crashes found): GOOD
+  armour (Armour): IDK
+      "Idk. A combination of the 2. % and fixed?"
+  poison (Poison's burst: Sickened): IDK
+      "Poison shoukd drop lower after it burst is over"
+  camp (The camp's lag): GOOD
+  wither (Rooms that drag on): WORKSHOP
+  DECK: done (5 of 5 answered)
+
+delve / runs / v13-convoy: "0.13.0: the wagon (convoy mode)"
+  convoy (The wagon: a try): DECENT on the card. Its parts: 3 decent, 1 words only, 1 good
+      "Bigger “arena by like 4x in width 
+
+Bigger wagon"
+      part camp (At the camp): DECENT
+      part road (The road): DECENT, "Enemies are not coming from off the screen and from under the trees
+
+Art needs overhaul. Mostly trees/ tree lining "
+      part gold (Gold on the road): no mark, "No switch. Just make them smart enough to go get gold that is near them. Or far away when there is nothing else to do. 
+Also in general make it so heroes don’t huddle up when there is nothing enemy on screen. Including in dungeons. "
+      part roadside (Roadside camps): GOOD
+      part end (The end of the road): DECENT
+  stance (Wagon: Guard or Gather): WORKSHOP
+      "There will be heroes with the gathering trait that will prioritize collecting rather than fighting. Like the hero with the big backpack. Maybe pirate"
+  biomes (Wagon: one road or many): GO
+  roadsidecamp (Wagon: the roadside camp): GO
+      "Only from gold earned in the trip. Not from main “bank”"
+  downed (Wagon: downed heroes): WORKSHOP
+      "They will be revivable until they fall off the screen then they will appear at the next camp. Makes it so heroes with revival abilities arent useless"
+  DECK: done (5 of 5 answered)
+
+delve / runs / v14-balance: "0.14.0: the whole game can be beaten"
+  curve (The campaign curve): GOOD on the card. Its parts: 4 good
+      "We need to make a way so that newly unlocked heroes don’t fall behind when in later dungeons. Open for suggestions"
+      part late (The late dungeons): GOOD
+      part bosses (Bosses): GOOD
+      part weak (Weak heroes): GOOD
+      part roles (Roles held): GOOD, "Need to seperate damage taken vs damage blocked (deflections, shields, damage that didn't get through)
+
+U can have tank heroes that are more hp based (tanking hits) or protection/ shield based (negating hits) "
+  healers (Healers still carry): GO, picked: Add enemies that punish or block healing
+      "That’s a good sign that some sort of healer is required for a balanced party. Would be a bad sign if 3-4 healers were better.  Still add the healing punishing. Heal negation, enemies that target healers, etc"
+  DECK: done (2 of 2 answered)

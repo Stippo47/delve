@@ -65,9 +65,12 @@ export function makeMap(api) {
     for (const b of built.bands) {
       if (b.y1 < lo - 200 || b.y0 > hi + 200) continue;
       const base = mix(b.c.floor, '#0E1120', 0.55), deep = mix(b.c.rock, '#0E1120', 0.35);
-      const top = sy(b.y1 + 60), bot = sy(b.y0 - 60);
+      // (0.14.1: each biome's ground runs E past its edges and fades over 2E, so neighbours cross-fade into each
+      // other; they used to fade out to the dark base, which left a dark stripe across the trail between biomes)
+      const E = 130, top = sy(b.y1 + E), bot = sy(b.y0 - E), f = Math.min(0.49, 2 * E / Math.max(1, bot - top));
       const gr = g.createLinearGradient(0, bot, 0, top);
-      gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(0.12, base); gr.addColorStop(0.88, base); gr.addColorStop(1, 'rgba(0,0,0,0)');
+      const clear = base.replace('rgb(', 'rgba(').replace(')', ',0)');
+      gr.addColorStop(0, clear); gr.addColorStop(f, base); gr.addColorStop(1 - f, base); gr.addColorStop(1, clear);
       g.fillStyle = gr; g.fillRect(0, top, W, bot - top);
       forest(g, b.y0 - 20, b.y1 + 20, deep, mix(b.c.wall, '#0E1120', 0.25), b.di * 31 + 5, lo, hi, b.c.accent);
     }
@@ -80,9 +83,19 @@ export function makeMap(api) {
     g.strokeStyle = '#5A4A3C'; g.lineWidth = 13; trail(g, lo, hi); g.stroke();
     g.strokeStyle = 'rgba(242,232,210,0.12)'; g.lineWidth = 2; g.setLineDash([3, 9]); trail(g, lo, hi); g.stroke(); g.setLineDash([]);
     // locked biomes greyed out, with what opens them
-    for (const b of built.bands) {
-      if (b.y1 < lo - 200 || b.y0 > hi + 200) continue;
-      if (!b.open) { const top = sy(b.y1), bot = sy(b.y0); g.fillStyle = 'rgba(14,17,32,0.55)'; g.fillRect(0, top, W, bot - top); }
+    // (0.14.1: one veil over everything from the first locked biome up, fading in over its edge. It was a flat
+    // rectangle per biome, which cut straight across the trail: "Fix the delve ui. Has a harsh cut.")
+    {
+      const locked = built.bands.filter((b) => !b.open);
+      if (locked.length) {
+        const edge = sy(Math.min(...locked.map((b) => b.y0))), fade = 110; // the veil's lower edge on screen
+        if (edge + fade > 0) {
+          const y1 = Math.min(H, edge + fade);
+          const vg = g.createLinearGradient(0, edge - fade, 0, edge + fade);
+          vg.addColorStop(0, 'rgba(14,17,32,0.55)'); vg.addColorStop(1, 'rgba(14,17,32,0)');
+          g.fillStyle = vg; g.fillRect(0, 0, W, y1);
+        }
+      }
     }
     for (const n of ns) { if (n.wy < lo || n.wy > hi) continue; node(g, n, time); }
     for (const b of built.bands) if (b.y0 + HEAD > lo && b.y0 < hi + 40) banner(g, b);
