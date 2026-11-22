@@ -38,7 +38,7 @@ def boar(v):
         left = [(100 - (15 if i % 2 else 9), 30 + i * 8) for i in range(13)]
         right = [(100 + (9 if i % 2 else 15), 30 + i * 8) for i in range(13)]
         S.shape(blob([(100, 22)] + right + [(100, 132)] + left[::-1], 0.5), DHIDE, shadow=3)
-        for y, k in ((48, 0.9), (80, 1.05), (112, 0.95)):
+        for y, k in ((42, 0.9), (68, 1.05), (94, 0.95)):
             T = f"translate(100 {y}) scale({k})"
             S.shape(blob([(-9, 8), (0, 12), (9, 8), (5, -8), (0, -24), (-5, -8)], 0.7), BONE, T=T, shadow=3,
                     decor='<path d="M 0 12 L 10 8 L 6 -8 L 0 -24 Z" fill="#B8A67E" opacity="0.6"/>')
