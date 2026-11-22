@@ -53,6 +53,7 @@ function room(W, H) {
   const w = makeWorld(W, H);
   w.doors = []; w.cleared = true; w.cells = null; w.walls = []; buildGrid(w);
   w.camAt = { x: W / 2, y: H / 2 }; // the camera stays put (render.js layout)
+  w.doorIn = { x: 0, y: -4000 }; // no doorway drawn: a practice yard, not a room on the way
   w.bookPreview = true;
   return w;
 }
@@ -508,7 +509,8 @@ function friendFor(k) {
   if (!groupsCache) groupsCache = foeGroups();
   const g = groupsCache.find((x) => x.kinds.includes(k)), d = DEFS[k];
   const pool = (g ? g.kinds : []).filter((o) => o !== k && DEFS[o] && DEFS[o].dmg > 0 && !DEFS[o].boss && !DEFS[o].part && (DEFS[o].atkCd || 0) < 99);
-  return pool.find((o) => !!DEFS[o].construct === !!d.construct) || pool[0] || 'goblin';
+  const mid = (o) => DEFS[o].r >= 26 && DEFS[o].r <= 44; // big enough to see beside it, not a giant
+  return pool.find((o) => mid(o) && !!DEFS[o].construct === !!d.construct) || pool.find(mid) || pool[0] || 'goblin';
 }
 export function foeGroups() {
   const R = battleRoster({ cheat: true, heroes: {} }), seen = new Set(), groups = [];
