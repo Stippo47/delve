@@ -14,10 +14,10 @@ export const SW = {
   seg: [43, 43, 41, 39, 37, 35, 33, 30, 27, 24, 20], space: 0.66, share: 0.5,
   under: { speed: 420, min: 0.8, max: 2.0 },
   breach: { r: 120, tell: 1.15, dmg: 113, knock: 400, stagger: 30, len: [300, 400], speed: 440, height: 96, landR: 90, landDmg: 68 },
-  root: { dur: 8.5, reach: 170, height: 44, turn: 1.5, comp: 0.74 },
+  root: { dur: 9.5, reach: 170, height: 44, turn: 1.5, comp: 0.74 },
   lunge: { len: 380, hw: 46, tell: 0.8, dmg: 97, knock: 320, stuck: 0.7, stuckTaken: 1.45, cd: [2.1, 2.7] },
   inhale: { tell: 0.8, dur: 2.7, pull: 74, range: 640, r: 150, dmg: 135, knock: 420, at: 0.42 },
-  pit: { r: 60, t: 10 }, brood: { n: 1, cap: 1, hpMul: 0.3 }, // round 14 (lane L): 2 at a time to 5 at full health -> 1 at a time at 30%: see BOSS_ADDS in dungeon.js
+  pit: { r: 60, t: 10 }, brood: { n: 1, cap: 1, hpMul: 0.3, dmgMul: 0.4 }, // round 14 (lane L): 2 at a time to 5 at full health -> 1 at a time at 30%: see BOSS_ADDS in dungeon.js
   coil: { r0: 150, r1: 345, mid: 248, tell: 2.1, dmg: 116, knock: 380, arc: 3.9, speed: 720, height: 84 },
   roar: { r: 250, tell: 1.0, dmg: 19, knock: 360, dur: 1.6 },
   chain: [2, 2, 3], // breaches in a row before it rears, by phase
@@ -257,7 +257,7 @@ function brood(w, u, k, h) {
   const mine = w.units.filter((o) => o.calledBy === u && o.kind === 'scarab' && alive(o)).length;
   for (let i = 0; i < SW.brood.n && mine + i < SW.brood.cap && crowd(w, u.team) < 24; i++) {
     const a = rand() * TAU, s = spawn(w, 'scarab', h.x + Math.cos(a) * 24, h.y + Math.sin(a) * 24, { mult: w.mult || 1, team: u.team, hpMul: SW.brood.hpMul });
-    s.aggro = true; s.minion = true; s.calledBy = u; s.court = true; s.facing = a; puff(w, s.x, s.y, SAND, 6, 80, 5, 0.4);
+    s.aggro = true; s.minion = true; s.calledBy = u; s.court = true; s.dmgMul *= SW.brood.dmgMul; s.facing = a; puff(w, s.x, s.y, SAND, 6, 80, 5, 0.4);
   }
 }
 function death(w, u) {

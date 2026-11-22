@@ -42,6 +42,7 @@ export const GUARD = 430;        // a foe this near the wagon is the guards' bus
 export const VIEW = 620;         // how far a hero on the road looks for something to fight ("maybe lower view distance for party members")
 export const LEASH = 640;        // nobody goes further from the wagon than this, whatever they're after
 const SAFE = 700;                // nothing this near the wagon (or the hero): free to go for gold further off
+const HUNT_AFTER = 6;            // seconds stopped at a gate with foes still near before the guards leave their sides to hunt them
 const REACH = 340;               // how far from itself a hero leaves its side for loose gold ("close by"; inside its side: anywhere within the leash)
 const GATHER_REACH = 1200;      // gatherers (the hero's data: gatherer: true) go this far from the wagon, and go even mid-fight
 export const FLING = 2;          // coins burst this much further from a fallen foe than in a dungeon
@@ -283,11 +284,11 @@ export function updateConvoy(run, dt) {
   if (run.calm > 0) run.calm -= dt; // (tools: a quiet spell)
   if (run.chief && !run.chiefSeen && dist(wg.x, wg.y, run.chief.x, run.chief.y) < 1000) { run.chiefSeen = true; run.chief.aggro = true; for (const e of foes) e.aggro = true; }
   if (run.chief && run.chiefDown && run.barricade && !run.barricade.broken) breakBarricade(run);
-  // a stand-off at the gate (a shooter kiting round a rock): everyone presses in, then the stragglers wear down
+  // a stand-off at the gate (a shooter kiting round a rock, out past where a guard goes): the guards leave their sides and
+  // hunt (HUNT_AFTER: pickFor, guardTick), then the foes press in. No wearing down: "fix the source not the symptom".
   const atGate = wg.x >= (run.barricade && !run.barricade.broken ? run.barricade.x - HOLD_BACK : gateOf()) - 1;
   run.atGateT = atGate ? run.atGateT + dt : 0;
   w.stale = run.atGateT > 40;
-  if (run.atGateT > 70) for (const e of foes) if (!e.chief && !e.ethereal) hurt(w, e, e.maxHp * 0.03 * dt, null, { dot: true, noDodge: true }); // (hurt, so the last of them does fall: round 14)
   // the end of the stretch: at the gate, nothing left standing near: gather the gold in reach, then stop for the night
   if (wg.x >= gateOf() - 1 && !seen.some((e) => dist(e.x, e.y, wg.x, wg.y) < 1000)) {
     run.doneT += dt;
@@ -436,6 +437,7 @@ export const sideOf = (u) => u.side || null; // (tools)
 // more for a foe on u's own side of the wagon, less for one the others are already on.
 function pickFor(run, u, o) {
   const S = u.side && SIDES[u.side]; if (!S || u.team !== run.wagon.team) return 0; // (a summon, a foe that changed sides: as ever)
+  if (run.atGateT > HUNT_AFTER) return 0; // (stopped at the gate with foes still about: the sides are off, everyone hunts)
   if (o.chief) return 0; // (the road's end: whoever holds it is everyone's, wherever he stands; the party must be able to take the fight to him)
   const wg = run.wagon, a = o.x - wg.x, c = o.y - wg.y, shooter = u.def.role === 'ranged', reach = shooter ? u.def.range : 50 + (u.def.range || 0);
   const inS = S.in(a, c);
@@ -460,6 +462,7 @@ function guardTick(run, dt, party) {
     const S = SIDES[h.side], post = h.post || (h.post = { x: 0, y: 0 });
     post.x = Math.min(run.world.W - 60, wg.x + h.postAt[0]); post.y = wg.y + h.postAt[1];
     const g = h.forcedGoal;
+    if (run.atGateT > HUNT_AFTER) { if (g && g.home) h.forcedGoal = null; continue; } // (hunting at the gate: no edge, no leash)
     if ((g && (g.revive || g.coin)) || (h.target && h.target.chief && !(g && g.home))) continue; // (errands; and going for the road's holder)
     const out = -S.in(h.x - wg.x, h.y - wg.y), far = rigGap(h.x - wg.x, h.y - wg.y) - LEASH, over = Math.max(out, far);
     if (out > 0 && S.dir[0] + S.dir[1] !== 0) { const k = Math.min(out * 3, 80) * dt, n = S.dir[1] ? [0, Math.sign(S.dir[1])] : [Math.sign(S.dir[0]), 0]; h.x += n[0] * k; h.y += n[1] * k; } // back over its edge, square to it

@@ -201,6 +201,7 @@ function blocked(w, ax, ay, bx, by) {
 
 // ---------------------------------------------------------------- targeting
 const SIGHT = 720, AGGRO = 540; // round 6: longer view range for everyone
+const WINDOW_PULL = 0.8;        // how much a hero would rather hit a boss while its window is open than its adds
 function wake(w, u) {
   if (u.aggro) return;
   u.aggro = true;
@@ -234,6 +235,9 @@ function chooseTarget(w, u) {
       // round 14 (lane L): the one mending the others first (a choir sprite, a light spirit, a repair drone, an elite
       // shaman: "kill it first"), or the fight can't end
       if (o.def.mends || (o.elite && o.kind === 'orcShaman')) s += 0.5;
+      // a boss that can only be hit while it's up (the Sand Wurm out of the sand: boss-wurm.js wurmOut): go for it while
+      // it shows, not for its brood (the scarabs took the party's blows through every window it was out)
+      if ((o.partOf || o).wurmOut) s += WINDOW_PULL;
     }
     if (k === 'archer') { s += (1 - hpRatio(o)) * 0.5; if (d <= u.def.range && !blocked(w, u.x, u.y, o.x, o.y)) s += 0.6; }
     else if (k === 'rogue') { s += (1 - hpRatio(o)) * 1.1 + (o.target && o.target !== u ? 0.5 : 0) - (o.def.boss ? 0.3 : 0); }
