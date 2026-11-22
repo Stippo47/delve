@@ -333,3 +333,46 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
 - Foresight: "Better visual." -> a great violet eye opens over the marked one, lashes of light round it and three pale
   beams pinning it, a glow under it. Clip: seer-foresight.
 - Premonition: "Meh." -> replaced (above).
+
+### Chef
+- Frying pan: "Should be ranged. Throws random foods. All same effect. Hurts enemies, heals allies" -> **Food toss**: he is
+  ranged now (range 200; a shooter's moves), throwing one of six foods drawn in code (an apple, a drumstick, a pie,
+  cheese, a roll, a fish): it hurts the enemy it hits and mends any friend it passes over (0.6x). Clip: chef-attack.
+- Hot Meal: "Doesnt look good. Should throw food pick ups randomly around dungeon to be picked up. If at full hp will get
+  over health." -> plates thrown on arcs to random spots round the party (two, II three), each a steaming plate of one
+  of the six foods; a friend who walks over one eats it: heals 25%, and what goes past full health becomes extra
+  health (a Warded shield); hurt friends with no enemy on them walk over to one. III kept (+20% damage 8 s). Clip:
+  chef-hotMeal.
+- Food Fight: "Stops any movement abilities from anyone hit and applies a slight slow." -> pies go first at whatever is
+  dashing, leaping or charging and stop it dead ("STOPPED"), and slow 20% for 3 s. Clip: chef-foodFight.
+- Grease Fire: ticked, unchanged.
+
+### Beekeeper (REDO)
+- "Overall don't like. Visuals or abilities or animations." -> a new kit (ids kept), my design: the keeper calms the
+  enemy with smoke, sets a hive on them and keeps his friends sweet; his bees pester. The bees are redrawn small with
+  one striped body and a head (the art round's note: "1 maybe 2 body segments").
+  - Bee (attack): a bee stings and then keeps buzzing round its foe, stinging again every 0.7 s for 3 s (more bees
+    pile on). Clip: beekeeper-attack.
+  - Trait **Pollen** (id pollen): every sixth sting of his bees mends the friend most hurt near him 5%.
+  - **Smoker** (swarm's slot): a cone of thick white smoke rolls out for 2 s: those in it grow Sleepy (the statuses
+    lane's; they drop off if it builds) and slowed; III they swing slower too. Clip: beekeeper-swarm.
+  - **Beehive** (honeyPot's slot): a straw skep thrown among the enemies (70 health) for 8 s (II 12 s): a bee streams out
+    at something near every 0.7 s; whoever strikes the hive is mobbed by three; III its bees pester. Clip:
+    beekeeper-honeyPot.
+  - **Honey Glaze** (royalJelly's slot): honey drizzled over the friend under the most attack: it heals 16% over 4 s (II
+    25%) and whatever strikes it gets stuck (entangle, slowed); III two friends. Clip: beekeeper-royalJelly.
+
+### Quartermaster (REDO)
+- "Overall don't like. Visuals or abilities. Giving out hp potions is very strong. Needs to be more unique" -> a new kit
+  (ids kept), my design: the man with the pack. No potions any more. `gatherer: true` and the wagon sentence are kept.
+  - Pack toss (attack): one of five things off the pack (a pot, a pan, a boot, a tin cup, a ladle), knock 90.
+  - Trait **Requisition** (id requisition): every 20 s he tosses a piece of kit to the friend nearest the fight, for
+    12 s: a whetstone (+20% damage), a buckler (a 25 shield, Warded) or boots (+25% speed), shown over its head.
+  - **Supply Crate** (resupply's slot): a crate (red cross on it) dropped by the friend whose abilities are furthest off;
+    each friend's first touch brings its abilities 4 s sooner (II 6 s; a gold clock shows it) and patches it 5%;
+    friends with abilities waiting walk over to it. III two crates. Clip: quartermaster-resupply.
+  - **Barricade** (oilBlades's slot): a wooden barricade unfolded between the party and the enemies: a summon that blocks
+    their way and their shots (110 health 10 s; II 160, 14 s; III spikes hurt whatever strikes it). Clip:
+    quartermaster-oilBlades.
+  - **Pot Helmet** (flare's slot): a big pot lands upside down over an enemy's head ("CLONG"): blinded and Confused 3 s;
+    II staggers; III bounces on to a second head. Clip: quartermaster-flare.

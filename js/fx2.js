@@ -421,14 +421,6 @@ PROJ2.pie = (ctx, p, T) => {
   ctx.rotate(T * 7); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 10, 0, TAU); }, '#D89A50');
   disc(ctx, 0, 0, 7, '#FFF4D0'); disc(ctx, 0, 0, 2.4, '#C8453D');
 };
-// a bee: striped body, flickering wings
-PROJ2.bee = (ctx, p, T, ang) => {
-  ctx.rotate(ang + Math.sin(T * 30 + p.x) * 0.3);
-  const wing = 0.5 + 0.5 * Math.abs(Math.sin(T * 60 + p.y));
-  ctx.save(); ctx.globalAlpha *= 0.7; ctx.fillStyle = '#F2FBFF'; ctx.beginPath(); ctx.ellipse(-1, -6 * wing, 4, 6 * wing, 0.3, 0, TAU); ctx.ellipse(-1, 6 * wing, 4, 6 * wing, -0.3, 0, TAU); ctx.fill(); ctx.restore();
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 8, 5, 0, 0, TAU); }, '#FFD45A');
-  ctx.fillStyle = '#2B2230'; ctx.fillRect(-3, -4.5, 2.4, 9); ctx.fillRect(1.6, -4.5, 2.4, 9);
-};
 // Ritual Circle: a smouldering sigil burned into the floor, its runes turning
 DRAW.circle = (ctx, f, w, layer) => {
   const a = life(f, 0.4, 0.5);
@@ -486,14 +478,6 @@ DRAW.star = (ctx, f, w, layer) => {
   inked(ctx, () => star(ctx, f.x, f.y, 12 + 28 * e, 5, 0.42, 0.3), '#F2C14E'); ctx.fillStyle = '#FFFBEA'; star(ctx, f.x, f.y, 5 + 10 * e, 5, 0.42, 0.3); ctx.fill();
   ctx.restore();
 };
-// Hot Meal: a steaming plate on the floor
-DRAW.meal = (ctx, f, w, layer) => {
-  const a = life(f, 0.15, 0.2), [vx, vy] = upVec();
-  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= a; inked(ctx, () => { ctx.beginPath(); ctx.ellipse(f.x, f.y, 15, 12, 0, 0, TAU); }, '#F2F2EE'); disc(ctx, f.x - 3, f.y, 6, '#C8702A'); disc(ctx, f.x + 4, f.y + 2, 4, '#7FA04A'); disc(ctx, f.x + 2, f.y - 4, 3.5, '#E0B050'); ctx.restore(); return; }
-  ctx.save(); ctx.globalAlpha *= a * 0.7;
-  for (let i = 0; i < 3; i++) { const ph = (f.t * 0.8 + i / 3) % 1; ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); inkDisc(ctx, f.x + (i - 1) * 6 + Math.sin(ph * 6 + i) * 3 + vx * (10 + ph * 26), f.y + vy * (10 + ph * 26), 3 + 3 * ph, '#FFFFFF'); ctx.restore(); }
-  ctx.restore();
-};
 // Grease Fire II: flames licking up off the spilled grease
 DRAW.greaseFlames = (ctx, f, w, layer) => {
   if (layer !== 'air') return; const a = life(f, 0.2, 0.6);
@@ -528,8 +512,6 @@ Object.assign(EL2, { resupply: 'song', oilBlades: 'fire', flare: 'fire', pavise:
   looseFalcon: 'earth', keenEye: 'holy', flock: 'earth', bigBomb: 'fire', stickyBomb: 'fire', blastOff: 'fire',
   reelIn: 'steel', rogueWave: 'water', anchorDrop: 'steel' });
 Object.assign(ALIAS2, { pot: 'bone', cbolt: 'arrow', harpoon: 'arrow', bomb: 'fireball' });
-// a copper pot, tumbling
-PROJ2.pot = (ctx, p, T) => { ctx.rotate(T * 12); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 9, 0, TAU); }, '#C8784A'); disc(ctx, -2.5, -2.5, 3.2, '#F2B07A'); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(9, 0); ctx.lineTo(17, 0); }, '#5A3A2A', 3); };
 // a supply bundle: a tied canvas sack
 PROJ2.bundle = (ctx, p, T) => { ctx.rotate(T * 6); inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 11, 9, 0, 0, TAU); }, '#D8C49A'); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-11, 0); ctx.lineTo(11, 0); ctx.moveTo(0, -9); ctx.lineTo(0, 9); }, '#8A5A30', 2.4); };
 // a flare: a red stick spitting light
@@ -1491,6 +1473,113 @@ DRAW.oops = (ctx, f, w, layer) => {
   upright(ctx, u.x + vx * up, u.y + vy * up, () => { ctx.font = 'bold 15px sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3.5; ctx.strokeStyle = '#2B2230'; ctx.strokeText('!?', 0, 5); ctx.fillStyle = '#C9B8FF'; ctx.fillText('!?', 0, 5); });
   ctx.restore();
 };
+
+// ---------------------------------------------------------------- the Chef, the Beekeeper, the Quartermaster (round 13)
+// one of six foods (an apple, a drumstick, a pie, a wedge of cheese, a bread roll, a fish), drawn at 0,0
+function foodShape(ctx, kind) {
+  if (kind === 0) { inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 1, 7.5, 0, TAU); }, '#D8402A'); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -6); ctx.lineTo(1.5, -10); }, '#6E4A2A', 2); inked(ctx, () => { ctx.beginPath(); ctx.ellipse(4, -8, 3.5, 2, 0.5, 0, TAU); }, '#6FA046'); disc(ctx, -2.5, -1.5, 2, '#FF9A80'); }
+  else if (kind === 1) { inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-2, 0, 8, 6.5, 0, 0, TAU); }, '#C8783A'); inked(ctx, () => roundRect(ctx, 4, -1.6, 9, 3.2, 1.6), '#F4EEDC'); inked(ctx, () => { ctx.beginPath(); ctx.arc(13, -2, 2.2, 0, TAU); ctx.arc(13, 2, 2.2, 0, TAU); }, '#F4EEDC'); }
+  else if (kind === 2) { inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 9, 0, TAU); }, '#E0B060'); ctx.fillStyle = '#B0402A'; ctx.beginPath(); ctx.arc(0, 0, 5.5, 0, TAU); ctx.fill(); ctx.strokeStyle = '#F2D28A'; ctx.lineWidth = 1.6; for (let i = -1; i <= 1; i++) { ctx.beginPath(); ctx.moveTo(-5, i * 3.4); ctx.lineTo(5, i * 3.4); ctx.stroke(); } }
+  else if (kind === 3) { inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-9, 6); ctx.lineTo(9, 6); ctx.lineTo(9, -1); ctx.lineTo(-9, -7); ctx.closePath(); }, '#F2C84A'); disc(ctx, -3, 2, 1.8, '#D8A030'); disc(ctx, 4, 3, 1.4, '#D8A030'); }
+  else if (kind === 4) { inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 9, 6.5, 0, 0, TAU); }, '#D89A50'); ctx.strokeStyle = '#F2CF8A'; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(-3, -4); ctx.lineTo(-3, 4); ctx.moveTo(2, -4); ctx.lineTo(2, 4); ctx.stroke(); }
+  else { inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 9, 4.5, 0, 0, TAU); ctx.moveTo(-8, 0); ctx.lineTo(-14, -5); ctx.lineTo(-14, 5); ctx.closePath(); }, '#8FB8D0'); disc(ctx, 5, -1, 1.4, '#2B2230'); }
+}
+PROJ2.food = (ctx, p, T) => { lobUp(ctx, p, 24); ctx.rotate(T * 8 + p.x * 0.02); ctx.scale(1.15, 1.15); foodShape(ctx, p.food ?? 2); };
+// Hot Meal's plate on the floor: a white plate with the food on it, steaming, a warm glow; it fades out near its end
+DRAW.meal = (ctx, f, w, layer) => {
+  if (layer === 'ground') { lit(ctx, () => glowDisc(ctx, f.x, f.y, 34, '#FFE7A0', 0.25 * life(f, 0.2, 1))); return; }
+  const a = life(f, 0.15, 1), [vx, vy] = upVec(); ctx.save(); ctx.globalAlpha *= a;
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(f.x, f.y, 15, 11, 0, 0, TAU); }, '#F4F0E8'); ctx.save(); ctx.translate(f.x, f.y); foodShape(ctx, f.kind ?? 2); ctx.restore();
+  for (let i = 0; i < 2; i++) { const ph = (f.t * 0.9 + i * 0.5) % 1; ctx.save(); ctx.globalAlpha *= 0.7 * Math.sin(ph * Math.PI); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(f.x + (i - 0.5) * 8, f.y); ctx.quadraticCurveTo(f.x + (i - 0.5) * 8 + 6 * Math.sin(f.t * 5 + i), f.y + vy * 10, f.x + (i - 0.5) * 8 + vx * (12 + ph * 16), f.y + vy * (12 + ph * 16)); }, '#FFFFFF', 2.2); ctx.restore(); }
+  ctx.restore();
+};
+// a bee (round 13: "Too many segments. 1 maybe 2 body segments"): a round head and one striped body, two wings beating
+PROJ2.bee = (ctx, p, T, ang) => { ctx.rotate(ang); beeShape(ctx, T, 1); };
+function beeShape(ctx, T, s2) {
+  ctx.scale(s2, s2); const flap = Math.sin(T * 60) * 0.5;
+  for (const sd of [-1, 1]) { ctx.save(); ctx.globalAlpha *= 0.8; ctx.rotate(sd * (0.9 + flap * 0.4)); inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-1, sd * 0, 5.5, 3, 0, 0, TAU); }, '#EAF6FF'); ctx.restore(); }
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-2.5, 0, 6.5, 4.8, 0, 0, TAU); }, '#F2C84A'); ctx.fillStyle = '#2B2230'; ctx.fillRect(-5.5, -4.6, 2.2, 9.2); ctx.fillRect(-1.5, -4.8, 2.2, 9.6);
+  inked(ctx, () => { ctx.beginPath(); ctx.arc(5, 0, 3.4, 0, TAU); }, '#2B2230');
+}
+// bees pestering one: two or three bees going round it, darting in
+DRAW.pester = (ctx, f, w, layer) => {
+  const u = f.unit; if (!alive2(u) || !f.hk || f.hk.until <= w.time) { ended(f, true); return; } if (layer !== 'air') return;
+  for (let i = 0; i < (f.hk.n || 1); i++) { const b = f.t * (5 + i) + i * 2.1, R = u.vr + 8 + Math.sin(f.t * 9 + i) * 6, x = u.x + Math.cos(b) * R, y = u.y + Math.sin(b) * R * 0.8;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(b + Math.PI / 2); beeShape(ctx, f.t + i, 0.9); ctx.restore(); }
+};
+// Pollen: a golden puff carried back to the friend it mends
+DRAW.pollen = (ctx, f, w, layer) => { const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const k = k01(f.t / f.max), [vx, vy] = upVec(); ctx.save(); ctx.globalAlpha *= 1 - k; for (let i = 0; i < 7; i++) { const b = i / 7 * TAU + f.t * 2, d = u.vr * (0.6 + 0.4 * k), up = 20 * k; disc(ctx, u.x + Math.cos(b) * d + vx * up, u.y + Math.sin(b) * d * 0.7 + vy * up, 3 * (1 - k) + 1, i % 2 ? '#FFD45A' : '#FFF0B0'); } ctx.restore(); };
+// Smoker: thick white smoke rolling out in a cone from the smoker's spout
+DRAW.smoker = (ctx, f, w, layer) => {
+  const k = k01(f.t / f.max), a = life(f, 0.15, 0.6);
+  if (layer === 'ground') { for (let i = 0; i < 7; i++) { const q = k01(f.t / 0.6 - i * 0.08), b = f.a + (hash(i, 4) - 0.5) * f.arc, d = 30 + f.r * 0.85 * q * (0.4 + 0.6 * hash(i, 7)); if (q > 0) drawPuddle(ctx, 'mist', f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 18 + 22 * q, w.time, a, i * 5 + 2, true); } return; }
+  ctx.save(); ctx.globalAlpha *= a * 0.9;
+  for (let i = 0; i < 9; i++) { const ph = (f.t * 0.8 + i / 9) % 1, b = f.a + (hash(i, 2) - 0.5) * f.arc, d = 20 + f.r * ph, s3 = 6 + 12 * ph; ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, s3, i % 2 ? '#F4F4F4' : '#DADDE4'); ctx.restore(); }
+  ctx.restore();
+};
+// the Beekeeper's hive: a straw skep, bees coming and going
+LOOK2.beehive = (ctx, u, w) => {
+  const fl = u.flashT > 0.06;
+  upright(ctx, u.x, u.y, () => {
+    ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(0, 6, 20, 7, 0, 0, TAU); ctx.fill(); ctx.restore();
+    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-18, 6); ctx.quadraticCurveTo(-20, -26, 0, -30); ctx.quadraticCurveTo(20, -26, 18, 6); ctx.closePath(); }, fl ? '#FFFFFF' : '#E0B050');
+    ctx.strokeStyle = '#A8802A'; ctx.lineWidth = 2; for (let i = 0; i < 4; i++) { const y = -22 + i * 7; ctx.beginPath(); ctx.moveTo(-15 + (3 - i) * -1.2, y); ctx.lineTo(15 - (3 - i) * -1.2, y); ctx.stroke(); }
+    inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 4, Math.PI, 0); ctx.closePath(); }, '#3A2A1A');
+  });
+  for (let i = 0; i < 3; i++) { const b = w.time * (3 + i) + i * 2, x = u.x + Math.cos(b) * (18 + i * 5), y = u.y - 14 + Math.sin(b) * 10; ctx.save(); ctx.translate(x, y); ctx.rotate(b + Math.PI / 2); beeShape(ctx, w.time + i, 0.7); ctx.restore(); }
+};
+PROJ2.hiveFly = (ctx, p, T) => { lobUp(ctx, p, 50); ctx.rotate(Math.sin(T * 8) * 0.4); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-10, 4); ctx.quadraticCurveTo(-11, -14, 0, -16); ctx.quadraticCurveTo(11, -14, 10, 4); ctx.closePath(); }, '#E0B050'); };
+PROJ2.honeyJar = (ctx, p, T) => { lobUp(ctx, p, 40); ctx.rotate(T * 9); inked(ctx, () => roundRect(ctx, -6, -6, 12, 13, 4), '#F2B42A'); inked(ctx, () => roundRect(ctx, -6.5, -9, 13, 4, 1.5), '#C9A070'); };
+// Honey Glaze: golden honey running down the body, drops falling off it
+DRAW.honeyOn = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const a = life(f, 0.15, 0.4), [vx, vy] = upVec();
+  ctx.save(); ctx.globalAlpha *= a * 0.85;
+  for (let i = 0; i < 4; i++) { const b = hash(i, u.id) * TAU, d = u.vr * 0.55, ph = (f.t * 0.7 + i / 4) % 1;
+    inked(ctx, () => { ctx.beginPath(); ctx.ellipse(u.x + Math.cos(b) * d, u.y + Math.sin(b) * d, 4.5, 6 + 4 * ph, 0, 0, TAU); }, '#F2B42A');
+    disc(ctx, u.x + Math.cos(b) * d - vx * ph * 18, u.y + Math.sin(b) * d - vy * ph * 18, 2.4 * (1 - ph) + 0.6, '#F2B42A'); }
+  ctx.restore();
+};
+// the Quartermaster's things: a pack item thrown (p.item), the crate, the barricade, the pot over a head, his kit
+const ITEM = [(ctx) => { inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 8, 0, TAU); }, '#8A8F99'); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(8, 0); ctx.lineTo(16, 0); }, '#5A3A2A', 3); },
+  (ctx) => { inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 8.5, 0, TAU); }, '#3A3440'); disc(ctx, -2, -2, 3, '#6A6470'); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(8, 0); ctx.lineTo(18, 0); }, '#2B2230', 3.4); },
+  (ctx) => { inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-7, -6); ctx.lineTo(1, -6); ctx.lineTo(1, 2); ctx.lineTo(9, 2); ctx.lineTo(9, 7); ctx.lineTo(-7, 7); ctx.closePath(); }, '#7A4A2A'); },
+  (ctx) => { inked(ctx, () => roundRect(ctx, -6, -7, 12, 13, 2), '#C9D2DE'); inkLine(ctx, () => { ctx.beginPath(); ctx.arc(7, 0, 4, -1.2, 1.2); }, '#8A94A6', 2.2); },
+  (ctx) => { inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-6, 0, 6, 5, 0, 0, TAU); }, '#A8B0BA'); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(16, 0); }, '#8A94A6', 3); }];
+PROJ2.pot = (ctx, p, T) => { ctx.rotate(T * 12); ITEM[p.item ?? 0](ctx); };
+LOOK2.crate = (ctx, u, w) => {
+  const fl = u.flashT > 0.06; ctx.save(); ctx.translate(u.x, u.y);
+  ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.fillRect(-18, -12, 38, 32); ctx.restore();
+  inked(ctx, () => roundRect(ctx, -18, -18, 36, 36, 3), fl ? '#FFFFFF' : '#B8884A'); ctx.strokeStyle = '#7A5A30'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-18, -18); ctx.lineTo(18, 18); ctx.moveTo(18, -18); ctx.lineTo(-18, 18); ctx.stroke();
+  inked(ctx, () => { ctx.beginPath(); ctx.rect(-5, -12, 10, 24); ctx.rect(-12, -5, 24, 10); }, '#E8E2D0'); ctx.fillStyle = '#C8453D'; ctx.fillRect(-3.5, -10, 7, 20); ctx.fillRect(-10, -3.5, 20, 7);
+  ctx.restore(); if (Math.sin(w.time * 5) > 0.5) lit(ctx, () => glowDisc(ctx, u.x, u.y, 26, '#FFE7A0', 0.3));
+};
+PROJ2.crateFly = (ctx, p, T) => { lobUp(ctx, p, 50); ctx.rotate(T * 5); inked(ctx, () => roundRect(ctx, -10, -10, 20, 20, 2), '#B8884A'); };
+LOOK2.barricade = (ctx, u, w) => {
+  const fl = u.flashT > 0.06, a = (u.facing || 0) + Math.PI / 2, L = u.r * 1.7;
+  ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(a);
+  ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.fillRect(-L, -4, L * 2, 18); ctx.restore();
+  for (let i = -3; i <= 3; i++) inked(ctx, () => roundRect(ctx, i * L / 3.5 - 6, -11, 12, 22, 3), fl ? '#FFFFFF' : i % 2 ? '#A0703A' : '#B8884A');
+  ctx.fillStyle = '#6E4A2A'; ctx.fillRect(-L, -6, L * 2, 4); ctx.fillRect(-L, 3, L * 2, 4);
+  if (u.spikes) for (let i = -3; i <= 3; i++) inked(ctx, () => { ctx.beginPath(); ctx.moveTo(i * L / 3.5 - 3, -11); ctx.lineTo(i * L / 3.5, -20); ctx.lineTo(i * L / 3.5 + 3, -11); ctx.closePath(); }, '#C9D2DE');
+  ctx.restore();
+  const k = u.hp / u.maxHp; if (k < 0.5) { ctx.save(); ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(u.x - 10, u.y - 6); ctx.lineTo(u.x + 4, u.y + 6); ctx.stroke(); ctx.restore(); }
+};
+PROJ2.potFly = (ctx, p, T) => { lobUp(ctx, p, 46); ctx.rotate(T * 9); ITEM[1](ctx); };
+// Pot Helmet: the pot upside down over its head, rattling as it blunders about
+DRAW.potHead = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const a = life(f, 0.05, 0.25), sh = Math.sin(f.t * 25) * 1.5;
+  ctx.save(); ctx.globalAlpha *= a; upright(ctx, u.x + sh, u.y - u.vr * 0.15, () => { inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, u.vr * 0.85, Math.PI, 0); ctx.lineTo(u.vr * 0.95, 3); ctx.lineTo(-u.vr * 0.95, 3); ctx.closePath(); }, '#3A3440'); ctx.fillStyle = '#6A6470'; ctx.fillRect(-u.vr * 0.6, -u.vr * 0.55, u.vr * 0.4, 3);
+    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(u.vr * 0.9, -2); ctx.lineTo(u.vr * 0.9 + 12, -6); }, '#2B2230', 3.4); });
+  ctx.restore();
+};
+PROJ2.kitFly = (ctx, p, T) => { lobUp(ctx, p, 40); ctx.rotate(T * 8); kitShape(ctx, p.item); };
+function kitShape(ctx, item) {
+  if (item === 'whetstone') { inked(ctx, () => roundRect(ctx, -9, -4, 18, 8, 3), '#8A8F99'); ctx.fillStyle = '#C9D2DE'; ctx.fillRect(-7, -2.5, 14, 2); }
+  else if (item === 'buckler') { inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 9, 0, TAU); }, '#B8884A'); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 3.5, 0, TAU); }, '#C9D2DE'); }
+  else { inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-6, -8); ctx.lineTo(1, -8); ctx.lineTo(1, 1); ctx.lineTo(9, 1); ctx.lineTo(9, 7); ctx.lineTo(-6, 7); ctx.closePath(); }, '#7A4A2A'); }
+}
+// Requisition: the kit he handed over, shown over the friend's head a moment
+DRAW.kitOn = (ctx, f, w, layer) => { const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const k = k01(f.t / f.max), [vx, vy] = upVec(), up = u.vr + 16 + 8 * easeOut(k01(k / 0.3)); ctx.save(); ctx.globalAlpha *= 1 - k01((k - 0.7) / 0.3); upright(ctx, u.x + vx * up, u.y + vy * up, () => { lit(ctx, () => glowDisc(ctx, 0, 0, 18, '#FFE7A0', 0.45)); kitShape(ctx, f.item); }); ctx.restore(); };
 
 export function drawK2(ctx, f, w, layer) { const d = DRAW[f.draw]; if (d) { ctx.save(); d(ctx, f, w, layer); ctx.restore(); } }
 

@@ -1312,24 +1312,20 @@ export const ABILITIES2 = {
     show: { far: true, attacks: false, foesFight: true },
   },
   // ----- Chef
+  // Hot Meal (round 13: "Doesnt look good. Should throw food pick ups randomly around dungeon to be picked up. If at full hp
+  // will get over health."): plates thrown out round the party; a friend who walks over one eats it: healed, and if
+  // already whole the rest is extra health (a shield: Warded). Hurt friends with nothing on them go and get one.
   hotMeal: {
-    score: (w, u) => { const a = hurtMost([u, ...allies(w, u)].filter((o) => !o.summon)); return a && hpRatio(a) < 0.6 ? 0.85 : 0; },
+    score: (w, u) => { const a = [u, ...allies(w, u)].filter((o) => !o.summon && hpRatio(o) < 0.7).length; return a && (u.kit.foods || []).length < 3 ? 0.6 + 0.1 * a : 0; },
     use(w, u, t, tier) {
-      cast(u, 'throw', 0.4);
-      const list = [u, ...allies(w, u)].filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 380).sort((p, q) => hpRatio(p) - hpRatio(q)).slice(0, tier >= 2 ? 2 : 1);
-      list.forEach((a, i) => {
-        const b = angleTo(a.x, a.y, u.x, u.y); let x = a.x + Math.cos(b) * 70, y = a.y + Math.sin(b) * 70;
-        const f = k2(w, { draw: 'meal', x, y, max: 10, ab: 'hotMeal' });
-        timer(u, 'meal' + i, 10, (dt) => {
-          if (alive(a)) { const c = angleTo(x, y, a.x, a.y), d = dist(x, y, a.x, a.y); x += Math.cos(c) * Math.min(d, 45 * dt); y += Math.sin(c) * Math.min(d, 45 * dt); f.x = x; f.y = y; }
-          const who = [u, ...allies(w, u)].find((o) => !o.summon && dist(o.x, o.y, x, y) < o.r + 22); if (!who) return;
-          heal(w, who, who.maxHp * 0.3, u); k2(w, { draw: 'crumbs', x: who.x, y: who.y, unit: who, max: 0.6, ab: 'hotMeal' });
-          if (tierOf(u, 'hotMeal') >= 3) addBuff(who, { id: 'hotMeal', dur: 8, dealt: 1.2, glow: '#FFB070' });
-          f.max = f.t + 0.15; return true;
-        }, () => { f.max = Math.min(f.max, f.t + 0.3); });
+      cast(u, 'throw', 0.5); const n = tier >= 2 ? 3 : 2, F = u.kit.foods || (u.kit.foods = []);
+      const al = [u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo);
+      for (let i = 0; i < n; i++) after(u, i * 0.15, () => {
+        const a = al[Math.floor(rand() * al.length)] || u, b = rand() * TAU, d = rrange(50, 140), x = clamp(a.x + Math.cos(b) * d, 30, w.W - 30), y = clamp(a.y + Math.sin(b) * d, 30, w.H - 30);
+        lob(w, u, x, y, 'food', null, () => { const f = k2(w, { draw: 'meal', x, y, max: 14, kind: Math.floor(rand() * 6), ab: 'hotMeal' }); F.push({ x, y, f, until: w.time + 14 }); puff(w, x, y, '#FFE7A0', 6, 60, 4, 0.35); }).food = Math.floor(rand() * 6);
       });
     },
-    show: { ally: true },
+    show: { ally: true, secs: 4 },
   },
   greaseFire: {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 170).filter((e) => inFront(u, e, 1.4)).length >= 2 ? 0.65 : 0),
@@ -1345,87 +1341,102 @@ export const ABILITIES2 = {
         timer(u, 'greaseFire', 6, (dt) => { acc += dt; if (acc < 0.3) return; acc -= 0.3; for (const e of opponents(w, u)) if (pts.some((p) => dist(p.x, p.y, e.x, e.y) < 40 + e.r * 0.5)) addStatus(w, e, 'burn', 11, u); }); }
     },
   },
+  // Food Fight (round 13: "Stops any movement abilities from anyone hit and applies a slight slow."): pies that stop a
+  // dash, leap or charge dead where it is, and slow a little
   foodFight: {
-    score: (w, u) => (foesNear(w, u, u.x, u.y, 300).length >= 3 ? 0.6 : 0),
+    score: (w, u) => (foesNear(w, u, u.x, u.y, 300).length >= 3 || opponents(w, u).some((e) => e.act && MOVES_ACT.has(e.act.type) && dist(u.x, u.y, e.x, e.y) < 330) ? 0.65 : 0),
     use(w, u, t, tier) {
       cast(u, 'throw', 0.5);
-      const list = foesNear(w, u, u.x, u.y, 330).filter((e) => !blocked(w, u.x, u.y, e.x, e.y)).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y)).slice(0, tier >= 3 ? 5 : 3);
+      const list = foesNear(w, u, u.x, u.y, 330).filter((e) => !blocked(w, u.x, u.y, e.x, e.y)).sort((p, q) => (q.act && MOVES_ACT.has(q.act.type) ? 1 : 0) - (p.act && MOVES_ACT.has(p.act.type) ? 1 : 0) || dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y)).slice(0, tier >= 3 ? 5 : 3);
       list.forEach((e, i) => after(u, i * 0.1, () => { if (!alive(e)) return; setAnim(u, 'throw', 0.2);
-        shoot(w, u, ang(u, e), { kind: 'pie', speed: 420, r: 9, color: '#FFF4D0', life: 1.2, dmg: dmgOf(u, 0.7), knock: 60, extra: { home: e, turn: 3, onHit: (w2, p, x) => {
-          addBuff(x, { id: 'pied', dur: 3, move: 0.6, blind: tierOf(u, 'foodFight') >= 2 });
+        shoot(w, u, ang(u, e), { kind: 'pie', speed: 460, r: 9, color: '#FFF4D0', life: 1.2, dmg: dmgOf(u, 0.8), knock: 60, extra: { home: e, turn: 4, onHit: (w2, p, x) => {
+          if (x.act && MOVES_ACT.has(x.act.type)) { if (x.act.type === 'leap') { x.hop = 0; } x.act = null; x.vx = x.vy = x.kx = x.ky = 0; x.spd = 0; textU(w2, x.x, x.y, x.r + 8, 'STOPPED', '#FFF4D0', 0.9); }
+          addBuff(x, { id: 'pied', dur: 3, move: 0.8, blind: tierOf(u, 'foodFight') >= 2 });
           k2(w2, { draw: 'splash', x: x.x, y: x.y, r: 30, col: '#FFF4D0', max: 0.5, ab: 'foodFight' }); k2(w2, { draw: 'pieFace', unit: x, x: x.x, y: x.y, r: x.vr, max: 3, ab: 'foodFight' });
         } } }); }));
     },
     show: { far: true },
   },
-  // ----- Beekeeper
+  // ----- Beekeeper (round 13: "REDO... Overall don't like. Visuals or abilities or animations." A new kit, the lane's
+  // own, ids kept: the keeper calms enemies with smoke, sets a hive on them and glazes friends in honey; his bees pester)
+  // Smoker (swarm's slot): a cone of the smoker's thick white smoke: they grow sleepy and slow
   swarm: {
-    score: (w, u) => (foesNear(w, u, u.x, u.y, 300).length >= 2 ? 0.65 : 0),
+    score: (w, u) => (foesNear(w, u, u.x, u.y, 170).filter((e) => inFront(u, e, 1.5)).length >= 2 ? 0.7 : foesNear(w, u, u.x, u.y, 120).length ? 0.45 : 0),
     use(w, u, t, tier) {
-      cast(u, 'throw', 0.5);
-      const n = tier >= 3 ? 10 : 6, foes = foesNear(w, u, u.x, u.y, 360).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y));
-      if (!foes.length) return;
-      for (let i = 0; i < n; i++) { const e = foes[i % Math.min(foes.length, 4)];
-        shoot(w, u, ang(u, e) + (i - n / 2) * 0.25, { kind: 'bee', speed: 300, r: 6, life: 2.6, dmg: dmgOf(u, 0.55), knock: 10, st: tier >= 2 ? { poison: 12 } : {}, extra: { home: e, turn: 7, onHit: (w2, p, x) => addBuff(x, { id: 'stung', dur: 2, move: 0.8 }) } }); }
+      if (t) u.facing = ang(u, t); cast(u, 'throw', 0.6); const a = u.facing, R = 175, arc = 1.4;
+      k2(w, { draw: 'smoker', x: u.x, y: u.y, a, r: R, arc, max: 2.2, ab: 'swarm' });
+      let acc = 0, n = 0;
+      timer(u, 'smoker', 2, (dt) => { acc += dt; if (acc < 0.25) return; acc -= 0.25; n++;
+        for (const e of foesNear(w, u, u.x, u.y, R)) if (inFront(u, e, arc + 0.2)) { sleepy(w, e, tier >= 2 ? 13 : 9, u); addBuff(e, { id: 'smoked', dur: 0.5, move: 0.7, atkSpeed: tier >= 3 ? 0.75 : 1 }); if (n === 1) hurt(w, e, dmgOf(u, 0.6), u, { noDodge: true, knock: 30, ab: 'swarm' }); } });
     },
   },
+  // Beehive (honeyPot's slot): a hive thrown down among the enemies (its own health): bees stream out at whatever is
+  // near; whoever strikes the hive is mobbed
   honeyPot: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 280 && foesNear(w, u, t.x, t.y, 100).length >= 2 ? 0.65 : 0),
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 300 && foesNear(w, u, t.x, t.y, 160).length >= 2 && !mine(w, u, 'beehive').length ? 0.7 : 0),
     use(w, u, t, tier) {
       if (!t) return; cast(u, 'throw', 0.4);
-      lob(w, u, t.x, t.y, 'flask', '#F2B42A', (x, y) => {
-        const r = tier >= 3 ? 110 : 80; let acc = 0;
-        k2(w, { draw: 'honey', x, y, r, max: 5, ab: 'honeyPot' });
-        timer(u, 'honey' + Math.round(x + y * 3), 5, (dt) => { acc += dt; if (acc < 0.3) return; acc -= 0.3;
-          for (const e of foesNear(w, u, x, y, r)) addStatus(w, e, 'entangle', 13, u);
-          if (tierOf(u, 'honeyPot') >= 2) for (const a of [u, ...allies(w, u)]) if (dist(a.x, a.y, x, y) < r) heal(w, a, a.maxHp * 0.015, u); });
-      });
+      const b = ang(u, t), d = Math.max(60, dist(u.x, u.y, t.x, t.y) - 40), x = clamp(u.x + Math.cos(b) * d, 30, w.W - 30), y = clamp(u.y + Math.sin(b) * d, 30, w.H - 30);
+      lob(w, u, x, y, 'hiveFly', null, () => { const h = summon(w, u, 'beehive', x, y, { life: tier >= 2 ? 12 : 8, hp: 70 }); h.fixed = true; h.tier = tier; puff(w, x, y, '#F2B42A', 8, 80, 5, 0.4); });
     },
-    show: { far: true },
+    show: { far: true, secs: 4 },
   },
+  // Honey Glaze (royalJelly's slot): honey drizzled over a friend: it heals over 4 s, and whatever strikes it gets stuck
   royalJelly: {
-    score: (w, u) => (allies(w, u).some((a) => !a.summon && a.target && dist(u.x, u.y, a.x, a.y) < 320 && !a.buffs.some((b) => b.id === 'royalJelly')) ? 0.6 : 0),
+    score: (w, u) => { const a = [u, ...allies(w, u)].filter((o) => !o.summon && hpRatio(o) < 0.75 && opponents(w, u).some((e) => e.target === o)); return a.length ? 0.75 : 0; },
     use(w, u, t, tier) {
       cast(u, 'throw', 0.4);
-      const list = allies(w, u).filter((a) => !a.summon && dist(u.x, u.y, a.x, a.y) < 360).sort((p, q) => (q.target ? 1 : 0) - (p.target ? 1 : 0) || (q.def.dmg / q.def.atkCd) - (p.def.dmg / p.def.atkCd)).slice(0, tier >= 3 ? 2 : 1);
-      if (!list.length) list.push(u);
-      for (const a of list) { addBuff(a, { id: 'royalJelly', dur: 6, atkSpeed: 1.4, dealt: tier >= 2 ? 1.2 : 1, glow: '#FFD45A' }); k2(w, { draw: 'splash', x: a.x, y: a.y, r: 30, col: '#FFD45A', max: 0.5 }); k2(w, { draw: 'rally', unit: a, x: a.x, y: a.y, r: a.vr, max: 0.9, cols: ['#FFD45A', '#F2B42A'] }); }
-    },
-    show: { ally: true },
-  },
-  // ----- Quartermaster
-  resupply: {
-    score: (w, u) => { const a = hurtMost([u, ...allies(w, u)].filter((o) => !o.summon)); return a && (hpRatio(a) < 0.65 || (a.potions === 0 && hpRatio(a) < 0.85)) ? 0.8 : 0; },
-    use(w, u, t, tier) {
-      cast(u, 'throw', 0.4);
-      const list = [u, ...allies(w, u)].filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 400).sort((p, q) => hpRatio(p) - hpRatio(q)).slice(0, tier >= 3 ? 2 : 1);
-      const give = (a) => { heal(w, a, a.maxHp * (tierOf(u, 'resupply') >= 2 ? 0.12 : 0.06), u); if (!a.potions && a.resuppliedIn !== w) { a.potions = 1; a.resuppliedIn = w; } k2(w, { draw: 'crumbs', x: a.x, y: a.y, unit: a, max: 0.6, ab: 'resupply' }); };
-      list.forEach((a, i) => after(u, i * 0.15, () => { if (!alive(a)) return; if (a === u) give(u); else lob(w, u, a.x, a.y, 'bundle', null, () => alive(a) && give(a)); }));
-    },
-    show: { ally: true },
-  },
-  oilBlades: {
-    score: (w, u) => (foesNear(w, u, u.x, u.y, 320).length >= 2 && friendsNear(w, u, u.x, u.y, 230).filter((a) => a !== u && a.def.role !== 'ranged').length ? 0.65 : 0),
-    use(w, u, t, tier) {
-      cast(u, 'throw', 0.5);
-      for (const a of [u, ...friendsNear(w, u, u.x, u.y, 240)]) {
-        if (!a.kit) continue;
-        a.hitBurn = tier >= 2 ? 12 : 7; if (tier >= 3) addBuff(a, { id: 'oilBlades', dur: 8, lifesteal: 0.04 });
-        timer(a, 'oilBlades', 8, null, () => { a.hitBurn = 0; });
-        k2(w, { draw: 'oilGlow', unit: a, x: a.x, y: a.y, r: a.vr, max: 8 });
+      const list = [u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo && dist(u.x, u.y, o.x, o.y) < 360).sort((p, q) => opponents(w, u).filter((e) => e.target === q).length - opponents(w, u).filter((e) => e.target === p).length || hpRatio(p) - hpRatio(q)).slice(0, tier >= 3 ? 2 : 1);
+      for (const a of list) {
+        const glaze = () => { if (!alive(a)) return; a.regenT = 4; a.regenRate = a.maxHp * (tier >= 2 ? 0.25 : 0.16) / 4; a.regenSrc = u;
+          k2(w, { draw: 'honeyOn', unit: a, x: a.x, y: a.y, r: a.vr, max: 4 });
+          onUnit(w, a, 'honey', 4, { struck(w2, u2, src) { if (src && alive(src) && src !== u2 && !src.fixed && dist(src.x, src.y, u2.x, u2.y) < u2.r + src.r + 60) { addStatus(w2, src, 'entangle', 30, u); addBuff(src, { id: 'honeyed', dur: 2, move: 0.5 }); k2(w2, { draw: 'honeyOn', unit: src, x: src.x, y: src.y, r: src.vr, max: 2 }); } } }); };
+        if (a === u) glaze(); else lob(w, u, a.x, a.y, 'honeyJar', null, glaze);
       }
     },
-    show: { ally: true },
+    show: { ally: true, hitAlly: true },
   },
+  // ----- Quartermaster (round 13: "REDO... Overall don't like. Visuals or abilities. Giving out hp potions is very
+  // strong. Needs to be more unique": a new kit, ids kept: the man with the pack: kit for the party, a crate, a barricade,
+  // a pot over an enemy's head; still a gatherer on the wagon road)
+  // Supply Crate (resupply's slot): a crate dropped by the party: whoever touches it first has its abilities come round
+  // sooner and is patched up a little
+  resupply: {
+    score: (w, u) => (allies(w, u).filter((a) => a.kit && dist(u.x, u.y, a.x, a.y) < 300 && Object.values(a.kit.cd).filter((c) => c > 4).length >= 2).length >= 1 && !mine(w, u, 'crate').length ? 0.65 : 0),
+    use(w, u, t, tier) {
+      cast(u, 'throw', 0.4); const n = tier >= 3 ? 2 : 1;
+      const al = allies(w, u).filter((a) => !a.summon && !a.def.cargo && a.kit).sort((p, q) => Object.values(q.kit.cd).reduce((s1, c) => s1 + c, 0) - Object.values(p.kit.cd).reduce((s1, c) => s1 + c, 0));
+      for (let i = 0; i < n; i++) { const a = al[i] || u, b = rand() * TAU, x = clamp(a.x + Math.cos(b) * 50, 30, w.W - 30), y = clamp(a.y + Math.sin(b) * 50, 30, w.H - 30);
+        lob(w, u, x, y, 'crateFly', null, () => { const c = summon(w, u, 'crate', x, y, { life: 14, hp: 40 }); c.fixed = true; c.cut = tier >= 2 ? 6 : 4; c.used = new Set(); puff(w, x, y, '#C9A070', 8, 80, 5, 0.4); w.shake = Math.max(w.shake, 2); }); }
+    },
+    show: { ally: true, secs: 4 },
+  },
+  // Barricade (oilBlades's slot): a wooden barricade unfolded between the party and the enemies: it blocks their way and
+  // their shots until it is broken
+  oilBlades: {
+    score(w, u) { const f = opponents(w, u).filter((e) => dist(u.x, u.y, e.x, e.y) < 300); return f.length >= 2 && !mine(w, u, 'barricade').length && allies(w, u).some((a) => !a.summon && a.def.role === 'ranged') ? 0.65 : f.length >= 3 && !mine(w, u, 'barricade').length ? 0.45 : 0; },
+    use(w, u, t, tier) {
+      const f = opponents(w, u).filter((e) => dist(u.x, u.y, e.x, e.y) < 400); if (!f.length) return;
+      let cx = 0, cy = 0; for (const e of f) { cx += e.x; cy += e.y; } cx /= f.length; cy /= f.length;
+      const a = angleTo(u.x, u.y, cx, cy), d = Math.min(110, dist(u.x, u.y, cx, cy) * 0.5), x = u.x + Math.cos(a) * d, y = u.y + Math.sin(a) * d;
+      cast(u, 'ability', 0.5); u.facing = a;
+      const bar = summon(w, u, 'barricade', x, y, { life: tier >= 2 ? 14 : 10, hp: tier >= 2 ? 160 : 110 }); bar.fixed = true; bar.facing = a; bar.spikes = tier >= 3;
+      w.shake = Math.max(w.shake, 3); puff(w, x, y, '#C9A070', 12, 110, 6, 0.5);
+    },
+    show: { far: true, shootme: true, secs: 4 },
+  },
+  // Pot Helmet (flare's slot): a big cooking pot thrown so it lands upside down over an enemy's head: it can't see (its
+  // blows miss) and blunders about confused
   flare: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 320 && foesNear(w, u, t.x, t.y, 110).length >= 2 ? 0.65 : 0),
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 300 && !isOn(w, t, 'potHead') ? 0.5 + (t.elite || t.major ? 0.25 : 0) + (t.def.role === 'ranged' ? 0.15 : 0) : 0),
     use(w, u, t, tier) {
       if (!t) return; cast(u, 'throw', 0.4);
-      lob(w, u, t.x, t.y, 'flare', null, (x, y) => {
-        const r = tier >= 3 ? 150 : 110;
-        k2(w, { draw: 'flare', x, y, r, max: 6, ab: 'flare' });
-        timer(u, 'flare' + Math.round(x + y), 6, () => { for (const e of foesNear(w, u, x, y, r)) addBuff(e, { id: 'flared', dur: 0.35, taken: 1.15, move: tierOf(u, 'flare') >= 2 ? 0.75 : 1 }); });
-      });
+      const pot = (e, then) => lob(w, u, e.x, e.y, 'potFly', null, () => { if (!alive(e)) return;
+        const d = e.def.boss ? 1.2 : 3; hurt(w, e, dmgOf(u, 1.2), u, { noDodge: true, knock: 40, stagger: tier >= 2 ? 50 : 0, ab: 'flare' });
+        addBuff(e, { id: 'potHead', dur: d, blind: true }); confuse(w, e, 45, u); onUnit(w, e, 'potHead', d, {});
+        k2(w, { draw: 'potHead', unit: e, x: e.x, y: e.y, r: e.vr, max: d }); textU(w, e.x, e.y, e.r + 10, 'CLONG', '#C9D2DE', 1);
+        if (then) then(e); });
+      pot(t, tier >= 3 ? (e) => { const n = opponents(w, u).filter((o) => o !== e && !isOn(w, o, 'potHead') && dist(o.x, o.y, e.x, e.y) < 200)[0]; if (n) after(u, 0.1, () => pot(n, null)); } : null);
     },
     show: { far: true },
   },
@@ -2302,6 +2313,44 @@ function sacrificeOf(w, u, tier) {
   const cut = tier >= 2 ? 0.35 : 0.25;
   return opponents(w, u).filter((e) => !e.fixed && hpRatio(e) < cut && dist(u.x, u.y, e.x, e.y) < 300 && !blocked(w, u.x, u.y, e.x, e.y)).sort((p, q) => hpRatio(p) - hpRatio(q))[0] || null;
 }
+// the Beekeeper's hive: bees stream out at what is near; whoever strikes it is mobbed (a hook on it)
+BRAINS.beehive = function (w, h, dt) {
+  const u = h.summonBy; h.vx = h.vy = h.kx = h.ky = 0; h.acc = (h.acc || 0) + dt;
+  if (!h.mob) { h.mob = true; onUnit(w, h, 'hiveMob', 99, { struck(w2, u2, src) { if (src && alive(src) && (u2.mobT || 0) < w2.time) { u2.mobT = w2.time + 0.6; for (let i = 0; i < 3; i++) bee(w2, u || u2, u2, src, 0.4, true); } } }); }
+  if (h.acc >= 0.7) { h.acc = 0; const e = opponents(w, h).filter((o) => dist(o.x, o.y, h.x, h.y) < 220).sort(() => rand() - 0.5)[0]; if (e && u) bee(w, u, h, e, 0.45, h.tier >= 3); }
+  return true;
+};
+// the Quartermaster's crate: the first touch of each friend has its abilities come round sooner, and patches it up
+BRAINS.crate = function (w, c, dt) {
+  c.vx = c.vy = c.kx = c.ky = 0; const u = c.summonBy;
+  for (const a of w.units) if (alive(a) && a.team === c.team && !a.summon && a.kit && !c.used.has(a) && dist(a.x, a.y, c.x, c.y) < a.r + c.r + 10) {
+    c.used.add(a); for (const k in a.kit.cd) a.kit.cd[k] = Math.max(0, a.kit.cd[k] - c.cut); heal(w, a, a.maxHp * 0.05, u);
+    k2(w, { draw: 'tellClock', unit: a, x: a.x, y: a.y, r: a.vr, max: 1.2, secs: c.cut }); puff(w, c.x, c.y, '#C9A070', 6, 60, 4, 0.3);
+  }
+  // friends with abilities waiting walk over to it
+  for (const a of w.units) if (alive(a) && a.team === c.team && !a.summon && a.kit && !c.used.has(a) && dist(a.x, a.y, c.x, c.y) < 260 && Object.values(a.kit.cd).some((x) => x > 3)) a.coinGoal = { x: c.x, y: c.y, d: dist(a.x, a.y, c.x, c.y) };
+  return true;
+};
+// the Quartermaster's barricade: it stands; III its spikes hurt whatever strikes it
+BRAINS.barricade = function (w, b, dt) {
+  b.vx = b.vy = b.kx = b.ky = 0;
+  if (b.spikes && !b.spiked) { b.spiked = true; onUnit(w, b, 'spikes', 99, { struck(w2, u2, src, amt, o) { if (src && alive(src) && !o.shot && dist(src.x, src.y, u2.x, u2.y) < u2.r + src.r + 40) hurt(w2, src, dmgOf(u2.summonBy || u2, 0.6), u2.summonBy, { noDodge: true, knock: 120, kAngle: angleTo(u2.x, u2.y, src.x, src.y), proc: true }); } }); }
+  return true;
+};
+// a bee (the Beekeeper's): it flies to its foe and stings; a pestering bee keeps buzzing round it, stinging now and then
+function bee(w, u, from, e, k, pester) {
+  const a = angleTo(from.x, from.y, e.x, e.y) + rrange(-0.6, 0.6);
+  w.projectiles.push({ kind: 'bee', x: from.x + Math.cos(a) * 14, y: from.y + Math.sin(a) * 14, vx: Math.cos(a) * 300, vy: Math.sin(a) * 300, r: 6, team: u.team, owner: u, dmg: dmgOf(u, k), o: { knock: 10, poison: 6 }, life: 1.8, a, home: e, turn: 7,
+    onHit: (w2, p, x) => { if (!pester || !alive(x)) return; const hk = hookOf(x, 'pester'); if (hk) { hk.until = w2.time + 3; hk.n = Math.min(3, hk.n + 1); return; }
+      let acc = 0; const h = onUnit(w2, x, 'pester', 3, { n: 1, tick(w3, u3, dt) { acc += dt; if (acc < 0.7) return; acc = 0; if (alive(u)) hurt(w3, u3, dmgOf(u, k * 0.35) * this.n, u, { noDodge: true, knock: 0, pester: true, poison: 4 }); } });
+      k2(w2, { draw: 'pester', unit: x, x: x.x, y: x.y, r: x.vr, max: 30, hk: h }); } });
+}
+// Pollen (the Beekeeper's trait): every sixth sting of his bees mends the friend most hurt near him
+function pollen(w, u) {
+  if (!u.kit) return; const k = u.kit; k.stings = (k.stings || 0) + 1; if (k.stings % 6) return;
+  const a = hurtMost([u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo && dist(u.x, u.y, o.x, o.y) < 300)); if (!a || hpRatio(a) >= 1) return;
+  heal(w, a, a.maxHp * 0.05, u); k2(w, { draw: 'pollen', unit: a, from: u, x: a.x, y: a.y, max: 0.8 });
+}
 // the Bandit's Snatch: its weapon flung out of its hand; it must walk over and pick it up before it can attack again
 function snatch(w, u, e) {
   if (!alive(e) || e.def.boss || e.fixed || e.def.brain || isOn(w, e, 'snatched')) return;
@@ -2435,11 +2484,19 @@ export const TRAITS2 = {
     tick(w, u) { if (u.buffs.some((b) => b.blind)) u.buffs = u.buffs.filter((b) => !b.blind); },
     evade(w, u, src, amt, o) { if (o.dot || rand() > 0.15) return false; puff(w, u.x, u.y, '#C9B8FF', 6, 60, 4, 0.35); return true; },
   },
-  wellStocked: {
+  // Requisition (round 13, the Quartermaster redone; "Giving out hp potions is very strong"): every 20 s he tosses a
+  // piece of kit out of the pack to the friend nearest the fight, for 12 s: a whetstone (+20% damage), a buckler
+  // (Warded 25) or boots (+25% speed). On the wagon road he is a gatherer (convoy.js reads gatherer: true)
+  requisition: {
     tick(w, u, dt) {
-      const k = u.kit; k.stockT = (k.stockT ?? 20) - dt; if (k.stockT > 0) return;
-      const a = friendsNear(w, u, u.x, u.y, 220).find((o) => !o.summon && !o.potions); if (!a) { k.stockT = 2; return; }
-      k.stockT = 120; a.potions = 1; k2(w, { draw: 'crumbs', x: a.x, y: a.y, unit: a, max: 0.6 });
+      const k = u.kit; if (k.reqW !== w) { k.reqW = w; k.reqT = 3; }
+      if (!opponents(w, u).length) return; k.reqT -= dt; if (k.reqT > 0) return; k.reqT = 20;
+      const a = [u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo && dist(u.x, u.y, o.x, o.y) < 320).sort((p, q) => (q.target ? 1 : 0) - (p.target ? 1 : 0) || hpRatio(p) - hpRatio(q))[0]; if (!a) return;
+      const item = ['whetstone', 'buckler', 'boots'][Math.floor(rand() * 3)];
+      const give = () => { if (!alive(a)) return;
+        if (item === 'whetstone') addBuff(a, { id: 'whetstone', dur: 12, dealt: 1.2 }); else if (item === 'buckler') ward(w, a, 25, 12); else addBuff(a, { id: 'boots', dur: 12, move: 1.25 });
+        k2(w, { draw: 'kitOn', unit: a, x: a.x, y: a.y, r: a.vr, item, max: 1.6 }); };
+      setAnim(u, 'throw', 0.3); if (a === u) give(); else { const p = lob(w, u, a.x, a.y, 'kitFly', null, give); p.item = item; }
     },
   },
   armourPiercing: { dealt(w, u, t, amt) { return t.elite || t.major || t.def.boss ? amt * 1.25 : amt; } },
@@ -2461,13 +2518,9 @@ export const TRAITS2 = {
   bushido: { atkSpeed: (u) => (hpRatio(u) < 0.35 ? 1.4 : 1) },
   chooser: { reviveRate: 2, reviveHp: 0.3 },
   wellFed: { tick(w, u, dt) { for (const a of friendsNear(w, u, u.x, u.y, 150)) if (!a.summon) heal(w, a, a.maxHp * 0.005 * dt, u); } },
-  beeFriend: {
-    tick(w, u, dt) {
-      const k = u.kit; k.beeT = (k.beeT || 0) - dt; if (k.beeT > 0) return; k.beeT = 0.9;
-      const e = foesNear(w, u, u.x, u.y, 100)[0]; if (!e) return;
-      hurt(w, e, dmgOf(u, 0.35), u, { noDodge: true, knock: 5, proc: true }); k2(w, { draw: 'beeZip', x: u.x, y: u.y, from: u, to: e, max: 0.35 });
-    },
-  },
+  // Pollen (round 13, the Beekeeper redone): every sixth sting of his bees mends the friend most hurt near him (kits2
+  // pollen(), counted where his bees sting)
+  pollen: { hit(w, u, t, amt, o) { if (o.shot || o.pester) pollen(w, u); } },
   // Rub Some Dirt In It (round 13, the designer: "Every ability he uses applies a dirty effect to him.. Acts as a 1 time
   // shield but attack speed is slow until it's cleared. Basic attack doesnt apply it. Makes him immune to poison and fire
   // until removed."): the Dirty effect is put on by each of his abilities (kits2.js dirty); this hook only reports it
@@ -2512,12 +2565,15 @@ export const ATTACKS2 = {
       w2.projectiles.push({ kind: 'glimmer', x: e.x, y: e.y, vx: Math.cos(b) * 480, vy: Math.sin(b) * 480, r: 5, team: u.team, owner: u, skip: e, dmg: A(u, 0.55), o: { knock: 15 }, life: 0.5, a: b });
     } } });
   },
-  // a bee buzzing after the target
-  beekeeper(w, u, t, a) {
-    shoot(w, u, a + rrange(-0.4, 0.4), { kind: 'bee', speed: 320, r: 6, life: 1.6, dmg: A(u, 0.95), knock: 10, extra: { home: t, turn: 6 } });
+  // a bee (round 13: the Beekeeper redone): it stings and then stays buzzing round its foe, stinging now and then
+  beekeeper(w, u, t, a) { bee(w, u, u, t, 0.7, true); },
+  // something out of the pack (round 13: the Quartermaster redone): a pot, a pan, a boot, a tin cup, a ladle
+  quartermaster(w, u, t, a) { shoot(w, u, a, { kind: 'pot', speed: 440, r: 8, dmg: A(u, 1), knock: 90, extra: { item: Math.floor(rand() * 5) } }); },
+  // the Chef (round 13: "Should be ranged. Throws random foods. All same effect. Hurts enemies, heals allies"): food of
+  // six kinds; it hurts the enemy it hits and mends any friend it passes over on the way
+  chef(w, u, t, a) {
+    shoot(w, u, a, { kind: 'food', speed: 420, r: 8, life: 1.1, dmg: A(u, 1), knock: 40, extra: { food: Math.floor(rand() * 6), allyHit: (w2, p, f) => { heal(w2, f, A(u, 0.6), u); f.mendGlow = w2.time + 0.3; } } });
   },
-  // a pot or a pan out of the pack
-  quartermaster(w, u, t, a) { shoot(w, u, a, { kind: 'pot', speed: 430, r: 8, dmg: A(u, 1), knock: 70 }); },
   // a heavy bolt through the first enemy; after Crank Up it bursts
   crossbowman(w, u, t, a) {
     const k = u.kit, boom = k.crank > 0; if (boom) k.crank--;
@@ -2574,6 +2630,19 @@ export function kit2Tick(w, u, dt) {
   if (u.kind === 'warhelm') { const out = !!u.kit.storm || u.kit.splitT > w.time; if (out) u._force = { 'arm-l': { hide: true } }; else if (u._force && u._force['arm-l']) u._force = null; }
   // the Alchemist's hand shows the next flask she'll throw (round 13: "Bottle in hand should change to what she will throw")
   if (u.kind === 'alchemist' && (u.kit.handW !== w || !u.kit.handFx || u.kit.handFx.t >= u.kit.handFx.max)) { u.kit.handW = w; u.kit.handFx = k2(w, { draw: 'handFlask', unit: u, x: u.x, y: u.y, max: 1e9 }); }
+  // the Chef's plates: a friend who walks over one eats it (healed; the rest past whole is extra health); hurt friends
+  // with no enemy on them go and get one
+  if (u.kit.foods && u.kit.foods.length) {
+    const F = u.kit.foods, tier = tierOf(u, 'hotMeal');
+    for (const fd of F) {
+      if (fd.until < w.time) { fd.done = true; continue; }
+      const who = w.units.find((o) => alive(o) && o.team === u.team && !o.summon && !o.def.cargo && dist(o.x, o.y, fd.x, fd.y) < o.r + 16);
+      if (who) { fd.done = true; fd.f.max = fd.f.t; const amt = who.maxHp * 0.25, room = who.maxHp - who.hp; heal(w, who, amt, u); if (amt > room + 1) ward(w, who, Math.round((amt - room) * 0.8), 10);
+        k2(w, { draw: 'crumbs', x: who.x, y: who.y, unit: who, max: 0.6, ab: 'hotMeal' }); if (tier >= 3) addBuff(who, { id: 'hotMeal', dur: 8, dealt: 1.2, glow: '#FFB070' }); continue; }
+      for (const o of w.units) if (alive(o) && o.team === u.team && !o.summon && !o.def.cargo && hpRatio(o) < 0.75 && dist(o.x, o.y, fd.x, fd.y) < 260 && !(o.target && dist(o.x, o.y, o.target.x, o.target.y) < 120)) o.coinGoal = { x: fd.x, y: fd.y, d: dist(o.x, o.y, fd.x, fd.y) };
+    }
+    u.kit.foods = F.filter((fd) => !fd.done);
+  }
   // the Shaman's spirit bear: friends near it take 20% less (round 13: "Negates all damage around him by 20%")
   if (u.kind === 'shaman') for (const b of w.units) if (b.kind === 'spiritBear' && b.summonBy === u && alive(b)) for (const a of friendsNear(w, b, b.x, b.y, 120)) addBuff(a, { id: 'bearWard', dur: 0.3, taken: 0.8 });
   // the Haymaker's bale: when it is gone he drops off it; under him meanwhile the leap's hop is kept off (the bale's brain sets it)

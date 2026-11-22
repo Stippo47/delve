@@ -346,7 +346,9 @@ const TRAIT_SCENE = {
   snatch: { words: 'weapon snatched' },
   dirtIn: { words: 'dirt rubbed in', abilities: true },
   familiar: { words: 'an imp' },
-  bloodRite: { words: 'blood heals', abilities: true }, // (lane H2, round 13: the new heroes' new traits)
+  bloodRite: { words: 'blood heals', abilities: true },
+  pollen: { words: 'pollen heals' },
+  requisition: { words: 'kit handed out' }, // (lane H2, round 13: the new heroes' new traits)
   grace: { words: '3rd blow: crit' },
   skyborn: { words: 'no roots', hitSt: { entangle: 45 } },
   phalanx: { words: 'ally near: -10%' },

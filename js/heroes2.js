@@ -350,55 +350,63 @@ Object.assign(HEROES2, {
     name: 'Chef', art: 'art/heroes/chef.svg', role: 'support', unlock: { gems: 1 },
     blurb: 'A toque, a moustache, a frying pan and a wooden spoon. Feeds friends and flings pies at everyone else.',
     fun: 'Has never once been asked to cook goblin. Has prepared anyway.',
-    stats: { hp: 120, speed: 56, r: 32, vr: 22, turn: 3.8, accel: 200, face: 4, mass: 1.6, range: 20, atkCd: 1.15, dmg: 10, knock: 160, arc: 1.6 },
-    weapon: 'heavy',
-    attack: { name: 'Frying pan', anim: 'swing', desc: 'A clanging whack with the pan.' },
+    stats: { hp: 120, speed: 56, r: 32, vr: 22, turn: 3.8, accel: 200, face: 4, mass: 1.6, range: 200, keep: 150, atkCd: 1.1, dmg: 10 },
+    // round 13: "Should be ranged. Throws random foods. All same effect. Hurts enemies, heals allies"
+    attack: { name: 'Food toss', anim: 'throw', desc: 'Throws whatever comes to hand: an apple, a drumstick, a pie, cheese, a roll, a fish. It hurts the enemy it hits and mends any friend it passes over.' },
     abilities: [
-      { id: 'hotMeal', name: 'Hot Meal', cd: 12, tags: 'h', glyph: 'heart', desc: 'Sets a hot plate down by a hurt ally; whoever eats it is healed.',
-        tiers: ['One meal: heals 30%.', 'Two meals.', 'Whoever eats hits 20% harder for 8s.'] },
+      { id: 'hotMeal', name: 'Hot Meal', cd: 12, tags: 'h', glyph: 'heart', desc: 'Throws hot plates out round the party; a friend who walks over one eats it and heals 25%; what goes past full health becomes extra health. Hurt friends go and get one.',
+        tiers: ['Two plates.', 'Three plates.', 'Whoever eats hits 20% harder for 8s.'] },
       { id: 'greaseFire', name: 'Grease Fire', cd: 13, tags: 's', glyph: 'flame', desc: 'Flips the pan: hot grease splashes over the floor in front, slick and slow.',
         tiers: ['Oil in a cone for 6s.', 'The oil catches: it burns.', 'A wider splash.'] },
-      { id: 'foodFight', name: 'Food Fight', cd: 10, tags: 's', glyph: 'burst', desc: 'Flings custard pies at several enemies. They splat.',
-        tiers: ['Three pies: slowed for 3s.', 'Pie in the eyes: they miss.', 'Five pies.'] },
+      { id: 'foodFight', name: 'Food Fight', cd: 10, tags: 's', glyph: 'burst', desc: 'Flings custard pies at several enemies, the ones dashing or leaping first: a pie stops a dash, a leap or a charge dead, and slows a little.',
+        tiers: ['Three pies.', 'Pie in the eyes: they miss.', 'Five pies.'] },
     ],
     trait: { id: 'wellFed', name: 'Well Fed', desc: 'Allies near him heal 0.5% of their health a second.' },
   },
   beekeeper: {
+    // round 13: "REDO... Overall don't like. Visuals or abilities or animations": a new kit (the ids stay for saves)
     name: 'Beekeeper', art: 'art/heroes/beekeeper.svg', role: 'support', unlock: { gems: 2 },
-    blurb: 'A veiled hat, a copper smoker, and a great many friends who sting.',
+    blurb: 'A veiled hat, a copper smoker, and a great many friends who sting. Calms the enemy, sets the hive on them, keeps his friends sweet.',
     fun: 'Knows every one of the bees by name. They know him by smell.',
     stats: { hp: 82, speed: 62, r: 31, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1.1, range: 210, keep: 170, atkCd: 1.0, dmg: 8 },
     style: { glow: '#FFD45A' },
-    attack: { name: 'Bee', anim: 'throw', desc: 'Sends a bee buzzing after the target.' },
+    attack: { name: 'Bee', anim: 'throw', desc: 'Sends a bee at the target: it stings, then stays buzzing round it, stinging now and then.' },
+    summons: { beehive: { name: 'Beehive', r: 20, vr: 22, turn: 0, accel: 0, face: 0, mass: 60, hp: 35, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 } },
     abilities: [
-      { id: 'swarm', name: 'Swarm', cd: 11, tags: 'ds', glyph: 'burst', desc: 'Opens the hive: bees pour out and chase the nearest enemies, stinging and slowing.',
-        tiers: ['Six bees.', 'Their stings poison.', 'Ten bees.'] },
-      { id: 'honeyPot', name: 'Honey Pot', cd: 13, tags: 'sh', glyph: 'vial', desc: 'Throws a pot of honey: enemies get stuck in it, friends get a sweet treat.',
-        tiers: ['A pool for 5s that entangles enemies.', 'Allies standing in it heal.', 'Bigger.'] },
-      { id: 'royalJelly', name: 'Royal Jelly', cd: 14, tags: 'h', glyph: 'up', desc: 'Feeds an ally royal jelly: it attacks much faster for a while.',
-        tiers: ['+40% attack speed for 6s.', 'And +20% damage.', 'Two allies.'] },
+      { id: 'swarm', name: 'Smoker', cd: 11, tags: 's', glyph: 'cloud', desc: 'Pumps the smoker: a cone of thick white smoke rolls over the enemies in front. They grow sleepy and slow, and drop off if it builds.',
+        tiers: ['Sleepy and slowed.', 'Sleepier.', 'They swing slower too.'] },
+      { id: 'honeyPot', name: 'Beehive', cd: 14, tags: 'ds', glyph: 'burst', desc: 'Throws a hive down among the enemies (its own health): bees stream out at whatever is near, and whoever strikes the hive is mobbed.',
+        tiers: ['A hive for 8s.', 'For 12s.', 'Its bees stay on their foes, stinging.'] },
+      { id: 'royalJelly', name: 'Honey Glaze', cd: 12, tags: 'h', glyph: 'heart', desc: 'Drizzles honey over the friend under the most attack: it heals over 4s, and whatever strikes it gets stuck in the honey.',
+        tiers: ['Heals 16% over 4s.', 'Heals 25%.', 'Two friends.'] },
     ],
-    trait: { id: 'beeFriend', name: 'Bee Friends', desc: 'A few bees always buzz round him and sting enemies that come close.' },
+    trait: { id: 'pollen', name: 'Pollen', desc: 'Every sixth sting of his bees carries pollen back: the friend most hurt near him heals 5%.' },
   },
 });
 
 // ------------------------------------------------------------------ batch 5: the quartermaster and four ranged
 Object.assign(HEROES2, {
   quartermaster: {
+    // round 13: "REDO... Overall don't like. Visuals or abilities. Giving out hp potions is very strong. Needs to be more
+    // unique": a new kit (ids kept for saves); no potions
     name: 'Quartermaster', art: 'art/heroes/quartermaster.svg', role: 'support', unlock: { gems: 1 },
-    blurb: 'A pack bigger than he is. Keeps the party fed, armed and stocked, and throws the pots.',
+    blurb: 'A pack bigger than he is. Whatever the party needs, it is in there somewhere: kit, a crate, a barricade, a pot.',
     fun: 'Has a receipt for everything in the pack. Including the pack.',
     stats: { hp: 105, speed: 56, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 150, atkCd: 1.3, dmg: 8 },
-    attack: { name: 'Pot toss', anim: 'throw', desc: 'Throws a pot or a pan out of the pack.' },
+    attack: { name: 'Pack toss', anim: 'throw', desc: 'Throws whatever is on top of the pack: a pot, a pan, a boot, a tin cup, a ladle.' },
+    summons: {
+      crate: { name: 'Supply crate', r: 20, vr: 22, turn: 0, accel: 0, face: 0, mass: 60, hp: 20, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
+      barricade: { name: 'Barricade', r: 34, vr: 34, turn: 0, accel: 0, face: 0, mass: 99, hp: 55, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
+    },
     abilities: [
-      { id: 'resupply', name: 'Resupply', cd: 28, tags: 'h', glyph: 'vial', desc: 'Tosses a supply bundle to the ally who needs it most.',
-        tiers: ['Heals 6%, and a health potion if they have none.', 'Heals 12%.', 'A bundle each for two allies.'] },
-      { id: 'oilBlades', name: 'Oil the Blades', cd: 16, tags: 's', glyph: 'flame', desc: 'Hands round lamp oil for the weapons: the allies near him set things alight with every blow.',
-        tiers: ['Their blows burn a little for 8s.', 'They burn more.', 'And their blows heal them a little.'] },
-      { id: 'flare', name: 'Flare', cd: 13, tags: 'd', glyph: 'sun', desc: 'Fires a red flare onto the enemies: whatever stands in its light is easy to hit.',
-        tiers: ['For 6s they take 15% more.', 'They are dazzled and slowed too.', 'A bigger patch of light.'] },
+      { id: 'resupply', name: 'Supply Crate', cd: 16, tags: 'h', glyph: 'vial', desc: "Drops a supply crate by the friend whose abilities are furthest off; each friend's first touch brings its abilities round sooner and patches it up 5%. Friends with abilities waiting walk over to it.",
+        tiers: ['One crate: 4s sooner.', '6s sooner.', 'Two crates.'] },
+      { id: 'oilBlades', name: 'Barricade', cd: 18, tags: 'd', glyph: 'wall', desc: 'Unfolds a wooden barricade between the party and the enemies: it blocks their way and their shots until it is broken.',
+        tiers: ['110 health, 10s.', '160 health, 14s.', 'Spikes: whatever strikes it is hurt.'] },
+      { id: 'flare', name: 'Pot Helmet', cd: 12, tags: 's', glyph: 'fist', desc: 'Throws a big cooking pot that lands upside down over an enemy\'s head: it can\'t see (its blows miss) and blunders about confused.',
+        tiers: ['Over one head for 3s.', 'The clang staggers.', 'It bounces on to a second head.'] },
     ],
-    trait: { id: 'wellStocked', name: 'Well Stocked', desc: 'Every two minutes, a friend near him who has no health potion gets one. A gatherer: on the wagon road he goes for loose gold before a fight, and further for it.' },
+    trait: { id: 'requisition', name: 'Requisition', desc: 'Every 20s he tosses a piece of kit to the friend nearest the fight, for 12s: a whetstone (+20% damage), a buckler (a shield of 25) or boots (+25% speed). A gatherer: on the wagon road he goes for loose gold before a fight, and further for it.' },
     gatherer: true, // lane W (round 13, the designer: "heroes with the gathering trait ... prioritize collecting rather than fighting"; convoy.js)
   },
   crossbowman: {
