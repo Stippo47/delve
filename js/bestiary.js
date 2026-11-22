@@ -306,6 +306,10 @@ export const BUFFS = {
   bloodPact: { name: 'Blood Pact', icon: 'might', desc: 'Bound in blood for a while.' },
   oilBlades: { name: 'Oiled Blades', icon: 'lifesteal', desc: 'Every cut feeds a little back.' },
   oldSoldier: { name: 'Old Soldier', icon: 'ward', desc: 'Standing by a veteran.' },
+  // lane H2 (round 13): the newer heroes' new buffs
+  haste: { name: 'Haste', icon: 'haste', desc: 'Moving and striking faster.' },
+  warded: { name: 'Warded', icon: 'ward', desc: 'A shield of light soaks up the next blows.' },
+  weakened: { name: 'Weakened', icon: 'might', desc: 'Its blows land softer.', bad: true },
   rally: { name: 'Rally', icon: 'stance', desc: 'Rallied: nothing knocks it off its feet.' },
   royalJelly: { name: 'Royal Jelly', icon: 'haste', desc: 'A taste of the queen\'s food.' },
   shieldWallCover: { name: 'Shield Wall', icon: 'ward', desc: 'Behind a friend\'s shield.' },

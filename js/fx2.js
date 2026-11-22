@@ -763,6 +763,118 @@ DRAW.mine = (ctx, f, w, layer) => {
   ctx.restore();
 };
 
+// ---------------------------------------------------------------- round 13 (lane H2): the shared effects' looks
+const alive2 = (u) => u && !u.dead && !u.downed;
+// the effect on a unit has ended (its hook or buff is gone): let the look fade out
+const ended = (f, gone) => { if (gone && f.max > f.t + 0.25) f.max = f.t + 0.25; };
+const hasHook = (u, id) => !!(u && u.h2 && u.h2.some((h) => h.id === id));
+// Parry: the greatsword held across him, a cold glint running along its edge while he waits
+DRAW.parryGuard = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) return; ended(f, !(u.kit && u.kit.parry && u.kit.parry.until > w.time && u.kit.parry.n > 0));
+  const a = life(f, 0.1, 0.25), b = u.facing + Math.PI / 2, cx = u.x + Math.cos(u.facing) * (u.r + 4), cy = u.y + Math.sin(u.facing) * (u.r + 4), L = u.r + 16;
+  const run = ((f.t * 1.6) % 1) * 2 - 1;
+  ctx.save(); ctx.globalAlpha *= a;
+  inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(cx - Math.cos(b) * L, cy - Math.sin(b) * L); ctx.lineTo(cx + Math.cos(b) * L, cy + Math.sin(b) * L); }, '#DCE3EC', 5);
+  lit(ctx, () => glowDisc(ctx, cx + Math.cos(b) * L * run, cy + Math.sin(b) * L * run, 14, '#FFFFFF', 0.7));
+  ctx.restore();
+};
+// Last Stand: a gold blaze bursting up off him, and gold shards flung out low along the floor
+DRAW.lastStand = (ctx, f, w, layer) => {
+  const u = f.unit, x = alive2(u) ? u.x : f.x, y = alive2(u) ? u.y : f.y, k = k01(f.t / f.max), e = easeOut(k);
+  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 1 - k; for (let i = 0; i < 12; i++) { const b = i / 12 * TAU + 0.3, r0 = 20 + 90 * e; K.streak(ctx, x + Math.cos(b) * r0, y + Math.sin(b) * r0, b, 0, 22 * (1 - k) + 6, 4, i % 2 ? '#F2C14E' : '#FFE7A0', '#FFFBEA'); } ctx.restore(); return; }
+  if (k < 0.35) lit(ctx, () => glowDisc(ctx, x, y, 70, '#FFE7A0', 0.75 * (1 - k / 0.35)));
+};
+// Challenge: the friend she shoves clear: a puff of dust and three chevrons pointing the way they go
+DRAW.shoveAway = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
+  ctx.save(); ctx.globalAlpha *= 1 - k;
+  for (let i = 0; i < 3; i++) { const d = 14 + i * 13 + 30 * e, x = f.x + Math.cos(f.a) * d, y = f.y + Math.sin(f.a) * d;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(f.a); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-5, -8); ctx.lineTo(4, 0); ctx.lineTo(-5, 8); }, '#FFE7A0', 4); ctx.restore(); }
+  ctx.restore();
+};
+// a taunt landing on an enemy: a red "!" popping over its head
+DRAW.tauntMark = (ctx, f, w, layer) => {
+  const e = f.unit; if (layer !== 'air' || !alive2(e)) return; const k = k01(f.t / f.max), [vx, vy] = upVec(), up = e.vr + 16 + 8 * easeOut(k01(k / 0.3));
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  upright(ctx, e.x + vx * up, e.y + vy * up, () => { const s = k < 0.2 ? 1 + 0.5 * Math.sin(k / 0.2 * Math.PI) : 1; ctx.scale(s, s);
+    inked(ctx, () => { roundRect(ctx, -3, -14, 6, 15, 3); }, '#E04A3A'); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 6, 3.4, 0, TAU); }, '#E04A3A'); });
+  ctx.restore();
+};
+// Haste: short pale speed lines streaming off the back of a hasted body as it moves
+DRAW.haste = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'ground' || !alive2(u)) return; ended(f, !(u.buffs && u.buffs.some((b) => b.id === 'haste')));
+  const sp = Math.hypot(u.vx || 0, u.vy || 0), a = life(f, 0.1, 0.3) * clamp(sp / 60, 0.25, 1), m = sp > 8 ? Math.atan2(u.vy, u.vx) : u.facing;
+  ctx.save(); ctx.globalAlpha *= a * 0.8;
+  for (let i = -1; i <= 1; i++) { const ph = (f.t * 3 + hash(i + 2, u.id)) % 1, nx = -Math.sin(m) * i * 11, ny = Math.cos(m) * i * 11, d = u.r + 4 + ph * 18;
+    K.streak(ctx, u.x + nx - Math.cos(m) * d, u.y + ny - Math.sin(m) * d, m + Math.PI, 0, 18 * (1 - ph) + 4, 2.6, '#DDF6FF', '#FFFFFF'); }
+  ctx.restore();
+};
+// Whirled: white wind curls going round its feet, faster and more of them as it builds
+DRAW.whirled = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'ground' || !alive2(u)) { if (!alive2(u)) ended(f, true); return; }
+  const q = clamp(((u.k2s && u.k2s.whirl) || 0) / 100, 0, 1); ended(f, q <= 0.01);
+  const a = life(f, 0.15, 0.25), n = 2 + Math.round(q * 3), R = u.vr * 1.25;
+  ctx.save(); ctx.globalAlpha *= a * (0.5 + 0.5 * q);
+  for (let i = 0; i < n; i++) { const b0 = f.t * (5 + 6 * q) + i / n * TAU;
+    inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(u.x, u.y + u.vr * 0.35, R, R * 0.45, 0, b0, b0 + 1.1); }, i % 2 ? '#EEF3F8' : '#FFFFFF', 3.2); }
+  ctx.restore();
+};
+// Whirled's burst: a white whirlwind spun up round it while it is flung about
+DRAW.whirlBurst = (ctx, f, w, layer) => {
+  const u = f.unit, x = alive2(u) ? u.x : f.x, y = alive2(u) ? u.y : f.y, k = k01(f.t / f.max), [vx, vy] = upVec();
+  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= (1 - k) * 0.6; ctx.fillStyle = 'rgba(238,243,248,0.5)'; ctx.beginPath(); ctx.ellipse(x, y, f.r * 1.8, f.r * 0.9, 0, 0, TAU); ctx.fill(); ctx.restore(); return; }
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  for (let i = 0; i < 5; i++) { const h = i * 11, R = f.r * (0.7 + i * 0.22), b0 = f.t * 16 + i;
+    inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(x + vx * h, y + vy * h, R, R * 0.4, 0, b0, b0 + 2.2); }, i % 2 ? '#EEF3F8' : '#FFFFFF', 3.6 - i * 0.4); }
+  ctx.restore();
+};
+// Dirty: brown smears over the body and crumbs of dirt dropping off it
+DRAW.dirtyOn = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) { if (!alive2(u)) ended(f, true); return; } ended(f, !hasHook(u, 'dirty'));
+  const a = life(f, 0.15, 0.3), [vx, vy] = upVec();
+  ctx.save(); ctx.globalAlpha *= a;
+  for (let i = 0; i < 5; i++) { const b = hash(i, u.id) * TAU, d = u.vr * 0.55 * hash(u.id, i + 3); ctx.save(); ctx.globalAlpha *= 0.8; inked(ctx, () => blob(ctx, u.x + Math.cos(b) * d, u.y + Math.sin(b) * d, 4 + 2 * hash(i, 9), 5, i, 1), i % 2 ? '#7A5A3A' : '#9C7650'); ctx.restore(); }
+  for (let i = 0; i < 3; i++) { const ph = (f.t * 1.2 + i / 3) % 1, b = hash(i, 4) * TAU, d = u.vr * 0.7;
+    ctx.save(); ctx.globalAlpha *= 1 - ph; disc(ctx, u.x + Math.cos(b) * d - vx * ph * 18, u.y + Math.sin(b) * d - vy * ph * 18, 2.4, '#7A5A3A'); ctx.restore(); }
+  ctx.restore();
+};
+// a crosshair on a unit: Targeted (red) and Tracked (amber, with a falcon's feather tick)
+DRAW.crosshair = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) { if (!alive2(u)) ended(f, true); return; } ended(f, !hasHook(u, f.tracked ? 'tracked' : 'targeted'));
+  const a = life(f, 0.15, 0.3), R = u.vr + 8 + 6 * (1 - easeOut(k01(f.t / 0.25))), rot = f.t * 0.8, col = f.col || '#FF5A4A';
+  ctx.save(); ctx.globalAlpha *= a;
+  inkLine(ctx, () => { ctx.beginPath(); for (let i = 0; i < 4; i++) { const b = rot + i * Math.PI / 2; ctx.moveTo(u.x + Math.cos(b + 0.32) * R, u.y + Math.sin(b + 0.32) * R); ctx.arc(u.x, u.y, R, b + 0.32, b + Math.PI / 2 - 0.32); } }, col, 3);
+  for (let i = 0; i < 4; i++) { const b = rot + i * Math.PI / 2 + Math.PI / 4; inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(u.x + Math.cos(b) * (R - 7), u.y + Math.sin(b) * (R - 7)); ctx.lineTo(u.x + Math.cos(b) * (R + 6), u.y + Math.sin(b) * (R + 6)); }, col, 3); }
+  ctx.restore();
+};
+// Spun: a slow wobble of gold chevrons going round its head, slower as it builds
+DRAW.spunOn = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) { if (!alive2(u)) ended(f, true); return; }
+  const q = clamp(((u.k2s && u.k2s.spun) || 0) / 100, 0, 1); ended(f, q <= 0.01);
+  const [vx, vy] = upVec(), hx = u.x + vx * (u.vr + 12), hy = u.y + vy * (u.vr + 12);
+  ctx.save(); ctx.globalAlpha *= life(f, 0.15, 0.25) * (0.5 + 0.5 * q);
+  inkLine(ctx, () => { ctx.beginPath(); for (let i = 0; i <= 24; i++) { const b = i / 24 * TAU * 1.6 + f.t * (3 - 2 * q), r = 4 + i * 0.7; const x = hx + Math.cos(b) * r, y = hy + Math.sin(b) * r * 0.6; if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); } }, '#F2C14E', 2.8);
+  ctx.restore();
+};
+// Spun's burst: dust kicked up behind as it marches off the way it faces
+DRAW.spunGo = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'ground' || !alive2(u)) return; const a = life(f, 0.05, 0.3);
+  ctx.save(); ctx.globalAlpha *= a;
+  for (let i = -1; i <= 1; i++) { const ph = (f.t * 4 + i * 0.3) % 1, m = u.facing, nx = -Math.sin(m) * i * 10, ny = Math.cos(m) * i * 10;
+    K.streak(ctx, u.x + nx - Math.cos(m) * (u.r + 6 + ph * 14), u.y + ny - Math.sin(m) * (u.r + 6 + ph * 14), m + Math.PI, 0, 22 * (1 - ph) + 6, 3, '#E9DDC2', '#FFFFFF'); }
+  ctx.restore();
+};
+// Weakened: grey chevrons sinking off the body (point down), a dull wash on it (render.js)
+DRAW.weakOn = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) { if (!alive2(u)) ended(f, true); return; } ended(f, !(u.buffs && u.buffs.some((b) => b.id === f.buff)));
+  const [vx, vy] = upVec(); ctx.save(); ctx.globalAlpha *= life(f, 0.15, 0.3);
+  for (let i = 0; i < 2; i++) { const ph = (f.t * 0.9 + i * 0.5) % 1, up = u.vr + 14 - ph * 24;
+    ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI);
+    upright(ctx, u.x + vx * up + (i ? 8 : -8), u.y + vy * up, () => inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-7, -4); ctx.lineTo(0, 3); ctx.lineTo(7, -4); }, '#9AA2AE', 3.6));
+    ctx.restore(); }
+  ctx.restore();
+};
+
 export function drawK2(ctx, f, w, layer) { const d = DRAW[f.draw]; if (d) { ctx.save(); d(ctx, f, w, layer); ctx.restore(); } }
 
 // ---------------------------------------------------------------- signatures at the cast

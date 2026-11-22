@@ -373,6 +373,10 @@ export function poseFor(u, w, dt) {
     main = scaleP(W, sm(u._ready));
     if (base === 'cast') glow = u._ready * 0.6;
   }
+  // lane H2 (round 13): a backhand swing (style.backhand: the Dame, the Pirate, "swing the other way"); daggers stabbed
+  // straight ahead, never turned in across each other (style.straight: the Shade, "should not cross blades")
+  if (sty.backhand && base === 'swing') main = { ...main, r: -(main.r || 0) };
+  if (sty.straight && base === 'thrust') main = { ...main, r: 0 };
   // the other arm (all in arm-r terms, mirrored onto arm-l below): a shield pushes forward as the blow lands, a free
   // hand counters, casters lift both
   if (base === 'cast' || (u.anim && u.anim.kind === 'ability' && !sty.bow)) off = main;

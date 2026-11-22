@@ -341,6 +341,7 @@ const TRAIT_SCENE = {
   soulHarvest: { words: 'cooldowns -0.8s' },
   immunity: { words: 'poison spreads', hitSt: { poison: 40 }, first: (d) => { d.st.poison = Math.max(d.st.poison, 70); } },
   oldSoldier: { words: 'ally takes -10%' },
+  lastStand: { words: 'LAST STAND' }, // (lane H2, round 13: the new heroes' new traits)
   grace: { words: '3rd blow: crit' },
   skyborn: { words: 'no roots', hitSt: { entangle: 45 } },
   phalanx: { words: 'ally near: -10%' },

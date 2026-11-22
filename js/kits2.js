@@ -6,7 +6,7 @@
 // The looks are in fx2.js: fx of type 'k2' with a `draw` name, shots of the new kinds, and each ability's 'sig'.
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange } from './util.js';
 import { hurt, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, stun, addBuff, fx, cleanse, textU, sparks, scatterCoins, turnSide, restoreSide } from './sim.js';
-import { lineClear } from './path.js';
+import { lineClear, circleRect } from './path.js';
 import { foesNear, friendsNear, hurtMost, dmgOf, ang, ring, cast, heal, addStatus, zone, shoot, segDist } from './kits.js';
 
 // ---------------------------------------------------------------- helpers
@@ -27,6 +27,160 @@ function interrupt(w, e) {
   for (const z of w.danger) if (z.src === e && z.t > 0) { z.cancelled = true; z.done = true; }
 }
 const foeWinding = (w, e) => !!(e.act && e.act.type !== 'slip') || w.danger.some((z) => z.src === e && z.t > 0);
+
+// ---------------------------------------------------------------- round 13 (lane H2): shared pieces
+// A timed hook on any unit, friend or foe (kits.js hooksOf reads u.h2): its own tick ends it when its time is up.
+// The new heroes' own effects (Whirled, Dirty, Targeted, Tracked, Trapped, Spun, Warded) are built this way, each
+// behind one function, so the statuses lane can lift any of them into statuses.js later.
+function onUnit(w, e, id, dur, h = {}, end) {
+  const L = e.h2 || (e.h2 = []), i = L.findIndex((x) => x.id === id), inner = h.tick;
+  const hook = { ...h, id, until: w.time + dur, tick(w2, u2, dt) { if (w2.time >= hook.until) { offUnit(u2, id); if (end) end(u2); return; } if (inner) inner.call(hook, w2, u2, dt); } };
+  if (i >= 0) L[i] = hook; else L.push(hook);
+  return hook;
+}
+function offUnit(e, id) { if (!e.h2) return; e.h2 = e.h2.filter((x) => x.id !== id); if (!e.h2.length) e.h2 = null; }
+const hookOf = (e, id) => (e && e.h2 && e.h2.find((x) => x.id === id)) || null;
+const isOn = (w, e, id) => { const h = e && e.h2 && e.h2.find((x) => x.id === id); return !!(h && h.until > w.time); };
+const MOVES_ACT = new Set(['dash', 'leap', 'charge', 'chargeTell']);
+const sideOfU = (o) => o.trueTeam || o.team;
+// a summon of ours: on the maker's side (either side can field anything: battle mode), its blows `hit` x the maker's
+function summon(w, u, kind, x, y, o = {}) {
+  const s = spawn(w, kind, clamp(x, 30, w.W - 30), clamp(y, 30, w.H - 30), { team: u.team, scale: o.scale });
+  s.summon = true; s.summonBy = u; s.aggro = true; if (o.life) s.lifeT = o.life;
+  s.dmgMul = o.hit != null && s.def.dmg ? dmgOf(u, o.hit) / s.def.dmg : u.dmgMul;
+  if (o.hp) { s.maxHp = Math.round(o.hp); s.hp = s.maxHp; }
+  return s;
+}
+const mine = (w, u, kind) => w.units.filter((o) => o.summonBy === u && o.kind === kind && alive(o));
+// is a unit pressed against a wall, the room's edge or a pillar?
+function atObstacle(w, e, pad = 3) {
+  if (e.x < e.r + pad || e.y < e.r + pad || e.x > w.W - e.r - pad || e.y > w.H - e.r - pad) return true;
+  for (const r of w.walls) if (circleRect(e.x, e.y, e.r + pad, r)) return true;
+  for (const p of w.pillars) if (dist(e.x, e.y, p.x, p.y) < p.r + e.r + pad) return true;
+  return false;
+}
+// a body sent flying: for `dur` s, onWall(e) the first time it slams into something hard, onBody(o) for each body it
+// ploughs into on the way
+function flung(w, by, e, dur, onWall, onBody) {
+  const hit = new Set([e]); let last = 0;
+  onUnit(w, e, 'flung' + by.id, dur, { tick(w2, u2) {
+    const sp = Math.hypot(u2.kx, u2.ky);
+    if (onWall && last > 150 && atObstacle(w2, u2, 4)) { offUnit(u2, 'flung' + by.id); onWall(u2); return; }
+    if (onBody && sp > 160) for (const o of w2.units) if (!hit.has(o) && alive(o) && !o.ethereal && o.team !== by.team && dist(o.x, o.y, u2.x, u2.y) < o.r + u2.r + 4) { hit.add(o); onBody(o, u2); }
+    last = sp;
+  } });
+}
+// knock a unit somewhere: its shove scaled by its mass (a big one moves less)
+const shove = (e, a, k) => { if (e.fixed) return; e.kx += Math.cos(a) * k / Math.max(0.6, Math.sqrt(e.mass)); e.ky += Math.sin(a) * k / Math.max(0.6, Math.sqrt(e.mass)); };
+
+// WHIRLED (the Griffon, the Alchemist's whirling pool): a build-up 0..100 (e.k2s.whirl) that drains 12 a second. While
+// it is on, every shove it takes from anyone goes (1 + fill) as far. At 100 it bursts: it is flung about at random three
+// times in 0.9 s with no control meanwhile, then can't be whirled for 3 s.
+export function whirl(w, e, amt, src) {
+  if (!alive(e) || e.ethereal || e.fixed || (e.whirlImmune || 0) > w.time || amt <= 0) return;
+  const s = e.k2s || (e.k2s = {}), was = s.whirl || 0;
+  s.whirl = Math.min(100, was + amt * (e.def.boss ? 0.45 : 1));
+  if (!was || !isOn(w, e, 'whirled')) {
+    onUnit(w, e, 'whirled', 30, {
+      taken(w2, u2, s2, a, o) { if (o.knock && !o.whirlDone) { o.whirlDone = true; o.knock *= 1 + k01h((u2.k2s && u2.k2s.whirl || 0) / 100); } return a; },
+      tick(w2, u2, dt) { const q = u2.k2s; q.whirl = Math.max(0, (q.whirl || 0) - 12 * dt); if (q.whirl <= 0) offUnit(u2, 'whirled'); },
+    });
+    k2(w, { draw: 'whirled', unit: e, x: e.x, y: e.y, r: e.vr, max: 30 });
+  }
+  if (s.whirl >= 100) {
+    s.whirl = 0; offUnit(e, 'whirled'); e.whirlImmune = w.time + 3.9;
+    stun(w, e, e.def.boss ? 0.4 : 0.95); if (e.act && e.act.type !== 'drink') e.act = null;
+    textU(w, e.x, e.y, e.r + 12, 'WHIRLED', '#EEF3F8', 1.2);
+    k2(w, { draw: 'whirlBurst', unit: e, x: e.x, y: e.y, r: e.vr, max: 1.1 });
+    for (let i = 0; i < 3; i++) after(e, 0.02 + i * 0.3, () => { if (alive(e)) { shove(e, rand() * TAU, e.def.boss ? 180 : 520); puff(w, e.x, e.y, '#EEF3F8', 6, 90, 6, 0.4); } });
+  }
+}
+const k01h = (v) => Math.max(0, Math.min(1, v));
+// DIRTY (the Digger: "Rub some dirt in it"): a coat of dirt. The next blow that would land is soaked up by it, and that
+// is the end of it; until then he attacks 30% slower, and fire and poison can't take on him (both are washed off now).
+function dirty(w, a, dur = 10) {
+  if (!alive(a)) return;
+  a.st.burn = 0; a.st.poison = 0; a.sickT = 0;
+  onUnit(w, a, 'dirty', dur, { immune: ['burn', 'poison'], atkSpeed: () => 0.7,
+    evade(w2, u2, s2, amt, o) { if (o.dot) return false; offUnit(u2, 'dirty'); puff(w2, u2.x, u2.y, '#9C7650', 12, 110, 6, 0.5); textU(w2, u2.x, u2.y, u2.r + 6, 'dirt', '#C9A47A', 0.9); return true; } });
+  k2(w, { draw: 'dirtyOn', unit: a, x: a.x, y: a.y, r: a.vr, max: dur });
+}
+// TARGETED (the Marksman's Aimed Shot, the Pirate's Point Blank): a crosshair on it. It takes 20% more, its dashes,
+// leaps and charges go 40% as far, and the Marksman's bullets go on through it.
+function targeted(w, e, dur) {
+  if (!alive(e)) return;
+  onUnit(w, e, 'targeted', dur, {
+    taken(w2, u2, s2, a, o) { return o.dot ? a : a * 1.2; },
+    tick(w2, u2) { const A = u2.act; if (A && A !== this.seen && MOVES_ACT.has(A.type)) { this.seen = A;
+      if (A.type === 'leap') { A.x1 = A.x0 + (A.x1 - A.x0) * 0.4; A.y1 = A.y0 + (A.y1 - A.y0) * 0.4; } else A.t *= 0.4; } },
+  });
+  k2(w, { draw: 'crosshair', unit: e, x: e.x, y: e.y, r: e.vr, max: dur, col: '#FF5A4A' });
+}
+// TRACKED (the Falconer's falcon): it can't turn invisible, untouchable or go underground, and every blow from his side
+// lands `fixed` harder.
+function tracked(w, e, dur, fixed, by) {
+  if (!alive(e)) return;
+  onUnit(w, e, 'tracked', dur, {
+    taken(w2, u2, s2, a, o) { return !o.dot && s2 && sideOfU(s2) === sideOfU(by) ? a + fixed : a; },
+    tick(w2, u2) { u2.hidden = false; if (u2.ethereal && !u2.def.ethereal) u2.ethereal = false; u2.invulnT = Math.min(u2.invulnT, 0.05); },
+  });
+  k2(w, { draw: 'crosshair', unit: e, x: e.x, y: e.y, r: e.vr, max: dur, col: '#E0A060', tracked: true });
+}
+// TRAPPED (the Trapper's jaw trap): it can't move or turn and can't use an ability; it can still strike straight ahead.
+function trapped(w, e, dur) {
+  if (!alive(e)) return;
+  const d = e.def.boss ? dur * 0.4 : dur;
+  onUnit(w, e, 'trapped', d, { tick(w2, u2) {
+    u2.rootT = Math.max(u2.rootT || 0, 0.06); u2.faceLockT = 0.06; u2.abilT = Math.max(u2.abilT || 0, 0.3);
+    if (u2.kit) for (const k in u2.kit.cd) u2.kit.cd[k] = Math.max(u2.kit.cd[k], 0.3);
+    if (u2.act && u2.act.type !== 'windup' && u2.act.type !== 'drink') u2.act = null;
+  } });
+  return d;
+}
+// SPUN (the Monk's Palm Strike): a build-up 0..100 (e.k2s.spun, drains 10 a second): it turns very slowly, more so as it
+// builds. At 100 it bursts: it marches off the way it faces, fast, for 1.2 s, and can't attack meanwhile.
+function spin(w, e, amt) {
+  if (!alive(e) || e.fixed || (e.spunImmune || 0) > w.time) return;
+  const s = e.k2s || (e.k2s = {}), was = s.spun || 0;
+  s.spun = Math.min(100, was + amt * (e.def.boss ? 0.45 : 1));
+  if (!was || !isOn(w, e, 'spun')) {
+    onUnit(w, e, 'spun', 30, { moveSpeed: () => 0.8,
+      tick(w2, u2, dt) { const q = u2.k2s; q.spun = Math.max(0, (q.spun || 0) - 10 * dt); if (rand() < 0.9 * q.spun / 100) u2.faceLockT = Math.max(u2.faceLockT || 0, 0.001); if (q.spun <= 0) offUnit(u2, 'spun'); } });
+    k2(w, { draw: 'spunOn', unit: e, x: e.x, y: e.y, r: e.vr, max: 30 });
+  }
+  if (s.spun >= 100) {
+    s.spun = 0; offUnit(e, 'spun'); e.spunImmune = w.time + 4;
+    const T = e.def.boss ? 0.5 : 1.2;
+    if (!e.def.brain) e.act = { type: 'dash', t: T, max: T, a: e.facing }; else stun(w, e, 0.5);
+    textU(w, e.x, e.y, e.r + 12, 'SPUN', '#FFE7A0', 1.2);
+    k2(w, { draw: 'spunGo', unit: e, x: e.x, y: e.y, r: e.vr, max: T + 0.2 });
+  }
+}
+// WARDED (the Alchemist's Elixir: the designer asked for a protection status's name): a shield soaking up the next
+// `amt` damage, shown as a pale blue border round the body (render.js: a buff's border is protection).
+function ward(w, a, amt, dur) {
+  if (!alive(a)) return;
+  let left = amt;
+  addBuff(a, { id: 'warded', dur, border: '#9FE0FF' });
+  onUnit(w, a, 'warded', dur, { taken(w2, u2, s2, x, o) { const t = Math.min(left, x); left -= t; if (left <= 0) { offUnit(u2, 'warded'); u2.buffs = u2.buffs.filter((b) => b.id !== 'warded'); sparks(w2, u2.x, u2.y, 0, 6, '#BFEFFF', 1); } return x - t; } },
+    (u2) => { u2.buffs = u2.buffs.filter((b) => b.id !== 'warded'); });
+}
+// HASTE and RAGE: buffs on the body (render.js washes rage; fx2 'haste' lines stream off a hasted one)
+function haste(w, a, dur, k = 1.3) { addBuff(a, { id: 'haste', dur, move: k, atkSpeed: k }); k2(w, { draw: 'haste', unit: a, x: a.x, y: a.y, r: a.vr, max: dur }); }
+function rage(w, a, dur, k = 1.3) { addBuff(a, { id: 'rage', dur, dealt: k, atkSpeed: 1 + (k - 1) * 0.8 }); }
+// WEAKENED (the Shade's Blackout): deals 30% less; a grey wash and grey chevrons sinking off the body
+function weaken(w, e, dur) { const had = e.buffs.some((b) => b.id === 'weakened'); addBuff(e, { id: 'weakened', dur, dealt: 0.7, wash: ['#7E8794', 0.22] }); if (!had) k2(w, { draw: 'weakOn', unit: e, x: e.x, y: e.y, r: e.vr, max: dur, buff: 'weakened' }); }
+// bleeding, sleepy, confused: the statuses lane's (statuses.js); added through kits.js addStatus (its web nodes)
+const bleed = (w, e, amt, u) => addStatus(w, e, 'bleed', amt, u);
+const sleepy = (w, e, amt, u) => addStatus(w, e, 'sleepy', amt, u);
+const confuse = (w, e, amt, u) => addStatus(w, e, 'confuse', amt, u);
+// a unit's hand, held out towards an angle (shots start there)
+const handAt = (u, a, d = 6) => ({ x: u.x + Math.cos(a) * (u.r + d), y: u.y + Math.sin(a) * (u.r + d) });
+// the friend most in trouble (low health, enemies on it), within reach
+function inTrouble(w, u, reach, pct = 0.45) {
+  const list = allies(w, u).filter((a) => !a.summon && !a.def.cargo && hpRatio(a) < pct && dist(u.x, u.y, a.x, a.y) < reach);
+  return list.sort((p, q) => hpRatio(p) - hpRatio(q))[0] || null;
+}
 
 // ---------------------------------------------------------------- abilities
 export const ABILITIES2 = {
@@ -55,25 +209,46 @@ export const ABILITIES2 = {
     },
     use(w, u, t, tier) {
       cast(u, 'ability', 0.5);
+      // round 13, the designer: "Get a haste boost when leveled up. Effect remains for a little bit." II: haste, and it
+      // all lasts 8 s
+      const dur = tier >= 2 ? 8 : 5;
       for (const a of [u, ...friendsNear(w, u, u.x, u.y, 240)]) {
         a.stunT = 0; a.rootT = 0; a.koT = 0; a.tangledT = 0; a.st.stagger = 0;
-        addBuff(a, { id: 'rally', dur: 5, knockImmune: true, move: tier >= 2 ? 1.2 : 1, glow: '#F2C14E' });
+        addBuff(a, { id: 'rally', dur, knockImmune: true, glow: '#F2C14E' });
+        if (tier >= 2) haste(w, a, dur, 1.3);
         if (tier >= 3) heal(w, a, a.maxHp * 0.12, u);
         k2(w, { draw: 'rally', unit: a, x: a.x, y: a.y, r: a.vr, max: 0.9 });
       }
     },
   },
+  // Parry (round 13, the designer: "Should have a parry ability. The next attack is blocked and deflected back if it was
+  // a projectile, melee just go back to target. When leveled up gets 2 charges. Maybe instead of pommel strike"). It
+  // takes Pommel Strike's place (the id stays for saves). He sets the greatsword across him; the next blow or shot that
+  // reaches him within 4 s is caught: a shot flies back at whoever loosed it, a blow's damage goes back into the striker.
   pommelStrike: {
-    score: (w, u, t) => (inReach(u, t, 30) ? (foeWinding(w, t) ? 0.95 : 0.3) : 0),
-    use(w, u, t, tier) {
-      if (!t) return; u.facing = ang(u, t); cast(u, 'thrust', 0.3);
-      interrupt(w, t);
-      hurt(w, t, dmgOf(u, 0.8), u, { knock: tier >= 2 ? 460 : 120, heavy: true, noDodge: true });
-      stun(w, t, 1);
-      if (tier >= 3) u.kit.pommelMark = t;
-      k2(w, { draw: 'bonk', x: t.x, y: t.y, r: t.vr, unit: t, max: 0.45 });
+    score(w, u) {
+      if (u.kit.parry && u.kit.parry.until > w.time) return 0;
+      const shots = w.projectiles.some((p) => p.team !== u.team && !p.noHit && p.team !== 'neutral' && dist(p.x, p.y, u.x, u.y) < 260);
+      const close = opponents(w, u).filter((e) => e.target === u && dist(u.x, u.y, e.x, e.y) - u.r - e.r < (e.def.range || 20) + 40).length;
+      return shots ? 0.8 : close ? 0.45 + 0.15 * close + (opponents(w, u).some((e) => e.target === u && foeWinding(w, e)) ? 0.3 : 0) : 0;
     },
-    show: { single: true },
+    use(w, u, t, tier) {
+      cast(u, 'ability', 0.35);
+      u.kit.parry = { until: w.time + 4, n: tier >= 2 ? 2 : 1, k: tier >= 3 ? 2 : 1 };
+      k2(w, { draw: 'parryGuard', unit: u, x: u.x, y: u.y, r: u.r, max: 4, ab: 'pommelStrike' });
+    },
+    hook: {
+      evade(w, u, src, amt, o) {
+        const P = u.kit.parry; if (!P || P.until < w.time || P.n <= 0 || o.dot || o.shot || !src || src === u) return false;
+        P.n--; if (P.n <= 0) P.until = w.time + 0.25;
+        u.facing = angleTo(u.x, u.y, src.x, src.y); setAnim(u, 'swing', 0.25);
+        k2(w, { draw: 'parry', x: u.x + Math.cos(u.facing) * (u.r + 8), y: u.y + Math.sin(u.facing) * (u.r + 8), a: u.facing, max: 0.4, ab: 'pommelStrike' });
+        if (alive(src)) hurt(w, src, Math.max(amt, dmgOf(u, 0.8)) * P.k, u, { noDodge: true, knock: 200, kAngle: angleTo(u.x, u.y, src.x, src.y), proc: true, ab: 'pommelStrike' });
+        textU(w, u.x, u.y, u.r + 8, 'PARRY', '#EEF3F8', 0.9);
+        return true;
+      },
+    },
+    show: { hitme: true, shootme: true },
   },
   // ----- Dame
   riposte: {
@@ -101,22 +276,28 @@ export const ABILITIES2 = {
     },
     show: { hitme: true },
   },
+  // Challenge (round 13, the designer: "Maybe it is a dash to nearest ally about to die, pushes them away and heals them
+  // slightly, the nearest enemy is taunted. No challenge status."): she dashes to the friend nearest death, shoves them
+  // clear of the fight, patches them up a little and plants herself in the enemy's way, calling the nearest one onto her
   challenge: {
-    score(w, u) { if (u.kit.duel && u.kit.duel.until > w.time && alive(u.kit.duel.e)) return 0; return foesNear(w, u, u.x, u.y, 300).length ? 0.6 : 0; },
+    score: (w, u) => { const a = inTrouble(w, u, 420, 0.4); return a && foesNear(w, u, a.x, a.y, 160).length ? 0.95 : 0; },
     use(w, u, t, tier) {
-      const list = foesNear(w, u, u.x, u.y, 320); if (!list.length) return;
-      const e = list.sort((a, b) => b.maxHp - a.maxHp)[0];
-      cast(u, 'ability', 0.4);
-      e.tauntBy = u; e.tauntT = 6; e.target = u; u.target = e;
-      u.kit.duel = { e, until: w.time + 6 };
-      k2(w, { draw: 'duel', unit: e, from: u, x: e.x, y: e.y, r: e.vr, max: 6 });
+      const a = inTrouble(w, u, 440, 0.55) || hurtMost(allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 440)); if (!a) return;
+      const f = foesNear(w, u, a.x, a.y, 220).sort((p, q) => dist(a.x, a.y, p.x, p.y) - dist(a.x, a.y, q.x, q.y))[0];
+      const fa = f ? angleTo(a.x, a.y, f.x, f.y) : angleTo(a.x, a.y, u.x, u.y);
+      const x1 = clamp(a.x + Math.cos(fa) * (a.r + u.r + 2), u.r, w.W - u.r), y1 = clamp(a.y + Math.sin(fa) * (a.r + u.r + 2), u.r, w.H - u.r);
+      const T = clamp(dist(u.x, u.y, x1, y1) / 700, 0.12, 0.45);
+      u.facing = angleTo(u.x, u.y, x1, y1); setAnim(u, 'ability', T + 0.3); u.invulnT = Math.max(u.invulnT, T + 0.1);
+      k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a: u.facing, max: T + 0.25, col: '#C8453D' });
+      u.act = { type: 'leap', t: T, max: T, x0: u.x, y0: u.y, x1, y1, land: () => {
+        if (alive(a)) { shove(a, fa + Math.PI, 520); heal(w, a, a.maxHp * (tier >= 2 ? 0.2 : 0.1), u); k2(w, { draw: 'shoveAway', x: a.x, y: a.y, a: fa + Math.PI, max: 0.5, ab: 'challenge' }); }
+        const list = tier >= 3 ? foesNear(w, u, u.x, u.y, 200) : f && alive(f) ? [f] : [];
+        for (const e of list) { e.tauntBy = u; e.tauntT = 4; e.target = u; k2(w, { draw: 'tauntMark', unit: e, x: e.x, y: e.y, r: e.vr, max: 1, ab: 'challenge' }); }
+        if (f && alive(f)) u.facing = ang(u, f);
+        puff(w, u.x, u.y, '#E9DDC2', 8, 90, 5, 0.4);
+      } };
     },
-    hook: {
-      dealt(w, u, t, amt) { const d = u.kit.duel; return d && d.e === t && d.until > w.time ? amt * 1.3 : amt; },
-      taken(w, u, src, amt) { const d = u.kit.duel; return d && d.e === src && d.until > w.time && tierOf(u, 'challenge') >= 2 ? amt * 0.7 : amt; },
-      kill(w, u, v) { const d = u.kit.duel; if (d && d.e === v && d.until > w.time && tierOf(u, 'challenge') >= 3) { heal(w, u, u.maxHp * 0.2, u); u.kit.cd.challenge = 0.5; u.kit.duel = null; } },
-    },
-    show: { single: true },
+    show: { ally: true, mob: 'ally' },
   },
   disarm: {
     score: (w, u, t) => (inReach(u, t, 40) && !t.buffs.some((b) => b.id === 'disarmed') ? 0.45 + (t.def.boss || t.elite ? 0.3 : 0) : 0),
@@ -1689,11 +1870,26 @@ function lob(w, u, x, y, kind, color, land) {
 
 // ---------------------------------------------------------------- traits
 export const TRAITS2 = {
-  oldSoldier: { tick(w, u) { for (const a of friendsNear(w, u, u.x, u.y, 150)) if (a !== u) addBuff(a, { id: 'oldSoldier', dur: 0.3, taken: 0.9 }); } },
+  // Last Stand (round 13, the designer: "When last one in party gets a long unstoppable and haste buff, all abilities
+  // are reset."): once a room, the moment he is the last of his side standing
+  lastStand: {
+    allyDown(w, u, v) {
+      if (u.kit.lastW === w || v.summon || !alive(u) || !opponents(w, u).length) return;
+      if (allies(w, u).some((a) => !a.summon && !a.def.cargo)) return;
+      u.kit.lastW = w;
+      addBuff(u, { id: 'unstoppable', dur: 10, statusImmune: true, knockImmune: true, glow: '#FFE7A0' });
+      haste(w, u, 10, 1.35);
+      for (const k in u.kit.cd) u.kit.cd[k] = 0;
+      cleanse(u); setAnim(u, 'ability', 0.6); w.shake = Math.max(w.shake, 6);
+      textU(w, u.x, u.y, u.r + 14, 'LAST STAND', '#FFE7A0', 1.3);
+      k2(w, { draw: 'rally', unit: u, x: u.x, y: u.y, r: u.vr, max: 1.2 });
+      k2(w, { draw: 'lastStand', unit: u, x: u.x, y: u.y, r: u.vr, max: 1.1 });
+    },
+  },
   grace: {
     dealt(w, u, t, amt, o) {
       if (o.dot) return amt;
-      const k = u.kit; if (k.pommelMark === t) { k.pommelMark = null; o.crit = true; return amt * 2; } // Old Guard's Pommel Strike III uses the same slot
+      const k = u.kit;
       k.graceN = (k.graceN || 0) + 1; if (k.graceN % 3 === 0) { o.crit = true; return amt * 2; } return amt;
     },
   },
@@ -1778,8 +1974,6 @@ export const TRAITS2 = {
     },
   },
 };
-// Old Guard's Pommel Strike III: his next blow on the struck enemy is a critical hit (he has no Grace)
-TRAITS2.oldSoldier.dealt = (w, u, t, amt, o) => { if (!o.dot && u.kit.pommelMark === t) { u.kit.pommelMark = null; o.crit = true; return amt * 2; } return amt; };
 
 // ---------------------------------------------------------------- the heroes' own attacks (ranged heroes)
 const A = (u, k) => dmgOf(u, k);
@@ -1868,6 +2062,19 @@ export function kit2Tick(w, u, dt) {
       p.dmg = (p.dmg || 6) * (tier >= 2 ? 2 : 1); if (p.hitSet) p.hitSet = new Set(); p.home = null;
       sparks(w, p.x, p.y, a, 6, '#FFF4C8', 1.1);
     }
+  }
+  // Parry (Old Guard): a shot reaching him while he parries flies back at whoever loosed it
+  const PR = u.kit.parry;
+  if (PR && PR.until > w.time && PR.n > 0) for (const p of w.projectiles) {
+    if (p.team === u.team || p.noHit || p.life <= 0 || p.team === 'neutral' || dist(p.x, p.y, u.x, u.y) > u.r + p.r + 16) continue;
+    const o = p.owner, sp = Math.hypot(p.vx, p.vy) * 1.15, a = o && alive(o) ? angleTo(p.x, p.y, o.x, o.y) : Math.atan2(-p.vy, -p.vx);
+    p.team = u.team; p.owner = u; p.vx = Math.cos(a) * sp; p.vy = Math.sin(a) * sp; p.a = a; p.life = Math.max(p.life, 1); p.home = o && alive(o) ? o : null; p.turn = p.turn || 6;
+    p.dmg = Math.max(p.dmg || 6, dmgOf(u, 0.8)) * PR.k; if (p.hitSet) p.hitSet = new Set();
+    PR.n--; if (PR.n <= 0) PR.until = w.time + 0.25;
+    u.facing = a; setAnim(u, 'swing', 0.25); sparks(w, p.x, p.y, a, 7, '#FFF4C8', 1.1);
+    k2(w, { draw: 'parry', x: u.x + Math.cos(a) * (u.r + 8), y: u.y + Math.sin(a) * (u.r + 8), a, max: 0.4, ab: 'pommelStrike' });
+    textU(w, u.x, u.y, u.r + 8, 'PARRY', '#EEF3F8', 0.9);
+    if (PR.n <= 0) break;
   }
   // Spirit Link: what each linked one lost since the last step is shared out evenly among them
   const L = u.kit.link;

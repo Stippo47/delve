@@ -124,7 +124,8 @@ export function noteWorld(w) {
       if (shape === 'scythe') col = SLASH_COL.scythe; else if (shape === 'smack') col = u && u.kind === 'fireSlime' ? SLASH_COL.fire : SLASH_COL.smack; else if (u && u.kind === 'ghost') col = SLASH_COL.ghost;
       if (t.aoe) { push({ type: 'slam', u, x: t.aoe.x, y: t.aoe.y, r: t.aoe.r, a: t.a, max: 0.42, seed: Math.round(t.x * 7 + t.y) }); continue; }
       // arm-l is on the +normal side of the facing, arm-r on the -normal side (the art's left/right, front = +y)
-      push({ type: 'slash', u, x: t.x, y: t.y, R: t.r, a: t.a, arc: t.arc, shape, dir: (shape === 'twin' || shape === 'twinBlade') && odd ? -1 : 1, side: odd ? 1 : -1, col,
+      const sty = (u && u.def.style) || {}, back = sty.backhand || sty.flip ? -1 : 1; // lane H2 (round 13): a backhand swing (Dame, Pirate), a mirrored sprite (Griffon)
+      push({ type: 'slash', u, x: t.x, y: t.y, R: t.r, a: t.a, arc: t.arc, shape, dir: ((shape === 'twin' || shape === 'twinBlade') && odd ? -1 : 1) * back, side: odd ? 1 : -1, col, r0k: sty.reach0,
         max: shape === 'great' ? 0.22 : shape === 'heavy' ? 0.24 : 0.28, seed: Math.round(t.x * 7 + t.y) });
     } else if (t.type === 'blast') {
       push({ type: 'blast', x: t.x, y: t.y, r: t.r, color: t.color || '#FFB347', ab: t.ab, max: t.ab === 'fireball' ? 0.6 : 0.45, seed: Math.round(t.x + t.y * 3) });
@@ -178,7 +179,7 @@ function slash(ctx, m, k) {
   if (sh === 'thrust' || sh === 'twin') {
     // round 9: the stab starts at the dagger's point, in the hand that strikes, and runs on along the line of it
     const vr = u ? u.vr : 20, twin = sh === 'twin';
-    const r0 = twin ? vr * 1.25 : (u ? u.r : 20) * 0.55, r1 = m.R + (twin ? 22 : 16);
+    const r0 = twin ? vr * 1.25 : (u ? u.r : 20) * (m.r0k || 0.55), r1 = m.R + (twin ? 22 : 16); // (lane H2: style.reach0, the stab starts further out: Bulwark)
     const tip = r0 + (r1 - r0) * easeOut(k01(k / 0.3)), base = r0 + (tip - r0) * sm(k01((k - 0.2) / 0.8));
     const off = twin ? m.side * vr * 0.62 : 0, nx = -Math.sin(m.a) * off, ny = Math.cos(m.a) * off;
     const a = twin ? m.a - m.side * 0.12 : m.a; // a hooked dagger stabs a little inward

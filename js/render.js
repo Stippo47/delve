@@ -568,7 +568,9 @@ function washesOf(u, w) {
     else if (b.id === 'unstoppable') out.push(['#FFE7A0', 0.2 + 0.12 * Math.sin(w.time * 12)]);
     else if (b.id === 'warSong') out.push(['#FFD45A', 0.1]);
     else if (b.id === 'whirl') out.push(['#FFFFFF', 0.08]);
+    if (b.wash) out.push(typeof b.wash === 'function' ? b.wash(w.time) : b.wash); // lane H2 (round 13): a buff's own wash (kits2.js: Shade's shadow, weakened)
   }
+  if (u.def.wash) out.push(u.def.wash); // lane H2: a summon's own wash (the Shade's shadow clones, the Shaman's spirits)
   if (u.leechT > 0) out.push(['#C8453D', 0.12 + 0.08 * Math.sin(w.time * 8)]);
   // being mended (the Cleric's ray, Sanctuary): the whole figure flashes a soft yellow-white, smoothly, on repeat
   if (u.mendGlow > w.time) out.push(['#FFF6C8', 0.1 + 0.32 * (0.5 + 0.5 * Math.sin(w.time * 5))]);
@@ -584,6 +586,7 @@ function borderOf(u, w) {
   if (u.downed) return null;
   if (u.buffs && u.buffs.some((b) => b.id === 'unstoppable')) return { color: '#FFF4B8', a: 0.85 + 0.15 * Math.sin(w.time * 9) };
   if (u.guardBy && u.guardT > 0 && !u.guardBy.dead && !u.guardBy.downed) return { color: '#F2C14E', a: 0.8 + 0.2 * Math.sin(w.time * 5) };
+  const pb = u.buffs && u.buffs.find((b) => b.border); if (pb) return { color: pb.border, a: 0.8 + 0.2 * Math.sin(w.time * 6) }; // lane H2 (round 13): protection (Warded)
   return null;
 }
 function drawUnit(ctx, u, w) {
@@ -632,7 +635,7 @@ function drawPartsUnit(ctx, u, w) {
   if (!set) { ctx.restore(); return; } // still rendering (a fraction of a second): draw nothing rather than a placeholder
   const pose = u.downed ? LIMP : poseFor(u, w, w._dt ?? 1 / 60);
   const k = sizeU / 220 * (1 + 0.05 * (pose.pop || 0));
-  ctx.scale(k, k); ctx.translate(-100, -100);
+  ctx.scale(k, k); if (u.def.style && u.def.style.flip) ctx.scale(-1, 1); ctx.translate(-100, -100); // lane H2 (round 13): style.flip mirrors the sprite (the Griffon)
   let alpha = 1;
   if (u.invulnT > 0 && !u.act && !u.spin) alpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18)); // no flicker mid-leap or roll (round 9)
   if (u.downed) alpha = 0.62; // a hero who is down lies faint too (round 7)
