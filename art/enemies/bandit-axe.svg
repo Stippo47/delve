@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
-<!-- GAME COPY (art round 10) of design/class-round10/enemies/bandit-axe.svg -->
+<!-- GAME COPY (art round 11) of design/class-round11/enemies/bandit-axe.svg -->
 <!-- AXE BANDIT (round 10): the gang's leather and red bandanna under a fur hat with a thick pale fur band and a striped tail hanging back from it (#back, sways), a wool collar; a big bearded axe in the right hand (arm-r, under the shoulder, the blade turned out), the left hand free (arm-l). No eyes. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
 <defs>
 <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -12,7 +12,7 @@
 <linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#A97546"/><stop offset="1" stop-color="#865B35"/></linearGradient>
 <linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#47301B" stop-opacity="0"/><stop offset="1" stop-color="#47301B" stop-opacity="0.42"/></linearGradient>
 <clipPath id="c2"><use href="#s2" transform="translate(152 124) rotate(4)"/></clipPath>
-<path id="s3" d="M 0 28 C 1.9 23.7 10 28.1 14 26 C 18 23.9 26.3 11.5 30 12 C 33.7 12.5 40.3 24.4 42 30 C 43.7 35.6 44.1 48.1 43 54 C 41.9 59.9 37.6 73.5 34 74 C 30.4 74.5 20.5 60.1 16 58 C 11.5 55.9 2.1 62 0 58 C -2.1 54 -1.9 32.3 0 28 Z"/>
+<path id="s3" d="M 0 28 C -1.9 23.7 -10 28.1 -14 26 C -18 23.9 -26.3 11.5 -30 12 C -33.7 12.5 -40.3 24.4 -42 30 C -43.7 35.6 -44.1 48.1 -43 54 C -41.9 59.9 -37.6 73.5 -34 74 C -30.4 74.5 -20.5 60.1 -16 58 C -11.5 55.9 -2.1 62 0 58 C 2.1 54 1.9 32.3 0 28 Z"/>
 <clipPath id="u3"><use href="#s1"/><use href="#s2" transform="translate(152 124) rotate(4)"/></clipPath>
 <linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E1E3E8"/><stop offset="1" stop-color="#A7B0BD"/></linearGradient>
 <linearGradient id="g6" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4F5A6B" stop-opacity="0"/><stop offset="1" stop-color="#4F5A6B" stop-opacity="0.42"/></linearGradient>
@@ -56,7 +56,7 @@
 </g>
 <g id="arm-r" data-pivot="154 108"><!-- axe -->
 <use href="#s2" transform="translate(152 124) rotate(4)" fill="url(#g3)"/><use href="#s2" transform="translate(152 124) rotate(4)" fill="url(#g4)"/><g clip-path="url(#c2)"><g transform="translate(152 124) rotate(4)"><rect x="1" y="-30" width="4" height="102" fill="#6E4628" opacity="0.5"/></g></g>
-<g clip-path="url(#u3)"><use href="#s3" transform="translate(0 2) translate(152 124) rotate(4)" fill="#2B2230" opacity="0.3"/></g><use href="#s3" transform="translate(152 124) rotate(4)" fill="url(#g5)"/><use href="#s3" transform="translate(152 124) rotate(4)" fill="url(#g6)"/><g clip-path="url(#c3)"><g transform="translate(152 124) rotate(4)"><path d="M 33 14 C 46 30 47 56 35 73" fill="none" stroke="#FFFFFF" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/></g></g>
+<g clip-path="url(#u3)"><use href="#s3" transform="translate(0 2) translate(152 124) rotate(4)" fill="#2B2230" opacity="0.3"/></g><use href="#s3" transform="translate(152 124) rotate(4)" fill="url(#g5)"/><use href="#s3" transform="translate(152 124) rotate(4)" fill="url(#g6)"/><g clip-path="url(#c3)"><g transform="translate(152 124) rotate(4)"><path d="M -33 14 C -46 30 -47 56 -35 73" fill="none" stroke="#FFFFFF" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/></g></g>
 <g clip-path="url(#u4)"><use href="#s4" transform="translate(0 1) translate(152 124) rotate(4)" fill="#2B2230" opacity="0.3"/></g><use href="#s4" transform="translate(152 124) rotate(4)" fill="url(#g7)"/><use href="#s4" transform="translate(152 124) rotate(4)" fill="url(#g8)"/>
 <g clip-path="url(#u5)"><use href="#s5" transform="translate(0 3) translate(152 124) rotate(4)" fill="#2B2230" opacity="0.3"/></g><use href="#s5" transform="translate(152 124) rotate(4)" fill="url(#gHand)"/>
 </g>
@@ -65,7 +65,6 @@
 <g clip-path="url(#u7)"><use href="#s7" transform="translate(0 3) translate(100 104) scale(1.08 0.8) translate(-100 -104)" fill="#2B2230" opacity="0.3"/></g><use href="#s7" transform="translate(100 104) scale(1.08 0.8) translate(-100 -104)" fill="url(#g11)"/><use href="#s7" transform="translate(100 104) scale(1.08 0.8) translate(-100 -104)" fill="url(#g12)"/>
 <g clip-path="url(#u8)"><use href="#s8" transform="translate(0 5) " fill="#2B2230" opacity="0.3"/></g><use href="#s8" fill="url(#gFace)"/><g clip-path="url(#c8)"><rect x="100" y="40" width="56" height="120" fill="url(#gFaceSide)"/></g>
 <g clip-path="url(#u9)"><use href="#s9" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s9" fill="url(#g13)"/><use href="#s9" fill="url(#g14)"/><g clip-path="url(#c9)"><path d="M50 138 C74 150 126 150 150 138 L150 190 L50 190 Z" fill="#A02E29" opacity="0.5"/></g>
-<path d="M68 128 Q100 138 132 128" fill="none" stroke="#7F2521" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
 <g clip-path="url(#u10)"><use href="#s10" transform="translate(0 5) " fill="#2B2230" opacity="0.3"/></g><use href="#s10" fill="url(#g1)"/><use href="#s10" fill="url(#g2)"/><g clip-path="url(#c10)"><path d="M 60 50 A 22 13 0 1 0 104 50 A 22 13 0 1 0 60 50 Z" fill="#957658" opacity="0.6"/><path d="M 70 44 L 76 72 M 90 34 L 92 68 M 110 34 L 108 68 M 130 44 L 124 72" fill="none" stroke="#5A4430" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/></g>
 <g clip-path="url(#u11)"><use href="#s11" transform="translate(0 3) translate(100 98) scale(1.04 0.32) translate(-100 -98)" fill="#2B2230" opacity="0.3"/></g><use href="#s11" transform="translate(100 98) scale(1.04 0.32) translate(-100 -98)" fill="url(#g15)"/><use href="#s11" transform="translate(100 98) scale(1.04 0.32) translate(-100 -98)" fill="url(#g16)"/>
 </g>

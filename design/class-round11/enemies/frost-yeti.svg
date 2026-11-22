@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- YETI (round 9): the troll's body plan in white fur (the designer: "the same shape and fighting style as trolls ... rolls its boulders as large snowballs"): a huge hunched back under a shaggy white coat with a ragged edge, a blue-grey shag over the hump, a small blue-grey face pushed forward under a white fur hood with a ragged fringe, a dark nose, taller than it is wide (round 11), and a wide mouth turned down with two short lower fangs at its corners (round 10), no eyes; long furry arms reaching forward either side of the head, huge blue-grey hands turned in to hold its snowball (a prop of its own in the game, yeti-snowball). Parts: #arm-l, #arm-r (arm and hand, before #body so the coat covers the shoulders), #body. Front = DOWN (+y). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#FBFDFF"/><stop offset="1" stop-color="#BCCADA"/></linearGradient>
+<path id="p2" d="M15.1 117.5 C10 122.4 15.9 138.5 19.4 147.5 C22.9 156.6 31.1 175.8 38.1 177.9 C45.1 180.1 63.7 168.3 65.9 162.1 C68.1 155.8 54.5 143.6 52.6 136.5 C50.7 129.3 58.6 117.4 52.9 114.5 C47.3 111.7 20.1 112.5 15.1 117.5 Z"/>
+<clipPath id="c3"><use href="#p2"/></clipPath>
+<linearGradient id="g4" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.25"/></linearGradient>
+<linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#9CAFC3"/><stop offset="1" stop-color="#727F99"/></linearGradient>
+<path id="p6" d="M-6 -17 H6 A14 14 0 0 1 20 -3 V3 A14 14 0 0 1 6 17 H-6 A14 14 0 0 1 -20 3 V-3 A14 14 0 0 1 -6 -17 Z" transform="translate(57 179) rotate(-30)"/>
+<clipPath id="c7"><use href="#p2"/></clipPath>
+<clipPath id="c8"><use href="#p6"/></clipPath>
+<linearGradient id="g9" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.32"/></linearGradient>
+<path id="p10" d="M147.1 114.5 C141.4 117.4 149.3 129.3 147.4 136.5 C145.5 143.6 131.9 155.8 134.1 162.1 C136.3 168.3 154.9 180.1 161.9 177.9 C168.9 175.8 177.1 156.6 180.6 147.5 C184.1 138.5 190 122.4 184.9 117.5 C179.9 112.5 152.7 111.7 147.1 114.5 Z"/>
+<clipPath id="c11"><use href="#p10"/></clipPath>
+<path id="p12" d="M-6 -17 H6 A14 14 0 0 1 20 -3 V3 A14 14 0 0 1 6 17 H-6 A14 14 0 0 1 -20 3 V-3 A14 14 0 0 1 -6 -17 Z" transform="translate(143 179) rotate(30)"/>
+<clipPath id="c13"><use href="#p2"/><use href="#p6"/><use href="#p10"/></clipPath>
+<clipPath id="c14"><use href="#p12"/></clipPath>
+<path id="p15" d="M17.3 110 A10.3 10.3 0 0 1 14 93.7 A10.3 10.3 0 0 1 17.6 77.4 A11.2 11.2 0 0 1 27.8 62.5 A12.6 12.6 0 0 1 43.8 50.1 A13.9 13.9 0 0 1 64.4 41.2 A14.8 14.8 0 0 1 87.8 36.6 A15.1 15.1 0 0 1 112.2 36.6 A14.8 14.8 0 0 1 135.6 41.2 A13.9 13.9 0 0 1 156.2 50.1 A12.6 12.6 0 0 1 172.2 62.5 A11.2 11.2 0 0 1 182.4 77.4 A10.3 10.3 0 0 1 186 93.7 A10.3 10.3 0 0 1 182.7 110 C 185 124 178 136 158 140 Q 100 150 42 140 C 22 136 15 124 17.3 110 Z"/>
+<clipPath id="c16"><use href="#p2"/><use href="#p6"/><use href="#p10"/><use href="#p12"/></clipPath>
+<clipPath id="c17"><use href="#p15"/></clipPath>
+<linearGradient id="g18" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.3"/></linearGradient>
+<radialGradient id="g19" cx="0.38" cy="0.3" r="0.8"><stop offset="0" stop-color="#9FB1C4"/><stop offset="0.7" stop-color="#8FA4BC"/><stop offset="1" stop-color="#7886A0"/></radialGradient>
+<linearGradient id="g20" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#494B68" stop-opacity="0"/><stop offset="1" stop-color="#494B68" stop-opacity="0.28"/></linearGradient>
+<path id="p21" d="M 100 47.8 C 129.6 47.8 147.8 68.7 147.8 98.3 C 147.8 122.6 136.5 140 120.9 147.8 C 113.9 151.3 107 153.1 100 153.1 C 93 153.1 86.1 151.3 79.1 147.8 C 63.5 140 52.1 122.6 52.1 98.3 C 52.1 68.7 70.4 47.8 100 47.8 Z" transform="translate(100 120) scale(0.82) translate(-100 -100)"/>
+<clipPath id="c22"><use href="#p2"/><use href="#p6"/><use href="#p10"/><use href="#p12"/><use href="#p15"/></clipPath>
+<clipPath id="c23"><use href="#p21"/></clipPath>
+<path id="p24" d="M100 34 C109 34 122.5 34.4 130 38 C137.5 41.6 145.9 50.8 150 58 C154.1 65.2 156.4 78.2 157 86 C157.6 93.8 156.6 107.3 154 110 C151.4 112.7 144.2 103.7 140 104 C135.8 104.3 130.2 112 126 112 C121.8 112 115.9 104.3 112 104 C108.1 103.7 103.6 110 100 110 C96.4 110 91.9 103.7 88 104 C84.1 104.3 78.2 112 74 112 C69.8 112 64.2 104.3 60 104 C55.8 103.7 48.5 112.7 46 110 C43.5 107.3 42.4 93.8 43 86 C43.6 78.2 46 65.2 50 58 C54 50.8 62.5 41.6 70 38 C77.5 34.4 91 34 100 34 Z" transform="translate(100 120) scale(0.82) translate(-100 -100)"/>
+<clipPath id="c25"><use href="#p2"/><use href="#p6"/><use href="#p10"/><use href="#p12"/><use href="#p15"/><use href="#p21"/></clipPath>
+<clipPath id="c26"><use href="#p24"/></clipPath>
+<linearGradient id="g27" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#F4EBD2"/><stop offset="1" stop-color="#C9B98E"/></linearGradient>
+<path id="p28" d="M112 141 C112.9 142.1 120.8 142.2 122 141 C123.2 139.8 121.3 134 121 132 C120.7 130 120 126 120 126 C120 126 116.1 131 115 133 C113.9 135 111.1 139.9 112 141 Z" transform="translate(100 120) scale(0.82) translate(-100 -100)"/>
+<clipPath id="c29"><use href="#p28"/></clipPath>
+<linearGradient id="g30" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.12"/></linearGradient>
+<path id="p31" d="M88 141 C87.1 142.1 79.2 142.2 78 141 C76.8 139.8 78.7 134 79 132 C79.3 130 80 126 80 126 C80 126 83.9 131 85 133 C86.1 135 88.9 139.9 88 141 Z" transform="translate(100 120) scale(0.82) translate(-100 -100)"/>
+<clipPath id="c32"><use href="#p31"/></clipPath>
+<linearGradient id="g33" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#7A89A3"/><stop offset="1" stop-color="#5E6681"/></linearGradient>
+<path id="p34" d="M94.5 110 C96.5 108.6 103.5 108.6 105.5 110 C107.5 111.4 106.9 116.3 107 119 C107.1 121.7 107.1 125.1 106 127 C104.9 128.9 101.9 131 100 131 C98.1 131 95.1 128.9 94 127 C92.9 125.1 92.9 121.7 93 119 C93.1 116.3 92.5 111.4 94.5 110 Z" transform="translate(100 120) scale(0.82) translate(-100 -100)"/>
+<clipPath id="c35"><use href="#p2"/><use href="#p6"/><use href="#p10"/><use href="#p12"/><use href="#p15"/><use href="#p21"/><use href="#p24"/><use href="#p28"/><use href="#p31"/></clipPath>
+<clipPath id="c36"><use href="#p34"/></clipPath>
+<linearGradient id="g37" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.2"/></linearGradient>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-l" data-pivot="38 116"><g>
+<use href="#p2" fill="url(#g1)"/>
+<g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>
+<g clip-path="url(#c7)"><use href="#p6" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p6" fill="url(#g5)"/>
+<g clip-path="url(#c8)"><use href="#p6" fill="url(#g9)"/></g>
+</g></g>
+<g id="arm-r" data-pivot="162 116"><g>
+<use href="#p10" fill="url(#g1)"/>
+<g clip-path="url(#c11)"><use href="#p10" fill="url(#g4)"/></g>
+<g clip-path="url(#c13)"><use href="#p12" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p12" fill="url(#g5)"/>
+<g clip-path="url(#c14)"><use href="#p12" fill="url(#g9)"/></g>
+</g></g>
+<g id="body"><g>
+<g clip-path="url(#c16)"><use href="#p15" transform="translate(0 4)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p15" fill="url(#g1)"/>
+<g clip-path="url(#c17)"><path d="M66 40 C71.7 33.7 89.3 26.3 96 30 C102.7 33.7 108 53 106 62 C104 71 91.3 83 84 84 C76.7 85 65 75.3 62 68 C59 60.7 60.3 46.3 66 40 Z" fill="#FFFFFF" opacity="0.4"/><path d="M 58 70 Q 70 84 66 100 M 142 70 Q 130 84 134 100 M 86 46 Q 96 60 92 76 M 114 46 Q 104 60 108 76" fill="none" stroke="#9FB2C6" stroke-width="4" stroke-linecap="round" opacity="0.35"/><use href="#p15" fill="url(#g18)"/></g>
+<g clip-path="url(#c22)"><use href="#p21" transform="translate(0 5)" fill="#2B2230" opacity="0.3"/></g>
+<use href="#p21" fill="url(#g19)"/>
+<g clip-path="url(#c23)"><rect x="100" y="-20" width="80" height="240" fill="url(#g20)" transform="translate(100 120) scale(0.82) translate(-100 -100)"/></g>
+<g clip-path="url(#c25)"><use href="#p24" transform="translate(0 3)" fill="#2B2230" opacity="0.16"/></g>
+<use href="#p24" fill="url(#g1)"/>
+<g clip-path="url(#c26)"><use href="#p24" fill="url(#g4)"/></g>
+<use href="#p28" fill="url(#g27)"/>
+<g clip-path="url(#c29)"><use href="#p28" fill="url(#g30)"/></g>
+<use href="#p31" fill="url(#g27)"/>
+<g clip-path="url(#c32)"><use href="#p31" fill="url(#g30)"/></g>
+<path d="M78 142 Q100 135 122 142" fill="none" stroke="#494B68" stroke-width="3.4" stroke-linecap="round" transform="translate(100 120) scale(0.82) translate(-100 -100)"/>
+<g clip-path="url(#c35)"><use href="#p34" transform="translate(0 3)" fill="#2B2230" opacity="0.28"/></g>
+<use href="#p34" fill="url(#g33)"/>
+<g clip-path="url(#c36)"><use href="#p34" fill="url(#g37)"/></g>
+</g></g>
+</g>
+</svg>

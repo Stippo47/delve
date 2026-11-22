@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- GOLEM (round 11, body "cairn"): a stone golem seen from above: a cairn that walks: three flat slabs stacked, each smaller than the one under it, the top one its head; two loose stones for fists; on its head the eye: a diamond rune that glows (no other face). Weathered grey stone, a little moss. Parts: #arm-l / #arm-r (the fists, swing), #body. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="s1" d="M 55 157.4 C 53 161.1 46.6 164.4 41.8 166.2 C 37.1 168 29.3 170.3 24.9 168.9 C 20.5 167.4 16 161.2 14.1 157.1 C 12.2 152.9 11.2 146.3 13 142.6 C 14.9 138.8 21.3 135.3 26 133.5 C 30.8 131.7 38.6 129.8 43 131.3 C 47.5 132.8 52.2 138.7 54.1 142.9 C 56 147 56.9 153.7 55 157.4 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#B6B0A7"/><stop offset="1" stop-color="#948A7D"/></linearGradient>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4F4840" stop-opacity="0"/><stop offset="1" stop-color="#4F4840" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c1"><use href="#s1"/></clipPath>
+<path id="s2" d="M 187 157.4 C 185 161.1 178.6 164.4 173.8 166.2 C 169.1 168 161.3 170.3 156.9 168.9 C 152.5 167.4 148 161.2 146.1 157.1 C 144.2 152.9 143.2 146.3 145 142.6 C 146.9 138.8 153.3 135.3 158 133.5 C 162.8 131.7 170.6 129.8 175 131.3 C 179.5 132.8 184.2 138.7 186.1 142.9 C 188 147 188.9 153.7 187 157.4 Z"/>
+<clipPath id="c2"><use href="#s2"/></clipPath>
+<path id="s3" d="M 181.8 119.1 C 174.4 131.1 150.7 143.6 132.2 149.1 C 113.7 154.5 82.6 158.4 65.1 153.6 C 47.6 148.7 28.9 131 21.5 118.2 C 14 105.4 10.8 84.7 18.2 72.9 C 25.6 61 49.7 48.9 68.1 43.5 C 86.6 38 117.3 33.7 134.9 38.4 C 152.5 43.2 171.9 60.8 179.4 73.5 C 186.8 86.3 189.3 107.2 181.8 119.1 Z"/>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#A79E94"/><stop offset="1" stop-color="#887C6E"/></linearGradient>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#474139" stop-opacity="0"/><stop offset="1" stop-color="#474139" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c3"><use href="#s3"/></clipPath>
+<path id="s4" d="M 159.6 117.8 C 154.1 127.9 139.2 141.4 126 145.2 C 112.7 149 89.8 146 76 141.7 C 62.3 137.4 44.7 127.6 39.1 118.2 C 33.6 108.8 35.4 92.4 41 82.4 C 46.5 72.3 60.9 58.6 74 54.8 C 87.2 51 110.2 54 124 58.3 C 137.7 62.6 155.2 72.4 160.9 81.8 C 166.5 91.2 165.2 107.8 159.6 117.8 Z"/>
+<clipPath id="u4"><use href="#s1"/><use href="#s2"/><use href="#s3"/></clipPath>
+<clipPath id="c4"><use href="#s4"/></clipPath>
+<path id="s5" d="M 137.9 118.8 C 134.6 125.5 123.8 133 115.2 136 C 106.7 139 92.2 140.4 84 137.6 C 75.8 134.7 67.1 125.3 63.6 118.3 C 60.1 111.3 58.7 99.9 62.1 93.2 C 65.4 86.5 76.2 79 84.8 76 C 93.3 73 107.8 71.6 116 74.4 C 124.2 77.3 132.9 86.7 136.4 93.7 C 139.9 100.7 141.3 112.1 137.9 118.8 Z"/>
+<clipPath id="u5"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4"/></clipPath>
+<linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#C1BCB5"/><stop offset="1" stop-color="#9D9487"/></linearGradient>
+<linearGradient id="g6" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#544D45" stop-opacity="0"/><stop offset="1" stop-color="#544D45" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c5"><use href="#s5"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-l" data-pivot="40 112"><!-- stone fist -->
+<use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/><g clip-path="url(#c1)"><path d="M 16 142 A 10 4 0 1 0 36 142 A 10 4 0 1 0 16 142 Z" fill="#FFFFF4" opacity="0.22"/></g>
+</g>
+<g id="arm-r" data-pivot="160 112"><!-- stone fist -->
+<use href="#s2" fill="url(#g1)"/><use href="#s2" fill="url(#g2)"/><g clip-path="url(#c2)"><path d="M 148 142 A 10 4 0 1 0 168 142 A 10 4 0 1 0 148 142 Z" fill="#FFFFF4" opacity="0.22"/></g>
+</g>
+<g id="body">
+<use href="#s3" fill="url(#g3)"/><use href="#s3" fill="url(#g4)"/><g clip-path="url(#c3)"><path d="M 34 62 A 28 9 0 1 0 90 62 A 28 9 0 1 0 34 62 Z" fill="#FFFFF4" opacity="0.2" transform="rotate(-18 62 62)"/><path d="M 135 76 A 15 7 0 1 0 165 76 A 15 7 0 1 0 135 76 Z" fill="#7E9A5A" opacity="0.9"/></g>
+<g clip-path="url(#u4)"><use href="#s4" transform="translate(0 5) " fill="#2B2230" opacity="0.3"/></g><use href="#s4" fill="url(#g1)"/><use href="#s4" fill="url(#g2)"/><g clip-path="url(#c4)"><path d="M 52 76 A 22 8 0 1 0 96 76 A 22 8 0 1 0 52 76 Z" fill="#FFFFF4" opacity="0.2" transform="rotate(-14 74 76)"/></g>
+<g clip-path="url(#u5)"><use href="#s5" transform="translate(0 5) " fill="#2B2230" opacity="0.3"/></g><use href="#s5" fill="url(#g5)"/><use href="#s5" fill="url(#g6)"/><g clip-path="url(#c5)"><path d="M 70 90 A 16 7 0 1 0 102 90 A 16 7 0 1 0 70 90 Z" fill="#FFFFF4" opacity="0.22"/><circle cx="100" cy="114" r="15" fill="#FFC84A" opacity="0.16" transform="translate(0 -6) translate(100 114) scale(1.0) translate(-100 -114)"/><path d="M 100 104 L 108 114 L 100 124 L 92 114 Z" fill="none" stroke="#FFC84A" stroke-width="3.5" stroke-linejoin="round" transform="translate(0 -6) translate(100 114) scale(1.0) translate(-100 -114)"/></g>
+</g>
+</g>
+</svg>
