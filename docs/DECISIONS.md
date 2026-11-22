@@ -939,3 +939,16 @@ hero, with every clip: `docs/HEROES-r15.md`. The numbers: `docs/balance/r15-newh
   stand-in on port 8975 they stop at those buttons, as they would on any recent build.
 - Batches with `trapper,monk,alchemist,shade` and `shade,alchemist,warden,trapper` get stuck now and then (a room that
   never ends), the same before and after this lane.
+
+## Round 15, the lead after lane E (2026-11-22): 0.21.1
+- **Bug fixed, live since 0.21.0: breaking a boss part killed the boss.** The Mob's code read `u.partOf` as "a body of
+  the Mob", but boss parts (boss-kit.js part()) carry `partOf = core` too: a broken hand ended the Great Engine at 92%,
+  and parts' blows, statuses and clocks went to the core. Every Mob read now asks `mobLead(u)` (js/mob.js: the lead only
+  when it has `bodies`); battle.js, inspect.js and render.js ask the same. Found by lane E's boss benches.
+- **Two bosses eased to about even** at the level the fixed campaign meets them (docs/balance/r15-bosses.txt): the Great
+  Engine's health 680 -> 580 (lane E's proposal; 20 of 40 at level 58, was 7-10); the Sand Wurm's breach 113 -> 80 and
+  its landing 68 -> 54 (lane E proposed -20%, which gave 10 of 40 at 51; one step more gives 20 of 40).
+- **Not taken yet, proposals in r15-bosses.txt**: the Elder Ent's health +20% and the Bone King's 1000 -> 1200 (both win
+  too often), the Great Ooze's health -6% (13 of 40). Left for a pass with the designer's boss answers in.
+- Lane E's own calls are in its entry above (the Engineer's mortar renamed `snowMortar`: a Foundry enemy of the same
+  name had been overwriting it; the Book's generic "Weakened" is now "Hindered").

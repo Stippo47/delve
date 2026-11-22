@@ -13,7 +13,7 @@ import { drawWurm, drawWurmPart, drawDunesFloor, drawDunesAir } from './boss-wur
 export const SW = {
   seg: [43, 43, 41, 39, 37, 35, 33, 30, 27, 24, 20], space: 0.66, share: 0.5,
   under: { speed: 420, min: 0.8, max: 2.0 },
-  breach: { r: 120, tell: 1.15, dmg: 113, knock: 400, stagger: 30, len: [300, 400], speed: 440, height: 96, landR: 90, landDmg: 68 },
+  breach: { r: 120, tell: 1.15, dmg: 80, knock: 400, stagger: 30, len: [300, 400], speed: 440, height: 96, landR: 90, landDmg: 54 },
   root: { dur: 9.5, reach: 170, height: 44, turn: 1.5, comp: 0.74 },
   lunge: { len: 380, hw: 46, tell: 0.8, dmg: 97, knock: 320, stuck: 0.7, stuckTaken: 1.45, cd: [2.1, 2.7] },
   inhale: { tell: 0.8, dur: 2.7, pull: 74, range: 640, r: 150, dmg: 135, knock: 420, at: 0.42 },

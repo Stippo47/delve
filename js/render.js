@@ -805,7 +805,7 @@ function drawCorpse(ctx, c) {
 const STATUS = [['burn', '#FF7A2F'], ['chill', '#7FD6F5'], ['poison', '#9BCB3C']];
 const SHOW_BARS = false; // health and status bars live in the HUD now (designer, round 2)
 function drawOverlay(ctx, u, dt = 0) {
-  if (u.downed || (u.linkTo && u.def.segment) || u.partOf) return; // (round 13, lane E: a chain's links carry no bar: its health is its head's; round 15, the Mob: one bar, on its lead)
+  if (u.downed || (u.linkTo && u.def.segment) || (u.partOf && u.partOf.bodies)) return; // (round 13, lane E: a chain's links carry no bar: its health is its head's; round 15, the Mob: one bar, on its lead)
   upright(ctx, u.x, u.y, () => {
     if (u.team === 'enemy' || w_battle || u.barAlways) drawEnemyHp(ctx, u, dt); // hpstyle.js: only once it's hurt, in the player's chosen style
     if (u.team !== 'hero' && u.act && (u.act.type === 'windup' || u.act.type === 'slam')) {

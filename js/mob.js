@@ -36,8 +36,10 @@ export const POOL_KEYS = [
 export function bindBody(b, lead) {
   for (const k of POOL_KEYS) Object.defineProperty(b, k, { get: () => lead[k], set: (v) => { lead[k] = v; }, enumerable: true, configurable: true });
 }
-export const leadOf = (u) => (u && u.partOf) || u;
-export const isMob = (u) => !!(u && (u.partOf || u.bodies));
+// a body's lead, only for the Mob: boss parts (boss-kit.js part()) also carry partOf = their core, and are not this
+export const mobLead = (u) => (u && u.partOf && u.partOf.bodies ? u.partOf : null);
+export const leadOf = (u) => mobLead(u) || u;
+export const isMob = (u) => !!(u && (mobLead(u) || u.bodies));
 // every body of the hero u belongs to, the lead first
 export const bodiesOf = (u) => { const l = leadOf(u); return l && l.bodies ? [l, ...l.bodies] : [l]; };
 // the middle of the four
