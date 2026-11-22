@@ -12,7 +12,7 @@ import { drawEnemyHp, hpWash, setHpSides } from './hpstyle.js';
 import { icon } from './icons.js';
 import { heartPath, drawStatusMarks } from './fx-status.js'; // round 13 (lane S): the new statuses' marks
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
-import { drawFoeGround, snowRoll } from './foe-draw.js'; // round 13 (lane E): the newer enemies' extra drawing
+import { drawFoeGround, snowRoll, drawFoe } from './foe-draw.js'; // round 13 (lane E): the newer enemies' extra drawing
 
 // One outline thickness for everything drawn here, in room units. Matches what the SVG heroes show.
 export const OUTLINE = 2.4;
@@ -150,7 +150,7 @@ function drawShadows(ctx, w, tf) {
     const sx = a * x + c * y + e, sy = b * x + d * y + f, sr = r * k + 2;
     if (sx - sr < x0) x0 = sx - sr; if (sy - sr < y0) y0 = sy - sr; if (sx + sr > x1) x1 = sx + sr; if (sy + sr > y1) y1 = sy + sr;
   };
-  for (const u of w.units) if (!u.ethereal || u.hiddenIn) disc(u.x, u.y, shadowSize(u), 1);
+  for (const u of w.units) if (!u.ethereal || u.hiddenIn) { if (u.def.shadows) { for (const [x, y, r] of u.def.shadows(u)) disc(x, y, r * 1.75, 1); } else disc(u.x, u.y, shadowSize(u), 1); } // (round 13, lane E: def.shadows, a body that isn't round)
   // a body in the air leaves its shadow on the floor
   for (const cp of w.corpses) if (cp.z > 2) disc(cp.x, cp.y, cp.vr * 1.3, clamp(cp.t / 4, 0, 1) * 0.8);
   g.globalAlpha = 1;
@@ -207,7 +207,7 @@ export function draw(ctx, w) {
   noteHits(w);
   for (const u of order) drawBodyGround(ctx, u, w); // chains, rays and rings that lie under the units (round 9)
   // a rat drawn by hand gets its springy tail; the rat king's art (art round 8) has its own tails knotted in it
-  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.def.art && !u.downed) drawTail(ctx, u, dt); drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawStatusMarks(ctx, u, w.time); drawBodyFx(ctx, u, w); }
+  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.def.art && !u.downed) drawTail(ctx, u, dt); if (!drawFoe(ctx, u, w, dt, RH)) drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawStatusMarks(ctx, u, w.time); drawBodyFx(ctx, u, w); }
   if (w.drawOver) w.drawOver(ctx, w, view); // lane W (convoy.js): the forest's canopy, over the units at the edge (a cached picture)
   for (const p of w.projectiles) projectile(ctx, p, w.time);
   for (const p of w.particles) drawParticle(ctx, p);
@@ -538,6 +538,7 @@ function unitFrame(ctx, u, w) {
   if (u.hop > 0) sc *= 1 + u.hop / 110; // a leap: off the ground, so drawn bigger (its shadow shrinks below)
   if (u.exiting) { const k = clamp(u.exiting.t / u.exiting.dur, 0, 1); sc *= 1 + 0.12 * Math.sin(Math.min(1, k * 3) * Math.PI) - 0.85 * k * k; } // through the door: a lift, then shrinking into the light
   ctx.translate(fx, fy); ctx.rotate(tilt); ctx.scale(sc, sc);
+  if (u.squash) ctx.scale(1, u.squash); // round 13 (lane E): foreshortened along its facing (the sun blade's point down in the floor)
 }
 
 // Status washes over the sprite: [colour, strength] pairs.
@@ -618,6 +619,8 @@ function drawUnit(ctx, u, w) {
   if (u.frozenT > 0) drawIce(ctx, u, w);
 }
 
+// Round 13 (lane E): what foe-draw.js drawFoe needs from here (a spirit's tail, a chain drawn as one body, a blade stuck in a wall).
+const RH = { drawUnit, unitFrame: (ctx, u, w) => unitFrame(ctx, u, w), washesOf: (u, w) => washesOf(u, w) };
 // Ask for every unit's art at its current size, so it's ready by the time the room fades in.
 export function warmArt(w) {
   for (const u of w.units) if (u.def.art) getRig(u.def.art, u.vr * 220 / (u.def.headR || headR(u.kind)) * view.scale * view.dpr * 1.04);

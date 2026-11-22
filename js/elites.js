@@ -46,7 +46,7 @@ export function makeMajor(w, u) {
   u.coinMul = (u.coinMul || 1) * MAJOR.gold;
   u.def = { ...u.def, major: true };
   const E = ELITES[u.kind] || ELITES[u.def.eliteAs];
-  const role = u.def.role === 'ranged' ? 'volley' : u.def.role === 'skirmish' ? 'charge' : 'quake';
+  const role = u.def.majorMove && MAJOR_MOVES[u.def.majorMove] ? u.def.majorMove : u.def.role === 'ranged' ? 'volley' : u.def.role === 'skirmish' ? 'charge' : 'quake'; // (round 13, lane E: a kind may name its own, def.majorMove)
   const moves = [E, MAJOR_MOVES[role]];
   if (!E || !E.tick) moves.push(MAJOR_MOVES.call); // no elite move of its own: two major moves, still one more than an elite
   const ticks = moves.filter((m) => m && m.tick).map((m) => m.tick);

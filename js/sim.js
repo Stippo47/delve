@@ -1504,7 +1504,7 @@ function projectiles(w, dt) {
         continue;
       }
       if (p.hitSet && p.hitSet.has(u)) continue;
-      if (dist(p.x, p.y, u.x, u.y) < u.r + p.r) {
+      if (u.def.hitAt ? u.def.hitAt(u, p.x, p.y, p.r) : dist(p.x, p.y, u.x, u.y) < u.r + p.r) { // (round 13, lane E: def.hitAt, a body that isn't round: the sun blade)
         // round 10, the gilded golem: a shot that hits its front bounces back at whoever shot it
         if (u.def.mirror && !p.noMirror && angleDiff(Math.atan2(-p.vy, -p.vx), u.facing) < (u.def.mirror || 1.2)) {
           const back = p.owner && alive(p.owner) ? angleTo(p.x, p.y, p.owner.x, p.owner.y) : Math.atan2(-p.vy, -p.vx), sp = Math.hypot(p.vx, p.vy);

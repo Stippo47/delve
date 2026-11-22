@@ -150,7 +150,7 @@ export const BEASTS = {
   angelFallen: { fun: 'Still has the wings. Lost the rest of the job description.',
     habit: 'An angel\'s spear, but its blows curse instead of blinding with light.' },
   sunBlade: { fun: 'A sword so holy it doesn\'t need anyone to hold it. It finds that freeing.',
-    habit: 'Spins through the party in a straight line (a line shows first), then turns and comes again. Can\'t be staggered.' },
+    habit: 'A great sword three heroes long. It turns onto a line (the floor shows the band it will sweep), cocks back and spins down it, cutting whoever its blade passes over, and drives its point into the wall at the end. Nothing stops or shoves it on the way. Stuck, it is open: blows land half again as hard until it works itself free.' },
   succubus: { fun: 'Has a lovely smile, and she knows it. So, before long, will you.', habit: 'Every blow on her charms whoever struck it a little. She goes for the charmed and hits them harder, and every so often blows a kiss at whoever is closest to falling for her: a hero charmed full up fights for her for a while, and one half charmed cannot bring itself to hit her.' },
   choirSprite: { fun: 'Knows one song. It is a lovely song. It is the reason the others keep getting up.',
     habit: 'Everything of its side inside its song mends, and everyone of yours inside it grows sleepy. A stagger silences it for a while.' },

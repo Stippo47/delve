@@ -19,7 +19,7 @@
 import { alive, opponents, allies, hurt, puff, sparks, flames, addStatus, setAnim, fx, addBuff, explode, spawn, heal, kill, addDanger, drive, steer, goalVec } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, angleDiff, rand, rrange, chance } from './util.js';
 import { lineClear } from './path.js';
-import { ELITES, lob, cone, line, around, rush, rushTick, summon, shoot, blink, openSpot, pounce, hold, beginHold, due, again, targetOf, gapTo, crowd, stand, turnTo, later } from './elites.js';
+import { ELITES, MAJOR_MOVES, lob, cone, line, around, rush, rushTick, summon, shoot, blink, openSpot, pounce, hold, beginHold, due, again, targetOf, gapTo, crowd, stand, turnTo, later } from './elites.js';
 import { slam, courtFalls } from './enemies.js';
 import { FOES } from './foes.js';
 import { wolfBrain } from './wildwood.js';
@@ -383,38 +383,234 @@ function pitLordBrain(w, u, dt) {
 }
 
 // ---------------------------------------------------------------- the Gilded Spire
-// Sun blade: a floating sword that can't be staggered. It picks a hero and spins through the party in a straight line
-// (a line shows first), cutting everyone it passes, then turns for another pass. The elite sheds radiant bolts all
-// round at the end of each pass.
-function bladeBrain(w, u, dt) {
-  if (!u.steady) { u.steady = true; addBuff(u, { id: 'steady', dur: 1e9, knockImmune: true }); }
-  u.facing = wrapAngle(u.facing + (u.pass ? 22 : 6) * dt); // always turning
-  const p = u.pass;
-  if (p) {
-    if (p.tell > 0) { p.tell -= dt; stand(u, dt); return true; }
-    u.dvx = Math.cos(p.a) * p.sp; u.dvy = Math.sin(p.a) * p.sp; u.vx = u.dvx; u.vy = u.dvy; u.mvA = p.a; u.spd = p.sp;
-    if (rand() < 0.7) sparks(w, u.x, u.y, p.a + Math.PI, 1, '#FFF1B0');
-    for (const h of opponents(w, u)) {
-      if (p.hit.has(h) || dist(u.x, u.y, h.x, h.y) > u.r + h.r + 6) continue;
-      p.hit.add(h); const side = Math.sign(Math.sin(angleTo(u.x, u.y, h.x, h.y) - p.a)) || 1;
-      hurt(w, h, u.def.dmg * u.dmgMul, u, { knock: 220, kAngle: p.a + side * 1.2, radiance: 14 });
+// Sun blade. Round 13 (lane E; the designer: "make the sword enemy much bigger. Like 3 units across in size. Also it
+// doesn't do anything currently"): a great sword three heroes long (vr 52: BLADE.len x vr = 179 room units) floating
+// point-first at its mark.
+//  - its pass: it turns onto a line and draws back (the line shows on the floor first, as wide as the blade is long:
+//    the band it will sweep), then spins down it gathering speed, cutting whoever its blade sweeps (the blade's length,
+//    tested along it, not a circle in its middle), and drives its point into the wall at the end; with no wall in
+//    reach it drives it into the floor. Nothing stops it, shoves it or staggers it from the tell to the wall;
+//  - stuck, it is open: blows land half again as hard while it shudders and works itself free, then wrenches out;
+//  - between passes it hangs back, point towards its mark, turning slowly;
+//  - shots hit it along its blade (def.hitAt), and its shadow is the blade's (def.shadows).
+// Elite: its pass glances off the first wall it meets into a second leg (both legs show on the floor). Major (its own
+// major move, MAJOR_MOVES.fallingSword): it rises up over a hero, a circle gathering on the floor where it will
+// land, and falls point-first: a hard blow all round, and it is stuck in the floor.
+const BLADE = { len: 3.44, hw: 0.17, tell: 0.85, cock: 0.7, top: 560, accel: 1500, turn: 330, stuck: 2.4, embed: 0.2, reach: 1000, open: 1.5, dmg: 13, knock: 280, radiance: 16,
+  rise: { up: 1.0, down: 0.18, r: 96, dmg: 22 } };
+const half = (u) => u.vr * BLADE.len / 2;
+// Where the blade lies now: its two ends (the point is forward, +facing).
+const bladeEnds = (u, x = u.x, y = u.y, f = u.facing) => { const h = half(u), c = Math.cos(f), s = Math.sin(f); return [x - c * h, y - s * h, x + c * h, y + s * h]; };
+function segDist(px, py, x1, y1, x2, y2) { const dx = x2 - x1, dy = y2 - y1, L2 = dx * dx + dy * dy || 1, k = clamp(((px - x1) * dx + (py - y1) * dy) / L2, 0, 1); return Math.hypot(x1 + dx * k - px, y1 + dy * k - py); }
+export { bladeEnds, segDist };
+// How far from (x, y) along a until a wall or the room's edge, and the face it meets ({ d, nx, ny, rect }).
+function rayWall(w, x, y, a, max) {
+  const c = Math.cos(a), s = Math.sin(a), BIG = 4000;
+  let best = { d: max, nx: 0, ny: 0, rect: null };
+  const edge = (t, nx, ny, rect) => { if (t > 0 && t < best.d) best = { d: t, nx, ny, rect }; };
+  if (c > 1e-6) edge((w.W - x) / c, -1, 0, { x: w.W, y: -BIG, w: BIG, h: w.H + BIG * 2 });
+  if (c < -1e-6) edge(-x / c, 1, 0, { x: -BIG, y: -BIG, w: BIG, h: w.H + BIG * 2 });
+  if (s > 1e-6) edge((w.H - y) / s, 0, -1, { x: -BIG, y: w.H, w: w.W + BIG * 2, h: BIG });
+  if (s < -1e-6) edge(-y / s, 0, 1, { x: -BIG, y: -BIG, w: w.W + BIG * 2, h: BIG });
+  for (const r of w.walls) { // slab test against each wall's box; the face is the one the ray enters by
+    let t0 = 0, t1 = best.d, nx = 0, ny = 0;
+    if (Math.abs(c) < 1e-9) { if (x < r.x || x > r.x + r.w) continue; } else {
+      let ta = (r.x - x) / c, tb = (r.x + r.w - x) / c; if (ta > tb) [ta, tb] = [tb, ta];
+      if (ta > t0) { t0 = ta; nx = c > 0 ? -1 : 1; ny = 0; } t1 = Math.min(t1, tb);
     }
-    const nx = u.x + Math.cos(p.a) * (u.r + 8), ny = u.y + Math.sin(p.a) * (u.r + 8);
-    if ((p.t -= dt) <= 0 || nx < 10 || ny < 10 || nx > w.W - 10 || ny > w.H - 10 || !lineClear(w, u.x, u.y, nx, ny, 2)) {
-      u.pass = null; u.spd *= 0.2;
-      if (u.elite) for (let i = 0; i < 6; i++) shoot(w, u, i / 6 * TAU + rand(), { kind: 'bolt', color: '#FFF1B0', speed: 280, dmg: 5, r: 7, life: 1.2, hitO: { knock: 60, radiance: 12 } });
+    if (Math.abs(s) < 1e-9) { if (y < r.y || y > r.y + r.h) continue; } else {
+      let ta = (r.y - y) / s, tb = (r.y + r.h - y) / s; if (ta > tb) [ta, tb] = [tb, ta];
+      if (ta > t0) { t0 = ta; nx = 0; ny = s > 0 ? -1 : 1; } t1 = Math.min(t1, tb);
+    }
+    if (t0 <= t1 && t0 > 0) edge(t0, nx, ny, r);
+  }
+  return best;
+}
+// One leg of a pass: from (x, y) along a, the blade's middle stopping so its point is BLADE.embed of its length into
+// the wall (or, with no wall within reach, out in the room: into the floor).
+function planLeg(w, u, x, y, a) {
+  const h = half(u), hit = rayWall(w, x, y, a, BLADE.reach), wall = !!hit.rect;
+  return { x, y, a, S: wall ? hit.d - h * (1 - BLADE.embed * 2) : hit.d, wall, hit };
+}
+// Room for the blade's sweep down a leg: the lines a third of its length either side of its path are clear too (it
+// doesn't pass along a wall, half of it in the stone).
+function bandClear(w, u, L) {
+  const off = half(u) * 0.66, nx = -Math.sin(L.a), ny = Math.cos(L.a), ex = L.x + Math.cos(L.a) * L.S, ey = L.y + Math.sin(L.a) * L.S;
+  return [-1, 1].every((k) => { const ox = nx * off * k, oy = ny * off * k, ax = L.x + ox, ay = L.y + oy; return ax > 0 && ay > 0 && ax < w.W && ay < w.H && ex + ox > 0 && ey + oy > 0 && ex + ox < w.W && ey + oy < w.H && lineClear(w, ax, ay, ex + ox, ey + oy, 2); });
+}
+// How close the nearest wall or edge is to (x, y), and the way out from it.
+function wallNear(w, x, y) {
+  let d = Math.min(x, y, w.W - x, w.H - y), ax = x === d ? 1 : x === w.W - (w.W - x) && w.W - x === d ? -1 : 0, ay = 0;
+  if (d === x) { ax = 1; ay = 0; } else if (d === w.W - x) { ax = -1; ay = 0; } else if (d === y) { ax = 0; ay = 1; } else { ax = 0; ay = -1; }
+  for (const r of w.walls) { const cx = clamp(x, r.x, r.x + r.w), cy = clamp(y, r.y, r.y + r.h), dd = Math.hypot(x - cx, y - cy); if (dd < d) { d = dd; ax = (x - cx) / (dd || 1); ay = (y - cy) / (dd || 1); } }
+  return { d, ax, ay };
+}
+function planPass(w, u, a) {
+  const L1 = planLeg(w, u, u.x, u.y, a);
+  if (L1.S < 170 || !bandClear(w, u, L1)) return null;
+  const legs = [L1];
+  if (u.elite && L1.wall) { // the elite's glances off the wall into a second leg
+    const n = L1.hit, d = Math.cos(a) * n.nx + Math.sin(a) * n.ny, rx = Math.cos(a) - 2 * d * n.nx, ry = Math.sin(a) - 2 * d * n.ny;
+    const at = L1.hit.d - half(u) * 0.62, bx = u.x + Math.cos(a) * at, by = u.y + Math.sin(a) * at; // its spinning point skims the wall
+    const L2 = planLeg(w, u, bx, by, Math.atan2(ry, rx));
+    if (L2.S > 170 && Math.abs(d) < 0.92 && bandClear(w, u, L2)) { L1.S = at; L1.wall = false; L1.bounce = true; legs.push(L2); }
+  }
+  return legs;
+}
+const legTime = (S) => (S < BLADE.top * BLADE.top / (2 * BLADE.accel) ? Math.sqrt(2 * S / BLADE.accel) : S / BLADE.top + BLADE.top / (2 * BLADE.accel));
+// Nothing holds or shoves it from its tell to the wall (a hook: sim.js runs a hook's tick in statusTick, before stuns)
+const LOCKED = new Set(['tell', 'pass', 'stuck', 'rise', 'fall']);
+const bladeLock = (u) => ({ tick(w, v) { if (v.bl && LOCKED.has(v.bl.st)) { v.stunT = 0; v.koT = 0; v.frozenT = 0; v.sleepT = 0; v.rootT = 0; v.st.stagger = 0; } },
+  get knockImmune() { return !!(u.bl && LOCKED.has(u.bl.st)); } });
+function bladeBrain(w, u, dt) {
+  const B = u.bl || (u.bl = { st: 'hover', t: 0 });
+  if (!B.lock) { B.lock = bladeLock(u); u.trinketHooks = [...(u.trinketHooks || []), B.lock]; }
+  u.lean = 0;
+  B.t += dt;
+  if (B.st === 'tell') {
+    const L = B.legs[0], k = clamp(B.t / B.tellT, 0, 1), e = k * k * (3 - 2 * k);
+    // onto its line, then cocked back against the way it will spin, drawn back and lifted a little, trembling, its point alight
+    u.facing = k < 0.35 ? wrapAngle(u.facing + clamp(wrapAngle(L.a - u.facing), -12 * dt, 12 * dt)) : wrapAngle(L.a - BLADE.cock * (e - 0.08) / 0.92);
+    const back = 22 * e, bx = L.x - Math.cos(L.a) * back, by = L.y - Math.sin(L.a) * back, j = 1.6 * k;
+    u.x = bx + rrange(-1, 1) * j; u.y = by + rrange(-1, 1) * j; u.dvx = u.dvy = 0; u.spd = 0; u.hop = 12 * e;
+    u._force = { glow: { a: 0.4 + 0.6 * k, color: '#FFF1B0' } };
+    if (rand() < dt * 18) { const q = rrange(-0.6, 0.6) * half(u); sparks(w, u.x + Math.cos(u.facing) * q, u.y + Math.sin(u.facing) * q, rand() * TAU, 1, '#FFF1B0'); }
+    if (B.t >= B.tellT) { B.st = 'pass'; B.leg = 0; B.s = -back; B.v = 0; B.hit = new Set(); B.prevF = u.facing; B.prevX = u.x; B.prevY = u.y; u.hop = 0; u._force = null; B.cock = BLADE.cock; }
+    return true;
+  }
+  if (B.st === 'pass') {
+    const L = B.legs[B.leg];
+    B.v = Math.min(BLADE.top * (u.elite ? 1.08 : 1), B.v + BLADE.accel * dt); B.s = Math.min(L.S, B.s + B.v * dt);
+    const turns = Math.max(1, Math.round(L.S / BLADE.turn)), k = clamp(B.s / L.S, 0, 1), c0 = B.leg === 0 ? B.cock : 0;
+    u.x = L.x + Math.cos(L.a) * B.s; u.y = L.y + Math.sin(L.a) * B.s; u.facing = wrapAngle(L.a - c0 + k * (turns * TAU + c0)); // spinning, and point-first again as it arrives
+    u.dvx = Math.cos(L.a) * B.v; u.dvy = Math.sin(L.a) * B.v; u.mvA = L.a; u.spd = B.v;
+    sweep(w, u, B, L);
+    B.prevF = u.facing; B.prevX = u.x; B.prevY = u.y;
+    if (rand() < dt * 30) { const [x1, y1, x2, y2] = bladeEnds(u), q = rand(); w.particles.push({ x: x1 + (x2 - x1) * q, y: y1 + (y2 - y1) * q, vx: 0, vy: 0, life: 0.35, max: 0.35, size: rrange(3, 6), color: 'rgba(255,241,176,0.85)' }); }
+    if (B.s >= L.S) {
+      if (L.bounce && B.legs[B.leg + 1]) { // glancing off the wall: sparks where its point skims it, on into the next leg
+        const p = { x: u.x + Math.cos(L.a) * half(u) * 0.9, y: u.y + Math.sin(L.a) * half(u) * 0.9 };
+        sparks(w, p.x, p.y, Math.atan2(L.hit.ny, L.hit.nx), 10, '#FFF1B0', 1.2); w.shake = Math.max(w.shake, 3);
+        B.leg++; B.s = 0; B.v *= 0.8; const N = B.legs[B.leg]; N.x = u.x; N.y = u.y; B.hit = new Set(); return true;
+      }
+      stickBlade(w, u, B, L);
     }
     return true;
   }
-  const t = targetOf(w, u); if (!t || !u.aggro || !due(u, 'pass', dt, 1.5)) return false;
-  const d = dist(u.x, u.y, t.x, t.y); if (d > 420 || !lineClear(w, u.x, u.y, t.x, t.y, u.r)) return false;
-  again(u, 'pass', 2.4, 3.4);
-  const a = angleTo(u.x, u.y, t.x, t.y), len = d + 180, sp = u.def.speed * 3.4;
-  u.pass = { a, tell: 0.55, t: len / sp, sp, hit: new Set() };
-  addDanger(w, { shape: 'line', x1: u.x, y1: u.y, x2: u.x + Math.cos(a) * len, y2: u.y + Math.sin(a) * len, hw: u.r + 8, t: 0.55, team: u.team, src: u, kind: 'holy' });
-  setAnim(u, 'ability', 0.55 + len / sp);
+  if (B.st === 'stuck') {
+    u.dvx = u.dvy = 0; u.spd = 0;
+    addBuff(u, { id: 'open', dur: 0.2, taken: BLADE.open }); // (open to blows while it's stuck)
+    const k = B.t / B.stuckT;
+    u.lean = Math.sin(B.t * (18 + 20 * k)) * 0.035 * (0.4 + k); // it shudders, harder as it works itself loose
+    if (rand() < dt * (4 + 10 * k)) { const tx = u.x + Math.cos(u.facing) * half(u) * 0.75, ty = u.y + Math.sin(u.facing) * half(u) * 0.75; if (B.floor) puff(w, tx, ty, '#D9CDB0', 2, 50, 4, 0.4); else sparks(w, tx, ty, u.facing + Math.PI + rrange(-0.8, 0.8), 1, '#FFF1B0'); }
+    if (B.t >= B.stuckT) { // wrenched free
+      B.st = 'free'; B.t = 0; u.stuckIn = null; u.squash = 0; u.fixed = false;
+      const tx = u.x + Math.cos(u.facing) * half(u) * 0.75, ty = u.y + Math.sin(u.facing) * half(u) * 0.75;
+      puff(w, tx, ty, B.floor ? '#D9CDB0' : '#CDBFA6', 12, 120, 6, 0.5); sparks(w, tx, ty, u.facing + Math.PI, 6, '#FFF1B0'); w.shake = Math.max(w.shake, 2);
+      again(u, 'pass', 1.3, 2.2);
+    }
+    return true;
+  }
+  if (B.st === 'free') { // it pulls back out of the wall, then hovers
+    const k = clamp(B.t / 0.4, 0, 1);
+    u.dvx = -Math.cos(u.facing) * 90 * (1 - k); u.dvy = -Math.sin(u.facing) * 90 * (1 - k); u.mvA = u.facing + Math.PI; u.spd = 90 * (1 - k);
+    if (k >= 1) { B.st = 'hover'; B.t = 0; }
+    return true;
+  }
+  if (B.st === 'rise' || B.st === 'fall') return fallTick(w, u, B, dt);
+  // ---- hovering: point towards its mark, turning slowly, keeping a pass's length off; a pass when it has a line
+  const t = targetOf(w, u);
+  if (!t || !u.aggro) { u.squash = 0; return false; }
+  turnTo(u, angleTo(u.x, u.y, t.x, t.y), 2.4, dt);
+  const d = dist(u.x, u.y, t.x, t.y);
+  if (due(u, 'pass', dt, 1.2) && d < 640 && lineClear(w, u.x, u.y, t.x, t.y, 6)) {
+    const legs = planPass(w, u, angleTo(u.x, u.y, t.x + (t.vx || 0) * 0.35, t.y + (t.vy || 0) * 0.35));
+    if (!legs) { again(u, 'pass', 0.4); return false; }
+    again(u, 'pass', 99); // (set again when it pulls free)
+    startPass(w, u, B, legs);
+    return true;
+  }
+  // out from walls (its whole length in the open), and a pass's length off its mark: closer, it backs away; further, it comes in
+  const wn = wallNear(w, u.x, u.y), cramped = wn.d < half(u) + 24;
+  const toward = d > 380, away = d < 200;
+  if (!toward && !away && !cramped) { stand(u, dt); return true; }
+  let [gx, gy] = toward ? goalVec(w, u, t.x, t.y) : away ? [u.x - t.x, u.y - t.y] : [0, 0];
+  if (cramped) { const L = Math.hypot(gx, gy) || 1; gx = gx / L + wn.ax * 1.5; gy = gy / L + wn.ay * 1.5; }
+  const [sx, sy] = steer(w, u, gx, gy);
+  drive(u, sx, sy, u.def.speed * (u.moveMul || 1), dt);
   return true;
 }
+function startPass(w, u, B, legs) {
+  B.st = 'tell'; B.t = 0; B.tellT = BLADE.tell * (u.elite ? 0.85 : 1); B.legs = legs; u.fixed = true;
+  let T = B.tellT;
+  for (const L of legs) { // each leg's line lasts until the blade has gone down it (the blade is the blow: nothing strikes along the line)
+    T += legTime(L.S);
+    const ex = L.x + Math.cos(L.a) * (L.S + half(u) * 0.9), ey = L.y + Math.sin(L.a) * (L.S + half(u) * 0.9);
+    addDanger(w, { shape: 'line', x1: L.x, y1: L.y, x2: ex, y2: ey, hw: half(u) * 0.92, t: T, team: u.team, src: u, kind: 'holy', cancelled: true });
+  }
+  setAnim(u, 'ability', B.tellT);
+}
+// Who the blade's length swept this tick: the blade tested where it was, where it is and between (it turns fast).
+function sweep(w, u, B, L) {
+  const hw = u.vr * BLADE.hw, turn = wrapAngle(u.facing - B.prevF), steps = Math.max(1, Math.ceil(Math.abs(turn) / 0.18));
+  for (const h of opponents(w, u)) {
+    if (B.hit.has(h)) continue;
+    let hit = false;
+    for (let i = 0; i <= steps && !hit; i++) {
+      const q = i / steps, [x1, y1, x2, y2] = bladeEnds(u, B.prevX + (u.x - B.prevX) * q, B.prevY + (u.y - B.prevY) * q, B.prevF + turn * q);
+      if (segDist(h.x, h.y, x1, y1, x2, y2) < h.r + hw) hit = true;
+    }
+    if (!hit) continue;
+    B.hit.add(h);
+    const side = Math.sign(Math.sin(angleTo(L.x, L.y, h.x, h.y) - L.a)) || 1;
+    hurt(w, h, BLADE.dmg * u.dmgMul, u, { knock: BLADE.knock, kAngle: L.a + side * 1.15, heavy: true, radiance: BLADE.radiance });
+    sparks(w, h.x, h.y, L.a + side * 1.15, 5, '#FFF1B0', 1.1);
+  }
+}
+function stickBlade(w, u, B, L) {
+  B.st = 'stuck'; B.t = 0; B.stuckT = BLADE.stuck * (u.elite ? 0.8 : 1); B.floor = !L.wall;
+  u.facing = L.a; u.fixed = true; u.dvx = u.dvy = 0; u.spd = 0;
+  const tx = u.x + Math.cos(L.a) * half(u), ty = u.y + Math.sin(L.a) * half(u);
+  if (L.wall) { u.stuckIn = L.hit.rect; sparks(w, tx, ty, Math.atan2(L.hit.ny, L.hit.nx), 12, '#FFF1B0', 1.3); puff(w, tx, ty, '#CDBFA6', 14, 140, 6, 0.5); }
+  else { u.squash = 0.62; puff(w, u.x + Math.cos(L.a) * half(u) * 0.5, u.y + Math.sin(L.a) * half(u) * 0.5, '#D9CDB0', 16, 150, 7, 0.55); } // point down into the floor: drawn foreshortened
+  w.shake = Math.max(w.shake, 5);
+  if (u.elite && !u.major) for (let i = 0; i < 5; i++) shoot(w, u, L.a + Math.PI + (i - 2) * 0.35, { kind: 'bolt', color: '#FFF1B0', speed: 280, dmg: 5, r: 7, life: 1.1, hitO: { knock: 60, radiance: 12 } }); // (the elite's: light thrown back off the wall)
+}
+// The major's falling sword: it rises (point turning down) and glides over its mark, and drops.
+function fallTick(w, u, B, dt) {
+  const R = BLADE.rise;
+  if (B.st === 'rise') {
+    const k = clamp(B.t / R.up, 0, 1);
+    u.hop = 70 * Math.sin(k * Math.PI / 2); u.squash = 1 - 0.6 * k; // up, tipping point-down
+    const m = 1 - Math.exp(-dt * 4); u.x += (B.at.x - u.x) * m; u.y += (B.at.y - u.y) * m; u.dvx = u.dvy = 0; u.spd = 0;
+    if (B.t >= R.up) { B.st = 'fall'; B.t = 0; }
+    return true;
+  }
+  const k = clamp(B.t / R.down, 0, 1);
+  u.x = B.at.x; u.y = B.at.y; u.hop = 70 * (1 - k * k); u.squash = 0.4;
+  if (k >= 1) {
+    u.hop = 0;
+    for (const h of opponents(w, u)) if (dist(h.x, h.y, u.x, u.y) < R.r + h.r) hurt(w, h, R.dmg * u.dmgMul, u, { knock: 320, kAngle: angleTo(u.x, u.y, h.x, h.y), heavy: true, stagger: 45, radiance: 30 });
+    fx(w, { type: 'ring', x: u.x, y: u.y, r: R.r, color: '#FFE7A0', max: 0.45 });
+    for (let i = 0; i < 8; i++) sparks(w, u.x, u.y, i / 8 * TAU, 2, '#FFF1B0', 1.3);
+    stickBlade(w, u, B, { a: u.facing, wall: false }); u.squash = 0.4; B.stuckT *= 1.1;
+  }
+  return true;
+}
+// The major's own major move (elites.js makeMajor reads def.majorMove; the Book's words are its `words`).
+Object.assign(MAJOR_MOVES, { fallingSword: { words: 'Rises up over a hero, a circle gathering on the floor below, and falls point-first: a hard blow all round, and it is stuck in the floor a while.',
+  tick(w, u, dt) {
+    const B = u.bl; if (!B || B.st !== 'hover' || !u.aggro) return false;
+    const t = targetOf(w, u); if (!t || !due(u, 'mfall', dt, 3) || dist(u.x, u.y, t.x, t.y) > 520) return false;
+    again(u, 'mfall', 8, 10);
+    B.st = 'rise'; B.t = 0; B.at = { x: clamp(t.x + (t.vx || 0) * 0.6, 60, w.W - 60), y: clamp(t.y + (t.vy || 0) * 0.6, 60, w.H - 60) };
+    u.fixed = true; setAnim(u, 'ability', BLADE.rise.up);
+    addDanger(w, { shape: 'circle', x: B.at.x, y: B.at.y, r: BLADE.rise.r, t: BLADE.rise.up + BLADE.rise.down, team: u.team, src: u, kind: 'holy', cancelled: true });
+    return true;
+  } } });
+// A shot hits it anywhere along its blade (sim.js projectiles: def.hitAt), and its shadow lies along it (render.js).
+const bladeHitAt = (u, x, y, r) => { const [x1, y1, x2, y2] = bladeEnds(u); return segDist(x, y, x1, y1, x2, y2) < r + u.vr * BLADE.hw + 4 || dist(x, y, u.x, u.y) < u.r + r; };
+const bladeShadows = (u) => { const [x1, y1, x2, y2] = bladeEnds(u), out = [], k = u.squash || 1; for (let i = 0; i < 5; i++) { const q = 0.5 + (i / 4 - 0.5) * k; out.push([x1 + (x2 - x1) * q, y1 + (y2 - y1) * q, u.vr * (i === 1 ? 0.42 : 0.3)]); } return out; };
 // Choir sprite: sings, and everything of its side in the song mends; a stagger (or any stun) silences it a while.
 // The elite's song quickens them too.
 function choirBrain(w, u, dt) {
@@ -516,9 +712,9 @@ export const FOES10 = {
   pitLord: { ...FOES.pitLord, art: 'art/enemies/pit-lord.svg', headR: 68, brain: pitLordBrain }, // art round 9: its own art (it wore the round-5 demon)
   // ---- the Gilded Spire
   angelFallen: { variantOf: 'angel', name: 'Fallen Angel', art: 'art/enemies/fallen-angel.svg', radiance: 0, curse: 22, xp: 17, res: { radiance: 0, curse: 0 } },
-  sunBlade: { ...FOE, name: 'Sun Blade', art: 'art/enemies/sun-blade.svg', headR: 58, r: 36, vr: 52, turn: 6, accel: 360, face: 6, mass: 0.8,
+  sunBlade: { ...FOE, name: 'Sun Blade', art: 'art/enemies/sun-blade.svg', headR: 58, r: 36, vr: 52, turn: 6, accel: 360, face: 6, mass: 2.5,
     hp: 46, speed: 70, role: 'skirmish', range: 14, atkCd: 999, dmg: 9, temp: 0.6, commit: 0.5, xp: 12, coins: [2, 5], cost: 4, noCorpse: true, goo: '#FFE7A0',
-    res: { stagger: 0, radiance: 0, poison: 0, curse: 0 }, brain: bladeBrain },
+    res: { stagger: 0, radiance: 0, poison: 0, curse: 0 }, brain: bladeBrain, majorMove: 'fallingSword', hitAt: bladeHitAt, shadows: bladeShadows }, // round 13 (lane E): see bladeBrain
   choirSprite: { ...FOE, name: 'Choir Sprite', art: 'art/enemies/choir-sprite.svg', headR: 40, r: 20, vr: 16, turn: 6, accel: 320, face: 6, mass: 0.5,
     hp: 34, speed: 58, role: 'ranged', range: 260, keep: 240, atkCd: 999, dmg: 0, temp: 0.5, commit: 0.6, xp: 11, coins: [2, 4], cost: 3.5, res: { radiance: 0 }, brain: choirBrain },
   golem: GOLEM,
@@ -547,6 +743,6 @@ Object.assign(ELITES, {
   cinderBat: { tick() { return false; } }, // a bigger blast that leaves fire (cinderBrain reads u.elite)
   // Fallen angel: a shaft of darkness where you stand (curses).
   angelFallen: { tick(w, u, dt) { every(w, u, dt, 'smite', 3.5, 5, 460, (t) => { setAnim(u, 'cast', 0.4); lob(w, u, t.x + (t.vx || 0) * 0.5, t.y + (t.vy || 0) * 0.5, { r: 66, tell: 0.9, kind: 'soul', dust: '#7A5A9A', hit: { dmg: 13, knock: 200, curse: 34 } }); }); return false; } },
-  sunBlade: { tick() { return false; } },  // radiant bolts at the end of each pass (bladeBrain reads u.elite)
+  sunBlade: { tick() { return false; } },  // its pass glances off the first wall into a second leg, and light flies back off the wall where it sticks (bladeBrain reads u.elite)
   choirSprite: { tick() { return false; } }, // its song quickens (choirBrain reads u.elite)
 });

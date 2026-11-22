@@ -252,7 +252,7 @@ export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = fals
       g.restore();
     }
     if (str) strokeString(g, str, mode === 'flash' ? '#FFFFFF' : ink || INK, set.string.w + LINE * 2);
-    if (mode === 'flash') return;
+    if (mode === 'flash' || mode === 'ink') return; // (round 13, lane E: 'ink', the outline alone: a chain's links are inked together, then filled)
   }
   for (const L of Ls) {
     if (hidden(pose, L)) continue;
