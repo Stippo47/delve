@@ -43,17 +43,26 @@ if (battle) {
     GAME.record(true); GAME.startBattle({ arena, a: parse(blue), b: parse(red) });
   }, [battle, opt('arena', 'crypt'), opt('nodes', '')]);
 } else if (args.includes('--convoy')) {
-  // --convoy [--party paladin,archer,cleric] [--level 5] [--stretch 0-2] [--gather]: the wagon mode (js/convoy.js); at a
-  // roadside camp the first choice offered is taken (or --pick repair|potions|trinket|sellsword)
-  await page.evaluate(([party, level, stretch, gather]) => {
+  // --convoy [--party paladin,archer,cleric] [--level 5] [--stretch 0-2] [--lands wildwood,warren]: the wagon mode
+  // (js/convoy.js); at a roadside camp it shops as convoys.mjs does (or buys --pick repair|potion|trinket|sellsword first)
+  await page.evaluate(([party, level, stretch, lands]) => {
     const s = GAME.save; s.unlocks = { ...(s.unlocks || {}), slotMini1: true, slotBoss1: true };
     for (const id of party) { const h = s.heroes[id]; h.owned = true; h.level = level; }
     s.party = party.slice();
-    GAME.record(true); GAME.startConvoy({ party, stretch, stance: gather ? 'gather' : 'guard' });
-  }, [opt('party', 'paladin,archer,cleric').split(','), +opt('level', 5), +opt('stretch', 0), args.includes('--gather')]);
-} else await page.evaluate((d) => { GAME.record(true); GAME.startRun(d); }, depth);
-const convoyStep = () => page.evaluate((pick) => { const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick(r.offer.includes(pick) ? pick : r.offer[0]); }, opt('pick', ''));
-if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) { GAME.recFrame(1 / 30); const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick(r.offer[0]); } }, skip);
+    GAME.record(true); GAME.startConvoy({ party, stretch, lands: lands ? lands.split(',') : undefined });
+  }, [opt('party', 'paladin,archer,cleric').split(','), +opt('level', 5), +opt('stretch', 0), opt('lands', '')]);
+} else await page.evaluate(([d, party, level, quiet]) => { // [--party a,b,c] [--level N]: a dungeon run with that party (lane W)
+  if (party) { const s = GAME.save; s.unlocks = { ...(s.unlocks || {}), slotMini1: true, slotBoss1: true }; for (const id of party.split(',')) { s.heroes[id].owned = true; s.heroes[id].level = level; } s.party = party.split(','); }
+  GAME.record(true); GAME.startRun(d);
+  if (quiet) { const w = GAME.run.world; w.wp = null; for (const u of w.units) if (u.team !== 'hero' && u.team !== 'neutral') { u.x = w.W + 4000; u.aggro = false; u.ethereal = true; } } // --quiet: the room's foes taken out of sight (the walk with nothing about)
+  }, [depth, opt('party', ''), +opt('level', 5), args.includes('--quiet')]);
+const convoyStep = () => page.evaluate((pick) => { const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick(pick || 'auto'); }, opt('pick', ''));
+if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) { GAME.recFrame(1 / 30); const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick('auto'); } }, skip);
+// --down N (convoy): after the skip, the second hero drops N behind the wagon (a revive, or one left behind) and the
+// waves hold off for 20 s, so the clip shows the downed hero's ring and what becomes of them
+if (args.includes('--convoy') && opt('down')) await page.evaluate((back) => { const r = GAME.run, wg = r.wagon; r.waveT = 20;
+  const h = r.world.units.filter((u) => u.team === wg.team && !u.def.cargo && !u.downed && !u.dead && r.heroes[u.kind])[1];
+  if (h) { h.x = wg.x - back; h.y = wg.y + 150; h.hp = 0; h.downed = true; h.target = null; h.forcedGoal = null; } }, +opt('down'));
 const n = Math.round(secs * fps);
 for (let i = 0; i < n; i++) {
   await page.evaluate((dt) => GAME.recFrame(dt), speed / fps);

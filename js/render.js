@@ -10,6 +10,7 @@ import { drawBodyFx, drawBodyGround, drawIceWall } from './fxkit.js';
 import { drawHazardPuddle, flushPuddles, drawPuddle } from './puddles.js';
 import { drawEnemyHp, hpWash, setHpSides } from './hpstyle.js';
 import { icon } from './icons.js';
+import { heartPath, drawStatusMarks } from './fx-status.js'; // round 13 (lane S): the new statuses' marks
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
 
 // One outline thickness for everything drawn here, in room units. Matches what the SVG heroes show.
@@ -23,10 +24,10 @@ const ACROSS = 480; // one room chunk across = the screen's width in portrait
 
 // topPad/bottomPad: screen space taken by the HUD. Portrait turns the room a quarter turn.
 export function layout(canvas, w, topPad, bottomPad = 10, sidePad = 10) {
-  const dpr = Math.min(window.devicePixelRatio || 1, 3);
+  const dpr = Math.min(window.devicePixelRatio || 1, view.dprCap || 3); // (round 13, the Book's preview caps its own)
   const cw = canvas.clientWidth, ch = canvas.clientHeight;
   if (canvas.width !== Math.round(cw * dpr) || canvas.height !== Math.round(ch * dpr)) { canvas.width = Math.round(cw * dpr); canvas.height = Math.round(ch * dpr); }
-  view.dpr = dpr; view.cw = cw; view.ch = ch;
+  view.dpr = dpr; view.cw = cw; view.ch = ch; view.padT = topPad; view.padB = bottomPad; // (lane W: convoy.js's off-screen arrows keep clear of the HUD)
   view.rot = ch > cw;
   const pad = 26; // the wall frame around the floor
   const edge = 7; // how much of the side walls stays on screen
@@ -35,8 +36,9 @@ export function layout(canvas, w, topPad, bottomPad = 10, sidePad = 10) {
   const across = view.rot ? availW : availH, along = view.rot ? availH : availW;
   // zoom 1 = one chunk across fills the screen's short side; the default shows a bit more
   const base = view.rot ? cw / (ACROSS + edge * 2) : Math.min(across / (ACROSS + edge * 2), along / 900);
-  const s = base * view.zoom;
-  view.scale = s; view.base = base;
+  const baseW = w.across ? across / (w.across * 0.8) : base; // lane W (convoy.js): the wagon road shows w.across units across at the default zoom
+  const s = baseW * view.zoom;
+  view.scale = s; view.base = baseW;
   // the camera follows the party's middle, never further than the walls
   // (a battle: the middle of everyone still standing, both sides)
   const heroes = w.battle ? w.units.filter((u) => !u.dead && !u.ethereal && u.team !== 'neutral') : w.units.filter((u) => u.team === 'hero' && !u.downed);
@@ -81,7 +83,8 @@ function floor(w) {
   const c = document.createElement('canvas');
   let s = view.base * view.dpr;
   const area = (w.W + pad * 2) * (w.H + pad * 2);
-  if (area * s * s > 12e6) s = Math.sqrt(12e6 / area); // a big room's floor is cached a little softer
+  const cap = w.cacheMax || 12e6; // lane W (convoy.js): the wide road's ground is cached smaller (a phone's memory)
+  if (area * s * s > cap) s = Math.sqrt(cap / area); // a big room's floor is cached a little softer
   c.width = Math.ceil((w.W + pad * 2) * s); c.height = Math.ceil((w.H + pad * 2) * s);
   const g = c.getContext('2d');
   g.scale(s, s); g.translate(pad, pad);
@@ -146,7 +149,7 @@ function drawShadows(ctx, w, tf) {
     const sx = a * x + c * y + e, sy = b * x + d * y + f, sr = r * k + 2;
     if (sx - sr < x0) x0 = sx - sr; if (sy - sr < y0) y0 = sy - sr; if (sx + sr > x1) x1 = sx + sr; if (sy + sr > y1) y1 = sy + sr;
   };
-  for (const u of w.units) if (!u.ethereal) disc(u.x, u.y, shadowSize(u), 1);
+  for (const u of w.units) if (!u.ethereal || u.hiddenIn) disc(u.x, u.y, shadowSize(u), 1);
   // a body in the air leaves its shadow on the floor
   for (const cp of w.corpses) if (cp.z > 2) disc(cp.x, cp.y, cp.vr * 1.3, clamp(cp.t / 4, 0, 1) * 0.8);
   g.globalAlpha = 1;
@@ -184,8 +187,8 @@ export function draw(ctx, w) {
   flushPuddles(ctx, tf); // puddles.js: every ground body queued above; bodies of a kind merge into one (round 9)
   for (const p of w.pickups) drawPickup(ctx, p, w.time);
   // shadows straight down under each obstacle (top-down: never cast to one side)
-  for (const p of w.pillars) { const R = p.r * 1.45; ctx.drawImage(softShadow(), p.x - R, p.y - R, R * 2, R * 2); }
-  for (const p of w.pillars) drawPillar(ctx, p, w);
+  for (const p of w.pillars) { if (p.painted) continue; const R = p.r * 1.45; ctx.drawImage(softShadow(), p.x - R, p.y - R, R * 2, R * 2); } // (lane W: p.painted = already in the ground's picture, convoy.js)
+  for (const p of w.pillars) if (!p.painted) drawPillar(ctx, p, w);
   // crates on the grid (layout.js): square obstacles, colliding as the wall rectangle they are (48 across at sc 1)
   for (const r of w.walls) if (r.prop) { const R = r.w * 0.8, x = r.x + r.w / 2, y = r.y + r.h / 2; ctx.drawImage(softShadow(), x - R, y - R, R * 2, R * 2); prop(ctx, r.prop, x, y, PROP_BOX, { sc: r.w / 48 }); }
   // a round shadow straight under every unit (top-down: no side cast), all of them merged; a leaping unit's shrinks
@@ -202,7 +205,8 @@ export function draw(ctx, w) {
   noteHits(w);
   for (const u of order) drawBodyGround(ctx, u, w); // chains, rays and rings that lie under the units (round 9)
   // a rat drawn by hand gets its springy tail; the rat king's art (art round 8) has its own tails knotted in it
-  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.def.art && !u.downed) drawTail(ctx, u, dt); drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawBodyFx(ctx, u, w); }
+  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.def.art && !u.downed) drawTail(ctx, u, dt); drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawStatusMarks(ctx, u, w.time); drawBodyFx(ctx, u, w); }
+  if (w.drawOver) w.drawOver(ctx, w, view); // lane W (convoy.js): the forest's canopy, over the units at the edge (a cached picture)
   for (const p of w.projectiles) projectile(ctx, p, w.time);
   for (const p of w.particles) drawParticle(ctx, p);
   ctx.globalAlpha = 1;
@@ -518,6 +522,12 @@ function unitFrame(ctx, u, w) {
   }
   if (u.act && u.act.type === 'charge') { fy += u.vr * 0.15; sc *= 1.04; }
   if (u.sleepT > 0) sc *= 1 + Math.sin(w.time * 2.4 + u.id) * 0.02;
+  // round 13 (lane S): how the new statuses move the body. Sleepy: its head nods (a slow droop forward, then a jerk
+  // back up). Fear: it trembles, harder as it builds; terrified, it shakes. Confused: it sways off balance.
+  const sti = u.st || {};
+  if (!u.downed && sti.sleepy > 8 && !(u.sleepT > 0)) { const f = clamp(sti.sleepy / 100, 0, 1), ph = (T * 0.55 + u.id * 0.3) % 1, nod = ph < 0.8 ? ph / 0.8 : 1 - (ph - 0.8) / 0.2; tilt += 0.26 * f * nod * nod; fy += u.vr * 0.12 * f * nod; }
+  if (!u.downed && (sti.fear > 8 || u.fearT > 0)) { const f = u.fearT > 0 ? 1 : clamp(sti.fear / 100, 0, 1), q = Math.floor(T * 30); fx += (hash(q, u.id) - 0.5) * 5 * f; fy += (hash(u.id, q) - 0.5) * 3 * f; }
+  if (!u.downed && (sti.confuse > 8 || u.addledT > 0)) { const f = u.addledT > 0 ? 1 : clamp(sti.confuse / 100, 0, 1); tilt += Math.sin(T * 3.1 + u.id) * 0.2 * f; }
   else if (!u.downed && u.spd <= 6 && !u.act) sc *= 1 + Math.sin(T * 2.6 + u.id) * 0.016; // breathing while it stands: nobody freezes stiff (round 9)
   // Granny leans her whole body into the scythe's sweep (round 9: "better animation of body too")
   if (u.kind === 'granny' && u.anim && u.anim.kind === 'swing') { const k = u.anim.t / u.anim.dur; tilt += k < 0.25 ? -0.3 * (k / 0.25) : -0.3 + 0.75 * Math.min(1, (k - 0.25) / 0.3) - 0.45 * Math.max(0, (k - 0.55) / 0.45); }
@@ -540,9 +550,18 @@ function washesOf(u, w) {
   const rad = u.radiantT > 0 ? 1 : clamp((st.radiance || 0) / 100, 0, 1), curse = u.hexed ? 1 : clamp((st.curse || 0) / 100, 0, 1); // round 8
   if (rad > 0.03) out.push(['#FFF1B0', (0.15 + 0.35 * rad) * (u.radiantT > 0 ? 0.85 + 0.15 * Math.sin(w.time * 9) : 1)]);
   if (curse > 0.03) out.push(['#5A2A80', 0.15 + 0.3 * curse]);
+  // round 13 (lane S): the new five's washes (each its own colour; enthralled and terrified pulse)
+  const charm = u.flipKind === 'charm' ? 1 : clamp((st.charm || 0) / 100, 0, 1), conf = u.addledT > 0 ? 1 : clamp((st.confuse || 0) / 100, 0, 1);
+  const sleepy = clamp((st.sleepy || 0) / 100, 0, 1), bleed = clamp((st.bleed || 0) / 100, 0, 1), fear = u.fearT > 0 ? 1 : clamp((st.fear || 0) / 100, 0, 1);
+  if (charm > 0.03) out.push(['#FF6EB8', (0.12 + 0.3 * charm) * (u.flipKind === 'charm' ? 0.8 + 0.2 * Math.sin(w.time * 7) : 1)]);
+  if (conf > 0.03) out.push(['#B48AE8', (0.1 + 0.25 * conf) * (u.addledT > 0 ? 0.75 + 0.25 * Math.sin(w.time * 13) : 1)]);
+  if (sleepy > 0.03) out.push(['#6A5AA8', 0.1 + 0.25 * sleepy]);
+  if (bleed > 0.03) out.push(['#9A1E2A', 0.12 + 0.28 * bleed]);
+  if (u.bursts && u.bursts.bleed != null && w.time - u.bursts.bleed < 0.35) out.push(['#FF2A2A', 0.7 * (1 - (w.time - u.bursts.bleed) / 0.35)]); // haemorrhage: a red flash
+  if (fear > 0.03) out.push(['#E8F0E0', (0.12 + 0.35 * fear) * (u.fearT > 0 ? 0.8 + 0.2 * Math.sin(w.time * 17) : 1)]);
   if (wet > 0.05) out.push(['#3F8FD8', 0.1 + 0.22 * wet]);
   if (shock > 0.05 && Math.sin(w.time * 31 + u.id * 3) > 0.55) out.push(['#FFF3A0', 0.35 + 0.4 * shock]);
-  if (u.ethereal) out.push(['#BFE6FF', 0.45]);
+  if (u.ethereal && !u.hiddenIn) out.push(['#BFE6FF', 0.45]);
   // buffs show on the body itself, never as a ring round it (round 8)
   for (const b of u.buffs || []) {
     if (b.id === 'rage') out.push(['#FF3A2A', 0.18 + 0.12 * Math.sin(w.time * 10 + u.id)]);
@@ -580,7 +599,7 @@ function drawUnit(ctx, u, w) {
   unitFrame(ctx, u, w);
   if (u.invulnT > 0 && !u.act) ctx.globalAlpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18));
   if (u.downed) ctx.globalAlpha = 0.62;
-  if (u.ethereal && !u.exiting) ctx.globalAlpha = 0.45;
+  if (u.ethereal && !u.exiting && !u.hiddenIn) ctx.globalAlpha = 0.45; // (lane W: a foe still under the trees, convoy.js, is drawn solid)
   if (spr) {
     const bd = borderOf(u, w); if (bd) { const ga = ctx.globalAlpha, r = sizeU * 1.1; ctx.globalAlpha = ga * bd.a; ctx.drawImage(tinted(spr, bd.color), -r / 2, -r / 2, r, r); ctx.globalAlpha = ga; }
     let img = u.downed ? spr.grey : u.flashT > 0.06 ? spr.flash : spr.img;
@@ -617,7 +636,7 @@ function drawPartsUnit(ctx, u, w) {
   let alpha = 1;
   if (u.invulnT > 0 && !u.act && !u.spin) alpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18)); // no flicker mid-leap or roll (round 9)
   if (u.downed) alpha = 0.62; // a hero who is down lies faint too (round 7)
-  if (u.ethereal && !u.exiting) alpha *= 0.5;
+  if (u.ethereal && !u.exiting && !u.hiddenIn) alpha *= 0.5;
   const mode = u.downed ? 'grey' : u.flashT > 0.06 ? 'flash' : 'normal';
   if (u.act && u.act.type === 'dash' && u.kind === 'twinfang') afterimages(ctx, u, w, set, pose, sizeU);
   else u._trail = null;
@@ -797,6 +816,17 @@ function drawParticle(ctx, p) {
     const cross = () => { ctx.beginPath(); ctx.rect(-s, -t, s * 2, t * 2); ctx.rect(-t, -s, t * 2, s * 2); };
     ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; cross(); ctx.stroke();
     ctx.fillStyle = p.color; cross(); ctx.fill(); ctx.restore(); ctx.globalAlpha = 1;
+  } else if (p.shape === 'heart') { // round 13: a little inked heart rising (charm)
+    const [ux, uy] = upVec(), s = p.size * (0.7 + 0.3 * Math.min(1, (1 - k) * 5));
+    upright(ctx, p.x + ux * (p.up || 0), p.y + uy * (p.up || 0), () => { ctx.globalAlpha = Math.min(1, k * 2.2); heartPath(ctx, s);
+      ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; ctx.lineJoin = 'round'; ctx.stroke(); ctx.fillStyle = p.color; ctx.fill(); });
+    ctx.globalAlpha = 1;
+  } else if (p.shape === 'drip') { // round 13: a drop of blood falling off the body (bleeding)
+    const [ux, uy] = upVec();
+    upright(ctx, p.x + ux * (p.up || 0), p.y + uy * (p.up || 0), () => { ctx.globalAlpha = Math.min(1, k * 2);
+      const s = p.size; ctx.beginPath(); ctx.moveTo(0, -s * 1.5); ctx.quadraticCurveTo(s, 0, s * 0.9, s * 0.5); ctx.arc(0, s * 0.5, s * 0.9, 0, Math.PI); ctx.quadraticCurveTo(-s, 0, 0, -s * 1.5); ctx.closePath();
+      ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 1.6; ctx.lineJoin = 'round'; ctx.stroke(); ctx.fillStyle = p.color; ctx.fill(); });
+    ctx.globalAlpha = 1;
   } else if (p.shape === 'spark') {
     const a = Math.atan2(p.vy, p.vx), len = 6 + 10 * k;
     ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(a); ctx.globalAlpha = Math.min(1, k * 1.6);

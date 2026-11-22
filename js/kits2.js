@@ -5,7 +5,7 @@
 // Lasting things an ability starts run on the unit's own timers (u.k2, ticked from kitTick), not new sim acts.
 // The looks are in fx2.js: fx of type 'k2' with a `draw` name, shots of the new kinds, and each ability's 'sig'.
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange } from './util.js';
-import { hurt, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, stun, addBuff, fx, cleanse, textU, sparks, scatterCoins } from './sim.js';
+import { hurt, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, stun, addBuff, fx, cleanse, textU, sparks, scatterCoins, turnSide, restoreSide } from './sim.js';
 import { lineClear } from './path.js';
 import { foesNear, friendsNear, hurtMost, dmgOf, ang, ring, cast, heal, addStatus, zone, shoot, segDist } from './kits.js';
 
@@ -17,7 +17,7 @@ const after = (u, t, f) => { u.later = [...(u.later || []).filter((l) => !l.done
 const timer = (u, id, t, tick, end) => { const k = u.k2 || (u.k2 = []); const old = k.find((x) => x.id === id); if (old) { old.t = t; old.tick = tick; old.end = end; return old; } const n = { id, t, tick, end }; k.push(n); return n; };
 const inReach = (u, t, extra = 0) => t && alive(t) && dist(u.x, u.y, t.x, t.y) - u.r - t.r <= (u.def.range || 20) + extra;
 const inFront = (u, e, arc) => angleDiff(ang(u, e), u.facing) < arc / 2;
-const BUILDS = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse', 'entangle'];
+const BUILDS = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse', 'entangle', 'charm', 'confuse', 'sleepy', 'bleed', 'fear'];
 // a melee blow drawn as a weapon arc (fxkit turns the 'swing' telegraph into the weapon's arc; aoe: a slam on the floor)
 const swingMark = (w, u, R, arc, aoe) => w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: R, a: u.facing, arc, t: 0.16, max: 0.16, color: '#FFFFFF', src: u, aoe });
 // break off what an enemy is winding up: its act, and any danger zone it has showing
@@ -1468,13 +1468,12 @@ export const ABILITIES2 = {
       const list = (t && !t.def.boss && !t.major ? [t] : []).concat(tier >= 3 ? opponents(w, u).filter((o) => o !== t && !o.def.boss && !o.major && dist(u.x, u.y, o.x, o.y) < 240).slice(0, 1) : []);
       const dur = tier >= 2 ? 5 : 3.5;
       for (const e of list) {
-        if (e.befuddled) continue;
-        const was = e.team; e.befuddled = { was, until: w.time + dur }; e.team = u.team; e.target = null; e.tauntBy = null; e.tauntT = 0; e.aggro = true;
+        if (e.befuddled || e.trueTeam) continue;
+        turnSide(w, e, u.team, 'befuddle', u, dur); e.befuddled = { until: w.time + dur }; // (round 13: sim.js turnSide, the one way sides change; it comes back by itself)
         k2(w, { draw: 'swirlStars', unit: e, x: e.x, y: e.y, r: e.vr, max: dur, ab: 'befuddle' });
-        timer(u, 'befuddle' + e.id, dur, null, () => { if (e.befuddled) { e.team = e.befuddled.was; e.befuddled = null; e.target = null; } });
       }
     },
-    hook: { fallen(w, u) { for (const e of w.units) if (e.befuddled) { e.team = e.befuddled.was; e.befuddled = null; e.target = null; } } },
+    hook: { fallen(w, u) { for (const e of w.units) if (e.flipKind === 'befuddle' && e.flipBy === u) restoreSide(w, e); } },
     show: { far: true, single: true },
   },
   juggle: {

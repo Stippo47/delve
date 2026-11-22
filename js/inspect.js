@@ -110,9 +110,9 @@ function body(u) {
   const rs = run.stats && u.team === 'hero' && !u.summon && run.stats.heroes[u.kind];
   if (rs) html += `<h3 class="cap">This run</h3>${runLine(rs)}`;
   // statuses
-  const sts = unitStatuses(u);
+  const sts = unitStatuses(u, run.world.time);
   if (sts.length) html += `<h3 class="cap">Right now</h3><ul class="ip-list">${sts.map((s) => {
-    const info = s.potion ? { name: POTIONS[s.potion].name, desc: POTIONS[s.potion].desc } : STATUSES[s.icon] || STATUSES.buff;
+    const info = s.potion ? { name: POTIONS[s.potion].name, desc: POTIONS[s.potion].desc } : s.name ? s : STATUSES[s.id] || STATUSES[s.icon] || STATUSES.buff; // (round 13: buffs and states carry their own name)
     const left = s.left != null ? secs(s.left) : s.potion ? 'this room' : '';
     return `<li>${ringSvg(s, 30)}<span><b>${info.name}</b>${left ? `<i class="ip-t">${left}</i>` : ''}<span>${info.desc}</span></span></li>`;
   }).join('')}</ul>`;

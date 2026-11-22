@@ -266,6 +266,7 @@
 .rs-bar.d .bar > i { background: linear-gradient(180deg, #FFCF66, #E09A2A); }
 .rs-bar.h .bar > i { background: linear-gradient(180deg, #7BDA6E, #46A646); }
 .rs-bar.t .bar > i { background: linear-gradient(180deg, #FF8A6E, #C8392A); }
+.rs-bar.b .bar > i { background: linear-gradient(180deg, #A8D4F4, #4F8FC8); } /* round 13: blocked */
 .rs-facts { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 5px; font-size: 12px; font-weight: 750; color: var(--quiet); }
 .rs-more { display: none; margin-top: 10px; padding-top: 4px; border-top: 1px solid var(--line); }
 .rs-row.open .rs-more { display: block; }

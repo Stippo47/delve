@@ -2,6 +2,7 @@
 // installed Edge (headless).
 //   node tools/hud-shots.mjs <outDir> [--port 8854] [--seed 4] [--w 390 --h 844] [--q 'theme=crypt']
 //     [--party paladin,archer,cleric,pyromancer] [--mercs] [--clip 8] (records that many seconds as hud-clip.mp4)
+//     [--inject 'js with w, S, GAME'] (run before the zoom and pause shots: put statuses or buffs on someone)
 import { chromium } from 'playwright-core';
 import { spawn, execFileSync } from 'node:child_process';
 import fs from 'node:fs'; import os from 'node:os'; import path from 'node:path';
@@ -43,6 +44,8 @@ try {
     if (busy) break;
   }
   await shot('02-hud-fight');
+  // --inject 'js': run in the page with w (the world) and S (sim.js) before the zoom and the pause shots (lane S: statuses on the cards)
+  if (opt('inject', '')) await page.evaluate(async (code) => { const S = await import('./js/sim.js'); new Function('w', 'S', 'GAME', code)(GAME.run.world, S, GAME); for (let i = 0; i < 3; i++) GAME.recFrame(1 / 30); }, opt('inject', ''));
   const clipSecs = +opt('clip', 0);
   if (clipSecs) {
     const frames = fs.mkdtempSync(path.join(out, '.frames-'));

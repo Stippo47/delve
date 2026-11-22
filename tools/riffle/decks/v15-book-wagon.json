@@ -1,0 +1,47 @@
+{
+  "title": "0.15.0: the Book, the wagon",
+  "topic": "runs",
+  "order": 24,
+  "priority": 1,
+  "tags": ["first"],
+  "cards": [
+    {
+      "id": "book",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "The Book, with live previews",
+      "text": "Every hero ability, enemy move, status and trinket plays live in the Book. Pick a hero and a tier. Live as 0.15.0.",
+      "why": "You asked for the Riffle clips inside the game, simulated, for every unit, ability and tier, and a Book overhaul. Mark what reads badly.",
+      "videos": ["../../../clips/r13/book/clip-storm-chain-t3.mp4", "../../../clips/r13/book/clip-jackal-elite.mp4"],
+      "images": ["../../../clips/r13/book/04-hero-ability-t3.png"],
+      "details": "Known limits. Where a tier only changes a number (a percentage, a duration, a crit), the picture is the same at each tier and the tier's own words rise on the stage instead: that's 56 abilities. Bosses play in a small yard, not their own hall. A status is always shown on a goblin.\n\nA check runs all 2,066 previews and fails if one breaks or its move never happens, so new heroes and enemies get previews without extra work.",
+      "parts": [
+        { "id": "layout", "title": "Layout", "text": "The preview on top; under it what's playing and its numbers; then the moves, the tier dial and a strip of faces, all under your thumb. Tabs: Heroes, Monsters, Statuses, Items.", "images": ["../../../clips/r13/book/00-open.png"] },
+        { "id": "heroes", "title": "Heroes and tiers", "text": "All 52 heroes. The dial sets tier 0 to III; the attack, each ability and the trait play at that tier, with the numbers at that tier. An ability the tier hasn't unlocked shows locked.", "videos": ["../../../clips/r13/book/clip-storm-chain-t1.mp4", "../../../clips/r13/book/clip-storm-chain-t3.mp4"], "images": ["../../../clips/r13/book/02-hero-ability-t0-locked.png"] },
+        { "id": "traits", "title": "Traits", "text": "Each trait is staged in the moment it matters, and its words rise off the hero when it acts (\"blocked 35%\").", "videos": ["../../../clips/r13/book/clip-trait-paladin-bulwark.mp4"], "images": ["../../../clips/r13/book/08b-trait-revive.png"] },
+        { "id": "monsters", "title": "Monsters", "text": "By dungeon; ones you haven't met stay hidden. Normal, elite and major, each with its moves against dummies, and the trinket an elite carries.", "videos": ["../../../clips/r13/book/clip-orcshaman-elite.mp4"], "images": ["../../../clips/r13/book/10b-jackal-elite-counter.png"] },
+        { "id": "statuses", "title": "Statuses and items", "text": "Each status builds on a dummy until it bursts, with its rules in plain words. Each trinket and potion is shown doing its thing.", "videos": ["../../../clips/r13/book/clip-status-chill.mp4"], "images": ["../../../clips/r13/book/16-trinket-thunder.png"] }
+      ]
+    },
+    {
+      "id": "wagon2",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The wagon, round two",
+      "text": "Four times the ground, a bigger wagon, pulled back, a real forest edge, a shop, no switch.",
+      "why": "Your list and your wagon answers, built. Mark what's still off; the forest is the part I most want your eye on.",
+      "videos": ["../../../clips/r13/convoy/convoy-road.mp4"],
+      "images": ["../../../clips/r13/convoy/edge-wildwood.png"],
+      "details": "In tests parties at level 3, 4 and 5 deliver the wagon 42%, 50% and 67% of the time.\n\nWith the ground this wide, the screen shows open meadow when nothing is happening and a tree line only comes into view when the fight is near it. Say if you'd rather see the trees all the time; that means zooming out further or narrowing the ground.\n\nStill weak: small flower and grass marks on the meadow; the Burnt Wood's glowing cracks read as scribbles; the later countries are too hard for the level you'd reach them at.",
+      "parts": [
+        { "id": "size", "title": "Ground, wagon, camera", "text": "The open ground is about 4 times as wide, the wagon about twice as long with two oxen, and the camera pulled back. The camera leans to where the fight is.", "images": ["../../../clips/r13/convoy/still-04-road-fight.png"] },
+        { "id": "edge", "title": "The forest edge", "text": "Several kinds of tree, fallen trunks reaching onto the verge, bushes, faceted rocks. Every wave walks out from under the canopy; a red arrow at the screen's edge marks one coming from off screen.", "images": ["../../../clips/r13/convoy/edge-wildwood.png", "../../../clips/r13/convoy/edge-frost.png"] },
+        { "id": "gold", "title": "Gold, no switch", "text": "The switch is gone. Heroes pick up gold near them, and go further when nothing threatens. The Quartermaster and the Pirate are gatherers: they go for gold first, even mid-fight.", "videos": ["../../../clips/r13/convoy/convoy-gatherers.mp4"] },
+        { "id": "downed", "title": "The downed", "text": "A downed hero can be revived on the road until they scroll off behind the wagon; then they wait at the next camp.", "videos": ["../../../clips/r13/convoy/convoy-revive.mp4", "../../../clips/r13/convoy/convoy-left-behind.mp4"] },
+        { "id": "shop", "title": "The roadside shop", "text": "Spends only the gold picked up on this trip: mend the wagon, a healing draught, a trinket, a sellsword. What you don't spend, you keep.", "images": ["../../../clips/r13/convoy/still-06-roadside.png"] },
+        { "id": "lands", "title": "Other countries", "text": "Each beaten dungeon opens its own country as a stretch: snow pines, the burnt wood, and so on.", "videos": ["../../../clips/r13/convoy/convoy-frost.mp4", "../../../clips/r13/convoy/convoy-ember.mp4"] },
+        { "id": "huddle", "title": "No more huddling", "text": "With nothing to fight, heroes walk spread out instead of bunching, in dungeons too.", "videos": ["../../../clips/r13/convoy/dungeon-no-huddle-after.mp4"] }
+      ]
+    }
+  ]
+}

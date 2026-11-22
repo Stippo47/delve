@@ -4,6 +4,7 @@
 import { INK, TAU, clamp } from './util.js';
 import { OUTLINE, view } from './render.js';
 import { STYLE } from './parts.js';
+import { drawStatusBurst } from './fx-status.js'; // round 13 (lane S)
 import { noteWorld, drawMarks, drawSigGround, drawSigAir, abilityRing, abilityBeam, abilityZone, EL, abilityRingGround, hookGround, abilityZoneAir, soulOrb, dustPuffs } from './fxkit.js';
 import { drawPuddle, snowflake } from './puddles.js';
 import { PROJ2, drawK2 } from './fx2.js';
@@ -89,6 +90,8 @@ export function drawGroundFx(ctx, w) {
     else if (f.type === 'beam' && f.kind === 'heal') beam(ctx, f, w.time);
     else if (f.type === 'wall' && f.kind === 'fire') wall(ctx, f, w.time);
     else if (f.type === 'pop') pop(ctx, f, w.time, 'ground');
+    else if (f.type === 'statusBurst') drawStatusBurst(ctx, f, w.time, 'ground');
+    else if (f.type === 'aura') aura(ctx, f, w.time); // round 13 (lane S; the designer: "Make it so the radiance glow appears below"): under the units
     else if (f.type === 'k2') drawK2(ctx, f, w, 'ground');
   }
   drawMarks(ctx, 0, 'ground');
@@ -281,8 +284,8 @@ export function drawAirFx(ctx, w) {
     else if (f.type === 'zone' && (f.kind === 'snow' || (f.kind === 'vines' && f.ab !== 'roll' && f.ab !== 'entangle'))) zoneAir(ctx, f, w.time);
     else if (f.type === 'wave') { if (f.ab === 'shockwave') eruption(ctx, f, 'air'); else if (f.kind === 'note') noteCone(ctx, f, w.time); else wave(ctx, f); }
     else if (f.type === 'pillar') pillar(ctx, f, w.time);
-    else if (f.type === 'aura') aura(ctx, f, w.time);
     else if (f.type === 'hex') hexMark(ctx, f, w.time);
+    else if (f.type === 'statusBurst') drawStatusBurst(ctx, f, w.time, 'air'); // round 13 (lane S): fx-status.js
     else if (f.type === 'zone' && f.kind === 'storm') stormCloud(ctx, f, w.time);
     else if (f.type === 'sig') drawSigAir(ctx, f, w);
     else if (f.type === 'k2') drawK2(ctx, f, w, 'air');

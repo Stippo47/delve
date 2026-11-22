@@ -4,7 +4,7 @@
 //
 // run.stats = run.summary.stats = {
 //   order: [heroId...]  (the party, then the sellswords),  mercs: [heroId...],
-//   heroes: { [heroId]: { dmg, heal, taken, kills, downs, revives, best (biggest single blow), bestBy (its source),
+//   heroes: { [heroId]: { dmg, heal, taken, blocked (round 13: what shields, blocks, armour, wards and dodges kept off), kills, downs, revives, best (biggest single blow), bestBy (its source),
 //     src: { dmg: { [source]: n }, heal: { [source]: n }, kills: { [source]: n } } } },
 //   foes: { [enemyKind]: { n, elite, mini, boss, major } }  (every enemy defeated, whoever finished it) }
 // A source is 'attack' (the weapon), 'ab:<abilityId>', 'tk:<trinketId>' (a trinket's own work; 'tk:pot:<id>' for an
@@ -18,7 +18,7 @@ export const CUR = { tk: null, tkU: null, ab: null, abU: null };
 
 export function newStats(order = [], mercs = []) {
   const heroes = {};
-  for (const k of order) heroes[k] = { dmg: 0, heal: 0, taken: 0, kills: 0, downs: 0, revives: 0, best: 0, bestBy: null, src: { dmg: {}, heal: {}, kills: {} } };
+  for (const k of order) heroes[k] = { dmg: 0, heal: 0, taken: 0, blocked: 0, kills: 0, downs: 0, revives: 0, best: 0, bestBy: null, src: { dmg: {}, heal: {}, kills: {} } };
   return { order: order.slice(), mercs: mercs.slice(), heroes, foes: {} };
 }
 
@@ -34,9 +34,10 @@ export function ownerOf(u) {
 }
 // Battle mode (battle.js): S = { battle: true, rows: { [key]: { dmg, taken, heal, kills, lost } } }, one row for each
 // kind of unit on each side (u.bkey; what a unit makes mid-fight carries its maker's key, and counts for its row).
-export function battleStats(keys) { const rows = {}; for (const k of keys) rows[k] = { dmg: 0, taken: 0, heal: 0, kills: 0, lost: 0 }; return { battle: true, rows }; }
+export function battleStats(keys) { const rows = {}; for (const k of keys) rows[k] = { dmg: 0, taken: 0, blocked: 0, heal: 0, kills: 0, lost: 0 }; return { battle: true, rows }; }
 const rowOf = (S, u) => { if (!u) return null; const r = ownerOf(u); return S.rows[(r && r.bkey) || u.bkey] || null; };
-const heroKey = (S, r) => (r && r.team === 'hero' && !r.turned && S.heroes[r.kind] ? r.kind : null);
+const sideOf = (u) => u.trueTeam || u.team; // (round 13: a charmed or befuddled unit counts as what it really is)
+const heroKey = (S, r) => (r && sideOf(r) === 'hero' && !r.turned && S.heroes[r.kind] ? r.kind : null);
 
 // Which part of the hero did it. src: the unit that struck (or healed); root: its owner; o: the hit's options.
 function sourceOf(src, root, o = {}) {
@@ -58,19 +59,26 @@ export function tallyHurt(w, u, src, amt, o = {}) {
   const eff = Math.min(amt, Math.max(0, u.hp + amt));
   if (S.battle) { const a = rowOf(S, src || o.by), b = rowOf(S, u); if (b && !u.summon) b.taken += eff; if (a && a !== b) a.dmg += eff; return; }
   // taken: a party hero's own body
-  if (u.team === 'hero' && !u.summon && S.heroes[u.kind]) S.heroes[u.kind].taken += eff;
-  if (S.byFoe && u.team === 'hero' && !u.summon) { const r = ownerOf(src || o.by); add(S.byFoe, r ? r.kind : 'other', eff); } // (tools: who hurts the party)
-  if (u.team !== 'enemy') return;
+  if (sideOf(u) === 'hero' && !u.summon && S.heroes[u.kind]) S.heroes[u.kind].taken += eff;
+  if (S.byFoe && sideOf(u) === 'hero' && !u.summon) { const r = ownerOf(src || o.by); add(S.byFoe, r ? r.kind : 'other', eff); } // (tools: who hurts the party)
+  if (sideOf(u) !== 'enemy') return;
   const by = src || o.by, root = ownerOf(by), k = heroKey(S, root); if (!k) return;
   const h = S.heroes[k], s = sourceOf(by, root, o);
   h.dmg += eff; add(h.src.dmg, s, eff);
   if (!o.dot && amt > h.best) { h.best = amt; h.bestBy = s; }
 }
+// sim.js hurt (round 13): what a shield, a block, armour, a ward, a dodge or being untouchable kept off a blow. It counts
+// for the one it was meant for (a party hero, or a battle row), apart from what it took.
+export function tallyBlock(w, u, src, amt, o = {}) {
+  const S = w.stats; if (!S || !(amt > 0) || u.summon) return;
+  if (S.battle) { const b = rowOf(S, u); if (b) b.blocked = (b.blocked || 0) + amt; return; }
+  if (sideOf(u) === 'hero' && S.heroes[u.kind]) S.heroes[u.kind].blocked = (S.heroes[u.kind].blocked || 0) + amt;
+}
 // sim.js heal: what actually came back. o.pab: the ability a lasting heal (regrowth, leeches) came from.
 export function tallyHeal(w, u, src, got, o = {}) {
   const S = w.stats; if (!S || !(got > 0)) return;
   if (S.battle) { const a = rowOf(S, src || u); if (a) a.heal += got; return; }
-  if (u.team !== 'hero') return;
+  if (sideOf(u) !== 'hero') return;
   const root = ownerOf(src), k = heroKey(S, root); if (!k) return;
   const h = S.heroes[k], s = sourceOf(src, root, o);
   h.heal += got; add(h.src.heal, s, got);
@@ -79,8 +87,8 @@ export function tallyHeal(w, u, src, got, o = {}) {
 export function tallyDown(w, u, src, o = {}) {
   const S = w.stats; if (!S) return;
   if (S.battle) { const a = rowOf(S, src || o.by), b = rowOf(S, u); if (b && !u.summon && u.bkey) b.lost++; if (a && a !== b) a.kills++; return; }
-  if (u.team === 'hero' && !u.summon) { if (S.heroes[u.kind]) S.heroes[u.kind].downs++; return; }
-  if (u.team !== 'enemy') return;
+  if (sideOf(u) === 'hero' && !u.summon) { if (S.heroes[u.kind]) S.heroes[u.kind].downs++; return; }
+  if (sideOf(u) !== 'enemy') return;
   const by = src || o.by, root = ownerOf(by), k = heroKey(S, root); if (!k) return;
   const h = S.heroes[k]; h.kills++; add(h.src.kills, sourceOf(by, root, o), 1);
 }
@@ -101,7 +109,7 @@ export function finishStats(S) {
   if (!S) return null;
   const r = (m) => Object.fromEntries(Object.entries(m).map(([k, v]) => [k, Math.round(v)]).filter(([, v]) => v > 0));
   const heroes = {};
-  for (const [k, h] of Object.entries(S.heroes)) heroes[k] = { ...h, dmg: Math.round(h.dmg), heal: Math.round(h.heal), taken: Math.round(h.taken), best: Math.round(h.best),
+  for (const [k, h] of Object.entries(S.heroes)) heroes[k] = { ...h, dmg: Math.round(h.dmg), heal: Math.round(h.heal), taken: Math.round(h.taken), blocked: Math.round(h.blocked || 0), best: Math.round(h.best),
     src: { dmg: r(h.src.dmg), heal: r(h.src.heal), kills: r(h.src.kills) } };
   return { order: S.order.slice(), mercs: S.mercs.slice(), heroes, foes: JSON.parse(JSON.stringify(S.foes)) };
 }
@@ -148,8 +156,8 @@ export function bankTally(save, S) {
   }
   for (const [k, h] of Object.entries(S.heroes || {})) {
     if ((S.mercs || []).includes(k)) continue;
-    const g = t.heroes[k] || (t.heroes[k] = { dmg: 0, heal: 0, taken: 0, kills: 0, downs: 0, revives: 0, best: 0, runs: 0, src: { dmg: {}, heal: {}, kills: {} } });
-    for (const key of ['dmg', 'heal', 'taken', 'kills', 'downs', 'revives']) g[key] += Math.round(h[key] || 0);
+    const g = t.heroes[k] || (t.heroes[k] = { dmg: 0, heal: 0, taken: 0, blocked: 0, kills: 0, downs: 0, revives: 0, best: 0, runs: 0, src: { dmg: {}, heal: {}, kills: {} } });
+    for (const key of ['dmg', 'heal', 'taken', 'blocked', 'kills', 'downs', 'revives']) g[key] = (g[key] || 0) + Math.round(h[key] || 0);
     g.best = Math.max(g.best || 0, Math.round(h.best || 0)); g.runs++;
     for (const m of ['dmg', 'heal', 'kills']) { g.src[m] = g.src[m] || {}; for (const [s, v] of Object.entries((h.src && h.src[m]) || {})) add(g.src[m], s, Math.round(v)); }
   }
@@ -164,7 +172,7 @@ export function cleanTally(t) {
     if (!h || typeof h !== 'object') continue;
     const src = {};
     for (const m of ['dmg', 'heal', 'kills']) { src[m] = {}; for (const [s, v] of Object.entries((h.src && h.src[m]) || {})) if (num(v)) src[m][s] = num(v); }
-    out.heroes[k] = { dmg: num(h.dmg), heal: num(h.heal), taken: num(h.taken), kills: num(h.kills), downs: num(h.downs), revives: num(h.revives), best: num(h.best), runs: num(h.runs), src };
+    out.heroes[k] = { dmg: num(h.dmg), heal: num(h.heal), taken: num(h.taken), blocked: num(h.blocked), kills: num(h.kills), downs: num(h.downs), revives: num(h.revives), best: num(h.best), runs: num(h.runs), src };
   }
   return out;
 }

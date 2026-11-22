@@ -335,3 +335,12 @@ A woodsman with a hatchet and a torn red shirt. Then, when it matters, a great g
 - **Frenzy** (14s). Each blow in a row comes faster than the last. I: For 6s, up to 60% faster. II: His blows heal him a little. III: At full speed he howls: everything near is staggered.
 - **Pounce** (10s). Leaps onto a far enemy and pins it to the floor. I: Pins it for 1s. II: Pins it for 1.6s. III: Mauls it while it's pinned.
 - **Trait: Moonblood.** Heals 1% of his health a second while fighting.
+
+## Enchantress (`enchantress`, support, 1050 gold) (round 13, lane S; kit in `js/kits-charm.js`, looks in `js/fx-status.js`)
+Rose silk, a heart-shaped locket and a smile. Nobody who meets her wants to hurt her, and before long they fight for her. Art: `art/heroes/enchantress.svg` (placeholder: the Witch recoloured).
+
+- **Attack: Blown kiss.** A slow pink heart that floats to its target: a little damage, and a little charm (14).
+- **Heartstring** (13s). Ties a pink thread to the most dangerous enemy near her: it is drawn out of its pack towards her while charm pours into it (30 a second), until it fights for the party. I: The thread holds 4s. II: It holds 6s. III: Once that enemy is won, the thread jumps to the next one.
+- **Sweetheart** (14s). Blows a kiss to the friend taking the most blows: whoever keeps hitting that friend falls for them (16 charm a blow, towards that friend), and can't bring itself to hit them any more. I: For 6s. II: For 8s, and the kiss heals 10%. III: Two friends.
+- **Heartbreak** (15s). Breaks every heart she has won at once. The charmed take damage (1x to 2.6x her weapon, more the more they were charmed) and swoon; the enthralled come to their senses in a burst that hurts their own friends (1.6x her weapon, 90 across). I: They swoon for 1s. II: For 1.6s. III: Every broken heart heals the party a little (4% each, up to four).
+- **Trait: First Impression.** The first blow any enemy lands on her charms it a lot (45): it soon can't bring itself to hit her again.

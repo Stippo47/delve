@@ -189,7 +189,7 @@ export const HEROES = {
     abilities: [
       { id: 'warSong', name: 'War Song', cd: 14, desc: 'Allies near attack faster for a while.',
         tiers: ['+40% for 6s.', '+50%.', 'They move faster too.'] },
-      { id: 'lullaby', name: 'Lullaby', cd: 13, desc: 'Enemies in front grow slow and drowsy.',
+      { id: 'lullaby', name: 'Lullaby', cd: 13, desc: 'Enemies in front grow slow and sleepy.',
         tiers: ['Slows for 4s.', 'Puts the weakest to sleep.', 'Wider, and puts everyone it reaches to sleep.'] },
       { id: 'encore', name: 'Encore', cd: 20, desc: 'An ally\'s ability is ready again.',
         tiers: ['One ally.', 'Heals them 10% too.', 'Two allies.'] },
@@ -261,8 +261,8 @@ export const ROLE_TUNE = {
   caster: { dmg: 1.12 },
   support: { dmg: 0.9, heal: 0.62 },  // (healers carried every party they were in: all their healing a little down)
 };
-// Armour: points off every blow, never more than 60% of it; damage over time ignores it, heavy and critical blows get
-// past half (sim.js hurt). Plate and big shields; the web's Armour nodes add to it.
+// Armour (armour.js): each point is one point and 2% off every blow, never more than 60% of it; damage over time
+// ignores it, heavy and critical blows get past half (sim.js hurt). Plate and big shields; the web's Armour nodes add to it.
 export const ARMOUR = { paladin: 6, tower: 8, oldguard: 6, dame: 4, griffon: 5, bulwark: 6, warhelm: 3, gladiator: 2, samurai: 2, valkyrie: 2, bearskin: 2 };
 for (const [id, h] of Object.entries(HEROES)) {
   const t = ROLE_TUNE[h.role] || {};
@@ -303,7 +303,7 @@ export const STATS = {
   heal: { name: 'Healing', per: 0.12, max: 3, line: (p) => `Heals ${p}% more` },
   status: { name: 'Potency', per: 0.15, max: 3, line: (p) => `Statuses you apply build ${p}% faster` },
   // (round 11: armour is points off every blow, to at most 60% of it; damage over time ignores it. per 0.02 = 2 points)
-  armor: { name: 'Armour', per: 0.02, max: 4, line: (p) => `+${p} armour: every blow loses that much (never more than 60% of it)` },
+  armor: { name: 'Armour', per: 0.02, max: 4, line: (p) => `+${p} armour: every blow loses ${p} and ${p * 2}% more (never more than 60% of it)` },
   abDmg: { name: 'power', per: 0.12, max: 3, line: (p, ab) => `${ab}: +${p}% damage` },
   abCd: { name: 'cooldown', per: 0.06, max: 3, line: (p, ab) => `${ab}: comes round ${p}% sooner` },
   abHeal: { name: 'mending', per: 0.15, max: 3, line: (p, ab) => `${ab}: heals ${p}% more` },
