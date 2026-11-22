@@ -236,7 +236,7 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
 
 ### Shaman
 - Spirit bolt: "Jumps to ally if they are near and heals them. Otherwise no heal" -> it strikes; if a hurt friend is
-  within 170 of what it struck, a spirit leaps on from there to that friend and mends it (0.3x of the bolt); else no
+  within 170 of what it struck, a spirit leaps on from there to that friend and mends it (0.25x of the bolt); else no
   heal. Clip: shaman-attack (no friend on the bench: the leap shows in a real fight and in the Book).
 - Healing Totem: "Not good overall. Doesn't even match the one on his back… Should throw to ally, In an arc. Has 100 hp.
   Any ally in its radius that takes damage will go to it instead. At lvl 3 cleanse status effects too. It has its own hit
@@ -251,7 +251,7 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
   Beaver. Spins and shoots out 3 homing orbs." -> **Ancestors' Call** (id rainDance): four light-blue spirits rise out
   of the floor: a bear (melee; friends within 120 of it take 20% less), a wolf (the Druid's wolf, washed light blue),
   an eagle (flies over the most hurt friend, mending it), a beaver (sits by him; every 2 s it spins and shoots three
-  homing spirit orbs). 6 s (II 9 s); III 15% stronger. The bear, eagle and beaver are drawn in code (fx2 LOOK2):
+  homing spirit orbs). 6 s (II 9 s); III 10% stronger. The bear, eagle and beaver are drawn in code (fx2 LOOK2):
   **art lane** may want to draw them properly. Clip: shaman-rainDance.
 
 ### Witch
@@ -295,15 +295,15 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
   he started that bursts (the statuses lane's haemorrhage) heals him 8% (blood drops flow back to him).
 - Shadow bolt: "Does a dagger swipe when close, and shadow bolt when far. Dagger applies bleed. If the bolt hits a
   bleeding target they instantly burst." -> within 34 a dagger swipe (1.1x, 26 bleeding); further, a violet bolt; a bolt
-  on anything bleeding bursts it at once. Clip: cultist-attack.
+  on anything with its bleeding built past 45 bursts it at once (balance: at any bleeding it burst every bolt). Clip: cultist-attack.
 - Blood Pact: "Meh. Applies bleed to self to give everyone becomes enraged." -> he cuts himself (45 bleeding on him) and
   his friends near are enraged (Rage: +30% damage, II +40%, quicker blows; III lifesteal). Clip: cultist-bloodPact.
-- Ritual Circle: "They can't leave circle. At max level. Applied bleed instead." -> it bleeds what stands in it (13 every
+- Ritual Circle: "They can't leave circle. At max level. Applied bleed instead." -> it bleeds what stands in it (10 every
   0.3 s) instead of cursing; III nothing caught inside can step out (held at its edge). Clip: cultist-ritualCircle.
 - Soul Candle: "Sacrifice. Dashes at enemy on low hp. Instantly kills them and heals. At lvl 3 spins and applies bleed to
   everyone near." -> **Sacrifice** (id soulCandle): a bound at an enemy below 25% (II 35%) and the dagger finishes it
-  (a boss, major or mini-boss is cut deep instead: 4x); he heals 15%; III he spins as he lands, blood flung out, 50
-  bleeding on everything near. Clip: cultist-soulCandle.
+  (a boss, major or mini-boss is cut deep instead: 4x); he heals 15%; III he spins as he lands, blood flung out, 0.6x
+  and 25 bleeding on everything near. Clip: cultist-soulCandle.
 
 ### Monk
 - "For traits you should also show them off" -> every new or kept trait gets a clip: `trait` clips (lab.js
@@ -339,7 +339,7 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
 ### Chef
 - Frying pan: "Should be ranged. Throws random foods. All same effect. Hurts enemies, heals allies" -> **Food toss**: he is
   ranged now (range 200; a shooter's moves), throwing one of six foods drawn in code (an apple, a drumstick, a pie,
-  cheese, a roll, a fish): it hurts the enemy it hits and mends any friend it passes over (0.6x). Clip: chef-attack.
+  cheese, a roll, a fish): it hurts the enemy it hits and mends any friend it passes over (0.45x). Clip: chef-attack.
 - Hot Meal: "Doesnt look good. Should throw food pick ups randomly around dungeon to be picked up. If at full hp will get
   over health." -> plates thrown on arcs to random spots round the party (two, II three), each a steaming plate of one
   of the six foods; a friend who walks over one eats it: heals 20%, and what goes past full health becomes extra
@@ -355,7 +355,7 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
   one striped body and a head (the art round's note: "1 maybe 2 body segments").
   - Bee (attack): a bee stings and then keeps buzzing round its foe, stinging again every 0.7 s for 3 s (more bees
     pile on). Clip: beekeeper-attack.
-  - Trait **Pollen** (id pollen): every sixth sting of his bees mends the friend most hurt near him 5%.
+  - Trait **Pollen** (id pollen): every sixth sting of his bees mends the friend most hurt near him 4%.
   - **Smoker** (swarm's slot): a cone of thick white smoke rolls out for 2 s: those in it grow Sleepy (the statuses
     lane's; they drop off if it builds) and slowed; III they swing slower too. Clip: beekeeper-swarm.
   - **Beehive** (honeyPot's slot): a straw skep thrown among the enemies (70 health) for 8 s (II 12 s): a bee streams out

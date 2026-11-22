@@ -979,7 +979,7 @@ export const ABILITIES2 = {
   rainDance: {
     score: (w, u) => (!mine(w, u, 'spiritBear').length && foesNear(w, u, u.x, u.y, 360).length >= 2 ? 0.7 : 0),
     use(w, u, t, tier) {
-      cast(u, 'cast', 0.8); const life = tier >= 2 ? 9 : 6, k = tier >= 3 ? 1.15 : 1, a0 = t ? ang(u, t) : u.facing;
+      cast(u, 'cast', 0.8); const life = tier >= 2 ? 9 : 6, k = tier >= 3 ? 1.1 : 1, a0 = t ? ang(u, t) : u.facing;
       const spots = [-0.9, -0.3, 0.3, 0.9].map((o) => ({ x: u.x + Math.cos(a0 + o) * 60, y: u.y + Math.sin(a0 + o) * 60 }));
       ['spiritBear', 'spiritWolf', 'spiritEagle', 'spiritBeaver'].forEach((kind, i) => {
         k2(w, { draw: 'spiritRise', x: spots[i].x, y: spots[i].y, r: 30, max: 0.9 });
@@ -2466,7 +2466,7 @@ function bee(w, u, from, e, k, pester) {
 function pollen(w, u) {
   if (!u.kit) return; const k = u.kit; k.stings = (k.stings || 0) + 1; if (k.stings % 6) return;
   const a = hurtMost([u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo && dist(u.x, u.y, o.x, o.y) < 300)); if (!a || hpRatio(a) >= 1) return;
-  heal(w, a, a.maxHp * 0.05, u); k2(w, { draw: 'pollen', unit: a, from: u, x: a.x, y: a.y, max: 0.8 });
+  heal(w, a, a.maxHp * 0.04, u); k2(w, { draw: 'pollen', unit: a, from: u, x: a.x, y: a.y, max: 0.8 });
 }
 // the Grenadier's big bomb: it sits fizzing; it goes off when it is broken or its 2 s are up (kill: its death)
 BRAINS.bigBomb = function (w, b, dt) {
@@ -2830,7 +2830,7 @@ export const ATTACKS2 = {
   shaman(w, u, t, a) {
     shoot(w, u, a, { kind: 'spirit', speed: 430, r: 7, dmg: A(u, 0.95), color: '#7FE0D0', knock: 25, extra: { onHit: (w2, p, e) => {
       const f = [u, ...allies(w2, u)].filter((o) => !o.summon && !o.def.cargo && hpRatio(o) < 1 && dist(o.x, o.y, e.x, e.y) < 170).sort((p1, q) => hpRatio(p1) - hpRatio(q))[0]; if (!f) return;
-      const b = angleTo(e.x, e.y, f.x, f.y), amt = p.dmg * 0.3;
+      const b = angleTo(e.x, e.y, f.x, f.y), amt = p.dmg * 0.25;
       w2.projectiles.push({ kind: 'spirit', x: e.x, y: e.y, vx: Math.cos(b) * 380, vy: Math.sin(b) * 380, r: 6, team: u.team, owner: u, skip: e, dmg: 0, o: {}, life: dist(e.x, e.y, f.x, f.y) / 380 + 0.04, a: b, home: f, turn: 9, noHit: true, heal: true,
         land: () => { if (alive(f)) { heal(w2, f, amt, u); f.mendGlow = w2.time + 0.3; } } });
     } } });
@@ -2850,7 +2850,7 @@ export const ATTACKS2 = {
     } } });
   },
   // a bee (round 13: the Beekeeper redone): it stings and then stays buzzing round its foe, stinging now and then
-  beekeeper(w, u, t, a) { bee(w, u, u, t, 0.55, true); },
+  beekeeper(w, u, t, a) { bee(w, u, u, t, 0.5, true); },
   // something out of the pack (round 13: the Quartermaster redone): a pot, a pan, a boot, a tin cup, a ladle
   quartermaster(w, u, t, a) { shoot(w, u, a, { kind: 'pot', speed: 440, r: 8, dmg: A(u, 1), knock: 90, extra: { item: Math.floor(rand() * 5) } }); },
   // the Chef (round 13: "Should be ranged. Throws random foods. All same effect. Hurts enemies, heals allies"): food of

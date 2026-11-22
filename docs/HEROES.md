@@ -117,7 +117,7 @@ A winged totem on his back and a feather spirit-stick. Calls on the ancestors an
 - **Attack: Spirit bolt.** A teal spirit; when it strikes near a hurt friend it leaps on to that friend and mends it.
 - **Healing Totem** (14s). Throws a winged totem like the one on his back to the friend in the most trouble. It stands (70 health, blows on it do half): every blow on a friend within its reach lands on the totem instead, and it mends them a little. I: It stands 6s. II: It stands 10s. III: It cleans statuses off friends near it.
 - **Spirit Link** (16s). Binds friends, and his totem, together with spirit threads: a blow on one is shared out among them all. I: Up to three friends, for 5s. II: Linked friends take 10% less. III: Up to five, for 7s.
-- **Ancestors' Call** (20s). Calls the ancestors in spirit shape: a bear that fights beside them and shelters friends near it (they take 20% less), a wolf that hunts, an eagle that follows the most hurt friend and mends it, and a beaver that spins and shoots homing spirit orbs. I: For 6s. II: For 9s. III: The spirits are 15% stronger.
+- **Ancestors' Call** (20s). Calls the ancestors in spirit shape: a bear that fights beside them and shelters friends near it (they take 20% less), a wolf that hunts, an eagle that follows the most hurt friend and mends it, and a beaver that spins and shoots homing spirit orbs. I: For 6s. II: For 9s. III: The spirits are 10% stronger.
 - **Trait: Ancestral Spirits.** When an ally goes down, the spirits heal everyone else 10%.
 
 ## Witch (`witch`, caster, 700 gold)
@@ -181,7 +181,7 @@ A veiled hat, a copper smoker, and a great many friends who sting. Calms the ene
 - **Smoker** (11s). Pumps the smoker: a cone of thick white smoke rolls over the enemies in front. They grow sleepy and slow, and drop off if it builds. I: Sleepy and slowed. II: Sleepier. III: They swing slower too.
 - **Beehive** (14s). Throws a hive down among the enemies (its own health): bees stream out at whatever is near, and whoever strikes the hive is mobbed. I: A hive for 8s. II: For 12s. III: Its bees stay on their foes, stinging.
 - **Honey Glaze** (12s). Drizzles honey over the friend under the most attack: it heals over 4s, and whatever strikes it gets stuck in the honey. I: Heals 11% over 4s. II: Heals 17%. III: Two friends.
-- **Trait: Pollen.** Every sixth sting of his bees carries pollen back: the friend most hurt near him heals 5%.
+- **Trait: Pollen.** Every sixth sting of his bees carries pollen back: the friend most hurt near him heals 4%.
 
 ## Quartermaster (`quartermaster`, support, 350 gold)
 A pack bigger than he is. Whatever the party needs, it is in there somewhere: kit, a crate, a barricade, a pot. Art: `art/heroes/quartermaster.svg`.
