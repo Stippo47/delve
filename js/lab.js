@@ -10,7 +10,7 @@
 import { loadSprites } from './sprites.js';
 import { layout, draw, view, setZoom, snapCamera } from './render.js';
 import { makeWorld, spawn, step, setAnim, hurt, meleeSwing } from './sim.js';
-import { ABILITIES, initKit } from './kits.js';
+import { ABILITIES, initKit, TRAITS } from './kits.js';
 import { tagAbility } from './fxtag.js';
 import { PUDDLE_TYPES, puddleStyle, PUDDLE_STYLES } from './puddles.js';
 import { ehpStyle, EHP_STYLES } from './hpstyle.js';
@@ -209,17 +209,19 @@ const FAR = new Set(['charge', 'leap', 'hook', 'backstab', 'dash', 'barrage', 'f
 const NEEDS_ALLY = new Set(['guard', 'mend', 'sanctuary', 'warSong', 'encore', 'rejuvenate', 'cure', 'consecrate']);
 const SINGLE = new Set(['shieldBash', 'backstab', 'smite', 'hook', 'mend', 'encore', 'rejuvenate', 'cure', 'guard']);
 const SHOW_AT = 0.45; // when the ability goes off, seconds into the loop
+const TRAIT_SHOW = { hitme: true, shootme: true, ally: true, attacks: true }; // lane H2 (round 13: "For traits you should also show them off")
+const traitShow = (hero) => ({ ...TRAIT_SHOW, ...((TRAITS[HEROES[hero].trait.id] || {}).show || {}) }); // (a trait can change its bench: kits2.js `show`)
 function setupShow() {
   const hero = P.get('hero') || 'paladin', ab = P.get('ab') || 'attack', tier = +(P.get('tier') || 3), loop = +(P.get('loop') || 3);
   const H = HEROES[hero], ranged = DEFS[hero].role === 'ranged';
   const abl = H.abilities.find((a) => a.id === ab);
-  info.textContent = H.name + ' · ' + (ab === 'attack' ? H.attack.name + ' (attack)' : abl ? abl.name + ' ' + 'I'.repeat(tier) : ab);
+  info.textContent = H.name + ' · ' + (ab === 'attack' ? H.attack.name + ' (attack)' : ab === 'trait' ? H.trait.name + ' (trait)' : abl ? abl.name + ' ' + 'I'.repeat(tier) : ab);
   info.style.cssText = 'font-size:15px;opacity:1;left:10px;top:8px;text-shadow:0 1px 0 #2B2230,0 -1px 0 #2B2230,1px 0 0 #2B2230,-1px 0 0 #2B2230';
   let u, dummies, ally, pin, cast;
   const build = () => {
     w = room(470, 350); w.walls = []; buildGrid(w);
-    const sh = (ABILITIES[ab] && ABILITIES[ab].show) || {}; // kits2.js: an ability says how the bench should stage it
-    const far = ab === 'attack' ? ranged : FAR.has(ab) || sh.far;
+    const sh = ab === 'trait' ? traitShow(hero) : (ABILITIES[ab] && ABILITIES[ab].show) || {}; // kits2.js: an ability says how the bench should stage it (lane H2: 'trait', a trait's bench)
+    const far = ab === 'attack' || ab === 'trait' ? ranged : FAR.has(ab) || sh.far;
     const hx = ab === 'roll' ? 215 : 110; // (round 13: room behind her to roll into)
     u = spawn(w, hero, hx, 175, { level: 9 });
     const nodes = {}; for (const a of H.abilities) for (let i = 1; i <= tier; i++) nodes[a.id + i] = 1;
@@ -228,7 +230,7 @@ function setupShow() {
     u.facing = u.mvA = 0;
     const mx = far ? (ab === 'charge' ? 270 : 340) : hx + u.r + 28 + (ab === 'attack' ? Math.max(8, DEFS[hero].range - 6) : 14);
     const spots = [[mx, 175], [mx + (far ? 30 : 22), 105], [mx + (far ? 30 : 22), 245]];
-    if (ab !== 'attack' && !SINGLE.has(ab) && !sh.single) spots.push([mx + 66, 175]);
+    if (ab !== 'attack' && ab !== 'trait' && !SINGLE.has(ab) && !sh.single) spots.push([mx + 66, 175]);
     dummies = spots.map(([x, y]) => { const d = spawn(w, 'lab-dummy', x, y); d.facing = Math.PI; d.home = { x, y }; d.aggro = false; return d; });
     if (ab === 'raiseDead') w.corpses.push({ kind: 'rattler', x: mx - 50, y: 125, r: 34, vr: 24, facing: 1, kx: 0, ky: 0, spin: 0, z: 0, vz: 0, age: 5, t: 14, max: 14 });
     ally = null;
@@ -244,12 +246,13 @@ function setupShow() {
     if (hero === 'cleric' && ab === 'attack') { ally = spawn(w, 'paladin', 200, 126, { level: 9 }); /* round 13: where the upper of the three orbs meets it */ initKit(ally, 'paladin', {}, 1); for (const k in ally.kit.cd) ally.kit.cd[k] = 9; ally.hp = ally.maxHp * 0.5; ally.facing = 0; ally.home = { x: ally.x, y: ally.y }; }
     if (sh.mob === 'ally' && ally) dummies.forEach((d, i) => { const a = -0.6 + i * 0.9; d.x = d.home.x = ally.x + Math.cos(a) * 62; d.y = d.home.y = ally.y - 40 + Math.sin(a) * 50; });
     if (sh.downed && ally) { ally.downed = true; ally.hp = 0; }
+    if (sh.hurt) u.hp = u.maxHp * sh.hurt; // lane H2 (round 13): a hero that heals itself starts hurt
     pin = { x: u.x, y: u.y }; cast = false; u.target = dummies[0];
     w.time = 0;
   };
   build(); restartFn = () => { build(); snapCamera(); };
   setZoom(1); view.zoom = +(P.get('zoom') || 1.9);
-  const sh = (ABILITIES[ab] && ABILITIES[ab].show) || {};
+  const sh = ab === 'trait' ? traitShow(hero) : (ABILITIES[ab] && ABILITIES[ab].show) || {};
   tick = (dt) => {
     if (w.time >= loop) { build(); snapCamera(); }
     if (!cast && w.time >= SHOW_AT && ab !== 'attack') {
@@ -258,10 +261,12 @@ function setupShow() {
       if (ab === 'oldBones') { u.kit.tiers.oldBones = tier; u.kit.oldBonesUsed = false; u.invulnT = 0; u.hp = 1; hurt(w, u, 50, dummies[0], { noDodge: true }); }
       else if (A) tagAbility(w, u, ab, tier, () => A.use(w, u, dummies[0], tier));
       for (const k in u.kit.cd) u.kit.cd[k] = 999;
+      if (sh.abilities) for (const k in u.kit.cd) u.kit.cd[k] = 0; // lane H2: a trait that works off the hero's abilities
       pin = { x: u.x, y: u.y };
     }
     // only the ability, no plain attacks (round 10: Zeus Bolt bounces on its own; no Zap after it)
-    if (ab !== 'attack' && !(sh.attacks && cast)) u.atkT = Math.max(u.atkT, 0.5);
+    if (sh.quiet && w.time < sh.quiet) u.atkT = Math.max(u.atkT, 0.5); // lane H2: a trait that wants the hero quiet a while first (Fade)
+    else if (ab !== 'attack' && ab !== 'trait' && !(sh.attacks && cast)) u.atkT = Math.max(u.atkT, 0.5);
     else if (!ranged) { // melee: the brain won't swing while pinned in place, so the bench swings on a beat
       u.atkT = 9; const d = DEFS[hero], beat = d.role === 'skirmish' ? 0.5 : 1.1, t0 = w.time - SHOW_AT;
       if (t0 >= 0 && Math.floor(t0 / beat) !== Math.floor((t0 - dt) / beat || -1) && t0 < loop - 0.9) {
@@ -272,10 +277,16 @@ function setupShow() {
     // kits2 abilities that answer blows or shots: the first dummy strikes or shoots at the hero on a beat
     if ((sh.hitme || sh.shootme) && cast && Math.floor(w.time / 0.45) !== Math.floor((w.time - dt) / 0.45)) {
       const d0 = dummies[0];
-      if (sh.hitme) { d0.facing = Math.atan2(u.y - d0.y, u.x - d0.x); hurt(w, u, 4, d0, { knock: 0 }); }
+      if (sh.hitme && (!sh.shootme || Math.floor(w.time / 0.45) % 2)) { d0.facing = Math.atan2(u.y - d0.y, u.x - d0.x); hurt(w, u, 4, d0, { knock: 0 }); }
       else { const a = Math.atan2(u.y - d0.y, u.x - d0.x); w.projectiles.push({ kind: 'arrow', x: d0.x + Math.cos(a) * 30, y: d0.y + Math.sin(a) * 30, vx: Math.cos(a) * 420, vy: Math.sin(a) * 420, r: 6, team: 'enemy', owner: d0, dmg: 4, o: { knock: 10 }, life: 1.2, a }); }
     }
     if (sh.mob === 'walk' && cast) for (const d of dummies) d.home.x = Math.max(u.x + 70, d.home.x - 70 * dt);
+    if (ab === 'trait') { // lane H2: a friend goes down, a dummy falls, the hero is brought low
+      if (ally && !u._allyDown && w.time > (sh.allyDownAt || 1.5)) { u._allyDown = true; hurt(w, ally, ally.hp + 999, dummies[0], { noDodge: true }); }
+      if (!u._dummyDown && w.time > 1.2) { u._dummyDown = true; hurt(w, dummies[1], 99999, u, { noDodge: true }); }
+      if (!u._low && w.time > 2) { u._low = true; u.hp = Math.min(u.hp, u.maxHp * 0.3); }
+      if (sh.killAt && !u._felled && w.time > sh.killAt) { u._felled = true; hurt(w, u, u.hp + 999, dummies[0], { noDodge: true }); }
+    }
     if (sh.killDummy && cast && w.time - SHOW_AT > 0.6 && !u._killed) { u._killed = true; hurt(w, dummies[1], 99999, u, { noDodge: true }); hurt(w, dummies[2], 99999, u, { noDodge: true }); }
     if (sh.hitDummy && cast && Math.floor(w.time / 0.45) !== Math.floor((w.time - dt) / 0.45)) hurt(w, dummies[0], 14, null, { noDodge: true });
     step(w, dt);
@@ -292,6 +303,7 @@ function setupShow() {
       if (d.hp < d.maxHp * 0.12) d.hp = d.maxHp;
       if (!w.units.includes(d)) { d.dead = false; d.hp = d.maxHp; w.units.push(d); }
     }
+    if (ally && sh.allyFree && cast) ally.home = { x: ally.x, y: ally.y }; // lane H2 (round 13): an ability that moves the friend (the Jester's Swap)
     if (ally) { ally.atkT = 999; ally.x = ally.home.x; ally.y = ally.home.y; for (const k in ally.kit.cd) ally.kit.cd[k] = Math.max(ally.kit.cd[k], 5); }
   };
 }

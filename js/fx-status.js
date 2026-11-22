@@ -40,6 +40,10 @@ const heart = (ctx, x, y, s, col) => inked(ctx, () => { ctx.save(); ctx.translat
 const fillOf = (u, k) => clamp(((u.st && u.st[k]) || 0) / 100, 0, 1);
 
 export function drawStatusMarks(ctx, u, T, w) {
+  if (u.koT > 0 && !u.downed && !u.dead) { // lane H2 (round 13, the designer: "knock out doesnt have a visual effect"): stars going round its head
+    const [vx, vy] = upVec(), hx = u.x + vx * ((u.vr || u.r) + 10), hy = u.y + vy * ((u.vr || u.r) + 10);
+    for (let i = 0; i < 3; i++) { const b = i / 3 * TAU + T * 7; inked(ctx, () => star(ctx, hx + Math.cos(b) * 15, hy + Math.sin(b) * 6, 5, 5, 0.45, b), i % 2 ? '#FFFFFF' : '#FFE66B'); }
+  }
   if (u.downed || u.dead || u.hidden) return;
   const st = u.st || {}, vr = u.vr, [ux, uy] = upVec();
   const head = (k) => [u.x + ux * vr * k, u.y + uy * vr * k];

@@ -344,6 +344,7 @@ export function poseFor(u, w, dt) {
   const d = u.def, sty = STYLE[u.kind] || d.style || {}, url = d.art; // d.style: the new heroes' touches (heroes2.js)
   const pose = {};
   if (u.frozenT > 0 && u._pose) return u._pose;          // frozen stiff
+  if (d.pose) return (u._pose = d.pose(u, w, dt));      // lane B (bosses3): a boss that poses its own parts (the angel's wheels)
   const kind = (u.anim && u.anim.kind) || d.attackAnim || (d.role === 'ranged' ? 'draw' : d.role === 'skirmish' ? 'thrust' : 'swing');
   const base = kind === 'ability' ? (d.attackAnim || 'swing') : kind;
   const mv = MOVES[base] || MOVES.swing;
@@ -377,6 +378,10 @@ export function poseFor(u, w, dt) {
     main = scaleP(W, sm(u._ready));
     if (base === 'cast') glow = u._ready * 0.6;
   }
+  // lane H2 (round 13): a backhand swing (style.backhand: the Dame, the Pirate, "swing the other way"); daggers stabbed
+  // straight ahead, never turned in across each other (style.straight: the Shade, "should not cross blades")
+  if (sty.backhand && base === 'swing') main = { ...main, r: -(main.r || 0) };
+  if (sty.straight && base === 'thrust') main = { ...main, r: 0 };
   // the other arm (all in arm-r terms, mirrored onto arm-l below): a shield pushes forward as the blow lands, a free
   // hand counters, casters lift both
   if (base === 'cast' || (u.anim && u.anim.kind === 'ability' && !sty.bow)) off = main;

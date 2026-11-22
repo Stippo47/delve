@@ -7,11 +7,11 @@ import { CHIEFTAIN } from './boss-chieftain.js';
 import { OOZE } from './boss-ooze.js';
 import { QUEEN } from './boss-queen.js';
 import { CINDER } from './boss-cinder.js';
-import { SERAPH } from './boss-seraph.js';
+import { ANGEL } from './boss-angel.js'; // (bosses3: the Gilded Seraph remade as a biblically accurate angel; the kind's id is still gildedSeraph)
 import { WURM } from './boss-wurm.js';
 import { ENGINE } from './boss-engine.js';
 
-const BOSS_FILES = [CHIEFTAIN, OOZE, QUEEN, CINDER, SERAPH, WURM, ENGINE];
+const BOSS_FILES = [CHIEFTAIN, OOZE, QUEEN, CINDER, ANGEL, WURM, ENGINE];
 
 // every boss (and its parts and adds) by kind
 export const BOSS_DEFS = Object.assign({}, ...BOSS_FILES.map((b) => b.defs));

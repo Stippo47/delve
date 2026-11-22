@@ -150,7 +150,8 @@ function drawShadows(ctx, w, tf) {
     const sx = a * x + c * y + e, sy = b * x + d * y + f, sr = r * k + 2;
     if (sx - sr < x0) x0 = sx - sr; if (sy - sr < y0) y0 = sy - sr; if (sx + sr > x1) x1 = sx + sr; if (sy + sr > y1) y1 = sy + sr;
   };
-  for (const u of w.units) if (!u.ethereal || u.hiddenIn) { if (u.def.shadows) { for (const [x, y, r] of u.def.shadows(u)) disc(x, y, r * 1.75, 1); } else disc(u.x, u.y, shadowSize(u), 1); } // (round 13, lane E: def.shadows, a body that isn't round)
+  // (round 13, lane E: def.shadows, a body that isn't round; lane B, bosses3: u.shadowK sizes a code-drawn boss's shadow (0: none: a wurm under the sand))
+  for (const u of w.units) if ((!u.ethereal || u.hiddenIn) && u.shadowK !== 0) { if (u.def.shadows) { for (const [x, y, r] of u.def.shadows(u)) disc(x, y, r * 1.75, 1); } else disc(u.x, u.y, shadowSize(u) * (u.shadowK ?? 1), 1); }
   // a body in the air leaves its shadow on the floor
   for (const cp of w.corpses) if (cp.z > 2) disc(cp.x, cp.y, cp.vr * 1.3, clamp(cp.t / 4, 0, 1) * 0.8);
   g.globalAlpha = 1;
@@ -544,7 +545,7 @@ function unitFrame(ctx, u, w) {
 // Status washes over the sprite: [colour, strength] pairs.
 function washesOf(u, w) {
   if (u.exiting) return [['#FFF6D8', clamp(u.exiting.t / u.exiting.dur * 1.6, 0, 0.95)]]; // glowing into the light
-  if (u.downed || u.flashT > 0.06) return [];
+  if (u.downed || u.flashT > (u.def.flashAt ?? 0.06)) return []; // (lane B, bosses3: def.flashAt: a boss struck many times a second shows white for a frame, not a third of the time)
   const st = u.st || {}, out = [];
   const chill = u.frozenT > 0 ? 1 : clamp((st.chill || 0) / 100, 0, 1), poison = clamp((st.poison || 0) / 100, 0, 1), burn = clamp((st.burn || 0) / 100, 0, 1);
   const wet = clamp((st.wet || 0) / 100, 0, 1), shock = clamp((st.shock || 0) / 100, 0, 1);
@@ -574,7 +575,9 @@ function washesOf(u, w) {
     else if (b.id === 'unstoppable') out.push(['#FFE7A0', 0.2 + 0.12 * Math.sin(w.time * 12)]);
     else if (b.id === 'warSong') out.push(['#FFD45A', 0.1]);
     else if (b.id === 'whirl') out.push(['#FFFFFF', 0.08]);
+    if (b.wash) out.push(typeof b.wash === 'function' ? b.wash(w.time) : b.wash); // lane H2 (round 13): a buff's own wash (kits2.js: Shade's shadow, weakened)
   }
+  if (u.def.wash) out.push(u.def.wash); // lane H2: a summon's own wash (the Shade's shadow clones, the Shaman's spirits)
   if (u.leechT > 0) out.push(['#C8453D', 0.12 + 0.08 * Math.sin(w.time * 8)]);
   // being mended (the Cleric's ray, Sanctuary): the whole figure flashes a soft yellow-white, smoothly, on repeat
   if (u.mendGlow > w.time) out.push(['#FFF6C8', 0.1 + 0.32 * (0.5 + 0.5 * Math.sin(w.time * 5))]);
@@ -590,7 +593,7 @@ function borderOf(u, w) {
   if (u.downed) return null;
   if (u.buffs && u.buffs.some((b) => b.id === 'unstoppable')) return { color: '#FFF4B8', a: 0.85 + 0.15 * Math.sin(w.time * 9) };
   if (u.guardBy && u.guardT > 0 && !u.guardBy.dead && !u.guardBy.downed) return { color: '#F2C14E', a: 0.8 + 0.2 * Math.sin(w.time * 5) };
-  { const b = u.buffs && u.buffs.find((x) => x.border); if (b) return { color: b.border, a: 0.85 + 0.15 * Math.sin(w.time * 9) }; } // lane H1 (round 13) hook: any buff can say it protects, with its border's colour (Old Bones)
+  { const b = u.buffs && u.buffs.find((x) => x.border); if (b) return { color: b.border, a: 0.85 + 0.15 * Math.sin(w.time * 9) }; } // lane H1 (round 13) hook: any buff can say it protects, with its border's colour (Old Bones; lane H2's Warded)
   return null;
 }
 function drawUnit(ctx, u, w) {
@@ -641,12 +644,12 @@ function drawPartsUnit(ctx, u, w) {
   if (!set) { ctx.restore(); return; } // still rendering (a fraction of a second): draw nothing rather than a placeholder
   const pose = u.downed ? LIMP : poseFor(u, w, w._dt ?? 1 / 60);
   const k = sizeU / 220 * (1 + 0.05 * (pose.pop || 0));
-  ctx.scale(k, k); ctx.translate(-100, -100);
+  ctx.scale(k, k); if (u.def.style && u.def.style.flip) ctx.scale(-1, 1); ctx.translate(-100, -100); // lane H2 (round 13): style.flip mirrors the sprite (the Griffon)
   let alpha = 1;
   if (u.invulnT > 0 && !u.act && !u.spin) alpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18)); // no flicker mid-leap or roll (round 9)
   if (u.downed) alpha = 0.62; // a hero who is down lies faint too (round 7)
   if (u.ethereal && !u.exiting && !u.hiddenIn) alpha *= 0.5;
-  const mode = u.downed ? 'grey' : u.flashT > 0.06 ? 'flash' : 'normal';
+  const mode = u.downed ? 'grey' : u.flashT > (u.def.flashAt ?? 0.06) ? 'flash' : 'normal'; // (lane B, bosses3: def.flashAt, as in washesOf)
   if (u.act && u.act.type === 'dash' && u.kind === 'twinfang') afterimages(ctx, u, w, set, pose, sizeU);
   else u._trail = null;
   drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w), shift: isOurs(u) && u.kind !== 'minion', /* round 10: the raised dead stay plain grey */ border: mode === 'normal' ? borderOf(u, w) : null });
