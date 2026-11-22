@@ -84,6 +84,6 @@ for c in cards:
     assert len(c["title"]) <= 26 and len(c["text"]) <= 110, (c["id"], len(c["title"]), len(c["text"]))
     for i in c["items"]:
         assert len(i["label"]) <= 36 and len(i.get("text", "")) <= 110, (i["id"], len(i.get("text", "")))
-deck = {"title": "Icons: pick a style", "topic": "art", "order": 29, "priority": 2, "cards": cards}
+deck = {"title": "Icons: pick a style", "topic": "art", "order": 31, "priority": 2, "cards": cards}
 (HERE / "decks" / "icons-r14.json").write_text(json.dumps(deck, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print("cards", len(cards), "tiles", sum(len(c["items"]) for c in cards))
