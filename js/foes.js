@@ -98,18 +98,18 @@ export const FOES = {
   devil: { ...FOE, name: 'Devil', art: ART('devil'), headR: 56, r: 32, vr: 24, hp: 70, speed: 62, role: 'melee', range: 44, atkCd: 1.3, windup: 0.3, dmg: 11, knock: 150, arc: 0.8,
     xp: 15, coins: [3, 6], cost: 5, attackAnim: 'thrust', ability: 'dash', abilCd: 4, res: { burn: 0.2 } },
   // round 13 (lane S): the Succubus (the designer: "Succubus enemies will also charm who hits them and deal extra damage
-  // to charmed foes"). Whoever lands a blow on her is charmed a little (once a second each), so soon they can't hurt her;
-  // she hunts the charmed, hits them 60% harder, and every few seconds blows a kiss at the most charmed hero in reach to
+  // to charmed foes"). Whoever lands a blow on her is charmed a little (8, once a second each), so soon they can't hurt
+  // her; she hunts the charmed, hits them 40% harder, and every few seconds blows a kiss at the most charmed hero in reach to
   // tip it over into fighting for her. Placeholder art: the Devil recoloured rose (docs/ART-NEEDED.md).
-  succubus: { variantOf: 'devil', name: 'Succubus', accent: { from: 0, range: 30, hue: 322, sat: 1.05, light: 0.1 }, hp: 60, dmg: 9, speed: 64, charm: 12, charmBonus: 0.6,
+  succubus: { variantOf: 'devil', name: 'Succubus', accent: { from: 0, range: 30, hue: 322, sat: 1.05, light: 0.1 }, hp: 60, dmg: 9, speed: 64, charm: 8, charmBonus: 0.4,
     xp: 18, coins: [3, 7], cost: 5, ability: 'dash', abilCd: 5,
-    struck: (w, u, src) => { if (!src || src.team === u.team || !src.st) return; const m = u.kissed || (u.kissed = new Map()); if ((m.get(src.id) || -9) > w.time - 1) return; m.set(src.id, w.time); addStatus(w, src, 'charm', 16, u); },
+    struck: (w, u, src) => { if (!src || src.team === u.team || !src.st) return; const m = u.kissed || (u.kissed = new Map()); if ((m.get(src.id) || -9) > w.time - 1) return; m.set(src.id, w.time); addStatus(w, src, 'charm', 8, u); },
     brain: (w, u, dt) => {
       if (!u.aggro || !due(u, 'kiss', dt, 3)) return false;
       const list = opponents(w, u).filter((h) => !h.summon && dist(u.x, u.y, h.x, h.y) < 300 && lineClear(w, u.x, u.y, h.x, h.y, 4) && !(h.charmImmuneT > 0) && h.flipKind !== 'charm');
       const t = list.sort((a, b) => (b.st.charm || 0) - (a.st.charm || 0))[0]; if (!t) return false;
-      again(u, 'kiss', 5, 6.5); setAnim(u, 'cast', 0.4);
-      shoot(w, u, angleTo(u.x, u.y, t.x, t.y), { kind: 'kiss', color: '#FF5AAE', speed: 300, dmg: 2, r: 9, life: 1.4, hitO: { charm: 40, knock: 10 } });
+      again(u, 'kiss', 8, 10); setAnim(u, 'cast', 0.4);
+      shoot(w, u, angleTo(u.x, u.y, t.x, t.y), { kind: 'kiss', color: '#FF5AAE', speed: 300, dmg: 2, r: 9, life: 1.4, hitO: { charm: 22, knock: 10 } });
       return false;
     } },
   demon: { ...FOE, name: 'Demon', art: ART('demon'), headR: 64, r: 40, vr: 30, turn: 2.8, accel: 160, face: 2.8, mass: 2.6, hp: 150, speed: 46, role: 'melee',

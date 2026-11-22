@@ -721,7 +721,7 @@ export function hurt(w, u, amount, src, o = {}) {
     if (src.radiantT > 0) return 0; // radiant: its glow is all it can do
     // round 13, charm: while it builds, a unit can't hurt whoever is charming it (its blow turns into a little heart)
     if (src.st && src.st.charm >= CHARM.guard && src.stBy && src.stBy.charm === u && src.flipKind !== 'charm') {
-      if (rand() < 0.6) w.particles.push({ x: u.x + rrange(-6, 6), y: u.y - u.r * 0.4, vx: 0, vy: 0, rise: 34, up: 0, life: 0.7, max: 0.7, size: 5, color: STATUS.charm.col, shape: 'heart' });
+      if (rand() < 0.3) w.particles.push({ x: u.x + rrange(-6, 6), y: u.y - u.r * 0.4, vx: 0, vy: 0, rise: 40, up: 0, life: 0.5, max: 0.5, size: 4.5, color: STATUS.charm.col, shape: 'heart' });
       return 0;
     }
     if (alive(src) && hexFires(w, src)) { // hexed: the blow turns on the one who struck it
@@ -732,7 +732,7 @@ export function hurt(w, u, amount, src, o = {}) {
     }
   }
   if (u.team === 'enemy') wake(w, u);
-  if (u.sleepT > 0 && !o.dot) u.sleepT = 0;
+  if (u.sleepT > 0 && !o.dot && !(u.deepT > 0)) u.sleepT = 0; // (round 13: Sleepy's sleep can't be broken for its first seconds)
   // a hook can make the blow miss entirely (Blink Stone)
   if (!o.dot && hooksOf(u).some((h) => h.evade && h.evade(w, u, src, amount, o))) { blockedBy(w, u, src, amount, o); return 0; }
   // someone guarding this unit takes part of the blow
@@ -884,7 +884,7 @@ export function addStatus(w, u, type, amount, src) {
   if (type === 'sleepy') {
     if (s.sleepy >= need) {                                      // falls asleep (the Lullaby's sleep: a blow wakes it)
       const T = u.def.boss ? SLEEPY.sleepT * 0.4 : SLEEPY.sleepT;
-      s.sleepy = after; burst(); u.sleepT = Math.max(u.sleepT, T); u.sleepyImmuneT = T + SLEEPY.immuneT; if (u.act && u.act.type !== 'drink') u.act = null;
+      s.sleepy = after; burst(); u.sleepT = Math.max(u.sleepT, T); u.deepT = u.def.boss ? 0.6 : SLEEPY.deepT; u.sleepyImmuneT = T + SLEEPY.immuneT; if (u.act && u.act.type !== 'drink') u.act = null;
       textU(w, u.x, u.y, u.r + 12, 'ASLEEP', STATUS.sleepy.col, 1.2);
       fx(w, { type: 'statusBurst', kind: 'sleepy', unit: u, x: u.x, y: u.y, r: u.vr, max: 1 });
     }
@@ -946,7 +946,7 @@ function haemorrhage(w, u, src) {
   if (u.def.boss) loss = Math.min(loss, u.maxHp * BLEED.bossCap);
   u.bleedImmuneT = BLEED.immuneT;
   textU(w, u.x, u.y, u.r + 12, 'HAEMORRHAGE', STATUS.bleed.col, 1.2);
-  fx(w, { type: 'statusBurst', kind: 'bleed', unit: u, x: u.x, y: u.y, r: u.vr, max: 1.1, loss: loss / u.maxHp, hp0: u.hp / u.maxHp });
+  fx(w, { type: 'statusBurst', kind: 'bleed', unit: u, x: u.x, y: u.y, r: u.vr, max: 2, loss: loss / u.maxHp, hp0: u.hp / u.maxHp });
   for (let i = 0; i < 14; i++) { const a = rand() * TAU, v = rrange(60, 200); w.particles.push({ x: u.x, y: u.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: rrange(0.4, 0.7), max: 0.7, size: rrange(3, 6), color: i % 2 ? '#C8453D' : '#8A1E28', drag: 0.88 }); }
   if (loss > 0) { hurt(w, u, loss, null, { dot: true, by: src, stk: 'bleed', color: STATUS.bleed.col, quiet: true }); textU(w, u.x, u.y, u.r + 2, '-' + Math.round(loss), '#FF6A5A', 1.3, true); }
 }
@@ -1309,7 +1309,8 @@ function statusTick(w, u, dt) {
     hurt(w, u, s.bleed * BLEED.dot * dt, null, { dot: true, color: STATUS.bleed.col, by: u.stBy && u.stBy.bleed, stk: 'bleed' });
     if (s.bleed > 6 && rand() < dt * (3 + 9 * fillOf(u, 'bleed'))) w.particles.push({ shape: 'drip', x: u.x + rrange(-u.r, u.r) * 0.7, y: u.y + rrange(-u.r, u.r) * 0.6, vx: 0, vy: 0, rise: -46, up: 0, life: 0.6, max: 0.6, size: 3.2 + 2 * fillOf(u, 'bleed'), color: '#C8453D' });
   }
-  for (const k of ['addledT', 'fearT', 'charmImmuneT', 'confuseImmuneT', 'sleepyImmuneT', 'bleedImmuneT', 'fearImmuneT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
+  if (u.deepT > 0 && !(u.sleepT > 0)) u.deepT = 0;
+  for (const k of ['deepT', 'addledT', 'fearT', 'charmImmuneT', 'confuseImmuneT', 'sleepyImmuneT', 'bleedImmuneT', 'fearImmuneT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
   if (u.flipUntil != null && w.time >= u.flipUntil) { // a charm (or a Befuddle) runs out: back to its own side
     const k = u.flipKind; restoreSide(w, u);
     if (k === 'charm') fx(w, { type: 'statusBurst', kind: 'uncharm', unit: u, x: u.x, y: u.y, r: u.vr, max: 0.6 });

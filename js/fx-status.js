@@ -100,7 +100,7 @@ export function drawStatusBurst(ctx, f, T, layer) {
   if (layer === 'ground') {
     if (f.kind !== 'bleed') return;
     // haemorrhage: a pool of blood spreads under it and fades (no outline: it lies on the ground)
-    const a = 0.75 * (1 - k * k);
+    const a = 0.85 * (1 - k * k);
     ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = '#7A1420';
     for (let i = 0; i < 9; i++) { const an = hash(i, Math.round(x), 3) * TAU, d = r * (0.4 + 1.4 * hash(i, 7, Math.round(y))) * Math.min(1, k * 4), s = r * (0.22 + 0.3 * hash(i, 11));
       ctx.beginPath(); ctx.arc(x + Math.cos(an) * d, y + Math.sin(an) * d, s, 0, TAU); ctx.fill(); }
@@ -156,7 +156,8 @@ export function drawStatusBurst(ctx, f, T, layer) {
       inked(ctx, () => { ctx.beginPath(); ctx.arc(x + Math.cos(an) * d, y + Math.sin(an) * d * 0.8, r * 0.35 * (1 - 0.4 * k), 0, TAU); }, '#E4DDFF'); }
     ctx.globalAlpha = fade; const s = 9;
     upright(ctx, x, y, () => { const zy = -r * 1.3 - 20 * e; inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-s, zy - s); ctx.lineTo(s, zy - s); ctx.lineTo(-s, zy + s); ctx.lineTo(s, zy + s); }, '#C9B8FF', 3.4); });
-  } else if (f.kind === 'bleed') { // a red spray, streaks thrown out all round
+  } else if (f.kind === 'bleed') { // a red spray, streaks thrown out all round (over its first second; the pool lasts longer)
+    const k = clamp(f.t / 1, 0, 1), fade = 1 - k, e = 1 - (1 - k) ** 3; if (k >= 1) { ctx.restore(); return; }
     if (k < 0.25) { ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x, y, r * 2, '#FF3A3A', 0.6 * (1 - k / 0.25)); ctx.globalCompositeOperation = 'source-over'; }
     ctx.globalAlpha = fade;
     for (let i = 0; i < 10; i++) { const an = hash(i, 3, Math.round(x)) * TAU, d0 = r * 0.8, d1 = d0 + r * (0.8 + hash(i, 5)) * e;
