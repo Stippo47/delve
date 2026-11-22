@@ -574,25 +574,6 @@ DRAW.shell = (ctx, f, w, layer) => {
     ctx.setLineDash([6, 6]); ctx.strokeStyle = '#FF6B5A'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, TAU); ctx.stroke(); ctx.restore(); return; }
   inked(ctx, () => { ctx.beginPath(); ctx.arc(f.x + vx * h, f.y + vy * h, 10, 0, TAU); }, '#3A3440');
 };
-// the Slinger's ram: a woolly cream ram with curled horns, charging
-DRAW.ram = (ctx, f, w, layer) => {
-  if (layer !== 'air') return; const bob = Math.abs(Math.sin(f.t * 22)) * 3; ctx.save(); ctx.globalAlpha *= life(f, 0.05, 0.15); ctx.translate(f.x, f.y); ctx.rotate(f.a);
-  inked(ctx, () => blob(ctx, -6, 0, 20 + bob * 0.3, 9, 1, 1), '#F2E8DA');
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(16, 0, 10, 8, 0, 0, TAU); }, '#7A6A58');
-  for (const s of [-1, 1]) inked(ctx, () => { ctx.beginPath(); ctx.arc(14, s * 9, 6, 0, TAU); }, '#C9B898');
-  ctx.restore();
-  ctx.save(); ctx.globalAlpha *= 0.6; for (let i = 0; i < 3; i++) disc(ctx, f.x - Math.cos(f.a) * (30 + i * 12) + (hash(i, f.t * 10 | 0) - 0.5) * 16, f.y - Math.sin(f.a) * (30 + i * 12), 6 - i, '#E9DDC2'); ctx.restore();
-};
-// Jaw Trap: steel jaws open on the floor; shut once it has caught something
-DRAW.trap = (ctx, f, w, layer) => {
-  if (layer !== 'ground') return; const shut = f.snapT != null, x = f.held && !f.held.dead ? f.held.x : f.x, y = f.held && !f.held.dead ? f.held.y : f.y;
-  ctx.save(); ctx.globalAlpha *= life(f, 0.1, 0.3); ctx.translate(x, y);
-  inkLine(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 16, 0, TAU); }, '#6E7680', 3);
-  const o = shut ? 2 : 14;
-  for (const s of [-1, 1]) inkLine(ctx, () => { ctx.beginPath(); for (let i = -3; i <= 3; i++) { const xx = i * 4, yy = s * (o - (i % 2 ? 3 : 0)); i === -3 ? ctx.moveTo(xx, yy) : ctx.lineTo(xx, yy); } }, '#A8B0BA', 2.4);
-  ctx.restore();
-  if (shut && f.t - f.snapT < 0.3) lit(ctx, () => glowDisc(ctx, x, y, 40, '#FFFFFF', 0.7 * (1 - (f.t - f.snapT) / 0.3)));
-};
 // a net spread over the floor or over a held enemy
 DRAW.netOn = (ctx, f, w, layer) => {
   if (layer !== 'air') return; const e = f.unit, x = e ? e.x : f.x, y = e ? e.y : f.y, r = f.r, a = life(f, 0.05, 0.3);
@@ -1650,6 +1631,133 @@ DRAW.cannon = (ctx, f, w, layer) => { const k = k01(f.t / f.max), [vx, vy] = upV
   if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.15 + 0.3 * k; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(x, y, 8 + 8 * k, 4 + 4 * k, 0, 0, TAU); ctx.fill(); ctx.restore();
     ctx.save(); ctx.globalAlpha *= 0.4 * k; ctx.strokeStyle = '#C8453D'; ctx.lineWidth = 2; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (1.2 - 0.2 * k), 0, TAU); ctx.stroke(); ctx.restore(); return; }
   ctx.save(); ctx.translate(x + vx * h, y + vy * h); const s2 = 1.4 - 0.4 * k; ctx.scale(s2, s2); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 10, 0, TAU); }, '#2B2230'); disc(ctx, -3, -3, 3.2, '#5A5060'); ctx.restore(); };
+
+// ---------------------------------------------------------------- the Slinger, Trapper, Gladiator, Jester (round 13)
+// a sling stone (round 13: "Bone particles bad"): a grey stone; its burst is grit and pebbles
+IMPACT2D.stone = (ctx, m, k) => { const e = easeOut(k); ctx.save(); ctx.globalAlpha *= 1 - k * k; for (let i = 0; i < 5; i++) { const b = m.a + Math.PI + (hash(m.seed, i) - 0.5) * 2.4, d = 4 + 18 * e; inkDisc(ctx, m.x + Math.cos(b) * d, m.y + Math.sin(b) * d, 2.6 * (1 - 0.5 * k) + 0.5, i % 2 ? '#A99C8B' : '#7A6A58'); } K.dustPuffs(ctx, m.x, m.y, 16, e, m.seed, 4); ctx.restore(); };
+IMPACT2D.bigStone = IMPACT2D.stone;
+PROJ2.bigStone = (ctx, p, T) => { lobUp(ctx, p, 70); ctx.rotate(T * 6); inked(ctx, () => blob(ctx, 0, 0, 10, 7, 3, 1), '#8A7E70'); disc(ctx, -3, -3, 3, '#B0A494'); };
+// Stunning Stone: the sling going round over his head, a blur and a glint
+DRAW.slingWhirl = (ctx, f, w, layer) => { const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const [vx, vy] = upVec(), hx = u.x + vx * (u.vr + 6), hy = u.y + vy * (u.vr + 6), b = f.t * 26; ctx.save(); ctx.globalAlpha *= life(f, 0.05, 0.1);
+  inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(hx, hy, 22, 9, 0, b - 1.2, b); }, '#EEF3F8', 2.6); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(hx + Math.cos(b) * 22, hy + Math.sin(b) * 9); }, '#8A5A30', 2); inkDisc(ctx, hx + Math.cos(b) * 22, hy + Math.sin(b) * 9, 5, '#8A7E70'); ctx.restore(); };
+DRAW.stoneCrack = (ctx, f, w, layer) => { if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k); ctx.save(); ctx.globalAlpha *= 1 - k; for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + 0.3, d = 6 + 24 * e; ctx.save(); ctx.translate(f.x + Math.cos(b) * d, f.y + Math.sin(b) * d); ctx.rotate(b + k * 4); inked(ctx, () => blob(ctx, 0, 0, 4 * (1 - 0.5 * k), 5, i, 1), '#8A7E70'); ctx.restore(); } ctx.restore(); };
+// the ram, redrawn (round 13: "Concept good. Execution poor"): a big woolly body of curls, a dark face, curled horns, legs
+// pounding as it bounds; dust kicked up behind
+DRAW.ram = (ctx, f, w, layer) => {
+  const bound = Math.abs(Math.sin(f.t * 16)), [vx, vy] = upVec(), h = bound * 8;
+  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.25 * life(f, 0.05, 0.2); ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(f.x, f.y, 26, 13, f.a, 0, TAU); ctx.fill(); ctx.restore(); K.dustPuffs(ctx, f.x - Math.cos(f.a) * 30, f.y - Math.sin(f.a) * 30, 18, 0.5 + 0.5 * bound, (f.t * 10) | 0, 3); return; }
+  ctx.save(); ctx.globalAlpha *= life(f, 0.05, 0.2); ctx.translate(f.x + vx * h, f.y + vy * h); ctx.rotate(f.a); ctx.scale(1.25, 1.25);
+  for (const [lx, ly] of [[10, -11], [10, 11], [-12, -11], [-12, 11]]) { const sw = Math.sin(f.t * 16 + lx) * 4; inked(ctx, () => roundRect(ctx, lx - 3 + sw, ly - 3, 7, 6, 2.5), '#3A3440'); }
+  inked(ctx, () => { ctx.beginPath(); for (let i = 0; i < 12; i++) { const b = i / 12 * TAU, rr = (i % 2 ? 15 : 17); ctx.lineTo(Math.cos(b) * rr * 1.25 - 3, Math.sin(b) * rr); } ctx.closePath(); }, '#F4EEDC');
+  for (let i = 0; i < 5; i++) { ctx.strokeStyle = '#D8CFB8'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(-10 + i * 5, (i % 2 ? -4 : 4), 3.5, 0, TAU); ctx.stroke(); }
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(20, 0, 8, 6.5, 0, 0, TAU); }, '#4A4048');
+  for (const sd of [-1, 1]) inkLine(ctx, () => { ctx.beginPath(); ctx.arc(17, sd * 7, 5.5, sd > 0 ? -1.6 : 1.6, sd > 0 ? 2.2 : -2.2, sd < 0); }, '#C9B890', 3.6);
+  ctx.restore();
+};
+DRAW.wool = (ctx, f, w, layer) => { if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k); ctx.save(); ctx.globalAlpha *= 1 - k; for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + hash(i, f.x | 0), d = 6 + 26 * e; inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 4.5 * (1 - 0.5 * k), '#F4EEDC'); } ctx.restore(); };
+// Counting Sheep: a little sheep bounding over the spot (in on one side, out the other), a number for each
+DRAW.sheepHop = (ctx, f, w, layer) => {
+  const k = k01(f.t / f.max), [vx, vy] = upVec(), x = f.x + Math.cos(f.a) * (k - 0.5) * 90, y = f.y + Math.sin(f.a) * (k - 0.5) * 90, h = Math.sin(k * Math.PI) * 40;
+  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.22; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(x, y, 12, 6, 0, 0, TAU); ctx.fill(); ctx.restore(); return; }
+  ctx.save(); ctx.globalAlpha *= 1 - k01((k - 0.8) / 0.2); ctx.translate(x + vx * h, y + vy * h); ctx.rotate(f.a);
+  for (const [lx, ly] of [[6, -6], [6, 6], [-6, -6], [-6, 6]]) inked(ctx, () => roundRect(ctx, lx - 2 + (k < 0.5 ? 2 : -2), ly - 2, 4, 4, 1.5), '#3A3440');
+  inked(ctx, () => { ctx.beginPath(); for (let i = 0; i < 10; i++) { const b = i / 10 * TAU, rr = i % 2 ? 9 : 10.5; ctx.lineTo(Math.cos(b) * rr * 1.2, Math.sin(b) * rr); } ctx.closePath(); }, '#FFFFFF');
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(12, 0, 5, 4, 0, 0, TAU); }, '#3A3440'); ctx.restore();
+  if (layer === 'air' && k > 0.45 && k < 0.65) { ctx.save(); ctx.globalAlpha *= 0.8; upright(ctx, f.x + vx * 50, f.y + vy * 50, () => { ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 3; ctx.strokeStyle = '#2B2230'; ctx.strokeText('z', 0, 0); ctx.fillStyle = '#A99CD8'; ctx.fillText('z', 0, 0); }); ctx.restore(); }
+};
+// the Trapper's jaw trap (round 13: "That doesnt look like what he is holding"): his steel jaw trap: two toothed half
+// rings open on the floor, a round pan between, a chain to its stake; snapped shut once it bites
+DRAW.trap = (ctx, f, w, layer) => {
+  if (layer !== 'ground') return; const a = life(f, 0.1, 0.3), shut = f.snapT != null ? easeOut(k01((f.t - f.snapT) / 0.08)) : 0;
+  ctx.save(); ctx.globalAlpha *= a; ctx.translate(f.x, f.y);
+  inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(14, 4); ctx.quadraticCurveTo(24, 14, 30, 8); }, '#6E7680', 2.2); inked(ctx, () => { ctx.beginPath(); ctx.arc(31, 8, 3, 0, TAU); }, '#6E7680');
+  for (const sd of [-1, 1]) { ctx.save(); ctx.scale(1, sd); ctx.translate(0, (1 - shut) * 6);
+    inkLine(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 15, Math.PI, TAU); }, '#8A94A6', 4);
+    for (let i = 1; i < 6; i++) { const b = Math.PI + i / 6 * Math.PI; inked(ctx, () => { ctx.beginPath(); ctx.moveTo(Math.cos(b - 0.12) * 13, Math.sin(b - 0.12) * 13); ctx.lineTo(Math.cos(b) * 7, Math.sin(b) * 7); ctx.lineTo(Math.cos(b + 0.12) * 13, Math.sin(b + 0.12) * 13); ctx.closePath(); }, '#DCE3EC'); }
+    ctx.restore(); }
+  inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 5 * (1 - shut), 0, TAU); }, '#A8B0BA');
+  ctx.restore();
+};
+PROJ2.pellet = (ctx, p, T, ang, sp) => { ctx.save(); ctx.rotate(ang); trail(ctx, sp, 14, 3.5, '#EEF3F8'); ctx.restore(); inkDisc(ctx, 0, 0, 3.2, '#6E7680'); };
+IMPACT2D.pellet = (ctx, m, k) => { ctx.save(); ctx.globalAlpha *= 1 - k; for (let i = 0; i < 3; i++) { const b = m.a + Math.PI + (i - 1) * 0.8, d = 3 + 9 * easeOut(k); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(m.x + Math.cos(b) * d, m.y + Math.sin(b) * d); ctx.lineTo(m.x + Math.cos(b) * (d + 4), m.y + Math.sin(b) * (d + 4)); }, '#FFF4C8', 1.8); } ctx.restore(); };
+// Bush: he is a round leafy bush, rustling as it creeps
+DRAW.bush = (ctx, f, w, layer) => { const u = f.unit; if (!alive2(u) || !(u.kit && u.kit.bushUntil > w.time)) { ended(f, true); return; } if (layer !== 'air') return; const rus = Math.sin(f.t * 12) * (u.spd > 5 ? 2 : 0.6), R = u.vr * 1.25;
+  ctx.save(); ctx.globalAlpha *= life(f, 0.15, 0.25);
+  inked(ctx, () => { ctx.beginPath(); for (let i = 0; i < 9; i++) { const b = i / 9 * TAU, rr = R * (i % 2 ? 0.86 : 1); ctx.arc(u.x + Math.cos(b) * rr * 0.55 + rus, u.y + Math.sin(b) * rr * 0.55, rr * 0.5, 0, TAU); } }, '#5A8A34');
+  for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + 0.4; disc(ctx, u.x + Math.cos(b) * R * 0.4 + rus, u.y + Math.sin(b) * R * 0.4, R * 0.28, i % 2 ? '#6FA046' : '#7FB850'); }
+  disc(ctx, u.x - R * 0.2 + rus, u.y - R * 0.25, R * 0.16, '#A9D47A'); ctx.restore(); };
+// Spear of Ares: a great bronze-headed spear trailing red-gold
+PROJ2.aresSpear = (ctx, p, T, ang, sp) => { ctx.save(); ctx.rotate(ang); trail(ctx, sp, 60, 12, '#F2A23A'); ctx.restore(); lit(ctx, () => glowDisc(ctx, 0, 0, 26, '#F2A23A', 0.45)); ctx.rotate(ang); ctx.scale(1.6, 1.6);
+  inked(ctx, () => roundRect(ctx, -28, -2, 32, 4, 2), '#8A4A2A'); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(18, 0); ctx.lineTo(4, -6); ctx.lineTo(2, 0); ctx.lineTo(4, 6); ctx.closePath(); }, '#D8A040'); inked(ctx, () => roundRect(ctx, -30, -4, 5, 8, 2), '#C8453D'); };
+// Arena: a ring drawn in the sand round the two of them (the designer asked for the ring), sand-coloured with stakes
+DRAW.arenaRing = (ctx, f, w, layer) => { if (layer !== 'ground') return; const a = life(f, 0.3, 0.5), q = easeOut(k01(f.t / 0.35));
+  ctx.save(); ctx.globalAlpha *= a; ctx.fillStyle = 'rgba(232,212,160,0.22)'; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * q, 0, TAU); ctx.fill();
+  inkLine(ctx, () => { ctx.beginPath(); ctx.arc(f.x, f.y, f.r * q, 0, TAU); }, '#E8D4A0', 4);
+  for (let i = 0; i < 10; i++) { const b = i / 10 * TAU; inked(ctx, () => { ctx.beginPath(); ctx.arc(f.x + Math.cos(b) * f.r * q, f.y + Math.sin(b) * f.r * q, 4.5, 0, TAU); }, '#C8453D'); }
+  ctx.restore(); };
+// confetti: a puff of coloured bits (the Jester's swap and kick, a ball's bounce)
+DRAW.confetti = (ctx, f, w, layer) => { if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k), [vx, vy] = upVec(), n = f.small ? 6 : 12, cols = ['#C8453D', '#FFD45A', '#5B8CDB', '#7FCB3A', '#E05AB8'];
+  ctx.save(); ctx.globalAlpha *= 1 - k * k; for (let i = 0; i < n; i++) { const b = i / n * TAU + hash(i, f.x | 0), d = (f.small ? 8 : 12) + (f.small ? 16 : 34) * e, h = Math.sin(k * Math.PI) * 14 * hash(i, 3);
+    ctx.save(); ctx.translate(f.x + Math.cos(b) * d + vx * h, f.y + Math.sin(b) * d + vy * h); ctx.rotate(b + k * 8); ctx.fillStyle = cols[i % 5]; ctx.fillRect(-3, -1.6, 6, 3.2); ctx.restore(); } ctx.restore(); };
+
+// ---------------------------------------------------------------- the Samurai, Valkyrie, Engineer, Werewolf (round 13)
+// Iaido's charge: the blade half out of its sheath, light gathering along it, the floor darkening in a line ahead
+DRAW.iaidoCharge = (ctx, f, w, layer) => { const u = f.unit; if (!alive2(u)) return; const q = k01(f.t / f.max);
+  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.3 * q; ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 8; ctx.setLineDash([10, 8]); ctx.beginPath(); ctx.moveTo(u.x, u.y); ctx.lineTo(u.x + Math.cos(f.a) * 200 * q, u.y + Math.sin(f.a) * 200 * q); ctx.stroke(); ctx.restore(); return; }
+  const x = u.x + Math.cos(f.a + 0.7) * u.r * 0.8, y = u.y + Math.sin(f.a + 0.7) * u.r * 0.8; lit(ctx, () => glowDisc(ctx, x, y, 14 + 26 * q, '#FFFFFF', 0.3 + 0.5 * q));
+  ctx.save(); ctx.globalAlpha *= q; inked(ctx, () => star(ctx, x, y, 4 + 10 * q, 4, 0.25, f.t * 6), '#FFFFFF'); ctx.restore(); };
+// Focus: his blade held level before him, a pale edge of light running along it while he waits
+DRAW.focusGuard = (ctx, f, w, layer) => { const u = f.unit; if (layer !== 'air' || !alive2(u)) return; ended(f, !(u.kit && u.kit.focusUntil > w.time));
+  const ready = !((u.kit.focusNext || 0) > w.time), a = life(f, 0.1, 0.25), cx = u.x + Math.cos(u.facing) * (u.r + 6), cy = u.y + Math.sin(u.facing) * (u.r + 6), b = u.facing + Math.PI / 2;
+  ctx.save(); ctx.globalAlpha *= a * (ready ? 1 : 0.4); lit(ctx, () => { ctx.strokeStyle = 'rgba(238,243,248,0.6)'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(cx - Math.cos(b) * 20, cy - Math.sin(b) * 20); ctx.lineTo(cx + Math.cos(b) * 20, cy + Math.sin(b) * 20); ctx.stroke(); }); ctx.restore(); };
+// Crescent Cut: one heavy white crescent across the enemy
+DRAW.crescentSlash = (ctx, f, w, layer) => { if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k01(k / 0.3)); if (k < 0.25) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 1.5, '#FFFFFF', 0.7 * (1 - k / 0.25)));
+  ctx.save(); ctx.globalAlpha *= 1 - k * k; inked(ctx, () => { ctx.beginPath(); ctx.arc(f.x, f.y, f.r, f.a - 1.4 * e, f.a + 1.4 * e); ctx.arc(f.x - Math.cos(f.a) * 10, f.y - Math.sin(f.a) * 10, f.r * 0.82, f.a + 1.4 * e, f.a - 1.4 * e, true); ctx.closePath(); }, '#EEF3F8'); ctx.restore(); };
+// a burst of light (Valkyrie's Call, Sky Dive): a gold flash, light rays and gold stars thrown out
+DRAW.radiantBurst = (ctx, f, w, layer) => { const k = k01(f.t / f.max), e = easeOut(k);
+  if (layer === 'ground') { lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r, '#FFE48A', 0.4 * (1 - k))); return; }
+  if (k < 0.25) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 0.8, '#FFFBEA', 0.8 * (1 - k / 0.25)));
+  ctx.save(); ctx.globalAlpha *= 1 - k; for (let i = 0; i < 10; i++) { const b = i / 10 * TAU + 0.2, d = 14 + f.r * 0.8 * e; inked(ctx, () => star(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 5 * (1 - 0.5 * k), 4, 0.35, b), '#FFE48A'); } ctx.restore(); };
+// Light of Valhalla: a soft gold glow under her while a friend is near (on the floor, no ring)
+DRAW.valhalla = (ctx, f, w, layer) => { const u = f.unit; if (layer !== 'ground') return; if (!u || u.dead) { ended(f, true); return; } if (u.downed || !(u.kit && u.kit.glowOn)) return;
+  lit(ctx, () => glowDisc(ctx, u.x, u.y, f.r * (0.9 + 0.05 * Math.sin(f.t * 2)), '#FFE7A0', 0.16)); };
+// Overclock: gears turning hard over her head and a spark or two
+DRAW.overclock = (ctx, f, w, layer) => { const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const [vx, vy] = upVec(), k = k01(f.t / f.max), x = u.x + vx * (u.vr + 14), y = u.y + vy * (u.vr + 14);
+  ctx.save(); ctx.globalAlpha *= 1 - k * k; for (const [dx, sz, dir] of [[-7, 8, 1], [7, 6, -1]]) { ctx.save(); ctx.translate(x + dx, y); ctx.rotate(f.t * 12 * dir); inked(ctx, () => star(ctx, 0, 0, sz, 8, 0.7, 0), '#FFD45A'); disc(ctx, 0, 0, sz * 0.35, '#8A5A30'); ctx.restore(); } ctx.restore(); };
+// her turret thrown into its spot, tumbling
+PROJ2.turretFly = (ctx, p, T) => { lobUp(ctx, p, 50); ctx.rotate(T * 8); inked(ctx, () => roundRect(ctx, -10, -10, 20, 20, 4), '#8A94A6'); inked(ctx, () => roundRect(ctx, 6, -2.5, 12, 5, 2), '#5A6070'); };
+PROJ2.droneFly = (ctx, p, T) => { lobUp(ctx, p, 30); ctx.rotate(T * 10); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 7, 0, TAU); }, '#E0B050'); };
+PROJ2.cog = (ctx, p, T) => { ctx.rotate(T * 16); inked(ctx, () => star(ctx, 0, 0, 9, 8, 0.72, 0), '#A8B0BA'); disc(ctx, 0, 0, 3, '#5A6070'); };
+IMPACT2D.cog = (ctx, m, k) => { ctx.save(); ctx.globalAlpha *= 1 - k; for (let i = 0; i < 4; i++) { const b = m.a + Math.PI + (i - 1.5) * 0.7, d = 4 + 14 * easeOut(k); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(m.x + Math.cos(b) * d, m.y + Math.sin(b) * d); ctx.lineTo(m.x + Math.cos(b) * (d + 5), m.y + Math.sin(b) * (d + 5)); }, '#FFF4C8', 2); } ctx.restore(); };
+PROJ2.snowball = (ctx, p, T) => { lobUp(ctx, p, 70); ctx.rotate(T * 5); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 9, 0, TAU); }, '#F2FBFF'); disc(ctx, -3, -3, 3, '#DDF6FF'); };
+DRAW.snowBurst = (ctx, f, w, layer) => { if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k); if (k < 0.2) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r, '#DDF6FF', 0.7 * (1 - k / 0.2))); ctx.save(); ctx.globalAlpha *= 1 - k * k; for (let i = 0; i < 9; i++) { const b = i / 9 * TAU + 0.3, d = f.r * (0.2 + 0.8 * e); inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 5 * (1 - 0.5 * k), i % 2 ? '#FFFFFF' : '#DDF6FF'); } ctx.restore(); };
+DRAW.buildSparks = (ctx, f, w, layer) => { if (layer !== 'air') return; const k = k01(f.t / f.max); ctx.save(); ctx.globalAlpha *= 1 - k; for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + f.t * 3, d = 10 + 26 * easeOut(k); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(f.x + Math.cos(b) * d, f.y + Math.sin(b) * d); ctx.lineTo(f.x + Math.cos(b) * (d + 6), f.y + Math.sin(b) * (d + 6)); }, '#FFE66B', 2.2); } ctx.restore(); };
+// the turret's barrels (round 13: "Make barrel swap between showing 2 and 1 (with 2 dark barrels below) to look like it's
+// spinning"): drawn over its art while it fires: two barrels and one, swapping, two dark ones under
+const turretBarrels = (ctx, u, w) => { const fire = (u.firing || 0) > w.time, swap = fire && Math.floor(w.time * 30) % 2;
+  ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(u.facing); const L = u.vr * 1.25;
+  for (const o of [-3.2, 3.2]) inked(ctx, () => roundRect(ctx, 6, o - 2, L, 4, 1.5), '#3A3440');
+  if (swap) inked(ctx, () => roundRect(ctx, 6, -2.2, L + 2, 4.4, 1.5), '#8A94A6'); else for (const o of [-5.5, 5.5]) inked(ctx, () => roundRect(ctx, 6, o - 2.2, L + 2, 4.4, 1.5), '#8A94A6');
+  if (fire) lit(ctx, () => glowDisc(ctx, 8 + L + 4, 0, 12, '#FFE7A0', 0.8)); ctx.restore(); };
+DRAW.turretTop = (ctx, f, w, layer) => { const u = f.unit; if (layer !== 'air' || !alive2(u)) { if (!alive2(u)) ended(f, true); return; } turretBarrels(ctx, u, w); };
+// the four towers and the drones, drawn in code
+const towerBase = (ctx, u, col, fl) => { ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y + 4, u.vr * 0.95, u.vr * 0.45, 0, 0, TAU); ctx.fill(); ctx.restore(); inked(ctx, () => { ctx.beginPath(); ctx.arc(u.x, u.y, u.vr * 0.85, 0, TAU); }, fl ? '#FFFFFF' : col); };
+LOOK2.torcher = (ctx, u, w) => { const fl = u.flashT > 0.06; towerBase(ctx, u, '#6E7680', fl); ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(u.facing);
+  inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, u.vr * 0.95, -1.1, 1.1); ctx.lineTo(0, 0); ctx.closePath(); }, '#A8B0BA'); inked(ctx, () => roundRect(ctx, 10, -5, 22, 10, 3), '#3A3440'); disc(ctx, 32, 0, 3.5, '#FF8A3D');
+  ctx.restore(); if (u.flaming) { const L = 180; ctx.save(); for (let i = 0; i < 9; i++) { const q = ((w.time * 3 + i / 9) % 1), d = 30 + q * L; upright(ctx, u.x + Math.cos(u.facing) * d + Math.sin(i * 7) * 6, u.y + Math.sin(u.facing) * d + Math.cos(i * 5) * 6, () => flame(ctx, 0, 0, 6 + 8 * q)); } ctx.restore(); } };
+LOOK2.tesla = (ctx, u, w) => { const fl = u.flashT > 0.06; towerBase(ctx, u, '#5A6070', fl); upright(ctx, u.x, u.y, () => { inked(ctx, () => roundRect(ctx, -4, -36, 8, 34, 3), '#8A94A6'); for (const yy of [-30, -22, -14]) inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, yy, 9, 3, 0, 0, TAU); }, '#C8784A'); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -40, 7, 0, TAU); }, '#DCE3EC'); });
+  const z = (w.time - (u.zapT || -9)); if (z < 0.3 || Math.sin(w.time * 20) > 0.7) lit(ctx, () => glowDisc(ctx, u.x, u.y - 40, 18, '#FFE66B', 0.7)); };
+LOOK2.mortar = (ctx, u, w) => { const fl = u.flashT > 0.06, rec = Math.max(0, 1 - (w.time - (u.recoil || -9)) / 0.3); towerBase(ctx, u, '#6E7680', fl); ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(u.facing);
+  inked(ctx, () => roundRect(ctx, -6 - rec * 4, -9, 26, 18, 6), '#4A5468'); inked(ctx, () => { ctx.beginPath(); ctx.arc(20 - rec * 4, 0, 7, 0, TAU); }, '#2B2230'); disc(ctx, 20 - rec * 4, 0, 4, '#F2FBFF'); ctx.restore(); };
+LOOK2.medbay = (ctx, u, w) => { const fl = u.flashT > 0.06; towerBase(ctx, u, '#EEF3F8', fl); ctx.save(); ctx.translate(u.x, u.y); inked(ctx, () => { ctx.beginPath(); ctx.rect(-4, -12, 8, 24); ctx.rect(-12, -4, 24, 8); }, '#9BE07A'); ctx.restore();
+  if (Math.sin(w.time * 4) > 0.5) lit(ctx, () => glowDisc(ctx, u.x, u.y, 28, '#9BE07A', 0.35)); };
+LOOK2.medDrone = (ctx, u, w) => { const [vx, vy] = upVec(), h = u.hop || 18; ctx.save(); ctx.globalAlpha *= 0.25; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y, 9, 4, 0, 0, TAU); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.translate(u.x + vx * h, u.y + vy * h); ctx.rotate(Math.sin(w.time * 9 + u.id) * 0.4); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 8, 0, TAU); }, '#EEF3F8'); ctx.fillStyle = '#9BE07A'; ctx.fillRect(-1.5, -5, 3, 10); ctx.fillRect(-5, -1.5, 10, 3);
+  for (const sd of [-1, 1]) inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(sd * 8, 0); ctx.lineTo(sd * 14, Math.sin(w.time * 40) * 3); }, '#A8B0BA', 2); ctx.restore(); };
+LOOK2.windup = (ctx, u, w) => { const fl = u.flashT > 0.06, step = Math.sin((u.key || 0)) * 2; ctx.save(); ctx.globalAlpha *= 0.25; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y + 3, 11, 5, 0, 0, TAU); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(u.facing || 0); for (const sd of [-1, 1]) inked(ctx, () => roundRect(ctx, -3 + sd * step, sd * 9 - 2, 6, 4, 2), '#3A3440');
+  inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 9, 0, TAU); }, fl ? '#FFFFFF' : '#E0B050'); disc(ctx, 4, -3, 2, '#2B2230'); disc(ctx, 4, 3, 2, '#2B2230');
+  ctx.save(); ctx.rotate((u.key || 0) * 0.6); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-9, 0); ctx.lineTo(-16, 0); ctx.moveTo(-16, -4); ctx.lineTo(-16, 4); }, '#8A94A6', 2.4); ctx.restore(); ctx.restore(); };
 
 export function drawK2(ctx, f, w, layer) { const d = DRAW[f.draw]; if (d) { ctx.save(); d(ctx, f, w, layer); ctx.restore(); } }
 

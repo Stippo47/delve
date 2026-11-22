@@ -352,7 +352,12 @@ const TRAIT_SCENE = {
   huntingPartner: { words: 'the falcon rakes' },
   powderKeg: { words: 'it blew up', kill: true },
   longShot: { words: 'a long shot' },
-  plunder: { words: 'extra coins', kill: true }, // (lane H2, round 13: the new heroes' new traits)
+  plunder: { words: 'extra coins', kill: true },
+  duelist: { words: 'one on one' },
+  keenEdge: { words: '+3% of its health' },
+  valhalla: { words: 'the glow heals' },
+  overclock: { words: 'overclocked', abilities: true },
+  fromTheWild: { words: 'back as a man', abilities: true }, // (lane H2, round 13: the new heroes' new traits)
   grace: { words: '3rd blow: crit' },
   skyborn: { words: 'no roots', hitSt: { entangle: 45 } },
   phalanx: { words: 'ally near: -10%' },
