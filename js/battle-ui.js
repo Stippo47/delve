@@ -3,13 +3,16 @@
 // The field runs up the screen with Blue at the bottom and Red at the top, so every screen stacks them that way.
 // Round 13: a hero stack has a tier (Yours, or 0-3: heroes.js tierBuild), the picker adds "as" a tier or a rank so one
 // kind can be fielded at several ("2 major slimes and 1 normal slime and 3 elites"), a ground size, a strength switch
-// (dungeon strength or even), a dev switch that fields everything, a stack per row, and a result built on bars.
+// (dungeon strength or even), a stack per row, and a result built on bars. Round 14: the dev switch that fields
+// everything (save.battleDev) lives with the other dev controls now, in the camp's Settings ("Put all dev controls in 1
+// place"); tapping a row's picture opens that unit's page (js/unit.js).
 import { DEFS } from './units.js';
 import { THEMES, DUNGEON_ORDER } from './themes.js';
 import { portrait } from './inspect.js';
 import { I } from './ui-kit.js';
 import { cue } from './sfx.js';
 import { dungeonOpen } from './progress.js';
+import { openUnit } from './unit.js';
 import { battleRoster, cleanSetup, setupProblem, countOf, isHero, isBoss, canRank, sideOf, standing, keyOf, tierName, SIDES, SIDE_MAX, STACK_MAX, RANKS, TIERS, SIZES } from './battle.js';
 
 let api = null, el = null, setup = null, adding = null, tab = 'heroes', note = '';
@@ -43,7 +46,7 @@ function keep() { const save = api.save(); save.battle = JSON.parse(JSON.stringi
 function sideHtml(side) {
   const list = setup[side], n = countOf(list);
   const rows = list.map((s, i) => `<div class="bs-row ${tagCls(s)}">
-      ${pic(s.k, 'md')}
+      <div role="button" class="bs-info" data-b="info:${side}:${i}">${pic(s.k, 'md')}</div>
       <div class="bs-mid"><b class="bs-name">${esc(nameOf(s.k))}</b>
         ${isHero(s.k) || canRank(s.k) ? `<button class="bs-tag" data-b="tag:${side}:${i}">${esc(tagOf(s))}</button>` : `<span class="bs-tag none">${esc(tagOf(s))}</span>`}</div>
       <div class="bs-step"><button data-b="dec:${side}:${i}" aria-label="one fewer">−</button><b>${s.n}</b><button data-b="inc:${side}:${i}" aria-label="one more">+</button></div>
@@ -78,8 +81,7 @@ function pickerHtml() {
   }
   return `<div class="bp"><div class="bp-back" data-b="done"></div><div class="bp-panel ${adding}">
     <div class="bp-h"><i class="bs-dot"></i><b>Add to ${SIDES[adding].name}</b><span class="quiet small">${countOf(list)} of ${SIDE_MAX}</span><button class="btn bp-done" data-b="done">Done</button></div>
-    <div class="bp-tabs">${tabs}</div><div class="bp-body">${body}
-      <div role="button" class="bp-dev ${save.battleDev ? 'on' : ''}" data-b="dev"><span>Dev: field everything, beaten or not</span><i class="bp-sw"></i></div></div></div></div>`;
+    <div class="bp-tabs">${tabs}</div><div class="bp-body">${body}</div></div></div>`;
 }
 
 function render() {
@@ -126,10 +128,10 @@ function onClick(e) {
     case 'astier': asTier = p === 'y' ? null : +p; cue('tap'); break;
     case 'asrank': asRank = +p; cue('tap'); break;
     case 'pick': addOne(adding, p); break;
-    case 'dev': { // "Add dev unlock": everything can be fielded; the setup is re-read so nothing just picked is dropped
-      const save = api.save(); save.battleDev = !save.battleDev; api.persist(); cue('tap');
-      if (!save.battleDev) setup = cleanSetup(save, setup);
-      break;
+    case 'info': { // a row's picture: that unit's own page (round 14, js/unit.js), back returns here
+      const s = setup[p][+q]; if (!s) break;
+      cue('tap'); openUnit({ save: api.save(), kind: isHero(s.k) ? 'hero' : 'foe', id: s.k, rank: s.rank || 0, page: isHero(s.k) ? 'preview' : 'overview', onBack: () => {} });
+      return;
     }
     case 'inc': { // one more of that very stack (its tag too)
       const s = setup[p][+q]; if (!s) break;

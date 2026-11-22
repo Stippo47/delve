@@ -786,7 +786,7 @@ const SHOW_BARS = false; // health and status bars live in the HUD now (designer
 function drawOverlay(ctx, u, dt = 0) {
   if (u.downed || (u.linkTo && u.def.segment)) return; // (round 13, lane E: a chain's links carry no bar: its health is its head's)
   upright(ctx, u.x, u.y, () => {
-    if (u.team === 'enemy' || w_battle) drawEnemyHp(ctx, u, dt); // hpstyle.js: only once it's hurt, in the player's chosen style
+    if (u.team === 'enemy' || w_battle || u.barAlways) drawEnemyHp(ctx, u, dt); // hpstyle.js: only once it's hurt, in the player's chosen style
     if (u.team !== 'hero' && u.act && (u.act.type === 'windup' || u.act.type === 'slam')) {
       const k = 1 - u.act.t / u.act.max;
       // a warning mark drawn as a shape (no text in the arena): a bar and a dot over the head. Only on the enemy's

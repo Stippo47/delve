@@ -1,361 +1,242 @@
-// The Book (round 13, lane K): rebuilt around a live preview. The designer: "On every ability I want the preview clips
-// you made in riffle to be shown (can be simulated not recorded) for every unit and ability and tier. Will show in the
-// book/ bestiary. You can select the hero and their tier ... Probably overhaul the book ui overall", and "All status
-// effects and trinkets should have previews aswell".
-// One screen for a phone held in one hand, top to bottom:
-//   the bar        back, what you're looking at, how many you've met
-//   the stage      the live preview (preview.js), with what's playing and its tier or rank written on it
-//   the page       the thing's words and numbers, then its moves as big rows; tapping a row plays it on the stage
-//   the dial       tier 0 / I / II / III for a hero, Normal / Elite / Major for a monster (in thumb reach)
-//   the shelf      a sideways strip of every hero, monster (by dungeon), status, trinket and potion
-//   the tabs       Heroes · Monsters · Statuses · Items
+// The Book (round 14, lane U): grids. The designer: "Very busy and packed together. Some repetitiveness. You can show
+// multiple pages side by side I can swipe between like clash royal", and "There would be no bottom bar to navigate
+// between enemies you would press back and it would open a page listing them all out in a grid. You could also see all
+// heroes in 1 page, trinkets in another, status effect in another, dungeon overview in another."
+// Five pages side by side (pager.js): Heroes · Monsters · Trinkets · Statuses · Dungeons. Each is a grid of cards and
+// nothing else. A card opens the thing's own page over the grid; Back returns to the grid where it was left:
+//   a hero, a monster          the unit page (js/unit.js), the same one the camp opens for a hero
+//   a trinket, potion, status  one page: its live preview, its words, its numbers
+//   a dungeon                  an overview: floors, who lives there, the boss, how far the party has got
 // The camp opens it from the book on the stump (camp.js go('book')); CAMP.setMode('book') still does.
-import { HEROES, HERO_IDS, freeNodes, tierBuild, STATS, statsFor } from './heroes.js';
+import { HEROES, HERO_IDS } from './heroes.js';
 import { DEFS } from './units.js';
-import { makeWorld, spawn } from './sim.js';
-import { initKit } from './kits.js';
-import { numbersOf, quietly } from './numbers.js';
-import { battleFoe } from './dungeon.js';
-import { ELITE, MAJOR, MAJOR_MOVES } from './elites.js';
 import { STATUS } from './statuses.js';
-import { beastFun, beastHabit, trinketFun, POTION_FUN, STATUSES } from './bestiary.js';
-import { ELITE_MOVE } from './movetext.js';
+import { trinketFun, POTION_FUN, STATUSES } from './bestiary.js';
 import * as P from './progress.js';
-import { icon } from './icons.js';
+import * as M from './meta.js';
+import { icon, statIcon } from './icons.js';
 import { portrait } from './inspect.js';
-import { I, ROLE, ROLE_COL, roman, face, gold } from './ui-kit.js';
+import { I, face, gold, themeColors } from './ui-kit.js';
 import { foeCount, num } from './stats-ui.js';
 import { cue } from './sfx.js';
 import { makePlayer } from './preview.js';
-import { heroMoves, foeMoves, foeGroups, statusIds, statusHow, canRank, sceneOf, MAJOR_KEY, makeStage, specKey, foeTrinkets, traitNote } from './preview-sim.js';
-import { setSeed } from './util.js';
+import { foeGroups, statusIds, statusHow, statusWays } from './preview-sim.js';
+import { THEMES, DUNGEON_ORDER } from './themes.js';
+import { makePager } from './pager.js';
+import { openUnit, closeUnit, unitOpen, cell, head } from './unit.js';
 
-const TABS = [['heroes', 'Heroes'], ['monsters', 'Monsters'], ['statuses', 'Statuses'], ['items', 'Items']];
-const RANKS = ['Normal', 'Elite', 'Major'];
-// the major's moves in words (elites.js MAJOR_MOVES, the comments there)
-const MAJOR_WORDS = { quake: 'A slam that shakes the floor all round it.', volley: 'A ring of shots out all round.',
-  charge: 'A long charge with a short tell.', call: 'Calls help from its dungeon\'s own roster.' };
-const STATUS_WORDS = { burn: 'fire', chill: 'cold', poison: 'poison', shock: 'lightning', wet: 'water', curse: 'curses', radiance: 'holy light', entangle: 'roots', stagger: 'staggering', charm: 'charm', confuse: 'confusion', sleepy: 'drowsiness', bleed: 'bleeding', fear: 'fear' };
-const FROM_WORDS = { frozen: 'chill', sick: 'poison', radiant: 'radiance', hexed: 'curse', ko: 'stagger', charmed: 'charm', addled: 'confuse', terrified: 'fear' }; // (round 13, lane S)
-const SCENE_WORDS = { down: 'The wearer takes a blow that would bring them down.', low: 'The wearer is knocked below a third of their health.',
-  kill: 'The wearer fells dummies.', friendDown: 'A friend goes down.', crowd: 'Dummies crowd round the wearer.', burnFoe: 'The dummies are burning.',
-  fire: 'The wearer stands in flames.', poison: 'The dummies\' blows poison.', ranged: 'An archer shoots down a line of dummies.',
-  hook: 'A dummy far off goes after a friend.', walk: 'The wearer walks about.', hurt: 'The wearer is hurt and fighting.', drink: 'The hero is badly hurt with nobody close.',
-  fight: 'The wearer trades blows with the dummies.' };
+const TABS = [{ id: 'heroes', name: 'Heroes' }, { id: 'monsters', name: 'Monsters' }, { id: 'trinkets', name: 'Trinkets' }, { id: 'statuses', name: 'Statuses' }, { id: 'dungeons', name: 'Dungeons' }];
+const FROM = { frozen: 'chill', sick: 'poison', radiant: 'radiance', hexed: 'curse', ko: 'stagger', charmed: 'charm', addled: 'confuse', terrified: 'fear' };
+const INTO = { chill: 'frozen', poison: 'sick', radiance: 'radiant', curse: 'hexed', stagger: 'ko', charm: 'charmed', confuse: 'addled', fear: 'terrified', entangle: 'root', sleepy: 'sleep' };
 
-let el = null, save = null, onBack = null, player = null;
-const st = { tab: 'heroes', hero: null, tier: 3, hmove: 'attack', foe: null, rank: 0, fmove: null, status: null, item: null };
-let shelfKey = '';
+// while the state a burst leaves is still on the fighter, the meter's right-hand picture stays lit
+const STATE_ON = { chill: (u) => u.frozenT > 0, poison: (u) => u.sickT > 0, radiance: (u) => u.radiantT > 0, curse: (u) => !!u.hexed, stagger: (u) => u.koT > 0,
+  charm: (u) => u.flipKind === 'charm', confuse: (u) => u.addledT > 0, fear: (u) => u.fearT > 0, entangle: (u) => u.rootT > 0, sleepy: (u) => u.sleepT > 0 };
+
+let el = null, save = null, onBack = null, acts = null, pager = null, player = null;
+let thing = null; // what's open over the grids: { t: 'trinket' | 'potion' | 'status' | 'dungeon', id, way }
 
 export function openBook(opts) {
-  save = opts.save; onBack = opts.onBack;
-  if (bookOpen()) { render(false); return; } // the camp redrew behind it: keep what's playing
+  save = opts.save; onBack = opts.onBack; acts = opts.acts || null;
+  if (bookOpen()) { fill(); if (thing) thingBody(); return; } // the camp redrew behind it: keep the place and what's playing
   el = document.getElementById('book');
   if (!el) { el = document.createElement('div'); el.id = 'book'; document.body.appendChild(el); }
   if (!el._wired) { el._wired = true; el.addEventListener('click', onClick); }
   el.classList.remove('hidden');
-  if (!st.hero) st.hero = HERO_IDS.find((id) => save.heroes[id] && save.heroes[id].owned) || HERO_IDS[0];
-  shelfKey = '';
-  render(true);
+  if (!pager) {
+    el.innerHTML = `<div class="un bk"><header class="un-bar"><button class="top-back" data-bk="back" aria-label="back">${I.back}</button><div class="un-ttl"><b>The Book</b></div><span class="bk-count"></span></header><div class="un-pages"></div></div>
+      <div class="bk-thing hidden"></div>`;
+    pager = makePager(el.querySelector('.un-pages'), { tabs: TABS, at: 0, onChange: () => { cue('tap'); count(); } });
+    for (const p of pager.pages) p.innerHTML = '<div class="un-scroll"></div>';
+  }
+  fill();
 }
 export function closeBook() {
+  closeUnit();
   if (player) player.stop();
   if (el) el.classList.add('hidden');
 }
 export const bookOpen = () => !!(el && !el.classList.contains('hidden'));
-// for the test tools: pick things without tapping
-export const BOOK = { state: st, set(o) { Object.assign(st, o); shelfKey = ''; render(true); }, get player() { return player; } };
+// for the test tools: go to a page, open a card
+export const BOOK = {
+  tab(id) { pager.go(TABS.findIndex((t) => t.id === id), false); },
+  open(t, id, o = {}) { if (t === 'hero' || t === 'foe') openCard(t, id, o); else openThing({ t, id, ...o }); },
+  close() { closeUnit(); closeThing(); },
+  get player() { return player; }, get thing() { return thing; }, get pager() { return pager; },
+};
 if (typeof window !== 'undefined') window.BOOK = BOOK;
 
 // ---------------------------------------------------------------- who is in the Book
 const owned = (id) => !!(save.heroes[id] && save.heroes[id].owned);
 const metFoe = (k) => !!save.cheat || !!((save.seen && save.seen[k] && save.seen[k].met) || (foeCount(save, k) || {}).n);
 let groups = null;
-const foeGroupsCached = () => groups || (groups = foeGroups());
-const items = () => [...P.shopTrinkets().map((t) => ({ k: 't', id: t.id })), ...Object.keys(P.POTIONS).map((id) => ({ k: 'p', id }))];
+const groupsOf = () => groups || (groups = foeGroups());
 const statusList = () => statusIds().filter((id) => STATUSES[id] || STATUS[id]);
+const tile = (act, pic, name, cls = '') => `<div ${act ? `role="button" data-bk="${act}"` : ''} class="tile ${cls}">${pic}<span>${name}</span></div>`;
+const sec = (t, right = '') => `<div class="un-h"><span class="cap">${t}</span>${right ? `<span class="quiet small">${right}</span>` : ''}</div>`;
+const beast = (k, cls = '') => `<span class="b-pic ${DEFS[k].boss ? 'boss' : ''} ${cls}"><img src="${portrait(k)}" alt=""></span>`;
+const tico = (inner, rar) => `<span class="t-ico" ${rar ? `style="--rar:${rar}"` : ''}>${inner}</span>`;
 
-// ---------------------------------------------------------------- the frame
-function render(replay) {
-  if (!el) return;
-  const tab = st.tab;
-  if (tab === 'monsters' && (!st.foe || !metFoe(st.foe))) st.foe = foeGroupsCached().flatMap((g) => g.kinds).find(metFoe) || null;
-  if (tab === 'statuses' && !st.status) st.status = statusList()[0];
-  if (tab === 'items' && !st.item) st.item = items()[0];
-  const page = ({ heroes: heroPage, monsters: foePage, statuses: statusPage, items: itemPage }[tab])();
-  const metN = foeGroupsCached().reduce((a, g) => a + g.kinds.filter(metFoe).length, 0), allN = foeGroupsCached().reduce((a, g) => a + g.kinds.length, 0);
-  const sk = tab + ':' + (tab === 'heroes' ? st.hero : tab === 'monsters' ? st.foe : tab === 'statuses' ? st.status : st.item && st.item.id);
-  const shelfHtml = shelf();
-  if (!el.firstChild || el.dataset.built !== '1') {
-    el.innerHTML = `<div class="bk">
-      <div class="bk-bar"><button class="top-back" data-bk="back" aria-label="back">${I.back}</button><div class="bk-title"></div><span class="bk-count"></span></div>
-      <div class="bk-stage"><canvas class="bk-cv"></canvas><div class="bk-tag"></div><div class="bk-lock hidden"></div><i class="bk-prog"><b></b></i><div class="bk-meter hidden"></div></div>
-      <div class="bk-page"></div>
-      <div class="bk-bar2"></div>
-      <div class="bk-dial"></div>
-      <div class="bk-shelf"></div>
-      <div class="bk-tabs"></div></div>`;
-    el.dataset.built = '1';
-    if (player) player.destroy();
-    player = makePlayer(el.querySelector('.bk-cv'), { onFrame: frameUi, onError: () => { const l = el.querySelector('.bk-lock'); l.textContent = 'This preview broke. It has been noted.'; l.classList.remove('hidden'); } });
-  }
-  el.dataset.tab = tab;
-  el.querySelector('.bk-title').innerHTML = page.title;
-  el.querySelector('.bk-count').innerHTML = tab === 'monsters' ? `${metN}/${allN} met` : tab === 'heroes' ? `${HERO_IDS.filter(owned).length}/${HERO_IDS.length} yours` : '';
-  const pg = el.querySelector('.bk-page'), keepScroll = pg.dataset.key === sk ? pg.scrollTop : 0;
-  pg.innerHTML = page.html; pg.dataset.key = sk; pg.scrollTop = keepScroll;
-  el.querySelector('.bk-bar2').innerHTML = page.bar || '';
-  el.querySelector('.bk-bar2').classList.toggle('hidden', !page.bar);
-  el.querySelector('.bk-dial').innerHTML = page.dial || '';
-  el.querySelector('.bk-dial').classList.toggle('hidden', !page.dial);
-  el.querySelector('.bk-tabs').innerHTML = TABS.map(([k, n]) => `<div role="button" class="bk-tab ${tab === k ? 'on' : ''}" data-bk="tab:${k}">${n}</div>`).join('');
-  const sh = el.querySelector('.bk-shelf');
-  if (shelfKey !== tab + '|' + shelfHtml.length + '|' + sk) {
-    const left = sh.scrollLeft; sh.innerHTML = shelfHtml; shelfKey = tab + '|' + shelfHtml.length + '|' + sk; sh.scrollLeft = left;
-    const on = sh.querySelector('.on'); if (on && replay) { const r = on.getBoundingClientRect(), R = sh.getBoundingClientRect(); if (r.left < R.left + 8 || r.right > R.right - 8) sh.scrollLeft += r.left - R.left - R.width / 2 + r.width / 2; }
-  }
-  if (replay) play(page.spec, page.tag);
-  else setTag(page.tag);
+// ---------------------------------------------------------------- the five grids
+function fill() {
+  const set = (id, html) => { const sc = pager.page(id).querySelector('.un-scroll'), top = sc.scrollTop; sc.innerHTML = html; sc.scrollTop = top; };
+  // heroes: yours, then the rest
+  const mine = HERO_IDS.filter(owned), rest = HERO_IDS.filter((id) => !owned(id));
+  const hero = (id) => tile(`hero:${id}`, `<span class="t-face">${face(id, 62)}${owned(id) ? `<span class="lvl">${M.level(save, id)}</span>` : ''}</span>`, HEROES[id].name, owned(id) ? '' : 'notyet');
+  set('heroes', `${sec('With you', mine.length)}<div class="tiles">${mine.map(hero).join('')}</div>${rest.length ? `${sec('Not recruited', rest.length)}<div class="tiles">${rest.map(hero).join('')}</div>` : ''}`);
+  // monsters: by dungeon; the ones not met yet stay dark
+  set('monsters', groupsOf().map((g) => {
+    const met = g.kinds.filter(metFoe).length;
+    return `${sec(g.name, `${met} of ${g.kinds.length}`)}<div class="tiles">${g.kinds.map((k) => (metFoe(k) ? tile(`foe:${k}`, beast(k), DEFS[k].name) : tile('', beast(k), '???', 'unknown'))).join('')}</div>`;
+  }).join(''));
+  // trinkets, then potions
+  const tr = P.shopTrinkets().map((t) => tile(`trinket:${t.id}`, tico(icon('trinket', t.id, '', t.color), P.RARITY[t.rarity].color), t.name)).join('');
+  const po = Object.keys(P.POTIONS).map((id) => tile(`potion:${id}`, tico(icon('potion', id)), P.POTIONS[id].name)).join('');
+  set('trinkets', `${sec('Trinkets')}<div class="tiles">${tr}</div>${sec('Potions')}<div class="tiles">${po}</div>`);
+  // statuses: what builds up, what a burst leaves, the rest
+  const all = statusList(), st = (id) => tile(`status:${id}`, tico(icon('status', id)), (STATUSES[id] || { name: id }).name);
+  const build = all.filter((id) => STATUS[id]), burst = all.filter((id) => !STATUS[id] && FROM[id]), other = all.filter((id) => !STATUS[id] && !FROM[id]);
+  set('statuses', `${sec('Build up, then burst')}<div class="tiles">${build.map(st).join('')}</div>${sec('What a burst leaves')}<div class="tiles">${burst.map(st).join('')}</div>${sec('Other states')}<div class="tiles">${other.map(st).join('')}</div>`);
+  // dungeons: one card each, in the order they open
+  set('dungeons', `<div class="dg-list">${DUNGEON_ORDER.filter((t) => THEMES[t]).map((t) => {
+    const T = THEMES[t], s = P.dungeonState(save, t), open = s.open || !!save.cheat;
+    const line = !open ? `${I.lock}<span>${M.dungeonLockText(t)}</span>` : s.cleared ? `<span>Boss beaten${s.cleared > 1 ? ' ' + s.cleared + ' times' : ''}</span>` : s.best ? `<span>Floor ${Math.min(3, s.best)} reached</span>` : '<span>Not entered yet</span>';
+    return `<div role="button" class="dg ${open ? '' : 'shut'}" data-bk="dungeon:${t}">${swatch(T)}<div class="dg-mid"><b>${T.name}</b><span class="quiet small dg-line">${line}</span></div></div>`;
+  }).join('')}</div>`);
+  count();
 }
-function setTag(tag) { const t = el.querySelector('.bk-tag'); if (t) t.innerHTML = tag || ''; }
-function play(spec, tag) {
-  setTag(tag);
-  const lock = el.querySelector('.bk-lock'), meter = el.querySelector('.bk-meter');
-  meter.classList.add('hidden'); meter.innerHTML = '';
-  if (!spec) { player.stop(); lock.textContent = 'Nothing here yet.'; lock.classList.remove('hidden'); return; }
-  const S = player.play(spec);
-  if (S && S.locked) { lock.innerHTML = `${I.lock}<span>${S.why}</span>`; lock.classList.remove('hidden'); } else lock.classList.add('hidden');
-  if (spec.t === 'status') meter.classList.remove('hidden');
+function swatch(T) { const c = themeColors(T); return `<span class="dg-sw" style="background:${c.wall}"><i style="background:${c.floor}"></i><em style="background:${c.accent}"></em></span>`; }
+function count() {
+  const c = el.querySelector('.bk-count'); if (!c) return;
+  const id = pager.id;
+  c.textContent = id === 'heroes' ? `${HERO_IDS.filter(owned).length} of ${HERO_IDS.length}` : id === 'monsters' ? `${groupsOf().reduce((a, g) => a + g.kinds.filter(metFoe).length, 0)} of ${groupsOf().reduce((a, g) => a + g.kinds.length, 0)} met` : '';
 }
-// what changes as it plays: the loop's progress, a status's fill
+
+// ---------------------------------------------------------------- a hero or a monster: the unit page
+function openCard(t, id, o = {}) {
+  openUnit({ save, kind: t, id, acts: t === 'hero' ? acts : null, onBack: () => { if (bookOpen()) fill(); }, ...o });
+}
+
+// ---------------------------------------------------------------- a trinket, a potion, a status, a dungeon
+function openThing(th) {
+  thing = th;
+  const host = el.querySelector('.bk-thing');
+  host.classList.remove('hidden');
+  if (player) { player.destroy(); player = null; }
+  const staged = th.t !== 'dungeon';
+  host.innerHTML = `<div class="un"><header class="un-bar"></header>
+    ${staged ? `<div class="pv-stage th-stage"><canvas class="pv-cv"></canvas><i class="pv-prog"><b></b></i></div><div class="th-meter hidden"></div><div class="th-ways hidden"></div>` : ''}
+    <div class="un-scroll th-body"></div></div>`;
+  if (staged) {
+    player = makePlayer(host.querySelector('.pv-cv'), { onFrame: frameUi, onError: () => { host.querySelector('.th-body').innerHTML = '<p class="un-note">This preview broke. It has been noted.</p>'; } });
+    play();
+  }
+  thingBody();
+}
+function closeThing() {
+  if (player) player.stop();
+  thing = null;
+  const host = el && el.querySelector('.bk-thing'); if (host) { host.classList.add('hidden'); host.innerHTML = ''; }
+}
+function play() {
+  const th = thing, host = el.querySelector('.bk-thing');
+  const spec = th.t === 'status' ? { t: 'status', id: th.id, way: th.way } : { t: th.t, id: th.id };
+  player.play(spec);
+  // a status that builds up: its meter, under the stage (the cause on the left, what it bursts into on the right)
+  const meter = host.querySelector('.th-meter'), ways = host.querySelector('.th-ways');
+  if (th.t === 'status') {
+    const src = FROM[th.id] || th.id, B = STATUS[src];
+    meter.classList.toggle('hidden', !B);
+    if (B) meter.innerHTML = `<span class="tm-i">${icon('status', src)}</span><i class="tm-bar" style="--c:${B.col}"><b></b></i><span class="tm-i tm-out">${icon('status', INTO[src] || src)}</span>`;
+    const W = statusWays(th.id);
+    ways.classList.toggle('hidden', !W);
+    if (W) ways.innerHTML = `<div class="un-seg">${W.map((w) => `<div role="button" data-bk="way:${w.id}" data-way="${w.id}">${w.name}</div>`).join('')}</div>`;
+  } else { meter.classList.add('hidden'); ways.classList.add('hidden'); }
+}
+// what changes as it plays: the loop's progress, a status's meter, which way this loop goes
 function frameUi(S) {
-  const b = el.querySelector('.bk-prog b'); if (b) b.style.width = Math.min(100, 100 * S.t / S.loop).toFixed(1) + '%';
-  if (S.spec.t === 'status' && S.hero) {
-    const m = el.querySelector('.bk-meter'), id = S.spec.id, src = FROM_WORDS[id] || id, u = S.hero;
-    if (STATUS[src]) {
-      const need = typeof STATUS[src].need === 'function' ? STATUS[src].need(u) : STATUS[src].need, v = (u.st && u.st[src]) || 0;
-      const burst = u.bursts && u.bursts[src] != null && S.w.time - u.bursts[src] < 0.6;
-      const html = `<span class="cap">${STATUSES[src] ? STATUSES[src].name : src}</span><i class="bk-fill ${burst ? 'burst' : ''}" style="--c:${STATUS[src].col}"><b style="width:${Math.min(100, 100 * v / need).toFixed(0)}%"></b></i><span class="bk-mv">${burst ? 'Burst!' : Math.round(v) + ' / ' + need}</span>`;
-      if (m._h !== html) { m.innerHTML = html; m._h = html; }
-    }
-  }
-}
-
-// ---------------------------------------------------------------- heroes
-const numbersCache = new Map();
-function heroNumbersAt(id, tier) {
-  const key = id + ':' + tier;
-  if (!numbersCache.has(key)) {
-    let n = null;
-    try { n = quietly(() => { const w = makeWorld(400, 400), u = spawn(w, id, 200, 200, { level: 1 }); initKit(u, id, { nodes: { ...freeNodes(id), ...tierBuild(id, tier) } }, 1); return numbersOf(u); }); } catch (e) { n = null; }
-    numbersCache.set(key, n);
-  }
-  return numbersCache.get(key);
-}
-const f1 = (v) => (v >= 10 ? String(Math.round(v)) : (Math.round(v * 10) / 10).toFixed(1));
-function statLine(n, base) {
-  if (!n) return '';
-  const cells = [['Hit', Number.isFinite(n.hit) && n.hit > 0 ? f1(n.hit) : '–', base && base.hit], ['Hits/s', n.aps >= 0.005 ? n.aps.toFixed(2) : '–', base && base.aps], ['Reach', Math.round(n.range), base && base.range],
-    ['Health', num(n.hp), base && base.hp], ['Armour', Math.round((n.armor || 0) * 10) / 10, base && base.armor], ['Speed', Math.round(n.speed), base && base.speed]];
-  const raw = [n.hit, n.aps, n.range, n.hp, n.armor || 0, n.speed];
-  return `<div class="bk-stats">${cells.map(([k, v, b], i) => `<div class="${b != null && raw[i] > b + 1e-6 ? 'up' : ''}"><b>${v}</b><span>${k}</span></div>`).join('')}</div>`;
-}
-// what the web adds at this tier, as short chips ("+16% damage")
-function webChips(id, tier) {
-  if (!tier || !STATS) return '';
-  const nodes = tierBuild(id, tier), chips = [];
-  try {
-    const s = statsFor(id, nodes), pct = (f) => Math.round(f * 100);
-    for (const [k, v] of Object.entries(s)) if (k !== 'ab' && v > 0 && STATS[k]) chips.push(STATS[k].line(pct(v)));
-  } catch (e) { return ''; }
-  return chips.length ? `<div class="bk-chips">${chips.map((c) => `<span>${c}</span>`).join('')}</div>` : '';
-}
-function heroPage() {
-  const id = st.hero, h = HEROES[id], tier = st.tier, mine = owned(id);
-  const moves = heroMoves(id);
-  if (!moves.find((m) => m.move === st.hmove)) st.hmove = 'attack';
-  const cur = moves.find((m) => m.move === st.hmove);
-  const n = heroNumbersAt(id, tier), base = tier ? heroNumbersAt(id, 0) : null;
-  const capOf = (m) => (m.kind === 'attack' ? 'Attack' : m.kind === 'trait' ? 'Trait' : `Ability ${m.i + 1} · ${m.ab.cd}s`);
-  const icoOf = (m) => (m.kind === 'attack' ? I.sword : m.kind === 'trait' ? I.crown : icon('ability', m.move));
-  // what's playing, first: its words, and for an ability every tier's line with this tier's lit (what it adds)
-  const desc = cur.kind === 'attack' ? h.attack.desc : cur.kind === 'trait' ? h.trait.desc : cur.ab.desc;
-  let ladder = '';
-  if (cur.kind === 'ability') ladder = `<ol class="mv-tiers">${cur.ab.tiers.map((t, k) => `<li class="${k + 1 <= tier ? 'got' : ''} ${k + 1 === tier ? 'now' : ''}"><i>${roman(k + 1)}</i><span>${t}</span></li>`).join('')}</ol>`
-    + (tier < 1 ? `<p class="mv-note">${I.lock} Tier 0 has no abilities yet. Pick tier I, II or III below to see it.</p>` : '');
-  if (cur.kind === 'trait') ladder = `<p class="mv-note">Shown in a short spar set up for it; each time it acts, its words rise off ${h.name}.${traitNote(id) ? ' ' + traitNote(id) : ''}</p>`;
-  if (cur.kind === 'ability' && tier >= 1) ladder += `<p class="mv-note">On the cast, what tier ${roman(tier)} adds rises off ${h.name}.</p>`;
-  const now = `<div class="bk-now"><span class="mv-ico ${cur.kind === 'ability' ? 'ab' : ''}">${icoOf(cur)}</span><div class="mv-mid"><span class="cap">${capOf(cur)}</span><b>${cur.name}</b></div>
-      <span class="bk-who">${face(id, 34)}</span></div><p class="mv-desc">${desc}</p>${ladder}`;
-  // the moves, as a bar of big buttons just over the tier dial (under the thumb)
-  const bar = moves.map((m) => {
-    const on = m.move === st.hmove, locked = m.kind === 'ability' && tier < 1;
-    const short = m.kind === 'attack' ? 'Attack' : m.kind === 'trait' ? 'Trait' : m.name;
-    return `<div role="button" class="mb ${on ? 'on' : ''} ${locked ? 'locked' : ''}" data-bk="hmove:${m.move}"><span class="mb-ico">${icoOf(m)}${locked ? `<i class="mb-lock">${I.lock}</i>` : ''}</span><span class="mb-n">${short}</span></div>`;
-  }).join('');
-  const html = `<div class="bk-card">${now}</div>
-    <div class="bk-head" style="--rc:${ROLE_COL[h.role]}">${face(id, 40)}<div class="bk-hm"><b class="bk-name">${h.name}</b><span class="cap" style="color:${ROLE_COL[h.role]}">${ROLE[h.role]}${mine ? '' : ' · not recruited'}</span></div>
-      <span class="bk-tierbig">${tier ? 'Tier ' + roman(tier) : 'Tier 0'}</span></div>
-    ${statLine(n, base)}<p class="bk-small quiet">${tier ? `Tier ${roman(tier)}: every node of the skill web out to shell ${tier === 3 ? '3 (the whole web)' : tier}, at level 1. Teal numbers are up on tier 0.` : 'Tier 0: nothing bought, level 1.'}</p>${webChips(id, tier)}
-    <p class="bk-blurb">${h.blurb || ''}</p>`;
-  const dial = `<span class="cap dial-cap">Tier</span><div class="bk-seg">${[0, 1, 2, 3].map((t) => `<div role="button" class="${t === tier ? 'on' : ''}" data-bk="tier:${t}">${t ? roman(t) : '0'}</div>`).join('')}</div>`;
-  const tag = `<b>${cur.name}</b><span>${cur.kind === 'attack' ? 'attack' : cur.kind === 'trait' ? 'trait' : (tier ? 'tier ' + roman(tier) : 'locked')}</span>`;
-  return { title: h.name, html, dial, bar, spec: { t: 'hero', id, move: st.hmove, tier }, tag };
-}
-
-// ---------------------------------------------------------------- monsters
-// A move is offered only if its preview shows it: the stage is run once, quietly, off screen (about 250 steps of a
-// small world, a few tens of ms, once per kind, move and rank) and must fire. A move that can't be staged (a bomb bot
-// that blows itself up before its major move comes round) isn't offered rather than shown doing nothing.
-const stageCache = new Map();
-function canStage(spec) {
-  const key = specKey(spec);
-  if (!stageCache.has(key)) {
-    let ok = false;
-    try { ok = quietly(() => { setSeed(7); const S = makeStage(spec); for (let i = 0, n = Math.ceil(S.loop * 60) + 6; i < n && !S.loopsFired && !(S.fired() && S.loops === 0); i++) S.step(1 / 30); return S.loopsFired > 0 || S.fired(); }); } catch (e) { ok = false; } // within two loops
-    stageCache.set(key, ok);
-  }
-  return stageCache.get(key);
-}
-function foeNumbersAt(k, rank) {
-  const key = 'f:' + k + ':' + rank;
-  if (!numbersCache.has(key)) {
-    let n = null;
-    try { n = quietly(() => { const w = makeWorld(400, 400); return numbersOf(battleFoe(w, k, 200, 200, 1, rank)); }); } catch (e) { n = null; }
-    numbersCache.set(key, n);
-  }
-  return numbersCache.get(key);
-}
-function attackWords(d) {
-  const carries = Object.keys(STATUS_WORDS).filter((s) => d[s] > 0).map((s) => STATUS_WORDS[s]);
-  const what = (d.atkCd || 0) >= 99 ? 'It has no plain attack; everything it does is in how it fights.' : d.role === 'ranged' ? 'Its plain shots.' : 'Its plain blows.';
-  return what + (carries.length ? ` They carry ${carries.join(' and ')}.` : '');
-}
-function foePage() {
-  const k = st.foe;
-  if (!k) return { title: 'Monsters', html: '<p class="bk-empty">Nobody met yet. The monsters you meet in the dungeons are written in here.</p>', spec: null, tag: '' };
-  const d = DEFS[k], rk = canRank(k) ? st.rank : 0, all = foeMoves(k, rk), staged = all.filter((m) => m.move === 'attack' || canStage({ t: 'foe', id: k, move: m.move, rank: rk })), moves = staged.length ? staged : all.slice(0, 1), fc = foeCount(save, k), s = (save.seen || {})[k] || { met: 0, beaten: 0 };
-  if (!moves.find((m) => m.move === st.fmove)) st.fmove = moves.find((m) => m.move === 'kit') ? 'kit' : moves[0].move;
-  const cur = moves.find((m) => m.move === st.fmove);
-  const g = foeGroupsCached().find((x) => x.kinds.includes(k));
-  const words = (m) => m.move === 'attack' ? attackWords(d) : m.move === 'kit' ? (beastHabit(k) || 'How it fights.')
-    : m.move === 'kit' && !staged.length ? (beastHabit(k) || '') + ' (It does not fight yet: what you see is all it does for now.)'
-    : m.move === 'elite' ? (ELITE_MOVE[k] || ELITE_MOVE[d.eliteAs] || 'Something extra on top of its kit.')
-    : (MAJOR_WORDS[m.key] || (MAJOR_MOVES[m.key] && MAJOR_MOVES[m.key].words) || '') + (m.call ? ' ' + MAJOR_WORDS.call : ''); // (round 13, lane E: a kind's own major move carries its words)
-  const title = { attack: 'Attack', kit: 'How it fights', elite: 'Elite move', major: 'Major move' };
-  const ico = { attack: I.sword, kit: I.skull, elite: '<span class="star">★</span>', major: I.crown };
-  const carry = (() => { try { return quietly(() => foeTrinkets(k, rk)); } catch (e) { return []; } })(); // the same trinkets as its stage
-  const now = `<div class="bk-now"><span class="mv-ico">${ico[cur.move]}</span><div class="mv-mid"><span class="cap">${d.name} · ${RANKS[rk].toLowerCase()}</span><b>${title[cur.move]}</b></div>
-      <span class="bk-who"><span class="b-pic sm"><img src="${portrait(k)}" alt=""></span></span></div><p class="mv-desc">${words(cur)}</p>${carry.length ? `<p class="bk-carry">${carry.map((t) => `<span style="--rar:${P.RARITY[P.trinketInfo(t).rarity].color}">${icon('trinket', t, '', P.trinketInfo(t).color)}${P.trinketInfo(t).name}</span>`).join('')}<em>carried: ${carry.map((t) => P.trinketInfo(t).desc.replace(/\.$/, '').toLowerCase()).join('; ')}</em></p>` : ''}`;
-  const short = { attack: 'Attack', kit: 'How it fights', elite: 'Elite move', major: 'Major move' };
-  const bar = moves.map((m) => `<div role="button" class="mb ${m.move === st.fmove ? 'on' : ''}" data-bk="fmove:${m.move}"><span class="mb-ico">${ico[m.move]}</span><span class="mb-n">${short[m.move]}</span></div>`).join('');
-  const n = foeNumbersAt(k, rk), base = rk ? foeNumbersAt(k, 0) : null;
-  const res = Object.entries(d.res || {}).filter(([, v]) => v !== 1);
-  const rankNote0 = rk === 1 ? `An elite: ${ELITE.hp}x health, ${ELITE.dmg}x damage, ${ELITE.speed}x as quick, one trinket.` : rk === 2 ? `A major: ${MAJOR.hp}x health (less for big kinds), ${MAJOR.dmg}x damage, two trinkets.` : '';
-  const rankNote = rankNote0;
-  const html = `<div class="bk-card">${now}</div>
-    <div class="bk-head"><span class="b-pic"><img src="${portrait(k)}" alt=""></span><div class="bk-hm"><b class="bk-name">${d.name}</b><span class="cap">${g ? g.name : ''}${d.boss ? ' · boss' : ''}</span></div>
-      <span class="bk-tierbig">${fc && fc.n ? num(fc.n) + ' <small>defeated</small>' : s.met + ' <small>met</small>'}</span></div>
-    ${statLine(n, base)}${rankNote ? `<p class="bk-small quiet">${rankNote}</p>` : ''}
-    ${res.length ? `<div class="bk-res">${res.map(([key, v]) => `<span class="${v < 1 ? 'res' : 'weak'}">${icon('status', key)}${v === 0 ? 'Immune to' : v < 1 ? 'Shrugs off' : 'Weak to'} ${STATUS_WORDS[key] || key}</span>`).join('')}</div>` : ''}
-    <p class="bk-fun">${beastFun(k)}</p>
-    ${fc && fc.n ? `<p class="bk-small quiet">${[fc.elite ? `${num(fc.elite)} elite` : '', fc.mini ? `${num(fc.mini)} as a mini-boss` : '', fc.boss ? `${num(fc.boss)} as the boss` : ''].filter(Boolean).join(' · ')}</p>` : ''}`;
-  const dial = canRank(k) ? `<div class="bk-seg three">${RANKS.map((r, i) => `<div role="button" class="${i === rk ? 'on' : ''} r${i}" data-bk="rank:${i}">${r}</div>`).join('')}</div>`
-    : `<p class="bk-small quiet dial-note">${d.boss ? 'A boss comes as it is: no elite or major.' : 'Comes only as it is.'}</p>`;
-  const tag = `<b>${d.name}</b><span>${cur.move === 'elite' || cur.move === 'major' ? title[cur.move] : RANKS[rk]}</span>`;
-  return { title: d.name, html, dial, bar, spec: { t: 'foe', id: k, move: st.fmove, rank: rk }, tag };
-}
-
-// ---------------------------------------------------------------- statuses
-function statusPage() {
-  const id = st.status, s = STATUSES[id] || { name: id, desc: '' }, how = statusHow(id), B = STATUS[id];
-  const src = FROM_WORDS[id];
-  const rules = [];
+  const host = el.querySelector('.bk-thing'); if (!host || !thing) return;
+  const b = host.querySelector('.pv-prog b'); if (b) b.style.width = Math.min(100, 100 * S.t / S.loop).toFixed(1) + '%';
+  if (S.spec.t !== 'status' || !S.hero) return;
+  const src = FROM[S.spec.id] || S.spec.id, B = STATUS[src], u = S.hero;
   if (B) {
-    const need = typeof B.need === 'function' ? 'about 100 (more after each freeze)' : B.need;
-    rules.push(`Builds up from hits to ${need}, then bursts.`, `Wears off by ${B.decay} a second when nothing adds to it.`, B.after ? `After a burst it drops to ${B.after}, not to nothing.` : 'A burst empties it.');
-  } else if (src && STATUSES[src]) rules.push(`What ${STATUSES[src].name.toLowerCase()} bursts into when it fills.`);
-  else if (how === 'put') rules.push('Put on by a move or an item, for a few seconds.');
-  const html = `<div class="bk-head"><span class="bk-big-ico">${icon('status', id)}</span><div class="bk-hm"><b class="bk-name">${s.name}</b><span class="cap">${B ? 'Builds up, then bursts' : src ? 'A burst\'s result' : 'Timed'}</span></div></div>
-    <p class="bk-desc">${s.desc}</p>
-    ${rules.length ? `<ul class="bk-rules">${rules.map((r) => `<li>${r}</li>`).join('')}</ul>` : ''}
-    <p class="bk-small quiet">On the stage: a goblin sparring with a dummy${B || src ? `, ${(STATUSES[src || id] || { name: id }).name.toLowerCase()} building on it until it bursts` : ''}; a friend stands by.</p>
-    ${whoBrings(src || id)}
-    <div class="bk-sec"><span class="cap">Every status</span></div>
-    <div class="bk-list">${statusList().map((x) => `<div role="button" class="bk-row ${x === id ? 'on' : ''}" data-bk="status:${x}"><span class="bk-sico">${icon('status', x)}</span><div class="mv-mid"><b>${(STATUSES[x] || { name: x }).name}</b><span class="quiet small">${((STATUSES[x] || {}).desc || '').split('.')[0]}.</span></div></div>`).join('')}</div>`;
-  return { title: 'Statuses', html, spec: { t: 'status', id }, tag: `<b>${s.name}</b>` };
+    // The meter fills, holds full for the burst's moment (lit), then falls to what the burst leaves. Round 13's showed
+    // the value alone, which is emptied in the very step it fills: it jumped from nine tenths to nearly nothing with
+    // "Burst!" swapped in beside it and the bar's length changing with the words ("freaks out when full").
+    const need = typeof B.need === 'function' ? B.need(u) : B.need, v = (u.st && u.st[src]) || 0;
+    const since = u.bursts && u.bursts[src] != null ? S.w.time - u.bursts[src] : 99, held = since < 0.9, lit = held || (STATE_ON[src] ? STATE_ON[src](u) : false);
+    const fillEl = host.querySelector('.tm-bar b'), meter = host.querySelector('.th-meter');
+    if (fillEl) { const f = held ? 1 : Math.max(0, Math.min(1, v / need)); if (fillEl._f !== f) { fillEl._f = f; fillEl.style.width = (f * 100).toFixed(1) + '%'; } }
+    if (meter && meter._lit !== lit) { meter._lit = lit; meter.classList.toggle('burst', lit); }
+  }
+  if (S.way) for (const w of host.querySelectorAll('[data-way]')) { const on = w.dataset.way === S.way; if (w.classList.contains('on') !== on) w.classList.toggle('on', on); }
 }
 
+function thingBody() {
+  const th = thing, host = el.querySelector('.bk-thing'), barEl = host.querySelector('.un-bar'), body = host.querySelector('.th-body'), top = body.scrollTop;
+  const bar = (pic, name, cap, capCol) => { barEl.innerHTML = `<button class="top-back" data-bk="thingback" aria-label="back">${I.back}</button>${pic}<div class="un-ttl"><b>${name}</b><span class="cap" ${capCol ? `style="color:${capCol}"` : ''}>${cap}</span></div>`; };
+  if (th.t === 'trinket') {
+    const t = P.trinketInfo(th.id), r = P.RARITY[t.rarity];
+    const have = save.trinkets.filter((x) => x === th.id).length, worn = HERO_IDS.filter((h) => save.heroes[h].trinkets.includes(th.id));
+    bar(tico(icon('trinket', th.id, '', t.color), r.color), t.name, `${r.name} trinket`, r.color);
+    body.innerHTML = `<p class="th-desc">${t.desc}</p><p class="th-fun">${trinketFun(th.id)}</p>
+      <div class="st-grid th-facts">${cell('gold', t.price, 'At the trader')}${cell('bag', have, 'In the chest')}${cell('tier', worn.length ? P.trinketLevel(save, th.id) : have ? P.trinketLevel(save, th.id) : '–', 'Level')}</div>
+      ${worn.length ? `${sec('Worn by')}<div class="th-who">${worn.map((h) => face(h, 44)).join('')}</div>` : ''}`;
+  } else if (th.t === 'potion') {
+    const p = P.POTIONS[th.id];
+    bar(tico(icon('potion', th.id)), p.name, 'Potion');
+    body.innerHTML = `<p class="th-desc">${p.desc}</p><p class="th-fun">${POTION_FUN[th.id] || ''}</p>
+      <div class="st-grid th-facts">${cell('gold', p.price, 'At the trader')}${cell('bag', P.potionCount(save, th.id), 'In the bag')}</div>`;
+  } else if (th.t === 'status') {
+    const id = th.id, s = STATUSES[id] || { name: id, desc: '' }, src = FROM[id], B = STATUS[id], how = statusHow(id);
+    bar(tico(icon('status', id)), s.name, B ? 'Builds up, then bursts' : src ? `What ${(STATUSES[src] || { name: src }).name.toLowerCase()} bursts into` : how === 'put' ? 'Lasts a few seconds' : 'A state');
+    const facts = B ? `<div class="st-grid th-facts">${cell('fill', typeof B.need === 'function' ? 100 : B.need, 'Fills at')}${cell('decay', B.decay, 'Fades a second')}${cell('fill', B.after || 0, 'Left by a burst')}</div>` : '';
+    const who = whoBrings(src || id);
+    body.innerHTML = `<p class="th-desc">${s.desc}</p>${facts}${who ? `${sec('Whose blows carry it')}<p class="un-note">${who}</p>` : ''}`;
+  } else dungeonBody(th.id, bar, body);
+  body.scrollTop = top;
+}
 // Who puts a build-up status on: heroes and met monsters whose own blows carry it (their def says so).
 function whoBrings(k) {
   if (!STATUS[k]) return '';
   const heroes = HERO_IDS.filter((h) => DEFS[h] && DEFS[h][k] > 0).map((h) => HEROES[h].name);
-  const foes = foeGroupsCached().flatMap((g) => g.kinds).filter((f) => metFoe(f) && DEFS[f] && (DEFS[f][k] > 0 || (DEFS[f].hitSt && DEFS[f].hitSt[k] > 0))).map((f) => DEFS[f].name);
-  if (!heroes.length && !foes.length) return '';
-  return `<div class="bk-sec"><span class="cap">Whose blows carry it</span></div><p class="bk-small">${[...heroes, ...foes].join(' · ')}</p>`;
+  const foes = groupsOf().flatMap((g) => g.kinds).filter((f) => metFoe(f) && DEFS[f] && (DEFS[f][k] > 0 || (DEFS[f].hitSt && DEFS[f].hitSt[k] > 0))).map((f) => DEFS[f].name);
+  return [...heroes, ...foes].join(' · ');
 }
 
-// ---------------------------------------------------------------- trinkets and potions
-function itemPage() {
-  const it = st.item;
-  if (it.k === 'p') {
-    const p = P.POTIONS[it.id], n = P.potionCount(save, it.id);
-    const html = `<div class="bk-head"><span class="bk-big-ico">${icon('potion', it.id)}</span><div class="bk-hm"><b class="bk-name">${p.name}</b><span class="cap">Potion · ${gold(p.price)}</span></div><span class="bk-tierbig">${n} <small>in the bag</small></span></div>
-      <p class="bk-desc">${p.desc}</p><p class="bk-fun">${POTION_FUN[it.id] || ''}</p>
-      <p class="bk-small quiet">On the stage: ${it.id === 'heal' ? stageWords(it.id) : 'the hero drinks it as the fight starts (a ring and a puff in its colour, then a trail while it lasts).'}</p>${itemList()}`;
-    return { title: 'Items', html, spec: { t: 'potion', id: it.id }, tag: `<b>${p.name}</b>` };
-  }
-  const t = P.trinketInfo(it.id), r = P.RARITY[t.rarity];
-  const have = save.trinkets.filter((x) => x === it.id).length, worn = HERO_IDS.filter((h) => save.heroes[h].trinkets.includes(it.id)).map((h) => HEROES[h].name);
-  const html = `<div class="bk-head"><span class="bk-big-ico" style="--rar:${r.color}">${icon('trinket', it.id, '', t.color)}</span><div class="bk-hm"><b class="bk-name">${t.name}</b><span class="cap" style="color:${r.color}">${r.name} trinket</span></div></div>
-    <p class="bk-desc">${t.desc}</p><p class="bk-fun">${trinketFun(it.id)}</p>
-    ${have + worn.length ? `<p class="bk-small quiet">You have ${have ? `${have} in the chest` : ''}${have && worn.length ? ' · ' : ''}${worn.length ? 'worn by ' + worn.join(', ') : ''}</p>` : ''}
-    <p class="bk-small quiet">On the stage: ${stageWords(it.id)}</p>${itemList()}`;
-  return { title: 'Items', html, spec: { t: 'trinket', id: it.id }, tag: `<b>${t.name}</b>` };
-}
-
-const stageWords = (id) => { const t = SCENE_WORDS[sceneOf({ id })] || SCENE_WORDS.fight; return t[0].toLowerCase() + t.slice(1); };
-function itemList() {
-  const row = (it, ico, name, sub) => `<div role="button" class="bk-row ${st.item && st.item.k === it.k && st.item.id === it.id ? 'on' : ''}" data-bk="item:${it.k}:${it.id}">${ico}<div class="mv-mid"><b>${name}</b><span class="quiet small">${sub}</span></div></div>`;
-  const all = items();
-  const tr = all.filter((it) => it.k === 't').map((it) => { const t = P.trinketInfo(it.id), r = P.RARITY[t.rarity]; return row(it, `<span class="bk-sico" style="--rar:${r.color}">${icon('trinket', it.id, '', t.color)}</span>`, t.name, `<span style="color:${r.color}">${r.name}</span> · ${t.desc}`); }).join('');
-  const po = all.filter((it) => it.k === 'p').map((it) => row(it, `<span class="bk-sico">${icon('potion', it.id)}</span>`, P.POTIONS[it.id].name, P.POTIONS[it.id].desc)).join('');
-  return `<div class="bk-sec"><span class="cap">Trinkets</span></div><div class="bk-list">${tr}</div><div class="bk-sec"><span class="cap">Potions</span></div><div class="bk-list">${po}</div>`;
-}
-
-// ---------------------------------------------------------------- the shelf
-function shelf() {
-  const tile = (act, on, pic, name, cls = '') => `<div role="button" class="bk-it ${on ? 'on' : ''} ${cls}" ${act ? `data-bk="${act}"` : ''}>${pic}<span>${name}</span></div>`;
-  if (st.tab === 'heroes') return HERO_IDS.map((id) => tile(`hero:${id}`, id === st.hero, face(id, 46), HEROES[id].name, owned(id) ? '' : 'notyet')).join('');
-  if (st.tab === 'monsters') return foeGroupsCached().map((g) => `<div class="bk-grp"><span>${g.name.replace(/^The /, '')}</span></div>` + g.kinds.map((k) => metFoe(k)
-    ? tile(`foe:${k}`, k === st.foe, `<span class="b-pic"><img src="${portrait(k)}" alt=""></span>`, DEFS[k].name, DEFS[k].boss ? 'boss' : '')
-    : tile('', false, `<span class="b-pic unknown"><img src="${portrait(k)}" alt=""></span>`, '???', 'unknown')).join('')).join('');
-  if (st.tab === 'statuses') return statusList().map((id) => tile(`status:${id}`, id === st.status, `<span class="bk-sico">${icon('status', id)}</span>`, (STATUSES[id] || { name: id }).name)).join('');
-  return items().map((it) => {
-    const on = st.item && st.item.k === it.k && st.item.id === it.id;
-    if (it.k === 'p') return tile(`item:p:${it.id}`, on, `<span class="bk-sico">${icon('potion', it.id)}</span>`, P.POTIONS[it.id].name);
-    const t = P.trinketInfo(it.id);
-    return tile(`item:t:${it.id}`, on, `<span class="bk-sico" style="--rar:${P.RARITY[t.rarity].color}">${icon('trinket', it.id, '', t.color)}</span>`, t.name);
+// A dungeon: its floors with who lives on each, the mini-bosses and the boss, and how far the party has got. From what
+// the save records (progress.js dungeonState: the deepest floor reached, boss kills, the floor a run can start at, which
+// mini-bosses have fallen) and the tally of kinds defeated.
+function dungeonBody(id, bar, body) {
+  const T = THEMES[id], s = P.dungeonState(save, id), open = s.open || !!save.cheat, n = DUNGEON_ORDER.filter((t) => THEMES[t]).indexOf(id) + 1;
+  bar(swatch(T), T.name, `Dungeon ${n}${open ? '' : ' · locked'}`);
+  const pic = (k, ring = '') => (metFoe(k) ? `<div role="button" class="dg-foe ${ring}" data-bk="foe:${k}">${beast(k)}</div>` : `<div class="dg-foe unknown ${ring}">${beast(k)}</div>`);
+  const floors = (T.floors || []).map((F, i) => {
+    const kinds = [...new Set([...(F.enemies || []).map(([k]) => k), F.elite].filter((k) => k && DEFS[k]))];
+    const last = i === T.floors.length - 1, end = last ? (T.bossKind && DEFS[T.bossKind] ? T.bossKind : T.boss) : F.mini || T.mini || T.warden;
+    const done = last ? s.cleared > 0 : !!s.minis[i];
+    return `${sec(`Floor ${i + 1} · ${F.name || ''}`, s.best > i || s.cleared ? (done ? (last ? 'boss beaten' : 'mini-boss beaten') : 'reached') : '')}
+      <div class="dg-foes">${kinds.map((k) => pic(k)).join('')}${end && DEFS[end] ? pic(end, 'end') : ''}</div>`;
   }).join('');
+  const beaten = groupsOf().filter((g) => g.id === id).flatMap((g) => g.kinds).reduce((a, k) => a + ((foeCount(save, k) || {}).n || 0), 0);
+  body.innerHTML = `<p class="th-fun first">${T.blurb || ''}</p>
+    <div class="st-grid th-facts">${cell('floor', `${Math.min(3, s.best)} / 3`, 'Deepest floor')}${cell('major', s.cleared, 'Boss beaten')}${cell('kills', num(beaten), 'Beaten here')}</div>
+    ${open ? '' : `<p class="un-note dg-lock">${M.dungeonLockText(id)} to open it.</p>`}
+    ${floors}
+    <p class="un-note dg-note">Runs can start at floor ${s.checkpoint}. The save keeps the deepest floor, boss kills and mini-bosses beaten; it does not yet keep runs, deaths or the fastest clear for each dungeon.</p>`;
 }
 
 // ---------------------------------------------------------------- taps
 function onClick(e) {
   const t = e.target.closest('[data-bk]'); if (!t) return;
-  const [a, b, c] = t.dataset.bk.split(':');
+  const [a, b] = t.dataset.bk.split(':');
   switch (a) {
     case 'back': cue('tap'); closeBook(); if (onBack) onBack(); return;
-    case 'tab': if (st.tab === b) return; st.tab = b; break;
-    case 'hero': if (st.hero === b) return; st.hero = b; break;
-    case 'tier': if (st.tier === +b) return; st.tier = +b; break;
-    case 'hmove': if (st.hmove === b) { player.restart(); cue('tap'); return; } st.hmove = b; break;
-    case 'foe': if (st.foe === b) return; st.foe = b; break;
-    case 'rank': if (st.rank === +b) return; st.rank = +b; break;
-    case 'fmove': if (st.fmove === b) { player.restart(); cue('tap'); return; } st.fmove = b; break;
-    case 'status': st.status = b; break;
-    case 'item': st.item = { k: b, id: c }; break;
+    case 'thingback': cue('tap'); closeThing(); return;
+    case 'hero': case 'foe': cue('tap'); openCard(a, b); return;
+    case 'trinket': case 'potion': case 'status': case 'dungeon': cue('tap'); openThing({ t: a, id: b }); return;
+    case 'way': cue('tap'); thing.way = b; play(); return;
     default: return;
   }
-  cue('tap');
-  render(true);
 }
+export { unitOpen };
