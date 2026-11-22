@@ -105,44 +105,7 @@ export function drawBlizzard(ctx, w) {
 
 // (Cinder is drawn in js/boss-cinder-fx.js: bosses3)
 
-function clipRay(w, x, y, a, len) {
-  let d = 0;
-  for (; d < len; d += 12) { const px = x + Math.cos(a) * d, py = y + Math.sin(a) * d;
-    if (px < 0 || py < 0 || px > w.W || py > w.H || w.pillars.some((p) => (px - p.x) ** 2 + (py - p.y) ** 2 < p.r * p.r) || w.walls.some((r) => px > r.x && px < r.x + r.w && py > r.y && py < r.y + r.h)) break; }
-  return d;
-}
-// ---------------------------------------------------------------- the Gilded Spire: the Seraph and the sanctum
-// A sun blade: a gold sword seen from above, point outwards along its facing; dark when she has fallen.
-export function drawSunBlade(ctx, u, w) {
-  const r = u.vr, f = flash(u), dark = u.fallen;
-  ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(u.facing);
-  ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, 0, 0, r * 2, dark ? '#9B86C9' : '#FFE7A0', 0.35); ctx.restore();
-  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(r * 1.6, 0); ctx.lineTo(-r * 0.4, -r * 0.3); ctx.lineTo(-r * 0.4, r * 0.3); ctx.closePath(); }, f ? '#FFFFFF' : dark ? '#5A4A7A' : '#F2C14E');
-  inked(ctx, () => { ctx.beginPath(); ctx.rect(-r * 0.55, -r * 0.6, r * 0.2, r * 1.2); }, dark ? '#2E2440' : '#C9A44A');
-  inked(ctx, () => { ctx.beginPath(); ctx.rect(-r * 1.1, -r * 0.13, r * 0.6, r * 0.26); }, dark ? '#2E2440' : '#C9A44A');
-  ctx.fillStyle = dark ? '#9B86C9' : '#FFFBEA'; ctx.beginPath(); ctx.moveTo(r * 1.4, 0); ctx.lineTo(-r * 0.3, -r * 0.08); ctx.lineTo(-r * 0.3, r * 0.08); ctx.closePath(); ctx.fill();
-  ctx.restore();
-}
-// A great sun set into the floor in the middle of the sanctum (it goes dark when she falls).
-export function drawSanctum(ctx, w) {
-  const s = w.sun; if (!s) return;
-  const col = w.fallen ? 'rgba(90,74,122,0.35)' : 'rgba(242,193,78,0.35)';
-  ctx.fillStyle = col; ctx.beginPath(); ctx.arc(s.x, s.y, 120, 0, TAU); ctx.fill();
-  ctx.strokeStyle = w.fallen ? 'rgba(46,36,64,0.5)' : 'rgba(201,164,74,0.6)'; ctx.lineWidth = 4;
-  ctx.beginPath(); for (let i = 0; i < 16; i++) { const a = i / 16 * TAU; ctx.moveTo(s.x + Math.cos(a) * 130, s.y + Math.sin(a) * 130); ctx.lineTo(s.x + Math.cos(a) * (i % 2 ? 175 : 210), s.y + Math.sin(a) * (i % 2 ? 175 : 210)); } ctx.stroke();
-  ctx.beginPath(); ctx.arc(s.x, s.y, 120, 0, TAU); ctx.stroke();
-}
-// The clock hands: shafts of light from her out to their length (stopped by pillars), an inked core and a glow.
-export function drawHands(ctx, w) {
-  const h = w.hands; if (!h) return;
-  const col = h.fallen ? '#9B86C9' : '#FFE7A0';
-  for (const a of h.as) {
-    const L = clipRay(w, h.x, h.y, a, h.len), ex = h.x + Math.cos(a) * L, ey = h.y + Math.sin(a) * L;
-    ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = rgba(col, 0.35); ctx.lineCap = 'round'; ctx.lineWidth = 52; ctx.beginPath(); ctx.moveTo(h.x, h.y); ctx.lineTo(ex, ey); ctx.stroke(); ctx.restore();
-    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(h.x, h.y); ctx.lineTo(ex, ey); }, h.fallen ? '#5A4A7A' : '#FFF4C8', 10);
-  }
-}
-
+// (the Spire's angel: js/boss-angel-fx.js: bosses3)
 // (the Sand Wurm is drawn in js/boss-wurm-fx.js: bosses3)
 // (the Great Engine is drawn in js/boss-engine-fx.js: bosses3)
 
