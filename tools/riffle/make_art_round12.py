@@ -98,7 +98,7 @@ for c in cards:
     assert len(c["title"]) <= 26 and len(c["text"]) <= 110, (c["id"], len(c["title"]), len(c["text"]))
     for it in c.get("items", []):
         assert len(it["label"]) <= 36, it["label"]
-deck = {"title": "Art round 12: six new heroes", "topic": "art", "order": 31, "priority": 2, "cards": cards}
+deck = {"title": "Art round 12: six new heroes", "topic": "art", "order": 37, "priority": 2, "cards": cards}
 (HERE / "decks").mkdir(exist_ok=True)
 (HERE / "decks" / "art-round12.json").write_text(json.dumps(deck, indent=2, ensure_ascii=False), encoding="utf-8")
 print("cards", len(cards), "boards", sum(1 for c in cards if c["kind"] == "board"), "tiles", sum(len(c.get("items", [])) for c in cards),
