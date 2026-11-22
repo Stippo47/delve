@@ -1,0 +1,1548 @@
+{
+  "title": "0.19.0: the 37 newer heroes",
+  "topic": "art",
+  "order": 32,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "all",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "37 newer heroes, your notes",
+      "text": "Every showcase 3 note is built: three heroes redone, 20 new traits, eight new statuses. Live as 0.19.0.",
+      "why": "One card a hero follows, with a clip for each thing that changed. This card is the summary and the things I want your call on.",
+      "details": "Redone from scratch: the Bandit (he takes things off enemies), the Beekeeper (bees that stay and pester), the Quartermaster (no potions; supplies and a barricade).\n\nRoles changed: the Valkyrie is a support now; the Chef, the Trapper and the Engineer fight at range.\n\nBalance, measured at tier I and III: tanks deal 23-24% of a party's damage, shooters 41-42%, supports 18-20%. Still strong: the Beekeeper, the Chef, the Valkyrie and the Shaman at tier I (healers again), the Pirate at tier III. Weakest: the Seer at tier I, the Griffon at tier III.",
+      "parts": [
+        {
+          "id": "statuses",
+          "title": "New statuses",
+          "text": "Whirled, Dirty, Targeted, Tracked, Trapped and Weakened as you described them. The Monk's turning effect I named Spun. For the Alchemist's protection status my answer is Warded: a pale blue border."
+        },
+        {
+          "id": "shackled",
+          "title": "Shackled: not yet",
+          "text": "You said it should go to someone else, maybe the executioner. It waits for that hero."
+        },
+        {
+          "id": "bulwark",
+          "title": "Bulwark: a question",
+          "text": "Hybrid damage tank is built as Return Thrust (blows he takes wind up a piercing thrust). Brace, Shield Wall and Impale are unchanged: say if hybrid should reach those too."
+        },
+        {
+          "id": "props",
+          "title": "Props drawn in code",
+          "text": "The new summons and props (totem, cauldron, pavise, beehive, barricade, turrets) are plain shapes for now, and a few weapons need to be separate parts. They are on the art list."
+        },
+        {
+          "id": "six",
+          "title": "Six new heroes: not built",
+          "text": "The six new heroes from your deck notes (the Warden and the others) are not built yet."
+        }
+      ]
+    },
+    {
+      "id": "oldguard",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Old Guard",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "oldguard-pommelStrike",
+        "oldguard-rallyCry",
+        "oldguard-trait"
+      ],
+      "items": [
+        {
+          "id": "oldguard-pommelStrike",
+          "label": "Parry",
+          "video": "../../../clips/showcase5/oldguard-pommelStrike.mp4",
+          "text": "\"Should have a parry ability. The next attack is blocked and deflected back if it was a projectile, melee just go back to target. When leveled up gets 2 charges. Maybe instead of pommel strike\" Built: Parry in Pommel Strike's slot : 4 s on guard (the greatsword drawn across him, a glint running along it); the next blow is caught and its force goes back into the striker, the next shot flies back at its shooter. I one, II two, III twice as hard."
+        },
+        {
+          "id": "oldguard-rallyCry",
+          "label": "Rally",
+          "video": "../../../clips/showcase5/oldguard-rallyCry.mp4",
+          "text": "Rally: \"Get a haste boost when leveled up. Effect remains for a little bit.\" Built: II: haste (30% faster moves and blows) and the whole rally lasts 8 s (was 5)."
+        },
+        {
+          "id": "oldguard-trait",
+          "label": "Trait: Last Stand",
+          "video": "../../../clips/showcase5/oldguard-trait.mp4",
+          "text": "Trait: \"Trait should be last stand. When last one in party gets a long unstoppable and haste buff, all abilities are reset.\" Built: Last Stand : once a room, when the last of his side falls: Unstoppable (its gold border) and haste for 10 s, every cooldown reset, a gold burst. Book scene added."
+        }
+      ],
+      "details": "Pommel Strike's note (\"Shackled status effect\"): goes with the shackled idea to a later hero (above)."
+    },
+    {
+      "id": "dame",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Dame",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "dame-attack",
+        "dame-challenge"
+      ],
+      "items": [
+        {
+          "id": "dame-attack",
+          "label": "Leaf sword",
+          "video": "../../../clips/showcase5/dame-attack.mp4",
+          "text": "Leaf sword: \"Should swipe the opposite way.\" Built: : the arm and the arc both go the other way."
+        },
+        {
+          "id": "dame-challenge",
+          "label": "Challenge",
+          "video": "../../../clips/showcase5/dame-challenge.mp4",
+          "text": "Challenge: \"Maybe it is a dash to nearest ally about to die, pushes them away and heals them slightly, the nearest enemy is taunted. No challenge status.\" Built: rebuilt: she bounds to the friend nearest death, shoves them clear (gold chevrons the way they go), heals them 10% (II 20%), and the nearest enemy (III: all near) must fight her for 4 s (a red \"!\" pops over it). No duel mark. (the bench pins the friend in place, so the shove itself shows only in a real fight)."
+        }
+      ]
+    },
+    {
+      "id": "griffon",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Griffon",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "griffon-attack",
+        "griffon-hammerThrow",
+        "griffon-swoop",
+        "griffon-wingShield"
+      ],
+      "items": [
+        {
+          "id": "griffon-attack",
+          "label": "Warhammer",
+          "video": "../../../clips/showcase5/griffon-attack.mp4",
+          "text": "Warhammer: \"Flip his sprite. Should be an aoe slam on the ground like the berserker\" Built: mirrors the sprite and the swing; the blow is a slam on the floor in front (aoe 40) with its own look ."
+        },
+        {
+          "id": "griffon-hammerThrow",
+          "label": "Stormhammer",
+          "video": "../../../clips/showcase5/griffon-hammerThrow.mp4",
+          "text": "Stormhammer: \"Should apply whirled. And have a small aoe burst on all targets hit (when upgraded). Lvl 3 will have it home between targets on the way out and back. I don't like the bones ... white puffy clouds when hit. Hammer also needs a yellow line on it. And maybe doesnt show in their hand when thrown.\" Built: I: out and back, whirls 35 a hit; II: a small thunderclap (55 across, a little shock) round each one hit; III: it flies on to the nearest enemy it hasn't hit, out a"
+        },
+        {
+          "id": "griffon-swoop",
+          "label": "Swoop",
+          "video": "../../../clips/showcase5/griffon-swoop.mp4",
+          "text": "Swoop: \"Should spin after they land making a wind swirl. Applies a new status whirled ... knocks them back ... Applies a small aoe burst around area before the dash. They don't have control of it.\" Built: a gust bursts round him at take-off (hurts, shoves, whirls 25); he lands spinning, three arms of wind spiral out under the units, and everything within 125 is hit, shoved hard and whirled 45. Tiers kept (II staggers, III the ally takes 40% less)."
+        },
+        {
+          "id": "griffon-wingShield",
+          "label": "Wing Guard",
+          "video": "../../../clips/showcase5/griffon-wingShield.mp4",
+          "text": "Wing Guard: \"Don't like. Anyone that hits him will take heavy knockback (even more when whirled ofc) when upgraded they will take damage if they hit an obstacle. Lvl 3 will have them burst when they hit an obstacle\"; showcase 4: \"can't even see the wings ... too sharp ... similar to the ones on his sprite. But bigger and maybe more segments\" Built: for 4 s he takes 25% less and whoever strikes him is blasted back (knock 620, x(1 + whirl fill)); II: slamming into a wall, the e"
+        }
+      ]
+    },
+    {
+      "id": "bulwark",
+      "kind": "report",
+      "rarity": "common",
+      "title": "Bulwark",
+      "text": "\"Don't like trait. Should be more of a hybrid dps tank\" Built: Return Thrust : every blow he takes winds him u",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "videos": [
+        "../../../clips/showcase5/bulwark-trait.mp4"
+      ],
+      "details": "\"Don't like trait. Should be more of a hybrid dps tank\" Built: Return Thrust : every blow he takes winds him up (up to 5; a glint grows on the spear's head); his next thrust lets it go: twice the reach, through everything in a line, 30% harder for each, heavier knockback. He trades blows, then hits back hard. Book scene added.\n\nWinged spear: \"Starts too close to them\" Built: the stab starts out at the spear's head (). \"Holding spear too close to tip\" is the art (the grip in the SVG): for the art lane.\n\nBrace, Shield Wall, Impale: not ticked and no note: left as they were (balance only). Ask the designer whether the hybrid ask means these should change too."
+    },
+    {
+      "id": "bearskin",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Bearskin",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "bearskin-bearRoar",
+        "bearskin-hibernate",
+        "bearskin-maul"
+      ],
+      "items": [
+        {
+          "id": "bearskin-bearRoar",
+          "label": "Bear Claws",
+          "video": "../../../clips/showcase5/bearskin-bearRoar.mp4",
+          "text": "Bear Roar: \"I want a rapid claw attack. Dashes forwards Does a burst of like 6 swings (club goes away). At max level get 6 more, and does a bite at the end that applies bleed\" Built: Bear Claws in its slot : a dash in, six claw rakes (four-streak rakes, alternating sides); II they catch everything in front; III six more and a bite (two rows of fangs) that adds 70 bleeding. The club's arm is hidden meanwhile (the art can't hide just the club)."
+        },
+        {
+          "id": "bearskin-hibernate",
+          "label": "Hibernate",
+          "video": "../../../clips/showcase5/bearskin-hibernate.mp4",
+          "text": "Hibernate: \"Should give self sleeping status effect. Will heal when sleeping at any time, also needs to take more damage than they are healing to wake up. Leveled up will be immune to status effects\" Built: he falls asleep (the sim's sleep, deep so a blow doesn't break it); asleep however it happens (a lullaby, Sleepy) he heals 7% a second; his own sleep holds until what he has taken since outweighs what he healed, or he is whole (8 s at most). II: statuses can't touch him wh"
+        },
+        {
+          "id": "bearskin-maul",
+          "label": "Maul",
+          "video": "../../../clips/showcase5/bearskin-maul.mp4",
+          "text": "Maul: \"Uses berserkers effect. Even shows the mace ball in the middle.\" Built: its own slam : the club comes down into a crater with a rim, cracks run out, brown dust and chunks; no flail ball."
+        }
+      ],
+      "details": "Studded club: \"The bear paws of his outfit should be on his hands. Move with it. I didn't like this club.\" Built: art lane (paws on the hands, a new weapon, and the club as its own part so it can be put away). Not done here."
+    },
+    {
+      "id": "warhelm",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Warhelm",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "warhelm-attack",
+        "warhelm-skullSplitter",
+        "warhelm-thunderBlow",
+        "warhelm-warHorn"
+      ],
+      "items": [
+        {
+          "id": "warhelm-attack",
+          "label": "Warhammer",
+          "video": "../../../clips/showcase5/warhelm-attack.mp4",
+          "text": "Warhammer: \"Needs to do a slam on the ground\" Built: a slam on the floor in front (aoe 46), the hammer look (SLAM2.hammer)."
+        },
+        {
+          "id": "warhelm-skullSplitter",
+          "label": "Skull Splitter",
+          "video": "../../../clips/showcase5/warhelm-skullSplitter.mp4",
+          "text": "Skull Splitter: \"Should throw hammer forward then leap towards it doing a slam. Hammer shocks anything hit.\" Built: the hammer is hurled ahead (shock 30 on all it passes, yellow sparks), lies where it fell, he leaps after it and slams there (1.9x). II staggers, III wider and stuns."
+        },
+        {
+          "id": "warhelm-thunderBlow",
+          "label": "Thunder Blow",
+          "video": "../../../clips/showcase5/warhelm-thunderBlow.mp4",
+          "text": "Thunder Blow: \"Needs its own slam visual. Don't use Beserkerd for everything... Actually change that, does a headbutt forwards dealing heavy knockback and stagger.\" Built: a lunge and a headbutt: 1.7x, knock 560, stagger 60 (a white star and sparks off the helm). II shocks; III the one thrown knocks down what it hits."
+        },
+        {
+          "id": "warhelm-warHorn",
+          "label": "Storm Born",
+          "video": "../../../clips/showcase5/warhelm-warHorn.mp4",
+          "text": "War Horn: \"Change. Storm born. Hammer float around him rotating dashing to a target in an interval around him. While he punches with his fist alternating applying shock and knockback\" Built: Storm Born in its slot : for 6 s (II 9 s) the hammer circles him in the air, crackling, darting at the nearest enemy every 0.9 s (1x, shock 25); he fights with his fists meanwhile (quick punches, +15 shock, knock 260). III: each dart bursts in a thunderclap. His hammer arm is hidden while"
+        }
+      ]
+    },
+    {
+      "id": "rogueBandit",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Bandit",
+      "text": "Redone: a new kit, built from your notes.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "rogueBandit-attack",
+        "rogueBandit-lowBlow",
+        "rogueBandit-pickpocket",
+        "rogueBandit-smokeBomb",
+        "rogueBandit-trait"
+      ],
+      "items": [
+        {
+          "id": "rogueBandit-attack",
+          "label": "Cutlass",
+          "video": "../../../clips/showcase5/rogueBandit-attack.mp4",
+          "text": "Cutlass: reach 22 (was 18) and a wider arc, so the slash reaches what it's swung at."
+        },
+        {
+          "id": "rogueBandit-lowBlow",
+          "label": "Stick 'Em Up",
+          "video": "../../../clips/showcase5/rogueBandit-lowBlow.mp4",
+          "text": "Stick 'Em Up : the cutlass levelled at an enemy: hands up (two little hands shaking over its head) for 2.5 s: it can't attack, use an ability or walk, and takes 25% more from everyone. II two more near it; III 3.5 s. Three different jobs: catch a runner or shooter, burst one and bowl its friends, shut one down for the party."
+        },
+        {
+          "id": "rogueBandit-pickpocket",
+          "label": "Dirty Trick",
+          "video": "../../../clips/showcase5/rogueBandit-pickpocket.mp4",
+          "text": "Dirty Trick : three quick cuts and a kick (0.7x three times, then 1.2x, knock 640) that sends the enemy into its friends (each one it ploughs into is hit). II the cuts bleed; III staggers."
+        },
+        {
+          "id": "rogueBandit-smokeBomb",
+          "label": "Bolas",
+          "video": "../../../clips/showcase5/rogueBandit-smokeBomb.mp4",
+          "text": "Bolas : a whirling bolas at the enemy furthest off, a shooter first: tripped 1.3 s (KO), then slowed. II two bolas; III down 2 s and it drops its weapon."
+        },
+        {
+          "id": "rogueBandit-trait",
+          "label": "Trait",
+          "video": "../../../clips/showcase5/rogueBandit-trait.mp4",
+          "text": "\"Don't like trait. Overall don't like hero\"; Cutlass: \"Animation is weird. Doesnt even hit.\" Built: a new kit, my design . The idea: he takes things off enemies."
+        }
+      ],
+      "details": "Trait Snatch : every fourth blow tears the enemy's weapon out of its hand and flings it 110-160 away (it spins through the air and lies glinting); the enemy can't attack until it walks over and picks it up (5 s at most; not bosses). Book scene added."
+    },
+    {
+      "id": "shade",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Shade",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "shade-attack",
+        "shade-blackout",
+        "shade-deathMark",
+        "shade-shadowWalk",
+        "shade-trait"
+      ],
+      "items": [
+        {
+          "id": "shade-attack",
+          "label": "Twin daggers",
+          "video": "../../../clips/showcase5/shade-attack.mp4",
+          "text": "Twin daggers: \"Should not cross blades. Attacks in 2 stabs at a time, quickly 1 after the other.\" Built: (both stab straight ahead) and every attack is two stabs, one from each hand, 0.1 s apart (attack every 0.8 s, was 0.5)."
+        },
+        {
+          "id": "shade-blackout",
+          "label": "Blackout",
+          "video": "../../../clips/showcase5/shade-blackout.mp4",
+          "text": "Blackout: \"She should become a shadow at lvl 3. Also aura should apply weakness debuff (which needs visual effects)\" Built: those in the dark are Weakened (deal 30% less; a grey wash and grey chevrons sinking off them); III she is a shadow for the 6 s."
+        },
+        {
+          "id": "shade-deathMark",
+          "label": "Shadow Clones",
+          "video": "../../../clips/showcase5/shade-deathMark.mp4",
+          "text": "Death Mark: \"Should create shadow clones that fight for them. Very fast and moves through entities and obstacles. Deal decent damage and have pretty low hp. They strafe around quickly\" Built: Shadow Clones in its slot : 2 (II 3) copies of her, drawn dark, 24 health, each stab 0.55x hers; they circle their foe fast (their own brain, straight through bodies, walls and pillars), switching direction now and then. 6 s (III 10 s)."
+        },
+        {
+          "id": "shade-shadowWalk",
+          "label": "Shadow Walk",
+          "video": "../../../clips/showcase5/shade-shadowWalk.mp4",
+          "text": "Shadow Walk: \"Shadow should be a union. Not overlapping circles. Should not return. Level 3 should have them do 3 dashes in a row.\" Built: her path is one merged body of shadow smoke on the floor (puddles.js 'smoke'); no return; III three runs in a row, each at another enemy."
+        },
+        {
+          "id": "shade-trait",
+          "label": "Trait",
+          "video": "../../../clips/showcase5/shade-trait.mp4",
+          "text": "Trait: \"After 3 seconds of not attacking or taking damage becomes a shadow.\" Built: Fade reworked: after 3 s without striking, casting or being hurt she becomes a shadow (ethereal: no enemy can pick her out; drawn dark) until her next blow or ability. Book scene: she waits idle first (preview-sim quiet)."
+        }
+      ]
+    },
+    {
+      "id": "haymaker",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Haymaker",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "haymaker-attack",
+        "haymaker-forkCharge",
+        "haymaker-toss"
+      ],
+      "items": [
+        {
+          "id": "haymaker-attack",
+          "label": "Pitchfork",
+          "video": "../../../clips/showcase5/haymaker-attack.mp4",
+          "text": "Pitchfork: \"Should show 3 stab slashes. Should dash forwards slightly too\" Built: three parallel tine streaks ; each jab is a little lunge forward. (the bench pins him, so the lunge shows in a real fight)."
+        },
+        {
+          "id": "haymaker-forkCharge",
+          "label": "Hay Bale",
+          "video": "../../../clips/showcase5/haymaker-forkCharge.mp4",
+          "text": "Fork Charge: \"Doesnt show it off. Different idea. Summons a large hay bail underneath them, walks on it dealing high knockback and damage to those he walks over. Slow turn radius, but flips instantly when he hits a wall. It has its own go that decays overtime, burns easily. When it dies it burst into hay\" Built: Hay Bale in its slot : a bale summon (its own health, running down over 5 s, II 7 s; burns three times as easily) that he rides on top of; it rolls at the nearest ene"
+        },
+        {
+          "id": "haymaker-toss",
+          "label": "Toss",
+          "video": "../../../clips/showcase5/haymaker-toss.mp4",
+          "text": "Toss: \"Should toss enemy backwards. Needs better animation\" Built: forked up and thrown high (95 up, drawn bigger as it rises) over his shoulder, turning head over heels, straw puffing off it, landing hard 150 behind him."
+        }
+      ],
+      "details": "Pitch Hay: not ticked, no note: unchanged."
+    },
+    {
+      "id": "digger",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Digger",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "digger-attack",
+        "digger-burrow",
+        "digger-dirtFling",
+        "digger-spadeBat",
+        "digger-trait"
+      ],
+      "items": [
+        {
+          "id": "digger-attack",
+          "label": "Spade",
+          "video": "../../../clips/showcase5/digger-attack.mp4",
+          "text": "Spade: \"Slash also creates 3 dirt projectiles with short range.\" Built: every swing throws three clods in a fan (0.25x each, short range), bursting in crumbs."
+        },
+        {
+          "id": "digger-burrow",
+          "label": "Burrow",
+          "video": "../../../clips/showcase5/digger-burrow.mp4",
+          "text": "Burrow: \"Don't like the dirt mound. Trail should also linger. It just vanishes. Overall improve visual. It will be used by more than just him. Don't like burst\" Built: burrowTo() (exported, for anyone): no mound; the churned earth behind him is one merged earth body that lingers 1.6 s then fades; he goes down and comes up in sprays of clods and dust; the ring burst is gone (the blow is still there)."
+        },
+        {
+          "id": "digger-dirtFling",
+          "label": "Dirt Fling",
+          "video": "../../../clips/showcase5/digger-dirtFling.mp4",
+          "text": "Dirt Fling: \"Doesnt look great. Does it knock out? Is so knock out doesnt have a visual effect. If done to ally removes some effects like burn and poison. Applies dirty to them\" Built: inked clods arcing out in a fan with dust; friends in the fan are cleaned of burn and poison and get Dirty (he aims it at a burning or poisoned friend when one is near). The knock-out from stagger (II) now has a look for everyone: stars going round the head while knocked out ."
+        },
+        {
+          "id": "digger-spadeBat",
+          "label": "Bury",
+          "video": "../../../clips/showcase5/digger-spadeBat.mp4",
+          "text": "Spade Bat: \"Burry. Slams shovel down in an aoe in front of him. Anyone hit will be pushed into the ground for a short duration. They can't move or be hit\" Built: Bury in its slot : the spade slammed flat in front (an earth splash, its own look), 1.6x to all within 64 (III 80); each is driven into the ground (hidden, can't move, act or be hit) for 1.5 s (II 2.2 s), shown as a twitching mound, and digs out in a spray of earth (III staggered). Bosses are only stunned."
+        },
+        {
+          "id": "digger-trait",
+          "label": "Trait: Rub Some Dirt In It",
+          "video": "../../../clips/showcase5/digger-trait.mp4",
+          "text": "Trait: \"Rub some dirt in it. Every ability he uses applies a dirty effect to him.. Acts as a 1 time shield but attack speed is slow until it's cleared. Basic attack doesnt apply it. Makes him immune to poison and fire until removed.\" Built: Rub Some Dirt In It : each ability he uses puts Dirty on him (brown smears, crumbs falling): it soaks up the next blow entirely and is gone; until then he swings 30% slower and burn and poison can't take (both are washed off). Book scene a"
+        }
+      ]
+    },
+    {
+      "id": "grandpa",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Grandpa Sickle",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "grandpa-breadToss",
+        "grandpa-harvest",
+        "grandpa-oldTales"
+      ],
+      "items": [
+        {
+          "id": "grandpa-breadToss",
+          "label": "Bread Toss",
+          "video": "../../../clips/showcase5/grandpa-breadToss.mp4",
+          "text": "Bread Toss: \"Doesnt look the best overall\" Built: a bigger golden loaf, scored on top, steam curling off it, lobbed high on an arc with its shadow below ; where it lands a warm glow, steam and crumbs."
+        },
+        {
+          "id": "grandpa-harvest",
+          "label": "Harvest",
+          "video": "../../../clips/showcase5/grandpa-harvest.mp4",
+          "text": "Harvest: \"Dashes to ally when he does it.\" Built: he hurries (a quick bound) to the friend most beset and sweeps there; with nobody in trouble he sweeps where he stands."
+        },
+        {
+          "id": "grandpa-oldTales",
+          "label": "Old Tales",
+          "video": "../../../clips/showcase5/grandpa-oldTales.mp4",
+          "text": "Old Tales: \"What does it do? Doesnt look the best\" Built: it says it now: an old story book opens over his head with its pages turning; over each friend listening a gold clock whose hand spins forward and \"-4s\" (II \"-6s\") rising: every ability of theirs comes round that much sooner (III heals them 8%)."
+        }
+      ]
+    },
+    {
+      "id": "alchemist",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Alchemist",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "alchemist-attack",
+        "alchemist-acidFlask",
+        "alchemist-bangFlask",
+        "alchemist-elixir"
+      ],
+      "items": [
+        {
+          "id": "alchemist-attack",
+          "label": "Unstable flask",
+          "video": "../../../clips/showcase5/alchemist-attack.mp4",
+          "text": "Unstable flask: \"Bottle in hand should change to what she will throw\" Built: a flask in the next brew's colour is drawn over the one in the art's hand (fire, frost, acid in turn). (A cleaner fix is the art lane giving the bottle its own part.)"
+        },
+        {
+          "id": "alchemist-acidFlask",
+          "label": "Brew Pools",
+          "video": "../../../clips/showcase5/alchemist-acidFlask.mp4",
+          "text": "Acid Flask: \"Bad. Is just the plague doctors. Throws 2 lingering pools of liquid in a spread. Has 6 possible ones they can choose. Acid Cold Fire Whirling Shocking Water. Make look better.\" Built: Brew Pools : two flasks (II three) arc out in a spread; each bursts into a pool of a random one of six: acid (eats at them, +15% taken), cold (chill), fire (a real fire patch: burns), whirling (whirls them and spins them round its middle), shocking (shock, sparks crackling), water ("
+        },
+        {
+          "id": "alchemist-bangFlask",
+          "label": "Monstrosity",
+          "video": "../../../clips/showcase5/alchemist-bangFlask.mp4",
+          "text": "Bang Flask: \"They drink 4 an unstable concoction becoming a monstrosity. Bigger fast, rapid melee attacks. Drains hp quickly when in form but are immune to damage and status effect, takes less knockback. Will leave form when they lose 33% of their max hp over 8 seconds. Attacks deal ANY status effect each hit at max level. Also gets a dash when in this form.\" Built: Monstrosity : 8 s as a monster: 1.35x her size, 25% faster, a melee clawer (a blow every 0.38 s) with a lunge ("
+        },
+        {
+          "id": "alchemist-elixir",
+          "label": "Elixir",
+          "video": "../../../clips/showcase5/alchemist-elixir.mp4",
+          "text": "Elixir: \"Gives 1 of 3 buffs. Haste/rage, Cleanse and heal, Or swiftness and temporary shield. (Like 30 negate). What's a good name for a protection status effect? Make look better\" Built: she lobs it to the friend who needs it most and picks the brew: cleansed and healed 14% (II 22%) if hurt or afflicted; Warded (a shield soaking 30, II 45: the pale blue border) and swift if being hit; hasted and enraged (+25%, II +35% damage) if fighting fine. The splash bursts in its colour"
+        }
+      ]
+    },
+    {
+      "id": "shaman",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Shaman",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "shaman-attack",
+        "shaman-healTotem",
+        "shaman-rainDance",
+        "shaman-spiritLink"
+      ],
+      "items": [
+        {
+          "id": "shaman-attack",
+          "label": "Spirit bolt",
+          "video": "../../../clips/showcase5/shaman-attack.mp4",
+          "text": "Spirit bolt: \"Jumps to ally if they are near and heals them. Otherwise no heal\" Built: it strikes; if a hurt friend is within 170 of what it struck, a spirit leaps on from there to that friend and mends it (0.25x of the bolt); else no heal. (no friend on the bench: the leap shows in a real fight and in the Book)."
+        },
+        {
+          "id": "shaman-healTotem",
+          "label": "Healing Totem",
+          "video": "../../../clips/showcase5/shaman-healTotem.mp4",
+          "text": "Healing Totem: \"Not good overall. Doesn't even match the one on his back… Should throw to ally, In an arc. Has 100 hp. Any ally in its radius that takes damage will go to it instead. At lvl 3 cleanse status effects too. It has its own hit box. Damage directly to it is 50%\" Built: a winged totem drawn like his (carved pole, stacked faces, teal wings, his orange bands), thrown on an arc to the friend under the most attack; a summon with 70 health and its own body; every blow on"
+        },
+        {
+          "id": "shaman-rainDance",
+          "label": "Ancestors' Call",
+          "video": "../../../clips/showcase5/shaman-rainDance.mp4",
+          "text": "Rain Dance: \"Don't like. Doesnt look good. Make ancestors call. Summons a light blue bear, eagle, wolf, and beaver. Eagle, follows ally healing them. Wolf, works like current wolf. Bear, melee. Negates all damage around him by 20%. Beaver. Spins and shoots out 3 homing orbs.\" Built: Ancestors' Call : four light-blue spirits rise out of the floor: a bear (melee; friends within 120 of it take 20% less), a wolf (the Druid's wolf, washed light blue), an eagle (flies over the most"
+        },
+        {
+          "id": "shaman-spiritLink",
+          "label": "Spirit Link",
+          "video": "../../../clips/showcase5/shaman-spiritLink.mp4",
+          "text": "Spirit Link: \"Show underneath. Give outline. Can link to totem\" Built: inked teal threads on the floor under the units, beads running along them; his totem joins the link."
+        }
+      ]
+    },
+    {
+      "id": "witch",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Witch",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "witch-attack",
+        "witch-broomRide",
+        "witch-cursedBrew",
+        "witch-frogHex"
+      ],
+      "items": [
+        {
+          "id": "witch-attack",
+          "label": "Hex bolt",
+          "video": "../../../clips/showcase5/witch-attack.mp4",
+          "text": "Hex bolt: \"Shoots 3 hexs in quick succession. Have each one look like 1 of 5 possible symbols.\" Built: three hexes 0.1 s apart (0.4x each), each a sign at random: a moon, a star, an eye, a spiral or a skull."
+        },
+        {
+          "id": "witch-broomRide",
+          "label": "Broom Ride",
+          "video": "../../../clips/showcase5/witch-broomRide.mp4",
+          "text": "Broom Ride: \"Should fly above everything for a bit. Circling around. Dropping hex bombs below it. Doesnt look like they are ridding it. Not targetable when flying\" Built: she rises high on the broom (drawn under her body, the handle out in front, the bristles behind, wind lines), circles the enemies for 2.5 s (III 3.5 s) dropping hex bombs (0.9x, a little curse; II more often); nothing can pick her out while she flies."
+        },
+        {
+          "id": "witch-cursedBrew",
+          "label": "Cursed Brew",
+          "video": "../../../clips/showcase5/witch-cursedBrew.mp4",
+          "text": "Cursed Brew: \"Doesnt look good. Pot should deal knockback and have a hit box and hp.\" Built: the cauldron (black iron, green brew bubbling, a fire under it) is a summon with 60 health and its own body; it lands with a blow (1.2x, knock 380, a little curse) and stands 6 s while purple fumes curse whatever breathes them."
+        },
+        {
+          "id": "witch-frogHex",
+          "label": "Hex",
+          "video": "../../../clips/showcase5/witch-frogHex.mp4",
+          "text": "Hex: \"Does not look good at all... Needs unique visual not the leach. Frogs should hop around randomly.\" Built: a hex shot; where it lands a puff of green smoke, the enemy's body is hidden and a frog is drawn in its place (squat green body, big eyes, back legs kicking on each hop); it hops about at random, can't attack, takes 50% more."
+        }
+      ]
+    },
+    {
+      "id": "warlock",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Warlock",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "warlock-attack",
+        "warlock-darkBargain",
+        "warlock-eldritchBeam",
+        "warlock-summonImp",
+        "warlock-trait"
+      ],
+      "items": [
+        {
+          "id": "warlock-attack",
+          "label": "Pact bolt",
+          "video": "../../../clips/showcase5/warlock-attack.mp4",
+          "text": "Pact bolt: \"Should return back to him. Make look like the eye on his sceptre. Make the imp shoot a smaller version.\" Built: a magenta eye with a gold lid and a flame tail; it flies out through up to three enemies and comes back to his hand, hitting on the way back (0.8x out, 0.48x back); a third heals him. The imp's are the same, smaller."
+        },
+        {
+          "id": "warlock-darkBargain",
+          "label": "Dark Bargain",
+          "video": "../../../clips/showcase5/warlock-darkBargain.mp4",
+          "text": "Dark Bargain: \"Gives 20% of his max hp go to his imp. Gets a huge attack speed boost for both of them and attack does aoe.\" Built: a fifth of his health flows into the imp (blood drops between them); both strike 1.8x as fast for 6 s (II 8 s) and every blow bursts round what it hits. III the imp grows on the blood (more health)."
+        },
+        {
+          "id": "warlock-eldritchBeam",
+          "label": "Eldritch Beam",
+          "video": "../../../clips/showcase5/warlock-eldritchBeam.mp4",
+          "text": "Eldritch Beam: \"Doesnt look good. Should deal kb. At the end it should burst. No second ray. Ray should come from imp.\" Built: a writhing ray (inked core, glow, thicker as it heats) from his imp (from him if the imp is gone), shoving the target back every tick; after 2.5 s it bursts (1.6x round it). The second ray is gone (III: a bigger burst)."
+        },
+        {
+          "id": "warlock-summonImp",
+          "label": "Awaken",
+          "video": "../../../clips/showcase5/warlock-summonImp.mp4",
+          "text": "Summon Imp: \"Change to awaken. Imp enters his body turning him into a stronger version of himself. Becomes melee with a large demonic sword, can teleport and does a large melee swing that explodes on hit targets, can spit fireballs. Kills resets duration in form.\" Built: Awaken : the imp streaks into him; for 8 s (II 11 s) he is melee with a big black-and-red blade (drawn in his hand, swung with it), 1.7x blows in a wide arc that explode on what they hit, a blink to his foe e"
+        },
+        {
+          "id": "warlock-trait",
+          "label": "Trait: Familiar",
+          "video": "../../../clips/showcase5/warlock-trait.mp4",
+          "text": "Trait: \"Has a small imp always with him. Follows closely. If it dies it will respawn after a short cooldown.\" Built: Familiar : an imp summon (the Ember Deep's imp art) darts round his shoulder and throws little eye bolts at what he fights; if it falls another climbs out of the floor 8 s later. Book scene added."
+        }
+      ]
+    },
+    {
+      "id": "cultist",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Cultist",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "cultist-attack",
+        "cultist-bloodPact",
+        "cultist-ritualCircle",
+        "cultist-soulCandle",
+        "cultist-trait"
+      ],
+      "items": [
+        {
+          "id": "cultist-attack",
+          "label": "Shadow bolt",
+          "video": "../../../clips/showcase5/cultist-attack.mp4",
+          "text": "Shadow bolt: \"Does a dagger swipe when close, and shadow bolt when far. Dagger applies bleed. If the bolt hits a bleeding target they instantly burst.\" Built: within 34 a dagger swipe (1.1x, 26 bleeding); further, a violet bolt; a bolt on anything with its bleeding built past 45 bursts it at once (balance: at any bleeding it burst every bolt)."
+        },
+        {
+          "id": "cultist-bloodPact",
+          "label": "Blood Pact",
+          "video": "../../../clips/showcase5/cultist-bloodPact.mp4",
+          "text": "Blood Pact: \"Meh. Applies bleed to self to give everyone becomes enraged.\" Built: he cuts himself (45 bleeding on him) and his friends near are enraged (Rage: +30% damage, II +40%, quicker blows; III lifesteal)."
+        },
+        {
+          "id": "cultist-ritualCircle",
+          "label": "Ritual Circle",
+          "video": "../../../clips/showcase5/cultist-ritualCircle.mp4",
+          "text": "Ritual Circle: \"They can't leave circle. At max level. Applied bleed instead.\" Built: it bleeds what stands in it (10 every 0.3 s) instead of cursing; III nothing caught inside can step out (held at its edge)."
+        },
+        {
+          "id": "cultist-soulCandle",
+          "label": "Sacrifice",
+          "video": "../../../clips/showcase5/cultist-soulCandle.mp4",
+          "text": "Soul Candle: \"Sacrifice. Dashes at enemy on low hp. Instantly kills them and heals. At lvl 3 spins and applies bleed to everyone near.\" Built: Sacrifice : a bound at an enemy below 25% (II 35%) and the dagger finishes it (a boss, major or mini-boss is cut deep instead: 4x); he heals 15%; III he spins as he lands, blood flung out, 0.6x and 25 bleeding on everything near."
+        },
+        {
+          "id": "cultist-trait",
+          "label": "Trait: Blood Rite",
+          "video": "../../../clips/showcase5/cultist-trait.mp4",
+          "text": "Trait: \"Don't like trait. Should heal when they trigger a blood burst\" Built: Blood Rite : every bleeding he started that bursts (the statuses lane's haemorrhage) heals him 8% (blood drops flow back to him)."
+        }
+      ]
+    },
+    {
+      "id": "monk",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Monk",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "monk-attack",
+        "monk-flurry",
+        "monk-innerPeace",
+        "monk-palmStrike"
+      ],
+      "items": [
+        {
+          "id": "monk-attack",
+          "label": "Fists",
+          "video": "../../../clips/showcase5/monk-attack.mp4",
+          "text": "Fists: \"Different visual. High knockback\" Built: a soft burst of force where the fist lands , knockback 240 (was 60)."
+        },
+        {
+          "id": "monk-flurry",
+          "label": "Flurry",
+          "video": "../../../clips/showcase5/monk-flurry.mp4",
+          "text": "Flurry: \"Better visual. Looks too sharp. Moves forward while doing it.\" Built: soft round bursts of force (no streaks) and he steps in with every punch."
+        },
+        {
+          "id": "monk-innerPeace",
+          "label": "Inner Peace",
+          "video": "../../../clips/showcase5/monk-innerPeace.mp4",
+          "text": "Inner Peace: \"Put hands together. Heals himself. All projectiles are deflected back. And melee attack will have them launched backwards. Lvl 3 heals with an aura around him and clears negative effects. Lvl 2 is a longer duration\" Built: he sits with his palms pressed together (both arms forced in, parts pose); cleansed, heals 15% over it; every shot reaching him flies back at its shooter; whoever strikes him is thrown far back (knock 640). 2.5 s (was 2), II 4 s; III a warm gl"
+        },
+        {
+          "id": "monk-palmStrike",
+          "label": "Palm Strike",
+          "video": "../../../clips/showcase5/monk-palmStrike.mp4",
+          "text": "Palm Strike: \"Better visual. Should hit everyone in range. Everyone is spun around to face away. Adds New status effect that makes entities turn very slowly. Burst effect: makes them walk in the direction they are facing for a bit very quickly. Can't attack.\" Built: everything within reach round him (110 at III) is struck (1.3x, knock 380), turned to face away from him and Spun 45 (III 60): turns very slowly as it builds; at 100 it marches off the way it faces, fast, for 1.2 "
+        }
+      ],
+      "details": "\"For traits you should also show them off\" Built: every new or kept trait gets a clip: trait clips (lab.js ab=trait), Deflect included (see the end of this file)."
+    },
+    {
+      "id": "seer",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Seer",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "seer-foresight",
+        "seer-premonition",
+        "seer-starfall"
+      ],
+      "items": [
+        {
+          "id": "seer-foresight",
+          "label": "Foresight",
+          "video": "../../../clips/showcase5/seer-foresight.mp4",
+          "text": "Foresight: \"Better visual.\" Built: a great violet eye opens over the marked one, lashes of light round it and three pale beams pinning it, a glow under it."
+        },
+        {
+          "id": "seer-premonition",
+          "label": "Premonition",
+          "video": "../../../clips/showcase5/seer-premonition.mp4",
+          "text": "Premonition: \"Meh.\" Built: replaced (above)."
+        },
+        {
+          "id": "seer-starfall",
+          "label": "Starfall",
+          "video": "../../../clips/showcase5/seer-starfall.mp4",
+          "text": "\"Overall not too exciting/ interesting. Maybe an ability that blinds everyone around her. Or making it so enemies attacks can accidentally hit each other friendly fire on.\" Built: both: Blinding Flash in Premonition's slot (its note was \"Meh\"; id premonition): her crystal flares, everything within 160 is struck (0.8x) and blinded 2.5 s (II 3.5 s; III radiance too), shards of light flung out, a bar of light over their eyes. Ill Omen in Starfall's slot (not ticked, no note; id "
+        }
+      ]
+    },
+    {
+      "id": "chef",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Chef",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "chef-attack",
+        "chef-foodFight",
+        "chef-hotMeal"
+      ],
+      "items": [
+        {
+          "id": "chef-attack",
+          "label": "Food toss",
+          "video": "../../../clips/showcase5/chef-attack.mp4",
+          "text": "Frying pan: \"Should be ranged. Throws random foods. All same effect. Hurts enemies, heals allies\" Built: Food toss: he is ranged now (range 200; a shooter's moves), throwing one of six foods drawn in code (an apple, a drumstick, a pie, cheese, a roll, a fish): it hurts the enemy it hits and mends any friend it passes over (0.45x)."
+        },
+        {
+          "id": "chef-foodFight",
+          "label": "Food Fight",
+          "video": "../../../clips/showcase5/chef-foodFight.mp4",
+          "text": "Food Fight: \"Stops any movement abilities from anyone hit and applies a slight slow.\" Built: pies go first at whatever is dashing, leaping or charging and stop it dead (\"STOPPED\"), and slow 20% for 3 s."
+        },
+        {
+          "id": "chef-hotMeal",
+          "label": "Hot Meal",
+          "video": "../../../clips/showcase5/chef-hotMeal.mp4",
+          "text": "Hot Meal: \"Doesnt look good. Should throw food pick ups randomly around dungeon to be picked up. If at full hp will get over health.\" Built: plates thrown on arcs to random spots round the party (two, II three), each a steaming plate of one of the six foods; a friend who walks over one eats it: heals 20%, and what goes past full health becomes extra health (a Warded shield); hurt friends with no enemy on them walk over to one. III kept (+20% damage 8 s)."
+        }
+      ],
+      "details": "Grease Fire: ticked, unchanged."
+    },
+    {
+      "id": "beekeeper",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Beekeeper",
+      "text": "Redone: a new kit, built from your notes.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "beekeeper-attack",
+        "beekeeper-honeyPot",
+        "beekeeper-royalJelly",
+        "beekeeper-swarm",
+        "beekeeper-trait"
+      ],
+      "items": [
+        {
+          "id": "beekeeper-attack",
+          "label": "Attack",
+          "video": "../../../clips/showcase5/beekeeper-attack.mp4",
+          "text": "Bee (attack): a bee stings and then keeps buzzing round its foe, stinging again every 0.7 s for 3 s (more bees pile on)."
+        },
+        {
+          "id": "beekeeper-honeyPot",
+          "label": "Beehive",
+          "video": "../../../clips/showcase5/beekeeper-honeyPot.mp4",
+          "text": "Beehive : a straw skep thrown among the enemies (70 health) for 8 s (II 12 s): a bee streams out at something near every 0.7 s; whoever strikes the hive is mobbed by three; III its bees pester."
+        },
+        {
+          "id": "beekeeper-royalJelly",
+          "label": "Honey Glaze",
+          "video": "../../../clips/showcase5/beekeeper-royalJelly.mp4",
+          "text": "Honey Glaze : honey drizzled over the friend under the most attack: it heals 11% over 4 s (II 17%) and whatever strikes it gets stuck (entangle, slowed); III two friends."
+        },
+        {
+          "id": "beekeeper-swarm",
+          "label": "Smoker",
+          "video": "../../../clips/showcase5/beekeeper-swarm.mp4",
+          "text": "Smoker : a cone of thick white smoke rolls out for 2 s: those in it grow Sleepy (the statuses lane's; they drop off if it builds) and slowed; III they swing slower too."
+        },
+        {
+          "id": "beekeeper-trait",
+          "label": "Trait: Pollen",
+          "video": "../../../clips/showcase5/beekeeper-trait.mp4",
+          "text": "Trait Pollen : every sixth sting of his bees mends the friend most hurt near him 4%."
+        }
+      ],
+      "details": "\"Overall don't like. Visuals or abilities or animations.\" Built: a new kit , my design: the keeper calms the enemy with smoke, sets a hive on them and keeps his friends sweet; his bees pester. The bees are redrawn small with one striped body and a head (the art round's note: \"1 maybe 2 body segments\")."
+    },
+    {
+      "id": "quartermaster",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Quartermaster",
+      "text": "Redone: a new kit, built from your notes.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "quartermaster-flare",
+        "quartermaster-oilBlades",
+        "quartermaster-resupply",
+        "quartermaster-trait"
+      ],
+      "items": [
+        {
+          "id": "quartermaster-flare",
+          "label": "Pot Helmet",
+          "video": "../../../clips/showcase5/quartermaster-flare.mp4",
+          "text": "Pot Helmet : a big pot lands upside down over an enemy's head (\"CLONG\"): blinded and Confused 3 s; II staggers; III bounces on to a second head."
+        },
+        {
+          "id": "quartermaster-oilBlades",
+          "label": "Barricade",
+          "video": "../../../clips/showcase5/quartermaster-oilBlades.mp4",
+          "text": "Barricade : a wooden barricade unfolded between the party and the enemies: a summon that blocks their way and their shots (110 health 10 s; II 160, 14 s; III spikes hurt whatever strikes it)."
+        },
+        {
+          "id": "quartermaster-resupply",
+          "label": "Supply Crate",
+          "video": "../../../clips/showcase5/quartermaster-resupply.mp4",
+          "text": "Supply Crate : a crate (red cross on it) dropped by the friend whose abilities are furthest off; each friend's first touch brings its abilities 4 s sooner (II 6 s; a gold clock shows it) and patches it 5%; friends with abilities waiting walk over to it. III two crates."
+        },
+        {
+          "id": "quartermaster-trait",
+          "label": "Trait: Requisition",
+          "video": "../../../clips/showcase5/quartermaster-trait.mp4",
+          "text": "Trait Requisition : every 20 s he tosses a piece of kit to the friend nearest the fight, for 12 s: a whetstone (+20% damage), a buckler (a 25 shield, Warded) or boots (+25% speed), shown over its head."
+        }
+      ],
+      "details": "\"Overall don't like. Visuals or abilities. Giving out hp potions is very strong. Needs to be more unique\" Built: a new kit , my design: the man with the pack. No potions any more. gatherer: true and the wagon sentence are kept.\n\nPack toss (attack): one of five things off the pack (a pot, a pan, a boot, a tin cup, a ladle), knock 90."
+    },
+    {
+      "id": "crossbowman",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Crossbowman",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "crossbowman-attack",
+        "crossbowman-crankUp",
+        "crossbowman-pavise",
+        "crossbowman-pinBolt",
+        "crossbowman-trait"
+      ],
+      "items": [
+        {
+          "id": "crossbowman-attack",
+          "label": "Heavy bolt",
+          "video": "../../../clips/showcase5/crossbowman-attack.mp4",
+          "text": "Heavy bolt: \"Needs better animation. Remove tail from arrow\" Built: a thick bolt with a steel head and short fletching, no trail; the string snaps (white lines off his front) and he rocks back."
+        },
+        {
+          "id": "crossbowman-crankUp",
+          "label": "Crank Up",
+          "video": "../../../clips/showcase5/crossbowman-crankUp.mp4",
+          "text": "Crank Up: \"Bomb at the end. Not fire themed. Staggering. Better visual\" Built: a gear spins hard at his crossbow, clicks flying; his charged bolts burst in grey smoke and iron (not fire), staggering."
+        },
+        {
+          "id": "crossbowman-pavise",
+          "label": "Pavise",
+          "video": "../../../clips/showcase5/crossbowman-pavise.mp4",
+          "text": "Pavise: \"Better visual. Doesnt look like he's shooting through it. It has its own hp. At lvl 3 he places 3 in a row slight titles to surround him. Allies can attack through it. Enemies can't\" Built: the pavise is its own thing (a summon, 60 health): a tall painted plank on a prop planted in front; his side's shots pass it, the enemy's stop on it. 7 s (II 10 s and he reloads 35% faster near it); III three in a slanted row round him."
+        },
+        {
+          "id": "crossbowman-pinBolt",
+          "label": "Pinning Bolt",
+          "video": "../../../clips/showcase5/crossbowman-pinBolt.mp4",
+          "text": "Pinning Bolt: \"Heavy bolt, hits an enemy, then makes them fly backwards into a wall stunning them in place for a bit. Does heavy damage. Enemy being flung does heavy kb to anyone it hits as they fly\" Built: 2.2x and flung backwards (knock 1100) with the bolt in it; whatever it ploughs into takes 0.9x and is hurled aside; slamming into a wall it is pinned (\"PINNED\", stunned 1.8 s, III 2.5 s; II the slam staggers)."
+        },
+        {
+          "id": "crossbowman-trait",
+          "label": "Trait",
+          "video": "../../../clips/showcase5/crossbowman-trait.mp4",
+          "text": "Changed with the rest of the kit; see the clip."
+        }
+      ],
+      "details": "\"If enemies have armour as well his attacks ignore them.\" Built: Armour Piercing also puts back what armour would take off (kept: +25% on elites, majors, bosses)."
+    },
+    {
+      "id": "falconer",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Falconer",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "falconer-flock",
+        "falconer-keenEye",
+        "falconer-looseFalcon",
+        "falconer-trait"
+      ],
+      "items": [
+        {
+          "id": "falconer-flock",
+          "label": "Call the Flock",
+          "video": "../../../clips/showcase5/falconer-flock.mp4",
+          "text": "Call the Flock: \"Not good. Should become a flock of birds for a bit. Birds don't look good\" Built: he scatters into a flock of nine small grey birds (redrawn: bodies and beating wing strokes) for 2.2 s (III 3 s): nothing can touch him while it wheels through the enemies pecking (0.6x each, slowed; II blinded), then he is himself again."
+        },
+        {
+          "id": "falconer-keenEye",
+          "label": "Keen Eye",
+          "video": "../../../clips/showcase5/falconer-keenEye.mp4",
+          "text": "Keen Eye: \"Don't like eye.\" Built: no eye: gold motes circle his throwing hand and his knives glint gold."
+        },
+        {
+          "id": "falconer-looseFalcon",
+          "label": "Loose the Falcon",
+          "video": "../../../clips/showcase5/falconer-looseFalcon.mp4",
+          "text": "Loose the Falcon: \"Doesnt look good. Falcon should leave hand. Should show a crosshair on target tracked, stops them from going invisible/un targetable, underground. All attacks do additional fixed damage to target\"; showcase 4: \"Make the falcon that flies look like the one he was holding\" Built: the falcon leaves his fist (hidden from his arm while out), drawn as his slate-grey falcon with its pale chest; it marks the furthest enemy (an elite first) Tracked for 6 s: an amber"
+        },
+        {
+          "id": "falconer-trait",
+          "label": "Trait: Hunting Partner",
+          "video": "../../../clips/showcase5/falconer-trait.mp4",
+          "text": "\"Different trait.\" Built: Hunting Partner : every fourth knife the falcon goes out with it, rakes the foe and marks it Tracked for 2 s."
+        }
+      ],
+      "details": "Throwing knife: \"Better visual\" Built: a broad blade turning end over end, a glint, a short trail (gold under Keen Eye)."
+    },
+    {
+      "id": "grenadier",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Grenadier",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "grenadier-attack",
+        "grenadier-bigBomb",
+        "grenadier-blastOff",
+        "grenadier-stickyBomb",
+        "grenadier-trait"
+      ],
+      "items": [
+        {
+          "id": "grenadier-attack",
+          "label": "Bomb",
+          "video": "../../../clips/showcase5/grenadier-attack.mp4",
+          "text": "Bomb: \"Not fire themed. Stagger. Looks good. Make sure shadow style matches\" Built: every blast of his is grey smoke and iron bits with a scorch on the floor (no flames), and staggers; the bomb in flight arcs with a soft round shadow under it, like the units'."
+        },
+        {
+          "id": "grenadier-bigBomb",
+          "label": "Big Bomb",
+          "video": "../../../clips/showcase5/grenadier-bigBomb.mp4",
+          "text": "Big Bomb: \"Secondary bombs don't look good. Big bomb should be an entity with a small health pool. Explodes if it is broken or after 2 seconds of landing\" Built: it lands as a summon (30 health), a great iron ball swelling as its fuse burns down; it goes off 2 s after landing or the moment it is broken; III's four small bombs arc out as proper bombs."
+        },
+        {
+          "id": "grenadier-blastOff",
+          "label": "Blast Off",
+          "video": "../../../clips/showcase5/grenadier-blastOff.mp4",
+          "text": "Blast Off: \"Explosion effect should happen underneath him\" Built: the blast is drawn on the floor under him."
+        },
+        {
+          "id": "grenadier-stickyBomb",
+          "label": "Sticky Bomb",
+          "video": "../../../clips/showcase5/grenadier-stickyBomb.mp4",
+          "text": "Sticky Bomb: \"Doesnt look very sticky\" Built: a splat of green goo holds the bomb on, strands dripping, the bomb jiggling faster as it nears; the goo slows it a little."
+        },
+        {
+          "id": "grenadier-trait",
+          "label": "Trait: Powder Keg",
+          "video": "../../../clips/showcase5/grenadier-trait.mp4",
+          "text": "\"Needs different trait. That's just what his bombs do.\" Built: Powder Keg : whatever he kills blows up a moment later (0.9x, staggering, 64 across): a blast sets off the next through a pack."
+        }
+      ]
+    },
+    {
+      "id": "harpooner",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Harpooner",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "harpooner-attack",
+        "harpooner-anchorDrop",
+        "harpooner-reelIn",
+        "harpooner-rogueWave"
+      ],
+      "items": [
+        {
+          "id": "harpooner-attack",
+          "label": "Harpoon",
+          "video": "../../../clips/showcase5/harpooner-attack.mp4",
+          "text": "Harpoon: \"Rope needs an outline. Render underneath him. Target pulled forwards a bit and then it returns. Harpoon should look like the one he is holding\" Built: a wooden-shafted barbed harpoon on an inked rope drawn on the floor under the units; it tugs the enemy a little way towards him and is hauled back to his hand."
+        },
+        {
+          "id": "harpooner-anchorDrop",
+          "label": "Drop Anchor",
+          "video": "../../../clips/showcase5/harpooner-anchorDrop.mp4",
+          "text": "Drop Anchor: \"Make anchor look better. Have it jump from him to targets position. Make it look bigger. Improve visuals\" Built: a big iron anchor heaved off him, arcing high over to the spot on its chain (its shadow racing in), crashing down in a crater of dust (2.8x, stunned 1.2 s)."
+        },
+        {
+          "id": "harpooner-reelIn",
+          "label": "Reel In",
+          "video": "../../../clips/showcase5/harpooner-reelIn.mp4",
+          "text": "Reel In: \"Make harpoon render stuck in them. Rope underneath\" Built: the harpoon stays drawn stuck in them, the rope on the floor."
+        },
+        {
+          "id": "harpooner-rogueWave",
+          "label": "Rogue Wave",
+          "video": "../../../clips/showcase5/harpooner-rogueWave.mp4",
+          "text": "Rogue Wave: \"Give better visual. Closer targets are launched further and take more damage. They get hit before the wave even reaches them\" Built: a curling inked wave crest with foam rolls out (420/s); each enemy is struck when the crest reaches it, 0.9x-2x and knock 220-640 by how close it stood."
+        }
+      ]
+    },
+    {
+      "id": "huntress",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Javelin Huntress",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "huntress-bound",
+        "huntress-prey",
+        "huntress-runningThrow"
+      ],
+      "items": [
+        {
+          "id": "huntress-bound",
+          "label": "Bound",
+          "video": "../../../clips/showcase5/huntress-bound.mp4",
+          "text": "Bound: \"Make javalin bigger and hit harder\" Built: a 1.45x-size javelin, 2.1x (was 1.3x)."
+        },
+        {
+          "id": "huntress-prey",
+          "label": "Javelin Rain",
+          "video": "../../../clips/showcase5/huntress-prey.mp4",
+          "text": "Prey: \"Don't like\" Built: Javelin Rain : three javelins (III five) hurled high come down on the enemies round her target (1.5x each, II staggers) and stand where they landed."
+        },
+        {
+          "id": "huntress-runningThrow",
+          "label": "Spear Lunge",
+          "video": "../../../clips/showcase5/huntress-runningThrow.mp4",
+          "text": "Running Throw: \"Description doesn't match what I see. Give a spear lunge attack. Pierce through targets. 2 charges at lvl 3\" Built: Spear Lunge : she lunges straight through a line of enemies (1.6x each); II staggers; III two charges (the second straight after)."
+        }
+      ],
+      "details": "Javelin: \"Make look better. Throw particles. Every third attack throws a razer javalin applying bleed\" Built: a longer javelin with a leaf head, dust off her hand as it goes; every third a serrated razor javelin (1.2x, 45 bleeding)."
+    },
+    {
+      "id": "marksman",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Marksman",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "marksman-attack",
+        "marksman-aimedShot",
+        "marksman-bayonet",
+        "marksman-ricochet",
+        "marksman-trait"
+      ],
+      "items": [
+        {
+          "id": "marksman-attack",
+          "label": "Musket",
+          "video": "../../../clips/showcase5/marksman-attack.mp4",
+          "text": "Musket: \"More impact.\" Built: a bigger flash and rolling gun smoke, a kick back, a little screen shake, knock 220."
+        },
+        {
+          "id": "marksman-aimedShot",
+          "label": "Aimed Shot",
+          "video": "../../../clips/showcase5/marksman-aimedShot.mp4",
+          "text": "Aimed Shot: \"Applied target effect. Shows crosshair on them. Movement abilities are limited and they take additional damage. Bullets pierce through targeted entities\" Built: it leaves its target Targeted 6 s (a red crosshair): takes 20% more, its dashes, leaps and charges go 40% as far, and his bullets go on through it."
+        },
+        {
+          "id": "marksman-bayonet",
+          "label": "Bayonet",
+          "video": "../../../clips/showcase5/marksman-bayonet.mp4",
+          "text": "Bayonet: \"Improve\" Built: a lunge with a long steel thrust streak, a heavy shove (knock 520), a flash where it lands; 1.2x (was 0.8x)."
+        },
+        {
+          "id": "marksman-ricochet",
+          "label": "Ricochet",
+          "video": "../../../clips/showcase5/marksman-ricochet.mp4",
+          "text": "Ricochet: \"Only bounces between targets within already 75 degrees of last target. Can't turn 180 degrees. Lvl 3 makes it so it does more damage to each consecutive target.\" Built: it only glances on to an enemy within 75 degrees of the way it was going; III each bounce x1.3 (else x0.9)."
+        },
+        {
+          "id": "marksman-trait",
+          "label": "Trait: Long Shot",
+          "video": "../../../clips/showcase5/marksman-trait.mp4",
+          "text": "\"Don't like trait. Gets additional damage when target is near max range. Should have very long range.\" Built: Long Shot : 40% more reach; shots hit up to 60% harder the nearer the edge of it."
+        }
+      ]
+    },
+    {
+      "id": "ninja",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Ninja",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "ninja-attack",
+        "ninja-caltrops",
+        "ninja-shurikenFan",
+        "ninja-substitution"
+      ],
+      "items": [
+        {
+          "id": "ninja-attack",
+          "label": "Shuriken",
+          "video": "../../../clips/showcase5/ninja-attack.mp4",
+          "text": "Shuriken: \"Animations is off. Flickers. Should throw 1 then 2 at a time, then 3 at a time on repeat\" Built: 1, 2, 3, 1, 2, 3... in a small fan (0.62x each)."
+        },
+        {
+          "id": "ninja-caltrops",
+          "label": "Caltrops",
+          "video": "../../../clips/showcase5/ninja-caltrops.mp4",
+          "text": "Caltrops: \"Doesnt look good. Should be shown spreading around her. Each one does slight damage and stagger\" Built: nine (II fourteen) inked iron caltrops flung out round her on little arcs; each bites the first foot on it once (0.55x, stagger 28; III poison)."
+        },
+        {
+          "id": "ninja-shurikenFan",
+          "label": "Kunai Rain",
+          "video": "../../../clips/showcase5/ninja-shurikenFan.mp4",
+          "text": "Shuriken Fan: \"Not good\" Built: Kunai Rain : she springs up and flings a ring of eight kunai (II twelve) all round her (1.3x each; III poison)."
+        },
+        {
+          "id": "ninja-substitution",
+          "label": "Substitution",
+          "video": "../../../clips/showcase5/ninja-substitution.mp4",
+          "text": "Substitution: \"doesnt show this happening. Good idea though\" Built: it shows: \"POOF\", a puff of smoke, a big log tumbling where she stood, a streak of smoke to where she comes out 130 away; it answers any blow (12 s; III 7 s)."
+        }
+      ]
+    },
+    {
+      "id": "pirate",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Pirate",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "pirate-attack",
+        "pirate-broadside",
+        "pirate-grog",
+        "pirate-pointBlank",
+        "pirate-trait"
+      ],
+      "items": [
+        {
+          "id": "pirate-attack",
+          "label": "Cutlass",
+          "video": "../../../clips/showcase5/pirate-attack.mp4",
+          "text": "Cutlass: \"Swing other way\" Built: ."
+        },
+        {
+          "id": "pirate-broadside",
+          "label": "Broadside",
+          "video": "../../../clips/showcase5/pirate-broadside.mp4",
+          "text": "Broadside: \"They should come in from an arc off the screen\" Built: each ball comes in high from the edge of the room on a long arc, its shadow racing in, a red ring warning where it lands."
+        },
+        {
+          "id": "pirate-grog",
+          "label": "Grog",
+          "video": "../../../clips/showcase5/pirate-grog.mp4",
+          "text": "Grog: \"Not good implementation. Lvl 3 throws 1 to ally\" Built: she stops, tips the bottle to her mouth (the arm forced up, the bottle drawn), heals 25% and sways tipsy (bubbles over her) while it works; III she lobs a bottle to a hurt friend."
+        },
+        {
+          "id": "pirate-pointBlank",
+          "label": "Point Blank",
+          "video": "../../../clips/showcase5/pirate-pointBlank.mp4",
+          "text": "Point Blank: \"Doesnt look great but yea. Should apply targeted\" Built: a big flash and rolling smoke; it is left Targeted 5 s."
+        },
+        {
+          "id": "pirate-trait",
+          "label": "Trait: Plunder",
+          "video": "../../../clips/showcase5/pirate-trait.mp4",
+          "text": "\"Trait: Enemies have a chance to drop more coins when he is in the party\" Built: Plunder : with her in the party, one enemy in three that falls anywhere spills extra coins (not in battles). gatherer: true and the wagon sentence are kept."
+        }
+      ]
+    },
+    {
+      "id": "slinger",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Slinger",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "slinger-attack",
+        "slinger-gravel",
+        "slinger-ramCharge",
+        "slinger-stunStone"
+      ],
+      "items": [
+        {
+          "id": "slinger-attack",
+          "label": "Sling",
+          "video": "../../../clips/showcase5/slinger-attack.mp4",
+          "text": "Sling: \"Bone particles bad. Has a 25% chance to throw a large stone which staggers. Up close he hits with cane\" Built: stones burst in grit and pebbles; one in four is a big stone (1.4x, stagger 35); within reach he cracks them with the crook."
+        },
+        {
+          "id": "slinger-gravel",
+          "label": "Counting Sheep",
+          "video": "../../../clips/showcase5/slinger-gravel.mp4",
+          "text": "Gravel: \"Not good. Needs ability that applied sleep\" Built: Counting Sheep : little sheep come bounding over the enemies round a spot one after another, a number over each; every jump adds Sleepy (the statuses lane's) until they drop off. II eight sheep; III each counts for more."
+        },
+        {
+          "id": "slinger-ramCharge",
+          "label": "Ram Charge",
+          "video": "../../../clips/showcase5/slinger-ramCharge.mp4",
+          "text": "Changed with the rest of the kit; see the clip."
+        },
+        {
+          "id": "slinger-stunStone",
+          "label": "Stun Stone",
+          "video": "../../../clips/showcase5/slinger-stunStone.mp4",
+          "text": "Changed with the rest of the kit; see the clip."
+        }
+      ],
+      "details": "Stunning Stone: \"Not good. Don't like how it is done.\" Built: the sling whirled over his head, then a big stone lobbed high that comes down on the head: BONK, stones scattering, stunned 0.9 s (II 1.3 s; III bounces to a second head).\n\nRam: \"Concept good. Execution poor\" Built: the ram redrawn (a woolly body of curls, dark face, curled horns, legs pounding, bounding, dust behind); it bowls through the line (1.5x, knock 460, tufts of wool). III two rams."
+    },
+    {
+      "id": "trapper",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Trapper",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "trapper-attack",
+        "trapper-jawTrap",
+        "trapper-snareNet",
+        "trapper-tripwire"
+      ],
+      "items": [
+        {
+          "id": "trapper-attack",
+          "label": "Shotgun",
+          "video": "../../../clips/showcase5/trapper-attack.mp4",
+          "text": "Short rifle: \"I want them to have a shotgun. Should hold with 2 hands. Trap sits on their back hip. Behind shoulder. Short range. Many pellets (each one is a projectile)\" Built: Shotgun: reach 180 (was 250), six pellet shots in a spread. The two-handed hold and the trap on his hip are the art lane's."
+        },
+        {
+          "id": "trapper-jawTrap",
+          "label": "Jaw Trap",
+          "video": "../../../clips/showcase5/trapper-jawTrap.mp4",
+          "text": "Jaw Trap: \"That doesnt look like what he is holding. Applies trapped. Target can't turn or move but can't use abilities and attack(straight). A trap shouldn't steal from another trap that is active.\" Built: a steel jaw trap (toothed half rings, a pan, a chain to a stake) that snaps shut; what it catches is Trapped; a trap ignores anything already trapped."
+        },
+        {
+          "id": "trapper-snareNet",
+          "label": "Snare Net",
+          "video": "../../../clips/showcase5/trapper-snareNet.mp4",
+          "text": "Changed with the rest of the kit; see the clip."
+        },
+        {
+          "id": "trapper-tripwire",
+          "label": "Bush",
+          "video": "../../../clips/showcase5/trapper-tripwire.mp4",
+          "text": "Tripwire: \"Don't like. Need ability that turns them into a bush. Enemies quickly lose aggro on him. Used to get away. Healing slightly (rejuvenation)\" Built: Bush : a leafy bush that creeps away from the enemies near; no enemy can pick him out; heals 2.5% a second (III 4%); 3.5 s (II 5 s)."
+        }
+      ],
+      "details": "Weighted Net: \"Don't like at all\" Built: Double Barrel : both barrels: twelve heavy pellets in a wide cone, he rocks back; II staggers; III those close are knocked down."
+    },
+    {
+      "id": "gladiator",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Gladiator",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "gladiator-attack",
+        "gladiator-netThrow",
+        "gladiator-shieldRush",
+        "gladiator-showboat",
+        "gladiator-trait"
+      ],
+      "items": [
+        {
+          "id": "gladiator-attack",
+          "label": "Gladius",
+          "video": "../../../clips/showcase5/gladiator-attack.mp4",
+          "text": "Gladius: \"Does a slash, stab on repeat\" Built: slash, stab, slash, stab (his blow's look and arc swap after each)."
+        },
+        {
+          "id": "gladiator-netThrow",
+          "label": "Spear of Ares",
+          "video": "../../../clips/showcase5/gladiator-netThrow.mp4",
+          "text": "Net Throw: \"Nope. Shoukd throw a large piercing spear. Ares spear\" Built: Spear of Ares : a great bronze spear trailing red-gold through the whole line (2.1x); II staggers; III nails the last one."
+        },
+        {
+          "id": "gladiator-shieldRush",
+          "label": "Shield Rush",
+          "video": "../../../clips/showcase5/gladiator-shieldRush.mp4",
+          "text": "Shield Rush: \"Make very long. Grab first target hit and drags them along with him. Slams at end of dash that staggers\" Built: a 0.62 s rush; the first one it meets is carried on the shield and slammed down at the end (2x, stagger 60; III stunned)."
+        },
+        {
+          "id": "gladiator-showboat",
+          "label": "Arena",
+          "video": "../../../clips/showcase5/gladiator-showboat.mp4",
+          "text": "Showboat: \"Should make a ring that pushes out allies and any enemy more than 1. Projectiles are blocked. 1 on 1 battle\" Built: Arena : a ring drawn in the sand round him and his foe for 5 s: everyone else is pushed out and kept out, no shot can cross it, the foe must fight him; II heals 15%; III blows on him answered."
+        },
+        {
+          "id": "gladiator-trait",
+          "label": "Trait: Duelist",
+          "video": "../../../clips/showcase5/gladiator-trait.mp4",
+          "text": "\"Trait should make him stronger 1 on 1\" Built: Duelist : while no enemy but the one he fights is on him, he hits it 35% harder and takes 25% less from it."
+        }
+      ]
+    },
+    {
+      "id": "jester",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Jester",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "jester-attack",
+        "jester-befuddle",
+        "jester-juggle",
+        "jester-mock",
+        "jester-trait"
+      ],
+      "items": [
+        {
+          "id": "jester-attack",
+          "label": "Marotte",
+          "video": "../../../clips/showcase5/jester-attack.mp4",
+          "text": "Marotte: \"Could be more interesting. Maybe can apply random status effect?\" Built: each bonk leaves 16 of a random status."
+        },
+        {
+          "id": "jester-befuddle",
+          "label": "Befuddle",
+          "video": "../../../clips/showcase5/jester-befuddle.mp4",
+          "text": "Befuddle: \"Instead of taking damage will teleport behind target and kick them forwards confusing them.\" Built: it answers a blow now: he is behind the swinger and boots it forward (\"KICK\", Confused); every 10 s (II 8 s, III 6 s)."
+        },
+        {
+          "id": "jester-juggle",
+          "label": "Juggling Act",
+          "video": "../../../clips/showcase5/jester-juggle.mp4",
+          "text": "Juggling Act: \"Different particles effects. Should pierce and bounce a few times. Not from target to target. Just off walls. Lvl 3 will teleport hit target to next wall the ball hits\" Built: balls thrown straight, through whatever they meet, bouncing off the room's edge, walls and pillars three times with confetti; III the first one a ball hits is whisked to where it next bounces."
+        },
+        {
+          "id": "jester-mock",
+          "label": "Swap",
+          "video": "../../../clips/showcase5/jester-mock.mp4",
+          "text": "Mock: \"Swap places with ally boosting them. Or with enemy confusing them.\" Built: Swap : confetti, and he trades places with a friend in trouble (hasted, a shield) or else an enemy (a shooter first; Confused; III stunned)."
+        },
+        {
+          "id": "jester-trait",
+          "label": "Trait",
+          "video": "../../../clips/showcase5/jester-trait.mp4",
+          "text": "Changed with the rest of the kit; see the clip."
+        }
+      ],
+      "details": "\"25% of simple melee hits that should hit him flips target around instead\" Built: Pratfall: a quarter of the blows swung at him miss and the swinger is spun to face away (\"FLIP\")."
+    },
+    {
+      "id": "samurai",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Samurai",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "samurai-attack",
+        "samurai-crescentCut",
+        "samurai-focus",
+        "samurai-iaido",
+        "samurai-trait"
+      ],
+      "items": [
+        {
+          "id": "samurai-attack",
+          "label": "Katana",
+          "video": "../../../clips/showcase5/samurai-attack.mp4",
+          "text": "Katana: \"Should dash forwards. Should hold with 2 hands in front of him\" Built: each cut steps in (a lunge). The two-handed hold is the art lane's (the katana is drawn in one hand)."
+        },
+        {
+          "id": "samurai-crescentCut",
+          "label": "Crescent Cut",
+          "video": "../../../clips/showcase5/samurai-crescentCut.mp4",
+          "text": "Crescent Cut: \"Will dash towards target and deal a heavy slash to them 10% of max hp + 20 damage. lvl 3 If it kills it will trigger again.\" Built: a dart in and a heavy white crescent: 10% of its health and 1.4x more (about 20 at base); II staggers; III a kill sends him on to the next."
+        },
+        {
+          "id": "samurai-focus",
+          "label": "Focus",
+          "video": "../../../clips/showcase5/samurai-focus.mp4",
+          "text": "Focus: \"Don't like. When focusing will deflect 1 melee or ranged attack every 1 second. After a successful block next attack will deal 40% more damage.\" Built: for 5 s (II 7 s, III 9 s) one blow a second is turned aside, and each makes his next cut 40% harder."
+        },
+        {
+          "id": "samurai-iaido",
+          "label": "Iaido",
+          "video": "../../../clips/showcase5/samurai-iaido.mp4",
+          "text": "Iaido: \"Done poorly. Instant teleport in a straight line towards enemies. Targets are staggered for a split second then take 10% of their max hp in damage. Lvl 3 has them do it 2 times. Make look good. Charge up before dash/teleport\" Built: he settles 0.35 s (light gathering on the half-drawn blade, a dark line on the floor ahead), then is on the far side of the enemies in his line; the cut hangs in the air; each one passed through is stopped and staggered, and 0.3 s later ta"
+        },
+        {
+          "id": "samurai-trait",
+          "label": "Trait",
+          "video": "../../../clips/showcase5/samurai-trait.mp4",
+          "text": "Changed with the rest of the kit; see the clip."
+        }
+      ],
+      "details": "\"Does percentage damage + a base.\" Built: Keen Edge : every blow also takes 3% of its target's greatest health (a boss 1%)."
+    },
+    {
+      "id": "valkyrie",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Valkyrie",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "valkyrie-skyDive",
+        "valkyrie-spearThrow",
+        "valkyrie-valkyrieCall",
+        "valkyrie-trait"
+      ],
+      "items": [
+        {
+          "id": "valkyrie-skyDive",
+          "label": "Sky Dive",
+          "video": "../../../clips/showcase5/valkyrie-skyDive.mp4",
+          "text": "Sky Dive: \"Flies in air for a moment then lands by ally. Applied radiance.\" Built: up on her wings 0.9 s, down beside the friend most beset: a burst of light, 1.6x and 35 radiance round her; II staggers; III heals 15%."
+        },
+        {
+          "id": "valkyrie-spearThrow",
+          "label": "Spear Throw",
+          "video": "../../../clips/showcase5/valkyrie-spearThrow.mp4",
+          "text": "Changed with the rest of the kit; see the clip."
+        },
+        {
+          "id": "valkyrie-valkyrieCall",
+          "label": "Valkyrie Call",
+          "video": "../../../clips/showcase5/valkyrie-valkyrieCall.mp4",
+          "text": "Changed with the rest of the kit; see the clip."
+        },
+        {
+          "id": "valkyrie-trait",
+          "label": "Trait",
+          "video": "../../../clips/showcase5/valkyrie-trait.mp4",
+          "text": "Changed with the rest of the kit; see the clip."
+        }
+      ],
+      "details": "\"Heals themselves and ally passively when near ally. Has a glowing aura. Is more of a support.\" Built: role support; Light of Valhalla : while a friend is within 140, she and those friends heal 0.9% a second; a soft gold glow on the floor under her (no ring); she still revives twice as fast.\n\nSpear: \"Hold spear better\" Built: art lane (the grip in the SVG).\n\nValkyrie's Call: \"Flies to recently fallen ally, revives them and knocks all targets back and applies radiance. Lvl 3 has her grab ally and flies them both to another safer position.\" Built: she flies to the fallen friend, it gets up (25%, II 40%) in a burst of light: enemies within 140 are thrown back and made radiant (40); III she takes it up and flies the two of them 190 away from the enemies.\n\nSpear of the Sky: \"Dash from current position all the way to most hurt allies position hitting anyone in the way. Cleanses ally and buffs them.\" Built: she flies spear-first to the friend most hurt, striking every enemy on the way (1.5x; II shock), and cleanses and steels it (hasted, a shield of 28; III 45)."
+    },
+    {
+      "id": "engineer",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Engineer",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "engineer-attack",
+        "engineer-deployTurret",
+        "engineer-shockMine",
+        "engineer-tinker",
+        "engineer-trait"
+      ],
+      "items": [
+        {
+          "id": "engineer-attack",
+          "label": "Wrench",
+          "video": "../../../clips/showcase5/engineer-attack.mp4",
+          "text": "Wrench: \"Hits she. Close. Throw bouncing cogs from afar\" Built: she is a shooter now (role ranged, reach 190: she keeps her distance like the Slinger); the wrench when an enemy is on her, else a cog that bounces on to a second enemy."
+        },
+        {
+          "id": "engineer-deployTurret",
+          "label": "Deploy Turret",
+          "video": "../../../clips/showcase5/engineer-deployTurret.mp4",
+          "text": "Deploy Turret: \"Make summoning better. Should throw them into their spot. Turrets should shoot in rapid bursts of 5. Make barrel swap between showing 2 and 1 (with 2 dark barrels below) to look like it's spinning. They should turn slowly. Should summon them in random positions.\" Built: thrown on arcs to random spots round her; they turn slowly (1.6 rad/s) and fire bursts of five; while firing the barrels drawn over the art swap two / one over two dark ones."
+        },
+        {
+          "id": "engineer-shockMine",
+          "label": "Wind-up Drones",
+          "video": "../../../clips/showcase5/engineer-shockMine.mp4",
+          "text": "Shock Mine: \"Spawn 4 small wind up drones that walk towards target and go pop, shocking a bit. He throws them in random directions around himself. Are slow.\" Built: Wind-up Drones : four (III six) thrown round her; they waddle slowly at the nearest enemy, a key turning on their backs, and pop (a thunderclap, shock 20; II 30). Towers and drones are drawn in code ."
+        },
+        {
+          "id": "engineer-tinker",
+          "label": "Tinker",
+          "video": "../../../clips/showcase5/engineer-tinker.mp4",
+          "text": "Tinker: \"Nope. Makes 1 of 4 special towers\" Built: one of four, bolted together on the spot: a torcher (tough from the front x0.35, weak behind x1.8, turning very slowly, a jet of fire out of its front), a tesla (a bolt every 1.2 s that leaps on to two more, shocking), a snowball mortar (a snowball lobbed every 1.6 s: chill), a medbay (when friends are hurt: a wobbly healing drone every 3 s that flies to the most hurt and heals it 4%). 9 s (II 12 s)."
+        },
+        {
+          "id": "engineer-trait",
+          "label": "Trait: Overclock",
+          "video": "../../../clips/showcase5/engineer-trait.mp4",
+          "text": "\"Trait doesnt make sense. Overclock. If all abilities are used up 1 random ability will come back faster. Boosted rate\" Built: Overclock : when none of her abilities is ready, one at random comes round twice as fast; gears spin over her."
+        }
+      ]
+    },
+    {
+      "id": "werewolf",
+      "kind": "board",
+      "rarity": "common",
+      "title": "Werewolf",
+      "text": "Your notes, built. Each clip says what changed.",
+      "why": "Tick the ones that are right now; comment on any that aren't. What you ticked last time with no note is untouched.",
+      "pick": [
+        "werewolf-frenzy",
+        "werewolf-pounce",
+        "werewolf-turnWolf",
+        "werewolf-trait"
+      ],
+      "items": [
+        {
+          "id": "werewolf-frenzy",
+          "label": "Frenzy",
+          "video": "../../../clips/showcase5/werewolf-frenzy.mp4",
+          "text": "Frenzy: \"Each successful hit comes out faster than the last. As ware wolf. As human each hit heals more the lower his hp. Is always active.\" Built: always on once bought: as a wolf each blow in a row up to 60% faster; as a man each blow heals 3% x (1 - health) x 2 (II 4.5%); III the howl at full speed."
+        },
+        {
+          "id": "werewolf-pounce",
+          "label": "Pounce",
+          "video": "../../../clips/showcase5/werewolf-pounce.mp4",
+          "text": "Pounce: \"As human does a forwards dash with a cleave at the end. As werewolf does a leap and gives self haste.\" Built: as a man a dash and a wide cleave (1.6x; II staggers); as a wolf the leap that pins, and haste 4 s. ## The deck's notes: new heroes (not built here; for the lead) \"Make new hero. Mob. Is 4 peasants... Clock work hero. Influence time. Air mage. Whirled effect. Warden (uses a lot or shackles and restraints. Nullification themed). Telekinetic. Earth mage\": six n"
+        },
+        {
+          "id": "werewolf-turnWolf",
+          "label": "Turn Wolf",
+          "video": "../../../clips/showcase5/werewolf-turnWolf.mp4",
+          "text": "Changed with the rest of the kit; see the clip."
+        },
+        {
+          "id": "werewolf-trait",
+          "label": "Trait",
+          "video": "../../../clips/showcase5/werewolf-trait.mp4",
+          "text": "Changed with the rest of the kit; see the clip."
+        }
+      ],
+      "details": "\"When they die in werewolf form they come back as a human at 10% hp everytime.\" Built: Back From the Wild : the wolf falls, the man gets up at 10% (\"BACK\").\n\nTurn: \"Make 15% bigger. Can't heal when in this form.\" Built: the wolf is 15% bigger, and his health never rises while he is one; II is 14 s (its heal on turning is gone: no healing as a wolf); III the claws make them bleed (real Bleeding)."
+    }
+  ]
+}
