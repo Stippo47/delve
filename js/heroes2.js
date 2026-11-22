@@ -208,7 +208,7 @@ Object.assign(HEROES2, {
       { id: 'harvest', name: 'Harvest', cd: 10, tags: 'ds', glyph: 'swirl', desc: 'Hurries to the friend most beset and sweeps the sickle low round his feet there, cutting at the legs of everything close.',
         tiers: ['They are slowed by half for 3s.', 'And staggered.', 'He heals 4% for each one cut.'] },
       { id: 'oldTales', name: 'Old Tales', cd: 18, tags: 'h', glyph: 'note', desc: 'Opens his old story book and tells the party one of his stories: every friend listening has its abilities come round sooner.',
-        tiers: ['Each friend near: every ability 2s sooner.', '3s sooner.', 'And they heal 8%.'] },
+        tiers: ['Each friend near: every ability 4s sooner.', '6s sooner.', 'And they heal 8%.'] },
     ],
     trait: { id: 'seenItAll', name: 'Seen It All', desc: 'Allies near him shake off stagger twice as fast.' },
   },

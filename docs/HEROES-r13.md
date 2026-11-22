@@ -208,7 +208,7 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
 - Harvest: "Dashes to ally when he does it." -> he hurries (a quick bound) to the friend most beset and sweeps there;
   with nobody in trouble he sweeps where he stands. Clip: grandpa-harvest.
 - Old Tales: "What does it do? Doesnt look the best" -> it says it now: an old story book opens over his head with its
-  pages turning; over each friend listening a gold clock whose hand spins forward and "-2s" (II "-3s") rising: every
+  pages turning; over each friend listening a gold clock whose hand spins forward and "-4s" (II "-6s") rising: every
   ability of theirs comes round that much sooner (III heals them 8%). Clip: grandpa-oldTales.
 
 ### Alchemist

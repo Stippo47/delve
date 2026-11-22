@@ -99,7 +99,7 @@ A sickle, a sheaf of wheat and a bag of bread. Feeds the party and trims the ene
 - **Attack: Sickle.** A short hooked cut.
 - **Bread Toss** (8s). Lobs a warm loaf high to a hurt ally; it heals them where it lands. I: One loaf: heals 20%. II: A loaf each for two allies. III: Warm bread: 10% more over 4s.
 - **Harvest** (10s). Hurries to the friend most beset and sweeps the sickle low round his feet there, cutting at the legs of everything close. I: They are slowed by half for 3s. II: And staggered. III: He heals 4% for each one cut.
-- **Old Tales** (18s). Opens his old story book and tells the party one of his stories: every friend listening has its abilities come round sooner. I: Each friend near: every ability 2s sooner. II: 3s sooner. III: And they heal 8%.
+- **Old Tales** (18s). Opens his old story book and tells the party one of his stories: every friend listening has its abilities come round sooner. I: Each friend near: every ability 4s sooner. II: 6s sooner. III: And they heal 8%.
 - **Trait: Seen It All.** Allies near him shake off stagger twice as fast.
 
 ## Alchemist (`alchemist`, caster, 700 gold)

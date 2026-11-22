@@ -866,9 +866,9 @@ export const ABILITIES2 = {
   // Old Tales (round 13: "What does it do? Doesnt look the best"): a story book opens over him; each friend listening
   // has a gold clock over its head whose hand spins forward, and the seconds its abilities gain rise off it
   oldTales: {
-    score: (w, u) => (allies(w, u).filter((a) => a.kit && dist(u.x, u.y, a.x, a.y) < 220 && Object.values(a.kit.cd).some((c) => c > 3)).length >= 1 ? 0.55 : 0),
+    score: (w, u) => (allies(w, u).filter((a) => a.kit && dist(u.x, u.y, a.x, a.y) < 220 && Object.values(a.kit.cd).filter((c) => c > 4).length >= 2).length >= 1 ? 0.55 : 0), // (balance: worth it only when friends have abilities waiting)
     use(w, u, t, tier) {
-      cast(u, 'cast', 0.9); const s = tier >= 2 ? 3 : 2;
+      cast(u, 'cast', 0.9); const s = tier >= 2 ? 6 : 4;
       k2(w, { draw: 'storyBook', unit: u, x: u.x, y: u.y, r: u.vr, max: 1.6 });
       for (const a of friendsNear(w, u, u.x, u.y, 230)) {
         if (a === u) continue;
