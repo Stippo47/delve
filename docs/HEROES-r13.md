@@ -579,7 +579,7 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
 - Tinker: "Nope. Makes 1 of 4 special towers" -> one of four, bolted together on the spot: a **torcher** (tough from the
   front x0.35, weak behind x1.8, turning very slowly, a jet of fire out of its front), a **tesla** (a bolt every 1.2 s
   that leaps on to two more, shocking), a **snowball mortar** (a snowball lobbed every 1.6 s: chill), a **medbay** (when
-  friends are hurt: a wobbly healing drone every 2 s that flies to the most hurt and heals it 8%). 12 s (II 16 s).
+  friends are hurt: a wobbly healing drone every 3 s that flies to the most hurt and heals it 5%). 12 s (II 16 s).
 - Shock Mine: "Spawn 4 small wind up drones that walk towards target and go pop, shocking a bit. He throws them in random
   directions around himself. Are slow." -> **Wind-up Drones** (id shockMine): four (III six) thrown round her; they
   waddle slowly at the nearest enemy, a key turning on their backs, and pop (a thunderclap, shock 20; II 30).

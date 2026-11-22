@@ -158,7 +158,7 @@ export const HEROES2 = {
     name: 'Haymaker', art: 'art/heroes/haymaker.svg', role: 'melee', unlock: { gems: 1 },
     blurb: 'A pitchfork, a straw hat, and the shoulders of a man who throws hay all day.',
     fun: 'Treats goblins the way he treats hay: in forkfuls, over the shoulder, without looking.',
-    stats: { hp: 132, speed: 60, r: 32, vr: 22, turn: 3.8, accel: 200, face: 4, mass: 1.6, range: 34, atkCd: 1.1, dmg: 13, knock: 150, arc: 1 },
+    stats: { hp: 145, speed: 60, r: 32, vr: 22, turn: 3.8, accel: 200, face: 4, mass: 1.6, range: 34, atkCd: 1.1, dmg: 13, knock: 150, arc: 1 },
     weapon: 'fork', // round 13: "Should show 3 stab slashes. Should dash forwards slightly too" (fxkit: three tines; kits2: a lunge)
     attack: { name: 'Pitchfork', anim: 'thrust', desc: 'A lunging jab with the fork: three tines.' },
     summons: { // Fork Charge's slot: the hay bale he rides (kits2.js BRAINS.haybale; drawn in fx2.js)
@@ -199,7 +199,7 @@ Object.assign(HEROES2, {
     name: 'Grandpa Sickle', art: 'art/heroes/grandpa.svg', role: 'support', unlock: { gems: 1 },
     blurb: 'A sickle, a sheaf of wheat and a bag of bread. Feeds the party and trims the enemy.',
     fun: 'Has been telling the same story since before the dungeon was dug. It gets longer every time.',
-    stats: { hp: 105, speed: 52, r: 31, vr: 22, turn: 3.8, accel: 190, face: 4, mass: 1.3, range: 22, atkCd: 1.0, dmg: 9, arc: 1.7 },
+    stats: { hp: 115, speed: 52, r: 31, vr: 22, turn: 3.8, accel: 190, face: 4, mass: 1.3, range: 22, atkCd: 1.0, dmg: 9, arc: 1.7 },
     weapon: 'scythe',
     attack: { name: 'Sickle', anim: 'swing', desc: 'A short hooked cut.' },
     abilities: [
@@ -464,7 +464,7 @@ Object.assign(HEROES2, {
     name: 'Harpooner', art: 'art/heroes/harpooner.svg', role: 'ranged', unlock: { gems: 2 },
     blurb: 'A yellow sou\'wester, a puffy grey moustache, a barbed harpoon on a rope.',
     fun: 'Came down here after the one that got away. It was a rat. It was a very big rat.',
-    stats: { hp: 100, speed: 58, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 140, atkCd: 1.4, dmg: 13 },
+    stats: { hp: 110, speed: 58, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 140, atkCd: 1.4, dmg: 13 },
     attack: { name: 'Harpoon', anim: 'throw', desc: 'The barbed harpoon thrown on its rope: it tugs the enemy a little way in, and is hauled back.' },
     abilities: [
       { id: 'reelIn', name: 'Reel In', cd: 10, tags: 'ds', glyph: 'hook', desc: 'Harpoons a far enemy, the harpoon stuck in it and the rope across the floor, and hauls: a small one is dragged to him, a big one drags him to it.',
@@ -604,7 +604,7 @@ Object.assign(HEROES2, {
     name: 'Jester', art: 'art/heroes/jester.svg', role: 'skirmish', unlock: { gems: 3 },
     blurb: 'A three-pointed cap with bells and a marotte on a stick. Makes enemies look foolish, then fight each other.',
     fun: 'The marotte has its own little jester on top. That one has a marotte too. It goes on.',
-    stats: { hp: 100, speed: 84, r: 30, vr: 21, turn: 6, accel: 360, face: 6, mass: 1, range: 18, atkCd: 0.75, dmg: 10, arc: 1.6, dodge: 0.2 },
+    stats: { hp: 100, speed: 84, r: 30, vr: 21, turn: 6, accel: 360, face: 6, mass: 1, range: 18, atkCd: 0.75, dmg: 11, arc: 1.6, dodge: 0.2 },
     weapon: 'heavy',
     attack: { name: 'Marotte', anim: 'swing', desc: 'A bonk with the jester\'s stick; each one leaves a little of something odd on it (a random status).' },
     abilities: [
@@ -613,7 +613,7 @@ Object.assign(HEROES2, {
       { id: 'befuddle', name: 'Befuddle', cd: 10, tags: 's', glyph: 'swirl', desc: 'When a blow is about to land on him, he is behind whoever swung it instead, and boots it forward, confused.',
         tiers: ['Ready every 10s.', 'Every 8s.', 'Every 6s, and the kick hurts more.'] },
       { id: 'juggle', name: 'Juggling Act', cd: 10, tags: 'd', glyph: 'burst', desc: 'Throws his juggling balls straight out: they go through whatever they meet and bounce off the walls three times.',
-        tiers: ['Three balls.', 'They daze: slowed.', 'Five balls, and the first one each ball hits is whisked to where it next bounces.'] },
+        tiers: ['Three balls.', 'They daze: slowed.', 'Four balls, and the first one each ball hits is whisked to where it next bounces.'] },
     ],
     trait: { id: 'pratfall', name: 'Pratfall', desc: 'A quarter of the blows swung at him miss, and whoever swung is spun round to face away.' },
   },
@@ -659,7 +659,7 @@ Object.assign(HEROES2, {
     name: 'Engineer', art: 'art/heroes/engineer.svg', role: 'ranged', unlock: { gems: 3 },
     blurb: 'An orange work suit, a welding mask pushed up and a very big wrench. Builds a turret and keeps it running.',
     fun: 'Can fix anything with a wrench. Has fixed several things that were not broken.',
-    stats: { hp: 115, speed: 60, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 120, atkCd: 1.1, dmg: 11, knock: 150, arc: 1.6 },
+    stats: { hp: 115, speed: 60, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 120, atkCd: 1.1, dmg: 10, knock: 150, arc: 1.6 },
     weapon: 'heavy', // round 13: "Hits she. Close. Throw bouncing cogs from afar"
     attack: { name: 'Wrench and cogs', anim: 'throw', desc: 'Close up, a clanging swing of the wrench; further off, a cog thrown that bounces on to a second enemy.' },
     summons: {
@@ -687,7 +687,7 @@ Object.assign(HEROES2, {
     name: 'Werewolf', art: 'art/heroes/werewolf.svg', role: 'melee', unlock: { gems: 3 },
     blurb: 'A woodsman with a hatchet and a torn red shirt. Then, when it matters, a great grey wolf.',
     fun: 'Buys his shirts in bulk.',
-    stats: { hp: 130, speed: 64, r: 33, vr: 23, turn: 4, accel: 230, face: 4.2, mass: 1.8, range: 22, atkCd: 1.1, dmg: 12, knock: 130, arc: 1.6 },
+    stats: { hp: 145, speed: 64, r: 33, vr: 23, turn: 4, accel: 230, face: 4.2, mass: 1.8, range: 22, atkCd: 1.1, dmg: 12, knock: 130, arc: 1.6 },
     weapon: 'blade',
     form: { id: 'werewolfBeast', name: 'Werewolf', art: 'art/heroes/werewolf-beast.svg', anim: 'swing',
       stats: { speed: 84, turn: 5.5, accel: 340, face: 5.5, range: 18, atkCd: 0.55, dmg: 10, knock: 90, arc: 2, weapon: 'claw' }, style: { dual: true } },

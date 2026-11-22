@@ -240,7 +240,7 @@ export const ABILITIES2 = {
     },
     use(w, u, t, tier) {
       cast(u, 'ability', 0.35);
-      u.kit.parry = { until: w.time + 4, n: tier >= 2 ? 2 : 1, k: tier >= 3 ? 1.6 : 1 };
+      u.kit.parry = { until: w.time + 4, n: tier >= 2 ? 2 : 1, k: tier >= 3 ? 1.3 : 1 };
       k2(w, { draw: 'parryGuard', unit: u, x: u.x, y: u.y, r: u.r, max: 4, ab: 'pommelStrike' });
     },
     hook: {
@@ -979,7 +979,7 @@ export const ABILITIES2 = {
   rainDance: {
     score: (w, u) => (!mine(w, u, 'spiritBear').length && foesNear(w, u, u.x, u.y, 360).length >= 2 ? 0.7 : 0),
     use(w, u, t, tier) {
-      cast(u, 'cast', 0.8); const life = tier >= 2 ? 10 : 7, k = tier >= 3 ? 1.3 : 1, a0 = t ? ang(u, t) : u.facing;
+      cast(u, 'cast', 0.8); const life = tier >= 2 ? 10 : 7, k = tier >= 3 ? 1.15 : 1, a0 = t ? ang(u, t) : u.facing;
       const spots = [-0.9, -0.3, 0.3, 0.9].map((o) => ({ x: u.x + Math.cos(a0 + o) * 60, y: u.y + Math.sin(a0 + o) * 60 }));
       ['spiritBear', 'spiritWolf', 'spiritEagle', 'spiritBeaver'].forEach((kind, i) => {
         k2(w, { draw: 'spiritRise', x: spots[i].x, y: spots[i].y, r: 30, max: 0.9 });
@@ -1788,7 +1788,7 @@ export const ABILITIES2 = {
       const list = foesNear(w, u, u.x, u.y, u.r + 70).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y));
       const bang = (e, side) => { if (!e || !alive(e)) return; u.facing = ang(u, e); setAnim(u, 'shoot', 0.3); u.recoilT = 0.2;
         k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: u.facing, max: 0.55, side, big: true });
-        hurt(w, e, dmgOf(u, 1.9), u, { knock: 420, heavy: true, noDodge: true, stagger: tierOf(u, 'pointBlank') >= 2 ? 50 : 0 }); targeted(w, e, 5); w.shake = Math.max(w.shake, 4); };
+        hurt(w, e, dmgOf(u, 1.7), u, { knock: 420, heavy: true, noDodge: true, stagger: tierOf(u, 'pointBlank') >= 2 ? 50 : 0 }); targeted(w, e, 5); w.shake = Math.max(w.shake, 4); };
       bang(list[0] || t, 1);
       if (tier >= 3) after(u, 0.25, () => bang(list[1] || list[0], -1));
     },
@@ -2019,7 +2019,7 @@ export const ABILITIES2 = {
   juggle: {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 260).length >= 2 ? 0.6 : foesNear(w, u, u.x, u.y, 200).length ? 0.35 : 0),
     use(w, u, t, tier) {
-      setAnim(u, 'throw', 0.4); const n = tier >= 3 ? 5 : 3, a0 = t ? ang(u, t) : u.facing;
+      setAnim(u, 'throw', 0.4); const n = tier >= 3 ? 4 : 3, a0 = t ? ang(u, t) : u.facing;
       const cols = ['#C8453D', '#FFD45A', '#5B8CDB', '#7FCB3A', '#E05AB8'];
       for (let i = 0; i < n; i++) { const a = a0 + (i - (n - 1) / 2) * 0.35;
         w.projectiles.push({ kind: 'ball', x: u.x + Math.cos(a) * u.r, y: u.y + Math.sin(a) * u.r, vx: Math.cos(a) * 540, vy: Math.sin(a) * 540, r: 8, team: u.team, owner: u, dmg: dmgOf(u, 1.1), o: { knock: 90, ab: 'juggle' }, life: 2.4, a, ab: 'juggle', tier, color: cols[i], pierce: 99, hitSet: new Set(), juggle: { left: 3, carry: null },
@@ -2151,7 +2151,7 @@ export const ABILITIES2 = {
       cast(u, 'throw', 0.5); const n = tier >= 3 ? 2 : 1;
       for (let i = 0; i < n; i++) { const a = rand() * TAU, d = rrange(60, 130), x = clamp(u.x + Math.cos(a) * d, 30, w.W - 30), y = clamp(u.y + Math.sin(a) * d, 30, w.H - 30);
         after(u, i * 0.15, () => lob(w, u, x, y, 'turretFly', null, () => {
-          const s2 = summon(w, u, 'turret', x, y, { life: tier >= 2 ? 25 : 15, hit: 0.45 }); s2.fixed = true; s2.facing = t ? angleTo(x, y, t.x, t.y) : a; s2.baseA = s2.facing; s2.mvA = s2.facing;
+          const s2 = summon(w, u, 'turret', x, y, { life: tier >= 2 ? 25 : 15, hit: 0.35 }); s2.fixed = true; s2.facing = t ? angleTo(x, y, t.x, t.y) : a; s2.baseA = s2.facing; s2.mvA = s2.facing;
           if (tier >= 2) s2.atkMul = 1.3; puff(w, x, y, '#C9D2DE', 10, 90, 5, 0.4); w.shake = Math.max(w.shake, 2); k2(w, { draw: 'turretTop', unit: s2, x, y, max: 1e9 }); })); }
     },
     show: { secs: 4 },
@@ -2548,9 +2548,9 @@ BRAINS.mortar = function (w, s2, dt) {
 };
 // the medbay: every 2 s a wobbly little healing drone floats out (three at most)
 BRAINS.medbay = function (w, s2, dt) {
-  s2.vx = s2.vy = 0; s2.acc = (s2.acc || 0) + dt; if (s2.acc < 2) return true; s2.acc = 0;
+  s2.vx = s2.vy = 0; s2.acc = (s2.acc || 0) + dt; if (s2.acc < 3) return true; s2.acc = 0;
   const u = s2.summonBy; if (!u || w.units.filter((o) => o.kind === 'medDrone' && o.summonBy === u && alive(o)).length >= 3) return true;
-  const d = summon(w, u, 'medDrone', s2.x, s2.y - 20, { life: 10 }); d.fixed = true; d.heal = 0.08 * (s2.tier >= 3 ? 1.5 : 1); return true;
+  const d = summon(w, u, 'medDrone', s2.x, s2.y - 20, { life: 10 }); d.fixed = true; d.heal = 0.05 * (s2.tier >= 3 ? 1.5 : 1); return true;
 };
 BRAINS.medDrone = function (w, d, dt) {
   const a = w.units.filter((o) => alive(o) && o.team === d.team && !o.summon && !o.def.cargo && hpRatio(o) < 1).sort((p, q) => hpRatio(p) - hpRatio(q))[0];
@@ -2830,7 +2830,7 @@ export const ATTACKS2 = {
   shaman(w, u, t, a) {
     shoot(w, u, a, { kind: 'spirit', speed: 430, r: 7, dmg: A(u, 0.95), color: '#7FE0D0', knock: 25, extra: { onHit: (w2, p, e) => {
       const f = [u, ...allies(w2, u)].filter((o) => !o.summon && !o.def.cargo && hpRatio(o) < 1 && dist(o.x, o.y, e.x, e.y) < 170).sort((p1, q) => hpRatio(p1) - hpRatio(q))[0]; if (!f) return;
-      const b = angleTo(e.x, e.y, f.x, f.y), amt = p.dmg * 0.4;
+      const b = angleTo(e.x, e.y, f.x, f.y), amt = p.dmg * 0.3;
       w2.projectiles.push({ kind: 'spirit', x: e.x, y: e.y, vx: Math.cos(b) * 380, vy: Math.sin(b) * 380, r: 6, team: u.team, owner: u, skip: e, dmg: 0, o: {}, life: dist(e.x, e.y, f.x, f.y) / 380 + 0.04, a: b, home: f, turn: 9, noHit: true, heal: true,
         land: () => { if (alive(f)) { heal(w2, f, amt, u); f.mendGlow = w2.time + 0.3; } } });
     } } });
@@ -2850,13 +2850,13 @@ export const ATTACKS2 = {
     } } });
   },
   // a bee (round 13: the Beekeeper redone): it stings and then stays buzzing round its foe, stinging now and then
-  beekeeper(w, u, t, a) { bee(w, u, u, t, 0.7, true); },
+  beekeeper(w, u, t, a) { bee(w, u, u, t, 0.55, true); },
   // something out of the pack (round 13: the Quartermaster redone): a pot, a pan, a boot, a tin cup, a ladle
   quartermaster(w, u, t, a) { shoot(w, u, a, { kind: 'pot', speed: 440, r: 8, dmg: A(u, 1), knock: 90, extra: { item: Math.floor(rand() * 5) } }); },
   // the Chef (round 13: "Should be ranged. Throws random foods. All same effect. Hurts enemies, heals allies"): food of
   // six kinds; it hurts the enemy it hits and mends any friend it passes over on the way
   chef(w, u, t, a) {
-    shoot(w, u, a, { kind: 'food', speed: 420, r: 8, life: 1.1, dmg: A(u, 1), knock: 40, extra: { food: Math.floor(rand() * 6), allyHit: (w2, p, f) => { heal(w2, f, A(u, 0.45), u); f.mendGlow = w2.time + 0.3; } } });
+    shoot(w, u, a, { kind: 'food', speed: 420, r: 8, life: 1.1, dmg: A(u, 0.85), knock: 40, extra: { food: Math.floor(rand() * 6), allyHit: (w2, p, f) => { heal(w2, f, A(u, 0.45), u); f.mendGlow = w2.time + 0.3; } } });
   },
   // a heavy bolt through the first enemy (round 13: "Needs better animation. Remove tail from arrow": no tail, the string
   // snaps forward and he rocks back); after Crank Up it bursts
@@ -2921,14 +2921,14 @@ export const ATTACKS2 = {
       hurt(w, t, A(u, 1.1), u, { knock: 80 }); addStatus(w, t, 'bleed', 26, u); u.recoilT = 0; return;
     }
     shoot(w, u, a, { kind: 'shadowBolt', speed: 470, r: 7, dmg: A(u, 1), color: '#9A5CC8', knock: 25, extra: { onHit: (w2, p, e) => {
-      if ((e.st.bleed || 0) > 3 && !(e.bleedImmuneT > 0)) { addStatus(w2, e, 'bleed', 200, u); k2(w2, { draw: 'markBurst', x: e.x, y: e.y, r: 20, max: 0.5, col: '#C8453D' }); }
+      if ((e.st.bleed || 0) > 45 && !(e.bleedImmuneT > 0)) { addStatus(w2, e, 'bleed', 200, u); k2(w2, { draw: 'markBurst', x: e.x, y: e.y, r: 20, max: 0.5, col: '#C8453D' }); }
     } } });
   },
   // the Engineer (round 13: "Hits she. Close. Throw bouncing cogs from afar"): the wrench when close, else a cog thrown
   // that bounces on to the next enemy
   engineer(w, u, t, a) {
     if (dist(u.x, u.y, t.x, t.y) - u.r - t.r < 34) { u.facing = ang(u, t); setAnim(u, 'swing', 0.28); swingMark(w, u, u.r + 34, 1.6); hurt(w, t, A(u, 1.15), u, { knock: 150 }); return; }
-    const cog = (x, y, e, left, skip) => { const b = angleTo(x, y, e.x, e.y); w.projectiles.push({ kind: 'cog', x, y, vx: Math.cos(b) * 480, vy: Math.sin(b) * 480, r: 8, team: u.team, owner: u, skip, dmg: A(u, left === 1 ? 0.9 : 0.6), o: { knock: 50 }, life: 0.9, a: b,
+    const cog = (x, y, e, left, skip) => { const b = angleTo(x, y, e.x, e.y); w.projectiles.push({ kind: 'cog', x, y, vx: Math.cos(b) * 480, vy: Math.sin(b) * 480, r: 8, team: u.team, owner: u, skip, dmg: A(u, left === 1 ? 0.75 : 0.5), o: { knock: 50 }, life: 0.9, a: b,
       onHit: (w2, p, h) => { if (left <= 0) return; const n = opponents(w2, u).filter((o) => o !== h && dist(o.x, o.y, h.x, h.y) < 160)[0]; if (n) cog(h.x, h.y, n, left - 1, h); } }); };
     cog(u.x + Math.cos(a) * u.r, u.y + Math.sin(a) * u.r, t, 1, null);
   },
