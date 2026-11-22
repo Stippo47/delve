@@ -256,6 +256,9 @@ export const openDungeons = (save) => DUNGEON_ORDER.filter((id) => dungeonOpen(s
 // Leaving before the floor is finished loses LEAVE_LOSS of the run's gold (falling too: a wipe is leaving early).
 // run.floorDone is true once the floor's last room is won (dungeon.js); then leaving is free.
 export const LEAVE_LOSS = 0.2;
+// Round 13 (the designer: "Remove the cooldown when your party dies. Have them lose 75% of gold earned."): a wipe
+// costs three quarters of the run's gold, whatever the floor's state, and nobody rests afterwards.
+export const WIPE_LOSS = 0.75;
 export function leaveCost(run) {
   const done = !!(run.floorDone || (run.summary && run.summary.floorDone) || run.phase === 'won');
   const gold = Math.max(0, Math.floor(run.coins || 0));
@@ -318,7 +321,9 @@ export function applySummary(save, run, result, now = Date.now()) {
   const mercs = !!(run.hired ? run.hired.length : Array.isArray(run.mercs) ? run.mercs.length : run.mercs);
   const raw = Math.max(0, Math.floor(s.gold || 0));
   const early = result !== 'won' && !s.floorDone;
-  const lost = early ? Math.ceil(raw * LEAVE_LOSS) : 0;
+  const wiped = result === 'lost';
+  const lostPct = wiped ? WIPE_LOSS : early ? LEAVE_LOSS : 0;
+  const lost = Math.ceil(raw * lostPct);
   const kept = raw - lost;
   const gold = mercs ? Math.floor(kept * (1 - MERC_CUT)) : kept;
   const theme = run.theme || 'unknown';
@@ -357,11 +362,11 @@ export function applySummary(save, run, result, now = Date.now()) {
     const record = h.level > (h.best || 1); h.best = Math.max(h.best || 1, h.level);
     const downed = (s.downed || []).includes(id);
     const hurt = !downed && s.hp && s.hp[id] != null && s.hp[id] < HURT_BELOW;
-    if (downed || hurt) h.recoverUntil = Math.max(h.recoverUntil || 0, now + (downed ? RECOVER_DOWN : RECOVER_HURT));
-    heroes.push({ id, from, level: h.level, gained, points: h.points, record, downed, hurt });
+    if ((downed || hurt) && !wiped) h.recoverUntil = Math.max(h.recoverUntil || 0, now + (downed ? RECOVER_DOWN : RECOVER_HURT)); // (no resting after a wipe)
+    heroes.push({ id, from, level: h.level, gained, points: h.points, record, downed: downed && !wiped, hurt: hurt && !wiped });
   }
   bankTally(save, s.stats); // lifetime: enemies defeated, each hero's damage, healing, kills (stats.js)
-  return { result, raw, lost, gold, mercCut: kept - gold, gems, firstClear, firstClearGems: 0, stats: s.stats || null,
+  return { result, raw, lost, lostPct, gold, mercCut: kept - gold, gems, firstClear, firstClearGems: 0, stats: s.stats || null,
     kills: s.kills || 0, floor: s.floor || 0, rooms: s.rooms || 0, heroes, found: (s.foundTrinkets || []).map((t) => (t && t.id) || t), theme,
     floorDone: !!s.floorDone, checkpoint: d.checkpoint > oldCp ? d.checkpoint : null, minis: (s.minis || []).slice(), bossKilled: !!s.bossKilled,
     slots: { before: slotsBefore, after: save.slots, unlocked: newSlots }, opened };

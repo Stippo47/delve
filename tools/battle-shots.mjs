@@ -48,7 +48,9 @@ try {
     await tap('[data-b="tab:heroes"]'); await tap('[data-b="pick:necromancer"]');
     await tap('[data-b="done"]');
     await tap('[data-b="add:a"]'); await tap('[data-b="pick:paladin"]'); await tap('[data-b="pick:tower"]'); await tap('[data-b="done"]');
-    await tap('[data-b="rank:b:1"]');
+    await tap('[data-b="tag:b:1"]');
+    await tap('[data-b="tag:a:0"]'); await tap('[data-b="tag:a:0"]'); await tap('[data-b="tag:a:0"]'); // the Paladin to tier 2
+    await tap('[data-b="add:a"]'); await tap('[data-b="astier:3"]'); await shot('05b-picker-add-at'); await tap('[data-b="pick:paladin"]'); await tap('[data-b="done"]');
     await shot('06-setup-filled');
     await tap('[data-b="fight"]');
     await page.waitForFunction(() => GAME.state === 'run' && GAME.run && GAME.run.mode === 'battle');
