@@ -181,12 +181,29 @@ export function makeStage(spec) {
   if (!make) throw new Error('no stage for ' + spec.t);
   const S = { spec, loop: 3, t: 0, w: null, fires: 0, locked: false, why: '', tick: () => {}, size: [HERO_W, HERO_H] };
   const build = make(S, spec);
-  S.reset = () => { S.t = 0; S.mark = marker(); build(); S.mark(S.w); };
+  S.reset = () => { S.t = 0; S.felled = false; S.mark = marker(); build(); S.mark(S.w); };
   S.step = (dt) => {
     if (S.t >= S.loop) S.reset();
     S.t += dt; S.tick(dt); step(S.w, dt); if (S.after) S.after(dt);
+    const w = S.w, seen = S._seen || (S._seen = new WeakSet()), g = S.sig;
+    for (const [k, list] of [['fx', w.fx], ['proj', w.projectiles], ['units', w.units], ['danger', w.danger], ['hazards', w.hazards], ['tele', w.telegraphs]]) for (const o of list) if (!seen.has(o)) {
+      seen.add(o); g[k]++;
+      if (o.r) g.size = (g.size || 0) + Math.round(o.r / 10); // bigger rings, zones, blasts
+      if (o.max || o.dur || o.t) g.time = (g.time || 0) + Math.round((o.max || o.dur || o.t || 0) * 2); // longer-lasting things
+    }
+    // what it did to the dummies: how far each status got, how long they were held, how hurt they were (their bars show it)
+    for (const d of S.dummies || []) {
+      for (const k in d.st) if (d.st[k] > 5) g['st_' + k] = Math.max(g['st_' + k] || 0, Math.round(d.st[k] / 25));
+      for (const k of ['stunT', 'rootT', 'sleepT', 'frozenT', 'koT', 'tangledT']) if (d[k] > 0.2) g[k] = Math.max(g[k] || 0, Math.round(d[k] * 2));
+      const lost = Math.round(10 * (1 - d.hp / d.maxHp)); g.hurt = Math.max(g.hurt || 0, lost);
+      if (d.buffs && d.buffs.length) g.buffs = Math.max(g.buffs || 0, d.buffs.length);
+    }
+    for (const o of w.units) if (o.team === (S.hero && S.hero.team) && o !== S.hero && !o.summon) { g.allyHp = Math.max(g.allyHp || 0, Math.round(10 * o.hp / o.maxHp)); g.allyBuffs = Math.max(g.allyBuffs || 0, o.buffs.length); }
+    if (S.hero) { const h = S.hero; g.heroHp = Math.max(g.heroHp || 0, Math.round(10 * h.hp / h.maxHp)); g.heroBuffs = Math.max(g.heroBuffs || 0, h.buffs.length); if (h.invulnT > 0.2) g.inv = Math.max(g.inv || 0, Math.round(h.invulnT * 2)); }
   };
   S.fire = () => { S.fires++; };
+  // a rough fingerprint of what the loop did: new things made in the world, by kind (the tier check compares tiers)
+  S.sig = { fx: 0, proj: 0, units: 0, danger: 0, hazards: 0, tele: 0 };
   S.fired = () => S.fires > 0;
   S.reset();
   return S;
@@ -198,7 +215,11 @@ function heroStage(S, spec) {
   const A = ABILITIES[ab], sh = (A && A.show) || {};
   S.locked = ab !== 'attack' && tier < 1;
   if (S.locked) S.why = 'Unlocks at tier I';
-  S.loop = ab === 'attack' ? 3 : 3.4;
+  // long enough to see it run out: the longest time its words name at this tier ("for 8s"), plus a beat
+  const H0 = HEROES[id].abilities.find((a) => a.id === ab);
+  const secs = H0 ? [H0.desc, ...H0.tiers.slice(0, Math.max(1, tier))].join(' ').match(/(\d+(?:\.\d+)?)\s?s\b/g) : null;
+  const longest = secs ? Math.max(...secs.map((x) => parseFloat(x))) : 0;
+  S.loop = ab === 'attack' ? 3 : Math.min(9.5, Math.max(3.4, CAST_AT + longest + 1));
   let u, dummies, ally, pin, cast, last, dmg0;
   return () => {
     const w = S.w = room(HERO_W, HERO_H, S.w);
@@ -209,9 +230,10 @@ function heroStage(S, spec) {
     u.facing = u.mvA = 0;
     const mx = far ? (ab === 'charge' ? 270 : 340) : 110 + u.r + 28 + (ab === 'attack' ? Math.max(8, DEFS[id].range - 6) : 14);
     const spots = [[mx, 175], [mx + (far ? 30 : 22), 105], [mx + (far ? 30 : 22), 245]];
-    if (ab !== 'attack' && !SINGLE.has(ab) && !sh.single) spots.push([mx + 66, 175]);
+    if (ab !== 'attack' && !SINGLE.has(ab) && !sh.single) spots.push([mx + 66, 175], [mx + 70, 100], [mx + 70, 250]); // six: enough for chains and jumps to run out at the lower tiers
     dummies = spots.map(([x, y]) => dummyAt(w, x, y));
-    if (ab === 'raiseDead') w.corpses.push({ kind: 'rattler', x: mx - 50, y: 125, r: 34, vr: 24, facing: 1, kx: 0, ky: 0, spin: 0, z: 0, vz: 0, age: 5, t: 14, max: 14 });
+    // bodies to raise (two: tier II raises two)
+    if (ab === 'raiseDead') for (const [cx, cy] of [[mx - 50, 125], [mx - 40, 235]]) w.corpses.push({ kind: 'rattler', x: cx, y: cy, r: 34, vr: 24, facing: 1, kx: 0, ky: 0, spin: 0, z: 0, vz: 0, age: 5, t: 14, max: 14 });
     ally = null;
     if (NEEDS_ALLY.has(ab) || sh.ally) {
       const ak = id === 'paladin' ? 'archer' : 'paladin';
@@ -252,6 +274,8 @@ function heroStage(S, spec) {
       if (sh.mob === 'walk' && cast) for (const d of dummies) d.home.x = Math.max(u.x + 70, d.home.x - 70 * dt);
       if (sh.killDummy && cast && S.t - CAST_AT > 0.6 && !u._killed) { u._killed = true; hurt(w, dummies[1], 99999, u, { noDodge: true }); hurt(w, dummies[2], 99999, u, { noDodge: true }); }
       if (sh.hitDummy && cast && Math.floor(S.t / 0.45) !== Math.floor((S.t - dt) / 0.45)) hurt(w, dummies[0], 14, null, { noDodge: true });
+      // what it called up falls before the loop ends, so what happens when they fall (an explosion at a higher tier) shows
+      if (cast && !S.felled && S.t > S.loop - 0.8) { S.felled = true; for (const o of w.units) if (o !== u && o.team === u.team && !o.dead && !o.downed && o !== ally && (o.summonBy === u || o.summon)) hurt(w, o, o.hp + 9999, dummies[0], { noDodge: true }); }
     };
     S.after = (dt) => {
       // did it do anything: a cast that left something in the world or changed someone's health; an attack that landed

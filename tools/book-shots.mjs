@@ -22,6 +22,7 @@ const errors = [];
 try {
   const page = await (await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2, hasTouch: true })).newPage();
   page.on('pageerror', (e) => errors.push('pageerror: ' + e)); page.on('console', (m) => { if (m.type() === 'error' && !/404/.test(m.text())) errors.push('console: ' + m.text()); });
+  page.on('requestfailed', (r) => errors.push('failed: ' + r.url().slice(0, 120)));
   page.on('response', (r) => { if (r.status() === 404 && !/favicon/.test(r.url())) errors.push('missing: ' + r.url()); });
   const want = (name) => !only.length || only.some((o) => name.includes(o));
   // set the Book, let it settle, then step the preview a fixed time (stopped, so the moment is the same every run)

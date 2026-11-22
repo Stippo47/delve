@@ -31,4 +31,16 @@ console.log(`threw: ${bad.length}`); for (const b of bad) console.log('  ' + b);
 console.log(`never fired: ${quiet.length}`); for (const q of quiet) console.log('  ' + q);
 console.log(`locked (shown as locked): ${locked.filter((l) => !l.includes(':hero:') && !/^hero:/.test(l)).length} not counting heroes' tier 0`);
 for (const l of locked) if (!/^hero:/.test(l)) console.log('  ' + l);
+// tiers that look alike: each ability played one loop at tiers I, II and III with the same dice; if two tiers in a row
+// make exactly the same things (effects, shots, units, zones), the preview can't show what the tier changed
+if (!opt('only') || opt('only') === 'hero') {
+  const { HEROES } = await import('../js/heroes.js');
+  const same = [];
+  for (const id of Object.keys(HEROES)) { if (opt('id') && id !== opt('id')) continue; for (const ab of HEROES[id].abilities) {
+    const sigs = [1, 2, 3].map((tier) => { setSeed(11); try { const S = PS.makeStage({ t: 'hero', id, move: ab.id, tier }); for (let i = 0; i < Math.ceil(S.loop / DT) - 1; i++) S.step(DT); return JSON.stringify(S.sig); } catch (e) { return 'err'; } });
+    const pairs = [sigs[0] === sigs[1] ? 'I=II' : '', sigs[1] === sigs[2] ? 'II=III' : ''].filter(Boolean);
+    if (pairs.length) same.push(`${id}:${ab.id} ${pairs.join(' ')}  (${ab.tiers.map((t, k) => ['I', 'II', 'III'][k] + ': ' + t).join(' | ')})`);
+  } }
+  console.log(`tiers that make the same things: ${same.length}`); for (const x of same) console.log('  ' + x);
+}
 process.exitCode = bad.length ? 1 : 0;
