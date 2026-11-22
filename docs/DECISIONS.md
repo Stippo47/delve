@@ -455,3 +455,12 @@ Rules and numbers: `docs/STATUSES.md` (the "Round 13" sections list every call t
   sprite's song (sleepy), the hellhound's bite and the hunter spider's pounce (bleeding; both hunt the party's healer).
 - **Helpful states shown**: every buff by name, icon and numbers; sixteen non-buff states (Regrowing, Gas Form...).
 - **Damage blocked** counted apart from damage taken (stats, battle result, balance `blk`).
+
+## Round 13, lane S, released as 0.16.0 (2026-11-22)
+Rules and numbers: docs/STATUSES.md. Charm, Confused, Sleepy, Bleeding and Fear as build-ups with bursts; one path for
+side changes (sim.js turnSide / restoreSide, `u.trueTeam`); the Enchantress (js/kits-charm.js); the Succubus (Ember
+Deep) and the Cupid (the cherub's elite); hellhounds and hunter spiders hunt healers; every buff and helpful state
+shows by name; damage blocked counted apart; Tangled merged into Rooted, the radiant glow under units, poison to 0
+after the sickness, armour a point and 2% a point capped at 60%, the wither rule removed. The lane's own calls (charm
+blocks from a third full; bosses and a side's last unit are stunned, not turned; Sleepy's and Confused's bursts) are
+put to the designer in deck v16-statuses.
