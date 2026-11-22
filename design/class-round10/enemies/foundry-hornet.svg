@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- HORNET (round 10: "1 maybe 2 body segments. Not 3"): a mechanical hornet seen from above, in copper: two parts: a broad head with two iron mandibles, and one fat abdomen with three bands and a heavy stinger; one wing of thin pale plate a side (arm-l, arm-r: they flap). The bronze and steel ones are this art turned by the game. No eyes. Parts: #arm-l / #arm-r (wings), #body. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="s1" d="M 0 -4 C 5.6 -3.8 16.2 8 20 15.6 C 23.8 23.2 26.1 38 25 46.8 C 23.9 55.6 16.2 69.4 12.5 74.1 C 8.8 78.8 3.9 78.6 0 78 C -3.9 77.4 -10.4 75.5 -13.8 70.2 C -17.1 64.9 -21.9 51.3 -22.5 42.9 C -23.1 34.5 -20.9 21.1 -17.5 14 C -14.1 7 -5.6 -4.2 0 -4 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F5F7FA"/><stop offset="1" stop-color="#B3C3D6"/></linearGradient>
+<clipPath id="c1"><use href="#s1" transform="translate(84 108) rotate(116)"/></clipPath>
+<path id="s2" d="M 0 -4 C 5.6 -3.8 16.2 8 20 15.6 C 23.8 23.2 26.1 38 25 46.8 C 23.9 55.6 16.2 69.4 12.5 74.1 C 8.8 78.8 3.9 78.6 0 78 C -3.9 77.4 -10.4 75.5 -13.8 70.2 C -17.1 64.9 -21.9 51.3 -22.5 42.9 C -23.1 34.5 -20.9 21.1 -17.5 14 C -14.1 7 -5.6 -4.2 0 -4 Z"/>
+<clipPath id="c2"><use href="#s2" transform="translate(116 108) rotate(-116)"/></clipPath>
+<path id="s3" d="M 91 36 L 109 36 L 100 6 Z"/>
+<linearGradient id="g2" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#515661"/><stop offset="1" stop-color="#3F434C"/></linearGradient>
+<linearGradient id="g3" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#212328" stop-opacity="0"/><stop offset="1" stop-color="#212328" stop-opacity="0.42"/></linearGradient>
+<path id="s4" d="M 56 82 A 44 52 0 1 0 144 82 A 44 52 0 1 0 56 82 Z"/>
+<linearGradient id="g4" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#CE824E"/><stop offset="1" stop-color="#B1632D"/></linearGradient>
+<linearGradient id="g5" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5E3316" stop-opacity="0"/><stop offset="1" stop-color="#5E3316" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c4"><use href="#s4"/></clipPath>
+<path id="s5" d="M 92 164 C 90.5 162.1 81.9 163.6 80 166 C 78.1 168.4 76.7 178.3 78 182 C 79.3 185.7 88.3 194.3 90 194 C 91.7 193.7 90.7 184 91 180 C 91.3 176 93.5 165.9 92 164 Z"/>
+<path id="s6" d="M 108 164 C 109.5 162.1 118.1 163.6 120 166 C 121.9 168.4 123.3 178.3 122 182 C 120.7 185.7 111.7 194.3 110 194 C 108.3 193.7 109.3 184 109 180 C 108.7 176 106.5 165.9 108 164 Z"/>
+<path id="s7" d="M 67 144 A 33 27 0 1 0 133 144 A 33 27 0 1 0 67 144 Z"/>
+<clipPath id="u7"><use href="#s1" transform="translate(84 108) rotate(116)"/><use href="#s2" transform="translate(116 108) rotate(-116)"/><use href="#s3"/><use href="#s4"/><use href="#s5"/><use href="#s6"/></clipPath>
+<linearGradient id="g6" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#98512A"/><stop offset="1" stop-color="#793F1F"/></linearGradient>
+<linearGradient id="g7" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#40210F" stop-opacity="0"/><stop offset="1" stop-color="#40210F" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c7"><use href="#s7"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-l" data-pivot="84 108"><!-- wing -->
+<use href="#s1" transform="translate(84 108) rotate(116)" fill="url(#g1)"/><g clip-path="url(#c1)"><g transform="translate(84 108) rotate(116)"><path d="M 0 7.8 L 0 67.1" stroke="#A8B2BE" stroke-width="3" stroke-linecap="round" opacity="0.8"/></g></g>
+</g>
+<g id="arm-r" data-pivot="116 108"><!-- wing -->
+<use href="#s2" transform="translate(116 108) rotate(-116)" fill="url(#g1)"/><g clip-path="url(#c2)"><g transform="translate(116 108) rotate(-116)"><path d="M 0 7.8 L 0 67.1" stroke="#A8B2BE" stroke-width="3" stroke-linecap="round" opacity="0.8"/></g></g>
+</g>
+<g id="body">
+<use href="#s3" fill="url(#g2)"/><use href="#s3" fill="url(#g3)"/>
+<use href="#s4" fill="url(#g4)"/><use href="#s4" fill="url(#g5)"/><g clip-path="url(#c4)"><path d="M 52 58 Q 100 49 148 58 M 52 82 Q 100 73 148 82 M 52 106 Q 100 97 148 106" fill="none" stroke="#3A3434" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" opacity="1"/><path d="M 70 54 A 12 16 0 1 0 94 54 A 12 16 0 1 0 70 54 Z" fill="#FFFFFF" opacity="0.28"/></g>
+<use href="#s5" fill="url(#g2)"/><use href="#s5" fill="url(#g3)"/>
+<use href="#s6" fill="url(#g2)"/><use href="#s6" fill="url(#g3)"/>
+<g clip-path="url(#u7)"><use href="#s7" transform="translate(0 4) " fill="#2B2230" opacity="0.3"/></g><use href="#s7" fill="url(#g6)"/><use href="#s7" fill="url(#g7)"/><g clip-path="url(#c7)"><path d="M 77 134 A 11 6 0 1 0 99 134 A 11 6 0 1 0 77 134 Z" fill="#FFFFFF" opacity="0.25"/></g>
+</g>
+</g>
+</svg>

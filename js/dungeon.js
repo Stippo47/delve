@@ -900,9 +900,9 @@ export { LAYERS };
 // ---------------------------------------------------------------- battle mode (battle.js)
 // One open room in a dungeon's look for a pinned fight: no doors, a few obstacles down the middle band only (so
 // nobody starts inside one), or a boss's own hall (arena: 'throne' | 'grove'). big: two screens across.
-export function battleRoom(themeId, { arena = null, big = false, obstacles = 2 } = {}) {
+export function battleRoom(themeId, { arena = null, big = false, obstacles = 2, W: Wd = 0, H: Hd = 0 } = {}) {
   const T = floorTheme(themeId, 1);
-  const W = big ? 1040 : 960, Hh = big ? 2 * ROW : ROW;
+  const W = Wd || (big ? 1040 : 960), Hh = Hd || (big ? 2 * ROW : ROW); // (round 13: the battle page picks a size)
   const sh = arena ? arenaShape(arena) : { name: 'battle', nr: 1, nc: 1, W, H: Hh, cells: [{ c: 0, r: 0, x: 0, y: 0, w: W, h: Hh }], solid: [] };
   const w = makeWorld(sh.W, sh.H);
   w.theme = T; w.cells = sh.cells; w.shape = sh.name; w.chunks = { nc: sh.nc, nr: sh.nr };
@@ -912,7 +912,7 @@ export function battleRoom(themeId, { arena = null, big = false, obstacles = 2 }
     makeGrid(w);
     gridObstacles(w, obstacles, T.obstacles || [['crate', 1], ['barrel', 1], ['rock', 1]]);
     // keep the two starting grounds clear: only what stands near the middle stays
-    const mid = (x) => Math.abs(x - sh.W / 2) < 110;
+    const mid = (x) => Math.abs(x - sh.W / 2) < Math.max(110, sh.W * 0.13);
     w.walls = w.walls.filter((r) => !r.grid || mid(r.x + r.w / 2)); w.pillars = w.pillars.filter((p) => !p.grid || mid(p.x));
   }
   buildGrid(w);

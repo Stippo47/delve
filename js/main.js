@@ -13,7 +13,7 @@ import { I } from './ui-kit.js';
 import { newBattle, updateBattle, callBattle } from './battle.js';
 import { initBattleUI, openSetup, buildBattleDock, updateBattleDock, showBattleResult, battleTitle } from './battle-ui.js';
 // lane C (convoy): the wagon mode
-import { newConvoy, updateConvoy, turnBack, applyConvoy, takeChoice } from './convoy.js';
+import { newConvoy, updateConvoy, turnBack, applyConvoy, buy as convoyBuy, autoShop, setOff } from './convoy.js';
 import { initConvoyUI, openSetOut, openRoadside, convoyHud, hideConvoyHud, showConvoyResult } from './convoy-ui.js';
 import { initInspect, openInspect, closeInspect, inspecting, selected, select, unitAt, drawSelection, panelHeight, refreshInspect } from './inspect.js';
 
@@ -61,15 +61,17 @@ function startRun(opts) {
 const isBattle = () => !!run && run.mode === 'battle';
 function startBattle(setup) {
   run = newBattle(save, setup);
-  if (save.zoom) setZoom(save.zoom);
+  // (round 13: a bigger ground starts pulled back so most of it shows; pinch to look closer. The run's own zoom is kept.)
+  battleZoomWas = view.zoom; setZoom({ s: save.zoom || 1, l: 0.62, h: 0.45 }[run.setup.size] || 0.62);
   warmArt(run.world);
   buildChips();
   show('run');
 }
+let battleZoomWas = null;
 function endBattle() {
   const r = run, setup = r.setup;
   setPaused(false);
-  if (view.zoom) save.zoom = view.zoom;
+  if (battleZoomWas) { setZoom(battleZoomWas); battleZoomWas = null; }
   writeSave(save);
   window.GAME.lastResult = r.summary.winner; window.GAME.lastReport = r.summary;
   showBattleResult(r.summary, { again: () => startBattle(setup), change: () => { run = null; openSetup(); show('setup'); }, camp: () => { run = null; show('camp'); } });
@@ -92,13 +94,14 @@ function startConvoy(opts = {}) { // (opts: tools only, e.g. { stretch: 2 } to s
 }
 function roadside() { // the stop for the night: one frame with the wagon and the camp past the gate in view above the page
   setPaused(false);
-  const w = run.world; if (w.camAt && run.wagon && state === 'run') { w.camAt.x = run.wagon.x - 300; snapCamera(); drawRun(0, false); }
+  const w = run.world; if (w.camAt && run.wagon && state === 'run') { w.camAt.x = run.wagon.x + 250; snapCamera(); drawRun(0, false); }
   openRoadside(run); show('convoy');
 }
-function convoyPick(choice) {
+function convoyPick(choice) { // set off from the roadside shop (tools: 'auto' shops like convoys.mjs, a name buys that first)
   if (!run || run.phase !== 'roadside') return;
   noteBeasts(run.world);
-  takeChoice(run, choice);
+  if (choice === 'auto') autoShop(run); else if (choice) convoyBuy(run, choice);
+  setOff(run);
   warmArt(run.world); buildChips(); snapCamera(); lastWorld = run.world;
   show('run');
 }

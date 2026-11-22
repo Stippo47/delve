@@ -16,8 +16,8 @@ import * as STOCK from './stock.js';
 import { writeSave } from './save.js';
 import { icon } from './icons.js';
 import { DEFS } from './units.js';
-import { beastFun, beastHabit, trinketFun, POTION_FUN, STATUSES } from './bestiary.js';
-import { portrait } from './inspect.js';
+import { trinketFun, POTION_FUN } from './bestiary.js';
+import { openBook, closeBook, bookOpen } from './book.js';
 import { ENV_STYLES, envId, setEnv } from './env.js';
 import { soundSettingsHtml } from './audio.js';
 import { cue } from './sfx.js';
@@ -46,7 +46,6 @@ let pickHero = null;        // picked in the fire's list, waiting for a seat
 let mapPick = null;         // { theme, floor } picked on the trail
 let sheet = null;
 let potionFor = {};         // { heroId: [potionId...] } handed out for the next run
-let bookTab = 'beasts';
 let treeSel = {};
 let tree = null;
 let ticker = 0;
@@ -74,11 +73,12 @@ export function showCamp() {
   render();
   clearInterval(ticker); ticker = setInterval(tick, 1000);
 }
-export function hideCamp() { clearInterval(ticker); closeSheet(); if (scene) scene.stop(); }
+export function hideCamp() { clearInterval(ticker); closeSheet(); closeBook(); if (scene) scene.stop(); }
 function persist() { writeSave(save); }
 
 // ---------------------------------------------------------------- the frame
 function go(m, o = {}) {
+  if (m !== 'book' && bookOpen()) { closeBook(); scene.start(); }
   mode = m;
   if (m === 'hero') { heroId = o.id; sub = o.sub || (save.heroes[o.id].owned ? 'skills' : 'about'); heroFrom = o.from || 'ground'; }
   if (m === 'map') { mapPick = null; map.setPick(null); }
@@ -290,24 +290,10 @@ function traderView() {
 }
 
 // ================================================================ the book
+// Round 13 (lane K): the Book is its own full-screen page now (js/book.js), with a live preview on top. The camp only
+// opens it, stops its own scene behind it, and comes back to the ground when it closes.
 function bookView() {
-  const kinds = Object.keys(DEFS).filter((k) => DEFS[k].team === 'enemy' && k !== 'boss' && k !== 'skeleton');
-  const seen = save.seen || {};
-  const metN = kinds.filter((k) => (seen[k] && seen[k].met) || (foeCount(save, k) || {}).n).length; // defeated counts as met (stats.js tally)
-  const segs = `<div class="seg"><button class="${bookTab === 'beasts' ? 'on' : ''}" data-act="booktab:beasts">Monsters ${metN}/${kinds.length}</button><button class="${bookTab === 'items' ? 'on' : ''}" data-act="booktab:items">Items</button><button class="${bookTab === 'status' ? 'on' : ''}" data-act="booktab:status">Statuses</button></div>`;
-  let body = '';
-  if (bookTab === 'beasts') {
-    body = `<div class="bgrid">${kinds.map((k) => {
-      const s = seen[k], d = DEFS[k], fc = foeCount(save, k), met = (s && s.met) || (fc && fc.n);
-      return `<div role="button" class="beast ${met ? '' : 'unknown'} ${d.boss ? 'boss' : ''}" ${met ? `data-act="beast:${k}"` : ''}><span class="b-pic"><img src="${portrait(k)}" alt=""></span>${met && fc && fc.n ? `<i class="b-n">${num(fc.n)}</i>` : ''}<b>${met ? d.name : '???'}</b></div>`;
-    }).join('')}</div>`;
-  } else if (bookTab === 'items') {
-    body = `<div class="entries">${P.shopTrinkets().map((t) => `<div class="entry" style="--rar:${P.RARITY[t.rarity].color}"><span class="e-ico">${icon('trinket', t.id, '', t.color)}</span><div><b>${t.name}</b><p>${t.desc}</p><em>${trinketFun(t.id)}</em></div></div>`).join('')
-      + Object.keys(P.POTIONS).map((id) => { const p = P.POTIONS[id]; return `<div class="entry" style="--rar:${p.color}"><span class="e-ico">${icon('potion', id)}</span><div><b>${p.name}</b><p>${p.desc}</p><em>${POTION_FUN[id] || ''}</em></div></div>`; }).join('')}</div>`;
-  } else {
-    body = `<div class="entries">${Object.entries(STATUSES).map(([k, s]) => `<div class="entry"><span class="e-ico">${icon('status', k)}</span><div><b>${s.name}</b><p>${s.desc}</p></div></div>`).join('')}</div>`;
-  }
-  return { title: 'Book', html: `<div class="pp-head">${segs}</div><div class="pp-body">${body}</div>`, cls: 'p-focus p-list' };
+  return { html: '', after: () => { scene.stop(); openBook({ save, onBack: () => { scene.start(); go('ground'); } }); } };
 }
 
 // ================================================================ settings
@@ -331,7 +317,7 @@ function settingsView() {
 function openSheet(s) { sheet = s; renderSheet(); }
 function closeSheet() { sheet = null; if (sheetEl) { sheetEl.classList.add('hidden'); sheetEl.innerHTML = ''; } }
 function renderSheet() {
-  const body = { pack: packSheet, trinket: trinketSheet, ware: wareSheet, beast: beastSheet, respec: respecSheet }[sheet.type]();
+  const body = { pack: packSheet, trinket: trinketSheet, ware: wareSheet, respec: respecSheet }[sheet.type]();
   const was = !sheetEl.classList.contains('hidden');
   sheetEl.innerHTML = `<div class="backdrop" data-act="closesheet"></div><div class="panel ${was ? '' : 'rise'}"><span class="grip"></span>${body}</div>`;
   sheetEl.classList.remove('hidden');
@@ -396,16 +382,6 @@ function respecSheet() {
     <div class="sheet-actions"><button class="btn ghost" data-act="closesheet">Keep it</button><button class="btn primary ${M.afford(save, price) ? '' : 'off'}" data-act="respec:${id}">Unlearn · ${gold(price)}</button></div>`;
 }
 
-function beastSheet() {
-  const k = sheet.kind, d = DEFS[k], s = (save.seen || {})[k] || { met: 0, beaten: 0 }, fc = foeCount(save, k);
-  const tally = fc && fc.n ? `<p class="sheet-p tallyline">${num(fc.n)} defeated in all${[fc.elite ? `${num(fc.elite)} elite` : '', fc.mini ? `${num(fc.mini)} as a mini-boss` : '', fc.boss ? `${num(fc.boss)} as the boss` : ''].filter(Boolean).map((x) => ' · ' + x).join('')}</p>` : '';
-  const res = Object.entries(d.res || {}).filter(([, v]) => v !== 1);
-  const word = { burn: 'fire', chill: 'cold', poison: 'poison', shock: 'lightning', wet: 'water' };
-  return `<div class="sheet-h"><span class="big-ico b-pic"><img src="${portrait(k)}" alt=""></span><div><h2>${d.name}</h2><span class="quiet small">${d.boss ? 'Boss · ' : ''}${s.met} met · ${s.beaten} beaten</span></div></div>
-    ${tally}<p class="sheet-fun">${beastFun(k)}</p><p class="sheet-p">${beastHabit(k)}</p>
-    ${res.length ? `<div class="reschips">${res.map(([key, v]) => `<span class="${v < 1 ? 'res' : 'weak'}">${icon('status', key)}${v === 0 ? 'Immune to' : v < 1 ? 'Shrugs off' : 'Weak to'} ${word[key] || key}</span>`).join('')}</div>` : ''}`;
-}
-
 function toast(text) {
   let el = document.querySelector('.toast');
   if (!el) { el = document.createElement('div'); el.className = 'toast'; document.body.appendChild(el); }
@@ -463,8 +439,6 @@ function onClick(e) {
     case 'buyt': if (STOCK.buy(save, 't', arg)) { ok(); popGold(); } else no(); break;
     case 'buyp': if (STOCK.buy(save, 'p', arg)) { ok(); popGold(); } else no(); break;
     case 'upt': if (P.upgradeTrinket(save, arg)) { ok(); popGold(); } else no(); break;
-    case 'booktab': bookTab = arg; cue('tap'); render(); break;
-    case 'beast': openSheet({ type: 'beast', kind: arg }); break;
     case 'env': setEnv(+arg); cue('tap'); render(); break;
     case 'puddle': LOOKS.setPuddleStyle(arg); cue('tap'); render(); break;
     case 'hpstyle': LOOKS.setHpStyle(arg); cue('tap'); render(); break;
@@ -505,7 +479,7 @@ export function showResult(rep, done) {
         <span class="quiet small">${to > from ? `Level ${from} → ${to}` : `Level ${to}`}${h.downed ? ' · downed, resting' : h.hurt ? ' · hurt, resting' : ''}</span></div>
       ${gained ? `<span class="rh-pts"><span class="pts">+${gained}</span><span class="cap">${gained === 1 ? 'point' : 'points'}</span></span>` : ''}</div>`;
   }).join('');
-  const lost = rep.lost ? `<p class="r-cut">${rep.result === 'lost' ? 'Fell' : 'Left'} before the floor was done: −${rep.lost} (${Math.round(M.LEAVE_CUT * 100)}%)</p>` : '';
+  const lost = rep.lost ? `<p class="r-cut">${rep.result === 'lost' ? 'The party fell' : 'Left before the floor was done'}: −${rep.lost} (${Math.round((rep.lostPct ?? M.LEAVE_CUT) * 100)}%)</p>` : '';
   const merc = rep.mercCut ? `<p class="quiet small">The sellswords took ${rep.mercCut}.</p>` : '';
   const opened = Array.isArray(rep.opened) ? rep.opened : rep.opened ? [rep.opened] : [];
   const newSeats = rep.slots && rep.slots.unlocked ? rep.slots.unlocked.length : 0;

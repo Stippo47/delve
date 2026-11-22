@@ -63,7 +63,7 @@ function brain(w, u, dt) {
 // ---- sun blades: three swords circling her; a broken one comes back after 15 s
 function makeBlades(w, u, k) {
   for (let i = k.blades.filter((b) => alive(b)).length; i < GS.blades.n; i++) {
-    const b = part(w, u, 'sunBlade', u.x, u.y, { share: 0, pool: true, hp: u.maxHp * GS.blades.hpK });
+    const b = part(w, u, 'seraphBlade', u.x, u.y, { share: 0, pool: true, hp: u.maxHp * GS.blades.hpK });
     b.slot = i; k.blades.push(b);
   }
   k.blades = k.blades.filter((b) => alive(b));
@@ -201,7 +201,7 @@ export const SERAPH = {
     gildedSeraph: { team: 'enemy', name: 'The Gilded Seraph', art: ART, headR: 58, r: 48, vr: 38, turn: 3, accel: 180, face: 3, mass: 6, hp: 1000, speed: 50, role: 'ranged', range: 300,
       atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 220, coins: [90, 110], boss: true, arena: 'sanctum', attackAnim: 'cast',
       res: { radiance: 0, curse: 0.5, poison: 0.3, stagger: 0.5 }, brain, onDeath: death },
-    sunBlade: PART('Sun Blade', { r: 22, vr: 22, mass: 20, hp: 100, res: { radiance: 0 }, draw: drawSunBlade }),
+    seraphBlade: PART('Sun Blade', { r: 22, vr: 22, mass: 20, hp: 100, res: { radiance: 0 }, draw: drawSunBlade }),
     seraphSinger: { team: 'enemy', name: 'Choir Singer', art: 'art/bosses/choir-singer.svg', headR: 40, r: 26, vr: 20, turn: 3, accel: 100, face: 3, mass: 2,
       hp: 60, speed: 0, role: 'ranged', range: 300, atkCd: 999, temp: 0.2, commit: 1, xp: 6, coins: [0, 0], noElite: true, res: { radiance: 0 }, brain: singerBrain },
   },

@@ -29,11 +29,11 @@ export const DEFS = {
     ability: 'dash', abilCd: 2.6,
   },
   slime: {
-    team: 'enemy', name: 'Slime', r: 25, vr: 22, turn: 3, accel: 140, face: 3.5, mass: 1.6, hp: 46, speed: 40, role: 'melee',
+    team: 'enemy', name: 'Slime', art: 'art/enemies/slime.svg', headR: 64, r: 25, vr: 22, turn: 3, accel: 140, face: 3.5, mass: 1.6, hp: 46, speed: 40, role: 'melee',
     range: 16, atkCd: 1.4, dmg: 8, knock: 90, arc: 2.2, temp: 0.3, commit: 1, xp: 8, coins: [2, 4], splits: true, noCorpse: true, hops: 1.1,
   },
   slimeSmall: {
-    team: 'enemy', name: 'Slimelet', r: 16, vr: 14, turn: 5, accel: 260, face: 5, mass: 0.6, hp: 16, speed: 58, role: 'melee',
+    team: 'enemy', name: 'Slimelet', art: 'art/enemies/slime-small.svg', headR: 64, r: 16, vr: 14, turn: 5, accel: 260, face: 5, mass: 0.6, hp: 16, speed: 58, role: 'melee',
     range: 12, atkCd: 1.0, dmg: 4, arc: 2.2, temp: 0.4, commit: 0.6, xp: 3, coins: [0, 1], noCorpse: true, hops: 0.8,
   },
   skeleton: {

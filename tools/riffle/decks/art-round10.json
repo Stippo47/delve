@@ -1,0 +1,696 @@
+{
+  "title": "Art round 10: your notes, and picks",
+  "topic": "art",
+  "order": 23,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "ghost-a-tails",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Ghost A: three tails",
+      "text": "A point, B stub, C hem. Only the tail's outline differs.",
+      "why": "You wrote: \"Tail is still a bit weird. Try 3 types.\" Comment with the letter to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round10/enemies/renders/ghost-a-tails.png"
+      ]
+    },
+    {
+      "id": "ghost-b-tails",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Ghost B: three tails",
+      "text": "The same three tails on the second ghost.",
+      "why": "You wrote: \"Same thing\" Comment with the letter to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round10/enemies/renders/ghost-b-tails.png"
+      ]
+    },
+    {
+      "id": "troll-heads",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Troll: three heads",
+      "text": "A wide jaw and long ears, B potato nose and a moss mop, C flat top with horns. 10% smaller, the boulder as it ",
+      "why": "You wrote: \"Try different heads. Make them slightly smaller keep boulder same size.\" Comment with the letter to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round10/enemies/renders/troll-heads.png"
+      ]
+    },
+    {
+      "id": "troll-hands",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Troll: just hands",
+      "text": "The same three heads with fists only, no arms.",
+      "why": "You wrote: \"Make version without arms. Just hands\" Comment with the letter to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round10/enemies/renders/troll-hands.png"
+      ]
+    },
+    {
+      "id": "wolves-nopaws",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Wolves without paws",
+      "text": "The wolf, the dire wolf and the Alpha without their front paws.",
+      "why": "You wrote: \"Show me wolves without paws.\" Comment with the letter to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round10/enemies/renders/wolves-nopaws.png"
+      ]
+    },
+    {
+      "id": "alpha-scar",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "The Alpha's scar",
+      "text": "A claw marks, B a stitched scar down the snout.",
+      "why": "You wrote: \"Change face scar\" Comment with the letter to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round10/enemies/renders/alpha-scar.png"
+      ]
+    },
+    {
+      "id": "boar",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Thornback boar: three",
+      "text": "Redrawn in the wolves' build: A a ridge, B quills, C plates.",
+      "why": "You wrote: \"I could see it almost working. Make variants.\" Comment with the letter to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round10/enemies/renders/boar.png"
+      ]
+    },
+    {
+      "id": "ent-faces",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Ent: three faces",
+      "text": "A leaf brows, B a nose with a leaf, C hollows.",
+      "why": "You wrote: \"Face variants\" Comment with the letter to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round10/enemies/renders/ent-faces.png"
+      ]
+    },
+    {
+      "id": "elder-ent-faces",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Elder Ent: three faces",
+      "text": "A a scowl with peg teeth, B a nose and moss moustache, C lantern eyes. It is also bigger in the game now.",
+      "why": "You wrote: \"Change face. 3 versions. They should also be very big\" Comment with the letter to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round10/enemies/renders/elder-ent-faces.png"
+      ]
+    },
+    {
+      "id": "sproutling",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Sproutling: three takes",
+      "text": "A turnip, B acorn, C bud.",
+      "why": "You wrote: \"Don't like.\" Comment with the letter to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round10/enemies/renders/sproutling.png"
+      ]
+    },
+    {
+      "id": "golem-bodies",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Golem: three bodies",
+      "text": "A boulders, B blocks, C a hunch. The eye is kept as it was.",
+      "why": "You wrote: \"First get down basic golems body. Make 3 variants.\" Comment with the letter to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round10/enemies/renders/golem-bodies.png"
+      ]
+    },
+    {
+      "id": "gilded-golems",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Gilded golem: the three",
+      "text": "Each of the three bodies in gold.",
+      "why": "You wrote: \"Then make gilded. Note I love the eye.\" Comment with the letter to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round10/enemies/renders/gilded-golems.png"
+      ]
+    },
+    {
+      "id": "frost-spirit",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Frost spirit's tail",
+      "text": "The core alone, and a mock-up of the wiggling tail the game will draw behind it.",
+      "why": "You wrote: \"That tail should be like that rat tail where it's wiggly/ follows behind\" Comment with the letter to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round10/enemies/renders/frost-spirit.png"
+      ]
+    },
+    {
+      "id": "boss-biblical-angel",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "A biblically accurate ange",
+      "text": "One great eye, two crossing wheels set with eyes, six wings: for the Spire's boss, which is being rebuilt.",
+      "why": "You wrote: \"I want one of those biblically accurate angels.\" Comment with the letter to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round10/enemies/renders/boss-biblical-angel.png"
+      ]
+    },
+    {
+      "id": "fixes0",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Wildwood and Sewers",
+      "text": "Your notes applied, each beside the version you saw. These are live in 0.14.2.",
+      "why": "Drawn on the stronger model this time, to the standard of the heroes you approved. Tick the ones that are right; comment on any that still aren't.",
+      "pick": [
+        "bandit-axe",
+        "bandit-brute",
+        "bandit-chief",
+        "bandit-daggers",
+        "bandit-greatsword",
+        "bandit-poacher",
+        "bandit-spear",
+        "bandit-sword",
+        "bandit-torch",
+        "greenskin-orc",
+        "sewer-croc",
+        "slime-small",
+        "slime",
+        "wild-dire-wolf"
+      ],
+      "items": [
+        {
+          "id": "bandit-axe",
+          "label": "Bandit axe",
+          "image": "../../../design/class-round10/enemies/renders/bandit-axe.png",
+          "text": "bandit-axe.svg: a fur hat with a thick pale band and a striped tail hanging back (it sways), a wool collar; a big",
+          "thumb": "../../../design/class-round10/enemies/renders/bandit-axe-thumb.png"
+        },
+        {
+          "id": "bandit-axe-before",
+          "label": "Bandit axe (before)",
+          "image": "../../../design/class-round10/enemies/renders/bandit-axe-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "bandit-brute",
+          "label": "Bandit brute",
+          "image": "../../../design/class-round10/enemies/renders/bandit-brute.png",
+          "text": "bandit-brute.svg: bald and scarred, a spiked iron pauldron strapped on the right shoulder, a fur collar; a great",
+          "thumb": "../../../design/class-round10/enemies/renders/bandit-brute-thumb.png"
+        },
+        {
+          "id": "bandit-brute-before",
+          "label": "Bandit brute (before)",
+          "image": "../../../design/class-round10/enemies/renders/bandit-brute-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "bandit-chief",
+          "label": "Bandit chief",
+          "image": "../../../design/class-round10/enemies/renders/bandit-chief.png",
+          "text": "bandit-chief.svg: a wide black cavalier hat, one side pinned up, a gold band and a great red plume sweeping back",
+          "thumb": "../../../design/class-round10/enemies/renders/bandit-chief-thumb.png"
+        },
+        {
+          "id": "bandit-chief-before",
+          "label": "Bandit chief (before)",
+          "image": "../../../design/class-round10/enemies/renders/bandit-chief-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "bandit-daggers",
+          "label": "Bandit daggers",
+          "image": "../../../design/class-round10/enemies/renders/bandit-daggers.png",
+          "text": "bandit-daggers.svg: the cutpurse, bare-headed: dark auburn hair swept back in a wave and tied in a long tail (it",
+          "thumb": "../../../design/class-round10/enemies/renders/bandit-daggers-thumb.png"
+        },
+        {
+          "id": "bandit-daggers-before",
+          "label": "Bandit daggers (before)",
+          "image": "../../../design/class-round10/enemies/renders/bandit-daggers-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "bandit-greatsword",
+          "label": "Bandit greatsword",
+          "image": "../../../design/class-round10/enemies/renders/bandit-greatsword.png",
+          "text": "bandit-greatsword.svg: a shock of black hair in back-swept spikes, a mustard headband knotted at the side; a",
+          "thumb": "../../../design/class-round10/enemies/renders/bandit-greatsword-thumb.png"
+        },
+        {
+          "id": "bandit-greatsword-before",
+          "label": "Bandit greatsword (before)",
+          "image": "../../../design/class-round10/enemies/renders/bandit-greatsword-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "bandit-poacher",
+          "label": "Bandit poacher",
+          "image": "../../../design/class-round10/enemies/renders/bandit-poacher.png",
+          "text": "bandit-poacher.svg: an olive hunter's cap with a pointed turned-up brim and a long pheasant feather, a scruffy",
+          "thumb": "../../../design/class-round10/enemies/renders/bandit-poacher-thumb.png"
+        },
+        {
+          "id": "bandit-poacher-before",
+          "label": "Bandit poacher (before)",
+          "image": "../../../design/class-round10/enemies/renders/bandit-poacher-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "bandit-spear",
+          "label": "Bandit spear",
+          "image": "../../../design/class-round10/enemies/renders/bandit-spear.png",
+          "text": "bandit-spear.svg: a moss-green hood with a long tail and a scalloped mantle; a long spear with a rag of red tied",
+          "thumb": "../../../design/class-round10/enemies/renders/bandit-spear-thumb.png"
+        },
+        {
+          "id": "bandit-spear-before",
+          "label": "Bandit spear (before)",
+          "image": "../../../design/class-round10/enemies/renders/bandit-spear-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "bandit-sword",
+          "label": "Bandit sword",
+          "image": "../../../design/class-round10/enemies/renders/bandit-sword.png",
+          "text": "bandit-sword.svg (art/enemies/bandit.svg): a dented iron pot helm with a riveted rim and a ridge, a mail collar; a",
+          "thumb": "../../../design/class-round10/enemies/renders/bandit-sword-thumb.png"
+        },
+        {
+          "id": "bandit-sword-before",
+          "label": "Bandit sword (before)",
+          "image": "../../../design/class-round10/enemies/renders/bandit-sword-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "bandit-torch",
+          "label": "Bandit torch",
+          "image": "../../../design/class-round10/enemies/renders/bandit-torch.png",
+          "text": "bandit-torch.svg: a battered slouch hat on the farmers' hat (stitched brim, a nick, a red band), a green neck",
+          "thumb": "../../../design/class-round10/enemies/renders/bandit-torch-thumb.png"
+        },
+        {
+          "id": "bandit-torch-before",
+          "label": "Bandit torch (before)",
+          "image": "../../../design/class-round10/enemies/renders/bandit-torch-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "greenskin-orc",
+          "label": "Orc",
+          "image": "../../../design/class-round10/enemies/renders/greenskin-orc.png",
+          "text": "Orc (greenskin-orc.svg -> art/enemies/orc.svg), \"Move tusks to the side... While at it fixe hair\": the two tusks",
+          "thumb": "../../../design/class-round10/enemies/renders/greenskin-orc-thumb.png"
+        },
+        {
+          "id": "greenskin-orc-before",
+          "label": "Orc (before)",
+          "image": "../../../design/class-round10/enemies/renders/greenskin-orc-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "sewer-croc",
+          "label": "Croc",
+          "image": "../../../design/class-round10/enemies/renders/sewer-croc.png",
+          "text": "Croc (sewer-croc.svg -> art/enemies/croc.svg), \"Fix axe\": the two grey slabs half under the snout (cut off by the",
+          "thumb": "../../../design/class-round10/enemies/renders/sewer-croc-thumb.png"
+        },
+        {
+          "id": "sewer-croc-before",
+          "label": "Croc (before)",
+          "image": "../../../design/class-round10/enemies/renders/sewer-croc-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "slime-small",
+          "label": "Slime",
+          "image": "../../../design/class-round10/enemies/renders/slime-small.png",
+          "text": "Slime (slime.svg, slime-small.svg -> art/enemies/slime.svg, slime-small.svg; js/units.js slime and slimeSmall",
+          "thumb": "../../../design/class-round10/enemies/renders/slime-small-thumb.png"
+        },
+        {
+          "id": "slime",
+          "label": "Slime",
+          "image": "../../../design/class-round10/enemies/renders/slime.png",
+          "text": "Slime (slime.svg, slime-small.svg -> art/enemies/slime.svg, slime-small.svg; js/units.js slime and slimeSmall",
+          "thumb": "../../../design/class-round10/enemies/renders/slime-thumb.png"
+        },
+        {
+          "id": "slime-before",
+          "label": "Slime (before)",
+          "image": "../../../design/class-round10/enemies/renders/slime-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "wild-dire-wolf",
+          "label": "Dire wolf",
+          "image": "../../../design/class-round10/enemies/renders/wild-dire-wolf.png",
+          "text": "Dire wolf (wild-dire-wolf.svg -> art/enemies/dire-wolf.svg), \"Mane not big enough. Body also 10% bigger\": the",
+          "thumb": "../../../design/class-round10/enemies/renders/wild-dire-wolf-thumb.png"
+        },
+        {
+          "id": "wild-dire-wolf-before",
+          "label": "Dire wolf (before)",
+          "image": "../../../design/class-round10/enemies/renders/wild-dire-wolf-before.png",
+          "text": "The version you saw last round."
+        }
+      ]
+    },
+    {
+      "id": "fixes1",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Frost, Spire and Dunes",
+      "text": "Your notes applied, each beside the version you saw. These are live in 0.14.2.",
+      "why": "Drawn on the stronger model this time, to the standard of the heroes you approved. Tick the ones that are right; comment on any that still aren't.",
+      "pick": [
+        "dunes-cobra",
+        "dunes-jackal",
+        "dunes-mummy",
+        "dunes-serpent-coil",
+        "dunes-serpent-head",
+        "frost-icicle-wraith",
+        "frost-yeti",
+        "spire-choir-sprite",
+        "spire-fallen-angel",
+        "spire-herald-fallen",
+        "spire-herald-light",
+        "spire-sun-blade"
+      ],
+      "items": [
+        {
+          "id": "dunes-cobra",
+          "label": "Cobra",
+          "image": "../../../design/class-round10/enemies/renders/dunes-cobra.png",
+          "text": "Cobra (dunes-cobra.svg -> art/enemies/cobra.svg, headR 48 -> 54 for the wider art), \"Meh\": drawn again: one neat",
+          "thumb": "../../../design/class-round10/enemies/renders/dunes-cobra-thumb.png"
+        },
+        {
+          "id": "dunes-cobra-before",
+          "label": "Cobra (before)",
+          "image": "../../../design/class-round10/enemies/renders/dunes-cobra-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "dunes-jackal",
+          "label": "Jackal guard",
+          "image": "../../../design/class-round10/enemies/renders/dunes-jackal.png",
+          "text": "Jackal guard (dunes-jackal.svg -> art/enemies/jackal.svg), \"Good overall shape and colours, bad quality\": the",
+          "thumb": "../../../design/class-round10/enemies/renders/dunes-jackal-thumb.png"
+        },
+        {
+          "id": "dunes-jackal-before",
+          "label": "Jackal guard (before)",
+          "image": "../../../design/class-round10/enemies/renders/dunes-jackal-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "dunes-mummy",
+          "label": "Mummy",
+          "image": "../../../design/class-round10/enemies/renders/dunes-mummy.png",
+          "text": "Mummy (dunes-mummy.svg -> art/enemies/mummy.svg), \"No\": drawn again in the heroes' bust build: a head wound in",
+          "thumb": "../../../design/class-round10/enemies/renders/dunes-mummy-thumb.png"
+        },
+        {
+          "id": "dunes-mummy-before",
+          "label": "Mummy (before)",
+          "image": "../../../design/class-round10/enemies/renders/dunes-mummy-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "dunes-serpent-coil",
+          "label": "Dunes serpent coil",
+          "image": "../../../design/class-round10/enemies/renders/dunes-serpent-coil.png",
+          "text": "Redrawn this round.",
+          "thumb": "../../../design/class-round10/enemies/renders/dunes-serpent-coil-thumb.png"
+        },
+        {
+          "id": "dunes-serpent-coil-before",
+          "label": "Dunes serpent coil (before)",
+          "image": "../../../design/class-round10/enemies/renders/dunes-serpent-coil-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "dunes-serpent-head",
+          "label": "Sand serpent",
+          "image": "../../../design/class-round10/enemies/renders/dunes-serpent-head.png",
+          "text": "Sand serpent, \"Wth is that snake enemy\" (v12-bosses deck): a proper snake. The head (dunes-serpent-head.svg ->",
+          "thumb": "../../../design/class-round10/enemies/renders/dunes-serpent-head-thumb.png"
+        },
+        {
+          "id": "dunes-serpent-head-before",
+          "label": "Sand serpent (before)",
+          "image": "../../../design/class-round10/enemies/renders/dunes-serpent-head-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "frost-icicle-wraith",
+          "label": "Icicle wraith",
+          "image": "../../../design/class-round10/enemies/renders/frost-icicle-wraith.png",
+          "text": "Icicle wraith (frost-icicle-wraith.svg -> art/enemies/icicle-wraith.svg, headR 37 as before), \"Different look.",
+          "thumb": "../../../design/class-round10/enemies/renders/frost-icicle-wraith-thumb.png"
+        },
+        {
+          "id": "frost-icicle-wraith-before",
+          "label": "Icicle wraith (before)",
+          "image": "../../../design/class-round10/enemies/renders/frost-icicle-wraith-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "frost-yeti",
+          "label": "Yeti",
+          "image": "../../../design/class-round10/enemies/renders/frost-yeti.png",
+          "text": "Yeti (frost-yeti.svg -> art/enemies/yeti.svg) and its snowball (props/yeti-snowball.svg ->",
+          "thumb": "../../../design/class-round10/enemies/renders/frost-yeti-thumb.png"
+        },
+        {
+          "id": "frost-yeti-before",
+          "label": "Yeti (before)",
+          "image": "../../../design/class-round10/enemies/renders/frost-yeti-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "spire-choir-sprite",
+          "label": "Choir sprite",
+          "image": "../../../design/class-round10/enemies/renders/spire-choir-sprite.png",
+          "text": "Choir sprite (spire-choir-sprite.svg -> art/enemies/choir-sprite.svg), \"Weird hair\": the lumpy cap with spiral",
+          "thumb": "../../../design/class-round10/enemies/renders/spire-choir-sprite-thumb.png"
+        },
+        {
+          "id": "spire-choir-sprite-before",
+          "label": "Choir sprite (before)",
+          "image": "../../../design/class-round10/enemies/renders/spire-choir-sprite-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "spire-fallen-angel",
+          "label": "Fallen angel",
+          "image": "../../../design/class-round10/enemies/renders/spire-fallen-angel.png",
+          "text": "Fallen angel (spire-fallen-angel.svg -> art/enemies/fallen-angel.svg), \"Meh. I think u could do better\": drawn",
+          "thumb": "../../../design/class-round10/enemies/renders/spire-fallen-angel-thumb.png"
+        },
+        {
+          "id": "spire-fallen-angel-before",
+          "label": "Fallen angel (before)",
+          "image": "../../../design/class-round10/enemies/renders/spire-fallen-angel-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "spire-herald-fallen",
+          "label": "The Twin Heralds",
+          "image": "../../../design/class-round10/enemies/renders/spire-herald-fallen.png",
+          "text": "The Twin Heralds (spire-herald-light.svg, spire-herald-fallen.svg -> art/enemies/herald-light.svg,",
+          "thumb": "../../../design/class-round10/enemies/renders/spire-herald-fallen-thumb.png"
+        },
+        {
+          "id": "spire-herald-fallen-before",
+          "label": "The Twin Heralds (before)",
+          "image": "../../../design/class-round10/enemies/renders/spire-herald-fallen-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "spire-herald-light",
+          "label": "The Twin Heralds",
+          "image": "../../../design/class-round10/enemies/renders/spire-herald-light.png",
+          "text": "The Twin Heralds (spire-herald-light.svg, spire-herald-fallen.svg -> art/enemies/herald-light.svg,",
+          "thumb": "../../../design/class-round10/enemies/renders/spire-herald-light-thumb.png"
+        },
+        {
+          "id": "spire-herald-light-before",
+          "label": "The Twin Heralds (before)",
+          "image": "../../../design/class-round10/enemies/renders/spire-herald-light-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "spire-sun-blade",
+          "label": "Sun blade",
+          "image": "../../../design/class-round10/enemies/renders/spire-sun-blade.png",
+          "text": "Sun blade (spire-sun-blade.svg -> art/enemies/sun-blade.svg), \"make the sword enemy much bigger. Like 3 units",
+          "thumb": "../../../design/class-round10/enemies/renders/spire-sun-blade-thumb.png"
+        },
+        {
+          "id": "spire-sun-blade-before",
+          "label": "Sun blade (before)",
+          "image": "../../../design/class-round10/enemies/renders/spire-sun-blade-before.png",
+          "text": "The version you saw last round."
+        }
+      ]
+    },
+    {
+      "id": "fixes2",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Foundry and bosses",
+      "text": "Your notes applied, each beside the version you saw. These are live in 0.14.2.",
+      "why": "Drawn on the stronger model this time, to the standard of the heroes you approved. Tick the ones that are right; comment on any that still aren't.",
+      "pick": [
+        "boss-choir-singer",
+        "boss-gilded-seraph",
+        "boss-goblin-chieftain",
+        "foundry-bee",
+        "foundry-cog-sprite",
+        "foundry-gear-sprite",
+        "foundry-hornet",
+        "foundry-turret-gun",
+        "foundry-turret-steam",
+        "foundry-wasp"
+      ],
+      "items": [
+        {
+          "id": "boss-choir-singer",
+          "label": "Choir singer",
+          "image": "../../../design/class-round10/enemies/renders/boss-choir-singer.png",
+          "text": "Choir singer (boss-choir-singer.svg -> art/bosses/choir-singer.svg), \"Flip book. Hair weird\": the book is turned",
+          "thumb": "../../../design/class-round10/enemies/renders/boss-choir-singer-thumb.png"
+        },
+        {
+          "id": "boss-choir-singer-before",
+          "label": "Choir singer (before)",
+          "image": "../../../design/class-round10/enemies/renders/boss-choir-singer-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "boss-gilded-seraph",
+          "label": "The Gilded Seraph",
+          "image": "../../../design/class-round10/enemies/renders/boss-gilded-seraph.png",
+          "text": "The Gilded Seraph (boss-gilded-seraph.svg -> art/bosses/gilded-seraph.svg), \"Looks decent as a base. Could be",
+          "thumb": "../../../design/class-round10/enemies/renders/boss-gilded-seraph-thumb.png"
+        },
+        {
+          "id": "boss-gilded-seraph-before",
+          "label": "The Gilded Seraph (before)",
+          "image": "../../../design/class-round10/enemies/renders/boss-gilded-seraph-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "boss-goblin-chieftain",
+          "label": "The Goblin Chieftain",
+          "image": "../../../design/class-round10/enemies/renders/boss-goblin-chieftain.png",
+          "text": "The Goblin Chieftain (boss-goblin-chieftain.svg -> art/bosses/goblin-chieftain.svg), \"Are those feathers in",
+          "thumb": "../../../design/class-round10/enemies/renders/boss-goblin-chieftain-thumb.png"
+        },
+        {
+          "id": "boss-goblin-chieftain-before",
+          "label": "The Goblin Chieftain (before)",
+          "image": "../../../design/class-round10/enemies/renders/boss-goblin-chieftain-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "foundry-bee",
+          "label": "Bee",
+          "image": "../../../design/class-round10/enemies/renders/foundry-bee.png",
+          "text": "Bee, wasp, hornet (foundry-bee.svg, -wasp.svg, -hornet.svg -> art/enemies/bee.svg, wasp.svg, hornet.svg;",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-bee-thumb.png"
+        },
+        {
+          "id": "foundry-bee-before",
+          "label": "Bee (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-bee-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "foundry-cog-sprite",
+          "label": "Gear sprite",
+          "image": "../../../design/class-round10/enemies/renders/foundry-cog-sprite.png",
+          "text": "Gear sprite, cog sprite (foundry-gear-sprite.svg, foundry-cog-sprite.svg -> art/enemies/gear-sprite.svg,",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-cog-sprite-thumb.png"
+        },
+        {
+          "id": "foundry-cog-sprite-before",
+          "label": "Gear sprite (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-cog-sprite-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "foundry-gear-sprite",
+          "label": "Gear sprite",
+          "image": "../../../design/class-round10/enemies/renders/foundry-gear-sprite.png",
+          "text": "Gear sprite, cog sprite (foundry-gear-sprite.svg, foundry-cog-sprite.svg -> art/enemies/gear-sprite.svg,",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-gear-sprite-thumb.png"
+        },
+        {
+          "id": "foundry-gear-sprite-before",
+          "label": "Gear sprite (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-gear-sprite-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "foundry-hornet",
+          "label": "Foundry hornet",
+          "image": "../../../design/class-round10/enemies/renders/foundry-hornet.png",
+          "text": "Redrawn this round.",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-hornet-thumb.png"
+        },
+        {
+          "id": "foundry-hornet-before",
+          "label": "Foundry hornet (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-hornet-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "foundry-turret-gun",
+          "label": "Gun turret",
+          "image": "../../../design/class-round10/enemies/renders/foundry-turret-gun.png",
+          "text": "Gun turret (foundry-turret-gun.svg -> art/enemies/turret-gun.svg), \"Almost good. Turret part shoukd be in the",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-turret-gun-thumb.png"
+        },
+        {
+          "id": "foundry-turret-gun-before",
+          "label": "Gun turret (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-turret-gun-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "foundry-turret-steam",
+          "label": "Steam turret",
+          "image": "../../../design/class-round10/enemies/renders/foundry-turret-steam.png",
+          "text": "Steam turret (foundry-turret-steam.svg -> art/enemies/turret-steam.svg), \"Meh. Not horrible\": drawn again as a",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-turret-steam-thumb.png"
+        },
+        {
+          "id": "foundry-turret-steam-before",
+          "label": "Steam turret (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-turret-steam-before.png",
+          "text": "The version you saw last round."
+        },
+        {
+          "id": "foundry-wasp",
+          "label": "Foundry wasp",
+          "image": "../../../design/class-round10/enemies/renders/foundry-wasp.png",
+          "text": "Redrawn this round.",
+          "thumb": "../../../design/class-round10/enemies/renders/foundry-wasp-thumb.png"
+        },
+        {
+          "id": "foundry-wasp-before",
+          "label": "Foundry wasp (before)",
+          "image": "../../../design/class-round10/enemies/renders/foundry-wasp-before.png",
+          "text": "The version you saw last round."
+        }
+      ]
+    }
+  ]
+}

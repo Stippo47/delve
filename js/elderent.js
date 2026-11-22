@@ -137,7 +137,7 @@ function grove(w, u, k, dt) {
 }
 
 export const ELDER = {
-  elderEnt: { team: 'enemy', name: 'The Elder Ent', art: 'art/enemies/elder-ent.svg', headR: 66, r: 64, vr: 48, turn: 1.4, accel: 90,
+  elderEnt: { team: 'enemy', name: 'The Elder Ent', art: 'art/enemies/elder-ent.svg', headR: 66, r: 80, vr: 60, turn: 1.4, accel: 90,
     face: 1.4, mass: 9, hp: 1850, speed: 38, role: 'melee', range: 34, atkCd: 999, arc: 2, temp: 0.2, commit: 1.4, xp: 160, coins: [60, 80], boss: true, arena: 'grove',
     res: { burn: 1, chill: 0, poison: 0, wet: 0, shock: 0, stagger: 0, radiance: 0, curse: 0, entangle: 0 }, onDeath: (w, u) => { courtFalls(w); for (let i = 0; i < 20; i++) rootPuff(w, u.x + rrange(-u.r, u.r), u.y + rrange(-u.r, u.r), 2); },
     brain },

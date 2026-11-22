@@ -377,7 +377,8 @@ Object.assign(HEROES2, {
       { id: 'flare', name: 'Flare', cd: 13, tags: 'd', glyph: 'sun', desc: 'Fires a red flare onto the enemies: whatever stands in its light is easy to hit.',
         tiers: ['For 6s they take 15% more.', 'They are dazzled and slowed too.', 'A bigger patch of light.'] },
     ],
-    trait: { id: 'wellStocked', name: 'Well Stocked', desc: 'Every two minutes, a friend near him who has no health potion gets one.' },
+    trait: { id: 'wellStocked', name: 'Well Stocked', desc: 'Every two minutes, a friend near him who has no health potion gets one. A gatherer: on the wagon road he goes for loose gold before a fight, and further for it.' },
+    gatherer: true, // lane W (round 13, the designer: "heroes with the gathering trait ... prioritize collecting rather than fighting"; convoy.js)
   },
   crossbowman: {
     name: 'Crossbowman', art: 'art/heroes/crossbowman.svg', role: 'ranged', unlock: { gems: 2 },
@@ -512,7 +513,8 @@ Object.assign(HEROES2, {
       { id: 'broadside', name: 'Broadside', cd: 15, tags: 'd', glyph: 'burst', desc: 'Whistles to the ship: cannonballs come down round a spot.',
         tiers: ['Three cannonballs.', 'Bigger blasts.', 'Five.'] },
     ],
-    trait: { id: 'dirtyFighting', name: 'Dirty Fighting', desc: 'Hits staggered, stunned, slowed or rooted enemies 30% harder.' },
+    trait: { id: 'dirtyFighting', name: 'Dirty Fighting', desc: 'Hits staggered, stunned, slowed or rooted enemies 30% harder. A gatherer: on the wagon road she goes for loose gold before a fight, and further for it.' },
+    gatherer: true, // lane W (round 13): see the Quartermaster
   },
   slinger: {
     name: 'Slinger', art: 'art/heroes/slinger.svg', role: 'ranged', unlock: { gems: 1 },

@@ -261,7 +261,7 @@ const TURRET = { ...FOE, headR: 60, r: 26, vr: 22, turn: 0, accel: 0, face: 0, m
 const turretArt = (spec) => variantUrl('art/enemies/mimic.svg', spec); // (unused since art round 9: every turret has its own art)
 // the fire and gas mortars: the mortar with its brass trim turned red and green (art round 9)
 const mortarArt = (hue, light) => variantUrl('art/enemies/mortar.svg', { accent: { from: 40, range: 30, hue, sat: hue < 30 ? 1.25 : 1, light } });
-const BEE = { ...FOE, art: 'art/enemies/bee.svg', headR: 48, r: 15, vr: 12, turn: 8, accel: 520, face: 8, mass: 0.35, hp: 14, speed: 86,
+const BEE = { ...FOE, art: 'art/enemies/bee.svg', headR: 56, r: 15, vr: 12, turn: 8, accel: 520, face: 8, mass: 0.35, hp: 14, speed: 86,
   role: 'skirmish', range: 10, atkCd: 0.8, dmg: 5, arc: 1.4, temp: 0.6, commit: 0.4, xp: 4, coins: [0, 2], cost: 1.2, pack: [3, 5], attackAnim: 'thrust', construct: true,
   noCorpse: true, goo: '#C9A46A', res: MACHINE, brain: beeBrain };
 // copper, bronze, steel: each more health and harm than the last
@@ -270,8 +270,8 @@ const METAL = { Copper: { hue: 0, sat: 1, light: 0, hp: 1, dmg: 1, xp: 1, cost: 
 const metal = (base, M, name) => { const m = METAL[M], d = base; return { variantOf: d.id, name: `${M} ${name}`, hue: m.hue, sat: m.sat, light: m.light, hp: Math.round(d.hp * m.hp), dmg: +(d.dmg * m.dmg).toFixed(1), xp: Math.round(d.xp * m.xp), cost: +(d.cost * m.cost).toFixed(1) }; };
 const BASES = {
   bee: { ...BEE, id: 'bee', name: 'Copper Bee' },
-  wasp: { ...BEE, id: 'wasp', name: 'Copper Wasp', wasp: true, art: 'art/enemies/wasp.svg', headR: 50, hp: 18, speed: 80, role: 'ranged', range: 200, keep: 150, atkCd: 999, dmg: 5, xp: 5, cost: 1.6, pack: [2, 3], brain: waspBrain },
-  hornet: { ...BEE, id: 'hornet', name: 'Copper Hornet', wasp: true, hornet: true, art: 'art/enemies/hornet.svg', headR: 52, r: 19, vr: 15, hp: 26, speed: 80, role: 'ranged', range: 200, keep: 150, atkCd: 999, dmg: 6, xp: 8, cost: 2.6, pack: [1, 2], brain: waspBrain },
+  wasp: { ...BEE, id: 'wasp', name: 'Copper Wasp', wasp: true, art: 'art/enemies/wasp.svg', headR: 58, hp: 18, speed: 80, role: 'ranged', range: 200, keep: 150, atkCd: 999, dmg: 5, xp: 5, cost: 1.6, pack: [2, 3], brain: waspBrain },
+  hornet: { ...BEE, id: 'hornet', name: 'Copper Hornet', wasp: true, hornet: true, art: 'art/enemies/hornet.svg', headR: 62, r: 19, vr: 15, hp: 26, speed: 80, role: 'ranged', range: 200, keep: 150, atkCd: 999, dmg: 6, xp: 8, cost: 2.6, pack: [1, 2], brain: waspBrain },
 };
 export const FOUNDRY = {
   gearSprite: { variantOf: 'slimeSmall', name: 'Gear Sprite', art: 'art/enemies/gear-sprite.svg', headR: 65, r: 20, vr: 18, mass: 1, hp: 30, speed: 92, dmg: 6, atkCd: 999, hops: null,

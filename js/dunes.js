@@ -155,7 +155,7 @@ export const DUNES = {
     hp: 18, speed: 74, role: 'skirmish', range: 12, atkCd: 0.8, dmg: 3, arc: 1.4, temp: 0.6, commit: 0.5, xp: 4, coins: [1, 2], cost: 1.5, pack: [3, 5], attackAnim: 'thrust',
     sandy: true, brain: scarabBrain },
   scarabGold: { variantOf: 'scarab', name: 'Golden Scarab', accent: { from: 165, range: 60, hue: 40, sat: 1.5, light: 0.08 }, hp: 40, coins: [3, 6], xp: 8, cost: 2.5, pack: [1, 2], goldShell: true, res: ALL_ST },
-  cobra: { ...FOE, name: 'Cobra', art: 'art/enemies/cobra.svg', headR: 48, r: 26, vr: 19, turn: 6, accel: 360, face: 6, mass: 0.9,
+  cobra: { ...FOE, name: 'Cobra', art: 'art/enemies/cobra.svg', headR: 54, r: 26, vr: 19, turn: 6, accel: 360, face: 6, mass: 0.9,
     hp: 40, speed: 62, role: 'ranged', range: 300, keep: 220, atkCd: 999, dmg: 5, temp: 0.45, commit: 0.6, xp: 11, coins: [2, 5], cost: 3.5, sandy: true, res: { poison: 0 }, brain: cobraBrain },
   jackal: { ...FOE, name: 'Jackal Guard', art: 'art/enemies/jackal.svg', headR: 54, r: 30, vr: 22, turn: 5, accel: 280, face: 5, mass: 1.4,
     hp: 72, speed: 58, role: 'melee', range: 44, atkCd: 1.3, windup: 0.3, dmg: 11, knock: 150, arc: 0.8, shield: 0.5, temp: 0.35, commit: 0.9, xp: 15, coins: [3, 6], cost: 5,

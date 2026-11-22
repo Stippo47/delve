@@ -520,6 +520,28 @@ function openAngle(w, u, pref) {
   return best;
 }
 
+// lane W (round 13, the designer: "make it so heroes don't huddle up when there is no enemy on screen. Including in
+// dungeons"). looseSpot: u's own place round a shared waypoint: the party stands in a loose line across the way
+// (w.looseGap apart, 125 by default; the wagon road sets more), every other one a step back, swaying a little, pulled
+// in where a wall or rock is in the way. roomFrom: a push away from any friend nearer than LOOSE_R.
+const LOOSE_R = 90;
+function looseSpot(w, u, al, wx, wy) {
+  const mates = al.filter((a) => !a.summon && !a.def.cargo); if (!mates.length || u.summon) return [wx, wy];
+  const ids = [u.id, ...mates.map((a) => a.id)].sort((a, b) => a - b), i = ids.indexOf(u.id), n = ids.length;
+  const gap = w.looseGap || 125, across = (i - (n - 1) / 2) * gap + Math.sin(w.time * 0.31 + u.id * 1.9) * gap * 0.22;
+  const back = (i % 2 ? -0.45 : 0) * gap + Math.sin(w.time * 0.23 + u.id) * gap * 0.25;
+  for (const k of [1, 0.6, 0.3]) {
+    const sx = clamp(wx + back * k, u.r + 8, w.W - u.r - 8), sy = clamp(wy + across * k, u.r + 8, w.H - u.r - 8);
+    if (!blocked(w, wx, wy, sx, sy) && !w.pillars.some((p) => dist(sx, sy, p.x, p.y) < p.r + u.r + 6)) return [sx, sy];
+  }
+  return [wx, wy];
+}
+function roomFrom(u, al, gx, gy) {
+  const l = Math.hypot(gx, gy) || 1; let px = gx / l, py = gy / l, push = false;
+  for (const a of al) { const d = dist(u.x, u.y, a.x, a.y), R = LOOSE_R + u.r + a.r - 50; if (d < R && d > 0.01) { const k = (R - d) / R * 1.4; px += (u.x - a.x) / d * k; py += (u.y - a.y) / d * k; push = true; } }
+  return push ? [px, py] : [gx, gy];
+}
+
 function movement(w, u, dt) {
   let gx = 0, gy = 0, side = 0, mult = 1;
   const t = u.target;
@@ -537,15 +559,19 @@ function movement(w, u, dt) {
   } else if (!t && u.team === 'hero' && !w.cleared) {
     // nothing in sight: press on through the room together, the slowest setting the pace
     // towards the next chunk of the room the party hasn't walked yet (dungeon.js keeps w.wp)
-    const al = allies(w, u);
-    const wx = w.wp ? w.wp.x : Math.min(w.W - 70, u.x + 220), wy = w.wp ? w.wp.y : u.y;
-    let md = dist(u.x, u.y, wx, wy); for (const a of al) md += dist(a.x, a.y, wx, wy); md /= al.length + 1;
-    const ahead = md - dist(u.x, u.y, wx, wy);
+    const al = allies(w, u).filter((a) => !a.def.cargo); // (lane W: the wagon, convoy.js, sets no pace)
+    // lane W (round 13, "heroes don't huddle up"): each walks to their own spot round the waypoint, not all to one point
+    const px = w.wp ? w.wp.x : Math.min(w.W - 70, u.x + 220), py = w.wp ? w.wp.y : u.y; // (the pace is still set on the shared waypoint)
+    const [wx, wy] = looseSpot(w, u, al, px, py);
+    let md = dist(u.x, u.y, px, py); for (const a of al) md += dist(a.x, a.y, px, py); md /= al.length + 1;
+    const ahead = md - dist(u.x, u.y, px, py);
     [gx, gy] = goalVec(w, u, wx, wy);
+    { const l = Math.hypot(gx, gy) || 1; gx /= l; gy /= l; gy += clamp((wy - u.y) / 140, -0.8, 0.8); } // lane W: and take up its place across the way as it goes
     const wd = dist(u.x, u.y, wx, wy);
     mult = ahead > 90 ? 0.15 : ahead < -60 ? 0.85 : 0.6;
     // ease in and stop at the waypoint (it circled round it, turning back and forth, until dungeon.js moved it on)
     if (wd < 50) { gx = gy = 0; } else mult *= clamp(wd / 160, 0.4, 1);
+    [gx, gy] = roomFrom(u, al, gx, gy); // lane W: and a little room from the others
   } else if (!t || u.mode === 'wander') {
     u.wanderA += Math.sin(w.time * 0.7 + u.id * 2.3) * 0.9 * dt; // a slow meander, not a random jitter
     // idle enemies mill about near where they were put, and turn away from walls before they reach them
@@ -553,10 +579,10 @@ function movement(w, u, dt) {
     if (u.team === 'enemy' && u.home && dist(u.x, u.y, u.home.x, u.home.y) > 110) u.wanderA = angleTo(u.x, u.y, u.home.x, u.home.y) + Math.sin(u.id) * 0.6;
     else if (clearance(w, u, Math.cos(u.wanderA), Math.sin(u.wanderA), 90) < 70) u.wanderA = openAngle(w, u);
     gx = Math.cos(u.wanderA); gy = Math.sin(u.wanderA); mult = 0.35;
-    if (u.team === 'hero') { // heroes drift together instead of scattering
-      const al = allies(w, u);
+    if (u.team === 'hero') { // lane W (round 13): heroes meander apart, never off alone (back once 230 from the rest), never in a huddle
+      const al = allies(w, u).filter((a) => !a.summon);
       if (al.length) { let cx = 0, cy = 0; for (const a of al) { cx += a.x; cy += a.y; } cx /= al.length; cy /= al.length;
-        if (dist(u.x, u.y, cx, cy) > 90) { gx = cx - u.x; gy = cy - u.y; mult = 0.6; } }
+        if (dist(u.x, u.y, cx, cy) > 230) { gx = cx - u.x; gy = cy - u.y; mult = 0.6; } else [gx, gy] = roomFrom(u, al, gx, gy); }
     }
   } else {
     const d = dist(u.x, u.y, t.x, t.y);

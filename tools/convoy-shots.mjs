@@ -1,6 +1,6 @@
 // Stills of the wagon mode (js/convoy.js) at phone size, through the installed Edge (headless): the camp with the
-// wagon parked at its edge, the Set out page, a stretch under way (and with Gather on), the roadside camp, the Bandit
-// Chief's barricade, and the result card.
+// wagon parked at its edge, the Set out page, a stretch under way, a quiet spell (the party spread out), the roadside
+// shop, the Bandit Chief's barricade, and the result card.
 //   node tools/convoy-shots.mjs <outDir> [--port 8882] [--seed 4] [--w 390 --h 844] [--party paladin,archer,cleric] [--level 5]
 import { chromium } from 'playwright-core';
 import { spawn, execFileSync } from 'node:child_process';
@@ -46,18 +46,20 @@ try {
   await shot('03-road-start', 1200);
   await page.evaluate(() => GAME.fastForward(28));
   await shot('04-road-fight', 700);
-  await page.evaluate(() => { document.querySelector('[data-st="gather"]').click(); GAME.fastForward(14); });
-  await shot('05-road-gather', 700);
+  await page.evaluate(() => { const r = GAME.run; for (let i = 0; i < 80; i++) { if (!r.world.units.some((u) => u.team !== r.wagon.team && !u.dead && !u.downed && u.team !== 'neutral')) break; GAME.fastForward(0.5); } r.waveT = 40; GAME.fastForward(14); });
+  await shot('05-road-quiet', 700);
   // on to the end of the stretch: the roadside camp
   await page.evaluate(() => { const r = GAME.run; for (let i = 0; i < 1600 && r.phase === "road"; i++) { r.wagon.hp = Math.max(r.wagon.hp, r.wagon.maxHp * 0.5); for (const u of r.world.units) if (u.team === r.wagon.team && !u.downed && !u.dead) u.hp = Math.max(u.hp, u.maxHp * 0.6); GAME.fastForward(0.25); }
-    if (r.phase === 'roadside') { r.wagonHp = Math.round(r.wagonMax * 0.45); if (!r.offer.includes('repair')) r.offer[0] = 'repair'; } });
+    if (r.phase === 'roadside') { r.wagonHp = Math.round(r.wagonMax * 0.45); r.coins = Math.max(r.coins, 90); } });
   await page.waitForFunction(() => GAME.state === 'convoy' || (GAME.run && GAME.run.phase !== 'road'), null, { timeout: 30000 });
   await page.evaluate(() => GAME.roadside());
   console.log('diag', await page.evaluate(() => JSON.stringify({ st: GAME.state, ph: GAME.run && GAME.run.phase, res: GAME.run && GAME.run.result, cv: (document.getElementById('convoy')||{}).className, n: document.querySelectorAll('.cv-choice').length })));
   await shot('06-roadside', 900);
-  const fit = await page.evaluate(() => { const c = [...document.querySelectorAll('.cv-choice')]; const b = c[c.length - 1].getBoundingClientRect(); return { bottom: b.bottom, h: innerHeight, n: c.length }; });
-  if (fit.bottom > fit.h + 1) errors.push('roadside: the last choice is off screen');
-  await tap('.cv-choice');
+  await tap('[data-cv="buy:repair"]'); await page.waitForTimeout(200);
+  await shot('06b-roadside-bought', 400);
+  const fit = await page.evaluate(() => { const p = document.querySelector('.cv-panel'); p.scrollTop = 1e4; const b = document.querySelector('.cv-go').getBoundingClientRect(); return { bottom: b.bottom, h: innerHeight }; });
+  if (fit.bottom > fit.h + 1) errors.push('roadside: the set-off button is off screen');
+  await tap('[data-cv="go-on"]');
   await page.waitForFunction(() => GAME.state === 'run' && GAME.run.phase === 'road' && GAME.run.stretch === 1);
   await shot('07-stretch2', 1500);
   // the last stretch, from its start (a second trip): the Bandit Chief's barricade

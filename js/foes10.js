@@ -306,7 +306,7 @@ export const FOES10 = {
   pitLord: { ...FOES.pitLord, art: 'art/enemies/pit-lord.svg', headR: 68, brain: pitLordBrain }, // art round 9: its own art (it wore the round-5 demon)
   // ---- the Gilded Spire
   angelFallen: { variantOf: 'angel', name: 'Fallen Angel', art: 'art/enemies/fallen-angel.svg', radiance: 0, curse: 22, xp: 17, res: { radiance: 0, curse: 0 } },
-  sunBlade: { ...FOE, name: 'Sun Blade', art: 'art/enemies/sun-blade.svg', headR: 58, r: 22, vr: 17, turn: 6, accel: 360, face: 6, mass: 0.8,
+  sunBlade: { ...FOE, name: 'Sun Blade', art: 'art/enemies/sun-blade.svg', headR: 58, r: 36, vr: 52, turn: 6, accel: 360, face: 6, mass: 0.8,
     hp: 46, speed: 70, role: 'skirmish', range: 14, atkCd: 999, dmg: 9, temp: 0.6, commit: 0.5, xp: 12, coins: [2, 5], cost: 4, noCorpse: true, goo: '#FFE7A0',
     res: { stagger: 0, radiance: 0, poison: 0, curse: 0 }, brain: bladeBrain },
   choirSprite: { ...FOE, name: 'Choir Sprite', art: 'art/enemies/choir-sprite.svg', headR: 40, r: 20, vr: 16, turn: 6, accel: 320, face: 6, mass: 0.5,

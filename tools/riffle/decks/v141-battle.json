@@ -1,0 +1,60 @@
+{
+  "title": "0.14.1: battle tiers, wipes, the trail",
+  "topic": "runs",
+  "order": 22,
+  "priority": 1,
+  "tags": ["first"],
+  "cards": [
+    {
+      "id": "battle2",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Battle page: tiers",
+      "text": "Set any hero's tier from 0 to 3, field one kind at several ranks, bigger grounds, a dev unlock. Live as 0.14.1.",
+      "why": "Your list and your battle answers, built. A hero can now fight itself at another tier. Mark what's still clumsy.",
+      "images": ["../../../clips/r13/battle/06-setup-filled.png", "../../../clips/r13/battle/10-result.png"],
+      "parts": [
+        { "id": "tiers", "title": "Hero tiers", "text": "Yours is the hero as it is at camp. Tier 0 has nothing bought; tier 1 is the first shell of the web with every ability; tier 2 the second shell; tier 3 the whole web. Tap a hero's tag to change it.", "images": ["../../../clips/r13/battle/06-setup-filled.png"] },
+        { "id": "addas", "title": "Add at a tier or rank", "text": "The picker has an Add at / Add as row, so you can put in 2 major slimes, 1 plain and 3 elites, or a Paladin at tier 2 beside one at tier 3.", "images": ["../../../clips/r13/battle/05b-picker-add-at.png"] },
+        { "id": "dev", "title": "Dev unlock", "text": "A switch at the bottom of the picker fields every hero and monster, beaten or not." },
+        { "id": "strength", "title": "Strength switch", "text": "By dungeon: a monster is as strong as on its own dungeon's first floor. Evened out: every monster as at the first dungeon, to compare kinds like for like." },
+        { "id": "size", "title": "Bigger grounds", "text": "Small, Large (the default now, nearly 3 times the old area) and Huge. The camera starts pulled back on the big ones; pinch to look closer.", "images": ["../../../clips/r13/battle/08-battle-mid.png"] },
+        { "id": "layout", "title": "Setup and result layouts", "text": "A stack is a row now, with its tag and count. The result is the verdict, then each side as a short list with a damage bar a kind, all to one scale.", "images": ["../../../clips/r13/battle/10-result.png"] }
+      ]
+    },
+    {
+      "id": "wipe",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Wipes, and resting",
+      "text": "A wipe now loses 75% of the run's gold and nobody rests. Should resting go everywhere else too?",
+      "why": "You asked for the wipe change. Leaving early still costs 20% and still sends the hurt and downed to rest, which is now the only place resting exists.",
+      "pick": "Remove resting altogether: gold is the only price, 20% for leaving early and 75% for a wipe."
+    },
+    {
+      "id": "catchup",
+      "kind": "options",
+      "rarity": "rare",
+      "title": "New heroes falling behind",
+      "text": "A hero recruited late starts at level 1 beside a party at 40. You asked for suggestions.",
+      "why": "Levels only matter for skill points, so the gap is points. The fix should let a new hero catch up fast without making old heroes' levels feel wasted.",
+      "options": [
+        { "id": "share", "label": "New recruits join near the party's level" },
+        { "id": "boost", "label": "Low heroes earn XP much faster" },
+        { "id": "train", "label": "Pay gold at camp to train a hero up" },
+        { "id": "bench", "label": "Heroes left at camp earn part of the XP" }
+      ],
+      "pick": "boost",
+      "details": "Join near the level: a recruit arrives at three quarters of your highest hero's level, with the points to spend. Simplest, but buying a hero late is then as good as raising one.\n\nFaster XP (my pick): a hero below your highest earns XP faster the further behind it is, up to four times, so it catches up in a handful of runs while being carried. Nothing is free and nothing new to learn.\n\nTraining: gold buys levels at camp up to your highest hero's. Gives gold a late use, but it's a menu, not play.\n\nBench XP: everyone at camp gets a third of what the party earns. Keeps the whole roster moving, but makes the party choice matter less."
+    },
+    {
+      "id": "trail",
+      "kind": "report",
+      "rarity": "common",
+      "title": "The trail's harsh cut",
+      "text": "Locked dungeons on the trail now fade in instead of starting at a hard line, and biomes blend into each other.",
+      "why": "You said the delve screen had a harsh cut. This is the one I found; if you meant another, comment with where.",
+      "images": ["../../../clips/r13/battle/trail.png"]
+    }
+  ]
+}
