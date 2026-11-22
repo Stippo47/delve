@@ -8,6 +8,7 @@
 import { TAU, clamp } from './util.js';
 import { inked, inkLine, glowDisc, star, upright, upVec, hash, easeOut, flame, blob, trail, roundRect } from './fx.js';
 import { drawPuddle } from './puddles.js';
+import { LOOK2 } from './looks2.js';
 
 const k01 = (v) => clamp(v, 0, 1);
 const lit = (ctx, fn) => { ctx.save(); ctx.globalCompositeOperation = 'lighter'; fn(); ctx.restore(); };
@@ -279,6 +280,8 @@ PROJ2.bolas = (ctx, p, T) => {
   inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-L, 0); ctx.quadraticCurveTo(0, 5, L, 0); }, '#C9A070', 2.4);
   inkDisc(ctx, -L, 0, 5.5, '#6E5E50'); inkDisc(ctx, L, 0, 5.5, '#6E5E50'); disc(ctx, -L - 1.5, -1.5, 1.8, '#A89888'); disc(ctx, L - 1.5, -1.5, 1.8, '#A89888');
 };
+// a clod of earth (the Digger's spade throws three)
+PROJ2.clod = (ctx, p, T) => { ctx.rotate(T * 9 + p.x); inked(ctx, () => blob(ctx, 0, 0, 6, 5, p.x | 0, 1), '#7A5A3A'); disc(ctx, -1.5, -1.5, 2, '#9C7650'); };
 PROJ2.smokeBomb = (ctx, p, T, ang) => {
   ctx.rotate(T * 10); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 8, 0, TAU); }, '#3A3440');
   ctx.fillStyle = '#6A6470'; ctx.beginPath(); ctx.arc(-2.5, -2.5, 3, 0, TAU); ctx.fill();
@@ -821,8 +824,25 @@ SLAM2.maul = (ctx, m, k, layer) => {
     inked(ctx, () => blob(ctx, m.x + Math.cos(b) * d + ux * hh, m.y + Math.sin(b) * d + uy * hh, 4.5, 5, i, 1), i % 2 ? '#7A6A58' : '#5A4634'); }
   ctx.restore();
 };
+// Bury (the Digger): the spade's blade driven flat into the floor: a split in the ground and earth thrown out
+SLAM2.spade = (ctx, m, k, layer) => {
+  const e = easeOut(k01((k - 0.1) / 0.6)), R = m.r;
+  if (layer === 'ground') { drawPuddle(ctx, 'earth', m.x, m.y, R * (0.6 + 0.4 * e), 0, 1 - k * 0.7, m.seed); return; }
+  if (k < 0.1) { const [ux, uy] = upVec(), h = (1 - k / 0.1) * 30; ctx.save(); ctx.translate(m.x + ux * h, m.y + uy * h); ctx.rotate(m.a || 0); inked(ctx, () => roundRect(ctx, -12, -7, 24, 14, 4), '#A8B0BA'); ctx.restore(); return; }
+  if (k < 0.25) lit(ctx, () => glowDisc(ctx, m.x, m.y, R, '#FFF4DC', 0.5 * (1 - (k - 0.1) / 0.15)));
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  for (let i = 0; i < 9; i++) { const b = i / 9 * TAU + hash(i, m.seed), d = R * (0.3 + 0.8 * e), hh = Math.sin(k01(k * 1.4) * Math.PI) * 26 * (0.4 + hash(m.seed, i)), [ux, uy] = upVec();
+    inked(ctx, () => blob(ctx, m.x + Math.cos(b) * d + ux * hh, m.y + Math.sin(b) * d + uy * hh, 4 + 2 * hash(i, 3), 5, i, 1), i % 2 ? '#7A5A3A' : '#9C7650'); }
+  ctx.restore();
+};
 // IMPACT2D[kind](ctx, m, k): where a new kind of shot stops (fxkit impact)
 export const IMPACT2D = {
+  // a clod of earth bursting: crumbs and a little dust (the Digger's spade)
+  clod(ctx, m, k) {
+    const e = easeOut(k); ctx.save(); ctx.globalAlpha *= 1 - k * k;
+    for (let i = 0; i < 5; i++) { const b = m.a + Math.PI + (hash(m.seed, i) - 0.5) * 2.6, d = 4 + 16 * e; inkDisc(ctx, m.x + Math.cos(b) * d, m.y + Math.sin(b) * d, 2.8 * (1 - 0.5 * k), i % 2 ? '#7A5A3A' : '#9C7650'); }
+    K.dustPuffs(ctx, m.x, m.y, 18, e, m.seed, 4, '#C9A47A'); ctx.restore();
+  },
   // Warhelm's hammer: yellow sparks thrown off and stone chips (it shocks what it hits)
   warhammer(ctx, m, k) {
     const e = easeOut(k);
@@ -1075,6 +1095,65 @@ DRAW.droppedWeapon = (ctx, f, w, layer) => {
   inked(ctx, () => roundRect(ctx, -7, 4, 14, 3.4, 1.5), '#8A5A30'); inked(ctx, () => roundRect(ctx, -1.8, 7, 3.6, 7, 1.5), '#6E4A2A');
   ctx.restore();
   if (k >= 1 && Math.sin(f.t * 8) > 0.3) lit(ctx, () => glowDisc(ctx, f.x, f.y, 16, '#FFD45A', 0.35));
+};
+
+// Toss: a puff of straw where it's forked up, and where it lands
+DRAW.hayPuff = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k), [vx, vy] = upVec();
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  for (let i = 0; i < 10; i++) { const b = i / 10 * TAU + hash(i, f.x | 0), d = 10 + 40 * e, h = Math.sin(k * Math.PI) * 18 * hash(i, 5);
+    ctx.save(); ctx.translate(f.x + Math.cos(b) * d + vx * h, f.y + Math.sin(b) * d * 0.6 + vy * h); ctx.rotate(b + k * 5); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-6, 0); ctx.lineTo(6, 0); }, i % 2 ? '#E8C860' : '#F2DC8A', 2.6); ctx.restore(); }
+  if (f.land) K.dustPuffs(ctx, f.x, f.y, 40, e, f.x | 0, 6);
+  ctx.restore();
+};
+// Dirt Fling: inked clods of earth thrown out in a fan, arcing up and down
+DRAW.clods = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k), [vx, vy] = upVec();
+  ctx.save(); ctx.globalAlpha *= 1 - k * k * k;
+  for (let i = 0; i < 14; i++) { const b = f.a + (hash(i, 7) - 0.5) * f.arc, d = 18 + f.r * e * (0.45 + 0.55 * hash(i, 9)), h = Math.sin(k * Math.PI) * 30 * hash(i, 4);
+    inked(ctx, () => blob(ctx, f.x + Math.cos(b) * d + vx * h, f.y + Math.sin(b) * d + vy * h, 4 + 3 * hash(i, 2), 5, i, 1), i % 3 ? '#7A5A3A' : '#9C7650'); }
+  K.dustPuffs(ctx, f.x + Math.cos(f.a) * f.r * 0.5 * e, f.y + Math.sin(f.a) * f.r * 0.5 * e, 40, e, 3, 5, '#C9A47A');
+  ctx.restore();
+};
+// Burrow: churned earth left along the way under the floor, one merged body (puddles.js 'earth'), lingering then fading
+DRAW.burrowTrail = (ctx, f, w, layer) => {
+  if (layer !== 'ground' || !f.unit) return; const u = f.unit;
+  if (u.hidden && (!f.pts.length || Math.hypot(u.x - f.pts[f.pts.length - 1].x, u.y - f.pts[f.pts.length - 1].y) > 10)) f.pts.push({ x: u.x, y: u.y, t: f.t });
+  f.pts.forEach((p, i) => { const age = f.t - p.t, a = age < 1.6 ? 1 : k01(1 - (age - 1.6) / 1); if (a > 0.02) drawPuddle(ctx, 'earth', p.x, p.y, 15 * (0.4 + 0.6 * a) * (0.85 + 0.3 * hash(i, 5)), w.time, a, i * 7 + 3); });
+  if (u.hidden) { const wob = Math.sin(f.t * 40) * 2; ctx.save(); for (let i = 0; i < 4; i++) { const b = f.t * 8 + i * 1.6; inked(ctx, () => blob(ctx, u.x + Math.cos(b) * 10 + wob, u.y + Math.sin(b) * 8, 4, 5, i, 1), '#9C7650'); } ctx.restore(); }
+};
+// earth bursting up out of the floor (going under, coming up, digging out): clods thrown up and out, dust; no ring
+DRAW.erupt = (ctx, f, w, layer) => {
+  const k = k01(f.t / f.max), e = easeOut(k), [vx, vy] = upVec();
+  if (layer === 'ground') { drawPuddle(ctx, 'earth', f.x, f.y, f.r * 0.55 * (0.5 + 0.5 * e), w.time, 1 - k, f.x | 0); return; }
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  const n = f.big ? 12 : 7;
+  for (let i = 0; i < n; i++) { const b = i / n * TAU + hash(i, f.y | 0), d = f.r * (0.2 + 0.8 * e), h = Math.sin(k01(k * 1.3) * Math.PI) * (f.big ? 40 : 24) * (0.5 + hash(i, 3));
+    inked(ctx, () => blob(ctx, f.x + Math.cos(b) * d + vx * h, f.y + Math.sin(b) * d + vy * h, 3.5 + 2.5 * hash(i, 8), 5, i, 1), i % 2 ? '#7A5A3A' : '#9C7650'); }
+  K.dustPuffs(ctx, f.x, f.y, f.r, e, f.x | 0, f.big ? 7 : 5, '#C9A47A');
+  ctx.restore();
+};
+// Bury: a mound of earth where it went down, twitching as it tries to dig out
+DRAW.buried = (ctx, f, w, layer) => {
+  const u = f.unit, x = f.x, y = f.y, a = life(f, 0.05, 0.15), wob = Math.sin(f.t * 30) * 1.5 * k01(f.t / f.max);
+  if (layer === 'ground') { drawPuddle(ctx, 'earth', x, y, f.r * 1.1, w.time, a, x | 0); return; }
+  ctx.save(); ctx.globalAlpha *= a;
+  inked(ctx, () => blob(ctx, x + wob, y, f.r * 0.85, 7, x | 0, 0.75), '#8A6A48');
+  for (let i = 0; i < 4; i++) { const b = i / 4 * TAU + 0.5; disc(ctx, x + Math.cos(b) * f.r * 0.4 + wob, y + Math.sin(b) * f.r * 0.3, 3, '#6E5034'); }
+  ctx.restore();
+};
+// the Haymaker's hay bale, seen from above as it rolls: a round bale lying across its way, its straw bands rolling over
+LOOK2.haybale = (ctx, u, w) => {
+  const a = u.facing || 0, L = u.vr * 1.15, R = u.vr * 0.95, roll = (u.roll || 0) * 0.12, fl = u.flashT > 0.06;
+  ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(a);
+  inked(ctx, () => roundRect(ctx, -R, -L, R * 2, L * 2, R * 0.55), fl ? '#FFFFFF' : '#E2BE58');
+  ctx.save(); ctx.beginPath(); roundRect(ctx, -R, -L, R * 2, L * 2, R * 0.55); ctx.clip();
+  for (let i = -3; i <= 3; i++) { const xx = ((i * 11 + roll * 30) % 77 + 77) % 77 - 38; ctx.fillStyle = i % 2 ? '#C9A040' : '#F2DC8A'; ctx.fillRect(xx - 2.5, -L, 5, L * 2); }
+  ctx.strokeStyle = '#8A6A2A'; ctx.lineWidth = 2.6; for (const yy of [-L * 0.45, L * 0.45]) { ctx.beginPath(); ctx.moveTo(-R, yy); ctx.lineTo(R, yy); ctx.stroke(); }
+  ctx.restore();
+  for (let i = 0; i < 5; i++) { const yy = -L + (i + 0.5) * L * 0.4, sd = i % 2 ? 1 : -1; inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(sd * R, yy); ctx.lineTo(sd * (R + 6), yy + 3); }, '#E8C860', 2); }
+  ctx.restore();
+  if (u.st && u.st.burn > 10) { ctx.save(); ctx.globalAlpha = Math.min(1, u.st.burn / 60); for (let i = 0; i < 3; i++) upright(ctx, u.x + (i - 1) * 12, u.y - 6, () => flame(ctx, 0, 0, 8)); ctx.restore(); }
 };
 
 export function drawK2(ctx, f, w, layer) { const d = DRAW[f.draw]; if (d) { ctx.save(); d(ctx, f, w, layer); ctx.restore(); } }

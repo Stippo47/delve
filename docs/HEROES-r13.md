@@ -159,3 +159,42 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
   deathMark): 2 (II 3) copies of her, drawn dark, 24 health, each stab 0.55x hers; they circle their foe fast (their own
   brain, straight through bodies, walls and pillars), switching direction now and then. 6 s (III 10 s). Clip:
   shade-deathMark.
+
+### Haymaker
+- Pitchfork: "Should show 3 stab slashes. Should dash forwards slightly too" -> weapon 'fork': three parallel tine
+  streaks (fxkit, marked); each jab is a little lunge forward. Clip: haymaker-attack (the bench pins him, so the lunge
+  shows in a real fight).
+- Toss: "Should toss enemy backwards. Needs better animation" -> forked up and thrown high (95 up, drawn bigger as it
+  rises) over his shoulder, turning head over heels, straw puffing off it, landing hard 150 behind him. Clip: haymaker-toss.
+- Fork Charge: "Doesnt show it off. Different idea. Summons a large hay bail underneath them, walks on it dealing high
+  knockback and damage to those he walks over. Slow turn radius, but flips instantly when he hits a wall. It has its own
+  go that decays overtime, burns easily. When it dies it burst into hay" -> **Hay Bale** in its slot (id forkCharge):
+  a bale summon (its own health, running down over 5 s, II 7 s; burns three times as easily) that he rides on top of;
+  it rolls at the nearest enemy turning slowly (1.3 rad/s), turns straight round off a wall, the edge or a pillar;
+  whoever it rolls over takes 1.5x and is thrown aside (knock 520; III staggers). When it goes it bursts into hay that
+  slows those round it, and he drops off. Drawn in code (fx2 LOOK2.haybale: a round bale across its way, bands rolling).
+  Clip: haymaker-forkCharge.
+- Pitch Hay: not ticked, no note: unchanged.
+
+### Digger
+- Trait: "Rub some dirt in it. Every ability he uses applies a dirty effect to him.. Acts as a 1 time shield but attack
+  speed is slow until it's cleared. Basic attack doesnt apply it. Makes him immune to poison and fire until removed." ->
+  **Rub Some Dirt In It** (id dirtIn): each ability he uses puts **Dirty** on him (brown smears, crumbs falling): it
+  soaks up the next blow entirely and is gone; until then he swings 30% slower and burn and poison can't take (both are
+  washed off). Book scene added.
+- Spade: "Slash also creates 3 dirt projectiles with short range." -> every swing throws three clods in a fan (0.25x
+  each, short range), bursting in crumbs. Clip: digger-attack.
+- Dirt Fling: "Doesnt look great. Does it knock out? Is so knock out doesnt have a visual effect. If done to ally removes
+  some effects like burn and poison. Applies dirty to them" -> inked clods arcing out in a fan with dust; friends in the
+  fan are cleaned of burn and poison and get Dirty (he aims it at a burning or poisoned friend when one is near). The
+  knock-out from stagger (II) now has a look for everyone: stars going round the head while knocked out (fx-status.js,
+  marked). Clip: digger-dirtFling.
+- Burrow: "Don't like the dirt mound. Trail should also linger. It just vanishes. Overall improve visual. It will be used
+  by more than just him. Don't like burst" -> `burrowTo()` (exported, for anyone): no mound; the churned earth behind
+  him is one merged earth body that lingers 1.6 s then fades; he goes down and comes up in sprays of clods and dust; the
+  ring burst is gone (the blow is still there). Clip: digger-burrow.
+- Spade Bat: "Burry. Slams shovel down in an aoe in front of him. Anyone hit will be pushed into the ground for a short
+  duration. They can't move or be hit" -> **Bury** in its slot (id spadeBat): the spade slammed flat in front (an earth
+  splash, its own look), 1.6x to all within 64 (III 80); each is driven into the ground (hidden, can't move, act or be
+  hit) for 1.5 s (II 2.2 s), shown as a twitching mound, and digs out in a spray of earth (III staggered). Bosses are
+  only stunned. Clip: digger-spadeBat.
