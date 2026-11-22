@@ -4,12 +4,21 @@
 //   shockwave  (round 13: Ridge, Slabs and Rolling, earth out of the floor, all came back: these are waves that travel)
 //              1 Arcs (a pale crescent of force running out over the floor), 2 Ripples (the same front as a soft dust
 //              ripple under the units), 3 Stomps (the floor pounded where the front passes, three blows marching out)
-//   wolfBite   1 Jaws (two rows of fangs snapping shut), 2 Chomp (a big wolf's muzzle outline closing, tooth marks
-//              left), 3 Rake (three curved fang streaks crossing the foe), 4 Snap (a quick white crescent bite with a
-//              burst of fur tufts)
+//   wolfBite   (round 13: Jaws, Chomp, Rake and Snap, four small tooth glyphs laid over the wolf's head, all came back)
+//              drawn on the one bitten, as big as it is: 1 Fangs (two jaws with gums and long canines open wide and
+//              snap shut on it), 2 Crunch (no teeth: the foe is pinched and two rows of tooth holes are left), 3 Clamp
+//              (two great curved fangs swing shut on it like pincers)
+//   boneSpear  (round 13, "Still not it. Make 3 variations.") 1 Spear (a bone shaft with a broad leaf head lashed on),
+//              2 Femur (one big thigh bone broken to a point), 3 Fang (a great curved fang flying point first)
+//   oldBones   (round 13: bones, a skull, then her soul: three things floating over her, three noes) she wears a
+//              bone-white protection border while it holds, and the moment is 1 Stand (a flash, dust stamped out, chips
+//              thrown off), 2 Creak (comic crack marks snap out round her), 3 Glance (the blow clangs off the side it
+//              came from)
 export const VARIANTS = {
   shockwave: ['Arcs', 'Ripples', 'Stomps'],
-  wolfBite: ['Jaws', 'Chomp', 'Rake', 'Snap'],
+  oldBones: ['Stand', 'Creak', 'Glance'],
+  boneSpear: ['Spear', 'Femur', 'Fang'],
+  wolfBite: ['Fangs', 'Crunch', 'Clamp'],
 };
 const cache = {};
 export function variant(key) {

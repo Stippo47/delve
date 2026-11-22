@@ -32,11 +32,15 @@ export const HEROES = {
   tower: {
     name: 'Tower', art: 'art/heroes/tower.svg', role: 'tank', unlock: { gems: 2 },
     blurb: 'A wall with a mace. Pulls every enemy onto himself.',
-    stats: { hp: 180, speed: 48, r: 36, vr: 24, turn: 2.8, accel: 150, face: 3, mass: 2.8, range: 24, atkCd: 1.3, dmg: 11, knock: 180, arc: 1.7 },
+    // (round 13: the hp tank. The designer: "U can have tank heroes that are more hp based (tanking hits) or protection/
+    // shield based (negating hits)": more than twice the Paladin's health and next to no armour: he takes the hits.
+    // Measured: with 180 health and 8 armour he took 40-57% of a blow against the Paladin's 26-37%, on less life per
+    // point: the Paladin was the better wall as well as the healer)
+    stats: { hp: 340, speed: 48, r: 36, vr: 24, turn: 2.8, accel: 150, face: 3, mass: 2.8, range: 24, atkCd: 1.3, dmg: 11, knock: 180, arc: 1.7 },
     attack: { name: 'Flanged mace', anim: 'swing', desc: 'A heavy mace blow.' },
     abilities: [
-      { id: 'holdTheLine', name: 'Hold the Line', cd: 12, desc: 'Plants the tower shield and calls enemies to him.',
-        tiers: ['Takes 60% less damage from the front and taunts those near for 4s.', 'Taunts further, for 6s.', 'Hits taken while planted are struck back.'] },
+      { id: 'holdTheLine', name: 'Hold the Line', cd: 10, desc: 'Plants the tower shield and calls enemies to him.',
+        tiers: ['Takes 60% less damage from the front and taunts those near for 4s; while he holds them they hit softer.', 'Taunts further, for 6s.', 'Hits taken while planted are struck back.'] },
       { id: 'charge', name: 'Charge', cd: 8, desc: 'Charges in a line, bowling enemies aside.',
         tiers: ['A short charge.', 'Longer, and slams enemies into walls harder.', 'Staggers everything it hits.'] },
       { id: 'groundPound', name: 'Ground Pound', cd: 10, desc: 'Slams the shield down: a ring that shoves enemies away.',
@@ -47,15 +51,15 @@ export const HEROES = {
   archer: {
     name: 'Archer', art: 'art/heroes/archer.svg', role: 'ranged', starter: true,
     blurb: 'Shoots from behind the front line.',
-    stats: { hp: 70, speed: 72, r: 31, vr: 22, turn: 5, accel: 260, face: 5, mass: 1, range: 270, keep: 170, atkCd: 1.05, dmg: 9, dodge: 0.2 },
+    stats: { hp: 70, speed: 72, r: 31, vr: 22, turn: 5, accel: 260, face: 5, mass: 1, range: 270, keep: 170, atkCd: 1.14, dmg: 9, dodge: 0.2 }, // (round 13: the bow a little slower, the abilities much harder: "Make the archers abilities stronger/ have more of the damage percentage")
     attack: { name: 'Bow', anim: 'draw', desc: 'An arrow.' },
     abilities: [
-      { id: 'barrage', name: 'Barrage', cd: 7, desc: 'Draws, then looses a fan of arrows, each at its own speed.',
+      { id: 'barrage', name: 'Barrage', cd: 6.5, desc: 'Draws, then looses a fan of arrows, each at its own speed.',
         tiers: ['Five arrows.', 'Seven arrows, set alight.', 'The arrows go through.'] },
       { id: 'frostArrow', name: 'Frost Arrow', cd: 8, desc: 'A frost-tipped arrow.',
-        tiers: ['Chills hard.', 'Freezes.', 'Bursts, chilling all around.'] },
-      { id: 'roll', name: 'Roll', cd: 6, desc: 'Slides back out of reach when something gets close.',
-        tiers: ['A quick slide back.', 'The next arrow after a slide hits twice as hard.', 'Flings out caltrops that slow.'] },
+        tiers: ['Hits hard and chills hard.', 'Freezes.', 'Bursts, hurting and chilling all around.'] },
+      { id: 'roll', name: 'Roll', cd: 6, desc: 'Rolls back out of reach when something gets close.',
+        tiers: ['A quick roll back.', 'The next arrow after a roll hits twice as hard.', 'Leaves caltrops that slow and prick.'] },
     ],
     trait: { id: 'steadyAim', name: 'Steady Aim', desc: 'After standing still for 1.5s, the next arrow is a critical hit.' },
   },
@@ -129,7 +133,7 @@ export const HEROES = {
         tiers: ['Bursts and burns.', 'Leaves burning ground.', 'Bigger burst.'] },
       { id: 'flameWall', name: 'Flame Wall', cd: 12, desc: 'A line of fire across the enemies\' way.',
         tiers: ['Burns what walks through.', 'Longer and lasts longer.', 'Sets oil off from further away.'] },
-      { id: 'inferno', name: 'Inferno', cd: 18, desc: 'A ring of fire bursts out of her.',
+      { id: 'inferno', name: 'Inferno', cd: 14, desc: 'A ring of fire bursts out of her.',
         tiers: ['Burns all near.', 'Knocks them back.', 'Leaves her immune to burning for 6s.'] },
     ],
     trait: { id: 'kindling', name: 'Kindling', desc: 'Burning enemies take 20% more from her.' },
@@ -143,7 +147,7 @@ export const HEROES = {
       { id: 'iceShard', name: 'Ice Shard', cd: 6, desc: 'A shard that goes through enemies in a line.',
         tiers: ['Chills.', 'Chills harder.', 'Splits into three; the middle one is bigger and hits harder.'] },
       { id: 'frostNova', name: 'Frost Nova', cd: 13, desc: 'Draws the cold in, then freezes everything close to her.',
-        tiers: ['Freezes for a moment.', 'Bigger.', 'Frozen enemies take double damage.'] },
+        tiers: ['Hurts and freezes for a moment.', 'Bigger.', 'Frozen enemies take double damage.'] },
       { id: 'iceWall', name: 'Ice Wall', cd: 16, desc: 'Throws out a wall of ice boulders that blocks enemies.',
         tiers: ['A short wall for 5s.', 'Longer, 8s.', 'It chills what touches it.'] },
     ],
@@ -160,7 +164,7 @@ export const HEROES = {
       { id: 'thunderclap', name: 'Thunderclap', cd: 11, desc: 'A crack of thunder around a target.',
         tiers: ['Staggers.', 'Bigger.', 'Shocks too.'] },
       // round 9: Storm Cloud reworked into Zeus Bolt (the id stays for saves)
-      { id: 'stormCloud', name: 'Zeus Bolt', cd: 14, desc: 'A bolt that leaps from enemy to enemy, shocking each one it strikes.',
+      { id: 'stormCloud', name: 'Zeus Bolt', cd: 12, desc: 'A bolt that leaps from enemy to enemy, shocking each one it strikes.',
         tiers: ['One bolt, four leaps.', 'Half as many leaps again.', 'Two more bolts.'] },
     ],
     trait: { id: 'conductor', name: 'Conductor', desc: 'Shock lasts twice as long on wet enemies.' },
@@ -188,7 +192,7 @@ export const HEROES = {
     attack: { name: 'Sour note', anim: 'cast', desc: 'Strums four slow notes in a spread; every one goes through.' },
     abilities: [
       { id: 'warSong', name: 'War Song', cd: 14, desc: 'Allies near attack faster for a while.',
-        tiers: ['+40% for 6s.', '+50%.', 'They move faster too.'] },
+        tiers: ['+40% for 8s.', '+50%.', 'They move faster too.'] },
       { id: 'lullaby', name: 'Lullaby', cd: 13, desc: 'Enemies in front grow slow and sleepy.',
         tiers: ['Slows for 4s.', 'Puts the weakest to sleep.', 'Wider, and puts everyone it reaches to sleep.'] },
       { id: 'encore', name: 'Encore', cd: 20, desc: 'An ally\'s ability is ready again.',
@@ -205,7 +209,7 @@ export const HEROES = {
       { id: 'entangle', name: 'Entangle', cd: 10, desc: 'Vines burst up and hold enemies in place.',
         tiers: ['Holds for 1.5s.', 'Bigger patch.', 'The vines poison.'] },
       { id: 'rejuvenate', name: 'Rejuvenate', cd: 8, desc: 'Heals an ally slowly over time.',
-        tiers: ['13% over 6s.', '20%.', 'Two allies.'] },
+        tiers: ['11% over 6s.', '18%.', 'Two allies.'] },
       { id: 'callWolf', name: 'Call Wolf', cd: 22, desc: 'A summoning ring opens and a wolf steps out to fight beside the party for a while.',
         tiers: ['For 12s.', 'A bigger wolf.', 'Two wolves.'] },
     ],
@@ -263,7 +267,7 @@ export const ROLE_TUNE = {
 };
 // Armour (armour.js): each point is one point and 2% off every blow, never more than 60% of it; damage over time
 // ignores it, heavy and critical blows get past half (sim.js hurt). Plate and big shields; the web's Armour nodes add to it.
-export const ARMOUR = { paladin: 6, tower: 8, oldguard: 6, dame: 4, griffon: 5, bulwark: 6, warhelm: 3, gladiator: 2, samurai: 2, valkyrie: 2, bearskin: 2 };
+export const ARMOUR = { paladin: 6, tower: 2, oldguard: 6, dame: 4, griffon: 5, bulwark: 6, warhelm: 3, gladiator: 2, samurai: 2, valkyrie: 2, bearskin: 2 };
 for (const [id, h] of Object.entries(HEROES)) {
   const t = ROLE_TUNE[h.role] || {};
   if (t.dmg) h.stats.dmg = Math.round(h.stats.dmg * t.dmg * 10) / 10;
