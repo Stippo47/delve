@@ -479,7 +479,7 @@ export function showResult(rep, done) {
         <span class="quiet small">${to > from ? `Level ${from} → ${to}` : `Level ${to}`}${h.downed ? ' · downed, resting' : h.hurt ? ' · hurt, resting' : ''}</span></div>
       ${gained ? `<span class="rh-pts"><span class="pts">+${gained}</span><span class="cap">${gained === 1 ? 'point' : 'points'}</span></span>` : ''}</div>`;
   }).join('');
-  const lost = rep.lost ? `<p class="r-cut">${rep.result === 'lost' ? 'Fell' : 'Left'} before the floor was done: −${rep.lost} (${Math.round(M.LEAVE_CUT * 100)}%)</p>` : '';
+  const lost = rep.lost ? `<p class="r-cut">${rep.result === 'lost' ? 'The party fell' : 'Left before the floor was done'}: −${rep.lost} (${Math.round((rep.lostPct ?? M.LEAVE_CUT) * 100)}%)</p>` : '';
   const merc = rep.mercCut ? `<p class="quiet small">The sellswords took ${rep.mercCut}.</p>` : '';
   const opened = Array.isArray(rep.opened) ? rep.opened : rep.opened ? [rep.opened] : [];
   const newSeats = rep.slots && rep.slots.unlocked ? rep.slots.unlocked.length : 0;

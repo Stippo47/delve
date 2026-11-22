@@ -386,3 +386,15 @@ Everything changed and why: `docs/balance/r12-notes.md`; tables: `docs/balance/r
   were roughly halved (ROLE_TUNE support heal 0.62) and they still lead by about 2 rooms. Asked the designer how to
   handle that (deck v14-balance): my pick is enemies that punish healing, not more cuts.
 - runs.mjs calls a room stuck at 420 s now, not 300 s.
+
+## Round 13 (2026-11-22): the designer's list and the round 12 answers
+Plan, the message in full and the lanes: `docs/BUILD-v6.md`. The answers: `docs/riffle-log/2026-11-22-round12.txt`.
+Done by the lead, live as 0.14.1:
+- **A wipe** loses 75% of the run's gold (progress.js WIPE_LOSS) and nobody rests after it. Leaving early is as it was
+  (20%, the hurt rest): asked whether resting should go altogether. The campaign curve was measured at 20%: re-measure.
+- **Battle page**: a hero stack's tier (Yours, or 0-3 through heroes.js `tierBuild`: every node out to the Nth shell),
+  the picker adds "at" a tier or "as" a rank so one kind can be fielded at several, ground sizes (Small / Large /
+  Huge), a strength switch (by dungeon, or evened out), a dev switch that fields everything (save.battleDev), a stack
+  a row on the setup page, the result as bars to one scale.
+- **The trail map's harsh cuts**: the locked-dungeon veil fades in over its edge, and neighbouring biomes cross-fade.
+- **Fear** was never built (only proposed in round 9): it goes in with Charm, Confused, Sleepy and Bleeding (lane S).
