@@ -1,79 +1,79 @@
 # Boss: the Winter Queen (the Frost Hollow, floor 3)
 
-The Frost Hollow's boss, replacing Old Frost (the frost giant) at the end of floor 3. The designer answered her card
-"IDK" (round 9) and changed nothing, so she is built as the roster proposed it, to be judged in the clips: "An ice
-mage. Walls of ice split the party, a blizzard hides the room, and she must be reached while her mirror images
-shatter." Built like the Bone King (`docs/BOSS-bone-king.md`). If she's a no, the hall and the moves can go to
-another frost boss (Old Frost's rolling snowballs, say) with little change.
+Round 13. The designer, round 12: "Don't like all of the abilities. All seem very similar. U can keep her just improve
+quality worthy of a boss. Clones shoukd also look different".
 
-Code: `js/boss-queen.js` (every number in `WQ`, `PHASE_AT`), shared tools `js/boss-kit.js`, looks `js/fx-boss.js`
-(`drawGlacier`, `drawBlizzard`; her walls use the ice-wall look the Frost Mage's Ice Wall has). Art: PLACEHOLDER, the
-Frost Mage hero's art made pale and bigger (`art/heroes/frost.svg` through `js/recolor.js`).
+She is kept: an ice mage who stands off and blinks away, walls that split the party, mirror images, a blizzard. What
+was wrong, as this lane reads it: five of her six moves were a pale blue line or a pale blue circle that ended in the
+same small spikes. So every move is rebuilt until no two ask the same thing or look alike, and her images are no
+longer copies of her.
+
+Code: `js/boss-queen.js` (every number in `WQ`, `PHASE_AT`), her hall and moves `js/boss-queen-fx.js`, shared tools
+`js/boss-kit.js` and `js/boss-draw.js`. Art: art round 9's Winter Queen (`art/bosses/winter-queen.svg`); her mirrors
+are drawn in code: a six-sided slab of clear ice with her shape (a pale crowned head) caught in it. (A first try, her
+own art drained to white, read as a second queen in the game: she is pale herself.)
 
 ## Who she is
-A tall ice mage in a court of frozen pillars. She doesn't come to you: she stands off at 300-420 from her mark, casts,
-and blinks away when you reach her. Cold can't touch her; fire can (x1.3).
+A tall ice mage in a court of frozen pillars. She doesn't come to you: she keeps 300-420 from her mark, casts, and
+blinks away in a swirl of snow when you reach her. Cold can't touch her; fire can (x1.3).
 
 ## The arena: the Glacier Hall
-- Two chunks by two (about 1300 by 960). The party comes in at the near end.
-- Four ice pillars (they stop her lances: a hero behind one is safe), cracked ice underfoot.
-- **Her dais** at the far end, a six-sided slab of blue ice. She waits on it until a hero comes within 460 or hurts her.
+Two chunks by two, four ice pillars (they stop her crystals), her dais of blue ice at the far end. She waits on it
+until a hero comes within 460 or hurts her.
 
-## Rhythm
-Tell -> hit -> recovery as every boss; she picks the nearest hero (or a taunter) and walks to keep her distance.
+## The moves: what each asks, and what it looks like
+| move | phase | asks the party to | looks like |
+|---|---|---|---|
+| **Icicle Fan** | 1+ | **stand behind a pillar or spread out** (real shots: no shape on the floor) | five crystals form in a fan over her shoulders and grow, then fly: the Frost Mage's own big crystals, five at once |
+| **Frost Nova, and away** | 1+ | **get off her** | ice bursts out of the floor all round her: two rings of tall crystals, snow thrown up, snow left lying; she is gone in a swirl of snowflakes and comes out of another across the room |
+| **Ice Wall and the Mist** | 2-3 | **walk round the wall**: the party is cut in two and the side cut off from her fills with freezing mist | a wall of ice blocks rises across the room through the middle of the party; mist rolls in behind it |
+| **the Mirrors' Lattice** | 3+ | **keep off the lines; break a mirror to break its lines** | two ice mirrors stand in the room (slabs of ice, her shape caught in each). Thin dashed lines run from her to one, to the other, and back; then they light: three beams of cold in a triangle across the room, crystals growing along them |
+| **the Blizzard: the Eye** | 4 | **close in on her** (and step back out when she novas) | the hall goes white, snow driving across it; only a circle round her is still and clear, snow turning round its edge |
 
 ## Phase 1: the Court of Ice (100% to 70%)
 | move | when | tell | shape | hit |
 |---|---|---|---|---|
-| **Ice Lances** | every 3.2-4.4 s | 0.9 s | a fan of 3 lines, 580 long, 48 wide, 0.28 rad apart (stopped by pillars) | 41, chill 30 |
-| **Frost Nova** | a hero within ~150 | 0.85 s | a circle 175 round her | 43, chill 55, thrown back; then she **blinks** to open floor 380-560 away, as far from the party as she can |
+| Icicle Fan | every 3.2-4.2 s | 0.5 s of gathering | five shots fanned 0.2 rad apart, 520 a second, 780 far; pillars and walls stop them | 23 and chill 14 each |
+| Frost Nova | a hero within ~150, every 5-6.5 s | 0.85 s | a circle 180 round her | 44, chill 44, thrown back; then she blinks 380-560 away, as far from the party as she can |
 
 ## Phase 2: Walls of Ice (70% to 45%)
-**Turn:** a nova and a blink. Then, every 9-11 s:
-- **Ice Wall**: a line 760 long fills across the room **through the middle of the party**, at right angles to her
-  (1.1 s, 16 and chill 30 to anyone still on it). Then a wall of ice blocks rises along it for 7 s (blocks walking and
-  shots; the A* grid is rebuilt): anyone on the line is shoved off to their side. The party is split in two.
-- **Glacial Spike**: straight after, a spike falls on whoever is furthest from her (the one cut off): a circle 64,
-  1.0 s, 45, chill 40.
+**Turn:** a nova and a blink (she can't be hurt while it fills). Then every 12-14 s:
+- **Ice Wall**: a line 760 long through the middle of the party, at right angles to her, 1.1 s: 20 and chill 30 to
+  anyone still on it; then ice blocks stand along it for 8 s (they stop walking and shots; anyone on the line is shoved
+  to their side).
+- **the Mist**: at once, seven patches of freezing mist (92 across, 7 s; the game's own mist: chill 15 a second) lie
+  along the wall's far side from her. Whoever was cut off has to come round.
 
-## Phase 3: Mirror Images (45% to 20%)
-**Turn:** a nova and a blink. Then she **splits into three**: two images and herself, at three spots round the room,
-looking the same. The images cast her lances at half strength, keep their distance, and each has only 4% of her health:
-broken, an image **shatters** (a circle 115 fills 0.5 s: 28 and chill, and icicles fly out). While no image stands,
-two more form every 16 s and she slips to a new spot among them. The heroes can't tell which is her: they hit
-whichever is nearest, so breaking images is part of the fight (and stepping out of their shatter).
+## Phase 3: the Mirrors (45% to 20%)
+**Turn:** a nova and a blink. **Two ice mirrors** form, as far from her and from each other as the room lets them
+(each 10% of her health; they do nothing by themselves and never move). Broken, a mirror **shatters**: a circle 110,
+0.5 s: 32 and chill. When none stand, two more form 15 s after the last pair.
+- **the Lattice**, every 8.5-10.5 s while a mirror stands: 1.2 s of thin lines, then 3.6 s of beams between her and
+  her mirrors (44 wide): 11 and chill 16 every 0.25 s on a line. One mirror left: one beam.
 
 ## Phase 4: the Blizzard (20% to 0)
-**Turn:** a nova and a blink. The room goes white: snow drives across it and a pale veil lies over everything.
-- **Hail** falls round the heroes all the time: a circle 56 every ~0.8 s near a hero (1.0 s, 24, chill 22).
-- Her tells and cooldowns x0.8. Walls and images go on.
+**Turn:** a nova; she blinks to the middle of the hall and stays there. The storm comes down: **outside a circle 215
+round her, 4.9 and chill 6.5 every half second**, all the time. She no longer blinks away after a nova (every 5.5-7 s):
+the party is thrown out into the storm and comes back in. Fans and the lattice go on, 15% quicker; no more walls.
 
 ## Death
-She shatters in a burst of ice; her images go with her and her walls melt.
+She shatters: crystals burst up where she stood and shards fly; her mirrors go with her, her walls and mist melt.
 
 ## Why it's fun to watch
-- She runs the room: the heroes chase her, she blinks away, and the archer is the one who can keep on her.
-- The wall splits the party and the spike hunts whoever's alone on the far side.
-- The mirror images: three queens, and the heroes break the wrong ones first.
-- The blizzard: the last 20% is a scramble under falling hail.
+- Five moves, five pictures: crystals in the air, a burst of ice, a wall with mist behind it, a triangle of beams, a
+  white room with a hole in it.
+- The mirrors are things to break with a reason to break them, and they look like what they are.
+- The last phase turns the fight inside out: she stops running and the party has to stay on her.
 
 ## Numbers
-Health 680 (round 12; was 1000) (x1.4 for every boss, then the dungeon's strength and party size), walk 50, mass 5, no knockback.
-Phases at 70%, 45%, 20%.
+Health 900 (x1.4 for every boss, then the dungeon's strength and party size), walk 50, mass 5. Phases at 70%, 45%, 20%.
 
-Balance (`node tools/runs.mjs --boss --theme frost --bossid winterQueen --level 41 --party paladin,archer,cleric,twinfang`;
-the campaign meets the Frost Hollow's boss with four heroes at about level 41):
-| | won | fight length |
-|---|---|---|
-| 10 fights, level 41 (final: health 1000, poison 0.3) | 7 of 10 | avg 260 s; losses in phase 4 |
-| 12 fights, level 41 (health 2600, before the poison resistance: a rot burst was doing most of the work) | 8 of 12 | avg 158 s |
-Tuning showed her to be swingy: hail at 0.55 s and +15% damage took her to 2 of 12; the blizzard's hail is the knob
-that moves her most (`WQ.hail`), then health.
+Balance (`node tools/runs.mjs --boss --theme frost --level 38 --party paladin,archer,cleric,twinfang --n 100`):
+100 fights: won 56, wins about 135 s (all fights about 135 s).
+The Icicle Fan decides it (five shots that can all land on one hero): a third more a shot and the party wins one fight
+in fifteen, a fifth less and it wins five in six. The knobs: `WQ.fan.dmg`, health, `WQ.storm`.
+Before main's hero pass was merged she was even at health 760 and blows a fifth softer (51 of 60 there after it).
 
-## Still to do
-Real art (her, the images, the dais; docs/ART-NEEDED-bosses.md). The designer's answer on whether she stays.
-
-## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
-Re-measured, not retuned (the lead tunes hero numbers first): level 41: won 2 of 10, avg 207 s. Same command as above.
-
-Round 12 (lane D): health 1000 to 680 (the Frost Hollow went from x4.6 to x3.75). The campaign meets her with the starter four (paladin, archer, cleric, twinfang) at about level 38: `--level 38 --n 20` won 9 of 20, wins about 162 s.
+Measured on the branch with main merged in (2026-11-22: round 13's hero ability pass and statuses, round 14's XP
+curve). The level is the one the campaign reached this boss at in round 12; the new XP curve will have moved it:
+**re-measure once the campaign has been run again**, and move health first.

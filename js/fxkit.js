@@ -8,7 +8,7 @@ import { INK, TAU, clamp } from './util.js';
 import { OUTLINE, view } from './render.js';
 import { hash, rgba, upright, upVec, inked, inkLine, flame, blob, star, glowDisc, bolt, easeOut, leaf, snowBurst } from './fx.js';
 import { drawPuddle } from './puddles.js';
-import { SIG2, installFx2 } from './fx2.js';
+import { SIG2, installFx2, SLAM2, IMPACT2D } from './fx2.js'; // (lane H2, round 13: SLAM2 / IMPACT2D, a hero's own slam and shot-burst looks)
 import { variant } from './fxvar.js';
 
 // ---------------------------------------------------------------- palette (FX-STYLE.md): dark, main, light, core
@@ -122,9 +122,10 @@ export function noteWorld(w) {
       const team = u && u.team === 'hero' ? 'hero' : 'enemy';
       let col = SLASH_COL[team];
       if (shape === 'scythe') col = SLASH_COL.scythe; else if (shape === 'smack') col = u && u.kind === 'fireSlime' ? SLASH_COL.fire : SLASH_COL.smack; else if (u && u.kind === 'ghost') col = SLASH_COL.ghost;
-      if (t.aoe) { push({ type: 'slam', u, x: t.aoe.x, y: t.aoe.y, r: t.aoe.r, a: t.a, max: 0.42, seed: Math.round(t.x * 7 + t.y) }); continue; }
+      if (t.aoe) { push({ type: 'slam', u, x: t.aoe.x, y: t.aoe.y, r: t.aoe.r, a: t.a, max: 0.42, seed: Math.round(t.x * 7 + t.y), look: t.aoe.look || (u && u.def.style && u.def.style.slam) }); continue; } // (lane H2: look, a hero's own slam: fx2 SLAM2)
       // arm-l is on the +normal side of the facing, arm-r on the -normal side (the art's left/right, front = +y)
-      push({ type: 'slash', u, x: t.x, y: t.y, R: t.r, a: t.a, arc: t.arc, shape, dir: (shape === 'twin' || shape === 'twinBlade') && odd ? -1 : 1, side: odd ? 1 : -1, col,
+      const sty = (u && u.def.style) || {}, back = sty.backhand || sty.flip ? -1 : 1; // lane H2 (round 13): a backhand swing (Dame, Pirate), a mirrored sprite (Griffon)
+      push({ type: 'slash', u, x: t.x, y: t.y, R: t.r, a: t.a, arc: t.arc, shape, dir: ((shape === 'twin' || shape === 'twinBlade') && odd ? -1 : 1) * back, side: odd ? 1 : -1, col, r0k: sty.reach0,
         max: shape === 'bite' && u && u.kind === 'wolf' ? 0.5 : shape === 'great' ? 0.22 : shape === 'heavy' ? 0.24 : 0.28, seed: Math.round(t.x * 7 + t.y) });
     } else if (t.type === 'blast') {
       push({ type: 'blast', x: t.x, y: t.y, r: t.r, color: t.color || '#FFB347', ab: t.ab, max: t.ab === 'fireball' ? 0.6 : 0.45, seed: Math.round(t.x + t.y * 3) });
@@ -138,8 +139,8 @@ export function noteWorld(w) {
     if (p.ab === 'frostArrow') snowBurst(p.x, p.y, 44, 18); // round 13: snow thrown out where it bursts, hanging a moment
   }
   w._proj = now;
-  // a danger zone striking: a burst shaped to its kind
-  for (const z of w.danger || []) if (z.t <= 0 && !z._struck) { z._struck = true; if (!z.cancelled) push({ type: 'strike', z, kind: z.kind, max: 0.55, seed: Math.round((z.x ?? z.x1) * 5 + (z.y ?? z.y1)) }); }
+  // a danger zone striking: a burst shaped to its kind (lane B, bosses3: z.quiet: the boss draws its own blow)
+  for (const z of w.danger || []) if (z.t <= 0 && !z._struck) { z._struck = true; if (!z.cancelled && !z.quiet) push({ type: 'strike', z, kind: z.kind, max: 0.55, seed: Math.round((z.x ?? z.x1) * 5 + (z.y ?? z.y1)) }); }
   for (const u of w.units) {
     // an enemy's ground slam (sim.js 'slam' act) lands
     const slam = u.act && u.act.type === 'slam';
@@ -176,10 +177,12 @@ function slash(ctx, m, k) {
   const x = live ? u.x : m.x, y = live ? u.y : m.y;
   const [main, core] = m.col;
   const sh = m.shape;
+  if (sh === 'palm') { const px = x + Math.cos(m.a) * (m.R - 4), py = y + Math.sin(m.a) * (m.R - 4), e = easeOut(k01(k / 0.5)); if (k < 0.25) lit(ctx, () => glowDisc(ctx, px, py, 22, '#FFFFFF', 0.6 * (1 - k / 0.25))); ctx.save(); ctx.globalAlpha *= 1 - k * k; for (let i = 0; i < 5; i++) { const b = m.a + (i - 2) * 0.55, d = 4 + 16 * e; inkDisc(ctx, px + Math.cos(b) * d, py + Math.sin(b) * d, 5 * (1 - 0.6 * k) + 1.5, i % 2 ? m.col[0] : m.col[1]); } ctx.restore(); return; } // lane H2 (round 13): the Monk's fists, soft bursts of force
+  if (sh === 'fork') { const vr = u ? u.vr : 20; for (let i = -1; i <= 1; i++) { const r0 = (u ? u.r : 20) * 0.7, r1 = m.R + 16, tip = r0 + (r1 - r0) * easeOut(k01(k / 0.3)), base = r0 + (tip - r0) * sm(k01((k - 0.2) / 0.8)), nx = -Math.sin(m.a) * i * 7, ny = Math.cos(m.a) * i * 7; streak(ctx, x + nx, y + ny, m.a, base, tip, 6 * (1 - 0.35 * k), m.col[0], m.col[1]); } return; } // lane H2 (round 13): the Haymaker's pitchfork, three tines
   if (sh === 'thrust' || sh === 'twin') {
     // round 9: the stab starts at the dagger's point, in the hand that strikes, and runs on along the line of it
     const vr = u ? u.vr : 20, twin = sh === 'twin';
-    const r0 = twin ? vr * 1.25 : (u ? u.r : 20) * 0.55, r1 = m.R + (twin ? 22 : 16);
+    const r0 = twin ? vr * 1.25 : (u ? u.r : 20) * (m.r0k || 0.55), r1 = m.R + (twin ? 22 : 16); // (lane H2: style.reach0, the stab starts further out: Bulwark)
     const tip = r0 + (r1 - r0) * easeOut(k01(k / 0.3)), base = r0 + (tip - r0) * sm(k01((k - 0.2) / 0.8));
     const off = twin ? m.side * vr * 0.62 : 0, nx = -Math.sin(m.a) * off, ny = Math.cos(m.a) * off;
     const a = twin ? m.a - m.side * 0.12 : m.a; // a hooked dagger stabs a little inward
@@ -282,6 +285,7 @@ function wolfBite(ctx, m, k, x, y) {
 // The Berserker's flail (round 9): "his attack should be a radius on the ground in front of him. Can have spikey rings
 // around it. Is an aoe attack. Small radius". The spiked head slams down; a ring of spikes and dust bursts round it.
 function slamGround(ctx, m, k) {
+  if (m.look && SLAM2[m.look]) { SLAM2[m.look](ctx, m, k, 'ground'); return; } // lane H2 (round 13)
   const e = easeOut(k01(k / 0.5)), R = m.r * (0.5 + 0.55 * e);
   // round 10 ("Simpler"): no spiky ring; a soft dent where the head lands, the blow's reach a faint dust edge
   ctx.save(); ctx.globalAlpha *= 1 - k;
@@ -289,6 +293,7 @@ function slamGround(ctx, m, k) {
   ctx.restore();
 }
 function slamAir(ctx, m, k) {
+  if (m.look && SLAM2[m.look]) { SLAM2[m.look](ctx, m, k, 'air'); return; } // lane H2 (round 13)
   const e = easeOut(k01((k - 0.12) / 0.6));
   // round 10 ("Simpler"): a small flash and a ring of dust; no spikes thrown up. Round 13 ("Don't show spike ball on the
   // ground"): no second flail head drawn where the blow lands; the one in his hand is the only one.
@@ -305,6 +310,7 @@ export const IMPACT_EL = { arrow: 'steel', fireArrow: 'fire', fireball: 'fire', 
   spark: 'fire', frostbolt: 'frost', orb: 'holy', zeus: 'storm', cluster: 'poison', soulFlame: 'poison' };
 function impact(ctx, m, k) {
   const big = !!m.ab, kind = IMPACT_ALIAS[m.kind] || m.kind, e = easeOut(k), x = m.x, y = m.y, a = m.a;
+  if (IMPACT2D[m.kind]) { IMPACT2D[m.kind](ctx, m, k); return; } // lane H2 (round 13): a new shot's own burst (fx2.js)
   const el = EL[kind === 'bolt' ? null : IMPACT_EL[kind]] || null;
   const col = m.col || (el ? el[1] : '#C9A7FF'), light = el ? el[2] : '#FFFFFF';
   const S = big ? 1.7 : 1;

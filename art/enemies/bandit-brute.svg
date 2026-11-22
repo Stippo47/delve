@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
-<!-- GAME COPY (art round 10) of design/class-round10/enemies/bandit-brute.svg -->
+<!-- GAME COPY (art round 11) of design/class-round11/enemies/bandit-brute.svg -->
 <!-- BANDIT BRUTE (round 10): the gang's heavy, bigger than the rest: a bald, scarred head over the red bandanna, very broad shoulders in patched leather, a spiked iron pauldron strapped on the right one, a shaggy fur collar; a great club bound with spiked iron bands in the right hand (arm-r, under the shoulder), a big fist in leather wraps on the left (arm-l). No eyes. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
 <defs>
 <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -86,7 +86,6 @@
 <g clip-path="url(#u17)"><use href="#s17" transform="translate(0 5) " fill="#2B2230" opacity="0.3"/></g><use href="#s17" fill="url(#gFaceBrute)"/><g clip-path="url(#c17)"><rect x="100" y="40" width="56" height="120" fill="url(#gFaceSide)"/></g>
 <path d="M 72 60 L 92 86" fill="none" stroke="#C88E6E" stroke-width="5" stroke-linecap="round"/><path d="M 76 74 L 86 66 M 82 80 L 91 73" fill="none" stroke="#C88E6E" stroke-width="3" stroke-linecap="round"/>
 <g clip-path="url(#u18)"><use href="#s18" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s18" fill="url(#g14)"/><use href="#s18" fill="url(#g15)"/><g clip-path="url(#c18)"><path d="M50 138 C74 150 126 150 150 138 L150 190 L50 190 Z" fill="#A02E29" opacity="0.5"/></g>
-<path d="M68 128 Q100 138 132 128" fill="none" stroke="#7F2521" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
 </g>
 <g id="arm-l" data-pivot="44 108"><!-- wrapped fist -->
 <g clip-path="url(#u19)"><use href="#s19" transform="translate(0 3) translate(38 148) rotate(-6)" fill="#2B2230" opacity="0.3"/></g><use href="#s19" transform="translate(38 148) rotate(-6)" fill="url(#gHand)"/>

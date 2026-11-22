@@ -1,5 +1,11 @@
 # Art the designed bosses need (lane B, round 10)
 
+> **Round 13 (bosses3, 2026-11-22): this list is out of date.** The Great Engine, the Sand Wurm, Cinder and the Great
+> Ooze are drawn in code as jointed figures (`js/boss-<id>-fx.js`, the kit in `js/boss-draw.js`): they bend, step, stretch
+> and break in ways one SVG can't, so they need no art unless the designer asks for it. The Spire's boss is the art
+> lane's biblical angel (`art/bosses/biblical-angel.svg`). The camp, the hall and the sanctum are drawn in code to
+> match. What art could still add: the Winter Queen's ice mirrors, the angel's trumpets and chains, the war drums.
+
 **Art round 9 (lane A, wave 11)** drew the Goblin Chieftain, the Winter Queen, the Gilded Seraph (and her fallen
 look, not swapped in yet) and her choir singer (design/class-round9, art/bosses/). The rest below is still to do:
 the drums, the tunnel mouths and stage, the ice dais and wall, the sun blades, and the bosses drawn in code.

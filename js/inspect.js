@@ -78,7 +78,7 @@ export function drawSelection(ctx, t) {
 const faceCache = {};
 export function portrait(kind) {
   const d = DEFS[kind]; if (!d) return '';
-  if (d.art) return d.art;
+  if (d.portrait || d.art) return d.portrait || d.art; // (round 13, lane E: def.portrait, a still picture when the art alone isn't the whole look: a spirit's tail is drawn by the game)
   if (faceCache[kind]) return faceCache[kind];
   const spr = getSprite(kind === 'slimeSmall' ? 'slimeSmall' : kind, 120);
   return (faceCache[kind] = spr && spr.img && spr.img.toDataURL ? spr.img.toDataURL() : '');

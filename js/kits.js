@@ -879,6 +879,7 @@ export function hooksOf(u) {
   const out = [];
   if (u.kit) { out.push(u.kit.trait); if (u.kit.tiers.oldBones) out.push(OLD_BONES); if (u.kit.statHook) out.push(u.kit.statHook); if (u.kit.extra) out.push(...u.kit.extra); }
   if (u.trinketHooks) out.push(...u.trinketHooks);
+  if (u.h2) out.push(...u.h2); // lane H2 (round 13): timed hooks an ability hangs on any unit for a while (kits2.js onUnit)
   return out;
 }
 // Each think, pick the best ready ability (if any is worth it) and use it.
