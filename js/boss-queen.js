@@ -1,35 +1,44 @@
-// The Winter Queen: the Frost Hollow's boss (floor 3). Design and numbers: docs/BOSS-winter-queen.md. The designer
-// answered the card "IDK" (round 9), so she's built as proposed in ROSTER.md and shown to them: "An ice mage. Walls of
-// ice split the party, a blizzard hides the room, and she must be reached while her mirror images shatter."
-// Art: art round 9's Winter Queen (art/bosses/winter-queen.svg, design/class-round9).
-import { alive, hurt, puff, sparks, setAnim, addDanger, spawn, kill } from './sim.js';
+// The Winter Queen: the Frost Hollow's boss (floor 3). Design and numbers: docs/BOSS-winter-queen.md.
+// The designer, round 12: "Don't like all of the abilities. All seem very similar. U can keep her just improve quality
+// worthy of a boss. Clones shoukd also look different". Round 13: she is kept (an ice mage who stands off, walls that
+// split the party, mirror images, a blizzard), and every move is rebuilt so no two ask the same thing or look alike:
+// crystals that fly, a burst of ice round her, a wall and the mist behind it, beams of cold between her and her
+// mirrors, a storm with a calm eye. Her images are ice mirrors now: frosted copies that cast nothing of their own.
+// Art: art round 9's Winter Queen (art/bosses/winter-queen.svg); the images are that art turned to frosted ice.
+import { alive, hurt, puff, sparks, setAnim, addDanger, spawn, kill, fx, addStatus } from './sim.js';
 import { TAU, clamp, dist, angleTo, rand, rrange, chance } from './util.js';
 import { buildGrid, circleRect } from './path.js';
-import { lob, around, hold, beginHold, due, again, stand, turnTo, openSpot, blink } from './elites.js';
+import { hold, beginHold, due, again, stand, turnTo, openSpot, blink } from './elites.js';
 import { walkTo, courtFalls } from './enemies.js';
 import { variantUrl } from './recolor.js';
-import { heroesOf, H, steady, asleep, phaseGate, pickTarget, farthest, randomHero, lead, clipLine, thud, logOf, notePhase, deathBurst, inside } from './boss-kit.js';
-import { drawGlacier, drawBlizzard } from './fx-boss.js';
+import { heroesOf, H, steady, asleep, phaseGate, pickTarget, lead, logOf, notePhase, inside, stage, bfx, liveZone, keepZone, TEST_MOVE } from './boss-kit.js';
+import { drawGlacierFloor, drawGlacierAir } from './boss-queen-fx.js';
 
 export const WQ = {
-  lance: { n: 3, fan: 0.28, len: 580, hw: 24, tell: 0.9, dmg: 41, chill: 30, cd: [3.2, 4.4] },
-  nova: { r: 175, tell: 0.85, dmg: 43, chill: 55, knock: 260, cd: [5, 6.5] },
-  blink: { after: 0.4, d: [380, 560] },
-  wall: { len: 760, size: 40, dur: 7, tell: 1.1, dmg: 16, chill: 30, cd: [9, 11] },
-  spike: { r: 64, tell: 1.0, dmg: 45, chill: 40 },
-  image: { n: 2, hpK: 0.04, every: 16, shatter: 115, shDmg: 28 },
-  hail: { r: 56, tell: 1.0, dmg: 24, chill: 22, every: 0.8 },
-  storm: { k: 0.8 },
+  fan: { n: 5, spread: 0.2, speed: 520, dmg: 19, chill: 14, r: 11, life: 1.5, wind: 0.5, cd: [3.2, 4.2] },
+  nova: { r: 180, tell: 0.85, dmg: 36, chill: 44, knock: 300, cd: [5, 6.5] },
+  blink: { d: [380, 560] },
+  wall: { len: 760, size: 40, dur: 8, tell: 1.1, dmg: 16, chill: 30, cd: [12, 14] },
+  mist: { n: 7, r: 92, t: 7, reach: 300 },
+  image: { n: 2, hpK: 0.1, every: 15, shatter: 110, shDmg: 26 },
+  lattice: { tell: 1.2, dur: 3.6, hw: 22, tick: 0.25, dmg: 9, chill: 16, cd: [8.5, 10.5] },
+  storm: { eye: 215, chill: 13, dmg: 4, tick: 0.5, k: 0.85, nova: [5.5, 7] },
 };
 export const PHASE_AT = [1, 0.7, 0.45, 0.2];
-const WAKE = 460;
+const WAKE = 460, ICE = '#DDF6FF';
 
 function brain(w, u, dt) {
-  const k = u.wq || (u.wq = { phase: 0 });
-  steady(u); logOf(w, u, k);
-  if (asleep(w, u, k, WAKE, PHASE_AT, () => { beginHold(u, 0.9, null); setAnim(u, 'cast', 0.9); puff(w, u.x, u.y, '#DDF6FF', 22, 160, 7, 0.7); notePhase(w, k); })) return true;
-  if (k.phase >= 4) hail(w, u, k, dt);
+  const k = u.wq || (u.wq = { phase: 0, t: 0 });
+  steady(u); logOf(w, u, k); stage(w, 'queen', drawGlacierFloor, drawGlacierAir);
+  k.t += dt;
+  if (asleep(w, u, k, WAKE, PHASE_AT, () => { beginHold(u, 0.9, null); setAnim(u, 'cast', 0.9); puff(w, u.x, u.y, ICE, 22, 160, 7, 0.7); notePhase(w, k); })) return true;
+  if (TEST_MOVE && !k.tested) { k.tested = true;
+    if (TEST_MOVE === 'wall') { k.phase = Math.max(2, k.phase); again(u, 'wall', 0.8); }
+    if (TEST_MOVE === 'lattice') { k.phase = Math.max(3, k.phase); again(u, 'images', 0.3); again(u, 'lattice', 2); again(u, 'wall', 30); }
+    if (TEST_MOVE === 'storm') { k.phase = 4; startStorm(w, u, k); again(u, 'wall', 30); again(u, 'lattice', 30); } }
+  if (k.phase >= 4) storm(w, u, k, dt);
   if (k.phase >= 3) images(w, u, k, dt);
+  if (latticeTick(w, u, k, dt)) return true;
   if (hold(u, dt)) return true;
   if (phaseGate(u, k, PHASE_AT, (p) => enter(w, u, k, p))) return true;
   const t = pickTarget(w, u, k, dt);
@@ -37,58 +46,56 @@ function brain(w, u, dt) {
   const K = k.phase >= 4 ? WQ.storm.k : 1;
   const d = dist(u.x, u.y, t.x, t.y), at = angleTo(u.x, u.y, t.x, t.y);
   const near = heroesOf(w, u).filter((h) => dist(h.x, h.y, u.x, u.y) < WQ.nova.r * 0.85);
-  // crowded: a frost nova, then she blinks away
+  // crowded: a frost nova, then she blinks away (in the storm she stands her ground: the eye is hers)
   if (near.length && due(u, 'nova', dt, 1.5)) {
-    again(u, 'nova', ...WQ.nova.cd.map((x) => x * K));
-    nova(w, u, u.x, u.y, () => { if (k.phase >= 1) away(w, u); });
+    again(u, 'nova', ...(k.phase >= 4 ? WQ.storm.nova : WQ.nova.cd));
+    nova(w, u, () => { if (k.phase < 4) away(w, u); });
     return true;
   }
-  // phase 2 on: a wall of ice through the party, then a spike on whoever's cut off
-  if (k.phase >= 2 && due(u, 'wall', dt, 2)) { again(u, 'wall', ...WQ.wall.cd.map((x) => x * K)); iceWall(w, u, k); return true; }
-  // ice lances: a fan of three at her mark (two fans in the blizzard)
-  if (due(u, 'lance', dt, 1.2) && d < 720) {
-    again(u, 'lance', ...WQ.lance.cd.map((x) => x * K));
-    lances(w, u, t, 1);
-    return true;
-  }
-  // she keeps her distance: walks to stay 300-420 from her mark
-  if (d < 280) { const a = at + Math.PI, p = inside(w, u.x + Math.cos(a) * 120, u.y + Math.sin(a) * 120, u.r + 20); walkTo(w, u, p.x, p.y, 0.9, dt); }
+  if (k.phase >= 3 && due(u, 'lattice', dt, 3) && mirrors(w, u).length) { again(u, 'lattice', ...WQ.lattice.cd.map((x) => x * K)); startLattice(w, u, k); return true; }
+  if (k.phase >= 2 && k.phase < 4 && due(u, 'wall', dt, 2)) { again(u, 'wall', ...WQ.wall.cd); iceWall(w, u, k); return true; }
+  if (due(u, 'fan', dt, 1.2) && d < 760) { again(u, 'fan', ...WQ.fan.cd.map((x) => x * K)); fan(w, u, t); return true; }
+  if (k.phase >= 4) { // the storm: she holds the middle of the hall
+    const cx = w.W / 2, cy = w.H / 2; if (dist(u.x, u.y, cx, cy) > 40) walkTo(w, u, cx, cy, 0.9, dt); else stand(u, dt);
+  } else if (d < 280) { const a = at + Math.PI, p = inside(w, u.x + Math.cos(a) * 120, u.y + Math.sin(a) * 120, u.r + 20); walkTo(w, u, p.x, p.y, 0.9, dt); }
   else if (d > 440) walkTo(w, u, t.x, t.y, 0.8, dt);
   else stand(u, dt);
   turnTo(u, at, 4, dt);
   return true;
 }
 
-// ---- moves
-function lances(w, u, t, mul = 1, src = u) {
-  const p = lead(t, 0.25), a0 = angleTo(src.x, src.y, p.x, p.y), L = WQ.lance;
-  for (let i = 0; i < L.n; i++) {
-    const a = a0 + (i - (L.n - 1) / 2) * L.fan, e = clipLine(w, src.x, src.y, a, L.len, 12, src.r);
-    addDanger(w, { shape: 'line', x1: src.x, y1: src.y, x2: e.x, y2: e.y, hw: L.hw, t: L.tell, team: src.team, src, kind: 'ice', hit: H(u, { dmg: L.dmg * mul, chill: L.chill * mul, knock: 120 }),
-      onFire: (w2, z) => { w2.projectiles.push({ kind: 'icicle', ab: 'iceShard', x: z.x1, y: z.y1, vx: Math.cos(a) * 1400, vy: Math.sin(a) * 1400, r: 8, team: src.team, owner: src, dmg: 0, o: {}, life: Math.hypot(z.x2 - z.x1, z.y2 - z.y1) / 1400, a, noHit: true }); } });
-  }
-  beginHold(src, L.tell + 0.25, a0); setAnim(src, 'cast', L.tell + 0.2);
+// ---- Icicle Fan: five crystals conjured over her shoulders, then thrown: real shots, stopped by pillars
+function fan(w, u, t) {
+  const F = WQ.fan, p = lead(t, 0.3), a0 = angleTo(u.x, u.y, p.x, p.y);
+  bfx(w, { type: 'fanGather', u, a: a0, n: F.n, max: F.wind });
+  setAnim(u, 'cast', F.wind + 0.25);
+  beginHold(u, F.wind + 0.25, a0, () => {
+    for (let i = 0; i < F.n; i++) { const a = a0 + (i - (F.n - 1) / 2) * F.spread;
+      w.projectiles.push({ kind: 'icicle', ab: 'iceShard', x: u.x + Math.cos(a) * (u.r + 10), y: u.y + Math.sin(a) * (u.r + 10), vx: Math.cos(a) * F.speed, vy: Math.sin(a) * F.speed, r: F.r, team: u.team, owner: u,
+        dmg: F.dmg * u.dmgMul, o: { chill: F.chill, knock: 90 }, life: F.life, a }); }
+  });
 }
-function nova(w, u, x, y, after) {
+// ---- Frost Nova: ice bursts out of the floor all round her
+function nova(w, u, after) {
   const N = WQ.nova;
-  addDanger(w, { shape: 'circle', x, y, r: N.r, t: N.tell, team: u.team, src: u, kind: 'ice', hit: H(u, { dmg: N.dmg, chill: N.chill, knock: N.knock }),
-    onFire: (w2, z) => { puff(w2, z.x, z.y, '#DDF6FF', 24, 260, 8, 0.6); w2.shake = Math.max(w2.shake, 5); for (let i = 0; i < 10; i++) sparks(w2, z.x + Math.cos(i / 10 * TAU) * z.r * 0.7, z.y + Math.sin(i / 10 * TAU) * z.r * 0.7, i / 10 * TAU, 1, '#FFFFFF'); } });
+  addDanger(w, { shape: 'circle', x: u.x, y: u.y, r: N.r, t: N.tell, team: u.team, src: u, kind: 'ice', quiet: true, hit: H(u, { dmg: N.dmg, chill: N.chill, knock: N.knock }),
+    onFire: (w2, z) => { bfx(w2, { type: 'frostBurst', x: z.x, y: z.y, r: N.r, max: 0.9, seed: Math.round(z.x + z.y) }); fx(w2, { type: 'zone', kind: 'snow', x: z.x, y: z.y, r: N.r * 0.85, max: 2.2 }); w2.shake = Math.max(w2.shake, 6); } });
   beginHold(u, N.tell + 0.2, null, after); setAnim(u, 'cast', N.tell + 0.2);
 }
 function away(w, u) {
   const hs = heroesOf(w, u); if (!hs.length) return;
   let best = null, bd = -1;
   for (let i = 0; i < 8; i++) { const p = openSpot(w, u.x, u.y, ...WQ.blink.d, u.r + 10); if (!p) continue; const m = Math.min(...hs.map((h) => dist(h.x, h.y, p.x, p.y))); if (m > bd) { bd = m; best = p; } }
-  if (best) blink(w, u, best.x, best.y, 'rgba(221,246,255,0.9)');
+  if (best) { bfx(w, { type: 'snowBlink', x: u.x, y: u.y, max: 0.5 }); blink(w, u, best.x, best.y, 'rgba(221,246,255,0.9)'); bfx(w, { type: 'snowBlink', x: u.x, y: u.y, max: 0.5 }); }
 }
-// A wall of ice blocks across the room, through the middle of the party, at right angles to her; heroes on it are
-// shoved off to their side. It melts after 7 s. Then a spike falls on whoever's on the far side from her.
+// ---- Ice Wall: a wall of ice blocks across the room through the middle of the party, at right angles to her; heroes
+// on it are shoved off to their side. Then the side cut off from her fills with freezing mist: walk round the wall.
 function iceWall(w, u, k) {
   const hs = heroesOf(w, u); if (!hs.length) return;
   const cx = hs.reduce((s, h) => s + h.x, 0) / hs.length, cy = hs.reduce((s, h) => s + h.y, 0) / hs.length;
   const a = angleTo(u.x, u.y, cx, cy) + Math.PI / 2, W2 = WQ.wall;
   const x1 = cx - Math.cos(a) * W2.len / 2, y1 = cy - Math.sin(a) * W2.len / 2, x2 = cx + Math.cos(a) * W2.len / 2, y2 = cy + Math.sin(a) * W2.len / 2;
-  addDanger(w, { shape: 'line', x1, y1, x2, y2, hw: W2.size * 0.7, t: W2.tell, team: u.team, src: u, kind: 'ice', hit: H(u, { dmg: W2.dmg, chill: W2.chill }),
+  addDanger(w, { shape: 'line', x1, y1, x2, y2, hw: W2.size * 0.7, t: W2.tell, team: u.team, src: u, kind: 'ice', quiet: true, hit: H(u, { dmg: W2.dmg, chill: W2.chill }),
     onFire: (w2) => {
       const made = [];
       for (let d = 0; d <= W2.len; d += W2.size) {
@@ -102,94 +109,108 @@ function iceWall(w, u, k) {
       buildGrid(w2);
       for (const o of w2.units) { if (!alive(o) || o === u) continue;
         for (const r of made) { const c = circleRect(o.x, o.y, o.r, r); if (!c) continue; const side = Math.sign(Math.sin(angleTo(x1, y1, o.x, o.y) - a)) || 1, na = a + side * Math.PI / 2; o.x += Math.cos(na) * (c.over + 2); o.y += Math.sin(na) * (c.over + 2); } }
-      puff(w2, cx, cy, '#DDF6FF', 20, 200, 8, 0.6); w2.shake = Math.max(w2.shake, 6);
-      // the one cut off from the rest (the far side from her): an ice spike falls on them
-      const far = farthest(w2, u); if (far) lob(w2, u, far.x + (far.vx || 0) * 0.4, far.y + (far.vy || 0) * 0.4, { r: WQ.spike.r, tell: WQ.spike.tell, kind: 'ice', proj: 'icicle', dust: '#DDF6FF', hit: { dmg: WQ.spike.dmg, chill: WQ.spike.chill, knock: 120 } });
+      puff(w2, cx, cy, ICE, 20, 200, 8, 0.6); w2.shake = Math.max(w2.shake, 6);
+      // the far side from her: mist rolls in along the wall's back
+      const back = angleTo(u.x, u.y, cx, cy), M = WQ.mist;
+      for (let i = 0; i < M.n; i++) { const q = (i + 0.5) / M.n - 0.5, d = M.r * (0.9 + (i % 2) * 1.1), p = inside(w2, cx + Math.cos(a) * W2.len * 0.8 * q + Math.cos(back) * d, cy + Math.sin(a) * W2.len * 0.8 * q + Math.sin(back) * d, 40);
+        w2.hazards.push({ type: 'mist', x: p.x, y: p.y, r: M.r, t: M.t + i * 0.1, max: M.t + i * 0.1, queens: true }); }
     } });
   beginHold(u, W2.tell + 0.3, angleTo(u.x, u.y, cx, cy)); setAnim(u, 'cast', W2.tell + 0.2);
 }
-// Mirror images (phase 3 on): two of her, the same to look at, that cast her lances (half as hard) and shatter into a
-// ring of ice when broken. While none are up, two more form every 16 s, and she slips among them.
+// ---- Mirror Images (phase 3 on): two ice mirrors of her stand in the room (frosted, still; each 5% of her health).
+// The Lattice: she throws a beam of cold to one mirror, it throws it to the next, and that one back to her: a triangle
+// of cold across the room. Keep off the lines; a broken mirror breaks its two lines. A mirror shatters when broken.
+const mirrors = (w, u) => w.units.filter((o) => o.imageOf === u && alive(o));
 function images(w, u, k, dt) {
-  const mine = w.units.filter((o) => o.imageOf === u && alive(o));
-  if (mine.length || !due(u, 'images', dt, 0.5)) return;
+  if (mirrors(w, u).length || k.lat || !due(u, 'images', dt, 0.5)) return;
   again(u, 'images', WQ.image.every);
-  const spots = [];
-  for (let i = 0; i < WQ.image.n; i++) { const p = openSpot(w, u.x, u.y, 260, 420, u.r + 10); if (p) spots.push(p); }
-  spots.push({ x: u.x, y: u.y });
-  // she ends up at one of the three spots, the images at the others
-  const mineAt = spots.splice(Math.floor(rand() * spots.length), 1)[0];
-  puff(w, u.x, u.y, '#DDF6FF', 16, 120, 7, 0.5);
-  blink(w, u, mineAt.x, mineAt.y, 'rgba(221,246,255,0.9)');
-  for (const p of spots) {
-    const m = spawn(w, 'queenImage', p.x, p.y, { mult: w.mult, team: u.team }); m.imageOf = u; m.court = true; m.aggro = true; m.dmgMul = u.dmgMul * 0.5;
-    m.maxHp = m.hp = Math.round(u.maxHp * WQ.image.hpK); m.facing = u.facing;
-    puff(w, p.x, p.y, '#DDF6FF', 16, 120, 7, 0.5);
+  for (let i = 0; i < WQ.image.n; i++) {
+    let best = null, bd = -1; // spread out: as far from her and from each other as the room lets them stand
+    for (let j = 0; j < 10; j++) { const p = openSpot(w, w.W / 2, w.H / 2, 120, Math.min(w.W, w.H) * 0.46, u.r + 20); if (!p) continue; const m = Math.min(dist(p.x, p.y, u.x, u.y), ...mirrors(w, u).map((o) => dist(p.x, p.y, o.x, o.y))); if (m > bd) { bd = m; best = p; } }
+    if (!best) continue;
+    const m = spawn(w, 'queenImage', best.x, best.y, { mult: w.mult || 1, team: u.team }); m.imageOf = u; m.court = true; m.aggro = true; m.minion = true; m.calledBy = u;
+    m.maxHp = m.hp = Math.round(u.maxHp * WQ.image.hpK); m.facing = angleTo(m.x, m.y, u.x, u.y);
+    bfx(w, { type: 'snowBlink', x: m.x, y: m.y, max: 0.5 }); puff(w, m.x, m.y, ICE, 14, 120, 7, 0.5);
   }
 }
 function imageBrain(w, m, dt) {
   const q = m.imageOf; if (!q || !alive(q)) { kill(w, m, null); return true; }
-  if (hold(m, dt)) return true;
-  const t = pickTarget(w, m, m.iq || (m.iq = {}), dt);
-  if (!t) { stand(m, dt); return true; }
-  if (due(m, 'lance', dt, 1.5)) { again(m, 'lance', 4, 5.5); lances(w, q, t, 0.5, m); return true; }
-  const d = dist(m.x, m.y, t.x, t.y);
-  if (d < 260) { const a = angleTo(t.x, t.y, m.x, m.y), p = inside(w, m.x + Math.cos(a) * 120, m.y + Math.sin(a) * 120, m.r + 20); walkTo(w, m, p.x, p.y, 0.8, dt); } else stand(m, dt);
-  turnTo(m, angleTo(m.x, m.y, t.x, t.y), 4, dt);
+  stand(m, dt); turnTo(m, angleTo(m.x, m.y, q.x, q.y), 3, dt);
   return true;
 }
 function shatterImage(w, m) {
   const q = m.imageOf; if (!q || !alive(q)) return; // (images going down with her don't burst)
-  puff(w, m.x, m.y, '#DDF6FF', 20, 200, 7, 0.6);
-  addDanger(w, { shape: 'circle', x: m.x, y: m.y, r: WQ.image.shatter, t: 0.5, team: m.team, src: m, kind: 'ice', hit: { dmg: WQ.image.shDmg * q.dmgMul, chill: 30, knock: 160 },
-    onFire: (w2, z) => { for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; w2.projectiles.push({ kind: 'icicle', x: z.x, y: z.y, vx: Math.cos(a) * 340, vy: Math.sin(a) * 340, r: 5, team: m.team, owner: q, dmg: 6 * q.dmgMul, o: { chill: 20, noDodge: true }, life: 0.6 }); } } });
+  addDanger(w, { shape: 'circle', x: m.x, y: m.y, r: WQ.image.shatter, t: 0.5, team: m.team, src: null, kind: 'ice', quiet: true, hit: { dmg: WQ.image.shDmg * q.dmgMul, chill: 30, knock: 160 },
+    onFire: (w2, z) => bfx(w2, { type: 'frostBurst', x: z.x, y: z.y, r: z.r, max: 0.7, seed: m.id }) });
+  bfx(w, { type: 'mirrorBreak', x: m.x, y: m.y, max: 0.6, seed: m.id });
 }
-// The blizzard (phase 4): hail falls round the heroes all the time, and the room goes white.
-function hail(w, u, k, dt) {
-  k.hailT = (k.hailT ?? 1) - dt;
-  if (k.hailT > 0) return;
-  k.hailT = WQ.hail.every * rrange(0.8, 1.2);
-  const h = randomHero(w, u); if (!h) return;
-  const a = rand() * TAU, off = rrange(0, 130), p = inside(w, h.x + (h.vx || 0) * 0.6 + Math.cos(a) * off, h.y + (h.vy || 0) * 0.6 + Math.sin(a) * off);
-  addDanger(w, { shape: 'circle', x: p.x, y: p.y, r: WQ.hail.r, t: WQ.hail.tell, team: u.team, src: null, kind: 'ice', hit: H(u, { dmg: WQ.hail.dmg, chill: WQ.hail.chill, knock: 80 }),
-    onFire: (w2, z) => { puff(w2, z.x, z.y, '#EAF8FF', 8, 110, 6, 0.4); sparks(w2, z.x, z.y, rand() * TAU, 3, '#FFFFFF'); } });
+const edges = (w, u) => { const ms = mirrors(w, u), pts = [u, ...ms]; return pts.length < 2 ? [] : pts.length === 2 ? [[u, ms[0]]] : pts.map((p, i) => [p, pts[(i + 1) % pts.length]]); };
+function startLattice(w, u, k) {
+  const L = WQ.lattice; k.lat = { t: 0, tick: 0, z: new Map() };
+  for (const [a, b] of edges(w, u)) addDanger(w, { shape: 'line', x1: a.x, y1: a.y, x2: b.x, y2: b.y, hw: L.hw, t: L.tell, team: u.team, src: u, kind: 'ice', quiet: true });
+  setAnim(u, 'cast', L.tell + L.dur);
+}
+function latticeTick(w, u, k, dt) {
+  const s = k.lat; if (!s) return false;
+  const L = WQ.lattice; s.t += dt; stand(u, dt);
+  const E = edges(w, u);
+  if (s.t < L.tell) { w.queenLattice = { edges: E.map(([a, b]) => [a.x, a.y, b.x, b.y]), k: s.t / L.tell, on: false }; return true; }
+  if (s.t >= L.tell + L.dur || !E.length) { k.lat = null; w.queenLattice = null; beginHold(u, 0.6, null); return true; }
+  w.queenLattice = { edges: E.map(([a, b]) => [a.x, a.y, b.x, b.y]), k: 1, on: true, t: s.t - L.tell };
+  E.forEach(([a, b], i) => { let z = s.z.get(i); if (!z || !w.danger.includes(z)) { z = liveZone(w, u, { shape: 'line', x1: a.x, y1: a.y, x2: b.x, y2: b.y, hw: L.hw + 8, kind: 'ice' }); s.z.set(i, z); } keepZone(z, { x1: a.x, y1: a.y, x2: b.x, y2: b.y }); });
+  if ((s.tick -= dt) <= 0) { s.tick = L.tick;
+    for (const h of heroesOf(w, u)) for (const [a, b] of E) { const dx = b.x - a.x, dy = b.y - a.y, L2 = dx * dx + dy * dy || 1, q = clamp(((h.x - a.x) * dx + (h.y - a.y) * dy) / L2, 0, 1);
+      if (dist(h.x, h.y, a.x + dx * q, a.y + dy * q) < L.hw + h.r * 0.5) { hurt(w, h, L.dmg * u.dmgMul, u, { noDodge: true, chill: L.chill, dot: true }); break; } } }
+  return true;
+}
+// ---- the Blizzard (phase 4): the room goes white; only round her is it still: the eye of the storm. Outside the eye
+// the cold bites all the time. So the party closes in on her, and her nova throws them back out into it.
+function startStorm(w, u, k) { w.blizzard = 0.01; w.stormEye = { u, r: WQ.storm.eye }; k.stormTick = 0; }
+function storm(w, u, k, dt) {
+  const S = WQ.storm;
+  if (!w.stormEye) startStorm(w, u, k);
+  k.eyeZ = k.eyeZ && w.danger.includes(k.eyeZ) ? k.eyeZ : liveZone(w, u, { shape: 'ring', x: u.x, y: u.y, r0: S.eye, r1: 3000, kind: 'ice' });
+  keepZone(k.eyeZ, { x: u.x, y: u.y }); k.eyeZ.unseen = true;
+  if ((k.stormTick -= dt) > 0) return; k.stormTick = S.tick;
+  for (const h of heroesOf(w, u)) if (dist(h.x, h.y, u.x, u.y) > S.eye + h.r * 0.5) { hurt(w, h, S.dmg * u.dmgMul, u, { noDodge: true, dot: true, color: '#DDF6FF' }); addStatus(w, h, 'chill', S.chill * S.tick, u); }
 }
 
-// ---- phase turns
+// ---- phase turns: a nova, a blink; then the phase's own thing
 function enter(w, u, k, p) {
-  notePhase(w, k);
+  notePhase(w, k); k.lat = null; w.queenLattice = null;
   u.invulnT = WQ.nova.tell + 0.6;
-  nova(w, u, u.x, u.y, () => away(w, u));
-  if (p === 2) again(u, 'wall', 0.4);
-  if (p === 3) again(u, 'images', 0.2);
-  if (p === 4) { w.blizzard = 0.01; again(u, 'wall', 2); }
+  nova(w, u, () => { if (p < 4) away(w, u); else { const c = inside(w, w.W / 2, w.H / 2, 60); bfx(w, { type: 'snowBlink', x: u.x, y: u.y, max: 0.5 }); blink(w, u, c.x, c.y, 'rgba(221,246,255,0.9)'); startStorm(w, u, k); } });
+  if (p === 2) again(u, 'wall', 0.6);
+  if (p === 3) { again(u, 'images', 0.2); again(u, 'lattice', 3); }
+  if (p === 4) again(u, 'lattice', 5);
 }
 function death(w, u) {
-  courtFalls(w); w.blizzard = 0;
+  courtFalls(w); w.blizzard = 0; w.stormEye = null; w.queenLattice = null;
+  for (const o of w.units) if (o.imageOf === u && alive(o)) kill(w, o, null);
+  w.hazards = w.hazards.filter((h) => !h.queens);
   for (const r of w.walls) if (r.kind === 'ice' && r.temp != null) r.temp = Math.min(r.temp, 0.1 + rand() * 0.4); // her walls melt with her
-  deathBurst(w, u, ['#DDF6FF', '#9FDDF6', '#FFFFFF']);
+  bfx(w, { type: 'frostBurst', x: u.x, y: u.y, r: 170, max: 1.0, seed: 9 }); bfx(w, { type: 'mirrorBreak', x: u.x, y: u.y, max: 0.9, seed: 5 }); w.shake = Math.max(w.shake, 12);
 }
 
 // ---- the glacier hall: a wide frozen hall, four ice pillars, her dais of ice at the far end
 function glacier(w) {
   const W = w.W, Hh = w.H;
   w.throne = { x: W - 210, y: Hh / 2 };
-  for (const [fx, fy] of [[0.38, 0.24], [0.38, 0.76], [0.66, 0.2], [0.66, 0.8]]) w.pillars.push({ x: W * fx, y: Hh * fy, r: 36, ice: true });
-  w.arenaDecor = [[0.2, 0.3, 'crack'], [0.2, 0.7, 'crack'], [0.5, 0.5, 'crack'], [0.8, 0.35, 'rubble'], [0.8, 0.65, 'rubble']].map(([fx, fy, type]) => ({ type, x: W * fx, y: Hh * fy, a: rand() * TAU, s: 1.3, v: 0 }));
+  for (const [fx2, fy] of [[0.38, 0.24], [0.38, 0.76], [0.66, 0.2], [0.66, 0.8]]) w.pillars.push({ x: W * fx2, y: Hh * fy, r: 36, ice: true });
+  w.arenaDecor = [[0.2, 0.3, 'crack'], [0.2, 0.7, 'crack'], [0.8, 0.35, 'rubble'], [0.8, 0.65, 'rubble']].map(([fx2, fy, type]) => ({ type, x: W * fx2, y: Hh * fy, a: rand() * TAU, s: 1.3, v: 0 }));
   w.dais = { x: W - 210, y: Hh / 2 };
-  w.arenaDraw = (ctx, w2) => drawGlacier(ctx, w2);
-  w.arenaAir = (ctx, w2) => { if (w2.blizzard) { w2.blizzard = Math.min(1, w2.blizzard + (w2._dt || 0.016) * 0.5); drawBlizzard(ctx, w2); } };
+  stage(w, 'queen', drawGlacierFloor, drawGlacierAir);
 }
 
-const ART = 'art/bosses/winter-queen.svg'; // art round 9 (design/class-round9); her images wear it too
+const ART = 'art/bosses/winter-queen.svg'; // art round 9 (design/class-round9)
 export const QUEEN = {
   defs: {
-    winterQueen: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 57, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 5, hp: 680, speed: 50, role: 'ranged', range: 300,
+    winterQueen: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 57, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 5, hp: 760, speed: 50, role: 'ranged', range: 300,
       atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 180, coins: [70, 90], boss: true, arena: 'glacier', attackAnim: 'cast',
       res: { chill: 0, wet: 0.5, burn: 1.3, stagger: 0.6, poison: 0.3 }, brain, onDeath: death },
-    // her mirror image: the same look, half her lances, shatters when broken
-    queenImage: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 57, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 3, hp: 60, speed: 50, role: 'ranged', range: 300,
-      atkCd: 999, temp: 0.2, commit: 1.2, xp: 0, coins: [0, 0], noElite: true, noCorpse: true, attackAnim: 'cast', res: { chill: 0 }, brain: imageBrain, onDeath: shatterImage },
+    // an ice mirror of her: her shape in frosted ice (her art with its colour drained to pale blue), still; it shatters
+    queenImage: { team: 'enemy', name: 'Ice Mirror', art: variantUrl(ART, { hue: 0, sat: 0.22, light: 0.16, accent: { from: 30, range: 180, hue: 200, sat: 0.5, light: 0.12 } }), headR: 57, r: 40, vr: 31, turn: 3.6, accel: 200, face: 3.6, mass: 30, hp: 60, speed: 0, role: 'ranged', range: 300,
+      atkCd: 999, temp: 0.2, commit: 1.2, xp: 0, coins: [0, 0], noElite: true, noCorpse: true, res: { chill: 0, burn: 1.3 }, brain: imageBrain, onDeath: shatterImage },
   },
   arenas: { glacier },
 };

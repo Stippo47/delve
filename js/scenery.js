@@ -354,6 +354,7 @@ export function drawDanger(ctx, w) {
   if (!w.danger || !w.danger.length) return;
   ctx.save(); ctx.lineJoin = 'round';
   for (const z of w.danger) {
+    if (z.unseen) continue; // (lane B, bosses3: a zone the boss draws itself: the Winter Queen's storm)
     const col = z.col || ZONE_COL[z.kind] || '#E0604B'; // (lane B, bosses3: z.col: a zone in the boss's own colour)
     if (z.t > 0) {
       const k = clamp(z.age / (z.max || 1), 0, 1);

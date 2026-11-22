@@ -80,29 +80,7 @@ export function drawTentacles(ctx, w) {
   }
 }
 
-// ---------------------------------------------------------------- the Frost Hollow: the glacier hall
-// Her dais: a six-sided slab of blue ice with a frosted rim.
-export function drawGlacier(ctx, w) {
-  const d = w.dais; if (!d) return;
-  const hex = (r) => { ctx.beginPath(); for (let i = 0; i < 6; i++) { const a = i / 6 * TAU + Math.PI / 6; ctx.lineTo(d.x + Math.cos(a) * r, d.y + Math.sin(a) * r * 1.2); } ctx.closePath(); };
-  inked(ctx, () => hex(120), '#A9D8EE');
-  ctx.fillStyle = '#C9EAF8'; hex(96); ctx.fill();
-  ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.beginPath(); ctx.ellipse(d.x - 30, d.y - 40, 40, 16, -0.5, 0, TAU); ctx.fill();
-}
-// The blizzard: a white veil over the room and snow driving across it.
-export function drawBlizzard(ctx, w) {
-  const b = w.blizzard || 0, t = w.time;
-  ctx.fillStyle = `rgba(235,245,255,${0.2 * b})`; ctx.fillRect(0, 0, w.W, w.H);
-  ctx.strokeStyle = `rgba(255,255,255,${0.75 * b})`; ctx.lineWidth = 3; ctx.lineCap = 'round';
-  ctx.beginPath();
-  for (let i = 0; i < 90; i++) {
-    const sx = hash(i, 1) * (w.W + 400), sy = hash(i, 2) * w.H, sp = 380 + hash(i, 3) * 260;
-    const x = ((sx + t * sp) % (w.W + 400)) - 200, y = (sy + t * sp * 0.35) % w.H;
-    ctx.moveTo(x, y); ctx.lineTo(x - 22, y - 8);
-  }
-  ctx.stroke();
-}
-
+// (the Winter Queen's hall is drawn in js/boss-queen-fx.js: bosses3)
 // (Cinder is drawn in js/boss-cinder-fx.js: bosses3)
 
 // (the Spire's angel: js/boss-angel-fx.js: bosses3)
