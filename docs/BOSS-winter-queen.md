@@ -10,7 +10,8 @@ longer copies of her.
 
 Code: `js/boss-queen.js` (every number in `WQ`, `PHASE_AT`), her hall and moves `js/boss-queen-fx.js`, shared tools
 `js/boss-kit.js` and `js/boss-draw.js`. Art: art round 9's Winter Queen (`art/bosses/winter-queen.svg`); her mirrors
-are that art turned to frosted ice (`recolor.js`: colour drained to pale blue-white).
+are drawn in code: a six-sided slab of clear ice with her shape (a pale crowned head) caught in it. (A first try, her
+own art drained to white, read as a second queen in the game: she is pale herself.)
 
 ## Who she is
 A tall ice mage in a court of frozen pillars. She doesn't come to you: she keeps 300-420 from her mark, casts, and
@@ -26,7 +27,7 @@ until a hero comes within 460 or hurts her.
 | **Icicle Fan** | 1+ | **stand behind a pillar or spread out** (real shots: no shape on the floor) | five crystals form in a fan over her shoulders and grow, then fly: the Frost Mage's own big crystals, five at once |
 | **Frost Nova, and away** | 1+ | **get off her** | ice bursts out of the floor all round her: two rings of tall crystals, snow thrown up, snow left lying; she is gone in a swirl of snowflakes and comes out of another across the room |
 | **Ice Wall and the Mist** | 2-3 | **walk round the wall**: the party is cut in two and the side cut off from her fills with freezing mist | a wall of ice blocks rises across the room through the middle of the party; mist rolls in behind it |
-| **the Mirrors' Lattice** | 3+ | **keep off the lines; break a mirror to break its lines** | two ice mirrors of her stand in the room (white, frosted, still). Thin dashed lines run from her to one, to the other, and back; then they light: three beams of cold in a triangle across the room, crystals growing along them |
+| **the Mirrors' Lattice** | 3+ | **keep off the lines; break a mirror to break its lines** | two ice mirrors stand in the room (slabs of ice, her shape caught in each). Thin dashed lines run from her to one, to the other, and back; then they light: three beams of cold in a triangle across the room, crystals growing along them |
 | **the Blizzard: the Eye** | 4 | **close in on her** (and step back out when she novas) | the hall goes white, snow driving across it; only a circle round her is still and clear, snow turning round its edge |
 
 ## Phase 1: the Court of Ice (100% to 70%)

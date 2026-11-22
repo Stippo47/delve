@@ -549,8 +549,9 @@ The designer's verdicts are the v12-bosses answers in `docs/riffle-log/2026-11-2
   The kind's id and name are still `gildedSeraph` / "The Gilded Seraph": **open: rename it?** "Horns" was read as
   **trumpets**: four of them stand round it and sound; **open: did they mean horns on its head?** The four chains are as
   described: one from each corner, each at a hero; what a chain hits is dragged to its corner and shackled 0.9 s.
-- **The Winter Queen** is kept; her images are **ice mirrors** (her art drained to frosted white, still, casting nothing)
-  and the Lattice (beams between her and her mirrors) is what they are for.
+- **The Winter Queen** is kept; her images are **ice mirrors** (slabs of clear ice drawn in code, her shape caught in
+  each; still, casting nothing: her own art drained to white read as a second queen) and the Lattice (beams between
+  her and her mirrors) is what they are for.
 - **The Goblin Chieftain**: about two minutes (wins 116 s, was 218 s): blows a fifth to a quarter harder, health 440 from
   1000. The spear and the bomb barrage are gone; a thrown axe flies a ring.
 - **The Great Ooze**: no tentacles. It rolls and bounces, splits in two and slaps back together; drawn in the picked

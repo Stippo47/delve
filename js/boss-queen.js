@@ -4,15 +4,14 @@
 // split the party, mirror images, a blizzard), and every move is rebuilt so no two ask the same thing or look alike:
 // crystals that fly, a burst of ice round her, a wall and the mist behind it, beams of cold between her and her
 // mirrors, a storm with a calm eye. Her images are ice mirrors now: frosted copies that cast nothing of their own.
-// Art: art round 9's Winter Queen (art/bosses/winter-queen.svg); the images are that art turned to frosted ice.
+// Art: art round 9's Winter Queen (art/bosses/winter-queen.svg); her mirrors are drawn in code (slabs of ice).
 import { alive, hurt, puff, sparks, setAnim, addDanger, spawn, kill, fx, addStatus } from './sim.js';
 import { TAU, clamp, dist, angleTo, rand, rrange, chance } from './util.js';
 import { buildGrid, circleRect } from './path.js';
 import { hold, beginHold, due, again, stand, turnTo, openSpot, blink } from './elites.js';
 import { walkTo, courtFalls } from './enemies.js';
-import { variantUrl } from './recolor.js';
 import { heroesOf, H, steady, asleep, phaseGate, pickTarget, lead, logOf, notePhase, inside, stage, bfx, liveZone, keepZone, TEST_MOVE } from './boss-kit.js';
-import { drawGlacierFloor, drawGlacierAir } from './boss-queen-fx.js';
+import { drawGlacierFloor, drawGlacierAir, drawMirror } from './boss-queen-fx.js';
 
 export const WQ = {
   fan: { n: 5, spread: 0.2, speed: 520, dmg: 23, chill: 14, r: 11, life: 1.5, wind: 0.5, cd: [3.2, 4.2] },
@@ -129,7 +128,7 @@ function images(w, u, k, dt) {
     for (let j = 0; j < 10; j++) { const p = openSpot(w, w.W / 2, w.H / 2, 120, Math.min(w.W, w.H) * 0.46, u.r + 20); if (!p) continue; const m = Math.min(dist(p.x, p.y, u.x, u.y), ...mirrors(w, u).map((o) => dist(p.x, p.y, o.x, o.y))); if (m > bd) { bd = m; best = p; } }
     if (!best) continue;
     const m = spawn(w, 'queenImage', best.x, best.y, { mult: w.mult || 1, team: u.team }); m.imageOf = u; m.court = true; m.aggro = true; m.minion = true; m.calledBy = u;
-    m.maxHp = m.hp = Math.round(u.maxHp * WQ.image.hpK); m.facing = angleTo(m.x, m.y, u.x, u.y);
+    m.maxHp = m.hp = Math.round(u.maxHp * WQ.image.hpK); m.facing = angleTo(m.x, m.y, u.x, u.y); m.born = w.time;
     bfx(w, { type: 'snowBlink', x: m.x, y: m.y, max: 0.5 }); puff(w, m.x, m.y, ICE, 14, 120, 7, 0.5);
   }
 }
@@ -208,8 +207,8 @@ export const QUEEN = {
     winterQueen: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 57, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 5, hp: 900, speed: 50, role: 'ranged', range: 300,
       atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 180, coins: [70, 90], boss: true, arena: 'glacier', attackAnim: 'cast',
       res: { chill: 0, wet: 0.5, burn: 1.3, stagger: 0.6, poison: 0.3 }, brain, onDeath: death },
-    // an ice mirror of her: her shape in frosted ice (her art with its colour drained to pale blue), still; it shatters
-    queenImage: { team: 'enemy', name: 'Ice Mirror', art: variantUrl(ART, { hue: 0, sat: 0.22, light: 0.16, accent: { from: 30, range: 180, hue: 200, sat: 0.5, light: 0.12 } }), headR: 57, r: 40, vr: 31, turn: 3.6, accel: 200, face: 3.6, mass: 30, hp: 60, speed: 0, role: 'ranged', range: 300,
+    // an ice mirror: a slab of clear ice with her shape caught in it (drawn in code: nothing like her), still; it shatters
+    queenImage: { team: 'enemy', name: 'Ice Mirror', r: 40, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 30, hp: 60, speed: 0, role: 'ranged', range: 300, draw: drawMirror,
       atkCd: 999, temp: 0.2, commit: 1.2, xp: 0, coins: [0, 0], noElite: true, noCorpse: true, res: { chill: 0, burn: 1.3, charm: 0, fear: 0, confuse: 0, sleepy: 0 }, brain: imageBrain, onDeath: shatterImage },
   },
   arenas: { glacier },

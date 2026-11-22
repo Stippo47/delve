@@ -1,10 +1,10 @@
-// The Winter Queen's hall and moves, drawn (lane B, bosses3). She and her mirrors are sprites (art round 9); this is
+// The Winter Queen's hall and moves, drawn (lane B, bosses3). She is a sprite (art round 9); her mirrors and this are
 // what her magic looks like: crystals with the Frost Mage's own cut (pale blue, a white facet, the ink outline), snow
 // as the game draws it, and beams that are an inked core with a halo. Lingering things lie under the units.
 import { TAU } from './util.js';
 import { inked, inkLine } from './fx.js';
 import { snowflake } from './puddles.js';
-import { lin, glow, poly, up, upRot, BFX, easeOut, sm, k01, hash, rgbaOf } from './boss-draw.js';
+import { figure, flashing, lin, glow, poly, up, upRot, BFX, easeOut, sm, k01, hash, rgbaOf } from './boss-draw.js';
 
 const ICE = ['#4A9CC8', '#9FDDF6', '#DDF6FF', '#FFFFFF'];
 // a crystal standing up out of the floor (it leans up the screen): h tall, wd half-wide, a white facet down one side
@@ -21,6 +21,32 @@ function shard(ctx, x, y, a, L, wd) {
   ctx.save(); ctx.translate(x, y); ctx.rotate(a);
   inked(ctx, () => poly(ctx, [[L, 0], [L * 0.25, -wd], [-L * 0.6, -wd * 0.55], [-L * 0.75, 0], [-L * 0.6, wd * 0.55], [L * 0.25, wd]]), ICE[1]);
   ctx.fillStyle = ICE[2]; poly(ctx, [[L * 0.9, 0], [L * 0.25, -wd * 0.8], [-L * 0.55, -wd * 0.4], [-L * 0.55, 0]]); ctx.fill();
+  ctx.restore();
+}
+
+// An ice mirror: a tall six-sided slab of clear ice seen from above, facets catching the light, and her shape caught
+// in it (a pale crowned head), shimmering. Nothing like her: a thing to break.
+export function drawMirror(ctx, u, w) {
+  const T = w.time, r = u.vr, born = k01((T - (u.born || 0)) / 0.35), sh = 0.6 + 0.4 * Math.sin(T * 3 + u.id);
+  ctx.save(); ctx.translate(u.x, u.y); ctx.scale(born, born);
+  glow(ctx, 0, 0, r * 2.2, ICE[1], 0.22);
+  figure(ctx, {}, (F) => {
+    F.flash = flashing(u);
+    const hex = (rr, sq = 1) => { ctx.beginPath(); for (let i = 0; i < 6; i++) { const a = i / 6 * TAU + Math.PI / 6; ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr * sq); } ctx.closePath(); };
+    for (const [x, y, s] of [[-r * 0.95, r * 0.5, 0.42], [r * 0.95, r * 0.45, 0.36], [0, -r * 1.05, 0.3]]) F.at(x, y, 0.3 * x / r, () => F.shape(() => hex(r * s), () => lin(ctx, -r * s, -r * s, r * s, r * s, ICE[2], ICE[0])));
+    F.shape(() => hex(r * 1.05, 1.12), () => lin(ctx, -r, -r, r, r, '#E6F8FF', ICE[1], '#5FB0DC'));
+    F.detail(() => {
+      ctx.save(); hex(r * 1.05, 1.12); ctx.clip();
+      ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 2; ctx.beginPath(); for (let i = 0; i < 6; i++) { const a = i / 6 * TAU + Math.PI / 6; ctx.moveTo(Math.cos(a) * r * 0.62, Math.sin(a) * r * 0.7); ctx.lineTo(Math.cos(a) * r * 1.05, Math.sin(a) * r * 1.18); } ctx.stroke();
+      ctx.fillStyle = 'rgba(214,240,252,0.55)'; hex(r * 0.62, 1.12); ctx.fill();
+      // her shape in the ice: a crowned head, pale, coming and going
+      ctx.globalAlpha = 0.45 + 0.3 * sh; ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath(); ctx.arc(0, r * 0.12, r * 0.3, 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(-r * 0.3, -r * 0.08); ctx.lineTo(-r * 0.34, -r * 0.5); ctx.lineTo(-r * 0.14, -r * 0.26); ctx.lineTo(0, -r * 0.58); ctx.lineTo(r * 0.14, -r * 0.26); ctx.lineTo(r * 0.34, -r * 0.5); ctx.lineTo(r * 0.3, -r * 0.08); ctx.closePath(); ctx.fill();
+      ctx.globalAlpha = 1; ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.beginPath(); ctx.ellipse(-r * 0.5, -r * 0.55, r * 0.28, r * 0.09, -0.6, 0, TAU); ctx.fill();
+      ctx.restore();
+    });
+  });
   ctx.restore();
 }
 
