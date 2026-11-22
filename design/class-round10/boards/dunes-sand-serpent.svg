@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- THE SAND SERPENT (round 10): its head and six body segments laid as the game lays the chain (gap 26, tapering), for the board only. -->
+<g transform="translate(92.04 3.39) rotate(-12.7) scale(0.2364) translate(-100 -100)">
+
+<defs>
+<filter id="k0_outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="k0_gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="k0_gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="k0_gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="k0_gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="k0_s1" d="M 100 25 H 100 A 55 55 0 0 1 155 80 V 120 A 55 55 0 0 1 100 175 H 100 A 55 55 0 0 1 45 120 V 80 A 55 55 0 0 1 100 25 Z"/>
+<linearGradient id="k0_g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D9B574"/><stop offset="1" stop-color="#CC9737"/></linearGradient>
+<linearGradient id="k0_g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6E501A" stop-opacity="0"/><stop offset="1" stop-color="#6E501A" stop-opacity="0.42"/></linearGradient>
+<clipPath id="k0_c1"><use href="#k0_s1"/></clipPath>
+</defs>
+<g id="k0_sprite" filter="url(#k0_outline)">
+<g id="k0_body">
+<use href="#k0_s1" fill="url(#k0_g1)"/><use href="#k0_s1" fill="url(#k0_g2)"/><g clip-path="url(#k0_c1)"><path d="M 100 -3.5 L 124 29 L 100 61.5 L 76 29 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 8.5 L 112 29 L 100 49.5 L 88 29 Z" fill="#A8803E"/><path d="M 100 67.5 L 124 100 L 100 132.5 L 76 100 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 79.5 L 112 100 L 100 120.5 L 88 100 Z" fill="#A8803E"/><path d="M 100 138.5 L 124 171 L 100 203.5 L 76 171 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 150.5 L 112 171 L 100 191.5 L 88 171 Z" fill="#A8803E"/><rect x="40" y="0" width="14" height="200" fill="#F0DCA8" opacity="0.4"/><rect x="146" y="0" width="14" height="200" fill="#A8803E" opacity="0.45"/></g>
+</g>
+</g>
+</g>
+<g transform="translate(97.76 28.75) rotate(-33.7) scale(0.2618) translate(-100 -100)">
+
+<defs>
+<filter id="k1_outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="k1_gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="k1_gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="k1_gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="k1_gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="k1_s1" d="M 100 25 H 100 A 55 55 0 0 1 155 80 V 120 A 55 55 0 0 1 100 175 H 100 A 55 55 0 0 1 45 120 V 80 A 55 55 0 0 1 100 25 Z"/>
+<linearGradient id="k1_g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D9B574"/><stop offset="1" stop-color="#CC9737"/></linearGradient>
+<linearGradient id="k1_g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6E501A" stop-opacity="0"/><stop offset="1" stop-color="#6E501A" stop-opacity="0.42"/></linearGradient>
+<clipPath id="k1_c1"><use href="#k1_s1"/></clipPath>
+</defs>
+<g id="k1_sprite" filter="url(#k1_outline)">
+<g id="k1_body">
+<use href="#k1_s1" fill="url(#k1_g1)"/><use href="#k1_s1" fill="url(#k1_g2)"/><g clip-path="url(#k1_c1)"><path d="M 100 -3.5 L 124 29 L 100 61.5 L 76 29 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 8.5 L 112 29 L 100 49.5 L 88 29 Z" fill="#A8803E"/><path d="M 100 67.5 L 124 100 L 100 132.5 L 76 100 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 79.5 L 112 100 L 100 120.5 L 88 100 Z" fill="#A8803E"/><path d="M 100 138.5 L 124 171 L 100 203.5 L 76 171 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 150.5 L 112 171 L 100 191.5 L 88 171 Z" fill="#A8803E"/><rect x="40" y="0" width="14" height="200" fill="#F0DCA8" opacity="0.4"/><rect x="146" y="0" width="14" height="200" fill="#A8803E" opacity="0.45"/></g>
+</g>
+</g>
+</g>
+<g transform="translate(112.17 50.39) rotate(-20.8) scale(0.2873) translate(-100 -100)">
+
+<defs>
+<filter id="k2_outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="k2_gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="k2_gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="k2_gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="k2_gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="k2_s1" d="M 100 25 H 100 A 55 55 0 0 1 155 80 V 120 A 55 55 0 0 1 100 175 H 100 A 55 55 0 0 1 45 120 V 80 A 55 55 0 0 1 100 25 Z"/>
+<linearGradient id="k2_g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D9B574"/><stop offset="1" stop-color="#CC9737"/></linearGradient>
+<linearGradient id="k2_g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6E501A" stop-opacity="0"/><stop offset="1" stop-color="#6E501A" stop-opacity="0.42"/></linearGradient>
+<clipPath id="k2_c1"><use href="#k2_s1"/></clipPath>
+</defs>
+<g id="k2_sprite" filter="url(#k2_outline)">
+<g id="k2_body">
+<use href="#k2_s1" fill="url(#k2_g1)"/><use href="#k2_s1" fill="url(#k2_g2)"/><g clip-path="url(#k2_c1)"><path d="M 100 -3.5 L 124 29 L 100 61.5 L 76 29 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 8.5 L 112 29 L 100 49.5 L 88 29 Z" fill="#A8803E"/><path d="M 100 67.5 L 124 100 L 100 132.5 L 76 100 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 79.5 L 112 100 L 100 120.5 L 88 100 Z" fill="#A8803E"/><path d="M 100 138.5 L 124 171 L 100 203.5 L 76 171 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 150.5 L 112 171 L 100 191.5 L 88 171 Z" fill="#A8803E"/><rect x="40" y="0" width="14" height="200" fill="#F0DCA8" opacity="0.4"/><rect x="146" y="0" width="14" height="200" fill="#A8803E" opacity="0.45"/></g>
+</g>
+</g>
+</g>
+<g transform="translate(121.41 74.70) rotate(13.0) scale(0.3127) translate(-100 -100)">
+
+<defs>
+<filter id="k3_outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="k3_gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="k3_gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="k3_gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="k3_gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="k3_s1" d="M 100 25 H 100 A 55 55 0 0 1 155 80 V 120 A 55 55 0 0 1 100 175 H 100 A 55 55 0 0 1 45 120 V 80 A 55 55 0 0 1 100 25 Z"/>
+<linearGradient id="k3_g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D9B574"/><stop offset="1" stop-color="#CC9737"/></linearGradient>
+<linearGradient id="k3_g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6E501A" stop-opacity="0"/><stop offset="1" stop-color="#6E501A" stop-opacity="0.42"/></linearGradient>
+<clipPath id="k3_c1"><use href="#k3_s1"/></clipPath>
+</defs>
+<g id="k3_sprite" filter="url(#k3_outline)">
+<g id="k3_body">
+<use href="#k3_s1" fill="url(#k3_g1)"/><use href="#k3_s1" fill="url(#k3_g2)"/><g clip-path="url(#k3_c1)"><path d="M 100 -3.5 L 124 29 L 100 61.5 L 76 29 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 8.5 L 112 29 L 100 49.5 L 88 29 Z" fill="#A8803E"/><path d="M 100 67.5 L 124 100 L 100 132.5 L 76 100 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 79.5 L 112 100 L 100 120.5 L 88 100 Z" fill="#A8803E"/><path d="M 100 138.5 L 124 171 L 100 203.5 L 76 171 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 150.5 L 112 171 L 100 191.5 L 88 171 Z" fill="#A8803E"/><rect x="40" y="0" width="14" height="200" fill="#F0DCA8" opacity="0.4"/><rect x="146" y="0" width="14" height="200" fill="#A8803E" opacity="0.45"/></g>
+</g>
+</g>
+</g>
+<g transform="translate(115.57 100.03) rotate(33.7) scale(0.3382) translate(-100 -100)">
+
+<defs>
+<filter id="k4_outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="k4_gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="k4_gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="k4_gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="k4_gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="k4_s1" d="M 100 25 H 100 A 55 55 0 0 1 155 80 V 120 A 55 55 0 0 1 100 175 H 100 A 55 55 0 0 1 45 120 V 80 A 55 55 0 0 1 100 25 Z"/>
+<linearGradient id="k4_g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D9B574"/><stop offset="1" stop-color="#CC9737"/></linearGradient>
+<linearGradient id="k4_g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6E501A" stop-opacity="0"/><stop offset="1" stop-color="#6E501A" stop-opacity="0.42"/></linearGradient>
+<clipPath id="k4_c1"><use href="#k4_s1"/></clipPath>
+</defs>
+<g id="k4_sprite" filter="url(#k4_outline)">
+<g id="k4_body">
+<use href="#k4_s1" fill="url(#k4_g1)"/><use href="#k4_s1" fill="url(#k4_g2)"/><g clip-path="url(#k4_c1)"><path d="M 100 -3.5 L 124 29 L 100 61.5 L 76 29 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 8.5 L 112 29 L 100 49.5 L 88 29 Z" fill="#A8803E"/><path d="M 100 67.5 L 124 100 L 100 132.5 L 76 100 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 79.5 L 112 100 L 100 120.5 L 88 100 Z" fill="#A8803E"/><path d="M 100 138.5 L 124 171 L 100 203.5 L 76 171 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 150.5 L 112 171 L 100 191.5 L 88 171 Z" fill="#A8803E"/><rect x="40" y="0" width="14" height="200" fill="#F0DCA8" opacity="0.4"/><rect x="146" y="0" width="14" height="200" fill="#A8803E" opacity="0.45"/></g>
+</g>
+</g>
+</g>
+<g transform="translate(101.14 121.66) rotate(20.6) scale(0.3636) translate(-100 -100)">
+
+<defs>
+<filter id="k5_outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="k5_gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="k5_gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="k5_gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="k5_gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="k5_s1" d="M 100 25 H 100 A 55 55 0 0 1 155 80 V 120 A 55 55 0 0 1 100 175 H 100 A 55 55 0 0 1 45 120 V 80 A 55 55 0 0 1 100 25 Z"/>
+<linearGradient id="k5_g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D9B574"/><stop offset="1" stop-color="#CC9737"/></linearGradient>
+<linearGradient id="k5_g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6E501A" stop-opacity="0"/><stop offset="1" stop-color="#6E501A" stop-opacity="0.42"/></linearGradient>
+<clipPath id="k5_c1"><use href="#k5_s1"/></clipPath>
+</defs>
+<g id="k5_sprite" filter="url(#k5_outline)">
+<g id="k5_body">
+<use href="#k5_s1" fill="url(#k5_g1)"/><use href="#k5_s1" fill="url(#k5_g2)"/><g clip-path="url(#k5_c1)"><path d="M 100 -3.5 L 124 29 L 100 61.5 L 76 29 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 8.5 L 112 29 L 100 49.5 L 88 29 Z" fill="#A8803E"/><path d="M 100 67.5 L 124 100 L 100 132.5 L 76 100 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 79.5 L 112 100 L 100 120.5 L 88 100 Z" fill="#A8803E"/><path d="M 100 138.5 L 124 171 L 100 203.5 L 76 171 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 150.5 L 112 171 L 100 191.5 L 88 171 Z" fill="#A8803E"/><rect x="40" y="0" width="14" height="200" fill="#F0DCA8" opacity="0.4"/><rect x="146" y="0" width="14" height="200" fill="#A8803E" opacity="0.45"/></g>
+</g>
+</g>
+</g>
+<g transform="translate(92.00 146.00) scale(0.5250) translate(-100 -100)">
+
+<defs>
+<filter id="k6_outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="k6_gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="k6_gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="k6_gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="k6_gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="k6_s1" d="M 100 7 H 100 A 40 40 0 0 1 140 47 V 77 A 40 40 0 0 1 100 117 H 100 A 40 40 0 0 1 60 77 V 47 A 40 40 0 0 1 100 7 Z"/>
+<linearGradient id="k6_g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D9B574"/><stop offset="1" stop-color="#CC9737"/></linearGradient>
+<linearGradient id="k6_g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6E501A" stop-opacity="0"/><stop offset="1" stop-color="#6E501A" stop-opacity="0.42"/></linearGradient>
+<clipPath id="k6_c1"><use href="#k6_s1"/></clipPath>
+<path id="k6_s2" d="M 100 190 C 105.4 190 112.6 188.2 118 184 C 123.4 179.8 131.2 169.8 136 162 C 140.8 154.2 147.9 140.4 150 132 C 152.1 123.6 152.1 112.6 150 106 C 147.9 99.4 140.8 91.6 136 88 C 131.2 84.4 123.4 83.2 118 82 C 112.6 80.8 105.4 80 100 80 C 94.6 80 87.4 80.8 82 82 C 76.6 83.2 68.8 84.4 64 88 C 59.2 91.6 52.1 99.4 50 106 C 47.9 112.6 47.9 123.6 50 132 C 52.1 140.4 59.2 154.2 64 162 C 68.8 169.8 76.6 179.8 82 184 C 87.4 188.2 94.6 190 100 190 Z"/>
+<clipPath id="k6_u2"><use href="#k6_s1"/></clipPath>
+<clipPath id="k6_c2"><use href="#k6_s2"/></clipPath>
+<path id="k6_s3" d="M 59 128 A 11 15 0 1 0 81 128 A 11 15 0 1 0 59 128 Z"/>
+<clipPath id="k6_u3"><use href="#k6_s1"/><use href="#k6_s2"/></clipPath>
+<linearGradient id="k6_g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#DDBD83"/><stop offset="1" stop-color="#D09E44"/></linearGradient>
+<linearGradient id="k6_g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#75551B" stop-opacity="0"/><stop offset="1" stop-color="#75551B" stop-opacity="0.42"/></linearGradient>
+<path id="k6_s4" d="M 119 128 A 11 15 0 1 0 141 128 A 11 15 0 1 0 119 128 Z"/>
+<clipPath id="k6_u4"><use href="#k6_s1"/><use href="#k6_s2"/><use href="#k6_s3" transform="rotate(-22 70 128)"/></clipPath>
+</defs>
+<g id="k6_sprite" filter="url(#k6_outline)">
+<g id="k6_front" data-pivot="100 180">
+<path d="M 100 184 L 100 198 M 100 198 L 93 207 M 100 198 L 107 207" fill="none" stroke="#B8303A" stroke-width="4.5" stroke-linecap="round"/>
+</g>
+<g id="k6_body">
+<use href="#k6_s1" fill="url(#k6_g1)"/><use href="#k6_s1" fill="url(#k6_g2)"/><g clip-path="url(#k6_c1)"><path d="M 100 17.5 L 124 50 L 100 82.5 L 76 50 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 29.5 L 112 50 L 100 70.5 L 88 50 Z" fill="#A8803E"/><path d="M 100 -32 L 124 0.5 L 100 33 L 76 0.5 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 100 -20 L 112 0.5 L 100 21 L 88 0.5 Z" fill="#A8803E"/><rect x="56" y="0" width="12" height="130" fill="#F0DCA8" opacity="0.35"/><rect x="132" y="0" width="12" height="130" fill="#A8803E" opacity="0.4"/></g>
+<g clip-path="url(#k6_u2)"><use href="#k6_s2" transform="translate(0 5) " fill="#2B2230" opacity="0.3"/></g><use href="#k6_s2" fill="url(#k6_g1)"/><use href="#k6_s2" fill="url(#k6_g2)"/><g clip-path="url(#k6_c2)"><path d="M 44 150 C 70 186 130 186 156 150 L 156 200 L 44 200 Z" fill="#F0DCA8"/><path d="M 100 92 L 116 112 L 100 140 L 84 112 Z" fill="#6E4A2A" stroke="#F0DCA8" stroke-width="4" stroke-linejoin="round"/><path d="M 64 96 A 16 8 0 1 0 96 96 A 16 8 0 1 0 64 96 Z" fill="#FFFFF4" opacity="0.18"/><path d="M 90.4 176 A 2.6 3.4 0 1 0 95.6 176 A 2.6 3.4 0 1 0 90.4 176 Z M 104.4 176 A 2.6 3.4 0 1 0 109.6 176 A 2.6 3.4 0 1 0 104.4 176 Z" fill="#6E4A2A"/></g>
+<g clip-path="url(#k6_u3)"><use href="#k6_s3" transform="translate(0 4) rotate(-22 70 128)" fill="#2B2230" opacity="0.3"/></g><use href="#k6_s3" transform="rotate(-22 70 128)" fill="url(#k6_g3)"/><use href="#k6_s3" transform="rotate(-22 70 128)" fill="url(#k6_g4)"/>
+<g clip-path="url(#k6_u4)"><use href="#k6_s4" transform="translate(0 4) rotate(22 130 128)" fill="#2B2230" opacity="0.3"/></g><use href="#k6_s4" transform="rotate(22 130 128)" fill="url(#k6_g3)"/><use href="#k6_s4" transform="rotate(22 130 128)" fill="url(#k6_g4)"/>
+</g>
+</g>
+</g>
+</svg>

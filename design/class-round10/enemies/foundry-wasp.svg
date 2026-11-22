@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- WASP (round 10: "1 maybe 2 body segments. Not 3"): a mechanical wasp seen from above, in copper: two parts: a small round head with two feelers, and one long abdomen tapering to a long iron stinger, striped with three bands; one wing of thin pale plate a side (arm-l, arm-r: they flap). The bronze and steel ones are this art turned by the game. No eyes. Parts: #arm-l / #arm-r (wings), #body. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="s1" d="M 0 -4 C 3.8 -3.8 11.1 8.2 13.6 16 C 16.2 23.8 17.8 39 17 48 C 16.2 57 11.1 71.2 8.5 76 C 5.9 80.8 2.7 80.6 0 80 C -2.7 79.4 -7.1 77.4 -9.4 72 C -11.6 66.6 -14.9 52.6 -15.3 44 C -15.7 35.4 -14.2 21.6 -11.9 14.4 C -9.6 7.2 -3.8 -4.2 0 -4 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F5F7FA"/><stop offset="1" stop-color="#B3C3D6"/></linearGradient>
+<clipPath id="c1"><use href="#s1" transform="translate(88 112) rotate(128)"/></clipPath>
+<path id="s2" d="M 0 -4 C 3.8 -3.8 11.1 8.2 13.6 16 C 16.2 23.8 17.8 39 17 48 C 16.2 57 11.1 71.2 8.5 76 C 5.9 80.8 2.7 80.6 0 80 C -2.7 79.4 -7.1 77.4 -9.4 72 C -11.6 66.6 -14.9 52.6 -15.3 44 C -15.7 35.4 -14.2 21.6 -11.9 14.4 C -9.6 7.2 -3.8 -4.2 0 -4 Z"/>
+<clipPath id="c2"><use href="#s2" transform="translate(112 112) rotate(-128)"/></clipPath>
+<path id="s3" d="M 95 34 L 105 34 L 100 0 Z"/>
+<linearGradient id="g2" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#515661"/><stop offset="1" stop-color="#3F434C"/></linearGradient>
+<linearGradient id="g3" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#212328" stop-opacity="0"/><stop offset="1" stop-color="#212328" stop-opacity="0.42"/></linearGradient>
+<path id="s4" d="M 100 26 C 104.8 26 112.4 36.8 116 44 C 119.6 51.2 123.4 65 124 74 C 124.6 83 123.6 96.8 120 104 C 116.4 111.2 106 122 100 122 C 94 122 83.6 111.2 80 104 C 76.4 96.8 75.4 83 76 74 C 76.6 65 80.4 51.2 84 44 C 87.6 36.8 95.2 26 100 26 Z"/>
+<linearGradient id="g4" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#CE824E"/><stop offset="1" stop-color="#B1632D"/></linearGradient>
+<linearGradient id="g5" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5E3316" stop-opacity="0"/><stop offset="1" stop-color="#5E3316" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c4"><use href="#s4"/></clipPath>
+<path id="s5" d="M 87 156.9 C 85.4 158.6 83.3 169.2 81.3 172.2 C 79.3 175.2 72.7 177.9 72 179.5 C 71.3 181.1 74 185 76 184.5 C 78 184 84.4 179.2 86.7 175.8 C 88.9 172.4 93 161.6 93 159.1 C 93 156.6 88.6 155.1 87 156.9 Z"/>
+<path id="s6" d="M 107 159.1 C 107 161.6 111.1 172.4 113.3 175.8 C 115.6 179.2 122 184 124 184.5 C 126 185 128.7 181.1 128 179.5 C 127.3 177.9 120.7 175.2 118.7 172.2 C 116.7 169.2 114.6 158.6 113 156.9 C 111.4 155.1 107 156.6 107 159.1 Z"/>
+<path id="s7" d="M 76 140 A 24 24 0 1 0 124 140 A 24 24 0 1 0 76 140 Z"/>
+<clipPath id="u7"><use href="#s1" transform="translate(88 112) rotate(128)"/><use href="#s2" transform="translate(112 112) rotate(-128)"/><use href="#s3"/><use href="#s4"/><use href="#s5"/><use href="#s6"/></clipPath>
+<linearGradient id="g6" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#98512A"/><stop offset="1" stop-color="#793F1F"/></linearGradient>
+<linearGradient id="g7" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#40210F" stop-opacity="0"/><stop offset="1" stop-color="#40210F" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c7"><use href="#s7"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-l" data-pivot="88 112"><!-- wing -->
+<use href="#s1" transform="translate(88 112) rotate(128)" fill="url(#g1)"/><g clip-path="url(#c1)"><g transform="translate(88 112) rotate(128)"><path d="M 0 8 L 0 68.8" stroke="#A8B2BE" stroke-width="3" stroke-linecap="round" opacity="0.8"/></g></g>
+</g>
+<g id="arm-r" data-pivot="112 112"><!-- wing -->
+<use href="#s2" transform="translate(112 112) rotate(-128)" fill="url(#g1)"/><g clip-path="url(#c2)"><g transform="translate(112 112) rotate(-128)"><path d="M 0 8 L 0 68.8" stroke="#A8B2BE" stroke-width="3" stroke-linecap="round" opacity="0.8"/></g></g>
+</g>
+<g id="body">
+<use href="#s3" fill="url(#g2)"/><use href="#s3" fill="url(#g3)"/>
+<use href="#s4" fill="url(#g4)"/><use href="#s4" fill="url(#g5)"/><g clip-path="url(#c4)"><path d="M 70 54 Q 100 47 130 54 M 70 76 Q 100 69 130 76 M 70 98 Q 100 91 130 98" fill="none" stroke="#3A3434" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity="1"/><path d="M 83 60 A 7 16 0 1 0 97 60 A 7 16 0 1 0 83 60 Z" fill="#FFFFFF" opacity="0.28"/></g>
+<use href="#s5" fill="url(#g2)"/><use href="#s5" fill="url(#g3)"/>
+<use href="#s6" fill="url(#g2)"/><use href="#s6" fill="url(#g3)"/>
+<g clip-path="url(#u7)"><use href="#s7" transform="translate(0 4) " fill="#2B2230" opacity="0.3"/></g><use href="#s7" fill="url(#g6)"/><use href="#s7" fill="url(#g7)"/><g clip-path="url(#c7)"><path d="M 84 132 A 8 5 0 1 0 100 132 A 8 5 0 1 0 84 132 Z" fill="#FFFFFF" opacity="0.25"/></g>
+</g>
+</g>
+</svg>
