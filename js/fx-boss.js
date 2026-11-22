@@ -210,40 +210,7 @@ export function drawHands(ctx, w) {
   }
 }
 
-// ---------------------------------------------------------------- the Sunken Dunes: the Sand Wurm
-// The head: a round ringed maw seen from above, a crown of inward teeth, no eyes.
-export function drawWurmHead(ctx, u, w) {
-  const r = u.vr, f = flash(u);
-  ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(u.facing);
-  if (u.invulnT > 0) ctx.globalAlpha = 0.8;
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, r * 1.15, r, 0, 0, TAU); }, f ? '#FFFFFF' : '#B58B5A');
-  ctx.fillStyle = f ? '#FFFFFF' : '#C9A06A'; ctx.beginPath(); ctx.ellipse(-r * 0.15, 0, r * 0.85, r * 0.8, 0, 0, TAU); ctx.fill();
-  ctx.fillStyle = '#3A2218'; ctx.beginPath(); ctx.ellipse(r * 0.35, 0, r * 0.55, r * 0.5, 0, 0, TAU); ctx.fill();
-  ctx.fillStyle = '#EDE4CD'; for (let i = 0; i < 9; i++) { const a = i / 9 * TAU, x = r * 0.35 + Math.cos(a) * r * 0.5, y = Math.sin(a) * r * 0.46; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(r * 0.35 + Math.cos(a) * r * 0.25 + Math.cos(a + 1.6) * 4, Math.sin(a) * r * 0.23); ctx.lineTo(r * 0.35 + Math.cos(a + 0.35) * r * 0.5, Math.sin(a + 0.35) * r * 0.46); ctx.closePath(); ctx.fill(); }
-  ctx.restore();
-}
-// A segment: a ringed, sand-coloured plate; the last one ends in a blunt tail.
-export function drawWurmSegment(ctx, u, w) {
-  const r = u.vr, f = flash(u);
-  ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(u.facing);
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(u.last ? -r * 0.3 : 0, 0, r * (u.last ? 1.4 : 1.05), r, 0, 0, TAU); }, f ? '#FFFFFF' : '#A67C4E');
-  ctx.fillStyle = f ? '#FFFFFF' : '#BF955F'; ctx.beginPath(); ctx.ellipse(0, -r * 0.1, r * 0.8, r * 0.72, 0, 0, TAU); ctx.fill();
-  ctx.strokeStyle = 'rgba(43,34,48,0.35)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-r * 0.2, -r * 0.8); ctx.quadraticCurveTo(-r * 0.45, 0, -r * 0.2, r * 0.8); ctx.stroke();
-  ctx.restore();
-}
-// The dunes: ripples in the sand; the dug trail and the running mound; the shaking ground where it will come up; the
-// sinkhole's swirl.
-export function drawDunes(ctx, w) {
-  const dt = w._dt || 0.016;
-  ctx.strokeStyle = 'rgba(120,84,40,0.18)'; ctx.lineWidth = 4;
-  for (let i = 0; i < 9; i++) { const y = (i + 0.5) / 9 * w.H; ctx.beginPath(); for (let x = 0; x <= w.W; x += 40) ctx.lineTo(x, y + Math.sin(x * 0.012 + i) * 14); ctx.stroke(); }
-  for (const d of w.digs || []) { d.t += dt; const a = clamp(1 - d.t / d.max, 0, 1); ctx.fillStyle = `rgba(150,110,62,${0.45 * a})`; ctx.beginPath(); ctx.arc(d.x, d.y, 18, 0, TAU); ctx.fill(); }
-  if (w.digs) w.digs = w.digs.filter((d) => d.t < d.max);
-  if (w.mound) inked(ctx, () => blob(ctx, w.mound.x, w.mound.y, 30, 6, w.time * 6), '#C9A86A');
-  if (w.sink) { const s = w.sink; for (let i = 0; i < 5; i++) { const rr = s.r * (1 - ((s.t * 0.4 + i / 5) % 1)); ctx.strokeStyle = `rgba(110,76,36,${0.5 * rr / s.r})`; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(s.x, s.y, rr, s.t * 2 + i, s.t * 2 + i + 4.2); ctx.stroke(); }
-    ctx.fillStyle = 'rgba(70,46,24,0.6)'; ctx.beginPath(); ctx.arc(s.x, s.y, 40, 0, TAU); ctx.fill(); }
-}
-
+// (the Sand Wurm is drawn in js/boss-wurm-fx.js: bosses3)
 // (the Great Engine is drawn in js/boss-engine-fx.js: bosses3)
 
 // A thrown spear in flight (out and back), and the chief's cleaver-spin trail.

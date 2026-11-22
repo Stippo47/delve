@@ -20,7 +20,9 @@ export function figure(ctx, o, body) {
       if (F.pass === 0) { ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineWidth = F.ol * 2; ctx.lineJoin = 'round'; path(); ctx.fill(); ctx.stroke(); return; }
       if (F.pass === 2) { ctx.fillStyle = F.wash; path(); ctx.fill(); return; }
       if (!(so && so.seam === false)) { ctx.strokeStyle = SEAM; ctx.lineWidth = 2.6; ctx.lineJoin = 'round'; path(); ctx.stroke(); }
-      ctx.fillStyle = F.flash || (so && so.flash) ? '#FFFFFF' : typeof fill === 'function' ? fill() : fill; path(); ctx.fill();
+      ctx.fillStyle = typeof fill === 'function' ? fill() : fill; path(); ctx.fill();
+      // struck: a white wash over the shape for a frame (a big body gone solid white every blow was too much)
+      if (F.flash || (so && so.flash)) { ctx.save(); ctx.globalAlpha *= 0.6; ctx.fillStyle = '#FFFFFF'; path(); ctx.fill(); ctx.restore(); }
     },
     // a stroked line as a solid thing (a rod, a chain link's bar)
     line(path, color, width, cap = 'round') {
@@ -28,10 +30,10 @@ export function figure(ctx, o, body) {
       if (F.pass === 0) { ctx.strokeStyle = INK; ctx.lineWidth = width + F.ol * 2; path(); ctx.stroke(); return; }
       if (F.pass === 2) { ctx.strokeStyle = F.wash; ctx.lineWidth = width; path(); ctx.stroke(); return; }
       ctx.strokeStyle = SEAM; ctx.lineWidth = width + 2.4; path(); ctx.stroke();
-      ctx.strokeStyle = F.flash ? '#FFFFFF' : typeof color === 'function' ? color() : color; ctx.lineWidth = width; path(); ctx.stroke();
+      ctx.strokeStyle = typeof color === 'function' ? color() : color; ctx.lineWidth = width; path(); ctx.stroke();
     },
-    // paint that sits on the shapes (highlights, rivets, glows): only in the paint pass, and not while it flashes white
-    detail(fn) { if (F.pass === 1 && !F.flash) fn(); },
+    // paint that sits on the shapes (highlights, rivets, glows): only in the paint pass
+    detail(fn) { if (F.pass === 1) fn(); },
     // in a frame of its own: at (x, y), turned by a, scaled by s
     at(x, y, a, fn, s) { ctx.save(); ctx.translate(x, y); if (a) ctx.rotate(a); if (s && s !== 1) ctx.scale(s, s); fn(); ctx.restore(); },
   };

@@ -1,69 +1,85 @@
 # Boss: the Sand Wurm (the Sunken Dunes, floor 3)
 
-The Sunken Dunes' boss. The designer (round 9, the Sand wurm card): "Should probably be a boss." From the roster:
-"Burrows, then erupts under a hero: the ground shakes first." From the deck note: "Snake enemies/ chains. Follow the
-leader segments, each with its own hit box. ... Burrowing enemies (leave being trail of dug up dirt)." Built like the
-Bone King (`docs/BOSS-bone-king.md`).
+Round 13, rebuilt from scratch. The designer on round 12's wurm: "Just no. Bad not even going to comment." From the
+roster they approved in round 9: "Burrows, then erupts under a hero: the ground shakes first"; from their deck note:
+"Follow the leader segments, each with its own hit box. ... Burrowing enemies (leave being trail of dug up dirt)."
 
-**Not wired yet:** the Dunes theme is lane R's (`roster3`). Until it names `sandWurm` as its boss, the wurm runs through
-`?bossroom&boss=sandWurm` (any theme) and `lab.html?m=boss&boss=sandWurm`. Battle mode only lists it once a theme does.
+What was wrong before, as this lane reads it: the wurm crawled about on top of the sand like a snake, its burrow was a
+blob sliding across the floor, and when it came up it simply appeared. So this one **lives under the sand**, and
+everything it does sells that.
 
-Code: `js/boss-wurm.js` (numbers in `SW`, `PHASE_AT`), shared tools `js/boss-kit.js`, looks `js/fx-boss.js`
-(`drawWurmHead`, `drawWurmSegment`, `drawDunes`). Art: PLACEHOLDER, drawn in code.
+Code: `js/boss-wurm.js` (every number in `SW`, `PHASE_AT`), its looks `js/boss-wurm-fx.js`, shared tools
+`js/boss-kit.js` and `js/boss-draw.js`. Art: drawn in code, one figure with one outline, in the sand serpent's colours.
 
 ## Who it is
-A great sand wurm: a round toothed maw (no eyes) and **eight ringed segments** that follow the head's path, each its
-own hit box (a third of every blow on a segment gets through to it; the head takes it all). On the surface it hunts its
-mark; then it dives, and while it's under the sand it can't be hurt and its body is gone, only a **mound of churned
-sand** running across the room towards someone, leaving a trail of dug-up sand behind it.
+A great wurm: a head with two bone mandibles that open on a red maw ringed with teeth, and **eleven plated segments**
+that taper to a tail spike, thorned along their sides. The head is the boss; a blow on a segment passes half of itself
+on. Only what is out of the sand can be seen or hit.
+
+## How the burrow is shown
+- **The mound**: under the sand it is a swelling that runs across the room, slabs of crust tipping off its front, grit
+  jumping, and it leaves a **furrow** of heaped sand behind that slumps back over about 6 s.
+- **The heave**: where it will come up, the ground swells and its crust lifts in slabs, more and higher, for the whole
+  tell (the circle on the floor fills as usual).
+- **The breach**: the crust is thrown back, spouts of sand stand up out of the hole, clods are flung wide; the wurm
+  comes out of the hole and **arcs over** (its body rises up the screen and grows as it comes at you, its shadow on the
+  floor under it), then **dives into a second hole**, its segments pouring out of the first and into the second along
+  the same path. The holes are dark pits ringed with heaped sand; they close after the tail.
 
 ## The arena: the Sunken Court
-Open sand rippled with dunes, two broken sandstone columns. It lies coiled at the far end until a hero comes within 520.
+Open rippled sand, two broken sandstone columns (they stop its lunge). It lies under the sand at the far end (a slow
+mound) and comes for the party as soon as it walks in.
+
+## The moves: what each asks, and what it looks like
+| move | phase | asks the party to | looks like |
+|---|---|---|---|
+| **Breach** | 1+ | **get off the lifting ground**; then **hit the body as it pours past** | the heave, the fountain, the wurm arcing from one hole into another |
+| **Lunge** (reared up) | 1+ | **sidestep a line**; then **hit the head while it is stuck** in the sand | the reared neck draws back, jaws opening, and strikes out; the head buries itself and shakes |
+| **Inhale** (reared up) | 1+ | **run from the maw against the pull** | the mandibles gape, streaks of sand run to the maw from all round the room and the heroes slide with them; then the jaws snap shut |
+| **Sinking sand** | 2+ | **mind where you stand**: its holes stay as quicksand | the Dunes' own quicksand where each hole was, for 10 s |
+| **the Brood** | 2+ | **kill the adds** | scarabs crawl out of each hole it leaves |
+| **the Coil** | 3 | **stand in the middle of the ring** (or far outside) | the mound races twice round the party, the ring of ground between lifts in slabs, then the whole ring bursts and the wurm arcs out along it |
 
 ## The cycle
-**On the surface** for 4.5-6 s: it chases its mark (walk 60), bites, spits. Then **down**: a circle round it (110,
-0.6 s: 36, thrown) as it dives into its own hole; the mound runs at its mark for 1.3 s; then it **erupts**:
-| | tell | shape | hit |
-|---|---|---|---|
-| **Erupt** | 1.25 s: the ground shakes (a circle fills under its mark, where it's going) | a circle 125 | 110, thrown high, staggered |
-| **the rear** | with it | a line 420 from the hole along the way it comes out, 80 wide | 80, thrown aside |
-It bursts out of the hole and rears along the line, its body pouring out of the hole behind it.
-On the surface: **Bite** (a hero close in front: a cone 165, 0.7 s, 100, thrown) and **Sand Spit** (every 3-4.5 s at
-the heroes 180+ off: three balls of packed sand, circles 66, 65 and a stagger).
+Under the sand it runs (420 a second) to where it wants to come up; then:
+- **Breach**, two in a row (three in phase 3): a circle 120 under a hero, 1.15 s: 84, staggered, thrown high. It arcs
+  300-400 over towards someone else at 440 a second (about 2 s with its whole body out); a circle 90 where the head
+  goes back in: 50.
+- then it **rears up** out of a hole (the same circle and blow as a breach) and stays 8.5 s, swaying after its mark
+  (1.5 rad/s), about 170 of neck out:
+  | move | tell | shape | hit |
+  |---|---|---|---|
+  | Lunge, every 2.1-2.7 s | 0.8 s | a line 380 long, 92 wide from its hole (stopped by columns) | 72, thrown. The head is **stuck 0.7 s**: blows on it do 45% more |
+  | Inhale, once, 42% through | 0.8 s, then 2.7 s of pull | everyone within 640 is dragged towards the maw at 41-74 a second (bosses are not); a circle 150 at the maw fills the whole time | 100, thrown hard |
+  then it sinks back down its hole.
 
-## Phase 2: the Quake (65% to 35%)
-**Turn:** it rears and the sand shakes (a circle 240: 14, staggered, thrown). Now:
-- **two eruptions in a row**: after the first it goes straight back under for a second, at someone else;
-- every eruption sends out a **tremor**: a ring from 135 to 270 round the hole (safe at the hole itself, or far off),
-  0.9 s after it comes up: 55, thrown.
+## Phase 2: the Brood (66% to 34%)
+**Turn:** it comes up in the middle of the room and roars (a circle 250, 1.0 s: 14, staggered, thrown back; it can't
+be hurt for the 1.6 s it is up). Then every hole it leaves becomes **quicksand** for 10 s (at most six at once), and
+**two scarabs** crawl out of each (at most five at a time).
 
-## Phase 3: the Sinkhole (35% to 0)
-**Turn:** the same shake. Its next dive, and a third of its dives after that, is the **sinkhole**: it goes down and the
-middle of the room sinks into a swirling pit; for 5 s every hero is dragged towards the middle (95 a second) while a
-circle 170 fills there; then it erupts out of the middle (120, thrown very hard) and rears.
+## Phase 3: the Coil (34% to 0)
+**Turn:** the roar. Each cycle now opens with **the Coil**: a ring from 150 to 345 round the middle of the party,
+2.1 s: 86, staggered, thrown. Then three breaches in a row and a shorter rear (6.8 s); tells are 12% shorter, lunges
+come 20% quicker, the arc is 12% faster.
 
 ## Death
-It collapses on the sand; the segments go with it.
+Each ring of it that is out of the sand slumps and scatters; the scarabs die with it.
 
 ## Why it's fun to watch
-- The mound: you see it coming across the room at someone, and the ground shaking where it will come up.
-- The body pouring out of the hole after the head.
-- The sinkhole: the whole party sliding into the middle, running against the drag.
+- You watch the floor, not the boss: the mound coming, the ground lifting under someone.
+- The breach is a set piece every few seconds, and the body pouring past is the party's window.
+- Reared up it is a different fight: a fixed thing with a reach, a line to sidestep and a pull to run from.
+- By phase 2 the floor is pocked with sinking sand and scarabs; in phase 3 the ring asks the party to bunch up, the one
+  thing every other move punishes.
 
 ## Numbers
-Health 760 (round 12; was 900) (x1.4 for every boss, then the dungeon's strength and party size), walk 60, mass 12. Phases at 65% and 35%.
+Health 620 (x1.4 for every boss, then the dungeon's strength and party size), mass 12. Phases at 66% and
+34%. Wet x1.4.
 
-Balance (`node tools/runs.mjs --boss --theme spire --bossid sandWurm --level 62 --party paladin,archer,cleric,twinfang`:
-the Spire's strength stands in for the Dunes', which roster3 is adding; level 62 is a guess a little past the Spire):
-| | won | fight length |
-|---|---|---|
-| 10 fights, level 62 | 5 of 10 | avg 227 s |
-Re-run against the Dunes' own strength once roster3 merges (knobs: health, the eruption's damage, `SW.surface`).
+Balance (`node tools/runs.mjs --boss --theme dunes --level 54 --party paladin,archer,cleric,twinfang`; the campaign
+meets it with the starter four at about level 54): 60 fights: won 31 (52%), wins about 152 s (all fights about 148 s).
+Health 560 gives 27 of 40 in 142 s, 640 gives 15 of 40 in 163 s. The knobs: health, `SW.breach.dmg`, `SW.chain`
+(breaches before it rears), `SW.root.dur` (how long the party gets at it).
 
-## Known placeholder gaps
-While under the sand its head is hidden but its round floor shadow still shows; the real art pass should hide it.
-
-## After main's round-10 balance pass (armour, cooldowns x1.22, poison's burst, 52 heroes)
-Re-measured, not retuned (the lead tunes hero numbers first): the Dunes' own strength (`--theme dunes`), level 62: won 1 of 10, avg 214 s. Same command as above.
-
-Round 12 (lane D): health 900 to 760, Bite 120 to 100, Spit 80 to 65, Erupt 140 to 110 (the rear 100 to 80), Tremor 70 to 55 (the Dunes went from x7.4 to x4.6). The campaign meets it with the starter four (paladin, archer, cleric, twinfang) at about level 54: `--level 54 --n 20` won 12 of 20, wins about 248 s. Phase 2 (the double eruptions and tremors) was where every r11 fight ended.
+It wakes as the party walks in (within 1500): a mound that has to be walked up to was 25 s of nothing.
