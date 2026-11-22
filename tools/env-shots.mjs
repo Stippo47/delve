@@ -3,7 +3,7 @@
 //        [--scenes start,doors,chosen,overview,props] [--seed 3] [--zoom 0.8] [--w 390 --h 844]
 // Files: <outDir>/<theme>-env<N>-<scene>.png. 'doors' pans to the far wall with the room cleared and one door
 // chosen; 'props' puts one of every prop near the party (no sim steps after, so nothing moves).
-import { chromium } from 'playwright-core';
+import { openEdge } from './edge.mjs';
 import { execFileSync, spawn } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -16,12 +16,8 @@ const site = +opt('port', 8833), W = +opt('w', 390), H = +opt('h', 844), seed = 
 const themes = opt('themes', 'crypt,sewers,warren').split(','), envs = opt('envs', '1,2,3,4').split(',');
 const scenes = opt('scenes', 'start,doors,props').split(',');
 fs.mkdirSync(outDir, { recursive: true });
-const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
-const port = 9300 + Math.floor(Math.random() * 500);
-const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'delve-edge-'));
-const edge = spawn(EDGE, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio', `--remote-debugging-port=${port}`, `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
-let browser;
-for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
+const edge = await openEdge({ flags: ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio'] }); // tools/edge.mjs: one headless Edge, closed cleanly
+const browser = edge.browser;
 const errors = [];
 try {
   for (const theme of themes) for (const env of envs) {
@@ -90,8 +86,6 @@ try {
     await ctx.close();
   }
 } finally {
-  await browser.close().catch(() => {});
-  try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); }
-  try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
+  await edge.close();
 }
 console.log(errors.length ? 'page errors:\n' + errors.join('\n') : 'no page errors');

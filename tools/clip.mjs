@@ -2,7 +2,7 @@
 // Needs the dev server on :8811 and `npm i --no-save playwright-core` in tools/. Drives the installed Edge.
 //   node tools/clip.mjs <out.mp4> [--seed N] [--depth D] [--secs S] [--skip S] [--speed 2] [--w 390 --h 844] [--fps 30]
 //   [--q 'theme=crypt&bossroom&lvl=6'] (extra address parameters for the game's test switches)
-import { chromium } from 'playwright-core';
+import { openEdge, sweepProfile } from './edge.mjs';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -18,23 +18,13 @@ const frames = fs.mkdtempSync(path.join(path.dirname(out), '.frames-'));
 // Edge won't take Playwright's pipe here, so start it ourselves with a debugging port and connect.
 import { spawn } from 'node:child_process';
 import os from 'node:os';
-const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
-const port = 9300 + Math.floor(Math.random() * 500);
-const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'delve-edge-'));
-const edge = spawn(EDGE, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio', `--remote-debugging-port=${port}`, `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
-let browser;
-for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
+const edge = await openEdge({ flags: ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio'] }); // tools/edge.mjs: one headless Edge, closed cleanly
+const browser = edge.browser;
 const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2 });
 const page = await ctx.newPage();
 const errors = [];
 // (round 14, lane W: whatever goes wrong below, Edge is taken down before this exits: a failed run used to leave it running)
-const killEdge = () => {
-  try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch {}
-  // (round 14, lane W) Edge starts itself again under another process id, which the line above doesn't reach, so every
-  // run used to leave one running: take down whatever still runs on this run's own profile folder
-  try { execFileSync('powershell', ['-NoProfile', '-Command', `Get-CimInstance Win32_Process -Filter "Name='msedge.exe'" | Where-Object { $_.CommandLine -like '*${path.basename(prof)}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`], { stdio: 'ignore' }); } catch {}
-  try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
-};
+const killEdge = () => sweepProfile(edge.prof); // (tools/edge.mjs: everything on this run's own profile folder, then the folder)
 setTimeout(() => { console.error('clip.mjs: took too long, giving up'); killEdge(); try { fs.rmSync(frames, { recursive: true, force: true }); } catch {} process.exit(2); }, +opt('max', 480) * 1000).unref(); // (--max S: a run that hangs still takes its Edge down)
 process.on('uncaughtException', (e) => { console.error(e); killEdge(); try { fs.rmSync(frames, { recursive: true, force: true }); } catch {} process.exit(1); });
 process.on('unhandledRejection', (e) => { console.error(e); killEdge(); try { fs.rmSync(frames, { recursive: true, force: true }); } catch {} process.exit(1); });
@@ -99,8 +89,7 @@ for (let i = 0; i < n; i++) {
   await convoyStep();
   await page.screenshot({ path: path.join(frames, `f${String(i).padStart(4, '0')}.png`) });
 }
-// a plain kill() leaves Edge running on Windows: take its whole process tree down
-try { await browser.close(); } catch {} killEdge();
+await edge.close(); // (tools/edge.mjs: Browser.close over CDP, then whatever is left on its own profile folder)
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', path.join(frames, 'f%04d.png'),
   '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '24', '-movflags', '+faststart', out]);
 fs.rmSync(frames, { recursive: true, force: true });

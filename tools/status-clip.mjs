@@ -6,7 +6,7 @@
 //        [--q 'v_bleed=2'] (extra address parameters: look variants, test switches) [--follow kind] (the camera on it)
 //   round 14: --run paladin,archer,enchantress [--level 30] [--setup "js once, with w, S, run"] records a dungeon run
 //        instead of a battle (--q 'theme=crypt' for the dungeon); --inject runs each frame there too (w is the room)
-import { chromium } from 'playwright-core';
+import { openEdge } from './edge.mjs';
 import { execFileSync, spawn } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -18,18 +18,8 @@ const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i
 const site = +opt('port', 8885), secs = +opt('secs', 8), fps = 30, W = +opt('w', 520), H = +opt('h', 640);
 const stills = (opt('stills', '') || '').split(',').filter(Boolean).map(Number);
 const frames = fs.mkdtempSync(path.join(path.dirname(out), '.frames-'));
-const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
-const port = 9300 + Math.floor(Math.random() * 500);
-const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'delve-edge-'));
-const edge = spawn(EDGE, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio', `--remote-debugging-port=${port}`, `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
-let browser;
-for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
-// (round 14: Edge hands itself over to another process at start, so a taskkill of the one we spawned finds nothing and
-// every run, and every failed one, left a headless Edge behind: ask it to quit over CDP, whatever happens)
-async function quit() { try { const cs = await browser.newBrowserCDPSession(); await cs.send('Browser.close'); } catch {} try { await browser.close(); } catch {} try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); }
-  // (and the browser itself, which outlives the launcher we spawned: every msedge.exe on this run's own profile folder)
-  try { execFileSync('powershell', ['-NoProfile', '-Command', `Get-CimInstance Win32_Process -Filter "Name='msedge.exe'" | Where-Object { $_.CommandLine -like '*${path.basename(prof)}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`], { stdio: 'ignore' }); } catch {}
-  try { fs.rmSync(prof, { recursive: true, force: true }); } catch {} }
+const edge = await openEdge({ flags: ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio'] }); // tools/edge.mjs: one headless Edge, closed cleanly
+const browser = edge.browser;
 const errors = [];
 try {
 const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2 });
@@ -66,7 +56,7 @@ for (let i = 0; i < n; i++) {
   await page.screenshot({ path: file });
   for (const s of stills) if (Math.round(s * fps) === i) fs.copyFileSync(file, out.replace(/\.mp4$/, `-${s}s.png`));
 }
-} finally { await quit(); }
+} finally { await edge.close(); }
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', path.join(frames, 'f%04d.png'),
   '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '24', '-movflags', '+faststart', out]);
 fs.rmSync(frames, { recursive: true, force: true });

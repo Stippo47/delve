@@ -1,7 +1,7 @@
 // Headless check of every trinket: one run per trinket (every hero wears it, all abilities bought), fast-forwarded.
 // Counts how often each of the trinket's hooks ran and reports page errors and runs that get stuck.
 //   node tools/test/trinkets.mjs [--port 8824] [--secs 240] [--seed 5] [--depth 1] [--only id,id] [--party a,b,c]
-import { chromium } from 'playwright-core';
+import { openEdge } from '../edge.mjs';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -12,16 +12,8 @@ const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i
 const site = +opt('port', 8824), secs = +opt('secs', 240), seed = +opt('seed', 5);
 const only = opt('only', ''), party = opt('party', ''), depth = +opt('depth', 1);
 
-const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
-const dport = 9300 + Math.floor(Math.random() * 500);
-const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'delve-edge-'));
-const edge = spawn(EDGE, ['--headless=new', '--disable-gpu', '--mute-audio', `--remote-debugging-port=${dport}`, `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
-// Edge's main process outlives a plain kill() on Windows: take the whole tree down, also when the script is stopped.
-import { execFileSync } from 'node:child_process';
-function quit() { try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch {} try { fs.rmSync(prof, { recursive: true, force: true }); } catch {} }
-process.on('SIGINT', () => { quit(); process.exit(1); }); process.on('SIGTERM', () => { quit(); process.exit(1); });
-let browser;
-for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${dport}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
+const edge = await openEdge({ flags: ['--headless=new', '--disable-gpu', '--mute-audio'] }); // tools/edge.mjs: one headless Edge, closed cleanly
+const browser = edge.browser;
 const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
 
 async function runOne(tq, s) {
@@ -77,4 +69,4 @@ for (const id of list) {
   for (const e of r.errors.slice(0, 3)) console.log('     ERR', e);
 }
 console.log(bad ? `${bad} trinket runs had errors or got stuck` : 'all clean');
-await browser.close(); quit();
+await edge.close();

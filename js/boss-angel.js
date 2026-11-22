@@ -18,7 +18,7 @@ export const AN = {
   wheels: { rings: [[150, 290, 1.35], [290, 430, 2.15]], inner: [0, 150, 2.9], dmg: 57, glow: 28, knock: 240, cd: [10.5, 12.5] },
   chains: { tell: 1.15, speed: 1500, hw: 22, reach: 980, dmg: 29, drag: 540, shackle: 0.9, cd: [13, 15.5], again: 1.3 },
   horns: { n: 4, out: 104, hpK: 0.032, arc: 1.0, r: 470, tell: 5.2, dmg: 73, glow: 40, knock: 430, cd: [21, 25] },
-  host: { n: 2, hpK: 0.045, taken: 0.5, every: 30, note: { r: 60, dmg: 16, glow: 16 } },
+  host: { n: 2, hpK: 0.045, taken: 0.5, every: 45, /* round 14 (lane L): 30 -> 45: see BOSS_ADDS in dungeon.js */ note: { r: 60, dmg: 16, glow: 16 } },
   gaze: { arc: 1.5, r: 540, tell: 1.2, dur: 5, turn: 0.5, tick: 0.25, dmg: 7.8, glow: 13, cd: [15, 18] },
   burst: { r: 220, tell: 0.9, dmg: 16, glow: 20, knock: 320 },
 };

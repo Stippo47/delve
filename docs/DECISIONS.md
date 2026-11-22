@@ -732,3 +732,34 @@ structure is in `docs/UI-v4.md`; what was decided, and what was read into the de
 - **Not done**: opening a unit from the battle *picker's* tiles (a tap there adds the unit; the stack's row opens the
   page instead). Over the skill web one finger pans the web, so there a swipe turns the page only from the screen's left or right
   edge (44 px), or on the tabs. **Open: two fingers for the web and one for the pages instead?**
+
+## Round 14, lane L (2026-11-22): rooms that dragged on
+The designer on the wither card: "I said no. I said to fix the source not the symptom." Everything measured, each cause
+and its evidence: `docs/LONG-ROOMS.md`; the tools: `tools/long-rooms.mjs` and `runs.mjs --rooms` / `--watch`.
+- **No clock on a room.** The stand-off clock left after the wither rule is gone (every enemy waking after 25 s without a
+  kill; after 45 s of that or 150 s in a room, `w.stale`: enemies 30% faster, no backing off, regrowing, mending, calling
+  help, digging in or slipping away, trolls dropping their boulders, turrets burning out, and in boss rooms the bosses'
+  own summons and drones stopping). Nothing in a dungeon reads how long a room has lasted.
+- **What was found**: most of the long-room time was a grind, not a stand-off (92% of it in four 150-run campaigns,
+  82% in a sweep of 576 runs): deep rooms of the Foundry and the Dunes ground on for three to seven minutes, kills coming
+  steadily, with a healer keeping the party out of danger. The clock had been hiding it by speeding up every room past
+  150 s.
+- **Fixed at the source**: enemy health and blows (`dungeon.js` HP_POW 0.85 -> 0.75, HIT_STEP 0.05 -> 0.09: round 8's
+  "dangerous, not long", one more step; at the Foundry's floor 3 health 19% lower, blows 20% harder); revives (a helper
+  no longer stands for minutes on its way to a friend it can't reach); a unit that can't get at its target picks another
+  (`sim.js reachCheck`); shooters step round what blocks their line; fighters meet gears instead of chasing them; the
+  troll's boulder throw, which never fired (its tell was never run), and a wedged troll lets its boulder be; heroes go for
+  enemy healers first and the choir sprite no longer heals itself; shooters go round the gilded golem's mirror. The
+  floors' last foes keep round 8's numbers (benched, the new step made the Queen and Cinder twice as hard).
+- **The bosses' adds**: the clock had switched every boss's adds off 45 s into its fight, so three were measured without
+  them; lighter now (the angel's Host every 45 s: back at its 12 wins in 20; the Ooze's Brood every 16 s and three at
+  most: 12 against 7, a little easier; the Wurm's Brood one scarab at a time at 30%: still 3 against 9, left for lane B).
+- **Measured** (`docs/LONG-ROOMS.md`): long-room time -37% in the campaigns, -28% in the sweep; runs at the 420 s cut
+  16 -> 8; rooms over 240 s 13.0% -> 8.2% (campaigns). Win rates within noise of main 0.20.0 but the Sewers at level 30
+  (1 of 12 against 4); on 0.20.0 the seed-2 campaign reached each boss 6-30 runs later than main (one seed: to measure).
+- **Open, for the designer**: a hero left alone who can neither win nor lose (a Cleric against gears she can't hit);
+  enemy armour growing to the 60% cap deep down (capping its growth measured -17% long-room time, but makes the late
+  dungeons easier); battle mode's own 75 s press-in and 240 s judge, and the wagon's gate clock (foes withering after
+  70 s: lane W's mode, reported, not changed).
+- **Tools**: `tools/edge.mjs`, one headless Edge for every recording tool, closed over CDP and then by its own profile
+  folder (the launcher pid taskkill used to target had already exited, so every run left an Edge behind).
