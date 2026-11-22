@@ -84,3 +84,10 @@ shape; they are marked "variant".
 
 ## Hazards drawn in code (js/scenery.js), fine for now
 quicksand (the Dunes), steam vents and conveyor plates (the Foundry).
+
+## Round 13 (lane S): placeholders
+| what | placeholder now | the real sprite should be |
+|---|---|---|
+| hero `enchantress` (Enchantress) | `art/heroes/enchantress.svg`: the Witch recoloured rose (made with js/recolor.js; same hat and broom) | her own bust: rose silk, a heart-shaped locket, no hat; a hand held up to blow kisses |
+| `succubus` (Succubus, the Ember Deep) | the Devil recoloured rose at load (variant) | her own sprite: bat wings, a whip or a long tail, a heart on the tip of the tail |
+| the Cupid (the cherub's elite) | the cherub, with love arrows drawn in code (fx-status.js `loveArrow`) | fine as is; a pink bow if the designer wants the elite to read at a glance |

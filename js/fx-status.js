@@ -39,6 +39,7 @@ export function drawStatusMarks(ctx, u, T) {
   if (u.downed || u.dead || u.hidden) return;
   const st = u.st || {}, vr = u.vr, [ux, uy] = upVec();
   const head = (k) => [u.x + ux * vr * k, u.y + uy * vr * k];
+  const above = (d) => [u.x + ux * (vr * 1.15 + d), u.y + uy * (vr * 1.15 + d)]; // over the health bar
   // ---- charm
   const enthralled = u.flipKind === 'charm';
   if ((st.charm || 0) > 3 || enthralled) {
@@ -46,22 +47,22 @@ export function drawStatusMarks(ctx, u, T) {
     for (let i = 0; i < n; i++) {
       const ph = (T * 0.8 + i / n + u.id * 0.23) % 1, an = (i * 2.4 + u.id) % TAU, rr = vr * 0.75;
       const px = u.x + Math.cos(an) * rr + ux * ph * 26, py = u.y + Math.sin(an) * rr * 0.7 + uy * ph * 26;
-      ctx.globalAlpha = Math.sin(ph * Math.PI); upright(ctx, px, py, () => heart(ctx, 0, 0, 3.6 + 2.6 * f, '#FF8AC8')); }
+      ctx.globalAlpha = Math.sin(ph * Math.PI); upright(ctx, px, py, () => heart(ctx, 0, 0, 4.6 + 3.4 * f, '#FF8AC8')); }
     ctx.globalAlpha = 1;
-    if (enthralled) { const [hx, hy] = head(1.45), beat = 1 + 0.18 * Math.max(0, Math.sin(T * 9)) ** 4;
+    if (enthralled) { const [hx, hy] = above(20), beat = 1 + 0.18 * Math.max(0, Math.sin(T * 9)) ** 4;
       ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, hx, hy, 16, '#FF8AC8', 0.5); ctx.restore();
-      upright(ctx, hx, hy, () => { heart(ctx, 0, 0, 8.5 * beat, '#FF5AAE'); ctx.fillStyle = '#FFE0F0'; ctx.beginPath(); ctx.arc(-3, -2.5, 1.8, 0, TAU); ctx.fill(); }); }
+      upright(ctx, hx, hy, () => { heart(ctx, 0, 0, 10.5 * beat, '#FF5AAE'); ctx.fillStyle = '#FFE0F0'; ctx.beginPath(); ctx.arc(-3, -2.5, 1.8, 0, TAU); ctx.fill(); }); }
   }
   // ---- the Enchantress's Sweetheart: a little heart beside its head while it lasts
   if (u.buffs && u.buffs.some((b) => b.id === 'beloved')) { const [hx, hy] = head(1.25), q = 1 + 0.1 * Math.sin(T * 6);
     upright(ctx, hx, hy, () => heart(ctx, u.vr * 0.75, -2, 5.5 * q, '#FF8AC8')); }
   // ---- confused / addled
   if (u.addledT > 0) {
-    const [hx, hy] = head(1.25);
+    const [hx, hy] = above(16);
     upright(ctx, hx, hy, () => { for (let i = 0; i < 2; i++) { const a = -T * 6 + i * Math.PI, x = Math.cos(a) * vr * 0.65, y = Math.sin(a) * vr * 0.22;
-      inkLine(ctx, () => { ctx.beginPath(); for (let j = 0; j <= 14; j++) { const t = j / 14, r = 1 + 6 * t, b = t * 9 + a * 2; ctx.lineTo(x + Math.cos(b) * r, y + Math.sin(b) * r); } }, '#C9A8F0', 2.4); } });
+      inkLine(ctx, () => { ctx.beginPath(); for (let j = 0; j <= 14; j++) { const t = j / 14, r = 1.5 + 9 * t, b = t * 9 + a * 2; ctx.lineTo(x + Math.cos(b) * r, y + Math.sin(b) * r); } }, '#C9A8F0', 3); } });
   } else if ((st.confuse || 0) > 12) {
-    const f = fillOf(u, 'confuse'), [hx, hy] = head(1.3), s = 0.7 + 0.5 * f;
+    const f = fillOf(u, 'confuse'), [hx, hy] = above(18), s = 1.05 + 0.6 * f;
     upright(ctx, hx, hy, () => { ctx.rotate(Math.sin(T * 4 + u.id) * 0.35); ctx.scale(s, s); ctx.globalAlpha = Math.min(1, 0.4 + f);
       inkLine(ctx, () => { ctx.beginPath(); ctx.arc(0, -6, 5, Math.PI * 1.05, Math.PI * 0.45, false); ctx.lineTo(0, 3); }, '#C9A8F0', 3.2);
       inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 8, 2.2, 0, TAU); }, '#C9A8F0'); });
@@ -129,7 +130,7 @@ export function drawStatusBurst(ctx, f, T, layer) {
     ctx.restore(); ctx.globalAlpha = 1; return;
   }
   if (f.kind === 'heartbreak') { // a big heart over it cracks down the middle and the halves fall apart
-    const [hx, hy] = [f.unit.x + ux * r * 1.5, f.unit.y + uy * r * 1.5], crack = Math.min(1, k / 0.25), fall = Math.max(0, (k - 0.25) / 0.75);
+    const [hx, hy] = [f.unit.x + ux * (r * 1.15 + 20), f.unit.y + uy * (r * 1.15 + 20)], crack = Math.min(1, k / 0.25), fall = Math.max(0, (k - 0.25) / 0.75);
     ctx.globalAlpha = 1 - fall * fall;
     upright(ctx, hx, hy, () => { for (const s of [-1, 1]) { ctx.save(); ctx.translate(s * (1 + 14 * fall), 22 * fall * fall); ctx.rotate(s * 0.8 * fall);
       ctx.beginPath(); ctx.moveTo(0, -16); ctx.lineTo(s * 2.5, -6); ctx.lineTo(-s * 2, 0); ctx.lineTo(s * 2, 6); ctx.lineTo(0, 16); ctx.lineTo(s * 20, 16); ctx.lineTo(s * 20, -16); ctx.closePath(); ctx.clip();
@@ -141,7 +142,7 @@ export function drawStatusBurst(ctx, f, T, layer) {
     for (let i = 0; i < 8; i++) { const an = i / 8 * TAU + 0.2, d = r * (0.6 + 1.6 * e); ctx.globalAlpha = fade;
       upright(ctx, x + Math.cos(an) * d, y + Math.sin(an) * d * 0.8, () => heart(ctx, 0, 0, 6 * (1 - 0.4 * k), i % 2 ? '#FF5AAE' : '#FF8AC8')); }
   } else if (f.kind === 'uncharm') { // the heart over its head cracks in two and falls away
-    const [hx, hy] = [x + ux * r * 1.45, y + uy * r * 1.45];
+    const [hx, hy] = [x + ux * (r * 1.15 + 20), y + uy * (r * 1.15 + 20)];
     ctx.globalAlpha = fade;
     upright(ctx, hx, hy, () => { for (const s of [-1, 1]) { ctx.save(); ctx.translate(s * (2 + 10 * e), 14 * e * e); ctx.rotate(s * 0.6 * e);
       ctx.beginPath(); ctx.rect(s < 0 ? -12 : 0, -12, 12, 24); ctx.clip(); heart(ctx, 0, 0, 8.5, '#FF5AAE'); ctx.restore(); } });

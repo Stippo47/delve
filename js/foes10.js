@@ -217,7 +217,7 @@ function choirBrain(w, u, dt) {
     if (!w.stale && a.hp < a.maxHp) heal(w, a, a.maxHp * 0.04, u);
     if (u.elite) addBuff(a, { id: 'choir', dur: 1.2, move: 1.2, atkSpeed: 1.2 });
   }
-  for (const h of opponents(w, u)) if (dist(h.x, h.y, u.x, u.y) < R + h.r) addStatus(w, h, 'sleepy', 12, u); // round 13: its lovely song makes the party sleepy
+  for (const h of opponents(w, u)) if (dist(h.x, h.y, u.x, u.y) < R + h.r) addStatus(w, h, 'sleepy', 8, u); // round 13: its lovely song makes the party sleepy
   u.beat = (u.beat || 0) + 1;
   if (u.beat % 2 === 0) { fx(w, { type: 'ring', x: u.x, y: u.y, r: R, color: '#FFE7A0', max: 0.6 }); setAnim(u, 'cast', 0.4); }
   for (let i = 0; i < 3; i++) w.particles.push({ x: u.x + rrange(-14, 14), y: u.y + rrange(-10, 10), vx: rrange(-20, 20), vy: 0, rise: 40, up: 0, life: 0.9, max: 0.9, size: 4, color: '#FFE7A0' });

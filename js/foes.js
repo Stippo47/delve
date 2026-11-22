@@ -262,8 +262,8 @@ Object.assign(ELITES, {
     again(u, 'breath', 6, 8); breath(w, u, angleTo(u.x, u.y, t.x, t.y), 250); return true;
   } },
   // Cherub: arrow rain: a circle on the floor peppered from above. Round 13 (the designer: "Elite Cupid enemies will shoot
-  // love arrows that charm"): the elite's own arrows are love arrows (charm 26 a hit, no radiance; sim.js fireArrow).
-  cherub: { tick(w, u, dt) { u.loveShots = 26; every(w, u, dt, 'rain', 4, 5.5, 420, (t) => lob(w, u, t.x, t.y, { r: 80, tell: 1.0, kind: 'holy', dust: '#FFF1B0', hit: { dmg: 6, knock: 80, radiance: 18 },
+  // love arrows that charm"): the elite's own arrows are love arrows (charm 18 a hit, no radiance; sim.js fireArrow).
+  cherub: { tick(w, u, dt) { u.loveShots = 18; every(w, u, dt, 'rain', 4, 5.5, 420, (t) => lob(w, u, t.x, t.y, { r: 80, tell: 1.0, kind: 'holy', dust: '#FFF1B0', hit: { dmg: 6, knock: 80, radiance: 18 },
     land: (w2, z) => { for (let i = 0; i < 12; i++) { const a = rand() * TAU, d = rand() * z.r; sparks(w2, z.x + Math.cos(a) * d, z.y + Math.sin(a) * d, rand() * TAU, 1, '#FFF1B0'); } } })); return false; } },
   // Angel: smites: a shaft of light where you stand.
   angel: { tick(w, u, dt) { every(w, u, dt, 'smite', 4.5, 6, 460, (t) => smite(w, u, t.x + (t.vx || 0) * 0.5, t.y + (t.vy || 0) * 0.5)); return false; } },

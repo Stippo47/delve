@@ -29,8 +29,51 @@ the problem (an archer's frost arrow is 34 chill: about three to freeze). Now ea
 | **Radiance** (new) | angels (blows 22, smite 30), cherubs (arrows 12, arrow rain 18), seraphs (bolts 20), the Archon and the Radiant (blows 25, the Radiant's ring 40) | 100 | 6 | attacks come up to 35% slower and hit up to 60% weaker (both scale with value / threshold) | **Radiant**: for 3 s it glows (an aura 120 across), **can't attack or use an ability**, and everyone else inside the aura gains 24 radiance a second (not itself); drops to 0, and it can't gain radiance again until 4 s after the glow ends |
 | **Cursed** (new) | ghosts' touch (30; ghosts no longer chill), the banshee's wail (32) and pull (22), the Bone King's last phase (his Soul Nova / Ring 40 and the Bone Wall 20) | 100 | 5 | heals do (1 - 1.6 x fill) of what they should: nothing from about 63; blows land up to 40% harder | **Hexed**: drops to 0; its next attack, heal or summon (within 8 s) **turns on it**: its damage hurts itself instead (80% of it, at most 30% of its max health per hex), a heal hurts the friend it was meant for, a summon joins the other side (with a 12 s life). Everything that one action does in the next 0.6 s turns too (all seven arrows of a Barrage) |
 | **Entangle** (round 9) | ents' root lines (55), an elite ent's root ring (70), the Elder Ent's roots (65) and root cage (110), grasping roots on the floor (22/s), rooted sproutlings' seeds (6, an elite's 14) | 100 | 6 | up to 70% slower (x fill); walking hurts (2.2 x fill per 100 walked) and so does every attack or ability (2.5 x fill) | **Rooted** (round 13: "Tangled and rooted are the same thing": one state, one name, one icon, one look): rooted for 3 s (bosses 1.2) and the vines squeeze once for 12 damage; drops to 0, then 3 s more before it can be entangled again |
+| **Charm** (round 13) | the Enchantress (her kiss 14, Heartstring 30/s, Sweetheart 16 a blow, First Impression 45), elite Cupids' love arrows (18), the Succubus (her blow 12; 16 on whoever hits her, once a second each; her kiss 40) | 100 | 8 | from 20 (the first blow still lands) it **can't hurt whoever is charming it** (u.stBy.charm): the blow does nothing and a heart pops; it looks for someone else to fight | **Enthralled**: fights for the charmer's side for 5 s (elites 4, majors 3), then comes back; drops to 0 and can't be charmed again for 6 s after. A boss, or the last one standing on its side, is **Smitten** instead: stunned 1.5 s (bosses 0.6) |
+| **Confused** (round 13) | the bat's screech (40) | 100 | 7 | every shot goes up to 0.7 rad wide (x fill); now and then (1.4 a second x fill) it lurches round to a random heading and stays turned 0.5 s; with an attack ready and nothing in reach it swings or shoots at the air (1.2 a second x fill) | **Addled** for 4 s (bosses 1.6): its weapon hits friends as well as foes, and it uses every ability it has ready at once; drops to 0, then 4 s immune |
+| **Sleepy** (round 13) | the Bard's Lullaby (45), the choir sprite's song (8 a beat on everyone of the other side inside it) | 100 | 5 | attacks up to 40% slower and up to 60% of its chances to use an ability lost (x fill); its head nods | **Asleep** for 4 s (bosses 1.6): the Lullaby's sleep, a blow wakes it; drops to 0, then 5 s immune |
+| **Bleeding** (round 13) | the hellhound's bite (16), the hunter spider's pounce (40) | 100 | 6, **held** for 1.5 s after every blow it takes | 0.05 x value damage a second (armour doesn't help); heals do up to 50% less (x fill) | **Haemorrhage**: loses 33% of the health it has left at once (a boss at most 6% of its max); drops to 0, then 3 s immune |
+| **Fear** (round 13) | the banshee's wail (45) | 100 | 8 | backs away from whoever frightened it while that one is within 320, more as it builds (x fill); it trembles | **Terrified** for 3 s: runs from the frightener, can't attack or use an ability, and every ability it had ready is wasted (its cooldown starts again, at least 5 s). A boss only **cowers** (stunned 0.6 s) |
 
 Angels, cherubs, seraphs and the angel bosses can't be made radiant; ghosts and banshees can't be cursed.
+
+## Changing sides (round 13)
+Charm's burst, the Jester's Befuddle and a brain leech's host all go through one path, sim.js `turnSide(w, u, team,
+kind, by, dur)` / `restoreSide(w, u)`: `u.trueTeam` keeps the side the unit really belongs to (`sideOf(u)`),
+`u.flipKind` says why (`charm` | `befuddle` | `leech`), `u.flipUntil` when it comes back on its own. A flipped unit
+dies, drops and counts as what it really is (killNow restores it first; stats.js, dungeon.js, battle.js `sideOf`,
+the HUD's hero cards all read the true side); a won room puts everyone back. In battle mode the floor ring shows
+the side it is fighting for right now.
+
+## Healers' counters (round 13; the designer: "Heal negation, enemies that target healers")
+- **Healer hunters** (`def.hunter`: a bonus when it picks a target that is a support hero): the hunter spider (the
+  Sewers) and the hellhound (the Ember Deep), +1.4.
+- **Heal negation**: Bleeding cuts heals by up to half and is on the hellhound's bite and the hunter spider's pounce;
+  Cursed still cuts them to nothing. Buffs can carry `healTaken` (heals x that) for later use.
+
+## Damage blocked (round 13)
+sim.js `hurt` counts what a dodge, a blind miss, Blink Stone, being untouchable, a `taken` hook or buff, a raised shield,
+a front block and armour kept off each blow (not damage over time) as **blocked** (stats.js `tallyBlock`), apart from
+what got through (taken). It shows in the run's result (a bar and a lead), the pause panel, the About page, the battle
+result (a column) and tools/balance.mjs (`blk`: blocked / (blocked + taken)).
+
+## Helpful states shown (round 13: "Some positive status effects don't show")
+Every buff now shows on the hero card and in the pause panel under its own name and icon with what its numbers do
+(bestiary.js `BUFFS`, hud.js `buffLine`), and so do helpful states that aren't buffs (bestiary.js `STATES`, hud.js
+`STATE_TESTS`): Regrowing, Guarding, Gas Form, Underground, Steady Aim, Loaded Shot, Momentum, Barkskin, Duel, Soul
+Candle, Cranked Up, Keen Eye, Mocking, Focused, Wolf Form, Spirit Link. Stances that hold a hero still (Hold the Line,
+Brace, Pavise, Shield Wall...) read as stances, not as Rooted.
+
+## Lane S calls (round 13), to put to the designer
+- Charm's "can't hurt the charmer" starts at 20, not at 1, so the first blow on a charmer still lands (with the Succubus
+  charming whoever hits her, a rule from 1 made her almost unkillable).
+- A boss, or the last one standing on its side, is only Smitten (a stun) by charm's burst; bosses only cower when
+  terrified; Haemorrhage takes at most 6% of a boss's max health.
+- Sleepy's burst is the Lullaby's sleep (4 s, a blow wakes it).
+- Confused's burst fires every ready ability at whatever it was looking at; an enemy without a hero kit uses its one
+  move if it has one.
+- Where the new statuses are used (above, the "from" column), the healer hunters, and that the Cupid is the cherub's
+  elite (its arrow rain stays).
 
 ## Timers (not build-ups)
 Frozen, stunned, knocked out, rooted, asleep, guarded, untouchable, taunted, radiant (the glow) and hexed (the armed
@@ -56,3 +99,15 @@ hex) are timers: their HUD ring shrinks from full as they run out.
   waits (an open purple eye over the head); fx `{ type: 'hex', kind: 'arm' | 'fire' | 'turn', unit }` when it arms,
   when it turns an action, and on a summon that changed sides (`u.turned`, `u.turnedFrom`).
 - HUD icons: `radiance`, `radiant`, `curse`, `hexed` in `icons.js`; names and descriptions in `bestiary.js STATUSES`.
+- Round 13 (js/fx-status.js, render.js `washesOf` and `unitFrame`). No rings round the body: a wash, body motion and marks.
+  - Charm: a pink wash; pink hearts rising off it, more as it builds. Enthralled: a stronger pulsing pink wash and a
+    beating heart over its head; a burst of hearts when it turns, the heart cracking in two when it comes back.
+  - Confused: a lilac wash; it sways off balance; a wobbling question mark over its head. Addled: a flickering wash and
+    two spirals chasing round its head; a lilac swirl with stars at the burst.
+  - Sleepy: a dusky violet wash; its head nods (a slow droop, a jerk back up); small slow z's. Asleep: a poof and a big Z.
+  - Bleeding: a dark red wash, red cuts on the body (more as it builds), drops of blood falling off it. Haemorrhage: a
+    red flash on the body, a spray of red streaks and a pool of blood under it that fades.
+  - Fear: a pale wash; it trembles, harder as it builds; sweat flicking off its head. Terrified: shaking, fright lines
+    round its head, and it runs.
+  - HUD icons `charm`, `charmed`, `confuse`, `addled`, `sleepy`, `bleed`, `fear`, `terrified`; buff and state icons
+    `haste`, `might`, `ward`, `stance`, `regen`, `lifesteal`, `focus`, `immune`, `hidden`, `form`.
