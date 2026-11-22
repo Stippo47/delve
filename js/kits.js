@@ -136,10 +136,10 @@ export const ABILITIES = {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 160).length >= 2 ? 0.75 : 0),
     use(w, u, t, tier) {
       const dur = tier >= 2 ? 6 : 4; // round 9: no swing; he simply holds the shield out in front (parts.js)
-      addBuff(u, { id: 'holdTheLine', dur, frontBlock: 0.6, root: true, reflect: tier >= 3 ? 0.8 : 0 });
+      addBuff(u, { id: 'holdTheLine', dur, frontBlock: 0.6, root: true, reflect: tier >= 3 ? 0.5 : 0 });
       // (round 13, "The v should remain over them": fxkit draws the mark while e.vMarkT runs and he still holds them)
       for (const e of foesNear(w, u, u.x, u.y, tier >= 2 ? 320 : 240)) { e.tauntBy = u; e.tauntT = dur; e.target = u; e.vMarkBy = u; e.vMarkT0 = w.time; e.vMarkT = w.time + dur;
-        addBuff(e, { id: 'cowed', dur, dealt: 0.75 }); } // (round 13: those he holds hit softer: what an hp tank does for the others)
+        addBuff(e, { id: 'cowed', dur, dealt: 0.8 }); } // (round 13: those he holds hit softer: what an hp tank does for the others)
       puff(w, u.x, u.y, '#FFE7A0', 10, 140, 5, 0.45); // no ring round him (round 6): a burst of dust as the shield plants
     },
   },
@@ -150,15 +150,15 @@ export const ABILITIES = {
     },
     use(w, u, t, tier) {
       const a = ang(u, t); u.facing = a; // round 9: no arm swing; the shield is held out in front while he charges (parts.js)
-      u.act = { type: 'charge', t: tier >= 2 ? 0.7 : 0.55, max: 0.7, a, hit: new Set(), stagger: tier >= 3 ? 60 : 0, power: tier >= 2 ? 1.3 : 1, ab: 'charge', dmg: dmgOf(u, 2.6) }; // (round 13: his own blow, 2.6 of the mace's; it was a flat 18)
+      u.act = { type: 'charge', t: tier >= 2 ? 0.7 : 0.55, max: 0.7, a, hit: new Set(), stagger: tier >= 3 ? 45 : 0, power: tier >= 2 ? 1.3 : 1, ab: 'charge', dmg: dmgOf(u, 2) }; // (round 13: his own blow, 2.6 of the mace's; it was a flat 18)
     },
   },
   groundPound: {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 120).length >= 2 ? 0.7 : 0),
     use(w, u, t, tier) {
       cast(u, 'ability', 0.4); w.shake = Math.max(w.shake, 7);
-      ring(w, u, u.x, u.y, 125, dmgOf(u, 1.6), { knock: 300, heavy: true, stagger: tier >= 2 ? 40 : 0 }, '#E8D8B0');
-      if (tier >= 3) u.later = [{ t: 0.5, f: () => ring(w, u, u.x, u.y, 170, dmgOf(u, 1), { knock: 220, stagger: 30 }, '#E8D8B0') }];
+      ring(w, u, u.x, u.y, 125, dmgOf(u, 1.2), { knock: 300, heavy: true, stagger: tier >= 2 ? 40 : 0 }, '#E8D8B0');
+      if (tier >= 3) u.later = [{ t: 0.5, f: () => ring(w, u, u.x, u.y, 170, dmgOf(u, 0.6), { knock: 220, stagger: 20 }, '#E8D8B0') }];
     },
   },
   // ----- Archer
@@ -173,7 +173,7 @@ export const ABILITIES = {
       const n = tier >= 2 ? 7 : 5; u.aimT = u.aimMax = 0.42; u.aimCol = tier >= 2 ? '#FF8A3D' : null; u.aimHead = tier >= 2 ? '#FFD45A' : null; // (round 13: the bow is drawn back while it charges: parts.js)
       u.later = [{ t: 0.4, f: () => {
         const base = t && alive(t) ? ang(u, t) : u.facing; u.aimT = 0; u.recoilT = 0.14; cast(u, 'draw', 0.3);
-        for (let i = 0; i < n; i++) shoot(w, u, base + (i - (n - 1) / 2) * 0.08, { kind: tier >= 2 ? 'fireArrow' : 'arrow', speed: 360 + ((i * 3) % n) / (n - 1) * 300, dmg: dmgOf(u, 0.95), st: tier >= 2 ? { burn: 20 } : {}, pierce: tier >= 3 ? 2 : 0 });
+        for (let i = 0; i < n; i++) shoot(w, u, base + (i - (n - 1) / 2) * 0.08, { kind: tier >= 2 ? 'fireArrow' : 'arrow', speed: 360 + ((i * 3) % n) / (n - 1) * 300, dmg: dmgOf(u, 0.75), st: tier >= 2 ? { burn: 20 } : {}, pierce: tier >= 3 ? 2 : 0 });
       } }];
     },
   },
@@ -186,9 +186,9 @@ export const ABILITIES = {
       u.aimT = u.aimMax = 0.47; u.aimCol = '#9FB7C8'; u.aimHead = '#BFE9F8';
       u.later = [{ t: 0.45, f: () => {
         u.aimT = 0; u.recoilT = 0.14; cast(u, 'draw', 0.3);
-        shoot(w, u, t && alive(t) ? ang(u, t) : u.facing, { kind: 'shard', speed: 560, dmg: dmgOf(u, 2.6), st: { chill: tier >= 2 ? 110 : 60 },
+        shoot(w, u, t && alive(t) ? ang(u, t) : u.facing, { kind: 'shard', speed: 560, dmg: dmgOf(u, 1.9), st: { chill: tier >= 2 ? 110 : 60 },
           land: (p) => { // round 10: "Remove the ice puddle" (the lingering rime it left)
-            if (tier >= 3) { fx(w, { type: 'ring', x: p.x, y: p.y, r: 80, color: '#BFEFFF', max: 0.4 }); for (const e of foesNear(w, u, p.x, p.y, 80)) { hurt(w, e, dmgOf(u, 1), u, { noDodge: true, kAngle: angleTo(p.x, p.y, e.x, e.y), knock: 60 }); addStatus(w, e, 'chill', 50, u); } } } });
+            if (tier >= 3) { fx(w, { type: 'ring', x: p.x, y: p.y, r: 80, color: '#BFEFFF', max: 0.4 }); for (const e of foesNear(w, u, p.x, p.y, 80)) { hurt(w, e, dmgOf(u, 0.7), u, { noDodge: true, kAngle: angleTo(p.x, p.y, e.x, e.y), knock: 60 }); addStatus(w, e, 'chill', 50, u); } } } });
       } }];
     },
   },
@@ -219,7 +219,7 @@ export const ABILITIES = {
       u.x = clamp(t.x + Math.cos(back) * (t.r + u.r + 6), u.r, w.W - u.r); u.y = clamp(t.y + Math.sin(back) * (t.r + u.r + 6), u.r, w.H - u.r);
       u.vx = u.vy = 0; u.facing = u.mvA = ang(u, t); u.spd = 0; cast(u, 'thrust', 0.25);
       zone(w, { x: u.x, y: u.y, r: 48, dur: 1.2, kind: 'smoke', src: u }); // round 10: a puff where she comes back in too
-      hurt(w, t, dmgOf(u, 3.6), u, { crit: true, noDodge: true, poison: tier >= 2 ? 40 : 0 });
+      hurt(w, t, dmgOf(u, 4), u, { crit: true, noDodge: true, poison: tier >= 2 ? 40 : 0 });
       if (tier >= 3 && !alive(t)) u.kit.cd.backstab = 0.5;
       u.atkT = u.def.atkCd; u.mode = 'retreat'; u.modeT = 0; u.invulnT = Math.max(u.invulnT, 0.5); // (round 13: out of the shadow untouchable for a moment; she went down more than anyone)
     },
@@ -234,7 +234,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       const close = foesNear(w, u, u.x, u.y, 60);
       const a = u.mode === 'retreat' && close.length ? angleTo(close[0].x, close[0].y, u.x, u.y) : ang(u, t);
-      u.act = { type: 'dash', t: 0.2, max: 0.2, a };
+      u.act = { type: 'dash', t: 0.2, max: 0.2, a }; u.invulnT = Math.max(u.invulnT, 0.3); // (round 13: nothing lands on her mid-dash; Dash was worth nothing and she went down most)
       if (tier >= 2) { zone(w, { x: u.x, y: u.y, r: 64, dur: 2.5, kind: 'smoke', src: u, smoke: true }); for (const e of foesNear(w, u, u.x, u.y, 90)) if (e.target === u) e.target = null; }
       if (tier >= 3) { u.kit.charges = (u.kit.charges ?? 1) - 1; if (u.kit.charges > 0) u.kit.cd.dash = 0.6; else u.kit.charges = 2; }
     },
@@ -253,7 +253,7 @@ export const ABILITIES = {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 130).length >= 2 || hpRatio(u) < 0.5 ? 0.8 : 0),
     use(w, u, t, tier) {
       cast(u, 'ability', 0.45); w.shake = Math.max(w.shake, 4);
-      addBuff(u, { id: 'rage', dur: tier >= 3 ? 8 : 5, taken: 0.7, atkSpeed: 1.4, move: 1.25, lifesteal: tier >= 2 ? 0.15 : 0, knockImmune: tier >= 3, glow: '#FF5A3D' });
+      addBuff(u, { id: 'rage', dur: tier >= 3 ? 8 : 5, taken: 0.62, atkSpeed: 1.4, move: 1.25, lifesteal: tier >= 2 ? 0.15 : 0, knockImmune: tier >= 3, glow: '#FF5A3D' });
       puff(w, u.x, u.y, '#FF6B4A', 16, 120, 6, 0.6);
     },
   },
@@ -262,7 +262,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'ability', 0.6);
       u.act = { type: 'leap', t: 0.5, max: 0.5, x0: u.x, y0: u.y, x1: t.x - Math.cos(ang(u, t)) * (u.r + t.r), y1: t.y - Math.sin(ang(u, t)) * (u.r + t.r),
-        land: () => { w.shake = Math.max(w.shake, 7); ring(w, u, u.x, u.y, 110, dmgOf(u, 1.3), { knock: 260, heavy: true, stagger: tier >= 2 ? 50 : 0 }, '#E8C9A0');
+        land: () => { w.shake = Math.max(w.shake, 7); ring(w, u, u.x, u.y, 110, dmgOf(u, 1.6), { knock: 260, heavy: true, stagger: tier >= 2 ? 50 : 0 }, '#E8C9A0');
           if (tier >= 3 && !u.leapAgain) { u.leapAgain = true; u.kit.cd.leap = 0.4; } else u.leapAgain = false; } };
       u.invulnT = Math.max(u.invulnT, 0.4);
     },
@@ -272,7 +272,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       // round 9: she spins round with the sword out (render.js u.spin), the blade's circle trailing it
       const spin = () => { setAnim(u, 'spin', 0.36); u.spin = { t0: w.time, dur: 0.36, dir: 1 }; fx(w, { type: 'ring', x: u.x, y: u.y, r: CLEAVE_R(u, tier), color: '#FFFFFF', max: 0.36, a: u.facing, unit: u });
-        for (const e of foesNear(w, u, u.x, u.y, CLEAVE_R(u, tier))) hurt(w, e, dmgOf(u, 2), u, { knock: tier >= 2 ? 220 : 90, kAngle: ang(u, e) }); };
+        for (const e of foesNear(w, u, u.x, u.y, CLEAVE_R(u, tier))) hurt(w, e, dmgOf(u, 2.3), u, { knock: tier >= 2 ? 220 : 90, kAngle: ang(u, e) }); };
       spin(); if (tier >= 3) u.later = [{ t: 0.35, f: spin }];
     },
   },
@@ -373,7 +373,7 @@ export const ABILITIES = {
       cast(u, 'cast', 0.4);
       const n = tier >= 3 ? 3 : 1, a0 = ang(u, t);
       for (let i = 0; i < n; i++) { const mid = n === 1 || i === 1; // round 9: the middle spike is bigger and hits harder
-        shoot(w, u, a0 + (i - (n - 1) / 2) * 0.18, { kind: 'shard', speed: 620, r: mid ? 8 : 6, dmg: dmgOf(u, mid ? 1.7 : 1.3), st: { chill: tier >= 2 ? 55 : 35 }, pierce: 4, extra: { big: mid && n > 1 } }); }
+        shoot(w, u, a0 + (i - (n - 1) / 2) * 0.18, { kind: 'shard', speed: 620, r: mid ? 8 : 6, dmg: dmgOf(u, mid ? 1.8 : 1.3), st: { chill: tier >= 2 ? 55 : 35 }, pierce: 4, extra: { big: mid && n > 1 } }); }
     },
   },
   frostNova: {
@@ -390,10 +390,13 @@ export const ABILITIES = {
     },
   },
   iceWall: {
-    score: (w, u, t) => (t && foesNear(w, u, u.x, u.y, 200).length >= 2 && dist(u.x, u.y, t.x, t.y) > 80 ? 0.6 : 0),
+    // (round 13: only against a brawler coming for her: thrown up whenever two enemies were near, it stood in the
+    // party's own line of fire and was worth less than nothing in the batches)
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) > 80 && foesNear(w, u, u.x, u.y, 170).some((e) => e.target === u && (e.def.range || 0) < 80) ? 0.7 : 0),
     use(w, u, t, tier) {
       cast(u, 'cast', 0.5);
-      const a = ang(u, t), d = Math.min(110, dist(u.x, u.y, t.x, t.y) * 0.5), cx = u.x + Math.cos(a) * d, cy = u.y + Math.sin(a) * d;
+      const foe = foesNear(w, u, u.x, u.y, 170).find((e) => e.target === u && (e.def.range || 0) < 80) || t; // across the way of whoever is coming for her
+      const a = ang(u, foe), d = Math.min(110, Math.max(46, dist(u.x, u.y, foe.x, foe.y) * 0.5)), cx = u.x + Math.cos(a) * d, cy = u.y + Math.sin(a) * d;
       const L = tier >= 2 ? 200 : 130, dur = tier >= 2 ? 8 : 5;
       // walls are axis-aligned: lay it across the way the enemies come, rounded to the nearer axis
       const horiz = Math.abs(Math.cos(a)) < Math.abs(Math.sin(a));
@@ -415,7 +418,7 @@ export const ABILITIES = {
       for (let i = 0; i <= jumps && cur; i++) {
         pts.push({ x: cur.x, y: cur.y });
         const n0 = w.particles.length;
-        hurt(w, cur, dmgOf(u, 1.1), u, { noDodge: true, shock: 40 }); hit.add(cur);
+        hurt(w, cur, dmgOf(u, 1.35), u, { noDodge: true, shock: 40 }); hit.add(cur);
         for (let j = w.particles.length - 1; j >= n0; j--) if (w.particles[j].shape === 'spark') w.particles.splice(j, 1);
         const here = cur;
         cur = opponents(w, u).filter((e) => e !== here && (tier >= 3 || !hit.has(e)) && dist(here.x, here.y, e.x, e.y) < 170).sort((a, b) => dist(here.x, here.y, a.x, a.y) - dist(here.x, here.y, b.x, b.y))[0];
@@ -469,7 +472,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'cast', 0.4);
       const list = allies(w, u).filter((o) => !o.summon && rayable(w, u, o)).sort((a, b) => hpRatio(a) - hpRatio(b)).slice(0, tier >= 3 ? 2 : 1);
-      const pct = tier >= 2 ? 0.18 : 0.14;
+      const pct = tier >= 2 ? 0.16 : 0.12; // (round 13: 14% / 18%; she was 1.5 rooms over the average at tier I)
       u.rays = list.map((a) => ({ to: a, t: RAY_T, rate: a.maxHp * pct / RAY_T, f: fx(w, { type: 'beam', kind: 'heal', from: u, to: a, x1: u.x, y1: u.y, x2: a.x, y2: a.y, max: RAY_T }) }));
     },
   },
@@ -534,7 +537,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'cast', 0.4);
       const list = [u, ...allies(w, u)].filter((o) => !o.summon).sort((a, b) => hpRatio(a) - hpRatio(b)).slice(0, tier >= 3 ? 2 : 1);
-      for (const a of list) { a.regenT = 6; a.regenRate = a.maxHp * (tier >= 2 ? 0.18 : 0.11) / 6; a.regenSrc = u; a.regenAb = u.kit && u.kit.using; fx(w, { type: 'zone', x: a.x, y: a.y, r: 26, kind: 'heal', max: 0.6 }); }
+      for (const a of list) { a.regenT = 6; a.regenRate = a.maxHp * (tier >= 2 ? 0.15 : 0.09) / 6; a.regenSrc = u; a.regenAb = u.kit && u.kit.using; fx(w, { type: 'zone', x: a.x, y: a.y, r: 26, kind: 'heal', max: 0.6 }); }
     },
   },
   callWolf: {
@@ -817,7 +820,7 @@ export const TRAITS = {
   coldBlood: { immune: ['chill'] },
   conductor: { shockMul: 2 },
   raiser: { reviveRate: 2, reviveHp: 0.2 },
-  rhythm: { tick(w, u, dt) { for (const a of friendsNear(w, u, u.x, u.y, 180)) addBuff(a, { id: 'rhythm', dur: 0.3, move: 1.1 }); } },
+  rhythm: { tick(w, u, dt) { for (const a of friendsNear(w, u, u.x, u.y, 180)) addBuff(a, { id: 'rhythm', dur: 0.3, move: 1.1, atkSpeed: 1.08 }); } }, // (round 13: their attacks too; her songs were worth nothing measurable)
   barkskin: { taken(w, u, src, amt) { return u.spd < 8 ? amt * 0.8 : amt; } },
   soulHarvest: { death(w, u) { if (u.kit) for (const k in u.kit.cd) u.kit.cd[k] = Math.max(0, u.kit.cd[k] - 0.8); } },
   immunity: {

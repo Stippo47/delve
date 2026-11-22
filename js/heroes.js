@@ -33,13 +33,14 @@ export const HEROES = {
     name: 'Tower', art: 'art/heroes/tower.svg', role: 'tank', unlock: { gems: 2 },
     blurb: 'A wall with a mace. Pulls every enemy onto himself.',
     // (round 13: the hp tank. The designer: "U can have tank heroes that are more hp based (tanking hits) or protection/
-    // shield based (negating hits)": more than twice the Paladin's health and next to no armour: he takes the hits.
-    // Measured: with 180 health and 8 armour he took 40-57% of a blow against the Paladin's 26-37%, on less life per
-    // point: the Paladin was the better wall as well as the healer)
-    stats: { hp: 340, speed: 48, r: 36, vr: 24, turn: 2.8, accel: 150, face: 3, mass: 2.8, range: 24, atkCd: 1.3, dmg: 11, knock: 180, arc: 1.7 },
+    // shield based (negating hits)": twice the Paladin's health and less armour than he had (8): he takes the hits,
+    // where the Paladin's shield turns a third of every blow from the front. Measured before: with 180 health he
+    // took 40-57% of a blow against the Paladin's 26-37%, so the Paladin was the better wall as well as the healer.
+    // Numbers set by duels at every tier and by party batches: docs/balance/r13-abilities.md)
+    stats: { hp: 310, speed: 48, r: 36, vr: 24, turn: 2.8, accel: 150, face: 3, mass: 2.8, range: 24, atkCd: 1.3, dmg: 12.5, knock: 180, arc: 1.7 },
     attack: { name: 'Flanged mace', anim: 'swing', desc: 'A heavy mace blow.' },
     abilities: [
-      { id: 'holdTheLine', name: 'Hold the Line', cd: 10, desc: 'Plants the tower shield and calls enemies to him.',
+      { id: 'holdTheLine', name: 'Hold the Line', cd: 12, desc: 'Plants the tower shield and calls enemies to him.',
         tiers: ['Takes 60% less damage from the front and taunts those near for 4s; while he holds them they hit softer.', 'Taunts further, for 6s.', 'Hits taken while planted are struck back.'] },
       { id: 'charge', name: 'Charge', cd: 8, desc: 'Charges in a line, bowling enemies aside.',
         tiers: ['A short charge.', 'Longer, and slams enemies into walls harder.', 'Staggers everything it hits.'] },
@@ -51,10 +52,10 @@ export const HEROES = {
   archer: {
     name: 'Archer', art: 'art/heroes/archer.svg', role: 'ranged', starter: true,
     blurb: 'Shoots from behind the front line.',
-    stats: { hp: 70, speed: 72, r: 31, vr: 22, turn: 5, accel: 260, face: 5, mass: 1, range: 270, keep: 170, atkCd: 1.14, dmg: 9, dodge: 0.2 }, // (round 13: the bow a little slower, the abilities much harder: "Make the archers abilities stronger/ have more of the damage percentage")
+    stats: { hp: 70, speed: 72, r: 31, vr: 22, turn: 5, accel: 260, face: 5, mass: 1, range: 270, keep: 170, atkCd: 1.05, dmg: 9, dodge: 0.2 },
     attack: { name: 'Bow', anim: 'draw', desc: 'An arrow.' },
     abilities: [
-      { id: 'barrage', name: 'Barrage', cd: 6.5, desc: 'Draws, then looses a fan of arrows, each at its own speed.',
+      { id: 'barrage', name: 'Barrage', cd: 7.5, desc: 'Draws, then looses a fan of arrows, each at its own speed.',
         tiers: ['Five arrows.', 'Seven arrows, set alight.', 'The arrows go through.'] },
       { id: 'frostArrow', name: 'Frost Arrow', cd: 8, desc: 'A frost-tipped arrow.',
         tiers: ['Hits hard and chills hard.', 'Freezes.', 'Bursts, hurting and chilling all around.'] },
@@ -66,7 +67,7 @@ export const HEROES = {
   twinfang: {
     name: 'Twinfang', art: 'art/heroes/twinfang.svg', role: 'skirmish', starter: true,
     blurb: 'Hooked daggers. Picks off the ones on their own.',
-    stats: { hp: 100, speed: 96, r: 29, vr: 20, turn: 7, accel: 420, face: 7, mass: 0.9, range: 16, atkCd: 0.55, dmg: 8, arc: 1.4, dodge: 0.25 }, // (round 11: dodge .18 -> .25; she went down more than anyone)
+    stats: { hp: 115, speed: 96, r: 29, vr: 20, turn: 7, accel: 420, face: 7, mass: 0.9, range: 16, atkCd: 0.55, dmg: 8, arc: 1.4, dodge: 0.25 }, // (round 11: dodge .18 -> .25; she went down more than anyone)
     attack: { name: 'Twin daggers', anim: 'thrust', desc: 'Quick stabs.' },
     abilities: [
       { id: 'backstab', name: 'Backstab', cd: 11, desc: 'Steps into the shadows and appears behind the target.',
@@ -81,10 +82,10 @@ export const HEROES = {
   wildmane: {
     name: 'Wildmane', art: 'art/heroes/wildmane.svg', role: 'melee', unlock: { gems: 2 },
     blurb: 'Big sword, bigger temper.',
-    stats: { hp: 125, speed: 62, r: 33, vr: 23, turn: 3.6, accel: 200, face: 3.8, mass: 1.8, range: 26, atkCd: 1.25, dmg: 15, knock: 140, arc: 2.1 },
+    stats: { hp: 135, speed: 62, r: 33, vr: 23, turn: 3.6, accel: 200, face: 3.8, mass: 1.8, range: 26, atkCd: 1.25, dmg: 15, knock: 140, arc: 2.1 }, // (round 13: hp 125 -> 135; she and the Berserker went down most at tier I)
     attack: { name: 'Greatsword', anim: 'swing', desc: 'A wide sword swing.' },
     abilities: [
-      { id: 'rage', name: 'Rage', cd: 14, desc: 'Takes less damage and attacks and moves faster for a while.',
+      { id: 'rage', name: 'Rage', cd: 12, desc: 'Takes less damage and attacks and moves faster for a while.',
         tiers: ['For 5s.', 'Her hits also heal her.', 'For 8s, and nothing knocks her back.'] },
       { id: 'leap', name: 'Leap', cd: 9, desc: 'Leaps onto a far enemy; the landing shoves those around.',
         tiers: ['A leap.', 'Lands harder, staggering.', 'Leaps again straight after.'] },
@@ -96,12 +97,12 @@ export const HEROES = {
   berserker: {
     name: 'Berserker', art: 'art/heroes/berserker.svg', role: 'melee', unlock: { gems: 2 },
     blurb: 'A flail and no plan. Shockwaves.',
-    stats: { hp: 115, speed: 66, r: 32, vr: 22, turn: 4, accel: 230, face: 4.2, mass: 1.6, range: 30, atkCd: 1.1, dmg: 12, knock: 120, arc: 2.4, aoe: 44 },
+    stats: { hp: 128, speed: 66, r: 32, vr: 22, turn: 4, accel: 230, face: 4.2, mass: 1.6, range: 30, atkCd: 1.1, dmg: 12, knock: 120, arc: 2.4, aoe: 44 }, // (round 13: hp 115 -> 128)
     attack: { name: 'Flail', anim: 'swing', desc: 'The flail slams the ground in front of him, hitting everything in a small circle there.' },
     abilities: [
       { id: 'shockwave', name: 'Shockwave', cd: 9, desc: 'Slams the ground, sending a shockwave forward that repeats.',
         tiers: ['Three waves.', 'Five waves.', 'The waves stagger.'] },
-      { id: 'whirl', name: 'Whirl', cd: 12, desc: 'Spins the flail while moving, hitting everything around.',
+      { id: 'whirl', name: 'Whirl', cd: 12, desc: 'Spins the flail while moving, hitting everything around and batting it away.',
         tiers: ['For 3s.', 'For 5s.', 'Pulls enemies in.'] },
       { id: 'unstoppable', name: 'Unstoppable', cd: 16, desc: 'Shakes off every status and can\'t be stopped for a moment.',
         tiers: ['Clears statuses, 2s of immunity.', '4s.', 'Heals 20% too.'] },
@@ -141,7 +142,7 @@ export const HEROES = {
   frost: {
     name: 'Frost Mage', art: 'art/heroes/frost.svg', role: 'caster', unlock: { gems: 2 },
     blurb: 'Slows everything down, then shatters it.',
-    stats: { hp: 70, speed: 64, r: 30, vr: 22, turn: 4.5, accel: 240, face: 4.6, mass: 1, range: 240, keep: 180, atkCd: 1.2, dmg: 8 },
+    stats: { hp: 70, speed: 64, r: 30, vr: 22, turn: 4.5, accel: 240, face: 4.6, mass: 1, range: 240, keep: 180, atkCd: 1.2, dmg: 8.6 },
     attack: { name: 'Snow bolt', anim: 'cast', desc: 'A bolt of snow: a little chill, and a few shards burst out behind what it hits.' },
     abilities: [
       { id: 'iceShard', name: 'Ice Shard', cd: 6, desc: 'A shard that goes through enemies in a line.',
@@ -173,11 +174,11 @@ export const HEROES = {
     name: 'Cleric', art: 'art/heroes/cleric.svg', role: 'support', unlock: { gems: 1 },
     blurb: 'Stays at the back, mends with a ray of light, and brings the fallen back fast.',
     stats: { hp: 80, speed: 62, r: 31, vr: 22, turn: 4.2, accel: 230, face: 4.4, mass: 1.1, range: 210, keep: 170, atkCd: 1.3, dmg: 5 },
-    attack: { name: 'Light orb', anim: 'cast', desc: 'Three small, slow orbs of light, one after another, each homing a little; all three on one enemy make it slightly radiant.' },
+    attack: { name: 'Light orb', anim: 'cast', desc: 'Three small, slow orbs of light from her hands, fanned wide, each homing a little; all three on one enemy make it slightly radiant. An orb that meets a friend heals it a little and stops there.' },
     abilities: [
       // the id stays 'mend' so bought nodes in saves keep working
       { id: 'mend', name: 'Mending Ray', cd: 7, desc: 'A ray of light to the most hurt ally that heals them slowly while it holds (never herself).',
-        tiers: ['Heals 14% over 4s.', 'Heals 18% over 4s.', 'Splits to a second ally.'] },
+        tiers: ['Heals 12% over 4s.', 'Heals 16% over 4s.', 'Splits to a second ally.'] },
       { id: 'sanctuary', name: 'Sanctuary', cd: 16, desc: 'A circle of light that heals allies standing in it.',
         tiers: ['For 5s.', 'Bigger, 7s.', 'Enemies can\'t step in.'] },
       { id: 'smite', name: 'Smite', cd: 9, desc: 'A pillar of light on an enemy: hurts, staggers and makes it radiant.',
@@ -191,14 +192,14 @@ export const HEROES = {
     stats: { hp: 80, speed: 68, r: 31, vr: 22, turn: 4.5, accel: 240, face: 4.6, mass: 1.1, range: 200, keep: 160, atkCd: 1.15, dmg: 6 },
     attack: { name: 'Sour note', anim: 'cast', desc: 'Strums four slow notes in a spread; every one goes through.' },
     abilities: [
-      { id: 'warSong', name: 'War Song', cd: 14, desc: 'Allies near attack faster for a while.',
+      { id: 'warSong', name: 'War Song', cd: 12, desc: 'Allies near attack faster for a while.',
         tiers: ['+40% for 8s.', '+50%.', 'They move faster too.'] },
       { id: 'lullaby', name: 'Lullaby', cd: 13, desc: 'Enemies in front grow slow and sleepy.',
         tiers: ['Slows for 4s.', 'Puts the weakest to sleep.', 'Wider, and puts everyone it reaches to sleep.'] },
       { id: 'encore', name: 'Encore', cd: 20, desc: 'An ally\'s ability is ready again.',
         tiers: ['One ally.', 'Heals them 10% too.', 'Two allies.'] },
     ],
-    trait: { id: 'rhythm', name: 'Rhythm', desc: 'Allies near the bard move 10% faster.' },
+    trait: { id: 'rhythm', name: 'Rhythm', desc: 'Allies near the bard move 10% faster and attack 8% faster.' },
   },
   druid: {
     name: 'Druid', art: 'art/heroes/druid.svg', role: 'support', unlock: { gems: 2 },
@@ -208,8 +209,8 @@ export const HEROES = {
     abilities: [
       { id: 'entangle', name: 'Entangle', cd: 10, desc: 'Vines burst up and hold enemies in place.',
         tiers: ['Holds for 1.5s.', 'Bigger patch.', 'The vines poison.'] },
-      { id: 'rejuvenate', name: 'Rejuvenate', cd: 8, desc: 'Heals an ally slowly over time.',
-        tiers: ['11% over 6s.', '18%.', 'Two allies.'] },
+      { id: 'rejuvenate', name: 'Rejuvenate', cd: 9, desc: 'Heals an ally slowly over time.',
+        tiers: ['9% over 6s.', '15%.', 'Two allies.'] },
       { id: 'callWolf', name: 'Call Wolf', cd: 22, desc: 'A summoning ring opens and a wolf steps out to fight beside the party for a while.',
         tiers: ['For 12s.', 'A bigger wolf.', 'Two wolves.'] },
     ],
@@ -267,7 +268,7 @@ export const ROLE_TUNE = {
 };
 // Armour (armour.js): each point is one point and 2% off every blow, never more than 60% of it; damage over time
 // ignores it, heavy and critical blows get past half (sim.js hurt). Plate and big shields; the web's Armour nodes add to it.
-export const ARMOUR = { paladin: 6, tower: 2, oldguard: 6, dame: 4, griffon: 5, bulwark: 6, warhelm: 3, gladiator: 2, samurai: 2, valkyrie: 2, bearskin: 2 };
+export const ARMOUR = { paladin: 6, tower: 5, oldguard: 6, dame: 4, griffon: 5, bulwark: 6, warhelm: 3, gladiator: 2, samurai: 2, valkyrie: 2, bearskin: 2 };
 for (const [id, h] of Object.entries(HEROES)) {
   const t = ROLE_TUNE[h.role] || {};
   if (t.dmg) h.stats.dmg = Math.round(h.stats.dmg * t.dmg * 10) / 10;
