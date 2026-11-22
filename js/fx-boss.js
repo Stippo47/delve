@@ -244,46 +244,7 @@ export function drawDunes(ctx, w) {
     ctx.fillStyle = 'rgba(70,46,24,0.6)'; ctx.beginPath(); ctx.arc(s.x, s.y, 40, 0, TAU); ctx.fill(); }
 }
 
-// ---------------------------------------------------------------- the Clockwork Foundry: the Great Engine
-// The head: a riveted iron dome with a furnace grille (glowing hotter as it overheats), no eyes; a ring of gear teeth.
-export function drawEngineHead(ctx, u, w) {
-  const r = u.vr, f = flash(u), hot = w.overheat;
-  ctx.save(); ctx.translate(u.x, u.y); ctx.rotate(u.facing);
-  if (u.invulnT > 0) ctx.globalAlpha = 0.8;
-  inked(ctx, () => { ctx.beginPath(); for (let i = 0; i < 24; i++) { const a = i / 24 * TAU, rr = i % 2 ? r * 1.08 : r * 0.96; ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); } ctx.closePath(); }, f ? '#FFFFFF' : '#6E6A72');
-  inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, r * 0.82, 0, TAU); }, f ? '#FFFFFF' : '#9A96A0');
-  ctx.fillStyle = '#B9B4AE'; ctx.beginPath(); ctx.ellipse(-r * 0.25, -r * 0.2, r * 0.4, r * 0.25, -0.5, 0, TAU); ctx.fill();
-  inked(ctx, () => { ctx.beginPath(); ctx.rect(r * 0.25, -r * 0.32, r * 0.42, r * 0.64); }, hot ? '#FF8A3D' : '#3A3440');
-  ctx.strokeStyle = INK; ctx.lineWidth = 2.5; for (let i = 1; i < 4; i++) { ctx.beginPath(); ctx.moveTo(r * 0.25, -r * 0.32 + i * r * 0.16); ctx.lineTo(r * 0.67, -r * 0.32 + i * r * 0.16); ctx.stroke(); }
-  ctx.fillStyle = INK; for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; ctx.beginPath(); ctx.arc(Math.cos(a) * r * 0.7, Math.sin(a) * r * 0.7, 2.6, 0, TAU); ctx.fill(); }
-  if (hot) { ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, r * 0.45, 0, r * 0.9, '#FF8A3D', 0.4 + 0.15 * Math.sin(w.time * 8)); }
-  ctx.restore();
-}
-// A hand: an iron gauntlet seen from above; the left ends in a hammer head, the right in three claws. It lifts up the
-// screen as it rises for a blow (u.lift).
-export function drawEngineHand(ctx, u, w) {
-  const r = u.vr, f = flash(u), [ux, uy] = view_up(), lift = u.lift || 0;
-  ctx.save(); ctx.translate(u.x + ux * lift, u.y + uy * lift); ctx.rotate(u.facing);
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-r * 0.2, 0, r * 0.8, r * 0.62, 0, 0, TAU); }, f ? '#FFFFFF' : '#7E7A84');
-  if (!u.claw) inked(ctx, () => { ctx.beginPath(); ctx.rect(r * 0.35, -r * 0.75, r * 0.6, r * 1.5); }, f ? '#FFFFFF' : '#5A5660');
-  else for (const s of [-1, 0, 1]) inked(ctx, () => { ctx.beginPath(); ctx.moveTo(r * 0.4, s * r * 0.4 - 6); ctx.lineTo(r * 1.15, s * r * 0.55); ctx.lineTo(r * 0.4, s * r * 0.4 + 6); ctx.closePath(); }, f ? '#FFFFFF' : '#C9D2DE');
-  ctx.fillStyle = '#B9B4AE'; ctx.beginPath(); ctx.ellipse(-r * 0.35, -r * 0.2, r * 0.3, r * 0.16, 0, 0, TAU); ctx.fill();
-  ctx.restore();
-}
-// The engine room's floor: a conveyor band across the middle, its slats running.
-export function drawFoundry(ctx, w) {
-  for (const y of w.belts || []) {
-    ctx.fillStyle = 'rgba(58,52,64,0.45)'; ctx.fillRect(0, y - 40, w.W, 80);
-    ctx.strokeStyle = 'rgba(30,26,34,0.5)'; ctx.lineWidth = 4; ctx.beginPath();
-    for (let x = (w.time * 60) % 40; x < w.W; x += 40) { ctx.moveTo(x, y - 40); ctx.lineTo(x, y + 40); } ctx.stroke();
-  }
-}
-// The eye's beam (phase 3).
-export function drawLaser(ctx, w) {
-  const l = w.laser; if (!l) return;
-  ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = 'rgba(255,138,61,0.4)'; ctx.lineCap = 'round'; ctx.lineWidth = 50; ctx.beginPath(); ctx.moveTo(l.x1, l.y1); ctx.lineTo(l.x2, l.y2); ctx.stroke(); ctx.restore();
-  inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(l.x1, l.y1); ctx.lineTo(l.x2, l.y2); }, '#FFE08A', 10);
-}
+// (the Great Engine is drawn in js/boss-engine-fx.js: bosses3)
 
 // A thrown spear in flight (out and back), and the chief's cleaver-spin trail.
 export function drawSpears(ctx, w) {

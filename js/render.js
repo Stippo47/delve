@@ -148,7 +148,7 @@ function drawShadows(ctx, w, tf) {
     const sx = a * x + c * y + e, sy = b * x + d * y + f, sr = r * k + 2;
     if (sx - sr < x0) x0 = sx - sr; if (sy - sr < y0) y0 = sy - sr; if (sx + sr > x1) x1 = sx + sr; if (sy + sr > y1) y1 = sy + sr;
   };
-  for (const u of w.units) if (!u.ethereal || u.hiddenIn) disc(u.x, u.y, shadowSize(u), 1);
+  for (const u of w.units) if ((!u.ethereal || u.hiddenIn) && u.shadowK !== 0) disc(u.x, u.y, shadowSize(u) * (u.shadowK ?? 1), 1); // lane B (bosses3): u.shadowK sizes a code-drawn boss's shadow (0: none: a wurm under the sand)
   // a body in the air leaves its shadow on the floor
   for (const cp of w.corpses) if (cp.z > 2) disc(cp.x, cp.y, cp.vr * 1.3, clamp(cp.t / 4, 0, 1) * 0.8);
   g.globalAlpha = 1;

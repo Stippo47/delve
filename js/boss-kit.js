@@ -9,11 +9,12 @@ import { alive, hurt, puff, sparks, spawn, kill, addDanger, fx } from './sim.js'
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange } from './util.js';
 import { circleRect } from './path.js';
 import { stand } from './elites.js';
+import { drawBfx } from './boss-draw.js';
 
 // the boss's opponents (whichever side it is on: battle mode can put a boss on either team)
 export const heroesOf = (w, u) => w.units.filter((o) => alive(o) && !o.ethereal && o.team !== u.team);
 export const H = (u, hit) => (hit ? { ...hit, dmg: (hit.dmg || 0) * u.dmgMul } : undefined);
-const param = (k) => { try { return typeof location !== 'undefined' ? new URLSearchParams(location.search).get(k) : null; } catch { return null; } };
+export const param = (k) => { try { return typeof location !== 'undefined' ? new URLSearchParams(location.search).get(k) : null; } catch { return null; } };
 
 // Bosses don't fly about: no knockback, and a stun is short (sim.js already cuts a boss's stuns to 40%).
 export const STEADY = { knockImmune: true };
@@ -138,3 +139,30 @@ export function notePhase(w, k) { (k.phaseT || (k.phaseT = [])).push(w.time); }
 // A shower of coins etc. is the sim's; this is the boss's last flourish: a big puff of its colour.
 export function deathBurst(w, u, cols) { for (let i = 0; i < 40; i++) { const a = rand() * TAU, v = rrange(60, 260); w.particles.push({ x: u.x, y: u.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0.9, max: 0.9, size: rrange(4, 8), color: cols[i % cols.length] }); } w.shake = Math.max(w.shake, 12); }
 export { fx };
+
+// ---------------------------------------------------------------- lane B (bosses3): the stage and effects of a fight
+// A boss's own drawing under the units (ground) and over them (air). The room's builder calls it, and so does the
+// brain on its first tick: a boss fighting in a room that isn't its own (battle mode, two bosses on a side) still gets
+// its effects. Keyed, so each is hooked once; it keeps whatever w.arenaDraw / w.arenaAir was there.
+export function stage(w, key, ground, air) {
+  const S = w.bossStage || (w.bossStage = { keys: {}, ground: [], air: [], g: null, a: null });
+  if (!S.keys[key]) { S.keys[key] = true; if (ground) S.ground.push(ground); if (air) S.air.push(air); }
+  if (w.arenaDraw !== S.g) { const g0 = w.arenaDraw; S.g = w.arenaDraw = (ctx, w2) => { if (g0) g0(ctx, w2); for (const f of S.ground) f(ctx, w2); drawBfx(ctx, w2, 'ground'); }; }
+  if (w.arenaAir !== S.a) { const a0 = w.arenaAir; S.a = w.arenaAir = (ctx, w2) => { if (a0) a0(ctx, w2); for (const f of S.air) f(ctx, w2); drawBfx(ctx, w2, 'air'); }; }
+}
+// An effect that lives for f.max seconds from now (boss-draw.js BFX[f.type] draws it by the room's clock).
+export function bfx(w, f) {
+  f.t0 = w.time; const L = w.bfx || (w.bfx = []);
+  if (L.length > 90) w.bfx = L.filter((g) => w.time - g.t0 < g.max);
+  (w.bfx || L).push(f); return f;
+}
+// A zone the fight moves and keeps alive itself (a spin's reach, a beam's path): shown full, never strikes; the other
+// side keeps stepping out of it. Call keep() every tick it should stay; drop it by not calling.
+export function liveZone(w, u, z) { const d = addDanger(w, { ...z, t: 0.3, max: 0.01, team: u.team, src: u, quiet: true, soft: true }); d.age = 9; return d; }
+export function keepZone(z, set) { if (!z) return; Object.assign(z, set); z.t = 0.3; z.done = false; }
+// Whether a unit can be picked up and carried (a claw's grab, a chain's drag): not a boss, a part, or one that's dug in.
+export const canDrag = (h) => alive(h) && !h.ethereal && !h.def.boss && !h.def.part && !(h.buffs || []).some((b) => b.id === 'unstoppable' || b.knockImmune) && !(h.trinketHooks || []).some((t) => t.knockImmune);
+// Held fast by something for a moment: it can't act, and it goes where it's put.
+export function holdFast(h, x, y, t = 0.2) { h.stunT = Math.max(h.stunT, t); h.x = x; h.y = y; h.vx = h.vy = h.dvx = h.dvy = h.kx = h.ky = 0; h.spd = 0; h.act = null; }
+// Testing and clips: ?bossmove=<name> makes a boss open with that move (each boss reads it in its own brain).
+export const TEST_MOVE = param('bossmove');
