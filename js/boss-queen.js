@@ -205,7 +205,7 @@ const ART = 'art/bosses/winter-queen.svg'; // art round 9 (design/class-round9)
 export const QUEEN = {
   defs: {
     winterQueen: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 57, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 5, hp: 900, speed: 50, role: 'ranged', range: 300,
-      atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 180, coins: [70, 90], boss: true, arena: 'glacier', attackAnim: 'cast',
+      atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 180, coins: [70, 90], boss: true, arena: 'glacier', attackAnim: 'cast', flashAt: 0.095,
       res: { chill: 0, wet: 0.5, burn: 1.3, stagger: 0.6, poison: 0.3 }, brain, onDeath: death },
     // an ice mirror: a slab of clear ice with her shape caught in it (drawn in code: nothing like her), still; it shatters
     queenImage: { team: 'enemy', name: 'Ice Mirror', r: 40, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 30, hp: 60, speed: 0, role: 'ranged', range: 300, draw: drawMirror,

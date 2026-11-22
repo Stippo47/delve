@@ -559,6 +559,7 @@ The designer's verdicts are the v12-bosses answers in `docs/riffle-log/2026-11-2
 - **Boss parts take no status at all** (`boss-kit.js PART`: every id in `statuses.js`), so a hand or a drum can't be
   charmed over or frightened off.
 - **Hooks left in shared files**, each one line and marked: `render.js` `u.shadowK`; `fxkit.js` `z.quiet`;
-  `scenery.js` `z.col`, `z.soft`, `z.unseen`; `parts.js` `def.pose`.
+  `scenery.js` `z.col`, `z.soft`, `z.unseen`; `parts.js` `def.pose`; `render.js` `def.flashAt` (the three sprite
+  bosses of this lane show white for a frame when struck; with four heroes on them they were white a third of the time).
 - **Testing**: `?bossmove=<name>` makes a boss open with one move (each boss's brain lists its names);
   `lab.html?m=boss&boss=<id>&bossphase=N&bossmove=<name>`.

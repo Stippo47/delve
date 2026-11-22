@@ -233,7 +233,7 @@ function sanctum(w) {
 export const ANGEL = {
   defs: {
     gildedSeraph: { team: 'enemy', name: 'The Gilded Seraph', art: 'art/bosses/biblical-angel.svg', headR: 58, r: 52, vr: 58, turn: 2.2, accel: 140, face: 2.2, mass: 8, hp: 950, speed: 40, role: 'ranged', range: 300,
-      atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 220, coins: [90, 110], boss: true, arena: 'sanctum', attackAnim: 'cast', pose: ANGEL_POSE,
+      atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 220, coins: [90, 110], boss: true, arena: 'sanctum', attackAnim: 'cast', pose: ANGEL_POSE, flashAt: 0.095,
       res: { radiance: 0, curse: 0.5, poison: 0.3, stagger: 0.5 }, brain, onDeath: death },
     seraphHorn: PART('The Gilded Seraph (a trumpet)', { r: 26, vr: 26, mass: 30, hp: 100, res: { radiance: 0 }, draw: drawHorn }),
     seraphSinger: { team: 'enemy', name: 'Choir Singer', art: 'art/bosses/choir-singer.svg', headR: 40, r: 26, vr: 20, turn: 3, accel: 100, face: 3, mass: 2,

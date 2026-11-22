@@ -540,7 +540,7 @@ function unitFrame(ctx, u, w) {
 // Status washes over the sprite: [colour, strength] pairs.
 function washesOf(u, w) {
   if (u.exiting) return [['#FFF6D8', clamp(u.exiting.t / u.exiting.dur * 1.6, 0, 0.95)]]; // glowing into the light
-  if (u.downed || u.flashT > 0.06) return [];
+  if (u.downed || u.flashT > (u.def.flashAt ?? 0.06)) return []; // (lane B, bosses3: def.flashAt: a boss struck many times a second shows white for a frame, not a third of the time)
   const st = u.st || {}, out = [];
   const chill = u.frozenT > 0 ? 1 : clamp((st.chill || 0) / 100, 0, 1), poison = clamp((st.poison || 0) / 100, 0, 1), burn = clamp((st.burn || 0) / 100, 0, 1);
   const wet = clamp((st.wet || 0) / 100, 0, 1), shock = clamp((st.shock || 0) / 100, 0, 1);
@@ -638,7 +638,7 @@ function drawPartsUnit(ctx, u, w) {
   if (u.invulnT > 0 && !u.act && !u.spin) alpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18)); // no flicker mid-leap or roll (round 9)
   if (u.downed) alpha = 0.62; // a hero who is down lies faint too (round 7)
   if (u.ethereal && !u.exiting && !u.hiddenIn) alpha *= 0.5;
-  const mode = u.downed ? 'grey' : u.flashT > 0.06 ? 'flash' : 'normal';
+  const mode = u.downed ? 'grey' : u.flashT > (u.def.flashAt ?? 0.06) ? 'flash' : 'normal'; // (lane B, bosses3: def.flashAt, as in washesOf)
   if (u.act && u.act.type === 'dash' && u.kind === 'twinfang') afterimages(ctx, u, w, set, pose, sizeU);
   else u._trail = null;
   drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w), shift: isOurs(u) && u.kind !== 'minion', /* round 10: the raised dead stay plain grey */ border: mode === 'normal' ? borderOf(u, w) : null });
