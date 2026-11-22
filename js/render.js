@@ -584,6 +584,7 @@ function borderOf(u, w) {
   if (u.downed) return null;
   if (u.buffs && u.buffs.some((b) => b.id === 'unstoppable')) return { color: '#FFF4B8', a: 0.85 + 0.15 * Math.sin(w.time * 9) };
   if (u.guardBy && u.guardT > 0 && !u.guardBy.dead && !u.guardBy.downed) return { color: '#F2C14E', a: 0.8 + 0.2 * Math.sin(w.time * 5) };
+  { const b = u.buffs && u.buffs.find((x) => x.border); if (b) return { color: b.border, a: 0.85 + 0.15 * Math.sin(w.time * 9) }; } // lane H1 (round 13) hook: any buff can say it protects, with its border's colour (Old Bones)
   return null;
 }
 function drawUnit(ctx, u, w) {

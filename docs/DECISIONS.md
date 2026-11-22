@@ -496,3 +496,35 @@ The designer's words: `docs/riffle-log/2026-11-22-round14.txt`. The plan and the
   dark tufts or puddles.
 - **Art**: the picks and notes of art round 10 and its second pass (lane A).
 - The Enchantress is kept as built ("YES").
+
+## Round 13, lane H1 (2026-11-22): the first 15 heroes: the showcase 4 answers, every ability worth having
+The designer's words: `docs/riffle-log/2026-11-22-round12.txt` (decks showcase4 and v12-report) and the message in
+`docs/BUILD-v6.md`. The looks: `docs/FX-STYLE.md`, "Round 13". The numbers: `docs/balance/r13-abilities.md`.
+- **Showcase 4.** Each note changed only what it asked. Where a card came back "none of them" the direction changed:
+  Shockwave is waves that travel (their own first words: "a repeating shockwave forwards"), with no earth out of the
+  floor; the wolf's bite is drawn on the one bitten, as big as it is; Old Bones puts nothing over her head and shows a
+  protection border; Bone Spear has three shapes. Variants wait on picks: `?v_shockwave`, `?v_wolfBite`, `?v_boneSpear`,
+  `?v_oldBones` (js/fxvar.js); the first of each is the default.
+- **Whirl's "changed more than what I asked"** was a drawing fault, not a choice: the flail head's path took in the
+  crescent drawn before it and inked it over. Fixed; the balls are the round 9 size again.
+- **Kit changes the notes asked for**: Whirl knocks back; Zeus Bolt shoves hard the way it flies and hits a little
+  harder; the Cleric's orbs leave one point 45 degrees apart and stop on a friend (the front line now eats some of her
+  shots: her damage share fell from 14-15% to 13-14%); Roll is a roll and its caltrops skid out.
+- **Reach follows the look** (my call): Cleave's and Reap's crescents were drawn far out past the blade ("Slash is too far
+  ahead from sword"). Drawn at the blade's tip they showed less reach than the blow had, so the blows' reach came in to
+  what the blade sweeps (Cleave u.r + 38 / 52, Reap u.r + 46 / 62) and their damage went up to pay for it.
+- **Measuring an ability** (the designer: "turning a skill on and off to see its impact"): `tools/ability-worth.mjs`
+  plays the same parties from the same seeds with all of a hero's abilities and with each one switched off in turn.
+  sim.js got two hooks so Charge and Hold the Line's struck-back blows are counted as theirs (they were the mace's).
+- **The Tower is the health tank, the Paladin the shield tank** (the designer: "more hp based (tanking hits) or protection/
+  shield based (negating hits)"). The Tower took 40-57% of a blow against the Paladin's 26-37% on barely more health, so
+  the Paladin was the better wall as well as the healer. Now: health 310 (was 180), armour 5 (was 8), mace 12.5 (was
+  11); Charge is 2x his blow and grows with his nodes (it was a flat 18 that the web's Charge nodes did nothing for);
+  those Hold the Line taunts hit 20% softer; its taunt is wider. Duels at tiers 0-3 and party batches in the balance doc.
+- **The Archer**: bow unchanged; Barrage is loosed at a lone enemy too, the Frost Arrow hits 1.9x (was 1.2x) and its
+  burst hurts. Her abilities deal about a third of her damage at tier I and about half at tier III (were a quarter and
+  two fifths); she clears as many rooms as the average shooter.
+- **Other calls**: Ice Wall goes up only against a brawler coming for her (raised across the party's own line of fire
+  it was worth less than nothing); the Bard's Rhythm quickens attacks by 8% as well; Twinfang is untouchable mid-dash
+  and as she steps out of a Backstab; the Druid's and Cleric's mending and the Necromancer's drain trimmed (all three
+  sat 1.5 to 2 rooms over the average at tier I).
