@@ -231,3 +231,37 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
   0.38 s) with a lunge (the sim's dash), nothing hurts her or puts a status on her, three times as heavy to shove, while
   a third of her health drains away; green wash and boiling bubbles. II her blows +25%; III every blow puts a random
   status on what it hits. Clip: alchemist-bangFlask.
+
+### Shaman
+- Spirit bolt: "Jumps to ally if they are near and heals them. Otherwise no heal" -> it strikes; if a hurt friend is
+  within 170 of what it struck, a spirit leaps on from there to that friend and mends it (0.6x of the bolt); else no
+  heal. Clip: shaman-attack (no friend on the bench: the leap shows in a real fight and in the Book).
+- Healing Totem: "Not good overall. Doesn't even match the one on his back… Should throw to ally, In an arc. Has 100 hp.
+  Any ally in its radius that takes damage will go to it instead. At lvl 3 cleanse status effects too. It has its own hit
+  box. Damage directly to it is 50%" -> a winged totem drawn like his (carved pole, stacked faces, teal wings, his
+  orange bands), thrown on an arc to the friend under the most attack; a summon with 100 health and its own body; every
+  blow on a friend within 115 lands on the totem instead (a teal streak from the friend to it); blows on it do half;
+  it still mends those near a little. 8 s (II 12 s); III it cleans statuses off them every 1.5 s. Clip: shaman-healTotem.
+- Spirit Link: "Show underneath. Give outline. Can link to totem" -> inked teal threads on the floor under the units,
+  beads running along them; his totem joins the link. Clip: shaman-spiritLink.
+- Rain Dance: "Don't like. Doesnt look good. Make ancestors call. Summons a light blue bear, eagle, wolf, and beaver.
+  Eagle, follows ally healing them. Wolf, works like current wolf. Bear, melee. Negates all damage around him by 20%.
+  Beaver. Spins and shoots out 3 homing orbs." -> **Ancestors' Call** (id rainDance): four light-blue spirits rise out
+  of the floor: a bear (melee; friends within 120 of it take 20% less), a wolf (the Druid's wolf, washed light blue),
+  an eagle (flies over the most hurt friend, mending it), a beaver (sits by him; every 2 s it spins and shoots three
+  homing spirit orbs). 8 s (II 12 s); III half as strong again. The bear, eagle and beaver are drawn in code (fx2 LOOK2):
+  **art lane** may want to draw them properly. Clip: shaman-rainDance.
+
+### Witch
+- Hex bolt: "Shoots 3 hexs in quick succession. Have each one look like 1 of 5 possible symbols." -> three hexes 0.1 s
+  apart (0.4x each), each a sign at random: a moon, a star, an eye, a spiral or a skull. Clip: witch-attack.
+- Hex: "Does not look good at all... Needs unique visual not the leach. Frogs should hop around randomly." -> a hex
+  shot; where it lands a puff of green smoke, the enemy's body is hidden and a frog is drawn in its place (squat green
+  body, big eyes, back legs kicking on each hop); it hops about at random, can't attack, takes 50% more. Clip: witch-frogHex.
+- Cursed Brew: "Doesnt look good. Pot should deal knockback and have a hit box and hp." -> the cauldron (black iron,
+  green brew bubbling, a fire under it) is a summon with 60 health and its own body; it lands with a blow (1.2x, knock
+  380, a little curse) and stands 6 s while purple fumes curse whatever breathes them. Clip: witch-cursedBrew.
+- Broom Ride: "Should fly above everything for a bit. Circling around. Dropping hex bombs below it. Doesnt look like
+  they are ridding it. Not targetable when flying" -> she rises high on the broom (drawn under her body, the handle out
+  in front, the bristles behind, wind lines), circles the enemies for 2.5 s (III 3.5 s) dropping hex bombs (0.9x, a
+  little curse; II more often); nothing can pick her out while she flies. Clip: witch-broomRide.

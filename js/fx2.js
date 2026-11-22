@@ -327,13 +327,6 @@ PROJ2.spirit = (ctx, p, T, ang, sp) => {
   inked(ctx, () => { ctx.beginPath(); ctx.moveTo(10, 0); ctx.quadraticCurveTo(2, -8, -6, -3); ctx.quadraticCurveTo(-2, 0, -6, 3); ctx.quadraticCurveTo(2, 8, 10, 0); ctx.closePath(); }, '#7FE0D0');
   disc(ctx, 4, -1.5, 2.2, '#FFFFFF');
 };
-// the Witch's hex bolt: a green spark wrapped in a violet curl
-PROJ2.hexbolt = (ctx, p, T, ang, sp) => {
-  ctx.rotate(ang); trail(ctx, sp, 34, 7, '#9BE36B');
-  lit(ctx, () => glowDisc(ctx, 0, 0, 18, '#9BE36B', 0.55));
-  inked(ctx, () => star(ctx, 0, 0, 8, 5, 0.45, T * 9), '#9BE36B');
-  inkLine(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 11, T * 12, T * 12 + 3.6); }, '#B07BE0', 2.4);
-};
 // a splash of brew where a flask burst
 DRAW.splash = (ctx, f, w, layer) => {
   if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
@@ -379,27 +372,6 @@ DRAW.fuse = (ctx, f, w, layer) => {
   lit(ctx, () => glowDisc(ctx, f.x, f.y - 14 * s, 10 + 6 * Math.sin(f.t * 50), '#FFC85A', 0.8));
   ctx.save(); ctx.globalAlpha *= 0.25 + 0.4 * k; ctx.setLineDash([6, 6]); ctx.strokeStyle = '#FF6B5A'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(f.x, f.y, f.r || 95, 0, TAU); ctx.stroke(); ctx.restore();
 };
-// the Healing Totem: a carved post with wings standing on the floor, light pouring round its foot
-DRAW.totem = (ctx, f, w, layer) => {
-  const a = life(f, 0.3, 0.5), rise = easeOut(k01(f.t / 0.35));
-  if (layer === 'ground') { lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r, '#8BE07A', (0.16 + 0.05 * Math.sin(f.t * 4)) * a)); return; }
-  ctx.save(); ctx.globalAlpha *= a;
-  upright(ctx, f.x, f.y, () => { ctx.scale(1, rise);
-    inked(ctx, () => roundRect(ctx, -7, -46, 14, 46, 3), '#B06A3A');
-    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-7, -38); ctx.lineTo(-24, -46); ctx.lineTo(-7, -30); ctx.closePath(); ctx.moveTo(7, -38); ctx.lineTo(24, -46); ctx.lineTo(7, -30); ctx.closePath(); }, '#2FA08F');
-    inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -46, 8, 0, TAU); }, '#E0A060'); disc(ctx, -3, -47, 1.8, '#2B2230'); disc(ctx, 3, -47, 1.8, '#2B2230'); });
-  for (let i = 0; i < 4; i++) { const ph = (f.t * 0.8 + i / 4) % 1, [vx, vy] = upVec(), b = i * 1.7; ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI) * 0.8; inkDisc(ctx, f.x + Math.cos(b) * 30 + vx * ph * 50, f.y + Math.sin(b) * 20 + vy * ph * 50, 3, '#A9D47A'); ctx.restore(); }
-  ctx.restore();
-};
-// Spirit Link: teal threads between the linked
-DRAW.links = (ctx, f, w, layer) => {
-  if (layer !== 'air') return; const g = f.group.filter((a) => !a.dead && !a.downed); if (g.length < 2) return; const a = life(f, 0.3, 0.4);
-  ctx.save(); ctx.globalAlpha *= 0.7 * a;
-  for (let i = 0; i < g.length; i++) { const p = g[i], q = g[(i + 1) % g.length]; if (g.length === 2 && i) break;
-    lit(ctx, () => { ctx.strokeStyle = 'rgba(127,224,208,0.35)'; ctx.lineWidth = 9; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.quadraticCurveTo((p.x + q.x) / 2 + Math.sin(f.t * 3 + i) * 14, (p.y + q.y) / 2 + Math.cos(f.t * 3 + i) * 14, q.x, q.y); ctx.stroke(); });
-    ctx.strokeStyle = '#BFF6EC'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.quadraticCurveTo((p.x + q.x) / 2 + Math.sin(f.t * 3 + i) * 14, (p.y + q.y) / 2 + Math.cos(f.t * 3 + i) * 14, q.x, q.y); ctx.stroke(); }
-  ctx.restore();
-};
 // Rain Dance: a cloud's shadow on the floor and rain streaking down through it
 DRAW.rain = (ctx, f, w, layer) => {
   const a = life(f, 0.3, 0.6);
@@ -407,33 +379,6 @@ DRAW.rain = (ctx, f, w, layer) => {
   const [vx, vy] = upVec(); ctx.save(); ctx.globalAlpha *= a;
   for (let i = 0; i < 26; i++) { const ph = (f.t * 2.4 + hash(i, 3)) % 1, b = hash(i, 4) * TAU, d = f.r * Math.sqrt(hash(i, 6)), x = f.x + Math.cos(b) * d, y = f.y + Math.sin(b) * d, h = 60 * (1 - ph);
     inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x + vx * h, y + vy * h); ctx.lineTo(x + vx * (h - 12), y + vy * (h - 12)); }, '#9FD8F2', 1.8); }
-  ctx.restore();
-};
-// Hex: a fat green frog sat on top of the enemy (it covers it)
-DRAW.frog = (ctx, f, w, layer) => {
-  if (layer !== 'air' || !f.unit) return; const e = f.unit, hop = Math.abs(Math.sin(f.t * 5)) * 8, [vx, vy] = upVec(), s = e.vr / 16 * (f.t < 0.2 ? f.t / 0.2 : 1);
-  if (f.t < 0.25) lit(ctx, () => glowDisc(ctx, e.x, e.y, 50, '#9BE36B', 0.7 * (1 - f.t / 0.25)));
-  ctx.save(); ctx.translate(e.x + vx * hop, e.y + vy * hop); ctx.rotate(e.facing - Math.PI / 2); ctx.scale(s, s);
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 16, 18, 0, 0, TAU); }, '#6FB83A');
-  for (const sx of [-1, 1]) { inked(ctx, () => { ctx.beginPath(); ctx.ellipse(sx * 15, -9, 6, 9, sx * 0.5, 0, TAU); }, '#5A9A2E'); inked(ctx, () => { ctx.beginPath(); ctx.arc(sx * 7, 12, 5, 0, TAU); }, '#8FD45A'); }
-  disc(ctx, 0, 2, 9, '#A9E07A');
-  ctx.restore();
-};
-// Cursed Brew: a black cauldron bubbling purple fumes, the fumes spread on the floor
-DRAW.cauldron = (ctx, f, w, layer) => {
-  const a = life(f, 0.2, 0.6);
-  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.4 * a; ctx.fillStyle = '#6A4A9A'; blob(ctx, f.x, f.y, f.r, 9, f.t * 0.6, 1); ctx.fill(); ctx.restore(); return; }
-  ctx.save(); ctx.globalAlpha *= a;
-  upright(ctx, f.x, f.y, () => { inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, -6, 15, 12, 0, 0, TAU); }, '#3A3440'); inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, -14, 13, 5, 0, 0, TAU); }, '#7FCB3A'); });
-  const [vx, vy] = upVec();
-  for (let i = 0; i < 5; i++) { const ph = (f.t * 0.9 + i / 5) % 1; ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI) * 0.9; inkDisc(ctx, f.x + Math.sin(i * 2 + f.t * 2) * 10 + vx * (16 + ph * 44), f.y + vy * (16 + ph * 44), 4 + 6 * ph, i % 2 ? '#9B7BD6' : '#7FCB3A'); ctx.restore(); }
-  ctx.restore();
-};
-// Broom Ride: bristle streaks and a violet trail behind her
-DRAW.broom = (ctx, f, w, layer) => {
-  if (layer !== 'ground' || !f.unit) return; const u = f.unit, k = k01(f.t / f.max);
-  ctx.save(); ctx.globalAlpha *= 1 - k;
-  for (let i = -2; i <= 2; i++) { const nx = -Math.sin(f.a) * i * 6, ny = Math.cos(f.a) * i * 6; K.streak(ctx, u.x + nx - Math.cos(f.a) * u.r, u.y + ny - Math.sin(f.a) * u.r, f.a + Math.PI, 0, 34 - Math.abs(i) * 5, 2.6, i % 2 ? '#C9A060' : '#B07BE0', '#FFFFFF'); }
   ctx.restore();
 };
 // Eldritch Beam: a magenta beam that thickens and brightens the longer it holds
@@ -1240,6 +1185,174 @@ DRAW.monster = (ctx, f, w, layer) => {
   if (f.t < 0.35) lit(ctx, () => glowDisc(ctx, u.x, u.y, 70, '#9BE36B', 0.6 * (1 - f.t / 0.35)));
   for (let i = 0; i < 6; i++) { const ph = (f.t * 1.5 + hash(i, u.id)) % 1, b = hash(i, 3) * TAU, d = u.vr * 0.8 * hash(i, 7), up = ph * 34;
     ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); inkDisc(ctx, u.x + Math.cos(b) * d + vx * up, u.y + Math.sin(b) * d * 0.7 + vy * up, 2.5 + 3.5 * ph, i % 2 ? '#B5DE5E' : '#7DB83A'); ctx.restore(); }
+  ctx.restore();
+};
+
+// ---------------------------------------------------------------- the Shaman (round 13)
+const SPIRIT = ['#5FB8E8', '#9FE4FF', '#DDF6FF']; // the ancestors' light blue: dark, main, light
+const spiritA = (u) => (u.lifeT != null ? clamp(u.lifeT / 0.6, 0, 1) : 1) * 0.92;
+// the winged totem (like the one on his back): a carved pole of stacked faces, teal wings at the top
+LOOK2.totem = (ctx, u, w) => {
+  const fl = u.flashT > 0.06, rise = easeOut(k01((w.time - (u.bornT ?? (u.bornT = w.time))) / 0.25));
+  upright(ctx, u.x, u.y, () => { ctx.scale(1, rise);
+    ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(0, 6, 18, 7, 0, 0, TAU); ctx.fill(); ctx.restore();
+    for (const sd of [-1, 1]) inked(ctx, () => { ctx.beginPath(); ctx.moveTo(sd * 8, -34); ctx.quadraticCurveTo(sd * 30, -48, sd * 34, -30); ctx.quadraticCurveTo(sd * 24, -30, sd * 26, -22); ctx.quadraticCurveTo(sd * 16, -26, sd * 8, -22); ctx.closePath(); }, fl ? '#FFFFFF' : '#2FB3A4');
+    inked(ctx, () => roundRect(ctx, -10, -40, 20, 46, 4), fl ? '#FFFFFF' : '#A0705A');
+    ctx.fillStyle = '#D7713C'; ctx.fillRect(-10, -26, 20, 4); ctx.fillRect(-10, -8, 20, 4);
+    ctx.fillStyle = '#F4EEDC'; for (const yy of [-33, -16]) { ctx.fillRect(-6, yy, 4, 3); ctx.fillRect(2, yy, 4, 3); ctx.fillRect(-4, yy + 6, 8, 2.4); }
+    inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -42, 5, 0, TAU); }, '#2FB3A4');
+  });
+  if (u.hp < u.maxHp * 0.5) { ctx.save(); ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(u.x - 5, u.y - 10); ctx.lineTo(u.x + 2, u.y - 2); ctx.stroke(); ctx.restore(); }
+};
+// the totem's reach: a faint teal glow on the floor round it with motes drifting in (no ring)
+DRAW.totemReach = (ctx, f, w, layer) => {
+  const u = f.unit; if (!alive2(u)) { ended(f, true); return; } const a = life(f, 0.3, 0.4);
+  if (layer === 'ground') { lit(ctx, () => glowDisc(ctx, u.x, u.y, f.r, '#7FE0D0', 0.16 * a)); return; }
+  ctx.save(); ctx.globalAlpha *= a;
+  for (let i = 0; i < 6; i++) { const ph = (f.t * 0.5 + i / 6) % 1, b = i / 6 * TAU + 0.4, d = f.r * (1 - ph); ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); disc(ctx, u.x + Math.cos(b) * d, u.y + Math.sin(b) * d, 2.6, '#BFF6EC'); ctx.restore(); }
+  ctx.restore();
+};
+// a blow drawn off a friend into the totem: a teal streak from the friend to it
+DRAW.totemTake = (ctx, f, w, layer) => {
+  if (layer !== 'air' || !alive2(f.from)) return; const k = k01(f.t / f.max), t = f.from, a = Math.atan2(t.y - f.y, t.x - f.x), L = Math.hypot(t.x - f.x, t.y - f.y);
+  ctx.save(); ctx.globalAlpha *= 1 - k; K.streak(ctx, f.x, f.y, a, L * k * 0.6, L * Math.min(1, k * 2), 4, '#7FE0D0', '#E8FFF6'); ctx.restore();
+};
+// Spirit Link (round 13: "Show underneath. Give outline."): inked teal threads between the linked, on the floor
+DRAW.links = (ctx, f, w, layer) => {
+  if (layer !== 'ground') return; const g = (f.group || []).filter(alive2); if (g.length < 2) return; const a = life(f, 0.2, 0.4);
+  ctx.save(); ctx.globalAlpha *= a;
+  for (let i = 1; i < g.length; i++) { const p = g[i - 1], q = g[i], mx = (p.x + q.x) / 2 + Math.sin(f.t * 3 + i) * 10, my = (p.y + q.y) / 2 + Math.cos(f.t * 3 + i) * 10;
+    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.quadraticCurveTo(mx, my, q.x, q.y); }, '#7FE0D0', 4.5);
+    const ph = (f.t * 0.8 + i * 0.3) % 1; disc(ctx, p.x + (q.x - p.x) * ph, p.y + (q.y - p.y) * ph, 3.2, '#E8FFF6'); }
+  ctx.restore();
+};
+// an ancestor spirit rising out of the floor: a teal-blue column of light and motes
+DRAW.spiritRise = (ctx, f, w, layer) => {
+  const k = k01(f.t / f.max), [vx, vy] = upVec();
+  if (layer === 'ground') { lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 1.4, SPIRIT[1], 0.45 * (1 - k))); return; }
+  ctx.save(); ctx.globalAlpha *= 1 - k;
+  for (let i = 0; i < 7; i++) { const ph = (k * 1.4 + hash(i, 3)) % 1, b = hash(i, 7) * TAU; disc(ctx, f.x + Math.cos(b) * f.r * 0.6 + vx * ph * 50, f.y + Math.sin(b) * f.r * 0.4 + vy * ph * 50, 3 * (1 - ph) + 1, SPIRIT[2]); }
+  ctx.restore();
+};
+// the spirit bear, from above: a round light-blue body, shoulders, a snout, round ears; it rocks as it walks
+LOOK2.spiritBear = (ctx, u, w) => {
+  const fl = u.flashT > 0.06, rock = Math.sin(u.bob || 0) * 0.08 * clamp(u.spd / 40, 0, 1), swing = u.anim ? Math.sin(Math.min(1, u.anim.t / u.anim.dur) * Math.PI) : 0;
+  ctx.save(); ctx.globalAlpha *= spiritA(u); ctx.translate(u.x, u.y); ctx.rotate(u.facing + rock);
+  lit(ctx, () => glowDisc(ctx, 0, 0, u.vr * 1.7, SPIRIT[1], 0.25));
+  for (const sd of [-1, 1]) inked(ctx, () => { ctx.beginPath(); ctx.ellipse(10 + (sd > 0 ? swing * 10 : 0), sd * 17, 8, 6, 0, 0, TAU); }, SPIRIT[0]);
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-4, 0, 24, 21, 0, 0, TAU); }, fl ? '#FFFFFF' : SPIRIT[1]);
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(14, 0, 13, 12, 0, 0, TAU); }, fl ? '#FFFFFF' : SPIRIT[1]);
+  for (const sd of [-1, 1]) inked(ctx, () => { ctx.beginPath(); ctx.arc(10, sd * 10, 4.5, 0, TAU); }, SPIRIT[1]);
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(24, 0, 5.5, 5, 0, 0, TAU); }, SPIRIT[2]); disc(ctx, 28, 0, 2, '#2B2230');
+  ctx.restore();
+};
+// the spirit eagle, wings spread, beating, high over the friend it mends
+LOOK2.spiritEagle = (ctx, u, w) => {
+  const beat = Math.sin(w.time * 11 + u.id) * 0.35, [vx, vy] = upVec(), up = u.hop || 0;
+  ctx.save(); ctx.globalAlpha *= 0.25; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y, 14, 6, 0, 0, TAU); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.globalAlpha *= spiritA(u); ctx.translate(u.x + vx * up, u.y + vy * up); ctx.rotate(u.facing);
+  lit(ctx, () => glowDisc(ctx, 0, 0, 34, SPIRIT[1], 0.25));
+  for (const sd of [-1, 1]) { ctx.save(); ctx.scale(1, sd); ctx.rotate(-beat);
+    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(4, 2); ctx.quadraticCurveTo(-2, 18, -10, 30); ctx.lineTo(-6, 22); ctx.lineTo(-14, 24); ctx.lineTo(-8, 16); ctx.lineTo(-14, 14); ctx.quadraticCurveTo(-6, 6, -4, 2); ctx.closePath(); }, SPIRIT[1]); ctx.restore(); }
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 13, 6, 0, 0, TAU); }, SPIRIT[1]);
+  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-12, 0); ctx.lineTo(-22, -6); ctx.lineTo(-20, 0); ctx.lineTo(-22, 6); ctx.closePath(); }, SPIRIT[0]);
+  inked(ctx, () => { ctx.beginPath(); ctx.arc(11, 0, 5.5, 0, TAU); }, SPIRIT[2]); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(15, -2); ctx.lineTo(21, 1); ctx.lineTo(15, 2.5); ctx.closePath(); }, '#F2C14E');
+  ctx.restore();
+};
+// the spirit beaver: a round body, a flat paddle tail, two front teeth; it spins when it shoots
+LOOK2.spiritBeaver = (ctx, u, w) => {
+  const fl = u.flashT > 0.06; let rot = u.facing;
+  if (u.spin) { const k = (w.time - u.spin.t0) / u.spin.dur; if (k >= 0 && k < 1) rot += TAU * k; }
+  ctx.save(); ctx.globalAlpha *= spiritA(u); ctx.translate(u.x, u.y); ctx.rotate(rot);
+  lit(ctx, () => glowDisc(ctx, 0, 0, 30, SPIRIT[1], 0.25));
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-20, 0, 10, 7, 0, 0, TAU); }, SPIRIT[0]);
+  ctx.strokeStyle = 'rgba(43,34,48,0.35)'; ctx.lineWidth = 1.4; for (let i = -1; i <= 1; i++) { ctx.beginPath(); ctx.moveTo(-26, i * 3); ctx.lineTo(-14, i * 3); ctx.stroke(); }
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-2, 0, 15, 13, 0, 0, TAU); }, fl ? '#FFFFFF' : SPIRIT[1]);
+  inked(ctx, () => { ctx.beginPath(); ctx.arc(12, 0, 8, 0, TAU); }, fl ? '#FFFFFF' : SPIRIT[1]);
+  inked(ctx, () => roundRect(ctx, 18, -2.5, 4, 5, 1), '#FFFFFF');
+  for (const sd of [-1, 1]) disc(ctx, 13, sd * 4, 1.6, '#2B2230');
+  ctx.restore();
+};
+// the totem in the air (thrown on an arc) and the beaver's homing spirit orb
+PROJ2.totemFly = (ctx, p, T) => { lobUp(ctx, p, 60); ctx.rotate(T * 9); inked(ctx, () => roundRect(ctx, -5, -16, 10, 26, 3), '#A0705A'); for (const sd of [-1, 1]) inked(ctx, () => { ctx.beginPath(); ctx.ellipse(sd * 9, -12, 7, 4, sd * 0.4, 0, TAU); }, '#2FB3A4'); };
+PROJ2.spiritOrb = (ctx, p, T, ang, sp) => { ctx.save(); ctx.rotate(ang); trail(ctx, sp, 30, 8, SPIRIT[1]); ctx.restore(); lit(ctx, () => glowDisc(ctx, 0, 0, 18, SPIRIT[1], 0.6)); inkDisc(ctx, 0, 0, 6.5, SPIRIT[2]); };
+IMPACT2D.spiritOrb = (ctx, m, k) => { const e = easeOut(k); ctx.save(); ctx.globalAlpha *= 1 - k; for (let i = 0; i < 5; i++) { const b = i / 5 * TAU + m.seed, d = 4 + 16 * e; inkDisc(ctx, m.x + Math.cos(b) * d, m.y + Math.sin(b) * d, 3 * (1 - k) + 1, SPIRIT[2]); } ctx.restore(); };
+
+// ---------------------------------------------------------------- the Witch (round 13)
+// the hex bolt: a green spark wrapped round one of five witch's signs (p.sym): a moon, a star, an eye, a spiral, a skull
+PROJ2.hexbolt = (ctx, p, T, ang, sp) => {
+  ctx.save(); ctx.rotate(ang); trail(ctx, sp, 34, 7, '#9BE36B'); ctx.restore();
+  lit(ctx, () => glowDisc(ctx, 0, 0, 20, '#9BE36B', 0.55));
+  upright(ctx, 0, 0, () => { const s = p.sym ?? 1, c = '#C9F59A';
+    if (s === 0) inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 8, 0.6, TAU - 0.6); ctx.arc(4, 0, 6, TAU - 0.9, 0.9, true); ctx.closePath(); }, c);
+    else if (s === 1) inked(ctx, () => star(ctx, 0, 0, 9, 5, 0.42, T * 4), c);
+    else if (s === 2) { inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-10, 0); ctx.quadraticCurveTo(0, -9, 10, 0); ctx.quadraticCurveTo(0, 9, -10, 0); ctx.closePath(); }, c); disc(ctx, 0, 0, 3.2, '#5A2A80'); }
+    else if (s === 3) inkLine(ctx, () => { ctx.beginPath(); for (let i = 0; i <= 20; i++) { const b = i / 20 * TAU * 1.7 + T * 6, r = 1.5 + i * 0.4; const x = Math.cos(b) * r, y = Math.sin(b) * r; if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); } }, c, 2.6);
+    else { inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -1.5, 7, Math.PI, 0); ctx.lineTo(5, 5); ctx.lineTo(-5, 5); ctx.closePath(); }, c); disc(ctx, -2.6, -1, 2, '#2B2230'); disc(ctx, 2.6, -1, 2, '#2B2230'); }
+  });
+};
+// a puff of green hex smoke where a unit turns into something else
+DRAW.poof = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
+  if (k < 0.25) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 2, f.col, 0.6 * (1 - k / 0.25)));
+  ctx.save(); ctx.globalAlpha *= 1 - k;
+  for (let i = 0; i < 8; i++) { const b = i / 8 * TAU + 0.3, d = f.r * (0.3 + 0.9 * e); inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, f.r * 0.35 * (1 - 0.5 * k), i % 2 ? f.col : '#E4F5C8'); }
+  ctx.restore();
+};
+// Hex: the frog it has become, seen from above: a squat green body, big round eyes, folded back legs; it hops
+DRAW.frog = (ctx, f, w, layer) => {
+  const u = f.unit; if (!alive2(u)) { ended(f, true); return; } ended(f, !(u.frogUntil > w.time));
+  const hop = u.frogHop != null ? k01((w.time - u.frogHop) / 0.35) : 1, h = Math.sin(hop * Math.PI) * 16, [vx, vy] = upVec(), s = clamp(u.vr / 20, 0.8, 1.6) * (1 + h / 80);
+  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y, 13 * s, 7 * s, 0, 0, TAU); ctx.fill(); ctx.restore(); return; }
+  ctx.save(); ctx.translate(u.x + vx * h, u.y + vy * h); ctx.rotate(u.facing); ctx.scale(s, s);
+  const leg = hop < 1 ? 0.6 : 0;
+  for (const sd of [-1, 1]) { inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-8 - leg * 6, sd * 9, 7 + leg * 4, 4, sd * (0.5 - leg), 0, TAU); }, '#4E9A2A'); inked(ctx, () => { ctx.beginPath(); ctx.ellipse(7, sd * 8, 4, 2.6, sd * 0.4, 0, TAU); }, '#4E9A2A'); }
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 12, 10, 0, 0, TAU); }, u.flashT > 0.06 ? '#FFFFFF' : '#6FB83A');
+  ctx.fillStyle = '#A9E07A'; ctx.beginPath(); ctx.ellipse(-2, 0, 6, 5, 0, 0, TAU); ctx.fill();
+  for (const sd of [-1, 1]) { inked(ctx, () => { ctx.beginPath(); ctx.arc(8, sd * 5.5, 4, 0, TAU); }, '#E8F5C8'); disc(ctx, 9, sd * 5.5, 2, '#2B2230'); }
+  ctx.restore();
+};
+// the Witch's cauldron on the floor: black iron on three stubby legs, green brew bubbling, a little fire under it
+LOOK2.cauldron = (ctx, u, w) => {
+  const fl = u.flashT > 0.06;
+  ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y + 6, 24, 9, 0, 0, TAU); ctx.fill(); ctx.restore();
+  for (let i = 0; i < 3; i++) upright(ctx, u.x + (i - 1) * 10, u.y + 10, () => flame(ctx, 0, 0, 5 + Math.sin(w.time * 20 + i) * 1));
+  upright(ctx, u.x, u.y, () => {
+    inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 20, 0, TAU); }, fl ? '#FFFFFF' : '#3A3440');
+    inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, -4, 16, 9, 0, 0, TAU); }, '#7FCB3A');
+    for (let i = 0; i < 3; i++) { const ph = (w.time * 1.6 + i / 3) % 1; ctx.save(); ctx.globalAlpha *= 1 - ph; inkDisc(ctx, (i - 1) * 7, -4 - ph * 4, 2 + 3 * ph, '#C9F59A'); ctx.restore(); }
+    ctx.fillStyle = '#6A6470'; ctx.fillRect(-20, -6, 40, 3);
+  });
+};
+// Cursed Brew's fumes: purple wisps curling up off the pot and drifting out over its reach
+DRAW.fumes = (ctx, f, w, layer) => {
+  const u = f.unit; if (!alive2(u)) { ended(f, true); return; } const a = life(f, 0.3, 0.4), [vx, vy] = upVec();
+  if (layer === 'ground') { drawPuddle(ctx, 'smoke', u.x, u.y, f.r * 0.8, w.time, a * 0.6, u.id * 3 + 1, true); return; }
+  ctx.save(); ctx.globalAlpha *= a;
+  for (let i = 0; i < 7; i++) { const ph = (f.t * 0.5 + i / 7) % 1, b = i / 7 * TAU + f.t * 0.3, d = f.r * 0.85 * ph, up = 24 + ph * 26;
+    ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI) * 0.8; inkDisc(ctx, u.x + Math.cos(b) * d + vx * up, u.y + Math.sin(b) * d + vy * up, 5 + 6 * ph, i % 2 ? '#9A5CC8' : '#5A2A80'); ctx.restore(); }
+  ctx.restore();
+};
+// Broom Ride (round 13: "Doesnt look like they are ridding it"): the broom drawn under her body at her height, its
+// handle out past her front, the bristles behind, so she sits on it; wind lines behind
+DRAW.broom = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'ground' || !alive2(u)) return; const a = life(f, 0.1, 0.2), up = u.hop || 0, [vx, vy] = upVec(), sc = 1 + up / 110;
+  ctx.save(); ctx.globalAlpha *= 0.25 * a; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y, 26, 10, u.facing, 0, TAU); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.globalAlpha *= a; ctx.translate(u.x, u.y); ctx.rotate(u.facing); ctx.scale(sc * 0.7, sc * 0.7);
+  inked(ctx, () => roundRect(ctx, -30, -2.6, 64, 5.2, 2.6), '#8A5A30');
+  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-26, -4); ctx.lineTo(-46, -13); ctx.lineTo(-50, 0); ctx.lineTo(-46, 13); ctx.lineTo(-26, 4); ctx.closePath(); }, '#D8B060');
+  ctx.strokeStyle = '#A8843A'; ctx.lineWidth = 1.6; for (let i = -2; i <= 2; i++) { ctx.beginPath(); ctx.moveTo(-28, i * 1.5); ctx.lineTo(-47, i * 4.4); ctx.stroke(); }
+  inked(ctx, () => roundRect(ctx, -29, -5, 5, 10, 2), '#5A2A80');
+  for (let i = -1; i <= 1; i++) K.streak(ctx, -52, i * 8, Math.PI, 0, 18 + 6 * Math.sin(f.t * 20 + i), 2.2, '#EEF3F8', '#FFFFFF');
+  ctx.restore();
+};
+// a hex bomb dropped from the broom, and where it pops
+PROJ2.hexBomb = (ctx, p, T) => { lobUp(ctx, p, 30); ctx.rotate(T * 10); lit(ctx, () => glowDisc(ctx, 0, 0, 16, '#9BE36B', 0.5)); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 7, 0, TAU); }, '#5A2A80'); inked(ctx, () => star(ctx, 0, 0, 5, 5, 0.42, T * 5), '#9BE36B'); };
+DRAW.hexPop = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
+  if (k < 0.25) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 1.3, '#9BE36B', 0.6 * (1 - k / 0.25)));
+  ctx.save(); ctx.globalAlpha *= 1 - k * k; inked(ctx, () => star(ctx, f.x, f.y, f.r * (0.3 + 0.6 * e), 7, 0.45, k), '#5A2A80');
+  for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + 0.5, d = f.r * (0.3 + 0.8 * e); inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 3.5 * (1 - k) + 1, '#9BE36B'); }
   ctx.restore();
 };
 

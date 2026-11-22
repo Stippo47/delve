@@ -938,29 +938,34 @@ export const ABILITIES2 = {
     show: { attacks: true, secs: 4 },
   },
   // ----- Shaman
+  // Healing Totem (round 13: "Should throw to ally, In an arc. Has 100 hp. Any ally in its radius that takes damage will go
+  // to it instead. At lvl 3 cleanse status effects too. It has its own hit box. Damage directly to it is 50%"; "Doesn't
+  // even match the one on his back"): a winged totem like his, thrown on an arc to the friend in trouble; a summon with
+  // 100 health; blows on friends within its reach land on it instead; blows on it do half; it mends those near a little
   healTotem: {
-    score: (w, u) => (allies(w, u).filter((a) => !a.summon && hpRatio(a) < 0.8).length + (hpRatio(u) < 0.8 ? 1 : 0) >= 1 && foesNear(w, u, u.x, u.y, 320).length ? 0.6 : 0),
+    score: (w, u) => (!mine(w, u, 'totem').length && [u, ...allies(w, u)].some((a) => !a.summon && hpRatio(a) < 0.85 && opponents(w, u).some((e) => e.target === a)) ? 0.7 : 0),
     use(w, u, t, tier) {
-      cast(u, 'ability', 0.5);
-      const fr = allies(w, u).filter((a) => !a.summon && dist(u.x, u.y, a.x, a.y) < 300);
-      let x = u.x, y = u.y; for (const a of fr) { x += a.x; y += a.y; } x /= fr.length + 1; y /= fr.length + 1;
-      const dur = tier >= 2 ? 9 : 6, R = 135; let acc = 0, zap = 0;
-      k2(w, { draw: 'totem', x, y, r: R, max: dur, ab: 'healTotem' });
-      timer(u, 'healTotem', dur, (dt) => {
-        acc += dt; zap += dt;
-        if (acc >= 0.5) { acc -= 0.5; for (const a of [u, ...allies(w, u)]) if (dist(a.x, a.y, x, y) < R + a.r) { heal(w, a, a.maxHp * 0.011, u); a.mendGlow = w.time + 0.4; } }
-        if (tierOf(u, 'healTotem') >= 3 && zap >= 1) { zap = 0; const e = foesNear(w, u, x, y, R)[0];
-          if (e) { fx(w, { type: 'beam', kind: 'lightning', x1: x, y1: y - 30, x2: e.x, y2: e.y, max: 0.25 }); hurt(w, e, dmgOf(u, 0.7), u, { noDodge: true, shock: 15, ab: 'healTotem' }); } }
+      cast(u, 'throw', 0.5);
+      const a = [u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo && dist(u.x, u.y, o.x, o.y) < 360).sort((p, q) => opponents(w, u).filter((e) => e.target === q).length - opponents(w, u).filter((e) => e.target === p).length || hpRatio(p) - hpRatio(q))[0] || u;
+      const b = angleTo(a.x, a.y, u.x, u.y), x = clamp(a.x + Math.cos(b) * (a.r + 30), 30, w.W - 30), y = clamp(a.y + Math.sin(b) * (a.r + 30), 30, w.H - 30);
+      lob(w, u, x, y, 'totemFly', null, () => {
+        const s2 = summon(w, u, 'totem', x, y, { life: tier >= 2 ? 12 : 8, hp: 100 }); s2.fixed = true; s2.tier = tier; s2.R = 115;
+        onUnit(w, s2, 'totemSkin', 99, { taken: (w2, u2, src, amt, o) => (o.redirected ? amt : amt * 0.5) });
+        puff(w, x, y, '#A0705A', 10, 100, 5, 0.45); w.shake = Math.max(w.shake, 3);
+        k2(w, { draw: 'totemReach', unit: s2, x, y, r: s2.R, max: tier >= 2 ? 12 : 8 });
       });
     },
-    show: { ally: true },
+    show: { ally: true, mob: 'ally', hitAlly: true },
   },
+  // Spirit Link (round 13: "Show underneath. Give outline. Can link to totem"): the threads are drawn under the units,
+  // inked; his totem joins the link
   spiritLink: {
     score: (w, u) => (allies(w, u).filter((a) => !a.summon && dist(u.x, u.y, a.x, a.y) < 260).length >= 1 && opponents(w, u).filter((e) => e.target && e.target.team === u.team).length >= 2 ? 0.6 : 0),
     use(w, u, t, tier) {
       cast(u, 'cast', 0.5);
       const n = tier >= 3 ? 5 : 3, dur = tier >= 3 ? 7 : 5;
       const group = [u, ...allies(w, u).filter((a) => !a.summon && dist(u.x, u.y, a.x, a.y) < 280).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))].slice(0, n);
+      for (const tm of mine(w, u, 'totem')) if (dist(u.x, u.y, tm.x, tm.y) < 320) group.push(tm);
       if (group.length < 2) return;
       u.kit.link = { group, until: w.time + dur, hp: group.map((a) => a.hp) };
       k2(w, { draw: 'links', group, x: u.x, y: u.y, max: dur, ab: 'spiritLink' });
@@ -968,71 +973,98 @@ export const ABILITIES2 = {
     },
     show: { ally: true, hitAlly: true },
   },
+  // Ancestors' Call, in Rain Dance's slot (round 13: "Don't like. Doesnt look good. Make ancestors call. Summons a light
+  // blue bear, eagle, wolf, and beaver. Eagle, follows ally healing them. Wolf, works like current wolf. Bear, melee.
+  // Negates all damage around him by 20%. Beaver. Spins and shoots out 3 homing orbs."); id kept
   rainDance: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 300 && foesNear(w, u, t.x, t.y, 110).length >= 2 ? 0.65 : 0),
+    score: (w, u) => (!mine(w, u, 'spiritBear').length && foesNear(w, u, u.x, u.y, 360).length >= 2 ? 0.7 : 0),
     use(w, u, t, tier) {
-      if (!t) return; cast(u, 'cast', 0.7);
-      const x = t.x, y = t.y, r = tier >= 3 ? 150 : 115, dur = 4; let acc = 0, bolt = 0;
-      k2(w, { draw: 'rain', x, y, r, max: dur, ab: 'rainDance' });
-      timer(u, 'rainDance', dur, (dt) => {
-        acc += dt; bolt += dt; if (acc < 0.25) return; acc -= 0.25;
-        for (const e of foesNear(w, u, x, y, r)) { addStatus(w, e, 'wet', 12, u); if (e.st.burn) e.st.burn *= 0.6; }
-        for (const a of [u, ...allies(w, u)]) if (dist(a.x, a.y, x, y) < r) { a.st.burn = 0; if (tierOf(u, 'rainDance') >= 2) heal(w, a, a.maxHp * 0.012, u); }
-        if (tierOf(u, 'rainDance') >= 3 && bolt >= 0.8) { bolt = 0; const e = foesNear(w, u, x, y, r).filter((o) => o.st.wet > 30)[0];
-          if (e) { fx(w, { type: 'pillar', x: e.x, y: e.y, r: 26, kind: 'lightning', max: 0.3 }); hurt(w, e, dmgOf(u, 1.3), u, { noDodge: true, shock: 30, omni: true, ab: 'rainDance' }); } }
+      cast(u, 'cast', 0.8); const life = tier >= 2 ? 12 : 8, k = tier >= 3 ? 1.5 : 1, a0 = t ? ang(u, t) : u.facing;
+      const spots = [-0.9, -0.3, 0.3, 0.9].map((o) => ({ x: u.x + Math.cos(a0 + o) * 60, y: u.y + Math.sin(a0 + o) * 60 }));
+      ['spiritBear', 'spiritWolf', 'spiritEagle', 'spiritBeaver'].forEach((kind, i) => {
+        k2(w, { draw: 'spiritRise', x: spots[i].x, y: spots[i].y, r: 30, max: 0.9 });
+        after(u, 0.25 + i * 0.12, () => {
+          const s2 = summon(w, u, kind, spots[i].x, spots[i].y, { life, hit: { spiritBear: 1.1, spiritWolf: 0.8, spiritEagle: 0, spiritBeaver: 0.6 }[kind] * k, hp: { spiritBear: 90, spiritWolf: 50, spiritEagle: 40, spiritBeaver: 40 }[kind] * k });
+          s2.spiritK = k; if (kind === 'spiritEagle' || kind === 'spiritBeaver') { s2.fixed = true; }
+        });
       });
     },
-    show: { far: true },
+    show: { far: false, ally: true, secs: 4 },
   },
   // ----- Witch
+  // Hex (round 13: "Does not look good at all. Interesting concept. Needs unique visual not the leach. Frogs should hop
+  // around randomly."): it turns into a frog (its own body is hidden, a frog drawn in its place) that hops about at random
   frogHex: {
     score: (w, u, t) => (t && !t.frogUntil && dist(u.x, u.y, t.x, t.y) < 280 ? 0.45 + (t.elite ? 0.3 : 0) + (foeWinding(w, t) ? 0.2 : 0) : 0),
     use(w, u, t, tier) {
       if (!t) return; cast(u, 'cast', 0.45);
       const frog = (e) => {
         const dur = tier >= 2 ? 3 : 2;
-        k2(w, { draw: 'ebeam', from: u, to: e, x: u.x, y: u.y, max: 0.3, thin: true, col: '#9BE36B' });
-        if (e.def.boss) { addStatus(w, e, 'curse', 40, u); return; }
-        interrupt(w, e); e.atkT = Math.max(e.atkT, dur); e.abilT = Math.max(e.abilT || 0, dur); e.frogUntil = w.time + dur;
-        addBuff(e, { id: 'frog', dur, move: 0.55, taken: 1.5 });
-        k2(w, { draw: 'frog', unit: e, x: e.x, y: e.y, r: e.vr, max: dur, ab: 'frogHex' });
-        timer(u, 'frog' + e.id, dur, null, () => { e.frogUntil = 0; });
+        shoot(w, u, ang(u, e), { kind: 'hexbolt', speed: 520, r: 8, life: 0.8, dmg: dmgOf(u, 0.4), knock: 0, extra: { home: e, turn: 8, sym: 4, onHit: (w2, p, x) => {
+          if (x.def.boss) { addStatus(w2, x, 'curse', 40, u); return; }
+          interrupt(w2, x); x.frogUntil = w2.time + dur; x.hidden = true;
+          k2(w2, { draw: 'poof', x: x.x, y: x.y, r: x.vr, col: '#9BE36B', max: 0.5 });
+          k2(w2, { draw: 'frog', unit: x, x: x.x, y: x.y, r: x.vr, max: dur, ab: 'frogHex' });
+          let hopT = 0;
+          onUnit(w2, x, 'frog', dur, { taken: (w3, u3, s3, a) => a * 1.5, tick(w3, u3, dt) {
+            u3.atkT = Math.max(u3.atkT, 0.2); u3.abilT = Math.max(u3.abilT || 0, 0.2); if (u3.act && u3.act.type !== 'slip') u3.act = null;
+            addBuff(u3, { id: 'frog', dur: 0.1, move: 0.01 }); hopT -= dt;
+            if (hopT <= 0) { hopT = 0.45 + rand() * 0.35; const b = rand() * TAU; shove(u3, b, 260); u3.facing = b; u3.frogHop = w3.time; }
+          } }, (u3) => { u3.frogUntil = 0; u3.hidden = false; puff(w2, u3.x, u3.y, '#9BE36B', 10, 90, 6, 0.45); });
+        } } });
       };
       frog(t);
       if (tier >= 3) { const n = opponents(w, u).filter((o) => o !== t && !o.frogUntil && !o.def.boss).sort((p, q) => dist(t.x, t.y, p.x, p.y) - dist(t.x, t.y, q.x, q.y))[0]; if (n) after(u, 0.2, () => alive(n) && frog(n)); }
     },
     show: { far: true },
   },
+  // Cursed Brew (round 13: "Doesnt look good. Pot should deal knockback and have a hit box and hp."): the cauldron is a
+  // summon (60 health, its own body), landing with a blow that throws them back; its fumes curse whatever breathes them
   cursedBrew: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 260 && foesNear(w, u, t.x, t.y, 100).length >= 2 ? 0.65 : 0),
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 260 && foesNear(w, u, t.x, t.y, 100).length >= 2 && !mine(w, u, 'cauldron').length ? 0.65 : 0),
     use(w, u, t, tier) {
       if (!t) return; cast(u, 'throw', 0.4);
-      const r = tier >= 2 ? 115 : 85, dur = 5;
+      const R = tier >= 2 ? 115 : 85;
       lob(w, u, t.x, t.y, 'cauldron', null, (x, y) => {
-        u.kit.brew = { x, y, r, until: w.time + dur };
-        k2(w, { draw: 'cauldron', x, y, r, max: dur, ab: 'cursedBrew' }); let acc = 0;
-        timer(u, 'cursedBrew', dur, (dt) => { acc += dt; if (acc < 0.3) return; acc -= 0.3; for (const e of foesNear(w, u, x, y, r)) addStatus(w, e, 'curse', 20, u); });
+        const c = summon(w, u, 'cauldron', x, y, { life: 6, hp: 60 }); c.fixed = true; c.R = R;
+        u.kit.brew = { x, y, r: R, until: w.time + 6, c };
+        w.shake = Math.max(w.shake, 5); k2(w, { draw: 'gust', x, y, r: 70, max: 0.45 });
+        for (const e of foesNear(w, u, x, y, 75)) hurt(w, e, dmgOf(u, 1.2), u, { knock: 380, kAngle: angleTo(x, y, e.x, e.y), heavy: true, noDodge: true, curse: 25, ab: 'cursedBrew' });
+        k2(w, { draw: 'fumes', unit: c, x, y, r: R, max: 6.2, ab: 'cursedBrew' });
       });
     },
     hook: {
       death(w, u, v) {
-        const b = u.kit.brew; if (!b || b.until < w.time || v.team === u.team || tierOf(u, 'cursedBrew') < 3 || dist(v.x, v.y, b.x, b.y) > b.r) return;
+        const b = u.kit.brew; if (!b || b.until < w.time || !alive(b.c) || v.team === u.team || tierOf(u, 'cursedBrew') < 3 || dist(v.x, v.y, b.x, b.y) > b.r) return;
         k2(w, { draw: 'markBurst', x: v.x, y: v.y, r: 20, max: 0.5, ab: 'cursedBrew' });
         for (const e of foesNear(w, u, v.x, v.y, 90)) addStatus(w, e, 'curse', 35, u);
       },
     },
     show: { far: true },
   },
+  // Broom Ride (round 13: "Should fly above everything for a bit. Circling around. Dropping hex bombs below it. Doesnt
+  // look like they are ridding it. Not targetable when flying"): up on the broom, high over the fight, circling the
+  // enemies; nothing can pick her out; hex bombs dropped on them below
   broomRide: {
-    score: (w, u) => (foesNear(w, u, u.x, u.y, 90).length ? 0.85 : 0),
+    score: (w, u) => (foesNear(w, u, u.x, u.y, 110).length ? 0.85 : foesNear(w, u, u.x, u.y, 300).length >= 3 ? 0.5 : 0),
     use(w, u, t, tier) {
-      const f = foesNear(w, u, u.x, u.y, 160); let ax = 0, ay = 0; for (const e of f) { ax += u.x - e.x; ay += u.y - e.y; }
-      const a = f.length ? Math.atan2(ay, ax) : u.facing + Math.PI, T = tier >= 3 ? 0.6 : 0.42;
-      u.act = { type: 'dash', t: T, max: T, a };
-      if (tier >= 3) u.invulnT = Math.max(u.invulnT, T + 0.1);
-      k2(w, { draw: 'broom', unit: u, x: u.x, y: u.y, a, max: T + 0.2 });
-      if (tier >= 2) for (let i = 0; i < 3; i++) after(u, 0.08 + i * 0.12, () => { const e = opponents(w, u).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[i % 2]; if (e) shoot(w, u, ang(u, e), { kind: 'hexbolt', speed: 380, r: 7, life: 1.2, dmg: dmgOf(u, 1.6), st: { curse: 12 }, extra: { home: e, turn: 4 } }); });
+      const T = tier >= 3 ? 3.5 : 2.5, foes = foesNear(w, u, u.x, u.y, 340);
+      let cx = u.x, cy = u.y; if (foes.length) { cx = 0; cy = 0; for (const e of foes) { cx += e.x; cy += e.y; } cx /= foes.length; cy /= foes.length; }
+      const R = clamp(dist(u.x, u.y, cx, cy), 90, 150); let th = angleTo(cx, cy, u.x, u.y), bombT = 0.25;
+      u.act = { type: 'ride', t: T + 0.2, max: T + 0.2 }; u.ethereal = true; u.kit.broomUntil = w.time + T; setAnim(u, 'ability', 0.4);
+      k2(w, { draw: 'broom', unit: u, x: u.x, y: u.y, a: u.facing, max: T + 0.1 });
+      timer(u, 'broom', T, (dt) => {
+        const k = Math.min(1, (T - (u.kit.broomUntil - w.time)) / 0.3);
+        th += dt * 2.4; const gx = clamp(cx + Math.cos(th) * R, u.r, w.W - u.r), gy = clamp(cy + Math.sin(th) * R, u.r, w.H - u.r), a = angleTo(u.x, u.y, gx, gy), d = dist(u.x, u.y, gx, gy);
+        u.x += Math.cos(a) * Math.min(d, 420 * dt); u.y += Math.sin(a) * Math.min(d, 420 * dt); u.facing = a; u.vx = u.vy = u.kx = u.ky = 0;
+        u.hop = 70 * k; bombT -= dt;
+        if (bombT <= 0) { bombT = tierOf(u, 'broomRide') >= 2 ? 0.32 : 0.5;
+          const e = opponents(w, u).filter((o) => dist(o.x, o.y, u.x, u.y) < 200).sort(() => rand() - 0.5)[0], bx = e ? e.x + rrange(-14, 14) : u.x, by = e ? e.y + rrange(-14, 14) : u.y;
+          const p = lob(w, u, bx, by, 'hexBomb', null, () => { k2(w, { draw: 'hexPop', x: bx, y: by, r: 46, max: 0.45, ab: 'broomRide' }); for (const o of foesNear(w, u, bx, by, 46)) hurt(w, o, dmgOf(u, 0.9), u, { noDodge: true, knock: 120, kAngle: angleTo(bx, by, o.x, o.y), curse: 14, ab: 'broomRide' }); });
+          p.x = u.x; p.y = u.y; }
+      }, () => { u.ethereal = false; u.hop = 0; if (u.act && u.act.type === 'ride') u.act = null; puff(w, u.x, u.y, '#B07BE0', 8, 80, 5, 0.4); });
     },
+    show: { far: false, secs: 4 },
   },
   // ----- Warlock
   eldritchBeam: {
@@ -2114,6 +2146,44 @@ function monsterEnd(w, u) {
   u.def = M.human; u.r = M.r; u.vr = M.vr; u.mass = M.mass; u.kit.monster = null;
   u.buffs = u.buffs.filter((b) => b.id !== 'monster'); puff(w, u.x, u.y, '#9BE36B', 12, 100, 6, 0.5); setAnim(u, 'ability', 0.4);
 }
+// The Shaman's totem: blows on friends within its reach go to it instead (a hook it hangs on them while they are in
+// reach); it mends them a little; III cleans their statuses off every 1.5 s
+BRAINS.totem = function (w, s2, dt) {
+  const u = s2.summonBy; s2.vx = s2.vy = s2.kx = s2.ky = 0;
+  s2.acc = (s2.acc || 0) + dt; s2.cl = (s2.cl || 0) + dt;
+  for (const a of w.units) {
+    if (a === s2 || !alive(a) || a.team !== s2.team || a.ethereal || dist(a.x, a.y, s2.x, s2.y) > s2.R + a.r) continue;
+    onUnit(w, a, 'totemCover', 0.15, { taken(w2, u2, src, amt, o) { if (!alive(s2) || o.redirected || o.dot) return amt; hurt(w2, s2, amt, src, { noDodge: true, redirected: true, knock: 0 }); k2(w2, { draw: 'totemTake', x: u2.x, y: u2.y, from: s2, max: 0.3 }); return 0; } });
+    if (s2.acc >= 0.5 && !a.summon) heal(w, a, a.maxHp * 0.008, u);
+    if (s2.tier >= 3 && s2.cl >= 1.5 && !a.summon) { const bad = (a.st.burn + a.st.poison + a.st.chill + (a.st.curse || 0) + (a.st.bleed || 0) + (a.st.stagger || 0)) > 20; if (bad) { cleanse(a); k2(w, { draw: 'splash', x: a.x, y: a.y, r: 26, col: '#7FE0D0', max: 0.5 }); } }
+  }
+  if (s2.acc >= 0.5) s2.acc = 0; if (s2.cl >= 1.5) s2.cl = 0;
+  return true;
+};
+// the spirit eagle: flies over the friend most hurt (straight over everything) and mends it
+BRAINS.spiritEagle = function (w, s2, dt) {
+  const al = w.units.filter((a) => alive(a) && a.team === s2.team && !a.summon && !a.ethereal && !a.def.cargo);
+  const a = al.sort((p, q) => hpRatio(p) - hpRatio(q))[0]; s2.orbit = (s2.orbit || 0) + dt * 2.5;
+  if (a) { const gx = a.x + Math.cos(s2.orbit) * 34, gy = a.y + Math.sin(s2.orbit) * 22, d = dist(s2.x, s2.y, gx, gy), sp = 320 * dt, b = angleTo(s2.x, s2.y, gx, gy);
+    s2.x += Math.cos(b) * Math.min(d, sp); s2.y += Math.sin(b) * Math.min(d, sp); s2.facing = b;
+    s2.acc = (s2.acc || 0) + dt; if (s2.acc >= 0.6 && dist(s2.x, s2.y, a.x, a.y) < 90) { s2.acc = 0; heal(w, a, a.maxHp * 0.02 * (s2.spiritK || 1), s2.summonBy); a.mendGlow = w.time + 0.3; } }
+  s2.hop = 30;
+  return true;
+};
+// the spirit beaver: sits by the Shaman; every 2 s it spins and shoots three homing spirit orbs
+BRAINS.spiritBeaver = function (w, s2, dt) {
+  const u = s2.summonBy; if (u && alive(u) && dist(s2.x, s2.y, u.x, u.y) > 70) { const b = angleTo(s2.x, s2.y, u.x, u.y); s2.x += Math.cos(b) * 140 * dt; s2.y += Math.sin(b) * 140 * dt; s2.facing = b; }
+  s2.acc = (s2.acc || 0) + dt; const foes = opponents(w, s2).filter((e) => dist(s2.x, s2.y, e.x, e.y) < 320);
+  if (s2.acc >= 2 && foes.length) { s2.acc = 0; s2.spin = { t0: w.time, dur: 0.45, dir: 1 };
+    for (let i = 0; i < 3; i++) { const e = foes[i % foes.length], a0 = i / 3 * TAU; shoot(w, s2, a0, { kind: 'spiritOrb', speed: 300, r: 8, life: 1.6, dmg: dmgOf(s2, 1), knock: 40, extra: { home: e, turn: 5 } }); } }
+  return true;
+};
+// the Witch's cauldron: its fumes curse whatever breathes them
+BRAINS.cauldron = function (w, s2, dt) {
+  s2.vx = s2.vy = s2.kx = s2.ky = 0; s2.acc = (s2.acc || 0) + dt;
+  if (s2.acc >= 0.3) { s2.acc = 0; for (const e of opponents(w, s2)) if (dist(e.x, e.y, s2.x, s2.y) < s2.R + e.r) addStatus(w, e, 'curse', 20, s2.summonBy); }
+  return true;
+};
 // the Bandit's Snatch: its weapon flung out of its hand; it must walk over and pick it up before it can attack again
 function snatch(w, u, e) {
   if (!alive(e) || e.def.boss || e.fixed || e.def.brain || isOn(w, e, 'snatched')) return;
@@ -2282,14 +2352,21 @@ export const ATTACKS2 = {
     } });
   },
   // a teal spirit; a share of what it deals mends the most hurt ally
+  // round 13: "Jumps to ally if they are near and heals them. Otherwise no heal": it strikes, then (a friend within 170
+  // of what it struck) leaps on to that friend and mends it
   shaman(w, u, t, a) {
-    shoot(w, u, a, { kind: 'spirit', speed: 430, r: 7, dmg: A(u, 1), color: '#7FE0D0', knock: 25, extra: { onHit: (w2, p) => {
-      const h = hurtMost([u, ...allies(w2, u)].filter((o) => !o.summon)); if (h && hpRatio(h) < 1) { heal(w2, h, p.dmg * 0.35, u); h.mendGlow = w2.time + 0.3; }
+    shoot(w, u, a, { kind: 'spirit', speed: 430, r: 7, dmg: A(u, 1.05), color: '#7FE0D0', knock: 25, extra: { onHit: (w2, p, e) => {
+      const f = [u, ...allies(w2, u)].filter((o) => !o.summon && !o.def.cargo && hpRatio(o) < 1 && dist(o.x, o.y, e.x, e.y) < 170).sort((p1, q) => hpRatio(p1) - hpRatio(q))[0]; if (!f) return;
+      const b = angleTo(e.x, e.y, f.x, f.y), amt = p.dmg * 0.6;
+      w2.projectiles.push({ kind: 'spirit', x: e.x, y: e.y, vx: Math.cos(b) * 380, vy: Math.sin(b) * 380, r: 6, team: u.team, owner: u, skip: e, dmg: 0, o: {}, life: dist(e.x, e.y, f.x, f.y) / 380 + 0.04, a: b, home: f, turn: 9, noHit: true, heal: true,
+        land: () => { if (alive(f)) { heal(w2, f, amt, u); f.mendGlow = w2.time + 0.3; } } });
     } } });
   },
   // a wobbling green spark that curves after its target
+  // round 13: "Shoots 3 hexs in quick succession. Have each one look like 1 of 5 possible symbols."
   witch(w, u, t, a) {
-    shoot(w, u, a + rrange(-0.35, 0.35), { kind: 'hexbolt', speed: 360, r: 7, life: 1.4, dmg: A(u, 1), knock: 25, extra: { home: t, turn: 3.5 } });
+    for (let i = 0; i < 3; i++) after(u, i * 0.1, () => { if (!alive(u)) return; const b = t && alive(t) ? ang(u, t) : a;
+      shoot(w, u, b + rrange(-0.3, 0.3), { kind: 'hexbolt', speed: 380, r: 7, life: 1.4, dmg: A(u, 0.4), knock: 15, extra: { home: t, turn: 3.5, sym: Math.floor(rand() * 5) } }); });
   },
   // a crystal mote that glances off onto a second enemy
   seer(w, u, t, a) {
@@ -2352,6 +2429,8 @@ export function kit2Tick(w, u, dt) {
   if (u.kind === 'warhelm') { const out = !!u.kit.storm || u.kit.splitT > w.time; if (out) u._force = { 'arm-l': { hide: true } }; else if (u._force && u._force['arm-l']) u._force = null; }
   // the Alchemist's hand shows the next flask she'll throw (round 13: "Bottle in hand should change to what she will throw")
   if (u.kind === 'alchemist' && (u.kit.handW !== w || !u.kit.handFx || u.kit.handFx.t >= u.kit.handFx.max)) { u.kit.handW = w; u.kit.handFx = k2(w, { draw: 'handFlask', unit: u, x: u.x, y: u.y, max: 1e9 }); }
+  // the Shaman's spirit bear: friends near it take 20% less (round 13: "Negates all damage around him by 20%")
+  if (u.kind === 'shaman') for (const b of w.units) if (b.kind === 'spiritBear' && b.summonBy === u && alive(b)) for (const a of friendsNear(w, b, b.x, b.y, 120)) addBuff(a, { id: 'bearWard', dur: 0.3, taken: 0.8 });
   // the Haymaker's bale: when it is gone he drops off it; under him meanwhile the leap's hop is kept off (the bale's brain sets it)
   if (u.kit.bale && !alive(u.kit.bale)) baleBurst(w, u, u.kit.bale);
   // the Haymaker's pitchfork (round 13: "Should show 3 stab slashes. Should dash forwards slightly too"): every jab is a
