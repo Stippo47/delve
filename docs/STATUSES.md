@@ -216,3 +216,53 @@ ability cooldowns are set back 50%", and "the shackled ability goes to someone e
 - **The Book**: Shackles (the build-up) and Shackled (its burst) under Statuses, each with a preview (preview-sim.js
   builds it on a fighter like the others); icons in icons.js; the HUD ring fills as it builds and counts the 4 s down.
 - **Cleaning it off**: Cure, Nullify's wash, a cleanse and going down all take the irons off (`shackledT = 0`).
+
+## Round 15 (lane E): the newer heroes' eight, lifted into the statuses
+Round 13 (lane H2) built eight effects as each hero's own, one function each in `js/kits2.js` "so they can be lifted
+into statuses.js" (docs/HEROES-r13.md, "New statuses asked for"). They are statuses now, with **behaviour unchanged**:
+the numbers, durations, looks and who puts them on are what they were. What the lift gave each: a row in `js/statuses.js`
+(its numbers in `WHIRLED`, `SPUN`, `DIRTY`, `TARGETED`, `TRACKED`, `TRAPPED`, `WARDED`, `WEAKENED`, and `HERO_STATUS`:
+kind, ring colour, who puts it on, how to read it off a unit), its own icon (`js/icons.js`, plain stand-ins in the
+status icons' look), a name and words (`js/bestiary.js STATUSES`), a ring on the hero cards and in the pause panel
+(`js/hud.js unitStatuses`: the two build-ups fill toward their burst and flash at it, the six timers run down), and a
+card in the Book's Statuses grid with a live preview (`js/preview-sim.js`: the build-ups built in pulses to their burst
+by the very function a hero uses, the timers put on at their tier I numbers). kits2.js keeps the functions (they are
+how a hero puts each on) and reads every number from statuses.js.
+
+| status | who | rule (numbers in statuses.js) | look (fx2.js, as before) |
+|---|---|---|---|
+| **Whirled** (builds) | the Griffon (Swoop, Stormhammer), the Alchemist (the whirling pool), the Air Mage | 0-100 in `u.k2s.whirl`, drains 12/s; while on, every shove it takes goes (1 + fill) as far. Full: stunned 0.95 s and flung about at random three times 0.3 s apart (520 hard), then 3.9 s from the burst before it can build again. Bosses: build at 45%, stunned 0.4 s, flung 180 | white wind curls round the feet; a whirlwind at the burst |
+| **Spun** (builds) | the Monk (Palm Strike) | 0-100 in `u.k2s.spun`, drains 10/s; while on it moves at 80% and each step has a 0.9 x fill chance it can't turn. Full: it marches off the way it faces for 1.2 s, fast, and can't attack (a unit with a brain of its own is stunned 0.5 s instead); 4 s before it builds again. Bosses: build at 45%, march 0.5 s | gold chevrons wobbling round its head; dust kicked up as it marches |
+| **Dirty** | the Digger (Dirt Fling, his trait) | 10 s (or the giver's): the next blow (not damage over time) is soaked up and that ends it; attacks 30% slower meanwhile; burn and poison washed off when it goes on and can't take on it while it lasts | brown smears, crumbs dropping |
+| **Targeted** | the Marksman (Aimed Shot), the Pirate (Point Blank) | blows (not damage over time) land 1.2x; its dashes, leaps and charges go 40% as far; the Marksman's bullets go on through it | a red crosshair |
+| **Tracked** | the Falconer (his falcon) | can't turn invisible, untouchable or go underground; every blow from the tracker's side lands the falcon's set amount harder | an amber crosshair |
+| **Trapped** | the Trapper (Jaw Trap) | can't move or turn, can't use an ability (its clocks held at 0.3 s), what it was doing is broken off (not a wind-up); it can still strike straight ahead. Bosses: 40% of the time | the jaw trap shut on it |
+| **Warded** | the Alchemist (Elixir), the Jester (Swap), the Valkyrie (Valkyrie's Call), the Quartermaster (the buckler), the Chef (a meal past whole) | a shield soaking up the next N damage (the giver's N) for its time, or till used up | a pale blue border (protection) |
+| **Weakened** | the Shade (Blackout) | deals 70% | a grey wash, grey chevrons sinking off the body |
+
+**Where the shared rules would have changed them, and what was chosen.** The rule: keep today's behaviour unless it is
+plainly a bug.
+- **Cleanses and going down** (sim.js `cleanse`: the Cleric's Cure, the Monk's Inner Peace, the Warden's Nullify II, the
+  Valkyrie's Call and others; a hero going down or getting up): they reset `u.st` and the control timers. The eight never lived there (Whirled and Spun keep
+  their value in `u.k2s`, the timers are hooks or buffs), so no cleanse ever took them off, and none does now (their values
+  stay out of `u.st` for that reason: Nullify's "anything building on a friend?" check reads it too). Not plainly a bug:
+  a cleanse here washes off what builds up and the stuns, never a buff (Weakened is one), and a jaw trap or a crosshair is
+  not something a heal washes off. In a run it never comes up (the six harmful ones go on enemies, which nothing cleanses;
+  Dirty and Warded are helps). **Kept.** Say if a cleanse should free a trapped or whirled friend (battle mode).
+- **Resistances**: `def.res.<id>` is read now (statuses.js `resTo`: a build-up's amount, a timer's time; 0 = none takes)
+  by all but the two helps (Dirty, Warded). No kind has one, so nothing changes. The designed bosses' default of 0 for
+  every build-up (boss-kit.js) is **not** extended to Whirled and Spun: they take them at 45% today. **Kept.**
+- **Boss limits**: as they were (above). Only `def.boss` counts, not a boss's parts, mini-bosses, majors or elites, where
+  Shackled shortens for all of those. **Kept.**
+- **Strips**: Nullify II (the Warden) strips an enemy's protecting buffs, anything with a border: Warded's border went but
+  its shield stayed on, unseen and still soaking. **Plainly a bug: fixed** (kits3.js: the shield goes with its border).
+  Only a battle can show it (an enemy hero warded). The Enchantress has no strip (Heartbreak breaks charm only).
+- **The Mob and chains**: a status put on with `addStatus` lands on the Mob's lead or a chain's head; the eight land on
+  the body they hit, as before. **Kept.**
+- **Stats**: `addStatus` counts a status's ticks and bursts for whoever put it on (stats.js); the eight never were. **Kept.**
+- **The HUD**: Warded and Weakened were shown as plain buffs (bestiary.js BUFFS); they are statuses with their own icons
+  now, and skipped as buffs so each shows once.
+
+Proof (same seeds before and after, `--v`): `node tools/runs.mjs --n 3 --theme all`, and with these heroes in the party
+at level 30 and with every node (`--party griffon,digger,marksman,falconer`, `trapper,monk,alchemist,shade`,
+`airMage,pirate,griffon,monk`): the same output line for line (docs/DECISIONS.md, round 15 lane E).

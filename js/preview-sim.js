@@ -22,7 +22,8 @@ import { HEROES, tierBuild, freeNodes } from './heroes.js';
 import { buildGrid } from './path.js';
 import { battleFoe } from './dungeon.js';
 import { ELITES } from './elites.js';
-import { STATUS } from './statuses.js';
+import { STATUS, HERO_STATUS } from './statuses.js';
+import { whirl, spin, dirty, targeted, tracked, trapped, ward, weaken, k2 } from './kits2.js'; // (round 15, lane E: the newer heroes' eight)
 import { STATUSES } from './bestiary.js';
 import { TRINKETS } from './trinkets.js';
 import { POTIONS, elixirKey } from './potions.js';
@@ -174,9 +175,18 @@ const PUT_ON = {
   buff: (w, s) => { addBuff(s, { id: 'book-buff', dur: 3.5, atkSpeed: 1.5, move: 1.3 }); },
   debuff: (w, s) => { addBuff(s, { id: 'book-debuff', dur: 3.5, atkSpeed: 0.6, move: 0.6 }); },
   rage: (w, s) => { addBuff(s, { id: 'rage', dur: 3.5, atkSpeed: 1.5, move: 1.4, taken: 0.7 }); },
+  // round 15 (lane E): the newer heroes' timers, put on by the function each hero puts it on with, at its tier I numbers
+  dirty: (w, s) => { dirty(w, s); },                            // the Digger's coat: 10 s, or till a blow lands
+  targeted: (w, s) => { targeted(w, s, 6); },                   // the Marksman's Aimed Shot
+  tracked: (w, s, o) => { tracked(w, s, 6, 2, o.dummy); },        // the Falconer's falcon (2 more a blow from the dummy's side)
+  trapped: (w, s) => { const d = trapped(w, s, 2); const f = k2(w, { draw: 'trap', x: s.x, y: s.y, max: d }); f.snapT = f.t; f.held = s; }, // the Trapper's jaw trap, shut on it (his trap's own look, kits2.js jawTrap)
+  warded: (w, s) => { ward(w, s, 30, 6); },                     // the Alchemist's Elixir
+  weakened: (w, s) => { weaken(w, s, 4); },                     // the Shade's Blackout (held a while)
 };
+// round 15 (lane E): Whirled and Spun build up and burst like the rest, through the function that puts each on
+const KIT_BUILD = { whirled: (w, s, amt, by) => whirl(w, s, amt, by), spun: (w, s, amt) => spin(w, s, amt) };
 export const statusIds = () => [...new Set([...Object.keys(STATUSES), ...Object.keys(STATUS)])];
-export const statusHow = (id) => (STATUS[id] ? 'build' : FROM_BURST[id] && STATUS[FROM_BURST[id]] ? 'burst' : PUT_ON[id] ? 'put' : null);
+export const statusHow = (id) => (STATUS[id] || KIT_BUILD[id] ? 'build' : FROM_BURST[id] && STATUS[FROM_BURST[id]] ? 'burst' : PUT_ON[id] ? 'put' : null);
 export const trinketIds = () => Object.keys(TRINKETS).filter((k) => !TRINKETS[k].potion);
 export const potionIds = () => Object.keys(POTIONS);
 
@@ -706,7 +716,7 @@ function statusStage(S, spec) {
     dummy = dummyAt(w, 205 - s.r - 46, 115, 'hero', S.way === 'trigger' ? W0.weapon : null);
     s.target = dummy; done = false; struck = null;
     S.hero = s; S.dummies = [dummy];
-    const need = STATUS[src] ? (typeof STATUS[src].need === 'function' ? STATUS[src].need(s) : STATUS[src].need) : 100;
+    const need = STATUS[src] ? (typeof STATUS[src].need === 'function' ? STATUS[src].need(s) : STATUS[src].need) : HERO_STATUS[src] && HERO_STATUS[src].need ? HERO_STATUS[src].need : 100;
     S.tick = (dt) => {
       if (S.locked) return;
       // the trigger: once the burst's state is on it, the target winds up and strikes
@@ -718,7 +728,7 @@ function statusStage(S, spec) {
       if (done) return;
       const beat = Math.floor(S.t / 0.28) !== Math.floor((S.t - dt) / 0.28);
       if (how === 'put') { if (S.t > 0.6) { PUT_ON[id](w, s, { friend, dummy }); done = true; } return; }
-      if (S.t > 0.4 && beat) addStatus(w, s, src, need / 7, dummy);
+      if (S.t > 0.4 && beat) { if (KIT_BUILD[src]) KIT_BUILD[src](w, s, need / 7, dummy); else addStatus(w, s, src, need / 7, dummy); }
       if (s.bursts && s.bursts[src] != null) done = true;
     };
     S.after = (dt) => {

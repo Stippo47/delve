@@ -273,7 +273,7 @@ export const STATUSES = {
   invuln: { name: 'Untouchable', desc: 'Nothing can hurt it, for a moment.' },
   taunt: { name: 'Taunted', desc: 'Can\'t help going after the one who taunted it.' },
   buff: { name: 'Strengthened', desc: 'Something is helping it right now.' },
-  debuff: { name: 'Weakened', desc: 'Something is holding it back right now.' },
+  debuff: { name: 'Hindered', desc: 'Something is holding it back right now.' }, // (round 15, lane E: was "Weakened", which is the Shade's status now)
   rage: { name: 'Enraged', desc: 'Faster and tougher while it lasts.' },
   radiance: { name: 'Radiance', desc: 'Dazzled by holy light: attacks slower and much weaker. Full up, it shines.' },
   radiant: { name: 'Radiant', desc: 'Shining: it cannot attack, and everyone close by is dazzled by the glow.' },
@@ -292,6 +292,15 @@ export const STATUSES = {
   // round 15 (lane N): the Warden's (numbers: statuses.js SHACKLE; rules: docs/STATUSES.md)
   shackle: { name: 'Shackles', desc: 'Irons closing on its wrists: its abilities come round slower and slower. Full up, they lock.' },
   shackled: { name: 'Shackled', desc: 'In irons: it can\'t make a basic attack, and every ability it has was set back by half its cooldown when the irons locked. Bosses shake them off far sooner and lose only a quarter.' },
+  // round 15 (lane E): the newer heroes' own, lifted into the statuses (numbers: statuses.js HERO_STATUS; rules: docs/STATUSES.md)
+  whirled: { name: 'Whirled', desc: 'Caught in the wind: every shove it takes throws it further, up to twice as far. Full up, it is flung about three times and can\'t act till it lands.' },
+  spun: { name: 'Spun', desc: 'Dizzy: it moves slower and can hardly turn, less and less the fuller it gets. Full up, it marches off the way it faces and can\'t attack.' },
+  dirty: { name: 'Dirty', desc: 'A coat of dirt: the next blow is soaked up by it. Fire and poison can\'t take hold meanwhile, but it attacks 30% slower.' },
+  targeted: { name: 'Targeted', desc: 'A crosshair on it: it takes 20% more from blows, its dashes, leaps and charges go less than half as far, and the Marksman\'s bullets go on through it.' },
+  tracked: { name: 'Tracked', desc: 'A falcon has it: it can\'t turn invisible, untouchable or go underground, and every blow from the falconer\'s side lands a little harder.' },
+  trapped: { name: 'Trapped', desc: 'In a jaw trap: it can\'t move, turn or use an ability, but it can still strike straight ahead. Bosses pull free sooner.' },
+  warded: { name: 'Warded', desc: 'A shield of light soaks up the next blows, until it is used up or its time runs out.' },
+  weakened: { name: 'Weakened', desc: 'Its blows land 30% softer.' },
 };
 
 // Helpful (and a few harmful) states a hero's kit, a trinket or an elixir switches on (round 13: "Some positive status

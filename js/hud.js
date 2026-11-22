@@ -8,7 +8,7 @@ import { HEROES } from './heroes.js';
 import { DEFS, xpToNext, levelHp } from './units.js';
 import { icon, abilityGlyph, ABILITY_COLOR } from './icons.js';
 import { elixirOf, POTIONS } from './potions.js';
-import { STATUS, fillOf, RADIANCE, CURSE, POISON, CHARM, CONFUSE, FEAR, SHACKLE } from './statuses.js';
+import { STATUS, fillOf, RADIANCE, CURSE, POISON, CHARM, CONFUSE, FEAR, SHACKLE, HERO_STATUS, HERO_STATUS_IDS } from './statuses.js';
 import { BUFFS, STATES } from './bestiary.js';
 
 // ---------------------------------------------------------------- statuses on a unit
@@ -63,6 +63,14 @@ export function unitStatuses(u, now) {
   // round 15 (lane N): Shackled
   if (u.shackledT > 0) out.push({ id: 'shackled', kind: 'status', icon: 'shackled', frac: u.shackledT / (u.shackledMax || SHACKLE.dur), color: STATUS.shackle.col, left: u.shackledT });
   else build('shackle', s.shackle > 2);
+  // round 15 (lane E): the newer heroes' eight (statuses.js HERO_STATUS): Whirled and Spun fill toward their burst, as
+  // the build-ups above; Dirty, Targeted, Tracked, Trapped, Warded and Weakened run out (Warded and Weakened were shown
+  // as plain buffs: they are skipped below)
+  for (const id of HERO_STATUS_IDS) {
+    const H = HERO_STATUS[id];
+    if (H.kind === 'build') { const v = H.value(u), burst = u.bursts && u.bursts[id] != null && now - u.bursts[id] < 0.5; if (v > 2 || burst) out.push({ id, kind: 'status', icon: id, frac: burst ? 1 : Math.min(1, v / H.need), color: H.col, amount: v, build: true, burst }); }
+    else { const left = H.left(u, now); if (left > 0) out.push({ id, kind: 'status', icon: id, frac: Math.min(1, left / H.dur(u)), color: H.col, left }); }
+  }
   add('ko', u.koT, { left: u.koT });
   add('stun', u.stunT > 0.05 && !(u.koT > 0) && !(u.frozenT > 0) ? u.stunT : 0, { left: u.stunT });
   add('root', u.rootT, { left: u.rootT });
@@ -76,6 +84,7 @@ export function unitStatuses(u, now) {
     const frac = long ? 1 : Math.min(1, b.t / (b.dur || b.t));
     if (b.potion) { out.push({ id: b.id, kind: 'potion', icon: b.potion, frac, color: POTIONS[b.potion].color, potion: b.potion }); continue; }
     if (b.id === 'rhythm') continue; // the bard's always-on hum: too constant to be worth a ring
+    if (b.id === 'warded' || b.id === 'weakened') continue; // (round 15, lane E: statuses now, above)
     // round 13 ("Some positive status effects don't show"): every buff by its own name and icon (bestiary.js BUFFS), with
     // what its numbers do; a stance that holds the hero still is a help, not "Rooted"
     const info = BUFFS[b.id], bad = info ? !!info.bad : badBuff(b);
