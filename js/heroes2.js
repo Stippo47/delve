@@ -24,7 +24,7 @@ export const HEROES2 = {
         tiers: ['Clears stuns, roots and stagger; nothing knocks them back for 5s.', 'Haste too: they move and strike 30% faster, and it all lasts 8s.', 'Heals them 12% too.'] },
       // round 13: Parry takes Pommel Strike's place (the designer: "Maybe instead of pommel strike"); the id stays for saves
       { id: 'pommelStrike', name: 'Parry', cd: 9, tags: 'd', glyph: 'shield', desc: "Sets the greatsword across him: the next blow or shot that reaches him within 4s is caught. A shot flies back at whoever loosed it; a blow's force goes back into the one who struck.",
-        tiers: ['One parry.', 'Two parries.', 'What he sends back hits twice as hard.'] },
+        tiers: ['One parry.', 'Two parries.', 'What he sends back hits 60% harder.'] },
     ],
     trait: { id: 'lastStand', name: 'Last Stand', desc: "Once a room, when he is the last of the party standing: he can't be stopped or knocked about and is hasted for 10s, and all his abilities are ready again at once." },
   },
@@ -32,7 +32,7 @@ export const HEROES2 = {
     name: 'Dame', art: 'art/heroes/dame.svg', role: 'tank', unlock: { gems: 2 },
     blurb: 'Kite shield, leaf sword, perfect manners. Answers every blow.',
     fun: 'Wears the tiara into battle because nobody has yet been brave enough to tell her not to.',
-    stats: { hp: 140, speed: 58, r: 33, vr: 23, turn: 3.6, accel: 190, face: 3.8, mass: 2, range: 24, atkCd: 1.0, dmg: 11, knock: 120, arc: 1.6 },
+    stats: { hp: 155, speed: 58, r: 33, vr: 23, turn: 3.6, accel: 190, face: 3.8, mass: 2, range: 24, atkCd: 1.0, dmg: 11, knock: 120, arc: 1.6 },
     weapon: 'blade', style: { hand: 'arm-l', off: 'shield', backhand: true }, // round 13: "Should swipe the opposite way"
     attack: { name: 'Leaf sword', anim: 'swing', desc: 'A quick, neat backhand cut.' },
     abilities: [
@@ -49,7 +49,7 @@ export const HEROES2 = {
     name: 'Griffon', art: 'art/heroes/griffon.svg', role: 'tank', unlock: { gems: 3 },
     blurb: 'Winged helm, warhammer, shield. Drops out of the sky onto whoever is bothering his friends.',
     fun: 'The wings on the helm are not real. Nobody has told the helm.',
-    stats: { hp: 150, speed: 58, r: 34, vr: 24, turn: 3.4, accel: 180, face: 3.6, mass: 2.2, range: 24, atkCd: 1.3, dmg: 14, knock: 190, arc: 1.7, aoe: 40 },
+    stats: { hp: 165, speed: 58, r: 34, vr: 24, turn: 3.4, accel: 180, face: 3.6, mass: 2.2, range: 24, atkCd: 1.3, dmg: 14, knock: 190, arc: 1.7, aoe: 40 },
     // round 13: "Flip his sprite. Should be an aoe slam on the ground like the berserker" (his own hammer slam, fx2 SLAM2)
     weapon: 'heavy', style: { hand: 'arm-l', off: 'shield', flip: true, slam: 'hammer' },
     attack: { name: 'Warhammer', anim: 'swing', desc: 'A heavy hammer slammed into the floor in front: everything there is hit.' },
@@ -158,7 +158,7 @@ export const HEROES2 = {
     name: 'Haymaker', art: 'art/heroes/haymaker.svg', role: 'melee', unlock: { gems: 1 },
     blurb: 'A pitchfork, a straw hat, and the shoulders of a man who throws hay all day.',
     fun: 'Treats goblins the way he treats hay: in forkfuls, over the shoulder, without looking.',
-    stats: { hp: 120, speed: 60, r: 32, vr: 22, turn: 3.8, accel: 200, face: 4, mass: 1.6, range: 34, atkCd: 1.1, dmg: 13, knock: 150, arc: 1 },
+    stats: { hp: 132, speed: 60, r: 32, vr: 22, turn: 3.8, accel: 200, face: 4, mass: 1.6, range: 34, atkCd: 1.1, dmg: 13, knock: 150, arc: 1 },
     weapon: 'fork', // round 13: "Should show 3 stab slashes. Should dash forwards slightly too" (fxkit: three tines; kits2: a lunge)
     attack: { name: 'Pitchfork', anim: 'thrust', desc: 'A lunging jab with the fork: three tines.' },
     summons: { // Fork Charge's slot: the hay bale he rides (kits2.js BRAINS.haybale; drawn in fx2.js)
@@ -249,7 +249,7 @@ Object.assign(HEROES2, {
       { id: 'spiritLink', name: 'Spirit Link', cd: 16, tags: 'h', glyph: 'heart', desc: 'Binds friends, and his totem, together with spirit threads: a blow on one is shared out among them all.',
         tiers: ['Up to three friends, for 5s.', 'Linked friends take 10% less.', 'Up to five, for 7s.'] },
       { id: 'rainDance', name: "Ancestors' Call", cd: 20, tags: 'ds', glyph: 'paw', desc: 'Calls the ancestors in spirit shape: a bear that fights beside them and shelters friends near it (they take 20% less), a wolf that hunts, an eagle that follows the most hurt friend and mends it, and a beaver that spins and shoots homing spirit orbs.',
-        tiers: ['For 8s.', 'For 12s.', 'The spirits are half as strong again.'] },
+        tiers: ['For 7s.', 'For 10s.', 'The spirits are a third as strong again.'] },
     ],
     trait: { id: 'ancestral', name: 'Ancestral Spirits', desc: 'When an ally goes down, the spirits heal everyone else 10%.' },
   },
@@ -284,7 +284,7 @@ Object.assign(HEROES2, {
     abilities: [
       { id: 'eldritchBeam', name: 'Eldritch Beam', cd: 10, tags: 'd', glyph: 'drain', desc: 'His imp holds a writhing magenta ray on an enemy (he does, if it is gone): it burns hotter the longer it holds, shoving the enemy back, and bursts at the end.',
         tiers: ['For 2.5s, then it bursts.', 'It grows hotter faster.', 'A bigger burst.'] },
-      { id: 'summonImp', name: 'Awaken', cd: 18, tags: 'd', glyph: 'flame', desc: 'The imp climbs into him and he becomes the demon: a big demonic sword whose blows explode on what they hit, a blink to his foe, fireballs spat at those further off. Every kill starts the time again.',
+      { id: 'summonImp', name: 'Awaken', cd: 18, tags: 'd', glyph: 'flame', desc: 'The imp climbs into him and he becomes the demon: a big demonic sword whose blows explode on what they hit, a blink to his foe, fireballs spat at those further off; he takes 40% less as the demon. Every kill starts the time again.',
         tiers: ['For 8s.', 'For 11s.', 'Bigger explosions that burn.'] },
       { id: 'darkBargain', name: 'Dark Bargain', cd: 18, tags: 'd', glyph: 'drain', desc: 'Pays a fifth of his health in blood to his imp: both of them strike far faster for a while, and every blow of theirs bursts round what it hits.',
         tiers: ['For 6s.', 'For 8s.', 'The imp grows on the blood: tougher.'] },
@@ -464,7 +464,7 @@ Object.assign(HEROES2, {
     name: 'Harpooner', art: 'art/heroes/harpooner.svg', role: 'ranged', unlock: { gems: 2 },
     blurb: 'A yellow sou\'wester, a puffy grey moustache, a barbed harpoon on a rope.',
     fun: 'Came down here after the one that got away. It was a rat. It was a very big rat.',
-    stats: { hp: 100, speed: 58, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 140, atkCd: 1.4, dmg: 12 },
+    stats: { hp: 100, speed: 58, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 140, atkCd: 1.4, dmg: 13 },
     attack: { name: 'Harpoon', anim: 'throw', desc: 'The barbed harpoon thrown on its rope: it tugs the enemy a little way in, and is hauled back.' },
     abilities: [
       { id: 'reelIn', name: 'Reel In', cd: 10, tags: 'ds', glyph: 'hook', desc: 'Harpoons a far enemy, the harpoon stuck in it and the rope across the floor, and hauls: a small one is dragged to him, a big one drags him to it.',
@@ -551,7 +551,7 @@ Object.assign(HEROES2, {
     name: 'Slinger', art: 'art/heroes/slinger.svg', role: 'ranged', unlock: { gems: 1 },
     blurb: 'A shepherd in a ram\'s fleece with a sling and a crook. Stones, and the flock behind him.',
     fun: 'Has counted sheep every night since he was four. Can no longer sleep without them.',
-    stats: { hp: 82, speed: 64, r: 31, vr: 22, turn: 4.5, accel: 240, face: 4.6, mass: 1.1, range: 240, keep: 170, atkCd: 1.15, dmg: 9 },
+    stats: { hp: 82, speed: 64, r: 31, vr: 22, turn: 4.5, accel: 240, face: 4.6, mass: 1.1, range: 240, keep: 170, atkCd: 1.15, dmg: 10 },
     attack: { name: 'Sling', anim: 'throw', desc: 'A whirl and a stone; one in four a big stone that staggers. Close up, a crack with the crook.' },
     abilities: [
       { id: 'stunStone', name: 'Stunning Stone', cd: 8, tags: 's', glyph: 'fist', desc: 'Whirls the sling hard over his head and lobs a big stone high: it comes down on the enemy\'s head. BONK.',
@@ -587,7 +587,7 @@ Object.assign(HEROES2, {
     name: 'Gladiator', art: 'art/heroes/gladiator.svg', role: 'melee', unlock: { gems: 2 },
     blurb: 'A crested bronze helm, a gladius and a little round shield. Plays to the crowd.',
     fun: 'Hears cheering in every fight. There is never anyone there.',
-    stats: { hp: 130, speed: 64, r: 33, vr: 23, turn: 4, accel: 230, face: 4.2, mass: 1.8, range: 22, atkCd: 0.9, dmg: 13, knock: 120, arc: 1.6 },
+    stats: { hp: 142, speed: 64, r: 33, vr: 23, turn: 4, accel: 230, face: 4.2, mass: 1.8, range: 22, atkCd: 0.9, dmg: 13, knock: 120, arc: 1.6 },
     weapon: 'blade', style: { off: 'shield' },
     attack: { name: 'Gladius', anim: 'thrust', desc: 'A slash, then a stab, over and over.' },
     abilities: [
@@ -604,7 +604,7 @@ Object.assign(HEROES2, {
     name: 'Jester', art: 'art/heroes/jester.svg', role: 'skirmish', unlock: { gems: 3 },
     blurb: 'A three-pointed cap with bells and a marotte on a stick. Makes enemies look foolish, then fight each other.',
     fun: 'The marotte has its own little jester on top. That one has a marotte too. It goes on.',
-    stats: { hp: 100, speed: 84, r: 30, vr: 21, turn: 6, accel: 360, face: 6, mass: 1, range: 18, atkCd: 0.75, dmg: 9, arc: 1.6, dodge: 0.2 },
+    stats: { hp: 100, speed: 84, r: 30, vr: 21, turn: 6, accel: 360, face: 6, mass: 1, range: 18, atkCd: 0.75, dmg: 10, arc: 1.6, dodge: 0.2 },
     weapon: 'heavy',
     attack: { name: 'Marotte', anim: 'swing', desc: 'A bonk with the jester\'s stick; each one leaves a little of something odd on it (a random status).' },
     abilities: [
@@ -649,14 +649,14 @@ Object.assign(HEROES2, {
       { id: 'skyDive', name: 'Sky Dive', cd: 12, tags: 'ds', glyph: 'up', desc: 'Up on her wings for a moment, then down beside the friend most beset in a burst of light: the enemies round are struck and made radiant.',
         tiers: ['A dive and a burst.', 'It staggers those round.', 'She heals 15% on landing.'] },
     ],
-    trait: { id: 'valhalla', name: 'Light of Valhalla', desc: 'While a friend is near her, she and the friends near heal 1.2% a second, a soft glow under her. She revives the fallen twice as fast, at 30% health.' },
+    trait: { id: 'valhalla', name: 'Light of Valhalla', desc: 'While a friend is near her, she and the friends near heal 0.9% a second, a soft glow under her. She revives the fallen twice as fast, at 30% health.' },
   },
 });
 
 // ------------------------------------------------------------------ batch 8: the engineer and the werewolf
 Object.assign(HEROES2, {
   engineer: {
-    name: 'Engineer', art: 'art/heroes/engineer.svg', role: 'melee', unlock: { gems: 3 },
+    name: 'Engineer', art: 'art/heroes/engineer.svg', role: 'ranged', unlock: { gems: 3 },
     blurb: 'An orange work suit, a welding mask pushed up and a very big wrench. Builds a turret and keeps it running.',
     fun: 'Can fix anything with a wrench. Has fixed several things that were not broken.',
     stats: { hp: 115, speed: 60, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 120, atkCd: 1.1, dmg: 11, knock: 150, arc: 1.6 },

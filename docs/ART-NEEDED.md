@@ -91,3 +91,25 @@ quicksand (the Dunes), steam vents and conveyor plates (the Foundry).
 | hero `enchantress` (Enchantress) | `art/heroes/enchantress.svg`: the Witch recoloured rose (made with js/recolor.js; same hat and broom) | her own bust: rose silk, a heart-shaped locket, no hat; a hand held up to blow kisses |
 | `succubus` (Succubus, the Ember Deep) | the Devil recoloured rose at load (variant) | her own sprite: bat wings, a whip or a long tail, a heart on the tip of the tail |
 | the Cupid (the cherub's elite) | the cherub, with love arrows drawn in code (fx-status.js `loveArrow`) | fine as is; a pink bow if the designer wants the elite to read at a glance |
+
+## Round 13 (lane H2, the newer heroes): drawn in code or borrowed
+Summons and props the round 13 abilities brought in. Each is drawn in code (js/fx2.js `LOOK2.<kind>`, one ink outline,
+the heroes' palette) or borrows a sprite; a real sprite in the bust style can replace any of them without touching the
+abilities (give the kind an `art` in js/heroes2.js and drop its LOOK2 entry).
+| kind (hero) | now | the real sprite should be |
+|---|---|---|
+| haybale (Haymaker) | drawn in code: a round bale with straw ends | fine as is; a rolled bale with twine bands |
+| totem (Shaman) | drawn in code: a carved post with a bird head | a carved, painted spirit pole |
+| spiritBear, spiritEagle, spiritBeaver (Shaman) | drawn in code: pale blue ghostly animals | three translucent spirit animals in one shared style |
+| cauldron (Alchemist) | drawn in code: a black pot with bubbling brew | fine as is |
+| warlockImp (Warlock) | art/enemies/placeholder/imp.svg | the Warlock's own small horned familiar |
+| beehive (Beekeeper) | drawn in code: a straw skep | fine as is |
+| crate, barricade (Quartermaster) | drawn in code: a slatted crate, a plank barricade | wooden supply crate; spiked plank barricade |
+| pavise (Crossbowman) | drawn in code: a tall painted shield on a prop | fine as is |
+| bigBomb (Grenadier) | drawn in code: a large black bomb with a fuse | fine as is |
+| torcher, tesla, mortar, windup, medbay, medDrone (Engineer) | drawn in code: brass turrets and a little drone | brass-and-wood machines in the Foundry style |
+| shadowClone (Bandit) | the Shade's sprite washed near-black | fine as is |
+| (parts) Bearskin | the club is part of the body sprite | paws and the club as their own parts, so the paws can swipe |
+| (parts) Warhelm | the hammer is part of the body sprite | the hammer as its own part, so the fists can alternate |
+| (parts) Bulwark, Valkyrie, Samurai, Trapper | weapon grips drawn for one hand | Bulwark's two-handed grip, Valkyrie's spear held at the shaft, the Samurai's two-handed katana, the Trapper's shotgun and a trap at the hip |
+| demon form (Warlock) | the Warlock's sprite washed red, horns and a big sword drawn in code (fx2.js demonForm) | its own horned demon bust holding the sword |

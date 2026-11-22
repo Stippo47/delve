@@ -4,6 +4,8 @@ The designer's words: `docs/riffle-log/2026-11-22-round12.txt`, deck showcase3. 
 each note quoted, what was built, and the clip (`clips/showcase5/<hero>-<ability>.mp4`). What was ticked with no note is
 left exactly as it was. Ability ids stay the same when a slot gets a new ability (saves keep their bought nodes); the
 name, words and behaviour change.
+Every new trait has its own clip too, `<hero>-trait.mp4` (the lab's trait bench: a dummy strikes and shoots at the
+hero, a friend goes down, a dummy falls, the hero is brought low; a trait can change its bench, kits2.js `show`).
 
 Shared pieces (kits2.js "round 13 (lane H2): shared pieces"): `onUnit` hangs a timed hook on any unit (kits.js
 hooksOf reads `u.h2`: one marked line), which is how each new effect below is built, behind one function each:
@@ -550,7 +552,7 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
 
 ### Valkyrie
 - "Heals themselves and ally passively when near ally. Has a glowing aura. Is more of a support." -> role **support**;
-  **Light of Valhalla** (id valhalla): while a friend is within 140, she and those friends heal 1.2% a second; a soft
+  **Light of Valhalla** (id valhalla): while a friend is within 140, she and those friends heal 0.9% a second; a soft
   gold glow on the floor under her (no ring); she still revives twice as fast.
 - Spear: "Hold spear better" -> **art lane** (the grip in the SVG).
 - Valkyrie's Call: "Flies to recently fallen ally, revives them and knocks all targets back and applies radiance. Lvl 3 has
@@ -568,8 +570,8 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
 - "Trait doesnt make sense. Overclock. If all abilities are used up 1 random ability will come back faster. Boosted rate"
   -> **Overclock** (id overclock): when none of her abilities is ready, one at random comes round three times as fast;
   gears spin over her.
-- Wrench: "Hits she. Close. Throw bouncing cogs from afar" -> ranged moves now (reach 190); the wrench within reach, else
-  a cog that bounces on to a second enemy.
+- Wrench: "Hits she. Close. Throw bouncing cogs from afar" -> she is a shooter now (role ranged, reach 190: she keeps
+  her distance like the Slinger); the wrench when an enemy is on her, else a cog that bounces on to a second enemy.
 - Deploy Turret: "Make summoning better. Should throw them into their spot. Turrets should shoot in rapid bursts of 5. Make
   barrel swap between showing 2 and 1 (with 2 dark barrels below) to look like it's spinning. They should turn slowly.
   Should summon them in random positions." -> thrown on arcs to random spots round her; they turn slowly (1.6 rad/s) and
