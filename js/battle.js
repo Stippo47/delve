@@ -121,7 +121,7 @@ export function newBattle(save, setupIn) {
 }
 
 const fighting = (u) => alive(u) && !u.ethereal;
-export const sideOf = (w, u) => (w.battle ? w.battle.side[u.team] || null : null);
+export const sideOf = (w, u) => (w.battle ? w.battle.side[u.trueTeam || u.team] || null : null); // (round 13: a charmed or befuddled unit still belongs to its own side)
 // Everyone still standing on a side (what it called up mid-fight too).
 export function standing(run, side) { const w = run.world; return w.units.filter((u) => fighting(u) && sideOf(w, u) === side); }
 const healthOf = (run, side) => { let hp = 0, max = 0; for (const u of run.sides[side]) { max += u.maxHp; if (fighting(u)) hp += Math.max(0, u.hp); } return max ? hp / max : 0; };

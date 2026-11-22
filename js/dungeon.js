@@ -8,7 +8,7 @@
 // of its own), floor 3 with the dungeon's boss. Each floor is its own place (themes.js floorTheme). A run can start at
 // a checkpoint floor (opts.floor). Heroes go in at their permanent level and keep the XP they earn (levels give skill
 // points, not strength).
-import { makeWorld, spawn, step, alive, addStatus, hurt, puff, fx, scatterCoins, addDanger, kill } from './sim.js';
+import { makeWorld, spawn, step, alive, addStatus, hurt, puff, fx, scatterCoins, addDanger, kill, restoreSide } from './sim.js';
 import { newStats, finishStats, tallyFoe, tallyRevive } from './stats.js';
 import { DEFS, levelHp, levelDmg, TRINKET_IDS } from './units.js';
 import { trinketHooks, raiseGhost, wears } from './trinkets.js';
@@ -568,7 +568,7 @@ export const XP_MUL = 1.6;
 // Mercenaries' level (their numbers: they don't grow), by dungeon.
 const MERC_LEVEL = [2, 3, 4, 6, 8, 10, 12, 14, 16];
 
-const heroesAlive = (run) => run.world.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon);
+const heroesAlive = (run) => run.world.units.filter((u) => (u.trueTeam || u.team) === 'hero' && alive(u) && !u.summon); // (round 13: a charmed hero is still ours)
 function nearestHero(run, x, y) { let best = null, bd = Infinity; for (const h of heroesAlive(run)) { const d = dist(h.x, h.y, x, y); if (d < bd) { bd = d; best = h; } } return best; }
 
 // ---------------------------------------------------------------- the room's flow
@@ -585,7 +585,7 @@ export function update(run, dt) {
   grabTrinkets(run, dt);
   for (const u of w.units) if (u.team === 'hero' && u.downed && run.heroes[u.kind]) run.heroes[u.kind].down = true;
   if (heroesAlive(run).length === 0 && !run.through && !w.units.some((u) => u.charmed && alive(u))) { run.phase = 'lost'; summarize(run); return; } // (a hero a brain leech holds is still ours)
-  const enemies = w.units.filter((u) => u.team === 'enemy' && alive(u) && !u.def.trap); // (round 10: traps, the saw blades, don't hold a room open)
+  const enemies = w.units.filter((u) => (u.trueTeam || u.team) === 'enemy' && alive(u) && !u.def.trap); // (round 10: traps, the saw blades, don't hold a room open)
   // a fight that's gone quiet (someone stuck, a group never met): everyone left comes looking
   if (run.phase === 'fight') {
     if (run.mainKills !== run.lastKills) { run.lastKills = run.mainKills; run.quietT = 0; } else run.quietT = (run.quietT || 0) + dt;
@@ -757,6 +757,7 @@ function waveSpot(w, cx, cy, r) {
 function roomWon(run) {
   const w = run.world;
   w.cleared = true; run.phase = 'loot'; run.t = 0;
+  for (const u of w.units) if (u.trueTeam) restoreSide(w, u); // (round 13: nobody leaves a room on the wrong side)
   for (const u of w.units) if (u.def.trap && alive(u)) kill(w, u, null); // the saw blades wind down with the room
   for (const h of heroesAlive(run)) h.target = null;
   for (const h of w.hazards) if (h.type === 'spikes' && h.up !== false) { h.up = false; puff(w, h.x, h.y, '#B9AE9C', 6, 60, 5, 0.4); }

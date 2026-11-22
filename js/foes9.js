@@ -17,7 +17,7 @@
 //   The Crypt: the golden skeleton (double gold, homing golden bones that go through heroes and hit 1.5x; "immune to
 //     status effects completely and has more hp") and the harrowing skeleton ("Revive 1 time after death. On revival
 //     makes small burst of curse around them").
-import { alive, opponents, allies, hurt, puff, sparks, flames, addStatus, setAnim, fx, addBuff, explode, spawn, heal, kill, addDanger, drive, steer, goalVec } from './sim.js';
+import { alive, opponents, allies, hurt, puff, sparks, flames, addStatus, setAnim, fx, addBuff, explode, spawn, heal, kill, addDanger, drive, steer, goalVec, turnSide, restoreSide } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange, chance } from './util.js';
 import { lineClear } from './path.js';
 import { ELITES, lob, cone, line, around, rush, rushTick, summon, shoot, blink, openSpot, hold, beginHold, due, again, targetOf, gapTo, crowd, stand, turnTo, later } from './elites.js';
@@ -299,7 +299,7 @@ function bubbles(w, u, t) {
 function latchTo(w, u, h) { u.host = h; u.latchT = 0; u.mass = 0.05; }
 function unlatch(w, u) {
   const h = u.host; u.host = null; u.mass = u.def.mass;
-  if (h && h.charmed === u) { h.team = h.charmTeam; h.charmed = null; h.target = null; h.charmCd = 6; fx(w, { type: 'ring', x: h.x, y: h.y, r: h.r * 1.6, color: '#F2A0C8', max: 0.4 }); }
+  if (h && h.charmed === u) { if (h.flipKind === 'leech') restoreSide(w, h); h.charmed = null; h.charmCd = 6; fx(w, { type: 'ring', x: h.x, y: h.y, r: h.r * 1.6, color: '#F2A0C8', max: 0.4 }); }
   if (h) { const a = rand() * TAU; u.x = h.x + Math.cos(a) * (h.r + u.r + 6); u.y = h.y + Math.sin(a) * (h.r + u.r + 6); u.kx = Math.cos(a) * 160; u.ky = Math.sin(a) * 160; }
   u.offT = rrange(2.5, 3.5);
 }
@@ -327,7 +327,7 @@ function spit(w, u, h) {
 }
 function brainLeechBrain(w, u, dt) {
   if (leechRide(w, u, dt)) {
-    const h = u.host, others = w.units.filter((o) => o !== h && alive(o) && !o.summon && (o.team === 'hero' || o.charmTeam === 'hero') && o.team !== 'enemy');
+    const h = u.host, others = w.units.filter((o) => o !== h && alive(o) && !o.summon && (o.team === 'hero' || o.trueTeam === 'hero') && o.team !== 'enemy');
     if (u.latchT > (u.elite ? 7 : 5) || !others.length) unlatch(w, u); // never the last one standing
     else if (h.charmed === u) { h.target = null; }
     return true;
@@ -339,11 +339,11 @@ function leechHop(w, u, dt, charm) {
   const t = targetOf(w, u); if (!t || !u.aggro || t.summon || !(t.team === 'hero') || u.act) return false;
   if (charm) { // only on a hero that isn't the last one up, and not one just let go
     const up = w.units.filter((o) => o.team === 'hero' && alive(o) && !o.summon).length;
-    if (up < 2 || t.charmCd > 0 || t.charmed) return false;
+    if (up < 2 || t.charmCd > 0 || t.charmed || t.trueTeam) return false;
   }
   if (gapTo(u, t) > 12) return false;
   latchTo(w, u, t);
-  if (charm) { t.charmTeam = t.team; t.team = 'enemy'; t.charmed = u; t.target = null; t.forcedGoal = null; fx(w, { type: 'ring', x: t.x, y: t.y, r: t.r * 1.6, color: '#F2A0C8', max: 0.5 }); }
+  if (charm) { turnSide(w, t, u.team, 'leech', u); t.charmed = u; fx(w, { type: 'ring', x: t.x, y: t.y, r: t.r * 1.6, color: '#F2A0C8', max: 0.5 }); }
   puff(w, t.x, t.y, charm ? '#F2A0C8' : '#C8453D', 8, 70, 5, 0.4);
   return true;
 }

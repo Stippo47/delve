@@ -25,7 +25,7 @@ import {
 import { lineClear } from './path.js';
 import { cue } from './sfx.js';
 import { tagAbility } from './fxtag.js';
-import { STATUS } from './statuses.js';
+import { STATUS, SLEEPY, fillOf } from './statuses.js';
 import { ABILITIES2, TRAITS2, ATTACKS2, kit2Tick } from './kits2.js';
 
 // ---------------------------------------------------------------- the skill web's stat nodes (round 8)
@@ -632,7 +632,7 @@ function zeusBolt(w, u, x, y, e, left, from, hit = new Set()) {
 }
 Object.assign(ABILITIES, ABILITIES2); // round 10 (lane H): the new heroes' abilities
 const RAY_T = 4, RAY_RANGE = 380;
-const CURE_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse'];
+const CURE_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse', 'entangle', 'charm', 'confuse', 'sleepy', 'bleed', 'fear'];
 // how far a unit is from the edge of a rectangle (0 inside)
 const rectGap = (o, r) => Math.hypot(Math.max(r.x - o.x, 0, o.x - r.x - r.w), Math.max(r.y - o.y, 0, o.y - r.y - r.h));
 // Gas Form's trail: a body of poison gas left where he drifts (puddles.js merges them into one cloud)
@@ -826,6 +826,13 @@ export function kitThink(w, u) {
   if (!best || bs < 0.3) return false;
   const lastOne = opponents(w, u).length === 1;
   if (!chance(clamp(0.25 + bs * 0.6, 0, 0.95)) && !lastOne) return false;
+  if (u.st.sleepy > 0 && chance(SLEEPY.abilCut * fillOf(u, 'sleepy'))) return false; // sleepy (round 13): fewer abilities
+  fireAbility(w, u, best);
+  return true;
+}
+// Use one ability now (kitThink's pick, or every ready one at once when a confusion bursts).
+function fireAbility(w, u, best) {
+  const k = u.kit;
   k.cd[best.id] = cooldownOf(u, best);
   const hadLater = u.later, hadRays = u.rays;
   k.using = best.id;
@@ -834,5 +841,19 @@ export function kitThink(w, u) {
   if (u.later && u.later !== hadLater) for (const l of u.later) if (!l.ab) { l.ab = best.id; l.f = withAb(u, best.id, l.f); }
   if (u.rays && u.rays !== hadRays) for (const r of u.rays) if (!r.ab) r.ab = best.id;
   cue('ability', u, best.id);
-  return true;
+}
+// Confused's burst (round 13, the designer: "uses all available abilities at once"): every learned ability that is
+// ready goes off now, whether it's worth it or not, at whatever it was looking at (or the nearest foe).
+export function kitFireAll(w, u) {
+  const k = u.kit; if (!k) return 0;
+  if (!u.target || !alive(u.target)) { const o = opponents(w, u).sort((a, b) => dist(u.x, u.y, a.x, a.y) - dist(u.x, u.y, b.x, b.y))[0]; if (o) u.target = o; }
+  let n = 0;
+  for (const ab of HEROES[k.hero].abilities) {
+    const tier = k.tiers[ab.id]; if (!tier || k.cd[ab.id] > 0) continue;
+    const A = ABILITIES[ab.id]; if (!A || A.passiveTier || (A.hook && !A.use)) continue;
+    if (!A.use) continue;
+    u.act = null;
+    try { fireAbility(w, u, ab); n++; } catch (e) { /* an ability that needs a target it hasn't got just doesn't go */ }
+  }
+  return n;
 }

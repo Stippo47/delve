@@ -2,11 +2,11 @@
 import { TAU, clamp, dist, dist2, angleTo, wrapAngle, angleDiff, rand, rrange, rint, chance, softmaxPick } from './util.js';
 import { DEFS, FEEL, levelHp, levelDmg } from './units.js';
 import { lineClear, pathClear, rayToRoundRect, circleRect, findPath, buildGrid } from './path.js';
-import { kitThink, kitTick, hooksOf, segDist, heroAttack } from './kits.js';
+import { kitThink, kitTick, hooksOf, segDist, heroAttack, kitFireAll } from './kits.js';
 import { trinketHooks } from './trinkets.js';
 import { cue } from './sfx.js';
 import { ARMOUR_CAP, ENEMY_ARMOUR, armourCut } from './armour.js';
-import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON } from './statuses.js';
+import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON, CHARM, CONFUSE, SLEEPY, BLEED, FEAR } from './statuses.js';
 import { tallyHurt, tallyHeal, tallyDown, noteStatus } from './stats.js';
 
 let NEXT_ID = 1;
@@ -63,6 +63,23 @@ export function spawn(w, kind, x, y, opts = {}) {
 // In a battle either kind of unit can be on either side, so what a unit is (a hero, or a monster) can't be read off
 // its side there. In a run it is the side, as ever.
 const heroic = (w, u) => (w.battle ? u.def.team === 'hero' : u.team === 'hero');
+// ---- round 13 (lane S): one way to change sides. Charm's burst, the Jester's Befuddle and a brain leech's host all go
+// through turnSide / restoreSide: u.trueTeam keeps the side it really belongs to (sideOf), u.flipKind says why it
+// changed ('charm' | 'befuddle' | 'leech'), u.flipUntil when it comes back by itself (statusTick). A flipped unit dies,
+// drops, and counts in the stats and the dungeon's checks as what it really is (killNow restores it first).
+export const sideOf = (u) => u.trueTeam || u.team;
+export function turnSide(w, u, team, kind, by, dur) {
+  if (!u.trueTeam) u.trueTeam = u.team;
+  u.team = team; u.flipKind = kind; u.flipBy = by || null; u.flipUntil = dur != null ? w.time + dur : null;
+  if (u.team === u.trueTeam) { restoreSide(w, u); return; } // (turned back to its own side: nothing is flipped)
+  u.target = null; u.tauntBy = null; u.tauntT = 0; u.aggro = true; u.forcedGoal = null; u.act = u.act && u.act.type === 'drink' ? u.act : null;
+  if (w) for (const o of w.units) if (o.target === u) o.target = null; // whoever was after it lets go
+}
+export function restoreSide(w, u) {
+  if (!u.trueTeam) return;
+  u.team = u.trueTeam; u.trueTeam = null; u.flipKind = null; u.flipBy = null; u.flipUntil = null; u.target = null; u.befuddled = null;
+  if (w) for (const o of w.units) if (o.target === u) o.target = null;
+}
 
 const alive = (u) => !u.dead && !u.downed;
 // Ethereal units (a Wraith Veil ghost) are nobody's opponent or ally: they can't be targeted, hit or helped.
@@ -79,6 +96,7 @@ const speedOf = (u) => {
   if (u.pulse != null) s *= u.pulse;       // slimes move in hops (round 9): their brain sets the pulse
   for (const b of u.buffs) if (b.move) s *= b.move;
   if (u.flinchT > 0) s *= 0.5;            // just took a blow
+  if (u.fearT > 0) s *= FEAR.run;         // terrified: runs for it (round 13)
   if (u.staleBoost) s *= 1.3;              // a stand-off that's gone on too long (dungeon.js w.stale)
   if (u.rootT > 0 || u.tangledT > 0 || u.stunT > 0 || u.sleepT > 0 || u.buffs.some((b) => b.root)) s = 0;
   return s;
@@ -90,6 +108,7 @@ const atkRate = (u) => {
   for (const h of hooksOf(u)) if (h.atkSpeed) r *= h.atkSpeed(u);
   if (u.sickT > 0) r *= 1 - POISON.slow; else if (u.st.poison > 20) r *= 0.9;
   if (u.st.radiance > 0) r *= 1 - RADIANCE.atkSlow * fillOf(u, 'radiance'); // radiant: attacks come slower
+  if (u.st.sleepy > 0) r *= 1 - SLEEPY.atkSlow * fillOf(u, 'sleepy');         // sleepy: attacks come slower (round 13)
   return r;
 };
 const buffMul = (u, key) => { let m = 1; for (const b of u.buffs) if (b[key] != null) m *= b[key]; return m; };
@@ -120,6 +139,8 @@ export function heal(w, u, amount, src, o) {
     hurt(w, u, Math.min(amount, u.maxHp * CURSE.selfCap), null, { noDodge: true, hexTurned: true }); return 0;
   }
   if (u.st.curse > 0) amount *= Math.max(0, 1 - CURSE.healCut * fillOf(u, 'curse')); // cursed: heals do less, then nothing
+  if (u.st.bleed > 0) amount *= 1 - BLEED.healCut * fillOf(u, 'bleed');             // bleeding: heals do less (round 13)
+  amount *= buffMul(u, 'healTaken');                                               // a wound that won't close (round 13: healers' counters)
   if (amount <= 0) return 0;
   if (u.def.cargo) amount /= 3; // lane C (convoy.js): heals mend the wagon at a third
   const before = u.hp; u.hp = Math.min(u.maxHp, u.hp + amount);
@@ -128,7 +149,7 @@ export function heal(w, u, amount, src, o) {
   if (u.hp - before > 2 && rand() < 0.5) { const a = rand() * Math.PI * 2, d = (u.vr || u.r) * (1 + 0.25 * rand()); w.particles.push({ x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d * 0.8, vx: 0, vy: 0, rise: 40, up: 0, life: 0.7, max: 0.7, size: 4.5, color: '#9BE07A', shape: 'plus' }); }
   return u.hp - before;
 }
-export function cleanse(u) { u.st = freshStatuses(); u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; }
+export function cleanse(u) { u.st = freshStatuses(); u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; u.addledT = 0; u.fearT = 0; if (u.flipKind === 'charm') restoreSide(null, u); }
 // Cursed's burst: an armed hex fires on the unit's next attack, heal or summon. hexFires() arms the window (everything
 // that action does in the next CURSE.windowT turns too) and says whether this one turns.
 function hexFires(w, u) {
@@ -209,6 +230,8 @@ function chooseTarget(w, u) {
     if ((u.team === 'enemy' || w.battle) && u.tauntT > 0 && u.tauntBy === o) s += 0.85; // the knight drew its attention
     if (u.focusT > 0 && u.focus === o) s += 1.2; // round 9: a howl (wolves) or a call turns a pack onto one hero
     if (o === u.target) s += 0.35; // stickiness
+    if (u.st.charm > 0 && u.stBy && u.stBy.charm === o) s -= 3;        // round 13: it won't go for whoever is charming it
+    if (u.def.hunter && o.def.heroRole === 'support') s += u.def.hunter; // round 13: healer hunters go for the party's healer
     if (s > bestS) { bestS = s; best = o; }
   }
   u.target = best;
@@ -579,8 +602,15 @@ function movement(w, u, dt) {
       case 'retreat': gx = -tx; gy = -ty; side = u.strafeSign; mult = d < 260 ? 0.7 : 0.9; break; // backpedalling is slower
     }
   }
+  // round 13, fear: terrified, it runs from whoever frightened it; while fear builds it backs off from them, more as it builds
+  const scare = !esc && !u.forcedGoal ? fearOf(u) : null;
+  if (scare) {
+    const fd = dist(u.x, u.y, scare.x, scare.y) || 1, ax = (u.x - scare.x) / fd, ay = (u.y - scare.y) / fd;
+    if (u.fearT > 0) { gx = ax; gy = ay; mult = 1; side = 0; const gl = Math.hypot(gx, gy); if (clearance(w, u, gx / gl, gy / gl, 110) < 80) { const oa = openAngle(w, u, Math.atan2(ay, ax)); gx = Math.cos(oa); gy = Math.sin(oa); } }
+    else if (fd < FEAR.reach) { const k = FEAR.pull * fillOf(u, 'fear'), gl = Math.hypot(gx, gy) || 1; gx = gx / gl * (1 - Math.min(1, k)) + ax * k; gy = gy / gl * (1 - Math.min(1, k)) + ay * k; mult = Math.max(mult, 0.6 * k); }
+  }
   // formation, lightly: an archer nearer the enemy than the knight leans back towards him
-  if (roleAlias(u) === 'archer' && heroic(w, u) && t && !u.forcedGoal) {
+  if (roleAlias(u) === 'archer' && heroic(w, u) && t && !u.forcedGoal && !scare) {
     const kn = w.units.find((o) => o.team === u.team && (o.kind === 'knight' || o.def.heroRole === 'tank') && alive(o));
     if (kn) {
       const da = dist(u.x, u.y, t.x, t.y), dk = dist(kn.x, kn.y, t.x, t.y);
@@ -621,6 +651,7 @@ function drive(u, sx, sy, want, dt, quick = 1) {
 
 // ---------------------------------------------------------------- facing
 function updateFacing(u, dt) {
+  if (u.faceLockT > 0) { u.faceLockT -= dt; return; } // (a confused lurch: it stays turned the wrong way a moment)
   let want = null;
   const t = u.target;
   if (t && !u.forcedGoal) {
@@ -676,12 +707,17 @@ export function hurt(w, u, amount, src, o = {}) {
     return hurt(w, u.linkTo, amount * (u.def.segTaken ?? 0.6), src, { ...o, knock: 0 }); }
   // a brain leech's host (round 9, foes9.js): its friends' blows go to the leech; the shove still lands (a hard one
   // knocks the leech off)
-  if (u.charmed && src && src.team === u.charmTeam && !o.dot && alive(u.charmed)) {
+  if (u.charmed && src && src.team === u.trueTeam && !o.dot && alive(u.charmed)) {
     if (o.knock && !knockImmune(u)) { const a = o.kAngle != null ? o.kAngle : angleTo(src.x, src.y, u.x, u.y), k = o.knock * KNOCK / u.mass; u.kx += Math.cos(a) * k; u.ky += Math.sin(a) * k; }
     return hurt(w, u.charmed, amount, src, { ...o, knock: 0 });
   }
   if (src && src !== u && !o.dot && !o.hexTurned && !o.noHex) {
     if (src.radiantT > 0) return 0; // radiant: its glow is all it can do
+    // round 13, charm: while it builds, a unit can't hurt whoever is charming it (its blow turns into a little heart)
+    if (src.st && src.st.charm > 0 && src.stBy && src.stBy.charm === u && src.flipKind !== 'charm') {
+      if (rand() < 0.6) w.particles.push({ x: u.x + rrange(-6, 6), y: u.y - u.r * 0.4, vx: 0, vy: 0, rise: 34, up: 0, life: 0.7, max: 0.7, size: 5, color: STATUS.charm.col, shape: 'heart' });
+      return 0;
+    }
     if (alive(src) && hexFires(w, src)) { // hexed: the blow turns on the one who struck it
       const room = Math.max(0, src.maxHp * CURSE.selfCap - (src.hexSelf || 0)), self = Math.min(amount * CURSE.selfMul, room);
       src.hexSelf = (src.hexSelf || 0) + self;
@@ -704,6 +740,7 @@ export function hurt(w, u, amount, src, o = {}) {
   let amt = amount;
   if (src && alive(src)) { for (const h of hooksOf(src)) if (h.dealt) amt = h.dealt(w, src, u, amt, o); amt *= blowMul(src); }
   if (u.st.curse > 0) amt *= 1 + CURSE.taken * fillOf(u, 'curse');             // cursed: blows land harder
+  if (src && src.def.charmBonus && (u.st.charm > 0 || u.flipKind === 'charm')) amt *= 1 + src.def.charmBonus; // the Succubus: harder on the charmed (round 13)
   for (const h of hooksOf(u)) if (h.taken) amt = h.taken(w, u, src, amt, o);
   amt *= buffMul(u, 'taken');
   if (u.koT > 0) amt *= 1.5;                                 // knocked out: wide open
@@ -748,7 +785,7 @@ export function hurt(w, u, amount, src, o = {}) {
     if (!heroic(w, u) || big) { u.flinchT = Math.max(u.flinchT || 0, onShield ? 0.06 : big ? 0.2 : 0.1); u.spd *= onShield ? 0.85 : 0.6; }
     if (src && (src.kind === 'knight' || src.def.heroRole === 'tank') && (w.battle ? u.team !== src.team : u.team === 'enemy')) { u.tauntBy = src; u.tauntT = 3; }
     u.flashT = 0.12; textU(w, u.x + rrange(-6, 6), u.y, u.r + 4, Math.round(amt), o.crit ? '#FFE14D' : '#FFFFFF', o.crit ? 1.3 : 1, true); }
-  else { u.dotAcc += amt; if (u.dotAcc >= 4) { textU(w, u.x, u.y, u.r, Math.round(u.dotAcc), o.color || '#FF9A55', 0.75); u.dotAcc = 0; } }
+  else if (!o.quiet) { u.dotAcc += amt; if (u.dotAcc >= 4) { textU(w, u.x, u.y, u.r, Math.round(u.dotAcc), o.color || '#FF9A55', 0.75); u.dotAcc = 0; } }
   if (src && alive(src)) { const ls = src.buffs.reduce((a, b) => a + (b.lifesteal || 0), 0); if (ls) heal(w, src, amt * ls, src); }
   if (o.knock && !knockImmune(u)) {
     const a = o.kAngle != null ? o.kAngle : src ? angleTo(src.x, src.y, u.x, u.y) : rand() * TAU;
@@ -756,7 +793,9 @@ export function hurt(w, u, amount, src, o = {}) {
     const k = o.knock * KNOCK / u.mass * (u.st.wet > 60 ? 1.7 : 1) * (onShield ? 0.6 : 1);
     u.kx += Math.cos(a) * k; u.ky += Math.sin(a) * k;
   }
+  if (!o.dot && u.st.bleed > 0) u.bleedHoldT = BLEED.holdT; // bleeding: every blow keeps it from wearing off (round 13)
   for (const s of BUILD_IDS) if (o[s]) addStatus(w, u, s, o[s], src);
+  if (!o.dot && src && u.def.struck && alive(u)) u.def.struck(w, u, src, amt, o); // an enemy that answers a blow (round 13: the Succubus)
   if (src && src.hitBurn && !o.dot && src !== u) addStatus(w, u, 'burn', src.hitBurn, src); // round 9: a burning Elder Ent's every blow burns
   if (src && alive(src) && !o.dot) for (const h of hooksOf(src)) if (h.hit) h.hit(w, src, u, amt, o);
   if (!o.dot) for (const h of hooksOf(u)) if (h.struck) h.struck(w, u, src, amt, o);
@@ -770,6 +809,8 @@ export function addStatus(w, u, type, amount, src) {
   if (u.linkTo) { if (alive(u.linkTo)) addStatus(w, u.linkTo, type, amount * (u.def.segTaken ?? 0.6), src); return; } // a chain's segment: its head takes it
   if (type === 'radiance' && (u.radiantT > 0 || u.radImmuneT > 0)) return; // glowing, or just was: its own aura can't feed it
   if (type === 'entangle' && u.tangleImmuneT > 0) return; // held fast already (an entangle root), or just got free
+  if (NEW_BURSTS.has(type) && u[type + 'ImmuneT'] > 0) return; // round 13: just burst
+  if (type === 'charm' && u.flipKind === 'charm') return;      // enthralled already
   const res = (u.def.res && u.def.res[type]) ?? 1;
   const s = u.st;
   noteStatus(u, type, src); // its ticks and bursts count for whoever put it on (stats.js)
@@ -829,6 +870,19 @@ export function addStatus(w, u, type, amount, src) {
     }
     return;
   }
+  if (type === 'charm') { if (s.charm >= need) { s.charm = after; burst(); charmBurst(w, u, src); } return; }
+  if (type === 'confuse') { if (s.confuse >= need) { s.confuse = after; burst(); addledBurst(w, u); } return; }
+  if (type === 'sleepy') {
+    if (s.sleepy >= need) {                                      // falls asleep (the Lullaby's sleep: a blow wakes it)
+      const T = u.def.boss ? SLEEPY.sleepT * 0.4 : SLEEPY.sleepT;
+      s.sleepy = after; burst(); u.sleepT = Math.max(u.sleepT, T); u.sleepyImmuneT = T + SLEEPY.immuneT; if (u.act && u.act.type !== 'drink') u.act = null;
+      textU(w, u.x, u.y, u.r + 12, 'ASLEEP', STATUS.sleepy.col, 1.2);
+      fx(w, { type: 'statusBurst', kind: 'sleepy', unit: u, x: u.x, y: u.y, r: u.vr, max: 1 });
+    }
+    return;
+  }
+  if (type === 'bleed') { if (s.bleed >= need) { s.bleed = after; burst(); haemorrhage(w, u, src); } return; }
+  if (type === 'fear') { if (s.fear >= need) { s.fear = after; burst(); terrify(w, u, src); } return; }
   if (type === 'curse') {
     if (s.curse >= need) {                                       // HEXED: the next attack, heal or summon turns on it
       s.curse = after; burst(); u.hexed = true; u.hexT = CURSE.armT;
@@ -851,6 +905,54 @@ export function addStatus(w, u, type, amount, src) {
     if (s.poison >= need) { s.poison = after; burst(); textU(w, u.x, u.y, u.r + 12, 'SICK', '#9BCB3C', 1.2); u.sickT = POISON.sickT; }
   }
 }
+
+// ---- round 13 (lane S): the new bursts (statuses.js has every number, docs/STATUSES.md the rules in words)
+const NEW_BURSTS = new Set(['charm', 'confuse', 'sleepy', 'bleed', 'fear']);
+function charmBurst(w, u, src) {
+  const by = src && alive(src) ? src : null;
+  const others = w.units.some((o) => o !== u && alive(o) && !o.summon && !o.ethereal && o.team === u.team);
+  u.charmImmuneT = CHARM.immuneT;
+  if (!by || by.team === u.team || u.def.boss || u.def.noFlip || !others) { // SMITTEN: a boss, or the last of its side, only swoons
+    stun(w, u, CHARM.smitT); textU(w, u.x, u.y, u.r + 12, 'SMITTEN', STATUS.charm.col, 1.2);
+  } else {
+    const dur = CHARM.dur * (u.major || u.mini ? CHARM.major : u.elite ? CHARM.elite : 1);
+    if (u.charmed) { const l = u.charmed; u.charmed = null; if (l.host === u) { l.host = null; l.mass = l.def.mass; } } // (a leech's hold is broken)
+    turnSide(w, u, by.team, 'charm', by, dur); u.charmImmuneT = dur + CHARM.immuneT;
+    textU(w, u.x, u.y, u.r + 12, 'CHARMED', STATUS.charm.col, 1.2);
+  }
+  fx(w, { type: 'statusBurst', kind: 'charm', unit: u, x: u.x, y: u.y, r: u.vr, max: 0.9 });
+}
+function addledBurst(w, u) {
+  const T = u.def.boss ? CONFUSE.addledT * 0.4 : CONFUSE.addledT;
+  u.addledT = T; u.confuseImmuneT = T + CONFUSE.immuneT;
+  textU(w, u.x, u.y, u.r + 12, 'ADDLED', STATUS.confuse.col, 1.2);
+  fx(w, { type: 'statusBurst', kind: 'confuse', unit: u, x: u.x, y: u.y, r: u.vr, max: 0.8 });
+  // every ability it has ready, all at once (heroes' kits; an enemy's own move)
+  if (u.stunT > 0 || u.frozenT > 0 || u.sleepT > 0) return;
+  if (u.kit) kitFireAll(w, u);
+  else if (u.def.ability && u.target && alive(u.target) && u.abilT <= 0 && !u.act) useAbility(w, u);
+}
+function haemorrhage(w, u, src) {
+  let loss = Math.max(0, u.hp) * BLEED.burst;
+  if (u.def.boss) loss = Math.min(loss, u.maxHp * BLEED.bossCap);
+  u.bleedImmuneT = BLEED.immuneT;
+  textU(w, u.x, u.y, u.r + 12, 'HAEMORRHAGE', STATUS.bleed.col, 1.2);
+  fx(w, { type: 'statusBurst', kind: 'bleed', unit: u, x: u.x, y: u.y, r: u.vr, max: 1.1, loss: loss / u.maxHp, hp0: u.hp / u.maxHp });
+  for (let i = 0; i < 14; i++) { const a = rand() * TAU, v = rrange(60, 200); w.particles.push({ x: u.x, y: u.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: rrange(0.4, 0.7), max: 0.7, size: rrange(3, 6), color: i % 2 ? '#C8453D' : '#8A1E28', drag: 0.88 }); }
+  if (loss > 0) { hurt(w, u, loss, null, { dot: true, by: src, stk: 'bleed', color: STATUS.bleed.col, quiet: true }); textU(w, u.x, u.y, u.r + 2, '-' + Math.round(loss), '#FF6A5A', 1.3, true); }
+}
+function terrify(w, u, src) {
+  u.fearImmuneT = FEAR.immuneT;
+  textU(w, u.x, u.y, u.r + 12, u.def.boss ? 'COWERS' : 'TERRIFIED', '#EEF4E4', 1.2);
+  fx(w, { type: 'statusBurst', kind: 'fear', unit: u, x: u.x, y: u.y, r: u.vr, max: 0.8 });
+  // an ability wasted: everything it had ready (or nearly) starts its cooldown again
+  if (u.kit) for (const k in u.kit.cd) u.kit.cd[k] = Math.max(u.kit.cd[k], FEAR.waste);
+  else if (u.def.abilCd) u.abilT = Math.max(u.abilT, Math.min(u.def.abilCd, FEAR.waste));
+  if (u.def.boss) { stun(w, u, FEAR.bossT / 0.4); return; } // (stun() takes 60% off for bosses)
+  u.fearT = FEAR.terrT; u.fearBy = src && alive(src) ? src : null; u.fearImmuneT = FEAR.terrT + FEAR.immuneT; if (u.act && u.act.type !== 'drink') u.act = null;
+}
+// The one being afraid of: whoever frightened it last, while it's still about.
+const fearOf = (u) => { const b = u.fearT > 0 ? u.fearBy : u.stBy && u.stBy.fear; return b && alive(b) && b.team !== u.team ? b : null; };
 
 function shatter(w, u, src) {
   cue('shatter', u);
@@ -909,9 +1011,10 @@ function kill(w, u, src) {
 }
 function killNow(w, u, src) {
   u.hp = 0;
-  if (u.befuddled) { u.team = u.befuddled.was; u.befuddled = null; } // (the Jester's Befuddle, kits2.js: it dies as what it is, not as one of ours)
-  if (u.charmed) { const l = u.charmed; u.team = u.charmTeam; u.charmed = null; if (l.host === u) { l.host = null; l.mass = l.def.mass; } } // a leech's host goes down as itself
-  if (u.host) { const h = u.host; u.host = null; if (h.charmed === u) { h.team = h.charmTeam; h.charmed = null; h.target = null; h.charmCd = 6; } } // a leech dies: its host is itself again
+  // (round 13: anything flipped, charmed, befuddled or a leech's host, dies, drops and counts as what it really is)
+  if (u.trueTeam) restoreSide(w, u);
+  if (u.charmed) { const l = u.charmed; u.charmed = null; if (l.host === u) { l.host = null; l.mass = l.def.mass; } } // a leech's host goes down as itself
+  if (u.host) { const h = u.host; u.host = null; if (h.charmed === u) { if (h.flipKind === 'leech') restoreSide(w, h); h.charmed = null; h.charmCd = 6; } } // a leech dies: its host is itself again
   if (src && src !== u && alive(src)) for (const h of hooksOf(src)) if (h.kill) h.kill(w, src, u);
   for (const o of w.units) if (o !== u && alive(o) && dist(o.x, o.y, u.x, u.y) < 260) for (const h of hooksOf(o)) if (h.death) h.death(w, o, u);
   if (u.boom) explode(w, u.x, u.y, 80, 16, {}, u.summonBy || null, '#9BE07A', u);
@@ -921,7 +1024,7 @@ function killNow(w, u, src) {
   }
   if (u.summon) { u.dead = true; puff(w, u.x, u.y, '#B8C8DA', 10, 80, 5, 0.5); return; } // summons just fade (blue-grey: ours, round 8)
   if (u.team === 'hero' && !w.battle) {
-    u.downed = true; u.act = null; u.frozenT = 0; u.st = freshStatuses(); u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0;
+    u.downed = true; u.act = null; u.frozenT = 0; u.st = freshStatuses(); u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; u.addledT = 0; u.fearT = 0;
     textU(w, u.x, u.y, u.r + 10, 'DOWN', '#FF8A80', 1.1);
     emit(w, 'heroDown', u);
     return;
@@ -974,12 +1077,14 @@ function meleeSwing(w, u, single) {
       hurt(w, o, d.dmg * u.dmgMul * rrange(0.9, 1.1), u, { knock: d.knock || 40, kAngle: angleTo(cx, cy, o.x, o.y), heavy: d.heavy });
     return;
   }
-  const targets = single ? (u.target && inMeleeArc(u, u.target, 6) ? [u.target] : []) : w.units.filter((o) => alive(o) && o.team !== u.team && inMeleeArc(u, o, 6));
+  const wild = u.addledT > 0; // addled (round 13): the blow lands on friends as well
+  const targets = single && !wild ? (u.target && inMeleeArc(u, u.target, 6) ? [u.target] : []) : w.units.filter((o) => alive(o) && o !== u && !o.ethereal && (o.team !== u.team || wild) && inMeleeArc(u, o, 6));
   u.lungeT = 0.18;
   w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, color: u.team === 'hero' ? '#FFFFFF' : '#FFD2C2', src: u });
   for (const o of targets) {
     hurt(w, o, hitDmg(u) * rrange(0.9, 1.1), u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison, radiance: d.radiance, curse: d.curse,
-      burn: d.burn, entangle: d.entangle, stagger: d.stagger, wet: d.wet, chill: d.team === 'enemy' ? d.chill : 0 }); // round 9: a def's blow can carry any build-up (round 10: an enemy's chill too, the frost wolf's bite)
+      burn: d.burn, entangle: d.entangle, stagger: d.stagger, wet: d.wet, chill: d.team === 'enemy' ? d.chill : 0,
+      charm: d.charm, confuse: d.confuse, sleepy: d.sleepy, bleed: d.bleed, fear: d.fear }); // (round 13: the new five too) // round 9: a def's blow can carry any build-up (round 10: an enemy's chill too, the frost wolf's bite)
   }
 }
 
@@ -988,9 +1093,19 @@ function fireArrow(w, u, angle, o = {}) {
   u.recoilT = 0.14;
   w.projectiles.push({ kind: o.fire ? 'fireArrow' : (u.def.proj || 'arrow'), color: u.def.projColor, x: u.x + Math.cos(angle) * (u.r + 6), y: u.y + Math.sin(angle) * (u.r + 6),
     vx: Math.cos(angle) * sp, vy: Math.sin(angle) * sp, r: 6, team: u.team, owner: u, dmg: o.dmg ? o.dmg * u.dmgMul : hitDmg(u),
-    o: { chill: o.fire ? 0 : u.def.chill, burn: o.fire ? 20 : 0, radiance: u.def.radiance, curse: u.def.curse, knock: 30 }, life: 1.2, a: angle });
+    o: { chill: o.fire ? 0 : u.def.chill, burn: o.fire ? 20 : 0, radiance: u.def.radiance, curse: u.def.curse, charm: u.def.charm, confuse: u.def.confuse, sleepy: u.def.sleepy, bleed: u.def.bleed, fear: u.def.fear, knock: 30 }, life: 1.2, a: angle });
 }
 
+// Confused (round 13): with an attack ready and nothing in reach, it swings or shoots at the air now and then.
+function flail(w, u, dt) {
+  if (u.atkT > 0 || u.act || u.forcedGoal || !(u.st.confuse > 10)) return false;
+  const t = u.target, inReach = t && dist(u.x, u.y, t.x, t.y) - u.r - t.r <= (u.def.range || 30) + 2;
+  if (inReach || !chance(dt * CONFUSE.flail * fillOf(u, 'confuse'))) return false;
+  if (u.def.role === 'ranged') fireArrow(w, u, u.facing + rrange(-0.5, 0.5)); else meleeSwing(w, u, false);
+  setAnim(u, u.def.attackAnim || (u.def.role === 'ranged' ? 'draw' : 'swing'), 0.3);
+  u.atkT = u.def.atkCd * rrange(0.9, 1.1); u.lastAttackT = w.time;
+  return true;
+}
 function tryAttack(w, u) {
   const t = u.target;
   if (!t || u.atkT > 0 || u.act || u.forcedGoal) return;
@@ -1178,6 +1293,19 @@ function statusTick(w, u, dt) {
   }
   if (s.radiance > 0) s.radiance = Math.max(0, s.radiance - STATUS.radiance.decay * dt);
   if (s.curse > 0) s.curse = Math.max(0, s.curse - STATUS.curse.decay * dt);
+  // round 13 (lane S): the new five drain away (bleeding holds still while blows keep landing); the bursts run out
+  for (const k of ['charm', 'confuse', 'sleepy', 'fear']) if (s[k] > 0) s[k] = Math.max(0, s[k] - STATUS[k].decay * dt);
+  if (s.bleed > 0) {
+    if (u.bleedHoldT > 0) u.bleedHoldT -= dt; else s.bleed = Math.max(0, s.bleed - STATUS.bleed.decay * dt);
+    hurt(w, u, s.bleed * BLEED.dot * dt, null, { dot: true, color: STATUS.bleed.col, by: u.stBy && u.stBy.bleed, stk: 'bleed' });
+    if (s.bleed > 6 && rand() < dt * (3 + 9 * fillOf(u, 'bleed'))) w.particles.push({ shape: 'drip', x: u.x + rrange(-u.r, u.r) * 0.7, y: u.y + rrange(-u.r, u.r) * 0.6, vx: 0, vy: 0, rise: -46, up: 0, life: 0.6, max: 0.6, size: 3.2 + 2 * fillOf(u, 'bleed'), color: '#C8453D' });
+  }
+  for (const k of ['addledT', 'fearT', 'charmImmuneT', 'confuseImmuneT', 'sleepyImmuneT', 'bleedImmuneT', 'fearImmuneT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
+  if (u.flipUntil != null && w.time >= u.flipUntil) { // a charm (or a Befuddle) runs out: back to its own side
+    const k = u.flipKind; restoreSide(w, u);
+    if (k === 'charm') fx(w, { type: 'statusBurst', kind: 'uncharm', unit: u, x: u.x, y: u.y, r: u.vr, max: 0.6 });
+  }
+  if (!alive(u)) return;
   entangleTick(w, u, dt);
   if (!alive(u)) return;
   if (u.radiantT > 0) {                                          // the radiant glow: everyone else close by turns radiant
@@ -1310,6 +1438,11 @@ function physics(w, dt) {
 function projectiles(w, dt) {
   for (const p of w.projectiles) {
     p.life -= dt;
+    if (!p.aimSeen) { // round 13: a confused shooter's shot goes wide; an addled one's can hit its own side
+      p.aimSeen = true; const o = p.owner;
+      if (o && o.st && o.st.confuse > 5 && !p.home) { const e = rrange(-1, 1) * CONFUSE.aim * fillOf(o, 'confuse'), a = Math.atan2(p.vy, p.vx) + e, sp = Math.hypot(p.vx, p.vy); p.vx = Math.cos(a) * sp; p.vy = Math.sin(a) * sp; p.a = a; }
+      if (o && o.addledT > 0) p.wild = true;
+    }
     // round 9 shot behaviours: home (turns towards a unit), accel (speeds up), drag (slows), grow (radius/s), fall (damage
     // lost per second, the necromancer's dart)
     if (p.home && alive(p.home) && p.turn) { const a = Math.atan2(p.vy, p.vx), want = angleTo(p.x, p.y, p.home.x, p.home.y), sp = Math.hypot(p.vx, p.vy), na = a + clamp(wrapAngle(want - a), -p.turn * dt, p.turn * dt); p.vx = Math.cos(na) * sp; p.vy = Math.sin(na) * sp; }
@@ -1329,7 +1462,7 @@ function projectiles(w, dt) {
     if (p.life <= 0 || p.noHit) continue; // noHit: only a look (a lobbed thing; its landing is a danger zone)
     for (const u of w.units) {
       if (!alive(u) || u === p.skip || u === p.owner || u.ethereal) continue;
-      if (p.team !== 'neutral' && u.team === p.team) { // round 10: a shot that does something to friends it passes (the Cleric's orbs heal)
+      if (p.team !== 'neutral' && u.team === p.team && !p.wild) { // round 10: a shot that does something to friends it passes (the Cleric's orbs heal)
         if (p.allyHit && u !== p.owner && !(p.allySeen || (p.allySeen = new Set())).has(u) && dist(p.x, p.y, u.x, u.y) < u.r + p.r) { p.allySeen.add(u); p.allyHit(w, p, u); }
         continue;
       }
@@ -1464,7 +1597,7 @@ export function step(w, dt) {
     }
     // a unit with its own brain (bosses, special enemies) runs it first; returning true skips the usual brain
     if (u.eliteFn && u.eliteFn(w, u, dt)) continue; // an elite's extra move (elites.js)
-    if (u.def.brain && u.def.brain(w, u, dt)) continue;
+    if (u.def.brain && !(u.fearT > 0) && u.def.brain(w, u, dt)) continue; // (terrified: the plain brain below runs it off)
     if (u.target && !alive(u.target)) u.target = null;
     u.thinkT -= dt;
     if (u.thinkT <= 0) { u.thinkT = 0.4 + rand() * 0.08; think(w, u); }
@@ -1472,8 +1605,11 @@ export function step(w, dt) {
     movement(w, u, dt);
     if (u.rootT > 0) { u.dvx = u.dvy = 0; u.spd = 0; }
     updateFacing(u, dt);
-    const radiant = u.radiantT > 0; // radiant: it glows, and can't attack or use an ability
+    // round 13, confused: now and then it lurches round to face somewhere else entirely (it walks that way a moment too)
+    if (u.st.confuse > 5 && chance(dt * CONFUSE.turn * fillOf(u, 'confuse'))) { const a = u.facing + rrange(1.2, 3.1) * (chance(0.5) ? 1 : -1); u.facing = wrapAngle(a); u.mvA = u.facing; u.faceLockT = 0.5; }
+    const radiant = u.radiantT > 0 || u.fearT > 0; // radiant: it glows, and can't attack or use an ability (terrified: it only runs)
     if (radiant) { /* no attacks */ }
+    else if (flail(w, u, dt)) continue;
     else if (u.kit) { u.abilThinkT -= dt; if (u.abilThinkT <= 0) { u.abilThinkT = 0.35; if (kitThink(w, u)) continue; } }
     else if (u.def.ability && u.abilT <= 0 && !u.forcedGoal) {
       u.abilThinkT -= dt;
@@ -1484,6 +1620,7 @@ export function step(w, dt) {
           const lastOne = opponents(w, u).length === 1;
           let ch = clamp(0.02 + s * 0.55, 0, 0.92);
           if (lastOne) ch = Math.max(ch * 3, 0.4);
+          if (u.st.sleepy > 0) ch *= 1 - SLEEPY.abilCut * fillOf(u, 'sleepy'); // sleepy: fewer abilities (round 13)
           if (chance(ch)) useAbility(w, u);
         }
       }
@@ -1541,4 +1678,4 @@ export function step(w, dt) {
   w.units = w.units.filter((u) => !u.dead);
 }
 
-export { alive, opponents, allies, hpRatio, wake, puff, textU, goalVec, steer, drive, blocked, updateFacing, meleeSwing, sparks, flames, kill, dangerEscape };
+export { alive, opponents, allies, hpRatio, wake, puff, textU, goalVec, steer, drive, blocked, updateFacing, meleeSwing, sparks, flames, kill, dangerEscape, fearOf };
