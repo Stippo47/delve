@@ -292,7 +292,7 @@ export const FOUNDRY = {
   mortarFire: { ...TURRET, name: 'Fire Mortar', art: mortarArt(8, -0.04), hp: 72, cost: 4.5, res: { ...TURRET.res, burn: 0 }, turret: { turn: 1.2, cd: 3.6, aim: 0.6, range: 620, fire: shell('fire') } },
   mortarPoison: { ...TURRET, name: 'Gas Mortar', art: mortarArt(95, -0.06), hp: 72, cost: 4.5, turret: { turn: 1.2, cd: 3.6, aim: 0.6, range: 620, fire: shell('poison') } },
   teslaCoil: { ...TURRET, name: 'Tesla Coil', art: 'art/enemies/tesla-coil.svg', headR: 52, r: 24, vr: 20, hp: 80, cost: 4.5, res: { ...MACHINE, shock: 0, stagger: 0 }, turret: null, brain: teslaBrain },
-  repairDrone: { ...FOE, name: 'Repair Drone', art: 'art/enemies/repair-drone.svg', headR: 55, r: 18, vr: 15, turn: 6, accel: 300, face: 6, mass: 0.4,
+  repairDrone: { ...FOE, name: 'Repair Drone', art: 'art/enemies/repair-drone.svg', mends: true, headR: 55, r: 18, vr: 15, turn: 6, accel: 300, face: 6, mass: 0.4,
     hp: 30, speed: 62, role: 'ranged', range: 240, keep: 220, atkCd: 999, dmg: 0, temp: 0.5, commit: 0.6, xp: 10, coins: [2, 4], cost: 3, construct: true, noCorpse: true, goo: '#8A8F96',
     res: MACHINE, brain: droneBrain },
   foundrySmith: { ...FOE, name: 'Foundry Smith', art: 'art/enemies/smith.svg', headR: 66, r: 40, vr: 30, turn: 2.8, accel: 160, face: 2.8,

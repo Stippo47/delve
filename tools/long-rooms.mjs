@@ -41,7 +41,7 @@ if (opt('snap')) {
   fs.mkdirSync(path.join(to, 'tools'), { recursive: true });
   for (const f of fs.readdirSync(here)) if (f.endsWith('.mjs')) fs.copyFileSync(path.join(here, f), path.join(to, 'tools', f));
   runner = path.join(to, 'tools', 'runs.mjs');
-}
+} else if (opt('use')) runner = path.join(here, '..', 'scratch', 'snap-' + opt('use'), 'tools', 'runs.mjs'); // (an existing copy, e.g. one with a number changed by hand)
 function runJobs(jobs, n) {
   fs.mkdirSync(dir, { recursive: true });
   let next = 0, live = 0, done = 0;
@@ -125,7 +125,7 @@ function show(file, run, n) {
     const rate = (k) => (prev ? ((s[k] - prev[k]) / dt).toFixed(1) : '-');
     const her = Object.entries(s.her).map(([k, v]) => `${k.slice(0, 5)} d${prev && prev.her[k] ? ((v.d - prev.her[k].d) / dt).toFixed(1) : '-'} h${prev && prev.her[k] ? ((v.h - prev.her[k].h) / dt).toFixed(1) : '-'}`).join(' ');
     console.log(`t${s.t} heroes took ${rate('hT')}/s healed ${rate('hH')}/s | enemies took ${rate('eT')}/s healed ${rate('eH')}/s | ${her}${s.wave ? ' waves ' + s.wave.left + (s.wave.pend ? 'p' : '') : ''}${s.coming ? ' coming' : ''}`);
-    for (const u of s.u) if (!u.f.includes('l')) console.log(`    ${u.s === 'hero' ? 'H' : 'E'} ${u.k}#${u.id} ${u.hp}%/${u.mhp} @${u.x},${u.y} ${u.m}${u.tg ? '>' + u.tg : ''} ${u.f} tk${u.tk} hl${u.hl} spd${u.spd} ${u.role} rng${u.rng}`);
+    for (const u of s.u) if (!fl(u).includes('l')) console.log(`    ${u.s === 'hero' ? 'H' : 'E'} ${u.k}#${u.id} ${u.hp}%/${u.mhp} @${u.x},${u.y} ${u.m}${u.tg ? '>' + u.tg : ''} ${u.f} tk${u.tk} hl${u.hl} spd${u.spd} ${u.role} rng${u.rng}`);
     prev = s;
   }
 }
@@ -138,62 +138,80 @@ function why(lr, long) {
   console.log(`\nlong plain rooms (> ${long}s): ${lr.length}; time past ${long}s: ${tot.toFixed(0)}s`);
   for (const [k, c] of Object.entries(by).sort((a, b) => b[1].t - a[1].t)) console.log(`  ${k.padEnd(28)} ${String(c.n).padStart(4)} rooms  ${(100 * c.t / Math.max(1, tot)).toFixed(1).padStart(5)}% of the time   e.g. ${c.ex.join(' ')}`);
 }
-// A long room's cause. A room whose kills kept coming (no stretch over G) is a slow grind ('steady: ...'); otherwise the
-// cause is its longest stand-off's (stretchCause).
+// A long room's cause. A room whose kills kept coming (no stretch over G, or stretches short next to the whole) is a
+// grind: 'grind: ...' (what made it long: how many enemies, how tough, the party's healers); otherwise the cause is its
+// longest stand-off's (stretchCause), by the mechanism behind it.
 export function cause(r) {
   gaps(r);
   const excess = r.fight - +opt('long', 120);
-  if (!r.stretches.length || r.stall < 0.25 * excess) return 'steady: ' + steadyWhy(r);
+  if (!r.stretches.length || r.stall < 0.25 * excess) return 'grind: ' + steadyWhy(r);
   const s = r.stretches.slice().sort((a, b) => (b[1] - b[0]) - (a[1] - a[0]))[0];
   return stretchCause(r, s[0], s[1]);
 }
-const isMain = (u) => u.s === 'enemy' && !/[mslT]/.test(u.f);
-const KIT_NAMES = { sawBlade: 1 };
+// (a unit's flags, without its action: 'a:slip' is not a link and not a summon)
+const fl = (u) => u.f.replace(/a:\w+/, '');
+const isMain = (u) => u.s === 'enemy' && !/[mslT]/.test(fl(u));
+const HEALERS = ['cleric', 'druid', 'bard', 'shaman', 'seer', 'beekeeper', 'quartermaster', 'enchantress', 'grandpa', 'chef'];
 function steadyWhy(r) {
-  const heal = r.party.filter((k) => ['cleric', 'druid', 'bard', 'shaman', 'seer', 'beekeeper', 'quartermaster', 'enchantress', 'grandpa', 'chef'].includes(k)).length;
-  if (r.party.length === 1) return 'one hero, many enemies';
-  return heal >= 2 ? 'two healers' : heal === 1 ? 'one healer' : 'no healer';
+  const heal = r.party.filter((k) => HEALERS.includes(k)).length;
+  const kills = (r.kt || []).length, per = r.fight / Math.max(1, kills);
+  const who = r.party.length === 1 ? 'one hero' : heal >= 2 ? 'two healers' : heal === 1 ? 'one healer' : 'no healer';
+  return `${kills >= 20 ? 'many enemies' : 'tough enemies'} (${who})`;
 }
+// One stand-off stretch [a, b] (no room enemy fell and no wave came for over G seconds): what kept it going.
+const GEARS = ['gearSprite', 'cogSprite'], MIRRORS = ['gildedGolem'], MENDERS = ['choirSprite', 'spiritHeal', 'repairDrone', 'orcShaman'];
 export function stretchCause(r, a, b) {
   const ss = (r.snaps || []).filter((s) => s.t >= a + 10 && s.t <= b);
   if (ss.length < 2) return 'stand-off (no snapshots)';
   const s0 = ss[0], s1 = ss[ss.length - 1], dt = Math.max(1, s1.t - s0.t);
   const frac = (f) => ss.filter(f).length / ss.length;
-  const up = (s) => s.u.filter((u) => u.s === 'hero' && !u.f.includes('D') && !u.f.includes('s')).length;
-  const lone = frac((s) => up(s) === 1) > 0.6;
-  // the room's own enemies standing through the stretch
+  const up = (s) => s.u.filter((u) => u.s === 'hero' && !fl(u).includes('D') && !fl(u).includes('s')).length;
+  const lone = frac((s) => up(s) === 1) > 0.6, note = lone ? ' [one hero left]' : '';
+  if (r.kind === 'boss') return 'a boss fight' + note;
+  // the room's own enemies standing through the stretch, and how far each moved
   const ids = new Map();
-  for (const s of ss) for (const u of s.u) if (isMain(u)) { const e = ids.get(u.id) || ids.set(u.id, { id: u.id, k: u.k, n: 0, first: u, last: u, calm: 0, hid: 0, fixed: 0, targeted: 0, modes: {} }).get(u.id); e.n++; e.last = u; if (u.f.includes('z')) e.calm++; if (/[eh]/.test(u.f)) e.hid++; if (u.f.includes('x')) e.fixed++; e.modes[u.m] = (e.modes[u.m] || 0) + 1;
-    if (s.u.some((h) => h.s === 'hero' && !h.f.includes('D') && h.tg === u.k + '#' + u.id)) e.targeted++; }
+  for (const s of ss) for (const u of s.u) if (isMain(u)) {
+    const e = ids.get(u.id) || ids.set(u.id, { id: u.id, k: u.k, n: 0, first: u, last: u, calm: 0, hid: 0, fixed: 0, targeted: 0, moved: 0, modes: {} }).get(u.id);
+    e.moved += Math.hypot(u.x - e.last.x, u.y - e.last.y); e.n++; e.last = u;
+    if (fl(u).includes('z')) e.calm++; if (/[eh]/.test(fl(u))) e.hid++; if (fl(u).includes('x')) e.fixed++; e.modes[u.m] = (e.modes[u.m] || 0) + 1;
+    if (s.u.some((h) => h.s === 'hero' && !fl(h).includes('D') && h.tg === u.k + '#' + u.id)) e.targeted++;
+  }
   const foes = [...ids.values()].filter((e) => e.n >= ss.length * 0.5);
   const took = (e) => e.last.tk - e.first.tk, healed = (e) => e.last.hl - e.first.hl;
   const eT = (s1.eT - s0.eT) / dt, eH = (s1.eH - s0.eH) / dt, hT = (s1.hT - s0.hT) / dt, hH = (s1.hH - s0.hH) / dt;
-  const heroModes = {}; let heroN = 0;
-  for (const s of ss) for (const u of s.u) if (u.s === 'hero' && !u.f.includes('D') && !u.f.includes('s')) { heroN++; const m = u.f.includes('F') ? 'forced' : u.m; heroModes[m] = (heroModes[m] || 0) + 1; }
+  // the heroes: modes, and whether those trying to get somewhere got anywhere
+  const heroModes = {}; let heroN = 0, stillApproach = 0;
+  const last = new Map();
+  for (const s of ss) for (const u of s.u) if (u.s === 'hero' && !fl(u).includes('D') && !fl(u).includes('s')) {
+    heroN++; const m = fl(u).includes('F') ? 'forced' : u.m; heroModes[m] = (heroModes[m] || 0) + 1;
+    const p = last.get(u.id); if (p && (u.m === 'approach' || fl(u).includes('F')) && Math.hypot(u.x - p.x, u.y - p.y) < 15) stillApproach++;
+    last.set(u.id, u);
+  }
   const hm = (m) => (heroModes[m] || 0) / Math.max(1, heroN);
-  const pre = lone ? 'last hero: ' : '';
-  if (!foes.length) return pre + 'nothing left but called help / parts';
-  if (foes.every((e) => e.calm > e.n * 0.6 && e.targeted < e.n * 0.3)) return pre + 'a group never met (calm, nobody goes)';
-  if (foes.every((e) => e.hid > e.n * 0.5)) return pre + 'enemies hidden or untouchable';
-  if (hm('forced') > 0.3) return pre + 'heroes held on a forced goal (revive)';
+  if (!foes.length) return 'only called help or parts left' + note;
+  if (foes.every((e) => e.calm > e.n * 0.6 && e.targeted < e.n * 0.3)) return 'a group never met (calm, nobody goes)' + note;
+  if (foes.every((e) => e.hid > e.n * 0.5)) return 'enemies hidden or untouchable' + note;
+  if (hm('forced') > 0.3) return 'a helper held on its way to revive' + note;
+  if (stillApproach / Math.max(1, heroN) > 0.3) return 'heroes stuck trying to get to it (no way through, no line)' + note;
+  const stuckFoe = foes.find((e) => !e.fixed && e.moved < 20 * ss.length && e.modes.approach > e.n * 0.5 && took(e) < 2 * dt);
+  if (stuckFoe) return 'an enemy wedged where it can\'t get on (' + stuckFoe.k + ')' + note;
+  if (foes.every((e) => GEARS.includes(e.k))) return 'gears that roll where they like (never chase, hard to pin)' + note;
+  if (foes.some((e) => MIRRORS.includes(e.k)) && eT < 15) return 'a mirror-faced golem (shots come back) and its radiance' + note;
+  if (foes.some((e) => MENDERS.includes(e.k)) && eH > 0.3 * eT) return 'an enemy healer mending as fast as they hurt' + note;
+  if (eH > 0.5 * eT) return 'enemies heal as fast as they are hurt' + note;
   const fx = foes.filter((e) => e.fixed > e.n * 0.5);
   if (eT < 1.5) {
-    if (fx.length === foes.length) return pre + 'a fixed enemy nobody can hit';
-    if (foes.some((e) => (e.modes.wander || 0) > e.n * 0.5 && e.targeted < e.n * 0.5)) return pre + 'an enemy nobody targets (wanders)';
-    return pre + 'nobody hurting anyone' + (hT < 1.5 ? ' (both sides idle)' : ' (heroes cannot hurt them)');
+    if (fx.length === foes.length) return 'a fixed enemy nobody can hit' + note;
+    if (foes.some((e) => (e.modes.wander || 0) > e.n * 0.5 && e.targeted < e.n * 0.5)) return 'an enemy nobody targets (wanders)' + note;
+    return 'nobody hurting anyone' + (hT < 1.5 ? ' (both sides idle)' : ' (heroes cannot hurt them)') + note;
   }
-  if (eH > 0.5 * eT) return pre + 'enemies heal as fast as they are hurt';
-  const low = foes.filter((e) => e.last.hp < 30 && e.first.hp < 40);
   const kite = hm('kite');
-  // what the party dealt against what the enemies have left
-  const left = foes.reduce((x, e) => x + e.last.hp / 100 * e.last.mhp, 0), eta = left / Math.max(0.1, eT);
-  if (hH > 0.7 * hT && hT > 1) {
-    if (kite > 0.3) return pre + 'kiting and healing (nobody falls)';
-    return pre + 'party heals what it takes; enemies slow to fall' + (low.length ? ' (a low one unfinished)' : '');
-  }
-  if (kite > 0.3) return pre + 'kiting a chaser';
-  if (low.length) return pre + 'a nearly dead enemy unfinished';
-  return pre + 'slow damage (eta ' + (eta > 120 ? '>120' : eta > 60 ? '60-120' : '<60') + 's)';
+  if (kite > 0.3 && lone) return 'a lone hero kiting what it cannot kill quickly' + note;
+  if (kite > 0.3) return 'kiting a chaser' + note;
+  // the one left is simply tough: most of its health still to go at the rate it was going down
+  const left = foes.reduce((x, e) => x + e.last.hp / 100 * e.last.mhp, 0), big = foes.reduce((x, e) => Math.max(x, e.last.mhp), 0);
+  if (hH > 0.6 * hT && hT > 1) return 'a tough enemy, and the party heals what it takes' + note;
+  return 'a tough enemy, slow to wear down' + note;
 }
 
 // ---------------------------------------------------------------- what to do

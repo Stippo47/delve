@@ -137,6 +137,7 @@ export const HOLD = -0.46;
 // colliders' 1.1 = 66: 41 room units), grown only as an elite or major troll is (u.r over its kind's r), so a smaller
 // troll still pushes the same boulder. def.boulderR overrides.
 export const BOULDER_R = 41;
+const BOULDER_JAM = 3, BOULDER_REST = 6; // round 14 (lane L): seconds getting nowhere before it lets the boulder be; seconds bare-handed after
 function boulderOf(w, u) {
   if (u.bould === undefined) {
     const big = u.elite && u.def.rock ? 1.25 : 1, r = Math.round((u.def.boulderR || BOULDER_R) * (u.r / (u.def.r || u.r)) * big);
@@ -160,6 +161,10 @@ export function boulderBrain(w, u, dt) {
   if (b.held) { // carried in front
     if (!(u.chg)) { const p = front(8 + Math.hypot(u.vx, u.vy) * dt * 3); b.x = p.x; b.y = p.y; }
   } else rollBoulder(w, u, b, dt);
+  // round 14 (lane L): standing through the tell before it lets the boulder go (beginHold below). Nothing ran this
+  // hold, so the tell never ended and the boulder was never let go: a troll kept it in front of it for good (until the
+  // old stand-off clock made it drop it), and a hero pressed against it could never get at the troll.
+  if (hold(u, dt)) return true;
   // charging behind it
   if (u.chg) {
     const c = u.chg;
@@ -171,18 +176,33 @@ export function boulderBrain(w, u, dt) {
     if ((c.t -= dt) <= 0 || nx < 4 || ny < 4 || nx > w.W - 4 || ny > w.H - 4 || !lineClear(w, b.x, b.y, nx, ny, 2)) { u.chg = null; u.spd *= 0.2; b.hits.clear(); if (c.t > 0) w.shake = Math.max(w.shake, 4); }
     return true;
   }
+  // round 14 (lane L; rooms that dragged on): a troll that gets nowhere (wedged in a gap too narrow for it, or walking
+  // after a boulder it can't get to) lets it be: it rolls it at its mark, or leaves it where it lies, and fights
+  // bare-handed a while before it goes for it again. Held in front of a wedged troll, the boulder plugged the way for
+  // everyone, and the troll stood there with it for minutes.
+  const jam = u.bJam || (u.bJam = { x: u.x, y: u.y, t: 0 });
+  if (dist(u.x, u.y, jam.x, jam.y) > 40) { jam.x = u.x; jam.y = u.y; jam.t = 0; }
+  if (u.bouldRest > 0) { u.bouldRest -= dt; if (!b.held) return false; }
   if (!b.held) { // go and get it (the elite calls it back to itself)
     if (u.def.rock && u.elite && b.vx * b.vx + b.vy * b.vy < 900 && due(u, 'recall', dt, 1)) {
       again(u, 'recall', 1.5); const a = angleTo(b.x, b.y, u.x, u.y); b.vx = Math.cos(a) * 300; b.vy = Math.sin(a) * 300; b.recalled = true;
     }
-    if (dist(u.x, u.y, b.x, b.y) < u.r + b.r + 16 && b.vx * b.vx + b.vy * b.vy < 3600) { b.held = true; b.recalled = false; b.hits.clear(); setAnim(u, 'ability', 0.3); return false; }
+    if (dist(u.x, u.y, b.x, b.y) < u.r + b.r + 16 && b.vx * b.vx + b.vy * b.vy < 3600) { b.held = true; b.recalled = false; b.hits.clear(); setAnim(u, 'ability', 0.3); jam.t = 0; return false; }
+    if ((jam.t += dt) > BOULDER_JAM) { jam.t = 0; u.bouldRest = BOULDER_REST; return false; } // it can't get to it: leave it a while
     const [gx, gy] = goalVec(w, u, b.x, b.y), [sx, sy] = steer(w, u, gx, gy);
     drive(u, sx, sy, u.def.speed * (u.moveMul || 1), dt);
     turnTo(u, angleTo(u.x, u.y, b.x, b.y), 3, dt);
     return true;
   }
-  if (w.stale) { dropBoulder(w, u); return false; } // a stand-off gone on too long: it lets the boulder go and fights bare-handed
-  const t = targetOf(w, u); if (!t || !u.aggro || !due(u, 'boulder', dt, 2)) return false;
+  const t = targetOf(w, u);
+  if (t && u.aggro && !u.chg && !(u.el && u.el.holdT > 0) && gapTo(u, t) > (u.def.range || 30) + 12) jam.t += dt; else jam.t = 0;
+  if (jam.t > BOULDER_JAM && t) { // wedged with it: let it go at its mark (it rolls till something stops it)
+    jam.t = 0; u.bouldRest = BOULDER_REST; const a = angleTo(u.x, u.y, t.x, t.y);
+    beginHold(u, 0.45, a, () => { if (!u.bould) return; const bb = u.bould; bb.held = false; const s = u.def.rock ? 360 : 320; bb.vx = Math.cos(a) * s; bb.vy = Math.sin(a) * s; bb.hits.clear(); });
+    setAnim(u, 'throw', 0.45);
+    return true;
+  }
+  if (!t || !u.aggro || !due(u, 'boulder', dt, 2)) return false;
   const d = dist(u.x, u.y, t.x, t.y), off = Math.abs(wrapAngle(angleTo(u.x, u.y, t.x, t.y) - u.facing));
   // a hero pressed up against the boulder gets it rolled into them point blank (else the boulder kept them off for ever)
   const pressed = dist(t.x, t.y, b.x, b.y) < b.r + t.r + 24;

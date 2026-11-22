@@ -54,7 +54,7 @@ export function roomLog({ keep = 100, every = 5 } = {}) {
       const h = cur.hp.get(u.id);
       units.push({ id: u.id, k: u.kind, s: side(u), hp: R(100 * Math.max(0, u.hp) / u.maxHp), mhp: R(u.maxHp), x: R(u.x), y: R(u.y), m: u.mode, tg: u.target ? u.target.kind + '#' + u.target.id : null,
         f: [u.downed ? 'D' : '', u.minion ? 'm' : '', u.summon ? 's' : '', u.linkTo ? 'l' : '', u.ethereal ? 'e' : '', u.hidden ? 'h' : '', u.fixed ? 'x' : '', u.aggro ? '' : 'z', u.forcedGoal ? 'F' : '',
-          u.elite ? 'E' : '', u.major ? 'M' : '', u.def.boss ? 'B' : '', u.def.trap ? 'T' : '', u.act ? 'a:' + u.act.type : '', u.stunT > 0.05 || u.frozenT > 0.05 || u.sleepT > 0.05 ? 'S' : '', u.rootT > 0.05 ? 'R' : ''].filter(Boolean).join(''),
+          u.elite ? 'E' : '', u.major ? 'M' : '', u.def.boss ? 'B' : '', u.def.trap ? 'T' : '', u.act ? 'a:' + u.act.type.replace(/[^A-Za-z]/g, '') : '', u.stunT > 0.05 || u.frozenT > 0.05 || u.sleepT > 0.05 ? 'S' : '', u.rootT > 0.05 ? 'R' : ''].filter(Boolean).join(''),
         tk: h ? R(h.t) : 0, hl: h ? R(h.h) : 0, r: R(u.r), spd: R(u.def.speed * (u.moveMul || 1)), role: u.def.role, rng: R(u.def.range || 0) });
     }
     const her = {};
