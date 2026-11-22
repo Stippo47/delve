@@ -528,3 +528,36 @@ The designer's words: `docs/riffle-log/2026-11-22-round12.txt` (decks showcase4 
   it was worth less than nothing); the Bard's Rhythm quickens attacks by 8% as well; Twinfang is untouchable mid-dash
   and as she steps out of a Backstab; the Druid's and Cleric's mending and the Necromancer's drain trimmed (all three
   sat 1.5 to 2 rooms over the average at tier I).
+
+## Round 13, lane B (2026-11-22): the seven designed bosses again (bosses3)
+The designer's verdicts are the v12-bosses answers in `docs/riffle-log/2026-11-22-round12.txt`; each boss's doc
+(`docs/BOSS-*.md`) opens with its words and what was done. The calls the lane made:
+- **How a code-drawn boss is drawn** (`js/boss-draw.js`): as a figure, every shape laid down twice (grown by the outline
+  in ink, then in paint), so a jointed body has one outline like the SVG art; soft gradients, a gloss, a thin seam where
+  parts overlap. A struck boss gets a white wash for a frame, not solid white. Each boss's drawing sits beside its fight
+  (`js/boss-<id>-fx.js`); `js/fx-boss.js` is only a pointer now.
+- **"Samey"**: each boss's doc has a table of its moves with two columns: what the move asks the party to do, and what
+  it looks like. No two rows of a boss match. Generic strikes (the bone spikes every zone ended in) are replaced by each
+  move's own picture (`z.quiet` on the zone, an effect from `boss-kit.js bfx`).
+- **The Great Engine**: one machine with jointed arms (shoulder hub, upper arm, elbow gear, forearm, wrist) that
+  telescope on piston rods; a hammer and a claw; broken hands are forged back by welder drones, not a timer.
+- **The Sand Wurm**: it lives under the sand. It is hittable only out of it: arcing from hole to hole, or reared up.
+  It wakes as the party walks in.
+- **Cinder**: an animal that walks: four stepping legs, a prowl round its mark, a body that follows its head's path;
+  its fire is the game's fire (fire puddles, inked flames, the Pyromancer's fireball).
+- **The Spire's boss is a biblically accurate angel** (the art lane's sprite; the designer marked it GOOD in round 14).
+  The kind's id and name are still `gildedSeraph` / "The Gilded Seraph": **open: rename it?** "Horns" was read as
+  **trumpets**: four of them stand round it and sound; **open: did they mean horns on its head?** The four chains are as
+  described: one from each corner, each at a hero; what a chain hits is dragged to its corner and shackled 0.9 s.
+- **The Winter Queen** is kept; her images are **ice mirrors** (her art drained to frosted white, still, casting nothing)
+  and the Lattice (beams between her and her mirrors) is what they are for.
+- **The Goblin Chieftain**: about two minutes (wins 116 s, was 218 s): blows a fifth to a quarter harder, health 440 from
+  1000. The spear and the bomb barrage are gone; a thrown axe flies a ring.
+- **The Great Ooze**: no tentacles. It rolls and bounces, splits in two and slaps back together; drawn in the picked
+  slime's look; its shadow is 62% of what it was.
+- **Boss parts take no status at all** (`boss-kit.js PART`: every id in `statuses.js`), so a hand or a drum can't be
+  charmed over or frightened off.
+- **Hooks left in shared files**, each one line and marked: `render.js` `u.shadowK`; `fxkit.js` `z.quiet`;
+  `scenery.js` `z.col`, `z.soft`, `z.unseen`; `parts.js` `def.pose`.
+- **Testing**: `?bossmove=<name>` makes a boss open with one move (each boss's brain lists its names);
+  `lab.html?m=boss&boss=<id>&bossphase=N&bossmove=<name>`.

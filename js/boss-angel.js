@@ -14,13 +14,13 @@ import { heroesOf, H, steady, asleep, phaseGate, pickTarget, randomHero, lead, c
 import { drawHorn, drawSanctumFloor, drawSanctumAir } from './boss-angel-fx.js';
 
 export const AN = {
-  smite: { r: 78, tell: 0.95, dmg: 30, glow: 18, cd: [2.8, 3.6] },
-  wheels: { rings: [[150, 290, 1.35], [290, 430, 2.15]], inner: [0, 150, 2.9], dmg: 44, glow: 28, knock: 240, cd: [10.5, 12.5] },
-  chains: { tell: 1.15, speed: 1500, hw: 22, reach: 980, dmg: 22, drag: 540, shackle: 0.9, cd: [13, 15.5], again: 1.3 },
-  horns: { n: 4, out: 104, hpK: 0.032, arc: 1.0, r: 470, tell: 5.2, dmg: 56, glow: 40, knock: 430, cd: [21, 25] },
-  host: { n: 2, hpK: 0.045, taken: 0.5, every: 30, note: { r: 60, dmg: 12, glow: 16 } },
-  gaze: { arc: 1.5, r: 540, tell: 1.2, dur: 5, turn: 0.5, tick: 0.25, dmg: 6, glow: 13, cd: [15, 18] },
-  burst: { r: 220, tell: 0.9, dmg: 12, glow: 20, knock: 320 },
+  smite: { r: 78, tell: 0.95, dmg: 39, glow: 18, cd: [2.8, 3.6] },
+  wheels: { rings: [[150, 290, 1.35], [290, 430, 2.15]], inner: [0, 150, 2.9], dmg: 57, glow: 28, knock: 240, cd: [10.5, 12.5] },
+  chains: { tell: 1.15, speed: 1500, hw: 22, reach: 980, dmg: 29, drag: 540, shackle: 0.9, cd: [13, 15.5], again: 1.3 },
+  horns: { n: 4, out: 104, hpK: 0.032, arc: 1.0, r: 470, tell: 5.2, dmg: 73, glow: 40, knock: 430, cd: [21, 25] },
+  host: { n: 2, hpK: 0.045, taken: 0.5, every: 30, note: { r: 60, dmg: 16, glow: 16 } },
+  gaze: { arc: 1.5, r: 540, tell: 1.2, dur: 5, turn: 0.5, tick: 0.25, dmg: 7.8, glow: 13, cd: [15, 18] },
+  burst: { r: 220, tell: 0.9, dmg: 16, glow: 20, knock: 320 },
 };
 export const PHASE_AT = [1, 0.6, 0.3];
 const WAKE = 480, GOLD = '#FFE7A0';
@@ -232,7 +232,7 @@ function sanctum(w) {
 
 export const ANGEL = {
   defs: {
-    gildedSeraph: { team: 'enemy', name: 'The Gilded Seraph', art: 'art/bosses/biblical-angel.svg', headR: 58, r: 52, vr: 58, turn: 2.2, accel: 140, face: 2.2, mass: 8, hp: 880, speed: 40, role: 'ranged', range: 300,
+    gildedSeraph: { team: 'enemy', name: 'The Gilded Seraph', art: 'art/bosses/biblical-angel.svg', headR: 58, r: 52, vr: 58, turn: 2.2, accel: 140, face: 2.2, mass: 8, hp: 950, speed: 40, role: 'ranged', range: 300,
       atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 220, coins: [90, 110], boss: true, arena: 'sanctum', attackAnim: 'cast', pose: ANGEL_POSE,
       res: { radiance: 0, curse: 0.5, poison: 0.3, stagger: 0.5 }, brain, onDeath: death },
     seraphHorn: PART('The Gilded Seraph (a trumpet)', { r: 26, vr: 26, mass: 30, hp: 100, res: { radiance: 0 }, draw: drawHorn }),

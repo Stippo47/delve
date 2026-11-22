@@ -11,7 +11,7 @@ What changed:
   that come down on the beat), timber-framed tunnel mouths.
 - **Moves**: the spear (a line, then the line again) and the bomb barrage (five circles) are gone. What is left asks
   six different things (the table below). His blows have their own looks, none of them bone spikes.
-- **Length**: about two minutes. His blows are a fifth to a quarter harder, his health is less than half.
+- **Length**: about two minutes. His blows are a fifth to a quarter harder, his health is half.
 - The radiant glow over his sprite is the statuses lane's (`status2`: "the radiance glow under units"); nothing his
   own is drawn over him now but his axes' crescents.
 
@@ -74,11 +74,15 @@ He goes down in a cloud of dust; his drums burst and the goblins he called go wi
 - The whirlwind chases one hero across the camp, then he's wide open.
 
 ## Numbers
-Health 440 (round 12 had 1000) (x1.4 for every boss, then the dungeon's strength and the party size), walk 54, mass 6,
+Health 500 (round 12 had 1000) (x1.4 for every boss, then the dungeon's strength and the party size), walk 54, mass 6,
 no knockback, stagger half, chill 0.7, poison 0.3. Phases at 70%, 45%, 20%.
 Round 12's blows: Chop 26, Charge 29. Round 13: Chop 31, Charge 37.
 
-Balance (`node tools/runs.mjs --boss --theme warren --level 17 --party paladin,archer,cleric`; the campaign meets him
-with three heroes at about level 17): 100 fights: won 44, **wins about 116 s** (all fights about 112 s). Phase 1 ends
-about 26 s in. Round 12's fight: 8 of 20, wins about 218 s.
+Balance (`node tools/runs.mjs --boss --theme warren --level 17 --party paladin,archer,cleric --n 100`):
+100 fights: won 44, **wins about 112 s** (all fights about 112 s); phase 1 ends about 26 s in.
+Round 12's fight: 8 of 20, wins about 218 s.
 Knobs: health, `CH.drum` (how often they call, how many at once), `CH.mice.n`, the damage numbers.
+
+Measured on the branch with main merged in (2026-11-22: round 13's hero ability pass and statuses, round 14's XP
+curve). The level is the one the campaign reached this boss at in round 12; the new XP curve will have moved it:
+**re-measure once the campaign has been run again**, and move health first.

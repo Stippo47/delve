@@ -36,23 +36,23 @@ ring bolted to the floor in each corner**: where the chains live. It waits at th
 ## Phase 1: the Watcher (100% to 60%)
 | move | when | tell | shape | hit |
 |---|---|---|---|---|
-| Smite | every 2.8-3.6 s | 0.95 s | a circle 78 on a hero (where they will be) | 30, radiance 18 |
-| the Chains | every 13-15.5 s | 1.15 s | four lines 44 wide, one from each corner at the hero nearest it (no hero gets two while there are others); up to 980 long; pillars stop them | 22 and radiance 14 on whatever a chain meets first. A hero is **dragged to that corner** at 540 a second and **shackled there 0.9 s** (rooted). Bosses and anything dug in (Unstoppable) are hit but not dragged |
-| Wheel Within a Wheel | every 10.5-12.5 s | 1.35 s, then 2.15 s | a ring from 150 to 290 round it, then a ring from 290 to 430 | 44, radiance 28, thrown |
+| Smite | every 2.8-3.6 s | 0.95 s | a circle 78 on a hero (where they will be) | 39, radiance 18 |
+| the Chains | every 13-15.5 s | 1.15 s | four lines 44 wide, one from each corner at the hero nearest it (no hero gets two while there are others); up to 980 long; pillars stop them | 29 and radiance 14 on whatever a chain meets first. A hero is **dragged to that corner** at 540 a second and **shackled there 0.9 s** (rooted). Bosses and anything dug in (Unstoppable) are hit but not dragged |
+| Wheel Within a Wheel | every 10.5-12.5 s | 1.35 s, then 2.15 s | a ring from 150 to 290 round it, then a ring from 290 to 430 | 57, radiance 28, thrown |
 
 ## Phase 2: the Host (60% to 30%)
-**Turn:** a burst of light round it (a circle 220: 12, radiance, thrown; untouchable 1.3 s). Then also:
+**Turn:** a burst of light round it (a circle 220: 16, radiance, thrown; untouchable 1.3 s). Then also:
 - **the Host**: two singers (4.5% of its health each) rise 300-520 from it. **While either sings, half of every blow on
-  the angel is turned aside.** Each lobs a note of light every 3-4 s (a circle 60: 12, radiance 16). When both are dead
+  the angel is turned aside.** Each lobs a note of light every 3-4 s (a circle 60: 16, radiance 16). When both are dead
   the next pair comes 30 s after the last pair came.
 - **the Trumpets**, every 21-25 s: four horns (3.2% of its health each) 104 out from it, one aimed at its mark. Each
-  horn's cone: 470 long, 1.0 rad, 5.2 s: 56, radiance 40, thrown hard. A broken horn's cone is gone. **All four broken
+  horn's cone: 470 long, 1.0 rad, 5.2 s: 73, radiance 40, thrown hard. A broken horn's cone is gone. **All four broken
   before they sound: it reels for 1.6 s, blows +30%.**
 
 ## Phase 3: the Open Eye (30% to 0)
 **Turn:** the burst. Then also:
 - **the Gaze**, every 15-18 s: 1.2 s tell, then for 5 s a cone 540 long, 1.5 rad, turning 0.5 rad/s after its mark:
-  6 and radiance 13 every 0.25 s in it.
+  7.8 and radiance 13 every 0.25 s in it.
 - the Chains are cast twice, 1.3 s apart; Smite falls on two heroes; the wheels come down a third time, on the middle
   (a circle 150 round it, 2.9 s: there is nowhere to stand but out past 430, or you move twice); cooldowns 15% shorter.
 
@@ -66,11 +66,15 @@ Its light goes out in a flash; the two wheels roll away across the floor and fal
 - Three different shapes of gold light: rings, cones, a sweeping sight.
 
 ## Numbers
-Health 880 (x1.4 for every boss, then the dungeon's strength and the party size), drift 40, mass 8. Phases at 60%
+Health 950 (x1.4 for every boss, then the dungeon's strength and the party size), drift 40, mass 8. Phases at 60%
 and 30%.
 
-Balance (`node tools/runs.mjs --boss --theme spire --level 49 --party paladin,archer,cleric,twinfang`; the campaign
-meets it with the starter four at about level 49): 60 fights: won 27 (45%), wins about 152 s (all fights about
-159 s). Health 850 gives 34 of 60 in 142 s.
-The chains decide it: with their blow and shackle taken out the party won 24 of 30; at blow 30 and shackle 1.3 s, 1 of 10.
-The knobs: health, `AN.chains` (dmg, shackle, cd), `AN.smite`.
+Balance (`node tools/runs.mjs --boss --theme spire --level 49 --party paladin,archer,cleric,twinfang --n 100`):
+100 fights: won 55, wins about 152 s (all fights about 157 s).
+The chains decide it: with their blow and shackle taken out the party won 24 of 30; with a third more of both, 1 of 10.
+The knobs: `AN.chains` (dmg, shackle, cd), `AN.smite`, health.
+Before main's hero pass was merged it was even at health 880 and blows a quarter softer (56 of 60 there after it).
+
+Measured on the branch with main merged in (2026-11-22: round 13's hero ability pass and statuses, round 14's XP
+curve). The level is the one the campaign reached this boss at in round 12; the new XP curve will have moved it:
+**re-measure once the campaign has been run again**, and move health first.

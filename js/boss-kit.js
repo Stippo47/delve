@@ -10,6 +10,7 @@ import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange } from './util.js';
 import { circleRect } from './path.js';
 import { stand } from './elites.js';
 import { drawBfx } from './boss-draw.js';
+import { BUILD_IDS } from './statuses.js';
 
 // the boss's opponents (whichever side it is on: battle mode can put a boss on either team)
 export const heroesOf = (w, u) => w.units.filter((o) => alive(o) && !o.ethereal && o.team !== u.team);
@@ -128,7 +129,8 @@ export const PART = (name, o) => ({ team: 'enemy', name, r: 30, vr: 30, turn: 0,
   atkCd: 999, temp: 0.2, commit: 1, xp: 0, coins: [0, 0], noElite: true, noCorpse: true, part: true, brain: () => true, ...o,
   // statuses don't take on parts: touching parts set each other off (a scorch burst burns its neighbours, which burst
   // in turn), and a rot burst is a share of the part's own health, passed on to the boss
-  res: { burn: 0, chill: 0, poison: 0, wet: 0, shock: 0, stagger: 0, radiance: 0, curse: 0, entangle: 0, ...(o.res || {}) } });
+  // (bosses3, after round 13's statuses: every status there is, so a part can't be charmed over to the other side or frightened off)
+  res: { ...Object.fromEntries(BUILD_IDS.map((id) => [id, 0])), ...(o.res || {}) } });
 // A unit moved by hand: put it at (x, y), facing a, with no slide of its own.
 export function place(u, x, y, a) { u.x = x; u.y = y; u.vx = u.vy = u.dvx = u.dvy = u.kx = u.ky = 0; u.spd = 0; if (a != null) { u.facing = a; u.mvA = a; } }
 

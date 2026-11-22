@@ -14,11 +14,11 @@ import { heroesOf, H, steady, asleep, pickTarget, randomHero, lead, part, endPar
 import { drawOoze, drawCisternFloor, drawCisternAir } from './boss-ooze-fx.js';
 
 export const OZ = {
-  hop: { r: 132, tell: 1.15, dmg: 62, knock: 320, puddle: 60, puddleT: 8, cd: [4.2, 5.4], lift: 120 },
-  roll: { tell: 0.95, speed: 560, legs: 3, leg: 640, dmg: 48, knock: 340, cd: [8, 10], rest: 0.9 },
-  heave: { reach: 56, tell: 0.8, dmg: 34, poison: 30, knock: 280, cd: [3.4, 4.4] },
+  hop: { r: 132, tell: 1.15, dmg: 74, knock: 320, puddle: 60, puddleT: 8, cd: [4.2, 5.4], lift: 120 },
+  roll: { tell: 0.95, speed: 560, legs: 3, leg: 640, dmg: 58, knock: 340, cd: [8, 10], rest: 0.9 },
+  heave: { reach: 56, tell: 0.8, dmg: 40, poison: 30, knock: 280, cd: [3.4, 4.4] },
   brood: { every: 12, n: 2, cap: 5, absorb: 0.012, home: [8, 11] },
-  split: { size: 0.72, dur: 13, again: 9, mergeTell: 1.4, mergeHw: 62, mergeSpeed: 520, splashR: 185, dmg: 70, knock: 420, dazed: 1.3, dazedTaken: 1.35 },
+  split: { size: 0.72, dur: 13, again: 9, mergeTell: 1.4, mergeHw: 62, mergeSpeed: 520, splashR: 185, dmg: 84, knock: 420, dazed: 1.3, dazedTaken: 1.35 },
   melt: { gas: 60, gasT: 6, speed: 1.35, k: 0.8, legs: 5 },
 };
 export const PHASE_AT = [1, 0.7, 0.45, 0.2];

@@ -32,12 +32,12 @@ until a hero comes within 460 or hurts her.
 ## Phase 1: the Court of Ice (100% to 70%)
 | move | when | tell | shape | hit |
 |---|---|---|---|---|
-| Icicle Fan | every 3.2-4.2 s | 0.5 s of gathering | five shots fanned 0.2 rad apart, 520 a second, 780 far; pillars and walls stop them | 19 and chill 14 each |
-| Frost Nova | a hero within ~150, every 5-6.5 s | 0.85 s | a circle 180 round her | 36, chill 44, thrown back; then she blinks 380-560 away, as far from the party as she can |
+| Icicle Fan | every 3.2-4.2 s | 0.5 s of gathering | five shots fanned 0.2 rad apart, 520 a second, 780 far; pillars and walls stop them | 23 and chill 14 each |
+| Frost Nova | a hero within ~150, every 5-6.5 s | 0.85 s | a circle 180 round her | 44, chill 44, thrown back; then she blinks 380-560 away, as far from the party as she can |
 
 ## Phase 2: Walls of Ice (70% to 45%)
 **Turn:** a nova and a blink (she can't be hurt while it fills). Then every 12-14 s:
-- **Ice Wall**: a line 760 long through the middle of the party, at right angles to her, 1.1 s: 16 and chill 30 to
+- **Ice Wall**: a line 760 long through the middle of the party, at right angles to her, 1.1 s: 20 and chill 30 to
   anyone still on it; then ice blocks stand along it for 8 s (they stop walking and shots; anyone on the line is shoved
   to their side).
 - **the Mist**: at once, seven patches of freezing mist (92 across, 7 s; the game's own mist: chill 15 a second) lie
@@ -46,13 +46,13 @@ until a hero comes within 460 or hurts her.
 ## Phase 3: the Mirrors (45% to 20%)
 **Turn:** a nova and a blink. **Two ice mirrors** form, as far from her and from each other as the room lets them
 (each 10% of her health; they do nothing by themselves and never move). Broken, a mirror **shatters**: a circle 110,
-0.5 s: 26 and chill. When none stand, two more form 15 s after the last pair.
+0.5 s: 32 and chill. When none stand, two more form 15 s after the last pair.
 - **the Lattice**, every 8.5-10.5 s while a mirror stands: 1.2 s of thin lines, then 3.6 s of beams between her and
-  her mirrors (44 wide): 9 and chill 16 every 0.25 s on a line. One mirror left: one beam.
+  her mirrors (44 wide): 11 and chill 16 every 0.25 s on a line. One mirror left: one beam.
 
 ## Phase 4: the Blizzard (20% to 0)
 **Turn:** a nova; she blinks to the middle of the hall and stays there. The storm comes down: **outside a circle 215
-round her, 4 and chill 6.5 every half second**, all the time. She no longer blinks away after a nova (every 5.5-7 s):
+round her, 4.9 and chill 6.5 every half second**, all the time. She no longer blinks away after a nova (every 5.5-7 s):
 the party is thrown out into the storm and comes back in. Fans and the lattice go on, 15% quicker; no more walls.
 
 ## Death
@@ -65,9 +65,14 @@ She shatters: crystals burst up where she stood and shards fly; her mirrors go w
 - The last phase turns the fight inside out: she stops running and the party has to stay on her.
 
 ## Numbers
-Health 760 (x1.4 for every boss, then the dungeon's strength and party size), walk 50, mass 5. Phases at 70%, 45%, 20%.
+Health 900 (x1.4 for every boss, then the dungeon's strength and party size), walk 50, mass 5. Phases at 70%, 45%, 20%.
 
-Balance (`node tools/runs.mjs --boss --theme frost --level 38 --party paladin,archer,cleric,twinfang`; the campaign
-meets her with the starter four at about level 38): 60 fights: won 27 (45%), wins about 151 s (all fights about 149 s).
-The Icicle Fan decides it (five shots that can all land on one hero): at 26 a shot the party won 2 of 30, at 15 a shot
-34 of 40. The knobs: `WQ.fan.dmg`, health, `WQ.storm`.
+Balance (`node tools/runs.mjs --boss --theme frost --level 38 --party paladin,archer,cleric,twinfang --n 100`):
+100 fights: won 56, wins about 135 s (all fights about 135 s).
+The Icicle Fan decides it (five shots that can all land on one hero): a third more a shot and the party wins one fight
+in fifteen, a fifth less and it wins five in six. The knobs: `WQ.fan.dmg`, health, `WQ.storm`.
+Before main's hero pass was merged she was even at health 760 and blows a fifth softer (51 of 60 there after it).
+
+Measured on the branch with main merged in (2026-11-22: round 13's hero ability pass and statuses, round 14's XP
+curve). The level is the one the campaign reached this boss at in round 12; the new XP curve will have moved it:
+**re-measure once the campaign has been run again**, and move health first.

@@ -42,15 +42,15 @@ wall or pillar shuts the way. Every move starts from the prowl and ends back in 
 ## Phase 1: the Old Drake (100% to 66%)
 | move | when | tell | shape | hit |
 |---|---|---|---|---|
-| Bite | a hero within 150 of its head, in front | 0.55 s | a cone 140 long, 1.3 rad | 67, burn 20, thrown |
-| Scorch | every 9-11.5 s, its mark 130-500 off | 1.0 s | a cone 460 long, 0.44 rad, for 3 s, turning 0.55 rad/s | 14 every 0.15 s and burn 14 while in it |
-| Tail Sweep | a hero within 150 of its tail, every 4-5.5 s | 0.75 s | a cone 215 long, 2.5 rad, from its hips backwards | 58, thrown hard |
-| Rush | every 10-13 s, its mark 230+ off | 0.95 s | a line 640 (stopped by rock) | 65, burn, thrown aside. Into a pillar or wall: **dazed 1.7 s**, blows +35% |
+| Bite | a hero within 150 of its head, in front | 0.55 s | a cone 140 long, 1.3 rad | 80, burn 20, thrown |
+| Scorch | every 9-11.5 s, its mark 130-500 off | 1.0 s | a cone 460 long, 0.44 rad, for 3 s, turning 0.55 rad/s | 17 every 0.15 s and burn 14 while in it |
+| Tail Sweep | a hero within 150 of its tail, every 4-5.5 s | 0.75 s | a cone 215 long, 2.5 rad, from its hips backwards | 70, thrown hard |
+| Rush | every 10-13 s, its mark 230+ off | 0.95 s | a line 640 (stopped by rock) | 78, burn, thrown aside. Into a pillar or wall: **dazed 1.7 s**, blows +35% |
 
 ## Phase 2: Fire Call (66% to 34%)
-**Turn:** a roar (a circle 230: 14, burn, thrown back; untouchable for 1.3 s). Then also:
+**Turn:** a roar (a circle 230: 17, burn, thrown back; untouchable for 1.3 s). Then also:
 - **Fire Call**, every 10-12.5 s: one fireball on each hero (aimed where they will be) and three more beside them, each
-  a circle 84, 1.4 s and a little later than the last: 57, burn 30; each leaves burning ground for 5 s.
+  a circle 84, 1.4 s and a little later than the last: 68, burn 30; each leaves burning ground for 5 s.
 - **Ring of Fire**, every 24-28 s: it runs the ring at 3.2x its pace (about 6 s); straight after, a Scorch.
 
 ## Phase 3: Molten (34% to 0)
@@ -68,10 +68,14 @@ It falls where it walks: its body breaks up along its length in flame and dust.
 - By the end the floor is its trail.
 
 ## Numbers
-Health 880 (x1.4 for every boss, then the dungeon's strength and the party size), walk 56, mass 12. Phases at 66%
+Health 900 (x1.4 for every boss, then the dungeon's strength and the party size), walk 56, mass 12. Phases at 66%
 and 34%.
 
-Balance (`node tools/runs.mjs --boss --theme ember --level 43 --party paladin,archer,cleric,twinfang`; the campaign
-meets it with the starter four at about level 43): 60 fights: won 32 (53%), wins about 164 s (all fights about 167 s).
-Health 840 gives 36 of 60 in 161 s. The knobs: health, the damage numbers above (they went up by half from round 12's,
-because a drake that walks is hit by more of the party more of the time), `CD.ring.cd`.
+Balance (`node tools/runs.mjs --boss --theme ember --level 43 --party paladin,archer,cleric,twinfang --n 100`):
+100 fights: won 52, wins about 161 s (all fights about 161 s).
+The knobs: the damage numbers above, health, `CD.ring.cd`.
+Before main's hero pass was merged it was even at health 880 and blows a sixth softer (44 of 60 there after it).
+
+Measured on the branch with main merged in (2026-11-22: round 13's hero ability pass and statuses, round 14's XP
+curve). The level is the one the campaign reached this boss at in round 12; the new XP curve will have moved it:
+**re-measure once the campaign has been run again**, and move health first.

@@ -42,25 +42,25 @@ mound) and comes for the party as soon as it walks in.
 
 ## The cycle
 Under the sand it runs (420 a second) to where it wants to come up; then:
-- **Breach**, two in a row (three in phase 3): a circle 120 under a hero, 1.15 s: 84, staggered, thrown high. It arcs
+- **Breach**, two in a row (three in phase 3): a circle 120 under a hero, 1.15 s: 113, staggered, thrown high. It arcs
   300-400 over towards someone else at 440 a second (about 2 s with its whole body out); a circle 90 where the head
-  goes back in: 50.
+  goes back in: 68.
 - then it **rears up** out of a hole (the same circle and blow as a breach) and stays 8.5 s, swaying after its mark
   (1.5 rad/s), about 170 of neck out:
   | move | tell | shape | hit |
   |---|---|---|---|
-  | Lunge, every 2.1-2.7 s | 0.8 s | a line 380 long, 92 wide from its hole (stopped by columns) | 72, thrown. The head is **stuck 0.7 s**: blows on it do 45% more |
-  | Inhale, once, 42% through | 0.8 s, then 2.7 s of pull | everyone within 640 is dragged towards the maw at 41-74 a second (bosses are not); a circle 150 at the maw fills the whole time | 100, thrown hard |
+  | Lunge, every 2.1-2.7 s | 0.8 s | a line 380 long, 92 wide from its hole (stopped by columns) | 97, thrown. The head is **stuck 0.7 s**: blows on it do 45% more |
+  | Inhale, once, 42% through | 0.8 s, then 2.7 s of pull | everyone within 640 is dragged towards the maw at 41-74 a second (bosses are not); a circle 150 at the maw fills the whole time | 135, thrown hard |
   then it sinks back down its hole.
 
 ## Phase 2: the Brood (66% to 34%)
-**Turn:** it comes up in the middle of the room and roars (a circle 250, 1.0 s: 14, staggered, thrown back; it can't
+**Turn:** it comes up in the middle of the room and roars (a circle 250, 1.0 s: 19, staggered, thrown back; it can't
 be hurt for the 1.6 s it is up). Then every hole it leaves becomes **quicksand** for 10 s (at most six at once), and
 **two scarabs** crawl out of each (at most five at a time).
 
 ## Phase 3: the Coil (34% to 0)
 **Turn:** the roar. Each cycle now opens with **the Coil**: a ring from 150 to 345 round the middle of the party,
-2.1 s: 86, staggered, thrown. Then three breaches in a row and a shorter rear (6.8 s); tells are 12% shorter, lunges
+2.1 s: 116, staggered, thrown. Then three breaches in a row and a shorter rear (6.8 s); tells are 12% shorter, lunges
 come 20% quicker, the arc is 12% faster.
 
 ## Death
@@ -74,12 +74,18 @@ Each ring of it that is out of the sand slumps and scatters; the scarabs die wit
   thing every other move punishes.
 
 ## Numbers
-Health 620 (x1.4 for every boss, then the dungeon's strength and party size), mass 12. Phases at 66% and
+Health 660 (x1.4 for every boss, then the dungeon's strength and party size), mass 12. Phases at 66% and
 34%. Wet x1.4.
 
-Balance (`node tools/runs.mjs --boss --theme dunes --level 54 --party paladin,archer,cleric,twinfang`; the campaign
-meets it with the starter four at about level 54): 60 fights: won 31 (52%), wins about 152 s (all fights about 148 s).
-Health 560 gives 27 of 40 in 142 s, 640 gives 15 of 40 in 163 s. The knobs: health, `SW.breach.dmg`, `SW.chain`
-(breaches before it rears), `SW.root.dur` (how long the party gets at it).
+Balance (`node tools/runs.mjs --boss --theme dunes --level 54 --party paladin,archer,cleric,twinfang --n 100`):
+100 fights: won 50, wins about 160 s (all fights about 147 s).
+The knobs: `SW.breach.dmg` and the other blows, health, `SW.chain` (breaches before it rears), `SW.root.dur` (how
+long the party gets at it).
+Before main's hero pass was merged it was even at health 620 and blows a quarter softer; after it the party won 55
+of 60 there, and more health did not make it harder (49 of 60 at 860, in 194 s): its blows went up by 35%.
 
 It wakes as the party walks in (within 1500): a mound that has to be walked up to was 25 s of nothing.
+
+Measured on the branch with main merged in (2026-11-22: round 13's hero ability pass and statuses, round 14's XP
+curve). The level is the one the campaign reached this boss at in round 12; the new XP curve will have moved it:
+**re-measure once the campaign has been run again**, and move health first.

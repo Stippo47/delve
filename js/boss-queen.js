@@ -15,14 +15,14 @@ import { heroesOf, H, steady, asleep, phaseGate, pickTarget, lead, logOf, notePh
 import { drawGlacierFloor, drawGlacierAir } from './boss-queen-fx.js';
 
 export const WQ = {
-  fan: { n: 5, spread: 0.2, speed: 520, dmg: 19, chill: 14, r: 11, life: 1.5, wind: 0.5, cd: [3.2, 4.2] },
-  nova: { r: 180, tell: 0.85, dmg: 36, chill: 44, knock: 300, cd: [5, 6.5] },
+  fan: { n: 5, spread: 0.2, speed: 520, dmg: 23, chill: 14, r: 11, life: 1.5, wind: 0.5, cd: [3.2, 4.2] },
+  nova: { r: 180, tell: 0.85, dmg: 44, chill: 44, knock: 300, cd: [5, 6.5] },
   blink: { d: [380, 560] },
-  wall: { len: 760, size: 40, dur: 8, tell: 1.1, dmg: 16, chill: 30, cd: [12, 14] },
+  wall: { len: 760, size: 40, dur: 8, tell: 1.1, dmg: 20, chill: 30, cd: [12, 14] },
   mist: { n: 7, r: 92, t: 7, reach: 300 },
-  image: { n: 2, hpK: 0.1, every: 15, shatter: 110, shDmg: 26 },
-  lattice: { tell: 1.2, dur: 3.6, hw: 22, tick: 0.25, dmg: 9, chill: 16, cd: [8.5, 10.5] },
-  storm: { eye: 215, chill: 13, dmg: 4, tick: 0.5, k: 0.85, nova: [5.5, 7] },
+  image: { n: 2, hpK: 0.1, every: 15, shatter: 110, shDmg: 32 },
+  lattice: { tell: 1.2, dur: 3.6, hw: 22, tick: 0.25, dmg: 11, chill: 16, cd: [8.5, 10.5] },
+  storm: { eye: 215, chill: 13, dmg: 4.9, tick: 0.5, k: 0.85, nova: [5.5, 7] },
 };
 export const PHASE_AT = [1, 0.7, 0.45, 0.2];
 const WAKE = 460, ICE = '#DDF6FF';
@@ -205,12 +205,12 @@ function glacier(w) {
 const ART = 'art/bosses/winter-queen.svg'; // art round 9 (design/class-round9)
 export const QUEEN = {
   defs: {
-    winterQueen: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 57, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 5, hp: 760, speed: 50, role: 'ranged', range: 300,
+    winterQueen: { team: 'enemy', name: 'The Winter Queen', art: ART, headR: 57, r: 44, vr: 34, turn: 3.6, accel: 200, face: 3.6, mass: 5, hp: 900, speed: 50, role: 'ranged', range: 300,
       atkCd: 999, arc: 2, temp: 0.2, commit: 1.2, xp: 180, coins: [70, 90], boss: true, arena: 'glacier', attackAnim: 'cast',
       res: { chill: 0, wet: 0.5, burn: 1.3, stagger: 0.6, poison: 0.3 }, brain, onDeath: death },
     // an ice mirror of her: her shape in frosted ice (her art with its colour drained to pale blue), still; it shatters
     queenImage: { team: 'enemy', name: 'Ice Mirror', art: variantUrl(ART, { hue: 0, sat: 0.22, light: 0.16, accent: { from: 30, range: 180, hue: 200, sat: 0.5, light: 0.12 } }), headR: 57, r: 40, vr: 31, turn: 3.6, accel: 200, face: 3.6, mass: 30, hp: 60, speed: 0, role: 'ranged', range: 300,
-      atkCd: 999, temp: 0.2, commit: 1.2, xp: 0, coins: [0, 0], noElite: true, noCorpse: true, res: { chill: 0, burn: 1.3 }, brain: imageBrain, onDeath: shatterImage },
+      atkCd: 999, temp: 0.2, commit: 1.2, xp: 0, coins: [0, 0], noElite: true, noCorpse: true, res: { chill: 0, burn: 1.3, charm: 0, fear: 0, confuse: 0, sleepy: 0 }, brain: imageBrain, onDeath: shatterImage },
   },
   arenas: { glacier },
 };

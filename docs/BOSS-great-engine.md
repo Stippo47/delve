@@ -42,16 +42,16 @@ line and the furnace beam). It hangs at the far end until a hero comes within 48
 The hands take turns, one move every 2.6-3.6 s; the head drifts after its mark, keeping 170-290 off, turning slowly.
 | move | tell | shape | hit |
 |---|---|---|---|
-| Hammer Fall | 1.05 s | a circle 100 where it comes down (within 470 of its shoulder) | 62, staggered, thrown. Then the hammer is **stuck for 1.7 s**: blows on it do 60% more |
-| Claw Grab | 0.9 s | a line 560 long, 60 wide, from its shoulder (stopped by boilers), at the farthest hero as often as its mark | 25 on the catch; the caught hero is held at the furnace mouth: 7 and burn every 0.3 s for up to 3.2 s, then thrown (35). **Blows on the claw worth 3% of the Engine's health break the grip**: the hero drops free and the claw hangs open 1.4 s (blows on it +40%). The whole party is turned onto the claw while it holds someone. Bosses and anything dug in (Unstoppable) can't be carried: they are just hit |
-| Swat | 0.6 s | a cone 200 long, 2.0 rad, from the head (a hero within 150) | 22, thrown hard |
-| Steam Vent | 0.85 s | a circle 175 round the head, only when no hand is free to swat | 40, burn, thrown |
+| Hammer Fall | 1.05 s | a circle 100 where it comes down (within 470 of its shoulder) | 71, staggered, thrown. Then the hammer is **stuck for 1.7 s**: blows on it do 60% more |
+| Claw Grab | 0.9 s | a line 560 long, 60 wide, from its shoulder (stopped by boilers), at the farthest hero as often as its mark | 29 on the catch; the caught hero is held at the furnace mouth: 8 and burn every 0.3 s for up to 3.2 s, then thrown (40). **Blows on the claw worth 3% of the Engine's health break the grip**: the hero drops free and the claw hangs open 1.4 s (blows on it +40%). The whole party is turned onto the claw while it holds someone. Bosses and anything dug in (Unstoppable) can't be carried: they are just hit |
+| Swat | 0.6 s | a cone 200 long, 2.0 rad, from the head (a hero within 150) | 25, thrown hard |
+| Steam Vent | 0.85 s | a circle 175 round the head, only when no hand is free to swat | 46, burn, thrown |
 
 ## Phase 2: Overdrive (66% to 34%)
-**Turn:** a blast of steam round the head (a circle 230: 16, burn, thrown back), untouchable for 1.5 s, and **both
+**Turn:** a blast of steam round the head (a circle 230: 18, burn, thrown back), untouchable for 1.5 s, and **both
 hands forged anew** at once. Hand moves come 10% quicker. New:
 - **the Whirl**, every 15-18 s: 1.1 s winding up (a circle 306 shows), then 4.2 s spinning at up to 5.4 rad/s while it
-  drives at its mark at 0.9x its pace (a hero who runs gets away). An arm passing over a hero: 26 and thrown (each hero at
+  drives at its mark at 0.9x its pace (a hero who runs gets away). An arm passing over a hero: 30 and thrown (each hero at
   most once every 0.8 s). Its reach is 286: the arms lock straight.
   Then it hangs **dizzy for 1.7 s** (stars round its head, arms slack): blows on it do 35% more.
 
@@ -59,10 +59,10 @@ hands forged anew** at once. Hand moves come 10% quicker. New:
 **Turn:** the same blast; the fire shows through its bars, the stacks glow, the floor under it is lit. Hand moves come
 20% quicker, tells 15% shorter. New:
 - **Furnace Beam**, every 12-14 s: 1.2 s tell (a line shows, the bars slide apart), then the beam sweeps 1.5 rad over
-  2.7 s towards the side with more heroes: 12 and burn every 0.15 s in it. Boilers stop it.
+  2.7 s towards the side with more heroes: 14 and burn every 0.15 s in it. Boilers stop it.
 - **the Pressure**, every 24-28 s: for 5.5 s it holds its lid down; a **valve** (7.5% of its health) stands out of its
   back and the party is turned onto it. Valve broken: the Engine vents for 3.2 s (blows +50%). Not broken: everyone
-  within 520 takes up to 95 (less with distance), burn, thrown.
+  within 520 takes up to 109 (less with distance), burn, thrown.
 
 ## Death
 The hands fly apart, the dome drops, the cog rolls away across the floor in a cloud of steam; the welders fall with it.
@@ -74,13 +74,19 @@ The hands fly apart, the dome drops, the cog rolls away across the floor in a cl
 - Breaking a hand changes the fight (the head opens up, drones come) and the phase turn takes it back.
 
 ## Numbers
-Health 640 (x1.4 for every boss, then the dungeon's strength and party size), drift 44, mass 14, phases at
+Health 680 (x1.4 for every boss, then the dungeon's strength and party size), drift 44, mass 14, phases at
 66% and 34%. Shock x1.4, wet x1.3, poison 0.
 
-Balance (`node tools/runs.mjs --boss --theme foundry --level 58 --party paladin,archer,cleric,twinfang`; the campaign
-meets it with the starter four at about level 58): 60 fights: won 29 (48%), wins about 157 s (all fights about 145 s).
-Health 600 gives 36 of 60 in 137 s, 680 gives 17 of 60 in 167 s. The knobs: health, `GE.guard`, the Whirl's pace
-(`GE.whirl.speed`: at 1.7 it outran the heroes and won every fight), `GE.every`.
+Balance (`node tools/runs.mjs --boss --theme foundry --level 58 --party paladin,archer,cleric,twinfang --n 100`):
+100 fights: won 49, wins about 149 s (all fights about 143 s).
+The knobs: health, `GE.guard`, the Whirl's pace (`GE.whirl.speed`: at 1.7 it outran the heroes and won every
+fight), `GE.every`, the damage numbers.
 
 Tried and dropped: a guard of 60% / 100% / 135% (the fight turned on whether the first hand broke in its first stuck
 window: phase 1 took 40 s or 90 s).
+Before main's hero pass was merged the same fight was even at health 640 and blows 15% softer; after it, the party
+won 49 of 60 there, and more health alone only made the fight longer (37 of 60 at 760, in 172 s).
+
+Measured on the branch with main merged in (2026-11-22: round 13's hero ability pass and statuses, round 14's XP
+curve). The level is the one the campaign reached this boss at in round 12; the new XP curve will have moved it:
+**re-measure once the campaign has been run again**, and move health first.

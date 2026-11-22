@@ -41,9 +41,9 @@ pillars, grates and moss. It sits in the far pool until a hero comes within 420 
 ## Phase 1: the Ooze (100% to 70%)
 | move | when | tell | shape | hit |
 |---|---|---|---|---|
-| Hop Slam | every 4.2-5.4 s | 1.15 s (the first quarter crouched, then in the air: nothing can hurt it there) | a circle 145 where its mark will be (smaller as it shrinks) | 62, thrown hard; it leaves a **slick** (60 across, 8 s: slows, and burns like oil) |
-| Roll | every 8-10 s, its mark 150+ off | 0.95 s | three legs up to 640 long, each as wide as it is, bouncing off the room's walls | 48 to anyone it rolls over (once a leg), thrown aside; then it rests 0.9 s |
-| Heave | two heroes touching it (or one, often), every 3.4-4.4 s | 0.8 s | a circle round it, its size + 56 | 34, poison 30, thrown off |
+| Hop Slam | every 4.2-5.4 s | 1.15 s (the first quarter crouched, then in the air: nothing can hurt it there) | a circle 145 where its mark will be (smaller as it shrinks) | 74, thrown hard; it leaves a **slick** (60 across, 8 s: slows, and burns like oil) |
+| Roll | every 8-10 s, its mark 150+ off | 0.95 s | three legs up to 640 long, each as wide as it is, bouncing off the room's walls | 58 to anyone it rolls over (once a leg), thrown aside; then it rests 0.9 s |
+| Heave | two heroes touching it (or one, often), every 3.4-4.4 s | 0.8 s | a circle round it, its size + 56 | 40, poison 30, thrown off |
 
 ## Phase 2: the Brood (70% to 45%)
 **Turn:** a heave that throws everyone far (a circle its size + 110: 10, poison) and three slimes bud off. Then every
@@ -53,8 +53,8 @@ pillars, grates and moss. It sits in the far pool until a hero comes within 420 
 ## Phase 3: the Split (45% to 20%)
 **Turn:** a heave; then it **tears in two**. Each half is 72% the size and runs the whole kit on its own, the other
 half at whoever the first isn't on. A blow on either is a blow on the ooze (one health bar). After 13 s:
-- **the Slap**: 1.4 s tell (a line 124 wide between them), then they fly together at 520 a second: 48 to anyone in
-  the way, and where they meet a circle 185: 70, poison, thrown hard. It is whole again, and **dazed 1.3 s, blows
+- **the Slap**: 1.4 s tell (a line 124 wide between them), then they fly together at 520 a second: 58 to anyone in
+  the way, and where they meet a circle 185: 84, poison, thrown hard. It is whole again, and **dazed 1.3 s, blows
   +35%**. 9 s later it tears again.
 
 ## Phase 4: Meltdown (20% to 0)
@@ -75,7 +75,12 @@ It bursts: gobs of it fly across the room and a wide slick is left; its slimes a
 Health 1010 (x1.4 for every boss, then the dungeon's strength and party size), walk 52 (in surges), mass 7, no
 knockback. Phases at 70%, 45%, 20%.
 
-Balance (`node tools/runs.mjs --boss --theme sewers --level 25 --party paladin,archer,cleric,twinfang`; the campaign
-meets it with the starter four at about level 25): 100 fights: won 53, wins about 154 s (all fights about 158 s).
-It is touchy: at health 975 the party won 65 of 100, at 1000 43, at 1025 50. The knobs: health, `OZ.hop.dmg`,
-`OZ.split` (dur, again), `OZ.brood`.
+Balance (`node tools/runs.mjs --boss --theme sewers --level 25 --party paladin,archer,cleric,twinfang --n 100`):
+100 fights: won 51, wins about 148 s (all fights about 154 s).
+It is touchy: a few percent of health either way moved it by ten fights in a hundred. The knobs: `OZ.hop.dmg` and the
+other blows, health, `OZ.split` (dur, again), `OZ.brood`.
+Before main's hero pass was merged it was even with blows a sixth softer (45 of 60 there after it).
+
+Measured on the branch with main merged in (2026-11-22: round 13's hero ability pass and statuses, round 14's XP
+curve). The level is the one the campaign reached this boss at in round 12; the new XP curve will have moved it:
+**re-measure once the campaign has been run again**, and move health first.

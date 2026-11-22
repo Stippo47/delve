@@ -13,13 +13,13 @@ import { drawWurm, drawWurmPart, drawDunesFloor, drawDunesAir } from './boss-wur
 export const SW = {
   seg: [43, 43, 41, 39, 37, 35, 33, 30, 27, 24, 20], space: 0.66, share: 0.5,
   under: { speed: 420, min: 0.8, max: 2.0 },
-  breach: { r: 120, tell: 1.15, dmg: 84, knock: 400, stagger: 30, len: [300, 400], speed: 440, height: 96, landR: 90, landDmg: 50 },
+  breach: { r: 120, tell: 1.15, dmg: 113, knock: 400, stagger: 30, len: [300, 400], speed: 440, height: 96, landR: 90, landDmg: 68 },
   root: { dur: 8.5, reach: 170, height: 44, turn: 1.5, comp: 0.74 },
-  lunge: { len: 380, hw: 46, tell: 0.8, dmg: 72, knock: 320, stuck: 0.7, stuckTaken: 1.45, cd: [2.1, 2.7] },
-  inhale: { tell: 0.8, dur: 2.7, pull: 74, range: 640, r: 150, dmg: 100, knock: 420, at: 0.42 },
+  lunge: { len: 380, hw: 46, tell: 0.8, dmg: 97, knock: 320, stuck: 0.7, stuckTaken: 1.45, cd: [2.1, 2.7] },
+  inhale: { tell: 0.8, dur: 2.7, pull: 74, range: 640, r: 150, dmg: 135, knock: 420, at: 0.42 },
   pit: { r: 60, t: 10 }, brood: { n: 2, cap: 5 },
-  coil: { r0: 150, r1: 345, mid: 248, tell: 2.1, dmg: 86, knock: 380, arc: 3.9, speed: 720, height: 84 },
-  roar: { r: 250, tell: 1.0, dmg: 14, knock: 360, dur: 1.6 },
+  coil: { r0: 150, r1: 345, mid: 248, tell: 2.1, dmg: 116, knock: 380, arc: 3.9, speed: 720, height: 84 },
+  roar: { r: 250, tell: 1.0, dmg: 19, knock: 360, dur: 1.6 },
   chain: [2, 2, 3], // breaches in a row before it rears, by phase
 };
 export const PHASE_AT = [1, 0.66, 0.34];
@@ -279,7 +279,7 @@ function dunes(w) {
 
 export const WURM = {
   defs: {
-    sandWurm: { team: 'enemy', name: 'The Sand Wurm', r: 46, vr: 50, turn: 2.2, accel: 140, face: 2.2, mass: 12, hp: 620, speed: 60, role: 'melee', range: 30, atkCd: 999, arc: 2,
+    sandWurm: { team: 'enemy', name: 'The Sand Wurm', r: 46, vr: 50, turn: 2.2, accel: 140, face: 2.2, mass: 12, hp: 660, speed: 60, role: 'melee', range: 30, atkCd: 999, arc: 2,
       temp: 0.2, commit: 1.2, xp: 230, coins: [90, 110], boss: true, arena: 'dunes', noCorpse: true, sandy: true,
       res: { poison: 0.3, stagger: 0.4, wet: 1.4, burn: 0.8 }, draw: drawWurm, brain, onDeath: death },
     wurmSegment: PART('The Sand Wurm (body)', { r: 36, vr: 36, mass: 40, hp: 100, sandy: true, draw: drawWurmPart }),

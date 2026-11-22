@@ -18,15 +18,15 @@ export const GE = {
   hand: { hpK: 0.11, share: 0.3, r: 34 },
   guard: [0.75, 1, 1.2],          // what the head takes with 2 / 1 / 0 hands up (a wider spread made the fight a coin toss on whether the first hand broke early)
   every: [2.6, 3.6],              // a hand move this often
-  hammer: { r: 100, tell: 1.05, dmg: 62, stagger: 40, knock: 220, stuck: 1.7, stuckTaken: 1.6, lift: 130 },
-  grab: { len: 560, hw: 30, tell: 0.9, speed: 1150, hold: 3.2, tick: 0.3, dmg: 7, burn: 9, gripK: 0.03, throwDmg: 35, throwKnock: 520, dazed: 1.4, hitDmg: 25 },
-  swat: { r: 200, arc: 2.0, tell: 0.6, dmg: 22, knock: 440, cd: [3.5, 5] },
-  vent: { r: 175, tell: 0.85, dmg: 40, burn: 25, knock: 300, cd: [5, 7] },
-  whirl: { wind: 1.1, dur: 4.2, r: 286, rate: 5.4, speed: 0.9, dmg: 26, knock: 380, again: 0.8, dizzy: 1.7, dizzyTaken: 1.35, cd: [15, 18] },
-  beam: { len: 900, hw: 28, tell: 1.2, sweep: 1.5, dur: 2.7, tick: 0.15, dmg: 12, burn: 9, cd: [12, 14] },
-  press: { dur: 5.5, valveK: 0.075, r: 520, dmg: 95, knock: 460, burn: 30, vented: 3.2, ventedTaken: 1.5, cd: [24, 28] },
+  hammer: { r: 100, tell: 1.05, dmg: 71, stagger: 40, knock: 220, stuck: 1.7, stuckTaken: 1.6, lift: 130 },
+  grab: { len: 560, hw: 30, tell: 0.9, speed: 1150, hold: 3.2, tick: 0.3, dmg: 8, burn: 9, gripK: 0.03, throwDmg: 40, throwKnock: 520, dazed: 1.4, hitDmg: 29 },
+  swat: { r: 200, arc: 2.0, tell: 0.6, dmg: 25, knock: 440, cd: [3.5, 5] },
+  vent: { r: 175, tell: 0.85, dmg: 46, burn: 25, knock: 300, cd: [5, 7] },
+  whirl: { wind: 1.1, dur: 4.2, r: 286, rate: 5.4, speed: 0.9, dmg: 30, knock: 380, again: 0.8, dizzy: 1.7, dizzyTaken: 1.35, cd: [15, 18] },
+  beam: { len: 900, hw: 28, tell: 1.2, sweep: 1.5, dur: 2.7, tick: 0.15, dmg: 14, burn: 9, cd: [12, 14] },
+  press: { dur: 5.5, valveK: 0.075, r: 520, dmg: 109, knock: 460, burn: 30, vented: 3.2, ventedTaken: 1.5, cd: [24, 28] },
   drones: { wait: 3.5, n: 2, forge: 9, again: 9 },   // seconds of welding by one drone to forge a hand
-  blast: { r: 230, tell: 0.9, dmg: 16, burn: 20, knock: 340 },
+  blast: { r: 230, tell: 0.9, dmg: 18, burn: 20, knock: 340 },
 };
 export const PHASE_AT = [1, 0.66, 0.34];
 const WAKE = 480;
@@ -447,7 +447,7 @@ function foundry(w) {
 const HAND = (name, o) => PART(name, { r: GE.hand.r, vr: GE.hand.r, mass: 30, hp: 100, draw: drawEngineHand, construct: true, ...o });
 export const ENGINE = {
   defs: {
-    greatEngine: { team: 'enemy', name: 'The Great Engine', r: 56, vr: 56, turn: 1.9, accel: 120, face: 1.9, mass: 14, hp: 640, speed: 44, role: 'melee', range: 30, atkCd: 999, arc: 2,
+    greatEngine: { team: 'enemy', name: 'The Great Engine', r: 56, vr: 56, turn: 1.9, accel: 120, face: 1.9, mass: 14, hp: 680, speed: 44, role: 'melee', range: 30, atkCd: 999, arc: 2,
       temp: 0.2, commit: 1.2, xp: 240, coins: [100, 120], boss: true, arena: 'foundry', noCorpse: true, construct: true,
       res: { poison: 0, burn: 0.5, chill: 0.8, shock: 1.4, wet: 1.3, stagger: 0.4, radiance: 0.5, curse: 0.5 }, draw: drawEngine, brain, onDeath: death },
     engineHammer: HAND('The Great Engine (hammer)', { res: { shock: 1.4 } }),

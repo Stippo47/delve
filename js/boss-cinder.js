@@ -21,13 +21,13 @@ const BOXES = [[84, 28], [128, 40], [178, 44], [228, 43], [276, 38], [322, 28], 
 export const CD = {
   share: 0.35, tailShare: 0.3, tailHp: 0.08, tailAt: 446, tailR: 22,
   prowl: { r: 250, flip: [6, 10] },
-  bite: { r: 140, arc: 1.3, tell: 0.55, dmg: 67, burn: 20, knock: 280, rec: 0.45, cd: [2.6, 3.6] },
-  scorch: { len: 460, arc: 0.44, tell: 1.0, dur: 3.0, turn: 0.55, tick: 0.15, dmg: 14, burn: 14, cd: [9, 11.5] },
-  tail: { r: 215, arc: 2.5, tell: 0.75, dmg: 58, knock: 380, near: 150, cd: [4, 5.5], reel: 2.0, reelTaken: 1.3 },
-  rush: { len: 640, tell: 0.95, dmg: 65, knock: 360, speed: 600, dazed: 1.7, dazedTaken: 1.35, cd: [10, 13] },
-  call: { r: 84, tell: 1.4, dmg: 57, burn: 30, fire: 5, extra: 3, cd: [10, 12.5] },
+  bite: { r: 140, arc: 1.3, tell: 0.55, dmg: 80, burn: 20, knock: 280, rec: 0.45, cd: [2.6, 3.6] },
+  scorch: { len: 460, arc: 0.44, tell: 1.0, dur: 3.0, turn: 0.55, tick: 0.15, dmg: 17, burn: 14, cd: [9, 11.5] },
+  tail: { r: 215, arc: 2.5, tell: 0.75, dmg: 70, knock: 380, near: 150, cd: [4, 5.5], reel: 2.0, reelTaken: 1.3 },
+  rush: { len: 640, tell: 0.95, dmg: 78, knock: 360, speed: 600, dazed: 1.7, dazedTaken: 1.35, cd: [10, 13] },
+  call: { r: 84, tell: 1.4, dmg: 68, burn: 30, fire: 5, extra: 3, cd: [10, 12.5] },
   ring: { r: 255, speed: 3.2, step: 44, fireR: 36, fireT: 11, cd: [24, 28] },
-  roar: { r: 230, tell: 0.9, dmg: 14, knock: 340, burn: 20 },
+  roar: { r: 230, tell: 0.9, dmg: 17, knock: 340, burn: 20 },
   molten: { drip: 0.55, fireR: 30, fireT: 4, cap: 14 },
 };
 export const PHASE_AT = [1, 0.66, 0.34];
@@ -288,7 +288,7 @@ function pit(w) {
 
 export const CINDER = {
   defs: {
-    cinder: { team: 'enemy', name: 'Cinder, the Old Drake', r: 40, vr: 44, turn: 2.6, accel: 150, face: 2.6, mass: 12, hp: 880, speed: 56, role: 'melee', range: 30, atkCd: 999, arc: 2,
+    cinder: { team: 'enemy', name: 'Cinder, the Old Drake', r: 40, vr: 44, turn: 2.6, accel: 150, face: 2.6, mass: 12, hp: 900, speed: 56, role: 'melee', range: 30, atkCd: 999, arc: 2,
       temp: 0.2, commit: 1.2, xp: 200, coins: [80, 100], boss: true, arena: 'pit', noCorpse: true,
       res: { burn: 0, chill: 1.3, wet: 1.3, stagger: 0.4, poison: 0.25 }, draw: drawCinder, brain, onDeath: death },
     drakeSegment: PART('Cinder (body)', { r: 40, vr: 40, mass: 40, hp: 100, res: { burn: 0 }, draw: drawCinderPart }),
