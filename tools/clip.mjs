@@ -43,17 +43,17 @@ if (battle) {
     GAME.record(true); GAME.startBattle({ arena, a: parse(blue), b: parse(red) });
   }, [battle, opt('arena', 'crypt'), opt('nodes', '')]);
 } else if (args.includes('--convoy')) {
-  // --convoy [--party paladin,archer,cleric] [--level 5] [--stretch 0-2] [--gather]: the wagon mode (js/convoy.js); at a
-  // roadside camp the first choice offered is taken (or --pick repair|potions|trinket|sellsword)
-  await page.evaluate(([party, level, stretch, gather]) => {
+  // --convoy [--party paladin,archer,cleric] [--level 5] [--stretch 0-2] [--lands wildwood,warren]: the wagon mode
+  // (js/convoy.js); at a roadside camp it shops as convoys.mjs does (or buys --pick repair|potion|trinket|sellsword first)
+  await page.evaluate(([party, level, stretch, lands]) => {
     const s = GAME.save; s.unlocks = { ...(s.unlocks || {}), slotMini1: true, slotBoss1: true };
     for (const id of party) { const h = s.heroes[id]; h.owned = true; h.level = level; }
     s.party = party.slice();
-    GAME.record(true); GAME.startConvoy({ party, stretch, stance: gather ? 'gather' : 'guard' });
-  }, [opt('party', 'paladin,archer,cleric').split(','), +opt('level', 5), +opt('stretch', 0), args.includes('--gather')]);
+    GAME.record(true); GAME.startConvoy({ party, stretch, lands: lands ? lands.split(',') : undefined });
+  }, [opt('party', 'paladin,archer,cleric').split(','), +opt('level', 5), +opt('stretch', 0), opt('lands', '')]);
 } else await page.evaluate((d) => { GAME.record(true); GAME.startRun(d); }, depth);
-const convoyStep = () => page.evaluate((pick) => { const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick(r.offer.includes(pick) ? pick : r.offer[0]); }, opt('pick', ''));
-if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) { GAME.recFrame(1 / 30); const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick(r.offer[0]); } }, skip);
+const convoyStep = () => page.evaluate((pick) => { const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick(pick || 'auto'); }, opt('pick', ''));
+if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) { GAME.recFrame(1 / 30); const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick('auto'); } }, skip);
 const n = Math.round(secs * fps);
 for (let i = 0; i < n; i++) {
   await page.evaluate((dt) => GAME.recFrame(dt), speed / fps);

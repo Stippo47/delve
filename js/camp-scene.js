@@ -406,7 +406,7 @@ export function makeScene(canvas, api) {
       for (const s of [-1, 1]) { g.save(); g.rotate(s * 0.75);
         ink(() => { g.beginPath(); g.rect(-1.8, -15, 3.6, 22); }, '#DCE2EC', 1.1); ink(() => { g.beginPath(); g.rect(-5.5, 7, 11, 2.6); g.rect(-1.6, 9.6, 3.2, 6.5); }, '#8A5A34', 1); g.restore(); }
     } else if (kind === 'wagon') { // lane C (convoy): the trader's wagon, ox and all, nose to the road out (js/convoy.js paints it)
-      g.rotate(Math.PI / 2); g.scale(0.56, 0.56); g.translate(-30, 0); paintWagon(g);
+      g.rotate(Math.PI / 2); g.scale(0.3, 0.3); g.translate(-55, 0); paintWagon(g); // (round 13: the bigger wagon, drawn smaller here)
     } else if (kind === 'settings') { // a tool chest with a lantern on it
       g.fillStyle = 'rgba(5,8,12,0.4)'; g.beginPath(); g.ellipse(3, 6, 30, 22, 0, 0, TAU); g.fill();
       ink(() => { g.beginPath(); g.roundRect ? g.roundRect(-26, -18, 52, 36, 5) : g.rect(-26, -18, 52, 36); }, '#4E5A78', 1.6);

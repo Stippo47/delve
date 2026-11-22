@@ -1,69 +1,114 @@
-// The wagon (convoy mode, round 11: a try; docs/CONVOY.md). The designer's idea (round 6): "escort a slow wagon upward
-// through biomes while enemies come from all sides; the party is ~3x faster than the wagon; camps between stretches ...;
-// gold dropped by enemies must be picked up or is left behind; meta progression stays."
+// The wagon (convoy mode; docs/CONVOY.md). The designer's idea (round 6): "escort a slow wagon upward through biomes
+// while enemies come from all sides; the party is ~3x faster than the wagon; camps between stretches ...; gold dropped by
+// enemies must be picked up or is left behind; meta progression stays." Round 11 built a try; round 13 (lane W) made it
+// from the designer's answers (deck v13-convoy): the ground four times as wide, the camera pulled back, a big wagon and
+// ox team, a forest edge the foes walk out from under, no Guard / Gather switch (heroes are smart about gold; gatherer
+// heroes put gold first), the downed revivable until they scroll off, the roadside camp a shop spending the trip's gold,
+// one trip through several biomes.
 // A convoy is a run-shaped object ({ mode: 'convoy', world, phase, ... }) so main.js can step and draw it like a run.
 // The road runs along the world's x (up the screen in portrait); the wagon is a unit on the party's side that enemies
 // can target like anyone. Sides are never read off team names here: the party's side is whatever the wagon's is.
-// Phases: 'road' (a stretch), 'roadside' (the stop between stretches: convoy-ui.js shows the choice), 'over'.
+// Phases: 'road' (a stretch), 'roadside' (the shop between stretches: convoy-ui.js shows it), 'over'.
 import { makeWorld, spawn, step, alive, puff } from './sim.js';
 import { DEFS } from './units.js';
-import { floorTheme, weighted } from './themes.js';
-import { battleFoe, spawnHero, rollTrinket, trinketSlots, FOUND_EXTRA, RANK_MULT, PARTY_SCALE, BOSS_HP, XP_MUL } from './dungeon.js';
+import { floorTheme, themeOf, weighted, DUNGEON_ORDER } from './themes.js';
+import { battleFoe, spawnHero, rollTrinket, trinketSlots, FOUND_EXTRA, RANK_MULT, PARTY_SCALE, BOSS_HP, XP_MUL, DUNGEON_RANK } from './dungeon.js';
 import { buildGrid } from './path.js';
-import { newStats, tallyFoe, finishStats, bankTally } from './stats.js';
-import { addXp, runOptions, applyLoadout, RECOVER_DOWN, RECOVER_HURT, HURT_BELOW, trinketInfo } from './progress.js';
+import { newStats, tallyFoe, finishStats, bankTally, tallyRevive } from './stats.js';
+import { addXp, runOptions, applyLoadout, RECOVER_DOWN, RECOVER_HURT, HURT_BELOW, trinketInfo, WIPE_LOSS } from './progress.js';
 import { HEROES } from './heroes.js';
+import { hooksOf } from './kits.js';
+import { freshStatuses } from './statuses.js';
+import { CARRY_MAX } from './potions.js';
 import { rand, rrange, rint, pick, chance, dist, clamp, angleTo, TAU, INK } from './util.js';
+import { paintRoadGround, drawCanopy, edgeLayout, lookOf, paintWagon } from './convoy-art.js';
+export { paintWagon }; // (camp-scene.js parks one at the camp's edge)
 
 // ---------------------------------------------------------------- the numbers
 export const THEME = 'wildwood';
 export const WAGON_SPEED = 21;   // px/s (a hero walks ~62: the party is ~3x faster)
 export const WAGON_HP = 900;
 export const STRETCH_LEN = 2300; // road from the start to the gate, a stretch
-export const ROAD_W = 600;       // the world across (a screen and a bit)
-export const ROAD_HALF = 74;     // the track itself
-// The player's one say (the HUD's toggle): 'guard' keeps the party close and only sends someone for gold when nothing is
-// near the wagon; 'gather' lets them roam further and run for gold even while the wagon is under attack.
-export const STANCE = {
-  guard: { leash: 320, reach: 0, safe: 420 },   // (no runs for gold: only what they pass on the way)
-  gather: { leash: 560, reach: 640, safe: 0 },
-};
-export const LEASH = STANCE.guard.leash;
-export const BEHIND = 380;       // gold this far behind the wagon (off the bottom of the screen) is left behind
-export const FLING = 2.2;        // coins burst this much further from a fallen foe than in a dungeon
+export const ROAD_W = 1700;      // the world across: nearly three times the try's 600 (designer: "Bigger arena by like 4x in width"; both tree lines stay in view)
+export const EDGE = 250;         // the canopy's line, in from each side: the open ground between is 1200 across (the try's: ~530)
+export const ROAD_HALF = 105;    // the track itself
+export const ACROSS = 1500;      // world units across a portrait phone at the default zoom (render.js reads w.across)
+const AHEAD = 600;               // the camera rides this far ahead of the wagon
+export const BEHIND = 640;       // the bottom of the screen at the default zoom: gold and the downed are left behind past it
+export const LEASH = 640;        // a hero further than this from the wagon walks back (unless fighting something near it)
+const SAFE = 640;                // nothing this near the wagon (or the hero): free to go for gold further off
+const REACH = 900;               // how far from the wagon heroes go for loose gold when it's safe
+const GATHER_REACH = 1050;       // gatherers (the hero's data: gatherer: true) go further, and go even mid-fight
+export const FLING = 2;          // coins burst this much further from a fallen foe than in a dungeon
 export const PAY = 200;          // delivery pay for a wagon in one piece (x its health left)
-export const LOSE_CUT = 0.2;     // lost or turned back: this share of the gold picked up is lost (the dungeon's 20%)
+export const LOSE_CUT = 0.2;     // turned back, or the wagon broken: this share of the trip's gold is lost (the dungeon's 20%)
+export { WIPE_LOSS };            // the whole party fell: 75% lost, as a dungeon wipe (round 13 ruling), and nobody rests
 export const DELIVER_XP = 60;    // each hero, on delivery
 export const GOLD_MUL = 1.1;     // the road's foes carry a little more than the dungeon's (it's a trade route)
-const HOLD_BACK = 380; // the wagon waits this far short of the barricade while the Chief's men hold it
-const START_X = 260, WAVE_GAP = [11, 15], RAIDERS = /^(goblin|bandit)/;
-// the three stretches: the Wildwood's floors (their enemies and looks), the hardest roster last but one; the road
-// ends at the Bandit Chief's barricade
-export const STRETCHES = [
-  { floor: 1, name: 'The Forest Edge', mult: 1, budget: 1 },
-  { floor: 3, name: 'The Old Grove', mult: 1.2, budget: 1 },
-  { floor: 2, name: 'The Bandit Camp', mult: 1.25, budget: 0.8, end: 'banditChief' }, // (bandits come cheap and many, and most go for the wagon)
-];
-export const CHOICES = {
-  repair: { name: 'Mend the wagon', desc: 'Back up by a third of its health.' },
-  potions: { name: 'A potion each', desc: 'A healing draught for every hero.' },
-  trinket: { name: 'A trinket', desc: 'Worn for the rest of the trip.' },
-  sellsword: { name: 'A sellsword', desc: 'Fights with you on the next stretch.' },
+const HOLD_BACK = 420; // the wagon waits this far short of the barricade while the end's holders hold it
+const START_X = 360, WAVE_GAP = [11, 15], RAIDERS = /^(goblin|bandit)/;
+// how hard each leg of the trip is, by its place in it (the try's numbers)
+const LEG = [{ mult: 1, budget: 1 }, { mult: 1.2, budget: 1 }, { mult: 1.25, budget: 0.8 }];
+// The road's own name for each dungeon's country (the underground ones become the land over them), and its stretches.
+export const ROADS = {
+  wildwood: { name: 'The Wildwood road', legs: ['The Forest Edge', 'The Old Grove', 'The Bandit Camp'] },
+  warren: { name: 'The Warren hills', legs: ['The Burrow Downs', 'The Warren Hills', 'The Rat Hollows'] },
+  sewers: { name: "The Sewers' mouth", legs: ['The Outfall', 'The Culverts', 'The Drain Road'] },
+  crypt: { name: 'The graveyard road', legs: ['The Yew Walk', 'The Graveyard', 'The Barrow Gate'] },
+  frost: { name: 'The frozen pass', legs: ['The Snow Pines', 'The Frozen Pass', 'The Ice Gate'] },
+  ember: { name: 'The ashen road', legs: ['The Burnt Wood', 'The Ash Road', 'The Cinder Gate'] },
+  spire: { name: "The pilgrims' way", legs: ['The White Crags', "The Pilgrims' Way", 'The Spire Steps'] },
+  dunes: { name: 'The dune road', legs: ['The Dune Edge', 'The Dune Road', 'The Oasis Gate'] },
+  foundry: { name: 'The slag road', legs: ['The Slag Heaps', 'The Slag Road', 'The Foundry Gate'] },
 };
+// The roadside shop (it takes only the gold picked up on this trip: never the bank's)
+export const SHOP = {
+  repair: { name: 'Mend the wagon', price: 30, desc: 'A quarter of its health back.' },
+  potion: { name: 'A healing draught', price: 12, desc: 'For whoever has fewest.' },
+  trinket: { name: 'A trinket', price: 55, desc: 'Worn for the rest of the trip.' },
+  sellsword: { name: 'A sellsword', price: 40, desc: 'Fights with you on the next stretch.' },
+};
+export const REPAIR = 0.25;
 
 // ---------------------------------------------------------------- the wagon
 // A unit with no brain of its own (convoy.js moves it), fixed in place for the physics (others are pushed off it),
-// drawn in code. def.cargo marks it for the two places in sim.js that must tell it from a hero (no coin pickup, heals
-// mend it at a third).
+// drawn in code (convoy-art.js). def.cargo marks it for the two places in sim.js that must tell it from a hero (no coin
+// pickup, heals mend it at a third). Its body circle covers the bed; the ox team is ahead of it.
 DEFS.wagon = {
-  team: 'hero', name: 'The Wagon', cargo: true, r: 40, vr: 40, turn: 0, accel: 0, face: 0, mass: 40, hp: WAGON_HP, speed: 0,
+  team: 'hero', name: 'The Wagon', cargo: true, r: 64, vr: 64, turn: 0, accel: 0, face: 0, mass: 60, hp: WAGON_HP, speed: 0,
   role: 'melee', range: 0, atkCd: 99, dmg: 0, temp: 0.3, commit: 1, noCorpse: true, noElite: true, armor: 3,
   res: { poison: 0, burn: 0.5, chill: 0, shock: 0.5, wet: 0, entangle: 0, stagger: 0, curse: 0, radiance: 0 },
   brain: () => true, draw: drawWagon,
 };
 
-// ---------------------------------------------------------------- a new trip
-// save: the camp's. The party is the one at the fire (resting heroes stay behind), as for a dungeon.
+// ---------------------------------------------------------------- the trip
+// Which dungeons' country the road can run through: the Wildwood always; each next one once its boss has been beaten
+// (the same rule that opens the dungeon itself... one step behind: its stretches open as it is BEATEN).
+export function openLands(save) {
+  const out = ['wildwood'];
+  for (const id of DUNGEON_ORDER) if (id !== 'wildwood' && ROADS[id] && save.dungeons && save.dungeons[id] && save.dungeons[id].cleared > 0) out.push(id);
+  return out;
+}
+// Three legs from what's open, climbing (the hardest country last); the last ends at a block held by a floor's
+// mini-boss and his men (the Wildwood: the Bandit Chief). Only the Wildwood open: its three floors, as the try had.
+let planned = null;
+export function planTrip(save, force) {
+  const open = force || openLands(save);
+  let legs;
+  if (open.length === 1) legs = [[open[0], 1], [open[0], 3], [open[0], 2]];
+  else {
+    const last = open[open.length - 1], a = pick(open.slice(0, -1)), b = pick(open);
+    legs = [a, b].sort((x, y) => DUNGEON_RANK[x] - DUNGEON_RANK[y]).map((t) => [t, pick([1, 3])]).concat([[last, 2]]);
+  }
+  planned = legs.map(([theme, floor], i) => {
+    const R = ROADS[theme] || ROADS.wildwood, T = themeOf(theme);
+    const end = i === 2 ? (T.floors[1] && T.floors[1].mini) || T.warden || 'banditChief' : null;
+    return { theme, floor, name: R.legs[floor === 1 ? 0 : floor === 3 ? 1 : 2], land: R.name, ...LEG[i], end };
+  });
+  return planned;
+}
+export const plannedTrip = () => planned;
+
 export function convoyParty(save) { return runOptions(save, THEME, {}, 1).party; }
 export function newConvoy(save, opts = {}) {
   const ro = runOptions(save, THEME, {}, 1);
@@ -74,62 +119,67 @@ export function newConvoy(save, opts = {}) {
     const level = Math.max(1, Math.floor(sv.level || 1));
     heroes[k] = { level, xp: sv.xp || 0, gained: 0, from: level, hp: null, maxHp: null, down: false, potions: 0, trinkets: (sv.trinkets || []).slice(), best: level };
   }
-  const run = { mode: 'convoy', theme: THEME, party, hired: [], heroes, save, stretch: 0, phase: 'road', t: 0, fade: 1, coins: 0, gems: 0,
+  const legs = opts.legs || (planned && !opts.lands ? planned : planTrip(save, opts.lands)); planned = null;
+  const run = { mode: 'convoy', theme: legs[0].theme, legs, party, hired: [], heroes, save, stretch: 0, phase: 'road', t: 0, fade: 1, coins: 0, spent: 0, gems: 0,
     dropped: 0, behind: 0, kills: 0, banner: null, satchel: [], depth: 1, floor: 1, rooms: 0, wagonHp: WAGON_HP, wagonMax: WAGON_HP,
-    stats: newStats(party), picks: [], stance: opts.stance || 'guard', bare: !!opts.bare, choose: opts.choose || null };
+    stats: newStats(party), picks: [], bare: !!opts.bare };
   applyLoadout(run, ro); // trinket levels onto the heroes' lists (progress.js)
-  if (opts.stretch) run.stretch = Math.min(STRETCHES.length - 1, opts.stretch | 0); // testing: start further up the road
+  if (opts.stretch) run.stretch = Math.min(legs.length - 1, opts.stretch | 0); // testing: start further up the road
   buildStretch(run);
   return run;
 }
+export const purse = (run) => run.coins - run.spent; // the trip's gold in hand
 
-const strength = (run, n = 0) => RANK_MULT[0] * (STRETCHES[run.stretch].mult + 0.03 * n);
+const legOf = (run) => run.legs[run.stretch];
+const strength = (run, n = 0) => RANK_MULT[DUNGEON_RANK[legOf(run).theme] || 0] * (legOf(run).mult + 0.03 * n);
 const goldMul = (run) => GOLD_MUL * (1 + 0.15 * run.stretch);
 const sizeScale = (run) => PARTY_SCALE[Math.min(4, Math.max(1, run.party.length + run.hired.length)) - 1] || 1;
 const gateOf = () => START_X + STRETCH_LEN;
-const last = (run) => run.stretch >= STRETCHES.length - 1;
+const last = (run) => run.stretch >= run.legs.length - 1;
+const MID = ROAD_W / 2;
+export const gatherer = (u) => !!(u.def.hero && HEROES[u.def.hero] && HEROES[u.def.hero].gatherer);
 
 function buildStretch(run) {
-  const S = STRETCHES[run.stretch], T = floorTheme(THEME, S.floor);
-  const W = gateOf() + 700, H = ROAD_W, mid = H / 2;
+  const S = legOf(run), T = floorTheme(S.theme, S.floor), look = lookOf(S.theme);
+  const W = gateOf() + 700, H = ROAD_W, mid = MID;
   const w = makeWorld(W, H);
-  run.world = w; run.rooms++;
+  run.world = w; run.rooms++; run.theme = S.theme;
   w.theme = T; w.stats = run.stats; w.mult = strength(run);
-  // chunks a screen long, so the floor dressing spreads along the whole road
+  w.across = ACROSS; w.cacheMax = 6e6; w.looseGap = 130; // render.js: how much shows across; the ground's cache size; sim.js: the party's spacing
+  // chunks a screen long (dungeon readers expect cells)
   const cells = []; for (let x = 0, i = 0; x < W; x += 480, i++) cells.push({ c: i, r: 0, x, y: 0, w: Math.min(480, W - x), h: H });
   w.cells = cells; w.shape = 'road'; w.chunks = { nc: cells.length, nr: 1 }; w.entry = cells[0]; w.exits = [cells[cells.length - 1]];
-  w.doorIn = { x: 0, y: mid }; w.doors = []; w.toVisit = []; w.wp = null;
-  // rocks along the verges, never on the track
-  for (let x = 330; x < W - 120; x += rrange(150, 300)) {
-    const side = chance(0.5) ? -1 : 1, r = rrange(30, 42), // (30+: env.js draws anything smaller as a brazier)
-      y = side < 0 ? rrange(40, mid - ROAD_HALF - 70) : rrange(mid + ROAD_HALF + 70, H - 40);
-    if (!w.pillars.some((p) => dist(p.x, p.y, x, y) < p.r + r + 60)) w.pillars.push({ x, y, r });
+  w.doorIn = { x: 0, y: -600 }; w.doors = []; w.toVisit = []; w.wp = null; w.decor = []; // (no way-in arch: render.js draws one at doorIn)
+  // rocks out on the open ground, never on the track, never right at the trees' foot
+  for (let x = START_X + 250; x < W - 160; x += rrange(230, 420)) {
+    const side = chance(0.5) ? -1 : 1, r = rrange(34, 58), // (30+: env.js draws anything smaller as a brazier)
+      y = side < 0 ? rrange(EDGE + 110, mid - ROAD_HALF - 90) : rrange(mid + ROAD_HALF + 90, H - EDGE - 110);
+    if (w.pillars.some((p) => dist(p.x, p.y, x, y) < p.r + r + 120)) continue;
+    w.pillars.push({ x, y, r });
+    if (chance(0.4)) { const a = rand() * TAU, r2 = r * rrange(0.55, 0.75); w.pillars.push({ x: x + Math.cos(a) * (r + r2 + 4), y: y + Math.sin(a) * (r + r2 + 4), r: Math.max(31, r2) }); } // a smaller one leaning on it
   }
-  // dressing off the track
-  w.decor = [];
-  for (const c of cells) for (const [type, per] of T.props) {
-    const n = Math.floor(per) + (chance(per % 1) ? 1 : 0);
-    for (let i = 0; i < n; i++) {
-      const x = rrange(c.x + 30, c.x + c.w - 30), y = rrange(30, H - 30);
-      if (Math.abs(y - mid) < ROAD_HALF + 14 || w.pillars.some((p) => dist(x, y, p.x, p.y) < p.r + 26)) continue;
-      w.decor.push({ type, x, y, a: rand() * TAU, s: rrange(0.8, 1.2), v: rint(0, 2) });
-    }
-  }
-  w.convoy = { gate: gateOf(), last: last(run), name: S.name, camp: !last(run), clumps: clumps(W, H) };
+  const trees = edgeLayout(W, H, EDGE, look);
+  w.convoy = { gate: gateOf(), last: last(run), name: S.name, camp: !last(run), look, trees, key: S.theme + run.stretch };
   w.paintGround = paintRoad; // render.js paints it into the floor's cached picture
-  // the end of the road: the Bandit Chief's barricade across it, his men in front of it
+  w.drawOver = (ctx, ww, view) => { drawCanopy(ctx, ww, view, { EDGE, look, trees, key: ww.convoy.key }); drawDowned(ctx, run); }; // render.js: over the units
+  // the end of the road: a barricade across the whole open ground (a gap only on the road), held by a floor's
+  // mini-boss and his men in front of it
   if (S.end) {
     const bx = gateOf() - 40;
     run.barricade = { x: bx, parts: [] };
-    for (let y = mid - ROAD_HALF - 40; y <= mid + ROAD_HALF + 40; y += 46) { const p = { x: bx + rrange(-6, 6), y, r: 22, prop: chance(0.6) ? 'crate' : 'barrel', barricade: true }; w.pillars.push(p); run.barricade.parts.push(p); }
-    const n = Math.min(4, run.party.length);
-    const chief = battleFoe(w, S.end, bx - 110, mid, RANK_MULT[0] * 1.05, 0); // (about as strong as on the Bandit Camp floor)
+    for (let y = EDGE + 10; y <= H - EDGE - 10; y += 46) {
+      const gate = Math.abs(y - mid) < ROAD_HALF + 46;
+      const p = { x: bx + rrange(-6, 6) + (gate ? 0 : Math.abs(y - mid) * 0.06), y, r: 22, prop: gate ? (chance(0.6) ? 'crate' : 'barrel') : (chance(0.5) ? 'crate' : 'barrel'), barricade: gate };
+      w.pillars.push(p); run.barricade.parts.push(p);
+    }
+    const n = Math.min(4, run.party.length), rank = DUNGEON_RANK[S.theme] || 0;
+    const chief = battleFoe(w, S.end, bx - 130, mid, RANK_MULT[rank] * 1.05, 0);
     chief.maxHp = Math.round(chief.maxHp * (BOSS_HP[n - 1] || 1)); chief.hp = chief.maxHp;
     chief.facing = chief.mvA = Math.PI; chief.floorFoe = true; chief.chief = true; chief.coinMul = goldMul(run) * 1.5;
     run.chief = chief;
+    const men = S.theme === 'wildwood' ? [['bandit', 1], ['banditDagger', 1], ['banditSpear', 1], ['poacher', 1]] : T.enemies;
     for (let i = 0; i < Math.round(3 * sizeScale(run)); i++) {
-      const k = pick(['bandit', 'banditDagger', 'banditSpear', 'poacher']);
-      const u = battleFoe(w, k, bx - rrange(70, 190), mid + rrange(-170, 170), strength(run, 2), chance(0.2) ? 1 : 0);
+      const u = battleFoe(w, weighted(men, rand), bx - rrange(80, 230), mid + rrange(-260, 260), strength(run, 2), chance(0.2) ? 1 : 0);
       u.facing = u.mvA = Math.PI; u.coinMul = goldMul(run);
     }
   } else { run.barricade = null; run.chief = null; }
@@ -138,11 +188,12 @@ function buildStretch(run) {
   const wg = spawn(w, 'wagon', START_X, mid);
   wg.maxHp = run.wagonMax; wg.hp = Math.min(run.wagonMax, run.wagonHp); wg.fixed = true; wg.facing = wg.mvA = 0; wg.roll = 0; wg.aggro = true;
   run.wagon = wg;
-  const spots = [[-70, -100], [-70, 100], [-150, 0], [-150, -110], [-150, 110]];
+  const spots = [[60, -150], [60, 150], [-110, -150], [-110, 150], [260, 0]];
   [...run.party, ...run.hired].forEach((k, i) => {
     const hs = run.heroes[k];
+    if (hs.out) return; // (left behind on this stretch: waits at the camp; never set at a stretch's start)
     const [dx, dy] = spots[i % spots.length];
-    const u = spawnHero(w, run.save, k, hs, START_X + dx, mid + dy, THEME);
+    const u = spawnHero(w, run.save, k, hs, START_X + dx, mid + dy, S.theme);
     hs.maxHp = u.maxHp;
     if (hs.hp != null) u.hp = Math.min(u.maxHp, hs.hp);
     if (run.bare) u.potions = 0;
@@ -151,15 +202,9 @@ function buildStretch(run) {
   w.on.kill = (u) => onKill(run, u);
   w.on.coin = (p) => { run.coins += p.v; };
   w.on.drank = (u) => { const hs = run.heroes[u.kind]; if (hs) hs.potions = u.potions; };
-  run.phase = 'road'; run.t = 0; run.fade = 1; run.waveT = 3.5; run.waveN = 0; run.stopT = 0; run.hitT = 0; run.lastHp = wg.hp;
-  run.doneT = 0; run.atGateT = 0; run.banner = { s: S.name, t: 2.2 };
-  run.camAt = w.camAt = { x: START_X + 110, y: mid };
-}
-// undergrowth along the two edges (painted, no collision): where the side waves come out of the trees
-function clumps(W, H) {
-  const out = [];
-  for (let x = -20; x < W + 40; x += rrange(26, 46)) for (const side of [-1, 1]) out.push({ x, y: side < 0 ? rrange(-6, 22) : H - rrange(-6, 22), r: rrange(18, 34), k: rand() });
-  return out;
+  run.phase = 'road'; run.t = 0; run.fade = 1; run.waveT = 4; run.waveN = 0; run.stopT = 0; run.hitT = 0; run.lastHp = wg.hp;
+  run.doneT = 0; run.atGateT = 0; run.banner = { s: S.name, t: 2.2 }; run.chiefSeen = false; run.chiefDown = false;
+  run.camAt = w.camAt = { x: START_X + AHEAD, y: mid };
 }
 
 // ---------------------------------------------------------------- who's who
@@ -179,25 +224,28 @@ export function updateConvoy(run, dt) {
   step(w, dt);
   const wg = run.wagon;
   if (!alive(wg) || wg.hp <= 0) { if (!wg.dead) wg.downed = true; return over(run, 'wagon'); }
-  carryDowned(run, dt);
   const party = heroesUp(run);
+  downedTick(run, dt, party);
   if (!party.length && !w.units.some((u) => u.charmed && alive(u))) return over(run, 'party');
   const foes = foesOf(run);
-  wagonTick(run, dt, foes);
-  // the camera rides a little ahead of the wagon; the party heads there when nothing's in sight
-  w.camAt.x = wg.x + 110; w.camAt.y = ROAD_W / 2 + clamp(party.reduce((a, h) => a + h.y, 0) / party.length - ROAD_W / 2, -90, 90) * 0.4;
-  w.wp = { x: Math.min(w.W - 80, wg.x + 250), y: wg.y }; // (ahead of the ox, not on it)
+  treeLine(run, dt, foes);
+  const seen = foes.filter((e) => !e.ethereal);
+  wagonTick(run, dt, seen);
+  // the camera rides ahead of the wagon, and leans across towards where the party is
+  const py = party.reduce((a, h) => a + h.y, 0) / party.length;
+  w.camAt.x = wg.x + AHEAD; w.camAt.y = MID + clamp(0.35 * (wg.y - MID) + 0.65 * (py - MID), -(ROAD_W / 2 - EDGE), ROAD_W / 2 - EDGE);
+  w.wp = { x: Math.min(w.W - 80, wg.x + 300), y: wg.y }; // (ahead of the oxen: sim.js spreads the party round it)
   leash(run, party);
-  coinsTick(run, party, foes);
+  coinsTick(run, party, seen);
   // raiders go for the wagon first (they want what's in it)
-  for (const e of foes) if (e.raider && dist(e.x, e.y, wg.x, wg.y) < 700) { e.focus = wg; e.focusT = 0.5; }
-  // the Chief goes for the party: the wagon is his once they're down
+  for (const e of seen) if (e.raider && dist(e.x, e.y, wg.x, wg.y) < 1400) { e.focus = wg; e.focusT = 0.5; }
+  // the end's holder goes for the party: the wagon is his once they're down
   if (run.chief && alive(run.chief) && party.length) { const c = run.chief; let best = null, bd = Infinity; for (const h of party) { const d = dist(h.x, h.y, c.x, c.y); if (d < bd) { bd = d; best = h; } } c.focus = best; c.focusT = 0.5; }
   // stragglers left far behind give up
-  for (const e of foes) if (e.x < wg.x - 1000 && !e.def.boss) { e.dead = true; e.gone = true; }
+  for (const e of foes) if (e.x < wg.x - 1100 && !e.def.boss) { e.dead = true; e.gone = true; }
   // waves, until the gate is in sight
-  if (wg.x < gateOf() - 380 && !run.chiefSeen) { run.waveT -= dt; if (run.waveT <= 0) { spawnWave(run); run.waveT = rrange(...WAVE_GAP) - Math.min(3, 0.3 * run.waveN); } }
-  if (run.chief && !run.chiefSeen && dist(wg.x, wg.y, run.chief.x, run.chief.y) < 720) { run.chiefSeen = true; run.chief.aggro = true; for (const e of foes) e.aggro = true; }
+  if (wg.x < gateOf() - 600 && !run.chiefSeen) { run.waveT -= dt; if (run.waveT <= 0) { spawnWave(run); run.waveT = rrange(...WAVE_GAP) - Math.min(3, 0.3 * run.waveN); } }
+  if (run.chief && !run.chiefSeen && dist(wg.x, wg.y, run.chief.x, run.chief.y) < 1000) { run.chiefSeen = true; run.chief.aggro = true; for (const e of foes) e.aggro = true; }
   if (run.chief && run.chiefDown && run.barricade && !run.barricade.broken) breakBarricade(run);
   // a stand-off at the gate (a shooter kiting round a rock): everyone presses in, then the stragglers wear down
   const atGate = wg.x >= (run.barricade && !run.barricade.broken ? run.barricade.x - HOLD_BACK : gateOf()) - 1;
@@ -205,11 +253,29 @@ export function updateConvoy(run, dt) {
   w.stale = run.atGateT > 40;
   if (run.atGateT > 70) for (const e of foes) if (!e.chief) e.hp -= e.maxHp * 0.03 * dt;
   // the end of the stretch: at the gate, nothing left standing near: gather the gold in reach, then stop for the night
-  if (wg.x >= gateOf() - 1 && !foes.some((e) => dist(e.x, e.y, wg.x, wg.y) < 900)) {
+  if (wg.x >= gateOf() - 1 && !seen.some((e) => dist(e.x, e.y, wg.x, wg.y) < 1000)) {
     run.doneT += dt;
-    const loose = w.pickups.filter((p) => p.type === 'coin' && !p.homing && dist(p.x, p.y, wg.x, wg.y) < 700);
-    if (run.doneT > 5 || (!loose.length && run.doneT > 1.2)) return stretchDone(run);
+    const loose = w.pickups.filter((p) => p.type === 'coin' && !p.homing && dist(p.x, p.y, wg.x, wg.y) < REACH);
+    if (run.doneT > 6 || (!loose.length && run.doneT > 1.2)) return stretchDone(run);
   } else run.doneT = 0;
+}
+
+// Foes come out from under the trees: a new one walks in hidden (ethereal: nobody can see, target or hit it) until it
+// steps out past the canopy's line, then it's in the fight. Once out, nobody goes back in under the trees (a soft wall a
+// little inside the line), so nothing fights out of sight.
+function treeLine(run, dt, foes) {
+  const w = run.world, H = w.H;
+  for (const e of foes) if (e.hiddenIn) {
+    e.hideT = (e.hideT || 0) + dt;
+    const out = e.hiddenIn < 0 ? e.y > EDGE - 12 : e.y < H - EDGE + 12;
+    if (out || e.hideT > 16) { e.hiddenIn = 0; e.ethereal = false; if (e.forcedGoal && e.forcedGoal.hide) e.forcedGoal = null; }
+    else if (e.forcedGoal && e.forcedGoal.hide) e.target = null;
+  }
+  const lo = EDGE - 34, hi = H - EDGE + 34, k = Math.min(1, dt * 8);
+  for (const u of w.units) {
+    if (u.dead || u.hiddenIn || u.def.cargo) continue;
+    if (u.y < lo) u.y += (lo - u.y) * k; else if (u.y > hi) u.y += (hi - u.y) * k;
+  }
 }
 
 // The wagon rolls at its own pace; it stops while an enemy stands in its way or it's taking heavy blows, at the
@@ -220,92 +286,135 @@ function wagonTick(run, dt, foes) {
   run.hitT = Math.max(0, run.hitT * Math.exp(-dt / 1.2) + Math.max(0, lost)); // recent damage, fading over a second or so
   if (run.hitT > wg.maxHp * 0.035) run.stopT = Math.max(run.stopT, 0.8);
   run.stopT = Math.max(0, run.stopT - dt);
-  const inWay = foes.some((e) => e.x > wg.x && e.x - e.r < wg.x + wg.r + 30 && Math.abs(e.y - wg.y) < wg.r * 0.85 + e.r);
+  const inWay = foes.some((e) => e.x > wg.x && e.x - e.r < wg.x + 250 && Math.abs(e.y - wg.y) < 58 + e.r); // (in front of the bed, or the oxen)
   const stopAt = run.barricade && !run.barricade.broken ? run.barricade.x - HOLD_BACK : gateOf();
   const want = inWay || run.stopT > 0 || wg.x >= stopAt ? 0 : WAGON_SPEED;
   wg.spd += clamp(want - wg.spd, -60 * dt, 14 * dt); // it takes a moment to get going, and stops short
   wg.blocked = inWay || run.stopT > 0;
   wg.x = Math.min(stopAt, wg.x + wg.spd * dt); wg.roll += wg.spd * dt;
   // a hard-hit wagon smokes a little
-  if (wg.hp < wg.maxHp * 0.35 && rand() < dt * 4) w.particles.push({ x: wg.x + rrange(-20, 20), y: wg.y + rrange(-14, 14), vx: 0, vy: 0, rise: 40, up: 0, life: 1.1, max: 1.1, size: rrange(7, 12), color: 'rgba(90,86,92,0.5)', drag: 0.9 });
+  if (wg.hp < wg.maxHp * 0.35 && rand() < dt * 4) w.particles.push({ x: wg.x + rrange(-40, 40), y: wg.y + rrange(-30, 30), vx: 0, vy: 0, rise: 40, up: 0, life: 1.1, max: 1.1, size: rrange(10, 16), color: 'rgba(90,86,92,0.5)', drag: 0.9 });
   // the last stretch: through the broken barricade and the gate: delivered
-  if (run.barricade && run.barricade.broken && wg.x >= gateOf() - 1) { run.delivering = (run.delivering || 0) + dt; if (run.delivering > 1.2 && !foes.some((e) => dist(e.x, e.y, wg.x, wg.y) < 600)) over(run, 'delivered'); }
+  if (run.barricade && run.barricade.broken && wg.x >= gateOf() - 1) { run.delivering = (run.delivering || 0) + dt; if (run.delivering > 1.2 && !foes.some((e) => dist(e.x, e.y, wg.x, wg.y) < 700)) over(run, 'delivered'); }
 }
 
-// Nobody strays far: a hero further than LEASH from the wagon walks back to it (whatever it was chasing).
-const stance = (run) => STANCE[run.stance] || STANCE.guard;
+// Nobody strays far: a hero further than LEASH from the wagon walks back towards it (whatever it was chasing), to a
+// spot of its own on its side of the wagon, not into a heap on it.
 function leash(run, party) {
-  const wg = run.wagon, L = stance(run).leash;
+  const wg = run.wagon, L = LEASH;
   for (const h of party) {
     const d = dist(h.x, h.y, wg.x, wg.y), g = h.forcedGoal;
+    if (g && (g.revive || g.coin)) continue;
     const near = h.target && alive(h.target) && dist(h.target.x, h.target.y, wg.x, wg.y) < L; // fighting something by the wagon: let it
-    if (d > L && !near && !(g && g.coin && d < L + 120)) { h.forcedGoal = { x: wg.x + 40, y: wg.y + clamp(h.y - wg.y, -110, 110), leash: true }; h.target = null; }
-    else if (g && g.leash) { if (d < 210) h.forcedGoal = null; else { g.x = wg.x + 40; } }
+    const spot = () => { const k = (L * 0.55) / Math.max(1, d); return { x: wg.x + 60 + (h.x - wg.x) * k, y: wg.y + (h.y - wg.y) * k, leash: true }; };
+    if (d > L && !near) { h.forcedGoal = spot(); h.target = null; }
+    else if (g && g.leash) { if (d < L * 0.65) h.forcedGoal = null; else h.forcedGoal = spot(); }
   }
 }
 
-// Gold lies where it fell (no fading on the road). Heroes pull in what's near them as ever; when nothing threatens the
-// wagon, the nearest free hero runs for loose gold in reach. What falls a screen behind the wagon is left behind.
+// Gold lies where it fell (no fading on the road) and what falls a screen behind the wagon is left behind. Heroes pull
+// in what's near them as they fight (sim.js: within 220, when what they fight is further than 240). When nothing
+// threatens the wagon or them, the nearest free hero goes further for loose gold, the gold about to be left behind
+// first. Gatherers put gold first: they go for it further, and even mid-fight unless a foe is on them.
 function coinsTick(run, party, foes) {
   const w = run.world, wg = run.wagon;
   let gone = false;
   for (const p of w.pickups) {
     if (p.type !== 'coin') continue;
-    if (!p.counted) { p.counted = true; run.dropped += p.v; p.vx *= FLING; p.vy *= FLING; } // (flung wider than in a room: off the track, into the verge)
+    if (!p.counted) { p.counted = true; run.dropped += p.v; p.vx *= FLING; p.vy *= FLING; } // (flung wider than in a room)
     p.life = 20; // (sim.js fades coins after 25 s: not on the road)
     if (p.x < wg.x - BEHIND && !p.homing) { p.left = true; gone = true; run.behind += p.v; if (rand() < 0.3) puff(w, p.x, p.y, '#C9B27A', 3, 30, 3, 0.3); }
   }
   if (gone) w.pickups = w.pickups.filter((p) => !p.left);
-  const S = stance(run), threat = S.safe > 0 && foes.some((e) => dist(e.x, e.y, wg.x, wg.y) < S.safe || (e.target && e.target === wg));
-  for (const h of party) if (h.forcedGoal && h.forcedGoal.coin && (threat || !w.pickups.includes(h.forcedGoal.p))) h.forcedGoal = null;
-  if (!S.reach) for (const h of party) h.coinGoal = null; // guarding: nobody steps off for coins, only what's in reach as they pass (sim.js sets coinGoal)
-  if (threat || !S.reach) return;
-  const loose = w.pickups.filter((p) => p.type === 'coin' && !p.homing && !(p.hop > 0) && p.x > wg.x - BEHIND + 30 && dist(p.x, p.y, wg.x, wg.y) < S.reach);
+  const near = (x, y, r) => foes.some((e) => dist(e.x, e.y, x, y) < r);
+  const wagonThreat = foes.some((e) => dist(e.x, e.y, wg.x, wg.y) < SAFE || e.target === wg);
+  const free = (h) => gatherer(h) ? !near(h.x, h.y, 130) : !wagonThreat && !near(h.x, h.y, 300) && !(h.target && alive(h.target) && dist(h.x, h.y, h.target.x, h.target.y) < 320);
+  for (const h of party) { const g = h.forcedGoal; if (g && g.coin && (!w.pickups.includes(g.p) || !free(h))) h.forcedGoal = null; }
+  const loose = w.pickups.filter((p) => p.type === 'coin' && !p.homing && !(p.hop > 0) && p.x > wg.x - BEHIND + 40 && p.y > EDGE - 30 && p.y < w.H - EDGE + 30 && dist(p.x, p.y, wg.x, wg.y) < GATHER_REACH)
+    .sort((a, b) => a.x - b.x); // (what's about to be left behind first)
   for (const p of loose) {
     if (party.some((h) => h.forcedGoal && h.forcedGoal.coin && dist(h.forcedGoal.p.x, h.forcedGoal.p.y, p.x, p.y) < 120)) continue; // someone's on that patch
     let best = null, bd = Infinity;
-    for (const h of party) { if (h.forcedGoal || (h.target && dist(h.x, h.y, h.target.x, h.target.y) < (S.safe ? 300 : 170))) continue; const d = dist(h.x, h.y, p.x, p.y); if (d < bd) { bd = d; best = h; } }
+    for (const h of party) {
+      if (h.forcedGoal || !free(h)) continue;
+      if (!gatherer(h) && dist(p.x, p.y, wg.x, wg.y) > REACH) continue;
+      const d = dist(h.x, h.y, p.x, p.y) * (gatherer(h) ? 0.5 : 1); // (a gatherer is sent first)
+      if (d < bd) { bd = d; best = h; }
+    }
     if (best) { best.forcedGoal = { x: p.x, y: p.y, coin: true, p }; best.target = null; }
   }
   for (const h of party) if (h.forcedGoal && h.forcedGoal.coin) { h.forcedGoal.x = h.forcedGoal.p.x; h.forcedGoal.y = h.forcedGoal.p.y; }
 }
 
-// A downed hero is lifted onto the wagon and rides out the stretch (back at the roadside camp with 30% health).
-function carryDowned(run, dt) {
-  const w = run.world, wg = run.wagon;
-  for (const u of w.units) {
-    if (!u.downed || u.dead || u.def.cargo || u.summon || !run.heroes[u.kind]) continue;
-    const hs = run.heroes[u.kind]; hs.down = true; hs.hp = 0;
-    u.carryT = (u.carryT || 0) + dt;
-    if (u.carryT < 1.4) continue;
-    for (let i = 0; i < 12; i++) { const k = i / 12; w.particles.push({ x: u.x + (wg.x - u.x) * k, y: u.y + (wg.y - u.y) * k, vx: 0, vy: 0, rise: 30, up: 0, life: 0.5 + k * 0.4, max: 0.9, size: 3.5, color: '#FFE7A0' }); }
-    u.dead = true; u.gone = true; hs.potions = u.potions;
-    wg.riders = (wg.riders || 0) + 1;
+// The downed lie where they fell and can be revived as in a dungeon (an ally standing over them a few seconds; revive
+// abilities work as ever) until they scroll off the bottom of the screen behind the wagon; then they're left behind
+// and wait at the next roadside camp (back with 30% health). (The designer: "Makes it so heroes with revival abilities
+// aren't useless.")
+const REVIVE_T = 3, REVIVE_HP = 0.1;
+function downedTick(run, dt, party) {
+  const w = run.world, wg = run.wagon, side = partySide(run);
+  for (const u of w.units) if (u.revivedByKit) { u.revivedByKit = false; if (run.heroes[u.kind]) run.heroes[u.kind].down = false; } // kits2.js: Valkyrie's Call
+  const downed = w.units.filter((u) => u.team === side && u.downed && !u.dead && !u.def.cargo && run.heroes[u.kind]);
+  for (const h of party) if (h.forcedGoal && h.forcedGoal.revive && !downed.includes(h.forcedGoal.who)) h.forcedGoal = null;
+  for (const d of downed) {
+    const hs = run.heroes[d.kind]; hs.down = true;
+    // left behind: off the bottom of the screen
+    if (d.x < wg.x - BEHIND) {
+      for (let i = 0; i < 10; i++) { const a = i / 10 * TAU; w.particles.push({ x: d.x, y: d.y, vx: Math.cos(a) * 60, vy: Math.sin(a) * 60, rise: 30, up: 0, life: 0.7, max: 0.7, size: 4, color: '#C9C2D0' }); }
+      d.dead = true; d.gone = true; hs.hp = 0; hs.potions = d.potions; hs.out = true;
+      run.leftBehind = (run.leftBehind || 0) + 1; run.banner = { s: `${HEROES[d.kind] ? HEROES[d.kind].name : 'A hero'} is left behind`, t: 2.4, small: true };
+      for (const h of party) if (h.forcedGoal && h.forcedGoal.who === d) h.forcedGoal = null;
+      continue;
+    }
+    const threat = w.units.some((e) => e.team !== side && e.team !== 'neutral' && alive(e) && !e.ethereal && e.aggro && dist(e.x, e.y, d.x, d.y) < 260);
+    let helper = null, hd = Infinity;
+    for (const h of party) {
+      const busy = h.target && dist(h.x, h.y, h.target.x, h.target.y) < 300;
+      const dd = dist(h.x, h.y, d.x, d.y);
+      if ((!busy || (h.forcedGoal && h.forcedGoal.who === d)) && dd < hd) { hd = dd; helper = h; }
+    }
+    for (const h of party) if (h !== helper && h.forcedGoal && h.forcedGoal.who === d) h.forcedGoal = null;
+    const hunted = helper && w.units.some((e) => e.team !== side && e.team !== 'neutral' && alive(e) && !e.ethereal && e.aggro && dist(e.x, e.y, helper.x, helper.y) < 220);
+    if (!helper || threat || hunted) { if (helper && helper.forcedGoal && helper.forcedGoal.who === d) helper.forcedGoal = null; d.reviveT = Math.max(0, (d.reviveT || 0) - dt); continue; }
+    helper.forcedGoal = { x: d.x, y: d.y, revive: true, who: d }; helper.target = null;
+    if (hd < d.r + helper.r + 18) {
+      const rate = Math.max(1, ...hooksOf(helper).map((x) => x.reviveRate || 1));
+      d.reviveT = (d.reviveT || 0) + dt * rate; d.reviveHp = Math.max(REVIVE_HP, ...hooksOf(helper).map((x) => x.reviveHp || 0));
+      if (rand() < dt * 14) w.particles.push({ x: d.x + rrange(-18, 18), y: d.y + rrange(-18, 18), vx: 0, vy: 0, rise: 40, life: 0.6, max: 0.6, size: 4, color: '#FFE7A0' });
+      if (d.reviveT >= REVIVE_T) {
+        d.downed = false; d.reviveT = 0; d.hp = d.maxHp * (d.reviveHp || REVIVE_HP); d.invulnT = 1.2; d.st = freshStatuses();
+        hs.down = false; helper.forcedGoal = null; tallyRevive(run.stats, helper);
+        puff(w, d.x, d.y, '#FFE7A0', 12, 120, 5, 0.5);
+      }
+    }
   }
 }
 
 // ---------------------------------------------------------------- waves
-// From ahead, a side (out of the trees), behind, or two at once; each a little bigger than the last.
+// Every wave walks in from under the trees: ahead on both sides, one side (out of the trees beside the wagon), behind,
+// or two at once; each a little bigger than the last. Nothing appears on open ground.
 function spawnWave(run) {
-  const w = run.world, wg = run.wagon, n = run.waveN++, T = floorTheme(THEME, STRETCHES[run.stretch].floor), mid = ROAD_W / 2;
-  const budget = (3.3 + 0.45 * n + 0.8 * run.stretch) * STRETCHES[run.stretch].budget * sizeScale(run) * rrange(0.9, 1.15);
+  const w = run.world, wg = run.wagon, n = run.waveN++, S = legOf(run), T = floorTheme(S.theme, S.floor), H = w.H;
+  const budget = (3.3 + 0.45 * n + 0.8 * run.stretch) * S.budget * sizeScale(run) * rrange(0.9, 1.15);
   const kinds = rollKinds(T.enemies, budget);
   const dirs = n === 0 ? ['ahead'] : (() => { const r = rand(); return r < 0.32 ? ['ahead'] : r < 0.6 ? [pick(['left', 'right'])] : r < 0.75 ? ['behind'] : [pick(['ahead', 'behind']), pick(['left', 'right'])]; })();
   const mult = strength(run, n); w.mult = mult;
   const eliteP = Math.min(0.25, 0.04 + 0.025 * run.stretch + 0.012 * n), majorP = Math.min(0.05, 0.006 + 0.004 * run.stretch + 0.003 * n);
+  const sideOf = {}; for (const d of dirs) sideOf[d] = d === 'left' ? -1 : d === 'right' ? 1 : chance(0.5) ? -1 : 1;
   kinds.forEach((k, i) => {
     const dir = dirs[i % dirs.length], r = DEFS[k].r;
-    let x, y;
-    if (dir === 'ahead') { x = wg.x + rrange(600, 760); y = mid + rrange(-190, 190); }
-    else if (dir === 'behind') { x = wg.x - rrange(430, 520); y = mid + rrange(-170, 170); }
-    else { x = wg.x + rrange(-120, 360); y = dir === 'left' ? r + rrange(6, 30) : ROAD_W - r - rrange(6, 30); }
-    x = clamp(x, r + 10, w.W - r - 10);
-    for (let t = 0; t < 10 && w.pillars.some((p) => dist(p.x, p.y, x, y) < p.r + r + 8); t++) x += 40;
+    const side = dir === 'left' || dir === 'right' ? sideOf[dir] : (i % 3 === 2 ? -sideOf[dir] : sideOf[dir]); // (ahead and behind: mostly one side, some the other)
+    let x = dir === 'ahead' ? wg.x + rrange(650, 1250) : dir === 'behind' ? wg.x - rrange(120, 420) : wg.x + rrange(-150, 850);
+    x = clamp(x, r + 60, w.W - 160);
+    const y = side < 0 ? rrange(EDGE - 200, EDGE - 80) : H - rrange(EDGE - 200, EDGE - 80);
     const rank = chance(majorP) ? 2 : chance(eliteP) ? 1 : 0;
     const u = battleFoe(w, k, x, y, mult, rank);
-    u.aggro = true; u.coinMul = goldMul(run); u.facing = u.mvA = angleTo(x, y, wg.x, wg.y); u.flinchT = 0.3;
+    u.aggro = true; u.coinMul = goldMul(run); u.flinchT = 0.3;
     u.raider = chance(RAIDERS.test(k) ? 0.5 : 0.15);
-    if (dir === 'left' || dir === 'right') puff(w, x, y, '#5E7A3A', 8, 70, 6, 0.5);
+    // hidden under the trees until it walks out (treeLine)
+    u.hiddenIn = side; u.ethereal = true; u.hideT = 0;
+    u.forcedGoal = { x: clamp(x + (wg.x - x) * 0.2 + rrange(-60, 60), 60, w.W - 60), y: side < 0 ? EDGE + 90 : H - EDGE - 90, hide: true };
+    u.facing = u.mvA = angleTo(x, y, u.forcedGoal.x, u.forcedGoal.y);
   });
 }
 function rollKinds(roster, budget) {
@@ -323,8 +432,8 @@ function rollKinds(roster, budget) {
 function breakBarricade(run) {
   const w = run.world, b = run.barricade;
   b.broken = true;
-  for (const p of b.parts) puff(w, p.x, p.y, '#B58B5A', 14, 140, 6, 0.6);
-  w.pillars = w.pillars.filter((p) => !p.barricade);
+  for (const p of b.parts) if (p.barricade) puff(w, p.x, p.y, '#B58B5A', 14, 140, 6, 0.6);
+  w.pillars = w.pillars.filter((p) => !p.barricade); // (the gap on the road; the rest of the stockade stands)
   w.shake = Math.max(w.shake, 5);
   buildGrid(w);
 }
@@ -348,11 +457,11 @@ function giveXp(run, h, xp) {
   for (let i = 0; i < 14; i++) { const a = i / 14 * TAU; w.particles.push({ x: h.x, y: h.y, vx: Math.cos(a) * 120, vy: Math.sin(a) * 120, life: 0.6, max: 0.6, size: 4, color: '#FFE14D' }); }
 }
 
-// ---------------------------------------------------------------- between stretches
+// ---------------------------------------------------------------- between stretches: the roadside camp, a shop
 function keepHp(run) {
   for (const u of run.world.units) if (!u.def.cargo && !u.summon && run.heroes[u.kind] && u.team === partySide(run)) {
     const hs = run.heroes[u.kind]; hs.maxHp = u.maxHp; hs.potions = u.potions;
-    if (u.downed || u.dead && !u.gone) hs.down = true; else if (!u.dead) hs.hp = u.hp;
+    if (u.downed || u.dead) hs.down = true; else hs.hp = u.hp;
   }
   run.wagonHp = Math.max(0, run.wagon.hp);
   (run.hpLog || (run.hpLog = []))[run.stretch] = run.wagonHp / run.wagonMax;
@@ -361,42 +470,62 @@ function stretchDone(run) {
   keepHp(run);
   if (last(run)) return over(run, 'delivered');
   run.phase = 'roadside';
-  // the night's rest: the downed are back at 30%, everyone mends a quarter
+  // the night's rest: the downed (and the left behind, who walk in to the fire) are back at 30%, everyone mends a quarter
+  run.waiting = [];
   for (const k of [...run.party, ...run.hired]) {
     const hs = run.heroes[k], max = hs.maxHp || 100;
-    if (hs.down) { hs.down = false; hs.hp = max * 0.3; } else hs.hp = Math.min(max, (hs.hp ?? max) + max * 0.25);
+    if (hs.out) run.waiting.push(k);
+    if (hs.down || hs.out) { hs.down = false; hs.out = false; hs.hp = max * 0.3; } else hs.hp = Math.min(max, (hs.hp ?? max) + max * 0.25);
   }
   run.hired = []; // a sellsword was for one stretch
-  run.offer = offerFor(run);
-}
-export function offerFor(run) {
-  const can = { repair: true, potions: !run.bare, trinket: !run.bare && run.party.some((k) => roomFor(run, k)), sellsword: !!mercKind(run) };
-  const pool = Object.keys(CHOICES).filter((c) => can[c]);
-  const out = [];
-  if (run.wagonHp < run.wagonMax * 0.5) out.push('repair');
-  while (out.length < 3 && pool.some((c) => !out.includes(c))) { const c = pick(pool.filter((x) => !out.includes(x))); out.push(c); }
-  return out;
+  run.shop = { trinket: !run.bare && run.party.some((k) => roomFor(run, k)) ? rollTrinket() : null, bought: [] };
+  run.offer = Object.keys(SHOP); // (older readers)
 }
 const roomFor = (run, k) => run.heroes[k] && run.heroes[k].trinkets.length < trinketSlots(run, k) + FOUND_EXTRA;
 const mercKind = (run) => ['knight', 'rogue'].find((k) => !run.party.includes(k) && DEFS[k]);
-// The player's pick at the roadside (or the headless tool's); then on to the next stretch. Returns what it gave.
-export function takeChoice(run, choice) {
-  if (run.phase !== 'roadside') return null;
-  let got = { choice };
-  if (choice === 'repair') { const before = run.wagonHp; run.wagonHp = Math.min(run.wagonMax, run.wagonHp + run.wagonMax * 0.35); got.amount = Math.round(run.wagonHp - before); }
-  else if (choice === 'potions') { for (const k of run.party) run.heroes[k].potions++; }
-  else if (choice === 'trinket') {
+// Can this be bought now? null if so, else why not (for the shop's greyed lines).
+export function cantBuy(run, item) {
+  if (run.phase !== 'roadside') return 'not now';
+  const it = SHOP[item]; if (!it) return 'no such thing';
+  if (purse(run) < it.price) return 'not enough gold from this trip';
+  if (item === 'repair' && run.wagonHp >= run.wagonMax - 1) return 'the wagon is whole';
+  if (item === 'potion' && (run.bare || !run.party.some((k) => run.heroes[k].potions < CARRY_MAX))) return 'every pack is full';
+  if (item === 'trinket' && (!run.shop.trinket || run.shop.bought.includes('trinket'))) return run.shop.trinket ? 'sold' : 'nobody has room';
+  if (item === 'sellsword' && (run.hired.length || !mercKind(run))) return run.hired.length ? 'hired' : 'nobody for hire';
+  return null;
+}
+// Buy one thing at the roadside with the trip's gold. Returns what it gave, or null.
+export function buy(run, item) {
+  if (cantBuy(run, item)) return null;
+  const it = SHOP[item], got = { choice: item, price: it.price };
+  run.spent += it.price; run.shop.bought.push(item);
+  if (item === 'repair') { const before = run.wagonHp; run.wagonHp = Math.min(run.wagonMax, run.wagonHp + run.wagonMax * REPAIR); got.amount = Math.round(run.wagonHp - before); }
+  else if (item === 'potion') { const k = run.party.filter((h) => run.heroes[h].potions < CARRY_MAX).sort((a, b) => run.heroes[a].potions - run.heroes[b].potions)[0]; run.heroes[k].potions++; got.hero = k; }
+  else if (item === 'trinket') {
     const k = run.party.filter((h) => roomFor(run, h)).sort((a, b) => run.heroes[a].trinkets.length - run.heroes[b].trinkets.length)[0];
-    if (k) { const it = rollTrinket(); run.heroes[k].trinkets.push(it.id); run.satchel.push(it); got.hero = k; got.id = it.id; got.name = trinketInfo(it.id).name; }
-  } else if (choice === 'sellsword') {
+    const t = run.shop.trinket; run.heroes[k].trinkets.push(t.id); run.satchel.push(t); got.hero = k; got.id = t.id; got.name = trinketInfo(t.id).name;
+  } else if (item === 'sellsword') {
     const k = mercKind(run);
-    if (k) { run.hired = [k]; run.heroes[k] = { level: 1, xp: 0, hp: null, down: false, potions: 0, trinkets: [], best: 1, merc: true }; got.kind = k; }
+    run.hired = [k]; run.heroes[k] = { level: 1, xp: 0, hp: null, down: false, potions: 0, trinkets: [], best: 1, merc: true }; got.kind = k;
   }
   run.picks.push(got);
-  run.stretch++;
-  buildStretch(run);
   return got;
 }
+// What a sensible player buys (the headless tools and clips): mend a wagon under 60%, a draught for an empty pack,
+// keep the rest.
+export function autoShop(run) {
+  for (let i = 0; i < 4 && run.wagonHp < run.wagonMax * 0.6 && buy(run, 'repair'); i++);
+  for (let i = 0; i < 4 && run.party.some((k) => !run.heroes[k].potions) && purse(run) > 50 && buy(run, 'potion'); i++);
+}
+// On to the next stretch.
+export function setOff(run) {
+  if (run.phase !== 'roadside') return false;
+  run.stretch++;
+  buildStretch(run);
+  return true;
+}
+// (the try's one-pick call, kept for old callers: buy it if it can be bought, then set off)
+export function takeChoice(run, choice) { const got = choice && buy(run, choice); setOff(run); return got; }
 
 // ---------------------------------------------------------------- the end
 function over(run, result) {
@@ -405,31 +534,31 @@ function over(run, result) {
   run.phase = 'over'; run.result = result; run.endT = 0;
   if (result === 'delivered') { run.banner = { s: 'Delivered', t: 2.5 }; for (const k of run.party) { const h = run.world.units.find((u) => u.kind === k && !u.summon && alive(u)); if (h) giveXp(run, h, DELIVER_XP); else addXp(run.heroes[k], DELIVER_XP); } }
 }
-export function setStance(run, s) { if (STANCE[s]) run.stance = s; }
-// The flag button: turn back (the gold picked up, less the cut; no pay).
+// The flag button: turn back (the trip's gold, less the cut; no pay).
 export function turnBack(run) { if (run.phase === 'over' || run.summary) return; over(run, 'turned'); run.endT = 9; summarizeConvoy(run); }
 
 export function summarizeConvoy(run) {
   if (run.summary) return run.summary;
-  const delivered = run.result === 'delivered';
+  const delivered = run.result === 'delivered', wiped = run.result === 'party';
   const health = run.wagonMax ? clamp(run.wagonHp / run.wagonMax, 0, 1) : 0;
   const pay = delivered ? Math.round(PAY * health) : 0;
-  const cut = delivered ? 0 : Math.ceil(run.coins * LOSE_CUT);
+  const kept = purse(run), lossPct = delivered ? 0 : wiped ? WIPE_LOSS : LOSE_CUT;
+  const cut = Math.ceil(kept * lossPct);
   const hp = {}, heroes = {}, downed = [];
   for (const k of run.party) {
     const hs = run.heroes[k], u = run.world && run.world.units.find((x) => x.kind === k && !x.summon && !x.def.cargo && !x.gone && !x.dead);
-    if (hs.down || (u && u.downed)) downed.push(k);
+    if (hs.down || hs.out || (u && u.downed)) downed.push(k);
     hp[k] = u ? Math.max(0, u.hp / u.maxHp) : hs.hp != null && hs.maxHp ? hs.hp / hs.maxHp : 1;
     heroes[k] = { level: hs.level, xp: hs.xp, gained: hs.gained || 0, from: hs.from || hs.level };
   }
   const left = run.world ? run.world.pickups.filter((p) => p.type === 'coin').reduce((a, p) => a + p.v, 0) : 0;
-  run.summary = { convoy: true, result: run.result, delivered, stretch: run.stretch + 1, stretches: STRETCHES.length, health, pay, cut, picked: run.coins,
-    dropped: run.dropped, behind: run.behind + (delivered ? 0 : left), gold: run.coins - cut + pay, gems: run.gems || 0, kills: run.kills, time: run.time || 0,
-    heroes, downed, hp, picks: run.picks.slice(), stats: finishStats(run.stats) };
+  run.summary = { convoy: true, result: run.result, delivered, wiped, lossPct, stretch: run.stretch + 1, stretches: run.legs.length, legs: run.legs.map((l) => l.name), land: run.legs[run.legs.length - 1].land,
+    health, pay, cut, picked: run.coins, spent: run.spent, dropped: run.dropped, behind: run.behind + (delivered ? 0 : left), gold: kept - cut + pay, gems: run.gems || 0,
+    kills: run.kills, time: run.time || 0, heroes, downed, hp, picks: run.picks.slice(), stats: finishStats(run.stats) };
   return run.summary;
 }
-// What a finished trip changes in the save: gold (and the gem), heroes' levels, XP and points, rest for the hurt,
-// lifetime stats. No checkpoints, slots or dungeons.
+// What a finished trip changes in the save: gold (and the gem), heroes' levels, XP and points, rest for the hurt
+// (none after a wipe, as in a dungeon), lifetime stats. No checkpoints, slots or dungeons.
 export function applyConvoy(save, run, now = Date.now()) {
   const s = summarizeConvoy(run);
   save.gold += Math.max(0, Math.floor(s.gold));
@@ -442,95 +571,52 @@ export function applyConvoy(save, run, now = Date.now()) {
     const gained = h.level - from;
     h.points = (h.points || 0) + gained; h.best = Math.max(h.best || 1, h.level);
     const downed = s.downed.includes(id), hurt = !downed && s.hp[id] != null && s.hp[id] < HURT_BELOW;
-    if (downed || hurt) h.recoverUntil = Math.max(h.recoverUntil || 0, now + (downed ? RECOVER_DOWN : RECOVER_HURT));
-    heroes.push({ id, from, level: h.level, xp: h.xp, gained, points: h.points, downed, hurt });
+    if ((downed || hurt) && !s.wiped) h.recoverUntil = Math.max(h.recoverUntil || 0, now + (downed ? RECOVER_DOWN : RECOVER_HURT));
+    heroes.push({ id, from, level: h.level, xp: h.xp, gained, points: h.points, downed: downed && !s.wiped, hurt: hurt && !s.wiped });
   }
   bankTally(save, s.stats);
   return { ...s, heroes };
 }
 
 // ---------------------------------------------------------------- drawing
-// The road, painted once into the floor's cached picture (render.js floor): a dirt track with wheel ruts up the
-// middle, undergrowth along both edges, the gate at the top (a roadside camp past it, or the town's arch).
+// The ground, painted once into the floor's cached picture (render.js floor): convoy-art.js paints the meadow, the
+// road, the shaded verge and what grows at the trees' foot; here, the gate at the top (a roadside camp past it, or the
+// town's arch).
 function paintRoad(g, w) {
   const H = w.H, mid = H / 2, C = w.convoy;
-  // the track: a soft darker rim, the dirt, ruts
-  g.fillStyle = 'rgba(70,58,34,0.22)'; g.fillRect(-60, mid - ROAD_HALF - 10, w.W + 120, ROAD_HALF * 2 + 20);
-  g.fillStyle = '#B49B6C'; g.fillRect(-60, mid - ROAD_HALF, w.W + 120, ROAD_HALF * 2);
-  g.fillStyle = 'rgba(255,240,200,0.10)'; g.fillRect(-60, mid - ROAD_HALF * 0.45, w.W + 120, ROAD_HALF * 0.9);
-  for (const dy of [-30, 30]) { g.fillStyle = 'rgba(90,70,40,0.32)'; g.fillRect(-60, mid + dy - 5, w.W + 120, 10); g.fillStyle = 'rgba(60,46,26,0.25)'; g.fillRect(-60, mid + dy - 1.5, w.W + 120, 3); }
-  // pebbles and tufts on the track's edges (fixed by position, so the cache is the same each time)
-  for (let x = 0; x < w.W; x += 23) {
-    const k = Math.abs(Math.sin(x * 12.9898) * 43758.5453) % 1, side = k < 0.5 ? -1 : 1;
-    const y = mid + side * (ROAD_HALF - 4 + (k * 10 % 1) * 12);
-    g.fillStyle = k < 0.3 ? 'rgba(80,96,48,0.55)' : 'rgba(120,104,76,0.5)';
-    g.beginPath(); g.ellipse(x, y, 4 + k * 5, 3 + k * 3, k * 3, 0, TAU); g.fill();
-  }
-  // the undergrowth at the edges
-  for (const c of C.clumps) {
-    g.fillStyle = INK; g.beginPath(); g.arc(c.x, c.y, c.r + 2.4, 0, TAU); g.fill();
-  }
-  for (const c of C.clumps) {
-    g.fillStyle = c.k < 0.33 ? '#4E6A2E' : c.k < 0.66 ? '#5C7A36' : '#46602A'; g.beginPath(); g.arc(c.x, c.y, c.r, 0, TAU); g.fill();
-    g.fillStyle = 'rgba(200,240,140,0.16)'; g.beginPath(); g.arc(c.x - c.r * 0.25, c.y - c.r * 0.25, c.r * 0.5, 0, TAU); g.fill();
-  }
-  // the gate across the road at the top: two posts and a beam
-  const gx = C.gate + 150; // (past the ox when the wagon stops at the gate)
+  paintRoadGround(g, w, { EDGE, ROAD_HALF, look: C.look, trees: C.trees });
+  const gx = C.gate + 300; // (past the oxen when the wagon stops at the gate)
   const ink = (fn, fill) => { g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = 4.8; g.lineJoin = 'round'; fn(); g.fill(); g.stroke(); g.fillStyle = fill; fn(); g.fill(); };
-  ink(() => { g.beginPath(); g.rect(gx - 9, mid - ROAD_HALF - 46, 18, ROAD_HALF * 2 + 92); }, C.last ? '#8A6A4A' : '#7A5A3C');
-  for (const s of [-1, 1]) ink(() => { g.beginPath(); g.arc(gx, mid + s * (ROAD_HALF + 46), 15, 0, TAU); }, '#6E4A30');
+  ink(() => { g.beginPath(); g.rect(gx - 11, mid - ROAD_HALF - 60, 22, ROAD_HALF * 2 + 120); }, C.last ? '#8A6A4A' : '#7A5A3C');
+  for (const s of [-1, 1]) ink(() => { g.beginPath(); g.arc(gx, mid + s * (ROAD_HALF + 60), 20, 0, TAU); }, '#6E4A30');
   if (C.last) { // the town: a banner on the beam
-    ink(() => { g.beginPath(); g.rect(gx - 30, mid - 26, 30, 52); }, '#B8423A');
-    g.fillStyle = '#F2C14E'; g.beginPath(); g.arc(gx - 15, mid, 8, 0, TAU); g.fill();
+    ink(() => { g.beginPath(); g.rect(gx - 40, mid - 34, 40, 68); }, '#B8423A');
+    g.fillStyle = '#F2C14E'; g.beginPath(); g.arc(gx - 20, mid, 10, 0, TAU); g.fill();
   } else { // the roadside camp past the gate: a fire and a tent on the verge
-    const fx0 = gx + 150, fy = mid + ROAD_HALF + 70;
-    ink(() => { g.beginPath(); g.arc(fx0, fy, 16, 0, TAU); }, '#5A4A3A');
-    g.fillStyle = '#FF9A3D'; g.beginPath(); g.arc(fx0, fy, 9, 0, TAU); g.fill(); g.fillStyle = '#FFE08A'; g.beginPath(); g.arc(fx0, fy, 4.5, 0, TAU); g.fill();
-    ink(() => { g.beginPath(); g.moveTo(fx0 + 40, fy - 60); g.lineTo(fx0 + 100, fy - 60); g.lineTo(fx0 + 106, fy - 4); g.lineTo(fx0 + 34, fy - 4); g.closePath(); }, '#3F5578');
-    g.strokeStyle = INK; g.lineWidth = 3; g.beginPath(); g.moveTo(fx0 + 70, fy - 62); g.lineTo(fx0 + 70, fy - 2); g.stroke();
+    const fx0 = gx + 200, fy = mid + ROAD_HALF + 110;
+    ink(() => { g.beginPath(); g.arc(fx0, fy, 22, 0, TAU); }, '#5A4A3A');
+    g.fillStyle = '#FF9A3D'; g.beginPath(); g.arc(fx0, fy, 12, 0, TAU); g.fill(); g.fillStyle = '#FFE08A'; g.beginPath(); g.arc(fx0, fy, 6, 0, TAU); g.fill();
+    ink(() => { g.beginPath(); g.moveTo(fx0 + 50, fy - 80); g.lineTo(fx0 + 130, fy - 80); g.lineTo(fx0 + 138, fy - 4); g.lineTo(fx0 + 42, fy - 4); g.closePath(); }, '#3F5578');
+    g.strokeStyle = INK; g.lineWidth = 3; g.beginPath(); g.moveTo(fx0 + 90, fy - 82); g.lineTo(fx0 + 90, fy - 2); g.stroke();
   }
 }
-
-// The wagon, top-down, facing up the road (+x): an ox in its traces, a covered bed on four wheels, crates at the back.
+// A downed hero carries a ring that runs down as the road carries them towards the bottom of the screen: gold while
+// there's time, red and pulsing when they're about to be left behind; the revive's progress fills it in gold-white.
+function drawDowned(ctx, run) {
+  const wg = run.wagon, w = run.world; if (!wg) return;
+  for (const u of w.units) {
+    if (!u.downed || u.dead || u.def.cargo || !run.heroes[u.kind] || u.team !== wg.team) continue;
+    const left = clamp((u.x - (wg.x - BEHIND)) / 560, 0, 1), late = left < 0.35, R = u.vr * 1.7 + 8;
+    ctx.save(); ctx.lineCap = 'round';
+    ctx.globalAlpha = late ? 0.65 + 0.35 * Math.sin(w.time * 11) : 0.9;
+    ctx.strokeStyle = INK; ctx.lineWidth = 9; ctx.beginPath(); ctx.arc(u.x, u.y, R, 0, TAU); ctx.stroke();
+    ctx.strokeStyle = late ? '#FF6B5A' : '#F2C14E'; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(u.x, u.y, R, 0, Math.max(0.05, left) * TAU); ctx.stroke();
+    if (u.reviveT > 0) { ctx.strokeStyle = '#FFF6D8'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(u.x, u.y, R - 7, 0, TAU * Math.min(1, u.reviveT / REVIVE_T)); ctx.stroke(); }
+    ctx.restore();
+  }
+}
 function drawWagon(ctx, u) {
   ctx.save(); ctx.translate(u.x, u.y);
-  paintWagon(ctx, { roll: u.roll || 0, hurt: 1 - u.hp / u.maxHp, riders: u.riders || 0, flash: u.flashT > 0.06 });
-  ctx.restore();
-}
-// The wagon at the origin, facing +x (camp-scene.js parks one at the camp's edge with this too).
-export function paintWagon(ctx, { roll = 0, hurt = 0, riders = 0, flash = false } = {}) {
-  const ink = (fn, fill, lw = 2.4) => { ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineWidth = lw * 2; ctx.lineJoin = 'round'; fn(); ctx.fill(); ctx.stroke(); ctx.fillStyle = fill; fn(); ctx.fill(); };
-  const rr = (x, y, ww, hh, r) => { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, ww, hh, r) : ctx.rect(x, y, ww, hh); };
-  ctx.save();
-  ctx.fillStyle = 'rgba(30,26,14,0.3)'; ctx.beginPath(); ctx.ellipse(18, 3, 88, 40, 0, 0, TAU); ctx.fill();
-  // the traces and the ox
-  ctx.strokeStyle = INK; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(36, -13); ctx.lineTo(76, -9); ctx.moveTo(36, 13); ctx.lineTo(76, 9); ctx.stroke();
-  ctx.strokeStyle = '#8A6A44'; ctx.lineWidth = 2.6; ctx.stroke();
-  const step = Math.sin(roll * 0.18) * 5;
-  for (const [lx, ly, ph] of [[72, -11, 1], [72, 11, -1], [98, -11, -1], [98, 11, 1]]) ink(() => { ctx.beginPath(); ctx.ellipse(lx + step * ph, ly, 5, 3.6, 0, 0, TAU); }, '#4A3626', 1.4);
-  ink(() => { ctx.beginPath(); ctx.ellipse(85, 0, 22, 14.5, 0, 0, TAU); }, '#8E6E4C');
-  ctx.fillStyle = 'rgba(255,240,210,0.18)'; ctx.beginPath(); ctx.ellipse(82, -4, 14, 6, 0, 0, TAU); ctx.fill();
-  ink(() => { ctx.beginPath(); ctx.ellipse(110, 0, 9.5, 8, 0, 0, TAU); }, '#7A5A3C');
-  for (const s of [-1, 1]) ink(() => { ctx.beginPath(); ctx.moveTo(112, s * 6); ctx.quadraticCurveTo(116, s * 15, 122, s * 13); ctx.lineTo(121, s * 10.5); ctx.quadraticCurveTo(116, s * 11, 115, s * 5); ctx.closePath(); }, '#E9DCC0', 1.1);
-  // wheels at the sides, spokes going round
-  for (const wx of [-26, 20]) for (const s of [-1, 1]) {
-    ink(() => rr(wx - 12, s * 31 - 4.5, 24, 9, 3), '#3A2C24', 1.4);
-    ctx.fillStyle = '#7A6250'; for (let k = 0; k < 3; k++) { const p = ((roll * 0.9 + k * 8) % 24) - 12; ctx.fillRect(wx + p - 1, s * 31 - 3.5, 2, 7); }
-  }
-  // the bed and its cover
-  ink(() => rr(-48, -27, 86, 54, 6), '#7A5232');
-  ink(() => rr(-38, -24, 64, 48, 12), '#E9DCC0', 2);
-  ctx.fillStyle = '#B8423A'; ctx.fillRect(-25, -24, 9, 48); ctx.fillRect(1, -24, 9, 48);
-  ctx.strokeStyle = 'rgba(43,34,48,0.35)'; ctx.lineWidth = 1.6; for (const rx of [-30, -16, -2, 12]) { ctx.beginPath(); ctx.moveTo(rx, -23); ctx.lineTo(rx, 23); ctx.stroke(); }
-  ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.fillRect(-36, -21, 60, 9);
-  // the driver's bench and the crates at the back
-  ink(() => rr(27, -16, 9, 32, 2), '#9A6B40', 1.4);
-  ink(() => rr(-56, -20, 16, 18, 2), '#A87C4A', 1.4); ink(() => rr(-56, 3, 16, 16, 2), '#946A3E', 1.4);
-  // the downed riding on it: a grey head on the cover each
-  for (let i = 0; i < riders; i++) { const hy = -12 + i * 12; ink(() => { ctx.beginPath(); ctx.arc(-6 + (i % 2) * 6, hy, 6, 0, TAU); }, '#A9A2B0', 1.2); }
-  // damage: tears in the cover, a broken board
-  if (hurt > 0.35) { ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-20, -18); ctx.lineTo(-12, -8); ctx.lineTo(-16, 2); ctx.moveTo(8, 10); ctx.lineTo(16, 18); ctx.stroke(); }
-  if (hurt > 0.65) { ctx.fillStyle = '#3A2C24'; ctx.fillRect(-46, 18, 22, 7); ctx.fillRect(14, -26, 18, 6); }
-  if (flash) { ctx.globalAlpha = 0.45; ctx.fillStyle = '#FFFFFF'; rr(-48, -27, 86, 54, 6); ctx.fill(); ctx.globalAlpha = 1; }
+  paintWagon(ctx, { roll: u.roll || 0, hurt: 1 - u.hp / u.maxHp, flash: u.flashT > 0.06 });
   ctx.restore();
 }
