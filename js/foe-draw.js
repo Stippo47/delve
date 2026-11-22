@@ -46,10 +46,11 @@ export function drawFoeGround(ctx, w) {
 function mound(ctx, x, y, r, a, col = '#B59A6A', t = 0, k = 1) {
   const L = r * (1.25 + 0.06 * Math.sin(t * 9)), Wd = r * 0.82 * k;
   ctx.save(); ctx.translate(x, y); ctx.rotate(a);
-  ctx.fillStyle = 'rgba(50,34,18,0.22)'; ctx.beginPath(); ctx.ellipse(3, 4, L * 1.05, Wd * 1.1, 0, 0, TAU); ctx.fill(); // its shade
+  ctx.fillStyle = 'rgba(50,34,18,0.22)'; ctx.beginPath(); ctx.ellipse(0, 0, L * 1.1, Wd * 1.2, 0, 0, TAU); ctx.fill(); // its shade, straight down
   ctx.fillStyle = col; ctx.strokeStyle = 'rgba(60,40,22,0.55)'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.ellipse(0, 0, L, Wd, 0, 0, TAU); ctx.fill(); ctx.stroke();
-  ctx.fillStyle = 'rgba(255,248,225,0.35)'; ctx.beginPath(); ctx.ellipse(-L * 0.15, -Wd * 0.3, L * 0.7, Wd * 0.45, 0, 0, TAU); ctx.fill(); // lit side
+  const lx = (-Math.cos(a) - Math.sin(a)) * 0.2, ly = (Math.sin(a) - Math.cos(a)) * 0.2; // (the light from the room's top left, whichever way it heads)
+  ctx.fillStyle = 'rgba(255,248,225,0.35)'; ctx.beginPath(); ctx.ellipse(lx * L, ly * Wd * 1.5, L * 0.7, Wd * 0.45, 0, 0, TAU); ctx.fill(); // lit side
   ctx.strokeStyle = 'rgba(60,40,22,0.5)'; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
   ctx.beginPath(); ctx.moveTo(-L * 0.55, 0); ctx.lineTo(-L * 0.1, Wd * 0.12); ctx.lineTo(L * 0.5, -Wd * 0.05); ctx.stroke(); // the crack along its crest
   ctx.fillStyle = col; for (let i = 0; i < 3; i++) { const q = (t * 1.7 + i / 3) % 1, s2 = i % 2 ? 1 : -1; ctx.beginPath(); ctx.arc(L * (0.6 - 1.4 * q), s2 * Wd * (0.9 + 0.3 * q), 2.6 * (1 - q * 0.5), 0, TAU); ctx.fill(); }
