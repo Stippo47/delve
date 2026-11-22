@@ -271,20 +271,21 @@ export const ABILITIES = {
   shockwave: {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 260 && foesNear(w, u, t.x, t.y, 100).length >= 2 ? 0.75 : 0),
     use(w, u, t, tier) {
+      // round 13 (three looks of earth coming up out of the floor all came back): the designer's own words for it were
+      // "Slams ground sending out a repeating shockwave forwards", so the waves travel. He slams once; each wave is a
+      // front that runs out along the floor from the slam, fanning wider, hits what it passes once and shoves it on.
       const a = ang(u, t), n = tier >= 2 ? 5 : 3; u.facing = a; cast(u, 'ability', 0.4); w.shake = Math.max(w.shake, 5);
+      const ox = u.x + Math.cos(a) * (u.r + 12), oy = u.y + Math.sin(a) * (u.r + 12);
       u.later = [];
-      for (let i = 0; i < n; i++) u.later.push({ t: 0.18 * i + 0.1, f: () => {
-        const x = u.x + Math.cos(a) * (60 + i * 55), y = u.y + Math.sin(a) * (60 + i * 55);
-        fx(w, { type: 'wave', x, y, a, r: 50, max: 0.35 });
-        for (const e of foesNear(w, u, x, y, 50)) hurt(w, e, dmgOf(u, 1), u, { knock: 160, kAngle: a, noDodge: true, stagger: tier >= 3 ? 35 : 0 });
-      } });
+      for (let i = 0; i < n; i++) u.later.push({ t: 0.12 + 0.2 * i, f: () => shockFront(w, u, ox, oy, a, tier) });
     },
   },
   whirl: {
     score: (w, u) => { const n = foesNear(w, u, u.x, u.y, 120).length; return n >= 2 ? 0.85 : n ? 0.4 : 0; },
     use(w, u, t, tier) {
-      addBuff(u, { id: 'whirl', dur: tier >= 2 ? 5 : 3, move: 0.85, spinning: true, glow: '#FFFFFF' });
-      u.spinHit = 0; u.spinPull = tier >= 3;
+      // (round 13: the blows are struck here now, kitTick below, not in sim.js: they knock back the way the flail turns)
+      addBuff(u, { id: 'whirl', dur: tier >= 2 ? 5 : 3, move: 0.85, whirling: true, glow: '#FFFFFF' });
+      u.kit.whirl = { t: 0, pull: tier >= 3 };
     },
   },
   unstoppable: {
@@ -631,6 +632,35 @@ function zeusBolt(w, u, x, y, e, left, from, hit = new Set()) {
       const nx = (fresh.length ? fresh : ok).sort((p1, p2) => dist(hitU.x, hitU.y, p1.x, p1.y) - dist(hitU.x, hitU.y, p2.x, p2.y))[0];
       if (nx) zeusBolt(w2, u, hitU.x, hitU.y, nx, left - 1, hitU, hit); } });
 }
+// Shockwave's wave (round 13): a front that runs SHOCK.reach out from (ox, oy) along a in SHOCK.T seconds, SHOCK.w0 wide
+// each side where it starts and widening by SHOCK.wk a unit; whatever it reaches is hit once and knocked on the way it
+// runs. The fx carries the numbers, so the renderer draws the front where the blows land (fx.js shockwave).
+export const SHOCK = { reach: 300, T: 0.46, w0: 36, wk: 0.15 };
+function shockFront(w, u, ox, oy, a, tier) {
+  const ca = Math.cos(a), sa = Math.sin(a), hit = new Set();
+  fx(w, { type: 'wave', x: ox, y: oy, a, r: SHOCK.reach, travel: SHOCK.T, w0: SHOCK.w0, wk: SHOCK.wk, max: SHOCK.T + 0.22, src: u, every: 0.03, tick(f) {
+    const d = Math.min(1, f.t / SHOCK.T) * SHOCK.reach;
+    for (const e of opponents(w, u)) {
+      if (hit.has(e) || e.ethereal) continue;
+      const dx = e.x - ox, dy = e.y - oy, along = dx * ca + dy * sa, side = Math.abs(dy * ca - dx * sa);
+      if (along < -e.r || along - e.r > d || side > SHOCK.w0 + Math.max(0, along) * SHOCK.wk + e.r) continue;
+      hit.add(e); hurt(w, e, dmgOf(u, 0.9), u, { knock: 170, kAngle: a, noDodge: true, stagger: tier >= 3 ? 35 : 0 });
+    }
+  } });
+}
+// Whirl's blows (round 13; they were struck in sim.js): every 0.4 s everything in the flail's reach is hit and knocked
+// away and round the way the flail turns (the designer: "Should also deal some kb"); at III what stands just out of
+// reach is drawn in towards him first.
+function whirlTick(w, u, dt) {
+  const k = u.kit.whirl; if (!u.buffs.some((b) => b.whirling)) { u.kit.whirl = null; return; }
+  if (k.pull) for (const e of opponents(w, u)) {
+    const gap = dist(u.x, u.y, e.x, e.y) - u.r - e.r; if (gap < 36 || gap > 170 || e.def.boss || e.ethereal) continue;
+    const a = angleTo(e.x, e.y, u.x, u.y), f = 620 * dt / Math.max(1, Math.sqrt(e.mass)); e.kx += Math.cos(a) * f; e.ky += Math.sin(a) * f;
+  }
+  k.t -= dt; if (k.t > 0) return; k.t = 0.4;
+  withAb(u, 'whirl', () => { for (const e of opponents(w, u)) if (!e.ethereal && dist(u.x, u.y, e.x, e.y) < u.r + e.r + 50)
+    hurt(w, e, dmgOf(u, 0.6), u, { kAngle: angleTo(u.x, u.y, e.x, e.y) + 0.9, knock: k.pull ? 150 : 200 }); })();
+}
 Object.assign(ABILITIES, ABILITIES2); // round 10 (lane H): the new heroes' abilities
 Object.assign(ABILITIES, CHARM_ABILITIES); // round 13 (lane S)
 const RAY_T = 4, RAY_RANGE = 380;
@@ -715,6 +745,7 @@ const rayable = (w, u, o) => dist(u.x, u.y, o.x, o.y) < RAY_RANGE - 40 && !block
 export function kitTick(w, u, dt) {
   kit2Tick(w, u, dt);
   if (u.kit && u.kit.string) charmTick(w, u, dt); // round 13: the Enchantress's Heartstring
+  if (u.kit && u.kit.whirl) whirlTick(w, u, dt);
   if (u.gasForm) { const g = u.gasForm;
     if (u.gasT > 0) { if (dist(u.x, u.y, g.lx, g.ly) > 34) { g.lx = u.x; g.ly = u.y; drop(w, u, g.tier); } }
     else { if (g.heal) heal(w, u, u.maxHp * 0.15, u); u.gasForm = null; puff(w, u.x, u.y, '#BCE070', 10, 80, 6, 0.5); } }

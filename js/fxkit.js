@@ -282,17 +282,13 @@ function slamGround(ctx, m, k) {
   ctx.restore();
 }
 function slamAir(ctx, m, k) {
-  const drop = k01(k / 0.14), e = easeOut(k01((k - 0.12) / 0.6));
-  // round 10 ("Simpler"): just the head coming down, a small flash and a ring of dust; no spikes thrown up
-  if (k < 0.14) { // the head coming down onto the spot
-    const [ux, uy] = upVec(), h = (1 - drop) * 26;
-    flailHead(ctx, m.x + ux * h, m.y + uy * h, 8, k * 8);
-    return;
-  }
+  const e = easeOut(k01((k - 0.12) / 0.6));
+  // round 10 ("Simpler"): a small flash and a ring of dust; no spikes thrown up. Round 13 ("Don't show spike ball on the
+  // ground"): no second flail head drawn where the blow lands; the one in his hand is the only one.
+  if (k < 0.14) return; // the arm is still coming down
   if (k < 0.26) lit(ctx, () => glowDisc(ctx, m.x, m.y, m.r * 1.1, '#FFF4DC', 0.5 * (1 - (k - 0.14) / 0.12)));
   ctx.save(); ctx.globalAlpha *= 1 - k * k;
   dustPuffs(ctx, m.x, m.y, m.r, e, m.seed, 6);
-  ctx.globalAlpha *= 1 - k01((k - 0.4) / 0.4); flailHead(ctx, m.x, m.y, 8, 0.4);
   ctx.restore();
 }
 
@@ -739,6 +735,12 @@ export function drawSigAir(ctx, f, w) {
       break;
     }
     case 'whirl': castFlash(ctx, f, k, el); break;
+    case 'shockwave': { // the slam the waves run out from: a flash and a kick of dust where the flail comes down
+      const x = f.x + Math.cos(f.a) * ((u ? u.r : 30) + 12), y = f.y + Math.sin(f.a) * ((u ? u.r : 30) + 12);
+      if (k < 0.4) lit(ctx, () => glowDisc(ctx, x, y, 44, '#FFF4DC', 0.7 * (1 - k / 0.4)));
+      ctx.save(); ctx.globalAlpha *= 1 - k * k; dustPuffs(ctx, x, y, 30, e, seed, 7); ctx.restore();
+      break;
+    }
     case 'flameWall': case 'inferno': case 'iceWall': case 'thunderclap': case 'lullaby': case 'entangle': case 'rejuvenate': case 'lifeDrain': case 'hook':
       castFlash(ctx, f, k, el); break;
     case 'warSong': { // notes fly from the lute to each ally it reaches
@@ -813,7 +815,7 @@ export function drawBodyFx(ctx, u, w) {
     } else if (b.id === 'lullaby') {
       const ph = (T * 0.6 + u.id * 0.29) % 1;
       ctx.save(); ctx.globalAlpha = Math.sin(ph * Math.PI) * 0.9; upright(ctx, u.x, u.y, () => { ctx.translate(-u.vr * 0.6 + Math.sin(ph * 6) * 4, -u.vr - 4 - ph * 20); inked(ctx, () => noteShape(ctx, 0.65), '#BFC8FF'); }); ctx.restore();
-    } else if (b.spinning) whirlArcs(ctx, u, T);
+    } else if (b.whirling) whirlArcs(ctx, u, T);
   }
   // Leeches clinging to the edge of the body, pulsing
   if (u.leechT > 0) for (let i = 0; i < 3; i++) {
@@ -895,7 +897,9 @@ export function drawBodyGround(ctx, u, w) {
 // berserker.svg): a pale steel ball, six fat cone spikes round it, a four-faced spike on top lit from the top left.
 export function flailHead(ctx, x, y, r, rot) {
   ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
-  inked(ctx, () => { for (let i = 0; i < 6; i++) { const a = i / 6 * TAU, c = Math.cos(a), s2 = Math.sin(a), w2 = 0.42;
+  // (round 13: this path never began anew, so it took in whatever was drawn last: Whirl's white crescent came out inked
+  // over and striped, which is the "changed more than what I asked")
+  inked(ctx, () => { ctx.beginPath(); for (let i = 0; i < 6; i++) { const a = i / 6 * TAU, c = Math.cos(a), s2 = Math.sin(a), w2 = 0.42;
     ctx.moveTo(Math.cos(a - w2) * r * 0.86, Math.sin(a - w2) * r * 0.86); ctx.lineTo(c * r * 1.62, s2 * r * 1.62); ctx.lineTo(Math.cos(a + w2) * r * 0.86, Math.sin(a + w2) * r * 0.86); ctx.closePath(); }
     ctx.moveTo(r, 0); ctx.arc(0, 0, r, 0, TAU); }, '#A9B2C1');
   ctx.restore();
@@ -914,7 +918,7 @@ function whirlArcs(ctx, u, T) {
   const R = u.r + 46, a = T * 13;
   for (let i = 0; i < 2; i++) { const b = a + i * Math.PI, hx = u.x + Math.cos(b) * (R - 9), hy = u.y + Math.sin(b) * (R - 9);
     slashBand(ctx, u.x, u.y, R, b - 1.6, b, 16, '#DCE3EC', '#FFFFFF');
-    flailHead(ctx, hx, hy, 9, b); }
+    flailHead(ctx, hx, hy, 10.5, T * 9); } // (round 13: as big as the round 9 balls were, and turning as they did)
 }
 
 // ---------------------------------------------------------------- ability-shaped versions of the plain fx
