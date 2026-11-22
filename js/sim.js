@@ -95,7 +95,7 @@ export function restoreSide(w, u) {
 const alive = (u) => !u.dead && !u.downed;
 // Ethereal units (a Wraith Veil ghost) are nobody's opponent or ally: they can't be targeted, hit or helped.
 const opponents = (w, u) => w.units.filter((o) => alive(o) && o.team !== u.team && !o.ethereal);
-const allies = (w, u) => w.units.filter((o) => alive(o) && o.team === u.team && o !== u && !o.ethereal);
+const allies = (w, u) => w.units.filter((o) => alive(o) && o.team === u.team && o !== u && !o.ethereal && !o.def.rig); // (lane W, round 14: def.rig = the wagon's body circles, convoy.js: nobody's friend)
 const hpRatio = (u) => u.hp / u.maxHp;
 const speedOf = (u) => {
   let s = u.def.speed * (u.moveMul || 1);
@@ -217,9 +217,11 @@ function chooseTarget(w, u) {
   const k = roleAlias(u);
   let best = null, bestS = -Infinity;
   const mates = allies(w, u);
+  const pick = w.pick && u.team === 'hero' ? w.pick : null; // lane W (round 14, convoy.js): each hero keeps to its own side of the wagon
   for (const o of opp) {
     const d = dist(u.x, u.y, o.x, o.y);
     let s = -d / (k === 'rogue' ? 900 : 300);
+    if (pick) { const b = pick(u, o); if (b == null) continue; s += b; } // (null: not this hero's to fight)
     // how many of my side are already on it, and how many of its side stand around it
     let on = 0; for (const a of mates) if (a.target === o) on++;
     let crowd = 0; for (const q of opp) if (q !== o && dist(q.x, q.y, o.x, o.y) < 95) crowd++;
@@ -468,6 +470,7 @@ function steer(w, u, gx, gy, opts = {}) {
 // Head for (tx,ty): straight there if there's a clear line, else along an A* route round the walls.
 const CLEAR_PAD = 42; // a route is pulled straight no tighter than this (the A* grid keeps 46 from walls)
 function goalVec(w, u, tx, ty) {
+  if (w.detour) { const p = w.detour(u, tx, ty); if (p) { tx = p.x; ty = p.y; } } // lane W (round 14, convoy.js): the way round the wagon, which is solid and moves
   if ((!w.walls.length && !w.pillars.length) || pathClear(w, u.x, u.y, tx, ty, u.r * 0.9)) { u.path = null; return [tx - u.x, ty - u.y]; }
   u.pathT -= 1 / 60;
   const moved = !u.pathGoal || Math.hypot(u.pathGoal.x - tx, u.pathGoal.y - ty) > 60;
@@ -577,13 +580,13 @@ function movement(w, u, dt) {
     const al = allies(w, u).filter((a) => !a.def.cargo); // (lane W: the wagon, convoy.js, sets no pace)
     // lane W (round 13, "heroes don't huddle up"): each walks to their own spot round the waypoint, not all to one point
     const px = w.wp ? w.wp.x : Math.min(w.W - 70, u.x + 220), py = w.wp ? w.wp.y : u.y; // (the pace is still set on the shared waypoint)
-    const [wx, wy] = looseSpot(w, u, al, px, py);
+    const [wx, wy] = u.post ? [u.post.x, u.post.y] : looseSpot(w, u, al, px, py); // lane W (round 14, convoy.js): a hero guarding a side of the wagon has a post of its own there
     let md = dist(u.x, u.y, px, py); for (const a of al) md += dist(a.x, a.y, px, py); md /= al.length + 1;
-    const ahead = md - dist(u.x, u.y, px, py);
+    const ahead = u.post ? 0 : md - dist(u.x, u.y, px, py);
     [gx, gy] = goalVec(w, u, wx, wy);
     { const l = Math.hypot(gx, gy) || 1; gx /= l; gy /= l; gy += clamp((wy - u.y) / 140, -0.8, 0.8); } // lane W: and take up its place across the way as it goes
     const wd = dist(u.x, u.y, wx, wy);
-    mult = ahead > 90 ? 0.15 : ahead < -60 ? 0.85 : 0.6;
+    mult = u.post ? 0.85 : ahead > 90 ? 0.15 : ahead < -60 ? 0.85 : 0.6; // (a post: nobody to keep pace with)
     // ease in and stop at the waypoint (it circled round it, turning back and forth, until dungeon.js moved it on)
     if (wd < 50) { gx = gy = 0; } else mult *= clamp(wd / 160, 0.4, 1);
     [gx, gy] = roomFrom(u, al, gx, gy); // lane W: and a little room from the others
@@ -763,8 +766,10 @@ const blockedBy = (w, u, src, amt, o) => { if (w.stats && amt > 0 && !o.dot) tal
 export function hurt(w, u, amount, src, o = {}) {
   if (u && u.invulnT > 0 && alive(u) && amount > 0 && !u.ethereal) { blockedBy(w, u, src, amount, o); return 0; }
   if (!alive(u) || u.invulnT > 0 || amount <= 0 || u.ethereal) return 0;
+  if (u.def.cargo && !u.linkTo) { u.blowBy = src || null; u.blowT = w.time; } // lane W (round 14): the wagon itself was hit: its body circles won't count the same blow again (below)
   // round 10, chains (families.js): a body segment flinches, but the blow lands on its head (no shove: it follows)
   if (u.linkTo) { if (!alive(u.linkTo)) return 0; u.flashT = 0.12; u.hitT = 0.16; u.hitA = src ? angleTo(src.x, src.y, u.x, u.y) : 0; u.hitX = u.x; u.hitY = u.y;
+    if (u.def.rig) { const h = u.linkTo, by = src || null; if (h.blowBy === by && w.time - h.blowT < (src ? 0.2 : 1e-6)) return 0; h.blowBy = by; h.blowT = w.time; } // lane W (round 14): the wagon's body circles: one blow that catches several lands once
     return hurt(w, u.linkTo, amount * (u.def.segTaken ?? 0.6), src, { ...o, knock: 0 }); }
   // a brain leech's host (round 9, foes9.js): its friends' blows go to the leech; the shove still lands (a hard one
   // knocks the leech off)

@@ -27,10 +27,30 @@ for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connec
 const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2 });
 const page = await ctx.newPage();
 const errors = [];
+// (round 14, lane W: whatever goes wrong below, Edge is taken down before this exits: a failed run used to leave it running)
+const killEdge = () => {
+  try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch {}
+  // (round 14, lane W) Edge starts itself again under another process id, which the line above doesn't reach, so every
+  // run used to leave one running: take down whatever still runs on this run's own profile folder
+  try { execFileSync('powershell', ['-NoProfile', '-Command', `Get-CimInstance Win32_Process -Filter "Name='msedge.exe'" | Where-Object { $_.CommandLine -like '*${path.basename(prof)}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`], { stdio: 'ignore' }); } catch {}
+  try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
+};
+setTimeout(() => { console.error('clip.mjs: took too long, giving up'); killEdge(); try { fs.rmSync(frames, { recursive: true, force: true }); } catch {} process.exit(2); }, +opt('max', 480) * 1000).unref(); // (--max S: a run that hangs still takes its Edge down)
+process.on('uncaughtException', (e) => { console.error(e); killEdge(); try { fs.rmSync(frames, { recursive: true, force: true }); } catch {} process.exit(1); });
+process.on('unhandledRejection', (e) => { console.error(e); killEdge(); try { fs.rmSync(frames, { recursive: true, force: true }); } catch {} process.exit(1); });
 page.on('pageerror', (e) => errors.push(String(e)));
 const q = opt('q', ''); // extra address parameters
-await page.goto(`http://localhost:${site}/?seed=${seed}${q ? '&' + q : ''}`);
-await page.waitForFunction(() => window.GAME && GAME.state === 'camp' && GAME.ready, null, { timeout: 180000 }); // sprites loaded, camp shown
+// Open the game and wait for it to be up. A small static server (python -m http.server) refuses some of a page's
+// hundred requests when they come in a burst, and one module missing leaves the game never starting: so a load that
+// isn't up in 30 s is tried again (what did arrive is cached), a few times. Polled on a timer: a headless page's frames
+// can stall on a busy machine.
+async function loadGame(page, url, up = () => window.GAME && GAME.ready) {
+  for (let i = 0; ; i++) {
+    try { if (i) await page.reload(); else await page.goto(url); await page.waitForFunction(up, null, { timeout: 30000, polling: 200 }); return; }
+    catch (e) { if (i >= 5) throw e; }
+  }
+}
+await loadGame(page, `http://localhost:${site}/?seed=${seed}${q ? '&' + q : ''}`, () => window.GAME && GAME.state === 'camp' && GAME.ready); // sprites loaded, camp shown
 // --battle "rattler*10,necromancer|paladin,tower" [--arena crypt]: a battle (js/battle.js), Red's stacks then Blue's; kind*count@rank.
 // Everything is fieldable for the clip (the cheat save), and --nodes "paladin:guard1+shieldBash1,..." gives heroes skills.
 const battle = opt('battle', '');
@@ -61,9 +81,15 @@ const convoyStep = () => page.evaluate((pick) => { const r = GAME.run; if (r && 
 if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) { GAME.recFrame(1 / 30); const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick('auto'); } }, skip);
 // --down N (convoy): after the skip, the second hero drops N behind the wagon (a revive, or one left behind) and the
 // waves hold off for 20 s, so the clip shows the downed hero's ring and what becomes of them
-if (args.includes('--convoy') && opt('down')) await page.evaluate((back) => { const r = GAME.run, wg = r.wagon; r.waveT = 20;
+if (args.includes('--convoy') && opt('down')) await page.evaluate((back) => { const r = GAME.run, wg = r.wagon; r.calm = 20;
   const h = r.world.units.filter((u) => u.team === wg.team && !u.def.cargo && !u.downed && !u.dead && r.heroes[u.kind])[1];
   if (h) { h.x = wg.x - back; h.y = wg.y + 150; h.hp = 0; h.downed = true; h.target = null; h.forcedGoal = null; } }, +opt('down'));
+// --lean X (convoy): hold the camera across the road (-1 the left wood .. 1 the right); --calm S: no foes for S seconds
+if (args.includes('--convoy') && (opt('lean') != null || opt('calm') != null)) await page.evaluate(([lean, calm]) => { const r = GAME.run; if (lean != null) r.lean = +lean; if (calm != null) r.calm = +calm; }, [opt('lean', null), opt('calm', null)]);
+// --send left:5,right:5 (convoy): after the skip, a crowd from each side named (ahead | behind | left | right), n foes each
+if (args.includes('--convoy') && opt('send')) await page.evaluate((list) => { for (const part of list.split(',')) { const [dir, n] = part.split(':'); GAME.run.send(dir, +n || 5); } }, opt('send'));
+// --eval "js": run in the page after the skip (staging a clip: GAME.run is the trip)
+if (opt('eval')) await page.evaluate((js) => { (0, eval)(js); }, opt('eval'));
 const n = Math.round(secs * fps);
 // --follow yeti: the camera stays on the one of that kind nearest the fighting (then on it till it falls) (with --zoom, a close look at one enemy)
 const follow = opt('follow', '');
@@ -74,7 +100,7 @@ for (let i = 0; i < n; i++) {
   await page.screenshot({ path: path.join(frames, `f${String(i).padStart(4, '0')}.png`) });
 }
 // a plain kill() leaves Edge running on Windows: take its whole process tree down
-await browser.close(); try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); } try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
+try { await browser.close(); } catch {} killEdge();
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', path.join(frames, 'f%04d.png'),
   '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '24', '-movflags', '+faststart', out]);
 fs.rmSync(frames, { recursive: true, force: true });
