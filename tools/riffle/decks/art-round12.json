@@ -1,0 +1,436 @@
+{
+  "title": "Art round 12: six new heroes",
+  "topic": "art",
+  "order": 31,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "mob",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "The Mob: four peasants",
+      "text": "Torch, pitchfork, axe, dagger: four small peasants, one hero. Three sets. Mine: the village.",
+      "why": "You wrote: \"Mob. Is 4 peasants... Torch, pitchfork, axe, and dagger.\" Each is about 60% of a hero, with the heroes' line weight. I'd take the village: four colours and four head shapes, so they stay four people at game size. The game keeps its stand-in until you pick.",
+      "pick": [
+        "mob-village"
+      ],
+      "items": [
+        {
+          "id": "mob-village",
+          "label": "A the village",
+          "image": "../../../design/class-round12/heroes/renders/mob-village.png",
+          "thumb": "../../../design/class-round12/heroes/renders/mob-village-thumb.png",
+          "text": "A red kerchief (torch), a slouched felt hat (pitchfork), a bald woodcutter with a black beard (axe), an ochre pointed hood (dagger)."
+        },
+        {
+          "id": "mob-kitchen",
+          "label": "B the kitchen militia",
+          "image": "../../../design/class-round12/heroes/renders/mob-kitchen.png",
+          "thumb": "../../../design/class-round12/heroes/renders/mob-kitchen-thumb.png",
+          "text": "The same sackcloth on all four; a colander, a bucket, a cooking pot and a funnel for helmets."
+        },
+        {
+          "id": "mob-family",
+          "label": "C one family",
+          "image": "../../../design/class-round12/heroes/renders/mob-family.png",
+          "thumb": "../../../design/class-round12/heroes/renders/mob-family-thumb.png",
+          "text": "Grandmother, father, big son and child, four sizes. The child is very small on a phone."
+        },
+        {
+          "id": "mob-all",
+          "label": "All three, side by side",
+          "image": "../../../design/class-round12/heroes/renders/mob.png",
+          "thumb": "../../../design/class-round12/heroes/renders/mob-thumb.png",
+          "text": "Not one to pick: the three takes together at game scale beside the archer, and at game size in four facings."
+        },
+        {
+          "id": "mob-lineup",
+          "label": "In a row with five heroes",
+          "image": "../../../design/class-round12/heroes/renders/mob-lineup.png",
+          "text": "Not one to pick: each take standing third in a row of six with five heroes you approved, big and at game size."
+        }
+      ]
+    },
+    {
+      "id": "clockwork",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "The Clockwork hero",
+      "text": "\"Influence time.\" Three takes. Mine: the chronomancer with a pocket watch for a hat.",
+      "why": "A white dial with two hands is the one clock sign that still reads at game size, so I'd take the watch. The wind-up man's key can turn in the game. Father Time is the weakest: at game size he is an old wizard. The game keeps its stand-in until you pick.",
+      "pick": [
+        "clockwork-watch"
+      ],
+      "items": [
+        {
+          "id": "clockwork-watch",
+          "label": "A the pocket-watch hat",
+          "image": "../../../design/class-round12/heroes/renders/clockwork-watch.png",
+          "thumb": "../../../design/class-round12/heroes/renders/clockwork-watch-thumb.png",
+          "text": "A chronomancer: a great brass pocket watch worn as a hat, a pendulum staff, a cog turning over the free hand."
+        },
+        {
+          "id": "clockwork-windup",
+          "label": "B the wind-up man",
+          "image": "../../../design/class-round12/heroes/renders/clockwork-windup.png",
+          "thumb": "../../../design/class-round12/heroes/renders/clockwork-windup-thumb.png",
+          "text": "A brass man whose face is a clock (twenty past eight makes a moustache), a key in his back, a clock hand for a sword."
+        },
+        {
+          "id": "clockwork-sands",
+          "label": "C Father Time",
+          "image": "../../../design/class-round12/heroes/renders/clockwork-sands.png",
+          "thumb": "../../../design/class-round12/heroes/renders/clockwork-sands-thumb.png",
+          "text": "A hood, a long white beard, a clock-hand staff, an hourglass hanging from the left fist."
+        },
+        {
+          "id": "clockwork-all",
+          "label": "All three, side by side",
+          "image": "../../../design/class-round12/heroes/renders/clockwork.png",
+          "thumb": "../../../design/class-round12/heroes/renders/clockwork-thumb.png",
+          "text": "Not one to pick: the three takes together at game scale beside the archer, and at game size in four facings."
+        },
+        {
+          "id": "clockwork-lineup",
+          "label": "In a row with five heroes",
+          "image": "../../../design/class-round12/heroes/renders/clockwork-lineup.png",
+          "text": "Not one to pick: each take standing third in a row of six with five heroes you approved, big and at game size."
+        }
+      ]
+    },
+    {
+      "id": "airMage",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "The Air mage",
+      "text": "\"Whirled effect.\" Three takes. Mine: the white hood drawn up into a curl of wind.",
+      "why": "The curl and the spiral are the whirl, and it sits in the mages' family beside Storm and Frost. The fans would work both hands in turn. The one blown sideways is the weakest: the hair reads as a head wrap. The game keeps its stand-in until you pick.",
+      "pick": [
+        "airMage-swirl"
+      ],
+      "items": [
+        {
+          "id": "airMage-swirl",
+          "label": "A the curl of wind",
+          "image": "../../../design/class-round12/heroes/renders/airMage-swirl.png",
+          "thumb": "../../../design/class-round12/heroes/renders/airMage-swirl-thumb.png",
+          "text": "A white hood with a spiral on it and a curled tip, a scarf streaming back, a curled staff, a whirlwind over the free hand."
+        },
+        {
+          "id": "airMage-fans",
+          "label": "B the spiral hat and fans",
+          "image": "../../../design/class-round12/heroes/renders/airMage-fans.png",
+          "thumb": "../../../design/class-round12/heroes/renders/airMage-fans-thumb.png",
+          "text": "A wide round hat painted with one spiral, a paper fan in each hand."
+        },
+        {
+          "id": "airMage-gale",
+          "label": "C blown sideways",
+          "image": "../../../design/class-round12/heroes/renders/airMage-gale.png",
+          "thumb": "../../../design/class-round12/heroes/renders/airMage-gale-thumb.png",
+          "text": "No hat: white hair and a scarf blown hard to one side, a pinwheel for a staff."
+        },
+        {
+          "id": "airMage-all",
+          "label": "All three, side by side",
+          "image": "../../../design/class-round12/heroes/renders/airMage.png",
+          "thumb": "../../../design/class-round12/heroes/renders/airMage-thumb.png",
+          "text": "Not one to pick: the three takes together at game scale beside the archer, and at game size in four facings."
+        },
+        {
+          "id": "airMage-lineup",
+          "label": "In a row with five heroes",
+          "image": "../../../design/class-round12/heroes/renders/airMage-lineup.png",
+          "text": "Not one to pick: each take standing third in a row of six with five heroes you approved, big and at game size."
+        }
+      ]
+    },
+    {
+      "id": "warden",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "The Warden",
+      "text": "Shackles, restraints, nullification. Three takes. Mine: the helm made like a padlock.",
+      "why": "The padlock is a shape nobody else has, and its pale keyhole can carry the nullifying glow. It has no face, like the Tower. The gaoler keeps a face, behind bars. The witch-finder is the weakest: its hat sits near the Witch's. The game keeps its stand-in until you pick.",
+      "pick": [
+        "warden-lock"
+      ],
+      "items": [
+        {
+          "id": "warden-lock",
+          "label": "A the padlock helm",
+          "image": "../../../design/class-round12/heroes/renders/warden-lock.png",
+          "thumb": "../../../design/class-round12/heroes/renders/warden-lock-thumb.png",
+          "text": "A closed helm made like a padlock, a glowing keyhole, the shackle arching over the back, a shackle on a chain in each fist."
+        },
+        {
+          "id": "warden-gaoler",
+          "label": "B the gaoler and his key",
+          "image": "../../../design/class-round12/heroes/renders/warden-gaoler.png",
+          "thumb": "../../../design/class-round12/heroes/renders/warden-gaoler-thumb.png",
+          "text": "A pot helm with a cage of bars over the face, a great key held like a mace, a shackle in the left hand."
+        },
+        {
+          "id": "warden-binder",
+          "label": "C the witch-finder",
+          "image": "../../../design/class-round12/heroes/renders/warden-binder.png",
+          "thumb": "../../../design/class-round12/heroes/renders/warden-binder-thumb.png",
+          "text": "A black hat with a padlock buckle, chains over the shoulders to a padlock under the chin, a man-catcher fork."
+        },
+        {
+          "id": "warden-all",
+          "label": "All three, side by side",
+          "image": "../../../design/class-round12/heroes/renders/warden.png",
+          "thumb": "../../../design/class-round12/heroes/renders/warden-thumb.png",
+          "text": "Not one to pick: the three takes together at game scale beside the archer, and at game size in four facings."
+        },
+        {
+          "id": "warden-lineup",
+          "label": "In a row with five heroes",
+          "image": "../../../design/class-round12/heroes/renders/warden-lineup.png",
+          "text": "Not one to pick: each take standing third in a row of six with five heroes you approved, big and at game size."
+        }
+      ]
+    },
+    {
+      "id": "telekinetic",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "The Telekinetic",
+      "text": "Three takes. Mine: fists at the temples, two swords hanging in the air with no hand on them.",
+      "why": "The swords with no hands on them say what the hero does, and they are the two arm parts, so the game can swing them. The turban's three stones can circle. The blindfold's floating braid is the weakest read. The game keeps its stand-in until you pick.",
+      "pick": [
+        "telekinetic-blades"
+      ],
+      "items": [
+        {
+          "id": "telekinetic-blades",
+          "label": "A swords that hang in the air",
+          "image": "../../../design/class-round12/heroes/renders/telekinetic-blades.png",
+          "thumb": "../../../design/class-round12/heroes/renders/telekinetic-blades-thumb.png",
+          "text": "An indigo hood with an eye gem, both fists at the temples, a sword floating in front of each shoulder, a ring of force round each grip."
+        },
+        {
+          "id": "telekinetic-orbit",
+          "label": "B the turban and the stones",
+          "image": "../../../design/class-round12/heroes/renders/telekinetic-orbit.png",
+          "thumb": "../../../design/class-round12/heroes/renders/telekinetic-orbit-thumb.png",
+          "text": "A white turban with a violet gem, both hands open, three stones hanging in the air behind."
+        },
+        {
+          "id": "telekinetic-boulder",
+          "label": "C blindfold, braid, boulder",
+          "image": "../../../design/class-round12/heroes/renders/telekinetic-boulder.png",
+          "thumb": "../../../design/class-round12/heroes/renders/telekinetic-boulder-thumb.png",
+          "text": "An indigo blindfold, a silver braid floating up behind, a boulder hanging before the open right hand."
+        },
+        {
+          "id": "telekinetic-all",
+          "label": "All three, side by side",
+          "image": "../../../design/class-round12/heroes/renders/telekinetic.png",
+          "thumb": "../../../design/class-round12/heroes/renders/telekinetic-thumb.png",
+          "text": "Not one to pick: the three takes together at game scale beside the archer, and at game size in four facings."
+        },
+        {
+          "id": "telekinetic-lineup",
+          "label": "In a row with five heroes",
+          "image": "../../../design/class-round12/heroes/renders/telekinetic-lineup.png",
+          "text": "Not one to pick: each take standing third in a row of six with five heroes you approved, big and at game size."
+        }
+      ]
+    },
+    {
+      "id": "earthMage",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "The Earth mage",
+      "text": "Quakes, chains of spikes, stone walls. Three takes. Mine: the stone-shaper with rock fists.",
+      "why": "The rock fists have the strongest outline of all the takes, and pounding the ground is the earthquake. The ring of spikes is the spike spell worn on the back. The stone hood is the weakest: the Frost mage's build in brown. The game keeps its stand-in until you pick.",
+      "pick": [
+        "earthMage-fists"
+      ],
+      "items": [
+        {
+          "id": "earthMage-fists",
+          "label": "A the rock fists",
+          "image": "../../../design/class-round12/heroes/renders/earthMage-fists.png",
+          "thumb": "../../../design/class-round12/heroes/renders/earthMage-fists-thumb.png",
+          "text": "A boulder for a cap (moss, amber crystals), a russet beard in two braids, each fist in a great glove of rock."
+        },
+        {
+          "id": "earthMage-spikes",
+          "label": "B the ring of spikes",
+          "image": "../../../design/class-round12/heroes/renders/earthMage-spikes.png",
+          "thumb": "../../../design/class-round12/heroes/renders/earthMage-spikes-thumb.png",
+          "text": "A ring of rock spikes round the back of the shoulders, a bun with a stone pin, a carved standing stone for a staff."
+        },
+        {
+          "id": "earthMage-slab",
+          "label": "C the stone hood",
+          "image": "../../../design/class-round12/heroes/renders/earthMage-slab.png",
+          "thumb": "../../../design/class-round12/heroes/renders/earthMage-slab-thumb.png",
+          "text": "A brown hood with a keystone and an amber gem, columns of rock off the shoulders, a boulder staff."
+        },
+        {
+          "id": "earthMage-all",
+          "label": "All three, side by side",
+          "image": "../../../design/class-round12/heroes/renders/earthMage.png",
+          "thumb": "../../../design/class-round12/heroes/renders/earthMage-thumb.png",
+          "text": "Not one to pick: the three takes together at game scale beside the archer, and at game size in four facings."
+        },
+        {
+          "id": "earthMage-lineup",
+          "label": "In a row with five heroes",
+          "image": "../../../design/class-round12/heroes/renders/earthMage-lineup.png",
+          "text": "Not one to pick: each take standing third in a row of six with five heroes you approved, big and at game size."
+        }
+      ]
+    },
+    {
+      "id": "props",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Summons and props, drawn",
+      "text": "The things the game draws in code today, as art: each hero with its own beside it, at game scale.",
+      "why": "One design each, in the props' style, with the heroes' line weight at their size in the game. None is in the game yet: mark any part that is off and I'll redo it before it goes in.",
+      "images": [
+        "../../../design/class-round12/boards/renders/with-haymaker.png"
+      ],
+      "parts": [
+        {
+          "id": "haymaker",
+          "title": "Haymaker: the hay bale",
+          "text": "A rolled bale with two bands of twine.",
+          "images": [
+            "../../../design/class-round12/boards/renders/with-haymaker.png"
+          ]
+        },
+        {
+          "id": "shaman",
+          "title": "Shaman: totem and spirits",
+          "text": "A carved, painted pole like the one on his back; the bear, eagle and beaver in one pale blue style with a swirl on each back.",
+          "images": [
+            "../../../design/class-round12/boards/renders/with-shaman.png"
+          ]
+        },
+        {
+          "id": "alchemist",
+          "title": "Alchemist: the cauldron",
+          "text": "A black iron pot, green brew to the brim.",
+          "images": [
+            "../../../design/class-round12/boards/renders/with-alchemist.png"
+          ]
+        },
+        {
+          "id": "warlock",
+          "title": "Warlock: imp and demon form",
+          "text": "His own imp in his colours, and his demon form as its own bust with the great sword.",
+          "images": [
+            "../../../design/class-round12/boards/renders/with-warlock.png"
+          ]
+        },
+        {
+          "id": "beekeeper",
+          "title": "Beekeeper: the hive",
+          "text": "A straw skep on a round board.",
+          "images": [
+            "../../../design/class-round12/boards/renders/with-beekeeper.png"
+          ]
+        },
+        {
+          "id": "quartermaster",
+          "title": "Quartermaster: crate, barricade",
+          "text": "A roped crate with the red cross; a wall of pointed planks, and the same with spikes.",
+          "images": [
+            "../../../design/class-round12/boards/renders/with-quartermaster.png"
+          ]
+        },
+        {
+          "id": "crossbowman",
+          "title": "Crossbowman: the pavise",
+          "text": "A tall shield in his red and yellow on its prop.",
+          "images": [
+            "../../../design/class-round12/boards/renders/with-crossbowman.png"
+          ]
+        },
+        {
+          "id": "grenadier",
+          "title": "Grenadier: the big bomb",
+          "text": "His bomb, large, with a brass collar and a lit fuse.",
+          "images": [
+            "../../../design/class-round12/boards/renders/with-grenadier.png"
+          ]
+        },
+        {
+          "id": "engineer",
+          "title": "Engineer: towers and drones",
+          "text": "The torcher, the tesla tower, the snowball mortar and the medbay on one kind of round wooden deck; the med drone and the wind-up drone.",
+          "images": [
+            "../../../design/class-round12/boards/renders/with-engineer.png"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hands",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Six heroes' weapon hands",
+      "text": "Your notes on how they hold things, drawn: each hero as it is now, then the new one. Not in the game yet.",
+      "why": "Each changes only the hand and what it holds. Mark any part that is off.",
+      "images": [
+        "../../../design/class-round12/boards/renders/with-bearskin.png"
+      ],
+      "parts": [
+        {
+          "id": "bearskin",
+          "title": "Bearskin: paws on his hands",
+          "text": "You wrote: \"The bear paws of his outfit should be on his hands. Move with it. I didn't like this club.\" The paws ride on the arms now; a new club, a gnarled root, is its own part so it can go away when he claws.",
+          "images": [
+            "../../../design/class-round12/boards/renders/with-bearskin.png"
+          ]
+        },
+        {
+          "id": "warhelm",
+          "title": "Warhelm: the hammer by itself",
+          "text": "The hammer is its own part, so it can leave his hand and float while both fists punch. At rest nothing looks different.",
+          "images": [
+            "../../../design/class-round12/boards/renders/with-warhelm.png"
+          ]
+        },
+        {
+          "id": "bulwark",
+          "title": "Bulwark: further from the tip",
+          "text": "You wrote: \"Holding spear too close to tip.\" The same spear, slid forward through the fist.",
+          "images": [
+            "../../../design/class-round12/boards/renders/with-bulwark.png"
+          ]
+        },
+        {
+          "id": "valkyrie",
+          "title": "Valkyrie: holding the spear",
+          "text": "You wrote: \"Hold spear better.\" The same spear, held at the shaft across the front, the fist in plain sight.",
+          "images": [
+            "../../../design/class-round12/boards/renders/with-valkyrie.png"
+          ]
+        },
+        {
+          "id": "samurai",
+          "title": "Samurai: both hands",
+          "text": "You wrote: \"Should hold with 2 hands in front of him.\" The same katana, across the front in both fists.",
+          "images": [
+            "../../../design/class-round12/boards/renders/with-samurai.png"
+          ]
+        },
+        {
+          "id": "trapper",
+          "title": "Trapper: shotgun, trap on hip",
+          "text": "You wrote: \"I want them to have a shotgun. Should hold with 2 hands. Trap sits on their back hip.\" A double-barrelled shotgun in both fists; the trap behind the left shoulder.",
+          "images": [
+            "../../../design/class-round12/boards/renders/with-trapper.png"
+          ]
+        }
+      ]
+    }
+  ]
+}

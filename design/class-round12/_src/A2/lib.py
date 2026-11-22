@@ -119,8 +119,12 @@ def to_global(x, y, a, lx, ly):
 # ------------------------------------------------------------------ sprite
 
 class Sprite:
-    def __init__(self, comment):
+    def __init__(self, comment, line=6):
+        """round 12: line = the outline's radius in sprite units, when it is not the usual 6: a design the game draws
+        bigger than a hero's box asks for a thinner one, so that it comes out the heroes' weight on screen (the gaper's
+        data-line of round 11; js/parts.js reads it)."""
         self.comment = comment
+        self.line = line
         self.defs, self.out, self.shapes = [], [], []
         self.n = 0
         self.cache = {}
@@ -214,9 +218,15 @@ class Sprite:
         if self.open:
             self.out.append("</g>")
             self.open = False
+        flt, tag = FILTER, '<g id="sprite" filter="url(#outline)">'
+        if self.line != 6:
+            q = self.line / 6
+            flt = (flt.replace('radius="6 2.5"', f'radius="{f(6 * q)} {f(2.5 * q)}"').replace('radius="2.5 6"', f'radius="{f(2.5 * q)} {f(6 * q)}"')
+                   .replace('radius="4.6"', f'radius="{f(4.6 * q)}"'))
+            tag = f'<g id="sprite" filter="url(#outline)" data-line="{f(self.line)}">'
         return ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">\n'
-                f"<!-- {self.comment} -->\n<defs>\n{FILTER}\n{COMMON}\n" + "\n".join(self.defs) + "\n</defs>\n"
-                '<g id="sprite" filter="url(#outline)">\n' + "\n".join(self.out) + "\n</g>\n</svg>\n")
+                f"<!-- {self.comment} -->\n<defs>\n{flt}\n{COMMON}\n" + "\n".join(self.defs) + "\n</defs>\n"
+                + tag + '\n' + "\n".join(self.out) + "\n</g>\n</svg>\n")
 
 
 def cloud(cx, cy, R, n, k=0.62, rot=0):

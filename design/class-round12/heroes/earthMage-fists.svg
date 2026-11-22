@@ -74,11 +74,11 @@
 </g>
 <g id="arm-l" data-pivot="46 108"><!-- a fist in a glove of rock -->
 <g clip-path="url(#u15)"><use href="#s15" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s15" fill="url(#g7)"/><use href="#s15" fill="url(#g8)"/><g clip-path="url(#c15)"><path d="M 25.2 145 C 25 143.5 36.7 130.9 39 130 C 41.3 129.1 52.5 133 52.8 134.5 C 53 136 43.8 146.6 41.5 147.5 C 39.2 148.4 25.5 146.5 25.2 145 Z" fill="#FFFFFF" opacity="0.3"/><path d="M 46 157.5 A 5 3.5 0 1 0 56 157.5 A 5 3.5 0 1 0 46 157.5 Z" fill="#746751" opacity="0.6"/></g>
-<path d="M 32 159 L 32 169 M 44 161 L 44 171 M 56 159 L 56 169" fill="none" stroke="#7E7566" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+<path d="M 33 153 L 33 163 M 44 155 L 44 165 M 55 153 L 55 163" fill="none" stroke="#7E7566" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
 </g>
 <g id="arm-r" data-pivot="154 108"><!-- a fist in a glove of rock -->
 <g clip-path="url(#u16)"><use href="#s16" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s16" fill="url(#g7)"/><use href="#s16" fill="url(#g8)"/><g clip-path="url(#c16)"><path d="M 137.2 145 C 137 143.5 148.7 130.9 151 130 C 153.3 129.1 164.5 133 164.8 134.5 C 165 136 155.8 146.6 153.5 147.5 C 151.2 148.4 137.5 146.5 137.2 145 Z" fill="#FFFFFF" opacity="0.3"/><path d="M 158 157.5 A 5 3.5 0 1 0 168 157.5 A 5 3.5 0 1 0 158 157.5 Z" fill="#746751" opacity="0.6"/></g>
-<path d="M 144 159 L 144 169 M 156 161 L 156 171 M 168 159 L 168 169" fill="none" stroke="#7E7566" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+<path d="M 145 153 L 145 163 M 156 155 L 156 165 M 167 153 L 167 163" fill="none" stroke="#7E7566" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
 </g>
 </g>
 </svg>

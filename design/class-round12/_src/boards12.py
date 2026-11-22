@@ -13,12 +13,12 @@ sys.path.insert(0, str(HERE / "A2"))
 from compose import compose
 
 MOB_ORDER = ("torch", "pitchfork", "axe", "dagger")
-MOB_W, MOB_H = 440, 204          # the mob board's canvas, sprite units
+MOB_W, MOB_H = 482, 204          # the mob board's canvas, sprite units
 ARCHER = 22 / 56                  # room units per sprite unit for a hero
 
 
 def mob_board(take):
-    xs, ys = (58, 164, 270, 376), (70, 84, 70, 84)
+    xs, ys = (58, 178, 298, 418), (70, 84, 70, 84)
     items = []
     for w, x, y in zip(MOB_ORDER, xs, ys):
         t = (R12 / "heroes" / f"mob-{w}-{take}.svg").read_text(encoding="utf-8")
@@ -37,11 +37,13 @@ def with_board(group, hero, props, W=None, H=236):
     ht = (ROOT / "art" / "heroes" / f"{hero}.svg") if isinstance(hero, str) else hero
     items.append((ht.read_text(encoding="utf-8"), "translate(10 14)"))
     x = 236
-    for fn, vr, hr in props:
+    for fn, vr, hr, *more in props:
         p = fn if isinstance(fn, pathlib.Path) else R12 / "props" / fn
-        k = (vr / hr) / ARCHER
-        size = 220 * k
-        items.append((p.read_text(encoding="utf-8"), f"translate({x:.1f} {14 + (220 - size) * 0.62:.1f}) scale({k:.4f}) translate(10 10)"))
+        k = (vr / hr) / ARCHER                      # the box's scale in the game
+        inner = more[2] if len(more) > 2 else 1.0   # the scale the design is drawn at inside its box
+        size = 220 * k * inner                      # what the drawing itself takes up
+        cx, cy = x + size / 2, 14 + (220 - size) * 0.62 + size / 2
+        items.append((p.read_text(encoding="utf-8"), f"translate({cx:.1f} {cy:.1f}) scale({k:.4f}) translate(-100 -100)"))
         x += size + 12
     W = W or int(x + 6)
     out = R12 / "boards" / f"with-{group}.svg"

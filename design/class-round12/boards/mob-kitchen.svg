@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 204" width="440" height="204">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 482 204" width="482" height="204">
 <!-- THE MOB, set "kitchen" (round 12): its four peasants (torch, pitchfork, axe, dagger) side by side at the scale they share. For the board only: the game draws each peasant's own file. -->
 <g transform="translate(-42 -30)">
 
@@ -67,7 +67,7 @@
 </g>
 </g>
 </g>
-<g transform="translate(64 -16)">
+<g transform="translate(78 -16)">
 
 <defs>
 <filter id="k1_outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -140,7 +140,7 @@
 </g>
 </g>
 </g>
-<g transform="translate(170 -30)">
+<g transform="translate(198 -30)">
 
 <defs>
 <filter id="k2_outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -210,7 +210,7 @@
 </g>
 </g>
 </g>
-<g transform="translate(276 -16)">
+<g transform="translate(318 -16)">
 
 <defs>
 <filter id="k3_outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>

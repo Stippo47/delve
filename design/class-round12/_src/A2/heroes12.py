@@ -388,7 +388,7 @@ def telekinetic(v):
             "blades": "a deep indigo hood with a pale eye-shaped gem, both fists pressed to the temples (in #body); two short "
                       "swords hang in the air in front of the shoulders with no hand on them, a ring of force round each "
                       "grip (arm-l and arm-r: they strike in turn)",
-            "boulder": "a white blindfold tied over the upper face, dark hair in one long braid that floats up behind the head "
+            "boulder": "an indigo blindfold tied over the upper face, pale silver hair in one long braid that floats up behind the head "
                        "and curls over (#back, sways); a mustard robe; a boulder hanging in the air in front of the open right "
                        "hand, a crescent of force under it (arm-r); the left hand open"}[v]
     S = Sprite(f"TELEKINETIC (round 12, take \"{v}\"): the hero who moves things with the mind. {what}. " + LAYOUT)
@@ -422,20 +422,20 @@ def telekinetic(v):
         S.group("arm-r", PR, "a sword that hangs in the air")
         psi_blade(S, frame(174, 126, 6))
     else:
-        HAIR = "#4A3A5E"
+        HAIR = "#DCD6EA"
         S.group("back", (100, 60), "the floating braid")
         sp = [(100, 54), (104, 34), (118, 16), (138, 8), (156, 16), (160, 32), (150, 42)]
         S.shape(taper(sp, 26, 12, 0.8), HAIR, shadow=0,
-                decor="".join(strokes(f"M {f(x - 12)} {f(y + dy)} L {f(x + 12)} {f(y - dy)}", "#8E7AA8", 3.2, 0.7) for (x, y), dy in zip(sp[1:6], (5, 9, 2, -8, -2))))
+                decor="".join(strokes(f"M {f(x - 12)} {f(y + dy)} L {f(x + 12)} {f(y - dy)}", "#9A8EB8", 3.2, 0.8) for (x, y), dy in zip(sp[1:6], (5, 9, 2, -8, -2))))
         S.shape(circ(149, 44, 8), GOLD, shadow=1, decor=hi(147, 42, 3, 2, 0.7))
         S.group("body")
         robe(S, MUST, INDIGO, 8)
         head(S)
         mouth(S)
         S.shape(blob([(51, 106), (46, 78), (60, 52), (100, 42), (140, 52), (154, 78), (149, 106), (140, 90), (120, 82), (100, 86), (80, 82), (60, 90)], 0.85), HAIR, shadow=4,
-                decor=hi(78, 58, 16, 8, 0.14, -20))
-        S.shape(blob([(50, 98), (148, 98), (160, 92), (168, 100), (160, 106), (166, 116), (150, 112), (149, 114), (100, 118), (51, 114)], 0.35), "#F6F3EC", shadow=3,
-                decor=strokes("M 52 111 Q 100 116 148 111", "#C9C2B0", 2.6, 0.8))
+                decor=hi(78, 58, 16, 8, 0.4, -20) + strokes("M 100 44 L 100 84", "#9A8EB8", 3, 0.6))
+        S.shape(blob([(50, 98), (148, 98), (160, 92), (168, 100), (160, 106), (166, 116), (150, 112), (149, 114), (100, 118), (51, 114)], 0.35), INDIGO, shadow=3,
+                decor=strokes("M 52 102 Q 100 106 148 102", "#6E68C8", 2.6, 0.8))
         free(S, "l", 54, 142)
         S.group("arm-r", PR, "the open hand and the boulder that hangs before it")
         fist(S, 146, 142, 0, w=24, h=21)
@@ -519,7 +519,7 @@ def earth_mage(v):
             S.group(part, PL if s < 0 else PR, "a fist in a glove of rock")
             x, y = 100 + s * 56, 150
             rock(S, x, y, 25, 20 if s > 0 else 70, n=8, shadow=3)
-            S.raw(strokes(f"M {x - 12} {y + 9} L {x - 12} {y + 19} M {x} {y + 11} L {x} {y + 21} M {x + 12} {y + 9} L {x + 12} {y + 19}", DSTONE, 3.4, 0.75))
+            S.raw(strokes(f"M {x - 11} {y + 3} L {x - 11} {y + 13} M {x} {y + 5} L {x} {y + 15} M {x + 11} {y + 3} L {x + 11} {y + 13}", DSTONE, 3.4, 0.75))
     else:
         HAIR = "#A8552E"
         S.group("back", (100, 100), "the ring of spikes")
