@@ -9,7 +9,7 @@ import { hurt, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode,
 import { STATUS } from './statuses.js';
 import { LOOK2 } from './looks2.js';
 import { lineClear, circleRect } from './path.js';
-import { foesNear, friendsNear, hurtMost, dmgOf, ang, ring, cast, heal, addStatus, zone, shoot, segDist } from './kits.js';
+import { foesNear, friendsNear, hurtMost, dmgOf, ang, ring, cast, heal, addStatus, zone, shoot, segDist, hooksOf } from './kits.js';
 
 // ---------------------------------------------------------------- helpers
 const k2 = (w, o) => fx(w, { type: 'k2', ...o });                 // a look of our own (fx2.js DRAW[o.draw])
@@ -19,7 +19,7 @@ const after = (u, t, f) => { u.later = [...(u.later || []).filter((l) => !l.done
 const timer = (u, id, t, tick, end) => { const k = u.k2 || (u.k2 = []); const old = k.find((x) => x.id === id); if (old) { old.t = t; old.tick = tick; old.end = end; return old; } const n = { id, t, tick, end }; k.push(n); return n; };
 const inReach = (u, t, extra = 0) => t && alive(t) && dist(u.x, u.y, t.x, t.y) - u.r - t.r <= (u.def.range || 20) + extra;
 const inFront = (u, e, arc) => angleDiff(ang(u, e), u.facing) < arc / 2;
-const BUILDS = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse', 'entangle', 'charm', 'confuse', 'sleepy', 'bleed', 'fear'];
+const BUILDS = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse', 'entangle', 'charm', 'confuse', 'sleepy', 'bleed', 'fear', 'shackle'];
 // a melee blow drawn as a weapon arc (fxkit turns the 'swing' telegraph into the weapon's arc; aoe: a slam on the floor)
 const swingMark = (w, u, R, arc, aoe) => w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: R, a: u.facing, arc, t: 0.16, max: 0.16, color: '#FFFFFF', src: u, aoe });
 // break off what an enemy is winding up: its act, and any danger zone it has showing
@@ -99,8 +99,11 @@ export function whirl(w, e, amt, src) {
     textU(w, e.x, e.y, e.r + 12, 'WHIRLED', '#EEF3F8', 1.2);
     k2(w, { draw: 'whirlBurst', unit: e, x: e.x, y: e.y, r: e.vr, max: 1.1 });
     for (let i = 0; i < 3; i++) after(e, 0.02 + i * 0.3, () => { if (alive(e)) { shove(e, rand() * TAU, e.def.boss ? 180 : 520); puff(w, e.x, e.y, '#EEF3F8', 6, 90, 6, 0.4); } });
+    if (src && alive(src)) for (const h of hooksOf(src)) if (h.whirlBurst) h.whirlBurst(w, src, e); // round 15 (lane N): whoever whirled it to bursting hears of it (the Air Mage's trait, kits3.js)
   }
 }
+// round 15 (lane N): the shared pieces, for kits3.js (the six newer heroes are built from the same parts)
+export { k2, after, timer, onUnit, offUnit, hookOf, isOn, flung, shove, interrupt, foeWinding, haste, atObstacle, swingMark, inFront, handAt, lob };
 const k01h = (v) => Math.max(0, Math.min(1, v));
 // DIRTY (the Digger: "Rub some dirt in it"): a coat of dirt. The next blow that would land is soaked up by it, and that
 // is the end of it; until then he attacks 30% slower, and fire and poison can't take on him (both are washed off now).

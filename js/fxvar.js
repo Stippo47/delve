@@ -19,7 +19,15 @@
 //              that quickens as it builds, and splashes on the floor), 2 Trail (nothing on the body: a pool grows
 //              under it and it leaves a trail of blood where it goes), 3 Drop (a blood drop over its head fills up
 //              like a gauge and throbs); each its own burst
+//   shackle    (round 15, lane N: Shackled's look on a unit is new, so three takes that differ in kind, fx3.js drawMarks3)
+//              1 Irons (a cuff at each wrist, open while it builds and shut when it bursts, the chain across its front,
+//              a lock on it), 2 Wound (a chain wound round the body link by link as it builds, locked at the burst),
+//              3 Staked (the cuffs, and a chain down to a ring bolted to the floor behind it)
+//   timeBubble (round 15, lane N: the Clockmaker's Slow Time) 1 Dial (a great clock face on the floor whose hands barely
+//              move, cold thick air, slow motes), 2 Glass (a dome of pale glass with a bright rim and a slow shine)
 export const VARIANTS = {
+  shackle: ['Irons', 'Wound', 'Staked'],
+  timeBubble: ['Dial', 'Glass'],
   bleed: ['Spurts', 'Trail', 'Drop'],
   shockwave: ['Arcs', 'Ripples', 'Stomps'],
   oldBones: ['Stand', 'Creak', 'Glance'],

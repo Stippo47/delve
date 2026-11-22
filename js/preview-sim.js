@@ -163,7 +163,7 @@ export function foeMoves(k, rank = 0) {
 }
 // Every status the Book names, and how each is shown. Build-ups (statuses.js STATUS) build to their burst; the states
 // a burst leaves (frozen, sickened...) are shown by building their cause; the rest are put on directly.
-const FROM_BURST = { frozen: 'chill', sick: 'poison', radiant: 'radiance', hexed: 'curse', ko: 'stagger', charmed: 'charm', addled: 'confuse', terrified: 'fear' }; // (round 13, lane S: tangled is rooted now; the new bursts)
+const FROM_BURST = { frozen: 'chill', sick: 'poison', radiant: 'radiance', hexed: 'curse', ko: 'stagger', charmed: 'charm', addled: 'confuse', terrified: 'fear', shackled: 'shackle' }; // (round 13, lane S: tangled is rooted now; the new bursts; round 15: Shackled)
 const PUT_ON = {
   root: (w, s) => { s.rootT = 3; },
   sleep: (w, s) => { s.sleepT = 3; },
@@ -273,6 +273,7 @@ function heroStage(S, spec) {
     if (id === 'cleric' && ab === 'attack') { ally = fullAlly(w, 'paladin', 230, 140); ally.hp = ally.maxHp * 0.5; }
     if (sh.mob === 'ally' && ally) dummies.forEach((d, i) => { const a = -0.6 + i * 0.9; d.x = d.home.x = ally.x + Math.cos(a) * 62; d.y = d.home.y = ally.y - 40 + Math.sin(a) * 50; });
     if (sh.downed && ally) { ally.downed = true; ally.hp = 0; }
+    if (sh.strikeAlly && ally) ally.hp = ally.maxHp; // round 15 (lane N): the friend starts whole and is struck just before the cast (Rewind turns it back)
     pin = { x: u.x, y: u.y }; cast = false; u.target = dummies[0]; last = u.lastAttackT; S.hits = hitWatch();
     dmg0 = null;
     S.hero = u; S.dummies = dummies;
@@ -286,6 +287,7 @@ function heroStage(S, spec) {
         pin = { x: u.x, y: u.y };
         // (round 14: no words on the stage. What a tier adds is in the caption under it; the stage shows it happening.)
       }
+      if (sh.strikeAlly && ally && !ally._struck && S.t >= 0.3) { ally._struck = true; hurt(w, ally, ally.maxHp * sh.strikeAlly, dummies[0], { noDodge: true, knock: 260 }); } // round 15 (lane N)
       if (u.hp < u.maxHp - 0.5) u.barAlways = true; // once the hero is hurt its health shows (a heal, a shield, a refusal to fall)
       if (ab !== 'attack' && !(sh.attacks && cast)) u.atkT = Math.max(u.atkT, 0.5);
       else if (!ranged) { // melee: the brain won't swing while pinned, so the stage swings on a beat
@@ -304,7 +306,7 @@ function heroStage(S, spec) {
       if (sh.killDummy && cast && S.t - CAST_AT > 0.6 && !u._killed) { u._killed = true; hurt(w, dummies[1], 99999, u, { noDodge: true }); hurt(w, dummies[2], 99999, u, { noDodge: true }); }
       if (sh.hitDummy && cast && Math.floor(S.t / 0.45) !== Math.floor((S.t - dt) / 0.45)) hurt(w, dummies[0], 14, null, { noDodge: true });
       // what it called up falls before the loop ends, so what happens when they fall (an explosion at a higher tier) shows
-      if (cast && !S.felled && S.t > S.loop - 0.8) { S.felled = true; for (const o of w.units) if (o !== u && o.team === u.team && !o.dead && !o.downed && o !== ally && (o.summonBy === u || o.summon)) hurt(w, o, o.hp + 9999, dummies[0], { noDodge: true }); }
+      if (cast && !S.felled && S.t > S.loop - 0.8) { S.felled = true; for (const o of w.units) if (o !== u && o.team === u.team && !o.dead && !o.downed && o !== ally && !o.partOf && (o.summonBy === u || o.summon)) hurt(w, o, o.hp + 9999, dummies[0], { noDodge: true }); }
     };
     S.after = (dt) => {
       // did it do anything: a cast that left something in the world or changed someone's health; an attack that landed
@@ -415,6 +417,13 @@ const TRAIT_SCENE = {
   handy: { foes: [{ at: 'far' }], hero: { abilities: true } },
   moonblood: { foes: [{ at: 'front', hpX: 14 }], hero: { hp: 0.5 } },
   firstImpression: { foes: [{ at: 'adj', w: 'sword', hits: 1.1, dmg: 0.08, aim: false }], hero: { idle: true } },
+  // round 15 (lane N): the six newer heroes
+  strengthInNumbers: { foes: [{ at: 'front', hpX: 40 }], loop: 5.6 },
+  spareSecond: { foes: [{ at: 'adj', w: 'sword', hits: 1, dmg: 0.1, aim: false }], hero: { idle: true, downAt: 3.4 }, loop: 6 },
+  stormsEye: { foes: [{ at: [286, 110], hpX: 60 }, { at: [322, 140], hpX: 60 }, { at: [286, 170], hpX: 60 }], hero: { abilities: true }, loop: 8.5 },
+  ballAndChain: { foes: [{ at: 'far', hpX: 60 }], hero: { abilities: true, cast: ['manacle'] }, loop: 6 },
+  poltergeist: { foes: [{ at: [262, 135], weak: true }, { at: [320, 105], hpX: 40 }, { at: [320, 170], hpX: 40 }] },
+  aftershock: { foes: [{ at: [290, 115], hpX: 60 }, { at: [316, 165], hpX: 60 }], hero: { abilities: true, cast: ['spikeChain'] }, loop: 6 },
 };
 export const traitNote = (id) => {
   const t = HEROES[id] && HEROES[id].trait, sc = t && TRAIT_SCENE[t.id];

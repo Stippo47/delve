@@ -1760,6 +1760,7 @@ LOOK2.windup = (ctx, u, w) => { const fl = u.flashT > 0.06, step = Math.sin((u.k
   ctx.save(); ctx.rotate((u.key || 0) * 0.6); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-9, 0); ctx.lineTo(-16, 0); ctx.moveTo(-16, -4); ctx.lineTo(-16, 4); }, '#8A94A6', 2.4); ctx.restore(); ctx.restore(); };
 
 export function drawK2(ctx, f, w, layer) { const d = DRAW[f.draw]; if (d) { ctx.save(); d(ctx, f, w, layer); ctx.restore(); } }
+export const DRAW2 = DRAW; // round 15 (lane N): fx3.js adds the six newer heroes' looks to the same table
 
 // ---------------------------------------------------------------- signatures at the cast
 export const SIG2 = {};

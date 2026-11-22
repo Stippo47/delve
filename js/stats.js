@@ -45,7 +45,7 @@ function sourceOf(src, root, o = {}) {
   const tk = o.tk || (CUR.tk && (CUR.tkU === root || CUR.tkU === src) ? CUR.tk : null); // only the wearer's own trinket
   if (tk) return 'tk:' + tk;
   if (src && 'ghostOf' in src) return 'tk:wraithVeil'; // a Wraith Veil ghost fighting on
-  if (src && src !== root) return src.tkSrc ? 'tk:' + src.tkSrc : 'pet';
+  if (src && src !== root && src.partOf !== root) return src.tkSrc ? 'tk:' + src.tkSrc : 'pet'; // (round 15, the Mob: its other bodies' blows are the hero's own weapon, not a pet's)
   const ab = o.pab || o.ab || (root.kit && root.kit.using) || (CUR.abU === root ? CUR.ab : null);
   if (ab) return 'ab:' + ab;
   if (o.proc) return 'other';

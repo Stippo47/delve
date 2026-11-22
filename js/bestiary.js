@@ -289,6 +289,9 @@ export const STATUSES = {
   bleed: { name: 'Bleeding', desc: 'Loses health every second; every blow keeps the wound open longer, and heals take less. Full up, it haemorrhages: a third of the health it has left, at once.' },
   fear: { name: 'Fear', desc: 'Backs away from whatever frightened it. Full up, it is terrified.' },
   terrified: { name: 'Terrified', desc: 'Running for its life: it can\'t attack or use an ability, the ones it had ready went to waste, and its panic frightens its friends nearby.' },
+  // round 15 (lane N): the Warden's (numbers: statuses.js SHACKLE; rules: docs/STATUSES.md)
+  shackle: { name: 'Shackles', desc: 'Irons closing on its wrists: its abilities come round slower and slower. Full up, they lock.' },
+  shackled: { name: 'Shackled', desc: 'In irons: it can\'t make a basic attack, and every ability it has was set back by half its cooldown when the irons locked. Bosses shake them off far sooner and lose only a quarter.' },
 };
 
 // Helpful (and a few harmful) states a hero's kit, a trinket or an elixir switches on (round 13: "Some positive status
@@ -353,6 +356,15 @@ export const BUFFS = {
   thorned: { name: 'Thorned', icon: 'debuff', bad: true, desc: 'Thorns in the way.' }, weakened: { name: 'Weakened', icon: 'debuff', bad: true, desc: 'Its blows lost their weight.' },
   dazed: { name: 'Dazed', icon: 'debuff', bad: true, desc: 'Seeing stars.' }, impaled: { name: 'Impaled', icon: 'debuff', bad: true, desc: 'A spear in it.' },
   stung: { name: 'Stung', icon: 'debuff', bad: true, desc: 'Bee stings.' }, pied: { name: 'Pie in the Face', icon: 'debuff', bad: true, desc: 'Custard everywhere.' },
+  // round 15 (lane N): the six newer heroes' buffs and harms
+  scatter: { name: 'Scattered', icon: 'ward', desc: 'Running four ways at once: hard to pin down.' },
+  fastTime: { name: 'Fast Time', icon: 'haste', desc: 'Time is running quick for it.' },
+  chainGang: { name: 'Chain Gang', icon: 'stance', desc: 'Holding the chains: braced.' },
+  spareSecond: { name: 'Spare Second', icon: 'ward', desc: 'A moment that never happened.' },
+  slowTime: { name: 'Slow Time', icon: 'debuff', bad: true, desc: 'Time is running thick and slow round it.' },
+  stopped: { name: 'Stopped', icon: 'debuff', bad: true, desc: 'Stopped mid-step: its clock is not running.' },
+  pressed: { name: 'Pressed', icon: 'debuff', bad: true, desc: 'A great weight on its shoulders.' },
+  quake: { name: 'Shaken', icon: 'debuff', bad: true, desc: 'The floor won\'t hold still under it.' },
   beloved: { name: 'Sweetheart', icon: 'charm', desc: 'Blown a kiss: whoever hits it falls for it, and soon can\'t hit it at all.' },
 };
 // States that aren't buffs (hud.js STATES reads the unit for these; the words are here so the Book can show them all).

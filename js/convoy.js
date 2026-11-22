@@ -86,7 +86,7 @@ export const REPAIR = 0.25;
 DEFS.wagon = {
   team: 'hero', name: 'The Wagon', cargo: true, r: 66, vr: 66, turn: 0, accel: 0, face: 0, mass: 60, hp: WAGON_HP, speed: 0,
   role: 'melee', range: 0, atkCd: 99, dmg: 0, temp: 0.3, commit: 1, noCorpse: true, noElite: true, armor: 3,
-  res: { poison: 0, burn: 0.5, chill: 0, shock: 0.5, wet: 0, entangle: 0, stagger: 0, curse: 0, radiance: 0, charm: 0, confuse: 0, sleepy: 0, bleed: 0, fear: 0 },
+  res: { poison: 0, burn: 0.5, chill: 0, shock: 0.5, wet: 0, entangle: 0, stagger: 0, curse: 0, radiance: 0, charm: 0, confuse: 0, sleepy: 0, bleed: 0, fear: 0, shackle: 0 },
   brain: () => true, draw: drawWagon,
 };
 // Round 14 (the designer: "Give the cart a hit box around all of it. The players are walking through it"): the wagon is

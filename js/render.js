@@ -11,6 +11,8 @@ import { drawHazardPuddle, flushPuddles, drawPuddle } from './puddles.js';
 import { drawEnemyHp, hpWash, setHpSides } from './hpstyle.js';
 import { icon } from './icons.js';
 import { heartPath, drawStatusMarks, bleedFlash, bleedLook } from './fx-status.js'; // round 13 (lane S): the new statuses' marks
+import { drawMarks3 } from './fx3.js'; // round 15 (lane N): Shackled's irons
+import { WALL2 } from './looks2.js';
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
 import { drawFoeGround, snowRoll, drawFoe } from './foe-draw.js'; // round 13 (lane E): the newer enemies' extra drawing
 
@@ -181,7 +183,7 @@ export function draw(ctx, w) {
   const s = view.scale;
   ctx.drawImage(fl, -floorCache.pad, -floorCache.pad, fl.width / floorCache.s, fl.height / floorCache.s);
   drawDoors(ctx, w);
-  for (const r of w.walls) if (r.temp != null) { if (r.kind === 'ice') drawIceWall(ctx, r, w.time); else drawWallThemed(ctx, r, w); } // the rest are in the floor cache
+  for (const r of w.walls) if (r.temp != null) { if (r.kind === 'ice') drawIceWall(ctx, r, w.time); else if (WALL2[r.kind]) WALL2[r.kind](ctx, r, w.time); /* round 15 (lane N): a wall with its own look (the Earth Mage's stone) */ else drawWallThemed(ctx, r, w); } // the rest are in the floor cache
   for (const h of w.hazards) if (!drawHazardPuddle(ctx, h, w.time) && !drawThemeHazard(ctx, h, w.time)) drawHazard(ctx, h, w.time); // puddles.js: the player's puddle style
   drawArena(ctx, w);
   drawDanger(ctx, w);
@@ -208,7 +210,7 @@ export function draw(ctx, w) {
   noteHits(w);
   for (const u of order) drawBodyGround(ctx, u, w); // chains, rays and rings that lie under the units (round 9)
   // a rat drawn by hand gets its springy tail; the rat king's art (art round 8) has its own tails knotted in it
-  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.def.art && !u.downed) drawTail(ctx, u, dt); if (!drawFoe(ctx, u, w, dt, RH)) drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawStatusMarks(ctx, u, w.time, w); drawBodyFx(ctx, u, w); }
+  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.def.art && !u.downed) drawTail(ctx, u, dt); if (!drawFoe(ctx, u, w, dt, RH)) drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawStatusMarks(ctx, u, w.time, w); drawMarks3(ctx, u, w); /* round 15 (lane N): Shackled's irons */ drawBodyFx(ctx, u, w); }
   if (w.drawOver) w.drawOver(ctx, w, view); // lane W (convoy.js): the forest's canopy, over the units at the edge (a cached picture)
   for (const p of w.projectiles) projectile(ctx, p, w.time);
   for (const p of w.particles) drawParticle(ctx, p);
@@ -635,7 +637,7 @@ export function warmArt(w) {
 // A unit drawn from its SVG parts, arms moving with what it is doing (parts.js).
 // Our summons keep the black outline and are hue-shifted towards blue-grey (round 8; round 7's purple outline is gone),
 // so a raised skeleton or a called wolf reads as ours, not the enemy's.
-const isOurs = (u) => !!(u.summon && u.team === 'hero' && !u.ethereal);
+const isOurs = (u) => !!(u.summon && u.team === 'hero' && !u.ethereal && !u.partOf); // (round 15, the Mob: its other bodies are the hero, not summons: no blue-grey shift)
 function drawPartsUnit(ctx, u, w) {
   const sizeU = u.vr * 220 / (u.def.headR || headR(u.kind)); // def.headR: the head's radius in the art's SVG units
   const set = getRig(u.def.art, sizeU * view.scale * view.dpr * 1.04);
@@ -786,7 +788,7 @@ function drawCorpse(ctx, c) {
 const STATUS = [['burn', '#FF7A2F'], ['chill', '#7FD6F5'], ['poison', '#9BCB3C']];
 const SHOW_BARS = false; // health and status bars live in the HUD now (designer, round 2)
 function drawOverlay(ctx, u, dt = 0) {
-  if (u.downed || (u.linkTo && u.def.segment)) return; // (round 13, lane E: a chain's links carry no bar: its health is its head's)
+  if (u.downed || (u.linkTo && u.def.segment) || u.partOf) return; // (round 13, lane E: a chain's links carry no bar: its health is its head's; round 15, the Mob: one bar, on its lead)
   upright(ctx, u.x, u.y, () => {
     if (u.team === 'enemy' || w_battle || u.barAlways) drawEnemyHp(ctx, u, dt); // hpstyle.js: only once it's hurt, in the player's chosen style
     if (u.team !== 'hero' && u.act && (u.act.type === 'windup' || u.act.type === 'slam')) {

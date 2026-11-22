@@ -164,6 +164,11 @@ const STATUS = {
     <circle cx="12" cy="14" r="1.3" fill="${INK}" ${H}/><circle cx="20" cy="14" r="1.3" fill="${INK}" ${H}/><ellipse cx="16" cy="22" rx="2.6" ry="3.2" fill="${INK}" ${H}/><path d="M26 4c1.6 2.4 2.6 3.8 2.6 5a2.6 2.6 0 0 1-5.2 0c0-1.2 1-2.6 2.6-5z" fill="#9FDDF6"/>`,
   terrified: `<path d="M18 4c6 0 10 4.6 10 11 0 5.6-2.8 11-10 12-7.200-1-10-6.400-10-12 0-6.400 4-11 10-11z" fill="#DCE4D0"/><circle cx="14.400" cy="13" r="2.8" fill="#FFFFFF" ${H}/><circle cx="21.600" cy="13" r="2.8" fill="#FFFFFF" ${H}/>
     <circle cx="14.400" cy="13" r="1.1" fill="${INK}" ${H}/><circle cx="21.600" cy="13" r="1.1" fill="${INK}" ${H}/><ellipse cx="18" cy="21" rx="3" ry="3.800" fill="${INK}" ${H}/><path d="M1 12h5M2 18h5M1 24h5" fill="none" stroke="#DCE4D0" stroke-width="2.4"/>`,
+  // round 15 (lane N): shackles build (an open iron cuff and two links), shackled is the burst (two cuffs locked together)
+  shackle: `<path d="M8 21a8 8 0 1 1 12-7" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/><path d="M8 21a8 8 0 1 1 12-7" fill="none" stroke="#A9B4C6" stroke-width="3.2" stroke-linecap="round" ${H}/>
+    <ellipse cx="22" cy="20" rx="4" ry="2.800" fill="none" stroke="${INK}" stroke-width="5"/><ellipse cx="22" cy="20" rx="4" ry="2.800" fill="none" stroke="#DCE3EC" stroke-width="1.800" ${H}/><ellipse cx="26.500" cy="25.500" rx="2.800" ry="4" fill="none" stroke="${INK}" stroke-width="5"/><ellipse cx="26.500" cy="25.500" rx="2.800" ry="4" fill="none" stroke="#A9B4C6" stroke-width="1.800" ${H}/>`,
+  shackled: `<circle cx="9" cy="15" r="6" fill="none" stroke="${INK}" stroke-width="7"/><circle cx="9" cy="15" r="6" fill="none" stroke="#A9B4C6" stroke-width="3.200" ${H}/><circle cx="23" cy="15" r="6" fill="none" stroke="${INK}" stroke-width="7"/><circle cx="23" cy="15" r="6" fill="none" stroke="#A9B4C6" stroke-width="3.200" ${H}/>
+    <path d="M12 6.500h8v6h-8z" fill="#E8B53A"/><circle cx="16" cy="9.500" r="1.300" fill="${INK}" ${H}/><path d="M6 25h20" fill="none" stroke="${INK}" stroke-width="6" stroke-linecap="round"/><path d="M6 25h20" fill="none" stroke="#DCE3EC" stroke-width="2.400" stroke-dasharray="3 2.500" ${H}/>`,
   // ---- round 13: helpful states (shown on the cards and in the pause panel with their own names: bestiary.js BUFFS)
   haste: `<path d="M4 10h9M2 16h11M4 22h9" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M4 10h9M2 16h11M4 22h9" fill="none" stroke="#FFF0A0" stroke-width="2" stroke-linecap="round" ${H}/><path d="M14 5l14 11-14 11 4-11z" fill="#E8D84A"/>`,
   might: `<path d="M16 2l4.400 4.400V20h-8.800V6.400z" fill="#E8EEF6"/><path d="M16 5v14" stroke="#FFFFFF" stroke-width="1.6" ${H}/><path d="M7 20h18v3.400H7z" fill="#E8B53A"/><path d="M14 23.400h4V30h-4z" fill="#8A5A30"/>`,
@@ -206,6 +211,14 @@ const G = {
   sleep: STATUS.sleep,
   vines: STATUS.root,
   wave: `<path d="M3 20c4-6 8-6 12 0s8 6 14 0" fill="none" stroke="${INK}" stroke-width="7"/><path d="M3 20c4-6 8-6 12 0s8 6 14 0" fill="none" stroke="#E0B070" stroke-width="3.4" ${H}/><path d="M6 11h20" fill="none" stroke="#E0B070" stroke-width="2.4"/>`,
+  // round 15 (lane N): the six newer heroes
+  clock: `<circle cx="16" cy="17" r="11.500" fill="#F6E3A6"/><circle cx="16" cy="17" r="8" fill="#FFFBEA" ${H}/><path d="M16 11v6l4.500 3" fill="none" stroke="${INK}" stroke-width="2.600" stroke-linecap="round"/><path d="M13 3h6" fill="none" stroke="#DEAF59" stroke-width="3"/>`,
+  chain: `<ellipse cx="9" cy="9" rx="5.500" ry="4" transform="rotate(45 9 9)" fill="none" stroke="${INK}" stroke-width="6.500"/><ellipse cx="9" cy="9" rx="5.500" ry="4" transform="rotate(45 9 9)" fill="none" stroke="#C9D2DE" stroke-width="2.800" ${H}/>
+    <ellipse cx="16" cy="16" rx="5.500" ry="4" transform="rotate(-45 16 16)" fill="none" stroke="${INK}" stroke-width="6.500"/><ellipse cx="16" cy="16" rx="5.500" ry="4" transform="rotate(-45 16 16)" fill="none" stroke="#8A94A6" stroke-width="2.800" ${H}/>
+    <ellipse cx="23" cy="23" rx="5.500" ry="4" transform="rotate(45 23 23)" fill="none" stroke="${INK}" stroke-width="6.500"/><ellipse cx="23" cy="23" rx="5.500" ry="4" transform="rotate(45 23 23)" fill="none" stroke="#C9D2DE" stroke-width="2.800" ${H}/>`,
+  null: `<circle cx="16" cy="16" r="11" fill="none" stroke="${INK}" stroke-width="7.500"/><circle cx="16" cy="16" r="11" fill="none" stroke="#C9D2DE" stroke-width="3.400" ${H}/><path d="M8 24L24 8" fill="none" stroke="${INK}" stroke-width="7.500" stroke-linecap="round"/><path d="M8 24L24 8" fill="none" stroke="#C9D2DE" stroke-width="3.400" stroke-linecap="round" ${H}/>`,
+  rock: `<path d="M6 20l3-10 8-5 9 4 2 10-6 8H10z" fill="#A99C8B"/><path d="M9 10l8-5 3 7-7 4z" fill="#E9DDC2" ${H}/><path d="M3 6l3 2M26 3l-2 3M29 24l-3-1" fill="none" stroke="#B58CFF" stroke-width="2.400" stroke-linecap="round"/>`,
+  spike: `<path d="M3 28l5-15 4 9 4-19 4 19 4-9 5 15z" fill="#A99C8B"/><path d="M16 3l-2 12 2 6z" fill="#E9DDC2" ${H}/><path d="M8 13l-1 8 2 4z" fill="#E9DDC2" ${H}/>`,
   // round 13 (lane S): the Enchantress
   kiss: `<path d="M16 28C6 21 3 16 3 11.5a6.5 6.5 0 0 1 13-1.5 6.5 6.5 0 0 1 13 1.5C29 16 26 21 16 28z" fill="#FF8AC8"/><path d="M10 15c2 2 4 2 6 0 2 2 4 2 6 0-2 3.6-10 3.6-12 0z" fill="#C8306E" ${H}/><path d="M8 10a4 4 0 0 1 4-3" fill="none" stroke="#FFE0F0" stroke-width="2" ${H}/>`,
   string: `<path d="M4 26C10 20 8 10 16 10s6 10 12 4" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M4 26C10 20 8 10 16 10s6 10 12 4" fill="none" stroke="#FF8AC8" stroke-width="2.2" stroke-linecap="round" ${H}/>
@@ -226,7 +239,8 @@ const ABILITY_GLYPH = {
 export const ABILITY_COLOR = { shield: '#5B8CDB', sun: '#F2C84A', dash: '#C8C0B0', burst: '#E0B070', arrows: '#D8C08A', snow: '#7FD6F5',
   dagger: '#B8C4D4', flame: '#FF7A2F', bolt: '#F2E04A', cloud: '#9AA8BC', heart: '#7CC06F', note: '#FFD27A', leaf: '#7FA04A',
   skull: '#D9D2C0', vial: '#9BCB3C', swirl: '#D8DEE8', hook: '#A8A8B0', fist: '#E0604B', up: '#E8B53A', paw: '#A0683A',
-  drain: '#C8553D', wall: '#9FDDF6', sleep: '#C9B8FF', vines: '#7FA04A', wave: '#E0B070', kiss: '#FF8AC8', string: '#FF8AC8', heartbreak: '#FF5AAE' };
+  drain: '#C8553D', wall: '#9FDDF6', sleep: '#C9B8FF', vines: '#7FA04A', wave: '#E0B070', kiss: '#FF8AC8', string: '#FF8AC8', heartbreak: '#FF5AAE',
+  clock: '#DEAF59', chain: '#A9B4C6', null: '#C9D2DE', rock: '#B58CFF', spike: '#A99C8B' }; // (round 15, lane N: the last five)
 export const abilityGlyph = (id) => ABILITY_GLYPH[id] || GLYPH2[id] || 'burst';
 
 // ---------------------------------------------------------------- the one entry point

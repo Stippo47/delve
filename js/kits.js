@@ -28,6 +28,7 @@ import { tagAbility } from './fxtag.js';
 import { STATUS, SLEEPY, fillOf } from './statuses.js';
 import { ABILITIES2, TRAITS2, ATTACKS2, kit2Tick } from './kits2.js';
 import { CHARM_ABILITIES, CHARM_TRAITS, CHARM_ATTACKS, charmTick } from './kits-charm.js'; // round 13 (lane S): the Enchantress
+import { ABILITIES3, TRAITS3, ATTACKS3, kit3Tick } from './kits3.js'; // round 15 (lane N): the Mob, the Clockmaker, the Air and Earth mages, the Warden, the Telekinetic
 
 // ---------------------------------------------------------------- the skill web's stat nodes (round 8)
 // u.kit.mods = statsFor(hero, nodes) (heroes.js). Generic stats go straight onto the unit in initKit; an ability's own
@@ -691,8 +692,9 @@ function whirlTick(w, u, dt) {
 }
 Object.assign(ABILITIES, ABILITIES2); // round 10 (lane H): the new heroes' abilities
 Object.assign(ABILITIES, CHARM_ABILITIES); // round 13 (lane S)
+Object.assign(ABILITIES, ABILITIES3); // round 15 (lane N)
 const RAY_T = 4, RAY_RANGE = 380;
-const CURE_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse', 'entangle', 'charm', 'confuse', 'sleepy', 'bleed', 'fear'];
+const CURE_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse', 'entangle', 'charm', 'confuse', 'sleepy', 'bleed', 'fear', 'shackle'];
 // how far a unit is from the edge of a rectangle (0 inside)
 const rectGap = (o, r) => Math.hypot(Math.max(r.x - o.x, 0, o.x - r.x - r.w), Math.max(r.y - o.y, 0, o.y - r.y - r.h));
 // Gas Form's trail: a body of poison gas left where he drifts (puddles.js merges them into one cloud)
@@ -766,6 +768,7 @@ const ATTACKS = {
 };
 Object.assign(ATTACKS, ATTACKS2);
 Object.assign(ATTACKS, CHARM_ATTACKS); // round 13 (lane S)
+Object.assign(ATTACKS, ATTACKS3); // round 15 (lane N)
 export const hasOwnAttack = (kind) => !!ATTACKS[kind]; // numbers.js measures these
 export function heroAttack(w, u, t, a) {
   const f = ATTACKS[u.kind]; if (!f || u.summon) return false;
@@ -776,6 +779,7 @@ const rayable = (w, u, o) => dist(u.x, u.y, o.x, o.y) < RAY_RANGE - 40 && !block
 // Every step, for a unit with a kit: abilities that last (the Cleric's rays).
 export function kitTick(w, u, dt) {
   kit2Tick(w, u, dt);
+  kit3Tick(w, u, dt); // round 15 (lane N)
   if (u.kit && u.kit.string) charmTick(w, u, dt); // round 13: the Enchantress's Heartstring
   if (u.kit && u.kit.whirl) whirlTick(w, u, dt);
   if (u.gasForm) { const g = u.gasForm;
@@ -833,6 +837,7 @@ export const TRAITS = {
 };
 Object.assign(TRAITS, TRAITS2);
 Object.assign(TRAITS, CHARM_TRAITS); // round 13 (lane S)
+Object.assign(TRAITS, TRAITS3); // round 15 (lane N)
 // Granny's Old Bones is an ability on paper but works like a trait once bought.
 const OLD_BONES = {
   downed(w, u) {
@@ -857,7 +862,7 @@ export function initKit(u, heroId, build = {}, level = 1) {
   u.dmgMul *= 1 + mods.dmg;
   const hpMul = 1 + mods.hp; u.maxHp = Math.round(u.maxHp * hpMul); u.hp = Math.min(u.maxHp, u.hp * hpMul);
   u.atkMul = 1 + mods.atkSpeed; u.moveMul = 1 + mods.moveSpeed;
-  if (mods.range) { const r = u.def.range; u.def = { ...u.def, range: r > 60 ? r * (1 + mods.range) : r + 60 * mods.range }; }
+  if (mods.range) { const r = u.def.range; u.def = { ...u.def, range: r > 60 ? r * (1 + mods.range) : r + 60 * mods.range }; for (const b of u.bodies || []) b.def = { ...b.def, range: b.def.range + 60 * mods.range }; } // (round 15, the Mob: its other bodies' reach too)
   u.armor = (u.armor || 0) + Math.round(mods.armor * 100); // the web's Armour nodes: points (stored as hundredths, like every stat)
   u.kit.statHook = mods.status || Object.values(mods.ab).some((a) => a.abStatus) ? statHook(mods) : null;
   refreshKit(u, level);
@@ -870,6 +875,12 @@ export function refreshKit(u, level) {
   u.kit.extra = HEROES[u.kit.hero].abilities.filter((ab) => u.kit.tiers[ab.id] && ABILITIES[ab.id] && ABILITIES[ab.id].hook).map((ab) => ABILITIES[ab.id].hook);
 }
 // How long an ability takes to come round: its base, -10% per tier past I, the web's haste and its own cooldown nodes.
+// Round 15 (lane N), Shackled's burst: every ability's cooldown set back by a share of its own full length (a ready one
+// has that long to wait; never past one full cooldown).
+export function kitSetBack(u, frac) {
+  const k = u.kit; if (!k) return;
+  for (const ab of HEROES[k.hero].abilities) { if (!k.tiers[ab.id]) continue; const full = cooldownOf(u, ab); k.cd[ab.id] = Math.min(Math.max(full, k.cd[ab.id]), Math.max(0, k.cd[ab.id]) + frac * full); }
+}
 export function cooldownOf(u, ab) {
   const k = u.kit, m = k.mods || { haste: 0, ab: {} };
   return ab.cd * (1 - TIER_CD * Math.max(0, (k.tiers[ab.id] || 1) - 1)) * Math.max(0.5, 1 - m.haste - abMod(u, 'abCd', ab.id));

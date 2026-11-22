@@ -20,6 +20,9 @@ export const STATUS = {
   sleepy: { need: 100, after: 0, decay: 5, col: '#A99CD8' },
   bleed: { need: 100, after: 0, decay: 6, col: '#C8453D' },
   fear: { need: 100, after: 0, decay: 8, col: '#DCE4D0' },
+  // round 15 (lane N): Shackled, the Warden's (the designer: "Shackled status effect, target can't do basic attacks,
+  // ability cooldowns are set back 50%")
+  shackle: { need: 100, after: 0, decay: 6, col: '#A9B4C6' },
 };
 // Poison's burst (round 11; it used to take 15% of max health at once): SICKENED for sickT seconds. The unit loses
 // `drain` of its max health over that time (not at once: it can be healed through), deals `weaken` less damage and
@@ -98,4 +101,21 @@ export const BLEED = { dot: 0.05, holdT: 1.5, healCut: 0.5, burst: 0.33, bossCap
 // (u.fearGen: the banshee's own victims spread at full strength, theirs at half, theirs at a quarter: below the 8 a
 // second fear drains, so a panic dies out after two links).
 export const FEAR = { reach: 320, back: 0.6, pull: 1.0, terrT: 3, bossT: 0.6, run: 1.2, waste: 5, immuneT: 5, spreadR: 120, spread: 34, spreadGen: 0.5 };
+
+// ---------------------------------------------------------------- round 15 (lane N): Shackled
+// The designer (the Old Guard's Pommel Strike note, given to the Warden): "Shackled status effect, target can't do basic
+// attacks, ability cooldowns are set back 50%". Built as a build-up like the rest. While it builds, irons closing on its
+// wrists: every ability cooldown it has runs up to `cdSlow` slower (x fill). Burst: SHACKLED for `dur` seconds (elites
+// x0.8, majors and mini-bosses x0.6, bosses x0.4): it can't make a basic attack, and at the moment the irons lock every
+// ability cooldown it has is set back by `setback` of that ability's full length (a ready one has half its cooldown to
+// wait again; never past one full cooldown). Then it can't be shackled again for immuneT.
+// The limit on bosses: 40% of the time, a quarter of a cooldown instead of half, and 12 s before the next.
+// What a "cooldown" is: a hero's abilities (kits.js), a plain enemy's one ability (def.abilCd), its dash, and every move
+// an enemy's own brain times with elites.js due() / again() (elites, majors, the families, the bosses' timed moves).
+export const SHACKLE = { cdSlow: 0.5, dur: 4, elite: 0.8, major: 0.6, boss: 0.4, setback: 0.5, bossSetback: 0.25, immuneT: 6, bossImmuneT: 12, hold: 0.25 };
+// how fast a unit's ability cooldowns run right now (1 = as ever): slower while Shackled builds
+export const cdRate = (u) => (u && u.st && u.st.shackle > 0 ? 1 - SHACKLE.cdSlow * fillOf(u, 'shackle') : 1);
+// every move an enemy's brain times with elites.js due() / again() (u.el, its lengths in u.el.dueLen), set back by a
+// share of its own length
+export function setBackDue(u, frac) { const e = u.el; if (!e || !e.dueLen) return; for (const k in e.dueLen) if (typeof e[k] === 'number') e[k] = Math.min(Math.max(e.dueLen[k], e[k]), Math.max(0, e[k]) + frac * e.dueLen[k]); }
 
