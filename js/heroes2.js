@@ -635,7 +635,7 @@ Object.assign(HEROES2, {
     trait: { id: 'keenEdge', name: 'Keen Edge', desc: 'Every blow also takes 3% of its target\'s greatest health (a boss 1%).' },
   },
   valkyrie: {
-    name: 'Valkyrie', art: 'art/heroes/valkyrie.svg', role: 'support', // round 13: "Is more of a support." unlock: { gems: 3 },
+    name: 'Valkyrie', art: 'art/heroes/valkyrie.svg', role: 'support', unlock: { gems: 3 }, // round 13: "Is more of a support."
     blurb: 'A winged helm, long plaits and a big spear. Carries the fallen back into the fight.',
     fun: 'Has been to Valhalla twice. Says the food is good but the seating is a nightmare.',
     stats: { hp: 125, speed: 66, r: 32, vr: 22, turn: 4.2, accel: 240, face: 4.4, mass: 1.6, range: 34, atkCd: 1.15, dmg: 12, knock: 130, arc: 1 },

@@ -38,7 +38,7 @@ const made = [];
 try {
   for (const hero of heroes) {
     const h = HEROES[hero]; if (!h) { console.log('no hero', hero); continue; }
-    const list = ['attack', ...h.abilities.map((a) => a.id)].filter((a) => !only.length || only.includes(a));
+    const list = ['attack', ...h.abilities.map((a) => a.id), 'trait'].filter((a) => (!only.length && a !== 'trait') || only.includes(a)); // (lane H2: --abs trait records the trait's bench)
     const rows = [];
     for (const ab of list) {
       const file = path.join(out, `${hero}-${ab}.mp4`);
