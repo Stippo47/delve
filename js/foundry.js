@@ -312,7 +312,7 @@ export const FOUNDRY = {
   drillBot: { ...FOE, name: 'Drill Bot', art: 'art/enemies/drill-bot.svg', headR: 49, r: 24, vr: 20, turn: 6, accel: 320, face: 6, mass: 1.2,
     hp: 48, speed: 66, role: 'skirmish', range: 14, atkCd: 1.0, dmg: 7, arc: 1.6, temp: 0.5, commit: 0.6, xp: 10, coins: [2, 4], cost: 3.5, attackAnim: 'thrust', construct: true,
     noCorpse: true, goo: '#8A8F96', res: MACHINE, brain: (w, u, dt) => hold(u, dt) || burrowTick(w, u, dt, DRILL) },
-  spiritShock: { ...spirit('shock', 'Storm Spirit', { hue: 15, sat: 1.4, light: 0.2 }, { shock: 0 }), art: 'art/enemies/spirit-shock.svg', headR: 30 }, // art round 9
+  spiritShock: { ...spirit('shock', 'Storm Spirit', { hue: 15, sat: 1.4, light: 0.2 }, { shock: 0 }), art: 'art/enemies/spirit-core-shock.svg', headR: 30, tail: ['#FFF29A', '#E0A82A'] }, // art round 9
 };
 for (const k of Object.keys(BASES)) delete FOUNDRY[k].id;
 

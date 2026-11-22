@@ -150,7 +150,9 @@ export function drawSpiritTail(ctx, u, dt, T) {
     const hw = u.vr * 0.83 * Math.pow(1 - i / n, 0.8), nx = -Math.sin(a) * hw, ny = Math.cos(a) * hw;
     left.push([pts[i].x + nx, pts[i].y + ny]); right.push([pts[i].x - nx, pts[i].y - ny]);
   }
-  const path = () => { ctx.beginPath(); ctx.moveTo(left[0][0], left[0][1]); for (let i = 1; i <= n; i++) ctx.lineTo(left[i][0], left[i][1]); for (let i = n; i >= 0; i--) ctx.lineTo(right[i][0], right[i][1]); ctx.closePath(); };
+  // (drawn as smooth curves through those points, as the art lane's mock-up is: boards/frost-spirit-code-tail.svg)
+  const side = (P) => { for (let i = 1; i < P.length - 1; i++) ctx.quadraticCurveTo(P[i][0], P[i][1], (P[i][0] + P[i + 1][0]) / 2, (P[i][1] + P[i + 1][1]) / 2); ctx.lineTo(P[P.length - 1][0], P[P.length - 1][1]); };
+  const path = () => { ctx.beginPath(); ctx.moveTo(left[0][0], left[0][1]); side(left); side(right.slice().reverse()); ctx.closePath(); };
   ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
   ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; path(); ctx.stroke();
   const g = ctx.createLinearGradient(ax, ay, pts[n].x, pts[n].y); g.addColorStop(0, u.def.tail[0]); g.addColorStop(1, u.def.tail[1]);
