@@ -7,6 +7,7 @@
 // installFx2 (called by fxkit.js) adds each new ability's element and signature time, and how its shots burst.
 import { TAU, clamp } from './util.js';
 import { inked, inkLine, glowDisc, star, upright, upVec, hash, easeOut, flame, blob, trail, roundRect } from './fx.js';
+import { drawPuddle } from './puddles.js';
 
 const k01 = (v) => clamp(v, 0, 1);
 const lit = (ctx, fn) => { ctx.save(); ctx.globalCompositeOperation = 'lighter'; fn(); ctx.restore(); };
@@ -201,11 +202,12 @@ DRAW.coinPop = (ctx, f, w, layer) => {
     inkDisc(ctx, f.x + Math.cos(b) * s + vx * (h + f.r * 0.6), f.y + Math.sin(b) * s * 0.3 + vy * (h + f.r * 0.6), 4.2, i % 2 ? '#FFD45A' : '#F2C14E'); }
   ctx.restore();
 };
-// Shadow Walk: dark after-images left along her path
+// Shadow Walk (round 13: "Shadow should be a union. Not overlapping circles"): her path left as one body of shadow smoke
+// on the floor (puddles.js merges the bodies of a kind into one, with one outline), thinning away behind her
 DRAW.shadowTrail = (ctx, f, w, layer) => {
   if (layer !== 'ground' || !f.unit) return; const u = f.unit;
-  if (f.t < f.max - 0.5 && (!f.pts.length || Math.hypot(u.x - f.pts[f.pts.length - 1].x, u.y - f.pts[f.pts.length - 1].y) > 10)) f.pts.push({ x: u.x, y: u.y, t: f.t });
-  for (const p of f.pts) { const a = k01(1 - (f.t - p.t) / 0.5); if (a <= 0) continue; ctx.save(); ctx.globalAlpha *= a * 0.55; disc(ctx, p.x, p.y, u.vr * (0.6 + 0.6 * a), '#2E2440'); ctx.restore(); }
+  if (f.t < f.max - 0.9 && (!f.pts.length || Math.hypot(u.x - f.pts[f.pts.length - 1].x, u.y - f.pts[f.pts.length - 1].y) > 9)) f.pts.push({ x: u.x, y: u.y, t: f.t });
+  f.pts.forEach((p, i) => { const a = k01(1 - (f.t - p.t) / 0.9); if (a > 0.02) drawPuddle(ctx, 'smoke', p.x, p.y, u.vr * (0.55 + 0.45 * a), w.time, a, i * 13 + 1); });
 };
 // Blackout: a pool of darkness on the floor with wisps at its edge (no ring)
 DRAW.dark = (ctx, f, w, layer) => {

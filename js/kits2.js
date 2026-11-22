@@ -5,7 +5,8 @@
 // Lasting things an ability starts run on the unit's own timers (u.k2, ticked from kitTick), not new sim acts.
 // The looks are in fx2.js: fx of type 'k2' with a `draw` name, shots of the new kinds, and each ability's 'sig'.
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange } from './util.js';
-import { hurt, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, stun, addBuff, fx, cleanse, textU, sparks, scatterCoins, turnSide, restoreSide } from './sim.js';
+import { hurt, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, stun, addBuff, fx, cleanse, textU, sparks, scatterCoins, turnSide, restoreSide, meleeSwing, kill } from './sim.js';
+import { STATUS } from './statuses.js';
 import { lineClear, circleRect } from './path.js';
 import { foesNear, friendsNear, hurtMost, dmgOf, ang, ring, cast, heal, addStatus, zone, shoot, segDist } from './kits.js';
 
@@ -43,9 +44,12 @@ const hookOf = (e, id) => (e && e.h2 && e.h2.find((x) => x.id === id)) || null;
 const isOn = (w, e, id) => { const h = e && e.h2 && e.h2.find((x) => x.id === id); return !!(h && h.until > w.time); };
 const MOVES_ACT = new Set(['dash', 'leap', 'charge', 'chargeTell']);
 const sideOfU = (o) => o.trueTeam || o.team;
+// summons with a brain of their own (filled in further down: a function is hoisted, the table is read at the first summon)
+const BRAINS = {};
 // a summon of ours: on the maker's side (either side can field anything: battle mode), its blows `hit` x the maker's
 function summon(w, u, kind, x, y, o = {}) {
   const s = spawn(w, kind, clamp(x, 30, w.W - 30), clamp(y, 30, w.H - 30), { team: u.team, scale: o.scale });
+  if (BRAINS[kind] && !s.def.brain) s.def.brain = BRAINS[kind]; // (a summon that runs its own brain: set on its def the first time)
   s.summon = true; s.summonBy = u; s.aggro = true; if (o.life) s.lifeT = o.life;
   s.dmgMul = o.hit != null && s.def.dmg ? dmgOf(u, o.hit) / s.def.dmg : u.dmgMul;
   if (o.hp) { s.maxHp = Math.round(o.hp); s.hp = s.maxHp; }
@@ -640,58 +644,56 @@ export const ABILITIES2 = {
     show: { single: true },
   },
   // ----- Shade
+  // Shadow Walk (round 13: "Shadow should be a union. Not overlapping circles. Should not return. Level 3 should have them
+  // do 3 dashes in a row."): one run through them as a shadow (her trail one merged body of smoke, fx2); III three runs,
+  // each at the next enemy
   shadowWalk: {
     score(w, u, t) { if (!t) return 0; const d = dist(u.x, u.y, t.x, t.y); return d < 260 && foesNear(w, u, t.x, t.y, 100).length >= 2 ? 0.7 : foesNear(w, u, u.x, u.y, 70).length >= 2 ? 0.6 : 0; },
     use(w, u, t, tier) {
-      const go = (a, T) => {
+      const go = (a, T, cut) => {
         u.act = { type: 'dash', t: T, max: T, a }; u.invulnT = Math.max(u.invulnT, T + 0.05); u.ethereal = true;
-        const cut = new Set();
-        k2(w, { draw: 'shadowTrail', unit: u, x: u.x, y: u.y, max: T + 0.5, pts: [] });
+        k2(w, { draw: 'shadowTrail', unit: u, x: u.x, y: u.y, max: T + 0.9, pts: [] });
         timer(u, 'shadowWalk', T, () => {
           for (const e of opponents(w, u)) if (!cut.has(e) && dist(u.x, u.y, e.x, e.y) < u.r + e.r + 12) {
-            cut.add(e); hurt(w, e, dmgOf(u, 1.4), u, { knock: 90, kAngle: a + Math.PI / 2, noDodge: true, curse: tierOf(u, 'shadowWalk') >= 2 ? 30 : 0, ab: 'shadowWalk' });
+            cut.add(e); hurt(w, e, dmgOf(u, 1.5), u, { knock: 90, kAngle: a + Math.PI / 2, noDodge: true, curse: tierOf(u, 'shadowWalk') >= 2 ? 30 : 0, ab: 'shadowWalk' });
             k2(w, { draw: 'parry', x: e.x, y: e.y, a: a + 0.8, max: 0.3, ab: 'shadowWalk' });
           }
-        }, () => { u.ethereal = false; });
+        }, () => { u.ethereal = !!(u.kit && u.kit.shadow); });
       };
-      const a = t ? ang(u, t) : u.facing, T = tier >= 3 ? 0.42 : 0.3;
-      go(a, T);
-      if (tier >= 3) after(u, T + 0.15, () => { if (alive(u)) go(a + Math.PI, T); });
+      const a0 = t ? ang(u, t) : u.facing, T = 0.32, n = tier >= 3 ? 3 : 1;
+      go(a0, T, new Set());
+      for (let i = 1; i < n; i++) after(u, i * (T + 0.08), () => {
+        if (!alive(u)) return;
+        const e = opponents(w, u).filter((o) => dist(u.x, u.y, o.x, o.y) < 300).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[i % 2];
+        go(e ? ang(u, e) + 0.2 * (i % 2 ? 1 : -1) : u.facing + 2.2, T, new Set());
+      });
     },
     show: { far: true },
   },
+  // Blackout (round 13: "She should become a shadow at lvl 3. Also aura should apply weakness debuff (which needs visual
+  // effects)"): those in the dark are Weakened (grey, chevrons sinking off them); III she is a shadow while it lasts
   blackout: {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 130).length >= 2 ? 0.7 : 0),
     use(w, u, t, tier) {
       cast(u, 'ability', 0.4);
       const r = tier >= 2 ? 170 : 130, dur = tier >= 3 ? 6 : 4, x = u.x, y = u.y;
       k2(w, { draw: 'dark', x, y, r, max: dur });
-      timer(u, 'blackout', dur, () => { for (const e of foesNear(w, u, x, y, r)) addBuff(e, { id: 'blackout', dur: 0.3, dealt: 0.7, move: tier >= 3 ? 0.7 : 1 }); });
+      timer(u, 'blackout', dur, () => { for (const e of foesNear(w, u, x, y, r)) { weaken(w, e, 0.35); addBuff(e, { id: 'blackout', dur: 0.3 }); } });
+      if (tier >= 3) shadowForm(w, u, dur);
     },
     hook: { dealt(w, u, t, amt) { return t.buffs && t.buffs.some((b) => b.id === 'blackout') ? amt * 1.3 : amt; } },
   },
+  // Shadow Clones, in Death Mark's slot (round 13: "Should create shadow clones that fight for them. Very fast and moves
+  // through entities and obstacles. Deal decent damage and have pretty low hp. They strafe around quickly"); id kept
   deathMark: {
-    score: (w, u, t) => (t && !t.deathMark && dist(u.x, u.y, t.x, t.y) < 260 ? 0.45 + (t.elite || t.def.boss ? 0.3 : 0) : 0),
+    score: (w, u) => (foesNear(w, u, u.x, u.y, 300).length >= 1 && !mine(w, u, 'shadowClone').length ? 0.7 : 0),
     use(w, u, t, tier) {
-      if (!t) return; cast(u, 'cast', 0.35);
-      const mark = (e) => {
-        const m = { by: u, hp0: e.hp }; e.deathMark = m;
-        const f = k2(w, { draw: 'skullMark', unit: e, x: e.x, y: e.y, r: e.vr, max: 3, ab: 'deathMark' });
-        timer(u, 'deathMark' + e.id, 3, () => {
-          if (alive(e)) return;
-          f.max = f.t;
-          if (tierOf(u, 'deathMark') >= 3) { const n = opponents(w, u).filter((o) => o !== e && !o.deathMark).sort((p, q) => dist(e.x, e.y, p.x, p.y) - dist(e.x, e.y, q.x, q.y))[0]; if (n) mark(n); }
-          return true;
-        }, () => {
-          if (!alive(e) || e.deathMark !== m) return; e.deathMark = null;
-          const took = Math.max(0, m.hp0 - e.hp) * (tierOf(u, 'deathMark') >= 2 ? 1 : 0.5);
-          k2(w, { draw: 'markBurst', x: e.x, y: e.y, r: e.vr, max: 0.5, ab: 'deathMark' });
-          if (took > 0) hurt(w, e, Math.min(took, dmgOf(u, 12)), u, { noDodge: true, crit: true, omni: true, ab: 'deathMark' });
-        });
-      };
-      mark(t);
+      cast(u, 'ability', 0.4); const n = tier >= 2 ? 3 : 2, life = tier >= 3 ? 10 : 6;
+      for (let i = 0; i < n; i++) { const a = u.facing + Math.PI + (i - (n - 1) / 2) * 1.1, x = u.x + Math.cos(a) * 36, y = u.y + Math.sin(a) * 36;
+        puff(w, x, y, '#2E2440', 10, 80, 7, 0.5);
+        const c = summon(w, u, 'shadowClone', x, y, { life, hit: 0.55 }); c.fixed = true; c.facing = u.facing; c.orbit = a; c.spinDir = i % 2 ? 1 : -1; c.target = t; }
     },
-    show: { single: true, hitDummy: true },
+    show: { far: false },
   },
   // ----- Haymaker
   toss: {
@@ -1964,6 +1966,28 @@ function lob(w, u, x, y, kind, color, land) {
   w.projectiles.push({ kind, x: u.x + Math.cos(a) * u.r, y: u.y + Math.sin(a) * u.r, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: 6, team: u.team, owner: u, dmg: 0, o: {}, life: d / sp, a, noHit: true, color, land: () => land(x, y) });
 }
 
+// The Shade's shadow: unseen (nobody's target: ethereal) and dark, until she strikes (the Fade trait), or for `dur`
+function shadowForm(w, u, dur) {
+  if (!alive(u)) return; const k = u.kit; k.shadow = { until: dur ? w.time + dur : 0, anim: u.anim, t0: w.time };
+  u.ethereal = true; addBuff(u, { id: 'shadowForm', dur: dur || 60, wash: ['#140E1E', 0.72] });
+  puff(w, u.x, u.y, '#2E2440', 12, 80, 7, 0.5);
+}
+function leaveShadow(w, u) { const k = u.kit; if (!k || !k.shadow) return; k.shadow = null; u.ethereal = false; u.buffs = u.buffs.filter((b) => b.id !== 'shadowForm'); puff(w, u.x, u.y, '#2E2440', 10, 90, 6, 0.45); k.lastHurt = w.time; }
+// A shadow clone (Death Mark): runs round its foe fast, straight through bodies, walls and pillars (it sets its own place
+// each step: def.pass, fixed), stabbing as it passes the front
+BRAINS.shadowClone = shadowCloneBrain;
+export function shadowCloneBrain(w, u, dt) {
+  let t = u.target; if (!t || !alive(t) || t.ethereal) t = u.target = opponents(w, u).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0] || null;
+  if (!t) return true;
+  u.orbit = (u.orbit || 0) + dt * 3.4 * (u.spinDir || 1); if (Math.random() < dt * 0.6) u.spinDir = -(u.spinDir || 1);
+  const R = t.r + u.r + 10, gx = t.x + Math.cos(u.orbit) * R, gy = t.y + Math.sin(u.orbit) * R, d = dist(u.x, u.y, gx, gy), sp = u.def.speed * 1.6 * dt;
+  const a = angleTo(u.x, u.y, gx, gy); u.x += Math.cos(a) * Math.min(d, sp); u.y += Math.sin(a) * Math.min(d, sp);
+  u.x = clamp(u.x, u.r, w.W - u.r); u.y = clamp(u.y, u.r, w.H - u.r); u.spd = Math.min(d, sp) / Math.max(dt, 1e-3); u.mvA = a;
+  u.facing = angleTo(u.x, u.y, t.x, t.y);
+  if (u.atkT <= 0 && dist(u.x, u.y, t.x, t.y) - u.r - t.r < u.def.range + 6) { meleeSwing(w, u, true); setAnim(u, 'thrust', 0.2); u.atkT = u.def.atkCd; }
+  if (Math.random() < dt * 8) w.particles.push({ x: u.x - Math.cos(a) * u.r, y: u.y - Math.sin(a) * u.r, vx: 0, vy: 0, life: 0.35, max: 0.35, size: 6, color: 'rgba(46,36,64,0.6)' });
+  return true;
+}
 // the Bandit's Snatch: its weapon flung out of its hand; it must walk over and pick it up before it can attack again
 function snatch(w, u, e) {
   if (!alive(e) || e.def.boss || e.fixed || e.def.brain || isOn(w, e, 'snatched')) return;
@@ -2038,8 +2062,22 @@ export const TRAITS2 = {
       snatch(w, u, t);
     },
   },
+  // (round 13: the Shade's daggers: "Attacks in 2 stabs at a time, quickly 1 after the other"): kits2 SHADE_STAB, below
+  // Fade (round 13, the designer: "After 3 seconds of not attacking or taking damage becomes a shadow."): unseen and
+  // dark (nobody can pick her out) until her next blow or ability
   fade: {
-    evade(w, u) { const k = u.kit; if (w.time - (k.lastHurt ?? -9) > 3) { k.lastHurt = w.time; puff(w, u.x, u.y, '#5A4A7A', 10, 70, 6, 0.5); k.faded = w.time; return true; } return false; },
+    tick(w, u) {
+      const k = u.kit, S = k.shadow;
+      if (S) { // a blow or a cast brings her out (unless Blackout III holds it for a while)
+        if (S.until && w.time < S.until) return;
+        if ((S.until && w.time >= S.until) || (u.anim && u.anim !== S.anim) || k.using) leaveShadow(w, u);
+        return;
+      }
+      if (k.fadeW !== w) { k.fadeW = w; k.lastCast = w.time; } // (a new room: 3 s from now, not at once)
+      const last = Math.max(u.lastAttackT ?? -9, k.lastHurt ?? -9, k.lastCast ?? -9);
+      if (u.anim && u.anim !== k.lastAnimSeen) { k.lastAnimSeen = u.anim; k.lastCast = w.time; }
+      if (w.time - last > 3 && !u.act && opponents(w, u).length) shadowForm(w, u, 0);
+    },
     taken(w, u, src, amt, o) { if (!o.dot) u.kit.lastHurt = w.time; return amt; },
   },
   hardWork: { kill(w, u) { heal(w, u, u.maxHp * 0.08, u); } },
@@ -2187,6 +2225,12 @@ export function kit2Tick(w, u, dt) {
   if (u.kind === 'bearskin') { const on = u.kit.clawsT > w.time; if (on) u._force = { 'arm-r': { hide: true } }; else if (u._force && u._force['arm-r']) u._force = null; }
   // Warhelm: his hammer is out of his hand while it circles him (Storm Born) or flies ahead (Skull Splitter)
   if (u.kind === 'warhelm') { const out = !!u.kit.storm || u.kit.splitT > w.time; if (out) u._force = { 'arm-l': { hide: true } }; else if (u._force && u._force['arm-l']) u._force = null; }
+  // the Shade's daggers (round 13: "Attacks in 2 stabs at a time, quickly 1 after the other"): each stab is followed at
+  // once by one from the other hand
+  if (u.kind === 'shade' && u.anim && u.anim !== u.kit.stabAnim && u.anim.kind === 'thrust' && u.anim.dur >= 0.25 && !u.act && !u.kit.using) {
+    u.kit.stabAnim = u.anim;
+    after(u, 0.1, () => { if (!alive(u) || u.act || !u.target) return; setAnim(u, 'thrust', 0.18); u.kit.stabAnim = u.anim; meleeSwing(w, u, true); });
+  }
   // Stormhammer: while the hammer is out of his hand it isn't drawn in it (round 13: "doesnt show in their hand when thrown")
   if (u.kind === 'griffon') {
     const out = w.projectiles.some((p) => p.owner === u && p.kind === 'hammer' && p.life > 0);

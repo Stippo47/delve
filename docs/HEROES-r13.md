@@ -140,3 +140,22 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
     head) for 2.5 s: it can't attack, use an ability or walk, and takes 25% more from everyone. II two more near it;
     III 3.5 s. Clip: rogueBandit-lowBlow.
   Three different jobs: catch a runner or shooter, burst one and bowl its friends, shut one down for the party.
+
+### Shade
+- Trait: "After 3 seconds of not attacking or taking damage becomes a shadow." -> Fade reworked: after 3 s without
+  striking, casting or being hurt she becomes a shadow (ethereal: no enemy can pick her out; drawn dark) until her
+  next blow or ability. Book scene: she waits idle first (preview-sim `quiet`).
+- Twin daggers: "Should not cross blades. Attacks in 2 stabs at a time, quickly 1 after the other." -> `style.straight`
+  (both stab straight ahead) and every attack is two stabs, one from each hand, 0.1 s apart (attack every 0.8 s, was
+  0.5). Clip: shade-attack.
+- Shadow Walk: "Shadow should be a union. Not overlapping circles. Should not return. Level 3 should have them do 3
+  dashes in a row." -> her path is one merged body of shadow smoke on the floor (puddles.js 'smoke'); no return; III
+  three runs in a row, each at another enemy. Clip: shade-shadowWalk.
+- Blackout: "She should become a shadow at lvl 3. Also aura should apply weakness debuff (which needs visual effects)"
+  -> those in the dark are **Weakened** (deal 30% less; a grey wash and grey chevrons sinking off them); III she is a
+  shadow for the 6 s. Clip: shade-blackout.
+- Death Mark: "Should create shadow clones that fight for them. Very fast and moves through entities and obstacles.
+  Deal decent damage and have pretty low hp. They strafe around quickly" -> **Shadow Clones** in its slot (id
+  deathMark): 2 (II 3) copies of her, drawn dark, 24 health, each stab 0.55x hers; they circle their foe fast (their own
+  brain, straight through bodies, walls and pillars), switching direction now and then. 6 s (III 10 s). Clip:
+  shade-deathMark.

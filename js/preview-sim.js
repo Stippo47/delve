@@ -350,7 +350,7 @@ const TRAIT_SCENE = {
   thickHide: { words: 'statuses half', hitSt: { burn: 16, chill: 16 } },
   ironWill: { words: 'low: +25%' },
   lightFingers: { words: 'more gold', start: (d) => { d.def = { ...d.def, coins: [2, 3] }; }, kill: true },
-  fade: { words: 'slipped away', hitsFrom: 3.3 },
+  fade: { words: 'a shadow', hitsFrom: 4.4, quiet: 3.6 }, // (round 13: she becomes a shadow after 3 s without striking or being hurt)
   hardWork: { words: 'healed 8%', hero: (u) => { u.hp = u.maxHp * 0.6; }, kill: true },
   prospector: { words: 'dug up a coin' },
   seenItAll: { words: 'stagger shaken', friend: (w, a) => { a.st.stagger = 90; } },
@@ -427,7 +427,7 @@ function traitStage(S, spec) {
       if (sc.first) sc.first(dummies[0]);
       if (!ranged && !did.free) {
         u.atkT = 9; const d = DEFS[id], b = d.role === 'skirmish' ? 0.5 : 0.9;
-        if (S.t > 0.3 && beat(b) && S.t < S.loop - 0.6 && !u.downed) { const t = dummies.find((o) => w2.units.includes(o)) || dummies[0]; u.facing = Math.atan2(t.y - u.y, t.x - u.x); u.target = t; meleeSwing(w2, u, d.role === 'skirmish'); setAnim(u, d.attackAnim || 'swing', (d.windup || 0) + 0.28); }
+        if (S.t > 0.3 && beat(b) && S.t < S.loop - 0.6 && !u.downed && !(sc.quiet && S.t < sc.quiet)) { /* sc.quiet: lane H2 */ const t = dummies.find((o) => w2.units.includes(o)) || dummies[0]; u.facing = Math.atan2(t.y - u.y, t.x - u.x); u.target = t; meleeSwing(w2, u, d.role === 'skirmish'); setAnim(u, d.attackAnim || 'swing', (d.windup || 0) + 0.28); }
       }
       if (S.t > (sc.hitsFrom ?? 0.5) && beat(sc.hitEvery || 0.7) && !u.downed && !did.free) {
         const d0 = dummies[0]; d0.facing = Math.atan2(u.y - d0.y, u.x - d0.x); setAnim(d0, 'swing', 0.25);
