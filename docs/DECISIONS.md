@@ -781,3 +781,11 @@ and its evidence: `docs/LONG-ROOMS.md`; the tools: `tools/long-rooms.mjs` and `r
 - **Asked in Riffle (deck v201-rooms)**: a lone hero who can neither win nor lose; my pick is to leave it to the player.
 - Campaigns on 0.20.0 before lane L (four seeds, 150 runs, wipes at 75%): the Foundry's boss first falls at runs 101, 80,
   91, 62; runs at the 420 s cut 2, 6, 8, 2.
+- **0.20.2, the hit step eased (the lead).** Four-seed campaigns after lane L: the Foundry's boss first fell at runs 100,
+  121, 112, 141 (0.20.0: 101, 80, 91, 62). The slowdown sat in the last three dungeons, where room foes' blows were up to
+  20% harder. HIT_STEP 0.09 -> 0.07 (about 15% harder at the Foundry's floor 3; health as lane L left it): the boss falls
+  at 97, 96, 120, 73; runs at the 420 s cut 7 (13 at 0.09, 18 on 0.20.0). Rooms over the same four campaigns: median
+  121 s, 90th 234 s, 9.1% over 240 s (before lane L 134 s, 255 s, 13.0%; at 0.09 110 s, 225 s, 8.2%; the 0.07 campaigns
+  spend more of their runs in the Foundry, whose rooms are the longest, so the mix is a little against it).
+- **Art round 12** merged (design/class-round12; props in art/summons and art/heroes/r12, not wired; the wiring table is
+  in its notes.md). Deck art-round12 sent. The game keeps stand-ins for the six new heroes until the picks.

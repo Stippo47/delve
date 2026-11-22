@@ -175,7 +175,10 @@ function foe(w, run, k, x, y, opts = {}, p = 0, pm = 0) {
 // The floors' last foes (the mini-bosses and the bosses) keep round 8's numbers: their fights were not where rooms
 // dragged, and lanes B and D tuned each to be about even at the level the campaign meets it (with the new step the Winter
 // Queen's and Cinder's benches fell from 9 and 10 wins in 20 to 5).
-export const HP_POW = 0.75, HIT_STEP = 0.09, BOSS_HP_POW = 0.85, BOSS_HIT_STEP = 0.05;
+// The lead, after the campaigns (0.20.2): 0.09 made the late dungeons slower to get through (the Foundry's boss first fell
+// at runs 100-141 over four seeds, 62-101 before the step); at 0.07 it falls at 73-120 and the rooms keep most of the gain
+// (median 121 s, 9.1% over 240 s; before the step 134 s and 13.0%; at 0.09 110 s and 8.2%).
+export const HP_POW = 0.75, HIT_STEP = 0.07, BOSS_HP_POW = 0.85, BOSS_HIT_STEP = 0.05;
 function hardHitting(u, m, boss = false) {
   if (!(m > 1)) return;
   const k = Math.pow(m, (boss ? BOSS_HP_POW : HP_POW) - 1);
