@@ -134,7 +134,7 @@ function totemBrain(w, u, dt) {
 export const HOLD = -0.46;
 function boulderOf(w, u) {
   if (u.bould === undefined) {
-    const big = u.elite && u.def.rock ? 1.25 : 1, r = Math.round(u.r * 0.62 * big);
+    const big = u.elite && u.def.rock ? 1.25 : 1, r = Math.round(u.r * (u.def.boulder || 0.62) * big);
     const d = u.r * (1 + HOLD) + r + 8;
     const b = { x: u.x + Math.cos(u.facing) * d, y: u.y + Math.sin(u.facing) * d, r, prop: 'troll-boulder', boulder: true, owner: u, team: u.team, vx: 0, vy: 0, held: true, hits: new Set() };
     if (!u.def.rock) { b.hp = b.maxHp = Math.round(55 * (w.mult || 1)); }

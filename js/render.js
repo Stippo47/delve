@@ -205,7 +205,7 @@ export function draw(ctx, w) {
   noteHits(w);
   for (const u of order) drawBodyGround(ctx, u, w); // chains, rays and rings that lie under the units (round 9)
   // a rat drawn by hand gets its springy tail; the rat king's art (art round 8) has its own tails knotted in it
-  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.def.art && !u.downed) drawTail(ctx, u, dt); drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawStatusMarks(ctx, u, w.time); drawBodyFx(ctx, u, w); }
+  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.def.art && !u.downed) drawTail(ctx, u, dt); if (u.def.tail && !u.downed) drawSpiritTail(ctx, u, dt, w.time); drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawStatusMarks(ctx, u, w.time); drawBodyFx(ctx, u, w); }
   if (w.drawOver) w.drawOver(ctx, w, view); // lane W (convoy.js): the forest's canopy, over the units at the edge (a cached picture)
   for (const p of w.projectiles) projectile(ctx, p, w.time);
   for (const p of w.particles) drawParticle(ctx, p);
@@ -684,6 +684,47 @@ function castGlow(ctx, gl, t) {
   ctx.fillStyle = g; ctx.beginPath(); ctx.arc(100, 182, r, 0, TAU); ctx.fill();
   ctx.fillStyle = hexA('#FFFFFF', 0.8 * a);
   for (let i = 0; i < 3; i++) { const b = t * 5 + i * 2.1; ctx.beginPath(); ctx.arc(100 + Math.cos(b) * r * 0.55, 182 + Math.sin(b) * r * 0.45, 2.6 * a + 0.5, 0, TAU); ctx.fill(); }
+  ctx.restore();
+}
+
+// A spirit's tail (art round 11; the designer on the frost spirit: "That tail should be like that rat tail where it's
+// wiggly/ follows behind"): the rat's chain on softer springs, each point also swayed sideways, drawn as a ribbon that
+// tapers to a point, inked like the art and filled from def.tail[0] at the root to def.tail[1] at the tip. Its root is
+// hidden under the spirit's core (the art: art/enemies/spirit-core-*.svg), which is drawn after it.
+function drawSpiritTail(ctx, u, dt, time) {
+  const back = u.facing + Math.PI, seg = u.vr * 0.65, n = 5;
+  const ax = u.x + Math.cos(u.facing) * u.vr * 0.13, ay = u.y + Math.sin(u.facing) * u.vr * 0.13;
+  if (!u.tail) { u.tail = []; for (let i = 1; i <= n; i++) u.tail.push({ x: ax + Math.cos(back) * seg * i, y: ay + Math.sin(back) * seg * i, vx: 0, vy: 0 }); }
+  let px = ax, py = ay, pa = back;
+  for (let i = 0; i < n; i++) {
+    const p = u.tail[i], wig = Math.sin(time * 7 - i * 1.1 + u.id) * seg * 0.16;
+    const rx = px + Math.cos(pa) * seg - Math.sin(pa) * wig, ry = py + Math.sin(pa) * seg + Math.cos(pa) * wig;
+    p.vx += (rx - p.x) * 40 * dt; p.vy += (ry - p.y) * 40 * dt;
+    const damp = Math.exp(-dt * 6); p.vx *= damp; p.vy *= damp;
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    const dx = p.x - px, dy = p.y - py, L = Math.hypot(dx, dy) || 1;
+    p.x = px + dx / L * seg; p.y = py + dy / L * seg;
+    pa = Math.atan2(p.y - py, p.x - px); px = p.x; py = p.y;
+  }
+  const pts = [{ x: ax, y: ay }, ...u.tail], L = [], R = [];
+  for (let i = 0; i <= n; i++) {
+    const a = pts[Math.max(i - 1, 0)], b = pts[Math.min(i + 1, n)], d = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+    const nx = -(b.y - a.y) / d, ny = (b.x - a.x) / d, hw = u.vr * 0.83 * Math.pow(1 - i / n, 0.8);
+    L.push([pts[i].x + nx * hw, pts[i].y + ny * hw]); R.push([pts[i].x - nx * hw, pts[i].y - ny * hw]);
+  }
+  const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  const path = () => { // both edges as smooth curves through the chain's points, meeting at the tip
+    ctx.beginPath(); ctx.moveTo(...L[0]);
+    for (let i = 1; i < n; i++) ctx.quadraticCurveTo(...L[i], ...mid(L[i], L[i + 1]));
+    ctx.lineTo(...L[n]);
+    for (let i = n - 1; i > 0; i--) ctx.quadraticCurveTo(...R[i], ...mid(R[i], R[i - 1]));
+    ctx.lineTo(...R[0]); ctx.closePath();
+  };
+  const tip = u.tail[n - 1], g = ctx.createLinearGradient(ax, ay, tip.x, tip.y);
+  g.addColorStop(0, u.def.tail[0]); g.addColorStop(1, u.def.tail[1]);
+  ctx.save(); ctx.lineJoin = 'round'; if (u.ethereal) ctx.globalAlpha = 0.5;
+  ctx.strokeStyle = INK; ctx.lineWidth = u.vr * 0.4; path(); ctx.stroke(); ctx.fillStyle = INK; ctx.fill(); // the art's outline: 6 units at vr / headR
+  ctx.fillStyle = g; path(); ctx.fill();
   ctx.restore();
 }
 
