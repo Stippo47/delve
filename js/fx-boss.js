@@ -9,35 +9,7 @@ const view_up = () => upVec();
 const flash = (u) => u.flashT > 0.09; // (only the first frames of a hit: a boss hit all the time read as solid white)
 const lit = (c, u) => (flash(u) ? '#FFFFFF' : c);
 
-// ---------------------------------------------------------------- the Warren: the war camp
-// A war drum seen from above: a wooden rim, a hide skin with a painted red hand, two crossed sticks; it swells when it
-// beats (u.beatT counts down from a beat).
-export function drawDrum(ctx, u) {
-  const b = clamp((u.beatT || 0) / 0.25, 0, 1), r = u.vr * (1 + 0.08 * b);
-  inked(ctx, () => { ctx.beginPath(); ctx.arc(u.x, u.y, r, 0, TAU); }, lit('#8A5A34', u));
-  inked(ctx, () => { ctx.beginPath(); ctx.arc(u.x, u.y, r * 0.78, 0, TAU); }, lit(u.awake ? '#E8D2A8' : '#CDB994', u));
-  ctx.fillStyle = 'rgba(176,52,40,0.85)'; ctx.beginPath(); ctx.arc(u.x, u.y, r * 0.3, 0, TAU); ctx.fill();
-  for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(u.x + Math.cos(a) * r * 0.9, u.y + Math.sin(a) * r * 0.9, 2.2, 0, TAU); ctx.fill(); }
-  if (b > 0) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, u.x, u.y, r * 2, '#F2A23A', 0.35 * b); ctx.restore(); }
-  const hp = u.hp / u.maxHp;
-  if (hp < 0.66) { ctx.strokeStyle = INK; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(u.x - r * 0.5, u.y - r * 0.2); ctx.lineTo(u.x, u.y + r * 0.1); ctx.lineTo(u.x + r * 0.3, u.y - r * 0.4); ctx.stroke(); }
-  if (hp < 0.33) { ctx.beginPath(); ctx.moveTo(u.x - r * 0.2, u.y + r * 0.5); ctx.lineTo(u.x + r * 0.1, u.y + r * 0.05); ctx.stroke(); }
-}
-// The war camp's floor: tunnel mouths in the side walls (goblins come out of them), the chief's hide-and-bone stage.
-export function drawWarcamp(ctx, w) {
-  for (const t of w.tunnels || []) {
-    ctx.save(); ctx.translate(t.x, t.y); ctx.rotate(t.a);
-    inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 54, Math.PI, TAU); ctx.closePath(); }, '#6E5038');
-    ctx.fillStyle = '#1E1510'; ctx.beginPath(); ctx.arc(0, 0, 40, Math.PI, TAU); ctx.closePath(); ctx.fill();
-    if (t.openT > 0) { ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, 0, -10, 60, '#F2A23A', 0.4 * clamp(t.openT, 0, 1)); }
-    ctx.restore();
-  }
-  const s = w.stage; if (!s) return;
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(s.x, s.y, 110, 150, 0, 0, TAU); }, '#8E6A46');
-  ctx.fillStyle = 'rgba(255,230,180,0.12)'; ctx.beginPath(); ctx.ellipse(s.x - 14, s.y - 18, 80, 110, 0, 0, TAU); ctx.fill();
-  for (let i = 0; i < 10; i++) { const a = i / 10 * TAU, x = s.x + Math.cos(a) * 118, y = s.y + Math.sin(a) * 158;
-    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(x - 6, y); ctx.lineTo(x, y - 18); ctx.lineTo(x + 6, y); ctx.closePath(); }, '#EDE4CD'); }
-}
+// (the Goblin Chieftain's camp is drawn in js/boss-chieftain-fx.js: bosses3)
 // ---------------------------------------------------------------- the Sewers: the Great Ooze and the cistern
 // The ooze: one wobbling body (no eyes), darker at the rim, things it has swallowed floating in it, a gloss on top.
 // It crouches (u.squash) before a hop and rises up the screen while it's in the air (u.hop; its shadow stays below).
@@ -87,13 +59,3 @@ export function drawTentacles(ctx, w) {
 // (the Sand Wurm is drawn in js/boss-wurm-fx.js: bosses3)
 // (the Great Engine is drawn in js/boss-engine-fx.js: bosses3)
 
-// A thrown spear in flight (out and back), and the chief's cleaver-spin trail.
-export function drawSpears(ctx, w) {
-  for (const s of w.spears || []) {
-    const k = clamp(s.t / s.dur, 0, 1), x = s.x1 + (s.x2 - s.x1) * k, y = s.y1 + (s.y2 - s.y1) * k, a = Math.atan2(s.y2 - s.y1, s.x2 - s.x1) + (s.back ? Math.PI : 0);
-    ctx.save(); ctx.translate(x, y); ctx.rotate(a);
-    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-34, 0); ctx.lineTo(22, 0); }, '#8A5A34', 4);
-    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(36, 0); ctx.lineTo(20, -7); ctx.lineTo(20, 7); ctx.closePath(); }, '#C9D2DE');
-    ctx.restore();
-  }
-}
