@@ -528,3 +528,59 @@ The designer's words: `docs/riffle-log/2026-11-22-round12.txt` (decks showcase4 
   it was worth less than nothing); the Bard's Rhythm quickens attacks by 8% as well; Twinfang is untouchable mid-dash
   and as she steps out of a Backstab; the Druid's and Cleric's mending and the Necromancer's drain trimmed (all three
   sat 1.5 to 2 rooms over the average at tier I).
+
+## Round 14, lane W (2026-11-22): the wagon's third round
+The designer's notes on 0.15.0's wagon (deck v15-book-wagon, card wagon2: parts size, edge, downed), each done as
+written; the rules are in docs/CONVOY.md. Calls made on the way:
+- **"15% less wide"** is the open ground between the tree lines: 2100 -> 1785 (the world 2800 -> 2385). The camera
+  still shows 1500 across (it was marked good).
+- **"Everyone 50% slower"** is movement, on the road only: every unit's speed is halved (walking, and the lunges and
+  charges worked out from it), the wagon's too; attack rates, shots and the dungeons are as they were. At half speed
+  the old road made a trip of about 11 minutes, so **a stretch is 1,500 of road, not 2,300**: a trip is about 7 min
+  50 s in the batch (6 min before). Speeding anything back up was not an option.
+- **A trickle and bursts, from all sides**: points come in all the time; half go on single foes from a random side,
+  half are saved for a crowd every 38-50 s, sometimes from two sides at once. "All sides" is left, right, ahead and
+  behind; all four still walk out from under the trees (the ones for ahead and behind come out up or down the road
+  and then walk on to it), so nothing pops into view.
+- **Guarding sides** is the designer's scheme as written: four half-ground regions cut along the wagon's four edges
+  (front: above its tail; back: below the oxen's noses; left and right: this side of its far flank). "The cart" is
+  taken to be the whole of it, oxen included. Inside its region a hero is also held near the wagon (430 from its
+  outline to pick a fight, 640 at most), looks no further than 620, prefers foes on its own side and avoids those the
+  others are already on. Fewer than four: three = front and two flank guards who share the rear; two = left and right.
+  The sturdiest takes the front; a healer takes a flank and stands in close, in reach of every post.
+  **This replaces "they walk ahead of the oxen in a loose line" with "each stands at its post"** when nothing is
+  about (still no huddle). Non-gatherers now leave their side for gold only when it is close by (340); gatherers as
+  before. Reviving is as before.
+- **The wagon solid all round**: a row of body circles (and one at each corner of the bed) as units set in place; a
+  blow on any lands on the wagon. Two things followed. Three times as many foes can reach it at once, and a split
+  slime's brood broke it in the first stretch (the wagon broke in half the level 3 trips), so **a blow on a body circle
+  counts 0.6** of one on its middle. And everyone needed a way round it: a unit whose straight line runs through the
+  wagon walks to the nearest corner first (sim.js asks convoy.js). The wagon also became immune to charm, confusion,
+  sleepiness, fear and bleeding (it could be charmed before: nothing in the Wildwood does it, so it had not shown).
+- **Difficulty kept** (tools/convoys.mjs, 60 trips a level, the Wildwood, before -> after): delivered 53% -> 52% at
+  level 3, 58% -> 67% at level 4, 68% -> 70% at level 5 (60 trips is good to about 6 points either way); foes out of
+  the trees a trip 48 -> 37, 46 -> 39, 48 -> 38, and the ones made mid-fight (a slime's brood, summons) 24 -> 33,
+  25 -> 34, 23 -> 33: about 72 bodies a trip before and after (a foe on its own is rolled without a cap on its cost,
+  so the trickle brings more of the big ones); gold picked up 90/90/92% -> 88/89/89%. 0 stuck, 0 errors, nothing
+  popping into view. FLOW: 0.31 points a second growing 0.0034 a second, half kept for the bursts.
+- **Two things the batch found**, both fixed at the source: a melee hero could be given a foe pressed to the wagon's far
+  flank, just past its edge, with nowhere on its own side to strike it from (it stood at the corner for ever: such a
+  foe is no longer its to fight, and a hero past its edge is eased back square to the edge, not through the wagon);
+  and the Bandit Chief, hiding at the trees past his stockade, was out of every guard's reach (he is everyone's now,
+  wherever he stands). A stand-off's stragglers at a gate also wore down to nothing without ever falling (round 13's
+  rule took their health but never finished them): they fall now.
+- **The tree line** (sent back twice): three takes to pick from, `?edge=crowns | firs | bank`; **crowns is the
+  default** (my pick: the biggest, simplest shapes, closest to how the heroes are drawn; firs is the busiest of the
+  three, the bank reads least like trees). All three are two flat-shaded inked rows on layers that slide faster than
+  the ground (1.5x and 2x), cached as tiles and only translated. The new line is in every country (hills, dunes and
+  crags in the same big flat shapes): the other countries were marked good, but leaving round 13's small trees in
+  some of them would have kept the look that was sent back. Round 13's bushes and fallen trunks at the trees' foot
+  went with it.
+- **The ground**: the tufts and the puddles are gone, everywhere (the Sewers' outfall lost its extra puddles too).
+  The patches, the flowers and the road are as they were.
+- **Tools**: `tools/edge-shots.mjs` (stills of the tree line), `tools/clip.mjs` takes `--lean`, `--calm`, `--send`,
+  `--eval`. The recording tools left a headless Edge running after every run, not just failed ones (Edge starts
+  itself again under another process id, which `taskkill /T` on the first doesn't reach): clip.mjs, convoy-shots.mjs
+  and edge-shots.mjs now stop whatever still runs on their own profile folder, clip.mjs also when a run fails or
+  hangs (`--max` seconds). The other tools that start Edge the same way still leave one behind each run. The tools
+  poll on a timer (a headless page's frames stalled on a busy machine). `?sides` draws each hero's region for checking.

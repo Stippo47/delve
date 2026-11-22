@@ -9,7 +9,7 @@
 // The road runs along the world's x (up the screen in portrait); the wagon is a unit on the party's side that enemies
 // can target like anyone. Sides are never read off team names here: the party's side is whatever the wagon's is.
 // Phases: 'road' (a stretch), 'roadside' (the shop between stretches: convoy-ui.js shows it), 'over'.
-import { makeWorld, spawn, step, alive, puff } from './sim.js';
+import { makeWorld, spawn, step, alive, puff, hurt } from './sim.js';
 import { DEFS } from './units.js';
 import { floorTheme, themeOf, weighted, DUNGEON_ORDER } from './themes.js';
 import { battleFoe, spawnHero, rollTrinket, trinketSlots, FOUND_EXTRA, RANK_MULT, PARTY_SCALE, BOSS_HP, XP_MUL, DUNGEON_RANK, xpScale, placeLevel } from './dungeon.js';
@@ -287,7 +287,7 @@ export function updateConvoy(run, dt) {
   const atGate = wg.x >= (run.barricade && !run.barricade.broken ? run.barricade.x - HOLD_BACK : gateOf()) - 1;
   run.atGateT = atGate ? run.atGateT + dt : 0;
   w.stale = run.atGateT > 40;
-  if (run.atGateT > 70) for (const e of foes) if (!e.chief) e.hp -= e.maxHp * 0.03 * dt;
+  if (run.atGateT > 70) for (const e of foes) if (!e.chief && !e.ethereal) hurt(w, e, e.maxHp * 0.03 * dt, null, { dot: true, noDodge: true }); // (hurt, so the last of them does fall: round 14)
   // the end of the stretch: at the gate, nothing left standing near: gather the gold in reach, then stop for the night
   if (wg.x >= gateOf() - 1 && !seen.some((e) => dist(e.x, e.y, wg.x, wg.y) < 1000)) {
     run.doneT += dt;
@@ -346,31 +346,32 @@ function rigTick(run) {
 }
 // How far (a, c) (a place, from the wagon's middle: along the road, across it) is from the wagon's outline; 0 inside it.
 const rigGap = (a, c) => Math.hypot(Math.max(RIG.back - a, 0, a - RIG.front), Math.max(Math.abs(c) - RIG.half, 0));
-// The way round the wagon (sim.js goalVec asks before heading anywhere): a unit whose straight line to (tx, ty) runs
-// through the wagon's middle makes for the corner that gives the shortest way round instead; a goal inside the wagon
-// (one of its own circles, a spot by one) becomes the nearest place on its outline. null: go straight.
+// The way round the wagon (sim.js goalVec asks before heading anywhere). The wagon's box, grown by most of u's own
+// size, is what u's middle can't cross. If the straight line from u to (tx, ty) crosses it, u makes for a corner
+// instead: of the corners it can see, the one that gives the shortest way round (it sees the next from there). A goal
+// inside the box (one of the wagon's own circles, a foe pressed to its side) is judged by the nearest place on the box's
+// edge, on u's side if two are about as near; so is u itself when it's pressed to the wagon. null: go straight.
 function roundRig(run, u, tx, ty) {
   const wg = run.wagon; if (!wg || u.def.cargo) return null;
-  const a0 = wg.x + RIG.back, a1 = wg.x + RIG.front, far = u.r + 40;
-  if ((u.x < a0 - far && tx < a0 - far) || (u.x > a1 + far && tx > a1 + far) || (u.y < wg.y - RIG.half - far && ty < wg.y - RIG.half - far) || (u.y > wg.y + RIG.half + far && ty > wg.y + RIG.half + far)) return null;
-  const core = { x: a0 + 12, y: wg.y - 42, w: a1 - a0 - 24, h: 84 }; // a line through this has gone through the wagon
-  const cut = (ax, ay, bx, by) => segHitsRect(ax, ay, bx, by, core);
-  let gx = tx, gy = ty, moved = false;
-  if (tx > a0 && tx < a1 && Math.abs(ty - wg.y) < RIG.half) { // inside it: out to the outline, on the side that's the shortest way for u
-    const out = RIG.half + u.r * 0.5, c = [[tx, wg.y - out], [tx, wg.y + out]];
-    if (tx - a0 < 70) c.push([a0 - u.r * 0.5, ty]); if (a1 - tx < 70) c.push([a1 + u.r * 0.5, ty]);
-    let bd = Infinity;
-    for (const [x, y] of c) { const d = dist(u.x, u.y, x, y) + (cut(u.x, u.y, x, y) ? 500 : 0); if (d < bd) { bd = d; gx = x; gy = y; } }
-    moved = true;
-  }
-  if (!cut(u.x, u.y, gx, gy)) return moved ? { x: gx, y: gy } : null;
-  const o = u.r + 34; let best = null, bd = Infinity;
-  for (const [x, y] of [[a0 - o, wg.y - RIG.half - o], [a0 - o, wg.y + RIG.half + o], [a1 + o, wg.y - RIG.half - o], [a1 + o, wg.y + RIG.half + o]]) {
-    if (cut(u.x, u.y, x, y)) continue; // (not in plain sight from here)
+  const g = Math.max(4, u.r - 6), x0 = wg.x + RIG.back - g, x1 = wg.x + RIG.front + g, y0 = wg.y - RIG.half - g, y1 = wg.y + RIG.half + g, far = 50;
+  if ((u.x < x0 - far && tx < x0 - far) || (u.x > x1 + far && tx > x1 + far) || (u.y < y0 - far && ty < y0 - far) || (u.y > y1 + far && ty > y1 + far)) return null;
+  const out = (px, py, nx, ny) => { // (px, py) if it's outside the box, else moved out through a face
+    if (px <= x0 || px >= x1 || py <= y0 || py >= y1) return [px, py];
+    const c = [[x0 - 1, py, px - x0], [x1 + 1, py, x1 - px], [px, y0 - 1, py - y0], [px, y1 + 1, y1 - py]], m = Math.min(c[0][2], c[1][2], c[2][2], c[3][2]);
+    let best = c[0], bd = Infinity;
+    for (const q of c) if (q[2] < m + 45) { const d = dist(q[0], q[1], nx, ny); if (d < bd) { bd = d; best = q; } }
+    return best;
+  };
+  const [ux, uy] = out(u.x, u.y, tx, ty), [gx, gy] = out(tx, ty, u.x, u.y);
+  const box = { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }, cut = (ax, ay, bx, by) => segHitsRect(ax, ay, bx, by, box, -0.5);
+  if (!cut(ux, uy, gx, gy)) return null; // (straight at it: a goal inside the wagon is one of its circles, and u stops at that)
+  let best = null, bd = Infinity;
+  for (const [x, y] of [[x0 - 24, y0 - 24], [x0 - 24, y1 + 24], [x1 + 24, y0 - 24], [x1 + 24, y1 + 24]]) {
+    if (cut(ux, uy, x, y)) continue; // (not in plain sight from here)
     const d = dist(u.x, u.y, x, y) + dist(x, y, gx, gy) + (cut(x, y, gx, gy) ? 420 : 0);
     if (d < bd) { bd = d; best = { x, y }; }
   }
-  return best || (moved ? { x: gx, y: gy } : null);
+  return best;
 }
 
 // The wagon rolls at its own pace; it stops while an enemy stands in its way or it's taking heavy blows, at the
@@ -435,8 +436,12 @@ export const sideOf = (u) => u.side || null; // (tools)
 // more for a foe on u's own side of the wagon, less for one the others are already on.
 function pickFor(run, u, o) {
   const S = u.side && SIDES[u.side]; if (!S || u.team !== run.wagon.team) return 0; // (a summon, a foe that changed sides: as ever)
+  if (o.chief) return 0; // (the road's end: whoever holds it is everyone's, wherever he stands; the party must be able to take the fight to him)
   const wg = run.wagon, a = o.x - wg.x, c = o.y - wg.y, shooter = u.def.role === 'ranged', reach = shooter ? u.def.range : 50 + (u.def.range || 0);
-  if (S.in(a, c) < -reach) return null;
+  const inS = S.in(a, c);
+  if (inS < -reach) return null;
+  // (a foe just past the edge, pressed to the wagon's far flank: the edge there runs along the wagon itself, so there's nowhere on u's side to strike it from)
+  if (inS < 0 && !shooter && (S.dir[1] ? o.x > wg.x + RIG.back - u.r && o.x < wg.x + RIG.front + u.r : Math.abs(c) < RIG.half + u.r)) return null;
   const far = rigGap(a, c), d = dist(u.x, u.y, o.x, o.y);
   if (d > Math.max(VIEW, shooter ? u.def.range + 140 : 0)) return null;
   if (far > GUARD + (shooter ? u.def.range * 0.7 : 0) && !(o.target === u && far < LEASH + reach)) return null; // (it may go out to one that's on it, as far as the leash)
@@ -455,9 +460,10 @@ function guardTick(run, dt, party) {
     const S = SIDES[h.side], post = h.post || (h.post = { x: 0, y: 0 });
     post.x = Math.min(run.world.W - 60, wg.x + h.postAt[0]); post.y = wg.y + h.postAt[1];
     const g = h.forcedGoal;
-    if (g && (g.revive || g.coin)) continue;
-    const over = Math.max(-S.in(h.x - wg.x, h.y - wg.y), rigGap(h.x - wg.x, h.y - wg.y) - LEASH);
-    if (over > 0) { const d = dist(h.x, h.y, post.x, post.y) || 1, k = Math.min(over * 3, 80) * dt / d; h.x += (post.x - h.x) * k; h.y += (post.y - h.y) * k; }
+    if ((g && (g.revive || g.coin)) || (h.target && h.target.chief && !(g && g.home))) continue; // (errands; and going for the road's holder)
+    const out = -S.in(h.x - wg.x, h.y - wg.y), far = rigGap(h.x - wg.x, h.y - wg.y) - LEASH, over = Math.max(out, far);
+    if (out > 0 && S.dir[0] + S.dir[1] !== 0) { const k = Math.min(out * 3, 80) * dt, n = S.dir[1] ? [0, Math.sign(S.dir[1])] : [Math.sign(S.dir[0]), 0]; h.x += n[0] * k; h.y += n[1] * k; } // back over its edge, square to it
+    if (far > 0) { const d = dist(h.x, h.y, wg.x + MID_A, wg.y) || 1, k = Math.min(far * 3, 80) * dt / d; h.x += (wg.x + MID_A - h.x) * k; h.y += (wg.y - h.y) * k; }
     if (over > 70) { h.forcedGoal = { x: post.x, y: post.y, home: true }; h.target = null; }
     else if (g && g.home) { if (over < -40 || dist(h.x, h.y, post.x, post.y) < 70) h.forcedGoal = null; else { g.x = post.x; g.y = post.y; } }
   }

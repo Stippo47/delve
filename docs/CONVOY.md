@@ -20,7 +20,7 @@ trickle from all sides, heroes guarding sides, the wagon solid, a new tree line 
   speed (convoy.js `PACE`; heroes, foes, summons: each unit gets its kind's def with the speed halved, so walking and
   every lunge or charge worked out from it are slower; attack rates and shots are not), and the wagon rolls at 10.5 px/s
   (was 21). A stretch is 1,500 of road (was 2,300: at half speed the old road made an 11-minute trip, so the road is
-  shorter instead); a whole trip comes to about 7 min 40 s in the batch (6 min before). Dungeons are untouched.
+  shorter instead); a whole trip comes to about 7 min 50 s in the batch (6 min before). Dungeons are untouched.
 - **The ground** is quiet (round 14): soft lighter and darker patches, a few drifts of flowers, the worn road. No grass
   tufts, no puddles, no bushes or fallen trunks at the trees' foot. Rocks on the open ground are faceted and painted
   into the ground.
@@ -61,7 +61,10 @@ trickle from all sides, heroes guarding sides, the wagon solid, a new tree line 
     (`GUARD`; a shooter further by 0.7 of its range), and within 620 of itself (`VIEW`: the "lower view distance"); one
     that is attacking the hero itself may be followed out to the leash (640). Of those it prefers the ones on its own
     side of the wagon, and avoids the ones other heroes are already on: attacked from two sides at once, the party
-    splits. Past the edge of its side or the leash a hero is eased back, and well past it walks home.
+    splits. Past the edge of its side or the leash a hero is eased back, and well past it walks home. A foe just past
+    a melee hero's edge that is pressed to the wagon's far flank isn't its to fight (the edge there runs along the
+    wagon itself: there is nowhere on its side to strike from). The one exception to all of it is the road's holder
+    at the end (the Bandit Chief): he is everyone's, wherever he stands, so the party can take the fight to him.
   - with nothing to fight each stands at its post (ahead of the oxen, behind the tail, out from a flank), which is
     round 13's "no huddling" on the road. Getting a friend up, and going for gold, are errands a hero may leave its
     side for; it comes home after. Summons and foes that changed sides aren't bound.
@@ -82,7 +85,8 @@ trickle from all sides, heroes guarding sides, the wagon solid, a new tree line 
   rolls over where they fell. It can't be charmed, confused, put to sleep, frightened or made to bleed.
   Enemies can target it like anyone. Half the goblins and bandits go for it first (whichever part is nearest); the
   rest 15%. It stops while an enemy stands in front of the oxen or it's taking heavy blows. Healing mends it at a
-  third. Broken wagon = the trip is lost; the whole party down = lost.
+  third. Broken wagon = the trip is lost; the whole party down = lost. (A stand-off at a stretch's gate: after 40 s
+  the foes press in, after 70 s the stragglers wear down and, since round 14, fall.)
 - **Downed heroes** lie where they fell and can be revived as in a dungeon (an ally standing over them, or a revive
   ability) until the road carries them off the bottom of the screen; a ring round them runs down (red and pulsing near
   the end) and the strip's face for them turns red. Past the bottom they're "left behind" (a banner says so) and wait at
@@ -111,7 +115,7 @@ kept for bursts every 38-50 s), RIG_TAKEN 0.6, GOLD_MUL 1.1, FLING 2, PAY 200, S
 budget); js/convoy-art.js: PARALLAX [0.5, 1], EDGE_DEFAULT 'crowns'.
 `node tools/convoys.mjs --n 20 --level 4 [--spend none] [--lands wildwood,warren]` reports how often it's delivered,
 the wagon's health, gold picked up vs dropped, what was bought and kept, heroes left behind, and the pop-in check.
-Round 14's batch (20 trips a level, the Wildwood, before -> after): delivered 55% -> 55% at level 3, 55% -> 60% at
-level 4, 65% -> 70% at level 5; 0 stuck, nothing popping into view.
+Round 14's batch (60 trips a level, the Wildwood, before -> after): delivered 53% -> 52% at level 3, 58% -> 67% at
+level 4, 68% -> 70% at level 5; 0 stuck, nothing popping into view; a trip 6 min -> 7 min 50 s.
 Tools for clips: `tools/clip.mjs --convoy` takes `--lean X` (hold the camera across), `--calm S` (no foes for S
 seconds), `--send left:5,right:5` (a crowd from each side named), `--eval "js"` (stage anything; `GAME.run.send(dir, n)`).

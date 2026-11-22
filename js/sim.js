@@ -571,7 +571,7 @@ function movement(w, u, dt) {
     [gx, gy] = goalVec(w, u, wx, wy);
     { const l = Math.hypot(gx, gy) || 1; gx /= l; gy /= l; gy += clamp((wy - u.y) / 140, -0.8, 0.8); } // lane W: and take up its place across the way as it goes
     const wd = dist(u.x, u.y, wx, wy);
-    mult = ahead > 90 ? 0.15 : ahead < -60 ? 0.85 : 0.6;
+    mult = u.post ? 0.85 : ahead > 90 ? 0.15 : ahead < -60 ? 0.85 : 0.6; // (a post: nobody to keep pace with)
     // ease in and stop at the waypoint (it circled round it, turning back and forth, until dungeon.js moved it on)
     if (wd < 50) { gx = gy = 0; } else mult *= clamp(wd / 160, 0.4, 1);
     [gx, gy] = roomFrom(u, al, gx, gy); // lane W: and a little room from the others
@@ -737,6 +737,7 @@ const blockedBy = (w, u, src, amt, o) => { if (w.stats && amt > 0 && !o.dot) tal
 export function hurt(w, u, amount, src, o = {}) {
   if (u && u.invulnT > 0 && alive(u) && amount > 0 && !u.ethereal) { blockedBy(w, u, src, amount, o); return 0; }
   if (!alive(u) || u.invulnT > 0 || amount <= 0 || u.ethereal) return 0;
+  if (u.def.cargo && !u.linkTo) { u.blowBy = src || null; u.blowT = w.time; } // lane W (round 14): the wagon itself was hit: its body circles won't count the same blow again (below)
   // round 10, chains (families.js): a body segment flinches, but the blow lands on its head (no shove: it follows)
   if (u.linkTo) { if (!alive(u.linkTo)) return 0; u.flashT = 0.12; u.hitT = 0.16; u.hitA = src ? angleTo(src.x, src.y, u.x, u.y) : 0; u.hitX = u.x; u.hitY = u.y;
     if (u.def.rig) { const h = u.linkTo, by = src || null; if (h.blowBy === by && w.time - h.blowT < (src ? 0.2 : 1e-6)) return 0; h.blowBy = by; h.blowT = w.time; } // lane W (round 14): the wagon's body circles: one blow that catches several lands once

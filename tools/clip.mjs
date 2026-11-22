@@ -28,7 +28,14 @@ const ctx = await browser.newContext({ viewport: { width: W, height: H }, device
 const page = await ctx.newPage();
 const errors = [];
 // (round 14, lane W: whatever goes wrong below, Edge is taken down before this exits: a failed run used to leave it running)
-const killEdge = () => { try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); } try { fs.rmSync(prof, { recursive: true, force: true }); } catch {} };
+const killEdge = () => {
+  try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch {}
+  // (round 14, lane W) Edge starts itself again under another process id, which the line above doesn't reach, so every
+  // run used to leave one running: take down whatever still runs on this run's own profile folder
+  try { execFileSync('powershell', ['-NoProfile', '-Command', `Get-CimInstance Win32_Process -Filter "Name='msedge.exe'" | Where-Object { $_.CommandLine -like '*${path.basename(prof)}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`], { stdio: 'ignore' }); } catch {}
+  try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
+};
+setTimeout(() => { console.error('clip.mjs: took too long, giving up'); killEdge(); try { fs.rmSync(frames, { recursive: true, force: true }); } catch {} process.exit(2); }, +opt('max', 480) * 1000).unref(); // (--max S: a run that hangs still takes its Edge down)
 process.on('uncaughtException', (e) => { console.error(e); killEdge(); try { fs.rmSync(frames, { recursive: true, force: true }); } catch {} process.exit(1); });
 process.on('unhandledRejection', (e) => { console.error(e); killEdge(); try { fs.rmSync(frames, { recursive: true, force: true }); } catch {} process.exit(1); });
 page.on('pageerror', (e) => errors.push(String(e)));

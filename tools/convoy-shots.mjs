@@ -16,6 +16,13 @@ const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'delve-edge-'));
 const edge = spawn(EDGE, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio', `--remote-debugging-port=${port}`, `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
 let browser;
 for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
+const killEdge = () => {
+  try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch {}
+  // (round 14, lane W) Edge starts itself again under another process id, which the line above doesn't reach, so every
+  // run used to leave one running: take down whatever still runs on this run's own profile folder
+  try { execFileSync('powershell', ['-NoProfile', '-Command', `Get-CimInstance Win32_Process -Filter "Name='msedge.exe'" | Where-Object { $_.CommandLine -like '*${path.basename(prof)}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`], { stdio: 'ignore' }); } catch {}
+  try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
+};
 const errors = [];
 try {
   const page = await (await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2, hasTouch: true })).newPage();
@@ -78,6 +85,5 @@ try {
 } catch (e) { errors.push('script: ' + (e.stack || e)); }
 console.log(errors.length ? 'ERRORS\n' + errors.join('\n') : 'no errors');
 try { await browser.close(); } catch {}
-try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch {}
-try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
+killEdge();
 process.exit(errors.length ? 1 : 0);
