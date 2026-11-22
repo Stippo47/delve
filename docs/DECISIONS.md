@@ -401,14 +401,16 @@ Done by the lead, live as 0.14.1:
 
 ## Round 13, lane W (2026-11-22): the wagon from the designer's answers; no huddling
 docs/CONVOY.md has the mode as built. The calls the lane made (the designer's words are in BUILD-v6 and the v13-convoy log):
-- **Width and zoom**: the ground is 1700 across (2.8x the try's 600; open ground between the tree lines 1200, ~2.3x),
-  not a full 4x, so that both tree lines stay on a portrait phone at the default zoom (1500 units across: hero ~19 px,
-  the wagon ~87 px long on a 390-wide screen). A pinch out shows the rest. The wagon and ox team are ~350 long, ~2x the try's.
+- **Width and zoom** (after the lead's review): the open ground between the tree lines is 2100 (~4x the try's), the
+  ground 2800 with a wood 350 deep each side. The camera shows 1500 units across a portrait phone at the default zoom
+  (hero ~19 px, the wagon and ox team ~87 px long on a 390-wide screen) and leans towards the fighting, so a tree line
+  comes into view when the fight is there; a wave coming from off screen shows as a red arrow at the screen's edge. The
+  ox team has a body (a box from the yoke to the noses).
 - **Foes from the trees**: every wave foe starts under the canopy, hidden and untouchable (ethereal) until it steps out
   past the tree line; nobody goes back under the trees after. Nothing walks in from off the top of the screen.
-- **Gold**: no switch. Near gold as they fight (as in a dungeon); further gold (900 from the wagon) when nothing threatens
+- **Gold**: no switch. Near gold as they fight (as in a dungeon); further gold (1000 from the wagon) when nothing threatens
   the wagon or the hero; gatherers (`gatherer: true` on a hero's data: the Quartermaster and the Pirate) first, further
-  (1050), and even mid-fight unless a foe is on them. Gatherers are a wagon-road thing only for now (dungeon gold fades
+  (1200), and even mid-fight unless a foe is on them. Gatherers are a wagon-road thing only for now (dungeon gold fades
   fast and is pulled in anyway); their trait text says so.
 - **The shop's prices** (the trip's gold only): mend 30 (+25%), draught 12, trinket 55, sellsword 40. The try's free
   pick of one is gone: the shop replaces it.

@@ -11,12 +11,15 @@ round 13 message). Files: `js/convoy.js` (rules), `js/convoy-art.js` (the ground
 - **Entry.** A wagon parked at the camp's bottom edge. Tapping it opens "The Wagon": the trip's three legs, the party
   at the fire (resting heroes stay), the pay. "Set out".
 - **The road.** A wide strip of open ground with the road worn up its middle and a forest on both sides; the camera
-  rides ahead of the wagon. The ground is 1700 across (the try's was 600), the open ground between the tree lines 1200
-  (the try's ~530); the camera shows 1500 across on a portrait phone at the default zoom, so both tree lines are always
-  in view, and pinching out shows more. A stretch is 2,300 of road; the wagon rolls at 21 px/s (a hero walks ~62).
-- **The forest edge** is the mode's look: three rows of tree tops a side, the front row ragged (gaps, old trees leaning
-  out, young ones set back), each crown drawn like the heroes (thick ink outline, scalloped clumps lit towards the light),
-  the canopy's shade on the verge, roots and bushes at the trees' foot. The canopy is drawn OVER the units, so whatever
+  rides ahead of the wagon. The ground is 2800 across (the try's was 600), the open ground between the tree lines 2100
+  (about four times the try's ~530); the camera shows 1500 across on a portrait phone at the default zoom, and leans
+  across towards wherever the fighting is, so a tree line comes into view when the fight is there. A wave coming from
+  off screen shows as a red arrow at the screen's edge. Pinching out shows more. A stretch is 2,300 of road; the wagon rolls at 21 px/s (a hero walks ~62).
+- **The forest edge** is the mode's look: a wood 350 deep, three rows a side, the front row ragged (gaps, old trees
+  leaning out, young ones set back), each country's mix of kinds (the Wildwood: broad trees, smaller paler ones, a few
+  pines and dead ones; fallen trunks reaching onto the verge), all drawn like the heroes (thick ink outline, a gradient
+  to the light, big soft lit masses), the deeper rows the same drawing in darker values; the canopy's shade on the
+  verge, bushes along it. Rocks on the open ground are faceted and painted into the ground. The canopy is drawn OVER the units, so whatever
   is under the trees is hidden.
 - **Waves** every 11-15 s, all walking in from under the trees: ahead (both sides), one side, behind, or two at once;
   each a little bigger than the last, and each leg harder. A new foe is hidden (nobody can target or hit it) until it
@@ -24,13 +27,14 @@ round 13 message). Files: `js/convoy.js` (rules), `js/convoy-art.js` (the ground
   first seen on open ground on screen.
 - **The party** fights round the wagon on its own; with nothing to fight they walk ahead of the oxen spread in a loose
   line (sim.js `looseSpot`, the same as in dungeons), and drift off for loose gold. A hero further than 640 from the
-  wagon walks back (unless what it fights is near the wagon).
+  wagon walks back (unless what it fights is near the wagon), at 820 now the ground is wider.
 - **Gold** (no switch): heroes pull in gold near them as they fight (as in a dungeon); when no foe is near the wagon or
-  them, the nearest free hero goes further for loose gold (up to 900 from the wagon), the gold about to be left behind
+  them, the nearest free hero goes further for loose gold (up to 1000 from the wagon), the gold about to be left behind
   first. **Gatherers** (a hero's data: `gatherer: true`; the Quartermaster and the Pirate) put gold first: they're sent
-  first, go further (1050), and go even mid-fight unless a foe is on them; a coin bobs over their head on the way.
+  first, go further (1200), and go even mid-fight unless a foe is on them; a coin bobs over their head on the way.
   Gold stays where it fell; past the bottom of the screen (640 behind the wagon) it's left behind.
-- **The wagon** is a unit on the party's side with 900 health (its body covers the bed; the ox team is ahead of it):
+- **The wagon** is a unit on the party's side with 900 health (its body covers the bed; the ox team ahead of it has a
+  body too: nobody stands on the oxen):
   enemies can target it like anyone. Half the goblins and bandits go for it first; the rest 15%. It stops while an enemy
   stands in front of it or it's taking heavy blows. Healing mends it at a third. Broken wagon = the trip is lost; the
   whole party down = lost.
@@ -56,8 +60,8 @@ round 13 message). Files: `js/convoy.js` (rules), `js/convoy-art.js` (the ground
   bestiary counts and lifetime stats do count.
 
 ## Numbers to tune (js/convoy.js top)
-WAGON_SPEED 21, WAGON_HP 900, STRETCH_LEN 2300, ROAD_W 1700, EDGE 250, ACROSS 1500, BEHIND 640, LEASH 640, SAFE 640,
-REACH 900, GATHER_REACH 1050, wave gap 11-15 s, wave budget, GOLD_MUL 1.1, FLING 2, PAY 200, SHOP prices, LEG (each
+WAGON_SPEED 21, WAGON_HP 900, STRETCH_LEN 2300, ROAD_W 2800, EDGE 350, ACROSS 1500, BEHIND 640, LEASH 820, SAFE 700,
+REACH 1000, GATHER_REACH 1200, wave gap 11-15 s, wave budget, GOLD_MUL 1.1, FLING 2, PAY 200, SHOP prices, LEG (each
 leg's strength and budget).
 `node tools/convoys.mjs --n 20 --level 4 [--spend none] [--lands wildwood,warren]` reports how often it's delivered,
 the wagon's health, gold picked up vs dropped, what was bought and kept, heroes left behind, and the pop-in check.
