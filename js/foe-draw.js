@@ -166,8 +166,8 @@ export function drawFoe(ctx, u, w, dt, R) {
   if (u.linkTo && u.def.segment) return true; // a chain's link: drawn with its head
   if (u.def.tail && !u.downed && !u.hidden) drawSpiritTail(ctx, u, dt, w.time); // (then the core over its root: drawUnit)
   if (u.segs && u.def.art && !u.downed) { drawChain(ctx, u, w, dt, R); return true; }
-  if (u.stuckIn) { // the sun blade with its point in a wall: the part inside the wall isn't drawn
-    const r = u.stuckIn, B = 1e5;
+  if (u.stuckIn || u.inWall) { // the sun blade with its point in a wall, a turret set into one: the part inside the wall isn't drawn
+    const r = u.stuckIn || u.inWall, B = 1e5;
     ctx.save(); ctx.beginPath(); ctx.rect(-B, -B, 2 * B, 2 * B); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip('evenodd');
     R.drawUnit(ctx, u, w); ctx.restore();
     return true;

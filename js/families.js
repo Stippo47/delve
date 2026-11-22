@@ -112,7 +112,7 @@ export function turretBrain(w, u, dt) {
   if (due(u, 'look', dt, 0.3)) {
     again(u, 'look', 0.35);
     let best = null, bd = Infinity;
-    for (const h of opponents(w, u)) { const d = dist(u.x, u.y, h.x, h.y); if (d < bd && d < (T.range || 520) && lineClear(w, u.x, u.y, h.x, h.y, 4) && (!T.wall || angleDiff(angleTo(u.x, u.y, h.x, h.y), u.baseA) < (T.arc || 1.3) + 0.2)) { bd = d; best = h; } }
+    for (const h of opponents(w, u)) { const d = dist(u.x, u.y, h.x, h.y); if (d < bd && d < (T.range || 520) && lineClear(w, eyeX(u), eyeY(u), h.x, h.y, 4) && (!T.wall || angleDiff(angleTo(u.x, u.y, h.x, h.y), u.baseA) < (T.arc || 1.3) + 0.2)) { bd = d; best = h; } }
     u.target = best; if (best) u.aggro = true;
   }
   const t = targetOf(w, u);
@@ -121,28 +121,35 @@ export function turretBrain(w, u, dt) {
   if (T.wall) want = u.baseA + clamp(wrapAngle(want - u.baseA), -(T.arc || 1.3), T.arc || 1.3);
   turnTo(u, want, (T.turn || 1) * (u.elite ? 1.3 : 1), dt);
   const off = angleDiff(u.facing, angleTo(u.x, u.y, t.x, t.y));
-  if (off < (T.aim || 0.2) && due(u, 'fire', dt, T.cd * 0.5) && lineClear(w, u.x, u.y, t.x, t.y, 4)) { again(u, 'fire', T.cd * 0.85, T.cd * 1.15); T.fire(w, u, t); }
+  if (off < (T.aim || 0.2) && due(u, 'fire', dt, T.cd * 0.5) && lineClear(w, eyeX(u), eyeY(u), t.x, t.y, 4)) { again(u, 'fire', T.cd * 0.85, T.cd * 1.15); T.fire(w, u, t); }
   return true;
 }
+// where a turret looks from: a wall one, a little out from the wall it's set in
+const eyeX = (u) => u.x + (u.mounted ? Math.cos(u.baseA) * 8 : 0), eyeY = (u) => u.y + (u.mounted ? Math.sin(u.baseA) * 8 : 0);
 // A stand-off that has gone on too long (w.stale): whatever can't walk in to end it burns itself out instead.
 export function overheat(w, u, dt) {
   if (!w.stale || !u.aggro) return;
   hurt(w, u, u.maxHp * 0.04 * dt, null, { dot: true, color: '#FFB347' });
   if (rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.5, y: u.y + rrange(-u.r, u.r) * 0.5, vx: 0, vy: 0, rise: 40, up: 0, life: 0.7, max: 0.7, size: 7, color: 'rgba(200,200,205,0.6)' });
 }
-// The nearest wall face (the room's edges, the walls inside it), within reach of where it was put: its back against it
-// (not sunk in, so whatever it drops can be picked up), facing out into the room.
+// The nearest wall face (the room's edges, the walls inside it), within reach of where it was put, facing out into
+// the room. Round 13 (lane E; the designer on the gun turret: "Turret part should be in the wall more. Circle half way
+// in"): set into the wall: its middle just off the wall's face (MOUNT_OUT: far enough that sight lines from it and to
+// it still clear the wall), and the part inside the wall isn't drawn (u.inWall, foe-draw.js), so the socket is in the
+// wall and the barrel pokes out.
+const MOUNT_OUT = 6;
 function mountOnWall(w, u) {
-  const cand = [];
-  const face = (x, y, nx, ny) => { const px = x + nx * (u.r + 2), py = y + ny * (u.r + 2); if (!solidAt(w, px + nx * (u.r * 0.5 + 6), py + ny * (u.r * 0.5 + 6), u.r * 0.5) && (!w.cells || w.cells.some((c) => px > c.x && px < c.x + c.w && py > c.y && py < c.y + c.h))) cand.push({ x: px, y: py, a: Math.atan2(ny, nx), d: dist(u.x, u.y, px, py) }); };
-  face(0, u.y, 1, 0); face(w.W, u.y, -1, 0); face(u.x, 0, 0, 1); face(u.x, w.H, 0, -1);
+  const cand = [], BIG = 4000;
+  const face = (x, y, nx, ny, rect) => { const px = x + nx * MOUNT_OUT, py = y + ny * MOUNT_OUT; if (!solidAt(w, px + nx * (u.r + 6), py + ny * (u.r + 6), u.r * 0.5) && (!w.cells || w.cells.some((c) => px > c.x && px < c.x + c.w && py > c.y && py < c.y + c.h))) cand.push({ x: px, y: py, a: Math.atan2(ny, nx), d: dist(u.x, u.y, px, py), rect }); };
+  face(0, u.y, 1, 0, { x: -BIG, y: -BIG, w: BIG, h: w.H + BIG * 2 }); face(w.W, u.y, -1, 0, { x: w.W, y: -BIG, w: BIG, h: w.H + BIG * 2 });
+  face(u.x, 0, 0, 1, { x: -BIG, y: -BIG, w: w.W + BIG * 2, h: BIG }); face(u.x, w.H, 0, -1, { x: -BIG, y: w.H, w: w.W + BIG * 2, h: BIG });
   for (const r of w.walls) {
     const cx = clamp(u.x, r.x + 30, r.x + r.w - 30), cy = clamp(u.y, r.y + 30, r.y + r.h - 30);
-    face(r.x, cy, -1, 0); face(r.x + r.w, cy, 1, 0); face(cx, r.y, 0, -1); face(cx, r.y + r.h, 0, 1);
+    face(r.x, cy, -1, 0, r); face(r.x + r.w, cy, 1, 0, r); face(cx, r.y, 0, -1, r); face(cx, r.y + r.h, 0, 1, r);
   }
   const ok = cand.filter((c) => c.d < 420 && c.x > 200).sort((a, b) => a.d - b.d)[0]; // (not right by the way in)
   if (!ok) return;
-  u.x = ok.x; u.y = ok.y; u.facing = ok.a; u.mounted = true;
+  u.x = ok.x; u.y = ok.y; u.facing = ok.a; u.mounted = true; u.inWall = ok.rect;
 }
 
 // ---------------------------------------------------------------- burrowers
