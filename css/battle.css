@@ -88,13 +88,6 @@
 .bp-as { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; }
 .bp-as .cap { flex: none; }
 .bp-as .seg { flex: 1; }
-.bp-dev { display: flex; align-items: center; gap: 10px; margin: 16px 2px 0; padding: 10px 12px; border-radius: 12px; color: var(--quiet); font-size: 13px; font-weight: 800; box-shadow: inset 0 0 0 1px var(--line); cursor: pointer; }
-.bp-dev span { flex: 1; }
-.bp-sw { flex: none; position: relative; display: block; width: 42px; height: 24px; border-radius: 999px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line2); }
-.bp-sw::after { content: ''; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--quiet); transition: transform .15s; }
-.bp-dev.on { color: var(--text); }
-.bp-dev.on .bp-sw { background: var(--teal); }
-.bp-dev.on .bp-sw::after { transform: translateX(18px); background: #062B27; }
 
 /* ---- in a battle: the top bar loses the purse and the map; the strip along the bottom */
 body.battle .hud-gold, body.battle .hud-gem, body.battle #mapCanvas { display: none; }
@@ -153,3 +146,4 @@ body.battle .hud-gold, body.battle .hud-gem, body.battle #mapCanvas { display: n
 .br-row.out .br-bar > i { opacity: .55; }
 .br-foot { display: flex; gap: 8px; }
 .br-foot .btn { flex: 1; padding-left: 8px; padding-right: 8px; }
+.bs-info { flex: none; cursor: pointer; } /* round 14: a row's picture opens that unit's page */

@@ -244,3 +244,41 @@ export const hasIcon = (kind, id) => !!({ trinket: TRINKET, potion: POTION, stat
 export const TRINKET_ICON_IDS = Object.keys(TRINKET);
 export const STATUS_ICON_IDS = Object.keys(STATUS);
 export const POTION_ICON_IDS = Object.keys(POTION);
+
+// ---------------------------------------------------------------- stat icons (round 14, lane U)
+// The designer: "I want every stat to have a readable icon so u can see sword + a number for damage for example."
+// Every stat icon in the game comes through statIcon(id): one place to drop the picked icon style into (the designer is
+// choosing between the three in design/icons-r14). Until then a plain, clear set in the look of the icons above.
+const LINE = (d, col, w = 3.2) => `<path d="${d}" fill="none" stroke="${INK}" stroke-width="${w + 3.4}"/><path d="${d}" fill="none" stroke="${col}" stroke-width="${w}"/>`;
+const STAT = {
+  hp: `<path d="M16 28S4 20 4 11.5A6.5 6.5 0 0 1 16 8a6.5 6.5 0 0 1 12 3.5C28 20 16 28 16 28z" fill="#E8604C"/><path d="M8.2 10.2c-1.300.8-2 2-2 3.600" fill="none" stroke="#FFD2C8" stroke-width="2"/>`,
+  armor: `<path d="M16 3l11 4v8c0 7-4.600 11.600-11 14C9.600 26.600 5 22 5 15V7z" fill="#8FA3C4"/><path d="M16 4.600v22.600C10.600 25 6.500 21 6.500 15V8z" fill="#C3D0E6" ${H}/>`,
+  speed: `<path d="M12 4h8v11l7 3.500c1.600.8 2.500 2 2.500 3.500V27H12z" fill="#C89A5A"/><path d="M12 22.500h17.500V27H12z" fill="#7A5230" ${H}/>${LINE('M2.500 9h5M1.500 15.500h6M2.500 22h5', '#F2E8D2', 2.200)}`,
+  dmg: `<path d="M28.500 3.500l-1.500 7-11 11-5.500-5.500 11-11z" fill="#DDE4EE"/><path d="M6.500 14l11.500 11.500-3 3L3.500 17z" fill="#D9A441"/><path d="M8.500 21l2.500 2.500-5.500 5.500-2.500-2.500z" fill="#8A5A30"/>`,
+  aps: LINE('M5 6l9.500 10L5 26M16.500 6L26 16l-9.500 10', '#FFD45A'),
+  range: LINE('M4 7v18M28 7v18M9 16h14M13 11.500L8.500 16l4.500 4.500M19 11.500l4.500 4.500-4.500 4.500', '#9FDDF6', 2.600),
+  cd: `<path d="M7.500 3.500h17v4.500l-6 8 6 8v4.500h-17V24l6-8-6-8z" fill="#F2E8D2"/><path d="M11 25.500l5-5.500 5 5.500z" fill="#E6A935" ${H}/><path d="M12.500 8.500h7L16 13z" fill="#E6A935" ${H}/>`,
+  heal: `<path d="M12 4h8v8h8v8h-8v8h-8v-8H4v-8h8z" fill="#5CC45A"/><path d="M13.500 6h2.500v7.500H6.500V13.500h7z" fill="#A8EBA0" ${H}/>`,
+  potency: `<path d="M16 3c5 7 9 11 9 16a9 9 0 0 1-18 0c0-5 4-9 9-16z" fill="#B58CFF"/><path d="M11.500 18c0 2.600 1.500 4.500 3.800 5" fill="none" stroke="#E6D8FF" stroke-width="2"/>`,
+  haste: `<path d="M18.500 2L6 18h8l-2.500 12L26 13h-8.500z" fill="#4FD8C8"/>`,
+  kills: `<path d="M5 14a11 11 0 0 1 22 0v5.500l-3 2V27H8v-5.500l-3-2z" fill="#E8E2D0"/><circle cx="11.500" cy="15.500" r="2.800" fill="${INK}" ${H}/><circle cx="20.500" cy="15.500" r="2.800" fill="${INK}" ${H}/><path d="M13 27v-3M16 27v-3M19 27v-3" fill="none" stroke-width="1.800"/>`,
+  runs: `${LINE('M8 29V4', '#C89A5A', 2.600)}<path d="M9.500 5h16.500l-4 5.500 4 5.500H9.500z" fill="#E8604C"/>`,
+  taken: `<path d="M16 2l3.300 7.700 8.200-2.700-3.700 7.800 5.700 5-7.800 2 .8 8.700-6.500-5.300-6.500 5.300.8-8.700-7.800-2 5.700-5-3.700-7.800 8.200 2.700z" fill="#FF8A6E"/>`,
+  blocked: `<path d="M16 3l11 4v8c0 7-4.600 11.600-11 14C9.600 26.600 5 22 5 15V7z" fill="#7FB8E8"/><path d="M10.500 15.500l4 4 7.500-8" fill="none" stroke="#FFFFFF" stroke-width="3"/>`,
+  downs: `<path d="M11 3h10v13h7L16 29 4 16h7z" fill="#9BA2C0"/>`,
+  revives: `<path d="M11 29h10V16h7L16 3 4 16h7z" fill="#7CE0A0"/>`,
+  best: `<path d="M16 2.500l4.200 8.500 9.300 1.400-6.700 6.600 1.600 9.300L16 23.900l-8.400 4.400 1.600-9.300L2.500 12.400l9.300-1.400z" fill="#F5B841"/>`,
+  xp: `<path d="M16 2.500L28 16 16 29.500 4 16z" fill="#8C7CFF"/><path d="M16 6.500L8 16h8z" fill="#C9C0FF" ${H}/>`,
+  gold: `<circle cx="16" cy="16" r="12" fill="#FFCB4A"/><circle cx="16" cy="16" r="7" fill="#F0A92E" stroke-width="2"/>`,
+  found: `<path d="M16 29.500s9.500-9.500 9.500-16.500a9.500 9.500 0 0 0-19 0c0 7 9.500 16.500 9.500 16.500z" fill="#E8604C"/><circle cx="16" cy="13" r="3.600" fill="#F4EDE0" ${H}/>`,
+  elite: `<path d="M16 3l3.600 9.400L29 16l-9.400 3.600L16 29l-3.600-9.400L3 16l9.400-3.600z" fill="#FFE6A0"/>`,
+  major: `<path d="M4 9.500l6.500 6L16 5.500l5.500 10 6.500-6-2.500 16.500h-19z" fill="#F5B841"/><path d="M8 22h16" fill="none" stroke-width="1.800"/>`,
+  tier: `<path d="M16 3l11 6.500v13L16 29 5 22.500v-13z" fill="#F5B841"/><path d="M16 9.500l5 3v6.500l-5 3-5-3v-6.500z" fill="#FFE6A0" stroke-width="1.800"/>`,
+  fill: `<path d="M5 12h22v9H5z" fill="#3A2F3E"/><path d="M6.500 13.500h13v6h-13z" fill="#F5B841" ${H}/>`,
+  decay: `<path d="M5 12h22v9H5z" fill="#3A2F3E"/><path d="M6.500 13.500h6v6h-6z" fill="#9BA2C0" ${H}/>${LINE('M24 5l-5 5M19 5.500V10h4.500', '#9BA2C0', 2)}`,
+  time: `<circle cx="16" cy="17" r="11" fill="#F2E8D2"/><path d="M16 10.500V17l4.500 3" fill="none" stroke-width="2.600"/><path d="M13 3h6" fill="none"/>`,
+  bag: `<path d="M10 9h12l5 15a4 4 0 0 1-4 5H9a4 4 0 0 1-4-5z" fill="#C89A5A"/><path d="M11 4h10l-1.500 5h-7z" fill="#A7774A"/><path d="M9.500 9h13" fill="none" stroke="#F2E8D2" stroke-width="2"/>`,
+  floor: `<path d="M4 25h8v-6h8v-6h8" fill="none" stroke="${INK}" stroke-width="7"/><path d="M4 25h8v-6h8v-6h8" fill="none" stroke="#C3D0E6" stroke-width="3.200"/>`,
+};
+export const STAT_ICON_IDS = Object.keys(STAT);
+export function statIcon(id, cls = '') { return wrap(tidy(STAT[id] || STAT.best), 'stat ' + cls); }
