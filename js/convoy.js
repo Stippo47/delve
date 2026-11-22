@@ -12,7 +12,7 @@
 import { makeWorld, spawn, step, alive, puff } from './sim.js';
 import { DEFS } from './units.js';
 import { floorTheme, themeOf, weighted, DUNGEON_ORDER } from './themes.js';
-import { battleFoe, spawnHero, rollTrinket, trinketSlots, FOUND_EXTRA, RANK_MULT, PARTY_SCALE, BOSS_HP, XP_MUL, DUNGEON_RANK } from './dungeon.js';
+import { battleFoe, spawnHero, rollTrinket, trinketSlots, FOUND_EXTRA, RANK_MULT, PARTY_SCALE, BOSS_HP, XP_MUL, DUNGEON_RANK, xpScale, placeLevel } from './dungeon.js';
 import { buildGrid } from './path.js';
 import { newStats, tallyFoe, finishStats, bankTally, tallyRevive } from './stats.js';
 import { addXp, runOptions, applyLoadout, RECOVER_DOWN, RECOVER_HURT, HURT_BELOW, trinketInfo, WIPE_LOSS } from './progress.js';
@@ -462,15 +462,18 @@ function onKill(run, u) {
   run.kills++; tallyFoe(run.stats, u);
   if (u.def.onDeath) u.def.onDeath(w, u);
   if (u.chief) run.chiefDown = true;
-  const xp = Math.round((u.def.xp || 0) * XP_MUL * Math.sqrt(w.mult || 1) * (u.major ? 7 : u.elite ? 3 : 1));
+  const xp = (u.def.xp || 0) * XP_MUL * Math.sqrt(w.mult || 1) * (u.major ? 7 : u.elite ? 3 : 1) * xpScale(placeLevel(DUNGEON_RANK[legOf(run).theme] || 0, 0.5));
   if (u.chief) run.gems += 1; // the road's last foe drops a gem, as a floor's does
-  for (const h of heroesUp(run)) giveXp(run, h, xp);
+  // everyone in the party gets it, the downed too (dungeon.js shareXp)
+  const up = heroesUp(run);
+  for (const k of run.party) giveXp(run, up.find((h) => h.kind === k) || { kind: k, down: true }, xp);
 }
 function giveXp(run, h, xp) {
   const sv = run.heroes[h.kind];
   if (!sv || sv.merc || h.summon) return;
   const n = addXp(sv, xp); if (!n) return;
   sv.gained += n; sv.best = Math.max(sv.best, sv.level); h.level = sv.level;
+  if (h.down) return;
   const w = run.world;
   for (let i = 0; i < 14; i++) { const a = i / 14 * TAU; w.particles.push({ x: h.x, y: h.y, vx: Math.cos(a) * 120, vy: Math.sin(a) * 120, life: 0.6, max: 0.6, size: 4, color: '#FFE14D' }); }
 }
@@ -550,7 +553,7 @@ function over(run, result) {
   if (run.phase === 'over') return;
   if (run.phase === 'road') keepHp(run);
   run.phase = 'over'; run.result = result; run.endT = 0;
-  if (result === 'delivered') { run.banner = { s: 'Delivered', t: 2.5 }; for (const k of run.party) { const h = run.world.units.find((u) => u.kind === k && !u.summon && alive(u)); if (h) giveXp(run, h, DELIVER_XP); else addXp(run.heroes[k], DELIVER_XP); } }
+  if (result === 'delivered') { run.banner = { s: 'Delivered', t: 2.5 }; for (const k of run.party) { const h = run.world.units.find((u) => u.kind === k && !u.summon && alive(u)); const xp = DELIVER_XP * xpScale(placeLevel(DUNGEON_RANK[legOf(run).theme] || 0, 0.5)); if (h) giveXp(run, h, xp); else addXp(run.heroes[k], xp); } }
 }
 // The flag button: turn back (the trip's gold, less the cut; no pay).
 export function turnBack(run) { if (run.phase === 'over' || run.summary) return; over(run, 'turned'); run.endT = 9; summarizeConvoy(run); }

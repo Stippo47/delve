@@ -1,0 +1,201 @@
+
+delve / art / art-round10: "Art round 10: your notes, and picks"
+  ghost-a-tails (Ghost A: three tails): GOOD
+      "Do 1"
+  ghost-b-tails (Ghost B: three tails): GOOD
+      "1"
+  troll-heads (Troll: three heads): GOOD
+      "B. Sharper jaw. Slightly longer head. No mouth. Long nose."
+  troll-hands (Troll: just hands): PROBLEM
+      comment on picture img/art-round10-troll-hands.jpg: "Yeah they need arms "
+  wolves-nopaws (Wolves without paws): GOOD
+      comment on picture img/art-round10-wolves-nopaws.jpg: "Bring their heads forwards a bit. Shorten body a bit. And I think this is good. Also show me with the pawns rendering under the body "
+  alpha-scar (The Alpha's scar): GOOD
+      "Claw marks"
+  boar (Thornback boar: three): GOOD
+      "Ridge. Show me without the “mane”"
+  ent-faces (Ent: three faces): GOOD
+      comment on picture img/art-round10-ent-faces.jpg: "Remove mouth. B is good
+Take leaf off nose"
+  elder-ent-faces (Elder Ent: three faces): GOOD
+      comment on picture img/art-round10-elder-ent-faces.jpg: "B"
+  sproutling (Sproutling: three takes): GOOD
+      comment on picture img/art-round10-sproutling.jpg: "I like these. Save em. But try the original design just better. No arms. Less busy leaves. 
+
+Bud doesnt look the too good "
+  golem-bodies (Golem: three bodies): GOOD
+      comment on picture img/art-round10-golem-bodies.jpg: "Try 4 more. Keeps these. "
+  gilded-golems (Gilded golem: the three): DECENT
+      comment on picture img/art-round10-gilded-golems.jpg: "Don’t like the gold mask look "
+  frost-spirit (Frost spirit's tail): GOOD
+  boss-biblical-angel (A biblically accurate ange): GOOD
+  fixes0 (Wildwood and Sewers): GO, picked: Bandit axe, Bandit brute, Bandit chief, Bandit daggers, Bandit sword, Croc, Slime, Slime, Slime (before)
+      item bandit-axe (Bandit axe): "Flip the axe "
+      item bandit-brute (Bandit brute): "I think I don’t like the line in the bandanas. Remove them for everyone "
+      item bandit-daggers (Bandit daggers): "Pigtail not layered properly "
+      item bandit-greatsword (Bandit greatsword): "Meh "
+      item bandit-poacher (Bandit poacher): "Try again"
+      item bandit-spear (Bandit spear): "Try again"
+      item bandit-sword (Bandit sword): "The strip down the middle shoukd be 2 lines dark on 1 side light on the other. Sharp contrast instead of gradient "
+      item bandit-torch (Bandit torch): "Meh. 
+
+Don’t like the torch. 
+
+Pretty cool hat for a bandit more suited for an “outlaw”"
+      item greenskin-orc (Orc): "Pony tail layer problem. Try without hair tie "
+      item sewer-croc (Croc): "Aim inwards. Put a chip in them and make them rusted (save this version though) 
+Make sure to use the axe on the left side and mirror it to the other side as they should be identical. "
+      item wild-dire-wolf (Dire wolf): "Less spikey "
+  fixes1 (Frost, Spire and Dunes): GO, picked: Cobra, Jackal guard, Mummy, Dunes serpent coil, Sand serpent, Icicle wraith, Choir sprite, The Twin Heralds, The Twin Heralds, Sun blade
+      item dunes-cobra (Cobra): "Have that top segment free from the bottom and have it slowly move around the bottom segment in game. "
+      item dunes-mummy (Mummy): "Don’t like Weird button on face. Remove arms. Otherwise good"
+      item dunes-serpent-coil (Dunes serpent coil): "Segment diamonds don’t look identical to head diamonds. Slight smaller and fainter"
+      item frost-icicle-wraith (Icicle wraith): "Fix hands then good"
+      item frost-yeti (Yeti): "Give dark nose again. Have it be taller then it is wide.
+Also make torso less sharp on the front "
+      item spire-fallen-angel (Fallen angel): "Try again"
+      item spire-herald-fallen (The Twin Heralds): "Make face more interesting. 
+Make the spear flag smaller, and have them hold the spear lower down on the handle and forwards more
+Hand also looks off "
+      item spire-herald-light (The Twin Heralds): "Reduce the shadow of face. 
+Same spear flag. 
+
+Idea is to have them both have bangs but 1 is down 1 way and the other has it the other way. 
+Don’t like hands "
+  fixes2 (Foundry and bosses): GO, picked: Choir singer, The Gilded Seraph, The Goblin Chieftain, Gear sprite, Gear sprite, Gun turret, Foundry wasp
+      item boss-gilded-seraph (The Gilded Seraph): "Looks good. I’ll keep if u can’t do better but I don’t love the helmet and face covering "
+      item boss-goblin-chieftain (The Goblin Chieftain): "Have them hold hands forwards more. Flip blades direction "
+      item foundry-bee (Bee): "Too simple now. Middle ground. 
+
+They should also show like cogs or something on them "
+      item foundry-turret-steam (Steam turret): "Meh
+Don’t like gun barrel "
+      item foundry-wasp (Foundry wasp): "This might be a good base for the basic bee. Maybe a bit fatter. Also make wings render ontop. 
+Maybe add 1 red “eye” on the head 
+
+
+Also make a “hive” sprite"
+  DECK: done (17 of 17 answered)
+
+delve / art / art-round10b: "Art round 10, part two"
+  foundry2 (The rest of the Foundry): GO, picked: Automaton, Bomb bot, Flame turret, Laser turret, Foundry smith, Saw blade (before), Chain crawler, Drill bot
+      item foundry-automaton (Automaton): "Good except visor. 3 variants. I also don’t like the look of the key on the back. Make 3 for that too"
+      item foundry-bomb-bot (Bomb bot): "Remove yellow caution tape. Fix fuse look. Put those leg things under the body coming out slightly on its left and right side "
+      item foundry-turret-flame (Flame turret): "The flame looks weird also ontop of the barrel? "
+      item foundry-turret-laser (Laser turret): "Have the socket hug it more. "
+      item foundry-mortar (Mortar): "Nope. Should be a cannon aiming straight up with a circle hole in the top. Slightly offset from the middle, skewed to 1 side. Will rotate this cannon to targets. What u made is more of a cannon  and I don’t like it regardless. "
+      item foundry-tesla-coil (Tesla coil): "The Tesla cannon I will allow to be slightly cheated up so you can see it better. "
+      item foundry-repair-drone (Repair drone): "3 variants for what’s on its front. Its propellers and body looks good. 
+
+Eye? "
+      item foundry-smith (Foundry smith): "The glowing hammer should have it on the side not top. 
+Don’t like the look of the hand. "
+      item foundry-saw-blade (Saw blade): "Add the middle detail onto the previous saw blade. "
+      item foundry-crawler-head (Chain crawler): "Different visor. "
+  others2 (Mummy, Spire, Pit Lord): GO, picked: Mummy, Sand mage, Dart trap, Seraph, Cherub, Knife bandit
+      item dunes-mummy (Mummy): "I liked the last one just without the button thing. 
+
+I want to see without the collar "
+      item frost-ice-slime (Ice slime): "I like the old one more. Maybe without the side spikes the old one could work "
+      item dunes-dart-trap (Dart trap): "Different “eye” style. Variants "
+      item spire-seraph (Seraph): "Use the old head shape."
+      item spire-seraph-before (Seraph (before)): "I like the head shape of this. "
+      item ember-pit-lord (The Pit Lord): "Face variants. Also tail "
+  DECK: done (2 of 2 answered)
+
+delve / runs / v12-report: "0.12.0: balance, armour, poison"
+  wither (Rooms that drag on): WORKSHOP
+      "I said no. I said to fix the source not the symptom."
+  DECK: done (5 of 5 answered)
+
+delve / runs / v141-battle: "0.14.1: battle tiers, wipes, the trail"
+  battle2 (Battle page: tiers): GOOD on the card. Its parts: 5 good, 1 decent
+      part tiers (Hero tiers): GOOD
+      part addas (Add at a tier or rank): GOOD
+      part dev (Dev unlock): GOOD, "Put all dev controls in 1 place "
+      part strength (Strength switch): GOOD
+      part size (Bigger grounds): GOOD, "Note the gaper in this pic has big outlines "
+      part layout (Setup and result layouts): DECENT
+  wipe (Wipes, and resting): GO
+  catchup (New heroes falling behind): GO, picked: Low heroes earn XP much faster
+      "Faster xp gain because in higher level dungeons enemies drop more xp. Have 3 lvl 40 and 1 at lvl1 and the high leveled ones will carry the weaker one through the dungeons as they pick up xp. For every enemy everyone in the party gets the same amount of xp when defeated. Maybe the person who does the killing blow gets more? 
+How is xp currently shared and gained? 
+
+In the first dungeon your high level heroes will barely gain levels while lvl 1 will do at a normal pace"
+  trail (The trail's harsh cut): DECENT
+      "I don’t remember what I was talking about but I’ll probably find it again"
+  DECK: done (4 of 4 answered)
+
+delve / runs / v15-book-wagon: "0.15.0: the Book, the wagon"
+  book (The Book, with live previews): GOOD on the card. Its parts: 2 decent, 2 good, 1 problem
+      part layout (Layout): DECENT, "Very busy and packed together. Some repetitiveness. You can show multiple pages side by side I can swipe between like clash royal. 
+
+Also get an agent to make better icons for every ability and trinkets. Start with a handful so I can choose if I like the style before you go all out "
+      part heroes (Heroes and tiers): GOOD, "Should still preview when locked. 
+I don’t like the text pop ups"
+      part traits (Traits): DECENT, "No text pop up. You should be able to see the effect. 
+Also is the archer supposed to be attacking him? If so don’t show the dummies and have the archer in front of him looking at him. Only show what you have to for the scenario. Instead of the archer you could give the targets bows and let them use them. (Can also use a sword, spear, or hammer when necessary. More if you think it would be good to show off something) "
+      part monsters (Monsters): GOOD, "Make sure you don’t show trinkets on elites or majors. 
+
+I actually think these bestiary screens should be the same ones that show when you select a unit. Where you go to change equipment, read descriptions, upgrade etc. 
+
+Layout. 
+
+Entities page: 
+For hero’s has these tabs/pages: main (set equipment and potion), upgrades (web), preview, stats (hp, armour, speed, each weapons stats, trait stats, resistances, etc.) 
+
+Enemies tabs: overview (times killed, found in: , description, etc), preview, stats. There would be a top bar to switch between base, elite, and major. Stats would be as they are in game. Maybe you could select the level/room to get actual stats? Or would just show average for simplicities sake. 
+
+There would be no bottom bar to navigate between enemies you would press back and it would open a page listing them all out in a grid.
+You could also see all heroes in 1 page, trinkets in another, status effect in another, dungeon overview in another. So u can navigate and pull up your heroes page in the book by clicking on their card in the book or by clicking them in the camp. Would pull up the same page. 
+
+I want every stat to have a readable icon so u can see sword + a number for damage for example."
+      part statuses (Statuses and items): PROBLEM, "Status build up freaks out when full. 
+For something like frozen show the shatter as well as just leaving it alone. "
+  wagon2 (The wagon, round two): GOOD on the card. Its parts: 6 good, 1 problem
+      part size (Ground, wagon, camera): GOOD, "15% less wide. 
+
+I want everyone to be like 50% slower. Enemies to spawn continually instead of set waves. (Can still spawn large waves of enemies, just not just waves. Trickle in + bursts sometimes. Have them spawn from all sides. 
+
+Have heavy pull towards cart shouldn’t run off to opposite side of map. 
+Each hero should try to guard 1 side, be more attracted to 1 direction instead of everyone rushing 1 direction then the other gets swarmed. 
+Maybe lower view distance for party members. 
+
+Maybe split the area around the cart into large overlapping quadrants and hero’s will try very hard not to leave their quadrants. 1 hero can only be on positions higher than the bottom of cart. Then another only lower than the center of the top of the cart. The 2 more for left and right. A lot of area overlaps but there is still a lot of area they won’t go. "
+      part edge (The forest edge): PROBLEM, "Don’t like look. 
+I think I also want larger less complex trees. Where you can’t see the ground beneath them. Have them on a parallax where they move faster. 
+
+Also not a fan of the grass texture. Remove the dark green tuffs of grass. 
+Don’t like the puddles "
+      part gold (Gold, no switch): GOOD
+      part downed (The downed): GOOD, "Give the cart a hit box around all of it. The players are walking through it "
+      part shop (The roadside shop): GOOD
+      part lands (Other countries): GOOD
+      part huddle (No more huddling): GOOD
+  DECK: done (2 of 2 answered)
+
+delve / statuses / v16-statuses: "0.16.0: new statuses, the Enchantress"
+  statuses (Five new statuses): GOOD on the card. Its parts: 5 good, 1 decent
+      part charm (Charm): GOOD, "Bosses immune to charm. The last unit on a floor charmed will count as beating the level. They will follow u into the next room fully charmed."
+      part confused (Confused): GOOD, "Should also make them turn randomly. Instead of using all abilities at once, will have a chance to trigger randomly while bursted. 
+
+The spiral swirls should be shown when confused appearing on body randomly. Question marks when bursted "
+      part sleepy (Sleepy): GOOD, "Should make all wind ups like 40% longer too. Anything charged up"
+      part bleeding (Bleeding): GOOD, "Don’t like visual at all"
+      part fear (Fear): DECENT, "Doesn’t seem to back away. 
+Burst will make them turn away and run. Will have a radius of fear around them giving other entities fear. "
+      part who (Who uses them): GOOD, "Ghost should give sleepiness instead of curse. 
+
+Have the chomp effect of bites start open, and rotate 90 degrees."
+  enchantress (The Enchantress): YES
+  foes (Cupid, Succubus, hunters): GOOD on the card. Its parts: 3 good
+      part cupid (The Cupid): GOOD
+      part succubus (The Succubus): GOOD, "The when hit charm attacker shoukd be on a cooldown, not every hit. "
+      part hunters (Healer hunters): GOOD, "Have a higher chance to go for healer. Not hard targeting. "
+  buffs (Good statuses now show): GOOD on the card. Its parts: 2 good
+      part blocked (Damage blocked): GOOD
+      part rulings (Your rulings): GOOD, "Poison drops to 20% "
+  DECK: done (4 of 4 answered)
+
+delve: SENT at 2026-11-22T11:02: they answered everything in the pack and pressed Send (34 cards).
+  Start on it now. Run riffle started --pack delve --note "what you start on" first: their pack shows Working. When you have nothing left but to wait, riffle wait shows it Done.

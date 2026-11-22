@@ -10,7 +10,7 @@
 // points, not strength).
 import { makeWorld, spawn, step, alive, addStatus, hurt, puff, fx, scatterCoins, addDanger, kill, restoreSide } from './sim.js';
 import { newStats, finishStats, tallyFoe, tallyRevive } from './stats.js';
-import { DEFS, levelHp, levelDmg, TRINKET_IDS } from './units.js';
+import { DEFS, levelHp, levelDmg, TRINKET_IDS, XP_BASE, XP_GROW, xpToNextR12 } from './units.js';
 import { trinketHooks, raiseGhost, wears } from './trinkets.js';
 import { HEROES, STARTERS, treeFor, freeNodes } from './heroes.js';
 import { initKit, refreshKit, hooksOf } from './kits.js';
@@ -203,6 +203,16 @@ export const ROOM_STEP = 0.035;  // each room further into a floor: +3.5%
 // (opts.asRank, for the balance batches in tools/balance.mjs: a dungeon's own enemies and rooms at another dungeon's
 // strength, numbers and elite odds, so every dungeon can be tried with the same party)
 export const rankOf = (run) => run.asRank ?? DUNGEON_RANK[run.theme] ?? 0;
+// The level a party has going into each dungeon and coming out of it (the round 12 campaign's medians, docs/balance/
+// r12-notes.md). A kill's XP is set by the level of the place, not of the hero (round 14): xpScale keeps the measured
+// pace for a party at that level, and the level curve (units.js xpToNext) does the rest for anyone above or below it.
+export const FOE_LEVEL = [[1, 11], [11, 17], [17, 24], [24, 33], [33, 38], [38, 43], [43, 49], [49, 53], [53, 58]];
+export function placeLevel(rank, part = 0) {
+  const [a, b] = FOE_LEVEL[Math.max(0, Math.min(FOE_LEVEL.length - 1, rank))];
+  return a + (b - a) * Math.max(0, Math.min(1, part));
+}
+export const xpScale = (lvl) => XP_BASE * Math.pow(XP_GROW, lvl - 1) / xpToNextR12(lvl);
+export const runLevel = (run) => placeLevel(rankOf(run), ((run.floor - 1) + Math.min(1, ((run.map && run.map.L) || 0) / LAYERS)) / FLOORS);
 export const enemyMult = (run, L) => {
   const rank = rankOf(run);
   return RANK_MULT[rank] * (1 + FLOOR_STEP * (run.floor - 1) + ROOM_STEP * L) + 0.22 * (run.depth - 1);
@@ -474,7 +484,7 @@ function grant(run, reward, hero) {
     const hs = w.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon).sort((a, b) => a.potions - b.potions || a.hp / a.maxHp - b.hp / b.maxHp);
     const h = hs[0]; if (h) { h.potions++; run.heroes[h.kind].potions = h.potions; }
   } else if (reward === 'xp') {
-    for (const h of w.units) if (h.team === 'hero' && alive(h)) giveXp(run, h, Math.round((30 + 20 * run.depth) * Math.sqrt(w.mult || 1)));
+    shareXp(run, (30 + 20 * run.depth) * Math.sqrt(w.mult || 1) * xpScale(runLevel(run)));
   } else if (reward === 'coins') {
     const n = Math.round((rint(10, 18) + run.depth * 6) * goldMul(run));
     scatterCoins(w, hero ? hero.x : w.W / 2, hero ? hero.y : w.H / 2, n);
@@ -542,6 +552,7 @@ function giveXp(run, h, xp) {
   const n = addXp(sv, xp);
   if (!n) return;
   sv.gained += n; sv.best = Math.max(sv.best, sv.level); h.level = sv.level;
+  if (h.down || h.dead || h.x == null) return;
   for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; w.particles.push({ x: h.x, y: h.y, vx: Math.cos(a) * 120, vy: Math.sin(a) * 120, life: 0.6, max: 0.6, size: 4, color: '#FFE14D' }); }
 }
 
@@ -557,12 +568,22 @@ function onKill(run, u) {
     w.pickups.push({ type: 'trinket', id, uid: Math.floor(rand() * 1e9), x: clamp(u.x + Math.cos(a) * 40, 40, w.W - 40), y: clamp(u.y + Math.sin(a) * 40, 40, w.H - 40), hop: 0.5 });
   }
   // tougher enemies (a harder dungeon, a deeper floor) are worth more; a mini-boss or boss a lot more
-  const xp = Math.round((u.def.xp || 0) * XP_MUL * (1 + 0.15 * (run.depth - 1)) * Math.sqrt(w.mult || 1) * (u.major ? 7 : u.elite ? 3 : 1));
+  // (round 14: and by the place's level, xpScale; not rounded, a goblin in the Wildwood's last rooms is worth about 1)
+  const xp = (u.def.xp || 0) * XP_MUL * (1 + 0.15 * (run.depth - 1)) * Math.sqrt(w.mult || 1) * (u.major ? 7 : u.elite ? 3 : 1) * xpScale(runLevel(run));
   // gems (round 9: "Gems stay"): each floor's last foe drops one, the dungeon's boss two; a major now and then
   if (u.floorFoe) run.gems += run.floor >= FLOORS ? 2 : 1;
   else if (u.major && chance(0.15)) run.gems++;
 
-  for (const h of w.units) if (h.team === 'hero' && alive(h)) giveXp(run, h, xp);
+  shareXp(run, xp);
+}
+// Everyone in the party gets the same XP, the downed too (round 14: a low hero is carried through a dungeon it can't
+// survive yet, and still learns from it).
+function shareXp(run, xp) {
+  const w = run.world;
+  for (const k of run.party) {
+    const h = w.units.find((u) => u.kind === k && !u.summon && run.heroes[k] && (u.trueTeam || u.team) === 'hero');
+    giveXp(run, h || { kind: k, down: true }, xp);
+  }
 }
 export const XP_MUL = 1.6;
 // Mercenaries' level (their numbers: they don't grow), by dungeon.
