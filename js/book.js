@@ -27,7 +27,8 @@ import { I, ROLE, ROLE_COL, roman, face, gold } from './ui-kit.js';
 import { foeCount, num } from './stats-ui.js';
 import { cue } from './sfx.js';
 import { makePlayer } from './preview.js';
-import { heroMoves, foeMoves, foeGroups, statusIds, statusHow, canRank, sceneOf, MAJOR_KEY } from './preview-sim.js';
+import { heroMoves, foeMoves, foeGroups, statusIds, statusHow, canRank, sceneOf, MAJOR_KEY, makeStage, specKey } from './preview-sim.js';
+import { setSeed } from './util.js';
 
 const TABS = [['heroes', 'Heroes'], ['monsters', 'Monsters'], ['statuses', 'Statuses'], ['items', 'Items']];
 const RANKS = ['Normal', 'Elite', 'Major'];
@@ -202,6 +203,19 @@ function heroPage() {
 }
 
 // ---------------------------------------------------------------- monsters
+// A move is offered only if its preview shows it: the stage is run once, quietly, off screen (about 250 steps of a
+// small world, a few tens of ms, once per kind, move and rank) and must fire. A move that can't be staged (a bomb bot
+// that blows itself up before its major move comes round) isn't offered rather than shown doing nothing.
+const stageCache = new Map();
+function canStage(spec) {
+  const key = specKey(spec);
+  if (!stageCache.has(key)) {
+    let ok = false;
+    try { ok = quietly(() => { setSeed(7); const S = makeStage(spec); for (let i = 0, n = Math.ceil(S.loop * 60) + 6; i < n && !S.loopsFired && !(S.fired() && S.loops === 0); i++) S.step(1 / 30); return S.loopsFired > 0 || S.fired(); }); // within two loops } catch (e) { ok = false; }
+    stageCache.set(key, ok);
+  }
+  return stageCache.get(key);
+}
 function foeNumbersAt(k, rank) {
   const key = 'f:' + k + ':' + rank;
   if (!numbersCache.has(key)) {
@@ -219,11 +233,12 @@ function attackWords(d) {
 function foePage() {
   const k = st.foe;
   if (!k) return { title: 'Monsters', html: '<p class="bk-empty">Nobody met yet. The monsters you meet in the dungeons are written in here.</p>', spec: null, tag: '' };
-  const d = DEFS[k], rk = canRank(k) ? st.rank : 0, moves = foeMoves(k, rk), fc = foeCount(save, k), s = (save.seen || {})[k] || { met: 0, beaten: 0 };
+  const d = DEFS[k], rk = canRank(k) ? st.rank : 0, all = foeMoves(k, rk), staged = all.filter((m) => m.move === 'attack' || canStage({ t: 'foe', id: k, move: m.move, rank: rk })), moves = staged.length ? staged : all.slice(0, 1), fc = foeCount(save, k), s = (save.seen || {})[k] || { met: 0, beaten: 0 };
   if (!moves.find((m) => m.move === st.fmove)) st.fmove = moves.find((m) => m.move === 'kit') ? 'kit' : moves[0].move;
   const cur = moves.find((m) => m.move === st.fmove);
   const g = foeGroupsCached().find((x) => x.kinds.includes(k));
   const words = (m) => m.move === 'attack' ? attackWords(d) : m.move === 'kit' ? (beastHabit(k) || 'How it fights.')
+    : m.move === 'kit' && !staged.length ? (beastHabit(k) || '') + ' (It doesn't fight yet: what you see is all it does for now.)'
     : m.move === 'elite' ? (ELITE_MOVE[k] || ELITE_MOVE[d.eliteAs] || 'Something extra on top of its kit.')
     : MAJOR_WORDS[m.key] + (m.call ? ' ' + MAJOR_WORDS.call : '');
   const title = { attack: 'Attack', kit: 'How it fights', elite: 'Elite move', major: 'Major move' };

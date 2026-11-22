@@ -1,5 +1,5 @@
 // The Book's safety net (round 13): every preview spec (js/preview-sim.js) stepped once through a whole loop in Node.
-// Reports the ones that throw and the ones whose move fired in neither of two loops.
+// Fails (exit 1) on any that throw and any whose move, trait or item doesn't fire in every one of two loops.
 //   node tools/preview-check.mjs [--only hero|foe|status|trinket|potion] [--id paladin] [--v]
 globalThis.location = { search: '?x' };
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
@@ -13,22 +13,24 @@ const kinds = PS.foeGroups().flatMap((g) => g.kinds);
 let specs = PS.allSpecs(kinds);
 if (opt('only')) specs = specs.filter((s) => s.t === opt('only'));
 if (opt('id')) specs = specs.filter((s) => s.id === opt('id'));
-const DT = 1 / 30, bad = [], quiet = [], locked = [];
+const DT = 1 / 30, bad = [], quiet = [], locked = [], notOffered = [];
 const t0 = Date.now();
 for (const s of specs) {
   setSeed(11);
   try {
     const S = PS.makeStage(s);
-    const n = Math.ceil(2 * S.loop / DT) + 2; // two whole loops (each loop is a fresh world with its own dice) and into the next
+    const n = Math.ceil(2 * S.loop / DT) + 6; // two whole loops (each loop is a fresh world with its own dice) and into the next
     for (let i = 0; i < n; i++) S.step(DT);
     if (S.locked) locked.push(PS.specKey(s) + (S.why ? ' (' + S.why + ')' : ''));
-    else if (!S.fired()) quiet.push(PS.specKey(s));
-    if (args.includes('--v')) console.log(PS.specKey(s), S.locked ? 'locked' : S.fired() ? 'ok' : 'NEVER FIRED');
+    else if (s.t === 'foe' && s.move !== 'attack' && S.loopsFired === 0) notOffered.push(PS.specKey(s)); // book.js canStage: the Book doesn't offer it
+    else if (S.loopsFired < S.loops) quiet.push(PS.specKey(s) + `  (fired in ${S.loopsFired} of ${S.loops} loops)`);
+    if (args.includes('--v')) console.log(PS.specKey(s), S.locked ? 'locked' : `${S.loopsFired}/${S.loops}`);
   } catch (e) { bad.push(PS.specKey(s) + '  ' + (e && e.stack ? e.stack.split('\n').slice(0, 3).join(' | ') : e)); }
 }
 console.log(`${specs.length} previews, ${((Date.now() - t0) / 1000).toFixed(1)}s`);
 console.log(`threw: ${bad.length}`); for (const b of bad) console.log('  ' + b);
-console.log(`never fired: ${quiet.length}`); for (const q of quiet) console.log('  ' + q);
+console.log(`a loop where the move or trait never fired: ${quiet.length}`); for (const q of quiet) console.log('  ' + q);
+console.log(`not offered in the Book (never fires, so its button is left out): ${notOffered.length}`); for (const q of notOffered) console.log('  ' + q);
 console.log(`locked (shown as locked): ${locked.filter((l) => !l.includes(':hero:') && !/^hero:/.test(l)).length} not counting heroes' tier 0`);
 for (const l of locked) if (!/^hero:/.test(l)) console.log('  ' + l);
 // tiers that look alike: each ability played one loop at tiers I, II and III with the same dice; if two tiers in a row
@@ -43,4 +45,4 @@ if (!opt('only') || opt('only') === 'hero') {
   } }
   console.log(`tiers that make the same things: ${same.length}`); for (const x of same) console.log('  ' + x);
 }
-process.exitCode = bad.length ? 1 : 0;
+process.exitCode = bad.length || quiet.length ? 1 : 0; // a preview that doesn't fire every loop fails the check
