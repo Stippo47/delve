@@ -8,7 +8,7 @@ import { INK, TAU, clamp } from './util.js';
 import { OUTLINE, view } from './render.js';
 import { hash, rgba, upright, upVec, inked, inkLine, flame, blob, star, glowDisc, bolt, easeOut, leaf } from './fx.js';
 import { drawPuddle } from './puddles.js';
-import { SIG2, installFx2 } from './fx2.js';
+import { SIG2, installFx2, SLAM2, IMPACT2D } from './fx2.js'; // (lane H2, round 13: SLAM2 / IMPACT2D, a hero's own slam and shot-burst looks)
 import { variant } from './fxvar.js';
 
 // ---------------------------------------------------------------- palette (FX-STYLE.md): dark, main, light, core
@@ -122,7 +122,7 @@ export function noteWorld(w) {
       const team = u && u.team === 'hero' ? 'hero' : 'enemy';
       let col = SLASH_COL[team];
       if (shape === 'scythe') col = SLASH_COL.scythe; else if (shape === 'smack') col = u && u.kind === 'fireSlime' ? SLASH_COL.fire : SLASH_COL.smack; else if (u && u.kind === 'ghost') col = SLASH_COL.ghost;
-      if (t.aoe) { push({ type: 'slam', u, x: t.aoe.x, y: t.aoe.y, r: t.aoe.r, a: t.a, max: 0.42, seed: Math.round(t.x * 7 + t.y) }); continue; }
+      if (t.aoe) { push({ type: 'slam', u, x: t.aoe.x, y: t.aoe.y, r: t.aoe.r, a: t.a, max: 0.42, seed: Math.round(t.x * 7 + t.y), look: t.aoe.look || (u && u.def.style && u.def.style.slam) }); continue; } // (lane H2: look, a hero's own slam: fx2 SLAM2)
       // arm-l is on the +normal side of the facing, arm-r on the -normal side (the art's left/right, front = +y)
       const sty = (u && u.def.style) || {}, back = sty.backhand || sty.flip ? -1 : 1; // lane H2 (round 13): a backhand swing (Dame, Pirate), a mirrored sprite (Griffon)
       push({ type: 'slash', u, x: t.x, y: t.y, R: t.r, a: t.a, arc: t.arc, shape, dir: ((shape === 'twin' || shape === 'twinBlade') && odd ? -1 : 1) * back, side: odd ? 1 : -1, col, r0k: sty.reach0,
@@ -276,6 +276,7 @@ function wolfBite(ctx, m, k, px, py, s, v) {
 // The Berserker's flail (round 9): "his attack should be a radius on the ground in front of him. Can have spikey rings
 // around it. Is an aoe attack. Small radius". The spiked head slams down; a ring of spikes and dust bursts round it.
 function slamGround(ctx, m, k) {
+  if (m.look && SLAM2[m.look]) { SLAM2[m.look](ctx, m, k, 'ground'); return; } // lane H2 (round 13)
   const e = easeOut(k01(k / 0.5)), R = m.r * (0.5 + 0.55 * e);
   // round 10 ("Simpler"): no spiky ring; a soft dent where the head lands, the blow's reach a faint dust edge
   ctx.save(); ctx.globalAlpha *= 1 - k;
@@ -283,6 +284,7 @@ function slamGround(ctx, m, k) {
   ctx.restore();
 }
 function slamAir(ctx, m, k) {
+  if (m.look && SLAM2[m.look]) { SLAM2[m.look](ctx, m, k, 'air'); return; } // lane H2 (round 13)
   const drop = k01(k / 0.14), e = easeOut(k01((k - 0.12) / 0.6));
   // round 10 ("Simpler"): just the head coming down, a small flash and a ring of dust; no spikes thrown up
   if (k < 0.14) { // the head coming down onto the spot
@@ -303,6 +305,7 @@ export const IMPACT_EL = { arrow: 'steel', fireArrow: 'fire', fireball: 'fire', 
   spark: 'fire', frostbolt: 'frost', orb: 'holy', zeus: 'storm', cluster: 'poison', soulFlame: 'poison' };
 function impact(ctx, m, k) {
   const big = !!m.ab, kind = IMPACT_ALIAS[m.kind] || m.kind, e = easeOut(k), x = m.x, y = m.y, a = m.a;
+  if (IMPACT2D[m.kind]) { IMPACT2D[m.kind](ctx, m, k); return; } // lane H2 (round 13): a new shot's own burst (fx2.js)
   const el = EL[kind === 'bolt' ? null : IMPACT_EL[kind]] || null;
   const col = m.col || (el ? el[1] : '#C9A7FF'), light = el ? el[2] : '#FFFFFF';
   const S = big ? 1.7 : 1;

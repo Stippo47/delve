@@ -23,7 +23,7 @@ const EL2 = {
 };
 const SIGT2 = {};
 // shots that burst like an older kind
-const ALIAS2 = { hammer: 'bone' };
+const ALIAS2 = {};
 const IMPACT2 = {};
 export function installFx2(api) {
   K = api;
@@ -44,6 +44,7 @@ export const PROJ2 = {
     inked(ctx, () => roundRect(ctx, -10, -11, 20, 11, 2.5), '#A8B0BA');
     ctx.fillStyle = '#DCE3EC'; ctx.fillRect(-8.5, -10, 17, 3.2);
     ctx.fillStyle = '#6E7680'; ctx.fillRect(-2, -11, 4, 11);
+    ctx.fillStyle = '#FFE14D'; ctx.fillRect(-10, -6.4, 20, 2.6); // round 13: the yellow line the designer asked for
   },
 };
 
@@ -110,16 +111,20 @@ const DRAW = {
     ctx.restore();
     if (k < 0.25) lit(ctx, () => glowDisc(ctx, f.x, f.y, 30, '#FFFFFF', 0.6 * (1 - k / 0.25)));
   },
-  // Griffon's wings: two feathered wings spread behind him (under the body), beating while he flies
+  // Griffon's wings (round 13, showcase 4: "U can't even see the wings and they are too sharp ... Should look similar to
+  // the ones on his sprite. But bigger and maybe more segments"): the helm's cream-and-gold wings, rounded feather lobes
+  // fanned out from his shoulders, six a side, reaching well past his body (f.big: Wing Guard's, bigger still)
   wings(ctx, f, w, layer) {
     if (layer !== 'ground' || !f.unit) return; const u = f.unit, a = life(f, 0.15, 0.25);
-    const beat = f.flap ? Math.sin(f.t * 22) * 0.35 : Math.sin(f.t * 4) * 0.06, spread = easeOut(k01(f.t / 0.2));
-    const lift = u.hop || 0, [vx, vy] = upVec();
+    const beat = f.flap ? Math.sin(f.t * 22) * 0.3 : Math.sin(f.t * 4) * 0.05, spread = easeOut(k01(f.t / 0.2));
+    const lift = u.hop || 0, [vx, vy] = upVec(), S = (f.big ? 1.25 : 1) * spread;
     ctx.save(); ctx.globalAlpha *= a; ctx.translate(u.x + vx * lift, u.y + vy * lift); ctx.rotate(u.facing - Math.PI / 2);
-    for (const s of [-1, 1]) { ctx.save(); ctx.scale(s, 1); ctx.rotate((0.35 + beat) * spread - 0.2);
-      // round 10 (the heroes lane: "Wing Guard's wings are faint"): longer, reaching well past the body, in his own gold
-      for (let i = 0; i < 4; i++) { const L = (u.r + 28 + i * 11) * spread, b = 0.6 + i * 0.32;
-        inked(ctx, () => { ctx.beginPath(); ctx.moveTo(6, -4); ctx.quadraticCurveTo(Math.cos(b) * L * 0.6 + 4, -Math.sin(b) * L * 0.2 - 12, Math.cos(b) * L, -Math.sin(b) * L * 0.45 - 4); ctx.quadraticCurveTo(Math.cos(b) * L * 0.5, 8, 6, 4); ctx.closePath(); }, ['#F8EED8', '#FBD46E', '#F9CB5C', '#E09A2E'][i]); }
+    for (const sd of [-1, 1]) { ctx.save(); ctx.scale(sd, 1); ctx.rotate(beat * spread);
+      for (let i = 5; i >= 0; i--) { const L = (u.r * 0.6 + 22 + i * 9) * S, b = 1.95 - i * 0.24 - (f.big ? 0.75 * spread : 0), wd = 9 + i * 0.6; // (Wing Guard: wrapped forward round him)
+        ctx.save(); ctx.translate(u.r * 0.35, -2); ctx.rotate(-b + Math.PI / 2);
+        inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, -L / 2, wd, L / 2 + 4, 0, 0, TAU); }, i % 2 ? '#F8EED8' : '#FFF6E4');
+        ctx.fillStyle = i % 2 ? '#F2B53A' : '#E9A62E'; ctx.beginPath(); ctx.ellipse(0, -5, wd * 0.62, 7, 0, 0, TAU); ctx.fill();
+        ctx.restore(); }
       ctx.restore(); }
     ctx.restore();
   },
@@ -763,6 +768,38 @@ DRAW.mine = (ctx, f, w, layer) => {
   ctx.restore();
 };
 
+// ---------------------------------------------------------------- round 13 (lane H2): slams and shot bursts of their own
+// SLAM2[look](ctx, m, k, layer): a hero's slam on the floor (fxkit slamGround / slamAir; a hero's style.slam names it)
+export const SLAM2 = {
+  // a warhammer head brought down on the spot: a dark dent, a flash, a ring of dust and stone chips (no flail ball)
+  hammer(ctx, m, k, layer) {
+    const e = easeOut(k01((k - 0.12) / 0.6)), R = m.r;
+    if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 1 - k; ctx.fillStyle = 'rgba(60,48,38,0.3)'; ctx.beginPath(); ctx.ellipse(m.x, m.y, R * 0.75, R * 0.6, m.a || 0, 0, TAU); ctx.fill();
+      ctx.strokeStyle = 'rgba(43,34,48,0.5)'; ctx.lineWidth = 2.2; for (let i = 0; i < 5; i++) { const b = i / 5 * TAU + hash(m.seed, i); ctx.beginPath(); ctx.moveTo(m.x + Math.cos(b) * R * 0.25, m.y + Math.sin(b) * R * 0.25); ctx.lineTo(m.x + Math.cos(b) * R * (0.55 + 0.25 * hash(i, m.seed)), m.y + Math.sin(b) * R * (0.55 + 0.25 * hash(i, m.seed))); ctx.stroke(); }
+      ctx.restore(); return; }
+    if (k < 0.14) { const [ux, uy] = upVec(), h = (1 - k / 0.14) * 30; // the head coming down
+      ctx.save(); ctx.translate(m.x + ux * h, m.y + uy * h); ctx.rotate(m.a || 0); inked(ctx, () => roundRect(ctx, -8, -13, 16, 26, 3), '#A8B0BA'); ctx.fillStyle = '#DCE3EC'; ctx.fillRect(-6, -11, 4, 22); ctx.restore(); return; }
+    if (k < 0.28) lit(ctx, () => glowDisc(ctx, m.x, m.y, R * 1.2, '#FFF4DC', 0.55 * (1 - (k - 0.14) / 0.14)));
+    ctx.save(); ctx.globalAlpha *= 1 - k * k;
+    K.dustPuffs(ctx, m.x, m.y, R * 1.05, e, m.seed, 7);
+    for (let i = 0; i < 5; i++) { const b = i / 5 * TAU + hash(i, m.seed) * 0.8, d = R * (0.3 + 0.9 * e), hh = Math.sin(k01(k * 1.6) * Math.PI) * 16 * hash(m.seed, i + 2), [ux, uy] = upVec();
+      inked(ctx, () => blob(ctx, m.x + Math.cos(b) * d + ux * hh, m.y + Math.sin(b) * d + uy * hh, 3.2, 5, i, 1), i % 2 ? '#A99C8B' : '#7A6A58'); }
+    ctx.restore();
+  },
+};
+// IMPACT2D[kind](ctx, m, k): where a new kind of shot stops (fxkit impact)
+export const IMPACT2D = {
+  // the Stormhammer: white puffy clouds bursting out where it strikes (round 13: "Should be white puffy clouds when hit")
+  hammer(ctx, m, k) {
+    const e = easeOut(k), S = m.ab ? 1.3 : 1;
+    if (k < 0.25) lit(ctx, () => glowDisc(ctx, m.x, m.y, 34 * S, '#FFFFFF', 0.6 * (1 - k / 0.25)));
+    ctx.save(); ctx.globalAlpha *= 1 - k * k;
+    for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + hash(m.seed, i), d = (6 + 24 * e) * S, r = (7 + 4 * hash(i, m.seed)) * S * (1 - 0.35 * k);
+      inked(ctx, () => { ctx.beginPath(); ctx.arc(m.x + Math.cos(b) * d, m.y + Math.sin(b) * d, r, 0, TAU); ctx.arc(m.x + Math.cos(b) * d + r * 0.7, m.y + Math.sin(b) * d - r * 0.3, r * 0.7, 0, TAU); }, i % 2 ? '#FFFFFF' : '#EEF3F8'); }
+    ctx.restore();
+  },
+};
+
 // ---------------------------------------------------------------- round 13 (lane H2): the shared effects' looks
 const alive2 = (u) => u && !u.dead && !u.downed;
 // the effect on a unit has ended (its hook or buff is gone): let the look fade out
@@ -872,6 +909,36 @@ DRAW.weakOn = (ctx, f, w, layer) => {
     ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI);
     upright(ctx, u.x + vx * up + (i ? 8 : -8), u.y + vy * up, () => inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-7, -4); ctx.lineTo(0, 3); ctx.lineTo(7, -4); }, '#9AA2AE', 3.6));
     ctx.restore(); }
+  ctx.restore();
+};
+
+// a gust of wind bursting out from a point (Swoop's take-off, Wing Guard's blast): short white wind strokes flying
+// outward, each curling at its tail (never a ring)
+DRAW.gust = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k), n = f.a != null ? 5 : 9;
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  for (let i = 0; i < n; i++) { const b = f.a != null ? f.a + (i - 2) * 0.32 : i / n * TAU + 0.2 + hash(i, 3) * 0.3, d0 = 8 + f.r * 0.9 * e, L = 16 + 10 * (1 - k);
+    const x0 = f.x + Math.cos(b) * d0, y0 = f.y + Math.sin(b) * d0, x1 = f.x + Math.cos(b) * (d0 + L), y1 = f.y + Math.sin(b) * (d0 + L), c = (i % 2 ? 1 : -1) * 7;
+    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x0 - Math.sin(b) * c, y0 + Math.cos(b) * c); ctx.quadraticCurveTo(x0, y0, x1, y1); }, '#FFFFFF', 3.2 * (1 - k) + 1.2); }
+  ctx.restore();
+};
+// Swoop's landing: three arms of wind spiralling out across the floor round him as he spins (under the units)
+DRAW.windSwirl = (ctx, f, w, layer) => {
+  if (layer !== 'ground') return; const k = k01(f.t / f.max), e = easeOut(k);
+  ctx.save(); ctx.globalAlpha *= (1 - k) * 0.95;
+  for (let i = 0; i < 3; i++) { const b0 = i / 3 * TAU + f.t * 7;
+    inkLine(ctx, () => { ctx.beginPath(); for (let j = 0; j <= 14; j++) { const q = j / 14, b = b0 + q * 2.4, R = f.r * (0.15 + 0.85 * q) * (0.4 + 0.6 * e); const x = f.x + Math.cos(b) * R, y = f.y + Math.sin(b) * R; if (j) ctx.lineTo(x, y); else ctx.moveTo(x, y); } }, i % 2 ? '#EEF3F8' : '#FFFFFF', 5 * (1 - k) + 1.5); }
+  lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 0.7, '#EEF3F8', 0.25 * (1 - k)));
+  ctx.restore();
+};
+// a small thunderclap: a flash, yellow sparks and a puff of white cloud (Stormhammer II, Wing Guard III's burst)
+DRAW.clap = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
+  if (k < 0.25) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 1.2, '#FFF7C2', 0.7 * (1 - k / 0.25)));
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + hash(i, f.x | 0), d = f.r * (0.2 + 0.7 * e);
+    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(f.x + Math.cos(b) * d, f.y + Math.sin(b) * d); ctx.lineTo(f.x + Math.cos(b + 0.25) * (d + 9), f.y + Math.sin(b + 0.25) * (d + 9)); ctx.lineTo(f.x + Math.cos(b) * (d + 16), f.y + Math.sin(b) * (d + 16)); }, '#FFE66B', 2.6);
+    if (i % 2) inked(ctx, () => { ctx.beginPath(); ctx.arc(f.x + Math.cos(b + 0.5) * d * 0.7, f.y + Math.sin(b + 0.5) * d * 0.7, 7 * (1 - 0.5 * k), 0, TAU); }, '#FFFFFF'); }
   ctx.restore();
 };
 

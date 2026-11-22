@@ -314,6 +314,9 @@ export const ABILITIES2 = {
     show: { single: true },
   },
   // ----- Griffon
+  // Swoop (round 13, the designer: "Should spin after they land making a wind swirl. Applies a new status whirled ... and
+  // knocks them back ... Applies a small aoe burst around area before the dash"): a gust bursts round him as he takes
+  // off; he lands by the friend in trouble with a spin that throws a wind swirl out, whirling and shoving them back
   swoop: {
     score(w, u) {
       const a = allies(w, u).filter((o) => !o.summon && hpRatio(o) < 0.6 && dist(u.x, u.y, o.x, o.y) > 130 && dist(u.x, u.y, o.x, o.y) < 480 && foesNear(w, u, o.x, o.y, 100).length);
@@ -325,10 +328,15 @@ export const ABILITIES2 = {
       const ba = f ? angleTo(a.x, a.y, f.x, f.y) : angleTo(a.x, a.y, u.x, u.y), off = a.r + u.r + 4;
       const x1 = clamp(a.x + Math.cos(ba) * off, u.r, w.W - u.r), y1 = clamp(a.y + Math.sin(ba) * off, u.r, w.H - u.r);
       cast(u, 'ability', 0.8); u.facing = angleTo(u.x, u.y, x1, y1);
+      // the gust as he beats up off the floor
+      for (const e of foesNear(w, u, u.x, u.y, 80)) { hurt(w, e, dmgOf(u, 0.5), u, { knock: 260, kAngle: ang(u, e), noDodge: true }); whirl(w, e, 25, u); }
+      k2(w, { draw: 'gust', x: u.x, y: u.y, r: 80, max: 0.5 });
       k2(w, { draw: 'wings', unit: u, x: u.x, y: u.y, r: u.r, max: 0.62, flap: true });
       u.act = { type: 'leap', t: 0.6, max: 0.6, x0: u.x, y0: u.y, x1, y1, land: () => {
-        w.shake = Math.max(w.shake, 7);
-        ring(w, u, u.x, u.y, 120, dmgOf(u, 1.2), { knock: 320, heavy: true, stagger: tier >= 2 ? 45 : 0 }, '#E8D8B0');
+        w.shake = Math.max(w.shake, 6);
+        setAnim(u, 'spin', 0.45); u.spin = { t0: w.time, dur: 0.45, dir: 1 };
+        k2(w, { draw: 'windSwirl', x: u.x, y: u.y, r: 125, max: 0.7, ab: 'swoop' });
+        for (const e of foesNear(w, u, u.x, u.y, 125)) { hurt(w, e, dmgOf(u, 1.3), u, { knock: 340, kAngle: ang(u, e), heavy: true, noDodge: true, stagger: tier >= 2 ? 45 : 0 }); whirl(w, e, 45, u); }
         if (tier >= 3 && alive(a) && a !== t) addBuff(a, { id: 'swoopGuard', dur: 3, taken: 0.6, glow: '#FFE7A0' });
         if (f && alive(f)) u.facing = ang(u, f);
       } };
@@ -336,37 +344,63 @@ export const ABILITIES2 = {
     },
     show: { far: true, ally: true, mob: 'ally' },
   },
+  // Stormhammer (round 13: "Should apply whirled. And have a small aoe burst on all targets hit (when upgraded). Lvl 3 will
+  // have it home between targets on the way out and back. ... white puffy clouds when hit. Hammer also needs a yellow
+  // line on it. And maybe doesnt show in their hand when thrown."): the hammer leaves his hand (kit2Tick hides it)
   hammerThrow: {
     score(w, u, t) {
-      if (!t || dist(u.x, u.y, t.x, t.y) > 330 || blocked(w, u.x, u.y, t.x, t.y)) return 0;
-      const a = ang(u, t); return 0.3 + 0.2 * opponents(w, u).filter((e) => angleDiff(ang(u, e), a) < 0.3 && dist(u.x, u.y, e.x, e.y) < 340).length;
+      if (!t || u.kit.hammerOut || dist(u.x, u.y, t.x, t.y) > 330 || blocked(w, u.x, u.y, t.x, t.y)) return 0;
+      const a = ang(u, t); return 0.35 + 0.2 * opponents(w, u).filter((e) => angleDiff(ang(u, e), a) < 0.3 && dist(u.x, u.y, e.x, e.y) < 340).length;
     },
     use(w, u, t, tier) {
       cast(u, 'throw', 0.45);
-      const a = t ? ang(u, t) : u.facing, st = { shock: tier >= 2 ? 30 : 0, stagger: tier >= 3 ? 40 : 0 }, r = tier >= 3 ? 14 : 10;
+      const a = t ? ang(u, t) : u.facing, r = 12, hitOut = new Set();
+      const onHit = (w2, p, e) => {
+        whirl(w2, e, 35, u);
+        if (tier >= 2) { k2(w2, { draw: 'clap', x: e.x, y: e.y, r: 55, max: 0.4, ab: 'hammerThrow' }); for (const o of foesNear(w2, u, e.x, e.y, 55)) if (o !== e) hurt(w2, o, dmgOf(u, 0.5), u, { knock: 160, kAngle: angleTo(e.x, e.y, o.x, o.y), noDodge: true, shock: 12, ab: 'hammerThrow' }); }
+        // III: on to the nearest one it hasn't struck yet this way
+        if (tier >= 3) { const seen = p.back ? p.hitSet : hitOut; seen.add(e); const n = opponents(w2, u).filter((o) => !seen.has(o) && dist(o.x, o.y, e.x, e.y) < 200 && (p.back ? dist(o.x, o.y, u.x, u.y) < dist(e.x, e.y, u.x, u.y) + 40 : true)).sort((p1, q) => dist(e.x, e.y, p1.x, p1.y) - dist(e.x, e.y, q.x, q.y))[0];
+          if (n) { p.home = n; p.turn = 12; p.life = Math.max(p.life, 0.4); } else if (p.back) { p.home = u; } }
+      };
       after(u, 0.14, () => {
-        u.kit.hammerOut = true;
-        shoot(w, u, a, { kind: 'hammer', speed: 560, r, life: 0.55, pierce: 9, dmg: dmgOf(u, 1.1), st, knock: 120, extra: { big: tier >= 3 }, land: (p) => {
+        shoot(w, u, a, { kind: 'hammer', speed: 560, r, life: 0.6, pierce: 9, dmg: dmgOf(u, 1.1), knock: 160, extra: { big: tier >= 3, onHit }, land: (p) => {
           // it comes back to his hand, hitting again on the way
           const b = angleTo(p.x, p.y, u.x, u.y);
-          w.projectiles.push({ kind: 'hammer', x: p.x, y: p.y, vx: Math.cos(b) * 600, vy: Math.sin(b) * 600, r, team: u.team, owner: u, dmg: dmgOf(u, 0.9), o: { knock: 100, ...st, ab: 'hammerThrow' },
-            life: 1.6, a: b, pierce: 9, hitSet: new Set(), home: u, turn: 14, catchBy: u, big: tier >= 3, ab: 'hammerThrow', tier });
+          w.projectiles.push({ kind: 'hammer', x: p.x, y: p.y, vx: Math.cos(b) * 600, vy: Math.sin(b) * 600, r, team: u.team, owner: u, dmg: dmgOf(u, 0.9), o: { knock: 130, ab: 'hammerThrow' },
+            life: 1.8, a: b, pierce: 9, hitSet: new Set(), home: u, turn: 14, catchBy: u, big: tier >= 3, ab: 'hammerThrow', tier, back: true, onHit });
         } });
       });
     },
     show: { far: true },
   },
+  // Wing Guard (round 13, the designer: "Don't like. Anyone that hits him will take heavy knockback (even more when
+  // whirled ofc) when upgraded they will take damage if they hit an obstacle. Lvl 3 will have them burst when they hit an
+  // obstacle"; showcase 4: the wings "Should look similar to the ones on his sprite. But bigger and maybe more segments")
   wingShield: {
     score(w, u) {
-      const shots = w.projectiles.filter((p) => p.team !== u.team && !p.noHit && dist(p.x, p.y, u.x, u.y) < 320).length;
-      return shots >= 1 ? 0.6 + 0.15 * shots : opponents(w, u).filter((e) => e.def.role === 'ranged' && e.target === u).length >= 2 ? 0.5 : 0;
+      const melee = opponents(w, u).filter((e) => e.target === u && e.def.role !== 'ranged' && dist(u.x, u.y, e.x, e.y) - u.r - e.r < 70).length;
+      return melee >= 2 ? 0.8 : melee ? 0.45 : 0;
     },
     use(w, u, t, tier) {
-      const dur = tier >= 3 ? 5 : 3; u.kit.wingUntil = w.time + dur;
-      addBuff(u, { id: 'wingShield', dur, frontBlock: 0.5, raise: true, move: 0.6 });
-      k2(w, { draw: 'wings', unit: u, x: u.x, y: u.y, r: u.r, max: dur });
+      u.kit.wingUntil = w.time + 4; setAnim(u, 'ability', 0.4);
+      addBuff(u, { id: 'wingShield', dur: 4, taken: 0.75, raise: true });
+      k2(w, { draw: 'wings', unit: u, x: u.x, y: u.y, r: u.r, max: 4, big: true });
     },
-    show: { shootme: true },
+    hook: {
+      struck(w, u, src, amt, o) {
+        if (!(u.kit.wingUntil > w.time) || !src || src === u || !alive(src) || o.shot || o.proc || (src.wingHitT || 0) > w.time) return;
+        if (dist(u.x, u.y, src.x, src.y) - u.r - src.r > 80) return;
+        src.wingHitT = w.time + 0.5; const tier = tierOf(u, 'wingShield'), a = angleTo(u.x, u.y, src.x, src.y);
+        hurt(w, src, dmgOf(u, 0.4), u, { knock: 620, kAngle: a, heavy: true, noDodge: true, proc: true, ab: 'wingShield' });
+        k2(w, { draw: 'gust', x: u.x + Math.cos(a) * u.r, y: u.y + Math.sin(a) * u.r, r: 50, a, max: 0.4 });
+        if (tier >= 2) flung(w, u, src, 0.9, (e) => {
+          hurt(w, e, dmgOf(u, 1.2), u, { noDodge: true, heavy: true, knock: 0, proc: true, ab: 'wingShield' }); w.shake = Math.max(w.shake, 4);
+          if (tier >= 3) { k2(w, { draw: 'clap', x: e.x, y: e.y, r: 75, max: 0.45, ab: 'wingShield' }); for (const o of foesNear(w, u, e.x, e.y, 75)) hurt(w, o, dmgOf(u, 0.9), u, { knock: 220, kAngle: angleTo(e.x, e.y, o.x, o.y), noDodge: true, proc: true, ab: 'wingShield' }); }
+          else puff(w, e.x, e.y, '#E9DDC2', 8, 90, 5, 0.4);
+        });
+      },
+    },
+    show: { hitme: true },
   },
   // ----- Bulwark
   brace: {
@@ -2050,18 +2084,11 @@ export function kit2Tick(w, u, dt) {
     u.k2 = u.k2.filter((k) => k.t > 0); if (!u.k2.length) u.k2 = null;
   }
   if (!u.kit) return;
-  // Wing Guard: shots coming at him are caught and thrown back
-  if (u.kit.wingUntil > w.time) {
-    const tier = tierOf(u, 'wingShield');
-    for (const p of w.projectiles) {
-      if (p.team === u.team || p.noHit || p.life <= 0 || p.team === 'neutral') continue;
-      if (dist(p.x, p.y, u.x, u.y) > u.r + p.r + 28) continue;
-      if (tier < 3 && angleDiff(angleTo(u.x, u.y, p.x, p.y), u.facing) > 1.3) continue;
-      const o = p.owner, sp = Math.hypot(p.vx, p.vy) * 1.1, a = o && alive(o) ? angleTo(p.x, p.y, o.x, o.y) : Math.atan2(-p.vy, -p.vx);
-      p.team = u.team; p.owner = u; p.vx = Math.cos(a) * sp; p.vy = Math.sin(a) * sp; p.a = a; p.life = Math.max(p.life, 1);
-      p.dmg = (p.dmg || 6) * (tier >= 2 ? 2 : 1); if (p.hitSet) p.hitSet = new Set(); p.home = null;
-      sparks(w, p.x, p.y, a, 6, '#FFF4C8', 1.1);
-    }
+  // Stormhammer: while the hammer is out of his hand it isn't drawn in it (round 13: "doesnt show in their hand when thrown")
+  if (u.kind === 'griffon') {
+    const out = w.projectiles.some((p) => p.owner === u && p.kind === 'hammer' && p.life > 0);
+    u.kit.hammerOut = out;
+    if (out) u._force = { 'arm-l': { hide: true } }; else if (u._force && u._force['arm-l'] && u._force['arm-l'].hide) u._force = null;
   }
   // Parry (Old Guard): a shot reaching him while he parries flies back at whoever loosed it
   const PR = u.kit.parry;

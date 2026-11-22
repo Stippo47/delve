@@ -61,3 +61,24 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
   chevrons the way they go), heals them 10% (II 20%), and the nearest enemy (III: all near) must fight her for 4 s (a
   red "!" pops over it). No duel mark. Clip: dame-challenge (the bench pins the friend in place, so the shove itself
   shows only in a real fight).
+
+### Griffon
+- Warhammer: "Flip his sprite. Should be an aoe slam on the ground like the berserker" -> `style.flip` mirrors the sprite
+  (render.js) and the swing; the blow is a slam on the floor in front (aoe 40) with its own look (fx2 SLAM2.hammer: a
+  hammer head coming down, a dent, dust and stone chips; no flail ball). Clip: griffon-attack.
+- Swoop: "Should spin after they land making a wind swirl. Applies a new status whirled ... knocks them back ... Applies
+  a small aoe burst around area before the dash. They don't have control of it." -> a gust bursts round him at take-off
+  (hurts, shoves, whirls 25); he lands spinning, three arms of wind spiral out under the units, and everything within
+  125 is hit, shoved hard and whirled 45. Tiers kept (II staggers, III the ally takes 40% less). Clip: griffon-swoop.
+- Stormhammer: "Should apply whirled. And have a small aoe burst on all targets hit (when upgraded). Lvl 3 will have it
+  home between targets on the way out and back. I don't like the bones ... white puffy clouds when hit. Hammer also needs
+  a yellow line on it. And maybe doesnt show in their hand when thrown." -> I: out and back, whirls 35 a hit; II: a
+  small thunderclap (55 across, a little shock) round each one hit; III: it flies on to the nearest enemy it hasn't hit,
+  out and back. Its burst is white cloud puffs (fx2 IMPACT2D.hammer), the head has a yellow band, and his hammer arm is
+  hidden while it is out (kit2Tick sets `u._force`). Clip: griffon-hammerThrow.
+- Wing Guard: "Don't like. Anyone that hits him will take heavy knockback (even more when whirled ofc) when upgraded they
+  will take damage if they hit an obstacle. Lvl 3 will have them burst when they hit an obstacle"; showcase 4: "can't
+  even see the wings ... too sharp ... similar to the ones on his sprite. But bigger and maybe more segments" -> for 4 s
+  he takes 25% less and whoever strikes him is blasted back (knock 620, x(1 + whirl fill)); II: slamming into a wall,
+  the edge or a pillar hurts them (1.2x his damage); III: they burst there (a thunderclap hurting their friends near).
+  The wings: his helm's cream-and-gold, six rounded lobes a side, spread out and wrapped forward. Clip: griffon-wingShield.
