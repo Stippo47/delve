@@ -124,7 +124,8 @@ export const turnTo = (u, a, rate, dt) => { u.facing = wrapAngle(u.facing + clam
 export const stand = (u, dt) => { u.spd *= Math.exp(-dt * 10); u.dvx = Math.cos(u.mvA) * u.spd; u.dvy = Math.sin(u.mvA) * u.spd; };
 const E = (u) => u.el || (u.el = {});
 // A timer that counts down; true once it's run out (reset it with again()).
-export function due(u, key, dt, first = 2) { const e = E(u); if (e[key] == null) e[key] = first * rrange(0.6, 1.2); e[key] -= dt; return e[key] <= 0; }
+// (round 13, the Book: u.dueSoon < 1 brings every move's first use forward, so a preview shows it in a short loop; never set in a run)
+export function due(u, key, dt, first = 2) { const e = E(u); if (e[key] == null) e[key] = first * rrange(0.6, 1.2) * (u.dueSoon || 1); e[key] -= dt; return e[key] <= 0; }
 export function again(u, key, a, b = a) { E(u)[key] = rrange(a, b); }
 // Standing still through a tell: true while it lasts (the caller returns true so the usual brain waits).
 export function hold(u, dt) {

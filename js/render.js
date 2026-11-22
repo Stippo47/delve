@@ -23,7 +23,7 @@ const ACROSS = 480; // one room chunk across = the screen's width in portrait
 
 // topPad/bottomPad: screen space taken by the HUD. Portrait turns the room a quarter turn.
 export function layout(canvas, w, topPad, bottomPad = 10, sidePad = 10) {
-  const dpr = Math.min(window.devicePixelRatio || 1, 3);
+  const dpr = Math.min(window.devicePixelRatio || 1, view.dprCap || 3); // (round 13, the Book's preview caps its own)
   const cw = canvas.clientWidth, ch = canvas.clientHeight;
   if (canvas.width !== Math.round(cw * dpr) || canvas.height !== Math.round(ch * dpr)) { canvas.width = Math.round(cw * dpr); canvas.height = Math.round(ch * dpr); }
   view.dpr = dpr; view.cw = cw; view.ch = ch;
