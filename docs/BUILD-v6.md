@@ -85,3 +85,13 @@ At most four agents at once; the rest queue in this order.
 Rules for all: either kind of unit can be on either side (never `team === 'hero'` for targets; summons take
 `team: u.team`); `node tools/battles.mjs`, `node tools/runs.mjs --n 6 --theme all` and `node tools/convoys.mjs --n 6`
 must end clean. Art fix rounds start from the exact version the designer saw and change only what the note asks.
+
+## Who does what, and the gate (2026-11-22)
+The designer, after the launch: "Make sure the agents are capable so I don't have to send them back."
+- Lanes whose kind of work has come back before go to the strongest model at high effort: **art** (`art7`, restarted),
+  and when they start, **bosses** (`bosses3`) and **the first heroes' kits and visuals** (`kits3`). The engineering
+  lanes (the Book, statuses, the wagon, and later `heroes3`, `foes3`) stay on Opus, at xhigh for new launches.
+- Every brief carries what the designer has rejected and why, and asks for a line-by-line checklist of their words
+  with evidence and a "would they send this back?" pass before reporting.
+- The lead reviews each lane's output against the approved references before anything goes to Riffle, and sends weak
+  work back to the lane instead of on to the designer.
