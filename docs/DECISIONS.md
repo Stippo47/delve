@@ -398,3 +398,45 @@ Done by the lead, live as 0.14.1:
   a row on the setup page, the result as bars to one scale.
 - **The trail map's harsh cuts**: the locked-dungeon veil fades in over its edge, and neighbouring biomes cross-fade.
 - **Fear** was never built (only proposed in round 9): it goes in with Charm, Confused, Sleepy and Bleeding (lane S).
+
+## Round 13, lane W (2026-11-22): the wagon from the designer's answers; no huddling
+docs/CONVOY.md has the mode as built. The calls the lane made (the designer's words are in BUILD-v6 and the v13-convoy log):
+- **Width and zoom** (after the lead's review): the open ground between the tree lines is 2100 (~4x the try's), the
+  ground 2800 with a wood 350 deep each side. The camera shows 1500 units across a portrait phone at the default zoom
+  (hero ~19 px, the wagon and ox team ~87 px long on a 390-wide screen) and leans towards the fighting, so a tree line
+  comes into view when the fight is there; a wave coming from off screen shows as a red arrow at the screen's edge. The
+  ox team has a body (a box from the yoke to the noses).
+- **Foes from the trees**: every wave foe starts under the canopy, hidden and untouchable (ethereal) until it steps out
+  past the tree line; nobody goes back under the trees after. Nothing walks in from off the top of the screen.
+- **Gold**: no switch. Near gold as they fight (as in a dungeon); further gold (1000 from the wagon) when nothing threatens
+  the wagon or the hero; gatherers (`gatherer: true` on a hero's data: the Quartermaster and the Pirate) first, further
+  (1200), and even mid-fight unless a foe is on them. Gatherers are a wagon-road thing only for now (dungeon gold fades
+  fast and is pulled in anyway); their trait text says so.
+- **The shop's prices** (the trip's gold only): mend 30 (+25%), draught 12, trinket 55, sellsword 40. The try's free
+  pick of one is gone: the shop replaces it.
+- **Losing**: the whole party fell: 75% of the trip's gold left is lost and nobody rests (the round 13 wipe ruling);
+  the wagon broken or turning back: 20% (as before).
+- **The trip's legs**: the Wildwood's three floors while it's the only country open (unchanged for a new player); each
+  dungeon whose boss is beaten opens its country; then two legs drawn from what's open, easiest first, the newest last,
+  each at its dungeon's strength. The end block is a stockade across the open ground held by the last country's floor-2
+  mini-boss and his men.
+- **No huddling (sim.js, both modes)**: with nothing to fight, heroes walk to their own spots round the waypoint (a loose
+  line across the way, 125 apart, every other one a step back, swaying) and keep ~90 from each other; after a room is
+  won they meander apart but come back once 230 from the rest (never off alone into an unseen room). Dungeon batches
+  before/after: no change in outcome beyond noise; runs ~5% longer (lane W report).
+
+## Round 13, released as 0.15.0 (2026-11-22)
+- **The Book** (lane K): rebuilt round a live preview (js/preview-sim.js, js/preview.js, js/book.js): every hero's
+  attack, abilities and trait at tier 0-3, every monster at normal / elite / major, every status, trinket and potion.
+  `node tools/preview-check.mjs` fails if any preview throws or its move, trait or item never fires. Where a tier only
+  changes a number the stage shows the tier's words (56 abilities): the picture is the same.
+- **The wagon** (lane W): see the lane's own entry and docs/CONVOY.md. Open ground 2100 across (4x the try), the same
+  zoom, the camera leaning to the fight, arrows for waves from off screen, a drawn forest edge, no Guard / Gather
+  switch (gatherer heroes: the Quartermaster and the Pirate), the downed revivable until they scroll off, a roadside
+  shop that spends the trip's gold, a country a stretch as dungeons are beaten. Heroes no longer huddle with nothing
+  to fight, in dungeons too (runs take about 8% longer; outcomes within noise).
+- **Art round 10** (lane A, on the stronger model): the round 8 and 9 notes; variants wait on boards (deck
+  art-round10) and the game keeps its art until picked. The sun blade "did nothing" because the Seraph's boss part
+  had the same id and overwrote it: the part is `seraphBlade` now, and the blade is drawn three heroes across.
+- The lead reviewed each lane before it shipped and sent the Book and the wagon back once each (previews that never
+  fired; the width, the forest, the oxen).
