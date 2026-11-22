@@ -235,7 +235,7 @@ function bleedMarks(ctx, u, T, w) {
   const v = variant('bleed'), f = bfill(u), vr = u.vr, ph = heartbeat(u, T), n = Math.floor(ph), q = ph - n;
   if (v === 1) { // Spurts: a jet of drops from the wound in its side on every beat
     const side = hash(u.id, 3) < 0.5 ? -1 : 1, wx = side * vr * 0.6, wy = -vr * 0.1 - 0.25 * vr * hash(u.id, 4), yl = vr * 0.8;
-    const L = vr * (0.8 + 1.1 * f), H = vr * (0.35 + 0.4 * f), nd = 3 + Math.round(2 * f), sz = 2.4 + 2.2 * f;
+    const L = vr * (0.9 + 1.2 * f), H = vr * (0.45 + 0.4 * f), nd = 3 + Math.round(2 * f), sz = 2.8 + 2.4 * f;
     upright(ctx, u.x, u.y, () => {
       for (let i = 0; i < nd; i++) { const t = (q - i * 0.045) / 0.5; if (t <= 0 || t >= 1) continue;
         const spread = 1 - i * 0.1, x = wx + side * L * t * spread, y = wy + (yl - wy) * t * t - H * 4 * t * (1 - t);

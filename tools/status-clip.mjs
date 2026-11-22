@@ -24,13 +24,17 @@ const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'delve-edge-'));
 const edge = spawn(EDGE, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio', `--remote-debugging-port=${port}`, `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
 let browser;
 for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
+// (round 14: Edge hands itself over to another process at start, so a taskkill of the one we spawned finds nothing and
+// every run, and every failed one, left a headless Edge behind: ask it to quit over CDP, whatever happens)
+async function quit() { try { const cs = await browser.newBrowserCDPSession(); await cs.send('Browser.close'); } catch {} try { await browser.close(); } catch {} try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); } try { fs.rmSync(prof, { recursive: true, force: true }); } catch {} }
+const errors = [];
+try {
 const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2 });
 const page = await ctx.newPage();
-const errors = [];
 page.on('pageerror', (e) => errors.push(String(e)));
 const q = opt('q', '');
 await page.goto(`http://localhost:${site}/?seed=${+opt('seed', 3)}${q ? '&' + q : ''}`);
-await page.waitForFunction(() => window.GAME && GAME.state === 'camp' && GAME.ready, null, { timeout: 180000 });
+await page.waitForFunction(() => window.GAME && GAME.state === 'camp' && GAME.ready, null, { timeout: 900000 });
 if (opt('run')) await page.evaluate(async ([party, level, setup]) => {
   const s = GAME.save; s.cheat = true; s.unlocks = { ...(s.unlocks || {}), slotMini1: true, slotBoss1: true };
   for (const id of party.split(',')) { s.heroes[id].owned = true; s.heroes[id].level = level; } s.party = party.split(',');
@@ -58,7 +62,7 @@ for (let i = 0; i < n; i++) {
   await page.screenshot({ path: file });
   for (const s of stills) if (Math.round(s * fps) === i) fs.copyFileSync(file, out.replace(/\.mp4$/, `-${s}s.png`));
 }
-await browser.close(); try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); } try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
+} finally { await quit(); }
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', path.join(frames, 'f%04d.png'),
   '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '24', '-movflags', '+faststart', out]);
 fs.rmSync(frames, { recursive: true, force: true });
