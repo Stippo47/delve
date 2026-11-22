@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- THE MOB, the peasant with the axe (round 12, set "kitchen"): an iron cooking pot for a helmet, its long handle out to one side; sackcloth. One of four small peasants who are one hero together. The heroes' bust build drawn at 0.6 of a hero inside the usual box (each part carries the scale; pivots are in the box's own frame), so the outline is the heroes' weight at the heroes' scale: draw it with headR 34 and vr 13.2. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="s1" d="M -2 -25 H 2 A 5 5 0 0 1 7 -20 V 70 A 5 5 0 0 1 2 75 H -2 A 5 5 0 0 1 -7 70 V -20 A 5 5 0 0 1 -2 -25 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#A97546"/><stop offset="1" stop-color="#865B35"/></linearGradient>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#47301B" stop-opacity="0"/><stop offset="1" stop-color="#47301B" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c1"><use href="#s1" transform="translate(164 122) rotate(12)"/></clipPath>
+<path id="s2" d="M 0 30 C 2.4 24.7 12.9 30.4 18 28 C 23.1 25.6 33.5 11.2 38 12 C 42.5 12.8 50 27.3 52 34 C 54 40.7 54.3 55.1 53 62 C 51.7 68.9 46.4 85.2 42 86 C 37.6 86.8 25.6 70.4 20 68 C 14.4 65.6 2.7 73.1 0 68 C -2.7 62.9 -2.4 35.3 0 30 Z"/>
+<clipPath id="u2"><use href="#s1" transform="translate(164 122) rotate(12)"/></clipPath>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E1E3E8"/><stop offset="1" stop-color="#A7B0BD"/></linearGradient>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4F5A6B" stop-opacity="0"/><stop offset="1" stop-color="#4F5A6B" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c2"><use href="#s2" transform="translate(164 122) rotate(12)"/></clipPath>
+<path id="s3" d="M -5 29 H 5 A 5 5 0 0 1 10 34 V 64 A 5 5 0 0 1 5 69 H -5 A 5 5 0 0 1 -10 64 V 34 A 5 5 0 0 1 -5 29 Z"/>
+<clipPath id="u3"><use href="#s1" transform="translate(164 122) rotate(12)"/><use href="#s2" transform="translate(164 122) rotate(12)"/></clipPath>
+<linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#79808A"/><stop offset="1" stop-color="#5E646D"/></linearGradient>
+<linearGradient id="g6" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#313439" stop-opacity="0"/><stop offset="1" stop-color="#313439" stop-opacity="0.42"/></linearGradient>
+<path id="s4" d="M -5.5 -15.5 H 5.5 A 8 8 0 0 1 13.5 -7.5 V 7.5 A 8 8 0 0 1 5.5 15.5 H -5.5 A 8 8 0 0 1 -13.5 7.5 V -7.5 A 8 8 0 0 1 -5.5 -15.5 Z"/>
+<clipPath id="u4"><use href="#s1" transform="translate(164 122) rotate(12)"/><use href="#s2" transform="translate(164 122) rotate(12)"/><use href="#s3" transform="translate(164 122) rotate(12)"/></clipPath>
+<path id="s5" d="M 26 108 C 26 82 54 76 100 76 C 146 76 174 82 174 108 C 174 134 146 140 100 140 C 54 140 26 134 26 108 Z"/>
+<clipPath id="u5"><use href="#s1" transform="translate(164 122) rotate(12)"/><use href="#s2" transform="translate(164 122) rotate(12)"/><use href="#s3" transform="translate(164 122) rotate(12)"/><use href="#s4" transform="translate(164 122) rotate(12)"/></clipPath>
+<linearGradient id="g7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#C1A77E"/><stop offset="1" stop-color="#AB874E"/></linearGradient>
+<linearGradient id="g8" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5B4728" stop-opacity="0"/><stop offset="1" stop-color="#5B4728" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c5"><use href="#s5"/></clipPath>
+<path id="s6" d="M 44.1 108.7 A 8 10.6 0 1 0 60.1 108.7 A 8 10.6 0 1 0 44.1 108.7 Z"/>
+<path id="s7" d="M 139.8 108.7 A 8 10.6 0 1 0 155.8 108.7 A 8 10.6 0 1 0 139.8 108.7 Z"/>
+<path id="s8" d="M 100 47.8 C 129.6 47.8 147.8 68.7 147.8 98.3 C 147.8 122.6 136.5 140 120.9 147.8 C 113.9 151.3 107 153.1 100 153.1 C 93 153.1 86.1 151.3 79.1 147.8 C 63.5 140 52.1 122.6 52.1 98.3 C 52.1 68.7 70.4 47.8 100 47.8 Z"/>
+<clipPath id="u8"><use href="#s1" transform="translate(164 122) rotate(12)"/><use href="#s2" transform="translate(164 122) rotate(12)"/><use href="#s3" transform="translate(164 122) rotate(12)"/><use href="#s4" transform="translate(164 122) rotate(12)"/><use href="#s5"/><use href="#s6"/><use href="#s7"/></clipPath>
+<clipPath id="c8"><use href="#s8"/></clipPath>
+<path id="s9" d="M -22 -6.5 H 22 A 6 6 0 0 1 28 -0.5 V 0.5 A 6 6 0 0 1 22 6.5 H -22 A 6 6 0 0 1 -28 0.5 V -0.5 A 6 6 0 0 1 -22 -6.5 Z"/>
+<linearGradient id="g9" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#514D5A"/><stop offset="1" stop-color="#403C47"/></linearGradient>
+<linearGradient id="g10" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#211F25" stop-opacity="0"/><stop offset="1" stop-color="#211F25" stop-opacity="0.42"/></linearGradient>
+<path id="s10" d="M 48 102 L 48 60 C 48 44 64 36 100 36 C 136 36 152 44 152 60 L 152 102 C 136 112 64 112 48 102 Z"/>
+<clipPath id="u10"><use href="#s1" transform="translate(164 122) rotate(12)"/><use href="#s2" transform="translate(164 122) rotate(12)"/><use href="#s3" transform="translate(164 122) rotate(12)"/><use href="#s4" transform="translate(164 122) rotate(12)"/><use href="#s5"/><use href="#s6"/><use href="#s7"/><use href="#s8"/><use href="#s9" transform="translate(168 62) rotate(-24)"/></clipPath>
+<clipPath id="c10"><use href="#s10"/></clipPath>
+<path id="s11" d="M 50 52 A 50 15 0 1 0 150 52 A 50 15 0 1 0 50 52 Z"/>
+<linearGradient id="g11" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#6A6476"/><stop offset="1" stop-color="#524E5C"/></linearGradient>
+<linearGradient id="g12" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2B2931" stop-opacity="0"/><stop offset="1" stop-color="#2B2931" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c11"><use href="#s11"/></clipPath>
+<path id="s12" d="M 44 98 C 62 108 138 108 156 98 L 156 108 C 138 119 62 119 44 108 Z"/>
+<clipPath id="u12"><use href="#s1" transform="translate(164 122) rotate(12)"/><use href="#s2" transform="translate(164 122) rotate(12)"/><use href="#s3" transform="translate(164 122) rotate(12)"/><use href="#s4" transform="translate(164 122) rotate(12)"/><use href="#s5"/><use href="#s6"/><use href="#s7"/><use href="#s8"/><use href="#s9" transform="translate(168 62) rotate(-24)"/><use href="#s10"/><use href="#s11"/></clipPath>
+<linearGradient id="g13" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#767083"/><stop offset="1" stop-color="#5C5767"/></linearGradient>
+<linearGradient id="g14" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#302E36" stop-opacity="0"/><stop offset="1" stop-color="#302E36" stop-opacity="0.42"/></linearGradient>
+<path id="s13" d="M -5.5 -15.5 H 5.5 A 8 8 0 0 1 13.5 -7.5 V 7.5 A 8 8 0 0 1 5.5 15.5 H -5.5 A 8 8 0 0 1 -13.5 7.5 V -7.5 A 8 8 0 0 1 -5.5 -15.5 Z"/>
+<clipPath id="u13"><use href="#s1" transform="translate(164 122) rotate(12)"/><use href="#s2" transform="translate(164 122) rotate(12)"/><use href="#s3" transform="translate(164 122) rotate(12)"/><use href="#s4" transform="translate(164 122) rotate(12)"/><use href="#s5"/><use href="#s6"/><use href="#s7"/><use href="#s8"/><use href="#s9" transform="translate(168 62) rotate(-24)"/><use href="#s10"/><use href="#s11"/><use href="#s12"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="arm-r" data-pivot="132.4 104.8" transform="translate(100 100) scale(0.6) translate(-100 -100)"><!-- axe -->
+<use href="#s1" transform="translate(164 122) rotate(12)" fill="url(#g1)"/><use href="#s1" transform="translate(164 122) rotate(12)" fill="url(#g2)"/><g clip-path="url(#c1)"><g transform="translate(164 122) rotate(12)"><rect x="1.5" y="-40" width="5" height="134" fill="#6E4628" opacity="0.5"/></g></g>
+<g clip-path="url(#u2)"><use href="#s2" transform="translate(0 3) translate(164 122) rotate(12)" fill="#2B2230" opacity="0.3"/></g><use href="#s2" transform="translate(164 122) rotate(12)" fill="url(#g3)"/><use href="#s2" transform="translate(164 122) rotate(12)" fill="url(#g4)"/><g clip-path="url(#c2)"><g transform="translate(164 122) rotate(12)"><path d="M 41 15 C 57 34 58 64 43 85" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/></g></g>
+<g clip-path="url(#u3)"><use href="#s3" transform="translate(0 2) translate(164 122) rotate(12)" fill="#2B2230" opacity="0.3"/></g><use href="#s3" transform="translate(164 122) rotate(12)" fill="url(#g5)"/><use href="#s3" transform="translate(164 122) rotate(12)" fill="url(#g6)"/>
+<g clip-path="url(#u4)"><use href="#s4" transform="translate(0 3) translate(164 122) rotate(12)" fill="#2B2230" opacity="0.3"/></g><use href="#s4" transform="translate(164 122) rotate(12)" fill="url(#gHand)"/>
+</g>
+<g id="body" transform="translate(100 100) scale(0.6) translate(-100 -100)">
+<g clip-path="url(#u5)"><use href="#s5" transform="translate(0 4) " fill="#2B2230" opacity="0.3"/></g><use href="#s5" fill="url(#g7)"/><use href="#s5" fill="url(#g8)"/><g clip-path="url(#c5)"><path d="M 38 90 A 20 7 0 1 0 78 90 A 20 7 0 1 0 38 90 Z" fill="#FFFFF4" opacity="0.16"/></g>
+<use href="#s6" fill="#F0C49D"/>
+<use href="#s7" fill="#D8A27C"/>
+<g clip-path="url(#u8)"><use href="#s8" transform="translate(0 7) " fill="#2B2230" opacity="0.3"/></g><use href="#s8" fill="url(#gFace)"/><g clip-path="url(#c8)"><rect x="100" y="40" width="56" height="120" fill="url(#gFaceSide)"/></g>
+<path d="M94 136 Q100 140 106 136" fill="none" stroke="#C98868" stroke-width="4" stroke-linecap="round"/>
+<use href="#s9" transform="translate(168 62) rotate(-24)" fill="url(#g9)"/><use href="#s9" transform="translate(168 62) rotate(-24)" fill="url(#g10)"/>
+<g clip-path="url(#u10)"><use href="#s10" transform="translate(0 6) " fill="#2B2230" opacity="0.3"/></g><use href="#s10" fill="url(#g9)"/><use href="#s10" fill="url(#g10)"/><g clip-path="url(#c10)"><path d="M 60 62 A 8 18 0 1 0 76 62 A 8 18 0 1 0 60 62 Z" fill="#FFFFF4" opacity="0.25"/></g>
+<use href="#s11" fill="url(#g11)"/><use href="#s11" fill="url(#g12)"/><g clip-path="url(#c11)"><path d="M 62 48 A 18 5 0 1 0 98 48 A 18 5 0 1 0 62 48 Z" fill="#FFFFF4" opacity="0.3"/></g>
+<g clip-path="url(#u12)"><use href="#s12" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s12" fill="url(#g13)"/><use href="#s12" fill="url(#g14)"/>
+</g>
+<g id="arm-l" data-pivot="67.6 104.8" transform="translate(100 100) scale(0.6) translate(-100 -100)"><!-- free hand -->
+<g clip-path="url(#u13)"><use href="#s13" transform="translate(0 3) translate(50 146) rotate(-6)" fill="#2B2230" opacity="0.3"/></g><use href="#s13" transform="translate(50 146) rotate(-6)" fill="url(#gHand)"/>
+</g>
+</g>
+</svg>

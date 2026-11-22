@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- GAME COPY (art round 12, not wired yet) of design/class-round12/props/haybale.svg -->
+<!-- HAY BALE (the Haymaker's; round 12): a rolled bale lying across its way, seen from above: straw wound round it, two bands of twine, shaggy ends. It rolls towards +y. One part (#body) unless said. Front = DOWN (+y), centre (100,100); the outline comes from the #outline filter. Give the kind headR 76 (vr 30). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="s1" d="M 30 44 L 20 50 L 12 62.5 L 20 75 L 12 87.5 L 20 100 L 12 112.5 L 20 125 L 12 137.5 L 20 150 L 30 156 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E0B434"/><stop offset="1" stop-color="#BF9418"/></linearGradient>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#664F0B" stop-opacity="0"/><stop offset="1" stop-color="#664F0B" stop-opacity="0.42"/></linearGradient>
+<path id="s2" d="M 170 44 L 180 50 L 188 62.5 L 180 75 L 188 87.5 L 180 100 L 188 112.5 L 180 125 L 188 137.5 L 180 150 L 170 156 Z"/>
+<path id="s3" d="M 58 39 H 142 A 36 36 0 0 1 178 75 V 125 A 36 36 0 0 1 142 161 H 58 A 36 36 0 0 1 22 125 V 75 A 36 36 0 0 1 58 39 Z"/>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E7C873"/><stop offset="1" stop-color="#E0B12E"/></linearGradient>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7D6110" stop-opacity="0"/><stop offset="1" stop-color="#7D6110" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c3"><use href="#s3"/></clipPath>
+<path id="s4" d="M 62.5 37 H 65.5 A 3 3 0 0 1 68.5 40 V 160 A 3 3 0 0 1 65.5 163 H 62.5 A 3 3 0 0 1 59.5 160 V 40 A 3 3 0 0 1 62.5 37 Z"/>
+<clipPath id="u4"><use href="#s1"/><use href="#s2"/><use href="#s3"/></clipPath>
+<linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#98752E"/><stop offset="1" stop-color="#795C22"/></linearGradient>
+<linearGradient id="g6" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#403011" stop-opacity="0"/><stop offset="1" stop-color="#403011" stop-opacity="0.42"/></linearGradient>
+<path id="s5" d="M 134.5 37 H 137.5 A 3 3 0 0 1 140.5 40 V 160 A 3 3 0 0 1 137.5 163 H 134.5 A 3 3 0 0 1 131.5 160 V 40 A 3 3 0 0 1 134.5 37 Z"/>
+<clipPath id="u5"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="body">
+<use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/>
+<use href="#s2" fill="url(#g1)"/><use href="#s2" fill="url(#g2)"/>
+<use href="#s3" fill="url(#g3)"/><use href="#s3" fill="url(#g4)"/><g clip-path="url(#c3)"><path d="M 28 62 Q 100 56 172 62 M 24 100 Q 100 94 176 100 M 28 138 Q 100 132 172 138" fill="none" stroke="#B88E2E" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/><path d="M 26 80 Q 100 75 174 80 M 26 120 Q 100 114 174 120" fill="none" stroke="#F6E6A0" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/><path d="M 40 58 A 30 9 0 1 0 100 58 A 30 9 0 1 0 40 58 Z" fill="#FFFFF4" opacity="0.3"/></g>
+<g clip-path="url(#u4)"><use href="#s4" transform="translate(0 2) " fill="#2B2230" opacity="0.3"/></g><use href="#s4" fill="url(#g5)"/><use href="#s4" fill="url(#g6)"/>
+<g clip-path="url(#u5)"><use href="#s5" transform="translate(0 2) " fill="#2B2230" opacity="0.3"/></g><use href="#s5" fill="url(#g5)"/><use href="#s5" fill="url(#g6)"/>
+</g>
+</g>
+</svg>

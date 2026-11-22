@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- Round 4: hammer head 15% bigger on a slightly longer, thicker haft; the fist wraps the haft. -->
+<!-- Round 3 (A and B merged into one unit): spikeless dome pauldrons, a beard drawn over the lower face (mouth hidden), longer-hafted warhammer (arm-l) drawn before #body. -->
+  <!-- BARBARIAN Warhelm (round 3: one unit from A+B) (round 2, pauldrons b): iron horned helm split light/dark exactly on the centre line, gold brow band, brown beard now clear. Warhammer held low in the left hand, head forward: flared striking block outward, beak spike inward. Parts: body / arm-l (hand + hammer) / arm-r (empty fist). Facing = DOWN (+y). -->
+  <defs>
+    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="gF" x1="0" y1="104" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient>
+    <linearGradient id="gFs" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+    <path d="M26.0 108.0 C26.0 82 54.0 76 100 76 C146.0 76 174.0 82 174.0 108.0 C174.0 134 146.0 140 100 140 C54.0 140 26.0 134 26.0 108.0 Z" id="s1"/>
+    <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D9A27F"/><stop offset="1" stop-color="#B8825F"/></linearGradient>
+    <linearGradient id="g2" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#71504A" stop-opacity="0"/><stop offset="1" stop-color="#71504A" stop-opacity="0.5"/></linearGradient>
+    <path d="M170 92 L204 104 L172 122 Z" id="s2"/>
+    <clipPath id="k3"><use href="#s1"/></clipPath>
+    <linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D5DBE4"/><stop offset="1" stop-color="#8C95A4"/></linearGradient>
+    <linearGradient id="g4" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#5B5A6D" stop-opacity="0"/><stop offset="1" stop-color="#5B5A6D" stop-opacity="0.5"/></linearGradient>
+    <path d="M 30 92 L -4 104 L 28 122 Z" id="s4"/>
+    <clipPath id="k5"><use href="#s1"/><use href="#s2"/></clipPath>
+    <path d="M120 80 C152 70 186 84 186 108 C186 132 158 142 126 136 Z" id="s6"/>
+    <clipPath id="k7"><use href="#s1"/><use href="#s2"/><use href="#s4"/></clipPath>
+    <linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F6C454"/><stop offset="1" stop-color="#D9952A"/></linearGradient>
+    <linearGradient id="g6" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#825A30" stop-opacity="0"/><stop offset="1" stop-color="#825A30" stop-opacity="0.4"/></linearGradient>
+    <path d="M 80 80 C 48 70 14 84 14 108 C 14 132 42 142 74 136 Z" id="s8"/>
+    <clipPath id="k9"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/></clipPath>
+    <path d="M126 86 C154 78 180 90 180 108 C180 128 156 136 130 131 Z" id="s10"/>
+    <linearGradient id="g7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#C9D0DA"/><stop offset="1" stop-color="#7A8496"/></linearGradient>
+    <linearGradient id="g8" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#525166" stop-opacity="0"/><stop offset="1" stop-color="#525166" stop-opacity="0.5"/></linearGradient>
+    <path d="M 74 86 C 46 78 20 90 20 108 C 20 128 44 136 70 131 Z" id="s11"/>
+    <path d="M54 118 C48 142 62 160 76 168 L82 186 L100 174 L118 186 L124 168 C138 160 152 142 146 118 C130 142 70 142 54 118 Z" id="s12"/>
+    <clipPath id="k13"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s8"/><use href="#s10"/><use href="#s11"/></clipPath>
+    <linearGradient id="g9" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#C4844A"/><stop offset="1" stop-color="#8A5528"/></linearGradient>
+    <linearGradient id="g10" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#5A3A2F" stop-opacity="0"/><stop offset="1" stop-color="#5A3A2F" stop-opacity="0.45"/></linearGradient>
+    <path d="M 100.0 47.8 C 129.6 47.8 147.8 68.7 147.8 98.3 C 147.8 122.6 136.5 140.0 120.9 147.8 C 113.9 151.3 107.0 153.1 100.0 153.1 C 93.0 153.1 86.1 151.3 79.1 147.8 C 63.5 140.0 52.1 122.6 52.1 98.3 C 52.1 68.7 70.4 47.8 100.0 47.8 Z" id="head"/>
+    <clipPath id="k14"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s8"/><use href="#s10"/><use href="#s11"/><use href="#s12"/></clipPath>
+    <path d="M30 78 C20 60 24 36 44 20 C38 40 44 54 58 62 L60 84 Z" id="s15"/>
+    <clipPath id="k16"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s8"/><use href="#s10"/><use href="#s11"/><use href="#s12"/><use href="#head"/></clipPath>
+    <linearGradient id="g11" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F3E7C8"/><stop offset="1" stop-color="#CDB98A"/></linearGradient>
+    <linearGradient id="g12" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#7C6C60" stop-opacity="0"/><stop offset="1" stop-color="#7C6C60" stop-opacity="0.45"/></linearGradient>
+    <path d="M 170 78 C 180 60 176 36 156 20 C 162 40 156 54 142 62 L 140 84 Z" id="s17"/>
+    <clipPath id="k18"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s8"/><use href="#s10"/><use href="#s11"/><use href="#s12"/><use href="#head"/><use href="#s15"/></clipPath>
+    <linearGradient id="g13" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E4D6B2"/><stop offset="1" stop-color="#BFA978"/></linearGradient>
+    <path d="M46 108 C40 58 66 36 100 36 C134 36 160 58 154 108 C150 112 140 112 130 108 L70 108 C60 112 50 112 46 108 Z" id="s19"/>
+    <clipPath id="k20"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s8"/><use href="#s10"/><use href="#s11"/><use href="#s12"/><use href="#head"/><use href="#s15"/><use href="#s17"/></clipPath>
+    <linearGradient id="g14" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D3D9E2"/><stop offset="1" stop-color="#A3ABB8"/></linearGradient>
+    <clipPath id="cs19"><use href="#s19"/></clipPath>
+    <rect x="93" y="38" width="14" height="66" rx="7" id="s21"/>
+    <clipPath id="k22"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s8"/><use href="#s10"/><use href="#s11"/><use href="#s12"/><use href="#head"/><use href="#s15"/><use href="#s17"/><use href="#s19"/></clipPath>
+    <linearGradient id="g15" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#EEF1F5"/><stop offset="1" stop-color="#C2C9D3"/></linearGradient>
+    <clipPath id="cs21"><use href="#s21"/></clipPath>
+    <path d="M46 95 H154 V108 C148 112 140 112 130 108 L70 108 C60 112 52 112 46 108 Z" id="s23"/>
+    <clipPath id="k24"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s8"/><use href="#s10"/><use href="#s11"/><use href="#s12"/><use href="#head"/><use href="#s15"/><use href="#s17"/><use href="#s19"/><use href="#s21"/></clipPath>
+    <linearGradient id="g16" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F6C454"/><stop offset="1" stop-color="#E8A030"/></linearGradient>
+    <clipPath id="cs23"><use href="#s23"/></clipPath>
+    <rect x="37" y="110" width="10" height="56" rx="4" id="s25"/>
+    <linearGradient id="g17" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#B57944"/><stop offset="1" stop-color="#7C4E2A"/></linearGradient>
+    <linearGradient id="g18" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#533630" stop-opacity="0"/><stop offset="1" stop-color="#533630" stop-opacity="0.4"/></linearGradient>
+    <path d="M52 166 L74 180 L52 194 Z" id="s26"/>
+    <clipPath id="k27"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s8"/><use href="#s10"/><use href="#s11"/><use href="#s12"/><use href="#head"/><use href="#s15"/><use href="#s17"/><use href="#s19"/><use href="#s21"/><use href="#s23"/><use href="#s25"/></clipPath>
+    <path d="M32 164 L15 156 Q8 156 8 163 V197 Q8 204 15 204 L32 196 Z" id="s28"/>
+    <clipPath id="k29"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s8"/><use href="#s10"/><use href="#s11"/><use href="#s12"/><use href="#head"/><use href="#s15"/><use href="#s17"/><use href="#s19"/><use href="#s21"/><use href="#s23"/><use href="#s25"/><use href="#s26"/></clipPath>
+    <rect x="29" y="155" width="26" height="48" rx="5" id="s30"/>
+    <clipPath id="k31"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s8"/><use href="#s10"/><use href="#s11"/><use href="#s12"/><use href="#head"/><use href="#s15"/><use href="#s17"/><use href="#s19"/><use href="#s21"/><use href="#s23"/><use href="#s25"/><use href="#s26"/><use href="#s28"/></clipPath>
+    <linearGradient id="g19" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#8E97A6"/><stop offset="1" stop-color="#5E6878"/></linearGradient>
+    <linearGradient id="g20" x1="0.42" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#444357" stop-opacity="0"/><stop offset="1" stop-color="#444357" stop-opacity="0.4"/></linearGradient>
+    <rect x="29" y="174" width="26" height="10" id="s32"/>
+    <rect id="h33" x="30" y="124" width="24" height="21" rx="8"/>
+    <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
+    <clipPath id="k34"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s8"/><use href="#s10"/><use href="#s11"/><use href="#s12"/><use href="#head"/><use href="#s15"/><use href="#s17"/><use href="#s19"/><use href="#s21"/><use href="#s23"/><use href="#s25"/><use href="#s26"/><use href="#s28"/><use href="#s30"/><use href="#s32"/></clipPath>
+    <rect id="h35" x="141" y="134" width="24" height="21" rx="8"/>
+    <clipPath id="k36"><use href="#s1"/><use href="#s2"/><use href="#s4"/><use href="#s6"/><use href="#s8"/><use href="#s10"/><use href="#s11"/><use href="#s12"/><use href="#head"/><use href="#s15"/><use href="#s17"/><use href="#s19"/><use href="#s21"/><use href="#s23"/><use href="#s25"/><use href="#s26"/><use href="#s28"/><use href="#s30"/><use href="#s32"/><use href="#h33"/></clipPath>
+      <path id="whBeard" d="M 54 112 C 58 124 70 130 84 127 Q 100 123 116 127 C 130 130 142 124 146 112 C 154 136 148 158 130 170 L 122 188 L 110 178 L 100 194 L 90 178 L 78 188 L 70 170 C 52 158 46 136 54 112 Z"/>
+    <path id="whMous" d="M 70 130 C 78 120 92 120 100 127 C 108 120 122 120 130 130 C 126 140 112 142 100 136 C 88 142 74 140 70 130 Z"/>
+    <linearGradient id="whgMous" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D9995C"/><stop offset="1" stop-color="#A86A36"/></linearGradient>
+    <clipPath id="whcBeard"><use href="#whBeard"/></clipPath>
+    <clipPath id="whcUnderBeard"><use href="#head"/><use href="#s1"/><use href="#s6"/><use href="#s8"/></clipPath>
+    <path id="whHead" d="M -9.2 35.35 L 23 31.9 C 27.02 31.9 29.9 34.77 29.9 38.8 L 29.9 57.2 C 29.9 61.23 27.02 64.1 23 64.1 L -9.2 60.65 L -31.05 49.73 L -31.05 46.27 Z"/>
+    <clipPath id="whcHead"><use href="#whHead"/></clipPath>
+    <clipPath id="whcHaft"><rect x="-5" y="-50" width="10" height="96"/></clipPath>
+    <clipPath id="whcWpn"><g transform="translate(36 141) rotate(-14)"><rect x="-5" y="-50" width="10" height="96"/><use href="#whHead"/><use href="#fistL"/></g></clipPath>
+<path id="fistL" d="M 4.5 -13.5 L -5.3 -13.5 Q -7.9 -13.5 -7.9 -10.5 A 3.52 3.52 0 0 0 -7.9 -5.25 A 3.52 3.52 0 0 0 -7.9 0 A 3.52 3.52 0 0 0 -7.9 5.25 A 3.52 3.52 0 0 0 -7.9 10.5 Q -7.9 13.5 -5.3 13.5 L 4.5 13.5 Q 10.5 13.5 10.5 7.5 L 10.5 -7.5 Q 10.5 -13.5 4.5 -13.5 Z"/>
+</defs>
+  <g id="sprite" filter="url(#outline)">
+    <g id="body">
+      <!-- the Warhelm's warhammer alone (round 12), for when it leaves his hand: the hero file's own shapes, its head forward (+y) -->
+      <g transform="translate(100 92)">
+        <rect x="-5" y="-50" width="10" height="96" rx="3.5" fill="url(#g17)"/>
+        <rect x="-5" y="-50" width="10" height="96" rx="3.5" fill="url(#g18)"/>
+        <circle cx="0" cy="-51" r="6" fill="url(#g19)"/>
+        <rect x="-4.5" y="16" width="9" height="4" fill="#5A3622" opacity="0.6"/><rect x="-4.5" y="24" width="9" height="4" fill="#5A3622" opacity="0.6"/>
+        <g clip-path="url(#whcHaft)"><use href="#whHead" fill="#2B2230" opacity="0.3" transform="translate(0 4)"/></g>
+        <use href="#whHead" fill="url(#g3)"/>
+        <use href="#whHead" fill="url(#g4)"/>
+        <g clip-path="url(#whcHead)"><rect x="15" y="28" width="15" height="42" fill="#EEF1F5" opacity="0.7"/><rect x="-9.2" y="28" width="17.2" height="42" fill="url(#g19)"/><rect x="-9.2" y="44.5" width="17.2" height="7" fill="url(#g5)"/></g>
+      </g>
+    </g>
+  </g>
+</svg>
