@@ -1,0 +1,316 @@
+{
+  "title": "0.17.0: XP, the first 15 heroes",
+  "topic": "runs",
+  "order": 27,
+  "priority": 1,
+  "tags": [
+    "first"
+  ],
+  "cards": [
+    {
+      "id": "xp",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "XP: catching up",
+      "text": "A low hero carried through a late dungeon now levels by the handful. Live as 0.17.0.",
+      "why": "You asked how XP is shared and described how it should work. This is that, with one thing I left out; say if you want it anyway.",
+      "details": "How it was: every living hero got the same XP for a kill, the downed got none, and a late dungeon paid only about twice the first. A new hero needed nearly as many runs as the first party had.\n\nNow: each level costs 10% more than the last, and a kill pays by the dungeon's level on the same curve. Everyone in the party gets the same amount. So a level 1 hero in a late dungeon gains several levels a run, and a level 40 party in the Wildwood barely moves, with no special rule for who is behind.\n\nTest: three level 33 heroes carrying a level 1 Archer through the Crypt. She was level 8, 15, 18, 24, 27, 29, 30 and 31 after runs one to eight; the carriers went from 33 to 39.\n\nFour test campaigns from a fresh save, with wipes costing 75%: all nine dungeons fall in every one, the Foundry between run 102 and 134.",
+      "parts": [
+        {
+          "id": "downed",
+          "title": "The downed get XP too",
+          "text": "A level 1 hero falls in a late dungeon's first room. If the downed got nothing, being carried would teach it nothing."
+        },
+        {
+          "id": "blow",
+          "title": "No killing-blow bonus",
+          "text": "You wondered about more XP for the killing blow. I left it out: the Archer would pull levels ahead of the Paladin and the Cleric in the same party, which is the falling behind this fixes."
+        },
+        {
+          "id": "gold",
+          "title": "A thing I saw: gold after wipes",
+          "text": "In one test a three-hero party took 62 runs on the Warren. With wipes costing 75% it banked about 40 gold a run and never afforded a fourth hero. The test never leaves early (which costs 20%); a player would."
+        }
+      ]
+    },
+    {
+      "id": "shockwave",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Shockwave: pick one",
+      "text": "Redone. Your first words were a repeating shockwave forwards: these travel, and hit what they pass once.",
+      "why": "Tick the one to keep. The first is in the game until you pick.",
+      "pick": [
+        "berserker-shockwave-v1-arcs"
+      ],
+      "items": [
+        {
+          "id": "berserker-shockwave-v1-arcs",
+          "label": "1 Arcs",
+          "video": "../../../clips/showcase6/berserker-shockwave-v1-arcs.mp4",
+          "text": "A pale inked crescent running out and growing."
+        },
+        {
+          "id": "berserker-shockwave-v2-ripples",
+          "label": "2 Ripples",
+          "video": "../../../clips/showcase6/berserker-shockwave-v2-ripples.mp4",
+          "text": "The same front as soft dust under the units."
+        },
+        {
+          "id": "berserker-shockwave-v3-stomps",
+          "label": "3 Stomps",
+          "video": "../../../clips/showcase6/berserker-shockwave-v3-stomps.mp4",
+          "text": "No front drawn: three blows marching out."
+        }
+      ]
+    },
+    {
+      "id": "wolfbite",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Wolf bite: pick one",
+      "text": "Redone. The old ones were small marks on the wolf's own head. These are on the target, at its size.",
+      "why": "Tick the one to keep. The first is in the game until you pick.",
+      "pick": [
+        "druid-callWolf-v1-fangs"
+      ],
+      "items": [
+        {
+          "id": "druid-callWolf-v1-fangs",
+          "label": "1 Fangs",
+          "video": "../../../clips/showcase6/druid-callWolf-v1-fangs.mp4",
+          "text": "Jaws with gums and canines snapping shut."
+        },
+        {
+          "id": "druid-callWolf-v2-crunch",
+          "label": "2 Crunch",
+          "video": "../../../clips/showcase6/druid-callWolf-v2-crunch.mp4",
+          "text": "No teeth: a pinch and tooth holes."
+        },
+        {
+          "id": "druid-callWolf-v3-clamp",
+          "label": "3 Clamp",
+          "video": "../../../clips/showcase6/druid-callWolf-v3-clamp.mp4",
+          "text": "Two curved fangs closing like pincers."
+        }
+      ]
+    },
+    {
+      "id": "bonespear",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Bone Spear: pick one",
+      "text": "You asked for three variations.",
+      "why": "Tick the one to keep. The first is in the game until you pick.",
+      "pick": [
+        "necromancer-boneSpear-v1-spear"
+      ],
+      "items": [
+        {
+          "id": "necromancer-boneSpear-v1-spear",
+          "label": "1 Spear",
+          "video": "../../../clips/showcase6/necromancer-boneSpear-v1-spear.mp4",
+          "text": "A shaft with a lashed leaf-shaped head."
+        },
+        {
+          "id": "necromancer-boneSpear-v2-femur",
+          "label": "2 Femur",
+          "video": "../../../clips/showcase6/necromancer-boneSpear-v2-femur.mp4",
+          "text": "A thrown thigh bone."
+        },
+        {
+          "id": "necromancer-boneSpear-v3-fang",
+          "label": "3 Fang",
+          "video": "../../../clips/showcase6/necromancer-boneSpear-v3-fang.mp4",
+          "text": "A great curved fang."
+        }
+      ]
+    },
+    {
+      "id": "oldbones",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Old Bones: pick one",
+      "text": "Granny, redone. Nothing floats over her now; she has a bone-white edge for the second she can't be hurt.",
+      "why": "Tick the one to keep. The first is in the game until you pick.",
+      "pick": [
+        "granny-oldBones-v1-stand"
+      ],
+      "items": [
+        {
+          "id": "granny-oldBones-v1-stand",
+          "label": "1 Stand",
+          "video": "../../../clips/showcase6/granny-oldBones-v1-stand.mp4",
+          "text": "A flash, dust and chips."
+        },
+        {
+          "id": "granny-oldBones-v2-creak",
+          "label": "2 Creak",
+          "video": "../../../clips/showcase6/granny-oldBones-v2-creak.mp4",
+          "text": "Comic crack marks."
+        },
+        {
+          "id": "granny-oldBones-v3-glance",
+          "label": "3 Glance",
+          "video": "../../../clips/showcase6/granny-oldBones-v3-glance.mp4",
+          "text": "The blow clangs off."
+        }
+      ]
+    },
+    {
+      "id": "fixes",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Your showcase 4 notes",
+      "text": "Each clip changed only where your note said.",
+      "why": "Tick the ones that are right now; comment on any that aren't.",
+      "pick": [
+        "archer-frostArrow",
+        "archer-barrage",
+        "archer-roll",
+        "berserker-attack",
+        "berserker-whirl",
+        "granny-reap",
+        "storm-chainLightning",
+        "storm-stormCloud-tier1",
+        "storm-stormCloud",
+        "cleric-attack",
+        "cleric-sanctuary",
+        "necromancer-lifeDrain",
+        "tower-holdTheLine",
+        "wildmane-cleave",
+        "frost-iceShard",
+        "druid-entangle"
+      ],
+      "items": [
+        {
+          "id": "archer-frostArrow",
+          "label": "Archer: Frost Arrow",
+          "video": "../../../clips/showcase6/archer-frostArrow.mp4",
+          "text": "The string and arrow draw back through the charge. Snow along its path and where it bursts."
+        },
+        {
+          "id": "archer-barrage",
+          "label": "Archer: Barrage",
+          "video": "../../../clips/showcase6/archer-barrage.mp4",
+          "text": "The same drawn bow. It now goes at a lone enemy too."
+        },
+        {
+          "id": "archer-roll",
+          "label": "Archer: Roll",
+          "video": "../../../clips/showcase6/archer-roll.mp4",
+          "text": "She makes a full turn as she goes, and the caltrops skid out along the floor."
+        },
+        {
+          "id": "berserker-attack",
+          "label": "Berserker: Flail",
+          "video": "../../../clips/showcase6/berserker-attack.mp4",
+          "text": "No spike ball left on the ground."
+        },
+        {
+          "id": "berserker-whirl",
+          "label": "Berserker: Whirl",
+          "video": "../../../clips/showcase6/berserker-whirl.mp4",
+          "text": "White crescents and balls as you approved them; blows knock back the way the flail turns."
+        },
+        {
+          "id": "granny-reap",
+          "label": "Granny: Reap",
+          "video": "../../../clips/showcase6/granny-reap.mp4",
+          "text": "The crescent rides the scythe; her orbs burst clear of her face."
+        },
+        {
+          "id": "storm-chainLightning",
+          "label": "Storm: Chain Lightning",
+          "video": "../../../clips/showcase6/storm-chainLightning.mp4",
+          "text": "The bolt, each leap and the overload arcs are one inked shape. No spark lines."
+        },
+        {
+          "id": "storm-stormCloud-tier1",
+          "label": "Storm: Zeus Bolt, tier I",
+          "video": "../../../clips/showcase6/storm-stormCloud-tier1.mp4",
+          "text": "Hard knockback the way it flies, and a stronger strike."
+        },
+        {
+          "id": "storm-stormCloud",
+          "label": "Storm: Zeus Bolt, tier III",
+          "video": "../../../clips/showcase6/storm-stormCloud.mp4",
+          "text": "The same at tier III."
+        },
+        {
+          "id": "cleric-attack",
+          "label": "Cleric: light orbs",
+          "video": "../../../clips/showcase6/cleric-attack.mp4",
+          "text": "All three leave one point, 45 degrees apart. One that meets a friend heals it and stops."
+        },
+        {
+          "id": "cleric-sanctuary",
+          "label": "Cleric: Sanctuary",
+          "video": "../../../clips/showcase6/cleric-sanctuary.mp4",
+          "text": "The same ring with more light: it draws itself round and pulses with each mend."
+        },
+        {
+          "id": "necromancer-lifeDrain",
+          "label": "Necromancer: Life Drain",
+          "video": "../../../clips/showcase6/necromancer-lifeDrain.mp4",
+          "text": "The thin tendrils wait until the ribbon has landed."
+        },
+        {
+          "id": "tower-holdTheLine",
+          "label": "Tower: Hold the Line",
+          "video": "../../../clips/showcase6/tower-holdTheLine.mp4",
+          "text": "The red mark stays over each taunted enemy until the taunt ends."
+        },
+        {
+          "id": "wildmane-cleave",
+          "label": "Wildmane: Cleave",
+          "video": "../../../clips/showcase6/wildmane-cleave.mp4",
+          "text": "The slash turns with the sword and starts at the blade's tip."
+        },
+        {
+          "id": "frost-iceShard",
+          "label": "Frost Mage: Ice Shard",
+          "video": "../../../clips/showcase6/frost-iceShard.mp4",
+          "text": "A trail of snow particles."
+        },
+        {
+          "id": "druid-entangle",
+          "label": "Druid: Entangle",
+          "video": "../../../clips/showcase6/druid-entangle.mp4",
+          "text": "The same patch and vines, redrawn: tapered stems, curled tips, thorns, leaves."
+        }
+      ]
+    },
+    {
+      "id": "balance",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Archer, Tower, the rest",
+      "text": "Each ability was measured switched on and off. The Archer's abilities now carry half her damage.",
+      "why": "You said the Archer's abilities should carry more of her damage and the Tower is weak beside the Paladin.",
+      "details": "At tier III all fifteen first heroes are within about a room of each other. Tanks deal 23% of a party's damage, shooters 41%.\n\nStill weak: the Berserker at tier I (he goes down 2.5 times a run), Granny at tier I, the Pyromancer at tier III (cause not found), Twinfang (better, still behind). The Bard's songs, Hold the Line, Guard, Old Bones, Gas Form and Miasma show no measurable worth in the tests; they need another look.",
+      "parts": [
+        {
+          "id": "archer",
+          "title": "Archer",
+          "text": "Abilities' share of her damage: 25% to 33% at tier I, 40% to 54% at tier III. Her bow is unchanged. Frost Arrow hits harder and its burst hurts; Barrage is used on a lone enemy too."
+        },
+        {
+          "id": "tower",
+          "title": "Tower against Paladin",
+          "text": "The Tower is the health tank now: 310 health (was 180), less armour, Charge worth twice his blow. Bare, the Paladin still wins their duel; fully built, the Tower does. The Paladin is untouched."
+        },
+        {
+          "id": "others",
+          "title": "Others",
+          "text": "Twinfang, Wildmane, Berserker and Granny have more health and harder abilities. The casters' big spells hit harder. Ice Wall is only raised against a brawler coming for her. Heals trimmed a little."
+        },
+        {
+          "id": "reach",
+          "title": "A call I made: reach",
+          "text": "Cleave and Reap now reach only as far as the blade sweeps, so the look and the blow agree."
+        }
+      ]
+    }
+  ]
+}

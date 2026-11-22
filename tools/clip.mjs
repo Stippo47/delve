@@ -56,6 +56,7 @@ if (battle) {
   GAME.record(true); GAME.startRun(d);
   if (quiet) { const w = GAME.run.world; w.wp = null; for (const u of w.units) if (u.team !== 'hero' && u.team !== 'neutral') { u.x = w.W + 4000; u.aggro = false; u.ethereal = true; } } // --quiet: the room's foes taken out of sight (the walk with nothing about)
   }, [depth, opt('party', ''), +opt('level', 5), args.includes('--quiet')]);
+if (opt('zoom')) await page.evaluate(async (z) => { (await import('./js/render.js')).setZoom(+z); }, opt('zoom')); // --zoom 1.4: the camera closer in (0.5 to 1.5)
 const convoyStep = () => page.evaluate((pick) => { const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick(pick || 'auto'); }, opt('pick', ''));
 if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) { GAME.recFrame(1 / 30); const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick('auto'); } }, skip);
 // --down N (convoy): after the skip, the second hero drops N behind the wagon (a revive, or one left behind) and the
@@ -64,7 +65,10 @@ if (args.includes('--convoy') && opt('down')) await page.evaluate((back) => { co
   const h = r.world.units.filter((u) => u.team === wg.team && !u.def.cargo && !u.downed && !u.dead && r.heroes[u.kind])[1];
   if (h) { h.x = wg.x - back; h.y = wg.y + 150; h.hp = 0; h.downed = true; h.target = null; h.forcedGoal = null; } }, +opt('down'));
 const n = Math.round(secs * fps);
+// --follow yeti: the camera stays on the one of that kind nearest the fighting (then on it till it falls) (with --zoom, a close look at one enemy)
+const follow = opt('follow', '');
 for (let i = 0; i < n; i++) {
+  if (follow) await page.evaluate((k) => { const w = GAME.run && GAME.run.world; if (!w) return; const near = (o) => Math.min(...w.units.filter((h) => h.team !== o.team && !h.dead && h.team !== 'neutral').map((h) => Math.hypot(h.x - o.x, h.y - o.y)), 9e9); const u = (w._fol && !w._fol.dead ? w._fol : null) || w.units.filter((o) => o.kind === k && !o.dead).sort((p, q) => near(p) - near(q))[0] || w._fol; if (u) { w._fol = u; const c = w._cam || (w._cam = { x: u.x, y: u.y }); c.x += (u.x - c.x) * 0.12; c.y += (u.y - c.y) * 0.12; w.camAt = c; } }, follow);
   await page.evaluate((dt) => GAME.recFrame(dt), speed / fps);
   await convoyStep();
   await page.screenshot({ path: path.join(frames, `f${String(i).padStart(4, '0')}.png`) });

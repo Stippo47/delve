@@ -16,7 +16,7 @@ import { makeWorld, spawn } from './sim.js';
 import { initKit } from './kits.js';
 import { numbersOf, quietly } from './numbers.js';
 import { battleFoe } from './dungeon.js';
-import { ELITE, MAJOR } from './elites.js';
+import { ELITE, MAJOR, MAJOR_MOVES } from './elites.js';
 import { STATUS } from './statuses.js';
 import { beastFun, beastHabit, trinketFun, POTION_FUN, STATUSES } from './bestiary.js';
 import { ELITE_MOVE } from './movetext.js';
@@ -241,7 +241,7 @@ function foePage() {
   const words = (m) => m.move === 'attack' ? attackWords(d) : m.move === 'kit' ? (beastHabit(k) || 'How it fights.')
     : m.move === 'kit' && !staged.length ? (beastHabit(k) || '') + ' (It does not fight yet: what you see is all it does for now.)'
     : m.move === 'elite' ? (ELITE_MOVE[k] || ELITE_MOVE[d.eliteAs] || 'Something extra on top of its kit.')
-    : MAJOR_WORDS[m.key] + (m.call ? ' ' + MAJOR_WORDS.call : '');
+    : (MAJOR_WORDS[m.key] || (MAJOR_MOVES[m.key] && MAJOR_MOVES[m.key].words) || '') + (m.call ? ' ' + MAJOR_WORDS.call : ''); // (round 13, lane E: a kind's own major move carries its words)
   const title = { attack: 'Attack', kit: 'How it fights', elite: 'Elite move', major: 'Major move' };
   const ico = { attack: I.sword, kit: I.skull, elite: '<span class="star">★</span>', major: I.crown };
   const carry = (() => { try { return quietly(() => foeTrinkets(k, rk)); } catch (e) { return []; } })(); // the same trinkets as its stage

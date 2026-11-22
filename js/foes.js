@@ -218,8 +218,8 @@ Object.assign(ELITES, {
   } },
   // Snowman: a blizzard: a big lob that leaves a patch of freezing air.
   snowman: { tick(w, u, dt) { every(w, u, dt, 'blizz', 5, 7, 420, (t) => blizzard(w, u, t.x, t.y, 90)); return false; } },
-  // Hunter spider: leaps onto you from a distance.
-  spiderHunter: { tick(w, u, dt) { return pounce(w, u, dt, { min: 120, max: 320, every: [3.5, 5], r: 52, dmg: 10, status: { poison: 30, bleed: 40 } }); } }, // (round 13: the pounce opens a wound)
+  // Hunter spider: leaps onto you from a distance, and the pounce opens a wound (round 13: it bleeds).
+  spiderHunter: { tick(w, u, dt) { return pounce(w, u, dt, { min: 120, max: 320, every: [3.5, 5], r: 52, dmg: 10, status: { poison: 30, bleed: 40 } }); } },
   // Momma spider: her brood hatches: spiderlings come out of her.
   spiderMomma: { tick(w, u, dt) { if (u.aggro && due(u, 'brood', dt, 4)) { again(u, 'brood', 9, 11); summon(w, u, 'spiderHunter', 2, { scale: 0.7, hpMul: 0.45, color: '#5A4A5E' }); } return false; } },
   // Banshee: a cry that drags everyone close by towards her.
@@ -261,8 +261,8 @@ Object.assign(ELITES, {
     const t = targetOf(w, u); if (!t || !due(u, 'breath', dt, 3) || dist(u.x, u.y, t.x, t.y) > 240) return false;
     again(u, 'breath', 6, 8); breath(w, u, angleTo(u.x, u.y, t.x, t.y), 250); return true;
   } },
-  // Cherub: arrow rain: a circle on the floor peppered from above. Round 13 (the designer: "Elite Cupid enemies will shoot
-  // love arrows that charm"): the elite's own arrows are love arrows (charm 18 a hit, no radiance; sim.js fireArrow).
+  // Cherub: arrow rain: a circle on the floor peppered from above, and its own arrows are love arrows (round 13, the
+  // designer: "Elite Cupid enemies will shoot love arrows that charm": charm 18 a hit, no radiance; sim.js fireArrow).
   cherub: { tick(w, u, dt) { u.loveShots = 18; every(w, u, dt, 'rain', 4, 5.5, 420, (t) => lob(w, u, t.x, t.y, { r: 80, tell: 1.0, kind: 'holy', dust: '#FFF1B0', hit: { dmg: 6, knock: 80, radiance: 18 },
     land: (w2, z) => { for (let i = 0; i < 12; i++) { const a = rand() * TAU, d = rand() * z.r; sparks(w2, z.x + Math.cos(a) * d, z.y + Math.sin(a) * d, rand() * TAU, 1, '#FFF1B0'); } } })); return false; } },
   // Angel: smites: a shaft of light where you stand.
