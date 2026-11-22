@@ -49,8 +49,11 @@ const SINGLE = new Set(['shieldBash', 'backstab', 'smite', 'hook', 'mend', 'enco
 const CAST_AT = 0.45; // when the ability goes off, seconds into the loop
 
 export const HERO_W = 470, HERO_H = 350;
-function room(W, H) {
-  const w = makeWorld(W, H);
+// keep: the stage's last world. It is emptied and filled again rather than replaced, so render.js's floor picture
+// (cached per world) is painted once per stage, not once per loop.
+function room(W, H, keep) {
+  let w = makeWorld(W, H);
+  if (keep && keep.W === W && keep.H === H) { for (const k of Object.keys(keep)) delete keep[k]; Object.assign(keep, w); w = keep; }
   w.doors = []; w.cleared = true; w.cells = null; w.walls = []; buildGrid(w);
   w.camAt = { x: W / 2, y: H / 2 }; // the camera stays put (render.js layout)
   w.doorIn = { x: 0, y: -4000 }; // no doorway drawn: a practice yard, not a room on the way
@@ -198,7 +201,7 @@ function heroStage(S, spec) {
   S.loop = ab === 'attack' ? 3 : 3.4;
   let u, dummies, ally, pin, cast, last, dmg0;
   return () => {
-    const w = S.w = room(HERO_W, HERO_H);
+    const w = S.w = room(HERO_W, HERO_H, S.w);
     const far = ab === 'attack' ? ranged : FAR.has(ab) || sh.far;
     u = spawn(w, id, 110, 175, { level: 9 });
     initKit(u, id, { nodes: heroNodes(id, tier) }, 9);
@@ -295,7 +298,7 @@ function traitStage(S, spec) {
   S.loop = 5.2;
   let u, dummies, ally, pin, did;
   return () => {
-    const w = S.w = room(HERO_W, HERO_H);
+    const w = S.w = room(HERO_W, HERO_H, S.w);
     u = spawn(w, id, 110, 175, { level: 9 });
     initKit(u, id, { nodes: heroNodes(id, tier) }, 9);
     const T = u.kit.trait || {}, tid = HEROES[id].trait.id, sc = TRAIT_SCENE[tid] || {};
@@ -347,17 +350,17 @@ function foeStage(S, spec) {
   const dies = move === 'kit' && (d0.onDeath || d0.splits) || (move === 'elite' && eliteOf(k) && eliteOf(k).death);
   let u, dummies, killT, friend;
   return () => {
-    const [W, H] = S.size, w = S.w = room(W, H);
+    const [W, H] = S.size, w = S.w = room(W, H, S.w);
     w.mult = 1; w.bossAdds = ['goblin'];
     if (boss && d0.arena && BOSS_ARENAS[d0.arena]) { try { BOSS_ARENAS[d0.arena](w); buildGrid(w); } catch (e) { /* the hall is optional here */ } }
-    const ux = W * 0.68, uy = H / 2;
+    const ux = W * (move === 'attack' ? 0.68 : 0.78), uy = H / 2;
     u = battleFoe(w, k, ux, uy, 1, r);
-    u.aggro = true; u.facing = Math.PI; u.dueSoon = 0.15; u.abilT = 0.4; if (boss) u.floorFoe = true;
+    u.aggro = true; u.facing = Math.PI; u.dueSoon = 0.4; u.abilT = 1; // its moves come round soon, but not before you've seen it stand there if (boss) u.floorFoe = true;
     if (move === 'attack') { u.def = { ...u.def, brain: null, ability: null, dashCd: 0 }; u.eliteFn = null; u.eliteDeath = null; }
     const watch = (fn) => (fn ? function (...a) { S.mark(w); const hp0 = stateSum(w); const out = fn.apply(this, a); if (S.mark(w) > 0 || Math.abs(stateSum(w) - hp0) > 0.5) S.fire(); return out; } : fn);
     if (move !== 'attack' && u.def.brain) u.def = { ...u.def, brain: watch(u.def.brain) };
     if (move === 'elite' || move === 'major') { u.eliteFn = watch(u.eliteFn); u.eliteDeath = watch(u.eliteDeath); }
-    const gap = (u.r || 30) + 30 + (move === 'attack' ? 0 : 140); // moves that want room (throws, charges) get it at the start; walkers close in
+    const gap = (u.r || 30) + 30 + (move === 'attack' ? 0 : 200); // moves that want room (throws, charges) get it at the start; walkers close in
     const spots = big ? [[ux - gap - 60, uy], [ux - 260, uy - 170], [ux - 300, uy + 170], [ux - 470, uy]] : [[ux - gap - 20, uy], [ux - 150, uy - 110], [ux - 170, uy + 110], [ux - 300, uy]];
     dummies = spots.map(([x, y]) => dummyAt(w, x, y, 'hero'));
     u.target = dummies[0];
@@ -398,15 +401,15 @@ function foeStage(S, spec) {
 const SUBJECT = ['goblin', 'orc', 'bandit'];
 function statusStage(S, spec) {
   const id = spec.id, how = statusHow(id), src = FROM_BURST[id] || id;
-  S.loop = 6;
+  S.loop = 6; S.size = [360, 250]; // a small yard: the one fighter is what matters, so it is drawn bigger
   if (!how) { S.locked = true; S.why = 'No preview for this one yet'; }
   let s, dummy, friend, done;
   return () => {
-    const w = S.w = room(HERO_W, HERO_H);
+    const [W, H] = S.size, w = S.w = room(W, H, S.w);
     const kind = SUBJECT.find((k) => DEFS[k]) || 'rat';
-    s = spawn(w, kind, 290, 175, { mult: 1 }); s.aggro = true; s.facing = Math.PI;
-    friend = spawn(w, kind, 340, 275, { mult: 1 }); friend.aggro = false; friend.facing = Math.PI; friend.home = { x: friend.x, y: friend.y };
-    dummy = dummyAt(w, 290 - s.r - 46, 175, 'hero');
+    s = spawn(w, kind, 205, 115, { mult: 1 }); s.aggro = true; s.facing = Math.PI;
+    friend = spawn(w, kind, 262, 190, { mult: 1 }); friend.aggro = false; friend.facing = Math.PI; friend.home = { x: friend.x, y: friend.y };
+    dummy = dummyAt(w, 205 - s.r - 46, 115, 'hero');
     s.target = dummy; done = false;
     S.hero = s; S.dummies = [dummy];
     const need = STATUS[src] ? (typeof STATUS[src].need === 'function' ? STATUS[src].need(s) : STATUS[src].need) : 100;
@@ -421,7 +424,7 @@ function statusStage(S, spec) {
       if ((s.bursts && s.bursts[src] != null) || (how === 'put' && done)) S.fire();
       for (const o of [s, friend]) { if (!o.dead && o.hp < o.maxHp * 0.3) o.hp = o.maxHp; }
       if (!friend.dead) { friend.x = friend.home.x; friend.y = friend.home.y; friend.atkT = 999; }
-      if (!s.dead) { s.x = Math.min(380, Math.max(240, s.x)); s.y = Math.min(260, Math.max(90, s.y)); }
+      if (!s.dead) { s.x = Math.min(290, Math.max(150, s.x)); s.y = Math.min(200, Math.max(60, s.y)); }
       tendDummy(w, dummy, dt, true);
     };
   };
@@ -442,7 +445,7 @@ function trinketStage(S, spec) {
   S.loop = 5;
   let u, dummies, ally, pin, did;
   return () => {
-    const w = S.w = room(HERO_W, HERO_H);
+    const w = S.w = room(HERO_W, HERO_H, S.w);
     const list = potion ? (spec.id === 'heal' ? [] : [elixirKey(spec.id)]) : [spec.id];
     u = spawn(w, kind, 140, 175, { level: 9, trinkets: list.slice(), potions: potion && spec.id === 'heal' ? 1 : 0 });
     initKit(u, kind, { nodes: freeNodes(kind) }, 9);

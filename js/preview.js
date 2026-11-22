@@ -87,7 +87,8 @@ export function makePlayer(canvas, opts = {}) {
     // for the test tools: step a fixed time without the clock (shots of a preview mid-play)
     advance(secs, dt = 1 / 30) {
       if (!stage) return;
-      quietly(() => { setSeed(seed); for (let t = 0; t < secs; t += dt) stage.step(dt); seed = getSeed(); withView(() => { fit(); draw(ctx, stage.w); }); });
+      quietly(() => { setSeed(seed); for (let t = 0; t < secs - 1e-9; t += dt) stage.step(dt); seed = getSeed(); withView(() => { fit(); draw(ctx, stage.w); }); });
+      if (opts.onFrame) opts.onFrame(stage);
     },
   };
   void lastLoopT;

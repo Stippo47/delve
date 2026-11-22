@@ -81,6 +81,12 @@ try {
   if (fit.bad.length) errors.push('runs off the side: ' + fit.bad.join(', '));
   if (fit.tabsBottom > fit.h + 1) errors.push('the tabs are off screen');
   console.log('stage height', fit.stage);
+  // what a frame costs (a step and a draw), on a hero, a big monster and a status
+  for (const set of [{ tab: 'heroes', hero: 'necromancer', tier: 3, hmove: 'raiseDead' }, { tab: 'monsters', foe: 'elderEnt', rank: 0, fmove: 'kit' }, { tab: 'statuses', status: 'burn' }]) {
+    await page.evaluate((s) => BOOK.set(s), set); await page.waitForTimeout(600);
+    const ms = await page.evaluate(() => { BOOK.player.stop(); const t0 = performance.now(); for (let i = 0; i < 120; i++) BOOK.player.advance(1 / 60, 1 / 60); return (performance.now() - t0) / 120; });
+    console.log('frame ms', JSON.stringify(set), ms.toFixed(2));
+  }
   // films: stepped frame by frame
   if (clips) {
     const film = async (name, set, secs, fps = 30) => {

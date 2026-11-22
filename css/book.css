@@ -141,3 +141,18 @@
 .bk-row .bk-sico { flex: none; width: 42px; height: 42px; }
 .bk-row .mv-mid b { font-size: 15px; }
 .bk-row .mv-mid .small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* the moves bar: one big button a move, over the dial */
+.bk-bar2 { flex: none; display: flex; gap: 5px; padding: 6px calc(10px + var(--sr)) 2px calc(10px + var(--sl)); border-top: 1px solid rgba(255,255,255,.05); }
+.mb { flex: 1 1 0; min-width: 0; display: block; padding: 5px 2px 4px; border-radius: 14px; text-align: center; background: var(--surf); box-shadow: inset 0 0 0 1px var(--line); cursor: pointer; transition: transform .09s ease-out; }
+.mb:active { transform: scale(.95); }
+.mb.on { background: var(--surf2); box-shadow: inset 0 0 0 2px var(--gold); }
+.mb-ico { position: relative; display: block; width: 30px; height: 30px; margin: 0 auto; color: var(--text); }
+.mb-ico .ico, .mb-ico svg { width: 30px; height: 30px; }
+.mb-ico .star { display: block; font-size: 24px; line-height: 30px; color: var(--gold); }
+.mb.locked .mb-ico > :first-child { opacity: .4; }
+.mb-lock { position: absolute; right: -6px; bottom: -4px; width: 16px; height: 16px; color: var(--gold); }
+.mb-lock .ico { width: 16px !important; height: 16px !important; }
+.mb-n { display: block; margin-top: 3px; font-size: 11px; font-weight: 850; line-height: 1.15; color: var(--quiet); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mb.on .mb-n { color: var(--text); }
+.bk-dial { border-top: 0; padding-top: 4px; }

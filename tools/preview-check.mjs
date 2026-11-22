@@ -1,5 +1,5 @@
 // The Book's safety net (round 13): every preview spec (js/preview-sim.js) stepped once through a whole loop in Node.
-// Reports the ones that throw and the ones whose move never fired.
+// Reports the ones that throw and the ones whose move fired in neither of two loops.
 //   node tools/preview-check.mjs [--only hero|foe|status|trinket|potion] [--id paladin] [--v]
 globalThis.location = { search: '?x' };
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
@@ -19,7 +19,7 @@ for (const s of specs) {
   setSeed(11);
   try {
     const S = PS.makeStage(s);
-    const n = Math.ceil(S.loop / DT) + 2; // one whole loop and into the next (the reset runs too)
+    const n = Math.ceil(2 * S.loop / DT) + 2; // two whole loops (each loop is a fresh world with its own dice) and into the next
     for (let i = 0; i < n; i++) S.step(DT);
     if (S.locked) locked.push(PS.specKey(s) + (S.why ? ' (' + S.why + ')' : ''));
     else if (!S.fired()) quiet.push(PS.specKey(s));

@@ -90,6 +90,7 @@ function render(replay) {
       <div class="bk-bar"><button class="top-back" data-bk="back" aria-label="back">${I.back}</button><div class="bk-title"></div><span class="bk-count"></span></div>
       <div class="bk-stage"><canvas class="bk-cv"></canvas><div class="bk-tag"></div><div class="bk-lock hidden"></div><i class="bk-prog"><b></b></i><div class="bk-meter hidden"></div></div>
       <div class="bk-page"></div>
+      <div class="bk-bar2"></div>
       <div class="bk-dial"></div>
       <div class="bk-shelf"></div>
       <div class="bk-tabs"></div></div>`;
@@ -102,6 +103,8 @@ function render(replay) {
   el.querySelector('.bk-count').innerHTML = tab === 'monsters' ? `${metN}/${allN} met` : tab === 'heroes' ? `${HERO_IDS.filter(owned).length}/${HERO_IDS.length} yours` : '';
   const pg = el.querySelector('.bk-page'), keepScroll = pg.dataset.key === sk ? pg.scrollTop : 0;
   pg.innerHTML = page.html; pg.dataset.key = sk; pg.scrollTop = keepScroll;
+  el.querySelector('.bk-bar2').innerHTML = page.bar || '';
+  el.querySelector('.bk-bar2').classList.toggle('hidden', !page.bar);
   el.querySelector('.bk-dial').innerHTML = page.dial || '';
   el.querySelector('.bk-dial').classList.toggle('hidden', !page.dial);
   el.querySelector('.bk-tabs').innerHTML = TABS.map(([k, n]) => `<div role="button" class="bk-tab ${tab === k ? 'on' : ''}" data-bk="tab:${k}">${n}</div>`).join('');
@@ -182,20 +185,20 @@ function heroPage() {
   if (cur.kind === 'trait') ladder = `<p class="mv-note">Shown in a short spar: the dummies hit back${/down|fall|reviv|friend|ally/i.test(desc) ? ', and someone goes down' : ''}.</p>`;
   const now = `<div class="bk-now"><span class="mv-ico ${cur.kind === 'ability' ? 'ab' : ''}">${icoOf(cur)}</span><div class="mv-mid"><span class="cap">${capOf(cur)}</span><b>${cur.name}</b></div>
       <span class="bk-who">${face(id, 34)}</span></div><p class="mv-desc">${desc}</p>${ladder}`;
-  const rows = moves.map((m) => {
+  // the moves, as a bar of big buttons just over the tier dial (under the thumb)
+  const bar = moves.map((m) => {
     const on = m.move === st.hmove, locked = m.kind === 'ability' && tier < 1;
-    const pips = m.kind === 'ability' ? `<span class="mv-pips">${[1, 2, 3].map((k) => `<i class="${k <= tier ? 'lit' : ''}">${roman(k)}</i>`).join('')}</span>` : '';
-    return `<div role="button" class="mv ${on ? 'on' : ''} ${locked ? 'locked' : ''}" data-bk="hmove:${m.move}"><span class="mv-ico ${m.kind === 'ability' ? 'ab' : ''}">${icoOf(m)}</span><div class="mv-mid"><span class="cap">${capOf(m)}</span><b>${m.name}</b></div>${locked ? `<span class="mv-lock">${I.lock}</span>` : pips}${on ? '<span class="mv-play">▶</span>' : ''}</div>`;
+    const short = m.kind === 'attack' ? 'Attack' : m.kind === 'trait' ? 'Trait' : m.name;
+    return `<div role="button" class="mb ${on ? 'on' : ''} ${locked ? 'locked' : ''}" data-bk="hmove:${m.move}"><span class="mb-ico">${icoOf(m)}${locked ? `<i class="mb-lock">${I.lock}</i>` : ''}</span><span class="mb-n">${short}</span></div>`;
   }).join('');
   const html = `<div class="bk-card">${now}</div>
-    <div class="bk-moves">${rows}</div>
     <div class="bk-head" style="--rc:${ROLE_COL[h.role]}">${face(id, 40)}<div class="bk-hm"><b class="bk-name">${h.name}</b><span class="cap" style="color:${ROLE_COL[h.role]}">${ROLE[h.role]}${mine ? '' : ' · not recruited'}</span></div>
       <span class="bk-tierbig">${tier ? 'Tier ' + roman(tier) : 'Tier 0'}</span></div>
     ${statLine(n, base)}<p class="bk-small quiet">${tier ? `Tier ${roman(tier)}: every node of the skill web out to shell ${tier === 3 ? '3 (the whole web)' : tier}, at level 1. Teal numbers are up on tier 0.` : 'Tier 0: nothing bought, level 1.'}</p>${webChips(id, tier)}
     <p class="bk-blurb">${h.blurb || ''}</p>`;
   const dial = `<span class="cap dial-cap">Tier</span><div class="bk-seg">${[0, 1, 2, 3].map((t) => `<div role="button" class="${t === tier ? 'on' : ''}" data-bk="tier:${t}">${t ? roman(t) : '0'}</div>`).join('')}</div>`;
   const tag = `<b>${cur.name}</b><span>${cur.kind === 'attack' ? 'attack' : cur.kind === 'trait' ? 'trait' : (tier ? 'tier ' + roman(tier) : 'locked')}</span>`;
-  return { title: h.name, html, dial, spec: { t: 'hero', id, move: st.hmove, tier }, tag };
+  return { title: h.name, html, dial, bar, spec: { t: 'hero', id, move: st.hmove, tier }, tag };
 }
 
 // ---------------------------------------------------------------- monsters
@@ -227,12 +230,12 @@ function foePage() {
   const ico = { attack: I.sword, kit: I.skull, elite: '<span class="star">★</span>', major: I.crown };
   const now = `<div class="bk-now"><span class="mv-ico">${ico[cur.move]}</span><div class="mv-mid"><span class="cap">${d.name} · ${RANKS[rk].toLowerCase()}</span><b>${title[cur.move]}</b></div>
       <span class="bk-who"><span class="b-pic sm"><img src="${portrait(k)}" alt=""></span></span></div><p class="mv-desc">${words(cur)}</p>`;
-  const rows = moves.map((m) => `<div role="button" class="mv ${m.move === st.fmove ? 'on' : ''} mv-${m.move}" data-bk="fmove:${m.move}"><span class="mv-ico">${ico[m.move]}</span>
-      <div class="mv-mid"><span class="cap">${title[m.move]}</span><b class="mv-short">${words(m).split(/[.;]/)[0]}</b></div>${m.move === st.fmove ? '<span class="mv-play">▶</span>' : ''}</div>`).join('');
+  const short = { attack: 'Attack', kit: 'How it fights', elite: 'Elite move', major: 'Major move' };
+  const bar = moves.map((m) => `<div role="button" class="mb ${m.move === st.fmove ? 'on' : ''}" data-bk="fmove:${m.move}"><span class="mb-ico">${ico[m.move]}</span><span class="mb-n">${short[m.move]}</span></div>`).join('');
   const n = foeNumbersAt(k, rk), base = rk ? foeNumbersAt(k, 0) : null;
   const res = Object.entries(d.res || {}).filter(([, v]) => v !== 1);
   const rankNote = rk === 1 ? `An elite: ${ELITE.hp}x health, ${ELITE.dmg}x damage, ${ELITE.speed}x as quick, one trinket.` : rk === 2 ? `A major: ${MAJOR.hp}x health (less for big kinds), ${MAJOR.dmg}x damage, two trinkets.` : '';
-  const html = `<div class="bk-card">${now}</div><div class="bk-moves">${rows}</div>
+  const html = `<div class="bk-card">${now}</div>
     <div class="bk-head"><span class="b-pic"><img src="${portrait(k)}" alt=""></span><div class="bk-hm"><b class="bk-name">${d.name}</b><span class="cap">${g ? g.name : ''}${d.boss ? ' · boss' : ''}</span></div>
       <span class="bk-tierbig">${fc && fc.n ? num(fc.n) + ' <small>defeated</small>' : s.met + ' <small>met</small>'}</span></div>
     ${statLine(n, base)}${rankNote ? `<p class="bk-small quiet">${rankNote}</p>` : ''}
@@ -242,7 +245,7 @@ function foePage() {
   const dial = canRank(k) ? `<div class="bk-seg three">${RANKS.map((r, i) => `<div role="button" class="${i === rk ? 'on' : ''} r${i}" data-bk="rank:${i}">${r}</div>`).join('')}</div>`
     : `<p class="bk-small quiet dial-note">${d.boss ? 'A boss comes as it is: no elite or major.' : 'Comes only as it is.'}</p>`;
   const tag = `<b>${d.name}</b><span>${cur.move === 'elite' || cur.move === 'major' ? title[cur.move] : RANKS[rk]}</span>`;
-  return { title: d.name, html, dial, spec: { t: 'foe', id: k, move: st.fmove, rank: rk }, tag };
+  return { title: d.name, html, dial, bar, spec: { t: 'foe', id: k, move: st.fmove, rank: rk }, tag };
 }
 
 // ---------------------------------------------------------------- statuses
@@ -306,7 +309,7 @@ function itemList() {
 function shelf() {
   const tile = (act, on, pic, name, cls = '') => `<div role="button" class="bk-it ${on ? 'on' : ''} ${cls}" ${act ? `data-bk="${act}"` : ''}>${pic}<span>${name}</span></div>`;
   if (st.tab === 'heroes') return HERO_IDS.map((id) => tile(`hero:${id}`, id === st.hero, face(id, 46), HEROES[id].name, owned(id) ? '' : 'notyet')).join('');
-  if (st.tab === 'monsters') return foeGroupsCached().map((g) => `<div class="bk-grp"><span>${g.name}</span></div>` + g.kinds.map((k) => metFoe(k)
+  if (st.tab === 'monsters') return foeGroupsCached().map((g) => `<div class="bk-grp"><span>${g.name.replace(/^The /, '')}</span></div>` + g.kinds.map((k) => metFoe(k)
     ? tile(`foe:${k}`, k === st.foe, `<span class="b-pic"><img src="${portrait(k)}" alt=""></span>`, DEFS[k].name, DEFS[k].boss ? 'boss' : '')
     : tile('', false, `<span class="b-pic unknown"><img src="${portrait(k)}" alt=""></span>`, '???', 'unknown')).join('')).join('');
   if (st.tab === 'statuses') return statusList().map((id) => tile(`status:${id}`, id === st.status, `<span class="bk-sico">${icon('status', id)}</span>`, (STATUSES[id] || { name: id }).name)).join('');
