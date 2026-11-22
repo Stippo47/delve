@@ -376,3 +376,226 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
     quartermaster-oilBlades.
   - **Pot Helmet** (flare's slot): a big pot lands upside down over an enemy's head ("CLONG"): blinded and Confused 3 s;
     II staggers; III bounces on to a second head. Clip: quartermaster-flare.
+
+### Crossbowman
+- "If enemies have armour as well his attacks ignore them." -> Armour Piercing also puts back what armour would take
+  off (kept: +25% on elites, majors, bosses).
+- Heavy bolt: "Needs better animation. Remove tail from arrow" -> a thick bolt with a steel head and short fletching, no
+  trail; the string snaps (white lines off his front) and he rocks back. Clip: crossbowman-attack.
+- Pavise: "Better visual. Doesnt look like he's shooting through it. It has its own hp. At lvl 3 he places 3 in a row
+  slight titles to surround him. Allies can attack through it. Enemies can't" -> the pavise is its own thing (a summon,
+  60 health): a tall painted plank on a prop planted in front; his side's shots pass it, the enemy's stop on it. 7 s
+  (II 10 s and he reloads 35% faster near it); III three in a slanted row round him. Clip: crossbowman-pavise.
+- Pinning Bolt: "Heavy bolt, hits an enemy, then makes them fly backwards into a wall stunning them in place for a bit.
+  Does heavy damage. Enemy being flung does heavy kb to anyone it hits as they fly" -> 2.2x and flung backwards (knock
+  1100) with the bolt in it; whatever it ploughs into takes 0.9x and is hurled aside; slamming into a wall it is pinned
+  ("PINNED", stunned 1.8 s, III 2.5 s; II the slam staggers). Clip: crossbowman-pinBolt.
+- Crank Up: "Bomb at the end. Not fire themed. Staggering. Better visual" -> a gear spins hard at his crossbow, clicks
+  flying; his charged bolts burst in grey smoke and iron (not fire), staggering. Clip: crossbowman-crankUp.
+
+### Falconer (IDK)
+- "Different trait." -> **Hunting Partner** (id huntingPartner): every fourth knife the falcon goes out with it, rakes the
+  foe and marks it Tracked for 2 s.
+- Throwing knife: "Better visual" -> a broad blade turning end over end, a glint, a short trail (gold under Keen Eye).
+- Loose the Falcon: "Doesnt look good. Falcon should leave hand. Should show a crosshair on target tracked, stops them from
+  going invisible/un targetable, underground. All attacks do additional fixed damage to target"; showcase 4: "Make the
+  falcon that flies look like the one he was holding" -> the falcon leaves his fist (hidden from his arm while out),
+  drawn as his slate-grey falcon with its pale chest; it marks the furthest enemy (an elite first) **Tracked** for 6 s:
+  an amber crosshair; it can't go invisible, untouchable or underground; every blow from his side on it lands harder by
+  a fixed amount. II blinded; III a second enemy. Clip: falconer-looseFalcon.
+- Keen Eye: "Don't like eye." -> no eye: gold motes circle his throwing hand and his knives glint gold. Clip: falconer-keenEye.
+- Call the Flock: "Not good. Should become a flock of birds for a bit. Birds don't look good" -> he scatters into a
+  flock of nine small grey birds (redrawn: bodies and beating wing strokes) for 2.2 s (III 3 s): nothing can touch him
+  while it wheels through the enemies pecking (0.6x each, slowed; II blinded), then he is himself again. Clip: falconer-flock.
+
+### Grenadier
+- "Needs different trait. That's just what his bombs do." -> **Powder Keg** (id powderKeg): whatever he kills blows up a
+  moment later (0.9x, staggering, 64 across): a blast sets off the next through a pack.
+- Bomb: "Not fire themed. Stagger. Looks good. Make sure shadow style matches" -> every blast of his is grey smoke and
+  iron bits with a scorch on the floor (no flames), and staggers; the bomb in flight arcs with a soft round shadow under
+  it, like the units'. Clip: grenadier-attack.
+- Big Bomb: "Secondary bombs don't look good. Big bomb should be an entity with a small health pool. Explodes if it is
+  broken or after 2 seconds of landing" -> it lands as a summon (30 health), a great iron ball swelling as its fuse
+  burns down; it goes off 2 s after landing or the moment it is broken; III's four small bombs arc out as proper bombs.
+  Clip: grenadier-bigBomb.
+- Sticky Bomb: "Doesnt look very sticky" -> a splat of green goo holds the bomb on, strands dripping, the bomb jiggling
+  faster as it nears; the goo slows it a little. Clip: grenadier-stickyBomb.
+- Blast Off: "Explosion effect should happen underneath him" -> the blast is drawn on the floor under him. Clip:
+  grenadier-blastOff.
+
+### Harpooner
+- Harpoon: "Rope needs an outline. Render underneath him. Target pulled forwards a bit and then it returns. Harpoon should
+  look like the one he is holding" -> a wooden-shafted barbed harpoon on an inked rope drawn on the floor under the
+  units; it tugs the enemy a little way towards him and is hauled back to his hand. Clip: harpooner-attack.
+- Reel In: "Make harpoon render stuck in them. Rope underneath" -> the harpoon stays drawn stuck in them, the rope on the
+  floor. Clip: harpooner-reelIn.
+- Rogue Wave: "Give better visual. Closer targets are launched further and take more damage. They get hit before the wave
+  even reaches them" -> a curling inked wave crest with foam rolls out (420/s); each enemy is struck when the crest
+  reaches it, 0.9x-2x and knock 220-640 by how close it stood. Clip: harpooner-rogueWave.
+- Drop Anchor: "Make anchor look better. Have it jump from him to targets position. Make it look bigger. Improve visuals"
+  -> a big iron anchor heaved off him, arcing high over to the spot on its chain (its shadow racing in), crashing down
+  in a crater of dust (2.8x, stunned 1.2 s). Clip: harpooner-anchorDrop.
+
+### Javelin Huntress
+- Javelin: "Make look better. Throw particles. Every third attack throws a razer javalin applying bleed" -> a longer
+  javelin with a leaf head, dust off her hand as it goes; every third a serrated razor javelin (1.2x, 45 bleeding).
+- Running Throw: "Description doesn't match what I see. Give a spear lunge attack. Pierce through targets. 2 charges at
+  lvl 3" -> **Spear Lunge** (id runningThrow): she lunges straight through a line of enemies (1.6x each); II staggers; III
+  two charges (the second straight after). Clip: huntress-runningThrow.
+- Bound: "Make javalin bigger and hit harder" -> a 1.45x-size javelin, 2.1x (was 1.3x). Clip: huntress-bound.
+- Prey: "Don't like" -> **Javelin Rain** (id prey; my design): three javelins (III five) hurled high come down on the
+  enemies round her target (1.5x each, II staggers) and stand where they landed. Clip: huntress-prey.
+
+### Marksman
+- "Don't like trait. Gets additional damage when target is near max range. Should have very long range." -> **Long
+  Shot** (id longShot): 40% more reach; shots hit up to 60% harder the nearer the edge of it.
+- Musket: "More impact." -> a bigger flash and rolling gun smoke, a kick back, a little screen shake, knock 220.
+- Aimed Shot: "Applied target effect. Shows crosshair on them. Movement abilities are limited and they take additional
+  damage. Bullets pierce through targeted entities" -> it leaves its target **Targeted** 6 s (a red crosshair): takes
+  20% more, its dashes, leaps and charges go 40% as far, and his bullets go on through it.
+- Bayonet: "Improve" -> a lunge with a long steel thrust streak, a heavy shove (knock 520), a flash where it lands;
+  1.2x (was 0.8x).
+- Ricochet: "Only bounces between targets within already 75 degrees of last target. Can't turn 180 degrees. Lvl 3 makes it
+  so it does more damage to each consecutive target." -> it only glances on to an enemy within 75 degrees of the way it
+  was going; III each bounce x1.3 (else x0.9). Clips: marksman-attack, -aimedShot, -bayonet, -ricochet.
+
+### Ninja
+- Shuriken: "Animations is off. Flickers. Should throw 1 then 2 at a time, then 3 at a time on repeat" -> 1, 2, 3, 1,
+  2, 3... in a small fan (0.62x each).
+- Shuriken Fan: "Not good" -> **Kunai Rain** (id shurikenFan; my design): she springs up and flings a ring of eight kunai
+  (II twelve) all round her (1.3x each; III poison).
+- Substitution: "doesnt show this happening. Good idea though" -> it shows: "POOF", a puff of smoke, a big log tumbling
+  where she stood, a streak of smoke to where she comes out 130 away; it answers any blow (12 s; III 7 s).
+- Caltrops: "Doesnt look good. Should be shown spreading around her. Each one does slight damage and stagger" -> nine
+  (II fourteen) inked iron caltrops flung out round her on little arcs; each bites the first foot on it once (0.55x,
+  stagger 28; III poison). Clips: ninja-attack, -shurikenFan, -substitution, -caltrops.
+
+### Pirate
+- "Trait: Enemies have a chance to drop more coins when he is in the party" -> **Plunder** (id plunder): with her in the
+  party, one enemy in three that falls anywhere spills extra coins (not in battles). `gatherer: true` and the wagon
+  sentence are kept.
+- Cutlass: "Swing other way" -> `style.backhand`.
+- Point Blank: "Doesnt look great but yea. Should apply targeted" -> a big flash and rolling smoke; it is left Targeted 5 s.
+- Grog: "Not good implementation. Lvl 3 throws 1 to ally" -> she stops, tips the bottle to her mouth (the arm forced up,
+  the bottle drawn), heals 25% and sways tipsy (bubbles over her) while it works; III she lobs a bottle to a hurt friend.
+- Broadside: "They should come in from an arc off the screen" -> each ball comes in high from the edge of the room on a
+  long arc, its shadow racing in, a red ring warning where it lands. Clips: pirate-attack, -pointBlank, -grog, -broadside.
+
+### Slinger
+- Sling: "Bone particles bad. Has a 25% chance to throw a large stone which staggers. Up close he hits with cane" -> stones
+  burst in grit and pebbles; one in four is a big stone (1.4x, stagger 35); within reach he cracks them with the crook.
+- Stunning Stone: "Not good. Don't like how it is done." -> the sling whirled over his head, then a big stone lobbed
+  high that comes down on the head: BONK, stones scattering, stunned 0.9 s (II 1.3 s; III bounces to a second head).
+- Ram: "Concept good. Execution poor" -> the ram redrawn (a woolly body of curls, dark face, curled horns, legs pounding,
+  bounding, dust behind); it bowls through the line (1.5x, knock 460, tufts of wool). III two rams.
+- Gravel: "Not good. Needs ability that applied sleep" -> **Counting Sheep** (id gravel): little sheep come bounding over
+  the enemies round a spot one after another, a number over each; every jump adds Sleepy (the statuses lane's) until
+  they drop off. II eight sheep; III each counts for more. Clips: slinger-attack, -stunStone, -ramCharge, -gravel.
+
+### Trapper
+- Short rifle: "I want them to have a shotgun. Should hold with 2 hands. Trap sits on their back hip. Behind shoulder.
+  Short range. Many pellets (each one is a projectile)" -> **Shotgun**: reach 180 (was 250), six pellet shots in a
+  spread. The two-handed hold and the trap on his hip are the **art lane's**.
+- Jaw Trap: "That doesnt look like what he is holding. Applies trapped. Target can't turn or move but can't use abilities
+  and attack(straight). A trap shouldn't steal from another trap that is active." -> a steel jaw trap (toothed half rings,
+  a pan, a chain to a stake) that snaps shut; what it catches is **Trapped**; a trap ignores anything already trapped.
+- Weighted Net: "Don't like at all" -> **Double Barrel** (id snareNet; my design): both barrels: twelve heavy pellets in a
+  wide cone, he rocks back; II staggers; III those close are knocked down.
+- Tripwire: "Don't like. Need ability that turns them into a bush. Enemies quickly lose aggro on him. Used to get away.
+  Healing slightly (rejuvenation)" -> **Bush** (id tripwire): a leafy bush that creeps away from the enemies near; no
+  enemy can pick him out; heals 2.5% a second (III 4%); 3.5 s (II 5 s). Clips: trapper-attack, -jawTrap, -snareNet, -tripwire.
+
+### Gladiator
+- "Trait should make him stronger 1 on 1" -> **Duelist** (id duelist): while no enemy but the one he fights is on him,
+  he hits it 35% harder and takes 25% less from it.
+- Gladius: "Does a slash, stab on repeat" -> slash, stab, slash, stab (his blow's look and arc swap after each).
+- Net Throw: "Nope. Shoukd throw a large piercing spear. Ares spear" -> **Spear of Ares** (id netThrow): a great bronze
+  spear trailing red-gold through the whole line (2.1x); II staggers; III nails the last one.
+- Showboat: "Should make a ring that pushes out allies and any enemy more than 1. Projectiles are blocked. 1 on 1 battle"
+  -> **Arena** (id showboat): a ring drawn in the sand round him and his foe for 5 s: everyone else is pushed out and
+  kept out, no shot can cross it, the foe must fight him; II heals 15%; III blows on him answered.
+- Shield Rush: "Make very long. Grab first target hit and drags them along with him. Slams at end of dash that staggers"
+  -> a 0.62 s rush; the first one it meets is carried on the shield and slammed down at the end (2x, stagger 60; III
+  stunned). Clips: gladiator-attack, -netThrow, -showboat, -shieldRush.
+
+### Jester
+- "25% of simple melee hits that should hit him flips target around instead" -> Pratfall: a quarter of the blows swung at
+  him miss and the swinger is spun to face away ("FLIP").
+- Marotte: "Could be more interesting. Maybe can apply random status effect?" -> each bonk leaves 16 of a random status.
+- Mock: "Swap places with ally boosting them. Or with enemy confusing them." -> **Swap** (id mock): confetti, and he
+  trades places with a friend in trouble (hasted, a shield) or else an enemy (a shooter first; Confused; III stunned).
+- Befuddle: "Instead of taking damage will teleport behind target and kick them forwards confusing them." -> it answers a
+  blow now: he is behind the swinger and boots it forward ("KICK", Confused); every 10 s (II 8 s, III 6 s).
+- Juggling Act: "Different particles effects. Should pierce and bounce a few times. Not from target to target. Just off
+  walls. Lvl 3 will teleport hit target to next wall the ball hits" -> balls thrown straight, through whatever they meet,
+  bouncing off the room's edge, walls and pillars three times with confetti; III the first one a ball hits is whisked
+  to where it next bounces. Clips: jester-attack, -mock, -befuddle, -juggle.
+
+### Samurai
+- "Does percentage damage + a base." -> **Keen Edge** (id keenEdge): every blow also takes 3% of its target's greatest
+  health (a boss 1%).
+- Katana: "Should dash forwards. Should hold with 2 hands in front of him" -> each cut steps in (a lunge). The two-handed
+  hold is the **art lane's** (the katana is drawn in one hand).
+- Iaido: "Done poorly. Instant teleport in a straight line towards enemies. Targets are staggered for a split second then
+  take 10% of their max hp in damage. Lvl 3 has them do it 2 times. Make look good. Charge up before dash/teleport" -> he
+  settles 0.35 s (light gathering on the half-drawn blade, a dark line on the floor ahead), then is on the far side of
+  the enemies in his line; the cut hangs in the air; each one passed through is stopped and staggered, and 0.3 s later
+  takes 10% of its health and 1x more (a boss 3%). III back through again.
+- Focus: "Don't like. When focusing will deflect 1 melee or ranged attack every 1 second. After a successful block next
+  attack will deal 40% more damage." -> for 5 s (II 7 s, III 9 s) one blow a second is turned aside, and each makes his
+  next cut 40% harder.
+- Crescent Cut: "Will dash towards target and deal a heavy slash to them 10% of max hp + 20 damage. lvl 3 If it kills it
+  will trigger again." -> a dart in and a heavy white crescent: 10% of its health and 1.4x more (about 20 at base); II
+  staggers; III a kill sends him on to the next. Clips: samurai-attack, -iaido, -focus, -crescentCut.
+
+### Valkyrie
+- "Heals themselves and ally passively when near ally. Has a glowing aura. Is more of a support." -> role **support**;
+  **Light of Valhalla** (id valhalla): while a friend is within 140, she and those friends heal 1.2% a second; a soft
+  gold glow on the floor under her (no ring); she still revives twice as fast.
+- Spear: "Hold spear better" -> **art lane** (the grip in the SVG).
+- Valkyrie's Call: "Flies to recently fallen ally, revives them and knocks all targets back and applies radiance. Lvl 3 has
+  her grab ally and flies them both to another safer position." -> she flies to the fallen friend, it gets up (25%, II
+  40%) in a burst of light: enemies within 140 are thrown back and made radiant (40); III she takes it up and flies the
+  two of them 190 away from the enemies.
+- Spear of the Sky: "Dash from current position all the way to most hurt allies position hitting anyone in the way.
+  Cleanses ally and buffs them." -> she flies spear-first to the friend most hurt, striking every enemy on the way
+  (1.5x; II shock), and cleanses and steels it (hasted, a shield of 28; III 45).
+- Sky Dive: "Flies in air for a moment then lands by ally. Applied radiance." -> up on her wings 0.9 s, down beside the
+  friend most beset: a burst of light, 1.6x and 35 radiance round her; II staggers; III heals 15%.
+  Clips: valkyrie-valkyrieCall, -spearThrow, -skyDive.
+
+### Engineer
+- "Trait doesnt make sense. Overclock. If all abilities are used up 1 random ability will come back faster. Boosted rate"
+  -> **Overclock** (id overclock): when none of her abilities is ready, one at random comes round three times as fast;
+  gears spin over her.
+- Wrench: "Hits she. Close. Throw bouncing cogs from afar" -> ranged moves now (reach 190); the wrench within reach, else
+  a cog that bounces on to a second enemy.
+- Deploy Turret: "Make summoning better. Should throw them into their spot. Turrets should shoot in rapid bursts of 5. Make
+  barrel swap between showing 2 and 1 (with 2 dark barrels below) to look like it's spinning. They should turn slowly.
+  Should summon them in random positions." -> thrown on arcs to random spots round her; they turn slowly (1.6 rad/s) and
+  fire bursts of five; while firing the barrels drawn over the art swap two / one over two dark ones.
+- Tinker: "Nope. Makes 1 of 4 special towers" -> one of four, bolted together on the spot: a **torcher** (tough from the
+  front x0.35, weak behind x1.8, turning very slowly, a jet of fire out of its front), a **tesla** (a bolt every 1.2 s
+  that leaps on to two more, shocking), a **snowball mortar** (a snowball lobbed every 1.6 s: chill), a **medbay** (when
+  friends are hurt: a wobbly healing drone every 2 s that flies to the most hurt and heals it 8%). 12 s (II 16 s).
+- Shock Mine: "Spawn 4 small wind up drones that walk towards target and go pop, shocking a bit. He throws them in random
+  directions around himself. Are slow." -> **Wind-up Drones** (id shockMine): four (III six) thrown round her; they
+  waddle slowly at the nearest enemy, a key turning on their backs, and pop (a thunderclap, shock 20; II 30).
+  Towers and drones are drawn in code (fx2 LOOK2). Clips: engineer-attack, -deployTurret, -tinker, -shockMine.
+
+### Werewolf
+- "When they die in werewolf form they come back as a human at 10% hp everytime." -> **Back From the Wild** (id
+  fromTheWild): the wolf falls, the man gets up at 10% ("BACK").
+- Turn: "Make 15% bigger. Can't heal when in this form." -> the wolf is 15% bigger, and his health never rises while he is
+  one; II is 14 s (its heal on turning is gone: no healing as a wolf); III the claws make them bleed (real Bleeding).
+- Frenzy: "Each successful hit comes out faster than the last. As ware wolf. As human each hit heals more the lower his
+  hp. Is always active." -> always on once bought: as a wolf each blow in a row up to 60% faster; as a man each blow heals
+  3% x (1 - health) x 2 (II 4.5%); III the howl at full speed.
+- Pounce: "As human does a forwards dash with a cleave at the end. As werewolf does a leap and gives self haste." -> as a
+  man a dash and a wide cleave (1.6x; II staggers); as a wolf the leap that pins, and haste 4 s.
+  Clips: werewolf-turnWolf, -frenzy, -pounce.
+
+## The deck's notes: new heroes (not built here; for the lead)
+"Make new hero. Mob. Is 4 peasants... Clock work hero. Influence time. Air mage. Whirled effect. Warden (uses a lot or
+shackles and restraints. Nullification themed). Telekinetic. Earth mage": six new heroes, a lane of their own. Whirled
+(`whirl()`) and the Shackled idea are ready for the Air mage and the Warden.
