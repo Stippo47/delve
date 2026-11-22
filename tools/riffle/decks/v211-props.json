@@ -1,0 +1,204 @@
+{
+  "title": "0.21.1: props drawn, a boss fix",
+  "topic": "art",
+  "order": 39,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "fix",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "Fixed: bosses dying early",
+      "text": "In 0.21.0, breaking a boss part killed the whole boss. Fixed in 0.21.1, and two bosses evened out.",
+      "why": "If you played 0.21.0, the Great Engine, Cinder, the Ooze, the angel and the Sand Wurm could die the moment a hand, plate or segment broke.",
+      "details": "Cause: the Mob's four bodies point at their leader, and boss parts point at their boss the same way, so the new Mob code treated every boss part as a Mob body. Found by the lane that re-measured the bosses.\n\nWith the fix the bosses were re-measured at the level a fresh campaign now meets them (the XP change moved those). Two were far too hard and are eased to about even: the Great Engine's health 680 to 580 (20 wins in 40), the Sand Wurm's breach hits softer (20 wins in 40; it was 6).\n\nNot changed yet, waiting on your boss answers: the Elder Ent and the Bone King win too easily (33 and 37 of 40), the Great Ooze is a bit hard (13 of 40)."
+    },
+    {
+      "id": "props",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Props, now drawn",
+      "text": "Every summon and prop that was a plain shape now uses its art, in the game: each as it was, then now.",
+      "why": "Tick the ones that read right; comment on any that don't. Nothing that the old shape did was dropped except the three noted.",
+      "pick": [
+        "totem",
+        "spirits",
+        "cauldron",
+        "beehive",
+        "barricade",
+        "barricade-spiked",
+        "pavise",
+        "crate",
+        "bigBomb",
+        "haybale",
+        "imp",
+        "demon",
+        "torcher",
+        "tesla",
+        "mortar",
+        "windup",
+        "bearskin-claws",
+        "warhelm-storm",
+        "bulwark-strike",
+        "valkyrie-rest",
+        "samurai-strike",
+        "trapper-trap"
+      ],
+      "items": [
+        {
+          "id": "totem",
+          "label": "Totem",
+          "image": "../../../clips/r15/wire/pairs/totem.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "spirits",
+          "label": "Spirits",
+          "image": "../../../clips/r15/wire/pairs/spirits.png",
+          "text": "The spirit bear's paw swing is gone; it lunges on each blow instead. Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "cauldron",
+          "label": "Cauldron",
+          "image": "../../../clips/r15/wire/pairs/cauldron.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "beehive",
+          "label": "Beehive",
+          "image": "../../../clips/r15/wire/pairs/beehive.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "barricade",
+          "label": "Barricade",
+          "image": "../../../clips/r15/wire/pairs/barricade.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "barricade-spiked",
+          "label": "Barricade spiked",
+          "image": "../../../clips/r15/wire/pairs/barricade-spiked.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "pavise",
+          "label": "Pavise",
+          "image": "../../../clips/r15/wire/pairs/pavise.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "crate",
+          "label": "Crate",
+          "image": "../../../clips/r15/wire/pairs/crate.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "bigBomb",
+          "label": "Big bomb",
+          "image": "../../../clips/r15/wire/pairs/bigBomb.png",
+          "text": "Its fuse no longer shortens as it burns. Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "haybale",
+          "label": "Hay bale",
+          "image": "../../../clips/r15/wire/pairs/haybale.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "imp",
+          "label": "Imp",
+          "image": "../../../clips/r15/wire/pairs/imp.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "demon",
+          "label": "Demon",
+          "image": "../../../clips/r15/wire/pairs/demon.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "torcher",
+          "label": "Torcher",
+          "image": "../../../clips/r15/wire/pairs/torcher.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "tesla",
+          "label": "Tesla",
+          "image": "../../../clips/r15/wire/pairs/tesla.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "mortar",
+          "label": "Mortar",
+          "image": "../../../clips/r15/wire/pairs/mortar.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "medbay",
+          "label": "Medbay",
+          "image": "../../../clips/r15/wire/pairs/medbay.png",
+          "text": "Weak in the game: reads as a pale flower with a small cross; the old big green cross was plainer. Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "medDrone",
+          "label": "Med drone",
+          "image": "../../../clips/r15/wire/pairs/medDrone.png",
+          "text": "Weak in the game: a pale dot with a green speck; its rotor blades barely show. Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "windup",
+          "label": "Windup",
+          "image": "../../../clips/r15/wire/pairs/windup.png",
+          "text": "Its stepping feet are gone; a waddle stands in. Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "bearskin-claws",
+          "label": "Bearskin claws",
+          "image": "../../../clips/r15/wire/pairs/bearskin-claws.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "warhelm-storm",
+          "label": "Warhelm storm",
+          "image": "../../../clips/r15/wire/pairs/warhelm-storm.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "bulwark-strike",
+          "label": "Bulwark strike",
+          "image": "../../../clips/r15/wire/pairs/bulwark-strike.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "valkyrie-rest",
+          "label": "Valkyrie rest",
+          "image": "../../../clips/r15/wire/pairs/valkyrie-rest.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "samurai-strike",
+          "label": "Samurai strike",
+          "image": "../../../clips/r15/wire/pairs/samurai-strike.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        },
+        {
+          "id": "trapper-trap",
+          "label": "Trapper trap",
+          "image": "../../../clips/r15/wire/pairs/trapper-trap.png",
+          "text": "Left: the plain shape it was. Right: the art, in the game."
+        }
+      ]
+    },
+    {
+      "id": "statuses",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Eight statuses in the Book",
+      "text": "Whirled, Spun, Dirty, Targeted, Tracked, Trapped, Warded and Weakened are real statuses, each in the Book.",
+      "why": "They were each hero's own effect before, with no Book entry or status mark. They work exactly as before: measured, same runs with the same seeds.",
+      "details": "Also found and fixed on the way: the Engineer's snowball mortar was firing Foundry shells (an enemy of the same name overwrote it), and the Warden's Nullify stripped a Warded hero's border but left the shield on. The Book's old generic 'Weakened' tile is now 'Hindered', so two tiles don't share a name."
+    }
+  ]
+}
