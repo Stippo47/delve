@@ -82,6 +82,15 @@ try {
   if (fit.bad.length) errors.push('runs off the side: ' + fit.bad.join(', '));
   if (fit.tabsBottom > fit.h + 1) errors.push('the tabs are off screen');
   console.log('stage height', fit.stage);
+  // out through Back, and in again through the camp's own route
+  if (want('20-back')) {
+    await page.evaluate(() => document.querySelector('[data-bk="back"]').click());
+    await page.waitForTimeout(800);
+    const st = await page.evaluate(() => ({ mode: CAMP.mode, hidden: document.getElementById('book').classList.contains('hidden') }));
+    if (st.mode !== 'ground' || !st.hidden) errors.push('back did not return to the camp: ' + JSON.stringify(st));
+    await page.screenshot({ path: path.join(out, '20-back-to-camp.png') }); console.log('shot 20-back-to-camp');
+    await page.evaluate(() => CAMP.setMode('book')); await page.waitForTimeout(600);
+  }
   // what a frame costs (a step and a draw), on a hero, a big monster and a status
   for (const set of [{ tab: 'heroes', hero: 'necromancer', tier: 3, hmove: 'raiseDead' }, { tab: 'monsters', foe: 'elderEnt', rank: 0, fmove: 'kit' }, { tab: 'statuses', status: 'burn' }]) {
     await page.evaluate((s) => BOOK.set(s), set); await page.waitForTimeout(600);

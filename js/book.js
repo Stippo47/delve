@@ -154,7 +154,7 @@ function heroNumbersAt(id, tier) {
 const f1 = (v) => (v >= 10 ? String(Math.round(v)) : (Math.round(v * 10) / 10).toFixed(1));
 function statLine(n, base) {
   if (!n) return '';
-  const cells = [['Hit', Number.isFinite(n.hit) && n.hit > 0 ? f1(n.hit) : '–', base && base.hit], ['Hits/s', n.aps > 0 ? n.aps.toFixed(2) : '–', base && base.aps], ['Reach', Math.round(n.range), base && base.range],
+  const cells = [['Hit', Number.isFinite(n.hit) && n.hit > 0 ? f1(n.hit) : '–', base && base.hit], ['Hits/s', n.aps >= 0.005 ? n.aps.toFixed(2) : '–', base && base.aps], ['Reach', Math.round(n.range), base && base.range],
     ['Health', num(n.hp), base && base.hp], ['Armour', Math.round((n.armor || 0) * 10) / 10, base && base.armor], ['Speed', Math.round(n.speed), base && base.speed]];
   const raw = [n.hit, n.aps, n.range, n.hp, n.armor || 0, n.speed];
   return `<div class="bk-stats">${cells.map(([k, v, b], i) => `<div class="${b != null && raw[i] > b + 1e-6 ? 'up' : ''}"><b>${v}</b><span>${k}</span></div>`).join('')}</div>`;
@@ -284,7 +284,7 @@ function itemPage() {
     const p = P.POTIONS[it.id], n = P.potionCount(save, it.id);
     const html = `<div class="bk-head"><span class="bk-big-ico">${icon('potion', it.id)}</span><div class="bk-hm"><b class="bk-name">${p.name}</b><span class="cap">Potion · ${gold(p.price)}</span></div><span class="bk-tierbig">${n} <small>in the bag</small></span></div>
       <p class="bk-desc">${p.desc}</p><p class="bk-fun">${POTION_FUN[it.id] || ''}</p>
-      <p class="bk-small quiet">On the stage: ${stageWords(it.id)}</p>${itemList()}`;
+      <p class="bk-small quiet">On the stage: ${it.id === 'heal' ? stageWords(it.id) : 'the hero drinks it as the fight starts (a ring and a puff in its colour, then a trail while it lasts).'}</p>${itemList()}`;
     return { title: 'Items', html, spec: { t: 'potion', id: it.id }, tag: `<b>${p.name}</b>` };
   }
   const t = P.trinketInfo(it.id), r = P.RARITY[t.rarity];
