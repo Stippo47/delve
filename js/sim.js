@@ -7,7 +7,7 @@ import { trinketHooks } from './trinkets.js';
 import { cue } from './sfx.js';
 import { ARMOUR_CAP, ENEMY_ARMOUR, armourCut } from './armour.js';
 import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON, CHARM, CONFUSE, SLEEPY, BLEED, FEAR } from './statuses.js';
-import { tallyHurt, tallyHeal, tallyDown, noteStatus } from './stats.js';
+import { tallyHurt, tallyHeal, tallyDown, noteStatus, tallyBlock } from './stats.js';
 
 let NEXT_ID = 1;
 let arcing = false; // an overload's arcs are landing (addStatus)
@@ -700,7 +700,12 @@ function sparks(w, x, y, a, n, color = '#FFFFFF', big = 1) {
 
 const KNOCK = 1.6; // every knockback, scaled (round 6: "more knockback, more physical juice")
 const SHIELD_BEARERS = new Set(['paladin', 'tower', 'knight']); // heroes carrying a shield on the front
+// Round 13 (lane S; the designer: "Need to separate damage taken vs damage blocked (deflections, shields, damage that
+// didn't get through)"): what a shield, a block, armour, a ward, a dodge or being untouchable kept off a blow (not damage
+// over time) is counted apart, as blocked (stats.js tallyBlock).
+const blockedBy = (w, u, src, amt, o) => { if (w.stats && amt > 0 && !o.dot) tallyBlock(w, u, src, amt, o); };
 export function hurt(w, u, amount, src, o = {}) {
+  if (u && u.invulnT > 0 && alive(u) && amount > 0 && !u.ethereal) { blockedBy(w, u, src, amount, o); return 0; }
   if (!alive(u) || u.invulnT > 0 || amount <= 0 || u.ethereal) return 0;
   // round 10, chains (families.js): a body segment flinches, but the blow lands on its head (no shove: it follows)
   if (u.linkTo) { if (!alive(u.linkTo)) return 0; u.flashT = 0.12; u.hitT = 0.16; u.hitA = src ? angleTo(src.x, src.y, u.x, u.y) : 0; u.hitX = u.x; u.hitY = u.y;
@@ -728,25 +733,26 @@ export function hurt(w, u, amount, src, o = {}) {
   if (u.team === 'enemy') wake(w, u);
   if (u.sleepT > 0 && !o.dot) u.sleepT = 0;
   // a hook can make the blow miss entirely (Blink Stone)
-  if (!o.dot && hooksOf(u).some((h) => h.evade && h.evade(w, u, src, amount, o))) return 0;
+  if (!o.dot && hooksOf(u).some((h) => h.evade && h.evade(w, u, src, amount, o))) { blockedBy(w, u, src, amount, o); return 0; }
   // someone guarding this unit takes part of the blow
   if (u.guardBy && u.guardT > 0 && alive(u.guardBy) && !o.dot && !o.guarded) {
     const share = amount * (u.guardShare || 0.4); amount -= share;
     hurt(w, u.guardBy, share, src, { ...o, guarded: true, knock: 0 });
   }
   if (u.act && u.act.type === 'drink' && !o.dot) u.act = null;
-  if (src && !o.dot && src.buffs && src.buffs.some((b) => b.blind) && chance(0.6)) { textU(w, u.x, u.y, u.r, 'miss', '#CFE8FF', 0.8); return 0; } // blinded (kits2: Digger's dirt, Bandit's smoke)
-  if (!o.dot && !o.noDodge && u.def.dodge && chance(u.def.dodge)) { textU(w, u.x, u.y, u.r, 'dodge', '#CFE8FF', 0.8); return 0; }
+  if (src && !o.dot && src.buffs && src.buffs.some((b) => b.blind) && chance(0.6)) { textU(w, u.x, u.y, u.r, 'miss', '#CFE8FF', 0.8); blockedBy(w, u, src, amount, o); return 0; } // blinded (kits2: Digger's dirt, Bandit's smoke)
+  if (!o.dot && !o.noDodge && u.def.dodge && chance(u.def.dodge)) { textU(w, u.x, u.y, u.r, 'dodge', '#CFE8FF', 0.8); blockedBy(w, u, src, amount, o); return 0; }
   let amt = amount;
   if (src && alive(src)) { for (const h of hooksOf(src)) if (h.dealt) amt = h.dealt(w, src, u, amt, o); amt *= blowMul(src); }
   if (u.st.curse > 0) amt *= 1 + CURSE.taken * fillOf(u, 'curse');             // cursed: blows land harder
   if (src && src.def.charmBonus && (u.st.charm > 0 || u.flipKind === 'charm')) amt *= 1 + src.def.charmBonus; // the Succubus: harder on the charmed (round 13)
-  for (const h of hooksOf(u)) if (h.taken) amt = h.taken(w, u, src, amt, o);
-  amt *= buffMul(u, 'taken');
+  let kept = 0; // what the defences below keep off (round 13: counted as blocked)
+  for (const h of hooksOf(u)) if (h.taken) { const b = amt; amt = h.taken(w, u, src, amt, o); if (amt < b) kept += b - amt; }
+  { const m = buffMul(u, 'taken'); if (m < 1) kept += amt * (1 - m); amt *= m; }
   if (u.koT > 0) amt *= 1.5;                                 // knocked out: wide open
   if (u.frozenT > 0 && u.frozenBonus) amt *= u.frozenBonus;  // Frost Nova III
   if (!o.dot && src) for (const b of u.buffs) if (b.frontBlock && angleDiff(angleTo(u.x, u.y, src.x, src.y), u.facing) < 1.3) {
-    amt *= 1 - b.frontBlock; u.blockedAt = w.time; if (b.reflect && alive(src) && src !== u) hurt(w, src, amount * b.reflect, u, { noDodge: true, dot: true });
+    kept += amt * b.frontBlock; amt *= 1 - b.frontBlock; u.blockedAt = w.time; if (b.reflect && alive(src) && src !== u) hurt(w, src, amount * b.reflect, u, { noDodge: true, dot: true });
   }
   // where the blow comes from: a shot's own heading, else the line from whoever struck
   const fromA = o.kAngle != null && (o.shot || !src) ? o.kAngle : src ? angleTo(src.x, src.y, u.x, u.y) : o.kAngle != null ? o.kAngle : rand() * TAU;
@@ -754,7 +760,7 @@ export function hurt(w, u, amount, src, o = {}) {
   const shield = u.shield ?? u.def.shield; // u.shield / u.shieldArc: a shield raised as an action (brains set them)
   if (!o.dot && shield && src) {
     const a = angleTo(u.x, u.y, src.x, src.y);
-    if (angleDiff(a, u.facing) < (u.shieldArc ?? 1.25)) { amt *= 1 - shield; onShield = true; u.blockedAt = w.time; }
+    if (angleDiff(a, u.facing) < (u.shieldArc ?? 1.25)) { kept += amt * shield; amt *= 1 - shield; onShield = true; u.blockedAt = w.time; }
   }
   if (!o.dot && src && !onShield && (u.buffs.some((b) => b.frontBlock) || SHIELD_BEARERS.has(u.kind)) && angleDiff(fromA + Math.PI, u.facing) < 1.1) onShield = true;
   // shatter: a hard hit on a frozen unit
@@ -762,7 +768,8 @@ export function hurt(w, u, amount, src, o = {}) {
   // Armour (round 11; round 13, the designer: "A combination of the 2. % and fixed?"): each point takes one point off a
   // blow and ARMOUR_PCT (2%) off it as well, the whole cut never more than ARMOUR_CAP of the blow. A blow marked heavy,
   // or a critical one, gets past half of both. Burning, poison and the like (damage over time) ignore it.
-  if (!o.dot && u.armor > 0) amt -= armourCut(u.armor, amt, o.heavy || o.crit);
+  if (!o.dot && u.armor > 0) { const c = armourCut(u.armor, amt, o.heavy || o.crit); kept += c; amt -= c; }
+  if (kept > 0) blockedBy(w, u, src, kept, o);
   u.hp -= amt;
   if (w.stats) tallyHurt(w, u, src, amt, o);
   if (!o.dot) cue('hit', u, src, { amt, crit: o.crit, heavy: o.heavy, shot: o.shot, blocked: u.blockedAt === w.time });

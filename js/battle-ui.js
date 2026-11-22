@@ -179,9 +179,9 @@ export function showBattleResult(sum, acts) {
   const side = (id) => {
     const S = sum.sides[id];
     const rows = S.rows.map((x) => `<tr class="${x.left ? '' : 'out'}"><td class="br-who">${pic(x.k, "sm")}<span class="br-nm"><b>${esc(nameOf(x.k))}${x.n > 1 ? ` ×${x.n}` : ''}</b>${x.rank ? `<i>${RANKS[x.rank]}</i>` : ''}</span></td>
-      <td>${x.left}/${x.n}</td><td>${num(x.dmg)}</td><td>${num(x.taken)}</td><td>${x.kills || 0}</td>${heals ? `<td>${x.heal > 0.5 ? num(x.heal) : '·'}</td>` : ''}</tr>`).join('');
+      <td>${x.left}/${x.n}</td><td>${num(x.dmg)}</td><td>${num(x.taken)}</td><td>${num(x.blocked)}</td><td>${x.kills || 0}</td>${heals ? `<td>${x.heal > 0.5 ? num(x.heal) : '·'}</td>` : ''}</tr>`).join('');
     return `<div class="br-side ${id} ${sum.winner === id ? 'win' : ''}"><div class="br-h"><i class="bs-dot"></i><b>${SIDES[id].name}</b><span class="quiet small">${S.left} of ${S.start} standing · ${Math.round(S.health * 100)}% health</span></div>
-      <table class="br-t"><thead><tr><th></th><th>Left</th><th>Damage</th><th>Taken</th><th>Kills</th>${heals ? '<th>Healed</th>' : ''}</tr></thead><tbody>${rows}</tbody></table></div>`;
+      <table class="br-t"><thead><tr><th></th><th>Left</th><th>Damage</th><th>Taken</th><th>Blocked</th><th>Kills</th>${heals ? '<th>Healed</th>' : ''}</tr></thead><tbody>${rows}</tbody></table></div>`;
   };
   r.innerHTML = `<div class="rcard battle ${sum.winner}"><div class="r-scroll">
     <span class="cap">Battle${T ? ' · ' + esc(T.name) : ''} · ${mmss(sum.time)}</span>
