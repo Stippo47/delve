@@ -1,0 +1,26 @@
+{
+  "title": "0.17.1: enemies that behave",
+  "topic": "runs",
+  "order": 28,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "foes",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Enemy behaviour fixes",
+      "text": "The yeti's snowball, the sun blade, the serpent, spirit tails, wall turrets, the troll's boulder. Live as 0.17.1.",
+      "why": "Your notes on how these enemies act, built. Mark any part that still plays wrong.",
+      "videos": ["../../../clips/r13/foes/1-yeti-frost3.mp4", "../../../clips/r13/foes/2-sunblade-spire1.mp4"],
+      "details": "Found while looking over every new kind: cinder bats and bomb bots showed 0 damage in battle results (their blast hurts both sides, so nobody was credited); the Fallen Herald appeared out of nowhere (it now arrives in a burst of shadow); a lone serpent going under the sand ended a battle.\n\nStill weak: two yetis against each other in battle mode block each other with their snowballs; the sun blade can hover a while in a small room, since it needs a clear line; several spirits together make a busy frame; the yeti's and the serpent's major move is still the plain quake.",
+      "parts": [
+        { "id": "yeti", "title": "Yeti's snowball", "text": "The ball is its own heavy thing. The yeti walks round behind it, leans in and pushes; it keeps its speed, can't turn, grows as it rolls and bowls through bodies. Shots knock it off course. Without one the yeti packs a new one.", "videos": ["../../../clips/r13/foes/1-yeti-frost3.mp4"] },
+        { "id": "sunblade", "title": "Sun blade", "text": "It shows the band it will sweep, spins down the line and drives its point into the wall. Stuck there it takes 1.5 times the damage until it wrenches free. The major drops point-first from above.", "videos": ["../../../clips/r13/foes/2-sunblade-spire1.mp4", "../../../clips/r13/foes/2-sunblade-major-battle.mp4"] },
+        { "id": "serpent", "title": "Sand serpent, chain crawler", "text": "One body, no lines between the links. The fault behind the strange snake: its head and first link pushed each other apart and flung it across the room. The serpent rears, strikes, dives and comes up beside a hero.", "videos": ["../../../clips/r13/foes/3-serpent-dunes1.mp4", "../../../clips/r13/foes/3-crawler-foundry3.mp4"] },
+        { "id": "spirits", "title": "Spirit tails", "text": "All seven spirits have the wiggly tail that follows behind, drawn by the game.", "videos": ["../../../clips/r13/foes/4-spirits-battle.mp4"], "images": ["../../../clips/r13/foes/4-spirit-tails-lab.png"] },
+        { "id": "turrets", "title": "Turrets in the wall", "text": "Wall turrets and the dart trap sit half inside a socket in the wall with the barrel poking out.", "videos": ["../../../clips/r13/foes/5-turrets-foundry2.mp4"], "images": ["../../../clips/r13/foes/5-gunturret-still.png", "../../../clips/r13/foes/5-darttrap-still.png"] },
+        { "id": "troll", "title": "Troll's boulder", "text": "The boulder has its own size now, so a smaller troll keeps the same boulder.", "videos": ["../../../clips/r13/foes/6-troll-warren.mp4"] }
+      ]
+    }
+  ]
+}
