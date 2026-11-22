@@ -118,26 +118,27 @@ await shot('12-map-picked', 500);
 await tap('[data-act="back"]'); await tap('[data-act="back"]');
 await settle(1);
 await tapScene({ hero: 'paladin' });
-await shot('13-hero-skills', 1000);
-await tap('[data-act="sub:gear"]');
-await shot('14-hero-gear', 500);
-await tap('[data-act="sub:skills"]');
+// (round 14: a hero's page is the unit page, js/unit.js: Main, Upgrades, Preview, Stats)
+const unitPage = (i) => page.evaluate((i) => UNIT.pager.go(i, false), i);
+await shot('13-hero-main', 1000);
+await unitPage(1);
+await shot('14-hero-upgrades', 500);
 await page.evaluate(() => { const g = document.querySelector('.wn.open:not(.ability)') || document.querySelector('.wn.open'); const r = g.getBoundingClientRect(); window.__tapAt = [r.left + r.width / 2, r.top + r.height / 2]; });
 const at = await page.evaluate(() => window.__tapAt);
 await page.mouse.click(at[0], at[1]);
 await shot('15-hero-node', 700);
 await tap('.web-panel [data-learn]');
 await shot('16-hero-learned', 600);
-await tap('[data-act="sub:about"]');
-await shot('17-hero-about');
-await tap('[data-act="back"]');
+await unitPage(3);
+await shot('17-hero-stats');
+await tap('#unit [data-un="back"]');
 
 // a hero not recruited yet: from the fire's list, standing at the camp's edge
 await tapScene('fire');
 await scrollPanel(9999);
 await tap('[data-act="recruitpage:storm"]');
 await shot('18-recruit', 1000);
-await tap('[data-act="back"]'); await tap('[data-act="back"]');
+await tap('#unit [data-un="back"]'); await tap('[data-act="back"]');
 
 // the things in the camp
 await tapScene('trader');
@@ -150,10 +151,11 @@ await shot('21-trader-bought', 400);
 await tap('[data-act="back"]');
 await tapScene('book');
 await shot('22-book', 1000);
-await tap('[data-act^="beast:"] >> nth=1');
-await shot('23-beast-sheet');
-await closeSheet();
-await tap('[data-act="back"]');
+await page.evaluate(() => BOOK.tab('monsters'));
+await tap('#book [data-bk^="foe:"] >> nth=0');
+await shot('23-monster-page');
+await tap('#unit [data-un="back"]');
+await tap('#book [data-bk="back"]');
 await tapScene('settings');
 await shot('24-settings', 1000);
 await scrollPanel(9999);
@@ -161,12 +163,12 @@ await shot('25-settings-cheats', 400);
 await tap('[data-act="webAll"]');
 await tap('[data-act="back"]');
 await tapScene({ hero: 'archer' });
-await tap('[data-act="sub:skills"]');
+await unitPage(1);
 await shot('26-web-all-shown', 800);
 await page.evaluate(async () => { const m = await import('./js/skilltree.js'); m.setShowAll(false); });
-await tap('[data-act="sub:gear"]'); await tap('[data-act="sub:skills"]');
+await tap('#unit [data-un="back"]'); await tapScene({ hero: 'archer' }); await unitPage(1);
 await shot('27-web-hidden', 800);
-await tap('[data-act="back"]');
+await tap('#unit [data-un="back"]');
 
 if (clips) {
   // the camp alive: wanderers, the fire, then the zoom to the fire and back

@@ -5,29 +5,28 @@
 //             potions handed out; "Delve" in the flames opens the map
 //   map       the trail (camp-map.js): a clearing at the bottom, a path up through each dungeon's biome; tap a floor
 //             start you can reach, then Set out
-//   focus     a hero (or the trader, the book, the settings) in the top third; their panel in the lower two thirds:
-//             Gear / Skills (the web) / About for a hero
+//   focus     the trader or the settings in the top third; their panel in the lower two thirds
+//   hero      a hero's own page (round 14: js/unit.js, the same page the Book opens), full screen over the camp
 // Plain DOM panels over one canvas, redrawn from the save after every action; one click handler reads data-act.
 // Rules live in progress.js, read through meta.js; the trader's stock in stock.js.
-import { HEROES, HERO_IDS, STATS } from './heroes.js';
+import { HEROES, HERO_IDS } from './heroes.js';
 import * as P from './progress.js';
 import * as M from './meta.js';
 import * as STOCK from './stock.js';
 import { writeSave } from './save.js';
 import { icon } from './icons.js';
-import { DEFS } from './units.js';
 import { trinketFun, POTION_FUN } from './bestiary.js';
 import { openBook, closeBook, bookOpen } from './book.js';
+import { openUnit, closeUnit, unitOpen, refreshUnit } from './unit.js';
 import { ENV_STYLES, envId, setEnv } from './env.js';
 import { soundSettingsHtml } from './audio.js';
 import { cue } from './sfx.js';
-import { I, coin, gold, ROLE, ROLE_COL, roman, mmss, face } from './ui-kit.js';
-import { mountTree, setShowAll, showAll } from './skilltree.js';
+import { I, coin, gold, roman, mmss, face } from './ui-kit.js';
+import { setShowAll, showAll } from './skilltree.js';
 import { makeScene } from './camp-scene.js';
 import { makeMap } from './camp-map.js';
 import * as LOOKS from './looks.js';
-import { resultStats, wireStats, numbersRow, lifetime, foeCount, num } from './stats-ui.js';
-import { heroNumbers as probeNumbers } from './numbers.js';
+import { resultStats, wireStats } from './stats-ui.js';
 
 // ---------------------------------------------------------------- dungeons (themes)
 export let THEMES = {};
@@ -41,13 +40,11 @@ let onConvoy = null; // lane C (convoy): the wagon at the camp's edge
 let save = null, onSetOut = null, onBattle = null, root = null, topEl = null, panelEl = null, sheetEl = null, hintEl = null;
 let scene = null, map = null;
 let mode = 'ground';        // ground | fire | map | hero | trader | book | settings
-let heroId = null, sub = 'skills', heroFrom = 'ground';
+let heroId = null, heroPage = 'main', heroFrom = 'ground';
 let pickHero = null;        // picked in the fire's list, waiting for a seat
 let mapPick = null;         // { theme, floor } picked on the trail
 let sheet = null;
 let potionFor = {};         // { heroId: [potionId...] } handed out for the next run
-let treeSel = {};
-let tree = null;
 let ticker = 0;
 
 export function initCamp(opts) {
@@ -73,14 +70,16 @@ export function showCamp() {
   render();
   clearInterval(ticker); ticker = setInterval(tick, 1000);
 }
-export function hideCamp() { clearInterval(ticker); closeSheet(); closeBook(); if (scene) scene.stop(); }
+export function hideCamp() { clearInterval(ticker); closeSheet(); closeBook(); closeUnit(); if (scene) scene.stop(); }
 function persist() { writeSave(save); }
 
 // ---------------------------------------------------------------- the frame
 function go(m, o = {}) {
   if (m !== 'book' && bookOpen()) { closeBook(); scene.start(); }
+  if (m !== 'hero' && mode === 'hero' && unitOpen()) { closeUnit(); scene.start(); }
   mode = m;
-  if (m === 'hero') { heroId = o.id; sub = o.sub || (save.heroes[o.id].owned ? 'skills' : 'about'); heroFrom = o.from || 'ground'; }
+  // (the old page's Gear / Skills / About are the unit page's Main / Upgrades / Stats)
+  if (m === 'hero') { heroId = o.id; heroPage = o.page || { gear: 'main', skills: 'upgrades', about: 'stats' }[o.sub] || 'main'; heroFrom = o.from || 'ground'; }
   if (m === 'map') { mapPick = null; map.setPick(null); }
   if (m !== 'fire') pickHero = null;
   closeSheet();
@@ -101,6 +100,7 @@ function render() {
   panelEl.classList.toggle('hidden', !out.html);
   hintEl.classList.toggle('hidden', mode !== 'ground');
   if (out.after) out.after();
+  if (mode !== 'hero' && unitOpen()) refreshUnit(save); // a hero's page opened from the Book
   if (sheet) renderSheet();
 }
 const purse = () => `<div class="purses"><span class="pill purse">${coin}<b id="cGold">${save.cheat ? '∞' : save.gold}</b></span>${typeof save.gems === 'number' ? `<span class="pill purse gems"><i class="gem"></i><b>${save.gems}</b></span>` : ''}</div>`;
@@ -186,84 +186,35 @@ function mapView() {
   return { title: 'The trail', html, cls: 'p-go' };
 }
 
-// ================================================================ a hero, zoomed
+// ================================================================ a hero
+// Round 14 (lane U): a hero's page is the unit page (js/unit.js): Main (equipment, potions), Upgrades (the web),
+// Preview, Stats. The Book opens the same page for the same hero. The camp only opens it, stops its own scene behind
+// it, and does what the page asks through heroActs (the save and the sheets are the camp's).
 function heroView() {
-  const id = heroId, h = HEROES[id], sv = save.heroes[id], lv = M.level(save, id), need = M.xpNeed(lv), x = M.xp(save, id);
-  const inParty = save.party.includes(id), left = sv.owned && P.recoverLeft(save, id);
-  const partyBtn = !sv.owned ? '' : inParty ? `<span class="chip on">${I.fire}<span>At the fire</span></span>`
-    : left ? `<span class="chip rest">${I.moon}<span data-until="${sv.recoverUntil}">${mmss(left)}</span></span>`
-    : `<button class="chip" data-act="sit:${id}">${I.plus}<span>Sit at the fire</span></button>`;
-  const head = `<div class="hhead" style="--rc:${ROLE_COL[h.role]}">
-      <div class="hh-mid"><span class="cap" style="color:${ROLE_COL[h.role]}">${ROLE[h.role]}</span>
-        <div class="xpline"><span class="lvl">${lv}</span><div class="bar xp"><i style="width:${sv.owned ? Math.min(100, 100 * x / need) : 0}%"></i><em>${sv.owned ? `${Math.floor(x)}/${need}` : 'not recruited'}</em></div></div></div>
-      ${partyBtn}</div>
-    <div class="seg hseg">${[['gear', 'Gear'], ['skills', 'Skills'], ['about', 'About']].map(([k, n]) => `<button class="${sub === k ? 'on' : ''}" data-act="sub:${k}">${n}</button>`).join('')}</div>`;
-  let body = '', after = null;
-  if (sub === 'skills') {
-    body = `<div class="treehost" id="treehost"></div>`;
-    after = () => {
-      tree = mountTree(document.getElementById('treehost'), {
-        save, id, sel: treeSel[id],
-        onSelect: (n) => { treeSel[id] = n; },
-        onLearn: (n) => { if (M.learn(save, id, n)) { cue('buy'); persist(); tree.refresh(save, n); } else cue('deny'); },
-        onDeny: () => cue('deny'),
-      });
-    };
-  } else body = `<div class="pp-body">${sub === 'gear' ? gearView(id) : aboutView(id)}</div>`;
-  const recruit = sv.owned ? '' : `<div class="pp-foot"><button class="btn primary wide recruit ${M.afford(save, M.heroPrice(id)) ? '' : 'off'}" data-act="recruit:${id}">Recruit ${h.name} · ${gold(M.heroPrice(id))}</button></div>`;
-  return { title: h.name, html: head + body + recruit, cls: 'p-focus p-hero sub-' + sub, after };
+  return { title: '', html: '', after: () => {
+    scene.stop();
+    const page = heroPage; heroPage = null;
+    openUnit({ save, kind: 'hero', id: heroId, acts: heroActs, page: page == null ? undefined : page, onBack: () => { scene.start(); go(heroFrom === 'fire' ? 'fire' : 'ground'); } });
+  } };
 }
-
-function gearView(id) {
-  const sv = save.heroes[id], n = P.trinketSlots(save, id);
-  const slots = Array.from({ length: Math.max(2, n) }, (_, k) => {
-    if (k >= n) return `<div class="gslot locked"><span class="gs-ico">${I.lock}</span><div><b>Second slot</b><span class="quiet small">Learn it in the skill web.</span></div></div>`;
-    const tid = sv.trinkets[k], t = tid && P.trinketInfo(tid);
-    if (!t) return `<div role="button" class="gslot empty" data-act="tslot:${k}"><span class="gs-ico">${I.plus}</span><div><b>Empty</b><span class="quiet small">Tap to wear a trinket.</span></div></div>`;
-    const lv = P.trinketLevel(save, tid);
-    return `<div role="button" class="gslot" data-act="tslot:${k}" style="--rar:${P.RARITY[t.rarity].color}"><span class="gs-ico t">${icon('trinket', tid, '', t.color)}</span>
-      <div><b>${t.name} <span class="tlv">${roman(lv)}</span></b><span class="quiet small">${t.desc}</span></div></div>`;
-  }).join('');
-  const spare = [...new Set(save.trinkets)];
-  return `<div class="sec-h first"><span class="cap">Worn</span><span class="quiet small">${n} ${n === 1 ? 'slot' : 'slots'}</span></div>${slots}
-    <div class="sec-h"><span class="cap">In the chest</span><span class="quiet small">${save.trinkets.length}</span></div>
-    ${spare.length ? `<div class="chest">${spare.map((t) => `<span class="chest-it" style="--rar:${P.RARITY[P.trinketInfo(t).rarity].color}">${icon('trinket', t, '', P.trinketInfo(t).color)}${save.trinkets.filter((x) => x === t).length > 1 ? `<i>${save.trinkets.filter((x) => x === t).length}</i>` : ''}</span>`).join('')}</div>`
-      : `<p class="quiet small empty-note">Nothing spare. The trader sells trinkets.</p>`}`;
-}
-
-function aboutView(id) {
-  const h = HEROES[id];
-  const row = (ico, cap, name, desc, extra = '') => `<div class="krow">${ico}<div><span class="cap">${cap}</span><b>${name}</b><p>${desc}</p>${extra}</div></div>`;
-  const sum = webSummary(id);
-  return `<p class="blurb">${h.blurb}</p>${h.fun ? `<p class="quiet small fun">${h.fun}</p>` : ''}
-    <div class="sec-h"><span class="cap">In a fight</span><span class="quiet small">with its web and trinkets</span></div>${numbersRow(heroNumbers(id))}
-    ${sum ? `<div class="sec-h"><span class="cap">From the skill web</span>${P.respecPrice ? `<button class="linkbtn" data-act="respec:${id}">Unlearn all · ${gold(P.respecPrice(save, id))}</button>` : ''}</div>
-      <div class="sumchips">${sum}</div><div class="sec-h"><span class="cap">Kit</span></div>` : ''}
-    ${row(`<span class="k-ico">${I.sword}</span>`, 'Attack', h.attack.name, h.attack.desc)}
-    ${h.abilities.map((ab, i) => row(`<span class="k-ico ab">${icon('ability', ab.id)}</span>`, `Ability ${i + 1} · ${ab.cd}s`, ab.name, ab.desc,
-      `<ol class="tiers">${ab.tiers.map((t, k) => `<li class="${M.rank(save, id, `${ab.id}${k + 1}`) ? 'got' : ''}"><i>${roman(k + 1)}</i>${t}</li>`).join('')}</ol>`)).join('')}
-    ${row(`<span class="k-ico">${I.crown}</span>`, 'Trait', h.trait.name, h.trait.desc)}
-    <div class="sec-h"><span class="cap">All runs</span></div>${lifetime(save, id)}`;
-}
-// The hero's real numbers: the hero as it would walk into a room, read the way the sim reads them (numbers.js).
-function heroNumbers(id) {
-  try {
-    const list = (save.heroes[id].trinkets || []).map((t) => { const lv = P.trinketLevel(save, t); return lv > 1 ? { id: t, lv } : t; });
-    return probeNumbers(save, id, list);
-  } catch (e) { return null; }
-}
-
-// What the hero's learned nodes add up to, as chips ("+16% damage").
-function webSummary(id) {
-  if (!P.heroStats || !STATS) return '';
-  const s = P.heroStats(save, id), pct = (f) => Math.round(f * 100), chips = [];
-  for (const [k, v] of Object.entries(s)) if (k !== 'ab' && v > 0 && STATS[k]) chips.push(STATS[k].line(pct(v)));
-  for (const [ab, o] of Object.entries(s.ab || {})) {
-    const name = (HEROES[id].abilities.find((a) => a.id === ab) || {}).name || ab;
-    for (const [k, v] of Object.entries(o)) if (v > 0 && STATS[k]) chips.push(STATS[k].line(pct(v), name));
-  }
-  return chips.map((c) => `<span>${c}</span>`).join('');
-}
+const shake = (el) => { cue('deny'); if (el) { el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); } };
+const heroActs = {
+  trinket: (id, slot) => openSheet({ type: 'trinket', hero: id, slot }),
+  // the two pockets a hero takes into the next delve, and whether they can be packed now
+  potions: (id) => {
+    const seated = save.party.includes(id), ok = seated && P.canGo(save, id);
+    return { list: (potionFor[id] || []).slice(), can: ok, why: !save.heroes[id].owned ? 'Recruit to carry potions.' : !seated ? 'Only heroes seated at the fire carry potions.' : ok ? '' : 'Resting: no potions until they are back.' };
+  },
+  pack: (id) => { if (!(save.party.includes(id) && P.canGo(save, id))) return false; openSheet({ type: 'pack', hero: id }); return true; },
+  sit: (id, el) => {
+    if (P.recoverLeft(save, id)) { shake(el); toast(`${HEROES[id].name} is resting.`); return; }
+    if (save.party.length >= M.slots(save)) { shake(el); toast('Every seat is taken. Swap someone at the fire.'); return; }
+    save.party = [...save.party, id]; cue('tap'); persist(); render();
+  },
+  recruit: (id, el) => { if (M.recruit(save, id)) { cue('buy'); heroFrom = 'ground'; persist(); scene.sync(); render(); popGold(); } else { shake(el); toast('Not enough gold.'); } },
+  learn: (id, n) => { if (!M.learn(save, id, n)) return false; persist(); return true; },
+  respec: (id) => openSheet({ type: 'respec', hero: id }),
+};
 
 // ================================================================ the trader: a few things, new after every mission
 function traderView() {
@@ -293,7 +244,7 @@ function traderView() {
 // Round 13 (lane K): the Book is its own full-screen page now (js/book.js), with a live preview on top. The camp only
 // opens it, stops its own scene behind it, and comes back to the ground when it closes.
 function bookView() {
-  return { html: '', after: () => { scene.stop(); openBook({ save, onBack: () => { scene.start(); go('ground'); } }); } };
+  return { html: '', after: () => { scene.stop(); openBook({ save, acts: heroActs, onBack: () => { scene.start(); go('ground'); } }); } };
 }
 
 // ================================================================ settings
@@ -306,9 +257,10 @@ function settingsView() {
     <section class="group"><h3 class="cap">Dungeon look</h3>${looks(ENV_STYLES, envId(), 'env', envSw)}</section>
     <section class="group"><h3 class="cap">Puddles and spills</h3>${looks(LOOKS.puddleStyles(), LOOKS.puddleStyle(), 'puddle', LOOKS.puddleSwatch)}</section>
     <section class="group"><h3 class="cap">Enemy health, once hurt</h3>${looks(LOOKS.hpStyles(), LOOKS.hpStyle(), 'hpstyle', LOOKS.hpSwatch)}</section>
-    <section class="group"><h3 class="cap">Cheats</h3>
-      <div role="button" class="rowbtn ${save.cheat ? 'on' : ''}" data-act="cheat"><div><b>Unlimited gold and points</b><span class="quiet small">Everything is free while it's on. Your real purse is kept for when you switch it off.</span></div><span class="switch"><i></i></span></div>
-      <div role="button" class="rowbtn ${showAll() ? 'on' : ''}" data-act="webAll"><div><b>Show the whole skill web</b><span class="quiet small">Dev: every node, even ones far from what a hero knows.</span></div><span class="switch"><i></i></span></div></section>
+    <section class="group dev"><h3 class="cap">Dev</h3>
+      <div role="button" class="rowbtn ${save.cheat ? 'on' : ''}" data-act="cheat"><div><b>Unlimited gold and points</b><span class="quiet small">Everything is free, every dungeon is open and the Book shows every monster. Your real purse is kept for when you switch it off.</span></div><span class="switch"><i></i></span></div>
+      <div role="button" class="rowbtn ${showAll() ? 'on' : ''}" data-act="webAll"><div><b>Show the whole skill web</b><span class="quiet small">Every node, even ones far from what a hero knows.</span></div><span class="switch"><i></i></span></div>
+      <div role="button" class="rowbtn ${save.battleDev ? 'on' : ''}" data-act="battleDev"><div><b>Battle: field everything</b><span class="quiet small">Every hero and monster can be picked on the battle page, beaten or not.</span></div><span class="switch"><i></i></span></div></section>
     <p class="faint small version">Delve · camp ground (round 9)</p></div>`;
   return { title: 'Settings', html, cls: 'p-focus p-list' };
 }
@@ -396,17 +348,11 @@ function onClick(e) {
   const no = () => { cue('deny'); el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); };
   switch (act) {
     case 'back': back(); break;
-    case 'sub': sub = arg; cue('tap'); render(); break;
     case 'pickh': {
       if (P.recoverLeft(save, arg)) { no(); toast(`${HEROES[arg].name} is resting.`); return; }
       pickHero = pickHero === arg ? null : arg; cue('tap'); render(); break;
     }
     case 'recruitpage': cue('tap'); go('hero', { id: arg, from: 'fire' }); break;
-    case 'sit': {
-      if (P.recoverLeft(save, arg)) { no(); toast(`${HEROES[arg].name} is resting.`); return; }
-      if (save.party.length >= M.slots(save)) { no(); toast('Every seat is taken. Swap someone at the fire.'); return; }
-      save.party = [...save.party, arg]; cue('tap'); ok(); break;
-    }
     case 'mercs': save.mercs = !save.mercs; cue('tap'); ok(); break;
     case 'pack': openSheet({ type: 'pack', hero: save.party[0] }); break;
     case 'packhero': sheet.hero = arg; renderSheet(); break;
@@ -431,8 +377,6 @@ function onClick(e) {
       if (sheet && sheet.type === 'respec') { closeSheet(); if (P.respec(save, arg)) { ok(); popGold(); toast('Every point is back. Spend them again in the web.'); } else { no(); toast('Not enough gold.'); } }
       else openSheet({ type: 'respec', hero: arg });
       break;
-    case 'recruit': if (M.recruit(save, arg)) { cue('buy'); sub = 'skills'; heroFrom = 'ground'; persist(); scene.sync(); render(); popGold(); } else { no(); toast('Not enough gold.'); } break;
-    case 'tslot': openSheet({ type: 'trinket', hero: heroId, slot: +arg }); break;
     case 'equip': if (P.equip(save, sheet.hero, arg, sheet.slot)) { closeSheet(); cue('tap'); ok(); } else no(); break;
     case 'unequip': if (P.unequip(save, sheet.hero, sheet.slot)) { closeSheet(); ok(); } else no(); break;
     case 'ware': openSheet({ type: 'ware', kind: arg, id: arg2 }); break;
@@ -443,6 +387,7 @@ function onClick(e) {
     case 'puddle': LOOKS.setPuddleStyle(arg); cue('tap'); render(); break;
     case 'hpstyle': LOOKS.setHpStyle(arg); cue('tap'); render(); break;
     case 'cheat': save.cheat = !save.cheat; ok(); break;
+    case 'battleDev': save.battleDev = !save.battleDev; cue('tap'); ok(); break;
     case 'webAll': setShowAll(!showAll()); cue('tap'); render(); break;
     case 'closesheet': closeSheet(); break;
     case 'home': closeResult(); break;
@@ -453,12 +398,12 @@ function popGold() { cue('buy'); const el = document.querySelector('#camp .purse
 // Timers tick down in place; when one runs out, redraw so the hero is ready again.
 function tick() {
   const now = Date.now(); let done = false;
-  for (const el of document.querySelectorAll('#camp [data-until], #sheet [data-until]')) {
+  for (const el of document.querySelectorAll('#camp [data-until], #sheet [data-until], #unit [data-until]')) {
     const left = +el.dataset.until - now;
     if (left <= 0) done = true; else el.textContent = mmss(left);
   }
   scene.sync();
-  if (done && !(mode === 'hero' && sub === 'skills')) render();
+  if (done) render();
 }
 
 // ================================================================ after a run

@@ -59,7 +59,7 @@ export function makePlayer(canvas, opts = {}) {
         stage.step(dt);
         if (stage.t < t0 && opts.onLoop) opts.onLoop(stage);
         seed = getSeed();
-        withView(() => { fit(); draw(ctx, stage.w); drawMarks(ctx, stage); });
+        withView(() => { fit(); draw(ctx, stage.w); });
       });
       if (opts.onFrame) opts.onFrame(stage);
     } catch (e) { err = e; console.error('preview', spec, e); stopped = true; if (opts.onError) opts.onError(e); return; }
@@ -87,27 +87,11 @@ export function makePlayer(canvas, opts = {}) {
     // for the test tools: step a fixed time without the clock (shots of a preview mid-play)
     advance(secs, dt = 1 / 30) {
       if (!stage) return;
-      quietly(() => { setSeed(seed); for (let t = 0; t < secs - 1e-9; t += dt) stage.step(dt); seed = getSeed(); withView(() => { fit(); draw(ctx, stage.w); drawMarks(ctx, stage); }); });
+      quietly(() => { setSeed(seed); for (let t = 0; t < secs - 1e-9; t += dt) stage.step(dt); seed = getSeed(); withView(() => { fit(); draw(ctx, stage.w); }); });
       if (opts.onFrame) opts.onFrame(stage);
     },
   };
   void lastLoopT;
   return api;
-}
-// The stage's marks (preview-sim.js markOn): a few words rising off a unit, saying what a trait or a tier just did, so a
-// number can be seen. Drawn over the room in screen space, upright, outlined.
-function drawMarks(ctx, S) {
-  if (!S.marks || !S.marks.length) return;
-  const d = view.dpr, m = view.m;
-  ctx.save(); ctx.setTransform(d, 0, 0, d, 0, 0);
-  ctx.font = 'bold 13px system-ui, -apple-system, "Segoe UI", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.lineJoin = 'round';
-  for (const k of S.marks) {
-    const u = k.u, f = k.t / k.max, wx = u.x, wy = u.y - (u.vr || u.r) - 8;
-    let x = m[0] * wx + m[2] * wy + m[4], y = m[1] * wx + m[3] * wy + m[5] - 6 - 16 * Math.min(1, f * 2);
-    const tw = ctx.measureText(k.text).width; x = Math.max(tw / 2 + 4, Math.min(view.cw - tw / 2 - 4, x)); y = Math.max(18, y);
-    ctx.globalAlpha = f < 0.12 ? f / 0.12 : f > 0.75 ? Math.max(0, (1 - f) / 0.25) : 1;
-    ctx.lineWidth = 3.5; ctx.strokeStyle = 'rgba(20,16,30,0.95)'; ctx.strokeText(k.text, x, y); ctx.fillStyle = k.color || '#FFE7A0'; ctx.fillText(k.text, x, y);
-  }
-  ctx.restore();
 }
 export const stopAll = () => { if (playing) playing.stop(); };

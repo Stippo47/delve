@@ -13,12 +13,12 @@ import { foesNear, friendsNear, dmgOf, cast, heal, addStatus, shoot } from './ki
 
 const tierOf = (u, id) => (u.kit && u.kit.tiers[id]) || 0;
 const sfx = (w, o) => fx(w, { type: 'statusBurst', ...o });
-const charmed = (e) => (e.st.charm || 0) > 10 || e.flipKind === 'charm';
+const charmed = (e) => ((e.st.charm || 0) > 10 || e.flipKind === 'charm') && !e.follower; // (round 14: a follower, won for good when its room fell, is not hers to break)
 // the one worth turning: the most dangerous foe in reach (elites, majors, big blows) not already hers
 function threat(w, u, r) {
   let best = null, bs = 0;
   for (const e of foesNear(w, u, u.x, u.y, r)) {
-    if (e.flipKind === 'charm' || e.charmImmuneT > 0) continue;
+    if (e.flipKind === 'charm' || e.charmImmuneT > 0 || e.def.boss || e.def.part || e.mini || e.floorFoe) continue; // (round 14: bosses take no charm)
     const s = (e.def.dmg || 5) * (e.dmgMul || 1) * (e.major ? 2.2 : e.elite ? 1.6 : 1) * (e.def.boss ? 0.4 : 1) + e.maxHp * 0.02;
     if (s > bs) { bs = s; best = e; }
   }

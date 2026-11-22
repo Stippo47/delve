@@ -14,7 +14,7 @@
 // stage loops by itself: it plays the move, waits a beat, and builds its world again.
 // Every list comes from the data (HEROES, DEFS and the dungeons' rosters, ELITES / MAJOR_MOVES, STATUS and the
 // Book's STATUSES words, TRINKETS, POTIONS), so new heroes, enemies, statuses and trinkets show up without edits here.
-import { makeWorld, spawn, step, setAnim, hurt, meleeSwing, addStatus, stun, addBuff } from './sim.js';
+import { makeWorld, spawn, step, setAnim, hurt, meleeSwing, addStatus, stun, addBuff, unitNumbers } from './sim.js';
 import { ABILITIES, initKit } from './kits.js';
 import { tagAbility } from './fxtag.js';
 import { DEFS } from './units.js';
@@ -38,6 +38,15 @@ const DUMMY = { name: 'Dummy', art: 'art/lab/dummy.svg', headR: 50, r: 28, vr: 2
   role: 'melee', range: 50, atkCd: 999, dmg: 0, arc: 1, temp: 0, commit: 0, xp: 0, coins: [0, 0], noElite: true, dummy: true, noCorpse: true };
 DEFS.bookDummy = { ...DUMMY, team: 'enemy' };
 DEFS.bookDummyBlue = { ...DUMMY, team: 'hero', art: variantUrl(DUMMY.art, { hue: 0, sat: 1, light: 0, accent: { from: 5, range: 22, hue: 212, sat: 1, light: 0.06 } }) };
+// Round 14: a target can hold a weapon (art/lab/dummy-<weapon>.svg: the weapon is its own part, so it swings), for the
+// scenes where something has to strike the hero or a status has to be broken by a blow.
+const BLUE = { hue: 0, sat: 1, light: 0, accent: { from: 5, range: 22, hue: 212, sat: 1, light: 0.06 } };
+export const WEAPONS = ['sword', 'bow', 'spear', 'hammer'];
+for (const wp of WEAPONS) {
+  const art = `art/lab/dummy-${wp}.svg`, attackAnim = wp === 'spear' || wp === 'bow' ? 'thrust' : 'swing';
+  DEFS['bookDummy_' + wp] = { ...DUMMY, team: 'enemy', art, attackAnim };
+  DEFS['bookDummyBlue_' + wp] = { ...DUMMY, team: 'hero', art: variantUrl(art, BLUE), attackAnim };
+}
 export const isDummy = (k) => !!(DEFS[k] && DEFS[k].dummy);
 
 // ---------------------------------------------------------------- staging the hero's moves (the showcase's rules)
@@ -47,16 +56,8 @@ const FAR = new Set(['charge', 'leap', 'hook', 'backstab', 'dash', 'barrage', 'f
   'chainLightning', 'thunderclap', 'stormCloud', 'smite', 'entangle', 'raiseDead', 'lifeDrain', 'boneSpear', 'miasma', 'mend', 'rejuvenate', 'cure', 'encore']);
 const NEEDS_ALLY = new Set(['guard', 'mend', 'sanctuary', 'warSong', 'encore', 'rejuvenate', 'cure', 'consecrate']);
 const SINGLE = new Set(['shieldBash', 'backstab', 'smite', 'hook', 'mend', 'encore', 'rejuvenate', 'cure', 'guard']);
-const CAST_AT = 0.45;
-// A tier's line made short enough for a mark: its first clause, at most about 28 letters.
-export function tierWords(tier, text) {
-  let t = String(text).replace(/\.$/, '');
-  if (t.length > 28) t = t.split(/[,;:]| and /)[0];
-  if (t.length > 30) t = t.slice(0, 28).replace(/\s+\S*$/, '') + '…';
-  return ['', 'I', 'II', 'III'][tier] + ': ' + t;
-} // when the ability goes off, seconds into the loop
-
-export const HERO_W = 470, HERO_H = 350;
+const CAST_AT = 0.45; // when the ability goes off, seconds into the loop
+export const HERO_W = 470, HERO_H = 350, TRAIT_W = 380, TRAIT_H = 270;
 // keep: the stage's last world. It is emptied and filled again rather than replaced, so render.js's floor picture
 // (cached per world) is painted once per stage, not once per loop.
 function room(W, H, keep) {
@@ -69,8 +70,8 @@ function room(W, H, keep) {
   return w;
 }
 const heroNodes = (id, tier) => ({ ...freeNodes(id), ...tierBuild(id, tier) });
-function dummyAt(w, x, y, side = 'enemy') {
-  const d = spawn(w, side === 'enemy' ? 'bookDummy' : 'bookDummyBlue', x, y);
+function dummyAt(w, x, y, side = 'enemy', weapon = null) {
+  const d = spawn(w, (side === 'enemy' ? 'bookDummy' : 'bookDummyBlue') + (weapon ? '_' + weapon : ''), x, y);
   d.facing = side === 'enemy' ? Math.PI : 0; d.home = { x, y }; d.aggro = false; d.atkT = 999;
   return d;
 }
@@ -192,16 +193,22 @@ export function allSpecs(kinds) {
 export const specKey = (s) => [s.t, s.id, s.move || '', s.t === 'hero' ? s.tier : s.t === 'foe' ? s.rank : ''].join(':');
 
 // ---------------------------------------------------------------- stages
+// Round 14 (the designer: "I don't like the text pop ups", "No text pop up. You should be able to see the effect"):
+// nothing is written on a stage. The words a round 13 stage raised off a unit are gone (what a tier adds is in the
+// caption under the stage), and so are the game's own floating words and hit numbers (FREEZE, SCORCH, 14...): every
+// unit on a stage that matters carries a health bar instead, so what a blow did is seen there. One switch:
+const STAGE_TEXT = false;
 export function makeStage(spec) {
   const make = { hero: spec.move === 'trait' ? traitStage : heroStage, foe: foeStage, status: statusStage, trinket: trinketStage, potion: trinketStage }[spec.t];
   if (!make) throw new Error('no stage for ' + spec.t);
   const S = { spec, loop: 3, t: 0, w: null, fires: 0, locked: false, why: '', tick: () => {}, size: [HERO_W, HERO_H] };
   const build = make(S, spec);
   S.loops = 0; S.loopsFired = 0;
-  S.reset = () => { if (S.w) { S.loops++; if (S.fires > S.fires0) S.loopsFired++; } S.fires0 = S.fires; S.t = 0; S.firstT = null; S.marks = []; S.felled = false; if (S.fit) S.loop = S.fit.max; S.mark = marker(); build(); S.mark(S.w); };
+  S.reset = () => { if (S.w) { S.loops++; if (S.fires > S.fires0) S.loopsFired++; } S.fires0 = S.fires; S.t = 0; S.firstT = null; S.felled = false; if (S.fit) S.loop = S.fit.max; S.mark = marker(); build(); S.mark(S.w); };
   S.step = (dt) => {
     if (S.t >= S.loop) S.reset();
     S.t += dt; S.tick(dt); step(S.w, dt); if (S.after) S.after(dt);
+    if (!STAGE_TEXT && S.w.texts.length) S.w.texts.length = 0;
     const w = S.w, seen = S._seen || (S._seen = new WeakSet()), g = S.sig;
     for (const [k, list] of [['fx', w.fx], ['proj', w.projectiles], ['units', w.units], ['danger', w.danger], ['hazards', w.hazards], ['tele', w.telegraphs]]) for (const o of list) if (!seen.has(o)) {
       seen.add(o); g[k]++;
@@ -232,11 +239,13 @@ export function makeStage(spec) {
 function heroStage(S, spec) {
   const { id, move: ab, tier } = spec, H = HEROES[id], ranged = DEFS[id].role === 'ranged';
   const A = ABILITIES[ab], sh = (A && A.show) || {};
-  S.locked = ab !== 'attack' && tier < 1;
-  if (S.locked) S.why = 'Unlocks at tier I';
+  // Round 14 ("Should still preview when locked"): an ability the tier hasn't unlocked still plays, as it is at tier I
+  // on a hero with nothing else bought; S.asLocked tells the page to mark it locked.
+  S.asLocked = ab !== 'attack' && tier < 1;
+  const useTier = ab === 'attack' ? tier : Math.max(1, tier);
   // long enough to see it run out: the longest time its words name at this tier ("for 8s"), plus a beat
   const H0 = HEROES[id].abilities.find((a) => a.id === ab);
-  const secs = H0 ? [H0.desc, ...H0.tiers.slice(0, Math.max(1, tier))].join(' ').match(/(\d+(?:\.\d+)?)\s?s\b/g) : null;
+  const secs = H0 ? [H0.desc, ...H0.tiers.slice(0, useTier)].join(' ').match(/(\d+(?:\.\d+)?)\s?s\b/g) : null;
   const longest = secs ? Math.max(...secs.map((x) => parseFloat(x))) : 0;
   S.loop = ab === 'attack' ? 3 : Math.min(9.5, Math.max(3.4, CAST_AT + longest + 1));
   let u, dummies, ally, pin, cast, last, dmg0;
@@ -244,7 +253,7 @@ function heroStage(S, spec) {
     const w = S.w = room(HERO_W, HERO_H, S.w);
     const far = ab === 'attack' ? ranged : FAR.has(ab) || sh.far;
     u = spawn(w, id, 110, 175, { level: 9 });
-    initKit(u, id, { nodes: heroNodes(id, tier) }, 9);
+    initKit(u, id, { nodes: S.asLocked ? { ...heroNodes(id, 0), [ab + '1']: 1 } : heroNodes(id, tier) }, 9);
     for (const k in u.kit.cd) u.kit.cd[k] = 999;
     u.facing = u.mvA = 0;
     const mx = far ? (ab === 'charge' ? 270 : 340) : 110 + u.r + 28 + (ab === 'attack' ? Math.max(8, DEFS[id].range - 6) : 14);
@@ -257,7 +266,7 @@ function heroStage(S, spec) {
     if (NEEDS_ALLY.has(ab) || sh.ally) {
       const ak = id === 'paladin' ? 'archer' : 'paladin';
       ally = fullAlly(w, ak, ab === 'warSong' || ab === 'sanctuary' || ab === 'consecrate' ? 155 : 190, 285);
-      ally.hp = ally.maxHp * 0.35;
+      ally.hp = ally.maxHp * 0.35; ally.barAlways = true; // its health shows, so a heal or a guard is seen on the bar
       if (ab === 'cure') { ally.st.poison = 70; ally.st.burn = 50; }
       if (ab === 'guard') { ally.target = dummies[0]; dummies[0].target = ally; }
     }
@@ -268,17 +277,16 @@ function heroStage(S, spec) {
     dmg0 = null;
     S.hero = u; S.dummies = dummies;
     S.tick = (dt) => {
-      if (S.locked) { u.atkT = Math.max(u.atkT, 0.5); return; }
       if (!cast && S.t >= CAST_AT && ab !== 'attack') {
         cast = true; u.target = dummies[0];
         S.mark(w); dmg0 = hpSum(w);
-        if (ab === 'oldBones') { u.kit.tiers.oldBones = tier; u.kit.oldBonesUsed = false; u.invulnT = 0; u.hp = 1; hurt(w, u, 50, dummies[0], { noDodge: true }); }
-        else if (A) tagAbility(w, u, ab, tier, () => A.use(w, u, dummies[0], tier));
+        if (ab === 'oldBones') { u.kit.tiers.oldBones = useTier; u.kit.oldBonesUsed = false; u.invulnT = 0; u.hp = 1; hurt(w, u, 50, dummies[0], { noDodge: true }); }
+        else if (A) tagAbility(w, u, ab, useTier, () => A.use(w, u, dummies[0], useTier));
         for (const k in u.kit.cd) u.kit.cd[k] = 999;
         pin = { x: u.x, y: u.y };
-        // what this tier adds, on the stage, from the tier's own words ("III: Two bolts more"), so a number can be seen
-        if (H0 && H0.tiers[tier - 1]) markOn(S, u, tierWords(tier, H0.tiers[tier - 1]), 0.9, 2.2);
+        // (round 14: no words on the stage. What a tier adds is in the caption under it; the stage shows it happening.)
       }
+      if (u.hp < u.maxHp - 0.5) u.barAlways = true; // once the hero is hurt its health shows (a heal, a shield, a refusal to fall)
       if (ab !== 'attack' && !(sh.attacks && cast)) u.atkT = Math.max(u.atkT, 0.5);
       else if (!ranged) { // melee: the brain won't swing while pinned, so the stage swings on a beat
         u.atkT = 9; const d = DEFS[id], beat = d.role === 'skirmish' ? 0.5 : 1.1, t0 = S.t - CAST_AT;
@@ -300,198 +308,280 @@ function heroStage(S, spec) {
     };
     S.after = (dt) => {
       // did it do anything: a cast that left something in the world or changed someone's health; an attack that landed
-      if (!S.locked) {
-        if (ab === 'attack') { if (S.hits(ally ? [...dummies, ally] : dummies) > 0) S.fire(); }
-        else if (cast && S.t < CAST_AT + 2) { if (S.mark(w) > 0 || (dmg0 != null && Math.abs(hpSum(w) - dmg0) > 0.5)) S.fire(); }
-      }
+      if (ab === 'attack') { if (S.hits(ally ? [...dummies, ally] : dummies) > 0) S.fire(); }
+      else if (cast && S.t < CAST_AT + 2) { if (S.mark(w) > 0 || (dmg0 != null && Math.abs(hpSum(w) - dmg0) > 0.5)) S.fire(); }
       if (u.act) pin = { x: u.x, y: u.y };
       else if (!u.downed) { u.x = pin.x; u.y = pin.y; u.vx = u.vy = 0; }
       if (u.downed) { u.downed = false; u.hp = u.maxHp; }
       for (const d of dummies) { if (!(ally && d.target === ally)) d.target = null; tendDummy(w, d, dt); }
-      ageMarks(S, dt);
       if (ally) { ally.atkT = 999; ally.x = ally.home.x; ally.y = ally.home.y; for (const k in ally.kit.cd) ally.kit.cd[k] = Math.max(ally.kit.cd[k], 5); }
     };
   };
 }
 
-// A hero's trait: a short spar where most traits get their moment. The hero fights three dummies that hit back and
-// shoot at it; one dummy falls (kills, deaths near it); a friend goes down (friends falling, reviving); the hero is
-// knocked low (low-health traits) and at the end takes a blow that would bring it down (traits that refuse to fall).
-// What a trait needs to show, keyed by trait id (a trait not here gets the plain spar):
-//   words   the mark pulsed on the hero each time the trait acts: what it just did, in two or three words
-//   dummy / start / first   how the dummies are set up (rooted, cursed, soaked, nearly dead, an elite, facing away...)
-//   hitSt   what the dummy's blows carry (for traits that shrug a status or a shove off)
-//   close   a dummy right beside a ranged hero; shooter / shotEvery / hitEvery / hitsFrom: who strikes and how often
-//   abilities: its abilities are on, at tier I at least (traits that ride on an ability); note: a line for the caption
-//   hero: set the hero up (a shortened timer); revive: the friend goes down and the hero is let go to reach it
+// ---------------------------------------------------------------- a hero's trait (round 14)
+// The designer: "No text pop up. You should be able to see the effect ... Only show what you have to for the scenario.
+// Instead of the archer you could give the targets bows and let them use them. (Can also use a sword, spear, or hammer
+// when necessary.)" So each trait has its own small scene with only what it needs:
+//   - whoever strikes the hero is a target holding the weapon the scene needs, stood in front of the hero, facing it;
+//   - where a trait only changes a number, the scene sets two things side by side that differ in the one way the trait
+//     cares about (a burning target beside a plain one, a friend beside the hero) and everyone's health bar is shown,
+//     so the difference is there to see;
+//   - each time the trait acts, a gold ring pulses once round whoever it acted for. No words anywhere on the stage.
+// TRAIT_SCENE[traitId]:
+//   foes   the targets: [{ at, w, hits, on, dmg, hitSt, off, from, until, hp, hpX, weak, st, root, elite, away, busy,
+//          aim, joinAt }]
+//            at      where it stands: 'front' (where the hero's own blows reach), 'adj' (at arm's length of the hero),
+//                    'back' (behind the hero), 'a' / 'b' (a pair side by side in the hero's reach), 'c', 'line' (behind
+//                    the front one), 'far', or [x, y]
+//            w       the weapon it holds: 'sword' | 'bow' | 'spear' | 'hammer' (none: a plain target)
+//            hits    seconds between its blows (with a bow: its shots); on: 'hero' (default) | 'ally' | 'both' | 'alt'
+//            dmg     each blow, as a share of the victim's health; hitSt: what its blows carry
+//            hp      the share of its health it starts on (and is put back to); hpX: its health in hero-blows (6)
+//            weak    falls to one blow, for good; st: statuses kept on it; root, elite, away (its back to the hero),
+//            busy    it is fighting the friend, not the hero; aim: false = the hero doesn't strike it
+//   hero   { hp, lowAt, downAt, idle (never strikes), quiet (no blow before), walk: [from, to], abilities, set(u) }
+//   allies [{ at: 'near' | 'far' | [x, y], hp, downAt, stunAt, st }]
+//   aura   the trait works on friends near the hero: the ring pulses on them, not on him
+//   revive the friend is down and the hero lifts it; fires(k, args): which hook calls count; note: a caption line
 const TRAIT_SCENE = {
-  bulwark: { words: 'blocked 35%' },
-  unmovable: { words: 'not knocked back', hitSt: { knock: 320, heavy: true } },
-  steadyAim: { words: 'crit: stood still' },
-  opportunist: { words: '+50%: busy foe' },
-  bloodied: { words: 'hurt: hits harder' },
-  momentum: { words: 'faster and faster' },
-  grim: { words: 'finished off', start: (d) => { d.hp = d.maxHp * 0.2; } },
-  kindling: { words: '+20%: burning', dummy: (d) => { d.st.burn = Math.max(d.st.burn, 40); } },
-  coldBlood: { words: 'no chill', hitSt: { chill: 45 } },
-  conductor: { words: 'shock x2: wet', dummy: (d) => { d.st.wet = Math.max(d.st.wet, 60); } },
-  raiser: { words: 'revives 2x fast', revive: true },
-  rhythm: { words: 'ally +10% speed' },
-  barkskin: { words: 'still: -20%' },
-  soulHarvest: { words: 'cooldowns -0.8s' },
-  immunity: { words: 'poison spreads', hitSt: { poison: 40 }, first: (d) => { d.st.poison = Math.max(d.st.poison, 70); } },
-  oldSoldier: { words: 'ally takes -10%' },
-  lastStand: { words: 'LAST STAND' },
-  returnThrust: { words: 'wound up: let go' },
-  snatch: { words: 'weapon snatched' },
-  dirtIn: { words: 'dirt rubbed in', abilities: true },
-  familiar: { words: 'an imp' },
-  bloodRite: { words: 'blood heals', abilities: true },
-  pollen: { words: 'pollen heals' },
-  requisition: { words: 'kit handed out' },
-  huntingPartner: { words: 'the falcon rakes' },
-  powderKeg: { words: 'it blew up', kill: true },
-  longShot: { words: 'a long shot' },
-  plunder: { words: 'extra coins', kill: true },
-  duelist: { words: 'one on one', abilities: true },
-  keenEdge: { words: '+3% of its health' },
-  valhalla: { words: 'the glow heals' },
-  overclock: { words: 'overclocked', abilities: true },
-  fromTheWild: { words: 'back as a man', abilities: true }, // (lane H2, round 13: the new heroes' new traits)
-  grace: { words: '3rd blow: crit' },
-  skyborn: { words: 'no roots', hitSt: { entangle: 45 } },
-  phalanx: { words: 'ally near: -10%' },
-  thickHide: { words: 'statuses half', hitSt: { burn: 16, chill: 16 } },
-  ironWill: { words: 'low: +25%' },
-  lightFingers: { words: 'more gold', start: (d) => { d.def = { ...d.def, coins: [2, 3] }; }, kill: true },
-  fade: { words: 'a shadow', hitsFrom: 4.4, quiet: 3.6, shotEvery: 50 }, // (round 13: she becomes a shadow after 3 s without striking or being hurt)
-  hardWork: { words: 'healed 8%', hero: (u) => { u.hp = u.maxHp * 0.6; }, kill: true },
-  prospector: { words: 'dug up a coin' },
-  seenItAll: { words: 'stagger shaken', friend: (w, a) => { a.st.stagger = 90; } },
-  catalyst: { words: 'statuses +30%' },
-  ancestral: { words: 'spirits heal 10%' },
-  crone: { words: '+40%: cursed', dummy: (d) => { d.st.curse = Math.max(d.st.curse, 50); } },
-  infernal: { words: 'no burning', hitSt: { burn: 45 } },
-  blackCandle: { words: 'cursing', close: true },
-  deflect: { words: 'swatted aside', shooter: 0, shotEvery: 0.45 },
-  thirdEye: { words: 'stepped aside', hitEvery: 0.3 },
-  wellFed: { words: 'ally heals' },
-  beeFriend: { words: 'bees sting', close: true },
-  wellStocked: { words: 'potion for a friend', hero: (u) => { u.kit.stockT = 1.2; }, note: 'On the stage the two minutes are cut to a second, so the hand-over shows.' },
-  armourPiercing: { words: '+25%: elite', start: (d) => { d.elite = true; } },
-  birdsEye: { words: '+25% reach', always: true },
-  demolition: { words: 'thrown twice as far', abilities: true, fires: (k, args) => k === 'dealt' && !!(args[4] && args[4].blast) },
-  oldSalt: { words: '+20%: wet', hitSt: { wet: 40 }, dummy: (d) => { d.st.wet = Math.max(d.st.wet, 60); } },
-  finisher: { words: '+25%: below half', start: (d) => { d.hp = d.maxHp * 0.45; } },
-  deadeye: { words: 'first hit: crit' },
-  assassin: { words: '+50%: from behind', start: (d) => { d.facing = 0; }, dummy: (d) => { d.facing = 0; } },
-  dirtyFighting: { words: '+30%: held', dummy: (d) => { d.rootT = 9; d.st.stagger = Math.max(d.st.stagger, 50); } },
-  watchful: { words: 'stun shaken', friend: (w, a) => { stun(w, a, 2); } },
-  trappersEye: { words: '+30%: held', dummy: (d) => { d.rootT = 9; } },
-  arena: { words: '+5% a foe' },
-  pratfall: { words: 'tripped aside' },
-  bushido: { words: 'low: cuts faster' },
-  chooser: { words: 'revives 2x fast', revive: true },
-  handy: { words: 'builds take -30%', abilities: true },
-  moonblood: { words: 'heals 1%' },
+  bulwark: { foes: [{ at: 'adj', w: 'sword', hits: 1.3, dmg: 0.12 }, { at: 'back', w: 'sword', hits: 1.3, off: 0.65, dmg: 0.12 }], hero: { idle: true } },
+  unmovable: { foes: [{ at: 'adj', w: 'hammer', hits: 1.5, on: 'both', dmg: 0.05, hitSt: { knock: 420, heavy: true } }], allies: [{ at: 'beside', hp: 1 }], hero: { idle: true } },
+  steadyAim: { foes: [{ at: 'far', hpX: 5 }], hero: { walk: [0.2, 2.2] }, loop: 6.4 },
+  opportunist: { foes: [{ at: 'a', w: 'sword', busy: true, hits: 1.2, on: 'ally', dmg: 0.04 }, { at: 'b' }], allies: [{ at: 'by-a', hp: 1 }] },
+  bloodied: { foes: [{ at: 'front', w: 'sword', hits: 0.8, dmg: 0.13, hpX: 5 }] },
+  momentum: { foes: [{ at: 'front', hpX: 14 }], loop: 6.5 },
+  grim: { foes: [{ at: 'a', hp: 0.21, hpX: 8 }, { at: 'b', hpX: 8 }] },
+  kindling: { foes: [{ at: 'a', st: { burn: 45 } }, { at: 'b' }] },
+  coldBlood: { foes: [{ at: 'far', w: 'bow', hits: 0.55, on: 'alt', dmg: 0.03, hitSt: { chill: 34 }, aim: false }], allies: [{ at: 'beside', hp: 1 }], hero: { idle: true } },
+  conductor: { foes: [{ at: 'a', st: { wet: 70 } }, { at: 'b' }] },
+  raiser: { revive: true, foes: [] },
+  rhythm: { aura: true, foes: [], allies: [{ at: 'near', hp: 1 }, { at: 'far', hp: 1 }], hero: { idle: true } },
+  barkskin: { foes: [{ at: 'adj', w: 'sword', hits: 0.9, dmg: 0.1, aim: false }], hero: { idle: true, walk: [2.8, 5.2] }, loop: 5.6 },
+  soulHarvest: { foes: [{ at: 'a', weak: true }, { at: 'b', weak: true }, { at: 'c', weak: true }], hero: { abilities: true } },
+  immunity: { foes: [{ at: 'front', st: { poison: 75 } }, { at: 'by-front' }] },
+  oldSoldier: { aura: true, foes: [{ at: 'adj', w: 'sword', hits: 1, on: 'ally', dmg: 0.1, aim: false }], allies: [{ at: 'beside', hp: 1 }], hero: { idle: true } },
+  lastStand: { foes: [{ at: 'adj', w: 'sword', hits: 1.2, dmg: 0.06 }], allies: [{ at: 'near', hp: 0.5, downAt: 1.4 }], hero: { abilities: true } },
+  returnThrust: { foes: [{ at: 'front', w: 'sword', hits: 0.45, dmg: 0.04, until: 2.6 }, { at: 'line' }], hero: { quiet: 2.9 } },
+  snatch: { foes: [{ at: 'front', w: 'sword', hits: 1.4, dmg: 0.05, hpX: 14 }] },
+  dirtIn: { foes: [{ at: 'front', w: 'sword', hits: 1.1, dmg: 0.1 }], hero: { abilities: true } },
+  familiar: { foes: [{ at: 'far' }] },
+  bloodRite: { foes: [{ at: 'front', hpX: 30 }], hero: { abilities: true, hp: 0.55 } },
+  pollen: { foes: [{ at: 'adj', hpX: 30 }], allies: [{ at: 'near', hp: 0.4 }] },
+  requisition: { foes: [{ at: 'far' }], allies: [{ at: 'near', hp: 0.7 }], hero: { set: (u) => { u.kit.reqW = null; } }, hold: (w, u) => { if (u.kit.reqW === w && u.kit.reqT > 1 && u.kit.reqT <= 3) u.kit.reqT = 1; } },
+  huntingPartner: { foes: [{ at: 'far', hpX: 14 }] },
+  powderKeg: { foes: [{ at: [272, 135], weak: true }, { at: [308, 110], hp: 0.2 }, { at: [308, 162], hp: 0.2 }] },
+  longShot: { foes: [{ at: [200, 80] }, { at: [345, 196] }] },
+  plunder: { foes: [{ at: 'a', weak: true, coins: true }, { at: 'b', weak: true, coins: true }, { at: 'c', weak: true, coins: true }] },
+  duelist: { foes: [{ at: 'front', w: 'sword', hits: 1, dmg: 0.08 }, { at: 'side', w: 'spear', hits: 1, off: 0.5, dmg: 0.08, joinAt: 3.2, aim: false }], hero: { abilities: true }, loop: 6.4 },
+  keenEdge: { foes: [{ at: 'front', hpX: 12 }] },
+  valhalla: { revive: true, reviveAt: 2.6, foes: [], allies: [{ at: 'beside', hp: 0.45, downAt: 2.6 }], hero: { hp: 0.6, idle: true } },
+  overclock: { foes: [{ at: 'far', hpX: 30 }], hero: { abilities: true } },
+  fromTheWild: { foes: [{ at: 'front', w: 'sword', hits: 1, dmg: 0.08 }], hero: { abilities: true, cast: ['turnWolf'], downAt: 3.2 }, loop: 6 },
+  grace: { foes: [{ at: 'front', hpX: 10 }] },
+  skyborn: { foes: [{ at: 'far', w: 'bow', hits: 0.55, on: 'alt', dmg: 0.03, hitSt: { entangle: 36 }, aim: false }], allies: [{ at: 'beside', hp: 1 }], hero: { idle: true } },
+  phalanx: { foes: [{ at: 'adj', w: 'sword', hits: 1, dmg: 0.1 }], allies: [{ at: 'beside', hp: 1 }] },
+  thickHide: { foes: [{ at: 'far', w: 'bow', hits: 0.5, on: 'alt', dmg: 0.02, hitSt: { burn: 24 }, aim: false }], allies: [{ at: 'beside', hp: 1 }], hero: { idle: true } },
+  ironWill: { foes: [{ at: 'front', w: 'hammer', hits: 0.9, dmg: 0.05, hitSt: { stagger: 55 }, hpX: 8 }], hero: { lowAt: 2.8 }, loop: 6.4 },
+  lightFingers: { foes: [{ at: 'a', weak: true, coins: true }, { at: 'b', weak: true, coins: true }] },
+  fade: { foes: [{ at: 'front', w: 'sword', hits: 1, dmg: 0.06, until: 0.9 }], hero: { quiet: 3.7 }, loop: 6 },
+  hardWork: { foes: [{ at: 'a', weak: true }, { at: 'b', weak: true }, { at: 'c', weak: true }], hero: { hp: 0.5 } },
+  prospector: { foes: [{ at: 'front' }] },
+  seenItAll: { aura: true, foes: [], allies: [{ at: 'near', hp: 1, st: { stagger: 85 } }, { at: 'far', hp: 1, st: { stagger: 85 } }], hero: { idle: true } },
+  catalyst: { foes: [{ at: 'front', hpX: 30 }] },
+  ancestral: { foes: [{ at: [300, 200], w: 'hammer', hits: 9, aim: false }], allies: [{ at: [236, 200], hp: 0.3, downAt: 1.6 }, { at: 'near', hp: 0.5 }], hero: { hp: 0.5, idle: true } },
+  crone: { foes: [{ at: 'a', st: { curse: 55 } }, { at: 'b' }] },
+  infernal: { foes: [{ at: 'far', w: 'bow', hits: 0.5, on: 'alt', dmg: 0.02, hitSt: { burn: 30 }, aim: false }], allies: [{ at: 'beside', hp: 1 }], hero: { idle: true } },
+  blackCandle: { foes: [{ at: 'adj' }] },
+  deflect: { foes: [{ at: 'far', w: 'bow', hits: 0.4, dmg: 0.07, aim: false }], hero: { idle: true } },
+  thirdEye: { foes: [{ at: 'adj', w: 'sword', hits: 0.45, dmg: 0.06, aim: false }], hero: { idle: true }, loop: 7 },
+  wellFed: { aura: true, foes: [], allies: [{ at: 'near', hp: 0.4 }, { at: 'far', hp: 0.4 }], hero: { idle: true }, loop: 7 },
+  beeFriend: { foes: [{ at: 'adj' }] },
+  wellStocked: { foes: [{ at: 'far' }], allies: [{ at: 'near', hp: 0.5 }], hero: { set: (u) => { u.kit.stockT = 1.2; } }, note: 'On the stage the two minutes are cut to a second, so the hand-over shows.' },
+  armourPiercing: { foes: [{ at: 'a', elite: true }, { at: 'b' }] },
+  birdsEye: { always: true, foes: [{ at: [345, 135] }] },
+  demolition: { foes: [{ at: 'front' }, { at: 'line' }], hero: { abilities: true }, fires: (k, args) => k === 'dealt' && !!(args[4] && args[4].blast) },
+  oldSalt: { foes: [{ at: 'a', st: { wet: 70 } }, { at: 'b' }] },
+  finisher: { foes: [{ at: 'a', hp: 0.42 }, { at: 'b' }] },
+  deadeye: { foes: [{ at: 'a' }, { at: 'b' }] },
+  assassin: { foes: [{ at: 'a', w: 'sword', away: true }, { at: 'b', w: 'sword' }] },
+  dirtyFighting: { foes: [{ at: 'a', root: true }, { at: 'b' }] },
+  watchful: { aura: true, foes: [], allies: [{ at: 'near', hp: 1, stunAt: 0.7 }, { at: 'far', hp: 1, stunAt: 0.7 }], hero: { idle: true } },
+  trappersEye: { foes: [{ at: 'a', root: true }, { at: 'b' }] },
+  arena: { foes: [{ at: 'a' }, { at: 'b' }, { at: 'c' }] },
+  pratfall: { foes: [{ at: 'adj', w: 'sword', hits: 0.42, dmg: 0.05, aim: false }], hero: { idle: true }, loop: 7 },
+  bushido: { foes: [{ at: 'front', w: 'sword', hits: 1, dmg: 0.05, hpX: 14 }], hero: { lowAt: 2.6 }, loop: 6.4 },
+  chooser: { revive: true, foes: [] },
+  handy: { foes: [{ at: 'far' }], hero: { abilities: true } },
+  moonblood: { foes: [{ at: 'front', hpX: 14 }], hero: { hp: 0.5 } },
+  firstImpression: { foes: [{ at: 'adj', w: 'sword', hits: 1.1, dmg: 0.08, aim: false }], hero: { idle: true } },
 };
 export const traitNote = (id) => {
   const t = HEROES[id] && HEROES[id].trait, sc = t && TRAIT_SCENE[t.id];
   if (!sc) return '';
   if (sc.note) return sc.note;
-  if (sc.abilities) return `It rides on his abilities, so they are on in this preview (at tier I at least): ${HEROES[id].abilities.map((x) => x.name).join(', ')}.`;
+  if (sc.hero && sc.hero.abilities) return `It rides on the abilities, so they are on in this preview (at tier I at least).`;
   return '';
 };
-// A hero's trait: a short spar where it gets its moment. The hero swings or shoots at three dummies that hit and shoot
-// back; then, by what the trait listens for (its hooks), a dummy falls (kill / death), a friend goes down (allyDown,
-// revives), or the hero takes a blow that would bring it down (downed). Each time the trait acts, its words pulse on
-// the hero (S.marks, drawn by preview.js).
+const ANIM = { sword: 'swing', hammer: 'swing', spear: 'thrust', bow: 'thrust' };
+const EVENT_HOOKS = new Set(['death', 'kill', 'allyDown', 'downed', 'struck']);
 function traitStage(S, spec) {
-  const { id, tier } = spec, ranged = DEFS[id].role === 'ranged';
-  const tid = HEROES[id].trait.id, sc = TRAIT_SCENE[tid] || {};
-  S.loop = 5.2; S.fit = { min: 5.2, tail: 2.2, max: 9 };
-  let u, dummies, ally, pin, did;
+  const { id, tier } = spec, d0 = DEFS[id], ranged = d0.role === 'ranged';
+  const tid = HEROES[id].trait.id, sc = TRAIT_SCENE[tid] || {}, H = sc.hero || {};
+  S.loop = sc.loop || 5.2; S.fit = { min: S.loop, tail: 2.2, max: 9 };
+  S.size = [TRAIT_W, TRAIT_H]; // a small yard, so the few figures a scene needs (and their health bars) are drawn big
+  let u, foes, allies, pin, did, swingT, turn, lastShot;
   return () => {
-    const w = S.w = room(HERO_W, HERO_H, S.w);
-    S.marks = [];
-    u = spawn(w, id, 110, 175, { level: 9 });
-    initKit(u, id, { nodes: heroNodes(id, sc.abilities ? Math.max(1, tier) : tier) }, 9);
+    const w = S.w = room(TRAIT_W, TRAIT_H, S.w);
+    const specs = sc.foes || [{ at: 'front' }];
+    const hx = specs.some((f) => f.at === 'back') ? 160 : 100, hy = TRAIT_H / 2;
+    u = spawn(w, id, hx, hy, { level: 9 });
+    initKit(u, id, { nodes: heroNodes(id, H.abilities ? Math.max(1, tier) : tier) }, 9);
+    u.barAlways = true;
     const T = u.kit.trait || {};
-    const words = sc.words || HEROES[id].trait.name;
-    // a standing trait (immune, knockImmune, shockMul) shows on every blow it meets; a reviver shows when it lifts someone
-    const standing = !sc.revive && (sc.always || Object.values(T).some((v) => v && typeof v !== 'function'));
-    u.kit.trait = sc.revive ? T : watchHooks(T, w, S.mark, (k, args) => { if (!sc.fires || sc.fires(k, args)) { S.fire(); markOn(S, u, words); } }, sc.fires);
-    for (const k in u.kit.cd) u.kit.cd[k] = sc.abilities ? 0.6 + Object.keys(u.kit.cd).indexOf(k) * 1.2 : 999;
-    if (sc.hero) sc.hero(u);
+    // the gold ring: once round whoever the trait just acted for (never more than once every 0.7 s on one unit)
+    const cue = (who) => { if (!who || who.dead) return; if (S.t - (who._cueT ?? -9) < 0.7) return; who._cueT = S.t; w.fx.push({ type: 'ring', x: who.x, y: who.y, r: (who.vr || who.r) + 16, color: '#FFD45A', t: 0, max: 0.42, unit: who }); };
+    const acted = () => { S.fire(); if (!sc.aura) cue(u); };
+    // a standing trait (immune to something, never knocked back) shows each time a blow that carries it lands on him
+    const standing = !sc.revive && (sc.always || !!(T.immune || T.knockImmune)), dealing = !sc.revive && !!T.shockMul;
+    // a hook that answers something happening (a death, a kill, a friend or the hero going down) counts whenever it is called
+    const counts = sc.fires || ((k) => EVENT_HOOKS.has(k));
+    u.kit.trait = sc.revive ? T : watchHooks(T, w, S.mark, (k, args) => { if (!sc.fires || sc.fires(k, args)) acted(); }, counts);
+    for (const k in u.kit.cd) u.kit.cd[k] = 999; // with abilities on, the stage casts them itself, in turn (below)
+    if (H.hp) u.hp = u.maxHp * H.hp;
+    if (H.set) H.set(u);
     u.facing = u.mvA = 0;
-    const mx = ranged ? 300 : 110 + u.r + 28 + Math.max(8, DEFS[id].range - 6);
-    const spots = ranged ? [[mx, 175], [sc.close ? 190 : mx + 26, sc.close ? 110 : 105], [mx + 26, 245]] : [[mx, 175], [mx + 26, 105], [mx + 26, 245]];
-    dummies = spots.map(([x, y]) => dummyAt(w, x, y));
-    ally = fullAlly(w, id === 'paladin' ? 'archer' : 'paladin', 150, 262); // close enough for the traits that help those near
-    ally.hp = ally.maxHp * 0.6;
-    for (const d of dummies) { d.target = ally; if (sc.start) sc.start(d); }
-    if (sc.first) sc.first(dummies[0]);
-    pin = { x: u.x, y: u.y }; u.target = dummies[0]; did = {};
-    S.hero = u; S.dummies = dummies;
-    const wants = (...ks) => ks.some((k) => T[k]);
+    const gap = u.r + 28, adjX = hx + gap + 12, frontX = ranged ? 285 : hx + gap + Math.max(8, d0.range - 6);
+    const SPOT = { front: [frontX, hy], adj: [adjX, hy], back: [hx - gap - 12, hy], far: [330, hy], line: [frontX + 84, hy], side: [adjX - 30, hy + 70],
+      a: ranged ? [276, hy - 52] : [frontX - 8, hy - 44], b: ranged ? [276, hy + 52] : [frontX - 8, hy + 44], c: ranged ? [334, hy] : [frontX + 34, hy], 'by-front': [frontX + 56, hy - 18] };
+    const hit0 = Math.max(6, unitNumbers(u).hit);
+    foes = [];
+    const addFoe = (p) => {
+      const [x, y] = Array.isArray(p.at) ? p.at : SPOT[p.at] || SPOT.front;
+      const d = dummyAt(w, x, y, 'enemy', p.w);
+      d.maxHp = d.hp = p.weak ? Math.max(1, hit0 * 0.5) : Math.round(hit0 * (p.hpX || 6));
+      if (p.hp) d.hp = d.maxHp * p.hp;
+      if (p.weak) d.gone = true; // falls for good to the hero's blow (never topped up)
+      if (p.coins) d.def = { ...d.def, coins: [2, 3] };
+      if (p.elite) d.elite = true;
+      d.facing = p.away ? Math.atan2(y - hy, x - hx) : Math.atan2(hy - y, hx - x);
+      d.barAlways = true;
+      const f = { d, p, t: (p.hits || 0) * 0.5 + (p.off || 0), land: 0, n: 0 }; foes.push(f); return f;
+    };
+    for (const p of specs) if (!p.joinAt) addFoe(p);
+    const A0 = sc.allies || (sc.revive ? [{ at: 'beside', hp: 0.6, downAt: 1.1 }] : []);
+    const ASPOT = { near: [hx + 6, hy + 84], beside: [hx, hy + 78], far: [340, 46], 'by-a': [SPOT.a[0] + 66, SPOT.a[1] - 24] };
+    allies = A0.map((a, i) => {
+      const [x, y] = Array.isArray(a.at) ? a.at : ASPOT[a.at] || ASPOT.near;
+      const o = fullAlly(w, id === 'paladin' ? (i ? 'tower' : 'archer') : i ? 'archer' : 'paladin', x, y);
+      o.hp = o.maxHp * (a.hp ?? 0.6); o.barAlways = true; o.spec = a;
+      if (a.st) for (const k in a.st) o.st[k] = a.st[k];
+      return o;
+    });
+    for (const f of foes) if (f.p.busy && allies[0]) { f.d.target = allies[0]; f.d.facing = Math.atan2(allies[0].y - f.d.y, allies[0].x - f.d.x); }
+    pin = { x: u.x, y: u.y }; did = {}; swingT = 0.5; turn = 0; lastShot = u.lastAttackT; S.hits = hitWatch(); S.hits2 = hitWatch();
+    const aims = () => foes.filter((f) => f.p.aim !== false && w.units.includes(f.d));
+    u.target = (aims()[0] || {}).d || null;
+    S.hero = u; S.dummies = foes.map((f) => f.d);
+    const strike = (f, v) => { // a target's blow, or its shot
+      const d = f.d, p = f.p, a = Math.atan2(v.y - d.y, v.x - d.x), dmg = v.maxHp * (p.dmg ?? 0.08);
+      d.facing = a; setAnim(d, ANIM[p.w] || 'swing', 0.3);
+      if (p.w === 'bow') w.projectiles.push({ kind: 'arrow', x: d.x + Math.cos(a) * 30, y: d.y + Math.sin(a) * 30, vx: Math.cos(a) * 440, vy: Math.sin(a) * 440, r: 6, team: d.team, owner: d, dmg, o: { knock: 10, ...(p.hitSt || {}) }, life: 1.4, a });
+      else f.lands = (f.lands || []).concat([{ at: S.t + 0.16, v, dmg }]);
+    };
     S.tick = (dt) => {
-      const w2 = S.w, beat = (p) => Math.floor(S.t / p) !== Math.floor((S.t - dt) / p);
-      if (!sc.abilities) for (const k in u.kit.cd) u.kit.cd[k] = 999;
-      if (sc.dummy) for (const d of dummies) sc.dummy(d);
-      if (sc.first) sc.first(dummies[0]);
-      if (!ranged && !did.free) {
-        u.atkT = 9; const d = DEFS[id], b = d.role === 'skirmish' ? 0.5 : 0.9;
-        if (S.t > 0.3 && beat(b) && S.t < S.loop - 0.6 && !u.downed && !(sc.quiet && S.t < sc.quiet)) { /* sc.quiet: lane H2 */ const t = dummies.find((o) => w2.units.includes(o)) || dummies[0]; u.facing = Math.atan2(t.y - u.y, t.x - u.x); u.target = t; meleeSwing(w2, u, d.role === 'skirmish'); setAnim(u, d.attackAnim || 'swing', (d.windup || 0) + 0.28); }
+      const every = (p) => Math.floor(S.t / p) !== Math.floor((S.t - dt) / p);
+      for (const k in u.kit.cd) u.kit.cd[k] = 999;
+      // its abilities, cast in turn (the first at 0.6 s, then one every 1.3 s), each once a loop
+      if (H.abilities && !u.downed && !u.act) HEROES[id].abilities.forEach((ab, i) => {
+        if (did['ab' + i] || S.t < 0.6 + i * 1.3 || (H.cast && !H.cast.includes(ab.id))) return;
+        did['ab' + i] = true; const A = ABILITIES[ab.id], tr = Math.max(1, tier), t = (aims()[0] || foes[0] || {}).d || null;
+        if (A && t) { u.target = t; tagAbility(w, u, ab.id, tr, () => A.use(w, u, t, tr)); }
+      });
+      if (sc.hold) sc.hold(w, u);
+      for (const p of specs) if (p.joinAt && S.t >= p.joinAt && !foes.some((f) => f.p === p)) { const f = addFoe(p); S.dummies.push(f.d); for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; w.particles.push({ x: f.d.x, y: f.d.y, vx: Math.cos(a) * 80, vy: Math.sin(a) * 80, life: 0.4, max: 0.4, size: 5, color: '#E6C979' }); } }
+      // the targets: what is kept on them, and their blows
+      for (const f of foes) {
+        const d = f.d, p = f.p; if (!w.units.includes(d)) continue;
+        if (p.st) for (const k in p.st) d.st[k] = Math.max(d.st[k] || 0, p.st[k]);
+        if (p.root) d.rootT = 9;
+        if (p.hits && !did.free && S.t >= (p.from ?? 0.5) && S.t <= (p.until ?? 99) && !u.downed) {
+          f.t -= dt;
+          if (f.t <= 0) {
+            f.t += p.hits; f.n++;
+            const friend = allies.find((o) => !o.downed && !o.dead);
+            const who = p.on === 'ally' ? [friend] : p.on === 'both' ? [u, friend] : p.on === 'alt' ? [f.n % 2 ? u : friend] : [u];
+            for (const v of who) if (v) strike(f, v);
+          }
+        }
+        if (f.lands) { for (const l of f.lands) if (S.t >= l.at && !l.done) { l.done = true; if (!l.v.downed && !l.v.dead) hurt(w, l.v, l.dmg, d, { knock: 0, ...(p.hitSt || {}) }); } f.lands = f.lands.filter((l) => !l.done); }
       }
-      if (S.t > (sc.hitsFrom ?? 0.5) && beat(sc.hitEvery || 0.7) && !u.downed && !did.free) {
-        const d0 = dummies[0]; d0.facing = Math.atan2(u.y - d0.y, u.x - d0.x); setAnim(d0, 'swing', 0.25);
-        hurt(w2, u, u.maxHp * 0.04, d0, { knock: 0, ...(sc.hitSt || {}) });
-        if (standing) { S.fire(); markOn(S, u, words); } // a standing trait shows on every blow it meets
-      }
-      if (S.t > 0.8 && beat(sc.shotEvery || 1.3) && !did.free) { const d1 = dummies[sc.shooter ?? 2], a = Math.atan2(u.y - d1.y, u.x - d1.x); w2.projectiles.push({ kind: 'arrow', x: d1.x + Math.cos(a) * 30, y: d1.y + Math.sin(a) * 30, vx: Math.cos(a) * 420, vy: Math.sin(a) * 420, r: 6, team: d1.team, owner: d1, dmg: 4, o: { knock: 10 }, life: 1.2, a }); }
-      if (sc.friend && !did.friend && S.t > 1) { did.friend = true; sc.friend(w2, ally); }
-      if ((sc.kill || wants('kill', 'death')) && !did.kill && S.t > 1.5) { did.kill = true; dummies[1].gone = true; hurt(w2, dummies[1], 99999, u, { noDodge: true }); }
-      if ((sc.revive || wants('allyDown')) && !did.ally && S.t > (sc.revive ? 1.1 : 1.8)) { did.ally = true; hurt(w2, ally, ally.hp + 99999, dummies[0], { noDodge: true }); }
-      // a reviver is let go: the dummies are knocked flat so the room is quiet, and it walks to the friend and lifts it
-      if (sc.revive && did.ally && !did.free && S.t > 1.4) { did.free = true; for (const d of dummies) fell(w2, d); }
-      // the revive, by the run's rule (dungeon.js revive: stand over them for 3 s, at the helper's reviveRate; up at reviveHp)
-      if (sc.revive && did.free && ally.downed && !u.downed) {
-        const d = Math.hypot(ally.x - u.x, ally.y - u.y);
-        if (d > ally.r + u.r + 16) { const a = Math.atan2(ally.y - u.y, ally.x - u.x); u.x += Math.cos(a) * 110 * dt; u.y += Math.sin(a) * 110 * dt; u.facing = u.mvA = a; u.spd = 110; }
-        else {
-          u.spd = 0; ally.reviveT = (ally.reviveT || 0) + dt * (T.reviveRate || 1);
-          if (Math.random() < dt * 14) w2.particles.push({ x: ally.x + (Math.random() - 0.5) * 36, y: ally.y + (Math.random() - 0.5) * 36, vx: 0, vy: 0, rise: 40, up: 0, life: 0.6, max: 0.6, size: 4, color: '#FFE7A0' });
-          if (ally.reviveT >= 3) { ally.downed = false; ally.reviveT = 0; ally.hp = ally.maxHp * (T.reviveHp || 0.1); ally.invulnT = 1.2; w2.fx.push({ type: 'ring', x: ally.x, y: ally.y, r: 50, color: '#FFE7A0', t: 0, max: 0.5 }); }
+      if (standing && sc.always && every(1)) acted();
+      // the hero's own blows: a melee hero is pinned, so the stage swings for it, at the pace its attack speed gives
+      const list = aims();
+      if (H.idle || (H.quiet && S.t < H.quiet) || did.free || !list.length) { u.atkT = Math.max(u.atkT, 0.4); if (ranged) u.target = null; }
+      else if (ranged) {
+        if (u.lastAttackT !== lastShot) { lastShot = u.lastAttackT; turn++; }
+        u.target = list[turn % list.length].d;
+      } else {
+        u.atkT = 9;
+        const rate = unitNumbers(u).aps * (d0.atkCd || 1), beat = d0.role === 'skirmish' ? 0.5 : 0.9;
+        swingT -= dt * Math.max(0.3, rate);
+        if (swingT <= 0 && S.t < S.loop - 0.5 && !u.downed && !u.act) {
+          swingT += beat; const t = list[turn++ % list.length].d;
+          u.facing = Math.atan2(t.y - u.y, t.x - u.x); u.target = t; meleeSwing(w, u, d0.role === 'skirmish'); setAnim(u, d0.attackAnim || 'swing', (d0.windup || 0) + 0.28);
         }
       }
-      if (sc.revive && did.free && !ally.downed && !did.up) { did.up = true; S.fire(); markOn(S, u, `${words}: up at ${Math.round((T.reviveHp || 0.1) * 100)}%`, 0.9, 2); }
-      if (!sc.revive && !did.low && S.t > 2.6) { did.low = true; u.hp = Math.min(u.hp, u.maxHp * 0.3); }
-      if (wants('downed') && !did.down && S.t > 3.6) { did.down = true; u.invulnT = 0; hurt(w2, u, u.hp + 99999, dummies[0], { noDodge: true }); }
+      // what happens to the hero and its friends
+      if (H.lowAt && !did.low && S.t > H.lowAt) { did.low = true; u.hp = Math.min(u.hp, u.maxHp * 0.25); }
+      if (H.downAt && !did.down && S.t > H.downAt) { did.down = true; u.invulnT = 0; hurt(w, u, u.hp + 99999, (foes[0] || {}).d || null, { noDodge: true }); }
+      for (const o of allies) {
+        const a = o.spec;
+        if (a.downAt && !o._fell && S.t > a.downAt) { o._fell = true; const by = foes.find((f) => f.p.w); if (by) { by.d.facing = Math.atan2(o.y - by.d.y, o.x - by.d.x); setAnim(by.d, 'swing', 0.3); } hurt(w, o, o.hp + 99999, by ? by.d : null, { noDodge: true }); }
+        if (a.stunAt && !o._stun && S.t > a.stunAt) { o._stun = true; stun(w, o, 3); }
+      }
+      // a trait that works on friends near the hero: the ring goes round each friend it reaches
+      if (sc.aura && every(0.9) && S.t > 0.4) { const near = allies.filter((o) => !o.downed && Math.hypot(o.x - u.x, o.y - u.y) < 150); if (near.length) { S.fire(); near.forEach(cue); } }
+      // a reviver is let go: it walks to the friend and lifts it, by the run's rule (dungeon.js revive: stand over
+      // them for 3 s at the helper's reviveRate; up at its reviveHp)
+      const down = allies.find((o) => o.downed);
+      if (sc.revive && down && !did.free && S.t > (sc.reviveAt || 1.1) + 0.3) { did.free = true; for (const f of foes) if (w.units.includes(f.d)) fell(w, f.d); }
+      if (sc.revive && did.free && down && !u.downed) {
+        const dd = Math.hypot(down.x - u.x, down.y - u.y);
+        if (dd > down.r + u.r + 16) { const a = Math.atan2(down.y - u.y, down.x - u.x); u.x += Math.cos(a) * 110 * dt; u.y += Math.sin(a) * 110 * dt; u.facing = u.mvA = a; u.spd = 110; }
+        else {
+          u.spd = 0; down.reviveT = (down.reviveT || 0) + dt * (T.reviveRate || 1);
+          if (Math.random() < dt * 14) w.particles.push({ x: down.x + (Math.random() - 0.5) * 36, y: down.y + (Math.random() - 0.5) * 36, vx: 0, vy: 0, rise: 40, up: 0, life: 0.6, max: 0.6, size: 4, color: '#FFE7A0' });
+          if (down.reviveT >= 3) { down.downed = false; down.reviveT = 0; down.hp = down.maxHp * (T.reviveHp || 0.1); down.invulnT = 1.2; w.fx.push({ type: 'ring', x: down.x, y: down.y, r: 50, color: '#FFE7A0', t: 0, max: 0.5 }); did.up = true; S.fire(); cue(down); }
+        }
+      }
+      if (H.walk && S.t > H.walk[0] && S.t < H.walk[1]) { pin = { x: hx, y: hy + Math.sin((S.t - H.walk[0]) * 3.2) * 40 }; u.spd = 60; u.mvA = Math.cos((S.t - H.walk[0]) * 3.2) > 0 ? Math.PI / 2 : -Math.PI / 2; did.walking = true; }
+      else if (did.walking) { did.walking = false; pin = { x: u.x, y: u.y }; u.spd = 0; }
     };
     S.after = (dt) => {
-      if (!did.free) { if (u.act) pin = { x: u.x, y: u.y }; else if (!u.downed) { u.x = pin.x; u.y = pin.y; u.vx = u.vy = 0; u.spd = 0; } }
-      for (const d of dummies) { if (sc.start && d.hp >= d.maxHp - 0.01 && d.hp > d.maxHp * 0.5) sc.start(d); tendDummy(S.w, d, dt, true); }
-      if (!ally.downed && !did.free) { ally.atkT = 999; ally.x = ally.home.x; ally.y = ally.home.y; }
-      ageMarks(S, dt);
+      if (did.walking) { u.x += (pin.x - u.x) * Math.min(1, dt * 8); u.y += (pin.y - u.y) * Math.min(1, dt * 8); u.vx = u.vy = 0; u.spd = 60; }
+      else if (!did.free) { if (u.act) pin = { x: u.x, y: u.y }; else if (!u.downed) { u.x = pin.x; u.y = pin.y; u.vx = u.vy = 0; u.spd = 0; } }
+      if (!H.downAt && !u.downed && u.hp < u.maxHp * 0.08) u.hp = u.maxHp * 0.08; // the scene isn't about him falling
+      for (const f of foes) {
+        const d = f.d, p = f.p;
+        if (d.gone) continue;
+        tendDummy(S.w, d, dt, true);
+        if (p.hp && d.hp >= d.maxHp - 0.01) d.hp = d.maxHp * p.hp;
+        if (p.away) d.facing = Math.atan2(d.y - hy, d.x - hx); else if (!p.hits && !p.busy) d.facing = Math.atan2(u.y - d.y, u.x - d.x);
+      }
+      if (standing && S.hits([u]) > 0) acted();                 // a blow or a shot that carries it just landed on him
+      if (dealing && S.hits2(foes.map((f) => f.d)) > 0) acted(); // his own blow just landed
+      for (const o of allies) if (!o.downed && !o.dead) { o.atkT = 999; const k = Math.hypot(o.kx, o.ky) > 20 ? 0 : Math.min(1, dt * 5); o.x += (o.home.x - o.x) * k; o.y += (o.home.y - o.y) * k; if (!did.up) o.facing = 0; }
     };
   };
 }
-// A mark: a few words that rise off a unit and fade (preview.js draws S.marks). Not the same words on one unit too often.
-export function markOn(S, u, text, every = 0.9, max = 1.3) {
-  if (!S.marks) S.marks = [];
-  const last = S.marks.find((m) => m.u === u && m.text === text);
-  if (last && last.t < every) return;
-  S.marks = S.marks.filter((m) => m.u !== u || m.t > 0.35);
-  S.marks.push({ u, text, t: 0, max });
-}
-function ageMarks(S, dt) { if (S.marks) { for (const m of S.marks) m.t += dt; S.marks = S.marks.filter((m) => m.t < m.max); } }
 
 // An enemy at a rank, with the same trinkets every loop: battleFoe picks an elite's or major's trinkets with the dice,
 // so the dice are set by the kind and rank for that one call (and put back after).
 const seedOf = (k, r) => { let h = 2166136261; for (const c of k + ':' + r) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return h >>> 0; };
-function seededFoe(w, k, x, y, r) { const keep = getSeed(); setSeed(seedOf(k, r)); try { return battleFoe(w, k, x, y, 1, r); } finally { setSeed(keep); } }
-// What an elite or major of a kind carries in the Book's preview (trinket ids), the same as its stage.
-export function foeTrinkets(k, rank) { if (!canRank(k) || !rank) return []; const u = seededFoe(makeWorld(400, 400), k, 200, 200, rank); return (u.trinkets || []).map((t) => (typeof t === 'string' ? t : t.id)).filter((t) => TRINKETS[t]); }
+// Round 14 ("Make sure you don't show trinkets on elites or majors"): what the dice handed it is taken off again, so the
+// stage shows the kind's own moves at that rank and nothing a trinket adds.
+function seededFoe(w, k, x, y, r) { const keep = getSeed(); setSeed(seedOf(k, r)); try { const u = battleFoe(w, k, x, y, 1, r); u.trinkets = []; u.trinketHooks = []; u.carried = null; return u; } finally { setSeed(keep); } }
 const dies0 = (k, move) => { const d = DEFS[k]; return !d.boss && !!(d.onDeath || d.splits || (eliteOf(k) && eliteOf(k).death)); };
 // An enemy at a rank against hero-coloured dummies. attack: its plain blows or shots only (no brain, no ability, no
 // elite move); kit: all it does at normal, with its first uses brought forward, and if it does something when it dies
@@ -565,8 +655,10 @@ function foeStage(S, spec) {
       // room (throws, charges, leaps) get it before it has walked up to the dummies; never longer than 3 s
       if (held() && !u.dead && !u.act) { u.x = hold.x; u.y = hold.y; u.vx = u.vy = 0; }
       // nothing yet by 2.4 s: the nearest dummy steps up close, for the moves that want a target at arm's length
-      if ((move === 'elite' || move === 'major') && !S.fired() && S.t > 2.4 && !lastA.stepped) { lastA.stepped = true; const d = dummies[0]; d.home = { x: u.x - Math.cos(u.facing) * 0 - (u.r + d.r + 26), y: u.y }; d._free = 0; }
-      if (lastA.stepped && !S.fired() && !u.dead) { const d = dummies[0]; d.home = { x: Math.max(40, u.x - (u.r + d.r + 26)), y: u.y }; } // and keeps at its side until the move comes
+      if ((move === 'elite' || move === 'major') && !S.fired() && S.t > 2.4 && !lastA.stepped) { lastA.stepped = true; dummies[0]._free = 0; }
+      // and keeps at its side until the move comes. (Round 14: held there firmly, however its blows shove it: a turret's
+      // shots kept knocking it back out of reach, so some loops never showed the move.)
+      if (lastA.stepped && !S.fired() && !u.dead) { const d = dummies[0]; d.home = { x: Math.max(40, u.x - (u.r + d.r + 26)), y: u.y }; d._free = 0; const k = Math.min(1, dt * 5); d.x += (d.home.x - d.x) * k; d.y += (d.home.y - d.y) * k; }
       if (move === 'kit' && d0.pass && Math.hypot(u.x - hold.x, u.y - hold.y) > 150) S.fire(); // a roller: rolling and bouncing is what it does
       // keep it on the stage and the stage going: hurt by its own moves or a reflected shot, it heals up
       if (!u.dead && u.hp < u.maxHp * 0.2) u.hp = u.maxHp * 0.6;
@@ -577,30 +669,51 @@ function foeStage(S, spec) {
 
 // A status on a fighter (a goblin, of the monsters' side) sparring with a blue dummy, a friend beside it: the status
 // builds up in pulses to its burst, or the state it comes from is built, or the state is put on directly.
+// Round 14 ("For something like frozen show the shatter as well as just leaving it alone"): where what follows a burst
+// depends on what is done to it, the stage shows both, turn about (S.way; spec.way holds it to one):
+//   alone     nothing touches it: a frozen fighter thaws, a sleeper sleeps it out
+//   trigger   the target beside it, holding a hammer, strikes: ice shatters, a sleeper is woken
+const WAYS = {
+  chill: { name: 'Shattered', weapon: 'hammer', when: (s) => s.frozenT > 0, wait: 0.9, blow: { heavy: true } },
+  sleepy: { name: 'Woken', weapon: 'sword', when: (s) => s.sleepT > 0, wait: 2.4, blow: {} },
+  sleep: { name: 'Woken', weapon: 'sword', when: (s) => s.sleepT > 0, wait: 1.1, blow: {} },
+};
+const wayOf = (id) => WAYS[FROM_BURST[id] || id] || null;
+export const statusWays = (id) => (wayOf(id) && statusHow(id) ? [{ id: 'alone', name: 'Left alone' }, { id: 'trigger', name: wayOf(id).name }] : null);
 const SUBJECT = ['goblin', 'orc', 'bandit'];
 function statusStage(S, spec) {
-  const id = spec.id, how = statusHow(id), src = FROM_BURST[id] || id;
+  const id = spec.id, how = statusHow(id), src = FROM_BURST[id] || id, W0 = wayOf(id);
   S.loop = 6; S.size = [360, 250]; // a small yard: the one fighter is what matters, so it is drawn bigger
   if (!how) { S.locked = true; S.why = 'No preview for this one yet'; }
-  let s, dummy, friend, done;
+  if (W0 && how) S.fit = { min: 4.5, tail: 2.6, max: 8.5 };
+  let s, dummy, friend, done, n = 0, struck;
   return () => {
     const [W, H] = S.size, w = S.w = room(W, H, S.w);
+    S.way = W0 && how ? spec.way || (n++ % 2 ? 'trigger' : 'alone') : null;
+    if (S.fit && S.way) S.fit.tail = S.way === 'trigger' ? 2.2 : 3.8; // left alone, it is watched until it wears off by itself
     const kind = SUBJECT.find((k) => DEFS[k]) || 'rat';
     s = spawn(w, kind, 205, 115, { mult: 1 }); s.aggro = true; s.facing = Math.PI;
     friend = spawn(w, kind, 262, 190, { mult: 1 }); friend.aggro = false; friend.facing = Math.PI; friend.home = { x: friend.x, y: friend.y };
-    dummy = dummyAt(w, 205 - s.r - 46, 115, 'hero');
-    s.target = dummy; done = false;
+    dummy = dummyAt(w, 205 - s.r - 46, 115, 'hero', S.way === 'trigger' ? W0.weapon : null);
+    s.target = dummy; done = false; struck = null;
     S.hero = s; S.dummies = [dummy];
     const need = STATUS[src] ? (typeof STATUS[src].need === 'function' ? STATUS[src].need(s) : STATUS[src].need) : 100;
     S.tick = (dt) => {
-      if (S.locked || done) return;
+      if (S.locked) return;
+      // the trigger: once the burst's state is on it, the target winds up and strikes
+      if (S.way === 'trigger' && done && struck !== true && W0.when(s)) {
+        if (struck == null) struck = S.t + W0.wait;
+        if (S.t >= struck - 0.18 && !dummy._wound) { dummy._wound = true; dummy.facing = Math.atan2(s.y - dummy.y, s.x - dummy.x); setAnim(dummy, 'swing', 0.3); }
+        if (S.t >= struck) { struck = true; hurt(w, s, 16, dummy, { knock: 0, noDodge: true, ...W0.blow }); }
+      }
+      if (done) return;
       const beat = Math.floor(S.t / 0.28) !== Math.floor((S.t - dt) / 0.28);
       if (how === 'put') { if (S.t > 0.6) { PUT_ON[id](w, s, { friend, dummy }); done = true; } return; }
       if (S.t > 0.4 && beat) addStatus(w, s, src, need / 7, dummy);
       if (s.bursts && s.bursts[src] != null) done = true;
     };
     S.after = (dt) => {
-      if ((s.bursts && s.bursts[src] != null) || (how === 'put' && done)) S.fire();
+      if (done && (S.way !== 'trigger' || struck === true)) S.fire();
       for (const o of [s, friend]) { if (!o.dead && o.hp < o.maxHp * 0.3) o.hp = o.maxHp; }
       if (!friend.dead) { friend.x = friend.home.x; friend.y = friend.home.y; friend.atkT = 999; }
       if (!s.dead) { s.x = Math.min(290, Math.max(150, s.x)); s.y = Math.min(200, Math.max(60, s.y)); }
@@ -629,6 +742,7 @@ function trinketStage(S, spec) {
     u = spawn(w, kind, 140, 175, { level: 9, trinkets: list.slice(), potions: potion && spec.id === 'heal' ? 1 : 0 });
     initKit(u, kind, { nodes: freeNodes(kind) }, 9);
     for (const k in u.kit.cd) u.kit.cd[k] = 999;
+    u.barAlways = true; // the wearer's health shows: a second life, a drain, a potion are seen on the bar
     if ((u.trinketHooks || []).some((h) => h.immune || h.knockImmune)) S.fire(); // always on
     u.trinketHooks = (u.trinketHooks || []).map((h) => watchHooks(h, w, S.mark, () => S.fire()));
     u.facing = u.mvA = 0;
@@ -640,7 +754,7 @@ function trinketStage(S, spec) {
     if (scene === 'drink') spots = [[430, 80], [430, 270]];
     dummies = spots.map(([x, y]) => { const d = dummyAt(w, x, y); d.aggro = true; return d; });
     ally = null;
-    if (scene === 'friendDown' || scene === 'hook') { ally = fullAlly(w, 'archer', 220, 285); if (scene === 'hook') { dummies[1].target = ally; } }
+    if (scene === 'friendDown' || scene === 'hook') { ally = fullAlly(w, 'archer', 220, 285); ally.barAlways = true; if (scene === 'hook') { dummies[1].target = ally; } }
     if (scene === 'fire') { w.hazards.push({ type: 'fire', x: 140, y: 175, r: 46, t: 99, max: 99 }); u.hp = u.maxHp * 0.6; }
     if (scene === 'hurt') u.hp = u.maxHp * 0.5;
     if (scene === 'drink') u.hp = u.maxHp * 0.3;

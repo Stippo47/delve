@@ -1,0 +1,97 @@
+{
+  "title": "0.20.0: one unit page, the Book",
+  "topic": "runs",
+  "order": 35,
+  "priority": 1,
+  "tags": ["first"],
+  "cards": [
+    {
+      "id": "unit",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "One unit page",
+      "text": "A hero in the camp and a card in the Book now open the same page, with pages side by side to swipe.",
+      "why": "Your layout, built: heroes get Main, Upgrades, Preview and Stats; enemies get Overview, Preview and Stats with Base, Elite and Major on top.",
+      "videos": ["../../../clips/r14/unit/clip-swipe-hero-pages.mp4", "../../../clips/r14/unit/clip-same-page-camp-and-book.mp4"],
+      "details": "The camp's old Gear / Skills / About panel is gone; everything it did (wear a trinket, pack a potion, learn a node, recruit) works from this page, whether you came from the camp, the Book or a battle setup row.\n\nFor 'very busy and packed together': each page holds one thing, in two text sizes, with no boxes round things that aren't buttons, and nothing is said twice on a page.\n\nThe screens I think are still the busiest: a hero's Stats once it has runs (long, and it ends in the old damage-by-source list), a dungeon's page (three rows of look-alike portraits), and the Monsters grid (147 tiles).\n\nNot done: a tile in the battle picker doesn't open the page (a tap there adds the unit; the row in your line-up does). The pause panel inside a run still has the old numbers row without icons.",
+      "parts": [
+        { "id": "main", "title": "Hero: Main", "text": "Equipment, potions, the trait, and where the hero is.", "images": ["../../../clips/r14/unit/10-hero-paladin-main.png", "../../../clips/r14/unit/50-main-trinket-sheet.png"] },
+        { "id": "upgrades", "title": "Hero: Upgrades", "text": "The skill web. One finger pans the web, so here a swipe turns the page only from the screen's edges or on the tabs.", "images": ["../../../clips/r14/unit/11-hero-paladin-upgrades.png", "../../../clips/r14/unit/53-upgrades-node.png"] },
+        { "id": "preview", "title": "Hero: Preview", "text": "The stage runs the full width, with the attack, abilities and trait as buttons under it and the tier below.", "images": ["../../../clips/r14/unit/12-hero-paladin-preview.png"] },
+        { "id": "stats", "title": "Hero: Stats", "text": "Every stat with an icon and a number: health, armour, speed, the weapon, each ability's cooldown, the trait's number, resistances, then all-run totals.", "images": ["../../../clips/r14/unit/13-hero-paladin-stats.png", "../../../clips/r14/unit/19b-hero-paladin-stats-runs.png"] },
+        { "id": "enemy", "title": "Enemy pages", "text": "Overview has times defeated, where it's found and how it fights. Base, Elite and Major switch on top. Stats are as in the game, with a stepper through every dungeon floor, opening on the first place you meet it.", "images": ["../../../clips/r14/unit/21a-monster-elite-overview.png", "../../../clips/r14/unit/21b-monster-elite-preview.png", "../../../clips/r14/unit/21c-monster-elite-stats.png", "../../../clips/r14/unit/24-boss-overview.png"] },
+        { "id": "icons", "title": "Stat icons: stand-ins", "text": "The 28 stat icons are a plain stand-in set. Your pick from the icons deck replaces them in one place." }
+      ]
+    },
+    {
+      "id": "book",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The Book as grids",
+      "text": "Five grids to swipe between: heroes, monsters, trinkets, statuses, dungeons. No bottom strip.",
+      "why": "You asked for grids instead of the bottom bar, and a page each for heroes, trinkets, statuses and dungeons. Back returns to the grid where you left it.",
+      "videos": ["../../../clips/r14/unit/clip-swipe-book-grids.mp4"],
+      "details": "Potions sit under the trinkets on the Trinkets grid; there is no sixth tab. A dungeon's page shows its floors, who lives there, the mini-bosses and boss, your deepest floor and boss kills. The save keeps no runs, deaths or fastest clear by dungeon, so those aren't shown; say if you want them counted from now on.",
+      "parts": [
+        { "id": "heroes", "title": "Heroes", "text": "Every hero in one grid.", "images": ["../../../clips/r14/unit/01-book-heroes.png"] },
+        { "id": "monsters", "title": "Monsters", "text": "By dungeon, with what you haven't met as shadows.", "images": ["../../../clips/r14/unit/02-book-monsters.png"] },
+        { "id": "trinkets", "title": "Trinkets and potions", "text": "One grid, potions under the trinkets.", "images": ["../../../clips/r14/unit/03-book-trinkets.png", "../../../clips/r14/unit/30-trinket.png", "../../../clips/r14/unit/31-potion.png"] },
+        { "id": "statuses", "title": "Statuses", "text": "Build-ups first, then what a burst leaves, then the good ones.", "images": ["../../../clips/r14/unit/04-book-statuses.png"] },
+        { "id": "dungeons", "title": "Dungeons", "text": "An overview of each dungeon.", "images": ["../../../clips/r14/unit/05-book-dungeons.png", "../../../clips/r14/unit/34-dungeon.png"] }
+      ]
+    },
+    {
+      "id": "previews",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Preview notes",
+      "text": "Locked abilities play, nothing is written on the stage, trait scenes show only what they need.",
+      "why": "Each part is one of your preview notes. Mark any that still doesn't show its effect.",
+      "videos": ["../../../clips/r14/unit/clip-locked-ability-still-plays.mp4", "../../../clips/r14/unit/clip-status-frozen-both-ways.mp4"],
+      "details": "51 tier steps change only a number (12% to 16%, 5 s to 7 s). On the stage they show only as longer or bigger; the words are in the caption under it.\n\nTraits that are a small percentage stay subtle: Rhythm, Well Fed, Keen Edge and Barkskin show mostly as the gold ring and a small difference between two health bars.",
+      "parts": [
+        { "id": "locked", "title": "Locked still previews", "text": "A locked ability plays as it is at tier I, with a lock on the stage's corner and on its button.", "videos": ["../../../clips/r14/unit/clip-locked-ability-still-plays.mp4"], "images": ["../../../clips/r14/unit/18-hero-archer-locked-preview.png"] },
+        { "id": "notext", "title": "No text on the stage", "text": "Nothing is written on any stage; tier words are in the caption under it. I took the hit numbers off too: the next card asks about that.", "images": ["../../../clips/r14/unit/before-after/hero-preview.png", "../../../clips/r14/unit/before-after/trait.png"] },
+        { "id": "traits", "title": "Trait scenes", "text": "All 53 traits have their own scene. Attackers are targets holding a sword, bow, spear or hammer, not an Archer standing by. A gold ring pulses when the trait acts. A number-only trait is shown as two things side by side.", "videos": ["../../../clips/r14/unit/clip-trait-paladin.mp4", "../../../clips/r14/unit/clip-trait-frost.mp4", "../../../clips/r14/unit/clip-trait-twinfang.mp4", "../../../clips/r14/unit/clip-trait-cleric.mp4", "../../../clips/r14/unit/clip-trait-tower.mp4", "../../../clips/r14/unit/clip-trait-ninja.mp4"] },
+        { "id": "notrinkets", "title": "Elites and majors", "text": "No trinkets on elites or majors: off the stage, out of the words, out of the stats.", "images": ["../../../clips/r14/unit/21b-monster-elite-preview.png", "../../../clips/r14/unit/22b-monster-major-preview.png"] },
+        { "id": "meter", "title": "The build-up meter", "text": "It freaked out because it showed the raw value, which empties the instant it fills. Now it fills, holds full through the burst, then falls, at a fixed size.", "videos": ["../../../clips/r14/unit/clip-status-burn-meter.mp4"], "images": ["../../../clips/r14/unit/before-after/status-burn.png"] },
+        { "id": "frozen", "title": "Frozen: both ways", "text": "The stage plays it left alone and shattered in turn, with a switch to hold one. Asleep and Sleepy get the same: left alone, or woken.", "videos": ["../../../clips/r14/unit/clip-status-frozen-both-ways.mp4"] }
+      ]
+    },
+    {
+      "id": "dev",
+      "kind": "report",
+      "rarity": "common",
+      "title": "Dev controls, one place",
+      "text": "Settings has one Dev section: unlimited gold and points, the whole skill web, every unit in battle mode.",
+      "why": "You asked for all dev controls in one place. The switch on the battle picker is gone.",
+      "images": ["../../../clips/r14/unit/40-settings-dev.png", "../../../clips/r14/unit/41-battle-picker-no-dev.png"]
+    },
+    {
+      "id": "hitnumbers",
+      "kind": "options",
+      "rarity": "uncommon",
+      "title": "Hit numbers in previews",
+      "text": "You said no text pop-ups in previews. Should the damage numbers go too?",
+      "why": "They're off for now, so a preview shows only the effect and the health bars. But they are how the game itself shows a harder hit, and tier steps that only raise a number are hard to see without them.",
+      "pick": "bars",
+      "options": [
+        { "id": "bars", "label": "Off: health bars only" },
+        { "id": "numbers", "label": "Damage numbers back, no words" }
+      ]
+    },
+    {
+      "id": "webswipe",
+      "kind": "options",
+      "rarity": "common",
+      "title": "Swiping over the skill web",
+      "text": "On Upgrades, one finger pans the web. How should you get to the next page from there?",
+      "why": "Dragging the web and swiping pages are the same gesture, so one of them has to give on this page.",
+      "pick": "edges",
+      "options": [
+        { "id": "edges", "label": "Swipe from the edges or tap a tab" },
+        { "id": "two", "label": "One finger swipes, two pan the web" }
+      ]
+    }
+  ]
+}

@@ -594,6 +594,145 @@ The designer's verdicts are the v12-bosses answers in `docs/riffle-log/2026-11-2
 - **Testing**: `?bossmove=<name>` makes a boss open with one move (each boss's brain lists its names);
   `lab.html?m=boss&boss=<id>&bossphase=N&bossmove=<name>`.
 
+## Round 14, lane S (2026-11-22): the statuses' second pass
+The designer's words: `docs/riffle-log/2026-11-22-round14.txt` (deck v16-statuses). Rules and every number:
+`docs/STATUSES.md`, "Round 14". Clips: `clips/r14/statuses/` (git-ignored). Only what each note asked was changed; the
+Enchantress's kit is as built except where the charm rules force it.
+- **Charm**: bosses, mini-bosses and boss parts take no charm. An enemy charmed over to the party no longer holds its
+  room open; when the room is won, every enemy still charmed there is a **follower** for the rest of the floor (it
+  walks through the door with the party and fights for them until it dies or the floor ends). My calls: the floor as
+  the limit (the lead's default: a floor is the run's own stretch, and with no end the Enchantress would build a
+  retinue across a dungeon); a mini-boss counts as a boss; a wave still to come keeps the room open (the charmed one
+  fights it for the time it has); what a charmed unit calls up or splits into is charmed the same way; a chain's body
+  turns with its head; a turret bolted to its room stays behind; cleanses and Heartbreak leave a follower alone; the
+  party's last hero standing, and a side's last unit in a battle, are still only Smitten (turned, nobody would be left
+  fighting for that side).
+- **Confused**: the random turn is a turn you can see and a few steps the wrong way; Addled lets off one ready ability at
+  random now and then instead of all at once; swirls pop up on the body while it builds, question marks when addled.
+- **Sleepy**: every wind-up and charge-up up to 40% longer (x fill), one multiplier (statuses.js `windMul`) read by the
+  sim's wind-ups, the shared tells in elites.js and boss-kit.js, the danger zones and a hero's queued shots. Not
+  stretched: the designed bosses' own move timers that don't go through those.
+- **Bleeding**: the round 13 look (wash, cuts, drops) is gone. Three looks to pick from, `?v_bleed=1..3`: Spurts (the
+  default), Trail, Drop. The game shows Spurts until the pick.
+- **Fear**: backs away from the first point (and keeps off further the more afraid), terrified turns its back and runs,
+  and the panic spreads to its own side within 120, halved at every hand so it dies out after two.
+- **Who uses them**: the ghost's touch builds Sleepy (30) instead of Cursed. The enemies' bite chomp (rats, bats,
+  hunter spiders) opens first and is turned 90 degrees; the Druid's wolf bite variants are untouched.
+- **The Succubus** answers a blow with a charming kiss on a 4 s cooldown (24), not 8 on every blow; the fights measure
+  about the same as before. **Healer hunters** hunt the healer only while in the mood (even odds every 3-5 s).
+  **Poison** drops to 20 when the sickness ends.
+- Checks: `tools/test/charm-rooms.mjs`, `tools/test/fear-spread.mjs`, `tools/test/hunters.mjs`,
+  `tools/test/sleepy-confused.mjs` (the last three also run on the round 13 code for the before numbers);
+  `tools/status-clip.mjs` records a dungeon run now (`--run`, `--setup`), takes `--q`, `--zoom` and `--speed`.
+
+## Round 14, lane W (2026-11-22): the wagon's third round
+The designer's notes on 0.15.0's wagon (deck v15-book-wagon, card wagon2: parts size, edge, downed), each done as
+written; the rules are in docs/CONVOY.md. Calls made on the way:
+- **"15% less wide"** is the open ground between the tree lines: 2100 -> 1785 (the world 2800 -> 2385). The camera
+  still shows 1500 across (it was marked good).
+- **"Everyone 50% slower"** is movement, on the road only: every unit's speed is halved (walking, and the lunges and
+  charges worked out from it), the wagon's too; attack rates, shots and the dungeons are as they were. At half speed
+  the old road made a trip of about 11 minutes, so **a stretch is 1,500 of road, not 2,300**: a trip is about 8 min
+  10 s in the batch (6 min 10 s before). Speeding anything back up was not an option.
+- **A trickle and bursts, from all sides**: points come in all the time; half go on single foes from a random side,
+  half are saved for a crowd every 38-50 s, sometimes from two sides at once. "All sides" is left, right, ahead and
+  behind; all four still walk out from under the trees (the ones for ahead and behind come out up or down the road
+  and then walk on to it), so nothing pops into view.
+- **Guarding sides** is the designer's scheme as written: four half-ground regions cut along the wagon's four edges
+  (front: above its tail; back: below the oxen's noses; left and right: this side of its far flank). "The cart" is
+  taken to be the whole of it, oxen included. Inside its region a hero is also held near the wagon (430 from its
+  outline to pick a fight, 640 at most), looks no further than 620, prefers foes on its own side and avoids those the
+  others are already on. Fewer than four: three = front and two flank guards who share the rear; two = left and right.
+  The sturdiest takes the front; a healer takes a flank and stands in close, in reach of every post.
+  **This replaces "they walk ahead of the oxen in a loose line" with "each stands at its post"** when nothing is
+  about (still no huddle). Non-gatherers now leave their side for gold only when it is close by (340); gatherers as
+  before. Reviving is as before.
+- **The wagon solid all round**: a row of body circles (and one at each corner of the bed) as units set in place; a
+  blow on any lands on the wagon. Two things followed. Three times as many foes can reach it at once, and a split
+  slime's brood broke it in the first stretch (the wagon broke in half the level 3 trips), so **a blow on a body circle
+  counts 0.6** of one on its middle. And everyone needed a way round it: a unit whose straight line runs through the
+  wagon walks to the nearest corner first (sim.js asks convoy.js). The wagon also became immune to charm, confusion,
+  sleepiness, fear and bleeding (it could be charmed before: nothing in the Wildwood does it, so it had not shown).
+- **Difficulty kept** (tools/convoys.mjs, 60 trips a level, the Wildwood, on main's 0.19.0 heroes, before -> after):
+  delivered 82% -> 80% at level 3, 90% -> 85% at level 4, 87% -> 93% at level 5 (60 trips is good to about 5 points
+  either way); foes out of the trees a trip 47 -> 34, 46 -> 33, 46 -> 34, and the ones made mid-fight (a slime's
+  brood, summons) 23 -> 31 at every level: about 69 bodies a trip before and 65 after (a foe on its own is rolled
+  without a cap on its cost, so the trickle brings more of the big ones); gold picked up 90/92/88% -> 85/88/89%. 0
+  stuck, 0 errors, nothing popping into view. FLOW: 0.27 points a second growing 0.003 a second, half kept for the
+  bursts (tuned twice: 0.31 matched the heroes this lane started from, 53/58/68% -> 52/67/70%, and came out about
+  5 points hard on 0.19.0's).
+- **Two things the batch found**, both fixed at the source: a melee hero could be given a foe pressed to the wagon's far
+  flank, just past its edge, with nowhere on its own side to strike it from (it stood at the corner for ever: such a
+  foe is no longer its to fight, and a hero past its edge is eased back square to the edge, not through the wagon);
+  and the Bandit Chief, hiding at the trees past his stockade, was out of every guard's reach (he is everyone's now,
+  wherever he stands). A stand-off's stragglers at a gate also wore down to nothing without ever falling (round 13's
+  rule took their health but never finished them): they fall now.
+- **The tree line** (sent back twice): three takes to pick from, `?edge=crowns | firs | bank`; **crowns is the
+  default** (my pick: the biggest, simplest shapes, closest to how the heroes are drawn; firs is the busiest of the
+  three, the bank reads least like trees). All three are two flat-shaded inked rows on layers that slide faster than
+  the ground (1.5x and 2x), cached as tiles and only translated. The new line is in every country (hills, dunes and
+  crags in the same big flat shapes): the other countries were marked good, but leaving round 13's small trees in
+  some of them would have kept the look that was sent back. Round 13's bushes and fallen trunks at the trees' foot
+  went with it.
+- **The ground**: the tufts and the puddles are gone, everywhere (the Sewers' outfall lost its extra puddles too).
+  The patches, the flowers and the road are as they were.
+- **Tools**: `tools/edge-shots.mjs` (stills of the tree line), `tools/clip.mjs` takes `--lean`, `--calm`, `--send`,
+  `--eval`. The recording tools left a headless Edge running after every run, not just failed ones (Edge starts
+  itself again under another process id, which `taskkill /T` on the first doesn't reach): clip.mjs, convoy-shots.mjs
+  and edge-shots.mjs now stop whatever still runs on their own profile folder, clip.mjs also when a run fails or
+  hangs (`--max` seconds). The other tools that start Edge the same way still leave one behind each run. The three
+  tools also wait on a timer (a headless page's frames stalled on a busy machine) and try a page load again when it
+  comes up incomplete (`python -m http.server` refuses some of a page's hundred requests when they come in a burst,
+  and one module missing leaves the game never starting: that was a three-minute wait and a failed run about one
+  time in three). `?sides` draws each hero's region for checking.
+
+## Round 14, lane U (2026-11-22): the unit page; the Book as grids
+From the Riffle answers (`docs/riffle-log/2026-11-22-round14.txt`, card "book", and v141-battle part "dev"). The
+structure is in `docs/UI-v4.md`; what was decided, and what was read into the designer's words:
+
+- **One unit page** (`js/unit.js`) for a hero or a monster, opened the same way from the camp (a tap on a hero), the
+  Book (a card) and the battle page (a row's picture). The camp's old hero panel (Gear / Skills / About) is gone: its
+  parts are the page's Main / Upgrades / Stats, and what it could do is passed to the page as `acts`, so the Book's
+  copy of a hero's page equips and upgrades too.
+- **Pages side by side, swiped** (`js/pager.js`): a hero has Main, Upgrades, Preview, Stats; a monster Overview,
+  Preview, Stats under a Base / Elite / Major switch that drives all three. The tabs are on top (the designer: "a top
+  bar"); the controls of a page (moves, the tier dial, the floor stepper) are at the bottom.
+- **The Book is five grids** (Heroes, Monsters, Trinkets, Statuses, Dungeons), swiped the same way. No strip of faces
+  under a unit: Back returns to the grid where it was left. **Potions sit under the trinkets** on the Trinkets grid
+  (the designer named four pages; a sixth tab for nine potions wasn't worth the width). **Open: their own page?**
+- **Dungeon overview**: floors, who lives on each, mini-bosses and the boss, deepest floor, boss kills. The save has no
+  runs, deaths or fastest clear by dungeon; the page says so rather than guess. **Open: record them?**
+- **Monster stats "as they are in game"**: for a chosen dungeon floor (a stepper; it opens on the first place the kind
+  is met), from `dungeon.js enemyMult` and `battleFoe`. An ordinary kind is taken at the middle room of the floor (the
+  floor's average, the designer's "or would just show average"); a boss or mini-boss in the floor's last room, for the
+  party's present size. Trinkets left off.
+- **Stat icons** all come from `icons.js statIcon(id)`; the set there is a stand-in until the style is picked
+  (`design/icons-r14`).
+- **Previews, no words** (`preview-sim.js STAGE_TEXT = false`): the round 13 marks are gone and so are the game's own
+  floating words and hit numbers on a stage (read as "No text pop up", all of it; one constant brings the game's
+  numbers back if that was too much). Units that matter carry a health bar there (`u.barAlways`). What a tier adds is in
+  the caption under the stage.
+- **A locked ability plays** as it is at tier I, marked locked.
+- **Trait scenes** (`TRAIT_SCENE`): one small yard each with only what the trait needs; attackers are targets holding a
+  sword, bow, spear or hammer (`art/lab/dummy-<weapon>.svg`), in front of the hero, facing it; a number-only trait is
+  shown as two things side by side that differ in the one way it cares about; a gold ring pulses once round whoever the
+  trait just acted for. With abilities on, the stage casts them itself in turn (the hero's own choosing wouldn't spend
+  one on a single target).
+- **No trinkets on elites and majors** on a stage (taken off after the dice hand them out, so the kind's own dice are
+  as before).
+- **The status meter** "freaked out when full" because it showed the raw value, which is emptied in the step it
+  fills, with "Burst!" swapped in and the bar's length changing with the words. Now: fixed size, fills, holds full for
+  the burst, the picture of the burst's state lit while it lasts, then falls to what is left.
+- **A burst that needs a trigger is shown both ways**, turn about (Frozen: left alone, shattered by a hammer; asleep:
+  left alone, woken by a blow), with a switch to hold one.
+- **Dev controls in one place**: Settings -> Dev (unlimited gold and points, the whole skill web, battle: field
+  everything). The battle picker's switch is gone.
+- **A stage fix that came with it**: the target that steps up to an elite or major whose move hasn't come is now held
+  there (a turret's shots kept knocking it out of reach), so those moves show in every loop again.
+- **Not done**: opening a unit from the battle *picker's* tiles (a tap there adds the unit; the stack's row opens the
+  page instead). Over the skill web one finger pans the web, so there a swipe turns the page only from the screen's left or right
+  edge (44 px), or on the tabs. **Open: two fingers for the web and one for the pages instead?**
+
 ## Round 14, lane L (2026-11-22): rooms that dragged on
 The designer on the wither card: "I said no. I said to fix the source not the symptom." Everything measured, each cause
 and its evidence: `docs/LONG-ROOMS.md`; the tools: `tools/long-rooms.mjs` and `runs.mjs --rooms` / `--watch`.

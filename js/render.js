@@ -10,7 +10,7 @@ import { drawBodyFx, drawBodyGround, drawIceWall } from './fxkit.js';
 import { drawHazardPuddle, flushPuddles, drawPuddle } from './puddles.js';
 import { drawEnemyHp, hpWash, setHpSides } from './hpstyle.js';
 import { icon } from './icons.js';
-import { heartPath, drawStatusMarks } from './fx-status.js'; // round 13 (lane S): the new statuses' marks
+import { heartPath, drawStatusMarks, bleedFlash, bleedLook } from './fx-status.js'; // round 13 (lane S): the new statuses' marks
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
 import { drawFoeGround, snowRoll, drawFoe } from './foe-draw.js'; // round 13 (lane E): the newer enemies' extra drawing
 
@@ -208,7 +208,7 @@ export function draw(ctx, w) {
   noteHits(w);
   for (const u of order) drawBodyGround(ctx, u, w); // chains, rays and rings that lie under the units (round 9)
   // a rat drawn by hand gets its springy tail; the rat king's art (art round 8) has its own tails knotted in it
-  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.def.art && !u.downed) drawTail(ctx, u, dt); if (!drawFoe(ctx, u, w, dt, RH)) drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawStatusMarks(ctx, u, w.time); drawBodyFx(ctx, u, w); }
+  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.def.art && !u.downed) drawTail(ctx, u, dt); if (!drawFoe(ctx, u, w, dt, RH)) drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawStatusMarks(ctx, u, w.time, w); drawBodyFx(ctx, u, w); }
   if (w.drawOver) w.drawOver(ctx, w, view); // lane W (convoy.js): the forest's canopy, over the units at the edge (a cached picture)
   for (const p of w.projectiles) projectile(ctx, p, w.time);
   for (const p of w.particles) drawParticle(ctx, p);
@@ -561,8 +561,10 @@ function washesOf(u, w) {
   if (charm > 0.03) out.push(['#FF6EB8', (0.12 + 0.3 * charm) * (u.flipKind === 'charm' ? 0.8 + 0.2 * Math.sin(w.time * 7) : 1)]);
   if (conf > 0.03) out.push(['#B48AE8', (0.1 + 0.25 * conf) * (u.addledT > 0 ? 0.75 + 0.25 * Math.sin(w.time * 13) : 1)]);
   if (sleepy > 0.03) out.push(['#6A5AA8', 0.1 + 0.25 * sleepy]);
-  if (bleed > 0.03) out.push(['#9A1E2A', 0.12 + 0.28 * bleed]);
-  if (u.bursts && u.bursts.bleed != null && w.time - u.bursts.bleed < 0.35) out.push(['#FF2A2A', 0.7 * (1 - (w.time - u.bursts.bleed) / 0.35)]); // haemorrhage: a red flash
+  // round 14 ("Don't like visual at all"): no dark red wash; the Spurts look flushes it red for a blink on each heartbeat
+  // and at its burst (fx-status.js bleedFlash); Trail and Drop leave the body alone
+  { const bf = bleedFlash(u); if (bf > 0) out.push(['#E0303A', bf]); }
+  if (u.bursts && u.bursts.bleed != null && w.time - u.bursts.bleed < 0.35 && bleedLook() === 1) out.push(['#FF2A2A', 0.7 * (1 - (w.time - u.bursts.bleed) / 0.35)]); // haemorrhage (Spurts): a red flash
   if (fear > 0.03) out.push(['#E8F0E0', (0.12 + 0.35 * fear) * (u.fearT > 0 ? 0.8 + 0.2 * Math.sin(w.time * 17) : 1)]);
   if (wet > 0.05) out.push(['#3F8FD8', 0.1 + 0.22 * wet]);
   if (shock > 0.05 && Math.sin(w.time * 31 + u.id * 3) > 0.55) out.push(['#FFF3A0', 0.35 + 0.4 * shock]);
@@ -786,7 +788,7 @@ const SHOW_BARS = false; // health and status bars live in the HUD now (designer
 function drawOverlay(ctx, u, dt = 0) {
   if (u.downed || (u.linkTo && u.def.segment)) return; // (round 13, lane E: a chain's links carry no bar: its health is its head's)
   upright(ctx, u.x, u.y, () => {
-    if (u.team === 'enemy' || w_battle) drawEnemyHp(ctx, u, dt); // hpstyle.js: only once it's hurt, in the player's chosen style
+    if (u.team === 'enemy' || w_battle || u.barAlways) drawEnemyHp(ctx, u, dt); // hpstyle.js: only once it's hurt, in the player's chosen style
     if (u.team !== 'hero' && u.act && (u.act.type === 'windup' || u.act.type === 'slam')) {
       const k = 1 - u.act.t / u.act.max;
       // a warning mark drawn as a shape (no text in the arena): a bar and a dot over the head. Only on the enemy's

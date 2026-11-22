@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- LAB (round 14, lane U): the straw dummy holding a sword, for the Book's trait and status previews ("give the targets bows and let
+     them use them. Can also use a sword, spear, or hammer"). The weapon is its own part (#arm-r, with a pivot at the end of the crossbar) so the
+     parts system swings it. Facing = DOWN (+y). -->
+<!-- LAB: a straw training dummy seen from above, for the showcase bench (lab.html?m=show). A burlap head with a painted
+     target, a wooden crossbar for arms with straw at the ends. One part (#body); the outline comes from the parts system. -->
+<defs>
+<radialGradient id="gSack" cx="0.36" cy="0.34" r="0.8"><stop offset="0" stop-color="#E8CC92"/><stop offset="1" stop-color="#B88E52"/></radialGradient>
+<linearGradient id="gBar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A7774A"/><stop offset="1" stop-color="#7A5230"/></linearGradient>
+</defs>
+<g id="sprite">
+<g id="body">
+<path d="M20 90 L34 84 L38 116 L22 112 Z" fill="#E6C979"/>
+<path d="M180 90 L166 84 L162 116 L178 112 Z" fill="#E6C979"/>
+<rect x="30" y="90" width="140" height="20" rx="6" fill="url(#gBar)"/>
+<circle cx="100" cy="100" r="50" fill="url(#gSack)"/>
+<circle cx="100" cy="100" r="34" fill="#F4EDE0"/>
+<circle cx="100" cy="100" r="25" fill="#D8483A"/>
+<circle cx="100" cy="100" r="15" fill="#F4EDE0"/>
+<circle cx="100" cy="100" r="7" fill="#D8483A"/>
+<path d="M74 70 Q86 62 100 61" fill="none" stroke="#FFF6E0" stroke-width="5" stroke-linecap="round" opacity="0.6"/>
+</g>
+<g id="arm-r" data-pivot="166 100">
+<rect x="161" y="98" width="10" height="24" rx="4" fill="#7A5230"/>
+<rect x="149" y="118" width="34" height="9" rx="4" fill="#D9A441"/>
+<path d="M158 127 H174 V176 L166 194 L158 176 Z" fill="#DDE4EE"/>
+<path d="M166 129 V182" fill="none" stroke="#AFB8C7" stroke-width="3" stroke-linecap="round"/>
+</g>
+</g>
+</svg>

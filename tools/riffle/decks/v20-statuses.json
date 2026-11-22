@@ -1,0 +1,42 @@
+{
+  "title": "0.20.0: your status notes",
+  "topic": "statuses",
+  "order": 33,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "notes",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Status notes, built",
+      "text": "Charm, Confused, Sleepy, Fear, the ghost, the bite, the Succubus, the hunters, poison. Live as 0.20.0.",
+      "why": "Each part is one of your notes with a clip of it. Mark any that still plays wrong. Bleeding's new look is the next card.",
+      "videos": ["../../../clips/r14/statuses/charm-follow.mp4", "../../../clips/r14/statuses/fear-spread.mp4"],
+      "details": "Calls I made that you didn't specify:\n\n- Mini-bosses count as bosses for charm: none of them can be charmed. An Enchantress party beats fewer Foundry mini-bosses because of it (9 in 12 runs, was 12). Say if you meant only the final bosses.\n- A follower stays until it dies or the floor ends, so nobody collects followers across a whole dungeon. In tests one turns up in about 1 Enchantress run in 6.\n- A battle side's last unit, and the party's last hero standing, are still only stunned by charm, not turned.\n- Poison drops to 20 when the sickness ends, and never rises to 20 if it was lower.\n\nWeak spots: Sleepy's longer wind-ups are hard to see in a clip (the numbers are in its part). Fear's spread has no drawn radius; you see it in the friends sweating, backing off and running.",
+      "parts": [
+        { "id": "charm", "title": "Charm: the last enemy", "text": "Bosses can't be charmed. A room's last enemy, charmed, wins the room and walks on with the party as a follower, fighting for them in the next rooms. Several charmed at once all follow; what a charmed summoner calls up is charmed too.", "videos": ["../../../clips/r14/statuses/charm-follow.mp4"] },
+        { "id": "confused", "title": "Confused", "text": "It swings round to random headings and walks that way. Swirls pop up on its body while it builds; question marks when it bursts. Burst: abilities go off one at a time at random moments, not all at once.", "videos": ["../../../clips/r14/statuses/confused.mp4", "../../../clips/r14/statuses/confused-before.mp4"] },
+        { "id": "sleepy", "title": "Sleepy: wind-ups", "text": "Every wind-up and charge takes up to 40% longer as it fills: a rattler's swing 0.42 s to 0.57, a banshee's wail 0.58 to 0.82, the Archer's Barrage 0.42 to 0.57. The designed bosses' own move timers are not stretched.", "videos": ["../../../clips/r14/statuses/sleepy-windup.mp4"] },
+        { "id": "fear", "title": "Fear", "text": "From the first point it backs away, facing what scared it. Burst: it turns and runs. A terrified unit frightens friends near it, weaker at each hand it passes through, so a pack panics for 6 or 7 seconds and then settles.", "videos": ["../../../clips/r14/statuses/fear-after.mp4", "../../../clips/r14/statuses/fear-spread.mp4", "../../../clips/r14/statuses/fear-before.mp4"] },
+        { "id": "ghost", "title": "Ghost: sleepy", "text": "The ghost's touch makes heroes sleepy instead of cursing them.", "videos": ["../../../clips/r14/statuses/ghost-sleepy.mp4"] },
+        { "id": "bite", "title": "The bite", "text": "The jaws show wide open first, then snap, turned 90 degrees. Rats, bats and hunter spiders use it. Wolves and hounds draw a thrust instead and are unchanged.", "videos": ["../../../clips/r14/statuses/bite-after.mp4", "../../../clips/r14/statuses/bite-before.mp4"] },
+        { "id": "succubus", "title": "Succubus: a cooldown", "text": "Struck, she answers with one kiss that charms the attacker, then can't again for 4 seconds, whoever hits her. She wins about as often as before.", "videos": ["../../../clips/r14/statuses/succubus-after.mp4", "../../../clips/r14/statuses/succubus-before.mp4"] },
+        { "id": "hunters", "title": "Healer hunters", "text": "Every few seconds a hunter rolls even odds on going for the healer. Hunter spiders spent 85% of their time on a Bard; now 60%. Hellhounds were already near chance: their pack picks the target." }
+      ]
+    },
+    {
+      "id": "bleed",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Bleeding: pick a look",
+      "text": "You didn't like the look at all. The red wash, cuts and drops are gone; here are three different ones.",
+      "why": "Tick the one to keep, or none and say what's off. The first is in the game until you pick.",
+      "pick": ["bleed-1"],
+      "items": [
+        { "id": "bleed-1", "label": "1 Spurts", "video": "../../../clips/r14/statuses/bleed-1.mp4", "text": "Drops squirt from a wound in time with a heartbeat and splash on the floor." },
+        { "id": "bleed-2", "label": "2 Trail", "video": "../../../clips/r14/statuses/bleed-2.mp4", "text": "A pool grows under the unit and it leaves a trail where it walks." },
+        { "id": "bleed-3", "label": "3 Drop", "video": "../../../clips/r14/statuses/bleed-3.mp4", "text": "Nothing on the floor: a drop beside the health bar fills like a gauge." }
+      ]
+    }
+  ]
+}
