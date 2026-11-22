@@ -3,7 +3,7 @@
 // to be in the clip). Also writes a few still frames (--stills 1.2,3.5) beside the mp4 for checking by eye.
 //   node tools/status-clip.mjs out.mp4 --battle "red|blue" [--arena crypt] [--tier 3] [--secs 8] [--port 8885]
 //        [--inject "js using w, t (seconds), U(kind, team)"] [--stills 1,2,3] [--w 520 --h 640] [--zoom 1]
-//        [--q 'v_bleed=2'] (extra address parameters: look variants, test switches)
+//        [--q 'v_bleed=2'] (extra address parameters: look variants, test switches) [--follow kind] (the camera on it)
 //   round 14: --run paladin,archer,enchantress [--level 30] [--setup "js once, with w, S, run"] records a dungeon run
 //        instead of a battle (--q 'theme=crypt' for the dungeon); --inject runs each frame there too (w is the room)
 import { chromium } from 'playwright-core';
@@ -26,7 +26,10 @@ let browser;
 for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
 // (round 14: Edge hands itself over to another process at start, so a taskkill of the one we spawned finds nothing and
 // every run, and every failed one, left a headless Edge behind: ask it to quit over CDP, whatever happens)
-async function quit() { try { const cs = await browser.newBrowserCDPSession(); await cs.send('Browser.close'); } catch {} try { await browser.close(); } catch {} try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); } try { fs.rmSync(prof, { recursive: true, force: true }); } catch {} }
+async function quit() { try { const cs = await browser.newBrowserCDPSession(); await cs.send('Browser.close'); } catch {} try { await browser.close(); } catch {} try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { edge.kill(); }
+  // (and the browser itself, which outlives the launcher we spawned: every msedge.exe on this run's own profile folder)
+  try { execFileSync('powershell', ['-NoProfile', '-Command', `Get-CimInstance Win32_Process -Filter "Name='msedge.exe'" | Where-Object { $_.CommandLine -like '*${path.basename(prof)}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`], { stdio: 'ignore' }); } catch {}
+  try { fs.rmSync(prof, { recursive: true, force: true }); } catch {} }
 const errors = [];
 try {
 const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2 });
@@ -53,6 +56,7 @@ if (opt('zoom')) await page.evaluate(async (z) => { (await import('./js/render.j
 const inject = opt('inject', '');
 const n = Math.round(secs * fps);
 for (let i = 0; i < n; i++) {
+  if (opt('follow')) await page.evaluate((k) => { const w = GAME.run && GAME.run.world; if (!w) return; const u = w.units.find((o) => o.kind === k && !o.dead); if (!u) return; const c = w._cam || (w._cam = { x: u.x, y: u.y }); c.x += (u.x - c.x) * 0.15; c.y += (u.y - c.y) * 0.15; w.camAt = c; }, opt('follow')); // (--follow archer: the camera stays on it, as clip.mjs)
   await page.evaluate(async ([dt, code, t]) => {
     if (code) { const S = await import('./js/sim.js'); const w = GAME.run.world; const U = (k, team) => w.units.find((u) => u.kind === k && !u.dead && (!team || (u.trueTeam || u.team) === team));
       const f = new Function('w', 't', 'U', 'S', 'dt', code); f(w, t, U, S, dt); }
