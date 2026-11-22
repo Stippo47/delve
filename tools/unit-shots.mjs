@@ -230,7 +230,7 @@ try {
     if (want('clip-same')) {
       // the same hero's page from the camp (a tap on the hero) and from the Book (a tap on its card)
       await page.evaluate(() => { BOOK.close(); CAMP.setMode('ground'); }); await wait(1500);
-      const where = await page.evaluate(() => CAMP.scene.screenOf({ type: 'hero', id: 'paladin' }));
+      const where = await page.evaluate(() => CAMP.scene.screenOf({ hero: 'paladin' }));
       const card = async () => page.evaluate(() => { const r = document.querySelector('#book [data-bk="hero:paladin"]').getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + 30 }; });
       let c = null;
       await film('clip-same-page-camp-and-book', 10.5, async (t, dt, i) => {

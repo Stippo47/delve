@@ -32,13 +32,15 @@
 .pg-tab.on { color: var(--text); }
 .pg-ind { position: absolute; left: 0; bottom: -1px; display: block; width: calc(100% / var(--n)); height: 3px; pointer-events: none; }
 .pg-ind::after { content: ''; position: absolute; left: 18%; right: 18%; top: 0; height: 3px; border-radius: 3px; background: var(--gold); }
-.pg-view { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; touch-action: pan-y; }
+/* (no percentage heights down this chain: each box gets its height by stretching in a flex row, which iPhone Safari
+   always resolves; a height: 100% inside a flex item is where it has gone wrong before) */
+.pg-view { position: relative; flex: 1 1 auto; min-height: 0; display: flex; overflow: hidden; touch-action: pan-y; }
 /* a sideways drag is the pager's everywhere on a page (a page's own scroller would otherwise hand it to the browser,
    which takes it for a swipe back through history) */
 .pg-page, .pg-page .un-scroll, .pg-page .pv-cap, .pg-page .pv { touch-action: pan-y; }
 .pg-page .un-scroll, .pg-page .pv-cap { overscroll-behavior: contain; }
-.pg-track { display: flex; height: 100%; will-change: transform; }
-.pg-page { position: relative; flex: none; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+.pg-track { flex: none; display: flex; min-height: 0; will-change: transform; }
+.pg-page { position: relative; flex: none; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
 .un-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 22px calc(20px + var(--sr)) calc(28px + var(--sb)) calc(20px + var(--sl)); }
 .un-foot { flex: none; padding: 10px calc(20px + var(--sr)) calc(14px + var(--sb)) calc(20px + var(--sl)); }
 .un-h { display: flex; align-items: baseline; justify-content: space-between; margin: 30px 0 12px; }

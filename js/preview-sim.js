@@ -690,6 +690,7 @@ function statusStage(S, spec) {
   return () => {
     const [W, H] = S.size, w = S.w = room(W, H, S.w);
     S.way = W0 && how ? spec.way || (n++ % 2 ? 'trigger' : 'alone') : null;
+    if (S.fit && S.way) S.fit.tail = S.way === 'trigger' ? 2.2 : 3.8; // left alone, it is watched until it wears off by itself
     const kind = SUBJECT.find((k) => DEFS[k]) || 'rat';
     s = spawn(w, kind, 205, 115, { mult: 1 }); s.aggro = true; s.facing = Math.PI;
     friend = spawn(w, kind, 262, 190, { mult: 1 }); friend.aggro = false; friend.facing = Math.PI; friend.home = { x: friend.x, y: friend.y };
