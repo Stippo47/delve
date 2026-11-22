@@ -21,7 +21,7 @@ import { hooksOf } from './kits.js';
 import { freshStatuses } from './statuses.js';
 import { CARRY_MAX } from './potions.js';
 import { rand, rrange, rint, pick, chance, dist, clamp, angleTo, TAU, INK } from './util.js';
-import { paintRoadGround, drawCanopy, edgeLayout, lookOf, paintWagon } from './convoy-art.js';
+import { paintRoadGround, drawCanopy, edgeLayout, lookOf, paintWagon, paintRock } from './convoy-art.js';
 export { paintWagon }; // (camp-scene.js parks one at the camp's edge)
 
 // ---------------------------------------------------------------- the numbers
@@ -29,16 +29,16 @@ export const THEME = 'wildwood';
 export const WAGON_SPEED = 21;   // px/s (a hero walks ~62: the party is ~3x faster)
 export const WAGON_HP = 900;
 export const STRETCH_LEN = 2300; // road from the start to the gate, a stretch
-export const ROAD_W = 1700;      // the world across: nearly three times the try's 600 (designer: "Bigger arena by like 4x in width"; both tree lines stay in view)
-export const EDGE = 250;         // the canopy's line, in from each side: the open ground between is 1200 across (the try's: ~530)
+export const ROAD_W = 2800;      // the world across (designer: "Bigger arena by like 4x in width")
+export const EDGE = 350;         // the canopy's line, in from each side (the wood is 350 deep): the open ground between is 2100 across, ~4x the try's ~530
 export const ROAD_HALF = 105;    // the track itself
 export const ACROSS = 1500;      // world units across a portrait phone at the default zoom (render.js reads w.across)
 const AHEAD = 600;               // the camera rides this far ahead of the wagon
 export const BEHIND = 640;       // the bottom of the screen at the default zoom: gold and the downed are left behind past it
-export const LEASH = 640;        // a hero further than this from the wagon walks back (unless fighting something near it)
-const SAFE = 640;                // nothing this near the wagon (or the hero): free to go for gold further off
-const REACH = 900;               // how far from the wagon heroes go for loose gold when it's safe
-const GATHER_REACH = 1050;       // gatherers (the hero's data: gatherer: true) go further, and go even mid-fight
+export const LEASH = 820;        // a hero further than this from the wagon walks back (unless fighting something near it)
+const SAFE = 700;                // nothing this near the wagon (or the hero): free to go for gold further off
+const REACH = 1000;              // how far from the wagon heroes go for loose gold when it's safe
+const GATHER_REACH = 1200;      // gatherers (the hero's data: gatherer: true) go further, and go even mid-fight
 export const FLING = 2;          // coins burst this much further from a fallen foe than in a dungeon
 export const PAY = 200;          // delivery pay for a wagon in one piece (x its health left)
 export const LOSE_CUT = 0.2;     // turned back, or the wagon broken: this share of the trip's gold is lost (the dungeon's 20%)
@@ -155,13 +155,13 @@ function buildStretch(run) {
     const side = chance(0.5) ? -1 : 1, r = rrange(34, 58), // (30+: env.js draws anything smaller as a brazier)
       y = side < 0 ? rrange(EDGE + 110, mid - ROAD_HALF - 90) : rrange(mid + ROAD_HALF + 90, H - EDGE - 110);
     if (w.pillars.some((p) => dist(p.x, p.y, x, y) < p.r + r + 120)) continue;
-    w.pillars.push({ x, y, r });
-    if (chance(0.4)) { const a = rand() * TAU, r2 = r * rrange(0.55, 0.75); w.pillars.push({ x: x + Math.cos(a) * (r + r2 + 4), y: y + Math.sin(a) * (r + r2 + 4), r: Math.max(31, r2) }); } // a smaller one leaning on it
+    w.pillars.push({ x, y, r, painted: true }); // (painted into the ground by convoy-art.js paintRock, not drawn as a prop)
+    if (chance(0.4)) { const a = rand() * TAU, r2 = r * rrange(0.55, 0.75); w.pillars.push({ x: x + Math.cos(a) * (r + r2 + 4), y: y + Math.sin(a) * (r + r2 + 4), r: Math.max(31, r2), painted: true }); } // a smaller one leaning on it
   }
   const trees = edgeLayout(W, H, EDGE, look);
   w.convoy = { gate: gateOf(), last: last(run), name: S.name, camp: !last(run), look, trees, key: S.theme + run.stretch };
   w.paintGround = paintRoad; // render.js paints it into the floor's cached picture
-  w.drawOver = (ctx, ww, view) => { drawCanopy(ctx, ww, view, { EDGE, look, trees, key: ww.convoy.key }); drawDowned(ctx, run, view); }; // render.js: over the units
+  w.drawOver = (ctx, ww, view) => { drawCanopy(ctx, ww, view, { EDGE, look, trees, key: ww.convoy.key }); drawDowned(ctx, run, view); drawArrows(ctx, run, view); }; // render.js: over the units
   // the end of the road: a barricade across the whole open ground (a gap only on the road), held by a floor's
   // mini-boss and his men in front of it
   if (S.end) {
@@ -229,11 +229,15 @@ export function updateConvoy(run, dt) {
   if (!party.length && !w.units.some((u) => u.charmed && alive(u))) return over(run, 'party');
   const foes = foesOf(run);
   treeLine(run, dt, foes);
+  oxTeam(run);
   const seen = foes.filter((e) => !e.ethereal);
   wagonTick(run, dt, seen);
   // the camera rides ahead of the wagon, and leans across towards where the party is
   const py = party.reduce((a, h) => a + h.y, 0) / party.length;
-  w.camAt.x = wg.x + AHEAD; w.camAt.y = MID + clamp(0.35 * (wg.y - MID) + 0.65 * (py - MID), -(ROAD_W / 2 - EDGE), ROAD_W / 2 - EDGE);
+  // ... and towards the fighting, so a tree line comes into view when the fight is there (the ground is wider than the screen)
+  const fight = seen.filter((e) => e.aggro && (dist(e.x, e.y, wg.x, wg.y) < 1000 || party.some((h) => dist(e.x, e.y, h.x, h.y) < 600)));
+  const fy = fight.length ? 0.3 * py + 0.7 * fight.reduce((a, e) => a + e.y, 0) / fight.length : py;
+  w.camAt.x = wg.x + AHEAD; w.camAt.y = MID + clamp(1.0 * (fy - MID), -(ROAD_W / 2 - EDGE), ROAD_W / 2 - EDGE);
   w.wp = { x: Math.min(w.W - 80, wg.x + 400), y: wg.y }; // (ahead of the oxen: sim.js spreads the party round it)
   leash(run, party);
   coinsTick(run, party, seen);
@@ -275,6 +279,20 @@ function treeLine(run, dt, foes) {
   for (const u of w.units) {
     if (u.dead || u.hiddenIn || u.def.cargo) continue;
     if (u.y < lo) u.y += (lo - u.y) * k; else if (u.y > hi) u.y += (hi - u.y) * k;
+  }
+}
+
+// The ox team has a body: nobody stands on the oxen (the wagon's own circle covers the bed). A box from the yoke to
+// the oxen's noses; whoever overlaps it is pushed out the shortest way.
+const OX = { x0: 70, x1: 240, half: 50 };
+function oxTeam(run) {
+  const wg = run.wagon, w = run.world, x0 = wg.x + OX.x0, x1 = wg.x + OX.x1, y0 = wg.y - OX.half, y1 = wg.y + OX.half;
+  for (const u of w.units) {
+    if (u === wg || u.dead || u.ethereal || u.hiddenIn) continue;
+    const cx = clamp(u.x, x0, x1), cy = clamp(u.y, y0, y1), dx = u.x - cx, dy = u.y - cy, d = Math.hypot(dx, dy);
+    if (d >= u.r) continue;
+    if (d > 0.01) { u.x = cx + dx / d * u.r; u.y = cy + dy / d * u.r; }
+    else { const up = u.y - y0, dn = y1 - u.y, fw = x1 - u.x; if (fw < Math.min(up, dn)) u.x = x1 + u.r; else if (up < dn) u.y = y0 - u.r; else u.y = y1 + u.r; }
   }
 }
 
@@ -585,6 +603,7 @@ export function applyConvoy(save, run, now = Date.now()) {
 function paintRoad(g, w) {
   const H = w.H, mid = H / 2, C = w.convoy;
   paintRoadGround(g, w, { EDGE, ROAD_HALF, look: C.look, trees: C.trees });
+  w.pillars.forEach((p, i) => { if (p.painted) paintRock(g, p.x, p.y, p.r * 1.05, C.look, i * 13 + 5); });
   const gx = C.gate + 300; // (past the oxen when the wagon stops at the gate)
   const ink = (fn, fill) => { g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = 4.8; g.lineJoin = 'round'; fn(); g.fill(); g.stroke(); g.fillStyle = fill; fn(); g.fill(); };
   ink(() => { g.beginPath(); g.rect(gx - 11, mid - ROAD_HALF - 60, 22, ROAD_HALF * 2 + 120); }, C.last ? '#8A6A4A' : '#7A5A3C');
@@ -622,6 +641,33 @@ function drawDowned(ctx, run, view) {
     if (u.reviveT > 0) { ctx.strokeStyle = '#FFF6D8'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(u.x, u.y, R - 7, 0, TAU * Math.min(1, u.reviveT / REVIVE_T)); ctx.stroke(); }
     ctx.restore();
   }
+}
+// A wave coming from off screen: an arrow at the screen's edge pointing at it (one for each bunch), pulsing, in the
+// warning red. Drawn in screen space; render.js keeps the HUD's padding in view.padT / padB.
+function drawArrows(ctx, run, view) {
+  const wg = run.wagon, w = run.world; if (!wg || !view || !view.m) return;
+  const m = view.m, cw = view.cw, ch = view.ch, top = (view.padT || 100) + 18, bot = ch - (view.padB || 140) - 18, lft = 18, rgt = cw - 18;
+  const marks = [];
+  for (const e of w.units) {
+    if (e.team === wg.team || e.team === 'neutral' || e.dead || e.downed || !e.aggro) continue;
+    const sx = m[0] * e.x + m[2] * e.y + m[4], sy = m[1] * e.x + m[3] * e.y + m[5];
+    if (sx > lft - 6 && sx < rgt + 6 && sy > top - 6 && sy < bot + 6) continue; // on screen (hidden under the trees or not)
+    const cx = cw / 2, cy = (top + bot) / 2, dx = sx - cx, dy = sy - cy;
+    const k = Math.min((rgt - cx) / Math.max(1e-3, Math.abs(dx)), (bot - cy) / Math.max(1e-3, Math.abs(dy)));
+    const px = cx + dx * k, py = cy + dy * k;
+    if (marks.some((q) => Math.hypot(q.x - px, q.y - py) < 46)) continue;
+    marks.push({ x: px, y: py, a: Math.atan2(dy, dx) });
+  }
+  if (!marks.length) return;
+  const d = view.dpr, pulse = 0.75 + 0.25 * Math.sin(w.time * 7);
+  ctx.save(); ctx.setTransform(d, 0, 0, d, 0, 0); ctx.lineJoin = 'round';
+  for (const q of marks) {
+    ctx.save(); ctx.translate(q.x, q.y); ctx.rotate(q.a); ctx.scale(pulse, pulse);
+    ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(-8, -12); ctx.lineTo(-3, 0); ctx.lineTo(-8, 12); ctx.closePath();
+    ctx.lineWidth = 5; ctx.strokeStyle = INK; ctx.stroke(); ctx.fillStyle = '#FF6B5A'; ctx.fill();
+    ctx.restore();
+  }
+  ctx.restore();
 }
 function drawWagon(ctx, u) {
   ctx.save(); ctx.translate(u.x, u.y);

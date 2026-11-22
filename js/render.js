@@ -26,7 +26,7 @@ export function layout(canvas, w, topPad, bottomPad = 10, sidePad = 10) {
   const dpr = Math.min(window.devicePixelRatio || 1, 3);
   const cw = canvas.clientWidth, ch = canvas.clientHeight;
   if (canvas.width !== Math.round(cw * dpr) || canvas.height !== Math.round(ch * dpr)) { canvas.width = Math.round(cw * dpr); canvas.height = Math.round(ch * dpr); }
-  view.dpr = dpr; view.cw = cw; view.ch = ch;
+  view.dpr = dpr; view.cw = cw; view.ch = ch; view.padT = topPad; view.padB = bottomPad; // (lane W: convoy.js's off-screen arrows keep clear of the HUD)
   view.rot = ch > cw;
   const pad = 26; // the wall frame around the floor
   const edge = 7; // how much of the side walls stays on screen
@@ -186,8 +186,8 @@ export function draw(ctx, w) {
   flushPuddles(ctx, tf); // puddles.js: every ground body queued above; bodies of a kind merge into one (round 9)
   for (const p of w.pickups) drawPickup(ctx, p, w.time);
   // shadows straight down under each obstacle (top-down: never cast to one side)
-  for (const p of w.pillars) { const R = p.r * 1.45; ctx.drawImage(softShadow(), p.x - R, p.y - R, R * 2, R * 2); }
-  for (const p of w.pillars) drawPillar(ctx, p, w);
+  for (const p of w.pillars) { if (p.painted) continue; const R = p.r * 1.45; ctx.drawImage(softShadow(), p.x - R, p.y - R, R * 2, R * 2); } // (lane W: p.painted = already in the ground's picture, convoy.js)
+  for (const p of w.pillars) if (!p.painted) drawPillar(ctx, p, w);
   // crates on the grid (layout.js): square obstacles, colliding as the wall rectangle they are (48 across at sc 1)
   for (const r of w.walls) if (r.prop) { const R = r.w * 0.8, x = r.x + r.w / 2, y = r.y + r.h / 2; ctx.drawImage(softShadow(), x - R, y - R, R * 2, R * 2); prop(ctx, r.prop, x, y, PROP_BOX, { sc: r.w / 48 }); }
   // a round shadow straight under every unit (top-down: no side cast), all of them merged; a leaping unit's shrinks
