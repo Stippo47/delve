@@ -137,9 +137,15 @@ export const HERO_ORDER = ['knight', 'archer', 'rogue'];
 // levelHp / levelDmg stay for summons and anything else that asks.
 export const levelHp = (base, lvl) => Math.round(base * (1 + 0.14 * (lvl - 1)));
 export const levelDmg = (base, lvl) => base * (1 + 0.11 * (lvl - 1));
-// XP to go from lvl to lvl + 1 (progress.js addXp). Tuned with tools/runs.mjs --campaign.
-export const xpToNext = (lvl) => Math.round(XP_BASE * Math.pow(lvl, XP_POW));
-export const XP_BASE = 60, XP_POW = 1.3;
+// XP to go from lvl to lvl + 1 (progress.js addXp). Round 14 ("low heroes earn XP much faster"): each level asks 10%
+// more than the last, so the whole climb to a level costs about ten levels' worth there, and a kill's XP follows the
+// same curve by the dungeon's own level (dungeon.js xpScale). A level 1 hero carried through a late dungeon gains
+// levels by the handful; a level 40 party in the Wildwood barely moves. Everyone gets the same XP for a kill.
+export const XP_BASE = 100, XP_GROW = 1.1;
+export const xpToNext = (lvl) => Math.round(XP_BASE * Math.pow(XP_GROW, lvl - 1));
+// The curve up to round 13. Kept for two things: a kill's XP is scaled by new / old at the dungeon's level, so a party
+// at the level a dungeon expects levels at the pace the round 12 campaign measured; and old saves' XP is rescaled once.
+export const xpToNextR12 = (lvl) => 60 * Math.pow(lvl, 1.3);
 
 // Trinkets live in trinkets.js (each is a set of hooks); re-exported here so older imports keep working.
 export { TRINKETS, TRINKET_IDS } from './trinkets.js';

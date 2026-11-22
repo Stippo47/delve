@@ -55,6 +55,10 @@ export function touch(w, u, dmg, o = {}, cd = 0.7) {
 // (def.chain.seg, each a unit with its own hit circle). A blow on a segment lands on the head (sim.js hurt, u.linkTo;
 // x segTaken), so the chain has one health bar; the body follows the head's path exactly; touching it hurts. When the
 // head dies the body goes with it. An elite or major head brings a body its own size.
+// Round 13 (lane E; the designer on the sand serpent: "Wth is that snake enemy"): each link lies along the path where
+// it is (its facing is the chord across its own length, so the body bends smoothly, not link by link), and the path
+// remembers where its head went under the sand: a link that reaches that stretch goes under too (hidden, untouchable)
+// and comes up again where the head came up. foe-draw.js draws the chain as one body.
 export function chainHead(w, u, dt) {
   if (!u.segs) layChain(w, u);
   return false;
@@ -62,31 +66,34 @@ export function chainHead(w, u, dt) {
 function layChain(w, u) {
   const c = u.def.chain, k = u.r / u.def.r, gap = c.gap * k, a = u.facing + Math.PI;
   u.segs = []; u.trail = [{ x: u.x, y: u.y }];
-  for (let d = 4; d <= (c.n + 1) * gap; d += 4) u.trail.push({ x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d });
+  for (let d = 4; d <= (c.n + 2) * gap; d += 4) u.trail.push({ x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d });
   for (let i = 0; i < c.n; i++) {
     const s = spawn(w, c.seg, u.x + Math.cos(a) * gap * (i + 1), u.y + Math.sin(a) * gap * (i + 1), { team: u.team, mult: w.mult, scale: k * (1 - 0.35 * (i / Math.max(1, c.n - 1)) * (c.taper || 0)) });
     s.linkTo = u; s.idx = i; s.fixed = true; s.aggro = true; s.minion = true; s.facing = u.facing; s.dmgMul = u.dmgMul; s.look = u.look; s.gap = gap;
     u.segs.push(s);
   }
 }
-function trailPoint(tr, d) { // the point d along the head's trail
+function trailPoint(tr, d) { // the point d along the head's trail (and whether that stretch is under the sand)
   for (let i = 1; i < tr.length; i++) {
     const a = tr[i - 1], b = tr[i], L = dist(a.x, a.y, b.x, b.y);
-    if (d <= L) { const k = L > 0 ? d / L : 0; return { x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, a: angleTo(b.x, b.y, a.x, a.y) }; }
+    if (d <= L) { const k = L > 0 ? d / L : 0; return { x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, a: angleTo(b.x, b.y, a.x, a.y), under: !!(a.under && b.under) }; }
     d -= L;
   }
-  const z = tr[tr.length - 1], y = tr[tr.length - 2] || z; return { x: z.x, y: z.y, a: angleTo(z.x, z.y, y.x, y.y) };
+  const z = tr[tr.length - 1], y = tr[tr.length - 2] || z; return { x: z.x, y: z.y, a: angleTo(z.x, z.y, y.x, y.y), under: !!z.under };
 }
 export function segBrain(w, s, dt) {
   const h = s.linkTo;
   if (!h || !alive(h)) { kill(w, s, null); return true; }
   if (s.idx === 0) { // the first segment keeps the head's trail (it runs even while the head stands through a move)
     const tr = h.trail, f = tr[0];
-    if (dist(f.x, f.y, h.x, h.y) > 3) { tr.unshift({ x: h.x, y: h.y }); let L = 0; for (let i = 1; i < tr.length; i++) { L += dist(tr[i - 1].x, tr[i - 1].y, tr[i].x, tr[i].y); if (L > (h.segs.length + 2) * s.gap) { tr.length = i + 1; break; } } }
+    if (dist(f.x, f.y, h.x, h.y) > 3) { tr.unshift({ x: h.x, y: h.y, under: !!h.hidden }); let L = 0; for (let i = 1; i < tr.length; i++) { L += dist(tr[i - 1].x, tr[i - 1].y, tr[i].x, tr[i].y); if (L > (h.segs.length + 3) * s.gap) { tr.length = i + 1; break; } } }
+    else tr[0].under = !!h.hidden;
   }
-  const p = trailPoint(h.trail, (s.idx + 1) * s.gap);
-  s.x = p.x; s.y = p.y; s.facing = p.a; s.mvA = p.a; s.dvx = s.dvy = 0; s.spd = dist(0, 0, h.vx, h.vy);
-  touch(w, s, s.def.touchDmg || 4, { knock: 140 });
+  const d = (s.idx + 1) * s.gap, p = trailPoint(h.trail, d), p0 = trailPoint(h.trail, Math.max(0, d - s.gap * 0.6)), p1 = trailPoint(h.trail, d + s.gap * 0.6);
+  const a = dist(p0.x, p0.y, p1.x, p1.y) > 2 ? angleTo(p1.x, p1.y, p0.x, p0.y) : p.a; // (the chord across its length: a smooth bend)
+  s.x = p.x; s.y = p.y; s.facing = a; s.mvA = a; s.dvx = s.dvy = 0; s.spd = dist(0, 0, h.vx, h.vy);
+  if (p.under !== !!s.hidden) { s.hidden = p.under; s.ethereal = p.under; if (h.def.chain.dirt) puff(w, s.x, s.y, h.def.chain.dirt, 5, 70, 5, 0.4); } // going under, coming up
+  if (!s.hidden) touch(w, s, s.def.touchDmg || 4, { knock: 140 });
   return true;
 }
 export const killChain = (w, u) => { for (const s of u.segs || []) if (alive(s)) kill(w, s, null); };
@@ -105,7 +112,7 @@ export function turretBrain(w, u, dt) {
   if (due(u, 'look', dt, 0.3)) {
     again(u, 'look', 0.35);
     let best = null, bd = Infinity;
-    for (const h of opponents(w, u)) { const d = dist(u.x, u.y, h.x, h.y); if (d < bd && d < (T.range || 520) && lineClear(w, u.x, u.y, h.x, h.y, 4) && (!T.wall || angleDiff(angleTo(u.x, u.y, h.x, h.y), u.baseA) < (T.arc || 1.3) + 0.2)) { bd = d; best = h; } }
+    for (const h of opponents(w, u)) { const d = dist(u.x, u.y, h.x, h.y); if (d < bd && d < (T.range || 520) && lineClear(w, eyeX(u), eyeY(u), h.x, h.y, 4) && (!T.wall || angleDiff(angleTo(u.x, u.y, h.x, h.y), u.baseA) < (T.arc || 1.3) + 0.2)) { bd = d; best = h; } }
     u.target = best; if (best) u.aggro = true;
   }
   const t = targetOf(w, u);
@@ -114,28 +121,35 @@ export function turretBrain(w, u, dt) {
   if (T.wall) want = u.baseA + clamp(wrapAngle(want - u.baseA), -(T.arc || 1.3), T.arc || 1.3);
   turnTo(u, want, (T.turn || 1) * (u.elite ? 1.3 : 1), dt);
   const off = angleDiff(u.facing, angleTo(u.x, u.y, t.x, t.y));
-  if (off < (T.aim || 0.2) && due(u, 'fire', dt, T.cd * 0.5) && lineClear(w, u.x, u.y, t.x, t.y, 4)) { again(u, 'fire', T.cd * 0.85, T.cd * 1.15); T.fire(w, u, t); }
+  if (off < (T.aim || 0.2) && due(u, 'fire', dt, T.cd * 0.5) && lineClear(w, eyeX(u), eyeY(u), t.x, t.y, 4)) { again(u, 'fire', T.cd * 0.85, T.cd * 1.15); T.fire(w, u, t); }
   return true;
 }
+// where a turret looks from: a wall one, a little out from the wall it's set in
+const eyeX = (u) => u.x + (u.mounted ? Math.cos(u.baseA) * 8 : 0), eyeY = (u) => u.y + (u.mounted ? Math.sin(u.baseA) * 8 : 0);
 // A stand-off that has gone on too long (w.stale): whatever can't walk in to end it burns itself out instead.
 export function overheat(w, u, dt) {
   if (!w.stale || !u.aggro) return;
   hurt(w, u, u.maxHp * 0.04 * dt, null, { dot: true, color: '#FFB347' });
   if (rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.5, y: u.y + rrange(-u.r, u.r) * 0.5, vx: 0, vy: 0, rise: 40, up: 0, life: 0.7, max: 0.7, size: 7, color: 'rgba(200,200,205,0.6)' });
 }
-// The nearest wall face (the room's edges, the walls inside it), within reach of where it was put: its back against it
-// (not sunk in, so whatever it drops can be picked up), facing out into the room.
+// The nearest wall face (the room's edges, the walls inside it), within reach of where it was put, facing out into
+// the room. Round 13 (lane E; the designer on the gun turret: "Turret part should be in the wall more. Circle half way
+// in"): set into the wall: its middle just off the wall's face (MOUNT_OUT: far enough that sight lines from it and to
+// it still clear the wall), and the part inside the wall isn't drawn (u.inWall, foe-draw.js), so the socket is in the
+// wall and the barrel pokes out.
+const MOUNT_OUT = 6;
 function mountOnWall(w, u) {
-  const cand = [];
-  const face = (x, y, nx, ny) => { const px = x + nx * (u.r + 2), py = y + ny * (u.r + 2); if (!solidAt(w, px + nx * (u.r * 0.5 + 6), py + ny * (u.r * 0.5 + 6), u.r * 0.5) && (!w.cells || w.cells.some((c) => px > c.x && px < c.x + c.w && py > c.y && py < c.y + c.h))) cand.push({ x: px, y: py, a: Math.atan2(ny, nx), d: dist(u.x, u.y, px, py) }); };
-  face(0, u.y, 1, 0); face(w.W, u.y, -1, 0); face(u.x, 0, 0, 1); face(u.x, w.H, 0, -1);
+  const cand = [], BIG = 4000;
+  const face = (x, y, nx, ny, rect) => { const px = x + nx * MOUNT_OUT, py = y + ny * MOUNT_OUT; if (!solidAt(w, px + nx * (u.r + 6), py + ny * (u.r + 6), u.r * 0.5) && (!w.cells || w.cells.some((c) => px > c.x && px < c.x + c.w && py > c.y && py < c.y + c.h))) cand.push({ x: px, y: py, a: Math.atan2(ny, nx), d: dist(u.x, u.y, px, py), rect }); };
+  face(0, u.y, 1, 0, { x: -BIG, y: -BIG, w: BIG, h: w.H + BIG * 2 }); face(w.W, u.y, -1, 0, { x: w.W, y: -BIG, w: BIG, h: w.H + BIG * 2 });
+  face(u.x, 0, 0, 1, { x: -BIG, y: -BIG, w: w.W + BIG * 2, h: BIG }); face(u.x, w.H, 0, -1, { x: -BIG, y: w.H, w: w.W + BIG * 2, h: BIG });
   for (const r of w.walls) {
     const cx = clamp(u.x, r.x + 30, r.x + r.w - 30), cy = clamp(u.y, r.y + 30, r.y + r.h - 30);
-    face(r.x, cy, -1, 0); face(r.x + r.w, cy, 1, 0); face(cx, r.y, 0, -1); face(cx, r.y + r.h, 0, 1);
+    face(r.x, cy, -1, 0, r); face(r.x + r.w, cy, 1, 0, r); face(cx, r.y, 0, -1, r); face(cx, r.y + r.h, 0, 1, r);
   }
   const ok = cand.filter((c) => c.d < 420 && c.x > 200).sort((a, b) => a.d - b.d)[0]; // (not right by the way in)
   if (!ok) return;
-  u.x = ok.x; u.y = ok.y; u.facing = ok.a; u.mounted = true;
+  u.x = ok.x; u.y = ok.y; u.facing = ok.a; u.mounted = true; u.inWall = ok.rect;
 }
 
 // ---------------------------------------------------------------- burrowers
@@ -143,9 +157,10 @@ function mountOnWall(w, u) {
 // ground shakes where it will come up (a circle fills), then it bursts out there, hitting what's close. It stays up a
 // while to fight, then digs in again. A stand-off that has gone on too long (w.stale) keeps it up.
 // o = { up: [min, max] seconds above, under: [min, max], near: how far from the target it comes up, hit: { dmg... },
-//       r: the burst's size, dirt: colour, speed: x walk under, then(w, u) after coming up }
+//       r: the burst's size, dirt: colour, speed: x walk under, then(w, u) after coming up, kind: the danger zone's kind ('bone') }
 export function burrowTick(w, u, dt, o) {
   const b = u.bur || (u.bur = { state: 'up', t: rrange(0.5, 1.5) });
+  b.dirt = o.dirt || '#B59A6A'; // (round 13, lane E: the mound it raises is drawn in it: foe-draw.js)
   if (b.state === 'under') {
     const t = targetOf(w, u) || opponents(w, u).sort((a, c) => dist(u.x, u.y, a.x, a.y) - dist(u.x, u.y, c.x, c.y))[0];
     if (t && !b.at) { // pick where to come up: near the target (round 9 scarab: "Near hero"), on open floor
@@ -161,7 +176,7 @@ export function burrowTick(w, u, dt, o) {
       if ((b.dirtT = (b.dirtT || 0) - dt) <= 0) { b.dirtT = 0.07; w.particles.push({ x: u.x + rrange(-6, 6), y: u.y + rrange(-6, 6), vx: rrange(-10, 10), vy: rrange(-10, 10), life: rrange(1.8, 2.6), max: 2.6, size: rrange(5, 8), color: o.dirt || '#B59A6A', drag: 0.8 }); }
       if ((d <= 14 || b.t < -4) && !b.tell) { // under the spot (or it can't get there: a wall in the way): the ground shakes, then it comes up
         b.tell = true; const tl = o.tell || 0.55;
-        addDanger(w, { shape: 'circle', x: u.x, y: u.y, r: o.r || 58, t: tl, team: u.team, src: u, kind: 'bone', spawns: true, hit: o.hit ? { ...o.hit, dmg: (o.hit.dmg || 6) * u.dmgMul } : undefined,
+        addDanger(w, { shape: 'circle', x: u.x, y: u.y, r: o.r || 58, t: tl, team: u.team, src: u, kind: o.kind || 'bone', spawns: true, hit: o.hit ? { ...o.hit, dmg: (o.hit.dmg || 6) * u.dmgMul } : undefined,
           onFire: () => { surface(w, u, o); } });
       }
     }
@@ -256,7 +271,7 @@ Object.assign(ELITES, {
 // explode when burned"). o = { r, dmg, fuse, burn }.
 export function blast(w, u, o) {
   if (u.blown) return; u.blown = true;
-  explode(w, u.x, u.y, o.r, o.dmg * u.dmgMul, { burn: o.burn || 18 }, null, '#FF8A3D'); // (src null: it hurts its own side too: knock one away in time and it blows up theirs)
+  explode(w, u.x, u.y, o.r, o.dmg * u.dmgMul, { burn: o.burn || 18, by: u }, null, '#FF8A3D'); // (src null: it hurts its own side too: knock one away in time and it blows up theirs; by: the stats still count it as its)
   w.shake = Math.max(w.shake, 7);
   kill(w, u, null);
 }

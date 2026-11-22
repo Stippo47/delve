@@ -12,6 +12,7 @@ import { drawEnemyHp, hpWash, setHpSides } from './hpstyle.js';
 import { icon } from './icons.js';
 import { heartPath, drawStatusMarks } from './fx-status.js'; // round 13 (lane S): the new statuses' marks
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
+import { drawFoeGround, snowRoll, drawFoe } from './foe-draw.js'; // round 13 (lane E): the newer enemies' extra drawing
 
 // One outline thickness for everything drawn here, in room units. Matches what the SVG heroes show.
 export const OUTLINE = 2.4;
@@ -149,7 +150,7 @@ function drawShadows(ctx, w, tf) {
     const sx = a * x + c * y + e, sy = b * x + d * y + f, sr = r * k + 2;
     if (sx - sr < x0) x0 = sx - sr; if (sy - sr < y0) y0 = sy - sr; if (sx + sr > x1) x1 = sx + sr; if (sy + sr > y1) y1 = sy + sr;
   };
-  for (const u of w.units) if (!u.ethereal || u.hiddenIn) disc(u.x, u.y, shadowSize(u), 1);
+  for (const u of w.units) if (!u.ethereal || u.hiddenIn) { if (u.def.shadows) { for (const [x, y, r] of u.def.shadows(u)) disc(x, y, r * 1.75, 1); } else disc(u.x, u.y, shadowSize(u), 1); } // (round 13, lane E: def.shadows, a body that isn't round)
   // a body in the air leaves its shadow on the floor
   for (const cp of w.corpses) if (cp.z > 2) disc(cp.x, cp.y, cp.vr * 1.3, clamp(cp.t / 4, 0, 1) * 0.8);
   g.globalAlpha = 1;
@@ -184,6 +185,7 @@ export function draw(ctx, w) {
   drawArena(ctx, w);
   drawDanger(ctx, w);
   drawGroundFx(ctx, w);
+  drawFoeGround(ctx, w); // round 13 (lane E): snow tracks, burrow mounds
   flushPuddles(ctx, tf); // puddles.js: every ground body queued above; bodies of a kind merge into one (round 9)
   for (const p of w.pickups) drawPickup(ctx, p, w.time);
   // shadows straight down under each obstacle (top-down: never cast to one side)
@@ -196,7 +198,7 @@ export function draw(ctx, w) {
   drawShadows(ctx, w, tf);
   if (w.battle) { // whose side: a thin ring on the floor round each unit's feet (an outline round the body is kept for protection)
     ctx.lineWidth = 2.4;
-    for (const u of w.units) { const c = SIDE_RING[w.battle.side[u.team]]; if (!c || u.dead || u.ethereal) continue; ctx.strokeStyle = c; ctx.beginPath(); ctx.arc(u.x, u.y, u.vr * 1.12 + 3, 0, TAU); ctx.stroke(); }
+    for (const u of w.units) { const c = SIDE_RING[w.battle.side[u.team]]; if (!c || u.dead || u.ethereal || (u.linkTo && u.def.segment)) continue; ctx.strokeStyle = c; ctx.beginPath(); ctx.arc(u.x, u.y, u.vr * 1.12 + 3, 0, TAU); ctx.stroke(); } // (round 13, lane E: one ring for a chain, its head's)
   }
   for (const t of w.telegraphs) if (t.type === 'ring') drawRing(ctx, t);
   for (const c of w.corpses) drawCorpse(ctx, c);
@@ -205,7 +207,7 @@ export function draw(ctx, w) {
   noteHits(w);
   for (const u of order) drawBodyGround(ctx, u, w); // chains, rays and rings that lie under the units (round 9)
   // a rat drawn by hand gets its springy tail; the rat king's art (art round 8) has its own tails knotted in it
-  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.def.art && !u.downed) drawTail(ctx, u, dt); if (u.def.tail && !u.downed) drawSpiritTail(ctx, u, dt, w.time); drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawStatusMarks(ctx, u, w.time); drawBodyFx(ctx, u, w); }
+  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.def.art && !u.downed) drawTail(ctx, u, dt); if (!drawFoe(ctx, u, w, dt, RH)) drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawStatusMarks(ctx, u, w.time); drawBodyFx(ctx, u, w); }
   if (w.drawOver) w.drawOver(ctx, w, view); // lane W (convoy.js): the forest's canopy, over the units at the edge (a cached picture)
   for (const p of w.projectiles) projectile(ctx, p, w.time);
   for (const p of w.particles) drawParticle(ctx, p);
@@ -362,7 +364,7 @@ function drawHazard(ctx, h, t) {
 
 function drawPillar(ctx, p, w) {
   if (p.snowball) { // round 10: a yeti's snowball (foes10.js): packed snow, a blue shade and a few clumps
-    if (prop(ctx, 'yeti-snowball', p.x, p.y, PROP_BOX, { sc: p.r / 30 })) return; // art round 9: its own prop, like the troll's boulder
+    if (prop(ctx, 'yeti-snowball', p.x, p.y, PROP_BOX, { sc: p.r / 30 })) { snowRoll(ctx, p); return; } // art round 9: its own prop, like the troll's boulder; round 13 (lane E): it turns as it rolls
     inked(ctx, () => { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); }, '#F4FAFF');
     ctx.fillStyle = 'rgba(150,190,225,0.45)'; ctx.beginPath(); ctx.arc(p.x + p.r * 0.18, p.y + p.r * 0.2, p.r * 0.78, 0, TAU); ctx.fill();
     ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(p.x - p.r * 0.25, p.y - p.r * 0.28, p.r * 0.42, 0, TAU); ctx.fill();
@@ -517,6 +519,7 @@ function unitFrame(ctx, u, w) {
   }
   if (u.lungeT > 0) { const k = ease(1 - u.lungeT / 0.18); fy += u.vr * 0.5 * k; sc *= 1 + 0.08 * k; }
   if (u.recoilT > 0) { fy -= u.vr * 0.22 * (u.recoilT / 0.14); }
+  if (u.lean) fy += u.vr * u.lean; // round 13 (lane E): leaning into something (a yeti pushing its snowball)
   if (u.act && (u.act.type === 'windup' || u.act.type === 'slam' || u.act.type === 'chargeTell')) {
     const k = 1 - u.act.t / u.act.max; fy -= u.vr * 0.3 * k; sc *= 1 + 0.1 * k; tilt += Math.sin(w.time * 40) * 0.03 * k;
   }
@@ -535,6 +538,7 @@ function unitFrame(ctx, u, w) {
   if (u.hop > 0) sc *= 1 + u.hop / 110; // a leap: off the ground, so drawn bigger (its shadow shrinks below)
   if (u.exiting) { const k = clamp(u.exiting.t / u.exiting.dur, 0, 1); sc *= 1 + 0.12 * Math.sin(Math.min(1, k * 3) * Math.PI) - 0.85 * k * k; } // through the door: a lift, then shrinking into the light
   ctx.translate(fx, fy); ctx.rotate(tilt); ctx.scale(sc, sc);
+  if (u.squash) ctx.scale(1, u.squash); // round 13 (lane E): foreshortened along its facing (the sun blade's point down in the floor)
 }
 
 // Status washes over the sprite: [colour, strength] pairs.
@@ -584,6 +588,7 @@ function borderOf(u, w) {
   if (u.downed) return null;
   if (u.buffs && u.buffs.some((b) => b.id === 'unstoppable')) return { color: '#FFF4B8', a: 0.85 + 0.15 * Math.sin(w.time * 9) };
   if (u.guardBy && u.guardT > 0 && !u.guardBy.dead && !u.guardBy.downed) return { color: '#F2C14E', a: 0.8 + 0.2 * Math.sin(w.time * 5) };
+  { const b = u.buffs && u.buffs.find((x) => x.border); if (b) return { color: b.border, a: 0.85 + 0.15 * Math.sin(w.time * 9) }; } // lane H1 (round 13) hook: any buff can say it protects, with its border's colour (Old Bones)
   return null;
 }
 function drawUnit(ctx, u, w) {
@@ -615,6 +620,8 @@ function drawUnit(ctx, u, w) {
   if (u.frozenT > 0) drawIce(ctx, u, w);
 }
 
+// Round 13 (lane E): what foe-draw.js drawFoe needs from here (a spirit's tail, a chain drawn as one body, a blade stuck in a wall).
+const RH = { drawUnit, unitFrame: (ctx, u, w) => unitFrame(ctx, u, w), washesOf: (u, w) => washesOf(u, w) };
 // Ask for every unit's art at its current size, so it's ready by the time the room fades in.
 export function warmArt(w) {
   for (const u of w.units) if (u.def.art) getRig(u.def.art, u.vr * 220 / (u.def.headR || headR(u.kind)) * view.scale * view.dpr * 1.04);
@@ -684,47 +691,6 @@ function castGlow(ctx, gl, t) {
   ctx.fillStyle = g; ctx.beginPath(); ctx.arc(100, 182, r, 0, TAU); ctx.fill();
   ctx.fillStyle = hexA('#FFFFFF', 0.8 * a);
   for (let i = 0; i < 3; i++) { const b = t * 5 + i * 2.1; ctx.beginPath(); ctx.arc(100 + Math.cos(b) * r * 0.55, 182 + Math.sin(b) * r * 0.45, 2.6 * a + 0.5, 0, TAU); ctx.fill(); }
-  ctx.restore();
-}
-
-// A spirit's tail (art round 11; the designer on the frost spirit: "That tail should be like that rat tail where it's
-// wiggly/ follows behind"): the rat's chain on softer springs, each point also swayed sideways, drawn as a ribbon that
-// tapers to a point, inked like the art and filled from def.tail[0] at the root to def.tail[1] at the tip. Its root is
-// hidden under the spirit's core (the art: art/enemies/spirit-core-*.svg), which is drawn after it.
-function drawSpiritTail(ctx, u, dt, time) {
-  const back = u.facing + Math.PI, seg = u.vr * 0.65, n = 5;
-  const ax = u.x + Math.cos(u.facing) * u.vr * 0.13, ay = u.y + Math.sin(u.facing) * u.vr * 0.13;
-  if (!u.tail) { u.tail = []; for (let i = 1; i <= n; i++) u.tail.push({ x: ax + Math.cos(back) * seg * i, y: ay + Math.sin(back) * seg * i, vx: 0, vy: 0 }); }
-  let px = ax, py = ay, pa = back;
-  for (let i = 0; i < n; i++) {
-    const p = u.tail[i], wig = Math.sin(time * 7 - i * 1.1 + u.id) * seg * 0.16;
-    const rx = px + Math.cos(pa) * seg - Math.sin(pa) * wig, ry = py + Math.sin(pa) * seg + Math.cos(pa) * wig;
-    p.vx += (rx - p.x) * 40 * dt; p.vy += (ry - p.y) * 40 * dt;
-    const damp = Math.exp(-dt * 6); p.vx *= damp; p.vy *= damp;
-    p.x += p.vx * dt; p.y += p.vy * dt;
-    const dx = p.x - px, dy = p.y - py, L = Math.hypot(dx, dy) || 1;
-    p.x = px + dx / L * seg; p.y = py + dy / L * seg;
-    pa = Math.atan2(p.y - py, p.x - px); px = p.x; py = p.y;
-  }
-  const pts = [{ x: ax, y: ay }, ...u.tail], L = [], R = [];
-  for (let i = 0; i <= n; i++) {
-    const a = pts[Math.max(i - 1, 0)], b = pts[Math.min(i + 1, n)], d = Math.hypot(b.x - a.x, b.y - a.y) || 1;
-    const nx = -(b.y - a.y) / d, ny = (b.x - a.x) / d, hw = u.vr * 0.83 * Math.pow(1 - i / n, 0.8);
-    L.push([pts[i].x + nx * hw, pts[i].y + ny * hw]); R.push([pts[i].x - nx * hw, pts[i].y - ny * hw]);
-  }
-  const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-  const path = () => { // both edges as smooth curves through the chain's points, meeting at the tip
-    ctx.beginPath(); ctx.moveTo(...L[0]);
-    for (let i = 1; i < n; i++) ctx.quadraticCurveTo(...L[i], ...mid(L[i], L[i + 1]));
-    ctx.lineTo(...L[n]);
-    for (let i = n - 1; i > 0; i--) ctx.quadraticCurveTo(...R[i], ...mid(R[i], R[i - 1]));
-    ctx.lineTo(...R[0]); ctx.closePath();
-  };
-  const tip = u.tail[n - 1], g = ctx.createLinearGradient(ax, ay, tip.x, tip.y);
-  g.addColorStop(0, u.def.tail[0]); g.addColorStop(1, u.def.tail[1]);
-  ctx.save(); ctx.lineJoin = 'round'; if (u.ethereal) ctx.globalAlpha = 0.5;
-  ctx.strokeStyle = INK; ctx.lineWidth = u.vr * 0.4; path(); ctx.stroke(); ctx.fillStyle = INK; ctx.fill(); // the art's outline: 6 units at vr / headR
-  ctx.fillStyle = g; path(); ctx.fill();
   ctx.restore();
 }
 
@@ -815,7 +781,7 @@ function drawCorpse(ctx, c) {
 const STATUS = [['burn', '#FF7A2F'], ['chill', '#7FD6F5'], ['poison', '#9BCB3C']];
 const SHOW_BARS = false; // health and status bars live in the HUD now (designer, round 2)
 function drawOverlay(ctx, u, dt = 0) {
-  if (u.downed) return;
+  if (u.downed || (u.linkTo && u.def.segment)) return; // (round 13, lane E: a chain's links carry no bar: its health is its head's)
   upright(ctx, u.x, u.y, () => {
     if (u.team === 'enemy' || w_battle) drawEnemyHp(ctx, u, dt); // hpstyle.js: only once it's hurt, in the player's chosen style
     if (u.team !== 'hero' && u.act && (u.act.type === 'windup' || u.act.type === 'slam')) {

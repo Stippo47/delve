@@ -132,9 +132,14 @@ function totemBrain(w, u, dt) {
 // Art round 8: the troll holds its boulder in both fists, so a held boulder sits HOLD of the troll's radius inside the
 // troll's collider, against the fists (the troll and its own held or rolling boulder don't push each other: sim.js).
 export const HOLD = -0.46;
+// Round 13 (lane E; the designer, art round 8: "Try different heads. Make them slightly smaller keep boulder same size"):
+// the boulder's size is its own, not the troll's: today's boulder (0.62 of the round-8 troll's collider, r 60 x the
+// colliders' 1.1 = 66: 41 room units), grown only as an elite or major troll is (u.r over its kind's r), so a smaller
+// troll still pushes the same boulder. def.boulderR overrides.
+export const BOULDER_R = 41;
 function boulderOf(w, u) {
   if (u.bould === undefined) {
-    const big = u.elite && u.def.rock ? 1.25 : 1, r = Math.round(u.r * (u.def.boulder || 0.62) * big);
+    const big = u.elite && u.def.rock ? 1.25 : 1, r = Math.round((u.def.boulderR || BOULDER_R) * (u.r / (u.def.r || u.r)) * big);
     const d = u.r * (1 + HOLD) + r + 8;
     const b = { x: u.x + Math.cos(u.facing) * d, y: u.y + Math.sin(u.facing) * d, r, prop: 'troll-boulder', boulder: true, owner: u, team: u.team, vx: 0, vy: 0, held: true, hits: new Set() };
     if (!u.def.rock) { b.hp = b.maxHp = Math.round(55 * (w.mult || 1)); }

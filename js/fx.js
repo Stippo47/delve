@@ -83,7 +83,7 @@ export function drawGroundFx(ctx, w) {
     if (f.type === 'zone') { if (!(f.ab || f.smoke || f.kind === 'smoke') || !abilityZone(ctx, f, w.time)) zone(ctx, f, w.time); }
     else if (f.type === 'rift') rift(ctx, f, w.time);
     else if (f.type === 'sig') drawSigGround(ctx, f, w);
-    else if (f.type === 'wave' && f.ab === 'shockwave') eruption(ctx, f, 'ground');
+    else if (f.type === 'wave' && f.ab === 'shockwave') shockwave(ctx, f, 'ground');
     // round 9: these lie under the units
     else if (f.type === 'ring' && f.ab) abilityRingGround(ctx, f);
     else if (f.type === 'beam' && f.ab === 'hook') hookGround(ctx, f, w.time);
@@ -188,18 +188,7 @@ function zone(ctx, f, T) {
       // round 9 redo (the flat spiral of lines was disliked): churned earth, then thick thorned tendrils whipping up out of
       // it all over the patch, each curling over at the top; at the end they wither back down, never just vanish
       if (f.ab === 'roll') break;
-      if (f.ab === 'entangle') { // round 10 (Entangle: "Effect looks good. Ability doesn't. Previous was better"): the round 8
-        // cast is back: a dark green patch and thorned vines bursting out of its middle and coiling outward, leaves on them
-        ctx.fillStyle = 'rgba(52,70,34,0.3)'; blob(ctx, x, y, r, 8, seed, 0.92); ctx.fill();
-        const n = 8, g = easeOut(clamp(f.t / 0.3, 0, 1));
-        for (let i = 0; i < n; i++) {
-          const a0 = i / n * TAU + seed, sw = (hash(i, seed) > 0.5 ? 1 : -1);
-          const path = () => { ctx.beginPath(); for (let s = 0; s <= 12 * g; s++) { const k = s / 12, rr = r * (0.12 + 0.85 * k), an = a0 + sw * k * 2.2 + Math.sin(T * 1.5 + i) * 0.05; s ? ctx.lineTo(x + Math.cos(an) * rr, y + Math.sin(an) * rr) : ctx.moveTo(x + Math.cos(an) * rr, y + Math.sin(an) * rr); } };
-          inkLine(ctx, path, i % 2 ? '#5E9E3E' : '#4A8433', 5.2);
-          if (g > 0.5) for (const k of [0.45, 0.8]) { const rr = r * (0.12 + 0.85 * k), an = a0 + sw * k * 2.2; leaf(ctx, x + Math.cos(an) * rr, y + Math.sin(an) * rr, an + sw * 1.2, 8); }
-        }
-        break;
-      }
+      if (f.ab === 'entangle') { bramble(ctx, f, x, y, r, T, seed); break; }
       ctx.globalAlpha = 1; drawPuddle(ctx, 'earth', x, y, r * 0.8, T, a, seed); // the tendrils: zoneAir
       break;
     }
@@ -212,21 +201,61 @@ function zone(ctx, f, T) {
       break;
     }
     case 'sanctuary': { // a fence of light posts round the place she blessed (gold stakes with light rising), a soft wash inside
-      ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x, y, r, EL.holy[2], 0.14); ctx.restore();
-      const n = Math.max(8, Math.round(r / 16)), [ux, uy] = upVec();
-      // round 10 ("A ring around the entire effect passing through each point"): one ring of light through every post
-      ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = rgba(EL.holy[1], 0.35); ctx.lineWidth = 9; ctx.beginPath(); ctx.arc(x, y, r * 0.92, 0, TAU); ctx.stroke(); ctx.restore();
-      ctx.save(); ctx.strokeStyle = rgba(EL.holy[2], 0.9); ctx.lineWidth = 2.6; ctx.beginPath(); ctx.arc(x, y, r * 0.92, 0, TAU); ctx.stroke(); ctx.restore();
-      for (let i = 0; i < n; i++) { const an = i / n * TAU + seed * 0.1, px = x + Math.cos(an) * r * 0.92, py = y + Math.sin(an) * r * 0.92, h = 30 + 6 * Math.sin(T * 3 + i);
-        const g = ctx.createLinearGradient(px, py, px + ux * h, py + uy * h); g.addColorStop(0, rgba(EL.holy[1], 0.9)); g.addColorStop(1, rgba(EL.holy[2], 0));
-        ctx.strokeStyle = g; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + ux * h, py + uy * h); ctx.stroke();
-        inked(ctx, () => star(ctx, px, py, 6.5, 4, 0.4, 0), EL.holy[2]); }
+      // round 10: one ring of light through every post. Round 13 ("Could look a bit better"), the same thing with more
+      // to it: the ring draws itself round as it is cast, the light pools towards it, a soft pulse runs out from her
+      // with every mend, glints run along the ring, and the posts are taller, their stars twinkling one after another
+      const R = r * 0.92, n = Math.max(8, Math.round(r / 20)), [ux, uy] = upVec(), drawn = easeOut(clamp(f.t / 0.45, 0, 1)), a0 = -Math.PI / 2 + seed * 0.1;
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      glowDisc(ctx, x, y, r, EL.holy[2], 0.16);
+      const g = ctx.createRadialGradient(x, y, R * 0.55, x, y, R); g.addColorStop(0, rgba(EL.holy[1], 0)); g.addColorStop(1, rgba(EL.holy[1], 0.2));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, TAU); ctx.fill();
+      const beat = clamp((f.acc || 0) / (f.every || 0.5), 0, 1); // the mend's pulse, out from the middle
+      ctx.strokeStyle = rgba(EL.holy[3], 0.3 * (1 - beat)); ctx.lineWidth = 10 * (1 - beat) + 2; ctx.beginPath(); ctx.arc(x, y, R * (0.15 + 0.85 * easeOut(beat)), 0, TAU); ctx.stroke();
+      ctx.strokeStyle = rgba(EL.holy[1], 0.4); ctx.lineWidth = 11; ctx.beginPath(); ctx.arc(x, y, R, a0, a0 + TAU * drawn); ctx.stroke();
+      ctx.restore();
+      ctx.save(); ctx.strokeStyle = rgba(EL.holy[2], 0.95); ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.beginPath(); ctx.arc(x, y, R, a0, a0 + TAU * drawn); ctx.stroke(); ctx.restore();
+      for (let i = 0; i < 3; i++) { const an = a0 + T * 0.9 + i / 3 * TAU; if (drawn < 1) break; // glints running round the ring
+        ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x + Math.cos(an) * R, y + Math.sin(an) * R, 13, '#FFFBEA', 0.8); ctx.restore(); }
+      for (let i = 0; i < n; i++) { const q = i / n; if (q > drawn) break;
+        const an = a0 + q * TAU, px = x + Math.cos(an) * R, py = y + Math.sin(an) * R, tw = 0.5 + 0.5 * Math.sin(T * 3.2 - i * 0.8), h = 38 + 8 * tw;
+        const g2 = ctx.createLinearGradient(px, py, px + ux * h, py + uy * h); g2.addColorStop(0, rgba(EL.holy[2], 0.95)); g2.addColorStop(1, rgba(EL.holy[2], 0));
+        ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = g2; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + ux * h, py + uy * h); ctx.stroke();
+        glowDisc(ctx, px, py, 12 + 5 * tw, EL.holy[2], 0.5); ctx.restore();
+        inked(ctx, () => star(ctx, px, py, 6.5 + 2.5 * tw, 4, 0.36, 0), tw > 0.6 ? EL.holy[3] : EL.holy[2]); }
       motes(ctx, f, x, y, r, T, a, seed, false);
       break;
     }
     case 'heal': motes(ctx, f, x, y, r, T, a, seed, true); break;
   }
   ctx.restore();
+}
+// Entangle. Round 9, of the first cast: "Especially don't like the vines"; round 10, of the tendrils that stood up: "Previous
+// was better"; round 13, of the first cast brought back: "try again but maybe stay closer to this style". So the same
+// idea (a dark green patch, vines bursting out of its middle and coiling out over the floor, under the units) with
+// better vines: each one a tapering stem, thick at the root and thin at the tip, its own length and its own bend, ending
+// in a curl, thorns down it and a leaf or two; they shoot out, sway, and at the end go brown and draw back in.
+function bramble(ctx, f, x, y, r, T, seed) {
+  const grow = easeOut(clamp(f.t / 0.3, 0, 1)), wither = clamp((f.max - f.t) / 0.45, 0, 1), g = grow * (0.35 + 0.65 * wither);
+  ctx.fillStyle = 'rgba(44,62,30,0.34)'; blob(ctx, x, y, r * (0.75 + 0.25 * grow), 9, seed, 0.94); ctx.fill();
+  ctx.fillStyle = 'rgba(70,96,44,0.22)'; blob(ctx, x, y, r * 0.62 * grow, 7, seed + 3, 0.94); ctx.fill();
+  const n = 7, dry = wither < 1;
+  for (let i = 0; i < n; i++) {
+    const a0 = (i + 0.35 * hash(i, seed)) / n * TAU + seed, sw = i % 2 ? 1 : -1, len = r * (0.78 + 0.26 * hash(seed, i)) * g, bend = 0.75 + 0.5 * hash(i, seed, 2);
+    // the stem's middle line, walked out from the centre: it bends gently one way, then curls over tightly at its tip
+    const N = 22, pts = []; let px0 = x + Math.cos(a0) * 5, py0 = y + Math.sin(a0) * 5, hd = a0 - sw * bend * 0.35;
+    for (let s = 0; s <= N; s++) { const k = s / N, curl = Math.max(0, k - 0.74) / 0.26; pts.push([px0, py0, hd]);
+      const ds = len / N * (1.18 - 0.75 * curl); hd += sw * (bend / N + 0.42 * curl) + Math.sin(T * 1.6 + i + k * 3) * 0.01; px0 += Math.cos(hd) * ds; py0 += Math.sin(hd) * ds; }
+    const wd = (k) => (5.2 * Math.pow(1 - k, 0.8) + 1.1) * (0.6 + 0.4 * g);
+    const side = (sd) => pts.map(([px, py], s) => { const p0 = pts[Math.max(0, s - 1)], p1 = pts[Math.min(N, s + 1)], tx = p1[0] - p0[0], ty = p1[1] - p0[1], L = Math.hypot(tx, ty) || 1, hw = wd(s / N); return [px - ty / L * hw * sd, py + tx / L * hw * sd]; });
+    const l = side(1), rgt = side(-1).reverse(), col = dry ? '#7A6A3A' : i % 2 ? '#5E9E3E' : '#4A8433';
+    for (let s = 3; s < N - 3; s += 3) { const [px, py] = pts[s], sd = (s / 3) % 2 ? 1 : -1, p1 = pts[s + 1], ta = Math.atan2(p1[1] - py, p1[0] - px), na = ta + sd * 1.2, hw = wd(s / N); // thorns
+      inked(ctx, () => { ctx.beginPath(); ctx.moveTo(px + Math.cos(ta) * 3, py + Math.sin(ta) * 3); ctx.lineTo(px + Math.cos(na) * (hw + 6.5), py + Math.sin(na) * (hw + 6.5)); ctx.lineTo(px - Math.cos(ta) * 3, py - Math.sin(ta) * 3); ctx.closePath(); }, dry ? '#6A5A30' : '#3E6E2A'); }
+    inked(ctx, () => { ctx.beginPath(); l.forEach(([px, py], s) => (s ? ctx.lineTo(px, py) : ctx.moveTo(px, py))); rgt.forEach(([px, py]) => ctx.lineTo(px, py)); ctx.closePath(); }, col);
+    ctx.save(); ctx.strokeStyle = dry ? '#A8975A' : '#9CCB6A'; ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.beginPath(); // the light along its top
+    for (let s = 1; s <= N - 3; s++) { const [px, py] = pts[s], q = l[s]; const hx = px + (q[0] - px) * 0.35, hy = py + (q[1] - py) * 0.35; s > 1 ? ctx.lineTo(hx, hy) : ctx.moveTo(hx, hy); }
+    ctx.stroke(); ctx.restore();
+    if (g > 0.6 && !dry) for (const k of [0.38, 0.66]) { const s = Math.round(k * N), [px, py, an] = pts[s], sd = k < 0.5 ? sw : -sw; leaf(ctx, px + Math.cos(an + sd * 1.5) * 9, py + Math.sin(an + sd * 1.5) * 9, an + sd * 1.1, 7.5); }
+  }
 }
 // Things standing up out of a zone, drawn over the ground bodies (the puddle layer goes down after the ground fx)
 function zoneAir(ctx, f, T) {
@@ -282,7 +311,7 @@ export function drawAirFx(ctx, w) {
     else if (f.type === 'cure') cureFx(ctx, f, w.time);
     else if (f.type === 'zone' && (f.ab === 'rejuvenate' || f.ab === 'cure')) abilityZoneAir(ctx, f, w.time);
     else if (f.type === 'zone' && (f.kind === 'snow' || (f.kind === 'vines' && f.ab !== 'roll' && f.ab !== 'entangle'))) zoneAir(ctx, f, w.time);
-    else if (f.type === 'wave') { if (f.ab === 'shockwave') eruption(ctx, f, 'air'); else if (f.kind === 'note') noteCone(ctx, f, w.time); else wave(ctx, f); }
+    else if (f.type === 'wave') { if (f.ab === 'shockwave') shockwave(ctx, f, 'air'); else if (f.kind === 'note') noteCone(ctx, f, w.time); else wave(ctx, f); }
     else if (f.type === 'pillar') pillar(ctx, f, w.time);
     else if (f.type === 'hex') hexMark(ctx, f, w.time);
     else if (f.type === 'statusBurst') drawStatusBurst(ctx, f, w.time, 'air'); // round 13 (lane S): fx-status.js
@@ -375,6 +404,38 @@ function boltTree(ctx, x1, y1, x2, y2, T, seed, width, arms, color = '#FFF3A0', 
   ctx.strokeStyle = '#FFFFFF'; for (const [pts, wd] of lines) { ctx.lineWidth = wd * 0.4; path(pts); ctx.stroke(); }
   ctx.restore();
 }
+// Chain Lightning (round 13: "Each arm bouncing off should have a merged sprite with main lightning bolt. Also no line
+// particle effects"): the bolt from her hands and every leap after it are built first and drawn as one shape: one glow,
+// one ink outline round the lot, one colour, one core. Each leap starts on the end of the stroke before it. A leap shows
+// a moment after the one before (the bolt is seen to jump). A flash of light where each one strikes; no spark lines.
+function chainBolt(ctx, f, T, seed) {
+  const fr = Math.floor(T / 0.06), pts = f.pts, shown = Math.min(pts.length - 1, 1 + Math.floor(f.t / 0.035)), lines = [];
+  for (let s = 0; s < shown; s++) {
+    const x1 = pts[s].x, y1 = pts[s].y, x2 = pts[s + 1].x, y2 = pts[s + 1].y, L = Math.hypot(x2 - x1, y2 - y1) || 1, nx = -(y2 - y1) / L, ny = (x2 - x1) / L;
+    const n = Math.max(4, Math.round(L / 28)), amp = Math.min(20, L * 0.11), line = [[x1, y1]];
+    for (let i = 1; i < n; i++) { const k = i / n, o = (hash(fr, i, seed + s * 13) - 0.5) * 2 * amp * Math.sin(k * Math.PI); line.push([x1 + (x2 - x1) * k + nx * o, y1 + (y2 - y1) * k + ny * o]); }
+    line.push([x2, y2]); lines.push([line, s ? 4.2 : 5.4]);
+  }
+  if (lines.length) { // two short arms off the main bolt, starting on its own corners (round 9)
+    const main = lines[0][0], an0 = Math.atan2(pts[1].y - pts[0].y, pts[1].x - pts[0].x), L = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+    for (let b = 0; b < 2; b++) { const p = main[1 + Math.floor(hash(fr, b, seed + 3) * (main.length - 2))], an = an0 + (b ? 1 : -1) * (0.5 + 0.4 * hash(fr, b, 7)), al = L * (0.12 + 0.1 * hash(b, seed, fr));
+      const mid = [p[0] + Math.cos(an) * al * 0.5 - Math.sin(an) * al * 0.12, p[1] + Math.sin(an) * al * 0.5 + Math.cos(an) * al * 0.12];
+      lines.push([[p, mid, [p[0] + Math.cos(an) * al, p[1] + Math.sin(an) * al]], 2.8]); }
+  }
+  for (const [i, [x1, y1, x2, y2]] of (f.arms || []).entries()) { // the arcs an overloaded foe throws to its neighbours
+    const L = Math.hypot(x2 - x1, y2 - y1) || 1, nx = -(y2 - y1) / L, ny = (x2 - x1) / L, n = Math.max(3, Math.round(L / 28)), line = [[x1, y1]];
+    for (let j = 1; j < n; j++) { const k = j / n, o = (hash(fr, j, seed + 77 + i * 7) - 0.5) * 2 * Math.min(16, L * 0.11) * Math.sin(k * Math.PI); line.push([x1 + (x2 - x1) * k + nx * o, y1 + (y2 - y1) * k + ny * o]); }
+    line.push([x2, y2]); lines.push([line, 3.4]); }
+  const path = (l) => { ctx.beginPath(); l.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); };
+  ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = rgba('#FFF3A0', 0.22); for (const [l, wd] of lines) { ctx.lineWidth = wd * 5; path(l); ctx.stroke(); }
+  for (let s = 1; s <= shown; s++) glowDisc(ctx, pts[s].x, pts[s].y, 34, '#FFF3A0', 0.7 * clamp(1 - (f.t - (s - 1) * 0.035) / 0.3, 0.25, 1));
+  ctx.restore();
+  ctx.strokeStyle = INK; for (const [l, wd] of lines) { ctx.lineWidth = wd + OUTLINE * 2; path(l); ctx.stroke(); }
+  ctx.strokeStyle = '#FFF3A0'; for (const [l, wd] of lines) { ctx.lineWidth = wd; path(l); ctx.stroke(); }
+  ctx.strokeStyle = '#FFFFFF'; for (const [l, wd] of lines) { ctx.lineWidth = wd * 0.4; path(l); ctx.stroke(); }
+  ctx.restore();
+}
 export function drawBeam(ctx, f, T) { beam(ctx, f, T); }
 function beam(ctx, f, T) {
   const a = f.from ? clamp(Math.min(f.t / 0.08, (f.max - f.t) / 0.25), 0, 1) : f.kind === 'lightning' ? clamp(Math.min(f.t / 0.03, (f.max - f.t) / 0.1), 0, 1) : life(f, 0.08, 0.2), seed = Math.round(f.x1 + f.y2);
@@ -383,12 +444,14 @@ function beam(ctx, f, T) {
   if (f.kind === 'lightning') {
     // round 10: the Storm Mage's Zap "Thinner. Small arms. More visible. Less transparent" (full strength until its last
     // 0.1 s, a stronger yellow); and no X-shaped star where lightning hits, anywhere: a flash of light and a few sparks
+    if (f.pts) { chainBolt(ctx, f, T, seed); ctx.restore(); return; }
     const big = f.ab ? 1.5 : f.small ? 0.6 : 1.1;
     if (f.small) boltTree(ctx, x1, y1, x2, y2, T, seed, 3.6 * big, 2, '#FFE14A', 0.35, 0.3);
     else boltTree(ctx, x1, y1, x2, y2, T, seed, 3.6 * big, 2);
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x2, y2, (f.small ? 22 : 30) * big, '#FFF3A0', 0.75); ctx.restore();
     const f6 = Math.floor(T / 0.06), an = Math.atan2(y2 - y1, x2 - x1);
-    for (let i = 0; i < 3; i++) { const b = an + (hash(f6, i, seed) - 0.5) * 2.4, L = (8 + 8 * hash(i, f6, seed)) * big;
+    // (round 13: no spark lines for Chain Lightning's arcs, "no line particle effects")
+    if (f.ab !== 'chainLightning') for (let i = 0; i < 3; i++) { const b = an + (hash(f6, i, seed) - 0.5) * 2.4, L = (8 + 8 * hash(i, f6, seed)) * big;
       inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x2 + Math.cos(b) * 6 * big, y2 + Math.sin(b) * 6 * big); ctx.lineTo(x2 + Math.cos(b) * (6 * big + L), y2 + Math.sin(b) * (6 * big + L)); }, '#FFF3A0', 1.8 * big); }
   } else if (f.kind === 'drain') {
     // a dark red ribbon, with blobs of life flowing back to the caster (x1, y1). Round 9: held steady (no blinking),
@@ -467,64 +530,65 @@ function wave(ctx, f) {
     inked(ctx, () => { ctx.beginPath(); ctx.arc(f.x + Math.cos(an) * rr, f.y + Math.sin(an) * rr - hop, 3 * (1 - k) + 1, 0, TAU); }, '#A99C8B'); }
   ctx.restore();
 }
-// Shockwave: the floor erupts in a crescent of rock spikes across the way the wave runs, dust thrown up round them
-function eruption(ctx, f, layer) {
-  const k = clamp(f.t / f.max, 0, 1), seed = Math.round(f.x * 3 + f.y), nx = -Math.sin(f.a), ny = Math.cos(f.a);
-  const up = k < 0.25 ? easeOut(k / 0.25) : 1 - 0.5 * clamp((k - 0.5) / 0.5, 0, 1);
-  ctx.save();
-  if (layer === 'ground') {
-    ctx.globalAlpha = 1 - k;
-    ctx.fillStyle = 'rgba(70,56,44,0.35)'; blob(ctx, f.x, f.y, f.r * 0.9, 7, seed, 0.8); ctx.fill();
+// Shockwave (round 13). Three looks of earth coming up out of the floor came back ("Don't like the spikes", then
+// "none of them" for Ridge, Slabs and Rolling), so no earth: the designer's words for the move were "a repeating
+// shockwave forwards", a wave that travels. kits.js runs each wave as a front moving out from the slam (f.x, f.y) along
+// f.a, f.r far in f.travel seconds, f.w0 wide each side and widening by f.wk a unit; the looks below draw that front
+// where the blows land. Variants (js/fxvar.js, ?v_shockwave=N):
+//   1 Arcs     a pale crescent of force, inked like a weapon's arc, running out over the floor and growing, two faint
+//              echoes behind it, dust kicked off its tips
+//   2 Ripples  the same front as a soft ripple of dust under the units (Ground Pound's wave, sent one way), no outline
+//   3 Stomps   the front is not drawn: where it passes the floor is pounded, three blows marching out, each bigger
+function lune(ctx, cx, cy, R, a, half, th) { // a crescent, both ends pointed, bulging towards a
+  const n = 14; ctx.beginPath();
+  for (let i = 0; i <= n; i++) { const b = a - half + 2 * half * i / n; ctx.lineTo(cx + Math.cos(b) * R, cy + Math.sin(b) * R); }
+  for (let i = n; i >= 0; i--) { const s = i / n * 2 - 1, b = a + s * half, r = R - th * Math.pow(1 - s * s, 0.75); ctx.lineTo(cx + Math.cos(b) * r, cy + Math.sin(b) * r); }
+  ctx.closePath();
+}
+function shockwave(ctx, f, layer) {
+  const v = variant('shockwave'), ca = Math.cos(f.a), sa = Math.sin(f.a), seed = Math.round(f.x * 3 + f.y + f.a * 50);
+  const q = clamp(f.t / f.travel, 0, 1), d = f.r * q, out = clamp((f.t - f.travel) / Math.max(0.01, f.max - f.travel), 0, 1);
+  const [ux, uy] = upVec();
+  if (v === 3) { // Stomps
+    for (let i = 0; i < 3; i++) { const di = f.r * (0.16 + 0.34 * i), k = (f.t - di / f.r * f.travel) / 0.34; if (k <= 0 || k >= 1) continue;
+      const x = f.x + ca * di, y = f.y + sa * di, R = 24 + 11 * i, e = easeOut(k);
+      if (layer === 'ground') { ctx.save(); ctx.globalAlpha = (1 - k) * 0.9; ctx.fillStyle = 'rgba(70,56,44,0.3)'; ctx.beginPath(); ctx.arc(x, y, R * (0.55 + 0.45 * e), 0, TAU); ctx.fill(); ctx.restore(); continue; }
+      if (k < 0.3) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x, y, R * 1.5, '#FFF4DC', 0.6 * (1 - k / 0.3)); ctx.restore(); }
+      ctx.save(); ctx.globalAlpha = 1 - k * k; dustPuffs(ctx, x, y, R, e, seed + i, 7); ctx.restore(); }
+    return;
+  }
+  // the front is an arc of a circle whose middle lies R0 behind the slam, so it starts nearly flat and fans as it runs
+  // the front is a crescent bulging the way it runs: a third of a circle a little wider than the wave, its tip at d
+  const W = f.w0 + d * f.wk, R = W * 1.18, R0 = R - d - out * 16, cx = f.x - ca * R0, cy = f.y - sa * R0, half = 1.02;
+  if (v === 2) { // Ripples: under the units
+    if (layer !== 'ground') return;
+    ctx.save();
+    ctx.globalAlpha = 0.3 * (1 - out) * clamp(q * 6, 0, 1); ctx.fillStyle = '#463830'; lune(ctx, cx, cy, R + 5, f.a, half, W * 0.55); ctx.fill(); ctx.globalAlpha = 1; // the floor dark under it
+    for (let j = 0; j < 3; j++) { const Rj = R - j * 24, th = 30 - j * 7; if (Rj - th < 4 || d < j * 24) continue;
+      const al = (1 - out) * [1, 0.7, 0.4][j] * clamp(q * 6, 0, 1);
+      const g = ctx.createRadialGradient(cx, cy, Math.max(0, Rj - th), cx, cy, Rj);
+      g.addColorStop(0, rgba('#E9DDC2', 0)); g.addColorStop(0.7, rgba('#E9DDC2', 0.8 * al)); g.addColorStop(1, rgba('#FFF8E6', 0.95 * al));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, Rj, f.a - half, f.a + half); ctx.arc(cx, cy, Math.max(0, Rj - th), f.a + half, f.a - half, true); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = rgba('#FFFFFF', 0.9 * al); ctx.lineWidth = 3 - j * 0.6; ctx.lineCap = 'round'; ctx.beginPath(); ctx.arc(cx, cy, Rj, f.a - half, f.a + half); ctx.stroke(); }
+    for (let i = 0; i < 7; i++) { const b = f.a + ((i + 0.5) / 7 - 0.5) * 2 * half, hop = Math.sin(clamp(q * 2.4 - hash(i, seed) * 1.2, 0, 1) * Math.PI) * 12;
+      ctx.globalAlpha = (1 - out) * clamp(q * 6, 0, 1); inked(ctx, () => { ctx.beginPath(); ctx.arc(cx + Math.cos(b) * (R - 8) + ux * hop, cy + Math.sin(b) * (R - 8) + uy * hop, 2.8, 0, TAU); }, i % 2 ? '#A99C8B' : '#7A6A58'); }
     ctx.restore(); return;
   }
-  const v = variant('shockwave'); // round 10: "Try 2 more variants" (js/fxvar.js)
-  if (v === 2) { slabs(ctx, f, k, seed); ctx.restore(); return; }
-  if (v === 3) { rolling(ctx, f, k, seed); ctx.restore(); return; }
-  // round 9 (the spikes were disliked): the floor heaves up in a crescent of earth (a raised, inked ridge), throws up
-  // rubble and dust, and settles
-  ctx.globalAlpha = 1 - clamp((k - 0.55) / 0.45, 0, 1);
-  const half = 0.85, R0 = f.r * 0.55, th = 14 * up + 2;
-  const ridge = (rr, t2) => { ctx.beginPath(); ctx.arc(f.x - Math.cos(f.a) * R0, f.y - Math.sin(f.a) * R0, rr + t2, f.a - half, f.a + half); ctx.arc(f.x - Math.cos(f.a) * R0, f.y - Math.sin(f.a) * R0, Math.max(1, rr - t2), f.a + half, f.a - half, true); ctx.closePath(); };
-  inked(ctx, () => ridge(R0 + 8, th * 0.5), '#8A7258');
-  ctx.fillStyle = '#B9A68A'; ridge(R0 + 8 + th * 0.12, th * 0.22); ctx.fill();
-  for (let i = -3; i <= 3; i++) { const b = f.a + i * half / 3.4, rr = R0 + 8 + th * 0.4, h = hash(i + 5, seed), cx = f.x - Math.cos(f.a) * R0 + Math.cos(b) * rr, cy = f.y - Math.sin(f.a) * R0 + Math.sin(b) * rr;
-    inked(ctx, () => { ctx.beginPath(); ctx.ellipse(cx, cy, (5 + 4 * h) * up + 1, (3.5 + 3 * h) * up + 1, b, 0, TAU); }, i % 2 ? '#6E5A46' : '#A08A6E'); }
-  dustPuffs(ctx, f.x, f.y, f.r * 0.8, k, seed);
-  const e = easeOut(k), [ux, uy] = upVec();
-  for (let i = 0; i < 6; i++) { const b = f.a + (hash(seed, i) - 0.5) * 2.4, d = 14 + 30 * e, hop = Math.sin(k * Math.PI) * 18 * hash(i, seed);
-    inked(ctx, () => { ctx.beginPath(); ctx.arc(f.x + Math.cos(b) * d + ux * hop, f.y + Math.sin(b) * d + uy * hop, 4 * (1 - k) + 1.2, 0, TAU); }, i % 2 ? '#E9DDC2' : '#A99C8B'); }
+  // Arcs
+  const th = W * 0.3 * (1 - 0.7 * out), al = (1 - out * out) * clamp(q * 8, 0, 1);
+  if (layer === 'ground') { // the floor darkens a moment where the wave is
+    ctx.save(); ctx.globalAlpha = 0.22 * al; ctx.fillStyle = '#463830'; lune(ctx, cx, cy, R + 4, f.a, half, th * 2.2); ctx.fill(); ctx.restore(); return; }
+  ctx.save();
+  for (let j = 2; j >= 1; j--) { const Rj = R - j * 17; if (Rj - th < 4 || d < j * 17) continue; // its echoes
+    ctx.globalAlpha = al * (j === 1 ? 0.5 : 0.25); inked(ctx, () => lune(ctx, cx, cy, Rj, f.a, half * 0.92, th * (j === 1 ? 0.55 : 0.4)), '#CDBFA6'); }
+  ctx.globalAlpha = al;
+  inked(ctx, () => lune(ctx, cx, cy, R, f.a, half, th), '#F3EAD6');
+  ctx.fillStyle = '#FFFFFF'; lune(ctx, cx, cy, R - th * 0.1, f.a, half * 0.82, th * 0.42); ctx.fill();
+  for (const sd of [-1, 1]) for (let i = 0; i < 3; i++) { // dust kicked off its two tips, left behind as it runs
+    const ph = (q * 5 + i / 3 + hash(seed, i)) % 1, b = f.a + sd * half, rr = R - 4 - ph * 30;
+    ctx.globalAlpha = al * (1 - ph);
+    inked(ctx, () => { ctx.beginPath(); ctx.arc(cx + Math.cos(b) * rr + sd * -sa * ph * 8, cy + Math.sin(b) * rr + sd * ca * ph * 8, 3 + 3.5 * ph, 0, TAU); }, i % 2 ? '#E9DDC2' : '#FFF8E6'); }
   ctx.restore();
-}
-// Shockwave, variant 2 (Slabs): three or four flat rock slabs thrust up out of the floor across the way it runs, tilted
-// away from him (their lit top face and a dark side face show the tilt), dust spilling off them; they sink back.
-function slabs(ctx, f, k, seed) {
-  const up = k < 0.2 ? easeOut(k / 0.2) : 1 - clamp((k - 0.55) / 0.45, 0, 1), nx = -Math.sin(f.a), ny = Math.cos(f.a), ca = Math.cos(f.a), sa = Math.sin(f.a);
-  ctx.globalAlpha = clamp(up * 1.6, 0, 1);
-  dustPuffs(ctx, f.x, f.y, f.r * 0.75, k, seed, 6);
-  for (let i = 0; i < 4; i++) { const o = (i - 1.5) * f.r * 0.42, h = hash(seed, i), L = f.r * (0.34 + 0.12 * h), W = 9 + 5 * hash(i, seed);
-    const cx = f.x + nx * o + ca * (h - 0.5) * 12, cy = f.y + ny * o + sa * (h - 0.5) * 12, lift = (10 + 6 * h) * up, tilt = 0.25 * (i - 1.5);
-    // the slab: a long rock seen from above, its back edge (towards him) lifted, so the lit top face grows with the lift
-    ctx.save(); ctx.translate(cx, cy); ctx.rotate(f.a + tilt);
-    const face = (w2, d) => { ctx.beginPath(); ctx.moveTo(-w2 * 0.5 - d, -L / 2); ctx.lineTo(w2 * 0.5, -L / 2 + 3); ctx.lineTo(w2 * 0.6, L / 2 - 2); ctx.lineTo(-w2 * 0.4 - d, L / 2); ctx.closePath(); };
-    inked(ctx, () => face(W + lift * 0.9, lift * 0.6), '#6E5A46');
-    ctx.fillStyle = '#A08A6E'; face(W * 0.9 + lift * 0.5, lift * 0.6); ctx.fill();
-    ctx.fillStyle = '#C9B699'; ctx.beginPath(); ctx.moveTo(-W * 0.3 - lift * 0.6, -L / 2 + 2); ctx.lineTo(-W * 0.05, -L / 2 + 4); ctx.lineTo(-W * 0.05, L / 2 - 3); ctx.lineTo(-W * 0.2 - lift * 0.6, L / 2 - 2); ctx.closePath(); ctx.fill();
-    ctx.restore(); }
-}
-// Shockwave, variant 3 (Rolling): a hump of earth that rolls forward under the floor: a short crescent of churned dirt
-// sliding outward with dust curling off its front and pebbles hopping off it, a dark furrow left behind.
-function rolling(ctx, f, k, seed) {
-  const e = easeOut(k), half = 0.75, x0 = f.x - Math.cos(f.a) * f.r * 0.6, y0 = f.y - Math.sin(f.a) * f.r * 0.6, R = f.r * (0.3 + 0.95 * e), th = 12 * (1 - 0.5 * k) + 4;
-  ctx.globalAlpha = 1 - k * k;
-  ctx.fillStyle = 'rgba(70,56,44,0.3)'; ctx.beginPath(); ctx.arc(x0, y0, R, f.a - half, f.a + half); ctx.arc(x0, y0, Math.max(1, R * 0.45), f.a + half, f.a - half, true); ctx.closePath(); ctx.fill();
-  const band = (r0, r1) => { ctx.beginPath(); ctx.arc(x0, y0, r1, f.a - half, f.a + half); ctx.arc(x0, y0, r0, f.a + half, f.a - half, true); ctx.closePath(); };
-  inked(ctx, () => band(R - th, R), '#8A7258');
-  ctx.fillStyle = '#B9A68A'; band(R - th * 0.75, R - th * 0.35); ctx.fill();
-  const [ux, uy] = upVec();
-  for (let i = 0; i < 7; i++) { const b = f.a + (i / 6 - 0.5) * half * 1.8, hop = Math.sin(clamp(k * 2.2 - hash(i, seed) * 0.6, 0, 1) * Math.PI) * (10 + 10 * hash(seed, i)), d = R + 4;
-    inked(ctx, () => { ctx.beginPath(); ctx.arc(x0 + Math.cos(b) * d + ux * hop, y0 + Math.sin(b) * d + uy * hop, 3 * (1 - k) + 1.4, 0, TAU); }, i % 2 ? '#6E5A46' : '#A08A6E'); }
-  for (let i = 0; i < 5; i++) { const b = f.a + (i / 4 - 0.5) * half * 1.5, d = R + 8 + 6 * hash(i, seed);
-    inked(ctx, () => { ctx.beginPath(); ctx.arc(x0 + Math.cos(b) * d, y0 + Math.sin(b) * d, (7 + 4 * hash(seed, i)) * (1 - 0.5 * k), 0, TAU); }, i % 2 ? '#E9DDC2' : '#FFF8E6'); }
 }
 // Lullaby: a soft cone of drifting notes rolling out in front of the bard
 // Lullaby (round 9: the light cone underneath was disliked): three soft waves of notes drifting out across the cone,
@@ -623,15 +687,15 @@ export function drawProjectile(ctx, p, T) {
   switch (p.kind) {
     case 'icicle': case 'shard': {
       ctx.rotate(ang);
-      if (ab === 'frostArrow') { frostArrow(ctx, sp, T); break; }
+      if (ab === 'frostArrow') { snowTrail(p, 8, 7); frostArrow(ctx, sp, T); break; }
       const L = ab === 'iceShard' ? (p.big ? 2.9 : 2.2) : p.kind === 'shard' ? 1.5 : 1.15;
       if (ab === 'iceShard') { // round 10: "Give each spike a trail effect": a long frost streak behind each one, a bright core
-        const TL = 30 * L, wd = 4.2 * L;
+        const TL = 22 * L, wd = 3.6 * L;
         const g = ctx.createLinearGradient(-TL - 8 * L, 0, -6 * L, 0); g.addColorStop(0, 'rgba(159,221,246,0)'); g.addColorStop(1, 'rgba(191,233,248,0.95)');
         ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-TL - 8 * L, 0); ctx.quadraticCurveTo(-TL * 0.4, -wd, -6 * L, -wd * 0.9); ctx.lineTo(-6 * L, wd * 0.9); ctx.quadraticCurveTo(-TL * 0.4, wd, -TL - 8 * L, 0); ctx.fill();
         const g2 = ctx.createLinearGradient(-TL * 0.7, 0, -6 * L, 0); g2.addColorStop(0, 'rgba(255,255,255,0)'); g2.addColorStop(1, 'rgba(255,255,255,0.95)');
         ctx.fillStyle = g2; ctx.beginPath(); ctx.moveTo(-TL * 0.7, 0); ctx.lineTo(-6 * L, -wd * 0.35); ctx.lineTo(-6 * L, wd * 0.35); ctx.closePath(); ctx.fill();
-        frostMotes(ctx, T, 12 * L, 6 * L, p.x); // round 9: particle trails
+        snowTrail(p, p.big ? 9 : 12, 4.5 * L); // round 13 ("Should have a snow particle trail"): snowflakes left along its path
       } else trail(ctx, sp, 26 * L, 5 * L, '#BFE9F8');
       if (ab) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, 0, 0, 14 * L, '#DDF6FF', 0.55); ctx.restore(); }
       inked(ctx, () => { ctx.beginPath(); ctx.moveTo(12 * L, 0); ctx.lineTo(-8 * L, -3.8 * L); ctx.lineTo(-11 * L, 0); ctx.lineTo(-8 * L, 3.8 * L); ctx.closePath(); }, '#BFE9F8');
@@ -775,7 +839,6 @@ export function drawProjectile(ctx, p, T) {
 function frostArrow(ctx, sp, T) {
   trail(ctx, sp, 60, 9, '#BFE9F8');
   ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, 14, 0, 24, '#DDF6FF', 0.6); ctx.restore();
-  for (let i = 0; i < 4; i++) { const d = 14 + ((T * 90 + i * 13) % 52); ctx.fillStyle = `rgba(242,252,255,${0.9 - d / 70})`; star(ctx, -d, Math.sin(i * 2.3 + T * 8) * 6, 3, 4, 0.4, d); ctx.fill(); }
   ctx.scale(1.35, 1.35);
   inked(ctx, () => { roundRect(ctx, -25, -1.7, 32, 3.4, 1.7); }, '#9FB7C8'); // round 9: a slightly longer shaft
   inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-25, 0); ctx.lineTo(-30, -5); ctx.lineTo(-20, -2); ctx.lineTo(-20, 2); ctx.lineTo(-30, 5); ctx.closePath(); }, '#F2FCFF');
@@ -799,17 +862,42 @@ function necroDart(ctx, sp, T, s) {
   ctx.fillStyle = '#C8F59A'; ctx.beginPath(); ctx.arc(1.2 * s, -1 * s, 4.6 * s, 0, TAU); ctx.fill();
   ctx.fillStyle = '#F2FFE4'; ctx.beginPath(); ctx.arc(2 * s, -2 * s, 2 * s, 0, TAU); ctx.fill();
 }
-// The Bone Spear (round 9: "I don't like the sprite"; round 10: "Too complex now"): one long tapering spike of bone, a
-// knuckle at its back end and a single highlight down it, in a violet wake. No vertebrae, no flames.
+// The Bone Spear (round 9: "I don't like the sprite"; round 10: "Too complex now"; round 13: "Still not it. Make 3
+// variations."). The plain spike had no head and read as a splinter. Three shapes, all cream bone in a violet wake
+// (js/fxvar.js, ?v_boneSpear=N):
+//   1 Spear  a real spear: a thin bone shaft, a knuckle at its butt, a broad leaf-shaped bone head lashed on
+//   2 Femur  one big thigh bone, its two-knobbed end behind, the front end broken to a point
+//   3 Fang   a great curved fang, thick and hollow at the root, flying point first
 function boneLance(ctx, sp, T, tier) {
-  const s = tier >= 3 ? 1.3 : 1.1;
+  const s = tier >= 3 ? 1.3 : 1.1, v = variant('boneSpear');
   ctx.save(); ctx.globalCompositeOperation = 'lighter';
-  const g = ctx.createLinearGradient(-100 * s, 0, 0, 0); g.addColorStop(0, 'rgba(155,123,214,0)'); g.addColorStop(1, 'rgba(155,123,214,0.65)');
-  ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-100 * s, 0); ctx.lineTo(-26 * s, -9 * s); ctx.lineTo(0, -6 * s); ctx.lineTo(0, 6 * s); ctx.lineTo(-26 * s, 9 * s); ctx.closePath(); ctx.fill();
+  const g = ctx.createLinearGradient(-90 * s, 0, 0, 0); g.addColorStop(0, 'rgba(155,123,214,0)'); g.addColorStop(1, 'rgba(155,123,214,0.6)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-90 * s, 0); ctx.lineTo(-24 * s, -8 * s); ctx.lineTo(4 * s, -5 * s); ctx.lineTo(4 * s, 5 * s); ctx.lineTo(-24 * s, 8 * s); ctx.closePath(); ctx.fill();
   ctx.restore();
   ctx.scale(s, s);
-  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(40, 0); ctx.quadraticCurveTo(6, -6.5, -22, -4.2); ctx.arc(-26, -3.4, 4.4, -1.2, -Math.PI); ctx.arc(-26, 3.4, 4.4, Math.PI, 1.2); ctx.quadraticCurveTo(6, 6.5, 40, 0); ctx.closePath(); }, '#EDE4CD');
-  ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.moveTo(34, -0.8); ctx.quadraticCurveTo(6, -4.6, -20, -2.4); ctx.lineTo(-20, -0.6); ctx.quadraticCurveTo(6, -1.8, 34, -0.8); ctx.closePath(); ctx.fill();
+  const B = '#EDE4CD', HI = '#FFFBF0', SH = '#C9BBA0';
+  if (v === 2) { // Femur
+    inked(ctx, () => { ctx.beginPath(); ctx.rect(-24, -4, 44, 8); // the shaft, the two knobs of its joint behind, the front end snapped to a point
+      ctx.moveTo(-19, -5.5); ctx.arc(-26, -5.5, 7, 0, TAU); ctx.moveTo(-19, 5.5); ctx.arc(-26, 5.5, 7, 0, TAU);
+      ctx.moveTo(18, -4); ctx.lineTo(27, -7.5); ctx.lineTo(31, -3.5); ctx.lineTo(46, 0.5); ctx.lineTo(29, 3); ctx.lineTo(25, 7); ctx.lineTo(18, 4); ctx.closePath(); }, B);
+    ctx.fillStyle = SH; ctx.beginPath(); ctx.rect(-20, 1.2, 40, 2.8); ctx.moveTo(-19.5, 6.5); ctx.arc(-26, 6.5, 6, 0.1, Math.PI - 0.1); ctx.fill();
+    ctx.fillStyle = HI; ctx.beginPath(); ctx.rect(-19, -3, 38, 1.8); ctx.fill(); ctx.beginPath(); ctx.arc(-28, -7.5, 2.4, 0, TAU); ctx.fill();
+    return;
+  }
+  if (v === 3) { // Fang
+    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(46, 3); ctx.quadraticCurveTo(14, -15, -26, -11); ctx.quadraticCurveTo(-34, -4, -27, 7); ctx.quadraticCurveTo(10, 3, 46, 3); ctx.closePath(); }, B);
+    ctx.fillStyle = SH; ctx.beginPath(); ctx.moveTo(42, 3); ctx.quadraticCurveTo(10, 1.5, -26, 5.6); ctx.quadraticCurveTo(-18, 1, 8, -1); ctx.quadraticCurveTo(28, 0, 42, 3); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = HI; ctx.beginPath(); ctx.moveTo(34, -1.6); ctx.quadraticCurveTo(12, -11.4, -22, -8.6); ctx.quadraticCurveTo(10, -8.4, 34, -1.6); ctx.closePath(); ctx.fill();
+    inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-28, -2, 3.6, 7.6, 0.25, 0, TAU); }, '#6B5A78'); // the hollow root
+    return;
+  }
+  // Spear
+  inked(ctx, () => { ctx.beginPath(); ctx.rect(-34, -2.3, 50, 4.6); ctx.moveTo(-33, -3); ctx.arc(-36, -3, 3.6, 0, TAU); ctx.moveTo(-33, 3); ctx.arc(-36, 3, 3.6, 0, TAU); }, B);
+  ctx.fillStyle = HI; ctx.fillRect(-32, -1.6, 44, 1.5);
+  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(48, 0); ctx.quadraticCurveTo(30, -11, 15, -8.5); ctx.lineTo(11, 0); ctx.lineTo(15, 8.5); ctx.quadraticCurveTo(30, 11, 48, 0); ctx.closePath(); }, B);
+  ctx.fillStyle = SH; ctx.beginPath(); ctx.moveTo(46, 0.4); ctx.quadraticCurveTo(30, 9.4, 16, 7.2); ctx.lineTo(13, 0.4); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = HI; ctx.beginPath(); ctx.moveTo(44, -0.6); ctx.quadraticCurveTo(30, -8.6, 17, -6.6); ctx.lineTo(20, -1.2); ctx.closePath(); ctx.fill();
+  inked(ctx, () => { ctx.beginPath(); ctx.rect(8.5, -3.6, 5.5, 7.2); }, '#7A6A58'); // the lashing
 }
 export function roundRect(g, x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); }
 // a fading streak behind a flying thing (in its own frame, +x forward)
@@ -817,6 +905,36 @@ export function trail(ctx, sp, len, wd, col) {
   const L = Math.min(len, sp * 0.08 + 8);
   const g = ctx.createLinearGradient(-L, 0, 0, 0); g.addColorStop(0, rgba(col, 0)); g.addColorStop(1, rgba(col, 0.7));
   ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-L, 0); ctx.lineTo(0, -wd); ctx.lineTo(0, wd); ctx.closePath(); ctx.fill();
+}
+
+// ---------------------------------------------------------------- snow left in the air (round 13)
+// The designer on the Frost Arrow: "No snow particles on the trail or on explosion", and on Ice Shard: "Should have a
+// snow particle trail". Real particles: a cold shot drops snowflakes along its path as it is drawn, and they stay where
+// they were dropped, drift, sink and fade; a burst throws them out and they hang a moment. Nothing is left on the floor.
+const flakes = [];
+let flakeN = 0;
+function flake(x, y, vx, vy, max, s) { if (flakes.length > 240) flakes.shift(); flakes.push({ x, y, vx, vy, t: 0, max, s, n: flakeN++ }); }
+export function snowTrail(p, every = 10, spread = 6) {
+  if (p._sx == null) { p._sx = p.x; p._sy = p.y; return; }
+  const dx = p.x - p._sx, dy = p.y - p._sy, L = Math.hypot(dx, dy); if (L < every) return;
+  const n = Math.min(8, Math.floor(L / every)), nx = -dy / L, ny = dx / L;
+  for (let i = 1; i <= n; i++) { const k = i / n, h = hash(flakeN, 3), h2 = hash(flakeN, 7), o = (h - 0.5) * 2 * spread;
+    flake(p._sx + dx * k + nx * o, p._sy + dy * k + ny * o, nx * (h2 - 0.5) * 30 + dx / L * 16, ny * (h2 - 0.5) * 30 + dy / L * 16, 0.6 + 0.55 * h2, 2.8 + 2.4 * h); }
+  p._sx = p.x; p._sy = p.y;
+}
+export function snowBurst(x, y, r, n) {
+  for (let i = 0; i < n; i++) { const h = hash(flakeN, 11), a = i / n * TAU + h * 0.9, sp = r * (1.4 + 2.2 * hash(flakeN, 5));
+    flake(x + Math.cos(a) * 8, y + Math.sin(a) * 8, Math.cos(a) * sp, Math.sin(a) * sp, 1 + 0.8 * h, 3.2 + 2.6 * hash(flakeN, 9)); }
+}
+function drawFlakes(ctx, dt) {
+  const [ux, uy] = upVec(), drag = Math.exp(-dt * 3.6);
+  for (const f of flakes) { f.t += dt; const k = f.t / f.max; if (k >= 1) continue;
+    f.vx *= drag; f.vy *= drag; f.x += (f.vx - ux * 13) * dt; f.y += (f.vy - uy * 13) * dt; // slowing, then sinking down the screen
+    const sway = Math.sin(f.t * 5 + f.n) * 2.5;
+    ctx.globalAlpha = k < 0.12 ? k / 0.12 : 1 - (k - 0.12) / 0.88;
+    snowflake(ctx, f.x + (view.rot ? 0 : sway), f.y + (view.rot ? sway : 0), f.s * (1 - 0.25 * k), f.t * 2 + f.n); }
+  ctx.globalAlpha = 1;
+  for (let i = flakes.length - 1; i >= 0; i--) if (flakes[i].t >= flakes[i].max) flakes.splice(i, 1);
 }
 
 // ---------------------------------------------------------------- status looks (after the unit is drawn)
@@ -964,6 +1082,7 @@ function deathBurst(ctx, f, k) {
 }
 export function drawLocal(ctx, dt) {
   drawMarks(ctx, dt, 'air');
+  drawFlakes(ctx, dt);
   for (const f of local) {
     f.t += dt; const k = clamp(f.t / f.max, 0, 1);
     if (f.type === 'impact') {

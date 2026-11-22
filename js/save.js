@@ -18,6 +18,7 @@
 // start at a level from their best run, with the points for it, and the gold spent on the old tree comes back.
 // A v1 save starts fresh but keeps its coins as gold.
 import { HEROES } from './heroes.js';
+import { xpToNext, xpToNextR12 } from './units.js';
 import { cleanTally } from './stats.js';
 
 const KEY = 'delve-save-v3';
@@ -44,7 +45,7 @@ const int = (v, min = 0) => Math.max(min, Math.floor(+v || 0));
 // Fill anything a save is missing (new heroes added since, new fields) without touching what it has.
 export function normalise(s) {
   const f = freshSave();
-  const out = { ...f, ...s, v: 3 };
+  const out = { ...f, ...s, v: 3, xpv: 2 };
   out.heroes = {};
   for (const id of Object.keys(HEROES)) {
     const h = (s.heroes && s.heroes[id]) || {};
@@ -52,6 +53,8 @@ export function normalise(s) {
     for (const [k, v] of Object.entries(h.nodes || {})) if (int(v) > 0) nodes[k] = int(v);
     out.heroes[id] = { ...freshHero(id), ...h, nodes, trinkets: Array.isArray(h.trinkets) ? h.trinkets.slice() : [],
       level: int(h.level ?? 1, 1), xp: int(h.xp), points: int(h.points ?? START_POINTS) };
+    // round 14's level curve: XP held towards the next level keeps its share of the way there
+    if (!(s.xpv >= 2)) { const o = out.heroes[id]; o.xp = Math.floor(Math.min(0.99, o.xp / xpToNextR12(o.level)) * xpToNext(o.level)); }
     out.heroes[id].best = Math.max(out.heroes[id].level, int(h.best, 1));
     delete out.heroes[id].feat;
     if (HEROES[id].starter) out.heroes[id].owned = true;

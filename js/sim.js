@@ -779,7 +779,7 @@ export function hurt(w, u, amount, src, o = {}) {
   if (u.koT > 0) amt *= 1.5;                                 // knocked out: wide open
   if (u.frozenT > 0 && u.frozenBonus) amt *= u.frozenBonus;  // Frost Nova III
   if (!o.dot && src) for (const b of u.buffs) if (b.frontBlock && angleDiff(angleTo(u.x, u.y, src.x, src.y), u.facing) < 1.3) {
-    kept += amt * b.frontBlock; amt *= 1 - b.frontBlock; u.blockedAt = w.time; if (b.reflect && alive(src) && src !== u) hurt(w, src, amount * b.reflect, u, { noDodge: true, dot: true });
+    kept += amt * b.frontBlock; amt *= 1 - b.frontBlock; u.blockedAt = w.time; if (b.reflect && alive(src) && src !== u) hurt(w, src, amount * b.reflect, u, { noDodge: true, dot: true, pab: b.id }); // (lane H1, round 13: pab, so the stats name the ability)
   }
   // where the blow comes from: a shot's own heading, else the line from whoever struck
   const fromA = o.kAngle != null && (o.shot || !src) ? o.kAngle : src ? angleTo(src.x, src.y, u.x, u.y) : o.kAngle != null ? o.kAngle : rand() * TAU;
@@ -1014,7 +1014,7 @@ export function explode(w, x, y, r, dmg, statuses, src, color, skip) {
     if (dist(x, y, o.x, o.y) > r + o.r) continue;
     const friendly = src && o.team === src.team;
     hurt(w, o, dmg * (friendly ? 0.4 : 1), src, { noDodge: true, knock: 110, kAngle: angleTo(x, y, o.x, o.y),
-      ...Object.fromEntries(Object.entries(statuses).filter(([, v]) => typeof v === 'number').map(([k, v]) => [k, v * (friendly ? 0.4 : 1)])), stk: statuses.stk });
+      ...Object.fromEntries(Object.entries(statuses).filter(([, v]) => typeof v === 'number').map(([k, v]) => [k, v * (friendly ? 0.4 : 1)])), stk: statuses.stk, by: statuses.by }); // (round 13, lane E: by, who to count it for when src is null on purpose)
   }
   if (statuses.burn) igniteAround(w, x, y, r);
 }
@@ -1274,7 +1274,7 @@ function runAction(w, u, dt) {
       if (dist(u.x, u.y, o.x, o.y) < u.r + o.r + 6) {
         a.hit.add(o);
         const side = Math.sign(Math.sin(angleTo(u.x, u.y, o.x, o.y) - a.a)) || 1;
-        hurt(w, o, 18 * u.dmgMul * (a.power || 1), u, { knock: 340 * (a.power || 1), kAngle: a.a + side * 0.6, heavy: true, stagger: a.stagger || 0 });
+        hurt(w, o, (a.dmg ?? 18 * u.dmgMul) * (a.power || 1), u, { knock: 340 * (a.power || 1), kAngle: a.a + side * 0.6, heavy: true, stagger: a.stagger || 0, pab: a.ab }); // lane H1 (round 13) hook: a.ab names the ability for the stats, a.dmg its blow
         w.shake = Math.max(w.shake, 5);
       }
     }
@@ -1454,7 +1454,7 @@ function physics(w, dt) {
     const a = us[i]; if (a.dead || a.downed || a.ethereal) continue;
     for (let j = i + 1; j < us.length; j++) {
       const b = us[j]; if (b.dead || b.downed || b.ethereal) continue;
-      if (a.def.pass || b.def.pass || (a.fixed && b.fixed) || (a.linkTo && a.linkTo === b.linkTo)) continue; // round 10: things that roll through (gear sprites), chains
+      if (a.def.pass || b.def.pass || (a.fixed && b.fixed) || (a.linkTo && a.linkTo === b.linkTo) || a.linkTo === b || b.linkTo === a) continue; // round 10: things that roll through (gear sprites), chains (round 13, lane E: a chain's head and its own links too: the first link, fixed, shoved its head off across the room at ~1900 a second)
       const dx = b.x - a.x, dy = b.y - a.y; const d2 = dx * dx + dy * dy; const m = a.r + b.r;
       if (d2 >= m * m || d2 === 0) continue;
       const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, over = m - d;
@@ -1491,6 +1491,7 @@ function projectiles(w, dt) {
     for (const pl of w.pillars) if (dist(p.x, p.y, pl.x, pl.y) < pl.r && p.life > 0) {
       p.life = 0;
       if (pl.hp != null && !p.noHit && p.team !== pl.team) { pl.hp -= p.dmg || 0; pl.hitT = 0.12; } // round 9: a troll's boulder can be shot to pieces
+      if (pl.onShot && !p.noHit && p.team !== pl.team) pl.onShot(w, pl, p); // round 13 (lane E): a yeti's snowball is knocked off course (foes10.js)
     }
     for (const r of w.walls) if (p.x > r.x && p.x < r.x + r.w && p.y > r.y && p.y < r.y + r.h) p.life = 0;
     if (p.life <= 0 && p.land && !p.landed) { p.landed = true; actAs(w, p.owner, () => p.land(p)); }
@@ -1503,7 +1504,7 @@ function projectiles(w, dt) {
         continue;
       }
       if (p.hitSet && p.hitSet.has(u)) continue;
-      if (dist(p.x, p.y, u.x, u.y) < u.r + p.r) {
+      if (u.def.hitAt ? u.def.hitAt(u, p.x, p.y, p.r) : dist(p.x, p.y, u.x, u.y) < u.r + p.r) { // (round 13, lane E: def.hitAt, a body that isn't round: the sun blade)
         // round 10, the gilded golem: a shot that hits its front bounces back at whoever shot it
         if (u.def.mirror && !p.noMirror && angleDiff(Math.atan2(-p.vy, -p.vx), u.facing) < (u.def.mirror || 1.2)) {
           const back = p.owner && alive(p.owner) ? angleTo(p.x, p.y, p.owner.x, p.owner.y) : Math.atan2(-p.vy, -p.vx), sp = Math.hypot(p.vx, p.vy);

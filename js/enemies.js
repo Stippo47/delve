@@ -247,7 +247,7 @@ export const ENEMIES = {
     hp: 60, speed: 48, role: 'ranged', range: 250, keep: 190, atkCd: 999, dmg: 5, temp: 0.4, commit: 0.9, xp: 16, coins: [3, 7], cost: 5, brain: shamanBrain },
   // art round 8 (the designer on the round-6 troll: "make like 2x bigger overall"): twice the archer across (it was 1.4x):
   // r 42 -> 60, vr 31 -> 44, mass 3 -> 6; its art holds the boulder (foes9.js) in both fists
-  troll: { team: 'enemy', name: 'Troll', art: 'art/enemies/troll.svg', headR: 66, r: 54, vr: 40, boulder: 0.69, /* art round 11, the picked head: "Make them slightly smaller keep boulder same size" (r 60 -> 54, vr 44 -> 40; the boulder was 0.62 of r 60) */ turn: 2.6, accel: 150, face: 2.6, mass: 6, hp: 170, speed: 46,
+  troll: { team: 'enemy', name: 'Troll', art: 'art/enemies/troll.svg', headR: 66, r: 54, vr: 40, /* art round 11, the picked head: "Make them slightly smaller keep boulder same size" (r 60 -> 54, vr 44 -> 40; the boulder keeps its own size: foes9.js BOULDER_R) */ turn: 2.6, accel: 150, face: 2.6, mass: 6, hp: 170, speed: 46,
     role: 'melee', range: 30, atkCd: 1.7, windup: 0.45, dmg: 16, knock: 200, arc: 2.4, temp: 0.25, commit: 1.2, xp: 30, coins: [6, 12], cost: 8,
     attackAnim: 'swing', res: { burn: 1.4 }, // round 9: "The base troll should also attack with a boulder. But its boulder has a health pool and can break" (foes9.js)
     brain: (w, u, dt) => { const busy = boulderBrain(w, u, dt); trollBrain(w, u, dt); return busy; }, onDeath: (w, u) => dropBoulder(w, u) },
