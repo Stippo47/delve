@@ -528,3 +528,34 @@ The designer's words: `docs/riffle-log/2026-11-22-round12.txt` (decks showcase4 
   it was worth less than nothing); the Bard's Rhythm quickens attacks by 8% as well; Twinfang is untouchable mid-dash
   and as she steps out of a Backstab; the Druid's and Cleric's mending and the Necromancer's drain trimmed (all three
   sat 1.5 to 2 rooms over the average at tier I).
+
+## Round 14, lane S (2026-11-22): the statuses' second pass
+The designer's words: `docs/riffle-log/2026-11-22-round14.txt` (deck v16-statuses). Rules and every number:
+`docs/STATUSES.md`, "Round 14". Clips: `clips/r14/statuses/` (git-ignored). Only what each note asked was changed; the
+Enchantress's kit is as built except where the charm rules force it.
+- **Charm**: bosses, mini-bosses and boss parts take no charm. An enemy charmed over to the party no longer holds its
+  room open; when the room is won, every enemy still charmed there is a **follower** for the rest of the floor (it
+  walks through the door with the party and fights for them until it dies or the floor ends). My calls: the floor as
+  the limit (the lead's default: a floor is the run's own stretch, and with no end the Enchantress would build a
+  retinue across a dungeon); a mini-boss counts as a boss; a wave still to come keeps the room open (the charmed one
+  fights it for the time it has); what a charmed unit calls up or splits into is charmed the same way; a chain's body
+  turns with its head; a turret bolted to its room stays behind; cleanses and Heartbreak leave a follower alone; the
+  party's last hero standing, and a side's last unit in a battle, are still only Smitten (turned, nobody would be left
+  fighting for that side).
+- **Confused**: the random turn is a turn you can see and a few steps the wrong way; Addled lets off one ready ability at
+  random now and then instead of all at once; swirls pop up on the body while it builds, question marks when addled.
+- **Sleepy**: every wind-up and charge-up up to 40% longer (x fill), one multiplier (statuses.js `windMul`) read by the
+  sim's wind-ups, the shared tells in elites.js and boss-kit.js, the danger zones and a hero's queued shots. Not
+  stretched: the designed bosses' own move timers that don't go through those.
+- **Bleeding**: the round 13 look (wash, cuts, drops) is gone. Three looks to pick from, `?v_bleed=1..3`: Spurts (the
+  default), Trail, Drop. The game shows Spurts until the pick.
+- **Fear**: backs away from the first point (and keeps off further the more afraid), terrified turns its back and runs,
+  and the panic spreads to its own side within 120, halved at every hand so it dies out after two.
+- **Who uses them**: the ghost's touch builds Sleepy (30) instead of Cursed. The enemies' bite chomp (rats, bats,
+  hunter spiders) opens first and is turned 90 degrees; the Druid's wolf bite variants are untouched.
+- **The Succubus** answers a blow with a charming kiss on a 4 s cooldown (24), not 8 on every blow; the fights measure
+  about the same as before. **Healer hunters** hunt the healer only while in the mood (even odds every 3-5 s).
+  **Poison** drops to 20 when the sickness ends.
+- Checks: `tools/test/charm-rooms.mjs`, `tools/test/fear-spread.mjs`, `tools/test/hunters.mjs`,
+  `tools/test/sleepy-confused.mjs` (the last three also run on the round 13 code for the before numbers);
+  `tools/status-clip.mjs` records a dungeon run now (`--run`, `--setup`), takes `--q`, `--zoom` and `--speed`.

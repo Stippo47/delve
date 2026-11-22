@@ -483,7 +483,7 @@ function grant(run, reward, hero) {
   burst(w, hero ? hero.x : w.W / 2, hero ? hero.y : w.H / 2, { potion: '#E0604B', xp: '#FFE14D', coins: '#F2B53A', trinket: '#C9A7FF' }[reward]);
   if (reward === 'potion' && run.bare) return;
   if (reward === 'potion') {
-    const hs = w.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon).sort((a, b) => a.potions - b.potions || a.hp / a.maxHp - b.hp / b.maxHp);
+    const hs = w.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon && run.heroes[u.kind]) /* (round 14: not a charmed follower) */.sort((a, b) => a.potions - b.potions || a.hp / a.maxHp - b.hp / b.maxHp);
     const h = hs[0]; if (h) { h.potions++; run.heroes[h.kind].potions = h.potions; }
   } else if (reward === 'xp') {
     shareXp(run, (30 + 20 * run.depth) * Math.sqrt(w.mult || 1) * xpScale(runLevel(run)));

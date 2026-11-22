@@ -189,3 +189,15 @@ where a card came back with "none of them" the direction changed, not the polish
   - `oldBones`: nothing floats over her any more; she wears a bone-white protection border for the second she is
     untouchable. 1 Stand (a flash, dust stamped out from under her, chips thrown off), 2 Creak (comic crack marks snap
     out round her), 3 Glance (the blow clangs off the side it came from).
+
+## Round 14 (lane S): statuses
+- **The bite chomp** (enemies' bites: rats, bats, hunter spiders; fxkit.js `slash`, shape 'bite'): the jaws show wide
+  open first, then snap shut and hold; the whole chomp is turned 90 degrees, so the jaws close along the line of the bite
+  (one on the biter's side, one beyond). 0.42 s.
+- **Confused**: swirls (inked lilac spirals) pop up on the body at random spots, more as it builds; Addled: question
+  marks popping round the head; the burst throws question marks out.
+- **Bleeding**, three looks (`?v_bleed=N`, fxvar.js; fx-status.js): 1 Spurts (a heartbeat squirts inked drops from a
+  wound in its side; they splash on the floor; the body flushes red for a blink each beat), 2 Trail (a pool under its
+  feet and a trail where it walks; nothing on the body), 3 Drop (a drop beside its health bar fills like a gauge and
+  throbs). Blood on the floor (`drawBloodGround`, splats kept on the world) is a ground effect: flat, no outline.
+- **The Succubus's answer**: a pink heart flies from her to the striker (fx-status.js 'kissBack').

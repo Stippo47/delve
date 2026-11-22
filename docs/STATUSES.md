@@ -22,18 +22,18 @@ the problem (an archer's frost arrow is 34 chill: about three to freeze). Now ea
 |---|---|---|---|---|---|
 | **Burn** | fire arrows, fireballs, fire patches (34/s), breath | 100 | 7 | from 8: (1.5 + 0.06 x value) damage a second; flames on the body, more as it builds; thaws a freeze and melts chill | **Scorch**: 22 damage and a fire blast round it (60 across, 10 damage, burn 24 on whoever's near); drops to 20 |
 | **Chill** | frost arrows, snowballs, blizzards, the Bone King's soul fire | 100, +45 after each freeze (that extra drains 4/s) | 6 | slower, up to 60% (value / 160) | **Freeze**: frozen 3 s (bosses 1.6), can't act; a hard hit while frozen **shatters** (26 damage, icicles); drops to 0, burn too |
-| **Poison** | spider bites, gas | 100 | 4 | 0.07 x value damage a second; over 20: moves and attacks 10% slower | **Sickened** (round 11; it used to take 15% of max health at once): for 6 s it loses 10% of its max health in all (bosses 4%), deals 30% less damage and moves and attacks 20% slower; drops to 30, and to 0 when the sickness ends (round 13). Anything that cleans statuses ends it |
+| **Poison** | spider bites, gas | 100 | 4 | 0.07 x value damage a second; over 20: moves and attacks 10% slower | **Sickened** (round 11; it used to take 15% of max health at once): for 6 s it loses 10% of its max health in all (bosses 4%), deals 30% less damage and moves and attacks 20% slower; drops to 30, and to 20 when the sickness ends (round 14; round 13 had 0). Anything that cleans statuses ends it |
 | **Wet** | water shots, puddles (to 90 only) | 100 | 6 | abilities come back slower (up to half speed); over 30 freezes 1.5x easier; over 60 flies 1.7x further when hit; each soaking washes off half the poison | **Slip**: spins helplessly for 1 s and leaves a puddle; drops to 60 |
 | **Shock** | Chain Lightning, Storm abilities | 100 | 14 | from 20: a 0.3 s jolt (stun) every 1.1 s (bosses 0.1 s) | **Overload**: a 1 s stun, and arcs 30 shock to up to two of its side within 140; drops to 0 |
 | **Stagger** | heavy blows, bone spikes, the banshee's wail, bat screech | 100 | 12 | every hit that adds stagger stops it for 0.15 s (bosses 0.05) | **Knocked out**: 2.5 s (bosses 1.2) helpless and taking 1.5x damage; drops to 0 |
 | **Radiance** (new) | angels (blows 22, smite 30), cherubs (arrows 12, arrow rain 18), seraphs (bolts 20), the Archon and the Radiant (blows 25, the Radiant's ring 40) | 100 | 6 | attacks come up to 35% slower and hit up to 60% weaker (both scale with value / threshold) | **Radiant**: for 3 s it glows (an aura 120 across), **can't attack or use an ability**, and everyone else inside the aura gains 24 radiance a second (not itself); drops to 0, and it can't gain radiance again until 4 s after the glow ends |
-| **Cursed** (new) | ghosts' touch (30; ghosts no longer chill), the banshee's wail (32) and pull (22), the Bone King's last phase (his Soul Nova / Ring 40 and the Bone Wall 20) | 100 | 5 | heals do (1 - 1.6 x fill) of what they should: nothing from about 63; blows land up to 40% harder | **Hexed**: drops to 0; its next attack, heal or summon (within 8 s) **turns on it**: its damage hurts itself instead (80% of it, at most 30% of its max health per hex), a heal hurts the friend it was meant for, a summon joins the other side (with a 12 s life). Everything that one action does in the next 0.6 s turns too (all seven arrows of a Barrage) |
+| **Cursed** (new) | the banshee's wail (32) and pull (22) (round 14: ghosts' touch is Sleepy now), the Bone King's last phase (his Soul Nova / Ring 40 and the Bone Wall 20) | 100 | 5 | heals do (1 - 1.6 x fill) of what they should: nothing from about 63; blows land up to 40% harder | **Hexed**: drops to 0; its next attack, heal or summon (within 8 s) **turns on it**: its damage hurts itself instead (80% of it, at most 30% of its max health per hex), a heal hurts the friend it was meant for, a summon joins the other side (with a 12 s life). Everything that one action does in the next 0.6 s turns too (all seven arrows of a Barrage) |
 | **Entangle** (round 9) | ents' root lines (55), an elite ent's root ring (70), the Elder Ent's roots (65) and root cage (110), grasping roots on the floor (22/s), rooted sproutlings' seeds (6, an elite's 14) | 100 | 6 | up to 70% slower (x fill); walking hurts (2.2 x fill per 100 walked) and so does every attack or ability (2.5 x fill) | **Rooted** (round 13: "Tangled and rooted are the same thing": one state, one name, one icon, one look): rooted for 3 s (bosses 1.2) and the vines squeeze once for 12 damage; drops to 0, then 3 s more before it can be entangled again |
-| **Charm** (round 13) | the Enchantress (her kiss 14, Heartstring 30/s, Sweetheart 16 a blow, First Impression 45), elite Cupids' love arrows (18), the Succubus (her blow 8; 8 on whoever hits her, once a second each; her kiss 22, every 8-10 s) | 100 | 8 | from 35 (the first blows still land) it **can't hurt whoever is charming it** (u.stBy.charm): the blow does nothing and a heart pops; it looks for someone else to fight | **Enthralled**: fights for the charmer's side for 5 s (elites 4, majors 3), then comes back; drops to 0 and can't be charmed again for 6 s after. A boss, or the last one standing on its side, is **Smitten** instead: stunned 1.5 s (bosses 0.6) |
-| **Confused** (round 13) | the bat's screech (40) | 100 | 7 | every shot goes up to 0.7 rad wide (x fill); now and then (1.4 a second x fill) it lurches round to a random heading and stays turned 0.5 s; with an attack ready and nothing in reach it swings or shoots at the air (1.2 a second x fill) | **Addled** for 4 s (bosses 1.6): its weapon hits friends as well as foes, and it uses every ability it has ready at once; drops to 0, then 4 s immune |
-| **Sleepy** (round 13) | the Bard's Lullaby (45), the choir sprite's song (8 a beat on everyone of the other side inside it) | 100 | 5 | attacks up to 40% slower and up to 60% of its chances to use an ability lost (x fill); its head nods | **Asleep** for 4 s (bosses 1.6): the Lullaby's sleep, but nothing wakes it for the first 2 s (bosses 0.6), then a blow does; drops to 0, then 5 s immune |
-| **Bleeding** (round 13) | the hellhound's bite (16), the hunter spider's pounce (40) | 100 | 6, **held** for 1.5 s after every blow it takes | 0.05 x value damage a second (armour doesn't help); heals do up to 50% less (x fill) | **Haemorrhage**: loses 33% of the health it has left at once (a boss at most 6% of its max); drops to 0, then 3 s immune |
-| **Fear** (round 13) | the banshee's wail (45) | 100 | 8 | backs away from whoever frightened it while that one is within 320, more as it builds (x fill); it trembles | **Terrified** for 3 s: runs from the frightener, can't attack or use an ability, and every ability it had ready is wasted (its cooldown starts again, at least 5 s). A boss only **cowers** (stunned 0.6 s) |
+| **Charm** (round 13) | the Enchantress (her kiss 14, Heartstring 30/s, Sweetheart 16 a blow, First Impression 45), elite Cupids' love arrows (18), the Succubus (her blow 8; 8 on whoever hits her, once a second each; her kiss 22, every 8-10 s) | 100 | 8 | from 35 (the first blows still land) it **can't hurt whoever is charming it** (u.stBy.charm): the blow does nothing and a heart pops; it looks for someone else to fight | **Enthralled**: fights for the charmer's side for 5 s (elites 4, majors 3), then comes back; drops to 0 and can't be charmed again for 6 s after. Round 14: bosses, mini-bosses and boss parts take no charm at all; an enemy still enthralled when its room is won **follows** the party for the rest of the floor (below). Only the party's last hero standing, and in a battle a side's last unit, is **Smitten** instead: stunned 1.5 s |
+| **Confused** (round 13) | the bat's screech (40) | 100 | 7 | every shot goes up to 0.7 rad wide (x fill); now and then (round 14: 1.2 a second x fill) it turns to a random heading and walks off that way for 0.6-1.1 s at 70% speed; with an attack ready and nothing in reach it swings or shoots at the air (1.2 a second x fill) | **Addled** for 4 s (bosses 1.6): its weapon hits friends as well as foes, and (round 14) now and then one ready ability, picked at random, goes off by itself (0.8 a second, 1.6 with two or more ready); it uses none by choice; drops to 0, then 4 s immune |
+| **Sleepy** (round 13) | the Bard's Lullaby (45), the choir sprite's song (8 a beat on everyone of the other side inside it), ghosts' touch (30, round 14) | 100 | 5 | attacks up to 40% slower and up to 60% of its chances to use an ability lost (x fill); every wind-up up to 40% longer (x fill, round 14); its head nods | **Asleep** for 4 s (bosses 1.6): the Lullaby's sleep, but nothing wakes it for the first 2 s (bosses 0.6), then a blow does; drops to 0, then 5 s immune |
+| **Bleeding** (round 13) | the hellhound's bite (16), the hunter spider's pounce (40) | 100 | 6, **held** for 1.5 s after every blow it takes | 0.05 x value damage a second (armour doesn't help); heals do up to 50% less (x fill); round 14: three looks to pick from | **Haemorrhage**: loses 33% of the health it has left at once (a boss at most 6% of its max); drops to 0, then 3 s immune |
+| **Fear** (round 13) | the banshee's wail (45), a terrified friend nearby (round 14) | 100 | 8 | round 14: backs away from whoever frightened it, facing it, to 40% of 320 at the first point and all of it when full; it trembles | **Terrified** for 3 s: turns its back and runs from the frightener (or from where the fright came from), can't attack or use an ability, and every ability it had ready is wasted (its cooldown starts again, at least 5 s); round 14: its panic spreads to its own side within 120 (34 a second, halved for every hand it has passed through). A boss only **cowers** (stunned 0.6 s) |
 
 Angels, cherubs, seraphs and the angel bosses can't be made radiant; ghosts and banshees can't be cursed.
 
@@ -47,7 +47,8 @@ the side it is fighting for right now.
 
 ## Healers' counters (round 13; the designer: "Heal negation, enemies that target healers")
 - **Healer hunters** (`def.hunter`: a bonus when it picks a target that is a support hero): the hunter spider (the
-  Sewers) and the hellhound (the Ember Deep), +1.4.
+  Sewers) and the hellhound (the Ember Deep), +1.4. Round 14 ("Have a higher chance to go for healer. Not hard
+  targeting."): only while it is in the mood, rolled every 3-5 s at even odds (sim.js `HUNT`).
 - **Heal negation**: Bleeding cuts heals by up to half and is on the hellhound's bite and the hunter spider's pounce;
   Cursed still cuts them to nothing. Buffs can carry `healTaken` (heals x that) for later use.
 
@@ -90,6 +91,80 @@ hex) are timers: their HUD ring shrinks from full as they run out.
 - **The wither rule is off** (dungeon.js): enemies no longer wear down in a room that drags on. `w.stale` (enemies press
   in harder after 45 s without a kill or 150 s in the room) is what is left.
 
+## Round 14 (lane S, second pass): the designer's notes on 0.16.0
+The designer's words: `docs/riffle-log/2026-11-22-round14.txt`, deck v16-statuses. Numbers in `js/statuses.js`.
+- **Charm** ("Bosses immune to charm. The last unit on a floor charmed will count as beating the level. They will follow
+  u into the next room fully charmed."):
+  - Bosses, a floor's mini-boss (`u.mini`, `u.floorFoe`) and boss parts (`def.part`) take no charm at all (sim.js
+    `charmProof`); the Enchantress's Heartstring no longer picks them.
+  - An enemy is enthralled even when it is the last of its side (round 13 stunned it). An enemy charmed over to the
+    party no longer holds its room open (dungeon.js `thrall`). When nothing in a room is left fighting the party and no
+    wave is to come, the room is won, and every enemy still enthralled there becomes a **follower** (`u.follower`): its
+    charm has no end (`flipUntil` null), it walks through the door with the party (dungeon.js `follow`, `enterRoom`)
+    and fights for them in the rooms after, **until it dies or the floor ends** (endFloor drops `run.followers`).
+    Why the floor: a floor is the run's own stretch (checkpoints, the downed come back at its end); without an end the
+    Enchantress would gather a retinue across a whole dungeon. A follower keeps its health, rank and kind; statuses,
+    targets, what it was casting and what was cast on it are left behind. A thing bolted to its room (a wall turret)
+    counts as beaten but stays.
+  - A wave still to come: the room is not won; the wave comes up while the charmed one fights for the party (for the
+    5 s it has).
+  - What a charmed or befuddled unit calls up or splits into is charmed the same way: the same side, the same end, a
+    follower's a follower (sim.js `spawn`; `killNow` keeps the dying one's charm in `u._flipWas`). A chain's body goes
+    over with its head (turnSide / restoreSide).
+  - A friend's cleanse does not break a follower's charm, and Heartbreak leaves followers alone (won for good).
+  - The party's last hero standing, charmed full (a Succubus), is still **Smitten** (stunned 1.5 s): turned, nobody
+    would be left fighting for the party. In a **battle** a side's last unit is still Smitten (kept from round 13):
+    turned, it would have no one to fight and the battle would sit until it came back.
+  - Tests: `node tools/test/charm-rooms.mjs` (16 checks: the last enemy follows and fights in the next room, several
+    charmed at once, a charmed summoner, a charmed splitter, a wave to come, bosses, the last hero, battle mode).
+- **Confused** ("turn randomly", "a chance to trigger randomly while bursted", "spiral swirls ... appearing on body
+  randomly. Question marks when bursted"): the lurch is a turn you can see and a walk the wrong way: 1.2 a second x fill
+  it swings round (1.5-3.1 rad off) at 1.6x its turning speed and walks that way for 0.6-1.1 s at 70% (`u.lurchA`,
+  `u.lurchT`). Addled fires nothing at the burst; while it lasts, each second there is a 0.8 chance (1.6 with two or more
+  ready) that one ready ability, picked at random, goes off by itself (sim.js `addledTick`, kits.js `kitFireRandom`); an
+  addled unit uses none by choice. Looks: swirls pop up on the body here and there (1 to 3, more as it builds); addled:
+  three question marks popping round its head; the burst throws five question marks out.
+  Measured (`tools/test/sleepy-confused.mjs`, an Archer at tier III addled with every ability ready): round 13 fired all
+  three at 0.0 s; now e.g. Roll 0.1, Frost Arrow 0.8, Barrage 2.6, Roll 3.9.
+- **Sleepy** ("all wind ups like 40% longer too. Anything charged up"): `windMul` = 1 + 0.4 x fill slows every wind-up:
+  an enemy's melee wind-up, a charge's tell, a slam, a stand through a tell (elites.js `hold`, `rushTick`, boss-kit
+  `chargeTick`), the danger zone it shows meanwhile, a lob's flight, a hero's charged shot and anything else it has
+  queued (`u.later`, `u.aimT`), and the pose plays out to match. Measured at 99 (just short of the burst): a rattler's
+  swing 0.42 -> 0.57 s, the banshee's wail 0.58 -> 0.82 s, an orc's charge tell 0.47 -> 0.63 s, the Archer's Barrage
+  0.42 -> 0.57 s (+36-41%); at 50 about +17%. The designed bosses' own move timers outside those tools are not stretched.
+- **Bleeding** ("Don't like visual at all"): round 13's dark red wash, red cuts and falling drops are gone; three looks
+  to pick from, `?v_bleed=1..3` (fxvar.js), 1 the default: **1 Spurts** (a heartbeat, 1.05 s a beat quickening to 0.55
+  s, squirts a jet of 3-5 drops from a wound in its side; they splash on the floor and fade over 2.6 s; the body flushes
+  red for a blink on each beat; Haemorrhage: six jets at once all round, a pool under it), **2 Trail** (nothing on the
+  body: a pool under its feet growing with the build-up, and a mark left every 14-20 it walks; Haemorrhage: the pool
+  floods out and a crown of blood splashes up round it), **3 Drop** (a blood drop beside its health bar fills like a
+  gauge and throbs on each beat; Haemorrhage: it swells and bursts, its blood thrown out). Blood on the floor is a ground
+  effect (no outline); drops in the air are inked. Clips `clips/r14/statuses/bleed-1..3.mp4`.
+- **Fear** ("Doesn't seem to back away. Burst will make them turn away and run. Will have a radius of fear around them
+  giving other entities fear."): from the first point it backs away facing the frightener (its walk turned away by at
+  least 0.6, all the way when it was coming straight on, at 74-90% speed) until it is 40% of 320 off (all 320 when
+  full). Measured (`tools/test/fear-spread.mjs`, a rattler closing on a paladin given 45, one wail): distance every 0.5 s
+  round 13 126 152 196 170 122 103 101 139 124; now 126 153 204 201 177 187 162 172 145 (it keeps off till the fear
+  drains). Terrified: it turns its back (faces the way it runs: 19% of its run in round 13, 100% now after a 0.4 s
+  turn), runs from the frightener or, if that one is gone, from where the fright came from; an elite's move or a tell
+  it was in is dropped. Spread: everyone of its own side within 120 gains 34 fear a second from it, halved for every hand
+  the panic has passed through (`u.fearGen`; the third hand's 8.5 a second no longer beats the 8 a second fear drains),
+  and the usual 8 s before a unit can be terrified again. Six rattlers in a knot, five given 45 and one terrified: 3-4
+  of the six burst, the panic goes two hands deep and everyone is calm again after 6-7 s (round 13: only the first one).
+- **Who uses them**: the ghost's touch builds Sleepy (30 a touch, every 1.3 s) instead of Cursed. The bite's chomp
+  (fxkit.js, used by rats, bats and hunter spiders: the Druid's wolf has its own bite, and hellhounds, dire and frost
+  wolves and the Alpha draw a thrust) shows the jaws wide open first (they open a touch wider over 0.09 s), snaps at
+  0.15-0.21 s and holds; it is turned 90 degrees, so the jaws close along the line of the bite; 0.42 s in all (was 0.28).
+- **The Succubus** ("The when hit charm attacker should be on a cooldown, not every hit."): when a blow lands on her and
+  her answer is ready she blows the striker a kiss (charm 24, a heart flies to it), then not again for 4 s whoever hits
+  her (`SUCCUBUS` in foes.js; round 13: 8 on every blow, once a second for each striker). Battles of 20: two Succubi vs
+  paladin, archer, cleric won 1 (round 13) and 0 (now); two Devils 0; three Succubi vs paladin, archer, bard 15 and 16.
+- **Healer hunters**: on the healer, share of the hunters' time in 12 battles of four against a trio (1 in 3 by chance;
+  `tools/test/hunters.mjs`): hunter spiders vs tower, pyromancer, bard 85% (round 13) -> 60%; vs paladin, archer, cleric
+  45% -> 44%; hellhounds 35% -> 34% (their pack brain picks for them most of the time, round 13 too); plain wolves 21%.
+- **Poison** ("Poison drops to 20%"): when the sickness ends the build-up drops to 20 (it never rises to it: a build-up
+  already under 20 stays).
+
 ## How they look (the hooks the visuals read)
 - `u.st.<status>` is the value; `statuses.js fillOf(u, id)` is 0..1 to the burst; `u.bursts[id]` is the time it last burst.
 - Burn: flames drawn on the body (`fx.js drawStatusFx`, 2-5 licks, taller as it builds) plus flame particles rising
@@ -103,11 +178,11 @@ hex) are timers: their HUD ring shrinks from full as they run out.
 - Round 13 (js/fx-status.js, render.js `washesOf` and `unitFrame`). No rings round the body: a wash, body motion and marks.
   - Charm: a pink wash; pink hearts rising off it, more as it builds. Enthralled: a stronger pulsing pink wash and a
     beating heart over its head; a burst of hearts when it turns, the heart cracking in two when it comes back.
-  - Confused: a lilac wash; it sways off balance; a wobbling question mark over its head. Addled: a flickering wash and
-    two spirals chasing round its head; a lilac swirl with stars at the burst.
+  - Confused: a lilac wash; it sways off balance; round 14: swirls popping up on its body here and there, more as it
+    builds. Addled: a flickering wash and question marks popping round its head; question marks thrown out at the burst.
   - Sleepy: a dusky violet wash; its head nods (a slow droop, a jerk back up); small slow z's. Asleep: a poof and a big Z.
-  - Bleeding: a dark red wash, red cuts on the body (more as it builds), drops of blood falling off it. Haemorrhage: a
-    red flash on the body, a spray of red streaks and a pool of blood under it that fades.
+  - Bleeding (round 14): three looks to pick from, `?v_bleed=N` (Spurts, Trail, Drop; above). Round 13's wash, cuts and
+    drops are gone.
   - Fear: a pale wash; it trembles, harder as it builds; sweat flicking off its head. Terrified: shaking, fright lines
     round its head, and it runs.
   - HUD icons `charm`, `charmed`, `confuse`, `addled`, `sleepy`, `bleed`, `fear`, `terrified`; buff and state icons
