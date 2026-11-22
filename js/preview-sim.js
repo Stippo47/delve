@@ -549,6 +549,7 @@ function foeStage(S, spec) {
       if (held() && !u.dead && !u.act) { u.x = hold.x; u.y = hold.y; u.vx = u.vy = 0; }
       // nothing yet by 2.4 s: the nearest dummy steps up close, for the moves that want a target at arm's length
       if ((move === 'elite' || move === 'major') && !S.fired() && S.t > 2.4 && !lastA.stepped) { lastA.stepped = true; const d = dummies[0]; d.home = { x: u.x - Math.cos(u.facing) * 0 - (u.r + d.r + 26), y: u.y }; d._free = 0; }
+      if (lastA.stepped && !S.fired() && !u.dead) { const d = dummies[0]; d.home = { x: Math.max(40, u.x - (u.r + d.r + 26)), y: u.y }; } // and keeps at its side until the move comes
       if (move === 'kit' && d0.pass && Math.hypot(u.x - hold.x, u.y - hold.y) > 150) S.fire(); // a roller: rolling and bouncing is what it does
       // keep it on the stage and the stage going: hurt by its own moves or a reflected shot, it heals up
       if (!u.dead && u.hp < u.maxHp * 0.2) u.hp = u.maxHp * 0.6;
