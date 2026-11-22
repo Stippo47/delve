@@ -763,3 +763,21 @@ and its evidence: `docs/LONG-ROOMS.md`; the tools: `tools/long-rooms.mjs` and `r
   70 s: lane W's mode, reported, not changed).
 - **Tools**: `tools/edge.mjs`, one headless Edge for every recording tool, closed over CDP and then by its own profile
   folder (the launcher pid taskkill used to target had already exited, so every run left an Edge behind).
+
+## Round 14, the lead after lane L (2026-11-22): 0.20.1
+- **The wagon's gate drain is gone** (foes losing 3% health a second after 70 s stopped at a stretch's gate): it was the
+  wither rule in another mode, and the designer's ruling is "fix the source not the symptom". The source was a foe out
+  past where a guard goes (the round 14 sides and leash). Now, 6 s stopped at a gate with foes still near, the guards
+  leave their sides and hunt (`HUNT_AFTER`, js/convoy.js pickFor and guardTick); after 40 s the foes press in as before.
+  Measured without the drain: delivered 24 of 30 at level 4, 17 of 20 at levels 3 and 5, 0 stuck.
+- **The Sand Wurm**, 5 wins in 30 once its Brood ran the whole fight (lane L: the old clock had switched the Brood off).
+  Cause found: the Brood's scarabs took the room foes' harder blows (HIT_STEP 0.09, the boss keeps 0.05) and come up
+  beside the back line. The Brood's scarabs hit at 40% (`SW.brood.dmgMul`), the rooted window is 9.5 s (8.5), and heroes
+  would rather hit a boss while its window is open than its adds (`WINDOW_PULL`, js/sim.js; by itself worth 2 wins in 30).
+  Now 15 wins in 40 at level 54; the level itself is round 12's and is re-measured with the campaigns.
+- **Kept from lane L as built**: no clock on a room; room foes' health 7-19% lower and blows 4-20% harder by depth
+  (HP_POW 0.75, HIT_STEP 0.09), bosses and mini-bosses on round 8's numbers. Battle mode keeps its 75 s press-in and
+  240 s judge (a sandbox's rule for setups that can't end, not a room's).
+- **Asked in Riffle (deck v201-rooms)**: a lone hero who can neither win nor lose; my pick is to leave it to the player.
+- Campaigns on 0.20.0 before lane L (four seeds, 150 runs, wipes at 75%): the Foundry's boss first falls at runs 101, 80,
+  91, 62; runs at the 420 s cut 2, 6, 8, 2.
