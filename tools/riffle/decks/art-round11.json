@@ -1,0 +1,734 @@
+{
+  "title": "Art round 11: your notes, and picks",
+  "topic": "art",
+  "order": 30,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "picks",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Your picks, in the game",
+      "text": "Ghost tail 1 on both, the Elder Ent's face B, the frost spirit's tail drawn by the game.",
+      "why": "These are exactly what you picked, now live. The spirits' tails are drawn by the game and wiggle behind them (all seven spirits); the clip on the next card shows them. Tick the ones that are right; comment on any that still aren't.",
+      "pick": [
+        "ghost",
+        "ghost-b",
+        "wild-elder-ent",
+        "spirit-core-frost",
+        "greenskin-troll",
+        "wild-ent"
+      ],
+      "items": [
+        {
+          "id": "ghost",
+          "label": "Ghost A, tail 1",
+          "image": "../../../design/class-round11/enemies/renders/ghost.png",
+          "text": "The point, as picked.",
+          "thumb": "../../../design/class-round11/enemies/renders/ghost-thumb.png"
+        },
+        {
+          "id": "ghost-before",
+          "label": "Ghost A, tail 1 (before)",
+          "image": "../../../design/class-round11/enemies/renders/ghost-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "ghost-b",
+          "label": "Ghost B, tail 1",
+          "image": "../../../design/class-round11/enemies/renders/ghost-b.png",
+          "text": "The point, as picked.",
+          "thumb": "../../../design/class-round11/enemies/renders/ghost-b-thumb.png"
+        },
+        {
+          "id": "ghost-b-before",
+          "label": "Ghost B, tail 1 (before)",
+          "image": "../../../design/class-round11/enemies/renders/ghost-b-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "wild-elder-ent",
+          "label": "Elder Ent, face B",
+          "image": "../../../design/class-round11/enemies/renders/wild-elder-ent.png",
+          "text": "As picked; it is the size you asked for last round.",
+          "thumb": "../../../design/class-round11/enemies/renders/wild-elder-ent-thumb.png"
+        },
+        {
+          "id": "wild-elder-ent-before",
+          "label": "Elder Ent, face B (before)",
+          "image": "../../../design/class-round11/enemies/renders/wild-elder-ent-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "spirit-core-frost",
+          "label": "Frost spirit",
+          "image": "../../../design/class-round11/enemies/renders/spirit-core-frost.png",
+          "text": "The art is the core alone now; the game draws the tail.",
+          "thumb": "../../../design/class-round11/enemies/renders/spirit-core-frost-thumb.png"
+        },
+        {
+          "id": "spirit-core-frost-before",
+          "label": "Frost spirit (before)",
+          "image": "../../../design/class-round11/enemies/renders/spirit-core-frost-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "greenskin-troll",
+          "label": "Troll, head B",
+          "image": "../../../design/class-round11/boards/renders/greenskin-troll.png",
+          "text": "Sharper jaw, a slightly longer head, no mouth, a long nose. It keeps its arms. 10% smaller, the boulder its old size.",
+          "thumb": "../../../design/class-round11/boards/renders/greenskin-troll-thumb.png"
+        },
+        {
+          "id": "greenskin-troll-before",
+          "label": "Troll, head B (before)",
+          "image": "../../../design/class-round11/boards/renders/greenskin-troll-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "wild-ent",
+          "label": "Ent, face B",
+          "image": "../../../design/class-round11/enemies/renders/wild-ent.png",
+          "text": "The mouth and the leaf on the nose are gone.",
+          "thumb": "../../../design/class-round11/enemies/renders/wild-ent-thumb.png"
+        },
+        {
+          "id": "wild-ent-before",
+          "label": "Ent, face B (before)",
+          "image": "../../../design/class-round11/enemies/renders/wild-ent-before.png",
+          "text": "The version your note was on."
+        }
+      ]
+    },
+    {
+      "id": "moving",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Cobra, spirits, gaper",
+      "text": "In the game: the cobra's hood circles over its coil, the spirits' tails wiggle, the gaper's line is thinner.",
+      "why": "You wrote: \"have it slowly move around the bottom segment in game\", \"like that rat tail\" and \"the gaper in this pic has big outlines\". The gaper stands beside a rattler: their lines are the same weight now. Pin anything that looks wrong.",
+      "videos": [
+        "../../../design/class-round11/clips/cobra-spirits-gaper.mp4"
+      ]
+    },
+    {
+      "id": "wolves",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Wolves: heads, bodies",
+      "text": "The game's wolves: no paws, heads forward, bodies shorter. Beside them: the paws drawn under the body.",
+      "why": "You wrote: \"Bring their heads forwards a bit. Shorten body a bit. And I think this is good. Also show me with the pawns rendering under the body\" The three without paws are live. Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/wolves.png"
+      ]
+    },
+    {
+      "id": "boar",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Boar: without the mane",
+      "text": "A the ridge as you picked it (live). B without the dark crest. C without the ruff round its neck.",
+      "why": "You wrote: \"Ridge. Show me without the mane\" I wasn't sure which you call the mane, so both are here. Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/boar.png"
+      ]
+    },
+    {
+      "id": "fixes-wild",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Wildwood and Sewers",
+      "text": "Your notes applied, each beside the version you saw. Live.",
+      "why": "Each changes only what its note says. No bandit has the line in the bandanna any more. Tick the ones that are right; comment on any that still aren't.",
+      "pick": [
+        "bandit-axe",
+        "bandit-daggers",
+        "bandit-sword",
+        "bandit-brute",
+        "bandit-chief",
+        "greenskin-orc",
+        "wild-dire-wolf-less-spiky"
+      ],
+      "items": [
+        {
+          "id": "bandit-axe",
+          "label": "Axe bandit",
+          "image": "../../../design/class-round11/enemies/renders/bandit-axe.png",
+          "text": "The axe flipped: the blade faces in.",
+          "thumb": "../../../design/class-round11/enemies/renders/bandit-axe-thumb.png"
+        },
+        {
+          "id": "bandit-axe-before",
+          "label": "Axe bandit (before)",
+          "image": "../../../design/class-round11/enemies/renders/bandit-axe-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "bandit-daggers",
+          "label": "Knife bandit",
+          "image": "../../../design/class-round11/enemies/renders/bandit-daggers.png",
+          "text": "The kerchief's knot lies on top now.",
+          "thumb": "../../../design/class-round11/enemies/renders/bandit-daggers-thumb.png"
+        },
+        {
+          "id": "bandit-daggers-before",
+          "label": "Knife bandit (before)",
+          "image": "../../../design/class-round11/enemies/renders/bandit-daggers-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "bandit-sword",
+          "label": "Sword bandit",
+          "image": "../../../design/class-round11/enemies/renders/bandit-sword.png",
+          "text": "The helm's strip is two flat lines, light and dark.",
+          "thumb": "../../../design/class-round11/enemies/renders/bandit-sword-thumb.png"
+        },
+        {
+          "id": "bandit-sword-before",
+          "label": "Sword bandit (before)",
+          "image": "../../../design/class-round11/enemies/renders/bandit-sword-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "bandit-brute",
+          "label": "Bandit brute",
+          "image": "../../../design/class-round11/enemies/renders/bandit-brute.png",
+          "text": "No line in the bandanna.",
+          "thumb": "../../../design/class-round11/enemies/renders/bandit-brute-thumb.png"
+        },
+        {
+          "id": "bandit-brute-before",
+          "label": "Bandit brute (before)",
+          "image": "../../../design/class-round11/enemies/renders/bandit-brute-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "bandit-chief",
+          "label": "Bandit Chief",
+          "image": "../../../design/class-round11/enemies/renders/bandit-chief.png",
+          "text": "No line in the bandanna.",
+          "thumb": "../../../design/class-round11/enemies/renders/bandit-chief-thumb.png"
+        },
+        {
+          "id": "bandit-chief-before",
+          "label": "Bandit Chief (before)",
+          "image": "../../../design/class-round11/enemies/renders/bandit-chief-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "greenskin-orc",
+          "label": "Orc",
+          "image": "../../../design/class-round11/enemies/renders/greenskin-orc.png",
+          "text": "The tail of hair lies over the head, from the knot; no hair tie.",
+          "thumb": "../../../design/class-round11/enemies/renders/greenskin-orc-thumb.png"
+        },
+        {
+          "id": "greenskin-orc-before",
+          "label": "Orc (before)",
+          "image": "../../../design/class-round11/enemies/renders/greenskin-orc-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "wild-dire-wolf-less-spiky",
+          "label": "Dire wolf, less spiky",
+          "image": "../../../design/class-round11/enemies/renders/wild-dire-wolf-less-spiky.png",
+          "text": "Only its mane: fewer, shallower tufts (shown with paws, as on your tile).",
+          "thumb": "../../../design/class-round11/enemies/renders/wild-dire-wolf-less-spiky-thumb.png"
+        },
+        {
+          "id": "wild-dire-wolf-less-spiky-before",
+          "label": "Dire wolf, less spiky (before)",
+          "image": "../../../design/class-round11/enemies/renders/wild-dire-wolf-less-spiky-before.png",
+          "text": "The version your note was on."
+        }
+      ]
+    },
+    {
+      "id": "croc",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Croc: the axes",
+      "text": "Aimed inwards, rusted, a chip in each; the right one is the left one mirrored. The steel version is saved.",
+      "why": "You wrote: \"Aim inwards. Put a chip in them and make them rusted (save this version though)... mirror it\" Live. I read \"aim inwards\" as where the axes point; say if you meant the blades. Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/croc.png"
+      ]
+    },
+    {
+      "id": "fixes-cold",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Frost, Spire and Dunes",
+      "text": "Your notes applied, each beside the version you saw. Live.",
+      "why": "Each changes only what its note says. Tick the ones that are right; comment on any that still aren't.",
+      "pick": [
+        "frost-icicle-wraith",
+        "frost-yeti",
+        "frost-ice-slime",
+        "spire-herald-light",
+        "spire-herald-fallen",
+        "spire-seraph",
+        "dunes-serpent-coil",
+        "dunes-sand-serpent",
+        "boss-goblin-chieftain"
+      ],
+      "items": [
+        {
+          "id": "frost-icicle-wraith",
+          "label": "Icicle wraith",
+          "image": "../../../design/class-round11/enemies/renders/frost-icicle-wraith.png",
+          "text": "The hands: three long icicle fingers on each sleeve.",
+          "thumb": "../../../design/class-round11/enemies/renders/frost-icicle-wraith-thumb.png"
+        },
+        {
+          "id": "frost-icicle-wraith-before",
+          "label": "Icicle wraith (before)",
+          "image": "../../../design/class-round11/enemies/renders/frost-icicle-wraith-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "frost-yeti",
+          "label": "Yeti",
+          "image": "../../../design/class-round11/enemies/renders/frost-yeti.png",
+          "text": "A dark nose again, taller than it is wide; the front of the torso is one soft curve.",
+          "thumb": "../../../design/class-round11/enemies/renders/frost-yeti-thumb.png"
+        },
+        {
+          "id": "frost-yeti-before",
+          "label": "Yeti (before)",
+          "image": "../../../design/class-round11/enemies/renders/frost-yeti-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "frost-ice-slime",
+          "label": "Ice slime",
+          "image": "../../../design/class-round11/enemies/renders/frost-ice-slime.png",
+          "text": "The old one, without its icicles.",
+          "thumb": "../../../design/class-round11/enemies/renders/frost-ice-slime-thumb.png"
+        },
+        {
+          "id": "frost-ice-slime-before",
+          "label": "Ice slime (before)",
+          "image": "../../../design/class-round11/enemies/renders/frost-ice-slime-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "spire-herald-light",
+          "label": "Herald of Light",
+          "image": "../../../design/class-round11/enemies/renders/spire-herald-light.png",
+          "text": "Less shade on the face, bangs to one side, a smaller flag, the spear held lower in a plain fist.",
+          "thumb": "../../../design/class-round11/enemies/renders/spire-herald-light-thumb.png"
+        },
+        {
+          "id": "spire-herald-light-before",
+          "label": "Herald of Light (before)",
+          "image": "../../../design/class-round11/enemies/renders/spire-herald-light-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "spire-herald-fallen",
+          "label": "Fallen Herald",
+          "image": "../../../design/class-round11/enemies/renders/spire-herald-fallen.png",
+          "text": "Bangs the other way, a cracked cheek, the same flag and grip.",
+          "thumb": "../../../design/class-round11/enemies/renders/spire-herald-fallen-thumb.png"
+        },
+        {
+          "id": "spire-herald-fallen-before",
+          "label": "Fallen Herald (before)",
+          "image": "../../../design/class-round11/enemies/renders/spire-herald-fallen-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "spire-seraph",
+          "label": "Seraph",
+          "image": "../../../design/class-round11/enemies/renders/spire-seraph.png",
+          "text": "The old head shape and cap of hair, in its pale gold.",
+          "thumb": "../../../design/class-round11/enemies/renders/spire-seraph-thumb.png"
+        },
+        {
+          "id": "spire-seraph-before",
+          "label": "Seraph (before)",
+          "image": "../../../design/class-round11/enemies/renders/spire-seraph-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "dunes-serpent-coil",
+          "label": "Serpent segment",
+          "image": "../../../design/class-round11/enemies/renders/dunes-serpent-coil.png",
+          "text": "The head's own diamond, the same size on screen.",
+          "thumb": "../../../design/class-round11/enemies/renders/dunes-serpent-coil-thumb.png"
+        },
+        {
+          "id": "dunes-serpent-coil-before",
+          "label": "Serpent segment (before)",
+          "image": "../../../design/class-round11/enemies/renders/dunes-serpent-coil-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "dunes-sand-serpent",
+          "label": "Sand serpent, whole",
+          "image": "../../../design/class-round11/boards/renders/dunes-sand-serpent.png",
+          "text": "Head and six segments as the game lays them.",
+          "thumb": "../../../design/class-round11/boards/renders/dunes-sand-serpent-thumb.png"
+        },
+        {
+          "id": "dunes-sand-serpent-before",
+          "label": "Sand serpent, whole (before)",
+          "image": "../../../design/class-round11/boards/renders/dunes-sand-serpent-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "boss-goblin-chieftain",
+          "label": "Goblin Chieftain",
+          "image": "../../../design/class-round11/enemies/renders/boss-goblin-chieftain.png",
+          "text": "Hands further forward, the blades flipped.",
+          "thumb": "../../../design/class-round11/enemies/renders/boss-goblin-chieftain-thumb.png"
+        },
+        {
+          "id": "boss-goblin-chieftain-before",
+          "label": "Goblin Chieftain (before)",
+          "image": "../../../design/class-round11/enemies/renders/boss-goblin-chieftain-before.png",
+          "text": "The version your note was on."
+        }
+      ]
+    },
+    {
+      "id": "mummy",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Mummy: the last one",
+      "text": "A no button, no arms (live). B no button, arms kept. C the newer one without its collar.",
+      "why": "You wrote: \"I liked the last one just without the button thing. I want to see without the collar\" Earlier: \"Remove arms\", so A has both notes. The collar that shows is the newer one's. Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/mummy.png"
+      ]
+    },
+    {
+      "id": "fixes-foundry",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "The Foundry",
+      "text": "Your notes applied, each beside the version you saw. Live.",
+      "why": "Each changes only what its note says. Tick the ones that are right; comment on any that still aren't.",
+      "pick": [
+        "foundry-bomb-bot",
+        "foundry-turret-flame",
+        "foundry-turret-laser",
+        "foundry-smith",
+        "foundry-saw-blade",
+        "foundry-tesla-coil"
+      ],
+      "items": [
+        {
+          "id": "foundry-bomb-bot",
+          "label": "Bomb bot",
+          "image": "../../../design/class-round11/enemies/renders/foundry-bomb-bot.png",
+          "text": "No caution tape, a proper fuse, the feet under its left and right sides.",
+          "thumb": "../../../design/class-round11/enemies/renders/foundry-bomb-bot-thumb.png"
+        },
+        {
+          "id": "foundry-bomb-bot-before",
+          "label": "Bomb bot (before)",
+          "image": "../../../design/class-round11/enemies/renders/foundry-bomb-bot-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "foundry-turret-flame",
+          "label": "Flame turret",
+          "image": "../../../design/class-round11/enemies/renders/foundry-turret-flame.png",
+          "text": "The flame comes out from under the nozzle, not on top of it.",
+          "thumb": "../../../design/class-round11/enemies/renders/foundry-turret-flame-thumb.png"
+        },
+        {
+          "id": "foundry-turret-flame-before",
+          "label": "Flame turret (before)",
+          "image": "../../../design/class-round11/enemies/renders/foundry-turret-flame-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "foundry-turret-laser",
+          "label": "Laser turret",
+          "image": "../../../design/class-round11/enemies/renders/foundry-turret-laser.png",
+          "text": "The socket is the housing's shape and hugs it.",
+          "thumb": "../../../design/class-round11/enemies/renders/foundry-turret-laser-thumb.png"
+        },
+        {
+          "id": "foundry-turret-laser-before",
+          "label": "Laser turret (before)",
+          "image": "../../../design/class-round11/enemies/renders/foundry-turret-laser-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "foundry-smith",
+          "label": "Foundry smith",
+          "image": "../../../design/class-round11/enemies/renders/foundry-smith.png",
+          "text": "The glow is on the hammer's side; a plain left hand.",
+          "thumb": "../../../design/class-round11/enemies/renders/foundry-smith-thumb.png"
+        },
+        {
+          "id": "foundry-smith-before",
+          "label": "Foundry smith (before)",
+          "image": "../../../design/class-round11/enemies/renders/foundry-smith-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "foundry-saw-blade",
+          "label": "Saw blade",
+          "image": "../../../design/class-round11/enemies/renders/foundry-saw-blade.png",
+          "text": "The previous blade with the new red middle.",
+          "thumb": "../../../design/class-round11/enemies/renders/foundry-saw-blade-thumb.png"
+        },
+        {
+          "id": "foundry-saw-blade-before",
+          "label": "Saw blade (before)",
+          "image": "../../../design/class-round11/enemies/renders/foundry-saw-blade-before.png",
+          "text": "The version your note was on."
+        },
+        {
+          "id": "foundry-tesla-coil",
+          "label": "Tesla coil",
+          "image": "../../../design/class-round11/enemies/renders/foundry-tesla-coil.png",
+          "text": "Cheated up: the coil stands and you see its side.",
+          "thumb": "../../../design/class-round11/enemies/renders/foundry-tesla-coil-thumb.png"
+        },
+        {
+          "id": "foundry-tesla-coil-before",
+          "label": "Tesla coil (before)",
+          "image": "../../../design/class-round11/enemies/renders/foundry-tesla-coil-before.png",
+          "text": "The version your note was on."
+        }
+      ]
+    },
+    {
+      "id": "bandit-torch",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Torch bandit",
+      "text": "A the hat kept, only the torch new. B a sackcloth cowl. C red hair and soot. The same new torch on all.",
+      "why": "You wrote: \"Meh. Don't like the torch. Pretty cool hat for a bandit more suited for an outlaw\" The hat is saved for an outlaw if you want one. Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/bandit-torch.png"
+      ]
+    },
+    {
+      "id": "bandit-greatsword",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Greatsword bandit",
+      "text": "A a deserter's dented helm. B the gang's headsman. C a horned raider.",
+      "why": "You wrote: \"Meh\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/bandit-greatsword.png"
+      ]
+    },
+    {
+      "id": "bandit-spear",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Spear bandit",
+      "text": "A a kettle hat and a boar spear. B a striped head wrap. C a farmer's straw hat.",
+      "why": "You wrote: \"Try again\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/bandit-spear.png"
+      ]
+    },
+    {
+      "id": "bandit-poacher",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Poacher",
+      "text": "A an antlered hide hood. B a hood and a quiver. C a beard and a brace of birds.",
+      "why": "You wrote: \"Try again\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/bandit-poacher.png"
+      ]
+    },
+    {
+      "id": "spire-fallen-angel",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Fallen angel",
+      "text": "A burnt white, blindfolded. B its halo slipped to a collar. C still burning.",
+      "why": "You wrote: \"Try again\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/spire-fallen-angel.png"
+      ]
+    },
+    {
+      "id": "golem-bodies",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Golem: four more",
+      "text": "D an arch. E a cairn of slabs. F split slate. G one carved wheel. The first three are kept.",
+      "why": "You wrote: \"Try 4 more. Keeps these.\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/golem-bodies.png"
+      ]
+    },
+    {
+      "id": "gilded-golems",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Gilded golem: no mask",
+      "text": "No plate round the eye. A gold veins. B gold bands. C gold caps. Shown on body A.",
+      "why": "You wrote: \"Don't like the gold mask look\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/gilded-golems.png"
+      ]
+    },
+    {
+      "id": "sproutling",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Sproutling: the original",
+      "text": "The first design, no arms. A no collar of leaves. B five broad leaves. C its two leaves out to the sides.",
+      "why": "You wrote: \"I like these. Save em. But try the original design just better. No arms. Less busy leaves.\" The three from last time are saved. Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/sproutling.png"
+      ]
+    },
+    {
+      "id": "dart-trap",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Dart trap: its eye",
+      "text": "A a carved eye. B a ruby in a gold lotus. C a scarab.",
+      "why": "You wrote: \"Different eye style. Variants\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/dart-trap.png"
+      ]
+    },
+    {
+      "id": "automaton-visors",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Automaton: visors",
+      "text": "A a grille of five slots. B one round lens. C a scowl.",
+      "why": "You wrote: \"Good except visor. 3 variants.\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/automaton-visors.png"
+      ]
+    },
+    {
+      "id": "automaton-keys",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Automaton: keys",
+      "text": "1 a ring. 2 a bar with two knobs. 3 a clover.",
+      "why": "You wrote: \"I also don't like the look of the key on the back. Make 3 for that too\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/automaton-keys.png"
+      ]
+    },
+    {
+      "id": "crawler-visors",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Chain crawler: visor",
+      "text": "The automaton's three visors on the crawler's head.",
+      "why": "You wrote: \"Different visor.\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/crawler-visors.png"
+      ]
+    },
+    {
+      "id": "repair-drone",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Repair drone: its front",
+      "text": "A just an eye. B an eye and two grabbers. C an eye and a welding torch.",
+      "why": "You wrote: \"3 variants for what's on its front. Its propellers and body looks good. Eye?\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/repair-drone.png"
+      ]
+    },
+    {
+      "id": "steam-turret",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Steam turret: barrel",
+      "text": "A a long pipe. B twin pipes. C a kettle's spout.",
+      "why": "You wrote: \"Meh Don't like gun barrel\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/steam-turret.png"
+      ]
+    },
+    {
+      "id": "mortar",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Mortar: straight up",
+      "text": "Seen from above, the barrel aims up: a round hole, set forward of the middle. A bare tube. B a cradle. C a pot",
+      "why": "You wrote: \"Should be a cannon aiming straight up with a circle hole in the top. Slightly offset from the middle, skewed to 1 side.\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/mortar.png"
+      ]
+    },
+    {
+      "id": "bee",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Bee, from the wasp",
+      "text": "Fatter, wings on top, one red eye. A a cog collar. B a cog on its back. C cogs at the wings.",
+      "why": "You wrote: \"This might be a good base for the basic bee. Maybe a bit fatter. Also make wings render ontop. Maybe add 1 red eye on the head\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/bee.png"
+      ]
+    },
+    {
+      "id": "hive",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "A hive",
+      "text": "A a copper dome with a door. B a brass drum with honeycomb ports. C an iron comb, some cells lit.",
+      "why": "You wrote: \"Also make a hive sprite\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/props/renders/hive.png"
+      ]
+    },
+    {
+      "id": "gilded-seraph",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Gilded Seraph: her head",
+      "text": "No helmet, nothing over the face. A a thin circlet. B a halo ring. C a white hood.",
+      "why": "You wrote: \"Looks good. I'll keep if u can't do better but I don't love the helmet and face covering\" Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/gilded-seraph.png"
+      ]
+    },
+    {
+      "id": "pit-lord",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Pit Lord: face and tail",
+      "text": "Faces: A burning eyes and fangs, B a bone mask, C a furnace grate. Tails 1 to 3. Last: its face now, tail 1.",
+      "why": "You wrote: \"Face variants. Also tail\" Say a face and a tail, like \"B with tail 1\". Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/pit-lord.png"
+      ]
+    },
+    {
+      "id": "enchantress",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "The Enchantress",
+      "text": "Her own art at last. A her hair in two buns that make a heart. B a veil and fan. C curls and a rose.",
+      "why": "She has worn the Witch's art turned pink until now. Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/heroes/renders/enchantress.png"
+      ]
+    },
+    {
+      "id": "succubus",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "The Succubus",
+      "text": "Her own art. A wings and a heart-tipped tail. B a whip with a heart. C her wings folded into a heart.",
+      "why": "She has worn the Devil's art turned pink until now. Comment with the one to keep, or what to change. The game keeps its current art until you pick.",
+      "images": [
+        "../../../design/class-round11/enemies/renders/succubus.png"
+      ]
+    }
+  ]
+}

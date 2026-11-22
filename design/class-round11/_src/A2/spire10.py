@@ -91,8 +91,10 @@ def fallen_angel():
 # the shadow of face. Same spear flag. Idea is to have them both have bangs but 1 is down 1 way and the other has it the
 # other way. Don't like hands"): herald(fallen, r11=True), each change marked CHANGE11:
 #   flag     the pennant 0.6x its size, tied at the same place under the blade.
-#   hold     the fist was hidden under the pauldrons; it grips the shaft 34 units further down it (forward), in front
-#            of the shoulder where a hero's weapon hand shows, and the whole standard is 3 units further forward.
+#   hold     the fist was hidden under the pauldrons; it grips the shaft 40 units further down it (forward), in front
+#            of the shoulder where a hero's weapon hand shows, and the standard is 2 units further forward. To leave the
+#            hand room on the shaft inside the box, the collar and blade start 9 units further out and the blade is 7
+#            units shorter (45 long; it was 52).
 #   hands    both hands are the heroes' own fists (their size, skin), no plate block and cuff.
 #   bangs    a swept fringe of hair under the helm's brow: the Herald of Light's falls to its right, the Fallen's to its left.
 #   face     Light: the brow's shade is the heroes' lightest (no dark band under the helm, a fainter cast shadow).
@@ -131,22 +133,29 @@ def herald(fallen, r11=False):
     S.group("back", (100, 90), "wings")
     wings(S, p["wing"], p["dwing"], ragged=fallen, k=0.98, dy=-6)
     S.group("arm-r", PR, "the standard")
-    T = frame(160, 101 if r11 else 98, 4)   # CHANGE11 hold: 3 units further forward
-    S.shape(rr(0, -6, 9, 108, 4.5), p["shaft"], T=T, shadow=0)
+    T = frame(160, 100 if r11 else 98, 4)   # CHANGE11 hold: 2 units further forward
+    if r11:
+        S.shape(rr(0, 0, 9, 120, 4.5), p["shaft"], T=T, shadow=0)
+    else:
+        S.shape(rr(0, -6, 9, 108, 4.5), p["shaft"], T=T, shadow=0)
     # the banner: a swallow-tailed pennant tied under the blade, flying out to the side
     ban = [(3, 44), (3, 22), (22, 20), (44, 14), (34, 31), (46, 46), (22, 44)]
     mark = (f'<circle cx="18" cy="32" r="6.5" fill="{p["mark"]}"/>' if not fallen else
             f'<path d="M 18 23 L 25 32 L 18 41 L 11 32 Z" fill="{p["mark"]}"/>')
     if r11:   # CHANGE11 flag: 0.6x, about the point where it is tied under the blade
-        S.shape(blob(ban, 0.5), p["banner"], T=f"{T} translate(3 44) scale(0.6) translate(-3 -44)", shadow=2, decor=mark)
+        S.shape(blob(ban, 0.5), p["banner"], T=f"{T} translate(3 57) scale(0.6) translate(-3 -44)", shadow=2, decor=mark)
     else:
         S.shape(blob(ban, 0.5), p["banner"], T=T, shadow=2, decor=mark)
-    S.shape(rr(0, 46, 16, 10, 3.5), p["plate"] if not fallen else p["edge"], T=T, shadow=1)
+    S.shape(rr(0, 55.5 if r11 else 46, 16, 10, 3.5), p["plate"] if not fallen else p["edge"], T=T, shadow=1)
     b = [(-12, 50), (12, 50), (13, 70), (0, 102), (-13, 70)]
+    half = [(0, 50), (12, 50), (13, 70), (0, 102)]
+    if r11:
+        b = [(-12, 59), (12, 59), (13, 77), (0, 104), (-13, 77)]
+        half = [(0, 59), (12, 59), (13, 77), (0, 104)]
     S.shape(blob(b, 0.7), p["blade"], T=T, shadow=2,
-            decor=f'<path d="{poly([(0, 50), (12, 50), (13, 70), (0, 102)])}" fill="{p["bdk"]}" opacity="0.45"/>')
+            decor=f'<path d="{poly(half)}" fill="{p["bdk"]}" opacity="0.45"/>')
     if r11:   # CHANGE11 hold, hands: a hero's fist, further down the shaft where it shows in front of the shoulder
-        fist(S, 0, 34, T=T, hand=p["hand"])
+        fist(S, 0, 40, T=T, hand=p["hand"])
     else:
         fist(S, 0, 0, T=T, hand=p["plate"] if not fallen else "#5E5470")
     S.group("body")

@@ -34,10 +34,8 @@ if __name__ == "__main__":
     if "r11" in sys.argv[1:]:   # round 11: the rusted, chipped axes (the game's) and the same in steel (saved)
         (OUT / "sewer-croc.svg").write_text(croc(r10=True, r11="rust"), encoding="utf-8")
         (OUT / "sewer-croc-steel.svg").write_text(croc(r10=True, r11="steel"), encoding="utf-8")
-        (OUT / "sewer-croc-blades-in.svg").write_text(croc(r10=True, r11="rust-in"), encoding="utf-8")
         print("enemies/sewer-croc.svg")
         print("enemies/sewer-croc-steel.svg")
-        print("enemies/sewer-croc-blades-in.svg")
     else:
         (OUT / "sewer-croc.svg").write_text(croc(r10=True), encoding="utf-8")
         print("enemies/sewer-croc.svg")

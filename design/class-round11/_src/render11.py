@@ -180,7 +180,7 @@ var("boar", 'Thornback boar: "Ridge. Show me without the mane"',
 # ================================================================== fixes: the Wildwood and the Sewers
 one("greenskin-orc", 'Orc: "Pony tail layer problem. Try without hair tie"', 27, 62, before=r10 + "greenskin-orc.svg")
 var("croc", 'Croc: "Aim inwards. Put a chip in them and make them rusted (save this version though)... mirror it"',
-    [("sewer-croc.svg", "A aimed in, rusted, chipped"), ("sewer-croc-steel.svg", "the steel version, saved"), ("sewer-croc-blades-in.svg", "B if you meant the blades")],
+    [("sewer-croc.svg", "aimed in, rusted, chipped"), ("sewer-croc-steel.svg", "the steel version, saved")],
     27, 56, before=r10 + "sewer-croc.svg")
 one("bandit-axe", 'Axe bandit: "Flip the axe"', 22, 54, before=r10 + "bandit-axe.svg")
 one("bandit-daggers", 'Knife bandit: "Pigtail not layered properly"', 22, 54, before=r10 + "bandit-daggers.svg")
