@@ -143,7 +143,7 @@ export function heroMoves(id) {
 }
 // What the major's extra move is, by how the kind fights (elites.js makeMajor's rule), and the call for kinds without
 // an elite move of their own.
-export const MAJOR_KEY = (d) => (d.role === 'ranged' ? 'volley' : d.role === 'skirmish' ? 'charge' : 'quake');
+export const MAJOR_KEY = (d) => d.majorMove || (d.role === 'ranged' ? 'volley' : d.role === 'skirmish' ? 'charge' : 'quake'); // (round 13, lane E: def.majorMove, a kind's own)
 export const canRank = (k) => !!DEFS[k] && !DEFS[k].boss && !DEFS[k].noElite;
 const eliteOf = (k) => ELITES[k] || ELITES[DEFS[k].eliteAs];
 const plainAttack = (d) => (d.atkCd || 0) < 99 && (d.dmg || 0) > 0;

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
-<!-- GAME COPY (art round 10) of design/class-round10/enemies/boss-goblin-chieftain.svg -->
-<!-- THE GOBLIN CHIEFTAIN (round 10: two big feathers, lower fangs, a war chopper in each fist, more war paint, one clipped ear; round 9): the round-8 chieftain (the round-7 Troll A, mohawk, which the designer said to keep "but not as a troll") made the goblins' chief: the goblins' yellow-lime skin, their long hooked nose, wide grin with two small fangs and huge swept-back ears, no eyes; the ragged red war crest kept, now with a band of bone across the brow and three white brown-tipped feathers at the back of the crest; red war paint (a handprint on the left shoulder, stripes on the right); a cleaver in the right fist, a bundle of three spears tied across its back (#back, sways), the left fist free. Hunched shoulders and sizes as before. Parts: #back (the spears), #arm-r (cleaver + fist), #body, #arm-l (free fist). Front = DOWN (+y). -->
+<!-- GAME COPY (art round 11) of design/class-round11/enemies/boss-goblin-chieftain.svg -->
+<!-- THE GOBLIN CHIEFTAIN (round 11: the hands held further forward, the choppers' edges turned in; round 10: two big feathers, lower fangs, a war chopper in each fist, more war paint, one clipped ear; round 9): the round-8 chieftain (the round-7 Troll A, mohawk, which the designer said to keep "but not as a troll") made the goblins' chief: the goblins' yellow-lime skin, their long hooked nose, wide grin with two small fangs and huge swept-back ears, no eyes; the ragged red war crest kept, now with a band of bone across the brow and three white brown-tipped feathers at the back of the crest; red war paint (a handprint on the left shoulder, stripes on the right); a cleaver in the right fist, a bundle of three spears tied across its back (#back, sways), the left fist free. Hunched shoulders and sizes as before. Parts: #back (the spears), #arm-r (cleaver + fist), #body, #arm-l (free fist). Front = DOWN (+y). -->
 <defs>
 <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A87A4A"/><stop offset="1" stop-color="#6E4A2A"/></linearGradient>
@@ -24,22 +24,22 @@
 <clipPath id="c19"><use href="#p17"/></clipPath>
 <linearGradient id="g20" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.15"/></linearGradient>
 <linearGradient id="g21" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#6A3E26"/><stop offset="1" stop-color="#40241A"/></linearGradient>
-<path id="p22" d="M-1 -28 H1 A4.5 4.5 0 0 1 5.5 -23.5 V7.5 A4.5 4.5 0 0 1 1 12 H-1 A4.5 4.5 0 0 1 -5.5 7.5 V-23.5 A4.5 4.5 0 0 1 -1 -28 Z" transform="translate(166 110) rotate(12)"/>
+<path id="p22" d="M-1 -28 H1 A4.5 4.5 0 0 1 5.5 -23.5 V7.5 A4.5 4.5 0 0 1 1 12 H-1 A4.5 4.5 0 0 1 -5.5 7.5 V-23.5 A4.5 4.5 0 0 1 -1 -28 Z" transform="translate(166 122) rotate(12) scale(-1 1)"/>
 <clipPath id="c23"><use href="#p22"/></clipPath>
 <linearGradient id="g24" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.32"/></linearGradient>
 <linearGradient id="g25" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0" stop-color="#D9DDE3"/><stop offset="1" stop-color="#8C94A1"/></linearGradient>
-<path id="p26" d="M-9 10 C-9 10 10 10 10 10 C10 10 25.4 14 28 18 C30.6 22 32.2 38.6 32 44 C31.8 49.4 28.3 59.8 26 64 C23.7 68.2 12 80 12 80 C12 80 -3.2 76.6 -6 74 C-8.8 71.4 -12 58 -12 58 C-12 58 -4.9 50.3 -5 48 C-5.1 45.7 -13 38 -13 38 C-13 38 -10.5 27.3 -10 24 C-9.5 20.7 -9 10 -9 10 Z" transform="translate(166 110) rotate(12)"/>
+<path id="p26" d="M-9 10 C-9 10 10 10 10 10 C10 10 25.4 14 28 18 C30.6 22 32.2 38.6 32 44 C31.8 49.4 28.3 59.8 26 64 C23.7 68.2 12 80 12 80 C12 80 -3.2 76.6 -6 74 C-8.8 71.4 -12 58 -12 58 C-12 58 -4.9 50.3 -5 48 C-5.1 45.7 -13 38 -13 38 C-13 38 -10.5 27.3 -10 24 C-9.5 20.7 -9 10 -9 10 Z" transform="translate(166 122) rotate(12) scale(-1 1)"/>
 <clipPath id="c27"><use href="#p26"/></clipPath>
 <linearGradient id="g28" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.28"/></linearGradient>
 <linearGradient id="g29" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#BBCF62"/><stop offset="1" stop-color="#91A047"/></linearGradient>
-<path id="p30" d="M-8 -15 H8 A8 8 0 0 1 16 -7 V7 A8 8 0 0 1 8 15 H-8 A8 8 0 0 1 -16 7 V-7 A8 8 0 0 1 -8 -15 Z" transform="translate(165 124) rotate(12)"/>
+<path id="p30" d="M-8 -15 H8 A8 8 0 0 1 16 -7 V7 A8 8 0 0 1 8 15 H-8 A8 8 0 0 1 -16 7 V-7 A8 8 0 0 1 -8 -15 Z" transform="translate(165 136) rotate(12)"/>
 <clipPath id="c31"><use href="#p2"/><use href="#p6"/><use href="#p8"/><use href="#p10"/><use href="#p12"/><use href="#p14"/><use href="#p17"/><use href="#p22"/><use href="#p26"/></clipPath>
 <clipPath id="c32"><use href="#p30"/></clipPath>
-<path id="p33" d="M-1 -28 H1 A4.5 4.5 0 0 1 5.5 -23.5 V7.5 A4.5 4.5 0 0 1 1 12 H-1 A4.5 4.5 0 0 1 -5.5 7.5 V-23.5 A4.5 4.5 0 0 1 -1 -28 Z" transform="translate(34 110) rotate(-12) scale(-1 1)"/>
+<path id="p33" d="M-1 -28 H1 A4.5 4.5 0 0 1 5.5 -23.5 V7.5 A4.5 4.5 0 0 1 1 12 H-1 A4.5 4.5 0 0 1 -5.5 7.5 V-23.5 A4.5 4.5 0 0 1 -1 -28 Z" transform="translate(34 122) rotate(-12)"/>
 <clipPath id="c34"><use href="#p33"/></clipPath>
-<path id="p35" d="M-9 10 C-9 10 10 10 10 10 C10 10 25.4 14 28 18 C30.6 22 32.2 38.6 32 44 C31.8 49.4 28.3 59.8 26 64 C23.7 68.2 12 80 12 80 C12 80 -3.2 76.6 -6 74 C-8.8 71.4 -12 58 -12 58 C-12 58 -4.9 50.3 -5 48 C-5.1 45.7 -13 38 -13 38 C-13 38 -10.5 27.3 -10 24 C-9.5 20.7 -9 10 -9 10 Z" transform="translate(34 110) rotate(-12) scale(-1 1)"/>
+<path id="p35" d="M-9 10 C-9 10 10 10 10 10 C10 10 25.4 14 28 18 C30.6 22 32.2 38.6 32 44 C31.8 49.4 28.3 59.8 26 64 C23.7 68.2 12 80 12 80 C12 80 -3.2 76.6 -6 74 C-8.8 71.4 -12 58 -12 58 C-12 58 -4.9 50.3 -5 48 C-5.1 45.7 -13 38 -13 38 C-13 38 -10.5 27.3 -10 24 C-9.5 20.7 -9 10 -9 10 Z" transform="translate(34 122) rotate(-12)"/>
 <clipPath id="c36"><use href="#p35"/></clipPath>
-<path id="p37" d="M-8 -15 H8 A8 8 0 0 1 16 -7 V7 A8 8 0 0 1 8 15 H-8 A8 8 0 0 1 -16 7 V-7 A8 8 0 0 1 -8 -15 Z" transform="translate(35 124) rotate(-12)"/>
+<path id="p37" d="M-8 -15 H8 A8 8 0 0 1 16 -7 V7 A8 8 0 0 1 8 15 H-8 A8 8 0 0 1 -16 7 V-7 A8 8 0 0 1 -8 -15 Z" transform="translate(35 136) rotate(-12)"/>
 <clipPath id="c38"><use href="#p2"/><use href="#p6"/><use href="#p8"/><use href="#p10"/><use href="#p12"/><use href="#p14"/><use href="#p17"/><use href="#p22"/><use href="#p26"/><use href="#p30"/><use href="#p33"/><use href="#p35"/></clipPath>
 <clipPath id="c39"><use href="#p37"/></clipPath>
 <linearGradient id="g40" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#B7CB58"/><stop offset="1" stop-color="#849145"/></linearGradient>
@@ -103,18 +103,18 @@
 </g></g>
 <g id="arm-r" data-pivot="156 114"><g>
 <use href="#p22" fill="url(#g21)"/>
-<g clip-path="url(#c23)"><path d="M -7 -20 L 7 -17 L 7 -12 L -7 -15 Z M -7 -8 L 7 -5 L 7 0 L -7 -3 Z" fill="#C8302A" transform="translate(166 110) rotate(12)"/><use href="#p22" fill="url(#g24)"/></g>
+<g clip-path="url(#c23)"><path d="M -7 -20 L 7 -17 L 7 -12 L -7 -15 Z M -7 -8 L 7 -5 L 7 0 L -7 -3 Z" fill="#C8302A" transform="translate(166 122) rotate(12) scale(-1 1)"/><use href="#p22" fill="url(#g24)"/></g>
 <use href="#p26" fill="url(#g25)"/>
-<g clip-path="url(#c27)"><path d="M 27 20 C 36 36 34 58 14 79" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.75" transform="translate(166 110) rotate(12)"/><circle cx="4" cy="24" r="4.5" fill="#6E7584" transform="translate(166 110) rotate(12)"/><use href="#p26" fill="url(#g28)"/></g>
+<g clip-path="url(#c27)"><path d="M 27 20 C 36 36 34 58 14 79" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.75" transform="translate(166 122) rotate(12) scale(-1 1)"/><circle cx="4" cy="24" r="4.5" fill="#6E7584" transform="translate(166 122) rotate(12) scale(-1 1)"/><use href="#p26" fill="url(#g28)"/></g>
 <g clip-path="url(#c31)"><use href="#p30" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
 <use href="#p30" fill="url(#g29)"/>
 <g clip-path="url(#c32)"><use href="#p30" fill="url(#g24)"/></g>
 </g></g>
 <g id="arm-l" data-pivot="44 114"><g>
 <use href="#p33" fill="url(#g21)"/>
-<g clip-path="url(#c34)"><path d="M -7 -20 L 7 -17 L 7 -12 L -7 -15 Z M -7 -8 L 7 -5 L 7 0 L -7 -3 Z" fill="#C8302A" transform="translate(34 110) rotate(-12) scale(-1 1)"/><use href="#p33" fill="url(#g24)"/></g>
+<g clip-path="url(#c34)"><path d="M -7 -20 L 7 -17 L 7 -12 L -7 -15 Z M -7 -8 L 7 -5 L 7 0 L -7 -3 Z" fill="#C8302A" transform="translate(34 122) rotate(-12)"/><use href="#p33" fill="url(#g24)"/></g>
 <use href="#p35" fill="url(#g25)"/>
-<g clip-path="url(#c36)"><path d="M 27 20 C 36 36 34 58 14 79" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.75" transform="translate(34 110) rotate(-12) scale(-1 1)"/><circle cx="4" cy="24" r="4.5" fill="#6E7584" transform="translate(34 110) rotate(-12) scale(-1 1)"/><use href="#p35" fill="url(#g28)"/></g>
+<g clip-path="url(#c36)"><path d="M 27 20 C 36 36 34 58 14 79" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.75" transform="translate(34 122) rotate(-12)"/><circle cx="4" cy="24" r="4.5" fill="#6E7584" transform="translate(34 122) rotate(-12)"/><use href="#p35" fill="url(#g28)"/></g>
 <g clip-path="url(#c38)"><use href="#p37" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
 <use href="#p37" fill="url(#g29)"/>
 <g clip-path="url(#c39)"><use href="#p37" fill="url(#g24)"/></g>

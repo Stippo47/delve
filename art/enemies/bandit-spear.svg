@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
-<!-- GAME COPY (art round 10) of design/class-round10/enemies/bandit-spear.svg -->
+<!-- GAME COPY (art round 11) of design/class-round11/enemies/bandit-spear.svg -->
 <!-- SPEAR BANDIT (round 10): the gang's red bandanna under a moss-green hood with a long tail lying back and a scalloped mantle over the shoulders; a long spear in the right hand (arm-r, under the shoulder, the point well forward, a rag of the gang's red tied under the head), the left hand free (arm-l). No eyes. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
 <defs>
 <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -61,7 +61,6 @@
 <g clip-path="url(#u7)"><use href="#s7" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s7" fill="url(#g11)"/><use href="#s7" fill="url(#g12)"/>
 <g clip-path="url(#u8)"><use href="#s8" transform="translate(0 5) " fill="#2B2230" opacity="0.3"/></g><use href="#s8" fill="url(#gFace)"/><g clip-path="url(#c8)"><rect x="100" y="40" width="56" height="120" fill="url(#gFaceSide)"/></g>
 <g clip-path="url(#u9)"><use href="#s9" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s9" fill="url(#g3)"/><use href="#s9" fill="url(#g4)"/><g clip-path="url(#c9)"><path d="M50 138 C74 150 126 150 150 138 L150 190 L50 190 Z" fill="#A02E29" opacity="0.5"/></g>
-<path d="M68 128 Q100 138 132 128" fill="none" stroke="#7F2521" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
 <use href="#s10" fill="url(#g13)"/><use href="#s10" fill="url(#g14)"/>
 <g clip-path="url(#u11)"><use href="#s11" transform="translate(0 4) " fill="#2B2230" opacity="0.3"/></g><use href="#s11" fill="url(#g15)"/><use href="#s11" fill="url(#g16)"/><g clip-path="url(#c11)"><path d="M 56 50 A 22 12 0 1 0 100 50 A 22 12 0 1 0 56 50 Z" fill="#FFFFF4" opacity="0.12"/><path d="M 58 104 C 56 86 74 70 100 68 C 126 70 144 86 142 104" fill="none" stroke="#424F32" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/></g>
 </g>
