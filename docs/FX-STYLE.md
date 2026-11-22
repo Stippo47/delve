@@ -145,3 +145,21 @@ The designer's words: `docs/riffle-log/2026-11-21-round10-showcase2.txt`. Each n
 - **Variants** (js/fxvar.js, `?v_<key>=N`, the showcase records them with `--q v_shockwave=2`): Shockwave 1 Ridge (as
   it was), 2 Slabs, 3 Rolling; the wolf's bite 1 Jaws (as it was), 2 Chomp, 3 Rake, 4 Snap. Once one is picked, make
   it the default in fxvar.js.
+
+## Round 13 (lane H2): the newer heroes' showcase 3 notes
+Every note and what was built: `docs/HEROES-r13.md`. What is new in the style's toolbox:
+- **Slams of their own** (fx2 `SLAM2`, picked by a hero's `style.slam` or a swing's `aoe.look`): `hammer` (the Griffon,
+  Warhelm), `maul` (Bearskin), `spade` (Digger's Bury). The Berserker's flail head is only his now.
+- **Shot bursts of their own** (fx2 `IMPACT2D[kind]`): white cloud puffs for the Stormhammer, grit for stones, crumbs
+  for clods, sparks for cogs and pellets, magenta flame for the Warlock's eye.
+- **Lobbed things arc** (fx2 `lobUp`): anything kits2 `lob()` throws rises and falls with a soft shadow under it.
+- **Summons drawn in code** (`js/looks2.js` LOOK2, filled by fx2; kits2 hangs it on the summon's def): the hay bale,
+  totem, spirit bear/eagle/beaver, cauldron, beehive, crate, barricade, pavise, big bomb, the Engineer's towers and
+  drones. Inked, top-down, their own shadow; a summon's `def.wash` (render.js) darkens the Shade's clones and lightens
+  the Shaman's wolf.
+- **Protection is a border** (render.js: a buff with `border`): Warded's pale blue.
+- **Merged ground bodies** for trails and pools (puddles.js `drawPuddle`): the Shade's shadow trail ('smoke'), the
+  Digger's burrow trail ('earth'), the Alchemist's pools, the Ninja's smoke dash.
+- **New effects' marks**: Whirled (white wind curls at the feet), Dirty (smears and crumbs), Targeted/Tracked
+  (crosshairs, red/amber), Spun (a slow gold spiral over the head), Weakened (grey chevrons sinking), KO (stars round
+  the head, fx-status.js).

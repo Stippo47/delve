@@ -1643,13 +1643,18 @@ export const ABILITIES2 = {
   runningThrow: {
     score(w, u, t) { if (!t) return 0; const d = dist(u.x, u.y, t.x, t.y), a = ang(u, t); return d < 240 && lineClear(w, u.x, u.y, t.x, t.y, u.r) ? 0.4 + 0.2 * opponents(w, u).filter((e) => angleDiff(ang(u, e), a) < 0.35 && dist(u.x, u.y, e.x, e.y) < 260).length : 0; },
     use(w, u, t, tier) {
-      if (!t) return; const a = ang(u, t), T = 0.26, cut = new Set(), x0 = u.x, y0 = u.y; u.facing = a;
+      if (!t) return; const a = ang(u, t), T = 0.28, cut = new Set(), x0 = u.x, y0 = u.y; u.facing = a;
+      const L = clamp(dist(u.x, u.y, t.x, t.y) + 50, 110, 290), sp = L / T; // (she runs right through her target, however far it stood)
       if (tier >= 3) { const k = u.kit; if (!k.lunge2) { k.lunge2 = true; k.cd.runningThrow = 0.7; } else k.lunge2 = false; } // two charges: the second follows at once
-      setAnim(u, 'thrust', T + 0.1); u.act = { type: 'dash', t: T, max: T, a }; u.invulnT = Math.max(u.invulnT, T);
+      setAnim(u, 'thrust', T + 0.1); u.act = { type: 'ride', t: T + 0.1, max: T + 0.1 }; u.invulnT = Math.max(u.invulnT, T); u.faceLockT = Math.max(u.faceLockT || 0, T);
       k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a, max: T + 0.3, col: '#E0A060' });
-      timer(u, 'lunge', T + 0.02, () => { for (const e of opponents(w, u)) if (!cut.has(e) && dist(u.x, u.y, e.x, e.y) < u.r + e.r + 26) { cut.add(e);
-        hurt(w, e, dmgOf(u, 1.6), u, { noDodge: true, knock: 200, kAngle: a + (Math.sin(ang(u, e) - a) > 0 ? 0.6 : -0.6), stagger: tierOf(u, 'runningThrow') >= 2 ? 40 : 0, ab: 'runningThrow' }); } },
-        () => k2(w, { draw: 'slashLine', x: x0, y: y0, x1: x0, y1: y0, x2: u.x + Math.cos(a) * 30, y2: u.y + Math.sin(a) * 30, max: 0.45 }));
+      timer(u, 'lunge', T, (dt) => {
+        const px = u.x, py = u.y; u.x += Math.cos(a) * sp * dt; u.y += Math.sin(a) * sp * dt; u.vx = u.vy = u.kx = u.ky = 0; u.facing = a;
+        if (atObstacle(w, u, 1)) { u.x = px; u.y = py; }
+        if (rand() < 0.6) w.particles.push({ x: u.x - Math.cos(a) * u.r, y: u.y - Math.sin(a) * u.r, vx: 0, vy: 0, life: 0.25, max: 0.25, size: 5, color: 'rgba(200,190,170,0.7)' });
+        for (const e of opponents(w, u)) if (!cut.has(e) && dist(u.x, u.y, e.x, e.y) < u.r + e.r + 26) { cut.add(e);
+          hurt(w, e, dmgOf(u, 1.6), u, { noDodge: true, knock: 200, kAngle: a + (Math.sin(ang(u, e) - a) > 0 ? 0.6 : -0.6), stagger: tierOf(u, 'runningThrow') >= 2 ? 40 : 0, ab: 'runningThrow' }); } },
+        () => { if (u.act && u.act.type === 'ride') u.act = null; k2(w, { draw: 'slashLine', x: x0, y: y0, x1: x0, y1: y0, x2: u.x + Math.cos(a) * 30, y2: u.y + Math.sin(a) * 30, max: 0.45 }); });
     },
     show: { far: true },
   },
