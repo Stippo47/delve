@@ -48,10 +48,11 @@ export const ENTANGLE = { slow: 0.7, walkDmg: 2.2, atkDmg: 2.5, rootT: 3, squeez
 
 // ---------------------------------------------------------------- round 13 (lane S): Charm, Confused, Sleepy, Bleeding, Fear
 // Charm (the designer: "can't hurt who is charming them, burst effect makes them fight for you for a bit"). While it
-// builds, its blows on whoever charmed it (u.stBy.charm) do nothing and it looks for someone else to fight. Burst:
+// builds (from `guard` up: the first blow still lands), its blows on whoever charmed it (u.stBy.charm) do nothing and it
+// looks for someone else to fight. Burst:
 // ENTHRALLED, it fights for the charmer's side for `dur` seconds (elites x0.8, majors x0.6), then comes back; a boss, or
 // the last one standing on its side, is SMITTEN instead (stunned `smitT`, bosses 40%). Then immuneT before it builds again.
-export const CHARM = { dur: 5, elite: 0.8, major: 0.6, smitT: 1.5, immuneT: 6 };
+export const CHARM = { dur: 5, elite: 0.8, major: 0.6, smitT: 1.5, immuneT: 6, guard: 20 };
 // Confused ("bad aim, turns randomly, attacks when no target is in range. Burst effect. Attacks can hurt allies for a
 // bit, uses all available abilities at once"). While it builds (x fill): every shot it makes goes up to `aim` radians
 // wide, it lurches round to a random heading now and then (`turn` a second), and with an attack ready and nothing in

@@ -232,6 +232,7 @@ function chooseTarget(w, u) {
     if (o === u.target) s += 0.35; // stickiness
     if (u.st.charm > 0 && u.stBy && u.stBy.charm === o) s -= 3;        // round 13: it won't go for whoever is charming it
     if (u.def.hunter && o.def.heroRole === 'support') s += u.def.hunter; // round 13: healer hunters go for the party's healer
+    if (u.def.charmBonus && (o.st.charm > 0 || o.flipKind === 'charm')) s += 0.8; // the Succubus goes for the charmed
     if (s > bestS) { bestS = s; best = o; }
   }
   u.target = best;
@@ -719,7 +720,7 @@ export function hurt(w, u, amount, src, o = {}) {
   if (src && src !== u && !o.dot && !o.hexTurned && !o.noHex) {
     if (src.radiantT > 0) return 0; // radiant: its glow is all it can do
     // round 13, charm: while it builds, a unit can't hurt whoever is charming it (its blow turns into a little heart)
-    if (src.st && src.st.charm > 0 && src.stBy && src.stBy.charm === u && src.flipKind !== 'charm') {
+    if (src.st && src.st.charm >= CHARM.guard && src.stBy && src.stBy.charm === u && src.flipKind !== 'charm') {
       if (rand() < 0.6) w.particles.push({ x: u.x + rrange(-6, 6), y: u.y - u.r * 0.4, vx: 0, vy: 0, rise: 34, up: 0, life: 0.7, max: 0.7, size: 5, color: STATUS.charm.col, shape: 'heart' });
       return 0;
     }
@@ -803,6 +804,7 @@ export function hurt(w, u, amount, src, o = {}) {
   if (!o.dot && u.st.bleed > 0) u.bleedHoldT = BLEED.holdT; // bleeding: every blow keeps it from wearing off (round 13)
   for (const s of BUILD_IDS) if (o[s]) addStatus(w, u, s, o[s], src);
   if (!o.dot && src && u.def.struck && alive(u)) u.def.struck(w, u, src, amt, o); // an enemy that answers a blow (round 13: the Succubus)
+  if (!o.dot && src && src !== u && src.team !== u.team && alive(src)) for (const b of u.buffs) if (b.charmBack) addStatus(w, src, 'charm', b.charmBack, u); // round 13: the Enchantress's Sweetheart
   if (src && src.hitBurn && !o.dot && src !== u) addStatus(w, u, 'burn', src.hitBurn, src); // round 9: a burning Elder Ent's every blow burns
   if (src && alive(src) && !o.dot) for (const h of hooksOf(src)) if (h.hit) h.hit(w, src, u, amt, o);
   if (!o.dot) for (const h of hooksOf(u)) if (h.struck) h.struck(w, u, src, amt, o);
@@ -1098,9 +1100,9 @@ function meleeSwing(w, u, single) {
 function fireArrow(w, u, angle, o = {}) {
   const sp = o.speed || 520;
   u.recoilT = 0.14;
-  w.projectiles.push({ kind: o.fire ? 'fireArrow' : (u.def.proj || 'arrow'), color: u.def.projColor, x: u.x + Math.cos(angle) * (u.r + 6), y: u.y + Math.sin(angle) * (u.r + 6),
+  w.projectiles.push({ kind: o.fire ? 'fireArrow' : u.loveShots ? 'loveArrow' : (u.def.proj || 'arrow'), color: u.def.projColor, x: u.x + Math.cos(angle) * (u.r + 6), y: u.y + Math.sin(angle) * (u.r + 6), // (round 13: the elite Cupid's love arrows)
     vx: Math.cos(angle) * sp, vy: Math.sin(angle) * sp, r: 6, team: u.team, owner: u, dmg: o.dmg ? o.dmg * u.dmgMul : hitDmg(u),
-    o: { chill: o.fire ? 0 : u.def.chill, burn: o.fire ? 20 : 0, radiance: u.def.radiance, curse: u.def.curse, charm: u.def.charm, confuse: u.def.confuse, sleepy: u.def.sleepy, bleed: u.def.bleed, fear: u.def.fear, knock: 30 }, life: 1.2, a: angle });
+    o: { chill: o.fire ? 0 : u.def.chill, burn: o.fire ? 20 : 0, radiance: u.loveShots ? 0 : u.def.radiance, curse: u.def.curse, charm: u.loveShots || u.def.charm, confuse: u.def.confuse, sleepy: u.def.sleepy, bleed: u.def.bleed, fear: u.def.fear, knock: 30 }, life: 1.2, a: angle });
 }
 
 // Confused (round 13): with an attack ready and nothing in reach, it swings or shoots at the air now and then.

@@ -139,7 +139,7 @@ export const BEASTS = {
   spiderFire: { fun: 'Eight legs, all of them on fire, none of them bothered.',
     habit: 'Its bite burns, and it spits fireballs from a way off.' },
   hellhound: { fun: 'Good dog. Bad breath. Very, very bad breath.',
-    habit: 'Runs with the pack and leaves fire where it runs. Up close it breathes a short cone of flame.' },
+    habit: 'Runs with the pack and leaves fire where it runs, and goes for whoever is doing the healing. Its bite bleeds; up close it breathes a short cone of flame.' },
   cinderBat: { fun: 'Lives fast, dies young, takes you with it.',
     habit: 'Dives straight at a hero and bursts into flame. Shoot it before it gets there.' },
   spiritFire: { fun: 'A spark with ambitions.',
@@ -151,8 +151,9 @@ export const BEASTS = {
     habit: 'An angel\'s spear, but its blows curse instead of blinding with light.' },
   sunBlade: { fun: 'A sword so holy it doesn\'t need anyone to hold it. It finds that freeing.',
     habit: 'Spins through the party in a straight line (a line shows first), then turns and comes again. Can\'t be staggered.' },
+  succubus: { fun: 'Has a lovely smile, and she knows it. So, before long, will you.', habit: 'Whoever hits her is charmed a little, and soon can\'t hit her at all. She goes for the charmed, hits them much harder, and blows a kiss at whoever is closest to falling for her.' },
   choirSprite: { fun: 'Knows one song. It is a lovely song. It is the reason the others keep getting up.',
-    habit: 'Everything of its side inside its song mends. A stagger silences it for a while.' },
+    habit: 'Everything of its side inside its song mends, and everyone of yours inside it grows sleepy. A stagger silences it for a while.' },
   golem: { fun: 'Somebody carved a guard out of a hill and forgot to tell it the war was over.',
     habit: 'Slow and hard to shift. Every blow staggers, and it stamps a crack along the floor at you.' },
   gildedGolem: { fun: 'Gold all the way through. You would think that would make it softer. It does not.',
@@ -342,7 +343,7 @@ export const BUFFS = {
   thorned: { name: 'Thorned', icon: 'debuff', bad: true, desc: 'Thorns in the way.' }, weakened: { name: 'Weakened', icon: 'debuff', bad: true, desc: 'Its blows lost their weight.' },
   dazed: { name: 'Dazed', icon: 'debuff', bad: true, desc: 'Seeing stars.' }, impaled: { name: 'Impaled', icon: 'debuff', bad: true, desc: 'A spear in it.' },
   stung: { name: 'Stung', icon: 'debuff', bad: true, desc: 'Bee stings.' }, pied: { name: 'Pie in the Face', icon: 'debuff', bad: true, desc: 'Custard everywhere.' },
-  festering: { name: 'Festering Wound', icon: 'bleed', bad: true, desc: 'A wound that won\'t close.' },
+  beloved: { name: 'Sweetheart', icon: 'charm', desc: 'Blown a kiss: whoever hits it falls for it, and soon can\'t hit it at all.' },
 };
 // States that aren't buffs (hud.js STATES reads the unit for these; the words are here so the Book can show them all).
 export const STATES = {

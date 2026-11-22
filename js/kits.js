@@ -27,6 +27,7 @@ import { cue } from './sfx.js';
 import { tagAbility } from './fxtag.js';
 import { STATUS, SLEEPY, fillOf } from './statuses.js';
 import { ABILITIES2, TRAITS2, ATTACKS2, kit2Tick } from './kits2.js';
+import { CHARM_ABILITIES, CHARM_TRAITS, CHARM_ATTACKS, charmTick } from './kits-charm.js'; // round 13 (lane S): the Enchantress
 
 // ---------------------------------------------------------------- the skill web's stat nodes (round 8)
 // u.kit.mods = statsFor(hero, nodes) (heroes.js). Generic stats go straight onto the unit in initKit; an ability's own
@@ -486,7 +487,7 @@ export const ABILITIES = {
       const arc = tier >= 3 ? 2.4 : 1.6, a = t ? ang(u, t) : u.facing;
       fx(w, { type: 'wave', x: u.x, y: u.y, a, r: 180, arc, max: 1.1, kind: 'note' }); // (round 10: longer, so the notes fade out softly)
       const hit = foesNear(w, u, u.x, u.y, 190).filter((e) => angleDiff(ang(u, e), a) < arc / 2);
-      for (const e of hit) addBuff(e, { id: 'lullaby', dur: 4, move: 0.55, atkSpeed: 0.7 });
+      for (const e of hit) { addBuff(e, { id: 'lullaby', dur: 4, move: 0.55, atkSpeed: 0.7 }); addStatus(w, e, 'sleepy', 45, u); } // (round 13: the lullaby makes them sleepy before it puts them to sleep)
       if (tier >= 3) { for (const e of hit) if (!e.def.boss) e.sleepT = 3; } // round 9: everyone it reaches, at III
       else if (tier >= 2) { const weak = hit.sort((p, q) => p.hp - q.hp)[0]; if (weak && !weak.def.boss) weak.sleepT = 3; }
     },
@@ -631,6 +632,7 @@ function zeusBolt(w, u, x, y, e, left, from, hit = new Set()) {
       if (nx) zeusBolt(w2, u, hitU.x, hitU.y, nx, left - 1, hitU, hit); } });
 }
 Object.assign(ABILITIES, ABILITIES2); // round 10 (lane H): the new heroes' abilities
+Object.assign(ABILITIES, CHARM_ABILITIES); // round 13 (lane S)
 const RAY_T = 4, RAY_RANGE = 380;
 const CURE_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse', 'entangle', 'charm', 'confuse', 'sleepy', 'bleed', 'fear'];
 // how far a unit is from the edge of a rectangle (0 inside)
@@ -701,6 +703,7 @@ const ATTACKS = {
   },
 };
 Object.assign(ATTACKS, ATTACKS2);
+Object.assign(ATTACKS, CHARM_ATTACKS); // round 13 (lane S)
 export const hasOwnAttack = (kind) => !!ATTACKS[kind]; // numbers.js measures these
 export function heroAttack(w, u, t, a) {
   const f = ATTACKS[u.kind]; if (!f || u.summon) return false;
@@ -711,6 +714,7 @@ const rayable = (w, u, o) => dist(u.x, u.y, o.x, o.y) < RAY_RANGE - 40 && !block
 // Every step, for a unit with a kit: abilities that last (the Cleric's rays).
 export function kitTick(w, u, dt) {
   kit2Tick(w, u, dt);
+  if (u.kit && u.kit.string) charmTick(w, u, dt); // round 13: the Enchantress's Heartstring
   if (u.gasForm) { const g = u.gasForm;
     if (u.gasT > 0) { if (dist(u.x, u.y, g.lx, g.ly) > 34) { g.lx = u.x; g.ly = u.y; drop(w, u, g.tier); } }
     else { if (g.heal) heal(w, u, u.maxHp * 0.15, u); u.gasForm = null; puff(w, u.x, u.y, '#BCE070', 10, 80, 6, 0.5); } }
@@ -765,6 +769,7 @@ export const TRAITS = {
   },
 };
 Object.assign(TRAITS, TRAITS2);
+Object.assign(TRAITS, CHARM_TRAITS); // round 13 (lane S)
 // Granny's Old Bones is an ability on paper but works like a trait once bought.
 const OLD_BONES = {
   downed(w, u) {

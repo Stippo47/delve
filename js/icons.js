@@ -206,6 +206,11 @@ const G = {
   sleep: STATUS.sleep,
   vines: STATUS.root,
   wave: `<path d="M3 20c4-6 8-6 12 0s8 6 14 0" fill="none" stroke="${INK}" stroke-width="7"/><path d="M3 20c4-6 8-6 12 0s8 6 14 0" fill="none" stroke="#E0B070" stroke-width="3.4" ${H}/><path d="M6 11h20" fill="none" stroke="#E0B070" stroke-width="2.4"/>`,
+  // round 13 (lane S): the Enchantress
+  kiss: `<path d="M16 28C6 21 3 16 3 11.5a6.5 6.5 0 0 1 13-1.5 6.5 6.5 0 0 1 13 1.5C29 16 26 21 16 28z" fill="#FF8AC8"/><path d="M10 15c2 2 4 2 6 0 2 2 4 2 6 0-2 3.6-10 3.6-12 0z" fill="#C8306E" ${H}/><path d="M8 10a4 4 0 0 1 4-3" fill="none" stroke="#FFE0F0" stroke-width="2" ${H}/>`,
+  string: `<path d="M4 26C10 20 8 10 16 10s6 10 12 4" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M4 26C10 20 8 10 16 10s6 10 12 4" fill="none" stroke="#FF8AC8" stroke-width="2.2" stroke-linecap="round" ${H}/>
+    <path d="M24 9c-2.400-3.400 1-6 3-3.600 2-2.400 5.400.2 3 3.600l-3 3z" fill="#FF5AAE"/>`,
+  heartbreak: `<path d="M15 28C6 21 3 16 3 11.5a6.5 6.5 0 0 1 12-3.400L12 15l4 3-2 6z" fill="#FF5AAE"/><path d="M18 27l2-5-4-4 3-5-2-4.600A6.5 6.5 0 0 1 29 11.5C29 16 26 21 18 27z" fill="#FF8AC8"/>`,
 };
 const ABILITY_GLYPH = {
   shieldBash: 'shield', guard: 'shield', consecrate: 'sun', holdTheLine: 'shield', charge: 'dash', groundPound: 'wave',
@@ -221,7 +226,7 @@ const ABILITY_GLYPH = {
 export const ABILITY_COLOR = { shield: '#5B8CDB', sun: '#F2C84A', dash: '#C8C0B0', burst: '#E0B070', arrows: '#D8C08A', snow: '#7FD6F5',
   dagger: '#B8C4D4', flame: '#FF7A2F', bolt: '#F2E04A', cloud: '#9AA8BC', heart: '#7CC06F', note: '#FFD27A', leaf: '#7FA04A',
   skull: '#D9D2C0', vial: '#9BCB3C', swirl: '#D8DEE8', hook: '#A8A8B0', fist: '#E0604B', up: '#E8B53A', paw: '#A0683A',
-  drain: '#C8553D', wall: '#9FDDF6', sleep: '#C9B8FF', vines: '#7FA04A', wave: '#E0B070' };
+  drain: '#C8553D', wall: '#9FDDF6', sleep: '#C9B8FF', vines: '#7FA04A', wave: '#E0B070', kiss: '#FF8AC8', string: '#FF8AC8', heartbreak: '#FF5AAE' };
 export const abilityGlyph = (id) => ABILITY_GLYPH[id] || GLYPH2[id] || 'burst';
 
 // ---------------------------------------------------------------- the one entry point

@@ -9,6 +9,23 @@
 //   fear       sweat flicking off its head and a tremble (unitFrame); terrified: fright lines round the head
 import { TAU, clamp, INK } from './util.js';
 import { upright, upVec, inked, inkLine, glowDisc, hash, star } from './fx.js';
+import { PROJ2 } from './fx2.js';
+
+// The Enchantress's blown kiss and the Cupid's love arrow (sim projectiles of kind 'kiss' / 'loveArrow')
+PROJ2.kiss = (ctx, p, T) => { // a pink heart, bobbing as it floats, a trail of little hearts
+  const b = 1 + 0.12 * Math.sin(T * 14);
+  ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, 0, 0, 16, '#FF8AC8', 0.45); ctx.restore();
+  for (let i = 1; i <= 3; i++) { const d = i * 9, a = Math.atan2(p.vy, p.vx); ctx.globalAlpha = 0.6 - i * 0.15; upright(ctx, -Math.cos(a) * d, -Math.sin(a) * d, () => heart(ctx, 0, 0, 4 - i * 0.7, '#FFB0D8')); }
+  ctx.globalAlpha = 1; upright(ctx, 0, 0, () => heart(ctx, 0, 0, 8 * b, p.color || '#FF8AC8'));
+};
+PROJ2.loveArrow = (ctx, p, T, ang) => { // a gold arrow with a heart for a head and a pink wake
+  ctx.save(); ctx.rotate(ang);
+  ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = 'rgba(255,138,200,0.45)'; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-40, 0); ctx.lineTo(-6, 0); ctx.stroke(); ctx.restore();
+  inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-24, 0); ctx.lineTo(4, 0); }, '#F2C84A', 3);
+  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-24, 0); ctx.lineTo(-30, -5); ctx.lineTo(-27, 0); ctx.lineTo(-30, 5); ctx.closePath(); }, '#FFFFFF');
+  ctx.save(); ctx.translate(8, 0); ctx.rotate(-Math.PI / 2); heart(ctx, 0, 0, 6.5, '#FF5AAE'); ctx.restore();
+  ctx.restore();
+};
 
 export function heartPath(ctx, s) { // a heart centred on 0,0 (its point down the screen); the caller strokes and fills it
   ctx.beginPath(); ctx.moveTo(0, s * 0.85);
@@ -35,6 +52,9 @@ export function drawStatusMarks(ctx, u, T) {
       ctx.save(); ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, hx, hy, 16, '#FF8AC8', 0.5); ctx.restore();
       upright(ctx, hx, hy, () => { heart(ctx, 0, 0, 8.5 * beat, '#FF5AAE'); ctx.fillStyle = '#FFE0F0'; ctx.beginPath(); ctx.arc(-3, -2.5, 1.8, 0, TAU); ctx.fill(); }); }
   }
+  // ---- the Enchantress's Sweetheart: a little heart beside its head while it lasts
+  if (u.buffs && u.buffs.some((b) => b.id === 'beloved')) { const [hx, hy] = head(1.25), q = 1 + 0.1 * Math.sin(T * 6);
+    upright(ctx, hx, hy, () => heart(ctx, u.vr * 0.75, -2, 5.5 * q, '#FF8AC8')); }
   // ---- confused / addled
   if (u.addledT > 0) {
     const [hx, hy] = head(1.25);
@@ -88,6 +108,34 @@ export function drawStatusBurst(ctx, f, T, layer) {
   }
   const fade = 1 - k, e = 1 - (1 - k) ** 3;
   ctx.save();
+  if (f.kind === 'heartstring' && f.from && f.unit) { // a pink thread from her hand to it, sagging and twitching, hearts running along it
+    const a = f.from, b = f.unit, sag = 26 * Math.sin(T * 3), mx = (a.x + b.x) / 2 - uy * sag * 0.3 + ux * 0, my = (a.y + b.y) / 2 + Math.abs(sag) * 0.6;
+    const end = Math.min(1, f.t / 0.2), x2 = a.x + (b.x - a.x) * end, y2 = a.y + (b.y - a.y) * end, fa = Math.min(1, (f.max - f.t) / 0.15);
+    ctx.globalAlpha = fa;
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = 'rgba(255,138,200,0.35)'; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(mx, my, x2, y2); ctx.stroke(); ctx.restore();
+    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(mx, my, x2, y2); }, '#FF8AC8', 3);
+    if (end >= 1) for (let i = 0; i < 3; i++) { const q = (T * 0.9 + i / 3) % 1, t1 = 1 - q, px = t1 * t1 * a.x + 2 * t1 * q * mx + q * q * b.x, py = t1 * t1 * a.y + 2 * t1 * q * my + q * q * b.y;
+      upright(ctx, px, py, () => heart(ctx, 0, 0, 4.5, '#FF5AAE')); }
+    ctx.restore(); ctx.globalAlpha = 1; return;
+  }
+  if (f.kind === 'kissTo') { // a kiss flying from her to the friend, a pink pop where it lands
+    const q = Math.min(1, k / 0.6), px = f.x + (f.unit.x - f.x) * q, py = f.y + (f.unit.y - f.y) * q - Math.sin(q * Math.PI) * 30;
+    if (q < 1) upright(ctx, px, py, () => heart(ctx, 0, 0, 8, '#FF8AC8'));
+    else { const g = (k - 0.6) / 0.4; ctx.globalAlpha = 1 - g; for (let i = 0; i < 6; i++) { const an = i / 6 * TAU, d = 10 + 26 * g; upright(ctx, f.unit.x + Math.cos(an) * d, f.unit.y + Math.sin(an) * d * 0.8, () => heart(ctx, 0, 0, 4.5, '#FFB0D8')); } }
+    ctx.restore(); ctx.globalAlpha = 1; return;
+  }
+  if (f.kind === 'heartbreakCast') { // her locket flashes: a burst of pink light
+    if (k < 0.5) { ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x, y, 60 * e + 10, '#FF8AC8', 0.6 * (1 - k / 0.5)); }
+    ctx.restore(); ctx.globalAlpha = 1; return;
+  }
+  if (f.kind === 'heartbreak') { // a big heart over it cracks down the middle and the halves fall apart
+    const [hx, hy] = [f.unit.x + ux * r * 1.5, f.unit.y + uy * r * 1.5], crack = Math.min(1, k / 0.25), fall = Math.max(0, (k - 0.25) / 0.75);
+    ctx.globalAlpha = 1 - fall * fall;
+    upright(ctx, hx, hy, () => { for (const s of [-1, 1]) { ctx.save(); ctx.translate(s * (1 + 14 * fall), 22 * fall * fall); ctx.rotate(s * 0.8 * fall);
+      ctx.beginPath(); ctx.moveTo(0, -16); ctx.lineTo(s * 2.5, -6); ctx.lineTo(-s * 2, 0); ctx.lineTo(s * 2, 6); ctx.lineTo(0, 16); ctx.lineTo(s * 20, 16); ctx.lineTo(s * 20, -16); ctx.closePath(); ctx.clip();
+      heart(ctx, 0, 0, 12, crack < 1 ? '#FF8AC8' : '#FF5AAE'); ctx.restore(); } });
+    ctx.restore(); ctx.globalAlpha = 1; return;
+  }
   if (f.kind === 'charm') { // hearts bursting outward, a pink flash
     if (k < 0.3) { ctx.globalCompositeOperation = 'lighter'; glowDisc(ctx, x, y, r * 2.4, '#FF8AC8', 0.7 * (1 - k / 0.3)); ctx.globalCompositeOperation = 'source-over'; }
     for (let i = 0; i < 8; i++) { const an = i / 8 * TAU + 0.2, d = r * (0.6 + 1.6 * e); ctx.globalAlpha = fade;
