@@ -57,7 +57,7 @@ const FAR = new Set(['charge', 'leap', 'hook', 'backstab', 'dash', 'barrage', 'f
 const NEEDS_ALLY = new Set(['guard', 'mend', 'sanctuary', 'warSong', 'encore', 'rejuvenate', 'cure', 'consecrate']);
 const SINGLE = new Set(['shieldBash', 'backstab', 'smite', 'hook', 'mend', 'encore', 'rejuvenate', 'cure', 'guard']);
 const CAST_AT = 0.45; // when the ability goes off, seconds into the loop
-export const HERO_W = 470, HERO_H = 350;
+export const HERO_W = 470, HERO_H = 350, TRAIT_W = 380, TRAIT_H = 270;
 // keep: the stage's last world. It is emptied and filled again rather than replaced, so render.js's floor picture
 // (cached per world) is painted once per stage, not once per loop.
 function room(W, H, keep) {
@@ -370,8 +370,8 @@ const TRAIT_SCENE = {
   pollen: { foes: [{ at: 'adj', hpX: 30 }], allies: [{ at: 'near', hp: 0.4 }] },
   requisition: { foes: [{ at: 'far' }], allies: [{ at: 'near', hp: 0.7 }], hero: { set: (u) => { u.kit.reqW = null; } }, hold: (w, u) => { if (u.kit.reqW === w && u.kit.reqT > 1 && u.kit.reqT <= 3) u.kit.reqT = 1; } },
   huntingPartner: { foes: [{ at: 'far', hpX: 14 }] },
-  powderKeg: { foes: [{ at: [330, 175], weak: true }, { at: [368, 150], hp: 0.2 }, { at: [368, 204], hp: 0.2 }] },
-  longShot: { foes: [{ at: [250, 120] }, { at: [432, 232] }] },
+  powderKeg: { foes: [{ at: [272, 135], weak: true }, { at: [308, 110], hp: 0.2 }, { at: [308, 162], hp: 0.2 }] },
+  longShot: { foes: [{ at: [200, 80] }, { at: [345, 196] }] },
   plunder: { foes: [{ at: 'a', weak: true, coins: true }, { at: 'b', weak: true, coins: true }, { at: 'c', weak: true, coins: true }] },
   duelist: { foes: [{ at: 'front', w: 'sword', hits: 1, dmg: 0.08 }, { at: 'side', w: 'spear', hits: 1, off: 0.5, dmg: 0.08, joinAt: 3.2, aim: false }], hero: { abilities: true }, loop: 6.4 },
   keenEdge: { foes: [{ at: 'front', hpX: 12 }] },
@@ -389,7 +389,7 @@ const TRAIT_SCENE = {
   prospector: { foes: [{ at: 'front' }] },
   seenItAll: { aura: true, foes: [], allies: [{ at: 'near', hp: 1, st: { stagger: 85 } }, { at: 'far', hp: 1, st: { stagger: 85 } }], hero: { idle: true } },
   catalyst: { foes: [{ at: 'front', hpX: 30 }] },
-  ancestral: { foes: [{ at: [300, 250], w: 'hammer', hits: 9, aim: false }], allies: [{ at: [250, 250], hp: 0.3, downAt: 1.6 }, { at: 'near', hp: 0.5 }], hero: { hp: 0.5, idle: true } },
+  ancestral: { foes: [{ at: [300, 200], w: 'hammer', hits: 9, aim: false }], allies: [{ at: [236, 200], hp: 0.3, downAt: 1.6 }, { at: 'near', hp: 0.5 }], hero: { hp: 0.5, idle: true } },
   crone: { foes: [{ at: 'a', st: { curse: 55 } }, { at: 'b' }] },
   infernal: { foes: [{ at: 'far', w: 'bow', hits: 0.5, on: 'alt', dmg: 0.02, hitSt: { burn: 30 }, aim: false }], allies: [{ at: 'beside', hp: 1 }], hero: { idle: true } },
   blackCandle: { foes: [{ at: 'adj' }] },
@@ -399,7 +399,7 @@ const TRAIT_SCENE = {
   beeFriend: { foes: [{ at: 'adj' }] },
   wellStocked: { foes: [{ at: 'far' }], allies: [{ at: 'near', hp: 0.5 }], hero: { set: (u) => { u.kit.stockT = 1.2; } }, note: 'On the stage the two minutes are cut to a second, so the hand-over shows.' },
   armourPiercing: { foes: [{ at: 'a', elite: true }, { at: 'b' }] },
-  birdsEye: { always: true, foes: [{ at: [440, 175] }] },
+  birdsEye: { always: true, foes: [{ at: [345, 135] }] },
   demolition: { foes: [{ at: 'front' }, { at: 'line' }], hero: { abilities: true }, fires: (k, args) => k === 'dealt' && !!(args[4] && args[4].blast) },
   oldSalt: { foes: [{ at: 'a', st: { wet: 70 } }, { at: 'b' }] },
   finisher: { foes: [{ at: 'a', hp: 0.42 }, { at: 'b' }] },
@@ -429,11 +429,12 @@ function traitStage(S, spec) {
   const { id, tier } = spec, d0 = DEFS[id], ranged = d0.role === 'ranged';
   const tid = HEROES[id].trait.id, sc = TRAIT_SCENE[tid] || {}, H = sc.hero || {};
   S.loop = sc.loop || 5.2; S.fit = { min: S.loop, tail: 2.2, max: 9 };
+  S.size = [TRAIT_W, TRAIT_H]; // a small yard, so the few figures a scene needs (and their health bars) are drawn big
   let u, foes, allies, pin, did, swingT, turn, lastShot;
   return () => {
-    const w = S.w = room(HERO_W, HERO_H, S.w);
+    const w = S.w = room(TRAIT_W, TRAIT_H, S.w);
     const specs = sc.foes || [{ at: 'front' }];
-    const hx = specs.some((f) => f.at === 'back') ? 190 : 120, hy = 175;
+    const hx = specs.some((f) => f.at === 'back') ? 160 : 100, hy = TRAIT_H / 2;
     u = spawn(w, id, hx, hy, { level: 9 });
     initKit(u, id, { nodes: heroNodes(id, H.abilities ? Math.max(1, tier) : tier) }, 9);
     u.barAlways = true;
@@ -450,9 +451,9 @@ function traitStage(S, spec) {
     if (H.hp) u.hp = u.maxHp * H.hp;
     if (H.set) H.set(u);
     u.facing = u.mvA = 0;
-    const gap = u.r + 28, adjX = hx + gap + 12, frontX = ranged ? 330 : hx + gap + Math.max(8, d0.range - 6);
-    const SPOT = { front: [frontX, hy], adj: [adjX, hy], back: [hx - gap - 12, hy], far: [405, hy], line: [frontX + 84, hy], side: [adjX - 30, hy + 74],
-      a: ranged ? [322, hy - 58] : [frontX - 8, hy - 44], b: ranged ? [322, hy + 58] : [frontX - 8, hy + 44], c: ranged ? [388, hy] : [frontX + 34, hy], 'by-front': [frontX + 56, hy - 18] };
+    const gap = u.r + 28, adjX = hx + gap + 12, frontX = ranged ? 285 : hx + gap + Math.max(8, d0.range - 6);
+    const SPOT = { front: [frontX, hy], adj: [adjX, hy], back: [hx - gap - 12, hy], far: [330, hy], line: [frontX + 84, hy], side: [adjX - 30, hy + 70],
+      a: ranged ? [276, hy - 52] : [frontX - 8, hy - 44], b: ranged ? [276, hy + 52] : [frontX - 8, hy + 44], c: ranged ? [334, hy] : [frontX + 34, hy], 'by-front': [frontX + 56, hy - 18] };
     const hit0 = Math.max(6, unitNumbers(u).hit);
     foes = [];
     const addFoe = (p) => {
@@ -469,7 +470,7 @@ function traitStage(S, spec) {
     };
     for (const p of specs) if (!p.joinAt) addFoe(p);
     const A0 = sc.allies || (sc.revive ? [{ at: 'beside', hp: 0.6, downAt: 1.1 }] : []);
-    const ASPOT = { near: [hx + 6, hy + 92], beside: [hx, hy + 84], far: [430, 62], 'by-a': [SPOT.a[0] + 4, SPOT.a[1] - 62] };
+    const ASPOT = { near: [hx + 6, hy + 84], beside: [hx, hy + 78], far: [340, 46], 'by-a': [SPOT.a[0] + 66, SPOT.a[1] - 24] };
     allies = A0.map((a, i) => {
       const [x, y] = Array.isArray(a.at) ? a.at : ASPOT[a.at] || ASPOT.near;
       const o = fullAlly(w, id === 'paladin' ? (i ? 'tower' : 'archer') : i ? 'archer' : 'paladin', x, y);
@@ -554,7 +555,7 @@ function traitStage(S, spec) {
           if (down.reviveT >= 3) { down.downed = false; down.reviveT = 0; down.hp = down.maxHp * (T.reviveHp || 0.1); down.invulnT = 1.2; w.fx.push({ type: 'ring', x: down.x, y: down.y, r: 50, color: '#FFE7A0', t: 0, max: 0.5 }); did.up = true; S.fire(); cue(down); }
         }
       }
-      if (H.walk && S.t > H.walk[0] && S.t < H.walk[1]) { pin = { x: hx, y: hy + Math.sin((S.t - H.walk[0]) * 3.2) * 46 }; u.spd = 60; u.mvA = Math.cos((S.t - H.walk[0]) * 3.2) > 0 ? Math.PI / 2 : -Math.PI / 2; did.walking = true; }
+      if (H.walk && S.t > H.walk[0] && S.t < H.walk[1]) { pin = { x: hx, y: hy + Math.sin((S.t - H.walk[0]) * 3.2) * 40 }; u.spd = 60; u.mvA = Math.cos((S.t - H.walk[0]) * 3.2) > 0 ? Math.PI / 2 : -Math.PI / 2; did.walking = true; }
       else if (did.walking) { did.walking = false; pin = { x: u.x, y: u.y }; u.spd = 0; }
     };
     S.after = (dt) => {
@@ -654,8 +655,10 @@ function foeStage(S, spec) {
       // room (throws, charges, leaps) get it before it has walked up to the dummies; never longer than 3 s
       if (held() && !u.dead && !u.act) { u.x = hold.x; u.y = hold.y; u.vx = u.vy = 0; }
       // nothing yet by 2.4 s: the nearest dummy steps up close, for the moves that want a target at arm's length
-      if ((move === 'elite' || move === 'major') && !S.fired() && S.t > 2.4 && !lastA.stepped) { lastA.stepped = true; const d = dummies[0]; d.home = { x: u.x - Math.cos(u.facing) * 0 - (u.r + d.r + 26), y: u.y }; d._free = 0; }
-      if (lastA.stepped && !S.fired() && !u.dead) { const d = dummies[0]; d.home = { x: Math.max(40, u.x - (u.r + d.r + 26)), y: u.y }; } // and keeps at its side until the move comes
+      if ((move === 'elite' || move === 'major') && !S.fired() && S.t > 2.4 && !lastA.stepped) { lastA.stepped = true; dummies[0]._free = 0; }
+      // and keeps at its side until the move comes. (Round 14: held there firmly, however its blows shove it: a turret's
+      // shots kept knocking it back out of reach, so some loops never showed the move.)
+      if (lastA.stepped && !S.fired() && !u.dead) { const d = dummies[0]; d.home = { x: Math.max(40, u.x - (u.r + d.r + 26)), y: u.y }; d._free = 0; const k = Math.min(1, dt * 5); d.x += (d.home.x - d.x) * k; d.y += (d.home.y - d.y) * k; }
       if (move === 'kit' && d0.pass && Math.hypot(u.x - hold.x, u.y - hold.y) > 150) S.fire(); // a roller: rolling and bouncing is what it does
       // keep it on the stage and the stage going: hurt by its own moves or a reflected shot, it heals up
       if (!u.dead && u.hp < u.maxHp * 0.2) u.hp = u.maxHp * 0.6;

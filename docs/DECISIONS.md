@@ -593,3 +593,49 @@ The designer's verdicts are the v12-bosses answers in `docs/riffle-log/2026-11-2
   bosses of this lane show white for a frame when struck; with four heroes on them they were white a third of the time).
 - **Testing**: `?bossmove=<name>` makes a boss open with one move (each boss's brain lists its names);
   `lab.html?m=boss&boss=<id>&bossphase=N&bossmove=<name>`.
+
+## Round 14, lane U (2026-11-22): the unit page; the Book as grids
+From the Riffle answers (`docs/riffle-log/2026-11-22-round14.txt`, card "book", and v141-battle part "dev"). The
+structure is in `docs/UI-v4.md`; what was decided, and what was read into the designer's words:
+
+- **One unit page** (`js/unit.js`) for a hero or a monster, opened the same way from the camp (a tap on a hero), the
+  Book (a card) and the battle page (a row's picture). The camp's old hero panel (Gear / Skills / About) is gone: its
+  parts are the page's Main / Upgrades / Stats, and what it could do is passed to the page as `acts`, so the Book's
+  copy of a hero's page equips and upgrades too.
+- **Pages side by side, swiped** (`js/pager.js`): a hero has Main, Upgrades, Preview, Stats; a monster Overview,
+  Preview, Stats under a Base / Elite / Major switch that drives all three. The tabs are on top (the designer: "a top
+  bar"); the controls of a page (moves, the tier dial, the floor stepper) are at the bottom.
+- **The Book is five grids** (Heroes, Monsters, Trinkets, Statuses, Dungeons), swiped the same way. No strip of faces
+  under a unit: Back returns to the grid where it was left. **Potions sit under the trinkets** on the Trinkets grid
+  (the designer named four pages; a sixth tab for nine potions wasn't worth the width). **Open: their own page?**
+- **Dungeon overview**: floors, who lives on each, mini-bosses and the boss, deepest floor, boss kills. The save has no
+  runs, deaths or fastest clear by dungeon; the page says so rather than guess. **Open: record them?**
+- **Monster stats "as they are in game"**: for a chosen dungeon floor (a stepper; it opens on the first place the kind
+  is met), from `dungeon.js enemyMult` and `battleFoe`. An ordinary kind is taken at the middle room of the floor (the
+  floor's average, the designer's "or would just show average"); a boss or mini-boss in the floor's last room, for the
+  party's present size. Trinkets left off.
+- **Stat icons** all come from `icons.js statIcon(id)`; the set there is a stand-in until the style is picked
+  (`design/icons-r14`).
+- **Previews, no words** (`preview-sim.js STAGE_TEXT = false`): the round 13 marks are gone and so are the game's own
+  floating words and hit numbers on a stage (read as "No text pop up", all of it; one constant brings the game's
+  numbers back if that was too much). Units that matter carry a health bar there (`u.barAlways`). What a tier adds is in
+  the caption under the stage.
+- **A locked ability plays** as it is at tier I, marked locked.
+- **Trait scenes** (`TRAIT_SCENE`): one small yard each with only what the trait needs; attackers are targets holding a
+  sword, bow, spear or hammer (`art/lab/dummy-<weapon>.svg`), in front of the hero, facing it; a number-only trait is
+  shown as two things side by side that differ in the one way it cares about; a gold ring pulses once round whoever the
+  trait just acted for. With abilities on, the stage casts them itself in turn (the hero's own choosing wouldn't spend
+  one on a single target).
+- **No trinkets on elites and majors** on a stage (taken off after the dice hand them out, so the kind's own dice are
+  as before).
+- **The status meter** "freaked out when full" because it showed the raw value, which is emptied in the step it
+  fills, with "Burst!" swapped in and the bar's length changing with the words. Now: fixed size, fills, holds full for
+  the burst, the picture of the burst's state lit while it lasts, then falls to what is left.
+- **A burst that needs a trigger is shown both ways**, turn about (Frozen: left alone, shattered by a hammer; asleep:
+  left alone, woken by a blow), with a switch to hold one.
+- **Dev controls in one place**: Settings -> Dev (unlimited gold and points, the whole skill web, battle: field
+  everything). The battle picker's switch is gone.
+- **A stage fix that came with it**: the target that steps up to an elite or major whose move hasn't come is now held
+  there (a turret's shots kept knocking it out of reach), so those moves show in every loop again.
+- **Not done**: opening a unit from the battle *picker's* tiles (a tap there adds the unit; the stack's row opens the
+  page instead). The skill web can't be swiped off (one finger pans it): leave it by the tabs.

@@ -190,7 +190,7 @@ function thingBody() {
   } else if (th.t === 'status') {
     const id = th.id, s = STATUSES[id] || { name: id, desc: '' }, src = FROM[id], B = STATUS[id], how = statusHow(id);
     bar(tico(icon('status', id)), s.name, B ? 'Builds up, then bursts' : src ? `What ${(STATUSES[src] || { name: src }).name.toLowerCase()} bursts into` : how === 'put' ? 'Lasts a few seconds' : 'A state');
-    const facts = B ? `<div class="st-grid th-facts">${cell('fill', typeof B.need === 'function' ? 100 : B.need, 'Fills at')}${cell('decay', B.decay, 'Fades a second')}${cell('fill', B.after || 0, 'Left by a burst')}</div>` : '';
+    const facts = B ? `<div class="st-grid th-facts">${cell('fill', typeof B.need === 'function' ? 100 : B.need, 'Fills at')}${cell('decay', B.decay, 'Fades / s')}${cell('fill', B.after || 0, 'After a burst')}</div>` : '';
     const who = whoBrings(src || id);
     body.innerHTML = `<p class="th-desc">${s.desc}</p>${facts}${who ? `${sec('Whose blows carry it')}<p class="un-note">${who}</p>` : ''}`;
   } else dungeonBody(th.id, bar, body);

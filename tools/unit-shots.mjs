@@ -121,6 +121,60 @@ try {
   await page.evaluate(() => { const b = document.querySelector('#campPanel .pp-body'); b.scrollTop = b.scrollHeight; }); await shot('40-settings-dev');
   if (want('41-battle')) { await page.evaluate(() => GAME.openBattle()); await wait(500); await page.evaluate(() => document.querySelector('[data-b="add:a"]').click()); await shot('41-battle-picker-no-dev'); await page.evaluate(() => { document.querySelector('[data-b="done"]').click(); document.querySelector('[data-b="close"]').click(); }); await wait(300); }
 
+  // ---- the page does what the old hero page did, from the camp and from the Book (checked, with stills)
+  if (want('5')) {
+    const say = (ok, what) => { if (!ok) errors.push('check failed: ' + what); else console.log('ok:', what); };
+    const tapSel = async (sel) => { await page.click(sel, { force: true, timeout: 5000 }); await wait(250); };
+    for (const from of ['camp', 'book']) {
+      await page.evaluate(() => { BOOK.close(); CAMP.setMode('ground'); }); await wait(200);
+      if (from === 'camp') await page.evaluate(() => CAMP.setMode('hero', { id: 'paladin' }));
+      else { await page.evaluate(() => { CAMP.setMode('book'); BOOK.tab('heroes'); }); await wait(300); await tapSel('#book [data-bk="hero:paladin"]'); }
+      await wait(400);
+      say(await page.evaluate(() => !document.getElementById('unit').classList.contains('hidden') && UNIT.state.id === 'paladin' && UNIT.pager.id === 'main'), `${from}: the hero's page opens on Main`);
+      // equipment: the slot opens the sheet; a trinket from the chest goes on; the page shows it
+      await tapSel('#unit [data-un="tslot:0"]');
+      if (from === 'camp') await shot('50-main-trinket-sheet', 300);
+      const want0 = await page.evaluate(() => GAME.save.trinkets[0]);
+      await tapSel(`#sheet [data-act="equip:${want0}"]`);
+      say(await page.evaluate((t) => GAME.save.heroes.paladin.trinkets[0] === t && document.querySelector('#unit .gslot b').textContent.length > 0 && document.getElementById('sheet').classList.contains('hidden'), want0), `${from}: a trinket is worn from the page (${want0})`);
+      // potions: the pockets open the packing sheet on this hero; a potion goes into a pocket
+      await tapSel('#unit [data-un="pack"]');
+      if (from === 'camp') await shot('51-main-potion-sheet', 300);
+      await tapSel('#sheet [data-act^="givep:"]');
+      await page.evaluate(() => document.querySelector('#sheet [data-act="closesheet"]').click()); await wait(250);
+      say(await page.evaluate(() => document.querySelectorAll('#unit .pocket.full').length >= 1), `${from}: a potion is packed from the page`);
+      if (from === 'camp') await shot('52-main-after', 200);
+      await page.evaluate(() => { const b = document.querySelector('#sheet [data-act^="takep:"]'); if (b) b.click(); });
+      // upgrades: a node that can be learned is learned from the page
+      await page.evaluate(() => UNIT.pager.go(1, false)); await wait(400);
+      const before = await page.evaluate(() => Object.keys(GAME.save.heroes.paladin.nodes).length + ':' + GAME.save.heroes.paladin.points);
+      const at = await page.evaluate(() => { const g = document.querySelector('#unit .wn.open'); if (!g) return null; const r = g.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
+      if (at) { await page.mouse.click(at[0], at[1]); await wait(500); if (from === 'camp') await shot('53-upgrades-node', 200); await tapSel('#unit .web-panel [data-learn]'); }
+      say(at && await page.evaluate((b) => (Object.keys(GAME.save.heroes.paladin.nodes).length + ':' + GAME.save.heroes.paladin.points) !== b, before), `${from}: a node is learned from the page`);
+      // back returns to where it was opened from
+      await tapSel('#unit [data-un="back"]'); await wait(300);
+      say(await page.evaluate((from) => document.getElementById('unit').classList.contains('hidden') && (from === 'camp' ? CAMP.mode === 'ground' : CAMP.mode === 'book' && !document.getElementById('book').classList.contains('hidden')), from), `${from}: Back returns to the ${from}`);
+    }
+    // the Book keeps its place: scroll the monsters grid, open one, come back
+    await page.evaluate(() => { BOOK.tab('monsters'); document.querySelector('#book .pg-page.on .un-scroll').scrollTop = 420; }); await wait(200);
+    await tapSel('#book [data-bk="foe:orcShaman"]'); await tapSel('#unit [data-un="back"]');
+    say(await page.evaluate(() => BOOK.pager.id === 'monsters' && Math.abs(document.querySelector('#book .pg-page.on .un-scroll').scrollTop - 420) < 3), 'the Book: Back returns to the grid at the place it was left');
+    // a hero not recruited: Recruit on its page, from the Book
+    await page.evaluate(() => BOOK.tab('heroes')); await tapSel('#book [data-bk="hero:tower"]'); await shot('54-hero-not-recruited', 300);
+    await tapSel('#unit [data-un="recruit"]');
+    say(await page.evaluate(() => GAME.save.heroes.tower.owned === true), 'the Book: a hero is recruited from its page');
+    await tapSel('#unit [data-un="back"]');
+    // the battle page: a row's picture opens that unit's page, read-only
+    await page.evaluate(() => { BOOK.close(); CAMP.setMode('ground'); GAME.openBattle(); }); await wait(400);
+    await page.evaluate(() => { document.querySelector('[data-b="add:a"]').click(); }); await wait(200);
+    await page.evaluate(() => { document.querySelector('[data-b^="pick:"]').click(); document.querySelector('[data-b="done"]').click(); }); await wait(200);
+    await tapSel('#battle [data-b^="info:"]');
+    say(await page.evaluate(() => !document.getElementById('unit').classList.contains('hidden')), 'the battle page: a row opens the unit page');
+    await shot('55-from-battle-page', 500);
+    await tapSel('#unit [data-un="back"]');
+    await page.evaluate(() => document.querySelector('[data-b="close"]').click()); await wait(300);
+  }
+
   // ---- every trait's scene, one still each (a moment after it first acts)
   if (traits) {
     const ids = await page.evaluate(async () => Object.keys((await import('./js/heroes.js')).HEROES));
