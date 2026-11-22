@@ -151,21 +151,39 @@ What is left in the long-room time is still the grind: 94% of it in the campaign
 down). Room by room, the long rooms left are deep Foundry and Dunes rooms with a healer in the party (steel bees still
 28% of the clock there: 19 s each, an elite 34 s), and a hero alone who can neither win nor lose.
 
-## Regression checks (main 0.19.0 against this branch merged with it)
+## Regression checks
 
-- `runs.mjs --n 12 --theme all`, the starter four with the Cleric at level 30: Wildwood 12 / 12, Crypt 0 / 0, Sewers 1 /
-  2, Warren 11 / 9, the rest 0 / 0. At level 50: Wildwood 12 / 12, Crypt 3 / 5, Sewers 12 / 12, Warren 12 / 12, Frost
-  9 / 7, **Ember 6 / 2**, Spire 1 / 1, Dunes 0 / 0, Foundry 2 / 0. Beyond noise (about 2 in 12): Ember at level 50, 4
-  fewer wins: harder-hitting rooms on its floors (its boss benches the same, 10 / 9, and the campaigns beat it at runs
-  61-71 as before, 61-74). The Warren at 30 and the Foundry at 50 are on the edge (2).
-- `battles.mjs`: 521 battles, 0 problems, 6 ran out of time (main 7; 0.18.0 8). Gone: the yeti elites against a major,
-  Wildmane and a Cleric against three gear sprites. New: three rock trolls against a Paladin and an Archer (trolls roll
-  their boulders now). Still: the crab, leech and choir mirror fights, which can't end by themselves.
-- `convoys.mjs --n 6 --level 4`: 6 trips, 6 delivered, 0 errors, 0 stuck (main the same).
-- `preview-check.mjs`: 2102 previews, 0 loops where the move never fired, 0 left out of the Book.
-- `runs.mjs --campaign 150 --seed 2 --v`: **2 stuck runs** (main 4), both the gilded golem. Bosses at runs 5 Wildwood, 15
-  Warren, 37 Sewers, 62 Crypt, 65 Frost, 70 Ember, 98 Spire, 107 Dunes, 114 Foundry (main: 4, 9, 30, 57, 59, 67, 77, 82,
-  86). On this base the seed's Warren took 5 runs before and 10 now, not the 62 of the brief's earlier version.
+Main moved twice while this ran, so the checks were run on both merges: main 0.19.0 against the branch merged with it,
+and again main 0.20.0 (lanes S, W and U) against the final merge. 12 runs a dungeon: noise is about 2 in 12.
+
+| check | main 0.19.0 / branch | main 0.20.0 / final |
+|---|---|---|
+| the four at level 30, wins in 12 | Wildwood 12 / 12, Crypt 0 / 1, Sewers 1 / 2, Warren 11 / 9, the rest 0 / 0 | Wildwood 12 / 12, Crypt 1 / 0, **Sewers 4 / 1**, Warren 11 / 12, the rest 0 / 0 |
+| the four at level 50 | Crypt 3 / 5, Sewers 12 / 12, Warren 12 / 12, Frost 9 / 7, **Ember 6 / 2**, Spire 1 / 1, Dunes 0 / 0, Foundry 2 / 0 | Crypt 4 / 3, Sewers 11 / 11, Warren 12 / 12, Frost 10 / 8, Ember 3 / 4, Spire 1 / 0, Dunes 1 / 0, Foundry 0 / 0 |
+| `battles.mjs` (521) | 0 problems; 7 / 6 ran out of time | 0 problems; 6 / 9 ran out of time |
+| `convoys.mjs --n 6 --level 4` | 6 delivered / 6, 0 errors, 0 stuck | 3 delivered, 2 parties fell / 5 delivered, none fell; 0 errors, 0 stuck |
+| `preview-check.mjs` | 2102 previews, 0 never fired, 0 left out | the same |
+| `runs.mjs --campaign 150 --seed 2 --v` | 4 / 2 stuck runs | 6 / 5 stuck runs |
+
+- Beyond noise: Ember at level 50 on 0.19.0 (6 -> 2) is gone on 0.20.0 (3 -> 4); the Sewers at level 30 on 0.20.0
+  (4 -> 1) was 1 -> 2 on 0.19.0. Both sit on the edge of what 12 runs can tell apart; neither repeats.
+- Battles: gone, the yeti elites against a major and Wildmane and a Cleric against three gears; new, three rock trolls
+  against a Paladin and an Archer (trolls roll their boulders now) and, on 0.20.0, three yetis or three smiths against a
+  hero pair: close fights that run long on main too (three yetis against the Paladin and the Archer: 155 s a fight on
+  main, 208 s here, one of six reaching the limit on each). The crab, leech and choir mirror fights can't end by
+  themselves on either.
+- The seed-2 campaign, bosses at runs (Wildwood, Warren, Sewers, Crypt, Frost, Ember, Spire, Dunes, Foundry):
+  - 0.18.0 / 0.19.0 main (the same run): 4, 9, 30, 57, 59, 67, 77, 82, 86; 4 stuck runs; 1516 sim minutes.
+  - branch on 0.19.0: 5, 15, 37, 62, 65, 70, 98, 107, 114; 2 stuck runs (both the gilded golem); 1202 sim minutes.
+  - 0.20.0 main: 4, 15, 20, 23, 37, 49, 54, 56, 80; 6 stuck runs (all Foundry floor 3, steel bees, wasps and hornets);
+    1776 sim minutes.
+  - final: 5, 13, 22, 42, 45, 56, 67, 86, 90; 5 stuck runs (an elite troll in the Warren, a ward spirit in the Spire,
+    golden scarabs in the Dunes twice, hornets in the Foundry); 1482 sim minutes (-17%).
+  0.20.0 made main's campaign much faster in the middle (the Crypt's boss at run 23, not 57); on that base this branch
+  reaches each boss later, by 6 to 30 runs, while on 0.19.0 four seeds came out as fast as before on average. One seed
+  can't settle it: a four-seed campaign on 0.20.0 is the next measurement to make.
+- This seed's Warren took 5 runs (0.19.0) or 11 (0.20.0) before, and 10 or 8 now: not the 62 of the brief's earlier
+  version of the game.
 
 ## Not fixed, and why
 
@@ -213,6 +231,8 @@ CDP, then stops only the processes whose command line carries that folder (other
 alone), then removes the folder; the same clean-up runs if the tool throws or is stopped. The 17 tools that launched
 Edge use it (`shot`, `clip`, `labshot`, `showcase`, `status-clip`, `stats-shots`, `hud-shots`, `env-shots`,
 `book-shots`, `camp-shots`, `camp-perf`, `battle-shots`, `convoy-shots`, `prop-board`, `sound-render`, `sound-smoke`,
-`test/trinkets`), and lane I's `design/icons-r14/render.mjs` since the merge. Checked: one page open, 16 processes on its
+`test/trinkets`), and since the merges lane I's `design/icons-r14/render.mjs` and lanes W's and U's new `edge-shots` and
+`unit-shots` (lane W had added the profile-folder kill to `clip`, `convoy-shots` and `edge-shots` on its own; it now goes
+through the helper, as does `clip`'s give-up timer). Checked: one page open, 16 processes on its
 profile; after `close()` none, and the folder gone; a tool that threw after opening left none either.
 

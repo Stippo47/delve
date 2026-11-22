@@ -755,7 +755,8 @@ and its evidence: `docs/LONG-ROOMS.md`; the tools: `tools/long-rooms.mjs` and `r
   them; lighter now (the angel's Host every 45 s: back at its 12 wins in 20; the Ooze's Brood every 16 s and three at
   most: 12 against 7, a little easier; the Wurm's Brood one scarab at a time at 30%: still 3 against 9, left for lane B).
 - **Measured** (`docs/LONG-ROOMS.md`): long-room time -37% in the campaigns, -28% in the sweep; runs at the 420 s cut
-  16 -> 8; rooms over 240 s 13.0% -> 8.2% (campaigns). Ember Deep at level 50 won 2 of 12 against 6 (beyond noise).
+  16 -> 8; rooms over 240 s 13.0% -> 8.2% (campaigns). Win rates within noise of main 0.20.0 but the Sewers at level 30
+  (1 of 12 against 4); on 0.20.0 the seed-2 campaign reached each boss 6-30 runs later than main (one seed: to measure).
 - **Open, for the designer**: a hero left alone who can neither win nor lose (a Cleric against gears she can't hit);
   enemy armour growing to the 60% cap deep down (capping its growth measured -17% long-room time, but makes the late
   dungeons easier); battle mode's own 75 s press-in and 240 s judge, and the wagon's gate clock (foes withering after
