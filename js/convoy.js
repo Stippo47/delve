@@ -148,8 +148,8 @@ export function newConvoy(save, opts = {}) {
   applyLoadout(run, ro); // trinket levels onto the heroes' lists (progress.js)
   if (opts.stretch) run.stretch = Math.min(legs.length - 1, opts.stretch | 0); // testing: start further up the road
   buildStretch(run);
-  // (tools: a crowd of n foes from one side now, e.g. run.send('left', 5); wood: -1 or 1 for which wood, for 'ahead' and 'behind')
-  run.send = (dir, n = 5, wood) => { const S = legOf(run), T = floorTheme(S.theme, S.floor), kinds = rollKinds(T.enemies, n * 3).slice(0, n); return comeFrom(run, kinds, dir, true, { wood }); };
+  // (tools: a crowd of n foes from one side now, e.g. run.send('left', 5); wood: -1 or 1 for which wood, for 'ahead' and 'behind'; kinds: which foes, else the leg's own)
+  run.send = (dir, n = 5, wood, kinds) => { const S = legOf(run), T = floorTheme(S.theme, S.floor); return comeFrom(run, kinds || rollKinds(T.enemies, n * 3).slice(0, n), dir, true, { wood }); };
   return run;
 }
 export const purse = (run) => run.coins - run.spent; // the trip's gold in hand

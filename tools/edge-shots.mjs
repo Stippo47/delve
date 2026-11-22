@@ -27,13 +27,22 @@ const killEdge = () => {
   try { execFileSync('powershell', ['-NoProfile', '-Command', `Get-CimInstance Win32_Process -Filter "Name='msedge.exe'" | Where-Object { $_.CommandLine -like '*${path.basename(prof)}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`], { stdio: 'ignore' }); } catch {}
   try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
 };
+// Open the game and wait for it to be up. A small static server (python -m http.server) refuses some of a page's
+// hundred requests when they come in a burst, and one module missing leaves the game never starting: so a load that
+// isn't up in 30 s is tried again (what did arrive is cached), a few times. Polled on a timer: a headless page's frames
+// can stall on a busy machine.
+async function loadGame(page, url, up = () => window.GAME && GAME.ready) {
+  for (let i = 0; ; i++) {
+    try { if (i) await page.reload(); else await page.goto(url); await page.waitForFunction(up, null, { timeout: 30000, polling: 200 }); return; }
+    catch (e) { if (i >= 5) throw e; }
+  }
+}
 const errors = [];
 try {
   const page = await (await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2, hasTouch: true })).newPage();
   page.on('pageerror', (e) => errors.push('pageerror: ' + e)); if (args.includes('--v')) page.on('console', (m) => console.log('console', m.type(), m.text()));
   for (const e of edges) {
-    await page.goto(`http://localhost:${site}/?seed=4&edge=${e}`);
-    await page.waitForFunction(() => window.GAME && GAME.ready, null, { timeout: 150000, polling: 200 });
+    await loadGame(page, `http://localhost:${site}/?seed=4&edge=${e}`);
     for (const land of lands) for (const lean of leans) {
       await page.evaluate(([party, land, lean, at]) => {
         const s = GAME.save; s.unlocks = { ...(s.unlocks || {}), slotMini1: true, slotBoss1: true };

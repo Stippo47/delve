@@ -23,6 +23,16 @@ const killEdge = () => {
   try { execFileSync('powershell', ['-NoProfile', '-Command', `Get-CimInstance Win32_Process -Filter "Name='msedge.exe'" | Where-Object { $_.CommandLine -like '*${path.basename(prof)}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`], { stdio: 'ignore' }); } catch {}
   try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
 };
+// Open the game and wait for it to be up. A small static server (python -m http.server) refuses some of a page's
+// hundred requests when they come in a burst, and one module missing leaves the game never starting: so a load that
+// isn't up in 30 s is tried again (what did arrive is cached), a few times. Polled on a timer: a headless page's frames
+// can stall on a busy machine.
+async function loadGame(page, url, up = () => window.GAME && GAME.ready) {
+  for (let i = 0; ; i++) {
+    try { if (i) await page.reload(); else await page.goto(url); await page.waitForFunction(up, null, { timeout: 30000, polling: 200 }); return; }
+    catch (e) { if (i >= 5) throw e; }
+  }
+}
 const errors = [];
 try {
   const page = await (await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2, hasTouch: true })).newPage();
@@ -30,10 +40,9 @@ try {
   page.on('response', (r) => { if (r.status() === 404 && !/favicon/.test(r.url())) errors.push('missing: ' + r.url()); });
   const shot = async (name, ms = 450) => { await page.waitForTimeout(ms); await page.screenshot({ path: path.join(out, name + '.png') }); console.log('shot', name); };
   const tap = (sel) => page.evaluate((s) => { const e = document.querySelector(s); if (!e) throw new Error('nothing matches ' + s); e.click(); }, sel);
-  await page.goto(`http://localhost:${site}/?seed=${seed}&allnodes`); // (every skill: a fresh save's heroes have none, and fall before the stills)
-  await page.waitForFunction(() => window.GAME && GAME.ready, null, { timeout: 120000, polling: 200 });
-  await page.evaluate(() => localStorage.clear()); await page.reload();
-  await page.waitForFunction(() => window.GAME && GAME.ready, null, { timeout: 120000, polling: 200 });
+  await loadGame(page, `http://localhost:${site}/?seed=${seed}&allnodes`); // (every skill: a fresh save's heroes have none, and fall before the stills)
+  await page.evaluate(() => localStorage.clear());
+  await loadGame(page, `http://localhost:${site}/?seed=${seed}&allnodes`);
   await page.evaluate(([party, level]) => {
     const s = GAME.save;
     s.unlocks = { ...(s.unlocks || {}) }; for (const k of ['slotMini1', 'slotBoss1']) s.unlocks[k] = true; s.slots = 3;

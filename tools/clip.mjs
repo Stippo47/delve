@@ -40,8 +40,17 @@ process.on('uncaughtException', (e) => { console.error(e); killEdge(); try { fs.
 process.on('unhandledRejection', (e) => { console.error(e); killEdge(); try { fs.rmSync(frames, { recursive: true, force: true }); } catch {} process.exit(1); });
 page.on('pageerror', (e) => errors.push(String(e)));
 const q = opt('q', ''); // extra address parameters
-await page.goto(`http://localhost:${site}/?seed=${seed}${q ? '&' + q : ''}`);
-await page.waitForFunction(() => window.GAME && GAME.state === 'camp' && GAME.ready, null, { timeout: 180000, polling: 200 }); // sprites loaded, camp shown (polled on a timer: a headless page's frames can stall on a busy machine)
+// Open the game and wait for it to be up. A small static server (python -m http.server) refuses some of a page's
+// hundred requests when they come in a burst, and one module missing leaves the game never starting: so a load that
+// isn't up in 30 s is tried again (what did arrive is cached), a few times. Polled on a timer: a headless page's frames
+// can stall on a busy machine.
+async function loadGame(page, url, up = () => window.GAME && GAME.ready) {
+  for (let i = 0; ; i++) {
+    try { if (i) await page.reload(); else await page.goto(url); await page.waitForFunction(up, null, { timeout: 30000, polling: 200 }); return; }
+    catch (e) { if (i >= 5) throw e; }
+  }
+}
+await loadGame(page, `http://localhost:${site}/?seed=${seed}${q ? '&' + q : ''}`, () => window.GAME && GAME.state === 'camp' && GAME.ready); // sprites loaded, camp shown
 // --battle "rattler*10,necromancer|paladin,tower" [--arena crypt]: a battle (js/battle.js), Red's stacks then Blue's; kind*count@rank.
 // Everything is fieldable for the clip (the cheat save), and --nodes "paladin:guard1+shieldBash1,..." gives heroes skills.
 const battle = opt('battle', '');
