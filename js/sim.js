@@ -201,6 +201,7 @@ function blocked(w, ax, ay, bx, by) {
 
 // ---------------------------------------------------------------- targeting
 const SIGHT = 720, AGGRO = 540; // round 6: longer view range for everyone
+const WINDOW_PULL = 0.8;        // how much a hero would rather hit a boss while its window is open than its adds
 function wake(w, u) {
   if (u.aggro) return;
   u.aggro = true;
@@ -231,6 +232,12 @@ function chooseTarget(w, u) {
       if (k === 'rogue' && crowd === 0) s += 0.45;      // the rogue hunts the ones on their own, even far off
       // finish the kill: a nearly dead enemy someone is already hitting
       if ((k === 'archer' || k === 'rogue') && on > 0 && hpRatio(o) < 0.35) s += 0.55;
+      // round 14 (lane L): the one mending the others first (a choir sprite, a light spirit, a repair drone, an elite
+      // shaman: "kill it first"), or the fight can't end
+      if (o.def.mends || (o.elite && o.kind === 'orcShaman')) s += 0.5;
+      // a boss that can only be hit while it's up (the Sand Wurm out of the sand: boss-wurm.js wurmOut): go for it while
+      // it shows, not for its brood (the scarabs took the party's blows through every window it was out)
+      if ((o.partOf || o).wurmOut) s += WINDOW_PULL;
     }
     if (k === 'archer') { s += (1 - hpRatio(o)) * 0.5; if (d <= u.def.range && !blocked(w, u.x, u.y, o.x, o.y)) s += 0.6; }
     else if (k === 'rogue') { s += (1 - hpRatio(o)) * 1.1 + (o.target && o.target !== u ? 0.5 : 0) - (o.def.boss ? 0.3 : 0); }
@@ -246,11 +253,33 @@ function chooseTarget(w, u) {
     if (u.st.charm > 0 && u.stBy && u.stBy.charm === o) s -= 3;        // round 13: it won't go for whoever is charming it
     if (u.hunting && o.def.heroRole === 'support') s += u.def.hunter; // round 13: healer hunters go for the party's healer (round 14: only while the mood is on it: think)
     if (u.def.charmBonus && (o.st.charm > 0 || o.flipKind === 'charm')) s += 0.8; // the Succubus goes for the charmed
+    if (u.outOfReach && u.outOfReach.get(o) > w.time) s -= REACH_PENALTY; // round 14 (lane L): one it couldn't get at (reachCheck)
     if (s > bestS) { bestS = s; best = o; }
   }
   u.target = best;
 }
+// Round 14, lane L (rooms that dragged on for minutes): a unit that gets no nearer to its target, and can't hit it from
+// where it is, for REACH_T seconds (a troll after a shooter behind a wall it is too big to get round, a knight after a bee
+// it never catches, a shooter with a rock between it and its mark) counts that target out of its reach for REACH_REST
+// seconds and goes for another it can get at, if there is one (with only the one left, it keeps on at it).
+const REACH_T = 6, REACH_REST = 8, REACH_PENALTY = 1.2;
+function reachCheck(w, u) {
+  const t = u.target;
+  if (!t || u.forcedGoal) { u.chase = null; return; }
+  const d = dist(u.x, u.y, t.x, t.y), gap = d - u.r - t.r;
+  const canHit = u.def.role === 'ranged' ? d <= (u.def.range || 0) && !blocked(w, u.x, u.y, t.x, t.y) : gap <= (u.def.range || 20) + 10;
+  const c = u.chase;
+  if (canHit || !c || c.t !== t || gap < c.best - 30) { u.chase = { t, best: c && c.t === t ? Math.min(c.best, gap) : gap, since: w.time }; return; }
+  if (w.time - c.since < REACH_T) return;
+  (u.outOfReach || (u.outOfReach = new Map())).set(t, w.time + REACH_REST);
+  u.chase = null;
+  if (u.outOfReach.size > 8) for (const [o, until] of u.outOfReach) if (until <= w.time || !alive(o)) u.outOfReach.delete(o);
+}
 
+// Round 14 (lane L): a shooter standing in a mirror-faced enemy's front while that enemy faces someone else (so it can
+// get round to its side, and its shots would only come back at it).
+const mirrorFront = (w, u, t) => !!t.def.mirror && u.def.role === 'ranged' && heroic(w, u) && t.target && t.target !== u && alive(t.target)
+  && angleDiff(angleTo(t.x, t.y, u.x, u.y), t.facing) < t.def.mirror + 0.25;
 // The old trio's brains, by role: shooters like the archer, skirmishers like the rogue, tanks like the knight.
 function roleAlias(u) {
   const r = u.def.heroRole;
@@ -304,6 +333,7 @@ function scoreModes(w, u) {
 export const HUNT = { p: 0.5, every: [3, 5] };
 function think(w, u) {
   const prevT = u.target;
+  reachCheck(w, u);
   if (u.def.hunter && !(u.huntT > w.time)) { u.huntT = w.time + rrange(...HUNT.every); u.hunting = chance(HUNT.p); }
   chooseTarget(w, u);
   const sc = scoreModes(w, u);
@@ -605,9 +635,31 @@ function movement(w, u, dt) {
   } else {
     const d = dist(u.x, u.y, t.x, t.y);
     const tx = (t.x - u.x) / (d || 1), ty = (t.y - u.y) / (d || 1);
-    switch (u.mode) {
+    if (mirrorFront(w, u, t) && u.mode !== 'kite') {
+      // round 14 (lane L): a shooter in front of a mirror-faced enemy (the gilded golem sends shots back) goes round to
+      // its side while it faces someone else, instead of plinking at the mirror (a party stood round one for minutes)
+      const off = wrapAngle(angleTo(t.x, t.y, u.x, u.y) - t.facing), a = t.facing + (Math.sign(off) || 1) * (t.def.mirror + 0.8), R = Math.min(u.def.range * 0.7, 240);
+      [gx, gy] = goalVec(w, u, t.x + Math.cos(a) * R, t.y + Math.sin(a) * R); mult = 0.9;
+    } else switch (u.mode) {
       case 'approach': {
         const gap = d - u.r - t.r;
+        // round 14 (lane L): a gear that rolls where it's going (it chases nobody, and outruns most) is met, not chased:
+        // a fighter heads for the point on its way nearest to it and waits there; with the gear rolling off, it stands
+        // and lets it come back off a wall (running after one, a knight never caught it)
+        if (t.def.pass && u.def.role !== 'ranged' && gap > u.def.range + 8) {
+          const tv = Math.hypot(t.vx, t.vy);
+          if (tv > 30) {
+            const vx = t.vx / tv, vy = t.vy / tv, along = (u.x - t.x) * vx + (u.y - t.y) * vy;
+            const mx = t.x + vx * Math.max(0, along), my = t.y + vy * Math.max(0, along);
+            // (only where it will really come: a gear rattling to and fro between a rock and a wall never gets there,
+            // so then it's walked up to as usual)
+            if (along > 0 && pathClear(w, t.x, t.y, mx, my, t.r)) {
+              if (dist(u.x, u.y, mx, my) < 18) { gx = gy = 0; break; }
+              [gx, gy] = goalVec(w, u, mx, my); mult = clamp(dist(u.x, u.y, mx, my) / 80, 0.3, 1); break;
+            }
+            if (along <= 0 && pathClear(w, t.x, t.y, t.x + vx * 400, t.y + vy * 400, t.r)) { gx = gy = 0; break; } // rolling off into open floor: wait for it to come back
+          }
+        }
         const spot = u.def.role !== 'ranged' && gap > u.def.range + 8 ? approachSpot(w, u, t) : null;
         [gx, gy] = spot ? goalVec(w, u, spot.x, spot.y) : goalVec(w, u, t.x, t.y); { const l = Math.hypot(gx, gy) || 1; gx /= l; gy /= l; }
         if (u.kind === 'rat' || u.def.ratMove) {
@@ -616,7 +668,14 @@ function movement(w, u, dt) {
           gx += -ty * z; gy += tx * z;
           if (gap < 55 && u.atkT > 0.2) { gx = -ty * u.strafeSign + tx * 0.25; gy = tx * u.strafeSign + ty * 0.25; }
         }
-        if (gap < u.def.range * 0.6) { gx = gy = 0; }
+        if (gap < u.def.range * 0.6) {
+          // round 14 (lane L): a shooter this close with something in the way (a rock, a troll's boulder, a wall's corner)
+          // steps round it to find a line, instead of standing behind it for ever
+          if (u.def.role === 'ranged' && blocked(w, u.x, u.y, t.x, t.y)) {
+            if (clearance(w, u, -ty * u.strafeSign, tx * u.strafeSign, 60) < 40) u.strafeSign = -u.strafeSign;
+            gx = -ty * u.strafeSign + tx * 0.25; gy = tx * u.strafeSign + ty * 0.25; mult = 0.8;
+          } else { gx = gy = 0; }
+        }
         else if (u.def.role === 'melee') mult = clamp(gap / 70, 0.35, 1); // ease in, so speed doesn't carry it through
         break;
       }
@@ -1211,6 +1270,7 @@ function tryAttack(w, u) {
   const face = angleDiff(angleTo(u.x, u.y, t.x, t.y), u.facing);
   const def = u.def;
   if (def.role === 'ranged') {
+    if (mirrorFront(w, u, t)) return; // (round 14: round to its side first: the mirror sends the shot back)
     if (d <= def.range && face < 0.35 && !blocked(w, u.x, u.y, t.x, t.y)) {
       const lead = d / 520;
       const aim = angleTo(u.x, u.y, t.x + t.vx * lead, t.y + t.vy * lead) + rrange(-0.04, 0.04);

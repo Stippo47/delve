@@ -85,8 +85,10 @@ trickle from all sides, heroes guarding sides, the wagon solid, a new tree line 
   rolls over where they fell. It can't be charmed, confused, put to sleep, frightened or made to bleed.
   Enemies can target it like anyone. Half the goblins and bandits go for it first (whichever part is nearest); the
   rest 15%. It stops while an enemy stands in front of the oxen or it's taking heavy blows. Healing mends it at a
-  third. Broken wagon = the trip is lost; the whole party down = lost. (A stand-off at a stretch's gate: after 40 s
-  the foes press in, after 70 s the stragglers wear down and, since round 14, fall.)
+  third. Broken wagon = the trip is lost; the whole party down = lost. (A stand-off at a stretch's gate: after 6 s
+  stopped there with foes still near, the guards leave their sides and hunt, no edge and no leash; after 40 s the foes
+  press in. Nothing wears down: the 3% a second drain that was here went with the wither rule, "fix the source not the
+  symptom".)
 - **Downed heroes** lie where they fell and can be revived as in a dungeon (an ally standing over them, or a revive
   ability) until the road carries them off the bottom of the screen; a ring round them runs down (red and pulsing near
   the end) and the strip's face for them turns red. Past the bottom they're "left behind" (a banner says so) and wait at

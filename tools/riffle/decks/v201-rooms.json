@@ -1,0 +1,41 @@
+{
+  "title": "0.20.1: why rooms dragged",
+  "topic": "runs",
+  "order": 36,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "rooms",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "Long rooms, at the source",
+      "text": "No rule ends a long room now. Each cause was found, measured and fixed where it happens. Live as 0.20.1.",
+      "why": "You said to fix the source, not the symptom. This is what the sources were. One of them was a second hidden clock, which is gone too.",
+      "details": "How it was measured: four 150-run campaigns and a 576-run sweep of parties and dungeons, every room timed and sorted by why it ran long.\n\nAfter the fixes, on the same seeds: the time spent in long rooms is down 37% in the campaigns and 28% in the sweep. A deep room's median went from 134 s to 110 s. Runs that hit the test's 7-minute cut: 16 down to 8.\n\nStill long: a lone hero who can neither win nor lose (the next card); the gilded golem's mirror when it faces the shooter; big enemies in narrow gaps (a major troll is wider than the paths allow for; the real fix is a path grid for big units).\n\nNot taken, measured only: enemy armour grows to its 60% cap deep down. Capping its growth cut the longest Foundry rooms from 19% to 7% but makes the late dungeons easier.",
+      "parts": [
+        { "id": "clock", "title": "A hidden second clock", "text": "Found in the code: after 45 s without a kill, enemies sped up 30% and stopped mending, regrowing and calling help, and turrets lost 4% health a second. It also reached every boss 45 s in and switched off its adds. Removed, with what it covered for fixed below." },
+        { "id": "grind", "title": "The grind (most of it)", "text": "Over 80% of long-room time was no stand-off: deep enemies' health outgrew the party's damage while a healer kept everyone safe. Deep room enemies now have 7 to 19% less health and hit 4 to 20% harder, so a fight costs about the same in less time. Bosses and mini-bosses are unchanged." },
+        { "id": "revive", "title": "Stuck going to a revive", "text": "A helper could dither for minutes on its way to a downed friend. Traps no longer count as threats, it holds a decision for 2 s, gives up for a while if it gets no closer, and helpers don't swap between two downed friends." },
+        { "id": "reach", "title": "Can't reach, can't see", "text": "A unit that can't get to its target for 6 s picks another. A shooter with no line of sight steps sideways to find one. Fighters wait on a gear's path instead of chasing it." },
+        { "id": "troll", "title": "The troll's boulder: a bug", "text": "The troll never let its boulder go: the roll never fired at all. Fixed. A troll that gets nowhere for 3 s lets it go and fights bare-handed." },
+        { "id": "healers", "title": "Enemy healers", "text": "Heroes go for the enemy that mends the others first. The choir sprite no longer heals itself. Shooters circle to the gilded golem's side instead of firing into its mirror." },
+        { "id": "bosses", "title": "Boss adds", "text": "With the clock gone, bosses' adds run the whole fight, which made three much harder. Lightened: the angel's Host every 45 s, the Ooze's Brood three at most, the Wurm's scarabs one at a time and hitting softer. The Wurm is still the hardest: the party wins 15 of 40." },
+        { "id": "wagon", "title": "The wagon's gate", "text": "The wagon had the same kind of rule: stragglers at a gate lost health after 70 s. Gone. Now the guards leave their sides and hunt once the wagon has stopped at a gate. 0 stuck trips in 70." }
+      ]
+    },
+    {
+      "id": "lone",
+      "kind": "options",
+      "rarity": "uncommon",
+      "title": "A lone hero, no way out",
+      "text": "The longest rooms left: one hero alone who can't kill what's left and can't die, like a Cleric against gears.",
+      "why": "Nothing is broken here; the hero just can't finish it. Any fix is a new rule, so it's your call. Today the player can tap Leave.",
+      "pick": "leave",
+      "options": [
+        { "id": "leave", "label": "Leave it: the player taps Leave" },
+        { "id": "walk", "label": "The hero gives up and walks out" },
+        { "id": "heal", "label": "A lone healer heals less" }
+      ]
+    }
+  ]
+}

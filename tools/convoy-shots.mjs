@@ -2,7 +2,7 @@
 // wagon parked at its edge, the Set out page, a stretch under way, a quiet spell (the party spread out), the roadside
 // shop, the Bandit Chief's barricade, and the result card.
 //   node tools/convoy-shots.mjs <outDir> [--port 8882] [--seed 4] [--w 390 --h 844] [--party paladin,archer,cleric] [--level 5]
-import { chromium } from 'playwright-core';
+import { openEdge } from './edge.mjs';
 import { spawn, execFileSync } from 'node:child_process';
 import fs from 'node:fs'; import os from 'node:os'; import path from 'node:path';
 const args = process.argv.slice(2);
@@ -10,19 +10,8 @@ const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i
 const out = path.resolve(args[0] || 'convoy-shots'); fs.mkdirSync(out, { recursive: true });
 const site = +opt('port', 8882), seed = +opt('seed', 4), W = +opt('w', 390), H = +opt('h', 844);
 const party = opt('party', 'paladin,archer,cleric').split(','), level = +opt('level', 5);
-const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
-const port = 9300 + Math.floor(Math.random() * 500);
-const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'delve-edge-'));
-const edge = spawn(EDGE, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio', `--remote-debugging-port=${port}`, `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
-let browser;
-for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
-const killEdge = () => {
-  try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch {}
-  // (round 14, lane W) Edge starts itself again under another process id, which the line above doesn't reach, so every
-  // run used to leave one running: take down whatever still runs on this run's own profile folder
-  try { execFileSync('powershell', ['-NoProfile', '-Command', `Get-CimInstance Win32_Process -Filter "Name='msedge.exe'" | Where-Object { $_.CommandLine -like '*${path.basename(prof)}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`], { stdio: 'ignore' }); } catch {}
-  try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
-};
+const edge = await openEdge({ flags: ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio'] }); // tools/edge.mjs: one headless Edge, closed cleanly
+const browser = edge.browser;
 // Open the game and wait for it to be up. A small static server (python -m http.server) refuses some of a page's
 // hundred requests when they come in a burst, and one module missing leaves the game never starting: so a load that
 // isn't up in 30 s is tried again (what did arrive is cached), a few times. Polled on a timer: a headless page's frames
@@ -93,6 +82,5 @@ try {
   await shot('10-camp-after', 900);
 } catch (e) { errors.push('script: ' + (e.stack || e)); }
 console.log(errors.length ? 'ERRORS\n' + errors.join('\n') : 'no errors');
-try { await browser.close(); } catch {}
-killEdge();
+await edge.close();
 process.exit(errors.length ? 1 : 0);

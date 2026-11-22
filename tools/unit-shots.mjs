@@ -4,7 +4,7 @@
 //   node tools/unit-shots.mjs <outDir> [--port 8961] [--w 390 --h 844] [--clips] [--traits] [--only name,name]
 // Needs a static server on the port (node tools/serve.mjs 8961) and playwright-core in tools/node_modules; ffmpeg on
 // the path for --clips. --traits: one still of every hero's trait scene (a contact sheet for checking them by eye).
-import { chromium } from 'playwright-core';
+import { openEdge } from './edge.mjs';
 import { spawn, execFileSync } from 'node:child_process';
 import fs from 'node:fs'; import os from 'node:os'; import path from 'node:path';
 const args = process.argv.slice(2);
@@ -12,12 +12,8 @@ const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i
 const out = path.resolve(args[0] && !args[0].startsWith('--') ? args[0] : 'unit-shots'); fs.mkdirSync(out, { recursive: true });
 const site = +opt('port', 8961), W = +opt('w', 390), H = +opt('h', 844), clips = args.includes('--clips'), traits = args.includes('--traits');
 const only = (opt('only', '') || '').split(',').filter(Boolean);
-const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
-const port = 9300 + Math.floor(Math.random() * 500);
-const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'delve-edge-'));
-const edge = spawn(EDGE, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio', `--remote-debugging-port=${port}`, `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
-let browser;
-for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
+const edge = await openEdge({ flags: ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--mute-audio'] }); // tools/edge.mjs: one headless Edge, closed cleanly
+const browser = edge.browser;
 const errors = [];
 try {
   const page = await (await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 2, hasTouch: true })).newPage();
@@ -272,8 +268,4 @@ try {
   }
 } catch (e) { errors.push('script: ' + (e.stack || e)); }
 console.log(errors.length ? 'ERRORS\n' + [...new Set(errors)].join('\n') : 'no errors');
-// close the browser over CDP, then make sure nothing is left
-try { const s = await browser.newBrowserCDPSession(); await s.send('Browser.close'); } catch {}
-try { await browser.close(); } catch {}
-try { execFileSync('taskkill', ['/PID', String(edge.pid), '/T', '/F'], { stdio: 'ignore' }); } catch {}
-try { fs.rmSync(prof, { recursive: true, force: true }); } catch {}
+await edge.close(); // (tools/edge.mjs: Browser.close over CDP, then whatever is left on its own profile folder)

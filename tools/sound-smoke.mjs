@@ -1,7 +1,7 @@
 // The sound in the real game page (Edge headless): unlock by a tap, the effects render, a run makes sounds and music,
 // the settings sheet shows the sound controls, and nothing throws. Needs the dev server on --port (default 8836).
 //   node tools/sound-smoke.mjs [--port 8836] [--secs 20]
-import { chromium } from 'playwright-core';
+import { openEdge } from './edge.mjs';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -9,12 +9,8 @@ import path from 'node:path';
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 const site = +opt('port', 8836), secs = +opt('secs', 20);
-const EDGE = 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
-const port = 9300 + Math.floor(Math.random() * 500);
-const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'delve-edge-'));
-const edge = spawn(EDGE, ['--headless=new', '--disable-gpu', '--mute-audio', '--autoplay-policy=no-user-gesture-required', `--remote-debugging-port=${port}`, `--user-data-dir=${prof}`, 'about:blank'], { stdio: 'ignore' });
-let browser;
-for (let i = 0; i < 60 && !browser; i++) { try { browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`); } catch { await new Promise((r) => setTimeout(r, 250)); } }
+const edge = await openEdge({ flags: ['--headless=new', '--disable-gpu', '--mute-audio', '--autoplay-policy=no-user-gesture-required'] }); // tools/edge.mjs: one headless Edge, closed cleanly
+const browser = edge.browser;
 const page = await (await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 })).newPage();
 const errors = [];
 page.on('pageerror', (e) => errors.push(String(e)));
@@ -44,5 +40,5 @@ const after = await page.evaluate(async () => { const m = await import('./js/aud
 console.log('music tracks:', after.tracks.join(', '), '| audio clock', after.t.toFixed(1), 's');
 console.log('played in', secs, 's:', Object.entries(after.played).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(', '));
 console.log(errors.length ? 'ERRORS:\n' + errors.join('\n') : 'no errors');
-await browser.close(); edge.kill();
+await edge.close();
 process.exit(errors.length ? 1 : 0);
