@@ -1441,51 +1441,64 @@ export const ABILITIES2 = {
     show: { far: true },
   },
   // ----- Crossbowman
+  // Pavise (round 13: "Better visual. Doesnt look like he's shooting through it. It has its own hp. At lvl 3 he places 3 in
+  // a row slight titles to surround him. Allies can attack through it. Enemies can't"): the tall shield planted as its
+  // own thing (a summon with health): its side's shots go through it, the other side's stop on it
   pavise: {
-    score: (w, u) => (opponents(w, u).filter((e) => e.target === u).length >= 1 || w.projectiles.some((p) => p.team !== u.team && dist(p.x, p.y, u.x, u.y) < 300) ? 0.6 : 0),
+    score: (w, u) => (!mine(w, u, 'pavise').length && (opponents(w, u).filter((e) => e.target === u).length >= 1 || w.projectiles.some((p) => p.team !== u.team && dist(p.x, p.y, u.x, u.y) < 300)) ? 0.65 : 0),
     use(w, u, t, tier) {
-      if (t) u.facing = ang(u, t);
-      const dur = tier >= 3 ? 9 : 6;
-      addBuff(u, { id: 'pavise', dur, frontBlock: 0.6, root: true, atkSpeed: tier >= 2 ? 1.35 : 1 });
-      puff(w, u.x + Math.cos(u.facing) * (u.r + 10), u.y + Math.sin(u.facing) * (u.r + 10), '#E9DDC2', 8, 90, 5, 0.4);
-      k2(w, { draw: 'pavise', unit: u, x: u.x, y: u.y, a: u.facing, max: dur });
+      if (t) u.facing = ang(u, t); setAnim(u, 'ability', 0.4); const dur = tier >= 2 ? 10 : 7, offs = tier >= 3 ? [-0.75, 0, 0.75] : [0];
+      for (const o of offs) { const a = u.facing + o, x = u.x + Math.cos(a) * (u.r + 30), y = u.y + Math.sin(a) * (u.r + 30);
+        const pv = summon(w, u, 'pavise', x, y, { life: dur, hp: 60 }); pv.fixed = true; pv.facing = a; puff(w, x, y, '#E9DDC2', 8, 90, 5, 0.4); }
+      u.kit.paviseT = w.time + dur;
     },
-    show: { shootme: true },
+    show: { far: true, shootme: true },
   },
+  // Pinning Bolt (round 13: "Heavy bolt, hits an enemy, then makes them fly backwards into a wall stunning them in place
+  // for a bit. Does heavy damage. Enemy being flung does heavy kb to anyone it hits as they fly")
   pinBolt: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && !blocked(w, u.x, u.y, t.x, t.y) && !(t.rootT > 0) ? 0.5 + (t.def.role !== 'ranged' && t.target && t.target !== u ? 0.2 : 0) : 0),
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && !blocked(w, u.x, u.y, t.x, t.y) ? 0.5 + (t.def.role !== 'ranged' && t.target && t.target !== u ? 0.2 : 0) : 0),
     use(w, u, t, tier) {
-      if (!t) return; setAnim(u, 'shoot', 0.4);
-      shoot(w, u, ang(u, t), { kind: 'cbolt', speed: 760, r: 8, dmg: dmgOf(u, 1.3), knock: 30, extra: { big: true, onHit: (w2, p, e) => {
-        e.rootT = Math.max(e.rootT || 0, tier >= 3 ? 2.5 : 1.5); e.kx = e.ky = 0;
-        if (tier >= 2) addStatus(w2, e, 'stagger', 40, u);
-        k2(w2, { draw: 'pin', unit: e, x: e.x, y: e.y, r: e.vr, a: p.a, max: tier >= 3 ? 2.5 : 1.5, ab: 'pinBolt' });
+      if (!t) return; setAnim(u, 'shoot', 0.4); u.recoilT = 0.25;
+      shoot(w, u, ang(u, t), { kind: 'cbolt', speed: 900, r: 9, dmg: dmgOf(u, 2.2), knock: 0, extra: { big: true, onHit: (w2, p, e) => {
+        const a = Math.atan2(p.vy, p.vx), d = (tier >= 3 ? 2.5 : 1.8) * (e.def.boss ? 0.4 : 1);
+        shove(e, a, e.def.boss ? 300 : 1100); e.act = null; interrupt(w2, e);
+        k2(w2, { draw: 'boltIn', unit: e, x: e.x, y: e.y, a, r: e.r, max: 1.2 + d });
+        flung(w2, u, e, 1.1, (x) => { stun(w2, x, d); addBuff(x, { id: 'pinned', dur: d, root: true }); hurt(w2, x, dmgOf(u, 0.8), u, { noDodge: true, heavy: true, knock: 0, stagger: tier >= 2 ? 50 : 0, ab: 'pinBolt' }); w2.shake = Math.max(w2.shake, 5);
+          k2(w2, { draw: 'pinWall', unit: x, x: x.x, y: x.y, a, r: x.r, max: d, ab: 'pinBolt' }); textU(w2, x.x, x.y, x.r + 10, 'PINNED', '#EEF3F8', 1); },
+          (o, x) => { hurt(w2, o, dmgOf(u, 0.9), u, { noDodge: true, knock: 520, kAngle: a, heavy: true, ab: 'pinBolt' }); });
       } } });
     },
     show: { far: true, single: true },
   },
+  // Crank Up (round 13: "Bomb at the end. Not fire themed. Staggering. Better visual"): the crank wound hard: his next
+  // bolts carry a charge that bursts where they stop: grey smoke and iron, staggering
   crankUp: {
-    score: (w, u, t) => (!(u.kit.crank > 0) && t && foesNear(w, u, t.x, t.y, 90).length >= 2 ? 0.6 : 0),
+    score: (w, u, t) => (!(u.kit.crank > 0) && t && foesNear(w, u, t.x, t.y, 90).length >= 2 ? 0.6 : t ? 0.3 : 0),
     use(w, u, t, tier) {
-      setAnim(u, 'ability', 0.6); u.kit.crank = tier >= 3 ? 5 : 3; u.kit.crankR = tier >= 2 ? 80 : 55;
-      k2(w, { draw: 'gather', unit: u, x: u.x, y: u.y, r: 30, max: 0.6, col: '#FF9A3D' });
+      setAnim(u, 'ability', 0.6); u.kit.crank = tier >= 3 ? 5 : 3; u.kit.crankR = tier >= 2 ? 80 : 60;
+      k2(w, { draw: 'crank', unit: u, x: u.x, y: u.y, r: u.vr, max: 0.8 });
       u.atkT = Math.min(u.atkT, 0.3);
     },
     show: { far: true, attacks: true },
   },
-  // ----- Falconer
+  // ----- Falconer (round 13: a new trait, Hunting Partner: the falcon goes out with every fourth knife)
+  // Loose the Falcon (round 13: "Doesnt look good. Falcon should leave hand. Should show a crosshair on target 'tracked'
+  // stops them from going invisible/un targetable, underground. All attacks do additional fixed damage to target";
+  // showcase 4: "Make the falcon that flies look like the one he was holding"): it leaves his fist and marks its prey
   looseFalcon: {
     score: (w, u) => (opponents(w, u).some((e) => dist(u.x, u.y, e.x, e.y) < 440) && !u.kit.falconOut ? 0.6 : 0),
     use(w, u, t, tier) {
-      const far = (not) => opponents(w, u).filter((e) => e !== not && dist(u.x, u.y, e.x, e.y) < 460).sort((p, q) => dist(u.x, u.y, q.x, q.y) - dist(u.x, u.y, p.x, p.y))[0];
+      const far = (not) => opponents(w, u).filter((e) => e !== not && dist(u.x, u.y, e.x, e.y) < 460).sort((p, q) => (q.elite || q.def.boss ? 1 : 0) - (p.elite || p.def.boss ? 1 : 0) || dist(u.x, u.y, q.x, q.y) - dist(u.x, u.y, p.x, p.y))[0];
       let e = far(null); if (!e) return; cast(u, 'throw', 0.4);
-      const f = k2(w, { draw: 'falcon', x: u.x, y: u.y, a: u.facing, max: 9, ab: 'looseFalcon' });
+      const hand = handAt(u, u.facing - 0.6, 0);
+      const f = k2(w, { draw: 'falcon', x: hand.x, y: hand.y, a: u.facing, max: 9, ab: 'looseFalcon' });
       let phase = 'fly', pt = 0, hits = 0, second = tier >= 3; u.kit.falconOut = true;
       timer(u, 'falcon', 8.5, (dt) => {
         const goal = phase === 'home' ? u : e;
         if (phase !== 'home' && !alive(e)) { const n = second ? far(e) : null; if (n) { e = n; second = false; phase = 'fly'; } else phase = 'home'; return; }
         const a = angleTo(f.x, f.y, goal.x, goal.y), d = dist(f.x, f.y, goal.x, goal.y);
-        if (phase === 'peck') { pt += dt; f.x = e.x + Math.cos(pt * 5) * (e.r + 6); f.y = e.y + Math.sin(pt * 5) * (e.r + 6); f.a = pt * 5 + Math.PI / 2;
+        if (phase === 'peck') { pt += dt; f.x = e.x + Math.cos(pt * 5) * (e.r + 8); f.y = e.y + Math.sin(pt * 5) * (e.r + 8); f.a = pt * 5 + Math.PI / 2;
           if (pt > 0.5 * (hits + 1)) { hits++; hurt(w, e, dmgOf(u, 0.5), u, { noDodge: true, knock: 20, ab: 'looseFalcon' }); }
           if (pt > 2.5) { if (second) { const n = far(e); second = false; if (n) { e = n; phase = 'fly'; pt = 0; hits = 0; return; } } phase = 'home'; }
           return; }
@@ -1493,137 +1506,154 @@ export const ABILITIES2 = {
         if (d < goal.r + 8) {
           if (phase === 'home') { f.max = f.t; return true; }
           phase = 'peck'; pt = 0; hits = 0;
-          addBuff(e, { id: 'falconMark', dur: 5, taken: 1.2, blind: tierOf(u, 'looseFalcon') >= 2 });
-          hurt(w, e, dmgOf(u, 0.9), u, { noDodge: true, knock: 60, ab: 'looseFalcon' });
-          k2(w, { draw: 'eye', unit: e, x: e.x, y: e.y, r: e.vr, max: 5, col: '#E0A060', ab: 'looseFalcon' });
+          tracked(w, e, 6, 3 + dmgOf(u, 0.3), u); if (tierOf(u, 'looseFalcon') >= 2) addBuff(e, { id: 'falconBlind', dur: 3, blind: true });
+          hurt(w, e, dmgOf(u, 1), u, { noDodge: true, knock: 60, ab: 'looseFalcon' });
         }
       }, () => { f.max = Math.min(f.max, f.t + 0.05); u.kit.falconOut = false; });
     },
-    show: { far: true },
+    show: { far: true, secs: 4 },
   },
+  // Keen Eye (round 13: "Don't like eye."): no eye: his knives glint gold while it lasts, and gold motes go round his
+  // throwing hand
   keenEye: {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && foesNear(w, u, u.x, u.y, 300).length >= 2 ? 0.6 : 0),
     use(w, u, t, tier) {
       cast(u, 'cast', 0.4); u.kit.keenUntil = w.time + 6;
       if (tier >= 2) addBuff(u, { id: 'keenEye', dur: 6, atkSpeed: 1.3 });
-      k2(w, { draw: 'eye', unit: u, x: u.x, y: u.y, r: u.vr, max: 6, col: '#FFE7A0' });
+      k2(w, { draw: 'keenHand', unit: u, x: u.x, y: u.y, r: u.vr, max: 6 });
       u.atkT = Math.min(u.atkT, 0.2);
     },
     show: { far: true, attacks: true },
   },
+  // Call the Flock (round 13: "Not good. Should become a flock of birds for a bit. Birds don't look good"): he scatters
+  // into a flock of birds (nothing can touch him) that sweeps through the enemies pecking, then he is himself again
   flock: {
-    score(w, u, t) { if (!t) return 0; const a = ang(u, t); return opponents(w, u).filter((e) => angleDiff(ang(u, e), a) < 0.35 && dist(u.x, u.y, e.x, e.y) < 360).length >= 2 ? 0.65 : 0; },
+    score: (w, u) => (foesNear(w, u, u.x, u.y, 110).length ? 0.8 : foesNear(w, u, u.x, u.y, 300).length >= 3 ? 0.5 : 0),
     use(w, u, t, tier) {
-      if (!t) return; cast(u, 'cast', 0.4);
-      const send = (a) => {
-        const x0 = u.x, y0 = u.y, hit = new Set(); let s = 0;
-        const f = k2(w, { draw: 'flock', x: x0, y: y0, a, max: 0.9, ab: 'flock' });
-        timer(u, 'flock' + a.toFixed(2), 0.85, (dt) => {
-          s += 460 * dt; f.x = x0 + Math.cos(a) * s; f.y = y0 + Math.sin(a) * s;
-          for (const e of foesNear(w, u, f.x, f.y, 44)) if (!hit.has(e)) { hit.add(e); hurt(w, e, dmgOf(u, 0.7), u, { noDodge: true, knock: 70, kAngle: a, ab: 'flock' }); addBuff(e, { id: 'pecked', dur: 3, move: 0.65, blind: tierOf(u, 'flock') >= 2 }); }
-        });
-      };
-      const a = ang(u, t); send(a);
-      if (tier >= 3) after(u, 0.3, () => { send(a + 0.3); send(a - 0.3); });
+      const T = tier >= 3 ? 3 : 2.2; u.act = { type: 'ride', t: T + 0.2, max: T + 0.2 }; u.hidden = true; u.ethereal = true;
+      const F = { birds: [], x: u.x, y: u.y }; for (let i = 0; i < 9; i++) F.birds.push({ o: rand() * TAU, r: 10 + rand() * 26, s: 0.8 + rand() * 0.5 });
+      k2(w, { draw: 'flockForm', unit: u, x: u.x, y: u.y, max: T + 0.3, F });
+      puff(w, u.x, u.y, '#8E98A6', 10, 90, 5, 0.4); const hit = new Map(); let goal = null, gT = 0;
+      timer(u, 'flock', T, (dt) => {
+        gT -= dt; if (!goal || !alive(goal) || gT <= 0) { const list = opponents(w, u).filter((e) => dist(u.x, u.y, e.x, e.y) < 360); goal = list[Math.floor(rand() * list.length)] || null; gT = 0.7; }
+        const gx = goal ? goal.x + Math.cos(w.time * 3) * 40 : u.x, gy = goal ? goal.y + Math.sin(w.time * 3) * 40 : u.y, a = angleTo(u.x, u.y, gx, gy), d = dist(u.x, u.y, gx, gy);
+        u.x = clamp(u.x + Math.cos(a) * Math.min(d, 300 * dt), u.r, w.W - u.r); u.y = clamp(u.y + Math.sin(a) * Math.min(d, 300 * dt), u.r, w.H - u.r); u.facing = a; u.vx = u.vy = u.kx = u.ky = 0;
+        for (const e of opponents(w, u)) if (dist(e.x, e.y, u.x, u.y) < e.r + 40 && w.time - (hit.get(e) || -9) > 0.5) { hit.set(e, w.time); hurt(w, e, dmgOf(u, 0.6), u, { noDodge: true, knock: 50, kAngle: a, ab: 'flock' }); addBuff(e, { id: 'pecked', dur: 2, move: 0.7, blind: tierOf(u, 'flock') >= 2 }); }
+      }, () => { u.hidden = false; u.ethereal = false; if (u.act && u.act.type === 'ride') u.act = null; puff(w, u.x, u.y, '#8E98A6', 12, 100, 5, 0.45); });
     },
-    show: { far: true },
+    show: { far: false, secs: 4 },
   },
-  // ----- Grenadier
+  // ----- Grenadier (round 13: a new trait, Powder Keg: what his blasts kill blows up too)
+  // Big Bomb (round 13: "Secondary bombs don't look good. Big bomb should be an entity with a small health pool. Explodes
+  // if it is broken or after 2 seconds of landing"): it lands as a thing of its own (30 health), fuse fizzing
   bigBomb: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 300 && foesNear(w, u, t.x, t.y, 120).length >= 3 ? 0.8 : 0),
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 300 && foesNear(w, u, t.x, t.y, 120).length >= 3 ? 0.8 : t && dist(u.x, u.y, t.x, t.y) < 300 && foesNear(w, u, t.x, t.y, 120).length >= 2 ? 0.45 : 0),
     use(w, u, t, tier) {
       if (!t) return; cast(u, 'throw', 0.5);
       lob(w, u, t.x, t.y, 'bomb', 'big', (x, y) => {
-        k2(w, { draw: 'fuse', x, y, r: 120, max: 0.75, bomb: true, ab: 'bigBomb' });
-        timer(u, 'bigBomb', 0.75, null, () => {
-          blast(w, u, x, y, 120, 2, { burn: tierOf(u, 'bigBomb') >= 2 ? 30 : 0, stagger: 30 }, 'bigBomb');
-          if (tierOf(u, 'bigBomb') >= 3) for (let i = 0; i < 4; i++) { const b = i / 4 * TAU + 0.4, x2 = x + Math.cos(b) * 110, y2 = y + Math.sin(b) * 110;
-            lob(w, u, x2, y2, 'bomb', null, () => after(u, 0.2, () => blast(w, u, x2, y2, 55, 0.8, {}, 'bigBomb'))); }
-        });
+        const b = summon(w, u, 'bigBomb', x, y, { life: 2, hp: 30 }); b.fixed = true; b.tier = tier; b.bomber = u;
+        w.shake = Math.max(w.shake, 3); puff(w, x, y, '#E9DDC2', 6, 60, 4, 0.35);
       });
     },
-    show: { far: true },
+    show: { far: true, secs: 4 },
   },
+  // Sticky Bomb (round 13: "Doesnt look very sticky"): it hits with a splat of green goo that holds it on, strands
+  // dripping off; it goes off 2 s later
   stickyBomb: {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && !t.sticky ? 0.5 + (t.elite || t.def.boss ? 0.25 : 0) : 0),
     use(w, u, t, tier) {
       if (!t) return; cast(u, 'throw', 0.4);
       const targets = [t]; if (tier >= 3) { const n = opponents(w, u).filter((o) => o !== t && dist(u.x, u.y, o.x, o.y) < u.def.range + 40)[0]; if (n) targets.push(n); }
       targets.forEach((e) => shoot(w, u, ang(u, e), { kind: 'bomb', speed: 520, r: 8, dmg: dmgOf(u, 0.4), knock: 10, extra: { home: e, turn: 5, onHit: (w2, p, x) => {
-        x.sticky = true; k2(w2, { draw: 'sticky', unit: x, x: x.x, y: x.y, r: x.vr, max: 2, ab: 'stickyBomb' });
-        timer(u, 'sticky' + x.id, 2, null, () => { x.sticky = false; blast(w, u, x.x, x.y, tierOf(u, 'stickyBomb') >= 2 ? 100 : 72, 1.9, {}, 'stickyBomb'); });
+        x.sticky = true; k2(w2, { draw: 'sticky', unit: x, x: x.x, y: x.y, r: x.vr, max: 2, a: Math.atan2(p.vy, p.vx), ab: 'stickyBomb' });
+        addBuff(x, { id: 'gooed', dur: 2, move: 0.75 });
+        after(x, 2, () => { x.sticky = false; blast(w2, u, x.x, x.y, tierOf(u, 'stickyBomb') >= 2 ? 100 : 72, 2.1, { stagger: 30 }, 'stickyBomb'); });
       } } }));
     },
     show: { far: true },
   },
+  // Blast Off (round 13: "Explosion effect should happen underneath him"): the blast drawn on the floor under him
   blastOff: {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 90).length ? 0.85 : 0),
     use(w, u, t, tier) {
       const f = foesNear(w, u, u.x, u.y, 160); let ax = 0, ay = 0; for (const e of f) { ax += u.x - e.x; ay += u.y - e.y; }
       const a = f.length ? Math.atan2(ay, ax) : u.facing + Math.PI;
-      blast(w, u, u.x, u.y, 95, 0.9, { stagger: tier >= 2 ? 45 : 0 }, 'blastOff');
+      blast(w, u, u.x, u.y, 95, 1, { stagger: tier >= 2 ? 45 : 20 }, 'blastOff', true);
       const x1 = clamp(u.x + Math.cos(a) * 190, u.r, w.W - u.r), y1 = clamp(u.y + Math.sin(a) * 190, u.r, w.H - u.r);
       u.invulnT = Math.max(u.invulnT, 0.55);
-      u.act = { type: 'leap', t: 0.5, max: 0.5, x0: u.x, y0: u.y, x1, y1, land: () => { if (tierOf(u, 'blastOff') >= 3) blast(w, u, u.x, u.y, 75, 0.7, {}, 'blastOff'); puff(w, u.x, u.y, '#E9DDC2', 8, 90, 5, 0.4); } };
+      u.act = { type: 'leap', t: 0.5, max: 0.5, x0: u.x, y0: u.y, x1, y1, land: () => { if (tierOf(u, 'blastOff') >= 3) blast(w, u, u.x, u.y, 75, 0.8, { stagger: 20 }, 'blastOff', true); puff(w, u.x, u.y, '#E9DDC2', 8, 90, 5, 0.4); } };
     },
   },
   // ----- Harpooner
+  // Reel In (round 13: "Make harpoon render stuck in them. Rope underneath"): the harpoon stays in them, the rope on the floor
   reelIn: {
     score(w, u) { return opponents(w, u).some((e) => { const d = dist(u.x, u.y, e.x, e.y); return d > 150 && d < 380 && !blocked(w, u.x, u.y, e.x, e.y); }) ? 0.6 : 0; },
     use(w, u, t, tier) {
       const e = opponents(w, u).filter((o) => { const d = dist(u.x, u.y, o.x, o.y); return d > 120 && d < 400 && !blocked(w, u.x, u.y, o.x, o.y); }).sort((p, q) => (q.def.role === 'ranged' ? 1 : 0) - (p.def.role === 'ranged' ? 1 : 0))[0] || t; if (!e) return;
       cast(u, 'throw', 0.4);
-      shoot(w, u, ang(u, e), { kind: 'harpoon', speed: 720, r: 9, life: 0.7, dmg: dmgOf(u, 2), knock: 0, extra: { big: true, home: e, turn: 6, onHit: (w2, p, x) => {
+      const p0 = shoot(w, u, ang(u, e), { kind: 'harpoon', speed: 720, r: 9, life: 0.7, dmg: dmgOf(u, 2), knock: 0, extra: { big: true, home: e, turn: 6, onHit: (w2, p, x) => {
         const big = x.def.boss || x.mass > 2.6;
         if (big) { const a = ang(u, x), d = dist(u.x, u.y, x.x, x.y) - u.r - x.r - 6; u.act = { type: 'leap', t: 0.35, max: 0.35, x0: u.x, y0: u.y, x1: u.x + Math.cos(a) * d, y1: u.y + Math.sin(a) * d, land: () => {} }; }
         else { const a = angleTo(x.x, x.y, u.x, u.y), d = dist(u.x, u.y, x.x, x.y) - u.r - x.r - 6; x.kx += Math.cos(a) * d * 5.4 / Math.max(1, Math.sqrt(x.mass)); x.ky += Math.sin(a) * d * 5.4 / Math.max(1, Math.sqrt(x.mass)); }
         if (tier >= 2) addStatus(w2, x, 'stagger', 55, u);
-        k2(w2, { draw: 'rope', from: u, to: x, x: u.x, y: u.y, max: tier >= 3 ? 4 : 0.5, ab: 'reelIn' });
+        k2(w2, { draw: 'rope', from: u, to: x, x: u.x, y: u.y, max: tier >= 3 ? 4 : 0.7, stuck: true, a: Math.atan2(p.vy, p.vx), ab: 'reelIn' });
         if (tier >= 3 && !big) timer(u, 'tether', 4, () => { if (!alive(x)) return true; const d = dist(u.x, u.y, x.x, x.y); if (d > 140) { const a = angleTo(x.x, x.y, u.x, u.y); x.x += Math.cos(a) * (d - 140) * 0.3; x.y += Math.sin(a) * (d - 140) * 0.3; } });
       } } });
+      k2(w, { draw: 'rope', from: u, shot: p0, x: u.x, y: u.y, max: 0.75 });
     },
     show: { far: true, single: true },
   },
+  // Rogue Wave (round 13: "Give better visual. Closer targets are launched further and take more damage. They get hit
+  // before the wave even reaches them"): a curling wave rolls out; each is struck when its crest reaches it, harder and
+  // further the closer it stood
   rogueWave: {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 200).filter((e) => inFront(u, e, 1.4)).length >= 2 ? 0.65 : 0),
     use(w, u, t, tier) {
       if (t) u.facing = ang(u, t); cast(u, 'cast', 0.5);
-      const a = u.facing, R = tier >= 2 ? 250 : 190, arc = tier >= 2 ? 1.6 : 1.2;
-      k2(w, { draw: 'wave', x: u.x, y: u.y, a, r: R, arc, max: 0.7, ab: 'rogueWave' });
-      for (const e of foesNear(w, u, u.x, u.y, R)) if (inFront(u, e, arc + 0.2)) { addStatus(w, e, 'wet', 60, u); hurt(w, e, dmgOf(u, 1.1), u, { knock: 340, kAngle: a, noDodge: true }); }
+      const a = u.facing, R = tier >= 2 ? 260 : 200, arc = tier >= 2 ? 1.6 : 1.25, sp = 420, hit = new Set(); let r = 10;
+      k2(w, { draw: 'rogueWave', x: u.x, y: u.y, a, r: R, arc, max: R / sp + 0.4, sp, ab: 'rogueWave' });
+      const x0 = u.x, y0 = u.y;
+      timer(u, 'rogueWave', R / sp + 0.05, (dt) => { r += sp * dt;
+        for (const e of foesNear(w, u, x0, y0, r)) if (!hit.has(e) && angleDiff(angleTo(x0, y0, e.x, e.y), a) < arc / 2 + 0.15) {
+          hit.add(e); const near = 1 - clamp(dist(x0, y0, e.x, e.y) / R, 0, 1);
+          addStatus(w, e, 'wet', 60, u); hurt(w, e, dmgOf(u, 0.9 + 1.1 * near), u, { knock: 220 + 420 * near, kAngle: a, noDodge: true, ab: 'rogueWave' }); } });
       if (tier >= 3) for (const d of [80, 140, 200]) w.hazards.push({ type: 'water', x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d, r: 44, t: 8, max: 8 });
     },
   },
+  // Drop Anchor (round 13: "Make anchor look better. Have it jump from him to targets position. Make it look bigger. Improve
+  // visuals"): a big iron anchor heaved off him on its chain, arcing over to land on them with a crash
   anchorDrop: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 260 && foesNear(w, u, t.x, t.y, 100).length >= 2 ? 0.7 : 0),
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 260 && foesNear(w, u, t.x, t.y, 100).length >= 2 ? 0.7 : t && dist(u.x, u.y, t.x, t.y) < 220 ? 0.35 : 0),
     use(w, u, t, tier) {
       if (!t) return; cast(u, 'ability', 0.7);
       const x = t.x, y = t.y, r = tier >= 2 ? 115 : 85;
-      if (tier >= 3) { setAnim(u, 'spin', 0.4); u.spin = { t0: w.time, dur: 0.4, dir: 1 }; ring(w, u, u.x, u.y, 130, dmgOf(u, 0.6), { knock: 240 }, '#8A94A6'); }
-      k2(w, { draw: 'anchor', from: u, x, y, r, max: 0.65, ab: 'anchorDrop' });
+      if (tier >= 3) { setAnim(u, 'spin', 0.4); u.spin = { t0: w.time, dur: 0.4, dir: 1 }; for (const e of foesNear(w, u, u.x, u.y, 130)) hurt(w, e, dmgOf(u, 0.6), u, { knock: 240, kAngle: ang(u, e), noDodge: true }); k2(w, { draw: 'chainSweep', unit: u, x: u.x, y: u.y, r: 130, max: 0.45 }); }
+      k2(w, { draw: 'anchor', from: u, x, y, x0: u.x, y0: u.y, r, max: 0.65, ab: 'anchorDrop' });
       after(u, 0.55, () => {
-        w.shake = Math.max(w.shake, 7);
-        w.telegraphs.push({ type: 'blast', x, y, r, color: '#C9D2DE', t: 0.05, max: 0.05 });
+        w.shake = Math.max(w.shake, 8);
+        k2(w, { draw: 'anchorCrash', x, y, r, max: 0.7 });
         for (const e of foesNear(w, u, x, y, r)) { hurt(w, e, dmgOf(u, 2.8), u, { heavy: true, noDodge: true, knock: 150, kAngle: angleTo(x, y, e.x, e.y) }); stun(w, e, 1.2); }
       });
     },
     show: { far: true },
   },
   // ----- Javelin Huntress
+  // Spear Lunge, in Running Throw's slot (round 13: "Description doesn't match what I see. Give a spear lunge attack.
+  // Pierce through targets. 2 charges at lvl 3"): she lunges spear-first straight through a line of enemies
   runningThrow: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 260 && t.target && t.target !== u ? 0.6 : t && dist(u.x, u.y, t.x, t.y) < 220 ? 0.3 : 0),
+    score(w, u, t) { if (!t) return 0; const d = dist(u.x, u.y, t.x, t.y), a = ang(u, t); return d < 240 && lineClear(w, u.x, u.y, t.x, t.y, u.r) ? 0.4 + 0.2 * opponents(w, u).filter((e) => angleDiff(ang(u, e), a) < 0.35 && dist(u.x, u.y, e.x, e.y) < 260).length : 0; },
     use(w, u, t, tier) {
-      if (!t) return;
-      const side = rand() < 0.5 ? 1 : -1, b = angleTo(t.x, t.y, u.x, u.y) + side * 1.9, gx = clamp(t.x + Math.cos(b) * (t.r + u.r + 70), u.r, w.W - u.r), gy = clamp(t.y + Math.sin(b) * (t.r + u.r + 70), u.r, w.H - u.r);
-      u.act = { type: 'dash', t: 0.28, max: 0.28, a: angleTo(u.x, u.y, gx, gy) };
-      k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a: u.act.a, max: 0.4, col: '#E0A060' });
-      const throwIt = (big) => { if (!alive(t)) return; u.facing = ang(u, t); setAnim(u, 'throw', 0.3);
-        shoot(w, u, ang(u, t), { kind: 'javelin', speed: 640, r: 7, dmg: dmgOf(u, 1.4) * 2, crit: true, knock: 140, st: { stagger: tierOf(u, 'runningThrow') >= 2 ? 45 : 0 }, extra: { big } }); };
-      after(u, 0.3, () => throwIt(true));
-      if (tier >= 3) after(u, 0.5, () => throwIt(false));
+      if (!t) return; const a = ang(u, t), T = 0.26, cut = new Set(), x0 = u.x, y0 = u.y; u.facing = a;
+      if (tier >= 3) { const k = u.kit; if (!k.lunge2) { k.lunge2 = true; k.cd.runningThrow = 0.7; } else k.lunge2 = false; } // two charges: the second follows at once
+      setAnim(u, 'thrust', T + 0.1); u.act = { type: 'dash', t: T, max: T, a }; u.invulnT = Math.max(u.invulnT, T);
+      k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a, max: T + 0.3, col: '#E0A060' });
+      timer(u, 'lunge', T + 0.02, () => { for (const e of opponents(w, u)) if (!cut.has(e) && dist(u.x, u.y, e.x, e.y) < u.r + e.r + 26) { cut.add(e);
+        hurt(w, e, dmgOf(u, 1.6), u, { noDodge: true, knock: 200, kAngle: a + (Math.sin(ang(u, e) - a) > 0 ? 0.6 : -0.6), stagger: tierOf(u, 'runningThrow') >= 2 ? 40 : 0, ab: 'runningThrow' }); } },
+        () => k2(w, { draw: 'slashLine', x: x0, y: y0, x1: x0, y1: y0, x2: u.x + Math.cos(a) * 30, y2: u.y + Math.sin(a) * 30, max: 0.45 }));
     },
     show: { far: true },
   },
+  // Bound (round 13: "Make javalin bigger and hit harder")
   bound: {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 95).length ? 0.85 : 0),
     use(w, u, t, tier) {
@@ -1632,26 +1662,28 @@ export const ABILITIES2 = {
       u.act = { type: 'leap', t: 0.45, max: 0.45, x0: u.x, y0: u.y, x1, y1, land: () => puff(w, u.x, u.y, '#E9DDC2', 6, 70, 4, 0.35) };
       u.invulnT = Math.max(u.invulnT, 0.3);
       after(u, 0.2, () => { const e = t && alive(t) ? t : foesNear(w, u, u.x, u.y, 300)[0]; if (!e) return; u.facing = ang(u, e);
-        shoot(w, u, ang(u, e), { kind: 'javelin', speed: 620, r: 7, dmg: dmgOf(u, 1.3), knock: 100, pierce: tierOf(u, 'bound') >= 2 ? 4 : 0 }); });
+        shoot(w, u, ang(u, e), { kind: 'javelin', speed: 660, r: 11, dmg: dmgOf(u, 2.1), knock: 200, pierce: tierOf(u, 'bound') >= 2 ? 4 : 0, extra: { big: true } }); });
       if (tier >= 3) u.kit.cd.bound = Math.max(0, (u.kit.cd.bound || 0) - 2);
     },
   },
+  // Javelin Rain, in Prey's slot (round 13: "Don't like"; a new ability, the lane's): she hurls javelins high; they
+  // come down on the enemies round her target
   prey: {
-    score: (w, u) => { const e = foesNear(w, u, u.x, u.y, 380).sort((p, q) => hpRatio(p) - hpRatio(q))[0]; return e && hpRatio(e) < 0.6 && !(u.kit.prey && u.kit.prey.until > w.time) ? 0.65 : 0; },
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 320 && foesNear(w, u, t.x, t.y, 110).length >= 2 ? 0.7 : t && dist(u.x, u.y, t.x, t.y) < 300 ? 0.3 : 0),
     use(w, u, t, tier) {
-      const e = foesNear(w, u, u.x, u.y, 400).sort((p, q) => hpRatio(p) - hpRatio(q))[0]; if (!e) return;
-      cast(u, 'cast', 0.3); u.kit.prey = { e, until: w.time + 8 }; u.target = e;
-      addBuff(u, { id: 'prey', dur: 8, move: 1.4 });
-      k2(w, { draw: 'eye', unit: e, x: e.x, y: e.y, r: e.vr, max: 8, col: '#E0A060', ab: 'prey' });
+      if (!t) return; cast(u, 'throw', 0.5); const n = tier >= 3 ? 5 : 3, cx = t.x, cy = t.y;
+      for (let i = 0; i < n; i++) {
+        const near = foesNear(w, u, cx, cy, 120), e = near[i % Math.max(1, near.length)], x = e ? e.x + rrange(-10, 10) : cx + rrange(-70, 70), y = e ? e.y + rrange(-10, 10) : cy + rrange(-70, 70);
+        after(u, 0.1 + i * 0.12, () => { k2(w, { draw: 'javFall', x, y, max: 0.6 }); after(u, 0.55, () => {
+          for (const o of foesNear(w, u, x, y, 44)) hurt(w, o, dmgOf(u, 1.5), u, { noDodge: true, knock: 120, kAngle: angleTo(x, y, o.x, o.y), stagger: tierOf(u, 'prey') >= 2 ? 30 : 0, ab: 'prey' });
+          k2(w, { draw: 'javStuck', x, y, max: 1.2 }); puff(w, x, y, '#E9DDC2', 6, 70, 4, 0.35); }); });
+      }
     },
-    hook: {
-      dealt(w, u, t, amt) { const p = u.kit.prey; return p && p.e === t && p.until > w.time ? amt * 1.5 : amt; },
-      tick(w, u) { const p = u.kit.prey; if (p && p.until > w.time && alive(p.e) && tierOf(u, 'prey') >= 2) u.target = p.e; },
-      kill(w, u, v) { const p = u.kit.prey; if (p && p.e === v) { if (tierOf(u, 'prey') >= 3) heal(w, u, u.maxHp * 0.15, u); u.kit.prey = null; u.buffs = u.buffs.filter((b) => b.id !== 'prey'); } },
-    },
-    show: { single: true, attacks: true },
+    show: { far: true },
   },
-  // ----- Marksman
+  // ----- Marksman (round 13: his trait is Long Shot: very long range, harder the further off)
+  // Aimed Shot (round 13: "Applied target effect. Shows crosshair on them. Movement abilities are limited and they take
+  // additional damage. Bullets pierce through targeted entities"): it leaves its target Targeted
   aimedShot: {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && !blocked(w, u.x, u.y, t.x, t.y) && !foesNear(w, u, u.x, u.y, 110).length ? 0.6 + (t.elite || t.def.boss ? 0.2 : 0) : 0),
     use(w, u, t, tier) {
@@ -1660,113 +1692,131 @@ export const ABILITIES2 = {
       u.act = { type: 'channel', t: 0.9, max: 0.9, target: t, every: 0.9, acc: 0, tick: () => {} };
       after(u, 0.9, () => {
         if (!alive(u)) return; const e = t && alive(t) ? t : foesNear(w, u, u.x, u.y, u.def.range)[0]; if (!e) return;
-        let first = true; u.recoilT = 0.2;
-        k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: ang(u, e), max: 0.5 });
-        shoot(w, u, ang(u, e), { kind: 'bullet', speed: 1400, r: 7, life: 0.6, dmg: dmgOf(u, 2.5), crit: true, knock: 220, pierce: tierOf(u, 'aimedShot') >= 2 ? 9 : 1, extra: { big: true, onHit: (w2, p, x) => {
+        let first = true; u.recoilT = 0.3; w.shake = Math.max(w.shake, 4);
+        k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: ang(u, e), max: 0.5, big: true });
+        shoot(w, u, ang(u, e), { kind: 'bullet', speed: 1400, r: 7, life: 0.8, dmg: dmgOf(u, 2.5), crit: true, knock: 260, pierce: tierOf(u, 'aimedShot') >= 2 ? 9 : 1, extra: { big: true, onHit: (w2, p, x) => {
+          targeted(w2, x, 6); pierceMarked(w2, p, x);
           if (first && tierOf(u, 'aimedShot') >= 3) { const d = x.def.boss ? 0.6 : 1.5; x.koT = Math.max(x.koT || 0, d); stun(w2, x, d); } first = false; } } });
       });
     },
     show: { far: true, single: true },
   },
+  // Bayonet (round 13: "Improve"): a lunge with the bayonet fixed: a long steel thrust, a heavy shove, a jolt of recoil
   bayonet: {
     score: (w, u) => (foesNear(w, u, u.x, u.y, u.r + 55).length ? 0.85 : 0),
     use(w, u, t, tier) {
       const e = foesNear(w, u, u.x, u.y, u.r + 70).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0]; if (!e) return;
-      u.facing = ang(u, e); setAnim(u, 'thrust', 0.35); u.kx += Math.cos(u.facing) * 120; u.ky += Math.sin(u.facing) * 120;
-      hurt(w, e, dmgOf(u, 0.8), u, { knock: 420, heavy: true, noDodge: true, stagger: tier >= 2 ? 50 : 0 });
-      k2(w, { draw: 'parry', x: e.x - Math.cos(u.facing) * e.r * 0.6, y: e.y - Math.sin(u.facing) * e.r * 0.6, a: u.facing, max: 0.3 });
-      if (tier >= 3) after(u, 0.3, () => { if (!alive(e)) return; u.facing = ang(u, e); setAnim(u, 'shoot', 0.3); k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: u.facing, max: 0.4 }); shoot(w, u, u.facing, { kind: 'bullet', speed: 1300, r: 6, dmg: dmgOf(u, 1.2), knock: 120 }); });
+      const a = ang(u, e); u.facing = a; setAnim(u, 'thrust', 0.35); u.kx += Math.cos(a) * 160; u.ky += Math.sin(a) * 160;
+      after(u, 0.08, () => { if (!alive(e)) return;
+        hurt(w, e, dmgOf(u, 1.2), u, { knock: 520, kAngle: a, heavy: true, noDodge: true, stagger: tier >= 2 ? 50 : 0, ab: 'bayonet' });
+        k2(w, { draw: 'thrustLine', x: u.x, y: u.y, a, r: u.r + 70, n: 2, max: 0.3 }); k2(w, { draw: 'headbutt', x: e.x - Math.cos(a) * e.r, y: e.y - Math.sin(a) * e.r, a, max: 0.35 }); w.shake = Math.max(w.shake, 3); });
+      if (tier >= 3) after(u, 0.35, () => { if (!alive(e)) return; u.facing = ang(u, e); setAnim(u, 'shoot', 0.3); k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: u.facing, max: 0.4, big: true }); shoot(w, u, u.facing, { kind: 'bullet', speed: 1300, r: 6, dmg: dmgOf(u, 1.2), knock: 160 }); });
     },
     show: { single: true },
   },
+  // Ricochet (round 13: "Only bounces between targets within already 75 degrees of last target. Can't turn 180 degrees.
+  // Lvl 3 makes it so it does more damage to each consecutive target.")
   ricochet: {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range && foesNear(w, u, t.x, t.y, 220).length >= 2 ? 0.6 : 0),
     use(w, u, t, tier) {
-      if (!t) return; setAnim(u, 'shoot', 0.4); const hit = new Set();
-      k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: ang(u, t), max: 0.4 });
+      if (!t) return; setAnim(u, 'shoot', 0.4); const hit = new Set(); u.recoilT = 0.22;
+      k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: ang(u, t), max: 0.4, big: true });
       const fire = (x, y, e, k, left, skip) => {
         const a = angleTo(x, y, e.x, e.y);
-        w.projectiles.push({ kind: 'bullet', x, y, vx: Math.cos(a) * 1100, vy: Math.sin(a) * 1100, r: 6, team: u.team, owner: u, skip, dmg: dmgOf(u, k), o: { knock: 90, ab: 'ricochet' }, life: 0.5, a, ab: 'ricochet', tier,
-          onHit: (w2, p, hitE) => { hit.add(hitE); if (left <= 0) return; const n = opponents(w2, u).filter((o) => !hit.has(o) && dist(o.x, o.y, hitE.x, hitE.y) < 230).sort((p1, q) => dist(hitE.x, hitE.y, p1.x, p1.y) - dist(hitE.x, hitE.y, q.x, q.y))[0];
-            sparks(w2, hitE.x, hitE.y, a, 4, '#FFF4C8', 1); if (n) fire(hitE.x, hitE.y, n, k * (tierOf(u, 'ricochet') >= 3 ? 1.25 : 0.85), left - 1, hitE); } });
+        w.projectiles.push({ kind: 'bullet', x, y, vx: Math.cos(a) * 1100, vy: Math.sin(a) * 1100, r: 6, team: u.team, owner: u, skip, dmg: dmgOf(u, k), o: { knock: 110, ab: 'ricochet' }, life: 0.5, a, ab: 'ricochet', tier,
+          onHit: (w2, p, hitE) => { hit.add(hitE); pierceMarked(w2, p, hitE); if (left <= 0) return;
+            const n = opponents(w2, u).filter((o) => !hit.has(o) && dist(o.x, o.y, hitE.x, hitE.y) < 260 && angleDiff(angleTo(hitE.x, hitE.y, o.x, o.y), a) < 1.31).sort((p1, q) => dist(hitE.x, hitE.y, p1.x, p1.y) - dist(hitE.x, hitE.y, q.x, q.y))[0];
+            sparks(w2, hitE.x, hitE.y, a, 4, '#FFF4C8', 1); if (n) fire(hitE.x, hitE.y, n, k * (tierOf(u, 'ricochet') >= 3 ? 1.3 : 0.9), left - 1, hitE); } });
       };
-      fire(u.x + Math.cos(ang(u, t)) * u.r, u.y + Math.sin(ang(u, t)) * u.r, t, 1.1, tier >= 2 ? 5 : 3, null);
+      fire(u.x + Math.cos(ang(u, t)) * u.r, u.y + Math.sin(ang(u, t)) * u.r, t, 1.2, tier >= 2 ? 5 : 3, null);
     },
     show: { far: true },
   },
   // ----- Ninja
+  // Kunai Rain, in Shuriken Fan's slot (round 13: "Not good"; a new ability, the lane's): she springs up and flings a
+  // ring of kunai down all round her
   shurikenFan: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 220 ? 0.45 + 0.15 * foesNear(w, u, t.x, t.y, 90).length : 0),
+    score: (w, u) => { const n = foesNear(w, u, u.x, u.y, 160).length; return n >= 2 ? 0.75 : n ? 0.35 : 0; },
     use(w, u, t, tier) {
-      if (!t) return; const n = tier >= 2 ? 5 : 3, a0 = ang(u, t); setAnim(u, 'throw', 0.3);
-      for (let i = 0; i < n; i++) shoot(w, u, a0 + (i - (n - 1) / 2) * 0.2, { kind: 'shuriken', speed: 560, r: 7, life: 0.8, dmg: dmgOf(u, 1.4), knock: 30, st: tier >= 3 ? { poison: 18 } : {}, extra: { big: true } });
-      after(u, 0.18, () => {
-        zone(w, { x: u.x, y: u.y, r: 46, dur: 1.2, kind: 'smoke', src: u, smoke: true });
-        const s = rand() < 0.5 ? 1 : -1, b = a0 + s * Math.PI / 2 + Math.PI * 0.15 * s;
-        u.x = clamp(u.x + Math.cos(b) * 110, u.r, w.W - u.r); u.y = clamp(u.y + Math.sin(b) * 110, u.r, w.H - u.r); u.vx = u.vy = 0;
-        puff(w, u.x, u.y, '#5A5560', 10, 80, 7, 0.45);
-      });
+      const n = tier >= 2 ? 12 : 8; setAnim(u, 'throw', 0.35); u.act = { type: 'leap', t: 0.35, max: 0.35, x0: u.x, y0: u.y, x1: u.x, y1: u.y, land: () => {} };
+      after(u, 0.17, () => { for (let i = 0; i < n; i++) shoot(w, u, i / n * TAU + rrange(-0.08, 0.08), { kind: 'kunai', speed: 520, r: 7, life: 0.45, dmg: dmgOf(u, 1.3), knock: 60, st: tier >= 3 ? { poison: 18 } : {}, extra: { big: true } }); puff(w, u.x, u.y, '#5A5560', 8, 70, 5, 0.35); });
     },
-    show: { far: true },
   },
+  // Substitution (round 13: "… doesnt show this happening. Good idea though"): shown now: a puff of smoke, a log
+  // tumbling where she stood ("POOF"), a streak of smoke to where she comes out
   substitution: {
     passiveTier: true, score: () => 0, use() {},
     hook: {
       taken(w, u, src, amt, o) {
-        const k = u.kit; if (o.dot || amt < u.maxHp * 0.07 || (k.subReady || 0) > w.time) return amt;
+        const k = u.kit; if (o.dot || o.proc || amt < 3 || (k.subReady || 0) > w.time) return amt;
         const tier = tierOf(u, 'substitution'), cd = tier >= 3 ? 7 : 12; k.subReady = w.time + cd; k.cd.substitution = cd;
-        k2(w, { draw: 'log', x: u.x, y: u.y, max: 1.4, ab: 'substitution' }); puff(w, u.x, u.y, '#5A5560', 12, 90, 7, 0.5);
-        if (tier >= 2) for (const e of foesNear(w, u, u.x, u.y, 80)) addBuff(e, { id: 'logSmoke', dur: 2, blind: true });
-        const a = src ? angleTo(src.x, src.y, u.x, u.y) + rrange(-0.6, 0.6) : rand() * TAU;
-        u.x = clamp(u.x + Math.cos(a) * 120, u.r, w.W - u.r); u.y = clamp(u.y + Math.sin(a) * 120, u.r, w.H - u.r); u.vx = u.vy = 0; u.invulnT = Math.max(u.invulnT, 0.3);
+        const x0 = u.x, y0 = u.y, a = src ? angleTo(src.x, src.y, u.x, u.y) + rrange(-0.7, 0.7) : rand() * TAU;
+        k2(w, { draw: 'log', x: x0, y: y0, max: 1.6, big: true, ab: 'substitution' }); k2(w, { draw: 'poof', x: x0, y: y0, r: 22, col: '#8A8590', max: 0.6 });
+        textU(w, x0, y0, u.r + 8, 'POOF', '#EEF3F8', 1);
+        if (tier >= 2) for (const e of foesNear(w, u, x0, y0, 90)) addBuff(e, { id: 'logSmoke', dur: 2, blind: true });
+        u.x = clamp(u.x + Math.cos(a) * 130, u.r, w.W - u.r); u.y = clamp(u.y + Math.sin(a) * 130, u.r, w.H - u.r); u.vx = u.vy = 0; u.invulnT = Math.max(u.invulnT, 0.3);
+        k2(w, { draw: 'smokeDash', x: x0, y: y0, x2: u.x, y2: u.y, max: 0.6 }); k2(w, { draw: 'poof', x: u.x, y: u.y, r: 18, col: '#8A8590', max: 0.5 });
         return 0;
       },
     },
     show: { hitme: true },
   },
+  // Caltrops (round 13: "Doesnt look good. Should be shown spreading around her. Each one does slight damage and
+  // stagger"): a handful flung out round her, each its own little iron star on the floor; each bites once
   caltrops: {
-    score: (w, u) => (foesNear(w, u, u.x, u.y, 110).length >= 2 ? 0.6 : 0),
+    score: (w, u) => (foesNear(w, u, u.x, u.y, 140).length >= 1 ? 0.6 : 0),
     use(w, u, t, tier) {
-      setAnim(u, 'throw', 0.3); const x = u.x, y = u.y, r = tier >= 2 ? 100 : 72; let acc = 0;
-      k2(w, { draw: 'caltrops', x, y, r, max: 5, ab: 'caltrops' });
-      timer(u, 'caltrops', 5, (dt) => { acc += dt; if (acc < 0.3) return; acc -= 0.3;
-        for (const e of foesNear(w, u, x, y, r)) { addBuff(e, { id: 'caltrops', dur: 0.4, move: 0.55 }); if (e.spd > 10) hurt(w, e, dmgOf(u, 0.35), u, { dot: true, poison: tierOf(u, 'caltrops') >= 3 ? 6 : 0, ab: 'caltrops' }); } });
+      setAnim(u, 'throw', 0.3); const n = tier >= 2 ? 14 : 9, C = [];
+      for (let i = 0; i < n; i++) { const b = i / n * TAU + rrange(-0.2, 0.2), d = rrange(40, tier >= 2 ? 120 : 95), x = clamp(u.x + Math.cos(b) * d, 10, w.W - 10), y = clamp(u.y + Math.sin(b) * d, 10, w.H - 10);
+        C.push({ x, y, x0: u.x, y0: u.y, live: true, rot: rand() * TAU }); }
+      k2(w, { draw: 'caltrops', C, x: u.x, y: u.y, max: 7, ab: 'caltrops' });
+      timer(u, 'caltrops', 7, () => { for (const c of C) if (c.live) { const e = opponents(w, u).find((o) => !o.hop && dist(o.x, o.y, c.x, c.y) < o.r * 0.7 + 6); if (e) { c.live = false;
+        hurt(w, e, dmgOf(u, 0.55), u, { noDodge: true, knock: 0, stagger: 28, poison: tierOf(u, 'caltrops') >= 3 ? 10 : 0, ab: 'caltrops' }); } } });
     },
   },
-  // ----- Pirate
+  // ----- Pirate (round 13: her trait is Plunder: with her in the party, the fallen drop more coins)
+  // Point Blank (round 13: "Doesnt look great but yea. Should apply targeted"): a big flash and a cloud of gun smoke; it is
+  // left Targeted
   pointBlank: {
     score: (w, u) => (foesNear(w, u, u.x, u.y, u.r + 60).length ? 0.6 : 0),
     use(w, u, t, tier) {
       const list = foesNear(w, u, u.x, u.y, u.r + 70).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y));
-      const bang = (e, side) => { if (!e || !alive(e)) return; u.facing = ang(u, e); setAnim(u, 'shoot', 0.3);
-        k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: u.facing, max: 0.45, side });
-        hurt(w, e, dmgOf(u, 2.2), u, { knock: 400, heavy: true, noDodge: true, stagger: tierOf(u, 'pointBlank') >= 2 ? 50 : 0 }); w.shake = Math.max(w.shake, 4); };
+      const bang = (e, side) => { if (!e || !alive(e)) return; u.facing = ang(u, e); setAnim(u, 'shoot', 0.3); u.recoilT = 0.2;
+        k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: u.facing, max: 0.55, side, big: true });
+        hurt(w, e, dmgOf(u, 2.2), u, { knock: 420, heavy: true, noDodge: true, stagger: tierOf(u, 'pointBlank') >= 2 ? 50 : 0 }); targeted(w, e, 5); w.shake = Math.max(w.shake, 4); };
       bang(list[0] || t, 1);
       if (tier >= 3) after(u, 0.25, () => bang(list[1] || list[0], -1));
     },
     show: { single: true },
   },
+  // Grog (round 13: "Not good implementation. Lvl 3 throws 1 to ally"): she stops, tips the bottle back (bottle to her
+  // mouth), and sways tipsy while it works; III she tosses a bottle to a friend too
   grog: {
     score: (w, u) => (hpRatio(u) < 0.5 && foesNear(w, u, u.x, u.y, 200).length ? 0.8 : 0),
     use(w, u, t, tier) {
-      setAnim(u, 'ability', 0.5);
-      heal(w, u, u.maxHp * (tier >= 3 ? 0.3 : 0.2), u);
-      addBuff(u, { id: 'grog', dur: 5, taken: 0.8, knockImmune: tier >= 2, glow: '#E0A060' });
-      k2(w, { draw: 'splash', x: u.x, y: u.y, r: 30, col: '#C8902A', max: 0.5 });
+      const drink = (a) => { heal(w, a, a.maxHp * 0.25, u); addBuff(a, { id: 'grog', dur: 5, taken: 0.8, knockImmune: tier >= 2 }); k2(w, { draw: 'tipsy', unit: a, x: a.x, y: a.y, r: a.vr, max: 5 }); };
+      u.act = { type: 'swig', t: 0.6, max: 0.6 }; u._force = { [u.def.style && u.def.style.hand === 'arm-l' ? 'arm-r' : 'arm-l']: { r: 0.6, dy: -16 } };
+      k2(w, { draw: 'bottle', unit: u, x: u.x, y: u.y, max: 0.6 });
+      after(u, 0.6, () => { if (u.act && u.act.type === 'swig') u.act = null; u._force = null; if (alive(u)) drink(u); });
+      if (tier >= 3) { const a = hurtMost(allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 320)); if (a) after(u, 0.7, () => lob(w, u, a.x, a.y, 'grogFly', null, () => alive(a) && drink(a))); }
     },
+    show: { hurt: 0.4, ally: true },
   },
+  // Broadside (round 13: "They should come in from an arc off the screen"): the ship's guns, out of sight: each ball
+  // comes in high from the edge of the room on a long arc and lands with a blast
   broadside: {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 340 && foesNear(w, u, t.x, t.y, 130).length >= 2 ? 0.7 : 0),
     use(w, u, t, tier) {
       if (!t) return; cast(u, 'cast', 0.5);
-      const n = tier >= 3 ? 5 : 3, cx = t.x, cy = t.y, r = tier >= 2 ? 75 : 58;
+      const n = tier >= 3 ? 5 : 3, cx = t.x, cy = t.y, r = tier >= 2 ? 75 : 58, side = rand() < 0.5 ? -1 : 1;
       for (let i = 0; i < n; i++) {
         const near = foesNear(w, u, cx, cy, 130), e = near[i % Math.max(1, near.length)];
         const x = e ? e.x + rrange(-15, 15) : cx + rrange(-80, 80), y = e ? e.y + rrange(-15, 15) : cy + rrange(-80, 80);
-        after(u, 0.2 + i * 0.22, () => { k2(w, { draw: 'shell', x, y, r, max: 0.6, ab: 'broadside' }); after(u, 0.6, () => blast(w, u, x, y, r, 1.4, {}, 'broadside')); });
+        const sx = side > 0 ? w.W + 60 : -60, sy = y + rrange(-200, 200);
+        after(u, 0.2 + i * 0.22, () => { k2(w, { draw: 'cannon', x, y, sx, sy, r, max: 0.9, ab: 'broadside' }); after(u, 0.9, () => blast(w, u, x, y, r, 1.5, { stagger: 20 }, 'broadside')); });
       }
     },
-    show: { far: true },
+    show: { far: true, secs: 4 },
   },
   // ----- Slinger
   stunStone: {
@@ -2130,8 +2180,10 @@ export const ABILITIES2 = {
 // the Werewolf's other shape (units.js builds it from heroes2.js form and hangs it on the hero's def)
 const WOLF_FORM = (u) => u.def.formDef || null;
 // a bomb's blast at x, y: radius r, damage k x his own, extra hit options; drawn as the kit's blast
-function blast(w, u, x, y, r, k, o, ab) {
-  w.telegraphs.push({ type: 'blast', x, y, r, color: '#FFB347', t: 0.05, max: 0.05, ab });
+function blast(w, u, x, y, r, k, o, ab, under) {
+  // round 13 (the Grenadier: "Not fire themed"): a grey burst of smoke and iron, not a fire blast; under: drawn on the
+  // floor beneath (Blast Off: "Explosion effect should happen underneath him")
+  if (under) k2(w, { draw: 'groundBlast', x, y, r, max: 0.55 }); else k2(w, { draw: 'smokeBlast', x, y, r, max: 0.6, ab });
   for (const e of foesNear(w, u, x, y, r)) hurt(w, e, dmgOf(u, k), u, { knock: 260, kAngle: angleTo(x, y, e.x, e.y), heavy: true, noDodge: true, blast: true, ...o, ab });
   w.shake = Math.max(w.shake, r > 90 ? 8 : 4);
 }
@@ -2351,6 +2403,33 @@ function pollen(w, u) {
   const a = hurtMost([u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo && dist(u.x, u.y, o.x, o.y) < 300)); if (!a || hpRatio(a) >= 1) return;
   heal(w, a, a.maxHp * 0.05, u); k2(w, { draw: 'pollen', unit: a, from: u, x: a.x, y: a.y, max: 0.8 });
 }
+// the Grenadier's big bomb: it sits fizzing; it goes off when it is broken or its 2 s are up (kill: its death)
+BRAINS.bigBomb = function (w, b, dt) {
+  b.vx = b.vy = b.kx = b.ky = 0;
+  if (!b.armed) { b.armed = true;
+    onUnit(w, b, 'bomb', 99, { downed(w2, u2) { bigBoom(w2, u2); return false; } }); }
+  if (!b.boomed && (b.hp <= 1 || (b.lifeT != null && b.lifeT <= dt * 1.5))) bigBoom(w, b);
+  return true;
+};
+function bigBoom(w, b) {
+  if (b.boomed) return; b.boomed = true; const u = b.bomber, tier = b.tier || 1; if (!u) return;
+  blast(w, u, b.x, b.y, 120, 2.2, { burn: tier >= 2 ? 30 : 0, stagger: 35 }, 'bigBomb');
+  if (tier >= 3) for (let i = 0; i < 4; i++) { const a = i / 4 * TAU + 0.4, x2 = clamp(b.x + Math.cos(a) * 110, 20, w.W - 20), y2 = clamp(b.y + Math.sin(a) * 110, 20, w.H - 20);
+    const p = lob(w, u, x2, y2, 'bomb', null, () => after(u, 0.2, () => blast(w, u, x2, y2, 55, 0.8, { stagger: 20 }, 'bigBomb'))); p.x = b.x; p.y = b.y; }
+  if (alive(b)) kill(w, b, null);
+}
+// the Falconer's Hunting Partner: the falcon darts out with the knife, rakes the foe (it is Tracked a moment) and is back
+function partnerDive(w, u, t) {
+  u.kit.falconOut = true; const hand = handAt(u, u.facing - 0.6, 0);
+  const f = k2(w, { draw: 'falcon', x: hand.x, y: hand.y, a: u.facing, max: 3 }); let phase = 'out';
+  timer(u, 'partner', 2.5, (dt) => {
+    const goal = phase === 'out' ? t : u; if (phase === 'out' && !alive(t)) phase = 'home';
+    const a = angleTo(f.x, f.y, goal.x, goal.y), d = dist(f.x, f.y, goal.x, goal.y); f.a = a; f.x += Math.cos(a) * Math.min(d, 620 * dt); f.y += Math.sin(a) * Math.min(d, 620 * dt);
+    if (d < goal.r + 8) { if (phase === 'home') { f.max = f.t; return true; } phase = 'home'; hurt(w, t, dmgOf(u, 0.7), u, { noDodge: true, knock: 40, proc: true }); tracked(w, t, 2, 2, u); k2(w, { draw: 'clawRake', x: t.x, y: t.y, a, side: 1, max: 0.28 }); }
+  }, () => { u.kit.falconOut = false; f.max = Math.min(f.max, f.t + 0.05); });
+}
+// the Marksman's bullets go on through anything Targeted
+function pierceMarked(w, p, e) { if (isOn(w, e, 'targeted')) { p.pierce = (p.pierce || 0) + 1; if (!p.hitSet) p.hitSet = new Set(); } }
 // the Bandit's Snatch: its weapon flung out of its hand; it must walk over and pick it up before it can attack again
 function snatch(w, u, e) {
   if (!alive(e) || e.def.boss || e.fixed || e.def.brain || isOn(w, e, 'snatched')) return;
@@ -2499,16 +2578,35 @@ export const TRAITS2 = {
       setAnim(u, 'throw', 0.3); if (a === u) give(); else { const p = lob(w, u, a.x, a.y, 'kitFly', null, give); p.item = item; }
     },
   },
-  armourPiercing: { dealt(w, u, t, amt) { return t.elite || t.major || t.def.boss ? amt * 1.25 : amt; } },
-  birdsEye: { tick(w, u) { if (u.kit.birdsEye) return; u.kit.birdsEye = true; u.def = { ...u.def, range: u.def.range * 1.25, keep: (u.def.keep || 150) * 1.15 }; } },
-  demolition: { dealt(w, u, t, amt, o) { if (o.blast && o.knock) o.knock *= 2; return amt; } },
+  // (round 13, the designer: "If enemies have armour as well his attacks ignore them."): what armour would take off is
+  // put back on first
+  armourPiercing: { dealt(w, u, t, amt, o) { const ar = o.dot ? 0 : (t.armor || 0) * (o.heavy || o.crit ? 0.5 : 1); return (t.elite || t.major || t.def.boss ? amt * 1.25 : amt) + ar; } },
+  // Hunting Partner (round 13, the designer: "Different trait."): every fourth knife the falcon goes out with it, rakes
+  // the foe and marks it Tracked for 2 s (kits2 partnerDive, from his attack)
+  huntingPartner: { hit(w, u, t, amt, o) { if (!o.shot || o.proc) return; const k = u.kit; k.throwN = (k.throwN || 0) + 1; if (k.throwN % 4 === 0 && !k.falconOut && alive(t)) partnerDive(w, u, t); } },
+  // Powder Keg (round 13, the designer: "Needs different trait. That's just what his bombs do."): whatever his blasts kill
+  // blows up too, hurting those round it (a chain through a pack)
+  powderKeg: { kill(w, u, v, o) { if (!v || v.summon || v._kegged) return; v._kegged = true; const x = v.x, y = v.y; after(u, 0.15, () => blast(w, u, x, y, 64, 0.9, { stagger: 20, keg: true }, 'powderKeg')); } },
   oldSalt: { immune: ['wet'], dealt(w, u, t, amt) { return t.st && t.st.wet > 20 ? amt * 1.2 : amt; } },
   handy: { tick(w, u) { for (const s of w.units) if (s.summonBy === u && alive(s)) addBuff(s, { id: 'handy', dur: 0.3, taken: 0.7 }); } },
   moonblood: { tick(w, u, dt) { if (foesNear(w, u, u.x, u.y, 260).length) heal(w, u, u.maxHp * 0.01 * dt, u); } },
   finisher: { dealt(w, u, t, amt) { return hpRatio(t) < 0.5 ? amt * 1.25 : amt; } },
-  deadeye: { dealt(w, u, t, amt, o) { if (!o.dot && t.hp >= t.maxHp * 0.999) { o.crit = true; return amt * 2; } return amt; } },
+  // Long Shot (round 13, the designer: "Don't like trait. Gets additional damage when target is near max range. Should
+  // have very long range."): his reach is 40% longer, and a shot hits up to 60% harder the nearer the edge of it
+  longShot: {
+    tick(w, u) { if (u.kit.longDef === u.def) return; u.def = { ...u.def, range: u.def.range * 1.4, keep: (u.def.keep || 200) * 1.2 }; u.kit.longDef = u.def; },
+    dealt(w, u, t, amt, o) { if (o.dot || !o.shot) return amt; const k = clamp((dist(u.x, u.y, t.x, t.y) / (u.def.range || 300) - 0.55) / 0.4, 0, 1); return amt * (1 + 0.6 * k); },
+  },
   assassin: { dealt(w, u, t, amt, o) { return o.shot && angleDiff(angleTo(t.x, t.y, u.x, u.y), t.facing) > 1.9 ? amt * 1.5 : amt; } },
-  dirtyFighting: { dealt(w, u, t, amt) { return (t.st.stagger || 0) > 30 || t.stunT > 0 || t.rootT > 0 || t.koT > 0 || t.buffs.some((b) => b.move && b.move < 1) ? amt * 1.3 : amt; } },
+  // Plunder (round 13, the designer: "Enemies have a chance to drop more coins when he is in the party"): with her in the
+  // party, every enemy that falls anywhere in the room has a 35% chance to spill extra coins (not in battles)
+  plunder: {
+    tick(w, u) {
+      const k = u.kit, seen = k.plunderSeen || (k.plunderSeen = new Map());
+      for (const e of opponents(w, u)) if (!e.summon && e.def.coins) seen.set(e, { x: e.x, y: e.y });
+      for (const [e, p] of seen) if (e.dead || !w.units.includes(e)) { seen.delete(e); if (e.dead && !w.battle && rand() < 0.35) { const c = e.def.coins; scatterCoins(w, p.x, p.y, Math.max(1, Math.round((c[0] + c[1]) / 3)), 0.9); k2(w, { draw: 'coinPop', x: p.x, y: p.y, r: 16, max: 0.7 }); } }
+    },
+  },
   watchful: { tick(w, u, dt) { for (const a of friendsNear(w, u, u.x, u.y, 170)) { if (a.stunT > 0) a.stunT = Math.max(0, a.stunT - 0.4 * dt); if (a.sleepT > 0) a.sleepT = Math.max(0, a.sleepT - 0.4 * dt); } } },
   trappersEye: { dealt(w, u, t, amt) { return t.rootT > 0 || t.tangledT > 0 || t.koT > 0 ? amt * 1.3 : amt; } },
   arena: { dealt(w, u, t, amt) { return amt * (1 + Math.min(0.25, 0.05 * foesNear(w, u, u.x, u.y, 160).length)); } },
@@ -2574,29 +2672,51 @@ export const ATTACKS2 = {
   chef(w, u, t, a) {
     shoot(w, u, a, { kind: 'food', speed: 420, r: 8, life: 1.1, dmg: A(u, 1), knock: 40, extra: { food: Math.floor(rand() * 6), allyHit: (w2, p, f) => { heal(w2, f, A(u, 0.6), u); f.mendGlow = w2.time + 0.3; } } });
   },
-  // a heavy bolt through the first enemy; after Crank Up it bursts
+  // a heavy bolt through the first enemy (round 13: "Needs better animation. Remove tail from arrow": no tail, the string
+  // snaps forward and he rocks back); after Crank Up it bursts
   crossbowman(w, u, t, a) {
-    const k = u.kit, boom = k.crank > 0; if (boom) k.crank--;
-    shoot(w, u, a, { kind: 'cbolt', speed: 720, r: 7, dmg: A(u, 1), knock: 50, pierce: 1, extra: { boom, onHit: boom ? (w2, p, e) => { if (p.boomed) return; p.boomed = true; blast(w2, u, e.x, e.y, k.crankR || 55, 0.6, { knock: 160 }, 'crankUp'); } : null } });
+    const k = u.kit, boom = k.crank > 0; if (boom) k.crank--; u.recoilT = 0.22;
+    k2(w, { draw: 'twang', unit: u, x: u.x, y: u.y, a, max: 0.3 });
+    shoot(w, u, a, { kind: 'cbolt', speed: 760, r: 7, dmg: A(u, 1), knock: 50, pierce: 1, extra: { boom, onHit: boom ? (w2, p, e) => { if (p.boomed) return; p.boomed = true; blast(w2, u, e.x, e.y, k.crankR || 60, 0.8, { knock: 180, stagger: 35 }, 'crankUp'); } : null } });
   },
-  // a thrown hunting knife; under Keen Eye some land just right
+  // a thrown hunting knife (round 13: "Better visual": a broad blade turning end over end, a glint, a short trail);
+  // under Keen Eye some land just right; every fourth goes out with the falcon (his trait, Hunting Partner)
   falconer(w, u, t, a) {
     const keen = u.kit.keenUntil > w.time && rand() < (tierOf(u, 'keenEye') >= 3 ? 0.5 : 0.3);
-    shoot(w, u, a, { kind: 'dagger', speed: 560, r: 6, dmg: A(u, 1) * (keen ? 2 : 1), crit: keen, knock: 30, extra: { big: keen } });
+    shoot(w, u, a, { kind: 'knife', speed: 580, r: 7, dmg: A(u, 1) * (keen ? 2 : 1), crit: keen, knock: 30, extra: { keen: u.kit.keenUntil > w.time } });
   },
-  // a small lobbed bomb that bursts where it lands
+  // a small lobbed bomb that bursts where it lands (round 13: "Not fire themed. Stagger.")
   grenadier(w, u, t, a) {
     const x = t.x + (t.vx || 0) * 0.3, y = t.y + (t.vy || 0) * 0.3;
-    lob(w, u, x, y, 'bomb', null, () => blast(w, u, x, y, 50, 1.1, { knock: 150, heavy: false }, null));
+    lob(w, u, x, y, 'bomb', null, () => blast(w, u, x, y, 52, 1.1, { knock: 150, heavy: false, stagger: 22 }, null));
   },
-  // a thrown barbed harpoon on its rope
-  harpooner(w, u, t, a) { shoot(w, u, a, { kind: 'harpoon', speed: 620, r: 7, life: 0.6, dmg: A(u, 1), knock: 40 }); },
-  // a hard-thrown javelin
-  huntress(w, u, t, a) { shoot(w, u, a, { kind: 'javelin', speed: 600, r: 7, dmg: A(u, 1), knock: 110 }); },
-  // one long, hard musket shot
-  marksman(w, u, t, a) { k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a, max: 0.45 }); shoot(w, u, a, { kind: 'bullet', speed: 1200, r: 6, life: 0.6, dmg: A(u, 1), knock: 120 }); },
-  // a shuriken from either hand
-  ninja(w, u, t, a) { shoot(w, u, a + rrange(-0.05, 0.05), { kind: 'shuriken', speed: 560, r: 6, life: 0.7, dmg: A(u, 1), knock: 15 }); },
+  // the harpoon on its rope (round 13: "Rope needs an outline. Render underneath him. Target pulled forwards a bit and then
+  // it returns. Harpoon should look like the one he is holding"): it strikes, tugs the enemy a little way towards him,
+  // and is hauled back to his hand
+  harpooner(w, u, t, a) {
+    const p0 = shoot(w, u, a, { kind: 'harpoon', speed: 640, r: 7, life: 0.6, dmg: A(u, 1), knock: 0, extra: { onHit: (w2, p, e) => {
+      if (!e.fixed && !e.def.boss) shove(e, angleTo(e.x, e.y, u.x, u.y), 230);
+      const b = angleTo(p.x, p.y, u.x, u.y);
+      const back = { kind: 'harpoon', x: p.x, y: p.y, vx: Math.cos(b) * 560, vy: Math.sin(b) * 560, r: 7, team: u.team, owner: u, dmg: 0, o: {}, life: 1, a: b, home: u, turn: 14, noHit: true, back: true, catchBy: u };
+      w2.projectiles.push(back); k2(w2, { draw: 'rope', from: u, shot: back, x: u.x, y: u.y, max: 1 });
+    } } });
+    k2(w, { draw: 'rope', from: u, shot: p0, x: u.x, y: u.y, max: 0.65 });
+  },
+  // a hard-thrown javelin (round 13: "Make look better. Throw particles. Every third attack throws a razer javalin
+  // applying bleed"): dust off her hand as it goes; every third is a serrated razor javelin that makes it bleed
+  huntress(w, u, t, a) {
+    const k = u.kit, razor = (k.javN = (k.javN || 0) + 1) % 3 === 0, h = handAt(u, a, 4);
+    puff(w, h.x, h.y, '#E9DDC2', 5, 80, 4, 0.3); k2(w, { draw: 'twang', unit: u, x: u.x, y: u.y, a, max: 0.25 });
+    shoot(w, u, a, { kind: 'javelin', speed: 620, r: 8, dmg: A(u, razor ? 1.2 : 1), knock: 120, extra: { razor, onHit: razor ? (w2, p, e) => bleed(w2, e, 45, u) : null } });
+  },
+  // one long, hard musket shot (round 13: "More impact."): a big flash and smoke, a kick back, a heavier hit
+  marksman(w, u, t, a) { k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a, max: 0.55, big: true }); u.recoilT = 0.25; w.shake = Math.max(w.shake, 2.5);
+    shoot(w, u, a, { kind: 'bullet', speed: 1300, r: 7, life: 0.8, dmg: A(u, 1), knock: 220, extra: { big: true, onHit: (w2, p, e) => pierceMarked(w2, p, e) } }); },
+  // shuriken (round 13: "Animations is off. Flickers. Should throw 1 then 2 at a time, then 3 at a time on repeat")
+  ninja(w, u, t, a) {
+    const k = u.kit, n = ((k.shN = (k.shN || 0) + 1) - 1) % 3 + 1;
+    for (let i = 0; i < n; i++) shoot(w, u, a + (i - (n - 1) / 2) * 0.16, { kind: 'shuriken', speed: 560, r: 6, life: 0.7, dmg: A(u, 0.62), knock: 15 });
+  },
   // a whirl and a stone
   slinger(w, u, t, a) { shoot(w, u, a, { kind: 'stone', speed: 580, r: 6, dmg: A(u, 1), knock: 50 }); },
   // a rifle shot
@@ -2643,6 +2763,8 @@ export function kit2Tick(w, u, dt) {
     }
     u.kit.foods = F.filter((fd) => !fd.done);
   }
+  // the Crossbowman reloads 35% faster with a pavise of his close (II)
+  if (u.kind === 'crossbowman' && tierOf(u, 'pavise') >= 2 && mine(w, u, 'pavise').some((p) => dist(p.x, p.y, u.x, u.y) < 90)) addBuff(u, { id: 'pavise', dur: 0.3, atkSpeed: 1.35 });
   // the Shaman's spirit bear: friends near it take 20% less (round 13: "Negates all damage around him by 20%")
   if (u.kind === 'shaman') for (const b of w.units) if (b.kind === 'spiritBear' && b.summonBy === u && alive(b)) for (const a of friendsNear(w, b, b.x, b.y, 120)) addBuff(a, { id: 'bearWard', dur: 0.3, taken: 0.8 });
   // the Haymaker's bale: when it is gone he drops off it; under him meanwhile the leap's hop is kept off (the bale's brain sets it)
@@ -2706,8 +2828,8 @@ export function kit2Tick(w, u, dt) {
     for (const h of u.kit.hayed) { const b = h.e.st.burn || 0; if (b > h.last && alive(h.e)) h.e.st.burn = b + (b - h.last); h.last = h.e.st.burn || 0; }
     u.kit.hayed = u.kit.hayed.filter((h) => h.until > w.time && alive(h.e));
   }
-  // the Warlock's eye bolts come back to whoever threw them
-  for (const p of w.projectiles) if (p.catchBy && p.kind === 'eyeBolt' && p.back && alive(p.catchBy) && dist(p.x, p.y, p.catchBy.x, p.catchBy.y) < p.catchBy.r + 6) p.life = 0;
+  // the Warlock's eye bolts and the Harpooner's harpoon come back to whoever threw them
+  for (const p of w.projectiles) if (p.catchBy && (p.kind === 'eyeBolt' || p.kind === 'harpoon') && p.back && alive(p.catchBy) && dist(p.x, p.y, p.catchBy.x, p.catchBy.y) < p.catchBy.r + 6) p.life = 0;
   // the Stormhammer comes back to his hand
   for (const p of w.projectiles) if (p.catchBy === u && dist(p.x, p.y, u.x, u.y) < u.r + 8) p.life = 0;
 }

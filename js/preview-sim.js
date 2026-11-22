@@ -348,7 +348,11 @@ const TRAIT_SCENE = {
   familiar: { words: 'an imp' },
   bloodRite: { words: 'blood heals', abilities: true },
   pollen: { words: 'pollen heals' },
-  requisition: { words: 'kit handed out' }, // (lane H2, round 13: the new heroes' new traits)
+  requisition: { words: 'kit handed out' },
+  huntingPartner: { words: 'the falcon rakes' },
+  powderKeg: { words: 'it blew up', kill: true },
+  longShot: { words: 'a long shot' },
+  plunder: { words: 'extra coins', kill: true }, // (lane H2, round 13: the new heroes' new traits)
   grace: { words: '3rd blow: crit' },
   skyborn: { words: 'no roots', hitSt: { entangle: 45 } },
   phalanx: { words: 'ally near: -10%' },
