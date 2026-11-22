@@ -17,7 +17,7 @@ Renders (`_src/render11.py`, round 10's boards): a single fix `<name>.png`, `-th
 note was on, on the same board); a set `<group>.png` (what was seen first, then each option at game scale beside the
 archer, and a row at game size in four facings). `_src/game11.py` copies into `art/` only the picks and the fixes.
 **Where a note was open the game keeps its current art until a pick.** A clip of the three things that move:
-`clips/cobra-spirits-gaper.mp4`. The deck: `tools/riffle/make_art_round11.py` -> `tools/riffle/decks/art-round11.json`
+`films/cobra-spirits-gaper.mp4`. The deck: `tools/riffle/make_art_round11.py` -> `tools/riffle/decks/art-round11.json`
 (checked, not sent).
 
 ## 1. Picks, in the game as picked
@@ -26,10 +26,9 @@ archer, and a row at game size in four facings). `_src/game11.py` copies into `a
   kind uses ghost-b yet).
 - **The Elder Ent** "B": `class-round10/enemies/wild-elder-ent-face-nose.svg` -> art/enemies/elder-ent.svg.
 - **The Alpha** "Claw marks": on the Alpha below.
-- **Frost spirit's tail** (ticked): the game draws it now. js/render.js `drawSpiritTail` (the rat's chain on softer
-  springs, each point swayed, a tapering ribbon with smooth edges, inked, a gradient from root to tip); all seven
-  spirits' defs point at `art/enemies/spirit-core-<el>.svg` with `tail: [root, tip]` (js/foes10.js, dunes.js,
-  foundry.js). The round-9 spirit files with the drawn tail stay in art/ unused.
+- **Frost spirit's tail** (ticked): the game draws it. Main did this while this lane ran (0.17.1, js/foe-draw.js, from
+  round 10's notes: the seven spirits' defs point at `art/enemies/spirit-core-<el>.svg` with `tail: [root, tip]`), so
+  this lane's own copy of the same thing was dropped in the merge. Nothing to add: the cores are round 10's.
 - **The boar** "Ridge.": `class-round10/enemies/wild-boar-ridge.svg` -> art/enemies/boar.svg. "Show me without the
   mane": board `boar.png`: A as picked, B without the dark crest of bristles (the thorns stay), C without the ruff round
   the neck (both readings of "mane").
@@ -38,8 +37,9 @@ archer, and a row at game size in four facings). `_src/game11.py` copies into `a
 - **Troll** "B. Sharper jaw. Slightly longer head. No mouth. Long nose." and "Yeah they need arms": `greenskin-troll.svg`
   -> art/enemies/troll.svg. Head B with four changes and nothing else: the head's outline has straight cheeks to a
   narrower squarer chin and is 11 units longer; the mouth line and its tooth are gone; the nose is drawn out to the chin.
-  Arms kept. The size the round-10 note asked for goes in with it: js/enemies.js troll r 60 -> 54, vr 44 -> 40,
-  `boulder: 0.69` (js/foes9.js boulderOf reads it, so the boulder stays r 41). Board `boards/renders/greenskin-troll.png`.
+  Arms kept. The size the round-10 note asked for goes in with it: js/enemies.js troll r 60 -> 54, vr 44 -> 40
+  (the rock troll follows); the boulder keeps its size (main's js/foes9.js BOULDER_R = 41, no longer a share of the
+  troll's radius). Board `boards/renders/greenskin-troll.png`.
 - **Ent** "Remove mouth. B is good Take leaf off nose": `wild-ent.svg` -> art/enemies/ent.svg.
 - **Wolves** "Bring their heads forwards a bit. Shorten body a bit. And I think this is good. Also show me with the pawns
   rendering under the body": `wild-wolf.svg`, `wild-dire-wolf.svg`, `wild-alpha.svg` (no paws, the head 7 units forward
