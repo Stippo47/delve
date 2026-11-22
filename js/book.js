@@ -10,7 +10,7 @@
 // The camp opens it from the book on the stump (camp.js go('book')); CAMP.setMode('book') still does.
 import { HEROES, HERO_IDS } from './heroes.js';
 import { DEFS } from './units.js';
-import { STATUS } from './statuses.js';
+import { STATUS, HERO_STATUS, buildRow, buildValue } from './statuses.js';
 import { trinketFun, POTION_FUN, STATUSES } from './bestiary.js';
 import * as P from './progress.js';
 import * as M from './meta.js';
@@ -95,7 +95,7 @@ function fill() {
   set('trinkets', `${sec('Trinkets')}<div class="tiles">${tr}</div>${sec('Potions')}<div class="tiles">${po}</div>`);
   // statuses: what builds up, what a burst leaves, the rest
   const all = statusList(), st = (id) => tile(`status:${id}`, tico(icon('status', id)), (STATUSES[id] || { name: id }).name);
-  const build = all.filter((id) => STATUS[id]), burst = all.filter((id) => !STATUS[id] && FROM[id]), other = all.filter((id) => !STATUS[id] && !FROM[id]);
+  const build = all.filter((id) => buildRow(id)), burst = all.filter((id) => !buildRow(id) && FROM[id]), other = all.filter((id) => !buildRow(id) && !FROM[id]); // (round 15, lane E: buildRow: Whirled and Spun build up too)
   set('statuses', `${sec('Build up, then burst')}<div class="tiles">${build.map(st).join('')}</div>${sec('What a burst leaves')}<div class="tiles">${burst.map(st).join('')}</div>${sec('Other states')}<div class="tiles">${other.map(st).join('')}</div>`);
   // dungeons: one card each, in the order they open
   set('dungeons', `<div class="dg-list">${DUNGEON_ORDER.filter((t) => THEMES[t]).map((t) => {
@@ -145,7 +145,7 @@ function play() {
   // a status that builds up: its meter, under the stage (the cause on the left, what it bursts into on the right)
   const meter = host.querySelector('.th-meter'), ways = host.querySelector('.th-ways');
   if (th.t === 'status') {
-    const src = FROM[th.id] || th.id, B = STATUS[src];
+    const src = FROM[th.id] || th.id, B = buildRow(src);
     meter.classList.toggle('hidden', !B);
     if (B) meter.innerHTML = `<span class="tm-i">${icon('status', src)}</span><i class="tm-bar" style="--c:${B.col}"><b></b></i><span class="tm-i tm-out">${icon('status', INTO[src] || src)}</span>`;
     const W = statusWays(th.id);
@@ -158,12 +158,12 @@ function frameUi(S) {
   const host = el.querySelector('.bk-thing'); if (!host || !thing) return;
   const b = host.querySelector('.pv-prog b'); if (b) b.style.width = Math.min(100, 100 * S.t / S.loop).toFixed(1) + '%';
   if (S.spec.t !== 'status' || !S.hero) return;
-  const src = FROM[S.spec.id] || S.spec.id, B = STATUS[src], u = S.hero;
+  const src = FROM[S.spec.id] || S.spec.id, B = buildRow(src), u = S.hero;
   if (B) {
     // The meter fills, holds full for the burst's moment (lit), then falls to what the burst leaves. Round 13's showed
     // the value alone, which is emptied in the very step it fills: it jumped from nine tenths to nearly nothing with
     // "Burst!" swapped in beside it and the bar's length changing with the words ("freaks out when full").
-    const need = typeof B.need === 'function' ? B.need(u) : B.need, v = (u.st && u.st[src]) || 0;
+    const need = typeof B.need === 'function' ? B.need(u) : B.need, v = buildValue(u, src);
     const since = u.bursts && u.bursts[src] != null ? S.w.time - u.bursts[src] : 99, held = since < 0.9, lit = held || (STATE_ON[src] ? STATE_ON[src](u) : false);
     const fillEl = host.querySelector('.tm-bar b'), meter = host.querySelector('.th-meter');
     if (fillEl) { const f = held ? 1 : Math.max(0, Math.min(1, v / need)); if (fillEl._f !== f) { fillEl._f = f; fillEl.style.width = (f * 100).toFixed(1) + '%'; } }
@@ -188,16 +188,17 @@ function thingBody() {
     body.innerHTML = `<p class="th-desc">${p.desc}</p><p class="th-fun">${POTION_FUN[th.id] || ''}</p>
       <div class="st-grid th-facts">${cell('gold', p.price, 'At the trader')}${cell('bag', P.potionCount(save, th.id), 'In the bag')}</div>`;
   } else if (th.t === 'status') {
-    const id = th.id, s = STATUSES[id] || { name: id, desc: '' }, src = FROM[id], B = STATUS[id], how = statusHow(id);
+    const id = th.id, s = STATUSES[id] || { name: id, desc: '' }, src = FROM[id], B = buildRow(id), how = statusHow(id);
     bar(tico(icon('status', id)), s.name, B ? 'Builds up, then bursts' : src ? `What ${(STATUSES[src] || { name: src }).name.toLowerCase()} bursts into` : how === 'put' ? 'Lasts a few seconds' : 'A state');
     const facts = B ? `<div class="st-grid th-facts">${cell('fill', typeof B.need === 'function' ? 100 : B.need, 'Fills at')}${cell('decay', B.decay, 'Fades / s')}${cell('fill', B.after || 0, 'After a burst')}</div>` : '';
     const who = whoBrings(src || id);
-    body.innerHTML = `<p class="th-desc">${s.desc}</p>${facts}${who ? `${sec('Whose blows carry it')}<p class="un-note">${who}</p>` : ''}`;
+    body.innerHTML = `<p class="th-desc">${s.desc}</p>${facts}${who ? `${sec(HERO_STATUS[src || id] ? 'Who puts it on' : 'Whose blows carry it')}<p class="un-note">${who}</p>` : ''}`;
   } else dungeonBody(th.id, bar, body);
   body.scrollTop = top;
 }
 // Who puts a build-up status on: heroes and met monsters whose own blows carry it (their def says so).
 function whoBrings(k) {
+  if (HERO_STATUS[k]) return HERO_STATUS[k].by.filter((h) => HEROES[h]).map((h) => HEROES[h].name).join(' · '); // (round 15, lane E: the newer heroes' eight)
   if (!STATUS[k]) return '';
   const heroes = HERO_IDS.filter((h) => DEFS[h] && DEFS[h][k] > 0).map((h) => HEROES[h].name);
   const foes = groupsOf().flatMap((g) => g.kinds).filter((f) => metFoe(f) && DEFS[f] && (DEFS[f][k] > 0 || (DEFS[f].hitSt && DEFS[f].hitSt[k] > 0))).map((f) => DEFS[f].name);

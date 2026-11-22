@@ -119,3 +119,66 @@ export const cdRate = (u) => (u && u.st && u.st.shackle > 0 ? 1 - SHACKLE.cdSlow
 // share of its own length
 export function setBackDue(u, frac) { const e = u.el; if (!e || !e.dueLen) return; for (const k in e.dueLen) if (typeof e[k] === 'number') e[k] = Math.min(Math.max(e.dueLen[k], e[k]), Math.max(0, e[k]) + frac * e.dueLen[k]); }
 
+// ---------------------------------------------------------------- round 15 (lane E): the newer heroes' eight
+// Built in round 13 (lane H2) as each hero's own effect behind one function in kits2.js (whirl, spin, dirty, targeted,
+// tracked, trapped, ward, weaken) "so they can be lifted into statuses.js"; lifted here with every number as it was. The
+// functions stay where they are (kits2.js: they are how a hero puts each on); this is their one table, and the HUD, the
+// pause panel, the Book and its previews read them from here. Rules in words, and where they keep apart from the shared
+// rules above (cleanses, resistances, boss limits): docs/STATUSES.md, "Round 15 (lane E)".
+// Two build up and burst, as the rest above do, but keep their value in u.k2s (not u.st: a cleanse, going down and
+// Nullify's wash, which all reset u.st, never touched them, and still don't); six are timers (a hook on the unit, u.h2,
+// or a buff), shown as their time runs out.
+// WHIRLED (the Griffon, the Alchemist's whirling pool, the Air Mage): u.k2s.whirl, 0..need, drains `decay` a second.
+// While on, every shove it takes goes (1 + fill) as far. Full: stunned `stunT` (bosses `bossStunT`) and flung about at
+// random `flings` times, `every` s apart (the first at `first`), `fling` hard (bosses `bossFling`); then `immuneT` s
+// (from the burst: the flinging and 3 more) before it can be whirled again. Bosses build at `boss` of the rate.
+export const WHIRLED = { need: 100, decay: 12, boss: 0.45, stunT: 0.95, bossStunT: 0.4, flings: 3, first: 0.02, every: 0.3, fling: 520, bossFling: 180, immuneT: 3.9, col: '#EEF3F8' };
+// SPUN (the Monk's Palm Strike): u.k2s.spun, 0..need, drains `decay` a second. While on: moves at `move`, and each step
+// a chance of `lock` x fill that it can't turn. Full: it marches off the way it faces for `marchT` s (bosses `bossT`),
+// fast, unable to attack (a unit with a brain of its own is stunned `brainStunT` instead); then `immuneT` s.
+export const SPUN = { need: 100, decay: 10, boss: 0.45, move: 0.8, lock: 0.9, marchT: 1.2, bossT: 0.5, brainStunT: 0.5, immuneT: 4, col: '#FFE7A0' };
+// DIRTY (the Digger: "Rub some dirt in it"): for `dur` s, the next blow (not damage over time) that would land is soaked
+// up by the dirt, and that ends it; meanwhile it attacks at `atkSpeed`, and the `immune` statuses can't take on it (both
+// washed off when the dirt goes on).
+export const DIRTY = { dur: 10, atkSpeed: 0.7, immune: ['burn', 'poison'], col: '#9C7650' };
+// TARGETED (the Marksman's Aimed Shot, the Pirate's Point Blank): blows (not damage over time) land `taken` as hard;
+// its dashes, leaps and charges go `moves` as far; the Marksman's bullets go on through it.
+export const TARGETED = { taken: 1.2, moves: 0.4, col: '#FF5A4A' };
+// TRACKED (the Falconer's falcon): it can't turn invisible, untouchable or go underground, and every blow from the
+// tracker's side lands a set amount harder (the falcon's own number, kits2.js).
+export const TRACKED = { col: '#E0A060' };
+// TRAPPED (the Trapper's jaw trap): it can't move or turn, can't use an ability (its ability clocks held at `hold`), and
+// what it was doing is broken off (not a blow it is winding up); it can still strike straight ahead. Bosses: `boss` of
+// the time.
+export const TRAPPED = { boss: 0.4, hold: 0.3, col: '#C9D2DE' };
+// WARDED (the Alchemist's Elixir, the Old Guard's Rally, the Chef's meal, the Quartermaster's buckler...): a shield that
+// soaks up the next N damage (the giver's number), shown as a pale blue border; it ends when it is used up, its time
+// runs out, or its border is stripped (round 15: Nullify II strips what protects).
+export const WARDED = { col: '#9FE0FF' };
+// WEAKENED (the Shade's Blackout): deals `dealt` as much, a grey wash and grey chevrons sinking off the body.
+export const WEAKENED = { dealt: 0.7, wash: ['#7E8794', 0.22], col: '#7E8794' };
+// The eight as statuses: kind (build | timer), the colour of their ring, by (the heroes who put it on: the Book), and
+// what the HUD and the Book read off a unit:
+// value(u) (a build-up: 0..need), left(u, now) (a timer: seconds left, 0 when off), dur(u) (its whole time).
+const hookOf2 = (u, id) => (u && u.h2 && u.h2.find((h) => h.id === id)) || null;
+const hookLeft = (id) => (u, now) => { const h = hookOf2(u, id); return h && now != null ? Math.max(0, h.until - now) : 0; };
+const hookDur = (id) => (u) => { const h = hookOf2(u, id); return (h && h.dur) || 1; };
+const buffOf = (u, id) => (u && u.buffs && u.buffs.find((b) => b.id === id && b.t > 0)) || null;
+export const HERO_STATUS = {
+  whirled: { kind: 'build', ...WHIRLED, by: ['griffon', 'alchemist', 'airMage'], value: (u) => (u && u.k2s && u.k2s.whirl) || 0 },
+  spun: { kind: 'build', ...SPUN, by: ['monk'], value: (u) => (u && u.k2s && u.k2s.spun) || 0 },
+  dirty: { kind: 'timer', ...DIRTY, by: ['digger'], left: hookLeft('dirty'), dur: hookDur('dirty') },
+  targeted: { kind: 'timer', ...TARGETED, by: ['marksman', 'pirate'], left: hookLeft('targeted'), dur: hookDur('targeted') },
+  tracked: { kind: 'timer', ...TRACKED, by: ['falconer'], left: hookLeft('tracked'), dur: hookDur('tracked') },
+  trapped: { kind: 'timer', ...TRAPPED, by: ['trapper'], left: hookLeft('trapped'), dur: hookDur('trapped') },
+  warded: { kind: 'timer', ...WARDED, by: ['alchemist', 'jester', 'valkyrie', 'quartermaster', 'chef'], left: hookLeft('warded'), dur: hookDur('warded') },
+  weakened: { kind: 'timer', ...WEAKENED, by: ['shade'], left: (u) => { const b = buffOf(u, 'weakened'); return b ? b.t : 0; }, dur: (u) => { const b = buffOf(u, 'weakened'); return (b && b.dur) || 1; } },
+};
+export const HERO_STATUS_IDS = Object.keys(HERO_STATUS);
+// a build-up of any kind (STATUS above, or one of the eight): its row, and its value on a unit
+export const buildRow = (id) => STATUS[id] || (HERO_STATUS[id] && HERO_STATUS[id].kind === 'build' ? HERO_STATUS[id] : null);
+export const buildValue = (u, id) => (STATUS[id] ? (u && u.st && u.st[id]) || 0 : HERO_STATUS[id] && HERO_STATUS[id].value ? HERO_STATUS[id].value(u) : 0);
+// a resistance to one of the eight (def.res[id], as for the build-ups above: 0 none takes, 1 as ever); no kind has one
+// yet, and the designed bosses' "nothing builds on us" (boss-kit.js) is left off them, as before
+export const resTo = (u, id) => (u && u.def && u.def.res && u.def.res[id] != null ? u.def.res[id] : 1);
+

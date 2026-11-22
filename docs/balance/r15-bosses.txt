@@ -1,0 +1,74 @@
+Round 15, lane E: the nine bosses at the levels the campaign meets them now (report only: nothing was retuned)
+==========================================================================================================
+
+What was run (branch wire15 = main 0.21.0 plus lane E's art and status work, which change no boss fight)
+- The campaign: node tools/runs.mjs --campaign 150 --seed N --v, seeds 1-4. runs.mjs now prints, for each run, the
+  levels its party went in at (a party's strength in a run is the points it spent at camp, so that is "the level it
+  had"), and with each first boss kill the party's levels then. "Level met" below = the mean of that party's levels on
+  the run that first beat the boss, per seed; "middle" = the median of the four seeds, rounded.
+- The bench: node tools/runs.mjs --boss --theme <theme> --level <L> --party paladin,archer,cleric,twinfang --n 40, at
+  the middle level and 3 under and 3 over. Wins of 40; average fight length over all 40 fights (wins alone in brackets).
+
+!! FIRST: A BUG THAT DECIDES FIVE OF THE NINE (found here, not fixed: the lane was told to change nothing) !!
+Round 15's Mob (lane N) made sim.js send a death, a blow's share and a status from a body to its lead through
+`u.partOf` (sim.js kill: "if (u.partOf) u = u.partOf; // the four fall as one"; hurt's pool; addStatus; step's
+`body`). The designed bosses' parts carry `partOf` too (boss-kit.js part(): `p.partOf = core`), so breaking a boss's
+part now KILLS THE BOSS. Seen: the Great Engine at 5409 of 5873 health dies the frame one of its hands breaks
+(`--watch`), every fight over in about 22 s with the log reading "phase 1 at 0% (3s)". It touches every boss with
+breakable parts: the Great Engine (hands, valve), Cinder, the Great Ooze, the Gilded Seraph, the Sand Wurm.
+A one-line-per-site fix, measured below as "fixed" (applied to a copy of the code only, not committed): send to the
+lead only when the lead is a Mob's, `u.partOf && u.partOf.bodies` (kill, hurt's pool, addStatus, step's body).
+The campaign was run again with that copy (seeds 1-4) for the levels the fixed game meets each boss at.
+
+Boss (theme)          level met per seed (party levels)                                middle | fixed game's campaign
+--------------------  ----------------------------------------------------------------  ------ | ---------------------
+Elder Ent (wildwood)  12.0 (14/10)  12.0 (13/11)  11.5 (13/10)  16.0 (21/11)            12     | 12 (same runs)
+Chieftain (warren)    13.3 (17/15/8)  13.0 (16/15/8)  23.7 (25/24/22)  20.0 (25/20/15)  17     | 17 (same runs)
+Great Ooze (sewers)   22.5  20.8  27.5  22.8                                              23     | 25 (26.0 24.5 27.5 22.8)
+Bone King (crypt)     31.2  33.5  31.8  31.2                                              32     | 31 (32.2 28.5 33.2 30.2)
+Winter Queen (frost)  38.5  36.8  37.5  37.5                                              38     | 38 (37.5 37.5 37.0 37.5)
+Cinder (ember)        42.0  42.5  42.2  42.0                                              42     | 44 (43.2 45.8 40.5 44.0)
+Gilded Seraph (spire) 45.2  49.0  46.8  44.5                                              46     | 49 (46.8 49.0 48.8 48.8)
+Sand Wurm (dunes)     50.5  53.5  48.8  49.5                                              50     | 51 (49.8 53.0 51.8 51.0)
+Great Engine (foundry) 54.0  56.0  57.8  54.0                                             55     | 59 (58.5 61.5 55.8 59.0)
+(The Wildwood is met by two heroes, paladin and archer; the Warren by three, the cleric far behind; from the Sewers
+on, the four the bench uses. Round 12's benches were at: Elder Ent ~11 with two, Bone King 33, Great Engine 58.)
+
+Wins of 40 at the middle level, 3 under, 3 over; average fight (wins), as the code is on main, and with the fix
+---------------------------------------------------------------------------------------------------------------------
+Boss          L-3                      L                        L+3                      | fixed: L-3 / L / L+3
+Elder Ent     L9  40  73 s (73)        L12 40  73 s (73)        L15 40  71 s (71)        | same (no parts)
+Chieftain     L14 35 103 s (103)       L17 38  84 s (84)        L20 39  79 s (79)        | same (no parts)
+Great Ooze    L20 14 176 s (197)       L23 13 183 s (182)       L26 23 179 s (175)       | 6 / 11 / 20   (162 / 161 / 176 s)
+Bone King     L29 35 168 s (167)       L32 37 157 s (156)       L35 40 154 s (154)       | same (no parts)
+Winter Queen  L35  0 150 s (-)         L38 22 161 s (163)       L41 27 150 s (153)       | same (no parts)
+Cinder        L39 37  42 s (40)        L42 38  43 s (41)        L45 40  39 s (39)        | 11 / 19 / 21  (169 / 182 / 156 s)
+Gilded Seraph L43 15 151 s (128)       L46 23 128 s (107)       L49 33 136 s (134)       | 16 / 30 / 20  (161 / 140 / 148 s)
+Sand Wurm     L47 14 128 s (144)       L50 19 130 s (139)       L53 27 129 s (132)       | 1 / 6 / 13    (130 / 137 / 143 s)
+Great Engine  L52 39  22 s (22)        L55 40  22 s (22)        L58 40  20 s (20)        | 3 / 7 / 10    (107 / 142 / 138 s)
+
+The two early bosses with the party that really meets them (not the bench's four):
+- Elder Ent, paladin + archer: L9 23/40, L12 33/40, L15 33/40 (about 103 s).
+- Chieftain, paladin + archer + cleric: L14 8/40, L17 21/40, L20 24/40 (about 111 s).
+
+Outside 40-60% at the level met, and the one knob I would turn (each boss's doc, "the knobs"; proposals, not made)
+- Elder Ent: 100% with the bench's four, 83% (33/40) with the two who meet it. Health 1850 -> 2200 (+20%): round 12
+  set 1850 for two heroes at ~11 to be close to even; the starters have gained since. Measure with the two.
+- Chieftain: 95% with four, 52% (21/40) with the three who meet it: in range with its real party. No change.
+- Great Ooze: 33% (13/40; fixed game 28% at 23, 50% at 26, where the fixed campaign meets it, 25). Its doc calls it
+  touchy (a few percent of health moved it ten fights in a hundred): health 1010 -> 950 (-6%), and only after the
+  parts bug is fixed, at the fixed game's level.
+- Bone King: 93% (37/40). HP 1000 -> 1200 (+20%, round 8's 1100 and then some): even round 12 (11 of 20 at 33) has
+  moved a long way with the heroes' passes since.
+- Winter Queen: 55%, in range. No change. (Note the cliff: 0 of 40 three levels under. Its doc's knob, WQ.fan.dmg, is
+  the one to watch if the campaign starts meeting it lower.)
+- Cinder: 95% as main is, but only because of the parts bug (fights of ~40 s); fixed, 48% at 42 and 53% at 45 (the
+  fixed campaign meets it at 44). In range once the bug is fixed. No change.
+- Gilded Seraph: 58% as main is; fixed, 75% at 46 but 50% at 49, where the fixed campaign meets it. In range. No change.
+- Sand Wurm: 48% as main is (the bug helps the party); fixed, 15% at 50 and 33% at 53 (fixed campaign: 51). Too hard
+  once fixed: SW.breach.dmg -20% (its doc's first knob; the breach is what kills).
+- Great Engine: 100% as main is, all from the bug (a claw broken ends the fight); fixed, 18% at 55 and 25% at 58 (the
+  fixed campaign meets it at 59). Too hard once fixed: health 680 -> 580 (-15%), its doc's "move health first".
+
+Raw outputs (per-run lines with each fight's time and boss log) were kept with the lane's scratch files; the numbers
+above are counted from them. The bug and its fix: docs/DECISIONS.md, round 15 lane E.

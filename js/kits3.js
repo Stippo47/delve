@@ -393,7 +393,7 @@ export const ABILITIES3 = {
         onUnit(w, e, 'silenced', T, { taken: (w2, u2, s2, amt, o) => (tier >= 3 && !o.dot ? amt * 1.2 : amt),
           tick(w2, u2) { u2.abilT = Math.max(u2.abilT || 0, 0.3); if (u2.kit) for (const c in u2.kit.cd) u2.kit.cd[c] = Math.max(u2.kit.cd[c], 0.3); const E = u2.el; if (E && E.dueLen) for (const c in E.dueLen) if (typeof E[c] === 'number') E[c] = Math.max(E[c], 0.3); } });
         k2(w, { draw: 'silenced', unit: e, x: e.x, y: e.y, r: e.vr, max: T });
-        if (tier >= 2) { const had = e.buffs.length; e.buffs = e.buffs.filter((b) => b.dur >= 1000 || !(b.dealt > 1 || b.atkSpeed > 1 || b.move > 1 || b.taken < 1 || b.border || b.lifesteal || b.statusImmune || b.knockImmune || b.frontBlock)); if (e.buffs.length < had) sparks(w, e.x, e.y, 0, 6, '#C9D2DE', 1); }
+        if (tier >= 2) { const had = e.buffs.length, wd = e.buffs.some((b) => b.id === 'warded'); e.buffs = e.buffs.filter((b) => b.dur >= 1000 || !(b.dealt > 1 || b.atkSpeed > 1 || b.move > 1 || b.taken < 1 || b.border || b.lifesteal || b.statusImmune || b.knockImmune || b.frontBlock)); if (wd && !e.buffs.some((b) => b.id === 'warded')) offUnit(e, 'warded'); /* (round 15, lane E: Warded's shield goes with its border: it used to stay on, unseen) */ if (e.buffs.length < had) sparks(w, e.x, e.y, 0, 6, '#C9D2DE', 1); }
       }
       if (tier >= 2) for (const a of [u, ...friendsNear(w, u, u.x, u.y, R)]) { if (a.partOf) continue; const bad = a.stunT > 0 || a.frozenT > 0 || a.rootT > 0 || Object.values(a.st).some((v) => v > 4); if (bad) { cleanse(a); k2(w, { draw: 'rally', unit: a, x: a.x, y: a.y, r: a.vr, max: 0.7, cols: ['#C9D2DE', '#EEF3F8'] }); } }
     },

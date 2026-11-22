@@ -96,23 +96,29 @@ quicksand (the Dunes), steam vents and conveyor plates (the Foundry).
 Summons and props the round 13 abilities brought in. Each is drawn in code (js/fx2.js `LOOK2.<kind>`, one ink outline,
 the heroes' palette) or borrows a sprite; a real sprite in the bust style can replace any of them without touching the
 abilities (give the kind an `art` in js/heroes2.js and drop its LOOK2 entry).
+**Round 15 (lane E): art round 12's files are wired in** (struck through below; `design/class-round12/notes.md` section C
+has the files): each kind has its `art` and `headR` in js/heroes2.js, its LOOK2 entry is gone, and what the code drawing
+also did (a glow, flames, the bale's rolling straw, the totem's rise, see-through spirits, a recoil, a turning key) is
+kept in js/fx2.js `ART2.<kind>` (js/looks2.js says how). Stills before and after: `clips/r15/wire/`. The Engineer's
+mortar is the kind `snowMortar` now (`mortar` was the Foundry's enemy of that name, which took its place in DEFS).
+Only the Bandit's shadow clone is still borrowed.
 | kind (hero) | now | the real sprite should be |
 |---|---|---|
-| haybale (Haymaker) | drawn in code: a round bale with straw ends | fine as is; a rolled bale with twine bands |
-| totem (Shaman) | drawn in code: a carved post with a bird head | a carved, painted spirit pole |
-| spiritBear, spiritEagle, spiritBeaver (Shaman) | drawn in code: pale blue ghostly animals | three translucent spirit animals in one shared style |
-| cauldron (Alchemist) | drawn in code: a black pot with bubbling brew | fine as is |
-| warlockImp (Warlock) | art/enemies/placeholder/imp.svg | the Warlock's own small horned familiar |
-| beehive (Beekeeper) | drawn in code: a straw skep | fine as is |
-| crate, barricade (Quartermaster) | drawn in code: a slatted crate, a plank barricade | wooden supply crate; spiked plank barricade |
-| pavise (Crossbowman) | drawn in code: a tall painted shield on a prop | fine as is |
-| bigBomb (Grenadier) | drawn in code: a large black bomb with a fuse | fine as is |
-| torcher, tesla, mortar, windup, medbay, medDrone (Engineer) | drawn in code: brass turrets and a little drone | brass-and-wood machines in the Foundry style |
+| ~~haybale (Haymaker)~~ | art/summons/haybale.svg (round 15); was drawn in code: a round bale with straw ends | fine as is; a rolled bale with twine bands |
+| ~~totem (Shaman)~~ | art/summons/totem.svg (round 15); was drawn in code: a carved post with a bird head | a carved, painted spirit pole |
+| ~~spiritBear, spiritEagle, spiritBeaver (Shaman)~~ | art/summons/spirit-bear, -eagle, -beaver.svg (round 15); was drawn in code: pale blue ghostly animals | three translucent spirit animals in one shared style |
+| ~~cauldron (the Witch's, Cursed Brew)~~ | art/summons/cauldron.svg (round 15); was drawn in code: a black pot with bubbling brew | fine as is |
+| ~~warlockImp (Warlock)~~ | art/summons/warlock-imp.svg (round 15; still turned blue-grey, as every summon of ours); was art/enemies/placeholder/imp.svg | the Warlock's own small horned familiar |
+| ~~beehive (Beekeeper)~~ | art/summons/beehive.svg (round 15); was drawn in code: a straw skep | fine as is |
+| ~~crate, barricade (Quartermaster)~~ | art/summons/supply-crate.svg, barricade.svg, barricade-spiked.svg (round 15); was drawn in code: a slatted crate, a plank barricade | wooden supply crate; spiked plank barricade |
+| ~~pavise (Crossbowman)~~ | art/summons/pavise.svg (round 15); was drawn in code: a tall painted shield on a prop | fine as is |
+| ~~bigBomb (Grenadier)~~ | art/summons/big-bomb.svg (round 15); was drawn in code: a large black bomb with a fuse | fine as is |
+| ~~torcher, tesla, mortar, windup, medbay, medDrone (Engineer)~~ | art/summons/engineer-*.svg (round 15; the mortar's kind is snowMortar); was drawn in code: brass turrets and a little drone | brass-and-wood machines in the Foundry style |
 | shadowClone (Bandit) | the Shade's sprite washed near-black | fine as is |
-| (parts) Bearskin | the club is part of the body sprite | paws and the club as their own parts, so the paws can swipe |
-| (parts) Warhelm | the hammer is part of the body sprite | the hammer as its own part, so the fists can alternate |
-| (parts) Bulwark, Valkyrie, Samurai, Trapper | weapon grips drawn for one hand | Bulwark's two-handed grip, Valkyrie's spear held at the shaft, the Samurai's two-handed katana, the Trapper's shotgun and a trap at the hip |
-| demon form (Warlock) | the Warlock's sprite washed red, horns and a big sword drawn in code (fx2.js demonForm) | its own horned demon bust holding the sword |
+| ~~(parts) Bearskin~~ | art/heroes/r12/bearskin.svg (round 15); was the club is part of the body sprite | paws and the club as their own parts, so the paws can swipe |
+| ~~(parts) Warhelm~~ | art/heroes/r12/warhelm.svg (round 15); was the hammer is part of the body sprite | the hammer as its own part, so the fists can alternate |
+| ~~(parts) Bulwark, Valkyrie, Samurai, Trapper~~ | art/heroes/r12/bulwark, valkyrie, samurai, trapper.svg (round 15); was weapon grips drawn for one hand | Bulwark's two-handed grip, Valkyrie's spear held at the shaft, the Samurai's two-handed katana, the Trapper's shotgun and a trap at the hip |
+| ~~demon form (Warlock)~~ | art/heroes/r12/warlock-demon.svg (round 15); was the Warlock's sprite washed red, horns and a big sword drawn in code (fx2.js demonForm) | its own horned demon bust holding the sword |
 
 ## Round 15 (lane N): the six new heroes are on stand-ins
 Each wears an existing hero's sprite recoloured (`tools/standins.mjs` writes `art/heroes/standin/<file>.svg` with

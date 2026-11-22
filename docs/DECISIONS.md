@@ -845,3 +845,97 @@ hero, with every clip: `docs/HEROES-r15.md`. The numbers: `docs/balance/r15-newh
 - **Tools**: `tools/hero-clips.mjs` (the clips, through `tools/clip.mjs`), `tools/test/hero-vs.mjs` (one hero against
   others of its role, same parties and seeds), `tools/standins.mjs`. `tools/heroes-doc.mjs` writes the six into
   `docs/HEROES.md` too.
+
+## Round 15, lane E (2026-11-22): art round 12 wired in, the eight lifted statuses, clips that spend points, bosses at their levels
+### 1. Art round 12's summons, props and weapon hands (design/class-round12/notes.md, section C)
+- **How**: each code-drawn kind has its `art` and `headR` (js/heroes2.js); its `LOOK2` drawing is gone (fx2.js) and
+  what it also did is kept in a new table, `ART2.<kind>` (looks2.js says how, fx2.js fills it, render.js
+  `drawPartsUnit` runs it): under it, in the body's frame, its parts' pose, how solid, over it in its SVG units, after.
+  The demon form is art on the def Awaken swaps in (kits2.js `summonImp`; its picture is got ready with the Warlock's,
+  heroes2.js `forms`); the imp only changed its art path.
+- **Kept from the code drawings** (the notes' table, every row): the bale's straw rolling with `u.roll` (straw lines in
+  its own two colours run over its body between the twine bands) and its flames when burning; the totem's rise out of
+  the floor and its crack; the spirits see-through (`spiritA`) with their light-blue glow, the bear's rocking walk,
+  the eagle lifted by `u.hop` with its wings beating (drawn narrower and wider across), the beaver's turn when it
+  shoots (`u.spin`); the cauldron's fire and bubbles; the hive's three bees; the crate's gold pulse; the barricade's
+  crack and its spiked file when `u.spikes`; the pavise's crack; the bomb swelling faster and its spark's glow creeping
+  down the fuse; the torcher's jet; the tesla's glow at the ball; the mortar's kick back (its `#top` slides back);
+  the medbay's green pulse; the med drone's wobble and spinning rotors (two blades over its rotor discs); the wind-up's
+  key turning (its `#back` squeezed across: parts.js `place` takes `sx`) and a waddle as it steps; the demon's glow
+  and embers. The party's summons' pictures are asked for when a room starts (render.js `warmArt`), so a totem's
+  rise isn't spent while its picture renders.
+- **Lost, said plainly**: the spirit bear's paw swing (the picture has no paw of its own: the rig's lunge on each blow
+  stands in); the bomb's fuse getting shorter (the picture's fuse is fixed: only its glow creeps down); the wind-up's
+  stepping feet (the waddle stands in). Gained from the rig, as every unit with art has: the white flash and the
+  squash when hit.
+- **Facing**: the standing things (totem, cauldron, hive, tesla) and the ones the code never turned (crate, medbay,
+  med drone, the bomb) are drawn as their file is, foot down the screen (`def.upright`, also with the view turned).
+  The pavise and the barricade turn to their facing, as the code's did (the notes list the pavise as standing, but
+  the code turned it to face the enemy, and a pavise only works facing them). The torcher and the mortar turn their
+  top over a deck that stays where it was set down (`turret: true`; render sets `u.baseA` on first sight).
+- **Colours**: the props keep their own colours (`def.ownLook`): the code drawings were never turned our summons'
+  blue-grey. The imp keeps the blue-grey, as the placeholder had ("only the art path changes"); one word
+  (`ownLook: true` on `warlockImp`) gives it its own purple and pink.
+- **Warhelm**: `#arm-l-hammer` rides his left fist and hides while the hammer circles or flies (`u.kit.hammerOut`);
+  his fist stays. Storm Born's fists now take turns (`style.dual`): the split was made "so the fists can alternate",
+  the designer's own words for Storm Born ("punches with his fist alternating"); a pose change only, no sim change.
+- **Bearskin**: `#arm-r-club` hides while he claws (`u.kit.clawsT`); the paw on his fist claws.
+- **Trapper**: the jaw trap stays on his hip while traps are out (the notes said it "could be hidden": not asked).
+- **The Engineer's mortar is the kind `snowMortar`**: `mortar` was also the Foundry's enemy, and units.js
+  `Object.assign(DEFS, ENEMIES)` put the enemy in its place, so Tinker's "snowball mortar" has been a Foundry mortar
+  firing shells, and the first time an Engineer built one the code drawing was hung on the Foundry's shared def (every
+  Foundry mortar drawn as the Engineer's tower after that). Plainly a bug, and the art couldn't be wired without it:
+  renamed (heroes2.js, kits2.js, fx2.js). The Engineer's mortar now lobs the snowballs its words promise.
+- **Weak, said plainly** (as they read in the game, `clips/r15/wire/`): the med drone is a pale dot with a green speck
+  (its rotor blades barely show at game size); the medbay is a pale flower on the deck with a small green cross (the
+  code's big green cross read more plainly); the pavise reads as a painted shield on a prop; the demon form is dark,
+  but its wings, red face and sword read on the floors seen. None reads worse than its code drawing in a way that
+  loses what it is, so all are wired.
+- **Evidence**: `tools/wire-shots.mjs` (the renderer bench's showcase through `tools/labshot.mjs`, which got `--eval`,
+  `--probe` and a second wait so a picture first asked for mid-step is drawn): `clips/r15/wire/<name>-before.png` and
+  `-after.png` at the game's default zoom, cropped round the hero and the thing; `full/` has the whole frames.
+- `sw.js` unchanged (its list already held every file: `build-sw.py 0.21.0` gives the same file).
+
+### 2. The newer heroes' eight effects lifted into the statuses
+- Whirled, Spun, Dirty, Targeted, Tracked, Trapped, Warded, Weakened: statuses.js rows (`WHIRLED` ... `WEAKENED`,
+  `HERO_STATUS`), icons, Book cards with previews, HUD rings, rules in docs/STATUSES.md ("Round 15 (lane E)").
+- **Whirled's and Spun's values stay in `u.k2s`**, not `u.st`: everything that resets `u.st` (cleanses, going down,
+  revives) and Nullify II's "anything building on a friend" check would otherwise have reached them.
+- **Shared rules kept apart (today's behaviour)**: cleanses don't take them off; the designed bosses' default "nothing
+  builds on us" (boss-kit.js) is not extended to them; boss limits stay as they were (only `def.boss`); a Mob's or a
+  chain's body takes them itself; stats don't count them. **Resistances**: `def.res.<id>` is read now (`resTo`); no
+  kind has one. **Fixed, plainly a bug**: Nullify II stripped Warded's border but left its shield on (kits3.js).
+- **The Book's generic "Weakened"** (a red down arrow, any harmful buff) **is "Hindered" now**: two tiles had one name.
+- **Proof of unchanged behaviour**, same seeds before (main 0.21.0) and after, `--v`: `runs.mjs --n 3 --theme all`;
+  `--level 30` and `--max` with `griffon,digger,marksman,falconer` and `airMage,pirate,griffon,monk`: identical line
+  for line. With the Shade in the party (`trapper,monk,alchemist,shade` at 30 and max, `shade,alchemist,warden,trapper`
+  at 30) two runs of the very same code differ: the Shade's shadow clone uses `Math.random()` (kits2.js
+  `shadowCloneBrain`, since round 13). Those were compared with `Math.random` seeded the same way in both (a wrapper,
+  not in the repo): identical line for line. Not fixed (outside the lane): it makes any batch with the Shade
+  unrepeatable.
+
+### 3. tools/clip.mjs spends skill points
+- By default every hero's points for its level (START_POINTS + level - 1, less what it has spent) are spent with
+  progress.js `autoSpend`, as runs.mjs does: a run's or a convoy's party at `--level`, and in a battle every hero not
+  named in `--nodes` (at its save's level). A hero named in `--nodes` keeps exactly those. `--nospend` is the old way.
+- `tools/hero-clips.mjs` passes `--nospend`: its battles name the hero's tiers in `--nodes` and its runs force the
+  tier at the use, so its clips stay as made. `tools/status-clip.mjs` doesn't use clip.mjs (its battles set each
+  hero's nodes with `tierBuild`); unchanged.
+
+### 4. The bosses at the levels the campaign meets them (docs/balance/r15-bosses.txt; nothing retuned)
+- **A round 15 bug decides five of the nine**: the Mob's `partOf` (a body's death, blow share and statuses go to its
+  lead) also catches the designed bosses' parts (boss-kit.js `part()` sets `partOf`), so breaking a part kills the
+  boss: the Great Engine dies at 92% health when a hand breaks (40 of 40 at 55, fights of about 22 s), Cinder 38 of 40
+  in about 40 s. Fix proposed (measured on a copy, not made): send to the lead only when it is a Mob's
+  (`u.partOf.bodies`), in sim.js kill, hurt's pool, addStatus and step. With it, at the level met: the Engine 7 of 40,
+  Cinder 19, the Sand Wurm 6, the Great Ooze 11, the Seraph 30.
+- runs.mjs `--campaign` prints the levels each run went in at, and with each boss kill the party's levels then.
+
+### Found and not fixed (outside the lane)
+- The boss-part bug above; the Shade's `Math.random()` above.
+- `tools/test/progress-check.mjs`: "falling mid-floor loses 20% of the gold" fails, the same on untouched 0.21.0.
+- `tools/test/t1.mjs`-`t5.mjs` can't run: they import `playwright` (not installed: tools has `playwright-core`), use
+  port 8811, and drive camp buttons the game no longer has (`#enterBtn`, `#toCamp`, `GAME.save.depth`). Run through a
+  stand-in on port 8975 they stop at those buttons, as they would on any recent build.
+- Batches with `trapper,monk,alchemist,shade` and `shade,alchemist,warden,trapper` get stuck now and then (a room that
+  never ends), the same before and after this lane.

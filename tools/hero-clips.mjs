@@ -2,8 +2,8 @@
 //   node tools/hero-clips.mjs [--port 8974] [--only mob-pileOn,warden-attack] [--hero mob] [--out clips/r15/heroes] [--jobs 3]
 // Needs the dev server (node tools/serve.mjs <port>). Each clip is a real battle (js/battle.js) or a real run, staged
 // through clip.mjs --eval: who stands where, the enemies' health raised and their blows softened so the hero lives to
-// show the move, and the move used at a set moment at the tier named (clip.mjs spends no skill points itself: the
-// nodes are passed). Nothing here is read by the game.
+// show the move, and the move used at a set moment at the tier named (clip.mjs is told --nospend: it spends no skill
+// points itself, the nodes are passed). Nothing here is read by the game.
 // Edge: every run's profile folder is made under this lane's own temp folder (TEMP below), so anything left running
 // can be told from other lanes' browsers by its command line and stopped without touching theirs.
 import { execFile, execFileSync } from 'node:child_process';
@@ -164,7 +164,9 @@ const list = Object.entries(CLIPS).filter(([name, c]) => (!only.length || only.i
 const run = ([name, c]) => new Promise((resolve) => {
   const file = path.join(out, name + '.mp4'), ev = PRELUDE(c.hero).replace('STAGE', c.stage || '');
   // a battle is framed by the game's own battle camera (everyone in it); a run follows the hero. c.follow: a kind to stay on instead
-  const a = ['tools/clip.mjs', file, '--port', port, '--secs', String(c.secs || 6), '--zoom', String(c.zoom || (c.battle ? 1.35 : 1.5)), '--seed', '5', '--eval', ev, ...(c.extra || [])];
+  // (round 15, lane E: clip.mjs spends skill points by default now; --nospend keeps these clips as they were made: the
+  // battle's hero has exactly the nodes of its tiers, a run's party none, and each stage uses its move at the tier named)
+  const a = ['tools/clip.mjs', file, '--port', port, '--secs', String(c.secs || 6), '--zoom', String(c.zoom || (c.battle ? 1.35 : 1.5)), '--seed', '5', '--eval', ev, '--nospend', ...(c.extra || [])];
   if (c.follow || !c.battle) a.push('--follow', c.follow || c.hero);
   if (c.q) a.push('--q', c.q);
   if (c.battle) a.push('--battle', c.battle, '--arena', c.arena || 'crypt', '--nodes', N(c.hero, c.t));
