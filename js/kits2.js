@@ -131,7 +131,7 @@ function trapped(w, e, dur) {
   if (!alive(e)) return;
   const d = e.def.boss ? dur * 0.4 : dur;
   onUnit(w, e, 'trapped', d, { tick(w2, u2) {
-    u2.rootT = Math.max(u2.rootT || 0, 0.06); u2.faceLockT = 0.06; u2.abilT = Math.max(u2.abilT || 0, 0.3);
+    addBuff(u2, { id: 'held', dur: 0.1, root: true }); u2.faceLockT = 0.06; u2.abilT = Math.max(u2.abilT || 0, 0.3);
     if (u2.kit) for (const k in u2.kit.cd) u2.kit.cd[k] = Math.max(u2.kit.cd[k], 0.3);
     if (u2.act && u2.act.type !== 'windup' && u2.act.type !== 'drink') u2.act = null;
   } });
@@ -588,50 +588,55 @@ export const ABILITIES2 = {
     },
     show: { far: true },
   },
-  // ----- Bandit
+  // ----- Bandit (round 13: "REDO... Don't like trait. Overall don't like hero": a new design, the lane's own; ids kept
+  // for saves). A thief who takes things off enemies: their weapons (Snatch), their footing (Bolas), their nerve (Stick
+  // 'Em Up), with a dirty combo to finish.
+  // Bolas (smokeBomb's slot): a spinning bolas at the enemy furthest off: it wraps its legs and down it goes
   smokeBomb: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 280 && foesNear(w, u, t.x, t.y, 90).length >= 2 ? 0.7 : 0),
+    score(w, u) { const e = foesNear(w, u, u.x, u.y, 320).filter((o) => !blocked(w, u.x, u.y, o.x, o.y) && dist(u.x, u.y, o.x, o.y) > 90); return e.length ? 0.45 + (e.some((o) => o.def.role === 'ranged') ? 0.25 : 0) : 0; },
     use(w, u, t, tier) {
-      if (!t) return; cast(u, 'throw', 0.35);
-      const r = tier >= 3 ? 115 : 85, dur = tier >= 3 ? 5 : 3;
-      shoot(w, u, ang(u, t), { kind: 'smokeBomb', speed: 420, r: 7, life: Math.min(0.7, dist(u.x, u.y, t.x, t.y) / 420), dmg: 1, knock: 0, land: (p) => {
-        puff(w, p.x, p.y, '#5A5560', 14, 140, 9, 0.6);
-        zone(w, { x: p.x, y: p.y, r, dur, kind: 'smoke', src: u, smoke: true, every: 0.2, tick(z) {
-          for (const e of foesNear(w, u, z.x, z.y, z.r)) { if (e.target && e.target.team !== e.team) e.target = null; addBuff(e, { id: 'smoked', dur: 0.45, blind: true, atkSpeed: tier >= 2 ? 0.65 : 1 }); }
-        } });
-      } });
+      const list = foesNear(w, u, u.x, u.y, 330).filter((o) => !blocked(w, u.x, u.y, o.x, o.y) && dist(u.x, u.y, o.x, o.y) > 60)
+        .sort((p, q) => (q.def.role === 'ranged' ? 1 : 0) - (p.def.role === 'ranged' ? 1 : 0) || dist(u.x, u.y, q.x, q.y) - dist(u.x, u.y, p.x, p.y)).slice(0, tier >= 2 ? 2 : 1);
+      if (!list.length && t) list.push(t); cast(u, 'throw', 0.4);
+      list.forEach((e, i) => after(u, 0.1 + i * 0.18, () => { if (!alive(e)) return;
+        shoot(w, u, ang(u, e), { kind: 'bolas', speed: 560, r: 10, life: 1, dmg: dmgOf(u, 0.6), knock: 0, extra: { home: e, turn: 6, onHit: (w2, p, x) => {
+          const d = (tier >= 3 ? 2 : 1.3) * (x.def.boss ? 0.35 : 1);
+          x.koT = Math.max(x.koT || 0, d); stun(w2, x, d); interrupt(w2, x); addBuff(x, { id: 'bolas', dur: d + 2, move: 0.6 });
+          k2(w2, { draw: 'bolasOn', unit: x, x: x.x, y: x.y, r: x.r, max: d + 0.3, ab: 'smokeBomb' }); textU(w2, x.x, x.y, x.r + 8, 'TRIPPED', '#FFE7A0', 0.9);
+          if (tier >= 3) snatch(w2, u, x);
+        } } }); }));
     },
     show: { far: true },
   },
+  // Dirty Trick (pickpocket's slot): three quick cuts and a kick that sends the enemy flying into its friends
   pickpocket: {
-    score(w, u, t) { if (!t) return 0; const g = dist(u.x, u.y, t.x, t.y) - u.r - t.r; return g > 20 && g < 200 && lineClear(w, u.x, u.y, t.x, t.y, u.r) ? 0.55 : 0; },
+    score: (w, u, t) => (inReach(u, t, 16) ? 0.5 + 0.15 * foesNear(w, u, t.x, t.y, 120).length : 0),
     use(w, u, t, tier) {
-      const a = t ? ang(u, t) : u.facing, robbed = new Set();
-      u.act = { type: 'dash', t: 0.32, max: 0.32, a }; u.invulnT = Math.max(u.invulnT, 0.32);
-      k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a, max: 0.45, col: '#C8453D' });
-      timer(u, 'pickpocket', 0.4, () => {
-        for (const e of foesNear(w, u, u.x, u.y, u.r + 14)) {
-          if (robbed.has(e)) continue; robbed.add(e);
-          hurt(w, e, dmgOf(u, 1.5), u, { knock: 60, kAngle: a + Math.PI / 2, noDodge: true, ab: 'pickpocket' });
-          if (!e.summon && !w.lab) scatterCoins(w, e.x, e.y, tier >= 2 ? 4 : 2, 0.7);
-          if (tier >= 2) addBuff(e, { id: 'robbed', dur: 3, move: 0.6 });
-          k2(w, { draw: 'coinPop', x: e.x, y: e.y, unit: e, r: e.vr, max: 0.6, ab: 'pickpocket' });
-          if (tierOf(u, 'pickpocket') < 3) return true;
-        }
+      if (!t) return;
+      for (let i = 0; i < 3; i++) after(u, i * 0.11, () => { if (!alive(t)) return; u.facing = ang(u, t); setAnim(u, 'swing', 0.12);
+        swingMark(w, u, u.r + u.def.range + 8, 1.3); hurt(w, t, dmgOf(u, 0.7), u, { knock: 20, noDodge: true, ab: 'pickpocket' }); if (tier >= 2) bleed(w, t, 18, u); });
+      after(u, 0.4, () => { if (!alive(t)) return; const a = ang(u, t); setAnim(u, 'thrust', 0.2);
+        hurt(w, t, dmgOf(u, 1.2), u, { knock: 640, kAngle: a, heavy: true, noDodge: true, stagger: tier >= 3 ? 45 : 0, ab: 'pickpocket' });
+        k2(w, { draw: 'headbutt', x: t.x - Math.cos(a) * t.r, y: t.y - Math.sin(a) * t.r, a, max: 0.4, ab: 'pickpocket' });
+        flung(w, u, t, 0.8, null, (o, e) => { hurt(w, o, dmgOf(u, 0.9), u, { knock: 380, kAngle: a, noDodge: true, stagger: tier >= 3 ? 45 : 0, ab: 'pickpocket' }); puff(w, o.x, o.y, '#E9DDC2', 6, 80, 5, 0.35); });
       });
     },
-    show: { far: true },
+    show: { single: false },
   },
+  // Stick 'Em Up (lowBlow's slot): the cutlass levelled at an enemy: hands up. It can't attack or use an ability while
+  // they're up, and everyone hits it harder
   lowBlow: {
-    score: (w, u, t) => (inReach(u, t, 20) && !(t.koT > 0) ? 0.5 + (foeWinding(w, t) ? 0.3 : 0) : 0),
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 220 && !isOn(w, t, 'handsUp') ? 0.45 + (t.elite || t.major ? 0.3 : 0) + (foeWinding(w, t) ? 0.2 : 0) : 0),
     use(w, u, t, tier) {
-      if (!t) return; u.facing = ang(u, t); cast(u, 'thrust', 0.3);
-      hurt(w, t, dmgOf(u, 1.3), u, { knock: 80, noDodge: true });
-      const d = (tier >= 2 ? 1.6 : 1) * (t.def.boss ? 0.4 : 1);
-      t.koT = Math.max(t.koT || 0, d); stun(w, t, d); interrupt(w, t);
-      k2(w, { draw: 'bonk', x: t.x, y: t.y, unit: t, r: t.vr, max: Math.max(0.5, d) });
+      if (!t) return; u.facing = ang(u, t); setAnim(u, 'thrust', 0.5);
+      const list = [t, ...(tier >= 2 ? foesNear(w, u, t.x, t.y, 110).filter((o) => o !== t).slice(0, 2) : [])];
+      for (const e of list) {
+        const d = (tier >= 3 ? 3.5 : 2.5) * (e.def.boss ? 0.3 : 1); interrupt(w, e);
+        onUnit(w, e, 'handsUp', d, { taken: (w2, u2, s2, a) => a * 1.25, tick(w2, u2) { u2.atkT = Math.max(u2.atkT, 0.2); u2.abilT = Math.max(u2.abilT || 0, 0.2); if (u2.kit) for (const k in u2.kit.cd) u2.kit.cd[k] = Math.max(u2.kit.cd[k], 0.2); addBuff(u2, { id: 'held', dur: 0.1, root: true }); } });
+        k2(w, { draw: 'handsUp', unit: e, x: e.x, y: e.y, r: e.vr, max: d, ab: 'lowBlow' });
+      }
+      k2(w, { draw: 'tauntMark', unit: t, x: t.x, y: t.y, r: t.vr, max: 0.8 });
     },
-    hook: { dealt(w, u, t, amt, o) { if (!o.dot && t.koT > 0 && tierOf(u, 'lowBlow') >= 3) { o.crit = true; return amt * 2; } return amt; } },
     show: { single: true },
   },
   // ----- Shade
@@ -1959,6 +1964,19 @@ function lob(w, u, x, y, kind, color, land) {
   w.projectiles.push({ kind, x: u.x + Math.cos(a) * u.r, y: u.y + Math.sin(a) * u.r, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: 6, team: u.team, owner: u, dmg: 0, o: {}, life: d / sp, a, noHit: true, color, land: () => land(x, y) });
 }
 
+// the Bandit's Snatch: its weapon flung out of its hand; it must walk over and pick it up before it can attack again
+function snatch(w, u, e) {
+  if (!alive(e) || e.def.boss || e.fixed || e.def.brain || isOn(w, e, 'snatched')) return;
+  const a = angleTo(u.x, u.y, e.x, e.y) + rrange(-0.8, 0.8), d = rrange(110, 160);
+  const x = clamp(e.x + Math.cos(a) * d, 30, w.W - 30), y = clamp(e.y + Math.sin(a) * d, 30, w.H - 30);
+  const f = k2(w, { draw: 'droppedWeapon', x, y, x0: e.x, y0: e.y, a, max: 5, team: e.team });
+  textU(w, e.x, e.y, e.r + 8, 'SNATCHED', '#FFD45A', 0.9);
+  onUnit(w, e, 'snatched', 5, { tick(w2, u2) {
+    u2.atkT = Math.max(u2.atkT, 0.2); if (f.t < 0.35) return;
+    u2.forcedGoal = { x, y };
+    if (dist(u2.x, u2.y, x, y) < u2.r + 10) { offUnit(u2, 'snatched'); u2.forcedGoal = null; f.max = f.t; setAnim(u2, 'ability', 0.3); }
+  } }, (u2) => { if (u2.forcedGoal && u2.forcedGoal.x === x) u2.forcedGoal = null; f.max = Math.min(f.max, f.t); });
+}
 // ---------------------------------------------------------------- traits
 export const TRAITS2 = {
   // Last Stand (round 13, the designer: "When last one in party gets a long unstoppable and haste buff, all abilities
@@ -2011,7 +2029,15 @@ export const TRAITS2 = {
     tick(w, u) { if (hpRatio(u) < 0.3) { u.stunT = 0; u.koT = 0; u.st.stagger = 0; } },
     dealt(w, u, t, amt) { return hpRatio(u) < 0.3 ? amt * 1.25 : amt; },
   },
-  lightFingers: { kill(w, u, v) { const c = v.def.coins; if (c && !v.summon) scatterCoins(w, v.x, v.y, Math.max(1, Math.round((c[0] + c[1]) / 4)), 0.8); } },
+  // Snatch (round 13, the Bandit redone: "Don't like trait"): every fourth blow tears the enemy's weapon out of its hand
+  // and flings it away; it can't attack until it has walked over and picked it up
+  snatch: {
+    hit(w, u, t, amt, o) {
+      if (o.dot || o.proc || o.shot || !alive(t)) return;
+      const k = u.kit; k.snatchN = (k.snatchN || 0) + 1; if (k.snatchN % 4) return;
+      snatch(w, u, t);
+    },
+  },
   fade: {
     evade(w, u) { const k = u.kit; if (w.time - (k.lastHurt ?? -9) > 3) { k.lastHurt = w.time; puff(w, u.x, u.y, '#5A4A7A', 10, 70, 6, 0.5); k.faded = w.time; return true; } return false; },
     taken(w, u, src, amt, o) { if (!o.dot) u.kit.lastHurt = w.time; return amt; },

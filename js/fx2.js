@@ -271,6 +271,12 @@ PROJ2.warhammer = (ctx, p, T, ang, sp) => {
   inked(ctx, () => roundRect(ctx, -2.4, -2, 4.8, 22, 2), '#7A4A28');
   inked(ctx, () => roundRect(ctx, -12, -13, 24, 13, 3), '#8E98A6'); ctx.fillStyle = '#C9D2DE'; ctx.fillRect(-10, -12, 20, 3.4);
 };
+// the Bandit's bolas: two weighted balls on a cord, whirling
+PROJ2.bolas = (ctx, p, T) => {
+  ctx.rotate(T * 22); const L = 15;
+  inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-L, 0); ctx.quadraticCurveTo(0, 5, L, 0); }, '#C9A070', 2.4);
+  inkDisc(ctx, -L, 0, 5.5, '#6E5E50'); inkDisc(ctx, L, 0, 5.5, '#6E5E50'); disc(ctx, -L - 1.5, -1.5, 1.8, '#A89888'); disc(ctx, L - 1.5, -1.5, 1.8, '#A89888');
+};
 PROJ2.smokeBomb = (ctx, p, T, ang) => {
   ctx.rotate(T * 10); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 8, 0, TAU); }, '#3A3440');
   ctx.fillStyle = '#6A6470'; ctx.beginPath(); ctx.arc(-2.5, -2.5, 3, 0, TAU); ctx.fill();
@@ -1039,6 +1045,34 @@ DRAW.hammerDown = (ctx, f, w, layer) => {
   ctx.save(); ctx.globalAlpha *= a; ctx.translate(f.x, f.y); ctx.rotate(f.a + Math.PI / 2);
   inked(ctx, () => roundRect(ctx, -2.6, -26, 5.2, 24, 2), '#7A4A28'); inked(ctx, () => roundRect(ctx, -13, -4, 26, 14, 3), '#8E98A6');
   ctx.restore();
+};
+
+// Bolas: the cord wound round its legs, the two balls swinging
+DRAW.bolasOn = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const a = life(f, 0.05, 0.25), y = u.y + u.r * 0.45;
+  ctx.save(); ctx.globalAlpha *= a;
+  for (let i = 0; i < 2; i++) inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(u.x, y + i * 5 - 2, u.r * 0.75, u.r * 0.28, 0.15, 0, TAU); }, '#C9A070', 2.6);
+  for (const sd of [-1, 1]) { const b = Math.sin(f.t * 6 + sd) * 0.5; inkDisc(ctx, u.x + sd * u.r * 0.8 + Math.sin(b) * 6, y + 8 + Math.cos(b) * 4, 5, '#6E5E50'); }
+  ctx.restore();
+};
+// Stick 'Em Up: two little hands raised over its head, shaking
+DRAW.handsUp = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) { ended(f, true); return; } ended(f, !hasHook(u, 'handsUp'));
+  const [vx, vy] = upVec(), up = u.vr + 10 + 4 * easeOut(k01(f.t / 0.2)), sh = Math.sin(f.t * 30) * 1.5;
+  ctx.save(); ctx.globalAlpha *= life(f, 0.1, 0.2);
+  upright(ctx, u.x + vx * up, u.y + vy * up, () => { for (const sd of [-1, 1]) { ctx.save(); ctx.translate(sd * 13 + sh, 0); ctx.rotate(sd * 0.25);
+    inked(ctx, () => { roundRect(ctx, -5, -6, 10, 12, 4); }, '#F2D2B0'); for (let i = -1; i <= 1; i++) inked(ctx, () => roundRect(ctx, i * 3.2 - 1.4, -12, 2.8, 7, 1.4), '#F2D2B0'); ctx.restore(); } });
+  ctx.restore();
+};
+// Snatch: the enemy's weapon spun out of its hand, lying on the floor where it landed until it is picked up
+DRAW.droppedWeapon = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / 0.35), [vx, vy] = upVec(), h = Math.sin(k * Math.PI) * 36;
+  const x = f.x0 + (f.x - f.x0) * k + vx * h, y = f.y0 + (f.y - f.y0) * k + vy * h, rot = k < 1 ? f.t * 20 : f.a + 0.6;
+  ctx.save(); ctx.globalAlpha *= life(f, 0.02, 0.2); ctx.translate(x, y); ctx.rotate(rot);
+  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -16); ctx.lineTo(3.5, 4); ctx.lineTo(-3.5, 4); ctx.closePath(); }, '#C9D2DE');
+  inked(ctx, () => roundRect(ctx, -7, 4, 14, 3.4, 1.5), '#8A5A30'); inked(ctx, () => roundRect(ctx, -1.8, 7, 3.6, 7, 1.5), '#6E4A2A');
+  ctx.restore();
+  if (k >= 1 && Math.sin(f.t * 8) > 0.3) lit(ctx, () => glowDisc(ctx, f.x, f.y, 16, '#FFD45A', 0.35));
 };
 
 export function drawK2(ctx, f, w, layer) { const d = DRAW[f.draw]; if (d) { ctx.save(); d(ctx, f, w, layer); ctx.restore(); } }

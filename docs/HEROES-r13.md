@@ -123,3 +123,20 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
 - Skull Splitter: "Should throw hammer forward then leap towards it doing a slam. Hammer shocks anything hit." -> the
   hammer is hurled ahead (shock 30 on all it passes, yellow sparks), lies where it fell, he leaps after it and slams
   there (1.9x). II staggers, III wider and stuns. Clip: warhelm-skullSplitter.
+
+### Bandit (REDO)
+- "Don't like trait. Overall don't like hero"; Cutlass: "Animation is weird. Doesnt even hit." -> a new kit, my design
+  (ids kept for saves; the art is the same: a thief). The idea: he takes things off enemies.
+  - Cutlass: reach 22 (was 18) and a wider arc, so the slash reaches what it's swung at. Clip: rogueBandit-attack.
+  - Trait **Snatch** (id snatch): every fourth blow tears the enemy's weapon out of its hand and flings it 110-160 away
+    (it spins through the air and lies glinting); the enemy can't attack until it walks over and picks it up (5 s at
+    most; not bosses). Book scene added.
+  - **Bolas** (smokeBomb's slot): a whirling bolas at the enemy furthest off, a shooter first: tripped 1.3 s (KO), then
+    slowed. II two bolas; III down 2 s and it drops its weapon. Clip: rogueBandit-smokeBomb.
+  - **Dirty Trick** (pickpocket's slot): three quick cuts and a kick (0.7x three times, then 1.2x, knock 640) that
+    sends the enemy into its friends (each one it ploughs into is hit). II the cuts bleed; III staggers. Clip:
+    rogueBandit-pickpocket.
+  - **Stick 'Em Up** (lowBlow's slot): the cutlass levelled at an enemy: hands up (two little hands shaking over its
+    head) for 2.5 s: it can't attack, use an ability or walk, and takes 25% more from everyone. II two more near it;
+    III 3.5 s. Clip: rogueBandit-lowBlow.
+  Three different jobs: catch a runner or shooter, burst one and bowl its friends, shut one down for the party.
