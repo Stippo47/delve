@@ -72,7 +72,7 @@ export const HEROES = {
     abilities: [
       { id: 'backstab', name: 'Backstab', cd: 11, desc: 'Steps into the shadows and appears behind the target.',
         tiers: ['A big hit from behind.', 'Poisons too.', 'A kill resets it.'] },
-      { id: 'dash', name: 'Dash', cd: 3.2, desc: 'A burst of speed: in at a lone target, or out of reach.',
+      { id: 'dash', name: 'Dash', cd: 3.2, desc: 'A burst of speed: in at an enemy busy with someone else, or out of reach.',
         tiers: ['One dash.', 'Leaves smoke: enemies lose sight of her.', 'Two dashes before it recharges.'] },
       { id: 'fanOfKnives', name: 'Fan of Knives', cd: 11, desc: 'Spins once, throwing knives one after another all the way round.',
         tiers: ['Eight knives.', 'They poison.', 'Twelve knives, and they go through.'] },
@@ -82,7 +82,7 @@ export const HEROES = {
   wildmane: {
     name: 'Wildmane', art: 'art/heroes/wildmane.svg', role: 'melee', unlock: { gems: 2 },
     blurb: 'Big sword, bigger temper.',
-    stats: { hp: 135, speed: 62, r: 33, vr: 23, turn: 3.6, accel: 200, face: 3.8, mass: 1.8, range: 26, atkCd: 1.25, dmg: 15, knock: 140, arc: 2.1 }, // (round 13: hp 125 -> 135; she and the Berserker went down most at tier I)
+    stats: { hp: 145, speed: 62, r: 33, vr: 23, turn: 3.6, accel: 200, face: 3.8, mass: 1.8, range: 26, atkCd: 1.25, dmg: 15, knock: 140, arc: 2.1 }, // (round 13: hp 125 -> 145; she and the Berserker went down most at tier I)
     attack: { name: 'Greatsword', anim: 'swing', desc: 'A wide sword swing.' },
     abilities: [
       { id: 'rage', name: 'Rage', cd: 12, desc: 'Takes less damage and attacks and moves faster for a while.',
@@ -112,7 +112,7 @@ export const HEROES = {
   granny: {
     name: 'Granny Reaper', art: 'art/heroes/granny.svg', role: 'melee', unlock: { gems: 3 },
     blurb: 'Scythe. Sweeps all the way round.',
-    stats: { hp: 110, speed: 54, r: 31, vr: 22, turn: 3.6, accel: 180, face: 3.6, mass: 1.2, range: 34, atkCd: 1.5, dmg: 14, arc: 2.8 }, // (round 11: hp 95 -> 110, dmg 12 -> 14; the weakest in the batches)
+    stats: { hp: 118, speed: 54, r: 31, vr: 22, turn: 3.6, accel: 180, face: 3.6, mass: 1.2, range: 34, atkCd: 1.5, dmg: 14, arc: 2.8 }, // (round 11: hp 95 -> 110, dmg 12 -> 14; the weakest in the batches)
     attack: { name: 'Scythe', anim: 'swing', desc: 'A long sweep in front.' },
     abilities: [
       { id: 'reap', name: 'Reap', cd: 8, desc: 'She spins, sweeping all the way round her; a red orb flies home from each one hit.',
@@ -193,10 +193,10 @@ export const HEROES = {
     attack: { name: 'Sour note', anim: 'cast', desc: 'Strums four slow notes in a spread; every one goes through.' },
     abilities: [
       { id: 'warSong', name: 'War Song', cd: 12, desc: 'Allies near attack faster for a while.',
-        tiers: ['+40% for 8s.', '+50%.', 'They move faster too.'] },
+        tiers: ['+50% for 8s.', '+60%.', 'They move faster too.'] },
       { id: 'lullaby', name: 'Lullaby', cd: 13, desc: 'Enemies in front grow slow and sleepy.',
         tiers: ['Slows for 4s.', 'Puts the weakest to sleep.', 'Wider, and puts everyone it reaches to sleep.'] },
-      { id: 'encore', name: 'Encore', cd: 20, desc: 'An ally\'s ability is ready again.',
+      { id: 'encore', name: 'Encore', cd: 16, desc: 'An ally\'s ability is ready again.',
         tiers: ['One ally.', 'Heals them 10% too.', 'Two allies.'] },
     ],
     trait: { id: 'rhythm', name: 'Rhythm', desc: 'Allies near the bard move 10% faster and attack 8% faster.' },

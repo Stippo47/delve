@@ -229,7 +229,9 @@ export const ABILITIES = {
       if (!t) return 0;
       const close = foesNear(w, u, u.x, u.y, 60).length, gap = dist(u.x, u.y, t.x, t.y) - u.r - t.r;
       if (u.mode === 'retreat' && close) return 0.95;
-      return u.mode !== 'retreat' && gap > 130 && gap < 320 && lineClear(w, u.x, u.y, t.x, t.y, u.r) ? 0.8 : 0;
+      // (round 13: in only at one that is busy with someone else, as her trait wants: switched off, Dash made no
+      // difference or a small one for the better at both tiers, before and after: she dashed in alone and went down)
+      return u.mode !== 'retreat' && gap > 130 && gap < 320 && t.target && t.target !== u && lineClear(w, u.x, u.y, t.x, t.y, u.r) ? 0.8 : 0;
     },
     use(w, u, t, tier) {
       const close = foesNear(w, u, u.x, u.y, 60);
@@ -314,7 +316,7 @@ export const ABILITIES = {
       // (round 13: the reach the scythe's own length sweeps, u.r + 46 / 62; it was 60 / 85, and drawn far out past the blade)
       const r = u.r + (tier >= 2 ? 62 : 46); setAnim(u, 'spin', 0.5); u.spin = { t0: w.time, dur: 0.5, dir: 1 };
       fx(w, { type: 'ring', x: u.x, y: u.y, r, color: '#E8E2D0', max: 0.5, a: u.facing, unit: u });
-      let n = 0; for (const e of foesNear(w, u, u.x, u.y, r)) { hurt(w, e, dmgOf(u, 2.6), u, { knock: 120, kAngle: ang(u, e) }); fx(w, { type: 'soulOrb', x: e.x, y: e.y, to: u, delay: 0.12 + n * 0.1, max: 1.1 }); n++; }
+      let n = 0; for (const e of foesNear(w, u, u.x, u.y, r)) { hurt(w, e, dmgOf(u, 2.9), u, { knock: 120, kAngle: ang(u, e) }); fx(w, { type: 'soulOrb', x: e.x, y: e.y, to: u, delay: 0.12 + n * 0.1, max: 1.1 }); n++; }
       if (tier >= 3 && n) heal(w, u, u.maxHp * 0.05 * n, u);
     },
   },
@@ -499,7 +501,7 @@ export const ABILITIES = {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 320).length >= 2 && friendsNear(w, u, u.x, u.y, 220).length >= 1 ? 0.7 : 0),
     use(w, u, t, tier) {
       cast(u, 'cast', 0.6);
-      for (const a of [u, ...friendsNear(w, u, u.x, u.y, 220)]) { addBuff(a, { id: 'warSong', dur: 8, atkSpeed: tier >= 2 ? 1.5 : 1.4, move: tier >= 3 ? 1.2 : 1, glow: '#FFD27A' }); puff(w, a.x, a.y, '#FFD27A', 6, 70, 4, 0.5); }
+      for (const a of [u, ...friendsNear(w, u, u.x, u.y, 220)]) { addBuff(a, { id: 'warSong', dur: 8, atkSpeed: tier >= 2 ? 1.6 : 1.5, move: tier >= 3 ? 1.2 : 1, glow: '#FFD27A' }); puff(w, a.x, a.y, '#FFD27A', 6, 70, 4, 0.5); }
     },
   },
   lullaby: {
@@ -581,8 +583,8 @@ export const ABILITIES = {
         if (!alive(t) || dist(u.x, u.y, t.x, t.y) > 280) { u.act = null; return; }
         hold(u, t, false);
         const got = hurt(w, t, dmgOf(u, tier >= 3 ? 0.55 : 0.4), u, { dot: true, color: '#9BE07A' });
-        heal(w, u, got * 0.6, u); // (round 11: 60% of what it takes, not all of it; friends 30%, not 50%)
-        if (tier >= 2) for (const a of friendsNear(w, u, u.x, u.y, 140)) heal(w, a, got * 0.3, u);
+        heal(w, u, got * 0.5, u); // (round 11: 60% of what it takes, not all of it; friends 30%, not 50%. Round 13: 50% and 25%; he was 1.3 to 1.9 rooms over the average at tier I)
+        if (tier >= 2) for (const a of friendsNear(w, u, u.x, u.y, 140)) heal(w, a, got * 0.25, u);
         // three thinner tendrils bounce off the target onto those round it, each a quarter as strong (round 13: "little
         // tendrils should wait for the main one to make contact": the ribbon takes 0.3 s to reach it)
         if (u.act && u.act.max - u.act.t >= 0.4) for (const e of opponents(w, u).filter((o) => o !== t && dist(o.x, o.y, t.x, t.y) < 150).slice(0, 3)) {
