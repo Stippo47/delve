@@ -1356,6 +1356,68 @@ DRAW.hexPop = (ctx, f, w, layer) => {
   ctx.restore();
 };
 
+// ---------------------------------------------------------------- the Warlock and the Cultist (round 13)
+// the pact bolt: a magenta eye like the one on his sceptre, a gold lid round it, a flame tail; it looks where it flies
+PROJ2.eyeBolt = (ctx, p, T, ang, sp) => {
+  const s2 = p.small ? 0.65 : 1; ctx.save(); ctx.rotate(ang); trail(ctx, sp, 34 * s2, 9 * s2, '#E05AB8'); ctx.restore();
+  lit(ctx, () => glowDisc(ctx, 0, 0, 22 * s2, '#E05AB8', 0.5)); ctx.rotate(ang); ctx.scale(s2, s2);
+  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-11, 0); ctx.quadraticCurveTo(0, -11, 11, 0); ctx.quadraticCurveTo(0, 11, -11, 0); ctx.closePath(); }, '#F2C14E');
+  disc(ctx, 0, 0, 6.5, '#E05AB8'); disc(ctx, 1.5, 0, 2.6, '#2B2230'); disc(ctx, -1.5, -2.5, 1.4, '#FFFFFF');
+};
+IMPACT2D.eyeBolt = (ctx, m, k) => { const e = easeOut(k); if (k < 0.25) lit(ctx, () => glowDisc(ctx, m.x, m.y, 24, '#E05AB8', 0.6 * (1 - k / 0.25))); ctx.save(); ctx.globalAlpha *= 1 - k; for (let i = 0; i < 5; i++) { const b = m.a + Math.PI + (i - 2) * 0.6, d = 4 + 16 * e; upright(ctx, m.x + Math.cos(b) * d, m.y + Math.sin(b) * d, () => flame(ctx, 0, 0, 4.5 * (1 - 0.6 * k), '#E05AB8', '#FFC8E8')); } ctx.restore(); };
+// the Cultist's shadow bolt: a violet streak with a dark core
+PROJ2.shadowBolt = (ctx, p, T, ang, sp) => { ctx.save(); ctx.rotate(ang); trail(ctx, sp, 38, 9, '#9A5CC8'); ctx.restore(); lit(ctx, () => glowDisc(ctx, 0, 0, 18, '#9A5CC8', 0.55)); inkDisc(ctx, 0, 0, 6.5, '#5A2A80'); disc(ctx, -1.5, -1.5, 2.2, '#D9C8FF'); };
+// Eldritch Beam: a writhing magenta ray, an inked core and a glow, thicker as it heats; an open eye where it starts
+DRAW.eldritchRay = (ctx, f, w, layer) => {
+  if (layer !== 'air' || !alive2(f.from) || !alive2(f.to)) return; const p = f.from, q = f.to, a = Math.atan2(q.y - p.y, q.x - p.x), L = Math.hypot(q.x - p.x, q.y - p.y), heat = Math.min(1, (f.heat || 0) / 10), wd = 5 + 7 * heat, al = life(f, 0.1, 0.15);
+  const pts = []; for (let i = 0; i <= 16; i++) { const k = i / 16, wob = Math.sin(k * 14 - f.t * 22) * (4 + 4 * heat) * Math.sin(k * Math.PI); pts.push([p.x + Math.cos(a) * L * k - Math.sin(a) * wob, p.y + Math.sin(a) * L * k + Math.cos(a) * wob]); }
+  const path = () => { ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); };
+  ctx.save(); ctx.globalAlpha *= al;
+  lit(ctx, () => { ctx.globalAlpha *= 0.45; ctx.strokeStyle = '#E05AB8'; ctx.lineWidth = wd * 3; ctx.lineCap = 'round'; path(); ctx.stroke(); });
+  inkLine(ctx, path, '#F27ACB', wd); ctx.strokeStyle = '#FFE0F2'; ctx.lineWidth = wd * 0.35; path(); ctx.stroke();
+  lit(ctx, () => glowDisc(ctx, q.x, q.y, 20 + 16 * heat, '#E05AB8', 0.6));
+  ctx.restore();
+};
+// a magenta burst: the ray's end, Awaken's exploding blows, Dark Bargain's bursting ones
+DRAW.eyeBurst = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
+  if (k < 0.25) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 1.3, '#FFC8E8', 0.8 * (1 - k / 0.25)));
+  ctx.save(); ctx.globalAlpha *= 1 - k * k; const n = f.small ? 6 : 10;
+  for (let i = 0; i < n; i++) { const b = i / n * TAU + hash(i, f.x | 0), d = f.r * (0.25 + 0.75 * e); upright(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, () => flame(ctx, 0, 0, (f.small ? 4 : 6) * (1 - 0.6 * k), '#E05AB8', '#FFC8E8')); }
+  if (!f.small) inked(ctx, () => star(ctx, f.x, f.y, f.r * 0.35 * (1 - k), 8, 0.4, 0.2), '#FFE0F2');
+  ctx.restore();
+};
+// the imp going into him, or out of him: a streak of magenta fire
+DRAW.impInto = (ctx, f, w, layer) => { if (layer !== 'air' || !f.from || !f.to) return; const k = k01(f.t / f.max), a = Math.atan2(f.to.y - f.from.y, f.to.x - f.from.x), L = Math.hypot(f.to.x - f.from.x, f.to.y - f.from.y); ctx.save(); ctx.globalAlpha *= 1 - k; K.streak(ctx, f.from.x, f.from.y, a, L * k * 0.7, L * Math.min(1, k * 2), 8, '#E05AB8', '#FFE0F2'); ctx.restore(); };
+// Awaken: the demon: a big black-and-red blade held out from his hand (swung with his arm), horns of flame, embers
+DRAW.demonForm = (ctx, f, w, layer) => {
+  const u = f.unit; if (!alive2(u) || !u.kit || u.kit.demon !== f.D) { ended(f, true); return; } if (layer !== 'air') return;
+  const an = u.anim, sw = an && an.kind === 'swing' ? Math.sin(Math.min(1, an.t / an.dur) * Math.PI) : 0, b = u.facing - 0.9 + sw * 1.9, hx = u.x + Math.cos(u.facing + 0.6) * u.r * 0.7, hy = u.y + Math.sin(u.facing + 0.6) * u.r * 0.7;
+  ctx.save(); ctx.translate(hx, hy); ctx.rotate(b);
+  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(4, -4); ctx.lineTo(54, -7); ctx.lineTo(66, 0); ctx.lineTo(54, 7); ctx.lineTo(4, 4); ctx.closePath(); }, '#3A1A2A');
+  ctx.fillStyle = '#E0304A'; ctx.beginPath(); ctx.moveTo(8, -1.5); ctx.lineTo(56, -2.5); ctx.lineTo(62, 0); ctx.lineTo(56, 2.5); ctx.lineTo(8, 1.5); ctx.closePath(); ctx.fill();
+  inked(ctx, () => roundRect(ctx, -3, -9, 6, 18, 2), '#8A1E28'); inked(ctx, () => roundRect(ctx, -12, -2.5, 10, 5, 2), '#3A1A2A');
+  ctx.restore();
+  lit(ctx, () => glowDisc(ctx, u.x, u.y, u.vr * 1.6, '#E0304A', 0.18 + 0.06 * Math.sin(f.t * 8)));
+  const [vx, vy] = upVec(); for (let i = 0; i < 4; i++) { const ph = (f.t * 1.2 + i / 4) % 1, a2 = hash(i, u.id) * TAU; ctx.save(); ctx.globalAlpha *= 1 - ph; disc(ctx, u.x + Math.cos(a2) * u.vr * 0.8 + vx * ph * 30, u.y + Math.sin(a2) * u.vr * 0.6 + vy * ph * 30, 2.4, '#FF6A3A'); ctx.restore(); }
+};
+DRAW.demonBlink = (ctx, f, w, layer) => { if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k); if (k < 0.3) lit(ctx, () => glowDisc(ctx, f.x, f.y, 40, '#E0304A', 0.7 * (1 - k / 0.3))); ctx.save(); ctx.globalAlpha *= 1 - k; for (let i = 0; i < 7; i++) { const b = i / 7 * TAU, d = 8 + 26 * e; upright(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, () => flame(ctx, 0, 0, 5 * (1 - k), '#B0204A', '#FF8A7A')); } ctx.restore(); };
+// blood drawn from one to another (Dark Bargain into the imp; Blood Rite back into the Cultist): red drops along the way
+DRAW.bloodTo = (ctx, f, w, layer) => {
+  if (layer !== 'air' || !f.from || !f.to) return; const k = k01(f.t / f.max), p = f.from, q = f.to;
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  for (let i = 0; i < 6; i++) { const ph = clamp(k * 1.6 - i * 0.1, 0, 1); if (ph <= 0 || ph >= 1) continue; const x = p.x + (q.x - p.x) * ph, y = p.y + (q.y - p.y) * ph - Math.sin(ph * Math.PI) * 20; inkDisc(ctx, x, y, 4 - i * 0.3, i % 2 ? '#C8453D' : '#8A1E28'); }
+  ctx.restore();
+};
+// Sacrifice: the dagger's killing cut, a red crescent, and blood thrown off
+DRAW.sacrifice = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
+  if (k < 0.25) lit(ctx, () => glowDisc(ctx, f.x, f.y, 50, '#C8453D', 0.7 * (1 - k / 0.25)));
+  ctx.save(); ctx.globalAlpha *= 1 - k * k; K.streak(ctx, f.x - Math.cos(f.a + 1.2) * 30, f.y - Math.sin(f.a + 1.2) * 30, f.a + 1.2, 0, 60 * Math.min(1, k * 4), 7 * (1 - k) + 2, '#C8453D', '#FFE0DA');
+  for (let i = 0; i < 8; i++) { const b = f.a + (hash(i, 3) - 0.5) * 2.4, d = 8 + 40 * e; inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 3.5 * (1 - 0.6 * k), i % 2 ? '#C8453D' : '#8A1E28'); }
+  ctx.restore();
+};
+
 export function drawK2(ctx, f, w, layer) { const d = DRAW[f.draw]; if (d) { ctx.save(); d(ctx, f, w, layer); ctx.restore(); } }
 
 // ---------------------------------------------------------------- signatures at the cast

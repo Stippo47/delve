@@ -344,7 +344,9 @@ const TRAIT_SCENE = {
   lastStand: { words: 'LAST STAND' },
   returnThrust: { words: 'wound up: let go' },
   snatch: { words: 'weapon snatched' },
-  dirtIn: { words: 'dirt rubbed in', abilities: true }, // (lane H2, round 13: the new heroes' new traits)
+  dirtIn: { words: 'dirt rubbed in', abilities: true },
+  familiar: { words: 'an imp' },
+  bloodRite: { words: 'blood heals', abilities: true }, // (lane H2, round 13: the new heroes' new traits)
   grace: { words: '3rd blow: crit' },
   skyborn: { words: 'no roots', hitSt: { entangle: 45 } },
   phalanx: { words: 'ally near: -10%' },

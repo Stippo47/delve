@@ -265,3 +265,40 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
   they are ridding it. Not targetable when flying" -> she rises high on the broom (drawn under her body, the handle out
   in front, the bristles behind, wind lines), circles the enemies for 2.5 s (III 3.5 s) dropping hex bombs (0.9x, a
   little curse; II more often); nothing can pick her out while she flies. Clip: witch-broomRide.
+
+### Warlock (IDK)
+- Trait: "Has a small imp always with him. Follows closely. If it dies it will respawn after a short cooldown." ->
+  **Familiar** (id familiar): an imp summon (the Ember Deep's imp art) darts round his shoulder and throws little eye
+  bolts at what he fights; if it falls another climbs out of the floor 8 s later. Book scene added.
+- Pact bolt: "Should return back to him. Make look like the eye on his sceptre. Make the imp shoot a smaller version."
+  -> a magenta eye with a gold lid and a flame tail; it flies out through up to three enemies and comes back to his
+  hand, hitting on the way back (0.8x out, 0.48x back); a third heals him. The imp's are the same, smaller. Clip:
+  warlock-attack.
+- Eldritch Beam: "Doesnt look good. Should deal kb. At the end it should burst. No second ray. Ray should come from imp."
+  -> a writhing ray (inked core, glow, thicker as it heats) from his imp (from him if the imp is gone), shoving the
+  target back every tick; after 2.5 s it bursts (1.6x round it). The second ray is gone (III: a bigger burst). Clip:
+  warlock-eldritchBeam.
+- Summon Imp: "Change to awaken. Imp enters his body turning him into a stronger version of himself. Becomes melee with a
+  large demonic sword, can teleport and does a large melee swing that explodes on hit targets, can spit fireballs. Kills
+  resets duration in form." -> **Awaken** (id summonImp): the imp streaks into him; for 8 s (II 11 s) he is melee with a
+  big black-and-red blade (drawn in his hand, swung with it), 1.7x blows in a wide arc that explode on what they hit,
+  a blink to his foe every 2.6 s, fireballs at those further off; every kill starts the time again; a dark red wash and
+  embers. III bigger explosions that burn. A real demon sprite would be **art lane**. Clip: warlock-summonImp.
+- Dark Bargain: "Gives 20% of his max hp go to his imp. Gets a huge attack speed boost for both of them and attack does
+  aoe." -> a fifth of his health flows into the imp (blood drops between them); both strike 1.8x as fast for 6 s (II 8 s)
+  and every blow bursts round what it hits. III the imp grows on the blood (more health). Clip: warlock-darkBargain.
+
+### Cultist
+- Trait: "Don't like trait. Should heal when they trigger a blood burst" -> **Blood Rite** (id bloodRite): every bleeding
+  he started that bursts (the statuses lane's haemorrhage) heals him 8% (blood drops flow back to him).
+- Shadow bolt: "Does a dagger swipe when close, and shadow bolt when far. Dagger applies bleed. If the bolt hits a
+  bleeding target they instantly burst." -> within 34 a dagger swipe (1.1x, 26 bleeding); further, a violet bolt; a bolt
+  on anything bleeding bursts it at once. Clip: cultist-attack.
+- Blood Pact: "Meh. Applies bleed to self to give everyone becomes enraged." -> he cuts himself (45 bleeding on him) and
+  his friends near are enraged (Rage: +30% damage, II +40%, quicker blows; III lifesteal). Clip: cultist-bloodPact.
+- Ritual Circle: "They can't leave circle. At max level. Applied bleed instead." -> it bleeds what stands in it (13 every
+  0.3 s) instead of cursing; III nothing caught inside can step out (held at its edge). Clip: cultist-ritualCircle.
+- Soul Candle: "Sacrifice. Dashes at enemy on low hp. Instantly kills them and heals. At lvl 3 spins and applies bleed to
+  everyone near." -> **Sacrifice** (id soulCandle): a bound at an enemy below 25% (II 35%) and the dagger finishes it
+  (a boss, major or mini-boss is cut deep instead: 4x); he heals 15%; III he spins as he lands, blood flung out, 50
+  bleeding on everything near. Clip: cultist-soulCandle.

@@ -1066,90 +1066,136 @@ export const ABILITIES2 = {
     },
     show: { far: false, secs: 4 },
   },
-  // ----- Warlock
+  // ----- Warlock (round 13: his trait gives him an imp that is always with him: TRAITS2.familiar)
+  // Eldritch Beam (round 13: "Doesnt look good. Should deal kb. At the end it should burst. No second ray. Ray should come
+  // from imp."): a writhing magenta ray from his imp (from him if it is gone), hotter the longer it holds, shoving the
+  // target back; at the end it bursts
   eldritchBeam: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 250 && !blocked(w, u.x, u.y, t.x, t.y) ? 0.55 + (t.elite || t.def.boss ? 0.2 : 0) : 0),
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 260 && !blocked(w, u.x, u.y, t.x, t.y) ? 0.55 + (t.elite || t.def.boss ? 0.2 : 0) : 0),
     use(w, u, t, tier) {
-      if (!t) return; cast(u, 'cast', 2.5);
-      const second = tier >= 3 ? opponents(w, u).filter((o) => o !== t && dist(o.x, o.y, t.x, t.y) < 160)[0] : null;
-      const f1 = k2(w, { draw: 'ebeam', from: u, to: t, x: u.x, y: u.y, max: 2.6, ab: 'eldritchBeam' });
-      const f2 = second ? k2(w, { draw: 'ebeam', from: t, to: second, x: t.x, y: t.y, max: 2.6, thin: true, ab: 'eldritchBeam' }) : null;
+      if (!t) return; cast(u, 'cast', 2.4);
+      const imp = mine(w, u, 'warlockImp')[0] || null, from = imp || u;
+      const f1 = k2(w, { draw: 'eldritchRay', from, to: t, x: from.x, y: from.y, max: 2.6, heat: 0, ab: 'eldritchBeam' });
+      if (imp) imp.beamT = w.time + 2.5;
       let n = 0;
       u.act = { type: 'channel', t: 2.5, max: 2.5, target: t, every: 0.25, acc: 0, tick: () => {
-        if (!alive(t) || dist(u.x, u.y, t.x, t.y) > 300) { u.act = null; f1.max = f1.t; if (f2) f2.max = f2.t; return; }
-        n++; const m = 1 + n * (tier >= 2 ? 0.35 : 0.2); f1.heat = n;
-        hurt(w, t, dmgOf(u, 0.3) * m, u, { dot: true, color: '#E05AB8' });
-        if (second && alive(second)) hurt(w, second, dmgOf(u, 0.15) * m, u, { dot: true, color: '#E05AB8' });
+        const src = imp && alive(imp) ? imp : u;
+        if (!alive(t) || dist(src.x, src.y, t.x, t.y) > 320) { u.act = null; f1.max = f1.t; return; }
+        n++; const m = 1 + n * (tier >= 2 ? 0.3 : 0.18); f1.heat = n;
+        hurt(w, t, dmgOf(u, 0.36) * m, u, { dot: true, color: '#E05AB8', ab: 'eldritchBeam' }); shove(t, angleTo(src.x, src.y, t.x, t.y), 70);
+        if (n === 10) { f1.max = f1.t + 0.05; const R = tier >= 3 ? 95 : 70; k2(w, { draw: 'eyeBurst', x: t.x, y: t.y, r: R, max: 0.55, ab: 'eldritchBeam' });
+          for (const e of foesNear(w, u, t.x, t.y, R)) hurt(w, e, dmgOf(u, 1.6), u, { knock: 360, kAngle: angleTo(t.x, t.y, e.x, e.y), heavy: true, noDodge: true, ab: 'eldritchBeam' }); w.shake = Math.max(w.shake, 6); }
       } };
     },
     show: { far: true },
   },
+  // Awaken, in Summon Imp's slot (round 13: "Change to awaken. Imp enters his body turning him into a stronger version of
+  // himself. Becomes melee with a large demonic sword, can teleport and does a large melee swing that explodes on hit
+  // targets, can spit fireballs. Kills resets duration in form."); id kept
   summonImp: {
-    score: (w, u) => (foesNear(w, u, u.x, u.y, 380).length >= 2 && !w.units.some((o) => o.summonBy === u && alive(o)) ? 0.65 : 0),
+    score: (w, u) => (!u.kit.demon && foesNear(w, u, u.x, u.y, 300).length >= 2 ? 0.7 : 0),
     use(w, u, t, tier) {
-      cast(u, 'ability', 0.8);
-      const spots = []; for (let i = 0; i < (tier >= 3 ? 2 : 1); i++) { const a = u.facing + (i ? -1 : 1) * 0.8; spots.push({ x: clamp(u.x + Math.cos(a) * 60, 30, w.W - 30), y: clamp(u.y + Math.sin(a) * 60, 30, w.H - 30) }); }
-      for (const p of spots) k2(w, { draw: 'gate', x: p.x, y: p.y, r: 30, max: 1.1 });
-      after(u, 0.7, () => { for (const p of spots) {
-        const s = spawn(w, 'imp', p.x, p.y, { team: u.team, scale: tier >= 2 ? 1.2 : 1, hpMul: tier >= 2 ? 2 : 1.2 });
-        s.summon = true; s.summonBy = u; s.lifeT = 15; s.aggro = true; s.dmgMul = u.dmgMul * (tier >= 2 ? 1.3 : 1);
-      } });
+      const dur = tier >= 2 ? 11 : 8, human = u.def, imp = mine(w, u, 'warlockImp')[0];
+      if (imp) { k2(w, { draw: 'impInto', from: imp, to: u, x: imp.x, y: imp.y, max: 0.4 }); imp.hidden = true; imp.ethereal = true; imp.inHim = true; }
+      u.def = { ...human, role: 'melee', range: 34, atkCd: 0.85, dmg: human.dmg * 1.7, knock: 260, arc: 2.6, weapon: 'great', attackAnim: 'swing', keep: 0, speed: human.speed * 1.15, style: { ...(human.style || {}), glow: '#FF3A5A' } };
+      const D = u.kit.demon = { human, until: w.time + dur, dur, imp, blinkT: 1.2, spitT: 0.8 };
+      w.shake = Math.max(w.shake, 6); setAnim(u, 'ability', 0.6);
+      addBuff(u, { id: 'demon', dur: 60, knockImmune: true, wash: (T) => ['#B0204A', 0.3 + 0.08 * Math.sin(T * 7)] });
+      k2(w, { draw: 'demonForm', unit: u, x: u.x, y: u.y, r: u.vr, max: 60, D });
     },
+    hook: {
+      kill(w, u, v) { const D = u.kit.demon; if (D) { D.until = w.time + D.dur; textU(w, u.x, u.y, u.r + 10, 'AGAIN', '#FF5A7A', 0.9); } },
+      hit(w, u, t, amt, o) {
+        const D = u.kit.demon; if (!D || o.dot || o.proc || o.shot) return;
+        const R = tierOf(u, 'summonImp') >= 3 ? 60 : 44; k2(w, { draw: 'eyeBurst', x: t.x, y: t.y, r: R, max: 0.4, small: true });
+        for (const e of foesNear(w, u, t.x, t.y, R)) hurt(w, e, dmgOf(u, 0.5), u, { knock: 160, kAngle: angleTo(t.x, t.y, e.x, e.y), noDodge: true, proc: true, burn: tierOf(u, 'summonImp') >= 3 ? 14 : 0, ab: 'summonImp' });
+      },
+      tick(w, u, dt) {
+        const D = u.kit.demon; if (!D) return;
+        if (w.time >= D.until || !alive(u)) { demonEnd(w, u); return; }
+        const t = u.target; if (!t || !alive(t)) return;
+        D.blinkT -= dt; D.spitT -= dt; const d = dist(u.x, u.y, t.x, t.y);
+        if (D.blinkT <= 0 && d > 110 && !u.act) { D.blinkT = 2.6; const b = angleTo(t.x, t.y, u.x, u.y) + rrange(-0.8, 0.8);
+          k2(w, { draw: 'demonBlink', x: u.x, y: u.y, max: 0.45 }); u.x = clamp(t.x + Math.cos(b) * (t.r + u.r + 8), u.r, w.W - u.r); u.y = clamp(t.y + Math.sin(b) * (t.r + u.r + 8), u.r, w.H - u.r); u.vx = u.vy = 0; u.facing = ang(u, t); k2(w, { draw: 'demonBlink', x: u.x, y: u.y, max: 0.45 }); }
+        else if (D.spitT <= 0 && d > 90 && d < 320 && !blocked(w, u.x, u.y, t.x, t.y)) { D.spitT = 1.5; setAnim(u, 'cast', 0.3);
+          shoot(w, u, ang(u, t), { kind: 'fireball', speed: 420, r: 9, life: 1, dmg: dmgOf(u, 0.6), st: { burn: 18 }, knock: 120, land: (p) => { for (const e of foesNear(w, u, p.x, p.y, 40)) hurt(w, e, dmgOf(u, 0.3), u, { noDodge: true, burn: 10, knock: 60, kAngle: angleTo(p.x, p.y, e.x, e.y), ab: 'summonImp' }); } }); }
+      },
+    },
+    show: { attacks: true, secs: 4 },
   },
+  // Dark Bargain (round 13: "Gives 20% of his max hp go to his imp. Gets a huge attack speed boost for both of them and
+  // attack does aoe."): blood drawn from him into the imp; both strike far faster, and every blow of theirs bursts
   darkBargain: {
-    score: (w, u) => { const others = Object.entries(u.kit.cd).filter(([k, c]) => k !== 'darkBargain' && c > 4).length; return others >= 2 && hpRatio(u) > 0.45 && foesNear(w, u, u.x, u.y, 320).length ? 0.7 : 0; },
+    score: (w, u) => (hpRatio(u) > 0.45 && mine(w, u, 'warlockImp').length && foesNear(w, u, u.x, u.y, 300).length >= 2 ? 0.7 : 0),
     use(w, u, t, tier) {
-      cast(u, 'cast', 0.5);
-      const pay = Math.min(u.hp - 1, u.maxHp * (tier >= 2 ? 0.1 : 0.15)); u.hp -= pay;
-      for (const k in u.kit.cd) if (k !== 'darkBargain') u.kit.cd[k] = 0;
-      if (tier >= 3) for (const a of friendsNear(w, u, u.x, u.y, 200)) if (a !== u) heal(w, a, pay * 0.6, u);
+      cast(u, 'cast', 0.5); const imp = mine(w, u, 'warlockImp')[0]; if (!imp) return;
+      const pay = Math.min(u.hp - 1, u.maxHp * 0.2), dur = tier >= 2 ? 8 : 6; u.hp -= pay;
+      imp.maxHp += tier >= 3 ? pay * 0.5 : 0; imp.hp = Math.min(imp.maxHp, imp.hp + pay);
+      for (const o of [u, imp]) addBuff(o, { id: 'bargain', dur, atkSpeed: 1.8, glow: '#E05AB8' });
+      u.kit.bargainUntil = w.time + dur; imp.bargainUntil = w.time + dur;
+      k2(w, { draw: 'bloodTo', from: u, to: imp, x: u.x, y: u.y, max: 0.7 });
       k2(w, { draw: 'bargain', unit: u, x: u.x, y: u.y, r: u.vr, max: 0.8 });
     },
+    hook: { hit(w, u, t, amt, o) { if (!(u.kit.bargainUntil > w.time) || o.dot || o.proc) return; k2(w, { draw: 'eyeBurst', x: t.x, y: t.y, r: 40, max: 0.35, small: true }); for (const e of foesNear(w, u, t.x, t.y, 40)) if (e !== t) hurt(w, e, amt * 0.6, u, { noDodge: true, knock: 80, kAngle: angleTo(t.x, t.y, e.x, e.y), proc: true, ab: 'darkBargain' }); } },
+    show: { attacks: true },
   },
-  // ----- Cultist
+  // ----- Cultist (round 13: bleeding is his: his dagger bleeds, his bolt bursts the bleeding, his trait heals him when
+  // they burst)
+  // Blood Pact (round 13: "Meh. Applies bleed to self to give everyone becomes enraged."): he cuts himself open (he
+  // bleeds) and his friends near are enraged
   bloodPact: {
-    score: (w, u) => (hpRatio(u) > 0.5 && foesNear(w, u, u.x, u.y, 300).length >= 2 && friendsNear(w, u, u.x, u.y, 230).length >= 2 ? 0.7 : 0),
+    score: (w, u) => (hpRatio(u) > 0.45 && foesNear(w, u, u.x, u.y, 300).length >= 2 && friendsNear(w, u, u.x, u.y, 230).length >= 2 ? 0.7 : 0),
     use(w, u, t, tier) {
-      cast(u, 'cast', 0.6);
-      u.hp -= Math.min(u.hp - 1, u.maxHp * 0.1);
+      cast(u, 'cast', 0.6); addStatus(w, u, 'bleed', 45, u);
       k2(w, { draw: 'bargain', unit: u, x: u.x, y: u.y, r: u.vr, max: 0.8 });
       for (const a of [u, ...friendsNear(w, u, u.x, u.y, 230)]) {
-        addBuff(a, { id: 'bloodPact', dur: 6, dealt: tier >= 2 ? 1.4 : 1.3, lifesteal: tier >= 3 ? 0.15 : 0, glow: '#C8453D' });
+        if (a.summon) continue;
+        rage(w, a, 6, tier >= 2 ? 1.4 : 1.3); if (tier >= 3) addBuff(a, { id: 'bloodPact', dur: 6, lifesteal: 0.15 });
         k2(w, { draw: 'rally', unit: a, x: a.x, y: a.y, r: a.vr, max: 0.9, cols: ['#C8453D', '#FF8A7A'] });
       }
     },
     show: { ally: true },
   },
+  // Ritual Circle (round 13: "They can't leave circle. At max level. Applied bleed instead."): it bleeds them now (not
+  // curses); III nothing inside can step out of it
   ritualCircle: {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 280 && foesNear(w, u, t.x, t.y, 100).length >= 2 ? 0.65 : 0),
     use(w, u, t, tier) {
       if (!t) return; cast(u, 'cast', 0.6);
-      const x = t.x, y = t.y, r = tier >= 3 ? 140 : 105; let acc = 0;
+      const x = t.x, y = t.y, r = tier >= 3 ? 125 : 105; let acc = 0; const held = tier >= 3 ? foesNear(w, u, x, y, r) : [];
       k2(w, { draw: 'circle', x, y, r, max: 4, ab: 'ritualCircle' });
-      timer(u, 'ritualCircle', 4, (dt) => { acc += dt; if (acc < 0.3) return; acc -= 0.3; for (const e of foesNear(w, u, x, y, r)) addStatus(w, e, 'curse', 28, u); }, () => {
+      timer(u, 'ritualCircle', 4, (dt) => {
+        for (const e of held) if (alive(e) && dist(e.x, e.y, x, y) > r - e.r * 0.5) { const a = angleTo(x, y, e.x, e.y), d = r - e.r * 0.5; e.x = x + Math.cos(a) * d; e.y = y + Math.sin(a) * d; e.kx *= 0.3; e.ky *= 0.3; }
+        acc += dt; if (acc < 0.3) return; acc -= 0.3; for (const e of foesNear(w, u, x, y, r)) addStatus(w, e, 'bleed', 13, u);
+      }, () => {
         if (tierOf(u, 'ritualCircle') < 2) return;
         for (const e of foesNear(w, u, x, y, r + 10)) { const a = angleTo(e.x, e.y, x, y), d = dist(e.x, e.y, x, y); e.kx += Math.cos(a) * d * 5; e.ky += Math.sin(a) * d * 5; addStatus(w, e, 'stagger', 30, u); }
-        k2(w, { draw: 'markBurst', x, y, r: 30, max: 0.5, ab: 'ritualCircle' });
+        k2(w, { draw: 'markBurst', x, y, r: 30, max: 0.5, col: '#C8453D', ab: 'ritualCircle' });
       });
     },
     show: { far: true },
   },
+  // Sacrifice, in Soul Candle's slot (round 13: "Sacrifice. Dashes at enemy on low hp. Instantly kills them and heals. At
+  // lvl 3 spins and applies bleed to everyone near."): a bound at an enemy near death and the dagger finishes it; the
+  // blood heals him. A boss or major is cut deep instead. Id kept
   soulCandle: {
-    score: (w, u) => (foesNear(w, u, u.x, u.y, 220).filter((e) => hpRatio(e) < 0.5).length >= 2 ? 0.7 : foesNear(w, u, u.x, u.y, 220).length >= 4 ? 0.5 : 0),
+    score: (w, u) => (sacrificeOf(w, u, tierOf(u, 'soulCandle')) ? 0.9 : 0),
     use(w, u, t, tier) {
-      cast(u, 'ability', 0.5); u.kit.candleUntil = w.time + 6;
-      k2(w, { draw: 'candle', unit: u, x: u.x, y: u.y, max: 6 });
+      const e = sacrificeOf(w, u, tier) || t; if (!e) return;
+      const a = ang(u, e), x1 = clamp(e.x - Math.cos(a) * (e.r + u.r), u.r, w.W - u.r), y1 = clamp(e.y - Math.sin(a) * (e.r + u.r), u.r, w.H - u.r), T = clamp(dist(u.x, u.y, x1, y1) / 700, 0.1, 0.4);
+      u.facing = a; setAnim(u, 'ability', T + 0.3); u.invulnT = Math.max(u.invulnT, T + 0.1);
+      k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a, max: T + 0.3, col: '#C8453D' });
+      u.act = { type: 'leap', t: T, max: T, x0: u.x, y0: u.y, x1, y1, land: () => {
+        if (!alive(e)) return; u.facing = ang(u, e); setAnim(u, 'thrust', 0.3);
+        k2(w, { draw: 'sacrifice', x: e.x, y: e.y, a: u.facing, r: e.vr, max: 0.7, ab: 'soulCandle' });
+        if (e.def.boss || e.major || e.mini) hurt(w, e, dmgOf(u, 4), u, { noDodge: true, crit: true, ab: 'soulCandle' });
+        else hurt(w, e, e.hp + 1, u, { noDodge: true, crit: true, knock: 120, ab: 'soulCandle' });
+        heal(w, u, u.maxHp * 0.15, u); w.shake = Math.max(w.shake, 5);
+        if (tier >= 3) { setAnim(u, 'spin', 0.4); u.spin = { t0: w.time, dur: 0.4, dir: 1 }; k2(w, { draw: 'spray', x: u.x, y: u.y, a: 0, arc: TAU, r: 110, max: 0.6, cols: ['#C8453D', '#8A1E28', '#FF8A7A'] });
+          for (const o of foesNear(w, u, u.x, u.y, 110)) { hurt(w, o, dmgOf(u, 0.8), u, { noDodge: true, knock: 120, kAngle: ang(u, o), ab: 'soulCandle' }); addStatus(w, o, 'bleed', 50, u); } }
+      } };
     },
-    hook: {
-      death(w, u, v) {
-        if (!(u.kit.candleUntil > w.time) || v.team === u.team || v._souled || dist(u.x, u.y, v.x, v.y) > 240) return; v._souled = true;
-        const tier = tierOf(u, 'soulCandle'), r = tier >= 2 ? 95 : 65;
-        k2(w, { draw: 'markBurst', x: v.x, y: v.y, r: 20, max: 0.5, col: '#6FC8FF', ab: 'soulCandle' });
-        for (const e of foesNear(w, u, v.x, v.y, r)) if (e !== v && e.hp > 0) hurt(w, e, dmgOf(u, 2.6), u, { noDodge: true, knock: 120, kAngle: angleTo(v.x, v.y, e.x, e.y), curse: 10, ab: 'soulCandle' });
-        if (tier >= 3) heal(w, u, u.maxHp * 0.04, u);
-      },
-    },
-    show: { killDummy: true },
+    show: { far: true, single: true },
   },
   // ----- Monk
   flurry: {
@@ -2184,6 +2230,40 @@ BRAINS.cauldron = function (w, s2, dt) {
   if (s2.acc >= 0.3) { s2.acc = 0; for (const e of opponents(w, s2)) if (dist(e.x, e.y, s2.x, s2.y) < s2.R + e.r) addStatus(w, e, 'curse', 20, s2.summonBy); }
   return true;
 };
+// The Warlock's imp (his trait): it keeps close to him, darting about at his shoulder, and shoots small eye bolts at
+// what he is fighting; during Awaken it is inside him; during Dark Bargain its bolts burst
+BRAINS.warlockImp = function (w, s2, dt) {
+  const u = s2.summonBy; if (!u || u.dead) { kill(w, s2, null); return true; }
+  if (s2.inHim) { s2.x = u.x; s2.y = u.y; s2.vx = s2.vy = 0; return true; }
+  s2.orbit = (s2.orbit || rand() * TAU) + dt * 1.4; const gx = u.x + Math.cos(s2.orbit) * 40, gy = u.y + Math.sin(s2.orbit) * 30, d = dist(s2.x, s2.y, gx, gy), b = angleTo(s2.x, s2.y, gx, gy);
+  s2.dvx = Math.cos(b) * Math.min(d * 4, 260); s2.dvy = Math.sin(b) * Math.min(d * 4, 260); s2.spd = Math.hypot(s2.dvx, s2.dvy); s2.mvA = b;
+  const t = u.target && alive(u.target) && !u.target.ethereal ? u.target : null;
+  if (t) s2.facing = angleTo(s2.x, s2.y, t.x, t.y); else s2.facing = b;
+  if (t && !(s2.beamT > w.time) && s2.atkT <= 0 && dist(s2.x, s2.y, t.x, t.y) < 280 && !blocked(w, s2.x, s2.y, t.x, t.y)) {
+    s2.atkT = s2.def.atkCd / (s2.buffs.some((x) => x.id === 'bargain') ? 1.8 : 1); setAnim(s2, 'throw', 0.25);
+    eyeBolt(w, s2, angleTo(s2.x, s2.y, t.x, t.y), dmgOf(u, 0.35), true, s2.bargainUntil > w.time ? u : null);
+  }
+  return true;
+};
+// the pact bolt: an eye like the one on his sceptre; it flies out and comes back to whoever threw it (round 13: "Should
+// return back to him"), hitting on the way back too; a third of what his deals heals him
+function eyeBolt(w, u, a, dmg, small, burstBy) {
+  const owner = u, onHit = (w2, p, e) => { if (!small) heal(w2, owner, p.dmg * 0.33, owner); if (burstBy) { k2(w2, { draw: 'eyeBurst', x: e.x, y: e.y, r: 36, max: 0.35, small: true }); for (const o of foesNear(w2, burstBy, e.x, e.y, 36)) if (o !== e) hurt(w2, o, p.dmg * 0.6, burstBy, { noDodge: true, knock: 60, proc: true }); } };
+  shoot(w, u, a, { kind: 'eyeBolt', speed: 470, r: small ? 5 : 8, life: small ? 0.5 : 0.62, pierce: 3, dmg, color: '#E05AB8', knock: 25, extra: { small, onHit }, land: (p) => {
+    const b = angleTo(p.x, p.y, owner.x, owner.y);
+    w.projectiles.push({ kind: 'eyeBolt', x: p.x, y: p.y, vx: Math.cos(b) * 520, vy: Math.sin(b) * 520, r: p.r, team: owner.team, owner, dmg: dmg * 0.6, o: { knock: 20 }, life: 1.3, a: b, pierce: 3, hitSet: new Set(), home: owner, turn: 12, catchBy: owner, small, back: true, onHit });
+  } });
+}
+function demonEnd(w, u) {
+  const D = u.kit.demon; if (!D) return; u.kit.demon = null; u.def = D.human; u.buffs = u.buffs.filter((b) => b.id !== 'demon');
+  if (D.imp && !D.imp.dead) { D.imp.hidden = false; D.imp.ethereal = false; D.imp.inHim = false; D.imp.x = u.x + 30; D.imp.y = u.y; k2(w, { draw: 'impInto', from: u, to: D.imp, x: u.x, y: u.y, max: 0.4 }); }
+  puff(w, u.x, u.y, '#B0204A', 12, 100, 6, 0.5);
+}
+// the Cultist's Sacrifice: an enemy near death in reach (below 25%; II 35%): bosses and majors only when they are low
+function sacrificeOf(w, u, tier) {
+  const cut = tier >= 2 ? 0.35 : 0.25;
+  return opponents(w, u).filter((e) => !e.fixed && hpRatio(e) < cut && dist(u.x, u.y, e.x, e.y) < 300 && !blocked(w, u.x, u.y, e.x, e.y)).sort((p, q) => hpRatio(p) - hpRatio(q))[0] || null;
+}
 // the Bandit's Snatch: its weapon flung out of its hand; it must walk over and pick it up before it can attack again
 function snatch(w, u, e) {
   if (!alive(e) || e.def.boss || e.fixed || e.def.brain || isOn(w, e, 'snatched')) return;
@@ -2285,8 +2365,26 @@ export const TRAITS2 = {
     allyDown(w, u, v) { if (v.summon) return; for (const a of [u, ...allies(w, u)]) if (a !== v && !a.summon) { heal(w, a, a.maxHp * 0.1, u); k2(w, { draw: 'rally', unit: a, x: a.x, y: a.y, r: a.vr, max: 0.8 }); } },
   },
   crone: { dealt(w, u, t, amt) { return t.st && t.st.curse > 5 ? amt * 1.4 : amt; } },
-  infernal: { immune: ['burn'] },
-  blackCandle: { tick(w, u, dt) { const k = u.kit; k.candleT = (k.candleT || 0) - dt; if (k.candleT > 0) return; k.candleT = 0.5; for (const e of foesNear(w, u, u.x, u.y, 120)) addStatus(w, e, 'curse', 5, u); } },
+  // Familiar (round 13, the designer: "Has a small imp always with him. Follows closely. If it dies it will respawn after a
+  // short cooldown."): a summon of his (kits2 BRAINS.warlockImp); 8 s after it falls another climbs out of the floor
+  familiar: {
+    tick(w, u, dt) {
+      const k = u.kit; if (mine(w, u, 'warlockImp').length) { k.impT = 8; return; }
+      if (k.impW !== w) { k.impW = w; k.impT = 0; } // (a new room: it is with him at once)
+      k.impT = (k.impT ?? 0.5) - dt; if (k.impT > 0) return; k.impT = 8;
+      const s2 = summon(w, u, 'warlockImp', u.x + 30, u.y - 20, { hit: 0.35, hp: 50 }); s2.fixed = false;
+      k2(w, { draw: 'gate', x: s2.x, y: s2.y, r: 22, max: 0.7 });
+    },
+  },
+  // Blood Rite (round 13, the designer: "Don't like trait. Should heal when they trigger a blood burst"): every bleeding
+  // he caused that bursts (a haemorrhage) heals him 8%
+  bloodRite: {
+    tick(w, u) {
+      const k = u.kit, seen = k.riteSeen || (k.riteSeen = new WeakSet());
+      for (const f of w.fx) if (f.type === 'statusBurst' && f.kind === 'bleed' && !seen.has(f)) { seen.add(f); const v = f.unit;
+        if (v && v.stBy && v.stBy.bleed === u && v !== u) { heal(w, u, u.maxHp * 0.08, u); k2(w, { draw: 'bloodTo', from: v, to: u, x: v.x, y: v.y, max: 0.6 }); } }
+    },
+  },
   deflect: {
     evade(w, u, src, amt, o) {
       if (!o.shot || !src || rand() > 0.4) return false;
@@ -2409,10 +2507,19 @@ export const ATTACKS2 = {
   slinger(w, u, t, a) { shoot(w, u, a, { kind: 'stone', speed: 580, r: 6, dmg: A(u, 1), knock: 50 }); },
   // a rifle shot
   trapper(w, u, t, a) { k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a, max: 0.4 }); shoot(w, u, a, { kind: 'bullet', speed: 1100, r: 6, life: 0.6, dmg: A(u, 1), knock: 80 }); },
-  // a magenta pact bolt: a third of what it deals heals him
-  warlock(w, u, t, a) {
-    shoot(w, u, a, { kind: 'bolt', speed: 470, r: 7, dmg: A(u, 1), color: '#E05AB8', knock: 25, extra: { onHit: (w2, p) => heal(w2, u, p.dmg * 0.33, u) } });
+  // the Cultist (round 13: "Does a dagger swipe when close, and shadow bolt when far. Dagger applies bleed. If the bolt
+  // hits a bleeding target they instantly burst.")
+  cultist(w, u, t, a) {
+    if (dist(u.x, u.y, t.x, t.y) - u.r - t.r < 34) {
+      u.facing = ang(u, t); setAnim(u, 'swing', 0.25); swingMark(w, u, u.r + 34, 1.6);
+      hurt(w, t, A(u, 1.1), u, { knock: 80 }); addStatus(w, t, 'bleed', 26, u); u.recoilT = 0; return;
+    }
+    shoot(w, u, a, { kind: 'shadowBolt', speed: 470, r: 7, dmg: A(u, 1), color: '#9A5CC8', knock: 25, extra: { onHit: (w2, p, e) => {
+      if ((e.st.bleed || 0) > 3 && !(e.bleedImmuneT > 0)) { addStatus(w2, e, 'bleed', 200, u); k2(w2, { draw: 'markBurst', x: e.x, y: e.y, r: 20, max: 0.5, col: '#C8453D' }); }
+    } } });
   },
+  // a magenta pact bolt: a third of what it deals heals him
+  warlock(w, u, t, a) { eyeBolt(w, u, a, A(u, 0.8), false, u.kit.bargainUntil > w.time ? u : null); },
 };
 
 // ---------------------------------------------------------------- every step (kits.js kitTick)
@@ -2482,6 +2589,8 @@ export function kit2Tick(w, u, dt) {
     for (const h of u.kit.hayed) { const b = h.e.st.burn || 0; if (b > h.last && alive(h.e)) h.e.st.burn = b + (b - h.last); h.last = h.e.st.burn || 0; }
     u.kit.hayed = u.kit.hayed.filter((h) => h.until > w.time && alive(h.e));
   }
+  // the Warlock's eye bolts come back to whoever threw them
+  for (const p of w.projectiles) if (p.catchBy && p.kind === 'eyeBolt' && p.back && alive(p.catchBy) && dist(p.x, p.y, p.catchBy.x, p.catchBy.y) < p.catchBy.r + 6) p.life = 0;
   // the Stormhammer comes back to his hand
   for (const p of w.projectiles) if (p.catchBy === u && dist(p.x, p.y, u.x, u.y) < u.r + 8) p.life = 0;
 }
