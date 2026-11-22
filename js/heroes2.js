@@ -543,11 +543,11 @@ Object.assign(HEROES2, {
       { id: 'jawTrap', name: 'Jaw Trap', cd: 9, tags: 'ds', glyph: 'hook', desc: 'Sets a jaw trap where the enemies are coming; the first to step in is caught.',
         tiers: ['Holds it for 2s.', 'Holds 3s and bites harder.', 'Two traps.'] },
       { id: 'snareNet', name: 'Weighted Net', cd: 12, tags: 's', glyph: 'vines', desc: 'Throws a weighted net over a group of enemies.',
-        tiers: ['It entangles those under it.', 'A bigger net.', 'They are tangled at once.'] },
+        tiers: ['It entangles those under it.', 'A bigger net.', 'They are rooted at once.'] },
       { id: 'tripwire', name: 'Tripwire', cd: 13, tags: 's', glyph: 'wave', desc: 'Strings a wire across the enemies\' way: whatever runs into it goes down.',
         tiers: ['Knocks them down for 1s.', 'A longer wire.', 'Down for 1.6s.'] },
     ],
-    trait: { id: 'trappersEye', name: 'Trapper\'s Eye', desc: 'Enemies that are held, rooted or tangled take 30% more from him.' },
+    trait: { id: 'trappersEye', name: 'Trapper\'s Eye', desc: 'Enemies that are held or rooted take 30% more from him.' },
   },
   gladiator: {
     name: 'Gladiator', art: 'art/heroes/gladiator.svg', role: 'melee', unlock: { gems: 2 },

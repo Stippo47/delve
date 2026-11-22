@@ -138,10 +138,9 @@ const STATUS = {
   sick: `<path d="M15 3c5 7 9 11 9 16a9 9 0 0 1-18 0c0-5 4-9 9-16z" fill="#9BCB3C"/><path d="M9.5 19.5c2-2.2 3.6 2.2 5.5 0s3.600 2.2 5.5 0" fill="none" stroke="${INK}" stroke-width="2" stroke-linecap="round" ${H}/><circle cx="25" cy="7" r="2.6" fill="#B6E05A"/><circle cx="28" cy="13.500" r="1.7" fill="#B6E05A"/>`,
   // cursed builds (a purple skull-drop), hexed is the armed curse (an eye in a ring)
   curse: `<path d="M16 3c6 0 10 4.4 10 10 0 4-2 6.4-4 7.6V26h-12v-5.4C8 19.4 6 17 6 13 6 7.4 10 3 16 3z" fill="#9A5CC8"/><circle cx="12.2" cy="13.5" r="2.6" fill="${INK}" ${H}/><circle cx="19.8" cy="13.5" r="2.6" fill="${INK}" ${H}/><path d="M13 22v3M16 22v3M19 22v3" stroke="${INK}" stroke-width="1.6" ${H}/>`,
-  // round 9: entangle builds (a curl of vine), tangled is the burst (roots wrapped round a foot)
+  // round 9: entangle builds (a curl of vine); round 13: its burst roots (tangled and rooted are one state: the root icon)
   entangle: `<path d="M8 26c0-8 4-12 9-12 4 0 6-3 6-6" fill="none" stroke="${INK}" stroke-width="5.6" stroke-linecap="round"/><path d="M8 26c0-8 4-12 9-12 4 0 6-3 6-6" fill="none" stroke="#7FA04A" stroke-width="2.6" stroke-linecap="round" ${H}/>
     <path d="M13 17c-3-1-5-3-5-6 3 0 5 2 5 6zM20 12c1-3 4-4 6-3-1 3-3 4-6 3z" fill="#9BCB3C"/>`,
-  tangled: `<path d="M10 6h8v14h6v6H10z" fill="#C9B8A0"/><path d="M5 14c6 4 16 4 22 0M5 21c6 4 16 4 22 0" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M5 14c6 4 16 4 22 0M5 21c6 4 16 4 22 0" fill="none" stroke="#7A5A3A" stroke-width="2.4" stroke-linecap="round" ${H}/>`,
   hexed: `<circle cx="16" cy="16" r="12" fill="none" stroke="${INK}" stroke-width="5.4"/><circle cx="16" cy="16" r="12" fill="none" stroke="#9A5CC8" stroke-width="2.6" ${H}/>
     <path d="M6 16c3-5 6.4-7 10-7s7 2 10 7c-3 5-6.4 7-10 7s-7-2-10-7z" fill="#E6D2F6"/><circle cx="16" cy="16" r="3.6" fill="#5A2A80" ${H}/>`,
 };

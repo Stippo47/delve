@@ -34,8 +34,8 @@ export const RADIANCE = { atkSlow: 0.35, weaken: 0.6, auraT: 3, auraR: 120, aura
 export const CURSE = { healCut: 1.6, taken: 0.4, armT: 8, windowT: 0.6, selfMul: 0.8, selfCap: 0.3 };
 
 // Entangle (round 9, ents and roots; the designer: "makes it so you move very slow and your attacks and movement cause
-// slight damage. Burst effect makes it so you are rooted, no movement for a bit but can still attack slowly while
-// taking a bit of damage overtime and more damage when you attack"). While it builds: up to `slow` slower, `walkDmg`
-// damage per 100 units walked and `atkDmg` per attack or ability (both x fill). Burst: TANGLED for tangledT seconds:
-// rooted, attacks at atkSlow of the speed, `dot` damage a second and `tangledAtk` per attack; then a short immunity.
-export const ENTANGLE = { slow: 0.7, walkDmg: 2.2, atkDmg: 2.5, tangledT: 3, atkSlow: 0.5, dot: 3, tangledAtk: 5, immuneT: 3 };
+// slight damage. Burst effect makes it so you are rooted"). While it builds: up to `slow` slower, `walkDmg` damage per
+// 100 units walked and `atkDmg` per attack or ability (both x fill). Burst (round 13: "Tangled and rooted are the same
+// thing"): ROOTED for rootT seconds (bosses 40%), the one rooted state every root uses, and a squeeze of `squeeze`
+// damage; then immuneT seconds before it can be entangled again.
+export const ENTANGLE = { slow: 0.7, walkDmg: 2.2, atkDmg: 2.5, rootT: 3, squeeze: 12, immuneT: 3 };

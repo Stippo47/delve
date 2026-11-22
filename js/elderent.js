@@ -68,7 +68,7 @@ function brain(w, u, dt) {
     cone(w, u, at, { r: EE.sweep.r, arc: EE.sweep.arc, tell: EE.sweep.tell * K, kind: 'bone', anim: 'ability', after: EE.sweep.rec, hit: hit({ dmg: EE.sweep.dmg, knock: EE.sweep.knock, heavy: true }) });
     return true;
   }
-  // root cage: a ring of roots springs up round a hero (two in the last phase): tangled at once if it's caught
+  // root cage: a ring of roots springs up round a hero (two in the last phase): rooted at once if it's caught
   if (k.phase >= 2 && due(u, 'cage', dt, 3)) {
     again(u, 'cage', 7 * K, 9 * K);
     const hs = heroes(w, u).sort((a, b) => dist(a.x, a.y, u.x, u.y) - dist(b.x, b.y, u.x, u.y));

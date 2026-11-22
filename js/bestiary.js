@@ -277,7 +277,6 @@ export const STATUSES = {
   radiance: { name: 'Radiance', desc: 'Dazzled by holy light: attacks slower and much weaker. Full up, it shines.' },
   radiant: { name: 'Radiant', desc: 'Shining: it cannot attack, and everyone close by is dazzled by the glow.' },
   curse: { name: 'Cursed', desc: 'Heals barely take, then not at all, and blows land harder. Full up, it is hexed.' },
-  entangle: { name: 'Entangled', desc: 'Moves very slowly, and walking or attacking hurts. Full up, it is tangled.' },
-  tangled: { name: 'Tangled', desc: 'Held fast by roots: can\'t move, attacks slowly, hurts all the while and more with every attack.' },
+  entangle: { name: 'Entangled', desc: 'Moves very slowly, and walking or attacking hurts. Full up, the vines squeeze and it is rooted.' },
   hexed: { name: 'Hexed', desc: 'Its next attack or ability turns on it: blows hurt itself, heals hurt the friend, summons change sides.' },
 };

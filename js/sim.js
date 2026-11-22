@@ -5,7 +5,7 @@ import { lineClear, pathClear, rayToRoundRect, circleRect, findPath, buildGrid }
 import { kitThink, kitTick, hooksOf, segDist, heroAttack } from './kits.js';
 import { trinketHooks } from './trinkets.js';
 import { cue } from './sfx.js';
-import { ARMOUR_CAP, ENEMY_ARMOUR } from './armour.js';
+import { ARMOUR_CAP, ENEMY_ARMOUR, armourCut } from './armour.js';
 import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON } from './statuses.js';
 import { tallyHurt, tallyHeal, tallyDown, noteStatus } from './stats.js';
 
@@ -90,7 +90,6 @@ const atkRate = (u) => {
   for (const h of hooksOf(u)) if (h.atkSpeed) r *= h.atkSpeed(u);
   if (u.sickT > 0) r *= 1 - POISON.slow; else if (u.st.poison > 20) r *= 0.9;
   if (u.st.radiance > 0) r *= 1 - RADIANCE.atkSlow * fillOf(u, 'radiance'); // radiant: attacks come slower
-  if (u.tangledT > 0) r *= ENTANGLE.atkSlow;                                    // tangled: attacks slowly
   return r;
 };
 const buffMul = (u, key) => { let m = 1; for (const b of u.buffs) if (b[key] != null) m *= b[key]; return m; };
@@ -723,10 +722,10 @@ export function hurt(w, u, amount, src, o = {}) {
   if (!o.dot && src && !onShield && (u.buffs.some((b) => b.frontBlock) || SHIELD_BEARERS.has(u.kind)) && angleDiff(fromA + Math.PI, u.facing) < 1.1) onShield = true;
   // shatter: a hard hit on a frozen unit
   if (u.frozenT > 0 && !o.dot && (o.heavy || amount >= 12 || (o.knock || 0) >= 150)) shatter(w, u, src);
-  // Armour (round 11): every blow loses the wearer's armour in points, but never more than ARMOUR_CAP of itself: a
-  // swarm's nips mostly bounce off, a heavy blow mostly goes through. A blow marked heavy, or a critical one, gets past
-  // half of it. Burning, poison and the like (damage over time) ignore it.
-  if (!o.dot && u.armor > 0) amt -= Math.min(u.armor * (o.heavy || o.crit ? 0.5 : 1), amt * ARMOUR_CAP);
+  // Armour (round 11; round 13, the designer: "A combination of the 2. % and fixed?"): each point takes one point off a
+  // blow and ARMOUR_PCT (2%) off it as well, the whole cut never more than ARMOUR_CAP of the blow. A blow marked heavy,
+  // or a critical one, gets past half of both. Burning, poison and the like (damage over time) ignore it.
+  if (!o.dot && u.armor > 0) amt -= armourCut(u.armor, amt, o.heavy || o.crit);
   u.hp -= amt;
   if (w.stats) tallyHurt(w, u, src, amt, o);
   if (!o.dot) cue('hit', u, src, { amt, crit: o.crit, heavy: o.heavy, shot: o.shot, blocked: u.blockedAt === w.time });
@@ -770,7 +769,7 @@ export function addStatus(w, u, type, amount, src) {
   if (!alive(u) || u.ethereal || immuneTo(u, type)) return;
   if (u.linkTo) { if (alive(u.linkTo)) addStatus(w, u.linkTo, type, amount * (u.def.segTaken ?? 0.6), src); return; } // a chain's segment: its head takes it
   if (type === 'radiance' && (u.radiantT > 0 || u.radImmuneT > 0)) return; // glowing, or just was: its own aura can't feed it
-  if (type === 'entangle' && (u.tangledT > 0 || u.tangleImmuneT > 0)) return; // held fast already, or just got free
+  if (type === 'entangle' && u.tangleImmuneT > 0) return; // held fast already (an entangle root), or just got free
   const res = (u.def.res && u.def.res[type]) ?? 1;
   const s = u.st;
   noteStatus(u, type, src); // its ticks and bursts count for whoever put it on (stats.js)
@@ -820,8 +819,12 @@ export function addStatus(w, u, type, amount, src) {
   }
   if (type === 'entangle') {
     if (s.entangle >= need) {                                    // TANGLED: rooted, attacks slowly, hurts, and more when it attacks
-      s.entangle = after; burst(); u.tangledT = u.def.boss ? ENTANGLE.tangledT * 0.4 : ENTANGLE.tangledT; if (u.act && u.act.type !== 'drink') u.act = null;
-      textU(w, u.x, u.y, u.r + 12, 'TANGLED', STATUS.entangle.col, 1.2);
+      // round 13 (lane S; the designer: "Tangled and rooted are the same thing"): the burst ROOTS, the one rooted state
+      // every root uses (no tangled timer any more), and the vines squeeze once as they close
+      const T = u.def.boss ? ENTANGLE.rootT * 0.4 : ENTANGLE.rootT;
+      s.entangle = after; burst(); u.rootT = Math.max(u.rootT || 0, T); u.tangleImmuneT = T + ENTANGLE.immuneT; if (u.act && u.act.type !== 'drink') u.act = null;
+      hurt(w, u, ENTANGLE.squeeze, null, { dot: true, color: STATUS.entangle.col, by: src, stk: 'entangle' });
+      textU(w, u.x, u.y, u.r + 12, 'ROOTED', STATUS.entangle.col, 1.2);
       for (let i = 0; i < 10; i++) { const a = i / 10 * TAU; w.particles.push({ x: u.x + Math.cos(a) * u.r, y: u.y + Math.sin(a) * u.r, vx: -Math.cos(a) * 30, vy: -Math.sin(a) * 30, life: 0.6, max: 0.6, size: 4, color: '#7FA04A' }); }
     }
     return;
@@ -1215,6 +1218,7 @@ function statusTick(w, u, dt) {
     u.sickT = Math.max(0, u.sickT - dt);
     hurt(w, u, u.maxHp * POISON.drain / POISON.sickT * dt * (u.def.boss ? 0.4 : 1), null, { dot: true, color: '#9BCB3C', by: u.stBy && u.stBy.poison, stk: 'poison' });
     if (rand() < dt * 9) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.8, y: u.y + rrange(-u.r, u.r) * 0.8, vx: rrange(-12, 12), vy: -32, life: 0.8, max: 0.8, size: 5, color: '#B6E05A' });
+    if (u.sickT <= 0) s.poison = 0; // round 13 (the designer: "Poison should drop lower after its burst is over"): 30 at the burst, 0 when the sickness ends
   }
   if (s.poison > 0) { s.poison = Math.max(0, s.poison - STATUS.poison.decay * dt); hurt(w, u, s.poison * 0.07 * dt, null, { dot: true, color: '#9BCB3C', by: u.stBy && u.stBy.poison, stk: 'poison' });
     if (s.poison > 25 && rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.7, y: u.y + rrange(-u.r, u.r) * 0.7, vx: 0, vy: -25, life: 0.6, max: 0.6, size: 4, color: '#9BCB3C' }); }
@@ -1222,22 +1226,14 @@ function statusTick(w, u, dt) {
   if (u.freezeImmune > 0) u.freezeImmune = Math.max(0, u.freezeImmune - 4 * dt);
 }
 
-// Entangle (statuses.js ENTANGLE): walking and attacking while it holds hurts a little; tangled, it hurts over time and
-// more on every attack. An attack or ability is seen as a new u.anim (every swing, shot and cast sets one).
+// Entangle (statuses.js ENTANGLE): walking and attacking while it holds hurts a little (its burst roots: addStatus).
+// An attack or ability is seen as a new u.anim (every swing, shot and cast sets one).
 function entangleTick(w, u, dt) {
   const s = u.st, fill = s.entangle > 0 ? fillOf(u, 'entangle') : 0;
   if (s.entangle > 0) s.entangle = Math.max(0, s.entangle - STATUS.entangle.decay * dt);
   if (u.tangleImmuneT > 0) u.tangleImmuneT -= dt;
   const anim = u.anim && u.anim !== u._entAnim ? u.anim : null;
   if (anim) u._entAnim = anim;
-  if (u.tangledT > 0) {
-    u.tangledT -= dt;
-    hurt(w, u, ENTANGLE.dot * dt, null, { dot: true, color: STATUS.entangle.col });
-    if (anim) hurt(w, u, ENTANGLE.tangledAtk, null, { dot: true, color: STATUS.entangle.col });
-    if (rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.8, y: u.y + rrange(-u.r, u.r) * 0.8, vx: 0, vy: 0, life: 0.5, max: 0.5, size: 4, color: '#5E7F32' });
-    if (u.tangledT <= 0) { u.tangledT = 0; u.tangleImmuneT = ENTANGLE.immuneT; }
-    return;
-  }
   if (!fill) return;
   const moved = Math.hypot(u.dvx || 0, u.dvy || 0) * dt;
   if (moved > 0) hurt(w, u, ENTANGLE.walkDmg * fill * moved / 100, null, { dot: true, color: STATUS.entangle.col });

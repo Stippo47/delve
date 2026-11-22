@@ -17,7 +17,7 @@ import { STATUS, fillOf, RADIANCE, CURSE, POISON } from './statuses.js';
 // Timed statuses shrink against the highest value seen since they began.
 const STATUS_COL = { burn: '#FF7A2F', chill: '#7FD6F5', frozen: '#BFEFFF', poison: '#9BCB3C', wet: '#6FB7E8', shock: '#FFF27A',
   stagger: '#E8E2D0', stun: '#FFE14D', root: '#7FA04A', sleep: '#C9B8FF', ko: '#FFE7A0', guard: '#5B8CDB', invuln: '#FFE07A',
-  taunt: '#E0604B', buff: '#7CC06F', debuff: '#C8553D', rage: '#E0604B', radiance: '#FFE48A', curse: '#9A5CC8', entangle: '#7FA04A', tangled: '#7A5A3A' };
+  taunt: '#E0604B', buff: '#7CC06F', debuff: '#C8553D', rage: '#E0604B', radiance: '#FFE48A', curse: '#9A5CC8', entangle: '#7FA04A' };
 const peaks = new WeakMap();
 function peaked(u, id, v) {
   let p = peaks.get(u); if (!p) peaks.set(u, (p = {}));
@@ -49,8 +49,7 @@ export function unitStatuses(u, now) {
   build('stagger', s.stagger > 3);
   build('radiance', s.radiance > 2);
   build('curse', s.curse > 2);
-  build('entangle', s.entangle > 2 && !(u.tangledT > 0)); // round 9
-  add('tangled', u.tangledT, { left: u.tangledT });
+  build('entangle', s.entangle > 2); // round 9 (round 13: its burst roots: the one Rooted below)
   add('ko', u.koT, { left: u.koT });
   add('stun', u.stunT > 0.05 && !(u.koT > 0) && !(u.frozenT > 0) ? u.stunT : 0, { left: u.stunT });
   add('root', u.rootT, { left: u.rootT });
