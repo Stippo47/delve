@@ -230,7 +230,7 @@ export function drawBloodGround(ctx, w) {
   if (variant('bleed') === 2) for (const u of w.units) {
     if (u.dead || u.downed || u.hidden || !((u.st && u.st.bleed) > 4)) continue;
     const f = bfill(u), ph = (u._bph || 0) % 1, beat = 1 + 0.06 * Math.max(0, 1 - ph / 0.25);
-    ctx.globalAlpha = 0.8; blot(ctx, ...toWorld(u.x, u.y, 0, u.vr * 0.3), u.vr * (0.35 + 0.55 * f) * beat, u.id * 13 + 5);
+    ctx.globalAlpha = 0.8; blot(ctx, ...toWorld(u.x, u.y, 0, u.vr * 0.42), u.vr * (0.55 + 0.75 * f) * beat, u.id * 13 + 5);
   }
   ctx.restore(); ctx.globalAlpha = 1;
 }
