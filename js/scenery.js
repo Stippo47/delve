@@ -354,14 +354,15 @@ export function drawDanger(ctx, w) {
   if (!w.danger || !w.danger.length) return;
   ctx.save(); ctx.lineJoin = 'round';
   for (const z of w.danger) {
-    const col = ZONE_COL[z.kind] || '#E0604B';
+    if (z.unseen) continue; // (lane B, bosses3: a zone the boss draws itself: the Winter Queen's storm)
+    const col = z.col || ZONE_COL[z.kind] || '#E0604B'; // (lane B, bosses3: z.col: a zone in the boss's own colour)
     if (z.t > 0) {
       const k = clamp(z.age / (z.max || 1), 0, 1);
       ctx.globalAlpha = 0.16; ctx.fillStyle = col; zonePath(ctx, z, 1); ctx.fill('evenodd');
-      ctx.globalAlpha = 0.22 + 0.3 * k; zonePath(ctx, z, k); ctx.fill('evenodd');
+      ctx.globalAlpha = z.soft ? 0.1 : 0.22 + 0.3 * k; zonePath(ctx, z, k); ctx.fill('evenodd'); // (lane B, bosses3: z.soft: a zone that stays and moves, drawn lighter)
       ctx.globalAlpha = 0.85; ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.setLineDash([12, 9]); ctx.lineDashOffset = -w.time * 30;
       zonePath(ctx, z, 1); ctx.stroke(); ctx.setLineDash([]);
-    } else if (!z.cancelled) {
+    } else if (!z.cancelled && !z.quiet) {
       const f = clamp(1 + z.t / 0.3, 0, 1); // fades over 0.3s after the hit
       ctx.globalAlpha = 0.55 * f; ctx.fillStyle = '#FFF4E0'; zonePath(ctx, z, 1); ctx.fill('evenodd');
       ctx.globalAlpha = 0.5 * f; ctx.fillStyle = col; zonePath(ctx, z, 1); ctx.fill('evenodd');

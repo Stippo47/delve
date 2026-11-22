@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
-<!-- GAME COPY (art round 10) of design/class-round10/enemies/foundry-smith.svg -->
-<!-- FOUNDRY SMITH (round 10): a big smith in the heroes' bust build: very broad bare sooty shoulders, a dark leather apron bib with two straps and brass rivets, a bald head under a red sweatband, a great ginger beard and moustache (no eyes); a big hammer with a red-hot face under the right shoulder (arm-r, it swings), a thick leather glove on the left fist (arm-l). Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<!-- GAME COPY (art round 11) of design/class-round11/enemies/foundry-smith.svg -->
+<!-- FOUNDRY SMITH (round 10): a big smith in the heroes' bust build: very broad bare sooty shoulders, a dark leather apron bib with two straps and brass rivets, a bald head under a red sweatband, a great ginger beard and moustache (no eyes); a big hammer with a red-hot striking face on its inner side (round 11) under the right shoulder (arm-r, it swings), a plain left fist (arm-l; round 11: no glove). Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
 <defs>
 <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
@@ -9,6 +9,7 @@
 <path id="s1" d="M -1.5 -24 H 1.5 A 4 4 0 0 1 5.5 -20 V 56 A 4 4 0 0 1 1.5 60 H -1.5 A 4 4 0 0 1 -5.5 56 V -20 A 4 4 0 0 1 -1.5 -24 Z"/>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#A97546"/><stop offset="1" stop-color="#865B35"/></linearGradient>
 <linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#47301B" stop-opacity="0"/><stop offset="1" stop-color="#47301B" stop-opacity="0.42"/></linearGradient>
+<linearGradient id="gHotSide" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFF2A0"/><stop offset="0.45" stop-color="#FF9A3D"/><stop offset="1" stop-color="#C8402A"/></linearGradient>
 <path id="s2" d="M -20 43 H 20 A 9 9 0 0 1 29 52 V 72 A 9 9 0 0 1 20 81 H -20 A 9 9 0 0 1 -29 72 V 52 A 9 9 0 0 1 -20 43 Z"/>
 <clipPath id="u2"><use href="#s1" transform="translate(162 116) rotate(10)"/></clipPath>
 <linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#515661"/><stop offset="1" stop-color="#3F434C"/></linearGradient>
@@ -46,17 +47,13 @@
 <clipPath id="u11"><use href="#s1" transform="translate(162 116) rotate(10)"/><use href="#s2" transform="translate(162 116) rotate(10)"/><use href="#s3" transform="translate(162 116) rotate(10)"/><use href="#s4"/><use href="#s5"/><use href="#s6"/><use href="#s7"/><use href="#s8"/><use href="#s9"/><use href="#s10"/></clipPath>
 <linearGradient id="g11" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#CE544E"/><stop offset="1" stop-color="#B1332D"/></linearGradient>
 <linearGradient id="g12" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5E1916" stop-opacity="0"/><stop offset="1" stop-color="#5E1916" stop-opacity="0.42"/></linearGradient>
-<path id="s12" d="M -6 -16 H 6 A 8 8 0 0 1 14 -8 V 8 A 8 8 0 0 1 6 16 H -6 A 8 8 0 0 1 -14 8 V -8 A 8 8 0 0 1 -6 -16 Z"/>
+<path id="s12" d="M -4.5 -14.5 H 4.5 A 8 8 0 0 1 12.5 -6.5 V 6.5 A 8 8 0 0 1 4.5 14.5 H -4.5 A 8 8 0 0 1 -12.5 6.5 V -6.5 A 8 8 0 0 1 -4.5 -14.5 Z"/>
 <clipPath id="u12"><use href="#s1" transform="translate(162 116) rotate(10)"/><use href="#s2" transform="translate(162 116) rotate(10)"/><use href="#s3" transform="translate(162 116) rotate(10)"/><use href="#s4"/><use href="#s5"/><use href="#s6"/><use href="#s7"/><use href="#s8"/><use href="#s9"/><use href="#s10"/><use href="#s11"/></clipPath>
-<path id="s13" d="M 23 127 H 49 A 4 4 0 0 1 53 131 V 133 A 4 4 0 0 1 49 137 H 23 A 4 4 0 0 1 19 133 V 131 A 4 4 0 0 1 23 127 Z"/>
-<clipPath id="u13"><use href="#s1" transform="translate(162 116) rotate(10)"/><use href="#s2" transform="translate(162 116) rotate(10)"/><use href="#s3" transform="translate(162 116) rotate(10)"/><use href="#s4"/><use href="#s5"/><use href="#s6"/><use href="#s7"/><use href="#s8"/><use href="#s9"/><use href="#s10"/><use href="#s11"/><use href="#s12" transform="translate(36 148) rotate(-6)"/></clipPath>
-<linearGradient id="g13" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#754D2C"/><stop offset="1" stop-color="#5D3C21"/></linearGradient>
-<linearGradient id="g14" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#311F11" stop-opacity="0"/><stop offset="1" stop-color="#311F11" stop-opacity="0.42"/></linearGradient>
 </defs>
 <g id="sprite" filter="url(#outline)">
 <g id="arm-r" data-pivot="160 108"><!-- hammer -->
 <use href="#s1" transform="translate(162 116) rotate(10)" fill="url(#g1)"/><use href="#s1" transform="translate(162 116) rotate(10)" fill="url(#g2)"/>
-<g clip-path="url(#u2)"><use href="#s2" transform="translate(0 3) translate(162 116) rotate(10)" fill="#2B2230" opacity="0.3"/></g><use href="#s2" transform="translate(162 116) rotate(10)" fill="url(#g3)"/><use href="#s2" transform="translate(162 116) rotate(10)" fill="url(#g4)"/><g clip-path="url(#c2)"><g transform="translate(162 116) rotate(10)"><path d="M -30 70 L 30 70 L 30 84 L -30 84 Z" fill="url(#gHot)"/><rect x="-22" y="48" width="18" height="6" rx="3" fill="#FFFFFF" opacity="0.18"/></g></g>
+<g clip-path="url(#u2)"><use href="#s2" transform="translate(0 3) translate(162 116) rotate(10)" fill="#2B2230" opacity="0.3"/></g><use href="#s2" transform="translate(162 116) rotate(10)" fill="url(#g3)"/><use href="#s2" transform="translate(162 116) rotate(10)" fill="url(#g4)"/><g clip-path="url(#c2)"><g transform="translate(162 116) rotate(10)"><path d="M -30 40 L -15 40 L -15 84 L -30 84 Z" fill="url(#gHotSide)"/><rect x="-6" y="48" width="18" height="6" rx="3" fill="#FFFFFF" opacity="0.18"/></g></g>
 <g clip-path="url(#u3)"><use href="#s3" transform="translate(0 3) translate(162 116) rotate(10)" fill="#2B2230" opacity="0.3"/></g><use href="#s3" transform="translate(162 116) rotate(10)" fill="url(#gHand)"/>
 </g>
 <g id="body">
@@ -71,8 +68,7 @@
 <g clip-path="url(#u11)"><use href="#s11" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s11" fill="url(#g11)"/><use href="#s11" fill="url(#g12)"/>
 </g>
 <g id="arm-l" data-pivot="44 108"><!-- gloved fist -->
-<g clip-path="url(#u12)"><use href="#s12" transform="translate(0 3) translate(36 148) rotate(-6)" fill="#2B2230" opacity="0.3"/></g><use href="#s12" transform="translate(36 148) rotate(-6)" fill="#8A5E38"/>
-<g clip-path="url(#u13)"><use href="#s13" transform="translate(0 1) rotate(-6 36 132)" fill="#2B2230" opacity="0.3"/></g><use href="#s13" transform="rotate(-6 36 132)" fill="url(#g13)"/><use href="#s13" transform="rotate(-6 36 132)" fill="url(#g14)"/>
+<g clip-path="url(#u12)"><use href="#s12" transform="translate(0 3) translate(38 148) rotate(-6)" fill="#2B2230" opacity="0.3"/></g><use href="#s12" transform="translate(38 148) rotate(-6)" fill="url(#gHand)"/>
 </g>
 </g>
 </svg>

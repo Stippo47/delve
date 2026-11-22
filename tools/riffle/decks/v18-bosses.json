@@ -1,0 +1,473 @@
+{
+  "title": "0.18.0: the bosses, redone",
+  "topic": "runs",
+  "order": 29,
+  "priority": 1,
+  "tags": [
+    "first"
+  ],
+  "cards": [
+    {
+      "id": "all",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "Seven bosses, redone",
+      "text": "Every boss you sent back is rebuilt. Live as 0.18.0. Each has its own card after this one.",
+      "why": "Your boss answers, built on the stronger model this time. I watched them before sending: the fights read, and each move asks for something different.",
+      "details": "How hard: in 100 test fights each, at the level the campaign meets them, the party wins 44 to 56. Those levels are from before the XP change, so I will re-measure after a fresh campaign.\n\nStill to do: no sounds for the new moves. The Bone King and the Elder Ent still flash fully white when struck; the seven here only blink.",
+      "videos": [
+        "../../../clips/r13/bosses/greatEngine-p1.mp4",
+        "../../../clips/r13/bosses/sandWurm-p1.mp4"
+      ]
+    },
+    {
+      "id": "greatEngine",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The Great Engine",
+      "text": "One machine now: a furnace head on a cog and two jointed arms, a hammer and a claw.",
+      "why": "You wanted an arm segment between head and hands, and said the spin did not look good at all. Each move is a part: mark the ones that are still weak.",
+      "videos": [
+        "../../../clips/r13/bosses/greatEngine-p1.mp4",
+        "../../../clips/r13/bosses/greatEngine-p2.mp4"
+      ],
+      "details": "One clip a stage of the fight, in order. Its steam uses the game's round dust puffs, which look bubbly up close.",
+      "parts": [
+        {
+          "id": "m0",
+          "title": "Hammer Fall",
+          "text": "The hammer climbs up the screen and drops. Scatter, then pile on it while it's stuck.",
+          "videos": [
+            "../../../clips/r13/bosses/greatEngine-p1.mp4"
+          ]
+        },
+        {
+          "id": "m1",
+          "title": "Claw Grab",
+          "text": "The claw shoots out on its pistons and hauls a hero to the furnace mouth. Hit the claw to free them.",
+          "videos": [
+            "../../../clips/r13/bosses/greatEngine-p1.mp4"
+          ]
+        },
+        {
+          "id": "m2",
+          "title": "Whirl",
+          "text": "Replaces the spin: arms locked straight out, the whole body turning like a rotor, then dizzy. Run.",
+          "videos": [
+            "../../../clips/r13/bosses/greatEngine-p2.mp4"
+          ]
+        },
+        {
+          "id": "m3",
+          "title": "Furnace Beam",
+          "text": "A white-hot sweep. Get behind a boiler.",
+          "videos": [
+            "../../../clips/r13/bosses/greatEngine-p2.mp4"
+          ]
+        },
+        {
+          "id": "m4",
+          "title": "Pressure",
+          "text": "Break the valve before the gauge hits red, or the boiler blows.",
+          "videos": [
+            "../../../clips/r13/bosses/greatEngine-p3.mp4"
+          ]
+        },
+        {
+          "id": "m5",
+          "title": "Welder drones",
+          "text": "A broken hand is forged back by two drones, not a timer. Kill them.",
+          "videos": [
+            "../../../clips/r13/bosses/greatEngine-p3.mp4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sandWurm",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The Sand Wurm",
+      "text": "Built again round the burrow: it lives under the sand and can only be hit out of it.",
+      "why": "You said: just no. Each move is a part: mark the ones that are still weak.",
+      "videos": [
+        "../../../clips/r13/bosses/sandWurm-p1.mp4",
+        "../../../clips/r13/bosses/sandWurm-p2.mp4"
+      ],
+      "details": "One clip a stage of the fight, in order. It wakes as the party walks in; walking up to a sleeping mound was 25 seconds of nothing.",
+      "parts": [
+        {
+          "id": "m0",
+          "title": "Under",
+          "text": "A mound runs across the room with crust tipping off its front and a furrow behind.",
+          "videos": [
+            "../../../clips/r13/bosses/sandWurm-p1.mp4"
+          ]
+        },
+        {
+          "id": "m1",
+          "title": "Breach",
+          "text": "The ground lifts, sand jets, and it arcs out of one hole into another. Get off the ground, then hit the body as it pours past.",
+          "videos": [
+            "../../../clips/r13/bosses/sandWurm-p1.mp4"
+          ]
+        },
+        {
+          "id": "m2",
+          "title": "Lunge",
+          "text": "Reared up, it strikes down a line. Sidestep, then hit the stuck head.",
+          "videos": [
+            "../../../clips/r13/bosses/sandWurm-p2.mp4"
+          ]
+        },
+        {
+          "id": "m3",
+          "title": "Inhale",
+          "text": "It pulls everyone to its maw, then the jaws snap. Run against the pull.",
+          "videos": [
+            "../../../clips/r13/bosses/sandWurm-p2.mp4"
+          ]
+        },
+        {
+          "id": "m4",
+          "title": "Quicksand",
+          "text": "From its second stage the holes stay as quicksand and scarabs crawl out.",
+          "videos": [
+            "../../../clips/r13/bosses/sandWurm-p3.mp4"
+          ]
+        },
+        {
+          "id": "m5",
+          "title": "The Coil",
+          "text": "Last stage: the mound circles the party and the ring bursts. Stand in the middle.",
+          "videos": [
+            "../../../clips/r13/bosses/sandWurm-p3.mp4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cinder",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Cinder, the Old Drake",
+      "text": "An animal that walks: four stepping legs, a body that follows its head, a prowl round its mark.",
+      "why": "You said it was stuck in one spot, and didn't like the art or the look of its attacks. Each move is a part: mark the ones that are still weak.",
+      "videos": [
+        "../../../clips/r13/bosses/cinder-p1.mp4",
+        "../../../clips/r13/bosses/cinder-p2.mp4"
+      ],
+      "details": "One clip a stage of the fight, in order. The scorch is a dense carpet of flames; fewer, bigger tongues might read better on a phone.",
+      "parts": [
+        {
+          "id": "m0",
+          "title": "Bite",
+          "text": "Keep off its mouth.",
+          "videos": [
+            "../../../clips/r13/bosses/cinder-p1.mp4"
+          ]
+        },
+        {
+          "id": "m1",
+          "title": "Scorch",
+          "text": "The game's own fire down a slowly turning cone. Get behind a pillar.",
+          "videos": [
+            "../../../clips/r13/bosses/cinder-p1.mp4"
+          ]
+        },
+        {
+          "id": "m2",
+          "title": "Tail Sweep",
+          "text": "Don't stand behind it, or break the blade off its tail.",
+          "videos": [
+            "../../../clips/r13/bosses/cinder-p1.mp4"
+          ]
+        },
+        {
+          "id": "m3",
+          "title": "Rush",
+          "text": "Get out of the lane; a pillar dazes it.",
+          "videos": [
+            "../../../clips/r13/bosses/cinder-p2.mp4"
+          ]
+        },
+        {
+          "id": "m4",
+          "title": "Fire Call",
+          "text": "A fireball on each hero. Split up.",
+          "videos": [
+            "../../../clips/r13/bosses/cinder-p2.mp4"
+          ]
+        },
+        {
+          "id": "m5",
+          "title": "Ring of Fire",
+          "text": "It runs a full circle round the party laying flame, then scorches into the pen.",
+          "videos": [
+            "../../../clips/r13/bosses/cinder-p3.mp4"
+          ]
+        },
+        {
+          "id": "m6",
+          "title": "Molten",
+          "text": "Last stage: fire drips where it walks.",
+          "videos": [
+            "../../../clips/r13/bosses/cinder-p3.mp4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gildedSeraph",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The angel",
+      "text": "The Spire's boss is the biblical angel you picked: one eye, wheels turning against each other, six wings.",
+      "why": "You asked for a biblically accurate angel, a horns ability, and four chains from the corners. Each move is a part: mark the ones that are still weak.",
+      "videos": [
+        "../../../clips/r13/bosses/gildedSeraph-p1.mp4",
+        "../../../clips/r13/bosses/gildedSeraph-p2.mp4"
+      ],
+      "details": "One clip a stage of the fight, in order. It is still named The Gilded Seraph in the game. Say if you want a new name, and if horns meant horns on its head.",
+      "parts": [
+        {
+          "id": "m0",
+          "title": "Chains",
+          "text": "One chain from each of the four corners at a hero. Whoever it hits is dragged to that corner and shackled a moment.",
+          "videos": [
+            "../../../clips/r13/bosses/gildedSeraph-p1.mp4"
+          ]
+        },
+        {
+          "id": "m1",
+          "title": "Trumpets",
+          "text": "My reading of horns: four horns in a cross with a climbing note. Break the one aimed at you; break all four and it reels.",
+          "videos": [
+            "../../../clips/r13/bosses/gildedSeraph-p1.mp4"
+          ]
+        },
+        {
+          "id": "m2",
+          "title": "Wheel Within a Wheel",
+          "text": "The wheels leave it and drop as two eyed hoops. Step in, then out.",
+          "videos": [
+            "../../../clips/r13/bosses/gildedSeraph-p2.mp4"
+          ]
+        },
+        {
+          "id": "m3",
+          "title": "Smite",
+          "text": "A small circle.",
+          "videos": [
+            "../../../clips/r13/bosses/gildedSeraph-p2.mp4"
+          ]
+        },
+        {
+          "id": "m4",
+          "title": "Host",
+          "text": "Two singers halve what it takes. Kill them.",
+          "videos": [
+            "../../../clips/r13/bosses/gildedSeraph-p3.mp4"
+          ]
+        },
+        {
+          "id": "m5",
+          "title": "Gaze",
+          "text": "Last stage: a slowly turning cone of sight. Get out of it.",
+          "videos": [
+            "../../../clips/r13/bosses/gildedSeraph-p3.mp4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "winterQueen",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The Winter Queen",
+      "text": "Kept, with every move rebuilt so each asks something different and looks different.",
+      "why": "You said her abilities were very similar and the clones should look different. Each move is a part: mark the ones that are still weak.",
+      "videos": [
+        "../../../clips/r13/bosses/winterQueen-p1.mp4",
+        "../../../clips/r13/bosses/winterQueen-p2.mp4"
+      ],
+      "details": "One clip a stage of the fight, in order.",
+      "parts": [
+        {
+          "id": "m0",
+          "title": "Icicle Fan",
+          "text": "Real crystals; pillars stop them.",
+          "videos": [
+            "../../../clips/r13/bosses/winterQueen-p1.mp4"
+          ]
+        },
+        {
+          "id": "m1",
+          "title": "Frost Nova",
+          "text": "Then she blinks away. Get off her.",
+          "videos": [
+            "../../../clips/r13/bosses/winterQueen-p1.mp4"
+          ]
+        },
+        {
+          "id": "m2",
+          "title": "Ice Wall",
+          "text": "With freezing mist on the cut-off side. Walk round.",
+          "videos": [
+            "../../../clips/r13/bosses/winterQueen-p2.mp4"
+          ]
+        },
+        {
+          "id": "m3",
+          "title": "Lattice",
+          "text": "Beams between her and two ice mirrors. Break a mirror to break its lines.",
+          "videos": [
+            "../../../clips/r13/bosses/winterQueen-p3.mp4"
+          ]
+        },
+        {
+          "id": "m4",
+          "title": "Blizzard",
+          "text": "Only a circle round her is calm. Close in.",
+          "videos": [
+            "../../../clips/r13/bosses/winterQueen-p3.mp4"
+          ]
+        },
+        {
+          "id": "m5",
+          "title": "Her images",
+          "text": "Slabs of ice with her shape caught in them, not second queens.",
+          "videos": [
+            "../../../clips/r13/bosses/winterQueen-p4.mp4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chieftain",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The Goblin Chieftain",
+      "text": "A two-minute fight: half the health, harder blows, six moves that each ask something else.",
+      "why": "You said samey, two minutes, more damage and less health. Each move is a part: mark the ones that are still weak.",
+      "videos": [
+        "../../../clips/r13/bosses/chieftain-p1.mp4",
+        "../../../clips/r13/bosses/chieftain-p2.mp4"
+      ],
+      "details": "One clip a stage of the fight, in order. Wins take about 112 seconds (they took 218). The spear and the bomb barrage are gone.",
+      "parts": [
+        {
+          "id": "m0",
+          "title": "Twin Chop",
+          "text": "Keep out of his face.",
+          "videos": [
+            "../../../clips/r13/bosses/chieftain-p1.mp4"
+          ]
+        },
+        {
+          "id": "m1",
+          "title": "Charge",
+          "text": "The bonfires stop and daze him.",
+          "videos": [
+            "../../../clips/r13/bosses/chieftain-p1.mp4"
+          ]
+        },
+        {
+          "id": "m2",
+          "title": "Thrown Axe",
+          "text": "Step off the ring.",
+          "videos": [
+            "../../../clips/r13/bosses/chieftain-p2.mp4"
+          ]
+        },
+        {
+          "id": "m3",
+          "title": "War Drums",
+          "text": "Break them.",
+          "videos": [
+            "../../../clips/r13/bosses/chieftain-p3.mp4"
+          ]
+        },
+        {
+          "id": "m4",
+          "title": "Dynamite mice",
+          "text": "Get away.",
+          "videos": [
+            "../../../clips/r13/bosses/chieftain-p3.mp4"
+          ]
+        },
+        {
+          "id": "m5",
+          "title": "Whirlwind",
+          "text": "Last stage: run, then he is dizzy.",
+          "videos": [
+            "../../../clips/r13/bosses/chieftain-p4.mp4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "greatOoze",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The Great Ooze",
+      "text": "No tentacles, drawn in the slime you picked, a smaller shadow, and about an even fight now.",
+      "why": "You said the shadow was too big, no tentacles, too easy, and to look at its ability pool. Each move is a part: mark the ones that are still weak.",
+      "videos": [
+        "../../../clips/r13/bosses/greatOoze-p1.mp4",
+        "../../../clips/r13/bosses/greatOoze-p2.mp4"
+      ],
+      "details": "One clip a stage of the fight, in order. The plainest of the seven: its room is unchanged and the split could use a more visible tear.",
+      "parts": [
+        {
+          "id": "m0",
+          "title": "Hop Slam",
+          "text": "Get out from under it.",
+          "videos": [
+            "../../../clips/r13/bosses/greatOoze-p1.mp4"
+          ]
+        },
+        {
+          "id": "m1",
+          "title": "Roll",
+          "text": "The whole zig-zag shows on the floor first. Read the bounce.",
+          "videos": [
+            "../../../clips/r13/bosses/greatOoze-p1.mp4"
+          ]
+        },
+        {
+          "id": "m2",
+          "title": "Heave",
+          "text": "Get off it.",
+          "videos": [
+            "../../../clips/r13/bosses/greatOoze-p2.mp4"
+          ]
+        },
+        {
+          "id": "m3",
+          "title": "Brood",
+          "text": "Kill the slimes before they crawl home and heal it.",
+          "videos": [
+            "../../../clips/r13/bosses/greatOoze-p3.mp4"
+          ]
+        },
+        {
+          "id": "m4",
+          "title": "Split and Slap",
+          "text": "Fight two halves, then keep out from between them.",
+          "videos": [
+            "../../../clips/r13/bosses/greatOoze-p3.mp4"
+          ]
+        },
+        {
+          "id": "m5",
+          "title": "Meltdown",
+          "text": "Last stage: its landings leave gas.",
+          "videos": [
+            "../../../clips/r13/bosses/greatOoze-p4.mp4"
+          ]
+        }
+      ]
+    }
+  ]
+}

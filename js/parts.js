@@ -52,7 +52,10 @@ function splitSvg(text) {
     root.removeAttribute('width'); root.removeAttribute('height');
     layers.push({ id, pivot, moves: /^(arm-|back|front|top)/.test(id) && el.hasAttribute('data-pivot'), text: ser.serializeToString(root) });
   });
-  return { layers, string, has: Object.fromEntries(layers.map((l) => [l.id, true])) };
+  // art round 11 (the gaper: "has big outlines"): an art drawn bigger on screen than the rest of its family can ask for a
+  // thinner line, so its outline comes out their weight: data-line on #sprite, in SVG units (LINE when absent)
+  const line = +sprite.getAttribute('data-line') || LINE;
+  return { layers, string, line, has: Object.fromEntries(layers.map((l) => [l.id, true])) };
 }
 
 function canvas(w, h) { const c = document.createElement('canvas'); c.width = Math.max(1, w); c.height = Math.max(1, h); return c; }
@@ -89,7 +92,7 @@ async function buildSet(rig, px) {
     }
     const w = x1 - x0, h = y1 - y0;
     const img = canvas(w, h); img.getContext('2d').drawImage(cvs[i], -x0, -y0);
-    out.push({ id: l.id, pivot: l.pivot, moves: l.moves, img, ink: grow(img, LINE * k, INK), x: B0 + x0 / k, y: B0 + y0 / k, w: w / k, h: h / k, tints: {} });
+    out.push({ id: l.id, pivot: l.pivot, moves: l.moves, img, ink: grow(img, (rig.line || LINE) * k, INK), x: B0 + x0 / k, y: B0 + y0 / k, w: w / k, h: h / k, tints: {} });
   });
   return { px, k, layers: out, string: rig.string, used: 0 };
 }
@@ -205,6 +208,7 @@ function filled(L, color) {
   });
 }
 
+const swayOf = (pose, L) => (pose && pose.sway && (L.id === 'front' || L.id.startsWith('top')) ? pose.sway : null); // art round 11: the cobra
 function place(g, L, p) {
   if (!p || (!p.r && !p.dx && !p.dy)) return;
   g.translate(L.pivot[0] + (p.dx || 0), L.pivot[1] + (p.dy || 0)); g.rotate(p.r || 0); g.translate(-L.pivot[0], -L.pivot[1]);
@@ -241,13 +245,13 @@ export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = fals
   if (border && mode === 'normal') {
     const ga = g.globalAlpha; g.globalAlpha = ga * (border.a ?? 1);
     for (const L of Ls) { if (hidden(pose, L)) continue; const b = bordered(L, set.k, border.color), p = b.pad / set.k;
-      g.save(); place(g, L, pose[L.id]); g.drawImage(b.c, L.x - p, L.y - p, L.w + p * 2, L.h + p * 2); g.restore(); }
+      g.save(); place(g, L, pose[L.id]); place(g, L, swayOf(pose, L)); g.drawImage(b.c, L.x - p, L.y - p, L.w + p * 2, L.h + p * 2); g.restore(); }
     g.globalAlpha = ga;
   }
   if (mode !== 'sil') {
     for (const L of Ls) {
       if (hidden(pose, L)) continue;
-      g.save(); place(g, L, pose[L.id]);
+      g.save(); place(g, L, pose[L.id]); place(g, L, swayOf(pose, L));
       g.drawImage(mode === 'flash' ? filled(L, '#FFFFFF') : ink ? filled(L, ink) : L.ink, L.x, L.y, L.w, L.h);
       g.restore();
     }
@@ -257,7 +261,7 @@ export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = fals
   for (const L of Ls) {
     if (hidden(pose, L)) continue;
     if (str && L.id === strLayer) strokeString(g, str, mode === 'grey' ? '#9A929C' : set.string.color, set.string.w);
-    g.save(); place(g, L, pose[L.id]);
+    g.save(); place(g, L, pose[L.id]); place(g, L, swayOf(pose, L));
     g.drawImage(mode === 'grey' ? washed(L, 'rgb(120,112,125)', 0.72) : shift ? shifted(L) : L.img, L.x, L.y, L.w, L.h);
     g.restore();
   }
@@ -340,6 +344,7 @@ export function poseFor(u, w, dt) {
   const d = u.def, sty = STYLE[u.kind] || d.style || {}, url = d.art; // d.style: the new heroes' touches (heroes2.js)
   const pose = {};
   if (u.frozenT > 0 && u._pose) return u._pose;          // frozen stiff
+  if (d.pose) return (u._pose = d.pose(u, w, dt));      // lane B (bosses3): a boss that poses its own parts (the angel's wheels)
   const kind = (u.anim && u.anim.kind) || d.attackAnim || (d.role === 'ranged' ? 'draw' : d.role === 'skirmish' ? 'thrust' : 'swing');
   const base = kind === 'ability' ? (d.attackAnim || 'swing') : kind;
   const mv = MOVES[base] || MOVES.swing;
@@ -416,6 +421,10 @@ export function poseFor(u, w, dt) {
   u._cape = (u._cape || 0) + (capeT - (u._cape || 0)) * (1 - Math.exp(-dt * 6));
   pose.back = { r: u._cape };
   if (d.turret) pose.back = { r: wrapAngle((u.baseA ?? u.facing) - u.facing) }; // a turret's legs stay put while its top turns
+  // art round 11 (the cobra: "Have that top segment free from the bottom and have it slowly move around the bottom
+  // segment in game"): def.sway = { r (SVG units), speed (rad/s) }: every part whose id starts with top, and #front, rides
+  // a slow circle over the rest (the coil, #back), a little flatter front to back.
+  if (d.sway) { const a = T * d.sway.speed + u.id * 1.7, o = { r: 0, dx: Math.cos(a) * d.sway.r, dy: Math.sin(a) * d.sway.r * 0.7 }; pose.sway = o; }
   pose.glow = glow > 0.02 ? { a: glow, color: sty.glow || '#FFF1B0' } : null;
   pose.pop = pop;
   if (u._force) Object.assign(pose, u._force); // the lab's test poses
