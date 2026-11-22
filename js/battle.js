@@ -9,7 +9,9 @@
 // colour each is. Bosses only know how to fight from the 'enemy' team, so the side with a boss gets that team.
 import { step, alive } from './sim.js';
 import { DEFS } from './units.js';
-import { HEROES, HERO_IDS } from './heroes.js';
+import { HEROES, HERO_IDS, tierBuild } from './heroes.js';
+import { spawn } from './sim.js';
+import { initKit } from './kits.js';
 import { THEMES, DUNGEON_ORDER } from './themes.js';
 import { battleRoom, battleFoe, spawnHero, freeSpot, RANK_MULT, DUNGEON_RANK } from './dungeon.js';
 import { battleStats } from './stats.js';
@@ -20,6 +22,13 @@ export const SIDE_MAX = 20;      // units a side
 export const STACK_MAX = 12;     // of one kind
 export const SIDES = { a: { name: 'Blue', color: '#5FA8FF' }, b: { name: 'Red', color: '#FF6B5A' } };
 export const RANKS = ['', 'Elite', 'Major'];
+// Round 13: a hero stack's tier. null = the build and trinkets it has at camp ("Yours"); 0-3 = heroes.js tierBuild
+// (0 nothing bought, 1 the first shell with every ability, 2 the second shell, 3 the whole web), no trinkets.
+export const TIERS = [null, 0, 1, 2, 3];
+export const tierName = (t) => (t == null ? 'Yours' : 'Tier ' + t);
+export const SIZES = { s: { name: 'Small', w: 960, h: 480 }, l: { name: 'Large', w: 1280, h: 960 }, h: { name: 'Huge', w: 1760, h: 1440 } };
+// "Add dev unlock": save.battleDev (a switch on the battle page) fields everything, beaten or not, owned or not.
+const devOpen = (save) => !!save.cheat || !!save.battleDev;
 const TIME_LIMIT = 240;          // a fight that hasn't ended by then goes to whoever has more health left
 
 // ---------------------------------------------------------------- who can be picked
@@ -41,9 +50,9 @@ export function battleRoster(save) {
     const T = THEMES[id]; if (!T) continue;
     const { kinds, bosses } = kindsOf(T);
     const fresh = (k) => (seen.has(k) ? false : (seen.add(k), true));
-    dungeons.push({ id, name: T.name, open: !!save.cheat || dungeonState(save, id).cleared > 0, kinds: kinds.filter(fresh), bosses: bosses.filter(fresh) });
+    dungeons.push({ id, name: T.name, open: devOpen(save) || dungeonState(save, id).cleared > 0, kinds: kinds.filter(fresh), bosses: bosses.filter(fresh) });
   }
-  const heroes = HERO_IDS.filter((h) => save.cheat || (save.heroes[h] && save.heroes[h].owned));
+  const heroes = HERO_IDS.filter((h) => devOpen(save) || (save.heroes[h] && save.heroes[h].owned));
   return { heroes, dungeons };
 }
 export const homeOf = (() => { let map = null; return (kind) => {
@@ -66,13 +75,16 @@ export function cleanSetup(save, setup) {
   const R = battleRoster(save), ok = new Set(R.heroes);
   for (const d of R.dungeons) if (d.open) for (const k of [...d.kinds, ...d.bosses]) ok.add(k);
   const fix = (list) => (Array.isArray(list) ? list : []).filter((s) => s && ok.has(s.k) && s.n > 0)
-    .map((s) => ({ k: s.k, n: Math.min(STACK_MAX, Math.floor(s.n)), rank: canRank(s.k) ? Math.max(0, Math.min(2, s.rank | 0)) : 0 }));
-  const arena = setup && THEMES[setup.arena] && (save.cheat || DUNGEON_ORDER.indexOf(setup.arena) <= 0 || dungeonState(save, setup.arena).open) ? setup.arena : DUNGEON_ORDER.find((id) => THEMES[id]);
-  return { arena, a: fix(setup && setup.a), b: fix(setup && setup.b) };
+    .map((s) => ({ k: s.k, n: Math.min(STACK_MAX, Math.floor(s.n)), rank: canRank(s.k) ? Math.max(0, Math.min(2, s.rank | 0)) : 0,
+      tier: isHero(s.k) && s.tier != null && s.tier >= 0 && s.tier <= 3 ? s.tier | 0 : null }));
+  const arena = setup && THEMES[setup.arena] && (devOpen(save) || DUNGEON_ORDER.indexOf(setup.arena) <= 0 || dungeonState(save, setup.arena).open) ? setup.arena : DUNGEON_ORDER.find((id) => THEMES[id]);
+  // scaled (the designer: "Both. Toggles scaled stats on and off."): on, a monster is as strong as on its own dungeon's
+  // first floor; off, every monster is at the first dungeon's strength, so kinds can be compared like for like.
+  return { arena, size: setup && SIZES[setup.size] ? setup.size : 'l', scaled: !setup || setup.scaled !== false, a: fix(setup && setup.a), b: fix(setup && setup.b) };
 }
 
 // ---------------------------------------------------------------- the fight
-const keyOf = (side, s) => `${side}:${s.k}:${s.rank || 0}`;
+export const keyOf = (side, s) => `${side}:${s.k}:${s.rank || 0}:${s.tier == null ? 'y' : s.tier}`;
 const frontish = (k) => { const r = DEFS[k].heroRole || DEFS[k].role; return r === 'tank' ? 0 : r === 'melee' || r === 'skirmish' ? 1 : 2; };
 
 export function newBattle(save, setupIn) {
@@ -81,7 +93,8 @@ export function newBattle(save, setupIn) {
   const teamOf = { [bossSide]: 'enemy', [bossSide === 'a' ? 'b' : 'a']: 'hero' };
   const boss = [...setup.a, ...setup.b].find((s) => isBoss(s.k) && DEFS[s.k].arena);
   const most = Math.max(countOf(setup.a), countOf(setup.b));
-  const w = battleRoom(setup.arena, { arena: boss ? DEFS[boss.k].arena : null, big: most > 10, obstacles: most > 10 ? 3 : 2 });
+  const sz = SIZES[setup.size] || SIZES.l;
+  const w = battleRoom(setup.arena, { arena: boss ? DEFS[boss.k].arena : null, W: sz.w, H: sz.h, obstacles: Math.round(2 * sz.w * sz.h / (960 * 480)) });
   w.battle = { side: { [teamOf.a]: 'a', [teamOf.b]: 'b' } };
   w.stats = battleStats([...setup.a.map((s) => keyOf('a', s)), ...setup.b.map((s) => keyOf('b', s))]);
   w.on.kill = (u) => { if (u.def.onDeath) u.def.onDeath(w, u); };
@@ -105,10 +118,11 @@ export function newBattle(save, setupIn) {
       let u;
       if (isHero(s.k)) {
         const sv = (save.heroes && save.heroes[s.k]) || {};
-        u = spawnHero(w, save, s.k, { level: Math.max(1, sv.level || 1), potions: 0, trinkets: (sv.trinkets || []).slice() }, x, y, setup.arena);
+        if (s.tier == null) u = spawnHero(w, save, s.k, { level: Math.max(1, sv.level || 1), potions: 0, trinkets: (sv.trinkets || []).slice() }, x, y, setup.arena);
+        else { u = spawn(w, s.k, x, y, { level: 1, potions: 0, trinkets: [] }); initKit(u, s.k, { nodes: tierBuild(s.k, s.tier) }, 1); } // a set tier: that build, nothing else
       } else {
         const home = homeOf(s.k);
-        u = battleFoe(w, s.k, x, y, RANK_MULT[DUNGEON_RANK[home] || 0] || 1, s.rank || 0);
+        u = battleFoe(w, s.k, x, y, setup.scaled ? RANK_MULT[DUNGEON_RANK[home] || 0] || 1 : RANK_MULT[0], s.rank || 0);
       }
       u.team = teamOf[side]; u.aggro = true; u.adopt = false;
       u.facing = u.mvA = dir > 0 ? 0 : Math.PI;
@@ -152,7 +166,7 @@ export function summarizeBattle(run) {
   for (const side of ['a', 'b']) {
     sides[side] = { left: 0, start: run.start[side], health: healthOf(run, side), rows: run.setup[side].map((s) => {
       const mine = run.sides[side].filter((u) => u.bkey === keyOf(side, s)), left = mine.filter(fighting).length;
-      return { k: s.k, n: s.n, rank: s.rank || 0, left, ...(S.rows[keyOf(side, s)] || {}) };
+      return { k: s.k, n: s.n, rank: s.rank || 0, tier: s.tier, left, ...(S.rows[keyOf(side, s)] || {}) };
     }) };
     sides[side].left = sides[side].rows.reduce((n, r) => n + r.left, 0);
   }
