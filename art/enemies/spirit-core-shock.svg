@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- GAME COPY (art round 10) of design/class-round10/enemies/spirit-core-shock.svg -->
+<!-- STORM SPIRIT (round 10: the core only): an elemental spirit seen from above, the spirits' one shared shape: a round glowing core with the element's mark in it and no drawn tail: the game draws its tail as a ribbon that trails and wiggles behind it; lightning: a pale yellow core with a white bolt in it. No face. Parts: #body (the core). Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<radialGradient id="gSpshock" cx="0.4" cy="0.36" r="0.72"><stop offset="0" stop-color="#FFFDE0"/><stop offset="0.55" stop-color="#F5D26D"/><stop offset="1" stop-color="#F2C23A"/></radialGradient><linearGradient id="gSpshockT" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#FFF29A"/><stop offset="1" stop-color="#E0A82A"/></linearGradient>
+<path id="s1" d="M 64 116 A 36 36 0 1 0 136 116 A 36 36 0 1 0 64 116 Z"/>
+<clipPath id="c1"><use href="#s1"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="body">
+<use href="#s1" fill="url(#gSpshock)"/><g clip-path="url(#c1)"><path d="M 75 116 A 25 25 0 1 0 125 116 A 25 25 0 1 0 75 116 Z" fill="#FFFDE0" opacity="0.35"/><path d="M 103 101 L 91 120 L 100 120 L 96 135 L 110 115 L 101 115 Z" fill="#FFFFFF"/><path d="M 76 100 A 10 6 0 1 0 96 100 A 10 6 0 1 0 76 100 Z" fill="#FFFFFF" opacity="0.5"/></g>
+</g>
+</g>
+</svg>

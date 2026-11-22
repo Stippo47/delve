@@ -216,7 +216,10 @@ def comma_tail(x0, y0, cx, cy, x1, y1, w0, n=14):
     return blob(L + R[::-1][1:], 0.7)
 
 
-def spirit9(el, name, desc):
+# round 10 (art-round9 deck, on the Frost spirit: "That tail should be like that rat tail where it's wiggly/ follows
+# behind"): tail=False leaves the drawn tail (#back) out, so the game can draw it as a springy ribbon behind the core
+# (js/render.js, as it draws the rat's tail). The core is the round-9 core, untouched.
+def spirit9(el, name, desc, tail=True):
     """The one spirit shape, in the element's colours (SPIRIT_COLS) with its mark: a comma, a round core with a tail
     sweeping back from it, tapering and curling to a point."""
     c0, c1, t0, t1, mk = SPIRIT_COLS[el]
@@ -228,9 +231,15 @@ def spirit9(el, name, desc):
               f'<stop offset="0.55" stop-color="{light(c1, 1.18)}"/><stop offset="1" stop-color="{c1}"/></radialGradient>'
               f'<linearGradient id="{gid}T" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="{t0}"/>'
               f'<stop offset="1" stop-color="{t1}"/></linearGradient>')
-    S.group("back", (100, 100), "the tail")
-    S.shape(comma_tail(100, 110, 70, 54, 128, 30, 52), fill=f"url(#{gid}T)", shadow=0, side=False,
-            decor=f'<path d="{comma_tail(94, 92, 76, 58, 112, 40, 18)}" fill="{t0}" opacity="0.5"/>')
+    if tail:
+        S.group("back", (100, 100), "the tail")
+        S.shape(comma_tail(100, 110, 70, 54, 128, 30, 52), fill=f"url(#{gid}T)", shadow=0, side=False,
+                decor=f'<path d="{comma_tail(94, 92, 76, 58, 112, 40, 18)}" fill="{t0}" opacity="0.5"/>')
+    else:
+        S.comment = S.comment.replace("(round 9)", "(round 10: the core only)").replace(
+            "a wisp of a tail sweeping back from it, tapering and curling to a point (a comma)",
+            "no drawn tail: the game draws its tail as a ribbon that trails and wiggles behind it").replace(
+            "Parts: #back (the tail, sways), #body (the core).", "Parts: #body (the core).")
     S.group("body")
     S.shape(circ(100, 116, 36), fill=f"url(#{gid})", shadow=3, side=False,
             decor=f'<path d="{circ(100, 116, 25)}" fill="{c0}" opacity="0.35"/>' + spirit_mark(el, 100, 118, mk)

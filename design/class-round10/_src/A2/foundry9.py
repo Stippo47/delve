@@ -177,19 +177,51 @@ def turret_flame():
     return save("enemies", "foundry-turret-flame", S)
 
 
-def turret_gun():
+# round 10 (art-round9 deck, on the Gun turret: "Almost good. Turret part shoukd be in the wall more. Circle half way in.
+# Could add more detail/ parts."): turret_gun(r10=True) keeps the dome and the twin barrels exactly and changes:
+#   in the wall: the game mounts a wall turret with its centre a collider's radius out from the wall (families.js
+#       mountOnWall: 83 of these units), and the dome has to stay on that centre to swivel. So the wall comes out to it:
+#       the thin plate is a riveted iron bulkhead built out from the wall as far as the dome's middle (#back, it stays
+#       put), with a round socket in its front edge: the dome sits half in the socket, half out.
+#   more parts: a drum magazine on the dome's left side, a top hatch with a hinge and a sight notch on the dome, cooling
+#       collars on the barrels, a hazard stripe along the bulkhead's lip and a feed pipe along the wall.
+def turret_gun(r10=False):
     S = Sprite("GUN TURRET (round 9): a turret mounted on a wall, seen from above: a riveted plate on the wall behind it "
                "(#back: it stays on the wall while the gun turns), a dark iron dome on a swivel and twin barrels pointing "
                "out into the room with brass muzzle rings. Parts: #back (the wall plate), #body (dome and barrels). "
                + LAYOUT)
-    wall_plate(S)
+    if r10:
+        S.comment = S.comment.replace("(round 9)", "(round 10: set into the wall, more parts)").replace(
+            "a riveted plate on the wall behind it (#back: it stays on the wall while the gun turns)",
+            "a riveted iron bulkhead built out from the wall with a round socket in its front edge (#back: it stays on the "
+            "wall while the gun turns), the dome half in the socket; a drum magazine on the dome's side, a hatch and a "
+            "sight on top, cooling collars on the barrels")
+        S.group("back", (100, 100), "bulkhead (stays on the wall)")
+        S.shape(rr(100, 26, 196, 16, 6), "#6E747E", shadow=0, decor=rivets([(14, 26), (186, 26)], 3.5, "#C9CED6"))   # the feed pipe
+        bulk = "M 22 16 L 178 16 L 178 88 Q 178 104 162 104 L 38 104 Q 22 104 22 88 Z"
+        stripes = "".join(f'<path d="M {x} 108 L {x + 12} 108 L {x + 2} 90 L {x - 10} 90 Z" fill="#2A2C32"/>' for x in range(24, 190, 24))
+        S.shape(bulk, DIRON, shadow=2,
+                decor=f'<path d="M 20 90 L 180 90 L 180 106 L 20 106 Z" fill="{HAZARD}"/>' + stripes
+                      + rivets([(34, 30), (166, 30), (34, 60), (166, 60), (66, 30), (134, 30)], 4.5, "#9AA0AA")
+                      + f'<path d="{circ(100, 100, 56)}" fill="#22242A"/>'
+                      + f'<path d="{ell(64, 40, 26, 9)}" fill="#FFFFFF" opacity="0.08"/>')
+    else:
+        wall_plate(S)
     S.group("body")
     for x in (90, 110):
         S.shape(rr(x, 150, 11, 84, 5), "#5A606A", shadow=0, decor=strokes(f"M {x - 2} 116 L {x - 2} 184", "#C9CED6", 2.5, 0.5))
         S.shape(rr(x, 190, 15, 9, 3.5), BRASS_C, shadow=1)
+    if r10:
+        for y in (150, 164):   # cooling collars across both barrels
+            S.shape(rr(100, y, 38, 8, 3.5), "#3E424A", shadow=1)
+        S.shape(rr(54, 104, 26, 40, 10), "#6E747E", shadow=0, decor=strokes("M 44 92 L 64 92 M 44 104 L 64 104 M 44 116 L 64 116", "#3E424A", 3, 0.8))   # the drum magazine
     S.shape(circ(100, 96, 46), "#5A606A", shadow=3,
             decor=rivets(ring_pts(100, 96, 37, 8, 22), 3.2, "#A8AEB8") + f'<path d="{ell(84, 76, 16, 9)}" fill="#FFFFFF" opacity="0.22"/>'
                   + f'<path d="{circ(100, 96, 18)}" fill="#3E424A"/>')
+    if r10:
+        S.shape(circ(100, 96, 14), "#7A808C", shadow=2, decor=strokes("M 91 96 L 109 96", "#3E424A", 3, 0.9) + f'<circle cx="95" cy="91" r="3.5" fill="#FFFFFF" opacity="0.3"/>')   # the hatch
+        S.shape(rr(100, 78, 14, 7, 3), "#3E424A", shadow=1)     # its hinge
+        S.shape(rr(100, 134, 10, 12, 3), BRASS_C, shadow=2)     # the sight, between the barrels' roots
     return save("enemies", "foundry-turret-gun", S)
 
 

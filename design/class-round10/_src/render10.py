@@ -197,6 +197,57 @@ var("sproutling", 'Sproutling: "Don\'t like." Three new takes',
     [("wild-sproutling-bulb.svg", "A turnip"), ("wild-sproutling-acorn.svg", "B acorn"), ("wild-sproutling-bud.svg", "C bud")],
     15, 34, before=r8 + "wild-sproutling.svg")
 
+# ================================================================== group 2: the art-round9 notes
+r9 = "class-round9/enemies/"
+B10 = R10 / "boards"
+# the Frost Hollow
+one("frost-icicle-wraith", "Icicle wraith: a banshee of the ice", 22, 37, before=r9 + "frost-icicle-wraith.svg")
+var("frost-spirit", 'Frost spirit: "That tail should be like that rat tail where it\'s wiggly/ follows behind"',
+    [(B10 / "frost-spirit-code-tail.svg", "the tail drawn by the game (a mock-up)"), ("spirit-core-frost.svg", "the art: the core alone")],
+    15, 30, before=r9 + "frost-spirit.svg", blabel="before: the tail drawn in")
+one("frost-yeti", "Yeti: the face, the nose, the fangs", 31, 68, before=r9 + "frost-yeti.svg")
+one("yeti-snowball", "The yeti's snowball: no lumps", 25 * 86.4 / 30 / 220 * 100, 100, before="class-round9/props/yeti-snowball.svg", folder="props")
+# the Gilded Spire
+one("spire-choir-sprite", "Choir sprite: the hair", 16, 40, before=r9 + "spire-choir-sprite.svg")
+one("spire-fallen-angel", "Fallen angel", 23, 56, before=r9 + "spire-fallen-angel.svg")
+one("spire-herald-light", "Herald of Light", 34, 56, before=r9 + "spire-herald-light.svg")
+one("spire-herald-fallen", "Fallen Herald", 34, 56, before=r9 + "spire-herald-fallen.svg")
+var("golem-bodies", 'Golem: "First get down basic golems body. Make 3 variants." (the eye kept)',
+    [("spire-golem-boulders.svg", "A boulders"), ("spire-golem-blocks.svg", "B blocks"), ("spire-golem-hunch.svg", "C hunch")],
+    33, 66, before=r9 + "spire-golem.svg")
+var("gilded-golems", 'Gilded golem: "Then make gilded. Note I love the eye." (each body gilded)',
+    [("spire-gilded-golem-boulders.svg", "A boulders"), ("spire-gilded-golem-blocks.svg", "B blocks"), ("spire-gilded-golem-hunch.svg", "C hunch")],
+    33, 66, before=r9 + "spire-gilded-golem.svg")
+# the Sunken Dunes
+one("dunes-cobra", "Cobra", 19, 54, before=r9 + "dunes-cobra.svg", bhr=48)
+one("dunes-jackal", "Jackal guard: the same shape and colours, drawn again", 22, 54, before=r9 + "dunes-jackal.svg")
+one("dunes-mummy", "Mummy", 24, 54, before=r9 + "dunes-mummy.svg")
+one("dunes-serpent-head", "Sand serpent (the head)", 21, 40, before=r9 + "dunes-serpent-head.svg")
+one("dunes-serpent-coil", "Sand serpent (a body segment)", 20, 55, before=r9 + "dunes-serpent-coil.svg")
+one("dunes-sand-serpent", "Sand serpent: head and six segments as the game lays them", 100, 100, folder="boards")
+# the Clockwork Foundry
+one("foundry-bee", "Bee (copper): one body", 12, 56, before=r9 + "foundry-bee.svg", bhr=48)
+one("foundry-wasp", "Wasp (copper): a head and one abdomen", 12, 58, before=r9 + "foundry-wasp.svg", bhr=50)
+one("foundry-hornet", "Hornet (copper): a head and one abdomen", 15, 62, before=r9 + "foundry-hornet.svg", bhr=52)
+one("foundry-gear-sprite", "Gear sprite", 18, 65, before=r9 + "foundry-gear-sprite.svg")
+one("foundry-cog-sprite", "Cog sprite", 18, 65, before=r9 + "foundry-cog-sprite.svg")
+one("foundry-turret-gun", "Gun turret: set into the wall, more parts", 22, 60, before=r9 + "foundry-turret-gun.svg")
+one("foundry-turret-steam", "Steam turret", 22, 60, before=r9 + "foundry-turret-steam.svg")
+# the bosses
+one("boss-choir-singer", "Choir singer: the book turned, the hair", 20, 40, before=r9 + "boss-choir-singer.svg")
+one("boss-goblin-chieftain", "The Goblin Chieftain", 38, 67, before=r9 + "boss-goblin-chieftain.svg")
+one("boss-gilded-seraph", "The Gilded Seraph", 38, 58, before=r9 + "boss-gilded-seraph.svg")
+var("boss-biblical-angel", '"I want one of those biblically accurate angels" (one drawn for the boss lane; beside it the seraph, redrawn)',
+    [("boss-biblical-angel.svg", "a biblically accurate angel"), ("boss-gilded-seraph.svg", "the Gilded Seraph, redrawn")],
+    38, 58, before=r9 + "boss-gilded-seraph.svg", blabel="before: the seraph you saw")
+
+# ================================================================== group 3: the designer's message of 2026-11-22
+one("spire-sun-blade", 'Sun blade: "much bigger. Like 3 units across"', 52, 58, before=r9 + "spire-sun-blade.svg", bvr=17, bhr=58,
+    blabel="Sun blade (before: its art and size until now)")
+one("slime", "Slime: the picked slime, tail removed, in the game's blue", 22, 64,
+    before="class-round6/enemies/slime-big.svg", blabel="The slime you picked (round 6: the tail removed)")
+one("slime-small", "Slimelet: the same slime, paler, no bone", 14, 64)
+
 if __name__ == "__main__":
     want = sys.argv[1:]
     for n in want or (list(SINGLE) + list(VARS)):

@@ -47,15 +47,18 @@ try:
     refs = {TMP / "base" / f: R8 / "enemies" / f for f in ("ghost-a.svg", "ghost-b.svg", "greenskin-orc.svg", "greenskin-troll.svg",
                                                            "greenskin-chieftain.svg", "sewer-croc.svg")}
     refs.update({TMP / "enemies" / f"wild-{w}.svg": R8 / "enemies" / f"wild-{w}.svg" for w in ("wolf", "dire-wolf", "alpha", "ent", "elder-ent")})
-    base9 = src / "base9.py"   # round-9 designs a round-10 fix starts from: base9.py writes them into TMP/base9
-    if base9.exists():
-        subprocess.run([sys.executable, str(base9), str(TMP / "base9")], check=True, stdout=subprocess.DEVNULL, cwd=src)
-        for p in sorted((TMP / "base9").rglob("*.svg")):
-            refs[p] = R9 / p.relative_to(TMP / "base9")
-    for a, b in refs.items():
-        n += 1
-        if not a.exists() or a.read_bytes() != b.read_bytes():
-            bad.append(f"[base] {a.name} differs from {b.relative_to(DESIGN).as_posix()}")
+    def compare(refs):
+        global n
+        for a, b in refs.items():
+            n += 1
+            if not a.exists() or not b.exists() or a.read_bytes() != b.read_bytes():
+                bad.append(f"[base] {a.name} differs from {b.relative_to(DESIGN).as_posix()}")
+    compare(refs)
+    for d in ("enemies", "props"):
+        shutil.rmtree(TMP / d, ignore_errors=True)
+    # every round-9 generator as it stands: base9.py writes their files into TMP/base9
+    subprocess.run([sys.executable, str(src / "base9.py"), str(TMP / "base9")], check=True, stdout=subprocess.DEVNULL, cwd=src)
+    compare({p: R9 / p.relative_to(TMP / "base9") for p in sorted((TMP / "base9").rglob("*.svg"))})
     for d in ("enemies", "props", "base", "base9"):
         shutil.rmtree(TMP / d, ignore_errors=True)
     # 2. build10.py -> the committed files

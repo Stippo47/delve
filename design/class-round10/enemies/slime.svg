@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- SLIME (round 10, the game's slime): the picked slime with its tail removed (round 6), in the game's blue: a soft rounded cube of jelly lit from the left, a swallowed bone inside, one soft shine, no eyes, no tail. Its other kinds are this art with its colours turned by the game. Parts: #body only (the game squashes it whole). Front = DOWN (+y). -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#A6D2F8"/><stop offset="1" stop-color="#3F7AC4"/></linearGradient>
+<path id="p2" d="M76 43 H124 A44 44 0 0 1 168 87 V121 A44 44 0 0 1 124 165 H76 A44 44 0 0 1 32 121 V87 A44 44 0 0 1 76 43 Z"/>
+<clipPath id="c3"><use href="#p2"/></clipPath>
+<linearGradient id="g4" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.3"/></linearGradient>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="body"><g>
+<use href="#p2" fill="url(#g1)"/>
+<g clip-path="url(#c3)"><g transform="translate(118 116) rotate(-35)" opacity="0.35"><rect x="-5" y="-22" width="10" height="44" rx="5" fill="#2C457A"/><circle cx="-6" cy="-22" r="7" fill="#2C457A"/><circle cx="6" cy="-22" r="7" fill="#2C457A"/><circle cx="-6" cy="22" r="7" fill="#2C457A"/><circle cx="6" cy="22" r="7" fill="#2C457A"/></g><path d="M36 140 C60 160 140 160 164 140 L164 180 L36 180 Z" fill="#36609F" opacity="0.35"/><use href="#p2" fill="url(#g4)"/></g>
+<path d="M58 78 C60.7 74 71 67.3 76 66 C81 64.7 88.7 67 88 70 C87.3 73 76.7 80.7 72 84 C67.3 87.3 62.3 91 60 90 C57.7 89 55.3 82 58 78 Z" fill="#FFFFFF" opacity="0.35"/>
+</g></g>
+</g>
+</svg>

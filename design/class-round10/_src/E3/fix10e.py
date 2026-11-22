@@ -27,6 +27,10 @@ for _h in "abc":
     BUILD[f"greenskin-troll-head-{_h}"] = (lambda h=_h: G.troll10(h, True))
     BUILD[f"greenskin-troll-hands-{_h}"] = (lambda h=_h: G.troll10(h, False))
 
+# "Get new slime spite in": the picked slime, tail removed, in the game's blue; and the slimelet from it
+BUILD["slime"] = lambda: C.slime("big", game="slime")
+BUILD["slime-small"] = lambda: C.slime("big", game="small")
+
 if __name__ == "__main__":
     for n in sys.argv[1:] or list(BUILD):
         p = BUILD[n]().write(f"{n}.svg")

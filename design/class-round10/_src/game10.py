@@ -24,7 +24,14 @@ COPIES = [
     ("enemies/bandit-chief.svg", "enemies/bandit-chief.svg"),
     ("enemies/wild-dire-wolf.svg", "enemies/dire-wolf.svg"),
     # the art-round9 notes
-    ("enemies/frost-spirit.svg", "enemies/spirit-frost.svg"),
+    # the spirits' cores without the drawn tail: beside the round-9 files, unused until the game draws the tail (notes.md)
+    ("enemies/spirit-core-frost.svg", "enemies/spirit-core-frost.svg"),
+    ("enemies/spirit-core-fire.svg", "enemies/spirit-core-fire.svg"),
+    ("enemies/spirit-core-heal.svg", "enemies/spirit-core-heal.svg"),
+    ("enemies/spirit-core-ward.svg", "enemies/spirit-core-ward.svg"),
+    ("enemies/spirit-core-poison.svg", "enemies/spirit-core-poison.svg"),
+    ("enemies/spirit-core-haste.svg", "enemies/spirit-core-haste.svg"),
+    ("enemies/spirit-core-shock.svg", "enemies/spirit-core-shock.svg"),
     ("enemies/frost-yeti.svg", "enemies/yeti.svg"),
     ("props/yeti-snowball.svg", "props/yeti-snowball.svg"),
     ("enemies/frost-icicle-wraith.svg", "enemies/icicle-wraith.svg"),
@@ -46,9 +53,11 @@ COPIES = [
     ("enemies/foundry-turret-steam.svg", "enemies/turret-steam.svg"),
     ("enemies/boss-choir-singer.svg", "bosses/choir-singer.svg"),
     ("enemies/boss-goblin-chieftain.svg", "bosses/goblin-chieftain.svg"),
+    ("enemies/boss-gilded-seraph.svg", "bosses/gilded-seraph.svg"),
     # today's message
     ("enemies/spire-sun-blade.svg", "enemies/sun-blade.svg"),
     ("enemies/slime.svg", "enemies/slime.svg"),
+    ("enemies/slime-small.svg", "enemies/slime-small.svg"),
 ]
 
 if __name__ == "__main__":

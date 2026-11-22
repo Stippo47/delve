@@ -5,7 +5,7 @@ python bosses9.py [name ...]   -> ../../enemies/boss-*.svg   (paths relative to 
 import sys, math, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from beasts9 import *
-from spire9 import feather9, wing9, LIGHT, FALLEN, ASH_FACE
+from spire9 import feather9, wing9, LIGHT, FALLEN, ASH_FACE, cherub_hair
 
 COLD_FACE = ('<linearGradient id="gFaceCold" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse">'
              '<stop offset="0" stop-color="#8E98B0"/><stop offset="0.2" stop-color="#B4BED2"/><stop offset="0.45" stop-color="#E2E8F2"/>'
@@ -111,7 +111,7 @@ def seraph(fallen=False):
 
 
 # ================================================================== the Seraph's choir singer
-def choir_singer():
+def choir_singer(r10=False):
     S = Sprite("CHOIR SINGER (round 9): one of the Gilded Seraph's singers, kin to the choir sprite: a cherub with golden "
                "curls, no eyes, its mouth open in an 'o' as it sings; a white robe with a gold collar; gold-tipped white "
                "wings (#back, sway); an open hymn book held in front in both hands (the hands are arm-l, arm-r: they lift "
@@ -126,14 +126,22 @@ def choir_singer():
     S.group("body")
     S.shape(ell(100, 116, 52, 32), "#F8F4EA", decor=strokes("M 52 124 Q 100 152 148 124", GOLD, 6, 0.95))
     head(S)
-    curls = "".join(f'<path d="M {x - 6} {y} a 6 6 0 1 1 6 6" fill="none" stroke="#D8A030" stroke-width="3" stroke-linecap="round" opacity="0.8"/>'
-                    for x, y in ((82, 66), (104, 58), (120, 74), (92, 84), (70, 84)))
-    S.shape(cloud(100, 80, 44, 13, 0.82, 4), "#F2C454", shadow=4, T="translate(100 80) scale(1.04 0.84) translate(-100 -80)",
-            decor=f'<path d="{ell(86, 64, 14, 8)}" fill="#FFF6D0" opacity="0.4"/>' + curls)
+    if r10:
+        S.comment = S.comment.replace("(round 9)", "(round 9; round 10: the hair, and the book turned to face the singer)")
+        S.shape(cherub_hair(), "#F2C454", shadow=4, decor=f'<path d="{ell(84, 64, 16, 9)}" fill="#FFF6D0" opacity="0.4"/>')
+    else:
+        curls = "".join(f'<path d="M {x - 6} {y} a 6 6 0 1 1 6 6" fill="none" stroke="#D8A030" stroke-width="3" stroke-linecap="round" opacity="0.8"/>'
+                        for x, y in ((82, 66), (104, 58), (120, 74), (92, 84), (70, 84)))
+        S.shape(cloud(100, 80, 44, 13, 0.82, 4), "#F2C454", shadow=4, T="translate(100 80) scale(1.04 0.84) translate(-100 -80)",
+                decor=f'<path d="{ell(86, 64, 14, 8)}" fill="#FFF6D0" opacity="0.4"/>' + curls)
     S.shape(ell(100, 136, 6, 7), "#7A3A3A", shadow=0, side=False, decor=f'<path d="{ell(100, 140, 4, 3)}" fill="#C86A6A"/>')
     # the open book in front, held at both sides
-    S.shape("M 70 156 Q 85 150 100 158 Q 115 150 130 156 L 130 180 Q 115 174 100 182 Q 85 174 70 180 Z", "#F4EEDC", shadow=3,
-            decor=strokes("M 100 158 L 100 182", "#B8A47C", 2.5, 0.9) + strokes("M 76 162 L 94 164 M 76 168 L 94 170 M 106 164 L 124 162 M 106 170 L 124 168", "#B8A47C", 2, 0.7))
+    if r10:   # the book the other way up: its pages fall open towards the singer, who reads it
+        S.shape("M 70 180 Q 85 186 100 178 Q 115 186 130 180 L 130 156 Q 115 162 100 154 Q 85 162 70 156 Z", "#F4EEDC", shadow=3,
+                decor=strokes("M 100 154 L 100 178", "#B8A47C", 2.5, 0.9) + strokes("M 76 166 L 94 164 M 76 172 L 94 170 M 106 164 L 124 166 M 106 170 L 124 172", "#B8A47C", 2, 0.7))
+    else:
+        S.shape("M 70 156 Q 85 150 100 158 Q 115 150 130 156 L 130 180 Q 115 174 100 182 Q 85 174 70 180 Z", "#F4EEDC", shadow=3,
+                decor=strokes("M 100 158 L 100 182", "#B8A47C", 2.5, 0.9) + strokes("M 76 162 L 94 164 M 76 168 L 94 170 M 106 164 L 124 162 M 106 170 L 124 168", "#B8A47C", 2, 0.7))
     S.shape("M 66 154 L 70 156 L 70 180 L 66 182 Z M 134 154 L 130 156 L 130 180 L 134 182 Z", "#A8443A", shadow=0)
     for g, s in (("arm-l", -1), ("arm-r", 1)):
         S.group(g, (100 + s * 34, 120), "a hand on the book")

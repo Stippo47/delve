@@ -132,7 +132,19 @@ def herald(fallen):
 
 
 # ================================================================== the choir sprite
-def choir_sprite():
+# round 10 (art-round9 deck: the Choir sprite, "Weird hair"; the Choir singer, "Flip book. Hair weird"): hair10 swaps the
+# lumpy cap with spiral squiggles for the picked cherub's hair (round 4's, the designer's pick): a cap of soft curls, each
+# bump one arc, with a parted fringe over the brow. Nothing else.
+def cherub_hair():
+    pts = [(100 + math.cos(math.radians(160 + i * 24.4)) * 48, 90 + math.sin(math.radians(160 + i * 24.4)) * 42) for i in range(10)]
+    d = f"M {f(pts[0][0])} {f(pts[0][1])}"
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        r = math.hypot(x1 - x0, y1 - y0) * 0.56
+        d += f" A {f(r)} {f(r)} 0 0 1 {f(x1)} {f(y1)}"
+    return d + " C 128 102 114 92 100 100 C 86 92 72 102 55 106 Z"
+
+
+def choir_sprite(hair10=False):
     S = Sprite("CHOIR SPRITE (round 9): a tiny singing cherub of the host, seen from above: a round head with golden curls, "
                "no eyes, its mouth open in an 'o' as it sings; a white robe collar with a gold edge; two small white wings "
                "(#back, sway); two little hands held up in front as it sings (arm-l, arm-r, they lift when it sings). "
@@ -145,10 +157,14 @@ def choir_sprite():
     S.group("body")
     S.shape(ell(100, 116, 50, 30), "#F4EFE4", decor=strokes("M 54 124 Q 100 150 146 124", GOLD, 4, 0.9))
     head(S)
-    curls = "".join(f'<path d="M {x - 6} {y} a 6 6 0 1 1 6 6" fill="none" stroke="#D8A030" stroke-width="3" stroke-linecap="round" opacity="0.8"/>'
-                    for x, y in ((82, 66), (104, 58), (120, 74), (92, 84), (70, 84)))
-    S.shape(cloud(100, 80, 44, 13, 0.82, 4), "#F2C454", shadow=4, T="translate(100 80) scale(1.04 0.84) translate(-100 -80)",
-            decor=f'<path d="{ell(86, 64, 14, 8)}" fill="#FFF6D0" opacity="0.4"/>' + curls)
+    if hair10:
+        S.comment = S.comment.replace("(round 9)", "(round 9; round 10: the hair)")
+        S.shape(cherub_hair(), "#F2C454", shadow=4, decor=f'<path d="{ell(84, 64, 16, 9)}" fill="#FFF6D0" opacity="0.4"/>')
+    else:
+        curls = "".join(f'<path d="M {x - 6} {y} a 6 6 0 1 1 6 6" fill="none" stroke="#D8A030" stroke-width="3" stroke-linecap="round" opacity="0.8"/>'
+                        for x, y in ((82, 66), (104, 58), (120, 74), (92, 84), (70, 84)))
+        S.shape(cloud(100, 80, 44, 13, 0.82, 4), "#F2C454", shadow=4, T="translate(100 80) scale(1.04 0.84) translate(-100 -80)",
+                decor=f'<path d="{ell(86, 64, 14, 8)}" fill="#FFF6D0" opacity="0.4"/>' + curls)
     S.shape(ell(100, 138, 6, 7), "#7A3A3A", shadow=0, side=False, decor=f'<path d="{ell(100, 142, 4, 3)}" fill="#C86A6A"/>')
     for g, s in (("arm-l", -1), ("arm-r", 1)):
         S.group(g, (100 + s * 34, 116), "a little hand")

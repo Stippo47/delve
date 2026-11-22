@@ -20,9 +20,16 @@ SNOWMAN_R7 = True
 
 
 # ----------------------------------------------------------------- slimes
-def slime(kind):
+# round 10 (the designer's message of 2026-11-22: "Get new slime spite in"): the slime the designer picked with its tail
+# removed (round 6's slime-big.svg: slime("big") gives it byte for byte) goes into the game as the slime. The game's slime
+# is blue (round 9: "The base slime is blue") and its other kinds are that blue turned, so game= gives the same shapes in
+# the game's blues: game="slime" (the bone inside, as picked) and game="small" (the slimelet: the same slime, paler, no
+# bone, no tail either, drawn full size: the game scales it).
+def slime(kind, game=None):
     cols = {"big": ("#8FE3CB", "#3E9C86", 1.0), "small": ("#B4EEDD", "#58B49D", 0.66), "fire": ("#FFC070", "#D8482A", 1.0)}
     c1, c2, k = cols[kind]
+    if game:
+        c1, c2, k = {"slime": ("#A6D2F8", "#3F7AC4", 1.0), "small": ("#C4E0FA", "#5C92D2", 1.0)}[game]
     S = Sprite(f'SLIME, {kind} (round 5): the round-4 cube slime with its drips turned 180 degrees (they now trail '
                f'behind it, so it reads as moving forward) and no eyes. A soft rounded cube of jelly lit from the left, '
                + ('a swallowed bone inside, ' if kind == "big" else 'embers inside, ' if kind == "fire" else '')
@@ -31,12 +38,19 @@ def slime(kind):
     drips = [(70, 56, 14, 24), (100, 52, 17, 36), (131, 56, 12, 18)]
     if kind == "big" and SLIME_R6:
         drips = []  # round 6 ("remove tail"): the three drips trailing behind are gone; nothing else changed
+    if game:
+        drips = []
+        S.comment = ("SLIME (round 10, the game's " + ("slime" if game == "slime" else "slimelet") + "): the picked slime with its "
+                     "tail removed (round 6), in the game's blue: "
+                     'a soft rounded cube of jelly lit from the left, ' + ('a swallowed bone inside, ' if game == "slime" else '')
+                     + 'one soft shine, no eyes, no tail. Its other kinds are this art with its colours turned by the game. '
+                     'Parts: #body only (the game squashes it whole). Front = DOWN (+y).')
     for x, y, w, L in drips:
         S.shape(blob([(x - w, y + 14), (x - w * 0.8, y - L * 0.45), (x - w * 0.95, y - L + w * 0.5), (x, y - L - w * 0.35),
                       (x + w * 0.95, y - L + w * 0.5), (x + w * 0.8, y - L * 0.45), (x + w, y + 14)], 1.0),
                 S.lg(c1, c2), shadow=False, shade=0.2)
     inner = []
-    if kind == "big":
+    if kind == "big" and game != "small":
         inner.append(f'<g transform="translate(118 116) rotate(-35)" opacity="0.35"><rect x="-5" y="-22" width="10" height="44" rx="5" fill="{dk(c2, 0.5)}"/>'
                      f'<circle cx="-6" cy="-22" r="7" fill="{dk(c2, 0.5)}"/><circle cx="6" cy="-22" r="7" fill="{dk(c2, 0.5)}"/>'
                      f'<circle cx="-6" cy="22" r="7" fill="{dk(c2, 0.5)}"/><circle cx="6" cy="22" r="7" fill="{dk(c2, 0.5)}"/></g>')

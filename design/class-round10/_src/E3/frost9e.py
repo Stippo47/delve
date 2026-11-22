@@ -28,6 +28,16 @@ def fluff(cx, cy, rx, ry, a0, a1, n, k=0.62, front=()):
     return d + "".join(f" L{f(x)} {f(y)}" for x, y in front) + " Z"
 
 
+# round 10 (art-round9 deck, on the Yeti: "Meh. Not great. Don't like little balls on snow ball for 1. Face is a. Little
+# weird. That nose looks like an eye. Weird fangs/mouth"): YETI_R10
+#   face:     the dark nose blob (the "eye") is a small pale nose; the mouth is one wide line turned
+#             down with two short lower fangs coming up at its corners (they hung down from the lip in the middle).
+#   snowball: the two stuck-on lumps and the four clumps are gone: one smooth ball of packed snow, three faint rolling
+#             streaks, the same size and light.
+#   the hands sit 8 units further back so they are whole inside the box (the board cut them off).
+YETI_R10 = False
+
+
 def yeti9():
     S = Sprite('YETI (round 9): the troll\'s body plan in white fur (the designer: "the same shape and fighting style as '
                'trolls ... rolls its boulders as large snowballs"): a huge hunched back under a shaggy white coat with a '
@@ -38,10 +48,11 @@ def yeti9():
                'the shoulders), #body. Front = DOWN (+y).')
     for gid, side in (("arm-l", -1), ("arm-r", 1)):
         S.group(gid, (100 + side * 62, 116))
-        arm = [(100 + side * 66, 116), (100 + side * 64, 150), (100 + side * 48, 178)]
+        hy = -8 if YETI_R10 else 0
+        arm = [(100 + side * 66, 116), (100 + side * 64, 150 + hy), (100 + side * 48, 178 + hy)]
         S.shape(stroke_path(arm, 38, 32, 0.9), S.lg(*FUR), shadow=False, shade=0.25)
         # a huge hand, the palm and the thick fingers one rounded block, turned in to hold the snowball
-        S.shape(rr(0, 0, 40, 34, 14), S.lg(lt(SKIN_Y, 0.12), dk(SKIN_Y, 0.25)), tf=frame(100 + side * 43, 187, side * 30), sh=3)
+        S.shape(rr(0, 0, 40, 34, 14), S.lg(lt(SKIN_Y, 0.12), dk(SKIN_Y, 0.25)), tf=frame(100 + side * 43, 187 + hy, side * 30), sh=3)
     S.group("body")
     coat = fluff(100, 94, 86, 58, -196, 16, 13, front=[(178, 130), (100, 146), (22, 130)])
     S.shape(coat, S.lg(*FUR), shade=0.3,
@@ -52,6 +63,17 @@ def yeti9():
     bald_head(S, SKIN_Y, tf=tf)
     # the white fur hood over the top of the head, a ragged fringe over the brow
     cap = sym([(100, 34), (130, 38), (150, 58), (157, 86), (154, 110), (140, 104), (126, 112), (112, 104), (100, 110)], 0.9)
+    if YETI_R10:
+        S.comment = S.comment.replace("a broad flat nose and a wide mouth with two fangs", "a small pale nose and a wide mouth "
+                                      "turned down with two short lower fangs at its corners (round 10)")
+        S.shape(cap, S.lg(*FUR), tf=tf, sh=3, op=0.16, shade=0.25)
+        fang = [(112, 141), (122, 141), (121, 132), (120, 126, 'c'), (115, 133)]
+        for pts in (fang, mx(fang)):
+            S.shape(blob(pts, 0.8), S.lg(*BONE), tf=tf, shadow=False, shade=0.12)
+        S.raw(f'<path d="M78 142 Q100 135 122 142" fill="none" stroke="{dk(SKIN_Y, 0.6)}" stroke-width="3.4" stroke-linecap="round" transform="{tf}"/>')
+        nose = blob([(93, 114), (107, 114), (112, 121), (107, 128), (100, 129.5), (93, 128), (88, 121)], 0.95)
+        S.shape(nose, S.lg(lt(SKIN_Y, 0.34), lt(SKIN_Y, 0.08)), tf=tf, sh=3, op=0.25, shade=0.1)
+        return S
     S.shape(cap, S.lg(*FUR), tf=tf, sh=3, op=0.16, shade=0.25)
     # a wide mouth, two fangs coming down out of the upper lip
     S.raw(f'<path d="M78 146 Q100 154 122 146" fill="none" stroke="{dk(SKIN_Y, 0.6)}" stroke-width="3.4" stroke-linecap="round" transform="{tf}"/>')
@@ -83,6 +105,13 @@ def snowball9():
         ([(60, 120), (72, 114), (80, 124), (70, 134), (60, 130)], "#7E9CBC", 0.18),
         ([(108, 64), (122, 58), (130, 70), (118, 78), (108, 74)], "#FFFFFF", 0.7),
         ([(66, 80), (80, 74), (86, 86), (74, 92), (64, 88)], "#FFFFFF", 0.55)))
+    if YETI_R10:
+        S.comment = S.comment.replace("a few clumps of snow stuck on it", "smooth, three faint streaks from rolling (round 10: no lumps)")
+        streaks = ('<path d="M 44 118 Q 100 140 156 112 M 58 150 Q 104 164 146 144 M 70 54 Q 108 44 138 58" fill="none" '
+                   'stroke="#7E9CBC" stroke-width="4" stroke-linecap="round" opacity="0.2"/>')
+        S.shape(ball, lit, shadow=False, shade=0.3,
+                decor=[streaks, '<ellipse cx="74" cy="66" rx="22" ry="13" transform="rotate(-35 74 66)" fill="#FFFFFF" opacity="0.55"/>'])
+        return S
     S.shape(ball, lit, shadow=False, shade=0.3,
             decor=[clumps, '<ellipse cx="74" cy="66" rx="22" ry="13" transform="rotate(-35 74 66)" fill="#FFFFFF" opacity="0.55"/>'])
     # two lumps of snow stuck on top, catching the light
