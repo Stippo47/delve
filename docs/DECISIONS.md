@@ -601,8 +601,8 @@ written; the rules are in docs/CONVOY.md. Calls made on the way:
   still shows 1500 across (it was marked good).
 - **"Everyone 50% slower"** is movement, on the road only: every unit's speed is halved (walking, and the lunges and
   charges worked out from it), the wagon's too; attack rates, shots and the dungeons are as they were. At half speed
-  the old road made a trip of about 11 minutes, so **a stretch is 1,500 of road, not 2,300**: a trip is about 7 min
-  50 s in the batch (6 min before). Speeding anything back up was not an option.
+  the old road made a trip of about 11 minutes, so **a stretch is 1,500 of road, not 2,300**: a trip is about 8 min
+  10 s in the batch (6 min 10 s before). Speeding anything back up was not an option.
 - **A trickle and bursts, from all sides**: points come in all the time; half go on single foes from a random side,
   half are saved for a crowd every 38-50 s, sometimes from two sides at once. "All sides" is left, right, ahead and
   behind; all four still walk out from under the trees (the ones for ahead and behind come out up or down the road
@@ -622,12 +622,14 @@ written; the rules are in docs/CONVOY.md. Calls made on the way:
   counts 0.6** of one on its middle. And everyone needed a way round it: a unit whose straight line runs through the
   wagon walks to the nearest corner first (sim.js asks convoy.js). The wagon also became immune to charm, confusion,
   sleepiness, fear and bleeding (it could be charmed before: nothing in the Wildwood does it, so it had not shown).
-- **Difficulty kept** (tools/convoys.mjs, 60 trips a level, the Wildwood, before -> after): delivered 53% -> 52% at
-  level 3, 58% -> 67% at level 4, 68% -> 70% at level 5 (60 trips is good to about 6 points either way); foes out of
-  the trees a trip 48 -> 37, 46 -> 39, 48 -> 38, and the ones made mid-fight (a slime's brood, summons) 24 -> 33,
-  25 -> 34, 23 -> 33: about 72 bodies a trip before and after (a foe on its own is rolled without a cap on its cost,
-  so the trickle brings more of the big ones); gold picked up 90/90/92% -> 88/89/89%. 0 stuck, 0 errors, nothing
-  popping into view. FLOW: 0.31 points a second growing 0.0034 a second, half kept for the bursts.
+- **Difficulty kept** (tools/convoys.mjs, 60 trips a level, the Wildwood, on main's 0.19.0 heroes, before -> after):
+  delivered 82% -> 80% at level 3, 90% -> 85% at level 4, 87% -> 93% at level 5 (60 trips is good to about 5 points
+  either way); foes out of the trees a trip 47 -> 34, 46 -> 33, 46 -> 34, and the ones made mid-fight (a slime's
+  brood, summons) 23 -> 31 at every level: about 69 bodies a trip before and 65 after (a foe on its own is rolled
+  without a cap on its cost, so the trickle brings more of the big ones); gold picked up 90/92/88% -> 85/88/89%. 0
+  stuck, 0 errors, nothing popping into view. FLOW: 0.27 points a second growing 0.003 a second, half kept for the
+  bursts (tuned twice: 0.31 matched the heroes this lane started from, 53/58/68% -> 52/67/70%, and came out about
+  5 points hard on 0.19.0's).
 - **Two things the batch found**, both fixed at the source: a melee hero could be given a foe pressed to the wagon's far
   flank, just past its edge, with nowhere on its own side to strike it from (it stood at the corner for ever: such a
   foe is no longer its to fight, and a hero past its edge is eased back square to the edge, not through the wagon);
@@ -647,5 +649,8 @@ written; the rules are in docs/CONVOY.md. Calls made on the way:
   `--eval`. The recording tools left a headless Edge running after every run, not just failed ones (Edge starts
   itself again under another process id, which `taskkill /T` on the first doesn't reach): clip.mjs, convoy-shots.mjs
   and edge-shots.mjs now stop whatever still runs on their own profile folder, clip.mjs also when a run fails or
-  hangs (`--max` seconds). The other tools that start Edge the same way still leave one behind each run. The tools
-  poll on a timer (a headless page's frames stalled on a busy machine). `?sides` draws each hero's region for checking.
+  hangs (`--max` seconds). The other tools that start Edge the same way still leave one behind each run. The three
+  tools also wait on a timer (a headless page's frames stalled on a busy machine) and try a page load again when it
+  comes up incomplete (`python -m http.server` refuses some of a page's hundred requests when they come in a burst,
+  and one module missing leaves the game never starting: that was a three-minute wait and a failed run about one
+  time in three). `?sides` draws each hero's region for checking.

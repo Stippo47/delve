@@ -20,7 +20,7 @@ trickle from all sides, heroes guarding sides, the wagon solid, a new tree line 
   speed (convoy.js `PACE`; heroes, foes, summons: each unit gets its kind's def with the speed halved, so walking and
   every lunge or charge worked out from it are slower; attack rates and shots are not), and the wagon rolls at 10.5 px/s
   (was 21). A stretch is 1,500 of road (was 2,300: at half speed the old road made an 11-minute trip, so the road is
-  shorter instead); a whole trip comes to about 7 min 50 s in the batch (6 min before). Dungeons are untouched.
+  shorter instead); a whole trip comes to about 8 min 10 s in the batch (6 min 10 s before). Dungeons are untouched.
 - **The ground** is quiet (round 14): soft lighter and darker patches, a few drifts of flowers, the worn road. No grass
   tufts, no puddles, no bushes or fallen trunks at the trees' foot. Rocks on the open ground are faceted and painted
   into the ground.
@@ -110,12 +110,12 @@ trickle from all sides, heroes guarding sides, the wagon solid, a new tree line 
 
 ## Numbers to tune (js/convoy.js top)
 PACE 0.5, WAGON_SPEED 10.5, WAGON_HP 900, STRETCH_LEN 1500, ROAD_W 2385, EDGE 300, ACROSS 1500, BEHIND 640, GUARD 430,
-VIEW 620, LEASH 640, SAFE 700, REACH 340, GATHER_REACH 1200, FLOW (rate 0.31 a second growing 0.0034 a second, half
+VIEW 620, LEASH 640, SAFE 700, REACH 340, GATHER_REACH 1200, FLOW (rate 0.27 a second growing 0.003 a second, half
 kept for bursts every 38-50 s), RIG_TAKEN 0.6, GOLD_MUL 1.1, FLING 2, PAY 200, SHOP prices, LEG (each leg's strength and
 budget); js/convoy-art.js: PARALLAX [0.5, 1], EDGE_DEFAULT 'crowns'.
 `node tools/convoys.mjs --n 20 --level 4 [--spend none] [--lands wildwood,warren]` reports how often it's delivered,
 the wagon's health, gold picked up vs dropped, what was bought and kept, heroes left behind, and the pop-in check.
-Round 14's batch (60 trips a level, the Wildwood, before -> after): delivered 53% -> 52% at level 3, 58% -> 67% at
-level 4, 68% -> 70% at level 5; 0 stuck, nothing popping into view; a trip 6 min -> 7 min 50 s.
+Round 14's batch (60 trips a level, the Wildwood, on 0.19.0's heroes, before -> after): delivered 82% -> 80% at level
+3, 90% -> 85% at level 4, 87% -> 93% at level 5; 0 stuck, nothing popping into view; a trip 6 min 10 s -> 8 min 10 s.
 Tools for clips: `tools/clip.mjs --convoy` takes `--lean X` (hold the camera across), `--calm S` (no foes for S
 seconds), `--send left:5,right:5` (a crowd from each side named), `--eval "js"` (stage anything; `GAME.run.send(dir, n)`).

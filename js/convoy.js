@@ -55,7 +55,7 @@ export const START_X = 700; const RAIDERS = /^(goblin|bandit)/;
 // Foes come all the time (round 14: "Enemies to spawn continually instead of set waves... Trickle in + bursts sometimes.
 // Have them spawn from all sides"). FLOW: how much comes a second (in the roster's cost points: it starts at `rate` and
 // grows by `grow` a second, as round 13's waves grew), the share kept back for the bursts, and how often a burst comes.
-export const FLOW = { rate: 0.31, grow: 0.0034, burst: 0.5, every: [38, 50], first: [22, 28], two: 0.4 };
+export const FLOW = { rate: 0.27, grow: 0.003, burst: 0.5, every: [38, 50], first: [22, 28], two: 0.4 };
 // how hard each leg of the trip is, by its place in it (the try's numbers)
 const LEG = [{ mult: 1, budget: 1 }, { mult: 1.2, budget: 1 }, { mult: 1.25, budget: 0.8 }];
 // The road's own name for each dungeon's country (the underground ones become the land over them), and its stretches.
