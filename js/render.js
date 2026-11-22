@@ -198,7 +198,7 @@ export function draw(ctx, w) {
   drawShadows(ctx, w, tf);
   if (w.battle) { // whose side: a thin ring on the floor round each unit's feet (an outline round the body is kept for protection)
     ctx.lineWidth = 2.4;
-    for (const u of w.units) { const c = SIDE_RING[w.battle.side[u.team]]; if (!c || u.dead || u.ethereal) continue; ctx.strokeStyle = c; ctx.beginPath(); ctx.arc(u.x, u.y, u.vr * 1.12 + 3, 0, TAU); ctx.stroke(); }
+    for (const u of w.units) { const c = SIDE_RING[w.battle.side[u.team]]; if (!c || u.dead || u.ethereal || (u.linkTo && u.def.segment)) continue; ctx.strokeStyle = c; ctx.beginPath(); ctx.arc(u.x, u.y, u.vr * 1.12 + 3, 0, TAU); ctx.stroke(); } // (round 13, lane E: one ring for a chain, its head's)
   }
   for (const t of w.telegraphs) if (t.type === 'ring') drawRing(ctx, t);
   for (const c of w.corpses) drawCorpse(ctx, c);
@@ -780,7 +780,7 @@ function drawCorpse(ctx, c) {
 const STATUS = [['burn', '#FF7A2F'], ['chill', '#7FD6F5'], ['poison', '#9BCB3C']];
 const SHOW_BARS = false; // health and status bars live in the HUD now (designer, round 2)
 function drawOverlay(ctx, u, dt = 0) {
-  if (u.downed) return;
+  if (u.downed || (u.linkTo && u.def.segment)) return; // (round 13, lane E: a chain's links carry no bar: its health is its head's)
   upright(ctx, u.x, u.y, () => {
     if (u.team === 'enemy' || w_battle) drawEnemyHp(ctx, u, dt); // hpstyle.js: only once it's hurt, in the player's chosen style
     if (u.team !== 'hero' && u.act && (u.act.type === 'windup' || u.act.type === 'slam')) {

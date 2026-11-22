@@ -1454,7 +1454,7 @@ function physics(w, dt) {
     const a = us[i]; if (a.dead || a.downed || a.ethereal) continue;
     for (let j = i + 1; j < us.length; j++) {
       const b = us[j]; if (b.dead || b.downed || b.ethereal) continue;
-      if (a.def.pass || b.def.pass || (a.fixed && b.fixed) || (a.linkTo && a.linkTo === b.linkTo)) continue; // round 10: things that roll through (gear sprites), chains
+      if (a.def.pass || b.def.pass || (a.fixed && b.fixed) || (a.linkTo && a.linkTo === b.linkTo) || a.linkTo === b || b.linkTo === a) continue; // round 10: things that roll through (gear sprites), chains (round 13, lane E: a chain's head and its own links too: the first link, fixed, shoved its head off across the room at ~1900 a second)
       const dx = b.x - a.x, dy = b.y - a.y; const d2 = dx * dx + dy * dy; const m = a.r + b.r;
       if (d2 >= m * m || d2 === 0) continue;
       const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, over = m - d;

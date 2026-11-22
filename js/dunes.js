@@ -132,14 +132,35 @@ function devilBrain(w, u, dt) {
   if (rand() < dt * 14) { const a = rand() * TAU; w.particles.push({ x: u.x + Math.cos(a) * u.r * 0.8, y: u.y + Math.sin(a) * u.r * 0.8, vx: -Math.sin(a) * 90, vy: Math.cos(a) * 90, life: 0.5, max: 0.5, size: 5, color: 'rgba(226,198,144,0.8)' }); }
   return true;
 }
-// The sand serpent: a chain (families.js): a head and six coils, one health bar; it bites with poison and lunges.
+// The sand serpent: a chain (families.js): a head and six coils, one health bar; its bite poisons. Round 13 (lane E; the
+// designer: "Wth is that snake enemy"): it moves and reads as one snake. Its body follows the head's path and is drawn as
+// one body (foe-draw.js). Its strike: it rears, the head lifting and drawing back, swaying (the floor shows the line),
+// then lunges fast and bites. Now and then it dives into the sand head first, the body following it down the hole,
+// travels under as a moving mound (the ground shakes where it will come up), and bursts up beside a hero, its body
+// pouring out of the hole after it.
+const SERPENT_DIG = { up: [5, 7.5], under: [1.4, 2.2], near: 64, r: 76, tell: 0.6, hit: { dmg: 10, knock: 220, poison: 22 }, dirt: SAND, speed: 1.6, kind: 'sand', // (no bone spikes: a burst of sand)
+  then: (w, u) => { for (let i = 0; i < 16; i++) { const a = rand() * TAU, s = rrange(120, 300); w.particles.push({ x: u.x, y: u.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rrange(0.5, 0.9), max: 0.9, size: rrange(5, 10), color: i % 2 ? SAND : '#EBD5A6', drag: 0.86 }); } } };
 function serpentBrain(w, u, dt) {
   chainHead(w, u, dt);
+  if (!u.bur) u.bur = { state: 'up', t: rrange(3, 5) }; // (it fights a while before it first goes under)
+  const S = u.sv || (u.sv = {});
+  if (S.rear) { // rearing: the head lifts and draws back along its body, swaying, then the strike
+    const R = S.rear; R.t += dt; const k = clamp(R.t / R.T, 0, 1), e = Math.sin(k * Math.PI / 2);
+    stand(u, dt); u.facing = wrapAngle(R.a + Math.sin(R.t * 10) * 0.16 * (1 - k * 0.6));
+    u.lean = -0.38 * e; u.hop = 13 * e;
+    if (R.t >= R.T) { S.rear = null; u.lean = 0; u.hop = 0; rush(w, u, R.a, R.len, { tell: 0, speed: u.def.speed * 6.5, dmg: 13, knock: 200, status: { poison: 30 }, trail: 'rgba(226,198,144,0.7)' }); }
+    return true;
+  }
   if (rushTick(w, u, dt)) return true;
-  const t = targetOf(w, u); if (!t || !u.aggro || !due(u, 'lunge', dt, 2)) return false;
-  const g = gapTo(u, t); if (g < 60 || g > 260 || !lineClear(w, u.x, u.y, t.x, t.y, u.r)) return false;
-  again(u, 'lunge', 4.5, 6);
-  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 60, { tell: 0.4, dmg: 12, knock: 200, status: { poison: 30 }, trail: 'rgba(226,198,144,0.7)' });
+  if (hold(u, dt)) return true;
+  if (burrowTick(w, u, dt, SERPENT_DIG)) return true; // under the sand (or just going under)
+  const t = targetOf(w, u); if (!t || !u.aggro || !due(u, 'strike', dt, 1.6)) return false;
+  const g = gapTo(u, t); if (g < 40 || g > 220 || !lineClear(w, u.x, u.y, t.x, t.y, u.r)) { again(u, 'strike', 0.4); return false; }
+  again(u, 'strike', 3.5, 5);
+  const a = angleTo(u.x, u.y, t.x + (t.vx || 0) * 0.3, t.y + (t.vy || 0) * 0.3), len = Math.min(260, g + 50), T = 0.6;
+  S.rear = { a, t: 0, T, len };
+  addDanger(w, { shape: 'line', x1: u.x, y1: u.y, x2: u.x + Math.cos(a) * (len + u.r), y2: u.y + Math.sin(a) * (len + u.r), hw: u.r + 4, t: T + 0.12, team: u.team, src: u, kind: 'poison' });
+  setAnim(u, 'ability', T + 0.3);
   return true;
 }
 // The dart trap: set in a wall, it barely turns; when a hero crosses in front of it, a burst of poison darts.
@@ -170,7 +191,7 @@ export const DUNES = {
     res: { ...ALL_ST }, brain: devilBrain },
   sandSerpent: { ...FOE, name: 'Sand Serpent', art: 'art/enemies/serpent-head.svg', headR: 40, r: 28, vr: 21, turn: 3.4, accel: 260, face: 4, mass: 2,
     hp: 150, speed: 60, role: 'melee', range: 18, atkCd: 1.2, windup: 0.25, dmg: 10, poison: 16, knock: 140, arc: 1.4, temp: 0.4, commit: 1, xp: 26, coins: [4, 9], cost: 7,
-    attackAnim: 'thrust', sandy: true, chain: { n: 6, seg: 'serpentCoil', gap: 26, taper: 1 }, res: { poison: 0 }, brain: serpentBrain, onDeath: killChain },
+    attackAnim: 'thrust', sandy: true, chain: { n: 6, seg: 'serpentCoil', gap: 26, taper: 1, dirt: SAND }, res: { poison: 0 }, brain: serpentBrain, onDeath: killChain },
   serpentCoil: { variantOf: 'slimeSmall', name: 'Serpent Coil', art: 'art/enemies/serpent-coil.svg', headR: 55, r: 24, vr: 20, mass: 2, hp: 999, speed: 0, atkCd: 999, dmg: 0, hops: null,
     xp: 0, coins: [0, 0], cost: 99, noCorpse: true, noElite: true, segment: true, touchDmg: 4, segTaken: 0.6, goo: '#E2C690', sandy: true, brain: segBrain },
   dartTrap: { ...FOE, name: 'Dart Trap', art: 'art/enemies/dart-trap.svg', headR: 45, r: 24, vr: 20, turn: 0, accel: 0, face: 0, mass: 99,
@@ -198,7 +219,7 @@ Object.assign(ELITES, {
   sandSerpent: { tick(w, u, dt) {
     if (!u.segs || !due(u, 'coils', dt, 3)) return false;
     again(u, 'coils', 4, 5.5);
-    u.segs.forEach((s, i) => { if (alive(s)) later(w, s.x, s.y, 0.05 + i * 0.08, () => { if (alive(s)) shoot(w, s, s.facing + (i % 2 ? 1 : -1) * Math.PI / 2, { kind: 'dagger', speed: 360, dmg: 4, r: 6, life: 1, hitO: { knock: 60 } }); }, 6); });
+    u.segs.forEach((s, i) => { if (alive(s) && !s.hidden) later(w, s.x, s.y, 0.05 + i * 0.08, () => { if (alive(s) && !s.hidden) shoot(w, s, s.facing + (i % 2 ? 1 : -1) * Math.PI / 2, { kind: 'dagger', speed: 360, dmg: 4, r: 6, life: 1, hitO: { knock: 60 } }); }, 6); });
     return false;
   } },
   dartTrap: { tick() { return false; } },     // three darts across (darts reads u.elite)

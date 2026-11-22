@@ -55,6 +55,10 @@ export function touch(w, u, dmg, o = {}, cd = 0.7) {
 // (def.chain.seg, each a unit with its own hit circle). A blow on a segment lands on the head (sim.js hurt, u.linkTo;
 // x segTaken), so the chain has one health bar; the body follows the head's path exactly; touching it hurts. When the
 // head dies the body goes with it. An elite or major head brings a body its own size.
+// Round 13 (lane E; the designer on the sand serpent: "Wth is that snake enemy"): each link lies along the path where
+// it is (its facing is the chord across its own length, so the body bends smoothly, not link by link), and the path
+// remembers where its head went under the sand: a link that reaches that stretch goes under too (hidden, untouchable)
+// and comes up again where the head came up. foe-draw.js draws the chain as one body.
 export function chainHead(w, u, dt) {
   if (!u.segs) layChain(w, u);
   return false;
@@ -62,31 +66,34 @@ export function chainHead(w, u, dt) {
 function layChain(w, u) {
   const c = u.def.chain, k = u.r / u.def.r, gap = c.gap * k, a = u.facing + Math.PI;
   u.segs = []; u.trail = [{ x: u.x, y: u.y }];
-  for (let d = 4; d <= (c.n + 1) * gap; d += 4) u.trail.push({ x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d });
+  for (let d = 4; d <= (c.n + 2) * gap; d += 4) u.trail.push({ x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d });
   for (let i = 0; i < c.n; i++) {
     const s = spawn(w, c.seg, u.x + Math.cos(a) * gap * (i + 1), u.y + Math.sin(a) * gap * (i + 1), { team: u.team, mult: w.mult, scale: k * (1 - 0.35 * (i / Math.max(1, c.n - 1)) * (c.taper || 0)) });
     s.linkTo = u; s.idx = i; s.fixed = true; s.aggro = true; s.minion = true; s.facing = u.facing; s.dmgMul = u.dmgMul; s.look = u.look; s.gap = gap;
     u.segs.push(s);
   }
 }
-function trailPoint(tr, d) { // the point d along the head's trail
+function trailPoint(tr, d) { // the point d along the head's trail (and whether that stretch is under the sand)
   for (let i = 1; i < tr.length; i++) {
     const a = tr[i - 1], b = tr[i], L = dist(a.x, a.y, b.x, b.y);
-    if (d <= L) { const k = L > 0 ? d / L : 0; return { x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, a: angleTo(b.x, b.y, a.x, a.y) }; }
+    if (d <= L) { const k = L > 0 ? d / L : 0; return { x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, a: angleTo(b.x, b.y, a.x, a.y), under: !!(a.under && b.under) }; }
     d -= L;
   }
-  const z = tr[tr.length - 1], y = tr[tr.length - 2] || z; return { x: z.x, y: z.y, a: angleTo(z.x, z.y, y.x, y.y) };
+  const z = tr[tr.length - 1], y = tr[tr.length - 2] || z; return { x: z.x, y: z.y, a: angleTo(z.x, z.y, y.x, y.y), under: !!z.under };
 }
 export function segBrain(w, s, dt) {
   const h = s.linkTo;
   if (!h || !alive(h)) { kill(w, s, null); return true; }
   if (s.idx === 0) { // the first segment keeps the head's trail (it runs even while the head stands through a move)
     const tr = h.trail, f = tr[0];
-    if (dist(f.x, f.y, h.x, h.y) > 3) { tr.unshift({ x: h.x, y: h.y }); let L = 0; for (let i = 1; i < tr.length; i++) { L += dist(tr[i - 1].x, tr[i - 1].y, tr[i].x, tr[i].y); if (L > (h.segs.length + 2) * s.gap) { tr.length = i + 1; break; } } }
+    if (dist(f.x, f.y, h.x, h.y) > 3) { tr.unshift({ x: h.x, y: h.y, under: !!h.hidden }); let L = 0; for (let i = 1; i < tr.length; i++) { L += dist(tr[i - 1].x, tr[i - 1].y, tr[i].x, tr[i].y); if (L > (h.segs.length + 3) * s.gap) { tr.length = i + 1; break; } } }
+    else tr[0].under = !!h.hidden;
   }
-  const p = trailPoint(h.trail, (s.idx + 1) * s.gap);
-  s.x = p.x; s.y = p.y; s.facing = p.a; s.mvA = p.a; s.dvx = s.dvy = 0; s.spd = dist(0, 0, h.vx, h.vy);
-  touch(w, s, s.def.touchDmg || 4, { knock: 140 });
+  const d = (s.idx + 1) * s.gap, p = trailPoint(h.trail, d), p0 = trailPoint(h.trail, Math.max(0, d - s.gap * 0.6)), p1 = trailPoint(h.trail, d + s.gap * 0.6);
+  const a = dist(p0.x, p0.y, p1.x, p1.y) > 2 ? angleTo(p1.x, p1.y, p0.x, p0.y) : p.a; // (the chord across its length: a smooth bend)
+  s.x = p.x; s.y = p.y; s.facing = a; s.mvA = a; s.dvx = s.dvy = 0; s.spd = dist(0, 0, h.vx, h.vy);
+  if (p.under !== !!s.hidden) { s.hidden = p.under; s.ethereal = p.under; if (h.def.chain.dirt) puff(w, s.x, s.y, h.def.chain.dirt, 5, 70, 5, 0.4); } // going under, coming up
+  if (!s.hidden) touch(w, s, s.def.touchDmg || 4, { knock: 140 });
   return true;
 }
 export const killChain = (w, u) => { for (const s of u.segs || []) if (alive(s)) kill(w, s, null); };
@@ -143,9 +150,10 @@ function mountOnWall(w, u) {
 // ground shakes where it will come up (a circle fills), then it bursts out there, hitting what's close. It stays up a
 // while to fight, then digs in again. A stand-off that has gone on too long (w.stale) keeps it up.
 // o = { up: [min, max] seconds above, under: [min, max], near: how far from the target it comes up, hit: { dmg... },
-//       r: the burst's size, dirt: colour, speed: x walk under, then(w, u) after coming up }
+//       r: the burst's size, dirt: colour, speed: x walk under, then(w, u) after coming up, kind: the danger zone's kind ('bone') }
 export function burrowTick(w, u, dt, o) {
   const b = u.bur || (u.bur = { state: 'up', t: rrange(0.5, 1.5) });
+  b.dirt = o.dirt || '#B59A6A'; // (round 13, lane E: the mound it raises is drawn in it: foe-draw.js)
   if (b.state === 'under') {
     const t = targetOf(w, u) || opponents(w, u).sort((a, c) => dist(u.x, u.y, a.x, a.y) - dist(u.x, u.y, c.x, c.y))[0];
     if (t && !b.at) { // pick where to come up: near the target (round 9 scarab: "Near hero"), on open floor
@@ -161,7 +169,7 @@ export function burrowTick(w, u, dt, o) {
       if ((b.dirtT = (b.dirtT || 0) - dt) <= 0) { b.dirtT = 0.07; w.particles.push({ x: u.x + rrange(-6, 6), y: u.y + rrange(-6, 6), vx: rrange(-10, 10), vy: rrange(-10, 10), life: rrange(1.8, 2.6), max: 2.6, size: rrange(5, 8), color: o.dirt || '#B59A6A', drag: 0.8 }); }
       if ((d <= 14 || b.t < -4) && !b.tell) { // under the spot (or it can't get there: a wall in the way): the ground shakes, then it comes up
         b.tell = true; const tl = o.tell || 0.55;
-        addDanger(w, { shape: 'circle', x: u.x, y: u.y, r: o.r || 58, t: tl, team: u.team, src: u, kind: 'bone', spawns: true, hit: o.hit ? { ...o.hit, dmg: (o.hit.dmg || 6) * u.dmgMul } : undefined,
+        addDanger(w, { shape: 'circle', x: u.x, y: u.y, r: o.r || 58, t: tl, team: u.team, src: u, kind: o.kind || 'bone', spawns: true, hit: o.hit ? { ...o.hit, dmg: (o.hit.dmg || 6) * u.dmgMul } : undefined,
           onFire: () => { surface(w, u, o); } });
       }
     }

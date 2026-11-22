@@ -106,10 +106,10 @@ function drawChain(ctx, h, w, dt, R) {
   const frame = (s) => { ctx.save(); R.unitFrame(ctx, s.p, w); const k = s.sizeU / 220; ctx.scale(k, k); ctx.translate(-100, -100); };
   const poses = sets.map((s) => pose(s.p));
   sets.forEach((s, i) => { frame(s); paintRig(ctx, s.set, poses[i], 'ink'); ctx.restore(); });
-  const washes = R.washesOf(h, w);
+  const eth = h.ethereal; h.ethereal = false; const washes = R.washesOf(h, w); h.ethereal = eth; // (its head under the sand is see-through; the links still up are not)
   sets.forEach((s, i) => {
     frame(s);
-    if (s.p.flashT > 0.06 || h.flashT > 0.06) { const k = composeRig(s.set, poses[i], 'sil', '#FFFFFF'); drawComposed(ctx, k); } // a link that was struck flashes
+    if (s.p.flashT > 0.06) { const k = composeRig(s.set, poses[i], 'sil', '#FFFFFF'); drawComposed(ctx, k); } // the link that was struck flashes (and the head, which takes the blow), not the whole body
     else {
       paintRig(ctx, s.set, poses[i], 'sil'); // (the parts' colours, no outline)
       for (const [col, a] of washes) { if (a <= 0.01) continue; const k = composeRig(s.set, poses[i], 'sil', col); const ga = ctx.globalAlpha; ctx.globalAlpha = ga * a; drawComposed(ctx, k); ctx.globalAlpha = ga; }
@@ -118,10 +118,51 @@ function drawChain(ctx, h, w, dt, R) {
   });
 }
 
+// ---------------------------------------------------------------- an elemental spirit's tail
+// The designer (art round 9, the frost spirit): "That tail should be like that rat tail where it's wiggly/ follows
+// behind". Built exactly as the art lane's notes say (design/class-round10/notes.md, "Frost spirit"): render.js
+// drawTail's chain of points on springs (u.tail), with a ribbon instead of a line: n = 5 points, seg = 0.65 vr, the
+// anchor 0.13 vr ahead of the unit's middle (hidden under the core, whose middle is 0.53 vr ahead and whose radius is
+// 1.2 vr); a softer spring (40) and damping (6) than the rat's, each rest point pushed sideways by
+// sin(time * 7 - i * 1.1) * seg * 0.16; the ribbon's half-width at point i (0 = the anchor) is 0.83 vr * (1 - i/n)^0.8;
+// outlined in ink at twice the outline (round joins), filled with the def's two colours from the anchor to the tip.
+export function drawSpiritTail(ctx, u, dt, T) {
+  const n = 5, seg = u.vr * 0.65, f = u.facing, back = f + Math.PI;
+  const ax = u.x + Math.cos(f) * u.vr * 0.13, ay = u.y + Math.sin(f) * u.vr * 0.13;
+  if (!u.tail || u.tail.length !== n) { u.tail = []; for (let i = 1; i <= n; i++) u.tail.push({ x: ax + Math.cos(back) * seg * i, y: ay + Math.sin(back) * seg * i, vx: 0, vy: 0 }); }
+  let px = ax, py = ay, pa = back;
+  for (let i = 0; i < n; i++) {
+    const p = u.tail[i];
+    // where this point would rest: one segment straight back from the one before it, swayed to the side
+    const sw = Math.sin(T * 7 - i * 1.1) * seg * 0.16;
+    const rx = px + Math.cos(pa) * seg - Math.sin(pa) * sw, ry = py + Math.sin(pa) * seg + Math.cos(pa) * sw;
+    p.vx += (rx - p.x) * 40 * dt; p.vy += (ry - p.y) * 40 * dt;
+    const damp = Math.exp(-dt * 6); p.vx *= damp; p.vy *= damp;
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    const dx = p.x - px, dy = p.y - py, L = Math.hypot(dx, dy) || 1; // keep the segment length
+    p.x = px + dx / L * seg; p.y = py + dy / L * seg;
+    pa = Math.atan2(p.y - py, p.x - px); px = p.x; py = p.y;
+  }
+  // the ribbon: left offsets down the chain, right offsets back up it
+  const pts = [{ x: ax, y: ay }, ...u.tail], left = [], right = [];
+  for (let i = 0; i <= n; i++) {
+    const a = i < n ? Math.atan2(pts[i + 1].y - pts[i].y, pts[i + 1].x - pts[i].x) : Math.atan2(pts[i].y - pts[i - 1].y, pts[i].x - pts[i - 1].x);
+    const hw = u.vr * 0.83 * Math.pow(1 - i / n, 0.8), nx = -Math.sin(a) * hw, ny = Math.cos(a) * hw;
+    left.push([pts[i].x + nx, pts[i].y + ny]); right.push([pts[i].x - nx, pts[i].y - ny]);
+  }
+  const path = () => { ctx.beginPath(); ctx.moveTo(left[0][0], left[0][1]); for (let i = 1; i <= n; i++) ctx.lineTo(left[i][0], left[i][1]); for (let i = n; i >= 0; i--) ctx.lineTo(right[i][0], right[i][1]); ctx.closePath(); };
+  ctx.save(); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  ctx.strokeStyle = INK; ctx.lineWidth = OUTLINE * 2; path(); ctx.stroke();
+  const g = ctx.createLinearGradient(ax, ay, pts[n].x, pts[n].y); g.addColorStop(0, u.def.tail[0]); g.addColorStop(1, u.def.tail[1]);
+  ctx.fillStyle = g; path(); ctx.fill();
+  ctx.restore();
+}
+
 // ---------------------------------------------------------------- units (render.js calls this before drawUnit)
 // True when it drew the unit itself (render.js then skips drawUnit). R: render.js's drawUnit, unitFrame, washesOf.
 export function drawFoe(ctx, u, w, dt, R) {
   if (u.linkTo && u.def.segment) return true; // a chain's link: drawn with its head
+  if (u.def.tail && !u.downed && !u.hidden) drawSpiritTail(ctx, u, dt, w.time); // (then the core over its root: drawUnit)
   if (u.segs && u.def.art && !u.downed) { drawChain(ctx, u, w, dt, R); return true; }
   if (u.stuckIn) { // the sun blade with its point in a wall: the part inside the wall isn't drawn
     const r = u.stuckIn, B = 1e5;

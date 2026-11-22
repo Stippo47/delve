@@ -170,7 +170,7 @@ export const BEASTS = {
   mummy: { fun: 'Wrapped for eternity. Eternity is chafing.', habit: 'Slow. Its wrappings lash out and pull you in, and its touch curses. Fire loves it.' },
   sandMage: { fun: 'Talks to the wind. The wind answers, rudely.', habit: 'Calls dust devils that spin off in straight lines, bowling heroes over and stopping shots.' },
   dustDevil: { fun: 'A small, angry weather.', habit: 'Spins in a straight line, bounces off walls, throws whoever it hits. Blocks shots. Blows itself out.' },
-  sandSerpent: { fun: 'Long enough to have a different mood at each end.', habit: 'A head and a long body, one health: hit anywhere. Its bite poisons; it lunges, and its coils hurt to touch.' },
+  sandSerpent: { fun: 'Long enough to have a different mood at each end.', habit: 'A head and a long body, one health: hit anywhere. It rears back, swaying, and strikes (a line shows first); its bite poisons and its coils hurt to touch. Now and then it dives into the sand, body and all, and comes up beside you: watch for the moving mound.' },
   serpentCoil: { fun: 'Part of a snake. The rest of the snake is coming.', habit: 'A blow here lands on the head.' },
   dartTrap: { fun: 'The tomb\'s original security system. Still under warranty.', habit: 'Set in a wall. Barely turns; fires poison darts at whoever crosses in front.' },
   spiritPoison: { fun: 'Smells of old tombs and worse intentions.', habit: 'Its ray makes a friend\'s blows poison, and poison can\'t touch it. Bursts into venom when it dies.' },
