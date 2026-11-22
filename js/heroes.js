@@ -1,4 +1,5 @@
 import { HEROES2 } from './heroes2.js';
+import { HEROES3 } from './heroes3.js'; // round 15 (lane N)
 // The hero roster: who each hero is, what they do, and their skill tree. Pure data; sim.js runs the kits
 // (attack, abilities, trait), camp.js shows them and sells the tree nodes.
 //
@@ -249,6 +250,7 @@ export const HEROES = {
   },
 };
 Object.assign(HEROES, HEROES2); // round 10 (lane H): the rest of the picked heroes, heroes2.js
+Object.assign(HEROES, HEROES3); // round 15 (lane N): the Mob, the Clockmaker, the Air and Earth mages, the Warden, the Telekinetic
 // Round 11 (the designer: "Increase all ability cooldowns by like 20-25%"): every cooldown above is on the old scale;
 // they are all stretched here, once, so new heroes written on the old scale are stretched with the rest.
 export const CD_MUL = 1.22;
@@ -326,7 +328,7 @@ export const ABILITY_TAGS = {
   entangle: 'sd', rejuvenate: 'h', callWolf: 'd', raiseDead: 'd', lifeDrain: 'dh', boneSpear: 'ds',
   miasma: 'ds', cure: 'h', leeches: 's',
 };
-for (const h of Object.values(HEROES2)) for (const ab of h.abilities) if (ab.tags) ABILITY_TAGS[ab.id] = ab.tags;
+for (const h of [...Object.values(HEROES2), ...Object.values(HEROES3)]) for (const ab of h.abilities) if (ab.tags) ABILITY_TAGS[ab.id] = ab.tags;
 const POW = { d: 'abDmg', h: 'abHeal', s: 'abStatus' };
 export const TIER_LEVEL = [0, 4, 9];   // the hero level each tier can be bought from
 const TIER_COST = [1, 1, 2];

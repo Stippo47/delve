@@ -37,7 +37,7 @@ const FOE_TABS = [{ id: 'overview', name: 'Overview' }, { id: 'preview', name: '
 const RANKS = ['Base', 'Elite', 'Major'];
 export const MAJOR_WORDS = { quake: 'A slam that shakes the floor all round it.', volley: 'A ring of shots out all round.',
   charge: 'A long charge with a short tell.', call: 'Calls help from its dungeon\'s own roster.' };
-export const STATUS_WORDS = { burn: 'fire', chill: 'cold', poison: 'poison', shock: 'lightning', wet: 'water', curse: 'curses', radiance: 'holy light', entangle: 'roots', stagger: 'staggering', charm: 'charm', confuse: 'confusion', sleepy: 'drowsiness', bleed: 'bleeding', fear: 'fear' };
+export const STATUS_WORDS = { burn: 'fire', chill: 'cold', poison: 'poison', shock: 'lightning', wet: 'water', curse: 'curses', radiance: 'holy light', entangle: 'roots', stagger: 'staggering', charm: 'charm', confuse: 'confusion', sleepy: 'drowsiness', bleed: 'bleeding', fear: 'fear', shackle: 'shackles' };
 
 let el = null, save = null, onBack = null, acts = null, pager = null, player = null, tree = null;
 const st = { kind: null, id: null, tier: 0, move: 'attack', rank: 0, fmove: null, place: 0 };

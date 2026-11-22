@@ -789,3 +789,59 @@ and its evidence: `docs/LONG-ROOMS.md`; the tools: `tools/long-rooms.mjs` and `r
   spend more of their runs in the Foundry, whose rooms are the longest, so the mix is a little against it).
 - **Art round 12** merged (design/class-round12; props in art/summons and art/heroes/r12, not wired; the wiring table is
   in its notes.md). Deck art-round12 sent. The game keeps stand-ins for the six new heroes until the picks.
+
+## Round 15, lane N (2026-11-22): six new heroes (the Mob, the Clockmaker, the Air Mage, the Warden, the Telekinetic, the Earth Mage) and Shackled
+The designer's words: the showcase 3 deck notes (`docs/riffle-log/2026-11-22-round12.txt`). What was built, hero by
+hero, with every clip: `docs/HEROES-r15.md`. The numbers: `docs/balance/r15-newheroes.txt`. The calls made here:
+- **The Mob is four units that are one hero** (`js/mob.js`): the torch-bearer is the hero's own unit, the other three
+  are bound to it (their health, statuses, buffs, kit and side are its fields). Not one unit drawn as four: they are
+  really apart, really knocked about one by one, and really run back together.
+- **One blow that catches several of its bodies** lands in full on the first and 30% on each more (a slam on all four:
+  190%). The designer said one health pool and nothing about area attacks; without a rule every area attack in the game
+  hits this hero four times. **Open: is 190% the right price, or should a blow only ever land once?**
+- **"Each is like 30%"** was read as what each is worth in a fight. Health: 388 against a plain fighter's 314 (31%
+  each). Blows: at 30% each on paper the Mob measured as the weakest hero in the game (four small bodies spend part of
+  every fight finding a place to stand, and are in reach of more enemies), so they were raised three times: 18.1 a
+  second on paper against the Haymaker's 13.0 (35% each). Strength in Numbers also takes 7% off a blow for each
+  neighbour, and Scatter heals from tier I, for the same reason. It is now inside the fighters' spread and still on
+  the weak side of it (below).
+- **Where they ended** (`docs/balance/r15-newheroes.txt`, section 7): all six inside their role's existing spread at
+  tier I and tier III but one. **Strong:** the Telekinetic at tier III (+1.19 rooms against the batch, over the old
+  caster top of +1.01; Hurl III), flagged and not eased; the Earth Mage at tier I (+1.11, inside). **Weak:** the Mob
+  (-0.64 and -0.85, it takes 56-57% of its party's damage); the Warden's damage at tier I (19%, a point under the
+  tanks); and two of the Warden's abilities by rooms cleared, Nullify (+0.00 at tier I, though it spares the party the
+  most damage of any of the eighteen) and Chain Gang (inside the noise at both tiers). **Open: ease Hurl III, lift the Mob again?**
+- **Armour against the Mob's blows** counts 35% (`mob.js MOB.armour`): armour takes its points off every blow, which
+  is four times for the Mob and once for a fighter. **Open: or should small blows just bounce off armour, as a swarm's do?**
+- **A heal that reaches several bodies counts once**; a status lands on the hero whichever body it caught; charmed,
+  down, lifted and through a door they go as one.
+- **Names**: the "Clock work hero" is the **Clockmaker** (id `clockwork`). **Open: the name.**
+- **Each kit's three jobs** (the "samey" note): the Mob holds one / herds many / gets out; the Clockmaker turns a
+  friend back / slows a patch / stops the room; the Air Mage pushes / lifts / pulls; the Warden shuts one down /
+  undoes what is in the air / holds a crowd on himself; the Telekinetic throws a thing / throws an enemy / shelters
+  friends; the Earth Mage shakes / spikes / walls.
+- **Shackled** (`docs/STATUSES.md`, "Round 15"): the designer's rule is the burst. My additions: it is a build-up like
+  every other status; while it builds, cooldowns run up to 50% slower; 4 s; the setback is once, when the irons lock,
+  and never past one full cooldown; bosses 40% of the time, a quarter of a cooldown, 12 s before the next. An enemy's
+  "cooldowns" are the moves its brain times with `elites.js due()`: that helper keeps each timer's length now so the
+  burst can set each back by its own share. **Open: should it do nothing at all while it builds?**
+- **No words pop up** for anything new: Shackled has no "SHACKLED" text, the Mob's and the mages' effects are drawn.
+- **Hurl really takes the rock** out of the room (the way through opens, the path grid is rebuilt). Not fountains,
+  trees, a boss room's pillars, a troll's boulder or anything with health of its own.
+- **Stone Wall is a real wall** (`sim.js wallRect`, the Ice Wall's kind): nothing walks through it and the enemy
+  can't see or shoot through it. As a plain wall it measured as a loss (it stood in the party's own line of fire), so
+  it is raised low on her side: the party sees and shoots over it (`wall.over`, read by `path.js lineClear` and the
+  shot loop in sim.js). She still only raises it across the way of a brawler coming for a soft friend.
+- **Mind Shield holds her still** while it is up: the dome is round her, and a hero who kites would walk it off the
+  friends it shelters.
+- **Rewind's revive** (tier III) is once a room and only for a friend who fell within the last 5 s; his own trait is
+  the same trick on himself, once a room.
+- **Looks in takes** (`js/fxvar.js`): `?v_shackle=1..3` (Irons, Wound, Staked) and `?v_timeBubble=1..2` (Dial,
+  Glass); take 1 is in the game.
+- **Art**: stand-ins by recolour in `art/heroes/standin/` (`tools/standins.mjs`); the list and the one line to change
+  when the real files land: `docs/ART-NEEDED.md`.
+- **Sounds**: nothing new. Every ability gets the game's ability cue from `kits.js`; shots, walls, blasts and statuses
+  are heard by `sfx.js`'s watcher as they are for every hero. Shackled has no sound of its own yet.
+- **Tools**: `tools/hero-clips.mjs` (the clips, through `tools/clip.mjs`), `tools/test/hero-vs.mjs` (one hero against
+  others of its role, same parties and seeds), `tools/standins.mjs`. `tools/heroes-doc.mjs` writes the six into
+  `docs/HEROES.md` too.

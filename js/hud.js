@@ -8,7 +8,7 @@ import { HEROES } from './heroes.js';
 import { DEFS, xpToNext, levelHp } from './units.js';
 import { icon, abilityGlyph, ABILITY_COLOR } from './icons.js';
 import { elixirOf, POTIONS } from './potions.js';
-import { STATUS, fillOf, RADIANCE, CURSE, POISON, CHARM, CONFUSE, FEAR } from './statuses.js';
+import { STATUS, fillOf, RADIANCE, CURSE, POISON, CHARM, CONFUSE, FEAR, SHACKLE } from './statuses.js';
 import { BUFFS, STATES } from './bestiary.js';
 
 // ---------------------------------------------------------------- statuses on a unit
@@ -60,6 +60,9 @@ export function unitStatuses(u, now) {
   build('bleed', s.bleed > 2);
   if (u.fearT > 0) out.push({ id: 'terrified', kind: 'status', icon: 'terrified', frac: u.fearT / FEAR.terrT, color: STATUS.fear.col, left: u.fearT });
   else build('fear', s.fear > 2);
+  // round 15 (lane N): Shackled
+  if (u.shackledT > 0) out.push({ id: 'shackled', kind: 'status', icon: 'shackled', frac: u.shackledT / (u.shackledMax || SHACKLE.dur), color: STATUS.shackle.col, left: u.shackledT });
+  else build('shackle', s.shackle > 2);
   add('ko', u.koT, { left: u.koT });
   add('stun', u.stunT > 0.05 && !(u.koT > 0) && !(u.frozenT > 0) ? u.stunT : 0, { left: u.stunT });
   add('root', u.rootT, { left: u.rootT });
@@ -89,7 +92,7 @@ export function unitStatuses(u, now) {
   return out;
 }
 const STATE_COL = { regen: '#7CC06F', guard: '#5B8CDB', immune: '#FFE07A', hidden: '#9C7650', focus: '#FFE7A0', might: '#E8B53A', haste: '#E8D84A', ward: '#5DB7E0', form: '#8A8484', lifesteal: '#C8453D', stance: '#8F97A3' };
-Object.assign(STATUS_COL, { charm: STATUS.charm.col, charmed: STATUS.charm.col, confuse: STATUS.confuse.col, addled: STATUS.confuse.col, sleepy: STATUS.sleepy.col, bleed: STATUS.bleed.col, fear: STATUS.fear.col, terrified: STATUS.fear.col }, STATE_COL);
+Object.assign(STATUS_COL, { charm: STATUS.charm.col, charmed: STATUS.charm.col, confuse: STATUS.confuse.col, addled: STATUS.confuse.col, sleepy: STATUS.sleepy.col, bleed: STATUS.bleed.col, fear: STATUS.fear.col, terrified: STATUS.fear.col, shackle: STATUS.shackle.col, shackled: STATUS.shackle.col }, STATE_COL);
 const until = (t, now, dur) => (t > now ? { frac: (t - now) / dur, left: t - now } : null);
 // Each returns false, true (full ring) or { frac, left }.
 const STATE_TESTS = {

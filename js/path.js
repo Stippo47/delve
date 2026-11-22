@@ -62,8 +62,10 @@ export function circleRect(x, y, rad, r) {
   return { nx: 0, ny: 1, over: b + rad };
 }
 
-export function lineClear(w, ax, ay, bx, by, pad = 0) {
-  for (const r of w.walls) if (segHitsRect(ax, ay, bx, by, r, pad)) return false;
+// over (round 15, lane N): a side whose shots go over walls marked `over` for it (the Earth Mage's stone wall is raised
+// low on her own side: the party sees and shoots over it, the enemy doesn't)
+export function lineClear(w, ax, ay, bx, by, pad = 0, over = null) {
+  for (const r of w.walls) if (!(over && r.over === over) && segHitsRect(ax, ay, bx, by, r, pad)) return false;
   return true;
 }
 

@@ -66,6 +66,8 @@ for (const [id, h] of Object.entries(HEROES)) {
   if (h.proj) { DEFS[id].proj = h.proj[0]; DEFS[id].projColor = h.proj[1]; }
   if (h.style) DEFS[id].style = h.style;
   if (h.weapon) DEFS[id].weapon = h.weapon;
+  if (h.bodies) DEFS[id].bodies = h.bodies;     // round 15 (the Mob, mob.js): the kinds of its other bodies (defs in h.summons)
+  if (h.portrait) DEFS[id].portrait = h.portrait; // (a still picture of the hero when its art is only one of its bodies)
   if (h.form) DEFS[h.form.id] = { ...DEFS[id], ...h.form.stats, name: h.form.name, art: h.form.art, attackAnim: h.form.anim || 'swing', form: true, style: h.form.style };
   if (h.form) DEFS[id].formDef = DEFS[h.form.id];
   if (h.summons) for (const [k, sd] of Object.entries(h.summons)) DEFS[k] = { team: 'hero', temp: 0.3, commit: 1, ...sd };

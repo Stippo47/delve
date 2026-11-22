@@ -62,7 +62,7 @@ function nodeSvg(save, id, n, st, sel) {
     return `<g class="${cls}" data-n="${n.id}" transform="translate(${n.x} ${n.y})">
       <circle r="${r + 10}" class="halo"/><circle r="${r}" class="body"/>
       <clipPath id="wclip"><circle r="${r - 4}"/></clipPath>
-      <image href="${HEROES[id].art}" x="${-r}" y="${-r + 2}" width="${2 * r}" height="${2 * r}" clip-path="url(#wclip)"/>
+      <image href="${HEROES[id].portrait || HEROES[id].art}" x="${-r}" y="${-r + 2}" width="${2 * r}" height="${2 * r}" clip-path="url(#wclip)"/>
       <circle r="${r}" class="rim"/></g>`;
   }
   if (n.kind === 'tier' || n.kind === 'ability') {

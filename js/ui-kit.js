@@ -35,7 +35,7 @@ export const roman = (n) => ['', 'I', 'II', 'III', 'IV', 'V', 'VI'][n] || String
 export const mmss = (ms) => { const s = Math.ceil(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 export const face = (id, size, extra = '') => {
   const h = HEROES[id];
-  return `<span class="face" style="width:${size}px;height:${size}px;--rc:${ROLE_COL[h.role]}" ${extra}><img src="${h.art}" alt=""></span>`;
+  return `<span class="face" style="width:${size}px;height:${size}px;--rc:${ROLE_COL[h.role]}" ${extra}><img src="${h.portrait || h.art}" alt=""></span>`;
 };
 // A theme's colours for its little pictures (palettes give [light, dark] pairs).
 export function themeColors(t) {

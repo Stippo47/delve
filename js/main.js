@@ -118,7 +118,7 @@ function endConvoy() {
 }
 
 const members = (r) => [...r.party, ...(r.hired || [])];
-const artOf = (k) => (DEFS[k] && DEFS[k].art) || (MERCS.find((m) => m.kind === k) || {}).art || `art/${k}.svg`;
+const artOf = (k) => (DEFS[k] && (DEFS[k].portrait || DEFS[k].art)) || (MERCS.find((m) => m.kind === k) || {}).art || `art/${k}.svg`;
 // The hero cards live in the dock along the bottom (hud.js); tapping one pauses and inspects that hero.
 function buildChips() {
   if (isBattle()) { buildBattleDock(run, (u) => { if (inspecting() && selected() === u) setPaused(false); else setPaused(true, u); }); return; }

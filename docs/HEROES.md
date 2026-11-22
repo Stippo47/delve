@@ -344,3 +344,57 @@ Rose silk, a heart-shaped locket and a smile. Nobody who meets her wants to hurt
 - **Sweetheart** (14s). Blows a kiss to the friend taking the most blows: whoever keeps hitting that friend falls for them, and can't bring itself to hit them any more. I: For 6s. II: For 8s, and the kiss heals 10%. III: Two friends.
 - **Heartbreak** (15s). Breaks every heart she has won at once. The charmed take damage (more the more they were charmed) and swoon; the enthralled come to their senses in a burst that hurts their own friends. I: They swoon for 1s. II: For 1.6s. III: Every broken heart heals the party a little.
 - **Trait: First Impression.** The first blow any enemy lands on her charms it a lot: it soon can't bring itself to hit her again.
+
+## The Mob (`mob`, melee, 1050 gold)
+Four angry villagers with a torch, a pitchfork, an axe and a dagger. One hero, four pairs of boots. Art: `art/heroes/standin/mob-torch.svg`.
+
+- **Attack: Torch, pitchfork, axe and dagger.** Each of the four strikes with what it carries: the torch burns, the pitchfork jabs from further off and shoves, the axe is slow and heavy, the dagger is quick and makes them bleed. Each is about a third of a fighter.
+- **Pile On** (10s). All four jump on one enemy, hold it down by the arms and legs and lay into it, each in turn with what it carries: it can't move, turn, strike or use anything, and everyone hits it 25% harder while they hold it. I: They hold it for 2.2s. II: For 3s. III: When they let go they throw it: it flies, and it is knocked out where it lands.
+- **Surround** (13s). The four run out to four sides of the enemies and close in at once, shoving everything they meet into one knot in the middle. I: Herds the enemies together; each one shoved is hit. II: The torch sets the ground alight where they meet, for 4s. III: Those herded together are knocked off their feet for 1.2s.
+- **Scatter** (16s). They bolt in four directions. Whoever was after them loses them, and for 3s each runs on its own and takes 50% less; then they find each other again and get their breath back. I: Healed 10% as they regroup. II: Healed 20%. III: Apart, each strikes twice as fast.
+- **Trait: Strength in Numbers.** Each of the four hits 9% harder, and is hurt 7% less, for every other one of them shoulder to shoulder with it: 27% and 21% when all four stand together, nothing when they are scattered.
+
+## Clockmaker (`clockwork`, support, 1050 gold)
+A brass key on his back and a pocket watch that is never wrong. He turns clocks back, slows them, and stops them. Art: `art/heroes/standin/clockwork.svg`.
+
+- **Attack: Clock hand.** Throws a brass clock hand. Whatever it hits loses a moment: its next blow comes a third of a second later.
+- **Rewind** (14s). Turns one friend's clock back: they are put where they stood a few seconds ago with the health they had then, and whatever statuses they have picked up since are gone. I: Back 3s (at most 35% of their health comes back). II: Back 5s (at most 50%). III: Once a room, a friend who has just fallen is turned back to before the blow that felled them.
+- **Slow Time** (15s). A bubble of slow time over the enemies: inside it they walk, strike, wind up and recharge at 45% speed, and their shots crawl. I: For 5s. II: Time runs fast for friends inside it: they move, strike and recharge 30% faster. III: Wider, and for 7s.
+- **Stop the Clock** (20s). Stops the room's clock. Every enemy and every enemy shot hangs where it is, mid-step, mid-swing, mid-air, while the party carries on. I: For 1.4s (bosses 0.6s). II: For 2s. III: When time starts again each of them takes at once a third of what it was dealt while it stood still.
+- **Trait: Spare Second.** Once a room, the blow that would bring him down never happens: he is back where he stood three seconds ago, with the health he had then.
+
+## Air Mage (`airMage`, caster, 700 gold)
+Sky-blue robes that never hang still. Pushes, lifts and spins the enemy until they don't know which way is up. Art: `art/heroes/standin/airMage.svg`.
+
+- **Attack: Gust.** A crescent of wind that goes through the first enemy to the one behind: a small shove, and a little Whirled on each.
+- **Gale** (9s). A wall of wind down a wide lane in front of her: every enemy in it is blown far back and whirled, and whatever is blown into a wall or a rock is hurt by it. I: Blows them back and whirls them. II: Enemy shots in the lane are blown back at whoever loosed them. III: A wider lane, and they are whirled half as much again.
+- **Updraft** (12s). A column of rising air under an enemy lifts it off its feet: it hangs there, helpless, then is dropped. I: One enemy, in the air for 1.8s; the fall hurts and staggers. II: Everything close to it is lifted too. III: They are slammed down: knocked out, and a whirled one bursts.
+- **Cyclone** (15s). A whirlwind that wanders after the enemies: it drags whatever is near into itself, batters it and whirls it until it is flung out. I: For 5s. II: A stronger pull, and for 7s. III: When it dies down it bursts: everything in it is thrown outwards.
+- **Trait: Eye of the Storm.** When an enemy she has whirled is flung about, a clap of wind goes off round it: its neighbours are hit and whirled too.
+
+## Warden (`warden`, tank, 1050 gold)
+Iron plate, a ring of keys and a great deal of chain. Nothing he has locked up has ever got out. Art: `art/heroes/standin/warden.svg`.
+
+- **Attack: Iron chain.** A weighted chain swung in a wide arc. Every blow closes the irons a little further: Shackled builds on what it hits.
+- **Manacles** (10s). Throws a pair of manacles at the enemy with the most to lose: a caster, a shooter, whatever is about to do something. They snap shut and it is Shackled at once: no basic attacks, and its abilities set back. I: Shackles one enemy. II: The chain is staked to the floor: it can't move either. III: A second pair flies on to the next enemy.
+- **Nullify** (16s). Raises the null key. In a wide ring round him nothing works: enemy shots drop out of the air, what enemies were winding up is broken off, and they can use no ability for a while. I: Breaks off their moves and silences them for 3s. II: It strips what protects and strengthens them, and washes the statuses off friends in the ring. III: Silenced for 5s, and the silenced take 20% more.
+- **Chain Gang** (14s). Chains fly from his belt to the enemies round him and lock on. They are leashed to him: they can't get further than the chain allows, they have to fight him, they strike 25% slower with the chain dragging at them, and he takes 35% less while he holds them. I: Three enemies, for 5s. II: Five enemies. III: At the end he hauls them all in at once and they are knocked reeling.
+- **Trait: Ball and Chain.** Whatever he shackles drags an iron ball as well: it moves 40% slower and can't dash, leap or charge until the irons come off.
+
+## Telekinetic (`telekinetic`, caster, 1050 gold)
+Never lifts a finger. Lifts everything else: rocks, crates, enemies, the arrows meant for her friends. Art: `art/heroes/standin/telekinetic.svg`.
+
+- **Attack: Flung stone.** A loose stone lifts off the floor beside her and is flung at the enemy.
+- **Hurl** (9s). Picks up the nearest heavy thing, a rock or a crate standing in the room, a body off the floor, or a slab torn out of the floor itself, and hurls it into the enemies. It lands hard on everything there. I: One thing thrown. II: A second straight after it. III: It bursts into shrapnel where it lands: a wider blast that staggers.
+- **Levitate** (13s). Lifts an enemy off the floor and holds it helpless in the air, then throws it at its own friends: it and whatever it lands on are hurt. A boss is too heavy to lift: it is pressed down and slowed instead. I: Held for 2s, then thrown. II: Held for 3s, and it takes 20% more while it hangs there. III: Two enemies at once.
+- **Mind Shield** (16s). A dome of force round her and the friends beside her. Enemy shots that reach it stop dead and hang in the air, enemies that walk into it are pushed back out, and every blow that does land on someone inside is 30% softer. She stands still to hold it; when it drops, everything it caught flies back at whoever loosed it. I: For 3.5s. II: For 5s, and what it throws back hits 50% harder. III: It ends with a shove: every enemy near is thrown back and staggered.
+- **Trait: Poltergeist.** When an enemy dies near her, its body is flung at the nearest of its friends.
+
+## Earth Mage (`earthMage`, caster, 700 gold)
+Bare feet, clay to the elbows. The floor does what she tells it: it shakes, it bites, it stands up and gets in the way. Art: `art/heroes/standin/earthMage.svg`.
+
+- **Attack: Rock.** A lump of rock punched out of the floor and thrown: a solid knock, and a little stagger.
+- **Earthquake** (14s). The floor under the enemies shakes itself to pieces: everything on it is slowed to a stumble, staggered again and again, and hurt. I: A quake for 3s. II: Wider, and for 4.5s. III: It ends with the floor heaving up: everything on it is thrown off its feet.
+- **Spike Chain** (9s). A line of stone spikes bursts out of the floor one after another, running from her to an enemy; from there it runs on to the next enemy, and the next. I: Runs through three enemies. II: Through five. III: The last spike under each holds it fast: rooted for 1.4s.
+- **Stone Wall** (15s). A wall of stone slabs heaves up out of the floor across the way of whoever is coming for the party, striking and throwing back whatever stands where it comes up. It is a real wall: nothing walks through it and the enemy can't shoot through it; the party shoots over it. I: Stands for 6s. II: A longer wall, for 8s. III: When it comes down it falls on the enemies' side: those near it are hurt and staggered.
+- **Trait: Aftershock.** The ground remembers. A moment after one of her abilities hurts an enemy, a stone spike comes up under it.

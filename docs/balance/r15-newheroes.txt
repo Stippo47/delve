@@ -1,0 +1,226 @@
+Round 15, lane N: the six new heroes, measured (the Mob, the Clockmaker, the Air Mage, the Warden, the Telekinetic, the Earth Mage)
+Game: 0.20.2 with the lane merged. All Node, no browser; nothing here is "before": these heroes did not exist.
+
+1. On paper (numbers.js heroNumbers: a fresh hero, nothing bought)
+   hero          role      damage a blow  blows a second  = a second  health  speed  reach  armour
+   mob           melee          4.8            3.80         18.1      388    149     28      0   <-- new
+   haymaker      melee         14.3            0.91         13.0      314    144     42      0
+   digger        melee         14.3            0.83         11.9      248    139     36      0
+   samurai       melee         15.4            0.91         14.0      260    158     36      2
+   clockwork     support        7.7            0.80          6.2      160    149    286      0   <-- new
+   cleric        support        4.6            0.77          3.5      160    149    273      0
+   seer          support        6.5            0.83          5.4      164    154    299      0
+   airMage       caster         8.3            0.87          7.2      140    163    299      0   <-- new
+   telekinetic   caster        10.6            0.80          8.5      144    154    306      0   <-- new
+   earthMage     caster        11.2            0.77          8.6      164    139    286      0   <-- new
+   storm         caster        10.1            0.80          8.1      130    158    312      0
+   pyromancer    caster        11.5            0.83          9.6      130    158    312      0
+   warden        tank           9.1            0.74          6.7      368    125     42      5   <-- new
+   oldguard      tank           9.8            0.67          6.5      356    120     38      6
+   griffon       tank          10.4            0.77          8.0      378    139     32      5
+   bulwark       tank           7.8            0.83          6.5      346    125     48      6
+   (the Mob: the four together; a blow is their average blow. Casters and helpers: one target of their own attack.)
+
+2. tools/balance.mjs, tier I (every ability at that tier, nothing else; each of the six leads a party with two random others through every dungeon, 5 times)
+tier 1, parties of 3, every dungeon at rank 0: 270 runs, 0 errors, 8.55 rooms a run on average
+dungeons: wildwood 10.1 rooms, crypt 11.1 rooms, sewers 6.3 rooms, warren 11.0 rooms, frost 12.1 rooms, ember 6.8 rooms, spire 6.5 rooms, dunes 5.9 rooms, foundry 7.0 rooms
+  tank      rooms 8.32  damage  21%  healing   6%  taken  47%  downs 2.37
+  ranged    rooms 9.13  damage  42%  healing  11%  taken  26%  downs 1.40
+  skirmish  rooms 7.43  damage  34%  healing  14%  taken  38%  downs 2.40
+  melee     rooms 8.18  damage  37%  healing  34%  taken  48%  downs 2.70
+  caster    rooms 8.76  damage  36%  healing  11%  taken  24%  downs 1.44
+  support   rooms 8.48  damage  22%  healing  48%  taken  30%  downs 1.56
+hero          role      runs  rooms  vs avg   dmg  heal taken   blk  downs  dmg/s  top sources of its damage
+earthMage     caster      50   9.66  + 1.11   41%    0%   24%    1%   1.24    6.6  attack 51%, spikeChain 18%, earthquake 17%, aftershock 11%
+clockwork     support     51   8.96  + 0.41   21%   59%   31%    3%   1.20    2.8  attack 100%
+airMage       caster      47   8.68  + 0.13   33%    0%   22%    1%   1.60    5.1  attack 58%, gale 17%, cyclone 15%, updraft 8%
+telekinetic   caster      54   8.20  -0.35   35%    0%   22%    4%   1.43    5.4  attack 55%, hurl 23%, levitate 12%, poltergeist 7%
+warden        tank        49   7.92  -0.63   19%    0%   48%   49%   2.20    2.4  attack 91%, manacle 9%, ~chill 0%
+mob           melee       55   7.91  -0.64   31%   66%   57%   14%   2.71    4.4  attack 46%, pileOn 32%, surround 19%, ~bleed 3%
+   the existing spread, from the last whole-roster batch (docs/balance/r13-h2-after-tier1.txt; rooms against that batch's average, share of the party's damage):
+     support   rooms -1.44 (seer) to +2.08 (chef);  damage 11% to 25%
+     ranged    rooms -0.34 (slinger) to +1.58 (crossbowman);  damage 35% to 50%
+     caster    rooms -1.60 (frost) to +1.34 (necromancer);  damage 27% to 49%
+     melee     rooms -1.53 (berserker) to +1.29 (bearskin);  damage 31% to 48%
+     skirmish  rooms -1.28 (twinfang) to +0.35 (pirate);  damage 31% to 46%
+     tank      rooms -1.07 (griffon) to -0.09 (dame);  damage 20% to 26%
+
+3. tools/balance.mjs, tier III (every ability at that tier, nothing else; each of the six leads a party with two random others through every dungeon, 5 times)
+tier 3, parties of 3, every dungeon at rank 1: 270 runs, 0 errors, 6.27 rooms a run on average
+dungeons: wildwood 8.7 rooms, crypt 7.7 rooms, sewers 5.3 rooms, warren 6.9 rooms, frost 8.6 rooms, ember 5.5 rooms, spire 5.3 rooms, dunes 3.1 rooms, foundry 5.3 rooms
+  tank      rooms 6.68  damage  23%  healing  22%  taken  43%  downs 2.05
+  ranged    rooms 5.27  damage  42%  healing   6%  taken  24%  downs 1.41
+  skirmish  rooms 6.25  damage  41%  healing   0%  taken  35%  downs 3.06
+  melee     rooms 5.84  damage  42%  healing  56%  taken  56%  downs 2.07
+  caster    rooms 6.50  damage  38%  healing   7%  taken  21%  downs 1.47
+  support   rooms 6.81  damage  20%  healing  58%  taken  30%  downs 1.25
+hero          role      runs  rooms  vs avg   dmg  heal taken   blk  downs  dmg/s  top sources of its damage
+telekinetic   caster      50   7.46  + 1.19   37%    0%   17%    9%   1.22    8.9  attack 44%, hurl 37%, levitate 12%, poltergeist 3%
+clockwork     support     53   6.94  + 0.67   19%   54%   30%    7%   0.98    3.8  attack 84%, stopClock 15%, ~chill 0%
+warden        tank        50   6.32  + 0.05   21%    1%   45%   54%   1.66    4.0  attack 82%, manacle 10%, chainGang 8%, ~chill 0%
+earthMage     caster      50   5.98  -0.29   40%    0%   23%    6%   1.56    9.7  attack 39%, earthquake 29%, spikeChain 17%, aftershock 12%
+airMage       caster      52   5.79  -0.49   36%    0%   20%    2%   1.44    8.1  attack 45%, cyclone 21%, gale 18%, updraft 10%
+mob           melee       45   5.42  -0.85   37%   47%   56%   15%   2.33    8.4  pileOn 39%, attack 32%, surround 16%, ~burn 8%
+   the existing spread, from the last whole-roster batch (docs/balance/r13-h2-after-tier3.txt; rooms against that batch's average, share of the party's damage):
+     skirmish  rooms -1.53 (twinfang) to +1.95 (pirate);  damage 31% to 51%
+     support   rooms -0.61 (seer) to +1.94 (beekeeper);  damage 12% to 26%
+     ranged    rooms -1.13 (marksman) to +1.25 (engineer);  damage 33% to 47%
+     tank      rooms -1.15 (griffon) to +1.04 (oldguard);  damage 19% to 28%
+     caster    rooms -1.79 (pyromancer) to +1.01 (cultist);  damage 29% to 49%
+     melee     rooms -1.19 (granny) to +0.39 (monk);  damage 28% to 47%
+
+4. tools/test/hero-vs.mjs: each of the six against others of its role in the same party (the two mates named), every dungeon, the same seeds (18 runs each)
+   rooms cleared; the hero's damage a second of fighting and its share of the party's; damage it takes a second of fighting; times down a run; its healing a second; where its damage came from
+   fighters, tier I, with archer, pyromancer (no healer):
+   hero          rooms  dmg/s  share  taken/s  downs  heal/s  sources
+   werewolf      11.00   8.41    30%    5.76   1.56   2.41   attack 82%, pounce 18%, st:chill 0%
+   haymaker       9.44   8.31    26%    4.91   2.67   1.41   attack 49%, forkCharge 35%, toss 16%
+   samurai        9.33  12.80    33%    2.89   4.11   0.00   attack 64%, crescentCut 22%, iaido 14%
+   gladiator      8.78  12.46    35%    2.91   3.06   0.00   attack 56%, netThrow 25%, shieldRush 19%
+   digger         8.61  12.04    34%    2.38   3.33   0.00   attack 52%, burrow 24%, spadeBat 15%, dirtFling 9%
+   mob            7.83   8.72    23%    5.60   3.61   0.45   attack 45%, pileOn 33%, surround 16%, st:burn 4%, st:bleed 2%   <-- new
+   wildmane       7.78  12.36    30%    3.44   2.83   0.00   attack 61%, leap 25%, cleave 14%
+   berserker      7.67   9.63    28%    2.99   3.72   0.00   attack 57%, shockwave 27%, whirl 17%
+
+   tanks, tier I, with archer, cleric:
+   hero          rooms  dmg/s  share  taken/s  downs  heal/s  sources
+   dame          12.11   5.41    30%    2.97   1.83   0.10   attack 83%, riposte 12%, disarm 5%, st:chill 0%
+   warden        11.89   4.30    27%    2.59   1.89   0.00   attack 93%, manacle 7%, st:chill 0%   <-- new
+   tower         11.61   4.71    29%    4.18   0.94   0.00   attack 63%, charge 22%, groundPound 15%, st:chill 0%
+   griffon       11.28   6.10    35%    3.28   1.94   0.00   attack 65%, hammerThrow 24%, wingShield 7%, swoop 4%, st:chill 0%
+   bulwark       11.11   6.20    34%    2.91   1.56   0.00   attack 67%, brace 15%, impale 14%, other 5%, st:chill 0%
+   oldguard      10.61   5.74    32%    2.81   1.44   0.00   attack 66%, greatSweep 26%, pommelStrike 8%, tk:brambleVest 0%, st:chill 0%, st:poison 0%
+
+   casters, tier I, with paladin, cleric:
+   hero          rooms  dmg/s  share  taken/s  downs  heal/s  sources
+   earthMage     12.67  10.13    60%    0.79   0.67   0.00   attack 53%, spikeChain 17%, earthquake 16%, aftershock 11%, stoneWall 3%   <-- new
+   warlock       12.61  21.20    75%    1.41   1.50   0.41   attack 48%, summonImp 28%, eldritchBeam 16%, st:burn 4%, pet 3%, darkBargain 1%
+   pyromancer    11.72  12.72    64%    0.96   1.28   0.00   attack 42%, st:burn 31%, fireball 19%, inferno 8%
+   witch         11.56   9.49    57%    0.70   0.78   0.00   attack 68%, broomRide 19%, cursedBrew 8%, frogHex 4%
+   airMage       11.33   8.23    54%    0.73   1.00   0.00   attack 60%, gale 15%, cyclone 15%, updraft 8%, stormsEye 2%   <-- new
+   storm         11.00   9.67    59%    0.79   0.94   0.00   attack 59%, chainLightning 19%, thunderclap 14%, stormCloud 8%
+   telekinetic   10.72   8.04    53%    0.76   0.83   0.00   attack 59%, hurl 22%, levitate 11%, poltergeist 4%, other 2%, mindShield 1%   <-- new
+   frost         10.17   6.63    49%    0.79   0.72   0.00   attack 65%, iceShard 30%, frostNova 4%, st:chill 1%
+
+   helpers, tier I, with paladin, archer:
+   hero          rooms  dmg/s  share  taken/s  downs  heal/s  sources
+   chef          11.11   4.62    24%    1.85   1.28   1.76   attack 82%, foodFight 14%, greaseFire 4%
+   cleric        10.83   2.04    12%    0.95   1.56   1.56   attack 61%, smite 36%, sanctuary 2%, mend 1%
+   clockwork     10.56   3.76    21%    0.91   1.22   0.19   attack 100%   <-- new
+   enchantress    9.61   3.86    22%    0.65   1.28   0.00   attack 85%, heartbreak 15%
+   bard           9.17   3.72    18%    0.87   1.44   0.00   attack 100%
+   seer           8.33   4.39    22%    0.96   1.67   0.00   attack 92%, premonition 8%
+
+   fighters, tier III, with archer, pyromancer (no healer):
+   hero          rooms  dmg/s  share  taken/s  downs  heal/s  sources
+   werewolf       6.44  12.34    30%    8.24   1.83   3.45   attack 64%, st:bleed 18%, pounce 17%, st:chill 2%
+   digger         6.39  18.46    36%    2.48   2.28   0.00   attack 40%, burrow 28%, dirtFling 17%, spadeBat 13%, st:chill 2%
+   samurai        5.00  19.12    31%    3.71   3.11   0.00   attack 56%, crescentCut 26%, iaido 17%, st:chill 2%
+   mob            4.89  14.85    21%    8.26   3.06   0.82   pileOn 38%, attack 33%, surround 15%, st:burn 12%, st:bleed 2%, st:chill 0%   <-- new
+   haymaker       4.33  10.63    25%    5.22   2.28   0.99   forkCharge 51%, attack 29%, toss 19%, st:chill 2%
+
+   tanks, tier III, with archer, cleric:
+   hero          rooms  dmg/s  share  taken/s  downs  heal/s  sources
+   bulwark        9.83   7.13    27%    3.41   1.39   0.00   attack 55%, brace 23%, impale 13%, st:chill 5%, other 3%
+   tower          8.94   7.16    29%    5.49   1.28   0.00   attack 41%, charge 25%, groundPound 16%, holdTheLine 12%, st:chill 6%
+   warden         8.94   6.08    27%    3.22   0.83   0.00   attack 77%, st:chill 8%, manacle 8%, chainGang 7%   <-- new
+   griffon        8.83   8.55    31%    4.61   2.61   0.00   attack 47%, hammerThrow 28%, wingShield 17%, st:chill 6%, swoop 2%
+
+   casters, tier III, with paladin, cleric:
+   hero          rooms  dmg/s  share  taken/s  downs  heal/s  sources
+   telekinetic    9.78  11.29    54%    0.52   0.22   0.00   attack 47%, hurl 35%, levitate 13%, mindShield 3%, poltergeist 2%, other 1%   <-- new
+   witch          9.61  13.22    56%    0.65   0.50   0.00   attack 55%, broomRide 32%, frogHex 7%, cursedBrew 6%
+   earthMage      9.56  13.90    60%    0.89   0.61   0.00   attack 41%, earthquake 29%, spikeChain 16%, aftershock 12%, stoneWall 2%   <-- new
+   airMage        9.06  11.34    53%    0.79   0.67   0.00   attack 46%, cyclone 21%, gale 17%, updraft 10%, stormsEye 6%, tk:brambleVest 0%   <-- new
+   storm          8.72  11.84    58%    0.80   0.67   0.00   attack 49%, chainLightning 23%, stormCloud 18%, thunderclap 10%
+   pyromancer     8.39  19.35    68%    1.14   1.17   0.00   st:burn 48%, attack 29%, fireball 18%, inferno 6%
+
+   helpers, tier III, with paladin, archer:
+   hero          rooms  dmg/s  share  taken/s  downs  heal/s  sources
+   cleric         9.28   2.94    12%    1.29   1.33   2.47   smite 47%, attack 45%, st:chill 5%, sanctuary 3%, mend 1%
+   chef           9.06   6.15    23%    2.13   1.22   2.08   attack 66%, st:burn 19%, foodFight 12%, greaseFire 3%
+   clockwork      8.17   4.74    19%    1.29   1.17   0.45   attack 83%, stopClock 15%, st:chill 2%   <-- new
+   seer           6.89   5.01    17%    1.04   1.28   0.00   attack 91%, premonition 9%
+
+5. tools/ability-worth.mjs, tier I: 45 parties each, played with everything on and with each ability in turn switched off (same parties, same seeds)
+   worth = rooms cleared with it minus without it (noisy: about +-0.6 at this size; the three of one hero share one "all on" run, so they move together);
+   hero dmg/s = what the hero's damage loses without it; party taken/s = how much more the party is hurt without it; party heal/s, downs likewise
+tier 1, rank 0: each ability switched off in turn (the same parties and seeds), 0 errors
+hero          ability           rooms with  worth   share of dmg  hero dmg/s  party taken/s  party heal/s  party downs
+airMage       (all on)           8.82           attack  57%     5.61         2.62          0.82       6.22   (45 runs)
+              gale                      +0.56           17%    +1.26        -0.19         +0.14       -0.82
+              updraft                   +1.64            8%    +0.88        +0.37         -0.17       -0.62
+              cyclone                   +1.80           16%    +1.24        +0.21         -0.06       -0.67
+clockwork     (all on)           9.93           attack 100%     2.83         2.53          1.02       5.27   (45 runs)
+              rewind                    +1.31            0%    +0.01        +0.05         +0.29       +0.11
+              timeBubble                +0.47            0%    +0.06        +0.10         +0.07       +0.22
+              stopClock                 +1.20            0%    +0.05        +0.15         +0.07       -0.51
+earthMage     (all on)           9.31           attack  50%     6.69         2.61          0.90       5.18   (45 runs)
+              earthquake                +1.36           17%    +1.50        +0.07         +0.07       +0.76
+              spikeChain                +0.51           19%    +1.41        +0.01         -0.02       +0.36
+              stoneWall                 +0.82            3%    +0.39        +0.11         -0.03       +0.20
+mob           (all on)           8.73           attack  46%     5.15         4.33          1.77       5.76   (45 runs)
+              pileOn                    +1.64           32%    +1.11        +0.14         +0.06       -0.42
+              surround                  +1.22           19%    +0.66        -0.14         +0.16       +0.04
+              scatter                   +1.42            0%    +1.33        -0.58         +0.80       +0.82
+telekinetic   (all on)           9.69           attack  56%     5.47         2.62          0.90       5.69   (45 runs)
+              hurl                      +1.07           23%    +0.93        +0.20         -0.23       -0.76
+              levitate                  +2.13           11%    +0.63        +0.34         -0.25       -0.29
+              mindShield                +1.56            1%    +0.05        +0.21         +0.00       -0.60
+warden        (all on)           9.04           attack  91%     2.47         2.70          0.97       4.96   (45 runs)
+              manacle                   +1.00            9%    +0.51        +0.30         -0.19       -0.07
+              nullify                   +0.00            0%    -0.24        +0.50         -0.19       +0.53
+              chainGang                 +0.62            0%    +0.31        +0.04         -0.12       +0.38
+
+6. tools/ability-worth.mjs, tier III: 45 parties each, played with everything on and with each ability in turn switched off (same parties, same seeds)
+   worth = rooms cleared with it minus without it (noisy: about +-0.6 at this size; the three of one hero share one "all on" run, so they move together);
+   hero dmg/s = what the hero's damage loses without it; party taken/s = how much more the party is hurt without it; party heal/s, downs likewise
+tier 3, rank 1: each ability switched off in turn (the same parties and seeds), 0 errors
+hero          ability           rooms with  worth   share of dmg  hero dmg/s  party taken/s  party heal/s  party downs
+airMage       (all on)           6.47           attack  45%     7.85         3.84          2.27       5.67   (45 runs)
+              gale                      +1.42           17%    +1.44        -0.22         +0.37       -0.89
+              updraft                   +1.82           10%    +1.66        +0.16         +0.14       -0.64
+              cyclone                   +0.62           22%    +1.83        -0.22         +0.22       -0.64
+clockwork     (all on)           8.49           attack  83%     3.96         3.43          2.30       4.67   (45 runs)
+              rewind                    +2.07            0%    +0.04        -0.06         +0.45       +0.07
+              timeBubble                +1.73            0%    +0.18        +0.59         -0.28       +0.71
+              stopClock                 +0.44           17%    +0.62        +0.72         -0.48       +0.18
+earthMage     (all on)           7.00           attack  38%    10.65         3.34          1.79       5.40   (45 runs)
+              earthquake                +2.20           29%    +3.79        +0.44         +0.00       -0.33
+              spikeChain                +1.00           17%    +2.55        +0.12         +0.09       +0.02
+              stoneWall                 +1.38            3%    +0.42        +0.29         +0.17       +0.16
+mob           (all on)           6.20           attack  34%     8.31         5.92          3.23       5.24   (45 runs)
+              pileOn                    +1.24           38%    +2.58        +0.40         +0.03       +0.29
+              surround                  +0.62           17%    +1.88        -0.27         +0.41       +0.27
+              scatter                   +1.56            0%    +2.82        -1.02         +1.34       +0.62
+telekinetic   (all on)           7.89           attack  43%     8.84         2.91          1.45       5.98   (45 runs)
+              hurl                      +1.96           37%    +3.35        +0.07         +0.12       -0.73
+              levitate                  +2.13           11%    +1.60        +0.39         -0.08       -0.44
+              mindShield                +1.69            4%    +0.82        +0.05         +0.07       -1.49
+warden        (all on)           5.67           attack  83%     3.43         3.55          1.66       4.47   (45 runs)
+              manacle                   +0.64           10%    +0.20        +0.24         -0.03       -0.24
+              nullify                   +0.71            0%    -0.29        +0.94         -0.54       -0.02
+              chainGang                 +0.42            7%    +0.05        +0.40         -0.15       +0.31
+
+7. Where each ended, plainly
+   (inside = inside the spread the existing heroes of that role had in the last whole-roster batch, sections 2 and 3; a 270-run batch moves a hero about +-0.5 rooms between repeats)
+
+   hero          role      tier I               tier III             said plainly
+   earthMage     caster    +1.11, 41% damage    -0.29, 40% damage    inside at both. STRONG at tier I: second only to the necromancer's +1.34 among casters, and top of its hero-vs table (12.67 rooms). Ordinary at tier III.
+   clockwork     support   +0.41, 21% damage    +0.67, 19% damage    inside at both; middle of the helpers (10.56 rooms beside the cleric's 10.83 and the chef's 11.11; 8.17 at tier III beside 9.28 and 9.06). Fair.
+   airMage       caster    +0.13, 33% damage    -0.49, 36% damage    inside at both; middle of the casters. Fair, a little under at tier III.
+   telekinetic   caster    -0.35, 35% damage    +1.19, 37% damage    inside at tier I. STRONG at tier III: +1.19 is above the old caster top (+1.01, the cultist) and it tops its hero-vs table (9.78 rooms, 0.22 downs a run). Hurl III (the boulder goes on through) is the cause: 37% of its damage. Left as it is and flagged, not eased: one batch, and the margin over the old top is inside the noise.
+   warden        tank      -0.63, 19% damage    +0.05, 21% damage    inside for rooms at both. Damage at tier I is a point under the lowest tank (20%): it is the lowest-damage tank in the game by design (its blows build Shackled instead) and that shows. In the same party as the other tanks it clears as much as they do (11.89 rooms; the dame 12.11, the tower 11.61).
+   mob           melee     -0.64, 31% damage    -0.85, 37% damage    inside at both, on the WEAK side at both, and at the bottom of the damage range at tier I (31%, the role's lowest). It takes 56-57% of its party's damage and goes down most (2.71 and 2.33 a run): four bodies in the fight are four things to hit. In the no-healer comparison it is sixth of eight at tier I (7.83 rooms) and fourth of five at tier III (4.89). It started at -2.15 / -1.98 and was raised three times to get here; I stopped there rather than push its numbers past what "each is like 30% of a hero" reads as.
+
+   Role shares against the brief's targets (tanks about 23%, shooters about 41%, supports 18-20%):
+     the Warden 19% / 21% (tank: under at tier I), the Clockmaker 21% / 19% (support: on target), the three mages 33-41% (casters; this batch's casters average 36-38%), the Mob 31% / 37% (melee; this batch's melee average 37-42%).
+
+   Abilities, worth in rooms (sections 5 and 6; noise about +-0.6, so anything under that is "not shown to help" rather than "shown to do nothing"):
+     clearly worth it at both tiers: updraft, rewind, earthquake, pileOn, scatter, hurl, levitate, mindShield, stoneWall (+0.82 / +1.38), manacle (+1.00 / +0.64).
+     worth it at one tier, inside the noise at the other: gale (+0.56 / +1.42), cyclone (+1.80 / +0.62), timeBubble (+0.47 / +1.73), stopClock (+1.20 / +0.44), spikeChain (+0.51 / +1.00), surround (+1.22 / +0.62).
+     WEAKEST: nullify, +0.00 rooms at tier I (+0.71 at tier III). What it does shows in another column: the party takes 0.50 more damage a second without it at tier I and 0.94 more at tier III, the largest "party taken" figure of any of the eighteen. It is a defensive ability measured by rooms cleared; at tier I that saving did not turn into rooms.
+     chainGang is the other weak one: inside the noise at both tiers (+0.62, +0.42), though positive at both.
+   None of the eighteen measured negative at either tier.
+
+   Not measured here: battle mode and the wagon guard with these six (they run without errors: tools/battles.mjs, tools/convoys.mjs), and how the six do with trinkets and web nodes beyond the ability tiers (balance.mjs gives every hero the ability tiers and nothing else).

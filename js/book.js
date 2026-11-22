@@ -26,12 +26,12 @@ import { makePager } from './pager.js';
 import { openUnit, closeUnit, unitOpen, cell, head } from './unit.js';
 
 const TABS = [{ id: 'heroes', name: 'Heroes' }, { id: 'monsters', name: 'Monsters' }, { id: 'trinkets', name: 'Trinkets' }, { id: 'statuses', name: 'Statuses' }, { id: 'dungeons', name: 'Dungeons' }];
-const FROM = { frozen: 'chill', sick: 'poison', radiant: 'radiance', hexed: 'curse', ko: 'stagger', charmed: 'charm', addled: 'confuse', terrified: 'fear' };
-const INTO = { chill: 'frozen', poison: 'sick', radiance: 'radiant', curse: 'hexed', stagger: 'ko', charm: 'charmed', confuse: 'addled', fear: 'terrified', entangle: 'root', sleepy: 'sleep' };
+const FROM = { frozen: 'chill', sick: 'poison', radiant: 'radiance', hexed: 'curse', ko: 'stagger', charmed: 'charm', addled: 'confuse', terrified: 'fear', shackled: 'shackle' };
+const INTO = { chill: 'frozen', poison: 'sick', radiance: 'radiant', curse: 'hexed', stagger: 'ko', charm: 'charmed', confuse: 'addled', fear: 'terrified', entangle: 'root', sleepy: 'sleep', shackle: 'shackled' };
 
 // while the state a burst leaves is still on the fighter, the meter's right-hand picture stays lit
 const STATE_ON = { chill: (u) => u.frozenT > 0, poison: (u) => u.sickT > 0, radiance: (u) => u.radiantT > 0, curse: (u) => !!u.hexed, stagger: (u) => u.koT > 0,
-  charm: (u) => u.flipKind === 'charm', confuse: (u) => u.addledT > 0, fear: (u) => u.fearT > 0, entangle: (u) => u.rootT > 0, sleepy: (u) => u.sleepT > 0 };
+  charm: (u) => u.flipKind === 'charm', confuse: (u) => u.addledT > 0, fear: (u) => u.fearT > 0, entangle: (u) => u.rootT > 0, sleepy: (u) => u.sleepT > 0, shackle: (u) => u.shackledT > 0 };
 
 let el = null, save = null, onBack = null, acts = null, pager = null, player = null;
 let thing = null; // what's open over the grids: { t: 'trinket' | 'potion' | 'status' | 'dungeon', id, way }

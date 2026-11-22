@@ -8,6 +8,7 @@
 // Each ability also carries tags (d damage, h healing, s statuses: which web nodes its arm gets) and glyph (its HUD
 // icon, icons.js). The kits are in kits2.js, the looks in fx2.js, the kits written out in docs/HEROES.md.
 
+import { HEROES3 } from './heroes3.js'; // round 15 (lane N): six more heroes; their ability glyphs join GLYPH2 below
 export const HEROES2 = {
   // ------------------------------------------------------------------ batch 1: the knights and the bear
   oldguard: {
@@ -730,3 +731,4 @@ Object.assign(HEROES2, {
 // The HUD glyph of each new ability (icons.js)
 export const GLYPH2 = {};
 for (const h of Object.values(HEROES2)) for (const ab of h.abilities) if (ab.glyph) GLYPH2[ab.id] = ab.glyph;
+for (const h of Object.values(HEROES3)) for (const ab of h.abilities) if (ab.glyph) GLYPH2[ab.id] = ab.glyph; // round 15 (lane N)

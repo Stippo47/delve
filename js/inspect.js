@@ -41,6 +41,7 @@ export function panelHeight() { return inspecting() ? el.getBoundingClientRect()
 
 const partyUnits = (r) => r.world.units.filter((u) => u.team === 'hero' && !u.summon && !u.dead && !u.ethereal);
 export function select(u) {
+  if (u && u.partOf) u = u.partOf; // round 15 (the Mob): a tap on any of its bodies is a tap on the hero
   sel = u;
   render();
   // bring the unit into the part of the room above the panel

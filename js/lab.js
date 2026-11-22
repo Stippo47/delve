@@ -246,6 +246,7 @@ function setupShow() {
     if (hero === 'cleric' && ab === 'attack') { ally = spawn(w, 'paladin', 200, 126, { level: 9 }); /* round 13: where the upper of the three orbs meets it */ initKit(ally, 'paladin', {}, 1); for (const k in ally.kit.cd) ally.kit.cd[k] = 9; ally.hp = ally.maxHp * 0.5; ally.facing = 0; ally.home = { x: ally.x, y: ally.y }; }
     if (sh.mob === 'ally' && ally) dummies.forEach((d, i) => { const a = -0.6 + i * 0.9; d.x = d.home.x = ally.x + Math.cos(a) * 62; d.y = d.home.y = ally.y - 40 + Math.sin(a) * 50; });
     if (sh.downed && ally) { ally.downed = true; ally.hp = 0; }
+    if (sh.strikeAlly && ally) ally.hp = ally.maxHp; // round 15 (lane N): struck just before the cast (Rewind)
     if (sh.hurt) u.hp = u.maxHp * sh.hurt; // lane H2 (round 13): a hero that heals itself starts hurt
     pin = { x: u.x, y: u.y }; cast = false; u.target = dummies[0];
     w.time = 0;
@@ -264,6 +265,7 @@ function setupShow() {
       if (sh.abilities) for (const k in u.kit.cd) u.kit.cd[k] = 0; // lane H2: a trait that works off the hero's abilities
       pin = { x: u.x, y: u.y };
     }
+    if (sh.strikeAlly && ally && !ally._struck && w.time >= 0.3) { ally._struck = true; hurt(w, ally, ally.maxHp * sh.strikeAlly, dummies[0], { noDodge: true, knock: 260 }); } // round 15 (lane N)
     // only the ability, no plain attacks (round 10: Zeus Bolt bounces on its own; no Zap after it)
     if (sh.quiet && w.time < sh.quiet) u.atkT = Math.max(u.atkT, 0.5); // lane H2: a trait that wants the hero quiet a while first (Fade)
     else if (ab !== 'attack' && ab !== 'trait' && !(sh.attacks && cast)) u.atkT = Math.max(u.atkT, 0.5);

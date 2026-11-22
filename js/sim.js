@@ -2,11 +2,12 @@
 import { TAU, clamp, dist, dist2, angleTo, wrapAngle, angleDiff, rand, rrange, rint, chance, softmaxPick } from './util.js';
 import { DEFS, FEEL, levelHp, levelDmg } from './units.js';
 import { lineClear, pathClear, rayToRoundRect, circleRect, findPath, buildGrid } from './path.js';
-import { kitThink, kitTick, hooksOf, segDist, heroAttack, kitReady, kitFireRandom } from './kits.js';
+import { kitThink, kitTick, hooksOf, segDist, heroAttack, kitReady, kitFireRandom, kitSetBack } from './kits.js';
 import { trinketHooks } from './trinkets.js';
 import { cue } from './sfx.js';
 import { ARMOUR_CAP, ENEMY_ARMOUR, armourCut } from './armour.js';
-import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON, CHARM, CONFUSE, SLEEPY, BLEED, FEAR, windMul } from './statuses.js';
+import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON, CHARM, CONFUSE, SLEEPY, BLEED, FEAR, SHACKLE, cdRate, setBackDue, windMul } from './statuses.js';
+import { MOB, bindBody, bodiesOf, mobMid, mobSlot } from './mob.js'; // round 15 (the Mob): four bodies, one hero
 import { tallyHurt, tallyHeal, tallyDown, noteStatus, tallyBlock } from './stats.js';
 
 let NEXT_ID = 1;
@@ -66,6 +67,16 @@ export function spawn(w, kind, x, y, opts = {}) {
     turnSide(w, u, fl.team, fl.kind, fl.by, fl.until != null ? Math.max(0.5, fl.until - w.time) : null);
     if (fl.follower) u.follower = true;
   }
+  // round 15 (the Mob, mob.js): a hero that is four bodies. The other three are made beside it and bound to it: their
+  // health, statuses, buffs, kit and side are its own (accessors), so the four are one hero wherever one is spawned.
+  if (d.bodies && !opts.noBodies) {
+    u.bodies = [];
+    d.bodies.forEach((k, i) => {
+      const a = Math.PI + (i - 1) * 0.9, b = spawn(w, k, x + Math.cos(a) * MOB.slot, y + Math.sin(a) * MOB.slot, { team: u.team, level: lvl });
+      b.partOf = u; b.summon = true; b.summonBy = u; b.hexSeen = true; b.adopt = false; b.aggro = true;
+      bindBody(b, u); u.bodies.push(b);
+    });
+  }
   return u;
 }
 const flipOf = (u) => ({ team: u.team, trueTeam: u.trueTeam, kind: u.flipKind, by: u.flipBy, until: u.flipUntil, follower: !!u.follower });
@@ -78,6 +89,8 @@ const heroic = (w, u) => (w.battle ? u.def.team === 'hero' : u.team === 'hero');
 // drops, and counts in the stats and the dungeon's checks as what it really is (killNow restores it first).
 export const sideOf = (u) => u.trueTeam || u.team;
 export function turnSide(w, u, team, kind, by, dur) {
+  if (u.partOf) u = u.partOf; // round 15 (the Mob): the four change sides as one (their side is the lead's)
+  for (const b of u.bodies || []) { b.target = null; b.act = null; b.forcedGoal = null; }
   if (!u.trueTeam) u.trueTeam = u.team;
   u.team = team; u.flipKind = kind; u.flipBy = by || null; u.flipUntil = dur != null ? w.time + dur : null;
   if (u.team === u.trueTeam) { restoreSide(w, u); return; } // (turned back to its own side: nothing is flipped)
@@ -86,7 +99,9 @@ export function turnSide(w, u, team, kind, by, dur) {
   for (const s of u.segs || []) if (s !== u && !s.dead) turnSide(w, s, team, kind, by, null); // (round 14: a chain's body goes over with its head; restoreSide brings it back)
 }
 export function restoreSide(w, u) {
+  if (u.partOf) u = u.partOf; // round 15 (the Mob)
   if (!u.trueTeam) return;
+  for (const b of u.bodies || []) b.target = null;
   u.team = u.trueTeam; u.trueTeam = null; u.flipKind = null; u.flipBy = null; u.flipUntil = null; u.target = null; u.befuddled = null; u.follower = false;
   if (w) for (const o of w.units) if (o.target === u) o.target = null;
   for (const s of u.segs || []) if (s !== u && s.trueTeam) restoreSide(w, s);
@@ -95,7 +110,7 @@ export function restoreSide(w, u) {
 const alive = (u) => !u.dead && !u.downed;
 // Ethereal units (a Wraith Veil ghost) are nobody's opponent or ally: they can't be targeted, hit or helped.
 const opponents = (w, u) => w.units.filter((o) => alive(o) && o.team !== u.team && !o.ethereal);
-const allies = (w, u) => w.units.filter((o) => alive(o) && o.team === u.team && o !== u && !o.ethereal && !o.def.rig); // (lane W, round 14: def.rig = the wagon's body circles, convoy.js: nobody's friend)
+const allies = (w, u) => w.units.filter((o) => alive(o) && o.team === u.team && o !== u && !o.ethereal && !o.def.rig && !o.partOf); // (round 15, the Mob: its other bodies are not more friends: the lead is the hero) // (lane W, round 14: def.rig = the wagon's body circles, convoy.js: nobody's friend)
 const hpRatio = (u) => u.hp / u.maxHp;
 const speedOf = (u) => {
   let s = u.def.speed * (u.moveMul || 1);
@@ -132,6 +147,10 @@ const blowMul = (u) => buffMul(u, 'dealt') * (u.st.radiance > 0 ? 1 - RADIANCE.w
 // weapon attacks per second (in reach), health, move speed (px/s) and reach.
 export { ARMOUR_CAP };
 export function unitNumbers(u) {
+  // round 15 (the Mob): four bodies strike, each at its own pace: attacks a second is the four's together, and the
+  // damage of a hit is their average blow (so hit x attacks is what the hero really deals)
+  if (u.bodies) { let aps = 0, dps = 0; for (const b of [u, ...u.bodies]) { const a = atkRate(b) / (b.def.atkCd || 1); aps += a; dps += a * hitDmg(b) * blowMul(b); }
+    return { hit: aps ? dps / aps : 0, aps, hp: u.maxHp, speed: speedOf(u), range: u.def.range || 0, armor: u.armor || 0 }; }
   return { hit: hitDmg(u) * blowMul(u), aps: atkRate(u) / (u.def.atkCd || 1), hp: u.maxHp, speed: speedOf(u), range: u.def.range || 0, armor: u.armor || 0 };
 }
 const immuneTo = (u, type) => u.buffs.some((b) => b.statusImmune || (b.immune && b.immune.includes(type))) || hooksOf(u).some((h) => h.immune && h.immune.includes(type));
@@ -145,6 +164,10 @@ export function addBuff(u, b) {
 export function stun(w, u, t) { if (!alive(u)) return; u.stunT = Math.max(u.stunT, u.def.boss ? t * 0.4 : t); u.act = u.act && u.act.type === 'drink' ? null : u.act; }
 export function heal(w, u, amount, src, o) {
   if (!alive(u) || amount <= 0) return 0;
+  // round 15 (the Mob): a heal on any body lands on the hero, and one heal that reaches several bodies (a healing
+  // ring, a zone's tick) counts once
+  if (u.partOf) u = u.partOf;
+  if (u.bodies) { const by = src || null; if (u.healAt === w.time && u.healBy === by && u.healAmt === amount) return 0; u.healAt = w.time; u.healBy = by; u.healAmt = amount; }
   // a hexed healer's heal turns: it hurts the friend instead (a tiny tick only turns inside a hex that has fired)
   if (src && src !== u && alive(src) && src.team === u.team && (src.hexUntil > w.time || (amount >= 1.5 && hexFires(w, src)))) {
     hurt(w, u, Math.min(amount, u.maxHp * CURSE.selfCap), null, { noDodge: true, hexTurned: true }); return 0;
@@ -160,7 +183,7 @@ export function heal(w, u, amount, src, o) {
   if (u.hp - before > 2 && rand() < 0.5) { const a = rand() * Math.PI * 2, d = (u.vr || u.r) * (1 + 0.25 * rand()); w.particles.push({ x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d * 0.8, vx: 0, vy: 0, rise: 40, up: 0, life: 0.7, max: 0.7, size: 4.5, color: '#9BE07A', shape: 'plus' }); }
   return u.hp - before;
 }
-export function cleanse(u) { u.st = freshStatuses(); u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; u.addledT = 0; u.fearT = 0; u.lurchT = 0; if (u.flipKind === 'charm' && !u.follower) restoreSide(null, u); } // (round 14: a follower's charm is for good: a friend's cleanse doesn't break it)
+export function cleanse(u) { u.st = freshStatuses(); u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; u.addledT = 0; u.fearT = 0; u.lurchT = 0; u.shackledT = 0; if (u.flipKind === 'charm' && !u.follower) restoreSide(null, u); } // (round 14: a follower's charm is for good: a friend's cleanse doesn't break it)
 // Cursed's burst: an armed hex fires on the unit's next attack, heal or summon. hexFires() arms the window (everything
 // that action does in the next CURSE.windowT turns too) and says whether this one turns.
 function hexFires(w, u) {
@@ -189,8 +212,8 @@ export function wallRect(w, r, dur, kind) {
 }
 
 // ---------------------------------------------------------------- line of sight
-function blocked(w, ax, ay, bx, by) {
-  if (!lineClear(w, ax, ay, bx, by, 2)) return true;
+function blocked(w, ax, ay, bx, by, team) { // (team, round 15 lane N: a shooter of that side sees over walls raised low for it: path.js lineClear)
+  if (!lineClear(w, ax, ay, bx, by, 2, team)) return true;
   for (const p of w.pillars) {
     const dx = bx - ax, dy = by - ay; const L2 = dx * dx + dy * dy || 1;
     let t = ((p.x - ax) * dx + (p.y - ay) * dy) / L2; t = clamp(t, 0, 1);
@@ -207,7 +230,20 @@ function wake(w, u) {
   u.aggro = true;
   for (const o of w.units) if (o.team === u.team && !o.aggro && alive(o) && dist(o.x, o.y, u.x, u.y) < 320) { o.aggro = true; }
 }
+// round 15 (the Mob): one of its other bodies fights what the lead fights; if that is out of its reach and something
+// else is at arm's length, that; with the lead under orders (a door, a friend to lift) or nothing about, nothing.
+function bodyTarget(w, u) {
+  const l = u.partOf, lt = l.target && alive(l.target) && !l.target.ethereal && l.target.team !== u.team ? l.target : null;
+  if (l.forcedGoal || u.forcedGoal) { u.target = null; return; }
+  const gap = (o) => dist(u.x, u.y, o.x, o.y) - u.r - o.r;
+  if (l.mobLoose > w.time) { let b = null, bd = 420; for (const o of opponents(w, u)) { const g = gap(o); if (g < bd) { bd = g; b = o; } } u.target = b; return; } // (Scatter: each on its own, whatever is nearest)
+  if (lt && gap(lt) <= u.def.range + 46) { u.target = lt; return; }
+  let best = lt, bd = lt ? Math.min(gap(lt), MOB.near) : MOB.near;
+  for (const o of opponents(w, u)) { const g = gap(o); if (g < bd && (g <= u.def.range + 14 || !lt)) { bd = g; best = o; } }
+  u.target = best;
+}
 function chooseTarget(w, u) {
+  if (u.partOf) { bodyTarget(w, u); return; }
   if (u.team === 'enemy' && !u.aggro) {
     for (const h of opponents(w, u)) if (dist(u.x, u.y, h.x, h.y) < AGGRO && !blocked(w, u.x, u.y, h.x, h.y)) { wake(w, u); break; }
     if (!u.aggro) { u.target = null; return; }
@@ -239,7 +275,7 @@ function chooseTarget(w, u) {
       // it shows, not for its brood (the scarabs took the party's blows through every window it was out)
       if ((o.partOf || o).wurmOut) s += WINDOW_PULL;
     }
-    if (k === 'archer') { s += (1 - hpRatio(o)) * 0.5; if (d <= u.def.range && !blocked(w, u.x, u.y, o.x, o.y)) s += 0.6; }
+    if (k === 'archer') { s += (1 - hpRatio(o)) * 0.5; if (d <= u.def.range && !blocked(w, u.x, u.y, o.x, o.y, u.team)) s += 0.6; }
     else if (k === 'rogue') { s += (1 - hpRatio(o)) * 1.1 + (o.target && o.target !== u ? 0.5 : 0) - (o.def.boss ? 0.3 : 0); }
     else if (k === 'knight') {
       s += o.target && o.target.kind !== 'knight' ? 0.35 : 0;
@@ -267,7 +303,7 @@ function reachCheck(w, u) {
   const t = u.target;
   if (!t || u.forcedGoal) { u.chase = null; return; }
   const d = dist(u.x, u.y, t.x, t.y), gap = d - u.r - t.r;
-  const canHit = u.def.role === 'ranged' ? d <= (u.def.range || 0) && !blocked(w, u.x, u.y, t.x, t.y) : gap <= (u.def.range || 20) + 10;
+  const canHit = u.def.role === 'ranged' ? d <= (u.def.range || 0) && !blocked(w, u.x, u.y, t.x, t.y, u.team) : gap <= (u.def.range || 20) + 10;
   const c = u.chase;
   if (canHit || !c || c.t !== t || gap < c.best - 30) { u.chase = { t, best: c && c.t === t ? Math.min(c.best, gap) : gap, since: w.time }; return; }
   if (w.time - c.since < REACH_T) return;
@@ -311,7 +347,7 @@ function scoreModes(w, u) {
   } else if (role === 'ranged') {
     let near = Infinity;
     for (const o of opponents(w, u)) near = Math.min(near, dist(u.x, u.y, o.x, o.y) - o.r);
-    const los = !blocked(w, u.x, u.y, t.x, t.y);
+    const los = !blocked(w, u.x, u.y, t.x, t.y, u.team);
     sc.kite = near < u.def.keep && !u.staleBoost ? 0.5 + 1.1 * (1 - near / u.def.keep) : 0;
     sc.approach = d > u.def.range * 0.92 || !los ? 1 : 0.05;
     sc.strafe = d <= u.def.range ? (los ? 0.75 : 0.9) : 0.15;
@@ -594,14 +630,30 @@ function movement(w, u, dt) {
   let gx = 0, gy = 0, side = 0, mult = 1;
   const t = u.target;
   const esc = dangerEscape(w, u);
+  // round 15 (the Mob): how far this body is from the middle of the other three. Past MOB.far it drops what it was
+  // doing and runs back to them, faster than it walks, until it is inside the leash again. An ability can let go of
+  // the leash for a while (kits3.js Scatter: lead.mobLoose). The lead with nothing to fight leads: the others come to it.
+  let mobGap = 0, mobM = null;
+  if ((u.partOf || u.bodies) && !u.forcedGoal && !(u.fearT > 0) && !((u.partOf || u).mobLoose > w.time) && !(u.bodies && !t)) {
+    mobM = mobMid(u); mobGap = dist(u.x, u.y, mobM.x, mobM.y) * 4 / 3;
+    u.mobBack = mobGap > MOB.far || (u.mobBack && mobGap > MOB.leash);
+  } else u.mobBack = false;
   if (esc) {
     [gx, gy] = goalVec(w, u, esc.x, esc.y); mult = 1; // out of the telegraphed hit first
+  } else if (u.mobBack) {
+    [gx, gy] = goalVec(w, u, mobM.x, mobM.y); mult = MOB.rush;
   } else if (u.forcedGoal) {
     [gx, gy] = goalVec(w, u, u.forcedGoal.x, u.forcedGoal.y);
     // ease in on arrival so momentum doesn't carry it past and swing it back and forth
     const gd = Math.hypot(u.forcedGoal.x - u.x, u.forcedGoal.y - u.y);
     if (gd < 20) { gx = gy = 0; } else mult = clamp(gd / 140, 0.22, 1);
     if (u.forcedGoal.slow) mult *= u.forcedGoal.slow;
+  } else if (u.partOf && (!t || u.partOf.forcedGoal) && !(u.partOf.mobLoose > w.time)) {
+    // round 15 (the Mob): with nothing to fight (or the lead walking somewhere on purpose) a body keeps its place just
+    // behind or beside the lead, and runs to catch up when it is left behind
+    const sl = mobSlot(u), sd = dist(u.x, u.y, sl.x, sl.y);
+    [gx, gy] = goalVec(w, u, sl.x, sl.y);
+    if (sd < 12) gx = gy = 0; else mult = sd > MOB.leash ? MOB.rush : clamp(sd / 60, 0.3, 1);
   } else if (u.coinGoal && (!t || dist(u.x, u.y, t.x, t.y) > 240)) {
     [gx, gy] = goalVec(w, u, u.coinGoal.x, u.coinGoal.y); mult = clamp(u.coinGoal.d / 90, 0.35, 0.9);
   } else if (!t && u.team === 'hero' && !w.cleared) {
@@ -671,7 +723,7 @@ function movement(w, u, dt) {
         if (gap < u.def.range * 0.6) {
           // round 14 (lane L): a shooter this close with something in the way (a rock, a troll's boulder, a wall's corner)
           // steps round it to find a line, instead of standing behind it for ever
-          if (u.def.role === 'ranged' && blocked(w, u.x, u.y, t.x, t.y)) {
+          if (u.def.role === 'ranged' && blocked(w, u.x, u.y, t.x, t.y, u.team)) {
             if (clearance(w, u, -ty * u.strafeSign, tx * u.strafeSign, 60) < 40) u.strafeSign = -u.strafeSign;
             gx = -ty * u.strafeSign + tx * 0.25; gy = tx * u.strafeSign + ty * 0.25; mult = 0.8;
           } else { gx = gy = 0; }
@@ -705,6 +757,13 @@ function movement(w, u, dt) {
       }
       case 'retreat': gx = -tx; gy = -ty; side = u.strafeSign; mult = d < 260 ? 0.7 : 0.9; break; // backpedalling is slower
     }
+  }
+  // round 15 (the Mob, "They are strongly attracted to each other"): a body further than MOB.leash from the middle of
+  // the others leans back towards them, harder the further it is (past MOB.far it runs back: the branch above).
+  if (mobGap > MOB.leash && !u.mobBack) {
+    const k = clamp((mobGap - MOB.leash) / (MOB.far - MOB.leash), 0, 1), px = mobM.x - u.x, py = mobM.y - u.y, pl = Math.hypot(px, py) || 1, gl = Math.hypot(gx, gy);
+    if (gl > 0.05 && mult > 0) { gx = gx / gl * (1 - k) + px / pl * k; gy = gy / gl * (1 - k) + py / pl * k; mult = mult + (MOB.rush - mult) * k; }
+    else if (k > 0.35) { gx = px / pl; gy = py / pl; mult = 0.4 + (MOB.rush - 0.4) * k; } // (standing at its blow: it only leaves it once it is well apart)
   }
   // round 13, fear: terrified, it runs from whoever frightened it; while fear builds it backs off from them, more as it builds
   // round 14 ("Doesn't seem to back away"): from the first point of fear it backs away (at least FEAR.back of its walk,
@@ -821,10 +880,21 @@ const SHIELD_BEARERS = new Set(['paladin', 'tower', 'knight']); // heroes carryi
 // Round 13 (lane S; the designer: "Need to separate damage taken vs damage blocked (deflections, shields, damage that
 // didn't get through)"): what a shield, a block, armour, a ward, a dodge or being untouchable kept off a blow (not damage
 // over time) is counted apart, as blocked (stats.js tallyBlock).
-const blockedBy = (w, u, src, amt, o) => { if (w.stats && amt > 0 && !o.dot) tallyBlock(w, u, src, amt, o); };
+const blockedBy = (w, u, src, amt, o) => { if (w.stats && amt > 0 && !o.dot) tallyBlock(w, u.partOf || u, src, amt, o); }; // (round 15, the Mob: for the hero, whichever body it was)
 export function hurt(w, u, amount, src, o = {}) {
   if (u && u.invulnT > 0 && alive(u) && amount > 0 && !u.ethereal) { blockedBy(w, u, src, amount, o); return 0; }
   if (!alive(u) || u.invulnT > 0 || amount <= 0 || u.ethereal) return 0;
+  // round 15 (the Mob, mob.js): a blow on any of its bodies comes off the one pool (u.hp is the lead's). One blow, or
+  // one tick of a zone, that catches several bodies lands in full on the first and MOB.share on each more; the same
+  // for the statuses it carries.
+  const pool = u.partOf || (u.bodies ? u : null);
+  if (pool && !o.mobOnce) {
+    const by = src || o.by || null, tag = (o.dot ? 'd:' : 'b:') + (o.pab || o.ab || o.stk || '');
+    if (pool.blowAt === w.time && pool.blowBy === by && pool.blowTag === tag) { amount *= MOB.share; o = { ...o }; for (const s of BUILD_IDS) if (o[s]) o[s] *= MOB.share; }
+    else { pool.blowAt = w.time; pool.blowBy = by; pool.blowTag = tag; }
+    o = { ...o, mobOnce: true };
+  }
+  const me = pool || u; // (who the stats, the cheat-death hooks and the fall are for)
   if (u.def.cargo && !u.linkTo) { u.blowBy = src || null; u.blowT = w.time; } // lane W (round 14): the wagon itself was hit: its body circles won't count the same blow again (below)
   // round 10, chains (families.js): a body segment flinches, but the blow lands on its head (no shove: it follows)
   if (u.linkTo) { if (!alive(u.linkTo)) return 0; u.flashT = 0.12; u.hitT = 0.16; u.hitA = src ? angleTo(src.x, src.y, u.x, u.y) : 0; u.hitX = u.x; u.hitY = u.y;
@@ -888,10 +958,10 @@ export function hurt(w, u, amount, src, o = {}) {
   // Armour (round 11; round 13, the designer: "A combination of the 2. % and fixed?"): each point takes one point off a
   // blow and ARMOUR_PCT (2%) off it as well, the whole cut never more than ARMOUR_CAP of the blow. A blow marked heavy,
   // or a critical one, gets past half of both. Burning, poison and the like (damage over time) ignore it.
-  if (!o.dot && u.armor > 0) { const c = armourCut(u.armor, amt, o.heavy || o.crit); kept += c; amt -= c; }
+  if (!o.dot && u.armor > 0) { const c = armourCut(u.armor * (src && (src.partOf || src.bodies) ? MOB.armour : 1), amt, o.heavy || o.crit); kept += c; amt -= c; } // (round 15, the Mob: armour's points count once across its four small blows, not four times)
   if (kept > 0) blockedBy(w, u, src, kept, o);
   u.hp -= amt;
-  if (w.stats) tallyHurt(w, u, src, amt, o);
+  if (w.stats) tallyHurt(w, me, src, amt, o);
   if (!o.dot) cue('hit', u, src, { amt, crit: o.crit, heavy: o.heavy, shot: o.shot, blocked: u.blockedAt === w.time });
   if (!o.dot) {
     u.hitT = 0.16; u.hitA = fromA; u.hitBlock = onShield; u.hitZap = !!o.shock; // (the renderer: no star for lightning, round 10)
@@ -921,19 +991,27 @@ export function hurt(w, u, amount, src, o = {}) {
     u.kx += Math.cos(a) * k; u.ky += Math.sin(a) * k;
   }
   if (!o.dot && u.st.bleed > 0) u.bleedHoldT = BLEED.holdT; // bleeding: every blow keeps it from wearing off (round 13)
-  for (const s of BUILD_IDS) if (o[s]) addStatus(w, u, s, o[s], src);
+  for (const s of BUILD_IDS) if (o[s]) addStatus(w, u, s, o[s], src, true);
   if (!o.dot && src && u.def.struck && alive(u)) u.def.struck(w, u, src, amt, o); // an enemy that answers a blow (round 13: the Succubus)
   if (!o.dot && src && src !== u && src.team !== u.team && alive(src)) for (const b of u.buffs) if (b.charmBack) addStatus(w, src, 'charm', b.charmBack, u); // round 13: the Enchantress's Sweetheart
   if (src && src.hitBurn && !o.dot && src !== u) addStatus(w, u, 'burn', src.hitBurn, src); // round 9: a burning Elder Ent's every blow burns
   if (src && alive(src) && !o.dot) for (const h of hooksOf(src)) if (h.hit) h.hit(w, src, u, amt, o);
   if (!o.dot) for (const h of hooksOf(u)) if (h.struck) h.struck(w, u, src, amt, o);
-  if (u.hp <= 0 && hooksOf(u).some((h) => h.downed && h.downed(w, u, src))) return amt;
-  if (u.hp <= 0) { if (w.stats) tallyDown(w, u, src, o); kill(w, u, src); }
+  if (u.hp <= 0 && hooksOf(me).some((h) => h.downed && h.downed(w, me, src))) return amt;
+  if (u.hp <= 0) { if (w.stats) tallyDown(w, me, src, o); kill(w, me, src); }
   return amt;
 }
 
-export function addStatus(w, u, type, amount, src) {
+export function addStatus(w, u, type, amount, src, fromBlow) {
   if (!alive(u) || u.ethereal || immuneTo(u, type)) return;
+  // round 15 (the Mob): a status lands on the hero whichever body it caught (its bursts hold all four); one cloud or
+  // one pool of fire that several bodies stand in builds in full for the first and MOB.share for each more (a blow's
+  // statuses were shared out already: hurt)
+  if (u.partOf || u.bodies) {
+    const l = u.partOf || u;
+    if (!fromBlow) { const by = src || null, m = l.stAt || (l.stAt = {}); if (m[type] === w.time && l.stBy0 === by) amount *= MOB.share; else { m[type] = w.time; l.stBy0 = by; } }
+    u = l;
+  }
   if (u.linkTo) { if (alive(u.linkTo)) addStatus(w, u.linkTo, type, amount * (u.def.segTaken ?? 0.6), src); return; } // a chain's segment: its head takes it
   if (type === 'radiance' && (u.radiantT > 0 || u.radImmuneT > 0)) return; // glowing, or just was: its own aura can't feed it
   if (type === 'entangle' && u.tangleImmuneT > 0) return; // held fast already (an entangle root), or just got free
@@ -1010,6 +1088,7 @@ export function addStatus(w, u, type, amount, src) {
     return;
   }
   if (type === 'bleed') { if (s.bleed >= need) { s.bleed = after; burst(); haemorrhage(w, u, src); } return; }
+  if (type === 'shackle') { if (s.shackle >= need) { s.shackle = after; burst(); shackleBurst(w, u, src); } return; } // round 15 (lane N)
   if (type === 'fear') { if (spreading) u.fearGenIn = Math.max(u.fearGenIn || 0, spreading); if (s.fear >= need) { s.fear = after; burst(); terrify(w, u, src); } return; }
   if (type === 'curse') {
     if (s.curse >= need) {                                       // HEXED: the next attack, heal or summon turns on it
@@ -1035,7 +1114,7 @@ export function addStatus(w, u, type, amount, src) {
 }
 
 // ---- round 13 (lane S): the new bursts (statuses.js has every number, docs/STATUSES.md the rules in words)
-const NEW_BURSTS = new Set(['charm', 'confuse', 'sleepy', 'bleed', 'fear']);
+const NEW_BURSTS = new Set(['charm', 'confuse', 'sleepy', 'bleed', 'fear', 'shackle']);
 // Round 14 ("Bosses immune to charm"): a boss, a floor's mini-boss and a boss's parts take no charm at all.
 export const charmProof = (u) => !!(u.def.boss || u.def.part || u.mini || u.floorFoe);
 function charmBurst(w, u, src) {
@@ -1055,6 +1134,22 @@ function charmBurst(w, u, src) {
     textU(w, u.x, u.y, u.r + 12, 'CHARMED', STATUS.charm.col, 1.2);
   }
   fx(w, { type: 'statusBurst', kind: 'charm', unit: u, x: u.x, y: u.y, r: u.vr, max: 0.9 });
+}
+// Round 15 (lane N): SHACKLED (statuses.js SHACKLE has the rule and every number). The irons lock: no basic attack for
+// its time (step holds the attack clock; tryAttack and flail refuse), and every ability cooldown it has is set back by a
+// share of that ability's own length, once, now. No word pops up: the irons show (fx3.js).
+function shackleBurst(w, u, src) {
+  const boss = !!(u.def.boss || u.def.part), k = boss ? SHACKLE.boss : u.major || u.mini ? SHACKLE.major : u.elite ? SHACKLE.elite : 1, T = SHACKLE.dur * k;
+  const back = boss ? SHACKLE.bossSetback : SHACKLE.setback;
+  u.shackledT = Math.max(u.shackledT || 0, T); u.shackledMax = T; u.shackleImmuneT = T + (boss ? SHACKLE.bossImmuneT : SHACKLE.immuneT);
+  u.shackleBy = src && alive(src) ? src : null;
+  if (u.kit) kitSetBack(u, back);
+  else if (u.def.abilCd) u.abilT = Math.min(Math.max(u.def.abilCd, u.abilT), Math.max(0, u.abilT) + back * u.def.abilCd);
+  if (u.def.dashCd) u.dashT = Math.min(Math.max(u.def.dashCd, u.dashT || 0), Math.max(0, u.dashT || 0) + back * u.def.dashCd);
+  setBackDue(u, back);
+  if (u.act && (u.act.type === 'windup' || u.act.type === 'drink')) u.act = null; // (a blow it was winding up is stopped in its hands)
+  fx(w, { type: 'k2', draw: 'shackleSnap', unit: u, x: u.x, y: u.y, r: u.vr, max: 0.7 }); // (fx3.js: the irons snapping shut)
+  if (src && alive(src)) for (const h of hooksOf(src)) if (h.shackled) h.shackled(w, src, u, T); // (the Warden's trait)
 }
 function addledBurst(w, u) {
   const T = u.def.boss ? CONFUSE.addledT * 0.4 : CONFUSE.addledT;
@@ -1160,6 +1255,7 @@ export function scatterCoins(w, x, y, n, reach = 1) {
 function kill(w, u, src) {
   // (round 11: once only. Two exploding minions side by side used to kill each other back and forth without end: each
   // blast hurt the other while it was still mid-death, until the game fell over.)
+  if (u.partOf) u = u.partOf; // round 15 (the Mob): the four fall as one
   if (u.dying) return;
   u.dying = true;
   const was = w.actor; w.actor = u; // (battle mode: what it leaves behind is its side's)
@@ -1180,8 +1276,9 @@ function killNow(w, u, src) {
     for (const o of w.units) if (o !== u && o.team === u.team && alive(o)) for (const h of hooksOf(o)) if (h.allyDown) h.allyDown(w, o, u);
   }
   if (u.summon) { u.dead = true; puff(w, u.x, u.y, '#B8C8DA', 10, 80, 5, 0.5); return; } // summons just fade (blue-grey: ours, round 8)
+  for (const b of u.bodies || []) { b.act = null; b.target = null; b.forcedGoal = null; b.later = null; } // round 15 (the Mob): its other bodies drop what they were doing
   if (u.team === 'hero' && !w.battle) {
-    u.downed = true; u.act = null; u.frozenT = 0; u.st = freshStatuses(); u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; u.addledT = 0; u.fearT = 0;
+    u.downed = true; u.act = null; u.frozenT = 0; u.st = freshStatuses(); u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; u.addledT = 0; u.fearT = 0; u.shackledT = 0;
     textU(w, u.x, u.y, u.r + 10, 'DOWN', '#FF8A80', 1.1);
     emit(w, 'heroDown', u);
     return;
@@ -1193,7 +1290,7 @@ function killNow(w, u, src) {
   const kick = 140 / Math.max(0.6, u.mass);
   const cvx = u.kx * 1.3 + Math.cos(la) * kick, cvy = u.ky * 1.3 + Math.sin(la) * kick, cs = Math.hypot(cvx, cvy);
   // slimes leave no body (round 9)
-  if (!u.def.noCorpse) w.corpses.push({ kind: u.kind, x: u.x, y: u.y, r: u.r, vr: u.vr, facing: u.facing, tint: u.tint, kx: cvx, ky: cvy,
+  if (!u.def.noCorpse) for (const b of [u, ...(u.bodies || [])]) w.corpses.push({ kind: b.kind, x: b.x, y: b.y, r: b.r, vr: b.vr, facing: b.facing, tint: b.tint, kx: cvx * (b === u ? 1 : rrange(0.5, 1.1)), ky: cvy * (b === u ? 1 : rrange(0.5, 1.1)), // (round 15, the Mob: each body leaves its own)
     spin: (rand() < 0.5 ? -1 : 1) * Math.min(14, cs / 40), z: 0, vz: Math.min(260, 60 + cs * 0.45), age: 0, t: CORPSE_LIFE, max: CORPSE_LIFE });
   if (w.corpses.length > MAX_CORPSES) w.corpses.splice(0, w.corpses.length - MAX_CORPSES);
   // the body itself flies now: a small puff (a slime, which leaves no body, bursts into goo)
@@ -1241,7 +1338,7 @@ function meleeSwing(w, u, single) {
   for (const o of targets) {
     hurt(w, o, hitDmg(u) * rrange(0.9, 1.1), u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison, radiance: d.radiance, curse: d.curse,
       burn: d.burn, entangle: d.entangle, stagger: d.stagger, wet: d.wet, chill: d.team === 'enemy' ? d.chill : 0,
-      charm: d.charm, confuse: d.confuse, sleepy: d.sleepy, bleed: d.bleed, fear: d.fear }); // (round 13: the new five too) // round 9: a def's blow can carry any build-up (round 10: an enemy's chill too, the frost wolf's bite)
+      charm: d.charm, confuse: d.confuse, sleepy: d.sleepy, bleed: d.bleed, fear: d.fear, shackle: d.shackle }); // (round 13: the new five too; round 15: Shackled, the Warden's chain) // round 9: a def's blow can carry any build-up (round 10: an enemy's chill too, the frost wolf's bite)
   }
 }
 
@@ -1255,7 +1352,7 @@ function fireArrow(w, u, angle, o = {}) {
 
 // Confused (round 13): with an attack ready and nothing in reach, it swings or shoots at the air now and then.
 function flail(w, u, dt) {
-  if (u.atkT > 0 || u.act || u.forcedGoal || !(u.st.confuse > 10)) return false;
+  if (u.atkT > 0 || u.act || u.forcedGoal || !(u.st.confuse > 10) || u.shackledT > 0) return false;
   const t = u.target, inReach = t && dist(u.x, u.y, t.x, t.y) - u.r - t.r <= (u.def.range || 30) + 2;
   if (inReach || !chance(dt * CONFUSE.flail * fillOf(u, 'confuse'))) return false;
   if (u.def.role === 'ranged') fireArrow(w, u, u.facing + rrange(-0.5, 0.5)); else meleeSwing(w, u, false);
@@ -1265,13 +1362,13 @@ function flail(w, u, dt) {
 }
 function tryAttack(w, u) {
   const t = u.target;
-  if (!t || u.atkT > 0 || u.act || u.forcedGoal) return;
+  if (!t || u.atkT > 0 || u.act || u.forcedGoal || u.shackledT > 0) return; // (round 15: Shackled, no basic attacks)
   const d = dist(u.x, u.y, t.x, t.y);
   const face = angleDiff(angleTo(u.x, u.y, t.x, t.y), u.facing);
   const def = u.def;
   if (def.role === 'ranged') {
     if (mirrorFront(w, u, t)) return; // (round 14: round to its side first: the mirror sends the shot back)
-    if (d <= def.range && face < 0.35 && !blocked(w, u.x, u.y, t.x, t.y)) {
+    if (d <= def.range && face < 0.35 && !blocked(w, u.x, u.y, t.x, t.y, u.team)) {
       const lead = d / 520;
       const aim = angleTo(u.x, u.y, t.x + t.vx * lead, t.y + t.vy * lead) + rrange(-0.04, 0.04);
       if (!(u.kit && heroAttack(w, u, t, aim))) fireArrow(w, u, aim); // kits.js: a hero's own attack (round 9), else a plain shot
@@ -1453,7 +1550,7 @@ function statusTick(w, u, dt) {
   if (s.radiance > 0) s.radiance = Math.max(0, s.radiance - STATUS.radiance.decay * dt);
   if (s.curse > 0) s.curse = Math.max(0, s.curse - STATUS.curse.decay * dt);
   // round 13 (lane S): the new five drain away (bleeding holds still while blows keep landing); the bursts run out
-  for (const k of ['charm', 'confuse', 'sleepy', 'fear']) if (s[k] > 0) s[k] = Math.max(0, s[k] - STATUS[k].decay * dt);
+  for (const k of ['charm', 'confuse', 'sleepy', 'fear', 'shackle']) if (s[k] > 0) s[k] = Math.max(0, s[k] - STATUS[k].decay * dt); // (round 15: Shackled too)
   if (s.bleed > 0) {
     if (u.bleedHoldT > 0) u.bleedHoldT -= dt; else s.bleed = Math.max(0, s.bleed - STATUS.bleed.decay * dt);
     hurt(w, u, s.bleed * BLEED.dot * dt, null, { dot: true, color: STATUS.bleed.col, by: u.stBy && u.stBy.bleed, stk: 'bleed' });
@@ -1462,7 +1559,7 @@ function statusTick(w, u, dt) {
   if (u.deepT > 0 && !(u.sleepT > 0)) u.deepT = 0;
   if (u.fearT > 0) fearSpread(w, u, dt); // round 14: the panic spreads to its own side round it
   if (!(s.fear > 0)) u.fearGenIn = 0;
-  for (const k of ['deepT', 'addledT', 'fearT', 'lurchT', 'charmImmuneT', 'confuseImmuneT', 'sleepyImmuneT', 'bleedImmuneT', 'fearImmuneT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
+  for (const k of ['deepT', 'addledT', 'fearT', 'lurchT', 'charmImmuneT', 'confuseImmuneT', 'sleepyImmuneT', 'bleedImmuneT', 'fearImmuneT', 'shackledT', 'shackleImmuneT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
   if (u.flipUntil != null && w.time >= u.flipUntil) { // a charm (or a Befuddle) runs out: back to its own side
     const k = u.flipKind; restoreSide(w, u);
     if (k === 'charm') fx(w, { type: 'statusBurst', kind: 'uncharm', unit: u, x: u.x, y: u.y, r: u.vr, max: 0.6 });
@@ -1516,6 +1613,14 @@ function statusTick(w, u, dt) {
     if (s.poison > 25 && rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.7, y: u.y + rrange(-u.r, u.r) * 0.7, vx: 0, vy: -25, life: 0.6, max: 0.6, size: 4, color: '#9BCB3C' }); }
   if (u.frozenT > 0) u.frozenT -= dt;
   if (u.freezeImmune > 0) u.freezeImmune = Math.max(0, u.freezeImmune - 4 * dt);
+}
+
+// Round 15 (the Mob): what one of its other bodies ticks for itself each step. Everything of the pool (statuses, buffs,
+// the kit, the trait's and trinkets' own ticks) is the lead's and runs in the lead's statusTick, once.
+function bodyTick(w, u, dt) {
+  for (const k of ['flinchT', 'gasT', 'focusT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
+  if (u.later) { for (const l of u.later) { l.t -= dt; if (l.t <= 0 && !l.done) { l.done = true; l.f(); } } if (u.later && u.later.every((l) => l.done)) u.later = null; }
+  if (u.h2) for (const h of u.h2.slice()) if (h.tick) h.tick(w, u, dt); // (a timed hook hung on this body itself: flung, whirled)
 }
 
 // Entangle (statuses.js ENTANGLE): walking and attacking while it holds hurts a little (its burst roots: addStatus).
@@ -1621,7 +1726,7 @@ function projectiles(w, dt) {
       if (pl.hp != null && !p.noHit && p.team !== pl.team) { pl.hp -= p.dmg || 0; pl.hitT = 0.12; } // round 9: a troll's boulder can be shot to pieces
       if (pl.onShot && !p.noHit && p.team !== pl.team) pl.onShot(w, pl, p); // round 13 (lane E): a yeti's snowball is knocked off course (foes10.js)
     }
-    for (const r of w.walls) if (p.x > r.x && p.x < r.x + r.w && p.y > r.y && p.y < r.y + r.h) p.life = 0;
+    for (const r of w.walls) if (p.x > r.x && p.x < r.x + r.w && p.y > r.y && p.y < r.y + r.h && !(r.over && r.over === p.team)) p.life = 0; // (round 15, lane N: r.over, a wall its own side shoots over)
     if (p.life <= 0 && p.land && !p.landed) { p.landed = true; actAs(w, p.owner, () => p.land(p)); }
     if (p.kind === 'fireArrow') for (const h of w.hazards) if ((h.type === 'oil' || h.type === 'gas') && dist(p.x, p.y, h.x, h.y) < h.r) { igniteAround(w, p.x, p.y, 4); p.life = Math.min(p.life, 0.02); }
     if (p.life <= 0 || p.noHit) continue; // noHit: only a look (a lobbed thing; its landing is a danger zone)
@@ -1743,13 +1848,16 @@ export function step(w, dt) {
     if (!alive(u)) continue;
     w.actor = u;
     u.staleBoost = !!w.stale && (u.team === 'enemy' || !!w.battle);
-    u.flashT = Math.max(0, u.flashT - dt); u.invulnT = Math.max(0, u.invulnT - dt);
-    u.atkT -= dt * atkRate(u); u.abilT -= dt;
-    if (u.kit) for (const k in u.kit.cd) u.kit.cd[k] -= dt * (1 - Math.min(0.5, u.st.wet / 200)); // wet slows abilities
+    const body = !!u.partOf; // round 15 (the Mob): one of its other bodies. The pool's clocks, statuses and kit are the lead's and tick with it, once
+    u.flashT = Math.max(0, u.flashT - dt); if (!body) u.invulnT = Math.max(0, u.invulnT - dt);
+    const cdr = cdRate(u); // round 15 (lane N): Shackled building, every ability cooldown runs slower
+    u.atkT -= dt * atkRate(u); u.abilT -= dt * cdr;
+    if (u.shackledT > 0) u.atkT = Math.max(u.atkT, SHACKLE.hold); // SHACKLED: its attack clock is held (the brains that strike off u.atkT are held with it)
+    if (u.kit && !body) for (const k in u.kit.cd) u.kit.cd[k] -= dt * (1 - Math.min(0.5, u.st.wet / 200)) * cdr; // wet slows abilities
     u.modeT += dt; u.bob += dt * (3 + u.spd * 0.09);
     u.lungeT = Math.max(0, u.lungeT - dt); u.recoilT = Math.max(0, u.recoilT - dt); u.hitT = Math.max(0, u.hitT - dt);
     if (u.tauntT > 0) { u.tauntT -= dt; if (u.tauntT <= 0 || !u.tauntBy || !alive(u.tauntBy)) { u.tauntBy = null; u.tauntT = 0; } }
-    statusTick(w, u, dt);
+    if (body) bodyTick(w, u, dt); else statusTick(w, u, dt);
     if (!alive(u)) continue;
     if (u.anim) { u.anim.t += dt / (u.winding ? windMul(u) : 1); if (u.anim.t >= u.anim.dur) u.anim = null; } // (round 14: a sleepy wind-up's pose plays out slower too)
     u.winding = false; // (set again this tick by whatever wind-up it is in: runAction, elites.js hold / rushTick, boss-kit chargeTick)
@@ -1776,8 +1884,9 @@ export function step(w, dt) {
     if (u.st.confuse > 5 && !(u.lurchT > 0) && chance(dt * CONFUSE.turn * fillOf(u, 'confuse'))) { u.lurchA = wrapAngle(u.facing + rrange(1.5, 3.1) * (chance(0.5) ? 1 : -1)); u.lurchT = rrange(...CONFUSE.lurchT); }
     const radiant = u.radiantT > 0 || u.fearT > 0; // radiant: it glows, and can't attack or use an ability (terrified: it only runs)
     if (radiant) { /* no attacks */ }
-    else if (u.addledT > 0) { if (addledTick(w, u, dt)) continue; } // (addled: its abilities only go off by themselves, at random)
+    else if (u.addledT > 0) { if (!body && addledTick(w, u, dt)) continue; } // (addled: its abilities only go off by themselves, at random)
     else if (flail(w, u, dt)) continue;
+    else if (body) { /* round 15 (the Mob): the abilities are the lead's to use */ }
     else if (u.kit) { u.abilThinkT -= dt; if (u.abilThinkT <= 0) { u.abilThinkT = 0.35; if (kitThink(w, u)) continue; } }
     else if (u.def.ability && u.abilT <= 0 && !u.forcedGoal) {
       u.abilThinkT -= dt;
@@ -1805,7 +1914,7 @@ export function step(w, dt) {
         if (a !== null) { u.act = { type: 'dash', t: 0.2, max: 0.2, a }; u.dashT = u.def.dashCd; continue; }
       }
     }
-    if (!u.act && u.potions > 0 && hpRatio(u) < 0.35) {
+    if (!u.act && !body && u.potions > 0 && hpRatio(u) < 0.35) {
       let near = Infinity; for (const o of opponents(w, u)) near = Math.min(near, dist(u.x, u.y, o.x, o.y) - o.r);
       if (near > 150 && chance(dt * 3)) { u.act = { type: 'drink', t: 1, max: 1 }; }
     }
