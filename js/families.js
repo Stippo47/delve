@@ -271,7 +271,7 @@ Object.assign(ELITES, {
 // explode when burned"). o = { r, dmg, fuse, burn }.
 export function blast(w, u, o) {
   if (u.blown) return; u.blown = true;
-  explode(w, u.x, u.y, o.r, o.dmg * u.dmgMul, { burn: o.burn || 18 }, null, '#FF8A3D'); // (src null: it hurts its own side too: knock one away in time and it blows up theirs)
+  explode(w, u.x, u.y, o.r, o.dmg * u.dmgMul, { burn: o.burn || 18, by: u }, null, '#FF8A3D'); // (src null: it hurts its own side too: knock one away in time and it blows up theirs; by: the stats still count it as its)
   w.shake = Math.max(w.shake, 7);
   kill(w, u, null);
 }

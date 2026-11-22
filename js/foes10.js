@@ -115,6 +115,7 @@ function snowShot(w, b, p) {
 function snowTick(w, b, dt) {
   if (!w.pillars.includes(b)) { if (b.drv) b.drv.max = b.drv.t; return; }
   const u = b.owner, up = u && alive(u);
+  if (up) b.team = u.team; // (a charmed yeti's ball is its new side's)
   if (b.hitT > 0) b.hitT = Math.max(0, b.hitT - dt);
   if (b.hp <= 0) { burstSnow(w, b); return; }
   // blasts nearby throw it about (an explosion this frame: sim.js explode leaves a 'blast' telegraph)
@@ -176,7 +177,7 @@ function packTick(w, u, Y, dt) {
   if (!b || b.hp <= 0 || skipped || u.hp < Y.hp0 - u.maxHp * 0.07 || Math.hypot(u.kx, u.ky) > 140) { // knocked apart
     if (b) { burstSnow(w, b, false); }
     Y.st = 'bare'; again(u, 'pack', 2, 3); u._force = null; u.lean = 0;
-    textOf(w, u, 'knocked apart');
+    if (b) for (let i = 0; i < 6; i++) { const a = rand() * TAU; w.particles.push({ x: b.x, y: b.y, vx: Math.cos(a) * 140, vy: Math.sin(a) * 140, life: 0.5, max: 0.5, size: rrange(4, 7), color: '#F4FBFF' }); } // (the half-made ball scattered)
     return false;
   }
   Y.t += dt; stand(u, dt);
@@ -190,7 +191,6 @@ function packTick(w, u, Y, dt) {
   if (k >= 1) { b.packing = false; b.r = b.r0; b.vx = b.vy = 0; Y.st = 'ball'; puff(w, b.x, b.y, '#F4FBFF', 8, 70, 5, 0.4); }
   return true;
 }
-const textOf = (w, u, s) => {}; // (no words over the arena: show, don't tell)
 function yetiBrain(w, u, dt) {
   const Y = u.yt || (u.yt = { st: 'bare', brawl: 0, last: 0, pushT: 0 });
   if (Y.st !== 'pack') { u._force = null; u.lean = 0; }
@@ -638,6 +638,7 @@ function heraldBrain(w, u, dt) {
     const p = openSpot(w, u.x, u.y, 90, 160, u.r) || { x: u.x, y: clamp(u.y + 140, 60, w.H - 60) };
     const f = spawn(w, 'heraldFallen', p.x, p.y, { team: u.team, mult: 1 });
     f.maxHp = u.maxHp; f.hp = u.hp; f.dmgMul = u.dmgMul; f.facing = u.facing; f.twin = u; u.twin = f; f.court = false;
+    puff(w, p.x, p.y, '#5A3A7A', 14, 120, 7, 0.5); fx(w, { type: 'ring', x: p.x, y: p.y, r: f.r * 1.8, color: '#9A6AC8', max: 0.45 }); // (round 13, lane E: it comes in a burst of shadow, not out of nowhere)
   }
   if (rushTick(w, u, dt)) return true;
   if (hold(u, dt)) return true;
@@ -701,14 +702,14 @@ export const FOES10 = {
     attackAnim: 'swing', res: { chill: 0, burn: 1.3 }, brain: yetiBrain, onDeath: (w, u) => { const b = snowOf(w, u); if (b && b.packing) burstSnow(w, b, false); else if (b) b.held = false; } }, // (its ball rolls on, and melts)
   frostWraith: { variantOf: 'ghost', name: 'Icicle Wraith', art: 'art/enemies/icicle-wraith.svg', headR: 37, role: 'ranged', range: 320, keep: 240, hp: 44, xp: 14, cost: 4,
     res: { poison: 0, burn: 1.5, chill: 0, curse: 0 }, brain: wraithBrain },
-  spiritFrost: { ...spirit('frost', 'Frost Spirit', { hue: 175, sat: 0.8, light: 0.2 }, { chill: 0 }), art: 'art/enemies/spirit-core-frost.svg', headR: 30, tail: ['#E6F8FF', '#7EC2E6'] }, // art round 9
+  spiritFrost: { ...spirit('frost', 'Frost Spirit', { hue: 175, sat: 0.8, light: 0.2 }, { chill: 0 }), art: 'art/enemies/spirit-core-frost.svg', portrait: 'art/enemies/spirit-frost.svg', headR: 30, tail: ['#E6F8FF', '#7EC2E6'] }, // art round 9
   // ---- the Ember Deep
   spiderFire: { variantOf: 'spiderHunter', name: 'Fire Spider', art: 'art/enemies/fire-spider.svg', headR: 54, poison: 0, burn: 20, xp: 11, cost: 3.5, res: { burn: 0 },
     onDeath: (w, u) => firePatch(w, u.x, u.y, 40, 3.5),
     brain: (w, u, dt) => { every(w, u, dt, 'spit', 3, 4.2, 320, (t) => { setAnim(u, 'throw', 0.3); fireball(w, u, angleTo(u.x, u.y, t.x + (t.vx || 0) * 0.4, t.y + (t.vy || 0) * 0.4)); }); return false; } },
   hellhound: { variantOf: 'wolf', name: 'Hellhound', art: 'art/enemies/hellhound.svg', burn: 14, bleed: 16, hunter: 1.4, hp: 40, /* round 13: its bite bleeds; it hunts the party's healer */ dmg: 7, xp: 11, cost: 3, pack: [2, 3], res: { burn: 0, chill: 1.4 }, brain: houndBrain },
   cinderBat: { variantOf: 'bat', name: 'Cinder Bat', art: 'art/enemies/cinder-bat.svg', hp: 20, xp: 6, cost: 2, pack: [2, 3], ability: null, atkCd: 999, res: { burn: 0 }, brain: cinderBrain },
-  spiritFire: { ...spirit('fire', 'Fire Spirit', { hue: -40, sat: 1.8, light: 0.1 }, { burn: 0 }), art: 'art/enemies/spirit-core-fire.svg', headR: 30, tail: ['#FFC650', '#E0482A'] }, // art round 9
+  spiritFire: { ...spirit('fire', 'Fire Spirit', { hue: -40, sat: 1.8, light: 0.1 }, { burn: 0 }), art: 'art/enemies/spirit-core-fire.svg', portrait: 'art/enemies/spirit-fire.svg', headR: 30, tail: ['#FFC650', '#E0482A'] }, // art round 9
   pitLord: { ...FOES.pitLord, art: 'art/enemies/pit-lord.svg', headR: 68, brain: pitLordBrain }, // art round 9: its own art (it wore the round-5 demon)
   // ---- the Gilded Spire
   angelFallen: { variantOf: 'angel', name: 'Fallen Angel', art: 'art/enemies/fallen-angel.svg', radiance: 0, curse: 22, xp: 17, res: { radiance: 0, curse: 0 } },
@@ -720,8 +721,8 @@ export const FOES10 = {
   golem: GOLEM,
   gildedGolem: { variantOf: 'golem', name: 'Gilded Golem', art: 'art/enemies/gilded-golem.svg', mirror: 1.2, shield: 0.35, hp: 180, radiance: 18, xp: 38, cost: 9, dust: '#E8C65A',
     res: { poison: 0, burn: 0.6, chill: 0.6, curse: 0, wet: 0.5, radiance: 0 } },
-  spiritHeal: { ...spirit('heal', 'Light Spirit', { hue: 40, sat: 1.6, light: 0.22 }, { radiance: 0 }), art: 'art/enemies/spirit-core-heal.svg', headR: 30, tail: ['#FFF2B0', '#E8B640'] }, // art round 9
-  spiritWard: { ...spirit('ward', 'Ward Spirit', { hue: -100, sat: 1.2, light: 0.08 }, { radiance: 0 }), art: 'art/enemies/spirit-core-ward.svg', headR: 30, tail: ['#E2D4FF', '#8E6AD6'] }, // art round 9
+  spiritHeal: { ...spirit('heal', 'Light Spirit', { hue: 40, sat: 1.6, light: 0.22 }, { radiance: 0 }), art: 'art/enemies/spirit-core-heal.svg', portrait: 'art/enemies/spirit-heal.svg', headR: 30, tail: ['#FFF2B0', '#E8B640'] }, // art round 9
+  spiritWard: { ...spirit('ward', 'Ward Spirit', { hue: -100, sat: 1.2, light: 0.08 }, { radiance: 0 }), art: 'art/enemies/spirit-core-ward.svg', portrait: 'art/enemies/spirit-ward.svg', headR: 30, tail: ['#E2D4FF', '#8E6AD6'] }, // art round 9
   heraldLight: { ...HERALD, name: 'Herald of Light', herald: 'light', art: 'art/enemies/herald-light.svg', radiance: 24, res: { radiance: 0 } },
   heraldFallen: { ...HERALD, name: 'Fallen Herald', herald: 'fallen', art: 'art/enemies/herald-fallen.svg', curse: 24, res: { radiance: 0, curse: 0 } },
 };

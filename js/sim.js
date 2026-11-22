@@ -1014,7 +1014,7 @@ export function explode(w, x, y, r, dmg, statuses, src, color, skip) {
     if (dist(x, y, o.x, o.y) > r + o.r) continue;
     const friendly = src && o.team === src.team;
     hurt(w, o, dmg * (friendly ? 0.4 : 1), src, { noDodge: true, knock: 110, kAngle: angleTo(x, y, o.x, o.y),
-      ...Object.fromEntries(Object.entries(statuses).filter(([, v]) => typeof v === 'number').map(([k, v]) => [k, v * (friendly ? 0.4 : 1)])), stk: statuses.stk });
+      ...Object.fromEntries(Object.entries(statuses).filter(([, v]) => typeof v === 'number').map(([k, v]) => [k, v * (friendly ? 0.4 : 1)])), stk: statuses.stk, by: statuses.by }); // (round 13, lane E: by, who to count it for when src is null on purpose)
   }
   if (statuses.burn) igniteAround(w, x, y, r);
 }

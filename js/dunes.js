@@ -197,8 +197,8 @@ export const DUNES = {
   dartTrap: { ...FOE, name: 'Dart Trap', art: 'art/enemies/dart-trap.svg', headR: 45, r: 24, vr: 20, turn: 0, accel: 0, face: 0, mass: 99,
     hp: 60, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 5, xp: 7, coins: [1, 3], cost: 3, noCorpse: true, construct: true, goo: '#B9AE9C',
     res: { poison: 0, curse: 0, chill: 0.5, wet: 0.5, stagger: 0 }, turret: { wall: true, arc: 0.45, turn: 0.6, cd: 2.4, aim: 0.5, range: 600, fire: darts }, brain: turretBrain },
-  spiritPoison: { ...spirit('poison', 'Venom Spirit', { hue: -120, sat: 1.4, light: 0.04 }, { poison: 0 }), art: 'art/enemies/spirit-core-poison.svg', headR: 30, tail: ['#D6F28A', '#5E9E2A'] }, // art round 9
-  spiritHaste: { ...spirit('haste', 'Wind Spirit', { hue: 30, sat: 0.4, light: 0.2 }), art: 'art/enemies/spirit-core-haste.svg', headR: 30, tail: ['#F2F6FF', '#9CB2D4'] }, // art round 9
+  spiritPoison: { ...spirit('poison', 'Venom Spirit', { hue: -120, sat: 1.4, light: 0.04 }, { poison: 0 }), art: 'art/enemies/spirit-core-poison.svg', portrait: 'art/enemies/spirit-poison.svg', headR: 30, tail: ['#D6F28A', '#5E9E2A'] }, // art round 9
+  spiritHaste: { ...spirit('haste', 'Wind Spirit', { hue: 30, sat: 0.4, light: 0.2 }), art: 'art/enemies/spirit-core-haste.svg', portrait: 'art/enemies/spirit-haste.svg', headR: 30, tail: ['#F2F6FF', '#9CB2D4'] }, // art round 9
 };
 
 // ---------------------------------------------------------------- their elite moves
