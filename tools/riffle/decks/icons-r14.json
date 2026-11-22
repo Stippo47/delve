@@ -1,0 +1,541 @@
+{
+  "title": "Icons: pick a style",
+  "topic": "art",
+  "order": 29,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "style",
+      "kind": "board",
+      "rarity": "epic",
+      "title": "Icons: pick a style",
+      "text": "The same 20 icons drawn three ways. Pick the style; the full set of about 245 then follows in it.",
+      "why": "My pick is A: it is the one that looks like the game's own sprites, every ability gets its own object, and it still reads on the hero card at 24 px. B is the clearest when tiny but plainer. C is the richest large and the muddiest small.",
+      "pick": [
+        "a"
+      ],
+      "details": "Each sheet shows the ten abilities, four trinkets and six stats large, then ready, on cooldown and locked for two of them. The next three cards have every icon by itself, and the style at the size the game really shows it.\n\nNothing in the game has changed: today's icons stay until you pick.",
+      "items": [
+        {
+          "id": "a",
+          "label": "A · Painted emblem",
+          "image": "../../../design/icons-r14/renders/sheet-a.png",
+          "thumb": "../../../design/icons-r14/renders/thumb-a.png",
+          "text": "The sprite style in a tile: the object itself, outlined and shaded. Rim = role or rarity."
+        },
+        {
+          "id": "b",
+          "label": "B · Bold glyph",
+          "image": "../../../design/icons-r14/renders/sheet-b.png",
+          "thumb": "../../../design/icons-r14/renders/thumb-b.png",
+          "text": "Two tones: one cream shape on a tile in the role colour. The clearest at the smallest size."
+        },
+        {
+          "id": "c",
+          "label": "C · Scene medallion",
+          "image": "../../../design/icons-r14/renders/sheet-c.png",
+          "thumb": "../../../design/icons-r14/renders/thumb-c.png",
+          "text": "A round window onto the ability happening. Backdrop = element, ring = role and timer."
+        }
+      ]
+    },
+    {
+      "id": "style-a",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Style A · Painted emblem",
+      "text": "The sprite style in a tile: the object itself, outlined and shaded. Rim = role or rarity. Tick what works; com",
+      "why": "Each icon is its own item, large and at the sizes the game would show it. The ones I left unticked are the ones I would redraw first in this style.",
+      "pick": [
+        "a-real",
+        "a-shieldBash",
+        "a-barrage",
+        "a-frostArrow",
+        "a-roll",
+        "a-whirl",
+        "a-chainLightning",
+        "a-sanctuary",
+        "a-raiseDead",
+        "a-backstab",
+        "a-callWolf",
+        "a-vampTooth",
+        "a-hookChain",
+        "a-whirlingKnives",
+        "a-phoenixFeather",
+        "a-dmg",
+        "a-hp",
+        "a-armor",
+        "a-moveSpeed"
+      ],
+      "items": [
+        {
+          "id": "a-real",
+          "label": "At real size on the phone",
+          "image": "../../../design/icons-r14/renders/mock-a.png",
+          "text": "The Archer's card in a fight beside today's, a stat row, ability rows at 40 px, trinkets at 36 px."
+        },
+        {
+          "id": "a-shieldBash",
+          "label": "Shield Bash",
+          "image": "../../../design/icons-r14/renders/icon-a-shieldBash.png",
+          "text": "Paladin. Today it shares the shield with nine other abilities."
+        },
+        {
+          "id": "a-barrage",
+          "label": "Barrage",
+          "image": "../../../design/icons-r14/renders/icon-a-barrage.png",
+          "text": "Archer. Three arrows loosed as a fan."
+        },
+        {
+          "id": "a-frostArrow",
+          "label": "Frost Arrow",
+          "image": "../../../design/icons-r14/renders/icon-a-frostArrow.png",
+          "text": "Archer. Today a plain snowflake, shared with Ice Shard and Frost Nova."
+        },
+        {
+          "id": "a-roll",
+          "label": "Roll",
+          "image": "../../../design/icons-r14/renders/icon-a-roll.png",
+          "text": "Archer, the movement skill. Today the dash arrow, shared with eight others."
+        },
+        {
+          "id": "a-whirl",
+          "label": "Whirl",
+          "image": "../../../design/icons-r14/renders/icon-a-whirl.png",
+          "text": "Berserker. The flail going round. Today the same swirl as Cleave and Reap."
+        },
+        {
+          "id": "a-chainLightning",
+          "label": "Chain Lightning",
+          "image": "../../../design/icons-r14/renders/icon-a-chainLightning.png",
+          "text": "Storm Mage. Today all three of her abilities are the same bolt."
+        },
+        {
+          "id": "a-sanctuary",
+          "label": "Sanctuary",
+          "image": "../../../design/icons-r14/renders/icon-a-sanctuary.png",
+          "text": "Cleric, the heal. Today the same sun as Smite and Consecrate."
+        },
+        {
+          "id": "a-raiseDead",
+          "label": "Raise Dead",
+          "image": "../../../design/icons-r14/renders/icon-a-raiseDead.png",
+          "text": "Necromancer, a summon. Today the same skull as Bone Spear."
+        },
+        {
+          "id": "a-backstab",
+          "label": "Backstab",
+          "image": "../../../design/icons-r14/renders/icon-a-backstab.png",
+          "text": "Twinfang. Today the same dagger as Fan of Knives."
+        },
+        {
+          "id": "a-callWolf",
+          "label": "Call Wolf",
+          "image": "../../../design/icons-r14/renders/icon-a-callWolf.png",
+          "text": "Druid, a summon. Today a paw."
+        },
+        {
+          "id": "a-vampTooth",
+          "label": "Vampire Tooth",
+          "image": "../../../design/icons-r14/renders/icon-a-vampTooth.png",
+          "text": "Common. Today it is nearly the same picture as the Venom Fang."
+        },
+        {
+          "id": "a-hookChain",
+          "label": "Hook and Chain",
+          "image": "../../../design/icons-r14/renders/icon-a-hookChain.png",
+          "text": "Rare. Today too thin to read at 18 px."
+        },
+        {
+          "id": "a-whirlingKnives",
+          "label": "Whirling Knives",
+          "image": "../../../design/icons-r14/renders/icon-a-whirlingKnives.png",
+          "text": "Epic. Today a busy tangle at 18 px."
+        },
+        {
+          "id": "a-phoenixFeather",
+          "label": "Phoenix Feather",
+          "image": "../../../design/icons-r14/renders/icon-a-phoenixFeather.png",
+          "text": "Legendary."
+        },
+        {
+          "id": "a-dmg",
+          "label": "Damage",
+          "image": "../../../design/icons-r14/renders/icon-a-dmg.png",
+          "text": "Your example: a sword beside the number."
+        },
+        {
+          "id": "a-hp",
+          "label": "Health",
+          "image": "../../../design/icons-r14/renders/icon-a-hp.png",
+          "text": "A red heart (green stays the colour of healing)."
+        },
+        {
+          "id": "a-armor",
+          "label": "Armour",
+          "image": "../../../design/icons-r14/renders/icon-a-armor.png",
+          "text": "A shield."
+        },
+        {
+          "id": "a-atkSpeed",
+          "label": "Attack speed",
+          "image": "../../../design/icons-r14/renders/icon-a-atkSpeed.png",
+          "text": "A sword with speed streaks; yellow, so it never reads as Damage."
+        },
+        {
+          "id": "a-moveSpeed",
+          "label": "Move speed",
+          "image": "../../../design/icons-r14/renders/icon-a-moveSpeed.png",
+          "text": "A boot with the same streaks."
+        },
+        {
+          "id": "a-range",
+          "label": "Range",
+          "image": "../../../design/icons-r14/renders/icon-a-range.png",
+          "text": "A drawn bow."
+        }
+      ]
+    },
+    {
+      "id": "style-b",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Style B · Bold glyph",
+      "text": "Two tones: one cream shape on a tile in the role colour. The clearest at the smallest size. Tick what works; c",
+      "why": "Each icon is its own item, large and at the sizes the game would show it. The ones I left unticked are the ones I would redraw first in this style.",
+      "pick": [
+        "b-real",
+        "b-shieldBash",
+        "b-barrage",
+        "b-frostArrow",
+        "b-whirl",
+        "b-chainLightning",
+        "b-sanctuary",
+        "b-raiseDead",
+        "b-backstab",
+        "b-callWolf",
+        "b-hookChain",
+        "b-whirlingKnives",
+        "b-phoenixFeather",
+        "b-dmg",
+        "b-hp",
+        "b-armor",
+        "b-atkSpeed",
+        "b-moveSpeed",
+        "b-range"
+      ],
+      "items": [
+        {
+          "id": "b-real",
+          "label": "At real size on the phone",
+          "image": "../../../design/icons-r14/renders/mock-b.png",
+          "text": "The Archer's card in a fight beside today's, a stat row, ability rows at 40 px, trinkets at 36 px."
+        },
+        {
+          "id": "b-shieldBash",
+          "label": "Shield Bash",
+          "image": "../../../design/icons-r14/renders/icon-b-shieldBash.png",
+          "text": "Paladin. Today it shares the shield with nine other abilities."
+        },
+        {
+          "id": "b-barrage",
+          "label": "Barrage",
+          "image": "../../../design/icons-r14/renders/icon-b-barrage.png",
+          "text": "Archer. Three arrows loosed as a fan."
+        },
+        {
+          "id": "b-frostArrow",
+          "label": "Frost Arrow",
+          "image": "../../../design/icons-r14/renders/icon-b-frostArrow.png",
+          "text": "Archer. Today a plain snowflake, shared with Ice Shard and Frost Nova."
+        },
+        {
+          "id": "b-roll",
+          "label": "Roll",
+          "image": "../../../design/icons-r14/renders/icon-b-roll.png",
+          "text": "Archer, the movement skill. Today the dash arrow, shared with eight others."
+        },
+        {
+          "id": "b-whirl",
+          "label": "Whirl",
+          "image": "../../../design/icons-r14/renders/icon-b-whirl.png",
+          "text": "Berserker. The flail going round. Today the same swirl as Cleave and Reap."
+        },
+        {
+          "id": "b-chainLightning",
+          "label": "Chain Lightning",
+          "image": "../../../design/icons-r14/renders/icon-b-chainLightning.png",
+          "text": "Storm Mage. Today all three of her abilities are the same bolt."
+        },
+        {
+          "id": "b-sanctuary",
+          "label": "Sanctuary",
+          "image": "../../../design/icons-r14/renders/icon-b-sanctuary.png",
+          "text": "Cleric, the heal. Today the same sun as Smite and Consecrate."
+        },
+        {
+          "id": "b-raiseDead",
+          "label": "Raise Dead",
+          "image": "../../../design/icons-r14/renders/icon-b-raiseDead.png",
+          "text": "Necromancer, a summon. Today the same skull as Bone Spear."
+        },
+        {
+          "id": "b-backstab",
+          "label": "Backstab",
+          "image": "../../../design/icons-r14/renders/icon-b-backstab.png",
+          "text": "Twinfang. Today the same dagger as Fan of Knives."
+        },
+        {
+          "id": "b-callWolf",
+          "label": "Call Wolf",
+          "image": "../../../design/icons-r14/renders/icon-b-callWolf.png",
+          "text": "Druid, a summon. Today a paw."
+        },
+        {
+          "id": "b-vampTooth",
+          "label": "Vampire Tooth",
+          "image": "../../../design/icons-r14/renders/icon-b-vampTooth.png",
+          "text": "Common. Today it is nearly the same picture as the Venom Fang."
+        },
+        {
+          "id": "b-hookChain",
+          "label": "Hook and Chain",
+          "image": "../../../design/icons-r14/renders/icon-b-hookChain.png",
+          "text": "Rare. Today too thin to read at 18 px."
+        },
+        {
+          "id": "b-whirlingKnives",
+          "label": "Whirling Knives",
+          "image": "../../../design/icons-r14/renders/icon-b-whirlingKnives.png",
+          "text": "Epic. Today a busy tangle at 18 px."
+        },
+        {
+          "id": "b-phoenixFeather",
+          "label": "Phoenix Feather",
+          "image": "../../../design/icons-r14/renders/icon-b-phoenixFeather.png",
+          "text": "Legendary."
+        },
+        {
+          "id": "b-dmg",
+          "label": "Damage",
+          "image": "../../../design/icons-r14/renders/icon-b-dmg.png",
+          "text": "Your example: a sword beside the number."
+        },
+        {
+          "id": "b-hp",
+          "label": "Health",
+          "image": "../../../design/icons-r14/renders/icon-b-hp.png",
+          "text": "A red heart (green stays the colour of healing)."
+        },
+        {
+          "id": "b-armor",
+          "label": "Armour",
+          "image": "../../../design/icons-r14/renders/icon-b-armor.png",
+          "text": "A shield."
+        },
+        {
+          "id": "b-atkSpeed",
+          "label": "Attack speed",
+          "image": "../../../design/icons-r14/renders/icon-b-atkSpeed.png",
+          "text": "A sword with speed streaks; yellow, so it never reads as Damage."
+        },
+        {
+          "id": "b-moveSpeed",
+          "label": "Move speed",
+          "image": "../../../design/icons-r14/renders/icon-b-moveSpeed.png",
+          "text": "A boot with the same streaks."
+        },
+        {
+          "id": "b-range",
+          "label": "Range",
+          "image": "../../../design/icons-r14/renders/icon-b-range.png",
+          "text": "A drawn bow."
+        }
+      ]
+    },
+    {
+      "id": "style-c",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Style C · Scene medallion",
+      "text": "A round window onto the ability happening. Backdrop = element, ring = role and timer. Tick what works; comment",
+      "why": "Each icon is its own item, large and at the sizes the game would show it. The ones I left unticked are the ones I would redraw first in this style.",
+      "pick": [
+        "c-real",
+        "c-shieldBash",
+        "c-frostArrow",
+        "c-sanctuary",
+        "c-raiseDead",
+        "c-backstab",
+        "c-callWolf",
+        "c-vampTooth",
+        "c-hookChain",
+        "c-whirlingKnives",
+        "c-phoenixFeather",
+        "c-dmg",
+        "c-hp",
+        "c-armor",
+        "c-moveSpeed"
+      ],
+      "items": [
+        {
+          "id": "c-real",
+          "label": "At real size on the phone",
+          "image": "../../../design/icons-r14/renders/mock-c.png",
+          "text": "The Archer's card in a fight beside today's, a stat row, ability rows at 40 px, trinkets at 36 px."
+        },
+        {
+          "id": "c-shieldBash",
+          "label": "Shield Bash",
+          "image": "../../../design/icons-r14/renders/icon-c-shieldBash.png",
+          "text": "Paladin. Today it shares the shield with nine other abilities."
+        },
+        {
+          "id": "c-barrage",
+          "label": "Barrage",
+          "image": "../../../design/icons-r14/renders/icon-c-barrage.png",
+          "text": "Archer. Three arrows loosed as a fan."
+        },
+        {
+          "id": "c-frostArrow",
+          "label": "Frost Arrow",
+          "image": "../../../design/icons-r14/renders/icon-c-frostArrow.png",
+          "text": "Archer. Today a plain snowflake, shared with Ice Shard and Frost Nova."
+        },
+        {
+          "id": "c-roll",
+          "label": "Roll",
+          "image": "../../../design/icons-r14/renders/icon-c-roll.png",
+          "text": "Archer, the movement skill. Today the dash arrow, shared with eight others."
+        },
+        {
+          "id": "c-whirl",
+          "label": "Whirl",
+          "image": "../../../design/icons-r14/renders/icon-c-whirl.png",
+          "text": "Berserker. The flail going round. Today the same swirl as Cleave and Reap."
+        },
+        {
+          "id": "c-chainLightning",
+          "label": "Chain Lightning",
+          "image": "../../../design/icons-r14/renders/icon-c-chainLightning.png",
+          "text": "Storm Mage. Today all three of her abilities are the same bolt."
+        },
+        {
+          "id": "c-sanctuary",
+          "label": "Sanctuary",
+          "image": "../../../design/icons-r14/renders/icon-c-sanctuary.png",
+          "text": "Cleric, the heal. Today the same sun as Smite and Consecrate."
+        },
+        {
+          "id": "c-raiseDead",
+          "label": "Raise Dead",
+          "image": "../../../design/icons-r14/renders/icon-c-raiseDead.png",
+          "text": "Necromancer, a summon. Today the same skull as Bone Spear."
+        },
+        {
+          "id": "c-backstab",
+          "label": "Backstab",
+          "image": "../../../design/icons-r14/renders/icon-c-backstab.png",
+          "text": "Twinfang. Today the same dagger as Fan of Knives."
+        },
+        {
+          "id": "c-callWolf",
+          "label": "Call Wolf",
+          "image": "../../../design/icons-r14/renders/icon-c-callWolf.png",
+          "text": "Druid, a summon. Today a paw."
+        },
+        {
+          "id": "c-vampTooth",
+          "label": "Vampire Tooth",
+          "image": "../../../design/icons-r14/renders/icon-c-vampTooth.png",
+          "text": "Common. Today it is nearly the same picture as the Venom Fang."
+        },
+        {
+          "id": "c-hookChain",
+          "label": "Hook and Chain",
+          "image": "../../../design/icons-r14/renders/icon-c-hookChain.png",
+          "text": "Rare. Today too thin to read at 18 px."
+        },
+        {
+          "id": "c-whirlingKnives",
+          "label": "Whirling Knives",
+          "image": "../../../design/icons-r14/renders/icon-c-whirlingKnives.png",
+          "text": "Epic. Today a busy tangle at 18 px."
+        },
+        {
+          "id": "c-phoenixFeather",
+          "label": "Phoenix Feather",
+          "image": "../../../design/icons-r14/renders/icon-c-phoenixFeather.png",
+          "text": "Legendary."
+        },
+        {
+          "id": "c-dmg",
+          "label": "Damage",
+          "image": "../../../design/icons-r14/renders/icon-c-dmg.png",
+          "text": "Your example: a sword beside the number."
+        },
+        {
+          "id": "c-hp",
+          "label": "Health",
+          "image": "../../../design/icons-r14/renders/icon-c-hp.png",
+          "text": "A red heart (green stays the colour of healing)."
+        },
+        {
+          "id": "c-armor",
+          "label": "Armour",
+          "image": "../../../design/icons-r14/renders/icon-c-armor.png",
+          "text": "A shield."
+        },
+        {
+          "id": "c-atkSpeed",
+          "label": "Attack speed",
+          "image": "../../../design/icons-r14/renders/icon-c-atkSpeed.png",
+          "text": "A sword with speed streaks; yellow, so it never reads as Damage."
+        },
+        {
+          "id": "c-moveSpeed",
+          "label": "Move speed",
+          "image": "../../../design/icons-r14/renders/icon-c-moveSpeed.png",
+          "text": "A boot with the same streaks."
+        },
+        {
+          "id": "c-range",
+          "label": "Range",
+          "image": "../../../design/icons-r14/renders/icon-c-range.png",
+          "text": "A drawn bow."
+        }
+      ]
+    },
+    {
+      "id": "stats",
+      "kind": "board",
+      "rarity": "rare",
+      "title": "Stats beside a number",
+      "text": "Your stat line (a sword and a number, and the rest) in each style, at 14 and 16 px.",
+      "why": "The stats can follow a different style from the abilities. A is painted like the sprites; B is one flat colour per stat and the crispest at 14 px; C is a white mark on a coloured chip.",
+      "pick": [
+        "stats-a"
+      ],
+      "items": [
+        {
+          "id": "stats-a",
+          "label": "A · Painted emblem",
+          "image": "../../../design/icons-r14/renders/stats-a.png",
+          "text": "Six of the nine hero stats; ability haste, healing and potency would follow."
+        },
+        {
+          "id": "stats-b",
+          "label": "B · Bold glyph",
+          "image": "../../../design/icons-r14/renders/stats-b.png",
+          "text": "Six of the nine hero stats; ability haste, healing and potency would follow."
+        },
+        {
+          "id": "stats-c",
+          "label": "C · Scene medallion",
+          "image": "../../../design/icons-r14/renders/stats-c.png",
+          "text": "Six of the nine hero stats; ability haste, healing and potency would follow."
+        }
+      ]
+    }
+  ]
+}
