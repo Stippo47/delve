@@ -12,6 +12,8 @@ import { ELITES, lob, cone, line, around, rush, rushTick, summon, shoot, blink, 
 import { slam, callAdds, courtFalls } from './enemies.js';
 
 const ART = (f) => `art/enemies/placeholder/${f}.svg`;
+// the Succubus's answer to a blow (round 14: on a cooldown): charm `back` on the striker, then `cd` seconds before the next
+export const SUCCUBUS = { back: 24, cd: 4 };
 const FOE = { team: 'enemy', turn: 4, accel: 220, face: 4, mass: 1.2, temp: 0.35, commit: 0.9 };
 
 // ---------------------------------------------------------------- base habits
@@ -101,9 +103,13 @@ export const FOES = {
   // to charmed foes"). Whoever lands a blow on her is charmed a little (8, once a second each), so soon they can't hurt
   // her; she hunts the charmed, hits them 40% harder, and every few seconds blows a kiss at the most charmed hero in reach to
   // tip it over into fighting for her. Placeholder art: the Devil recoloured rose (docs/ART-NEEDED.md).
+  // Round 14 (the designer: "The when hit charm attacker should be on a cooldown, not every hit."): when a blow lands on
+  // her and her answer is ready, she blows the striker a kiss back (charm SUCCUBUS.back, a heart flies to it), then
+  // not again for SUCCUBUS.cd seconds, whoever hits her. (Round 13: 8 on every blow, once a second for each striker.)
   succubus: { variantOf: 'devil', name: 'Succubus', accent: { from: 0, range: 30, hue: 322, sat: 1.05, light: 0.1 }, hp: 60, dmg: 9, speed: 64, charm: 8, charmBonus: 0.4,
     xp: 18, coins: [3, 7], cost: 5, ability: 'dash', abilCd: 5,
-    struck: (w, u, src) => { if (!src || src.team === u.team || !src.st) return; const m = u.kissed || (u.kissed = new Map()); if ((m.get(src.id) || -9) > w.time - 1) return; m.set(src.id, w.time); addStatus(w, src, 'charm', 8, u); },
+    struck: (w, u, src) => { if (!src || src.team === u.team || !src.st || src.flipKind === 'charm' || !(w.time >= (u.backT ?? 0))) return; u.backT = w.time + SUCCUBUS.cd;
+      addStatus(w, src, 'charm', SUCCUBUS.back, u); fx(w, { type: 'statusBurst', kind: 'kissBack', from: u, unit: src, x: u.x, y: u.y, max: 0.55 }); },
     brain: (w, u, dt) => {
       if (!u.aggro || !due(u, 'kiss', dt, 3)) return false;
       const list = opponents(w, u).filter((h) => !h.summon && dist(u.x, u.y, h.x, h.y) < 300 && lineClear(w, u.x, u.y, h.x, h.y, 4) && !(h.charmImmuneT > 0) && h.flipKind !== 'charm');

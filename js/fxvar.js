@@ -14,7 +14,13 @@
 //              bone-white protection border while it holds, and the moment is 1 Stand (a flash, dust stamped out, chips
 //              thrown off), 2 Creak (comic crack marks snap out round her), 3 Glance (the blow clangs off the side it
 //              came from)
+//   bleed      (round 14, the designer of round 13's red cuts, drops and wash: "Don't like visual at all") three looks
+//              that differ in kind, drawn by fx-status.js: 1 Spurts (blood squirts from a wound in time with a heartbeat
+//              that quickens as it builds, and splashes on the floor), 2 Trail (nothing on the body: a pool grows
+//              under it and it leaves a trail of blood where it goes), 3 Drop (a blood drop over its head fills up
+//              like a gauge and throbs); each its own burst
 export const VARIANTS = {
+  bleed: ['Spurts', 'Trail', 'Drop'],
   shockwave: ['Arcs', 'Ripples', 'Stomps'],
   oldBones: ['Stand', 'Creak', 'Glance'],
   boneSpear: ['Spear', 'Femur', 'Fang'],

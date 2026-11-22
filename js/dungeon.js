@@ -305,6 +305,8 @@ function buildRoom(run) {
     if (hs.hp != null) u.hp = Math.min(u.maxHp, hs.hp);
     u.facing = 0; u.mvA = 0;
   });
+  // round 14: the enemies charmed over in earlier rooms of this floor walk in behind the party
+  (run.followers || []).forEach((f, i) => enterRoom(w, f, 40, y0 + ((i % 2) ? 1 : -1) * (40 + 30 * Math.floor(i / 2))));
   // enemies: groups around the room's chunks, waiting
   const far = pick(w.exits);
   if (kind === 'boss') {
@@ -590,6 +592,8 @@ export const XP_MUL = 1.6;
 const MERC_LEVEL = [2, 3, 4, 6, 8, 10, 12, 14, 16];
 
 const heroesAlive = (run) => run.world.units.filter((u) => (u.trueTeam || u.team) === 'hero' && alive(u) && !u.summon); // (round 13: a charmed hero is still ours)
+// Round 14: an enemy charmed over to the party (enthralled for a while, or a follower for good).
+const thrall = (u) => u.flipKind === 'charm' && u.team === 'hero' && u.trueTeam === 'enemy';
 function nearestHero(run, x, y) { let best = null, bd = Infinity; for (const h of heroesAlive(run)) { const d = dist(h.x, h.y, x, y); if (d < bd) { bd = d; best = h; } } return best; }
 
 // ---------------------------------------------------------------- the room's flow
@@ -606,7 +610,9 @@ export function update(run, dt) {
   grabTrinkets(run, dt);
   for (const u of w.units) if (u.team === 'hero' && u.downed && run.heroes[u.kind]) run.heroes[u.kind].down = true;
   if (heroesAlive(run).length === 0 && !run.through && !w.units.some((u) => u.charmed && alive(u))) { run.phase = 'lost'; summarize(run); return; } // (a hero a brain leech holds is still ours)
-  const enemies = w.units.filter((u) => (u.trueTeam || u.team) === 'enemy' && alive(u) && !u.def.trap); // (round 10: traps, the saw blades, don't hold a room open)
+  // (round 10: traps, the saw blades, don't hold a room open; round 14: nor does an enemy charmed over to the party's
+  // side: "The last unit on a floor charmed will count as beating the level")
+  const enemies = w.units.filter((u) => (u.trueTeam || u.team) === 'enemy' && alive(u) && !u.def.trap && !thrall(u));
   // a fight that's gone quiet (someone stuck, a group never met): everyone left comes looking
   if (run.phase === 'fight') {
     if (run.mainKills !== run.lastKills) { run.lastKills = run.mainKills; run.quietT = 0; } else run.quietT = (run.quietT || 0) + dt;
@@ -640,10 +646,11 @@ export function update(run, dt) {
     // round 7: no dawdling at the door. Everyone heads straight for it, and a hero within reach of it steps into the
     // light (shrinks, glows, a few motes rise) and is gone; the room ends as soon as the last one is through.
     const dx = w.W - 30;
-    hs.forEach((h) => { if (!h.exiting) { h.forcedGoal = { x: w.W - 6, y: door.y, exit: true }; h.target = null; } });
+    const fl = w.units.filter((u) => u.follower && alive(u)); // round 14: the charmed come along through the same door
+    for (const h of [...hs, ...fl]) if (!h.exiting) { h.forcedGoal = { x: w.W - 6, y: door.y, exit: true }; h.target = null; }
     run.exitT += dt;
-    for (const h of hs) if (!h.exiting && (Math.hypot(h.x - dx, h.y - door.y) < EXIT_R || run.exitT > 9)) stepOut(run, h, door);
-    for (const h of hs) if (h.exiting) exitTick(run, h, dt);
+    for (const h of [...hs, ...fl]) if (!h.exiting && (Math.hypot(h.x - dx, h.y - door.y) < EXIT_R || run.exitT > 9)) stepOut(run, h, door);
+    for (const h of [...hs, ...fl]) if (h.exiting) exitTick(run, h, dt);
     if (run.through && heroesAlive(run).length === 0) { run.exitDone = (run.exitDone || 0) + dt; if (run.exitDone > 0.15) { finishRoomHp(run); run.phase = 'transition'; run.fadeOut = 0; } }
   }
 }
@@ -653,7 +660,7 @@ const EXIT_R = 130, EXIT_T = 0.5;
 function stepOut(run, h, door) {
   const w = run.world;
   h.exiting = { t: 0, dur: EXIT_T }; h.ethereal = true; h.invulnT = 9;
-  const hs = run.heroes[h.kind]; if (hs) { hs.hp = h.hp; hs.maxHp = h.maxHp; hs.potions = h.potions; }
+  const hs = !h.follower && run.heroes[h.kind]; if (hs) { hs.hp = h.hp; hs.maxHp = h.maxHp; hs.potions = h.potions; }
   fx(w, { type: 'pillar', x: h.x, y: h.y, r: h.r * 0.9, kind: 'holy', max: EXIT_T + 0.35 });
   for (let i = 0; i < 10; i++) { const a = rand() * Math.PI * 2, v = rrange(20, 70);
     w.particles.push({ x: h.x + Math.cos(a) * h.r * 0.6, y: h.y + Math.sin(a) * h.r * 0.6, vx: Math.cos(a) * v, vy: Math.sin(a) * v, rise: rrange(50, 110), up: 0, life: rrange(0.5, 0.9), max: 0.9, size: rrange(2.5, 4.5), color: chance(0.5) ? '#FFF4C8' : '#FFE08A', drag: 0.9 }); }
@@ -664,9 +671,9 @@ function exitTick(run, h, dt) {
   h.forcedGoal = { x: w.W - 6, y: h.y, exit: true, slow: 0.5 }; // drifting on into the doorway as it goes
   if (rand() < dt * 18) w.particles.push({ x: h.x + rrange(-h.r, h.r) * 0.5, y: h.y + rrange(-h.r, h.r) * 0.5, vx: 0, vy: 0, rise: rrange(60, 120), up: 0, life: 0.6, max: 0.6, size: rrange(2, 3.5), color: '#FFF4C8' });
   if (e.t >= e.dur) {
-    const hs = run.heroes[h.kind]; if (hs) { hs.hp = h.hp; hs.potions = h.potions; }
+    const hs = !h.follower && run.heroes[h.kind]; if (hs) { hs.hp = h.hp; hs.potions = h.potions; }
     for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; w.particles.push({ x: h.x, y: h.y, vx: Math.cos(a) * 90, vy: Math.sin(a) * 90, life: 0.35, max: 0.35, size: 3, color: '#FFF8E6' }); }
-    h.dead = true; h.gone = true; run.through = (run.through || 0) + 1;
+    h.dead = true; h.gone = true; if (!h.follower) run.through = (run.through || 0) + 1;
   }
 }
 
@@ -774,11 +781,38 @@ function waveSpot(w, cx, cy, r) {
   return placeFree(w, r, 60, w.W - 60);
 }
 
+// Round 14 (the designer: "The last unit on a floor charmed will count as beating the level. They will follow u into
+// the next room fully charmed."): an enemy still charmed over to the party when its room is won is beaten, and becomes
+// a follower: charmed with no end, it goes through the door with the party and fights for it in the rooms after, until
+// it dies or the floor ends (endFloor). A thing bolted to its room (a wall turret) stays behind, beaten.
+function follow(run, u) {
+  u.flipUntil = null; u.aggro = true;
+  if (u.fixed && !u.linkTo) return;
+  u.follower = true;
+  const list = run.followers || (run.followers = []); if (!list.includes(u)) list.push(u);
+}
+// A follower carried into the next room: the same unit (its health, rank and kind of charm), afresh in the new room.
+function enterRoom(w, f, x, y) {
+  x = clamp(x, f.r + 4, w.W - f.r - 4); y = clamp(y, f.r + 4, w.H - f.r - 4);
+  Object.assign(f, { x, y, vx: 0, vy: 0, kx: 0, ky: 0, dvx: 0, dvy: 0, spd: 0, dead: false, gone: false, dying: false, exiting: null, ethereal: false, invulnT: 1,
+    target: null, path: null, pathGoal: null, pathT: 0, act: null, anim: null, forcedGoal: null, escape: null, spotFor: null, later: null, tauntBy: null, tauntT: 0,
+    focus: null, focusT: 0, st: freshStatuses(), stBy: {}, frozenT: 0, stunT: 0, rootT: 0, sleepT: 0, deepT: 0, koT: 0, hexed: false, radiantT: 0, sickT: 0,
+    addledT: 0, fearT: 0, fearBy: null, lurchT: 0, flinchT: 0, hitT: 0, home: { x, y }, facing: 0, mvA: 0, lastX: x, lastY: y, stuckT: 0, unstickT: 0,
+    flipBy: null, coinGoal: null, hidden: false, mode: 'wander', modeT: 0 });
+  f.buffs = (f.buffs || []).filter((b) => b.t > 1e5); // (what it wears for good, a bat's thirst; not what was cast on it back there)
+  if (f.el) { f.el.holdT = 0; f.el.then = null; f.el.rush = null; f.el.coming = 0; }
+  if (f.segs) { f.trail = []; for (let d = 0; d <= (f.segs.length + 3) * (f.segs[0] ? f.segs[0].gap : 26); d += 4) f.trail.push({ x: x - d, y }); } // (a chain's body lies out behind its head again)
+  w.units.push(f);
+}
+
 // The room is won: spikes sink, and (if the room has one) a chest drops in beside the party.
 function roomWon(run) {
   const w = run.world;
   w.cleared = true; run.phase = 'loot'; run.t = 0;
-  for (const u of w.units) if (u.trueTeam) restoreSide(w, u); // (round 13: nobody leaves a room on the wrong side)
+  // (round 13: nobody leaves a room on the wrong side; round 14: except an enemy charmed over to the party: the room
+  // counts as beaten and it follows the party on, charmed for good, until it dies or the floor ends)
+  for (const u of w.units) if (u.trueTeam && !(thrall(u) && alive(u))) restoreSide(w, u);
+  for (const u of w.units) if (thrall(u) && alive(u)) follow(run, u);
   for (const u of w.units) if (u.def.trap && alive(u)) kill(w, u, null); // the saw blades wind down with the room
   for (const h of heroesAlive(run)) h.target = null;
   for (const h of w.hazards) if (h.type === 'spikes' && h.up !== false) { h.up = false; puff(w, h.x, h.y, '#B9AE9C', 6, 60, 5, 0.4); }
@@ -879,6 +913,7 @@ function endFloor(run) {
   if (run.floor >= FLOORS) { run.phase = 'won'; summarize(run); return; }
   if (run.leaving) { run.phase = 'retreated'; summarize(run); return; }
   run.floor++;
+  run.followers = []; // round 14: the charmed stay behind when the floor ends
   run.map = makeFloor(floorTheme(run.theme, run.floor).kinds);
   for (const k of run.party) { const hs = run.heroes[k]; if (hs.down) { hs.down = false; hs.hp = (hs.maxHp || DEFS[k].hp) * 0.1; } }
   run.banner = { s: 'Floor ' + run.floor, t: 1.8 };
@@ -890,6 +925,8 @@ function nextRoom(run) {
   if (run.newFloor) run.newFloor = false;
   else advance(run.map, run.doorK);
   run.doorK = null;
+  // round 14: the followers still standing come through with the party (through the door, or caught up as the room ends)
+  run.followers = (run.followers || []).filter((f) => f.gone || (!f.dead && !f.downed && f.hp > 0));
   buildRoom(run);
 }
 

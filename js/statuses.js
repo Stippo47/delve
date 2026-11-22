@@ -24,7 +24,9 @@ export const STATUS = {
 // Poison's burst (round 11; it used to take 15% of max health at once): SICKENED for sickT seconds. The unit loses
 // `drain` of its max health over that time (not at once: it can be healed through), deals `weaken` less damage and
 // moves and attacks `slow` slower. Anything that cleans statuses off ends it.
-export const POISON = { sickT: 6, drain: 0.1, weaken: 0.3, slow: 0.2 };
+// Round 14 (the designer: "Poison drops to 20%"): when the sickness ends the build-up drops to `ends` (of 100), not to
+// nothing (it never rises to it: a build-up already lower stays where it is).
+export const POISON = { sickT: 6, drain: 0.1, weaken: 0.3, slow: 0.2, ends: 20 };
 export const BUILD_IDS = Object.keys(STATUS);
 export const needOf = (u, id) => { const n = STATUS[id].need; return typeof n === 'function' ? n(u) : n; };
 // 0..1: how close a unit's status is to bursting.
@@ -52,17 +54,32 @@ export const ENTANGLE = { slow: 0.7, walkDmg: 2.2, atkDmg: 2.5, rootT: 3, squeez
 // looks for someone else to fight. Burst:
 // ENTHRALLED, it fights for the charmer's side for `dur` seconds (elites x0.8, majors x0.6), then comes back; a boss, or
 // the last one standing on its side, is SMITTEN instead (stunned `smitT`, bosses 40%). Then immuneT before it builds again.
+// Round 14 (the designer: "Bosses immune to charm. The last unit on a floor charmed will count as beating the level.
+// They will follow u into the next room fully charmed."): bosses, mini-bosses and boss parts take no charm. An enemy is
+// enthralled even when it is the last of its side; once no enemy in a room is left fighting the party (and no wave is to
+// come), every enemy still enthralled there counts as beaten and becomes a FOLLOWER: charmed with no end, it walks
+// through the door with the party and fights for them until it dies or the floor ends (dungeon.js). Only the party's
+// last hero standing, and in a battle the last unit of either side, is still SMITTEN instead of turned.
 export const CHARM = { dur: 5, elite: 0.8, major: 0.6, smitT: 1.5, immuneT: 6, guard: 35 };
 // Confused ("bad aim, turns randomly, attacks when no target is in range. Burst effect. Attacks can hurt allies for a
 // bit, uses all available abilities at once"). While it builds (x fill): every shot it makes goes up to `aim` radians
 // wide, it lurches round to a random heading now and then (`turn` a second), and with an attack ready and nothing in
 // reach it swings or shoots at the air (`flail` a second). Burst: ADDLED for addledT s (bosses 40%): its weapon hits
 // friends as well as foes, and it uses every ability it has ready at once. Then immuneT.
-export const CONFUSE = { aim: 0.7, turn: 1.4, flail: 1.2, addledT: 4, immuneT: 4 };
+// Round 14 (the designer: "Should also make them turn randomly. Instead of using all abilities at once, will have a
+// chance to trigger randomly while bursted"): the lurch is a real turn now: `turn` times a second (x fill) it swings
+// round to a random heading over a moment and walks off that way for lurchT seconds (it can't attack while turned
+// away). Addled no longer fires everything at once: each second it has a `trigger` chance (x2 when it has several ready)
+// to let off ONE ability that's ready, picked at random, at whatever it happens to face.
+export const CONFUSE = { aim: 0.7, turn: 1.2, lurchT: [0.6, 1.1], lurchSpeed: 0.7, flail: 1.2, addledT: 4, immuneT: 4, trigger: 0.8 };
 // Sleepy ("lower chance to use abilities, slow attack speed"): attacks up to atkSlow slower and up to abilCut of its
 // chances to use an ability lost (x fill). Burst (the lead's call): ASLEEP for sleepT s (bosses 40%), the Bard's
 // Lullaby's sleep, but nothing wakes it for its first deepT s (bosses 0.6); after that a blow does. Then immuneT.
-export const SLEEPY = { atkSlow: 0.4, abilCut: 0.6, sleepT: 4, deepT: 2, immuneT: 5 };
+// Round 14 (the designer: "Should make all wind ups like 40% longer too. Anything charged up"): every wind-up runs up to
+// `windup` slower (x fill): a melee wind-up, a charge's tell, a slam, every danger zone it shows on the floor, a stand
+// through a tell, a hero's charged shot and anything else it has queued (sim.js windMul).
+export const SLEEPY = { atkSlow: 0.4, abilCut: 0.6, sleepT: 4, deepT: 2, immuneT: 5, windup: 0.4 };
+export const windMul = (u) => (u && u.st && u.st.sleepy > 0 ? 1 + SLEEPY.windup * fillOf(u, 'sleepy') : 1);
 // Bleeding ("drains hp, taking damage increases duration. Burst effect removes 33% of remaining hp. Make healing
 // weaker"): loses `dot` x value health a second (armour doesn't help); every blow it takes holds the drain still for
 // holdT s (it doesn't wear off while it's being hit); heals do up to healCut less (x fill). Burst: HAEMORRHAGE, it loses
@@ -72,5 +89,13 @@ export const BLEED = { dot: 0.05, holdT: 1.5, healCut: 0.5, burst: 0.33, bossCap
 // whoever frightened it (u.stBy.fear) when that one is within `reach`, more as it builds (x fill). Burst: TERRIFIED for
 // terrT s (bosses: a cower, stunned bossT): it runs from the frightener and can't attack or use an ability, and every
 // ability it had ready is wasted (its cooldown starts again, at least `waste` s). Then immuneT.
-export const FEAR = { reach: 320, pull: 1.3, terrT: 3, bossT: 0.6, run: 1.2, waste: 5, immuneT: 5 };
+// Round 14 (the designer: "Doesn't seem to back away. Burst will make them turn away and run. Will have a radius of fear
+// around them giving other entities fear."): from the first point of fear it backs away, facing what frightened it
+// (a backpedal: its walk turned away by at least `back`, which is all the way when it was coming straight on), keeping
+// off to 40% of `reach` at the first point and all of it when full.
+// Terrified, it turns its back and runs (from where the fright came if the frightener is gone). While it runs, everyone
+// of its own side within spreadR gains `spread` fear a second from it, halved for every hand it has passed through
+// (u.fearGen: the banshee's own victims spread at full strength, theirs at half, theirs at a quarter: below the 8 a
+// second fear drains, so a panic dies out after two links).
+export const FEAR = { reach: 320, back: 0.6, pull: 1.0, terrT: 3, bossT: 0.6, run: 1.2, waste: 5, immuneT: 5, spreadR: 120, spread: 34, spreadGen: 0.5 };
 

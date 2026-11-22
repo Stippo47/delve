@@ -9,6 +9,7 @@ import { alive, hurt, puff, sparks, spawn, kill, addDanger, fx } from './sim.js'
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange } from './util.js';
 import { circleRect } from './path.js';
 import { stand } from './elites.js';
+import { windMul } from './statuses.js'; // round 14: sleepy, a charge's tell lasts longer
 
 // the boss's opponents (whichever side it is on: battle mode can put a boss on either team)
 export const heroesOf = (w, u) => w.units.filter((o) => alive(o) && !o.ethereal && o.team !== u.team);
@@ -79,7 +80,7 @@ export function charge(w, u, k, a, len, o = {}) {
 }
 export function chargeTick(w, u, k, dt) {
   const c = k.ch; if (!c) return false;
-  if (c.t > 0) { c.t -= dt; stand(u, dt); u.facing = wrapAngle(u.facing + clamp(wrapAngle(c.a - u.facing), -8 * dt, 8 * dt)); return true; }
+  if (c.t > 0) { u.winding = true; c.t -= dt / windMul(u); stand(u, dt); u.facing = wrapAngle(u.facing + clamp(wrapAngle(c.a - u.facing), -8 * dt, 8 * dt)); return true; }
   u.dvx = Math.cos(c.a) * c.sp; u.dvy = Math.sin(c.a) * c.sp; u.vx = u.dvx; u.vy = u.dvy; u.mvA = c.a; u.spd = c.sp; u.facing = c.a;
   if (rand() < 0.6) w.particles.push({ x: u.x - Math.cos(c.a) * u.r, y: u.y - Math.sin(c.a) * u.r, vx: 0, vy: 0, life: 0.35, max: 0.35, size: 8, color: c.o.trail || 'rgba(214,196,160,0.75)' });
   for (const h of heroesOf(w, u)) {

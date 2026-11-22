@@ -3,6 +3,9 @@
 // to be in the clip). Also writes a few still frames (--stills 1.2,3.5) beside the mp4 for checking by eye.
 //   node tools/status-clip.mjs out.mp4 --battle "red|blue" [--arena crypt] [--tier 3] [--secs 8] [--port 8885]
 //        [--inject "js using w, t (seconds), U(kind, team)"] [--stills 1,2,3] [--w 520 --h 640] [--zoom 1]
+//        [--q 'v_bleed=2'] (extra address parameters: look variants, test switches)
+//   round 14: --run paladin,archer,enchantress [--level 30] [--setup "js once, with w, S, run"] records a dungeon run
+//        instead of a battle (--q 'theme=crypt' for the dungeon); --inject runs each frame there too (w is the room)
 import { chromium } from 'playwright-core';
 import { execFileSync, spawn } from 'node:child_process';
 import fs from 'node:fs';
@@ -25,9 +28,16 @@ const ctx = await browser.newContext({ viewport: { width: W, height: H }, device
 const page = await ctx.newPage();
 const errors = [];
 page.on('pageerror', (e) => errors.push(String(e)));
-await page.goto(`http://localhost:${site}/?seed=${+opt('seed', 3)}`);
+const q = opt('q', '');
+await page.goto(`http://localhost:${site}/?seed=${+opt('seed', 3)}${q ? '&' + q : ''}`);
 await page.waitForFunction(() => window.GAME && GAME.state === 'camp' && GAME.ready, null, { timeout: 180000 });
-await page.evaluate(async ([b, arena, tier]) => {
+if (opt('run')) await page.evaluate(async ([party, level, setup]) => {
+  const s = GAME.save; s.cheat = true; s.unlocks = { ...(s.unlocks || {}), slotMini1: true, slotBoss1: true };
+  for (const id of party.split(',')) { s.heroes[id].owned = true; s.heroes[id].level = level; } s.party = party.split(',');
+  GAME.record(true); GAME.startRun(1);
+  if (setup) { const S = await import('./js/sim.js'); const run = GAME.run, w = run.world; new Function('w', 'S', 'run', setup)(w, S, run); }
+}, [opt('run'), +opt('level', 30), opt('setup', '')]);
+else await page.evaluate(async ([b, arena, tier]) => {
   const parse = (s) => s.split(',').filter(Boolean).map((x) => { const [kn, rank] = x.split('@'), [k, n] = kn.split('*'); return { k, n: +n || 1, rank: +rank || 0 }; });
   const [red, blue] = b.split('|');
   GAME.save.cheat = true;
@@ -35,6 +45,7 @@ await page.evaluate(async ([b, arena, tier]) => {
   for (const s of [...parse(red), ...parse(blue)]) if (GAME.save.heroes[s.k]) GAME.save.heroes[s.k].nodes = tierBuild(s.k, tier);
   GAME.record(true); GAME.startBattle({ arena, a: parse(blue), b: parse(red) });
 }, [opt('battle'), opt('arena', 'crypt'), +opt('tier', 3)]);
+if (opt('zoom')) await page.evaluate(async (z) => { (await import('./js/render.js')).setZoom(+z); }, opt('zoom'));
 const inject = opt('inject', '');
 const n = Math.round(secs * fps);
 for (let i = 0; i < n; i++) {
@@ -42,7 +53,7 @@ for (let i = 0; i < n; i++) {
     if (code) { const S = await import('./js/sim.js'); const w = GAME.run.world; const U = (k, team) => w.units.find((u) => u.kind === k && !u.dead && (!team || (u.trueTeam || u.team) === team));
       const f = new Function('w', 't', 'U', 'S', 'dt', code); f(w, t, U, S, dt); }
     GAME.recFrame(dt);
-  }, [1 / fps, inject, i / fps]);
+  }, [+opt('speed', 1) / fps, inject, i / fps]); // (--speed 1.5: the game runs faster than the clip)
   const file = path.join(frames, `f${String(i).padStart(4, '0')}.png`);
   await page.screenshot({ path: file });
   for (const s of stills) if (Math.round(s * fps) === i) fs.copyFileSync(file, out.replace(/\.mp4$/, `-${s}s.png`));

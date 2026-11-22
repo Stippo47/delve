@@ -2,11 +2,11 @@
 import { TAU, clamp, dist, dist2, angleTo, wrapAngle, angleDiff, rand, rrange, rint, chance, softmaxPick } from './util.js';
 import { DEFS, FEEL, levelHp, levelDmg } from './units.js';
 import { lineClear, pathClear, rayToRoundRect, circleRect, findPath, buildGrid } from './path.js';
-import { kitThink, kitTick, hooksOf, segDist, heroAttack, kitFireAll } from './kits.js';
+import { kitThink, kitTick, hooksOf, segDist, heroAttack, kitReady, kitFireRandom } from './kits.js';
 import { trinketHooks } from './trinkets.js';
 import { cue } from './sfx.js';
 import { ARMOUR_CAP, ENEMY_ARMOUR, armourCut } from './armour.js';
-import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON, CHARM, CONFUSE, SLEEPY, BLEED, FEAR } from './statuses.js';
+import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON, CHARM, CONFUSE, SLEEPY, BLEED, FEAR, windMul } from './statuses.js';
 import { tallyHurt, tallyHeal, tallyDown, noteStatus, tallyBlock } from './stats.js';
 
 let NEXT_ID = 1;
@@ -58,8 +58,17 @@ export function spawn(w, kind, x, y, opts = {}) {
   if (w.battle && !opts.team) u.adopt = true; // (step: takes the side of whoever it says called it)
   if (w.battle && w.actor) u.bkey = w.actor.bkey; // (stats.js: what a unit makes counts for its row)
   w.units.push(u);
+  // round 14: what a charmed (or befuddled) unit makes, calls up or splits into is charmed the same way: the same side,
+  // the same end, a follower's a follower too (killNow keeps the dying one's charm in u._flipWas for its split)
+  const par = !opts.team && w.actor && w.actor !== u ? w.actor : null, fl = par && (par.trueTeam ? flipOf(par) : par._flipWas);
+  if (fl && (fl.kind === 'charm' || fl.kind === 'befuddle')) {
+    u.team = fl.trueTeam; u.adopt = false;
+    turnSide(w, u, fl.team, fl.kind, fl.by, fl.until != null ? Math.max(0.5, fl.until - w.time) : null);
+    if (fl.follower) u.follower = true;
+  }
   return u;
 }
+const flipOf = (u) => ({ team: u.team, trueTeam: u.trueTeam, kind: u.flipKind, by: u.flipBy, until: u.flipUntil, follower: !!u.follower });
 // In a battle either kind of unit can be on either side, so what a unit is (a hero, or a monster) can't be read off
 // its side there. In a run it is the side, as ever.
 const heroic = (w, u) => (w.battle ? u.def.team === 'hero' : u.team === 'hero');
@@ -74,11 +83,13 @@ export function turnSide(w, u, team, kind, by, dur) {
   if (u.team === u.trueTeam) { restoreSide(w, u); return; } // (turned back to its own side: nothing is flipped)
   u.target = null; u.tauntBy = null; u.tauntT = 0; u.aggro = true; u.forcedGoal = null; u.act = u.act && u.act.type === 'drink' ? u.act : null;
   if (w) for (const o of w.units) if (o.target === u) o.target = null; // whoever was after it lets go
+  for (const s of u.segs || []) if (s !== u && !s.dead) turnSide(w, s, team, kind, by, null); // (round 14: a chain's body goes over with its head; restoreSide brings it back)
 }
 export function restoreSide(w, u) {
   if (!u.trueTeam) return;
-  u.team = u.trueTeam; u.trueTeam = null; u.flipKind = null; u.flipBy = null; u.flipUntil = null; u.target = null; u.befuddled = null;
+  u.team = u.trueTeam; u.trueTeam = null; u.flipKind = null; u.flipBy = null; u.flipUntil = null; u.target = null; u.befuddled = null; u.follower = false;
   if (w) for (const o of w.units) if (o.target === u) o.target = null;
+  for (const s of u.segs || []) if (s !== u && s.trueTeam) restoreSide(w, s);
 }
 
 const alive = (u) => !u.dead && !u.downed;
@@ -149,7 +160,7 @@ export function heal(w, u, amount, src, o) {
   if (u.hp - before > 2 && rand() < 0.5) { const a = rand() * Math.PI * 2, d = (u.vr || u.r) * (1 + 0.25 * rand()); w.particles.push({ x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d * 0.8, vx: 0, vy: 0, rise: 40, up: 0, life: 0.7, max: 0.7, size: 4.5, color: '#9BE07A', shape: 'plus' }); }
   return u.hp - before;
 }
-export function cleanse(u) { u.st = freshStatuses(); u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; u.addledT = 0; u.fearT = 0; if (u.flipKind === 'charm') restoreSide(null, u); }
+export function cleanse(u) { u.st = freshStatuses(); u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; u.addledT = 0; u.fearT = 0; u.lurchT = 0; if (u.flipKind === 'charm' && !u.follower) restoreSide(null, u); } // (round 14: a follower's charm is for good: a friend's cleanse doesn't break it)
 // Cursed's burst: an armed hex fires on the unit's next attack, heal or summon. hexFires() arms the window (everything
 // that action does in the next CURSE.windowT turns too) and says whether this one turns.
 function hexFires(w, u) {
@@ -166,7 +177,7 @@ function turnSummon(w, s, by) {
   fx(w, { type: 'hex', kind: 'turn', unit: s, x: s.x, y: s.y, r: s.vr * 1.3, max: 0.8 });
 }
 // A visual effect, optionally with a tick (a lasting zone that does something every `every` seconds).
-export function fx(w, f) { f.t = 0; f.max = f.max ?? f.dur ?? 0.5; if (w.battle && !f.by) f.by = w.actor || null; w.fx.push(f); return f; }
+export function fx(w, f) { f.t = 0; f.max = f.max ?? f.dur ?? 0.5; if ((w.battle || (w.actor && w.actor.trueTeam)) && !f.by) f.by = w.actor || null; w.fx.push(f); return f; } // (round 14: a charmed unit's delayed calls run as it, so what it calls up is charmed too)
 // Run a delayed callback as the unit it belongs to (battle mode: what it spawns is that unit's side's).
 function actAs(w, by, fn) { const was = w.actor; w.actor = by || was; try { return fn(); } finally { w.actor = was; } }
 export function zone(w, z) { return fx(w, { type: 'zone', ...z, max: z.dur, acc: 0 }); }
@@ -231,7 +242,7 @@ function chooseTarget(w, u) {
     if (u.focusT > 0 && u.focus === o) s += 1.2; // round 9: a howl (wolves) or a call turns a pack onto one hero
     if (o === u.target) s += 0.35; // stickiness
     if (u.st.charm > 0 && u.stBy && u.stBy.charm === o) s -= 3;        // round 13: it won't go for whoever is charming it
-    if (u.def.hunter && o.def.heroRole === 'support') s += u.def.hunter; // round 13: healer hunters go for the party's healer
+    if (u.hunting && o.def.heroRole === 'support') s += u.def.hunter; // round 13: healer hunters go for the party's healer (round 14: only while the mood is on it: think)
     if (u.def.charmBonus && (o.st.charm > 0 || o.flipKind === 'charm')) s += 0.8; // the Succubus goes for the charmed
     if (s > bestS) { bestS = s; best = o; }
   }
@@ -286,8 +297,12 @@ function scoreModes(w, u) {
   return sc;
 }
 
+// Round 14 (the designer, of the healer hunters: "Have a higher chance to go for healer. Not hard targeting."): every
+// few seconds a hunter rolls whether it is after the healer for now (HUNT.p); only then does the healer score its bonus.
+export const HUNT = { p: 0.5, every: [3, 5] };
 function think(w, u) {
   const prevT = u.target;
+  if (u.def.hunter && !(u.huntT > w.time)) { u.huntT = w.time + rrange(...HUNT.every); u.hunting = chance(HUNT.p); }
   chooseTarget(w, u);
   const sc = scoreModes(w, u);
   const list = MODES.map((m) => (sc[m] > 0 ? sc[m] : -4)); // modes that don't apply are effectively off
@@ -341,7 +356,7 @@ export function inZone(z, x, y, pad = 0) {
 const threatens = (z, u) => z.team !== u.team && z.t > 0;
 function dangerTick(w, dt) {
   for (const z of w.danger) {
-    z.t -= dt; z.age += dt;
+    z.t -= dt / (z.src && z.src.winding ? windMul(z.src) : 1); z.age += dt; // (round 14: a sleepy unit's telegraph fills slower while it winds up)
     if (z.t > 0 || z.done) continue;
     z.done = true;
     if (z.src && (z.src.dead || z.src.downed)) { z.cancelled = true; continue; }
@@ -630,12 +645,22 @@ function movement(w, u, dt) {
     }
   }
   // round 13, fear: terrified, it runs from whoever frightened it; while fear builds it backs off from them, more as it builds
+  // round 14 ("Doesn't seem to back away"): from the first point of fear it backs away (at least FEAR.back of its walk,
+  // all of it from about half full) and doesn't step back in; terrified, it runs from where the fright came from even
+  // once the frightener is gone (u.fearFrom)
   const scare = !esc && !u.forcedGoal ? fearOf(u) : null;
-  if (scare) {
-    const fd = dist(u.x, u.y, scare.x, scare.y) || 1, ax = (u.x - scare.x) / fd, ay = (u.y - scare.y) / fd;
+  const from = scare || (u.fearT > 0 && !esc && !u.forcedGoal ? u.fearFrom : null);
+  u.backing = false;
+  if (from) {
+    const fd = dist(u.x, u.y, from.x, from.y) || 1, ax = (u.x - from.x) / fd, ay = (u.y - from.y) / fd;
     if (u.fearT > 0) { gx = ax; gy = ay; mult = 1; side = 0; const gl = Math.hypot(gx, gy); if (clearance(w, u, gx / gl, gy / gl, 110) < 80) { const oa = openAngle(w, u, Math.atan2(ay, ax)); gx = Math.cos(oa); gy = Math.sin(oa); } }
-    else if (fd < FEAR.reach) { const k = FEAR.pull * fillOf(u, 'fear'), gl = Math.hypot(gx, gy) || 1; gx = gx / gl * (1 - Math.min(1, k)) + ax * k; gy = gy / gl * (1 - Math.min(1, k)) + ay * k; mult = Math.max(mult, 0.6 * k); }
+    else if (fd < FEAR.reach * (0.4 + 0.6 * fillOf(u, 'fear')) && u.st.fear > 1) { // (it keeps further off the more afraid it is: 40% of FEAR.reach to all of it)
+      const k = Math.min(1, FEAR.back + FEAR.pull * fillOf(u, 'fear')), gl = Math.hypot(gx, gy) || 1;
+      gx = gx / gl * (1 - k) + ax * k; gy = gy / gl * (1 - k) + ay * k; mult = Math.max(mult, 0.5 + 0.4 * k); side = 0; u.backing = true;
+    }
   }
+  // round 14, confused: a lurch walks off the way it turned (only a forced goal, a door or a revive, overrides it)
+  if (u.lurchT > 0 && !u.forcedGoal) { gx = Math.cos(u.lurchA); gy = Math.sin(u.lurchA); mult = CONFUSE.lurchSpeed; side = 0; }
   // formation, lightly: an archer nearer the enemy than the knight leans back towards him
   if (roleAlias(u) === 'archer' && heroic(w, u) && t && !u.forcedGoal && !scare) {
     const kn = w.units.find((o) => o.team === u.team && (o.kind === 'knight' || o.def.heroRole === 'tank') && alive(o));
@@ -678,9 +703,13 @@ function drive(u, sx, sy, want, dt, quick = 1) {
 
 // ---------------------------------------------------------------- facing
 function updateFacing(u, dt) {
-  if (u.faceLockT > 0) { u.faceLockT -= dt; return; } // (a confused lurch: it stays turned the wrong way a moment)
+  // round 14: a confused lurch swings it round to its random heading (quickly, but a turn you can see, not a snap);
+  // terrified, it turns its back on what frightened it and faces the way it runs
+  if (u.lurchT > 0 && !u.forcedGoal) { const d = wrapAngle(u.lurchA - u.facing), r = (u.def.face || 5) * 1.6 * dt; u.facing = wrapAngle(u.facing + clamp(d, -r, r)); return; }
+  if (u.fearT > 0 && !u.forcedGoal) { if (u.spd > 4) { const d = wrapAngle(u.mvA - u.facing), r = (u.def.face || 5) * 1.6 * dt; u.facing = wrapAngle(u.facing + clamp(d, -r, r)); } return; }
   let want = null;
   const t = u.target;
+  if (u.backing) { const s = fearOf(u); if (s) { const d = wrapAngle(angleTo(u.x, u.y, s.x, s.y) - u.facing), r = (u.def.face || 5) * dt; u.facing = wrapAngle(u.facing + clamp(d, -r, r)); return; } } // backing away: it keeps its eyes on what frightened it
   if (t && !u.forcedGoal) {
     const d = dist(u.x, u.y, t.x, t.y);
     // backing off after a hit keeps the face to the enemy (a backpedal), rather than turning round to run.
@@ -845,7 +874,7 @@ export function addStatus(w, u, type, amount, src) {
   if (type === 'radiance' && (u.radiantT > 0 || u.radImmuneT > 0)) return; // glowing, or just was: its own aura can't feed it
   if (type === 'entangle' && u.tangleImmuneT > 0) return; // held fast already (an entangle root), or just got free
   if (NEW_BURSTS.has(type) && u[type + 'ImmuneT'] > 0) return; // round 13: just burst
-  if (type === 'charm' && u.flipKind === 'charm') return;      // enthralled already
+  if (type === 'charm' && (u.flipKind === 'charm' || charmProof(u))) return; // enthralled already; round 14: "Bosses immune to charm"
   const res = (u.def.res && u.def.res[type]) ?? 1;
   const s = u.st;
   noteStatus(u, type, src); // its ticks and bursts count for whoever put it on (stats.js)
@@ -917,7 +946,7 @@ export function addStatus(w, u, type, amount, src) {
     return;
   }
   if (type === 'bleed') { if (s.bleed >= need) { s.bleed = after; burst(); haemorrhage(w, u, src); } return; }
-  if (type === 'fear') { if (s.fear >= need) { s.fear = after; burst(); terrify(w, u, src); } return; }
+  if (type === 'fear') { if (spreading) u.fearGenIn = Math.max(u.fearGenIn || 0, spreading); if (s.fear >= need) { s.fear = after; burst(); terrify(w, u, src); } return; }
   if (type === 'curse') {
     if (s.curse >= need) {                                       // HEXED: the next attack, heal or summon turns on it
       s.curse = after; burst(); u.hexed = true; u.hexT = CURSE.armT;
@@ -943,11 +972,17 @@ export function addStatus(w, u, type, amount, src) {
 
 // ---- round 13 (lane S): the new bursts (statuses.js has every number, docs/STATUSES.md the rules in words)
 const NEW_BURSTS = new Set(['charm', 'confuse', 'sleepy', 'bleed', 'fear']);
+// Round 14 ("Bosses immune to charm"): a boss, a floor's mini-boss and a boss's parts take no charm at all.
+export const charmProof = (u) => !!(u.def.boss || u.def.part || u.mini || u.floorFoe);
 function charmBurst(w, u, src) {
   const by = src && alive(src) ? src : null;
   const others = w.units.some((o) => o !== u && alive(o) && !o.summon && !o.ethereal && o.team === u.team);
   u.charmImmuneT = CHARM.immuneT;
-  if (!by || by.team === u.team || u.def.boss || u.def.noFlip || !others) { // SMITTEN: a boss, or the last of its side, only swoons
+  // round 14: an enemy is turned even when it is the last of its side (dungeon.js: the room then counts as won and it
+  // follows the party on). Only the party's last hero standing, and in a battle the last unit of either side, swoons:
+  // turned, there would be no one left fighting on its own side (a run would sit for 5 s; a battle would have nobody to fight).
+  const lastStands = !others && (w.battle || heroic(w, u));
+  if (!by || by.team === u.team || u.def.boss || u.def.noFlip || lastStands) { // SMITTEN: only swoons
     stun(w, u, CHARM.smitT); textU(w, u.x, u.y, u.r + 12, 'SMITTEN', STATUS.charm.col, 1.2);
   } else {
     const dur = CHARM.dur * (u.major || u.mini ? CHARM.major : u.elite ? CHARM.elite : 1);
@@ -962,18 +997,24 @@ function addledBurst(w, u) {
   u.addledT = T; u.confuseImmuneT = T + CONFUSE.immuneT;
   textU(w, u.x, u.y, u.r + 12, 'ADDLED', STATUS.confuse.col, 1.2);
   fx(w, { type: 'statusBurst', kind: 'confuse', unit: u, x: u.x, y: u.y, r: u.vr, max: 0.8 });
-  // every ability it has ready, all at once (heroes' kits; an enemy's own move)
-  if (u.stunT > 0 || u.frozenT > 0 || u.sleepT > 0) return;
-  if (u.kit) kitFireAll(w, u);
-  else if (u.def.ability && u.target && alive(u.target) && u.abilT <= 0 && !u.act) useAbility(w, u);
+  // (round 14: no more every ability at once: addledTick lets one off at random now and then while it lasts)
+}
+// Addled, each tick (round 14, the designer: "will have a chance to trigger randomly while bursted"): now and then one
+// ready ability goes off by itself, picked at random (heroes' kits; an enemy's own move), worth it or not.
+function addledTick(w, u, dt) {
+  if (u.act || u.forcedGoal) return false;
+  const n = u.kit ? kitReady(u) : u.def.ability && u.abilT <= 0 ? 1 : 0;
+  if (!n || !chance(dt * CONFUSE.trigger * (n > 1 ? 2 : 1))) return false;
+  if (u.kit) return kitFireRandom(w, u);
+  if (!u.target || !alive(u.target)) { const o = opponents(w, u).sort((a, b) => dist(u.x, u.y, a.x, a.y) - dist(u.x, u.y, b.x, b.y))[0]; if (!o) return false; u.target = o; }
+  useAbility(w, u); return true;
 }
 function haemorrhage(w, u, src) {
   let loss = Math.max(0, u.hp) * BLEED.burst;
   if (u.def.boss) loss = Math.min(loss, u.maxHp * BLEED.bossCap);
   u.bleedImmuneT = BLEED.immuneT;
   textU(w, u.x, u.y, u.r + 12, 'HAEMORRHAGE', STATUS.bleed.col, 1.2);
-  fx(w, { type: 'statusBurst', kind: 'bleed', unit: u, x: u.x, y: u.y, r: u.vr, max: 2, loss: loss / u.maxHp, hp0: u.hp / u.maxHp });
-  for (let i = 0; i < 14; i++) { const a = rand() * TAU, v = rrange(60, 200); w.particles.push({ x: u.x, y: u.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: rrange(0.4, 0.7), max: 0.7, size: rrange(3, 6), color: i % 2 ? '#C8453D' : '#8A1E28', drag: 0.88 }); }
+  fx(w, { type: 'statusBurst', kind: 'bleed', unit: u, x: u.x, y: u.y, r: u.vr, max: 2, loss: loss / u.maxHp, hp0: u.hp / u.maxHp, a: u.hitA || 0 }); // (round 14: the burst's whole look is fx-status.js's, in the picked style; no sim particles)
   if (loss > 0) { hurt(w, u, loss, null, { dot: true, by: src, stk: 'bleed', color: STATUS.bleed.col, quiet: true }); textU(w, u.x, u.y, u.r + 2, '-' + Math.round(loss), '#FF6A5A', 1.3, true); }
 }
 function terrify(w, u, src) {
@@ -985,6 +1026,22 @@ function terrify(w, u, src) {
   else if (u.def.abilCd) u.abilT = Math.max(u.abilT, Math.min(u.def.abilCd, FEAR.waste));
   if (u.def.boss) { stun(w, u, FEAR.bossT / 0.4); return; } // (stun() takes 60% off for bosses)
   u.fearT = FEAR.terrT; u.fearBy = src && alive(src) ? src : null; u.fearImmuneT = FEAR.terrT + FEAR.immuneT; if (u.act && u.act.type !== 'drink') u.act = null;
+  // round 14: where the fright came from (it runs from there even once the frightener is gone), and how many hands this
+  // panic has passed through (statusTick spreads it on, weaker each time)
+  const f0 = u.fearBy || (u.stBy && u.stBy.fear && alive(u.stBy.fear) ? u.stBy.fear : null);
+  u.fearFrom = f0 ? { x: f0.x, y: f0.y } : { x: u.x - Math.cos(u.facing) * 60, y: u.y - Math.sin(u.facing) * 60 };
+  u.fearGen = u.fearGenIn || 0; u.fearGenIn = 0; u.lurchT = 0;
+  u.el && (u.el.holdT = 0, u.el.then = null, u.el.rush = null); // (a tell or a rush it was in the middle of is dropped)
+}
+// Round 14 (the designer: "Will have a radius of fear around them giving other entities fear"): a terrified unit
+// frightens its own side round it as it runs, weaker for every hand the panic has passed through (FEAR.spreadGen).
+let spreading = 0; // the generation of fear being handed on right now (addStatus notes it on whoever takes it)
+function fearSpread(w, u, dt) {
+  const rate = FEAR.spread * FEAR.spreadGen ** (u.fearGen || 0); if (rate < 1) return;
+  const by = u.fearBy && alive(u.fearBy) ? u.fearBy : null;
+  spreading = (u.fearGen || 0) + 1;
+  try { for (const o of w.units) if (o !== u && alive(o) && !o.ethereal && o.team === u.team && !o.summon && dist(o.x, o.y, u.x, u.y) < FEAR.spreadR + o.r) addStatus(w, o, 'fear', rate * dt, by); }
+  finally { spreading = 0; }
 }
 // The one being afraid of: whoever frightened it last, while it's still about.
 const fearOf = (u) => { const b = u.fearT > 0 ? u.fearBy : u.stBy && u.stBy.fear; return b && alive(b) && b.team !== u.team ? b : null; };
@@ -1042,11 +1099,12 @@ function kill(w, u, src) {
   if (u.dying) return;
   u.dying = true;
   const was = w.actor; w.actor = u; // (battle mode: what it leaves behind is its side's)
-  try { killNow(w, u, src); } finally { w.actor = was; if (!u.dead) u.dying = false; } // (a downed hero can fall again once it's back up)
+  try { killNow(w, u, src); } finally { w.actor = was; u._flipWas = null; if (!u.dead) u.dying = false; } // (a downed hero can fall again once it's back up)
 }
 function killNow(w, u, src) {
   u.hp = 0;
   // (round 13: anything flipped, charmed, befuddled or a leech's host, dies, drops and counts as what it really is)
+  u._flipWas = u.trueTeam ? flipOf(u) : null; // (round 14: but what it splits into stays charmed: spawn)
   if (u.trueTeam) restoreSide(w, u);
   if (u.charmed) { const l = u.charmed; u.charmed = null; if (l.host === u) { l.host = null; l.mass = l.def.mass; } } // a leech's host goes down as itself
   if (u.host) { const h = u.host; u.host = null; if (h.charmed === u) { if (h.flipKind === 'leech') restoreSide(w, h); h.charmed = null; h.charmCd = 6; } } // a leech dies: its host is itself again
@@ -1253,15 +1311,16 @@ function useAbility(w, u) {
     }
     case 'slam': {
       u.act = { type: 'slam', t: 0.8, max: 0.8 };
-      w.telegraphs.push({ type: 'ring', x: u.x, y: u.y, r: 125, t: 0.8, max: 0.8, color: '#FF6B5A' });
+      w.telegraphs.push({ type: 'ring', x: u.x, y: u.y, r: 125, t: 0.8, max: 0.8, color: '#FF6B5A', src: u, wind: true });
       break;
     }
   }
 }
 
+const WIND_ACTS = new Set(['windup', 'chargeTell', 'slam']);
 function runAction(w, u, dt) {
   const a = u.act;
-  a.t -= dt;
+  if (WIND_ACTS.has(a.type)) { u.winding = true; a.t -= dt / windMul(u); } else a.t -= dt; // round 14: sleepy, every wind-up runs slower
   if (a.type === 'windup') {
     u.dvx = u.dvy = 0;
     if (a.t <= 0) { u.act = null; meleeSwing(w, u, false); }
@@ -1333,10 +1392,12 @@ function statusTick(w, u, dt) {
   if (s.bleed > 0) {
     if (u.bleedHoldT > 0) u.bleedHoldT -= dt; else s.bleed = Math.max(0, s.bleed - STATUS.bleed.decay * dt);
     hurt(w, u, s.bleed * BLEED.dot * dt, null, { dot: true, color: STATUS.bleed.col, by: u.stBy && u.stBy.bleed, stk: 'bleed' });
-    if (s.bleed > 6 && rand() < dt * (3 + 9 * fillOf(u, 'bleed'))) w.particles.push({ shape: 'drip', x: u.x + rrange(-u.r, u.r) * 0.7, y: u.y + rrange(-u.r, u.r) * 0.6, vx: 0, vy: 0, rise: -46, up: 0, life: 0.6, max: 0.6, size: 3.2 + 2 * fillOf(u, 'bleed'), color: '#C8453D' });
+    // (round 14: "Don't like visual at all": the drops it shed are gone; fx-status.js draws the bleeding, in three looks)
   }
   if (u.deepT > 0 && !(u.sleepT > 0)) u.deepT = 0;
-  for (const k of ['deepT', 'addledT', 'fearT', 'charmImmuneT', 'confuseImmuneT', 'sleepyImmuneT', 'bleedImmuneT', 'fearImmuneT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
+  if (u.fearT > 0) fearSpread(w, u, dt); // round 14: the panic spreads to its own side round it
+  if (!(s.fear > 0)) u.fearGenIn = 0;
+  for (const k of ['deepT', 'addledT', 'fearT', 'lurchT', 'charmImmuneT', 'confuseImmuneT', 'sleepyImmuneT', 'bleedImmuneT', 'fearImmuneT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
   if (u.flipUntil != null && w.time >= u.flipUntil) { // a charm (or a Befuddle) runs out: back to its own side
     const k = u.flipKind; restoreSide(w, u);
     if (k === 'charm') fx(w, { type: 'statusBurst', kind: 'uncharm', unit: u, x: u.x, y: u.y, r: u.vr, max: 0.6 });
@@ -1351,7 +1412,9 @@ function statusTick(w, u, dt) {
     if (u.radiantT <= 0) { u.radiantT = 0; u.radImmuneT = RADIANCE.immuneT; }
   } else if (u.radImmuneT > 0) u.radImmuneT -= dt;
   if (u.hexed && (u.hexT -= dt) <= 0) u.hexed = false;           // an unused hex wears off
-  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT', 'aimT', 'gasT', 'focusT', 'charmCd']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
+  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT', 'gasT', 'focusT', 'charmCd']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
+  const wm = windMul(u); // round 14: sleepy, a charged shot and anything else queued up comes slower
+  if (u.aimT > 0) u.aimT = Math.max(0, u.aimT - dt / wm);
   for (const b of u.buffs) b.t -= dt;
   if (u.buffs.length) u.buffs = u.buffs.filter((b) => b.t > 0);
   if (u.regenT > 0) { u.regenT -= dt; heal(w, u, u.regenRate * dt, u.regenSrc, { pab: u.regenAb }); }
@@ -1361,7 +1424,7 @@ function statusTick(w, u, dt) {
     if (side) heal(w, side, got * 1.5 * (u.leechMul || 1), u.leechBy, { pab: u.leechAb });
   }
   if (u.lifeT != null) { u.lifeT -= dt; if (u.lifeT <= 0) { kill(w, u, null); return; } }
-  if (u.later) { for (const l of u.later) { l.t -= dt; if (l.t <= 0 && !l.done) { l.done = true; l.f(); } } if (u.later.every((l) => l.done)) u.later = null; }
+  if (u.later) { for (const l of u.later) { l.t -= dt / wm; if (l.t <= 0 && !l.done) { l.done = true; l.f(); } } if (u.later.every((l) => l.done)) u.later = null; }
   for (const b of u.buffs) if (b.spinning) {                      // Whirl: hits everything round about, pulls with tier III
     u.spinT = (u.spinT || 0) - dt; if (u.spinT > 0) continue; u.spinT = 0.4;
     for (const e of opponents(w, u)) if (dist(u.x, u.y, e.x, e.y) < u.r + e.r + 50) { // sparks only where it hits (round 9)
@@ -1382,7 +1445,7 @@ function statusTick(w, u, dt) {
     u.sickT = Math.max(0, u.sickT - dt);
     hurt(w, u, u.maxHp * POISON.drain / POISON.sickT * dt * (u.def.boss ? 0.4 : 1), null, { dot: true, color: '#9BCB3C', by: u.stBy && u.stBy.poison, stk: 'poison' });
     if (rand() < dt * 9) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.8, y: u.y + rrange(-u.r, u.r) * 0.8, vx: rrange(-12, 12), vy: -32, life: 0.8, max: 0.8, size: 5, color: '#B6E05A' });
-    if (u.sickT <= 0) s.poison = 0; // round 13 (the designer: "Poison should drop lower after its burst is over"): 30 at the burst, 0 when the sickness ends
+    if (u.sickT <= 0) s.poison = Math.min(s.poison, POISON.ends); // round 13 (the designer: "Poison should drop lower after its burst is over"): 30 at the burst; round 14 ("Poison drops to 20%"): 20 when the sickness ends, not 0
   }
   if (s.poison > 0) { s.poison = Math.max(0, s.poison - STATUS.poison.decay * dt); hurt(w, u, s.poison * 0.07 * dt, null, { dot: true, color: '#9BCB3C', by: u.stBy && u.stBy.poison, stk: 'poison' });
     if (s.poison > 25 && rand() < dt * 6) w.particles.push({ x: u.x + rrange(-u.r, u.r) * 0.7, y: u.y + rrange(-u.r, u.r) * 0.7, vx: 0, vy: -25, life: 0.6, max: 0.6, size: 4, color: '#9BCB3C' }); }
@@ -1623,7 +1686,8 @@ export function step(w, dt) {
     if (u.tauntT > 0) { u.tauntT -= dt; if (u.tauntT <= 0 || !u.tauntBy || !alive(u.tauntBy)) { u.tauntBy = null; u.tauntT = 0; } }
     statusTick(w, u, dt);
     if (!alive(u)) continue;
-    if (u.anim) { u.anim.t += dt; if (u.anim.t >= u.anim.dur) u.anim = null; }
+    if (u.anim) { u.anim.t += dt / (u.winding ? windMul(u) : 1); if (u.anim.t >= u.anim.dur) u.anim = null; } // (round 14: a sleepy wind-up's pose plays out slower too)
+    u.winding = false; // (set again this tick by whatever wind-up it is in: runAction, elites.js hold / rushTick, boss-kit chargeTick)
     if (u.frozenT > 0 || u.stunT > 0 || u.sleepT > 0) { if (!u.act || u.act.type !== 'slip') { u.dvx = u.dvy = 0; u.spd = 0; continue; } }
     // slimes (round 9: "All slimes move in forward burst, pause then move again"): a hop, then a rest; def.onHop(w, u)
     // when it lands
@@ -1633,7 +1697,7 @@ export function step(w, dt) {
       if (was > 0.5 && u.pulse <= 0.15 && u.def.onHop && u.aggro) u.def.onHop(w, u);
     }
     // a unit with its own brain (bosses, special enemies) runs it first; returning true skips the usual brain
-    if (u.eliteFn && u.eliteFn(w, u, dt)) continue; // an elite's extra move (elites.js)
+    if (u.eliteFn && !(u.fearT > 0) && u.eliteFn(w, u, dt)) continue; // an elite's extra move (elites.js) (round 14: not while terrified: it runs)
     if (u.def.brain && !(u.fearT > 0) && u.def.brain(w, u, dt)) continue; // (terrified: the plain brain below runs it off)
     if (u.target && !alive(u.target)) u.target = null;
     u.thinkT -= dt;
@@ -1642,10 +1706,12 @@ export function step(w, dt) {
     movement(w, u, dt);
     if (u.rootT > 0) { u.dvx = u.dvy = 0; u.spd = 0; }
     updateFacing(u, dt);
-    // round 13, confused: now and then it lurches round to face somewhere else entirely (it walks that way a moment too)
-    if (u.st.confuse > 5 && chance(dt * CONFUSE.turn * fillOf(u, 'confuse'))) { const a = u.facing + rrange(1.2, 3.1) * (chance(0.5) ? 1 : -1); u.facing = wrapAngle(a); u.mvA = u.facing; u.faceLockT = 0.5; }
+    // confused (round 13; round 14, "Should also make them turn randomly"): now and then it swings round to a random
+    // heading and walks off that way for a moment (movement and updateFacing follow u.lurchA while u.lurchT lasts)
+    if (u.st.confuse > 5 && !(u.lurchT > 0) && chance(dt * CONFUSE.turn * fillOf(u, 'confuse'))) { u.lurchA = wrapAngle(u.facing + rrange(1.5, 3.1) * (chance(0.5) ? 1 : -1)); u.lurchT = rrange(...CONFUSE.lurchT); }
     const radiant = u.radiantT > 0 || u.fearT > 0; // radiant: it glows, and can't attack or use an ability (terrified: it only runs)
     if (radiant) { /* no attacks */ }
+    else if (u.addledT > 0) { if (addledTick(w, u, dt)) continue; } // (addled: its abilities only go off by themselves, at random)
     else if (flail(w, u, dt)) continue;
     else if (u.kit) { u.abilThinkT -= dt; if (u.abilThinkT <= 0) { u.abilThinkT = 0.35; if (kitThink(w, u)) continue; } }
     else if (u.def.ability && u.abilT <= 0 && !u.forcedGoal) {
@@ -1710,7 +1776,7 @@ export function step(w, dt) {
     for (const r of w.walls) if (r.kind === 'bone' && r.temp <= 0) puff(w, r.x + r.w / 2, r.y + r.h / 2, '#E6DCC4', 6, 70, 5, 0.5); // a bone wall crumbles
     w.walls = w.walls.filter((r) => r.temp == null || r.temp > 0); buildGrid(w);
   }
-  for (const t of w.telegraphs) t.t -= dt;
+  for (const t of w.telegraphs) t.t -= dt / (t.wind && t.src && t.src.winding ? windMul(t.src) : 1);
   w.telegraphs = w.telegraphs.filter((t) => t.t > 0);
   w.units = w.units.filter((u) => !u.dead);
 }
