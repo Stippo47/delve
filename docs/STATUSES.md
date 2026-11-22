@@ -34,6 +34,7 @@ the problem (an archer's frost arrow is 34 chill: about three to freeze). Now ea
 | **Sleepy** (round 13) | the Bard's Lullaby (45), the choir sprite's song (8 a beat on everyone of the other side inside it), ghosts' touch (30, round 14) | 100 | 5 | attacks up to 40% slower and up to 60% of its chances to use an ability lost (x fill); every wind-up up to 40% longer (x fill, round 14); its head nods | **Asleep** for 4 s (bosses 1.6): the Lullaby's sleep, but nothing wakes it for the first 2 s (bosses 0.6), then a blow does; drops to 0, then 5 s immune |
 | **Bleeding** (round 13) | the hellhound's bite (16), the hunter spider's pounce (40) | 100 | 6, **held** for 1.5 s after every blow it takes | 0.05 x value damage a second (armour doesn't help); heals do up to 50% less (x fill); round 14: three looks to pick from | **Haemorrhage**: loses 33% of the health it has left at once (a boss at most 6% of its max); drops to 0, then 3 s immune |
 | **Fear** (round 13) | the banshee's wail (45), a terrified friend nearby (round 14) | 100 | 8 | round 14: backs away from whoever frightened it, facing it, to 40% of 320 at the first point and all of it when full; it trembles | **Terrified** for 3 s: turns its back and runs from the frightener (or from where the fright came from), can't attack or use an ability, and every ability it had ready is wasted (its cooldown starts again, at least 5 s); round 14: its panic spreads to its own side within 120 (34 a second, halved for every hand it has passed through). A boss only **cowers** (stunned 0.6 s) |
+| **Shackled** (round 15) | the Warden's chain (28 a blow: about five blows on one enemy), his Manacles (110: at once) | 100 | 6 | every ability cooldown it has runs up to 50% slower (x fill): a hero's abilities, a plain enemy's one ability, its dash, every move its brain times with `due()` | **Shackled**: for 4 s (elites 3.2, majors and mini-bosses 2.4, bosses 1.6) it can't make a basic attack, and at the moment the irons lock every ability cooldown it has is set back by half of that ability's full length (bosses a quarter), never past one full cooldown; a blow it was winding up is stopped. Drops to 0; can't be shackled again for 6 s after it ends (bosses 12 s) |
 
 Angels, cherubs, seraphs and the angel bosses can't be made radiant; ghosts and banshees can't be cursed.
 
@@ -187,3 +188,31 @@ The designer's words: `docs/riffle-log/2026-11-22-round14.txt`, deck v16-statuse
     round its head, and it runs.
   - HUD icons `charm`, `charmed`, `confuse`, `addled`, `sleepy`, `bleed`, `fear`, `terrified`; buff and state icons
     `haste`, `might`, `ward`, `stance`, `regen`, `lifesteal`, `focus`, `immune`, `hidden`, `form`.
+
+## Round 15 (lane N): Shackled
+The designer (the Old Guard's Pommel Strike note, showcase 3): "Shackled status effect, target can't do basic attacks,
+ability cooldowns are set back 50%", and "the shackled ability goes to someone else"; the deck notes then asked for a
+"Warden (uses a lot or shackles and restraints. Nullification themed)". It is the Warden's.
+- **The rule** (statuses.js `SHACKLE`, sim.js `shackleBurst`): a build-up like the rest. Full, the irons lock for 4 s:
+  no basic attack (sim.js holds its attack clock: `tryAttack`, a confused flail, and every brain that strikes off
+  `u.atkT`), and every ability cooldown is set back once, at that moment, by 50% of its own full length: a ready
+  ability has half its cooldown to wait, one that had 80% left has a whole one. It is never pushed past one full
+  cooldown, so shackling the same enemy again can't hold an ability off for ever.
+- **While it builds** the designer's words say nothing, and every other build-up does something on the way: cooldowns
+  run slower, up to half speed when it is nearly full (statuses.js `cdRate`). My call; say if it should do nothing.
+- **What counts as a cooldown**: a hero's three abilities (kits.js `kitSetBack`), a plain enemy's one ability
+  (`def.abilCd`), its dash (`def.dashCd`), and every move an enemy's own brain times with elites.js `due()` /
+  `again()` (elites' and majors' moves, the families, the bosses' timed moves): `due` keeps each timer's full length
+  now (`u.el.dueLen`) so the burst can set each back by its own share (statuses.js `setBackDue`).
+- **What it can't reach**: an enemy whose brain keeps a private clock and never looks at `u.atkT` or `due()` (the Bone
+  King's phases, a few turret-like kinds) loses neither its blows nor its moves to it. On those it is weaker than its
+  words. Listed here rather than patched kind by kind.
+- **The limit on bosses** (and their parts): 40% of the time (1.6 s), a quarter of a cooldown instead of half, 12 s
+  before it can build again, and the Warden's Manacles II stake doesn't root them.
+- **How it looks** (fx3.js `drawMarks3`, three takes, `?v_shackle=N`): 1 Irons (the game's): an iron cuff at each
+  wrist, open while it builds and closing as it fills, a chain across its front; shut with a lock at the burst, the
+  irons snapping together with sparks (`shackleSnap`). 2 Wound: a chain wound round the body link by link. 3 Staked:
+  the cuffs and a chain down to a ring in the floor behind it. No word pops up.
+- **The Book**: Shackles (the build-up) and Shackled (its burst) under Statuses, each with a preview (preview-sim.js
+  builds it on a fighter like the others); icons in icons.js; the HUD ring fills as it builds and counts the 4 s down.
+- **Cleaning it off**: Cure, Nullify's wash, a cleanse and going down all take the irons off (`shackledT = 0`).

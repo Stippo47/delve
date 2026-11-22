@@ -440,21 +440,28 @@ export function makeScene(canvas, api) {
       g.beginPath(); g.ellipse(f.x, f.y + 2, f.state === 'rest' ? r * 1.2 : r, f.state === 'rest' ? r * 0.8 : r, 0, 0, TAU); g.fill();
     }
   }
+  // round 15 (the Mob, mob.js): a hero that is four bodies sits, walks and rests at camp as four: the other three are
+  // drawn close round the first, turned the same way, each a step out of time with the next
   function drawFig(f) {
-    const def = f.def, sizeU = def.vr * 220 / headR(f.id) * HS;
+    drawBody(f, f.def, f.id, f.x, f.y, f.u);
+    (f.def.bodies || []).forEach((k, i) => { const a = f.facing + [2.2, -2.2, Math.PI][i % 3], d = f.def.vr * HS * (i === 2 ? 3.4 : 2.9);
+      drawBody(f, DEFS[k], k, f.x + Math.cos(a) * d, f.y + Math.sin(a) * d, { ...f.u, def: DEFS[k], kind: k, bob: (f.u.bob || 0) + 1.3 * (i + 1), anim: null }); });
+  }
+  function drawBody(f, def, id, fx, fy, fu) {
+    const sizeU = def.vr * 220 / headR(id) * HS;
     // 0.11.1: nobody off the screen is drawn, and only the hero being looked at gets a sprite made at the zoomed
     // size. (Every hero's parts were re-made at up to 640 px whenever the camp zoomed in, on screen or not: some 250 MB
     // of pictures, and the fire and the hero pages ran at a few frames a second.)
-    const sp = toScreen(f.x, f.y), rad = sizeU * cam.k * 0.75;
+    const sp = toScreen(fx, fy), rad = sizeU * cam.k * 0.75;
     if (sp.x < -rad || sp.x > W + rad || sp.y < -rad || sp.y > H + rad) return;
     const looked = mode === 'focus' && focus && focus.type === 'hero' && focus.id === f.id;
     const fine = looked || (mode === 'fire' && (f.state === 'sit' || f.goalKind === 'sit'));
     // (asked for at the zoom the camera is heading to, not each size it passes through on the way)
     const set = getRig(def.art, sizeU * (fine ? want.k : Math.min(want.k, s0 * 1.25)) * dpr * 1.04); if (!set) return;
     const lying = f.state === 'rest';
-    const pose = lying ? LIMP : poseFor(f.u, {}, 1 / 60);
-    g.save(); g.translate(f.x, f.y);
-    if (f.state === 'walk') { const k = Math.abs(Math.cos(f.u.bob)) * 0.025; g.scale(1 + k, 1 + k); }
+    const pose = lying ? LIMP : poseFor(fu, {}, 1 / 60);
+    g.save(); g.translate(fx, fy);
+    if (f.state === 'walk') { const k = Math.abs(Math.cos(fu.bob)) * 0.025; g.scale(1 + k, 1 + k); }
     g.rotate(lying ? -Math.PI / 2 + 0.2 : f.facing - Math.PI / 2);
     const k = sizeU / 220; g.scale(k, k); g.translate(-100, -100);
     drawRig(g, set, pose, { alpha: lying ? 0.9 : 1 });

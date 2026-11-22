@@ -134,7 +134,7 @@ export function newBattle(save, setupIn) {
   return run;
 }
 
-const fighting = (u) => alive(u) && !(u.linkTo && u.def.segment) && (!u.ethereal || (u.bur && u.bur.state === 'under')); // (round 13, lane E: one under the sand is still in it: a lone sand serpent or scarab going under ended the fight; a chain's links are its head's, not more of it)
+const fighting = (u) => alive(u) && !(u.linkTo && u.def.segment) && !u.partOf && (!u.ethereal || (u.bur && u.bur.state === 'under')); // (round 15, the Mob: its four bodies are one fighter, its lead) // (round 13, lane E: one under the sand is still in it: a lone sand serpent or scarab going under ended the fight; a chain's links are its head's, not more of it)
 export const sideOf = (w, u) => (w.battle ? w.battle.side[u.trueTeam || u.team] || null : null); // (round 13: a charmed or befuddled unit still belongs to its own side)
 // Everyone still standing on a side (what it called up mid-fight too).
 export function standing(run, side) { const w = run.world; return w.units.filter((u) => fighting(u) && sideOf(w, u) === side); }

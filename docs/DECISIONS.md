@@ -732,3 +732,46 @@ structure is in `docs/UI-v4.md`; what was decided, and what was read into the de
 - **Not done**: opening a unit from the battle *picker's* tiles (a tap there adds the unit; the stack's row opens the
   page instead). Over the skill web one finger pans the web, so there a swipe turns the page only from the screen's left or right
   edge (44 px), or on the tabs. **Open: two fingers for the web and one for the pages instead?**
+
+## Round 15, lane N (2026-11-22): six new heroes (the Mob, the Clockmaker, the Air Mage, the Warden, the Telekinetic, the Earth Mage) and Shackled
+The designer's words: the showcase 3 deck notes (`docs/riffle-log/2026-11-22-round12.txt`). What was built, hero by
+hero, with every clip: `docs/HEROES-r15.md`. The numbers: `docs/balance/r15-newheroes.txt`. The calls made here:
+- **The Mob is four units that are one hero** (`js/mob.js`): the torch-bearer is the hero's own unit, the other three
+  are bound to it (their health, statuses, buffs, kit and side are its fields). Not one unit drawn as four: they are
+  really apart, really knocked about one by one, and really run back together.
+- **One blow that catches several of its bodies** lands in full on the first and 30% on each more (a slam on all four:
+  190%). The designer said one health pool and nothing about area attacks; without a rule every area attack in the game
+  hits this hero four times. **Open: is 190% the right price, or should a blow only ever land once?**
+- **"Each is like 30%"** was read as: four together are about 120-130% of a plain fighter, in blows (16.6 a second on
+  paper against the Haymaker's 13.0) and in health (388 against 314). In real runs four small blows lose more to armour
+  and the Mob is in reach of more enemies, so it comes out level with the fighters, not ahead (the tables).
+- **A heal that reaches several bodies counts once**; a status lands on the hero whichever body it caught; charmed,
+  down, lifted and through a door they go as one.
+- **Names**: the "Clock work hero" is the **Clockmaker** (id `clockwork`). **Open: the name.**
+- **Each kit's three jobs** (the "samey" note): the Mob holds one / herds many / gets out; the Clockmaker turns a
+  friend back / slows a patch / stops the room; the Air Mage pushes / lifts / pulls; the Warden shuts one down /
+  undoes what is in the air / holds a crowd on himself; the Telekinetic throws a thing / throws an enemy / shelters
+  friends; the Earth Mage shakes / spikes / walls.
+- **Shackled** (`docs/STATUSES.md`, "Round 15"): the designer's rule is the burst. My additions: it is a build-up like
+  every other status; while it builds, cooldowns run up to 50% slower; 4 s; the setback is once, when the irons lock,
+  and never past one full cooldown; bosses 40% of the time, a quarter of a cooldown, 12 s before the next. An enemy's
+  "cooldowns" are the moves its brain times with `elites.js due()`: that helper keeps each timer's length now so the
+  burst can set each back by its own share. **Open: should it do nothing at all while it builds?**
+- **No words pop up** for anything new: Shackled has no "SHACKLED" text, the Mob's and the mages' effects are drawn.
+- **Hurl really takes the rock** out of the room (the way through opens, the path grid is rebuilt). Not fountains,
+  trees, a boss room's pillars, a troll's boulder or anything with health of its own.
+- **Stone Wall is a real wall** (`sim.js wallRect`, the Ice Wall's kind): nothing walks or shoots through it, the
+  party's shots included, so she only raises it across the way of a brawler coming for a soft friend.
+- **Mind Shield holds her still** while it is up: the dome is round her, and a hero who kites would walk it off the
+  friends it shelters.
+- **Rewind's revive** (tier III) is once a room and only for a friend who fell within the last 5 s; his own trait is
+  the same trick on himself, once a room.
+- **Looks in takes** (`js/fxvar.js`): `?v_shackle=1..3` (Irons, Wound, Staked) and `?v_timeBubble=1..2` (Dial,
+  Glass); take 1 is in the game.
+- **Art**: stand-ins by recolour in `art/heroes/standin/` (`tools/standins.mjs`); the list and the one line to change
+  when the real files land: `docs/ART-NEEDED.md`.
+- **Sounds**: nothing new. Every ability gets the game's ability cue from `kits.js`; shots, walls, blasts and statuses
+  are heard by `sfx.js`'s watcher as they are for every hero. Shackled has no sound of its own yet.
+- **Tools**: `tools/hero-clips.mjs` (the clips, through `tools/clip.mjs`), `tools/test/hero-vs.mjs` (one hero against
+  others of its role, same parties and seeds), `tools/standins.mjs`. `tools/heroes-doc.mjs` writes the six into
+  `docs/HEROES.md` too.

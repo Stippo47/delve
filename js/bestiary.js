@@ -357,6 +357,9 @@ export const BUFFS = {
   dazed: { name: 'Dazed', icon: 'debuff', bad: true, desc: 'Seeing stars.' }, impaled: { name: 'Impaled', icon: 'debuff', bad: true, desc: 'A spear in it.' },
   stung: { name: 'Stung', icon: 'debuff', bad: true, desc: 'Bee stings.' }, pied: { name: 'Pie in the Face', icon: 'debuff', bad: true, desc: 'Custard everywhere.' },
   // round 15 (lane N): the six newer heroes' buffs and harms
+  domed: { name: 'Under the Dome', icon: 'ward', desc: 'Sheltered by a dome of force: blows land softer.' },
+  chained: { name: 'Chained', icon: 'debuff', bad: true, desc: 'On a warden\'s chain: it has to fight him, and the chain drags at its arm.' },
+  mindShield: { name: 'Mind Shield', icon: 'stance', desc: 'Holding the dome up: she stands where she is.' },
   scatter: { name: 'Scattered', icon: 'ward', desc: 'Running four ways at once: hard to pin down.' },
   fastTime: { name: 'Fast Time', icon: 'haste', desc: 'Time is running quick for it.' },
   chainGang: { name: 'Chain Gang', icon: 'stance', desc: 'Holding the chains: braced.' },

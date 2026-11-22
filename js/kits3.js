@@ -105,14 +105,16 @@ function hurlThing(w, u, x0, y0, x1, y1, thing, big, tier) {
 // ---------------------------------------------------------------- abilities
 export const ABILITIES3 = {
   // ================================================================ the Mob
-  // Pile On: a lockdown. All four jump on one enemy and hold it; the party hits it harder; only the dagger works.
+  // Pile On: a lockdown. All four jump on one enemy, hold it down and beat it, each in turn with what it carries; the
+  // party hits it harder meanwhile.
   pileOn: {
     score(w, u, t) {
       if (!t || !alive(t) || t.ethereal || u.kit.pile || dist(u.x, u.y, t.x, t.y) - t.r > 230 || blocked(w, u.x, u.y, t.x, t.y)) return 0;
       return 0.45 + menace(w, t) * 0.8 + (hpRatio(t) > 0.5 ? 0.1 : 0) - (t.def.boss ? 0.1 : 0);
     },
     use(w, u, t, tier) {
-      const B = bodiesOf(u), hold = (tier >= 2 ? 3 : 2.2) * (t.def.boss ? 0.4 : 1), a0 = angleTo(t.x, t.y, u.x, u.y), T0 = 0.26, dagger = bodyOf(u, 'mobDagger');
+      const B = bodiesOf(u), hold = (tier >= 2 ? 3 : 2.2) * (t.def.boss ? 0.4 : 1), a0 = angleTo(t.x, t.y, u.x, u.y), T0 = 0.26;
+      const WITH = { mob: { burn: 9 }, mobDagger: { bleed: 10 }, mobAxe: { stagger: 10 }, mobPitchfork: {} }; let turn = 0;
       const spot = (b, i) => { const a = a0 + i * TAU / 4, R = t.r + b.r * 0.8; return [t.x + Math.cos(a) * R, t.y + Math.sin(a) * R, a]; };
       u.kit.pile = t;
       B.forEach((b, i) => { const [x1, y1] = spot(b, i); b.forcedGoal = null; b.target = t;
@@ -128,7 +130,7 @@ export const ABILITIES3 = {
       timer(u, 'pile', T0 + hold, (dt) => {
         el += dt; if (!alive(t)) return true; if (el < T0) return false;
         B.forEach((b, i) => { if (!b.act || !b.act.mob) return; const [x, y, a] = spot(b, i); b.x = x; b.y = y; b.vx = b.vy = b.kx = b.ky = 0; b.facing = a + Math.PI; });
-        stabT -= dt; if (stabT <= 0) { stabT = 0.42; setAnim(dagger, 'thrust', 0.2); hurt(w, t, D(u, 0.3), dagger, { knock: 0, noDodge: true, bleed: 10 }); }
+        stabT -= dt; if (stabT <= 0) { stabT = 0.3; const b = B[turn++ % B.length]; setAnim(b, b.def.attackAnim || 'swing', 0.2); hurt(w, t, D(u, 0.52), b, { knock: 0, noDodge: true, pab: 'pileOn', ...(WITH[b.kind] || {}) }); }
         return false;
       }, () => {
         u.kit.pile = null; for (const b of B) release(b); offUnit(t, 'piled');
@@ -136,8 +138,8 @@ export const ABILITIES3 = {
           const m = mobMid(u), a = angleTo(m.x, m.y, t.x, t.y) + rrange(-0.3, 0.3);
           for (const b of B) setAnim(b, 'swing', 0.3);
           k2(w, { draw: 'heave', x: t.x, y: t.y, a, max: 0.4 });
-          hurt(w, t, D(u, 0.9), u, { knock: 0, noDodge: true, heavy: true }); shove(t, a, 700);
-          flung(w, u, t, 1, (e) => { hurt(w, e, D(u, 0.8), u, { noDodge: true, heavy: true, knock: 0 }); addStatus(w, e, 'stagger', 100, u); });
+          hurt(w, t, D(u, 0.9), u, { knock: 0, noDodge: true, heavy: true, pab: 'pileOn' }); shove(t, a, 700);
+          flung(w, u, t, 1, (e) => { hurt(w, e, D(u, 0.8), u, { noDodge: true, heavy: true, knock: 0, pab: 'pileOn' }); addStatus(w, e, 'stagger', 100, u); });
           after(u, 0.5, () => { if (alive(t) && !(t.koT > 0)) addStatus(w, t, 'stagger', 100, u); });
         }
       });
@@ -148,7 +150,7 @@ export const ABILITIES3 = {
   surround: {
     score(w, u, t) { if (!t || u.kit.pile) return 0; const K = knot(w, u, t.x, t.y, 170), n = K.list.filter((e) => !bossy(e)).length; return dist(u.x, u.y, K.x, K.y) > 300 ? 0 : n >= 3 ? 0.85 : n === 2 ? 0.5 : 0; },
     use(w, u, t, tier) {
-      const B = bodiesOf(u), K = knot(w, u, t.x, t.y, 170), cx = K.x, cy = K.y, T1 = 0.36, T2 = 0.36;
+      const B = bodiesOf(u), K = knot(w, u, t.x, t.y, 170), cx = K.x, cy = K.y, T1 = 0.4, T2 = 0.5;
       const R = clamp(Math.max(60, ...K.list.map((e) => dist(e.x, e.y, cx, cy) + e.r)) + 24, 76, 180), a0 = angleTo(cx, cy, u.x, u.y), hit = new Set();
       const S = B.map((b, i) => { const a = a0 + i * TAU / 4, [x1, y1] = inRoom(w, cx + Math.cos(a) * R, cy + Math.sin(a) * R, b.r); order(b, T1 + T2 + 0.05, t); return { b, a, x0: b.x, y0: b.y, x1, y1 }; });
       k2(w, { draw: 'herd', x: cx, y: cy, r: R, a: a0, t1: T1, max: T1 + T2 + 0.3 });
@@ -162,7 +164,7 @@ export const ABILITIES3 = {
           if (hit.has(e)) continue; const d = dist(e.x, e.y, cx, cy); if (d > R + 20 || d + e.r * 0.4 < r - 6) continue;
           hit.add(e); const by = S.reduce((p, s) => (dist(s.b.x, s.b.y, e.x, e.y) < dist(p.b.x, p.b.y, e.x, e.y) ? s : p)).b, a = angleTo(e.x, e.y, cx, cy);
           setAnim(by, by.def.attackAnim || 'swing', 0.25);
-          hurt(w, e, D(u, 0.65), by, { knock: 0, noDodge: true, stagger: 14 });
+          hurt(w, e, D(u, 1.5), by, { knock: 0, noDodge: true, stagger: 14, pab: 'surround' });
           if (!bossy(e)) { const pull = 5 * Math.max(0, d - 24) * (e.mass >= 3 ? 0.5 : 1); e.kx += Math.cos(a) * pull; e.ky += Math.sin(a) * pull; }
         }
         return false;
@@ -170,7 +172,7 @@ export const ABILITIES3 = {
         for (const s of S) release(s.b);
         if (tier >= 2) { // the torch lights the ground where they met
           setAnim(u, 'swing', 0.3);
-          k2(w, { draw: 'torchFire', x: cx, y: cy, r: 62, max: 4, every: 0.4, src: u, tick: held(u, () => { for (const e of foesNear(w, u, cx, cy, 62)) { addStatus(w, e, 'burn', 15, u); hurt(w, e, D(u, 0.12), u, { dot: true, color: '#FF9A55' }); } }) });
+          k2(w, { draw: 'torchFire', x: cx, y: cy, r: 62, max: 4, every: 0.4, src: u, tick: held(u, () => { for (const e of foesNear(w, u, cx, cy, 62)) { addStatus(w, e, 'burn', 15, u); hurt(w, e, D(u, 0.12), u, { dot: true, color: '#FF9A55', pab: 'surround' }); } }) });
         }
         if (tier >= 3) for (const e of hit) if (alive(e)) { e.stunT = Math.max(e.stunT, e.def.boss ? 0.45 : 1.2); if (e.act && e.act.type !== 'slip') e.act = null; k2(w, { draw: 'tumble', unit: e, x: e.x, y: e.y, r: e.vr, max: e.def.boss ? 0.45 : 1.2 }); }
         w.shake = Math.max(w.shake, 4);
@@ -192,7 +194,7 @@ export const ABILITIES3 = {
       k2(w, { draw: 'scatterBurst', x: m.x, y: m.y, max: 0.45 });
       // away from the nearest enemy, fanned out four ways
       const f = opponents(w, u).sort((p, q) => dist(m.x, m.y, p.x, p.y) - dist(m.x, m.y, q.x, q.y))[0], base = f ? angleTo(f.x, f.y, m.x, m.y) : u.facing + Math.PI;
-      B.forEach((b, i) => { const a = base + (i - 1.5) * 1.15; release(b); b.target = null; b.act = { type: 'dash', t: 0.3, max: 0.3, a };
+      B.forEach((b, i) => { const a = base + (i - 1.5) * 0.72; release(b); b.target = null; b.act = { type: 'dash', t: 0.3, max: 0.3, a };
         const [gx, gy] = inRoom(w, b.x + Math.cos(a) * 190, b.y + Math.sin(a) * 190, 40); b.runTo = { x: gx, y: gy, until: w.time + 0.9 };
         k2(w, { draw: 'haste', unit: b, x: b.x, y: b.y, r: b.vr, max: dur }); });
       for (const e of opponents(w, u)) if (e.target && (e.target === u || e.target.partOf === u)) { e.target = null; e.tauntBy = null; e.tauntT = 0; e.thinkT = rrange(0.35, 0.8); e.act = e.act && (e.act.type === 'windup' || e.act.type === 'chargeTell') ? null : e.act; }
@@ -409,11 +411,12 @@ export const ABILITIES3 = {
       const F = foesNear(w, u, u.x, u.y, 190).filter((e) => !e.fixed).sort((p, q) => (q.target && q.target !== u ? 1 : 0) - (p.target && p.target !== u ? 1 : 0) || dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y)).slice(0, n);
       if (!F.length) return;
       cast(u, 'ability', 0.5); u.kit.gang = w.time + dur;
-      addBuff(u, { id: 'chainGang', dur, taken: 0.8 });
+      addBuff(u, { id: 'chainGang', dur, taken: 0.65 });
       for (const e of F) {
         onUnit(w, e, 'chained', dur, { tick(w2, u2, dt) {
           if (!alive(u)) { offUnit(u2, 'chained'); return; }
           u2.tauntBy = u; u2.tauntT = 0.6; if (!(u2.fearT > 0) && u2.team !== u.team) u2.target = u;
+          addBuff(u2, { id: 'chained', dur: 0.3, atkSpeed: 0.75 }); // (the chain drags at its arm)
           const d = dist(u2.x, u2.y, u.x, u.y); if (d > L && !u2.def.boss) { const a = angleTo(u2.x, u2.y, u.x, u.y), k = Math.min(d - L, 420 * dt); u2.x += Math.cos(a) * k; u2.y += Math.sin(a) * k; if (u2.kx * Math.cos(a) + u2.ky * Math.sin(a) < 0) { u2.kx *= 0.6; u2.ky *= 0.6; } }
         } });
         k2(w, { draw: 'chainTo', from: u, unit: e, x: e.x, y: e.y, max: dur, len: L });
@@ -483,13 +486,16 @@ export const ABILITIES3 = {
     use(w, u, t, tier) {
       const dur = tier >= 2 ? 5 : 3.5, R = 100, caught = [];
       cast(u, 'ability', 0.5); u.kit.dome = w.time + dur;
+      addBuff(u, { id: 'mindShield', dur, root: true }); // she stands and holds it (the dome is hers: it would walk off with her)
       const f = k2(w, { draw: 'mindDome', unit: u, x: u.x, y: u.y, r: R, max: dur, ward: true, src: u, caught });
       timer(u, 'dome', dur, () => {
         for (const p of w.projectiles) {
           if (p.team === u.team || p.team === 'neutral' || p.noHit || p.life <= 0 || p.domed || dist(p.x, p.y, u.x, u.y) > R + p.r) continue;
-          p.domed = true; caught.push({ p, sp: Math.max(280, Math.hypot(p.vx, p.vy)), by: p.owner }); p.vx = p.vy = 0; p.noHit = true; p.home = null; p.life = dur + 2; p.accel = 0; p.drag = 0;
+          p.domed = true; caught.push({ p, sp: Math.max(280, Math.hypot(p.vx, p.vy)), by: p.owner, ox: p.x - u.x, oy: p.y - u.y }); p.vx = p.vy = 0; p.noHit = true; p.home = null; p.life = dur + 2; p.accel = 0; p.drag = 0;
           sparks(w, p.x, p.y, 0, 4, '#D9B8FF', 0.8);
         }
+        for (const c of caught) { c.p.x = u.x + c.ox; c.p.y = u.y + c.oy; } // (held in her grip: they go where she goes)
+        for (const a of [u, ...friendsNear(w, u, u.x, u.y, R)]) addBuff(a, { id: 'domed', dur: 0.25, taken: 0.7 }); // (under the dome every blow lands 30% softer)
         return !alive(u);
       }, held(u, () => {
         f.max = Math.min(f.max, f.t + 0.2);
@@ -559,8 +565,9 @@ export const ABILITIES3 = {
       const rect = horiz ? { x: clamp(cx - L / 2, 4, w.W - L - 4), y: cy - 15, w: L, h: 30 } : { x: cx - 15, y: clamp(cy - L / 2, 4, w.H - L - 4), w: 30, h: L };
       const wl = wallRect(w, rect, dur, 'stone'); wl.max = dur; wl.side = horiz ? Math.sign(foe.y - cy) || 1 : Math.sign(foe.x - cx) || 1; wl.horiz = horiz;
       w.shake = Math.max(w.shake, 4);
-      // whoever it came up under is lifted out of the way with a knock
-      for (const e of opponents(w, u)) if (rectGap(e, rect) < e.r + 4) hurt(w, e, dmgOf(u, 0.5), u, { knock: 160, kAngle: horiz ? (e.y > cy ? 1 : -1) * Math.PI / 2 : e.x > cx ? 0 : Math.PI, noDodge: true, stagger: 20 });
+      // it comes up hard: whatever stands on it or just beyond it is struck, staggered and thrown back the way it came
+      k2(w, { draw: 'wallRise', x: rect.x + rect.w / 2, y: rect.y + rect.h / 2, w: rect.w, h: rect.h, horiz, max: 0.45 });
+      for (const e of opponents(w, u)) if (rectGap(e, rect) < e.r + 34) hurt(w, e, dmgOf(u, 1.1), u, { knock: bossy(e) ? 0 : 300, kAngle: horiz ? wl.side * Math.PI / 2 : wl.side > 0 ? 0 : Math.PI, noDodge: true, heavy: true, stagger: 45 });
       if (tier >= 3) after(u, dur - 0.08, held(u, () => {
         k2(w, { draw: 'rubble', x: rect.x + rect.w / 2, y: rect.y + rect.h / 2, w: rect.w, h: rect.h, side: wl.side, horiz, max: 0.7 }); w.shake = Math.max(w.shake, 6);
         for (const e of opponents(w, u)) { if (rectGap(e, rect) > 62) continue; const far = horiz ? (e.y - cy) * wl.side : (e.x - cx) * wl.side; if (far < -8) continue;

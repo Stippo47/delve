@@ -113,3 +113,26 @@ abilities (give the kind an `art` in js/heroes2.js and drop its LOOK2 entry).
 | (parts) Warhelm | the hammer is part of the body sprite | the hammer as its own part, so the fists can alternate |
 | (parts) Bulwark, Valkyrie, Samurai, Trapper | weapon grips drawn for one hand | Bulwark's two-handed grip, Valkyrie's spear held at the shaft, the Samurai's two-handed katana, the Trapper's shotgun and a trap at the hip |
 | demon form (Warlock) | the Warlock's sprite washed red, horns and a big sword drawn in code (fx2.js demonForm) | its own horned demon bust holding the sword |
+
+## Round 15 (lane N): the six new heroes are on stand-ins
+Each wears an existing hero's sprite recoloured (`tools/standins.mjs` writes `art/heroes/standin/<file>.svg` with
+js/recolor.js, as the Enchantress was made from the Witch); props that the borrowed sprite lacks are drawn in code
+(js/fx3.js). The final files go at `art/heroes/<id>.svg` (the Mob's bodies `art/heroes/mob-torch.svg`, `-pitchfork`,
+`-axe`, `-dagger`). **To switch over**: in js/heroes3.js change `const ART = 'art/heroes/standin/'` to `'art/heroes/'`,
+then delete `art/heroes/standin/` and run `python tools/build-sw.py <version>`. Nothing else reads the stand-ins.
+All in the heroes' top-down bust style (220 x 220 view box, front = down, one ink outline, no eyes), with the same
+part ids the others use (`sprite`, `body`, `arm-r` with `data-pivot="154 108"`, `arm-l` with `data-pivot="46 108"`),
+because the game swings those arms.
+
+| hero (kind id) | stand-in now | what the real art needs |
+|---|---|---|
+| The Mob: torch-bearer (`mob`, file `mob-torch.svg`) | the Digger in browns; a flame drawn in code at the end of his spade (fx3.js `torchFlame`) | a peasant holding a **torch** in `arm-r` (the game swings it); no flame in the art (the game draws a live one at the torch's head: say where the head is, or keep it at the Digger's spade tip, about 1.9 head-radii out, a little left of straight ahead) |
+| The Mob: pitchfork (`mobPitchfork`, `mob-pitchfork.svg`) | the Haymaker with a green hat | a second peasant, plainly a different person from the Haymaker hero, pitchfork in `arm-r` held to thrust |
+| The Mob: axe (`mobAxe`, `mob-axe.svg`) | the Werewolf's woodsman in a green shirt | a peasant with a wood axe in `arm-r` held to swing |
+| The Mob: dagger (`mobDagger`, `mob-dagger.svg`) | the Bandit in a blue scarf (his cutlass) | a peasant with a short dagger in `arm-r` held to stab |
+| The Mob together (`mob.svg`, a still for faces: the camp, the Book, the HUD card) | the four stand-ins set in a diamond | one picture of the four shoulder to shoulder; it is only ever shown as a small round face, so heads and tools, not bodies. **The four bodies must be four separate files** (each is its own unit, about 64% of a hero's size on screen: the game scales them, draw them at full size) |
+| Clockmaker (`clockwork`) | the Engineer with a blue coat | a clockmaker: a brass winding key on his back, a pocket watch or a clock hand in `arm-r` (he throws clock hands: anim `throw`) |
+| Air Mage (`airMage`) | the Storm Mage in pale sky blue (her bolt badge still shows) | robes that look blown about, no lightning badge; both arms as parts (anim `cast` lifts both) |
+| Warden (`warden`) | the Tower in dark iron | a jailer in iron plate with a ring of keys; **the chain as its own part in `arm-r`** (a weighted chain: the game swings the arm and draws the links flying out along the arc, fx3.js `chainSwing`; with the chain in the art it could draw less); shield arm `arm-l` as now, or a lantern |
+| Telekinetic (`telekinetic`) | the Seer in magenta (her crystal ball, her blindfold) | no blindfold, no ball: hands held out, empty; both arms as parts (anim `cast`) |
+| Earth Mage (`earthMage`) | the Druid in browns (his antlers) | no antlers: bare feet and clay to the elbows don't show from above, so a clay-stained apron or stone bangles; both arms as parts (anim `cast`) |

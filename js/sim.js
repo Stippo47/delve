@@ -147,6 +147,10 @@ const blowMul = (u) => buffMul(u, 'dealt') * (u.st.radiance > 0 ? 1 - RADIANCE.w
 // weapon attacks per second (in reach), health, move speed (px/s) and reach.
 export { ARMOUR_CAP };
 export function unitNumbers(u) {
+  // round 15 (the Mob): four bodies strike, each at its own pace: attacks a second is the four's together, and the
+  // damage of a hit is their average blow (so hit x attacks is what the hero really deals)
+  if (u.bodies) { let aps = 0, dps = 0; for (const b of [u, ...u.bodies]) { const a = atkRate(b) / (b.def.atkCd || 1); aps += a; dps += a * hitDmg(b) * blowMul(b); }
+    return { hit: aps ? dps / aps : 0, aps, hp: u.maxHp, speed: speedOf(u), range: u.def.range || 0, armor: u.armor || 0 }; }
   return { hit: hitDmg(u) * blowMul(u), aps: atkRate(u) / (u.def.atkCd || 1), hp: u.maxHp, speed: speedOf(u), range: u.def.range || 0, armor: u.armor || 0 };
 }
 const immuneTo = (u, type) => u.buffs.some((b) => b.statusImmune || (b.immune && b.immune.includes(type))) || hooksOf(u).some((h) => h.immune && h.immune.includes(type));

@@ -7,7 +7,7 @@
 // and `timeBubble` (1 Dial, 2 Glass). Take 1 is the game's.
 import { TAU, clamp, INK } from './util.js';
 import { inked, inkLine, glowDisc, star, upright, upVec, hash, easeOut, flame, roundRect, trail } from './fx.js';
-import { PROJ2, DRAW2 } from './fx2.js';
+import { PROJ2, DRAW2, IMPACT2D } from './fx2.js';
 import { WALL2 } from './looks2.js';
 import { drawPuddle } from './puddles.js';
 import { drawPillarThemed } from './scenery.js';
@@ -26,6 +26,9 @@ export function installFx3(api) {
   const EL3 = { pileOn: 'earth', surround: 'earth', scatter: 'earth', rewind: 'holy', timeBubble: 'frost', stopClock: 'holy', gale: 'steel', updraft: 'steel', cyclone: 'steel',
     manacle: 'steel', nullify: 'steel', chainGang: 'steel', hurl: 'necro', levitate: 'necro', mindShield: 'necro', earthquake: 'earth', spikeChain: 'earth', stoneWall: 'earth' };
   for (const [k, v] of Object.entries(EL3)) if (!(k in api.CAST_EL)) api.CAST_EL[k] = v;
+  // how the new shots burst: brass for the clock hand, steel for the manacles and the gust; her stone like any stone
+  Object.assign(api.IMPACT_EL, { clockHand: 'holy', manacles: 'steel', gust: 'steel' });
+  IMPACT2D.tkStone = (ctx, m, k) => IMPACT2D.stone(ctx, m, k);
 }
 
 // ---------------------------------------------------------------- small shapes
@@ -114,7 +117,7 @@ Object.assign(DRAW2, {
   // the torch-bearer's torch: a head of pitch and a live flame at the end of what he holds
   torchFlame(ctx, f, w, layer) {
     const u = f.unit; if (layer !== 'air' || !u || u.dead || u.downed || u.ethereal) return;
-    const sw = u.anim && u.anim.kind === 'swing' ? Math.sin(k01(u.anim.t / u.anim.dur) * Math.PI) : 0, a = u.facing + 0.5 - 1.1 * sw, d = u.vr * 1.25 + 5 * sw;
+    const sw = u.anim && u.anim.kind === 'swing' ? Math.sin(k01(u.anim.t / u.anim.dur) * Math.PI) : 0, a = u.facing - 0.42 + 1.0 * sw, d = u.vr * 1.9 + 4 * sw;
     const x = u.x + Math.cos(a) * d, y = u.y + Math.sin(a) * d, fl = 1 + 0.18 * Math.sin(w.time * 23 + u.id) + 0.1 * Math.sin(w.time * 37);
     lit(ctx, () => glowDisc(ctx, x, y, 20, '#FF8A3D', 0.32));
     inked(ctx, () => { ctx.beginPath(); ctx.arc(x, y, 3.6, 0, TAU); }, '#4A3A30');
@@ -124,6 +127,11 @@ Object.assign(DRAW2, {
   scuffle(ctx, f, w, layer) {
     const u = f.unit, x = u && live(u) ? u.x : f.x, y = u && live(u) ? u.y : f.y, a = fade(f, 0.15, 0.3), st = Math.floor(w.time * 9);
     if (layer === 'ground') { for (let i = 0; i < 7; i++) { const b = i / 7 * TAU + w.time * 1.4, rr = f.r * (0.8 + 0.25 * hash(st, i)); dust(ctx, x + Math.cos(b) * rr, y + Math.sin(b) * rr * 0.85, 9 + 6 * hash(i, st), 0.5 * a); } return; }
+    // the brawl's cloud: inked puffs boiling round its edge (never over its middle: who is held stays in sight)
+    ctx.save(); ctx.globalAlpha *= a;
+    for (let i = 0; i < 6; i++) { const ph = (w.time * 2.2 + i / 6) % 1, b = i / 6 * TAU + Math.floor(w.time * 2.2 + i / 6) * 2.4, rr = f.r * (0.95 + 0.25 * ph), s = (7 + 5 * hash(i, 2)) * Math.sin(ph * Math.PI);
+      if (s > 1.5) inked(ctx, () => { ctx.beginPath(); ctx.arc(x + Math.cos(b) * rr, y + Math.sin(b) * rr, s, 0, TAU); ctx.arc(x + Math.cos(b) * rr + s * 0.9, y + Math.sin(b) * rr + s * 0.3, s * 0.7, 0, TAU); }, '#F2EDE2'); }
+    ctx.restore();
     for (let i = 0; i < 2; i++) { const ph = (w.time * 3.2 + i * 0.5) % 1, s2 = Math.floor(w.time * 3.2 + i * 0.5), b = hash(s2, i) * TAU, rr = f.r * (0.55 + 0.4 * hash(i, s2));
       ctx.save(); ctx.globalAlpha *= a * (1 - ph); inked(ctx, () => star(ctx, x + Math.cos(b) * rr, y + Math.sin(b) * rr, 5 + 7 * easeOut(ph), 4, 0.4, b), '#FFF7C2'); ctx.restore(); }
   },
@@ -137,15 +145,19 @@ Object.assign(DRAW2, {
   },
   // Surround: four shoving fronts closing on the knot, dust kicked up behind them
   herd(ctx, f, w, layer) {
-    if (layer !== 'ground') return; const T2 = f.max - f.t1 - 0.3, k = k01((f.t - f.t1) / T2), r = lerp(f.r, 36, easeOut(k)), out = k01((f.t - f.t1 - T2) / 0.3);
-    if (f.t < f.t1) { const q = k01(f.t / f.t1); for (let i = 0; i < 4; i++) { const b = f.a + i * TAU / 4; dust(ctx, f.x + Math.cos(b) * f.r * q, f.y + Math.sin(b) * f.r * q, 10, 0.35 * q); } return; }
+    const T2 = f.max - f.t1 - 0.3, k = k01((f.t - f.t1) / T2), r = lerp(f.r, 36, k * (2 - k)), out = k01((f.t - f.t1 - T2) / 0.3);
+    if (layer === 'ground') {
+      if (f.t < f.t1) { const q = k01(f.t / f.t1); for (let i = 0; i < 4; i++) { const b = f.a + i * TAU / 4; dust(ctx, f.x + Math.cos(b) * f.r * q, f.y + Math.sin(b) * f.r * q, 12, 0.5 * q, '#FFF8E6'); } return; }
+      for (let i = 0; i < 4; i++) { const b = f.a + i * TAU / 4; for (let j = 0; j < 3; j++) dust(ctx, f.x + Math.cos(b + (j - 1) * 0.22) * (r + 40 + j * 9), f.y + Math.sin(b + (j - 1) * 0.22) * (r + 40 + j * 9), 12 - j * 2, 0.55 * (1 - out), '#FFF8E6'); }
+      if (out > 0) for (let i = 0; i < 8; i++) { const b = i / 8 * TAU; dust(ctx, f.x + Math.cos(b) * (30 + 46 * easeOut(out)), f.y + Math.sin(b) * (30 + 46 * easeOut(out)), 12 * (1 - out) + 3, 0.6 * (1 - out), '#FFF8E6'); }
+      return;
+    }
+    if (f.t < f.t1) return;
+    // the shove: a thick white crescent in front of each of them as they close, bowed towards the middle
     ctx.save(); ctx.globalAlpha *= 1 - out;
-    for (let i = 0; i < 4; i++) { const b = f.a + i * TAU / 4, cx = f.x + Math.cos(b) * (r + 22), cy = f.y + Math.sin(b) * (r + 22);
-      for (let j = 0; j < 3; j++) dust(ctx, f.x + Math.cos(b + (j - 1) * 0.22) * (r + 40 + j * 9), f.y + Math.sin(b + (j - 1) * 0.22) * (r + 40 + j * 9), 11 - j * 2, 0.4 * (1 - k * 0.5));
-      // the shove: a thick pale crescent in front of each of them, bowed towards the middle
-      inked(ctx, () => { ctx.beginPath(); ctx.arc(cx, cy, 34, b + Math.PI - 0.75, b + Math.PI + 0.75); ctx.arc(cx + Math.cos(b) * 9, cy + Math.sin(b) * 9, 30, b + Math.PI + 0.6, b + Math.PI - 0.6, true); ctx.closePath(); }, EARTH[2]); }
+    for (let i = 0; i < 4; i++) { const b = f.a + i * TAU / 4, cx = f.x + Math.cos(b) * (r + 2), cy = f.y + Math.sin(b) * (r + 2);
+      inked(ctx, () => { ctx.beginPath(); ctx.arc(cx, cy, 30, b + Math.PI - 0.8, b + Math.PI + 0.8); ctx.arc(cx + Math.cos(b) * 10, cy + Math.sin(b) * 10, 27, b + Math.PI + 0.62, b + Math.PI - 0.62, true); ctx.closePath(); }, '#FFFFFF'); }
     ctx.restore();
-    if (out > 0) for (let i = 0; i < 8; i++) { const b = i / 8 * TAU; dust(ctx, f.x + Math.cos(b) * (30 + 46 * easeOut(out)), f.y + Math.sin(b) * (30 + 46 * easeOut(out)), 12 * (1 - out) + 3, 0.5 * (1 - out)); }
   },
   // Surround II: the torch's fire on the floor where they met, flames standing in it
   torchFire(ctx, f, w, layer) {
@@ -374,7 +386,7 @@ Object.assign(DRAW2, {
   tkHold(ctx, f, w, layer) {
     const u = f.unit; if (!u || !live(u)) return; const a = fade(f, 0.2, 0.3), [vx, vy] = upVec(), X = u.x + vx * (u.hop || 0) * 0.9, Y = u.y + vy * (u.hop || 0) * 0.9;
     if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.5 * a; ctx.strokeStyle = FORCE[1]; ctx.lineWidth = 3; ctx.setLineDash([6, 7]); ctx.lineDashOffset = -f.t * 24; ctx.beginPath(); ctx.ellipse(u.x, u.y, f.r * 1.1, f.r * 0.6, 0, 0, TAU); ctx.stroke(); ctx.restore(); return; }
-    lit(ctx, () => { glowDisc(ctx, X, Y, f.r * 2.1, FORCE[1], 0.4 * a);
+    lit(ctx, () => { glowDisc(ctx, X, Y, f.r * 2.1, FORCE[1], 0.2 * a);
       if (live(f.from)) { const [hx, hy] = handOf(f.from); ctx.strokeStyle = `rgba(181,140,255,${0.6 * a})`; ctx.lineWidth = 3.4; ctx.lineCap = 'round';
         for (const sd of [-1, 1]) { ctx.beginPath(); ctx.moveTo(hx, hy); ctx.quadraticCurveTo((hx + X) / 2 + sd * 14 * Math.sin(f.t * 6), (hy + Y) / 2 + sd * 14 * Math.cos(f.t * 6), X, Y); ctx.stroke(); } } });
     ctx.save(); ctx.globalAlpha *= a; for (let i = 0; i < 4; i++) { const b = f.t * 3 + i * TAU / 4; rock(ctx, X + Math.cos(b) * (f.r + 8), Y + Math.sin(b) * (f.r + 8) * 0.5, 2.6, i, FORCE[2], '#FFFFFF', b); } ctx.restore();
@@ -460,6 +472,12 @@ Object.assign(DRAW2, {
     for (let i = 0; i < 5; i++) { let b = i / 5 * TAU + 0.4, px = x, py = y; ctx.beginPath(); ctx.moveTo(px, py); for (let j = 1; j <= 3; j++) { b += (hash(i, j) - 0.5) * 0.9; const d = (f.r * 0.5 + 6) * k01(k * 2.2); px += Math.cos(b) * d; py += Math.sin(b) * d * 0.8; ctx.lineTo(px, py); } ctx.stroke(); }
     ctx.restore();
   },
+  // Stone Wall coming up: a white knock along its whole length and grit thrown off both faces
+  wallRise(ctx, f, w, layer) {
+    const k = k01(f.t / f.max), e = easeOut(k), n = Math.max(4, Math.round((f.horiz ? f.w : f.h) / 26));
+    if (layer === 'air') { if (k < 0.3) lit(ctx, () => { ctx.fillStyle = `rgba(255,248,230,${0.7 * (1 - k / 0.3)})`; ctx.fillRect(f.x - f.w / 2 - 8, f.y - f.h / 2 - 8, f.w + 16, f.h + 16); }); return; }
+    for (let i = 0; i < n; i++) for (const sd of [-1, 1]) { const q = (i + 0.5) / n, out = (14 + 30 * e) * sd, x = f.horiz ? f.x - f.w / 2 + f.w * q : f.x + out, y = f.horiz ? f.y + out : f.y - f.h / 2 + f.h * q; dust(ctx, x, y, 11 * (1 - k) + 3, 0.6 * (1 - k), '#FFF8E6'); }
+  },
   // Stone Wall III: the wall comes down on their side: rocks tumbling out, dust
   rubble(ctx, f, w, layer) {
     const k = k01(f.t / f.max), e = easeOut(k), n = Math.max(6, Math.round((f.horiz ? f.w : f.h) / 22)), [vx, vy] = upVec();
@@ -498,20 +516,24 @@ WALL2.stone = (ctx, r, T) => {
 // wound round its body, link by link as it builds, a lock where the ends meet), 3 Staked (the cuffs, and a chain
 // down to a ring bolted to the floor behind it).
 export function drawMarks3(ctx, u, w) {
-  if (!u.st || u.dead || u.hidden || u.ethereal && !u.exiting) return;
+  if (!u.st || u.dead || u.hidden || (u.ethereal && !u.exiting)) return;
   const on = u.shackledT > 0, fill = on ? 1 : k01((u.st.shackle || 0) / 100); if (fill < 0.05) return;
   const v = variant('shackle'), R = u.vr, a = u.facing, c = Math.cos(a), s = Math.sin(a), [vx, vy] = upVec(), hop = (u.hop || 0) * 0.9, X = u.x + vx * hop, Y = u.y + vy * hop;
-  ctx.save(); ctx.globalAlpha *= on ? 1 : 0.55 + 0.45 * fill;
+  ctx.save();
   if (v === 2) {
-    const n = Math.round((on ? 16 : 14 * fill) + 2);
-    for (let i = 0; i < n; i++) { const b = a + 0.5 + i / 16 * TAU, wob = Math.sin(i * 1.9) * 0.14; link(ctx, X + Math.cos(b) * R * (0.92 + wob), Y + Math.sin(b) * R * (0.92 + wob), b + Math.PI / 2 + (i % 2 ? 0.5 : -0.5), 1.05); }
-    if (on) upright(ctx, X + c * R * 0.9, Y + s * R * 0.9, () => padlock(ctx, 0, 0, 1.05));
+    // Wound: the chain goes round its body link by link (16 is all the way round), and is locked where the ends meet
+    const n = on ? 16 : Math.round(15 * fill);
+    for (let i = 0; i < n; i++) { const b = a + 0.25 + i / 16 * TAU, wob = Math.sin(i * 1.9) * 0.05; link(ctx, X + Math.cos(b) * R * (1.02 + wob), Y + Math.sin(b) * R * (1.02 + wob), b + Math.PI / 2 + (i % 2 ? 0.5 : -0.5), 1.05, on ? IRON[2] : IRON[1]); }
+    if (on) upright(ctx, X + c * R * 1.02, Y + s * R * 1.02, () => padlock(ctx, 0, 0, 1.1));
   } else {
-    const wr = R * 0.82, fw = R * 0.5, lx = X + c * fw - s * wr, ly = Y + s * fw + c * wr, rx = X + c * fw + s * wr, ry = Y + s * fw - c * wr, gap = on ? 0 : 2.4 * (1 - fill);
-    if (v === 3) { const bx = u.x - c * (R + 18), by = u.y - s * (R + 18); ctx.save(); ctx.globalAlpha *= fill; chain(ctx, (lx + rx) / 2, (ly + ry) / 2, bx, by, on ? 1 : 7); inkLine(ctx, () => { ctx.beginPath(); ctx.arc(bx, by, 5, 0, TAU); }, IRON[0], 3); ctx.restore(); }
-    chain(ctx, lx, ly, rx, ry, (on ? 2 : 12 * (1 - fill) + 4) * -1, 0.95);
-    cuff(ctx, lx, ly, 6.5, a + Math.PI / 2, gap); cuff(ctx, rx, ry, 6.5, a - Math.PI / 2, gap);
-    if (on) upright(ctx, (lx + rx) / 2 + c * 3, (ly + ry) / 2 + s * 3, () => padlock(ctx, 0, 0, 0.95));
+    // the wrists: out at its sides and a little forward (where the art's hands are), never over its face
+    const wr = R * 1.06, fw = R * 0.42, lx = X + c * fw - s * wr, ly = Y + s * fw + c * wr, rx = X + c * fw + s * wr, ry = Y + s * fw - c * wr, gap = on ? 0 : 0.5 + 2.2 * (1 - fill);
+    if (v === 3) { const bx = u.x - c * (R + 30), by = u.y - s * (R + 30); ctx.save(); ctx.globalAlpha *= fill; chain(ctx, u.x - c * R * 0.95, u.y - s * R * 0.95, bx, by, on ? 0 : 3); inked(ctx, () => { ctx.beginPath(); ctx.arc(bx, by, 5.5, 0, TAU); }, IRON[0]); ctx.restore(); }
+    else if (on) { chain(ctx, lx, ly, rx, ry, R * 0.75, 0.95, IRON[2]); upright(ctx, (lx + rx) / 2 + c * R * 0.75, (ly + ry) / 2 + s * R * 0.75, () => padlock(ctx, 0, 0, 1)); } // locked: the chain hangs across its front, a lock in the middle
+    else { // closing: a few links hang from each cuff, more as it fills; they don't meet until it bursts
+      const n = Math.round(1 + 3 * fill); for (const [hx, hy, sd] of [[lx, ly, -1], [rx, ry, 1]]) for (let i = 1; i <= n; i++) link(ctx, hx + c * i * 6.5 + s * sd * i * -1.6, hy + s * i * 6.5 - c * sd * i * -1.6, a + (i % 2 ? 0.5 : -0.5), 0.9);
+    }
+    cuff(ctx, lx, ly, on ? 7.5 : 6.5, a + Math.PI / 2, gap); cuff(ctx, rx, ry, on ? 7.5 : 6.5, a - Math.PI / 2, gap);
   }
   ctx.restore();
 }
