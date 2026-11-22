@@ -398,3 +398,27 @@ Done by the lead, live as 0.14.1:
   a row on the setup page, the result as bars to one scale.
 - **The trail map's harsh cuts**: the locked-dungeon veil fades in over its edge, and neighbouring biomes cross-fade.
 - **Fear** was never built (only proposed in round 9): it goes in with Charm, Confused, Sleepy and Bleeding (lane S).
+
+## Round 13, lane W (2026-11-22): the wagon from the designer's answers; no huddling
+docs/CONVOY.md has the mode as built. The calls the lane made (the designer's words are in BUILD-v6 and the v13-convoy log):
+- **Width and zoom**: the ground is 1700 across (2.8x the try's 600; open ground between the tree lines 1200, ~2.3x),
+  not a full 4x, so that both tree lines stay on a portrait phone at the default zoom (1500 units across: hero ~19 px,
+  the wagon ~87 px long on a 390-wide screen). A pinch out shows the rest. The wagon and ox team are ~350 long, ~2x the try's.
+- **Foes from the trees**: every wave foe starts under the canopy, hidden and untouchable (ethereal) until it steps out
+  past the tree line; nobody goes back under the trees after. Nothing walks in from off the top of the screen.
+- **Gold**: no switch. Near gold as they fight (as in a dungeon); further gold (900 from the wagon) when nothing threatens
+  the wagon or the hero; gatherers (`gatherer: true` on a hero's data: the Quartermaster and the Pirate) first, further
+  (1050), and even mid-fight unless a foe is on them. Gatherers are a wagon-road thing only for now (dungeon gold fades
+  fast and is pulled in anyway); their trait text says so.
+- **The shop's prices** (the trip's gold only): mend 30 (+25%), draught 12, trinket 55, sellsword 40. The try's free
+  pick of one is gone: the shop replaces it.
+- **Losing**: the whole party fell: 75% of the trip's gold left is lost and nobody rests (the round 13 wipe ruling);
+  the wagon broken or turning back: 20% (as before).
+- **The trip's legs**: the Wildwood's three floors while it's the only country open (unchanged for a new player); each
+  dungeon whose boss is beaten opens its country; then two legs drawn from what's open, easiest first, the newest last,
+  each at its dungeon's strength. The end block is a stockade across the open ground held by the last country's floor-2
+  mini-boss and his men.
+- **No huddling (sim.js, both modes)**: with nothing to fight, heroes walk to their own spots round the waypoint (a loose
+  line across the way, 125 apart, every other one a step back, swaying) and keep ~90 from each other; after a room is
+  won they meander apart but come back once 230 from the rest (never off alone into an unseen room). Dungeon batches
+  before/after: no change in outcome beyond noise; runs ~5% longer (lane W report).

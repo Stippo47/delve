@@ -46,7 +46,7 @@ export { WIPE_LOSS };            // the whole party fell: 75% lost, as a dungeon
 export const DELIVER_XP = 60;    // each hero, on delivery
 export const GOLD_MUL = 1.1;     // the road's foes carry a little more than the dungeon's (it's a trade route)
 const HOLD_BACK = 420; // the wagon waits this far short of the barricade while the end's holders hold it
-const START_X = 360, WAVE_GAP = [11, 15], RAIDERS = /^(goblin|bandit)/;
+export const START_X = 700; const WAVE_GAP = [11, 15], RAIDERS = /^(goblin|bandit)/;
 // how hard each leg of the trip is, by its place in it (the try's numbers)
 const LEG = [{ mult: 1, budget: 1 }, { mult: 1.2, budget: 1 }, { mult: 1.25, budget: 0.8 }];
 // The road's own name for each dungeon's country (the underground ones become the land over them), and its stretches.
@@ -161,7 +161,7 @@ function buildStretch(run) {
   const trees = edgeLayout(W, H, EDGE, look);
   w.convoy = { gate: gateOf(), last: last(run), name: S.name, camp: !last(run), look, trees, key: S.theme + run.stretch };
   w.paintGround = paintRoad; // render.js paints it into the floor's cached picture
-  w.drawOver = (ctx, ww, view) => { drawCanopy(ctx, ww, view, { EDGE, look, trees, key: ww.convoy.key }); drawDowned(ctx, run); }; // render.js: over the units
+  w.drawOver = (ctx, ww, view) => { drawCanopy(ctx, ww, view, { EDGE, look, trees, key: ww.convoy.key }); drawDowned(ctx, run, view); }; // render.js: over the units
   // the end of the road: a barricade across the whole open ground (a gap only on the road), held by a floor's
   // mini-boss and his men in front of it
   if (S.end) {
@@ -395,7 +395,7 @@ function downedTick(run, dt, party) {
 // or two at once; each a little bigger than the last. Nothing appears on open ground.
 function spawnWave(run) {
   const w = run.world, wg = run.wagon, n = run.waveN++, S = legOf(run), T = floorTheme(S.theme, S.floor), H = w.H;
-  const budget = (3.3 + 0.45 * n + 0.8 * run.stretch) * S.budget * sizeScale(run) * rrange(0.9, 1.15);
+  const budget = (3.6 + 0.45 * n + 0.8 * run.stretch) * S.budget * sizeScale(run) * rrange(0.9, 1.15);
   const kinds = rollKinds(T.enemies, budget);
   const dirs = n === 0 ? ['ahead'] : (() => { const r = rand(); return r < 0.32 ? ['ahead'] : r < 0.6 ? [pick(['left', 'right'])] : r < 0.75 ? ['behind'] : [pick(['ahead', 'behind']), pick(['left', 'right'])]; })();
   const mult = strength(run, n); w.mult = mult;
@@ -602,8 +602,16 @@ function paintRoad(g, w) {
 }
 // A downed hero carries a ring that runs down as the road carries them towards the bottom of the screen: gold while
 // there's time, red and pulsing when they're about to be left behind; the revive's progress fills it in gold-white.
-function drawDowned(ctx, run) {
+function drawDowned(ctx, run, view) {
   const wg = run.wagon, w = run.world; if (!wg) return;
+  // a gatherer on its way to gold: a coin bobbing over its head (so the trait reads)
+  for (const u of w.units) {
+    if (!u.forcedGoal || !u.forcedGoal.coin || !gatherer(u) || !alive(u)) continue;
+    const up = (u.vr + 16 + 3 * Math.sin(w.time * 6)), cx = view && view.rot ? u.x + up : u.x, cy = view && view.rot ? u.y : u.y - up;
+    ctx.save(); ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(cx, cy, 10, 0, TAU); ctx.fill();
+    ctx.fillStyle = '#F2C14E'; ctx.beginPath(); ctx.arc(cx, cy, 7, 0, TAU); ctx.fill();
+    ctx.fillStyle = '#FFE9A0'; ctx.beginPath(); ctx.arc(cx + (view && view.rot ? 2 : -2), cy - 2, 2.6, 0, TAU); ctx.fill(); ctx.restore();
+  }
   for (const u of w.units) {
     if (!u.downed || u.dead || u.def.cargo || !run.heroes[u.kind] || u.team !== wg.team) continue;
     const left = clamp((u.x - (wg.x - BEHIND)) / 560, 0, 1), late = left < 0.35, R = u.vr * 1.7 + 8;

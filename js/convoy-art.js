@@ -19,20 +19,20 @@ export const LOOKS = {
     floor: '#3A4A24', crown: [['#2E5A2A', '#4C8236', '#86B850'], ['#36602A', '#5A8E38', '#9CC45A'], ['#2A5034', '#467A44', '#7EB066']], trunk: '#6B4A30', under: ['#3E6A2C', '#5E8E3A'] },
   warren: { edge: 'mound', ground: ['#A9AE6A', '#959A58'], tuft: '#7E8A44', flower: ['#F6E08A', '#FFFFFF'], road: ['#C2A878', '#A88E60'],
     floor: '#5E6A34', crown: [['#6E8A3C', '#90AA4C', '#C2D47A'], ['#7A8E40', '#9CB054', '#CCDA86']], trunk: '#5A4A34', under: ['#6A7E36', '#8AA04A'] },
-  sewers: { edge: 'wall', ground: ['#7E8E6A', '#6E7E5C'], tuft: '#5E7A4A', flower: ['#C8E0A0'], road: ['#9A9488', '#7E786E'],
-    floor: '#3C4A3A', crown: [['#5E6A5A', '#7E8A74', '#A2AE92']], trunk: '#4A4038', under: ['#4E6A44', '#6E8E58'], water: '#4F7E72' },
+  sewers: { edge: 'crown', ground: ['#7E8E6A', '#6E7E5C'], tuft: '#5E7A4A', flower: ['#C8E0A0'], road: ['#9A9488', '#7E786E'], // a fen of willows round the outfall
+    floor: '#2E3A30', crown: [['#3A5244', '#5E7E5E', '#9CB884'], ['#40564A', '#668466', '#A8C090']], trunk: '#4A4038', under: ['#4E6A44', '#6E8E58'], water: '#4F7E72', puddles: 3 },
   crypt: { edge: 'crown', ground: ['#8A9478', '#78826A'], tuft: '#5E6E50', flower: ['#D8D0E8'], road: ['#ABA294', '#8E8678'],
     floor: '#2E3430', crown: [['#1E3A34', '#2E544A', '#4E7A66'], ['#243C3A', '#365A54', '#5A8478']], trunk: '#4A3E3A', under: ['#2E4A3E', '#46664E'], graves: true },
   frost: { edge: 'pine', ground: ['#DCE6EE', '#C8D4E0'], tuft: '#A8B8C8', flower: ['#FFFFFF'], road: ['#B4BCC6', '#9AA4B0'],
     floor: '#B8C6D4', crown: [['#1E4A44', '#2E6A5E', '#E8F2F8'], ['#24504A', '#367266', '#F2F8FC']], trunk: '#5A4638', under: ['#9AB0BE', '#C2D2DE'] },
-  ember: { edge: 'bare', ground: ['#5E524C', '#4E4440'], tuft: '#3E3634', flower: ['#FF8A3D', '#FFC85A'], road: ['#8A7262', '#705C50'],
-    floor: '#2A2220', crown: [['#2A2020', '#4A3830', '#FF7A3A']], trunk: '#2E2420', under: ['#3A302C', '#5A4A40'] },
+  ember: { edge: 'crown', ground: ['#6A5A52', '#5A4C46'], tuft: '#4A3E3A', flower: ['#FF8A3D', '#FFC85A'], road: ['#9A8070', '#7E685A'], // a smouldering wood
+    floor: '#2A2220', crown: [['#3A2A26', '#6A4436', '#E8783A'], ['#34282A', '#5E3E38', '#D86A3A']], trunk: '#2E2420', under: ['#4A3A34', '#6A5246'] },
   spire: { edge: 'rock', ground: ['#C8C2B0', '#B4AE9C'], tuft: '#9AA078', flower: ['#F6E6A8', '#C8B0F0'], road: ['#E2D8C0', '#C8BEA4'],
     floor: '#8A8474', crown: [['#8E8A82', '#B4AEA2', '#E6E0D2']], trunk: '#6E6458', under: ['#9AA078', '#B8BC90'] },
   dunes: { edge: 'mound', ground: ['#E2C68A', '#D2B478'], tuft: '#B8A060', flower: ['#E87A4A'], road: ['#C8A46A', '#B08E58'],
     floor: '#B8965A', crown: [['#C89E5A', '#DEB874', '#F4DCA0']], trunk: '#8A6A44', under: ['#A8A058', '#C4BC6A'], palms: true },
   foundry: { edge: 'rock', ground: ['#6A625C', '#5A524E'], tuft: '#4A4440', flower: ['#FF9A3A'], road: ['#8E8274', '#766A5E'],
-    floor: '#3A3430', crown: [['#3E3836', '#5E5450', '#8E8078']], trunk: '#3A3230', under: ['#4E4842', '#6A625A'] },
+    floor: '#3A3430', crown: [['#4E4642', '#7E706A', '#BCA898'], ['#5A443A', '#8A6450', '#C89470']], trunk: '#3A3230', under: ['#4E4842', '#6A625A'] },
 };
 export const lookOf = (theme) => LOOKS[theme] || LOOKS.wildwood;
 
@@ -99,7 +99,7 @@ export function paintRoadGround(g, w, { EDGE, ROAD_HALF, look, trees }) {
     const k = hz(x, 4), s = k < 0.5 ? -1 : 1, y = mid + s * (edgeAt(x, s < 0 ? 1 : 2) - 6 + hz(x, 5) * 18);
     g.fillStyle = k < 0.25 ? look.tuft : 'rgba(110,96,72,0.55)'; g.beginPath(); g.ellipse(x, y, 3 + k * 5, 2.5 + k * 3, k * 3, 0, TAU); g.fill();
   }
-  for (let x = 300; x < W; x += 420 + hz(x, 6) * 500) {
+  for (let x = 300; x < W; x += (420 + hz(x, 6) * 500) / (look.puddles || 1)) {
     const y = mid + (hz(x, 7) - 0.5) * 90, rx = 24 + hz(x, 8) * 26;
     g.fillStyle = 'rgba(60,46,30,0.35)'; g.beginPath(); g.ellipse(x, y, rx + 4, rx * 0.5 + 3, 0, 0, TAU); g.fill();
     g.fillStyle = look.water || '#7E9AA0'; g.beginPath(); g.ellipse(x, y, rx, rx * 0.5, 0, 0, TAU); g.fill();

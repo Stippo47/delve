@@ -7,7 +7,7 @@ import { portrait } from './inspect.js';
 import { I } from './ui-kit.js';
 import { cue } from './sfx.js';
 import { xpToNext } from './units.js';
-import { SHOP, REPAIR, PAY, LOSE_CUT, WIPE_LOSS, STRETCH_LEN, convoyParty, planTrip, purse, cantBuy, buy } from './convoy.js';
+import { SHOP, REPAIR, PAY, LOSE_CUT, WIPE_LOSS, STRETCH_LEN, START_X, convoyParty, planTrip, purse, cantBuy, buy } from './convoy.js';
 import { trinketInfo } from './progress.js';
 import { DEFS } from './units.js';
 
@@ -18,8 +18,9 @@ const mmss = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart
 // the wagon from above, facing up the page: the ox, the striped cover, wheels and crates (the road's drawing, simplified)
 export const WAGON_SVG = `<svg class="cv-wagon" viewBox="0 0 80 150" aria-hidden="true"><g stroke="#2B2230" stroke-width="3.2" stroke-linejoin="round">
   <path d="M33 52 L36 28 M47 52 L44 28" stroke-width="5"/><path d="M33 52 L36 28 M47 52 L44 28" stroke="#8A6A44" stroke-width="2"/>
-  <ellipse cx="40" cy="22" rx="12" ry="17" fill="#8E6E4C"/><ellipse cx="40" cy="6" rx="7" ry="6" fill="#7A5A3C"/>
-  <path d="M34 4 q-6 -5 -6 -9 M46 4 q6 -5 6 -9" fill="none" stroke="#E9DCC0" stroke-width="2.6"/>
+  <ellipse cx="30" cy="24" rx="9" ry="15" fill="#8E6E4C"/><ellipse cx="50" cy="24" rx="9" ry="15" fill="#8E6E4C"/>
+  <ellipse cx="30" cy="9" rx="6" ry="5.5" fill="#7A5A3C"/><ellipse cx="50" cy="9" rx="6" ry="5.5" fill="#7A5A3C"/>
+  <path d="M25 7 q-5 -4 -5 -8 M35 7 q4 -4 4 -8 M45 7 q-4 -4 -4 -8 M55 7 q5 -4 5 -8" fill="none" stroke="#E9DCC0" stroke-width="2.4"/>
   <rect x="5" y="62" width="9" height="22" rx="3" fill="#3A2C24"/><rect x="66" y="62" width="9" height="22" rx="3" fill="#3A2C24"/>
   <rect x="5" y="104" width="9" height="22" rx="3" fill="#3A2C24"/><rect x="66" y="104" width="9" height="22" rx="3" fill="#3A2C24"/>
   <rect x="11" y="52" width="58" height="88" rx="6" fill="#7A5232"/><rect x="15" y="64" width="50" height="66" rx="11" fill="#E9DCC0"/>
@@ -84,7 +85,7 @@ export function openRoadside(run) {
     <p class="quiet small cv-next">Next: ${esc(next ? next.name : '')}${next ? ` (${esc(next.land)})` : ''}${next && next.end ? `, and ${esc(foeName(next.end))} at the end of it` : ''}</p></div></div>`;
 }
 const cap1 = (t) => t[0].toUpperCase() + t.slice(1);
-const foeName = (k) => (DEFS[k] ? `the ${DEFS[k].name}` : 'a warden');
+const foeName = (k) => (DEFS[k] ? `the ${DEFS[k].name.replace(/^the /i, '')}` : 'a warden');
 function choiceLine(run, c) {
   if (c === 'repair') return `+${Math.round(run.wagonMax * REPAIR)} health for the wagon.`;
   if (c === 'potion') { const k = run.party.filter((h) => run.heroes[h].potions < 2).sort((a, b) => run.heroes[a].potions - run.heroes[b].potions)[0]; return k ? `For ${HEROES[k].name}, who has ${run.heroes[k].potions || 'none'}.` : SHOP.potion.desc; }
@@ -115,7 +116,7 @@ export function convoyHud(run) {
   bar.querySelector('.cvb-hp > em').textContent = `${Math.ceil(hp)}/${max}`;
   bar.classList.toggle('low', hp / max < 0.3);
   bar.classList.toggle('held', !!(wg && wg.blocked));
-  const along = (run.stretch + Math.max(0, Math.min(1, ((wg ? wg.x : 0) - 360) / STRETCH_LEN))) / run.legs.length;
+  const along = (run.stretch + Math.max(0, Math.min(1, ((wg ? wg.x : 0) - START_X) / STRETCH_LEN))) / run.legs.length;
   bar.querySelector('.cvb-dot').style.left = (100 * along).toFixed(1) + '%';
   const w = run.world, down = run.party.filter((k) => run.heroes[k] && (run.heroes[k].down || run.heroes[k].out));
   const html = down.map((k) => { const u = w && w.units.find((x) => x.kind === k && x.downed && !x.dead), near = u && wg ? u.x < wg.x - 380 : false;

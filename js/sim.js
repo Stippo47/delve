@@ -499,13 +499,13 @@ function openAngle(w, u, pref) {
 
 // lane W (round 13, the designer: "make it so heroes don't huddle up when there is no enemy on screen. Including in
 // dungeons"). looseSpot: u's own place round a shared waypoint: the party stands in a loose line across the way
-// (w.looseGap apart, 90 by default; the wagon road sets more), every other one a step back, swaying a little, pulled
+// (w.looseGap apart, 125 by default; the wagon road sets more), every other one a step back, swaying a little, pulled
 // in where a wall or rock is in the way. roomFrom: a push away from any friend nearer than LOOSE_R.
-const LOOSE_R = 72;
+const LOOSE_R = 90;
 function looseSpot(w, u, al, wx, wy) {
   const mates = al.filter((a) => !a.summon && !a.def.cargo); if (!mates.length || u.summon) return [wx, wy];
   const ids = [u.id, ...mates.map((a) => a.id)].sort((a, b) => a - b), i = ids.indexOf(u.id), n = ids.length;
-  const gap = w.looseGap || 90, across = (i - (n - 1) / 2) * gap + Math.sin(w.time * 0.31 + u.id * 1.9) * gap * 0.22;
+  const gap = w.looseGap || 125, across = (i - (n - 1) / 2) * gap + Math.sin(w.time * 0.31 + u.id * 1.9) * gap * 0.22;
   const back = (i % 2 ? -0.45 : 0) * gap + Math.sin(w.time * 0.23 + u.id) * gap * 0.25;
   for (const k of [1, 0.6, 0.3]) {
     const sx = clamp(wx + back * k, u.r + 8, w.W - u.r - 8), sy = clamp(wy + across * k, u.r + 8, w.H - u.r - 8);
@@ -536,12 +536,14 @@ function movement(w, u, dt) {
   } else if (!t && u.team === 'hero' && !w.cleared) {
     // nothing in sight: press on through the room together, the slowest setting the pace
     // towards the next chunk of the room the party hasn't walked yet (dungeon.js keeps w.wp)
-    const al = allies(w, u);
+    const al = allies(w, u).filter((a) => !a.def.cargo); // (lane W: the wagon, convoy.js, sets no pace)
     // lane W (round 13, "heroes don't huddle up"): each walks to their own spot round the waypoint, not all to one point
-    const [wx, wy] = looseSpot(w, u, al, w.wp ? w.wp.x : Math.min(w.W - 70, u.x + 220), w.wp ? w.wp.y : u.y);
-    let md = dist(u.x, u.y, wx, wy); for (const a of al) md += dist(a.x, a.y, wx, wy); md /= al.length + 1;
-    const ahead = md - dist(u.x, u.y, wx, wy);
+    const px = w.wp ? w.wp.x : Math.min(w.W - 70, u.x + 220), py = w.wp ? w.wp.y : u.y; // (the pace is still set on the shared waypoint)
+    const [wx, wy] = looseSpot(w, u, al, px, py);
+    let md = dist(u.x, u.y, px, py); for (const a of al) md += dist(a.x, a.y, px, py); md /= al.length + 1;
+    const ahead = md - dist(u.x, u.y, px, py);
     [gx, gy] = goalVec(w, u, wx, wy);
+    { const l = Math.hypot(gx, gy) || 1; gx /= l; gy /= l; gy += clamp((wy - u.y) / 140, -0.8, 0.8); } // lane W: and take up its place across the way as it goes
     const wd = dist(u.x, u.y, wx, wy);
     mult = ahead > 90 ? 0.15 : ahead < -60 ? 0.85 : 0.6;
     // ease in and stop at the waypoint (it circled round it, turning back and forth, until dungeon.js moved it on)

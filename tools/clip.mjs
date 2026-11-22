@@ -51,9 +51,18 @@ if (battle) {
     s.party = party.slice();
     GAME.record(true); GAME.startConvoy({ party, stretch, lands: lands ? lands.split(',') : undefined });
   }, [opt('party', 'paladin,archer,cleric').split(','), +opt('level', 5), +opt('stretch', 0), opt('lands', '')]);
-} else await page.evaluate((d) => { GAME.record(true); GAME.startRun(d); }, depth);
+} else await page.evaluate(([d, party, level, quiet]) => { // [--party a,b,c] [--level N]: a dungeon run with that party (lane W)
+  if (party) { const s = GAME.save; s.unlocks = { ...(s.unlocks || {}), slotMini1: true, slotBoss1: true }; for (const id of party.split(',')) { s.heroes[id].owned = true; s.heroes[id].level = level; } s.party = party.split(','); }
+  GAME.record(true); GAME.startRun(d);
+  if (quiet) { const w = GAME.run.world; w.wp = null; for (const u of w.units) if (u.team !== 'hero' && u.team !== 'neutral') { u.x = w.W + 4000; u.aggro = false; u.ethereal = true; } } // --quiet: the room's foes taken out of sight (the walk with nothing about)
+  }, [depth, opt('party', ''), +opt('level', 5), args.includes('--quiet')]);
 const convoyStep = () => page.evaluate((pick) => { const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick(pick || 'auto'); }, opt('pick', ''));
 if (skip) await page.evaluate((s) => { for (let i = 0; i < s * 30; i++) { GAME.recFrame(1 / 30); const r = GAME.run; if (r && r.mode === 'convoy' && r.phase === 'roadside') GAME.convoyPick('auto'); } }, skip);
+// --down N (convoy): after the skip, the second hero drops N behind the wagon (a revive, or one left behind) and the
+// waves hold off for 20 s, so the clip shows the downed hero's ring and what becomes of them
+if (args.includes('--convoy') && opt('down')) await page.evaluate((back) => { const r = GAME.run, wg = r.wagon; r.waveT = 20;
+  const h = r.world.units.filter((u) => u.team === wg.team && !u.def.cargo && !u.downed && !u.dead && r.heroes[u.kind])[1];
+  if (h) { h.x = wg.x - back; h.y = wg.y + 150; h.hp = 0; h.downed = true; h.target = null; h.forcedGoal = null; } }, +opt('down'));
 const n = Math.round(secs * fps);
 for (let i = 0; i < n; i++) {
   await page.evaluate((dt) => GAME.recFrame(dt), speed / fps);
