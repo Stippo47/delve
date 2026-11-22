@@ -61,7 +61,7 @@ try {
   await pose('06-hero-chain-t3', { tab: 'heroes', hero: 'storm', tier: 3, hmove: 'chainLightning' }, 0.75);
   await pose('07-hero-raise-t3', { tab: 'heroes', hero: 'necromancer', tier: 3, hmove: 'raiseDead' }, 1.8);
   await pose('08-hero-trait', { tab: 'heroes', hero: 'paladin', tier: 2, hmove: 'trait' }, 2);
-  await pose('08b-trait-revive', { tab: 'heroes', hero: 'cleric', tier: 1, hmove: 'trait' }, 2.95);
+  await pose('08b-trait-revive', { tab: 'heroes', hero: 'cleric', tier: 1, hmove: 'trait' }, 'fire+0.4');
   await pose('08c-trait-quartermaster', { tab: 'heroes', hero: 'quartermaster', tier: 0, hmove: 'trait' }, 1.5);
   await pose('09-monsters-normal', { tab: 'monsters', foe: 'orcShaman', rank: 0, fmove: 'kit' }, 2.5);
   await pose('10-monsters-elite', { tab: 'monsters', foe: 'orcShaman', rank: 1, fmove: 'elite' }, 2.5);
