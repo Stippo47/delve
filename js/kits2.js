@@ -838,73 +838,104 @@ export const ABILITIES2 = {
     },
     show: { ally: true },
   },
+  // Harvest (round 13: "Dashes to ally when he does it."): he hurries to the friend most beset and sweeps round his feet there
   harvest: {
-    score: (w, u) => { const n = foesNear(w, u, u.x, u.y, u.r + 70).length; return n >= 2 ? 0.8 : n ? 0.35 : 0; },
-    use(w, u, t, tier) {
-      const r = u.r + 72; setAnim(u, 'spin', 0.4); u.spin = { t0: w.time, dur: 0.4, dir: 1 };
-      fx(w, { type: 'ring', x: u.x, y: u.y, r, color: '#EDE4CD', max: 0.4, a: u.facing, unit: u });
-      let n = 0;
-      for (const e of foesNear(w, u, u.x, u.y, r)) { n++; hurt(w, e, dmgOf(u, 0.9), u, { knock: 40, kAngle: ang(u, e), stagger: tier >= 2 ? 40 : 0 }); addBuff(e, { id: 'hamstrung', dur: 3, move: 0.5 }); }
-      if (tier >= 3 && n) heal(w, u, u.maxHp * 0.04 * n, u);
+    score(w, u) {
+      const n = foesNear(w, u, u.x, u.y, u.r + 70).length;
+      const a = allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 360 && dist(u.x, u.y, o.x, o.y) > 80 && foesNear(w, u, o.x, o.y, 90).length >= 1);
+      return a.length ? 0.75 : n >= 2 ? 0.7 : n ? 0.35 : 0;
     },
+    use(w, u, t, tier) {
+      const sweep = () => {
+        const r = u.r + 72; setAnim(u, 'spin', 0.4); u.spin = { t0: w.time, dur: 0.4, dir: 1 };
+        fx(w, { type: 'ring', x: u.x, y: u.y, r, color: '#EDE4CD', max: 0.4, a: u.facing, unit: u });
+        let n = 0;
+        for (const e of foesNear(w, u, u.x, u.y, r)) { n++; hurt(w, e, dmgOf(u, 1.2), u, { knock: 60, kAngle: ang(u, e), stagger: tier >= 2 ? 40 : 0, ab: 'harvest' }); addBuff(e, { id: 'hamstrung', dur: 3, move: 0.5 }); }
+        if (tier >= 3 && n) heal(w, u, u.maxHp * 0.04 * n, u);
+      };
+      const a = allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 380 && dist(u.x, u.y, o.x, o.y) > 80).sort((p, q) => foesNear(w, u, q.x, q.y, 90).length - foesNear(w, u, p.x, p.y, 90).length || hpRatio(p) - hpRatio(q))[0];
+      if (!a || !foesNear(w, u, a.x, a.y, 90).length) { sweep(); return; }
+      const f = foesNear(w, u, a.x, a.y, 110)[0], b = f ? angleTo(a.x, a.y, f.x, f.y) : angleTo(a.x, a.y, u.x, u.y);
+      const x1 = clamp(a.x + Math.cos(b) * (a.r + u.r * 0.6), u.r, w.W - u.r), y1 = clamp(a.y + Math.sin(b) * (a.r + u.r * 0.6), u.r, w.H - u.r);
+      const T = clamp(dist(u.x, u.y, x1, y1) / 650, 0.12, 0.42); u.facing = angleTo(u.x, u.y, x1, y1);
+      k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a: u.facing, max: T + 0.3, col: '#EDE4CD' });
+      u.act = { type: 'leap', t: T, max: T, x0: u.x, y0: u.y, x1, y1, land: sweep }; u.invulnT = Math.max(u.invulnT, T);
+    },
+    show: { ally: true, mob: 'ally' },
   },
+  // Old Tales (round 13: "What does it do? Doesnt look the best"): a story book opens over him; each friend listening
+  // has a gold clock over its head whose hand spins forward, and the seconds its abilities gain rise off it
   oldTales: {
     score: (w, u) => (allies(w, u).filter((a) => a.kit && dist(u.x, u.y, a.x, a.y) < 220 && Object.values(a.kit.cd).some((c) => c > 3)).length >= 1 ? 0.55 : 0),
     use(w, u, t, tier) {
-      cast(u, 'cast', 0.9);
+      cast(u, 'cast', 0.9); const s = tier >= 2 ? 3 : 2;
+      k2(w, { draw: 'storyBook', unit: u, x: u.x, y: u.y, r: u.vr, max: 1.6 });
       for (const a of friendsNear(w, u, u.x, u.y, 230)) {
         if (a === u) continue;
-        if (a.kit) for (const k in a.kit.cd) a.kit.cd[k] = Math.max(0, a.kit.cd[k] - (tier >= 2 ? 3 : 2));
+        if (a.kit) for (const k in a.kit.cd) a.kit.cd[k] = Math.max(0, a.kit.cd[k] - s);
         if (tier >= 3) heal(w, a, a.maxHp * 0.08, u);
-        k2(w, { draw: 'bubble', unit: a, x: a.x, y: a.y, r: a.vr, max: 1 });
+        k2(w, { draw: 'tellClock', unit: a, x: a.x, y: a.y, r: a.vr, max: 1.3, secs: s });
       }
-      k2(w, { draw: 'bubble', unit: u, x: u.x, y: u.y, r: u.vr, max: 1.2, talk: true });
     },
     show: { ally: true },
   },
   // ----- Alchemist
+  // Brew Pools, in Acid Flask's slot (round 13: "Bad. Is just the plague doctors. Throws 2 lingering pools of liquid in a
+  // spread. Has 6 possible ones they can choose. Acid Cold Fire Whirling Shocking Water. Make look better."); id kept
   acidFlask: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 260 && foesNear(w, u, t.x, t.y, 80).length >= 2 ? 0.7 : t ? 0.25 : 0),
+    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 280 && foesNear(w, u, t.x, t.y, 100).length >= 2 ? 0.7 : t && dist(u.x, u.y, t.x, t.y) < 260 ? 0.3 : 0),
     use(w, u, t, tier) {
       if (!t) return; cast(u, 'throw', 0.4);
-      lob(w, u, t.x, t.y, 'flask', '#C8E63C', (x, y) => {
-        const r = tier >= 3 ? 92 : 66, dur = 4;
-        k2(w, { draw: 'acid', x, y, r, max: dur, ab: 'acidFlask' });
-        let acc = 0;
-        timer(u, 'acid' + Math.round(x + y), dur, (dt) => { acc += dt; if (acc < 0.3) return; acc -= 0.3;
-          for (const e of foesNear(w, u, x, y, r)) { hurt(w, e, dmgOf(u, 0.28), u, { dot: true, color: '#C8E63C', ab: 'acidFlask' }); if (tierOf(u, 'acidFlask') >= 2) addBuff(e, { id: 'acid', dur: 0.4, taken: 1.2 }); } });
+      const n = tier >= 2 ? 3 : 2, r = tier >= 3 ? 78 : 62, dur = tier >= 3 ? 5 : 4, a0 = ang(u, t), d0 = dist(u.x, u.y, t.x, t.y);
+      for (let i = 0; i < n; i++) after(u, i * 0.1, () => {
+        const kind = POOLS[Math.floor(rand() * POOLS.length)], a = a0 + (i - (n - 1) / 2) * 0.42, d = Math.max(60, d0 + (i % 2 ? -20 : 20));
+        const x = clamp(u.x + Math.cos(a) * d, 20, w.W - 20), y = clamp(u.y + Math.sin(a) * d, 20, w.H - 20);
+        lob(w, u, x, y, 'flask', POOL_COL[kind], () => brewPool(w, u, x, y, r, dur, kind));
       });
     },
     show: { far: true },
   },
+  // Elixir (round 13: "Gives 1 of 3 buffs. Haste/rage, Cleanse and heal, Or swiftness and temporary shield. (Like 30
+  // negate)... Make look better"): she picks the one the friend needs: cleansed and healed when it is hurt or afflicted,
+  // Warded and swift when it is being hit, hasted and enraged when it is fighting fine
   elixir: {
-    score: (w, u) => { const a = hurtMost(allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 360)); return a && hpRatio(a) < 0.75 ? 0.75 : 0; },
+    score: (w, u) => { const a = elixirFor(w, u); return a ? 0.75 : 0; },
     use(w, u, t, tier) {
-      const a = hurtMost(allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 400)) || u;
-      cast(u, 'throw', 0.4);
-      const dose = (o) => { heal(w, o, o.maxHp * (tierOf(u, 'elixir') >= 2 ? 0.2 : 0.12), u); addBuff(o, { id: 'elixir', dur: 4, move: 1.3, atkSpeed: 1.3, glow: '#FF7AC8' }); k2(w, { draw: 'splash', x: o.x, y: o.y, r: 30, col: '#FF7AC8', max: 0.5, ab: 'elixir' }); };
-      if (a === u) { dose(u); return; }
-      lob(w, u, a.x, a.y, 'flask', '#FF7AC8', () => { if (alive(a)) dose(a); if (tierOf(u, 'elixir') >= 3) for (const o of friendsNear(w, u, a.x, a.y, 100)) if (o !== a) dose(o); });
+      const a = elixirFor(w, u) || u; cast(u, 'throw', 0.4);
+      const kind = elixirKind(w, u, a);
+      const dose = (o) => {
+        if (kind === 'mend') { cleanse(o); heal(w, o, o.maxHp * (tier >= 2 ? 0.22 : 0.14), u); }
+        else if (kind === 'ward') { ward(w, o, tier >= 2 ? 45 : 30, 6); addBuff(o, { id: 'swift', dur: 5, move: 1.35 }); }
+        else { haste(w, o, 5, 1.3); rage(w, o, 5, tier >= 2 ? 1.35 : 1.25); }
+        k2(w, { draw: 'elixirSplash', x: o.x, y: o.y, unit: o, r: o.vr, kind, max: 0.9, ab: 'elixir' });
+      };
+      const go = () => { if (!alive(a)) return; dose(a); if (tier >= 3) for (const o of friendsNear(w, u, a.x, a.y, 110)) if (o !== a && !o.summon) dose(o); };
+      if (a === u) go(); else lob(w, u, a.x, a.y, 'flask', ELIXIR_COL[kind], go);
     },
     show: { ally: true },
   },
+  // Monstrosity, in Bang Flask's slot (round 13: "They drink 4 an unstable concoction becoming a monstrosity. Bigger fast,
+  // rapid melee attacks. Drains hp quickly when in form but are immune to damage and status effect, takes less knockback.
+  // Will leave form when they lose 33% of their max hp over 8 seconds. Attacks deal ANY status effect each hit at max
+  // level. Also gets a dash when in this form."); id kept
   bangFlask: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 280 && foesNear(w, u, t.x, t.y, 100).length >= 2 ? 0.7 : 0),
+    score: (w, u, t) => (!u.kit.monster && hpRatio(u) > 0.5 && t && foesNear(w, u, u.x, u.y, 240).length >= 2 ? 0.65 : 0),
     use(w, u, t, tier) {
-      if (!t) return; cast(u, 'throw', 0.4);
-      lob(w, u, t.x, t.y, 'flask', '#FF8A3D', (x, y) => {
-        k2(w, { draw: 'fuse', x, y, max: 0.6, ab: 'bangFlask' });
-        timer(u, 'bang' + Math.round(x * 3 + y), 0.6, null, () => {
-          const spots = tierOf(u, 'bangFlask') >= 3 ? [0, 1, 2].map((i) => ({ x: x + Math.cos(i * 2.1) * 60, y: y + Math.sin(i * 2.1) * 60 })) : [{ x, y }];
-          for (const p of spots) {
-            w.telegraphs.push({ type: 'blast', x: p.x, y: p.y, r: spots.length > 1 ? 80 : 105, color: '#FFB347', t: 0.05, max: 0.05, ab: 'bangFlask' });
-            for (const e of foesNear(w, u, p.x, p.y, spots.length > 1 ? 80 : 105)) hurt(w, e, dmgOf(u, spots.length > 1 ? 1 : 1.5), u, { knock: 430, kAngle: angleTo(p.x, p.y, e.x, e.y), heavy: true, noDodge: true, stagger: tierOf(u, 'bangFlask') >= 2 ? 50 : 0, ab: 'bangFlask' });
-          }
-          w.shake = Math.max(w.shake, 7);
-        });
-      });
+      const human = u.def; setAnim(u, 'ability', 0.6);
+      u.def = { ...human, role: 'melee', range: 26, atkCd: 0.38, dmg: human.dmg * (tier >= 2 ? 1.25 : 1), knock: 160, arc: 1.8, speed: human.speed * 1.25, dashCd: 2.2, attackAnim: 'punch', weapon: 'claw', keep: 0 };
+      const M = u.kit.monster = { human, until: w.time + 8, r: u.r, vr: u.vr, mass: u.mass, hp0: u.maxHp };
+      u.r *= 1.3; u.vr *= 1.35; u.mass *= 3;
+      addBuff(u, { id: 'monster', dur: 8, statusImmune: true, wash: (T) => ['#7FCB3A', 0.28 + 0.08 * Math.sin(T * 9)] });
+      cleanse(u); w.shake = Math.max(w.shake, 5); puff(w, u.x, u.y, '#9BE36B', 16, 140, 7, 0.6);
+      k2(w, { draw: 'monster', unit: u, x: u.x, y: u.y, r: u.vr, max: 8.2 });
+      timer(u, 'monster', 8, (dt) => { u.hp = Math.max(1, u.hp - M.hp0 * 0.33 / 8 * dt); }, () => monsterEnd(w, u));
     },
-    show: { far: true },
+    hook: {
+      evade(w, u, src, amt, o) { if (!u.kit.monster) return false; sparks(w, u.x, u.y, src ? angleTo(u.x, u.y, src.x, src.y) : 0, 3, '#B5DE5E', 0.8); return true; },
+      taken(w, u, src, amt, o) { return u.kit.monster ? 0 : amt; },
+      hit(w, u, t, amt, o) { if (!u.kit.monster || o.dot || o.proc || tierOf(u, 'bangFlask') < 3 || !alive(t)) return; const st = ANY_STATUS[Math.floor(rand() * ANY_STATUS.length)]; addStatus(w, t, st, 22, u); },
+    },
+    show: { attacks: true, secs: 4 },
   },
   // ----- Shaman
   healTotem: {
@@ -1980,7 +2011,8 @@ function blast(w, u, x, y, r, k, o, ab) {
 // a lobbed thing (no hit on the way; it lands where it was thrown): kind, colour, land(x, y)
 function lob(w, u, x, y, kind, color, land) {
   const d = Math.max(30, dist(u.x, u.y, x, y)), a = angleTo(u.x, u.y, x, y), sp = Math.max(260, d * 1.6);
-  w.projectiles.push({ kind, x: u.x + Math.cos(a) * u.r, y: u.y + Math.sin(a) * u.r, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: 6, team: u.team, owner: u, dmg: 0, o: {}, life: d / sp, a, noHit: true, color, land: () => land(x, y) });
+  w.projectiles.push({ kind, x: u.x + Math.cos(a) * u.r, y: u.y + Math.sin(a) * u.r, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: 6, team: u.team, owner: u, dmg: 0, o: {}, life: d / sp, life0: d / sp, a, noHit: true, color, land: () => land(x, y) }); // (life0: fx2 arcs a lobbed thing)
+  return w.projectiles[w.projectiles.length - 1];
 }
 
 // The Shade's shadow: unseen (nobody's target: ethereal) and dark, until she strikes (the Fade trait), or for `dur`
@@ -2044,6 +2076,43 @@ export function burrowTo(w, u, x1, y1, T, surface) {
     k2(w, { draw: 'erupt', x: u.x, y: u.y, r: 70, max: 0.7, big: true }); w.shake = Math.max(w.shake, 6);
     if (surface) surface(u);
   } };
+}
+// the Alchemist's brews: six pools (Brew Pools), three elixirs, her monstrous form
+const POOLS = ['acid', 'cold', 'fire', 'whirl', 'shock', 'water'];
+const POOL_COL = { acid: '#C8E63C', cold: '#9FDDF6', fire: '#FF8A3D', whirl: '#EEF3F8', shock: '#FFE66B', water: '#5DB7E0' };
+const ELIXIR_COL = { rage: '#FF5A3D', mend: '#9BE07A', ward: '#9FE0FF' };
+const ANY_STATUS = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'curse', 'bleed', 'confuse', 'sleepy', 'fear', 'radiance'];
+function brewPool(w, u, x, y, r, dur, kind) {
+  k2(w, { draw: 'brewPool', x, y, r, kind, max: dur, ab: 'acidFlask' });
+  if (kind === 'fire') w.hazards.push({ type: 'fire', x, y, r: r * 0.85, t: dur, max: dur });
+  else if (kind === 'water') w.hazards.push({ type: 'water', x, y, r: r * 0.85, t: dur, max: dur });
+  let acc = 0;
+  timer(u, 'pool' + Math.round(x * 3 + y * 7), dur, (dt) => { acc += dt; if (acc < 0.3) return; acc -= 0.3;
+    for (const e of foesNear(w, u, x, y, r)) {
+      if (kind === 'acid') { hurt(w, e, dmgOf(u, 0.32), u, { dot: true, color: '#C8E63C', ab: 'acidFlask' }); addBuff(e, { id: 'acid', dur: 0.4, taken: 1.15 }); }
+      else if (kind === 'cold') { addStatus(w, e, 'chill', 13, u); hurt(w, e, dmgOf(u, 0.12), u, { dot: true, color: '#9FDDF6', ab: 'acidFlask' }); }
+      else if (kind === 'fire') hurt(w, e, dmgOf(u, 0.15), u, { dot: true, color: '#FF8A3D', ab: 'acidFlask' });
+      else if (kind === 'whirl') { whirl(w, e, 14, u); shove(e, angleTo(x, y, e.x, e.y) + 1.4, 90); }
+      else if (kind === 'shock') { addStatus(w, e, 'shock', 11, u); hurt(w, e, dmgOf(u, 0.12), u, { dot: true, color: '#FFE66B', ab: 'acidFlask' }); }
+      else if (kind === 'water') { addStatus(w, e, 'wet', 10, u); hurt(w, e, dmgOf(u, 0.12), u, { dot: true, color: '#5DB7E0', ab: 'acidFlask' }); }
+    } });
+}
+function elixirFor(w, u) {
+  const list = [u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo && dist(u.x, u.y, o.x, o.y) < 380 && !o.buffs.some((b) => b.id === 'haste' || b.id === 'warded'));
+  const need = (o) => (1 - hpRatio(o)) + (o.target ? 0.3 : 0) + (opponents(w, u).filter((e) => e.target === o).length * 0.15) + ((o.st.burn + o.st.poison + (o.st.bleed || 0) + (o.st.curse || 0)) > 40 ? 0.4 : 0);
+  const a = list.sort((p, q) => need(q) - need(p))[0];
+  return a && need(a) > 0.45 ? a : null;
+}
+function elixirKind(w, u, a) {
+  const bad = (a.st.burn + a.st.poison + (a.st.bleed || 0) + (a.st.curse || 0) + (a.st.chill || 0)) > 40 || a.sickT > 0;
+  if (bad || hpRatio(a) < 0.45) return 'mend';
+  if (opponents(w, u).filter((e) => e.target === a && dist(e.x, e.y, a.x, a.y) < 200).length >= 2) return rand() < 0.75 ? 'ward' : 'rage';
+  return rand() < 0.75 ? 'rage' : 'ward';
+}
+function monsterEnd(w, u) {
+  const M = u.kit.monster; if (!M) return;
+  u.def = M.human; u.r = M.r; u.vr = M.vr; u.mass = M.mass; u.kit.monster = null;
+  u.buffs = u.buffs.filter((b) => b.id !== 'monster'); puff(w, u.x, u.y, '#9BE36B', 12, 100, 6, 0.5); setAnim(u, 'ability', 0.4);
 }
 // the Bandit's Snatch: its weapon flung out of its hand; it must walk over and pick it up before it can attack again
 function snatch(w, u, e) {
@@ -2281,6 +2350,8 @@ export function kit2Tick(w, u, dt) {
   if (u.kind === 'bearskin') { const on = u.kit.clawsT > w.time; if (on) u._force = { 'arm-r': { hide: true } }; else if (u._force && u._force['arm-r']) u._force = null; }
   // Warhelm: his hammer is out of his hand while it circles him (Storm Born) or flies ahead (Skull Splitter)
   if (u.kind === 'warhelm') { const out = !!u.kit.storm || u.kit.splitT > w.time; if (out) u._force = { 'arm-l': { hide: true } }; else if (u._force && u._force['arm-l']) u._force = null; }
+  // the Alchemist's hand shows the next flask she'll throw (round 13: "Bottle in hand should change to what she will throw")
+  if (u.kind === 'alchemist' && (u.kit.handW !== w || !u.kit.handFx || u.kit.handFx.t >= u.kit.handFx.max)) { u.kit.handW = w; u.kit.handFx = k2(w, { draw: 'handFlask', unit: u, x: u.x, y: u.y, max: 1e9 }); }
   // the Haymaker's bale: when it is gone he drops off it; under him meanwhile the leap's hop is kept off (the bale's brain sets it)
   if (u.kit.bale && !alive(u.kit.bale)) baleBurst(w, u, u.kit.bale);
   // the Haymaker's pitchfork (round 13: "Should show 3 stab slashes. Should dash forwards slightly too"): every jab is a

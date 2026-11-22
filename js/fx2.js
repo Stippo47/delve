@@ -294,21 +294,31 @@ Object.assign(EL2, { breadToss: 'song', harvest: 'bone', oldTales: 'song', acidF
   healTotem: 'nature', spiritLink: 'water', rainDance: 'water', frogHex: 'nature', cursedBrew: 'necro', broomRide: 'necro',
   eldritchBeam: 'necro', summonImp: 'fire', darkBargain: 'blood' });
 Object.assign(ALIAS2, { flask: 'vial', spirit: 'bolt', hexbolt: 'bolt', bread: 'note', cauldron: 'vial' });
+// a lobbed thing rises and falls on its way (kits2 lob sets life0): lift the drawing by the arc, a shadow left below
+export function lobUp(ctx, p, H = 44) {
+  if (!p.life0) return; const k = clamp(1 - p.life / p.life0, 0, 1), h = Math.sin(Math.PI * k) * Math.min(H, 20 + p.life0 * 60), [vx, vy] = upVec();
+  ctx.save(); ctx.globalAlpha *= 0.25; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(0, 0, 8, 4, 0, 0, TAU); ctx.fill(); ctx.restore();
+  ctx.translate(vx * h, vy * h);
+}
 // a round flask of coloured brew, spinning
 PROJ2.flask = (ctx, p, T) => {
-  ctx.rotate(T * 11 + p.x * 0.01); ctx.scale(1.5, 1.5);
+  lobUp(ctx, p); ctx.rotate(T * 11 + p.x * 0.01); ctx.scale(1.5, 1.5);
   inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 2, 6.5, 0, TAU); ctx.rect(-2.4, -8, 4.8, 6); }, '#E8F0EA');
   disc(ctx, 0, 3, 5, p.color || '#9BCB3C'); ctx.fillStyle = '#8A5A3A'; ctx.fillRect(-2.8, -10, 5.6, 3.2);
   disc(ctx, -2, 0.5, 1.5, 'rgba(255,255,255,0.75)');
 };
 // a crusty loaf
+// (round 13: "Doesnt look the best overall"): a big golden loaf, lobbed high, scored on top, steam curling off it
 PROJ2.bread = (ctx, p, T) => {
-  ctx.rotate(T * 6 + p.x * 0.01);
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 12, 7, 0, 0, TAU); }, '#D89A50');
-  ctx.strokeStyle = '#F2CF8A'; ctx.lineWidth = 2; for (const x of [-5, 0, 5]) { ctx.beginPath(); ctx.moveTo(x - 2, -4); ctx.lineTo(x + 2, 4); ctx.stroke(); }
+  lobUp(ctx, p, 60); const [vx, vy] = upVec();
+  for (let i = 0; i < 2; i++) { const ph = (T * 1.6 + i * 0.5) % 1; ctx.save(); ctx.globalAlpha *= 0.7 * Math.sin(ph * Math.PI); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo((i - 0.5) * 8, 0); ctx.quadraticCurveTo((i - 0.5) * 8 + 5 * Math.sin(T * 6 + i), 0, (i - 0.5) * 8 + vx * (10 + ph * 16), vy * (10 + ph * 16)); }, '#FFFFFF', 2.2); ctx.restore(); }
+  ctx.rotate(Math.sin(T * 5) * 0.4); ctx.scale(1.4, 1.4);
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 12, 7.5, 0, 0, TAU); }, '#D08A40');
+  ctx.fillStyle = '#E8AC5C'; ctx.beginPath(); ctx.ellipse(-1, -1.5, 9, 4.5, 0, 0, TAU); ctx.fill();
+  ctx.strokeStyle = '#F8DCA0'; ctx.lineWidth = 2; for (const x of [-5, 0, 5]) { ctx.beginPath(); ctx.moveTo(x - 2, -4); ctx.lineTo(x + 2, 3); ctx.stroke(); }
 };
 // the witch's cauldron flying (it lands upright)
-PROJ2.cauldron = (ctx, p, T) => { ctx.rotate(T * 8); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 10, 0, TAU); }, '#3A3440'); disc(ctx, 0, 0, 6.5, '#7FCB3A'); };
+PROJ2.cauldron = (ctx, p, T) => { lobUp(ctx, p); ctx.rotate(T * 8); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 10, 0, TAU); }, '#3A3440'); disc(ctx, 0, 0, 6.5, '#7FCB3A'); };
 // the Shaman's spirit: a teal wisp with a curling tail
 PROJ2.spirit = (ctx, p, T, ang, sp) => {
   ctx.rotate(ang); trail(ctx, sp, 40, 8, '#7FE0D0');
@@ -335,7 +345,8 @@ DRAW.splash = (ctx, f, w, layer) => {
 // crumbs and a warm glow where a loaf is eaten
 DRAW.crumbs = (ctx, f, w, layer) => {
   if (layer !== 'air') return; const k = k01(f.t / f.max), [vx, vy] = upVec();
-  if (k < 0.4) lit(ctx, () => glowDisc(ctx, f.x, f.y, 40, '#FFE7A0', 0.5 * (1 - k / 0.4)));
+  if (k < 0.5) lit(ctx, () => glowDisc(ctx, f.x, f.y, 54, '#FFE7A0', 0.6 * (1 - k / 0.5)));
+  ctx.save(); ctx.globalAlpha *= 1 - k; for (let i = 0; i < 3; i++) { const q = k01(k * 1.3 - i * 0.12), up = 14 + 30 * easeOut(q); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(f.x + (i - 1) * 10, f.y); ctx.quadraticCurveTo(f.x + (i - 1) * 10 + 7 * Math.sin(f.t * 8 + i), f.y + vy * up * 0.5, f.x + (i - 1) * 10 + vx * up, f.y + vy * up); }, '#FFFFFF', 2.4); } ctx.restore();
   ctx.save(); ctx.globalAlpha *= 1 - k;
   for (let i = 0; i < 7; i++) { const b = i / 7 * TAU, h = Math.sin(k * Math.PI) * 20 * hash(i, 2), d = 8 + 26 * easeOut(k); inkDisc(ctx, f.x + Math.cos(b) * d + vx * h, f.y + Math.sin(b) * d * 0.6 + vy * h, 2.8, i % 2 ? '#D89A50' : '#F2CF8A'); }
   ctx.restore();
@@ -1154,6 +1165,82 @@ LOOK2.haybale = (ctx, u, w) => {
   for (let i = 0; i < 5; i++) { const yy = -L + (i + 0.5) * L * 0.4, sd = i % 2 ? 1 : -1; inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(sd * R, yy); ctx.lineTo(sd * (R + 6), yy + 3); }, '#E8C860', 2); }
   ctx.restore();
   if (u.st && u.st.burn > 10) { ctx.save(); ctx.globalAlpha = Math.min(1, u.st.burn / 60); for (let i = 0; i < 3; i++) upright(ctx, u.x + (i - 1) * 12, u.y - 6, () => flame(ctx, 0, 0, 8)); ctx.restore(); }
+};
+
+// Old Tales: his story book open over his head, its pages turning
+DRAW.storyBook = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const [vx, vy] = upVec(), up = u.vr + 22 + 6 * easeOut(k01(f.t / 0.3)), a = life(f, 0.15, 0.3);
+  ctx.save(); ctx.globalAlpha *= a;
+  upright(ctx, u.x + vx * up, u.y + vy * up, () => {
+    inked(ctx, () => roundRect(ctx, -22, -13, 44, 26, 3), '#8A4A2A');
+    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -11); ctx.quadraticCurveTo(-10, -14, -19, -10); ctx.lineTo(-19, 10); ctx.quadraticCurveTo(-10, 7, 0, 10); ctx.closePath(); }, '#FFF8EA');
+    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -11); ctx.quadraticCurveTo(10, -14, 19, -10); ctx.lineTo(19, 10); ctx.quadraticCurveTo(10, 7, 0, 10); ctx.closePath(); }, '#FFF8EA');
+    ctx.fillStyle = '#A99C8B'; for (let i = 0; i < 4; i++) { ctx.fillRect(-16, -6 + i * 4, 12, 1.4); ctx.fillRect(4, -6 + i * 4, 12, 1.4); }
+    const turn = (f.t * 2.2) % 1, sx = Math.cos(turn * Math.PI); // a page turning over
+    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -11); ctx.quadraticCurveTo(10 * sx, -14, 19 * sx, -10); ctx.lineTo(19 * sx, 10); ctx.quadraticCurveTo(10 * sx, 7, 0, 10); ctx.closePath(); }, '#F2E8D4');
+  });
+  lit(ctx, () => glowDisc(ctx, u.x + vx * up, u.y + vy * up, 34, '#FFE7A0', 0.3 * a));
+  ctx.restore();
+};
+// Old Tales on a listener: a gold clock over its head, its hand spinning forward, and "-2s" rising off it
+DRAW.tellClock = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const [vx, vy] = upVec(), k = k01(f.t / f.max), up = u.vr + 16, a = life(f, 0.15, 0.35);
+  ctx.save(); ctx.globalAlpha *= a;
+  upright(ctx, u.x + vx * up, u.y + vy * up, () => {
+    inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 11, 0, TAU); }, '#F2C14E'); disc(ctx, 0, 0, 8, '#FFF8EA');
+    const h = -Math.PI / 2 + easeOut(k01(f.t / 0.8)) * TAU * 1.5; inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(h) * 7, Math.sin(h) * 7); }, '#7A4A2A', 2.2);
+    ctx.globalAlpha *= k01((k - 0.25) / 0.2) * (1 - k01((k - 0.8) / 0.2));
+    ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'left'; ctx.lineWidth = 3; ctx.strokeStyle = '#2B2230'; const tx = 15, ty = 4 - 8 * k; ctx.strokeText('-' + f.secs + 's', tx, ty); ctx.fillStyle = '#FFE7A0'; ctx.fillText('-' + f.secs + 's', tx, ty);
+  });
+  ctx.restore();
+};
+// the Alchemist's hand: the flask she'll throw next, in its brew's colour (round 13: "Bottle in hand should change to
+// what she will throw"); hidden while she's a monster
+DRAW.handFlask = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u) || (u.kit && u.kit.monster)) return;
+  const next = (((u.kit && u.kit.brew3) ?? -1) + 1) % 3, col = ['#FF8A3D', '#9FDDF6', '#C8E63C'][next];
+  const a = u.facing - 0.53, d = u.vr * 1.3, x = u.x + Math.cos(a) * d, y = u.y + Math.sin(a) * d; // (over the flask in the art's hand)
+  ctx.save(); ctx.translate(x, y); ctx.rotate(u.facing - Math.PI / 2 + 0.5); ctx.scale(1.35, 1.35);
+  inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 1.5, 5.2, 0, TAU); ctx.rect(-1.8, -6, 3.6, 4.5); }, '#E8F0EA'); disc(ctx, 0, 2.2, 3.8, col); ctx.fillStyle = '#8A5A3A'; ctx.fillRect(-2.1, -7.4, 4.2, 2.4);
+  ctx.restore();
+  lit(ctx, () => glowDisc(ctx, x, y, 10, col, 0.35));
+};
+// Brew Pools: a pool of the brew on the floor (merged with its own kind) and what stands up out of it
+DRAW.brewPool = (ctx, f, w, layer) => {
+  const a = life(f, 0.2, 0.5), K2 = { acid: 'gas', cold: 'frost', fire: 'fire', whirl: 'mist', shock: 'mist', water: 'water' }[f.kind];
+  if (layer === 'ground') { drawPuddle(ctx, K2, f.x, f.y, f.r * (0.55 + 0.45 * easeOut(k01(f.t / 0.25))), w.time, a, Math.round(f.x * 5 + f.y)); return; }
+  ctx.save(); ctx.globalAlpha *= a;
+  if (f.kind === 'acid') for (let i = 0; i < 6; i++) { const ph = (f.t * 1.4 + hash(i, 5)) % 1, b = hash(i, 1) * TAU, d = f.r * 0.7 * hash(i, 8); ctx.save(); ctx.globalAlpha *= 1 - ph; inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 2 + 5 * ph, '#E6F7B0'); ctx.restore(); }
+  else if (f.kind === 'cold') for (let i = 0; i < 5; i++) { const b = hash(i, 3) * TAU, d = f.r * 0.6 * hash(i, 4); ctx.save(); ctx.translate(f.x + Math.cos(b) * d, f.y + Math.sin(b) * d); ctx.rotate(b); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -9); ctx.lineTo(3, 0); ctx.lineTo(0, 4); ctx.lineTo(-3, 0); ctx.closePath(); }, '#DDF6FF'); ctx.restore(); }
+  else if (f.kind === 'whirl') for (let i = 0; i < 3; i++) { const b0 = f.t * 6 + i / 3 * TAU; inkLine(ctx, () => { ctx.beginPath(); for (let j = 0; j <= 10; j++) { const q = j / 10, b = b0 + q * 2, R = f.r * (0.2 + 0.7 * q); const x = f.x + Math.cos(b) * R, y = f.y + Math.sin(b) * R; if (j) ctx.lineTo(x, y); else ctx.moveTo(x, y); } }, '#FFFFFF', 3); }
+  else if (f.kind === 'shock') { for (let i = 0; i < 3; i++) if (Math.sin(f.t * 17 + i * 2.1) > 0.3) { const b = hash(i, (f.t * 6) | 0) * TAU, d = f.r * 0.6; inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(f.x + Math.cos(b) * d * 0.2, f.y + Math.sin(b) * d * 0.2); ctx.lineTo(f.x + Math.cos(b + 0.4) * d * 0.6, f.y + Math.sin(b + 0.4) * d * 0.6); ctx.lineTo(f.x + Math.cos(b) * d, f.y + Math.sin(b) * d); }, '#FFE66B', 2.6); }
+    lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r, '#FFE66B', 0.15)); }
+  else if (f.kind === 'water') for (let i = 0; i < 3; i++) { const ph = (f.t * 0.8 + i / 3) % 1; ctx.save(); ctx.globalAlpha *= 1 - ph; inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(f.x + (i - 1) * 14, f.y + (i % 2) * 10, 4 + 14 * ph, (4 + 14 * ph) * 0.5, 0, 0, TAU); }, '#BFE9F8', 2); ctx.restore(); }
+  ctx.restore();
+};
+// Elixir: the potion bursts over the friend in its colour, with the sign of what it gave rising off it
+DRAW.elixirSplash = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const u = f.unit, x = alive2(u) ? u.x : f.x, y = alive2(u) ? u.y : f.y, k = k01(f.t / f.max), e = easeOut(k), [vx, vy] = upVec();
+  const col = { rage: '#FF5A3D', mend: '#9BE07A', ward: '#9FE0FF' }[f.kind];
+  if (k < 0.3) lit(ctx, () => glowDisc(ctx, x, y, 50, col, 0.6 * (1 - k / 0.3)));
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  for (let i = 0; i < 9; i++) { const b = i / 9 * TAU + 0.3, d = f.r * (0.4 + 1.1 * e), h = Math.sin(k * Math.PI) * 14; inkDisc(ctx, x + Math.cos(b) * d + vx * h, y + Math.sin(b) * d * 0.7 + vy * h, 4 * (1 - 0.6 * k), i % 2 ? col : '#FFFFFF'); }
+  const up = f.r + 10 + 26 * e;
+  upright(ctx, x + vx * up, y + vy * up, () => {
+    if (f.kind === 'mend') { inked(ctx, () => { ctx.beginPath(); ctx.rect(-3, -9, 6, 18); ctx.rect(-9, -3, 18, 6); }, '#9BE07A'); }
+    else if (f.kind === 'ward') { inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -10); ctx.lineTo(9, -6); ctx.lineTo(7, 4); ctx.lineTo(0, 10); ctx.lineTo(-7, 4); ctx.lineTo(-9, -6); ctx.closePath(); }, '#9FE0FF'); }
+    else { inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-8, 6); ctx.lineTo(-2, -2); ctx.lineTo(-5, -2); ctx.lineTo(2, -10); ctx.lineTo(0, -3); ctx.lineTo(4, -3); ctx.closePath(); }, '#FF8A3D'); }
+  });
+  ctx.restore();
+};
+// Monstrosity: bubbles boiling up off her and green steam, while she's the monster
+DRAW.monster = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) { if (!alive2(u)) ended(f, true); return; } ended(f, !(u.kit && u.kit.monster));
+  const [vx, vy] = upVec(); ctx.save(); ctx.globalAlpha *= life(f, 0.2, 0.3);
+  if (f.t < 0.35) lit(ctx, () => glowDisc(ctx, u.x, u.y, 70, '#9BE36B', 0.6 * (1 - f.t / 0.35)));
+  for (let i = 0; i < 6; i++) { const ph = (f.t * 1.5 + hash(i, u.id)) % 1, b = hash(i, 3) * TAU, d = u.vr * 0.8 * hash(i, 7), up = ph * 34;
+    ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); inkDisc(ctx, u.x + Math.cos(b) * d + vx * up, u.y + Math.sin(b) * d * 0.7 + vy * up, 2.5 + 3.5 * ph, i % 2 ? '#B5DE5E' : '#7DB83A'); ctx.restore(); }
+  ctx.restore();
 };
 
 export function drawK2(ctx, f, w, layer) { const d = DRAW[f.draw]; if (d) { ctx.save(); d(ctx, f, w, layer); ctx.restore(); } }

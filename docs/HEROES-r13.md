@@ -198,3 +198,36 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
   splash, its own look), 1.6x to all within 64 (III 80); each is driven into the ground (hidden, can't move, act or be
   hit) for 1.5 s (II 2.2 s), shown as a twitching mound, and digs out in a spray of earth (III staggered). Bosses are
   only stunned. Clip: digger-spadeBat.
+
+### Grandpa Sickle
+- Bread Toss: "Doesnt look the best overall" -> a bigger golden loaf, scored on top, steam curling off it, lobbed high
+  on an arc with its shadow below (fx2 `lobUp`, used by every lobbed thing now); where it lands a warm glow, steam
+  and crumbs. Clip: grandpa-breadToss.
+- Harvest: "Dashes to ally when he does it." -> he hurries (a quick bound) to the friend most beset and sweeps there;
+  with nobody in trouble he sweeps where he stands. Clip: grandpa-harvest.
+- Old Tales: "What does it do? Doesnt look the best" -> it says it now: an old story book opens over his head with its
+  pages turning; over each friend listening a gold clock whose hand spins forward and "-2s" (II "-3s") rising: every
+  ability of theirs comes round that much sooner (III heals them 8%). Clip: grandpa-oldTales.
+
+### Alchemist
+- Unstable flask: "Bottle in hand should change to what she will throw" -> a flask in the next brew's colour is drawn
+  over the one in the art's hand (fire, frost, acid in turn). Clip: alchemist-attack. (A cleaner fix is the art lane
+  giving the bottle its own part.)
+- Acid Flask: "Bad. Is just the plague doctors. Throws 2 lingering pools of liquid in a spread. Has 6 possible ones they
+  can choose. Acid Cold Fire Whirling Shocking Water. Make look better." -> **Brew Pools** (id acidFlask): two flasks
+  (II three) arc out in a spread; each bursts into a pool of a random one of six: acid (eats at them, +15% taken),
+  cold (chill), fire (a real fire patch: burns), whirling (whirls them and spins them round its middle), shocking
+  (shock, sparks crackling), water (a real water patch: soaks). Pools are merged ground bodies with what stands in them
+  (bubbles, ice shards, wind spirals, sparks, ripples). III bigger, 5 s. Clip: alchemist-acidFlask.
+- Elixir: "Gives 1 of 3 buffs. Haste/rage, Cleanse and heal, Or swiftness and temporary shield. (Like 30 negate). What's
+  a good name for a protection status effect? Make look better" -> she lobs it to the friend who needs it most and picks
+  the brew: cleansed and healed 14% (II 22%) if hurt or afflicted; **Warded** (a shield soaking 30, II 45: the pale blue
+  border) and swift if being hit; hasted and enraged (+25%, II +35% damage) if fighting fine. The splash bursts in its
+  colour and its sign rises (a cross, a shield, a bolt). III splashes friends near. Clip: alchemist-elixir.
+- Bang Flask: "They drink 4 an unstable concoction becoming a monstrosity. Bigger fast, rapid melee attacks. Drains hp
+  quickly when in form but are immune to damage and status effect, takes less knockback. Will leave form when they lose
+  33% of their max hp over 8 seconds. Attacks deal ANY status effect each hit at max level. Also gets a dash when in this
+  form." -> **Monstrosity** (id bangFlask): 8 s as a monster: 1.35x her size, 25% faster, a melee clawer (a blow every
+  0.38 s) with a lunge (the sim's dash), nothing hurts her or puts a status on her, three times as heavy to shove, while
+  a third of her health drains away; green wash and boiling bubbles. II her blows +25%; III every blow puts a random
+  status on what it hits. Clip: alchemist-bangFlask.
