@@ -8,7 +8,7 @@ A greatsword held in both hands, and forty years of knowing where to put it. Art
 
 - **Attack: Greatsword.** A slow, wide two-handed cut in front.
 - **Great Sweep** (8s). Draws the greatsword back, then sweeps it round in one huge arc in front of him. I: Hits everything in a wide arc and knocks it back. II: Staggers what it hits. III: Sweeps straight back the other way.
-- **Rally** (15s). An old soldier's shout: allies near him shake off stuns and staggers and stand firm. I: Clears stuns, roots and stagger; nothing knocks them back for 5s. II: Haste too: they move and strike 30% faster, and it all lasts 8s. III: Heals them 12% too.
+- **Rally** (15s). An old soldier's shout: allies near him shake off stuns and staggers and stand firm. I: Clears stuns, roots and stagger; nothing knocks them back for 5s. II: Haste too: they move and strike 30% faster, and it all lasts 8s. III: Heals them 8% too.
 - **Parry** (9s). Sets the greatsword across him: the next blow or shot that reaches him within 4s is caught. A shot flies back at whoever loosed it; a blow's force goes back into the one who struck. I: One parry. II: Two parries. III: What he sends back hits 60% harder.
 - **Trait: Last Stand.** Once a room, when he is the last of the party standing: he can't be stopped or knocked about and is hasted for 10s, and all his abilities are ready again at once.
 
@@ -115,9 +115,9 @@ Wild white hair, brass goggles, a strap of flasks. Every throw is a different br
 A winged totem on his back and a feather spirit-stick. Calls on the ancestors and the rain. Art: `art/heroes/shaman.svg`.
 
 - **Attack: Spirit bolt.** A teal spirit; when it strikes near a hurt friend it leaps on to that friend and mends it.
-- **Healing Totem** (14s). Throws a winged totem like the one on his back to the friend in the most trouble. It stands (70 health, blows on it do half): every blow on a friend within its reach lands on the totem instead, and it mends them a little. I: It stands 8s. II: It stands 12s. III: It cleans statuses off friends near it.
+- **Healing Totem** (14s). Throws a winged totem like the one on his back to the friend in the most trouble. It stands (70 health, blows on it do half): every blow on a friend within its reach lands on the totem instead, and it mends them a little. I: It stands 6s. II: It stands 10s. III: It cleans statuses off friends near it.
 - **Spirit Link** (16s). Binds friends, and his totem, together with spirit threads: a blow on one is shared out among them all. I: Up to three friends, for 5s. II: Linked friends take 10% less. III: Up to five, for 7s.
-- **Ancestors' Call** (20s). Calls the ancestors in spirit shape: a bear that fights beside them and shelters friends near it (they take 20% less), a wolf that hunts, an eagle that follows the most hurt friend and mends it, and a beaver that spins and shoots homing spirit orbs. I: For 7s. II: For 10s. III: The spirits are a third as strong again.
+- **Ancestors' Call** (20s). Calls the ancestors in spirit shape: a bear that fights beside them and shelters friends near it (they take 20% less), a wolf that hunts, an eagle that follows the most hurt friend and mends it, and a beaver that spins and shoots homing spirit orbs. I: For 6s. II: For 9s. III: The spirits are 15% stronger.
 - **Trait: Ancestral Spirits.** When an ally goes down, the spirits heal everyone else 10%.
 
 ## Witch (`witch`, caster, 700 gold)
@@ -169,7 +169,7 @@ Blindfolded, silver-haired, a glowing crystal in her hand. Sees what's coming an
 A toque, a moustache, a frying pan and a wooden spoon. Feeds friends and flings pies at everyone else. Art: `art/heroes/chef.svg`.
 
 - **Attack: Food toss.** Throws whatever comes to hand: an apple, a drumstick, a pie, cheese, a roll, a fish. It hurts the enemy it hits and mends any friend it passes over.
-- **Hot Meal** (12s). Throws hot plates out round the party; a friend who walks over one eats it and heals 25%; what goes past full health becomes extra health. Hurt friends go and get one. I: Two plates. II: Three plates. III: Whoever eats hits 20% harder for 8s.
+- **Hot Meal** (12s). Throws hot plates out round the party; a friend who walks over one eats it and heals 20%; what goes past full health becomes extra health. Hurt friends go and get one. I: Two plates. II: Three plates. III: Whoever eats hits 20% harder for 8s.
 - **Grease Fire** (13s). Flips the pan: hot grease splashes over the floor in front, slick and slow. I: Oil in a cone for 6s. II: The oil catches: it burns. III: A wider splash.
 - **Food Fight** (10s). Flings custard pies at several enemies, the ones dashing or leaping first: a pie stops a dash, a leap or a charge dead, and slows a little. I: Three pies. II: Pie in the eyes: they miss. III: Five pies.
 - **Trait: Well Fed.** Allies near him heal 0.5% of their health a second.
@@ -180,7 +180,7 @@ A veiled hat, a copper smoker, and a great many friends who sting. Calms the ene
 - **Attack: Bee.** Sends a bee at the target: it stings, then stays buzzing round it, stinging now and then.
 - **Smoker** (11s). Pumps the smoker: a cone of thick white smoke rolls over the enemies in front. They grow sleepy and slow, and drop off if it builds. I: Sleepy and slowed. II: Sleepier. III: They swing slower too.
 - **Beehive** (14s). Throws a hive down among the enemies (its own health): bees stream out at whatever is near, and whoever strikes the hive is mobbed. I: A hive for 8s. II: For 12s. III: Its bees stay on their foes, stinging.
-- **Honey Glaze** (12s). Drizzles honey over the friend under the most attack: it heals over 4s, and whatever strikes it gets stuck in the honey. I: Heals 13% over 4s. II: Heals 20%. III: Two friends.
+- **Honey Glaze** (12s). Drizzles honey over the friend under the most attack: it heals over 4s, and whatever strikes it gets stuck in the honey. I: Heals 11% over 4s. II: Heals 17%. III: Two friends.
 - **Trait: Pollen.** Every sixth sting of his bees carries pollen back: the friend most hurt near him heals 5%.
 
 ## Quartermaster (`quartermaster`, support, 350 gold)

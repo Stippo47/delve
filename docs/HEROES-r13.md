@@ -236,14 +236,14 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
 
 ### Shaman
 - Spirit bolt: "Jumps to ally if they are near and heals them. Otherwise no heal" -> it strikes; if a hurt friend is
-  within 170 of what it struck, a spirit leaps on from there to that friend and mends it (0.6x of the bolt); else no
+  within 170 of what it struck, a spirit leaps on from there to that friend and mends it (0.3x of the bolt); else no
   heal. Clip: shaman-attack (no friend on the bench: the leap shows in a real fight and in the Book).
 - Healing Totem: "Not good overall. Doesn't even match the one on his back… Should throw to ally, In an arc. Has 100 hp.
   Any ally in its radius that takes damage will go to it instead. At lvl 3 cleanse status effects too. It has its own hit
   box. Damage directly to it is 50%" -> a winged totem drawn like his (carved pole, stacked faces, teal wings, his
   orange bands), thrown on an arc to the friend under the most attack; a summon with 70 health and its own body; every
   blow on a friend within 115 lands on the totem instead (a teal streak from the friend to it); blows on it do half;
-  it still mends those near a little. 8 s (II 12 s); III it cleans statuses off them every 1.5 s. Clip: shaman-healTotem.
+  it still mends those near a little. 6 s (II 10 s); III it cleans statuses off them every 1.5 s. Clip: shaman-healTotem.
 - Spirit Link: "Show underneath. Give outline. Can link to totem" -> inked teal threads on the floor under the units,
   beads running along them; his totem joins the link. Clip: shaman-spiritLink.
 - Rain Dance: "Don't like. Doesnt look good. Make ancestors call. Summons a light blue bear, eagle, wolf, and beaver.
@@ -251,7 +251,7 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
   Beaver. Spins and shoots out 3 homing orbs." -> **Ancestors' Call** (id rainDance): four light-blue spirits rise out
   of the floor: a bear (melee; friends within 120 of it take 20% less), a wolf (the Druid's wolf, washed light blue),
   an eagle (flies over the most hurt friend, mending it), a beaver (sits by him; every 2 s it spins and shoots three
-  homing spirit orbs). 8 s (II 12 s); III half as strong again. The bear, eagle and beaver are drawn in code (fx2 LOOK2):
+  homing spirit orbs). 6 s (II 9 s); III 15% stronger. The bear, eagle and beaver are drawn in code (fx2 LOOK2):
   **art lane** may want to draw them properly. Clip: shaman-rainDance.
 
 ### Witch
@@ -342,7 +342,7 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
   cheese, a roll, a fish): it hurts the enemy it hits and mends any friend it passes over (0.6x). Clip: chef-attack.
 - Hot Meal: "Doesnt look good. Should throw food pick ups randomly around dungeon to be picked up. If at full hp will get
   over health." -> plates thrown on arcs to random spots round the party (two, II three), each a steaming plate of one
-  of the six foods; a friend who walks over one eats it: heals 25%, and what goes past full health becomes extra
+  of the six foods; a friend who walks over one eats it: heals 20%, and what goes past full health becomes extra
   health (a Warded shield); hurt friends with no enemy on them walk over to one. III kept (+20% damage 8 s). Clip:
   chef-hotMeal.
 - Food Fight: "Stops any movement abilities from anyone hit and applies a slight slow." -> pies go first at whatever is
@@ -361,8 +361,8 @@ Built as each hero's own effect behind one function in kits2.js, so they can be 
   - **Beehive** (honeyPot's slot): a straw skep thrown among the enemies (70 health) for 8 s (II 12 s): a bee streams out
     at something near every 0.7 s; whoever strikes the hive is mobbed by three; III its bees pester. Clip:
     beekeeper-honeyPot.
-  - **Honey Glaze** (royalJelly's slot): honey drizzled over the friend under the most attack: it heals 13% over 4 s (II
-    20%) and whatever strikes it gets stuck (entangle, slowed); III two friends. Clip: beekeeper-royalJelly.
+  - **Honey Glaze** (royalJelly's slot): honey drizzled over the friend under the most attack: it heals 11% over 4 s (II
+    17%) and whatever strikes it gets stuck (entangle, slowed); III two friends. Clip: beekeeper-royalJelly.
 
 ### Quartermaster (REDO)
 - "Overall don't like. Visuals or abilities. Giving out hp potions is very strong. Needs to be more unique" -> a new kit

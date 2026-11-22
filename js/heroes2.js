@@ -21,7 +21,7 @@ export const HEROES2 = {
       { id: 'greatSweep', name: 'Great Sweep', cd: 8, tags: 'ds', glyph: 'swirl', desc: 'Draws the greatsword back, then sweeps it round in one huge arc in front of him.',
         tiers: ['Hits everything in a wide arc and knocks it back.', 'Staggers what it hits.', 'Sweeps straight back the other way.'] },
       { id: 'rallyCry', name: 'Rally', cd: 15, tags: 'h', glyph: 'up', desc: "An old soldier's shout: allies near him shake off stuns and staggers and stand firm.",
-        tiers: ['Clears stuns, roots and stagger; nothing knocks them back for 5s.', 'Haste too: they move and strike 30% faster, and it all lasts 8s.', 'Heals them 12% too.'] },
+        tiers: ['Clears stuns, roots and stagger; nothing knocks them back for 5s.', 'Haste too: they move and strike 30% faster, and it all lasts 8s.', 'Heals them 8% too.'] },
       // round 13: Parry takes Pommel Strike's place (the designer: "Maybe instead of pommel strike"); the id stays for saves
       { id: 'pommelStrike', name: 'Parry', cd: 9, tags: 'd', glyph: 'shield', desc: "Sets the greatsword across him: the next blow or shot that reaches him within 4s is caught. A shot flies back at whoever loosed it; a blow's force goes back into the one who struck.",
         tiers: ['One parry.', 'Two parries.', 'What he sends back hits 60% harder.'] },
@@ -49,7 +49,7 @@ export const HEROES2 = {
     name: 'Griffon', art: 'art/heroes/griffon.svg', role: 'tank', unlock: { gems: 3 },
     blurb: 'Winged helm, warhammer, shield. Drops out of the sky onto whoever is bothering his friends.',
     fun: 'The wings on the helm are not real. Nobody has told the helm.',
-    stats: { hp: 165, speed: 58, r: 34, vr: 24, turn: 3.4, accel: 180, face: 3.6, mass: 2.2, range: 24, atkCd: 1.3, dmg: 15, knock: 190, arc: 1.7, aoe: 40 },
+    stats: { hp: 165, speed: 58, r: 34, vr: 24, turn: 3.4, accel: 180, face: 3.6, mass: 2.2, range: 24, atkCd: 1.3, dmg: 16, knock: 190, arc: 1.7, aoe: 40 },
     // round 13: "Flip his sprite. Should be an aoe slam on the ground like the berserker" (his own hammer slam, fx2 SLAM2)
     weapon: 'heavy', style: { hand: 'arm-l', off: 'shield', flip: true, slam: 'hammer' },
     attack: { name: 'Warhammer', anim: 'swing', desc: 'A heavy hammer slammed into the floor in front: everything there is hit.' },
@@ -245,11 +245,11 @@ Object.assign(HEROES2, {
     },
     abilities: [
       { id: 'healTotem', name: 'Healing Totem', cd: 14, tags: 'h', glyph: 'leaf', desc: 'Throws a winged totem like the one on his back to the friend in the most trouble. It stands (70 health, blows on it do half): every blow on a friend within its reach lands on the totem instead, and it mends them a little.',
-        tiers: ['It stands 8s.', 'It stands 12s.', 'It cleans statuses off friends near it.'] },
+        tiers: ['It stands 6s.', 'It stands 10s.', 'It cleans statuses off friends near it.'] },
       { id: 'spiritLink', name: 'Spirit Link', cd: 16, tags: 'h', glyph: 'heart', desc: 'Binds friends, and his totem, together with spirit threads: a blow on one is shared out among them all.',
         tiers: ['Up to three friends, for 5s.', 'Linked friends take 10% less.', 'Up to five, for 7s.'] },
       { id: 'rainDance', name: "Ancestors' Call", cd: 20, tags: 'ds', glyph: 'paw', desc: 'Calls the ancestors in spirit shape: a bear that fights beside them and shelters friends near it (they take 20% less), a wolf that hunts, an eagle that follows the most hurt friend and mends it, and a beaver that spins and shoots homing spirit orbs.',
-        tiers: ['For 7s.', 'For 10s.', 'The spirits are a third as strong again.'] },
+        tiers: ['For 6s.', 'For 9s.', 'The spirits are 15% stronger.'] },
     ],
     trait: { id: 'ancestral', name: 'Ancestral Spirits', desc: 'When an ally goes down, the spirits heal everyone else 10%.' },
   },
@@ -354,7 +354,7 @@ Object.assign(HEROES2, {
     // round 13: "Should be ranged. Throws random foods. All same effect. Hurts enemies, heals allies"
     attack: { name: 'Food toss', anim: 'throw', desc: 'Throws whatever comes to hand: an apple, a drumstick, a pie, cheese, a roll, a fish. It hurts the enemy it hits and mends any friend it passes over.' },
     abilities: [
-      { id: 'hotMeal', name: 'Hot Meal', cd: 12, tags: 'h', glyph: 'heart', desc: 'Throws hot plates out round the party; a friend who walks over one eats it and heals 25%; what goes past full health becomes extra health. Hurt friends go and get one.',
+      { id: 'hotMeal', name: 'Hot Meal', cd: 12, tags: 'h', glyph: 'heart', desc: 'Throws hot plates out round the party; a friend who walks over one eats it and heals 20%; what goes past full health becomes extra health. Hurt friends go and get one.',
         tiers: ['Two plates.', 'Three plates.', 'Whoever eats hits 20% harder for 8s.'] },
       { id: 'greaseFire', name: 'Grease Fire', cd: 13, tags: 's', glyph: 'flame', desc: 'Flips the pan: hot grease splashes over the floor in front, slick and slow.',
         tiers: ['Oil in a cone for 6s.', 'The oil catches: it burns.', 'A wider splash.'] },
@@ -378,7 +378,7 @@ Object.assign(HEROES2, {
       { id: 'honeyPot', name: 'Beehive', cd: 14, tags: 'ds', glyph: 'burst', desc: 'Throws a hive down among the enemies (its own health): bees stream out at whatever is near, and whoever strikes the hive is mobbed.',
         tiers: ['A hive for 8s.', 'For 12s.', 'Its bees stay on their foes, stinging.'] },
       { id: 'royalJelly', name: 'Honey Glaze', cd: 12, tags: 'h', glyph: 'heart', desc: 'Drizzles honey over the friend under the most attack: it heals over 4s, and whatever strikes it gets stuck in the honey.',
-        tiers: ['Heals 13% over 4s.', 'Heals 20%.', 'Two friends.'] },
+        tiers: ['Heals 11% over 4s.', 'Heals 17%.', 'Two friends.'] },
     ],
     trait: { id: 'pollen', name: 'Pollen', desc: 'Every sixth sting of his bees carries pollen back: the friend most hurt near him heals 5%.' },
   },
@@ -659,7 +659,7 @@ Object.assign(HEROES2, {
     name: 'Engineer', art: 'art/heroes/engineer.svg', role: 'ranged', unlock: { gems: 3 },
     blurb: 'An orange work suit, a welding mask pushed up and a very big wrench. Builds a turret and keeps it running.',
     fun: 'Can fix anything with a wrench. Has fixed several things that were not broken.',
-    stats: { hp: 115, speed: 60, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 120, atkCd: 1.1, dmg: 10, knock: 150, arc: 1.6 },
+    stats: { hp: 100, speed: 60, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 120, atkCd: 1.1, dmg: 10, knock: 150, arc: 1.6 },
     weapon: 'heavy', // round 13: "Hits she. Close. Throw bouncing cogs from afar"
     attack: { name: 'Wrench and cogs', anim: 'throw', desc: 'Close up, a clanging swing of the wrench; further off, a cog thrown that bounces on to a second enemy.' },
     summons: {

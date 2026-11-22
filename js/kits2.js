@@ -222,7 +222,7 @@ export const ABILITIES2 = {
         a.stunT = 0; a.rootT = 0; a.koT = 0; a.tangledT = 0; a.st.stagger = 0;
         addBuff(a, { id: 'rally', dur, knockImmune: true, glow: '#F2C14E' });
         if (tier >= 2) haste(w, a, dur, 1.3);
-        if (tier >= 3) heal(w, a, a.maxHp * 0.12, u);
+        if (tier >= 3) heal(w, a, a.maxHp * 0.08, u);
         k2(w, { draw: 'rally', unit: a, x: a.x, y: a.y, r: a.vr, max: 0.9 });
       }
     },
@@ -949,7 +949,7 @@ export const ABILITIES2 = {
       const a = [u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo && dist(u.x, u.y, o.x, o.y) < 360).sort((p, q) => opponents(w, u).filter((e) => e.target === q).length - opponents(w, u).filter((e) => e.target === p).length || hpRatio(p) - hpRatio(q))[0] || u;
       const b = angleTo(a.x, a.y, u.x, u.y), x = clamp(a.x + Math.cos(b) * (a.r + 30), 30, w.W - 30), y = clamp(a.y + Math.sin(b) * (a.r + 30), 30, w.H - 30);
       lob(w, u, x, y, 'totemFly', null, () => {
-        const s2 = summon(w, u, 'totem', x, y, { life: tier >= 2 ? 12 : 8, hp: 70 }); s2.fixed = true; s2.tier = tier; s2.R = 115;
+        const s2 = summon(w, u, 'totem', x, y, { life: tier >= 2 ? 10 : 6, hp: 70 }); s2.fixed = true; s2.tier = tier; s2.R = 115;
         onUnit(w, s2, 'totemSkin', 99, { taken: (w2, u2, src, amt, o) => (o.redirected ? amt : amt * 0.5) });
         puff(w, x, y, '#A0705A', 10, 100, 5, 0.45); w.shake = Math.max(w.shake, 3);
         k2(w, { draw: 'totemReach', unit: s2, x, y, r: s2.R, max: tier >= 2 ? 12 : 8 });
@@ -979,7 +979,7 @@ export const ABILITIES2 = {
   rainDance: {
     score: (w, u) => (!mine(w, u, 'spiritBear').length && foesNear(w, u, u.x, u.y, 360).length >= 2 ? 0.7 : 0),
     use(w, u, t, tier) {
-      cast(u, 'cast', 0.8); const life = tier >= 2 ? 10 : 7, k = tier >= 3 ? 1.15 : 1, a0 = t ? ang(u, t) : u.facing;
+      cast(u, 'cast', 0.8); const life = tier >= 2 ? 9 : 6, k = tier >= 3 ? 1.15 : 1, a0 = t ? ang(u, t) : u.facing;
       const spots = [-0.9, -0.3, 0.3, 0.9].map((o) => ({ x: u.x + Math.cos(a0 + o) * 60, y: u.y + Math.sin(a0 + o) * 60 }));
       ['spiritBear', 'spiritWolf', 'spiritEagle', 'spiritBeaver'].forEach((kind, i) => {
         k2(w, { draw: 'spiritRise', x: spots[i].x, y: spots[i].y, r: 30, max: 0.9 });
@@ -1388,7 +1388,7 @@ export const ABILITIES2 = {
       cast(u, 'throw', 0.4);
       const list = [u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo && dist(u.x, u.y, o.x, o.y) < 360).sort((p, q) => opponents(w, u).filter((e) => e.target === q).length - opponents(w, u).filter((e) => e.target === p).length || hpRatio(p) - hpRatio(q)).slice(0, tier >= 3 ? 2 : 1);
       for (const a of list) {
-        const glaze = () => { if (!alive(a)) return; a.regenT = 4; a.regenRate = a.maxHp * (tier >= 2 ? 0.2 : 0.13) / 4; a.regenSrc = u;
+        const glaze = () => { if (!alive(a)) return; a.regenT = 4; a.regenRate = a.maxHp * (tier >= 2 ? 0.17 : 0.11) / 4; a.regenSrc = u;
           k2(w, { draw: 'honeyOn', unit: a, x: a.x, y: a.y, r: a.vr, max: 4 });
           onUnit(w, a, 'honey', 4, { struck(w2, u2, src) { if (src && alive(src) && src !== u2 && !src.fixed && dist(src.x, src.y, u2.x, u2.y) < u2.r + src.r + 60) { addStatus(w2, src, 'entangle', 30, u); addBuff(src, { id: 'honeyed', dur: 2, move: 0.5 }); k2(w2, { draw: 'honeyOn', unit: src, x: src.x, y: src.y, r: src.vr, max: 2 }); } } }); };
         if (a === u) glaze(); else lob(w, u, a.x, a.y, 'honeyJar', null, glaze);
@@ -2957,7 +2957,7 @@ export function kit2Tick(w, u, dt) {
     for (const fd of F) {
       if (fd.until < w.time) { fd.done = true; continue; }
       const who = w.units.find((o) => alive(o) && o.team === u.team && !o.summon && !o.def.cargo && dist(o.x, o.y, fd.x, fd.y) < o.r + 16);
-      if (who) { fd.done = true; fd.f.max = fd.f.t; const amt = who.maxHp * 0.25, room = who.maxHp - who.hp; heal(w, who, amt, u); if (amt > room + 1) ward(w, who, Math.round((amt - room) * 0.8), 10);
+      if (who) { fd.done = true; fd.f.max = fd.f.t; const amt = who.maxHp * 0.2, room = who.maxHp - who.hp; heal(w, who, amt, u); if (amt > room + 1) ward(w, who, Math.round((amt - room) * 0.8), 10);
         k2(w, { draw: 'crumbs', x: who.x, y: who.y, unit: who, max: 0.6, ab: 'hotMeal' }); if (tier >= 3) addBuff(who, { id: 'hotMeal', dur: 8, dealt: 1.2, glow: '#FFB070' }); continue; }
       for (const o of w.units) if (alive(o) && o.team === u.team && !o.summon && !o.def.cargo && hpRatio(o) < 0.75 && dist(o.x, o.y, fd.x, fd.y) < 260 && !(o.target && dist(o.x, o.y, o.target.x, o.target.y) < 120)) o.coinGoal = { x: fd.x, y: fd.y, d: dist(o.x, o.y, fd.x, fd.y) };
     }
