@@ -67,6 +67,8 @@ try {
   const openHero = async (id, pg) => { await page.evaluate(([id, pg]) => CAMP.setMode('hero', { id, page: pg }), [id, pg]); await wait(500); };
   const book = async () => { await page.evaluate(() => { BOOK && BOOK.close && document.getElementById('book') && !document.getElementById('book').classList.contains('hidden') && BOOK.close(); CAMP.setMode('book'); }); await wait(500); };
 
+  const stills = !only.length || only.some((o) => !o.startsWith('clip') && o !== 'traits'); // (films and trait sheets alone skip the stills)
+  if (stills) {
   // ---- the Book's five grids
   await book();
   for (const [i, id] of ['heroes', 'monsters', 'trinkets', 'statuses', 'dungeons'].entries()) {
@@ -175,6 +177,7 @@ try {
     await page.evaluate(() => document.querySelector('[data-b="close"]').click()); await wait(300);
   }
 
+  }
   // ---- every trait's scene, one still each (a moment after it first acts)
   if (traits) {
     const ids = await page.evaluate(async () => Object.keys((await import('./js/heroes.js')).HEROES));
@@ -208,7 +211,7 @@ try {
     if (want('clip-swipe')) {
       await page.evaluate(() => { CAMP.setMode('ground'); CAMP.setMode('hero', { id: 'paladin', page: 'main' }); }); await wait(700);
       // four swipes left through the hero's pages, one back, then a tap on a tab
-      const swipes = [[0.5, 330, 60], [2.0, 330, 60], [4.2, 330, 60], [6.0, 80, 330]];
+      const swipes = [[0.5, 330, 60], [2.0, 384, 110], [4.2, 330, 60], [6.0, 80, 330]]; // (the second starts at the screen's edge: it is over the skill web)
       await film('clip-swipe-hero-pages', 8.2, async (t, dt) => {
         await page.evaluate((dt) => { const p = UNIT.player; if (p && p.stage && UNIT.pager.id === 'preview') { p.stop(); p.advance(dt, dt); } }, dt);
         const s = swipes.find(([t0]) => t >= t0 && t < t0 + 0.5);

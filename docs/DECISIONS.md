@@ -638,4 +638,5 @@ structure is in `docs/UI-v4.md`; what was decided, and what was read into the de
 - **A stage fix that came with it**: the target that steps up to an elite or major whose move hasn't come is now held
   there (a turret's shots kept knocking it out of reach), so those moves show in every loop again.
 - **Not done**: opening a unit from the battle *picker's* tiles (a tap there adds the unit; the stack's row opens the
-  page instead). The skill web can't be swiped off (one finger pans it): leave it by the tabs.
+  page instead). Over the skill web one finger pans the web, so there a swipe turns the page only from the screen's left or right
+  edge (44 px), or on the tabs. **Open: two fingers for the web and one for the pages instead?**

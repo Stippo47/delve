@@ -91,7 +91,7 @@ function build(page) {
   tree = null;
   el.dataset.kind = st.kind;
   el.innerHTML = `<div class="un"><header class="un-bar"></header><div class="un-rank hidden"></div><div class="un-pages"></div></div>`;
-  pager = makePager(el.querySelector('.un-pages'), { tabs: tabsOf(), at: pageIndex(page || 0), onChange: (i, id) => { cue('tap'); if (id === 'preview') player.resume(); } });
+  pager = makePager(el.querySelector('.un-pages'), { tabs: tabsOf(), at: pageIndex(page || 0), onChange: (i, id) => { cue('tap'); if (id === 'preview') player.resume(); else player.stop(); } });
   const pv = pager.page('preview');
   pv.innerHTML = `<div class="pv"><div class="pv-stage"><canvas class="pv-cv"></canvas><span class="pv-lock hidden">${I.lock}</span><i class="pv-prog"><b></b></i></div>
     <div class="pv-cap"></div><div class="pv-moves"></div><div class="pv-dial"></div></div>`;

@@ -5,9 +5,11 @@
 //   pg.pages[i]            each page's element, to fill
 //   pg.go(i, animate)      to a page
 //   pg.index / pg.id       where it is
-// A sideways drag turns the page only if it starts sideways (a page still scrolls up and down), and never from inside
-// something that owns its own drags: mark that with data-noswipe (the skill web pans under one finger).
+// A sideways drag turns the page only if it starts sideways (a page still scrolls up and down). Something that owns
+// its own drags is marked data-noswipe (the skill web pans under one finger): over it, a drag turns the page only when
+// it starts within EDGE px of the left or right side of the screen; anywhere else on it the drag is its own.
 // iPhone Safari: the row is moved with a transform; the pages keep their own vertical scrolling (touch-action: pan-y).
+const EDGE = 44;
 export function makePager(host, opts) {
   const tabs = opts.tabs, n = tabs.length;
   host.classList.add('pg');
@@ -33,7 +35,11 @@ export function makePager(host, opts) {
   strip.addEventListener('click', (e) => { const t = e.target.closest('[data-pg]'); if (t) go(+t.dataset.pg); });
   const start = (e) => {
     if (drag || (e.pointerType === 'mouse' && e.button !== 0)) return;
-    if (e.target.closest && e.target.closest('[data-noswipe]')) return;
+    if (e.target.closest && e.target.closest('[data-noswipe]')) {
+      const r = view.getBoundingClientRect();
+      if (e.clientX > r.left + EDGE && e.clientX < r.right - EDGE) return;
+      e.stopPropagation(); // from the edge: the page's, so the thing under it never sees this finger
+    }
     drag = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), on: false, dx: 0, lx: e.clientX, lt: performance.now(), v: 0 };
   };
   const move = (e) => {
@@ -66,7 +72,7 @@ export function makePager(host, opts) {
     setTimeout(() => view.removeEventListener('click', eat, { capture: true }), 60);
   };
   for (const el of [view, strip]) {
-    el.addEventListener('pointerdown', start);
+    el.addEventListener('pointerdown', start, el === view ? { capture: true } : false);
     el.addEventListener('pointermove', move);
     el.addEventListener('pointerup', end);
     el.addEventListener('pointercancel', end);

@@ -37,7 +37,8 @@ same `acts` on, so a hero opened from the Book can be equipped and upgraded ther
 A strip of tabs on top that also taps; under it the pages sit in a row. One finger sideways drags the row with the
 finger; on release it snaps to the nearest page (past a fifth of the width, or a flick). The gold bar under the tabs
 moves with the row. A page still scrolls up and down by itself. The skill web keeps its own one-finger pan
-(`data-noswipe`), so from the Upgrades page you leave by the tabs (they swipe too).
+(`data-noswipe`): over it, a drag turns the page only when it starts within 44 px of the left or right side of the
+screen (or on the tabs); anywhere else it pans the web.
 
 ### A hero: Main · Upgrades · Preview · Stats
 
