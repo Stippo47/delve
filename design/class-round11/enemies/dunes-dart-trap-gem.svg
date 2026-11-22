@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- DART TRAP (round 10): a trap set in a tomb wall, seen from above, built like the Foundry's wall turrets: a carved sandstone block built out from the wall with a turquoise band along its lip and a round socket in its front edge (#back: it stays on the wall), and half in the socket the part that turns to aim: a round stone head with a gold winged sun carved on it and a dark slot of a mouth with three darts in it, points out. No eyes. Parts: #back (the block), #body (the head). Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
+<defs>
+<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="s1" d="M 22 36 L 178 36 L 178 90 Q 178 104 164 104 L 36 104 Q 22 104 22 90 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E0CEAE"/><stop offset="1" stop-color="#CAA86D"/></linearGradient>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#795C29" stop-opacity="0"/><stop offset="1" stop-color="#795C29" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c1"><use href="#s1"/></clipPath>
+<path id="s2" d="M 81 138 L 91 138 L 86 160 Z"/>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#DFE1E6"/><stop offset="1" stop-color="#A7AEBB"/></linearGradient>
+<path id="s3" d="M 95 138 L 105 138 L 100 160 Z"/>
+<path id="s4" d="M 109 138 L 119 138 L 114 160 Z"/>
+<path id="s5" d="M 54 104 A 46 46 0 1 0 146 104 A 46 46 0 1 0 54 104 Z"/>
+<clipPath id="u5"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4"/></clipPath>
+<linearGradient id="g4" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E6D7BC"/><stop offset="1" stop-color="#CEAF78"/></linearGradient>
+<linearGradient id="g5" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7F612C" stop-opacity="0"/><stop offset="1" stop-color="#7F612C" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c5"><use href="#s5"/></clipPath>
+<path id="s6" d="M 94 96 C 93.3 93.4 98.6 74 100 74 C 101.4 74 106.7 93.4 106 96 C 105.3 98.6 94.7 98.6 94 96 Z"/>
+<linearGradient id="g6" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F4C056"/><stop offset="1" stop-color="#F5A80D"/></linearGradient>
+<linearGradient id="g7" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#855902" stop-opacity="0"/><stop offset="1" stop-color="#855902" stop-opacity="0.42"/></linearGradient>
+<path id="s7" d="M 94 96 C 93.3 93.4 98.6 74 100 74 C 101.4 74 106.7 93.4 106 96 C 105.3 98.6 94.7 98.6 94 96 Z"/>
+<path id="s8" d="M 94 96 C 93.3 93.4 98.6 74 100 74 C 101.4 74 106.7 93.4 106 96 C 105.3 98.6 94.7 98.6 94 96 Z"/>
+<path id="s9" d="M 94 96 C 93.3 93.4 98.6 74 100 74 C 101.4 74 106.7 93.4 106 96 C 105.3 98.6 94.7 98.6 94 96 Z"/>
+<path id="s10" d="M 94 96 C 93.3 93.4 98.6 74 100 74 C 101.4 74 106.7 93.4 106 96 C 105.3 98.6 94.7 98.6 94 96 Z"/>
+<path id="s11" d="M 87 100 A 13 13 0 1 0 113 100 A 13 13 0 1 0 87 100 Z"/>
+<clipPath id="u11"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4"/><use href="#s5"/><use href="#s6" transform="rotate(-70 100 100)"/><use href="#s7" transform="rotate(-35 100 100)"/><use href="#s8" transform="rotate(0 100 100)"/><use href="#s9" transform="rotate(35 100 100)"/><use href="#s10" transform="rotate(70 100 100)"/></clipPath>
+<path id="s12" d="M 91 100 A 9 9 0 1 0 109 100 A 9 9 0 1 0 91 100 Z"/>
+<linearGradient id="g8" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#DD5151"/><stop offset="1" stop-color="#C92323"/></linearGradient>
+<linearGradient id="g9" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6B1010" stop-opacity="0"/><stop offset="1" stop-color="#6B1010" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c12"><use href="#s12"/></clipPath>
+</defs>
+<g id="sprite" filter="url(#outline)">
+<g id="back" data-pivot="100 100"><!-- the block (stays on the wall) -->
+<use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/><g clip-path="url(#c1)"><path d="M 20 92 L 180 92 L 180 106 L 20 106 Z" fill="#3FB8A8"/><path d="M 40 52 L 40 68 M 48 52 L 56 60 L 48 68 M 152 52 L 152 68 M 160 52 L 160 68 M 34 80 L 60 80 M 140 80 L 166 80" fill="none" stroke="#8E7652" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/><path d="M 48 104 A 52 52 0 1 0 152 104 A 52 52 0 1 0 48 104 Z" fill="#3A2E28"/><path d="M 36 44 A 24 5 0 1 0 84 44 A 24 5 0 1 0 36 44 Z" fill="#FFFFFF" opacity="0.25"/></g>
+</g>
+<g id="body">
+<use href="#s2" fill="url(#g3)"/>
+<use href="#s3" fill="url(#g3)"/>
+<use href="#s4" fill="url(#g3)"/>
+<g clip-path="url(#u5)"><use href="#s5" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s5" fill="url(#g4)"/><use href="#s5" fill="url(#g5)"/><g clip-path="url(#c5)"><circle cx="100" cy="104" r="38" fill="none" stroke="#8E7652" stroke-width="3" opacity="0.45"/><path d="M 82 126.5 H 118 A 7 7 0 0 1 125 133.5 V 134.5 A 7 7 0 0 1 118 141.5 H 82 A 7 7 0 0 1 75 134.5 V 133.5 A 7 7 0 0 1 82 126.5 Z" fill="#2E2428"/><path d="M 68 76 A 14 7 0 1 0 96 76 A 14 7 0 1 0 68 76 Z" fill="#FFFFFF" opacity="0.3" transform="rotate(-20 82 76)"/></g>
+<use href="#s6" transform="rotate(-70 100 100)" fill="url(#g6)"/><use href="#s6" transform="rotate(-70 100 100)" fill="url(#g7)"/>
+<use href="#s7" transform="rotate(-35 100 100)" fill="url(#g6)"/><use href="#s7" transform="rotate(-35 100 100)" fill="url(#g7)"/>
+<use href="#s8" transform="rotate(0 100 100)" fill="url(#g6)"/><use href="#s8" transform="rotate(0 100 100)" fill="url(#g7)"/>
+<use href="#s9" transform="rotate(35 100 100)" fill="url(#g6)"/><use href="#s9" transform="rotate(35 100 100)" fill="url(#g7)"/>
+<use href="#s10" transform="rotate(70 100 100)" fill="url(#g6)"/><use href="#s10" transform="rotate(70 100 100)" fill="url(#g7)"/>
+<g clip-path="url(#u11)"><use href="#s11" transform="translate(0 2) " fill="#2B2230" opacity="0.3"/></g><use href="#s11" fill="url(#g6)"/><use href="#s11" fill="url(#g7)"/>
+<use href="#s12" fill="url(#g8)"/><use href="#s12" fill="url(#g9)"/><g clip-path="url(#c12)"><circle cx="97" cy="97" r="3" fill="#FFD0C8"/></g>
+</g>
+</g>
+</svg>
