@@ -234,8 +234,9 @@ if (boss) {
     const m = boss.moves[k] && boss.moves[k].boss; if (!m) continue;
     const tot = Object.values(m.dmg).reduce((a, b) => a + b, 0), per = m.up / 60;
     const declared = ((stat && stat[k] && stat[k].due) || []).map((x) => 'mv:' + x);
+    const fz = (mv) => m.fires[mv] || Object.entries(m.fires).filter(([q]) => q.endsWith('/' + mv)).reduce((a, [, n]) => a + n, 0);
     const keys = [...new Set([...Object.keys(m.fires), ...Object.keys(m.dmg), ...declared])].filter((mv) => !mv.includes('/') && !NOT_MOVES.has(mv));
-    lines.push(`**${nm(k)}**: ` + keys.sort((a, b) => (m.dmg[b] || 0) - (m.dmg[a] || 0)).map((mv) => `${lab(mv)} ${m.fires[mv] ? f1(m.fires[mv] / per) + '/min' : mv.startsWith('mv:') || mv.startsWith('ab:') ? '**never**' : ''}${m.dmg[mv] ? ' ' + pct(m.dmg[mv] / tot) : ''}`).join(', '));
+    lines.push(`**${nm(k)}**: ` + keys.sort((a, b) => (m.dmg[b] || 0) - (m.dmg[a] || 0)).map((mv) => `${lab(mv)} ${fz(mv) ? f1(fz(mv) / per) + '/min' + (m.fires[mv] ? '' : ' (in its second form)') : mv.startsWith('mv:') || mv.startsWith('ab:') ? '**never**' : ''}${m.dmg[mv] ? ' ' + pct(m.dmg[mv] / tot) : ''}`).join(', '));
   }
   out.push('Boss moves (fires a minute, share of the boss side\'s damage; "made:" is what its adds did):\n\n' + lines.join('\n\n') + '\n');
 }
