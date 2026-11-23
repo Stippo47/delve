@@ -1,0 +1,1780 @@
+{
+ "wolf": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [
+   "howl",
+   "lunge"
+  ],
+  "ability": null
+ },
+ "slime": {
+  "dungeon": "wildwood",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": null
+ },
+ "goblin": {
+  "dungeon": "wildwood",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": "dash"
+ },
+ "goblinOrange": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [],
+  "ability": "dash"
+ },
+ "slimeBig": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [
+   "spit"
+  ],
+  "ability": null
+ },
+ "slimePoison": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "onSplit"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "bandit": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [
+   "bash"
+  ],
+  "ability": null
+ },
+ "banditDagger": {
+  "dungeon": "wildwood",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": "dash"
+ },
+ "banditSpear": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [
+   "lunge"
+  ],
+  "ability": null
+ },
+ "banditTorch": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [
+   "torch"
+  ],
+  "ability": null
+ },
+ "banditAxe": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [
+   "axe"
+  ],
+  "ability": null
+ },
+ "banditGreat": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [
+   "sweep"
+  ],
+  "ability": null
+ },
+ "poacher": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [
+   "net"
+  ],
+  "ability": null
+ },
+ "banditBrute": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [
+   "slam"
+  ],
+  "ability": null
+ },
+ "ent": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [
+   "roots"
+  ],
+  "ability": null
+ },
+ "sproutling": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [
+   "dash"
+  ],
+  "ability": null
+ },
+ "wisp": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [
+   "blink",
+   "mend"
+  ],
+  "ability": null
+ },
+ "direWolf": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [
+   "howl",
+   "lunge",
+   "pin"
+  ],
+  "ability": null
+ },
+ "boar": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [
+   "charge"
+  ],
+  "ability": null
+ },
+ "alpha": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "wildwood.js",
+   "enemies.js"
+  ],
+  "due": [
+   "howl",
+   "pack",
+   "pin",
+   "rend"
+  ],
+  "ability": null
+ },
+ "banditChief": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "wildwood.js",
+   "enemies.js"
+  ],
+  "due": [
+   "knives",
+   "smoke",
+   "whistle"
+  ],
+  "ability": null
+ },
+ "elderEnt": {
+  "dungeon": "wildwood",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "elderent.js"
+  ],
+  "due": [
+   "branch",
+   "cage",
+   "grove",
+   "roots",
+   "sweep"
+  ],
+  "ability": null
+ },
+ "mouse": {
+  "dungeon": "warren",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": "dash"
+ },
+ "goblinSpear": {
+  "dungeon": "warren",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [
+   "spear"
+  ],
+  "ability": "dash"
+ },
+ "goblinBomber": {
+  "dungeon": "warren",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [
+   "bomb"
+  ],
+  "ability": "dash"
+ },
+ "dynamouse": {
+  "dungeon": "warren",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [],
+  "ability": "dash"
+ },
+ "hobgoblin": {
+  "dungeon": "warren",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": null
+ },
+ "orc": {
+  "dungeon": "warren",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": "charge"
+ },
+ "orcShaman": {
+  "dungeon": "warren",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "enemies.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "wolfRider": {
+  "dungeon": "warren",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [
+   "charge"
+  ],
+  "ability": null
+ },
+ "drummer": {
+  "dungeon": "warren",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [
+   "beat"
+  ],
+  "ability": null
+ },
+ "goblinSuicide": {
+  "dungeon": "warren",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "frostShaman": {
+  "dungeon": "warren",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [
+   "ball",
+   "totem"
+  ],
+  "ability": null
+ },
+ "troll": {
+  "dungeon": "warren",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "enemies.js"
+  ],
+  "due": [
+   "boulder",
+   "recall"
+  ],
+  "ability": null
+ },
+ "rockTroll": {
+  "dungeon": "warren",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "foes9.js",
+   "enemies.js"
+  ],
+  "due": [
+   "boulder",
+   "recall"
+  ],
+  "ability": null
+ },
+ "ogre": {
+  "dungeon": "warren",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "warboss": {
+  "dungeon": "warren",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "enemies.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "chieftain": {
+  "dungeon": "warren",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "boss-chieftain.js"
+  ],
+  "due": [
+   "axe",
+   "charge",
+   "chop",
+   "mice",
+   "spin"
+  ],
+  "ability": null
+ },
+ "rat": {
+  "dungeon": "sewers",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": "dash"
+ },
+ "ratPlague": {
+  "dungeon": "sewers",
+  "hooks": [
+   "onDeath"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [],
+  "ability": "dash"
+ },
+ "slimeSludge": {
+  "dungeon": "sewers",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "slimeSmall": {
+  "dungeon": "sewers",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": null
+ },
+ "leechBlood": {
+  "dungeon": "sewers",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "lizardBlade": {
+  "dungeon": "sewers",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": "dash"
+ },
+ "lizardman": {
+  "dungeon": "sewers",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "enemies.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "crab": {
+  "dungeon": "sewers",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [
+   "bub"
+  ],
+  "ability": null
+ },
+ "crabBlue": {
+  "dungeon": "sewers",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [
+   "bub"
+  ],
+  "ability": null
+ },
+ "croc": {
+  "dungeon": "sewers",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [
+   "bite"
+  ],
+  "ability": null
+ },
+ "leechBrain": {
+  "dungeon": "sewers",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "crabGreen": {
+  "dungeon": "sewers",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [
+   "bub"
+  ],
+  "ability": null
+ },
+ "ratKing": {
+  "dungeon": "sewers",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "spiderHunter": {
+  "dungeon": "sewers",
+  "hooks": [
+   "onDeath"
+  ],
+  "files": [
+   "foes.js"
+  ],
+  "due": [],
+  "ability": "dash"
+ },
+ "fireSlime": {
+  "dungeon": "sewers",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "foes.js"
+  ],
+  "due": [
+   "drip"
+  ],
+  "ability": null
+ },
+ "lizardChief": {
+  "dungeon": "sewers",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "enemies.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "greatOoze": {
+  "dungeon": "sewers",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "boss-ooze.js"
+  ],
+  "due": [
+   "brood",
+   "heave",
+   "hop",
+   "roll"
+  ],
+  "ability": null
+ },
+ "rattler": {
+  "dungeon": "crypt",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": null
+ },
+ "rattlerBow": {
+  "dungeon": "crypt",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": null
+ },
+ "rattlerHarrow": {
+  "dungeon": "crypt",
+  "hooks": [
+   "onDeath"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "ghost": {
+  "dungeon": "crypt",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "enemies.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "rattlerSpear": {
+  "dungeon": "crypt",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": "dash"
+ },
+ "rattlerMace": {
+  "dungeon": "crypt",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": null
+ },
+ "rattlerGold": {
+  "dungeon": "crypt",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes9.js"
+  ],
+  "due": [
+   "bones"
+  ],
+  "ability": null
+ },
+ "gaper": {
+  "dungeon": "crypt",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "enemies.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "banshee": {
+  "dungeon": "crypt",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes.js"
+  ],
+  "due": [
+   "wail"
+  ],
+  "ability": null
+ },
+ "brute": {
+  "dungeon": "crypt",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "enemies.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "graveWarden": {
+  "dungeon": "crypt",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "enemies.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "boneKing": {
+  "dungeon": "crypt",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "boss.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "frostWolf": {
+  "dungeon": "frost",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "wildwood.js"
+  ],
+  "due": [
+   "howl",
+   "lunge"
+  ],
+  "ability": null
+ },
+ "bat": {
+  "dungeon": "frost",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes.js"
+  ],
+  "due": [],
+  "ability": "dash"
+ },
+ "snowman": {
+  "dungeon": "frost",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes.js"
+  ],
+  "due": [
+   "snow"
+  ],
+  "ability": null
+ },
+ "slimeIce": {
+  "dungeon": "frost",
+  "hooks": [
+   "onDeath",
+   "onHop"
+  ],
+  "files": [
+   "foes10.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "spiritFrost": {
+  "dungeon": "frost",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "repick"
+  ],
+  "ability": null
+ },
+ "spiderFrost": {
+  "dungeon": "frost",
+  "hooks": [
+   "onDeath"
+  ],
+  "files": [
+   "foes10.js"
+  ],
+  "due": [],
+  "ability": "dash"
+ },
+ "spiderMomma": {
+  "dungeon": "frost",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "foes.js"
+  ],
+  "due": [
+   "web"
+  ],
+  "ability": null
+ },
+ "frostWraith": {
+  "dungeon": "frost",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes10.js"
+  ],
+  "due": [
+   "ice"
+  ],
+  "ability": null
+ },
+ "yeti": {
+  "dungeon": "frost",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "foes10.js"
+  ],
+  "due": [
+   "heave",
+   "look",
+   "pack",
+   "shove"
+  ],
+  "ability": null
+ },
+ "frostGiant": {
+  "dungeon": "frost",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "foes.js",
+   "enemies.js"
+  ],
+  "due": [
+   "storm",
+   "volley"
+  ],
+  "ability": null
+ },
+ "winterQueen": {
+  "dungeon": "frost",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "boss-queen.js"
+  ],
+  "due": [
+   "fan",
+   "images",
+   "lattice",
+   "nova",
+   "wall"
+  ],
+  "ability": null
+ },
+ "imp": {
+  "dungeon": "ember",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes.js"
+  ],
+  "due": [
+   "fire"
+  ],
+  "ability": null
+ },
+ "cinderBat": {
+  "dungeon": "ember",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes10.js"
+  ],
+  "due": [
+   "dive"
+  ],
+  "ability": null
+ },
+ "hellhound": {
+  "dungeon": "ember",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes10.js"
+  ],
+  "due": [
+   "breath",
+   "howl",
+   "lunge",
+   "trail"
+  ],
+  "ability": null
+ },
+ "spiritFire": {
+  "dungeon": "ember",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "repick"
+  ],
+  "ability": null
+ },
+ "devil": {
+  "dungeon": "ember",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": "dash"
+ },
+ "dragonborn": {
+  "dungeon": "ember",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": "charge"
+ },
+ "spiderFire": {
+  "dungeon": "ember",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "foes10.js"
+  ],
+  "due": [
+   "spit"
+  ],
+  "ability": "dash"
+ },
+ "succubus": {
+  "dungeon": "ember",
+  "hooks": [
+   "brain",
+   "struck"
+  ],
+  "files": [
+   "foes.js"
+  ],
+  "due": [
+   "kiss"
+  ],
+  "ability": "dash"
+ },
+ "demon": {
+  "dungeon": "ember",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "pitLord": {
+  "dungeon": "ember",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "foes10.js",
+   "enemies.js"
+  ],
+  "due": [
+   "nova",
+   "rifts",
+   "whip"
+  ],
+  "ability": null
+ },
+ "archfiend": {
+  "dungeon": "ember",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "foes.js",
+   "enemies.js"
+  ],
+  "due": [
+   "breath",
+   "nova",
+   "trident"
+  ],
+  "ability": null
+ },
+ "cinder": {
+  "dungeon": "ember",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "boss-cinder.js"
+  ],
+  "due": [
+   "bite",
+   "call",
+   "lash",
+   "ring",
+   "rush",
+   "scorch"
+  ],
+  "ability": null
+ },
+ "cherub": {
+  "dungeon": "spire",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": null
+ },
+ "angel": {
+  "dungeon": "spire",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": "dash"
+ },
+ "sunBlade": {
+  "dungeon": "spire",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes10.js"
+  ],
+  "due": [
+   "pass"
+  ],
+  "ability": null
+ },
+ "choirSprite": {
+  "dungeon": "spire",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes10.js"
+  ],
+  "due": [
+   "song"
+  ],
+  "ability": null
+ },
+ "seraph": {
+  "dungeon": "spire",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": null
+ },
+ "angelFallen": {
+  "dungeon": "spire",
+  "hooks": [],
+  "files": [],
+  "due": [],
+  "ability": "dash"
+ },
+ "spiritHeal": {
+  "dungeon": "spire",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "repick"
+  ],
+  "ability": null
+ },
+ "gildedGolem": {
+  "dungeon": "spire",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "stomp"
+  ],
+  "ability": null
+ },
+ "golem": {
+  "dungeon": "spire",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "stomp"
+  ],
+  "ability": null
+ },
+ "spiritWard": {
+  "dungeon": "spire",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "repick"
+  ],
+  "ability": null
+ },
+ "heraldLight": {
+  "dungeon": "spire",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foes10.js"
+  ],
+  "due": [
+   "gloom",
+   "part",
+   "spear"
+  ],
+  "ability": null
+ },
+ "radiant": {
+  "dungeon": "spire",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "foes.js",
+   "enemies.js"
+  ],
+  "due": [
+   "raise",
+   "ring",
+   "smite"
+  ],
+  "ability": null
+ },
+ "gildedSeraph": {
+  "dungeon": "spire",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "boss-angel.js"
+  ],
+  "due": [
+   "chains",
+   "gaze",
+   "horns",
+   "host",
+   "smite",
+   "wheels"
+  ],
+  "ability": null
+ },
+ "scarab": {
+  "dungeon": "dunes",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "dunes.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "cobra": {
+  "dungeon": "dunes",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "dunes.js"
+  ],
+  "due": [
+   "rear",
+   "spit"
+  ],
+  "ability": null
+ },
+ "scarabGold": {
+  "dungeon": "dunes",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "dunes.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "sandSerpent": {
+  "dungeon": "dunes",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "dunes.js",
+   "families.js"
+  ],
+  "due": [
+   "strike"
+  ],
+  "ability": null
+ },
+ "spiritHaste": {
+  "dungeon": "dunes",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "repick"
+  ],
+  "ability": null
+ },
+ "jackal": {
+  "dungeon": "dunes",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "dunes.js"
+  ],
+  "due": [
+   "side"
+  ],
+  "ability": null
+ },
+ "mummy": {
+  "dungeon": "dunes",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "dunes.js"
+  ],
+  "due": [
+   "wrap"
+  ],
+  "ability": null
+ },
+ "dartTrap": {
+  "dungeon": "dunes",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "fire",
+   "look"
+  ],
+  "ability": null
+ },
+ "spiritPoison": {
+  "dungeon": "dunes",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "repick"
+  ],
+  "ability": null
+ },
+ "sandMage": {
+  "dungeon": "dunes",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "dunes.js"
+  ],
+  "due": [
+   "devil",
+   "sand"
+  ],
+  "ability": null
+ },
+ "sandWurm": {
+  "dungeon": "dunes",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "boss-wurm.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "gearSprite": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "cogSprite": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "bombBot": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "bee": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [
+   "dash"
+  ],
+  "ability": null
+ },
+ "wasp": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [
+   "sting"
+  ],
+  "ability": null
+ },
+ "drillBot": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "sawBlade": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "automaton": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "turretSteam": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "fire",
+   "look"
+  ],
+  "ability": null
+ },
+ "turretFlame": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "fire",
+   "look"
+  ],
+  "ability": null
+ },
+ "turretGun": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "fire",
+   "look"
+  ],
+  "ability": null
+ },
+ "mortar": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "fire",
+   "look"
+  ],
+  "ability": null
+ },
+ "autoBomb": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [],
+  "ability": null
+ },
+ "repairDrone": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [
+   "mend"
+  ],
+  "ability": null
+ },
+ "beeBronze": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [
+   "dash"
+  ],
+  "ability": null
+ },
+ "waspBronze": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [
+   "sting"
+  ],
+  "ability": null
+ },
+ "hornetBronze": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [
+   "sting"
+  ],
+  "ability": null
+ },
+ "teslaCoil": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [
+   "zap"
+  ],
+  "ability": null
+ },
+ "foundrySmith": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [
+   "slam"
+  ],
+  "ability": null
+ },
+ "turretLaser": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "fire",
+   "look"
+  ],
+  "ability": null
+ },
+ "mortarFire": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "fire",
+   "look"
+  ],
+  "ability": null
+ },
+ "mortarPoison": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "fire",
+   "look"
+  ],
+  "ability": null
+ },
+ "chainCrawler": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "foundry.js",
+   "families.js"
+  ],
+  "due": [
+   "lunge"
+  ],
+  "ability": null
+ },
+ "beeSteel": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [
+   "dash"
+  ],
+  "ability": null
+ },
+ "waspSteel": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [
+   "sting"
+  ],
+  "ability": null
+ },
+ "hornetSteel": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain"
+  ],
+  "files": [
+   "foundry.js"
+  ],
+  "due": [
+   "sting"
+  ],
+  "ability": null
+ },
+ "spiritShock": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "families.js"
+  ],
+  "due": [
+   "repick"
+  ],
+  "ability": null
+ },
+ "greatEngine": {
+  "dungeon": "foundry",
+  "hooks": [
+   "brain",
+   "onDeath"
+  ],
+  "files": [
+   "boss-engine.js"
+  ],
+  "due": [
+   "beam",
+   "hand",
+   "press",
+   "swat",
+   "whirl"
+  ],
+  "ability": null
+ }
+}
