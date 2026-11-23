@@ -1,14 +1,15 @@
 // The status audit's fights. Every matchup is a mirror; every condition runs on the same seeds, with the fed side
 // Red on even seeds and Blue on odd ones (the two sides start in different places).
-//   node tools/audit/statuses/run.mjs [--only id,id] [--seeds 40] [--cond prefix]
+//   node tools/audit/statuses/run.mjs [--only id,id] [--seeds 40] [--cond prefix-or-suffix,...] [--tag name]
+// (with --tag the file is fights-<matchup>-<tag>.json; analyze.mjs merges every file of a matchup)
 // Writes docs/audit/data/statuses/fights-<matchup>.json (per condition: each seed's win and margin, and means).
 import { runFight } from './lib.mjs';
 import { MATCHUPS, conditions } from './plan.mjs';
 import fs from 'node:fs';
 const args = process.argv.slice(2), opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
-const only = opt('only', null), nSeeds = +opt('seeds', 40), condP = opt('cond', null);
+const only = opt('only', null), nSeeds = +opt('seeds', 40), condP = opt('cond', null), tag = opt('tag', '');
 const list = MATCHUPS.filter((m) => !only || only.split(',').includes(m.id));
-const C = conditions().filter((c) => !condP || c.id === 'control' || c.id.startsWith(condP));
+const C = conditions().filter((c) => !condP || (condP.split(',').some((p) => c.id.startsWith(p) || c.id.endsWith(p))));
 const r2 = (x) => (x == null ? null : Math.round(x * 1000) / 1000);
 fs.mkdirSync('docs/audit/data/statuses', { recursive: true });
 for (const M of list) {
@@ -39,6 +40,6 @@ for (const M of list) {
       firstBurst: meanNN((r) => r.firstBurst), meanGap: meanNN((r) => r.meanGap), per };
   }
   out.ms = Date.now() - t0; out.fights = fights;
-  fs.writeFileSync(`docs/audit/data/statuses/fights-${M.id}.json`, JSON.stringify(out));
+  fs.writeFileSync(`docs/audit/data/statuses/fights-${M.id}${tag ? '-' + tag : ''}.json`, JSON.stringify(out));
   console.log(M.id.padEnd(14), fights, 'fights', (out.ms / 1000).toFixed(0) + 's');
 }

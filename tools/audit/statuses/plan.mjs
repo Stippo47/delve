@@ -27,7 +27,7 @@ export const LADDER = [
 ];
 export const ladderValue = (l) => (l.side === 'other' ? l.mul - 1 : -(l.mul - 1)); // +: worth that much bonus damage to the opponent
 
-export const HOLD = 85;
+export const HOLD = 85, FLAT = 25;
 export function conditions() {
   const C = [{ id: 'control' }];
   for (const st of STATUSES) {
@@ -38,6 +38,8 @@ export function conditions() {
     }
     C.push({ id: `${st}:hold`, status: st, level: 'hold', feed: { type: st, hold: HOLD } });
   }
+  // every status at one flat rate (points a second), so the statuses compare point for point as well
+  for (const st of STATUSES) C.push({ id: `${st}:flat`, status: st, level: 'flat', feed: { type: st, rate: FLAT } });
   for (const l of LADDER) C.push({ id: `bonus:${l.side}:${l.mul}`, bonus: l, value: ladderValue(l) });
   // pairs worth a look (both at their medium rate)
   for (const [x, y] of [['wet', 'chill'], ['wet', 'shock'], ['burn', 'chill'], ['wet', 'poison'], ['curse', 'bleed'], ['shock', 'stagger']])
