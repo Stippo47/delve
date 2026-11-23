@@ -87,7 +87,6 @@ if (mode === 'all' || mode === 'measured') {
   console.log('\n## Measured, per status and rate (all 26 matchups; per fed unit; medians of each matchup\'s change vs its control)\n');
   console.log('| status | rate | feed /s | bursts a fight | a burst every | first burst | s in burst state | share of fight it couldn\'t strike (control) | status\'s own dmg a fight (share of all it took) | its damage dealt /s | blows landed /s | abilities used /s | heal lost (healers) | fight length (control) | worth |');
   console.log('|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|');
-  const HEALERS = ['cleric-t1', 'cleric-t3', 'bard-t1', 'bard-t3', 'trio-t1', 'trio-t3'];
   for (const st of STATUSES) for (const lv of LEVELS) {
     const R = S.status[st] && S.status[st][lv]; if (!R) continue;
     const all = Object.values(R);
@@ -95,7 +94,7 @@ if (mode === 'all' || mode === 'measured') {
     const own = (r) => r.per[st].stDmg + (st === 'curse' ? r.hexSelf : 0) + (st === 'entangle' ? r.entWalk : 0);
     const ns = all.reduce((x, r) => x + r.noStrike / r.n, 0) / timeSum, nsC = all.reduce((x, r) => x + r.noStrikeC / r.n, 0) / all.reduce((x, r) => x + r.timeC, 0);
     const ratio = (f, g) => med(all.filter((r) => g(r) > 0).map((r) => f(r) / g(r) - 1));
-    const hl = HEALERS.map((id) => R[id]).filter(Boolean), lost = hl.reduce((x, r) => x + r.healLost, 0), ask = hl.reduce((x, r) => x + (r.healAsk || 0), 0);
+    const hl = all.filter((r) => r.healC > 50) /* (the matchups that heal: a Cleric's, mostly) */, lost = hl.reduce((x, r) => x + r.healLost, 0), ask = hl.reduce((x, r) => x + (r.healAsk || 0), 0);
     console.log(`| ${st} | ${lv} | ${lv === 'hold' ? 'kept at 85' : lv === 'flat' ? 25 : RATES[st][lv].rate} | ${f1(burstsU / all.length)} | ${burstsU > 0.5 ? f1(timeSum / burstsU) + ' s' : 'never'} | ${f1(avg(all.filter((r) => r.firstBurst != null).map((r) => r.firstBurst)))} s | ${f1(avg(all.map((r) => r.per[st].inBurst / r.n)))} | ${pct(ns)} (${pct(nsC)}) | ${f0(avg(all.map((r) => own(r) / r.n)))} (${pct(avg(all.map((r) => own(r) / Math.max(1, r.taken))))}) | ${pct(ratio((r) => r.dealtPS, (r) => r.dealtPSC))} | ${pct(ratio((r) => r.blows / r.time, (r) => r.blowsC / r.timeC))} | ${pct(ratio((r) => r.casts / r.time, (r) => r.castsC / r.timeC))} | ${f0(lost / hl.length)} (${pct(ask ? lost / ask : 0)}) | ${f0(avg(all.map((r) => r.time)))} s (${f0(avg(all.map((r) => r.timeC)))}) | ${worthStr(all)} |`);
   }
 }
