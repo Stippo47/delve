@@ -958,3 +958,21 @@ hero, with every clip: `docs/HEROES-r15.md`. The numbers: `docs/balance/r15-newh
 - Deaf is deaf to everything: a Deaf hero gets nothing from its own side's sound effects either (the Bard's songs,
   rallying shouts), as well as being immune to the enemy's.
 - No console port for now. An engine port was discussed (Godot the better fit); not decided.
+
+## Round 16: the balance audit (2026-11-23)
+The designer: pin every open idea and move on to balance. Go through every hero, enemy and status for how strong they
+are against each other; before any tournament, test every hero in different scenarios (1v1, a foe with charged
+attacks, a swarm, a melee + ranged duo, a normal dungeon level, with an ally) for how often each ability fires, with a
+full breakdown per ability against the weapon (damage, blocked, healing, kills, statuses applied, status damage, time
+under statuses and buffs); the same audit for enemies ("2 rats taking out a wolf"); how much each status changes
+outcomes in mirror fights with a status fed in at a fixed rate; and the lasting-state cooldown problem (the farmer's
+hay bale, the Thor-like hero: a cooldown runs while its state lasts, so it's ready the moment the state ends; it
+should start charging at exit, or count the ability's average length). "I want to see the results of your findings
+before you run a tournament or change stats/fix cooldowns."
+
+The lead: measurement only this round. A null-guarded hook (js/stats.js AUDIT.on: hurt, block, heal, down, status,
+burst, cast) added on main; four Opus lanes in delve-wt: audit-heroes, audit-foes, audit-statuses, audit-cooldowns,
+each writing tools/audit/<lane>/ and docs/audit/<lane>.md. Tournaments (1v1 brackets at several tiers, and 2v2 with a
+Paladin on each side so healers and supports count) wait until the designer has read the findings.
+Pinned in Riffle Misc ("Pinned: more ideas"): tags on everything, red when evil, unit maker, unlocks and quests,
+battle videos, scripted lines in videos, lore, who can find Delve.
