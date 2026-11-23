@@ -8,7 +8,7 @@ import { cue } from './sfx.js';
 import { ARMOUR_CAP, ENEMY_ARMOUR, armourCut } from './armour.js';
 import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON, CHARM, CONFUSE, SLEEPY, BLEED, FEAR, SHACKLE, cdRate, setBackDue, windMul } from './statuses.js';
 import { MOB, bindBody, bodiesOf, mobMid, mobSlot, mobLead } from './mob.js'; // round 15 (the Mob): four bodies, one hero
-import { tallyHurt, tallyHeal, tallyDown, noteStatus, tallyBlock } from './stats.js';
+import { tallyHurt, tallyHeal, tallyDown, noteStatus, tallyBlock, AUDIT } from './stats.js';
 
 let NEXT_ID = 1;
 let arcing = false; // an overload's arcs are landing (addStatus)
@@ -1023,8 +1023,9 @@ export function addStatus(w, u, type, amount, src, fromBlow) {
   if (type === 'chill' && s.wet > 30) amount *= 1.5;          // wet freezes easier
   if (type === 'shock' && s.wet > 30 && src) for (const h of hooksOf(src)) if (h.shockMul) amount *= h.shockMul;
   s[type] = (s[type] || 0) + amount * res;
+  if (AUDIT.on) AUDIT.on('status', w, u, src, amount * res, { type }); // (round 16: tools/audit)
   const need = needOf(u, type), after = STATUS[type].after;
-  const burst = () => { (u.bursts || (u.bursts = {}))[type] = w.time; }; // the HUD ring flashes when it bursts
+  const burst = () => { (u.bursts || (u.bursts = {}))[type] = w.time; if (AUDIT.on) AUDIT.on('burst', w, u, src, 0, { type }); }; // the HUD ring flashes when it bursts
   if (type === 'wet') {
     s.poison *= 0.5;                                             // water washes poison off
     if (s.wet >= need) {                                         // soaked through: slips, spins, leaves a puddle

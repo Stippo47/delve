@@ -15,6 +15,9 @@
 // What is running right now: a trinket's hook (tk, set by tagTrinket below) or an ability's use or one of its later
 // landings (ab + abU, set by fxtag.js).
 export const CUR = { tk: null, tkU: null, ab: null, abU: null };
+// Round 16 (the balance audit, tools/audit): one callback that sees every event the counting sees, and more (a cast,
+// a status added, a burst). AUDIT.on(event, w, u, src, amt, o). Always null in the game.
+export const AUDIT = { on: null };
 
 export function newStats(order = [], mercs = []) {
   const heroes = {};
@@ -40,7 +43,7 @@ const sideOf = (u) => u.trueTeam || u.team; // (round 13: a charmed or befuddled
 const heroKey = (S, r) => (r && sideOf(r) === 'hero' && !r.turned && S.heroes[r.kind] ? r.kind : null);
 
 // Which part of the hero did it. src: the unit that struck (or healed); root: its owner; o: the hit's options.
-function sourceOf(src, root, o = {}) {
+export function sourceOf(src, root, o = {}) {
   if (o.stk) return 'st:' + o.stk;
   const tk = o.tk || (CUR.tk && (CUR.tkU === root || CUR.tkU === src) ? CUR.tk : null); // only the wearer's own trinket
   if (tk) return 'tk:' + tk;
@@ -57,6 +60,7 @@ const add = (m, k, n) => { m[k] = (m[k] || 0) + n; };
 export function tallyHurt(w, u, src, amt, o = {}) {
   const S = w.stats; if (!S || !(amt > 0)) return;
   const eff = Math.min(amt, Math.max(0, u.hp + amt));
+  if (AUDIT.on) AUDIT.on('hurt', w, u, src || o.by, eff, o);
   if (S.battle) { const a = rowOf(S, src || o.by), b = rowOf(S, u); if (b && !u.summon) b.taken += eff; if (a && a !== b) a.dmg += eff; return; }
   // taken: a party hero's own body
   if (sideOf(u) === 'hero' && !u.summon && S.heroes[u.kind]) S.heroes[u.kind].taken += eff;
@@ -70,13 +74,16 @@ export function tallyHurt(w, u, src, amt, o = {}) {
 // sim.js hurt (round 13): what a shield, a block, armour, a ward, a dodge or being untouchable kept off a blow. It counts
 // for the one it was meant for (a party hero, or a battle row), apart from what it took.
 export function tallyBlock(w, u, src, amt, o = {}) {
-  const S = w.stats; if (!S || !(amt > 0) || u.summon) return;
+  const S = w.stats; if (!S || !(amt > 0)) return;
+  if (AUDIT.on) AUDIT.on('block', w, u, src, amt, o);
+  if (u.summon) return;
   if (S.battle) { const b = rowOf(S, u); if (b) b.blocked = (b.blocked || 0) + amt; return; }
   if (sideOf(u) === 'hero' && S.heroes[u.kind]) S.heroes[u.kind].blocked = (S.heroes[u.kind].blocked || 0) + amt;
 }
 // sim.js heal: what actually came back. o.pab: the ability a lasting heal (regrowth, leeches) came from.
 export function tallyHeal(w, u, src, got, o = {}) {
   const S = w.stats; if (!S || !(got > 0)) return;
+  if (AUDIT.on) AUDIT.on('heal', w, u, src, got, o);
   if (S.battle) { const a = rowOf(S, src || u); if (a) a.heal += got; return; }
   if (sideOf(u) !== 'hero') return;
   const root = ownerOf(src), k = heroKey(S, root); if (!k) return;
@@ -86,6 +93,7 @@ export function tallyHeal(w, u, src, got, o = {}) {
 // sim.js hurt, just before kill(): a party hero going down, or an enemy killed (credited to the hero behind the blow).
 export function tallyDown(w, u, src, o = {}) {
   const S = w.stats; if (!S) return;
+  if (AUDIT.on) AUDIT.on('down', w, u, src || o.by, 0, o);
   if (S.battle) { const a = rowOf(S, src || o.by), b = rowOf(S, u); if (b && !u.summon && u.bkey) b.lost++; if (a && a !== b) a.kills++; return; }
   if (sideOf(u) === 'hero' && !u.summon) { if (S.heroes[u.kind]) S.heroes[u.kind].downs++; return; }
   if (sideOf(u) !== 'enemy') return;

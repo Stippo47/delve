@@ -25,6 +25,7 @@ import {
 import { lineClear } from './path.js';
 import { cue } from './sfx.js';
 import { tagAbility } from './fxtag.js';
+import { AUDIT } from './stats.js';
 import { STATUS, SLEEPY, fillOf } from './statuses.js';
 import { ABILITIES2, TRAITS2, ATTACKS2, kit2Tick } from './kits2.js';
 import { CHARM_ABILITIES, CHARM_TRAITS, CHARM_ATTACKS, charmTick } from './kits-charm.js'; // round 13 (lane S): the Enchantress
@@ -915,6 +916,7 @@ export function kitThink(w, u) {
 function fireAbility(w, u, best) {
   const k = u.kit;
   k.cd[best.id] = cooldownOf(u, best);
+  if (AUDIT.on) AUDIT.on('cast', w, u, u.target, 0, { ab: best.id, tier: k.tiers[best.id] }); // (round 16: tools/audit)
   const hadLater = u.later, hadRays = u.rays;
   k.using = best.id;
   try { tagAbility(w, u, best.id, k.tiers[best.id], () => ABILITIES[best.id].use(w, u, u.target, k.tiers[best.id])); } finally { k.using = null; } // fxtag.js: each ability drawn in its own look

@@ -1,0 +1,19 @@
+{
+  "id": "pinned-ideas-2",
+  "kind": "report",
+  "rarity": "uncommon",
+  "title": "Pinned: more ideas",
+  "text": "The rest of our chat's ideas, with rough sizes. Nothing is started; they're kept so none are lost.",
+  "why": "You said pin everything and move on. Each part is one idea, so you can mark the ones you want first when you come back to them.",
+  "details": "Sizes are rough agent-hours. The first card of pinned ideas (controller play, a live server, open world, the cleanup) is still in Misc. The farming roguelike is its own project and isn't here.",
+  "parts": [
+    { "id": "tags", "title": "Tags on everything", "text": "Sound, body, mind, soul, washable, floor, good or bad tags on abilities and statuses. Mute and Deaf as traits, Silenced and Deafened as statuses that wear off; Deaf blocks every sound, friend or foe. Cleanse takes only bad ones; floor hits miss hovering units; slimes burst by fire turn to fire slimes. About 15 to 25 hours." },
+    { "id": "evil", "title": "Red when evil", "text": "Allied heroes in their own colours; a hero on the enemy side gets red in place of its main colour, a little darker. About 3 to 5 hours." },
+    { "id": "creator", "title": "Unit maker", "text": "Make a unit from the parts and abilities the game already has: pick a body, a weapon, a kit, a look, then fight with it. About 15 to 25 hours." },
+    { "id": "unlocks", "title": "Unlocks and quests", "text": "Beat a hero in the dungeon to unlock them, quests that ask for something odd, hidden things to find. About 10 to 20 hours for the system and a first handful." },
+    { "id": "content", "title": "Battle videos", "text": "Marble-race style videos: hero against hero, tournament brackets, filmed by the game itself. A pilot of a 16-hero bracket and a few shorts: 10 to 15 hours." },
+    { "id": "dialogue", "title": "Lines in the videos", "text": "Speech bubbles scripted per video: a talk before the fight, a line at a set moment, the winner's line at the end. Fights replay exactly, so the timings hold. 4 to 6 hours." },
+    { "id": "lore", "title": "Lore", "text": "Who the heroes are and why they go down, and who waits at the bottom. A few premise pitches first, on a card, for you to pick from. Your duel lines already hint at a rivalry and a final boss." },
+    { "id": "found", "title": "Who can find Delve", "text": "Web search doesn't list it, but GitHub's own search for its description finds it at once. To keep it private: a private repository (GitHub Pages from one likely needs a paid plan) or a vaguer description." }
+  ]
+}
