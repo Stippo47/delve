@@ -161,6 +161,38 @@ if (mode === 'panel') {
   }
 }
 
+// ---------------------------------------------------------------- in a mixed group
+// What a kind adds to a plain group of its dungeon: a partner pack of about 12 cost points, with and without about 4
+// points of the kind (at least one), against the paladin and the archer at tier I (kept on their feet as in the panel).
+// Added threat per cost = (toll with it - toll without) / its cost. The partner's own extra 4 points are the yardstick.
+export const PARTNER = { wildwood: 'bandit', warren: 'hobgoblin', sewers: 'lizardBlade', crypt: 'rattler', frost: 'spiderFrost', ember: 'hellhound', spire: 'angel', dunes: 'jackal', foundry: 'automaton' };
+if (mode === 'mix') {
+  const S = +opt('seeds', 4), HEROES = ['paladin', 'archer'], recs = [];
+  const toll = (d, list, hero, seed) => {
+    let h0 = null, cum = 0;
+    const r = fight({ arena: d, a: [{ k: hero, n: 1, tier: 1 }], b: list }, seed, {
+      prep: (run) => { h0 = run.sides.a[0]; }, onDmg: (key, u, amt) => { if (u === h0) cum += amt; },
+      onFrame: () => { if (h0 && !h0.dead && !h0.downed) h0.hp = h0.maxHp; } });
+    for (const [key, row] of Object.entries(r.rows)) if (sideKey(key) === 'b') addMoves('mix', row, key);
+    return cum;
+  };
+  for (const d of DUNG) {
+    const P = PARTNER[d.id], cP = costOf(P), nP = Math.max(1, Math.round(12 / cP)), nP2 = Math.max(nP + 1, Math.round(16 / cP));
+    const base = {}, more = {};
+    for (const hero of HEROES) { base[hero] = 0; more[hero] = 0; for (let s = 0; s < S; s++) { base[hero] += toll(d.id, [{ k: P, n: nP }], hero, 60000 + s * 7919) / S; more[hero] += toll(d.id, [{ k: P, n: nP2 }], hero, 61000 + s * 7919) / S; } }
+    const yard = HEROES.reduce((a, h) => a + (more[h] - base[h]) / ((nP2 - nP) * cP), 0) / HEROES.length;
+    for (const k of d.kinds) {
+      const m = Math.max(1, Math.round(4 / costOf(k))), rec = { d: d.id, k, partner: P, nPartner: nP, n: m, cost: r1(m * costOf(k)), added: {}, yard: r1(yard) };
+      let a = 0;
+      for (const hero of HEROES) { let t = 0; for (let s = 0; s < S; s++) t += toll(d.id, [{ k: P, n: nP }, ...stacks(k, m)], hero, 62000 + s * 7919 + recs.length * 3) / S; rec.added[hero] = r1((t - base[hero]) / rec.cost); a += rec.added[hero] / HEROES.length; }
+      rec.addedPerCost = r1(a);
+      recs.push(rec);
+    }
+    log(d.id, 'done, yardstick', yard.toFixed(2));
+  }
+  save('mix', { seeds: S, heroes: HEROES, partner: PARTNER, recs, moves: MOVES });
+}
+
 // ---------------------------------------------------------------- against a swarm
 if (mode === 'swarm') {
   const S = +opt('seeds', 4), recs = [];
@@ -232,4 +264,4 @@ if (mode === 'ratswolf') {
   }
   save('ratswolf', { seeds: S, recs, look });
 }
-if (!['rr', 'cm', 'panel', 'swarm', 'boss', 'ratswolf'].includes(mode)) console.log('mode? rr | cm | panel | swarm | boss | ratswolf');
+if (!['rr', 'cm', 'panel', 'mix', 'swarm', 'boss', 'ratswolf'].includes(mode)) console.log('mode? rr | cm | panel | swarm | boss | ratswolf');

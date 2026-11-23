@@ -24,6 +24,8 @@ const HOOKS = ['brain', 'onDeath', 'onSplit', 'onHop', 'struck'];
 const HOOK_MV = { onDeath: 'death', onSplit: 'split', onHop: 'hop', struck: 'struck' };
 const SKIP_SUB = new Set(['dueLen', 'holdT', 'face', 'coming']);
 // a home-made timer's name: t, ...T, cd, ...Cd (a position, a speed or a count is not one); every due() timer in u.el is
+// clocks that are not moves (a turret's look-round, a troll's calm after a blow): counted, but never name what follows
+const QUIET = new Set(['el.look', 'el.repick', 'calmT', 'burnedT', 'bJam', 'bJam.t', 'flinchT', 'lastHp']);
 const TIMERISH = /(^t$|T$|^cd$|Cd$|CD$|^cd[A-Z]|Timer$|timer$)/;
 
 export function instrument(G) {
@@ -94,13 +96,20 @@ export function instrument(G) {
     try { r = fn(); } finally {
       if (timed) {
         const post = snap(u), R = rowOf(u.bkey), fired = [];
+        const had = new Set(Object.keys(pre).map((k) => k.split('.')[0])), fresh = new Set(), first = !u._auCalls; u._auCalls = (u._auCalls || 0) + 1;
         for (const k in post) {
-          if (pre[k] == null) { if (!(k in pre)) R.armed[mvName(k)] = 1; continue; }
-          if (post[k] - pre[k] > 0.25 && post[k] > 0.3) fired.push(k);
+          const el = k.startsWith('el.'), dot = k.indexOf('.');
+          if (pre[k] == null) { // a clock seen for the first time: a due() move armed, or a move's own state object just made (the move starts)
+            R.armed[mvName(el || dot < 0 ? k : k.slice(0, dot))] = 1;
+            if (!el && !first && post[k] > 0.05) { const id = dot < 0 || had.has(k.slice(0, dot)) ? k : k.slice(0, dot); if (!fresh.has(id)) { fresh.add(id); fired.push(id); } }
+            continue;
+          }
+          if (post[k] - pre[k] > 0.25 && post[k] > (el ? 0.3 : 0.9)) fired.push(k); // (a home-made clock put back by less than 0.9 s is a retry, not a move)
         }
         if (!fired.length && u.atkT - atk0 > 0.25) fired.push('atkT');
         for (const k of fired) add(R.fires, (isOrig(u) ? '' : 'spawn:' + u.kind + '/') + mvName(k), 1);
-        if (fired.length) { const best = fired.find((k) => k.startsWith('el.')) || fired[0]; u._mvCur = mvName(best); }
+        const real = fired.filter((k) => !QUIET.has(k));
+        if (real.length) { const best = real.find((k) => k.startsWith('el.')) || real[0]; u._mvCur = mvName(best); }
         ctx.mv = u._mvCur || 'mv:brain';
         u._brainAtk = u.atkT; u._brainF = F.frame;
       }
@@ -136,6 +145,7 @@ export function instrument(G) {
     } else {
       c = credit(src || o.by, o);
       if (c && o.shot && src && o._own && sideOf(o._own) === sideOf(u) && sideOf(src) !== sideOf(u)) c = { key: src.bkey, mv: 'mirror', u: src };
+      else if (c && o.shot && src && src.def && src.def.mirror && !o._own) c = { ...c, mv: 'mirror' }; // a shot the gilded golem sent back (its owner is the golem now)
       if (!c && !src && !o.by && o.noDodge && Object.keys(o).length === 1 && u._lastHit && F.t - u._lastHit.t < 1.5) c = { ...u._lastHit.c, mv: 'wall slam' }; // sim.js wallHit: knocked into a wall
       else if (c) u._lastHit = { c, t: F.t };
       mv = c && c.mv;
@@ -183,7 +193,7 @@ export function instrument(G) {
   // ---- a fight
   function baseFields() {
     if (BASE) return BASE;
-    BASE = new Set(['_orig', '_mvCur', '_brainAtk', '_brainF', '_atk0', '_abil0', '_stOwn', '_made', '_madeMv', 'lastHp']);
+    BASE = new Set(['_auCalls', '_orig', '_mvCur', '_brainAtk', '_brainF', '_atk0', '_abil0', '_stOwn', '_made', '_madeMv', 'lastHp']);
     const w = G.D.battleRoom('crypt', { W: 960, H: 480 });
     for (const k of Object.keys(DEFS)) { try { const u = sim.spawn(w, k, 400, 240, { mult: 1 }); for (const f in u) BASE.add(f); } catch (e) { /* a part that needs its owner */ } }
     return BASE;
@@ -221,5 +231,5 @@ export function instrument(G) {
     F = null;
     return out;
   }
-  return { fight };
+  return { fight, warm: baseFields };
 }
