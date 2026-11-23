@@ -158,6 +158,7 @@ const immuneTo = (u, type) => u.buffs.some((b) => b.statusImmune || (b.immune &&
 const knockImmune = (u) => u.buffs.some((b) => b.knockImmune) || hooksOf(u).some((h) => h.knockImmune);
 
 export function addBuff(u, b) {
+  if (AUDIT.on) AUDIT.on('buff', null, u, null, b.dur || 0, b); // (round 16: tools/audit: who put it on)
   const old = u.buffs.find((x) => x.id === b.id);
   if (old) { Object.assign(old, b, { t: Math.max(old.t, b.dur) }); return old; }
   const nb = { ...b, t: b.dur }; u.buffs.push(nb); return nb;
@@ -173,9 +174,11 @@ export function heal(w, u, amount, src, o) {
   if (src && src !== u && alive(src) && src.team === u.team && (src.hexUntil > w.time || (amount >= 1.5 && hexFires(w, src)))) {
     hurt(w, u, Math.min(amount, u.maxHp * CURSE.selfCap), null, { noDodge: true, hexTurned: true }); return 0;
   }
+  if (AUDIT.on) AUDIT.on('healAsk', w, u, src, amount, o || {});
   if (u.st.curse > 0) amount *= Math.max(0, 1 - CURSE.healCut * fillOf(u, 'curse')); // cursed: heals do less, then nothing
   if (u.st.bleed > 0) amount *= 1 - BLEED.healCut * fillOf(u, 'bleed');             // bleeding: heals do less (round 13)
   amount *= buffMul(u, 'healTaken');                                               // a wound that won't close (round 13: healers' counters)
+  if (AUDIT.on) AUDIT.on('healCut', w, u, src, amount, o || {});
   if (amount <= 0) return 0;
   if (u.def.cargo) amount /= 3; // lane C (convoy.js): heals mend the wagon at a third
   const before = u.hp; u.hp = Math.min(u.maxHp, u.hp + amount);
@@ -883,6 +886,7 @@ const SHIELD_BEARERS = new Set(['paladin', 'tower', 'knight']); // heroes carryi
 // over time) is counted apart, as blocked (stats.js tallyBlock).
 const blockedBy = (w, u, src, amt, o) => { if (w.stats && amt > 0 && !o.dot) tallyBlock(w, mobLead(u) || u, src, amt, o); }; // (round 15, the Mob: for the hero, whichever body it was)
 export function hurt(w, u, amount, src, o = {}) {
+  if (AUDIT.on && u && u.invulnT > 0 && alive(u) && amount > 0 && !u.ethereal) AUDIT.on('keep', w, u, src, amount, { why: 'invuln', dot: o.dot }); // (round 16: tools/audit: untouchable)
   if (u && u.invulnT > 0 && alive(u) && amount > 0 && !u.ethereal) { blockedBy(w, u, src, amount, o); return 0; }
   if (!alive(u) || u.invulnT > 0 || amount <= 0 || u.ethereal) return 0;
   // round 15 (the Mob, mob.js): a blow on any of its bodies comes off the one pool (u.hp is the lead's). One blow, or
@@ -908,16 +912,18 @@ export function hurt(w, u, amount, src, o = {}) {
     return hurt(w, u.charmed, amount, src, { ...o, knock: 0 });
   }
   if (src && src !== u && !o.dot && !o.hexTurned && !o.noHex) {
-    if (src.radiantT > 0) return 0; // radiant: its glow is all it can do
+    if (src.radiantT > 0) { if (AUDIT.on) AUDIT.on('nullified', w, u, src, amount, { why: 'radiant' }); return 0; } // radiant: its glow is all it can do
     // round 13, charm: while it builds, a unit can't hurt whoever is charming it (its blow turns into a little heart)
     if (src.st && src.st.charm >= CHARM.guard && src.stBy && src.stBy.charm === u && src.flipKind !== 'charm') {
       if (rand() < 0.3) w.particles.push({ x: u.x + rrange(-6, 6), y: u.y - u.r * 0.4, vx: 0, vy: 0, rise: 40, up: 0, life: 0.5, max: 0.5, size: 4.5, color: STATUS.charm.col, shape: 'heart' });
+      if (AUDIT.on) AUDIT.on('nullified', w, u, src, amount, { why: 'charm' });
       return 0;
     }
     if (alive(src) && hexFires(w, src)) { // hexed: the blow turns on the one who struck it
       const room = Math.max(0, src.maxHp * CURSE.selfCap - (src.hexSelf || 0)), self = Math.min(amount * CURSE.selfMul, room);
       src.hexSelf = (src.hexSelf || 0) + self;
       if (self > 0) hurt(w, src, self, null, { noDodge: true, hexTurned: true, color: STATUS.curse.col });
+      if (AUDIT.on) AUDIT.on('nullified', w, u, src, amount, { why: 'hex' });
       return 0;
     }
   }
@@ -928,6 +934,7 @@ export function hurt(w, u, amount, src, o = {}) {
   // someone guarding this unit takes part of the blow
   if (u.guardBy && u.guardT > 0 && alive(u.guardBy) && !o.dot && !o.guarded) {
     const share = amount * (u.guardShare || 0.4); amount -= share;
+    if (AUDIT.on) AUDIT.on('guard', w, u, src, share, { by: u.guardBy }); // (round 16: tools/audit: what a guard took over)
     hurt(w, u.guardBy, share, src, { ...o, guarded: true, knock: 0 });
   }
   if (u.act && u.act.type === 'drink' && !o.dot) u.act = null;
@@ -935,13 +942,16 @@ export function hurt(w, u, amount, src, o = {}) {
   if (!o.dot && !o.noDodge && u.def.dodge && chance(u.def.dodge)) { textU(w, u.x, u.y, u.r, 'dodge', '#CFE8FF', 0.8); blockedBy(w, u, src, amount, o); return 0; }
   let amt = amount;
   if (src && alive(src)) { for (const h of hooksOf(src)) if (h.dealt) amt = h.dealt(w, src, u, amt, o); amt *= blowMul(src); }
+  if (AUDIT.on && src && alive(src)) AUDIT.on('dealt', w, u, src, amt, o); // (round 16: tools/audit: the blow after src's own buffs)
   if (u.st.curse > 0) amt *= 1 + CURSE.taken * fillOf(u, 'curse');             // cursed: blows land harder
   if (src && src.def.charmBonus && (u.st.charm > 0 || u.flipKind === 'charm')) amt *= 1 + src.def.charmBonus; // the Succubus: harder on the charmed (round 13)
   let kept = 0; // what the defences below keep off (round 13: counted as blocked)
   for (const h of hooksOf(u)) if (h.taken) { const b = amt; amt = h.taken(w, u, src, amt, o); if (amt < b) kept += b - amt; }
+  if (AUDIT.on) AUDIT.on('takenBuffs', w, u, src, amt, o); // (round 16: tools/audit: the blow before u's buffs soften or harden it)
   { const m = buffMul(u, 'taken'); if (m < 1) kept += amt * (1 - m); amt *= m; }
   if (u.koT > 0) amt *= 1.5;                                 // knocked out: wide open
   if (u.frozenT > 0 && u.frozenBonus) amt *= u.frozenBonus;  // Frost Nova III
+  if (AUDIT.on && !o.dot && src) AUDIT.on('front', w, u, src, amt, o); // (round 16: tools/audit: the blow before front blocks)
   if (!o.dot && src) for (const b of u.buffs) if (b.frontBlock && angleDiff(angleTo(u.x, u.y, src.x, src.y), u.facing) < 1.3) {
     kept += amt * b.frontBlock; amt *= 1 - b.frontBlock; u.blockedAt = w.time; if (b.reflect && alive(src) && src !== u) hurt(w, src, amount * b.reflect, u, { noDodge: true, dot: true, pab: b.id }); // (lane H1, round 13: pab, so the stats name the ability)
   }

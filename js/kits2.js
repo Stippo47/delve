@@ -10,6 +10,7 @@ import { STATUS, WHIRLED, SPUN, DIRTY, TARGETED, TRACKED, TRAPPED, WARDED, WEAKE
 import { LOOK2 } from './looks2.js';
 import { lineClear, circleRect } from './path.js';
 import { foesNear, friendsNear, hurtMost, dmgOf, ang, ring, cast, heal, addStatus, zone, shoot, segDist, hooksOf } from './kits.js';
+import { AUDIT } from './stats.js'; // (round 16: tools/audit)
 
 // ---------------------------------------------------------------- helpers
 const k2 = (w, o) => fx(w, { type: 'k2', ...o });                 // a look of our own (fx2.js DRAW[o.draw])
@@ -39,6 +40,7 @@ function onUnit(w, e, id, dur, h = {}, end) {
   const L = e.h2 || (e.h2 = []), i = L.findIndex((x) => x.id === id), inner = h.tick;
   const hook = { ...h, id, until: w.time + dur, dur, tick(w2, u2, dt) { if (w2.time >= hook.until) { offUnit(u2, id); if (end) end(u2); return; } if (inner) inner.call(hook, w2, u2, dt); } };
   if (i >= 0) L[i] = hook; else L.push(hook);
+  if (AUDIT.on) AUDIT.on('hook', w, e, null, dur, hook); // (round 16: tools/audit: who put it on)
   return hook;
 }
 function offUnit(e, id) { if (!e.h2) return; e.h2 = e.h2.filter((x) => x.id !== id); if (!e.h2.length) e.h2 = null; }

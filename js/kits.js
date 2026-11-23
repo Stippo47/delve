@@ -902,7 +902,8 @@ export function kitThink(w, u) {
   for (const ab of h.abilities) {
     const tier = k.tiers[ab.id]; if (!tier || k.cd[ab.id] > 0) continue;
     const A = ABILITIES[ab.id]; if (!A || A.passiveTier) continue;
-    const s = A.score(w, u, u.target, tier) * rrange(0.85, 1.15);
+    const raw = A.score(w, u, u.target, tier), s = raw * rrange(0.85, 1.15);
+    if (AUDIT.on) AUDIT.on('score', w, u, u.target, raw, { ab: ab.id, tier, s }); // (round 16: tools/audit: what each ready ability scored)
     if (s > bs) { bs = s; best = ab; }
   }
   if (!best || bs < 0.3) return false;
