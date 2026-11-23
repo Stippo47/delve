@@ -172,9 +172,11 @@ export function heal(w, u, amount, src, o) {
   if (src && src !== u && alive(src) && src.team === u.team && (src.hexUntil > w.time || (amount >= 1.5 && hexFires(w, src)))) {
     hurt(w, u, Math.min(amount, u.maxHp * CURSE.selfCap), null, { noDodge: true, hexTurned: true }); return 0;
   }
+  if (AUDIT.on) AUDIT.on('healAsk', w, u, src, amount, o || {});
   if (u.st.curse > 0) amount *= Math.max(0, 1 - CURSE.healCut * fillOf(u, 'curse')); // cursed: heals do less, then nothing
   if (u.st.bleed > 0) amount *= 1 - BLEED.healCut * fillOf(u, 'bleed');             // bleeding: heals do less (round 13)
   amount *= buffMul(u, 'healTaken');                                               // a wound that won't close (round 13: healers' counters)
+  if (AUDIT.on) AUDIT.on('healCut', w, u, src, amount, o || {});
   if (amount <= 0) return 0;
   if (u.def.cargo) amount /= 3; // lane C (convoy.js): heals mend the wagon at a third
   const before = u.hp; u.hp = Math.min(u.maxHp, u.hp + amount);
@@ -907,16 +909,18 @@ export function hurt(w, u, amount, src, o = {}) {
     return hurt(w, u.charmed, amount, src, { ...o, knock: 0 });
   }
   if (src && src !== u && !o.dot && !o.hexTurned && !o.noHex) {
-    if (src.radiantT > 0) return 0; // radiant: its glow is all it can do
+    if (src.radiantT > 0) { if (AUDIT.on) AUDIT.on('nullified', w, u, src, amount, { why: 'radiant' }); return 0; } // radiant: its glow is all it can do
     // round 13, charm: while it builds, a unit can't hurt whoever is charming it (its blow turns into a little heart)
     if (src.st && src.st.charm >= CHARM.guard && src.stBy && src.stBy.charm === u && src.flipKind !== 'charm') {
       if (rand() < 0.3) w.particles.push({ x: u.x + rrange(-6, 6), y: u.y - u.r * 0.4, vx: 0, vy: 0, rise: 40, up: 0, life: 0.5, max: 0.5, size: 4.5, color: STATUS.charm.col, shape: 'heart' });
+      if (AUDIT.on) AUDIT.on('nullified', w, u, src, amount, { why: 'charm' });
       return 0;
     }
     if (alive(src) && hexFires(w, src)) { // hexed: the blow turns on the one who struck it
       const room = Math.max(0, src.maxHp * CURSE.selfCap - (src.hexSelf || 0)), self = Math.min(amount * CURSE.selfMul, room);
       src.hexSelf = (src.hexSelf || 0) + self;
       if (self > 0) hurt(w, src, self, null, { noDodge: true, hexTurned: true, color: STATUS.curse.col });
+      if (AUDIT.on) AUDIT.on('nullified', w, u, src, amount, { why: 'hex' });
       return 0;
     }
   }

@@ -1,0 +1,497 @@
+{
+ "burn": {
+  "lock": 0,
+  "low": {
+   "want": 12,
+   "rate": 15,
+   "gotGap": 11.25,
+   "bursts90s": 8,
+   "first": 11.000000000000126,
+   "meanGap": 11,
+   "formula": 13.7,
+   "fastestGap": 1
+  },
+  "med": {
+   "want": 6,
+   "rate": 22.5,
+   "gotGap": 6,
+   "bursts90s": 15,
+   "first": 5.016666666666654,
+   "meanGap": 6,
+   "formula": 20.3,
+   "fastestGap": 1
+  },
+  "high": {
+   "want": 3,
+   "rate": 38.3,
+   "gotGap": 3,
+   "bursts90s": 30,
+   "first": 2.0166666666666644,
+   "meanGap": 3,
+   "formula": 33.7,
+   "fastestGap": 1
+  }
+ },
+ "chill": {
+  "lock": 0,
+  "low": {
+   "want": 12,
+   "rate": 15,
+   "gotGap": 11.25,
+   "bursts90s": 8,
+   "first": 10.000000000000076,
+   "meanGap": 11.29,
+   "formula": 14.3,
+   "fastestGap": 3.91
+  },
+  "med": {
+   "want": 6,
+   "rate": 56.9,
+   "gotGap": 6,
+   "bursts90s": 15,
+   "first": 1.0000000000000013,
+   "meanGap": 6.14,
+   "formula": 22.7,
+   "fastestGap": 3.91
+  },
+  "high": {
+   "want": 3,
+   "rate": 145.3,
+   "gotGap": 3.91,
+   "bursts90s": 23,
+   "first": 0,
+   "meanGap": 4,
+   "formula": 39.3,
+   "fastestGap": 3.91
+  }
+ },
+ "poison": {
+  "lock": 0,
+  "low": {
+   "want": 12,
+   "rate": 15.6,
+   "gotGap": 12.86,
+   "bursts90s": 7,
+   "first": 8.016666666666644,
+   "meanGap": 12.83,
+   "formula": 9.8,
+   "fastestGap": 1.5
+  },
+  "med": {
+   "want": 6,
+   "rate": 24.3,
+   "gotGap": 6,
+   "bursts90s": 15,
+   "first": 4.016666666666658,
+   "meanGap": 4,
+   "formula": 15.7,
+   "fastestGap": 1.5
+  },
+  "high": {
+   "want": 3,
+   "rate": 56.9,
+   "gotGap": 3,
+   "bursts90s": 30,
+   "first": 1.0000000000000013,
+   "meanGap": 2,
+   "formula": 27.3,
+   "fastestGap": 1.5
+  }
+ },
+ "wet": {
+  "lock": 0,
+  "low": {
+   "want": 12,
+   "rate": 8,
+   "gotGap": 11.25,
+   "bursts90s": 8,
+   "first": 47.01666666666528,
+   "meanGap": 4,
+   "formula": 9.3,
+   "fastestGap": 1
+  },
+  "med": {
+   "want": 6,
+   "rate": 10,
+   "gotGap": 5.63,
+   "bursts90s": 16,
+   "first": 23.01666666666664,
+   "meanGap": 4.33,
+   "formula": 12.7,
+   "fastestGap": 1
+  },
+  "high": {
+   "want": 3,
+   "rate": 14.4,
+   "gotGap": 3,
+   "bursts90s": 30,
+   "first": 11.000000000000126,
+   "meanGap": 2.66,
+   "formula": 19.3,
+   "fastestGap": 1
+  }
+ },
+ "shock": {
+  "lock": 0,
+  "low": {
+   "want": 12,
+   "rate": 22,
+   "gotGap": 11.25,
+   "bursts90s": 8,
+   "first": 10.000000000000076,
+   "meanGap": 11,
+   "formula": 22.3,
+   "fastestGap": 1
+  },
+  "med": {
+   "want": 6,
+   "rate": 28.9,
+   "gotGap": 6,
+   "bursts90s": 15,
+   "first": 5.016666666666654,
+   "meanGap": 6,
+   "formula": 30.7,
+   "fastestGap": 1
+  },
+  "high": {
+   "want": 3,
+   "rate": 56.9,
+   "gotGap": 3,
+   "bursts90s": 30,
+   "first": 2.0166666666666644,
+   "meanGap": 3,
+   "formula": 47.3,
+   "fastestGap": 1
+  }
+ },
+ "stagger": {
+  "lock": 0,
+  "low": {
+   "want": 12,
+   "rate": 16.1,
+   "gotGap": 11.25,
+   "bursts90s": 8,
+   "first": 9.416666666666714,
+   "meanGap": 10.09,
+   "formula": 20.3,
+   "fastestGap": 1
+  },
+  "med": {
+   "want": 6,
+   "rate": 24.3,
+   "gotGap": 6,
+   "bursts90s": 15,
+   "first": 3.016666666666661,
+   "meanGap": 6.14,
+   "formula": 28.7,
+   "fastestGap": 1
+  },
+  "high": {
+   "want": 3,
+   "rate": 41.4,
+   "gotGap": 2.73,
+   "bursts90s": 33,
+   "first": 1.9333333333333313,
+   "meanGap": 2.66,
+   "formula": 45.3,
+   "fastestGap": 1
+  }
+ },
+ "radiance": {
+  "lock": 7,
+  "low": {
+   "want": 12,
+   "rate": 28.9,
+   "gotGap": 11.25,
+   "bursts90s": 8,
+   "first": 4.016666666666658,
+   "meanGap": 12,
+   "formula": 26,
+   "fastestGap": 7.5
+  },
+  "med": {
+   "want": 6,
+   "rate": 112.8,
+   "gotGap": 7.5,
+   "bursts90s": 12,
+   "first": 0,
+   "meanGap": 8,
+   "formula": 150,
+   "fastestGap": 7.5
+  },
+  "high": {
+   "want": 3,
+   "rate": 112.8,
+   "gotGap": 7.5,
+   "bursts90s": 12,
+   "first": 0,
+   "meanGap": 8,
+   "formula": 150,
+   "fastestGap": 7.5
+  }
+ },
+ "curse": {
+  "lock": 0,
+  "low": {
+   "want": 12,
+   "rate": 13.8,
+   "gotGap": 11.25,
+   "bursts90s": 8,
+   "first": 10.000000000000076,
+   "meanGap": 11,
+   "formula": 13.3,
+   "fastestGap": 1
+  },
+  "med": {
+   "want": 6,
+   "rate": 22,
+   "gotGap": 6,
+   "bursts90s": 15,
+   "first": 5.016666666666654,
+   "meanGap": 6,
+   "formula": 21.7,
+   "fastestGap": 1
+  },
+  "high": {
+   "want": 3,
+   "rate": 38.3,
+   "gotGap": 3,
+   "bursts90s": 30,
+   "first": 2.0166666666666644,
+   "meanGap": 3,
+   "formula": 38.3,
+   "fastestGap": 1
+  }
+ },
+ "entangle": {
+  "lock": 6,
+  "low": {
+   "want": 12,
+   "rate": 28.9,
+   "gotGap": 11.25,
+   "bursts90s": 8,
+   "first": 4.016666666666658,
+   "meanGap": 11,
+   "formula": 22.7,
+   "fastestGap": 6.43
+  },
+  "med": {
+   "want": 6,
+   "rate": 112.8,
+   "gotGap": 6.43,
+   "bursts90s": 14,
+   "first": 0,
+   "meanGap": 6.85,
+   "formula": 150,
+   "fastestGap": 6.43
+  },
+  "high": {
+   "want": 3,
+   "rate": 112.8,
+   "gotGap": 6.43,
+   "bursts90s": 14,
+   "first": 0,
+   "meanGap": 6.85,
+   "formula": 150,
+   "fastestGap": 6.43
+  }
+ },
+ "charm": {
+  "lock": 6,
+  "low": {
+   "want": 12,
+   "rate": 28.9,
+   "gotGap": 11.25,
+   "bursts90s": 8,
+   "first": 4.016666666666658,
+   "meanGap": 11,
+   "formula": 24.7,
+   "fastestGap": 6.43
+  },
+  "med": {
+   "want": 6,
+   "rate": 112.8,
+   "gotGap": 6.43,
+   "bursts90s": 14,
+   "first": 0,
+   "meanGap": 6.85,
+   "formula": 150,
+   "fastestGap": 6.43
+  },
+  "high": {
+   "want": 3,
+   "rate": 112.8,
+   "gotGap": 6.43,
+   "bursts90s": 14,
+   "first": 0,
+   "meanGap": 6.85,
+   "formula": 150,
+   "fastestGap": 6.43
+  }
+ },
+ "confuse": {
+  "lock": 8,
+  "low": {
+   "want": 12,
+   "rate": 38.3,
+   "gotGap": 11.25,
+   "bursts90s": 8,
+   "first": 2.0166666666666644,
+   "meanGap": 11,
+   "formula": 32,
+   "fastestGap": 8.18
+  },
+  "med": {
+   "want": 6,
+   "rate": 112.8,
+   "gotGap": 8.18,
+   "bursts90s": 11,
+   "first": 0,
+   "meanGap": 8.8,
+   "formula": 150,
+   "fastestGap": 8.18
+  },
+  "high": {
+   "want": 3,
+   "rate": 112.8,
+   "gotGap": 8.18,
+   "bursts90s": 11,
+   "first": 0,
+   "meanGap": 8.8,
+   "formula": 150,
+   "fastestGap": 8.18
+  }
+ },
+ "sleepy": {
+  "lock": 9,
+  "low": {
+   "want": 12,
+   "rate": 38.3,
+   "gotGap": 11.25,
+   "bursts90s": 8,
+   "first": 2.0166666666666644,
+   "meanGap": 11.14,
+   "formula": 38.3,
+   "fastestGap": 9
+  },
+  "med": {
+   "want": 6,
+   "rate": 112.8,
+   "gotGap": 9,
+   "bursts90s": 10,
+   "first": 0,
+   "meanGap": 9,
+   "formula": 150,
+   "fastestGap": 9
+  },
+  "high": {
+   "want": 3,
+   "rate": 112.8,
+   "gotGap": 9,
+   "bursts90s": 10,
+   "first": 0,
+   "meanGap": 9,
+   "formula": 150,
+   "fastestGap": 9
+  }
+ },
+ "bleed": {
+  "lock": 3,
+  "low": {
+   "want": 12,
+   "rate": 12.6,
+   "gotGap": 11.25,
+   "bursts90s": 8,
+   "first": 8.016666666666644,
+   "meanGap": 11,
+   "formula": 17.1,
+   "fastestGap": 3.91
+  },
+  "med": {
+   "want": 6,
+   "rate": 38.3,
+   "gotGap": 6,
+   "bursts90s": 15,
+   "first": 2.0166666666666644,
+   "meanGap": 5.93,
+   "formula": 39.3,
+   "fastestGap": 3.91
+  },
+  "high": {
+   "want": 3,
+   "rate": 112.8,
+   "gotGap": 3.91,
+   "bursts90s": 23,
+   "first": 0,
+   "meanGap": 3.96,
+   "formula": 150,
+   "fastestGap": 3.91
+  }
+ },
+ "fear": {
+  "lock": 8,
+  "low": {
+   "want": 12,
+   "rate": 38.3,
+   "gotGap": 11.25,
+   "bursts90s": 8,
+   "first": 3.016666666666661,
+   "meanGap": 11.86,
+   "formula": 33,
+   "fastestGap": 8.18
+  },
+  "med": {
+   "want": 6,
+   "rate": 112.8,
+   "gotGap": 8.18,
+   "bursts90s": 11,
+   "first": 0,
+   "meanGap": 8.8,
+   "formula": 150,
+   "fastestGap": 8.18
+  },
+  "high": {
+   "want": 3,
+   "rate": 112.8,
+   "gotGap": 8.18,
+   "bursts90s": 11,
+   "first": 0,
+   "meanGap": 8.8,
+   "formula": 150,
+   "fastestGap": 8.18
+  }
+ },
+ "shackle": {
+  "lock": 10,
+  "low": {
+   "want": 12,
+   "rate": 38.3,
+   "gotGap": 11.25,
+   "bursts90s": 8,
+   "first": 2.0166666666666644,
+   "meanGap": 12.14,
+   "formula": 56,
+   "fastestGap": 10
+  },
+  "med": {
+   "want": 6,
+   "rate": 75.5,
+   "gotGap": 10,
+   "bursts90s": 9,
+   "first": 1.0000000000000013,
+   "meanGap": 11,
+   "formula": 150,
+   "fastestGap": 10
+  },
+  "high": {
+   "want": 3,
+   "rate": 75.5,
+   "gotGap": 10,
+   "bursts90s": 9,
+   "first": 1.0000000000000013,
+   "meanGap": 11,
+   "formula": 150,
+   "fastestGap": 10
+  }
+ }
+}
