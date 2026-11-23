@@ -32,6 +32,10 @@ for (const M of list) {
       time: mean((r) => r.time), timeUps: R.filter((r) => r.timeUp).length, hpFed: mean((r) => r.hpFed), hpOther: mean((r) => r.hpOther),
       dmgFed: mean((r) => r.dmgFed), takenFed: mean((r) => r.takenFed), dmgOther: mean((r) => r.dmgOther), takenOther: mean((r) => r.takenOther),
       healFed: mean((r) => r.healFed), blockedFed: mean((r) => r.blockedFed), stunned: mean((r) => r.stunned), hexSelf: mean((r) => r.hexSelf), entWalk: mean((r) => r.entWalk),
+      noStrike: mean((r) => r.noStrike), blowsFed: mean((r) => r.blowsFed), blowsOther: mean((r) => r.blowsOther), castsFed: mean((r) => r.castsFed), castsOther: mean((r) => r.castsOther),
+      healAsk: mean((r) => r.healAsk), healCut: mean((r) => r.healCut),
+      nullFed: Object.fromEntries(['radiant', 'charm', 'hex'].map((k) => [k, [mean((r) => r.nullFed[k]), mean((r) => r.nullFedAmt[k])]])),
+      nullOther: Object.fromEntries(['radiant', 'charm', 'hex'].map((k) => [k, [mean((r) => r.nullOther[k]), mean((r) => r.nullOtherAmt[k])]])),
       firstBurst: meanNN((r) => r.firstBurst), meanGap: meanNN((r) => r.meanGap), per };
   }
   out.ms = Date.now() - t0; out.fights = fights;

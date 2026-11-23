@@ -49,6 +49,8 @@ const IN_BURST = {
 };
 const ENT_COL = STATUS.entangle.col;
 const disabled = (u) => u.stunT > 0 || u.frozenT > 0 || u.sleepT > 0 || u.koT > 0;
+// can't strike its foes: disabled, glowing (Radiant), running (Terrified), in irons (Shackled: no basic attack), or fighting for the other side
+const noStrike = (u) => disabled(u) || u.radiantT > 0 || u.fearT > 0 || u.shackledT > 0 || u.flipKind === 'charm';
 
 const sideHealth = (run, side) => { let hp = 0, max = 0; for (const u of run.sides[side]) { max += u.maxHp; if (SIM.alive(u)) hp += Math.max(0, u.hp); } return max ? hp / max : 0; };
 
@@ -62,7 +64,8 @@ export function runFight({ a, b, seed, fed = 'b', feed = null, bonus = null, are
   const sideOfU = (u) => { if (!u) return null; let o = u; for (let i = 0; i < 5 && o; i++) { if (fedSet.has(o)) return fed; if (otherSet.has(o)) return other; o = o.summonBy || o.ghostOf || null; } const s = B.sideOf(w, u); return s; };
   const types = feeds.map((f) => f.type);
   const m = { bursts: {}, burstOther: {}, stDmg: {}, stDmgOther: {}, inBurst: {}, built: {}, added: {}, stunned: 0, hexSelf: 0, entWalk: 0,
-    blockedFed: 0, healFed: 0 };
+    blockedFed: 0, healFed: 0, noStrike: 0, blowsFed: 0, blowsOther: 0, castsFed: 0, castsOther: 0, healAsk: 0, healCut: 0,
+    nullFed: { radiant: 0, charm: 0, hex: 0 }, nullFedAmt: { radiant: 0, charm: 0, hex: 0 }, nullOther: { radiant: 0, charm: 0, hex: 0 }, nullOtherAmt: { radiant: 0, charm: 0, hex: 0 } };
   for (const t of types) { m.bursts[t] = 0; m.burstOther[t] = 0; m.stDmg[t] = 0; m.stDmgOther[t] = 0; m.inBurst[t] = 0; m.built[t] = 0; m.added[t] = 0; }
   const burstTimes = [];
   AUDIT.on = (ev, w2, u, src, amt, o) => {
@@ -72,12 +75,17 @@ export function runFight({ a, b, seed, fed = 'b', feed = null, bonus = null, are
       if (k && m.stDmg[k] != null) { if (s === fed) m.stDmg[k] += amt; else m.stDmgOther[k] += amt; }
       if (o && o.hexTurned && s === fed) m.hexSelf += amt;
       if (o && o.dot && !o.stk && o.color === ENT_COL && s === fed) m.entWalk += amt;
+      if (src && !(o && o.dot)) { const ss = sideOfU(src); if (ss === fed && s !== fed) m.blowsFed++; else if (ss === other && s !== other) m.blowsOther++; }
     } else if (ev === 'burst') {
       if (m.bursts[o.type] != null) { if (s === fed) { m.bursts[o.type]++; burstTimes.push(w2.time); } else m.burstOther[o.type]++; }
     } else if (ev === 'status') {
       if (m.added[o.type] != null && s === fed) m.added[o.type] += amt;
     } else if (ev === 'block') { if (s === fed) m.blockedFed += amt; }
     else if (ev === 'heal') { if (s === fed) m.healFed += amt; }
+    else if (ev === 'healAsk') { if (s === fed) m.healAsk += amt; }
+    else if (ev === 'healCut') { if (s === fed) m.healCut += amt; }
+    else if (ev === 'cast') { if (s === fed) m.castsFed++; else if (s === other) m.castsOther++; }
+    else if (ev === 'nullified') { const ss = sideOfU(src); if (ss === fed) { m.nullFed[o.why]++; m.nullFedAmt[o.why] += amt; } else if (ss === other) { m.nullOther[o.why]++; m.nullOtherAmt[o.why] += amt; } }
   };
   if (bonus) for (const u of run.sides[bonus.side]) SIM.addBuff(u, { id: 'auditBonus', dealt: bonus.mul, dur: 1e9 });
   if (immortal) for (const u of [...run.sides.a, ...run.sides.b]) { u.maxHp = u.hp = 1e7; }
@@ -109,6 +117,7 @@ export function runFight({ a, b, seed, fed = 'b', feed = null, bonus = null, are
         if (!SIM.alive(u)) continue;
         u._w = w;
         if (disabled(u)) m.stunned += DT;
+        if (noStrike(u)) m.noStrike += DT;
         for (const ty of types) { if (IN_BURST[ty](u)) m.inBurst[ty] += DT; if (u.st && u.st[ty] > 0) m.built[ty] += DT; }
       }
     }
