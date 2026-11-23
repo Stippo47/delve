@@ -952,3 +952,9 @@ hero, with every clip: `docs/HEROES-r15.md`. The numbers: `docs/balance/r15-newh
   too often), the Great Ooze's health -6% (13 of 40). Left for a pass with the designer's boss answers in.
 - Lane E's own calls are in its entry above (the Engineer's mortar renamed `snowMortar`: a Foundry enemy of the same
   name had been overwriting it; the Book's generic "Weakened" is now "Hindered").
+
+## The designer's tag-system notes (2026-11-22, chat; not built, the rest is coming in Riffle)
+- Mute and Deaf are traits, always on. Silenced and Deafened are statuses that wear off.
+- Deaf is deaf to everything: a Deaf hero gets nothing from its own side's sound effects either (the Bard's songs,
+  rallying shouts), as well as being immune to the enemy's.
+- No console port for now. An engine port was discussed (Godot the better fit); not decided.
