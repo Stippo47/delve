@@ -112,7 +112,7 @@ function stepBattle(run) {
 export function battleFight(hero, scen, spec, seed, opts = {}) {
   const P = PANEL[scen], save = freshSave(); save.cheat = true;
   const a = [{ k: hero, n: 1, tier: 3 }]; if (P.a === 'ally') a.push({ k: allyOf(hero), n: 1, tier: 3 });
-  setSeed(seed);
+  setSeed(seed); AUDIT.idFrom = 1; // (unit ids feed some movement: the same ids every fight, so a seed is one fight)
   const run = B.newBattle(save, { arena: opts.arena || 'crypt', size: opts.size || 'l', scaled: true, a, b: P.b });
   const me = run.sides.a.find((u) => u.kind === hero);
   me.kit.nodes = battleNodes(hero, spec); K.refreshKit(me, 1);
@@ -142,7 +142,7 @@ function dungeonSave(party, lead, spec) {
   return s;
 }
 export function dungeonRun(lead, party, theme, spec, seed, cap = 900) {
-  setSeed(seed);
+  setSeed(seed); AUDIT.idFrom = 1;
   const run = D.newRun(dungeonSave(party, lead, spec), { theme, party, asRank: 1, bare: true });
   const Wt = watch((x) => x && x.kind === lead && (x.trueTeam || x.team) === 'hero' && !x.summonBy);
   let t = 0;

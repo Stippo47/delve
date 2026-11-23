@@ -42,6 +42,7 @@ export function spawn(w, kind, x, y, opts = {}) {
   const lvl = opts.level || 1;
   const mult = opts.mult || 1;
   const maxHp = hero ? levelHp(d.hp, lvl) : Math.round(d.hp * mult * (opts.hpMul || 1));
+  if (AUDIT.idFrom) { NEXT_ID = AUDIT.idFrom; AUDIT.idFrom = 0; } // (round 16: tools/audit/worth starts every fight's unit ids from the same number, so one seed is one fight)
   const u = {
     id: NEXT_ID++, kind, def: d, team, x, y, vx: 0, vy: 0, kx: 0, ky: 0, dvx: 0, dvy: 0,
     r: d.r * (opts.scale || 1), vr: (d.vr || d.r) * (opts.scale || 1), mass: d.mass * (opts.scale || 1), maxHp, hp: opts.hp != null ? Math.min(opts.hp, maxHp) : maxHp,
