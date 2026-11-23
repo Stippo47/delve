@@ -1,0 +1,183 @@
+{
+  "title": "Round 16: the balance audit",
+  "topic": "balance",
+  "stack": "audit16",
+  "order": 1,
+  "priority": 1,
+  "tags": [
+    "first"
+  ],
+  "kind": "report",
+  "cards": [
+    {
+      "id": "overview",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "What was measured",
+      "text": "Every hero, enemy and status measured, nothing changed. About 150,000 test fights in six areas.",
+      "why": "You asked to see the findings before any tournament or fix. Each card after this one is one area; the question deck after it holds the calls only you can make.",
+      "details": "Six tests, each its own write-up in the game's folder (docs/audit):\n\n- Cooldowns during lasting states: the Hay Bale and Warhelm problem, every lasting ability checked.\n- Statuses: mirror fights with one status fed in at a fixed rate, measured as real numbers (time it couldn't strike, damage the status did, heals lost) and one 'worth' number.\n- Heroes: how often each ability fires in 1v1, against a charged-attack foe, a swarm, a melee+ranged duo, a dungeon floor and with an ally, and what each ability did next to the weapon.\n- Ability worth: every hero with each ability off, only one on, one at tier I, all at III; 98,100 fights and 15,696 dungeon runs.\n- Enemies: 1v1 inside each dungeon, equal-cost groups, against heroes, in mixed groups, and the rats against a wolf.\n- Bosses: Stagger and Shock switched off one at a time.\n\nNo game rule or number has changed. The only lines added to the game's code are switched-off counting hooks for the tests.",
+      "parts": [
+        {
+          "id": "bugs",
+          "title": "Five bugs first",
+          "text": "Found on the way, and they would skew a tournament: battle mode ends a fight when a side's last fighter turns ethereal; Frost Arrow loses its arrow 29% of the time; lobbed attacks credit nobody; a side of only Saw Blades loses at once; the same seed doesn't replay the same fight."
+        },
+        {
+          "id": "big",
+          "title": "Biggest findings",
+          "text": "Poison is worth nearly 3x Burn. Warhelm is in Storm Born 81% of a fight. The Gilded Golem is 28x its dungeon's threat. Grandpa Sickle wins 93% of duels with Bread Toss and 1% without."
+        }
+      ]
+    },
+    {
+      "id": "cooldowns",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Cooldowns in states",
+      "text": "A cooldown starts at the cast and runs out while the state is on. Warhelm is in Storm Born 81% of a fight.",
+      "why": "This is the Hay Bale and Thor problem you saw. It only shows at tiers II and III, where cooldowns roughly halve while many states get longer.",
+      "details": "The cooldown is set when the ability is cast and counts down every moment, whatever the hero is doing. Most lasting abilities can't be recast while on, so the cooldown simply runs out underneath.\n\nTier I is fine: 7 to 12 seconds are usually left when the state ends. At II and III, tier cuts and the skill web's haste nodes nearly halve cooldowns.\n\n17 abilities that put the hero in a state are affected, and about 20 that leave something in the world. The worst of those are cast again on top of the last one: Pyromancer's burning patches are down 92% of the fight, Engineer's machines 88%, Earth Mage's wall and Alchemist's pools 85%.\n\nThree fixes were tried in the test runner only. (a) The cooldown starts when the effect ends. (b) The cooldown adds the effect's average length. (c) At least half the cooldown is left when it ends. (a) and (b) give nearly the same uptimes, but (b) overcharges when a state is cut short (a bale broken early). (c) doesn't stop the patches and walls stacking.\n\nWhat (a) costs: most affected heroes lose 5 to 12% of their damage a second at II and III. Alchemist, Engineer and Pyromancer lose 16 to 28%, and the Berserker at III about 20%. Some may want small cooldown trims afterwards.",
+      "parts": [
+        {
+          "id": "warhelm",
+          "title": "Warhelm, Storm Born",
+          "text": "Tier II: cooldown 8.8 s, the form lasts 9 s, so it's ready 0.2 s before he leaves it, every time. In the form 81% of the fight at II and III. Under (a): 50% and 57%."
+        },
+        {
+          "id": "hay",
+          "title": "Haymaker, Hay Bale",
+          "text": "Tier III: cooldown 6.4 s, the ride up to 7 s. On the bale 72% of the fight (49% at II, 27% at I). Under (a): 46%."
+        },
+        {
+          "id": "world",
+          "title": "Walls, pools, patches",
+          "text": "Pyromancer's patches 92% of the fight, Engineer's machines 88%, Stone Wall and brew pools 85%. Under (a) about 51 to 55%."
+        },
+        {
+          "id": "awaken",
+          "title": "Warlock's Awaken",
+          "text": "Its cooldown restarts on every kill, so in a crowd it is nearly always ready."
+        }
+      ]
+    },
+    {
+      "id": "statuses",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Statuses, measured",
+      "text": "Poison is far ahead: it more than doubles the damage the poisoned side takes. Confused helps heroes.",
+      "why": "This decides which status fixes come first. The worth number is how much more damage the fed side took, all else equal; the real counts are on the back.",
+      "details": "Two identical units fight; one is fed a status at a fixed rate, so it bursts every 6 to 10 seconds. 26 matchups at three rates.\n\nAt the medium rate, per fight:\n\n- Poison: bursts 4.4 times, its own ticks are 47% of all the damage the unit takes, and the unit deals 36% less. Fight 28 s instead of 70. Worth +190%.\n- Bleeding: 58% of all damage taken is its own. +122%.\n- Burn: 48% of damage taken. +70%.\n- Chill: couldn't strike 35% of the fight; Shatter does 27% of damage taken. +66%.\n- Cursed: 30% of heals lost; 10.6 blows turned by Hexes. +62%.\n- Shackled: couldn't strike 44%. +57%.\n- Stagger: knocked out 47% of the fight. +51%.\n- Sleepy +38%, Entangle +28%, Fear +28% (couldn't strike 40%, yet the fight drags longer), Shock +22%, Charm +20%, Wet +12%, Radiance +10%.\n- Confused: abilities used 79% more often. -14%, so it helps.\n\nWin rate is a poor measure here: a mirror flips on anything. The health margin is steadier.",
+      "parts": [
+        {
+          "id": "poison",
+          "title": "Poison overpowered",
+          "text": "Nearly 3x Burn's worth at the same rate. Most overtuned enemies win through it (the Cobra does 85% of its damage by poison)."
+        },
+        {
+          "id": "confused",
+          "title": "Confused helps heroes",
+          "text": "Addled fires a hero's unused abilities at random, and those still hit. A confused hero uses 79% more abilities."
+        },
+        {
+          "id": "burst",
+          "title": "Radiance and Charm",
+          "text": "Strongest before they burst: the burst frees the victim. Kept at 85, Charm makes every one of the victim's blows on the charmer do nothing."
+        },
+        {
+          "id": "odd",
+          "title": "Odd pairs",
+          "text": "Wet washes Poison off, halving it. The Berserker III's Unstoppable heals 20% off any status every 16 s. Chill's slow does nothing measurable; the Freeze is all of it."
+        }
+      ]
+    },
+    {
+      "id": "heroes",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Which abilities fire",
+      "text": "Most abilities fire. The silent ones are waiting on a condition battles rarely give, not a busy hero.",
+      "why": "You saw abilities that never triggered in 1v1s. This is why, and which heroes a 1v1 tournament would undersell.",
+      "details": "Every hero at tiers I to III, six situations: 1v1, a foe with charged attacks, a swarm, a melee and ranged duo, a dungeon floor, and with an ally.\n\nWhole kits silent in 1v1: Valkyrie (her kit fires in 18% of fights), Bard (44%), Cultist (49%). Fire most: Bandit, Crossbowman, Warhelm, Slinger (99 to 100%).\n\n44 abilities need two or more foes close together, so they never fire in a 1v1.\n\nWorth more than the hero's weapon: Hay Bale (3.7x at tier III), Life Drain (2.8x), Dirty Trick (1.9x), Juggling Act, Reap, Pile On.\n\nFire but do almost nothing: Twinfang's Dash, Roll, Encore, Old Tales, Supply Crate, Barricade, Wind-up Drones, Turn, Spear of the Sky.\n\nEvery hero clears the first dungeon floor at every tier, so that floor tells heroes apart poorly.\n\nThe game's result card counts some ability work as weapon damage: the Chef's meals, Wildmane's Rage lifesteal and the Beehive's bees.",
+      "parts": [
+        {
+          "id": "ethereal",
+          "title": "Ethereal ends fights",
+          "text": "Battle mode ends a fight when a side's last fighter goes ethereal. Digger's Burrow, Witch's Broom Ride, Falconer, Trapper and Shade lose alone. Fixed in the test, a tier II Digger goes from 54% to 100% of 1v1s."
+        },
+        {
+          "id": "frost",
+          "title": "Frost Arrow lost",
+          "text": "Barrage cast during Frost Arrow's draw throws the frost arrow away: 29% of the time."
+        },
+        {
+          "id": "valk",
+          "title": "Never or rarely",
+          "text": "Valkyrie's Call: 0 casts (needs a downed friend; battle mode has none). Rarely: Challenge, Spear of the Sky, Swoop, Old Tales, Supply Crate, Guard, Mending Ray (0% at II and III on dungeon floors)."
+        }
+      ]
+    },
+    {
+      "id": "worth",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "What each ability is worth",
+      "text": "Each hero fought with each ability off, alone, at I, and all at III. 152 of 177 clearly matter.",
+      "why": "Your with-or-without test. It shows which heroes lean on one ability, which upgrades do nothing, and which pairs belong together.",
+      "details": "Builds per hero: all three at III, minus one, only one, one at tier I, none. Duels against four strong foes, a group fight with a Tower friend against six crypt undead, and dungeon runs. Full kits win 82% of duels and 83% of group fights; bare kits 32% and 13%.\n\nTop ten: Bread Toss, Hook, Frenzy, Reap, Elixir, Unstoppable, Juggling Act, Consecrate, Sanctuary, Dirty Trick.\n\nHeroes carried by one ability (switching it off takes away 60%+ of what the kit is worth): Grandpa Sickle (Bread Toss), Werewolf (Frenzy), Alchemist (Elixir), Jester (Juggling Act), Frost Mage (Ice Shard), Quartermaster (Pot Helmet), Dame (Riposte), Shaman (Ancestors' Call), Tower (Charge), Twinfang (Fan of Knives), Griffon (Stormhammer).\n\nWorth nothing in any build: Valkyrie's Call (doesn't fire), and Roll, Supply Crate, Old Tales and Entangle, which do fire.\n\nWorth something alone but nothing next to the other two (17): Dark Bargain, Shield Wall, Surround, Bayonet, Frost Nova, Ice Wall, Thunderclap, Guard and others.\n\nGood together: Rejuvenate + Call Wolf, Reap + Hook, Bread Toss + Harvest, Frenzy + Pounce, Riposte + Challenge, Raise Dead + Life Drain. Real overlap: Awaken + Dark Bargain (each adds 30 to 35 points alone, 12 together).\n\nHurt in duels but help in groups: Heartstring, Eldritch Beam, Awaken, Monstrosity, Turn.\n\nDungeon rooms were too noisy to rank single abilities; the battle numbers carry the ranking.",
+      "parts": [
+        {
+          "id": "carry",
+          "title": "Carried by one",
+          "text": "Grandpa Sickle wins 93% of duels with Bread Toss, 1% without. Eleven heroes lean that hard on one ability."
+        },
+        {
+          "id": "flat",
+          "title": "Upgrades that do nothing",
+          "text": "33 abilities matter, but their tier II and III upgrades change nothing: Harvest, Hot Meal, Chain Lightning, Hibernate, Deploy Turret, Iaido and more. Stop the Clock and Gale: neither step. Nullify's steps do help."
+        },
+        {
+          "id": "worse",
+          "title": "Upgrades that hurt",
+          "text": "Cure III wins the group fight 67% of the time, Cure I 100%. Brace III is 16 points worse in duels; Shield Wall III 12 worse in groups."
+        }
+      ]
+    },
+    {
+      "id": "foes",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Enemies, and the rats",
+      "text": "Two Rats beat a Wolf 30 times in 30. The Rat is cheap for its strength and the Wolf weak for its price.",
+      "why": "Your rats-and-wolf example holds, and the same tests found the over- and undertuned enemy in every dungeon.",
+      "details": "Per cost point a Rat has 1.4x a Wolf's health and 1.9x its damage. In battle mode each enemy is built at its own dungeon's strength, so a Sewers Rat (77 health) meets a Wildwood Wolf (39): one Rat beats one Wolf every time. That's most likely what you saw.\n\nOvertuned, mostly through Poison or Burn: Gilded Golem (28x its dungeon's threat; its front sends shots back), Cobra (12.5x), Steam Turret (10x), Green Crab (8.4x), Dart Trap, Golden Skeleton, Imp, Hellhound, Poacher, Yeti, Spear Goblin, the steel and bronze wasps.\n\nUndertuned: Wisp, Drummer, Brain Leech, the spirits (except the Venom Spirit, one of the best helpers), Ghost (lost every Crypt 1v1), the bombers (they die before the fuse), Cinder Bat (its dive blows itself up), Wolf, Boar, Troll, Croc, Momma Spider.\n\nAcross dungeons, per cost the Frost Hollow is weaker than the Crypt before it, and the Ember Deep much stronger than the Frost Hollow.\n\nBattle-mode bosses don't get a dungeon's scaling, so they are easy there.",
+      "parts": [
+        {
+          "id": "rats",
+          "title": "Rats and wolves",
+          "text": "Equal strength: 2 Rats beat 1 Wolf 30/30; 4 beat 2 28/30. At home strength one Rat beats one Wolf 30/30."
+        },
+        {
+          "id": "over",
+          "title": "Overtuned",
+          "text": "Gilded Golem, Cobra, Steam Turret, Green Crab, Golden Skeleton, Imp, Hellhound, Poacher. Most of their damage comes from statuses, which armour doesn't block."
+        },
+        {
+          "id": "under",
+          "title": "Undertuned",
+          "text": "Wisp, Drummer, Brain Leech, most spirits, Ghost, bombers, Cinder Bat, Wolf, Boar, Troll, Croc, Momma Spider."
+        }
+      ]
+    },
+    {
+      "id": "bosses",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Stagger, Shock and bosses",
+      "text": "Your hunch was right: both matter, Shock a bit more. Warhelm II beats 74% of bosses, 54% with neither.",
+      "why": "You noticed Stagger doing well on bosses while watching Warhelm. This splits his two statuses apart.",
+      "details": "Every battle-mode boss (19), with bosses made immune to Stagger, to Shock, or to both.\n\nWarhelm alone at tier II: wins 74% as it is, 71% with no Stagger, 62% with no Shock, 54% with neither. His health left: 51%, 48%, 40%, 36%.\n\nAt tier III he wins regardless, but finishes with 85% health as is and 60% with neither. At tier I it makes no difference.\n\nIn a party (mates at tier I) the boss lasts 22.2 s as is, 25 s without Stagger, 24.8 s without Shock, 27.8 s with neither.\n\nShock and Stagger have no short immunity after they burst, unlike the other statuses, so they can be stacked again at once.\n\nEvery tier III hero solos every battle-mode boss with 95%+ health left (Archer 13 s, Berserker 14 s, Paladin 35 s). A boss tournament needs scaled bosses, or tiers I and II only."
+    }
+  ]
+}

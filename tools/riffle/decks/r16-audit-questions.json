@@ -1,0 +1,131 @@
+{
+  "title": "Round 16: calls from the audit",
+  "topic": "balance",
+  "stack": "audit16",
+  "order": 2,
+  "priority": 1,
+  "tags": [
+    "waiting"
+  ],
+  "cards": [
+    {
+      "id": "bugs",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Fix the five bugs?",
+      "text": "Fix the five bugs the audit found before any tournament? Details on the back.",
+      "why": "They're mistakes, not balance, but they change results: the ethereal one alone makes five heroes lose fights they would win.",
+      "pick": "Yes, all five, then re-run the hero checks so the tournament starts clean.",
+      "details": "1. Battle mode ends a fight when a side's last fighter turns ethereal (Digger's Burrow, Witch's Broom Ride, Falconer, Trapper, Shade). Fix: a hero that's ethereal still counts as fighting.\n2. Barrage cast during Frost Arrow's draw throws the frost arrow away. Fix: queue the shots instead of replacing them.\n3. Lobbed attacks (bombs, boulders, mortar shells) credit nobody on the result card. Fix: pass the thrower.\n4. A side of only Saw Blades (a trap) loses at once. Fix: traps only join a side with other kinds, or leave the battle menu.\n5. The same seed doesn't replay the same fight, because unit numbers keep counting up. Fix: reset them per fight. This also makes the battle videos repeatable."
+    },
+    {
+      "id": "cooldown-rule",
+      "kind": "options",
+      "rarity": "rare",
+      "title": "Cooldowns in states",
+      "text": "Which rule for abilities that keep a hero in a state?",
+      "why": "Storm Born is up 81% of a fight, the Hay Bale 72%. Any fix costs those heroes some damage.",
+      "pick": "a",
+      "options": [
+        {
+          "id": "a",
+          "label": "Starts when it ends",
+          "text": "Waits until the state or wall is gone. Storm Born to 50-57%; stops walls stacking."
+        },
+        {
+          "id": "b",
+          "label": "Adds the average",
+          "text": "Adds the effect's average length at the cast. Overcharges when cut short."
+        },
+        {
+          "id": "c",
+          "label": "Half left at the end",
+          "text": "Half the cooldown left at the end. Gentler, but walls still stack."
+        }
+      ],
+      "details": "Damage a second lost under (a) at tiers II and III: Warhelm 7 to 12%, Haymaker 3 to 8%, Werewolf 5 to 6%, Berserker 8 to 20%, Engineer 16 to 19%, Pyromancer 19 to 22%, Alchemist 25 to 28%. Win rates mostly stay at 100%; the Berserker II drops from 97% to 69% in the test fights. Tier I barely moves.\n\nThe cooldown ring would show the ability as 'on' while it's held."
+    },
+    {
+      "id": "poison",
+      "kind": "options",
+      "rarity": "rare",
+      "title": "Bring Poison down",
+      "text": "Poison is worth nearly 3x Burn at the same rate. Which lever?",
+      "why": "It's the main reason the Cobra, Green Crab, Plague Rat and Gas Mortar are overtuned, and armour doesn't stop it. Any one lever should about halve it; I'd re-measure before settling.",
+      "pick": "sick",
+      "options": [
+        {
+          "id": "sick",
+          "label": "Weaker Sickened",
+          "text": "The burst's 30% weaker becomes 15%. Keeps the ticks as they feel now."
+        },
+        {
+          "id": "drain",
+          "label": "Drains faster",
+          "text": "Poison wears off 4 to 6 a second, so it needs a steady feed to stay up."
+        },
+        {
+          "id": "back",
+          "label": "No bounce back",
+          "text": "Drop the 'comes back to 20' after a burst, so each burst starts from zero."
+        }
+      ]
+    },
+    {
+      "id": "confused",
+      "kind": "options",
+      "rarity": "uncommon",
+      "title": "Confused helps heroes",
+      "text": "A confused hero fires its unused abilities at random and they still hit, so Confused makes heroes better.",
+      "why": "In the test a confused hero used 79% more abilities and came out ahead. A bad status shouldn't be worth having.",
+      "pick": "aim",
+      "options": [
+        {
+          "id": "aim",
+          "label": "Random aim",
+          "text": "Addled abilities go at a random spot, or a friend, instead of what the hero faces."
+        },
+        {
+          "id": "weapon",
+          "label": "Weapon only",
+          "text": "Addled fires no abilities for heroes; it only scrambles the weapon."
+        },
+        {
+          "id": "cd",
+          "label": "Longer cooldown",
+          "text": "An Addled cast puts the ability on a longer cooldown, so it costs something."
+        }
+      ]
+    },
+    {
+      "id": "foe-costs",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Enemy prices",
+      "text": "Adjust enemy cost or strength, starting with the Wolf, the Rat and the worst outliers?",
+      "why": "Cost decides how many of a kind a room gets, so a cheap strong enemy floods rooms and a pricey weak one is free XP.",
+      "pick": "Wolf to cost 1.5, Rat to 1.3. Gilded Golem's mirror sends back half. Status foes wait for the Poison call, then get re-measured.",
+      "details": "Overtuned per cost: Gilded Golem (28x its dungeon's median), Cobra, Steam Turret, Green Crab, Golden Skeleton, Poacher, Spear Goblin, Imp, Hellhound. Most win through Poison or Burn, so fixing Poison first fixes much of the list.\n\nUndertuned: Wisp, Drummer, Brain Leech, most spirits, Ghost, Wolf, Boar, Troll, Croc, Momma Spider, and the bombers (Goblin Bomber, Suicide Bomber, Dynamite Mouse, Bomb Bots, Cinder Bat), which die before the fuse or blow up their own side.\n\nThe helpers (Wisp, Drummer, Wind and Storm Spirits) do nothing measurable even in a group. The Venom Spirit shows a helper can be worth its cost."
+    },
+    {
+      "id": "abilities",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Abilities that do nothing",
+      "text": "Rework the abilities that change nothing, and the upgrades that do nothing or make things worse?",
+      "why": "A slot or an upgrade that changes nothing is a wasted pick in the skill web.",
+      "pick": "Yes, after the tournament. I'd draft changes in a deck for you first: Valkyrie's Call, Roll, Supply Crate, Old Tales, Entangle, Cure III.",
+      "details": "Worth nothing in any build: Valkyrie's Call (needs a downed friend, so in battle it never fires), Roll, Supply Crate, Old Tales and Entangle (they fire but change nothing).\n\nUpgrades that hurt: Cure III wins the group fight 67%, Cure I 100%. My guess, to check: it strips good states too. Brace III and Shield Wall III are also worse than tier I.\n\n33 abilities' tier II and III upgrades change nothing (Harvest, Hot Meal, Chain Lightning, Hibernate, Deploy Turret, Iaido and more), and both steps of Stop the Clock and Gale.\n\nOverlap: Awaken and Dark Bargain do the same job for the Warlock.\n\nEleven heroes lean on one ability for 60%+ of their kit's worth (Grandpa Sickle's Bread Toss: 93% of duels won with it, 1% without). Is that on purpose?"
+    },
+    {
+      "id": "tournament",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Tournament shape",
+      "text": "1v1 brackets at tiers I to III, 2v2 with a Paladin each side, plus a group bracket. Bosses scaled.",
+      "why": "44 abilities need two or more foes to fire, so 1v1 alone undersells heroes like the Bard. Unscaled bosses fall to any tier III hero.",
+      "pick": "Yes, after the bug fixes and your cooldown call, so the brackets measure the game you'll keep. Health margin decides ties.",
+      "details": "Order I'd run: fix the five bugs, apply the cooldown rule you pick, then 1v1 at tiers I, II and III, 2v2 with a Paladin on each side, and a group bracket (the hero against a three-foe pack). Bosses: scaled to their dungeon, or only tiers I and II against unscaled ones.\n\nStat changes (Poison, enemy costs) would come after, so the tournament shows where things stand first."
+    }
+  ]
+}

@@ -976,3 +976,21 @@ each writing tools/audit/<lane>/ and docs/audit/<lane>.md. Tournaments (1v1 brac
 Paladin on each side so healers and supports count) wait until the designer has read the findings.
 Pinned in Riffle Misc ("Pinned: more ideas"): tags on everything, red when evil, unit maker, unlocks and quests,
 battle videos, scripted lines in videos, lore, who can find Delve.
+
+Later in round 16 the designer asked for measured values, not only a worth number (statuses lane leads with them), and
+a with-or-without test per ability (a fifth lane, audit-worth: docs/audit/worth.md), and asked whether Stagger or
+Shock carries Warhelm against bosses (docs/audit/boss-stagger.md: both, Shock a bit more; tier II alone wins 74% of
+boss fights, 54% with neither).
+
+Findings, all six areas in docs/audit/, reported in Riffle (topic balance, "Round 16: the balance audit"), with the
+calls in "Round 16: calls from the audit". Nothing changed in the game; the lead's picks, all waiting on the designer:
+- Fix five bugs first: battle mode ends a fight when a side's last fighter is ethereal (battle.js `fighting()`);
+  Barrage replaces Frost Arrow's queued shot (`u.later`); `lob()` zones credit nobody; a Saw-Blade-only side loses at
+  once; unit ids never reset, so a seed doesn't replay a fight.
+- Cooldown rule (a): the cooldown starts when the state or world effect ends (Storm Born 81% -> 50-57%).
+- Poison: Sickened 30% -> 15% (Poison is worth ~3x Burn); Confused: Addled abilities aim at random.
+- Enemies: Wolf cost 1.5, Rat 1.3, Gilded Golem's mirror sends back half; the status foes after the Poison call.
+- Do-nothing abilities and flat upgrades (Valkyrie's Call, Roll, Supply Crate, Old Tales, Entangle, Cure III worse
+  than Cure I) drafted in a deck after the tournament.
+- Tournament after the fixes and the cooldown rule: 1v1 at I-III, 2v2 with a Paladin each side, a three-foe group
+  bracket (44 abilities need 2+ foes), bosses scaled; health margin breaks ties.
