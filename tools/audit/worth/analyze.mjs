@@ -15,9 +15,16 @@ function est(vals) { const v = vals.filter((x) => x != null && !Number.isNaN(x))
 // per-seed combination of builds: terms [[sign, build]...]; get(build) -> per-seed array
 function combo(get, terms) { const arrs = terms.map(([, b]) => get(b)); if (arrs.some((a) => !a)) return null; const n = Math.min(...arrs.map((a) => a.length)); const out = []; for (let i = 0; i < n; i++) { let s = 0, bad = false; terms.forEach(([sg], j) => { const x = arrs[j][i]; if (x == null) bad = true; else s += sg * x; }); out.push(bad ? null : s); } return est(out); }
 
+const perRun = (h, b, f) => { const r = DG.heroes[h] && DG.heroes[h][b]; if (!r || !Array.isArray(r.secs)) return null; return r.rooms.map((x, i) => (x == null || !r.secs[i] ? null : f(r, i))); };
 // per-seed series for a hero and build in each measure
 const series = {
   rooms: (h, b) => DG.heroes[h] && DG.heroes[h][b] ? DG.heroes[h][b].rooms : null,
+  // dungeon rates over the whole run (every room counts, so steadier than rooms): signed so that bigger is better
+  dDps: (h, b) => perRun(h, b, (r, i) => r.dmg[i] / r.secs[i]),
+  dSaved: (h, b) => perRun(h, b, (r, i) => -r.taken[i] / r.secs[i]),
+  dHeal: (h, b) => perRun(h, b, (r, i) => r.heal[i] / r.secs[i]),
+  dDowns: (h, b) => perRun(h, b, (r, i) => -r.downs[i]),
+  dWon: (h, b) => DG.heroes[h] && DG.heroes[h][b] ? DG.heroes[h][b].won : null,
   duel: (h, b) => { const B = BT.heroes[h] && BT.heroes[h][b]; if (!B) return null; const n = B.melee.margin.length; return Array.from({ length: n }, (_, i) => mean(PANEL4.map((s) => B[s].margin[i]))); },
   duelWin: (h, b) => { const B = BT.heroes[h] && BT.heroes[h][b]; if (!B) return null; const n = B.melee.win.length; return Array.from({ length: n }, (_, i) => mean(PANEL4.map((s) => B[s].win[i]))); },
   group: (h, b) => BT.heroes[h] && BT.heroes[h][b] ? BT.heroes[h][b].group.margin : null,
@@ -25,7 +32,7 @@ const series = {
   battle: (h, b) => { const d = series.duel(h, b), g = series.group(h, b); if (!d || !g) return null; return d.map((x, i) => (x == null || g[i] == null ? null : (x + g[i]) / 2)); },
 };
 for (const s of PANEL4) { series[s] = (h, b) => BT.heroes[h] && BT.heroes[h][b] ? BT.heroes[h][b][s].margin : null; series[s + 'Win'] = (h, b) => BT.heroes[h] && BT.heroes[h][b] ? BT.heroes[h][b][s].win : null; }
-const MEASURES = ['rooms', 'duel', 'duelWin', 'group', 'groupWin', 'battle', ...PANEL4, ...PANEL4.map((s) => s + 'Win')];
+const MEASURES = ['rooms', 'dDps', 'dSaved', 'dHeal', 'dDowns', 'dWon', 'duel', 'duelWin', 'group', 'groupWin', 'battle', ...PANEL4, ...PANEL4.map((s) => s + 'Win')];
 
 // ---------------------------------------------------------------- per ability
 const ABS = [], HERO = {};
@@ -91,12 +98,16 @@ for (const h of Object.keys(HERO)) {
 // ---------------------------------------------------------------- scores and noise
 const sdOf = (xs) => { const v = xs.filter((x) => Number.isFinite(x)); const m = v.reduce((a, b) => a + b, 0) / v.length; return Math.sqrt(v.reduce((a, b) => a + (b - m) ** 2, 0) / v.length); };
 const median = (xs) => { const v = xs.filter((x) => Number.isFinite(x)).sort((a, b) => a - b); return v.length ? v[Math.floor(v.length / 2)] : NaN; };
-const SD = { rooms: sdOf(ABS.map((A) => A.m.rooms.kit && A.m.rooms.kit.m)), battle: sdOf(ABS.map((A) => A.m.battle.kit && A.m.battle.kit.m)) };
-const zOf = (A, k = 'kit') => { const zs = []; if (A.m.rooms[k] && Number.isFinite(A.m.rooms[k].m)) zs.push(A.m.rooms[k].m / SD.rooms); if (A.m.battle[k] && Number.isFinite(A.m.battle[k].m)) zs.push(A.m.battle[k].m / SD.battle); return zs.length ? zs.reduce((a, b) => a + b, 0) / zs.length : NaN; };
+// The spread of the abilities' TRUE worths in a measure: the spread of the estimates less the part the noise makes.
+const trueSd = (m) => { const es = ABS.map((A) => A.m[m].kit).filter((e) => e && Number.isFinite(e.m)); const obs = sdOf(es.map((e) => e.m)); const nv = es.reduce((a, e) => a + e.se ** 2, 0) / es.length; return Math.sqrt(Math.max(obs ** 2 - nv, 0.25 * obs ** 2)); };
+const SD = { rooms: trueSd('rooms'), battle: trueSd('battle') };
+// Combined score: each setting's worth over that spread, weighted by how sure it is (1 / standard error squared).
+const zw = (list) => { let sw = 0, sz = 0; for (const [e, sd] of list) if (e && Number.isFinite(e.m) && e.se > 0) { const w = (sd / e.se) ** 2; sw += w; sz += w * e.m / sd; } return sw ? sz / sw : NaN; };
+const zOf = (A, k = 'kit') => zw([[A.m.rooms[k], SD.rooms], [A.m.battle[k], SD.battle]]);
 for (const A of ABS) { A.score = zOf(A, 'kit'); A.scoreAlone = zOf(A, 'alone'); A.scoreUpg = zOf(A, 'upg'); }
 const clear = (e) => e && Number.isFinite(e.m) && Math.abs(e.m) > 2 * e.se;
 const NOISE = {};
-for (const m of ['rooms', 'duel', 'duelWin', 'group', 'groupWin', 'battle']) NOISE[m] = { kitSE: median(ABS.map((A) => A.m[m].kit && A.m[m].kit.se)), aloneSE: median(ABS.map((A) => A.m[m].alone && A.m[m].alone.se)), upgSE: median(ABS.map((A) => A.m[m].upg && A.m[m].upg.se)), levelSE: median(Object.values(HERO).map((H) => H.lvl[m].full.se)) };
+for (const m of ['rooms', 'dDps', 'dSaved', 'dHeal', 'dDowns', 'duel', 'duelWin', 'group', 'groupWin', 'battle']) NOISE[m] = { kitSE: median(ABS.map((A) => A.m[m].kit && A.m[m].kit.se)), aloneSE: median(ABS.map((A) => A.m[m].alone && A.m[m].alone.se)), upgSE: median(ABS.map((A) => A.m[m].upg && A.m[m].upg.se)), levelSE: median(Object.values(HERO).map((H) => H.lvl[m].full.se)) };
 
 // ---------------------------------------------------------------- summary JSON
 const r3 = (x) => (Number.isFinite(x) ? +x.toFixed(3) : null);
@@ -120,7 +131,7 @@ const it = (e, f) => (!e || !Number.isFinite(e.m) ? 'n/a' : clear(e) ? f(e.m) : 
 const castTxt = (c) => `${Number.isFinite(c.dPerRun) ? c.dPerRun.toFixed(1) : '-'} / ${Number.isFinite(c.bPerFight) ? c.bPerFight.toFixed(1) : '-'}`;
 const L = [];
 const P = (s = '') => L.push(s);
-const raw = { L, P, ABS, PAIRS, HERO, NOISE, SD, summary, it, sg, pc, nm, hn, abName, clear, castTxt, BT, DG, PANEL4, allyOf };
+const raw = { zw, L, P, ABS, PAIRS, HERO, NOISE, SD, summary, it, sg, pc, nm, hn, abName, clear, castTxt, BT, DG, PANEL4, allyOf };
 if (opt('md')) {
   const { write } = await import('./report.mjs');
   writeFileSync(opt('md'), write(raw));

@@ -2,8 +2,8 @@
 // others, every dungeon in turn, the same parties and seeds as ability-worth's draw), each party played once per build
 // from the same seed. Bare runs at rank 1; the other two heroes have all three abilities at III.
 //   node tools/audit/worth/dungeon.mjs [--n 32] [--shard 0/3] [--heroes a,b] [--out file.json]
-// Writes per hero and build: per-run rooms cleared and won, and summed seconds, hero damage, hero downs, party damage
-// taken, healing and downs, casts per ability and the hero's damage/heal by source.
+// Writes per hero and build, per run: rooms cleared, won, seconds, hero damage, party damage, hero downs, party damage
+// taken, healing and downs; summed: casts per ability and the hero's damage/heal by source.
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { dungeonRun, builds, HERO_IDS, THEME_IDS } from './lib.mjs';
@@ -15,7 +15,7 @@ const OUT = { n, seed0, heroes: {} }; let problems = 0; const t0 = Date.now();
 const add = (m, src) => { for (const [k, v] of Object.entries(src)) m[k] = (m[k] || 0) + v; };
 for (const lead of heroes) {
   const bs = builds(lead), H = OUT.heroes[lead] = {};
-  for (const b of Object.keys(bs)) if (!only || only.includes(b)) H[b] = { rooms: [], won: [], secs: 0, dmg: 0, hdowns: 0, taken: 0, heal: 0, downs: 0, casts: {}, src: {}, hsrc: {} };
+  for (const b of Object.keys(bs)) if (!only || only.includes(b)) H[b] = { rooms: [], won: [], secs: [], dmg: [], pdmg: [], hdowns: [], taken: [], heal: [], downs: [], casts: {}, src: {}, hsrc: {} };
   // the same draw as tools/ability-worth.mjs at tier 3
   let rs = (seed0 * 7919 + 3 * 31 + HERO_IDS.indexOf(lead) * 104729) & 0x7fffffff; const rnd = () => (rs = (rs * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
   const parties = [];
@@ -26,9 +26,8 @@ for (const lead of heroes) {
     parties.push(party.join(',') + '@' + theme);
     for (const b of Object.keys(H)) {
       const r = H[b];
-      let f; try { f = dungeonRun(lead, party, theme, bs[b], sd); } catch (e) { problems++; console.error(lead, b, i, e.stack.split('\n').slice(0, 3).join(' / ')); r.rooms.push(null); r.won.push(null); continue; }
-      r.rooms.push(f.rooms); r.won.push(f.won);
-      for (const m of ['secs', 'dmg', 'hdowns', 'taken', 'heal', 'downs']) r[m] += f[m];
+      let f; try { f = dungeonRun(lead, party, theme, bs[b], sd); } catch (e) { problems++; console.error(lead, b, i, e.stack.split('\n').slice(0, 3).join(' / ')); for (const m of ['rooms', 'won', 'secs', 'dmg', 'pdmg', 'hdowns', 'taken', 'heal', 'downs']) r[m].push(null); continue; }
+      for (const m of ['rooms', 'won', 'secs', 'dmg', 'pdmg', 'hdowns', 'taken', 'heal', 'downs']) r[m].push(+f[m].toFixed(2));
       add(r.casts, f.casts); add(r.src, f.src); add(r.hsrc, f.hsrc);
     }
   }

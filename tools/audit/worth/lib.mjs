@@ -119,9 +119,9 @@ export function dungeonRun(lead, party, theme, spec, seed, cap = 900) {
   let t = 0;
   try { while (run.phase !== 'won' && run.phase !== 'lost' && run.phase !== 'retreated' && t < cap) { D.update(run, DT); t += DT; } } finally { WATCH = null; }
   const S = D.summarize(run).stats, me = S.heroes[lead];
-  let taken = 0, heal = 0, downs = 0;
-  for (const k of party) { taken += S.heroes[k].taken; heal += S.heroes[k].heal; downs += S.heroes[k].downs; }
-  return { rooms: Math.max(0, run.rooms - (run.phase === 'lost' ? 1 : 0)), won: run.phase === 'won' ? 1 : 0, secs: t, dmg: me.dmg, hdowns: me.downs,
+  let taken = 0, heal = 0, downs = 0, pdmg = 0;
+  for (const k of party) { taken += S.heroes[k].taken; heal += S.heroes[k].heal; downs += S.heroes[k].downs; pdmg += S.heroes[k].dmg; }
+  return { rooms: Math.max(0, run.rooms - (run.phase === 'lost' ? 1 : 0)), won: run.phase === 'won' ? 1 : 0, secs: t, dmg: me.dmg, pdmg, hdowns: me.downs,
     taken, heal, downs, casts: Wt.casts, src: me.src.dmg, hsrc: me.src.heal };
 }
 export const ABILITIES = K.ABILITIES;

@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 const HERE = dirname(fileURLToPath(import.meta.url));
 
 export function write(R) {
-  const { L, P, ABS, PAIRS, HERO, NOISE, SD, summary, it, sg, pc, nm, hn, abName, clear, castTxt, PANEL4, BT } = R;
+  const { zw, L, P, ABS, PAIRS, HERO, NOISE, SD, summary, it, sg, pc, nm, hn, abName, clear, castTxt, PANEL4, BT } = R;
   const notes = existsSync(resolve(HERE, 'notes.md')) ? readFileSync(resolve(HERE, 'notes.md'), 'utf8') : '';
   const part = (k) => { const m = notes.match(new RegExp(`<!-- ${k} -->([\\s\\S]*?)<!-- /${k} -->`)); return m ? m[1].trim() : '_(to write)_'; };
   const rooms = (e) => it(e, (x) => sg(x, 2));
@@ -68,8 +68,11 @@ export function write(R) {
   P('- **Rooms**: extra rooms cleared in a dungeon run. **Health**: points of health margin (out of 100) in battle. **Win**: points of win rate.');
   P('- **kit** = full minus "minus one". **alone** = "only one" minus bare. **I to III** = full minus "one at I".');
   P('- A number in *italics* is inside the noise (under two standard errors from zero). Plain numbers are clear of it.');
-  P(`- The combined **score** ranks abilities across both settings: the dungeon rooms worth and the battle health worth (duels and group`);
-  P(`  averaged, each half), each divided by how much worths spread across all ${nAb} abilities (rooms ${SD.rooms.toFixed(2)}, health ${(100 * SD.battle).toFixed(1)} points), then averaged. 1.0 = one typical spread.`);
+  P(`- The combined **score** ranks abilities across both settings: the dungeon rooms worth and the battle health worth (duels and`);
+  P(`  group averaged, half each), each divided by how widely real worths spread across all ${nAb} abilities in that measure (rooms`);
+  P(`  ${SD.rooms.toFixed(2)}, health ${(100 * SD.battle).toFixed(1)} points; the spread the noise adds taken out), then averaged with each weighted by how sure`);
+  P(`  it is (one over its standard error squared). Rooms are far noisier than battle health, so the battle carries most of the score.`);
+  P(`  1.0 = one typical spread.`);
   P('- **Casts** = casts a dungeon run / casts a battle fight, in the full build.');
   P();
   P('### Noise');
@@ -113,10 +116,10 @@ export function write(R) {
   P('Neither switching it off (kit) nor having it alone (alone) makes a clear difference in any of the three measures (dungeon');
   P('rooms, duel health, group health). The "why" column checks whether it fires at all.');
   P();
-  P('| Hero | Ability | Rooms kit / alone | Duels kit / alone | Group kit / alone | Casts (full) | Why |');
-  P('|---|---|---|---|---|---|---|');
-  for (const A of nothing.sort((a, b) => a.score - b.score)) P(`| ${hn(A.hero)} | ${nm(A)} | ${rooms(A.m.rooms.kit)} / ${rooms(A.m.rooms.alone)} | ${hp(A.m.duel.kit)} / ${hp(A.m.duel.alone)} | ${hp(A.m.group.kit)} / ${hp(A.m.group.alone)} | ${casts(A)} | ${why(A)} |`);
-  if (!nothing.length) P('| (none) | | | | | | |');
+  P('| Hero | Ability | Rooms kit / alone | Dungeon kit, a second: hero dmg / hurt saved / heal | Duels kit / alone | Group kit / alone | Casts (full) | Why |');
+  P('|---|---|---|---|---|---|---|---|');
+  for (const A of nothing.sort((a, b) => a.score - b.score)) P(`| ${hn(A.hero)} | ${nm(A)} | ${rooms(A.m.rooms.kit)} / ${rooms(A.m.rooms.alone)} | ${it(A.m.dDps.kit, (x) => sg(x, 1))} / ${it(A.m.dSaved.kit, (x) => sg(x, 1))} / ${it(A.m.dHeal.kit, (x) => sg(x, 1))} | ${hp(A.m.duel.kit)} / ${hp(A.m.duel.alone)} | ${hp(A.m.group.kit)} / ${hp(A.m.group.alone)} | ${casts(A)} | ${why(A)} |`);
+  if (!nothing.length) P('| (none) | | | | | | | |');
   P();
   P('Worth nothing **to the kit** but clearly worth something alone (the other two already do its job, so switching it off costs');
   P('nothing while they are on):');
@@ -191,7 +194,7 @@ export function write(R) {
   P();
 
   // ---- combos
-  const pz = (P2, k) => { const zs = []; if (P2.m.rooms[k] && Number.isFinite(P2.m.rooms[k].m)) zs.push(P2.m.rooms[k].m / SD.rooms); if (P2.m.battle[k] && Number.isFinite(P2.m.battle[k].m)) zs.push(P2.m.battle[k].m / SD.battle); return zs.length ? zs.reduce((a, b) => a + b, 0) / zs.length : NaN; };
+  const pz = (P2, k) => zw([[P2.m.rooms[k], SD.rooms], [P2.m.battle[k], SD.battle]]);
   for (const P2 of PAIRS) { P2.zOff = pz(P2, 'off'); P2.zOn = pz(P2, 'on'); P2.z = (P2.zOff + P2.zOn) / 2; }
   const anyClear = (P2, sign) => ['rooms', 'duel', 'group'].some((m) => ['off', 'on'].some((k) => clear(P2.m[m][k]) && Math.sign(P2.m[m][k].m) === sign));
   const pairRow = (P2) => `| ${hn(P2.hero)} | ${abName(P2.hero, P2.a)} (${P2.a}) + ${abName(P2.hero, P2.b)} (${P2.b}) | ${rooms(P2.m.rooms.off)} / ${rooms(P2.m.rooms.on)} | ${hp(P2.m.duel.off)} / ${hp(P2.m.duel.on)} | ${hp(P2.m.group.off)} / ${hp(P2.m.group.on)} | ${sg(P2.z)} |`;
@@ -215,7 +218,7 @@ export function write(R) {
   for (const P2 of PAIRS.filter((x) => anyClear(x, -1) && x.z < 0).sort((a, b) => a.z - b.z).slice(0, 20)) P(pairRow(P2));
   P();
   // gap
-  const gz = (A) => { const zs = []; if (A.m.rooms.gap && Number.isFinite(A.m.rooms.gap.m)) zs.push(A.m.rooms.gap.m / SD.rooms); if (A.m.battle.gap && Number.isFinite(A.m.battle.gap.m)) zs.push(A.m.battle.gap.m / SD.battle); return zs.length ? zs.reduce((a, b) => a + b, 0) / zs.length : NaN; };
+  const gz = (A) => zw([[A.m.rooms.gap, SD.rooms], [A.m.battle.gap, SD.battle]]);
   for (const A of ABS) A.gapZ = gz(A);
   P('### Worth with the others vs worth alone');
   P();
@@ -244,11 +247,11 @@ export function write(R) {
     P();
     P(`Full: ${H.rooms.full.m.toFixed(2)} rooms, duels won ${Math.round(100 * H.duelWin.full.m)}% (health ${pc(H.duel.full.m)}), group won ${Math.round(100 * H.groupWin.full.m)}% (health ${pc(H.group.full.m)}). Bare: ${H.rooms.bare.m.toFixed(2)} rooms, duels ${Math.round(100 * H.duelWin.bare.m)}% (${pc(H.duel.bare.m)}), group ${Math.round(100 * H.groupWin.bare.m)}% (${pc(H.group.bare.m)}).`);
     P();
-    P('| Ability | Casts | Dmg share | Rooms: kit / alone / I-III | Duels health: kit / alone / I-III | Group health: kit / alone / I-III | Win kit: duels / group |');
-    P('|---|---|---|---|---|---|---|');
+    P('| Ability | Casts | Dmg share | Rooms: kit / alone / I-III | Dungeon kit, a second: hero dmg / hurt saved / heal | Duels health: kit / alone / I-III | Group health: kit / alone / I-III | Win kit: duels / group |');
+    P('|---|---|---|---|---|---|---|---|');
     for (const A of ABS.filter((x) => x.hero === h)) {
       const m = A.m;
-      P(`| ${nm(A)}${A.passive ? ' (passive)' : ''} | ${casts(A)} | ${Math.round(100 * A.share.dDmg)}% / ${Math.round(100 * A.share.bDmg)}%${A.share.dHeal > 0.05 ? `, heals ${Math.round(100 * A.share.dHeal)}%` : ''} | ${rooms(m.rooms.kit)} / ${rooms(m.rooms.alone)} / ${rooms(m.rooms.upg)} | ${hp(m.duel.kit)} / ${hp(m.duel.alone)} / ${hp(m.duel.upg)} | ${hp(m.group.kit)} / ${hp(m.group.alone)} / ${hp(m.group.upg)} | ${win(m.duelWin.kit)} / ${win(m.groupWin.kit)} |`);
+      P(`| ${nm(A)}${A.passive ? ' (passive)' : ''} | ${casts(A)} | ${Math.round(100 * A.share.dDmg)}% / ${Math.round(100 * A.share.bDmg)}%${A.share.dHeal > 0.05 ? `, heals ${Math.round(100 * A.share.dHeal)}%` : ''} | ${rooms(m.rooms.kit)} / ${rooms(m.rooms.alone)} / ${rooms(m.rooms.upg)} | ${it(m.dDps.kit, (x) => sg(x, 1))} / ${it(m.dSaved.kit, (x) => sg(x, 1))} / ${it(m.dHeal.kit, (x) => sg(x, 1))} | ${hp(m.duel.kit)} / ${hp(m.duel.alone)} / ${hp(m.duel.upg)} | ${hp(m.group.kit)} / ${hp(m.group.alone)} / ${hp(m.group.upg)} | ${win(m.duelWin.kit)} / ${win(m.groupWin.kit)} |`);
     }
     P();
   }
