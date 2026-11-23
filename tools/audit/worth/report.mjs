@@ -59,7 +59,7 @@ export function write(R) {
   P('  Four duels against a fixed panel, and one group fight:');
   for (const [k, v] of Object.entries(S.panel || {})) P(`  - ${k}: ${v}`);
   P('  The panel was picked (tools/audit/worth/calibrate.mjs) so a full kit wins most duels but not all and a bare one loses most;');
-  P('  the group is hard (a full kit wins about half) so supports and healers have a fight to swing. Measured: the health margin');
+  P('  the group is hard on a bare kit (it wins 13% of them, a full kit 83%; duels 32% and 82%) so supports and healers have a fight to swing. Measured: the health margin');
   P('  (our side\'s share of health left minus theirs, -100 to +100) and the win rate. The margin is the main battle number:');
   P('  it moves even when the win doesn\'t.');
   P();
@@ -70,6 +70,8 @@ export function write(R) {
   P('  points of win rate. Dungeon rates: the hero\'s damage a second, party damage a second it spares (hurt saved), healing a second.');
   P('- **kit** = full minus "minus one". **alone** = "only one" minus bare. **I to III** = full minus "one at I".');
   P('- A number in *italics* is inside the noise (under two standard errors from zero). Plain numbers are clear of it.');
+  P('  With 177 abilities, about one plain number in twenty in a column is still luck (some 9 a column), so a lone plain number');
+  P('  in one measure, against the other measures, is weak evidence; the same sign in two settings is strong.');
   P(`- The combined **score** ranks abilities across both settings: the dungeon rooms worth and the battle health worth (duels and`);
   P(`  group averaged, half each), each divided by how widely real worths spread across all ${nAb} abilities in that measure (rooms`);
   P(`  ${SD.rooms.toFixed(2)}, health ${(100 * SD.battle).toFixed(1)} points; the spread the noise adds taken out), then averaged with each weighted by how sure`);
@@ -88,15 +90,23 @@ export function write(R) {
   P(`| Duels, win points | ${(100 * NOISE.duelWin.kitSE).toFixed(1)} | ${(100 * NOISE.duelWin.aloneSE).toFixed(1)} | ${(100 * NOISE.duelWin.upgSE).toFixed(1)} | ${(100 * NOISE.duelWin.levelSE).toFixed(1)} |`);
   P(`| Group, health points (${S.battleSeeds} seeds) | ${(100 * NOISE.group.kitSE).toFixed(1)} | ${(100 * NOISE.group.aloneSE).toFixed(1)} | ${(100 * NOISE.group.upgSE).toFixed(1)} | ${(100 * NOISE.group.levelSE).toFixed(1)} |`);
   P(`| Group, win points | ${(100 * NOISE.groupWin.kitSE).toFixed(1)} | ${(100 * NOISE.groupWin.aloneSE).toFixed(1)} | ${(100 * NOISE.groupWin.upgSE).toFixed(1)} | ${(100 * NOISE.groupWin.levelSE).toFixed(1)} |`);
-  P();
   P(`| Dungeon hero damage a second | ${NOISE.dDps.kitSE.toFixed(2)} | ${NOISE.dDps.aloneSE.toFixed(2)} | ${NOISE.dDps.upgSE.toFixed(2)} | ${NOISE.dDps.levelSE.toFixed(2)} |`);
   P(`| Dungeon party damage taken a second | ${NOISE.dSaved.kitSE.toFixed(2)} | ${NOISE.dSaved.aloneSE.toFixed(2)} | ${NOISE.dSaved.upgSE.toFixed(2)} | ${NOISE.dSaved.levelSE.toFixed(2)} |`);
   P();
   P('Twice these is the line between a real difference and noise. Playing every build on the same seeds helps less than one');
-  P('would hope: one ability more or less changes the fight from the first second, so two builds on one seed drift apart');
-  P('about as far as two seeds do (compare the last column). Dungeon rooms are the noisiest by far: a run ends at its first');
-  P('wipe, so rooms cleared swing by several rooms from run to run, and one ability\'s rooms worth carries an error of most of a');
-  P('room. The dungeon\'s per-second rates and the battle numbers are much steadier.');
+  P('would hope: the builds share a fight only until the first moment they differ (the first cast), then drift apart, so');
+  P('a worth\'s error is close to what two unmatched builds would give (compare the last column). Dungeon rooms are the');
+  P('noisiest by far: a run ends at its first wipe, so rooms cleared swing by several rooms from run to run, and one');
+  P('ability\'s rooms worth carries an error of most of a room. The dungeon\'s per-second rates and the battle numbers are');
+  P('much steadier.');
+  P();
+  P('**Same seed, different fight.** On the way it turned out that one seed did not give one fight: unit ids come from a');
+  P('counter that is never reset (js/sim.js `NEXT_ID`), and ids feed some movement (the wander and spacing wobble), so a fight');
+  P('played after other fights in the same process plays out differently. The battle batch was run with the counter set to');
+  P('the same start for every fight (one audit line, `AUDIT.idFrom`; nothing changes in the game); the dungeon batch was run');
+  P('before that was found, so its builds are matched by party, dungeon and seed but not fight for fight. Its numbers are');
+  P('still fair, just as noisy as unmatched runs (a test with the counter reset showed rooms no steadier). The same applies to');
+  P('tools/ability-worth.mjs and tools/balance.mjs: same seeds there are not the same fights either.');
   P();
 
   // ---- the ranking
@@ -251,25 +261,27 @@ export function write(R) {
   P();
 
   // ---- the battle-mode bug
-  const eth = [];
-  for (const [h, H] of Object.entries(BT.heroes)) { let et = 0, ge = 0, n = 0, geDuel = 0, nDuel = 0; for (const [b, Bd] of Object.entries(H)) for (const [sc, r] of Object.entries(Bd)) { n += r.win.length; et += r.ethT || 0; ge += r.gameEnd || 0; if (sc !== 'group') { nDuel += r.win.length; geDuel += r.gameEnd || 0; } } if (ge || et) eth.push({ h, et, ge, n, geDuel, nDuel }); }
+  const eth = [], base = [];
+  for (const [h, H] of Object.entries(BT.heroes)) { let et = 0, ge = 0, n = 0, geDuel = 0, nDuel = 0; for (const [b, Bd] of Object.entries(H)) for (const [sc, r] of Object.entries(Bd)) { n += r.win.length; et += r.ethT || 0; ge += r.gameEnd || 0; if (sc !== 'group') { nDuel += r.win.length; geDuel += r.gameEnd || 0; } } if (et > 0) eth.push({ h, et, ge, n, geDuel, nDuel }); else if (n) base.push(ge / n); }
   P('## A battle-mode bug found on the way');
   P();
   P('Battle mode drops an ethereal unit from its side\'s head count (js/battle.js `fighting()`: meant for things like a ghost).');
   P('A hero is ethereal while it burrows (Digger, Burrow), rides its broom (Witch, Broom Ride), flies off with the flock');
-  P('(Falconer, Call the Flock), hides in a bush (Trapper, Bush) or is in shadow form (Shade, Shadow Walk at III and the');
-  P('Shade\'s trait). So a hero fighting alone who does any of those **loses on the spot**: the side counts as empty and');
-  P('the fight ends in 2 to 5 seconds, scored as a wipe. In the first battle batch this made Burrow, Call the Flock and Broom');
+  P('(Falconer, Call the Flock), hides in a bush (Trapper, Bush) or is a shadow (Shade: the Shadow Walk dash, Blackout at III and her');
+  P('Fade trait). So a hero fighting alone who does any of those **loses on the spot**: the side counts as empty and');
+  P('the fight ends in 2 to 5 seconds, scored as a wipe. In a first battle batch run with the game\'s rule this made Burrow, Call the Flock and Broom');
   P('Ride look like the three worst abilities in the game (Digger lost 100% of duels with Burrow, 0% without).');
   P();
   P('This audit\'s runner counts a hero as still in the fight while it is ethereal (tools/audit/worth/lib.mjs `stepBattle`,');
-  P('otherwise the game\'s own step), and those five heroes were re-run. Nothing in js/ was changed. With the corrected count,');
+  P('otherwise the game\'s own step), and the battle batch was run that way. Nothing in js/ was changed. With the corrected count,');
   P('the fights where the game\'s own rule would have ended the battle early (all builds, all fights):');
   P();
   P('| Hero | Fights | Would have ended early: duels | group | Seconds ethereal a fight |');
   P('|---|---|---|---|---|');
   for (const e of eth) P(`| ${hn(e.h)} | ${e.n} | ${e.geDuel} of ${e.nDuel} | ${e.ge - e.geDuel} of ${e.n - e.nDuel} | ${(e.et / e.n).toFixed(1)} |`);
   if (!eth.length) P('| (none) | | | | |');
+  P();
+  P(`(Heroes that never go ethereal show ${Math.round(100 * Math.min(...base))} to ${Math.round(100 * Math.max(...base))}% on the same count: moments when one side is empty but something of theirs is still on its way in, which the game rightly waits for. Read the five above against that.)`);
   P();
   P('In a game the player sets up a lone Digger, Witch, Falconer, Trapper or Shade and watches it lose in seconds. Proposal');
   P('below. (The dungeon is not affected: it counts heroes that are standing, not ethereal ones.)');

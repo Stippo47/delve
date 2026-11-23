@@ -89,7 +89,7 @@ export function setPanel(p) { Object.assign(PANEL, p); }
 // Battle mode's own step (js/battle.js updateBattle), with one change to who counts as still in the fight. The game drops an
 // ethereal unit from its side's count (battle.js fighting()), meant for things like a ghost; but a hero is ethereal while
 // it burrows (Digger), rides its broom (Witch), flies with the flock (Falconer), hides in a bush (Trapper) or is in
-// shadow form (Shade), so a lone hero doing that LOSES on the spot (found by this audit; reported, not changed in js/).
+// is a shadow (Shade: Shadow Walk's dash, Blackout III, the Fade trait), so a lone hero doing that LOSES on the spot (found by this audit; reported, not changed in js/).
 // Here a hero (a unit with a kit) still counts while ethereal. Every other unit, and the step itself, are the game's, so
 // for any hero that never goes ethereal the fight is the same, step for step.
 const TIME_LIMIT = 240;

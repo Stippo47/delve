@@ -120,7 +120,7 @@ const summary = {
     m: Object.fromEntries(Object.entries(A.m).map(([m, E]) => [m, Object.fromEntries(Object.entries(E).map(([k, e]) => [k, slim(e)]))])) })),
   pairs: PAIRS.map((P) => ({ hero: P.hero, a: P.a, b: P.b, c: P.c, m: Object.fromEntries(Object.entries(P.m).map(([m, E]) => [m, { off: slim(E.off), on: slim(E.on) }])) })),
 };
-if (opt('summary')) writeFileSync(opt('summary'), JSON.stringify(summary, null, 1));
+if (opt('summary')) writeFileSync(opt('summary'), JSON.stringify(summary));
 
 // ---------------------------------------------------------------- the report
 const nm = (A) => `${A.name} (${A.id})`, hn = (h) => `${HEROES[h].name} (${h})`;
