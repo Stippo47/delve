@@ -143,8 +143,10 @@ function diff(w, u, A, Z) {
 // today: the game's own (the cooldown runs from the cast).
 // a: the cooldown is held at full while the ability's state lasts and starts running when it ends.
 // b: the cooldown is set to its full length plus the effect's average length (RULE.add[abilityId], seconds).
-export const RULE = { mode: 'today', add: {}, only: null, cls: {}, keys: {} };
-export function setRule(mode, o = {}) { RULE.mode = mode; RULE.add = o.add || {}; RULE.only = o.only || null; RULE.cls = o.cls || {}; RULE.keys = o.keys || {}; }
+// c: the cooldown runs from the cast as today, but when the effect ends at least RULE.frac of the full cooldown is left
+//    (a rest after the effect: nothing changes where plenty is left already).
+export const RULE = { mode: 'today', add: {}, only: null, cls: {}, keys: {}, frac: 0.5 };
+export function setRule(mode, o = {}) { RULE.mode = mode; RULE.add = o.add || {}; RULE.only = o.only || null; RULE.cls = o.cls || {}; RULE.keys = o.keys || {}; RULE.frac = o.frac ?? 0.5; }
 const counts = (id, c, cls) => (RULE.keys[id] ? RULE.keys[id].includes(c.key) : c.cls === cls);
 const ruled = (id) => RULE.mode !== 'today' && (!RULE.only || RULE.only.includes(id));
 
@@ -181,12 +183,19 @@ export function fight(heroId, tier, scenario, seed, o = {}) {
   const offAcc = { t: 0, dmg: 0, taken: 0 };
   let stepDmg = 0, stepTaken = 0, aliveT = 0, attacks = 0, lastAtk = u.atkT;
   const held = {};           // rule a: ab -> the cast whose state holds its cooldown
+  // rule a: the cooldown is held from the moment the effect is there (at the cast, or when a thrown thing lands) until
+  // it is over; a later cast's effect takes the hold over
+  const holdFor = (cast, c) => {
+    if ((RULE.mode !== 'a' && RULE.mode !== 'c') || !ruled(cast.ab) || lastCast[cast.ab] !== cast) return;
+    const cls = RULE.cls[cast.ab] || 'state'; if (!counts(cast.ab, c, cls) || held[cast.ab]) return;
+    held[cast.ab] = { cast, cls }; if (RULE.mode === 'a') u.kit.cd[cast.ab] = 1e6;
+  };
   // merge what one piece of an ability left into its cast (the cast itself, a delayed landing, a zone's tick)
   const attach = (cast, comps) => {
     for (const c of comps) {
       if (WORLD[cast.ab] && WORLD[cast.ab][c.key]) c.cls = WORLD[cast.ab][c.key];
       const old = cast.comps.find((x) => x.key === c.key);
-      if (!old) { const n = { ...c, end: null, cdEnd: null, why: null }; cast.comps.push(n); open.push({ c: n, cast }); continue; }
+      if (!old) { const n = { ...c, end: null, cdEnd: null, why: null }; cast.comps.push(n); open.push({ c: n, cast }); holdFor(cast, n); continue; }
       if (old.static) continue;
       const was = old.on, now = c.on; old.on = () => was() || now();
       if (old.end != null) { old.end = null; old.cdEnd = null; old.why = null; open.push({ c: old, cast }); }
@@ -202,7 +211,7 @@ export function fight(heroId, tier, scenario, seed, o = {}) {
       attach(cast, diff(w, u, before, snap(w, u))); claim(w, before);
       if (ruled(id)) {
         if (RULE.mode === 'b') { const ad = RULE.add[id]; u.kit.cd[id] = cd + ((ad && typeof ad === 'object' ? ad[tier2] : ad) || 0); }
-        else if (RULE.mode === 'a') { const cls = RULE.cls[id] || 'state'; if (cast.comps.some((c) => counts(id, c, cls))) { held[id] = { cast, cls }; u.kit.cd[id] = 1e6; } }
+        else for (const c of cast.comps) holdFor(cast, c);
       }
     },
   };
@@ -243,7 +252,8 @@ export function fight(heroId, tier, scenario, seed, o = {}) {
       }
       // rule a: the held cooldown starts once the state is over
       for (const id in held) { const h = held[id]; if (!h.cast.comps.some((c) => counts(id, c, h.cls) && !c.static && c.end == null && c.why !== 'fightEnd')) {
-        const ab = abs.find((a) => a.id === id); u.kit.cd[id] = cooldownOf(u, ab); delete held[id];
+        const ab = abs.find((a) => a.id === id), full = cooldownOf(u, ab); delete held[id];
+        u.kit.cd[id] = RULE.mode === 'a' ? full : Math.max(u.kit.cd[id], RULE.frac * full);
         for (const c of h.cast.comps) if (c.cdEnd != null && c.end === w.time) c.cdEnd = u.kit.cd[id];
       } }
       // damage in and out, split by which abilities' states are up

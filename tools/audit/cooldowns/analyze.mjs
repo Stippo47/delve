@@ -1,6 +1,6 @@
 // Turns raw fights (run.mjs) into per-ability numbers: how long each lasting effect is up, how much cooldown is left
 // when it ends, how often it is ready by then, and the share of the fight it is up (uptime). Also the uptime that the
-// two proposed rules would give, worked out from the same casts (see docs/audit/cooldowns.md, "How the proposals are
+// proposed rules would give, worked out from the same casts (see docs/audit/cooldowns.md, "How the proposals are
 // worked out").
 //   node tools/audit/cooldowns/analyze.mjs raw1.json [raw2.json...] [--out summary.json] [--md table.md]
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -75,13 +75,14 @@ for (const g of Object.values(G)) {
   const upCyc = gs.length ? sum((x) => Math.min(x.dur, x.cycle)) / sum((x) => x.cycle) : null;
   const upA = gs.length ? sum((x) => x.dur) / sum((x) => x.dur + x.full + x.wait) : null;
   const upB = gs.length ? sum((x) => x.dur) / sum((x) => Math.max(x.full + avgDur, x.dur) + x.wait) : null;
+  const upC = gs.length ? sum((x) => x.dur) / sum((x) => Math.max(x.full, x.dur + 0.5 * x.full) + x.wait) : null; // c) at least half the cooldown left when it ends
   const scale = upCyc ? (g.upT / g.aliveT) / upCyc : 1; // (cycles leave out the start and end of a fight; scale to the measured uptime)
   const rate = (o) => (o && o.t > 0 ? o.dmg / o.t : null), trate = (o) => (o && o.t > 0 ? o.taken / o.t : null);
   rows.push({ hero: g.hero, name: H.name, ab: g.ab, abName: A.name, cls: g.cls, tier: g.tier, baseCd: A.cd, casts: g.casts, fights: NF[hk],
     cd: fullM, dur, durMean: avgDur, durRaw: mean(g.raw), open: g.open, cdLeft: med(cd), cdLeftMean: mean(cd), ready: g.cdEnd.length ? g.cdEnd.filter((x) => x <= 0).length / g.cdEnd.length : null,
     readyFor: med(g.cdEnd.filter((x) => x <= 0).map((x) => -x)), uptime: g.aliveT ? g.upT / g.aliveT : 0,
     scen: Object.fromEntries(Object.entries(g.scen).map(([k, v]) => [k, v / AS[hk + '|' + k]])),
-    upCycle: upCyc, upA: upA == null ? null : Math.min(1, upA * scale), upB: upB == null ? null : Math.min(1, upB * scale), wait: med(gs.map((x) => x.wait)),
+    upCycle: upCyc, upA: upA == null ? null : Math.min(1, upA * scale), upB: upB == null ? null : Math.min(1, upB * scale), upC: upC == null ? null : Math.min(1, upC * scale), wait: med(gs.map((x) => x.wait)),
     recast: g.re / g.casts, atk: mean(g.atk), other: mean(g.other), why: g.why, tgtDead: g.cdEnd.length ? g.tgtDead / g.cdEnd.length : 0,
     durs: g.dur.map((x) => +x.toFixed(2)), cdEnds: g.cdEnd.map((x) => +x.toFixed(2)),
     dpsOn: rate(g.on), dpsOff: rate(g.off), takenOn: trate(g.on), takenOff: trate(g.off), keys: g.keys });
