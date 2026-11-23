@@ -1,0 +1,16 @@
+{
+  "id": "pinned-ideas",
+  "kind": "report",
+  "rarity": "uncommon",
+  "title": "Pinned: where Delve could go",
+  "text": "The ideas from our chat, kept here with rough sizes. Nothing is started; this is just so they aren't lost.",
+  "why": "You liked the art and kits enough to picture them in other genres. These are the options we talked about, cheapest test first.",
+  "details": "Sizes are rough agent-hours.\n\nThe cheapest test of all: controller play in battle mode (6 to 8 hours). Pick any hero or monster and fight a set-up battle with a game pad. A few evenings of that tell you which kits are fun in your hands.\n\nThe farming roguelike is pinned separately as its own game with its own art, not here.",
+  "parts": [
+    { "id": "controller", "title": "Play as a hero", "text": "You steer one hero with a pad or an on-screen stick; the party stays on AI. In the web game, no engine needed. About 8 to 12 hours; 6 to 8 in battle mode only." },
+    { "id": "genres", "title": "Three ways to play it", "text": "One hero hands-on with an AI party. Or switch between your party mid-fight. Or body-hopping: a spirit that takes over any unit, hero or monster, and jumps on when it dies." },
+    { "id": "multiplayer", "title": "A shared live server", "text": "Like an .io game: one world, many players in real time. Delve's combat already runs without a browser, which is most of a server. Private prototype for you and friends: 15 to 25 hours. Public for strangers: 100 or more, then ongoing upkeep." },
+    { "id": "openworld", "title": "An open-world version", "text": "A new Unity project taking Delve's kits, statuses and art style as its spec, effects baked from the current game. A first slice (one region, a hero or two, gather, craft, build, one boss): 60 to 100 hours. The survey found no open-world survival game with kit-and-status combat in this look." },
+    { "id": "cleanup", "title": "A code cleanup first", "text": "About 20 to 30 hours, done right before any of these: a clash check on unit names, one meaning per field, the Mob and wagon pulled out of the core file, one shared effect maker. Proven to change nothing by replaying the same seeds." }
+  ]
+}
