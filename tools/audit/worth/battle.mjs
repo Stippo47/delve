@@ -18,10 +18,10 @@ for (const h of heroes) {
   for (const [b, spec] of Object.entries(bs)) {
     const R = H[b] = {};
     for (const sc of scens) {
-      const r = R[sc] = { win: [], margin: [], t: 0, dmg: 0, taken: 0, heal: 0, timeUp: 0, casts: {}, src: {}, hsrc: {} };
+      const r = R[sc] = { win: [], margin: [], t: 0, dmg: 0, taken: 0, heal: 0, timeUp: 0, ethT: 0, gameEnd: 0, casts: {}, src: {}, hsrc: {} };
       for (let s = 0; s < nSeeds; s++) {
         let f; try { f = battleFight(h, sc, spec, seed0 + s * 101); } catch (e) { problems++; console.error(h, b, sc, s, e.stack.split('\n').slice(0, 3).join(' / ')); r.win.push(null); r.margin.push(null); continue; }
-        r.win.push(f.win); r.margin.push(+f.margin.toFixed(3)); r.t += f.t; r.dmg += f.dmg; r.taken += f.taken; r.heal += f.heal; r.timeUp += f.timeUp;
+        r.win.push(f.win); r.margin.push(+f.margin.toFixed(3)); r.t += f.t; r.dmg += f.dmg; r.taken += f.taken; r.heal += f.heal; r.timeUp += f.timeUp; r.ethT += f.ethT; if (f.gameEnd != null) r.gameEnd++;
         add(r.casts, f.casts); add(r.src, f.src); add(r.hsrc, f.hsrc);
       }
     }

@@ -42,7 +42,7 @@ for (const h of HERO_IDS) {
   const lvl = {}; for (const m of MEASURES) { const g = (b) => series[m](h, b); lvl[m] = { full: est(g('full') || []), bare: est(g('bare') || []), span: combo(g, [[1, 'full'], [-1, 'bare']]) }; }
   HERO[h] = { name: HEROES[h].name, lvl, abilities: ids };
   for (const id of ids) {
-    const A = { hero: h, heroName: HEROES[h].name, id, name: HEROES[h].abilities.find((a) => a.id === id).name, passive: !!(ABILITIES[id] && ABILITIES[id].passiveTier), hook: !!(ABILITIES[id] && ABILITIES[id].hook), m: {} };
+    const A = { hero: h, heroName: HEROES[h].name, id, name: HEROES[h].abilities.find((a) => a.id === id).name, passive: !!(ABILITIES[id] && ABILITIES[id].passiveTier) || id === 'oldBones' /* (Old Bones works through a hook in kits.js; its score is always 0) */, hook: !!(ABILITIES[id] && ABILITIES[id].hook), m: {} };
     const [o1, o2] = ids.filter((x) => x !== id);
     for (const m of MEASURES) {
       const g = (b) => series[m](h, b);

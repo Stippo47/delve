@@ -31,6 +31,7 @@ const { setSeed } = await imp('js/util.js');
 const { freshSave } = await imp('js/save.js');
 const { HEROES, HERO_IDS, tierBuild } = await imp('js/heroes.js');
 const K = await imp('js/kits.js');
+const { step, alive: simAlive } = await imp('js/sim.js');
 const { AUDIT, ownerOf, sourceOf } = await imp('js/stats.js');
 const { THEME_IDS } = await imp('js/themes.js');
 export { HEROES, HERO_IDS, THEME_IDS };
@@ -85,6 +86,29 @@ export const PANEL = {
 export const allyOf = (hero) => (hero === 'tower' ? 'paladin' : 'tower');
 export function setPanel(p) { Object.assign(PANEL, p); }
 
+// Battle mode's own step (js/battle.js updateBattle), with one change to who counts as still in the fight. The game drops an
+// ethereal unit from its side's count (battle.js fighting()), meant for things like a ghost; but a hero is ethereal while
+// it burrows (Digger), rides its broom (Witch), flies with the flock (Falconer), hides in a bush (Trapper) or is in
+// shadow form (Shade), so a lone hero doing that LOSES on the spot (found by this audit; reported, not changed in js/).
+// Here a hero (a unit with a kit) still counts while ethereal. Every other unit, and the step itself, are the game's, so
+// for any hero that never goes ethereal the fight is the same, step for step.
+const TIME_LIMIT = 240;
+const fightingFix = (u) => simAlive(u) && !(u.linkTo && u.def.segment) && !(u.partOf && u.partOf.bodies) && (!u.ethereal || (u.bur && u.bur.state === 'under') || !!u.kit);
+const standingFix = (run, side) => run.world.units.filter((u) => fightingFix(u) && B.sideOf(run.world, u) === side);
+function healthFix(run, side) { let hp = 0, max = 0; for (const u of run.sides[side]) { max += u.maxHp; if (fightingFix(u)) hp += Math.max(0, u.hp); } return max ? hp / max : 0; }
+function stepBattle(run) {
+  const w = run.world;
+  if (w.hitstop > 0) { w.hitstop -= DT; return; }
+  run.t += DT;
+  step(w, DT);
+  w.pickups.length = 0; w.stale = run.t > 75;
+  const a = standingFix(run, 'a').length, b = standingFix(run, 'b').length;
+  const coming = w.danger.some((z) => z.spawns && !z.done) || w.fx.some((f) => f.spawns && !f.done);
+  const end = (winner, timeUp) => { run.phase = 'over'; run.winner = winner; run.timeUp = !!timeUp; run.endT = 0; };
+  if ((!a || !b) && !coming) end(a ? 'a' : b ? 'b' : 'draw');
+  else if (run.t > TIME_LIMIT) { const ha = healthFix(run, 'a'), hb = healthFix(run, 'b'); end(Math.abs(ha - hb) < 0.02 ? 'draw' : ha > hb ? 'a' : 'b', true); }
+}
+
 export function battleFight(hero, scen, spec, seed, opts = {}) {
   const P = PANEL[scen], save = freshSave(); save.cheat = true;
   const a = [{ k: hero, n: 1, tier: 3 }]; if (P.a === 'ally') a.push({ k: allyOf(hero), n: 1, tier: 3 });
@@ -93,11 +117,16 @@ export function battleFight(hero, scen, spec, seed, opts = {}) {
   const me = run.sides.a.find((u) => u.kind === hero);
   me.kit.nodes = battleNodes(hero, spec); K.refreshKit(me, 1);
   const Wt = watch((x) => x === me);
-  let guard = 0;
-  try { while (run.phase === 'fight' && guard++ < 60 * 260) B.updateBattle(run, DT); } finally { WATCH = null; }
-  if (run.phase === 'fight') B.callBattle(run);
-  const S = B.summarizeBattle(run), row = S.sides.a.rows[0];
-  return { win: run.winner === 'a' ? 1 : run.winner === 'draw' ? 0.5 : 0, margin: S.sides.a.health - S.sides.b.health, hpA: S.sides.a.health, hpB: S.sides.b.health,
+  let ethT = 0, gameEnd = null;
+  try {
+    while (run.phase === 'fight') {
+      stepBattle(run);
+      if (me.ethereal && simAlive(me)) ethT += DT;
+      if (gameEnd == null && run.phase === 'fight' && (!B.standing(run, 'a').length || !B.standing(run, 'b').length)) gameEnd = run.t; // the game's own rule would have ended it here
+    }
+  } finally { WATCH = null; }
+  const S = B.summarizeBattle(run), row = S.sides.a.rows[0], hA = healthFix(run, 'a'), hB = healthFix(run, 'b');
+  return { win: run.winner === 'a' ? 1 : run.winner === 'draw' ? 0.5 : 0, margin: hA - hB, hpA: hA, hpB: hB, ethT, gameEnd,
     t: run.t, timeUp: run.timeUp ? 1 : 0, dmg: row.dmg || 0, taken: row.taken || 0, heal: row.heal || 0, casts: Wt.casts, src: Wt.dmg, hsrc: Wt.heal };
 }
 

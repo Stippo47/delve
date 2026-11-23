@@ -65,7 +65,9 @@ export function write(R) {
   P();
   P('### Reading the numbers');
   P();
-  P('- **Rooms**: extra rooms cleared in a dungeon run. **Health**: points of health margin (out of 100) in battle. **Win**: points of win rate.');
+  P('- **Rooms**: extra rooms cleared in a dungeon run. **Health**: points of health margin in battle (a fight\'s margin runs');
+  P('  from -100, lost without a scratch on them, to +100, won without a scratch, so a difference can be up to 200). **Win**:');
+  P('  points of win rate. Dungeon rates: the hero\'s damage a second, party damage a second it spares (hurt saved), healing a second.');
   P('- **kit** = full minus "minus one". **alone** = "only one" minus bare. **I to III** = full minus "one at I".');
   P('- A number in *italics* is inside the noise (under two standard errors from zero). Plain numbers are clear of it.');
   P(`- The combined **score** ranks abilities across both settings: the dungeon rooms worth and the battle health worth (duels and`);
@@ -87,8 +89,14 @@ export function write(R) {
   P(`| Group, health points (${S.battleSeeds} seeds) | ${(100 * NOISE.group.kitSE).toFixed(1)} | ${(100 * NOISE.group.aloneSE).toFixed(1)} | ${(100 * NOISE.group.upgSE).toFixed(1)} | ${(100 * NOISE.group.levelSE).toFixed(1)} |`);
   P(`| Group, win points | ${(100 * NOISE.groupWin.kitSE).toFixed(1)} | ${(100 * NOISE.groupWin.aloneSE).toFixed(1)} | ${(100 * NOISE.groupWin.upgSE).toFixed(1)} | ${(100 * NOISE.groupWin.levelSE).toFixed(1)} |`);
   P();
-  P('Twice these is the line between a real difference and noise. Pairing the builds on the same seeds is what keeps a worth\'s');
-  P('error well under a single build\'s own (the last column).');
+  P(`| Dungeon hero damage a second | ${NOISE.dDps.kitSE.toFixed(2)} | ${NOISE.dDps.aloneSE.toFixed(2)} | ${NOISE.dDps.upgSE.toFixed(2)} | ${NOISE.dDps.levelSE.toFixed(2)} |`);
+  P(`| Dungeon party damage taken a second | ${NOISE.dSaved.kitSE.toFixed(2)} | ${NOISE.dSaved.aloneSE.toFixed(2)} | ${NOISE.dSaved.upgSE.toFixed(2)} | ${NOISE.dSaved.levelSE.toFixed(2)} |`);
+  P();
+  P('Twice these is the line between a real difference and noise. Playing every build on the same seeds helps less than one');
+  P('would hope: one ability more or less changes the fight from the first second, so two builds on one seed drift apart');
+  P('about as far as two seeds do (compare the last column). Dungeon rooms are the noisiest by far: a run ends at its first');
+  P('wipe, so rooms cleared swing by several rooms from run to run, and one ability\'s rooms worth carries an error of most of a');
+  P('room. The dungeon\'s per-second rates and the battle numbers are much steadier.');
   P();
 
   // ---- the ranking
@@ -131,8 +139,8 @@ export function write(R) {
   P();
   // casts check across all
   const never = ABS.filter((A) => !A.passive && (A.casts.full.dPerRun || 0) < 0.05 && (A.casts.full.bPerFight || 0) < 0.05);
-  const rare = ABS.filter((A) => !A.passive && !never.includes(A) && ((A.casts.full.dPerRun || 0) < 1 || (A.casts.full.bPerFight || 0) < 0.3));
-  P(`Casts, all ${nAb}: ${ABS.filter((A) => A.passive).length} passive (${ABS.filter((A) => A.passive).map(nm).join(', ')}); never cast in the full build: ${never.length ? never.map((A) => `${nm(A)} [${A.heroName}]`).join(', ') : 'none'}; under one cast a dungeon run or 0.3 a battle fight: ${rare.length ? rare.map((A) => `${nm(A)} [${A.heroName}] ${castTxt(A.casts.full)}`).join(', ') : 'none'}.`);
+  const rare = ABS.filter((A) => !A.passive && !never.includes(A) && (A.casts.full.dPerRun || 0) < 1 && (A.casts.full.bPerFight || 0) < 0.3);
+  P(`Casts, all ${nAb}: ${ABS.filter((A) => A.passive).length} passive (${ABS.filter((A) => A.passive).map(nm).join(', ')}); never cast in the full build: ${never.length ? never.map((A) => `${nm(A)} [${A.heroName}]`).join(', ') : 'none'}; under one cast a dungeon run and under 0.3 a battle fight: ${rare.length ? rare.map((A) => `${nm(A)} [${A.heroName}] ${castTxt(A.casts.full)}`).join(', ') : 'none'}.`);
   P();
 
   // ---- carries
@@ -197,7 +205,10 @@ export function write(R) {
   const pz = (P2, k) => zw([[P2.m.rooms[k], SD.rooms], [P2.m.battle[k], SD.battle]]);
   for (const P2 of PAIRS) { P2.zOff = pz(P2, 'off'); P2.zOn = pz(P2, 'on'); P2.z = (P2.zOff + P2.zOn) / 2; }
   const anyClear = (P2, sign) => ['rooms', 'duel', 'group'].some((m) => ['off', 'on'].some((k) => clear(P2.m[m][k]) && Math.sign(P2.m[m][k].m) === sign));
-  const pairRow = (P2) => `| ${hn(P2.hero)} | ${abName(P2.hero, P2.a)} (${P2.a}) + ${abName(P2.hero, P2.b)} (${P2.b}) | ${rooms(P2.m.rooms.off)} / ${rooms(P2.m.rooms.on)} | ${hp(P2.m.duel.off)} / ${hp(P2.m.duel.on)} | ${hp(P2.m.group.off)} / ${hp(P2.m.group.on)} | ${sg(P2.z)} |`;
+  const abOf = (h, id) => ABS.find((x) => x.hero === h && x.id === id);
+  const lvls = (P2, m) => { const A = abOf(P2.hero, P2.a), Bb = abOf(P2.hero, P2.b), C = abOf(P2.hero, P2.c), f = (e) => (e && Number.isFinite(e.m) ? pc(e.m) : '?');
+    return `${f(HERO[P2.hero].lvl[m].bare)}; ${f(A.m[m].onlyLvl)}, ${f(Bb.m[m].onlyLvl)}; ${f(C.m[m].offLvl)}`; };
+  const pairRow = (P2) => `| ${hn(P2.hero)} | ${abName(P2.hero, P2.a)} (${P2.a}) + ${abName(P2.hero, P2.b)} (${P2.b}) | ${rooms(P2.m.rooms.off)} / ${rooms(P2.m.rooms.on)} | ${hp(P2.m.duel.off)} / ${hp(P2.m.duel.on)} | ${hp(P2.m.group.off)} / ${hp(P2.m.group.on)} | ${sg(P2.z)} | ${lvls(P2, 'duel')} | ${lvls(P2, 'group')} |`;
   P('## Combo pairs');
   P();
   P('How much more two abilities are worth together than the two of them apart: (both) minus (first alone) minus (second alone)');
@@ -207,14 +218,19 @@ export function write(R) {
   P();
   P('Worth more together (clear somewhere, best first):');
   P();
-  P('| Hero | Pair | Rooms (third off / on) | Duels health | Group health | Score |');
-  P('|---|---|---|---|---|---|');
+  P('| Hero | Pair | Rooms (third off / on) | Duels health | Group health | Score | Duels level: none; each alone; both | Group level: none; each alone; both |');
+  P('|---|---|---|---|---|---|---|---|');
   for (const P2 of PAIRS.filter((x) => anyClear(x, 1) && x.z > 0).sort((a, b) => b.z - a.z).slice(0, 25)) P(pairRow(P2));
   P();
   P('Worth less together (they overlap or get in each other\'s way):');
   P();
-  P('| Hero | Pair | Rooms (third off / on) | Duels health | Group health | Score |');
-  P('|---|---|---|---|---|---|');
+  P('Read the "level" columns before believing one of these. The health margin stops at +100 (won without a scratch), so when');
+  P('either ability alone already wins the duel, the pair cannot add much: that shows up here as "worth less together" though');
+  P('nothing overlaps. That is most of the list below (each alone already near the top). The real overlaps are the rows where');
+  P('each alone is middling and both together are no better than one.');
+  P();
+  P('| Hero | Pair | Rooms (third off / on) | Duels health | Group health | Score | Duels level: none; each alone; both | Group level: none; each alone; both |');
+  P('|---|---|---|---|---|---|---|---|');
   for (const P2 of PAIRS.filter((x) => anyClear(x, -1) && x.z < 0).sort((a, b) => a.z - b.z).slice(0, 20)) P(pairRow(P2));
   P();
   // gap
@@ -232,6 +248,31 @@ export function write(R) {
   for (const A of ABS.slice().sort((a, b) => b.gapZ - a.gapZ).slice(0, 12)) P(gapRow(A));
   P('| ... | | | | | |');
   for (const A of ABS.slice().sort((a, b) => b.gapZ - a.gapZ).slice(-12)) P(gapRow(A));
+  P();
+
+  // ---- the battle-mode bug
+  const eth = [];
+  for (const [h, H] of Object.entries(BT.heroes)) { let et = 0, ge = 0, n = 0, geDuel = 0, nDuel = 0; for (const [b, Bd] of Object.entries(H)) for (const [sc, r] of Object.entries(Bd)) { n += r.win.length; et += r.ethT || 0; ge += r.gameEnd || 0; if (sc !== 'group') { nDuel += r.win.length; geDuel += r.gameEnd || 0; } } if (ge || et) eth.push({ h, et, ge, n, geDuel, nDuel }); }
+  P('## A battle-mode bug found on the way');
+  P();
+  P('Battle mode drops an ethereal unit from its side\'s head count (js/battle.js `fighting()`: meant for things like a ghost).');
+  P('A hero is ethereal while it burrows (Digger, Burrow), rides its broom (Witch, Broom Ride), flies off with the flock');
+  P('(Falconer, Call the Flock), hides in a bush (Trapper, Bush) or is in shadow form (Shade, Shadow Walk at III and the');
+  P('Shade\'s trait). So a hero fighting alone who does any of those **loses on the spot**: the side counts as empty and');
+  P('the fight ends in 2 to 5 seconds, scored as a wipe. In the first battle batch this made Burrow, Call the Flock and Broom');
+  P('Ride look like the three worst abilities in the game (Digger lost 100% of duels with Burrow, 0% without).');
+  P();
+  P('This audit\'s runner counts a hero as still in the fight while it is ethereal (tools/audit/worth/lib.mjs `stepBattle`,');
+  P('otherwise the game\'s own step), and those five heroes were re-run. Nothing in js/ was changed. With the corrected count,');
+  P('the fights where the game\'s own rule would have ended the battle early (all builds, all fights):');
+  P();
+  P('| Hero | Fights | Would have ended early: duels | group | Seconds ethereal a fight |');
+  P('|---|---|---|---|---|');
+  for (const e of eth) P(`| ${hn(e.h)} | ${e.n} | ${e.geDuel} of ${e.nDuel} | ${e.ge - e.geDuel} of ${e.n - e.nDuel} | ${(e.et / e.n).toFixed(1)} |`);
+  if (!eth.length) P('| (none) | | | | |');
+  P();
+  P('In a game the player sets up a lone Digger, Witch, Falconer, Trapper or Shade and watches it lose in seconds. Proposal');
+  P('below. (The dungeon is not affected: it counts heroes that are standing, not ethereal ones.)');
   P();
 
   // ---- per hero
