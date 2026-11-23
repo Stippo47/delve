@@ -5,7 +5,7 @@
 // tagAbility(w, u, id, tier, use): runs use(); every fx, projectile and telegraph it pushes gets { ab: id, tier },
 // and so does anything they push later (a projectile's landing, a zone's ticks, the unit's queued follow-ups, a leap's
 // landing). Then a 'sig' fx is pushed: the ability's own signature, drawn by fxkit.js from where the caster stands.
-import { CUR } from './stats.js';
+import { CUR, AUDIT } from './stats.js';
 
 export function tagAbility(w, u, id, tier, use) {
   const mark = (o) => { if (o.ab) return; o.ab = id; o.tier = tier; wrap(o, 'land'); wrap(o, 'tick'); wrap(o, 'onHit'); };
@@ -18,7 +18,8 @@ export function tagAbility(w, u, id, tier, use) {
   const run = (fn) => {
     const nf = w.fx.length, np = w.projectiles.length, nt = w.telegraphs.length;
     const pa = CUR.ab, pu = CUR.abU; CUR.ab = id; CUR.abU = u; // stats.js: whatever this does counts for the ability
-    let r; try { r = fn(); } finally { CUR.ab = pa; CUR.abU = pu; }
+    if (AUDIT.on) AUDIT.on('abRun', w, u, null, 0, { ab: id, tier, at: 'pre' }); // (round 16: tools/audit/cooldowns, each piece of an ability as it runs)
+    let r; try { r = fn(); } finally { CUR.ab = pa; CUR.abU = pu; if (AUDIT.on) AUDIT.on('abRun', w, u, null, 0, { ab: id, tier, at: 'post' }); }
     for (let i = nf; i < w.fx.length; i++) mark(w.fx[i]);
     for (let i = np; i < w.projectiles.length; i++) mark(w.projectiles[i]);
     for (let i = nt; i < w.telegraphs.length; i++) mark(w.telegraphs[i]);
