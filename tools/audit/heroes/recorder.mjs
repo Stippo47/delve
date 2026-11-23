@@ -47,6 +47,9 @@ const STATE_IDS = Object.keys(STATES);
 // what a hero's own clock does for one of its abilities (kits2.js kit2Tick), where nothing else names it
 const TICK_BUFF = { bearWard: 'rainDance', pavise: 'pavise', hotMeal: 'hotMeal' };
 const TICK_AB = { chef: 'ab:hotMeal' };
+// the control timers counted for d.ctl: [state, unit field, the build-up whose burst sets it]
+const CTL = [['stunned', 'stunT', 'stagger'], ['rooted', 'rootT', 'entangle'], ['asleep', 'sleepT', 'sleepy'], ['frozen', 'frozenT', 'chill'], ['knockedOut', 'koT', 'stagger'],
+  ['terrified', 'fearT', 'fear'], ['shackled', 'shackledT', 'shackle'], ['addled', 'addledT', 'confuse'], ['sickened', 'sickT', 'poison'], ['radiant', 'radiantT', 'radiance']];
 const HERO_BUILDS = { whirled: (u) => (u.k2s && u.k2s.whirl) || 0, spun: (u) => (u.k2s && u.k2s.spun) || 0 };
 
 function blankAb(id, tier, passive) {
@@ -60,9 +63,11 @@ export class Recorder {
   constructor() {
     this.w = null; this.f = null; this.ctx = [];
     this.d = { t: 0, simT: 0, ab: {}, src: {}, st: { applied: {}, bursts: {}, dmg: {}, trace: {} },
-      foeT: { unitSec: 0, st: {}, stMine: {}, state: {}, stateMine: {}, hook: {}, hookMine: {}, buff: {}, buffMine: {} },
-      selfT: { buff: {}, buffMine: {}, hook: {}, st: {}, state: {} },
-      taken: 0, takenBy: {}, byOthers: { heal: {}, block: {}, guard: {} }, downs: 0, saves: {}, attribution: { unknownBuffs: 0 } };
+      foeT: { unitSec: 0, st: {}, stMine: {}, state: {}, stateMine: {}, hook: {}, hookMine: {}, buff: {}, buffMine: {}, bySrc: {} },
+      allyT: { unitSec: 0, bySrc: {} },
+      selfT: { buff: {}, buffMine: {}, hook: {}, st: {}, state: {}, bySrc: {} },
+      taken: 0, takenBy: {}, byOthers: { heal: {}, block: {}, guard: {} }, downs: 0, saves: {}, ctl: {}, attribution: { unknownBuffs: 0 } };
+    this.touch = new Map(); this.touchBurst = new Map();
     this.seen = new WeakSet(); this.pend = new Map(); this.lastBlow = null; this.lastStatus = null;
     this.stepCasts = []; this.lastCast = new Map(); this.kindMap = {}; this.think = null; this.fighting = true;
     this.prevCd = {}; this.mix = new WeakMap(); this.castOpen = {}; this.prevBones = false; this.lastT = null;
@@ -174,7 +179,7 @@ export class Recorder {
         if (this.me(u)) { this.d.taken += amt; add(this.d.takenBy, root === f ? 'self ' + s : root.kind, amt); }
         if (root !== f) return;
         if (this.foe(u)) {
-          this.credit(f, s, 'dmg', amt, u);
+          this.credit(f, s, 'dmg', amt, u); this.touch.set(leadOf(u), s);
           if (o.stk) { add(this.d.st.dmg, o.stk, amt); const m = this.mix.get(u), mt = m && m[o.stk]; if (mt) { let tot = 0; for (const v of Object.values(mt)) tot += v; if (tot > 0) for (const [k2, v] of Object.entries(mt)) add(sub(this.d.st.trace, k2), o.stk, amt * v / tot); } }
         } else { const r = this.d.src[s] || (this.d.src[s] = blankSrc()); r.selfHurt += amt; }
         return;
@@ -253,26 +258,26 @@ export class Recorder {
         if (root) { const lb = this.lastBlow; s = this.srcOf(src, root, lb && lb.t === w.time && lb.u === u && lb.src === src ? lb.o : {}); }
         this.lastStatus = { u, type: o.type, root, s };
         if (root === f && this.foe(u)) {
-          add(sub(this.d.st.applied, o.type), s, amt); this.productive(s);
+          add(sub(this.d.st.applied, o.type), s, amt); this.productive(s); this.touch.set(u, s);
           let m = this.mix.get(u); if (!m) { m = {}; this.mix.set(u, m); } add(sub(m, o.type), s, amt);
         }
         return;
       }
       case 'burst': {
         const ls = this.lastStatus;
-        if (ls && ls.u === u && ls.type === o.type && ls.root === f && this.foe(u)) add(sub(this.d.st.bursts, o.type), ls.s);
+        if (ls && ls.u === u && ls.type === o.type && ls.root === f && this.foe(u)) { add(sub(this.d.st.bursts, o.type), ls.s); const m = this.touchBurst.get(u) || {}; m[o.type] = ls.s; this.touchBurst.set(u, m); }
         return;
       }
       case 'buff': { // b is the buff being put on (or refreshed); its tag is copied onto the one the unit wears
         const c = this.who(); o._aud = c ? { u: ownerOf(c.u) || c.u, s: c.s } : null;
         if (o._aud && o._aud.s === 'other' && o._aud.u && o._aud.u.kit) { const k = o._aud.u.kit; if (k.tiers[o.id]) o._aud.s = 'ab:' + o.id; else if (TICK_BUFF[o.id] && k.tiers[TICK_BUFF[o.id]]) o._aud.s = 'ab:' + TICK_BUFF[o.id]; }
-        if (c && c.u === f) this.productive(c.s);
+        if (c && c.u === f) { this.productive(c.s); if (this.foe(u)) this.touch.set(u, c.s); }
         return;
       }
       case 'hook': { // a timed hook (kits2.js onUnit) on any unit: tag it, and wrap it so its work counts for whoever put it on
         const c = this.who(); const g = c ? { u: ownerOf(c.u) || c.u, s: c.s } : { u: null, s: 'other' };
         this.wrapHook(o, g.u, g.s, false);
-        if (g.u === f) this.productive(g.s);
+        if (g.u === f) { this.productive(g.s); if (this.foe(u)) this.touch.set(u, g.s); }
         return;
       }
       case 'cast': {
@@ -353,6 +358,32 @@ export class Recorder {
       if (!A.passive && A.tier && prev > 0 && cd <= 0) { A.readies++; const what = this.stillOn(id); if (what) { A.midEffect++; add(A.midWhat, what); } }
       this.prevCd[id] = cd;
     }
+    // a queued blow (u.later) an ability left that was thrown away before it went: something replaced the list
+    const LT = f.later || [];
+    if (this.prevLater && alive(f)) for (const l of this.prevLater) if (!l.done && !LT.includes(l) && l.ab && this.d.ab[l.ab]) {
+      const A = this.d.ab[l.ab], by = this.stepCasts.filter((x) => x.u === f).map((x) => x.ab).join('+') || 'weapon or other';
+      if (!l._audLost) { l._audLost = true; A.wiped = (A.wiped || 0) + 1; add(A.wipedBy || (A.wipedBy = {}), by); }
+    }
+    this.prevLater = LT.filter((l) => !l.done);
+    // control: a foe's stun, root, sleep... timer that rose this step is put down to what the hero did to it this step
+    // (the burst that caused it, its blow or status, a buff or timed hook it put on, else a cast this step or one of its
+    // zones the foe stands in); the seconds added count (d.ctl[source][state])
+    for (const e of w.units) {
+      if (!alive(e) || !this.foe(e) || e.partOf) continue;
+      const prev = e._audCtl || {}, now = {};
+      for (const [st, key, from] of CTL) {
+        const cur = st === 'rooted' ? Math.max(e.rootT || 0, e.tangledT || 0) : e[key] || 0; now[st] = cur;
+        const rise = cur - Math.max(0, (prev[st] || 0) - dt);
+        if (!(rise > 0.02 && cur > 0)) continue;
+        const tb = this.touchBurst.get(e);
+        let s = (from && tb && tb[from]) || this.touch.get(e);
+        if (!s) { const c = this.stepCasts.find((x) => x.u === f); if (c) s = 'ab:' + c.ab; }
+        if (!s) { const z = w.fx.find((q) => q.tick && q.ab && (q.src === f || q.by === f) && q.t < q.max && q.r && Math.hypot(e.x - q.x, e.y - q.y) < q.r + e.r); if (z) s = 'ab:' + z.ab; }
+        if (s) add(sub(this.d.ctl, s), st, rise);
+      }
+      e._audCtl = now;
+    }
+    this.touch.clear(); this.touchBurst.clear();
     if (k.oldBonesUsed && !this.prevBones && this.d.ab.oldBones) { this.d.ab.oldBones.triggers++; if (this.d.ab.oldBones.first == null) this.d.ab.oldBones.first = this.d.t; add(this.d.saves, 'ab:oldBones'); }
     this.prevBones = !!k.oldBonesUsed;
     this.stepCasts.length = 0;
@@ -381,9 +412,19 @@ export class Recorder {
       for (const s of BUILD_IDS) if (e.st[s] > 0) { add(FT.st, s, dt); if (e.stBy && ownerOf(e.stBy[s]) === f) add(FT.stMine, s, dt); }
       for (const [s, v] of Object.entries(HERO_BUILDS)) if (v(e) > 0) add(FT.st, s, dt);
       for (const s of STATE_IDS) if (STATES[s].on(e)) { add(FT.state, s, dt); const fr = STATES[s].from; if (fr && e.stBy && ownerOf(e.stBy[fr]) === f) add(FT.stateMine, s, dt); }
-      if (e.h2) for (const h of e.h2) { add(FT.hook, h.id, dt); if (h._aud && h._aud.u === f) add(FT.hookMine, h.id, dt); }
-      for (const b of e.buffs) { add(FT.buff, b.id, dt); if (b._aud && b._aud.u === f) add(FT.buffMine, b.id, dt); }
+      if (e.h2) for (const h of e.h2) { add(FT.hook, h.id, dt); if (h._aud && h._aud.u === f) { add(FT.hookMine, h.id, dt); add(sub(FT.bySrc, h._aud.s), h.id, dt); } }
+      for (const b of e.buffs) { add(FT.buff, b.id, dt); if (b._aud && b._aud.u === f) { add(FT.buffMine, b.id, dt); add(sub(FT.bySrc, b._aud.s), b.id, dt); } }
     }
+    // friends: what the hero's kit kept on them (buffs and timed hooks), by the part that put it on
+    const AT = this.d.allyT;
+    for (const a of w.units) {
+      if (a === f || !alive(a) || this.foe(a) || a.partOf || sideOf(a) !== sideOf(f)) continue;
+      AT.unitSec += dt;
+      for (const b of a.buffs) if (b._aud && b._aud.u === f) add(sub(AT.bySrc, b._aud.s), b.id, dt);
+      if (a.h2) for (const h of a.h2) if (h._aud && h._aud.u === f) add(sub(AT.bySrc, h._aud.s), h.id, dt);
+    }
+    for (const b of f.buffs) if (b._aud && b._aud.u === f) add(sub(this.d.selfT.bySrc, b._aud.s), b.id, dt);
+    if (f.h2) for (const h of f.h2) if (h._aud && h._aud.u === f) add(sub(this.d.selfT.bySrc, h._aud.s), h.id, dt);
   }
   // a summon: the ability its maker used this step, else the one that made this kind before, else its maker's last cast
   tagSummon(u) {
@@ -442,5 +483,10 @@ export class Recorder {
 //     status damage shared back to what put the status on, by build-up applied)
 //   foeT: unitSec (foe-seconds alive), st/stMine {type: foe-seconds built up}, state/stateMine {state: foe-seconds},
 //     hook/hookMine {id: foe-seconds}, buff/buffMine {id: foe-seconds}   (Mine: traced to the focus)
+//   foeT.bySrc / allyT.bySrc / selfT.bySrc {source: {buff or hook id: unit-seconds}}: what each part of the kit kept on
+//     foes, on friends and on the hero itself; allyT.unitSec: friend-seconds alive
 //   selfT: buff/buffMine {id: s}, hook {id: s}, st {type: s}, state {state: s}
+//   ab[id].wiped / wipedBy {by: n}: a blow it had queued (u.later) thrown away before it went, and what replaced it
 //   byOthers: heal/block/guard {who: amt} done for the focus by others; saves {source: n} (kept from going down)
+//   ctl {source: {state: seconds}}: control dealt: seconds added to foes' stun, root, sleep, freeze, knock-out, fear,
+//     shackle, addled, sickness and radiant timers, put down to what the hero did to that foe in that step

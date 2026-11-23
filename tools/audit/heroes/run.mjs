@@ -27,6 +27,7 @@ function addInto(a, b) { // numbers add; objects recurse; `first` becomes a list
     if (v == null) continue;
     if (k === 'first') { (a.firsts || (a.firsts = [])).push(v); continue; }
     if (k === 'tier' || k === 'passive') { a[k] = v; continue; }
+    if (k === 'max') { a[k] = Math.max(a[k] || 0, v); continue; }
     if (typeof v === 'number') a[k] = (a[k] || 0) + v;
     else if (typeof v === 'object') addInto(a[k] || (a[k] = {}), v);
   }
