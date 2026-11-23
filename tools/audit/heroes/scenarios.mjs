@@ -6,10 +6,10 @@
 // A hero's tier is heroes.js tierBuild (the battle page's and the Book's meaning: 1 = the first shell of the web with
 // every ability at tier I and the stats beside them, 2 = the second shell, 3 = the whole web). The same in the dungeon.
 //
-// Enemy strength: battle mode's "scaled off" (every monster at the first dungeon's strength, x0.75) times nothing at
-// tier I; at tiers II and III each monster is made as the dungeon makes a stronger place's monsters (dungeon.js
-// battleFoe with a bigger mult: health and blows up). Set so a middling hero at each tier has a fight of 20-60 s
-// (tools/audit/heroes/calibrate: docs/audit/heroes.md has the numbers).
+// Enemy strength: each monster is made as the dungeon makes a stronger place's monsters (dungeon.js battleFoe with
+// mult FOE_MULT[tier] x the scenario's own mul: health and blows up; battle mode's own "scaled off" is x0.75). Set
+// with run.mjs --calibrate so a middling hero at each tier has a fight of roughly 20-60 s and the ally fights press
+// the ally hard enough to need help.
 export const FOE_MULT = { 1: 1.5, 2: 3, 3: 5 };
 // the reference heroes for the 1v1s, and the standard mates (with a stand-in when the hero is one of them)
 export const REF = { melee: 'wildmane', ranged: 'archer', caster: 'pyromancer', tank: 'paladin' };
