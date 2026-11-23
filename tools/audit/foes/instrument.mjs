@@ -25,7 +25,8 @@ const HOOK_MV = { onDeath: 'death', onSplit: 'split', onHop: 'hop', struck: 'str
 const SKIP_SUB = new Set(['dueLen', 'holdT', 'face', 'coming']);
 // a home-made timer's name: t, ...T, cd, ...Cd (a position, a speed or a count is not one); every due() timer in u.el is
 // clocks that are not moves (a turret's look-round, a troll's calm after a blow): counted, but never name what follows
-const QUIET = new Set(['el.look', 'el.repick', 'calmT', 'burnedT', 'bJam', 'bJam.t', 'flinchT', 'lastHp']);
+// (and a boss's clocks for picking a new target or shaking the screen)
+const QUIET = { has: (k) => /^(el\.look|el\.repick|calmT|burnedT|bJam|bJam\.t|flinchT|lastHp)$|tgtT$|shakeT$/.test(k) };
 const TIMERISH = /(^t$|T$|^cd$|Cd$|CD$|^cd[A-Z]|Timer$|timer$)/;
 
 export function instrument(G) {

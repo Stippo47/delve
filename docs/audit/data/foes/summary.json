@@ -1,0 +1,6452 @@
+{
+ "wolf": {
+  "k": "wolf",
+  "name": "Wolf",
+  "dungeon": "wildwood",
+  "cost": 2,
+  "rr_r0": 0.18888888888888888,
+  "rr_home": 0.2,
+  "packN": 8,
+  "packCost": 16,
+  "tollPerCost": 1.2132812499999999,
+  "tollPerCostT1": 1.8921875000000001,
+  "oneTollPerCost": 0.4875,
+  "toughPerCost": 19.5,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 8.35,
+  "dpsPack": 2.4369625972543125,
+  "byHero": {
+   "paladin1": 2.5,
+   "paladin2": 1,
+   "berserker1": 2.3,
+   "berserker2": 0.6,
+   "archer1": 1.5,
+   "archer2": 0.5,
+   "pyromancer1": 1.3,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.5505140021269054,
+  "toughRel": 0.75,
+  "mixAdded": 1.3,
+  "mixYard": 5.4,
+  "mixRel": 0.24074074074074073,
+  "moves": {
+   "attack": 1480,
+   "mv:lunge": 732,
+   "mv:atkT": 644,
+   "wall slam": 0,
+   "mv:howl": 149,
+   "mv:focusT": 90
+  },
+  "dmgShare": {
+   "attack": 0.7601268099085391,
+   "mv:lunge": 0.20737266140634666,
+   "mv:atkT": 0.01984107528175322,
+   "wall slam": 0.012659453403361096,
+   "mv:howl": 0,
+   "mv:focusT": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "slime": {
+  "k": "slime",
+  "name": "Slime",
+  "dungeon": "wildwood",
+  "cost": 2,
+  "rr_r0": 0.28611111111111115,
+  "rr_home": 0.2833333333333334,
+  "packN": 8,
+  "packCost": 16,
+  "tollPerCost": 1.8640625,
+  "tollPerCostT1": 2.8249999999999997,
+  "oneTollPerCost": 1.25,
+  "toughPerCost": 66.5,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 24.3,
+  "dpsPack": 1.1686337275916352,
+  "byHero": {
+   "paladin1": 7.6,
+   "paladin2": 3.2,
+   "berserker1": 3.6,
+   "berserker2": 0.4,
+   "archer1": 0.1,
+   "archer2": 0,
+   "pyromancer1": 0.1,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.8457993619283942,
+  "toughRel": 2.5576923076923075,
+  "mixAdded": 5,
+  "mixYard": 5.4,
+  "mixRel": 0.9259259259259258,
+  "moves": {
+   "attack": 1521,
+   "spawn:slimeSmall": 0,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.6390114198976994,
+   "spawn:slimeSmall": 0.35305609706996544,
+   "wall slam": 0.007932483032335241
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "goblin": {
+  "k": "goblin",
+  "name": "Goblin",
+  "dungeon": "wildwood",
+  "cost": 2,
+  "rr_r0": 0.12777777777777777,
+  "rr_home": 0.12777777777777777,
+  "packN": 8,
+  "packCost": 16,
+  "tollPerCost": 1.2328125,
+  "tollPerCostT1": 1.921875,
+  "oneTollPerCost": 0.25625,
+  "toughPerCost": 16.5,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 5.449999999999999,
+  "dpsPack": 2.4536462633101475,
+  "byHero": {
+   "paladin1": 2.6,
+   "paladin2": 1,
+   "berserker1": 1.6,
+   "berserker2": 0.6,
+   "archer1": 2.9,
+   "archer2": 0.4,
+   "pyromancer1": 0.6,
+   "pyromancer2": 0.2
+  },
+  "timeUps": 0,
+  "threatRel": 0.5593761077632047,
+  "toughRel": 0.6346153846153846,
+  "mixAdded": 3.6,
+  "mixYard": 5.4,
+  "mixRel": 0.6666666666666666,
+  "moves": {
+   "attack": 1747,
+   "wall slam": 0,
+   "ab:dash": 723
+  },
+  "dmgShare": {
+   "attack": 0.998617772125262,
+   "wall slam": 0.0013822278747380355,
+   "ab:dash": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "goblinOrange": {
+  "k": "goblinOrange",
+  "name": "Orange Goblin",
+  "dungeon": "wildwood",
+  "cost": 2,
+  "rr_r0": 0.4444444444444444,
+  "rr_home": 0.4055555555555555,
+  "packN": 8,
+  "packCost": 16,
+  "tollPerCost": 2.4828125,
+  "tollPerCostT1": 3.871875,
+  "oneTollPerCost": 0.61875,
+  "toughPerCost": 16.5,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 10.95,
+  "dpsPack": 3.131839588286277,
+  "byHero": {
+   "paladin1": 4.5,
+   "paladin2": 2.3,
+   "berserker1": 3.1,
+   "berserker2": 0.8,
+   "archer1": 4.3,
+   "archer2": 0.7,
+   "pyromancer1": 3.7,
+   "pyromancer2": 0.6
+  },
+  "timeUps": 0,
+  "threatRel": 1.1265508684863526,
+  "toughRel": 0.6346153846153846,
+  "mixAdded": 5.4,
+  "mixYard": 5.4,
+  "mixRel": 1,
+  "moves": {
+   "attack": 5036,
+   "ab:dash": 1716
+  },
+  "dmgShare": {
+   "attack": 1,
+   "ab:dash": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "slimeBig": {
+  "k": "slimeBig",
+  "name": "Big Slime",
+  "dungeon": "wildwood",
+  "cost": 5,
+  "rr_r0": 0.8944444444444445,
+  "rr_home": 0.9055555555555556,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 4.505833333333334,
+  "tollPerCostT1": 6.898333333333333,
+  "oneTollPerCost": 3.97,
+  "toughPerCost": 96,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 34.35,
+  "dpsPack": 1.7433205767584128,
+  "byHero": {
+   "paladin1": 14.7,
+   "paladin2": 7,
+   "berserker1": 12.5,
+   "berserker2": 1.4,
+   "archer1": 0.2,
+   "archer2": 0.1,
+   "pyromancer1": 0.2,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 2.0444759541533744,
+  "toughRel": 3.6923076923076925,
+  "mixAdded": 6.1,
+  "mixYard": 5.4,
+  "mixRel": 1.1296296296296295,
+  "moves": {
+   "attack": 2236,
+   "spawn:slime": 0,
+   "mv:spit": 1612,
+   "spawn:slimeSmall": 0,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.6083014144883121,
+   "spawn:slime": 0.18457253906609644,
+   "mv:spit": 0.11793163436969922,
+   "spawn:slimeSmall": 0.07960434338367768,
+   "wall slam": 0.0095900686922147
+  },
+  "swarmWin": 0.5,
+  "swarmKills": 6
+ },
+ "slimePoison": {
+  "k": "slimePoison",
+  "name": "Poison Slime",
+  "dungeon": "wildwood",
+  "cost": 3,
+  "rr_r0": 0.7638888888888888,
+  "rr_home": 0.7583333333333333,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 7.655,
+  "tollPerCostT1": 10.143333333333334,
+  "oneTollPerCost": 3.7708333333333335,
+  "toughPerCost": 46.33333333333333,
+  "heroDown": 0.125,
+  "heroDownT1": 0.25,
+  "ttk": 36,
+  "clear": 14.65,
+  "dpsPack": 3.912921561197423,
+  "byHero": {
+   "paladin1": 36.9,
+   "paladin2": 20,
+   "berserker1": 3.6,
+   "berserker2": 0.6,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 3.4733782346685578,
+  "toughRel": 1.782051282051282,
+  "mixAdded": 20,
+  "mixYard": 5.4,
+  "mixRel": 3.7037037037037033,
+  "moves": {
+   "st:poison": 0,
+   "attack": 1495,
+   "spawn:slimeletPoison": 0,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "st:poison": 0.6030539267918622,
+   "attack": 0.32519278934274887,
+   "spawn:slimeletPoison": 0.06756457553822665,
+   "wall slam": 0.00418870832716231
+  },
+  "statuses": {
+   "poison": {
+    "perMin": 315.70387278117573,
+    "bursts": 1.358549599639415,
+    "dmgShare": 0.6030539267918622
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0.5
+ },
+ "bandit": {
+  "k": "bandit",
+  "name": "Bandit",
+  "dungeon": "wildwood",
+  "cost": 3,
+  "rr_r0": 0.5888888888888889,
+  "rr_home": 0.5888888888888889,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 2.646666666666667,
+  "tollPerCostT1": 4.243333333333334,
+  "oneTollPerCost": 2.0333333333333337,
+  "toughPerCost": 47.75916666666667,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 13.45,
+  "dpsPack": 2.2296823738455727,
+  "byHero": {
+   "paladin1": 6.8,
+   "paladin2": 3.2,
+   "berserker1": 7.2,
+   "berserker2": 1,
+   "archer1": 2.3,
+   "archer2": 0,
+   "pyromancer1": 0.7,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1.2008980267044786,
+  "toughRel": 1.8368910256410258,
+  "mixAdded": 5.4,
+  "mixYard": 5.4,
+  "mixRel": 1,
+  "moves": {
+   "attack": 14471,
+   "mv:bash": 4260,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.7723854298381206,
+   "mv:bash": 0.1645095516924586,
+   "wall slam": 0.0631050184694208
+  },
+  "statuses": {
+   "stagger": {
+    "perMin": 100.99967640644111,
+    "bursts": 0.10852731575452063,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "banditDagger": {
+  "k": "banditDagger",
+  "name": "Knife Bandit",
+  "dungeon": "wildwood",
+  "cost": 3,
+  "rr_r0": 0.4833333333333334,
+  "rr_home": 0.5000000000000001,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 5.234999999999999,
+  "tollPerCostT1": 7.301666666666666,
+  "oneTollPerCost": 1.25,
+  "toughPerCost": 20,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 7.8999999999999995,
+  "dpsPack": 5.237952857027995,
+  "byHero": {
+   "paladin1": 24.2,
+   "paladin2": 11.6,
+   "berserker1": 2.1,
+   "berserker2": 0.8,
+   "archer1": 1.9,
+   "archer2": 0.2,
+   "pyromancer1": 1.1,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 2.375327897908543,
+  "toughRel": 0.7692307692307693,
+  "mixAdded": 13.7,
+  "mixYard": 5.4,
+  "mixRel": 2.5370370370370368,
+  "moves": {
+   "attack": 3184,
+   "st:poison": 0,
+   "wall slam": 0,
+   "ab:dash": 698
+  },
+  "dmgShare": {
+   "attack": 0.5433867661731396,
+   "st:poison": 0.4520233142222103,
+   "wall slam": 0.004589919604650048,
+   "ab:dash": 0
+  },
+  "statuses": {
+   "poison": {
+    "perMin": 347.12646487358336,
+    "bursts": 0.7038725208656642,
+    "dmgShare": 0.4520233142222103
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "banditSpear": {
+  "k": "banditSpear",
+  "name": "Spear Bandit",
+  "dungeon": "wildwood",
+  "cost": 3,
+  "rr_r0": 0.4388888888888889,
+  "rr_home": 0.4388888888888889,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 1.9741666666666668,
+  "tollPerCostT1": 3.003333333333333,
+  "oneTollPerCost": 1.2541666666666667,
+  "toughPerCost": 26,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 9.649999999999999,
+  "dpsPack": 2.5285007189407827,
+  "byHero": {
+   "paladin1": 5.9,
+   "paladin2": 2.7,
+   "berserker1": 4.8,
+   "berserker2": 1.1,
+   "archer1": 0.8,
+   "archer2": 0,
+   "pyromancer1": 0.5,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.8957580054354249,
+  "toughRel": 1,
+  "mixAdded": 2.3,
+  "mixYard": 5.4,
+  "mixRel": 0.4259259259259259,
+  "moves": {
+   "attack": 2228,
+   "mv:lunge": 803,
+   "wall slam": 0,
+   "mv:atkT": 686
+  },
+  "dmgShare": {
+   "attack": 0.7758246021580884,
+   "mv:lunge": 0.203944518981153,
+   "wall slam": 0.012538619641851313,
+   "mv:atkT": 0.00769225921890722
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "banditTorch": {
+  "k": "banditTorch",
+  "name": "Torch Bandit",
+  "dungeon": "wildwood",
+  "cost": 3,
+  "rr_r0": 0.561111111111111,
+  "rr_home": 0.5555555555555555,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 2.3616666666666664,
+  "tollPerCostT1": 3.5483333333333333,
+  "oneTollPerCost": 2.095833333333333,
+  "toughPerCost": 26,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 10.55,
+  "dpsPack": 2.6229049214643805,
+  "byHero": {
+   "paladin1": 11.4,
+   "paladin2": 3.6,
+   "berserker1": 2.1,
+   "berserker2": 1.1,
+   "archer1": 0.6,
+   "archer2": 0,
+   "pyromancer1": 0.1,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1.0715821812596007,
+  "toughRel": 1,
+  "mixAdded": 11.5,
+  "mixYard": 5.4,
+  "mixRel": 2.1296296296296293,
+  "moves": {
+   "st:burn": 0,
+   "attack": 1782,
+   "mv:torch": 667,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "st:burn": 0.4616650281175875,
+   "attack": 0.4519760249014419,
+   "mv:torch": 0.07744060595839687,
+   "wall slam": 0.008918341022573766
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 283.61657812828946,
+    "bursts": 0.27380590203833133,
+    "dmgShare": 0.4616650281175875
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "banditAxe": {
+  "k": "banditAxe",
+  "name": "Axe Bandit",
+  "dungeon": "wildwood",
+  "cost": 4,
+  "rr_r0": 0.3055555555555556,
+  "rr_home": 0.288888888888889,
+  "packN": 4,
+  "packCost": 16,
+  "tollPerCost": 2.6312499999999996,
+  "tollPerCostT1": 4.340625,
+  "oneTollPerCost": 0.6,
+  "toughPerCost": 19.5,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 9.2,
+  "dpsPack": 2.7361862570575757,
+  "byHero": {
+   "paladin1": 11.7,
+   "paladin2": 2.8,
+   "berserker1": 0.7,
+   "berserker2": 0.2,
+   "archer1": 4,
+   "archer2": 0.4,
+   "pyromancer1": 1,
+   "pyromancer2": 0.3
+  },
+  "timeUps": 0,
+  "threatRel": 1.1939028713222262,
+  "toughRel": 0.75,
+  "mixAdded": 9.2,
+  "mixYard": 5.4,
+  "mixRel": 1.7037037037037035,
+  "moves": {
+   "attack": 2066,
+   "mv:axe": 2163,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.862360901209945,
+   "mv:axe": 0.13513178726728403,
+   "wall slam": 0.002507311522770865
+  },
+  "statuses": {
+   "stagger": {
+    "perMin": 456.91424888073095,
+    "bursts": 0.3657331829296494,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0.5
+ },
+ "banditGreat": {
+  "k": "banditGreat",
+  "name": "Greatsword Bandit",
+  "dungeon": "wildwood",
+  "cost": 4,
+  "rr_r0": 0.538888888888889,
+  "rr_home": 0.5277777777777778,
+  "packN": 4,
+  "packCost": 16,
+  "tollPerCost": 2.2039062499999997,
+  "tollPerCostT1": 3.7984375000000004,
+  "oneTollPerCost": 1.4281249999999999,
+  "toughPerCost": 26.25,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 12.45,
+  "dpsPack": 2.0789081469361412,
+  "byHero": {
+   "paladin1": 7.3,
+   "paladin2": 1.8,
+   "berserker1": 6.3,
+   "berserker2": 0.7,
+   "archer1": 1.4,
+   "archer2": 0,
+   "pyromancer1": 0.3,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1,
+  "toughRel": 1.0096153846153846,
+  "mixAdded": 2.9,
+  "mixYard": 5.4,
+  "mixRel": 0.537037037037037,
+  "moves": {
+   "attack": 1741,
+   "mv:sweep": 688,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.7672898516481692,
+   "mv:sweep": 0.206818709911547,
+   "wall slam": 0.025891438440283816
+  },
+  "statuses": {
+   "stagger": {
+    "perMin": 86.2260069256002,
+    "bursts": 0.009172979460170235,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0.25,
+  "swarmKills": 2.3
+ },
+ "poacher": {
+  "k": "poacher",
+  "name": "Poacher",
+  "dungeon": "wildwood",
+  "cost": 4,
+  "rr_r0": 0.9277777777777777,
+  "rr_home": 0.9222222222222223,
+  "packN": 4,
+  "packCost": 16,
+  "tollPerCost": 10.411718749999999,
+  "tollPerCostT1": 16.525,
+  "oneTollPerCost": 3.234375000000001,
+  "toughPerCost": 16.5,
+  "heroDown": 0.125,
+  "heroDownT1": 0.25,
+  "ttk": 71.69999999999999,
+  "clear": 17.65,
+  "dpsPack": 4.4874106904053,
+  "byHero": {
+   "paladin1": 31.6,
+   "paladin2": 11.7,
+   "berserker1": 24.6,
+   "berserker2": 3.8,
+   "archer1": 5.1,
+   "archer2": 0.7,
+   "pyromancer1": 4.8,
+   "pyromancer2": 1
+  },
+  "timeUps": 0,
+  "threatRel": 4.724211272598369,
+  "toughRel": 0.6346153846153846,
+  "mixAdded": 14.1,
+  "mixYard": 5.4,
+  "mixRel": 2.6111111111111107,
+  "moves": {
+   "attack": 7599,
+   "mv:net": 2277
+  },
+  "dmgShare": {
+   "attack": 0.8935911066957688,
+   "mv:net": 0.1064088933042311
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "banditBrute": {
+  "k": "banditBrute",
+  "name": "Bandit Brute",
+  "dungeon": "wildwood",
+  "cost": 7,
+  "rr_r0": 0.8611111111111112,
+  "rr_home": 0.8666666666666667,
+  "packN": 2,
+  "packCost": 14,
+  "tollPerCost": 2.0741071428571427,
+  "tollPerCostT1": 3.2982142857142858,
+  "oneTollPerCost": 2.466071428571429,
+  "toughPerCost": 37.64999999999999,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 16.450000000000003,
+  "dpsPack": 1.337652210791192,
+  "byHero": {
+   "paladin1": 6.8,
+   "paladin2": 2.5,
+   "berserker1": 6.4,
+   "berserker2": 0.9,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.9411049779713374,
+  "toughRel": 1.4480769230769228,
+  "mixAdded": 6.2,
+  "mixYard": 5.4,
+  "mixRel": 1.1481481481481481,
+  "moves": {
+   "attack": 2487,
+   "mv:slam": 917,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.6918072360726522,
+   "mv:slam": 0.27373049572312513,
+   "wall slam": 0.034462268204222705
+  },
+  "statuses": {
+   "stagger": {
+    "perMin": 130.54227789681624,
+    "bursts": 0.012624978520001572,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 1,
+  "swarmKills": 7.5
+ },
+ "ent": {
+  "k": "ent",
+  "name": "Ent",
+  "dungeon": "wildwood",
+  "cost": 9,
+  "rr_r0": 0.9055555555555556,
+  "rr_home": 0.9055555555555556,
+  "packN": 2,
+  "packCost": 18,
+  "tollPerCost": 2.209722222222222,
+  "tollPerCostT1": 3.5555555555555554,
+  "oneTollPerCost": 1.6111111111111112,
+  "toughPerCost": 41.94861111111111,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 21.8,
+  "dpsPack": 1.3778169826553,
+  "byHero": {
+   "paladin1": 7.2,
+   "paladin2": 2.7,
+   "berserker1": 6.9,
+   "berserker2": 0.8,
+   "archer1": 0.1,
+   "archer2": 0,
+   "pyromancer1": 0.1,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1.0026389381228091,
+  "toughRel": 1.6134081196581198,
+  "mixAdded": 3.3,
+  "mixYard": 5.4,
+  "mixRel": 0.611111111111111,
+  "moves": {
+   "attack": 2616,
+   "mv:roots": 1443,
+   "wall slam": 0,
+   "st:entangle": 0,
+   "mv:sproutCd": 151,
+   "mv:sp": 0,
+   "mv:dash": 0
+  },
+  "dmgShare": {
+   "attack": 0.8549638869464413,
+   "mv:roots": 0.11385204984965466,
+   "wall slam": 0.016069536765864367,
+   "st:entangle": 0.008115010516063788,
+   "mv:sproutCd": 0,
+   "mv:sp": 0,
+   "mv:dash": 0
+  },
+  "statuses": {
+   "entangle": {
+    "perMin": 131.5862273622756,
+    "bursts": 0.08309084764204855,
+    "dmgShare": 0.00811501051606379
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 2.5
+ },
+ "sproutling": {
+  "k": "sproutling",
+  "name": "Sproutling",
+  "dungeon": "wildwood",
+  "cost": 1.5,
+  "rr_r0": 0.05555555555555555,
+  "rr_home": 0.05555555555555555,
+  "packN": 11,
+  "packCost": 16.5,
+  "tollPerCost": 0.4378787878787879,
+  "tollPerCostT1": 0.6666666666666667,
+  "oneTollPerCost": 0.44166666666666665,
+  "toughPerCost": 20.10378787878788,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 6.85,
+  "dpsPack": 1.186173517993869,
+  "byHero": {
+   "paladin1": 0.5,
+   "paladin2": 0.4,
+   "berserker1": 1.3,
+   "berserker2": 0.3,
+   "archer1": 0.6,
+   "archer2": 0.1,
+   "pyromancer1": 0.3,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.19868303739271487,
+  "toughRel": 0.7732226107226108,
+  "mixAdded": 3,
+  "mixYard": 5.4,
+  "mixRel": 0.5555555555555555,
+  "moves": {
+   "mv:dash": 1207,
+   "mv:sp.shotT": 441,
+   "wall slam": 0,
+   "attack": 0,
+   "mv:sp.rootCd": 9,
+   "mv:sp": 0
+  },
+  "dmgShare": {
+   "mv:dash": 0.7802499953323702,
+   "mv:sp.shotT": 0.1946247095804551,
+   "wall slam": 0.018143155465737464,
+   "attack": 0.006982139621437291,
+   "mv:sp.rootCd": 0,
+   "mv:sp": 0
+  },
+  "statuses": {
+   "entangle": {
+    "perMin": 8.780428808514234,
+    "bursts": 0,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "wisp": {
+  "k": "wisp",
+  "name": "Wisp",
+  "dungeon": "wildwood",
+  "cost": 3,
+  "rr_r0": 0.027777777777777776,
+  "rr_home": 0.03611111111111111,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 0,
+  "tollPerCostT1": 0,
+  "oneTollPerCost": 0,
+  "toughPerCost": 13,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 17.8,
+  "dpsPack": 0,
+  "byHero": {
+   "paladin1": 0,
+   "paladin2": 0,
+   "berserker1": 0,
+   "berserker2": 0,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0,
+  "toughRel": 0.5,
+  "mixAdded": -2.2,
+  "mixYard": 5.4,
+  "mixRel": -0.40740740740740744,
+  "moves": {
+   "mv:mend": 31752,
+   "mv:blink": 25388
+  },
+  "dmgShare": {
+   "mv:mend": 0,
+   "mv:blink": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "direWolf": {
+  "k": "direWolf",
+  "name": "Dire Wolf",
+  "dungeon": "wildwood",
+  "cost": 4,
+  "rr_r0": 0.55,
+  "rr_home": 0.5555555555555556,
+  "packN": 4,
+  "packCost": 16,
+  "tollPerCost": 2.13828125,
+  "tollPerCostT1": 3.2671875,
+  "oneTollPerCost": 1.3125000000000002,
+  "toughPerCost": 23.25,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 8.6,
+  "dpsPack": 2.904941132196683,
+  "byHero": {
+   "paladin1": 5.4,
+   "paladin2": 2.8,
+   "berserker1": 3.3,
+   "berserker2": 0.8,
+   "archer1": 3.2,
+   "archer2": 0.3,
+   "pyromancer1": 1.1,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 0.9702233250620348,
+  "toughRel": 0.8942307692307693,
+  "mixAdded": 4.7,
+  "mixYard": 5.4,
+  "mixRel": 0.8703703703703703,
+  "moves": {
+   "attack": 2147,
+   "mv:lunge": 746,
+   "mv:pin": 457,
+   "mv:atkT": 684,
+   "wall slam": 0,
+   "mv:howl": 83,
+   "mv:focusT": 62
+  },
+  "dmgShare": {
+   "attack": 0.7168080402156961,
+   "mv:lunge": 0.19158176331591972,
+   "mv:pin": 0.07691221016261533,
+   "mv:atkT": 0.012630567760434698,
+   "wall slam": 0.002067418545334288,
+   "mv:howl": 0,
+   "mv:focusT": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "boar": {
+  "k": "boar",
+  "name": "Thornback Boar",
+  "dungeon": "wildwood",
+  "cost": 5,
+  "rr_r0": 0.55,
+  "rr_home": 0.5777777777777777,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 1.1566666666666665,
+  "tollPerCostT1": 1.7716666666666665,
+  "oneTollPerCost": 0.795,
+  "toughPerCost": 26.400000000000002,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 10.25,
+  "dpsPack": 1.326139111842478,
+  "byHero": {
+   "paladin1": 3.9,
+   "paladin2": 1.7,
+   "berserker1": 2.6,
+   "berserker2": 0.4,
+   "archer1": 0.3,
+   "archer2": 0,
+   "pyromancer1": 0.2,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.5248257119224861,
+  "toughRel": 1.0153846153846156,
+  "mixAdded": 2.8,
+  "mixYard": 5.4,
+  "mixRel": 0.5185185185185185,
+  "moves": {
+   "attack": 2427,
+   "mv:charge": 399,
+   "wall slam": 0,
+   "mv:atkT": 300
+  },
+  "dmgShare": {
+   "attack": 0.8595706364170621,
+   "mv:charge": 0.12240512105665659,
+   "wall slam": 0.018024242526281268,
+   "mv:atkT": 0
+  },
+  "statuses": {
+   "stagger": {
+    "perMin": 58.513822757614115,
+    "bursts": 0,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0.8
+ },
+ "mouse": {
+  "k": "mouse",
+  "name": "Mouse",
+  "dungeon": "warren",
+  "cost": 0.8,
+  "rr_r0": 0.3076923076923077,
+  "rr_home": 0.2846153846153846,
+  "packN": 20,
+  "packCost": 16,
+  "tollPerCost": 1.6007812499999998,
+  "tollPerCostT1": 2.415625,
+  "oneTollPerCost": 0.34375,
+  "toughPerCost": 22.5,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 10.45,
+  "dpsPack": 2.30408932592493,
+  "byHero": {
+   "paladin1": 2.7,
+   "paladin2": 1.3,
+   "berserker1": 1.3,
+   "berserker2": 0.6,
+   "archer1": 4.5,
+   "archer2": 0.8,
+   "pyromancer1": 1.2,
+   "pyromancer2": 0.5
+  },
+  "timeUps": 0,
+  "threatRel": 0.8165840827875712,
+  "toughRel": 0.9090909090909091,
+  "mixAdded": 1.7,
+  "mixYard": 4.2,
+  "mixRel": 0.4047619047619047,
+  "moves": {
+   "attack": 1600,
+   "wall slam": 0,
+   "ab:dash": 1662
+  },
+  "dmgShare": {
+   "attack": 0.9631201274042489,
+   "wall slam": 0.03687987259575097,
+   "ab:dash": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "goblinSpear": {
+  "k": "goblinSpear",
+  "name": "Spear Goblin",
+  "dungeon": "warren",
+  "cost": 2,
+  "rr_r0": 0.6,
+  "rr_home": 0.6,
+  "packN": 8,
+  "packCost": 16,
+  "tollPerCost": 4.659375,
+  "tollPerCostT1": 7.5953125,
+  "oneTollPerCost": 3.06875,
+  "toughPerCost": 16.5,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 15.149999999999999,
+  "dpsPack": 2.6202388455312864,
+  "byHero": {
+   "paladin1": 9.2,
+   "paladin2": 3.9,
+   "berserker1": 14.2,
+   "berserker2": 1.7,
+   "archer1": 3.2,
+   "archer2": 0.8,
+   "pyromancer1": 3.7,
+   "pyromancer2": 0.5
+  },
+  "timeUps": 0,
+  "threatRel": 2.376821605536884,
+  "toughRel": 0.6666666666666666,
+  "mixAdded": 13.2,
+  "mixYard": 4.2,
+  "mixRel": 3.1428571428571423,
+  "moves": {
+   "mv:spear": 3742,
+   "wall slam": 0,
+   "attack": 0,
+   "ab:dash": 282
+  },
+  "dmgShare": {
+   "mv:spear": 0.9957478423386203,
+   "wall slam": 0.002457464834056794,
+   "attack": 0.0017946928273227729,
+   "ab:dash": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0.3
+ },
+ "goblinBomber": {
+  "k": "goblinBomber",
+  "name": "Goblin Bomber",
+  "dungeon": "warren",
+  "cost": 2.5,
+  "rr_r0": 0.23461538461538464,
+  "rr_home": 0.25,
+  "packN": 6,
+  "packCost": 15,
+  "tollPerCost": 0.3616666666666667,
+  "tollPerCostT1": 0.46499999999999997,
+  "oneTollPerCost": 0.015,
+  "toughPerCost": 13.200000000000001,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 27.95,
+  "dpsPack": 0.0649993417897367,
+  "byHero": {
+   "paladin1": 1.7,
+   "paladin2": 0.8,
+   "berserker1": 0.2,
+   "berserker2": 0.3,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.18449194309018693,
+  "toughRel": 0.5333333333333333,
+  "mixAdded": 3.4,
+  "mixYard": 4.2,
+  "mixRel": 0.8095238095238094,
+  "moves": {
+   "mv:bomb": 5155,
+   "wall slam": 0,
+   "attack": 0,
+   "ab:dash": 154
+  },
+  "dmgShare": {
+   "mv:bomb": 0.9785549962338247,
+   "wall slam": 0.01310624331467257,
+   "attack": 0.008338760451502723,
+   "ab:dash": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "dynamouse": {
+  "k": "dynamouse",
+  "name": "Dynamite Mouse",
+  "dungeon": "warren",
+  "cost": 1.5,
+  "rr_r0": 0.015384615384615385,
+  "rr_home": 0.007692307692307693,
+  "packN": 11,
+  "packCost": 16.5,
+  "tollPerCost": 0.39015151515151514,
+  "tollPerCostT1": 0.3712121212121212,
+  "oneTollPerCost": 0,
+  "toughPerCost": 10.287878787878789,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 8.35,
+  "dpsPack": 0.8152080206428032,
+  "byHero": {
+   "paladin1": 0.8,
+   "paladin2": 1.2,
+   "berserker1": 0,
+   "berserker2": 0.2,
+   "archer1": 0.7,
+   "archer2": 0.1,
+   "pyromancer1": 0,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 0.1990225192531342,
+  "toughRel": 0.4156718702173248,
+  "mixAdded": 2.1,
+  "mixYard": 4.2,
+  "mixRel": 0.5,
+  "moves": {
+   "death": 0,
+   "st:burn": 0,
+   "wall slam": 0,
+   "ab:dash": 546
+  },
+  "dmgShare": {
+   "death": 0.6470243802186312,
+   "st:burn": 0.29223345395363437,
+   "wall slam": 0.06074216582773456,
+   "ab:dash": 0
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 16.18807999571721,
+    "bursts": 0,
+    "dmgShare": 0.2922334539536343
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "hobgoblin": {
+  "k": "hobgoblin",
+  "name": "Hobgoblin",
+  "dungeon": "warren",
+  "cost": 3,
+  "rr_r0": 0.37692307692307697,
+  "rr_home": 0.37692307692307697,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 1.9308333333333332,
+  "tollPerCostT1": 3.0999999999999996,
+  "oneTollPerCost": 1.1541666666666666,
+  "toughPerCost": 47.055,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 14,
+  "dpsPack": 1.6103951552923765,
+  "byHero": {
+   "paladin1": 6.7,
+   "paladin2": 2.8,
+   "berserker1": 5.1,
+   "berserker2": 0.3,
+   "archer1": 0.3,
+   "archer2": 0,
+   "pyromancer1": 0.3,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.9849489219814818,
+  "toughRel": 1.9012121212121211,
+  "mixAdded": 3.1,
+  "mixYard": 4.2,
+  "mixRel": 0.7380952380952381,
+  "moves": {
+   "attack": 12347,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.9986295526174351,
+   "wall slam": 0.0013704473825649178
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "orc": {
+  "k": "orc",
+  "name": "Orc",
+  "dungeon": "warren",
+  "cost": 5,
+  "rr_r0": 0.46153846153846156,
+  "rr_home": 0.4846153846153846,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 1.903333333333333,
+  "tollPerCostT1": 3.1416666666666666,
+  "oneTollPerCost": 0.9875,
+  "toughPerCost": 27,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 11,
+  "dpsPack": 1.8562556687936453,
+  "byHero": {
+   "paladin1": 7.5,
+   "paladin2": 2.3,
+   "berserker1": 4.3,
+   "berserker2": 0.4,
+   "archer1": 0.7,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.9709207327603384,
+  "toughRel": 1.0909090909090908,
+  "mixAdded": 4.7,
+  "mixYard": 4.2,
+  "mixRel": 1.119047619047619,
+  "moves": {
+   "attack": 1399,
+   "ab:charge": 842,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.7770339969936269,
+   "ab:charge": 0.1824255968090042,
+   "wall slam": 0.04054040619736894
+  },
+  "swarmWin": 0,
+  "swarmKills": 1.5
+ },
+ "orcShaman": {
+  "k": "orcShaman",
+  "name": "Orc Shaman",
+  "dungeon": "warren",
+  "cost": 5,
+  "rr_r0": 0.7,
+  "rr_home": 0.7692307692307693,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 5.424166666666667,
+  "tollPerCostT1": 8.371666666666666,
+  "oneTollPerCost": 3.675,
+  "toughPerCost": 18,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 13.75,
+  "dpsPack": 3.1539319934144445,
+  "byHero": {
+   "paladin1": 19.7,
+   "paladin2": 8,
+   "berserker1": 9.4,
+   "berserker2": 1.4,
+   "archer1": 3.4,
+   "archer2": 0.4,
+   "pyromancer1": 1,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 2.766954049709739,
+  "toughRel": 0.7272727272727273,
+  "mixAdded": 16.4,
+  "mixYard": 4.2,
+  "mixRel": 3.904761904761904,
+  "moves": {
+   "st:burn": 0,
+   "mv:sT": 1710,
+   "wall slam": 0,
+   "attack": 0
+  },
+  "dmgShare": {
+   "st:burn": 0.6947154662377301,
+   "mv:sT": 0.3012098087311493,
+   "wall slam": 0.002974407465690532,
+   "attack": 0.0011003175654303375
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 368.8940570845876,
+    "bursts": 0.40793971557537334,
+    "dmgShare": 0.6947154662377298
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 1.3
+ },
+ "wolfRider": {
+  "k": "wolfRider",
+  "name": "Wolf Rider",
+  "dungeon": "warren",
+  "cost": 5,
+  "rr_r0": 0.769230769230769,
+  "rr_home": 0.6230769230769231,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 3.3249999999999997,
+  "tollPerCostT1": 5.24,
+  "oneTollPerCost": 2.0375,
+  "toughPerCost": 28,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 19.55,
+  "dpsPack": 1.6236920984937389,
+  "byHero": {
+   "paladin1": 7.5,
+   "paladin2": 3.6,
+   "berserker1": 10.3,
+   "berserker2": 1.8,
+   "archer1": 1.7,
+   "archer2": 0.1,
+   "pyromancer1": 1.5,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 1.6961356058291377,
+  "toughRel": 1.1313131313131313,
+  "mixAdded": 5.4,
+  "mixYard": 4.2,
+  "mixRel": 1.2857142857142858,
+  "moves": {
+   "attack": 1873,
+   "mv:charge": 597,
+   "wall slam": 0,
+   "spawn:goblinSpear": 0,
+   "mv:atkT": 543,
+   "mv:spear": 0
+  },
+  "dmgShare": {
+   "attack": 0.41145060583887094,
+   "mv:charge": 0.15537645294618668,
+   "wall slam": 0.015337307838681816,
+   "spawn:goblinSpear": 0.0009461134480691172,
+   "mv:atkT": 0.0005906984619852581,
+   "mv:spear": 0
+  },
+  "statuses": {
+   "stagger": {
+    "perMin": 74.21230795937764,
+    "bursts": 0,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0.5
+ },
+ "drummer": {
+  "k": "drummer",
+  "name": "Drummer",
+  "dungeon": "warren",
+  "cost": 3,
+  "rr_r0": 0.17307692307692307,
+  "rr_home": 0.1769230769230769,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 0.008333333333333333,
+  "tollPerCostT1": 0.011666666666666665,
+  "oneTollPerCost": 0.008333333333333333,
+  "toughPerCost": 15,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 30.9,
+  "dpsPack": 0.002213465400384905,
+  "byHero": {
+   "paladin1": 0,
+   "paladin2": 0,
+   "berserker1": 0,
+   "berserker2": 0,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.0042509664306494685,
+  "toughRel": 0.6060606060606061,
+  "mixAdded": 1.8,
+  "mixYard": 4.2,
+  "mixRel": 0.42857142857142855,
+  "moves": {
+   "attack": 0,
+   "mv:beat": 30848
+  },
+  "dmgShare": {
+   "attack": 1,
+   "mv:beat": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "goblinSuicide": {
+  "k": "goblinSuicide",
+  "name": "Suicide Bomber",
+  "dungeon": "warren",
+  "cost": 2.5,
+  "rr_r0": 0.07692307692307693,
+  "rr_home": 0.07692307692307693,
+  "packN": 6,
+  "packCost": 15,
+  "tollPerCost": 0.47,
+  "tollPerCostT1": 0.6083333333333334,
+  "oneTollPerCost": 0,
+  "toughPerCost": 11.827499999999999,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 6.85,
+  "dpsPack": 1.1107074153013092,
+  "byHero": {
+   "paladin1": 0.9,
+   "paladin2": 0.9,
+   "berserker1": 0.4,
+   "berserker2": 0.4,
+   "archer1": 1.2,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.23975450668863,
+  "toughRel": 0.47787878787878785,
+  "mixAdded": 0.5,
+  "mixYard": 4.2,
+  "mixRel": 0.11904761904761904,
+  "moves": {
+   "death": 0,
+   "st:burn": 0
+  },
+  "dmgShare": {
+   "death": 0.8678172736857515,
+   "st:burn": 0.1321827263142485
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 34.32634547014846,
+    "bursts": 0,
+    "dmgShare": 0.13218272631424852
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "frostShaman": {
+  "k": "frostShaman",
+  "name": "Frost Shaman",
+  "dungeon": "warren",
+  "cost": 5,
+  "rr_r0": 0.8538461538461539,
+  "rr_home": 0.8692307692307693,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 6.939166666666667,
+  "tollPerCostT1": 10.268333333333334,
+  "oneTollPerCost": 2.1799999999999997,
+  "toughPerCost": 40.91416666666667,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 22.4,
+  "dpsPack": 1.2731371906810047,
+  "byHero": {
+   "paladin1": 18.1,
+   "paladin2": 13.3,
+   "berserker1": 19.2,
+   "berserker2": 1.1,
+   "archer1": 2.4,
+   "archer2": 0,
+   "pyromancer1": 1.3,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 3.539779746801812,
+  "toughRel": 1.6530976430976432,
+  "mixAdded": 10.4,
+  "mixYard": 4.2,
+  "mixRel": 2.4761904761904763,
+  "moves": {
+   "mv:ball": 5006,
+   "wall slam": 0,
+   "mv:totem": 1080,
+   "attack": 0
+  },
+  "dmgShare": {
+   "mv:ball": 0.9880898777820567,
+   "wall slam": 0.007520880824424148,
+   "mv:totem": 0.0023210041414480228,
+   "attack": 0.0020682372520711492
+  },
+  "statuses": {
+   "chill": {
+    "perMin": 1134.1610823541355,
+    "bursts": 4.220215352552991,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "troll": {
+  "k": "troll",
+  "name": "Troll",
+  "dungeon": "warren",
+  "cost": 8,
+  "rr_r0": 0.823076923076923,
+  "rr_home": 0.8500000000000002,
+  "packN": 2,
+  "packCost": 16,
+  "tollPerCost": 1.98984375,
+  "tollPerCostT1": 3.3281250000000004,
+  "oneTollPerCost": 1.2640625,
+  "toughPerCost": 39.86718749999999,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 37.95,
+  "dpsPack": 0.47552837442928614,
+  "byHero": {
+   "paladin1": 2.4,
+   "paladin2": 1.2,
+   "berserker1": 8.5,
+   "berserker2": 1.1,
+   "archer1": 0.3,
+   "archer2": 0.2,
+   "pyromancer1": 2.1,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 4,
+  "threatRel": 1.0150510780185182,
+  "toughRel": 1.6107954545454544,
+  "mixAdded": 1.9,
+  "mixYard": 4.2,
+  "mixRel": 0.45238095238095233,
+  "moves": {
+   "mv:boulder": 2137,
+   "wall slam": 0,
+   "attack": 898,
+   "mv:recall": 0
+  },
+  "dmgShare": {
+   "mv:boulder": 0.8471638818594313,
+   "wall slam": 0.0852829159833351,
+   "attack": 0.06755320215723357,
+   "mv:recall": 0
+  },
+  "statuses": {
+   "stagger": {
+    "perMin": 174.51015505836298,
+    "bursts": 0,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "rockTroll": {
+  "k": "rockTroll",
+  "name": "Rock Troll",
+  "dungeon": "warren",
+  "cost": 9,
+  "rr_r0": 0.9923076923076923,
+  "rr_home": 0.9846153846153846,
+  "packN": 2,
+  "packCost": 18,
+  "tollPerCost": 3.9680555555555554,
+  "tollPerCostT1": 6.379166666666666,
+  "oneTollPerCost": 2.6625,
+  "toughPerCost": 46.61666666666667,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 62.85,
+  "dpsPack": 0.9334435016773062,
+  "byHero": {
+   "paladin1": 4.4,
+   "paladin2": 1.5,
+   "berserker1": 10.7,
+   "berserker2": 2.3,
+   "archer1": 6.4,
+   "archer2": 1.9,
+   "pyromancer1": 4,
+   "pyromancer2": 0.6
+  },
+  "timeUps": 0,
+  "threatRel": 2.0241685153942552,
+  "toughRel": 1.8835016835016836,
+  "mixAdded": 4.1,
+  "mixYard": 4.2,
+  "mixRel": 0.976190476190476,
+  "moves": {
+   "mv:boulder": 2378,
+   "wall slam": 0,
+   "attack": 910,
+   "mv:chg": 970,
+   "mv:recall": 0
+  },
+  "dmgShare": {
+   "mv:boulder": 0.8579330561649703,
+   "wall slam": 0.07973193867014357,
+   "attack": 0.06233500516488613,
+   "mv:chg": 0,
+   "mv:recall": 0
+  },
+  "statuses": {
+   "stagger": {
+    "perMin": 181.90361377883713,
+    "bursts": 0,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0.25,
+  "swarmKills": 2.8
+ },
+ "ogre": {
+  "k": "ogre",
+  "name": "Ogre",
+  "dungeon": "warren",
+  "cost": 8,
+  "rr_r0": 0.6153846153846153,
+  "rr_home": 0.6461538461538462,
+  "packN": 2,
+  "packCost": 16,
+  "tollPerCost": 2.01953125,
+  "tollPerCostT1": 3.2828125000000004,
+  "oneTollPerCost": 1.809375,
+  "toughPerCost": 30,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 14.149999999999999,
+  "dpsPack": 1.5570842860164613,
+  "byHero": {
+   "paladin1": 7.5,
+   "paladin2": 2.4,
+   "berserker1": 5.7,
+   "berserker2": 0.7,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1.030195145927707,
+  "toughRel": 1.2121212121212122,
+  "mixAdded": 4.4,
+  "mixYard": 4.2,
+  "mixRel": 1.0476190476190477,
+  "moves": {
+   "attack": 1670,
+   "mv:slT": 924,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.8283092563559166,
+   "mv:slT": 0.12496824417378057,
+   "wall slam": 0.04672249947030288
+  },
+  "swarmWin": 0.25,
+  "swarmKills": 4.5
+ },
+ "rat": {
+  "k": "rat",
+  "name": "Rat",
+  "dungeon": "sewers",
+  "cost": 1,
+  "rr_r0": 0.17857142857142858,
+  "rr_home": 0.17857142857142858,
+  "packN": 16,
+  "packCost": 16,
+  "tollPerCost": 1.5796875,
+  "tollPerCostT1": 2.4296875,
+  "oneTollPerCost": 0.55,
+  "toughPerCost": 27,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 9.3,
+  "dpsPack": 2.5410201758062647,
+  "byHero": {
+   "paladin1": 2.8,
+   "paladin2": 1.3,
+   "berserker1": 1.4,
+   "berserker2": 0.6,
+   "archer1": 3.4,
+   "archer2": 0.7,
+   "pyromancer1": 2.1,
+   "pyromancer2": 0.3
+  },
+  "timeUps": 0,
+  "threatRel": 0.6888172238372092,
+  "toughRel": 1.0384615384615385,
+  "mixAdded": 3.7,
+  "mixYard": 4.3,
+  "mixRel": 0.8604651162790699,
+  "moves": {
+   "attack": 1595,
+   "wall slam": 0,
+   "ab:dash": 1043
+  },
+  "dmgShare": {
+   "attack": 0.9964529462796039,
+   "wall slam": 0.0035470537203960875,
+   "ab:dash": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "ratPlague": {
+  "k": "ratPlague",
+  "name": "Plague Rat",
+  "dungeon": "sewers",
+  "cost": 1.3,
+  "rr_r0": 0.2571428571428572,
+  "rr_home": 0.25,
+  "packN": 12,
+  "packCost": 15.6,
+  "tollPerCost": 5.274839743589744,
+  "tollPerCostT1": 6.767628205128205,
+  "oneTollPerCost": 0.49038461538461536,
+  "toughPerCost": 20.607371794871796,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 6.95,
+  "dpsPack": 6.738427307082485,
+  "byHero": {
+   "paladin1": 13.4,
+   "paladin2": 12.7,
+   "berserker1": 1.8,
+   "berserker2": 1,
+   "archer1": 9.9,
+   "archer2": 0.9,
+   "pyromancer1": 2,
+   "pyromancer2": 0.4
+  },
+  "timeUps": 0,
+  "threatRel": 2.300075469588551,
+  "toughRel": 0.7925912228796844,
+  "mixAdded": 23,
+  "mixYard": 4.3,
+  "mixRel": 5.348837209302326,
+  "moves": {
+   "st:poison": 0,
+   "attack": 1544,
+   "st:burn": 0,
+   "wall slam": 0,
+   "ab:dash": 802
+  },
+  "dmgShare": {
+   "st:poison": 0.6463011264183083,
+   "attack": 0.3365002150586436,
+   "st:burn": 0.013685294073329387,
+   "wall slam": 0.003513364449718808,
+   "ab:dash": 0
+  },
+  "statuses": {
+   "poison": {
+    "perMin": 362.2932772589546,
+    "bursts": 1.825715876059138,
+    "dmgShare": 0.6463011264183083
+   },
+   "burn": {
+    "perMin": 2.226482775681876,
+    "bursts": 0.08905931102727503,
+    "dmgShare": 0.013685294073329387
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "slimeSludge": {
+  "k": "slimeSludge",
+  "name": "Sludge Slime",
+  "dungeon": "sewers",
+  "cost": 3,
+  "rr_r0": 0.47857142857142854,
+  "rr_home": 0.39285714285714285,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 1.425,
+  "tollPerCostT1": 2.243333333333333,
+  "oneTollPerCost": 0.7833333333333333,
+  "toughPerCost": 42.86666666666667,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 13.7,
+  "dpsPack": 0.96784631743084,
+  "byHero": {
+   "paladin1": 6,
+   "paladin2": 2.1,
+   "berserker1": 2.8,
+   "berserker2": 0.3,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0.2,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.6213662790697674,
+  "toughRel": 1.6487179487179486,
+  "mixAdded": 2.9,
+  "mixYard": 4.3,
+  "mixRel": 0.6744186046511628,
+  "moves": {
+   "attack": 1469,
+   "spawn:slimeSmall": 0,
+   "st:poison": 0,
+   "wall slam": 0,
+   "st:burn": 0
+  },
+  "dmgShare": {
+   "attack": 0.7294385667154956,
+   "spawn:slimeSmall": 0.24692053172555908,
+   "st:poison": 0.01207509837395769,
+   "wall slam": 0.010062261970410522,
+   "st:burn": 0.0015035412145771184
+  },
+  "statuses": {
+   "wet": {
+    "perMin": 1.6292718603026222,
+    "bursts": 0,
+    "dmgShare": 0
+   },
+   "poison": {
+    "perMin": 5.609908869393998,
+    "bursts": 0,
+    "dmgShare": 0.01207509837395769
+   },
+   "burn": {
+    "perMin": 0.9010959568713731,
+    "bursts": 0,
+    "dmgShare": 0.0015035412145771184
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "slimeSmall": {
+  "k": "slimeSmall",
+  "name": "Slimelet",
+  "dungeon": "sewers",
+  "cost": 1,
+  "rr_r0": 0.10714285714285714,
+  "rr_home": 0.10714285714285714,
+  "packN": 16,
+  "packCost": 16,
+  "tollPerCost": 0.46875000000000006,
+  "tollPerCostT1": 0.7484375,
+  "oneTollPerCost": 0.0625,
+  "toughPerCost": 24,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 11.3,
+  "dpsPack": 0.6785629891299995,
+  "byHero": {
+   "paladin1": 1.7,
+   "paladin2": 0.6,
+   "berserker1": 1.3,
+   "berserker2": 0.1,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.2043968023255814,
+  "toughRel": 0.9230769230769231,
+  "mixAdded": 0.5,
+  "mixYard": 4.3,
+  "mixRel": 0.11627906976744186,
+  "moves": {
+   "attack": 988,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.9904961136062036,
+   "wall slam": 0.009503886393796417
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "leechBlood": {
+  "k": "leechBlood",
+  "name": "Blood Leech",
+  "dungeon": "sewers",
+  "cost": 2,
+  "rr_r0": 0.27142857142857146,
+  "rr_home": 0.2857142857142857,
+  "packN": 8,
+  "packCost": 16,
+  "tollPerCost": 3.5007812499999997,
+  "tollPerCostT1": 5.221875,
+  "oneTollPerCost": 1.05625,
+  "toughPerCost": 18.506249999999998,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 6.3,
+  "dpsPack": 4.591512983007395,
+  "byHero": {
+   "paladin1": 13,
+   "paladin2": 3.9,
+   "berserker1": 0.7,
+   "berserker2": 1.4,
+   "archer1": 6.6,
+   "archer2": 1.9,
+   "pyromancer1": 0.6,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1.5265034520348835,
+  "toughRel": 0.7117788461538461,
+  "mixAdded": 8.4,
+  "mixYard": 4.3,
+  "mixRel": 1.9534883720930234,
+  "moves": {
+   "attack": 0,
+   "mv:offT": 347,
+   "wall slam": 0,
+   "mv:sipT": 252,
+   "mv:latchT": 0
+  },
+  "dmgShare": {
+   "attack": 0.7141490711674753,
+   "mv:offT": 0.2722776498789668,
+   "wall slam": 0.013573278953557916,
+   "mv:sipT": 0,
+   "mv:latchT": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "lizardBlade": {
+  "k": "lizardBlade",
+  "name": "Lizard Blade",
+  "dungeon": "sewers",
+  "cost": 3,
+  "rr_r0": 0.42857142857142855,
+  "rr_home": 0.4857142857142857,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 2.2674999999999996,
+  "tollPerCostT1": 3.4166666666666665,
+  "oneTollPerCost": 1.0375,
+  "toughPerCost": 26,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 11.149999999999999,
+  "dpsPack": 2.6769081043885707,
+  "byHero": {
+   "paladin1": 6.7,
+   "paladin2": 3.4,
+   "berserker1": 3.2,
+   "berserker2": 0.7,
+   "archer1": 2.1,
+   "archer2": 0.2,
+   "pyromancer1": 1.6,
+   "pyromancer2": 0.2
+  },
+  "timeUps": 0,
+  "threatRel": 0.9887354651162789,
+  "toughRel": 1,
+  "mixAdded": 4.4,
+  "mixYard": 4.3,
+  "mixRel": 1.0232558139534884,
+  "moves": {
+   "attack": 12166,
+   "wall slam": 0,
+   "ab:dash": 4429
+  },
+  "dmgShare": {
+   "attack": 0.9998070863431806,
+   "wall slam": 0.00019291365681944656,
+   "ab:dash": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "lizardman": {
+  "k": "lizardman",
+  "name": "Lizardman",
+  "dungeon": "sewers",
+  "cost": 5,
+  "rr_r0": 0.5714285714285714,
+  "rr_home": 0.6214285714285713,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 1.235,
+  "tollPerCostT1": 1.6833333333333333,
+  "oneTollPerCost": 0.975,
+  "toughPerCost": 19.2,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 8.8,
+  "dpsPack": 1.6592331685499058,
+  "byHero": {
+   "paladin1": 4,
+   "paladin2": 2.3,
+   "berserker1": 2.7,
+   "berserker2": 0.9,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0.1,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.5385174418604651,
+  "toughRel": 0.7384615384615384,
+  "mixAdded": 3.8,
+  "mixYard": 4.3,
+  "mixRel": 0.8837209302325582,
+  "moves": {
+   "attack": 1785,
+   "mv:ts.cd": 430,
+   "mv:ts.t": 226,
+   "wall slam": 0,
+   "mv:ts": 0
+  },
+  "dmgShare": {
+   "attack": 0.8313126810432434,
+   "mv:ts.cd": 0.11783109575241842,
+   "mv:ts.t": 0.033537265921152186,
+   "wall slam": 0.017318957283185946,
+   "mv:ts": 0
+  },
+  "statuses": {
+   "wet": {
+    "perMin": 202.3717258701118,
+    "bursts": 0.21528525296017278,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0.5
+ },
+ "crab": {
+  "k": "crab",
+  "name": "Sewer Crab",
+  "dungeon": "sewers",
+  "cost": 3,
+  "rr_r0": 0.7142857142857143,
+  "rr_home": 0.7142857142857143,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 2.2933333333333334,
+  "tollPerCostT1": 3.998333333333334,
+  "oneTollPerCost": 2.2625,
+  "toughPerCost": 63.534166666666664,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 28.35,
+  "dpsPack": 0.8024492630230337,
+  "byHero": {
+   "paladin1": 5.9,
+   "paladin2": 1.8,
+   "berserker1": 9.3,
+   "berserker2": 0.5,
+   "archer1": 0.8,
+   "archer2": 0.1,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1,
+  "toughRel": 2.443621794871795,
+  "mixAdded": 6.2,
+  "mixYard": 4.3,
+  "mixRel": 1.4418604651162792,
+  "moves": {
+   "attack": 3010,
+   "wall slam": 0,
+   "mv:bub": 0
+  },
+  "dmgShare": {
+   "attack": 0.9975006364752131,
+   "wall slam": 0.0024993635247869024,
+   "mv:bub": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0.8
+ },
+ "crabBlue": {
+  "k": "crabBlue",
+  "name": "Blue Crab",
+  "dungeon": "sewers",
+  "cost": 3,
+  "rr_r0": 0.7928571428571428,
+  "rr_home": 0.8571428571428573,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 7.273333333333333,
+  "tollPerCostT1": 11.923333333333334,
+  "oneTollPerCost": 2.604166666666667,
+  "toughPerCost": 52.66499999999999,
+  "heroDown": 0.09375,
+  "heroDownT1": 0.1875,
+  "ttk": 63.4,
+  "clear": 40.95,
+  "dpsPack": 1.8080525275505663,
+  "byHero": {
+   "paladin1": 13.3,
+   "paladin2": 5.8,
+   "berserker1": 29.1,
+   "berserker2": 3.9,
+   "archer1": 1.5,
+   "archer2": 0.3,
+   "pyromancer1": 3.8,
+   "pyromancer2": 0.6
+  },
+  "timeUps": 1,
+  "threatRel": 3.171511627906977,
+  "toughRel": 2.025576923076923,
+  "mixAdded": 7.7,
+  "mixYard": 4.3,
+  "mixRel": 1.7906976744186047,
+  "moves": {
+   "attack": 2892,
+   "mv:bub": 3543,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.6889085190975962,
+   "mv:bub": 0.3070238679518975,
+   "wall slam": 0.004067612950506265
+  },
+  "statuses": {
+   "wet": {
+    "perMin": 427.63789457394944,
+    "bursts": 6.847178846841028,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0.8
+ },
+ "croc": {
+  "k": "croc",
+  "name": "Croc",
+  "dungeon": "sewers",
+  "cost": 6,
+  "rr_r0": 0.7071428571428572,
+  "rr_home": 0.7142857142857143,
+  "packN": 3,
+  "packCost": 18,
+  "tollPerCost": 2.3041666666666667,
+  "tollPerCostT1": 3.6791666666666663,
+  "oneTollPerCost": 1.1895833333333332,
+  "toughPerCost": 27.5,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 15.15,
+  "dpsPack": 2.1709899601733533,
+  "byHero": {
+   "paladin1": 7.8,
+   "paladin2": 3.2,
+   "berserker1": 6.4,
+   "berserker2": 0.6,
+   "archer1": 0.1,
+   "archer2": 0,
+   "pyromancer1": 0.5,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1.0047238372093024,
+  "toughRel": 1.0576923076923077,
+  "mixAdded": 4.8,
+  "mixYard": 4.3,
+  "mixRel": 1.1162790697674418,
+  "moves": {
+   "attack": 2049,
+   "mv:drag": 369,
+   "wall slam": 0,
+   "mv:bite": 390,
+   "mv:atkT": 309
+  },
+  "dmgShare": {
+   "attack": 0.6411658878474705,
+   "mv:drag": 0.3394973475380925,
+   "wall slam": 0.019336764614436914,
+   "mv:bite": 0,
+   "mv:atkT": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 1
+ },
+ "leechBrain": {
+  "k": "leechBrain",
+  "name": "Brain Leech",
+  "dungeon": "sewers",
+  "cost": 3,
+  "rr_r0": 0.014285714285714287,
+  "rr_home": 0.014285714285714287,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 0,
+  "tollPerCostT1": 0,
+  "oneTollPerCost": 0,
+  "toughPerCost": 12,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 4.25,
+  "dpsPack": 0,
+  "byHero": {
+   "paladin1": 0,
+   "paladin2": 0,
+   "berserker1": 0,
+   "berserker2": 0,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0,
+  "toughRel": 0.46153846153846156,
+  "mixAdded": 0,
+  "mixYard": 4.3,
+  "mixRel": 0,
+  "moves": {
+   "mv:offT": 1,
+   "mv:latchT": 0
+  },
+  "dmgShare": {
+   "mv:offT": 0,
+   "mv:latchT": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "crabGreen": {
+  "k": "crabGreen",
+  "name": "Green Crab",
+  "dungeon": "sewers",
+  "cost": 3.5,
+  "rr_r0": 0.8857142857142858,
+  "rr_home": 0.8857142857142858,
+  "packN": 5,
+  "packCost": 17.5,
+  "tollPerCost": 19.14142857142857,
+  "tollPerCostT1": 27.68142857142857,
+  "oneTollPerCost": 8.525000000000002,
+  "toughPerCost": 47.863571428571426,
+  "heroDown": 0.3125,
+  "heroDownT1": 0.625,
+  "ttk": 27.9,
+  "clear": 33.05,
+  "dpsPack": 7.3135950330181325,
+  "byHero": {
+   "paladin1": 56.8,
+   "paladin2": 34.1,
+   "berserker1": 39.2,
+   "berserker2": 4.1,
+   "archer1": 5.6,
+   "archer2": 2.6,
+   "pyromancer1": 9.1,
+   "pyromancer2": 1.7
+  },
+  "timeUps": 0,
+  "threatRel": 8.346553156146179,
+  "toughRel": 1.8409065934065934,
+  "mixAdded": 32.9,
+  "mixYard": 4.3,
+  "mixRel": 7.651162790697675,
+  "moves": {
+   "st:poison": 0,
+   "attack": 1808,
+   "mv:bub": 2889,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "st:poison": 0.5937286811549499,
+   "attack": 0.21552470244954738,
+   "mv:bub": 0.18940431075981648,
+   "wall slam": 0.001342305635686183
+  },
+  "statuses": {
+   "poison": {
+    "perMin": 329.50601073906813,
+    "bursts": 2.231611429855632,
+    "dmgShare": 0.59372868115495
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 1.5
+ },
+ "ratKing": {
+  "k": "ratKing",
+  "name": "Rat King",
+  "dungeon": "sewers",
+  "cost": 8,
+  "rr_r0": 1,
+  "rr_home": 1,
+  "packN": 2,
+  "packCost": 16,
+  "tollPerCost": 10.68828125,
+  "tollPerCostT1": 16.403125,
+  "oneTollPerCost": 9.5140625,
+  "toughPerCost": 70.78125,
+  "heroDown": 0.25,
+  "heroDownT1": 0.5,
+  "ttk": 30.9,
+  "clear": 18.45,
+  "dpsPack": 6.80013573493347,
+  "byHero": {
+   "paladin1": 32.4,
+   "paladin2": 17.3,
+   "berserker1": 10.6,
+   "berserker2": 1.1,
+   "archer1": 11.3,
+   "archer2": 1.1,
+   "pyromancer1": 11.3,
+   "pyromancer2": 0.4
+  },
+  "timeUps": 0,
+  "threatRel": 4.660587754360464,
+  "toughRel": 2.722355769230769,
+  "mixAdded": 23.9,
+  "mixYard": 4.3,
+  "mixRel": 5.558139534883721,
+  "moves": {
+   "st:poison": 0,
+   "attack": 1652,
+   "spawn:rat": 0,
+   "spawn:ratPlague": 0,
+   "wall slam": 0,
+   "st:burn": 0
+  },
+  "dmgShare": {
+   "st:poison": 0.3305486602095461,
+   "attack": 0.2948767937585743,
+   "spawn:rat": 0.23343858047543514,
+   "spawn:ratPlague": 0.11927073617212544,
+   "wall slam": 0.020899705626534353,
+   "st:burn": 0.0009655237577846066
+  },
+  "statuses": {
+   "poison": {
+    "perMin": 481.00801561714496,
+    "bursts": 3.194415688130383,
+    "dmgShare": 0.3305486602095462
+   },
+   "burn": {
+    "perMin": 1.0648052293767942,
+    "bursts": 0.017746753822946573,
+    "dmgShare": 0.0009655237577846069
+   }
+  },
+  "swarmWin": 1,
+  "swarmKills": 7.5
+ },
+ "spiderHunter": {
+  "k": "spiderHunter",
+  "name": "Hunter Spider",
+  "dungeon": "sewers",
+  "cost": 3,
+  "rr_r0": 0.7642857142857142,
+  "rr_home": 0.6714285714285714,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 5.8475,
+  "tollPerCostT1": 8.17,
+  "oneTollPerCost": 1.4791666666666667,
+  "toughPerCost": 20,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 9.1,
+  "dpsPack": 5.336203442891593,
+  "byHero": {
+   "paladin1": 23.5,
+   "paladin2": 13.2,
+   "berserker1": 1.3,
+   "berserker2": 0.8,
+   "archer1": 7,
+   "archer2": 0.1,
+   "pyromancer1": 0.8,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 2.549781976744186,
+  "toughRel": 0.7692307692307693,
+  "mixAdded": 21.3,
+  "mixYard": 4.3,
+  "mixRel": 4.953488372093024,
+  "moves": {
+   "st:poison": 0,
+   "attack": 1692,
+   "ab:dash": 493
+  },
+  "dmgShare": {
+   "st:poison": 0.6383433985553978,
+   "attack": 0.3616566014446022,
+   "ab:dash": 0
+  },
+  "statuses": {
+   "poison": {
+    "perMin": 625.9969256706522,
+    "bursts": 3.391679476372303,
+    "dmgShare": 0.6383433985553977
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "fireSlime": {
+  "k": "fireSlime",
+  "name": "Fire Slime",
+  "dungeon": "sewers",
+  "cost": 4,
+  "rr_r0": 0.32857142857142857,
+  "rr_home": 0.32142857142857145,
+  "packN": 4,
+  "packCost": 16,
+  "tollPerCost": 0.67734375,
+  "tollPerCostT1": 0.9265625,
+  "oneTollPerCost": 0.5031249999999999,
+  "toughPerCost": 18.75,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 11.100000000000001,
+  "dpsPack": 1.1200813728484984,
+  "byHero": {
+   "paladin1": 2.7,
+   "paladin2": 1.4,
+   "berserker1": 1,
+   "berserker2": 0.3,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.29535337936046513,
+  "toughRel": 0.7211538461538461,
+  "mixAdded": 0.7,
+  "mixYard": 4.3,
+  "mixRel": 0.1627906976744186,
+  "moves": {
+   "attack": 1322,
+   "st:burn": 0,
+   "mv:drip": 1835
+  },
+  "dmgShare": {
+   "attack": 0.9799119307902502,
+   "st:burn": 0.02008806920974983,
+   "mv:drip": 0
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 15.566548167363287,
+    "bursts": 0,
+    "dmgShare": 0.020088069209749825
+   },
+   "wet": {
+    "perMin": 0.19881374465688023,
+    "bursts": 0,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "rattler": {
+  "k": "rattler",
+  "name": "Rattler",
+  "dungeon": "crypt",
+  "cost": 3,
+  "rr_r0": 0.14444444444444446,
+  "rr_home": 0.14444444444444446,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 1.0616666666666665,
+  "tollPerCostT1": 1.5966666666666667,
+  "oneTollPerCost": 0.5458333333333334,
+  "toughPerCost": 25,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 10.3,
+  "dpsPack": 1.3533980708744198,
+  "byHero": {
+   "paladin1": 4.3,
+   "paladin2": 1.9,
+   "berserker1": 2,
+   "berserker2": 0.2,
+   "archer1": 0.1,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.5995294117647059,
+  "toughRel": 1.098901098901099,
+  "mixAdded": 3.7,
+  "mixYard": 3.3,
+  "mixRel": 1.1212121212121213,
+  "moves": {
+   "attack": 5809
+  },
+  "dmgShare": {
+   "attack": 1
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "rattlerBow": {
+  "k": "rattlerBow",
+  "name": "Bone Archer",
+  "dungeon": "crypt",
+  "cost": 3,
+  "rr_r0": 0.8055555555555556,
+  "rr_home": 0.788888888888889,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 5.246666666666667,
+  "tollPerCostT1": 8.386666666666667,
+  "oneTollPerCost": 2.1666666666666665,
+  "toughPerCost": 18,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 15.05,
+  "dpsPack": 4.011987726161338,
+  "byHero": {
+   "paladin1": 11.6,
+   "paladin2": 3.4,
+   "berserker1": 10.2,
+   "berserker2": 2.5,
+   "archer1": 5.6,
+   "archer2": 1.1,
+   "pyromancer1": 6.2,
+   "pyromancer2": 1.3
+  },
+  "timeUps": 0,
+  "threatRel": 2.962823529411765,
+  "toughRel": 0.7912087912087912,
+  "mixAdded": 6.8,
+  "mixYard": 3.3,
+  "mixRel": 2.0606060606060606,
+  "moves": {
+   "attack": 3863
+  },
+  "dmgShare": {
+   "attack": 1
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "rattlerHarrow": {
+  "k": "rattlerHarrow",
+  "name": "Harrowing Skeleton",
+  "dungeon": "crypt",
+  "cost": 4,
+  "rr_r0": 0.4444444444444444,
+  "rr_home": 0.3222222222222222,
+  "packN": 4,
+  "packCost": 16,
+  "tollPerCost": 2.2671875000000004,
+  "tollPerCostT1": 3.7140625000000003,
+  "oneTollPerCost": 1.7187499999999996,
+  "toughPerCost": 33.75,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 15.95,
+  "dpsPack": 1.8822651792030598,
+  "byHero": {
+   "paladin1": 7.1,
+   "paladin2": 2.6,
+   "berserker1": 6.8,
+   "berserker2": 0.6,
+   "archer1": 0.7,
+   "archer2": 0,
+   "pyromancer1": 0.3,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1.280294117647059,
+  "toughRel": 1.4835164835164836,
+  "mixAdded": 4.3,
+  "mixYard": 3.3,
+  "mixRel": 1.303030303030303,
+  "moves": {
+   "attack": 1026,
+   "spawn:rattlerHarrow": 0,
+   "death": 0,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.631682403388445,
+   "spawn:rattlerHarrow": 0.3073426526778641,
+   "death": 0.056711534149882926,
+   "wall slam": 0.004263409783808071
+  },
+  "statuses": {
+   "curse": {
+    "perMin": 70.71559769197995,
+    "bursts": 0.0500936937605525,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0.8
+ },
+ "ghost": {
+  "k": "ghost",
+  "name": "Ghost",
+  "dungeon": "crypt",
+  "cost": 3,
+  "rr_r0": 0,
+  "rr_home": 0,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 0.63,
+  "tollPerCostT1": 0.9133333333333333,
+  "oneTollPerCost": 0.3541666666666667,
+  "toughPerCost": 20,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 7.5,
+  "dpsPack": 0.9343566413291483,
+  "byHero": {
+   "paladin1": 2.5,
+   "paladin2": 1.2,
+   "berserker1": 1,
+   "berserker2": 0.1,
+   "archer1": 0.1,
+   "archer2": 0.1,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.355764705882353,
+  "toughRel": 0.8791208791208791,
+  "mixAdded": 3.4,
+  "mixYard": 3.3,
+  "mixRel": 1.0303030303030303,
+  "moves": {
+   "mv:gT": 952,
+   "attack": 0
+  },
+  "dmgShare": {
+   "mv:gT": 0.9931187526654147,
+   "attack": 0.006881247334585248
+  },
+  "statuses": {
+   "sleepy": {
+    "perMin": 245.6441954800095,
+    "bursts": 1.3907668533900042,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "rattlerSpear": {
+  "k": "rattlerSpear",
+  "name": "Bone Spear",
+  "dungeon": "crypt",
+  "cost": 3,
+  "rr_r0": 0.26666666666666666,
+  "rr_home": 0.2222222222222222,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 1.6141666666666667,
+  "tollPerCostT1": 2.448333333333333,
+  "oneTollPerCost": 1.15,
+  "toughPerCost": 23,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 9.85,
+  "dpsPack": 2.0892640013229227,
+  "byHero": {
+   "paladin1": 5,
+   "paladin2": 2.3,
+   "berserker1": 3.8,
+   "berserker2": 0.8,
+   "archer1": 0.7,
+   "archer2": 0,
+   "pyromancer1": 0.2,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.9115294117647059,
+  "toughRel": 1.010989010989011,
+  "mixAdded": 4.7,
+  "mixYard": 3.3,
+  "mixRel": 1.4242424242424243,
+  "moves": {
+   "attack": 1234,
+   "wall slam": 0,
+   "ab:dash": 545
+  },
+  "dmgShare": {
+   "attack": 0.9932808292573093,
+   "wall slam": 0.0067191707426907015,
+   "ab:dash": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "rattlerMace": {
+  "k": "rattlerMace",
+  "name": "Loose Jaw",
+  "dungeon": "crypt",
+  "cost": 4,
+  "rr_r0": 0.25555555555555554,
+  "rr_home": 0.4222222222222222,
+  "packN": 4,
+  "packCost": 16,
+  "tollPerCost": 1.08125,
+  "tollPerCostT1": 1.6203125,
+  "oneTollPerCost": 0.571875,
+  "toughPerCost": 22.5,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 9.4,
+  "dpsPack": 1.1902966218675075,
+  "byHero": {
+   "paladin1": 5.3,
+   "paladin2": 1.9,
+   "berserker1": 1,
+   "berserker2": 0.3,
+   "archer1": 0.2,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.6105882352941177,
+  "toughRel": 0.989010989010989,
+  "mixAdded": 3.2,
+  "mixYard": 3.3,
+  "mixRel": 0.9696969696969698,
+  "moves": {
+   "attack": 967,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.9975403886520517,
+   "wall slam": 0.0024596113479483607
+  },
+  "swarmWin": 0,
+  "swarmKills": 0.5
+ },
+ "rattlerGold": {
+  "k": "rattlerGold",
+  "name": "Golden Skeleton",
+  "dungeon": "crypt",
+  "cost": 5,
+  "rr_r0": 0.8888888888888888,
+  "rr_home": 0.8888888888888888,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 9.629166666666668,
+  "tollPerCostT1": 14.78,
+  "oneTollPerCost": 5.404999999999999,
+  "toughPerCost": 34.137499999999996,
+  "heroDown": 0.1875,
+  "heroDownT1": 0.375,
+  "ttk": 14.2,
+  "clear": 17.9,
+  "dpsPack": 7.2050738188779455,
+  "byHero": {
+   "paladin1": 12.8,
+   "paladin2": 7.2,
+   "berserker1": 13.8,
+   "berserker2": 2.6,
+   "archer1": 13.7,
+   "archer2": 3,
+   "pyromancer1": 18.8,
+   "pyromancer2": 5.1
+  },
+  "timeUps": 0,
+  "threatRel": 5.43764705882353,
+  "toughRel": 1.5005494505494503,
+  "mixAdded": 14.7,
+  "mixYard": 3.3,
+  "mixRel": 4.454545454545454,
+  "moves": {
+   "mv:bones": 463,
+   "attack": 1181,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "mv:bones": 0.7607367627418593,
+   "attack": 0.2371692706857816,
+   "wall slam": 0.002093966572359037
+  },
+  "swarmWin": 1,
+  "swarmKills": 8
+ },
+ "gaper": {
+  "k": "gaper",
+  "name": "Gaper",
+  "dungeon": "crypt",
+  "cost": 6,
+  "rr_r0": 0.5777777777777777,
+  "rr_home": 0.5888888888888889,
+  "packN": 3,
+  "packCost": 18,
+  "tollPerCost": 1.4187500000000002,
+  "tollPerCostT1": 2.1625,
+  "oneTollPerCost": 0.9270833333333333,
+  "toughPerCost": 22.5,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 12.75,
+  "dpsPack": 1.6367568570226425,
+  "byHero": {
+   "paladin1": 4.7,
+   "paladin2": 2.1,
+   "berserker1": 3.6,
+   "berserker2": 0.6,
+   "archer1": 0.3,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.8011764705882354,
+  "toughRel": 0.989010989010989,
+  "mixAdded": 3.6,
+  "mixYard": 3.3,
+  "mixRel": 1.090909090909091,
+  "moves": {
+   "attack": 1195,
+   "mv:g.cd": 478,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.6671530183941596,
+   "mv:g.cd": 0.32352453942289816,
+   "wall slam": 0.00932244218294212
+  },
+  "swarmWin": 0,
+  "swarmKills": 1.5
+ },
+ "banshee": {
+  "k": "banshee",
+  "name": "Banshee",
+  "dungeon": "crypt",
+  "cost": 5,
+  "rr_r0": 0.7444444444444445,
+  "rr_home": 0.7611111111111111,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 1.9274999999999998,
+  "tollPerCostT1": 2.6133333333333333,
+  "oneTollPerCost": 6.6525,
+  "toughPerCost": 18,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 31.3,
+  "dpsPack": 0.5808295425865195,
+  "byHero": {
+   "paladin1": 5,
+   "paladin2": 2.4,
+   "berserker1": 4.6,
+   "berserker2": 2.5,
+   "archer1": 0.6,
+   "archer2": 0,
+   "pyromancer1": 0.2,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 1.088470588235294,
+  "toughRel": 0.7912087912087912,
+  "mixAdded": 3.2,
+  "mixYard": 3.3,
+  "mixRel": 0.9696969696969698,
+  "moves": {
+   "mv:wail": 2750,
+   "attack": 0,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "mv:wail": 0.9908535546096819,
+   "attack": 0.00803538021534001,
+   "wall slam": 0.0011110651749780052
+  },
+  "statuses": {
+   "stagger": {
+    "perMin": 347.202972486765,
+    "bursts": 0.10222838213754476,
+    "dmgShare": 0
+   },
+   "curse": {
+    "perMin": 301.3378156546704,
+    "bursts": 0.43643655451028723,
+    "dmgShare": 0
+   },
+   "fear": {
+    "perMin": 425.52564064753005,
+    "bursts": 0.18086559916642533,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "brute": {
+  "k": "brute",
+  "name": "Brute",
+  "dungeon": "crypt",
+  "cost": 7,
+  "rr_r0": 0.8722222222222222,
+  "rr_home": 0.8611111111111112,
+  "packN": 2,
+  "packCost": 14,
+  "tollPerCost": 2.950892857142857,
+  "tollPerCostT1": 4.95,
+  "oneTollPerCost": 2.1857142857142855,
+  "toughPerCost": 55.208035714285714,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 20.3,
+  "dpsPack": 1.6361664273107257,
+  "byHero": {
+   "paladin1": 11.1,
+   "paladin2": 2.9,
+   "berserker1": 8.5,
+   "berserker2": 0.9,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0.2,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1.6663865546218488,
+  "toughRel": 2.4267268445839876,
+  "mixAdded": 4.6,
+  "mixYard": 3.3,
+  "mixRel": 1.3939393939393938,
+  "moves": {
+   "attack": 1381,
+   "wall slam": 0,
+   "mv:b.cd": 939,
+   "mv:b": 0
+  },
+  "dmgShare": {
+   "attack": 0.9892441722137477,
+   "wall slam": 0.010755827786252278,
+   "mv:b.cd": 0,
+   "mv:b": 0
+  },
+  "swarmWin": 1,
+  "swarmKills": 7.8
+ },
+ "frostWolf": {
+  "k": "frostWolf",
+  "name": "Frost Wolf",
+  "dungeon": "frost",
+  "cost": 2.5,
+  "rr_r0": 0.475,
+  "rr_home": 0.5,
+  "packN": 6,
+  "packCost": 15,
+  "tollPerCost": 2.0100000000000002,
+  "tollPerCostT1": 3.3083333333333327,
+  "oneTollPerCost": 0.415,
+  "toughPerCost": 18,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 7.050000000000001,
+  "dpsPack": 3.000397582301454,
+  "byHero": {
+   "paladin1": 5.6,
+   "paladin2": 2.1,
+   "berserker1": 1.6,
+   "berserker2": 0.5,
+   "archer1": 5.6,
+   "archer2": 0.1,
+   "pyromancer1": 0.5,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 1.7531193216232588,
+  "toughRel": 0.9,
+  "mixAdded": 11.1,
+  "mixYard": 7.1,
+  "mixRel": 1.563380281690141,
+  "moves": {
+   "attack": 1548,
+   "st:chill": 0,
+   "mv:lunge": 727,
+   "mv:atkT": 657,
+   "wall slam": 0,
+   "mv:howl": 95,
+   "mv:focusT": 68
+  },
+  "dmgShare": {
+   "attack": 0.6723396126623429,
+   "st:chill": 0.1542200437675586,
+   "mv:lunge": 0.1329939893689167,
+   "mv:atkT": 0.035463902809285776,
+   "wall slam": 0.004982451391896011,
+   "mv:howl": 0,
+   "mv:focusT": 0
+  },
+  "statuses": {
+   "chill": {
+    "perMin": 273.2223939813495,
+    "bursts": 0.9444509470744373,
+    "dmgShare": 0.15422004376755863
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "bat": {
+  "k": "bat",
+  "name": "Cave Bat",
+  "dungeon": "frost",
+  "cost": 2,
+  "rr_r0": 0.4,
+  "rr_home": 0.375,
+  "packN": 8,
+  "packCost": 16,
+  "tollPerCost": 1.034375,
+  "tollPerCostT1": 1.53125,
+  "oneTollPerCost": 0.30624999999999997,
+  "toughPerCost": 16.7765625,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 6,
+  "dpsPack": 2.0812994162959737,
+  "byHero": {
+   "paladin1": 1.7,
+   "paladin2": 1.2,
+   "berserker1": 1.4,
+   "berserker2": 0.7,
+   "archer1": 2.7,
+   "archer2": 0.2,
+   "pyromancer1": 0.3,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 0.9021804966686856,
+  "toughRel": 0.838828125,
+  "mixAdded": 9.4,
+  "mixYard": 7.1,
+  "mixRel": 1.323943661971831,
+  "moves": {
+   "attack": 2044,
+   "wall slam": 0,
+   "ab:dash": 1046
+  },
+  "dmgShare": {
+   "attack": 0.9926942267229955,
+   "wall slam": 0.007305773277004499,
+   "ab:dash": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "snowman": {
+  "k": "snowman",
+  "name": "Snowman",
+  "dungeon": "frost",
+  "cost": 4,
+  "rr_r0": 0.7125,
+  "rr_home": 0.725,
+  "packN": 4,
+  "packCost": 16,
+  "tollPerCost": 3.6500000000000004,
+  "tollPerCostT1": 5.6796875,
+  "oneTollPerCost": 0.646875,
+  "toughPerCost": 21,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 17.25,
+  "dpsPack": 1.3365378397948426,
+  "byHero": {
+   "paladin1": 13,
+   "paladin2": 5.4,
+   "berserker1": 6.2,
+   "berserker2": 0.8,
+   "archer1": 1.6,
+   "archer2": 0.2,
+   "pyromancer1": 1.9,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 3.183525136281042,
+  "toughRel": 1.05,
+  "mixAdded": 6.7,
+  "mixYard": 7.1,
+  "mixRel": 0.943661971830986,
+  "moves": {
+   "mv:snow": 2900,
+   "attack": 0
+  },
+  "dmgShare": {
+   "mv:snow": 0.9947561987145983,
+   "attack": 0.005243801285401594
+  },
+  "statuses": {
+   "chill": {
+    "perMin": 279.51865043292656,
+    "bursts": 0.9120307586844433,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "slimeIce": {
+  "k": "slimeIce",
+  "name": "Ice Slime",
+  "dungeon": "frost",
+  "cost": 3,
+  "rr_r0": 0.5125,
+  "rr_home": 0.5,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 1.07,
+  "tollPerCostT1": 1.7033333333333334,
+  "oneTollPerCost": 0.6083333333333333,
+  "toughPerCost": 27,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 12.600000000000001,
+  "dpsPack": 1.082148754204498,
+  "byHero": {
+   "paladin1": 3.9,
+   "paladin2": 1.3,
+   "berserker1": 2.8,
+   "berserker2": 0.4,
+   "archer1": 0.1,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 0.9332525741974561,
+  "toughRel": 1.35,
+  "mixAdded": 5.1,
+  "mixYard": 7.1,
+  "mixRel": 0.7183098591549295,
+  "moves": {
+   "attack": 702,
+   "death": 0
+  },
+  "dmgShare": {
+   "attack": 0.9535999762696327,
+   "death": 0.046400023730367286
+  },
+  "statuses": {
+   "chill": {
+    "perMin": 18.92676066519718,
+    "bursts": 0.011829225415748237,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "spiritFrost": {
+  "k": "spiritFrost",
+  "name": "Frost Spirit",
+  "dungeon": "frost",
+  "cost": 2.5,
+  "rr_r0": 0,
+  "rr_home": 0,
+  "packN": 6,
+  "packCost": 15,
+  "tollPerCost": 0.13916666666666666,
+  "tollPerCostT1": 0.14833333333333332,
+  "oneTollPerCost": 0.315,
+  "toughPerCost": 18,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 12.95,
+  "dpsPack": 0.1344496552829886,
+  "byHero": {
+   "paladin1": 0.1,
+   "paladin2": 0.2,
+   "berserker1": 0.5,
+   "berserker2": 0.3,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.1213809812235009,
+  "toughRel": 0.9,
+  "mixAdded": 1.9,
+  "mixYard": 7.1,
+  "mixRel": 0.2676056338028169,
+  "moves": {
+   "death": 0,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "death": 0.8501410073998594,
+   "wall slam": 0.14985899260014052
+  },
+  "statuses": {
+   "chill": {
+    "perMin": 49.47542622830203,
+    "bursts": 0,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "spiderFrost": {
+  "k": "spiderFrost",
+  "name": "Frost Spider",
+  "dungeon": "frost",
+  "cost": 3,
+  "rr_r0": 0.7,
+  "rr_home": 0.7,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 1.8941666666666668,
+  "tollPerCostT1": 3.1466666666666665,
+  "oneTollPerCost": 0.5666666666666667,
+  "toughPerCost": 20,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 8.1,
+  "dpsPack": 2.098253099930086,
+  "byHero": {
+   "paladin1": 7.1,
+   "paladin2": 2.1,
+   "berserker1": 1.8,
+   "berserker2": 0.3,
+   "archer1": 3.1,
+   "archer2": 0.2,
+   "pyromancer1": 0.5,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1.6520896426408238,
+  "toughRel": 1,
+  "mixAdded": 6.7,
+  "mixYard": 7.1,
+  "mixRel": 0.943661971830986,
+  "moves": {
+   "attack": 9824,
+   "ab:dash": 3255
+  },
+  "dmgShare": {
+   "attack": 1,
+   "ab:dash": 0
+  },
+  "statuses": {
+   "chill": {
+    "perMin": 600.4518520622374,
+    "bursts": 2.4116150436934767,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "spiderMomma": {
+  "k": "spiderMomma",
+  "name": "Momma Spider",
+  "dungeon": "frost",
+  "cost": 6,
+  "rr_r0": 0.375,
+  "rr_home": 0.3875,
+  "packN": 3,
+  "packCost": 18,
+  "tollPerCost": 1.1465277777777778,
+  "tollPerCostT1": 1.7930555555555556,
+  "oneTollPerCost": 0.4270833333333333,
+  "toughPerCost": 22.5,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 21.700000000000003,
+  "dpsPack": 0.4815814999003868,
+  "byHero": {
+   "paladin1": 3.7,
+   "paladin2": 1.6,
+   "berserker1": 2.2,
+   "berserker2": 0.2,
+   "archer1": 0.7,
+   "archer2": 0.1,
+   "pyromancer1": 0.6,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1,
+  "toughRel": 1.125,
+  "mixAdded": 4,
+  "mixYard": 7.1,
+  "mixRel": 0.5633802816901409,
+  "moves": {
+   "mv:web": 2538,
+   "attack": 0
+  },
+  "dmgShare": {
+   "mv:web": 0.9918301691300657,
+   "attack": 0.008169830869934216
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "frostWraith": {
+  "k": "frostWraith",
+  "name": "Icicle Wraith",
+  "dungeon": "frost",
+  "cost": 4,
+  "rr_r0": 0.36250000000000004,
+  "rr_home": 0.3375,
+  "packN": 4,
+  "packCost": 16,
+  "tollPerCost": 0.871875,
+  "tollPerCostT1": 0.35625,
+  "oneTollPerCost": 0,
+  "toughPerCost": 16.5,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 29.35,
+  "dpsPack": 0.14533782605230333,
+  "byHero": {
+   "paladin1": 1.4,
+   "paladin2": 5.4,
+   "berserker1": 0.1,
+   "berserker2": 0.2,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.7604482132041187,
+  "toughRel": 0.825,
+  "mixAdded": 9.7,
+  "mixYard": 7.1,
+  "mixRel": 1.3661971830985915,
+  "moves": {
+   "mv:ice": 3983,
+   "attack": 0,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "mv:ice": 0.9891526038387013,
+   "attack": 0.008939047585962633,
+   "wall slam": 0.0019083485753360481
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "yeti": {
+  "k": "yeti",
+  "name": "Yeti",
+  "dungeon": "frost",
+  "cost": 8,
+  "rr_r0": 0.9625,
+  "rr_home": 0.9750000000000001,
+  "packN": 2,
+  "packCost": 16,
+  "tollPerCost": 4.84140625,
+  "tollPerCostT1": 6.0859375,
+  "oneTollPerCost": 5.6140625,
+  "toughPerCost": 33.75,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 26.25,
+  "dpsPack": 2.2941432250428893,
+  "byHero": {
+   "paladin1": 12.1,
+   "paladin2": 10.2,
+   "berserker1": 7,
+   "berserker2": 0.8,
+   "archer1": 3.7,
+   "archer2": 1.9,
+   "pyromancer1": 1.4,
+   "pyromancer2": 1.5
+  },
+  "timeUps": 0,
+  "threatRel": 4.222668079951545,
+  "toughRel": 1.6875,
+  "mixAdded": 12.9,
+  "mixYard": 7.1,
+  "mixRel": 1.8169014084507045,
+  "moves": {
+   "mv:pack": 502,
+   "attack": 500,
+   "st:chill": 0,
+   "wall slam": 0,
+   "mv:heave": 425,
+   "mv:shove": 131,
+   "mv:yt": 0
+  },
+  "dmgShare": {
+   "mv:pack": 0.6005581375672681,
+   "attack": 0.2241365980433442,
+   "st:chill": 0.13700258223434225,
+   "wall slam": 0.03830268215504539,
+   "mv:heave": 0,
+   "mv:shove": 0,
+   "mv:yt": 0
+  },
+  "statuses": {
+   "stagger": {
+    "perMin": 323.64747060287976,
+    "bursts": 0.4813654418415535,
+    "dmgShare": 0
+   },
+   "chill": {
+    "perMin": 193.7854567859115,
+    "bursts": 0.7267674317999925,
+    "dmgShare": 0.13700258223434228
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 1.5
+ },
+ "imp": {
+  "k": "imp",
+  "name": "Imp",
+  "dungeon": "ember",
+  "cost": 2,
+  "rr_r0": 0.38749999999999996,
+  "rr_home": 0.3,
+  "packN": 8,
+  "packCost": 16,
+  "tollPerCost": 9.05078125,
+  "tollPerCostT1": 12.7859375,
+  "oneTollPerCost": 4.3625,
+  "toughPerCost": 19.5,
+  "heroDown": 0.0625,
+  "heroDownT1": 0.125,
+  "ttk": 54.5,
+  "clear": 24.799999999999997,
+  "dpsPack": 3.750294221638203,
+  "byHero": {
+   "paladin1": 27.1,
+   "paladin2": 13.2,
+   "berserker1": 10.6,
+   "berserker2": 3.4,
+   "archer1": 5.7,
+   "archer2": 1.6,
+   "pyromancer1": 7.7,
+   "pyromancer2": 3.1
+  },
+  "timeUps": 0,
+  "threatRel": 5.063374125874126,
+  "toughRel": 1,
+  "mixAdded": 19.5,
+  "mixYard": 32.9,
+  "mixRel": 0.5927051671732523,
+  "moves": {
+   "mv:fire": 2248,
+   "st:burn": 0,
+   "attack": 0,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "mv:fire": 0.5595524988768928,
+   "st:burn": 0.43842808328540706,
+   "attack": 0.0011769798414508754,
+   "wall slam": 0.0008424379962492321
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 117.1161968713486,
+    "bursts": 0.2874845277424297,
+    "dmgShare": 0.43842808328540694
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "cinderBat": {
+  "k": "cinderBat",
+  "name": "Cinder Bat",
+  "dungeon": "ember",
+  "cost": 2,
+  "rr_r0": 0,
+  "rr_home": 0,
+  "packN": 8,
+  "packCost": 16,
+  "tollPerCost": 1.07421875,
+  "tollPerCostT1": 1.2953125,
+  "oneTollPerCost": 0.89375,
+  "toughPerCost": 11.4265625,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 3.05,
+  "dpsPack": 5.724231672501657,
+  "byHero": {
+   "paladin1": 1.4,
+   "paladin2": 1.5,
+   "berserker1": 1.7,
+   "berserker2": 0.8,
+   "archer1": 0.9,
+   "archer2": 1.1,
+   "pyromancer1": 1.2,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 0.6009615384615384,
+  "toughRel": 0.5859775641025641,
+  "mixAdded": -9.8,
+  "mixYard": 32.9,
+  "mixRel": -0.29787234042553196,
+  "moves": {
+   "mv:dive": 415,
+   "st:burn": 0,
+   "mv:bleedHoldT": 7,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "mv:dive": 0.7802584543025627,
+   "st:burn": 0.1726929202762114,
+   "mv:bleedHoldT": 0.03684436845735255,
+   "wall slam": 0.010204256963873466
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 264.9248554913286,
+    "bursts": 0.5780346820809228,
+    "dmgShare": 0.17269292027621136
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "hellhound": {
+  "k": "hellhound",
+  "name": "Hellhound",
+  "dungeon": "ember",
+  "cost": 3,
+  "rr_r0": 0.5,
+  "rr_home": 0.4625,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 7.990833333333333,
+  "tollPerCostT1": 9.618333333333332,
+  "oneTollPerCost": 2.0958333333333337,
+  "toughPerCost": 20,
+  "heroDown": 0.0625,
+  "heroDownT1": 0.125,
+  "ttk": 10.75,
+  "clear": 8.85,
+  "dpsPack": 11.290745931281425,
+  "byHero": {
+   "paladin1": 23.4,
+   "paladin2": 22.6,
+   "berserker1": 4.1,
+   "berserker2": 1.2,
+   "archer1": 7.4,
+   "archer2": 0.4,
+   "pyromancer1": 3.5,
+   "pyromancer2": 1.2
+  },
+  "timeUps": 0,
+  "threatRel": 4.47039627039627,
+  "toughRel": 1.0256410256410255,
+  "mixAdded": 25.7,
+  "mixYard": 32.9,
+  "mixRel": 0.7811550151975684,
+  "moves": {
+   "st:bleed": 0,
+   "st:burn": 0,
+   "attack": 3509,
+   "mv:breath": 1960,
+   "mv:trail": 19466,
+   "mv:lunge": 2200,
+   "mv:atkT": 1972,
+   "wall slam": 0,
+   "mv:howl": 1074,
+   "mv:focusT": 840
+  },
+  "dmgShare": {
+   "st:bleed": 0.5720628419209418,
+   "st:burn": 0.2686876539432912,
+   "attack": 0.11245702888182359,
+   "mv:breath": 0.02625337473338098,
+   "mv:trail": 0.00897152778474966,
+   "mv:lunge": 0.008468518064272823,
+   "mv:atkT": 0.0027000487380967994,
+   "wall slam": 0.00039900593344312837,
+   "mv:howl": 0,
+   "mv:focusT": 0
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 385.0749544599491,
+    "bursts": 2.750321020097416,
+    "dmgShare": 0.2686876539432912
+   },
+   "bleed": {
+    "perMin": 178.24230298325145,
+    "bursts": 0.9764983426404508,
+    "dmgShare": 0.5720628419209419
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "spiritFire": {
+  "k": "spiritFire",
+  "name": "Fire Spirit",
+  "dungeon": "ember",
+  "cost": 2.5,
+  "rr_r0": 0.125,
+  "rr_home": 0.125,
+  "packN": 6,
+  "packCost": 15,
+  "tollPerCost": 0.8575,
+  "tollPerCostT1": 0.9333333333333333,
+  "oneTollPerCost": 0.29000000000000004,
+  "toughPerCost": 18,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 12.399999999999999,
+  "dpsPack": 0.812046576522807,
+  "byHero": {
+   "paladin1": 2,
+   "paladin2": 2.2,
+   "berserker1": 1.7,
+   "berserker2": 1,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.4797202797202797,
+  "toughRel": 0.9230769230769231,
+  "mixAdded": 4,
+  "mixYard": 32.9,
+  "mixRel": 0.12158054711246201,
+  "moves": {
+   "st:burn": 0,
+   "death": 0,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "st:burn": 0.5911682897453525,
+   "death": 0.3989447449255629,
+   "wall slam": 0.009886965329084613
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 60.834349074038784,
+    "bursts": 0,
+    "dmgShare": 0.5911682897453524
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "devil": {
+  "k": "devil",
+  "name": "Devil",
+  "dungeon": "ember",
+  "cost": 5,
+  "rr_r0": 0.5875,
+  "rr_home": 0.625,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 1.4933333333333334,
+  "tollPerCostT1": 2.2199999999999998,
+  "oneTollPerCost": 0.92,
+  "toughPerCost": 21,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 10.7,
+  "dpsPack": 1.8539056645374292,
+  "byHero": {
+   "paladin1": 5,
+   "paladin2": 2.6,
+   "berserker1": 3.3,
+   "berserker2": 0.5,
+   "archer1": 0.2,
+   "archer2": 0,
+   "pyromancer1": 0.4,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.8354312354312354,
+  "toughRel": 1.0769230769230769,
+  "mixAdded": 14.4,
+  "mixYard": 32.9,
+  "mixRel": 0.4376899696048632,
+  "moves": {
+   "attack": 1259,
+   "wall slam": 0,
+   "ab:dash": 489
+  },
+  "dmgShare": {
+   "attack": 0.9848457554151533,
+   "wall slam": 0.015154244584846707,
+   "ab:dash": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "dragonborn": {
+  "k": "dragonborn",
+  "name": "Dragonborn",
+  "dungeon": "ember",
+  "cost": 7,
+  "rr_r0": 0.7124999999999999,
+  "rr_home": 0.7125,
+  "packN": 2,
+  "packCost": 14,
+  "tollPerCost": 1.7723214285714288,
+  "tollPerCostT1": 2.7642857142857142,
+  "oneTollPerCost": 1.4303571428571429,
+  "toughPerCost": 23.571428571428577,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 11.600000000000001,
+  "dpsPack": 1.7383709450568623,
+  "byHero": {
+   "paladin1": 6.9,
+   "paladin2": 2.6,
+   "berserker1": 3.2,
+   "berserker2": 0.6,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 1,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.9915084915084916,
+  "toughRel": 1.2087912087912092,
+  "mixAdded": 13.2,
+  "mixYard": 32.9,
+  "mixRel": 0.4012158054711246,
+  "moves": {
+   "attack": 1001,
+   "ab:charge": 326,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.8043875993469619,
+   "ab:charge": 0.16996335715288352,
+   "wall slam": 0.025649043500154536
+  },
+  "swarmWin": 0,
+  "swarmKills": 1.5
+ },
+ "spiderFire": {
+  "k": "spiderFire",
+  "name": "Fire Spider",
+  "dungeon": "ember",
+  "cost": 3.5,
+  "rr_r0": 0.375,
+  "rr_home": 0.4125,
+  "packN": 5,
+  "packCost": 17.5,
+  "tollPerCost": 4.739285714285715,
+  "tollPerCostT1": 6.751428571428572,
+  "oneTollPerCost": 1.8571428571428574,
+  "toughPerCost": 17.142857142857142,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 8.75,
+  "dpsPack": 8.200198000573682,
+  "byHero": {
+   "paladin1": 10.5,
+   "paladin2": 5.9,
+   "berserker1": 3.7,
+   "berserker2": 1.1,
+   "archer1": 7.7,
+   "archer2": 2.1,
+   "pyromancer1": 5.1,
+   "pyromancer2": 1.8
+  },
+  "timeUps": 0,
+  "threatRel": 2.6513486513486515,
+  "toughRel": 0.8791208791208791,
+  "mixAdded": 16.4,
+  "mixYard": 32.9,
+  "mixRel": 0.4984802431610942,
+  "moves": {
+   "attack": 789,
+   "st:burn": 0,
+   "mv:spit": 561,
+   "wall slam": 0,
+   "ab:dash": 457
+  },
+  "dmgShare": {
+   "attack": 0.35560536626343625,
+   "st:burn": 0.35293145247458135,
+   "mv:spit": 0.2853708701022865,
+   "wall slam": 0.006092311159695871,
+   "ab:dash": 0
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 355.6615285113738,
+    "bursts": 1.9144119866336158,
+    "dmgShare": 0.3529314524745814
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "succubus": {
+  "k": "succubus",
+  "name": "Succubus",
+  "dungeon": "ember",
+  "cost": 5,
+  "rr_r0": 0.95,
+  "rr_home": 0.9875,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 2.0016666666666665,
+  "tollPerCostT1": 3.0983333333333336,
+  "oneTollPerCost": 18.845,
+  "toughPerCost": 18,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 12.95,
+  "dpsPack": 2.403650349733971,
+  "byHero": {
+   "paladin1": 5.9,
+   "paladin2": 2.4,
+   "berserker1": 3.7,
+   "berserker2": 1.1,
+   "archer1": 0.9,
+   "archer2": 0.1,
+   "pyromancer1": 1.9,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 1.1198135198135197,
+  "toughRel": 0.9230769230769231,
+  "mixAdded": 17.3,
+  "mixYard": 32.9,
+  "mixRel": 0.5258358662613982,
+  "moves": {
+   "attack": 3005,
+   "mv:kiss": 572,
+   "wall slam": 0,
+   "ab:dash": 422
+  },
+  "dmgShare": {
+   "attack": 0.9466076882377112,
+   "mv:kiss": 0.04419370128163055,
+   "wall slam": 0.009198610480658273,
+   "ab:dash": 0
+  },
+  "statuses": {
+   "charm": {
+    "perMin": 484.0077624304665,
+    "bursts": 0.587074574778597,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 1
+ },
+ "demon": {
+  "k": "demon",
+  "name": "Demon",
+  "dungeon": "ember",
+  "cost": 8,
+  "rr_r0": 0.8625,
+  "rr_home": 0.875,
+  "packN": 2,
+  "packCost": 16,
+  "tollPerCost": 1.7875,
+  "tollPerCostT1": 2.890625,
+  "oneTollPerCost": 1.609375,
+  "toughPerCost": 28.125,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 16.35,
+  "dpsPack": 1.4368011979861794,
+  "byHero": {
+   "paladin1": 7.3,
+   "paladin2": 2,
+   "berserker1": 4,
+   "berserker2": 0.7,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0.2,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1,
+  "toughRel": 1.4423076923076923,
+  "mixAdded": 12.5,
+  "mixYard": 32.9,
+  "mixRel": 0.3799392097264438,
+  "moves": {
+   "attack": 1072,
+   "mv:slT": 311,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.8679660802625648,
+   "mv:slT": 0.09842710303713403,
+   "wall slam": 0.03360681670030119
+  },
+  "swarmWin": 0.25,
+  "swarmKills": 3.5
+ },
+ "cherub": {
+  "k": "cherub",
+  "name": "Cherub",
+  "dungeon": "spire",
+  "cost": 2,
+  "rr_r0": 0.4222222222222222,
+  "rr_home": 0.4555555555555555,
+  "packN": 8,
+  "packCost": 16,
+  "tollPerCost": 10.1265625,
+  "tollPerCostT1": 15.4859375,
+  "oneTollPerCost": 3.2249999999999996,
+  "toughPerCost": 18,
+  "heroDown": 0.15625,
+  "heroDownT1": 0.3125,
+  "ttk": 29.7,
+  "clear": 30.45,
+  "dpsPack": 4.397909739100424,
+  "byHero": {
+   "paladin1": 15.6,
+   "paladin2": 8.1,
+   "berserker1": 25.3,
+   "berserker2": 5.5,
+   "archer1": 10.7,
+   "archer2": 2.5,
+   "pyromancer1": 10.4,
+   "pyromancer2": 3
+  },
+  "timeUps": 0,
+  "threatRel": 4.270558777016342,
+  "toughRel": 0.9893604491382355,
+  "mixAdded": 13,
+  "mixYard": 5.5,
+  "mixRel": 2.3636363636363638,
+  "moves": {
+   "attack": 7029
+  },
+  "dmgShare": {
+   "attack": 1
+  },
+  "statuses": {
+   "radiance": {
+    "perMin": 172.9305541737081,
+    "bursts": 0.817082877325611,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "angel": {
+  "k": "angel",
+  "name": "Angel",
+  "dungeon": "spire",
+  "cost": 5,
+  "rr_r0": 0.5555555555555556,
+  "rr_home": 0.5444444444444445,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 2.5066666666666664,
+  "tollPerCostT1": 3.665,
+  "oneTollPerCost": 1.2525,
+  "toughPerCost": 24,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 11.55,
+  "dpsPack": 2.082640202948907,
+  "byHero": {
+   "paladin1": 7.3,
+   "paladin2": 4.2,
+   "berserker1": 6.7,
+   "berserker2": 1.1,
+   "archer1": 0.4,
+   "archer2": 0.1,
+   "pyromancer1": 0.2,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1.0571077139342822,
+  "toughRel": 1.3191472655176473,
+  "mixAdded": 4.7,
+  "mixYard": 5.5,
+  "mixRel": 0.8545454545454546,
+  "moves": {
+   "attack": 8192,
+   "wall slam": 0,
+   "ab:dash": 2456
+  },
+  "dmgShare": {
+   "attack": 0.9918796791215241,
+   "wall slam": 0.008120320878475947,
+   "ab:dash": 0
+  },
+  "statuses": {
+   "radiance": {
+    "perMin": 233.12014736270052,
+    "bursts": 1.4465213718856402,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0.3
+ },
+ "sunBlade": {
+  "k": "sunBlade",
+  "name": "Sun Blade",
+  "dungeon": "spire",
+  "cost": 4,
+  "rr_r0": 0.35555555555555557,
+  "rr_home": 0.34444444444444444,
+  "packN": 4,
+  "packCost": 16,
+  "tollPerCost": 0.6570312500000001,
+  "tollPerCostT1": 1.0328125,
+  "oneTollPerCost": 0.6968749999999999,
+  "toughPerCost": 17.25,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 16.75,
+  "dpsPack": 0.3892304156040843,
+  "byHero": {
+   "paladin1": 2,
+   "paladin2": 0.9,
+   "berserker1": 1.3,
+   "berserker2": 0.2,
+   "archer1": 0.8,
+   "archer2": 0,
+   "pyromancer1": 0.1,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.2770822351080654,
+  "toughRel": 0.9481370970908091,
+  "mixAdded": 2.8,
+  "mixYard": 5.5,
+  "mixRel": 0.509090909090909,
+  "moves": {
+   "mv:pass": 2514,
+   "wall slam": 0,
+   "mv:bl.tellT": 276,
+   "mv:bl.stuckT": 246,
+   "mv:bl": 0
+  },
+  "dmgShare": {
+   "mv:pass": 0.8884187155150044,
+   "wall slam": 0.11158128448499569,
+   "mv:bl.tellT": 0,
+   "mv:bl.stuckT": 0,
+   "mv:bl": 0
+  },
+  "statuses": {
+   "radiance": {
+    "perMin": 30.269672244502765,
+    "bursts": 0.01810387095963084,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "choirSprite": {
+  "k": "choirSprite",
+  "name": "Choir Sprite",
+  "dungeon": "spire",
+  "cost": 3.5,
+  "rr_r0": 0.22777777777777775,
+  "rr_home": 0.22777777777777775,
+  "packN": 5,
+  "packCost": 17.5,
+  "tollPerCost": 0,
+  "tollPerCostT1": 0,
+  "oneTollPerCost": 0,
+  "toughPerCost": 18.38714285714286,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 24.4,
+  "dpsPack": 0,
+  "byHero": {
+   "paladin1": 0,
+   "paladin2": 0,
+   "berserker1": 0,
+   "berserker2": 0,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0,
+  "toughRel": 1.0106395508617643,
+  "mixAdded": 4.2,
+  "mixYard": 5.5,
+  "mixRel": 0.7636363636363637,
+  "moves": {
+   "mv:song": 9257,
+   "mv:silT": 100
+  },
+  "dmgShare": {
+   "mv:song": 0,
+   "mv:silT": 0
+  },
+  "statuses": {
+   "sleepy": {
+    "perMin": 237.92238046263628,
+    "bursts": 0.5695982009853252,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "seraph": {
+  "k": "seraph",
+  "name": "Seraph",
+  "dungeon": "spire",
+  "cost": 5,
+  "rr_r0": 0.8222222222222223,
+  "rr_home": 0.8444444444444444,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 6.635,
+  "tollPerCostT1": 10.735000000000001,
+  "oneTollPerCost": 3.1950000000000003,
+  "toughPerCost": 18,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 22.15,
+  "dpsPack": 3.3820665447931786,
+  "byHero": {
+   "paladin1": 14.4,
+   "paladin2": 3.9,
+   "berserker1": 13,
+   "berserker2": 3.1,
+   "archer1": 7,
+   "archer2": 1.4,
+   "pyromancer1": 8.5,
+   "pyromancer2": 1.7
+  },
+  "timeUps": 0,
+  "threatRel": 2.798102266736953,
+  "toughRel": 0.9893604491382355,
+  "mixAdded": 9.2,
+  "mixYard": 5.5,
+  "mixRel": 1.6727272727272726,
+  "moves": {
+   "attack": 4415
+  },
+  "dmgShare": {
+   "attack": 1
+  },
+  "statuses": {
+   "radiance": {
+    "perMin": 327.47936099493313,
+    "bursts": 1.7326042671811548,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "angelFallen": {
+  "k": "angelFallen",
+  "name": "Fallen Angel",
+  "dungeon": "spire",
+  "cost": 5,
+  "rr_r0": 0.6666666666666666,
+  "rr_home": 0.6666666666666666,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 2.2358333333333333,
+  "tollPerCostT1": 3.3516666666666666,
+  "oneTollPerCost": 1.1,
+  "toughPerCost": 24,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 9.25,
+  "dpsPack": 2.1147454830182726,
+  "byHero": {
+   "paladin1": 8.8,
+   "paladin2": 3.9,
+   "berserker1": 3.8,
+   "berserker2": 0.6,
+   "archer1": 0.5,
+   "archer2": 0,
+   "pyromancer1": 0.3,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.9428922860657178,
+  "toughRel": 1.3191472655176473,
+  "mixAdded": 9,
+  "mixYard": 5.5,
+  "mixRel": 1.6363636363636365,
+  "moves": {
+   "attack": 1711,
+   "wall slam": 0,
+   "ab:dash": 656
+  },
+  "dmgShare": {
+   "attack": 0.9717523806587118,
+   "wall slam": 0.028247619341288194,
+   "ab:dash": 0
+  },
+  "statuses": {
+   "curse": {
+    "perMin": 328.0314336063235,
+    "bursts": 1.501355390282913,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0.8
+ },
+ "spiritHeal": {
+  "k": "spiritHeal",
+  "name": "Light Spirit",
+  "dungeon": "spire",
+  "cost": 2.5,
+  "rr_r0": 0.05555555555555555,
+  "rr_home": 0.05555555555555555,
+  "packN": 6,
+  "packCost": 15,
+  "tollPerCost": 0,
+  "tollPerCostT1": 0,
+  "oneTollPerCost": 0,
+  "toughPerCost": 18,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 12.45,
+  "dpsPack": 0,
+  "byHero": {
+   "paladin1": 0,
+   "paladin2": 0,
+   "berserker1": 0,
+   "berserker2": 0,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0,
+  "toughRel": 0.9893604491382355,
+  "mixAdded": 4.7,
+  "mixYard": 5.5,
+  "mixRel": 0.8545454545454546,
+  "moves": {},
+  "dmgShare": {},
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "gildedGolem": {
+  "k": "gildedGolem",
+  "name": "Gilded Golem",
+  "dungeon": "spire",
+  "cost": 9,
+  "rr_r0": 0.9944444444444444,
+  "rr_home": 0.9944444444444444,
+  "packN": 2,
+  "packCost": 18,
+  "tollPerCost": 67.30208333333333,
+  "tollPerCostT1": 98.16805555555555,
+  "oneTollPerCost": 80.44166666666666,
+  "toughPerCost": 56.55277777777778,
+  "heroDown": 0.6875,
+  "heroDownT1": 1,
+  "ttk": 56.85,
+  "clear": 71.05,
+  "dpsPack": 3.567098131349116,
+  "byHero": {
+   "paladin1": 38.3,
+   "paladin2": 7.7,
+   "berserker1": 33.5,
+   "berserker2": 4.3,
+   "archer1": 261.1,
+   "archer2": 117.8,
+   "pyromancer1": 59.8,
+   "pyromancer2": 16
+  },
+  "timeUps": 8,
+  "threatRel": 28.382533825338253,
+  "toughRel": 3.108393423457614,
+  "mixAdded": 136.7,
+  "mixYard": 5.5,
+  "mixRel": 24.854545454545452,
+  "moves": {
+   "mirror": 0,
+   "attack": 3705,
+   "st:burn": 0,
+   "wall slam": 0,
+   "mv:stomp": 2478,
+   "st:chill": 0
+  },
+  "dmgShare": {
+   "mirror": 0.5674186038608969,
+   "attack": 0.24683537430282992,
+   "st:burn": 0.06691965705010174,
+   "wall slam": 0.060338361356205406,
+   "mv:stomp": 0.04911458184332618,
+   "st:chill": 0.009373421586639757
+  },
+  "statuses": {
+   "radiance": {
+    "perMin": 129.16868046146374,
+    "bursts": 0.2914889727517677,
+    "dmgShare": 0
+   },
+   "stagger": {
+    "perMin": 425.5438498080188,
+    "bursts": 1.7278985498171797,
+    "dmgShare": 0
+   },
+   "burn": {
+    "perMin": 60.14589473841887,
+    "bursts": 0.20734782597806156,
+    "dmgShare": 0.06691965705010174
+   },
+   "chill": {
+    "perMin": 45.316017619553165,
+    "bursts": 0.11118651537954026,
+    "dmgShare": 0.009373421586639757
+   }
+  },
+  "swarmWin": 1,
+  "swarmKills": 7.3
+ },
+ "golem": {
+  "k": "golem",
+  "name": "Golem",
+  "dungeon": "spire",
+  "cost": 8,
+  "rr_r0": 0.8444444444444444,
+  "rr_home": 0.8111111111111111,
+  "packN": 2,
+  "packCost": 16,
+  "tollPerCost": 5.973437499999999,
+  "tollPerCostT1": 10.301562500000001,
+  "oneTollPerCost": 4.695312499999999,
+  "toughPerCost": 67.03203125,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 31.2,
+  "dpsPack": 1.954206005081121,
+  "byHero": {
+   "paladin1": 20.7,
+   "paladin2": 4.7,
+   "berserker1": 18.1,
+   "berserker2": 1.7,
+   "archer1": 2.2,
+   "archer2": 0.2,
+   "pyromancer1": 0.2,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 2.519109119662625,
+  "toughRel": 3.6843800302304577,
+  "mixAdded": 8.6,
+  "mixYard": 5.5,
+  "mixRel": 1.5636363636363635,
+  "moves": {
+   "attack": 1697,
+   "mv:stomp": 1339,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.7716027563182748,
+   "mv:stomp": 0.18353940409717182,
+   "wall slam": 0.044857839584553395
+  },
+  "statuses": {
+   "stagger": {
+    "perMin": 370.972782219629,
+    "bursts": 1.1195036623195904,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 1,
+  "swarmKills": 8
+ },
+ "spiritWard": {
+  "k": "spiritWard",
+  "name": "Ward Spirit",
+  "dungeon": "spire",
+  "cost": 2.5,
+  "rr_r0": 0.05555555555555555,
+  "rr_home": 0.05555555555555555,
+  "packN": 6,
+  "packCost": 15,
+  "tollPerCost": 0,
+  "tollPerCostT1": 0,
+  "oneTollPerCost": 0,
+  "toughPerCost": 18,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 13.05,
+  "dpsPack": 0,
+  "byHero": {
+   "paladin1": 0,
+   "paladin2": 0,
+   "berserker1": 0,
+   "berserker2": 0,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0,
+  "toughRel": 0.9893604491382355,
+  "mixAdded": 4.4,
+  "mixYard": 5.5,
+  "mixRel": 0.8,
+  "moves": {},
+  "dmgShare": {},
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "scarab": {
+  "k": "scarab",
+  "name": "Scarab",
+  "dungeon": "dunes",
+  "cost": 1.5,
+  "rr_r0": 0.2222222222222222,
+  "rr_home": 0.26666666666666666,
+  "packN": 11,
+  "packCost": 16.5,
+  "tollPerCost": 0.9113636363636364,
+  "tollPerCostT1": 1.337878787878788,
+  "oneTollPerCost": 0.4916666666666667,
+  "toughPerCost": 22.137121212121215,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 12,
+  "dpsPack": 1.1813701462696429,
+  "byHero": {
+   "paladin1": 2.2,
+   "paladin2": 1.2,
+   "berserker1": 0.9,
+   "berserker2": 0.4,
+   "archer1": 1.3,
+   "archer2": 0.3,
+   "pyromancer1": 1,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 0.400189299058851,
+  "toughRel": 0.7699868247694336,
+  "mixAdded": 2,
+  "mixYard": 7.1,
+  "mixRel": 0.28169014084507044,
+  "moves": {
+   "attack": 1684,
+   "wall slam": 0,
+   "mv:bur.t": 1383,
+   "mv:bur.dirtT": 550,
+   "mv:bur": 0
+  },
+  "dmgShare": {
+   "attack": 0.8276331625147701,
+   "wall slam": 0.08703290835122901,
+   "mv:bur.t": 0.046763213098239435,
+   "mv:bur.dirtT": 0.038570716035761274,
+   "mv:bur": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "cobra": {
+  "k": "cobra",
+  "name": "Cobra",
+  "dungeon": "dunes",
+  "cost": 3.5,
+  "rr_r0": 0.6888888888888889,
+  "rr_home": 0.7222222222222222,
+  "packN": 5,
+  "packCost": 17.5,
+  "tollPerCost": 28.36714285714286,
+  "tollPerCostT1": 33.84428571428571,
+  "oneTollPerCost": 12.114285714285714,
+  "toughPerCost": 17.142857142857142,
+  "heroDown": 0.4375,
+  "heroDownT1": 0.625,
+  "ttk": 37.6,
+  "clear": 27.1,
+  "dpsPack": 7.763543126961093,
+  "byHero": {
+   "paladin1": 84.5,
+   "paladin2": 81.8,
+   "berserker1": 31,
+   "berserker2": 4,
+   "archer1": 10,
+   "archer2": 2.5,
+   "pyromancer1": 9.8,
+   "pyromancer2": 3.2
+  },
+  "timeUps": 0,
+  "threatRel": 12.4563089455686,
+  "toughRel": 0.5962732919254659,
+  "mixAdded": 59.9,
+  "mixYard": 7.1,
+  "mixRel": 8.43661971830986,
+  "moves": {
+   "st:poison": 0,
+   "mv:spit": 4809,
+   "attack": 0,
+   "wall slam": 0,
+   "mv:rear": 1073
+  },
+  "dmgShare": {
+   "st:poison": 0.7314586497737567,
+   "mv:spit": 0.2669943920997479,
+   "attack": 0.0008417221403890511,
+   "wall slam": 0.000705235986106211,
+   "mv:rear": 0
+  },
+  "statuses": {
+   "poison": {
+    "perMin": 266.3544884771723,
+    "bursts": 1.8967360755990565,
+    "dmgShare": 0.7314586497737567
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "scarabGold": {
+  "k": "scarabGold",
+  "name": "Golden Scarab",
+  "dungeon": "dunes",
+  "cost": 2.5,
+  "rr_r0": 0.6000000000000001,
+  "rr_home": 0.6000000000000001,
+  "packN": 6,
+  "packCost": 15,
+  "tollPerCost": 1.5508333333333333,
+  "tollPerCostT1": 2.533333333333333,
+  "oneTollPerCost": 0.67,
+  "toughPerCost": 35.519999999999996,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 19,
+  "dpsPack": 1.2104871105489676,
+  "byHero": {
+   "paladin1": 3,
+   "paladin2": 1.4,
+   "berserker1": 4.1,
+   "berserker2": 0.4,
+   "archer1": 1.6,
+   "archer2": 0.2,
+   "pyromancer1": 1.4,
+   "pyromancer2": 0.2
+  },
+  "timeUps": 0,
+  "threatRel": 0.680987127267975,
+  "toughRel": 1.2354782608695651,
+  "mixAdded": 3.2,
+  "mixYard": 7.1,
+  "mixRel": 0.45070422535211274,
+  "moves": {
+   "attack": 2946,
+   "wall slam": 0,
+   "mv:bur.t": 1929,
+   "mv:bur.dirtT": 366,
+   "mv:bur": 0
+  },
+  "dmgShare": {
+   "attack": 0.8333282782743525,
+   "wall slam": 0.09476121752059956,
+   "mv:bur.t": 0.06001083213470754,
+   "mv:bur.dirtT": 0.011899672070340414,
+   "mv:bur": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "sandSerpent": {
+  "k": "sandSerpent",
+  "name": "Sand Serpent",
+  "dungeon": "dunes",
+  "cost": 7,
+  "rr_r0": 0.711111111111111,
+  "rr_home": 0.7888888888888889,
+  "packN": 2,
+  "packCost": 14,
+  "tollPerCost": 2.492857142857143,
+  "tollPerCostT1": 3.810714285714286,
+  "oneTollPerCost": 1.4125,
+  "toughPerCost": 32.142857142857146,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 7.1,
+  "dpsPack": 2.481686626052351,
+  "byHero": {
+   "paladin1": 13.5,
+   "paladin2": 3.9,
+   "berserker1": 0.8,
+   "berserker2": 0.6,
+   "archer1": 0.9,
+   "archer2": 0.2,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1.0946396288471172,
+  "toughRel": 1.1180124223602486,
+  "mixAdded": 17.7,
+  "mixYard": 7.1,
+  "mixRel": 2.4929577464788735,
+  "moves": {
+   "st:poison": 0,
+   "attack": 1155,
+   "mv:strike": 1666,
+   "mv:atkT": 625,
+   "mv:bur.t": 459,
+   "wall slam": 0,
+   "mv:bur.dirtT": 160,
+   "mv:_lastHit": 2,
+   "mv:bur": 0
+  },
+  "dmgShare": {
+   "st:poison": 0.3262234025745432,
+   "attack": 0.3079341358853088,
+   "mv:strike": 0.1192629068136476,
+   "mv:atkT": 0.027771892807289915,
+   "mv:bur.t": 0.02672281718366356,
+   "wall slam": 0.013974955061255467,
+   "mv:bur.dirtT": 0.00837747470765374,
+   "mv:_lastHit": 0.0011859324721842327,
+   "mv:bur": 0
+  },
+  "statuses": {
+   "poison": {
+    "perMin": 139.07899917284283,
+    "bursts": 0.39010153476058235,
+    "dmgShare": 0.32622340257454335
+   }
+  },
+  "swarmWin": 1,
+  "swarmKills": 6.5
+ },
+ "spiritHaste": {
+  "k": "spiritHaste",
+  "name": "Wind Spirit",
+  "dungeon": "dunes",
+  "cost": 2.5,
+  "rr_r0": 0.05555555555555555,
+  "rr_home": 0.05555555555555555,
+  "packN": 6,
+  "packCost": 15,
+  "tollPerCost": 0,
+  "tollPerCostT1": 0,
+  "oneTollPerCost": 0,
+  "toughPerCost": 18,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 11.9,
+  "dpsPack": 0,
+  "byHero": {
+   "paladin1": 0,
+   "paladin2": 0,
+   "berserker1": 0,
+   "berserker2": 0,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0,
+  "toughRel": 0.6260869565217392,
+  "mixAdded": 2.2,
+  "mixYard": 7.1,
+  "mixRel": 0.3098591549295775,
+  "moves": {},
+  "dmgShare": {},
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "jackal": {
+  "k": "jackal",
+  "name": "Jackal Guard",
+  "dungeon": "dunes",
+  "cost": 5,
+  "rr_r0": 0.8555555555555556,
+  "rr_home": 0.8666666666666667,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 3.898333333333333,
+  "tollPerCostT1": 6.035,
+  "oneTollPerCost": 3.2875,
+  "toughPerCost": 41.6975,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 16.1,
+  "dpsPack": 3.1656607145587095,
+  "byHero": {
+   "paladin1": 9.3,
+   "paladin2": 4.7,
+   "berserker1": 12,
+   "berserker2": 2,
+   "archer1": 1.2,
+   "archer2": 0,
+   "pyromancer1": 1.6,
+   "pyromancer2": 0.3
+  },
+  "timeUps": 0,
+  "threatRel": 1.7117989152926312,
+  "toughRel": 1.4503478260869564,
+  "mixAdded": 8.4,
+  "mixYard": 7.1,
+  "mixRel": 1.183098591549296,
+  "moves": {
+   "attack": 7898,
+   "mv:side": 2993,
+   "st:poison": 0,
+   "mv:atkT": 1470,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.7004888593653666,
+   "mv:side": 0.18829422286530487,
+   "st:poison": 0.09017435359344568,
+   "mv:atkT": 0.013470878369806457,
+   "wall slam": 0.0075716858060764355
+  },
+  "statuses": {
+   "stagger": {
+    "perMin": 140.18238928363414,
+    "bursts": 0.03740498893036214,
+    "dmgShare": 0
+   },
+   "poison": {
+    "perMin": 14.461344181846163,
+    "bursts": 0.07480997786072428,
+    "dmgShare": 0.09017435359344568
+   }
+  },
+  "swarmWin": 0.25,
+  "swarmKills": 3.3
+ },
+ "mummy": {
+  "k": "mummy",
+  "name": "Mummy",
+  "dungeon": "dunes",
+  "cost": 6,
+  "rr_r0": 0.6555555555555556,
+  "rr_home": 0.7333333333333334,
+  "packN": 3,
+  "packCost": 18,
+  "tollPerCost": 2.0618055555555554,
+  "tollPerCostT1": 3.313888888888889,
+  "oneTollPerCost": 1.0104166666666665,
+  "toughPerCost": 27.5,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 12.45,
+  "dpsPack": 1.5918005211726154,
+  "byHero": {
+   "paladin1": 8.4,
+   "paladin2": 3,
+   "berserker1": 4.5,
+   "berserker2": 0.2,
+   "archer1": 0.2,
+   "archer2": 0,
+   "pyromancer1": 0.1,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.9053603711528826,
+  "toughRel": 0.9565217391304348,
+  "mixAdded": 5.5,
+  "mixYard": 7.1,
+  "mixRel": 0.7746478873239437,
+  "moves": {
+   "attack": 1590,
+   "mv:wrap": 632,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.914776943662715,
+   "mv:wrap": 0.08068488305625875,
+   "wall slam": 0.004538173281026269
+  },
+  "statuses": {
+   "curse": {
+    "perMin": 261.10107837573446,
+    "bursts": 1.279603735617385,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0.5
+ },
+ "dartTrap": {
+  "k": "dartTrap",
+  "name": "Dart Trap",
+  "dungeon": "dunes",
+  "cost": 3,
+  "rr_r0": 0.35555555555555557,
+  "rr_home": 0.30000000000000004,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 12.803333333333333,
+  "tollPerCostT1": 14.246666666666668,
+  "oneTollPerCost": 5.495833333333334,
+  "toughPerCost": 30,
+  "heroDown": 0.09375,
+  "heroDownT1": 0.1875,
+  "ttk": 32.7,
+  "clear": 20.05,
+  "dpsPack": 6.4389150155490285,
+  "byHero": {
+   "paladin1": 37.4,
+   "paladin2": 40.5,
+   "berserker1": 14.7,
+   "berserker2": 2.8,
+   "archer1": 0.8,
+   "archer2": 0.4,
+   "pyromancer1": 4.1,
+   "pyromancer2": 1.7
+  },
+  "timeUps": 0,
+  "threatRel": 5.622077497767419,
+  "toughRel": 1.0434782608695652,
+  "mixAdded": 38.5,
+  "mixYard": 7.1,
+  "mixRel": 5.422535211267606,
+  "moves": {
+   "st:poison": 0,
+   "mv:fire": 1237
+  },
+  "dmgShare": {
+   "st:poison": 0.6156047318669318,
+   "mv:fire": 0.38439526813306824
+  },
+  "statuses": {
+   "poison": {
+    "perMin": 206.507981510017,
+    "bursts": 1.5176579352850657,
+    "dmgShare": 0.6156047318669317
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "spiritPoison": {
+  "k": "spiritPoison",
+  "name": "Venom Spirit",
+  "dungeon": "dunes",
+  "cost": 2.5,
+  "rr_r0": 0.05555555555555555,
+  "rr_home": 0.05555555555555555,
+  "packN": 6,
+  "packCost": 15,
+  "tollPerCost": 0.7758333333333333,
+  "tollPerCostT1": 0.73,
+  "oneTollPerCost": 0.22500000000000003,
+  "toughPerCost": 18,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 11.8,
+  "dpsPack": 0.7320094014901768,
+  "byHero": {
+   "paladin1": 1.7,
+   "paladin2": 2.4,
+   "berserker1": 1.2,
+   "berserker2": 0.9,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.3406765263226677,
+  "toughRel": 0.6260869565217392,
+  "mixAdded": 25.8,
+  "mixYard": 7.1,
+  "mixRel": 3.633802816901409,
+  "moves": {
+   "st:poison": 0,
+   "death": 0,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "st:poison": 0.573678072401439,
+   "death": 0.3928001677513057,
+   "wall slam": 0.033521759847255285
+  },
+  "statuses": {
+   "poison": {
+    "perMin": 50.690703504187866,
+    "bursts": 0.03840204810923323,
+    "dmgShare": 0.5736780724014389
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "sandMage": {
+  "k": "sandMage",
+  "name": "Sand Mage",
+  "dungeon": "dunes",
+  "cost": 5,
+  "rr_r0": 0.8,
+  "rr_home": 0.6111111111111112,
+  "packN": 3,
+  "packCost": 15,
+  "tollPerCost": 7.580833333333334,
+  "tollPerCostT1": 11.83,
+  "oneTollPerCost": 2.9175,
+  "toughPerCost": 70.92083333333333,
+  "heroDown": 0.09375,
+  "heroDownT1": 0.1875,
+  "ttk": 54.9,
+  "clear": 53.15,
+  "dpsPack": 1.6648161259355738,
+  "byHero": {
+   "paladin1": 10,
+   "paladin2": 9.5,
+   "berserker1": 25.4,
+   "berserker2": 1.1,
+   "archer1": 9.7,
+   "archer2": 0.8,
+   "pyromancer1": 2.3,
+   "pyromancer2": 1.9
+  },
+  "timeUps": 0,
+  "threatRel": 3.328823157848882,
+  "toughRel": 2.4668115942028987,
+  "mixAdded": 9.4,
+  "mixYard": 7.1,
+  "mixRel": 1.323943661971831,
+  "moves": {
+   "mv:sand": 3685,
+   "wall slam": 0,
+   "attack": 0,
+   "mv:devil": 1620,
+   "mv:_lastHit": 0
+  },
+  "dmgShare": {
+   "mv:sand": 0.3410501972677888,
+   "wall slam": 0.17520143411893854,
+   "attack": 0.0021658442614708607,
+   "mv:devil": 0.0016364156642224281,
+   "mv:_lastHit": 0
+  },
+  "statuses": {
+   "stagger": {
+    "perMin": 238.3821047512601,
+    "bursts": 0.5148888698188876,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0.25,
+  "swarmKills": 1.5
+ },
+ "gearSprite": {
+  "k": "gearSprite",
+  "name": "Gear Sprite",
+  "dungeon": "foundry",
+  "cost": 2,
+  "rr_r0": 0.46923076923076923,
+  "rr_home": 0.45961538461538465,
+  "packN": 8,
+  "packCost": 16,
+  "tollPerCost": 0.72890625,
+  "tollPerCostT1": 1.1390624999999999,
+  "oneTollPerCost": 0.3125,
+  "toughPerCost": 29.8796875,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 40,
+  "dpsPack": 0.1915158625380713,
+  "byHero": {
+   "paladin1": 1.8,
+   "paladin2": 0.8,
+   "berserker1": 2.2,
+   "berserker2": 0.4,
+   "archer1": 0.4,
+   "archer2": 0.1,
+   "pyromancer1": 0.1,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 0.3344656879481051,
+  "toughRel": 1.009814423657212,
+  "mixAdded": 2.1,
+  "mixYard": 2.4,
+  "mixRel": 0.8750000000000001,
+  "moves": {
+   "mv:brain": 0,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "mv:brain": 0.9376499499633947,
+   "wall slam": 0.062350050036605334
+  },
+  "swarmWin": 0.25,
+  "swarmKills": 2
+ },
+ "cogSprite": {
+  "k": "cogSprite",
+  "name": "Cog Sprite",
+  "dungeon": "foundry",
+  "cost": 2.4,
+  "rr_r0": 0.5576923076923077,
+  "rr_home": 0.5769230769230769,
+  "packN": 7,
+  "packCost": 16.8,
+  "tollPerCost": 2.1793154761904763,
+  "tollPerCostT1": 3.636904761904762,
+  "oneTollPerCost": 0.9791666666666667,
+  "toughPerCost": 29.58928571428571,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 22.25,
+  "dpsPack": 1.1997312416601256,
+  "byHero": {
+   "paladin1": 6,
+   "paladin2": 2.2,
+   "berserker1": 3.9,
+   "berserker2": 0.3,
+   "archer1": 2.5,
+   "archer2": 0.3,
+   "pyromancer1": 2.1,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 1,
+  "toughRel": 1,
+  "mixAdded": 4.2,
+  "mixYard": 2.4,
+  "mixRel": 1.7500000000000002,
+  "moves": {
+   "mv:brain": 0,
+   "wall slam": 0,
+   "mv:_lastHit": 2
+  },
+  "dmgShare": {
+   "mv:brain": 0.8816279105395125,
+   "wall slam": 0.11793777687072732,
+   "mv:_lastHit": 0.00043431258976018964
+  },
+  "swarmWin": 0.5,
+  "swarmKills": 2.8
+ },
+ "bombBot": {
+  "k": "bombBot",
+  "name": "Bomb Bot",
+  "dungeon": "foundry",
+  "cost": 2.5,
+  "rr_r0": 0.038461538461538464,
+  "rr_home": 0.038461538461538464,
+  "packN": 6,
+  "packCost": 15,
+  "tollPerCost": 0.5541666666666667,
+  "tollPerCostT1": 0.8500000000000001,
+  "oneTollPerCost": 0.28,
+  "toughPerCost": 14.209166666666665,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 2.55,
+  "dpsPack": 3.2669230769230766,
+  "byHero": {
+   "paladin1": 1,
+   "paladin2": 0.5,
+   "berserker1": 1.9,
+   "berserker2": 0.1,
+   "archer1": 0.4,
+   "archer2": 0.5,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.25428473881870944,
+  "toughRel": 0.48021323677328503,
+  "mixAdded": 1.9,
+  "mixYard": 2.4,
+  "mixRel": 0.7916666666666666,
+  "moves": {
+   "mv:fuse": 526,
+   "st:burn": 0,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "mv:fuse": 0.7877829295282188,
+   "st:burn": 0.21032289520852293,
+   "wall slam": 0.0018941752632580897
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 271.07770513639383,
+    "bursts": 0.5382409307762331,
+    "dmgShare": 0.210322895208523
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "bee": {
+  "k": "bee",
+  "name": "Copper Bee",
+  "dungeon": "foundry",
+  "cost": 1.2,
+  "rr_r0": 0.25769230769230766,
+  "rr_home": 0.2576923076923077,
+  "packN": 13,
+  "packCost": 15.6,
+  "tollPerCost": 1.124198717948718,
+  "tollPerCostT1": 1.5080128205128205,
+  "oneTollPerCost": 0.3958333333333333,
+  "toughPerCost": 17.5,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 7.65,
+  "dpsPack": 2.467415929851618,
+  "byHero": {
+   "paladin1": 2.4,
+   "paladin2": 1.4,
+   "berserker1": 1.9,
+   "berserker2": 1.2,
+   "archer1": 0.7,
+   "archer2": 0.1,
+   "pyromancer1": 1.1,
+   "pyromancer2": 0.2
+  },
+  "timeUps": 0,
+  "threatRel": 0.5158494629303779,
+  "toughRel": 0.5914302957151479,
+  "mixAdded": 0.7,
+  "mixYard": 2.4,
+  "mixRel": 0.2916666666666667,
+  "moves": {
+   "attack": 2655,
+   "mv:dash": 1143,
+   "wall slam": 0,
+   "mv:atkT": 989
+  },
+  "dmgShare": {
+   "attack": 0.7195052371237936,
+   "mv:dash": 0.2178431671754193,
+   "wall slam": 0.05852045341703011,
+   "mv:atkT": 0.004131142283757108
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "wasp": {
+  "k": "wasp",
+  "name": "Copper Wasp",
+  "dungeon": "foundry",
+  "cost": 1.6,
+  "rr_r0": 0.6326923076923076,
+  "rr_home": 0.6384615384615385,
+  "packN": 10,
+  "packCost": 16,
+  "tollPerCost": 4.02734375,
+  "tollPerCostT1": 6.859375,
+  "oneTollPerCost": 12.257812499999998,
+  "toughPerCost": 16.875,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 18.85,
+  "dpsPack": 1.5888780224737884,
+  "byHero": {
+   "paladin1": 7.6,
+   "paladin2": 2.7,
+   "berserker1": 17.4,
+   "berserker2": 1.5,
+   "archer1": 1,
+   "archer2": 0.3,
+   "pyromancer1": 1.4,
+   "pyromancer2": 0.2
+  },
+  "timeUps": 0,
+  "threatRel": 1.847985660635029,
+  "toughRel": 0.5703077851538926,
+  "mixAdded": 5.6,
+  "mixYard": 2.4,
+  "mixRel": 2.3333333333333335,
+  "moves": {
+   "mv:sting": 23965
+  },
+  "dmgShare": {
+   "mv:sting": 1
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "drillBot": {
+  "k": "drillBot",
+  "name": "Drill Bot",
+  "dungeon": "foundry",
+  "cost": 3.5,
+  "rr_r0": 0.7,
+  "rr_home": 0.7346153846153847,
+  "packN": 5,
+  "packCost": 17.5,
+  "tollPerCost": 1.8849999999999996,
+  "tollPerCostT1": 3.0471428571428567,
+  "oneTollPerCost": 1.2035714285714285,
+  "toughPerCost": 26.744285714285713,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 14.899999999999999,
+  "dpsPack": 1.8654040634635445,
+  "byHero": {
+   "paladin1": 4.3,
+   "paladin2": 2.1,
+   "berserker1": 3.9,
+   "berserker2": 0.3,
+   "archer1": 2.8,
+   "archer2": 0.3,
+   "pyromancer1": 1.1,
+   "pyromancer2": 0.2
+  },
+  "timeUps": 0,
+  "threatRel": 0.8649504950495047,
+  "toughRel": 0.903850331925166,
+  "mixAdded": 4.3,
+  "mixYard": 2.4,
+  "mixRel": 1.7916666666666667,
+  "moves": {
+   "attack": 5436,
+   "mv:bur.t": 3103,
+   "wall slam": 0,
+   "mv:bur.dirtT": 470,
+   "mv:bur": 0
+  },
+  "dmgShare": {
+   "attack": 0.9012599414947815,
+   "mv:bur.t": 0.05575561432117276,
+   "wall slam": 0.030921894360499805,
+   "mv:bur.dirtT": 0.012062549823545887,
+   "mv:bur": 0
+  },
+  "statuses": {
+   "stagger": {
+    "perMin": 29.540936241898407,
+    "bursts": 0.07173295776178422,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0.5
+ },
+ "sawBlade": {
+  "k": "sawBlade",
+  "name": "Saw Blade",
+  "dungeon": "foundry",
+  "cost": 2.5,
+  "rr_r0": 0,
+  "rr_home": 0,
+  "packN": 6,
+  "packCost": 15,
+  "tollPerCost": 0,
+  "tollPerCostT1": 0,
+  "oneTollPerCost": 0,
+  "toughPerCost": 0,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 0,
+  "dpsPack": 0,
+  "byHero": {
+   "paladin1": 0,
+   "paladin2": 0,
+   "berserker1": 0,
+   "berserker2": 0,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0,
+  "toughRel": 0,
+  "mixAdded": 0.4,
+  "mixYard": 2.4,
+  "mixRel": 0.16666666666666669,
+  "moves": {
+   "mv:brain": 0
+  },
+  "dmgShare": {
+   "mv:brain": 1
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "automaton": {
+  "k": "automaton",
+  "name": "Automaton",
+  "dungeon": "foundry",
+  "cost": 6,
+  "rr_r0": 0.6192307692307693,
+  "rr_home": 0.6807692307692308,
+  "packN": 3,
+  "packCost": 18,
+  "tollPerCost": 1.3791666666666664,
+  "tollPerCostT1": 2.158333333333333,
+  "oneTollPerCost": 0.8145833333333332,
+  "toughPerCost": 33.335416666666674,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 14.3,
+  "dpsPack": 1.603679012074538,
+  "byHero": {
+   "paladin1": 3.5,
+   "paladin2": 1.9,
+   "berserker1": 4.5,
+   "berserker2": 0.5,
+   "archer1": 0.4,
+   "archer2": 0,
+   "pyromancer1": 0.2,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.6328439740525775,
+  "toughRel": 1.1266043049688195,
+  "mixAdded": 2.6,
+  "mixYard": 2.4,
+  "mixRel": 1.0833333333333335,
+  "moves": {
+   "attack": 11467,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "attack": 0.9870092766578057,
+   "wall slam": 0.012990723342194286
+  },
+  "statuses": {
+   "shock": {
+    "perMin": 2.9687289787983353,
+    "bursts": 0,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 2
+ },
+ "turretSteam": {
+  "k": "turretSteam",
+  "name": "Steam Turret",
+  "dungeon": "foundry",
+  "cost": 3.5,
+  "rr_r0": 0.5673076923076923,
+  "rr_home": 0.5192307692307693,
+  "packN": 5,
+  "packCost": 17.5,
+  "tollPerCost": 22.173571428571424,
+  "tollPerCostT1": 30.989999999999995,
+  "oneTollPerCost": 3.3535714285714286,
+  "toughPerCost": 37.55285714285714,
+  "heroDown": 0.46875,
+  "heroDownT1": 0.6875,
+  "ttk": 39.85,
+  "clear": 41.55,
+  "dpsPack": 6.035664035379899,
+  "byHero": {
+   "paladin1": 49.9,
+   "paladin2": 47.1,
+   "berserker1": 47.4,
+   "berserker2": 4.5,
+   "archer1": 5.8,
+   "archer2": 0.7,
+   "pyromancer1": 20.7,
+   "pyromancer2": 1.2
+  },
+  "timeUps": 0,
+  "threatRel": 10.17455786958006,
+  "toughRel": 1.2691369945684974,
+  "mixAdded": 14.9,
+  "mixYard": 2.4,
+  "mixRel": 6.208333333333334,
+  "moves": {
+   "st:burn": 0,
+   "mv:fire": 6844,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "st:burn": 0.5481602948120676,
+   "mv:fire": 0.4506489157426141,
+   "wall slam": 0.001190789445318273
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 168.93360209269707,
+    "bursts": 0.4722436804827642,
+    "dmgShare": 0.5481602948120675
+   },
+   "wet": {
+    "perMin": 445.28690003920696,
+    "bursts": 8.611502408803346,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "turretFlame": {
+  "k": "turretFlame",
+  "name": "Flame Turret",
+  "dungeon": "foundry",
+  "cost": 3.5,
+  "rr_r0": 0.46153846153846156,
+  "rr_home": 0.32499999999999996,
+  "packN": 5,
+  "packCost": 17.5,
+  "tollPerCost": 4.322857142857143,
+  "tollPerCostT1": 6.491428571428572,
+  "oneTollPerCost": 2.8964285714285714,
+  "toughPerCost": 40.34428571428572,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 27.4,
+  "dpsPack": 2.734292274462335,
+  "byHero": {
+   "paladin1": 15,
+   "paladin2": 7.3,
+   "berserker1": 8.3,
+   "berserker2": 0.9,
+   "archer1": 1.7,
+   "archer2": 0.4,
+   "pyromancer1": 1.1,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 1.983584841242745,
+  "toughRel": 1.363476161738081,
+  "mixAdded": 16.6,
+  "mixYard": 2.4,
+  "mixRel": 6.916666666666668,
+  "moves": {
+   "st:burn": 0,
+   "mv:fire": 1026
+  },
+  "dmgShare": {
+   "st:burn": 0.8398110957551337,
+   "mv:fire": 0.16018890424486634
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 115.62799775829188,
+    "bursts": 0.614901103405887,
+    "dmgShare": 0.8398110957551334
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "turretGun": {
+  "k": "turretGun",
+  "name": "Gun Turret",
+  "dungeon": "foundry",
+  "cost": 3.5,
+  "rr_r0": 0.375,
+  "rr_home": 0.37500000000000006,
+  "packN": 5,
+  "packCost": 17.5,
+  "tollPerCost": 2.924285714285714,
+  "tollPerCostT1": 4.564285714285714,
+  "oneTollPerCost": 1.5928571428571427,
+  "toughPerCost": 33.254999999999995,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 19.049999999999997,
+  "dpsPack": 2.4426973105179752,
+  "byHero": {
+   "paladin1": 3.3,
+   "paladin2": 2.6,
+   "berserker1": 9.3,
+   "berserker2": 2.2,
+   "archer1": 2.3,
+   "archer2": 0.3,
+   "pyromancer1": 3.4,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 1.341836804370092,
+  "toughRel": 1.1238865419432709,
+  "mixAdded": 6.1,
+  "mixYard": 2.4,
+  "mixRel": 2.5416666666666665,
+  "moves": {
+   "mv:fire": 2740,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "mv:fire": 0.999217341395369,
+   "wall slam": 0.0007826586046309144
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "mortar": {
+  "k": "mortar",
+  "name": "Mortar",
+  "dungeon": "foundry",
+  "cost": 4,
+  "rr_r0": 0.37884615384615383,
+  "rr_home": 0.4076923076923077,
+  "packN": 4,
+  "packCost": 16,
+  "tollPerCost": 0.28281249999999997,
+  "tollPerCostT1": 0.45000000000000007,
+  "oneTollPerCost": 0.071875,
+  "toughPerCost": 34.774218749999996,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 17.25,
+  "dpsPack": 0.19089626528885079,
+  "byHero": {
+   "paladin1": 0.8,
+   "paladin2": 0.4,
+   "berserker1": 0.7,
+   "berserker2": 0,
+   "archer1": 0.1,
+   "archer2": 0.1,
+   "pyromancer1": 0.1,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.1297712529873677,
+  "toughRel": 1.1752300844900423,
+  "mixAdded": -0.2,
+  "mixYard": 2.4,
+  "mixRel": -0.08333333333333334,
+  "moves": {
+   "mv:fire": 3890,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "mv:fire": 0.9937772597636423,
+   "wall slam": 0.006222740236357666
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "autoBomb": {
+  "k": "autoBomb",
+  "name": "Auto Bomb Bot",
+  "dungeon": "foundry",
+  "cost": 3,
+  "rr_r0": 0.08846153846153847,
+  "rr_home": 0.08461538461538462,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 0.6183333333333334,
+  "tollPerCostT1": 0.8583333333333334,
+  "oneTollPerCost": 0.5125000000000001,
+  "toughPerCost": 14.2325,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 5.3,
+  "dpsPack": 2.0715957797695883,
+  "byHero": {
+   "paladin1": 1.3,
+   "paladin2": 1.5,
+   "berserker1": 1.6,
+   "berserker2": 0,
+   "archer1": 0.3,
+   "archer2": 0,
+   "pyromancer1": 0.2,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.2837282348924548,
+  "toughRel": 0.4810018105009053,
+  "mixAdded": 1.6,
+  "mixYard": 2.4,
+  "mixRel": 0.6666666666666667,
+  "moves": {
+   "mv:fuse": 1439,
+   "st:burn": 0,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "mv:fuse": 0.6562571052781355,
+   "st:burn": 0.33068592658566975,
+   "wall slam": 0.01305696813619475
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 113.79966517277101,
+    "bursts": 0.47416527155321253,
+    "dmgShare": 0.33068592658566975
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "repairDrone": {
+  "k": "repairDrone",
+  "name": "Repair Drone",
+  "dungeon": "foundry",
+  "cost": 3,
+  "rr_r0": 0.31153846153846154,
+  "rr_home": 0.3384615384615385,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 0,
+  "tollPerCostT1": 0,
+  "oneTollPerCost": 0,
+  "toughPerCost": 19.78666666666667,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 20.9,
+  "dpsPack": 0,
+  "byHero": {
+   "paladin1": 0,
+   "paladin2": 0,
+   "berserker1": 0,
+   "berserker2": 0,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0,
+  "toughRel": 0.6687105210219273,
+  "mixAdded": 3,
+  "mixYard": 2.4,
+  "mixRel": 1.25,
+  "moves": {
+   "mv:mend": 30449
+  },
+  "dmgShare": {
+   "mv:mend": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "beeBronze": {
+  "k": "beeBronze",
+  "name": "Bronze Bee",
+  "dungeon": "foundry",
+  "cost": 1.7,
+  "rr_r0": 0.41923076923076924,
+  "rr_home": 0.4884615384615385,
+  "packN": 9,
+  "packCost": 15.3,
+  "tollPerCost": 1.687908496732026,
+  "tollPerCostT1": 2.6781045751633985,
+  "oneTollPerCost": 1.0073529411764706,
+  "toughPerCost": 23.513071895424833,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 9.100000000000001,
+  "dpsPack": 2.716293698490384,
+  "byHero": {
+   "paladin1": 3.6,
+   "paladin2": 2.2,
+   "berserker1": 3.4,
+   "berserker2": 0.6,
+   "archer1": 2.6,
+   "archer2": 0,
+   "pyromancer1": 1.1,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.7745131511122714,
+  "toughRel": 0.7946481751018653,
+  "mixAdded": 2.5,
+  "mixYard": 2.4,
+  "mixRel": 1.0416666666666667,
+  "moves": {
+   "attack": 3441,
+   "mv:dash": 1506,
+   "wall slam": 0,
+   "mv:atkT": 1397
+  },
+  "dmgShare": {
+   "attack": 0.7286420477791485,
+   "mv:dash": 0.22739249476737886,
+   "wall slam": 0.04207821580781717,
+   "mv:atkT": 0.001887241645655247
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "waspBronze": {
+  "k": "waspBronze",
+  "name": "Bronze Wasp",
+  "dungeon": "foundry",
+  "cost": 2.2,
+  "rr_r0": 0.7749999999999999,
+  "rr_home": 0.7826923076923075,
+  "packN": 7,
+  "packCost": 15.4,
+  "tollPerCost": 6.252435064935065,
+  "tollPerCostT1": 10.959415584415584,
+  "oneTollPerCost": 13.84090909090909,
+  "toughPerCost": 24.09090909090909,
+  "heroDown": 0.09375,
+  "heroDownT1": 0.1875,
+  "ttk": 63.6,
+  "clear": 23.9,
+  "dpsPack": 1.7373412466076639,
+  "byHero": {
+   "paladin1": 11.7,
+   "paladin2": 3.7,
+   "berserker1": 28.4,
+   "berserker2": 2.1,
+   "archer1": 2.6,
+   "archer2": 0.2,
+   "pyromancer1": 1.3,
+   "pyromancer2": 0.1
+  },
+  "timeUps": 0,
+  "threatRel": 2.868990347310593,
+  "toughRel": 0.814176770724749,
+  "mixAdded": 8.7,
+  "mixYard": 2.4,
+  "mixRel": 3.625,
+  "moves": {
+   "mv:sting": 26923,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "mv:sting": 0.9989255479003353,
+   "wall slam": 0.0010744520996647383
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "hornetBronze": {
+  "k": "hornetBronze",
+  "name": "Bronze Hornet",
+  "dungeon": "foundry",
+  "cost": 3.6,
+  "rr_r0": 0.8807692307692307,
+  "rr_home": 0.8807692307692309,
+  "packN": 4,
+  "packCost": 14.4,
+  "tollPerCost": 4.930555555555555,
+  "tollPerCostT1": 8.430555555555555,
+  "oneTollPerCost": 7.065972222222221,
+  "toughPerCost": 21.12673611111111,
+  "heroDown": 0.03125,
+  "heroDownT1": 0.0625,
+  "ttk": 98.7,
+  "clear": 18.4,
+  "dpsPack": 1.834085253669169,
+  "byHero": {
+   "paladin1": 11.7,
+   "paladin2": 2.8,
+   "berserker1": 19.3,
+   "berserker2": 2,
+   "archer1": 1.4,
+   "archer2": 0.5,
+   "pyromancer1": 1.3,
+   "pyromancer2": 0.4
+  },
+  "timeUps": 0,
+  "threatRel": 2.2624331398657107,
+  "toughRel": 0.7139995306108765,
+  "mixAdded": 7.8,
+  "mixYard": 2.4,
+  "mixRel": 3.25,
+  "moves": {
+   "mv:sting": 7905,
+   "wall slam": 0,
+   "mv:_lastHit": 2,
+   "mv:atkT": 224
+  },
+  "dmgShare": {
+   "mv:sting": 0.9778990733532565,
+   "wall slam": 0.02173416710725133,
+   "mv:_lastHit": 0.00036675953949212277,
+   "mv:atkT": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 0.3
+ },
+ "teslaCoil": {
+  "k": "teslaCoil",
+  "name": "Tesla Coil",
+  "dungeon": "foundry",
+  "cost": 4.5,
+  "rr_r0": 0.4076923076923077,
+  "rr_home": 0.423076923076923,
+  "packN": 4,
+  "packCost": 18,
+  "tollPerCost": 2.6763888888888885,
+  "tollPerCostT1": 4.269444444444444,
+  "oneTollPerCost": 1.2944444444444445,
+  "toughPerCost": 26.666666666666664,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 16.25,
+  "dpsPack": 2.4260232486692113,
+  "byHero": {
+   "paladin1": 3.1,
+   "paladin2": 1.7,
+   "berserker1": 4.2,
+   "berserker2": 1,
+   "archer1": 5.9,
+   "archer2": 0.7,
+   "pyromancer1": 3.8,
+   "pyromancer2": 0.9
+  },
+  "timeUps": 0,
+  "threatRel": 1.2280869466256967,
+  "toughRel": 0.9012271172802253,
+  "mixAdded": 4.6,
+  "mixYard": 2.4,
+  "mixRel": 1.9166666666666665,
+  "moves": {
+   "mv:zap": 15325
+  },
+  "dmgShare": {
+   "mv:zap": 1
+  },
+  "statuses": {
+   "shock": {
+    "perMin": 556.9003798451389,
+    "bursts": 1.0482466265136376,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "foundrySmith": {
+  "k": "foundrySmith",
+  "name": "Foundry Smith",
+  "dungeon": "foundry",
+  "cost": 8,
+  "rr_r0": 0.8346153846153848,
+  "rr_home": 0.8076923076923077,
+  "packN": 2,
+  "packCost": 16,
+  "tollPerCost": 5.78828125,
+  "tollPerCostT1": 9.2515625,
+  "oneTollPerCost": 6.0453125000000005,
+  "toughPerCost": 39.9921875,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 25.549999999999997,
+  "dpsPack": 3.3214029983873106,
+  "byHero": {
+   "paladin1": 20.2,
+   "paladin2": 8,
+   "berserker1": 13.3,
+   "berserker2": 1.3,
+   "archer1": 2.3,
+   "archer2": 0,
+   "pyromancer1": 1.2,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 2.656008876749744,
+  "toughRel": 1.3515766445383224,
+  "mixAdded": 12.2,
+  "mixYard": 2.4,
+  "mixRel": 5.083333333333333,
+  "moves": {
+   "st:burn": 0,
+   "attack": 1432,
+   "mv:slam": 1807,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "st:burn": 0.5580230512423363,
+   "attack": 0.27136101413176394,
+   "mv:slam": 0.13976847924038502,
+   "wall slam": 0.030847455385514828
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 183.37116525576948,
+    "bursts": 1.0140596245857894,
+    "dmgShare": 0.5580230512423362
+   },
+   "stagger": {
+    "perMin": 22.365844681630822,
+    "bursts": 0.003533308796466165,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 1,
+  "swarmKills": 7.5
+ },
+ "turretLaser": {
+  "k": "turretLaser",
+  "name": "Laser Turret",
+  "dungeon": "foundry",
+  "cost": 4,
+  "rr_r0": 0.4096153846153846,
+  "rr_home": 0.3,
+  "packN": 4,
+  "packCost": 16,
+  "tollPerCost": 0.14765625,
+  "tollPerCostT1": 0.140625,
+  "oneTollPerCost": 0,
+  "toughPerCost": 30.78671875,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 15.4,
+  "dpsPack": 0.10083815826179884,
+  "byHero": {
+   "paladin1": 0.1,
+   "paladin2": 0.3,
+   "berserker1": 0,
+   "berserker2": 0.1,
+   "archer1": 0.4,
+   "archer2": 0.2,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.06775349948787981,
+  "toughRel": 1.0404684671092337,
+  "mixAdded": 1.5,
+  "mixYard": 2.4,
+  "mixRel": 0.625,
+  "moves": {
+   "mv:fire": 1194,
+   "st:burn": 0
+  },
+  "dmgShare": {
+   "mv:fire": 0.5730011718333233,
+   "st:burn": 0.42699882816667667
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 51.60555051938335,
+    "bursts": 0.2229031000364807,
+    "dmgShare": 0.4269988281666766
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "mortarFire": {
+  "k": "mortarFire",
+  "name": "Fire Mortar",
+  "dungeon": "foundry",
+  "cost": 4.5,
+  "rr_r0": 0.7057692307692307,
+  "rr_home": 0.6115384615384616,
+  "packN": 4,
+  "packCost": 18,
+  "tollPerCost": 4.819444444444445,
+  "tollPerCostT1": 7.026388888888889,
+  "oneTollPerCost": 1.2333333333333334,
+  "toughPerCost": 32.303472222222226,
+  "heroDown": 0.0625,
+  "heroDownT1": 0.125,
+  "ttk": 26.2,
+  "clear": 21.8,
+  "dpsPack": 3.1052171788218694,
+  "byHero": {
+   "paladin1": 11.7,
+   "paladin2": 5.3,
+   "berserker1": 1.2,
+   "berserker2": 0.3,
+   "archer1": 6.4,
+   "archer2": 1.8,
+   "pyromancer1": 8.8,
+   "pyromancer2": 3.1
+  },
+  "timeUps": 0,
+  "threatRel": 2.2114487310800044,
+  "toughRel": 1.091728693086569,
+  "mixAdded": 3.9,
+  "mixYard": 2.4,
+  "mixRel": 1.625,
+  "moves": {
+   "st:burn": 0,
+   "mv:fire": 2563,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "st:burn": 0.8164280015090868,
+   "mv:fire": 0.18147959716275483,
+   "wall slam": 0.0020924013281584004
+  },
+  "statuses": {
+   "burn": {
+    "perMin": 180.80845761077973,
+    "bursts": 1.3865301719627114,
+    "dmgShare": 0.8164280015090868
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "mortarPoison": {
+  "k": "mortarPoison",
+  "name": "Gas Mortar",
+  "dungeon": "foundry",
+  "cost": 4.5,
+  "rr_r0": 0.30192307692307685,
+  "rr_home": 0.3230769230769231,
+  "packN": 4,
+  "packCost": 18,
+  "tollPerCost": 5.977777777777778,
+  "tollPerCostT1": 6.691666666666666,
+  "oneTollPerCost": 0.41944444444444445,
+  "toughPerCost": 31.120833333333337,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 16.05,
+  "dpsPack": 3.5738628555769383,
+  "byHero": {
+   "paladin1": 17.9,
+   "paladin2": 18.2,
+   "berserker1": 1.9,
+   "berserker2": 0.2,
+   "archer1": 5.1,
+   "archer2": 2.6,
+   "pyromancer1": 1.9,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 2.7429611926709914,
+  "toughRel": 1.0517602092134382,
+  "mixAdded": 13.3,
+  "mixYard": 2.4,
+  "mixRel": 5.541666666666667,
+  "moves": {
+   "mv:fire": 3672,
+   "st:poison": 0,
+   "st:burn": 0,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "mv:fire": 0.5752452044268394,
+   "st:poison": 0.4129714171569542,
+   "st:burn": 0.007195627890345157,
+   "wall slam": 0.004587750525861272
+  },
+  "statuses": {
+   "poison": {
+    "perMin": 42.19258313551134,
+    "bursts": 0.2657144567017177,
+    "dmgShare": 0.4129714171569541
+   },
+   "burn": {
+    "perMin": 0.5386103852061845,
+    "bursts": 0.0035907359013745634,
+    "dmgShare": 0.0071956278903451566
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "chainCrawler": {
+  "k": "chainCrawler",
+  "name": "Chain Crawler",
+  "dungeon": "foundry",
+  "cost": 8,
+  "rr_r0": 0.6538461538461539,
+  "rr_home": 0.7173076923076924,
+  "packN": 2,
+  "packCost": 16,
+  "tollPerCost": 1.0960937499999999,
+  "tollPerCostT1": 1.7203125,
+  "oneTollPerCost": 0.7843749999999998,
+  "toughPerCost": 48.635937500000004,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 6.449999999999999,
+  "dpsPack": 1.708706087564853,
+  "byHero": {
+   "paladin1": 3.8,
+   "paladin2": 1.3,
+   "berserker1": 2.6,
+   "berserker2": 0.6,
+   "archer1": 0.4,
+   "archer2": 0,
+   "pyromancer1": 0.1,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.5029532263571184,
+  "toughRel": 1.643700965600483,
+  "mixAdded": 3.7,
+  "mixYard": 2.4,
+  "mixRel": 1.5416666666666667,
+  "moves": {
+   "attack": 2464,
+   "mv:lunge": 1040,
+   "wall slam": 0,
+   "mv:atkT": 986
+  },
+  "dmgShare": {
+   "attack": 0.6612499634151954,
+   "mv:lunge": 0.10731427825510852,
+   "wall slam": 0.041971889513237264,
+   "mv:atkT": 0.002351921420201523
+  },
+  "statuses": {
+   "shock": {
+    "perMin": 33.414250476421536,
+    "bursts": 0,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 1,
+  "swarmKills": 6.3
+ },
+ "beeSteel": {
+  "k": "beeSteel",
+  "name": "Steel Bee",
+  "dungeon": "foundry",
+  "cost": 2.3,
+  "rr_r0": 0.6307692307692307,
+  "rr_home": 0.6884615384615385,
+  "packN": 7,
+  "packCost": 16.1,
+  "tollPerCost": 2.781055900621118,
+  "tollPerCostT1": 4.169254658385093,
+  "oneTollPerCost": 1.7663043478260874,
+  "toughPerCost": 32.06366459627329,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 11.75,
+  "dpsPack": 3.555824149376126,
+  "byHero": {
+   "paladin1": 5,
+   "paladin2": 3.3,
+   "berserker1": 5.6,
+   "berserker2": 1.5,
+   "archer1": 4.1,
+   "archer2": 0.5,
+   "pyromancer1": 2,
+   "pyromancer2": 0.3
+  },
+  "timeUps": 0,
+  "threatRel": 1.2761144180385053,
+  "toughRel": 1.0836241505077275,
+  "mixAdded": 4.4,
+  "mixYard": 2.4,
+  "mixRel": 1.8333333333333335,
+  "moves": {
+   "attack": 3698,
+   "mv:dash": 1674,
+   "wall slam": 0,
+   "mv:atkT": 1589
+  },
+  "dmgShare": {
+   "attack": 0.7086373997648656,
+   "mv:dash": 0.2578817381462437,
+   "wall slam": 0.028857362750839003,
+   "mv:atkT": 0.004623499338051792
+  },
+  "swarmWin": 0,
+  "swarmKills": 1.3
+ },
+ "waspSteel": {
+  "k": "waspSteel",
+  "name": "Steel Wasp",
+  "dungeon": "foundry",
+  "cost": 3,
+  "rr_r0": 0.9346153846153845,
+  "rr_home": 0.9692307692307692,
+  "packN": 5,
+  "packCost": 15,
+  "tollPerCost": 7.108333333333333,
+  "tollPerCostT1": 12.301666666666666,
+  "oneTollPerCost": 17.2875,
+  "toughPerCost": 31.00416666666667,
+  "heroDown": 0.09375,
+  "heroDownT1": 0.1875,
+  "ttk": 71.7,
+  "clear": 32.55,
+  "dpsPack": 1.830632598178987,
+  "byHero": {
+   "paladin1": 15.8,
+   "paladin2": 3.6,
+   "berserker1": 28.2,
+   "berserker2": 3.5,
+   "archer1": 2.9,
+   "archer2": 0.3,
+   "pyromancer1": 2.3,
+   "pyromancer2": 0.3
+  },
+  "timeUps": 0,
+  "threatRel": 3.261727552065551,
+  "toughRel": 1.0478173405753373,
+  "mixAdded": 8.3,
+  "mixYard": 2.4,
+  "mixRel": 3.458333333333334,
+  "moves": {
+   "mv:sting": 25379,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "mv:sting": 0.998429203195793,
+   "wall slam": 0.0015707968042071208
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "hornetSteel": {
+  "k": "hornetSteel",
+  "name": "Steel Hornet",
+  "dungeon": "foundry",
+  "cost": 4.9,
+  "rr_r0": 0.9769230769230769,
+  "rr_home": 0.9596153846153845,
+  "packN": 3,
+  "packCost": 14.7,
+  "tollPerCost": 7.050170068027213,
+  "tollPerCostT1": 12.374149659863948,
+  "oneTollPerCost": 10.795918367346935,
+  "toughPerCost": 27.30442176870748,
+  "heroDown": 0.125,
+  "heroDownT1": 0.25,
+  "ttk": 59.4,
+  "clear": 22.05,
+  "dpsPack": 2.3032900772391733,
+  "byHero": {
+   "paladin1": 13.1,
+   "paladin2": 3.3,
+   "berserker1": 30.5,
+   "berserker2": 2.9,
+   "archer1": 2.6,
+   "archer2": 0.5,
+   "pyromancer1": 3.3,
+   "pyromancer2": 0.3
+  },
+  "timeUps": 0,
+  "threatRel": 3.2350387748134426,
+  "toughRel": 0.9227806994855878,
+  "mixAdded": 10.3,
+  "mixYard": 2.4,
+  "mixRel": 4.291666666666667,
+  "moves": {
+   "mv:sting": 7092,
+   "wall slam": 0,
+   "mv:_lastHit": 1,
+   "mv:atkT": 45
+  },
+  "dmgShare": {
+   "mv:sting": 0.9846416759695691,
+   "wall slam": 0.015294228145169593,
+   "mv:_lastHit": 0.0000640958852612064,
+   "mv:atkT": 0
+  },
+  "swarmWin": 0,
+  "swarmKills": 2.3
+ },
+ "spiritShock": {
+  "k": "spiritShock",
+  "name": "Storm Spirit",
+  "dungeon": "foundry",
+  "cost": 2.5,
+  "rr_r0": 0.11153846153846153,
+  "rr_home": 0.11153846153846153,
+  "packN": 6,
+  "packCost": 15,
+  "tollPerCost": 0.15166666666666667,
+  "tollPerCostT1": 0.19666666666666666,
+  "oneTollPerCost": 0.315,
+  "toughPerCost": 18,
+  "heroDown": 0,
+  "heroDownT1": 0,
+  "ttk": null,
+  "clear": 13.25,
+  "dpsPack": 0.14136470947755211,
+  "byHero": {
+   "paladin1": 0.1,
+   "paladin2": 0.1,
+   "berserker1": 0.7,
+   "berserker2": 0.3,
+   "archer1": 0,
+   "archer2": 0,
+   "pyromancer1": 0,
+   "pyromancer2": 0
+  },
+  "timeUps": 0,
+  "threatRel": 0.06959371799248891,
+  "toughRel": 0.6083283041641522,
+  "mixAdded": 0.4,
+  "mixYard": 2.4,
+  "mixRel": 0.16666666666666669,
+  "moves": {
+   "death": 0,
+   "wall slam": 0
+  },
+  "dmgShare": {
+   "death": 0.8952396794436955,
+   "wall slam": 0.10476032055630445
+  },
+  "statuses": {
+   "shock": {
+    "perMin": 75.03335605317007,
+    "bursts": 0,
+    "dmgShare": 0
+   }
+  },
+  "swarmWin": 0,
+  "swarmKills": 0
+ },
+ "_never": [
+  {
+   "k": "troll",
+   "moves": [
+    "mv:recall"
+   ],
+   "armed": []
+  },
+  {
+   "k": "rockTroll",
+   "moves": [
+    "mv:recall"
+   ],
+   "armed": []
+  },
+  {
+   "k": "crab",
+   "moves": [
+    "mv:bub"
+   ],
+   "armed": []
+  }
+ ]
+}

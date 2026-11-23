@@ -8,7 +8,7 @@ const G = await boot();
 const R = G.B.battleRoster(G.save);
 const DATA = resolve(ROOT, 'docs/audit/data/foes');
 const load = (n) => (existsSync(resolve(DATA, n + '.json')) ? JSON.parse(readFileSync(resolve(DATA, n + '.json'), 'utf8')) : null);
-const rr = load('rr'), cm = load('cm'), panel = load('panel'), swarm = load('swarm'), boss = load('boss'), rw = load('ratswolf'), stat = load('moves-static');
+const mix = load('mix'), rr = load('rr'), cm = load('cm'), panel = load('panel'), swarm = load('swarm'), boss = load('boss'), rw = load('ratswolf'), stat = load('moves-static');
 const OLD_COST = { rat: 1, slime: 2, slimeSmall: 1, skeleton: 3 };
 const costOf = (k) => G.DEFS[k].cost ?? OLD_COST[k] ?? 3;
 const nm = (k) => `${G.DEFS[k] ? G.DEFS[k].name : k} (${k})`;
@@ -28,10 +28,15 @@ export const LABEL = {
   'attack': 'basic attack', 'ab:dash': 'dash (sim ability)', 'ab:charge': 'charge (sim ability)', 'wall slam': 'knocked into a wall',
   'mv:sT': 'fireball', 'mv:gT': 'touch', 'mv:g.t': 'charge + spin (each phase)', 'mv:g.cd': 'charge + spin', 'mv:ts.cd': 'tail spin', 'mv:slT': 'slam',
   'mv:callT': 'calls adds', 'mv:b.cd': 'shield up', 'mv:calmT': '(regrow pause, not a move)', 'mv:burnedT': '(burn block on regrow, not a move)',
+  'mv:brain': "its brain's own blows (contact, no clock)", 'mv:g': 'charge + spin',
   'mv:atkT': 'its own strike (the brain sets the attack clock)', 'death': 'on death', 'split': 'on split', 'hop': 'on landing a hop', 'struck': 'answer to a blow', 'mirror': 'shot bounced back',
 };
 const lab = (m) => LABEL[m] || (m.startsWith('mv:') ? m.slice(3) : m.startsWith('st:') ? 'status: ' + m.slice(3) : m.startsWith('spawn:') ? 'made: ' + m.slice(6) : m);
-const NOT_MOVES = new Set(['mv:calmT', 'mv:burnedT', 'mv:look', 'mv:bJam.t', 'mv:repick', 'mv:g.t']);
+const NOT_SET = new Set(['mv:calmT', 'mv:burnedT', 'mv:look', 'mv:bJam', 'mv:bJam.t', 'mv:repick', 'mv:flinchT', 'mv:g.t', 'mv:g']);
+// the gaper's one move shows on two clocks (g.t when its first charge starts, g.cd when each one ends): counted once, by g.cd
+const NOT_MOVES = { has: (m) => NOT_SET.has(m) || /tgtT$|shakeT$/.test(m) };
+const MERGE = { 'mv:g.t': 'mv:g.cd', 'mv:g': 'mv:g.cd' };
+const merged = (o, fires) => { const r = {}; for (const [k, v] of Object.entries(o || {})) { if (fires && MERGE[k]) continue; const m = MERGE[k] || k; r[m] = (r[m] || 0) + v; } return r; };
 
 // ---------------------------------------------------------------- 1v1
 if (rr) {
@@ -53,7 +58,7 @@ if (rr) {
       return { lo, hi, wLo, ratio: Math.max(cA, cB) / Math.min(cA, cB) };
     }).filter((u) => u.ratio >= 1.5 && u.wLo >= 0.7).sort((a, b) => b.ratio - a.ratio);
     out.push(`### ${d.name}\n\n` + table(['kind', 'cost', 'score at rank 0', 'score at home strength'], rows) + '\n');
-    if (ups.length) out.push('Upsets (rank 0): ' + ups.map((u) => `${G.DEFS[u.lo].name} (cost ${costOf(u.lo)}) beats ${G.DEFS[u.hi].name} (cost ${costOf(u.hi)}) ${pct(u.wLo)}`).join('; ') + '.\n');
+    if (ups.length) out.push(`Upsets (rank 0${ups.length > 8 ? `, the 8 widest of ${ups.length}` : ''}): ` + ups.slice(0, 8).map((u) => `${G.DEFS[u.lo].name} (cost ${costOf(u.lo)}) beats ${G.DEFS[u.hi].name} (cost ${costOf(u.hi)}) ${pct(u.wLo)}`).join('; ') + '.\n');
     const draws = rr.pairs.filter((p) => p.d === d.id && p.strength === 'r0' && p.draw / (p.wA + p.wB + p.draw) >= 0.5);
     if (draws.length) out.push('Mostly draws (time ran out, 240 s): ' + draws.map((p) => `${G.DEFS[p.A].name} v ${G.DEFS[p.B].name}`).join('; ') + '.\n');
   }
@@ -124,11 +129,27 @@ if (panel) {
   }
 }
 
+// ---------------------------------------------------------------- mixed group
+if (mix) {
+  out.push(`## 3b. In a mixed group
+
+${mix.fights} fights, ${mix.seeds} seeds, rank 0. A plain group of the dungeon's partner kind (about 12 cost points) against the paladin and the archer at tier I (kept on their feet), with and without about 4 points of the kind added. **Added threat per cost** = the extra toll it brings, per cost point. The yardstick is what 4 more points of the partner kind itself add. This is where the helpers (spirits, drummers, healers) show: alone against a hero they do almost nothing.
+`);
+  for (const d of R.dungeons) {
+    const list = mix.recs.filter((r) => r.d === d.id); if (!list.length) continue;
+    for (const r of list) { S(r.k).mixAdded = r.addedPerCost; S(r.k).mixYard = r.yard; S(r.k).mixRel = r.yard ? r.addedPerCost / r.yard : null; }
+    const rows = list.slice().sort((a, b) => b.addedPerCost - a.addedPerCost).map((r) => [nm(r.k), f1(costOf(r.k)), `${r.n} (${r.cost})`, f1(r.added.paladin), f1(r.added.archer), f1(r.addedPerCost), f2(r.yard ? r.addedPerCost / r.yard : null)]);
+    out.push(`### ${d.name} (partner: ${nm(list[0].partner)} x${list[0].nPartner}; yardstick ${f1(list[0].yard)} a point)
+
+` + table(['kind', 'cost', 'added (cost)', 'added per cost v paladin', 'v archer', 'added per cost', 'vs yardstick'], rows) + '\n');
+  }
+}
+
 // ---------------------------------------------------------------- moves
-const SCEN = [['1v1', '1v1 in its dungeon'], ['group', 'cost-matched groups'], ['vsSwarm', 'alone v 8 goblins'], ['vsRanged', 'v the archer'], ['vsHero', 'v paladin, berserker, pyromancer']];
+const SCEN = [['1v1', '1v1 in its dungeon'], ['group', 'cost-matched groups'], ['mix', 'in a mixed group v a hero'], ['vsSwarm', 'alone v 8 goblins'], ['vsRanged', 'v the archer'], ['vsHero', 'v paladin, berserker, pyromancer']];
 function movesOf(k) {
   const M = {}, A = {}, D = {};
-  for (const src of [rr, cm, swarm, panel]) if (src && src.moves && src.moves[k]) for (const [scen, m] of Object.entries(src.moves[k])) M[scen] = m;
+  for (const src of [rr, cm, swarm, panel, mix]) if (src && src.moves && src.moves[k]) for (const [scen, m] of Object.entries(src.moves[k])) M[scen] = { ...m, fires: merged(m.fires, true), dmg: merged(m.dmg), armed: merged(m.armed) };
   return M;
 }
 {
@@ -151,13 +172,16 @@ function movesOf(k) {
       const totDmg = Object.values(dmg).reduce((a, b) => a + b, 0);
       const declared = new Set(((stat && stat[k] && stat[k].due) || []).map((x) => 'mv:' + x));
       const moveKeys = [...new Set([...Object.keys(fires), ...armed, ...declared, ...Object.keys(dmg)])].filter((mv) => !mv.startsWith('spawn:') || !mv.includes('/'));
-      const neverK = [...new Set([...armed, ...declared])].filter((mv) => !fires[mv] && !NOT_MOVES.has(mv));
+      // (only due() moves can be called "never fired": a home-made state object shows up once, at its first brain call, and its clocks fire under their own names)
+      const neverK = [...declared].filter((mv) => !fires[mv] && !NOT_MOVES.has(mv));
       if (neverK.length) never.push({ k, moves: neverK, armed: neverK.filter((mv) => armed.has(mv)) });
       S(k).moves = {}; S(k).dmgShare = {};
       const rows = [];
       for (const mv of moveKeys.sort((a, b) => (dmg[b] || 0) - (dmg[a] || 0) || (fires[b] || 0) - (fires[a] || 0))) {
         if (!fires[mv] && !dmg[mv] && !declared.has(mv) && !armed.has(mv)) continue;
         if (NOT_MOVES.has(mv) && !dmg[mv]) continue;
+        // a move's state object made as its due() move starts (the boar's chg with its charge): the same move twice; shown once
+        if (!declared.has(mv) && !LABEL[mv] && !dmg[mv] && mv.startsWith('mv:') && Object.entries(fires).some(([o, n]) => o !== mv && declared.has(o) && Math.abs(n - fires[mv]) <= 0.15 * n)) continue;
         const row = [lab(mv) + (mv.startsWith('mv:') && lab(mv) !== mv.slice(3) ? ` (${mv.slice(3)})` : '')];
         for (const c of cols) row.push(c ? (c.m.fires[mv] ? f1(c.m.fires[mv] / Math.max(0.01, c.per)) : mv.startsWith('st:') || mv === 'wall slam' || mv.startsWith('spawn:') ? '' : '0') : '');
         row.push(totDmg ? pct((dmg[mv] || 0) / totDmg) : '-');
