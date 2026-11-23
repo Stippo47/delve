@@ -21,3 +21,21 @@ boss lasts.
 - Shock and Stagger have no rest after a burst. The round 13 and 15 statuses (Charm, Confused, Sleepy, Bleeding,
   Fear, Shackled) and Entangle and Radiance all do; that is why only these two can chain on a boss.
 - Battle-mode bosses are short fights here (17-44 s); the dungeon's boss rooms are longer, so the share may differ there.
+
+## 1v1: Warhelm alone against each boss (the designer: "What about 1v1 with boss?")
+`node tools/audit/boss-stagger.mjs --mates none --htier <t> --seeds 6` (19 bosses x 6 seeds each way).
+
+| Warhelm alone | as it is | no Stagger | no Shock | neither |
+|---|---|---|---|---|
+| tier II: wins | 74% | 71% | 62% | 54% |
+| tier II: his health left | 51% | 48% | 40% | 36% |
+| tier III: wins | 100% | 100% | 97% | 92% |
+| tier III: his health left | 85% | 80% | 70% | 60% |
+| tier I: wins | 27% | 28% | 25% | 27% |
+
+- Alone the two are worth 20 points of win rate at tier II, Shock the larger part (12 of the 20).
+- Tier I: no difference; his tier I Storm Born is short and only overloads a boss about 1.7 times a fight.
+- A wider finding: at tier III every hero tried wins every 1v1 against every boss in battle mode with 95%+ health left
+  (Archer 13 s a fight, Berserker 14 s, Samurai 15 s, Paladin 35 s). Battle mode's tier III is the whole skill web
+  out to that ring, stat nodes included, against a boss at its base strength. Boss fights in tournaments would need
+  the bosses scaled up, or be read at tier I and II only.
