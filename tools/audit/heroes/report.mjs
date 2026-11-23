@@ -1,7 +1,7 @@
 // Round 16 (the balance audit, lane audit-heroes): docs/audit/heroes.md from the JSON that run.mjs wrote.
 //   node tools/audit/heroes/report.mjs            write the report
 //   node tools/audit/heroes/report.mjs --list     print the abilities that (nearly) never fire, with their score code
-// The hand-written parts are in findings.md (the summary at the top) and why.mjs (why each quiet ability stays quiet).
+// The hand-written parts are in notes.mjs (the findings at the top) and why.mjs (why each quiet ability stays quiet).
 globalThis.location = { search: '?x' };
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
 const fs = await import('node:fs'), path = await import('node:path'), url = await import('node:url');
@@ -77,8 +77,8 @@ const anyD = Object.values(D)[0] || { seeds: '?', dseeds: '?' };
 P('# Hero ability audit', '');
 P('Round 16, lane audit-heroes. Every hero, every ability, at tiers I, II and III, put through the same eleven fights, with a recorder counting what each part of the kit did. **Measured only: no numbers, rules or cooldowns were changed.** No tournament has been run yet.', '');
 P(`${Object.keys(D).length} heroes, ${nFights.toLocaleString('en-GB')} fights, ${Math.round(fightSecs / 3600)} hours of fighting in the sim. Raw numbers: \`docs/audit/data/heroes/<hero>.json\`. Tools: \`tools/audit/heroes/\` (README at the top of each file).`, '');
-const findings = path.join(here, 'findings.md');
-if (fs.existsSync(findings)) P(fs.readFileSync(findings, 'utf8').trim(), '');
+const { FINDINGS } = await import('./notes.mjs');
+if (FINDINGS) P(FINDINGS.trim(), '');
 
 P('## How it was measured', '');
 P(`- **Tiers** are the battle page's tiers (the same as the Book): tier I is the first shell of the skill web, every ability at tier I and the stat nodes beside them; tier II the second shell; tier III the whole web. No trinkets, no potions. The same build in the dungeon.`);
@@ -94,13 +94,14 @@ P('- Status damage is credited to whoever put the status on last (the game\'s ow
 
 // ---------------------------------------------------------------- 1. ranking
 P('## 1. How much of each kit fires', '');
-P('The average, over its three abilities and the eleven scenarios, of the share of fights each ability went off in. 100% would be every ability in every fight. Sorted by the average of the three tiers.', '');
+P('The average, over its three abilities and the eleven scenarios, of the share of fights each ability went off in. 100% would be every ability in every fight. Sorted by the average of the three tiers. **Abilities that work in a 1v1**: how many of its three went off in at least half of the fights across the four 1v1s, at tier II.', '');
 const rank = HERO_IDS.filter((h) => D[h]).map((h) => {
   const per = {}; for (const t of TIERS) { let s = 0, n = 0; for (const ab of HEROES[h].abilities) for (const sc of SCS) { const c = cellOf(h, t, sc.id); if (!c || !c.n) continue; n++; s += ALWAYS_ON.has(ab.id) ? 1 : fireRate(c, ab.id); } per[t] = n ? s / n : 0; }
   const quietAbs = HEROES[h].abilities.filter((ab) => !ALWAYS_ON.has(ab.id)).map((ab) => [ab.name, SCS.filter((sc) => { const f = fireRate(cellOf(h, 2, sc.id), ab.id); return f != null && f <= 0.1; }).length]).filter(([, n]) => n >= 5).map(([a, n]) => `${a} (${n})`);
-  return { h, per, avg: (per[1] + per[2] + per[3]) / 3, quietAbs };
+  const DUELS = ['duelMelee', 'duelRanged', 'duelCaster', 'duelTank'], inDuels = HEROES[h].abilities.filter((ab) => ALWAYS_ON.has(ab.id) || DUELS.reduce((a, d) => a + (fireRate(cellOf(h, 2, d), ab.id) || 0), 0) / DUELS.length >= 0.5).length;
+  return { h, per, avg: (per[1] + per[2] + per[3]) / 3, quietAbs, inDuels };
 }).sort((a, b) => b.avg - a.avg);
-table(['#', 'Hero', 'Role', 'Tier I', 'Tier II', 'Tier III', 'Average', 'Quiet in 5+ of the 11 scenarios at tier II (how many)'], rank.map((r, i) => [i + 1, `${nm(r.h)} (${r.h})`, HEROES[r.h].role, pct(r.per[1]), pct(r.per[2]), pct(r.per[3]), '**' + pct(r.avg) + '**', r.quietAbs.join(', ') || '-']));
+table(['#', 'Hero', 'Role', 'Tier I', 'Tier II', 'Tier III', 'Average', 'Abilities that work in a 1v1 (II)', 'Quiet in 5+ of the 11 scenarios at tier II (how many)'], rank.map((r, i) => [i + 1, `${nm(r.h)} (${r.h})`, HEROES[r.h].role, pct(r.per[1]), pct(r.per[2]), pct(r.per[3]), '**' + pct(r.avg) + '**', r.inDuels + ' of 3', r.quietAbs.join(', ') || '-']));
 
 // ---------------------------------------------------------------- 2. quiet abilities
 P('## 2. Abilities that fire 0 or nearly 0 times', '');
@@ -146,7 +147,7 @@ for (const h of HERO_IDS) {
       ctl /= Math.max(1, nn); keep /= Math.max(1, nn); saves /= Math.max(1, nn);
       const cpm = SCS.reduce((a, sc) => { const c = cellOf(h, t, sc.id); const A = abData(c, ab.id); return a + (c && c.t ? castsOf(A) / (c.t / 60) : 0); }, 0) / SCS.length;
       const r = wpv ? tot / wpv : null;
-      valueRows.push({ h, t, ab, v, st, tot, cpm, r, ctl, keep, saves });
+      valueRows.push({ h, t, ab, v, st, tot, cpm, r, ctl, keep, saves, wpv });
       if (cpm > 0.05 && r != null && r < SMALL) flagsTiny.push({ h, t, ab, tot, r, cpm, v, ctl, keep, saves });
       if (r != null && r > 1) flagsBig.push({ h, t, ab, tot, r, cpm, v, wpv });
     }
@@ -160,12 +161,45 @@ const tinyHead = ['Hero', 'Ability', 'Tiers', 'Casts/min', 'Value/min', '% of we
 const doesSomething = (fs2) => fs2.some((x) => x.ctl >= 10 || x.keep >= 3 || x.saves > 0 || x.v.ctl >= 1);
 P('**Next to nothing measured:**', ''); table(tinyHead, Object.values(tinyBy).filter((x) => !doesSomething(x)).map(tinyRow));
 P('**Control or support instead (value low, but it does something):**', ''); table(tinyHead, Object.values(tinyBy).filter(doesSomething).map(tinyRow));
+P('### How much of each hero\'s measured worth is its abilities (tier II)', '');
+P('Value a minute at tier II (each scenario counted the same): the weapon (with the status damage it built), the three abilities together (with theirs), and the trait (its own blows, blocks and heals). **Abilities\' share** is the abilities over all three. Low means the hero is mostly its weapon; high means its abilities carry it. Control, cooldown cuts, walls and speed are not in it (see section 7).', '');
+const share = HERO_IDS.filter((h) => D[h]).map((h) => {
+  const rows = valueRows.filter((x) => x.h === h && x.t === 2), wp = rows.length ? rows[0].wpv : 0, ab = rows.reduce((a, x) => a + x.tot, 0);
+  const tr = avgRate(h, 2, 'trait:' + HEROES[h].trait.id).value, tot = wp + ab + tr;
+  const best = rows.slice().sort((p, q) => q.tot - p.tot)[0];
+  return { h, wp, ab, tr, s: tot ? ab / tot : 0, best };
+}).sort((p, q) => q.s - p.s);
+table(['Hero', 'Role', 'Weapon/min', 'Abilities/min', 'Trait/min', "Abilities' share", 'Its biggest ability'], share.map((x) => [nm(x.h), HEROES[x.h].role, r0(x.wp), r0(x.ab), r0(x.tr), pct(x.s), x.best ? `${x.best.ab.name} (${r0(x.best.tot)})` : '-']));
 P('### Abilities worth more than the weapon', '');
 const bigBy = {}; for (const f of flagsBig) { const k = f.h + ':' + f.ab.id; (bigBy[k] || (bigBy[k] = [])).push(f); }
 table(['Hero', 'Ability', 'Tiers', 'Casts/min', 'Value/min', 'Mostly', 'Weapon dmg/min', 'x weapon'], Object.values(bigBy).sort((a, b) => Math.max(...b.map((x) => x.r)) - Math.max(...a.map((x) => x.r))).map((fs2) => { const f = fs2[0]; const main = VAL.map((k) => [k, f.v[k]]).sort((a, b) => b[1] - a[1])[0][0]; return [nm(f.h), `${f.ab.name} (${f.ab.id})`, fs2.map((x) => TN[x.t]).join(', '), fs2.map((x) => r1(x.cpm)).join(' / '), fs2.map((x) => r0(x.tot)).join(' / '), main, fs2.map((x) => r0(x.wpv)).join(' / '), fs2.map((x) => r1(x.r) + 'x').join(' / ')]; }));
 
 // ---------------------------------------------------------------- 4. odd things
 P('## 4. Things that look broken or odd', '');
+// battles that end while the losing side still has someone alive but out of the fight (vanish-check.mjs)
+const VF = path.join(repo, 'docs/audit/data/heroes-vanish.json');
+if (fs.existsSync(VF)) {
+  const V = JSON.parse(fs.readFileSync(VF, 'utf8'));
+  P('### Battles that end while a fighter is only out of sight', '');
+  P(`Battle mode (battle.js) calls a side beaten when nobody on it is "fighting", and it does not count a unit that is ethereal (bar a sand burrower under the sand). Several heroes go ethereal for a moment as part of an ability (underground, a flock of birds, a broom, a shadow dash, a bush), and the Digger's Bury makes a foe ethereal. When that unit is the last one standing on its side, the battle ends on the spot: a hero alone that ducks out loses, and a lone foe that gets buried counts as beaten. The dungeon is not affected (its room check counts every living enemy). Checked with tools/audit/heroes/vanish-check.mjs: the same battles as the audit, ${V.seeds} seeds each, ${V.fights.toLocaleString('en-GB')} battles, ${V.ended} of them ended this way. **These fights are in the numbers above as they happened**, so these heroes' 1v1 results (and some others) are not real wins or losses; read their win rates and cast counts with that in mind.`, '');
+  const by = {}; for (const o of V.rows) { const k = o.hero; const b = by[k] || (by[k] = { hero: o.hero, ended: 0, fights: 0, cells: [], who: {} }); b.ended += o.ended; b.cells.push(`${TN[o.tier]} ${SHORT[o.scen]} ${o.ended}/${o.fights}`); for (const [w2, n2] of Object.entries(o.who)) b.who[w2.replace(/ \(.*/, '') + ' ' + (w2.match(/\((.*)\)/) || ['', ''])[1]] = (b.who[w2.replace(/ \(.*/, '') + ' ' + (w2.match(/\((.*)\)/) || ['', ''])[1]] || 0) + n2; }
+  table(['Hero', 'Battles ended so', 'Where (tier, scenario, how many of the seeds)', 'Who was out of it (how, and the last ability they had used)'], Object.values(by).sort((p, q) => q.ended - p.ended).map((b) => [nm(b.hero), b.ended, b.cells.join('; '), Object.entries(b.who).sort((p, q) => q[1] - p[1]).slice(0, 4).map(([w2, n2]) => `${w2} (${n2})`).join(', ')]));
+  // the same heroes again with the test runner's battle not ending while someone is only out of sight (fights.mjs fairEnd)
+  const FD = path.join(repo, 'docs/audit/data/heroes-fairend');
+  if (fs.existsSync(FD)) {
+    P('**What these heroes look like when the fight is allowed to go on** (a what-if in the test runner only, fights.mjs \'fairEnd\': the battle does not end while a side\'s last fighter is only out of sight; the game is unchanged). Tier II, the ten battle scenarios, 12 seeds each, the same fights as above. Each cell: as measured above → with the fight allowed to go on.', '');
+    const rowsF = [];
+    for (const f of fs.readdirSync(FD).filter((x) => x.endsWith('.json'))) {
+      const X = JSON.parse(fs.readFileSync(path.join(FD, f), 'utf8')), h = X.hero, T2 = X.tiers[2] || {};
+      const g = (src, ids) => { let n = 0, w2 = 0, t = 0; for (const id of ids) { const c = src[id]; if (!c) continue; n += c.n; w2 += c.win || 0; t += c.t; } return { win: n ? w2 / n : 0, len: n ? t / n : 0 }; };
+      const duels = ['duelMelee', 'duelRanged', 'duelCaster', 'duelTank'], rest = SCS.filter((s) => !s.dungeon && !duels.includes(s.id)).map((s) => s.id);
+      const real = D[h].tiers[2], a1 = g(real, duels), b1 = g(T2, duels), a2 = g(real, rest), b2 = g(T2, rest);
+      const cpm = (src, id) => { let c0 = 0, m = 0; for (const s of [...duels, ...rest]) { const c = src[s]; if (!c) continue; m += c.t / 60; c0 += castsOf(c.data.ab[id]); } return m ? c0 / m : 0; };
+      rowsF.push([nm(h), `${pct(a1.win)} → ${pct(b1.win)}`, `${r0(a1.len)}s → ${r0(b1.len)}s`, `${pct(a2.win)} → ${pct(b2.win)}`, `${r0(a2.len)}s → ${r0(b2.len)}s`, HEROES[h].abilities.map((ab) => `${ab.name} ${r1(cpm(real, ab.id))} → ${r1(cpm(T2, ab.id))}`).join('; ')]);
+    }
+    table(['Hero', '1v1 win rate', '1v1 fight length', 'Other battles win rate', 'Other battles length', 'Casts a minute, all ten battles'], rowsF);
+  }
+}
 P('### Casts that leave nothing measurable', '');
 P('Casts after which nothing the recorder can see was credited to the ability before its next cast (no damage, heal, block, status, buff, timed state on anyone, or summon). Some of these do things it cannot count (moving the hero, pulling a foe, taunting, walls that stop shots): see the notes.', '');
 const empty = [];
@@ -192,7 +226,7 @@ for (const t of TIERS) {
 
 // ---------------------------------------------------------------- 6. each hero
 P('## 6. Each hero', '');
-P('For each hero: how often each ability fires (share of fights, then casts per minute), and what each part of the kit is worth per minute, at each tier (each scenario counted the same). Then statuses and states, summed over the battle scenarios (not the dungeon) and given per minute of fighting: the build-up applied, bursts, the damage the statuses did, the foe-seconds foes spent built up or in a state (several foes at once count several times), and the seconds the hero spent in its own buffs and in foes\' statuses.', '');
+P('For each hero: how often each ability fires (the share of fights it went off in · casts per minute of fighting · the median second of its first cast), and what each part of the kit is worth per minute, at each tier (each scenario counted the same). Then statuses and states, summed over the battle scenarios (not the dungeon) and given per minute of fighting: the build-up applied, bursts, the damage the statuses did, the foe-seconds foes spent built up or in a state (several foes at once count several times), and the seconds the hero spent in its own buffs and in foes\' statuses.', '');
 const stPer = (h, t, f) => { const o = {}; let m = 0; for (const sc of SCS) { if (sc.dungeon) continue; const c = cellOf(h, t, sc.id); if (!c || !c.n) continue; m += c.t / 60; f(c, o); } for (const k of Object.keys(o)) o[k] /= Math.max(1e-9, m); return o; };
 const fmtMap = (o, k = r0, n = 8) => Object.entries(o).filter(([, v]) => v >= 0.5).sort((a, b) => b[1] - a[1]).slice(0, n).map(([x, v]) => `${x} ${k(v)}`).join(', ') || '-';
 const srcName = (h, s) => s === 'attack' ? 'weapon' : s.startsWith('ab:') ? (HEROES[h].abilities.some((a) => a.id === s.slice(3)) ? abName(h, s.slice(3)) : s.slice(3) + ' (a foe\'s, sent back)') : s.startsWith('trait:') ? HEROES[h].trait.name + ' (trait)' : s.startsWith('st:') ? s.slice(3) + ' (status)' : s === 'stat:armour' ? 'armour' : s === 'stat:dodge' ? 'dodge' : s;
@@ -206,7 +240,7 @@ for (const h of HERO_IDS) {
     const c = cellOf(h, t, sc.id), A = abData(c, ab.id); if (!c || !c.n) return '-';
     if (ALWAYS_ON.has(ab.id)) return 'always on';
     const f = fireRate(c, ab.id), cpm = castsOf(A) / Math.max(1e-9, c.t / 60);
-    return f <= 0.1 ? `**${pct(f)}**` : `${pct(f)} ${r1(cpm)}/m`;
+    const fst = med(A && A.firsts); return f <= 0.1 ? `**${pct(f)}**` : `${pct(f)} · ${cpm < 0.1 ? "<0.1" : r1(cpm)}/m · ${fst == null ? "-" : r0(fst) + "s"}`;
   })])));
   // value
   const srcs = new Set(); for (const t of TIERS) for (const sc of SCS) { const c = cellOf(h, t, sc.id); if (c) for (const s of Object.keys(c.data.src || {})) srcs.add(s); }

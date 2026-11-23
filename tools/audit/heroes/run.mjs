@@ -3,6 +3,8 @@
 //   node tools/audit/heroes/run.mjs [--heroes all|paladin,archer] [--tiers 1,2,3] [--seeds 8] [--dseeds 6]
 //        [--scen all|duelMelee,swarm,...] [--jobs 3] [--out docs/audit/data/heroes]
 //     runs each hero in its own node process, up to --jobs at once, and writes one JSON per hero
+//   add --fairEnd (and --scen without the dungeon, --out elsewhere) for the what-if where a battle does not end while
+//   a side's last fighter is only out of sight (fights.mjs): used for docs/audit/data/heroes-fairend/
 //   node tools/audit/heroes/run.mjs --calibrate [--heroes ...] [--tiers ...] [--seeds 4]
 //     prints win rate and fight length per scenario and tier (to set FOE_MULT), writes nothing
 // Then: node tools/audit/heroes/report.mjs (docs/audit/heroes.md from the JSON).
@@ -49,7 +51,7 @@ function runCell(hero, tier, sc) {
   const n = sc.dungeon ? nDSeeds : nSeeds;
   for (let i = 0; i < n; i++) {
     const seed = sc.dungeon ? 5000 + i : 1000 + i * 17 + SC.SCENARIOS.indexOf(sc);
-    let r; try { r = sc.dungeon ? dungeon(hero, tier, seed) : battle(hero, tier, sc, seed); }
+    let r; try { r = sc.dungeon ? dungeon(hero, tier, seed) : battle(hero, tier, sc, seed, true, { fairEnd: args.includes('--fairEnd') }); }
     catch (e) { agg.errors = (agg.errors || 0) + 1; agg.lastError = String(e && e.stack || e).split('\n').slice(0, 3).join(' | '); continue; }
     agg.n++; agg[r.outcome]++; agg.t += r.t; agg.hpLeft += r.hpLeft; agg.sideHp += r.sideHp || 0; agg.foeHp += r.foeHp || 0; agg.rooms += r.rooms || 0;
     for (const [id, A] of Object.entries(r.data.ab)) if (A.casts > 0 || A.triggers > 0) agg.firedIn[id] = (agg.firedIn[id] || 0) + 1; // fights it went off in at least once

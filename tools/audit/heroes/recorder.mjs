@@ -46,7 +46,8 @@ export const STATES = {
 const STATE_IDS = Object.keys(STATES);
 // what a hero's own clock does for one of its abilities (kits2.js kit2Tick), where nothing else names it
 const TICK_BUFF = { bearWard: 'rainDance', pavise: 'pavise', hotMeal: 'hotMeal' };
-const TICK_AB = { chef: 'ab:hotMeal' };
+const TICK_AB = { chef: 'ab:hotMeal' }; // heals on its own clock
+const TICK_ST = { enchantress: 'ab:heartstring' }; // statuses on its own clock (kits-charm.js charmTick: the string's charm)
 // the control timers counted for d.ctl: [state, unit field, the build-up whose burst sets it]
 const CTL = [['stunned', 'stunT', 'stagger'], ['rooted', 'rootT', 'entangle'], ['asleep', 'sleepT', 'sleepy'], ['frozen', 'frozenT', 'chill'], ['knockedOut', 'koT', 'stagger'],
   ['terrified', 'fearT', 'fear'], ['shackled', 'shackledT', 'shackle'], ['addled', 'addledT', 'confuse'], ['sickened', 'sickT', 'poison'], ['radiant', 'radiantT', 'radiance']];
@@ -255,7 +256,7 @@ export class Recorder {
       case 'status': {
         const root = ownerOf(src);
         let s = null;
-        if (root) { const lb = this.lastBlow; s = this.srcOf(src, root, lb && lb.t === w.time && lb.u === u && lb.src === src ? lb.o : {}); }
+        if (root) { const lb = this.lastBlow, blow = lb && lb.t === w.time && lb.u === u && lb.src === src; s = this.srcOf(src, root, blow ? lb.o : {}); if (s === 'attack' && !blow && !this.ctx.length && w.actor === root && TICK_ST[root.kind]) s = TICK_ST[root.kind]; }
         this.lastStatus = { u, type: o.type, root, s };
         if (root === f && this.foe(u)) {
           add(sub(this.d.st.applied, o.type), s, amt); this.productive(s); this.touch.set(u, s);

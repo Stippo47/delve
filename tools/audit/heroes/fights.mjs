@@ -2,12 +2,16 @@
 // Import after setting globalThis.location and globalThis.localStorage.
 //   battle(hero, tier, scenario, seed, record) and dungeon(hero, tier, seed, record) -> { outcome, t, hpLeft, ..., data }
 // A Recorder subclass can be passed as record (tools that want more than the counts).
+// opts.fairEnd (a what-if for the test runner only, not the game): the battle does not end while a side still has
+// someone alive who is only out of sight (ethereal or hidden: underground, a flock, a broom, buried). battle.js ends it
+// on the spot (report section 4, vanish-check.mjs); this lets those heroes' fights run their course to be measured.
 const B = await import('../../../js/battle.js');
 const D = await import('../../../js/dungeon.js');
 const { setSeed } = await import('../../../js/util.js');
 const { HEROES, tierBuild } = await import('../../../js/heroes.js');
 const { freshSave } = await import('../../../js/save.js');
 const { Recorder } = await import('./recorder.mjs');
+const { step } = await import('../../../js/sim.js');
 const SC = await import('./scenarios.mjs');
 const DT = 1 / 60;
 const save = freshSave(); save.cheat = true;
@@ -15,7 +19,19 @@ const alive = (u) => !!u && !u.dead && !u.downed;
 const recOf = (record) => (!record ? null : typeof record === 'function' ? new record() : new Recorder());
 
 // ---------------------------------------------------------------- one battle
-export function battle(hero, tier, sc, seed, record = true) {
+// updateBattle (battle.js) as it is, with its end check counting a living unit that is out of sight as still in the fight
+function updateFair(run, dt) {
+  const w = run.world;
+  run.fade = Math.max(0, run.fade - dt * 2.5);
+  if (run.phase !== 'fight') return;
+  if (w.hitstop > 0) { w.hitstop -= dt; return; }
+  run.t += dt; step(w, dt); w.pickups.length = 0; w.stale = run.t > 75;
+  const inIt = (u) => alive(u) && !(u.linkTo && u.def.segment) && !(u.partOf && u.partOf.bodies);
+  const n = (side) => w.units.filter((u) => inIt(u) && B.sideOf(w, u) === side).length;
+  const a = n('a'), b = n('b'), coming = w.danger.some((z) => z.spawns && !z.done) || w.fx.some((f) => f.spawns && !f.done);
+  if ((!a || !b) && !coming) { run.phase = 'over'; run.winner = a ? 'a' : b ? 'b' : 'draw'; }
+}
+export function battle(hero, tier, sc, seed, record = true, opts = {}) {
   setSeed(seed);
   const a = [{ k: hero, n: 1, tier }]; if (sc.ally) a.push({ k: sc.ally(hero), n: 1, tier });
   const foes = sc.foes(hero, tier);
@@ -31,12 +47,13 @@ export function battle(hero, tier, sc, seed, record = true) {
   });
   const f = run.sides.a.find((u) => u.kind === hero);
   const rec = recOf(record); if (rec) rec.attach(w, f);
-  while (run.phase === 'fight' && run.t < SC.BATTLE_CAP) { B.updateBattle(run, DT); if (rec) rec.step(true); }
+  const up = opts.fairEnd ? updateFair : B.updateBattle;
+  while (run.phase === 'fight' && run.t < SC.BATTLE_CAP) { up(run, DT); if (rec) rec.step(true); }
   const data = rec ? rec.finish() : null;
   const timeout = run.phase === 'fight';
   const hpOf = (side) => { let h = 0, m = 0; for (const u of run.sides[side]) { m += u.maxHp; if (alive(u)) h += Math.max(0, u.hp); } return m ? h / m : 0; };
   return { outcome: timeout ? 'timeout' : run.winner === 'a' ? 'win' : run.winner === 'b' ? 'loss' : 'draw', t: run.t, hpLeft: alive(f) ? f.hp / f.maxHp : 0,
-    sideHp: hpOf('a'), foeHp: hpOf('b'), data };
+    sideHp: hpOf('a'), foeHp: hpOf('b'), data, run };
 }
 
 // ---------------------------------------------------------------- one dungeon floor
