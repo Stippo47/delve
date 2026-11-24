@@ -2297,7 +2297,7 @@ BRAINS.shadowClone = shadowCloneBrain;
 export function shadowCloneBrain(w, u, dt) {
   let t = u.target; if (!t || !alive(t) || t.ethereal) t = u.target = opponents(w, u).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0] || null;
   if (!t) return true;
-  u.orbit = (u.orbit || 0) + dt * 3.4 * (u.spinDir || 1); if (Math.random() < dt * 0.6) u.spinDir = -(u.spinDir || 1);
+  u.orbit = (u.orbit || 0) + dt * 3.4 * (u.spinDir || 1); if (rand() < dt * 0.6) u.spinDir = -(u.spinDir || 1);
   const R = t.r + u.r + 10, gx = t.x + Math.cos(u.orbit) * R, gy = t.y + Math.sin(u.orbit) * R, d = dist(u.x, u.y, gx, gy), sp = u.def.speed * 1.6 * dt;
   const a = angleTo(u.x, u.y, gx, gy); u.x += Math.cos(a) * Math.min(d, sp); u.y += Math.sin(a) * Math.min(d, sp);
   u.x = clamp(u.x, u.r, w.W - u.r); u.y = clamp(u.y, u.r, w.H - u.r); u.spd = Math.min(d, sp) / Math.max(dt, 1e-3); u.mvA = a;
