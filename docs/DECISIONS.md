@@ -994,3 +994,18 @@ calls in "Round 16: calls from the audit". Nothing changed in the game; the lead
   than Cure I) drafted in a deck after the tournament.
 - Tournament after the fixes and the cooldown rule: 1v1 at I-III, 2v2 with a Paladin each side, a three-foe group
   bracket (44 abilities need 2+ foes), bosses scaled; health margin breaks ties.
+
+## Round 17: fixes, slimes, enemy prices, playtests (2026-11-24)
+The designer (chat): handle the five bugs from the audit. Slimes have too much health and the wolf maybe too little
+damage. Slimes hop with a real vertical offset, aren't touched by floor things while in the air, jump further and
+faster, and their contact does the damage. Weak abilities can be balanced by when they fire (a dodge roll only when a
+blow is about to land). Every enemy priced against the Wildwood's first floor, all in one price range and strength;
+dungeons, floors and rooms then scale their stats. The first room could hold a major: not a gradual introduction.
+"Might" remove trinkets from elites and majors later (not now). Play the game from zero with different strategies and
+report the progression (levels, gear, seats, how hard each room and boss is).
+The lead: four Opus lanes in delve-wt: fixes16 (five bugs + when abilities fire; no number or cooldown changes),
+slimes16 (hops, airborne, contact damage), foes16 (one worth-per-cost yardstick at Wildwood floor 1, every kind its
+own cost, RANK_MULT re-set to keep each dungeon's overall difficulty, elites x3 and majors x7 of a kind's cost taken
+from the room budget, no majors on the Wildwood's first floor), play16 (fresh-save campaigns with several strategies,
+measurement only, on the game as it is now). Cooldown rule, Poison, Confused and the tournament still wait on the
+round 16 calls deck.
