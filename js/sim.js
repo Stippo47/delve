@@ -508,7 +508,7 @@ function steer(w, u, gx, gy, opts = {}) {
     for (let i = 0; i < DIRS; i++) { const tt = rayToRoundRect(u.x, u.y, DIR_X[i], DIR_Y[i], r, R); if (tt < look) danger[i] = Math.max(danger[i], 1 - tt / look); }
   }
   const fear = heroic(w, u) ? 0.9 : 0.45;
-  for (const h of w.hazards) if (!h.hidden && h.up !== false && h.type !== 'beam' && ((h.type !== 'oil' && h.type !== 'web') || heroic(w, u))) avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' || h.type === 'web' ? 0.35 : fear, 40);
+  if (!u.def.hops) for (const h of w.hazards) if (!h.hidden && h.up !== false && h.type !== 'beam' && ((h.type !== 'oil' && h.type !== 'web') || heroic(w, u))) avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' || h.type === 'web' ? 0.35 : fear, 40);
   for (const o of w.units) {
     if (o === u || !alive(o) || o.ethereal || u.ethereal) continue;
     if (o.team === u.team) avoidCircle(o.x, o.y, o.r + (heroic(w, u) ? 14 : 0), 0.45, 18);
@@ -841,7 +841,7 @@ function drive(u, sx, sy, want, dt, quick = 1) {
 // Its blow is the contact: with its attack ready (u.atkT) and its target within a hop, it hops at the target, and each
 // foe its body meets on the way down is hit, once a hop, with its own blow (blowOf: dmg, knock, poison, burn...). The
 // attack clock then restarts as a swing's would, so its damage a second stays about def.dmg / def.atkCd.
-export const HOP = { crouch: 0.15, air: 0.4, land: 0.1, rest: 0.35, pace: 1.6, lift: 1.6, lift0: 10, sq: 0.5, sqLand: 0.55, reach: 4 };
+export const HOP = { crouch: 0.15, air: 0.4, land: 0.1, rest: 0.35, pace: 1.6, lift: 1.6, lift0: 10, sq: 0.5, sqLand: 0.55, reach: 4, rebound: 190 };
 export const offFloor = (u) => !!u.airborne;
 const canStrike = (u) => !(u.radiantT > 0 || u.fearT > 0 || u.shackledT > 0 || u.forcedGoal);
 const heavyOf = (u) => clamp(u.r / 25, 0.7, 1.5); // how heavy it hops (the plain slime 1, a big one 1.5)
@@ -893,15 +893,26 @@ function slimeMove(w, u, dt) {
   const P = u.def.hops, full = HOP.pace * u.def.speed * P, far = full * Math.min(m, 1.3), t = u.target;
   if (t && alive(t) && t.team !== u.team && !t.ethereal && u.atkT <= 0 && canStrike(u)) { // a hop onto its target
     const lead = P * HOP.air * 0.5, tx = t.x + t.vx * lead, ty = t.y + t.vy * lead, d = dist(u.x, u.y, tx, ty);
-    if (d - u.r - t.r <= far && lineClear(w, u.x, u.y, t.x, t.y, u.r * 0.6)) return startHop(u, s, angleTo(u.x, u.y, tx, ty), clamp(d - (u.r + t.r) * 0.45, full * 0.3, far), full);
+    if (d - u.r - t.r <= far && lineClear(w, u.x, u.y, t.x, t.y, u.r * 0.6)) return startHop(u, s, angleTo(u.x, u.y, tx, ty), clamp(d - (u.r + t.r) * 0.45, full * 0.3, far), full, true);
   }
-  if (u.wantSpd > 1) startHop(u, s, Math.atan2(u.sdy, u.sdx), clamp(u.wantSpd * HOP.pace * P, full * 0.3, full * 1.4), full);
+  if (u.wantSpd > 1) { const a = Math.atan2(u.sdy, u.sdx); startHop(u, s, a, clearLanding(w, u, a, clamp(u.wantSpd * HOP.pace * P, full * 0.3, full * 1.4), full), full); }
 }
-function startHop(u, s, a, D, full) {
+// A slime doesn't walk round a pool (steer leaves pools out for it): it goes over. Where a hop would come down in one
+// (or in a hit about to land) it hops further to clear it if it can, else stops short of it.
+function clearLanding(w, u, a, D, full) {
+  const ca = Math.cos(a), sa = Math.sin(a);
+  const bad = (d) => { const x = u.x + ca * d, y = u.y + sa * d;
+    return w.hazards.some((h) => !h.hidden && h.up !== false && h.type !== 'beam' && dist(x, y, h.x, h.y) < h.r + u.r * 0.5) || w.danger.some((z) => threatens(z, u) && inZone(z, x, y, u.r * 0.5)); };
+  if (!bad(D)) return D;
+  for (let d = D + 10; d <= full * 1.5; d += 10) if (!bad(d) && lineClear(w, u.x, u.y, u.x + ca * d, u.y + sa * d, u.r * 0.6)) return d;
+  for (let d = D - 10; d >= full * 0.25; d -= 10) if (!bad(d)) return d;
+  return D;
+}
+function startHop(u, s, a, D, full, atk = false) {
   const P = u.def.hops, f = clamp(D / full, 0.3, 1.4);
   s.ph = 'crouch'; s.t = 0; s.dur = P * HOP.crouch; s.a = a; s.D = D; s.x0 = u.x; s.y0 = u.y;
   s.airT = P * HOP.air * (0.6 + 0.4 * f); s.sp = D / s.airT; // a short hop is quicker, not slower
-  s.H = (HOP.lift0 + u.r * HOP.lift) * (0.55 + 0.45 * Math.min(1, f));
+  s.H = (HOP.lift0 + u.r * HOP.lift) * (atk ? 0.8 + 0.2 * Math.min(1, f) : 0.55 + 0.45 * Math.min(1, f)); // (a hop onto someone always goes well up: it comes down on them)
 }
 // Its blow: whatever foe it comes down on or bumps into on the way, once a hop (and only with its attack ready).
 function hopContact(w, u, s) {
@@ -914,7 +925,7 @@ function hopContact(w, u, s) {
   }
   if (!any || s.stop) return;
   s.stop = true; u.atkT = u.def.atkCd * rrange(0.9, 1.1); u.lastAttackT = w.time; // it stops dead on them, and bounces back a little
-  u.kx -= Math.cos(s.a) * 70; u.ky -= Math.sin(s.a) * 70;
+  const back = HOP.rebound / Math.sqrt(heavyOf(u)); u.kx -= Math.cos(s.a) * back; u.ky -= Math.sin(s.a) * back; // (so its next blow is a real hop in again)
 }
 
 // ---------------------------------------------------------------- facing
