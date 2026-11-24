@@ -36,6 +36,9 @@ import { ABILITIES3, TRAITS3, ATTACKS3, kit3Tick } from './kits3.js'; // round 1
 // nodes (its damage, heal, statuses) apply while that ability is being used: kitThink sets u.kit.using around use(),
 // and what an ability leaves behind (a zone's ticks, a delayed blow, a ray, a shot) carries the ability with it.
 const abMod = (u, key, ab) => { const k = u && u.kit; if (!k || !k.mods) return 0; const a = k.mods.ab[ab || k.using]; return (a && a[key]) || 0; };
+// (round 16 fix: an ability that queues blows adds to the queue; it used to replace it, so Barrage cast during Frost
+// Arrow's draw threw the frost arrow away. kits2.js after() already worked this way.)
+const pending = (u) => (u.later || []).filter((l) => !l.done);
 function withAb(u, ab, f) {
   if (!ab || !u.kit) return f;
   return (...args) => { const k = u.kit, prev = k.using; k.using = ab; try { return f(...args); } finally { k.using = prev; } };
@@ -160,7 +163,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'ability', 0.4); w.shake = Math.max(w.shake, 7);
       ring(w, u, u.x, u.y, 125, dmgOf(u, 1.2), { knock: 300, heavy: true, stagger: tier >= 2 ? 40 : 0 }, '#E8D8B0');
-      if (tier >= 3) u.later = [{ t: 0.5, f: () => ring(w, u, u.x, u.y, 170, dmgOf(u, 0.6), { knock: 220, stagger: 20 }, '#E8D8B0') }];
+      if (tier >= 3) u.later = [...pending(u), { t: 0.5, f: () => ring(w, u, u.x, u.y, 170, dmgOf(u, 0.6), { knock: 220, stagger: 20 }, '#E8D8B0') }];
     },
   },
   // ----- Archer
@@ -173,7 +176,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       // round 9: a short charge first (the bow drawn, arrows gathering on it: fxkit), then the fan, each arrow at its own speed
       const n = tier >= 2 ? 7 : 5; u.aimT = u.aimMax = 0.42; u.aimCol = tier >= 2 ? '#FF8A3D' : null; u.aimHead = tier >= 2 ? '#FFD45A' : null; // (round 13: the bow is drawn back while it charges: parts.js)
-      u.later = [{ t: 0.4, f: () => {
+      u.later = [...pending(u), { t: 0.4, f: () => {
         const base = t && alive(t) ? ang(u, t) : u.facing; u.aimT = 0; u.recoilT = 0.14; cast(u, 'draw', 0.3);
         for (let i = 0; i < n; i++) shoot(w, u, base + (i - (n - 1) / 2) * 0.08, { kind: tier >= 2 ? 'fireArrow' : 'arrow', speed: 360 + ((i * 3) % n) / (n - 1) * 300, dmg: dmgOf(u, 0.75), st: tier >= 2 ? { burn: 20 } : {}, pierce: tier >= 3 ? 2 : 0 });
       } }];
@@ -186,7 +189,7 @@ export const ABILITIES = {
       // round 13 ("Doesnt charge back bow"): the string and the arrow come back with her hand through the charge
       // (parts.js reads u.aimT), and the loose plays when the arrow goes
       u.aimT = u.aimMax = 0.47; u.aimCol = '#9FB7C8'; u.aimHead = '#BFE9F8';
-      u.later = [{ t: 0.45, f: () => {
+      u.later = [...pending(u), { t: 0.45, f: () => {
         u.aimT = 0; u.recoilT = 0.14; cast(u, 'draw', 0.3);
         shoot(w, u, t && alive(t) ? ang(u, t) : u.facing, { kind: 'shard', speed: 560, dmg: dmgOf(u, 1.9), st: { chill: tier >= 2 ? 110 : 60 },
           land: (p) => { // round 10: "Remove the ice puddle" (the lingering rime it left)
@@ -248,7 +251,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       // round 9: she spins once, throwing the knives one at a time round the circle as she turns
       const n = tier >= 3 ? 12 : 8, T = 0.42, a0 = u.facing; setAnim(u, 'spin', T); u.spin = { t0: w.time, dur: T, dir: 1 };
-      u.later = [];
+      u.later = pending(u);
       for (let i = 0; i < n; i++) u.later.push({ t: (i + 0.5) / n * T, f: () => shoot(w, u, a0 + (i + 0.5) / n * TAU, { kind: 'dagger', speed: 520, life: 0.45, dmg: dmgOf(u, 1.8), st: tier >= 2 ? { poison: 25 } : {}, pierce: tier >= 3 ? 1 : 0 }) });
     },
   },
@@ -277,7 +280,7 @@ export const ABILITIES = {
       // round 9: she spins round with the sword out (render.js u.spin), the blade's circle trailing it
       const spin = () => { setAnim(u, 'spin', 0.36); u.spin = { t0: w.time, dur: 0.36, dir: 1 }; fx(w, { type: 'ring', x: u.x, y: u.y, r: CLEAVE_R(u, tier), color: '#FFFFFF', max: 0.36, a: u.facing, unit: u });
         for (const e of foesNear(w, u, u.x, u.y, CLEAVE_R(u, tier))) hurt(w, e, dmgOf(u, 2.3), u, { knock: tier >= 2 ? 220 : 90, kAngle: ang(u, e) }); };
-      spin(); if (tier >= 3) u.later = [{ t: 0.35, f: spin }];
+      spin(); if (tier >= 3) u.later = [...pending(u), { t: 0.35, f: spin }];
     },
   },
   // ----- Berserker
@@ -289,7 +292,7 @@ export const ABILITIES = {
       // front that runs out along the floor from the slam, fanning wider, hits what it passes once and shoves it on.
       const a = ang(u, t), n = tier >= 2 ? 5 : 3; u.facing = a; cast(u, 'ability', 0.4); w.shake = Math.max(w.shake, 5);
       const ox = u.x + Math.cos(a) * (u.r + 12), oy = u.y + Math.sin(a) * (u.r + 12);
-      u.later = [];
+      u.later = pending(u);
       for (let i = 0; i < n; i++) u.later.push({ t: 0.12 + 0.2 * i, f: () => shockFront(w, u, ox, oy, a, tier) });
     },
   },
@@ -330,7 +333,7 @@ export const ABILITIES = {
       cast(u, 'throw', 0.5);
       // round 9: the hook flies out slower (it bites at 0.3s), pulls much harder and always staggers (harder from II)
       for (const e of far) fx(w, { type: 'beam', x1: u.x, y1: u.y, x2: e.x, y2: e.y, kind: 'drain', max: 0.85, hookTo: e, hookFrom: u });
-      u.later = [{ t: 0.3, f: () => { for (const e of far) { if (!alive(e)) continue;
+      u.later = [...pending(u), { t: 0.3, f: () => { for (const e of far) { if (!alive(e)) continue;
         const a = angleTo(e.x, e.y, u.x, u.y), d = dist(u.x, u.y, e.x, e.y) - u.r - e.r - 6;
         e.kx += Math.cos(a) * d * 5.4 / Math.max(1, Math.sqrt(e.mass)); e.ky += Math.sin(a) * d * 5.4 / Math.max(1, Math.sqrt(e.mass));
         hurt(w, e, dmgOf(u, 1.9), u, { noDodge: true, stagger: tier >= 2 ? 70 : 40 });
@@ -343,7 +346,7 @@ export const ABILITIES = {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range + 40 && !blocked(w, u.x, u.y, t.x, t.y) ? 0.3 + 0.3 * foesNear(w, u, t.x, t.y, 90).length : 0),
     use(w, u, t, tier) {
       cast(u, 'cast', 0.75); // round 9: a short charge up (the fire gathering in her hands: fxkit), then the throw
-      u.later = [{ t: 0.4, f: () => shoot(w, u, t && alive(t) ? ang(u, t) : u.facing, { kind: 'fireball', speed: 300, r: 10, dmg: dmgOf(u, 1.2), st: { burn: 25 }, land: (p) => {
+      u.later = [...pending(u), { t: 0.4, f: () => shoot(w, u, t && alive(t) ? ang(u, t) : u.facing, { kind: 'fireball', speed: 300, r: 10, dmg: dmgOf(u, 1.2), st: { burn: 25 }, land: (p) => {
         explode(w, p.x, p.y, tier >= 3 ? 110 : 80, dmgOf(u, 1.6), { burn: 35 }, u, '#FF8A3D');
         if (tier >= 2) zone(w, { x: p.x, y: p.y, r: 55, dur: 4, kind: 'fire', src: u, every: 0.3, tick(z) { for (const e of foesNear(w, u, z.x, z.y, z.r)) addStatus(w, e, 'burn', 12, u); } });
       } }) }];
@@ -386,7 +389,7 @@ export const ABILITIES = {
       // round 9: a charge up (cold drawn into her: fxkit), the burst, and snow and a cold rime that linger
       cast(u, 'ability', 0.8);
       const r = tier >= 2 ? 150 : 110;
-      u.later = [{ t: 0.35, f: () => {
+      u.later = [...pending(u), { t: 0.35, f: () => {
         fx(w, { type: 'ring', x: u.x, y: u.y, r, color: '#BFEFFF', max: 0.5 });
         fx(w, { type: 'zone', kind: 'snow', x: u.x, y: u.y, r: r * 0.9, max: 2.6 });
         for (const e of foesNear(w, u, u.x, u.y, r)) { hurt(w, e, dmgOf(u, 1.2), u, { noDodge: true, knock: 0 }); addStatus(w, e, 'chill', 140, u); if (tier >= 3) e.frozenBonus = 2; }
@@ -456,7 +459,7 @@ export const ABILITIES = {
       cast(u, 'throw', 0.6);
       const jumps = tier >= 2 ? 6 : 4, n = tier >= 3 ? 3 : 1;
       const first = [t, ...opponents(w, u).filter((e) => e !== t && dist(u.x, u.y, e.x, e.y) < u.def.range + 60 && !blocked(w, u.x, u.y, e.x, e.y)).sort((a, b) => dist(t.x, t.y, a.x, a.y) - dist(t.x, t.y, b.x, b.y))];
-      u.later = [];
+      u.later = pending(u);
       for (let i = 0; i < n; i++) u.later.push({ t: 0.08 + i * 0.15, f: () => {
         const e = alive(first[i % first.length]) ? first[i % first.length] : t; if (!alive(e)) return;
         const a = ang(u, e), x = u.x + Math.cos(a) * (u.r + 8), y = u.y + Math.sin(a) * (u.r + 8);
@@ -551,7 +554,7 @@ export const ABILITIES = {
       // round 9: a summoning ring on the ground first, then the wolf steps out of it (not instant)
       const spots = []; for (let i = 0; i < (tier >= 3 ? 2 : 1); i++) { const a = u.facing + (i ? -1 : 1) * 0.9; spots.push({ x: clamp(u.x + Math.cos(a) * 60, 30, w.W - 30), y: clamp(u.y + Math.sin(a) * 60, 30, w.H - 30) }); }
       for (const p of spots) fx(w, { type: 'zone', kind: 'summon', x: p.x, y: p.y, r: 34, max: 1.1 });
-      u.later = [{ t: 0.7, f: () => { for (const p of spots) {
+      u.later = [...pending(u), { t: 0.7, f: () => { for (const p of spots) {
         const s = spawn(w, 'wolf', p.x, p.y, { team: u.team, scale: tier >= 2 ? 1.25 : 1, hpMul: tier >= 2 ? 1.25 : 1 });
         s.summon = true; s.summonBy = u; s.lifeT = 12; s.aggro = true; s.dmgMul = u.dmgMul * (tier >= 2 ? 1 : 0.8);
       } } }];
@@ -735,14 +738,14 @@ const ATTACKS = {
     // they stop"): all three leave the one point at her hands, 45 degrees apart, and curve in; an orb that meets a friend
     // heals it a little and ends there
     const volley = new Map();
-    u.later = [0, 1, 2].map((i) => ({ t: i * 0.1, f: () => {
+    u.later = [...pending(u), ...[0, 1, 2].map((i) => ({ t: i * 0.1, f: () => {
       const tt = t && alive(t) ? t : null, aim = tt ? ang(u, tt) : a, hp = { x: u.x + Math.cos(aim) * (u.r + 6), y: u.y + Math.sin(aim) * (u.r + 6) };
       const p = shoot(w, u, aim + (i - 1) * Math.PI / 4, { kind: 'orb', speed: 210, r: 5, life: 2, dmg: A(u, 0.34), knock: 10, color: '#FFF1B0',
         extra: { home: t, turn: 2.6, allyHit: (w2, p2, f) => { heal(w2, f, p2.dmg * 0.6, u); f.mendGlow = w2.time + 0.3; p2.life = 0;
           w2.particles.push({ x: p2.x, y: p2.y, vx: 0, vy: 0, rise: 40, up: 0, life: 0.6, max: 0.6, size: 4.5, color: '#9BE07A', shape: 'plus' }); },
           onHit: (w2, p2, e) => { const n = (volley.get(e) || 0) + 1; volley.set(e, n); if (n === 3) addStatus(w2, e, 'radiance', 25, u); } } });
       p.x = hp.x; p.y = hp.y;
-    } }));
+    } }))];
   },
   // four notes in a spread, slower, all of them going through
   bard(w, u, t, a) {
@@ -922,7 +925,7 @@ function fireAbility(w, u, best) {
   k.using = best.id;
   try { tagAbility(w, u, best.id, k.tiers[best.id], () => ABILITIES[best.id].use(w, u, u.target, k.tiers[best.id])); } finally { k.using = null; } // fxtag.js: each ability drawn in its own look
   // what the ability left to happen later keeps its ability (its damage, heal and status nodes)
-  if (u.later && u.later !== hadLater) for (const l of u.later) if (!l.ab) { l.ab = best.id; l.f = withAb(u, best.id, l.f); }
+  if (u.later && u.later !== hadLater) { const was = new Set(hadLater || []); for (const l of u.later) if (!l.ab && !was.has(l)) { l.ab = best.id; l.f = withAb(u, best.id, l.f); } } // (only what this cast queued: the queue keeps what was already waiting)
   if (u.rays && u.rays !== hadRays) for (const r of u.rays) if (!r.ab) r.ab = best.id;
   cue('ability', u, best.id);
 }

@@ -96,7 +96,7 @@ function brain(w, u, dt) {
     for (let i = 0; i < n; i++) {
       const h = hs[i % hs.length], off = i < hs.length ? 0 : rrange(60, 140), a = rand() * TAU;
       const x = clamp(h.x + (h.vx || 0) * 0.4 + Math.cos(a) * off, 40, w.W - 40), y = clamp(h.y + (h.vy || 0) * 0.4 + Math.sin(a) * off, 40, w.H - 40);
-      addDanger(w, { shape: 'circle', x, y, r: EE.branch.r, t: EE.branch.tell * K + i * 0.12, team: u.team, src: null, kind: 'bone', hit: hit({ dmg: EE.branch.dmg * u.dmgMul, stagger: EE.branch.stagger, knock: 120 }),
+      addDanger(w, { shape: 'circle', x, y, r: EE.branch.r, t: EE.branch.tell * K + i * 0.12, team: u.team, src: null, by: u, kind: 'bone', hit: hit({ dmg: EE.branch.dmg * u.dmgMul, stagger: EE.branch.stagger, knock: 120 }),
         onFire: (w2, z) => { puff(w2, z.x, z.y, '#7A5A3A', 12, 140, 6, 0.5); sparks(w2, z.x, z.y, rand() * TAU, 3, '#C9A27A'); w2.shake = Math.max(w2.shake, 3); } });
     }
     setAnim(u, 'cast', 0.7); beginHold(u, 0.6, at);

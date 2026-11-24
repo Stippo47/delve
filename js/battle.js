@@ -62,6 +62,7 @@ export const homeOf = (() => { let map = null; return (kind) => {
 export const isHero = (k) => !!HEROES[k];
 export const isBoss = (k) => !!(DEFS[k] && DEFS[k].boss);
 export const canRank = (k) => !isHero(k) && !isBoss(k) && !(DEFS[k] && DEFS[k].noElite);
+export const isTrap = (k) => !!(DEFS[k] && DEFS[k].trap);
 export const countOf = (list) => list.reduce((a, s) => a + s.n, 0);
 
 // What's wrong with a setup, as a sentence, or null. Stacks that can't be fielded any more (a hero sold, a save from
@@ -69,6 +70,8 @@ export const countOf = (list) => list.reduce((a, s) => a + s.n, 0);
 export function setupProblem(setup) {
   if (!countOf(setup.a) || !countOf(setup.b)) return 'Each side needs someone.';
   if (setup.a.some((s) => isBoss(s.k)) && setup.b.some((s) => isBoss(s.k))) return 'Bosses can only be on one side.';
+  // round 16 fix: a trap (the Saw Blade) can't be hit, so it never counts as standing; a side of only traps lost at once
+  if (['a', 'b'].some((sd) => setup[sd].every((s) => isTrap(s.k)))) return "A trap can't hold a side alone: add a fighter.";
   return null;
 }
 export function cleanSetup(save, setup) {
@@ -134,7 +137,11 @@ export function newBattle(save, setupIn) {
   return run;
 }
 
-const fighting = (u) => alive(u) && !(u.linkTo && u.def.segment) && !(u.partOf && u.partOf.bodies) && (!u.ethereal || (u.bur && u.bur.state === 'under')); // (round 15, the Mob: its four bodies are one fighter, its lead) // (round 13, lane E: one under the sand is still in it: a lone sand serpent or scarab going under ended the fight; a chain's links are its head's, not more of it)
+// Round 16 fix: out of sight is not out of the fight. A hero (anything with a kit) that goes ethereal (Burrow, Broom
+// Ride, Call the Flock, Bush, the Shade's Shadow Walk, Blackout and Fade) and a foe the Digger buried are still in it:
+// a lone one going under used to end the battle on the spot. Traps (the Saw Blade) never count: they can't be hit.
+const outOfSight = (u) => !!(u.kit || u.buried || (u.bur && u.bur.state === 'under'));
+const fighting = (u) => alive(u) && !u.def.trap && !(u.linkTo && u.def.segment) && !(u.partOf && u.partOf.bodies) && (!u.ethereal || outOfSight(u)); // (round 15, the Mob: its four bodies are one fighter, its lead) // (round 13, lane E: one under the sand is still in it: a lone sand serpent or scarab going under ended the fight; a chain's links are its head's, not more of it)
 export const sideOf = (w, u) => (w.battle ? w.battle.side[u.trueTeam || u.team] || null : null); // (round 13: a charmed or befuddled unit still belongs to its own side)
 // Everyone still standing on a side (what it called up mid-fight too).
 export function standing(run, side) { const w = run.world; return w.units.filter((u) => fighting(u) && sideOf(w, u) === side); }

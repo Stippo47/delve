@@ -47,7 +47,7 @@ function boomSpear(w, u, a, o = {}) {
 // A bomb with a lit fuse: lobbed, it lands and sits a moment (a circle on the floor) before it blows.
 function fuseBomb(w, u, x, y, o = {}) {
   lob(w, u, x, y, { r: 18, tell: o.fly || 0.7, proj: 'vial', color: '#3A3236', kind: 'fire', dust: '#5A4A40', spawns: true,
-    land: (w2, z) => addDanger(w2, { shape: 'circle', x: z.x, y: z.y, r: o.r || 72, t: o.fuse || 1.0, team: u.team, src: null, kind: 'fire', spawns: true,
+    land: (w2, z) => addDanger(w2, { shape: 'circle', x: z.x, y: z.y, r: o.r || 72, t: o.fuse || 1.0, team: u.team, src: null, by: u, kind: 'fire', spawns: true,
       hit: { dmg: (o.dmg || 14) * u.dmgMul, knock: 300, heavy: true, burn: o.burn || 0 },
       onFire: (w3, q) => { explode(w3, q.x, q.y, 4, 0, { burn: 1 }, null, '#FF8A3D'); w3.shake = Math.max(w3.shake, 5); } }) });
 }

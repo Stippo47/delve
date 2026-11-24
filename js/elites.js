@@ -150,7 +150,7 @@ export const crowd = (w, team) => w.units.reduce((n, o) => n + (o.team === team 
 export function lob(w, u, x, y, o = {}) {
   const tell = (o.tell || 0.9) * windMul(u), a = angleTo(u.x, u.y, x, y), d = dist(u.x, u.y, x, y); // (round 14: a sleepy thrower's lob hangs longer)
   x = clamp(x, 30, w.W - 30); y = clamp(y, 30, w.H - 30);
-  addDanger(w, { shape: 'circle', x, y, r: o.r || 60, t: tell, team: u.team, src: null, kind: o.kind || 'bone', spawns: !!o.spawns,
+  addDanger(w, { shape: 'circle', x, y, r: o.r || 60, t: tell, team: u.team, src: null, by: u, kind: o.kind || 'bone', spawns: !!o.spawns,
     hit: hitOf(u, o.hit), onFire: (w2, z) => { if (o.dust !== false) puff(w2, x, y, o.dust || '#CDBFA6', 10, 120, 6, 0.4); if (o.land) o.land(w2, z); } });
   if (o.proj) w.projectiles.push({ kind: o.proj, color: o.color, x: u.x + Math.cos(a) * u.r, y: u.y + Math.sin(a) * u.r, vx: Math.cos(a) * d / tell, vy: Math.sin(a) * d / tell,
     r: o.pr || 8, team: u.team, owner: u, dmg: 0, o: {}, life: tell * 0.98, a, noHit: true, big: o.big });

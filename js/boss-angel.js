@@ -68,7 +68,7 @@ function flare(w, x, y) { puff(w, x, y, GOLD, 16, 180, 7, 0.6); for (let i = 0; 
 // ---- Smite: a pillar of light on a hero
 function smite(w, u, k, t) {
   if (!t) return; const S = AN.smite, p = lead(t, 0.5), q = inside(w, p.x, p.y, 40);
-  addDanger(w, { shape: 'circle', x: q.x, y: q.y, r: S.r, t: S.tell, team: u.team, src: null, kind: 'holy', hit: H(u, { dmg: S.dmg, radiance: S.glow, knock: 90 }),
+  addDanger(w, { shape: 'circle', x: q.x, y: q.y, r: S.r, t: S.tell, team: u.team, src: null, by: u, kind: 'holy', hit: H(u, { dmg: S.dmg, radiance: S.glow, knock: 90 }),
     onFire: (w2, z) => { fx(w2, { type: 'pillar', x: z.x, y: z.y, r: z.r * 0.7, kind: 'holy', max: 0.55 }); } });
   k.cast = Math.max(k.cast || 0, 0.5);
 }

@@ -139,7 +139,7 @@ function imageBrain(w, m, dt) {
 }
 function shatterImage(w, m) {
   const q = m.imageOf; if (!q || !alive(q)) return; // (images going down with her don't burst)
-  addDanger(w, { shape: 'circle', x: m.x, y: m.y, r: WQ.image.shatter, t: 0.5, team: m.team, src: null, kind: 'ice', quiet: true, hit: { dmg: WQ.image.shDmg * q.dmgMul, chill: 30, knock: 160 },
+  addDanger(w, { shape: 'circle', x: m.x, y: m.y, r: WQ.image.shatter, t: 0.5, team: m.team, src: null, by: m, kind: 'ice', quiet: true, hit: { dmg: WQ.image.shDmg * q.dmgMul, chill: 30, knock: 160 },
     onFire: (w2, z) => bfx(w2, { type: 'frostBurst', x: z.x, y: z.y, r: z.r, max: 0.7, seed: m.id }) });
   bfx(w, { type: 'mirrorBreak', x: m.x, y: m.y, max: 0.6, seed: m.id });
 }

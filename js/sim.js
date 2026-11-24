@@ -11,6 +11,11 @@ import { MOB, bindBody, bodiesOf, mobMid, mobSlot, mobLead } from './mob.js'; //
 import { tallyHurt, tallyHeal, tallyDown, noteStatus, tallyBlock, AUDIT } from './stats.js';
 
 let NEXT_ID = 1;
+// Round 16 fix: unit ids feed some movement (the wander and spacing wobble), so a fight only replays from its seed if its
+// ids start from the same number: battle mode and every dungeon room start them again (dungeon.js battleRoom, the room
+// build). A unit carried into a new room (a charmed follower) takes a fresh id there (nextId).
+export function resetIds(from = 1) { NEXT_ID = from; }
+export const nextId = () => NEXT_ID++;
 let arcing = false; // an overload's arcs are landing (addStatus)
 const DIRS = 16;
 const DIR_X = [], DIR_Y = [];
@@ -432,7 +437,7 @@ function dangerTick(w, dt) {
     if (z.t > 0 || z.done) continue;
     z.done = true;
     if (z.src && (z.src.dead || z.src.downed)) { z.cancelled = true; continue; }
-    if (z.hit) for (const o of w.units) if (alive(o) && o.team !== z.team && inZone(z, o.x, o.y, o.r * 0.5)) hurt(w, o, z.hit.dmg, z.src || null, { noDodge: true, ...z.hit });
+    if (z.hit) for (const o of w.units) if (alive(o) && o.team !== z.team && inZone(z, o.x, o.y, o.r * 0.5)) hurt(w, o, z.hit.dmg, z.src || null, { noDodge: true, ...z.hit, by: z.src ? undefined : z.by }); // (round 16 fix: a lobbed zone has no src on purpose, so it lands even if its thrower falls; by names the thrower, so its blow and statuses count for it)
     if (z.onFire) actAs(w, z.src || z.by, () => z.onFire(w, z));
   }
   w.danger = w.danger.filter((z) => z.t > -0.3);
@@ -1002,7 +1007,7 @@ export function hurt(w, u, amount, src, o = {}) {
     u.kx += Math.cos(a) * k; u.ky += Math.sin(a) * k;
   }
   if (!o.dot && u.st.bleed > 0) u.bleedHoldT = BLEED.holdT; // bleeding: every blow keeps it from wearing off (round 13)
-  for (const s of BUILD_IDS) if (o[s]) addStatus(w, u, s, o[s], src, true);
+  for (const s of BUILD_IDS) if (o[s]) addStatus(w, u, s, o[s], src, true, src ? null : o.by); // (round 16: by, who a sourceless blow's statuses count for)
   if (!o.dot && src && u.def.struck && alive(u)) u.def.struck(w, u, src, amt, o); // an enemy that answers a blow (round 13: the Succubus)
   if (!o.dot && src && src !== u && src.team !== u.team && alive(src)) for (const b of u.buffs) if (b.charmBack) addStatus(w, src, 'charm', b.charmBack, u); // round 13: the Enchantress's Sweetheart
   if (src && src.hitBurn && !o.dot && src !== u) addStatus(w, u, 'burn', src.hitBurn, src); // round 9: a burning Elder Ent's every blow burns
@@ -1013,7 +1018,7 @@ export function hurt(w, u, amount, src, o = {}) {
   return amt;
 }
 
-export function addStatus(w, u, type, amount, src, fromBlow) {
+export function addStatus(w, u, type, amount, src, fromBlow, credit = null) { // (credit: who it counts for when src is null on purpose: a lob's thrower)
   if (!alive(u) || u.ethereal || immuneTo(u, type)) return;
   // round 15 (the Mob): a status lands on the hero whichever body it caught (its bursts hold all four); one cloud or
   // one pool of fire that several bodies stand in builds in full for the first and MOB.share for each more (a blow's
@@ -1023,20 +1028,20 @@ export function addStatus(w, u, type, amount, src, fromBlow) {
     if (!fromBlow) { const by = src || null, m = l.stAt || (l.stAt = {}); if (m[type] === w.time && l.stBy0 === by) amount *= MOB.share; else { m[type] = w.time; l.stBy0 = by; } }
     u = l;
   }
-  if (u.linkTo) { if (alive(u.linkTo)) addStatus(w, u.linkTo, type, amount * (u.def.segTaken ?? 0.6), src); return; } // a chain's segment: its head takes it
+  if (u.linkTo) { if (alive(u.linkTo)) addStatus(w, u.linkTo, type, amount * (u.def.segTaken ?? 0.6), src, undefined, credit); return; } // a chain's segment: its head takes it
   if (type === 'radiance' && (u.radiantT > 0 || u.radImmuneT > 0)) return; // glowing, or just was: its own aura can't feed it
   if (type === 'entangle' && u.tangleImmuneT > 0) return; // held fast already (an entangle root), or just got free
   if (NEW_BURSTS.has(type) && u[type + 'ImmuneT'] > 0) return; // round 13: just burst
   if (type === 'charm' && (u.flipKind === 'charm' || charmProof(u))) return; // enthralled already; round 14: "Bosses immune to charm"
   const res = (u.def.res && u.def.res[type]) ?? 1;
   const s = u.st;
-  noteStatus(u, type, src); // its ticks and bursts count for whoever put it on (stats.js)
+  noteStatus(u, type, src || credit); // its ticks and bursts count for whoever put it on (stats.js)
   if (type === 'chill' && s.wet > 30) amount *= 1.5;          // wet freezes easier
   if (type === 'shock' && s.wet > 30 && src) for (const h of hooksOf(src)) if (h.shockMul) amount *= h.shockMul;
   s[type] = (s[type] || 0) + amount * res;
-  if (AUDIT.on) AUDIT.on('status', w, u, src, amount * res, { type }); // (round 16: tools/audit)
+  if (AUDIT.on) AUDIT.on('status', w, u, src || credit, amount * res, { type }); // (round 16: tools/audit)
   const need = needOf(u, type), after = STATUS[type].after;
-  const burst = () => { (u.bursts || (u.bursts = {}))[type] = w.time; if (AUDIT.on) AUDIT.on('burst', w, u, src, 0, { type }); }; // the HUD ring flashes when it bursts
+  const burst = () => { (u.bursts || (u.bursts = {}))[type] = w.time; if (AUDIT.on) AUDIT.on('burst', w, u, src || credit, 0, { type }); }; // the HUD ring flashes when it bursts
   if (type === 'wet') {
     s.poison *= 0.5;                                             // water washes poison off
     if (s.wet >= need) {                                         // soaked through: slips, spins, leaves a puddle

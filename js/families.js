@@ -277,6 +277,6 @@ export function blast(w, u, o) {
 }
 // A shot that falls from above where the target stands (a mortar shell, an icicle): a circle shows where it lands.
 export function dropOn(w, u, x, y, o = {}) {
-  addDanger(w, { shape: 'circle', x: clamp(x, 30, w.W - 30), y: clamp(y, 30, w.H - 30), r: o.r || 50, t: o.tell || 1.0, team: u.team, src: null, kind: o.kind || 'ice',
+  addDanger(w, { shape: 'circle', x: clamp(x, 30, w.W - 30), y: clamp(y, 30, w.H - 30), r: o.r || 50, t: o.tell || 1.0, team: u.team, src: null, by: u, kind: o.kind || 'ice',
     hit: { ...(o.hit || {}), dmg: (o.hit && o.hit.dmg || 8) * u.dmgMul }, onFire: (w2, z) => { if (o.land) o.land(w2, z); } });
 }
