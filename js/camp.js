@@ -13,7 +13,7 @@ import { HEROES, HERO_IDS } from './heroes.js';
 import * as P from './progress.js';
 import * as M from './meta.js';
 import * as STOCK from './stock.js';
-import { writeSave } from './save.js';
+import { writeSave, resetSave } from './save.js';
 import { icon } from './icons.js';
 import { trinketFun, POTION_FUN } from './bestiary.js';
 import { openBook, closeBook, bookOpen } from './book.js';
@@ -44,6 +44,7 @@ let heroId = null, heroPage = 'main', heroFrom = 'ground';
 let pickHero = null;        // picked in the fire's list, waiting for a seat
 let mapPick = null;         // { theme, floor } picked on the trail
 let sheet = null;
+let resetArmed = false; // the account reset needs a second tap
 let potionFor = {};         // { heroId: [potionId...] } handed out for the next run
 let ticker = 0;
 
@@ -249,6 +250,7 @@ function bookView() {
 
 // ================================================================ settings
 function settingsView() {
+  resetArmed = false; // a redraw always shows the unarmed button
   const looks = (list, cur, act, swatch) => `<div class="looks">${list.map((l) => `<button class="look ${String(cur) === String(l.id) ? 'on' : ''}" data-act="${act}:${l.id}">
     <span class="lk-sw">${swatch(l)}</span><b>${l.name}</b><span class="quiet small">${l.blurb || ''}</span></button>`).join('')}</div>`;
   const envSw = (l) => `<i style="background:${['#B9B5B2', '#C7C1B4', '#6A6070', '#B8A890'][l.id - 1]}"></i><i style="background:${['#8E8D96', '#9C9488', '#2E2836', '#8E7860'][l.id - 1]}"></i>`;
@@ -261,8 +263,19 @@ function settingsView() {
       <div role="button" class="rowbtn ${save.cheat ? 'on' : ''}" data-act="cheat"><div><b>Unlimited gold and points</b><span class="quiet small">Everything is free, every dungeon is open and the Book shows every monster. Your real purse is kept for when you switch it off.</span></div><span class="switch"><i></i></span></div>
       <div role="button" class="rowbtn ${showAll() ? 'on' : ''}" data-act="webAll"><div><b>Show the whole skill web</b><span class="quiet small">Every node, even ones far from what a hero knows.</span></div><span class="switch"><i></i></span></div>
       <div role="button" class="rowbtn ${save.battleDev ? 'on' : ''}" data-act="battleDev"><div><b>Battle: field everything</b><span class="quiet small">Every hero and monster can be picked on the battle page, beaten or not.</span></div><span class="switch"><i></i></span></div></section>
+    <section class="group"><h3 class="cap">Account</h3>
+      <button class="btn wide" data-act="reset" id="resetBtn">Reset account</button>
+      <p class="quiet small" id="resetNote">Start over from nothing. Sound and look settings are kept.</p></section>
     <p class="faint small version">Delve · camp ground (round 9)</p></div>`;
   return { title: 'Settings', html, cls: 'p-focus p-list' };
+}
+
+// The reset button changes in place (a redraw would scroll the settings back to the top).
+function showReset() {
+  const b = document.getElementById('resetBtn'), n = document.getElementById('resetNote'); if (!b || !n) return;
+  b.classList.toggle('danger', resetArmed);
+  b.textContent = resetArmed ? 'Tap again to wipe everything' : 'Reset account';
+  n.textContent = resetArmed ? 'Every hero, all gold, trinkets and progress go. There is no undo.' : 'Start over from nothing. Sound and look settings are kept.';
 }
 
 // ================================================================ sheets
@@ -388,6 +401,7 @@ function onClick(e) {
     case 'hpstyle': LOOKS.setHpStyle(arg); cue('tap'); render(); break;
     case 'cheat': save.cheat = !save.cheat; ok(); break;
     case 'battleDev': save.battleDev = !save.battleDev; cue('tap'); ok(); break;
+    case 'reset': if (!resetArmed) { resetArmed = true; cue('tap'); showReset(); setTimeout(() => { resetArmed = false; showReset(); }, 5000); } else { resetSave(); location.reload(); } break;
     case 'webAll': setShowAll(!showAll()); cue('tap'); render(); break;
     case 'closesheet': closeSheet(); break;
     case 'home': closeResult(); break;
