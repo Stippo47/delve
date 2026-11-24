@@ -2,7 +2,7 @@
 import { TAU, clamp, dist, dist2, angleTo, wrapAngle, angleDiff, rand, rrange, rint, chance, softmaxPick } from './util.js';
 import { DEFS, FEEL, levelHp, levelDmg } from './units.js';
 import { lineClear, pathClear, rayToRoundRect, circleRect, findPath, buildGrid } from './path.js';
-import { kitThink, kitTick, hooksOf, segDist, heroAttack, kitReady, kitFireRandom, kitSetBack } from './kits.js';
+import { kitThink, kitReflex, kitTick, hooksOf, segDist, heroAttack, kitReady, kitFireRandom, kitSetBack } from './kits.js';
 import { trinketHooks } from './trinkets.js';
 import { cue } from './sfx.js';
 import { ARMOUR_CAP, ENEMY_ARMOUR, armourCut } from './armour.js';
@@ -1904,7 +1904,7 @@ export function step(w, dt) {
     else if (u.addledT > 0) { if (!body && addledTick(w, u, dt)) continue; } // (addled: its abilities only go off by themselves, at random)
     else if (flail(w, u, dt)) continue;
     else if (body) { /* round 15 (the Mob): the abilities are the lead's to use */ }
-    else if (u.kit) { u.abilThinkT -= dt; if (u.abilThinkT <= 0) { u.abilThinkT = 0.35; if (kitThink(w, u)) continue; } }
+    else if (u.kit) { u.abilThinkT -= dt; if (u.abilThinkT <= 0) { u.abilThinkT = 0.35; if (kitThink(w, u)) continue; } else if (kitReflex(w, u)) continue; } // (round 16 fixes: a ready dodge is checked every step: kits.js kitReflex)
     else if (u.def.ability && u.abilT <= 0 && !u.forcedGoal) {
       u.abilThinkT -= dt;
       if (u.abilThinkT <= 0) {
