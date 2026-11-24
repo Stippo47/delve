@@ -115,12 +115,11 @@ function inCell(w, cell, r, m = 110) {
   return placeFree(w, r, x0, Math.max(x0 + 10, x1), cell.y + m, cell.y + cell.h - m);
 }
 
-// What an enemy is worth from a room's budget, and the group size small things come in (enemies.js defs carry
-// cost/pack; these are for the older kinds in units.js).
-const OLD_COST = { rat: 1, slime: 2, slimeSmall: 1, skeleton: 3 }, OLD_PACK = { rat: [2, 4] };
-const costOf = (k) => DEFS[k].cost ?? OLD_COST[k] ?? 3;
-setCostOf((k) => (DEFS[k] ? costOf(k) : 3));
-const packOf = (k) => DEFS[k].pack || OLD_PACK[k] || null;
+// What an enemy is worth from a room's budget, and the group size small things come in: every kind's own, from
+// prices.js (round 17; the older kinds' fallback table is gone). A kind with no price (a summon) counts as 3.
+export const costOf = (k) => (DEFS[k] && DEFS[k].cost) ?? 3;
+setCostOf(costOf);
+const packOf = (k) => DEFS[k].pack || null;
 // What a group is made of: kinds from the theme's roster for this floor, spending `budget`. harder: now and then
 // a kind from the next floor's roster (later waves bring heavier things).
 function rollKinds(run, budget, harder = 0) {
@@ -137,15 +136,50 @@ function rollKinds(run, budget, harder = 0) {
   }
   return kinds;
 }
-function enemyPack(w, run, budget, cell) {
+// Round 17 (the designer: "Does each room have a value and when it spawns enemies does it take from that value pool? If
+// so do you make elites and majors worth more?"): an elite takes its kind's cost x3 from the room's budget and a major
+// x7, the same as the XP they give. A group's kinds are rolled first as plain ones; then each may turn elite or major
+// (eliteP / majorP), and what that costs on top is paid with the group's other plain ones (the last rolled go first). What
+// a group can't pay the room owes, and its next wave comes that much smaller; the last wave, a treasure room and a boss's
+// adds can't owe, so there a major that doesn't fit comes as an elite, and an elite that doesn't fit as a plain one. The
+// elite room's own elites, the mini-bosses and ?elites / ?majors (testing) cost nothing.
+export const RANK_COST = [1, 3, 7];
+const PAY_SLACK = 0.5; // (a part-point short still pays)
+const canRank = (k) => !DEFS[k].boss && !DEFS[k].noElite;
+function takeRanks(kinds, o) {
+  const g = kinds.map((k) => ({ k, rank: 0 }));
+  let owe = o.owe || 0;
+  while (owe > PAY_SLACK && g.length > 1) owe -= costOf(g.pop().k); // what an earlier group couldn't pay
+  let owed = Math.max(0, owe);
+  for (let i = 0; i < g.length; i++) {
+    if (!canRank(g[i].k)) continue;
+    const r0 = chance(o.major) ? 2 : chance(o.elite) ? 1 : 0;
+    for (let r = r0; r > 0; r--) {
+      if (o.free) { g[i].rank = r; break; }
+      let extra = (RANK_COST[r] - 1) * costOf(g[i].k);
+      const gone = [];
+      for (let j = g.length - 1; j >= 0 && extra > PAY_SLACK; j--) if (j !== i && !g[j].rank) { extra -= costOf(g[j].k); gone.push(j); }
+      if (extra > PAY_SLACK && !o.credit) continue; // can't be paid for here: one rank down
+      g[i].rank = r;
+      for (const j of gone) { g.splice(j, 1); if (j < i) i--; } // (gone runs high to low, so the indices hold)
+      if (extra > PAY_SLACK) owed += extra; // (on the room's slate: its next wave pays)
+      break;
+    }
+  }
+  g.owed = owed; g.bodies = kinds.length;
+  return g;
+}
+const rankOpts = (r) => (r >= 2 ? { major: true } : r === 1 ? { elite: true } : {});
+const freeRanks = () => debugParam('elites') != null || debugParam('majors') != null;
+function enemyPack(w, run, budget, cell, odds) {
   const c = inCell(w, cell, 40, 150);
-  const kinds = rollKinds(run, budget);
-  for (const k of kinds) {
+  const g = takeRanks(rollKinds(run, budget), odds);
+  for (const { k, rank } of g) {
     const p = placeFree(w, DEFS[k].r, c.x - 170, c.x + 170, Math.max(DEFS[k].r + 20, c.y - 160), Math.min(w.H - DEFS[k].r - 20, c.y + 160));
-    const u = foe(w, run, k, p.x, p.y, {}, eliteP(run), majorP(run));
+    const u = foe(w, run, k, p.x, p.y, rankOpts(rank));
     u.facing = u.mvA = angleTo(p.x, p.y, w.doorIn.x, w.doorIn.y); // facing the way the party comes in
   }
-  return kinds.length;
+  return g;
 }
 
 // One enemy, maybe an elite (its kind's extra move on top of its kit, 2-3x as strong, 1.5x as fast, bigger; elites.js
@@ -195,12 +229,19 @@ function arm(u, n) {
 // Harder dungeons and deeper floors pay better.
 const goldMul = (run) => 1 + 0.25 * rankOf(run) + 0.15 * (run.floor - 1);
 // How likely any one enemy is to be an elite (designer, round 7: "have elites show up more often"): more on deeper
-// floors, in harder dungeons and in later waves.
-// (testing: ?elites makes every enemy an elite)
-const eliteP = (run, wave = 0) => (debugParam('elites') != null ? 1 : Math.min(0.32, 0.05 + 0.03 * (run.floor - 1) + 0.015 * rankOf(run) + 0.025 * wave));
-// A major (round 9: "Majors can appear on any floor"): rare, a little more often deeper and in later waves (?majors
-// makes every enemy one).
-const majorP = (run, wave = 0) => (debugParam('majors') != null ? 1 : Math.min(0.06, 0.008 + 0.006 * (run.floor - 1) + 0.003 * rankOf(run) + 0.005 * wave));
+// floors, in harder dungeons and in later waves. L: the room's place in its floor (0 the first).
+// Round 17, a gradual introduction (the designer: "The very first room was able to have majors. That's not a gradual
+// introduction"): on the Wildwood's first floor no elites in its first two rooms, then a quarter of the usual chance in
+// the third room, rising to the full chance by the sixth; no majors until the Wildwood's second floor (from the first
+// floor in every later dungeon). An elite or major now also takes from the room's budget (takeRanks above).
+// (testing: ?elites makes every enemy an elite, free)
+const firstFloor = (run) => rankOf(run) === 0 && run.floor === 1;
+export const eliteP = (run, L = 0, wave = 0) => (debugParam('elites') != null ? 1
+  : Math.min(0.32, 0.05 + 0.03 * (run.floor - 1) + 0.015 * rankOf(run) + 0.025 * wave) * (firstFloor(run) ? clamp((L - 1) / 4, 0, 1) : 1));
+// A major (round 9: "Majors can appear on any floor"; round 17: from the Wildwood's second floor on): rare, a little more
+// often deeper and in later waves (?majors makes every enemy one, free).
+export const majorP = (run, L = 0, wave = 0) => (debugParam('majors') != null ? 1 : firstFloor(run) ? 0
+  : Math.min(0.06, 0.008 + 0.006 * (run.floor - 1) + 0.003 * rankOf(run) + 0.005 * wave));
 
 // How hard each dungeon type is, easiest first (designer, round 6: each dungeon harder than the last; round 7: three
 // harder ones after the Crypt; round 8: "make each dungeon and floor clearly harder than the last ... it has to be a
@@ -338,8 +379,9 @@ function buildRoom(run) {
     if (own) hardHitting(b, bm, true);
     b.facing = b.mvA = Math.PI; b.floorFoe = true;
     const adds = Math.round((2 + run.floor + Math.floor(run.depth / 2)) * partyScale * COUNT_MUL);
-    if (!arena) for (let i = 0; i < adds; i++) {
-      const p = inCell(w, far, 30, 90); const u = foe(w, run, pick(T.bossAdds), p.x, p.y, {}, eliteP(run), majorP(run)); u.facing = Math.PI;
+    // (round 17: an elite or major among the adds takes the place of others, as in the rooms: takeRanks)
+    if (!arena) for (const { k, rank } of takeRanks(Array.from({ length: adds }, () => pick(T.bossAdds)), { elite: eliteP(run, L), major: majorP(run, L), free: freeRanks() })) {
+      const p = inCell(w, far, 30, 90); const u = foe(w, run, k, p.x, p.y, rankOpts(rank)); u.facing = Math.PI;
     }
   } else if (kind === 'fight' || kind === 'hazard' || kind === 'elite' || kind === 'treasure') {
     let homes = sh.cells.filter((c) => c !== w.entry);
@@ -352,8 +394,9 @@ function buildRoom(run) {
     // ("Each wave should have the same count of enemies or more"); the first lot is a share like a wave's
     const nWaves = kind === 'treasure' ? 0 : kind === 'elite' ? 2 : rint(2, 3) + (chance(0.25 * (run.floor - 1)) ? 1 : 0);
     const share = kind === 'treasure' ? 1 : 1 / (1 + nWaves * 1.1);
-    let count = 0;
-    for (const cell of homes) count += enemyPack(w, run, Math.max(2, Math.round(total * share / homes.length * rrange(0.85, 1.15))), cell);
+    let count = 0, owed = 0;
+    const odds = { elite: eliteP(run, L), major: majorP(run, L), credit: kind !== 'treasure', free: freeRanks() };
+    for (const cell of homes) { const g = enemyPack(w, run, Math.max(2, Math.round(total * share / homes.length * rrange(0.85, 1.15))), cell, odds); count += g.bodies; owed += g.owed; }
     if (kind === 'elite') { // the elite room: the theme's big one, made elite, and a second elite of its own kind deeper in
       const p = inCell(w, far, 40);
       foe(w, run, T.elite, p.x, p.y, { elite: true }).facing = Math.PI;
@@ -364,7 +407,8 @@ function buildRoom(run) {
     // waves: once the room is clear, more come up out of the floor. Round 7: 2-3 more than before (3-4, a fifth now
     // and then deeper down; the elite room 2), each a bit harder than the last (bigger, heavier kinds, more elites);
     // the chest (if the room has one) shows up when the last wave is down
-    if (kind !== 'treasure') w.waves = { left: nWaves, budget: total * share, n: 0, last: count };
+    // (round 17: owed, what the first lot's elites and majors couldn't pay, comes off the first wave; L for the odds)
+    if (kind !== 'treasure') w.waves = { left: nWaves, budget: total * share, n: 0, last: count, owed, L };
     w.chest = kind === 'treasure' || kind === 'elite' || chance(0.3);
   }
   w.on.kill = (u) => onKill(run, u);
@@ -763,25 +807,29 @@ function waveTick(run, dt) {
     let cx = 0, cy = 0; for (const h of hs) { cx += h.x; cy += h.y; } cx /= hs.length; cy /= hs.length;
     // each wave a bit harder than the last (round 8: and never fewer than the one before): a bigger lot, heavier
     // kinds from the next floor's roster, more elites
-    const kinds = rollKinds(run, Math.max(2, Math.round(wv.budget * (1 + 0.1 * wv.n) * rrange(0.95, 1.1))), 0.1 + 0.1 * wv.n);
+    const plain = rollKinds(run, Math.max(2, Math.round(wv.budget * (1 + 0.1 * wv.n) * rrange(0.95, 1.1))), 0.1 + 0.1 * wv.n);
     const cheap = floorTheme(run.theme, run.floor).enemies.slice().sort((a, b) => costOf(a[0]) - costOf(b[0]))[0][0];
-    while (kinds.length < wv.last) kinds.push(cheap);
-    wv.last = kinds.length;
+    while (plain.length < wv.last) plain.push(cheap);
+    wv.last = plain.length;
+    // round 17: then its elites and majors, paid for with its other plain ones (and what the room owes from before);
+    // the last wave can't owe (wv.left was counted down already)
+    const kinds = takeRanks(plain, { elite: eliteP(run, wv.L, wv.n), major: majorP(run, wv.L, wv.n), owe: wv.owed, credit: wv.left > 0, free: freeRanks() });
+    wv.owed = kinds.owed;
     // spread round the party: several spots at different bearings and distances, one to three at each
     const nSpots = clamp(Math.ceil(kinds.length / 2), 2, 6), centres = waveSpots(w, cx, cy, nSpots);
-    pd.spots = kinds.map((k, i) => {
+    pd.spots = kinds.map(({ k, rank }, i) => {
       const c = centres[i % centres.length], r = DEFS[k].r;
       let p = null;
       for (let tries = 0; tries < 30 && !p; tries++) { const a = rand() * Math.PI * 2, d = rrange(0, 70), x = c.x + Math.cos(a) * d, y = c.y + Math.sin(a) * d; if (freeSpot(w, x, y, r)) p = { x, y }; }
       p = p || c;
       fx(w, { type: 'rift', x: p.x, y: p.y, r: r * 1.1, at: RIFT_T, max: RIFT_T + 0.5 });
-      return { k, ...p };
+      return { k, rank, ...p };
     });
     w.shake = Math.max(w.shake, 3);
   }
   if (pd.t > 0) return;
   for (const sp of pd.spots || []) {
-    const u = foe(w, run, sp.k, sp.x, sp.y, { mult: w.mult * (1 + 0.05 * wv.n) }, eliteP(run, wv.n), majorP(run, wv.n));
+    const u = foe(w, run, sp.k, sp.x, sp.y, { mult: w.mult * (1 + 0.05 * wv.n), ...rankOpts(sp.rank) });
     u.aggro = true; u.facing = u.mvA = rand() * Math.PI * 2; u.flinchT = 0.35; // a moment to find its feet
     puff(w, sp.x, sp.y, '#3A2E44', 10, 120, 7, 0.5);
   }

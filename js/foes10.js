@@ -721,7 +721,7 @@ export const FOES10 = {
   choirSprite: { ...FOE, name: 'Choir Sprite', art: 'art/enemies/choir-sprite.svg', headR: 40, r: 20, vr: 16, turn: 6, accel: 320, face: 6, mass: 0.5,
     hp: 34, speed: 58, role: 'ranged', range: 260, keep: 240, atkCd: 999, dmg: 0, temp: 0.5, commit: 0.6, xp: 11, coins: [2, 4], cost: 3.5, res: { radiance: 0 }, mends: true, brain: choirBrain },
   golem: GOLEM,
-  gildedGolem: { variantOf: 'golem', name: 'Gilded Golem', art: 'art/enemies/gilded-golem.svg', mirror: 1.2, shield: 0.35, hp: 180, radiance: 18, xp: 38, cost: 9, dust: '#E8C65A',
+  gildedGolem: { variantOf: 'golem', name: 'Gilded Golem', art: 'art/enemies/gilded-golem.svg', mirror: 1.2, mirrorDmg: 0.5, shield: 0.35, hp: 180, radiance: 18, xp: 38, cost: 9, dust: '#E8C65A',
     res: { poison: 0, burn: 0.6, chill: 0.6, curse: 0, wet: 0.5, radiance: 0 } },
   spiritHeal: { ...spirit('heal', 'Light Spirit', { hue: 40, sat: 1.6, light: 0.22 }, { radiance: 0 }), art: 'art/enemies/spirit-core-heal.svg', portrait: 'art/enemies/spirit-heal.svg', mends: true, headR: 30, tail: ['#FFF2B0', '#E8B640'] }, // art round 9
   spiritWard: { ...spirit('ward', 'Ward Spirit', { hue: -100, sat: 1.2, light: 0.08 }, { radiance: 0 }), art: 'art/enemies/spirit-core-ward.svg', portrait: 'art/enemies/spirit-ward.svg', headR: 30, tail: ['#E2D4FF', '#8E6AD6'] }, // art round 9

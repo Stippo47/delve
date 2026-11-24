@@ -2,6 +2,7 @@
 // Heroes come from heroes.js (one def per hero, built below); extra enemy kinds come from enemies.js.
 import { HEROES } from './heroes.js';
 import { ENEMIES } from './enemies.js';
+import { PRICES } from './prices.js';
 import { specOf, variantUrl, parseVariantUrl } from './recolor.js';
 // r: collider (covers shoulders), vr: head radius the sprite is sized from.
 // turn: how fast the movement heading swings (rad/s), accel: speed gained per second, face: sprite turn rate.
@@ -106,6 +107,14 @@ function resolveVariant(k) {
   return (DEFS[k] = out);
 }
 for (const k of Object.keys(DEFS)) resolveVariant(k);
+// Round 17 (lane foes16): every enemy kind's price and strength for it (prices.js): its cost and pack, its health x, and
+// hitMul (x its blows and the statuses they carry, sim.js spawn and addStatus). Before the feel numbers below.
+for (const [k, p] of Object.entries(PRICES)) {
+  const d = DEFS[k]; if (!d) continue;
+  d.cost = p.cost; d.pack = p.pack || null;
+  if (p.hp != null && p.hp !== 1) d.hp = Math.max(1, Math.round(d.hp * p.hp));
+  if (p.hit != null && p.hit !== 1) d.hitMul = p.hit;
+}
 
 // Round 6 feel (designer, 2026-11-20): a much faster party (~3x; enemies faster too so fights still meet, ability
 // cooldowns unchanged), longer time-to-kill (more HP for everyone), longer attack and view range, slightly bigger

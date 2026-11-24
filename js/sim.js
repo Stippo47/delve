@@ -46,7 +46,7 @@ export function spawn(w, kind, x, y, opts = {}) {
   const u = {
     id: NEXT_ID++, kind, def: d, team, x, y, vx: 0, vy: 0, kx: 0, ky: 0, dvx: 0, dvy: 0,
     r: d.r * (opts.scale || 1), vr: (d.vr || d.r) * (opts.scale || 1), mass: d.mass * (opts.scale || 1), maxHp, hp: opts.hp != null ? Math.min(opts.hp, maxHp) : maxHp,
-    dmgMul: hero ? levelDmg(1, lvl) : (0.65 + 0.35 * mult) * (team === 'enemy' || w.battle ? FEEL.enemyDmg : 1), level: lvl,
+    dmgMul: hero ? levelDmg(1, lvl) : (0.65 + 0.35 * mult) * (team === 'enemy' || w.battle ? FEEL.enemyDmg : 1) * (d.hitMul || 1), level: lvl, // (round 17: hitMul, its kind's price, prices.js)
     facing: team === 'hero' ? 0 : Math.PI, atkT: rand() * d.atkCd, abilT: (d.abilCd || 0) * rrange(0.3, 0.7),
     mode: 'wander', modeT: 0, thinkT: rand() * 0.4, abilThinkT: rand() * 0.5, target: null, targetT: 0,
     st: freshStatuses(), frozenT: 0, stunT: 0, rootT: 0, sleepT: 0, koT: 0, buffs: [], later: null, freezeImmune: 0, dotAcc: 0,
@@ -1028,6 +1028,7 @@ export function addStatus(w, u, type, amount, src, fromBlow) {
   if (type === 'entangle' && u.tangleImmuneT > 0) return; // held fast already (an entangle root), or just got free
   if (NEW_BURSTS.has(type) && u[type + 'ImmuneT'] > 0) return; // round 13: just burst
   if (type === 'charm' && (u.flipKind === 'charm' || charmProof(u))) return; // enthralled already; round 14: "Bosses immune to charm"
+  if (src && src !== u && src.def && src.def.hitMul) amount *= src.def.hitMul; // (round 17: an enemy kind's hit, prices.js, carries to what its blows put on)
   const res = (u.def.res && u.def.res[type]) ?? 1;
   const s = u.st;
   noteStatus(u, type, src); // its ticks and bursts count for whoever put it on (stats.js)
@@ -1754,6 +1755,7 @@ function projectiles(w, dt) {
         if (u.def.mirror && !p.noMirror && angleDiff(Math.atan2(-p.vy, -p.vx), u.facing) < (u.def.mirror || 1.2)) {
           const back = p.owner && alive(p.owner) ? angleTo(p.x, p.y, p.owner.x, p.owner.y) : Math.atan2(-p.vy, -p.vx), sp = Math.hypot(p.vx, p.vy);
           p.vx = Math.cos(back) * sp; p.vy = Math.sin(back) * sp; p.a = back; p.team = u.team; p.owner = u; p.noMirror = true; p.home = null; p.life = Math.max(p.life, 1);
+          if (u.def.mirrorDmg != null) p.dmg *= u.def.mirrorDmg; // (round 17: what comes back, a share of the shot: the gilded golem's is half)
           if (p.hitSet) p.hitSet.clear(); u.blockedAt = w.time; sparks(w, p.x, p.y, back, 6, '#FFF1B0', 1.1);
           break;
         }
