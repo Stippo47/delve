@@ -20,7 +20,7 @@ import { HEROES, TIER_CD, ROLE_TUNE, statsFor, tierOf } from './heroes.js';
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange, chance } from './util.js';
 import {
   hurt, addStatus as simAddStatus, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, textU,
-  stun, heal as simHeal, addBuff, fx, zone as simZone, cleanse, wallRect,
+  stun, heal as simHeal, addBuff, fx, zone as simZone, cleanse, wallRect, offFloor,
 } from './sim.js';
 import { lineClear } from './path.js';
 import { cue } from './sfx.js';
@@ -671,7 +671,7 @@ function shockFront(w, u, ox, oy, a, tier) {
   fx(w, { type: 'wave', x: ox, y: oy, a, r: SHOCK.reach, travel: SHOCK.T, w0: SHOCK.w0, wk: SHOCK.wk, max: SHOCK.T + 0.22, src: u, every: 0.03, tick(f) {
     const d = Math.min(1, f.t / SHOCK.T) * SHOCK.reach;
     for (const e of opponents(w, u)) {
-      if (hit.has(e) || e.ethereal) continue;
+      if (hit.has(e) || e.ethereal || offFloor(e)) continue; // (round 16: a slime up in a hop goes over the wave)
       const dx = e.x - ox, dy = e.y - oy, along = dx * ca + dy * sa, side = Math.abs(dy * ca - dx * sa);
       if (along < -e.r || along - e.r > d || side > SHOCK.w0 + Math.max(0, along) * SHOCK.wk + e.r) continue;
       hit.add(e); hurt(w, e, dmgOf(u, 0.9), u, { knock: 170, kAngle: a, noDodge: true, stagger: tier >= 3 ? 35 : 0 });

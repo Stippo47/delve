@@ -133,7 +133,7 @@ function unitShadow() { // solid to 60% of the radius, then a short soft rim
 }
 // The old single-image sprites (the hired Knight and Rogue) are drawn bigger than their vr: their shadow is sized to
 // the sprite, else it hides under it (round 9: "you can't see the knight's shadow").
-const shadowSize = (u) => (u.downed ? u.vr * 1.35 : u.vr * (u.def.art ? 1.75 : 2.2)) * (1 - Math.min(0.35, (u.hop || 0) / 120)) * bigOf(u);
+const shadowSize = (u) => (u.downed ? u.vr * 1.35 : u.vr * (u.def.art ? 1.75 : 2.2)) * (1 - Math.min(u.def.hops ? 0.5 : 0.35, (u.hop || 0) / 120)) * bigOf(u);
 // Elites and majors are just bigger versions of themselves (round 9: no gold outline).
 const bigOf = (u) => (u.major || u.mini ? 1.16 : u.elite ? 1.08 : 1);
 const SH = { c: null, box: null, half: 0.5 };
@@ -504,6 +504,12 @@ function unitFrame(ctx, u, w) {
   const T = w.time;
   // off the ground (a leap): the body lifts up the screen, its shadow stays where it really is (round 9)
   if (u.hop > 0) { const [ux, uy] = upVec(); ctx.translate(ux * u.hop * 0.9, uy * u.hop * 0.9); }
+  // a slime's hop (round 16, sim.js slime hops): squashed flat and wide on the floor (u.squish > 0: the crouch, the
+  // landing), stretched tall in the air (< 0); up and down the screen whatever it faces, its foot kept where it was
+  if (u.squish) {
+    const [ux, uy] = upVec(), q = clamp(u.squish, -0.6, 0.9) * 0.36, a = Math.atan2(uy, ux);
+    ctx.translate(-ux * u.vr * q, -uy * u.vr * q); ctx.rotate(a); ctx.scale(1 - q, 1 + q * 0.85); ctx.rotate(-a);
+  }
   // knocked out: a hard shake for a moment as the stagger bursts (round 9)
   if (u.koT > 0 && u.bursts && T - (u.bursts.stagger ?? -9) < 0.6) { const q = 1 - (T - u.bursts.stagger) / 0.6, f = Math.floor(T * 40); ctx.translate((hash(f, u.id) - 0.5) * 8 * q, (hash(u.id, f) - 0.5) * 8 * q); }
   // a full turn: Cleave, Reap, Fan of Knives (u.spin); the archer's Roll (round 9)
@@ -541,7 +547,7 @@ function unitFrame(ctx, u, w) {
   // Granny leans her whole body into the scythe's sweep (round 9: "better animation of body too")
   if (u.kind === 'granny' && u.anim && u.anim.kind === 'swing') { const k = u.anim.t / u.anim.dur; tilt += k < 0.25 ? -0.3 * (k / 0.25) : -0.3 + 0.75 * Math.min(1, (k - 0.25) / 0.3) - 0.45 * Math.max(0, (k - 0.55) / 0.45); }
   sc *= bigOf(u);
-  if (u.hop > 0) sc *= 1 + u.hop / 110; // a leap: off the ground, so drawn bigger (its shadow shrinks below)
+  if (u.hop > 0) sc *= 1 + u.hop / (u.def.hops ? 240 : 110); // a leap: off the ground, so drawn bigger (its shadow shrinks below) (round 16: a slime's hop goes higher, so it grows less with it)
   if (u.exiting) { const k = clamp(u.exiting.t / u.exiting.dur, 0, 1); sc *= 1 + 0.12 * Math.sin(Math.min(1, k * 3) * Math.PI) - 0.85 * k * k; } // through the door: a lift, then shrinking into the light
   ctx.translate(fx, fy); ctx.rotate(tilt); ctx.scale(sc, sc);
   if (u.squash) ctx.scale(1, u.squash); // round 13 (lane E): foreshortened along its facing (the sun blade's point down in the floor)
