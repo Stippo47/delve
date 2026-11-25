@@ -1,0 +1,222 @@
+delve / art / v19-heroes: "0.19.0: the 37 newer heroes"
+  all (37 newer heroes, your notes): GOOD on the card. Its parts: 4 good, 1 decent
+      part statuses (New statuses): GOOD
+      part shackled (Shackled: not yet): GOOD
+      part bulwark (Bulwark: a question): DECENT
+      part props (Props drawn in code): GOOD
+      part six (Six new heroes: not built): GOOD
+  oldguard (Old Guard): GO, picked: Parry, Rally, Trait: Last Stand, (your pick, nothing tapped)
+      item oldguard-pommelStrike (Parry): "Don’t like look. Good implementation though "
+      item oldguard-rallyCry (Rally): "Haste better visual effect for. He also swings arm weird. Pivoting from 1 shoulder, not hands. 
+Overall visuals just meh "
+      item oldguard-trait (Trait: Last Stand): "When on party gives anyone who is the last one standing the buff. Maybe just effects him better"
+  dame (Dame): GO, picked: Challenge
+      item dame-attack (Leaf sword): "She swings her sword the wrong way. Out instead of in. "
+      item dame-challenge (Challenge): "Can you make it so the bench stops pinning people it messes up a lot of replays as movement is the whole part of many abilities. 
+
+Should show the agreed lines V over their head. For the taunted indicator. Already used somewhere else. 
+
+Lvl 3 she gets haste when going in aswell "
+  griffon (Griffon): GO, picked: Stormhammer
+      item griffon-attack (Warhammer): "Maybe a bit more forwards. Circular crater, no cracks. 
+Maybe wind up."
+      item griffon-hammerThrow (Stormhammer): "Thrown hammer looks different than held hammer. 
+I don’t think I like the yellow arrows. 
+Also try the whirled effect as circular and a radius around them"
+      item griffon-swoop (Swoop): "Don’t like wings, particle effects, or whirl effect (which is flipped the wrong way) . When they land they flip to be looking another direction. "
+      item griffon-wingShield (Wing Guard): "Wings same style as the one on his sprite, render above him. 40% smaller. 
+Better visual effects "
+      pin 1 on item griffon-attack (Warhammer), film img/v19-heroes-griffon-attack.mp4 at 0:00.48, frame 15 of 90, 43% across, 47% down: "What is that?"
+  bulwark (Bulwark): GOOD
+      "Star isnt on spear head. 
+
+Don’t like stab animation."
+  bearskin (Bearskin): IDK
+      item bearskin-bearRoar (Bear Claws): "Doesnt look good. Too fast. He doesn’t even swing or get near them. He does the swinging. Should dash forward slight with each swing 
+Rotate bite 90 degrees so it’s always flat with him. 
+
+Should do 3 at base, slower, higher damage, and upgraded it does 5 then bite. "
+      item bearskin-hibernate (Hibernate): "Doesnt show the status effect on him. 
+
+Don’t like the burst effect "
+      item bearskin-maul (Maul): "Don’t like. Also weird star on target hit. Don’t know why"
+  warhelm (Warhelm): GO, picked: Skull Splitter, Thunder Blow
+      item warhelm-attack (Warhammer): "Same slam as griffon. Not the left hand is in front of body and the right is behind. Left should be behind, free hands don’t get to float "
+      item warhelm-skullSplitter (Skull Splitter): "Throws a different hammer than what he holds.
+
+Also when entities are in the air they should not collide with things on the ground. Until they are landed. Should also always render in front of everything on the ground until landed. 
+
+Better visual effects "
+  rogueBandit (Bandit): IDK
+      item rogueBandit-lowBlow (Stick 'Em Up): "Don’t like"
+      item rogueBandit-pickpocket (Dirty Trick): "Disarms? 
+
+Alternating slash visual. Btw that’s not a “kick” 
+Maybe punch with other hand. 
+Slightly slower attack speed. 
+
+Disarm ability: makes it so an entity can’t use their weapon (and weapon is hidden) for a bit (Aswell as any ability attached to the weapon). innate attacks built into the body aren’t stopped. Can’t disarm a slime. "
+      item rogueBandit-smokeBomb (Bolas): "Should not make unique effect. Should trap like a hunters trap. Stops movement and turning. 
+
+Effect should look like a ring with 3 triangles pointing inwards spread out. 
+
+No disarm "
+      item rogueBandit-trait (Trait): "Ability dash through 3 enemies in a chain disarming and dealing damage. "
+  shade (Shade): GO, picked: Twin daggers, Trait
+      "Might have to lower base hp to balance her"
+      item shade-attack (Twin daggers): "They are still holding the blades crossed. 
+Should keep them to the sides. "
+      item shade-blackout (Blackout): "It follows them. No physical attack can hit her but soul can.
+In this form she has no collision. 
+
+Ghost should also be able to go incorporeal. "
+      item shade-deathMark (Shadow Clones): "Don’t like. They should move identical to how she would. Also be in the same shadow form as she is in blackout. "
+      item shade-shadowWalk (Shadow Walk): "The path is not joined…
+
+Changing it again. Keep this ability saved though. 
+
+For 4 seconds she will disappear completely. Blinking in and out of existence around a random enemy hitting them then vanishing. Upgrades boost duration. "
+  haymaker (Haymaker): GO, picked: Pitchfork, Hay Bale, Toss
+      item haymaker-attack (Pitchfork): "Have them hold fork aimed more forwards and centred. "
+      item haymaker-forkCharge (Hay Bale): "Rendered wrong order. Also remove the hairs on it. Have it leave a trail of hay hairs. Also burst with hay when hitting someone "
+      item haymaker-toss (Toss): "They fly before he does an animation. "
+  digger (Digger): GO, picked: Burrow, Dirt Fling, Trait: Rub Some Dirt In It
+      item digger-attack (Spade): "Don’t like the hit effect. 
+Also, have the projectiles burst out from behind anyone who was hit with the shovel. They don’t get thrown automatically anymore. Only behind entities hit. "
+      item digger-burrow (Burrow): "Trail better. Maybe nit transparent. And have it start fading later but much faster so u see less “crumbs” of dirt in a line. Bigger churned clumps in trail. 
+The dirt mound itself doesn’t look good. Should also leave a mound behind when he emerges.
+Overall could look better. "
+      item digger-dirtFling (Dirt Fling): "Should make target dirty (clears enemies effects too). When he hits a dirtied foe he deals double damage and clears the dirt (with shovel or dirt clumps from shovel) "
+      item digger-spadeBat (Bury): "Doesnt look good. Should be dirty when they get back up. 
+Should not be able to move when buried unless the are native to the underground like a sand worm. "
+      item digger-trait (Trait: Rub Some Dirt In It): "Don’t like the dirtied effect visual. "
+  grandpa (Grandpa Sickle): GO, picked: Bread Toss
+      item grandpa-breadToss (Bread Toss): "Don’t like steam. It has 2 shadows.
+
+MAKE SURE YOU USE 1 SHADOW SYSTEM FOR EVERYTHING. Neither of them look like the entity shadows. 
+
+If he eats 1 too he needs to throw it up and down. 
+The bread doesnt come or land directly in the center of entities. "
+      item grandpa-harvest (Harvest): "Looks like he jumps. Not dash. 
+Should do a circular sweep like the granny reaper. Seems like the landing does damage but the sweep 
+
+Shows a random star on him as he jumps. "
+      item grandpa-oldTales (Old Tales): "I like the book. Doesn’t look right here.
+
+Change ability. He throws out 4 planted hay bunches random. Low hp. If an ally breaks it heals them, enemies that break it become hayed (same effect pitch former does). 
+When a party member hits someone who is hayed they cooldowns come back faster. Like 15% boost to all non full abilities. "
+  alchemist (Alchemist): GO, picked: Unstable flask, Brew Pools, Monstrosity, Elixir
+      item alchemist-attack (Unstable flask): "They aren’t holding it…"
+      item alchemist-acidFlask (Brew Pools): "Don’t like ice puddle, lightning, water. Winds could be improved. "
+      item alchemist-bangFlask (Monstrosity): "Should not hold a flask. It will be alternating punch attacks. Not claws. High knock back. They should have fast movement speed. 
+
+Don’t like visual. They should get a new altered sprite based off their base sprite. Purple skin. 
+
+Also now that I’m thinking about it. The potions they use should look like the vials on their head. Skinny tubes. Same style but tubular. Should be shown drinking a purple tube flask first. "
+      item alchemist-elixir (Elixir): "They. Pronouns. 
+
+Splash could look better. 
+This also has the same problem as the sickle farmer. Thrown to bottom left corner. Not center of entity. 
+
+Lvl 2 lets them throw 2 different potions each on their own roll for who and what kind. "
+  shaman (Shaman): GO, picked: Spirit bolt, Ancestors' Call, Spirit Link
+      item shaman-attack (Spirit bolt): "It’s not shown in book. "
+      item shaman-healTotem (Healing Totem): "It has 2 shadows too, bad visuals overall. (Ik a better one is in the game.) the wing and beak on totem don’t match the one on their sprite. 
+Should burst where it lands. 
+
+When an entity is hit a light orb should home from hero to totem to be absorbed. 
+
+Should only have collisions on the base of the totem. It’s not laying down. "
+      item shaman-rainDance (Ancestors' Call): "Bad visuals. In game the wolf looks different from the rest. 
+Eagle doesnt look right and isnt always rendered above entities on the ground. 
+
+I want you to make a bear model (using the bearskin berserker as reference). Should be large. Then make a spirit bear after I approve of the design. 
+
+Beaver looks good in game so just need to do wolf (in the same style), bear (make large normal bear if I approve you will make it into a spirit), and eagle (better shape) 
+Also try a fish/salmon. Top down. Just visual. 
+
+What does each animal represent? "
+      item shaman-spiritLink (Spirit Link): "Not showy enough. 
+Preview doesnt show off potential. "
+  witch (Witch): GO, picked: Hex bolt, Hex
+      item witch-attack (Hex bolt): "More like minecraft enchanting table shape. "
+      item witch-broomRide (Broom Ride): "Don’t make her invisible make sure the broom is under her. Not on the ground. Better broom visual. Remove the broom from her hand when flying."
+      item witch-cursedBrew (Cursed Brew): "More Top down cauldron. Opening more circular. 
+Don’t like landing effect and the thrown projectile doesnt line up "
+      item witch-frogHex (Hex): "Better frog visual but good implementation. 
+Probably a smaller shadow "
+  warlock (Warlock): GO, picked: Awaken
+      item warlock-attack (Pact bolt): "Imp should always be hovering therefore always render ontop of ground entities. 
+When there is the imp the stronger projectile just come from it then back at owner. When just the warlock they will use the smaller bolt building up a charge when it comes back. 
+
+He has 4 tiers. Just warlock, Spawn a weak imp, then the imp becomes a demon, then he becomes a demon form. 
+Automatically switches to next state when charge builds enough. This replaces the demon form and this ability. He needs a new third ability. 
+
+I like imps design in the game, don’t like his demonic form. Should have same colour theme. Can be a different shade. "
+      item warlock-darkBargain (Dark Bargain): "Should use consume x amount of health to build x amount of charge + get the haste boost and life steal for a bit. 
+
+The charge overall should slowly decay but he builds it faster than he drains it if he hits his shots. 
+
+The imps hp is correlated with charge. When the imp takes damage the charge does down. 
+
+If his imp does not exist dark bargain will create imp. "
+      item warlock-eldritchBeam (Eldritch Beam): "Should be a laser, not beam (beams go from a to b. Lasers go in a direction until they can’t). 
+
+Should pierce, imp moves much slower and can turn laser slowly, the imp has a weaker one than the demons. When in demon form should become an eldritch blast. 
+Drains charge when not hitting anything, otherwise it keeps current charge stable. 
+
+If doesnt have imp he will create a weak one himself. 
+
+Laser should take time to go to target when starting and from hero when ending. Like a stream doesnt appear instantly. 
+
+Needs hit effects."
+      item warlock-summonImp (Awaken): ". Each swing create a repeating shockwave of eldritch energy (goes in straight line). In this state creates random eldritch explosions happen around him periodically. 
+
+Should have a large sword. 
+
+Because awaken is apart of his main attacks/ a trait, this ability becomes free. 
+This ability becomes a teleport. When in warlock form will teleport to random positions away, When in demon form it becomes a teleport (which causes eldritch explosions). "
+  cultist (Cultist): GO, picked: Shadow bolt, Blood Pact, Ritual Circle, Sacrifice, Trait: Blood Rite, (your pick, nothing tapped)
+      item cultist-attack (Shadow bolt): "Bolt instead applies anti heal. "
+      item cultist-bloodPact (Blood Pact): "Don’t like look of status effect 
+
+Should also give allies bleed "
+      item cultist-ritualCircle (Ritual Circle): "Puts circle around centred around 1 entity that is at low hp. If they don’t escape after x seconds they will be sacrificed, lowering all of his cooldowns, healing himself. 
+Also slowly applies bleed to all entities within it at higher levels. Doesnt lock anyone in. "
+      item cultist-soulCandle (Sacrifice): "Dashes to every enemy who has bleed, bursting them. Higher levels applies antiheal to everyone hit and gives him more damage buff status effect for each person hit. Temporary. "
+      item cultist-trait (Trait: Blood Rite): "When ally is about to die (very low hp) he will dash to them killing them instantly but resets all of his cooldowns "
+  monk: still choosing: Fists, Inner Peace
+      item monk-attack (Fists): "Don’t like visual. 
+
+Has a 3 part combo with the last 1 dealing more damage knockback and spun. "
+      item monk-flurry (Flurry): "He doesn’t move forward. Don’t lock positions. Final hit needs a short delay. Upgrades also applied weakness 
+
+Don’t like visual "
+      item monk-innerPeace (Inner Peace): "Doesnt look like he’s blocking physical or ranged attacks. "
+      item monk-palmStrike (Palm Strike): "Don’t like visual. Hand should turn large and flat. And push forward. Smaller range. 
+
+Burst effect is dazed. Has a hard time controlling turn, overshoots. Like has low acceleration but high max turn speed. Slippery but for turning. "
+  Still owed: monk, seer, chef, beekeeper, quartermaster, crossbowman, falconer, grenadier, harpooner, huntress, marksman, ninja, pirate, slinger, trapper, gladiator, jester, samurai, valkyrie, engineer, werewolf
+  Pins point at a spot. To see each one, its frame and a close-up: riffle pins --pack delve --deck v19-heroes --out <folder>
+
+delve / art / v21-newheroes: "0.21.0: six new heroes"
+  all (Six new heroes): GOOD on the card. Its parts: 6 good
+      part strength (How strong they are): GOOD
+      part mob30 (The Mob and “30% each”): GOOD, "Sure"
+      part mobarea (The Mob: area hits): GOOD, "Heals should be treated the same way "
+      part mobarmour (The Mob: enemy armour): GOOD
+      part name (The Clockmaker's name): GOOD
+      part weak (Weakest abilities): GOOD
+  mob: still writing: "They should be a full bodied size each "
+      part four-who-are-one (Four who are one): YES
+      part 30-each (30% each): YES
+      part what-each-carries (What each carries): IDK, "No dagger bleed "
+      part enemy-armour-my-call (Enemy armour: my call): IDK
+      part drawn-to-each-other (Drawn to each other): RETHINK, "Too strongly attracted. 
+They can have their own target but have a higher strength to what one of them is already fighting "
+      part all-melee (All melee): YES
+      part one-health-pool (One health pool): no mark, "Stuns and status only affect who they hit. Not everyone "
+      part pile-on (Pile On): RETHINK, "Don’t like "
+      part surround (Surround): IDK
+      part scatter (Scatter): IDK
+  Still owed: mob, clockwork, airMage, warden, telekinetic, earthMage, shackled
