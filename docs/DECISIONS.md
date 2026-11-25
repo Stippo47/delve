@@ -1213,3 +1213,22 @@ Round 19 (2026-11-25, free rein from midnight the designer's time): the designer
 - **Pronouns**: the Alchemist is they/them in its texts (heroes2.js, code notes); the others match the designer's use.
 - Checks: battles 528, 0 problems, 10 out of time; preview-check threw / never fired / not offered 0 / 0 / 0 (monster
   previews late 24 -> 30, wrong scenario 7 -> 8: borderline timings both ways). Clips docs/clips/sys19/ (-before beside).
+
+## Round 19, lane caster19 (2026-11-25): the Digger, Grandpa Sickle, the Alchemist, the Shaman, the Witch
+Every note on these five in the designer's 0.19 deck, done as asked; everything in docs/caster19.md. The lane's calls (say
+if any is wrong):
+- **Dirty** is one status on either side: on a foe its *helps* are washed off ("clears enemies' effects" read as the buffs
+  helping it, not its burning or poison), it attacks 30% slower for 6 s, and the Digger's spade (swing or clods) lands
+  double and knocks the dirt off. Look: a brown wash and a cloud of dust, no smears.
+- **Bury** buries things with brains of their own too (they were only stunned); a new tag, `burrower` (scarabs, the sand
+  serpent, the drill bot, the Sand Wurm), digs about while buried.
+- **Sheaves** (Old Tales' slot): "15% boost" read as cooldowns running 15% faster for 3 s after each blow on a hayed foe;
+  a sheaf is on Grandpa's side, so enemies strike it (and are hayed) and friends tread on it (and are healed); no longer
+  a mouth/sound ability. The story book's drawing is kept for later.
+- **Elixir**: II's second tube rolled on its own (friend weighted by need, brew never the same); the strong brews moved
+  to III with the splash.
+- **Monstrosity**: knock back 320 (was 160), 60% faster (was 25%); a sketch sprite (alchemist-monster.svg) for the art
+  round.
+- **Broom Ride**: seen and targetable now; she is on the flying layer, so only shots reach her.
+- **Healing Totem**: its body is only its foot (r 13); its picture stands up the screen from there.
+- **For approval**: design/caster19/bear.png (a large brown bear, the spirit bear after approval) and salmon.png.
