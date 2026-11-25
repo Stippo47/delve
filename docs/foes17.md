@@ -120,6 +120,25 @@ share of its link, after every step:
 | crawler before | 0.92-1.15 | 0.45-1.26 | 0.92-1.15 | 0.10-1.23, 2.0 s a run | |
 | crawler after | 0.99-1.08 | 0.94-1.08 | 0.99-1.08 | 0.88-1.08 | |
 
+## Round 18 follow-up (lane foes17b): a knock piled the body up
+
+The clip check found the crawler's body piling into a clump round its head after the staged knock (8.6 s on). Real,
+not the staging: replayed headless (tools/foes17/pile.mjs), a knock of 650 back into its body put the head on top of
+its own links (0.06 of a gap) and then two links on top of each other (0.02) as it walked off. The knock was taken as
+the head's walk: the old shove kept each link its gap from the one before but nothing kept the head and the other
+links apart, and the trail it laid again ran through the pile, so the body kept that shape until it crawled out.
+tools/foes17/chains.mjs had shown it (knock: head to its body 0.54-0.76), and I passed over it.
+
+Fix (families.js chainTick): a knock moves the whole body with the head as one piece (the trail and every link are
+moved by the knock's part of the head's step); only the head's own walk lays new trail. After: knock spacing 0.99-1.08
+of a link, nearest two links 1.78-1.82 gaps, head to its body 1.91-1.96 (chains.mjs, 8 seeds); the clip's replay never
+below 1.74 gaps.
+
+The staging (tools/foes17/stage/snake-run.js) was also off: it moved the head across the room without its trail, so
+the body was dragged round from where it had been, and the stop came beside the hero. Now the body is laid out again
+where the head is put, the target is set, and the hero is far off: a run, a stop at 2 s, a sharp turn at 3.6 s, a
+knock back at 6.6 s, on again.
+
 ## Clips (docs/clips/foes17/, not in git)
 
 - `troll-slot-before.mp4` / `-after.mp4`: its boulder in a ring of rocks with a gap too narrow for it. Before: it
