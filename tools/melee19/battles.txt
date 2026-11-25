@@ -1,0 +1,3 @@
+example: a in 13.9s
+528 battles, 0 problems, 9 ran out of time
+EXIT 0
