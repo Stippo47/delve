@@ -3,31 +3,24 @@
  "fights": {},
  "dungeon": {
   "frost": {
-   "releases": 397,
-   "back": 325,
-   "quick": 279,
+   "releases": 411,
+   "back": 379,
+   "quick": 329,
    "lost": 0,
-   "broke": 45,
-   "mean": 3.6,
-   "p90": 8.4
-  },
-  "warren": {
-   "releases": 512,
-   "back": 374,
-   "quick": 336,
-   "lost": 0,
-   "broke": 80,
-   "mean": 2.1,
-   "p90": 6
+   "broke": 0,
+   "died": 0,
+   "mean": 3.7,
+   "p90": 7.7
   },
   "crypt": {
-   "releases": 491,
-   "back": 412,
-   "quick": 362,
+   "releases": 510,
+   "back": 467,
+   "quick": 407,
    "lost": 0,
-   "broke": 42,
-   "mean": 3.1,
-   "p90": 7.4
+   "broke": 0,
+   "died": 0,
+   "mean": 3.4,
+   "p90": 7.6
   }
  }
 }

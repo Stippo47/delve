@@ -3,24 +3,24 @@
  "fights": {},
  "dungeon": {
   "warren": {
-   "releases": 419,
-   "back": 406,
-   "quick": 399,
+   "releases": 393,
+   "back": 376,
+   "quick": 371,
    "lost": 0,
    "broke": 0,
    "died": 0,
-   "mean": 1.4,
+   "mean": 1.5,
    "p90": 4
   },
   "crypt": {
-   "releases": 508,
-   "back": 499,
-   "quick": 489,
+   "releases": 525,
+   "back": 516,
+   "quick": 506,
    "lost": 0,
    "broke": 0,
    "died": 0,
    "mean": 1,
-   "p90": 3.5
+   "p90": 3.4
   },
   "foundry": {
    "releases": 289,

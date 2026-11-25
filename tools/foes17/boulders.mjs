@@ -19,7 +19,7 @@ const DG = await import('../../js/dungeon.js'), HE = await import('../../js/hero
 const DT = 1 / 60, N = +opt('n', 20), V = args.includes('--v'), WITHIN = +opt('within', 6), MAXT = 20;
 const KINDS = (opt('kinds', 'troll,rockTroll,rockTroll@1,yeti')).split(',');
 const ballOf = (u) => u.bould || u.snow || null;
-const isHeld = (u, b) => (u.snow ? b.held && !b.packing : b.held);
+const isHeld = (u, b) => (u.snow ? b.held && !b.packing && !b.haul : b.held); // (a yeti: pushing it, its hands behind it, not hauling it out)
 
 function stage(kind, seed) {
   setSeed(seed);
@@ -85,14 +85,16 @@ function dungeon() {
           if (!kinds.has(u.kind)) continue;
           const z = seen.get(u) || (seen.set(u, { was: null, since: null, ball: null }), seen.get(u));
           if (u.dead) { if (z.since != null) { died++; z.since = null; } continue; }
+          if (z.was === null) { z.was = false; }
           const b = ballOf(u);
-          if (!b && u.ripT > 0) continue; // (tearing a new one out of the floor: the wait goes on till it has it)
-          if (!b) { if (z.ball && z.since != null) { broke++; z.since = null; } z.ball = null; continue; }
-          if (b !== z.ball) { if (z.since != null) { back++; sum += t - z.since; waits.push(t - z.since); if (t - z.since <= WITHIN) quick++; z.since = null; } z.ball = b; z.was = isHeld(u, b); continue; }
+          // (no boulder: broken, or left to melt, or a new one being torn out of the floor or packed: the wait goes on
+          // till it has one in its hands again, whichever one)
+          if (!b) { if (z.ball && z.since == null) { z.since = t; z.why = 'gone'; z.log = null; rel++; } z.ball = null; z.was = false; continue; }
+          if (b !== z.ball) { z.ball = b; }
           const h = isHeld(u, b);
           if (z.was && !h) { rel++; z.since = t; z.why = (u.bouldRest > 0 ? 'jam' : 'throw'); z.log = null; }
           if (!z.was && h && z.since != null) { back++; sum += t - z.since; waits.push(t - z.since); if (t - z.since <= WITHIN) quick++; z.since = null; if (V && z.log) console.log('   slow', (t - (z.log.t0)).toFixed(1) + 's', JSON.stringify(z.log)); }
-          if (z.since != null && t - z.since > WITHIN && !z.log) z.log = { run: i, id: u.id, t0: z.since, why: z.why, d: Math.round(Math.hypot(u.x - b.x, u.y - b.y) - u.r - b.r), rest: +(u.bouldRest || 0).toFixed(1), jam: u.bJam && +u.bJam.t.toFixed(1), bsp: Math.round(Math.hypot(b.vx, b.vy)), held: b.held, mode: u.mode, tgt: u.target && u.target.kind, stun: u.stunT > 0, at: [Math.round(u.x), Math.round(u.y)], b: [Math.round(b.x), Math.round(b.y)], W: [w.W, w.H], hp: Math.round(100 * u.hp / u.maxHp) };
+          if (z.since != null && t - z.since > WITHIN && !z.log) z.log = { run: i, id: u.id, t0: z.since, why: z.why, d: Math.round(Math.hypot(u.x - b.x, u.y - b.y) - u.r - b.r), rest: +(u.bouldRest || 0).toFixed(1), jam: u.bJam && +u.bJam.t.toFixed(1), bsp: Math.round(Math.hypot(b.vx, b.vy)), held: b.held, mode: u.mode, tgt: u.target && u.target.kind, stun: u.stunT > 0, at: [Math.round(u.x), Math.round(u.y)], b: [Math.round(b.x), Math.round(b.y)], W: [w.W, w.H], hp: Math.round(100 * u.hp / u.maxHp), ...(u.yt ? { st: u.yt.st, brawl: +(u.yt.brawl || 0).toFixed(1), calm: +(u.yt.calm || 0).toFixed(1), haul: !!u.yt.haul, lostT: +(u.yt.lost || 0).toFixed(1), side: +(Math.abs(((Math.atan2(b.y - u.y, b.x - u.x) - Math.atan2((u.target ? u.target.y : b.y) - b.y, (u.target ? u.target.x : b.x) - b.x)) + 9 * Math.PI) % (2 * Math.PI) - Math.PI)).toFixed(2), tgap: u.target ? Math.round(Math.hypot(u.target.x - u.x, u.target.y - u.y) - u.r - u.target.r) : null } : {}) };
           z.was = h;
         }
       }

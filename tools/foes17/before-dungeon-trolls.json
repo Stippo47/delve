@@ -3,17 +3,17 @@
  "fights": {},
  "dungeon": {
   "warren": {
-   "releases": 559,
+   "releases": 567,
    "back": 539,
    "quick": 465,
    "lost": 0,
-   "broke": 3,
+   "broke": 0,
    "died": 0,
    "mean": 2.1,
    "p90": 6
   },
   "crypt": {
-   "releases": 608,
+   "releases": 609,
    "back": 596,
    "quick": 423,
    "lost": 0,
