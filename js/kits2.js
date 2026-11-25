@@ -723,7 +723,7 @@ export const ABILITIES2 = {
       for (let i = 0; i < 3; i++) after(u, i * GAP, () => { if (!alive(t)) return; u.facing = ang(u, t); setAnim(u, 'swing', GAP + 0.02); u.anim.back = i % 2 === 1;
         swingMark(w, u, u.r + u.def.range + 8, 1.5, null, i % 2 ? -1 : 1); hurt(w, t, dmgOf(u, 0.7), u, { knock: 20, noDodge: true, ab: 'pickpocket' }); if (tier >= 2) bleed(w, t, 18, u); });
       after(u, 3 * GAP + 0.12, () => { if (!alive(t)) return; const a = ang(u, t); u.facing = a; setAnim(u, 'punch', 0.28); u.anim.hand = 'arm-l'; u.kx += Math.cos(a) * 80; u.ky += Math.sin(a) * 80;
-        hurt(w, t, dmgOf(u, 1.2), u, { knock: 640, kAngle: a, heavy: true, noDodge: true, stagger: tier >= 3 ? 45 : 0, ab: 'pickpocket' });
+        hurt(w, t, dmgOf(u, 1.4), u, { knock: 640, kAngle: a, heavy: true, noDodge: true, stagger: tier >= 3 ? 45 : 0, ab: 'pickpocket' });
         disarm(w, t, tier >= 2 ? 3 : 2.5, u);
         k2(w, { draw: 'banditPunch', unit: t, x: t.x - Math.cos(a) * t.r * 0.8, y: t.y - Math.sin(a) * t.r * 0.8, a, r: t.vr, max: 0.3, ab: 'pickpocket' });
         flung(w, u, t, 0.8, null, (o, e) => { hurt(w, o, dmgOf(u, 0.9), u, { knock: 380, kAngle: a, noDodge: true, stagger: tier >= 3 ? 45 : 0, ab: 'pickpocket' }); puff(w, o.x, o.y, '#E9DDC2', 6, 80, 5, 0.35); });
@@ -2711,7 +2711,7 @@ export function antiheal(w, e, dur) {
 }
 const PACT = { bleed: 18, self: 28, wash: ['#6A0E1E', 0.2] }; // (the cut: a token of blood, not a wound; 35 / 45 measured -1.8 rooms)
 const RITE = { r: 72, r3: 92, t: 3, t3: 2.4, bleed: 6, big: 0.2, cdCut: 4, heal: 0.15, below: 0.55, reach: 320 };
-const SAC = { max: 6, reach: 380, cut: 0.5, anti: 4, might: 0.1, dur: 6 };
+const SAC = { max: 6, reach: 380, cut: 0.5, heal: 0.06, anti: 4, might: 0.1, dur: 6 };
 // held where it stands (it can't walk out of a circle)
 const stuckFor = (w, e) => e.stunT > 0 || e.rootT > 0 || e.frozenT > 0 || e.sleepT > 0 || e.koT > 0 || isOn(w, e, 'trapped') || isOn(w, e, 'hostage');
 // the Ritual Circle's mark: the enemy nearest death within reach (under RITE.below), one held in place before the rest
@@ -2726,7 +2726,7 @@ function bleedersOf(w, u, from = u) {
 // Sacrifice's cut: a cut, and its bleeding bursts now (the build-up pushed over its top: a Haemorrhage)
 function cutOpen(w, u, e, tier) {
   if (!alive(e)) return; u.facing = ang(u, e);
-  hurt(w, e, dmgOf(u, SAC.cut), u, { noDodge: true, knock: 100, kAngle: ang(u, e), ab: 'soulCandle' });
+  hurt(w, e, dmgOf(u, SAC.cut), u, { noDodge: true, knock: 100, kAngle: ang(u, e), ab: 'soulCandle' }); heal(w, u, u.maxHp * SAC.heal, u); // (its blood heals him a little, as the old Sacrifice's did)
   if (alive(e) && !(e.bleedImmuneT > 0)) addStatus(w, e, 'bleed', 300, u);
   k2(w, { draw: 'sacrifice', x: e.x, y: e.y, a: u.facing, r: e.vr, max: 0.6, ab: 'soulCandle' });
   if (tier >= 2) antiheal(w, e, SAC.anti);
@@ -2920,7 +2920,7 @@ function snatch(w, u, e) {
 }
 // Round 19 (lane rogue19): Light Fingers, the Bandit's trait: a chain of three draw cuts (dashes.js), the next mark the
 // nearest one not yet cut (an armed one first: there is a weapon to take), each cut a blow and DISARMED
-const LIGHT = { cd: 11, first: 4, reach: 260, n: 3, cut: 0.9, disarm: 2.5 };
+const LIGHT = { cd: 9, first: 3, reach: 260, n: 3, cut: 1.1, disarm: 2.5 }; // (cd 11, cut 0.9 measured the Bandit 0.8 rooms down from Snatch)
 function lightChain(w, u, pool) {
   const done = new Set(), pick = () => { const L = opponents(w, u).filter((e) => !done.has(e) && dist(u.x, u.y, e.x, e.y) < LIGHT.reach && !blocked(w, u.x, u.y, e.x, e.y));
     return L.sort((p, q) => (isArmed(q) && !(q.disarmT > 0) ? 1 : 0) - (isArmed(p) && !(p.disarmT > 0) ? 1 : 0) || dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0] || null; };

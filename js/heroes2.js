@@ -133,7 +133,7 @@ export const HEROES2 = {
       { id: 'lowBlow', name: 'Hostage', cd: 12, tags: 's', glyph: 'dagger', desc: 'Grabs the nearest enemy that isn\'t too big and holds it in front of him, the cutlass at its throat: it can\'t act, and every blow and shot that comes at him from the front lands on it instead.',
         tiers: ['Held for 3s.', 'Held for 4.5s.', 'When he lets go he shoves it into its friends, disarmed.'] },
     ],
-    trait: { id: 'lightFingers', name: 'Light Fingers', desc: 'Every 11s, with two or more enemies near, he dashes through up to three of them in a chain, cutting each one and knocking its weapon out of its hand (disarmed for 2.5s).' },
+    trait: { id: 'lightFingers', name: 'Light Fingers', desc: 'Every 9s, with two or more enemies near, he dashes through up to three of them in a chain, cutting each one and knocking its weapon out of its hand (disarmed for 2.5s).' },
   },
   shade: {
     name: 'Shade', art: 'art/heroes/shade.svg', role: 'skirmish', unlock: { gems: 3 },
@@ -312,7 +312,7 @@ Object.assign(HEROES2, {
         tiers: ['+30% damage, quicker blows.', '+40%.', 'They heal from 15% of what they deal.'] },
       { id: 'ritualCircle', name: 'Ritual Circle', cd: 13, tags: 's', glyph: 'skull', desc: 'Burns a circle into the floor round the enemy nearest death. If it is still inside when the count runs out it is sacrificed: it dies (a boss loses a fifth of its health), his cooldowns come 4s nearer and he heals 15%. Nothing is held in.',
         tiers: ['3s to get out.', 'Everything in the circle bleeds slowly.', 'A wider circle, 2.4s to get out.'] },
-      { id: 'soulCandle', name: 'Sacrifice', cd: 14, tags: 'dh', glyph: 'dagger', desc: 'Darts round every bleeding enemy in turn, the dagger across its back: a cut, and its bleeding bursts at once.',
+      { id: 'soulCandle', name: 'Sacrifice', cd: 14, tags: 'dh', glyph: 'dagger', desc: 'Darts round every bleeding enemy in turn, the dagger across its back: a cut, and its bleeding bursts at once; the blood of each heals him 6%.',
         tiers: ['A cut and the burst.', 'Each one cut has Anti-heal: heals on it do half for 4s.', 'Each one cut makes him 10% stronger for 6s (it adds up).'] },
     ],
     trait: { id: 'bloodRite', name: 'Blood Rite', desc: 'When a friend is about to die (under 12% health) he darts to it and takes the last of its life: every cooldown of his is ready again. A hero friend goes down, as at 0. Once every 25s.' },

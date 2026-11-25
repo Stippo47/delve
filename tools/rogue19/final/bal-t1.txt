@@ -1,0 +1,67 @@
+tier 1, parties of 3, every dungeon at rank 0: 144 runs, 0 errors, 10.27 rooms a run on average
+dungeons: wildwood 12.2 rooms, crypt 10.6 rooms, sewers 11.7 rooms, warren 10.7 rooms, frost 9.4 rooms, ember 9.9 rooms, spire 9.4 rooms, dunes 9.5 rooms, foundry 9.0 rooms
+  tank      rooms 9.63  damage  20%  healing  20%  taken  44%  downs 1.95
+  ranged    rooms 10.73  damage  43%  healing   9%  taken  21%  downs 1.17
+  skirmish  rooms 10.04  damage  37%  healing   4%  taken  34%  downs 2.49
+  melee     rooms 9.95  damage  33%  healing  48%  taken  48%  downs 1.80
+  caster    rooms 10.17  damage  39%  healing  17%  taken  26%  downs 1.43
+  support   rooms 11.19  damage  18%  healing  51%  taken  26%  downs 1.39
+hero          role      runs  rooms  vs avg   dmg  heal taken   blk  downs  dmg/s  top sources of its damage
+chef          support      1  16.00  + 5.73   15%  100%   31%    3%   1.00    2.6  attack 88%, foodFight 10%, greaseFire 2%
+beekeeper     support      7  15.71  + 5.44   22%   80%   21%    0%   0.43    3.7  attack 89%, ~poison 6%, swarm 4%, ~entangle 0%
+plague        caster       2  15.50  + 5.23   30%   54%   30%   21%   1.50    5.0  attack 53%, ~poison 45%, miasma 1%, ~burn 0%
+waterMage     support      1  15.00  + 4.73   28%   35%    8%   16%   0.00    3.8  attack 61%, waterCannon 39%, other 0%
+crossbowman   ranged       4  13.25  + 2.98   56%    0%   18%    1%   0.75    9.6  attack 59%, pinBolt 23%, crankUp 18%
+quartermaster support      5  12.80  + 2.53   15%   72%   31%   22%   1.60    2.4  attack 83%, flare 17%
+shaman        support      2  12.50  + 2.23   14%   86%   29%   27%   1.00    2.3  attack 74%, pet 25%, ~chill 1%
+cleric        support      6  12.33  + 2.06    9%   92%   23%    1%   2.33    1.5  attack 56%, smite 39%, sanctuary 4%, mend 0%
+gladiator     melee        3  12.00  + 1.73   39%    0%   32%   43%   4.67    7.9  attack 58%, netThrow 23%, shieldRush 19%
+telekinetic   caster       7  11.86  + 1.59   33%    0%   21%    6%   0.86    6.0  attack 57%, hurl 22%, levitate 12%, poltergeist 5%
+marksman      ranged       8  11.75  + 1.48   48%    0%   20%    0%   1.75    8.2  attack 54%, aimedShot 28%, ricochet 12%, bayonet 5%
+granny        melee        4  11.50  + 1.23   31%    0%   47%    6%   1.75    5.7  attack 47%, reap 33%, hook 20%
+frost         caster       2  11.50  + 1.23   27%    0%   24%    1%   1.50    4.4  attack 60%, iceShard 30%, frostNova 7%, ~chill 2%
+valkyrie      support      6  11.33  + 1.06   20%   65%   37%   29%   2.00    3.0  attack 83%, skyDive 14%, spearThrow 3%, valkyrieCall 0%
+paladin       tank         7  11.00  + 0.73   19%   68%   42%   60%   2.71    2.7  attack 63%, shieldBash 24%, consecrate 14%
+warlock       caster       2  11.00  + 0.73   48%   70%   22%   31%   1.00   11.5  attack 51%, summonImp 32%, eldritchBeam 11%, pet 4%
+huntress      ranged       9  11.00  + 0.73   54%    0%   18%   24%   1.44    9.3  attack 50%, prey 18%, runningThrow 15%, bound 10%
+slinger       ranged      11  11.00  + 0.73   40%    0%   17%    1%   1.00    5.5  attack 69%, stunStone 16%, ramCharge 15%, ~chill 0%
+shade         skirmish    40  10.90  + 0.63   43%    0%   29%   14%   2.05    7.7  attack 59%, pet 21%, shadowWalk 20%, blackout 0%
+storm         caster       7  10.86  + 0.59   40%    0%   19%    0%   1.29    6.2  attack 58%, chainLightning 19%, thunderclap 15%, stormCloud 8%
+ninja         ranged       4  10.75  + 0.48   36%    0%   13%   45%   1.00    5.5  attack 89%, shurikenFan 8%, caltrops 3%
+werewolf      melee        4  10.75  + 0.48   24%   78%   57%    3%   1.25    4.0  attack 79%, pounce 21%
+harpooner     ranged       5  10.60  + 0.33   44%    0%   31%    4%   1.20    7.7  attack 54%, reelIn 21%, anchorDrop 15%, rogueWave 10%
+tower         tank         4  10.50  + 0.23   15%    0%   60%   37%   3.00    2.0  attack 66%, charge 20%, groundPound 13%, ~chill 1%
+archer        ranged       6  10.50  + 0.23   37%    0%   17%   17%   1.00    6.8  attack 63%, barrage 23%, frostArrow 14%
+druid         support      4  10.50  + 0.23   16%   98%   21%    2%   1.00    2.6  attack 77%, pet 23%
+falconer      ranged       4  10.50  + 0.23   39%    0%   17%    8%   0.75    6.3  attack 57%, looseFalcon 27%, flock 12%, other 5%
+monk          melee       40  10.40  + 0.13   30%   81%   57%   17%   1.45    4.5  attack 65%, flurry 25%, palmStrike 10%, innerPeace 1%
+warden        tank         5  10.20  -0.07   17%    0%   47%   41%   1.20    2.6  attack 92%, manacle 8%
+bearskin      melee        6  10.17  -0.10   36%   19%   37%   25%   1.00    6.2  attack 54%, maul 27%, bearRoar 19%
+engineer      ranged       6  10.17  -0.10   39%   47%   26%    2%   1.33    6.5  attack 81%, pet 17%, ~burn 2%, ~chill 0%
+alchemist     caster       4  10.00  -0.27   29%   86%   19%   10%   1.25    4.5  attack 69%, acidFlask 16%, ~burn 11%, ~poison 3%
+pirate        skirmish     6  10.00  -0.27   31%   67%   46%   10%   1.33    4.7  attack 57%, pointBlank 27%, broadside 15%
+griffon       tank         9   9.89  -0.38   24%    0%   46%   47%   1.56    3.6  attack 56%, hammerThrow 27%, swoop 10%, wingShield 7%
+oldguard      tank         6   9.83  -0.44   19%    0%   40%   50%   2.50    2.5  attack 56%, greatSweep 35%, pommelStrike 10%, tk:brambleVest 0%
+trapper       ranged       6   9.83  -0.44   35%   60%   33%    0%   1.17    5.8  attack 72%, snareNet 20%, jawTrap 9%
+jester        skirmish     9   9.78  -0.49   31%    0%   32%   38%   2.22    5.3  attack 55%, juggle 35%, befuddle 9%, ~burn 1%
+cultist       caster      40   9.78  -0.50   42%   16%   31%    8%   1.70    6.7  attack 77%, ~bleed 18%, soulCandle 3%, ritualCircle 2%
+grandpa       support      4   9.75  -0.52   13%   78%   44%    3%   2.00    2.0  attack 71%, harvest 29%
+warhelm       melee        6   9.67  -0.60   40%    0%   39%   37%   2.67    7.0  attack 35%, skullSplitter 26%, warHorn 25%, thunderBlow 14%
+rogueBandit   skirmish    39   9.64  -0.63   33%    0%   37%   19%   3.31    5.3  attack 52%, pickpocket 24%, lightFingers 18%, smokeBomb 6%
+necromancer   caster       5   9.60  -0.67   35%   22%   23%    2%   1.20    5.0  attack 33%, boneSpear 28%, lifeDrain 28%, pet 12%
+enchantress   support     11   9.55  -0.73   21%    0%   19%    0%   1.27    2.9  attack 84%, heartbreak 16%
+haymaker      melee        6   9.50  -0.77   31%   66%   53%    0%   1.00    4.8  attack 43%, forkCharge 40%, toss 17%
+berserker     melee        7   9.43  -0.84   31%    0%   36%    8%   3.00    4.7  attack 55%, shockwave 27%, whirl 17%
+bard          support      5   9.40  -0.87   20%    0%   26%    0%   2.00    3.2  attack 100%
+earthMage     caster       7   9.29  -0.99   40%    0%   19%    1%   1.00    6.9  attack 51%, spikeChain 19%, earthquake 17%, aftershock 11%
+mob           melee        6   9.17  -1.10   32%   55%   47%   11%   3.17    4.7  attack 41%, pileOn 30%, surround 26%, ~burn 2%
+grenadier     ranged       7   9.00  -1.27   42%    0%   25%    8%   1.00    6.8  attack 66%, stickyBomb 19%, bigBomb 9%, blastOff 5%
+wildmane      melee        2   8.50  -1.77   38%    0%   35%   15%   1.00    7.5  attack 66%, leap 23%, cleave 10%
+samurai       melee        5   8.00  -2.27   44%    0%   32%   35%   1.80    7.4  attack 60%, crescentCut 21%, iaido 18%
+dame          tank         3   7.00  -3.27   19%   95%   37%   49%   1.33    2.6  attack 81%, riposte 11%, disarm 7%
+bulwark       tank         4   6.75  -3.52   23%    0%   40%   55%   1.00    3.4  attack 64%, impale 20%, brace 15%, other 2%
+digger        melee        3   6.67  -3.60   40%    0%   32%   45%   1.00    8.1  attack 57%, burrow 21%, spadeBat 12%, dirtFling 9%
+seer          support      3   6.67  -3.60   21%    0%   24%   20%   0.67    2.9  attack 91%, premonition 9%
+clockwork     support      2   6.50  -3.77   19%    8%   21%    0%   0.50    1.5  attack 100%
+twinfang      skirmish     4   6.00  -4.27   36%    0%   39%   36%   1.25    6.2  attack 61%, backstab 27%, fanOfKnives 9%, dash 3%
+airMage       caster       1   4.00  -6.27   32%    0%   21%    0%   1.00    4.2  attack 59%, gale 19%, updraft 12%, cyclone 10%
