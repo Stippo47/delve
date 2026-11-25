@@ -1,0 +1,47 @@
+2253 previews, 35.7s
+threw: 0
+a loop where the move or trait never fired: 0
+not offered in the Book (never fires, so its button is left out): 0
+locked (shown as locked): 1 not counting heroes' tier 0
+  status:silenced:: (No preview for this one yet)
+abilities at tiers I-III: 540 runs of two loops, 10.5s
+  first go: 0.66 s on average, 4.4 s at the latest; 1.01 goes a loop; the hero's own brain chose it in 1051 of 1080 loops
+a loop where it didn't go within 2.5 s: 1
+  waterMage:bubbleShield  (2.1 1.4 2.1 1.4 2.1 4.4 s)
+not shown (a loop where it drew nothing and touched no one): 0
+drawn but reached no one (a loop where nothing it made touched a foe or a friend: a roll, a bush, a change of shape): 3
+  archer:roll
+  trapper:tripwire
+  werewolf:turnWolf
+wrong scenario (a loop where the game's own scorer wouldn't have used it there): 0
+cast by the stage (the brain didn't pick it by forceAt, though the scorer agreed): 4
+tiers identical (the same loop at two tiers: nothing on the stage changed): 0
+tiers that differ only in where things went (the same foes reached, statuses, buffs, heals, summons, sizes): 25
+  frost:iceShard I~II  (I: Chills. | II: Chills harder. | III: Splits into three; the middle one is bigger and hits harder.)
+  bulwark:shieldWall II~III  (I: For 5s; allies near take 30% less. | II: For 7s. | III: Enemies that press against the shield are shoved back.)
+  haymaker:forkCharge I~II  (I: A bale for 5s. | II: For 7s. | III: It staggers what it rolls over.)
+  alchemist:elixir II~III  (I: One friend: heals 14% / ward 30 / +25% damage. | II: Heals 22% / ward 45 / +35% damage. | III: It splashes every friend near the one it hits.)
+  witch:cursedBrew II~III  (I: Cursed fumes for 6s. | II: Wider fumes. | III: Enemies that die in them burst, cursing those near.)
+  warlock:eldritchBeam II~III  (I: For 2.5s, then it bursts. | II: It grows hotter faster. | III: A bigger burst.)
+  cultist:soulCandle I~II  (I: Below a quarter of its health. | II: Below a third. | III: He spins as he lands: everything near bleeds.)
+  beekeeper:honeyPot I~II  (I: A hive for 8s. | II: For 12s. | III: Its bees stay on their foes, stinging.)
+  quartermaster:resupply I~II  (I: One crate: 4s sooner. | II: 6s sooner. | III: Two crates.)
+  crossbowman:pavise I~II  (I: One pavise for 7s. | II: For 10s, and he reloads 35% faster behind it. | III: Three, set round him in a slanted row.)
+  grenadier:blastOff I~II  (I: Throws him clear and hurts those near. | II: The blast staggers. | III: He lands with a second blast.)
+  harpooner:rogueWave II~III  (I: Soaks and throws them back. | II: A bigger wave. | III: It leaves water on the floor.)
+  huntress:bound II~III  (I: A leap back and a heavy javelin. | II: The javelin pierces. | III: She lands lightly: 2s faster.)
+  marksman:aimedShot I~II  (I: Two and a half times the damage through the first enemy. | II: Through everything in the line. | III: Knocks out the first one hit.)
+  marksman:ricochet I~II  (I: Bounces three times. | II: Five times. | III: Each bounce hits harder than the last.)
+  ninja:substitution I~II II~III  (I: Escapes one blow. | II: The smoke blinds those near. | III: Ready again much sooner.)
+  trapper:snareNet II~III  (I: Twelve pellets. | II: They stagger. | III: Those close are knocked down.)
+  samurai:iaido I~II  (I: One cut through. | II: Staggers them harder. | III: He cuts back through again.)
+  samurai:crescentCut II~III  (I: One heavy cut. | II: It staggers. | III: If it kills, he darts on to the next.)
+  valkyrie:spearThrow II~III  (I: A shield of 28. | II: The strikes shock. | III: A shield of 45.)
+  engineer:deployTurret I~II  (I: One turret for 10s. | II: It fires faster and lasts 16s. | III: Two turrets.)
+  engineer:tinker II~III  (I: A tower for 9s. | II: For 12s. | III: The medbay's drones heal half as much again.)
+  werewolf:turnWolf I~II  (I: A wolf for 10s. | II: For 14s. | III: The claws make them bleed.)
+  werewolf:frenzy II~III  (I: Up to 60% faster / heals up to 6%. | II: Heals up to 9%. | III: At full speed he howls: everything near is staggered.)
+  enchantress:heartstring II~III  (I: The thread holds 4s. | II: It holds 6s. | III: Once that enemy is won, the thread jumps to the next one.)
+blows on the hero side with nothing seen behind them (a target with no weapon, health set lower): 2
+  harpooner:rogueWave  1 (hero<-nothing)
+  jester:mock  2 (paladin<-nothing, paladin<-nothing)

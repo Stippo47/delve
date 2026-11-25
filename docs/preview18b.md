@@ -26,14 +26,14 @@ preview yet".
 | Straw targets on the stage, the move shown against them | 975 | 0 | 41 | 0 |
 | Blows or health lost with nothing seen behind them (either side) | 720 previews, 3205 blows | 0 | 0 | 0 |
 | The stage helped it: health set lower with no blow, a target moved up to it | 366 | 0 | 0 | 0 |
-| Wrong scenario: it went off but nothing it made reached anyone within 3.5 s | 27 | 8 | - | 0 (every one comes to its burst or state) |
-| A loop where it didn't go within 2.5 s | 75 | 23 | 26 | 0 |
+| Wrong scenario: it went off but nothing it made reached anyone within 3.5 s | 27 | 7 | - | 0 (every one comes to its burst or state) |
+| A loop where it didn't go within 2.5 s | 75 | 24 | 26 | 0 |
 | A loop where it never went / threw / not offered | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 |
 | Put on from nothing seen (no fighter in view put it on) | - | - | 41 | 0 |
 | No preview at all | 0 | 0 | 1 (Silenced) | 0 |
-| A loop that showed only its plain blows (its own move never came) | 33 | 31 | - | - |
+| A loop that showed only its plain blows (its own move never came) | 33 | 32 | - | - |
 
-First go: monsters 1.05 s on average before, 0.99 s after (2.3 goes a loop both); statuses 0.86 s after (they used to
+First go: monsters 1.05 s on average before, 1.00 s after (2.3 goes a loop both); statuses 0.86 s after (they used to
 fire at the burst, about 2.5 s; now when the first dose lands, bursting on the third blow).
 
 ## How the monster previews work now
@@ -99,25 +99,27 @@ loop's units from the same id (`steadyStage`), so a result no longer hangs on wh
 unit ids: a wanderer's heading is `Math.sin(u.id)`).
 
 - 2253 previews: threw 0, never fired 0, not offered 0, locked 0 (`tools/preview18b/check.txt`)
-- monster moves: first go 0.99 s, 2.39 goes a loop; late 23, straw 0, wrong scenario 8, helped 0, blows from nothing 0,
-  plain blows only 31
+- monster moves: first go 1.00 s, 2.37 goes a loop; late 24, straw 0, wrong scenario 7, helped 0, blows from nothing 0,
+  plain blows only 32
 - statuses: first go 0.86 s, late 0, straw 0, wrong scenario 0, helped 0, blows from nothing 0, from nothing seen 0
-- abilities: as lane preview18 left them, except "tiers that differ only in where things went" reads 22, not 19 (see
+- abilities: as main has them after the dash lane (main itself reads the same two hero-side blows from nothing, the
+  Harpooner's Rogue Wave and the Jester's Mock, and "tiers that differ only in where things went" 25; here 26, see
   below)
-- `node tools/battles.mjs`: 528 battles, 0 problems (8 ran out of time)
+- `node tools/battles.mjs`: 528 battles, 0 problems (9 ran out of time)
+- (all after `git merge main`, which brought the dash lane in)
 
 ## Still weak, and why
 
-- **Wrong scenario, 8**: the Ent at rank 1, the Rock Troll major, the Plague Rat and the Bone King at rank 0, the Yeti at
-  rank 1, the suicide goblin at ranks 0 and 1, the saw blade. In a loop of each, what the move made (a ring, a cloud,
+- **Wrong scenario, 7**: the Ent at rank 1, the Rock Troll major, the Bone King, the Yeti at rank 1, the suicide goblin
+  at ranks 0 and 1, the saw blade. In a loop of each, what the move made (a ring, a cloud,
   a lane) caught nobody: the heroes, moving as in a run, were out of it by then. The suicide goblin is the worst: the
   heroes' own blows knock it away from them mid-fuse, so it blows up alone (a party standing its ground let it circle
   round them instead); the saw blade runs its own track and the heroes aren't on it. Each shows its tell and its
   landing.
-- **Late, 23**: moves on their own clocks or that need a run-up the scene can't hurry: the leech's latch (3 s on a host
+- **Late, 24**: moves on their own clocks or that need a run-up the scene can't hurry: the leech's latch (3 s on a host
   before it spits), the sun blade's major leg, the cobra's spray, the chain creatures' coils (their segments are laid
   out first), the cinder's opening, the imp's blink (only once someone is close), a few rank-2 kits.
-- **Plain blows only, 31**: mostly the dash and lunge kinds (goblins, knife bandits, mice, rats, lizards, devils, angels):
+- **Plain blows only, 32**: mostly the dash and lunge kinds (goblins, knife bandits, mice, rats, lizards, devils, angels):
   their dash is a roll of the dice each think while in range, and in some loops the heroes close in first. That is the
   other lane's dash rework; the scenes give them room (`far`). The rest (the axe bandit's throw, the crabs' snap at rank
   0) come round after the loop's fight has closed the gap.
@@ -125,8 +127,8 @@ unit ids: a wanderer's heading is `Math.sin(u.id)`).
   before), so a brain-timed elite move (the boar's thorns, the wolf's quickening howl) is counted as fired when its brain
   acts; the clips are what show the move itself.
 - **The heroes' tier report moves with the order things are checked in**: the abilities' measures keep the ids they get
-  (as when lane preview18 took its counts), and stepping the new stages first moved "tiers that differ only in where
-  things went" from 19 to 22. Measured with steady ids too (`--steady`), 35 abilities play the very same loop at two
+  (as when lane preview18 took its counts), and stepping the new stages first moves "tiers that differ only in where
+  things went" by one or two (25 on main, 26 here). Measured with steady ids too (`--steady`), 35 abilities play the very same loop at two
   tiers and 15 more differ only in where things went: the differing ids had been making those loops differ. That is the
   hero side's to look at (not changed here).
 - **Trinket and potion previews** still use the round 14 straw targets with weapons (they swing before each blow: no

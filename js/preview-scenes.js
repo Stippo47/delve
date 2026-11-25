@@ -385,7 +385,7 @@ export function foeSceneOf(k, move, d, words, major) {
 // Shield Bash (sim.js stun), so a new status still has a source in view.
 const ST = (by, o = {}) => ({ by, ...o });
 export const STATUS_SCENE = {
-  burn: ST('pyromancer'), chill: ST('frost', { trigger: 'warhelm' }), poison: ST('plague'), wet: ST('waterMage'),
+  burn: ST('pyromancer'), chill: ST('frost', { trigger: 'warhelm' }), poison: ST('plague'), wet: ST('waterMage', { at: [150, 0] }), // (close in: she keeps her distance and her first shots went wide)
   shock: ST('storm'), stagger: ST('warhelm', { carry: 0.7 }), // (a reeling orc steadies quickly: more on each blow) radiance: ST('cleric'), curse: ST('witch'), entangle: ST('druid'),
   charm: ST('enchantress'), confuse: ST('jester'), sleepy: ST('bard', { trigger: 'paladin' }), bleed: ST('twinfang'),
   fear: ST('shade'), shackle: ST('warden'), whirled: ST('airMage'), spun: ST('monk'),

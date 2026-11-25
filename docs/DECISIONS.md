@@ -1129,6 +1129,29 @@ fired 0, not offered 0. Clips: docs/clips/downed18/.
 - 0.24.2: foes17b, a knock back slides a chain's whole body as one piece (it piled the links up on the head); clips re-staged.
 - 0.25.0: preview18, the Book's ability previews are small real fights (js/preview-scenes.js: 22 scene recipes, real enemies with their own brains, no damage from nothing, the hero's own brain casts, scenes built for tier III). Wrong-scenario 35 -> 0, invisible damage 49 kinds -> 0, tiers alike 57 -> 18 (number-only tiers). docs/preview18.md. Still on straw dummies: the monster pages' previews.
 
+## Round 18, lane dash18 (2026-11-24): the dashes
+
+The designer: "I don't like how dash slash abilities work currently in general. Everyone from the wolf to hero's
+abilities. Make a few completely new variations of it." Everything is in docs/dash18.md (the survey, the six, who uses
+which, the numbers); code js/dashes.js, looks js/fx-dash.js; checks tools/dash18/ (smoke.mjs, threat-check.mjs).
+- Six variations in one module any unit can use: draw cut, blink chain, hook, feint, drag and fling, pounce. Each has a
+  tell (the body settles; anything not a hero shows its path on the floor, and threat.js sees it coming), a posed body, a
+  weapon that is tracked (the hit is what the blade or body really passed through; the slash drawn is the path the
+  blade's point took), and a follow-through. A dash is still a 'dash' act, so what stops or shortens dashes still does.
+- Re-assigned: Iaido, Spear Lunge, Spear of the Sky, Bayonet (draw cut); Shadow Walk (blink chain); Backstab, the
+  Werewolf's man-form Pounce, Sacrifice (hook); Twinfang's Dash, Crescent Cut (feint); Charge, Shield Rush, Thunder Blow,
+  Shield Bash (drag and fling); the Werewolf's wolf Pounce, Bear Claws (pounce). Enemies: every rush() names its style;
+  a small foe's `ability: 'dash'` names one on its def (def.dash) and its cut is a part of its own blow.
+- Lane calls (say if any is wrong): an enemy's pounce watches its mark while it crouches and picks its spot as it leaves
+  the floor; a hero's hook and pounce follow their mark; enemies are not untouchable mid-dash, heroes are where the old
+  move was; Shadow Walk's cut is lighter (the chain finds three marks); Iaido III's cut back lands at 0.3 of the first
+  cut (measured, the old cut back hit nothing, so III was worth what II was; it is now worth about a quarter more); Twinfang's
+  Dash in nicks for half a stab; Spear of the Sky is 1.0x (it now hits what the point passes).
+- Left alone on purpose: the bosses' charges (their own tells, crashes and dazes), the boar and the Gaper (their own
+  endings), chain heads (crawler, sand serpent: the plain straight run, their bodies follow the head's path), flights
+  and rescues (Leap, Swoop, Sky Dive, Challenge, Burrow), Roll, the Ninja's Substitution.
+- 0.26.0: dash18 merged (six dash moves in js/dashes.js: draw cut, blink chain, hook, feint, drag and fling, pounce; every dash re-assigned; docs/dash18.md). Film check: none broken; to look at in the weapon-slash pass: the feint's crescent sweeps wide of the dagger, the bone spear's delayed wounds don't show, faint feint/hook copies, the Shade ends as a blob under a foe.
+
 ## Round 18, lane preview18b (2026-11-24): the monster pages and the statuses in the Book
 The rest of the designer's note on the Book's previews ("the dummies don't attack like how an enemy would, I don't want
 the heroes to just take invisible damage"): lane preview18 had done the heroes' abilities. The lane's calls (all in
@@ -1145,9 +1168,9 @@ js/preview-scenes.js, easy to change; docs/preview18b.md has the audit, every nu
   of shots still goes while its song waits, then it sings again.
 - Measured (tools/preview18b/foe-audit.mjs, the same ruler before and after): monster previews on straw 975 -> 0, blows
   or health lost with nothing behind them 720 previews (3205 blows) -> 0, the stage helping it 366 -> 0, wrong scenario
-  27 -> 8, late (not within 2.5 s) 75 -> 23; statuses on straw 41 -> 0, from nothing seen 41 -> 0, late 26 -> 0, no
+  27 -> 7, late (not within 2.5 s) 75 -> 24; statuses on straw 41 -> 0, from nothing seen 41 -> 0, late 26 -> 0, no
   preview 1 -> 0. tools/preview-check.mjs reports the monster moves and the statuses too; threw / never fired / not
-  offered 0 / 0 / 0. tools/battles.mjs: 528 battles, 0 problems. Clips: docs/clips/preview18b/.
+  offered 0 / 0 / 0. tools/battles.mjs: 528 battles, 0 problems (after merging main). Clips: docs/clips/preview18b/.
 - Found on the way, not changed (the heroes' side): measured from the same unit ids every time, 35 hero abilities play
   the very same loop at two tiers and 15 more differ only in where things went (`preview-check --steady`); the ids
   had been making those loops differ.

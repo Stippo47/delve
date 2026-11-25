@@ -12,6 +12,7 @@ import { drawEnemyHp, hpWash, setHpSides } from './hpstyle.js';
 import { icon } from './icons.js';
 import { heartPath, drawStatusMarks, bleedFlash, bleedLook } from './fx-status.js'; // round 13 (lane S): the new statuses' marks
 import { drawMarks3 } from './fx3.js'; // round 15 (lane N): Shackled's irons
+import './fx-dash.js'; // round 18 (lane dash18): the six dashes' looks (it fills fx2.js's table)
 import { WALL2, ART2 } from './looks2.js';
 import { HEROES } from './heroes.js';
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
@@ -504,6 +505,10 @@ function unitFrame(ctx, u, w) {
   const T = w.time;
   // off the ground (a leap): the body lifts up the screen, its shadow stays where it really is (round 9)
   if (u.hop > 0) { const [ux, uy] = upVec(); ctx.translate(ux * u.hop * 0.9, uy * u.hop * 0.9); }
+  // round 18 (lane dash18): one of the six dashes poses the body itself (dashes.js D.body: lean, squash and stretch along
+  // its facing, a bank into a turn, a small hop)
+  const dvb = u.act && u.act.dv && !u.downed ? u.act.dv.body : null;
+  if (dvb && dvb.hop) { const [ux, uy] = upVec(); ctx.translate(ux * dvb.hop * 0.9, uy * dvb.hop * 0.9); }
   // a slime's hop (round 16, sim.js slime hops): squashed flat and wide on the floor (u.squish > 0: the crouch, the
   // landing), stretched tall in the air (< 0); up and down the screen whatever it faces, its foot kept where it was
   if (u.squish) {
@@ -537,6 +542,7 @@ function unitFrame(ctx, u, w) {
     const k = 1 - u.act.t / u.act.max; fy -= u.vr * 0.3 * k; sc *= 1 + 0.1 * k; tilt += Math.sin(w.time * 40) * 0.03 * k;
   }
   if (u.act && u.act.type === 'charge') { fy += u.vr * 0.15; sc *= 1.04; }
+  if (dvb) { fy += u.vr * (dvb.lean || 0); tilt += dvb.tilt || 0; }
   if (u.sleepT > 0) sc *= 1 + Math.sin(w.time * 2.4 + u.id) * 0.02;
   // round 13 (lane S): how the new statuses move the body. Sleepy: its head nods (a slow droop forward, then a jerk
   // back up). Fear: it trembles, harder as it builds; terrified, it shakes. Confused: it sways off balance.
@@ -551,6 +557,7 @@ function unitFrame(ctx, u, w) {
   if (u.hop > 0) sc *= 1 + u.hop / (u.def.hops ? 240 : 110); // a leap: off the ground, so drawn bigger (its shadow shrinks below) (round 16: a slime's hop goes higher, so it grows less with it)
   if (u.exiting) { const k = clamp(u.exiting.t / u.exiting.dur, 0, 1); sc *= 1 + 0.12 * Math.sin(Math.min(1, k * 3) * Math.PI) - 0.85 * k * k; } // through the door: a lift, then shrinking into the light
   ctx.translate(fx, fy); ctx.rotate(tilt); ctx.scale(sc, sc);
+  if (dvb) ctx.scale(dvb.sx || 1, dvb.sy || 1);
   if (u.squash) ctx.scale(1, u.squash); // round 13 (lane E): foreshortened along its facing (the sun blade's point down in the floor)
 }
 
@@ -581,6 +588,7 @@ function washesOf(u, w) {
   if (wet > 0.05) out.push(['#3F8FD8', 0.1 + 0.22 * wet]);
   if (shock > 0.05 && Math.sin(w.time * 31 + u.id * 3) > 0.55) out.push(['#FFF3A0', 0.35 + 0.4 * shock]);
   if (u.ethereal && !u.hiddenIn) out.push(['#BFE6FF', 0.45]);
+  { const dv = u.act && u.act.dv; if (dv && dv.body && dv.body.wash) out.push(dv.body.wash); } // round 18 (lane dash18): a dash's own wash (the Shade's blinks: a shadow)
   // buffs show on the body itself, never as a ring round it (round 8)
   for (const b of u.buffs || []) {
     if (b.id === 'rage') out.push(['#FF3A2A', 0.18 + 0.12 * Math.sin(w.time * 10 + u.id)]);
@@ -659,6 +667,8 @@ function drawPartsUnit(ctx, u, w) {
   const sizeU = u.vr * 220 / (u.def.headR || headR(u.kind)); // def.headR: the head's radius in the art's SVG units
   const set = getRig(url, sizeU * view.scale * view.dpr * 1.04);
   if (set && X && X.under) X.under(ctx, u, w);
+  const DV = u.act && u.act.dv ? u.act.dv : null; // round 18 (lane dash18): one of the six dashes (dashes.js)
+  if (set && (DV || u._dvTrail || (u.dvStamps && u.dvStamps.length))) dashGhosts(ctx, u, w, set, sizeU, DV);
   ctx.save();
   unitFrame(ctx, u, w);
   if (!set) { ctx.restore(); return; } // still rendering (a fraction of a second): draw nothing rather than a placeholder
@@ -672,8 +682,9 @@ function drawPartsUnit(ctx, u, w) {
   if (u.downed) alpha = 0.62; // a hero who is down lies faint too (round 7)
   if (u.ethereal && !u.exiting && !u.hiddenIn) alpha *= 0.5;
   if (X && X.alpha) alpha *= X.alpha(u, w);
+  if (DV && DV.body && DV.body.alpha) alpha *= DV.body.alpha;
   const mode = u.downed ? 'grey' : u.flashT > (u.def.flashAt ?? 0.06) ? 'flash' : 'normal'; // (lane B, bosses3: def.flashAt, as in washesOf)
-  if (u.act && u.act.type === 'dash' && u.kind === 'twinfang') afterimages(ctx, u, w, set, pose, sizeU);
+  if (u.act && u.act.type === 'dash' && !u.act.dv && u.kind === 'twinfang') afterimages(ctx, u, w, set, pose, sizeU); // (round 18: her Dash is one of dashes.js's now: dashGhosts above)
   else u._trail = null;
   // (round 15, lane E: def.ownLook, a summon drawn in its own colours: the code drawings it replaces were never turned blue-grey)
   drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w), shift: isOurs(u) && u.kind !== 'minion' && !u.def.ownLook, /* round 10: the raised dead stay plain grey */ border: mode === 'normal' ? borderOf(u, w) : null });
@@ -684,6 +695,23 @@ function drawPartsUnit(ctx, u, w) {
   if (X && X.over) X.over(ctx, u, w);
 }
 
+// Round 18 (lane dash18): the copies of the body a dash leaves behind it (dashes.js), drawn in the room's own frame under
+// the body: a trail of fading silhouettes while it travels (D.ghost: their colour), and the copies left standing where a
+// blink set off or sliding on where a feint pretended to go (u.dvStamps).
+function dashGhosts(ctx, u, w, set, sizeU, DV) {
+  const T = w.time, flip = u.def.style && u.def.style.flip, sc = sizeU / 220 * bigOf(u);
+  let kc = null, kcol = null; // (one silhouette painted per colour, drawn for every copy)
+  const one = (x, y, f, a, col) => { if (a <= 0.02) return; if (col !== kcol) { kc = composeRig(set, u._pose || LIMP, 'sil', col); kcol = col; } const k = kc;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(f - Math.PI / 2); ctx.scale(sc, sc); if (flip) ctx.scale(-1, 1); ctx.translate(-100, -100); ctx.globalAlpha = a; drawComposed(ctx, k); ctx.restore(); };
+  if (DV && DV.ghost) { const tr = u._dvTrail || (u._dvTrail = []);
+    if (DV.lines && (!tr.length || T - tr[tr.length - 1].t > 0.022)) tr.push({ x: u.x, y: u.y, f: u.facing, t: T, col: DV.ghost });
+  }
+  const tr = u._dvTrail;
+  if (tr) { while (tr.length && T - tr[0].t > 0.3) tr.shift(); if (!tr.length) u._dvTrail = null;
+    for (const p of tr) { const age = (T - p.t) / 0.3; if (age < 0.06) continue; one(p.x, p.y, p.f, 0.72 * (1 - age), p.col); } }
+  if (u.dvStamps) { u.dvStamps = u.dvStamps.filter((s) => T - s.t0 < s.life);
+    for (const s of u.dvStamps) { const age = T - s.t0, q = age / s.life; one(s.x + s.vx * age * (1 - q * 0.5), s.y + s.vy * age * (1 - q * 0.5), s.f, s.a * (1 - q) * (1 - q), s.col); } }
+}
 // Twinfang's Dash (round 9): shadow copies of her left behind along the way, fading. Drawn from inside her own frame
 // (SVG units), so each copy undoes her frame and sets up its own.
 function afterimages(ctx, u, w, set, pose, sizeU) {

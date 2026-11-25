@@ -27,7 +27,7 @@ export const DEFS = {
   rat: {
     team: 'enemy', name: 'Rat', r: 18, vr: 15, turn: 8, accel: 500, face: 8, mass: 0.4, hp: 18, speed: 88, role: 'skirmish',
     range: 11, atkCd: 0.85, dmg: 4, arc: 1.6, temp: 0.7, commit: 0.4, xp: 4, coins: [1, 2],
-    ability: 'dash', abilCd: 2.6,
+    ability: 'dash', dash: 'pounce', abilCd: 2.6, // (round 18, lane dash18: def.dash names which of the six dashes, dashes.js: a rat's is a little pounce)
   },
   slime: {
     team: 'enemy', name: 'Slime', art: 'art/enemies/slime.svg', headR: 64, r: 25, vr: 22, turn: 3, accel: 140, face: 3.5, mass: 1.6, hp: 46, speed: 40, role: 'melee',

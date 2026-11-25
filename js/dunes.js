@@ -64,7 +64,7 @@ function jackalBrain(w, u, dt) {
         if (!f || !alive(f) || gapTo(u, f) > 160) return true;
         const a = angleTo(u.x, u.y, f.x, f.y);
         if (u.elite) cone(w, u, a, { r: u.r + 90, arc: 1.7, tell: 0.2, kind: 'blade', anim: 'swing', hit: { dmg: 13, knock: 280, stagger: 45 } });
-        else rush(w, u, a, gapTo(u, f) + 34, { tell: 0.12, dmg: 15, knock: 260, status: { stagger: 40 } });
+        else rush(w, u, a, gapTo(u, f) + 34, { style: 'pounce', tell: 0.12, air: 0.28, rest: 0.25, dmg: 15, knock: 260, status: { stagger: 40 } }); // (round 18, lane dash18: its bite after the sidestep is a pounce)
       }
       return true;
     }
@@ -149,7 +149,7 @@ function serpentBrain(w, u, dt) {
     const R = S.rear; R.t += dt; const k = clamp(R.t / R.T, 0, 1), e = Math.sin(k * Math.PI / 2);
     stand(u, dt); u.facing = wrapAngle(R.a + Math.sin(R.t * 10) * 0.16 * (1 - k * 0.6));
     u.lean = -0.38 * e; // (round 17, lane foes17: "Is always laying down": it draws back along the floor, the head no longer lifted, u.hop)
-    if (R.t >= R.T) { S.rear = null; u.lean = 0; rush(w, u, R.a, R.len, { tell: 0, speed: u.def.speed * 6.5, dmg: 13, knock: 200, status: { poison: 30 }, trail: 'rgba(226,198,144,0.7)' }); }
+    if (R.t >= R.T) { S.rear = null; u.lean = 0; rush(w, u, R.a, R.len, { style: 'plain', tell: 0, speed: u.def.speed * 6.5, dmg: 13, knock: 200, status: { poison: 30 }, trail: 'rgba(226,198,144,0.7)' }); }
     return true;
   }
   if (rushTick(w, u, dt)) return true;

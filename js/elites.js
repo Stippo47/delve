@@ -9,6 +9,7 @@ import { alive, opponents, allies, hurt, puff, sparks, flames, addDanger, spawn,
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange, chance } from './util.js';
 import { lineClear } from './path.js';
 import { moveBlocked } from './tags.js'; // round 17 (lane tags17): Silenced, no mouth moves
+import { dash, dashStep } from './dashes.js'; // round 18 (lane dash18): the six dashes
 import { windMul, cdRate } from './statuses.js'; // round 14: sleepy, every tell lasts longer; round 15: Shackled, cooldowns run slower
 
 // 2-3x as strong (hp x2.4, blows x1.8), 1.5x as fast (walking; attacks x1.2), gold x0.8, XP x3 (dungeon.js).
@@ -180,14 +181,31 @@ export function around(w, u, o = {}) {
   addDanger(w, { ...z, t: tell, team: u.team, src: u, kind: o.kind || 'bone', hit: hitOf(u, o.hit), onFire: o.fire });
   beginHold(u, tell + (o.after || 0.3), null); setAnim(u, 'ability', tell + 0.3);
 }
-// A rush in a straight line: hurts everyone it runs through once (o.hit), stops at walls. Runs from rushTick.
+// A rush. Round 18 (lane dash18): it is one of the six dashes (dashes.js), named by o.style:
+//   'dragFling' (the default: a heavy charger: the first one met is carried and flung, the rest shouldered aside),
+//   'drawCut' (a blade through the line, the cut landing a beat after), 'lance' (the same with a spear), 'pounce' (a
+//   beast: onto its target), 'feint', 'hook' (at its target), or 'plain' (the old straight run, kept for the chains: a
+//   crawler's or a serpent's head, whose body follows its path).
+// The numbers are the old ones: o.dmg, o.knock, o.status, o.tell, o.speed. It was: a straight line at one speed,
+// everyone run through hurt and thrown aside the same. Runs from rushTick.
 export function rush(w, u, a, len, o = {}) {
+  const st = o.style || 'dragFling', t = targetOf(w, u);
+  if (st !== 'plain') {
+    const dmg = (o.dmg || 10) * u.dmgMul, hit = { knock: o.knock || 240, ...(o.status || {}) }, base = { a, dmg, hit, rest: o.rest ?? 0.5, recover: o.recover, kind: o.kind, onEnd: o.onEnd };
+    setAnim(u, 'ability', 0.2);
+    if (st === 'dragFling') return dash(w, u, 'dragFling', { ...base, len, tell: o.tell || 0.12, speed: o.speed || u.def.speed * 2.6, knock: o.knock || 240, hit: { ...(o.status || {}) }, carry: o.carry });
+    if (st === 'drawCut' || st === 'lance') return dash(w, u, 'drawCut', { ...base, dmg: dmg * 0.85, len, tell: Math.max(0.3, o.tell || 0), lance: st === 'lance', hold: o.hold ?? 0.2, hit: { ...hit, knock: (o.knock || 240) * 0.6 } }); // (0.85 of the old blow: the burst is too quick to step out of once it has gone)
+    if (st === 'pounce') return dash(w, u, 'pounce', { ...base, ...(t ? { t } : { x: u.x + Math.cos(a) * len, y: u.y + Math.sin(a) * len }), tell: Math.max(0.2, o.tell || 0), r: o.r || u.r + 24, air: o.air ?? 0.32, close: o.close ?? 0.4, land: o.land }); // (it comes down on its mark, not short of it, after a third of a second in the air: the time there is to step out)
+    if (t) return dash(w, u, st, { ...base, t, tell: Math.max(0.25, o.tell || 0) });
+    return dash(w, u, 'dragFling', { ...base, len, tell: o.tell || 0.12, knock: o.knock || 240, hit: { ...(o.status || {}) } });
+  }
   const sp = o.speed || u.def.speed * 2.6;
   E(u).rush = { a, t: len / sp, sp, hit: new Set(), o, tell: o.tell || 0 };
   if (o.tell) addDanger(w, { shape: 'line', x1: u.x, y1: u.y, x2: u.x + Math.cos(a) * len, y2: u.y + Math.sin(a) * len, hw: u.r + 6, t: o.tell, team: u.team, src: u, kind: o.kind || 'blade' });
   setAnim(u, 'ability', (o.tell || 0) + len / sp);
 }
 export function rushTick(w, u, dt) {
+  if (u.act && u.act.dv) { dashStep(w, u, u.act, dt); return true; } // (round 18: one of the six dashes, run here because the brain holds the unit)
   const r = E(u).rush; if (!r) return false;
   if (r.tell > 0) { u.winding = true; r.tell -= dt / windMul(u); stand(u, dt); turnTo(u, r.a, 9, dt); return true; }
   u.dvx = Math.cos(r.a) * r.sp; u.dvy = Math.sin(r.a) * r.sp; u.vx = u.dvx; u.vy = u.dvy; u.mvA = r.a; u.spd = r.sp; u.facing = r.a;
@@ -376,7 +394,7 @@ export const ELITES = {
       const t = targetOf(w, u); if (!t || !due(u, 'cut', dt, 2.5)) return false;
       const g = gapTo(u, t); if (g < 50 || g > 260 || !lineClear(w, u.x, u.y, t.x, t.y, u.r)) return false;
       again(u, 'cut', 4, 5.5);
-      rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 130, { tell: 0.3, dmg: 9, knock: 160, status: { poison: 35 }, trail: 'rgba(140,200,120,0.6)' });
+      rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 130, { style: 'drawCut', tell: 0.3, dmg: 9, knock: 160, status: { poison: 35 }, trail: 'rgba(140,200,120,0.6)' }); // (round 18, lane dash18: the draw cut: through the party, the cuts landing a beat after)
       return true;
     },
   },
@@ -454,9 +472,9 @@ export function pounce(w, u, dt, o) {
   const d = dist(u.x, u.y, t.x, t.y); if (d < o.min || d > o.max || !lineClear(w, u.x, u.y, t.x, t.y, u.r)) return false;
   again(u, 'pounce', ...o.every);
   const p = lead(t, 0.3), a = angleTo(u.x, u.y, p.x, p.y), L = Math.max(0, dist(u.x, u.y, p.x, p.y) - u.r - t.r * 0.5);
-  const x1 = u.x + Math.cos(a) * L, y1 = u.y + Math.sin(a) * L, dur = 0.5;
-  addDanger(w, { shape: 'circle', x: x1, y: y1, r: o.r, t: dur, team: u.team, src: u, kind: o.kind || 'bone', hit: hitOf(u, { dmg: o.dmg, knock: 180, ...(o.status || {}) }) });
-  u.act = { type: 'leap', t: dur, max: dur, x0: u.x, y0: u.y, x1, y1, land: () => puff(w, u.x, u.y, o.dust || '#CDBFA6', 8, 90, 5, 0.4) };
-  u.facing = a; setAnim(u, 'ability', dur);
+  const x1 = u.x + Math.cos(a) * L, y1 = u.y + Math.sin(a) * L;
+  // round 18 (lane dash18): the pounce of dashes.js: a crouch, a leap that hangs, a landing rake on whoever is under it
+  // (the circle on the floor is where the rake reaches). It was a plain arc with the circle's hit at the end.
+  dash(w, u, 'pounce', { t, tell: o.tell ?? 0.26, r: o.r, dmg: o.dmg * u.dmgMul, hit: { knock: 180, ...(o.status || {}) }, kind: o.kind || 'bone', dustCol: o.dust, land: o.land, rest: 0.4 });
   return false;
 }
