@@ -26,7 +26,7 @@ const inFront = (u, e, arc) => angleDiff(ang(u, e), u.facing) < arc / 2;
 // Bear Claws (round 19): one swing every CLAW_GAP s; each of the 3 swings (I, II) is CLAW_K of his blow, each of III's 5 CLAW_K3
 // Toss (round 19): the fork goes in by TOSS_IN s, and the foe leaves its tines at TOSS_UP s
 const TOSS_IN = 0.2, TOSS_UP = 0.46;
-const CLAW_GAP = 0.27, CLAW_K = 0.75, CLAW_K3 = 0.95;
+const CLAW_GAP = 0.27, CLAW_K = 0.58, CLAW_K3 = 0.66;
 const BUILDS = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse', 'entangle', 'charm', 'confuse', 'sleepy', 'bleed', 'fear', 'shackle'];
 // a melee blow drawn as a weapon arc (fxkit turns the 'swing' telegraph into the weapon's arc; aoe: a slam on the floor)
 const swingMark = (w, u, R, arc, aoe) => w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: R, a: u.facing, arc, t: 0.16, max: 0.16, color: '#FFFFFF', src: u, aoe });

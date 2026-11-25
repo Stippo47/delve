@@ -1175,3 +1175,51 @@ js/preview-scenes.js, easy to change; docs/preview18b.md has the audit, every nu
   the very same loop at two tiers and 15 more differ only in where things went (`preview-check --steady`); the ids
   had been making those loops differ.
 - 0.26.1: preview18b, monster pages and status previews play against real heroes (straw dummies 1016 -> 0, unseen blows 3205 -> 0), Silenced has a preview; unit ids steady per loop. Open: 7 monster previews hit nobody, 24 late; with steady ids 35 hero abilities play the same loop at two tiers; Rogue Wave and Mock show 2 unseen blows after the dash merge; trinket/potion previews still on dummies. docs/preview18b.md.
+
+## Round 19, lane melee19 (2026-11-25): the knights' and brutes' notes (Old Guard, Dame, Griffon, Bulwark, Warhelm, Bearskin, Haymaker)
+The designer's notes on 0.19's heroes (docs/riffle-log/2026-11-25-v19-v21-partial.txt). The looks are in js/fx-melee.js
+(new: it fills fx2.js's tables, as fx-dash.js does); the weapon poses an ability holds are kits2.js meleePose (u._force).
+Clips (not in git): docs/clips/melee19/before (as it was), w2-w4 (after); tools/melee19/clips.mjs records them.
+- **The warhammer slam** (Griffon, Warhelm: "Same slam as griffon"): a 0.2 s wind-up (def.windup: the hammer raised back,
+  parts.js style.slamPose), driven down further out in front (def.aoeAt 0.9 / 0.85 of his reach, was 0.55), a round crater
+  with a pale lip, a white flash, soft dust rolling out to the blow's real reach, a few chips; no cracks. The pinned "What is
+  that?" (0.48 s) was the slam's own grey hammer head drawn falling onto the spot: gone (the hammer in his hand comes down).
+- **Dame**: her cut sweeps in across her (style.lefty: the left arm swings in, the arc follows; it was a backhand outward).
+  Challenge III hastes her as she goes in (4 s, 30%).
+- **Griffon**: Swoop and Wing Guard wings are the helm's wing shape and colours, drawn over him, about 40% smaller than the
+  old fans; Swoop's beat as he flies, a downdraft of dust and gold feathers at take-off, the landing swirl turns the way he
+  spins (bands tapering behind their fronts) with a soft edge at its real reach; he no longer snaps round on landing (he turns
+  to the foe at his own pace). Wing Guard's blast is two curved fronts of air and loose feathers. The small thunderclap
+  (Stormhammer II, Wing Guard III, Storm Born III) has no yellow zig-zags: a flash, a pale shock to its reach, cloud puffs.
+  Whirled's curls run on a circle round the foe with the faint circle shown. (The thrown hammer's look is sys19's.)
+- **Bulwark**: the stab is drawn back and driven straight out along the shaft (style.stab, no wave of the arm), and its
+  streak runs down the spear off his right side (style.stabX), as does Return Thrust's line; Brace's glint and Return
+  Thrust's star sit on the spear's real head (read off the posed sprite).
+- **Warhelm**: Skull Splitter lands in the same crater, wider, with forked lightning crackling out to the slam's reach.
+- **Bearskin**: Bear Claws keeps the pounce (a light rake on landing, 0.3x), then **he swings**: 3 paw swings (III: 5 harder,
+  then the bite), one every 0.27 s, left and right paw in turn, stepping in with each so it stays in reach; the claw marks are
+  swept by his paw across his front. Numbers: each swing 0.58x his blow (III 0.66x); was 6 / 12 swipes of 0.42x, many of which missed (no step in). The bite is
+  turned flat with him (jaws across his facing, closing along it). Hibernate: he lies curled low and breathes (u.squish), a
+  warm glow and big Zs float up off him; III wakes with a roar out of his front and dust blown out all round (no ring). Maul:
+  the club hauled up over his head, held a beat, brought straight down; the foe squashed flat; a deep crater; no star of its
+  own on the foe (the "weird star" was the 'bonk' look).
+- **Haymaker**: the fork turned 20 degrees towards straight ahead and slid in towards his middle (art/heroes/haymaker.svg).
+  Hay Bale: he rides on top (he was 0.6 units nearer the viewer than the bale; the bale moving on after him drew it over
+  him; now 4, and his hop of 26 was lost in a comment), no straw lines on the bale, one straw dropped on the floor every
+  13 units it rolls, lying 1.4 s then fading, and a burst of hay over each one it hits. Toss in three beats: the fork in low
+  (0.2 s; the foe is caught and stopped), heaved up and back over his shoulder with the foe on the tines (to 0.46 s), and
+  only then thrown.
+- **Old Guard**: Parry holds the greatsword itself flat across his front (a pose, not a bar of light), a glint running its
+  edge; the catch is a clash, sparks and a short crescent. Rally: a gold war cry bursts out of his front and sides, three
+  waves, and gold light washes out to its reach. Haste (every Haste): pale blue copies of the body trail behind as it moves,
+  longer speed lines. **Last Stand** (rule change): while he is in the party, whoever is last standing gets it, once a room
+  (each friend carries a small hook from him, so it comes when he is the one down): on him as before (10 s, haste 35%, every
+  ability ready); on a friend 6 s, haste 25%, its cooldowns halved. (The arm pivot from one shoulder is sys19's.)
+- Worth (tools/ability-worth.mjs, 12 parties a hero, same seeds; tools/melee19/worth/): Bear Claws' share of Bearskin's
+  damage I 17% -> 17%, III 26% -> 30% (rooms and hero dmg/s within the run-to-run noise). Nothing else's numbers changed;
+  Challenge III's haste and Last Stand for friends add a little (Challenge I 0%/II-III share n/a; Old Guard's rooms 8.3 ->
+  8.9 at I, 7.1 -> 7.9 at III, inside the noise). The windup on the two warhammers (0.2 s, the blow lands then): Warhelm's
+  dmg/s 7.25 -> 7.40 (I), 11.0 -> 10.8 (III); the Griffon's 3.52 -> 3.63 (I), 6.00 -> 4.45 (III, one noisy row: his attack
+  share 52% -> 48%).
+- Left to sys19 (shared): the taunted V mark, thrown hammers looking like the held ones, airborne drawing and collisions, free
+  hands and shoulder pivots, one shadow system.
