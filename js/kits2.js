@@ -132,7 +132,9 @@ const k01h = (v) => Math.max(0, Math.min(1, v));
 // (its 'dirty' buff) and a little cloud of dust going round it (fx2 'dirtyOn').
 const HELPS = (b) => b.id !== 'dirty' && !b.potion && ((b.dealt || 1) > 1 || (b.atkSpeed || 1) > 1 || (b.move || 1) > 1 || (b.taken != null && b.taken < 1) || b.border || b.statusImmune || b.lifesteal || b.frontBlock);
 function dirtOff(w, u, knocked, by) {
-  offUnit(u, 'dirty'); u.buffs = u.buffs.filter((b) => b.id !== 'dirty');
+  offUnit(u, 'dirty');
+  // (knocked off: its brown wash fades over 0.3 s as the dust falls, rather than vanishing in the frame the blow lands)
+  if (knocked) { for (const b of u.buffs) if (b.id === 'dirty') b.t = Math.min(b.t, 0.3); } else u.buffs = u.buffs.filter((b) => b.id !== 'dirty');
   // (round 19 check: the dirt is knocked off the side the blow came from, out the far side: a fan, not a ring round it)
   if (knocked) { const a = by ? angleTo(by.x, by.y, u.x, u.y) : u.facing + Math.PI; k2(w, { draw: 'dirtOff', x: u.x, y: u.y, r: u.vr, a, max: 0.55 }); }
 }

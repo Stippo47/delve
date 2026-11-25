@@ -1,0 +1,13 @@
+42 previews, 0.4s
+threw: 0
+a loop where the move or trait never fired: 0
+not offered in the Book (never fires, so its button is left out): 0
+locked (shown as locked): 0 not counting heroes' tier 0
+statuses: 42 previews of two loops, 0.3s
+  first go: 0.83 s on average, 2.1 s at the latest; 1.04 goes a loop
+  a loop where it didn't go within 2.5 s: 0
+  straw targets on the stage (never moving, never striking back): 0
+  wrong scenario (went off, but nothing it made reached anyone in 3.5 s; or it never came to its burst or state): 0
+  the stage helped it (a target moved up to it, its health set lower): 0
+  blows or health lost with nothing seen behind them (either side): 0
+  put on from nothing seen (no fighter in view put it on): 0

@@ -150,7 +150,7 @@ export const ABILITY_SCENE = {
   breadToss: S('hurtFriends', { hp: 0.4 }), harvest: S('hurtFriend', { addFoes: [F('fast', [250, 320], { on: 0 })] }),
   oldTales: S('party', { friends: [{ at: [150, 92], hp: 0.45 }, { at: [150, 258], hp: 0.5 }], foes: [F('melee', [330, 128]), F('fast', [350, 222]), F('melee', [400, 175]), F('fast', [420, 100])] }),
   // Alchemist
-  acidFlask: S('pack'), elixir: S('hurtFriends', { noAttack: true }), bangFlask: S('ring'), // (round 19: Elixir II's second tube has a second friend to go to; their own flasks held, so only the potions fly)
+  acidFlask: S('pack'), elixir: S('hurtFriends', { noAttack: true }), bangFlask: S('front'), // (round 19 check: in front of them, not round them, so the punches are seen going out) // (round 19: Elixir II's second tube has a second friend to go to; their own flasks held, so only the potions fly)
   // Shaman
   healTotem: S('hurtFriend', { friends: [{ at: [205, 262], hp: 0.4, st: { poison: 60 } }], addFoes: [F('poisoner', [250, 320], { on: 0 })] }), spiritLink: S('partyFight', { friends: [{ at: [185, 92], hp: 0.7 }, { at: [185, 258], hp: 0.7 }, { at: [150, 175], hp: 0.75 }, { at: [70, 290], hp: 0.8 }], foes: [F('heavy', [262, 92], { on: 0 }), F('melee', [262, 258], { on: 1 }), F('fast', [300, 175], { on: 2 }), F('melee', [400, 175])] }), rainDance: S('party'), // (round 19: "Preview doesn't show off potential": four friends being hit, so every blow is seen going out along the threads, and III's five)
   // Witch
@@ -410,7 +410,7 @@ export const STATUS_SCENE = {
   invuln: ST('self', { side: 'hero', on: 'plague', hp: 0.45, ab: 'leeches', castAt: 1.1 }),
   buff: ST('bard', { side: 'hero', on: 'paladin', ab: 'warSong', castAt: 0.8 }),
   rage: ST('self', { side: 'hero', on: 'wildmane', hp: 0.5, ab: 'rage', castAt: 0.9 }),
-  dirty: ST('digger', { side: 'hero', on: 'paladin', ab: 'dirtFling', castAt: 0.9, front: true }),
+  dirty: ST('digger', { side: 'hero', on: 'paladin', ab: 'dirtFling', castAt: 0.4, front: true }), // (round 19: thrown before he has walked round the friend, so it is in front of him)
   warded: ST('jester', { side: 'hero', on: 'paladin', hp: 0.4, ab: 'mock', castAt: 0.9 }), // (it swaps places with the friend in trouble and wards it)
 };
 export const statusSceneOf = (id, from) => STATUS_SCENE[id] || STATUS_SCENE[from] || ST('cleric');
