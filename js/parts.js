@@ -3,12 +3,16 @@
 // outline goes on afterwards over the whole figure: each part also has an "ink" copy, its silhouette grown by the
 // outline radius; all the inks are drawn first, then the parts in file order on top. The union of grown silhouettes
 // is the grown union, so the outline hugs the combined figure with no lines between parts, like the SVG filter did.
+// Round 19 (lane outline19, "check that outline thickness is consistent everywhere"): the ink is grown by OUTLINE room
+// units whatever the figure's size: getRig(url, px, sizeU) is told how big the figure is drawn (room units per 220 box)
+// and grows its inks by OUTLINE * 220 / sizeU SVG units (it was 6 SVG units for all, so a big troll's outline was 1.6x
+// a hero's and a bee's half; the gaper's data-line made up for it by hand). The art files carry no outline of their own.
 //
 // Coordinates: everything here is in SVG units, the sprite's own frame (220 box, centre 100,100, front = +y).
-import { INK, clamp, wrapAngle } from './util.js';
+import { INK, OUTLINE, clamp, wrapAngle } from './util.js';
 import { parseVariantUrl, recolorSvgText } from './recolor.js';
 
-const LINE = 6;            // outline radius in SVG units (the #outline filter's; = OUTLINE in room units at hero scale)
+const LINE = 6;            // outline radius in SVG units when the caller doesn't say how big it draws the figure (about OUTLINE at hero size)
 const B0 = -24, BOX = 248; // the raster box: the 220 box plus room for the outline
 const arts = new Map();    // url -> { text, layers, string } once loaded, or a promise while loading
 
@@ -52,9 +56,9 @@ function splitSvg(text) {
     root.removeAttribute('width'); root.removeAttribute('height');
     layers.push({ id, pivot, moves: /^(arm-|back|front|top)/.test(id) && el.hasAttribute('data-pivot'), text: ser.serializeToString(root) });
   });
-  // art round 11 (the gaper: "has big outlines"): an art drawn bigger on screen than the rest of its family can ask for a
-  // thinner line, so its outline comes out their weight: data-line on #sprite, in SVG units (LINE when absent)
-  const line = +sprite.getAttribute('data-line') || LINE;
+  // (art round 11's data-line, a thinner line asked for by an art drawn big, is gone: round 19, lane outline19, every
+  // outline is OUTLINE room units from the size it's drawn at: lineFor)
+  const line = LINE;
   // round 19 (lane sys19; the designer on Warhelm: "Left should be behind, free hands don't get to float"): an arm part
   // that is only a fist (three shapes or fewer: the fist, its shadow) drawn over the body in the file is a free hand;
   // poseFor puts it under the body while the other hand holds the weapon (pose.under; paintRig)
@@ -77,7 +81,7 @@ function raster(text, px) {
 }
 
 // One raster set: every layer at one pixel size, cropped, with its ink copy.
-async function buildSet(rig, px) {
+async function buildSet(rig, px, line) {
   const k = px / BOX; // pixels per SVG unit
   const cvs = await Promise.all(rig.layers.map((l) => raster(l.text, px)));
   if (cvs.some((c) => !c)) return null;
@@ -92,17 +96,18 @@ async function buildSet(rig, px) {
       for (let y = 0; y < px; y++) for (let x = 0; x < px; x++) if (d[(y * px + x) * 4 + 3] > 2) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
       if (x1 < x0) return; // an empty layer
       cvs[i].getContext('2d').putImageData(data[i], 0, 0);
-      const m = Math.ceil(LINE * k) + 2;
+      const m = Math.ceil(line * k) + 2;
       x0 = Math.max(0, x0 - m); y0 = Math.max(0, y0 - m); x1 = Math.min(px, x1 + m + 1); y1 = Math.min(px, y1 + m + 1);
     }
     const w = x1 - x0, h = y1 - y0;
     const img = canvas(w, h); img.getContext('2d').drawImage(cvs[i], -x0, -y0);
-    out.push({ id: l.id, pivot: l.pivot, moves: l.moves, img, ink: grow(img, (rig.line || LINE) * k, INK), x: B0 + x0 / k, y: B0 + y0 / k, w: w / k, h: h / k, tints: {} });
+    out.push({ id: l.id, pivot: l.pivot, moves: l.moves, img, ink: grow(img, line * k, INK), x: B0 + x0 / k, y: B0 + y0 / k, w: w / k, h: h / k, tints: {} });
   });
-  return { px, k, layers: out, string: rig.string, used: 0 };
+  return { px, k, line, layers: out, string: rig.string, used: 0 };
 }
 
 // The silhouette grown by r pixels, filled with one colour: stamps of the alpha round two circles.
+export function growInk(src, r, color) { return grow(src, r, color); }
 function grow(src, r, color) {
   const c = canvas(src.width, src.height), g = c.getContext('2d');
   const ring = (rr, n, ph) => { for (let i = 0; i < n; i++) { const a = (i + ph) / n * Math.PI * 2; g.drawImage(src, Math.cos(a) * rr, Math.sin(a) * rr); } };
@@ -135,29 +140,35 @@ function moveLooseShadows(rig, data) {
 // sizes step by about 12%, so a pinch zoom re-renders a few times, not at every pixel
 const bucket = (px) => clamp(Math.round(32 * Math.pow(2, Math.ceil(Math.log2(Math.max(px, 32) / 32) * 6) / 6)), 32, 640);
 
-// The raster set for an art file at about px pixels per 220 units, or the nearest one ready while it renders.
-export function getRig(url, px220) {
+// The outline's radius in SVG units for a figure drawn sizeU room units per 220 box: OUTLINE on screen whatever its size
+// (to a tenth of a unit, so a size is a handful of sets, not one per pixel). The raster box has room for 24 units of it.
+export function lineFor(sizeU) { return sizeU > 0 ? clamp(Math.round(OUTLINE * 220 / sizeU * 10) / 10, 1, 20) : LINE; }
+// The raster set for an art file at about px pixels per 220 units, its outline grown for a figure drawn sizeU room units
+// per 220 box (round 19, lane outline19: render.js passes it, times an elite's bigness), or the nearest one ready while
+// it renders.
+export function getRig(url, px220, sizeU) {
   const e = arts.get(url);
   if (!e) { loadArt(url); return null; }
   if (!e.rig) return null;
-  const px = bucket(px220 * BOX / 220);
-  let s = e.sets.get(px);
+  const px = bucket(px220 * BOX / 220), line = lineFor(sizeU), key = px + '|' + line;
+  let s = e.sets.get(key);
   if (!s) {
-    s = { pending: true }; e.sets.set(px, s);
+    s = { pending: true, px, line }; e.sets.set(key, s);
     // (0.11.1: a new set counts as just used. It used to arrive with used = 0, so once an art had three sizes ready any
     // fourth was thrown out the moment it was made and built again on the next frame, for ever: the camp crawled after
     // zooming to the fire or a hero, and a battle after pinching in.)
-    buildSet(e.rig, px).then((r) => { if (r) { Object.assign(s, r); s.used = performance.now(); s.pending = false; s.ready = true; } else e.sets.delete(px); prune(e); });
+    buildSet(e.rig, px, line).then((r) => { if (r) { Object.assign(s, r); s.used = performance.now(); s.pending = false; s.ready = true; } else e.sets.delete(key); prune(e); });
   }
   s.used = performance.now();
   if (s.ready) return s;
-  let best = null; // a ready set of another size stands in
-  for (const o of e.sets.values()) if (o.ready && (!best || Math.abs(o.px - px) < Math.abs(best.px - px))) best = o;
+  let best = null; // a ready set of another size stands in (one with the same outline first)
+  const off = (o) => Math.abs(o.px - px) + (o.line === line ? 0 : 1e4);
+  for (const o of e.sets.values()) if (o.ready && (!best || off(o) < off(best))) best = o;
   return best;
 }
 function prune(e) {
   const ready = [...e.sets.entries()].filter(([, s]) => s.ready).sort((a, b) => b[1].used - a[1].used);
-  for (const [px] of ready.slice(3)) e.sets.delete(px);
+  for (const [key] of ready.slice(4)) e.sets.delete(key); // (four: an art drawn at two sizes, an elite's among them)
 }
 export const artReady = (url) => { const e = arts.get(url); return !!(e && e.rig); };
 export const rigHas = (url, id) => { const e = arts.get(url); return !!(e && e.rig && e.rig.has[id]); };
@@ -199,11 +210,11 @@ function shifted(L) {
 }
 // A border round the figure's ink outline (round 9: protection, Guard's gold): the ink silhouette grown once more,
 // on a canvas with room round it, filled with the colour. { c, pad (pixels) }.
-function bordered(L, k, color) {
+function bordered(L, k, color, line) {
   return colored(L, 'b' + color, () => {
-    const pad = Math.ceil(LINE * k * 0.9) + 2, src = canvas(L.ink.width + pad * 2, L.ink.height + pad * 2);
+    const pad = Math.ceil(line * k * 0.9) + 2, src = canvas(L.ink.width + pad * 2, L.ink.height + pad * 2);
     src.getContext('2d').drawImage(L.ink, pad, pad);
-    return { c: grow(src, LINE * k * 0.85, color), pad };
+    return { c: grow(src, line * k * 0.85, color), pad };
   });
 }
 function filled(L, color) {
@@ -250,7 +261,7 @@ export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = fals
   const Ls = overLast(underFirst(set.layers, pose && pose.under), pose && pose.over), str = set.string ? stringPts(set, pose) : null, strLayer = set.string && set.string.layer;
   if (border && mode === 'normal') {
     const ga = g.globalAlpha; g.globalAlpha = ga * (border.a ?? 1);
-    for (const L of Ls) { if (hidden(pose, L)) continue; const b = bordered(L, set.k, border.color), p = b.pad / set.k;
+    for (const L of Ls) { if (hidden(pose, L)) continue; const b = bordered(L, set.k, border.color, set.line || LINE), p = b.pad / set.k;
       g.save(); place(g, L, pose[L.id]); place(g, L, swayOf(pose, L)); g.drawImage(b.c, L.x - p, L.y - p, L.w + p * 2, L.h + p * 2); g.restore(); }
     g.globalAlpha = ga;
   }
@@ -261,7 +272,7 @@ export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = fals
       g.drawImage(mode === 'flash' ? filled(L, '#FFFFFF') : ink ? filled(L, ink) : L.ink, L.x, L.y, L.w, L.h);
       g.restore();
     }
-    if (str) strokeString(g, str, mode === 'flash' ? '#FFFFFF' : ink || INK, set.string.w + LINE * 2);
+    if (str) strokeString(g, str, mode === 'flash' ? '#FFFFFF' : ink || INK, set.string.w + (set.line || LINE) * 2);
     if (mode === 'flash' || mode === 'ink') return; // (round 13, lane E: 'ink', the outline alone: a chain's links are inked together, then filled)
   }
   for (const L of Ls) {

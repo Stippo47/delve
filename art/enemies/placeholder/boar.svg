@@ -2,7 +2,6 @@
 <!-- PLACEHOLDER (round 9, lane E): stand-in art copied from the design rounds until the real art for this enemy is drawn. -->
 <!-- BEAST Boar (tamer B): a hulking dark boar with a bristly ridge down the spine, small ears, a flat pink-grey snout and two big curved white tusks. A beast companion, about a hero's size, seen from above, head forward (+y). Parts: #back (tail, sways about its pivot), #body (torso, hind legs, head), #arm-l / #arm-r (front legs, swing to walk). No eyes (the designer cut eyes on the monsters). Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
 <path id="s1" d="M 57 62 A 11 23.4 0 1 0 79 62 A 11 23.4 0 1 0 57 62 Z"/>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#675144"/><stop offset="1" stop-color="#523F35"/></linearGradient>
@@ -44,7 +43,7 @@
 <path id="s16" d="M 126 156 A 12 10.2 0 1 0 150 156 A 12 10.2 0 1 0 126 156 Z"/>
 <clipPath id="u16"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4"/><use href="#s5"/><use href="#s6"/><use href="#s7"/><use href="#s8"/><use href="#s9"/><use href="#s10"/><use href="#s11"/><use href="#s12"/><use href="#s13"/><use href="#s14"/><use href="#s15"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 38"><!-- little tail -->
 <path d="M 100 40 C 92 30 108 24 100 16" fill="none" stroke="#5E4A3E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="1.0"/>
 </g>

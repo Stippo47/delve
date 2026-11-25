@@ -1,10 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
   <!-- ROCK 1 (Carved): a rounded boulder with a broad lit top, a pebble beside it. r 30 room units; scale by r/30. -->
   <defs>
-    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <linearGradient id="gBody" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#B4AB9F"/><stop offset="1" stop-color="#7A7166"/></linearGradient><linearGradient id="gTop" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#D8D0C4"/><stop offset="1" stop-color="#B0A79A"/></linearGradient><linearGradient id="gPeb" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#B2A99C"/><stop offset="1" stop-color="#7C7368"/></linearGradient><clipPath id="bodyC"><path d="M32.0 95.0 Q38 70 61.0 48.0 Q84 26 113.0 28.0 Q142 30 161.0 53.0 Q180 76 176.0 108.0 Q172 140 146.0 159.0 Q120 178 90.0 173.0 Q60 168 43.0 144.0 Q26 120 32.0 95.0 Z"/></clipPath>
   </defs>
-  <g id="sprite" filter="url(#outline)" stroke-linejoin="round">
+  <g id="sprite" stroke-linejoin="round">
     <path d="M150 140 C150 130 162 126 172 132 C180 138 178 152 168 156 C158 158 150 150 150 140 Z" fill="url(#gPeb)"/>
     <path d="M32.0 95.0 Q38 70 61.0 48.0 Q84 26 113.0 28.0 Q142 30 161.0 53.0 Q180 76 176.0 108.0 Q172 140 146.0 159.0 Q120 178 90.0 173.0 Q60 168 43.0 144.0 Q26 120 32.0 95.0 Z" fill="url(#gBody)"/>
     <g clip-path="url(#bodyC)">

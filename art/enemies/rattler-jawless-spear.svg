@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
   <!-- Round 4: the lower jaw is back, as its own bone below the skull with a dark gap between; the spear claw is turned to the shaft (knuckles down the shaft) | was: SKELETON round 3 "Rattler, no jaw" (spear): no lower jaw, upper teeth hang free. Parts in draw order: #arm-r (long spear + claw; drawn first so the shaft runs under the shoulder and its butt shows behind), #body (skull + shoulder balls), #arm-l (empty claw). Facing = DOWN (+y), centre (100,100). -->
   <defs>
-    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <linearGradient id="shX" x1="70" y1="0" x2="160" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4A3220" stop-opacity="0"/><stop offset="1" stop-color="#4A3220" stop-opacity="0.34"/></linearGradient>
     <linearGradient id="gSkull" x1="52" y1="40" x2="150" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FCF6E4"/><stop offset="0.5" stop-color="#F0E2BE"/><stop offset="1" stop-color="#D6C096"/></linearGradient>
     <radialGradient id="gDome" cx="84" cy="74" r="44" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
@@ -51,7 +50,7 @@
     <path id="hand-l-palm" d="M 43.5 134.7 L 53.3 132.6 A 6 6 0 0 1 60.4 137.2 L 61.1 140.2 A 6 6 0 0 1 56.5 147.3 L 46.7 149.4 A 6 6 0 0 1 39.6 144.8 L 38.9 141.8 A 6 6 0 0 1 43.5 134.7 Z"/>
     <clipPath id="under-hand-l-palm"><use href="#butt"/><use href="#shaft"/><use href="#spearhead"/><use href="#binding"/><use href="#fist-r-f0"/><use href="#fist-r-f1"/><use href="#fist-r-f2"/><use href="#fist-r-f3"/><use href="#fist-r-palm"/><use href="#ball-l"/><use href="#ball-r"/><use href="#tooth0"/><use href="#tooth1"/><use href="#tooth2"/><use href="#tooth3"/><use href="#tooth4"/><use href="#skull"/><use href="#jaw"/><use href="#ltooth0"/><use href="#ltooth1"/><use href="#ltooth2"/><use href="#ltooth3"/><use href="#hand-l-f0"/><use href="#hand-l-f1"/><use href="#hand-l-f2"/><use href="#hand-l-f3"/></clipPath>
   </defs>
-  <g id="sprite" filter="url(#outline)">
+  <g id="sprite">
     <g id="arm-r" data-pivot="160 110">
       <use href="#butt" fill="url(#gIronD)"/>
       <use href="#butt" fill="url(#shX)"/>

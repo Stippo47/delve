@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
 <!-- LIZARDMAN, blade (b) (round 5, version b, with the round-7 crest: the picked spear lizard's jagged crest down the back of the head and its dashed line down the tail): sea-green scales, no eyes, a gold crest, a tail, a scimitar curved the right way (the edge bows inward, the tip flicks out). Face shaded like the humans (darker plate over the top, face gradient on the snout). Parts: #back (tail), #arm-r (scimitar + fist, before #body), #body, #arm-l (free fist). Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#6FAE95"/><stop offset="1" stop-color="#4A786F"/></linearGradient>
 <path id="p2" d="M116.9 94.6 C121.5 88.5 110.9 70.9 110.2 60.8 C109.5 50.7 110.4 41.7 112.6 34 C114.9 26.2 119.7 19.4 123.8 14.3 C127.8 9.3 135 6.1 136.9 3.8 C138.8 1.4 138.6 -0.1 135.1 0.2 C131.7 0.5 122.8 1.4 116.2 5.7 C109.6 10 100.8 17.1 95.4 26 C90 35 85.8 47.3 83.8 59.2 C81.7 71.1 77.5 91.5 83.1 97.4 C88.6 103.3 112.4 100.7 116.9 94.6 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -52,7 +51,7 @@
 <path id="p48" d="M-14.7 -6.5 A4.2 4.2 0 1 0 -6.3 -6.5 A4.2 4.2 0 1 0 -14.7 -6.5 Z M-14.7 0 A4.2 4.2 0 1 0 -6.3 0 A4.2 4.2 0 1 0 -14.7 0 Z M-14.7 6.5 A4.2 4.2 0 1 0 -6.3 6.5 A4.2 4.2 0 1 0 -14.7 6.5 Z" transform="translate(50 142) rotate(-4)"/>
 <clipPath id="c49"><use href="#p48"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 86"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><path d="M101 33 C103 26 108 18 123 8" fill="none" stroke="#B38E3A" stroke-width="5" stroke-linecap="round" stroke-dasharray="6 7"/><use href="#p2" fill="url(#g4)"/></g>

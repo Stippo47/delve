@@ -4,7 +4,6 @@
 <!-- GRANNY REAPER round 3: a much longer snath, drawn behind the body (arm-r before body): its top end pokes out at the right side of the shoulder, it runs under the shoulder, comes out at the front edge in the right fist, the left fist holds it further down, and a bigger blade sweeps left across the front. Two-handed: both fists + scythe in arm-r, no arm-l. Front = down (+y). -->
 <defs>
 
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
 <linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient>
 <linearGradient id="gFS" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
@@ -25,7 +24,7 @@
 <clipPath id="sc"><path d="M26 108 C26 82 54 76 100 76 C146 76 174 82 174 108 C174 134 146 140 100 140 C54 140 26 134 26 108 Z"/><path d="M84 132 C92 128 108 128 116 132 C114 146 108 156 100 162 C92 156 86 146 84 132 Z"/><path d="M68 36 A15 10 0 1 0 98 36 A15 10 0 1 0 68 36 Z" transform="rotate(-22 83 36)"/><path d="M102 36 A15 10 0 1 0 132 36 A15 10 0 1 0 102 36 Z" transform="rotate(22 117 36)"/></clipPath>
 <linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.55"/><stop offset="0.42" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gWoodV" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#CF9A62"/><stop offset="0.55" stop-color="#AD7442"/><stop offset="1" stop-color="#83542C"/></linearGradient><linearGradient id="gMatte" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B9BEC7"/><stop offset="1" stop-color="#868D9A"/></linearGradient>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="arm-r" data-pivot="154 108">
 <g transform="translate(192.0 68.0) rotate(19.5)"><rect x="-5.5" y="0" width="11" height="123.0" rx="5.5" fill="url(#gWoodV)"/></g>
 <path d="M145 172 L154 197 C112 207 52 200 12 150 C10 145 15 141 19 144 C48 176 98 186 145 172 Z" fill="url(#g8)"/><path d="M145 172 C98 186 48 176 19 144 C40 174 80 190 116 191 C128 191 138 188 148 184 Z" fill="#FFFFFF" opacity="0.45"/>

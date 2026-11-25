@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 7) of design/class-round7/enemies/snowman.svg: the designer's pick with the round-8 note applied. It stays under placeholder/ because js/foes.js loads it from here. -->
 <!-- SNOWMAN (round 5): seen from straight above, upright (not leaning): a big snowball body behind a smaller snowball head, a blue knitted cap with a white bobble, a red scarf round the neck (round 7: its end trailing behind is gone), a carrot nose poking forward, a coal smile, stick arms with twig hands. No eyes. Parts: #arm-l / #arm-r (sticks), #body. Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#9A6A40"/><stop offset="1" stop-color="#5E3C22"/></linearGradient>
 <path id="p2" d="M46.9 100.7 C41.6 103.8 28 116.4 21 125.7 C14.1 135 7.1 151 5.4 156.6 C3.6 162.2 7 163.8 10.6 159.4 C14.2 155 19.9 139 27 130.3 C34 121.6 49.7 112.2 53.1 107.3 C56.4 102.4 52.3 97.6 46.9 100.7 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -41,7 +40,7 @@
 <clipPath id="c36"><use href="#p2"/><use href="#p5"/><use href="#p6"/><use href="#p7"/><use href="#p8"/><use href="#p10"/><use href="#p11"/><use href="#p12"/><use href="#p14"/><use href="#p19"/><use href="#p22"/><use href="#p27"/><use href="#p31"/></clipPath>
 <clipPath id="c37"><use href="#p35"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="arm-l" data-pivot="44 100"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

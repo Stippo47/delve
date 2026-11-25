@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
 <!-- LIZARDMAN A "spear" (round 6, version a: the round-4 design without eyes; was round 4; the picked round-3 lizardman, redone to the hand rule). Olive scales, a long snout with nostrils, yellow slit eyes on brow bumps, an orange crest of spines down the back of the head, tail curling behind. The spear passes under the right shoulder; the fist wraps the shaft with its knuckles along it. Parts: #back = tail (pivot at its root), #arm-r = spear + fist (before #body), #body, #arm-l = empty claw. Facing = DOWN (+y), centre (100,100). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#A9C75E"/><stop offset="1" stop-color="#7EA343"/></linearGradient>
 <path id="p2" d="M82 84 C78 62 82 42 94 28 C104 16 116 10 130 6 C120 16 113 28 111 42 C109 58 114 72 118 84 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -44,7 +43,7 @@
 <clipPath id="c40"><use href="#p38"/></clipPath>
 <path id="p41" d="M42.5 151 L49.5 151 L44.5 160 Z M50.5 151 L57.5 151 L52.5 160 Z M58.5 151 L65.5 151 L60.5 160 Z"/>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 80"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><path d="M94 50 C98 40 104 32 112 26" fill="none" stroke="#D2552A" stroke-width="5" stroke-linecap="round" stroke-dasharray="6 7"/><use href="#p2" fill="url(#g4)"/></g>

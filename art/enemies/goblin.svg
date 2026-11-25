@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
 <!-- GOBLIN (round 6, game copy: the round-4 goblin with its eyes taken out, drawn at 0.875 inside the box so it fills the game's goblin hit circle; the design file is design/class-round6/enemies/greenskin-goblin.svg at 0.72). Parts: #arm-r (dagger + fist, before #body), #body, #arm-l (empty claw). Facing = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#7A5236"/><stop offset="1" stop-color="#4E3220"/></linearGradient>
 <path id="p2" d="M-0.5 -19 H0.5 A3.5 3.5 0 0 1 4 -15.5 V3.5 A3.5 3.5 0 0 1 0.5 7 H-0.5 A3.5 3.5 0 0 1 -4 3.5 V-15.5 A3.5 3.5 0 0 1 -0.5 -19 Z" transform="translate(150 154) rotate(-12)"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -43,7 +42,7 @@
 <clipPath id="c39"><use href="#p38"/></clipPath>
 <path id="p40" d="M-13 -9.5 L-20 -6.5 L-13 -3.5 Z M-13 -3 L-20 0 L-13 3 Z M-13 3.5 L-20 6.5 L-13 9.5 Z" transform="translate(52 146) rotate(8)"/>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="arm-r" data-pivot="143.8 107"><g transform="translate(100 100) scale(0.875) translate(-100 -100)">
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

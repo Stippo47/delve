@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 11) of design/class-round10/enemies/wild-boar-ridge.svg -->
 <!-- THORNBACK BOAR (round 10, variant "ridge"): a stout wild boar seen from above in the wolves' capsule build: a crest of dark bristles down the spine with three big pale thorns standing in it; a little tufted tail, a round skull with small pointed ears, a blunt snout with a pink-grey disc and two nostrils, two tusks curving up from the sides of it; two front hooves. No eyes. Parts: #back (tail, sways), #body, #arm-l / #arm-r (front legs and hooves, swing to walk), #front (snout and tusks, over the legs). Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
 <path id="s1" d="M 100.9 45.8 C 101.4 43.8 101.6 36.4 102.8 32.7 C 104 28.9 109.1 24.2 108.8 20.8 C 108.5 17.3 102.3 11.3 100.9 9.7 C 99.4 8.2 99.7 8.8 99.1 10.3 C 98.6 11.7 98.4 16.1 97.2 19.2 C 96 22.4 90.9 27.3 91.2 31.3 C 91.5 35.4 97.7 44 99.1 46.2 C 100.6 48.4 100.3 47.8 100.9 45.8 Z"/>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#755A4B"/><stop offset="1" stop-color="#5C463A"/></linearGradient>
@@ -63,7 +62,7 @@
 <linearGradient id="g14" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#633732" stop-opacity="0"/><stop offset="1" stop-color="#633732" stop-opacity="0.42"/></linearGradient>
 <clipPath id="c18"><use href="#s18"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 40"><!-- tail -->
 <use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/><g clip-path="url(#c1)"><path d="M 91 10 A 9 8 0 1 0 109 10 A 9 8 0 1 0 91 10 Z" fill="#3E3028"/></g>
 </g>

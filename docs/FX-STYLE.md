@@ -32,6 +32,10 @@ soft-edged, never a hard ring.
 - A beam is an inked core line plus an additive halo.
 - Ground effects have no outline round their edge (they would read as walls or holes); things standing in them
   (flames, crystals, bubbles) are inked.
+- **One thickness everywhere** (round 19, lane outline19): units, summons, bosses (SVG or code-drawn), props and
+  thrown things all show `OUTLINE` room units whatever their size. The art files carry no outline: the renderer draws
+  it (parts.js `lineFor`, sprites.js `getProp`; pages' pictures `uiArt`). New art: no `#outline` filter, no outer
+  stroke (`tools/outline19/strip-outlines.mjs` takes them out). docs/outline19.md.
 
 ## Palette per element (dark / main / light / core)
 | element | dark | main | light | core | used by |
