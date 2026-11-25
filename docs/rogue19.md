@@ -171,3 +171,31 @@ trait stage, left from an earlier Bandit, was taken out: it had the same name an
 - `shade-clones.mp4`
 - `shade-shadowWalk.mp4`
 - `bare-*.png`: the weapon-out boards (left as drawn, right disarmed).
+
+## The clip check (round 19, after the first send-back)
+An independent frame-by-frame check found notes the clips didn't show. What was changed, and where each note can be
+seen now (clip, time; all in docs/clips/rogue19/, checked at 8-30 fps, zoomed; `tools/rogue19/sheet.sh` stamps the time):
+- Disarmed foes stood frozen: a fighter with no kit now goes after its weapon, which lands clear, to its side (60-85 off)
+  and lies on the floor till it is back (`dame-disarm` 0.77 s the cleaver flies, 0.93-4.6 s on the floor, the orc walks to
+  it; 4.77 s back in its hand).
+- Bolas ring: thicker cord, bigger weights (`bandit-bolas` 1.05-2.9 s: the ring round the skeleton, three weights in).
+- Dirty Trick: the clip is staged on one orc (no crowd, no other swings); cuts forehand 0.60 s, backhand 0.80 s,
+  forehand 1.00 s; his free arm drawn back and driven in, whoosh lines from his free side to the impact (1.25-1.30 s);
+  the cleaver spins away 1.35 s and lies on the floor 1.5-2.0 s, the orc flung into the goblin.
+- Hostage: the cutlass drawn across its throat with guard and grip, his hands busy (no swings while he holds it); an
+  arrow lands on the goblin (`bandit-hostage` 1.9-2.5 s).
+- Ghost: pass-through streaks bolder and dark; it stays incorporeal 3.2 s in the clip (`ghost-incorporeal` 1.75-1.87 s
+  and 3.40-3.53 s: the Paladin's swing goes through, streaks out the far side, no number, no hit star).
+- Monk: fixed camera; jabs 0.45 s and 1.08 s, the third at 1.45 s throws the goblin far back, Spun's spiral over its head
+  at 1.9 s (`monk-attack`); Flurry walks forward a step a punch 0.60-1.10 s (he moves up the frame against the floor),
+  the last punch late and big at 1.13-1.27 s (`monk-flurry`); Inner Peace's gold plates bolder and longer
+  (`monk-innerPeace` 0.73, 1.60, 2.60 s); its border lasts its 3 s (II) and goes, as it should.
+- Sacrifice: each burst is a ring of thrown blood drops and a flash on the one cut (`cultist-sacrifice`); a burst is a
+  Haemorrhage (a third of what it has left), not a kill, so foes still stand at the end (the note says "bursting them").
+- Blood Rite: his dart is a crimson smear down the floor (`cultist-bloodRite` 1.0-1.3 s); the camera stays on the downed
+  Paladin. The "ring drifting to the orcs" was the camera following the Cultist: the downed hero never moves (checked
+  headless: tools/rogue19/rite-dbg.mjs, the Paladin at 637,492 the whole time).
+- Anti-heal's crosses darker and duller (`cultist-attack`).
+- Not this lane's: the pink crescents near the Shade (2.6 s) and through the Monk (palmStrike) are enemies' swings and
+  dashes (enemy arcs are warm-tinted); the white flash and hit star are the game's old hit look.
+- Call, kept (the coordinator agreed): the Palm Strike turning note is read as Spun's effect on the victim (above).
