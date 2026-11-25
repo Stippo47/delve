@@ -80,7 +80,7 @@ up"; the trait: "Don't like the dirtied effect visual".
 - **Monstrosity** ("Should not hold a flask. It will be alternating punch attacks. Not claws. High knock back. They
   should have fast movement speed. Don't like visual. They should get a new altered sprite ... Purple skin. ... Should be
   shown drinking a purple tube flask first"): they stop and drink a purple tube (0.55 s, tipped to the mouth, its level
-  going down, bubbles fizzing), then become art/heroes/alchemist-monster.svg (their own picture, purple skin, fists half
+  going down, bubbles fizzing), then become art/heroes/alchemist-monster.svg (their own picture, purple skin, fists nearly twice
   as big again, no tube; a sketch for the art round, made by tools/caster19/alchemist_art.py), punching left and right in
   turn (fxkit 'fist': a purple thump where the knuckles land), knock back 320 (was 160), moving 60% faster (was 25%).
   The rest as it was.
@@ -187,3 +187,22 @@ lane), tier III, 24 parties: the Digger 7.33 -> 8.08 rooms (Dirt Fling +1.21 -> 
 -> +1.38): about level, a little up; the Witch 8.67 -> 7.92 (Broom Ride +0.92 -> -0.33: being seen and shot up there
 costs it), so Broom Ride's cooldown went 11 -> 10 on top of the bombs' 0.9 -> 1.0 (worth-witch-final.txt).
 After that: the Witch 8.71 rooms (main 8.67), Broom Ride +0.58: level again.
+
+## The clip check (round 19, after the first report)
+An independent frame-by-frame check of the clips found notes they didn't show. Changed:
+- **Sheaves**: planted round Grandpa on the side the enemy comes from, 55-150 out (they were thrown to the fight's middle
+  and trampled at once); enemies break one only with a blow, friends by treading on it.
+- **The spirit wolf** redrawn lean: legs out in a stride, a long bushy tail with a pale tip, tall pointed ears, a long
+  tapering muzzle, a darker saddle; drawn at 0.8 of the box. **The eagle**: a white head, five finger feathers spread at
+  each wing tip, a fanned tail with pale tips.
+- **Monstrosity**: fists nearly twice as big (alchemist-monster.svg), each punch a knuckled purple thump with thick strokes.
+- **Brew Pools**: the brews come out of a shuffled rack of the six (a cast's flasks all differ; the next cast throws the rest).
+- **Harvest**: the sweep's band runs the whole circle behind the blade, then the swept circle fades.
+- **Spade**: its arc earth-brown; the three clods come out of one spot on the far side of each foe hit and fan out, with a
+  spurt of dirt; the thwack rides on the foe. **Dirt knocked off** flies out of the far side, away from the blow (a fan).
+- **Spirit Link**: up to n friends besides him (one in reach went without a thread); motes and pulses teal.
+- **Broom Ride**: the handle runs well out past her front; her circle kept off the top wall so all of her stays in the room.
+- **Bury**: no hit star (the mound is the impact).
+- Clips (tools/caster19/bookclips.mjs) follow the hero (or the clip's subject); stills of the new art at game size in
+  design/caster19/stills/.
+- Bread Toss II throws two loaves at once on purpose (one each for two friends; his own goes up and down).
