@@ -377,6 +377,8 @@ export const BUFFS = {
   stopped: { name: 'Stopped', icon: 'debuff', bad: true, desc: 'Stopped mid-step: its clock is not running.' },
   pressed: { name: 'Pressed', icon: 'debuff', bad: true, desc: 'A great weight on its shoulders.' },
   quake: { name: 'Shaken', icon: 'debuff', bad: true, desc: 'The floor won\'t hold still under it.' },
+  // round 17 (lane water17): the Water Mage
+  bubbled: { name: 'Bubble Shield', icon: 'ward', desc: 'In a bubble of water: magic can\'t get through it; swords, arrows and teeth can. Soaked when it pops.' },
   beloved: { name: 'Sweetheart', icon: 'charm', desc: 'Blown a kiss: whoever hits it falls for it, and soon can\'t hit it at all.' },
 };
 // States that aren't buffs (hud.js STATES reads the unit for these; the words are here so the Book can show them all).

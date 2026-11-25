@@ -31,6 +31,7 @@ import { STATUS, SLEEPY, fillOf } from './statuses.js';
 import { ABILITIES2, TRAITS2, ATTACKS2, kit2Tick } from './kits2.js';
 import { CHARM_ABILITIES, CHARM_TRAITS, CHARM_ATTACKS, charmTick } from './kits-charm.js'; // round 13 (lane S): the Enchantress
 import { ABILITIES3, TRAITS3, ATTACKS3, kit3Tick } from './kits3.js'; // round 15 (lane N): the Mob, the Clockmaker, the Air and Earth mages, the Warden, the Telekinetic
+import { ABILITIES_WATER, TRAITS_WATER, ATTACKS_WATER, waterTick } from './kits-water.js'; // round 17 (lane water17): the Water Mage
 
 // ---------------------------------------------------------------- the skill web's stat nodes (round 8)
 // u.kit.mods = statsFor(hero, nodes) (heroes.js). Generic stats go straight onto the unit in initKit; an ability's own
@@ -734,6 +735,7 @@ function whirlTick(w, u, dt) {
 Object.assign(ABILITIES, ABILITIES2); // round 10 (lane H): the new heroes' abilities
 Object.assign(ABILITIES, CHARM_ABILITIES); // round 13 (lane S)
 Object.assign(ABILITIES, ABILITIES3); // round 15 (lane N)
+Object.assign(ABILITIES, ABILITIES_WATER); // round 17 (lane water17)
 const RAY_T = 4, RAY_RANGE = 380;
 const CURE_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse', 'entangle', 'charm', 'confuse', 'sleepy', 'bleed', 'fear', 'shackle'];
 // how far a unit is from the edge of a rectangle (0 inside)
@@ -810,6 +812,7 @@ const ATTACKS = {
 Object.assign(ATTACKS, ATTACKS2);
 Object.assign(ATTACKS, CHARM_ATTACKS); // round 13 (lane S)
 Object.assign(ATTACKS, ATTACKS3); // round 15 (lane N)
+Object.assign(ATTACKS, ATTACKS_WATER); // round 17 (lane water17)
 export const hasOwnAttack = (kind) => !!ATTACKS[kind]; // numbers.js measures these
 export function heroAttack(w, u, t, a) {
   const f = ATTACKS[u.kind]; if (!f || u.summon) return false;
@@ -838,6 +841,7 @@ const rayable = (w, u, o) => dist(u.x, u.y, o.x, o.y) < RAY_RANGE - 40 && !block
 export function kitTick(w, u, dt) {
   kit2Tick(w, u, dt);
   kit3Tick(w, u, dt); // round 15 (lane N)
+  waterTick(w, u, dt); // round 17 (lane water17): the Water Mage's beam
   if (u.kit && u.kit.string) charmTick(w, u, dt); // round 13: the Enchantress's Heartstring
   if (u.kit && u.kit.whirl) whirlTick(w, u, dt);
   if (u.gasForm) { const g = u.gasForm;
@@ -896,6 +900,7 @@ export const TRAITS = {
 Object.assign(TRAITS, TRAITS2);
 Object.assign(TRAITS, CHARM_TRAITS); // round 13 (lane S)
 Object.assign(TRAITS, TRAITS3); // round 15 (lane N)
+Object.assign(TRAITS, TRAITS_WATER); // round 17 (lane water17)
 // Granny's Old Bones is an ability on paper but works like a trait once bought.
 const OLD_BONES = {
   downed(w, u) {

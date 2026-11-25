@@ -281,6 +281,7 @@ function heroStage(S, spec) {
       if (ab === 'guard') { ally.target = dummies[0]; dummies[0].target = ally; }
     }
     if (id === 'cleric' && ab === 'attack') { ally = fullAlly(w, 'paladin', 230, 140); ally.hp = ally.maxHp * 0.5; }
+    if (id === 'waterMage' && ab === 'attack') { ally = fullAlly(w, 'paladin', 230, 140); ally.hp = ally.maxHp * 0.7; } // (round 17, lane water17: a friend beside the beam; at 70% it isn't hurt enough to take the beam off the enemy)
     if (sh.mob === 'ally' && ally) dummies.forEach((d, i) => { const a = -0.6 + i * 0.9; d.x = d.home.x = ally.x + Math.cos(a) * 62; d.y = d.home.y = ally.y - 40 + Math.sin(a) * 50; });
     if (sh.downed && ally) { ally.downed = true; ally.hp = 0; }
     if (sh.strikeAlly && ally) ally.hp = ally.maxHp; // round 15 (lane N): the friend starts whole and is struck just before the cast (Rewind turns it back)
@@ -310,7 +311,8 @@ function heroStage(S, spec) {
       if ((sh.hitme || sh.shootme) && cast && Math.floor(S.t / 0.45) !== Math.floor((S.t - dt) / 0.45)) {
         const d0 = dummies[0];
         if (sh.hitme) { d0.facing = Math.atan2(u.y - d0.y, u.x - d0.x); hurt(w, u, 4, d0, { knock: 0 }); }
-        else { const a = Math.atan2(u.y - d0.y, u.x - d0.x); w.projectiles.push({ kind: 'arrow', x: d0.x + Math.cos(a) * 30, y: d0.y + Math.sin(a) * 30, vx: Math.cos(a) * 420, vy: Math.sin(a) * 420, r: 6, team: d0.team, owner: d0, dmg: 4, o: { knock: 10 }, life: 1.2, a }); }
+        else { const spell = sh.shootme === 'spell', v = spell && ally && !ally.downed ? ally : u, a = Math.atan2(v.y - d0.y, v.x - d0.x); // (round 17, lane water17: 'spell': a fire bolt at the friend, the Water Mage's bubble stops it)
+          w.projectiles.push({ kind: spell ? 'bolt' : 'arrow', color: spell ? '#FF8A3D' : undefined, x: d0.x + Math.cos(a) * 30, y: d0.y + Math.sin(a) * 30, vx: Math.cos(a) * 420, vy: Math.sin(a) * 420, r: 6, team: d0.team, owner: d0, dmg: spell ? 8 : 4, o: { knock: 10, burn: spell ? 10 : 0 }, life: 1.2, a }); }
       }
       if (sh.mob === 'walk' && cast) for (const d of dummies) d.home.x = Math.max(u.x + 70, d.home.x - 70 * dt);
       if (sh.killDummy && cast && S.t - CAST_AT > 0.6 && !u._killed) { u._killed = true; hurt(w, dummies[1], 99999, u, { noDodge: true }); hurt(w, dummies[2], 99999, u, { noDodge: true }); }
@@ -434,6 +436,9 @@ const TRAIT_SCENE = {
   ballAndChain: { foes: [{ at: 'far', hpX: 60 }], hero: { abilities: true, cast: ['manacle'] }, loop: 6 },
   poltergeist: { foes: [{ at: [262, 135], weak: true }, { at: [320, 105], hpX: 40 }, { at: [320, 170], hpX: 40 }] },
   aftershock: { foes: [{ at: [290, 115], hpX: 60 }, { at: [316, 165], hpX: 60 }], hero: { abilities: true, cast: ['spikeChain'] }, loop: 6 },
+  // round 17 (lane water17): the Water Mage stands in a puddle and is struck
+  splashback: { foes: [{ at: 'adj', w: 'sword', hits: 1.1, dmg: 0.05, aim: false, hpX: 30 }], hero: { idle: true }, loop: 5.6,
+    hold: (w, u) => { if (!w.hazards.some((h) => h.type === 'water')) w.hazards.push({ type: 'water', x: u.x, y: u.y, r: 46 }); } },
 };
 export const traitNote = (id) => {
   const t = HEROES[id] && HEROES[id].trait, sc = t && TRAIT_SCENE[t.id];
