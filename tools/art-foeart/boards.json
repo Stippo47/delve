@@ -1,0 +1,387 @@
+[
+ {
+  "out": "design/r19-art/foes/spiderHunter/spiderHunter-a.png",
+  "title": "Hunter Spider: option A, Chevron",
+  "sub": "The old hunter's colours and chevron, in the fire spider's build.",
+  "kind": "spiderHunter",
+  "cur": [
+   {
+    "url": "art/enemies/placeholder/spider-hunter.svg",
+    "label": "now in the game"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/spiderHunter/spiderHunter-a.svg",
+    "label": "A: Chevron"
+   }
+  ],
+  "thumb": "design/r19-art/foes/spiderHunter/spiderHunter-a-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/spiderHunter/spiderHunter-b.png",
+  "title": "Hunter Spider: option B, Striped",
+  "sub": "A wolf spider: one dark stripe, banded knees, a bigger head and fangs.",
+  "kind": "spiderHunter",
+  "cur": [
+   {
+    "url": "art/enemies/placeholder/spider-hunter.svg",
+    "label": "now in the game"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/spiderHunter/spiderHunter-b.svg",
+    "label": "B: Striped"
+   }
+  ],
+  "thumb": "design/r19-art/foes/spiderHunter/spiderHunter-b-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/spiderMomma/spiderMomma-a.png",
+  "title": "Momma Spider: option A, Clutch",
+  "sub": "Huge abdomen, one tidy clutch of seven same-size eggs on her back.",
+  "kind": "spiderMomma",
+  "cur": [
+   {
+    "url": "art/enemies/placeholder/spider-momma.svg",
+    "label": "now in the game"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/spiderMomma/spiderMomma-a.svg",
+    "label": "A: Clutch"
+   }
+  ],
+  "thumb": "design/r19-art/foes/spiderMomma/spiderMomma-a-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/spiderMomma/spiderMomma-b.png",
+  "title": "Momma Spider: option B, Egg sac",
+  "sub": "Carries a white silk egg sac on her back: where her brood comes from.",
+  "kind": "spiderMomma",
+  "cur": [
+   {
+    "url": "art/enemies/placeholder/spider-momma.svg",
+    "label": "now in the game"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/spiderMomma/spiderMomma-b.svg",
+    "label": "B: Egg sac"
+   }
+  ],
+  "thumb": "design/r19-art/foes/spiderMomma/spiderMomma-b-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/frostWolf/frostWolf-a.png",
+  "title": "Frost Wolf: option A, No paws",
+  "sub": "Your wolf fixes: head forward, body shorter, no paws (as the picked wolves).",
+  "kind": "frostWolf",
+  "cur": [
+   {
+    "url": "art/enemies/frost-wolf.svg",
+    "label": "now in the game"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/frostWolf/frostWolf-a.svg",
+    "label": "A: No paws"
+   }
+  ],
+  "thumb": "design/r19-art/foes/frostWolf/frostWolf-a-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/frostWolf/frostWolf-b.png",
+  "title": "Frost Wolf: option B, Paws under",
+  "sub": "The same, with the front paws drawn under the body.",
+  "kind": "frostWolf",
+  "cur": [
+   {
+    "url": "art/enemies/frost-wolf.svg",
+    "label": "now in the game"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/frostWolf/frostWolf-b.svg",
+    "label": "B: Paws under"
+   }
+  ],
+  "thumb": "design/r19-art/foes/frostWolf/frostWolf-b-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/banshee/banshee-a.png",
+  "title": "Banshee: option A, Wailer",
+  "sub": "In the ghosts' build: their eyes, a wailing mouth, long hair streaming back.",
+  "kind": "banshee",
+  "cur": [
+   {
+    "url": "art/enemies/placeholder/banshee.svg",
+    "label": "now in the game"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/banshee/banshee-a.svg",
+    "label": "A: Wailer"
+   }
+  ],
+  "thumb": "design/r19-art/foes/banshee/banshee-a-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/banshee/banshee-b.png",
+  "title": "Banshee: option B, Hollow",
+  "sub": "The Hollow's skull you said to keep for a banshee, in a ragged shroud.",
+  "kind": "banshee",
+  "cur": [
+   {
+    "url": "art/enemies/placeholder/banshee.svg",
+    "label": "now in the game"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/banshee/banshee-b.svg",
+    "label": "B: Hollow"
+   }
+  ],
+  "thumb": "design/r19-art/foes/banshee/banshee-b-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/banshee/banshee-c.png",
+  "title": "Banshee: option C, Veil",
+  "sub": "A under a teal veil that trails behind her.",
+  "kind": "banshee",
+  "cur": [
+   {
+    "url": "art/enemies/placeholder/banshee.svg",
+    "label": "now in the game"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/banshee/banshee-c.svg",
+    "label": "C: Veil"
+   }
+  ],
+  "thumb": "design/r19-art/foes/banshee/banshee-c-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/imp/imp-a.png",
+  "title": "Imp: option A, Firebrand",
+  "sub": "Nearly all head, little horns, long ears, a grin, a fireball in hand.",
+  "kind": "imp",
+  "cur": [
+   {
+    "url": "art/enemies/placeholder/imp.svg",
+    "label": "now in the game"
+   },
+   {
+    "url": "design/class-round6/enemies/fiend-imp.svg",
+    "label": "ticked round 8, never wired"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/imp/imp-a.svg",
+    "label": "A: Firebrand"
+   }
+  ],
+  "thumb": "design/r19-art/foes/imp/imp-a-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/imp/imp-b.png",
+  "title": "Imp: option B, Match head",
+  "sub": "A flame burning on its head instead of horns, darker red.",
+  "kind": "imp",
+  "cur": [
+   {
+    "url": "art/enemies/placeholder/imp.svg",
+    "label": "now in the game"
+   },
+   {
+    "url": "design/class-round6/enemies/fiend-imp.svg",
+    "label": "ticked round 8, never wired"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/imp/imp-b.svg",
+    "label": "B: Match head"
+   }
+  ],
+  "thumb": "design/r19-art/foes/imp/imp-b-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/devil/devil-a.png",
+  "title": "Devil: option A, Trident",
+  "sub": "Crimson, widow's peak, goatee, horns, bat wings, gold trident.",
+  "kind": "devil",
+  "cur": [
+   {
+    "url": "art/enemies/placeholder/devil.svg",
+    "label": "now in the game"
+   },
+   {
+    "url": "design/class-round6/enemies/fiend-devil.svg",
+    "label": "ticked round 8, never wired"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/devil/devil-a.svg",
+    "label": "A: Trident"
+   }
+  ],
+  "thumb": "design/r19-art/foes/devil/devil-a-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/devil/devil-b.png",
+  "title": "Devil: option B, High collar",
+  "sub": "No wings: a black cloak with a tall collar behind the head.",
+  "kind": "devil",
+  "cur": [
+   {
+    "url": "art/enemies/placeholder/devil.svg",
+    "label": "now in the game"
+   },
+   {
+    "url": "design/class-round6/enemies/fiend-devil.svg",
+    "label": "ticked round 8, never wired"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/devil/devil-b.svg",
+    "label": "B: High collar"
+   }
+  ],
+  "thumb": "design/r19-art/foes/devil/devil-b-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/demon/demon-a.png",
+  "title": "Demon: option A, Ram",
+  "sub": "Plum brute, glowing cracks, curled ram horns, a glowing mouth, huge fists.",
+  "kind": "demon",
+  "cur": [
+   {
+    "url": "art/enemies/placeholder/demon.svg",
+    "label": "now in the game"
+   },
+   {
+    "url": "design/class-round6/enemies/fiend-demon.svg",
+    "label": "ticked round 8, never wired"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/demon/demon-a.svg",
+    "label": "A: Ram"
+   }
+  ],
+  "thumb": "design/r19-art/foes/demon/demon-a-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/demon/demon-b.png",
+  "title": "Demon: option B, Bull",
+  "sub": "A bull of the pit: wide pale horns, a gold nose ring, huge fists.",
+  "kind": "demon",
+  "cur": [
+   {
+    "url": "art/enemies/placeholder/demon.svg",
+    "label": "now in the game"
+   },
+   {
+    "url": "design/class-round6/enemies/fiend-demon.svg",
+    "label": "ticked round 8, never wired"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/demon/demon-b.svg",
+    "label": "B: Bull"
+   }
+  ],
+  "thumb": "design/r19-art/foes/demon/demon-b-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/succubus/succubus-a.png",
+  "title": "Succubus: option A, Wings",
+  "sub": "Her own sprite: plum hair, small horns, rose wings, a heart-tipped tail.",
+  "kind": "succubus",
+  "cur": [
+   {
+    "url": "@succubus",
+    "label": "now in the game"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/succubus/succubus-a.svg",
+    "label": "A: Wings"
+   }
+  ],
+  "thumb": "design/r19-art/foes/succubus/succubus-a-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/succubus/succubus-b.png",
+  "title": "Succubus: option B, Whip",
+  "sub": "Hair in a high tail, wings folded small, a coiled whip.",
+  "kind": "succubus",
+  "cur": [
+   {
+    "url": "@succubus",
+    "label": "now in the game"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/succubus/succubus-b.svg",
+    "label": "B: Whip"
+   }
+  ],
+  "thumb": "design/r19-art/foes/succubus/succubus-b-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/hellhound/hellhound-a.png",
+  "title": "Hellhound: option A, No paws",
+  "sub": "Your wolf fixes: head forward, body shorter, no paws (as the picked wolves).",
+  "kind": "hellhound",
+  "cur": [
+   {
+    "url": "art/enemies/hellhound.svg",
+    "label": "now in the game"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/hellhound/hellhound-a.svg",
+    "label": "A: No paws"
+   }
+  ],
+  "thumb": "design/r19-art/foes/hellhound/hellhound-a-thumb.png"
+ },
+ {
+  "out": "design/r19-art/foes/hellhound/hellhound-b.png",
+  "title": "Hellhound: option B, Paws under",
+  "sub": "The same, with the front paws drawn under the body.",
+  "kind": "hellhound",
+  "cur": [
+   {
+    "url": "art/enemies/hellhound.svg",
+    "label": "now in the game"
+   }
+  ],
+  "opt": [
+   {
+    "url": "design/r19-art/foes/hellhound/hellhound-b.svg",
+    "label": "B: Paws under"
+   }
+  ],
+  "thumb": "design/r19-art/foes/hellhound/hellhound-b-thumb.png"
+ }
+]

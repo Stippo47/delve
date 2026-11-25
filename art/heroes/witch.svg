@@ -2,7 +2,6 @@
 <!-- WITCH (round 5: the hat rebuilt on the farmers' straw hat): the same wide oval brim and band as the Haymaker's hat, in violet, with the crown drawn up into a tall bent point that leans back; dark-green hair at the sides; a broom in the LEFT fist, bristles first (behind the body); empty right fist. -->
 <!-- Parts: groups inside #sprite in draw order; weapon arms come before #body so the weapon sits under the body and only the fist shows. Pivots: the shoulder points. Front = down (+y), centre (100,100). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gFace" x1="0" y1="94.8" x2="0" y2="153.1" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient><linearGradient id="sR" x1="0.4" y1="0" x2="1" y2="0.12"><stop offset="0" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.32"/></linearGradient><linearGradient id="sRl" x1="0.4" y1="0" x2="1" y2="0.12"><stop offset="0" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.18"/></linearGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.55"/><stop offset="0.42" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gWood" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#CF9A62"/><stop offset="0.55" stop-color="#AD7442"/><stop offset="1" stop-color="#83542C"/></linearGradient>
 <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B88250"/><stop offset="1" stop-color="#7A4E2A"/></linearGradient>
 <path id="s2" d="M 10.3 57.5 L 52.3 161.5 A 4.0 4.0 0 0 0 59.7 158.5 L 17.7 54.5 A 4.0 4.0 0 0 0 10.3 57.5 Z"/>
@@ -32,10 +31,13 @@
 <clipPath id="c26"><use href="#s24"/></clipPath>
 <clipPath id="c27"><use href="#s2"/><use href="#s4"/><use href="#s8"/><use href="#s9"/><use href="#s13"/><use href="#s15"/><use href="#s18"/><use href="#s21"/><use href="#s24"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
-<g id="arm-l" data-pivot="46 108">
+<g id="sprite">
+<!-- Round 19 (lane caster19, Broom Ride: "Remove the broom from her hand when flying"): the broom is its own part riding her left fist (parts.js hides it while she flies on it). -->
+<g id="arm-l-broom" data-pivot="46 108">
 <use href="#s2" fill="url(#g1)"/><use href="#s2" fill="url(#sR)"/>
 <use href="#s4" fill="url(#g3)"/><g clip-path="url(#c5)"><g transform="translate(56.0 160.0) rotate(-21.99)"><rect x="-12" y="4" width="24" height="6" fill="#A8333A"/><path d="M -4 14 L -8 40 L -5 40 L -1 14 Z M 5 14 L 7 40 L 10 40 L 8 14 Z" fill="#9C7426" opacity="0.5"/></g></g><use href="#s4" fill="url(#sR)"/>
+</g>
+<g id="arm-l" data-pivot="46 108">
 <g clip-path="url(#c6)"><rect x="38.4" y="131.2" width="20" height="25" rx="8" transform="rotate(-22.0 48.4 141.2)" fill="#2B2230" opacity="0.28"/></g><rect x="38.4" y="128.7" width="20" height="25" rx="8" transform="rotate(-22.0 48.4 141.2)" fill="url(#gHand)"/><rect x="38.4" y="128.7" width="20" height="25" rx="8" transform="rotate(-22.0 48.4 141.2)" fill="url(#gUnder)"/>
 </g>
 <g id="body">

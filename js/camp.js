@@ -14,14 +14,14 @@ import * as P from './progress.js';
 import * as M from './meta.js';
 import * as STOCK from './stock.js';
 import { writeSave, resetSave } from './save.js';
-import { icon } from './icons.js';
+import { icon, ICON_PICKS, iconPicks, iconSwatch, setIconPick, altLoaded, loadIconAlt } from './icons.js';
 import { trinketFun, POTION_FUN } from './bestiary.js';
 import { openBook, closeBook, bookOpen } from './book.js';
 import { openUnit, closeUnit, unitOpen, refreshUnit } from './unit.js';
 import { ENV_STYLES, envId, setEnv } from './env.js';
 import { soundSettingsHtml } from './audio.js';
 import { cue } from './sfx.js';
-import { I, coin, gold, roman, mmss, face } from './ui-kit.js';
+import { I, coinTag, gold, roman, mmss, face } from './ui-kit.js';
 import { setShowAll, showAll } from './skilltree.js';
 import { makeScene } from './camp-scene.js';
 import { makeMap } from './camp-map.js';
@@ -104,7 +104,7 @@ function render() {
   if (mode !== 'hero' && unitOpen()) refreshUnit(save); // a hero's page opened from the Book
   if (sheet) renderSheet();
 }
-const purse = () => `<div class="purses"><span class="pill purse">${coin}<b id="cGold">${save.cheat ? '∞' : save.gold}</b></span>${typeof save.gems === 'number' ? `<span class="pill purse gems"><i class="gem"></i><b>${save.gems}</b></span>` : ''}</div>`;
+const purse = () => `<div class="purses"><span class="pill purse">${coinTag()}<b id="cGold">${save.cheat ? '∞' : save.gold}</b></span>${typeof save.gems === 'number' ? `<span class="pill purse gems"><i class="gem"></i><b>${save.gems}</b></span>` : ''}</div>`;
 
 // what the canvas says was tapped
 function onScene(h) {
@@ -254,11 +254,14 @@ function settingsView() {
   const looks = (list, cur, act, swatch) => `<div class="looks">${list.map((l) => `<button class="look ${String(cur) === String(l.id) ? 'on' : ''}" data-act="${act}:${l.id}">
     <span class="lk-sw">${swatch(l)}</span><b>${l.name}</b><span class="quiet small">${l.blurb || ''}</span></button>`).join('')}</div>`;
   const envSw = (l) => `<i style="background:${['#B9B5B2', '#C7C1B4', '#6A6070', '#B8A890'][l.id - 1]}"></i><i style="background:${['#8E8D96', '#9C9488', '#2E2836', '#8E7860'][l.id - 1]}"></i>`;
+  if (!altLoaded()) loadIconAlt().then((ok) => { if (ok && mode === 'settings') render(); }); // (round 19: the B and soft swatches)
   const html = `<div class="pp-body settings">
     <section class="group">${soundSettingsHtml()}</section>
     <section class="group"><h3 class="cap">Dungeon look</h3>${looks(ENV_STYLES, envId(), 'env', envSw)}</section>
     <section class="group"><h3 class="cap">Puddles and spills</h3>${looks(LOOKS.puddleStyles(), LOOKS.puddleStyle(), 'puddle', LOOKS.puddleSwatch)}</section>
     <section class="group"><h3 class="cap">Enemy health, once hurt</h3>${looks(LOOKS.hpStyles(), LOOKS.hpStyle(), 'hpstyle', LOOKS.hpSwatch)}</section>
+    <section class="group icon-picks"><h3 class="cap">Stat icons</h3>${looks(ICON_PICKS.stats, iconPicks.stats, 'iconstats', (l) => iconSwatch('stats', l.id))}
+      <h3 class="cap">Trinket, potion and small icons</h3>${looks(ICON_PICKS.items, iconPicks.items, 'iconitems', (l) => iconSwatch('items', l.id))}</section>
     <section class="group dev"><h3 class="cap">Dev</h3>
       <div role="button" class="rowbtn ${save.cheat ? 'on' : ''}" data-act="cheat"><div><b>Unlimited gold and points</b><span class="quiet small">Everything is free, every dungeon is open and the Book shows every monster. Your real purse is kept for when you switch it off.</span></div><span class="switch"><i></i></span></div>
       <div role="button" class="rowbtn ${showAll() ? 'on' : ''}" data-act="webAll"><div><b>Show the whole skill web</b><span class="quiet small">Every node, even ones far from what a hero knows.</span></div><span class="switch"><i></i></span></div>
@@ -399,6 +402,7 @@ function onClick(e) {
     case 'env': setEnv(+arg); cue('tap'); render(); break;
     case 'puddle': LOOKS.setPuddleStyle(arg); cue('tap'); render(); break;
     case 'hpstyle': LOOKS.setHpStyle(arg); cue('tap'); render(); break;
+    case 'iconstats': case 'iconitems': setIconPick(act === 'iconstats' ? 'stats' : 'items', arg).then(() => render()); cue('tap'); break;
     case 'cheat': save.cheat = !save.cheat; ok(); break;
     case 'battleDev': save.battleDev = !save.battleDev; cue('tap'); ok(); break;
     case 'reset': if (!resetArmed) { resetArmed = true; cue('tap'); showReset(); setTimeout(() => { resetArmed = false; showReset(); }, 5000); } else { resetSave(); location.reload(); } break;
@@ -448,7 +452,7 @@ export function showResult(rep, done) {
   el.innerHTML = `<div class="rcard ${rep.result}"><div class="r-scroll">
     <span class="cap">${theme ? theme.name : ''} · floor ${rep.floor} · ${rep.rooms} rooms · ${rep.kills} kills</span>
     <h1 class="t32">${TITLES[rep.result] || 'Run over'}</h1>
-    <div class="r-gold">${coin}<b class="count">0</b><span class="quiet">gold</span></div>${lost}${merc}
+    <div class="r-gold">${coinTag()}<b class="count">0</b><span class="quiet">gold</span></div>${lost}${merc}
     ${news}
     ${heroes ? `<div class="rheroes">${heroes}</div>` : ''}
     ${resultStats(rep.stats)}</div>

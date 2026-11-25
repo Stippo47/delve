@@ -7,7 +7,6 @@
        #body (pauldrons, skull, jaw, crown), #arm-l (lantern + claw). No outline strokes: the #outline filter adds it.
        Facing = DOWN (+y), centre (100,100). The game draws him about 1.6x a hero. -->
   <defs>
-    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <linearGradient id="shX" x1="80" y1="0" x2="190" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3A2440" stop-opacity="0"/><stop offset="1" stop-color="#3A2440" stop-opacity="0.36"/></linearGradient>
     <linearGradient id="gSkull" x1="56" y1="40" x2="144" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FCF6E4"/><stop offset="0.5" stop-color="#F0E2BE"/><stop offset="1" stop-color="#D3BD92"/></linearGradient>
     <radialGradient id="gDome" cx="86" cy="64" r="46" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
@@ -34,7 +33,7 @@
     <mask id="bladeM"><use href="#blade" fill="#fff"/></mask>
     <mask id="paulM"><use href="#paulL" fill="#fff"/><use href="#paulR" fill="#fff"/></mask>
   </defs>
-  <g id="sprite" filter="url(#outline)">
+  <g id="sprite">
     <!-- the cape: behind everything, ragged at the back -->
     <g id="back" data-pivot="100 80">
       <use href="#cape" fill="url(#gCape)"/>

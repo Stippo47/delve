@@ -10,8 +10,9 @@ import { hash, rgba, upright, upVec, inked, inkLine, flame, blob, star, glowDisc
 import { drawPuddle } from './puddles.js';
 import { installFx3 } from './fx3.js'; // round 15 (lane N): the six newer heroes' looks
 import { installFxWater } from './fx-water.js'; // round 17 (lane water17): the Water Mage's looks
-import { SIG2, installFx2, SLAM2, IMPACT2D } from './fx2.js'; // (lane H2, round 13: SLAM2 / IMPACT2D, a hero's own slam and shot-burst looks)
+import { SIG2, installFx2, SLAM2, IMPACT2D, SLASH2 } from './fx2.js'; // (lane H2, round 13: SLAM2 / IMPACT2D, a hero's own slam and shot-burst looks)
 import { variant } from './fxvar.js';
+import { blowPoses, partPivot } from './parts.js'; // round 19 (lane melee19): a blow's slash drawn along its weapon's real path
 
 // ---------------------------------------------------------------- palette (FX-STYLE.md): dark, main, light, core
 export const EL = {
@@ -105,9 +106,12 @@ export function weaponOf(u) {
   if (d.heavy || d.mass >= 2.8) return 'heavy';
   return 'blade';
 }
-const SLASH_COL = { hero: ['#DCE3EC', '#FFFFFF'], enemy: ['#FFCDBD', '#FFF6F2'], scythe: ['#EDE4CD', '#FFFFFF'], smack: ['#8FD8C0', '#E8FFF6'], fire: ['#FF8A3D', '#FFF0B0'], ghost: ['#BFE6FF', '#FFFFFF'] };
+const SLASH_COL = { hero: ['#DCE3EC', '#FFFFFF'], enemy: ['#FFCDBD', '#FFF6F2'], scythe: ['#EDE4CD', '#FFFFFF'], smack: ['#8FD8C0', '#E8FFF6'], fire: ['#FF8A3D', '#FFF0B0'], ghost: ['#BFE6FF', '#FFFFFF'], spade: ['#8E6A44', '#D2B07E'] };
 
 // ---------------------------------------------------------------- the renderer-side marks (impacts, arcs, strikes)
+// Round 19 (lane art-hitfx): the hooks js/fx-hit-r19.js fills when the page is opened with ?hitfx= (the trial looks for
+// hits, blows on shields, misses, blasts, heals, buffs, deaths, pickups and level-ups). Empty: everything as it was.
+export const HIT_OWN = {};
 const marks = [];
 const push = (m) => { m.t = 0; marks.push(m); if (marks.length > 160) marks.splice(0, marks.length - 160); };
 
@@ -123,14 +127,15 @@ export function noteWorld(w) {
       const n = u ? (u._n || 0) + (u.anim && u.anim !== u._lastAnim ? 1 : 0) : 0, odd = n % 2;
       const team = u && u.team === 'hero' ? 'hero' : 'enemy';
       let col = SLASH_COL[team];
-      if (shape === 'scythe') col = SLASH_COL.scythe; else if (shape === 'smack') col = u && u.kind === 'fireSlime' ? SLASH_COL.fire : SLASH_COL.smack; else if (u && u.kind === 'ghost') col = SLASH_COL.ghost;
+      if (shape === 'scythe') col = SLASH_COL.scythe; else if (shape === 'spade') col = SLASH_COL.spade; else if (shape === 'smack') col = u && u.kind === 'fireSlime' ? SLASH_COL.fire : SLASH_COL.smack; else if (u && u.kind === 'ghost') col = SLASH_COL.ghost;
+      if (t.aoe && !t.aoe.look && u && u.def.style && u.def.style.slamPose) { const T = tipPath(u); if (T) { const p = T.at(1); t.aoe.x = p.x; t.aoe.y = p.y; } } // round 19 (lane melee19): the crater where the hammer's head comes down
       if (t.aoe) { push({ type: 'slam', u, x: t.aoe.x, y: t.aoe.y, r: t.aoe.r, a: t.a, max: 0.42, seed: Math.round(t.x * 7 + t.y), look: t.aoe.look || (u && u.def.style && u.def.style.slam) }); continue; } // (lane H2: look, a hero's own slam: fx2 SLAM2)
       // arm-l is on the +normal side of the facing, arm-r on the -normal side (the art's left/right, front = +y)
-      const sty = (u && u.def.style) || {}, back = sty.backhand || sty.flip ? -1 : 1; // lane H2 (round 13): a backhand swing (Dame, Pirate), a mirrored sprite (Griffon)
-      push({ type: 'slash', u, x: t.x, y: t.y, R: t.r, a: t.a, arc: t.arc, shape, dir: ((shape === 'twin' || shape === 'twinBlade') && odd ? -1 : 1) * back, side: odd ? 1 : -1, col, r0k: sty.reach0,
+      const sty = (u && u.def.style) || {}, back = sty.backhand || sty.flip || sty.lefty ? -1 : 1; // (round 19: style.lefty, a left hand's cut sweeping in across her: the Dame) // lane H2 (round 13): a backhand swing (Dame, Pirate), a mirrored sprite (Griffon)
+      push({ type: 'slash', u, x: t.x, y: t.y, R: t.r, a: t.a, arc: t.arc, shape, dir: t.dir ?? ((shape === 'twin' || shape === 'twinBlade') && odd ? -1 : 1) * back, /* (round 19: t.dir, the swing's own way: the Bandit's backhand) */ side: odd ? 1 : -1, col, r0k: sty.reach0, sx: sty.stabX, // (round 19: style.stabX, the stab runs down the spear held off to one side: Bulwark)
         max: shape === 'bite' && u && u.kind === 'wolf' ? 0.5 : shape === 'bite' ? 0.42 /* round 14: open, then the snap */ : shape === 'great' ? 0.22 : shape === 'heavy' ? 0.24 : 0.28, seed: Math.round(t.x * 7 + t.y) });
     } else if (t.type === 'blast') {
-      push({ type: 'blast', x: t.x, y: t.y, r: t.r, color: t.color || '#FFB347', ab: t.ab, max: t.ab === 'fireball' ? 0.6 : 0.45, seed: Math.round(t.x + t.y * 3) });
+      push({ type: 'blast', x: t.x, y: t.y, r: t.r, color: t.color || '#FFB347', ab: t.ab, burn: t.burn, max: HIT_OWN.blastT ? HIT_OWN.blastT(t) : t.ab === 'fireball' ? 0.6 : 0.45, seed: Math.round(t.x + t.y * 3) });
     }
   }
   // shots that are gone burst where they stopped
@@ -159,7 +164,7 @@ export function drawMarks(ctx, dt, layer) {
     if (layer === 'air') m.t += dt;
     const k = k01(m.t / m.max);
     ctx.save();
-    if (layer === 'ground') { if (m.type === 'quake') quake(ctx, m.x, m.y, m.r, k, m.seed, m.col); else if (m.type === 'strike') strikeGround(ctx, m, k); else if (m.type === 'slam') slamGround(ctx, m, k); else if (m.type === 'oldBones') oldBonesGround(ctx, m, k); }
+    if (layer === 'ground') { if (m.type === 'quake') quake(ctx, m.x, m.y, m.r, k, m.seed, m.col); else if (m.type === 'strike') strikeGround(ctx, m, k); else if (m.type === 'slam') slamGround(ctx, m, k); else if (m.type === 'oldBones') oldBonesGround(ctx, m, k); else if (m.type === 'blast' && HIT_OWN.blastGround) HIT_OWN.blastGround(ctx, m, k); }
     else switch (m.type) {
       case 'slash': slash(ctx, m, k); break;
       case 'slam': slamAir(ctx, m, k); break;
@@ -174,11 +179,58 @@ export function drawMarks(ctx, dt, layer) {
 }
 
 // ---------------------------------------------------------------- melee arcs
+export const SLASH_OWN = {}; // round 19 (lane rogue19): shape -> (ctx, m, k, x, y), returning false to fall through to the one here
+// ---------------------------------------------------------------- round 19 (lane melee19): slashes along the weapon
+// The designer: "spears slash is centered when the spear is usually off to 1 side". A hero whose style names its weapon's
+// striking point (style.tip: [x, y] in its art's units, on style.tipPart, else the striking hand; style.tipBase: the blade's
+// root, for a cut) has its blow drawn along the path that point really takes between the wound-back and the struck-through
+// poses parts.js plays (blowPoses), from where the body really is (its lunge too): a cut is the band the blade sweeps, a
+// stab a streak down the line the point travels (style.tines: a fork's three), a slam lands where the head comes down.
+const mixPose = (a, b, q) => ({ r: (a.r || 0) + ((b.r || 0) - (a.r || 0)) * q, dx: (a.dx || 0) + ((b.dx || 0) - (a.dx || 0)) * q, dy: (a.dy || 0) + ((b.dy || 0) - (a.dy || 0)) * q });
+function artPt(u, pt, piv, p, lunge = true) {
+  let sx = pt[0], sy = pt[1];
+  if (p) { const c = Math.cos(p.r || 0), sn = Math.sin(p.r || 0), dx = sx - piv[0], dy = sy - piv[1]; sx = piv[0] + (p.dx || 0) + dx * c - dy * sn; sy = piv[1] + (p.dy || 0) + dx * sn + dy * c; }
+  if (u.def.style && u.def.style.flip) sx = 200 - sx;
+  const k = u.vr / (u.def.headR || 54), a = u.facing - Math.PI / 2;
+  const fwd = lunge && u.lungeT > 0 ? u.vr * 0.5 * Math.sin(Math.PI * (1 - u.lungeT / 0.18)) : 0; // (render.js unitFrame's lunge, in room units)
+  const x = (sx - 100) * k, y = (sy - 100) * k + fwd;
+  return { x: u.x + x * Math.cos(a) - y * Math.sin(a), y: u.y + x * Math.sin(a) + y * Math.cos(a) };
+}
+// the blow's path: q 0 (wound back) .. 1 (struck through), the point (and the blade's root) where the art puts them
+export function tipPath(u) {
+  const sty = u && u.def.style; if (!sty || !sty.tip) return null;
+  const P = blowPoses(u), part = sty.tipPart || P.hand, piv = partPivot(u.def.art, part); if (!piv) return null;
+  return { P, at: (q, pt = sty.tip) => artPt(u, pt, piv, mixPose(P.W, P.S, q)), sty };
+}
+function tipSlash(ctx, m, k, u) {
+  const T = m.tp || (m.tp = tipPath(u)); if (!T) return false; const [main, core] = m.col, sty = T.sty;
+  if (m.shape === 'thrust' || m.shape === 'fork' || m.shape === 'twin') {
+    const a0 = T.at(0), a1 = T.at(1), a = Math.atan2(a1.y - a0.y, a1.x - a0.x), L = Math.hypot(a1.x - a0.x, a1.y - a0.y) + 18;
+    const tip = L * easeOut(k01(k / 0.3)), base = tip * sm(k01((k - 0.2) / 0.8)) * 0.9, n = m.shape === 'fork' ? sty.tines || 3 : 1;
+    for (let i = 0; i < n; i++) { const o = (i - (n - 1) / 2) * 7, ox = -Math.sin(a) * o, oy = Math.cos(a) * o;
+      streak(ctx, a0.x + ox, a0.y + oy, a, base, tip, (n > 1 ? 5.5 : 8) * (1 - 0.35 * k), main, core); }
+    return true;
+  }
+  // a cut: the band the blade sweeps, from its root to its point, its head running ahead and its tail catching up
+  const N = 14, hk = 0.4, tk = 0.16, head = easeOut(k01(k / hk)), tail = sm(k01((k - tk) / (1 - tk)));
+  if (head - tail < 0.02) return true;
+  const outer = [], inner = [], th = sty.slashTh || 0.45; // (how far down the blade the band reaches at its thickest)
+  for (let i = 0; i <= N; i++) { const q = tail + (head - tail) * i / N, p = T.at(q), b = T.at(q, sty.tipBase || sty.tip), f = Math.pow(i / N, 0.85) * th * (1 - 0.3 * k);
+    outer.push(p); inner.push({ x: p.x + (b.x - p.x) * f, y: p.y + (b.y - p.y) * f }); }
+  const path = () => { ctx.beginPath(); outer.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y))); for (let i = N; i >= 0; i--) ctx.lineTo(inner[i].x, inner[i].y); ctx.closePath(); };
+  inked(ctx, path, main);
+  ctx.fillStyle = core; ctx.beginPath(); for (let i = Math.floor(N * 0.35); i <= N; i++) { const p = outer[i], b = inner[i], x = p.x + (b.x - p.x) * 0.25, y = p.y + (b.y - p.y) * 0.25; if (i === Math.floor(N * 0.35)) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
+  for (let i = N; i >= Math.floor(N * 0.35); i--) { const p = outer[i], b = inner[i], x = p.x + (b.x - p.x) * 0.5, y = p.y + (b.y - p.y) * 0.5; ctx.lineTo(x, y); } ctx.closePath(); ctx.fill();
+  return true;
+}
 function slash(ctx, m, k) {
   const u = m.u, live = u && !u.dead;
+  if (live && u.def.style && u.def.style.tip && tipSlash(ctx, m, k, u)) return; // round 19 (lane melee19)
   const x = live ? u.x : m.x, y = live ? u.y : m.y;
   const [main, core] = m.col;
   const sh = m.shape;
+  if (SLASH_OWN[sh] && SLASH_OWN[sh](ctx, m, k, x, y) !== false) return; // (round 19: a look of a weapon's own, filled by another file: fx-rogue19.js, the Monk's fists)
+  if (SLASH2[sh] && SLASH2[sh](ctx, m, k, x, y) !== false) return; // (round 19, lane caster19: fx2.js's, the Alchemist's monster fists)
   if (sh === 'palm') { const px = x + Math.cos(m.a) * (m.R - 4), py = y + Math.sin(m.a) * (m.R - 4), e = easeOut(k01(k / 0.5)); if (k < 0.25) lit(ctx, () => glowDisc(ctx, px, py, 22, '#FFFFFF', 0.6 * (1 - k / 0.25))); ctx.save(); ctx.globalAlpha *= 1 - k * k; for (let i = 0; i < 5; i++) { const b = m.a + (i - 2) * 0.55, d = 4 + 16 * e; inkDisc(ctx, px + Math.cos(b) * d, py + Math.sin(b) * d, 5 * (1 - 0.6 * k) + 1.5, i % 2 ? m.col[0] : m.col[1]); } ctx.restore(); return; } // lane H2 (round 13): the Monk's fists, soft bursts of force
   if (sh === 'fork') { const vr = u ? u.vr : 20; for (let i = -1; i <= 1; i++) { const r0 = (u ? u.r : 20) * 0.7, r1 = m.R + 16, tip = r0 + (r1 - r0) * easeOut(k01(k / 0.3)), base = r0 + (tip - r0) * sm(k01((k - 0.2) / 0.8)), nx = -Math.sin(m.a) * i * 7, ny = Math.cos(m.a) * i * 7; streak(ctx, x + nx, y + ny, m.a, base, tip, 6 * (1 - 0.35 * k), m.col[0], m.col[1]); } return; } // lane H2 (round 13): the Haymaker's pitchfork, three tines
   if (sh === 'thrust' || sh === 'twin') {
@@ -186,7 +238,7 @@ function slash(ctx, m, k) {
     const vr = u ? u.vr : 20, twin = sh === 'twin';
     const r0 = twin ? vr * 1.25 : (u ? u.r : 20) * (m.r0k || 0.55), r1 = m.R + (twin ? 22 : 16); // (lane H2: style.reach0, the stab starts further out: Bulwark)
     const tip = r0 + (r1 - r0) * easeOut(k01(k / 0.3)), base = r0 + (tip - r0) * sm(k01((k - 0.2) / 0.8));
-    const off = twin ? m.side * vr * 0.62 : 0, nx = -Math.sin(m.a) * off, ny = Math.cos(m.a) * off;
+    const off = twin ? m.side * vr * 0.62 : (m.sx || 0), nx = -Math.sin(m.a) * off, ny = Math.cos(m.a) * off;
     const a = twin ? m.a - m.side * 0.12 : m.a; // a hooked dagger stabs a little inward
     if (twin && k < 0.3) lit(ctx, () => glowDisc(ctx, x + nx + Math.cos(a) * r0, y + ny + Math.sin(a) * r0, 12, '#FFFFFF', 0.5 * (1 - k / 0.3)));
     streak(ctx, x + nx, y + ny, a, base, tip, (twin ? 5.5 : 9) * (1 - 0.35 * k), main, core);
@@ -225,6 +277,7 @@ function slash(ctx, m, k) {
   // a crescent sweeping across the weapon's arc, in the way the arm moves
   let th = 18, R = m.R, extra = 0.4, span0 = m.arc, pointed = false;
   if (sh === 'heavy') { th = 26; R *= 0.96; extra = 0.15; }
+  else if (sh === 'spade') { th = 15; R *= 0.9; extra = 0.05; } // round 19 (lane caster19): the Digger's spade, a short low sweep in earth colours
   else if (sh === 'great') { th = 22; R *= 1.04; extra = 0; span0 = m.arc * 0.72; pointed = true; } // round 9: narrower, ends in a point
   else if (sh === 'flail') { th = 18; R *= 1.04; extra = 0.45; }
   else if (sh === 'scythe') { th = 20; R *= 1.12; extra = 0.7; } // round 9: a wider line
@@ -232,7 +285,7 @@ function slash(ctx, m, k) {
   else if (sh === 'twinBlade') { th = 16; extra = 0.3; }
   const span = span0 + extra, a0 = m.a - m.dir * span / 2;
   // the heavy blow: round 9 "remove that last frame": the tail catches the head sooner and nothing lingers after
-  const hk = sh === 'heavy' ? 0.36 : 0.42, tk = sh === 'heavy' ? 0.12 : 0.18;
+  const hk = sh === 'heavy' || sh === 'spade' ? 0.36 : 0.42, tk = sh === 'heavy' || sh === 'spade' ? 0.12 : 0.18;
   const head = a0 + m.dir * span * easeOut(k01(k / hk)), tail = a0 + m.dir * span * sm(k01((k - tk) / (1 - tk)));
   slashBand(ctx, x, y, R, tail, head, th * (1 - 0.3 * k), main, core, pointed);
   const hx = x + Math.cos(head) * (R - th * 0.4), hy = y + Math.sin(head) * (R - th * 0.4);
@@ -385,6 +438,7 @@ function impact(ctx, m, k) {
 
 // ---------------------------------------------------------------- blasts (sim.js explode)
 function blast(ctx, m, k) {
+  if (HIT_OWN.blast && HIT_OWN.blast(ctx, m, k)) return; // (round 19, lane art-hitfx: ?hitfx=)
   const e = easeOut(k), x = m.x, y = m.y, R = m.r;
   const fire = /^#F[F-F][789AB]/i.test(m.color) || m.ab === 'fireball';
   const col = fire ? EL.fire : m.color === '#9BE07A' ? EL.necro : [m.color, m.color, '#FFFFFF', '#FFFFFF'];
@@ -977,15 +1031,17 @@ const SPIN_AT = { cleave: -1.1, reap: -1.1 };
 export function abilityRing(ctx, f) {
   const k = k01(f.t / f.max), e = easeOut(k), seed = Math.round(f.x * 3 + f.y);
   switch (f.ab) {
-    case 'cleave': case 'reap': { // round 9: the blade's circle follows her as she spins (render.js u.spin), the scythe's in bone
+    case 'cleave': case 'reap': case 'harvest': { // round 9: the blade's circle follows her as she spins (render.js u.spin), the scythe's in bone (round 19: Grandpa's Harvest, the same sweep)
       // round 13 (Cleave: "Slash is too far ahead from sword"): the crescent's head is where the blade is: it turns with
       // the sprite (the same easing as render.js's spin) from where the weapon is held out (SPIN_AT, measured off the
       // art), and its tail trails behind by at most a third of a turn
-      const scy = f.ab === 'reap', a0 = f.a != null ? f.a : hash(seed) * TAU, turn = TAU * sm(k), at = scy ? SPIN_AT.reap : SPIN_AT.cleave;
+      const hv = f.ab === 'harvest', scy = f.ab === 'reap' || hv, a0 = f.a != null ? f.a : hash(seed) * TAU, turn = TAU * sm(hv ? Math.min(1, k / 0.75) : k), at = scy ? SPIN_AT.reap : SPIN_AT.cleave; // (Harvest: the blade goes round in the first 3/4 of the look, then the whole circle it swept fades)
       const x = f.unit && !f.unit.dead ? f.unit.x : f.x, y = f.unit && !f.unit.dead ? f.unit.y : f.y;
-      const h = a0 + at + turn, len = Math.min(turn, 2.1) * (1 - sm(k01((k - 0.8) / 0.2)));
+      const h = a0 + at + turn, len = hv ? Math.min(turn, TAU * 0.97) : Math.min(turn, 2.1) * (1 - sm(k01((k - 0.8) / 0.2))); // (round 19 check: Harvest's band runs the whole way round behind the blade, a full circle swept)
       // (and it starts at the blade's tip, not far out past it: kits.js brought the reach in to what a blade that long sweeps)
+      if (hv) { ctx.save(); ctx.globalAlpha *= 1 - sm(k01((k - 0.75) / 0.25)); }
       slashBand(ctx, x, y, f.r, h - Math.max(0.05, len), h, ((f.tier || 1) >= 2 ? 34 : 24) * (1 - 0.2 * k), scy ? EL.bone[1] : '#DCE3EC', '#FFFFFF', !scy);
+      if (hv) ctx.restore();
       return true;
     }
     case 'groundPound': case 'leap': case 'oldBones': return true; // on the ground layer (abilityRingGround)

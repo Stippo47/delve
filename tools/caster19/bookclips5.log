@@ -1,0 +1,5 @@
+film digger-attack {"scene":"pair","castT":0.7333333333333333,"casts":4,"brain":true,"forced":false,"loop":4}
+film digger-dirtFling-III {"scene":"front","castT":1.1,"casts":1,"brain":true,"forced":false,"loop":5.1}
+film digger-burrow-III {"scene":"spread","castT":0.7333333333333333,"casts":1,"brain":true,"forced":false,"loop":3.6}
+film digger-bury-III {"scene":"front","castT":0.7666666666666666,"casts":1,"brain":true,"forced":false,"loop":4.466666666666667}
+film digger-trait {"loop":5.2}

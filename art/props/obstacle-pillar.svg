@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
   <!-- BROKEN PILLAR: a fluted stone column on a square plinth, seen from above, its top snapped off (a high jagged stub on the lit side, the broken lower face darker), a fallen drum of it across the plinth's front corner, rubble. Drawn at radius 30 room units (the plinth corners and the drum reach ~36). Scale by r/30. -->
   <defs>
-    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <linearGradient id="gPlinth" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#9E9180"/><stop offset="1" stop-color="#6E6354"/></linearGradient>
     <linearGradient id="gCol" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#EEE6D7"/><stop offset="1" stop-color="#B9AC97"/></linearGradient>
     <linearGradient id="gBreak" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#AE9F88"/><stop offset="1" stop-color="#837560"/></linearGradient>
@@ -15,7 +14,7 @@
     <path id="drum" d="M-40 -19 H40 A10 19 0 0 1 40 19 H-40 A10 19 0 0 1 -40 -19 Z"/>
     <clipPath id="drumC"><use href="#drum"/></clipPath>
   </defs>
-  <g id="sprite" filter="url(#outline)">
+  <g id="sprite">
     <use href="#plinth" fill="url(#gPlinth)"/>
     <g clip-path="url(#plC)"><rect x="30" y="30" width="136" height="9" fill="#FFFFFF" opacity="0.18"/><rect x="30" y="30" width="9" height="136" fill="#FFFFFF" opacity="0.12"/></g>
     <use href="#col" fill="#2B2230" opacity="0.32" transform="translate(7 9)"/>

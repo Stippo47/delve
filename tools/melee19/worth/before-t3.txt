@@ -1,0 +1,26 @@
+tier 3, rank 1: each ability switched off in turn (the same parties and seeds), 0 errors
+hero          ability           rooms with  worth   share of dmg  hero dmg/s  party taken/s  party heal/s  party downs
+bearskin      (all on)           8.42           attack  47%     9.44         5.20          3.74       4.92   (12 runs)
+              maul                      +1.67           23%    +1.74        +0.88         -0.46       +0.33
+              hibernate                 +2.67            0%    +1.29        -0.62         +1.45       +2.50
+              bearRoar                  +0.67           26%    +2.43        +0.34         -0.17       +0.25
+oldguard      (all on)           7.08           attack  49%     7.08         4.61          3.26       3.75   (12 runs)
+              greatSweep                +0.33           32%    +2.28        +0.25         +0.20       +0.83
+              rallyCry                  +1.42            0%    +0.67        +0.60         +0.25       +0.92
+              pommelStrike              +0.67           19%    +2.31        +0.68         -0.57       +0.42
+griffon       (all on)           5.17           attack  52%     6.00         4.90          2.66       5.00   (12 runs)
+              swoop                     -0.58            6%    +0.55        +0.31         -0.48       +0.50
+              hammerThrow               -0.33           28%    +1.58        -0.12         +0.33       -0.17
+              wingShield                -0.33           15%    +0.97        +0.13         -0.18       -0.08
+dame          (all on)           7.17           attack  77%     3.20         3.38          1.72       5.92   (12 runs)
+              riposte                   +1.50           15%    +0.52        +0.81         -0.13       +0.75
+              challenge                 +2.00            0%    -0.78        +0.56         +0.17       -1.42
+              disarm                    +0.08            8%    +0.31        +0.15         -0.04       +1.50
+warhelm       (all on)           5.83           attack  32%    11.01         4.04          1.25       4.83   (12 runs)
+              thunderBlow               -1.58           12%    -0.12        -0.25         -0.08       +0.92
+              warHorn                   +0.92           34%    +2.63        -0.09         -0.17       -0.17
+              skullSplitter             +0.00           22%    +1.23        +0.51         -0.47       -0.25
+haymaker      (all on)           6.58           attack  29%     8.21         5.26          3.34       4.50   (12 runs)
+              toss                      -0.17           16%    +1.67        +0.30         -0.35       +0.58
+              pitchHay                  +0.58            0%    +0.48        +0.03         -0.11       +0.42
+              forkCharge                +1.17           55%    +2.24        +0.44         +0.08       +0.83

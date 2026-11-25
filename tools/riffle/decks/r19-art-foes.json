@@ -1,0 +1,174 @@
+{
+ "title": "Art: enemies",
+ "topic": "art",
+ "stack": "r19art",
+ "order": 7,
+ "cards": [
+  {
+   "id": "frost",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Frost Hollow foes",
+   "text": "Hunter and momma spiders and the banshee redrawn; the frost wolf with your wolf fixes.",
+   "why": "The spiders and banshee are still round 4-5 drawings you turned down. Spiders now use the ticked fire spider's build, the banshee the ghosts'. The frost wolf gets the wolves' fix. Left: the game now. Right: the option, 3x and game size.",
+   "pick": [
+    "spiderHunter-a",
+    "spiderMomma-b",
+    "banshee-b",
+    "frostWolf-a"
+   ],
+   "items": [
+    {
+     "id": "spiderHunter-a",
+     "label": "Hunter Spider A: Chevron",
+     "image": "../../../design/r19-art/foes/spiderHunter/spiderHunter-a.png",
+     "text": "The old hunter's colours and chevron, in the fire spider's build.",
+     "thumb": "../../../design/r19-art/foes/spiderHunter/spiderHunter-a-thumb.png"
+    },
+    {
+     "id": "spiderHunter-b",
+     "label": "Hunter Spider B: Striped",
+     "image": "../../../design/r19-art/foes/spiderHunter/spiderHunter-b.png",
+     "text": "A wolf spider: one dark stripe, banded knees, a bigger head and fangs.",
+     "thumb": "../../../design/r19-art/foes/spiderHunter/spiderHunter-b-thumb.png"
+    },
+    {
+     "id": "spiderMomma-a",
+     "label": "Momma Spider A: Clutch",
+     "image": "../../../design/r19-art/foes/spiderMomma/spiderMomma-a.png",
+     "text": "Huge abdomen, one tidy clutch of seven same-size eggs on her back.",
+     "thumb": "../../../design/r19-art/foes/spiderMomma/spiderMomma-a-thumb.png"
+    },
+    {
+     "id": "spiderMomma-b",
+     "label": "Momma Spider B: Egg sac",
+     "image": "../../../design/r19-art/foes/spiderMomma/spiderMomma-b.png",
+     "text": "Carries a white silk egg sac on her back: where her brood comes from.",
+     "thumb": "../../../design/r19-art/foes/spiderMomma/spiderMomma-b-thumb.png"
+    },
+    {
+     "id": "banshee-a",
+     "label": "Banshee A: Wailer",
+     "image": "../../../design/r19-art/foes/banshee/banshee-a.png",
+     "text": "In the ghosts' build: their eyes, a wailing mouth, long hair streaming back.",
+     "thumb": "../../../design/r19-art/foes/banshee/banshee-a-thumb.png"
+    },
+    {
+     "id": "banshee-b",
+     "label": "Banshee B: Hollow",
+     "image": "../../../design/r19-art/foes/banshee/banshee-b.png",
+     "text": "The Hollow's skull you said to keep for a banshee, in a ragged shroud.",
+     "thumb": "../../../design/r19-art/foes/banshee/banshee-b-thumb.png"
+    },
+    {
+     "id": "banshee-c",
+     "label": "Banshee C: Veil",
+     "image": "../../../design/r19-art/foes/banshee/banshee-c.png",
+     "text": "A under a teal veil that trails behind her.",
+     "thumb": "../../../design/r19-art/foes/banshee/banshee-c-thumb.png"
+    },
+    {
+     "id": "frostWolf-a",
+     "label": "Frost Wolf A: No paws",
+     "image": "../../../design/r19-art/foes/frostWolf/frostWolf-a.png",
+     "text": "Your wolf fixes: head forward, body shorter, no paws (as the picked wolves).",
+     "thumb": "../../../design/r19-art/foes/frostWolf/frostWolf-a-thumb.png"
+    },
+    {
+     "id": "frostWolf-b",
+     "label": "Frost Wolf B: Paws under",
+     "image": "../../../design/r19-art/foes/frostWolf/frostWolf-b.png",
+     "text": "The same, with the front paws drawn under the body.",
+     "thumb": "../../../design/r19-art/foes/frostWolf/frostWolf-b-thumb.png"
+    }
+   ]
+  },
+  {
+   "id": "ember",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Ember Deep foes",
+   "text": "Imp, devil, demon and succubus redrawn beside the Pit Lord; the hellhound with your wolf fixes.",
+   "why": "Imp, devil and demon are round-5 stand-ins (your ticked round-6 fixes never reached the game: the middle picture). The succubus is the devil turned pink. All in the Pit Lord's build, each its own outline.",
+   "pick": [
+    "imp-a",
+    "devil-a",
+    "demon-b",
+    "succubus-a",
+    "hellhound-a"
+   ],
+   "items": [
+    {
+     "id": "imp-a",
+     "label": "Imp A: Firebrand",
+     "image": "../../../design/r19-art/foes/imp/imp-a.png",
+     "text": "Nearly all head, little horns, long ears, a grin, a fireball in hand.",
+     "thumb": "../../../design/r19-art/foes/imp/imp-a-thumb.png"
+    },
+    {
+     "id": "imp-b",
+     "label": "Imp B: Match head",
+     "image": "../../../design/r19-art/foes/imp/imp-b.png",
+     "text": "A flame burning on its head instead of horns, darker red.",
+     "thumb": "../../../design/r19-art/foes/imp/imp-b-thumb.png"
+    },
+    {
+     "id": "devil-a",
+     "label": "Devil A: Trident",
+     "image": "../../../design/r19-art/foes/devil/devil-a.png",
+     "text": "Crimson, widow's peak, goatee, horns, bat wings, gold trident.",
+     "thumb": "../../../design/r19-art/foes/devil/devil-a-thumb.png"
+    },
+    {
+     "id": "devil-b",
+     "label": "Devil B: High collar",
+     "image": "../../../design/r19-art/foes/devil/devil-b.png",
+     "text": "No wings: a black cloak with a tall collar behind the head.",
+     "thumb": "../../../design/r19-art/foes/devil/devil-b-thumb.png"
+    },
+    {
+     "id": "demon-a",
+     "label": "Demon A: Ram",
+     "image": "../../../design/r19-art/foes/demon/demon-a.png",
+     "text": "Plum brute, glowing cracks, curled ram horns, a glowing mouth, huge fists.",
+     "thumb": "../../../design/r19-art/foes/demon/demon-a-thumb.png"
+    },
+    {
+     "id": "demon-b",
+     "label": "Demon B: Bull",
+     "image": "../../../design/r19-art/foes/demon/demon-b.png",
+     "text": "A bull of the pit: wide pale horns, a gold nose ring, huge fists.",
+     "thumb": "../../../design/r19-art/foes/demon/demon-b-thumb.png"
+    },
+    {
+     "id": "succubus-a",
+     "label": "Succubus A: Wings",
+     "image": "../../../design/r19-art/foes/succubus/succubus-a.png",
+     "text": "Her own sprite: plum hair, small horns, rose wings, a heart-tipped tail.",
+     "thumb": "../../../design/r19-art/foes/succubus/succubus-a-thumb.png"
+    },
+    {
+     "id": "succubus-b",
+     "label": "Succubus B: Whip",
+     "image": "../../../design/r19-art/foes/succubus/succubus-b.png",
+     "text": "Hair in a high tail, wings folded small, a coiled whip.",
+     "thumb": "../../../design/r19-art/foes/succubus/succubus-b-thumb.png"
+    },
+    {
+     "id": "hellhound-a",
+     "label": "Hellhound A: No paws",
+     "image": "../../../design/r19-art/foes/hellhound/hellhound-a.png",
+     "text": "Your wolf fixes: head forward, body shorter, no paws (as the picked wolves).",
+     "thumb": "../../../design/r19-art/foes/hellhound/hellhound-a-thumb.png"
+    },
+    {
+     "id": "hellhound-b",
+     "label": "Hellhound B: Paws under",
+     "image": "../../../design/r19-art/foes/hellhound/hellhound-b.png",
+     "text": "The same, with the front paws drawn under the body.",
+     "thumb": "../../../design/r19-art/foes/hellhound/hellhound-b-thumb.png"
+    }
+   ]
+  }
+ ]
+}

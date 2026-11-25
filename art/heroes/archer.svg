@@ -4,7 +4,6 @@
        arm-r = arrow + the drawing hand (the game pulls this back). No baked outline: #outline adds it over the
        combined silhouette. Facing = DOWN (+y). Rotate whole sprite around (100,100). -->
   <defs>
-    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feComposite in="a" in2="b" operator="over" result="ab"/><feComposite in="c" in2="ab" operator="over" result="d"/><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <path id="hood" d="M100 14 C118 32 150 56 159 92 C166 124 146 153 100 155 C54 153 34 124 41 92 C50 56 82 32 100 14 Z"/>
     <clipPath id="hoodClip"><use href="#hood"/></clipPath>
     <path id="pBackL" d="M60 96 C34 88 12 104 8 134 C28 140 52 128 70 112 Z"/>
@@ -67,7 +66,7 @@
     </radialGradient>
   </defs>
 
-  <g id="sprite" filter="url(#outline)">
+  <g id="sprite">
 
     <!-- ===== back: quiver "1B" ===== -->
     <g id="back">

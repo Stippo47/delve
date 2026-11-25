@@ -40,6 +40,8 @@ b, strong { font-weight: 850; }
   background: radial-gradient(circle at 35% 32%, #FFF0B8 0 18%, #FFCB4A 19% 58%, #D18A1A 60%); box-shadow: inset 0 0 0 1.5px rgba(80,45,0,.55); }
 .cost { display: inline-flex; align-items: center; gap: 4px; font-weight: 850; white-space: nowrap; }
 .pts { display: inline-flex; align-items: center; gap: 4px; color: var(--teal); font-weight: 850; white-space: nowrap; }
+.ico.coin-ico { display: inline-block; width: 1.05em; height: 1.05em; vertical-align: -.17em; flex: none; } /* round 19: the painted coin */
+.pts.r19::before { content: none; } .pts .ico.pts-ico { width: 1em; height: 1em; flex: none; }
 .pts::before { content: ''; width: .7em; height: .7em; transform: rotate(45deg); border-radius: 2px; background: var(--teal); box-shadow: 0 0 8px rgba(79,216,200,.6); }
 
 /* buttons */

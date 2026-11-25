@@ -1,0 +1,22 @@
+tier 1, rank 0: each ability switched off in turn (the same parties and seeds), 0 errors
+hero          ability           rooms with  worth   share of dmg  hero dmg/s  party taken/s  party heal/s  party downs
+digger        (all on)          10.21           attack  52%     6.53         2.80          1.04       5.54   (24 runs)
+              dirtFling                 +0.75           10%    +1.39        -0.05         +0.15       +0.29
+              burrow                    +0.50           24%    +1.72        +0.01         -0.07       -0.25
+              spadeBat                  +1.08           15%    +1.59        -0.07         +0.26       +0.54
+grandpa       (all on)          10.46           attack  79%     2.56         3.90          2.54       5.50   (24 runs)
+              breadToss                 +3.00            0%    +0.57        -0.65         +1.32       +0.75
+              harvest                   +0.21           21%    +0.73        +0.25         +0.03       +0.04
+              oldTales                  +1.96            0%    +0.27        -0.10         +0.61       -0.63
+alchemist     (all on)          10.79           attack  75%     4.52         2.83          1.89       5.42   (24 runs)
+              acidFlask                 -0.04           14%    +0.45        +0.16         -0.10       -0.46
+              elixir                    +2.38            0%    +0.80        -0.45         +1.05       +0.83
+              bangFlask                 -0.96            0%    -0.09        +0.01         +0.36       -1.00
+shaman        (all on)          13.08           attack  71%     2.91         2.66          1.77       4.96   (24 runs)
+              healTotem                 +2.29            0%    +0.04        -0.03         +0.51       +0.25
+              spiritLink                +0.58            0%    +0.10        -0.00         +0.10       -1.00
+              rainDance                 +1.83            0%    +0.86        -0.19         +0.46       +0.42
+witch         (all on)           9.88           attack  68%     5.83         2.09          0.52       5.83   (24 runs)
+              frogHex                   +0.75            5%    +0.42        +0.00         -0.01       -0.46
+              cursedBrew                +0.25            8%    +0.09        +0.35         -0.18       -0.67
+              broomRide                 +0.50           20%    +0.21        +0.11         -0.10       -0.13

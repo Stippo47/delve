@@ -1,0 +1,6 @@
+film digger-dirtFling-III {"scene":"front","castT":null,"casts":0,"brain":false,"forced":false,"loop":7.1000000000000005}
+film digger-bury-III {"scene":"front","castT":null,"casts":0,"brain":false,"forced":false,"loop":6.8}
+film digger-trait {"loop":5.2}
+film grandpa-sheaves-III {"scene":"party","castT":0.9333333333333332,"casts":1,"brain":true,"forced":false,"loop":8.433333333333334}
+film alchemist-monstrosity-III {"scene":"ring","castT":0.4333333333333333,"casts":40,"brain":true,"forced":false,"loop":9.933333333333334}
+film shaman-ancestorsCall-III {"scene":"party","castT":0.5333333333333333,"casts":1,"brain":true,"forced":false,"loop":10.033333333333333}

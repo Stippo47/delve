@@ -4,7 +4,6 @@
 <!-- HAYMAKER (fork) round 3: long pitchfork handle passing behind the body (arm-r before body): the butt end pokes out at the right side of the shoulder, the shaft runs under the shoulder and comes out at the front edge in the right fist (the other hand is hidden under the body); matte iron tines, no bright highlights. Simpler straw hat: smooth brim, wide low crown (the bowl), plain red band. Two-handed: fist + fork in arm-r, no arm-l. Front = down (+y). -->
 <defs>
 
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
 <linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient>
 <linearGradient id="gFS" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
@@ -24,11 +23,14 @@
 <linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.55"/><stop offset="0.42" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gWoodV" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#CF9A62"/><stop offset="0.55" stop-color="#AD7442"/><stop offset="1" stop-color="#83542C"/></linearGradient><linearGradient id="gMatte" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B9BEC7"/><stop offset="1" stop-color="#868D9A"/></linearGradient><clipPath id="brimc"><path d="M28 68 C28 40 60 20 100 20 C140 20 172 40 172 68 C172 96 140 116 100 116 C60 116 28 96 28 68 Z"/></clipPath>
 <linearGradient id="gFork" x1="-27" y1="0" x2="27" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B4BAC4"/><stop offset="1" stop-color="#7E8592"/></linearGradient>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="arm-r" data-pivot="154 108">
+<!-- round 19 ("Have them hold fork aimed more forwards and centred"): the fork turned 20 degrees towards straight ahead about the fist, and slid in towards the middle -->
+<g transform="translate(-27 0) rotate(-20 160 125)">
 <g transform="translate(194.0 84.0) rotate(38.5)"><rect x="-5.0" y="0" width="10" height="93.2" rx="5.0" fill="url(#gWoodV)"/></g>
 <g transform="translate(136.0 157.0) rotate(38.5)"><rect x="-6" y="-12" width="12" height="13" rx="3" fill="url(#gFork)"/><path d="M-25 0 C-25 -7 25 -7 25 0 L25 6 C25 10 -25 10 -25 6 Z" fill="url(#gFork)"/><path d="M-23 3 C-29 13 -27 25 -21 36 L-14.5 35 C-19.5 25 -20.5 15 -15.5 7 Z" fill="url(#gFork)"/><path d="M-3.8 5 L-3.8 36 L0 40 L3.8 36 L3.8 5 Z" fill="url(#gFork)"/><path d="M23 3 C29 13 27 25 21 36 L14.5 35 C19.5 25 20.5 15 15.5 7 Z" fill="url(#gFork)"/></g>
 <path d="M 166.39 111.51 L 174.07 117.61 Q 176.1 119.22 174.24 121.57 A 3.52 3.52 38.47 0 1 170.97 125.68 A 3.52 3.52 38.47 0 1 167.71 129.79 A 3.52 3.52 38.47 0 1 164.44 133.9 A 3.52 3.52 38.47 0 1 161.17 138.02 Q 159.31 140.36 157.27 138.75 L 149.6 132.65 Q 144.9 128.92 148.63 124.22 L 157.96 112.48 Q 161.7 107.78 166.39 111.51 Z" fill="url(#gHand)"/><path d="M 166.39 111.51 L 174.07 117.61 Q 176.1 119.22 174.24 121.57 A 3.52 3.52 38.47 0 1 170.97 125.68 A 3.52 3.52 38.47 0 1 167.71 129.79 A 3.52 3.52 38.47 0 1 164.44 133.9 A 3.52 3.52 38.47 0 1 161.17 138.02 Q 159.31 140.36 157.27 138.75 L 149.6 132.65 Q 144.9 128.92 148.63 124.22 L 157.96 112.48 Q 161.7 107.78 166.39 111.51 Z" fill="url(#gUnder)"/>
+</g>
 </g>
 <g id="body">
 <g clip-path="url(#uc)"><g transform="translate(0 3)"><path d="M26 108 C26 82 54 76 100 76 C146 76 174 82 174 108 C174 134 146 140 100 140 C54 140 26 134 26 108 Z" fill="#1A1030" opacity="0.28"/></g></g><path d="M26 108 C26 82 54 76 100 76 C146 76 174 82 174 108 C174 134 146 140 100 140 C54 140 26 134 26 108 Z" fill="url(#g1)"/><path d="M26 108 C26 82 54 76 100 76 C146 76 174 82 174 108 C174 134 146 140 100 140 C54 140 26 134 26 108 Z" fill="url(#sR)"/>

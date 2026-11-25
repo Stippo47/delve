@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -104 160 104" width="640" height="416">
+  <!-- dunes walls, option a (Sandstone): the stretch a door sits in. Round 19 art lane (walls). 1 SVG unit = 1 room unit. The wall's own frame: x runs along the wall, y = 0 is the foot (where the wall meets the floor; the room is below, +y), y < 0 rises up the wall away from the room. Face (the wall's inner side, folded flat like the doors' arch): y -86..0. Cap (the top, seen from above): y -104..-86. The whole wall is 104 deep; the doors' arch reaches y -57, so the wall rises 47 past it. Everything repeats every 160 along x, so runs tile end to end. No outline in the file: the renderer draws the one ink outline round the wall's mass. Rotate the piece so +y points into the room. An overlay: drawn over the run (which carries on under it) wherever a door stands, then the door (art/props/door-*.svg, box 141.4) on top, its doorway centred on (80, 0). -->
+  <defs>
+    <clipPath id="c0"><path d="M0 -104H160V0H0Z"/></clipPath>
+    <linearGradient id="g1" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#CFA276"/><stop offset="0.55" stop-color="#C79360"/><stop offset="1" stop-color="#A77B51"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#D2A87F"/><stop offset="0.55" stop-color="#CB9A6A"/><stop offset="1" stop-color="#AB8159"/></linearGradient>
+    <radialGradient id="g3" cx="0.38" cy="0.32" r="0.8"><stop offset="0" stop-color="#FFF0B0"/><stop offset="0.6" stop-color="#E8B84A"/><stop offset="1" stop-color="#A87A22"/></radialGradient>
+    <linearGradient id="g4" gradientUnits="userSpaceOnUse" x1="0" y1="2" x2="0" y2="-8"><stop offset="0" stop-color="#EDD5A0"/><stop offset="1" stop-color="#ECD29A"/></linearGradient>
+  </defs>
+  <g id="sprite">
+<g clip-path="url(#c0)">
+<path d="M4 -72H18Q20 -72 20 -70V-2Q20 0 18 0H4Q2 0 2 -2V-70Q2 -72 4 -72Z" fill="url(#g1)"/>
+<path d="M6.4 -70.2H15.6Q17.6 -70.2 17.6 -68.2V-67.2Q17.6 -65.2 15.6 -65.2H6.4Q4.4 -65.2 4.4 -67.2V-68.2Q4.4 -70.2 6.4 -70.2Z" fill="#FFFFFF" opacity="0.2"/>
+<path d="M11 -72Q-4 -84 -1 -88Q11 -82 11 -72Z" fill="#3E8A9A" />
+<path d="M11 -72Q5 -84 8 -88Q11 -82 11 -72Z" fill="#C0603A" />
+<path d="M11 -72Q14 -84 17 -88Q11 -82 11 -72Z" fill="#3E8A9A" />
+<path d="M142 -72H156Q158 -72 158 -70V-2Q158 0 156 0H142Q140 0 140 -2V-70Q140 -72 142 -72Z" fill="url(#g1)"/>
+<path d="M144.4 -70.2H153.6Q155.6 -70.2 155.6 -68.2V-67.2Q155.6 -65.2 153.6 -65.2H144.4Q142.4 -65.2 142.4 -67.2V-68.2Q142.4 -70.2 144.4 -70.2Z" fill="#FFFFFF" opacity="0.2"/>
+<path d="M149 -72Q134 -84 137 -88Q149 -82 149 -72Z" fill="#3E8A9A" />
+<path d="M149 -72Q143 -84 146 -88Q149 -82 149 -72Z" fill="#C0603A" />
+<path d="M149 -72Q152 -84 155 -88Q149 -82 149 -72Z" fill="#3E8A9A" />
+<path d="M3 -96H157Q160 -96 160 -93V-85Q160 -82 157 -82H3Q0 -82 0 -85V-93Q0 -96 3 -96Z" fill="url(#g2)"/>
+<path d="M5.1 -94.2H154.9Q157 -94.2 157 -92.1V-92.1Q157 -90 154.9 -90H5.1Q3 -90 3 -92.1V-92.1Q3 -94.2 5.1 -94.2Z" fill="#FFFFFF" opacity="0.2"/>
+<path d="M72 -92Q50 -97 36 -88L72 -88Z" fill="#65A1AE" />
+<path d="M72 -90Q44 -94 42 -86.8L72 -86.8Z" fill="#3E8A9A" />
+<path d="M72 -88Q38 -91 48 -85.6L72 -85.6Z" fill="#65A1AE" />
+<path d="M72 -86Q32 -88 54 -84.4L72 -84.4Z" fill="#3E8A9A" />
+<path d="M88 -92Q110 -97 124 -88L88 -88Z" fill="#65A1AE" />
+<path d="M88 -90Q116 -94 118 -86.8L88 -86.8Z" fill="#3E8A9A" />
+<path d="M88 -88Q122 -91 112 -85.6L88 -85.6Z" fill="#65A1AE" />
+<path d="M88 -86Q128 -88 106 -84.4L88 -84.4Z" fill="#3E8A9A" />
+<circle cx="80" cy="-89" r="6.5" fill="url(#g3)"/>
+<path d="M-160 2L-160 -15.6Q-152.5 -6.5 -145 -8.8Q-137.5 -16.8 -130 -14.8Q-122.5 -5.8 -115 -8.1Q-107.5 -17.6 -100 -15.2Q-92.5 -7.1 -85 -9.2Q-77.5 -18 -70 -15.7Q-62.5 -7.2 -55 -9.4Q-47.5 -16.8 -40 -14.9Q-32.5 -7.1 -25 -9.1Q-17.5 -16.9 -10 -14.8Q-5 -15.9 0 -15.6Q2.5 -5.5 5 -8.1Q10 -9.1 15 -8.8Q22.5 -16.8 30 -14.8Q37.5 -5.8 45 -8.1Q52.5 -17.6 60 -15.2Q67.5 -7.1 75 -9.2Q82.5 -18 90 -15.7Q97.5 -7.2 105 -9.4Q112.5 -16.8 120 -14.9Q127.5 -7.1 135 -9.1Q142.5 -16.9 150 -14.8Q157.5 -5.7 165 -8.1L165 2Z" fill="url(#g4)"/>
+</g>
+  </g>
+</svg>

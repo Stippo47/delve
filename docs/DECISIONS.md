@@ -707,7 +707,13 @@ structure is in `docs/UI-v4.md`; what was decided, and what was read into the de
   floor's average, the designer's "or would just show average"); a boss or mini-boss in the floor's last room, for the
   party's present size. Trinkets left off.
 - **Stat icons** all come from `icons.js statIcon(id)`; the set there is a stand-in until the style is picked
-  (`design/icons-r14`).
+  (`design/icons-r14`). Round 19 (icons-misc lane): picked, "A as stats. Maybe B." statIcon now gives round 14's style A
+  painted emblems (`tools/icons-misc/stats.mjs`, built into `js/icons-r19.js`), the skill web's stat nodes included;
+  style B and the old stand-ins stay behind Settings -> Stat icons (`?icons=b`, `?icons=statold`). Trinkets and potions
+  were tried again with no container ("Maybe just no container?"), in two paints (painted object, soft paint), with the
+  stand-in UI pictures (coin, points, lock, flag, door...); they stay behind Settings -> Trinket, potion and small icons
+  (`?icons=r19`, `?icons=soft`) until the designer picks (deck `r19-icons-misc`). "I like the square borders more" was
+  read as about the abilities (lane icons-abil), so nothing here has a border.
 - **Previews, no words** (`preview-sim.js STAGE_TEXT = false`): the round 13 marks are gone and so are the game's own
   floating words and hit numbers on a stage (read as "No text pop up", all of it; one constant brings the game's
   numbers back if that was too much). Units that matter carry a health bar there (`u.barAlways`). What a tier adds is in
@@ -1178,6 +1184,20 @@ js/preview-scenes.js, easy to change; docs/preview18b.md has the audit, every nu
 
 Round 19 (2026-11-25, free rein from midnight the designer's time): the designer is answering the 0.19 heroes deck (v19-heroes) and the 0.21 one tonight; notes so far in docs/riffle-log/2026-11-25-v19-v21-partial.txt. Those notes go first, ahead of my own list. Lanes (Opus; Fable is at 92% until 02:00 PC): sys19 (shared rules from the notes: one shadow system, thrown things land on centre, airborne drawn above and not colliding with the floor, thrown weapons look like held ones, free hands don't float, the taunted V mark, previews don't pin, pronouns), melee19 (Old Guard, Dame, Griffon, Bulwark, Warhelm, Bearskin, Haymaker), rogue19 (Bandit with a Disarmed state, Shade incl. a new Shadow Walk with the blink chain kept spare, Monk, Cultist), caster19 (Digger, Grandpa, Alchemist, Shaman incl. bear and salmon sketches for approval, Witch). Queued: the Warlock's four-form redesign (Fable after the reset), the heroes still owed, the Mob's notes.
 
+## Round 19, lane outline19 (2026-11-25): one outline ("check that outline thickness is consistent everywhere")
+- **OUTLINE 2.4 room units for everything** (js/util.js): the median of the old spread and what code drawings used.
+  It was 1.2 (bees, wasps, slimelets) to 6 (the Gilded Seraph) on SVG figures, because the parts' ink was grown by 6
+  SVG units and so scaled with the sprite; props 1.4-4.1 px with their size; code-drawn bosses 3.6.
+- **Drawn by the renderer, not built into the art**: parts.js grows each part's ink by OUTLINE for the size the figure
+  is drawn at (getRig's sizeU; an elite's bigness doesn't thicken it), over body + hands + weapon as one; props are
+  outlined by sprites.js getProp (their #sprite only, never a #light or the oil); rats and mice by their size; boss-draw
+  OL = OUTLINE; the camp one CAMP_LINE (OUTLINE at the heroes' camp scale). Pictures in pages get the old filter back at
+  load (sprites.js uiArt), so portraits look as before.
+- **Stripped** (tools/outline19/strip-outlines.mjs, re-runnable): the #outline filter and data-line from 252 art files;
+  rock-3's stones marked data-ink="own" (each outlined on its own). Interior lines kept.
+- Frame cost unchanged (tools/outline19/perf.mjs). Open, for the designer: big bosses read lighter at a hero's line.
+  Details, numbers and sheets: docs/outline19.md, docs/clips/outline19/.
+
 ## Round 19, lane sys19 (2026-11-25): the shared rules in the designer's 0.19 notes
 - **One shadow system** (js/height.js castShadow / projZ; render.js drawShadows). Every shadow is a disc in the units'
   merged shadow layer (same colour, softness, strength), laid before pillars and pickups. Into it now: pillars, crates,
@@ -1214,3 +1234,110 @@ Round 19 (2026-11-25, free rein from midnight the designer's time): the designer
 - Checks: battles 528, 0 problems, 10 out of time; preview-check threw / never fired / not offered 0 / 0 / 0 (monster
   previews late 24 -> 30, wrong scenario 7 -> 8: borderline timings both ways). Clips docs/clips/sys19/ (-before beside).
 - Round 19, chat: "Also check that outline thickness is consistent everywhere. Outlines shouldn't if possible be built into the sprites." Lane outline19: audit every outline (baked vs drawn, on-screen thickness), one renderer-drawn outline at one constant thickness over the whole assembled figure (the old ruling: outline added afterwards, like a shader), a re-runnable script strips baked outer strokes from the SVGs, frame cost measured.
+
+## Round 19, lane melee19 (2026-11-25): the knights' and brutes' notes (Old Guard, Dame, Griffon, Bulwark, Warhelm, Bearskin, Haymaker)
+The designer's notes on 0.19's heroes (docs/riffle-log/2026-11-25-v19-v21-partial.txt). The looks are in js/fx-melee.js
+(new: it fills fx2.js's tables, as fx-dash.js does); the weapon poses an ability holds are kits2.js meleePose (u._force).
+Clips (not in git): docs/clips/melee19/before (as it was), w2-w4 (after); tools/melee19/clips.mjs records them.
+- **The warhammer slam** (Griffon, Warhelm: "Same slam as griffon"): a 0.2 s wind-up (def.windup: the hammer raised back,
+  parts.js style.slamPose), driven down further out in front (def.aoeAt 0.9 / 0.85 of his reach, was 0.55), a round crater
+  with a pale lip, a white flash, soft dust rolling out to the blow's real reach, a few chips; no cracks. The pinned "What is
+  that?" (0.48 s) was the slam's own grey hammer head drawn falling onto the spot: gone (the hammer in his hand comes down).
+- **Dame**: her cut sweeps in across her (style.lefty: the left arm swings in, the arc follows; it was a backhand outward).
+  Challenge III hastes her as she goes in (4 s, 30%).
+- **Griffon**: Swoop and Wing Guard wings are the helm's wing shape and colours, drawn over him, about 40% smaller than the
+  old fans; Swoop's beat as he flies, a downdraft of dust and gold feathers at take-off, the landing swirl turns the way he
+  spins (bands tapering behind their fronts) with a soft edge at its real reach; he no longer snaps round on landing (he turns
+  to the foe at his own pace). Wing Guard's blast is two curved fronts of air and loose feathers. The small thunderclap
+  (Stormhammer II, Wing Guard III, Storm Born III) has no yellow zig-zags: a flash, a pale shock to its reach, cloud puffs.
+  Whirled's curls run on a circle round the foe with the faint circle shown. (The thrown hammer's look is sys19's.)
+- **Bulwark**: the stab is drawn back and driven straight out along the shaft (style.stab, no wave of the arm), and its
+  streak runs down the spear off his right side (style.stabX), as does Return Thrust's line; Brace's glint and Return
+  Thrust's star sit on the spear's real head (read off the posed sprite).
+- **Warhelm**: Skull Splitter lands in the same crater, wider, with forked lightning crackling out to the slam's reach.
+- **Bearskin**: Bear Claws keeps the pounce (a light rake on landing, 0.3x), then **he swings**: 3 paw swings (III: 5 harder,
+  then the bite), one every 0.27 s, left and right paw in turn, stepping in with each so it stays in reach; the claw marks are
+  swept by his paw across his front. Numbers: each swing 0.58x his blow (III 0.66x); was 6 / 12 swipes of 0.42x, many of which missed (no step in). The bite is
+  turned flat with him (jaws across his facing, closing along it). Hibernate: he lies curled low and breathes (u.squish), a
+  warm glow and big Zs float up off him; III wakes with a roar out of his front and dust blown out all round (no ring). Maul:
+  the club hauled up over his head, held a beat, brought straight down; the foe squashed flat; a deep crater; no star of its
+  own on the foe (the "weird star" was the 'bonk' look).
+- **Haymaker**: the fork turned 20 degrees towards straight ahead and slid in towards his middle (art/heroes/haymaker.svg).
+  Hay Bale: he rides on top (he was 0.6 units nearer the viewer than the bale; the bale moving on after him drew it over
+  him; now 4, and his hop of 26 was lost in a comment), no straw lines on the bale, one straw dropped on the floor every
+  13 units it rolls, lying 1.4 s then fading, and a burst of hay over each one it hits. Toss in three beats: the fork in low
+  (0.2 s; the foe is caught and stopped), heaved up and back over his shoulder with the foe on the tines (to 0.46 s), and
+  only then thrown.
+- **Old Guard**: Parry holds the greatsword itself flat across his front (a pose, not a bar of light), a glint running its
+  edge; the catch is a clash, sparks and a short crescent. Rally: a gold war cry bursts out of his front and sides, three
+  waves, and gold light washes out to its reach. Haste (every Haste): pale blue copies of the body trail behind as it moves,
+  longer speed lines. **Last Stand** (rule change): while he is in the party, whoever is last standing gets it, once a room
+  (each friend carries a small hook from him, so it comes when he is the one down): on him as before (10 s, haste 35%, every
+  ability ready); on a friend 6 s, haste 25%, its cooldowns halved. (The arm pivot from one shoulder is sys19's.)
+- Worth (tools/ability-worth.mjs, 12 parties a hero, same seeds; tools/melee19/worth/): Bear Claws' share of Bearskin's
+  damage I 17% -> 17%, III 26% -> 30% (rooms and hero dmg/s within the run-to-run noise). Nothing else's numbers changed;
+  Challenge III's haste and Last Stand for friends add a little (Challenge I 0%/II-III share n/a; Old Guard's rooms 8.3 ->
+  8.9 at I, 7.1 -> 7.9 at III, inside the noise). The windup on the two warhammers (0.2 s, the blow lands then): Warhelm's
+  dmg/s 7.25 -> 7.40 (I), 11.0 -> 10.8 (III); the Griffon's 3.52 -> 3.63 (I), 6.00 -> 4.45 (III, one noisy row: his attack
+  share 52% -> 48%).
+- **Second pass (the coordinator's frame check of the clips)**. Why the first clips didn't show it: the clips were recording
+  the real ability code, but (a) the poses an ability holds (Parry, Toss, Maul) went through u._force and the Maul's club was
+  posed about the wrong axis and drawn under the pelt; (b) every struck body went solid white for 0.12 s (the "white puffs"
+  hiding heroes and foes); (c) the default cast star (fxkit castFlash) was the Maul's "weird star"; (d) the camera framed the
+  fight, not the move; (e) the attack arcs were drawn as a centred crescent, not where the weapon goes. Fixed: **slashes follow
+  the weapon** (fxkit tipSlash: style.tip names the weapon's point in the art; the arc is the band that point really sweeps
+  between parts.js's wound-back and struck-through poses, from where the body is; a stab is a streak down the line the point
+  travels; the slam lands where the hammer head comes down) for the Old Guard, Dame, Griffon, Bulwark, Bearskin, Warhelm and
+  Haymaker; a struck body now flashes a pale wash, its picture readable; the Maul hauls the club over his head (drawn over
+  him, parts.js pose.over) and squashes the foe flat, with no star and no white pop; Bear Claws' paws swing (kits2 CLAW_KEYS)
+  and the claw marks are drawn along the claws' real path; Parry's pose lies the sword across his front; Rally's three waves
+  0.28 s apart and a gold band of light out to its reach; Hibernate lies him flat, a warm pool under him, big Zs; the waking
+  roar without the dust cloud; the bale shows ahead of him, the hay burst thrown away from him; Bulwark's hit lands on the
+  spear's line (o.at); the Stormhammer doesn't burst when caught. Bear Claws re-measured: share 17% (I) / 28% (III).
+- Left to sys19 (shared): the taunted V mark, thrown hammers looking like the held ones, airborne drawing and collisions, free
+  hands and shoulder pivots, one shadow system.
+- Round 19, chat: "Get a fable agent on redoing the sandworm. It's good but has many misc problems." Lane wurm19 (Fable, high): find and list every problem by playing and filming it, then fix, keeping its identity and win rate.
+- Round 19, chat, a new boss to test the shape: "An Ik spider. Its head/body is always flying/ in the air. It has 6 legs that keep it up and walk on the ground. Its attacks are stomps and slamming its head into the ground, if it doesn't hit something it is stunned on the ground for a second. Each leg has its own hp and will break when the foot is destroyed. The leg will still show but badly damaged and can't attack, each leg damaged makes the time the head spends on the ground longer and how fast it can move. Before slamming its head it will have a telegraph circle underneath it as it walks for a bit then will pause for a split second and slam. U can add additional abilities. Get fable on it." Lane spider19 (Fable, high); not placed in a dungeon.
+- melee19 sent back: its clips didn't show what its report said (Maul, the Dame's swing, Parry, Rally, Hibernate, the hay bale); the stray pink slash arcs to be made to follow the weapon. Its first version sits merged on local main, unpushed, until the fix lands.
+
+
+
+## Round 19, lane rogue19 (2026-11-25): the Bandit, the Shade, the Monk, the Cultist
+The designer's notes on 0.19 (`docs/riffle-log/2026-11-25-v19-v21-partial.txt`), all of them on these four. Everything is
+in docs/rogue19.md (rules, calls, numbers); clips docs/clips/rogue19/.
+- New shared rules: **Disarmed** (a status: weapon hidden and its blows and weapon abilities stopped; only what holds a
+  weapon; the Dame's Disarm folded in, a beast keeping the old softer blows), **incorporeal** (physical hits pass, magic
+  lands, no collision: the Shade's Blackout and clones, the Ghost), **Anti-heal** (heals do half), **Spun** slippery
+  turning and a Dazed burst.
+- Bandit: Hostage in Stick 'Em Up's slot (the lane's rework), Dirty Trick alternating cuts and a punch that disarms,
+  Bolas puts on Trapped (ring and three weights), trait Light Fingers (a chain of three draw cuts, each disarming).
+- Shade: daggers at her sides; Blackout follows her and makes her incorporeal; clones move as she does, in that form;
+  Shadow Walk is the 4-6 s blinking (the round 18 blink chain kept as shadowWalkChain).
+- Monk: three-part Fists combo; Flurry walks in, a late last punch, Weakened at II; Inner Peace blocks blows and shots
+  outright (gold plates); Palm Strike a great flat hand in a short cone.
+- Cultist: bolt Anti-heal; Blood Pact bleeds the friends too, its own look; Ritual Circle round one nearly dead,
+  sacrificed if it stays; Sacrifice a chain through the bleeding, bursting them; Blood Rite takes a dying friend for his
+  cooldowns (a hero goes down, as at 0).
+- Calls (say if wrong): the Palm Strike note's "low acceleration but high max turn speed" read as Spun, not the Monk's
+  own turning; who can be disarmed (tags.js ARMED) decided by each art (what shows a weapon that can be taken out);
+  Inner Peace stops physical hits outright (shorter: 2 / 3 s); Blood Rite downs a hero friend (as at 0).
+- Round 19, chat: "Get a few opus agents to just make a bunch of art. Terrain, obstacles, walls in dungeons so they match doors and are taller than doors, character, projectile, effects, redo status effects to see if they can come up with better designs that I like, etc. go crazy for the last bit of credits left. Like honestly spawn like 8 agents maybe more." Eight Opus art lanes (art-walls, art-floors, art-props, art-statusfx, art-shots, art-hitfx, art-foeart, art-heroart): options only, in design/r19-art/, each with a Riffle board deck (stack r19art); nothing replaces live art until picked.
+## Round 19, lane caster19 (2026-11-25): the Digger, Grandpa Sickle, the Alchemist, the Shaman, the Witch
+Every note on these five in the designer's 0.19 deck, done as asked; everything in docs/caster19.md. The lane's calls (say
+if any is wrong):
+- **Dirty** is one status on either side: on a foe its *helps* are washed off ("clears enemies' effects" read as the buffs
+  helping it, not its burning or poison), it attacks 30% slower for 6 s, and the Digger's spade (swing or clods) lands
+  double and knocks the dirt off. Look: a brown wash and a cloud of dust, no smears.
+- **Bury** buries things with brains of their own too (they were only stunned); a new tag, `burrower` (scarabs, the sand
+  serpent, the drill bot, the Sand Wurm), digs about while buried.
+- **Sheaves** (Old Tales' slot): "15% boost" read as cooldowns running 15% faster for 3 s after each blow on a hayed foe;
+  a sheaf is on Grandpa's side, so enemies strike it (and are hayed) and friends tread on it (and are healed); no longer
+  a mouth/sound ability. The story book's drawing is kept for later.
+- **Elixir**: II's second tube rolled on its own (friend weighted by need, brew never the same); the strong brews moved
+  to III with the splash.
+- **Monstrosity**: knock back 320 (was 160), 60% faster (was 25%); a sketch sprite (alchemist-monster.svg) for the art
+  round.
+- **Broom Ride**: seen and targetable now; she is on the flying layer, so only shots reach her. To keep her strength: its bombs 0.9 -> 1.0 of her damage, its cooldown 11 -> 10 s (measured level with main).
+- **Healing Totem**: its body is only its foot (r 13); its picture stands up the screen from there.
+- **For approval**: design/caster19/bear.png (a large brown bear, the spirit bear after approval) and salmon.png.
+- Round 19, chat: "Stop agents". Stopped (work so far kept on their branches, unmerged): wurm19, spider19, icons-abil, art-props, art-statusfx, art-shots.

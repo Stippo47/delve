@@ -2,7 +2,6 @@
 <!-- PLACEHOLDER (round 9, lane E): stand-in art copied from the design rounds until the real art for this enemy is drawn. -->
 <!-- LIZARDMAN C "croc" (round 6, version a: the round-4 design without eyes; was round 4 variant). A heavier swamp croc-man: dark moss-brown hide, a broad flat snout with three teeth a side tucked under the jaw so only their points show (round 7), eyes on raised bumps, a double row of armour ridges down the back of the head. A turtle-shell shield in front (hand hidden) and a bone club behind the right shoulder. Parts: #back = thick tail, #arm-r = club + fist (before #body), #body, #arm-l = shield. Facing = DOWN (+y), centre (100,100). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#8A9A58"/><stop offset="1" stop-color="#5E6E3A"/></linearGradient>
 <path id="p2" d="M78 86 C76 62 84 40 98 24 C104 18 110 14 116 12 C112 24 112 40 116 54 C120 66 122 76 122 86 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -43,7 +42,7 @@
 <clipPath id="c38"><use href="#p2"/><use href="#p6"/><use href="#p10"/><use href="#p12"/><use href="#p13"/><use href="#p17"/><use href="#p20"/><use href="#p24"/><use href="#p25"/><use href="#p29"/><use href="#p33"/></clipPath>
 <clipPath id="c39"><use href="#p37"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 80"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><path d="M99 34 L104 24 L109 34 Z M101 50 L106 40 L111 50 Z M103 66 L108 56 L113 66 Z" fill="#44522A" opacity="0.7"/><use href="#p2" fill="url(#g4)"/></g>

@@ -1,0 +1,296 @@
+{
+  "title": "Art: dungeon floors",
+  "topic": "art",
+  "stack": "r19art",
+  "order": 2,
+  "cards": [
+    {
+      "id": "wildwood",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Wildwood floors",
+      "text": "Three forest floors: moss and earth, stepping stones, or a worn trail door to door.",
+      "why": "The floor has to stay quiet under a busy fight, so each one keeps a narrow, soft range of light and dark with big shapes and no fine grain, and the units stand on it in every picture so you can judge that. Tick the one you want for this dungeon; a comment can mix parts of two.",
+      "pick": [
+        "wildwood-trail"
+      ],
+      "details": "My pick: the trail. It quietly points the way out and its two tones are the calmest under a crowd.\n\nEach picture is a real room of the game at phone size with heroes and this dungeon's enemies standing on it. To walk around in one: floors.html?floor=wildwood-trail (or ?floor=a, b or c for that option in every dungeon). Code: js/floors19.js; each folder also has swatch.png, the option alone.",
+      "items": [
+        {
+          "id": "wildwood-loam",
+          "label": "Mossy loam",
+          "image": "../../../design/r19-art/floors/wildwood-loam/room.png",
+          "text": "Big moss and bare-earth patches, leaf drifts, roots reaching in from the walls."
+        },
+        {
+          "id": "wildwood-stones",
+          "label": "Stepping stones",
+          "image": "../../../design/r19-art/floors/wildwood-stones/room.png",
+          "text": "Flat stones laid door to door, moss on their shady side."
+        },
+        {
+          "id": "wildwood-trail",
+          "label": "Worn trail",
+          "image": "../../../design/r19-art/floors/wildwood-trail/room.png",
+          "text": "A trodden dirt trail from the way in to each door, wheel ruts, leaves at its sides."
+        }
+      ]
+    },
+    {
+      "id": "crypt",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Crypt floors",
+      "text": "Three crypt floors: grave flags with tomb slabs, bone-dust cobbles, or pale tomb marble.",
+      "why": "The floor has to stay quiet under a busy fight, so each one keeps a narrow, soft range of light and dark with big shapes and no fine grain, and the units stand on it in every picture so you can judge that. Tick the one you want for this dungeon; a comment can mix parts of two.",
+      "pick": [
+        "crypt-flags"
+      ],
+      "details": "My pick: grave flags. The tomb slabs make it the Crypt at a glance; the cobbles are the busiest of the three.\n\nEach picture is a real room of the game at phone size with heroes and this dungeon's enemies standing on it. To walk around in one: floors.html?floor=crypt-flags (or ?floor=a, b or c for that option in every dungeon). Code: js/floors19.js; each folder also has swatch.png, the option alone.",
+      "items": [
+        {
+          "id": "crypt-flags",
+          "label": "Grave flags",
+          "image": "../../../design/r19-art/floors/crypt-flags/room.png",
+          "text": "Mixed flagstones, a few cracked, carved tomb slabs with a cross; dust at the walls."
+        },
+        {
+          "id": "crypt-cobble",
+          "label": "Bone-dust cobbles",
+          "image": "../../../design/r19-art/floors/crypt-cobble/room.png",
+          "text": "Big rounded cobbles, pale dust drifted in the joints, scattered bones."
+        },
+        {
+          "id": "crypt-marble",
+          "label": "Tomb marble",
+          "image": "../../../design/r19-art/floors/crypt-marble/room.png",
+          "text": "Large marble slabs with soft veins, slate diamonds at the corners, a slate border."
+        }
+      ]
+    },
+    {
+      "id": "sewers",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Sewers floors",
+      "text": "Three sewer floors: wet brick, mossy setts, or old glazed cistern tiles.",
+      "why": "The floor has to stay quiet under a busy fight, so each one keeps a narrow, soft range of light and dark with big shapes and no fine grain, and the units stand on it in every picture so you can judge that. Tick the one you want for this dungeon; a comment can mix parts of two.",
+      "pick": [
+        "sewers-brick"
+      ],
+      "details": "My pick: wet brick. Its shapes are the biggest; the tiles are a close second and the most unusual.\n\nEach picture is a real room of the game at phone size with heroes and this dungeon's enemies standing on it. To walk around in one: floors.html?floor=sewers-brick (or ?floor=a, b or c for that option in every dungeon). Code: js/floors19.js; each folder also has swatch.png, the option alone.",
+      "items": [
+        {
+          "id": "sewers-brick",
+          "label": "Wet brick",
+          "image": "../../../design/r19-art/floors/sewers-brick/room.png",
+          "text": "Rounded bricks, soft damp stains, moss from the walls, drain grates and puddles."
+        },
+        {
+          "id": "sewers-setts",
+          "label": "Mossy setts",
+          "image": "../../../design/r19-art/floors/sewers-setts/room.png",
+          "text": "Square setts with moss filling the joints in patches, round manhole covers."
+        },
+        {
+          "id": "sewers-tile",
+          "label": "Cistern tiles",
+          "image": "../../../design/r19-art/floors/sewers-tile/room.png",
+          "text": "Pale green glazed tiles, a few missing down to the mortar, grime at the walls."
+        }
+      ]
+    },
+    {
+      "id": "warren",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Warren floors",
+      "text": "Three goblin floors: trodden earth, plank walkways, or broken dwarf flagstones.",
+      "why": "The floor has to stay quiet under a busy fight, so each one keeps a narrow, soft range of light and dark with big shapes and no fine grain, and the units stand on it in every picture so you can judge that. Tick the one you want for this dungeon; a comment can mix parts of two.",
+      "pick": [
+        "warren-boards"
+      ],
+      "details": "My pick: plank walks, the most goblin of the three. Trodden earth is the quietest if the fights get too busy.\n\nEach picture is a real room of the game at phone size with heroes and this dungeon's enemies standing on it. To walk around in one: floors.html?floor=warren-boards (or ?floor=a, b or c for that option in every dungeon). Code: js/floors19.js; each folder also has swatch.png, the option alone.",
+      "items": [
+        {
+          "id": "warren-earth",
+          "label": "Trodden earth",
+          "image": "../../../design/r19-art/floors/warren-earth/room.png",
+          "text": "Packed earth worn pale where feet go, dark hollows, pebbles, straw, a dug lip."
+        },
+        {
+          "id": "warren-boards",
+          "label": "Plank walks",
+          "image": "../../../design/r19-art/floors/warren-boards/room.png",
+          "text": "Crooked nailed boardwalks laid door to door over the earth, loose planks about."
+        },
+        {
+          "id": "warren-ruin",
+          "label": "Broken flags",
+          "image": "../../../design/r19-art/floors/warren-ruin/room.png",
+          "text": "Old cut flagstones with whole stretches gone to earth, rubble at the edges."
+        }
+      ]
+    },
+    {
+      "id": "frost",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Frost Hollow floors",
+      "text": "Three cold floors: packed snow with drifts, glacier ice plates, or rimed flagstones.",
+      "why": "The floor has to stay quiet under a busy fight, so each one keeps a narrow, soft range of light and dark with big shapes and no fine grain, and the units stand on it in every picture so you can judge that. Tick the one you want for this dungeon; a comment can mix parts of two.",
+      "pick": [
+        "frost-ice"
+      ],
+      "details": "My pick: glacier plates. Clearly ice, and white units (wolf, snowman) still stand out on its blue.\n\nEach picture is a real room of the game at phone size with heroes and this dungeon's enemies standing on it. To walk around in one: floors.html?floor=frost-ice (or ?floor=a, b or c for that option in every dungeon). Code: js/floors19.js; each folder also has swatch.png, the option alone.",
+      "items": [
+        {
+          "id": "frost-snow",
+          "label": "Packed snow",
+          "image": "../../../design/r19-art/floors/frost-snow/room.png",
+          "text": "Wind-shaped drifts all lying one way, glassy ice patches, snow banked at the walls."
+        },
+        {
+          "id": "frost-ice",
+          "label": "Glacier plates",
+          "image": "../../../design/r19-art/floors/frost-ice/room.png",
+          "text": "Big pale-blue ice plates split by blue cracks, frost feathers, trapped bubbles."
+        },
+        {
+          "id": "frost-rime",
+          "label": "Rimed flags",
+          "image": "../../../design/r19-art/floors/frost-rime/room.png",
+          "text": "Blue-grey flagstones, snow packed in the joints, rime creeping in from the walls."
+        }
+      ]
+    },
+    {
+      "id": "ember",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Ember Deep floors",
+      "text": "Three hot floors: basalt columns with glowing joints, ash and lava flows, or scorched brick.",
+      "why": "The floor has to stay quiet under a busy fight, so each one keeps a narrow, soft range of light and dark with big shapes and no fine grain, and the units stand on it in every picture so you can judge that. Tick the one you want for this dungeon; a comment can mix parts of two.",
+      "pick": [
+        "ember-basalt"
+      ],
+      "details": "My pick: basalt columns. The glowing joints say Ember Deep without any bright patches that read as fire on the ground.\n\nEach picture is a real room of the game at phone size with heroes and this dungeon's enemies standing on it. To walk around in one: floors.html?floor=ember-basalt (or ?floor=a, b or c for that option in every dungeon). Code: js/floors19.js; each folder also has swatch.png, the option alone.",
+      "items": [
+        {
+          "id": "ember-basalt",
+          "label": "Basalt columns",
+          "image": "../../../design/r19-art/floors/ember-basalt/room.png",
+          "text": "Hexagonal basalt tops, a faint ember glow down a few joints, ash at the walls."
+        },
+        {
+          "id": "ember-ash",
+          "label": "Ash and lava",
+          "image": "../../../design/r19-art/floors/ember-ash/room.png",
+          "text": "Warm grey ash over dark cooled lava flows, a glowing fissure here and there."
+        },
+        {
+          "id": "ember-brick",
+          "label": "Scorched brick",
+          "image": "../../../design/r19-art/floors/ember-brick/room.png",
+          "text": "Dark red forge brick, soot scorches, cooled slag spills, soot thick at the walls."
+        }
+      ]
+    },
+    {
+      "id": "spire",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Gilded Spire floors",
+      "text": "Three bright floors: gilded marble grid, cut-stone octagons, or flags mended with gold.",
+      "why": "The floor has to stay quiet under a busy fight, so each one keeps a narrow, soft range of light and dark with big shapes and no fine grain, and the units stand on it in every picture so you can judge that. Tick the one you want for this dungeon; a comment can mix parts of two.",
+      "pick": [
+        "spire-sectile"
+      ],
+      "details": "My pick: opus sectile. Rich but even all over, so nothing on it looks like a marker.\n\nEach picture is a real room of the game at phone size with heroes and this dungeon's enemies standing on it. To walk around in one: floors.html?floor=spire-sectile (or ?floor=a, b or c for that option in every dungeon). Code: js/floors19.js; each folder also has swatch.png, the option alone.",
+      "items": [
+        {
+          "id": "spire-inlay",
+          "label": "Gilded marble",
+          "image": "../../../design/r19-art/floors/spire-inlay/room.png",
+          "text": "Cream marble in a soft checker, a gold inlay grid with rosettes where lines cross."
+        },
+        {
+          "id": "spire-sectile",
+          "label": "Opus sectile",
+          "image": "../../../design/r19-art/floors/spire-sectile/room.png",
+          "text": "Cream octagons with small lavender and gold squares between them."
+        },
+        {
+          "id": "spire-kintsugi",
+          "label": "Mended flags",
+          "image": "../../../design/r19-art/floors/spire-kintsugi/room.png",
+          "text": "Near-white flagstones, the cracked ones mended with angular gold seams."
+        }
+      ]
+    },
+    {
+      "id": "dunes",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Sunken Dunes floors",
+      "text": "Three desert floors: wind-swept sand, sandstone tomb blocks, or a sun-cracked clay pan.",
+      "why": "The floor has to stay quiet under a busy fight, so each one keeps a narrow, soft range of light and dark with big shapes and no fine grain, and the units stand on it in every picture so you can judge that. Tick the one you want for this dungeon; a comment can mix parts of two.",
+      "pick": [
+        "dunes-sand"
+      ],
+      "details": "My pick: wind-swept sand, the softest of the three. The tomb blocks would suit the Buried Halls floor.\n\nEach picture is a real room of the game at phone size with heroes and this dungeon's enemies standing on it. To walk around in one: floors.html?floor=dunes-sand (or ?floor=a, b or c for that option in every dungeon). Code: js/floors19.js; each folder also has swatch.png, the option alone.",
+      "items": [
+        {
+          "id": "dunes-sand",
+          "label": "Wind-swept sand",
+          "image": "../../../design/r19-art/floors/dunes-sand/room.png",
+          "text": "Long soft dunes all lying one way, half-buried slabs, shards, drifts at the walls."
+        },
+        {
+          "id": "dunes-tomb",
+          "label": "Sandstone tomb",
+          "image": "../../../design/r19-art/floors/dunes-tomb/room.png",
+          "text": "Big sandstone blocks, some cut with old signs, sand blown over them in tongues."
+        },
+        {
+          "id": "dunes-clay",
+          "label": "Sun-cracked clay",
+          "image": "../../../design/r19-art/floors/dunes-clay/room.png",
+          "text": "A dried clay pan in big curled plates, sand in the cracks, shards and pebbles."
+        }
+      ]
+    },
+    {
+      "id": "foundry",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Foundry floors",
+      "text": "Three factory floors: riveted deck plates, tread plate panels, or brick with brass rails.",
+      "why": "The floor has to stay quiet under a busy fight, so each one keeps a narrow, soft range of light and dark with big shapes and no fine grain, and the units stand on it in every picture so you can judge that. Tick the one you want for this dungeon; a comment can mix parts of two.",
+      "pick": [
+        "foundry-plates"
+      ],
+      "details": "My pick: riveted plates. Big calm panels, and the hazard stripes frame the room without crowding it.\n\nEach picture is a real room of the game at phone size with heroes and this dungeon's enemies standing on it. To walk around in one: floors.html?floor=foundry-plates (or ?floor=a, b or c for that option in every dungeon). Code: js/floors19.js; each folder also has swatch.png, the option alone.",
+      "items": [
+        {
+          "id": "foundry-plates",
+          "label": "Riveted plates",
+          "image": "../../../design/r19-art/floors/foundry-plates/room.png",
+          "text": "Big steel plates, rivets at the corners, oil stains, brass hatches, hazard stripes."
+        },
+        {
+          "id": "foundry-tread",
+          "label": "Tread plate",
+          "image": "../../../design/r19-art/floors/foundry-tread/room.png",
+          "text": "Panels of low chunky tread plate, brass name plates bolted down, scorches."
+        },
+        {
+          "id": "foundry-rails",
+          "label": "Brick and brass",
+          "image": "../../../design/r19-art/floors/foundry-rails/room.png",
+          "text": "Grey factory brick with brass rails sunk in it door to door, a turn plate."
+        }
+      ]
+    }
+  ]
+}

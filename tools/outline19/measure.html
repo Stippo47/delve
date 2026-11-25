@@ -1,0 +1,125 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><base href="/"><title>outline measure</title>
+<style>body{margin:0;background:#1d1a20;color:#eee;font:12px system-ui}canvas{display:block}</style></head>
+<body>
+<canvas id="sheet"></canvas>
+<script type="module">
+// Outline audit (lane outline19): every unit kind drawn from SVG parts and every prop, at its in-game size on an
+// iPhone 11 at the default zoom (414 x 896 portrait, dpr 2, zoom 0.8: 1.341 device px per room unit), measured.
+// For each: the dark band at its silhouette's edge as the game draws it now ("total"), and as the art alone paints it
+// with no outline from the renderer ("baked": 'sil' mode, the parts' paint only). Band width = the sum over the rings
+// 1, 2, 3... px in from the edge of the share of each ring that is ink-coloured and joined to the edge.
+// ?q=... : only kinds whose name has it. Results: window.OUT (rows), the sheet canvas (a contact sheet at game size).
+import { DEFS } from '/js/units.js';
+import { getRig, paintRig, loadArt, artReady } from '/js/parts.js';
+import { headR, getProp, loadProps } from '/js/sprites.js';
+import * as R from '/js/render.js';
+const P = new URLSearchParams(location.search);
+const PXU = +(P.get('pxu') || (414 / 494 * 0.8 * 2)); // device px per room unit
+const q = P.get('q') || '';
+const INKC = [43, 34, 48], TOL = +(P.get('tol') || 30); // how near the ink colour a pixel must be (sum of |dr|+|dg|+|db|)
+const big = (k) => 1;
+
+function edt1(f, n) { // Felzenszwalb 1D squared distance transform
+  const d = new Float64Array(n), v = new Int32Array(n), z = new Float64Array(n + 1); let k = 0; v[0] = 0; z[0] = -Infinity; z[1] = Infinity;
+  for (let qq = 1; qq < n; qq++) { let s; do { const p = v[k]; s = ((f[qq] + qq * qq) - (f[p] + p * p)) / (2 * qq - 2 * p); if (s <= z[k]) k--; else break; } while (k >= 0); k++; v[k] = qq; z[k] = s; z[k + 1] = Infinity; }
+  k = 0; for (let qq = 0; qq < n; qq++) { while (z[k + 1] < qq) k++; const p = v[k]; d[qq] = (qq - p) * (qq - p) + f[p]; } return d;
+}
+function distOut(inside, W, H) { // distance from each inside pixel to the nearest outside pixel
+  const BIG = 1e9, g = new Float64Array(W * H);
+  for (let i = 0; i < W * H; i++) g[i] = inside[i] ? BIG : 0;
+  const col = new Float64Array(H);
+  for (let x = 0; x < W; x++) { for (let y = 0; y < H; y++) col[y] = g[y * W + x]; const d = edt1(col, H); for (let y = 0; y < H; y++) g[y * W + x] = d[y]; }
+  const row = new Float64Array(W);
+  for (let y = 0; y < H; y++) { for (let x = 0; x < W; x++) row[x] = g[y * W + x]; const d = edt1(row, W); for (let x = 0; x < W; x++) g[y * W + x] = Math.sqrt(d[x]); }
+  return g;
+}
+export function band(c) {
+  const W = c.width, H = c.height, d = c.getContext('2d').getImageData(0, 0, W, H).data;
+  const inside = new Uint8Array(W * H), ink = new Uint8Array(W * H);
+  for (let i = 0; i < W * H; i++) { const a = d[i * 4 + 3]; if (a >= 128) { inside[i] = 1; const e = Math.abs(d[i * 4] - INKC[0]) + Math.abs(d[i * 4 + 1] - INKC[1]) + Math.abs(d[i * 4 + 2] - INKC[2]); if (e < TOL) ink[i] = 1; } }
+  const D = distOut(inside, W, H);
+  // ink joined to the edge: flood from ink pixels on the first ring
+  const on = new Uint8Array(W * H), st = [];
+  for (let i = 0; i < W * H; i++) if (ink[i] && D[i] <= 1.5) { on[i] = 1; st.push(i); }
+  while (st.length) { const i = st.pop(), x = i % W, y = (i / W) | 0; for (const j of [x > 0 ? i - 1 : -1, x < W - 1 ? i + 1 : -1, y > 0 ? i - W : -1, y < H - 1 ? i + W : -1]) if (j >= 0 && ink[j] && !on[j] && D[j] <= 24) { on[j] = 1; st.push(j); } }
+  const tot = new Float64Array(26), got = new Float64Array(26);
+  for (let i = 0; i < W * H; i++) if (inside[i]) { const b = Math.min(25, Math.ceil(D[i] - 0.5)); tot[b]++; if (on[i]) got[b]++; }
+  let T = 0; for (let b = 1; b < 26; b++) if (tot[b] > 4) T += got[b] / tot[b];
+  band.r1 = tot[1] ? got[1] / tot[1] : 0; // the share of the outermost ring that is ink (near 1: an outline)
+  return T;
+}
+// the outline the renderer draws: inside the ink's silhouette (alpha >= 128) and outside the paint's (alpha < 128)
+function ringBand(inkC, paintC) {
+  const W = inkC.width, H = inkC.height, a = inkC.getContext('2d').getImageData(0, 0, W, H).data, b = paintC.getContext('2d').getImageData(0, 0, W, H).data;
+  const inside = new Uint8Array(W * H); for (let i = 0; i < W * H; i++) inside[i] = a[i * 4 + 3] >= 128 ? 1 : 0;
+  const D = distOut(inside, W, H), tot = new Float64Array(26), got = new Float64Array(26);
+  for (let i = 0; i < W * H; i++) if (inside[i]) { const k = Math.min(25, Math.ceil(D[i] - 0.5)); tot[k]++; if (b[i * 4 + 3] < 128) got[k]++; }
+  let T = 0; for (let k = 1; k < 26; k++) if (tot[k] > 4) T += got[k] / tot[k];
+  return T;
+}
+const canvas = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+function crop(c) { // the drawn part only, with a 2 px margin
+  const W = c.width, H = c.height, d = c.getContext('2d').getImageData(0, 0, W, H).data; let x0 = W, y0 = H, x1 = -1, y1 = -1;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (d[(y * W + x) * 4 + 3] > 8) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  if (x1 < 0) return c; x0 = Math.max(0, x0 - 2); y0 = Math.max(0, y0 - 2); x1 = Math.min(W - 1, x1 + 2); y1 = Math.min(H - 1, y1 + 2);
+  const o = canvas(x1 - x0 + 1, y1 - y0 + 1); o.getContext('2d').drawImage(c, -x0, -y0); return o;
+}
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// the kinds: one row per art file and size
+const kinds = [], seen = new Set();
+for (const [k, d] of Object.entries(DEFS)) {
+  if (!d || !d.art || !d.vr || (q && !k.includes(q))) continue;
+  const sizeU = d.vr * 220 / (d.headR || headR(k)); const key = d.art + '|' + sizeU.toFixed(1);
+  if (seen.has(key)) continue; seen.add(key);
+  const grp = d.boss || d.major ? 'boss' : d.team === 'hero' && !d.summon && !/summons|standin/.test(d.art) ? 'hero' : /summons/.test(d.art) || d.summon ? 'summon' : 'enemy';
+  kinds.push({ kind: k, art: d.art, sizeU, grp });
+}
+await Promise.all([...new Set(kinds.map((r) => r.art))].map((a) => loadArt(a).catch(() => {})));
+await loadProps();
+const PROPS = [['barrel', 86.4, 1], ['crate', 86.4, 1], ['brazier', 86.4, 1], ['chest-closed', 86.4, 1], ['pedestal', 86.4, 1], ['fountain', 86.4, 1], ['obstacle-pillar', 86.4, 1], ['obstacle-crates', 86.4, 1], ['obstacle-rock', 86.4, 1], ['rock-1', 86.4, 0.6], ['rock-2', 86.4, 1], ['rock-4', 86.4, 1.4], ['troll-boulder', 86.4, 1], ['yeti-snowball', 86.4, 1], ['trap-spikes-up', 86.4, 1], ['door-shut', 141.4, 1], ['door-open-fight', 141.4, 1]];
+// ask for every picture, then wait for them
+const want = () => { let n = 0; for (const r of kinds) { const s = getRig(r.art, r.sizeU * PXU * 1.04, r.sizeU); if (!s || s.px !== bucketPx(r)) n++; } for (const [p, b, sc] of PROPS) if (!getProp(p, b * PXU * sc, R.OUTLINE * PXU)) n++; return n; };
+const bucketPx = (r) => { const px = r.sizeU * PXU * 1.04 * 248 / 220; return Math.max(32, Math.min(640, Math.round(32 * Math.pow(2, Math.ceil(Math.log2(Math.max(px, 32) / 32) * 6) / 6)))); };
+for (let i = 0; i < 200; i++) { if (!want()) break; await sleep(100); }
+const OUT = [];
+const cells = [];
+for (const r of kinds) {
+  const set = getRig(r.art, r.sizeU * PXU * 1.04, r.sizeU); if (!set) { OUT.push({ ...r, err: 'not ready' }); continue; }
+  const sz = Math.ceil(r.sizeU * PXU * 1.5) + 8, k = PXU * r.sizeU / 220;
+  const one = (mode) => { const c = canvas(sz, sz), g = c.getContext('2d'); g.setTransform(k, 0, 0, k, sz / 2 - 100 * k, sz / 2 - 100 * k); paintRig(g, set, {}, mode); return c; };
+  const all = one('normal'), baked = one('sil'), inkOnly = one('ink');
+  // the renderer's own outline alone: ink pixels not under paint, ring by ring in from the ink's edge
+  const R1 = ringBand(inkOnly, baked);
+  const T = band(all), B = band(baked), B1 = band.r1;
+  OUT.push({ kind: r.kind, grp: r.grp, art: r.art, sizeU: +r.sizeU.toFixed(1), totalPx: +T.toFixed(2), bakedPx: +B.toFixed(2), totalU: +(T / PXU).toFixed(2), bakedU: +(B / PXU).toFixed(2), bakedRing1: +B1.toFixed(2), rendPx: +R1.toFixed(2), rendU: +(R1 / PXU).toFixed(2) });
+  cells.push({ name: r.kind, grp: r.grp, c: crop(all), T });
+}
+for (const [p, b, sc] of PROPS) {
+  const e = getProp(p, b * PXU * sc, R.OUTLINE * PXU); if (!e) { OUT.push({ kind: p, grp: 'prop', err: 'not ready' }); continue; }
+  const s = Math.round(b * PXU * sc), pu = Math.round((e.pad || 0) / (e.size || 1) * s), c = canvas(s + pu * 2, s + pu * 2), g = c.getContext('2d'); g.drawImage(e.img, 0, 0, s + pu * 2, s + pu * 2);
+  const T = band(c);
+  OUT.push({ kind: p, grp: 'prop', art: 'art/props/' + p + '.svg', sizeU: +(b * sc).toFixed(1), totalPx: +T.toFixed(2), totalU: +(T / PXU).toFixed(2) });
+  cells.push({ name: p, grp: 'prop', c: crop(c), T });
+}
+// the contact sheet, at game size: groups in rows, cells as wide as they need
+const order = ['hero', 'summon', 'enemy', 'boss', 'prop'], W = +(P.get('w') || 1200), pad = 6, lab = 12;
+const lay = []; let x = pad, y = pad, rowH = 0;
+for (const gname of order) {
+  const list = cells.filter((c) => c.grp === gname); if (!list.length) continue;
+  if (x > pad) { x = pad; y += rowH + pad; rowH = 0; }
+  lay.push({ head: gname, x, y }); y += 16;
+  for (const c of list) { const w = Math.max(c.c.width, 46); if (x + w > W - pad) { x = pad; y += rowH + pad; rowH = 0; } lay.push({ c, x, y, w }); x += w + 2; rowH = Math.max(rowH, c.c.height + lab); }
+}
+const sh = document.getElementById('sheet'); sh.width = W; sh.height = y + rowH + pad;
+const g = sh.getContext('2d'); g.fillStyle = P.get('bg') || '#8C8478'; g.fillRect(0, 0, sh.width, sh.height);
+g.font = '600 10px system-ui'; g.textBaseline = 'top';
+for (const L of lay) {
+  if (L.head) { g.fillStyle = '#1d1a20'; g.font = '700 13px system-ui'; g.fillText(L.head + 's', L.x, L.y); g.font = '600 9px system-ui'; continue; }
+  g.drawImage(L.c.c, L.x + (L.w - L.c.c.width) / 2, L.y);
+  g.fillStyle = '#1d1a20'; g.fillText(L.c.name.slice(0, 9), L.x, L.y + L.c.c.height); g.fillStyle = '#F2E8D0'; g.fillText(L.c.T.toFixed(1), L.x + L.w - 16, L.y + 1);
+}
+window.OUT = OUT; window.DONE = true;
+</script>
+</body></html>

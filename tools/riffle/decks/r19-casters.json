@@ -1,0 +1,120 @@
+{
+  "title": "Round 19: Digger, Grandpa, Alchemist, Shaman, Witch",
+  "topic": "art",
+  "stack": "r19",
+  "order": 3,
+  "priority": 1,
+  "cards": [
+    {
+      "id": "report",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Five casters, your notes",
+      "text": "Digger, Grandpa, Alchemist, Shaman and Witch from every 0.19 note. Live in 0.30.0.",
+      "why": "Mark any part that's off. The bear and salmon sketches and my calls are the cards after this.",
+      "videos": [
+        "../../../docs/clips/caster19/grandpa-sheaves-III.mp4"
+      ],
+      "parts": [
+        {
+          "id": "digger",
+          "title": "Digger",
+          "text": "Spade: an earth swing; clods burst out behind each foe hit, not on their own. Burrow: solid churned trail with big clumps that holds then goes fast; a mound where he goes in and comes up. Dirt Fling makes foes Dirty: their buffs wash off, the spade does double and knocks the dirt off. Bury: held under a mound, comes up dirty; only burrowers can move under it.",
+          "videos": [
+            "../../../docs/clips/caster19/digger-attack.mp4",
+            "../../../docs/clips/caster19/digger-burrow-III.mp4",
+            "../../../docs/clips/caster19/digger-bury-III.mp4",
+            "../../../docs/clips/caster19/digger-dirtyFriend-III.mp4"
+          ]
+        },
+        {
+          "id": "grandpa",
+          "title": "Grandpa Sickle",
+          "text": "Bread: no steam, one shadow, lands on the friend's middle; his own loaf goes up and back into his hands. Harvest: a dash along the floor, then a full circular sweep that does the cutting. Old Tales is now Sheaves: four hay bundles planted round him; friends step on them to heal, enemies that break them get hayed, and hitting a hayed foe speeds your cooldowns.",
+          "videos": [
+            "../../../docs/clips/caster19/grandpa-breadToss-II.mp4",
+            "../../../docs/clips/caster19/grandpa-harvest-III.mp4",
+            "../../../docs/clips/caster19/grandpa-sheaves-III.mp4"
+          ]
+        },
+        {
+          "id": "alchemist",
+          "title": "Alchemist",
+          "text": "They throw skinny corked tubes like the vials on their head. Brew Pools: frost mist and snowflakes, ripples, fizzing sparks, a mint whirlpool. Monstrosity: drinks a purple tube, turns purple with big fists, punches left and right, knocks far, runs fast. Elixir II throws two tubes to two friends.",
+          "videos": [
+            "../../../docs/clips/caster19/alchemist-attack.mp4",
+            "../../../docs/clips/caster19/alchemist-brewPools-III.mp4",
+            "../../../docs/clips/caster19/alchemist-monstrosity-III.mp4",
+            "../../../docs/clips/caster19/alchemist-elixir-II.mp4"
+          ]
+        },
+        {
+          "id": "shaman",
+          "title": "Shaman",
+          "text": "Spirit bolt shows in the Book. Totem: matches the one on his back, bursts on landing, light orbs fly into it from hit friends, collides only at its foot. Ancestors' Call: a new lean wolf and an eagle with a white head, finger feathers and a fan tail, drawn above everyone. Spirit Link: threads to every friend, teal light running along them.",
+          "videos": [
+            "../../../docs/clips/caster19/shaman-healTotem-III.mp4",
+            "../../../docs/clips/caster19/shaman-ancestorsCall-III.mp4",
+            "../../../docs/clips/caster19/shaman-spiritLink-III.mp4"
+          ]
+        },
+        {
+          "id": "witch",
+          "title": "Witch",
+          "text": "Hex bolts are glowing angular runes. Broom Ride: she stays visible, the broom under her, not in her hand. Cursed Brew: a cauldron from above with a round mouth, the same pot thrown as lands. Hex: a proper top-down frog that blinks and kicks.",
+          "videos": [
+            "../../../docs/clips/caster19/witch-attack.mp4",
+            "../../../docs/clips/caster19/witch-broomRide-III.mp4",
+            "../../../docs/clips/caster19/witch-cursedBrew-III.mp4",
+            "../../../docs/clips/caster19/witch-hex-III.mp4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bear",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "The bear",
+      "text": "A big bear seen from above, in the Bearskin's colours. Approve, and I'll make the spirit bear from it?",
+      "why": "You asked to approve the normal bear before it becomes a spirit. It's beside the Bearskin and the current spirit bear for size.",
+      "pick": "Yes, make the spirit version from it.",
+      "images": [
+        "../../../design/caster19/bear.png"
+      ]
+    },
+    {
+      "id": "salmon",
+      "kind": "question",
+      "rarity": "common",
+      "title": "The salmon",
+      "text": "A top-down salmon, in its own colours and in spirit blue. Use it as a spirit?",
+      "why": "You asked to try one. It stands for the way home and coming back; it isn't in the game yet.",
+      "pick": "Yes, as a spirit that heals whoever it swims through.",
+      "images": [
+        "../../../design/caster19/salmon.png"
+      ]
+    },
+    {
+      "id": "calls",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Calls in the casters",
+      "text": "Four readings of your notes, made while building. Details on the back.",
+      "why": "Each changes how a hero plays. All easy to change.",
+      "pick": "Keep all four.",
+      "details": "1. Dirty 'clears enemies' effects': I read it as washing off their helpful buffs (rage, haste, shields), not their burning or poison.\n\n2. Sheaves' '15% boost': each blow on a hayed foe makes the striker's waiting abilities recharge 15% faster for 3 s.\n\n3. Elixir: tier II is your two tubes; the strong brews moved from tier II to III.\n\n4. Broom Ride: now that she's visible she can be targeted, but she flies, so only shots reach her. Her bombs went up a little (0.9 to 1.0 of her damage, cooldown 11 to 10 s) to keep her strength."
+    },
+    {
+      "id": "animals",
+      "kind": "report",
+      "rarity": "common",
+      "title": "What each animal means",
+      "text": "You asked what each of the Shaman's animals stands for.",
+      "why": "Bear: strength and shelter. Wolf: the hunt and the pack. Eagle: sight from above, and healing. Beaver: patience, work that lasts. Salmon: the way home.",
+      "images": [
+        "../../../design/caster19/spirits-in-game.png"
+      ]
+    }
+  ]
+}

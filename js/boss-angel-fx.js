@@ -1,7 +1,7 @@
 // The angel's hall and moves, drawn (lane B, bosses3). The angel itself is the art lane's sprite (round 10,
 // art/bosses/biblical-angel.svg): what is drawn here in code is made to sit beside it: gold in the same four tones, the
 // same blue eyes, one ink outline on solid things, none on light. Chains and hoops lie on the floor, under the units.
-import { INK, TAU, clamp } from './util.js';
+import { INK, TAU, clamp, OUTLINE } from './util.js';
 import { inked, inkLine, star, upright } from './fx.js';
 import { figure, flashing, lin, rad, gloss, glow, shade, ell, circ, soft, poly, up, BFX, easeOut, sm, k01, hash, inkDisc, streak, rgbaOf } from './boss-draw.js';
 
@@ -20,7 +20,7 @@ function eye(ctx, x, y, s, rot = 0, open = 1) {
 function hoop(ctx, x, y, r, wd, rot, a = 1) {
   if (r < 8) return;
   ctx.save(); ctx.globalAlpha *= a; ctx.lineCap = 'butt';
-  ctx.strokeStyle = INK; ctx.lineWidth = wd + 7; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.stroke();
+  ctx.strokeStyle = INK; ctx.lineWidth = wd + OUTLINE * 2; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.stroke();
   ctx.strokeStyle = GOLD[2]; ctx.lineWidth = wd; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.stroke();
   ctx.strokeStyle = GOLD[1]; ctx.lineWidth = wd * 0.7; ctx.beginPath(); ctx.arc(x, y, r + wd * 0.06, 0, TAU); ctx.stroke();
   ctx.strokeStyle = GOLD[0]; ctx.lineWidth = wd * 0.22; ctx.beginPath(); ctx.arc(x, y, r + wd * 0.2, 0, TAU); ctx.stroke();
@@ -37,13 +37,13 @@ function chain(ctx, x1, y1, a, d, T, rattle = 0) {
     for (let i = 0; i < n; i++) { const x = (i + 0.5) * (d / n), y = rattle ? Math.sin(T * 40 + i * 1.7) * rattle : 0;
       if (i % 2) { ctx.moveTo(x - 9, y); ctx.lineTo(x + 9, y); } else { ctx.moveTo(x + 10, y); ctx.ellipse(x, y, 10, 6.5, 0, 0, TAU); } }
     ctx.stroke(); };
-  links(INK, 9); links(GOLD[2], 4.6); links(GOLD[0], 1.8);
+  links(INK, 4.6 + OUTLINE * 2); links(GOLD[2], 4.6); links(GOLD[0], 1.8);
   ctx.restore();
 }
 function shackle(ctx, x, y, a, shut) { // the chain's end: a gold cuff, open as it flies, shut on what it holds
   ctx.save(); ctx.translate(x, y); ctx.rotate(a);
   const gap = shut ? 0.25 : 1.1, p = () => { ctx.beginPath(); ctx.arc(14, 0, 19, gap, TAU - gap); };
-  ctx.lineCap = 'round'; ctx.strokeStyle = INK; ctx.lineWidth = 13; p(); ctx.stroke(); ctx.strokeStyle = GOLD[1]; ctx.lineWidth = 7.5; p(); ctx.stroke(); ctx.strokeStyle = GOLD[0]; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.arc(14, 0, 21, Math.PI * 0.9, Math.PI * 1.5); ctx.stroke();
+  ctx.lineCap = 'round'; ctx.strokeStyle = INK; ctx.lineWidth = 7.5 + OUTLINE * 2; p(); ctx.stroke(); ctx.strokeStyle = GOLD[1]; ctx.lineWidth = 7.5; p(); ctx.stroke(); ctx.strokeStyle = GOLD[0]; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.arc(14, 0, 21, Math.PI * 0.9, Math.PI * 1.5); ctx.stroke();
   inkDisc(ctx, -5, 0, 6.5, GOLD[2]);
   ctx.restore();
 }

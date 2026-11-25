@@ -1,0 +1,10 @@
+tier 3, rank 1: each ability switched off in turn (the same parties and seeds), 0 errors
+hero          ability           rooms with  worth   share of dmg  hero dmg/s  party taken/s  party heal/s  party downs
+witch         (all on)           7.92           attack  53%    10.26         3.63          2.17       6.21   (24 runs)
+              frogHex                   +1.08            6%    +0.34        -0.40         +0.44       -1.29
+              cursedBrew                +1.96            6%    +1.21        -0.41         +0.52       -0.88
+              broomRide                 -0.33           35%    +2.67        -0.43         +0.45       +0.08
+digger        (all on)           8.08           attack  39%    10.86         3.08          1.30       5.58   (24 runs)
+              dirtFling                 +2.42           19%    +3.09        +0.61         -0.30       -0.17
+              burrow                    +1.58           27%    +2.31        +0.42         -0.23       -0.17
+              spadeBat                  +1.38           14%    +0.63        +0.53         -0.29       -0.79

@@ -1,0 +1,6 @@
+tier 1, rank 0: each ability switched off in turn (the same parties and seeds), 0 errors
+hero          ability           rooms with  worth   share of dmg  hero dmg/s  party taken/s  party heal/s  party downs
+monk          (all on)          10.90           attack  65%     5.11         4.14          2.55       5.70   (30 runs)
+              flurry                    +2.00           25%    +1.62        -0.31         +0.54       -1.13
+              palmStrike                +1.17            9%    +0.47        -0.17         +0.33       -1.27
+              innerPeace                +2.13            1%    +0.60        -0.45         +0.73       -0.87

@@ -5,7 +5,6 @@
 <!-- SHADE (cape) round 3, crossed: weapon rule, keeping the X. Both daggers drawn behind the body (arm groups before body); the fists show at the chin edge and the blades cross ahead of the face. Parts: back = cape, arm-l, arm-r, body. Front = down (+y). -->
 <defs>
 
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
 <linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient>
 <linearGradient id="gFS" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
@@ -23,7 +22,7 @@
 <linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.55"/><stop offset="0.42" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gWoodV" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#CF9A62"/><stop offset="0.55" stop-color="#AD7442"/><stop offset="1" stop-color="#83542C"/></linearGradient><linearGradient id="gMatte" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B9BEC7"/><stop offset="1" stop-color="#868D9A"/></linearGradient>
 <radialGradient id="gHandM" cx="0.62" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 90">
 <path d="M44 100 C28 82 16 58 14 34 C13 24 20 18 30 20 C50 26 70 24 86 14 C92 10 96 14 100 30 C104 14 108 10 114 14 C130 24 150 26 170 20 C180 18 187 24 186 34 C184 58 172 82 156 100 Z" fill="url(#g1)"/><path d="M44 100 C28 82 16 58 14 34 C13 24 20 18 30 20 C50 26 70 24 86 14 C92 10 96 14 100 30 C104 14 108 10 114 14 C130 24 150 26 170 20 C180 18 187 24 186 34 C184 58 172 82 156 100 Z" fill="url(#sR)"/>
 <path d="M52 92 Q40 60 30 26 Q48 32 60 32 Q58 62 66 92 Z" fill="#5A41A0" opacity="0.5"/><path d="M84 92 Q82 60 86 30 Q94 30 98 38 Q96 64 100 92 Z" fill="#5A41A0" opacity="0.4"/><path d="M122 92 Q126 60 132 30 Q146 32 158 26 Q148 60 140 92 Z" fill="#5A41A0" opacity="0.28"/>
