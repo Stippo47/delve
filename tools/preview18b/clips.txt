@@ -1,0 +1,10 @@
+film foe-wolf-kit-pack {"spec":{"t":"foe","id":"wolf","move":"kit","rank":0},"scene":"pack","loop":6.5,"firstT":0.8333333333333333,"heroes":["paladin","archer","tower"]}
+film foe-orcShaman-kit {"spec":{"t":"foe","id":"orcShaman","move":"kit","rank":0},"scene":"party","loop":6.5,"firstT":1.933333333333336,"heroes":["paladin","archer"]}
+film foe-boar-elite-crash {"spec":{"t":"foe","id":"boar","move":"elite","rank":1},"scene":"edge","loop":4.5,"firstT":0.9666666666666666,"heroes":["paladin","archer","tower"]}
+film foe-banditBrute-elite-quake {"spec":{"t":"foe","id":"banditBrute","move":"elite","rank":1},"scene":"close","loop":14,"firstT":null,"heroes":["paladin","dame","archer"]}
+film foe-mortar-kit-shells {"spec":{"t":"foe","id":"mortar","move":"kit","rank":0},"scene":"standing","loop":6.5,"firstT":0.6666666666666666,"heroes":["paladin","archer","tower"]}
+film foe-choirSprite-kit-song {"spec":{"t":"foe","id":"choirSprite","move":"kit","rank":0},"scene":"friend","loop":6.5,"firstT":0.4666666666666666,"heroes":["paladin","archer"]}
+film foe-alpha-boss-kit {"spec":{"t":"foe","id":"alpha","move":"kit","rank":0},"scene":"boss","loop":10,"firstT":0.49999999999999994,"heroes":["paladin","tower","archer","cleric"]}
+film status-silenced {"spec":{"t":"status","id":"silenced"},"loop":9,"firstT":1.4333333333333345,"heroes":["cleric","paladin"]}
+film status-chill-shattered {"spec":{"t":"status","id":"chill","way":"trigger"},"loop":7.5,"firstT":0.5666666666666667,"way":"trigger","heroes":["frost","warhelm"]}
+film status-guard {"spec":{"t":"status","id":"guard"},"loop":6,"firstT":0.9333333333333332,"way":null,"heroes":["paladin","orc"]}
