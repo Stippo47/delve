@@ -2598,7 +2598,8 @@ function sheafBreak(w, s2, who) {
   const give = (o, k) => { if (!alive(o) || o === s2) return; if (sideOfU(o) === sideOfU(s2)) { if (!o.summon) { heal(w, o, o.maxHp * (tier >= 2 ? SHEAF.heal2 : SHEAF.heal) * k, u); o.mendGlow = w.time + 0.4; } } else hayed(w, o, tier >= 2 ? SHEAF.hay2 : SHEAF.hay, s2); };
   if (who) give(who, 1);
   if (tier >= 3) for (const o of w.units) if (o !== who && alive(o) && !o.ethereal && dist(o.x, o.y, s2.x, s2.y) < SHEAF.burstR + o.r) give(o, 0.5);
-  if (alive(s2)) kill(w, s2, null);
+  // (gone without a death burst: it is hay, scattered by the spray above, not a body falling)
+  if (alive(s2)) { s2.hp = Math.max(1, s2.hp); s2.dead = true; } // (sim.js step drops the dead at its end; with health left there is no burst)
 }
 BRAINS.sheaf = function (w, s2, dt) {
   s2.vx = s2.vy = s2.kx = s2.ky = 0;

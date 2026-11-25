@@ -184,11 +184,11 @@ export const HEROES2 = {
     weapon: 'spade', // round 19 (lane caster19): its own swing and thwack (fxkit 'spade', kits2 TRAITS2.dirtIn)
     attack: { name: 'Spade', anim: 'swing', desc: 'A swing with the flat of the spade; clods burst out behind whatever it hits.' },
     abilities: [
-      { id: 'dirtFling', name: 'Dirt Fling', cd: 9, tags: 's', glyph: 'wave', desc: "Flings clods of earth in a fan: enemies are blinded (most of their blows miss for 2.5s); friends in it are cleaned of fire and poison and get a coat of dirt.",
+      { id: 'dirtFling', name: 'Dirt Fling', cd: 9, tags: 's', glyph: 'wave', desc: "Flings clods of earth in a fan: enemies are blinded (most of their blows miss for 2.5s) and dirtied (what helps them is washed off, and his spade lands twice as hard on them); friends in it are cleaned of fire and poison and get a coat of dirt.",
         tiers: ['One fling.', 'It staggers enemies.', 'Three flings in a row.'] },
-      { id: 'burrow', name: 'Burrow', cd: 13, tags: 'ds', glyph: 'up', desc: 'Dives into the ground and tunnels to a far enemy, churning a trail of earth behind him, and bursts up out of the floor beside it.',
+      { id: 'burrow', name: 'Burrow', cd: 13, tags: 'ds', glyph: 'up', desc: 'Dives into the ground and tunnels to a far enemy, churning a trail of earth behind him, and bursts up out of the floor beside it, leaving a mound where he went in and where he came up.',
         tiers: ['He bursts up and throws enemies back.', 'The burst staggers.', 'Tunnels on to a second enemy.'] },
-      { id: 'spadeBat', name: 'Bury', cd: 10, tags: 'ds', glyph: 'fist', desc: 'Slams the spade down in front of him: whatever it hits is driven into the ground, where it can neither move nor be hit until it digs itself out.',
+      { id: 'spadeBat', name: 'Bury', cd: 10, tags: 'ds', glyph: 'fist', desc: 'Slams the spade down in front of him: whatever it hits is driven into the ground under a mound of earth, where it can neither move nor be hit until it digs itself out, dirty. (Things that live underground dig about down there.)',
         tiers: ['Buried for 1.5s.', 'Buried for 2.2s.', 'They come out staggered.'] },
     ],
     trait: { id: 'dirtIn', name: 'Rub Some Dirt In It', desc: 'Every ability he uses rubs dirt into him (Dirty): it soaks up the next blow, and until then fire and poison can\'t take on him, but he swings slower.' },
@@ -243,7 +243,7 @@ Object.assign(HEROES2, {
     summons: { // round 13: the Healing Totem and the Ancestors' Call spirits (light blue; kits2.js BRAINS, fx2.js LOOK2)
       totem: { name: 'Totem', art: 'art/summons/totem.svg', headR: 66, ownLook: true, upright: true, r: 13, vr: 26, foot: [0, 36], /* round 19 (lane caster19): it stands on its foot: its body is only its base, and its picture is drawn up the screen from there (fx2 ART2.totem), so its foot (render.js footOf) is its middle */ turn: 0, accel: 0, face: 0, mass: 60, hp: 50, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
       spiritBear: { name: 'Spirit bear', art: 'art/summons/spirit-bear.svg', headR: 66, ownLook: true, r: 30, vr: 26, turn: 4, accel: 260, face: 4, mass: 3, hp: 45, speed: 62, role: 'melee', range: 18, atkCd: 1.1, dmg: 10, knock: 170, arc: 1.7, weapon: 'claw', attackAnim: 'swing' },
-      spiritWolf: { name: 'Spirit wolf', art: 'art/summons/spirit-wolf.svg', headR: 47, ownLook: true, attackAnim: 'thrust', weapon: 'bite', r: 24, vr: 18, turn: 6, accel: 380, face: 6, mass: 1, hp: 25, speed: 92, role: 'skirmish', range: 14, atkCd: 0.8, dmg: 7, arc: 1.4 },
+      spiritWolf: { name: 'Spirit wolf', art: 'art/summons/spirit-wolf.svg', headR: 40, ownLook: true, attackAnim: 'thrust', weapon: 'bite', r: 24, vr: 18, turn: 6, accel: 380, face: 6, mass: 1, hp: 25, speed: 92, role: 'skirmish', range: 14, atkCd: 0.8, dmg: 7, arc: 1.4 },
       spiritEagle: { name: 'Spirit eagle', art: 'art/summons/spirit-eagle.svg', headR: 56, ownLook: true, pass: true, r: 16, vr: 22, turn: 6, accel: 400, face: 6, mass: 0.6, hp: 20, speed: 120, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
       spiritBeaver: { name: 'Spirit beaver', art: 'art/summons/spirit-beaver.svg', headR: 51, ownLook: true, r: 20, vr: 20, turn: 5, accel: 300, face: 5, mass: 1, hp: 20, speed: 60, role: 'melee', range: 0, atkCd: 999, dmg: 6 },
     },

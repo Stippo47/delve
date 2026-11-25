@@ -818,25 +818,25 @@ DRAW.whirlBurst = (ctx, f, w, layer) => {
 // friend or foe): no smears on the face. The body takes a brown wash (its 'dirty' buff, render.js), and a little cloud of
 // dust hangs about it the way it does round someone who has been rolling in the dirt: soft puffs that swell and drift off
 // round its feet, more of them trailing when it moves, and now and then a crumb dropping off.
-const DUST = ['#B89A72', '#A8865E', '#C9AE86'];
+const DUST = ['#A0805A', '#8C6C48', '#B8996E'];
 DRAW.dirtyOn = (ctx, f, w, layer) => {
   const u = f.unit; if (!alive2(u)) { ended(f, true); return; } ended(f, !hasHook(u, 'dirty'));
   if (u.hidden) return; const a = life(f, 0.2, 0.3), [vx, vy] = upVec(), R = u.vr;
   if (layer === 'ground') { // the dust at its feet, under it
-    ctx.save(); ctx.globalAlpha *= a * 0.55;
-    for (let i = 0; i < 7; i++) { const ph = (f.t * 0.7 + i / 7 + hash(i, u.id) * 0.3) % 1, b = i / 7 * TAU + f.t * 0.6 + hash(u.id, i), d = R * (0.85 + 0.45 * ph);
+    ctx.save(); ctx.globalAlpha *= a * 0.8;
+    for (let i = 0; i < 8; i++) { const ph = (f.t * 0.7 + i / 7 + hash(i, u.id) * 0.3) % 1, b = i / 7 * TAU + f.t * 0.6 + hash(u.id, i), d = R * (0.85 + 0.45 * ph);
       ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); disc(ctx, u.x + Math.cos(b) * d, u.y + Math.sin(b) * d * 0.75, R * (0.22 + 0.2 * ph), DUST[i % 3]); ctx.restore(); }
     ctx.restore(); return;
   }
   ctx.save(); ctx.globalAlpha *= a;
   // puffs rising off its edge, soft (light: dust is not inked)
   for (let i = 0; i < 5; i++) { const ph = (f.t * 0.9 + i / 5 + hash(u.id, i + 7) * 0.2) % 1, b = hash(i, u.id + 3) * TAU + f.t * 0.4, d = R * (0.75 + 0.3 * ph), up = 4 + ph * 16;
-    ctx.save(); ctx.globalAlpha *= 0.42 * Math.sin(ph * Math.PI); disc(ctx, u.x + Math.cos(b) * d + vx * up, u.y + Math.sin(b) * d * 0.7 + vy * up, 3 + 6 * ph, DUST[(i + 1) % 3]); ctx.restore(); }
+    ctx.save(); ctx.globalAlpha *= 0.6 * Math.sin(ph * Math.PI); disc(ctx, u.x + Math.cos(b) * d + vx * up, u.y + Math.sin(b) * d * 0.7 + vy * up, 4 + 7 * ph, DUST[(i + 1) % 3]); ctx.restore(); }
   // moving: puffs kicked up behind
   if ((u.spd || 0) > 25) for (let i = 0; i < 3; i++) { const ph = (f.t * 2.4 + i / 3) % 1, b = (u.mvA ?? u.facing) + Math.PI + (i - 1) * 0.5, d = R * (0.8 + 0.8 * ph);
     ctx.save(); ctx.globalAlpha *= 0.4 * (1 - ph); disc(ctx, u.x + Math.cos(b) * d, u.y + Math.sin(b) * d, 4 + 6 * ph, DUST[i % 3]); ctx.restore(); }
   // a crumb dropping off now and then (inked: a solid bit)
-  { const c = f.t * 0.8 + hash(u.id, 2), ph = c % 1, b = hash(Math.floor(c), u.id) * TAU, d = R * 0.7, h = (1 - ph) * 14;
+  for (let j = 0; j < 2; j++) { const c = f.t * 0.9 + hash(u.id, 2) + j * 0.5, ph = c % 1, b = hash(Math.floor(c), u.id + j) * TAU, d = R * 0.7, h = (1 - ph) * 14;
     if (ph < 0.85) { ctx.save(); ctx.globalAlpha *= 1 - ph / 0.85; inked(ctx, () => blob(ctx, u.x + Math.cos(b) * d + vx * h, u.y + Math.sin(b) * d * 0.7 + vy * h, 2.6, 4, b, 1), '#7A5A3A'); ctx.restore(); } }
   ctx.restore();
 };
@@ -1252,13 +1252,15 @@ DRAW.elixirSplash = (ctx, f, w, layer) => {
   });
   ctx.restore();
 };
-// Monstrosity: bubbles boiling up off her and green steam, while she's the monster
+// Monstrosity: steam and bubbles boiling up off them while they're the monster
 DRAW.monster = (ctx, f, w, layer) => {
   const u = f.unit; if (layer !== 'air' || !alive2(u)) { if (!alive2(u)) ended(f, true); return; } ended(f, !(u.kit && u.kit.monster));
   const [vx, vy] = upVec(); ctx.save(); ctx.globalAlpha *= life(f, 0.2, 0.3);
   if (f.t < 0.35) lit(ctx, () => glowDisc(ctx, u.x, u.y, 70, '#C9A0F0', 0.6 * (1 - f.t / 0.35))); // (round 19: purple, the brew they drank)
-  for (let i = 0; i < 6; i++) { const ph = (f.t * 1.5 + hash(i, u.id)) % 1, b = hash(i, 3) * TAU, d = u.vr * 0.8 * hash(i, 7), up = ph * 34;
-    ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); inkDisc(ctx, u.x + Math.cos(b) * d + vx * up, u.y + Math.sin(b) * d * 0.7 + vy * up, 2.5 + 3.5 * ph, i % 2 ? '#D9B6F2' : '#9A5CC8'); ctx.restore(); }
+  // (round 19: fewer and softer, off its edge, not spots over its face: purple steam rising, the odd bubble)
+  for (let i = 0; i < 4; i++) { const ph = (f.t * 1.2 + i / 4 + hash(i, u.id) * 0.2) % 1, b = hash(i, 3) * TAU, d = u.vr * (0.9 + 0.2 * ph), up = 6 + ph * 30;
+    ctx.save(); ctx.globalAlpha *= 0.45 * Math.sin(ph * Math.PI); disc(ctx, u.x + Math.cos(b) * d + vx * up, u.y + Math.sin(b) * d * 0.7 + vy * up, 4 + 6 * ph, i % 2 ? '#D9B6F2' : '#B48AE8'); ctx.restore(); }
+  { const ph = (f.t * 0.9 + hash(u.id, 5)) % 1, b = hash(Math.floor(f.t * 0.9 + hash(u.id, 5)), u.id) * TAU, d = u.vr * 0.95; ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); inkDisc(ctx, u.x + Math.cos(b) * d + vx * ph * 26, u.y + Math.sin(b) * d * 0.7 + vy * ph * 26, 2 + 2.5 * ph, '#D9B6F2'); ctx.restore(); }
   ctx.restore();
 };
 

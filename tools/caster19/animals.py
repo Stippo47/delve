@@ -25,17 +25,17 @@ ROOT = os.path.join(os.path.dirname(__file__), '..', '..')
 
 # ------------------------------------------------------------------ the spirit wolf (in the game)
 def wolf(pal=None):
-    a = Art('SPIRIT WOLF (the Shaman\'s ancestor spirit; round 19, lane caster19, the designer: "In game the wolf looks different from the rest ... do wolf (in the same style)"): a wolf seen from above in the beaver\'s and the bear\'s way: the ancestors\' pale blue, a long body, a bushy tail out behind, pricked ears, a long muzzle, the spirits\' swirl on its back. The game draws it see-through. One part (#body). Front = DOWN (+y), centre (100,100); drawn at 0.72 of the box: give the kind headR 47 (vr 18).', scale=0.72)
+    a = Art('SPIRIT WOLF (the Shaman\'s ancestor spirit; round 19, lane caster19, the designer: "In game the wolf looks different from the rest ... do wolf (in the same style)"): a wolf seen from above in the beaver\'s and the bear\'s way: the ancestors\' pale blue, a long body, a bushy tail out behind, pricked ears, a long muzzle, the spirits\' swirl on its back. The game draws it see-through. One part (#body). Front = DOWN (+y), centre (100,100); drawn at 0.72 of the box: give the kind headR 40 (vr 18).', scale=0.72)
     tail = blobpath([(100, 62), (88, 46), (86, 26), (94, 8), (106, 8), (114, 26), (112, 46)])
     a.shape(tail, DARK, DARK_S, inner='<path d="M 95 46 L 97 18 M 105 46 L 104 18" fill="none" stroke="#2E6A9A" stroke-width="2.6" stroke-linecap="round" opacity="0.3"/>')
-    for x in (70, 130): a.shape(ell(x, 74, 12, 16, 14 if x < 100 else -14), DARK, DARK_S)
-    for x in (72, 128): a.shape(ell(x, 126, 12, 15, -10 if x < 100 else 10), DARK, DARK_S)
-    a.shape(ell(100, 94, 32, 44), LIGHT, LIGHT_S, drop=3, inner=swirl(100, 90) + gloss(84, 70, 14, 7))
-    a.shape(ell(100, 146, 25, 22), LIGHT, LIGHT_S, drop=3, inner=gloss(90, 140, 9, 4.5))
-    # the ears stand up on top of the head, pointing back
-    ear = [(76, 138), (78, 104), (96, 130)]
-    a.shape(blobpath(ear, 0.3), DARK, DARK_S, drop=2, inner='<path d="M 80 114 L 84 130" stroke="#F0FBFF" stroke-width="5" stroke-linecap="round" opacity="0.6"/>')
-    a.shape(blobpath(mirror(ear), 0.3), DARK, DARK_S, drop=2, inner='<path d="M 120 114 L 116 130" stroke="#F0FBFF" stroke-width="5" stroke-linecap="round" opacity="0.6"/>')
+    for x in (67, 133): a.shape(ell(x, 74, 14, 17, 14 if x < 100 else -14), DARK, DARK_S)
+    for x in (69, 131): a.shape(ell(x, 124, 14, 16, -10 if x < 100 else 10), DARK, DARK_S)
+    a.shape(ell(100, 94, 35, 45), LIGHT, LIGHT_S, drop=3, inner=swirl(100, 90) + gloss(84, 70, 14, 7))
+    # the ears: pointed, out at the back corners of the head and past the body's sides, so they show in its outline
+    ear = [(76, 150), (50, 118), (90, 130)]
+    a.shape(blobpath(ear, 0.3), DARK, DARK_S, drop=2, inner='<path d="M 60 124 L 78 138" stroke="#F0FBFF" stroke-width="6" stroke-linecap="round" opacity="0.6"/>')
+    a.shape(blobpath(mirror(ear), 0.3), DARK, DARK_S, drop=2, inner='<path d="M 140 124 L 122 138" stroke="#F0FBFF" stroke-width="6" stroke-linecap="round" opacity="0.6"/>')
+    a.shape(ell(100, 148, 27, 23), LIGHT, LIGHT_S, drop=3, inner=gloss(90, 142, 9, 4.5))
     a.shape(blobpath([(89, 154), (111, 154), (113, 172), (106, 190), (94, 190), (87, 172)]), PALE, PALE_S, drop=2)
     a.shape(ell(100, 187, 7, 5), NOSE)
     return a

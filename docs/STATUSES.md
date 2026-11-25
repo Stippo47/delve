@@ -233,7 +233,7 @@ how a hero puts each on) and reads every number from statuses.js.
 |---|---|---|---|
 | **Whirled** (builds) | the Griffon (Swoop, Stormhammer), the Alchemist (the whirling pool), the Air Mage | 0-100 in `u.k2s.whirl`, drains 12/s; while on, every shove it takes goes (1 + fill) as far. Full: stunned 0.95 s and flung about at random three times 0.3 s apart (520 hard), then 3.9 s from the burst before it can build again. Bosses: build at 45%, stunned 0.4 s, flung 180 | white wind curls round the feet; a whirlwind at the burst |
 | **Spun** (builds) | the Monk (Palm Strike) | 0-100 in `u.k2s.spun`, drains 10/s; while on it moves at 80% and each step has a 0.9 x fill chance it can't turn. Full: it marches off the way it faces for 1.2 s, fast, and can't attack (a unit with a brain of its own is stunned 0.5 s instead); 4 s before it builds again. Bosses: build at 45%, march 0.5 s | gold chevrons wobbling round its head; dust kicked up as it marches |
-| **Dirty** | the Digger (Dirt Fling, his trait) | 10 s (or the giver's): the next blow (not damage over time) is soaked up and that ends it; attacks 30% slower meanwhile; burn and poison washed off when it goes on and can't take on it while it lasts | brown smears, crumbs dropping |
+| **Dirty** | the Digger (Dirt Fling, Bury, his trait) | on a friend: 10 s (or the giver's): the next blow (not damage over time) is soaked up and that ends it; attacks 30% slower meanwhile; burn and poison washed off when it goes on and can't take on it while it lasts. On a foe (round 19): 6 s, its helps washed off when it goes on, attacks 30% slower, and the Digger's spade (swing or clods) lands double on it and knocks it off | round 19: a brown wash and a cloud of dust round it (no smears) |
 | **Targeted** | the Marksman (Aimed Shot), the Pirate (Point Blank) | blows (not damage over time) land 1.2x; its dashes, leaps and charges go 40% as far; the Marksman's bullets go on through it | a red crosshair |
 | **Tracked** | the Falconer (his falcon) | can't turn invisible, untouchable or go underground; every blow from the tracker's side lands the falcon's set amount harder | an amber crosshair |
 | **Trapped** | the Trapper (Jaw Trap) | can't move or turn, can't use an ability (its clocks held at 0.3 s), what it was doing is broken off (not a wind-up); it can still strike straight ahead. Bosses: 40% of the time | the jaw trap shut on it |
@@ -279,3 +279,12 @@ The rules and numbers are in docs/tags17.md and js/tags.js.
 - **Kindled / Flare**: a fire-tagged unit set burning by the other side takes no burn damage: up to +30% dealt and
   attack speed, +15% move (x fill); its Scorch is a Flare instead (the whole boost for 4 s); bosses half the extra.
 - Constructs take no Bleeding and no Poison.
+
+## Round 19 (lane caster19): Dirty on foes
+The designer: Dirt Fling "should make target dirty (clears enemies effects too). When he hits a dirtied foe he deals double
+damage and clears the dirt"; Bury: "should be dirty when they get back up"; the trait: "Don't like the dirtied effect
+visual". Dirty is one status on either side (statuses.js DIRTY, kits2.js dirty(w, unit, dur, by)): on a friend of the giver
+as before; on a foe of the giver for `foeDur` (6 s), its helping buffs (rage, haste, wards, shields: any buff that helps)
+washed off when it goes on, attacking at 70%, and the Digger's own spade (a swing or its clods) landing `spade` (2) times as
+hard on it and knocking the dirt off. Its look on anyone: a brown wash (the 'dirty' buff, not listed twice in the HUD) and
+a small cloud of dust round it. Details: docs/caster19.md.

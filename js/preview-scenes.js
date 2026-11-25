@@ -143,7 +143,7 @@ export const ABILITY_SCENE = {
   // Haymaker
   toss: S('pair'), pitchHay: S('front'), forkCharge: S('pack', { wall: WALL_R }),
   // Digger
-  dirtFling: S('front', { friends: [{ at: [175, 262], hp: 0.6, st: { burn: 60, poison: 40 } }], addFoes: [F('burner', [250, 320], { on: 0 })] }), burrow: S('spread'), spadeBat: S('front'),
+  dirtFling: S('front', { friends: [{ at: [175, 262], hp: 0.6, st: { burn: 40, poison: 40 } }], addFoes: [F('burner', [250, 320], { on: 0 })] }), burrow: S('spread'), spadeBat: S('front'),
   // Grandpa
   // (round 19, lane caster19: Bread Toss with Grandpa hurt too, so II's second loaf is tossed up and caught; Sheaves, Old
   // Tales' slot: hurt friends near the fight, enemies walking in through where the hay lands)

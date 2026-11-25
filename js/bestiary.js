@@ -296,7 +296,7 @@ export const STATUSES = {
   // round 15 (lane E): the newer heroes' own, lifted into the statuses (numbers: statuses.js HERO_STATUS; rules: docs/STATUSES.md)
   whirled: { name: 'Whirled', desc: 'Caught in the wind: every shove it takes throws it further, up to twice as far. Full up, it is flung about three times and can\'t act till it lands.' },
   spun: { name: 'Spun', desc: 'Dizzy: it moves slower and can hardly turn, less and less the fuller it gets. Full up, it marches off the way it faces and can\'t attack.' },
-  dirty: { name: 'Dirty', desc: 'A coat of dirt: the next blow is soaked up by it. Fire and poison can\'t take hold meanwhile, but it attacks 30% slower.' },
+  dirty: { name: 'Dirty', desc: 'A coat of dirt. On a friend: the next blow is soaked up by it, and fire and poison can\'t take hold meanwhile. On an enemy: what was helping it is washed off, and the Digger\'s spade lands twice as hard on it (and knocks the dirt off). Either way it attacks 30% slower.' }, // (round 19, lane caster19: Dirty on foes)
   targeted: { name: 'Targeted', desc: 'A crosshair on it: it takes 20% more from blows, its dashes, leaps and charges go less than half as far, and the Marksman\'s bullets go on through it.' },
   tracked: { name: 'Tracked', desc: 'A falcon has it: it can\'t turn invisible, untouchable or go underground, and every blow from the falconer\'s side lands a little harder.' },
   trapped: { name: 'Trapped', desc: 'In a jaw trap: it can\'t move, turn or use an ability, but it can still strike straight ahead. Bosses pull free sooner.' },
