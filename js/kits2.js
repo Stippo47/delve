@@ -717,16 +717,19 @@ export const ABILITIES2 = {
     use(w, u, t, tier) {
       // round 18 (lane dash18): the blink chain (dashes.js). She sinks, and is a shadow blinking from foe to foe: each
       // blink crosses its mark at a slant with the daggers out, a copy of her left standing at every stop; three marks a
-      // run. The cut (1.5x, II cursing) lands where the blades cross a body. III: three runs in a row, each from where the
+      // run. The cut (II cursing) lands where the blades cross a body. III: three runs in a row, each from where the
       // last ended. (It was one straight run at one speed, cutting whoever stood within reach of the line.)
-      const runs = tier >= 3 ? 3 : 1, dmg = dmgOf(u, 1.5), curse = tier >= 2 ? 30 : 0; let chaining = true, idle = 0;
+      // The cut is CUT x her own blow (it was 1.5x): the old run caught two on a good line and often one, the chain finds
+      // its three, so each cut is lighter to keep what Shadow Walk deals where it was.
+      const CUT = 1.0;
+      const runs = tier >= 3 ? 3 : 1, dmg = dmgOf(u, CUT), curse = tier >= 2 ? 30 : 0; let chaining = true, idle = 0;
       const marks = (x, y) => opponents(w, u).filter((e) => dist(x, y, e.x, e.y) < 280).sort((p, q) => dist(x, y, p.x, p.y) - dist(x, y, q.x, q.y));
       const back = () => { chaining = false; u.ethereal = !!(u.kit && u.kit.shadow); };
       const go = (i) => {
         const list = i === 0 && t && alive(t) ? [t, ...marks(t.x, t.y).filter((e) => e !== t)] : marks(u.x, u.y);
         if (!list.length) { back(); return; }
         u.ethereal = true; k2(w, { draw: 'shadowTrail', unit: u, x: u.x, y: u.y, max: 1.5, pts: [] });
-        dash(w, u, 'blinkChain', { targets: list, n: 3, reach: 280, tell: i ? 0.07 : 0.14, recover: i + 1 < runs ? 0.06 : 0.18, dmg, hit: { knock: 90, curse, ab: 'shadowWalk' }, ghost: '#3E3158', col: ['#9B86C9', '#F4EEFF'],
+        dash(w, u, 'blinkChain', { targets: list, n: 3, reach: 280, tell: i ? 0.07 : 0.14, recover: i + 1 < runs ? 0.06 : 0.18, dmg, hit: { knock: 90, curse, ab: 'shadowWalk' }, ghost: '#3E3158', col: ['#9B86C9', '#F4EEFF'], alpha: 1, wash: ['#1E1630', 0.82], // (a shadow: dark, not the pale of a ghost)
           onEnd: () => { if (i + 1 < runs && alive(u)) go(i + 1); else back(); } });
       };
       go(0);
@@ -2132,10 +2135,13 @@ export const ABILITIES2 = {
       if (!t) return; const a0 = ang(u, t), base = dmgOf(u, 1); u.facing = a0;
       k2(w, { draw: 'iaidoCharge', unit: u, x: u.x, y: u.y, a: a0, max: 0.38 });
       const reachOf = (a) => { const far = opponents(w, u).filter((e) => segDist(e.x, e.y, u.x, u.y, u.x + Math.cos(a) * 280, u.y + Math.sin(a) * 280) < e.r + 16); return far.length ? Math.min(280, Math.max(...far.map((e) => dist(u.x, u.y, e.x, e.y))) + 60) : 160; };
-      const cut = (a, tell, again) => dash(w, u, 'drawCut', { a, len: reachOf(a), tell, hold: 0.3, settle: false, ghost: '#AEB9CC',
-        dmg: (e) => e.maxHp * (e.def.boss ? 0.03 : 0.1) + base, hit: { crit: true, knock: 120, ab: 'iaido' },
+      // (the cut back: the blade's sweep catches the ones the first cut threw off the line, which the old line did not, so
+      // it lands at BACK of the first cut's weight to keep what Iaido III deals where it was)
+      const BACK = 0.3;
+      const cut = (a, tell, again, k = 1) => dash(w, u, 'drawCut', { a, len: reachOf(a), tell, hold: 0.3, settle: false, ghost: '#5E6B86',
+        dmg: (e) => (e.maxHp * (e.def.boss ? 0.03 : 0.1) + base) * k, hit: { crit: true, knock: 120, ab: 'iaido' },
         mark: (e) => { stun(w, e, 0.3); addStatus(w, e, 'stagger', 25, u); }, again });
-      cut(a0, 0.36, tier >= 3 ? () => ({ a: u.facing + Math.PI, len: reachOf(u.facing + Math.PI), tell: 0.16, again: null }) : null);
+      cut(a0, 0.36, tier >= 3 ? () => ({ a: u.facing + Math.PI, len: reachOf(u.facing + Math.PI), tell: 0.16, again: null, dmg: (e) => (e.maxHp * (e.def.boss ? 0.03 : 0.1) + base) * BACK }) : null);
     },
     show: { far: true },
   },
@@ -2165,7 +2171,7 @@ export const ABILITIES2 = {
       const base = dmgOf(u, 1.4), stg = tier >= 2 ? 40 : 0;
       const strike = (e, n) => {
         if (!e || !alive(e) || n > 4) return;
-        dash(w, u, 'feint', { t: e, only: e, ghost: '#AEB9CC', dmg: (x) => x.maxHp * (x.def.boss ? 0.03 : 0.1) + base, hit: { heavy: true, crit: true, knock: 200, stagger: stg, ab: 'crescentCut' },
+        dash(w, u, 'feint', { t: e, only: e, ghost: '#5E6B86', dmg: (x) => x.maxHp * (x.def.boss ? 0.03 : 0.1) + base, hit: { heavy: true, crit: true, knock: 200, stagger: stg, ab: 'crescentCut' },
           each: (x) => k2(w, { draw: 'crescentSlash', x: x.x, y: x.y, a: ang(u, x), r: x.vr + 18, max: 0.45 }),
           onEnd: () => { if (!alive(e) && tierOf(u, 'crescentCut') >= 3) { const nx = opponents(w, u).filter((o) => dist(o.x, o.y, u.x, u.y) < 260).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0]; if (nx) after(u, 0.1, () => { if (!u.act) strike(nx, n + 1); }); } } });
       };

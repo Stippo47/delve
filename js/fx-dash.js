@@ -55,10 +55,16 @@ DRAW2.dashRibbon = (ctx, f, w, layer) => {
   else if (!R.hold) { while (i0 < P.length - 2 && now - P[i0].t > hang) i0++; }
   const n = P.length - i0; if (n < 2) return;
   const th = f.th * (R.rel != null ? 1 - 0.4 * k01((now - R.rel) / f.life) : 1), [main, core] = f.col;
+  if (f.lance) { // a spear's point runs straight down its own path: one long pointed streak from where it set off to where it is
+    const p0 = P[i0], p1 = P[P.length - 1], a = Math.atan2(p1.y1 - p0.y1, p1.x1 - p0.x1), L = Math.hypot(p1.x1 - p0.x1, p1.y1 - p0.y1);
+    ctx.save(); if (R.rel != null) ctx.globalAlpha *= 1 - 0.6 * k01((now - R.rel) / f.life); streak(ctx, p0.x1, p0.y1, a, 0, L, Math.max(2.5, th * 0.55), main, core); ctx.restore();
+    if (R.rel == null && !R.hold) lit(ctx, () => glowDisc(ctx, p1.x1, p1.y1, 13, '#FFFFFF', 0.55));
+    return;
+  }
   const edge = (k, wk) => { // the band between the point's path and a line wk * th inside it, from the tail to the head
     ctx.beginPath();
     for (let i = i0; i < P.length; i++) { const p = P[i]; ctx.lineTo(p.x1, p.y1); }
-    for (let i = P.length - 1; i >= i0; i--) { const p = P[i], s = (i - i0) / (n - 1), L = Math.hypot(p.x0 - p.x1, p.y0 - p.y1) || 1, t = Math.min(L * 0.8, th * wk * Math.pow(s, 0.8));
+    for (let i = P.length - 1; i >= i0; i--) { const p = P[i], s = (i - i0) / (n - 1), L = Math.hypot(p.x0 - p.x1, p.y0 - p.y1) || 1, t = Math.min(L * 0.8, th * wk * Math.pow(s, 0.8) * (s > 0.86 ? Math.sqrt(Math.max(0, 1 - ((s - 0.86) / 0.14) ** 2)) : 1)); // (fattest near the head, a point at each end)
       ctx.lineTo(p.x1 + (p.x0 - p.x1) / L * t, p.y1 + (p.y0 - p.y1) / L * t); }
     ctx.closePath(); };
   ctx.save(); if (R.rel != null) ctx.globalAlpha *= 1 - 0.5 * k01((now - R.rel) / f.life);
@@ -181,4 +187,11 @@ DRAW2.dashClaws = (ctx, f, w, layer) => {
     const off = i * r * 0.62, b = back + i * 0.1, L = r * 3.1, ox = f.x - Math.sin(f.a) * off + Math.cos(f.a) * r * 1.4, oy = f.y + Math.cos(f.a) * off + Math.sin(f.a) * r * 1.4;
     streak(ctx, ox, oy, b, L * g * 0.25 * k, L * g, 5.2 * (1 - 0.3 * k), main, core); }
   ctx.restore();
+};
+// Backstab's cross: two cuts crossing on the one struck, the second a breath after the first, and a flash under them.
+DRAW2.dashCross = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), r = f.r || 22, [main, core] = f.col || ['#D9C8FF', '#FFFFFF'];
+  if (k < 0.3) lit(ctx, () => glowDisc(ctx, f.x, f.y, r * 2, main, 0.8 * (1 - k / 0.3)));
+  for (const sd of [-1, 1]) { const a = f.a + sd * 0.8, q = easeOut(k01((k - (sd > 0 ? 0.12 : 0)) / 0.35)), fade = k01((1 - k) / 0.45);
+    if (q <= 0) continue; ctx.save(); ctx.globalAlpha *= fade; streak(ctx, f.x - Math.cos(a) * r * 1.6, f.y - Math.sin(a) * r * 1.6, a, 0, r * 3.2 * q, 6.5, main, core); ctx.restore(); }
 };

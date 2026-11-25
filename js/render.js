@@ -587,6 +587,7 @@ function washesOf(u, w) {
   if (wet > 0.05) out.push(['#3F8FD8', 0.1 + 0.22 * wet]);
   if (shock > 0.05 && Math.sin(w.time * 31 + u.id * 3) > 0.55) out.push(['#FFF3A0', 0.35 + 0.4 * shock]);
   if (u.ethereal && !u.hiddenIn) out.push(['#BFE6FF', 0.45]);
+  { const dv = u.act && u.act.dv; if (dv && dv.body && dv.body.wash) out.push(dv.body.wash); } // round 18 (lane dash18): a dash's own wash (the Shade's blinks: a shadow)
   // buffs show on the body itself, never as a ring round it (round 8)
   for (const b of u.buffs || []) {
     if (b.id === 'rage') out.push(['#FF3A2A', 0.18 + 0.12 * Math.sin(w.time * 10 + u.id)]);
@@ -706,7 +707,7 @@ function dashGhosts(ctx, u, w, set, sizeU, DV) {
   }
   const tr = u._dvTrail;
   if (tr) { while (tr.length && T - tr[0].t > 0.3) tr.shift(); if (!tr.length) u._dvTrail = null;
-    for (const p of tr) { const age = (T - p.t) / 0.3; if (age < 0.08) continue; one(p.x, p.y, p.f, 0.5 * (1 - age), p.col); } }
+    for (const p of tr) { const age = (T - p.t) / 0.3; if (age < 0.06) continue; one(p.x, p.y, p.f, 0.72 * (1 - age), p.col); } }
   if (u.dvStamps) { u.dvStamps = u.dvStamps.filter((s) => T - s.t0 < s.life);
     for (const s of u.dvStamps) { const age = T - s.t0, q = age / s.life; one(s.x + s.vx * age * (1 - q * 0.5), s.y + s.vy * age * (1 - q * 0.5), s.f, s.a * (1 - q) * (1 - q), s.col); } }
 }

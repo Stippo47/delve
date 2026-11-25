@@ -752,6 +752,10 @@ export function drawSigAir(ctx, f, w) {
       castFlash(ctx, f, k, el); break;
     case 'backstab': { // round 9: she goes in the smoke left behind (a body, puddles.js) and comes out of a different
       // shadow: wisps of dark violet pulled in to the spot behind the target, then a sharp pop, and the cross of two cuts
+      // (round 18, lane dash18: she runs round it now, dashes.js hook: the wisps as she goes in; the cross is drawn when
+      // her cut lands, fx-dash.js dashCross)
+      if (f._hook == null) f._hook = !!(u && u.act && u.act.dv);
+      if (f._hook && k >= 0.3) break;
       if (k < 0.3) { const q = k / 0.3;
         for (let i = 0; i < 10; i++) { const b = i / 10 * TAU + seed, d = 50 * (1 - easeOut(q)) + 6;
           ctx.save(); ctx.globalAlpha *= 1 - q * 0.5; streak(ctx, ux0 + Math.cos(b) * (d + 18), uy0 + Math.sin(b) * (d + 18), b + Math.PI, 0, 18, 3.2, i % 2 ? '#5A4A7A' : '#2E2440', '#9B86C9'); ctx.restore(); } }

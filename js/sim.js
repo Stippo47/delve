@@ -2111,3 +2111,4 @@ export function step(w, dt) {
 }
 
 export { alive, opponents, allies, hpRatio, wake, puff, textU, goalVec, steer, drive, blocked, updateFacing, meleeSwing, sparks, flames, kill, dangerEscape, fearOf };
+export { useAbility as unitAbility }; // (round 18, lane dash18: a plain unit's own ability, set off by hand: tools/dash18/clips.mjs)

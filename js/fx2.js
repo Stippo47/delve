@@ -210,7 +210,11 @@ DRAW.coinPop = (ctx, f, w, layer) => {
 // on the floor (puddles.js merges the bodies of a kind into one, with one outline), thinning away behind her
 DRAW.shadowTrail = (ctx, f, w, layer) => {
   if (layer !== 'ground' || !f.unit) return; const u = f.unit;
-  if (f.t < f.max - 0.9 && (!f.pts.length || Math.hypot(u.x - f.pts[f.pts.length - 1].x, u.y - f.pts[f.pts.length - 1].y) > 9)) f.pts.push({ x: u.x, y: u.y, t: f.t });
+  if (f.t < f.max - 0.9 && (!f.pts.length || Math.hypot(u.x - f.pts[f.pts.length - 1].x, u.y - f.pts[f.pts.length - 1].y) > 9)) {
+    // (round 18, lane dash18: she blinks now, dashes.js: a long step between two frames is filled in, so the trail stays one body)
+    const l = f.pts[f.pts.length - 1], d = l ? Math.hypot(u.x - l.x, u.y - l.y) : 0, n = l && d > 22 && d < 400 ? Math.min(14, Math.ceil(d / 16)) : 1;
+    for (let i = 1; i <= n; i++) f.pts.push({ x: l && n > 1 ? l.x + (u.x - l.x) * i / n : u.x, y: l && n > 1 ? l.y + (u.y - l.y) * i / n : u.y, t: f.t });
+  }
   f.pts.forEach((p, i) => { const a = k01(1 - (f.t - p.t) / 0.9); if (a > 0.02) drawPuddle(ctx, 'smoke', p.x, p.y, u.vr * (0.55 + 0.45 * a), w.time, a, i * 13 + 1); });
 };
 // Blackout: a pool of darkness on the floor with wisps at its edge (no ring)
