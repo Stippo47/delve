@@ -67,6 +67,26 @@ for (const [name, cs] of Object.entries(by)) for (const d of DUNGEONS) {
 }
 line();
 
+// ---------------------------------------------------------------- gear: when the first trinket, the 4th hero, trinket levels
+line('## Gear and gold (median over seeds)');
+line();
+line('| Strategy | First trinket (run) | Trinkets bought by the Warren boss | Trinket levels bought by then | First hero bought (run, who) | Gold made a run (Wildwood) | Kept a run (Wildwood) |');
+line('|---|---|---|---|---|---|---|');
+for (const [name, cs] of Object.entries(by)) {
+  const ft = [], tb = [], tl = [], hb = [], mk = [], kp = [], dr = [];
+  for (const c of cs) {
+    const wb = (c.events.find((e) => /^warren boss/.test(e.s)) || {}).run || c.runs.length;
+    const r1 = c.runs.find((r) => r.camp.bought.some((b) => /^[a-z]+:[a-zA-Z]+$/.test(b) && !b.startsWith('hero:') && !b.startsWith('lv')));
+    ft.push(r1 ? r1.i : null);
+    tb.push(c.runs.filter((r) => r.i <= wb).reduce((a, r) => a + r.camp.bought.filter((b) => !b.startsWith('hero:') && !b.startsWith('lv')).length, 0));
+    tl.push(c.runs.filter((r) => r.i <= wb).reduce((a, r) => a + r.camp.bought.filter((b) => b.startsWith('lv')).length, 0));
+    const h = c.runs.find((r) => r.camp.bought.some((b) => b.startsWith('hero:'))); hb.push(h ? `${h.i} ${h.camp.bought.find((b) => b.startsWith('hero:')).slice(5)}` : '–');
+    const ww = c.runs.filter((r) => r.theme === 'wildwood'); mk.push(mean(ww.map((r) => r.gold.raw))); kp.push(mean(ww.map((r) => r.gold.kept))); dr.push(mean(c.runs.map((r) => r.drank)));
+  }
+  line(`| ${name} | ${f1(med(ft), 0)} | ${f1(med(tb), 0)} | ${f1(med(tl), 0)} | ${hb.join('; ')} | ${f1(med(mk), 0)} | ${f1(med(kp), 0)} |`);
+}
+line();
+
 // ---------------------------------------------------------------- the curve, room by room
 // For each dungeon and room position: the enemies' strength there (per foe, from enemyMult), the party's measured power
 // (per hero, a fresh Archer = 1) when it got there, their ratio, and what the room cost.

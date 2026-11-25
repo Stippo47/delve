@@ -18,7 +18,7 @@ const { freshSave } = await import('../../js/save.js');
 const { alive } = await import('../../js/sim.js');
 const P = await import('../../js/progress.js');
 const { STRATS, JOIN, HERO_BUY, TRINKET_PREF } = await import('./strategies.mjs');
-const { probe } = await import('./probe.mjs');
+const { probe, PROBE_ERRORS } = await import('./probe.mjs');
 const S = STRATS[NAME]; if (!S) { console.error('no strategy ' + NAME); process.exit(2); }
 const DT = 1 / 60;
 const errors = [];
@@ -223,7 +223,7 @@ for (let i = 0; i < RUNS; i++) {
   const cleared = Object.values(save.dungeons).filter((d) => d.cleared > 0).length;
   if (cleared >= UNTIL) break;
 }
-out.errors = errors;
+out.errors = errors; out.probeErrors = PROBE_ERRORS;
 out.final = { gold: save.gold, slots: save.slots, heroes: Object.fromEntries(Object.entries(save.heroes).filter(([, h]) => h.owned).map(([k, h]) => [k, { lv: h.level, nodes: h.nodes, trinkets: h.trinkets }])),
   dungeons: save.dungeons, tlv: save.tlv, bag: save.trinkets };
 fs.writeFileSync(OUT, JSON.stringify(out));

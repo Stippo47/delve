@@ -16,6 +16,7 @@ const { newStats } = await import('../../js/stats.js');
 const { setSeed } = await import('../../js/util.js');
 
 const DT = 1 / 60;
+export const PROBE_ERRORS = [];
 const PACK = ['goblin', 'goblin', 'goblin', 'wolf', 'wolf'];
 function fight(save, k, trinkets, harmless, secs, mult = 1) {
   const w = battleRoom('wildwood', { W: 1280, H: 960, obstacles: 0 });
@@ -31,7 +32,8 @@ function fight(save, k, trinkets, harmless, secs, mult = 1) {
   });
   let t = 0;
   while (t < secs) {
-    step(w, DT); t += DT;
+    try { step(w, DT); } catch (e) { PROBE_ERRORS.push(String(e && e.message)); break; } // (a game error: the fight ends there)
+    t += DT;
     if (!alive(h) || h.downed) break;
   }
   const dealt = foes.reduce((a, u) => a + (u.maxHp - Math.max(0, u.hp)), 0);

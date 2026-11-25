@@ -1,16 +1,14 @@
 // Round 16, lane play16: the report's charts as PNGs (docs/audit/play16/), drawn on a canvas in headless Chromium.
 //   node tools/play16/charts.mjs   (after analyze.mjs: reads docs/audit/data/play16/summary.json and the campaigns)
 import fs from 'node:fs';
-import { createRequire } from 'node:module';
-const require = createRequire(import.meta.url);
-const { chromium } = require('playwright');
+import { openEdge } from '../edge.mjs'; // (headless Edge over CDP, as the repo's other picture tools)
 const DIR = 'docs/audit/data/play16', OUT = 'docs/audit/play16';
 const S = JSON.parse(fs.readFileSync(DIR + '/summary.json', 'utf8'));
 const SERIES = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#6250d6', '#e34948'];
 
 // a line chart spec: { title, sub, xLabels (every n-th shown), xTitle, yTitle, series: [{ name, data: [y|null] }], bands: [{ from, to, label }], hline }
 function page(spec) {
-  return `<!doctype html><html><body style="margin:0;background:#fcfcfb"><canvas id="c" width="1200" height="680"></canvas><script>
+  return `<!doctype html><html><body style="margin:0;background:#fcfcfb"><canvas id="c" width="1200" height="680"></canvas><script>(() => {
 const spec = ${JSON.stringify(spec)}, COL = ${JSON.stringify(SERIES)};
 const c = document.getElementById('c'), g = c.getContext('2d');
 const W = 1200, H = 680, L = 90, R = 190, T = 96, B = 92;
@@ -31,7 +29,7 @@ if (spec.hline != null) { g.strokeStyle = '#8a8983'; g.setLineDash([6, 5]); g.be
   g.textAlign = 'left'; g.fillText(spec.hlineLabel || '', L + 6, Y(spec.hline) - 7); }
 g.textAlign = 'center';
 const every = spec.xEvery || 1;
-spec.xLabels.forEach((s, i) => { if (i % every === 0 || i === n - 1) g.fillText(s, X(i), H - B + 24); });
+spec.xLabels.forEach((s, i) => { if (i % every === 0 || (i === n - 1 && (n - 1) % every > every / 2)) g.fillText(s, X(i), H - B + 24); });
 g.fillText(spec.xTitle || '', L + (W - L - R) / 2, H - 28);
 g.save(); g.translate(26, T + (H - T - B) / 2); g.rotate(-Math.PI / 2); g.fillText(spec.yTitle || '', 0, 0); g.restore();
 // lines
@@ -44,7 +42,7 @@ spec.series.forEach((s, k) => {
 // legend (and direct labels at the line ends)
 g.textAlign = 'left'; g.font = '16px system-ui';
 spec.series.forEach((s, k) => { const y = T + 10 + k * 28; g.fillStyle = COL[k]; g.fillRect(W - R + 22, y - 4, 22, 4); g.fillStyle = '#0b0b0b'; g.fillText(s.name, W - R + 52, y + 2); });
-</script></body></html>`;
+})();</script></body></html>`;
 }
 
 const camps = fs.readdirSync(DIR).filter((f) => /-s\d+\.json$/.test(f)).map((f) => JSON.parse(fs.readFileSync(DIR + '/' + f, 'utf8')));
@@ -65,8 +63,8 @@ const charts = [];
 {
   const ds = ['wildwood', 'warren', 'sewers'], labels = [], bands = [], a = [], b = [];
   ds.forEach((d, j) => { bands.push({ from: j * 21, to: j * 21 + 20, label: { wildwood: 'Wildwood', warren: 'Warren', sewers: 'Sewers' }[d] });
-    for (let p = 0; p < 21; p++) { labels.push(`${(p / 7 | 0) + 1}.${p % 7 + 1}`); const x = S.curves['baseline:' + d][p], y = S.curves['solo:' + d][p]; a.push(x && x.n ? x.takenFirst ?? x.taken : null); b.push(y && y.n ? y.takenFirst ?? y.taken : null); } });
-  charts.push(['curve-damage.png', { title: 'What a fight room costs, the first time the party gets there', sub: 'Damage taken in a fight room as a share of the party\'s full health (healing makes more than 100% possible). Median of 4 seeds.',
+    for (let p = 0; p < 21; p++) { labels.push(`${(p / 7 | 0) + 1}.${p % 7 + 1}`); const x = S.curves['baseline:' + d][p], y = S.curves['solo:' + d][p]; a.push(x && x.n ? x.taken : null); b.push(y && y.n ? y.taken : null); } });
+  charts.push(['curve-damage.png', { title: 'What a fight room costs', sub: 'Damage taken in a fight room as a share of the party\'s full health (healing makes more than 100% possible). Median of 4 seeds.',
     xLabels: labels, xEvery: 7, xTitle: 'Floor.room', yTitle: 'Damage taken', yFmt: 'pct', bands, dots: true, yMin: 0,
     series: [{ name: 'Archer + seats', data: a.map((v, i) => (i % 7 === 6 ? null : v)) }, { name: 'Lone Archer', data: b.map((v, i) => (i % 7 === 6 ? null : v)) }] }]);
 }
@@ -90,8 +88,10 @@ const charts = [];
   charts.push(['campaign-sawtooth.png', { title: 'One campaign as played (Archer + seats, seed 1)', sub: 'Every room in the order played: enemy strength per foe ÷ party power per hero. Each run climbs; camp drops it again.',
     xLabels: labels, xEvery: 60, xTitle: 'Rooms played, in order', yTitle: 'Enemy ÷ hero', bands, yMin: 0, series: [{ name: 'Enemy ÷ hero', data: ratio }] }]);
 }
-const browser = await chromium.launch();
-const pg = await browser.newPage({ viewport: { width: 1200, height: 680 } });
+const edge = await openEdge();
+const ctx = edge.browser.contexts()[0] || await edge.browser.newContext();
+const pg = await ctx.newPage(); await pg.setViewportSize({ width: 1200, height: 680 });
 fs.mkdirSync(OUT, { recursive: true });
+pg.on('pageerror', (e) => console.log('page error', e.message));
 for (const [file, spec] of charts) { await pg.setContent(page(spec)); await pg.waitForTimeout(50); await (await pg.$('#c')).screenshot({ path: OUT + '/' + file }); console.log('wrote', OUT + '/' + file); }
-await browser.close();
+await edge.close();
