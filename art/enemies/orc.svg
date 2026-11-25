@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 11) of design/class-round11/enemies/greenskin-orc.svg -->
 <!-- ORC (round 5): grass-green skin, no eyes; heavy brow, a big underbite jaw with two tusks coming out of the mouth (round 7), a wider mouth (round 8), the tusks at its corners (round 10), a black topknot, a thick tail of hair falling back from it to a tuft, lying over the head (round 11: no hair tie), a brown fur mantle, a big cleaver. Parts: #arm-r (cleaver + fist, before #body), #body, #back (the tail of hair and the knot, after #body: on top of the head), #arm-l (free fist). Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#6A3E26"/><stop offset="1" stop-color="#40241A"/></linearGradient>
 <path id="p2" d="M-1 -25 H1 A4 4 0 0 1 5 -21 V1 A4 4 0 0 1 1 5 H-1 A4 4 0 0 1 -5 1 V-21 A4 4 0 0 1 -1 -25 Z" transform="translate(154 126) rotate(18)"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -57,7 +56,7 @@
 <path id="p52" d="M-15.7 -8 A4.2 4.2 0 1 0 -7.3 -8 A4.2 4.2 0 1 0 -15.7 -8 Z M-15.7 0 A4.2 4.2 0 1 0 -7.3 0 A4.2 4.2 0 1 0 -15.7 0 Z M-15.7 8 A4.2 4.2 0 1 0 -7.3 8 A4.2 4.2 0 1 0 -15.7 8 Z" transform="translate(44 146) rotate(-6)"/>
 <clipPath id="c53"><use href="#p52"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="arm-r" data-pivot="154 110"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

@@ -17,7 +17,7 @@ export const HEROES2 = {
     blurb: 'A greatsword held in both hands, and forty years of knowing where to put it.',
     fun: 'Has outlived three kings, two dragons and every sergeant who ever shouted at him. Still gets up at dawn.',
     stats: { hp: 165, speed: 50, r: 34, vr: 24, turn: 3, accel: 160, face: 3.2, mass: 2.4, range: 30, atkCd: 1.5, dmg: 15, knock: 190, arc: 2.3 },
-    weapon: 'great',
+    weapon: 'great', style: { tip: [43.4, 203.4], tipBase: [81.7, 171.3] }, // round 19 (melee19): the cut drawn along the blade (fxkit tipSlash)
     attack: { name: 'Greatsword', anim: 'swing', desc: 'A slow, wide two-handed cut in front.' },
     abilities: [
       { id: 'greatSweep', name: 'Great Sweep', cd: 8, tags: 'ds', glyph: 'swirl', desc: 'Draws the greatsword back, then sweeps it round in one huge arc in front of him.',
@@ -35,7 +35,7 @@ export const HEROES2 = {
     blurb: 'Kite shield, leaf sword, perfect manners. Answers every blow.',
     fun: 'Wears the tiara into battle because nobody has yet been brave enough to tell her not to.',
     stats: { hp: 155, speed: 58, r: 33, vr: 23, turn: 3.6, accel: 190, face: 3.8, mass: 2, range: 24, atkCd: 1.0, dmg: 11, knock: 120, arc: 1.6 },
-    weapon: 'blade', style: { hand: 'arm-l', off: 'shield', lefty: true }, // round 13: "Should swipe the opposite way"; round 19: "She swings her sword the wrong way. Out instead of in": the arm cuts in across her (no backhand), the arc with it
+    weapon: 'blade', style: { hand: 'arm-l', off: 'shield', lefty: true, swingAmp: 1.6, tip: [90.3, 204.7], tipBase: [57.8, 156.6] }, // round 13: "Should swipe the opposite way"; round 19: "She swings her sword the wrong way. Out instead of in": the arm cuts in across her (no backhand), the arc with it
     attack: { name: 'Leaf sword', anim: 'swing', desc: 'A quick, neat backhand cut.' },
     abilities: [
       { id: 'riposte', name: 'Riposte', cd: 9, tags: 'ds', glyph: 'shield', desc: 'Raises the shield; every blow it stops from the front is answered with a thrust.',
@@ -53,7 +53,7 @@ export const HEROES2 = {
     fun: 'The wings on the helm are not real. Nobody has told the helm.',
     stats: { hp: 175, speed: 58, r: 34, vr: 24, turn: 3.4, accel: 180, face: 3.6, mass: 2.2, range: 24, atkCd: 1.3, dmg: 16, knock: 190, arc: 1.7, aoe: 40, aoeAt: 0.9, windup: 0.2 }, // round 19: "a bit more forwards ... Maybe wind up"
     // round 13: "Flip his sprite. Should be an aoe slam on the ground like the berserker" (his own hammer slam, fx2 SLAM2)
-    weapon: 'heavy', style: { hand: 'arm-l', off: 'shield', flip: true, slam: 'hammer', slamPose: true },
+    weapon: 'heavy', style: { hand: 'arm-l', off: 'shield', flip: true, slam: 'hammer', slamPose: true, slamS: { r: 0.4, dy: 58 }, tip: [73.8, 180.2], tipPart: 'arm-l-hammer' },
     attack: { name: 'Warhammer', anim: 'swing', desc: 'A heavy hammer slammed into the floor in front: everything there is hit.' },
     abilities: [
       { id: 'swoop', name: 'Swoop', cd: 11, tags: 'ds', glyph: 'up', desc: 'A gust bursts round him as he beats his wings and flies to the ally in the most trouble; he lands spinning, and a swirl of wind whirls their attackers and throws them back.',
@@ -70,7 +70,7 @@ export const HEROES2 = {
     blurb: 'A winged spear and a big shield. Nothing gets past the end of the spear.',
     fun: 'Has stood in the same doorway for so long that the door now leans on him.',
     stats: { hp: 160, speed: 52, r: 34, vr: 24, turn: 3.1, accel: 160, face: 3.3, mass: 2.4, range: 40, atkCd: 1.2, dmg: 12, knock: 170, arc: 0.9 },
-    weapon: 'thrust', style: { off: 'shield', reach0: 1.15, stab: 1.7, stabX: -38 }, // round 19: the stab straight down the spear, drawn along it // round 13: "Starts too close to them" (the stab starts out at the spear's head)
+    weapon: 'thrust', style: { off: 'shield', reach0: 1.15, stab: 1.7, stabX: -38, tip: [184.3, 203.5] }, // round 19: the stab straight down the spear, drawn along it // round 13: "Starts too close to them" (the stab starts out at the spear's head)
     attack: { name: 'Winged spear', anim: 'thrust', desc: 'A long thrust that reaches past the front line.' },
     abilities: [
       { id: 'brace', name: 'Brace', cd: 10, tags: 'ds', glyph: 'shield', desc: 'Sets the spear and waits: whatever comes into its reach is struck hard and stopped dead.',
@@ -87,7 +87,7 @@ export const HEROES2 = {
     blurb: 'A studded club and a bear on his back. Hits like the bear did.',
     fun: 'The bear was not killed. The bear lent him the coat and is waiting outside.',
     stats: { hp: 135, speed: 60, r: 34, vr: 24, turn: 3.4, accel: 190, face: 3.6, mass: 2, range: 26, atkCd: 1.35, dmg: 16, knock: 170, arc: 1.8 },
-    weapon: 'heavy',
+    weapon: 'heavy', style: { tip: [105.3, 189.8], tipBase: [146, 156], tipPart: 'arm-r-club', slashTh: 0.6 }, // round 19 (melee19): the club's blow drawn along the club
     attack: { name: 'Studded club', anim: 'swing', desc: 'A heavy club blow.' },
     abilities: [
       { id: 'maul', name: 'Maul', cd: 8, tags: 'ds', glyph: 'fist', desc: 'Raises the club high and brings it straight down on one enemy, cratering the floor.',
@@ -104,8 +104,8 @@ export const HEROES2 = {
     name: 'Warhelm', art: 'art/heroes/r12/warhelm.svg', role: 'melee', unlock: { gems: 2 },
     blurb: 'A beard, a helm, a hammer the size of a sheep. Knocks things a long way.',
     fun: 'Nobody has seen his face. There is a rumour it is also a helm.',
-    stats: { hp: 140, speed: 56, r: 34, vr: 24, turn: 3.2, accel: 170, face: 3.4, mass: 2.2, range: 28, atkCd: 1.45, dmg: 17, knock: 230, arc: 1.8, aoe: 46, aoeAt: 0.85, windup: 0.2 }, // round 19: "Same slam as griffon"
-    weapon: 'heavy', style: { hand: 'arm-l', slam: 'hammer', slamPose: true }, // round 13: "Needs to do a slam on the ground"
+    stats: { hp: 140, speed: 56, r: 34, vr: 24, turn: 3.2, accel: 170, face: 3.4, mass: 2.2, range: 28, atkCd: 1.45, dmg: 17, knock: 230, arc: 1.8, aoe: 46, aoeAt: 0.75, windup: 0.2 }, // round 19: "Same slam as griffon"
+    weapon: 'heavy', style: { hand: 'arm-l', slam: 'hammer', slamPose: true, slamS: { r: 0.74, dy: 60 }, tip: [47.9, 188.5], tipPart: 'arm-l-hammer' }, // round 13: "Needs to do a slam on the ground"
     attack: { name: 'Warhammer', anim: 'swing', desc: 'A huge hammer slammed into the floor in front, knocking back everything there.' },
     abilities: [
       { id: 'thunderBlow', name: 'Thunder Blow', cd: 9, tags: 'ds', glyph: 'fist', desc: 'Lunges and headbutts the enemy in front: a heavy blow that staggers it and throws it far back.',
@@ -163,7 +163,7 @@ export const HEROES2 = {
     blurb: 'A pitchfork, a straw hat, and the shoulders of a man who throws hay all day.',
     fun: 'Treats goblins the way he treats hay: in forkfuls, over the shoulder, without looking.',
     stats: { hp: 145, speed: 60, r: 32, vr: 22, turn: 3.8, accel: 200, face: 4, mass: 1.6, range: 34, atkCd: 1.1, dmg: 13, knock: 150, arc: 1 },
-    weapon: 'fork', // round 13: "Should show 3 stab slashes. Should dash forwards slightly too" (fxkit: three tines; kits2: a lunge)
+    weapon: 'fork', style: { tip: [108.6, 201.2], tines: 3 }, // round 19 (melee19): the three tines' streaks run from the fork's real head // round 13: "Should show 3 stab slashes. Should dash forwards slightly too" (fxkit: three tines; kits2: a lunge)
     attack: { name: 'Pitchfork', anim: 'thrust', desc: 'A lunging jab with the fork: three tines.' },
     summons: { // Fork Charge's slot: the hay bale he rides (kits2.js BRAINS.haybale; drawn in fx2.js)
       haybale: { name: 'Hay bale', art: 'art/summons/haybale.svg', headR: 76, ownLook: true, pass: true, r: 34, vr: 30, turn: 2, accel: 200, face: 2, mass: 6, hp: 45, speed: 60, role: 'melee', range: 0, atkCd: 999, dmg: 0, res: { burn: 3 } },

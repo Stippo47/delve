@@ -1,0 +1,6 @@
+tier 1, rank 0: each ability switched off in turn (the same parties and seeds), 0 errors
+hero          ability           rooms with  worth   share of dmg  hero dmg/s  party taken/s  party heal/s  party downs
+bearskin      (all on)          11.08           attack  58%     6.15         3.66          1.67       5.58   (12 runs)
+              maul                      +1.33           25%    +1.26        +0.18         -0.28       +1.75
+              hibernate                 +1.67            0%    +1.32        -0.67         +0.76       -0.42
+              bearRoar                  +1.25           17%    +0.63        +0.21         -0.36       +1.08

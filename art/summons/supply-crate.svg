@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 12, not wired yet) of design/class-round12/props/supply-crate.svg -->
 <!-- SUPPLY CRATE (the Quartermaster's; round 12): a wooden crate seen from straight above, built like the rooms' crates (sloped sides, a planked lid, iron corners), tied with rope and marked with the red cross of supplies. One part (#body) unless said. Front = DOWN (+y), centre (100,100); the outline comes from the #outline filter. Drawn at 0.622 of the box (each part carries the scale; pivots are in the box's own frame), so its outline is the heroes' weight: give the kind headR 56 (vr 22). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
 <path id="s1" d="M 31 22 H 169 A 9 9 0 0 1 178 31 V 169 A 9 9 0 0 1 169 178 H 31 A 9 9 0 0 1 22 169 V 31 A 9 9 0 0 1 31 22 Z"/>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#886333"/><stop offset="1" stop-color="#6C4E26"/></linearGradient>
@@ -37,7 +36,7 @@
 <linearGradient id="g11" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#CE5851"/><stop offset="1" stop-color="#B2362E"/></linearGradient>
 <linearGradient id="g12" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5F1B17" stop-opacity="0"/><stop offset="1" stop-color="#5F1B17" stop-opacity="0.42"/></linearGradient>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="body" transform="translate(100 100) scale(0.622) translate(-100 -100)">
 <use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/>
 <use href="#s2" fill="url(#g3)"/><use href="#s2" fill="url(#g4)"/><g clip-path="url(#c2)"><path d="M 34 68 L 166 68 M 34 100 L 166 100 M 34 132 L 166 132" fill="none" stroke="#7A5A30" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/><path d="M 42 48 A 24 6 0 1 0 90 48 A 24 6 0 1 0 42 48 Z" fill="#FFFFF4" opacity="0.3"/></g>

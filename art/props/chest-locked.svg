@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
   <!-- CHEST, locked (needs a key): darker wood, iron bands with studs instead of gold, and a big brass padlock (key colour) hanging over the seam. 48 room units wide. Stays upright on screen. -->
   <defs>
-    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <linearGradient id="gWood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#86603F"/><stop offset="0.38" stop-color="#B38962"/><stop offset="1" stop-color="#6E4C32"/></linearGradient>
     <linearGradient id="gWoodDk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7E5636"/><stop offset="1" stop-color="#5C3C24"/></linearGradient>
     <linearGradient id="gBand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#AEB4BE"/><stop offset="1" stop-color="#666B75"/></linearGradient>
@@ -12,7 +11,7 @@
     <path id="front" d="M44 108 H156 V148 A10 10 0 0 1 146 158 H54 A10 10 0 0 1 44 148 Z"/>
     <clipPath id="frontC"><use href="#front"/></clipPath>
   </defs>
-  <g id="sprite" filter="url(#outline)">
+  <g id="sprite">
     <use href="#front" fill="url(#gWoodDk)"/>
     <g clip-path="url(#frontC)"><rect x="56" y="20" width="12" height="150" fill="url(#gBand)"/><rect x="132" y="20" width="12" height="150" fill="url(#gBand)"/><rect x="36" y="110" width="130" height="50" fill="url(#shX)"/></g>
     <use href="#lid" fill="url(#gWood)"/>

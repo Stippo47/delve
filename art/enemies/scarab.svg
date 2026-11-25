@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 9) of design/class-round9/enemies/dunes-scarab.svg -->
 <!-- SCARAB (round 9): a scarab beetle seen from above in round 8's creature build: an iridescent green shell (teal-green going to blue at the back, a bright sheen) split down the middle into its two wing cases, a rounded shield behind its head, a small head with two curved mandibles, six short dark legs (the front pair in the arm parts, they jab when it bites). No eyes. The golden scarab is this art turned gold (js/dunes.js). Parts: #back (the four back legs), #arm-l / #arm-r (the front legs), #body. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
 <linearGradient id="gScarab" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#7CE0A0"/><stop offset="0.45" stop-color="#2EA27A"/><stop offset="1" stop-color="#1E5E6E"/></linearGradient>
 <path id="s1" d="M 67.5 98.7 C 64.2 96.7 41.6 89.7 36.4 92.1 C 31.3 94.4 24.2 115.2 23.3 118.7 C 22.4 122.1 26.8 123.5 28.7 121.3 C 30.6 119.2 35.4 101.4 39.6 99.9 C 43.8 98.5 61.2 109.4 64.5 109.3 C 67.7 109.1 70.8 100.7 67.5 98.7 Z"/>
@@ -27,7 +26,7 @@
 <path id="s11" d="M 106 164 C 107.6 163.2 114.4 163.9 116 166 C 117.6 168.1 118.8 177.1 118 180 C 117.2 182.9 111.2 188.3 110 188 C 108.8 187.7 109.8 180.1 109 178 C 108.2 175.9 104.4 173.9 104 172 C 103.6 170.1 104.4 164.8 106 164 Z"/>
 <clipPath id="u11"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4"/><use href="#s5"/><use href="#s6"/><use href="#s7"/><use href="#s8"/><use href="#s9"/><use href="#s10"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 100"><!-- back legs -->
 <use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/>
 <use href="#s2" fill="url(#g1)"/><use href="#s2" fill="url(#g2)"/>

@@ -1,6 +1,6 @@
 <!doctype html><html><body style="margin:0;background:#E9E2D0"><canvas id=c></canvas><script type=module>
 import { loadArt, getRig, drawRig, rigHas } from '/js/parts.js';
-const files = ["art/enemies/bandit-axe.svg","art/enemies/bandit-chief.svg","art/enemies/bandit-daggers.svg","art/enemies/bandit-greatsword.svg","art/enemies/bandit-spear.svg","art/enemies/bandit-torch.svg","art/enemies/smith.svg","art/enemies/fallen-angel.svg","art/enemies/herald-fallen.svg","art/enemies/herald-light.svg","art/enemies/chieftain.svg","art/enemies/hobgoblin.svg","art/enemies/rattler-jawless-spear.svg","art/enemies/rattler-loosejaw.svg","art/enemies/brute.svg","art/enemies/lizardman-blade.svg","art/enemies/goblin.svg","art/enemies/orc.svg","art/enemies/bandit.svg","art/enemies/rattler.svg","art/enemies/lizardman.svg","art/enemies/jackal.svg","art/enemies/poacher.svg","art/enemies/rattler-jawless-bow.svg"];
+const files = ["art/heroes/bandit.svg","art/heroes/dame.svg","art/enemies/orc.svg","art/enemies/goblin.svg","art/enemies/rattler.svg","art/enemies/bandit-axe.svg"];
 await Promise.all(files.map((f) => loadArt('/' + f)));
 const S = +(new URLSearchParams(location.search).get('S') || 96), cols = +(new URLSearchParams(location.search).get('cols') || 6), rows = Math.ceil(files.length / cols), c = document.getElementById('c'); c.width = cols * S * 2 + cols * 6; c.height = rows * (S + 16); const g = c.getContext('2d');
 const sets = files.map((f) => getRig('/' + f, S * 2));

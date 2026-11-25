@@ -1,0 +1,123 @@
+{
+  "title": "Round 19: melee heroes, outlines",
+  "topic": "art",
+  "stack": "r19",
+  "order": 1,
+  "priority": 1,
+  "cards": [
+    {
+      "id": "melee",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Melee heroes, your notes",
+      "text": "Old Guard, Dame, Griffon, Bulwark, Warhelm, Bearskin, Haymaker: every 0.19 note. Live in 0.28.0.",
+      "why": "Mark any part that's off. Slashes now follow the weapon's real path, and a struck unit gets a pale wash instead of going solid white.",
+      "videos": [
+        "../../../docs/clips/melee19/bearskin-maul.mp4"
+      ],
+      "parts": [
+        {
+          "id": "oldguard",
+          "title": "Old Guard",
+          "text": "Parry: the greatsword laid flat across his front, blows caught and sent back. Rally: three gold waves and gold light on the floor; hasted friends trail pale blue copies (every Haste now looks like this). Last Stand: whoever is last standing gets it while he's in the party; stronger on him.",
+          "videos": [
+            "../../../docs/clips/melee19/oldguard-parry.mp4",
+            "../../../docs/clips/melee19/oldguard-rally.mp4",
+            "../../../docs/clips/melee19/oldguard-laststand-friend.mp4"
+          ]
+        },
+        {
+          "id": "dame",
+          "title": "Dame",
+          "text": "Her sword sweeps in across her front. Challenge III hastes her as she goes in; the taunted foe wears the red V.",
+          "videos": [
+            "../../../docs/clips/melee19/dame-attack.mp4",
+            "../../../docs/clips/melee19/dame-challenge.mp4"
+          ]
+        },
+        {
+          "id": "griffon",
+          "title": "Griffon",
+          "text": "Hammer raised, then down well forward into a round crater, no cracks (the mystery shape was the old falling hammer head). Stormhammer: the thrown hammer is his own; whirl is a circle; no yellow arrows. Swoop and Wing Guard: wings shaped like his helm wing, about 40% smaller, over him.",
+          "videos": [
+            "../../../docs/clips/melee19/griffon-attack.mp4",
+            "../../../docs/clips/melee19/griffon-hammerThrow.mp4",
+            "../../../docs/clips/melee19/griffon-swoop.mp4",
+            "../../../docs/clips/melee19/griffon-wingShield.mp4"
+          ]
+        },
+        {
+          "id": "bulwark",
+          "title": "Bulwark",
+          "text": "The stab drives straight out along the spear, off to his side; Brace's glint is on the spear head.",
+          "videos": [
+            "../../../docs/clips/melee19/bulwark-attack.mp4",
+            "../../../docs/clips/melee19/bulwark-brace.mp4"
+          ]
+        },
+        {
+          "id": "warhelm",
+          "title": "Warhelm",
+          "text": "Same wind-up and crater as the Griffon; his free hand rests at his side. Skull Splitter: he leaps over them, drawn above, and lands in a wide crater with forked lightning.",
+          "videos": [
+            "../../../docs/clips/melee19/warhelm-attack.mp4",
+            "../../../docs/clips/melee19/warhelm-skullSplitter.mp4"
+          ]
+        },
+        {
+          "id": "bearskin",
+          "title": "Bearskin",
+          "text": "Bear Claws: a pounce, then 3 slower paw swings stepping in (tier III: 5, then a bite flat with him). Hibernate: lies flat, warm glow, big Zs; wakes with a roar. Maul: club overhead, straight down into a crater, no star.",
+          "videos": [
+            "../../../docs/clips/melee19/bearskin-bearRoar3.mp4",
+            "../../../docs/clips/melee19/bearskin-hibernate.mp4",
+            "../../../docs/clips/melee19/bearskin-maul.mp4"
+          ]
+        },
+        {
+          "id": "haymaker",
+          "title": "Haymaker",
+          "text": "Fork centred and pointed ahead. Hay Bale: he rides behind it, no hairs, a straw trail, hay bursting on hits. Toss: the fork goes in low, carries the foe up over his head, then throws it behind him.",
+          "videos": [
+            "../../../docs/clips/melee19/haymaker-attack.mp4",
+            "../../../docs/clips/melee19/haymaker-forkCharge.mp4",
+            "../../../docs/clips/melee19/haymaker-toss.mp4"
+          ]
+        },
+        {
+          "id": "left",
+          "title": "Not quite yet",
+          "text": "The Maul's squash is there but hard to see. Swoop no longer snaps round on landing, but he still turns to face the foes he knocked away."
+        }
+      ]
+    },
+    {
+      "id": "outlines",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "One outline",
+      "text": "Every figure, prop and boss now has the same outline thickness, drawn by the game, not by the art.",
+      "why": "You asked for consistent outlines not built into sprites. The art never had them baked in; the game drew one that grew with the sprite (bees 1.3, heroes 2.5, the Seraph 6). Props had theirs baked in the file. Now one line for all.",
+      "images": [
+        "../../../docs/clips/outline19/sheet-before.png",
+        "../../../docs/clips/outline19/sheet-after.png"
+      ],
+      "videos": [
+        "../../../docs/clips/outline19/room-after.mp4"
+      ]
+    },
+    {
+      "id": "bosses-lighter",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Big bosses look lighter",
+      "text": "With one outline the big bosses (Seraph, Ent, Engine) carry a hero's line and read lighter. Keep?",
+      "why": "It's the rule you asked for; their silhouettes still read on the floor. The other way is one exception: bosses a little thicker.",
+      "pick": "Keep one line for everything.",
+      "videos": [
+        "../../../docs/clips/outline19/seraph-before.mp4",
+        "../../../docs/clips/outline19/seraph-after.mp4"
+      ]
+    }
+  ]
+}

@@ -113,7 +113,7 @@ function taperPath(ctx, [front, tip, half]) {
 function drawChain(ctx, h, w, dt, R) {
   const pieces = [...h.segs.filter((s) => !s.dead && !s.hidden).reverse(), ...(h.hidden ? [] : [h])];
   if (!pieces.length) return;
-  const sets = pieces.map((p) => { const sizeU = p.vr * 220 / (p.def.headR || 60); return { p, sizeU, set: getRig(p.def.art, sizeU * view.scale * view.dpr * 1.04) }; });
+  const sets = pieces.map((p) => { const sizeU = p.vr * 220 / (p.def.headR || 60); return { p, sizeU, set: getRig(p.def.art, sizeU * view.scale * view.dpr * 1.04, sizeU) }; });
   if (sets.some((s) => !s.set)) return; // (still rendering: a fraction of a second)
   const pose = (p) => { if (p !== h) return {}; const q = poseFor(p, w, dt); q.front = { dy: 3 + 3 * Math.sin(w.time * 26 + p.id) * (Math.sin(w.time * 2.3 + p.id) > 0.3 ? 1 : 0) }; return q; }; // (the serpent's tongue flickers now and then)
   const frame = (s) => { ctx.save(); R.unitFrame(ctx, s.p, w); const k = s.sizeU / 220; ctx.scale(k, k); ctx.translate(-100, -100); };

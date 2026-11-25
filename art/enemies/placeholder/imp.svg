@@ -2,7 +2,6 @@
   <!-- PLACEHOLDER (round 7): art the designer marked not good, standing in for the new dungeons until it is redone. -->
 <!-- IMP (round 5), small: orange-red skin, no eyes; little dark horns, pointed ears, a sly wide grin, small bat wings, a thin tail going straight back with a spade tip, a ball of fire in one hand. Parts: #back (wings and tail), #body, #arm-r (free claw), #arm-l (fist + fireball). Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#EA7E50"/><stop offset="1" stop-color="#AA533A"/></linearGradient>
 <path id="p2" d="M106 91.5 C107.3 85.8 101.8 67.4 102 58.6 C102.2 49.8 106.8 46.3 107 38.6 C107.2 30.8 104.6 16.5 103 12.3 C101.3 8 97.7 8.7 97 12.9 C96.4 17.2 99.8 30.5 99 38 C98.2 45.6 92.8 48.9 92 58 C91.2 67.1 91.7 87 94 92.5 C96.4 98.1 104.6 97.1 106 91.5 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -59,7 +58,7 @@
 <radialGradient id="g54" cx="0.5" cy="0.4" r="0.65"><stop offset="0" stop-color="#FFF2A0" stop-opacity="1"/><stop offset="1" stop-color="#FF7A2A" stop-opacity="1"/></radialGradient>
 <path id="p55" d="M54 146 C58 146 64 152 66 156 C68 160 68 165.3 66 170 C64 174.7 54 184 54 184 C54 184 44 174.7 42 170 C40 165.3 40 160 42 156 C44 152 50 146 54 146 Z"/>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 92"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

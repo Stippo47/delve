@@ -2,7 +2,6 @@
   <!-- PLACEHOLDER (round 7): art the designer marked not good, standing in for the new dungeons until it is redone. -->
 <!-- DEVIL (round 5): crimson skin, no eyes; big black horns curving out and up, a pointed black goatee at the front, dark red bat wings, the tail straight back with a spade tip, a gold trident held low. Parts: #back (wings and tail), #arm-r (trident + fist, before #body), #body, #arm-l (free fist). Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#C8454D"/><stop offset="1" stop-color="#902637"/></linearGradient>
 <path id="p2" d="M106 91.5 C107.3 85.5 101.8 65.5 102 56.3 C102.2 47.1 106.8 44.3 107 36.2 C107.2 28.2 104.6 12.3 103 7.7 C101.3 3 97.7 3.6 97 8.3 C96.4 13 99.8 27.8 99 35.8 C98.2 43.7 92.8 46.3 92 55.7 C91.2 65.2 91.7 86.5 94 92.5 C96.3 98.5 104.7 97.5 106 91.5 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -72,7 +71,7 @@
 <path id="p67" d="M-14.7 -6.5 A4.2 4.2 0 1 0 -6.3 -6.5 A4.2 4.2 0 1 0 -14.7 -6.5 Z M-14.7 0 A4.2 4.2 0 1 0 -6.3 0 A4.2 4.2 0 1 0 -14.7 0 Z M-14.7 6.5 A4.2 4.2 0 1 0 -6.3 6.5 A4.2 4.2 0 1 0 -14.7 6.5 Z" transform="translate(48 142) rotate(-4)"/>
 <clipPath id="c68"><use href="#p67"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 92"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

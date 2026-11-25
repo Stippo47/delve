@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 11) of design/class-round11/enemies/frost-yeti.svg -->
 <!-- YETI (round 9): the troll's body plan in white fur (the designer: "the same shape and fighting style as trolls ... rolls its boulders as large snowballs"): a huge hunched back under a shaggy white coat with a ragged edge, a blue-grey shag over the hump, a small blue-grey face pushed forward under a white fur hood with a ragged fringe, a dark nose, taller than it is wide (round 11), and a wide mouth turned down with two short lower fangs at its corners (round 10), no eyes; long furry arms reaching forward either side of the head, huge blue-grey hands turned in to hold its snowball (a prop of its own in the game, yeti-snowball). Parts: #arm-l, #arm-r (arm and hand, before #body so the coat covers the shoulders), #body. Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#FBFDFF"/><stop offset="1" stop-color="#BCCADA"/></linearGradient>
 <path id="p2" d="M15.1 117.5 C10 122.4 15.9 138.5 19.4 147.5 C22.9 156.6 31.1 175.8 38.1 177.9 C45.1 180.1 63.7 168.3 65.9 162.1 C68.1 155.8 54.5 143.6 52.6 136.5 C50.7 129.3 58.6 117.4 52.9 114.5 C47.3 111.7 20.1 112.5 15.1 117.5 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -41,7 +40,7 @@
 <clipPath id="c36"><use href="#p34"/></clipPath>
 <linearGradient id="g37" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.2"/></linearGradient>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="arm-l" data-pivot="38 116"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

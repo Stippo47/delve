@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 11) of design/class-round11/enemies/greenskin-troll.svg -->
 <!-- TROLL (round 11, head B, the pick, with the round-11 notes: a long nose drawn out to the chin, no mouth, a longer head with a sharper jaw, round ears, a mop of moss hair over the brow; long arms): the round-8 troll with a different head: blue-teal green skin, no eyes, the huge hunched back with its moss-dark patch of hair, big plain fists turned in to hold its boulder (a prop of its own in the game). Parts: #arm-l, #arm-r (arm and fist, before #body), #body. Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#62A794"/><stop offset="1" stop-color="#4A7875"/></linearGradient>
 <path id="p2" d="M20.1 120.1 C16.3 125.7 22.5 144.6 26.2 153.3 C30 162 39 176.6 45.1 177.9 C51.2 179.3 65.6 167.3 66.9 162.1 C68.2 156.8 56 149.6 53.8 142.7 C51.5 135.8 56.9 119.3 51.9 115.9 C46.8 112.5 24 114.5 20.1 120.1 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -45,7 +44,7 @@
 <clipPath id="c40"><use href="#p38"/></clipPath>
 <linearGradient id="g41" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.22"/></linearGradient>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="arm-l" data-pivot="38 116"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

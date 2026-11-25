@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 7) of design/class-round7/enemies/bat.svg: the designer's pick with the round-8 note applied. It stays under placeholder/ because js/foes.js loads it from here. -->
 <!-- BAT (round 5), small: seen from above in flight; a big round furry head with no body behind it (round 7), two big broad pointed ears standing up and out, a small snout with two white fangs, no eyes; membrane wings spread to the sides (scalloped trailing edge, paler bones). Parts: #arm-l / #arm-r (the wings, pivots at the shoulders, so the game flaps them), #body (head and ears). Scaled 0.8. Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#735B6C"/><stop offset="1" stop-color="#473049"/></linearGradient>
 <path id="p2" d="M80 110 C76.2 113.2 51 115.8 44 116 C37 116.2 15.4 113.8 10 112 C4.6 110.2 -10 98 -10 98 C-10 98 5.2 89.4 8 86 C10.8 82.6 18 64 18 64 C18 64 30.8 77.4 34 76 C37.2 74.6 50 50 50 50 C50 50 59.2 70.6 62 72 C64.8 73.4 78 64 78 64 C78 64 81.8 79.4 82 84 C82.2 88.6 83.8 106.8 80 110 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -38,7 +37,7 @@
 <path id="p33" d="M91 146 L97 146 L94 155 Z" transform="translate(100 106) scale(1.28) translate(-100 -112)"/>
 <path id="p34" d="M103 146 L109 146 L106 155 Z" transform="translate(100 106) scale(1.28) translate(-100 -112)"/>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="arm-l" data-pivot="79.2 100"><g transform="translate(100 100) scale(0.8) translate(-100 -100)">
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

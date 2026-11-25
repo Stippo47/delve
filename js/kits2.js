@@ -266,7 +266,7 @@ export const ABILITIES2 = {
       // round 13, the designer: "Get a haste boost when leveled up. Effect remains for a little bit." II: haste, and it
       // all lasts 8 s. (Round 19: "Overall visuals just meh": a gold war cry bursts off him, fx-melee.js warCry.)
       const dur = tier >= 2 ? 8 : 5;
-      k2(w, { draw: 'warCry', unit: u, x: u.x, y: u.y, r: 240, max: 0.8, ab: 'rallyCry' });
+      k2(w, { draw: 'warCry', unit: u, x: u.x, y: u.y, r: 240, max: 1.25, ab: 'rallyCry' });
       for (const a of [u, ...friendsNear(w, u, u.x, u.y, 240)]) {
         a.stunT = 0; a.rootT = 0; a.koT = 0; a.tangledT = 0; a.st.stagger = 0;
         addBuff(a, { id: 'rally', dur, knockImmune: true, glow: '#F2C14E' });
@@ -544,10 +544,10 @@ export const ABILITIES2 = {
       after(u, 0.3, () => {
         if (!alive(t)) return;
         swingMark(w, u, u.r + u.def.range + 14, 0.8, { x: t.x, y: t.y, r: tier >= 3 ? 90 : 46, look: 'maul' });
-        hurt(w, t, dmgOf(u, 2.2), u, { heavy: true, knock: 110, noDodge: true });
+        hurt(w, t, dmgOf(u, 2.2), u, { heavy: true, knock: 20, noDodge: true, noMark: true });
         stun(w, t, tier >= 2 ? 1.6 : 1); w.shake = Math.max(w.shake, 6);
-        if (!t.fixed && !t.def.boss) onUnit(w, t, 'mauled', 0.45, { tick(w2, u2) { const q = 1 - (this.until - w2.time) / 0.45; u2.squish = 0.85 * (1 - q) * (1 - q); } }, (u2) => { u2.squish = 0; });
-        if (tier >= 3) for (const e of foesNear(w, u, t.x, t.y, 90)) if (e !== t) hurt(w, e, dmgOf(u, 0.8), u, { stagger: 50, knock: 140, kAngle: angleTo(t.x, t.y, e.x, e.y), noDodge: true, slam: true });
+        if (!t.fixed && !t.def.boss) onUnit(w, t, 'mauled', 0.7, { tick(w2, u2) { const q = 1 - (this.until - w2.time) / 0.7; u2.squish = 0.9 * (q < 0.5 ? 1 : 1 - (q - 0.5) * 2); } }, (u2) => { u2.squish = 0; }); // (squashed flat, held, then springing back)
+        if (tier >= 3) for (const e of foesNear(w, u, t.x, t.y, 90)) if (e !== t) hurt(w, e, dmgOf(u, 0.8), u, { stagger: 50, knock: 140, kAngle: angleTo(t.x, t.y, e.x, e.y), noDodge: true, slam: true, noMark: true });
       });
     },
     show: { single: true },
@@ -583,7 +583,7 @@ export const ABILITIES2 = {
           return;
         }
         u.sleepT = Math.max(u.sleepT, 0.2); u.deepT = Math.max(u.deepT || 0, 0.2);
-        u.squish = 0.3 + 0.06 * Math.sin((w.time - H.t0) * 3.2); // (round 19: curled up low under the pelt, breathing slowly)
+        u.squish = 0.62 + 0.1 * Math.sin((w.time - H.t0) * 3.2); // (round 19: curled up low under the pelt, breathing slowly)
       },
       taken(w, u, src, amt, o) { if (u.kit.hib) u.kit.hib.took += amt; return amt; },
     },
@@ -606,10 +606,10 @@ export const ABILITIES2 = {
       const swipe = (i) => { if (!alive(u) || !alive(t) || u.stunT > 0) return; const a = ang(u, t); u.facing = a;
         // a step in with the swing: further if it has backed off, a little if it is close
         const gap = dist(u.x, u.y, t.x, t.y) - u.r - t.r, step = 110 + clamp(gap - 4, 0, 50) * 7; u.kx += Math.cos(a) * step; u.ky += Math.sin(a) * step;
-        setAnim(u, 'swing', CLAW_GAP * 0.95); u.atkT = Math.max(u.atkT, CLAW_GAP + 0.2);
+        u.atkT = Math.max(u.atkT, CLAW_GAP + 0.2); const hand = i % 2 ? 'arm-l' : 'arm-r'; u.kit.claw = { t0: w.time, hand }; // (his paw's own swing: meleePose)
         const list = tier >= 2 ? foesNear(w, u, u.x, u.y, u.r + u.def.range + 34).filter((e) => inFront(u, e, 1.7)) : inReach(u, t, 34) ? [t] : [];
-        after(u, 0.07, () => { if (!alive(u)) return; for (const e of list) if (alive(e)) hurt(w, e, k1, u, { knock: 70, kAngle: u.facing, noDodge: true, ab: 'bearRoar' }); });
-        k2(w, { draw: 'clawSwipe', unit: u, x: u.x, y: u.y, side: i % 2 ? 1 : -1, r: u.r + 20, max: 0.32, ab: 'bearRoar' }); };
+        after(u, CLAW_KEYS[2][0] - 0.02, () => { if (!alive(u)) return; for (const e of list) if (alive(e)) hurt(w, e, k1, u, { knock: 70, kAngle: u.facing, noDodge: true, ab: 'bearRoar' }); });
+        k2(w, { draw: 'clawSwipe', unit: u, x: u.x, y: u.y, hand, W: CLAW_KEYS[1][1], S: CLAW_KEYS[2][1], t1: CLAW_KEYS[1][0], t2: CLAW_KEYS[2][0], max: 0.42, ab: 'bearRoar' }); };
       dash(w, u, 'pounce', { t, only: tier >= 2 ? null : t, tell: 0.16, air: 0.32, h: 22, recover: 0.04, rest: 0, dmg: k0, hit: { knock: 20, ab: 'bearRoar' }, col: ['#FFF8F0', '#FFFFFF'],
         land: () => { u.kit.clawsT = w.time + end;
           // his paws take turns (the left one, then the right): his def's style is dual while he claws
@@ -2572,12 +2572,13 @@ BRAINS.haybale = function (w, b, dt) {
     b.hitAt.set(o, w.time); const side = Math.sin(angleTo(b.x, b.y, o.x, o.y) - b.head) > 0 ? 1 : -1;
     hurt(w, o, dmgOf(u, 1.5), u, { knock: 520, kAngle: b.head + side * 0.9, heavy: true, noDodge: true, stagger: b.tier >= 3 ? 40 : 0, ab: 'forkCharge' });
     w.shake = Math.max(w.shake, 3);
-    k2(w, { draw: 'hayBurst', x: (b.x + o.x) / 2, y: (b.y + o.y) / 2, a: b.head + side * 0.9, r: 60, max: 0.7, ab: 'forkCharge' }); // round 19: "burst with hay when hitting someone"
+    k2(w, { draw: 'hayBurst', x: o.x, y: o.y, a: b.head + side * 0.9, r: 60, max: 0.7, ab: 'forkCharge' }); // round 19: "burst with hay when hitting someone"
   }
   // nearer the viewer than the bale by more than the bale moves in a step (render.js sorts by depth down the screen: at
   // 0.6 the bale, moving on after this, often ended up nearer and was drawn over him: round 19, "Rendered wrong order")
-  u.x = b.x - 4; u.y = b.y + 4; u.vx = u.vy = u.kx = u.ky = 0; u.facing = b.head;
-  u.hop = 26 + Math.abs(Math.sin(b.roll * 0.06)) * 3; // round 19 ("Rendered wrong order"): stood up on top of it, bobbing as it rolls (this had slipped into the comment above)
+  // (and stood towards the bale's back, so the round of the bale shows ahead of his feet as it rolls)
+  u.x = b.x - Math.cos(b.head) * 14 - 4; u.y = b.y - Math.sin(b.head) * 14 + 4; u.vx = u.vy = u.kx = u.ky = 0; u.facing = b.head;
+  u.hop = 30 + Math.abs(Math.sin(b.roll * 0.06)) * 3; // round 19 ("Rendered wrong order"): stood up on top of it, bobbing as it rolls (this had slipped into the comment above)
   if (!b.trail) b.trail = k2(w, { draw: 'hayTrail', bale: b, x: b.x, y: b.y, max: 60, pts: [], ab: 'forkCharge' }); // round 19: "leave a trail of hay hairs"
   return true;
 };
@@ -2950,16 +2951,20 @@ const mixPose = (a, b, k) => ({ r: (a.r || 0) + ((b.r || 0) - (a.r || 0)) * k, d
 function poseAt(keys, t) { if (t < 0 || t > keys[keys.length - 1][0]) return null; for (let i = 1; i < keys.length; i++) if (t <= keys[i][0]) return mixPose(keys[i - 1][1], keys[i][1], smo((t - keys[i - 1][0]) / Math.max(1e-3, keys[i][0] - keys[i - 1][0]))); return keys[keys.length - 1][1]; }
 const Z0 = { r: 0, dx: 0, dy: 0 };
 // The Old Guard's parry: the greatsword laid flat across his front, point to his left
-export const PARRY_POSE = { r: 0.72, dx: 46, dy: 17 }; // (about the grip, arm-r's pivot since round 19: 105,152)
+export const PARRY_POSE = { r: 0.36, dx: 40, dy: 30 }; // (about the grip, arm-r's pivot since round 19: 105,152)
 // The Haymaker's toss: the fork driven in low, then heaved up and back over his left shoulder, then back to rest
 const TOSS_KEYS = [[0, Z0], [TOSS_IN, { r: 0.12, dy: 24 }], [TOSS_UP, { r: 1.75, dy: -8, dx: -6 }], [TOSS_UP + 0.08, { r: 1.85, dy: -10, dx: -6 }], [TOSS_UP + 0.34, Z0]];
+// Bearskin's claws: a paw drawn back and out, then raked in across his front (arm-r terms; the left paw mirrors it)
+export const CLAW_KEYS = [[0, Z0], [0.07, { r: -0.6, dx: 4, dy: -14 }], [0.15, { r: 0.9, dx: -10, dy: 26 }], [0.27, Z0]];
 // Bearskin's maul: the club hauled up and back over his head, held, then brought straight down in front
-const MAUL_KEYS = [[0, Z0], [0.22, { r: -0.65, dy: -42 }], [0.28, { r: -0.7, dy: -46 }], [0.33, { r: 0.45, dy: 40 }], [0.45, { r: 0.45, dy: 40 }], [0.7, Z0]];
+// (the club's head, art/heroes/r12/bearskin.svg about 105,190, carried round over his head to about 100,75, then down in front)
+const MAUL_KEYS = [[0, Z0], [0.2, { r: 1.42, dx: 29, dy: 9 }], [0.28, { r: 1.48, dx: 30, dy: 6 }], [0.32, { r: -0.08, dx: -3, dy: 24 }], [0.5, { r: -0.08, dx: -3, dy: 24 }], [0.75, Z0]];
 function meleePose(w, u) {
   let f = null;
   if (u.kind === 'oldguard') { const P = u.kit.parry; if (P && P.until > w.time && P.n > 0 && !(w.time - (P.caughtT ?? -9) < 0.32)) f = { 'arm-r': PARRY_POSE }; }
   else if (u.kind === 'haymaker' && u.kit.toss) { const p = poseAt(TOSS_KEYS, w.time - u.kit.toss.t0); if (p) f = { 'arm-r': p }; else u.kit.toss = null; }
-  else if (u.kind === 'bearskin' && u.kit.maulT0 != null) { const p = poseAt(MAUL_KEYS, w.time - u.kit.maulT0); if (p) f = { 'arm-r': p, 'arm-r-club': p }; else u.kit.maulT0 = null; }
+  else if (u.kind === 'bearskin' && u.kit.claw && w.time - u.kit.claw.t0 < CLAW_KEYS[3][0]) { const p = poseAt(CLAW_KEYS, w.time - u.kit.claw.t0); if (p) f = { [u.kit.claw.hand]: u.kit.claw.hand === 'arm-r' ? p : { r: -p.r, dx: -p.dx, dy: p.dy } }; }
+  else if (u.kind === 'bearskin' && u.kit.maulT0 != null) { const p = poseAt(MAUL_KEYS, w.time - u.kit.maulT0); if (p) f = { 'arm-r': p, 'arm-r-club': p, over: ['arm-r', 'arm-r-club'] }; else u.kit.maulT0 = null; } // (over: the raised club and paw are drawn over his head, not under the pelt)
   if (f) { u._force = f; u._forceBy = 'melee'; } else if (u._forceBy === 'melee') { u._force = null; u._forceBy = null; }
 }
 // A point of a hero's sprite (SVG units, the 220 box, front = +y) in the room, with its part posed as p about pivot
@@ -3496,5 +3501,5 @@ export function kit2Tick(w, u, dt) {
   // the Warlock's eye bolts and the Harpooner's harpoon come back to whoever threw them
   for (const p of w.projectiles) if (p.catchBy && (p.kind === 'eyeBolt' || p.kind === 'harpoon') && p.back && alive(p.catchBy) && dist(p.x, p.y, p.catchBy.x, p.catchBy.y) < p.catchBy.r + 6) p.life = 0;
   // the Stormhammer comes back to his hand
-  for (const p of w.projectiles) if (p.catchBy === u && dist(p.x, p.y, u.x, u.y) < u.r + 8) p.life = 0;
+  for (const p of w.projectiles) if (p.catchBy === u && dist(p.x, p.y, u.x, u.y) < u.r + 8) { p.life = 0; p.noHit = true; } // (round 19: caught, it doesn't burst in his face)
 }

@@ -1178,6 +1178,20 @@ js/preview-scenes.js, easy to change; docs/preview18b.md has the audit, every nu
 
 Round 19 (2026-11-25, free rein from midnight the designer's time): the designer is answering the 0.19 heroes deck (v19-heroes) and the 0.21 one tonight; notes so far in docs/riffle-log/2026-11-25-v19-v21-partial.txt. Those notes go first, ahead of my own list. Lanes (Opus; Fable is at 92% until 02:00 PC): sys19 (shared rules from the notes: one shadow system, thrown things land on centre, airborne drawn above and not colliding with the floor, thrown weapons look like held ones, free hands don't float, the taunted V mark, previews don't pin, pronouns), melee19 (Old Guard, Dame, Griffon, Bulwark, Warhelm, Bearskin, Haymaker), rogue19 (Bandit with a Disarmed state, Shade incl. a new Shadow Walk with the blink chain kept spare, Monk, Cultist), caster19 (Digger, Grandpa, Alchemist, Shaman incl. bear and salmon sketches for approval, Witch). Queued: the Warlock's four-form redesign (Fable after the reset), the heroes still owed, the Mob's notes.
 
+## Round 19, lane outline19 (2026-11-25): one outline ("check that outline thickness is consistent everywhere")
+- **OUTLINE 2.4 room units for everything** (js/util.js): the median of the old spread and what code drawings used.
+  It was 1.2 (bees, wasps, slimelets) to 6 (the Gilded Seraph) on SVG figures, because the parts' ink was grown by 6
+  SVG units and so scaled with the sprite; props 1.4-4.1 px with their size; code-drawn bosses 3.6.
+- **Drawn by the renderer, not built into the art**: parts.js grows each part's ink by OUTLINE for the size the figure
+  is drawn at (getRig's sizeU; an elite's bigness doesn't thicken it), over body + hands + weapon as one; props are
+  outlined by sprites.js getProp (their #sprite only, never a #light or the oil); rats and mice by their size; boss-draw
+  OL = OUTLINE; the camp one CAMP_LINE (OUTLINE at the heroes' camp scale). Pictures in pages get the old filter back at
+  load (sprites.js uiArt), so portraits look as before.
+- **Stripped** (tools/outline19/strip-outlines.mjs, re-runnable): the #outline filter and data-line from 252 art files;
+  rock-3's stones marked data-ink="own" (each outlined on its own). Interior lines kept.
+- Frame cost unchanged (tools/outline19/perf.mjs). Open, for the designer: big bosses read lighter at a hero's line.
+  Details, numbers and sheets: docs/outline19.md, docs/clips/outline19/.
+
 ## Round 19, lane sys19 (2026-11-25): the shared rules in the designer's 0.19 notes
 - **One shadow system** (js/height.js castShadow / projZ; render.js drawShadows). Every shadow is a disc in the units'
   merged shadow layer (same colour, softness, strength), laid before pillars and pickups. Into it now: pillars, crates,
@@ -1260,8 +1274,26 @@ Clips (not in git): docs/clips/melee19/before (as it was), w2-w4 (after); tools/
   8.9 at I, 7.1 -> 7.9 at III, inside the noise). The windup on the two warhammers (0.2 s, the blow lands then): Warhelm's
   dmg/s 7.25 -> 7.40 (I), 11.0 -> 10.8 (III); the Griffon's 3.52 -> 3.63 (I), 6.00 -> 4.45 (III, one noisy row: his attack
   share 52% -> 48%).
+- **Second pass (the coordinator's frame check of the clips)**. Why the first clips didn't show it: the clips were recording
+  the real ability code, but (a) the poses an ability holds (Parry, Toss, Maul) went through u._force and the Maul's club was
+  posed about the wrong axis and drawn under the pelt; (b) every struck body went solid white for 0.12 s (the "white puffs"
+  hiding heroes and foes); (c) the default cast star (fxkit castFlash) was the Maul's "weird star"; (d) the camera framed the
+  fight, not the move; (e) the attack arcs were drawn as a centred crescent, not where the weapon goes. Fixed: **slashes follow
+  the weapon** (fxkit tipSlash: style.tip names the weapon's point in the art; the arc is the band that point really sweeps
+  between parts.js's wound-back and struck-through poses, from where the body is; a stab is a streak down the line the point
+  travels; the slam lands where the hammer head comes down) for the Old Guard, Dame, Griffon, Bulwark, Bearskin, Warhelm and
+  Haymaker; a struck body now flashes a pale wash, its picture readable; the Maul hauls the club over his head (drawn over
+  him, parts.js pose.over) and squashes the foe flat, with no star and no white pop; Bear Claws' paws swing (kits2 CLAW_KEYS)
+  and the claw marks are drawn along the claws' real path; Parry's pose lies the sword across his front; Rally's three waves
+  0.28 s apart and a gold band of light out to its reach; Hibernate lies him flat, a warm pool under him, big Zs; the waking
+  roar without the dust cloud; the bale shows ahead of him, the hay burst thrown away from him; Bulwark's hit lands on the
+  spear's line (o.at); the Stormhammer doesn't burst when caught. Bear Claws re-measured: share 17% (I) / 28% (III).
 - Left to sys19 (shared): the taunted V mark, thrown hammers looking like the held ones, airborne drawing and collisions, free
   hands and shoulder pivots, one shadow system.
+- Round 19, chat: "Get a fable agent on redoing the sandworm. It's good but has many misc problems." Lane wurm19 (Fable, high): find and list every problem by playing and filming it, then fix, keeping its identity and win rate.
+- Round 19, chat, a new boss to test the shape: "An Ik spider. Its head/body is always flying/ in the air. It has 6 legs that keep it up and walk on the ground. Its attacks are stomps and slamming its head into the ground, if it doesn't hit something it is stunned on the ground for a second. Each leg has its own hp and will break when the foot is destroyed. The leg will still show but badly damaged and can't attack, each leg damaged makes the time the head spends on the ground longer and how fast it can move. Before slamming its head it will have a telegraph circle underneath it as it walks for a bit then will pause for a split second and slam. U can add additional abilities. Get fable on it." Lane spider19 (Fable, high); not placed in a dungeon.
+- melee19 sent back: its clips didn't show what its report said (Maul, the Dame's swing, Parry, Rally, Hibernate, the hay bale); the stray pink slash arcs to be made to follow the weapon. Its first version sits merged on local main, unpushed, until the fix lands.
+
 
 
 ## Round 19, lane rogue19 (2026-11-25): the Bandit, the Shade, the Monk, the Cultist

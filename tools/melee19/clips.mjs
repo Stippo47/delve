@@ -31,13 +31,15 @@ const PRELUDE = (hero, zoom, cam) => `(async () => {
   const clear = (keep) => { w.pillars = keep ? w.pillars : []; w.walls = w.walls.filter((r) => r.solid); PATH.buildGrid(w); };
   const use = (ab, tier, t, by = me) => { by.kit.cd[ab] = 99; by.kit.using = ab; if (t) by.target = t; try { FT.tagAbility(w, by, ab, tier, () => K.ABILITIES[ab].use(w, by, t, tier)); } finally { by.kit.using = null; } };
   const quiet = (u) => { for (const k in u.kit.cd) u.kit.cd[k] = 999; };
+  const mid = (a, b, k = 0.5) => () => ({ x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k });
   const done = {}; const at = (T, t, id, f) => { if (T >= t && !done[id]) { done[id] = true; f(); } };
   quiet(me); for (const f of friends()) if (f.kit) quiet(f);
-  let T = 0, each = () => {};
+  let T = 0, each = () => {}, look = null, calm = true; // look(): where the camera sits (default the hero); calm: the foes don't swing (their arcs are not the hero's)
   STAGE
   let camOn = ${cam ? `w.units.find((u) => u.kind === '${cam}')` : 'me'}, cam = null; // the camera eases after one unit (melee19: clip.mjs --follow lagged)
   const rf = GAME.recFrame; GAME.recFrame = (dt) => { T += dt; try { each(T, dt); } catch (e) { console.error(e); throw e; }
-    if (camOn) { if (!cam) cam = { x: camOn.x, y: camOn.y }; cam.x += (camOn.x - cam.x) * 0.25; cam.y += (camOn.y - cam.y) * 0.25; w.camAt = cam; RD.view.snap = true; }
+    if (calm) for (const e of foes()) e.atkT = Math.max(e.atkT || 0, 0.3);
+    const L = look ? look() : camOn; if (L) { if (!cam) cam = { x: L.x, y: L.y }; cam.x += (L.x - cam.x) * 0.25; cam.y += (L.y - cam.y) * 0.25; w.camAt = cam; RD.view.snap = true; }
     return rf.call(GAME, dt); };
 })();`;
 
@@ -47,70 +49,74 @@ const ABS = { oldguard: ['greatSweep', 'rallyCry', 'pommelStrike'], dame: ['ripo
   bulwark: ['brace', 'shieldWall', 'impale'], bearskin: ['maul', 'hibernate', 'bearRoar'], warhelm: ['thunderBlow', 'warHorn', 'skullSplitter'], haymaker: ['toss', 'pitchHay', 'forkCharge'] };
 const CLIPS = {
   // ------------------------------------------------------------ Old Guard
+  // Parry (III, two parries): a mace blow caught and sent back, then an arrow (the bowman in view) caught and sent back
   'oldguard-parry': { hero: 'oldguard', battle: 'rattlerMace*1,rattlerBow*1|oldguard', t: '003', secs: 5, stage: `
-    clear(); put(me, CX - 60, CY, 0); const F = foes(), mace = F.find((u) => u.kind === 'rattlerMace'), bow = F.find((u) => u.kind === 'rattlerBow'); tough(F, 4, 0.3); put(mace, CX + 10, CY + 10, Math.PI); put(bow, CX + 200, CY - 60, Math.PI);
-    each = (T) => { at(T, 0.6, 'a', () => use('pommelStrike', 3, mace)); at(T, 2.6, 'b', () => use('pommelStrike', 3, mace)); };` },
-  'oldguard-rally': { hero: 'oldguard', battle: 'rattlerMace*3|oldguard,archer,paladin', t: '020', secs: 6, stage: `
-    clear(); const [a1, a2] = friends(), F = foes(); tough(F, 4, 0.3); put(me, CX - 40, CY, 0); put(a1, CX - 110, CY - 70, 0); put(a2, CX - 100, CY + 70, 0); F.forEach((u, i) => put(u, CX + 60, CY + (i - 1) * 70, Math.PI));
-    each = (T) => { at(T, 0.8, 's', () => { a1.stunT = 2; a2.stunT = 2; }); at(T, 1.3, 'a', () => use('rallyCry', 2, F[0])); };` },
-  'oldguard-laststand': { hero: 'oldguard', battle: 'rattlerMace*3|oldguard,archer', t: '000', secs: 6, stage: `
+    clear(); put(me, CX - 60, CY, 0); const F = foes(), mace = F.find((u) => u.kind === 'rattlerMace'), bow = F.find((u) => u.kind === 'rattlerBow'); tough(F, 4, 0.3); put(mace, CX + 15, CY + 5, Math.PI); put(bow, CX + 150, CY - 40, Math.PI);
+    calm = false; look = mid(me, mace, 0.35); me.atkT = 99; each = (T) => { me.atkT = Math.max(me.atkT, 0.5); at(T, 0.6, 'a', () => use('pommelStrike', 3, mace)); };` },
+  // Rally (II): the two friends stunned, the cry, they shake it off and run hasted at the foes standing off
+  'oldguard-rally': { hero: 'oldguard', battle: 'rattlerMace*3|oldguard,archer,paladin', t: '020', secs: 5, zoom: 2.0, stage: `
+    clear(); const [a1, a2] = friends(), F = foes(); tough(F, 4, 0.3); put(me, CX - 60, CY, 0); put(a1, CX - 150, CY - 70, 0); put(a2, CX - 140, CY + 70, 0); F.forEach((u, i) => put(u, CX + 190, CY + (i - 1) * 90, Math.PI));
+    each = (T) => { if (T < 2.6) for (const u of F) { u.x = u.home.x; u.y = u.home.y; u.vx = u.vy = 0; } at(T, 0.5, 's', () => { a1.stunT = 2; a2.stunT = 2; }); at(T, 1.0, 'a', () => use('rallyCry', 2, F[0])); };` },
+  'oldguard-laststand': { hero: 'oldguard', battle: 'rattlerMace*3|oldguard,archer', t: '000', secs: 5, stage: `
     clear(); const a1 = friends()[0], F = foes(); tough(F, 4, 0.3); put(me, CX - 40, CY, 0); put(a1, CX - 120, CY - 60, 0); F.forEach((u, i) => put(u, CX + 60, CY + (i - 1) * 70, Math.PI));
-    each = (T) => { at(T, 1.2, 'k', () => SIM.hurt(w, a1, 99999, F[0], { noDodge: true })); };` },
-  'oldguard-laststand-friend': { hero: 'oldguard', battle: 'rattlerMace*3|oldguard,archer', t: '000', secs: 6, follow: 'archer', stage: `
+    each = (T) => { at(T, 1.0, 'k', () => SIM.hurt(w, a1, 99999, F[0], { noDodge: true })); };` },
+  'oldguard-laststand-friend': { hero: 'oldguard', battle: 'rattlerMace*3|oldguard,archer', t: '000', secs: 5, follow: 'archer', stage: `
     clear(); const a1 = friends()[0], F = foes(); tough(F, 4, 0.3); put(me, CX - 40, CY, 0); put(a1, CX - 140, CY - 60, 0); F.forEach((u, i) => put(u, CX + 60, CY + (i - 1) * 70, Math.PI));
-    each = (T) => { at(T, 1.2, 'k', () => SIM.hurt(w, me, 99999, F[0], { noDodge: true })); };` },
+    each = (T) => { at(T, 1.0, 'k', () => SIM.hurt(w, me, 99999, F[0], { noDodge: true })); };` },
   // ------------------------------------------------------------ Dame
   'dame-attack': { hero: 'dame', battle: 'rattlerMace*1|dame', t: '000', secs: 4, stage: `
-    clear(); put(me, CX - 40, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 30, CY, Math.PI);` },
-  'dame-challenge': { hero: 'dame', battle: 'rattlerMace*2,brute*1|dame,archer', t: '030', secs: 6, stage: `
+    clear(); put(me, CX - 40, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 30, CY, Math.PI); look = mid(me, F[0], 0.4);` },
+  'dame-challenge': { hero: 'dame', battle: 'rattlerMace*2,brute*1|dame,archer', t: '030', secs: 5, zoom: 2.2, stage: `
     clear(); const arc = friends()[0], F = foes(); tough(F, 4, 0.3); put(me, CX - 200, CY + 60, 0); put(arc, CX + 20, CY - 40, 0); F.forEach((u, i) => { put(u, CX + 90 + (i % 2) * 40, CY - 60 + i * 40, Math.PI); u.target = arc; });
-    each = (T) => { at(T, 0.8, 'h', () => { arc.hp = arc.maxHp * 0.35; }); at(T, 1.2, 'a', () => use('challenge', 3, F[0])); };` },
+    look = null; each = (T) => { at(T, 0.6, 'h', () => { arc.hp = arc.maxHp * 0.35; }); at(T, 0.9, 'a', () => use('challenge', 3, F[0])); };` },
   // ------------------------------------------------------------ Griffon
-  'griffon-attack': { hero: 'griffon', battle: 'rattlerMace*2|griffon', t: '000', secs: 4, stage: `
-    clear(); put(me, CX - 40, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 40, CY - 15, Math.PI); put(F[1], CX + 50, CY + 45, Math.PI);` },
-  'griffon-hammerThrow': { hero: 'griffon', battle: 'rattlerMace*3|griffon', t: '030', secs: 5, stage: `
+  'griffon-attack': { hero: 'griffon', battle: 'rattlerMace*1|griffon', t: '000', secs: 4, stage: `
+    clear(); put(me, CX - 40, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 75, CY, Math.PI); look = mid(me, F[0], 0.4); each = (T) => { F[0].x = F[0].home.x; F[0].y = F[0].home.y; };` },
+  'griffon-hammerThrow': { hero: 'griffon', battle: 'rattlerMace*3|griffon', t: '030', secs: 4, zoom: 2.0, stage: `
     clear(); put(me, CX - 160, CY, 0); const F = foes(); tough(F, 6, 0.3); F.forEach((u, i) => put(u, CX + i * 70, CY + (i - 1) * 30, Math.PI));
-    each = (T) => { if (T < 1) for (const u of F) { u.x = u.home.x; u.y = u.home.y; } at(T, 0.8, 'a', () => use('hammerThrow', 3, F[1])); };` },
-  'griffon-swoop': { hero: 'griffon', battle: 'rattlerMace*3|griffon,archer', t: '300', secs: 5, stage: `
-    clear(); const arc = friends()[0], F = foes(); tough(F, 4, 0.3); put(me, CX - 200, CY + 60, 0); put(arc, CX + 60, CY - 40, Math.PI); F.forEach((u, i) => { put(u, CX + 120 + (i % 2) * 30, CY - 80 + i * 45, Math.PI); u.target = arc; });
-    each = (T) => { at(T, 0.6, 'h', () => { arc.hp = arc.maxHp * 0.4; }); at(T, 1.0, 'a', () => use('swoop', 3, F[0])); };` },
-  'griffon-wingShield': { hero: 'griffon', battle: 'rattlerMace*3|griffon', t: '003', secs: 6, stage: `
+    look = mid(me, F[1], 0.45); each = (T) => { if (T < 1) for (const u of F) { u.x = u.home.x; u.y = u.home.y; } at(T, 0.8, 'a', () => use('hammerThrow', 3, F[1])); };` },
+  'griffon-swoop': { hero: 'griffon', battle: 'rattlerMace*3|griffon,archer', t: '300', secs: 4, zoom: 2.0, stage: `
+    clear(); const arc = friends()[0], F = foes(); tough(F, 4, 0.3); put(me, CX - 200, CY + 60, 0); put(arc, CX + 60, CY - 40, Math.PI); F.forEach((u, i) => { put(u, CX + 140 + (i % 2) * 30, CY - 80 + i * 45, Math.PI); u.target = arc; });
+    look = mid(me, arc, 0.5); each = (T) => { at(T, 0.5, 'h', () => { arc.hp = arc.maxHp * 0.4; }); at(T, 0.8, 'a', () => use('swoop', 3, F[0])); };` },
+  'griffon-wingShield': { hero: 'griffon', battle: 'rattlerMace*3|griffon', t: '003', secs: 5, stage: `
     clear(); put(me, CX - 40, CY, 0); const F = foes(); tough(F, 6, 0.3); F.forEach((u, i) => put(u, CX + 40 + (i % 2) * 20, CY + (i - 1) * 55, Math.PI));
-    each = (T) => { at(T, 0.6, 'a', () => use('wingShield', 3, F[0])); };` },
+    calm = false; each = (T) => { at(T, 0.6, 'a', () => use('wingShield', 3, F[0])); };` },
   // ------------------------------------------------------------ Bulwark
-  'bulwark-attack': { hero: 'bulwark', battle: 'rattlerMace*2|bulwark', t: '000', secs: 5, stage: `
-    clear(); put(me, CX - 50, CY, 0); const F = foes(); tough(F, 8, 0.4); put(F[0], CX + 40, CY - 10, Math.PI); put(F[1], CX + 120, CY + 10, Math.PI);` },
-  'bulwark-brace': { hero: 'bulwark', battle: 'rattlerMace*2|bulwark', t: '300', secs: 5, stage: `
+  'bulwark-attack': { hero: 'bulwark', battle: 'rattlerMace*1|bulwark', t: '000', secs: 4, stage: `
+    clear(); put(me, CX - 60, CY, 0); const F = foes(); tough(F, 8, 0.4); put(F[0], CX + 50, CY, Math.PI); look = mid(me, F[0], 0.4);
+    each = (T) => { F[0].x = F[0].home.x; F[0].y = F[0].home.y; };` },
+  'bulwark-brace': { hero: 'bulwark', battle: 'rattlerMace*2|bulwark', t: '300', secs: 4, stage: `
     clear(); put(me, CX - 80, CY, 0); const F = foes(); tough(F, 8, 0.4); put(F[0], CX + 120, CY - 20, Math.PI); put(F[1], CX + 180, CY + 40, Math.PI);
-    each = (T) => { at(T, 0.4, 'a', () => use('brace', 3, F[0])); };` },
+    look = mid(me, F[0], 0.3); each = (T) => { at(T, 0.4, 'a', () => use('brace', 3, F[0])); };` },
   // ------------------------------------------------------------ Warhelm
-  'warhelm-attack': { hero: 'warhelm', battle: 'rattlerMace*2|warhelm', t: '000', secs: 4, stage: `
-    clear(); put(me, CX - 40, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 40, CY - 15, Math.PI); put(F[1], CX + 50, CY + 45, Math.PI);` },
-  'warhelm-skullSplitter': { hero: 'warhelm', battle: 'rattlerMace*3|warhelm', t: '003', secs: 5, stage: `
+  'warhelm-attack': { hero: 'warhelm', battle: 'rattlerMace*1|warhelm', t: '000', secs: 4, stage: `
+    clear(); put(me, CX - 40, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 75, CY, Math.PI); look = mid(me, F[0], 0.4); each = (T) => { F[0].x = F[0].home.x; F[0].y = F[0].home.y; };` },
+  'warhelm-skullSplitter': { hero: 'warhelm', battle: 'rattlerMace*3|warhelm', t: '003', secs: 4, zoom: 2.0, stage: `
     clear(); put(me, CX - 180, CY, 0); const F = foes(); tough(F, 6, 0.3); F.forEach((u, i) => put(u, CX + 40 + (i % 2) * 30, CY + (i - 1) * 50, Math.PI));
-    each = (T) => { if (T < 1) for (const u of F) { u.x = u.home.x; u.y = u.home.y; } at(T, 0.8, 'a', () => use('skullSplitter', 3, F[1])); };` },
+    look = mid(me, F[1], 0.5); each = (T) => { if (T < 1) for (const u of F) { u.x = u.home.x; u.y = u.home.y; } at(T, 0.8, 'a', () => use('skullSplitter', 3, F[1])); };` },
   // ------------------------------------------------------------ Bearskin
-  'bearskin-bearRoar1': { hero: 'bearskin', battle: 'rattlerMace*2|bearskin', t: '001', secs: 6, stage: `
-    clear(); put(me, CX - 120, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 20, CY, Math.PI); put(F[1], CX + 140, CY + 90, Math.PI);
-    each = (T) => { at(T, 0.6, 'a', () => use('bearRoar', 1, F[0])); };` },
-  'bearskin-bearRoar3': { hero: 'bearskin', battle: 'rattlerMace*2|bearskin', t: '003', secs: 6, stage: `
-    clear(); put(me, CX - 120, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 20, CY, Math.PI); put(F[1], CX + 140, CY + 90, Math.PI);
-    each = (T) => { at(T, 0.6, 'a', () => use('bearRoar', 3, F[0])); };` },
-  'bearskin-hibernate': { hero: 'bearskin', battle: 'rattlerMace*2|bearskin', t: '030', secs: 7, stage: `
-    clear(); put(me, CX - 40, CY, 0); const F = foes(); tough(F, 8, 0.05); put(F[0], CX + 40, CY - 15, Math.PI); put(F[1], CX + 50, CY + 45, Math.PI);
-    each = (T) => { at(T, 0.6, 'h', () => { me.hp = me.maxHp * 0.3; }); at(T, 0.8, 'a', () => use('hibernate', 3, F[0])); at(T, 4.2, 'w', () => SIM.hurt(w, me, me.maxHp * 0.25, F[0], { noDodge: true })); };` },
-  'bearskin-maul': { hero: 'bearskin', battle: 'rattlerMace*3|bearskin', t: '300', secs: 5, zoom: 2.1, stage: `
-    clear(); put(me, CX - 40, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 30, CY, Math.PI); put(F[1], CX + 80, CY - 60, Math.PI); put(F[2], CX + 80, CY + 60, Math.PI);
-    each = (T) => { at(T, 0.8, 'a', () => use('maul', 3, F[0])); };` },
+  'bearskin-bearRoar1': { hero: 'bearskin', battle: 'rattlerMace*1|bearskin', t: '001', secs: 3.5, stage: `
+    clear(); put(me, CX - 120, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 20, CY, Math.PI); look = mid(me, F[0], 0.6);
+    each = (T) => { at(T, 0.5, 'a', () => use('bearRoar', 1, F[0])); };` },
+  'bearskin-bearRoar3': { hero: 'bearskin', battle: 'rattlerMace*1|bearskin', t: '003', secs: 4, stage: `
+    clear(); put(me, CX - 120, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 20, CY, Math.PI); look = mid(me, F[0], 0.6);
+    each = (T) => { at(T, 0.5, 'a', () => use('bearRoar', 3, F[0])); };` },
+  'bearskin-hibernate': { hero: 'bearskin', battle: 'rattlerMace*2|bearskin', t: '030', secs: 6, stage: `
+    clear(); put(me, CX - 40, CY, 0); const F = foes(); tough(F, 8, 0.05); put(F[0], CX + 50, CY - 15, Math.PI); put(F[1], CX + 60, CY + 50, Math.PI);
+    each = (T) => { at(T, 0.4, 'h', () => { me.hp = me.maxHp * 0.3; }); at(T, 0.6, 'a', () => use('hibernate', 3, F[0])); at(T, 4.0, 'w', () => SIM.hurt(w, me, me.maxHp * 0.3, F[0], { noDodge: true })); };` },
+  'bearskin-maul': { hero: 'bearskin', battle: 'rattlerMace*3|bearskin', t: '300', secs: 3.5, zoom: 2.2, stage: `
+    clear(); put(me, CX - 40, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 30, CY, Math.PI); put(F[1], CX + 70, CY - 70, Math.PI); put(F[2], CX + 70, CY + 70, Math.PI);
+    look = mid(me, F[0], 0.4); each = (T) => { at(T, 0.6, 'a', () => use('maul', 3, F[0])); };` },
   // ------------------------------------------------------------ Haymaker
   'haymaker-attack': { hero: 'haymaker', battle: 'rattlerMace*1|haymaker', t: '000', secs: 4, stage: `
-    clear(); put(me, CX - 60, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 40, CY, Math.PI);` },
-  'haymaker-toss': { hero: 'haymaker', battle: 'rattlerMace*2|haymaker', t: '300', secs: 5, stage: `
-    clear(); put(me, CX - 20, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 40, CY - 10, Math.PI); put(F[1], CX + 50, CY + 50, Math.PI);
-    each = (T) => { at(T, 0.8, 'a', () => use('toss', 3, F[0])); };` },
-  'haymaker-forkCharge': { hero: 'haymaker', battle: 'rattlerMace*3|haymaker', t: '003', secs: 6, stage: `
+    clear(); put(me, CX - 60, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 45, CY, Math.PI); look = mid(me, F[0], 0.4);
+    each = (T) => { F[0].x = F[0].home.x; F[0].y = F[0].home.y; };` },
+  'haymaker-toss': { hero: 'haymaker', battle: 'rattlerMace*1|haymaker', t: '200', secs: 3.5, zoom: 1.8, stage: `
+    clear(); put(me, CX - 20, CY, 0); const F = foes(); tough(F, 8, 0.3); put(F[0], CX + 40, CY - 10, Math.PI);
+    each = (T) => { at(T, 0.6, 'a', () => use('toss', 2, F[0])); };` },
+  'haymaker-forkCharge': { hero: 'haymaker', battle: 'rattlerMace*3|haymaker', t: '003', secs: 5, zoom: 2.2, stage: `
     clear(); put(me, CX - 200, CY, 0); const F = foes(); tough(F, 8, 0.3); F.forEach((u, i) => put(u, CX + 40 + i * 30, CY + (i - 1) * 60, Math.PI));
-    each = (T) => { at(T, 0.5, 'a', () => use('forkCharge', 3, F[1])); };` },
+    each = (T) => { at(T, 0.4, 'a', () => use('forkCharge', 3, F[1])); };` },
 };
 for (const c of Object.values(CLIPS)) if (c.same) c.stage = CLIPS[c.same].stage;
 

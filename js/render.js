@@ -4,7 +4,7 @@ import { getSprite, headR, tinted, getProp } from './sprites.js';
 import { getRig, drawRig, poseFor, LIMP, composeRig, drawComposed, bowNock } from './parts.js';
 import { DEFS } from './units.js';
 import { drawGroundFx, drawAirFx, drawProjectile as projectile, drawStatusFx, noteHits, drawLocal, drawBeam, hash } from './fx.js';
-import { INK, TAU, clamp } from './util.js';
+import { INK, TAU, clamp, OUTLINE } from './util.js';
 import { envId, obstacleFor } from './env.js';
 import { drawBodyFx, drawBodyGround, drawIceWall } from './fxkit.js';
 import { drawHazardPuddle, flushPuddles, drawPuddle } from './puddles.js';
@@ -21,8 +21,9 @@ import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawAren
 import { drawFoeGround, snowRoll, drawFoe } from './foe-draw.js';
 import { airTier, projZ, takeShadows, shadowOfH, LOB_SHADOW_R } from './height.js'; // round 19 (lane sys19): heights, one shadow system // round 13 (lane E): the newer enemies' extra drawing
 
-// One outline thickness for everything drawn here, in room units. Matches what the SVG heroes show.
-export const OUTLINE = 2.4;
+// One outline thickness for everything drawn here, in room units (util.js; round 19, lane outline19: the parts' and the
+// props' outlines are drawn at it too, whatever their size).
+export { OUTLINE };
 
 export const view = { scale: 1, base: 1, zoom: 0.8, dpr: 1, cw: 0, ch: 0, rot: false, camX: null, camY: null, m: [1, 0, 0, 1, 0, 0] };
 try { const z = +localStorage.getItem('delve.zoom'); if (z) view.zoom = z; } catch {}
@@ -321,13 +322,14 @@ function roomIcon(ctx, kind, r) {
 // Props from art/props: a 220 box is 86.4 room units (the doors' 360 box 141.4), centred on the prop.
 const PROP_BOX = 86.4;
 function prop(ctx, name, x, y, box, opts = {}) {
-  const e = getProp(name, box * view.scale * view.dpr * (opts.sc || 1)); if (!e) return false;
+  const e = getProp(name, box * view.scale * view.dpr * (opts.sc || 1), OUTLINE * view.scale * view.dpr); if (!e) return false; // (round 19, lane outline19: the outline in pixels, so it is OUTLINE whatever the prop's size)
   ctx.save(); ctx.translate(x, y);
   if (opts.rot != null) ctx.rotate(opts.rot); else if (opts.upright !== false && view.rot) ctx.rotate(Math.PI / 2);
   if (opts.sc) ctx.scale(opts.sc, opts.sc);
   const light = () => { if (opts.extraA && e.extra) { ctx.globalAlpha = opts.extraA; ctx.drawImage(e.extra, -box / 2, -box / 2, box, box); ctx.globalAlpha = 1; } };
   if (!e.over) light();
-  ctx.drawImage(e.img, -box / 2, -box / 2, box, box);
+  const pu = (e.pad || 0) / (e.size || 1) * box; // the outline's room round the box (sprites.js getProp)
+  ctx.drawImage(e.img, -box / 2 - pu, -box / 2 - pu, box + pu * 2, box + pu * 2);
   if (e.over) light();
   ctx.restore();
   return true;
@@ -641,7 +643,7 @@ function drawUnit(ctx, u, w) {
   const s = view.scale * view.dpr;
   const kind = SPRITE_KIND[u.kind] || u.kind;
   const sizeU = u.vr * 220 / headR(kind);
-  const spr = getSprite(kind, sizeU * s);
+  const spr = getSprite(kind, sizeU * s, sizeU * bigOf(u));
   ctx.save();
   unitFrame(ctx, u, w);
   if (u.invulnT > 0 && !u.act) ctx.globalAlpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18));
@@ -671,7 +673,7 @@ function drawUnit(ctx, u, w) {
 const WEAPON_PART = /^arm-[lr]-(hammer|club|axe|sword|spear|blade|weapon)$/;
 export function drawHeldWeapon(ctx, u, k = 1) {
   if (!u || !u.def || !u.def.art) return false;
-  const sizeU = u.vr * 220 / (u.def.headR || headR(u.kind)), set = getRig(u.def.art, sizeU * view.scale * view.dpr * 1.04 * k);
+  const sizeU = u.vr * 220 / (u.def.headR || headR(u.kind)), set = getRig(u.def.art, sizeU * view.scale * view.dpr * 1.04 * k, sizeU * k * bigOf(u));
   if (!set) return false;
   const want = u.def.style && u.def.style.weaponPart, L = set.layers.find((l) => (want ? l.id === want : WEAPON_PART.test(l.id)));
   if (!L) return false;
@@ -686,11 +688,11 @@ export function drawHeldWeapon(ctx, u, k = 1) {
 const RH = { drawUnit, unitFrame: (ctx, u, w) => unitFrame(ctx, u, w), washesOf: (u, w) => washesOf(u, w) };
 // Ask for every unit's art at its current size, so it's ready by the time the room fades in.
 export function warmArt(w) {
-  for (const u of w.units) if (u.def.art) getRig(u.def.art, u.vr * 220 / (u.def.headR || headR(u.kind)) * view.scale * view.dpr * 1.04);
+  for (const u of w.units) if (u.def.art) { const sizeU = u.vr * 220 / (u.def.headR || headR(u.kind)); getRig(u.def.art, sizeU * view.scale * view.dpr * 1.04, sizeU * bigOf(u)); }
   // round 15 (lane E): and what the party's heroes can call up or put down (their summons are art now), so a totem's
   // rise out of the floor isn't missed while its picture renders
-  for (const u of w.units) { const F = HEROES[u.kind] && HEROES[u.kind].forms; if (F) for (const a of F) getRig(a, u.vr * 220 / 56 * view.scale * view.dpr * 1.04); } // (a form he can take: the Warlock's demon)
-  for (const u of w.units) { const S = HEROES[u.kind] && HEROES[u.kind].summons; if (S) for (const k in S) { const d = DEFS[k]; if (!d || !d.art) continue; const px = d.vr * 220 / (d.headR || headR(k)) * view.scale * view.dpr * 1.04; getRig(d.art, px); if (ART2[k] && ART2[k].arts) for (const a of ART2[k].arts) getRig(a, px); } }
+  for (const u of w.units) { const F = HEROES[u.kind] && HEROES[u.kind].forms; if (F) for (const a of F) getRig(a, u.vr * 220 / 56 * view.scale * view.dpr * 1.04, u.vr * 220 / 56); } // (a form he can take: the Warlock's demon)
+  for (const u of w.units) { const S = HEROES[u.kind] && HEROES[u.kind].summons; if (S) for (const k in S) { const d = DEFS[k]; if (!d || !d.art) continue; const sz = d.vr * 220 / (d.headR || headR(k)), px = sz * view.scale * view.dpr * 1.04; getRig(d.art, px, sz); if (ART2[k] && ART2[k].arts) for (const a of ART2[k].arts) getRig(a, px, sz); } }
 }
 
 // A unit drawn from its SVG parts, arms moving with what it is doing (parts.js).
@@ -702,7 +704,7 @@ function drawPartsUnit(ctx, u, w) {
   if (X && u.bornT == null) u.bornT = w.time; // (when it was first drawn, whether or not its picture is ready yet: the totem rises from then)
   const url = (X && X.art && X.art(u)) || u.def.art;
   const sizeU = u.vr * 220 / (u.def.headR || headR(u.kind)); // def.headR: the head's radius in the art's SVG units
-  const set = getRig(url, sizeU * view.scale * view.dpr * 1.04);
+  const set = getRig(url, sizeU * view.scale * view.dpr * 1.04, sizeU * bigOf(u)); // (round 19, lane outline19: sizeU, so the outline is OUTLINE whatever its size)
   if (set && X && X.under) X.under(ctx, u, w);
   const DV = u.act && u.act.dv ? u.act.dv : null; // round 18 (lane dash18): one of the six dashes (dashes.js)
   if (set && (DV || u._dvTrail || (u.dvStamps && u.dvStamps.length))) dashGhosts(ctx, u, w, set, sizeU, DV);
@@ -721,11 +723,14 @@ function drawPartsUnit(ctx, u, w) {
   else if (u.incorpT > 0) alpha *= u.incorpLook === 'mist' ? 0.55 : 0.78; // round 19 (lane rogue19): incorporeal (sim.js), see-through
   if (X && X.alpha) alpha *= X.alpha(u, w);
   if (DV && DV.body && DV.body.alpha) alpha *= DV.body.alpha;
-  const mode = u.downed ? 'grey' : u.flashT > (u.def.flashAt ?? 0.06) ? 'flash' : 'normal'; // (lane B, bosses3: def.flashAt, as in washesOf)
+  const struck = !u.downed && u.flashT > (u.def.flashAt ?? 0.06);
+  // round 19 (lane melee19, "big white puffs hiding the hero on impact"): a body struck flashes a pale wash, its picture
+  // still readable through it (it went solid white, a blob over whatever stood beside it) (lane B, bosses3: def.flashAt)
+  const mode = u.downed ? 'grey' : 'normal';
   if (u.act && u.act.type === 'dash' && !u.act.dv && u.kind === 'twinfang') afterimages(ctx, u, w, set, pose, sizeU); // (round 18: her Dash is one of dashes.js's now: dashGhosts above)
   else u._trail = null;
   // (round 15, lane E: def.ownLook, a summon drawn in its own colours: the code drawings it replaces were never turned blue-grey)
-  drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w), shift: isOurs(u) && u.kind !== 'minion' && !u.def.ownLook, /* round 10: the raised dead stay plain grey */ border: mode === 'normal' ? borderOf(u, w) : null });
+  drawRig(ctx, set, pose, { mode, alpha, washes: struck ? [['#FFFFFF', 0.55 * Math.min(1, u.flashT / 0.12)]] : washesOf(u, w), shift: isOurs(u) && u.kind !== 'minion' && !u.def.ownLook, /* round 10: the raised dead stay plain grey */ border: mode === 'normal' ? borderOf(u, w) : null });
   if (pose.glow && mode === 'normal') castGlow(ctx, pose.glow, w.time);
   if (u.kind === 'archer' && mode === 'normal') nockedArrow(ctx, u, set, pose, sizeU);
   if (X && X.top && mode !== 'grey') X.top(ctx, u, w);
@@ -768,7 +773,7 @@ function afterimages(ctx, u, w, set, pose, sizeU) {
 function nockedArrow(ctx, u, set, pose, sizeU) {
   if (!((!u.anim && (u._ready || 0) > 0.12) || u.aimT > 0)) return;
   const n = bowNock(set, pose); if (!n) return;
-  const s = 220 / sizeU, L = 44 * s, x = n[0], y = n[1], wd = 2.4 * s, O = 6;
+  const s = 220 / sizeU, L = 44 * s, x = n[0], y = n[1], wd = 2.4 * s, O = set.line || OUTLINE * s; // (O: the figure's own outline, round 19, lane outline19; it was 6 SVG units)
   const shaft = () => { ctx.beginPath(); ctx.moveTo(x, y - 2 * s); ctx.lineTo(x, y + L - 9 * s); };
   const head = () => { ctx.beginPath(); ctx.moveTo(x, y + L); ctx.lineTo(x - 4.5 * s, y + L - 10 * s); ctx.lineTo(x + 4.5 * s, y + L - 10 * s); ctx.closePath(); };
   const fl = () => { ctx.beginPath(); for (const sd of [-1, 1]) { ctx.moveTo(x, y + 7 * s); ctx.lineTo(x + sd * 4.5 * s, y - 1 * s); ctx.lineTo(x + sd * 3 * s, y + 9 * s); ctx.closePath(); } };
@@ -851,7 +856,7 @@ function drawCorpse(ctx, c) {
   const live = fade * (1 - m), dead = fade * m * DEAD_A; // the two looks cross-fade
   ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.facing - Math.PI / 2); ctx.scale(lift, lift);
   if (art) {
-    const set = getRig(art, sizeU * view.scale * view.dpr); if (set) {
+    const set = getRig(art, sizeU * view.scale * view.dpr, sizeU); if (set) {
       ctx.scale(sizeU / 220, sizeU / 220); ctx.translate(-100, -100);
       if (flash) drawRig(ctx, set, LIMP, { mode: 'flash' });
       else {
@@ -863,7 +868,7 @@ function drawCorpse(ctx, c) {
     }
     ctx.restore(); return;
   }
-  const spr = getSprite(kind, sizeU * view.scale * view.dpr);
+  const spr = getSprite(kind, sizeU * view.scale * view.dpr, sizeU);
   if (spr) {
     if (flash) ctx.drawImage(spr.flash, -sizeU / 2, -sizeU / 2, sizeU, sizeU);
     else {

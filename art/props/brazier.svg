@@ -1,13 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
   <!-- BRAZIER (replaces the broken pillar): a square stone plinth with cut corners and an iron fire bowl of coals and flames, seen from straight above; #light (no outline) is its glow on the floor. Collider r 30 (scale by r/30). -->
   <defs>
-    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <linearGradient id="gStone" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#C2B8A8"/><stop offset="1" stop-color="#857A6C"/></linearGradient><linearGradient id="gStoneTop" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#D6CDBD"/><stop offset="1" stop-color="#A0958A"/></linearGradient><linearGradient id="gIron" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#7A7480"/><stop offset="1" stop-color="#3E3944"/></linearGradient><radialGradient id="gCoal" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#FFB347" stop-opacity="0.9"/><stop offset="0.6" stop-color="#E0603A" stop-opacity="0.45"/><stop offset="1" stop-color="#E0603A" stop-opacity="0"/></radialGradient><radialGradient id="gLight" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#FFC27A" stop-opacity="0.38"/><stop offset="1" stop-color="#FFC27A" stop-opacity="0"/></radialGradient><clipPath id="bowlC"><circle cx="100" cy="100" r="35"/></clipPath>
   </defs>
   <g id="light">
     <circle cx="100" cy="100" r="96" fill="url(#gLight)"/>
   </g>
-  <g id="sprite" filter="url(#outline)">
+  <g id="sprite">
     <polygon points="42.0,56.0 56.0,42.0 144.0,42.0 158.0,56.0 158.0,144.0 144.0,158.0 56.0,158.0 42.0,144.0" fill="url(#gStone)"/>
     <polygon points="50.1,62.2 62.2,50.1 137.8,50.1 149.9,62.2 149.9,137.8 137.8,149.9 62.2,149.9 50.1,137.8" fill="url(#gStoneTop)"/>
     <g fill="#8C8174"><circle cx="60" cy="60" r="4"/><circle cx="60" cy="140" r="4"/><circle cx="140" cy="60" r="4"/><circle cx="140" cy="140" r="4"/></g>

@@ -38,3 +38,7 @@ export function softmaxPick(scores, temp) {
 }
 
 export const INK = '#2B2230';
+// One outline thickness for everything with an outline, in room units (round 19, lane outline19: "check that outline
+// thickness is consistent everywhere"). The renderer draws it round every unit, summon, prop and thrown thing at this
+// width whatever its size (parts.js, sprites.js getProp); code drawings stroke OUTLINE * 2 (half of it outside).
+export const OUTLINE = 2.4;
