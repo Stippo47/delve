@@ -1069,7 +1069,7 @@ function mound(ctx, x, y, R, open, seed, rise = 1, wob = 0) {
   ctx.fillStyle = SOIL[3]; blob(ctx, x + wob - r * 0.18, y - r * 0.32, r * 0.48, 6, seed + 2, 0.7); ctx.fill();
   if (open) { inked(ctx, () => { ctx.beginPath(); ctx.ellipse(x + wob, y - r * 0.02, r * 0.42, r * 0.32, 0, 0, TAU); }, SOIL[0]); ctx.fillStyle = '#2E2219'; ctx.beginPath(); ctx.ellipse(x + wob, y + r * 0.04, r * 0.3, r * 0.2, 0, 0, TAU); ctx.fill(); }
   for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + hash(seed, i), d = r * (0.95 + 0.2 * hash(i, seed)), cr = r * (0.16 + 0.08 * hash(seed, i + 4));
-    inked(ctx, () => blob(ctx, x + wob + Math.cos(b) * d, y + 2 + Math.sin(b) * d * 0.82, cr, 4, i, 0.9), i % 2 ? SOIL[2] : SOIL[1]); }
+    inked(ctx, () => blob(ctx, x + wob + Math.cos(b) * d, y + 2 + Math.sin(b) * d * 0.82, cr, 7, i, 0.9), i % 2 ? SOIL[2] : SOIL[1]); }
 }
 DRAW.mound = (ctx, f, w, layer) => {
   if (layer !== 'ground') return; const rise = easeOut(k01(f.t / 0.18)), sink = k01((f.max - f.t) / 0.45);
@@ -1174,13 +1174,13 @@ DRAW.tubeSip = (ctx, f, w, layer) => {
 // snowflakes drift up off it (no ice); shocking fizzes, its bubbles popping in little crackling sparks (no bolts); water
 // ripples where drops fall back into it and spits droplets up; whirling turns into a whirlpool, its foam drawn round and in,
 // gusts curling up off it. Acid and fire are as they were.
-const BREWC = { cold: ['#5FB0DC', '#A9E2F8', '#E8F8FF'], shock: ['#D8B020', '#FFE66B', '#FFF7C2'], water: ['#2F7FB8', '#5DB7E0', '#BFE9F8'], whirl: ['#8FB8C4', '#D6EEF2', '#FFFFFF'] };
+const BREWC = { cold: ['#5FB0DC', '#A9E2F8', '#E8F8FF'], shock: ['#D8B020', '#FFE66B', '#FFF7C2'], water: ['#2F7FB8', '#5DB7E0', '#BFE9F8'], whirl: ['#5FB4A4', '#A8E6D8', '#F0FFFB'] };
 function brewSplat(ctx, f, a, C) {
   const r = f.r * (0.55 + 0.45 * easeOut(k01(f.t / 0.25))), sd = Math.round(f.x * 5 + f.y);
   ctx.save(); ctx.globalAlpha *= a;
-  ctx.save(); ctx.globalAlpha *= 0.35; ctx.fillStyle = C[0]; blob(ctx, f.x, f.y, r * 1.08, 7, sd, 0.85); ctx.fill(); ctx.restore();
-  ctx.save(); ctx.globalAlpha *= 0.8; ctx.fillStyle = C[0]; blob(ctx, f.x, f.y, r * 0.95, 7, sd + 1, 0.82); ctx.fill(); ctx.restore();
-  ctx.save(); ctx.globalAlpha *= 0.85; ctx.fillStyle = C[1]; blob(ctx, f.x - r * 0.04, f.y - r * 0.05, r * 0.78, 6, sd + 2, 0.8); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.globalAlpha *= 0.35; ctx.fillStyle = C[0]; blob(ctx, f.x, f.y, r * 1.08, 12, sd, 0.85); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.globalAlpha *= 0.8; ctx.fillStyle = C[0]; blob(ctx, f.x, f.y, r * 0.95, 12, sd + 1, 0.82); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.globalAlpha *= 0.85; ctx.fillStyle = C[1]; blob(ctx, f.x - r * 0.04, f.y - r * 0.05, r * 0.78, 12, sd + 2, 0.8); ctx.fill(); ctx.restore();
   for (let i = 0; i < 6; i++) { const b = hash(sd, i) * TAU, d = r * (1.05 + 0.25 * hash(i, sd)); ctx.save(); ctx.globalAlpha *= 0.8; disc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d * 0.85, 2.5 + 3 * hash(i, 4), C[i % 2]); ctx.restore(); }
   ctx.save(); ctx.globalAlpha *= 0.55; ctx.fillStyle = C[2]; ctx.beginPath(); ctx.ellipse(f.x - r * 0.3, f.y - r * 0.32, r * 0.28, r * 0.1, -0.45, 0, TAU); ctx.fill(); ctx.restore();
   ctx.restore();
@@ -1202,7 +1202,7 @@ DRAW.brewPool = (ctx, f, w, layer) => {
         for (let j = 0; j <= 14; j++) { const q = j / 14, b = -f.t * 5 + arm / 3 * TAU + q * 3.2, rr = R * (0.15 + 0.85 * q); const x = f.x + Math.cos(b) * rr, y = f.y + Math.sin(b) * rr * 0.85; j ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); ctx.restore(); }
       disc(ctx, f.x, f.y, R * 0.14, C[0]); }
     if (f.kind === 'shock') lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * (0.8 + 0.15 * Math.sin(f.t * 23)), '#FFE66B', 0.22));
-    if (f.kind === 'cold') lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 0.9, '#DDF6FF', 0.2));
+    if (f.kind === 'cold') lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 0.8, '#DDF6FF', 0.08));
     ctx.restore(); return;
   }
   ctx.save(); ctx.globalAlpha *= a;
@@ -1219,8 +1219,8 @@ DRAW.brewPool = (ctx, f, w, layer) => {
     for (let i = 0; i < 4; i++) { const ph = (f.t * 1.1 + i / 4 + hash(i, sd) * 0.3) % 1, b = hash(i, sd + 4) * TAU, d = R * 0.5 * hash(sd, i + 1), h = Math.sin(ph * Math.PI) * 22;
       inkDisc(ctx, f.x + Math.cos(b) * (d + ph * 10) + vx * h, f.y + Math.sin(b) * (d + ph * 10) * 0.8 + vy * h, 2.8, i % 2 ? C[1] : C[2]); }
   } else if (f.kind === 'whirl') { // gusts curling up off the whirlpool, turning with it
-    for (let i = 0; i < 3; i++) { const ph = (f.t * 0.8 + i / 3) % 1, b0 = -f.t * 4 + i / 3 * TAU, up = 6 + ph * 26, RR = R * (0.9 - 0.4 * ph);
-      ctx.save(); ctx.globalAlpha *= 0.9 * Math.sin(ph * Math.PI); inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(f.x + vx * up, f.y + vy * up, RR, RR * 0.35, 0, b0, b0 + 2.2); }, '#FFFFFF', 3); ctx.restore(); }
+    for (let i = 0; i < 3; i++) { const ph = (f.t * 0.8 + i / 3) % 1, b0 = -f.t * 4 + i / 3 * TAU, up = 6 + ph * 24, RR = R * (0.55 - 0.3 * ph);
+      ctx.save(); ctx.globalAlpha *= 0.8 * Math.sin(ph * Math.PI); inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(f.x + vx * up, f.y + vy * up, RR, RR * 0.35, 0, b0, b0 + 1.8); }, '#FFFFFF', 2.2); ctx.restore(); }
   }
   ctx.restore();
 };

@@ -145,11 +145,14 @@ export const ABILITY_SCENE = {
   // Digger
   dirtFling: S('front', { friends: [{ at: [175, 262], hp: 0.6, st: { burn: 60, poison: 40 } }], addFoes: [F('burner', [250, 320], { on: 0 })] }), burrow: S('spread'), spadeBat: S('front'),
   // Grandpa
-  breadToss: S('hurtFriends'), harvest: S('hurtFriend', { addFoes: [F('fast', [250, 320], { on: 0 })] }), oldTales: S('partyFight', { forceAt: 3.2 }),
+  // (round 19, lane caster19: Bread Toss with Grandpa hurt too, so II's second loaf is tossed up and caught; Sheaves, Old
+  // Tales' slot: hurt friends near the fight, enemies walking in through where the hay lands)
+  breadToss: S('hurtFriends', { hp: 0.4 }), harvest: S('hurtFriend', { addFoes: [F('fast', [250, 320], { on: 0 })] }),
+  oldTales: S('party', { friends: [{ at: [150, 92], hp: 0.45 }, { at: [150, 258], hp: 0.5 }], foes: [F('melee', [330, 128]), F('fast', [350, 222]), F('melee', [400, 175]), F('fast', [420, 100])] }),
   // Alchemist
-  acidFlask: S('pack'), elixir: S('hurtFriend'), bangFlask: S('ring'),
+  acidFlask: S('pack'), elixir: S('hurtFriends'), bangFlask: S('ring'), // (round 19: Elixir II's second tube has a second friend to go to)
   // Shaman
-  healTotem: S('hurtFriend', { friends: [{ at: [205, 262], hp: 0.4, st: { poison: 60 } }], addFoes: [F('poisoner', [250, 320], { on: 0 })] }), spiritLink: S('party', { addFriends: [{ at: [70, 290], hp: 0.6 }] }), rainDance: S('party'),
+  healTotem: S('hurtFriend', { friends: [{ at: [205, 262], hp: 0.4, st: { poison: 60 } }], addFoes: [F('poisoner', [250, 320], { on: 0 })] }), spiritLink: S('partyFight', { friends: [{ at: [185, 92], hp: 0.7 }, { at: [185, 258], hp: 0.7 }, { at: [150, 175], hp: 0.75 }, { at: [70, 290], hp: 0.8 }], foes: [F('heavy', [262, 92], { on: 0 }), F('melee', [262, 258], { on: 1 }), F('fast', [300, 175], { on: 2 }), F('melee', [400, 175])] }), rainDance: S('party'), // (round 19: "Preview doesn't show off potential": four friends being hit, so every blow is seen going out along the threads, and III's five)
   // Witch
   frogHex: S('spread'), cursedBrew: S('pack', { foes: [F('melee', [340, 175], { hp: 0.3, mortal: true }), F('fast', [375, 125], { hp: 0.3, mortal: true }), F('fast', [375, 228]), F('melee', [410, 175])] }), broomRide: S('pack'),
   // Warlock
@@ -249,6 +252,9 @@ export function sceneOf(id, A) {
 export const ATTACK_SCENE = {
   cleric: S('hurtFriend', { hero: [100, 175], friends: [{ at: [230, 120], hp: 0.5 }], foes: [F('melee', [320, 120], { on: 0 }), F('melee', [320, 235])] }),
   waterMage: S('hurtFriend', { hero: [100, 175], friends: [{ at: [230, 120], hp: 0.7 }], foes: [F('melee', [320, 120], { on: 0 }), F('melee', [320, 235])] }),
+  // round 19 (lane caster19, the Shaman's Spirit bolt: "It's not shown in book"): a hurt friend fighting by the enemy it
+  // strikes, so the spirit is seen to leap on to the friend and mend it
+  shaman: S('hurtFriend', { hero: [90, 175], friends: [{ at: [250, 110], hp: 0.45 }], foes: [F('melee', [320, 125], { on: 0 }), F('melee', [330, 240])] }),
 };
 export function attackSceneOf(id) {
   const o = ATTACK_SCENE[id] || S('pair', { foes: [F('melee', [300, 150]), F('fast', [330, 215])] }), base = SCENES[o.scene];

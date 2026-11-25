@@ -146,7 +146,7 @@ export const SPUN = { need: 100, decay: 10, boss: 0.45, move: 0.8, lock: 0.9, ma
 // helps it had on (rage, haste, wards, shields: anything that helps it) are washed off when the dirt goes on, and the
 // Digger's own spade (a swing, or the clods it throws) lands `spade` times as hard on it and knocks the dirt off. No
 // soaked blow and no fire or poison guard on a foe. `wash`: the brown it turns (render.js, through its 'dirty' buff).
-export const DIRTY = { dur: 10, atkSpeed: 0.7, immune: ['burn', 'poison'], col: '#9C7650', foeDur: 6, spade: 2, wash: ['#6E4E30', 0.3] };
+export const DIRTY = { dur: 10, atkSpeed: 0.7, immune: ['burn', 'poison'], col: '#9C7650', foeDur: 6, spade: 2, wash: ['#6E4E30', 0.22] };
 // TARGETED (the Marksman's Aimed Shot, the Pirate's Point Blank): blows (not damage over time) land `taken` as hard;
 // its dashes, leaps and charges go `moves` as far; the Marksman's bullets go on through it.
 export const TARGETED = { taken: 1.2, moves: 0.4, col: '#FF5A4A' };
