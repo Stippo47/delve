@@ -105,5 +105,42 @@ for (const [name, o, src, want] of [
   ['a telekinetic stone (a caster\'s shot)', { shot: true, proj: 'tkStone' }, { kind: 'telekinetic', def: {} }, true],
 ]) ok(`${name}: ${T.isMagicHit(o, src) ? 'magic' : 'physical'}`, T.isMagicHit(o, src) === want);
 
+console.log(`fire set on fire (KINDLED: up to x${T.KINDLED.dealt} dealt, x${T.KINDLED.atkSpeed} attack speed, x${T.KINDLED.move} move; bosses half the extra)`);
+{ const w = room(), e = spawn(w, 'imp', 600, 350, { mult: 1 }); pin(e); const py = spawn(w, 'pyromancer', 200, 350, { level: 1 }); pin(py); const h0 = e.hp; addStatus(w, e, 'burn', 80, py); run(w, 2);
+  const b = e.buffs.find((x) => x.id === 'kindled');
+  ok(`an imp (burn resistance 0) takes burning in (${e.st.burn.toFixed(0)} left after 2 s), loses no health, and is kindled`, e.hp === h0 && b && b.dealt > 1.1, b && `x${b.dealt.toFixed(2)} dealt, x${b.atkSpeed.toFixed(2)} speed`);
+  addStatus(w, e, 'burn', 100, py); const f = e.buffs.find((x) => x.id === 'flare');
+  ok('full up it FLARES (no scorch damage to itself): the whole boost for 4 s', e.hp === h0 && f && Math.abs(f.dealt - T.KINDLED.dealt) < 1e-6 && f.t === T.KINDLED.flareT); }
+{ const w = room(), e = spawn(w, 'cinder', 600, 350, { mult: 1 }); pin(e); const py = spawn(w, 'pyromancer', 200, 350, { level: 1 }); pin(py); addStatus(w, e, 'burn', 100, py); const f = e.buffs.find((x) => x.id === 'flare');
+  ok('a fire boss (Cinder) flares at half the extra', f && Math.abs(f.dealt - (1 + (T.KINDLED.dealt - 1) * T.KINDLED.boss)) < 1e-6, f && `x${f.dealt.toFixed(2)}`); }
+{ const w = room(), e = spawn(w, 'hellhound', 600, 350, { mult: 1 }); pin(e); w.hazards.push({ type: 'fire', x: 600, y: 350, r: 80 }); run(w, 2);
+  ok('fire with nobody behind it (a pool, its own trail) does nothing to a fire thing, as before', !(e.st.burn > 0) && !e.buffs.some((b) => b.id === 'kindled')); }
+{ const w = room(), e = spawn(w, 'rat', 600, 350, { mult: 1 }); pin(e); e.maxHp = e.hp = 1000; addStatus(w, e, 'burn', 80, null); run(w, 2); ok('a rat burns as ever', e.hp < 1000, (1000 - e.hp).toFixed(1)); }
+
+console.log('height layers');
+{ const mk = () => { const w = room(), s = spawn(w, 'slime', 600, 350, { mult: 1 }); pin(s); s.maxHp = s.hp = 1000; s.airborne = true; const h = spawn(w, 'warhelm', 560, 350, { level: 1 }); initKit(h, 'warhelm', { nodes: {} }, 1); return { w, s, h }; };
+  { const { w, s, h } = mk(); ok('a slime mid-hop: a hammer slam misses it', hurt(w, s, 30, h, { slam: true, heavy: true }) === 0); }
+  { const { w, s, h } = mk(); ok('a blow lands', hurt(w, s, 30, h, {}) > 0); }
+  { const { w, s, h } = mk(); ok('a shot lands', hurt(w, s, 30, h, { shot: true, proj: 'arrow' }) > 0); }
+  { const { w, s, h } = mk(); const { explode } = await import('../../js/sim.js'); explode(w, 600, 350, 80, 20, {}, h, '#fff'); ok('an explosion lands', s.hp < 1000, (1000 - s.hp).toFixed(0)); }
+  { const { w, s } = mk(); w.hazards.push({ type: 'gas', x: 600, y: 350, r: 80 }); w.hazards.push({ type: 'fire', x: 600, y: 350, r: 80 }); step(w, 1 / 60); s.airborne = true; for (let i = 0; i < 30; i++) { s.airborne = true; step(w, 1 / 60); }
+    ok('gas reaches it (poison builds), the fire pool under it does not', s.st.poison > 0 && s.st.burn === 0, `poison ${s.st.poison.toFixed(1)}, burn ${s.st.burn}`); }
+  { const w = room(), g = spawn(w, 'griffon', 600, 350, { level: 1 }); g.flyT = 1; const e = spawn(w, 'rattler', 640, 350, { mult: 1 });
+    ok('a flier up in the air: a blow misses it, a shot lands', hurt(w, g, 10, e, {}) === 0 && hurt(w, g, 10, e, { shot: true, proj: 'arrow' }) > 0); } }
+
+console.log('hit kinds: one damage type (sharp | blunt | magic) and the elements it carries, apart');
+const desc = (o, src) => { const k = T.hitKinds(o, src); return [k.type, ...k.elements.map((e) => '+' + e), ...['slam', 'explosion', 'gas', 'shot'].filter((f) => k[f])].join(' '); };
+for (const [name, o, src, want] of [
+  ['a knight sword', {}, { kind: 'knight', def: {} }, 'sharp'], ['the Warhelm hammer', {}, { kind: 'warhelm', def: { weapon: 'heavy' } }, 'blunt'],
+  ['an arrow', { shot: true, proj: 'arrow' }, null, 'sharp shot'], ['a frost arrow', { shot: true, proj: 'arrow', chill: 34 }, null, 'sharp +frost shot'],
+  ['a sling stone', { shot: true, proj: 'stone' }, null, 'blunt shot'], ['a wolf bite', {}, { kind: 'wolf', def: {} }, 'sharp'],
+  ['a slime landing', {}, { kind: 'slime', def: { hops: 1 } }, 'blunt'], ['Ground Pound', { ab: 'groundPound' }, null, 'blunt slam'],
+  ['a bomb', { explosion: true, burn: 20 }, null, 'blunt +fire explosion'], ['a fireball', { shot: true, proj: 'fireball', burn: 20 }, null, 'magic +fire shot'],
+  ['Smite', { ab: 'smite', radiance: 35 }, { kind: 'cleric', def: {} }, 'magic +holy'], ['burning ticking', { dot: true, stk: 'burn' }, null, ' +fire'],
+]) ok(`${name}: ${desc(o, src)}`, desc(o, src).trim() === want.trim());
+{ const w = room(), e = spawn(w, 'rat', 600, 350, { mult: 1 }); pin(e); e.maxHp = e.hp = 1000; e.def = { ...e.def, hitRes: { magic: 0.5 } }; const py = spawn(w, 'pyromancer', 200, 350, { level: 1 });
+  const got = hurt(w, e, 40, py, { shot: true, proj: 'fireball', burn: 30, noDodge: true });
+  ok(`a magic-proof foe (hitRes magic 0.5) takes half a fireball's hit (${got.toFixed(0)} of 40) and burns in full (${e.st.burn.toFixed(0)} of 30)`, Math.abs(got - 20) < 1 && Math.abs(e.st.burn - 30) < 0.01); }
+
 console.log(bad ? `${bad} failed` : 'all passed');
 process.exit(bad ? 1 : 0);

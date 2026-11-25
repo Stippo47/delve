@@ -379,6 +379,7 @@ export const ABILITIES2 = {
       for (const e of foesNear(w, u, u.x, u.y, 80)) { hurt(w, e, dmgOf(u, 0.5), u, { knock: 260, kAngle: ang(u, e), noDodge: true }); whirl(w, e, 25, u); }
       k2(w, { draw: 'gust', x: u.x, y: u.y, r: 80, max: 0.5 });
       k2(w, { draw: 'wings', unit: u, x: u.x, y: u.y, r: u.r, max: 0.62, flap: true });
+      u.flyT = 0.6; // round 17 (lane tags17): flying while he swoops (tags.js layerOf)
       u.act = { type: 'leap', t: 0.6, max: 0.6, x0: u.x, y0: u.y, x1, y1, land: () => {
         w.shake = Math.max(w.shake, 6);
         setAnim(u, 'spin', 0.45); u.spin = { t0: w.time, dur: 0.45, dir: 1 };
@@ -526,7 +527,7 @@ export const ABILITIES2 = {
         hurt(w, t, dmgOf(u, 2.2), u, { heavy: true, knock: 110, noDodge: true });
         stun(w, t, tier >= 2 ? 1.6 : 1); w.shake = Math.max(w.shake, 6);
         k2(w, { draw: 'bonk', x: t.x, y: t.y, unit: t, r: t.vr, max: tier >= 2 ? 1.6 : 1 });
-        if (tier >= 3) for (const e of foesNear(w, u, t.x, t.y, 90)) if (e !== t) hurt(w, e, dmgOf(u, 0.8), u, { stagger: 50, knock: 140, kAngle: angleTo(t.x, t.y, e.x, e.y), noDodge: true });
+        if (tier >= 3) for (const e of foesNear(w, u, t.x, t.y, 90)) if (e !== t) hurt(w, e, dmgOf(u, 0.8), u, { stagger: 50, knock: 140, kAngle: angleTo(t.x, t.y, e.x, e.y), noDodge: true, slam: true });
       });
     },
     show: { single: true },
@@ -646,7 +647,7 @@ export const ABILITIES2 = {
         u.act = { type: 'leap', t: 0.45, max: 0.45, x0: u.x, y0: u.y, x1, y1, land: () => {
           const R = tier >= 3 ? 105 : 80; w.shake = Math.max(w.shake, 8); u.kit.splitT = 0;
           swingMark(w, u, u.r + 20, 0.6, { x: u.x, y: u.y, r: R, look: 'hammer' });
-          for (const e of foesNear(w, u, u.x, u.y, R)) { hurt(w, e, dmgOf(u, 1.9), u, { knock: 300, kAngle: ang(u, e), heavy: true, noDodge: true, stagger: tier >= 2 ? 55 : 0, shock: 20 }); if (tier >= 3) stun(w, e, 0.8); }
+          for (const e of foesNear(w, u, u.x, u.y, R)) { hurt(w, e, dmgOf(u, 1.9), u, { knock: 300, kAngle: ang(u, e), heavy: true, noDodge: true, stagger: tier >= 2 ? 55 : 0, shock: 20, slam: true }); if (tier >= 3) stun(w, e, 0.8); }
         } };
         u.invulnT = Math.max(u.invulnT, 0.45);
       } }));
@@ -1116,7 +1117,7 @@ export const ABILITIES2 = {
       const T = tier >= 3 ? 3.5 : 2.5, foes = foesNear(w, u, u.x, u.y, 340);
       let cx = u.x, cy = u.y; if (foes.length) { cx = 0; cy = 0; for (const e of foes) { cx += e.x; cy += e.y; } cx /= foes.length; cy /= foes.length; }
       const R = clamp(dist(u.x, u.y, cx, cy), 90, 150); let th = angleTo(cx, cy, u.x, u.y), bombT = 0.25;
-      u.act = { type: 'ride', t: T + 0.2, max: T + 0.2 }; u.ethereal = true; u.kit.broomUntil = w.time + T; setAnim(u, 'ability', 0.4);
+      u.act = { type: 'ride', t: T + 0.2, max: T + 0.2 }; u.ethereal = true; u.kit.broomUntil = w.time + T; u.flyT = T; // (round 17: flying on the broom) setAnim(u, 'ability', 0.4);
       k2(w, { draw: 'broom', unit: u, x: u.x, y: u.y, a: u.facing, max: T + 0.1 });
       timer(u, 'broom', T, (dt) => {
         const k = Math.min(1, (T - (u.kit.broomUntil - w.time)) / 0.3);
@@ -2180,6 +2181,7 @@ export const ABILITIES2 = {
       const d = w.units.filter((a) => a.team === u.team && a.downed && !a.dead && !a.summon).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0]; if (!d) return;
       u.kit.callW = w; cast(u, 'ability', 0.7); const a = angleTo(d.x, d.y, u.x, u.y), x1 = clamp(d.x + Math.cos(a) * (d.r + u.r), u.r, w.W - u.r), y1 = clamp(d.y + Math.sin(a) * (d.r + u.r), u.r, w.H - u.r);
       k2(w, { draw: 'wings', unit: u, x: u.x, y: u.y, r: u.r, max: 0.7, flap: true }); u.invulnT = Math.max(u.invulnT, 0.7);
+      u.flyT = 0.55; // round 17 (lane tags17): flying on her saving leap
       u.act = { type: 'leap', t: 0.55, max: 0.55, x0: u.x, y0: u.y, x1, y1, land: () => {
         if (!d.downed || d.dead) return; cleanse(d); d.downed = false; d.reviveT = 0; d.hp = d.maxHp * (tier >= 2 ? 0.4 : 0.25); d.invulnT = 1.5; d.revivedByKit = true;
         fx(w, { type: 'pillar', x: d.x, y: d.y, r: 34, kind: 'holy', max: 0.6 }); w.shake = Math.max(w.shake, 5);
@@ -2189,7 +2191,7 @@ export const ABILITIES2 = {
         if (tier >= 3) after(u, 0.25, () => { if (!alive(u) || !alive(d)) return; const f = opponents(w, u); let ax = 0, ay = 0; for (const e of f) if (dist(e.x, e.y, u.x, u.y) < 320) { ax += u.x - e.x; ay += u.y - e.y; }
           const b = Math.hypot(ax, ay) > 1 ? Math.atan2(ay, ax) : a, sx = clamp(u.x + Math.cos(b) * 190, u.r, w.W - u.r), sy = clamp(u.y + Math.sin(b) * 190, u.r, w.H - u.r);
           k2(w, { draw: 'wings', unit: u, x: u.x, y: u.y, r: u.r, max: 0.6, flap: true }); u.kit.carry = d;
-          u.act = { type: 'leap', t: 0.5, max: 0.5, x0: u.x, y0: u.y, x1: sx, y1: sy, land: () => { u.kit.carry = null; } }; });
+          u.flyT = 0.5; u.act = { type: 'leap', t: 0.5, max: 0.5, x0: u.x, y0: u.y, x1: sx, y1: sy, land: () => { u.kit.carry = null; } }; });
       } };
     },
     show: { ally: true, downed: true, allyFree: true },
@@ -2221,7 +2223,7 @@ export const ABILITIES2 = {
       const a = [u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo).sort((p, q) => opponents(w, u).filter((e) => e.target === q).length - opponents(w, u).filter((e) => e.target === p).length)[0] || u;
       const f = foesNear(w, u, a.x, a.y, 140)[0], b = f ? angleTo(a.x, a.y, f.x, f.y) : 0, x1 = clamp(a.x + Math.cos(b) * (a.r + u.r), u.r, w.W - u.r), y1 = clamp(a.y + Math.sin(b) * (a.r + u.r), u.r, w.H - u.r);
       cast(u, 'ability', 0.9); k2(w, { draw: 'wings', unit: u, x: u.x, y: u.y, r: u.r, max: 0.95, flap: true }); u.invulnT = Math.max(u.invulnT, 0.9);
-      u.act = { type: 'ride', t: 0.95, max: 0.95 }; const x0 = u.x, y0 = u.y, t0 = w.time;
+      u.act = { type: 'ride', t: 0.95, max: 0.95 }; u.flyT = 0.85; const x0 = u.x, y0 = u.y, t0 = w.time; // (round 17: flying, up on her wings)
       timer(u, 'skyDive', 0.9, () => { const k = (w.time - t0) / 0.9; u.hop = Math.sin(Math.min(1, k * 1.6) * Math.PI / 2) * 80 * (k < 0.75 ? 1 : (1 - k) / 0.25); const q = clamp((k - 0.3) / 0.7, 0, 1); u.x = x0 + (x1 - x0) * q; u.y = y0 + (y1 - y0) * q; u.vx = u.vy = 0; },
         () => { u.hop = 0; if (u.act && u.act.type === 'ride') u.act = null; w.shake = Math.max(w.shake, 7);
           k2(w, { draw: 'radiantBurst', x: u.x, y: u.y, r: 110, max: 0.6 });

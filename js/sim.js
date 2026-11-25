@@ -9,7 +9,7 @@ import { ARMOUR_CAP, ENEMY_ARMOUR, armourCut } from './armour.js';
 import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON, CHARM, CONFUSE, SLEEPY, BLEED, FEAR, SHACKLE, cdRate, setBackDue, windMul } from './statuses.js';
 import { MOB, bindBody, bodiesOf, mobMid, mobSlot, mobLead } from './mob.js'; // round 15 (the Mob): four bodies, one hero
 import { tallyHurt, tallyHeal, tallyDown, noteStatus, tallyBlock, AUDIT } from './stats.js';
-import { tagRes, douseRate, DOUSE } from './tags.js'; // round 17 (lane tags17): tags; docs/tags17.md
+import { tagRes, douseRate, DOUSE, hasTag, kindledBuff, KINDLED, hitKinds, hitType, reaches, layerOf, anyHitRes, hitResOf } from './tags.js'; // round 17 (lane tags17): tags; docs/tags17.md
 
 let NEXT_ID = 1;
 // Round 16 fix: unit ids feed some movement (the wander and spacing wobble), so a fight only replays from its seed if its
@@ -448,7 +448,7 @@ function dangerTick(w, dt) {
     if (z.t > 0 || z.done) continue;
     z.done = true;
     if (z.src && (z.src.dead || z.src.downed)) { z.cancelled = true; continue; }
-    if (z.hit) for (const o of w.units) if (alive(o) && o.team !== z.team && !offFloor(o) && inZone(z, o.x, o.y, o.r * 0.5)) hurt(w, o, z.hit.dmg, z.src || null, { noDodge: true, zone: z.kind, ...z.hit, by: z.src ? undefined : z.by }); // (round 16 fix: a lobbed zone has no src on purpose, so it lands even if its thrower falls; by names the thrower, so its blow and statuses count for it) (slimes16: not a slime up in a hop)
+    if (z.hit) for (const o of w.units) if (alive(o) && o.team !== z.team && (!offFloor(o) || ((z.gas || z.explosion) && layerOf(o) === 'hovering')) && inZone(z, o.x, o.y, o.r * 0.5)) hurt(w, o, z.hit.dmg, z.src || null, { noDodge: true, zone: z.kind, gas: z.gas, explosion: z.explosion, ...z.hit, by: z.src ? undefined : z.by }); // (round 16 fix: a lobbed zone has no src on purpose, so it lands even if its thrower falls; by names the thrower, so its blow and statuses count for it) (slimes16: not a slime up in a hop)
     if (z.onFire) actAs(w, z.src || z.by, () => z.onFire(w, z));
   }
   w.danger = w.danger.filter((z) => z.t > -0.3);
@@ -859,7 +859,7 @@ function drive(u, sx, sy, want, dt, quick = 1) {
 // foe its body meets on the way down is hit, once a hop, with its own blow (blowOf: dmg, knock, poison, burn...). The
 // attack clock then restarts as a swing's would, so its damage a second stays about def.dmg / def.atkCd.
 export const HOP = { crouch: 0.15, air: 0.4, land: 0.1, rest: 0.35, pace: 1.6, lift: 1.6, lift0: 10, sq: 0.5, sqLand: 0.55, reach: 4, rebound: 190 };
-export const offFloor = (u) => !!u.airborne;
+export const offFloor = (u) => !!u.airborne || u.flyT > 0; // round 17 (lane tags17): hovering (a slime mid-hop) or flying (tags.js layerOf)
 const canStrike = (u) => !(u.radiantT > 0 || u.fearT > 0 || u.shackledT > 0 || u.forcedGoal);
 const heavyOf = (u) => clamp(u.r / 25, 0.7, 1.5); // how heavy it hops (the plain slime 1, a big one 1.5)
 function hopTick(w, u, dt) {
@@ -1008,6 +1008,7 @@ export function hurt(w, u, amount, src, o = {}) {
   if (AUDIT.on && u && u.invulnT > 0 && alive(u) && amount > 0 && !u.ethereal) AUDIT.on('keep', w, u, src, amount, { why: 'invuln', dot: o.dot }); // (round 16: tools/audit: untouchable)
   if (u && u.invulnT > 0 && alive(u) && amount > 0 && !u.ethereal) { blockedBy(w, u, src, amount, o); return 0; }
   if (!alive(u) || u.invulnT > 0 || amount <= 0 || u.ethereal) return 0;
+  if (!o.dot && offFloor(u) && !reaches(layerOf(u), hitKinds(o, src))) return 0; // round 17 (lane tags17): a slam misses a slime mid-hop; only shots reach a flier up in the air
   // round 15 (the Mob, mob.js): a blow on any of its bodies comes off the one pool (u.hp is the lead's). One blow, or
   // one tick of a zone, that catches several bodies lands in full on the first and MOB.share on each more; the same
   // for the statuses it carries.
@@ -1088,6 +1089,7 @@ export function hurt(w, u, amount, src, o = {}) {
   // Armour (round 11; round 13, the designer: "A combination of the 2. % and fixed?"): each point takes one point off a
   // blow and ARMOUR_PCT (2%) off it as well, the whole cut never more than ARMOUR_CAP of the blow. A blow marked heavy,
   // or a critical one, gets past half of both. Burning, poison and the like (damage over time) ignore it.
+  if (anyHitRes(u)) { const m = hitResOf(u, hitType(o, src)); if (m < 1) kept += amt * (1 - m); amt *= m; } // round 17 (lane tags17): a resistance to the hit's damage type, sharp / blunt / magic (none set yet; its elements are the def's res)
   if (!o.dot && u.armor > 0) { const c = armourCut(u.armor * (src && (mobLead(src) || src.bodies) ? MOB.armour : 1), amt, o.heavy || o.crit); kept += c; amt -= c; } // (round 15, the Mob: armour's points count once across its four small blows, not four times)
   if (kept > 0) blockedBy(w, u, src, kept, o);
   u.hp -= amt;
@@ -1150,7 +1152,11 @@ export function addStatus(w, u, type, amount, src, fromBlow, credit = null) { //
   if (src && src !== u && src.def && src.def.hitMul) amount *= src.def.hitMul; // (round 17: an enemy kind's hit, prices.js, carries to what its blows put on)
   const own = u.def.res && u.def.res[type], tr = own == null ? tagRes(u, type) : null; // (round 17, lane tags17: a tag's own, tags.js TAG_RES: constructs don't bleed or sicken)
   if (tr === 0) return;
-  const res = own ?? tr ?? 1;
+  // round 17 (lane tags17): a fire thing takes in fire put on it by the other side (KINDLED, tags.js), its own burn
+  // resistance set aside; fire with no one behind it (a pool, its own trail, its own side's) does nothing to it, as before
+  const fireIn = type === 'burn' && hasTag(u, 'fire');
+  if (fireIn) { const by = src || credit; if (!by || by === u || sideOf(by) === sideOf(u)) return; }
+  const res = fireIn ? Math.max(1, own ?? 1) : own ?? tr ?? 1;
   const s = u.st;
   noteStatus(u, type, src || credit); // its ticks and bursts count for whoever put it on (stats.js)
   if (type === 'chill' && s.wet > 30) amount *= 1.5;          // wet freezes easier
@@ -1236,7 +1242,8 @@ export function addStatus(w, u, type, amount, src, fromBlow, credit = null) { //
   if (type === 'burn') {
     if (u.frozenT > 0) { u.frozenT = 0; s.chill = 0; puff(w, u.x, u.y, 'rgba(235,240,245,0.8)', 10, 60, 9, 0.8); textU(w, u.x, u.y, u.r, 'thaw', '#DDEAF2', 0.8); }
     s.chill = Math.max(0, s.chill - amount);
-    if (s.burn >= need) { s.burn = after; burst(); textU(w, u.x, u.y, u.r + 12, 'SCORCH', '#FF7A2F', 1.2); flames(w, u.x, u.y, 10, u.vr * 0.8, 90); hurt(w, u, 22, src, { noDodge: true, noHex: true, stk: 'burn', proc: true }); /* (proc: a scorch never sets off on-hit hooks again: with a fire-weak target that looped for ever) */ explode(w, u.x, u.y, 60, 10, { burn: 24, stk: 'burn', proc: true }, src, '#FF7A2F', u); } // (round 17: its splash is a proc too: Potency's burn on each splash hit set off the next scorch, for ever)
+    if (s.burn >= need && hasTag(u, 'fire')) { s.burn = after; burst(); textU(w, u.x, u.y, u.r + 12, 'FLARE', KINDLED.col, 1.2); flames(w, u.x, u.y, 14, u.vr * 0.9, 110); addBuff(u, kindledBuff(u, 1, KINDLED.flareT, 'flare')); } // round 17 (lane tags17): a fire thing's scorch hurts nobody: it flares up
+    else if (s.burn >= need) { s.burn = after; burst(); textU(w, u.x, u.y, u.r + 12, 'SCORCH', '#FF7A2F', 1.2); flames(w, u.x, u.y, 10, u.vr * 0.8, 90); hurt(w, u, 22, src, { noDodge: true, noHex: true, stk: 'burn', proc: true }); /* (proc: a scorch never sets off on-hit hooks again: with a fire-weak target that looped for ever) */ explode(w, u.x, u.y, 60, 10, { burn: 24, stk: 'burn', proc: true }, src, '#FF7A2F', u); } // (round 17: its splash is a proc too: Potency's burn on each splash hit set off the next scorch, for ever)
   } else if (type === 'chill') {
     if (s.chill >= need && u.frozenT <= 0) {
       u.frozenT = u.def.boss ? 1.6 : 3; s.chill = after; s.burn = 0; u.freezeImmune += 45; u.act = null; burst();
@@ -1364,7 +1371,7 @@ export function explode(w, x, y, r, dmg, statuses, src, color, skip) {
     if (!alive(o) || o === skip) continue;
     if (dist(x, y, o.x, o.y) > r + o.r) continue;
     const friendly = src && o.team === src.team;
-    hurt(w, o, dmg * (friendly ? 0.4 : 1), src, { noDodge: true, knock: 110, kAngle: angleTo(x, y, o.x, o.y),
+    hurt(w, o, dmg * (friendly ? 0.4 : 1), src, { noDodge: true, knock: 110, kAngle: angleTo(x, y, o.x, o.y), explosion: true,
       ...Object.fromEntries(Object.entries(statuses).filter(([, v]) => typeof v === 'number').map(([k, v]) => [k, v * (friendly ? 0.4 : 1)])), stk: statuses.stk, by: statuses.by, proc: !!statuses.proc }); // (round 13, lane E: by, who to count it for when src is null on purpose)
   }
   if (statuses.burn) igniteAround(w, x, y, r);
@@ -1667,7 +1674,7 @@ function runAction(w, u, dt) {
       textU(w, u.x, u.y, u.r + 14, 'SLAM', '#FF6B5A', 1.2);
       w.shake = Math.max(w.shake, 9);
       for (const o of w.units) if (alive(o) && o.team !== u.team && dist(u.x, u.y, o.x, o.y) < 125 + o.r)
-        hurt(w, o, 20 * u.dmgMul, u, { knock: 260, heavy: true, noDodge: true });
+        hurt(w, o, 20 * u.dmgMul, u, { knock: 260, heavy: true, noDodge: true, slam: true });
       puff(w, u.x, u.y, '#D9CDB0', 24, 260, 7, 0.6);
     }
   }
@@ -1710,7 +1717,7 @@ function statusTick(w, u, dt) {
     if (u.radiantT <= 0) { u.radiantT = 0; u.radImmuneT = RADIANCE.immuneT; }
   } else if (u.radImmuneT > 0) u.radImmuneT -= dt;
   if (u.hexed && (u.hexT -= dt) <= 0) u.hexed = false;           // an unused hex wears off
-  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT', 'gasT', 'focusT', 'charmCd', 'silencedT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
+  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT', 'gasT', 'focusT', 'charmCd', 'silencedT', 'flyT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
   const wm = windMul(u); // round 14: sleepy, a charged shot and anything else queued up comes slower
   if (u.aimT > 0) u.aimT = Math.max(0, u.aimT - dt / wm);
   for (const b of u.buffs) b.t -= dt;
@@ -1735,7 +1742,8 @@ function statusTick(w, u, dt) {
     s.burn = Math.max(0, s.burn - STATUS.burn.decay * dt);
     // burning: hurts from a little build-up (it used to wait for 30, so most burns never showed or hurt), and the body
     // gives off licks of flame, more as it builds (fx.js drawStatusFx draws flames on the body too)
-    if (s.burn >= 8) hurt(w, u, (1.5 + s.burn * 0.06) * dt, null, { dot: true, color: '#FF9A55', by: u.stBy && u.stBy.burn, stk: 'burn' });
+    if (s.burn >= 8 && hasTag(u, 'fire')) addBuff(u, kindledBuff(u, fillOf(u, 'burn'))); // round 17 (lane tags17): KINDLED, fire on a fire thing feeds it (tags.js)
+    else if (s.burn >= 8) hurt(w, u, (1.5 + s.burn * 0.06) * dt, null, { dot: true, color: '#FF9A55', by: u.stBy && u.stBy.burn, stk: 'burn' });
     if (s.burn > 4 && rand() < dt * (4 + 10 * fillOf(u, 'burn'))) flames(w, u.x, u.y - u.vr * 0.3, 1, u.vr * 0.6, 60);
   }
   // round 17 (lane tags17): DOUSED, a fire creature soaked or standing in water takes what burning would do (tags.js
@@ -1916,8 +1924,9 @@ function hazards(w, dt) {
     if (!alive(u) || u.ethereal) continue;
     u.inOil = false; u.soakedT = 0;
     u.hazardT -= dt;
-    if (offFloor(u)) continue; // up in a hop (round 16): over the pools and the spikes
+    const lay = layerOf(u); if (lay === 'flying') continue; // up in a hop (round 16): over the pools and the spikes; round 17 (lane tags17): flying, over all of it
     for (const h of w.hazards) {
+      if (lay === 'hovering' && h.type !== 'gas') continue; // (round 17: the designer, "Gas can hit slimes": a cloud still reaches a slime mid-hop)
       if (dist(u.x, u.y, h.x, h.y) > h.r + u.r * 0.4) continue;
       if (h.type === 'oil' || h.type === 'web') u.inOil = true; // web (round 7): sticky, slows like oil
       else if (h.type === 'fire') addStatus(w, u, 'burn', 34 * dt);

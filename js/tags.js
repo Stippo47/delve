@@ -165,28 +165,138 @@ export function douseRate(u) {
   return (DOUSE.base + DOUSE.perWet * wet) * (u.def.boss ? DOUSE.boss : 1);
 }
 
-// ---------------------------------------------------------------- magic or physical
-// isMagicHit(o, src): o is hurt()'s options object, src its source (or null). In order, the first that answers:
-//   1. o.magic: true, o.physical: false (a caller can always say)
-//   2. a status ticking (o.dot with o.stk: burning, poison, bleeding, roots): false (not a hit at all)
-//   3. the ability it came from (o.ab or o.pab, else the one running right now when src is the one casting it):
-//      tagged magic in ABILITY_TAGS: true
-//   4. a shot (o.proj, the projectile's kind; sim.js projectiles passes it): MAGIC_SHOTS: true
-//   5. a telegraphed zone (o.zone, the danger zone's kind; sim.js dangerTick passes it): MAGIC_ZONES: true
-//   6. a shot or a zone whose source is tagged caster: true
-//   7. otherwise: false (blades, claws, arrows, bullets, stones, bombs, bites, fists)
+// KINDLED (the designer: "Fire tagged enemies that get set on fire don't take damage, instead getting a rage like
+// boost"): a fire-tagged unit builds Burn as anything else does (its own burn resistance set aside), but burning hurts
+// it not at all: it deals up to `dealt`, strikes up to `atkSpeed` and moves up to `move` x fill (the burn's value / 100;
+// bosses `boss` of the extra). Its Scorch burst hurts nobody (it is its own fire): it FLARES instead, the full boost
+// for `flareT` s. Water still hurts it, and soaking it still puts half the burning out.
+export const KINDLED = { dealt: 1.3, atkSpeed: 1.3, move: 1.15, boss: 0.5, flareT: 4, col: '#FF7A2F' };
+export function kindledBuff(u, fill, dur = 0.25, id = 'kindled') {
+  const k = Math.max(0, Math.min(1, fill)) * (u.def.boss ? KINDLED.boss : 1), m = (x) => 1 + (x - 1) * k;
+  return { id, dur, dealt: m(KINDLED.dealt), atkSpeed: m(KINDLED.atkSpeed), move: m(KINDLED.move), glow: KINDLED.col };
+}
+
+// ---------------------------------------------------------------- what a hit is
+// The designer: "Also think about the physical damage types, sharp vs blunt damage", and then: "magic shouldn't fall
+// under blunt or sharp right? Would be a separate 'magic' type. Like a fireball would be magic + fire effect. You
+// could have a monster hunter that resists magic but not its effects."
+// So every hit has two separate things, and a resistance to one never touches the other:
+//   type      exactly one of 'sharp' | 'blunt' | 'magic' (null for a status ticking: burning, poison, bleeding are not
+//             hits). A resistance to a type (def.hitRes / TAG_HIT_RES below) scales the hit's DAMAGE only.
+//   elements  none or more of fire, water, frost, shock, poison, holy, curse, nature... : what it carries (the
+//             statuses on the blow, ELEMENT_OF). A resistance to an element is the def's res (units.js, statuses.js:
+//             burn 0.5 = half the burn): it scales that element's BUILD-UP only, never the hit's damage.
+//   A fireball is { type: 'magic', elements: ['fire'] }: a magic-proof foe takes little of the blast but burns as ever;
+//   a fire-proof one takes the whole blast and doesn't burn.
+// hitKinds(o, src) -> { type, elements, slam, explosion, gas, zone, beam, shot, dot }: o is hurt()'s options object,
+// src its source (or null). The delivery flags:
+//   slam       a blow through the floor (o.slam, or an ability in SLAM_ABILITIES): misses anything off the floor
+//   explosion  a blast (sim.js explode passes it): reaches a slime mid-hop
+//   gas        a cloud (o.gas): reaches a slime mid-hop
+//   zone       a telegraphed danger zone (sim.js dangerTick passes its kind as o.zone)
+//   beam       a held ray (o.beam)
+//   shot       a projectile (sim.js projectiles passes its kind as o.proj)
+//   dot        a status ticking, a pool's sting
+// The type, in order, the first that answers:
+//   1. o.magic / o.sharp / o.blunt (a caller can always say; o.physical: not magic, the edge as below)
+//   2. a status ticking (o.dot with o.stk): null
+//   3. magic: the ability it came from is tagged magic (ABILITY_TAGS; o.ab / o.pab, else the one being cast by src
+//      right now); a shot of a MAGIC_SHOTS kind; a zone of a MAGIC_ZONES kind; a shot or zone from a caster-tagged src
+//   4. the edge: the ability's (EDGE_ABILITIES); the shot's kind (EDGE_SHOTS, else blunt); a zone ('blade' sharp, else
+//      blunt); an explosion: blunt; the striker: a hero's weapon (EDGE_WEAPON), its kind (EDGE_KINDS), its tags (a
+//      beast bites and claws: sharp; a slime, a plant, a construct: blunt); else sharp (most foes carry a blade)
 export const MAGIC_SHOTS = new Set(['bolt', 'fireball', 'frostbolt', 'holy', 'soul', 'lightning', 'ray', 'drain', 'spirit', 'spiritOrb', 'orb', 'note',
-  'kiss', 'kissTo', 'kissBack', 'hexbolt', 'glimmer', 'eyeBolt', 'cbolt', 'zeus', 'uncharm', 'spark', 'sleepy', 'shadowBolt', 'radiance',
+  'kiss', 'kissTo', 'kissBack', 'hexbolt', 'glimmer', 'eyeBolt', 'zeus', 'uncharm', 'spark', 'sleepy', 'shadowBolt', 'radiance',
   'heartstring', 'heartbreak', 'heartbreakCast', 'fear', 'confuse', 'charm', 'clockHand', 'loveArrow']);
 export const MAGIC_ZONES = new Set(['holy', 'soul', 'lightning', 'radiance', 'spirit', 'curse', 'hex']);
-export function isMagicHit(o = {}, src = null) {
-  if (o.magic) return true;
-  if (o.physical) return false;
-  if (o.dot && o.stk) return false;
-  const ab = o.ab || o.pab || (src && src.kit && src.kit.using) || (src && CUR.abU === src ? CUR.ab : null);
-  if (ab && abilityHas(ab, 'magic')) return true;
-  if (o.proj && MAGIC_SHOTS.has(o.proj)) return true;
-  if (o.zone && MAGIC_ZONES.has(o.zone)) return true;
-  if ((o.proj || o.zone || o.shot) && src && hasTag(src, 'caster')) return true;
-  return false;
+export const EDGE_WEAPON = { great: 'sharp', blade: 'sharp', thrust: 'sharp', twin: 'sharp', fork: 'sharp', scythe: 'sharp', claw: 'sharp', bite: 'sharp', heavy: 'blunt', palm: 'blunt' };
+export const EDGE_KINDS = {
+  sharp: ['knight', 'rogue', 'twinfang', 'wildmane', 'granny', 'cultist', 'huntress', 'ninja', 'marksman', 'pirate', 'wolf', 'mobDagger', 'mobAxe', 'mobPitchfork'],
+  blunt: ['paladin', 'tower', 'berserker', 'slinger', 'minion', 'warlockImp', 'golem', 'gildedGolem', 'ogre', 'troll', 'rockTroll', 'brute', 'rattlerMace',
+    'yeti', 'snowman', 'drummer', 'banditBrute', 'mummy', 'crab', 'crabBlue', 'crabGreen', 'engineHammer', 'greatEngine', 'chainCrawler', 'warDrum', 'boss', 'boneKing', 'frostGiant', 'hobgoblin'],
+};
+export const EDGE_ABILITIES = {
+  sharp: ['backstab', 'shadowstep', 'fanOfKnives', 'cleave', 'leap', 'reap', 'hook', 'greatSweep', 'riposte', 'impale', 'brace', 'bearRoar', 'pickpocket',
+    'shadowWalk', 'deathMark', 'harvest', 'soulCandle', 'crescentCut', 'iaido', 'runningThrow', 'bound', 'prey', 'aimedShot', 'ricochet', 'bayonet',
+    'shurikenFan', 'caltrops', 'pointBlank', 'snareNet', 'jawTrap', 'netThrow', 'spearThrow', 'reelIn', 'looseFalcon', 'flock', 'barrage', 'frostArrow',
+    'pounce', 'pinBolt', 'crankUp', 'disarm'],
+  blunt: ['shieldBash', 'groundPound', 'charge', 'holdTheLine', 'shockwave', 'whirl', 'toss', 'forkCharge', 'spadeBat', 'maul', 'thunderBlow', 'warHorn',
+    'skullSplitter', 'hammerThrow', 'swoop', 'wingShield', 'anchorDrop', 'rogueWave', 'stunStone', 'ramCharge', 'palmStrike', 'flurry', 'innerPeace',
+    'juggle', 'shieldRush', 'surround', 'chainGang', 'manacle', 'foodFight', 'challenge', 'burrow', 'mock', 'befuddle'],
+};
+export const EDGE_SHOTS = {
+  sharp: ['arrow', 'fireArrow', 'dagger', 'knife', 'knives', 'shuriken', 'kunai', 'javelin', 'harpoon', 'cbolt', 'aresSpear', 'shard', 'icicle', 'pellet',
+    'bullet', 'thorn', 'bone', 'bee', 'spear', 'dart', 'darts'],
+  blunt: ['stone', 'tkStone', 'ball', 'bomb', 'pot', 'pie', 'food', 'clod', 'snow', 'snowball', 'flask', 'vial', 'hammer', 'warhammer', 'cog', 'manacles', 'bolas', 'boulder', 'rock', 'water', 'sand'],
+};
+export const SLAM_ABILITIES = ['groundPound', 'shockwave', 'earthquake'];
+// the statuses a blow carries, as elements (a blow's stagger, sleepiness and the like are effects, not elements)
+export const ELEMENT_OF = { burn: 'fire', wet: 'water', chill: 'frost', shock: 'shock', poison: 'poison', radiance: 'holy', curse: 'curse', entangle: 'nature' };
+const EDGE = {};
+for (const [e, l] of Object.entries(EDGE_KINDS)) for (const k of l) EDGE['k:' + k] = e;
+for (const [e, l] of Object.entries(EDGE_ABILITIES)) for (const k of l) EDGE['a:' + k] = e;
+for (const [e, l] of Object.entries(EDGE_SHOTS)) for (const k of l) EDGE['s:' + k] = e;
+const SLAM = new Set(SLAM_ABILITIES);
+const abOf = (o, src) => o.ab || o.pab || (src && src.kit && src.kit.using) || (src && CUR.abU === src ? CUR.ab : null);
+function edgeOf(o, src, ab) {
+  if (ab && EDGE['a:' + ab]) return EDGE['a:' + ab];
+  if (o.proj) return EDGE['s:' + o.proj] || 'blunt';
+  if (o.zone) return o.zone === 'blade' ? 'sharp' : 'blunt';
+  if (o.explosion || !src) return 'blunt';
+  if (src.def && src.def.weapon && EDGE_WEAPON[src.def.weapon]) return EDGE_WEAPON[src.def.weapon];
+  const k = EDGE['k:' + src.kind] || (src.def && src.def.base && EDGE['k:' + src.def.base]);
+  if (k) return k;
+  if (hasTag(src, 'beast')) return 'sharp';
+  if (hasTag(src, 'slime') || hasTag(src, 'plant') || hasTag(src, 'construct')) return 'blunt';
+  return 'sharp';
+}
+// the hit's damage type alone: 'sharp' | 'blunt' | 'magic' | null
+export function hitType(o = {}, src = null) {
+  if (o.magic) return 'magic';
+  if (o.sharp) return 'sharp';
+  if (o.blunt) return 'blunt';
+  if (o.dot && o.stk) return null;
+  const ab = abOf(o, src);
+  if (!o.physical) {
+    if (ab && abilityHas(ab, 'magic')) return 'magic';
+    if (o.proj && MAGIC_SHOTS.has(o.proj)) return 'magic';
+    if (o.zone && MAGIC_ZONES.has(o.zone)) return 'magic';
+    if ((o.proj || o.zone || o.shot) && src && hasTag(src, 'caster')) return 'magic';
+  }
+  return edgeOf(o, src, ab);
+}
+export function hitKinds(o = {}, src = null) {
+  const ab = abOf(o, src), elements = [];
+  for (const [st, el] of Object.entries(ELEMENT_OF)) if (o[st] > 0) elements.push(el);
+  if (o.stk && ELEMENT_OF[o.stk] && !elements.includes(ELEMENT_OF[o.stk])) elements.push(ELEMENT_OF[o.stk]);
+  return { type: hitType(o, src), elements, slam: !!(o.slam || (ab && SLAM.has(ab) && !o.shot)), explosion: !!o.explosion, gas: !!o.gas,
+    zone: o.zone || null, beam: !!o.beam, shot: !!(o.shot || o.proj), dot: !!o.dot };
+}
+// The Water Mage's Bubble Shield ("blocks magic, not physical attacks") asks this.
+export const isMagicHit = (o = {}, src = null) => hitType(o, src) === 'magic';
+// A resistance to a damage type (x the hit's damage, never its elements): def.hitRes = { magic: 0.5 }, or a tag's in
+// TAG_HIT_RES. The mechanism only: no kind or tag has one yet (the resistances are another lane's pass; docs/tags17.md
+// has the proposals).
+export const TAG_HIT_RES = {};
+export function hitResOf(u, type) {
+  if (!type) return 1;
+  const own = u.def && u.def.hitRes; if (own && own[type] != null) return own[type];
+  let m = 1; for (const t of tagsOf(u)) { const r = TAG_HIT_RES[t]; if (r && r[type] != null) m *= r[type]; }
+  return m;
+}
+export const anyHitRes = (u) => !!((u.def && u.def.hitRes) || Object.keys(TAG_HIT_RES).some((t) => hasTag(u, t)));
+
+// ---------------------------------------------------------------- height (the designer's answers on slimes and leaps)
+// Three layers. FLOOR: everyone, most of the time. HOVERING (u.airborne: a slime mid-hop): over the pools, puddles,
+// trails and spikes and every telegraphed floor zone, and missed by slams; gas and explosions still reach it, and so
+// do blows and shots. FLYING (u.flyT > 0: the Griffon's Swoop and the Valkyrie's leaps while she is in the air, the
+// Witch on her broom): over everything on the floor, and nothing reaches it but shots (and what was already on it:
+// burning, poison). Kinds that always fly (bats, spirits, angels) stay on the floor layer: up there for good, every
+// floor zone and slam would miss them (docs/tags17.md, suggestions).
+export const layerOf = (u) => (!u ? 'floor' : u.flyT > 0 ? 'flying' : u.airborne ? 'hovering' : 'floor');
+// does a hit (hitKinds) reach a unit on that layer?
+export function reaches(layer, k) {
+  if (layer === 'floor') return true;
+  if (layer === 'hovering') return !k.slam;
+  return k.shot || k.dot;
 }
