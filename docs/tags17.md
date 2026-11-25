@@ -209,3 +209,14 @@ Each stands alone; my pick at the end of each.
     gets soaked as ever. Mages have to rely on their elements. *Pick: yes, the designer's own example.*
 15. **Wet machines short out.** A soaked machine hit by lightning stops for a moment (sparks, a stall). Water heroes
     and storm heroes work together. *Pick: yes, cheap; it already takes more shock when wet.*
+
+## Clips (docs/clips/tags17/, git-ignored; 844x390, made by `node tools/tags17/clips.mjs` with the worktree served on 8971)
+- `wrench-repair.mp4` (7 s): the Engineer leaves her spot, walks to her turret at 30% and whacks it five times (sparks,
+  126/140 at the end); the Paladin beside her at 35% gets nothing.
+- `fire-in-water.mp4` (6 s): an imp and a fire slime held in a puddle: steam rising, "hiss", their health draining.
+- `kindled.mp4` (6 s): fireballs on an imp: it burns, takes no damage, glows, and flares.
+- `choir-silenced.mp4` (9 s): a Choir Sprite sings (its ring) and mends two hurt skeletons; at 3.2 s a stagger
+  silences it: the crossed-out speech bubble beside its head, no more song and no more mending for 4 s.
+- `slime-gas-and-slam.mp4` (8 s): a slime hops through a gas cloud (it turns poisoned) and then at the Tower, who
+  Ground Pounds whenever it is up in a hop: the ring passes under it (no hit) while the skeleton standing on the floor
+  beside him is struck and thrown back.

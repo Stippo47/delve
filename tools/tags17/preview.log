@@ -1,4 +1,4 @@
-2233 previews, 40.8s
+2233 previews, 52.8s
 threw: 0
 a loop where the move or trait never fired: 0
 not offered in the Book (never fires, so its button is left out): 0
@@ -62,4 +62,3 @@ tier steps that make the same things (round 14: what the tier adds is in the cap
   airMage:gale I=II  (I: Blows them back and whirls them. | II: Enemy shots in the lane are blown back at whoever loosed them. | III: A wider lane, and they are whirled half as much again.)
   warden:nullify I=II  (I: Breaks off their moves and nullifies them for 3s: no ability of any kind. | II: It strips what protects and strengthens them, and washes the statuses off friends in the ring. | III: Nullified for 5s, and the nullified take 20% more.)
   earthMage:stoneWall I=II  (I: Stands for 6s. | II: A longer wall, for 8s. | III: When it comes down it falls on the enemies' side: those near it are hurt and staggered.)
-exit 0

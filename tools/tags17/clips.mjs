@@ -33,14 +33,18 @@ const CLIPS = {
     const c = w.units.find((u) => u.kind === 'choirSprite'), cx = w.W * 0.5, cy = w.H * 0.5; c.x = cx; c.y = cy; G.hold.push(c); c.aggro = true; c.maxHp = c.hp = 1e5;
     w.units.filter((u) => u.kind === 'rattler').forEach((r, i) => { r.x = cx + (i ? 80 : -80); r.y = cy + 30; G.hold.push(r); r.maxHp = 600; r.hp = 150; });
     G.c = c; G.p = p;`, each: `if (!G.hit && w.time - G.t0 > 3.2) { G.hit = true; S.addStatus(w, G.c, 'stagger', 30, G.p); }` },
-  'slime-gas-and-slam': { blue: 'tower', red: 'slime', secs: 8, zoom: 1.35, follow: 'slime', stage: `
+  'slime-gas-and-slam': { blue: 'tower', red: 'slime,rattler', secs: 8, zoom: 1.35, follow: 'slime', stage: `
     const h = w.units.find((u) => u.kind === 'tower'), s = w.units.find((u) => u.kind === 'slime');
     h.x = w.W * 0.62; h.y = w.H * 0.5; G.hold.push(h); h.maxHp = h.hp = 1e5; s.x = w.W * 0.22; s.y = w.H * 0.5; s.maxHp = s.hp = 2000; s.aggro = true;
     w.hazards.push({ type: 'gas', x: w.W * 0.36, y: w.H * 0.5, r: 70 });
+    const r = w.units.find((u) => u.kind === 'rattler'); r.x = h.x + 10; r.y = h.y + 85; r.maxHp = r.hp = 1e4; G.hold.push(r); // (on the floor inside the slam: it is hit, the slime up in its hop is not)
     G.h = h; G.s = s; G.last = -9;`,
-    each: `const s = G.s, h = G.h; if (s && !s.dead && s.airborne && Math.hypot(s.x - h.x, s.y - h.y) < 150 && w.time - G.last > 1.6) { G.last = w.time; K.ABILITIES.groundPound.use(w, h, s, 1); }` },
+    each: `const s = G.s, h = G.h; if (s && !s.dead && s.airborne && Math.hypot(s.x - h.x, s.y - h.y) < 120 && w.time - G.last > 1.2) { G.last = w.time; K.ABILITIES.groundPound.use(w, h, s, 1); }` },
 };
 
+if (args.includes('hush-test')) CLIPS['hush-test'] = { blue: 'paladin', red: 'ogre', secs: 1, zoom: 1.5, follow: 'ogre', stage: `
+    const p = w.units.find((u) => u.kind === 'paladin'); p.x = 60; p.y = 60; G.hold.push(p); p.ethereal = true;
+    const o = w.units.find((u) => u.kind === 'ogre'); o.x = w.W / 2; o.y = w.H / 2; G.hold.push(o); S.silence(w, o, 5, null);` };
 const names = args.filter((a) => !a.startsWith('--') && CLIPS[a]);
 const list = names.length ? names : Object.keys(CLIPS);
 const edge = await openEdge();

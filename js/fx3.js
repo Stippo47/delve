@@ -329,7 +329,7 @@ Object.assign(DRAW2, {
   hushed(ctx, f, w, layer) {
     const u = f.unit; if (layer !== 'air' || !u || !live(u) || u.hidden) return; if (!(u.silencedT > 0)) { f.max = Math.min(f.max, f.t + 0.25); }
     const a = fade(f, 0.12, 0.25), pop = f.t < 0.2 ? 1 + 0.4 * Math.sin(f.t / 0.2 * Math.PI) : 1, bob = Math.sin(f.t * 4) * 1.5;
-    ctx.save(); ctx.globalAlpha *= a; upright(ctx, u.x, u.y, () => hushMark(ctx, (u.vr || 20) * 0.75, -(u.vr || 20) * 1.55 + bob, 1.1 * pop)); ctx.restore();
+    ctx.save(); ctx.globalAlpha *= a; upright(ctx, u.x, u.y, () => hushMark(ctx, (u.vr || 20) * 1.4 + 10, -(u.vr || 20) * 1.4 - 6 + bob, 2.1 * pop)); // (beside the head, clear of the health bar) ctx.restore();
   },
   // Chain Gang: a chain along the floor from his belt to each one he holds: slack when it stands close, taut at its end
   chainTo(ctx, f, w, layer) {
