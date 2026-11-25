@@ -50,6 +50,9 @@ const CLIPS = {
   // the same walk at full speed and further out, across the hall on a slant
   'walk-far': { party: 'paladin', q: 'bossmove=walk', secs: 9, zoom: 0.8, follow: 'stiltIdol', stage: `
     const h = heroes()[0]; tough([h]); idle(h); stay(h); put(sp, CX + 480, CY - 250, Math.PI); put(h, CX - 480, CY + 300, 0);` },
+  // the same on a wide screen (a desktop: "up" is up the short side there), from the bottom wall to the top one
+  'walk-wide': { party: 'paladin', q: 'bossmove=walk', secs: 8, zoom: 0.8, w: 1100, h: 620, stage: `
+    const h = heroes()[0]; tough([h]); idle(h); stay(h); put(sp, CX + 300, CY + 300, Math.PI); put(h, CX - 300, 70, 0); w.camAt = { x: CX, y: CY };` },
   // turning: its mark is carried round it in a circle; it turns on the spot, hooves swinging round
   turn: { party: 'paladin', q: 'bossmove=walk', secs: 10, speed: 0.6, zoom: 1.0, follow: 'stiltIdol', stage: `
     const h = heroes()[0]; tough([h]); idle(h); stay(h); put(sp, CX + 119, CY, Math.PI); put(h, CX - 150, CY, 0);
@@ -102,6 +105,7 @@ const run = ([name, c]) => new Promise((resolve) => {
   const a = ['tools/clip.mjs', file, '--port', port, '--secs', String(c.secs || 6), '--zoom', String(c.zoom || 1.3), '--seed', String(c.seed || 5), '--eval', ev, '--speed', String(c.speed || 1),
     '--party', c.party, '--level', '25', '--q', 'theme=sewers&bossroom&boss=stiltIdol' + (c.q ? '&' + c.q : '')];
   if (c.follow) a.push('--follow', c.follow);
+  if (c.w) a.push('--w', String(c.w), '--h', String(c.h));
   const t0 = Date.now();
   execFile(process.execPath, a, { env: { ...process.env, TEMP: TMP, TMP }, maxBuffer: 1 << 24 }, (err, so, se) => {
     const msg = (so + se).trim().split('\n').filter((l) => !/^no page errors/.test(l)).join(' | ');

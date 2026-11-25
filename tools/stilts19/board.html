@@ -27,10 +27,10 @@ for (let i = 0; i < 8; i++) {
     h = [h, h, h, h, 70, 10, 10, h][i];
     P = restPose(x, y, f, h);
     if (i === 0 || i === 1) { for (const L of P.legs) if ([0, 3, 4].includes(L.i)) { L.foot.z = 38; L.foot.x += Math.cos(f) * 26; L.foot.y += Math.sin(f) * 26; } else { L.foot.x -= Math.cos(f) * 30; L.foot.y -= Math.sin(f) * 30; } }
-    if (i === 2) { const L = P.legs[0]; L.foot.z = 104; L.hurt = 0.7; P.legs[1].hurt = 0.4; }
-    if (i === 3) { for (const L of P.legs) if ([1, 2].includes(L.i)) { L.broken = true; L.foot.x = L.hip.x + (L.foot.x - L.hip.x) * 0.5 - Math.cos(f) * 30; L.foot.y = L.hip.y + (L.foot.y - L.hip.y) * 0.5 - Math.sin(f) * 30; L.sw = 0.4; } }
+    if (i === 2) { const L = P.legs[1]; L.foot.z = 104; L.foot.x = L.hip.x + (L.foot.x - L.hip.x) * 1.45; L.foot.y = L.hip.y + (L.foot.y - L.hip.y) * 1.45; L.hurt = 0.7; P.legs[0].hurt = 0.4; }
+    if (i === 3) { for (const L of P.legs) if ([1, 2].includes(L.i)) { L.broken = true; L.foot.x = L.hip.x + (L.foot.x - L.hip.x) * 0.9 - Math.cos(f) * 60; L.foot.y = L.hip.y + (L.foot.y - L.hip.y) * 0.9 - Math.sin(f) * 60; L.sw = 0.4; } }
     if (i === 5) { P.daze = true; }
-    if (i === 6) { P.daze = true; for (const L of P.legs) if ([1, 2, 4, 0].includes(L.i)) { L.broken = true; L.foot.x = L.hip.x + (L.foot.x - L.hip.x) * 0.45; L.foot.y = L.hip.y + (L.foot.y - L.hip.y) * 0.45; } }
+    if (i === 6) { P.daze = true; for (const L of P.legs) if ([1, 2, 4, 0].includes(L.i)) { L.broken = true; L.foot.x = L.hip.x + (L.foot.x - L.hip.x) * 0.95; L.foot.y = L.hip.y + (L.foot.y - L.hip.y) * 0.95; } }
     if (i === 7) { P.maw = 1; P.glare = 1; P.shake = 0.6; P.T = 0.31; P.pods = 1; }
   }
   shadow(x, y, f, h);

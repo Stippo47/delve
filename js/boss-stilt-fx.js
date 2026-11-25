@@ -32,7 +32,7 @@ export const headScale = (h) => (1 + h / ID.body.sc) * ID.body.big;
 
 // ---------------------------------------------------------------- a pose, and the figure drawn from it
 // P: { gx, gy (the floor point under the head), f (facing), h (its height), T, legs: [{ i, hip, foot, side, broken,
-// hurt 0..1, flash, sw (a broken stilt's swing), ref (the fight's leg, for a steady draw order) }], glare 0..1 (its
+// hurt 0..1, flash, sw (a broken stilt's swing) }], glare 0..1 (its
 // eyes), maw 0..1 (open), daze, flash, pods 0..3 (hanging behind), shake 0..1 (its crown), jit }.
 const hipAt = (gx, gy, f, h, d) => ({ x: gx + Math.cos(f) * d.hx - Math.sin(f) * d.hy, y: gy + Math.sin(f) * d.hx + Math.cos(f) * d.hy, z: h });
 export function restPose(gx, gy, f, h = ID.body.h) {
@@ -42,43 +42,37 @@ export function restPose(gx, gy, f, h = ID.body.h) {
 export function drawPose(ctx, P, o = {}) {
   const [ux, uy] = o.up || up(), G = ID.leg, fx = Math.cos(P.f), fy = Math.sin(P.f);
   const pr = (p) => [p.x + ux * p.z * 0.9, p.y + uy * p.z * 0.9];
-  const bodyDepth = -(P.gx * ux + P.gy * uy);
   const legs = P.legs.map((L) => {
     const s = L.side;
     let kn, stub = null;
     if (L.broken) {
-      // it hangs from the hip as straight down as its height lets it, towards where its hoof lies; the snapped shin
-      // hangs on below the knee; both swing (L.sw)
-      const dx = L.foot.x - L.hip.x, dy = L.foot.y - L.hip.y, d = Math.hypot(dx, dy), nx = d > 4 ? dx / d : -fy * s, ny = d > 4 ? dy / d : fx * s, tx = -ny, ty = nx, sw = L.sw || 0;
-      const dr1 = Math.min(G.l1 * 0.97, Math.max(0, L.hip.z - 4)), h1 = Math.sqrt(G.l1 * G.l1 - dr1 * dr1);
-      kn = { x: L.hip.x + nx * h1 + tx * sw * 16, y: L.hip.y + ny * h1 + ty * sw * 16, z: L.hip.z - dr1 };
-      const SL = 58, dr2 = Math.min(SL * 0.97, Math.max(0, kn.z - 3)), h2 = Math.sqrt(SL * SL - dr2 * dr2);
-      stub = { x: kn.x + nx * h2 + tx * sw * 26, y: kn.y + ny * h2 + ty * sw * 26, z: kn.z - dr2 };
+      // what is left of it: the thigh still sticks out from the yoke, stiff in its lashing, sagging; the shin is snapped a
+      // little below the knee and that stump hangs straight down, well short of the floor, and swings (L.sw)
+      const a = P.f + LEGS[L.i].th, nx = Math.cos(a), ny = Math.sin(a), tx = -ny, ty = nx, sw = L.sw || 0;
+      const dr1 = Math.min(56, Math.max(0, L.hip.z - 5)), h1 = Math.sqrt(G.l1 * G.l1 - dr1 * dr1);
+      kn = { x: L.hip.x + nx * h1, y: L.hip.y + ny * h1, z: L.hip.z - dr1 };
+      const SL = 30, dr2 = Math.min(SL * 0.97, Math.max(0, kn.z - 4)), h2 = Math.sqrt(SL * SL - dr2 * dr2);
+      stub = { x: kn.x + nx * h2 + tx * sw * 22, y: kn.y + ny * h2 + ty * sw * 22, z: kn.z - dr2 };
     } else {
       // a stilt bends upwards (and a little out to its own side): a short thigh up and out, a long shin down
-      // As the head comes down between its stilts the knees fold away from it, fore (the front pair) or aft, and lie
-      // low: left standing straight up, the near ones crossed its face.
-      const rx = L.foot.x - L.hip.x, ry = L.foot.y - L.hip.y, rl = Math.hypot(rx, ry) || 1, want = Math.abs(LEGS[L.i].th) < 1 ? 1 : -1;
-      const sg = (-ry * fx + rx * fy) * want >= 0 ? 1 : -1, b = sm((104 - L.hip.z) / 84);
-      kn = knee3(L.hip, L.foot, G.l1, G.l2, { x: -fy * s * KNEE_OUT * (1 - b) + -ry / rl * sg * b * 1.25, y: fx * s * KNEE_OUT * (1 - b) + rx / rl * sg * b * 1.25, z: 1 - 0.62 * b });
+      kn = knee3(L.hip, L.foot, G.l1, G.l2, { x: -fy * s * KNEE_OUT, y: fx * s * KNEE_OUT, z: 1 });
       if (kn.z < 6) kn.z = 6;
     }
-    // stilts whose hips are on the far side of the head go under it, the near ones over it (held a little, so it doesn't flicker)
-    // (and with the head down on the floor every stilt comes out from under it: the head stays in plain sight)
-    const depth = -(L.hip.x * ux + L.hip.y * uy), ref = L.ref, over = L.hip.z > 46 && depth > bodyDepth + (ref && ref._over ? -5 : 5);
-    if (ref) ref._over = over;
-    return { L, hip: pr(L.hip), knee: pr(kn), foot: pr(L.foot), stub: stub && pr(stub), kz: kn.z, sz: stub ? stub.z : 0, depth, over };
+    // Every stilt is drawn under the head. Seen from above and in front, whatever of a stilt lies behind the head's
+    // picture is lower than the head and further off, so the head hides it: a hoof lifted to stamp passes under its
+    // chin, not across its face. (With the head down on the floor its knees are left standing over it; drawn under it
+    // all the same, so the head stays in plain sight.) Far stilts first.
+    const depth = -(L.hip.x * ux + L.hip.y * uy);
+    return { L, hip: pr(L.hip), knee: pr(kn), foot: pr(L.foot), stub: stub && pr(stub), kz: kn.z, sz: stub ? stub.z : 0, depth };
   }).sort((a, b) => a.depth - b.depth);
   const jx = P.jit ? (hash(Math.floor(P.T * 50), 1) - 0.5) * P.jit : 0, jy = P.jit ? (hash(Math.floor(P.T * 50), 2) - 0.5) * P.jit : 0;
   const [bx, by] = pr({ x: P.gx + jx, y: P.gy + jy, z: P.h });
   figure(ctx, { wash: o.wash, alpha: o.alpha }, (F) => {
     F.flash = false;
-    for (const A of legs) if (!A.over) drawLeg(F, ctx, A);
+    for (const A of legs) drawLeg(F, ctx, A);
     drawYoke(F, ctx, bx, by, P);
     F.flash = !!P.flash;
     drawHead(F, ctx, bx, by, P, headScale(P.h));
-    F.flash = false;
-    for (const A of legs) if (A.over) drawLeg(F, ctx, A);
   });
 }
 // a length of bamboo from a to b: a tapering cane with a ring at each node
@@ -104,11 +98,13 @@ function drawLeg(F, ctx, A) {
   const ks = pz(A.kz), hs = pz(L.hip.z), fs = 1 + L.foot.z / 260; // (a hoof lifted towards you is drawn bigger)
   if (L.broken) {
     const [sx, sy] = A.stub, ss = pz(A.sz);
-    // the hoof on its side on the floor, a splintered end of cane still in it, at the end of a strand of lashing
-    const dx = x - sx, dy = y - sy, d = Math.hypot(dx, dy) || 1, ax = d > 6 ? dx / d : 1, ay = d > 6 ? dy / d : 0;
-    const tx = x - ax * 22, ty = y - ay * 22, ex = x - ax * 38, ey = y - ay * 38;
-    F.line(() => { ctx.beginPath(); ctx.moveTo(sx, sy); ctx.quadraticCurveTo((sx + ex) / 2 - ay * 9, (sy + ey) / 2 + ax * 9, ex, ey); }, '#6E7F4A', 2.6);
-    F.shape(() => capsule(ctx, tx, ty, 4.6, ex, ey, 4.2), () => lin(ctx, tx, ty, ex, ey, DEAD[1], DEAD[0]));
+    // the rest of the shin lies on the floor with the hoof on its end, tied to the stump by a strand of the lashing
+    // (it lies askew, not in line with the stump: in line, the pieces read as one whole grey stilt)
+    const dx = x - sx, dy = y - sy, d = Math.hypot(dx, dy) || 1, bx0 = d > 6 ? dx / d : 1, by0 = d > 6 ? dy / d : 0, sk = (L.i & 1 ? 1 : -1) * 1.05;
+    const ax = bx0 * Math.cos(sk) - by0 * Math.sin(sk), ay = bx0 * Math.sin(sk) + by0 * Math.cos(sk);
+    const tx = x - ax * 22, ty = y - ay * 22, ex = x - ax * 74, ey = y - ay * 74;
+    F.line(() => { ctx.beginPath(); ctx.moveTo(sx, sy); ctx.quadraticCurveTo((sx + ex) / 2 - ay * 10, (sy + ey) / 2 + ax * 10, ex, ey); }, '#6E7F4A', 2.6);
+    cane(F, ctx, tx, ty, 4.6, ex, ey, 4.4, DEAD, [0.3, 0.7]);
     F.shape(() => poly(ctx, [[ex + ay * 5, ey - ax * 5], [ex - ax * 8 + ay * 2, ey - ay * 8 - ax * 2], [ex - ax * 2, ey - ay * 2], [ex - ax * 9 - ay * 3, ey - ay * 9 + ax * 3], [ex - ay * 5, ey + ax * 5]]), DEAD[0], { seam: false });
     F.shape(() => capsule(ctx, x, y, 9.4, tx, ty, 6.4), () => lin(ctx, x, y, tx, ty, DEAD_STONE[1], DEAD_STONE[0]));
     F.detail(() => { // the cracked hoof
@@ -118,7 +114,7 @@ function drawLeg(F, ctx, A) {
       ctx.beginPath(); ctx.moveTo(mx + ax * 3, my + ay * 3); ctx.lineTo(x + ax * 2 - ay * 5, y + ay * 2 + ax * 5); ctx.stroke();
     });
     // the stilt itself: dry and grey, the thigh hanging from the hip, the snapped shin below the knee
-    cane(F, ctx, kx, ky, 5 * ks, sx, sy, 4.6 * ss, DEAD, [0.5]);
+    cane(F, ctx, kx, ky, 5 * ks, sx, sy, 4.6 * ss, DEAD, []);
     { const ux2 = sx - kx, uy2 = sy - ky, ul = Math.hypot(ux2, uy2) || 1, cx = ux2 / ul, cy = uy2 / ul; // its splintered end
       F.shape(() => poly(ctx, [[sx - cy * 5 * ss, sy + cx * 5 * ss], [sx + cx * 9 - cy * 2, sy + cy * 9 + cx * 2], [sx + cx * 2, sy + cy * 2], [sx + cx * 11 + cy * 3, sy + cy * 11 - cx * 3], [sx + cy * 5 * ss, sy - cx * 5 * ss]]), DEAD[0], { seam: false }); }
     cane(F, ctx, hx, hy, 5.8 * hs, kx, ky, 5.2 * ks, DEAD, [0.55]);
@@ -230,7 +226,7 @@ export function drawIdol(ctx, u, w) {
     glare: k.glare, flash: T - k.hitT < 0.03, jit: daze && left < 0.35 ? 2.6 : 0, pods: k.podsOn,
     maw: Math.max(k.glare * 0.5, pose && pose.kind === 'roar' ? Math.sin(Math.min(1, pk * 2.5) * Math.PI / 2) * (1 - sm(k01((pk - 0.75) / 0.25))) : 0),
     shake: pose && pose.kind === 'shake' ? Math.sin(Math.min(1, pk * 1.4) * Math.PI) : pose && pose.kind === 'roar' ? 0.5 * (1 - pk) : 0,
-    legs: k.legs.map((L) => ({ i: L.i, ref: L, hip: hipOf(u, k, L), foot: { x: L.x, y: L.y, z: L.z }, side: L.side, broken: L.broken, sw: L.sw,
+    legs: k.legs.map((L) => ({ i: L.i, hip: hipOf(u, k, L), foot: { x: L.x, y: L.y, z: L.z }, side: L.side, broken: L.broken, sw: L.sw,
       hurt: L.foot ? clamp(1 - L.foot.hp / L.foot.maxHp, 0, 1) : 1, flash: !!L.foot && flashing(L.foot) })) };
   drawPose(ctx, P, { wash: washOf(u, w), alpha: u.invulnT > 0 ? 0.85 : 1 });
 }
@@ -264,7 +260,9 @@ export function idolPortrait() {
 // a small leaf lying or flying: at (x, y), turned by a, s long
 function leafBit(ctx, x, y, a, s, col) { ctx.save(); ctx.translate(x, y); ctx.rotate(a); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-s, 0); ctx.quadraticCurveTo(0, -s * 0.62, s, 0); ctx.quadraticCurveTo(0, s * 0.62, -s, 0); ctx.closePath(); }, col); ctx.restore(); }
 // where the liana leaves the head: its rim, on the side of whatever it reaches for
-const rimOf = (u, tx, ty) => { const k = u.si, gx = k.gx + k.sx, gy = k.gy + k.sy, d = Math.hypot(tx - gx, ty - gy) || 1; return { x: gx + (tx - gx) / d * 46, y: gy + (ty - gy) / d * 46, z: Math.max(ID.body.low, k.h + k.bob) - 4 }; };
+// (the head's outline is longer ahead than behind and narrower across: the liana comes out from under its edge, not out of its face)
+const rimOf = (u, tx, ty) => { const k = u.si, gx = k.gx + k.sx, gy = k.gy + k.sy, z = Math.max(ID.body.low, k.h + k.bob), sc = headScale(z), a = Math.atan2(ty - gy, tx - gx), c = Math.cos(a - u.facing), sn = Math.sin(a - u.facing);
+  const r = 1 / Math.hypot(c / ((c > 0 ? 66 : 52) * sc), sn / (40 * sc)); return { x: gx + Math.cos(a) * r, y: gy + Math.sin(a) * r, z: z - 4 }; };
 // a liana from a to b (each { x, y, z }): hanging slack by `sag`, writhing by `wig`; leaves along it
 function liana(ctx, a, b, sag, wig, T, alpha = 1) {
   const [ux, uy] = up(), n = 14, pts = [];
@@ -297,6 +295,19 @@ export function drawGladeFloor(ctx, w) {
   ctx.restore();
 }
 export function drawGladeAir(ctx, w) {
+  // whoever stands on the floor behind the head's picture (it is drawn over the floor, a long way up the screen from
+  // where it stands): a pale ring over the head where they are, so nobody is lost under it
+  for (const u of w.units) {
+    const k = u.si; if (!k || u.dead || k.h < 46) continue;
+    const sc = headScale(k.h), c = Math.cos(u.facing), sn = Math.sin(u.facing);
+    for (const h of w.units) {
+      if (h === u || h.dead || h.def.part || h.flyT > 0 || h.team === u.team) continue;
+      const dx = h.x - u.x, dy = h.y - u.y, lx = dx * c + dy * sn, ly = -dx * sn + dy * c;
+      if ((lx / ((lx > 0 ? 60 : 62) * sc)) ** 2 + (ly / (40 * sc)) ** 2 > 1) continue;
+      ctx.save(); ctx.lineWidth = 2.6; ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.fillStyle = 'rgba(255,255,255,0.14)'; ctx.setLineDash([7, 5]);
+      ctx.beginPath(); ctx.arc(h.x, h.y, h.vr * 1.05, 0, TAU); ctx.fill(); ctx.stroke(); ctx.restore();
+    }
+  }
   // whoever is tangled in its liana: coils round them
   for (const h of w.units) {
     if (h.dead || h.downed) continue;
@@ -336,16 +347,16 @@ BFX.idSlam = { // the head hits the floor: a wide dent, a wave of dust rolling o
 };
 BFX.idFall = { air(ctx, f, k) { // where it fell from: streaks down the screen for a moment, and leaves left hanging in the air that flutter down after it
   const [ux, uy] = up(), tx = -uy, ty = ux;
-  if (k < 0.16) { const q = k / 0.16, top = f.h * 0.9, bot = f.h * 0.9 * (1 - Math.min(1, q * 1.5));
-    ctx.save(); ctx.lineCap = 'round'; ctx.strokeStyle = 'rgba(255,255,240,' + (0.55 * (1 - q)).toFixed(3) + ')';
-    for (let i = 0; i < 6; i++) { const o = (i - 2.5) * 19 + (hash(f.seed, i) - 0.5) * 8, t0 = top + 30 * hash(i, f.seed);
-      ctx.lineWidth = 3.2 - 2 * q; ctx.beginPath(); ctx.moveTo(f.x + tx * o + ux * t0, f.y + ty * o + uy * t0); ctx.lineTo(f.x + tx * o + ux * (bot + 40), f.y + ty * o + uy * (bot + 40)); ctx.stroke(); }
+  if (k < 0.22) { const q = k / 0.22, top = f.h * 0.9, bot = f.h * 0.9 * (1 - Math.min(1, q * 2.1));
+    ctx.save(); ctx.lineCap = 'round'; ctx.strokeStyle = 'rgba(255,255,240,' + (0.7 * (1 - q)).toFixed(3) + ')';
+    for (let i = 0; i < 8; i++) { const o = (i - 3.5) * 17 + (hash(f.seed, i) - 0.5) * 8, t0 = top + 50 * hash(i, f.seed) + 10;
+      ctx.lineWidth = 4.6 - 3 * q; ctx.beginPath(); ctx.moveTo(f.x + tx * o + ux * t0, f.y + ty * o + uy * t0); ctx.lineTo(f.x + tx * o + ux * (bot + 46), f.y + ty * o + uy * (bot + 46)); ctx.stroke(); }
     ctx.restore(); }
-  ctx.globalAlpha = k < 0.06 ? k / 0.06 : k > 0.72 ? 1 - (k - 0.72) / 0.28 : 1;
-  for (let i = 0; i < 11; i++) {
-    const a = hash(f.seed, i, 1) * TAU, d = 14 + 52 * hash(f.seed, i, 2), z0 = f.h + 24 * hash(f.seed, i, 3) - 6, z = z0 * (1 - 0.94 * Math.pow(k, 1.25)), fl = Math.sin(k * 11 + i * 2.2) * (9 + 7 * hash(i, 4));
+  ctx.globalAlpha = k < 0.04 ? k / 0.04 : k > 0.72 ? 1 - (k - 0.72) / 0.28 : 1;
+  for (let i = 0; i < 18; i++) {
+    const a = hash(f.seed, i, 1) * TAU, d = 12 + 62 * hash(f.seed, i, 2), z0 = f.h + 34 * hash(f.seed, i, 3) - 4, z = z0 * (1 - 0.94 * Math.pow(k, 1.25)), fl = Math.sin(k * 11 + i * 2.2) * (10 + 8 * hash(i, 4));
     const x = f.x + Math.cos(a) * d * (1 + 0.5 * k) + tx * fl + ux * z * 0.9, y = f.y + Math.sin(a) * d * (1 + 0.5 * k) + ty * fl + uy * z * 0.9;
-    leafBit(ctx, x, y, a + Math.sin(k * 9 + i) * 1.2, (6 + 3.5 * hash(i, 6)) * (1 + z / 500), LEAF[i % 3]);
+    leafBit(ctx, x, y, a + Math.sin(k * 9 + i) * 1.2, (8 + 5 * hash(i, 6)) * (1 + z / 400), LEAF[i % 3]);
   }
 } };
 BFX.idDazed = { air(ctx, f, k, w) { // stunned on the floor: stars going round its head until it gets up
@@ -406,12 +417,12 @@ function podAt(f, k) {
   return { x: f.x0 + (f.x1 - f.x0) * (1 - (1 - q) * (1 - q)), y: f.y0 + (f.y1 - f.y0) * (1 - (1 - q) * (1 - q)), z: f.z0 * (1 - q * q), q };
 }
 BFX.idPod = {
-  ground(ctx, f, k) { const s = podAt(f, k); if (s) castShadow(s.x, s.y, 13, 1, s.z); },
+  ground(ctx, f, k) { const s = podAt(f, k); if (s) castShadow(s.x, s.y, 16, 1, s.z); },
   air(ctx, f, k) {
     const s = podAt(f, k); if (!s) return;
     const [ux, uy] = up(), x = s.x + ux * s.z * 0.9, y = s.y + uy * s.z * 0.9, sc = 1 + s.z / 330, rot = f.seed + s.q * 5;
     if (s.q > 0.35) { ctx.save(); ctx.strokeStyle = 'rgba(255,255,240,0.4)'; ctx.lineWidth = 2.4; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x + ux * 12, y + uy * 12); ctx.lineTo(x + ux * (12 + 34 * s.q), y + uy * (12 + 34 * s.q)); ctx.stroke(); ctx.restore(); }
-    ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(sc, sc);
+    ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(sc * 1.3, sc * 1.3);
     inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 11, 8.5, 0, 0, TAU); }, POD[1]);
     ctx.fillStyle = POD[0]; ctx.beginPath(); ctx.ellipse(-2.5, -2.5, 6, 3.6, -0.4, 0, TAU); ctx.fill();
     ctx.strokeStyle = 'rgba(70,30,40,0.7)'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(-10, 0.5); ctx.lineTo(10, 0.5); ctx.stroke();

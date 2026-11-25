@@ -31,9 +31,10 @@ import { up } from './boss-draw.js';
 import { drawIdol, drawIdolFoot, drawGladeFloor, drawGladeAir, idolShadows, idolPortrait } from './boss-stilt-fx.js';
 
 export const ID = {
+  hp: 1400,
   body: { h: 132, low: 10, air: 34, sc: 330, big: 1.15 },   // how high the head is carried; lying on the floor; flying from this height up; how much bigger it is drawn for being nearer (1 + h / sc); the head's own size
   leg: { l1: 80, l2: 160, restR: 180, hpK: 0.1, share: 0.85, more: 0.25,   // thigh, shin; where a hoof rests; a hoof's health (of the head's); what a blow on a hoof passes on (and a second hoof caught by the same blow)
-    footR: 22, stepDist: 44, settle: 18, over: 0.55, stepT: 0.36, lift: 34, drag: 92 },
+    footR: 22, stepDist: 44, settle: 18, over: 0.55, stepT: 0.36, lift: 34, drag: 150 },
   slow: [1, 0.9, 0.78, 0.66],     // its pace with 0, 1, 2, 3 stilts broken
   collapseAt: 4, crawl: 0.42,     // this many broken: it can't stand; its pace on its belly
   keep: 150, turn: 0.85,          // how far it stands off its mark (a front stilt's reach); how fast it turns (rad/s)
@@ -41,11 +42,12 @@ export const ID = {
   stomp: { r: 70, tell: 0.74, dmg: 46, stagger: 30, knock: 170, lift: 104, stuck: 0.5, reachMin: 70, reachMax: 184, clear: 84, sector: 0.62, cd: [1.7, 2.5] },
   slam: { r: 110, track: 1.5, pause: 0.3, drop: 0.16, rear: 18, dmg: 105, knock: 340, stagger: 40, chase: 2.3,
     stun: 1.0, perLeg: 0.3, hitRest: 0.45, rise: 0.7, taken: 1.25, cd: [5.5, 7], other: 0.4 },
-  vine: { r: 56, tell: 0.9, dmg: 22, haul: 0.5, off: 64, root: 1.2, cd: [7, 9], range: [190, 660] },
-  pods: { n: 3, r: 52, tell: 1.2, drop: 0.45, dmg: 30, cd: [13, 16], hatch: 1, own: 3, scale: 0.9, hpMul: 0.9, near: [70, 150] },
+  vine: { r: 56, tell: 0.9, dmg: 22, haul: 0.5, off: 64, root: 0.8, cd: [7, 9], range: [190, 660] },
+  pods: { n: 3, r: 52, tell: 1.2, drop: 0.45, dmg: 30, cd: [13, 16], hatch: 1, own: 3, scale: 0.9, hpMul: 0.45, near: [70, 150] },
   collapse: { dazed: 1.8, taken: 1.25 },
 };
 export const PHASE_AT = [1, 0.6];
+/*TUNE*/ if (typeof process !== 'undefined' && process.env && process.env.IDOL) for (const kv of process.env.IDOL.split(',')) { const [key, v] = kv.split('='), [g, f] = key.split('.'), val = v.includes('/') ? v.split('/').map(Number) : +v; if (f) ID[g][f] = val; else ID[g] = val; }
 const WAKE = 500, DUST = '#D9CDB0', LEAF = '#6BA544';
 // th: where its hoof rests round the floor point (0 is straight ahead); hx, hy: its hip on the yoke (ahead, to the
 // right); side: -1 left, 1 right (its knee bends out to its own side); grp: its tripod.
@@ -98,20 +100,23 @@ function brain(w, u, dt) {
   if (k.pose && (k.pose.t -= dt) <= 0) k.pose = null;
   // the floor point stays where the head's picture and its shadow are both inside the walls
   { const [ux, uy] = up(), o = k.h * 0.9, E = ID.edge, m = 60;
-    k.gx = clamp(k.gx, Math.max(m, E - ux * o), Math.min(w.W - m, w.W - E - ux * o)); k.gy = clamp(k.gy, Math.max(m, E - uy * o), Math.min(w.H - m, w.H - E - uy * o)); }
+    const x1 = clamp(k.gx, Math.max(m, E - ux * o), Math.min(w.W - m, w.W - E - ux * o)), y1 = clamp(k.gy, Math.max(m, E - uy * o), Math.min(w.H - m, w.H - E - uy * o));
+    if (x1 !== k.gx) { k.gx = x1; u.vx = u.dvx = 0; } if (y1 !== k.gy) { k.gy = y1; u.vy = u.dvy = 0; } } // (held there, it isn't walking: its hooves don't march on the spot)
   legsTick(w, u, k, dt);
   const [ux, uy] = up(); k.ox = ux * k.h * 0.9; k.oy = uy * k.h * 0.9;
   u.x = k.gx + k.ox; u.y = k.gy + k.oy; k.f0 = u.facing;
   const glare = k.slam && (k.slam.st === 'track' || k.slam.st === 'pause') ? 1 : k.pose ? 0.6 : 0;
   k.glare += (glare - k.glare) * Math.min(1, dt * 8);
-  k.podsOn += (dt / 4) * (k.podsOn < 3 ? 1 : 0); if (k.podsOn > 3) k.podsOn = 3; // its pods grow back
+  // the pods hanging behind its crown: each leaves as it starts to fall, and they grow back
+  while (k.podDrops.length && w.time >= k.podDrops[0]) { k.podDrops.shift(); k.podsOn = Math.max(0, Math.floor(k.podsOn) - 1); }
+  if (!k.podDrops.length && k.podsOn < 3) k.podsOn = Math.min(3, k.podsOn + dt / 3);
   return true;
 }
 
 function make(w, u) {
   const k = { phase: 0, t: 0, gx: u.x, gy: u.y, ox: 0, oy: 0, h: ID.body.h, hGoal: ID.body.h, hRate: 190, bob: 0, bobV: 0, sx: 0, sy: 0, f0: u.facing,
     legs: LEGS.map((d, i) => ({ ...d, i, R: ID.leg.restR, x: 0, y: 0, z: 0, foot: null, broken: false, bt: 0, step: null, job: null, hvx: 0, hvy: 0, hx0: 0, hy0: 0, err: 0, along: 0, stillT: 0, sw: 0, swV: 0 })),
-    slam: null, fall: null, pose: null, collapsed: false, collapsedAt: 0, hauls: [], podsOn: 3, glare: 0, hitT: -9, blowAt: -1,
+    slam: null, fall: null, pose: null, collapsed: false, collapsedAt: 0, hauls: [], podsOn: 3, podDrops: [], glare: 0, hitT: -9, blowAt: -1,
     slams: 0, slamHits: 0, stomps: 0, stompHits: 0, vines: 0, vineHits: 0, podN: 0, podHits: 0 };
   // (the unit is where the head shows; the first tick finds the floor point under it)
   const [ux, uy] = up(); k.ox = ux * k.h * 0.9; k.oy = uy * k.h * 0.9; k.gx = u.x - k.ox; k.gy = u.y - k.oy;
@@ -237,11 +242,12 @@ function footSpot(w, x, y) {
   for (const o of w.pillars) { const d = dist(p.x, p.y, o.x, o.y), m = o.r + 11; if (d < m && d > 0) { p.x = o.x + (p.x - o.x) / d * m; p.y = o.y + (p.y - o.y) / d * m; } }
   return p;
 }
-// A broken stilt hangs from its hip, snapped below the knee: its hoof lies on the floor on a strand of the lashing,
-// pulled along once the slack is gone, and nudged back out to its own side if the head walks over it. The hanging
-// stump swings as the head moves (L.sw: a pendulum, for the drawing).
+// A broken stilt is snapped below the knee: what is left on the yoke sticks out and hangs; the rest of the shin lies on
+// the floor with the hoof on it, on a strand of the lashing, pulled along once the slack is gone, and nudged back out to
+// its own side if the head walks over it. The hanging stump swings as the head moves (L.sw: a pendulum, for the
+// drawing).
 function dragLeg(w, u, k, L, dt) {
-  const hp = hipOf(u, k, L), dx = L.x - hp.x, dy = L.y - hp.y, d = Math.hypot(dx, dy) || 1, max = ID.leg.drag, min = 26;
+  const hp = hipOf(u, k, L), dx = L.x - hp.x, dy = L.y - hp.y, d = Math.hypot(dx, dy) || 1, max = ID.leg.drag, min = 96;
   if (d > max) { L.x = hp.x + dx / d * max; L.y = hp.y + dy / d * max; if (rand() < dt * 7) w.particles.push({ x: L.x, y: L.y, vx: 0, vy: 0, life: 0.35, max: 0.35, size: 3.2, color: 'rgba(217,205,176,0.5)' }); }
   else if (d < min) { const a = u.facing + L.th, e = Math.min(1, dt * 5); L.x += (hp.x + Math.cos(a) * min - L.x) * e; L.y += (hp.y + Math.sin(a) * min - L.y) * e; }
   L.z = 0;
@@ -323,14 +329,18 @@ function stomp(w, u, k, L, p) {
       bfx(w2, { type: 'idStomp', x: p.x, y: p.y, r: S.r, max: 0.6, seed: Math.round(p.x + p.y) }); puff(w2, p.x, p.y, DUST, 7, 150, 5, 0.4);
       w2.shake = Math.max(w2.shake, 6); k.bobV -= 60;
     } });
-  L.step = null; L.job = { type: 'stomp', x0: L.x, y0: L.y, p, z, stuck: S.stuck };
+  // where it hangs before it comes down: out past the mark with the stilt nearly straight (lifted close in, its knee
+  // stood up over the head and the shin crossed its face)
+  const hp = hipOf(u, k, L), d = dist(hp.x, hp.y, p.x, p.y) || 1, md = clamp(d + 34, 150, 196);
+  L.step = null; L.job = { type: 'stomp', x0: L.x, y0: L.y, p, z, stuck: S.stuck, mx: hp.x + (p.x - hp.x) / d * md, my: hp.y + (p.y - hp.y) / d * md };
 }
 function stompTick(w, u, k, L, dt) {
   const j = L.job, S = ID.stomp, z = j.z;
   if (z.cancelled) { L.job = null; return; }
-  if (!z.done) { // straight up first, then carried over the mark, a hang at the top, and down in the last sixth
-    const q = clamp(1 - z.t / z.max, 0, 1), e0 = clamp((q - 0.22) / 0.45, 0, 1), e = e0 * e0 * (3 - 2 * e0), l0 = clamp(q / 0.4, 0, 1), dr = clamp((q - 0.84) / 0.16, 0, 1);
-    L.x = j.x0 + (j.p.x - j.x0) * e; L.y = j.y0 + (j.p.y - j.y0) * e; L.z = S.lift * l0 * l0 * (3 - 2 * l0) * (1 - dr * dr);
+  if (!z.done) { // lifted up and out, a hang at the top, and down on the mark in the last sixth
+    const q = clamp(1 - z.t / z.max, 0, 1), l0 = clamp(q / 0.42, 0, 1), e = l0 * l0 * (3 - 2 * l0), dr = clamp((q - 0.84) / 0.16, 0, 1), d2 = dr * dr;
+    const ax = j.x0 + (j.mx - j.x0) * e, ay = j.y0 + (j.my - j.y0) * e;
+    L.x = ax + (j.p.x - ax) * d2; L.y = ay + (j.p.y - ay) * d2; L.z = S.lift * e * (1 - d2);
     return;
   }
   L.x = j.p.x; L.y = j.p.y; L.z = 0; // driven into the floor a moment, then it walks back to its place
@@ -410,7 +420,7 @@ function vine(w, u, k, t) {
   const V = ID.vine, p0 = lead(t, 0.45), p = inside(w, p0.x, p0.y, 40), tell = V.tell;
   k.vines++;
   const f = bfx(w, { type: 'idVine', u, x1: p.x, y1: p.y, max: tell + 0.12, tell, seed: Math.round(p.x + p.y) });
-  addDanger(w, { shape: 'circle', x: p.x, y: p.y, r: V.r, t: tell, team: u.team, src: u, kind: 'poison', col: '#6BBF4A', quiet: true, hit: H(u, { dmg: V.dmg }),
+  addDanger(w, { shape: 'circle', x: p.x, y: p.y, r: V.r, t: tell, team: u.team, src: u, kind: 'bone', quiet: true, hit: H(u, { dmg: V.dmg }),
     onFire: (w2, z) => {
       let caught = 0;
       for (const h of heroesOf(w2, u)) {
@@ -463,7 +473,7 @@ function pods(w, u, k, hs) {
     k.podN++;
     // where it leaves the crown: the back of the head, at its height
     const c = Math.cos(u.facing), s = Math.sin(u.facing), x0 = k.gx + k.sx - c * 44 + (i - 1) * -s * 16, y0 = k.gy + k.sy - s * 44 + (i - 1) * c * 16;
-    addDanger(w, { shape: 'circle', x: p.x, y: p.y, r: P.r, t: tell, team: u.team, src: null, by: u, kind: 'poison', col: '#C9A23A', quiet: true, hit: { dmg: 0 },
+    addDanger(w, { shape: 'circle', x: p.x, y: p.y, r: P.r, t: tell, team: u.team, src: null, by: u, kind: 'bone', quiet: true, hit: { dmg: 0 },
       onFire: (w2, z) => {
         let hit = 0;
         for (const h of heroesOf(w2, u)) if (!offFloor(h) && inZone(z, h.x, h.y, h.r * 0.5)
@@ -478,8 +488,8 @@ function pods(w, u, k, hs) {
         sp.aggro = true; sp.minion = true; sp.calledBy = u; sp.summonBy = u; sp.facing = sp.mvA = rand() * TAU; sp.atkT = 0.6;
       } });
     bfx(w, { type: 'idPod', u, x0, y0, z0: Math.max(ID.body.low, k.h) + 8, x1: p.x, y1: p.y, max: tell, rel: 1 - P.drop / tell, seed: i * 7 + Math.round(p.x) });
+    k.podDrops.push(w.time + tell - P.drop);
   });
-  k.podsOn = Math.max(0, 3 - n);
   bfx(w, { type: 'idShake', u, max: 0.7 });
   k.pose = { kind: 'shake', t: 0.8, max: 0.8 }; beginHold(u, 0.8, null);
   return true;
@@ -519,7 +529,7 @@ export const STILT = {
   defs: {
     // (home: the dungeon whose strength it fights at in battle mode, battle.js; bookOpen: its page in the Book is open
     // without meeting it, book.js: it lives in no dungeon yet)
-    stiltIdol: { team: 'enemy', name: 'The Canopy Idol', r: 56, vr: 62, turn: 1.4, accel: 190, face: 1.2, mass: 18, hp: 1400, speed: 40, role: 'melee', range: 30, atkCd: 999, arc: 2,
+    stiltIdol: { team: 'enemy', name: 'The Canopy Idol', r: 56, vr: 62, turn: 1.4, accel: 190, face: 1.2, mass: 18, hp: ID.hp, speed: 40, role: 'melee', range: 30, atkCd: 999, arc: 2,
       temp: 0.2, commit: 1.2, xp: 170, coins: [65, 85], boss: true, arena: 'idolGlade', noCorpse: true, labels: ['plant'], home: 'sewers', bookOpen: true,
       res: { stagger: 0.4 }, draw: drawIdol, shadows: idolShadows, brain, onDeath: death, get portrait() { return idolPortrait(); } },
     stiltFoot: PART('The Canopy Idol (a hoof)', { r: ID.leg.footR, vr: 19, mass: 30, hp: 100, labels: ['plant'], draw: drawIdolFoot }),

@@ -338,6 +338,8 @@ export const FOE_SCENE = {
   cinderBat: FS('far'), imp: FS('standing'),
   // the Foundry
   cogSprite: FS('far'), bee: FS('far'), beeBronze: FS('far'), beeSteel: FS('far'), automaton: FS('close'), 'automaton:attack': FS('party'),
+  // no dungeon yet (round 19, lane stilts19): the Canopy Idol's head is drawn a long way up from where it stands: placed higher, so its stilts are all on the stage
+  stiltIdol: FS('boss', { at: [0.78, 0.33] }),
 };
 const HURT_MOVE = /below half|half its health|when hurt|hurt badly|hurt,|once hurt|low on health|wounded/i;
 // the scene for a kind's move when it has no entry: from how it fights (its ability, its role) and its move's words
