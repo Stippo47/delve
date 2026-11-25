@@ -1176,6 +1176,45 @@ js/preview-scenes.js, easy to change; docs/preview18b.md has the audit, every nu
   had been making those loops differ.
 - 0.26.1: preview18b, monster pages and status previews play against real heroes (straw dummies 1016 -> 0, unseen blows 3205 -> 0), Silenced has a preview; unit ids steady per loop. Open: 7 monster previews hit nobody, 24 late; with steady ids 35 hero abilities play the same loop at two tiers; Rogue Wave and Mock show 2 unseen blows after the dash merge; trinket/potion previews still on dummies. docs/preview18b.md.
 
+Round 19 (2026-11-25, free rein from midnight the designer's time): the designer is answering the 0.19 heroes deck (v19-heroes) and the 0.21 one tonight; notes so far in docs/riffle-log/2026-11-25-v19-v21-partial.txt. Those notes go first, ahead of my own list. Lanes (Opus; Fable is at 92% until 02:00 PC): sys19 (shared rules from the notes: one shadow system, thrown things land on centre, airborne drawn above and not colliding with the floor, thrown weapons look like held ones, free hands don't float, the taunted V mark, previews don't pin, pronouns), melee19 (Old Guard, Dame, Griffon, Bulwark, Warhelm, Bearskin, Haymaker), rogue19 (Bandit with a Disarmed state, Shade incl. a new Shadow Walk with the blink chain kept spare, Monk, Cultist), caster19 (Digger, Grandpa, Alchemist, Shaman incl. bear and salmon sketches for approval, Witch). Queued: the Warlock's four-form redesign (Fable after the reset), the heroes still owed, the Mob's notes.
+
+## Round 19, lane sys19 (2026-11-25): the shared rules in the designer's 0.19 notes
+- **One shadow system** (js/height.js castShadow / projZ; render.js drawShadows). Every shadow is a disc in the units'
+  merged shadow layer (same colour, softness, strength), laid before pillars and pickups. Into it now: pillars, crates,
+  the chest and pedestal (their own softer shadow gone); every lob (kits2 lob: bread, flasks, bombs, cauldron, totem,
+  hive... drew a second shadow and was lifted twice: fx.js lifts once, fx2 lobUp is a no-op); and every code-drawn thing
+  in the air: Storm Born's hammer, the frog, the broom, the falcon, the flock (a shadow per bird), the anchor, Javelin
+  Rain, the cannonball, the ram, the sheep, Ill Omen, Rain Dance's cloud, Hurl, the Cinder's falling fireball. A thing
+  that stands (def.upright) casts at its foot when it has one (the totem: FOOT table in render.js, def.foot). A hidden
+  unit (frog, flock, smoke) casts none of its own. Left alone: ground bodies that are part of a thing's look (burrow
+  mounds, the wurm's sand heap and holes), Levitate's dashed ring.
+- **Lobs land on the middle** (kits2 lob): it flies from the thrower's edge only the rest of the way (it went the full
+  distance from the edge: a body's width past); a lob at a unit (opts.at, or a unit standing exactly on x, y) follows it
+  (sim.js p.lobTo, at most twice the throw's speed) and lands on its middle; land(x, y) gets where it came down. Lead's
+  call: bombs and the cauldron thrown at an enemy follow it too.
+- **The air over the floor** (height.js airTier, bodiesMeet): drawn floor, then hovering, then flying (u.hop >= 10, >= 34
+  high, flyT, a slime's hop, tag `hover` (the imps: new tag, layerOf hovering, so slams miss them), tag flier kinds that
+  aren't walking heroes); bodies on different heights never push or block (anything that leapt, was tossed, pounces,
+  hops, swoops; the imps). Always-flying kinds (bats, spirits) still touch floor bodies (their hit layer is the floor,
+  round 17): a call for the designer.
+- **Thrown weapons as held** (render.js drawHeldWeapon): the Stormhammer, Skull Splitter's flight and its hammer lying
+  where it fell, Storm Born's circling hammer draw the hero's own weapon part. The Griffon's art split like Warhelm's
+  (arm-l-hammer + arm-l fist); his fist now stays while the hammer flies.
+- **Free hands** (parts.js): an arm part that is only a fist, drawn over the body in the file, is a free hand when the
+  other holds the weapon (no shield, bow or second weapon): drawn under the body and rested back 18 at its side (most
+  heroes' off hand). Old Guard's two-handed greatsword turns about the hands on the grip (oldguard.svg pivot), not his
+  right shoulder; other two-handed arts (Granny, Haymaker, Digger, Samurai) left as they are.
+- **Taunted** (sim.js taunt): one way in for every taunt an ability or trinket puts on (Hold the Line, Challenge, Showboat,
+  the Warden's chains, the trinket, the status preview), each wearing Hold the Line's red V while held, raised above the
+  health bar (it was hidden under it). Challenge's "!" gone. A tank's blows drawing attention (sim.js hurt) get no mark.
+- **No pinning** (js/leash.js): the Book's previews (hero abilities, traits, monster pages, statuses, trinkets) and the
+  bench (lab.js m=show) no longer put units back each frame; a unit kept is held by its walking (moveMul) and walked back
+  only once far off and nothing moves it. A shoved, flung, pulled or knocked unit stays where it went.
+- **Pronouns**: the Alchemist is they/them in its texts (heroes2.js, code notes); the others match the designer's use.
+- Checks: battles 528, 0 problems, 10 out of time; preview-check threw / never fired / not offered 0 / 0 / 0 (monster
+  previews late 24 -> 30, wrong scenario 7 -> 8: borderline timings both ways). Clips docs/clips/sys19/ (-before beside).
+- Round 19, chat: "Also check that outline thickness is consistent everywhere. Outlines shouldn't if possible be built into the sprites." Lane outline19: audit every outline (baked vs drawn, on-screen thickness), one renderer-drawn outline at one constant thickness over the whole assembled figure (the old ruling: outline added afterwards, like a shader), a re-runnable script strips baked outer strokes from the SVGs, frame cost measured.
+
 ## Round 19, lane melee19 (2026-11-25): the knights' and brutes' notes (Old Guard, Dame, Griffon, Bulwark, Warhelm, Bearskin, Haymaker)
 The designer's notes on 0.19's heroes (docs/riffle-log/2026-11-25-v19-v21-partial.txt). The looks are in js/fx-melee.js
 (new: it fills fx2.js's tables, as fx-dash.js does); the weapon poses an ability holds are kits2.js meleePose (u._force).

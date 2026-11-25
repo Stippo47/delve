@@ -214,10 +214,10 @@ Object.assign(HEROES2, {
     ],
     trait: { id: 'seenItAll', name: 'Seen It All', desc: 'Allies near him shake off stagger twice as fast.' },
   },
-  alchemist: {
+  alchemist: { // (round 19: the designer, "They. Pronouns.": the Alchemist is they/them in every text)
     name: 'Alchemist', art: 'art/heroes/alchemist.svg', role: 'caster', unlock: { gems: 2 },
     blurb: 'Wild white hair, brass goggles, a strap of flasks. Every throw is a different brew.',
-    fun: 'Lost her eyebrows in the first week. Lost the lab in the second. Kept the goggles.',
+    fun: 'Lost their eyebrows in the first week. Lost the lab in the second. Kept the goggles.',
     stats: { hp: 72, speed: 64, r: 30, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1, range: 210, keep: 170, atkCd: 1.3, dmg: 8 },
     style: { glow: '#9BE36B' },
     attack: { name: 'Unstable flask', anim: 'throw', desc: 'A lobbed flask that splashes where it lands; each one is a different brew: fire, frost or acid.' },
@@ -226,10 +226,10 @@ Object.assign(HEROES2, {
         tiers: ['Two pools for 4s.', 'Three flasks.', 'Bigger pools, for 5s.'] },
       { id: 'elixir', name: 'Elixir', cd: 12, tags: 'h', glyph: 'vial', desc: 'Throws a bright potion to the friend who needs it, one of three: cleansed and healed if hurt or afflicted; Warded (a shield soaking up 30) and swift if being hit; hasted and enraged if fighting.',
         tiers: ['One friend: heals 14% / ward 30 / +25% damage.', 'Heals 22% / ward 45 / +35% damage.', 'It splashes every friend near the one it hits.'] },
-      { id: 'bangFlask', name: 'Monstrosity', cd: 18, tags: 'ds', glyph: 'burst', desc: 'Drinks an unstable concoction and becomes a monstrosity for 8s: bigger, faster, with rapid clawing blows and a lunge; nothing can hurt her or put a status on her, she is hard to shove, but it burns through a third of her health.',
-        tiers: ['8s as a monster.', 'Her blows land 25% harder.', 'Every blow puts a random status on what it hits.'] },
+      { id: 'bangFlask', name: 'Monstrosity', cd: 18, tags: 'ds', glyph: 'burst', desc: 'Drinks an unstable concoction and becomes a monstrosity for 8s: bigger, faster, with rapid clawing blows and a lunge; nothing can hurt them or put a status on them, they are hard to shove, but it burns through a third of their health.',
+        tiers: ['8s as a monster.', 'Their blows land 25% harder.', 'Every blow puts a random status on what it hits.'] },
     ],
-    trait: { id: 'catalyst', name: 'Catalyst', desc: 'The statuses she causes build 30% faster.' },
+    trait: { id: 'catalyst', name: 'Catalyst', desc: 'The statuses they cause build 30% faster.' },
   },
   shaman: {
     name: 'Shaman', art: 'art/heroes/shaman.svg', role: 'support', unlock: { gems: 2 },

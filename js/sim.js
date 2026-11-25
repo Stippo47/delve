@@ -9,6 +9,7 @@ import { ARMOUR_CAP, ENEMY_ARMOUR, armourCut } from './armour.js';
 import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON, CHARM, CONFUSE, SLEEPY, BLEED, FEAR, SHACKLE, cdRate, setBackDue, windMul } from './statuses.js';
 import { MOB, bindBody, bodiesOf, mobMid, mobSlot, mobLead } from './mob.js'; // round 15 (the Mob): four bodies, one hero
 import { tallyHurt, tallyHeal, tallyDown, noteStatus, tallyBlock, AUDIT } from './stats.js';
+import { bodiesMeet } from './height.js'; // round 19 (lane sys19): height off the floor, one shadow system
 import { dash, dashStep } from './dashes.js'; // round 18 (lane dash18): the six dashes
 import { tagRes, douseRate, DOUSE, hasTag, kindledBuff, KINDLED, hitKinds, hitType, reaches, layerOf, anyHitRes, hitResOf } from './tags.js'; // round 17 (lane tags17): tags; docs/tags17.md
 
@@ -179,6 +180,17 @@ export function silence(w, u, t, src) {
   u.silencedT = Math.max(was, T);
   const f = u.hushFx; if (f && f.t < f.max && w.fx.includes(f)) f.max = Math.max(f.max, f.t + u.silencedT);
   else if (u.silencedT > was + 0.05) u.hushFx = fx(w, { type: 'k2', draw: 'hushed', unit: u, x: u.x, y: u.y, r: u.vr, max: u.silencedT });
+}
+// Taunted (round 19, lane sys19; the designer on the Dame's Challenge: "Should show the agreed lines V over their head.
+// For the taunted indicator. Already used somewhere else."): every taunt an ability or a trinket puts on goes through
+// here: e goes for `by` for dur, and wears Hold the Line's red V over its head while it is held (fxkit.js drawBodyFx). A
+// taunt topped up while it runs (the Warden's chains) keeps its mark without popping it in again. (A tank's blows drawing
+// a foe's attention, hurt() below, is not a taunt anyone cast: no mark.)
+export function taunt(w, e, by, dur) {
+  if (!alive(e) || !by) return;
+  e.tauntBy = by; e.tauntT = Math.max(dur, e.tauntBy === by ? e.tauntT || 0 : 0); e.target = by;
+  if (!(e.vMarkBy === by && e.vMarkT > w.time)) e.vMarkT0 = w.time;
+  e.vMarkBy = by; e.vMarkT = Math.max(e.vMarkT || 0, w.time + dur);
 }
 export function stun(w, u, t) { if (!alive(u)) return; u.stunT = Math.max(u.stunT, u.def.boss ? t * 0.4 : t); u.act = u.act && u.act.type === 'drink' ? null : u.act; }
 export function heal(w, u, amount, src, o) {
@@ -864,7 +876,7 @@ function drive(u, sx, sy, want, dt, quick = 1) {
 // foe its body meets on the way down is hit, once a hop, with its own blow (blowOf: dmg, knock, poison, burn...). The
 // attack clock then restarts as a swing's would, so its damage a second stays about def.dmg / def.atkCd.
 export const HOP = { crouch: 0.15, air: 0.4, land: 0.1, rest: 0.35, pace: 1.6, lift: 1.6, lift0: 10, sq: 0.5, sqLand: 0.55, reach: 4, rebound: 190 };
-export const offFloor = (u) => !!u.airborne || u.flyT > 0; // round 17 (lane tags17): hovering (a slime mid-hop) or flying (tags.js layerOf)
+export const offFloor = (u) => layerOf(u) !== 'floor'; // round 17 (lane tags17): hovering (a slime mid-hop) or flying (tags.js layerOf); round 19 (lane sys19): or a kind that always hovers (the imps)
 const canStrike = (u) => !(u.radiantT > 0 || u.fearT > 0 || u.shackledT > 0 || u.forcedGoal);
 const heavyOf = (u) => clamp(u.r / 25, 0.7, 1.5); // how heavy it hops (the plain slime 1, a big one 1.5)
 function hopTick(w, u, dt) {
@@ -1863,6 +1875,7 @@ function physics(w, dt) {
     const a = us[i]; if (a.dead || a.downed || a.ethereal || a.passUntil > w.time) continue; // (round 18, lane dash18: passUntil, a dash going through bodies: dashes.js)
     for (let j = i + 1; j < us.length; j++) {
       const b = us[j]; if (b.dead || b.downed || b.ethereal || b.passUntil > w.time) continue;
+      if (!bodiesMeet(a, b)) continue; // round 19 (lane sys19): one up in the air and one on the floor don't touch until it lands (height.js)
       if (a.def.pass || b.def.pass || (a.fixed && b.fixed) || (a.linkTo && a.linkTo === b.linkTo) || a.linkTo === b || b.linkTo === a) continue; // round 10: things that roll through (gear sprites), chains (round 13, lane E: a chain's head and its own links too: the first link, fixed, shoved its head off across the room at ~1900 a second)
       const dx = b.x - a.x, dy = b.y - a.y; const d2 = dx * dx + dy * dy; const m = a.r + b.r;
       if (d2 >= m * m || d2 === 0) continue;
@@ -1895,6 +1908,9 @@ function projectiles(w, dt) {
     if (p.drag) { const m = Math.exp(-p.drag * dt); p.vx *= m; p.vy *= m; }
     if (p.grow) p.r = Math.max(2, p.r + p.grow * dt);
     if (p.fall) p.dmg *= Math.exp(-p.fall * dt);
+    // round 19 (lane sys19): a lob thrown to someone (kits2.js lob, p.lobTo) lands on their middle wherever they have got
+    // to: what is left of its flight is turned each step to end where they are now (no faster than twice its throw)
+    if (p.lobTo && !p.landed && (alive(p.lobTo) || p.lobTo.downed)) { const L = p.lobTo, t = Math.max(p.life + dt, dt), vx = (L.x - p.x) / t, vy = (L.y - p.y) / t, v = Math.hypot(vx, vy), cap = (p.lobV || 400) * 2, m = v > cap ? cap / v : 1; p.vx = vx * m; p.vy = vy * m; }
     p.x += p.vx * dt; p.y += p.vy * dt;
     if (p.x < 0 || p.y < 0 || p.x > w.W || p.y > w.H) p.life = 0;
     for (const pl of w.pillars) if (dist(p.x, p.y, pl.x, pl.y) < pl.r && p.life > 0) {

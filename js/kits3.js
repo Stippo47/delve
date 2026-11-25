@@ -5,7 +5,7 @@
 // The designer's standing rules for this file: no three abilities that are all "damage in a shape" (each hero's three
 // do three different jobs), nothing that only shows as a word popping up, nothing too weak to be worth its button.
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange } from './util.js';
-import { hurt, alive, opponents, allies, hpRatio, puff, setAnim, blocked, addBuff, fx, cleanse, sparks, wallRect, offFloor, silence } from './sim.js'; // (round 16: offFloor, a slime up in a hop)
+import { hurt, alive, opponents, allies, hpRatio, puff, setAnim, blocked, addBuff, fx, cleanse, sparks, wallRect, offFloor, silence, taunt } from './sim.js'; // (round 16: offFloor, a slime up in a hop)
 import { lineClear, buildGrid } from './path.js';
 import { foesNear, friendsNear, dmgOf, ang, cast, heal, addStatus, shoot, segDist, withAb, rectGap } from './kits.js';
 import { k2, after, timer, onUnit, offUnit, isOn, flung, shove, interrupt, foeWinding, whirl, inFront } from './kits2.js';
@@ -417,7 +417,7 @@ export const ABILITIES3 = {
       for (const e of F) {
         onUnit(w, e, 'chained', dur, { tick(w2, u2, dt) {
           if (!alive(u)) { offUnit(u2, 'chained'); return; }
-          u2.tauntBy = u; u2.tauntT = 0.6; if (!(u2.fearT > 0) && u2.team !== u.team) u2.target = u;
+          if (u2.team !== u.team) { const tg = u2.target; taunt(w2, u2, u, 0.6); if (u2.fearT > 0) u2.target = tg; } // (round 19: sim.js taunt, the red V)
           addBuff(u2, { id: 'chained', dur: 0.3, atkSpeed: 0.75 }); // (the chain drags at its arm)
           const d = dist(u2.x, u2.y, u.x, u.y); if (d > L && !u2.def.boss) { const a = angleTo(u2.x, u2.y, u.x, u.y), k = Math.min(d - L, 420 * dt); u2.x += Math.cos(a) * k; u2.y += Math.sin(a) * k; if (u2.kx * Math.cos(a) + u2.ky * Math.sin(a) < 0) { u2.kx *= 0.6; u2.ky *= 0.6; } }
         } });

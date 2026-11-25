@@ -31,6 +31,7 @@ export const TAG_INFO = {
   beast: { name: 'Beast', desc: 'An animal.' },
   slime: { name: 'Slime', desc: 'A blob of ooze that moves in hops.' },
   flier: { name: 'Flier', desc: 'Flies.' },
+  hover: { name: 'Hovering', desc: 'Hovers off the floor: over pools, spikes and slams, drawn over those on the floor, and never shoved by them.' }, // round 19 (lane sys19): the imps
   metal: { name: 'Metal', desc: 'Made of metal: lightning and water get into it.' },
   demon: { name: 'Demon', desc: 'A fiend from the pit.' },
   holy: { name: 'Holy', desc: 'A thing of the light.' },
@@ -73,6 +74,7 @@ export const KIND_TAGS = {
   flier: ['bat', 'cinderBat', 'wisp', 'ghost', 'banshee', 'cherub', 'angel', 'seraph', 'angelFallen', 'spiritEagle', 'medDrone', 'repairDrone', 'welderDrone',
     'bee', 'wasp', 'hornet', 'beeBronze', 'beeSteel', 'waspBronze', 'waspSteel', 'hornetBronze', 'hornetSteel',
     'spiritPoison', 'spiritHaste', 'spiritShock', 'spiritFrost', 'spiritFire', 'spiritHeal', 'spiritWard', 'griffon', 'valkyrie', 'gildedSeraph'],
+  hover: ['imp', 'warlockImp'], // round 19 (lane sys19), the designer: "Imp should always be hovering therefore always render on top of ground entities"
   metal: ['turret', 'torcher', 'tesla', 'snowMortar', 'medbay', 'medDrone', 'windup', 'cauldron', 'bigBomb', 'gildedGolem', 'greatEngine', 'engineHammer', 'engineClaw', 'engineValve', 'sawBlade'],
   demon: ['imp', 'warlockImp', 'devil', 'succubus', 'demon', 'pitLord', 'archfiend', 'hellhound'],
   holy: ['cherub', 'angel', 'seraph', 'sunBlade', 'choirSprite', 'spiritHeal', 'spiritWard', 'heraldLight', 'archon', 'radiant', 'gildedSeraph', 'seraphSinger', 'gildedGolem'],
@@ -295,7 +297,8 @@ export const anyHitRes = (u) => !!((u.def && u.def.hitRes) || Object.keys(TAG_HI
 // Witch on her broom): over everything on the floor, and nothing reaches it but shots (and what was already on it:
 // burning, poison). Kinds that always fly (bats, spirits, angels) stay on the floor layer: up there for good, every
 // floor zone and slam would miss them (docs/tags17.md, suggestions).
-export const layerOf = (u) => (!u ? 'floor' : u.flyT > 0 ? 'flying' : u.airborne ? 'hovering' : 'floor');
+// (round 19, lane sys19: a kind tagged hover, the imps, is always hovering)
+export const layerOf = (u) => (!u ? 'floor' : u.flyT > 0 ? 'flying' : u.airborne || hasTag(u, 'hover') ? 'hovering' : 'floor');
 // does a hit (hitKinds) reach a unit on that layer?
 export function reaches(layer, k) {
   if (layer === 'floor') return true;

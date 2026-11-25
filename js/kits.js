@@ -20,7 +20,7 @@ import { HEROES, TIER_CD, ROLE_TUNE, statsFor, tierOf } from './heroes.js';
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange, chance } from './util.js';
 import {
   hurt, addStatus as simAddStatus, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, textU,
-  stun, heal as simHeal, addBuff, fx, zone as simZone, cleanse, wallRect, offFloor,
+  stun, heal as simHeal, addBuff, fx, zone as simZone, cleanse, wallRect, offFloor, taunt,
 } from './sim.js';
 import { lineClear } from './path.js';
 import { dash } from './dashes.js'; // round 18 (lane dash18): the six dashes
@@ -169,7 +169,7 @@ export const ABILITIES = {
       const dur = tier >= 2 ? 6 : 4; // round 9: no swing; he simply holds the shield out in front (parts.js)
       addBuff(u, { id: 'holdTheLine', dur, frontBlock: 0.6, root: true, reflect: tier >= 3 ? 0.5 : 0 });
       // (round 13, "The v should remain over them": fxkit draws the mark while e.vMarkT runs and he still holds them)
-      for (const e of foesNear(w, u, u.x, u.y, tier >= 2 ? 320 : 240)) { e.tauntBy = u; e.tauntT = dur; e.target = u; e.vMarkBy = u; e.vMarkT0 = w.time; e.vMarkT = w.time + dur;
+      for (const e of foesNear(w, u, u.x, u.y, tier >= 2 ? 320 : 240)) { taunt(w, e, u, dur); // (round 19: sim.js taunt, the one way in)
         addBuff(e, { id: 'cowed', dur, dealt: 0.8 }); } // (round 13: those he holds hit softer: what an hp tank does for the others)
       puff(w, u.x, u.y, '#FFE7A0', 10, 140, 5, 0.45); // no ring round him (round 6): a burst of dust as the shield plants
     },

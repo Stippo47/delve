@@ -9,6 +9,7 @@ import { noteWorld, drawMarks, drawSigGround, drawSigAir, abilityRing, abilityBe
 import { drawPuddle, snowflake } from './puddles.js';
 import { PROJ2, drawK2 } from './fx2.js';
 import { variant } from './fxvar.js';
+import { projZ } from './height.js'; // round 19 (lane sys19): one height for lobs
 
 export function easeOut(k) { return 1 - (1 - k) * (1 - k) * (1 - k); }
 // a stable pseudo-random number from integers (flicker that doesn't need state)
@@ -674,14 +675,10 @@ function pillar(ctx, f, T) {
 const BOLT_COL = { pyromancer: '#FF9A3D', frost: '#9FE3FF', storm: '#FFE66B', necromancer: '#B48CFF', bard: '#FFD45A', druid: '#9BE36B' };
 export function drawProjectile(ctx, p, T) {
   const ang = Math.atan2(p.vy, p.vx), sp = Math.hypot(p.vx, p.vy);
-  // a lobbed thing flies in an arc, lifted up the screen in mid-flight, its shadow on the floor
+  // a lobbed thing flies in an arc, lifted up the screen in mid-flight (round 19, lane sys19: one height for every lob,
+  // height.js projZ, applied here once; its shadow is the units' own, on the floor under it: render.js drawShadows)
   let lx = 0, ly = 0;
-  if (p.noHit && sp < 700) {
-    if (p._life0 == null) p._life0 = p.life;
-    const q = 1 - clamp(p.life / (p._life0 || 1), 0, 1), [ux, uy] = upVec(), h = Math.sin(q * Math.PI) * Math.min(80, sp * p._life0 * 0.22);
-    lx = ux * h; ly = uy * h;
-    ctx.fillStyle = 'rgba(43,34,48,0.22)'; ctx.beginPath(); ctx.ellipse(p.x, p.y, 9, 6, 0, 0, TAU); ctx.fill();
-  }
+  { const h = projZ(p); if (h > 0) { const [ux, uy] = upVec(); lx = ux * h; ly = uy * h; } }
   ctx.save(); ctx.translate(p.x + lx, p.y + ly);
   const ab = p.ab;
   if (PROJ2[p.kind]) { PROJ2[p.kind](ctx, p, T, ang, sp); ctx.restore(); return; } // fx2.js: the new heroes' shots

@@ -64,7 +64,7 @@ DRAW2.warCry = (ctx, f, w, layer) => {
 // itself flat across his front (kits2.js PARRY_POSE, through parts.js), and a cold glint runs up and down its edge while
 // he waits. The blade's ends are read off the posed sprite (art/heroes/oldguard.svg: the grip at 94,161, the point
 // 120 down the blade, turned 50 degrees).
-const OG_PIVOT = [150, 108], OG_BASE = [83.3, 170], OG_TIP = [3.6, 236.8];
+const OG_PIVOT = [105, 152], OG_BASE = [83.3, 170], OG_TIP = [3.6, 236.8];
 DRAW2.parryGuard = (ctx, f, w, layer) => {
   const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const P = u.kit && u.kit.parry; ended(f, !(P && P.until > w.time && P.n > 0));
   if (w.time - ((P && P.caughtT) ?? -9) < 0.32) return; // (the guard drops for the riposte)
