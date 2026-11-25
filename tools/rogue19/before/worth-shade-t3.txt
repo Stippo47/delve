@@ -1,0 +1,6 @@
+tier 3, rank 1: each ability switched off in turn (the same parties and seeds), 0 errors
+hero          ability           rooms with  worth   share of dmg  hero dmg/s  party taken/s  party heal/s  party downs
+shade         (all on)           6.57           attack  31%    12.97         4.08          1.89       6.77   (30 runs)
+              shadowWalk                -0.03           13%    +1.71        +0.17         -0.23       -0.20
+              blackout                  -0.77            0%    +1.70        -0.11         -0.07       +0.00
+              deathMark                 +1.57            0%    +7.01        +0.06         +0.06       -0.13

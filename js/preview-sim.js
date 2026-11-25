@@ -15,7 +15,7 @@
 // Every list comes from the data (HEROES, DEFS and the dungeons' rosters, ELITES / MAJOR_MOVES, STATUS and the
 // Book's STATUSES words, TRINKETS, POTIONS), so new heroes, enemies, statuses and trinkets show up without edits here.
 import { leash, holdWalk, freeWalk } from './leash.js'; // round 19 (lane sys19): "the bench stops pinning people"
-import { makeWorld, spawn, step, setAnim, hurt, meleeSwing, addStatus, stun, addBuff, unitNumbers, wallRect, taunt } from './sim.js';
+import { makeWorld, spawn, step, setAnim, hurt, meleeSwing, addStatus, stun, addBuff, unitNumbers, wallRect, taunt, disarm } from './sim.js';
 import { sceneOf as abilitySceneOf, attackSceneOf, KINDS, FOE_HP, FOE_DMG, HERO_FLOOR, FRIEND_FLOOR, foeSceneOf, FOE_HERO_DMG, FOE_HERO_FLOOR, statusSceneOf, STATUS_SCENE } from './preview-scenes.js';
 import { newStats } from './stats.js';
 import { ABILITIES, initKit, cooldownOf } from './kits.js';
@@ -26,7 +26,7 @@ import { buildGrid } from './path.js';
 import { battleFoe } from './dungeon.js';
 import { ELITES } from './elites.js';
 import { STATUS, HERO_STATUS } from './statuses.js';
-import { whirl, spin, dirty, targeted, tracked, trapped, ward, weaken, k2 } from './kits2.js'; // (round 15, lane E: the newer heroes' eight)
+import { whirl, spin, dirty, targeted, tracked, trapped, ward, weaken, k2, antiheal } from './kits2.js'; // (round 15, lane E: the newer heroes' eight; round 19: Anti-heal)
 import { STATUSES } from './bestiary.js';
 import { TRINKETS } from './trinkets.js';
 import { POTIONS, elixirKey } from './potions.js';
@@ -180,6 +180,8 @@ const PUT_ON = {
   trapped: (w, s) => { const d = trapped(w, s, 2); const f = k2(w, { draw: 'trap', x: s.x, y: s.y, max: d }); f.snapT = f.t; f.held = s; }, // the Trapper's jaw trap, shut on it (his trap's own look, kits2.js jawTrap)
   warded: (w, s) => { ward(w, s, 30, 6); },                     // the Alchemist's Elixir
   weakened: (w, s) => { weaken(w, s, 4); },                     // the Shade's Blackout (held a while)
+  disarmed: (w, s, o) => { disarm(w, s, 3, o.dummy); },        // round 19: the Bandit's Dirty Trick
+  antiheal: (w, s) => { antiheal(w, s, 4); },                   // round 19: the Cultist's shadow bolt
 };
 // round 15 (lane E): Whirled and Spun build up and burst like the rest, through the function that puts each on
 const KIT_BUILD = { whirled: (w, s, amt, by) => whirl(w, s, amt, by), spun: (w, s, amt) => spin(w, s, amt) };
@@ -294,6 +296,7 @@ function heroStage(S, spec) {
       o.hp = o.maxHp * (f.hp ?? 0.6); o.barAlways = true; o.moveMul = 1e-4; o.spec = f; o.facing = 0;
       if (f.st) for (const k in f.st) o.st[k] = f.st[k];
       if (f.stun) stun(w, o, f.stun);
+      if (f.carry) o.trinketHooks = [...(o.trinketHooks || []), { hit(w2, a, t, amt, oo) { if (!oo.dot && !oo.proc) for (const k in f.carry) addStatus(w2, t, k, f.carry[k], a); } }]; // (round 19: carry, what its blows put on in this scene: the Twinfang's cuts bleeding the foes for Sacrifice)
       return o;
     });
     // the enemies: real kinds with their own brains, tougher and softer-hitting than in a run
@@ -441,9 +444,13 @@ const TRAIT_SCENE = {
   lastStand: { foes: [{ at: 'adj', w: 'sword', hits: 1.2, dmg: 0.06 }], allies: [{ at: 'near', hp: 0.5, downAt: 1.4 }], hero: { abilities: true } },
   returnThrust: { foes: [{ at: 'front', w: 'sword', hits: 0.45, dmg: 0.04, until: 2.6 }, { at: 'line' }], hero: { quiet: 2.9 } },
   snatch: { foes: [{ at: 'front', w: 'sword', hits: 1.4, dmg: 0.05, hpX: 14 }] },
+  // round 19: the Bandit's Light Fingers (the chain comes round sooner on the stage), the Cultist's Blood Rite (a friend
+  // nearly gone, his cooldowns running)
+  lightFingers: { foes: [{ at: 'a', w: 'sword', hits: 1.4, dmg: 0.04, hpX: 14 }, { at: 'b', w: 'sword', hits: 1.6, dmg: 0.04, hpX: 14 }, { at: 'far', w: 'sword', hits: 2, dmg: 0.04, hpX: 14 }],
+    hold: (w, u) => { if (u.kit.lightW === w && u.kit.lightT > 1) u.kit.lightT = 1; } },
   dirtIn: { foes: [{ at: 'front', w: 'sword', hits: 1.1, dmg: 0.1 }], hero: { abilities: true } },
   familiar: { foes: [{ at: 'far' }] },
-  bloodRite: { foes: [{ at: 'front', w: 'sword', hits: 1.5, dmg: 0.03, hpX: 30 }], hero: { abilities: true, hp: 0.55 } },
+  bloodRite: { foes: [{ at: 'front', w: 'sword', hits: 1.5, dmg: 0.03, hpX: 30 }, { at: [195, 260], w: 'sword', hits: 0.9, on: 'ally', dmg: 0.005, hpX: 30 }], allies: [{ at: 'near', hp: 0.08 }], hero: { set: (u) => { for (const c in u.kit.cd) u.kit.cd[c] = 9; u.kit.riteW = null; } } },
   pollen: { foes: [{ at: 'adj', hpX: 30 }], allies: [{ at: 'near', hp: 0.4 }] },
   requisition: { foes: [{ at: 'far' }], allies: [{ at: 'near', hp: 0.7 }], hero: { set: (u) => { u.kit.reqW = null; } }, hold: (w, u) => { if (u.kit.reqW === w && u.kit.reqT > 1 && u.kit.reqT <= 3) u.kit.reqT = 1; } },
   huntingPartner: { foes: [{ at: 'far', hpX: 14 }] },
@@ -460,7 +467,6 @@ const TRAIT_SCENE = {
   phalanx: { foes: [{ at: 'adj', w: 'sword', hits: 1, dmg: 0.1 }], allies: [{ at: 'beside', hp: 1 }] },
   thickHide: { foes: [{ at: 'far', w: 'bow', hits: 0.5, on: 'alt', dmg: 0.02, hitSt: { burn: 24 }, aim: false }], allies: [{ at: 'beside', hp: 1 }], hero: { idle: true } },
   ironWill: { foes: [{ at: 'front', w: 'hammer', hits: 0.9, dmg: 0.05, hitSt: { stagger: 55 }, hpX: 8 }], hero: { lowAt: 2.8 }, loop: 6.4 },
-  lightFingers: { foes: [{ at: 'a', weak: true, coins: true }, { at: 'b', weak: true, coins: true }] },
   fade: { foes: [{ at: 'front', w: 'sword', hits: 1, dmg: 0.06, until: 0.9 }], hero: { quiet: 3.7 }, loop: 6 },
   hardWork: { foes: [{ at: 'a', weak: true }, { at: 'b', weak: true }, { at: 'c', weak: true }, { at: 'back', w: 'sword', hits: 1.4, dmg: 0.03, aim: false, hpX: 30 }], hero: { hp: 0.5 } },
   prospector: { foes: [{ at: 'front' }] },
@@ -809,7 +815,7 @@ const wayOf = (id) => WAYS[FROM_BURST[id] || id] || null;
 export const statusWays = (id) => (wayOf(id) && statusHow(id) ? [{ id: 'alone', name: 'Left alone' }, { id: 'trigger', name: wayOf(id).name }] : null);
 // a timed state is on: its own timer, or the hook or buff it is made of (kits2.js onUnit: dirty, targeted, tracked...)
 const STATE_ON = { stun: (s) => s.stunT > 0, root: (s) => s.rootT > 0, sleep: (s) => s.sleepT > 0, guard: (s) => !!(s.guardBy && s.guardT > 0), invuln: (s) => s.invulnT > 0,
-  taunt: (s) => s.tauntT > 0, rage: (s) => s.buffs.some((b) => b.id === 'rage'), silenced: (s) => s.silencedT > 0,
+  taunt: (s) => s.tauntT > 0, rage: (s) => s.buffs.some((b) => b.id === 'rage'), silenced: (s) => s.silencedT > 0, disarmed: (s) => s.disarmT > 0,
   buff: (s) => s.buffs.some((b) => b.dur >= 1 && b.dur < 900 && b.id !== 'rhythm' && ((b.atkSpeed || 1) > 1 || (b.move || 1) > 1 || (b.dealt || 1) > 1)),
   debuff: (s) => s.buffs.some((b) => b.dur < 900 && ((b.atkSpeed || 1) < 1 || (b.move || 1) < 1 || (b.dealt || 1) < 1)) };
 const stateOn = (s, id) => (STATE_ON[id] ? STATE_ON[id](s) : (s.h2 || []).some((h) => h.id === id) || s.buffs.some((b) => b.id === id));
@@ -846,6 +852,8 @@ function statusStage(S, spec) {
     w.stats = newStats([...new Set([by, s, trig].filter((o) => o && o.team === 'hero').map((o) => o.kind))]);
     const need = STATUS[src] ? (typeof STATUS[src].need === 'function' ? STATUS[src].need(s) : STATUS[src].need) : HERO_STATUS[src] && HERO_STATUS[src].need ? HERO_STATUS[src].need : 100;
     // a build-up rides on the hero's own blows and shots: each that lands on it carries a share
+    // (round 19: a timed state its giver's own blows or shots put on, no ability cast: Anti-heal from the Cultist's bolt; it is seen coming from them)
+    if (!build && !sc.ab) by.trinketHooks = [...by.trinketHooks, { hit(w2, a, t) { if (t === s) S.srcSeen = true; } }];
     if (build && !sc.ab) by.trinketHooks = [...by.trinketHooks, { dealt(w2, a, t, amt, o) {
       if (t === s && !o.dot && !o.proc && !done && S.t > 0.2) { S.srcSeen = true; gave++; const k = need * (sc.carry || 0.38); if (KIT_BUILD[src]) KIT_BUILD[src](w2, s, k, a); else addStatus(w2, s, src, k, a); }
       return amt; } }];

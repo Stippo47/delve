@@ -14,6 +14,7 @@ import { heartPath, drawStatusMarks, bleedFlash, bleedLook } from './fx-status.j
 import { drawMarks3 } from './fx3.js'; // round 15 (lane N): Shackled's irons
 import './fx-dash.js'; // round 18 (lane dash18): the six dashes' looks (it fills fx2.js's table)
 import './fx-melee.js'; // round 19 (lane melee19): the knights' and brutes' looks (it fills fx2.js's tables)
+import './fx-rogue19.js'; // round 19 (lane rogue19): the Bandit's, Shade's, Monk's and Cultist's looks, Disarmed and Anti-heal
 import { WALL2, ART2 } from './looks2.js';
 import { HEROES } from './heroes.js';
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
@@ -719,13 +720,17 @@ function drawPartsUnit(ctx, u, w) {
   if (u.invulnT > 0 && !u.act && !u.spin) alpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18)); // no flicker mid-leap or roll (round 9)
   if (u.downed) alpha = 0.62; // a hero who is down lies faint too (round 7)
   if (u.ethereal && !u.exiting && !u.hiddenIn) alpha *= 0.5;
+  else if (u.incorpT > 0) alpha *= u.incorpLook === 'mist' ? 0.55 : 0.78; // round 19 (lane rogue19): incorporeal (sim.js), see-through
   if (X && X.alpha) alpha *= X.alpha(u, w);
   if (DV && DV.body && DV.body.alpha) alpha *= DV.body.alpha;
-  const mode = u.downed ? 'grey' : u.flashT > (u.def.flashAt ?? 0.06) ? 'flash' : 'normal'; // (lane B, bosses3: def.flashAt, as in washesOf)
+  const struck = !u.downed && u.flashT > (u.def.flashAt ?? 0.06);
+  // round 19 (lane melee19, "big white puffs hiding the hero on impact"): a body struck flashes a pale wash, its picture
+  // still readable through it (it went solid white, a blob over whatever stood beside it) (lane B, bosses3: def.flashAt)
+  const mode = u.downed ? 'grey' : 'normal';
   if (u.act && u.act.type === 'dash' && !u.act.dv && u.kind === 'twinfang') afterimages(ctx, u, w, set, pose, sizeU); // (round 18: her Dash is one of dashes.js's now: dashGhosts above)
   else u._trail = null;
   // (round 15, lane E: def.ownLook, a summon drawn in its own colours: the code drawings it replaces were never turned blue-grey)
-  drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w), shift: isOurs(u) && u.kind !== 'minion' && !u.def.ownLook, /* round 10: the raised dead stay plain grey */ border: mode === 'normal' ? borderOf(u, w) : null });
+  drawRig(ctx, set, pose, { mode, alpha, washes: struck ? [['#FFFFFF', 0.55 * Math.min(1, u.flashT / 0.12)]] : washesOf(u, w), shift: isOurs(u) && u.kind !== 'minion' && !u.def.ownLook, /* round 10: the raised dead stay plain grey */ border: mode === 'normal' ? borderOf(u, w) : null });
   if (pose.glow && mode === 'normal') castGlow(ctx, pose.glow, w.time);
   if (u.kind === 'archer' && mode === 'normal') nockedArrow(ctx, u, set, pose, sizeU);
   if (X && X.top && mode !== 'grey') X.top(ctx, u, w);

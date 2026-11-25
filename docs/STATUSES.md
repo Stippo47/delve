@@ -280,6 +280,22 @@ The rules and numbers are in docs/tags17.md and js/tags.js.
   attack speed, +15% move (x fill); its Scorch is a Flare instead (the whole boost for 4 s); bosses half the extra.
 - Constructs take no Bleeding and no Poison.
 
+## Round 19 (lane rogue19): Disarmed, Anti-heal, incorporeal; Spun changed
+The rules, the calls and the clips: docs/rogue19.md.
+- **Disarmed** (`u.disarmT`, sim.js `disarm`; `statuses.js DISARMED`): its weapon is knocked out of its hand and hidden
+  (parts.js takes the weapon out of the arm's art; it spins away and lies on the floor till it is back); no weapon blow,
+  no ability or move done with the weapon (tags.js `WEAPON_ABILITIES`, `MOVE_TAGS.weapon`, through `abilityBlocked` /
+  `moveBlocked`, as Silenced); bites, claws, shields, kicks and spells go on. Only what holds a weapon (tags.js `ARMED`).
+  Bosses 40%. A cleanse doesn't bring the weapon back. From the Bandit's Dirty Trick, Hostage III and Light Fingers, and
+  the Dame's Disarm.
+- **Anti-heal** (buff `antiheal`, `statuses.js ANTIHEAL`): heals on it do half. Dull cracked crosses sink off the body.
+  From the Cultist's shadow bolt (3 s) and Sacrifice II (4 s).
+- **Incorporeal** (`u.incorpT`, sim.js `incorporeal`; a state, not in the HUD): sharp and blunt hits pass through, magic
+  lands; no collision. The Shade in Blackout and her shadow clones; the Ghost when pressed.
+- **Spun** (changed): its turning is slippery (momentum: slow to start, slow to stop, overshooting; sim.js
+  `updateFacing` reads `u.slipF`) instead of locked; full up it is **Dazed** (stunned 1.3 s, bosses 0.5 s, stars round
+  the head) instead of marching off.
+
 ## Round 19 (lane caster19): Dirty on foes
 The designer: Dirt Fling "should make target dirty (clears enemies effects too). When he hits a dirtied foe he deals double
 damage and clears the dirt"; Bury: "should be dirty when they get back up"; the trait: "Don't like the dirtied effect

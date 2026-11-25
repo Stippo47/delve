@@ -17,7 +17,7 @@ export const HEROES2 = {
     blurb: 'A greatsword held in both hands, and forty years of knowing where to put it.',
     fun: 'Has outlived three kings, two dragons and every sergeant who ever shouted at him. Still gets up at dawn.',
     stats: { hp: 165, speed: 50, r: 34, vr: 24, turn: 3, accel: 160, face: 3.2, mass: 2.4, range: 30, atkCd: 1.5, dmg: 15, knock: 190, arc: 2.3 },
-    weapon: 'great',
+    weapon: 'great', style: { tip: [43.4, 203.4], tipBase: [81.7, 171.3] }, // round 19 (melee19): the cut drawn along the blade (fxkit tipSlash)
     attack: { name: 'Greatsword', anim: 'swing', desc: 'A slow, wide two-handed cut in front.' },
     abilities: [
       { id: 'greatSweep', name: 'Great Sweep', cd: 8, tags: 'ds', glyph: 'swirl', desc: 'Draws the greatsword back, then sweeps it round in one huge arc in front of him.',
@@ -35,15 +35,15 @@ export const HEROES2 = {
     blurb: 'Kite shield, leaf sword, perfect manners. Answers every blow.',
     fun: 'Wears the tiara into battle because nobody has yet been brave enough to tell her not to.',
     stats: { hp: 155, speed: 58, r: 33, vr: 23, turn: 3.6, accel: 190, face: 3.8, mass: 2, range: 24, atkCd: 1.0, dmg: 11, knock: 120, arc: 1.6 },
-    weapon: 'blade', style: { hand: 'arm-l', off: 'shield', lefty: true }, // round 13: "Should swipe the opposite way"; round 19: "She swings her sword the wrong way. Out instead of in": the arm cuts in across her (no backhand), the arc with it
+    weapon: 'blade', style: { hand: 'arm-l', off: 'shield', lefty: true, swingAmp: 1.6, tip: [90.3, 204.7], tipBase: [57.8, 156.6] }, // round 13: "Should swipe the opposite way"; round 19: "She swings her sword the wrong way. Out instead of in": the arm cuts in across her (no backhand), the arc with it
     attack: { name: 'Leaf sword', anim: 'swing', desc: 'A quick, neat backhand cut.' },
     abilities: [
       { id: 'riposte', name: 'Riposte', cd: 9, tags: 'ds', glyph: 'shield', desc: 'Raises the shield; every blow it stops from the front is answered with a thrust.',
         tiers: ['For 1.6s.', 'The answers stagger.', 'For 2.6s, and she turns to meet blows from any side.'] },
       { id: 'challenge', name: 'Challenge', cd: 14, tags: 'h', glyph: 'dagger', desc: 'Dashes to the friend nearest death, shoves them clear of the fight, patches them up and stands in the way: the nearest enemy has to turn on her.',
         tiers: ['Heals them 10%; the nearest enemy must fight her for 4s.', 'Heals them 20%.', 'Every enemy near must fight her.'] },
-      { id: 'disarm', name: 'Disarm', cd: 11, tags: 's', glyph: 'swirl', desc: 'A flick of the blade at an enemy\'s weapon hand: its blows land far softer for a while.',
-        tiers: ['Its blows do 50% less for 5s.', 'It attacks slower too.', 'Every enemy in front of her.'] },
+      { id: 'disarm', name: 'Disarm', cd: 11, tags: 's', glyph: 'swirl', desc: 'A flick of the blade at an enemy\'s weapon hand: its weapon spins away (Disarmed: no weapon blows or weapon abilities). A beast with no weapon has its blows land far softer for a while instead.',
+        tiers: ['Disarmed for 3s (or its blows do 50% less for 5s).', 'Disarmed for 4s (or it attacks slower too).', 'Every enemy in front of her.'] },
     ],
     trait: { id: 'grace', name: 'Grace', desc: 'Every third blow she lands is a critical hit.' },
   },
@@ -53,7 +53,7 @@ export const HEROES2 = {
     fun: 'The wings on the helm are not real. Nobody has told the helm.',
     stats: { hp: 175, speed: 58, r: 34, vr: 24, turn: 3.4, accel: 180, face: 3.6, mass: 2.2, range: 24, atkCd: 1.3, dmg: 16, knock: 190, arc: 1.7, aoe: 40, aoeAt: 0.9, windup: 0.2 }, // round 19: "a bit more forwards ... Maybe wind up"
     // round 13: "Flip his sprite. Should be an aoe slam on the ground like the berserker" (his own hammer slam, fx2 SLAM2)
-    weapon: 'heavy', style: { hand: 'arm-l', off: 'shield', flip: true, slam: 'hammer', slamPose: true },
+    weapon: 'heavy', style: { hand: 'arm-l', off: 'shield', flip: true, slam: 'hammer', slamPose: true, slamS: { r: 0.4, dy: 58 }, tip: [73.8, 180.2], tipPart: 'arm-l-hammer' },
     attack: { name: 'Warhammer', anim: 'swing', desc: 'A heavy hammer slammed into the floor in front: everything there is hit.' },
     abilities: [
       { id: 'swoop', name: 'Swoop', cd: 11, tags: 'ds', glyph: 'up', desc: 'A gust bursts round him as he beats his wings and flies to the ally in the most trouble; he lands spinning, and a swirl of wind whirls their attackers and throws them back.',
@@ -70,7 +70,7 @@ export const HEROES2 = {
     blurb: 'A winged spear and a big shield. Nothing gets past the end of the spear.',
     fun: 'Has stood in the same doorway for so long that the door now leans on him.',
     stats: { hp: 160, speed: 52, r: 34, vr: 24, turn: 3.1, accel: 160, face: 3.3, mass: 2.4, range: 40, atkCd: 1.2, dmg: 12, knock: 170, arc: 0.9 },
-    weapon: 'thrust', style: { off: 'shield', reach0: 1.15, stab: 1.7, stabX: -38 }, // round 19: the stab straight down the spear, drawn along it // round 13: "Starts too close to them" (the stab starts out at the spear's head)
+    weapon: 'thrust', style: { off: 'shield', reach0: 1.15, stab: 1.7, stabX: -38, tip: [184.3, 203.5] }, // round 19: the stab straight down the spear, drawn along it // round 13: "Starts too close to them" (the stab starts out at the spear's head)
     attack: { name: 'Winged spear', anim: 'thrust', desc: 'A long thrust that reaches past the front line.' },
     abilities: [
       { id: 'brace', name: 'Brace', cd: 10, tags: 'ds', glyph: 'shield', desc: 'Sets the spear and waits: whatever comes into its reach is struck hard and stopped dead.',
@@ -87,7 +87,7 @@ export const HEROES2 = {
     blurb: 'A studded club and a bear on his back. Hits like the bear did.',
     fun: 'The bear was not killed. The bear lent him the coat and is waiting outside.',
     stats: { hp: 135, speed: 60, r: 34, vr: 24, turn: 3.4, accel: 190, face: 3.6, mass: 2, range: 26, atkCd: 1.35, dmg: 16, knock: 170, arc: 1.8 },
-    weapon: 'heavy',
+    weapon: 'heavy', style: { tip: [105.3, 189.8], tipBase: [146, 156], tipPart: 'arm-r-club', slashTh: 0.6 }, // round 19 (melee19): the club's blow drawn along the club
     attack: { name: 'Studded club', anim: 'swing', desc: 'A heavy club blow.' },
     abilities: [
       { id: 'maul', name: 'Maul', cd: 8, tags: 'ds', glyph: 'fist', desc: 'Raises the club high and brings it straight down on one enemy, cratering the floor.',
@@ -104,8 +104,8 @@ export const HEROES2 = {
     name: 'Warhelm', art: 'art/heroes/r12/warhelm.svg', role: 'melee', unlock: { gems: 2 },
     blurb: 'A beard, a helm, a hammer the size of a sheep. Knocks things a long way.',
     fun: 'Nobody has seen his face. There is a rumour it is also a helm.',
-    stats: { hp: 140, speed: 56, r: 34, vr: 24, turn: 3.2, accel: 170, face: 3.4, mass: 2.2, range: 28, atkCd: 1.45, dmg: 17, knock: 230, arc: 1.8, aoe: 46, aoeAt: 0.85, windup: 0.2 }, // round 19: "Same slam as griffon"
-    weapon: 'heavy', style: { hand: 'arm-l', slam: 'hammer', slamPose: true }, // round 13: "Needs to do a slam on the ground"
+    stats: { hp: 140, speed: 56, r: 34, vr: 24, turn: 3.2, accel: 170, face: 3.4, mass: 2.2, range: 28, atkCd: 1.45, dmg: 17, knock: 230, arc: 1.8, aoe: 46, aoeAt: 0.75, windup: 0.2 }, // round 19: "Same slam as griffon"
+    weapon: 'heavy', style: { hand: 'arm-l', slam: 'hammer', slamPose: true, slamS: { r: 0.74, dy: 60 }, tip: [47.9, 188.5], tipPart: 'arm-l-hammer' }, // round 13: "Needs to do a slam on the ground"
     attack: { name: 'Warhammer', anim: 'swing', desc: 'A huge hammer slammed into the floor in front, knocking back everything there.' },
     abilities: [
       { id: 'thunderBlow', name: 'Thunder Blow', cd: 9, tags: 'ds', glyph: 'fist', desc: 'Lunges and headbutts the enemy in front: a heavy blow that staggers it and throws it far back.',
@@ -126,33 +126,35 @@ export const HEROES2 = {
     weapon: 'blade',
     attack: { name: 'Cutlass', anim: 'swing', desc: 'Quick, wide cutlass slashes.' },
     abilities: [
-      { id: 'smokeBomb', name: 'Bolas', cd: 11, tags: 's', glyph: 'hook', desc: 'Whirls a bolas and lets it fly at the enemy furthest off (a shooter first): it wraps its legs and down it goes.',
-        tiers: ['Tripped for 1.3s, then slowed.', 'Two bolas.', 'Down for 2s, and it drops its weapon.'] },
-      { id: 'pickpocket', name: 'Dirty Trick', cd: 9, tags: 'ds', glyph: 'fist', desc: 'Three quick cuts and a kick that sends the enemy flying into its friends.',
-        tiers: ['Three cuts and the kick.', 'The cuts make it bleed.', 'The kicked one, and whatever it hits, are staggered.'] },
-      { id: 'lowBlow', name: "Stick 'Em Up", cd: 12, tags: 's', glyph: 'dagger', desc: 'Levels the cutlass at an enemy: hands up. It can\'t attack or use an ability while they\'re up, and everyone hits it 25% harder.',
-        tiers: ['Hands up for 2.5s.', 'Two more near it put theirs up too.', 'For 3.5s.'] },
+      { id: 'smokeBomb', name: 'Bolas', cd: 11, tags: 's', glyph: 'hook', desc: 'Whirls a three-weight bolas and lets it fly at the enemy furthest off (a shooter first): it wraps its legs and holds it like a hunter\'s trap. Trapped: it can\'t move or turn, or use an ability; it can only strike straight ahead.',
+        tiers: ['Trapped for 1.6s.', 'Two bolas.', 'Trapped for 2.5s.'] },
+      { id: 'pickpocket', name: 'Dirty Trick', cd: 9, tags: 'ds', glyph: 'fist', desc: 'Three cuts, forehand, backhand, forehand, then his free fist: the enemy is flung into its friends and its weapon spins out of its hand. Disarmed: no weapon blows or weapon abilities for a while.',
+        tiers: ['Three cuts and the punch: disarmed for 2.5s.', 'The cuts make it bleed; disarmed for 3s.', 'The punched one, and whatever it hits, are staggered.'] },
+      { id: 'lowBlow', name: 'Hostage', cd: 12, tags: 's', glyph: 'dagger', desc: 'Grabs the nearest enemy that isn\'t too big and holds it in front of him, the cutlass at its throat: it can\'t act, and every blow and shot that comes at him from the front lands on it instead.',
+        tiers: ['Held for 3s.', 'Held for 4.5s.', 'When he lets go he shoves it into its friends, disarmed.'] },
     ],
-    trait: { id: 'snatch', name: 'Snatch', desc: 'Every fourth blow tears the enemy\'s weapon out of its hand and flings it away: it can\'t attack until it walks over and picks it up.' },
+    trait: { id: 'lightFingers', name: 'Light Fingers', desc: 'Every 9s, with two or more enemies near, he dashes through up to three of them in a chain, cutting each one and knocking its weapon out of its hand (disarmed for 2.5s).' },
   },
   shade: {
     name: 'Shade', art: 'art/heroes/shade.svg', role: 'skirmish', unlock: { gems: 3 },
     blurb: 'Two mirrored daggers and a cape the colour of a shadow. Hard to find, harder to hit.',
     fun: 'Arrives before the door opens and leaves after it closes. Nobody has seen the in between.',
-    stats: { hp: 100, speed: 98, r: 29, vr: 20, turn: 7, accel: 430, face: 7, mass: 0.85, range: 16, atkCd: 0.8, dmg: 8, arc: 1.4, dodge: 0.2 },
-    weapon: 'twin', style: { dual: true, straight: true }, // round 13: "Should not cross blades. Attacks in 2 stabs at a time"
+    stats: { hp: 86, speed: 98, r: 29, vr: 20, turn: 7, accel: 430, face: 7, mass: 0.85, range: 16, atkCd: 0.8, dmg: 8, arc: 1.4, dodge: 0.2 }, // (round 19: hp 100; the designer: "Might have to lower base hp to balance her": measured, docs/rogue19.md)
+    weapon: 'twin', style: { dual: true, straight: true, sides: 0.55 }, // round 13: "Should not cross blades. Attacks in 2 stabs at a time"; round 19: "Should keep them to the sides" (parts.js style.sides)
     attack: { name: 'Twin daggers', anim: 'thrust', desc: 'Two quick stabs, one from each hand, one right after the other.' },
-    summons: { // Death Mark's shadow clones (round 13): her own figure, dark; they pass through everything (kits2.js shadowCloneBrain)
-      shadowClone: { name: 'Shadow', art: 'art/heroes/shade.svg', wash: ['#140E1E', 0.78], pass: true, r: 26, vr: 20, turn: 9, accel: 600, face: 9, mass: 0.6,
-        hp: 12, speed: 120, role: 'skirmish', range: 16, atkCd: 0.42, dmg: 7, arc: 1.4, attackAnim: 'thrust', style: { dual: true, straight: true }, weapon: 'twin' },
+    summons: { // Death Mark's shadow clones (round 13): her own figure, dark (round 19: her Blackout form; atkCd half hers: her stab comes in pairs)
+      // (round 19: "They should move identical to how she would. Also be in the same shadow form as she is in blackout": her
+      // numbers for moving and striking, the plain brain, her Blackout form: kits2.js deathMark)
+      shadowClone: { name: 'Shadow', art: 'art/heroes/shade.svg', wash: ['#140E1E', 0.62], r: 29, vr: 20, turn: 7, accel: 430, face: 7, mass: 0.85,
+        hp: 12, speed: 98, role: 'skirmish', range: 16, atkCd: 0.4, dmg: 7, arc: 1.4, attackAnim: 'thrust', style: { dual: true, straight: true, sides: 0.55 }, weapon: 'twin' },
     },
     abilities: [
-      { id: 'shadowWalk', name: 'Shadow Walk', cd: 11, tags: 'ds', glyph: 'dagger', desc: 'Becomes a shadow and runs straight through the enemies, cutting each one she passes. Nothing can touch her meanwhile.',
-        tiers: ['One run through them.', 'The cuts curse.', 'Three runs in a row, each at another enemy.'] },
-      { id: 'blackout', name: 'Blackout', cd: 15, tags: 's', glyph: 'cloud', desc: 'Snuffs out the light round her: enemies in the dark are Weakened (they deal 30% less) and she hits them 30% harder.',
-        tiers: ['For 4s.', 'Bigger.', 'For 6s, and she is a shadow while it lasts.'] },
-      { id: 'deathMark', name: 'Shadow Clones', cd: 14, tags: 'd', glyph: 'skull', desc: 'Her shadow splits off into copies of her that fight beside her: very fast, running straight through bodies and walls, circling their foe and stabbing, but easily broken.',
-        tiers: ['Two clones for 6s.', 'Three clones.', 'They last 10s.'] },
+      { id: 'shadowWalk', name: 'Shadow Walk', cd: 11, tags: 'ds', glyph: 'dagger', desc: 'She is gone. Then she blinks into being beside one enemy after another, at random, stabs it with both daggers and is gone again. Nothing can touch her meanwhile.',
+        tiers: ['For 4s.', 'For 4.5s.', 'For 5s.'] },
+      { id: 'blackout', name: 'Blackout', cd: 15, tags: 's', glyph: 'cloud', desc: 'Snuffs out the light round her, and the dark goes with her. In it she is incorporeal: no physical blow or shot can touch her (spells still can) and she walks through bodies. Enemies in the dark are Weakened (they deal 30% less) and she hits them 30% harder.',
+        tiers: ['For 4s.', 'Bigger.', 'For 6s, and no enemy can pick her out.'] },
+      { id: 'deathMark', name: 'Shadow Clones', cd: 14, tags: 'd', glyph: 'skull', desc: 'Her shadow splits off into copies of her that move and fight just as she does, in her Blackout form: dark, and no physical blow can touch them, but a spell breaks them.',
+        tiers: ['Two clones for 6s.', 'Three clones.', 'They last 8s.'] },
     ],
     trait: { id: 'fade', name: 'Fade', desc: 'After 3s without attacking or being hurt she becomes a shadow: no enemy can pick her out until she strikes or uses an ability.' },
   },
@@ -161,7 +163,7 @@ export const HEROES2 = {
     blurb: 'A pitchfork, a straw hat, and the shoulders of a man who throws hay all day.',
     fun: 'Treats goblins the way he treats hay: in forkfuls, over the shoulder, without looking.',
     stats: { hp: 145, speed: 60, r: 32, vr: 22, turn: 3.8, accel: 200, face: 4, mass: 1.6, range: 34, atkCd: 1.1, dmg: 13, knock: 150, arc: 1 },
-    weapon: 'fork', // round 13: "Should show 3 stab slashes. Should dash forwards slightly too" (fxkit: three tines; kits2: a lunge)
+    weapon: 'fork', style: { tip: [108.6, 201.2], tines: 3 }, // round 19 (melee19): the three tines' streaks run from the fork's real head // round 13: "Should show 3 stab slashes. Should dash forwards slightly too" (fxkit: three tines; kits2: a lunge)
     attack: { name: 'Pitchfork', anim: 'thrust', desc: 'A lunging jab with the fork: three tines.' },
     summons: { // Fork Charge's slot: the hay bale he rides (kits2.js BRAINS.haybale; drawn in fx2.js)
       haybale: { name: 'Hay bale', art: 'art/summons/haybale.svg', headR: 76, ownLook: true, pass: true, r: 34, vr: 30, turn: 2, accel: 200, face: 2, mass: 6, hp: 45, speed: 60, role: 'melee', range: 0, atkCd: 999, dmg: 0, res: { burn: 3 } },
@@ -304,33 +306,33 @@ Object.assign(HEROES2, {
     name: 'Cultist', art: 'art/heroes/cultist.svg', role: 'caster', unlock: { gems: 2 },
     blurb: 'A tall black hood, a curved dagger and a burning black candle. Pays in blood for the party\'s strength.',
     fun: 'Says the eye on his hood sees everything. It mostly sees the inside of the hood.',
-    stats: { hp: 78, speed: 62, r: 30, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1, range: 220, keep: 175, atkCd: 1.25, dmg: 10 },
+    stats: { hp: 88, speed: 62, r: 30, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1, range: 220, keep: 175, atkCd: 1.1, dmg: 15 }, // (round 19: hp 78, atkCd 1.25, dmg 10 before: his bolt no longer bursts the bleeding, the engine of his damage; measured, docs/rogue19.md)
     proj: ['bolt', '#9A5CC8'], style: { glow: '#9A5CC8' },
-    attack: { name: 'Shadow bolt', anim: 'cast', desc: 'Close up, a swipe of the curved dagger that makes it bleed; further off, a bolt of violet shadow from the candle. The bolt bursts the bleeding at once.' },
+    attack: { name: 'Shadow bolt', anim: 'cast', desc: 'Close up, a swipe of the curved dagger that makes it bleed; further off, a bolt of violet shadow from the candle that draws a little blood and leaves Anti-heal: heals on it do half for 3s.' },
     abilities: [
-      { id: 'bloodPact', name: 'Blood Pact', cd: 15, tags: 'h', glyph: 'drain', desc: 'Cuts himself open (he bleeds): the friends near him are enraged.',
-        tiers: ['Rage for 6s: +30% damage, quicker blows.', '+40%.', 'They heal from 15% of what they deal.'] },
-      { id: 'ritualCircle', name: 'Ritual Circle', cd: 13, tags: 's', glyph: 'skull', desc: 'Draws a burning circle under the enemies that makes whatever stands in it bleed.',
-        tiers: ['A circle for 4s.', 'When it closes it drags everything in it to its middle.', 'Nothing inside can step out of it.'] },
-      { id: 'soulCandle', name: 'Sacrifice', cd: 14, tags: 'dh', glyph: 'dagger', desc: 'Bounds at an enemy near death and finishes it with the dagger; its blood heals him 15%. A boss or a major is cut deep instead.',
-        tiers: ['Below a quarter of its health.', 'Below a third.', 'He spins as he lands: everything near bleeds.'] },
+      { id: 'bloodPact', name: 'Blood Pact', cd: 15, tags: 'h', glyph: 'drain', desc: 'Cuts himself and every friend near him open: they all bleed, and all are bound in blood: harder, quicker blows for 6s.',
+        tiers: ['+30% damage, quicker blows.', '+40%.', 'They heal from 15% of what they deal.'] },
+      { id: 'ritualCircle', name: 'Ritual Circle', cd: 13, tags: 's', glyph: 'skull', desc: 'Burns a circle into the floor round the enemy nearest death. If it is still inside when the count runs out it is sacrificed: it dies (a boss loses a fifth of its health), his cooldowns come 4s nearer and he heals 15%. Nothing is held in.',
+        tiers: ['3s to get out.', 'Everything in the circle bleeds slowly.', 'A wider circle, 2.4s to get out.'] },
+      { id: 'soulCandle', name: 'Sacrifice', cd: 14, tags: 'dh', glyph: 'dagger', desc: 'Darts round every bleeding enemy in turn, the dagger across its back: a cut, and its bleeding bursts at once; the blood of each heals him 6%.',
+        tiers: ['A cut and the burst.', 'Each one cut has Anti-heal: heals on it do half for 4s.', 'Each one cut makes him 10% stronger for 6s (it adds up).'] },
     ],
-    trait: { id: 'bloodRite', name: 'Blood Rite', desc: 'Every bleeding he started that bursts heals him 8%.' },
+    trait: { id: 'bloodRite', name: 'Blood Rite', desc: 'When a friend is about to die (under 12% health) he darts to it and takes the last of its life: every cooldown of his is ready again. A hero friend goes down, as at 0. Once every 25s.' },
   },
   monk: {
     name: 'Monk', art: 'art/heroes/monk.svg', role: 'melee', unlock: { gems: 2 },
     blurb: 'Saffron robe, prayer beads, bare fists. Very calm. Very fast.',
     fun: 'Has meditated in the middle of a goblin raid. The goblins left first.',
     stats: { hp: 115, speed: 74, r: 30, vr: 22, turn: 5.5, accel: 320, face: 5.5, mass: 1.2, range: 16, atkCd: 0.5, dmg: 6, arc: 1.4, dodge: 0.12, knock: 240 },
-    weapon: 'palm', style: { dual: true }, // round 13: "Different visual. High knockback" (fxkit: a soft burst of force where the fist lands)
-    attack: { name: 'Fists', anim: 'punch', desc: 'Quick jabs with either fist, each one a burst of force that knocks back hard.' },
+    weapon: 'palm', style: { dual: true }, // round 13: "Different visual. High knockback"; round 19: a three-part combo (kits2.js TRAITS2.deflect), a fist's pow where it lands (fx-rogue19.js)
+    attack: { name: 'Fists', anim: 'punch', desc: 'A three-part combo, fist after fist: two quick jabs and a third, harder blow that throws it far back and Spins it.' },
     abilities: [
-      { id: 'flurry', name: 'Flurry', cd: 8, tags: 'dh', glyph: 'fist', desc: 'Steps in behind a blur of punches into one enemy; each one heals him a little.',
-        tiers: ['Six punches.', 'The last one sends it flying.', 'Nine punches.'] },
-      { id: 'palmStrike', name: 'Palm Strike', cd: 9, tags: 'ds', glyph: 'wave', desc: 'An open palm whose force strikes everything in reach: each is thrown back, turned to face away from him and Spun: it turns very slowly, and when that builds up it marches off the way it faces, fast, unable to attack.',
-        tiers: ['Everything in reach.', 'It staggers them.', 'Further, and they spin faster.'] },
-      { id: 'innerPeace', name: 'Inner Peace', cd: 16, tags: 'h', glyph: 'sun', desc: 'Sits with his palms pressed together: his statuses fall away and he heals 15%; shots that reach him fly back, and whoever strikes him is thrown far back.',
-        tiers: ['For 2.5s.', 'For 4s.', 'A glow round him heals friends near and clears their statuses.'] },
+      { id: 'flurry', name: 'Flurry', cd: 8, tags: 'dh', glyph: 'fist', desc: 'Walks into one enemy behind a blur of punches, a step with each; each heals him a little, and the last comes a beat late and lands hard.',
+        tiers: ['Six punches.', 'The last one sends it flying, Weakened.', 'Nine punches.'] },
+      { id: 'palmStrike', name: 'Palm Strike', cd: 9, tags: 'ds', glyph: 'wave', desc: 'His open hand grows into a great flat palm that pushes out in front of him: what it meets is thrown back, turned to face away and Spun: its turns go slippery, and when that fills up it is dazed.',
+        tiers: ['Close in front.', 'It staggers them.', 'Further, and they spin faster.'] },
+      { id: 'innerPeace', name: 'Inner Peace', cd: 16, tags: 'h', glyph: 'sun', desc: 'Sits with his palms pressed together: his statuses fall away and he heals 15%. No blow or shot gets through to him (spells land softer): shots fly back, and whoever strikes him is thrown far back.',
+        tiers: ['For 2s.', 'For 3s.', 'A glow round him heals friends near and clears their statuses.'] },
     ],
     trait: { id: 'deflect', name: 'Deflect', desc: 'Swats aside 40% of the shots that reach him from the front.' },
   },

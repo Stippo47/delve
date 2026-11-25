@@ -137,7 +137,7 @@ export const ABILITY_SCENE = {
   // Warhelm
   thunderBlow: S('line'), warHorn: S('ring'), skullSplitter: S('pack'),
   // Bandit
-  smokeBomb: S('shooters'), pickpocket: S('line'), lowBlow: S('front'),
+  smokeBomb: S('shooters'), pickpocket: S('line'), lowBlow: S('front', { addFoes: [F('shooter', [425, 175], { on: 'hero' })] }), // (round 19: Hostage, a shooter on him to stop)
   // Shade
   shadowWalk: S('spread'), blackout: S('ring'), deathMark: S('front'),
   // Haymaker
@@ -158,7 +158,7 @@ export const ABILITY_SCENE = {
   // Warlock
   eldritchBeam: S('pack'), summonImp: S('front'), darkBargain: S('front'),
   // Cultist
-  bloodPact: S('party'), ritualCircle: S('pack'), soulCandle: S('lowFoe'),
+  bloodPact: S('party'), ritualCircle: S('lowFoe'), soulCandle: S('front', { foes: [F('melee', [215, 95], { on: 0 }), F('melee', [215, 255], { on: 1 }), F('fast', [300, 175])], friends: [{ k: 'twinfang', at: [170, 95], hp: 0.9, carry: { bleed: 60 } }, { k: 'wildmane', at: [170, 255], hp: 0.9, carry: { bleed: 60 } }], readyAt: 1.4, forceAt: 4 }), // (round 19: the circle round one nearly gone; Sacrifice, foes a Twinfang's cuts have been bleeding)
   // Monk
   flurry: S('duel'), palmStrike: S('front'), innerPeace: S('incomingShots', { hp: 0.4, friends: [{ at: [90, 270], hp: 0.6, st: { poison: 60 } }], addFoes: [F('poisoner', [170, 320], { on: 0 })] }),
   // Seer
@@ -400,7 +400,8 @@ export const STATUS_SCENE = {
   root: ST('druid', { ab: 'entangle', castAt: 0.9 }),
   sleep: ST('bard', { ab: 'lullaby', tier: 2, reach: 150, trigger: 'paladin' }),
   taunt: ST('dame', { ab: 'challenge', on: 'orc', castAt: 1.0, archer: true, at: [110, -70] }),
-  debuff: ST('dame', { ab: 'disarm', reach: 50 }),
+  debuff: ST('dame', { ab: 'disarm', reach: 50, on: 'wolf' }), // (round 19: a wolf: what holds no weapon keeps the old softer blows)
+  disarmed: ST('rogueBandit', { ab: 'pickpocket', reach: 40 }), antiheal: ST('cultist'), // round 19 (lane rogue19)
   targeted: ST('marksman', { ab: 'aimedShot', castAt: 0.7 }),
   tracked: ST('falconer', { ab: 'looseFalcon', castAt: 0.7 }),
   trapped: ST('trapper', { ab: 'jawTrap', castAt: 0.5 }),

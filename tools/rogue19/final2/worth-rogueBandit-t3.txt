@@ -1,0 +1,6 @@
+tier 3, rank 1: each ability switched off in turn (the same parties and seeds), 0 errors
+hero          ability           rooms with  worth   share of dmg  hero dmg/s  party taken/s  party heal/s  party downs
+rogueBandit   (all on)           5.90           attack  45%     7.92         4.18          2.02       6.57   (30 runs)
+              smokeBomb                 +0.10            6%    +0.41        +0.36         -0.28       -0.27
+              pickpocket                +0.13           25%    +2.78        -0.14         -0.07       -0.03
+              lowBlow                   +0.57            0%    +0.31        +0.49         -0.16       -0.53
