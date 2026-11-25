@@ -125,7 +125,6 @@ const speedOf = (u) => {
   if (u.sickT > 0) s *= 1 - POISON.slow; else if (u.st.poison > 20) s *= 0.9; // poison slows a little; sickened (its burst), a lot
   if (u.inOil) s *= 0.7;
   if (u.st.entangle > 0) s *= 1 - ENTANGLE.slow * fillOf(u, 'entangle'); // entangled: very slow
-  if (u.pulse != null) s *= u.pulse;       // slimes move in hops (round 9): their brain sets the pulse
   for (const b of u.buffs) if (b.move) s *= b.move;
   if (u.flinchT > 0) s *= 0.5;            // just took a blow
   if (u.fearT > 0) s *= FEAR.run;         // terrified: runs for it (round 13)
@@ -437,7 +436,7 @@ function dangerTick(w, dt) {
     if (z.t > 0 || z.done) continue;
     z.done = true;
     if (z.src && (z.src.dead || z.src.downed)) { z.cancelled = true; continue; }
-    if (z.hit) for (const o of w.units) if (alive(o) && o.team !== z.team && inZone(z, o.x, o.y, o.r * 0.5)) hurt(w, o, z.hit.dmg, z.src || null, { noDodge: true, ...z.hit, by: z.src ? undefined : z.by }); // (round 16 fix: a lobbed zone has no src on purpose, so it lands even if its thrower falls; by names the thrower, so its blow and statuses count for it)
+    if (z.hit) for (const o of w.units) if (alive(o) && o.team !== z.team && !offFloor(o) && inZone(z, o.x, o.y, o.r * 0.5)) hurt(w, o, z.hit.dmg, z.src || null, { noDodge: true, ...z.hit, by: z.src ? undefined : z.by }); // (round 16 fix: a lobbed zone has no src on purpose, so it lands even if its thrower falls; by names the thrower, so its blow and statuses count for it) (slimes16: not a slime up in a hop)
     if (z.onFire) actAs(w, z.src || z.by, () => z.onFire(w, z));
   }
   w.danger = w.danger.filter((z) => z.t > -0.3);
@@ -514,7 +513,7 @@ function steer(w, u, gx, gy, opts = {}) {
     for (let i = 0; i < DIRS; i++) { const tt = rayToRoundRect(u.x, u.y, DIR_X[i], DIR_Y[i], r, R); if (tt < look) danger[i] = Math.max(danger[i], 1 - tt / look); }
   }
   const fear = heroic(w, u) ? 0.9 : 0.45;
-  for (const h of w.hazards) if (!h.hidden && h.up !== false && h.type !== 'beam' && ((h.type !== 'oil' && h.type !== 'web') || heroic(w, u))) avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' || h.type === 'web' ? 0.35 : fear, 40);
+  if (!u.def.hops) for (const h of w.hazards) if (!h.hidden && h.up !== false && h.type !== 'beam' && ((h.type !== 'oil' && h.type !== 'web') || heroic(w, u))) avoidCircle(h.x, h.y, h.r * 0.85, h.type === 'oil' || h.type === 'web' ? 0.35 : fear, 40);
   for (const o of w.units) {
     if (o === u || !alive(o) || o.ethereal || u.ethereal) continue;
     if (o.team === u.team) avoidCircle(o.x, o.y, o.r + (heroic(w, u) ? 14 : 0), 0.45, 18);
@@ -825,10 +824,113 @@ function drive(u, sx, sy, want, dt, quick = 1) {
     u.mvA = wrapAngle(u.mvA + clamp(diff, -turn, turn));
     goal = want * Math.min(1, m) * Math.max(0.2, Math.cos(Math.min(Math.PI / 2, Math.abs(diff))));
   }
+  u.wantSpd = m > 0.15 && want > 0 ? want * Math.min(1, m) : 0; // how fast it would like to go (round 16: a slime's hop is sized by it)
   const acc = (d.accel || 250) * dt * quick;
   u.spd += clamp(goal - u.spd, -acc * 1.6, acc);
   if (u.spd < 0) u.spd = 0;
   u.dvx = Math.cos(u.mvA) * u.spd; u.dvy = Math.sin(u.mvA) * u.spd;
+}
+
+// ---------------------------------------------------------------- slime hops
+// Round 16, the designer: "Slimes should also hop, getting vertical offset, and aren't affected by floor things while
+// hopping. Should jump further and faster. The contact of the slime does the damage." (Round 9's hops were bursts of
+// speed along the floor.) A slime (def.hops: the beat of one hop in seconds; a bigger one is heavier and slower) moves
+// only in hops, each in four parts:
+//   crouch  a squash on the spot (u.squish > 0: render.js flattens the body)
+//   air     a leap along an arc. u.hop is how high it is (render.js lifts the body; its shadow stays on the floor and
+//           shrinks), and while it is well up it is u.airborne: nothing on the floor touches it then (offFloor: pools
+//           and clouds, traps, danger zones, quakes and shockwaves). Blows and shots still do.
+//   land    a squash as it comes down (def.onHop then: the ice slime's cold patch, the fire slime's drip)
+//   rest    a beat on the ground. movement() still runs, for where it wants to go (u.sdx/sdy) and how fast
+//           (u.wantSpd), and the next hop is sized from that: HOP.pace times that speed over the beat.
+// Its blow is the contact: with its attack ready (u.atkT) and its target within a hop, it hops at the target, and each
+// foe its body meets on the way down is hit, once a hop, with its own blow (blowOf: dmg, knock, poison, burn...). The
+// attack clock then restarts as a swing's would, so its damage a second stays about def.dmg / def.atkCd.
+export const HOP = { crouch: 0.15, air: 0.4, land: 0.1, rest: 0.35, pace: 1.6, lift: 1.6, lift0: 10, sq: 0.5, sqLand: 0.55, reach: 4, rebound: 190 };
+export const offFloor = (u) => !!u.airborne;
+const canStrike = (u) => !(u.radiantT > 0 || u.fearT > 0 || u.shackledT > 0 || u.forcedGoal);
+const heavyOf = (u) => clamp(u.r / 25, 0.7, 1.5); // how heavy it hops (the plain slime 1, a big one 1.5)
+function hopTick(w, u, dt) {
+  const P = u.def.hops, s = u.sh || (u.sh = { ph: 'rest', t: 0, dur: P * HOP.rest * rand() }); // (new ones start at a random point of their beat)
+  if (s.ph === 'rest') { u.squish = 0; s.t += dt; return; }
+  if (u.act) return endHop(u, s); // something else has the body now (a slip, a leap, a throw)
+  const held = u.frozenT > 0 || u.stunT > 0 || u.sleepT > 0;
+  s.t += dt;
+  const k = clamp(s.t / s.dur, 0, 1), hv = heavyOf(u);
+  if (s.ph === 'crouch') {
+    u.dvx = u.dvy = 0; u.spd = 0; u.squish = HOP.sq * hv * Math.sin(k * Math.PI / 2);
+    if (held) return endHop(u, s);
+    if (k >= 1) { s.ph = 'air'; s.t = 0; s.dur = s.airT; s.hit = new Set(); s.stop = false; u.mvA = s.a; }
+    return;
+  }
+  if (s.ph === 'air') {
+    u.hop = Math.sin(Math.PI * k) * s.H;
+    u.airborne = u.hop > s.H * 0.25;
+    u.squish = -0.22 * (1 - Math.sin(Math.PI * k)); // stretched as it leaves the floor and as it comes back down, round at the top
+    if (held || s.stop) { u.dvx = u.dvy = 0; u.spd = 0; }
+    else { u.dvx = Math.cos(s.a) * s.sp; u.dvy = Math.sin(s.a) * s.sp; u.vx = u.dvx; u.vy = u.dvy; u.spd = s.sp; }
+    if (!held && k > 0.3) hopContact(w, u, s);
+    if (k < 1) return;
+    u.hop = 0; u.airborne = false; s.ph = 'land'; s.t = 0; s.dur = P * HOP.land;
+    u.dvx = u.dvy = 0; u.vx *= 0.3; u.vy *= 0.3; u.spd = 0;
+    if (dist(u.x, u.y, s.x0, s.y0) > s.D * 0.4) u.stuckT = 0; // it got somewhere (movement() reads a slime at rest as stuck)
+    if (u.def.onHop && u.aggro) u.def.onHop(w, u);
+    if (hv > 1.2) w.shake = Math.max(w.shake, 1.5); // a big one lands with a thump
+    puff(w, u.x, u.y, u.def.goo || '#6FA6E6', Math.round(2 + 3 * hv), 50 + 40 * hv, 3 + 2 * hv, 0.3);
+    return;
+  }
+  u.dvx = u.dvy = 0; u.spd = 0; u.squish = HOP.sqLand * hv * (1 - k); // landed: squashed, springing back
+  if (k >= 1) { s.ph = 'rest'; s.t = 0; s.dur = P * HOP.rest / clamp(speedOf(u) / (u.def.speed || 1), 0.5, 1); u.squish = 0; } // (slowed: a longer beat)
+}
+function endHop(u, s) {
+  if (s.ph === 'air' && !u.act) u.hop = 0;
+  u.airborne = false; u.squish = 0; s.ph = 'rest'; s.t = 0; s.dur = u.def.hops * HOP.rest;
+}
+// On the ground between hops: where it wants to go, and the next hop when the beat is up.
+function slimeMove(w, u, dt) {
+  const s = u.sh;
+  if (!s || s.ph !== 'rest') return; // mid-hop: hopTick moves it
+  movement(w, u, dt);
+  u.dvx = u.dvy = 0; u.spd = 0; // it doesn't walk
+  if (s.t < s.dur) return;
+  const m = speedOf(u) / (u.def.speed || 1);
+  if (m < 0.08) return; // rooted, entangled hard: it sits
+  const P = u.def.hops, full = HOP.pace * u.def.speed * P, far = full * Math.min(m, 1.3), t = u.target;
+  if (t && alive(t) && t.team !== u.team && !t.ethereal && u.atkT <= 0 && canStrike(u)) { // a hop onto its target
+    const lead = P * HOP.air * 0.5, tx = t.x + t.vx * lead, ty = t.y + t.vy * lead, d = dist(u.x, u.y, tx, ty);
+    if (d - u.r - t.r <= far && lineClear(w, u.x, u.y, t.x, t.y, u.r * 0.6)) return startHop(u, s, angleTo(u.x, u.y, tx, ty), clamp(d - (u.r + t.r) * 0.45, full * 0.3, far), full, true);
+  }
+  if (u.wantSpd > 1) { const a = Math.atan2(u.sdy, u.sdx); startHop(u, s, a, clearLanding(w, u, a, clamp(u.wantSpd * HOP.pace * P, full * 0.3, full * 1.4), full), full); }
+}
+// A slime doesn't walk round a pool (steer leaves pools out for it): it goes over. Where a hop would come down in one
+// (or in a hit about to land) it hops further to clear it if it can, else stops short of it.
+function clearLanding(w, u, a, D, full) {
+  const ca = Math.cos(a), sa = Math.sin(a);
+  const bad = (d) => { const x = u.x + ca * d, y = u.y + sa * d;
+    return w.hazards.some((h) => !h.hidden && h.up !== false && h.type !== 'beam' && dist(x, y, h.x, h.y) < h.r + u.r * 0.5) || w.danger.some((z) => threatens(z, u) && inZone(z, x, y, u.r * 0.5)); };
+  if (!bad(D)) return D;
+  for (let d = D + 10; d <= full * 1.5; d += 10) if (!bad(d) && lineClear(w, u.x, u.y, u.x + ca * d, u.y + sa * d, u.r * 0.6)) return d;
+  for (let d = D - 10; d >= full * 0.25; d -= 10) if (!bad(d)) return d;
+  return D;
+}
+function startHop(u, s, a, D, full, atk = false) {
+  const P = u.def.hops, f = clamp(D / full, 0.3, 1.4);
+  s.ph = 'crouch'; s.t = 0; s.dur = P * HOP.crouch; s.a = a; s.D = D; s.x0 = u.x; s.y0 = u.y;
+  s.airT = P * HOP.air * (0.6 + 0.4 * f); s.sp = D / s.airT; // a short hop is quicker, not slower
+  s.H = (HOP.lift0 + u.r * HOP.lift) * (atk ? 0.8 + 0.2 * Math.min(1, f) : 0.55 + 0.45 * Math.min(1, f)); // (a hop onto someone always goes well up: it comes down on them)
+}
+// Its blow: whatever foe it comes down on or bumps into on the way, once a hop (and only with its attack ready).
+function hopContact(w, u, s) {
+  if ((u.atkT > 0 && !s.hit.size) || !canStrike(u)) return;
+  let any = false;
+  for (const o of opponents(w, u)) {
+    if (s.hit.has(o) || dist(u.x, u.y, o.x, o.y) > u.r + o.r + HOP.reach) continue;
+    s.hit.add(o); any = true;
+    hurt(w, o, hitDmg(u) * rrange(0.9, 1.1), u, { ...blowOf(u.def), kAngle: s.a });
+  }
+  if (!any || s.stop) return;
+  s.stop = true; u.atkT = u.def.atkCd * rrange(0.9, 1.1); u.lastAttackT = w.time; // it stops dead on them, and bounces back a little
+  const back = HOP.rebound / Math.sqrt(heavyOf(u)); u.kx -= Math.cos(s.a) * back; u.ky -= Math.sin(s.a) * back; // (so its next blow is a real hop in again)
 }
 
 // ---------------------------------------------------------------- facing
@@ -1352,12 +1454,14 @@ function meleeSwing(w, u, single) {
   const targets = single && !wild ? (u.target && inMeleeArc(u, u.target, 6) ? [u.target] : []) : w.units.filter((o) => alive(o) && o !== u && !o.ethereal && (o.team !== u.team || wild) && inMeleeArc(u, o, 6));
   u.lungeT = 0.18;
   w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, color: u.team === 'hero' ? '#FFFFFF' : '#FFD2C2', src: u });
-  for (const o of targets) {
-    hurt(w, o, hitDmg(u) * rrange(0.9, 1.1), u, { knock: d.knock || 40, heavy: d.heavy, poison: d.poison, radiance: d.radiance, curse: d.curse,
-      burn: d.burn, entangle: d.entangle, stagger: d.stagger, wet: d.wet, chill: d.team === 'enemy' ? d.chill : 0,
-      charm: d.charm, confuse: d.confuse, sleepy: d.sleepy, bleed: d.bleed, fear: d.fear, shackle: d.shackle }); // (round 13: the new five too; round 15: Shackled, the Warden's chain) // round 9: a def's blow can carry any build-up (round 10: an enemy's chill too, the frost wolf's bite)
-  }
+  for (const o of targets) hurt(w, o, hitDmg(u) * rrange(0.9, 1.1), u, blowOf(d));
 }
+// What a def's own blow carries (round 9: a def's blow can carry any build-up; round 10: an enemy's chill too, the
+// frost wolf's bite; round 13: the new five too; round 15: Shackled, the Warden's chain). A swing and a slime's
+// landing (round 16, slimeHop) hit with the same.
+const blowOf = (d) => ({ knock: d.knock || 40, heavy: d.heavy, poison: d.poison, radiance: d.radiance, curse: d.curse,
+  burn: d.burn, entangle: d.entangle, stagger: d.stagger, wet: d.wet, chill: d.team === 'enemy' ? d.chill : 0,
+  charm: d.charm, confuse: d.confuse, sleepy: d.sleepy, bleed: d.bleed, fear: d.fear, shackle: d.shackle });
 
 function fireArrow(w, u, angle, o = {}) {
   const sp = o.speed || 520;
@@ -1369,7 +1473,7 @@ function fireArrow(w, u, angle, o = {}) {
 
 // Confused (round 13): with an attack ready and nothing in reach, it swings or shoots at the air now and then.
 function flail(w, u, dt) {
-  if (u.atkT > 0 || u.act || u.forcedGoal || !(u.st.confuse > 10) || u.shackledT > 0) return false;
+  if (u.atkT > 0 || u.act || u.forcedGoal || !(u.st.confuse > 10) || u.shackledT > 0 || u.def.hops) return false; // (round 16: a slime has no swing to flail)
   const t = u.target, inReach = t && dist(u.x, u.y, t.x, t.y) - u.r - t.r <= (u.def.range || 30) + 2;
   if (inReach || !chance(dt * CONFUSE.flail * fillOf(u, 'confuse'))) return false;
   if (u.def.role === 'ranged') fireArrow(w, u, u.facing + rrange(-0.5, 0.5)); else meleeSwing(w, u, false);
@@ -1399,7 +1503,6 @@ function tryAttack(w, u) {
     else meleeSwing(w, u, def.role === 'skirmish');
     setAnim(u, def.attackAnim || (def.role === 'skirmish' ? 'thrust' : 'swing'), (def.windup || 0) + 0.28);
     u.atkT = def.atkCd * rrange(0.9, 1.1); u.lastAttackT = w.time;
-    if (u.kind === 'slime' || u.kind === 'slimeSmall' || u.def.spriteOf === 'slime' || u.def.spriteOf === 'slimeSmall') { u.kx += Math.cos(u.facing) * 60; u.ky += Math.sin(u.facing) * 60; }
   }
 }
 
@@ -1789,6 +1892,7 @@ function hazards(w, dt) {
     if (!alive(u) || u.ethereal) continue;
     u.inOil = false; u.soakedT = 0;
     u.hazardT -= dt;
+    if (offFloor(u)) continue; // up in a hop (round 16): over the pools and the spikes
     for (const h of w.hazards) {
       if (dist(u.x, u.y, h.x, h.y) > h.r + u.r * 0.4) continue;
       if (h.type === 'oil' || h.type === 'web') u.inOil = true; // web (round 7): sticky, slows like oil
@@ -1878,14 +1982,8 @@ export function step(w, dt) {
     if (!alive(u)) continue;
     if (u.anim) { u.anim.t += dt / (u.winding ? windMul(u) : 1); if (u.anim.t >= u.anim.dur) u.anim = null; } // (round 14: a sleepy wind-up's pose plays out slower too)
     u.winding = false; // (set again this tick by whatever wind-up it is in: runAction, elites.js hold / rushTick, boss-kit chargeTick)
+    if (u.def.hops) hopTick(w, u, dt); // slimes (round 16): a hop in the air goes on whatever else holds it (see slime hops)
     if (u.frozenT > 0 || u.stunT > 0 || u.sleepT > 0) { if (!u.act || u.act.type !== 'slip') { u.dvx = u.dvy = 0; u.spd = 0; continue; } }
-    // slimes (round 9: "All slimes move in forward burst, pause then move again"): a hop, then a rest; def.onHop(w, u)
-    // when it lands
-    if (u.def.hops) {
-      const per = u.def.hops, k = ((w.time + u.id * 0.37) % per) / per, was = u.pulse ?? 1;
-      u.pulse = k < 0.34 ? 0.4 + 2.6 * Math.sin(Math.PI * k / 0.34) : 0.15;
-      if (was > 0.5 && u.pulse <= 0.15 && u.def.onHop && u.aggro) u.def.onHop(w, u);
-    }
     // a unit with its own brain (bosses, special enemies) runs it first; returning true skips the usual brain
     if (u.eliteFn && !(u.fearT > 0) && u.eliteFn(w, u, dt)) continue; // an elite's extra move (elites.js) (round 14: not while terrified: it runs)
     if (u.def.brain && !(u.fearT > 0) && u.def.brain(w, u, dt)) continue; // (terrified: the plain brain below runs it off)
@@ -1893,7 +1991,7 @@ export function step(w, dt) {
     u.thinkT -= dt;
     if (u.thinkT <= 0) { u.thinkT = 0.4 + rand() * 0.08; think(w, u); }
     if (u.act) { const charging = u.act.type === 'charge' || u.act.type === 'dash'; if (u.act.type !== 'dash') u.spd *= Math.exp(-dt * 10); if (u.act.type === 'charge') { u.mvA = u.act.a; u.spd = u.def.speed * 1.5; } runAction(w, u, dt); if (!charging) updateFacing(u, dt); continue; }
-    movement(w, u, dt);
+    if (u.def.hops) slimeMove(w, u, dt); else movement(w, u, dt); // (round 16: a slime only moves in hops)
     if (u.rootT > 0) { u.dvx = u.dvy = 0; u.spd = 0; }
     updateFacing(u, dt);
     // confused (round 13; round 14, "Should also make them turn randomly"): now and then it swings round to a random
@@ -1935,7 +2033,7 @@ export function step(w, dt) {
       let near = Infinity; for (const o of opponents(w, u)) near = Math.min(near, dist(u.x, u.y, o.x, o.y) - o.r);
       if (near > 150 && chance(dt * 3)) { u.act = { type: 'drink', t: 1, max: 1 }; }
     }
-    if (!u.act && !radiant) tryAttack(w, u);
+    if (!u.act && !radiant && !u.def.hops) tryAttack(w, u); // (round 16: a slime's blow is its landing, slimeHop)
   }
   w.actor = null;
   physics(w, dt);

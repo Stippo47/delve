@@ -8,7 +8,7 @@
 // of its own), floor 3 with the dungeon's boss. Each floor is its own place (themes.js floorTheme). A run can start at
 // a checkpoint floor (opts.floor). Heroes go in at their permanent level and keep the XP they earn (levels give skill
 // points, not strength).
-import { makeWorld, spawn, step, alive, addStatus, hurt, puff, fx, scatterCoins, addDanger, kill, restoreSide, resetIds, nextId } from './sim.js';
+import { makeWorld, spawn, step, alive, addStatus, hurt, puff, fx, scatterCoins, addDanger, kill, restoreSide, resetIds, nextId, offFloor } from './sim.js';
 import { newStats, finishStats, tallyFoe, tallyRevive } from './stats.js';
 import { DEFS, levelHp, levelDmg, TRINKET_IDS, XP_BASE, XP_GROW, xpToNextR12 } from './units.js';
 import { trinketHooks, raiseGhost, wears } from './trinkets.js';
@@ -460,7 +460,7 @@ function themeTick(w, dt) {
       onFire: (w2) => fx(w2, { type: 'pillar', x: h.x, y: h.y, r: h.r * 0.8, kind: 'holy', max: 0.6 }) });
   }
   for (const u of w.units) {
-    if (!alive(u)) continue;
+    if (!alive(u) || offFloor(u)) continue; // (round 16: a slime up in a hop is over all of it, the water too)
     for (const h of w.hazards) {
       if (h.type === 'mist') { if (dist(u.x, u.y, h.x, h.y) < h.r + u.r * 0.3) addStatus(w, u, 'chill', 15 * dt); }
       else if (h.type === 'web' && h.cold) { if (dist(u.x, u.y, h.x, h.y) < h.r + u.r * 0.3) addStatus(w, u, 'chill', 14 * dt); } // round 10: a frost spider's web chills
