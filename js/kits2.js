@@ -11,6 +11,7 @@ import { LOOK2 } from './looks2.js';
 import { lineClear, circleRect } from './path.js';
 import { foesNear, friendsNear, hurtMost, dmgOf, ang, ring, cast, heal, addStatus, zone, shoot, segDist, hooksOf, wantedWait, beset } from './kits.js';
 import { threatened, attackers } from './threat.js'; // round 16 fixes: what is about to land on a unit, who is on it
+import { dash } from './dashes.js'; // round 18 (lane dash18): the six dashes
 import { AUDIT } from './stats.js'; // (round 16: tools/audit)
 import { hasTag } from './tags.js'; // round 17 (lane tags17): the Engineer's wrench mends constructs
 
@@ -570,20 +571,23 @@ export const ABILITIES2 = {
   bearRoar: {
     score: (w, u, t) => { if (!t) return 0; const g = dist(u.x, u.y, t.x, t.y) - u.r - t.r; return g < 160 ? 0.6 + (t.elite || t.def.boss ? 0.2 : 0) : 0; },
     use(w, u, t, tier) {
-      if (!t) return; const a = ang(u, t), g = Math.max(0, dist(u.x, u.y, t.x, t.y) - u.r - t.r - 4), T = clamp(g / 380, 0.08, 0.32), n = tier >= 3 ? 12 : 6;
-      u.facing = a; u.act = { type: 'dash', t: T, max: T, a }; u.kit.clawsT = w.time + T + n * 0.085 + (tier >= 3 ? 0.4 : 0.1);
-      k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a, max: T + 0.3, col: '#A0683A' });
-      for (let i = 0; i < n; i++) after(u, T + 0.02 + i * 0.085, () => {
-        if (!alive(t)) return; u.facing = ang(u, t); setAnim(u, 'punch', 0.09);
+      // round 18 (lane dash18): the pounce (dashes.js): the club put away, a crouch, a leap that hangs, and he lands on it
+      // with the first rake of the claws; the rest of the flurry follows as it did (the same swipes, the same blows; III
+      // the bite at the end). (It was a straight dash to its front, then the swipes.)
+      if (!t) return; const n = tier >= 3 ? 12 : 6, k1 = dmgOf(u, 0.42), k3 = dmgOf(u, 1); u.facing = ang(u, t);
+      u.kit.clawsT = w.time + 0.9 + n * 0.085 + (tier >= 3 ? 0.4 : 0.1);
+      const swipe = (i) => { if (!alive(t)) return; u.facing = ang(u, t); setAnim(u, 'punch', 0.09);
         const list = tier >= 2 ? foesNear(w, u, u.x, u.y, u.r + u.def.range + 30).filter((e) => inFront(u, e, 1.6)) : inReach(u, t, 30) ? [t] : [];
-        for (const e of list) hurt(w, e, dmgOf(u, 0.42), u, { knock: 30, noDodge: true, ab: 'bearRoar' });
-        if (list.length) k2(w, { draw: 'clawRake', x: t.x, y: t.y, a: u.facing, side: i % 2 ? 1 : -1, max: 0.28, ab: 'bearRoar' });
-      });
-      if (tier >= 3) after(u, T + n * 0.085 + 0.1, () => {
-        if (!alive(t) || !inReach(u, t, 30)) return; setAnim(u, 'thrust', 0.25);
-        hurt(w, t, dmgOf(u, 1), u, { knock: 160, heavy: true, noDodge: true, ab: 'bearRoar' }); bleed(w, t, 70, u);
-        k2(w, { draw: 'bite', x: t.x, y: t.y, a: ang(u, t), r: t.vr, max: 0.45, ab: 'bearRoar' });
-      });
+        for (const e of list) hurt(w, e, k1, u, { knock: 30, noDodge: true, ab: 'bearRoar' });
+        if (list.length) k2(w, { draw: 'clawRake', x: t.x, y: t.y, a: u.facing, side: i % 2 ? 1 : -1, max: 0.28, ab: 'bearRoar' }); };
+      dash(w, u, 'pounce', { t, only: tier >= 2 ? null : t, tell: 0.14, air: 0.3, h: 20, recover: 0.02, rest: 0, dmg: k1, hit: { knock: 30, ab: 'bearRoar' }, col: ['#FFF8F0', '#FFFFFF'],
+        land: () => { u.kit.clawsT = w.time + 0.2 + n * 0.085 + (tier >= 3 ? 0.4 : 0.1);
+          for (let i = 1; i < n; i++) after(u, 0.1 + i * 0.085, () => swipe(i));
+          if (tier >= 3) after(u, 0.1 + n * 0.085 + 0.1, () => {
+            if (!alive(t) || !inReach(u, t, 30)) return; setAnim(u, 'thrust', 0.25);
+            hurt(w, t, k3, u, { knock: 160, heavy: true, noDodge: true, ab: 'bearRoar' }); bleed(w, t, 70, u);
+            k2(w, { draw: 'bite', x: t.x, y: t.y, a: ang(u, t), r: t.vr, max: 0.45, ab: 'bearRoar' });
+          }); } });
     },
     show: { single: true },
   },
@@ -593,15 +597,14 @@ export const ABILITIES2 = {
   thunderBlow: {
     score: (w, u, t) => (inReach(u, t, 34) ? 0.55 + (foeWinding(w, t) ? 0.3 : 0) + (t.elite || t.def.boss ? 0.1 : 0) : 0),
     use(w, u, t, tier) {
+      // round 18 (lane dash18): a short drag and fling (dashes.js): he drops his head, drives it into the one in front,
+      // carries it a step on the helmet and throws it off: the same heavy blow, far throw and stagger (II shock; III
+      // whoever it lands on is hurt and stunned). (He jolted forward and the blow landed a moment later if it was near.)
       if (!t) return; const a = ang(u, t); u.facing = a; setAnim(u, 'ability', 0.4);
-      u.act = { type: 'dash', t: 0.12, max: 0.12, a }; u.lungeT = 0.3;
-      after(u, 0.13, () => {
-        if (!alive(t) || dist(u.x, u.y, t.x, t.y) - u.r - t.r > 40) return;
-        const hx = u.x + Math.cos(a) * u.r, hy = u.y + Math.sin(a) * u.r;
-        hurt(w, t, dmgOf(u, 1.7), u, { knock: 560, kAngle: a, heavy: true, noDodge: true, stagger: 60, shock: tier >= 2 ? 35 : 0 });
-        k2(w, { draw: 'headbutt', x: hx, y: hy, a, max: 0.45, ab: 'thunderBlow' }); w.shake = Math.max(w.shake, 7);
-        if (tier >= 3) flung(w, u, t, 0.8, null, (o) => { hurt(w, o, dmgOf(u, 0.8), u, { knock: 300, kAngle: a, noDodge: true, stagger: 40 }); stun(w, o, 0.6); });
-      });
+      const gap = Math.max(0, dist(u.x, u.y, t.x, t.y) - u.r - t.r);
+      dash(w, u, 'dragFling', { a, len: gap + 40, speed: 600, tell: 0.12, dmg: dmgOf(u, 1.7), grabK: 0, fling: dmgOf(u, 1.7), knock: 560, aside: 0, hit: { ab: 'thunderBlow' }, flingHit: { stagger: 60, shock: tier >= 2 ? 35 : 0 }, recover: 0.18, rest: 0.2,
+        flung: (e) => { k2(w, { draw: 'headbutt', x: u.x + Math.cos(a) * u.r, y: u.y + Math.sin(a) * u.r, a, max: 0.45, ab: 'thunderBlow' }); w.shake = Math.max(w.shake, 7);
+          if (tier >= 3 && alive(e)) flung(w, u, e, 0.8, null, (o) => { hurt(w, o, dmgOf(u, 0.8), u, { knock: 300, kAngle: a, noDodge: true, stagger: 40, ab: 'thunderBlow' }); stun(w, o, 0.6); }); } });
     },
     show: { single: true },
   },
@@ -712,23 +715,23 @@ export const ABILITIES2 = {
   shadowWalk: {
     score(w, u, t) { if (!t) return 0; const d = dist(u.x, u.y, t.x, t.y); return d < 260 && foesNear(w, u, t.x, t.y, 100).length >= 2 ? 0.7 : foesNear(w, u, u.x, u.y, 70).length >= 2 ? 0.6 : 0; },
     use(w, u, t, tier) {
-      const go = (a, T, cut) => {
-        u.act = { type: 'dash', t: T, max: T, a }; u.invulnT = Math.max(u.invulnT, T + 0.05); u.ethereal = true;
-        k2(w, { draw: 'shadowTrail', unit: u, x: u.x, y: u.y, max: T + 0.9, pts: [] });
-        timer(u, 'shadowWalk', T, () => {
-          for (const e of opponents(w, u)) if (!cut.has(e) && dist(u.x, u.y, e.x, e.y) < u.r + e.r + 12) {
-            cut.add(e); hurt(w, e, dmgOf(u, 1.5), u, { knock: 90, kAngle: a + Math.PI / 2, noDodge: true, curse: tierOf(u, 'shadowWalk') >= 2 ? 30 : 0, ab: 'shadowWalk' });
-            k2(w, { draw: 'parry', x: e.x, y: e.y, a: a + 0.8, max: 0.3, ab: 'shadowWalk' });
-          }
-        }, () => { u.ethereal = !!(u.kit && u.kit.shadow); });
+      // round 18 (lane dash18): the blink chain (dashes.js). She sinks, and is a shadow blinking from foe to foe: each
+      // blink crosses its mark at a slant with the daggers out, a copy of her left standing at every stop; three marks a
+      // run. The cut (1.5x, II cursing) lands where the blades cross a body. III: three runs in a row, each from where the
+      // last ended. (It was one straight run at one speed, cutting whoever stood within reach of the line.)
+      const runs = tier >= 3 ? 3 : 1, dmg = dmgOf(u, 1.5), curse = tier >= 2 ? 30 : 0; let chaining = true, idle = 0;
+      const marks = (x, y) => opponents(w, u).filter((e) => dist(x, y, e.x, e.y) < 280).sort((p, q) => dist(x, y, p.x, p.y) - dist(x, y, q.x, q.y));
+      const back = () => { chaining = false; u.ethereal = !!(u.kit && u.kit.shadow); };
+      const go = (i) => {
+        const list = i === 0 && t && alive(t) ? [t, ...marks(t.x, t.y).filter((e) => e !== t)] : marks(u.x, u.y);
+        if (!list.length) { back(); return; }
+        u.ethereal = true; k2(w, { draw: 'shadowTrail', unit: u, x: u.x, y: u.y, max: 1.5, pts: [] });
+        dash(w, u, 'blinkChain', { targets: list, n: 3, reach: 280, tell: i ? 0.07 : 0.14, recover: i + 1 < runs ? 0.06 : 0.18, dmg, hit: { knock: 90, curse, ab: 'shadowWalk' }, ghost: '#3E3158', col: ['#9B86C9', '#F4EEFF'],
+          onEnd: () => { if (i + 1 < runs && alive(u)) go(i + 1); else back(); } });
       };
-      const a0 = t ? ang(u, t) : u.facing, T = 0.32, n = tier >= 3 ? 3 : 1;
-      go(a0, T, new Set());
-      for (let i = 1; i < n; i++) after(u, i * (T + 0.08), () => {
-        if (!alive(u)) return;
-        const e = opponents(w, u).filter((o) => dist(u.x, u.y, o.x, o.y) < 300).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[i % 2];
-        go(e ? ang(u, e) + 0.2 * (i % 2 ? 1 : -1) : u.facing + 2.2, T, new Set());
-      });
+      go(0);
+      // (should anything stop her mid-run, she is solid again a moment after)
+      timer(u, 'shadowWalk', 6, (dt) => { if (u.act && u.act.dv) { idle = 0; return false; } idle += dt; return !chaining || idle > 0.15; }, back);
     },
     show: { far: true },
   },
@@ -1260,18 +1263,21 @@ export const ABILITIES2 = {
     score: (w, u) => (sacrificeOf(w, u, tierOf(u, 'soulCandle')) ? 0.9 : 0),
     use(w, u, t, tier) {
       const e = sacrificeOf(w, u, tier) || t; if (!e) return;
-      const a = ang(u, e), x1 = clamp(e.x - Math.cos(a) * (e.r + u.r), u.r, w.W - u.r), y1 = clamp(e.y - Math.sin(a) * (e.r + u.r), u.r, w.H - u.r), T = clamp(dist(u.x, u.y, x1, y1) / 700, 0.1, 0.4);
-      u.facing = a; setAnim(u, 'ability', T + 0.3); u.invulnT = Math.max(u.invulnT, T + 0.1);
-      k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a, max: T + 0.3, col: '#C8453D' });
-      u.act = { type: 'leap', t: T, max: T, x0: u.x, y0: u.y, x1, y1, land: () => {
-        if (!alive(e)) return; u.facing = ang(u, e); setAnim(u, 'thrust', 0.3);
+      // round 18 (lane dash18): the hook (dashes.js): he runs round its side and the dagger comes across its back as he
+      // arrives behind it; the kill, the healing and the spin at III are as they were. (It was a straight leap to its
+      // front, the dagger landing as he arrived.)
+      const finish = () => {
+        if (!alive(e)) return; u.facing = ang(u, e);
         k2(w, { draw: 'sacrifice', x: e.x, y: e.y, a: u.facing, r: e.vr, max: 0.7, ab: 'soulCandle' });
-        if (e.def.boss || e.major || e.mini) hurt(w, e, dmgOf(u, 4), u, { noDodge: true, crit: true, ab: 'soulCandle' });
+        if (e.def.boss || e.major || e.mini) hurt(w, e, big, u, { noDodge: true, crit: true, ab: 'soulCandle' });
         else hurt(w, e, e.hp + 1, u, { noDodge: true, crit: true, knock: 120, ab: 'soulCandle' });
         heal(w, u, u.maxHp * 0.15, u); w.shake = Math.max(w.shake, 5);
         if (tier >= 3) { setAnim(u, 'spin', 0.4); u.spin = { t0: w.time, dur: 0.4, dir: 1 }; k2(w, { draw: 'spray', x: u.x, y: u.y, a: 0, arc: TAU, r: 110, max: 0.6, cols: ['#C8453D', '#8A1E28', '#FF8A7A'] });
-          for (const o of foesNear(w, u, u.x, u.y, 110)) { hurt(w, o, dmgOf(u, 0.6), u, { noDodge: true, knock: 120, kAngle: ang(u, o), ab: 'soulCandle' }); addStatus(w, o, 'bleed', 25, u); } }
-      } };
+          for (const o of foesNear(w, u, u.x, u.y, 110)) { hurt(w, o, spin, u, { noDodge: true, knock: 120, kAngle: ang(u, o), ab: 'soulCandle' }); addStatus(w, o, 'bleed', 25, u); } }
+      };
+      const big = dmgOf(u, 4), spin = dmgOf(u, 0.6); let done = false;
+      const A = dash(w, u, 'hook', { t: e, only: e, tell: 0.1, inv: true, ghost: '#7A2C40', col: ['#C8453D', '#FFE0DA'], strike: () => { if (!done) { done = true; finish(); } }, recover: 0.2 });
+      if (!A) { u.x = clamp(e.x - Math.cos(ang(u, e)) * (e.r + u.r), u.r, w.W - u.r); u.y = clamp(e.y - Math.sin(ang(u, e)) * (e.r + u.r), u.r, w.H - u.r); setAnim(u, 'thrust', 0.3); finish(); }
     },
     show: { far: true, single: true },
   },
@@ -1731,18 +1737,14 @@ export const ABILITIES2 = {
   runningThrow: {
     score(w, u, t) { if (!t) return 0; const d = dist(u.x, u.y, t.x, t.y), a = ang(u, t); return d < 240 && lineClear(w, u.x, u.y, t.x, t.y, u.r) ? 0.4 + 0.2 * opponents(w, u).filter((e) => angleDiff(ang(u, e), a) < 0.35 && dist(u.x, u.y, e.x, e.y) < 260).length : 0; },
     use(w, u, t, tier) {
-      if (!t) return; const a = ang(u, t), T = 0.28, cut = new Set(), x0 = u.x, y0 = u.y; u.facing = a;
-      const L = clamp(dist(u.x, u.y, t.x, t.y) + 50, 110, 290), sp = L / T; // (she runs right through her target, however far it stood)
+      // round 18 (lane dash18): the draw cut with a spear (dashes.js). She draws the spear back, bursts down the line
+      // behind its point and stops past them; each one the point went through carries a mark, and the wounds burst open
+      // down the line a beat after. The blow (1.6x), the stagger at II and the second lunge at III are as they were.
+      // (She ran the line at one speed, each one struck as she passed.)
+      if (!t) return; const a = ang(u, t); u.facing = a;
+      const L = clamp(dist(u.x, u.y, t.x, t.y) + 50, 110, 290); // (she runs right through her target, however far it stood)
       if (tier >= 3) { const k = u.kit; if (!k.lunge2) { k.lunge2 = true; k.cd.runningThrow = 0.7; } else k.lunge2 = false; } // two charges: the second follows at once
-      setAnim(u, 'thrust', T + 0.1); u.act = { type: 'ride', t: T + 0.1, max: T + 0.1 }; u.invulnT = Math.max(u.invulnT, T); u.faceLockT = Math.max(u.faceLockT || 0, T);
-      k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a, max: T + 0.3, col: '#E0A060' });
-      timer(u, 'lunge', T, (dt) => {
-        const px = u.x, py = u.y; u.x += Math.cos(a) * sp * dt; u.y += Math.sin(a) * sp * dt; u.vx = u.vy = u.kx = u.ky = 0; u.facing = a;
-        if (atObstacle(w, u, 1)) { u.x = px; u.y = py; }
-        if (rand() < 0.6) w.particles.push({ x: u.x - Math.cos(a) * u.r, y: u.y - Math.sin(a) * u.r, vx: 0, vy: 0, life: 0.25, max: 0.25, size: 5, color: 'rgba(200,190,170,0.7)' });
-        for (const e of opponents(w, u)) if (!cut.has(e) && dist(u.x, u.y, e.x, e.y) < u.r + e.r + 26) { cut.add(e);
-          hurt(w, e, dmgOf(u, 1.6), u, { noDodge: true, knock: 200, kAngle: a + (Math.sin(ang(u, e) - a) > 0 ? 0.6 : -0.6), stagger: tierOf(u, 'runningThrow') >= 2 ? 40 : 0, ab: 'runningThrow' }); } },
-        () => { if (u.act && u.act.type === 'ride') u.act = null; k2(w, { draw: 'slashLine', x: x0, y: y0, x1: x0, y1: y0, x2: u.x + Math.cos(a) * 30, y2: u.y + Math.sin(a) * 30, max: 0.45 }); });
+      dash(w, u, 'drawCut', { a, len: L, lance: true, tell: 0.16, hold: 0.14, recover: 0.16, ghost: '#C9A46A', dmg: dmgOf(u, 1.6), hit: { knock: 200, stagger: tier >= 2 ? 40 : 0, ab: 'runningThrow' } });
     },
     show: { far: true },
   },
@@ -1798,12 +1800,15 @@ export const ABILITIES2 = {
   bayonet: {
     score: (w, u) => (foesNear(w, u, u.x, u.y, u.r + 55).length ? 0.85 : 0),
     use(w, u, t, tier) {
+      // round 18 (lane dash18): a short draw cut with the bayonet (dashes.js, the wound landing as the point goes in):
+      // he sets the stock, lunges a short way behind the point, and whatever it runs into is shoved hard. The blow, the
+      // shove, the stagger at II and the shot at III are as they were. (He jolted forward and the blow landed on the
+      // nearest one a moment later, wherever the point was.)
       const e = foesNear(w, u, u.x, u.y, u.r + 70).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0]; if (!e) return;
-      const a = ang(u, e); u.facing = a; setAnim(u, 'thrust', 0.35); u.kx += Math.cos(a) * 160; u.ky += Math.sin(a) * 160;
-      after(u, 0.08, () => { if (!alive(e)) return;
-        hurt(w, e, dmgOf(u, 1.2), u, { knock: 520, kAngle: a, heavy: true, noDodge: true, stagger: tier >= 2 ? 50 : 0, ab: 'bayonet' });
-        k2(w, { draw: 'thrustLine', x: u.x, y: u.y, a, r: u.r + 70, n: 2, max: 0.3 }); k2(w, { draw: 'headbutt', x: e.x - Math.cos(a) * e.r, y: e.y - Math.sin(a) * e.r, a, max: 0.35 }); w.shake = Math.max(w.shake, 3); });
-      if (tier >= 3) after(u, 0.35, () => { if (!alive(e)) return; u.facing = ang(u, e); setAnim(u, 'shoot', 0.3); k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: u.facing, max: 0.4, big: true }); shoot(w, u, u.facing, { kind: 'bullet', speed: 1300, r: 6, dmg: dmgOf(u, 1.2), knock: 160 }); });
+      const a = ang(u, e); u.facing = a; const gap = Math.max(0, dist(u.x, u.y, e.x, e.y) - u.r - e.r);
+      dash(w, u, 'drawCut', { a, len: gap + 30, lance: true, now: true, tell: 0.1, burst: 0.09, recover: 0.14, inv: false, dmg: dmgOf(u, 1.2), straight: true, hit: { knock: 520, heavy: true, stagger: tier >= 2 ? 50 : 0, ab: 'bayonet' },
+        arrive: () => { k2(w, { draw: 'headbutt', x: u.x + Math.cos(a) * (u.r + 30), y: u.y + Math.sin(a) * (u.r + 30), a, max: 0.35 }); w.shake = Math.max(w.shake, 3); } });
+      if (tier >= 3) after(u, 0.5, () => { if (!alive(e)) return; u.facing = ang(u, e); setAnim(u, 'shoot', 0.3); k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: u.facing, max: 0.4, big: true }); shoot(w, u, u.facing, { kind: 'bullet', speed: 1300, r: 6, dmg: dmgOf(u, 1.2), knock: 160 }); });
     },
     show: { single: true },
   },
@@ -2053,19 +2058,15 @@ export const ABILITIES2 = {
   shieldRush: {
     score(w, u, t) { if (!t) return 0; const g = dist(u.x, u.y, t.x, t.y) - u.r - t.r; return g > 30 && g < 300 && lineClear(w, u.x, u.y, t.x, t.y, u.r) ? 0.6 : 0; },
     use(w, u, t, tier) {
-      if (!t) return; const a = ang(u, t), T = 0.62; let held = null; u.facing = a;
-      u.act = { type: 'dash', t: T, max: T, a }; addBuff(u, { id: 'shieldRush', dur: T + 0.05, raise: true, frontBlock: 0.5, knockImmune: true });
-      k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a, max: T + 0.3 });
-      timer(u, 'shieldRush', T, () => {
-        if (!held) { const e = foesNear(w, u, u.x, u.y, u.r + 14).find((o) => inFront(u, o, 1.8)); if (e) { held = e; hurt(w, e, dmgOf(u, 0.8), u, { knock: 0, noDodge: true, ab: 'shieldRush' }); } }
-        if (held && alive(held) && !held.fixed && held.mass <= 4 && !held.def.boss) { held.x = u.x + Math.cos(a) * (u.r + held.r + 2); held.y = u.y + Math.sin(a) * (u.r + held.r + 2); held.vx = held.vy = held.kx = held.ky = 0; }
-        if (tierOf(u, 'shieldRush') >= 2) for (const e of foesNear(w, u, u.x, u.y, u.r + 10)) if (e !== held) { e.kx += Math.cos(a + (Math.sin(ang(u, e) - a) > 0 ? 1.2 : -1.2)) * 260; e.ky += Math.sin(a + (Math.sin(ang(u, e) - a) > 0 ? 1.2 : -1.2)) * 260; }
-      }, () => {
-        const e = held && alive(held) ? held : null; if (!e) return;
-        setAnim(u, 'ability', 0.3); w.shake = Math.max(w.shake, 6); k2(w, { draw: 'shoveAway', x: e.x, y: e.y, a, max: 0.4 });
-        hurt(w, e, dmgOf(u, 2), u, { knock: 260, kAngle: a, noDodge: true, heavy: true, stagger: 60, ab: 'shieldRush' }); if (tierOf(u, 'shieldRush') >= 3) stun(w, e, 1);
-        puff(w, e.x, e.y, '#E9DDC2', 10, 110, 6, 0.45);
-      });
+      // round 18 (lane dash18): the drag and fling (dashes.js). He rocks back behind the shield and runs, slow off the mark
+      // then flat out; the first one he meets is picked up on the shield (0.8x), carried to the end of the rush and
+      // slammed off it (2x, staggered; III stunned), into a wall if there is one. II: the rest are knocked aside. The
+      // length, the blows and the block are as they were. (He ran at one speed and the slam landed where he stopped.)
+      if (!t) return; const a = ang(u, t), sp = u.def.speed * 2.1, T = 0.62, k1 = dmgOf(u, 1); u.facing = a;
+      addBuff(u, { id: 'shieldRush', dur: T * 1.2 + 0.6, raise: true, frontBlock: 0.5, knockImmune: true });
+      dash(w, u, 'dragFling', { a, len: sp * T, speed: sp, tell: 0.16, dmg: k1, grabK: 0.8, fling: dmgOf(u, 2), knock: 260, aside: 0, hit: { ab: 'shieldRush' }, flingHit: { stagger: 60 }, rest: 0.25,
+        brushed: (e, sd) => { if (tierOf(u, 'shieldRush') >= 2) { e.kx += Math.cos(a + sd * 1.2) * 260; e.ky += Math.sin(a + sd * 1.2) * 260; } },
+        flung: (e) => { setAnim(u, 'ability', 0.3); k2(w, { draw: 'shoveAway', x: e.x, y: e.y, a, max: 0.4 }); if (tierOf(u, 'shieldRush') >= 3) stun(w, e, 1); puff(w, e.x, e.y, '#E9DDC2', 10, 110, 6, 0.45); } });
     },
     show: { far: true, single: true },
   },
@@ -2123,19 +2124,18 @@ export const ABILITIES2 = {
   iaido: {
     score(w, u, t) { if (!t) return 0; const a = ang(u, t); return dist(u.x, u.y, t.x, t.y) < 280 && lineClear(w, u.x, u.y, t.x, t.y, u.r) ? 0.45 + 0.2 * opponents(w, u).filter((e) => angleDiff(ang(u, e), a) < 0.35 && dist(u.x, u.y, e.x, e.y) < 300).length : 0; },
     use(w, u, t, tier) {
-      if (!t) return; const a0 = ang(u, t); u.facing = a0; setAnim(u, 'ability', 0.4); u.act = { type: 'channel', t: 0.35, max: 0.35, target: t, every: 1, acc: 0, tick: () => {} };
+      // round 18 (lane dash18): the draw cut (dashes.js). He settles with the blade at his hip (the light gathering on it,
+      // as before), bursts down the line with the blade swept out, and stops past them; each one the blade crossed is
+      // staggered and carries a thin white line, and then the cut lands on each in turn: a tenth of its health and more,
+      // as it was. III: he turns and cuts back through. What is cut is what the blade or his body really passed through.
+      // (He was simply at the far end, and everything within reach of the line between was cut.)
+      if (!t) return; const a0 = ang(u, t), base = dmgOf(u, 1); u.facing = a0;
       k2(w, { draw: 'iaidoCharge', unit: u, x: u.x, y: u.y, a: a0, max: 0.38 });
-      const go = (a) => {
-        if (!alive(u)) return; const x0 = u.x, y0 = u.y; let L = 0; for (let d = 20; d <= 280; d += 10) { const x = x0 + Math.cos(a) * d, y = y0 + Math.sin(a) * d; if (x < u.r || y < u.r || x > w.W - u.r || y > w.H - u.r || w.walls.some((r) => circleRect(x, y, u.r, r)) || w.pillars.some((p) => dist(x, y, p.x, p.y) < p.r + u.r)) break; L = d; }
-        const far = opponents(w, u).filter((e) => segDist(e.x, e.y, x0, y0, x0 + Math.cos(a) * L, y0 + Math.sin(a) * L) < e.r + 16); const reach = far.length ? Math.min(L, Math.max(...far.map((e) => dist(x0, y0, e.x, e.y))) + 60) : Math.min(L, 160);
-        const x1 = x0 + Math.cos(a) * reach, y1 = y0 + Math.sin(a) * reach; u.x = x1; u.y = y1; u.vx = u.vy = 0; u.facing = a; setAnim(u, 'swing', 0.3); u.invulnT = Math.max(u.invulnT, 0.3);
-        k2(w, { draw: 'slashLine', x: x0, y: y0, x1: x0, y1: y0, x2: x1, y2: y1, max: 0.6, ab: 'iaido', big: true }); k2(w, { draw: 'poof', x: x0, y: y0, r: 16, col: '#EEF3F8', max: 0.3 });
-        const cut = opponents(w, u).filter((e) => segDist(e.x, e.y, x0, y0, x1, y1) < e.r + 16);
-        for (const e of cut) { stun(w, e, 0.3); addStatus(w, e, 'stagger', 25, u); }
-        after(u, 0.3, () => { for (const e of cut) if (alive(e)) { hurt(w, e, e.maxHp * (e.def.boss ? 0.03 : 0.1) + dmgOf(u, 1), u, { noDodge: true, crit: true, knock: 120, kAngle: a + Math.PI / 2, ab: 'iaido' }); k2(w, { draw: 'parry', x: e.x, y: e.y, a: a + 0.6, max: 0.35 }); } });
-      };
-      after(u, 0.36, () => go(a0));
-      if (tier >= 3) after(u, 0.85, () => go(u.facing + Math.PI));
+      const reachOf = (a) => { const far = opponents(w, u).filter((e) => segDist(e.x, e.y, u.x, u.y, u.x + Math.cos(a) * 280, u.y + Math.sin(a) * 280) < e.r + 16); return far.length ? Math.min(280, Math.max(...far.map((e) => dist(u.x, u.y, e.x, e.y))) + 60) : 160; };
+      const cut = (a, tell, again) => dash(w, u, 'drawCut', { a, len: reachOf(a), tell, hold: 0.3, settle: false, ghost: '#AEB9CC',
+        dmg: (e) => e.maxHp * (e.def.boss ? 0.03 : 0.1) + base, hit: { crit: true, knock: 120, ab: 'iaido' },
+        mark: (e) => { stun(w, e, 0.3); addStatus(w, e, 'stagger', 25, u); }, again });
+      cut(a0, 0.36, tier >= 3 ? () => ({ a: u.facing + Math.PI, len: reachOf(u.facing + Math.PI), tell: 0.16, again: null }) : null);
     },
     show: { far: true },
   },
@@ -2158,15 +2158,16 @@ export const ABILITIES2 = {
   crescentCut: {
     score(w, u, t) { if (!t) return 0; const d = dist(u.x, u.y, t.x, t.y); return d < 300 && lineClear(w, u.x, u.y, t.x, t.y, u.r) ? 0.5 + (t.elite || t.def.boss ? 0.2 : 0) : 0; },
     use(w, u, t, tier) {
+      // round 18 (lane dash18): the feint (dashes.js). A step to one side with a shadow of him carrying on that way, a
+      // planted foot, and the real cut back across the other flank: the same heavy slash (a tenth of its health and
+      // more), landing as the blade crosses it. III: a kill and he goes again. (He flew straight at it and the slash
+      // landed as he arrived.)
+      const base = dmgOf(u, 1.4), stg = tier >= 2 ? 40 : 0;
       const strike = (e, n) => {
-        if (!e || !alive(e) || n > 4) return; const a = ang(u, e), x1 = clamp(e.x - Math.cos(a) * (e.r + u.r), u.r, w.W - u.r), y1 = clamp(e.y - Math.sin(a) * (e.r + u.r), u.r, w.H - u.r), T = clamp(dist(u.x, u.y, x1, y1) / 900, 0.06, 0.3);
-        u.facing = a; k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a, max: T + 0.3 });
-        u.act = { type: 'leap', t: T, max: T, x0: u.x, y0: u.y, x1, y1, land: () => {
-          if (!alive(e)) return; setAnim(u, 'swing', 0.3); swingMark(w, u, u.r + u.def.range + 20, 2.2);
-          k2(w, { draw: 'crescentSlash', x: e.x, y: e.y, a: ang(u, e), r: e.vr + 18, max: 0.45 });
-          const was = alive(e); hurt(w, e, e.maxHp * (e.def.boss ? 0.03 : 0.1) + dmgOf(u, 1.4), u, { noDodge: true, heavy: true, crit: true, knock: 200, stagger: tier >= 2 ? 40 : 0, ab: 'crescentCut' });
-          if (was && !alive(e) && tierOf(u, 'crescentCut') >= 3) { const nx = opponents(w, u).filter((o) => dist(o.x, o.y, u.x, u.y) < 260).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0]; if (nx) after(u, 0.15, () => strike(nx, n + 1)); }
-        } };
+        if (!e || !alive(e) || n > 4) return;
+        dash(w, u, 'feint', { t: e, only: e, ghost: '#AEB9CC', dmg: (x) => x.maxHp * (x.def.boss ? 0.03 : 0.1) + base, hit: { heavy: true, crit: true, knock: 200, stagger: stg, ab: 'crescentCut' },
+          each: (x) => k2(w, { draw: 'crescentSlash', x: x.x, y: x.y, a: ang(u, x), r: x.vr + 18, max: 0.45 }),
+          onEnd: () => { if (!alive(e) && tierOf(u, 'crescentCut') >= 3) { const nx = opponents(w, u).filter((o) => dist(o.x, o.y, u.x, u.y) < 260).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0]; if (nx) after(u, 0.1, () => { if (!u.act) strike(nx, n + 1); }); } } });
       };
       strike(t, 0);
     },
@@ -2205,13 +2206,14 @@ export const ABILITIES2 = {
     score: (w, u) => (spearFor(w, u) ? 0.75 : 0),
     use(w, u, t, tier) {
       const a = spearFor(w, u) || inTrouble(w, u, 440, 0.7) || hurtMost(allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 440)); if (!a) return;
-      const b = ang(u, a), x0 = u.x, y0 = u.y, x1 = clamp(a.x - Math.cos(b) * (a.r + u.r), u.r, w.W - u.r), y1 = clamp(a.y - Math.sin(b) * (a.r + u.r), u.r, w.H - u.r), T = clamp(dist(u.x, u.y, x1, y1) / 800, 0.12, 0.5), cut = new Set();
-      u.facing = b; setAnim(u, 'thrust', T + 0.2); u.invulnT = Math.max(u.invulnT, T + 0.1); k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a: b, max: T + 0.35, col: '#FFE7A0' });
-      u.act = { type: 'leap', t: T, max: T, x0, y0, x1, y1, land: () => {
-        for (const e of opponents(w, u)) if (segDist(e.x, e.y, x0, y0, x1, y1) < e.r + 22 && !cut.has(e)) { cut.add(e); hurt(w, e, dmgOf(u, 1.5), u, { noDodge: true, knock: 220, kAngle: b + (Math.sin(ang(u, e) - b) > 0 ? -1 : 1) * 1.2, shock: tier >= 2 ? 30 : 0, ab: 'spearThrow' }); }
-        if (alive(a)) { cleanse(a); haste(w, a, 4, 1.3); ward(w, a, tier >= 3 ? 45 : 28, 5); k2(w, { draw: 'rally', unit: a, x: a.x, y: a.y, r: a.vr, max: 0.9 }); }
-        k2(w, { draw: 'slashLine', x: x0, y: y0, x1: x0, y1: y0, x2: x1, y2: y1, max: 0.5 });
-      } };
+      // round 18 (lane dash18): the draw cut with a spear (dashes.js): she draws the spear back, bursts down the line to
+      // her friend behind its point and stops beside them (cleansed and steeled on the spot, as before); each enemy the
+      // point went through carries a mark, and the wounds burst open down the line a beat after. The blow is the same.
+      // (She flew the line as a leap, and everything within reach of it was struck when she landed.)
+      const b = ang(u, a), L = Math.max(20, dist(u.x, u.y, a.x, a.y) - a.r - u.r); u.facing = b;
+      dash(w, u, 'drawCut', { a: b, len: L, lance: true, tell: 0.14, burst: clamp(L / 2200, 0.1, 0.2), hold: 0.16, recover: 0.16, ghost: '#E8D49A', col: ['#FFE7A0', '#FFFBEA'], dmg: dmgOf(u, 1.5), hit: { knock: 220, shock: tier >= 2 ? 30 : 0, ab: 'spearThrow' },
+        arrive: () => { if (alive(a)) { cleanse(a); haste(w, a, 4, 1.3); ward(w, a, tier >= 3 ? 45 : 28, 5); k2(w, { draw: 'rally', unit: a, x: a.x, y: a.y, r: a.vr, max: 0.9 }); } } });
+      u.invulnT = Math.max(u.invulnT, 0.4);
     },
     show: { ally: true, mob: 'ally' },
   },
@@ -2316,25 +2318,25 @@ export const ABILITIES2 = {
   pounce: {
     score(w, u, t) { if (!t) return 0; const d = dist(u.x, u.y, t.x, t.y); return u.kit.wolfUntil > w.time ? (d > 110 && d < 340 && !t.def.boss ? 0.6 : 0) : d < 200 ? 0.55 : 0; },
     use(w, u, t, tier) {
-      if (!t) return; const a = ang(u, t);
+      if (!t) return;
       if (u.kit.wolfUntil > w.time) {
-        cast(u, 'ability', 0.6);
-        u.act = { type: 'leap', t: 0.45, max: 0.45, x0: u.x, y0: u.y, x1: t.x - Math.cos(a) * (u.r + t.r) * 0.7, y1: t.y - Math.sin(a) * (u.r + t.r) * 0.7, land: () => {
-          haste(w, u, 4, 1.35); if (!alive(t)) return; const d = (tier >= 2 ? 1.6 : 1) * (t.def.boss ? 0.4 : 1);
-          hurt(w, t, dmgOf(u, 1.6), u, { noDodge: true, heavy: true, knock: 0, ab: 'pounce' }); stun(w, t, d); interrupt(w, t);
-          k2(w, { draw: 'bonk', x: t.x, y: t.y, unit: t, r: t.vr, max: d });
-          if (tier >= 3) for (let i = 1; i <= 4; i++) after(u, i * d / 5, () => { if (alive(t)) { setAnim(u, 'swing', 0.15); hurt(w, t, dmgOf(u, 0.5), u, { noDodge: true, knock: 0, ab: 'pounce' }); } });
-        } };
+        // round 18 (lane dash18): the pounce (dashes.js): a crouch with a wriggle, a leap that hangs, and he comes down
+        // on it claws first: the same blow, pin and haste (III: he bites it while it is down). (It was a plain arc.)
+        cast(u, 'ability', 0.3);
+        dash(w, u, 'pounce', { t, only: t, close: 0.7, tell: 0.16, inv: true, dmg: dmgOf(u, 1.6), hit: { heavy: true, knock: 0, ab: 'pounce' }, col: ['#DCE3EC', '#FFFFFF'],
+          land: (list) => { haste(w, u, 4, 1.35); if (!alive(t) || !list.includes(t)) return; const d = (tier >= 2 ? 1.6 : 1) * (t.def.boss ? 0.4 : 1);
+            stun(w, t, d); interrupt(w, t); k2(w, { draw: 'bonk', x: t.x, y: t.y, unit: t, r: t.vr, max: d });
+            if (tier >= 3) for (let i = 1; i <= 4; i++) after(u, i * d / 5, () => { if (alive(t)) { setAnim(u, 'swing', 0.15); hurt(w, t, dmgOf(u, 0.5), u, { noDodge: true, knock: 0, ab: 'pounce' }); } }); } });
         u.invulnT = Math.max(u.invulnT, 0.4); return;
       }
-      // a man: a dash forward and a cleave at the end of it
-      // (he covers the gap to his target, whatever his own speed)
-      const L = clamp(dist(u.x, u.y, t.x, t.y) - u.r - t.r - 6, 20, 210), T = clamp(L / 520, 0.08, 0.3), sp = L / T; u.facing = a; setAnim(u, 'ability', T + 0.3);
-      u.act = { type: 'ride', t: T + 0.1, max: T + 0.1 }; u.faceLockT = Math.max(u.faceLockT || 0, T); k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a, max: T + 0.3 });
-      timer(u, 'pounceDash', T, (dt) => { const px = u.x, py = u.y; u.x += Math.cos(a) * sp * dt; u.y += Math.sin(a) * sp * dt; u.vx = u.vy = u.kx = u.ky = 0; u.facing = a; if (atObstacle(w, u, 1)) { u.x = px; u.y = py; } },
-        () => { if (u.act && u.act.type === 'ride') u.act = null; });
-      after(u, T + 0.02, () => { if (!alive(u)) return; setAnim(u, 'swing', 0.3); swingMark(w, u, u.r + u.def.range + 30, 2.6);
-        for (const e of foesNear(w, u, u.x, u.y, u.r + u.def.range + 34)) if (inFront(u, e, 2.7)) hurt(w, e, dmgOf(u, 1.6), u, { noDodge: true, knock: 260, kAngle: ang(u, e), stagger: tier >= 2 ? 40 : 0, ab: 'pounce' }); });
+      // a man: round 18 (lane dash18): the hook (dashes.js): he runs round its side, banked into the turn, and the wide
+      // cleave is swung as he comes round behind it: the same blow on everything the blade sweeps through. (It was a
+      // straight dash to its front and a cleave over everything before him.)
+      const k1 = dmgOf(u, 1.6), hit = { knock: 260, stagger: tier >= 2 ? 40 : 0, ab: 'pounce' };
+      if (dash(w, u, 'hook', { t, tell: 0.12, dmg: k1, hit, recover: 0.2 })) return;
+      // (walled in: the cleave where he stands)
+      u.facing = ang(u, t); setAnim(u, 'swing', 0.3); swingMark(w, u, u.r + u.def.range + 30, 2.6);
+      for (const e of foesNear(w, u, u.x, u.y, u.r + u.def.range + 34)) if (inFront(u, e, 2.7)) hurt(w, e, k1, u, { noDodge: true, ...hit, kAngle: ang(u, e) });
     },
     show: { far: true, single: true },
   },

@@ -91,7 +91,7 @@ function riderBrain(w, u, dt) {
   const t = targetOf(w, u); if (!t || !u.aggro || !due(u, 'charge', dt, 2)) return false;
   const g = gapTo(u, t); if (g < 70 || g > 360 || !lineClear(w, u.x, u.y, t.x, t.y, u.r * 0.8)) return false;
   again(u, 'charge', u.elite ? 3.5 : 5, u.elite ? 4.5 : 7);
-  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 170, { tell: 0.45, dmg: 13, knock: 300, status: { stagger: 25 }, trail: 'rgba(190,170,140,0.7)' });
+  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 170, { style: 'lance', tell: 0.45, dmg: 13, knock: 300, status: { stagger: 25 }, trail: 'rgba(190,170,140,0.7)' }); // (round 18, lane dash18: spear first: the draw cut with a spear)
   return true;
 }
 // Frost shaman: a frost ball that bursts and chills (not fire), and an ice totem planted near the party.
@@ -491,7 +491,7 @@ Object.assign(ELITES, {
   crab: { tick(w, u, dt) {
     const t = targetOf(w, u); if (!t || !due(u, 'snap', dt, 2.5)) return false;
     const g = gapTo(u, t); if (g < 30 || g > 150 || !lineClear(w, u.x, u.y, t.x, t.y, u.r)) return false;
-    again(u, 'snap', 4, 5.5); rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 20, { tell: 0.3, dmg: 9, knock: 180, status: { stagger: 40 } }); return true;
+    again(u, 'snap', 4, 5.5); rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 20, { style: 'feint', tell: 0.3, dmg: 9, knock: 180, status: { stagger: 40 } }); return true; // (round 18, lane dash18: a scuttle to one side, then the snap: the feint)
   } },
   leechBlood: { tick() { return false; } },     // spits up to six shots (spit reads u.elite)
   leechBrain: { tick() { return false; } },     // holds its host longer

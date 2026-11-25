@@ -23,6 +23,7 @@ import {
   stun, heal as simHeal, addBuff, fx, zone as simZone, cleanse, wallRect, offFloor,
 } from './sim.js';
 import { lineClear } from './path.js';
+import { dash } from './dashes.js'; // round 18 (lane dash18): the six dashes
 import { threatened, attackers } from './threat.js'; // round 16 fixes: what is about to land on a unit, who is on it
 import { cue } from './sfx.js';
 import { tagAbility } from './fxtag.js';
@@ -126,10 +127,13 @@ export const ABILITIES = {
   shieldBash: {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) - u.r - t.r < 70 ? 0.55 + (t.target && t.target !== u ? 0.3 : 0) : 0),
     use(w, u, t, tier) {
-      cast(u, 'ability', 0.35); u.facing = ang(u, t); u.kx += Math.cos(u.facing) * 260; u.ky += Math.sin(u.facing) * 260;
-      const hits = tier >= 3 ? foesNear(w, u, u.x, u.y, u.r + 70).filter((e) => angleDiff(ang(u, e), u.facing) < 1.1) : [t];
-      for (const e of hits) { hurt(w, e, dmgOf(u, 1.4), u, { knock: 280, heavy: true, stagger: 45 }); if (tier >= 2) stun(w, e, 0.8); }
-      w.shake = Math.max(w.shake, 5);
+      // round 18 (lane dash18): a short drag and fling (dashes.js): he drives in behind the shield, the one he meets is
+      // carried a step on its face and thrown off it. The blow, the shove and the stun are as they were. (It was a shove
+      // of his own body and the blow landing the same instant, wherever he was.)
+      cast(u, 'ability', 0.35); const a = ang(u, t); u.facing = a;
+      const gap = Math.max(0, dist(u.x, u.y, t.x, t.y) - u.r - t.r), bash = (e) => { if (tier >= 2 && alive(e)) stun(w, e, 0.8); };
+      dash(w, u, 'dragFling', { a, len: gap + 44, speed: 560, tell: 0.1, dmg: dmgOf(u, 1.4), grabK: 0, fling: dmgOf(u, 1.4), knock: 280, flingHit: { stagger: 45 }, aside: tier >= 3 ? 1 : 0,
+        hit: { stagger: tier >= 3 ? 45 : 0, ab: 'shieldBash' }, flung: bash, brushed: (e) => { if (tier >= 3) bash(e); }, recover: 0.16, rest: 0.2 });
     },
   },
   guard: {
@@ -174,8 +178,12 @@ export const ABILITIES = {
       return 0.4 + 0.3 * foesNear(w, u, t.x, t.y, 80).length;
     },
     use(w, u, t, tier) {
-      const a = ang(u, t); u.facing = a; // round 9: no arm swing; the shield is held out in front while he charges (parts.js)
-      u.act = { type: 'charge', t: tier >= 2 ? 0.7 : 0.55, max: 0.7, a, hit: new Set(), stagger: tier >= 3 ? 45 : 0, power: tier >= 2 ? 1.3 : 1, ab: 'charge', dmg: dmgOf(u, 2) }; // (round 13: his own blow, 2.6 of the mace's; it was a flat 18)
+      // round 18 (lane dash18): the drag and fling (dashes.js). He rocks back, runs, and the first one he meets is picked
+      // up on the shield, carried down the line and flung off the end of it (into a wall: a slam that staggers); the rest
+      // are bowled aside as before. The run is as long as it was and the blow the same (round 13: 2x his own, 2.6 at II),
+      // split between the pick-up and the throw. (It was one speed down a line, everyone thrown aside the same.)
+      const a = ang(u, t), power = tier >= 2 ? 1.3 : 1, sp = u.def.speed * 1.9; u.facing = a;
+      dash(w, u, 'dragFling', { a, len: sp * (tier >= 2 ? 0.7 : 0.55) * 1.1, speed: sp, tell: 0.18, dmg: dmgOf(u, 2) * power, knock: 340 * power, hit: { stagger: tier >= 3 ? 45 : 0, ab: 'charge' }, rest: 0.3 });
     },
   },
   groundPound: {
@@ -245,13 +253,22 @@ export const ABILITIES = {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) > 90 ? (1 - hpRatio(t)) * 0.6 + (t.target && t.target !== u ? 0.4 : 0) : 0),
     use(w, u, t, tier) {
       zone(w, { x: u.x, y: u.y, r: 62, dur: 1.6, kind: 'smoke', src: u }); // the cloud she leaves (round 9: bigger, a body like the puddles)
+      const done = () => { if (tier >= 3 && !alive(t)) u.kit.cd.backstab = 0.5;
+        u.atkT = u.def.atkCd; u.mode = 'retreat'; u.modeT = 0; u.invulnT = Math.max(u.invulnT, 0.5); }; // (round 13: out of the shadow untouchable for a moment; she went down more than anyone)
+      // round 18 (lane dash18): the hook (dashes.js). Out of the cloud a shadow of her runs round its side, banked into
+      // the turn, and she is behind it with the daggers swung across its back: the same blow, landing where the blades
+      // are. Nothing touches her on the way. (She vanished and was behind it, the blow landing the same instant.)
+      const A = dash(w, u, 'hook', { t, tell: 0.1, inv: true, alpha: 0.5, only: t, dmg: dmgOf(u, 4), hit: { crit: true, poison: tier >= 2 ? 40 : 0, knock: 40, ab: 'backstab' }, ghost: '#6E5E8E', col: ['#9B86C9', '#F4EEFF'], recover: 0.12,
+        arrive: () => zone(w, { x: u.x, y: u.y, r: 48, dur: 1.2, kind: 'smoke', src: u }), // round 10: a puff where she comes back in too
+        onEnd: done });
+      if (A) return;
+      // no way round it (walled in): the old step through the shadows
       const back = t.facing + Math.PI;
       u.x = clamp(t.x + Math.cos(back) * (t.r + u.r + 6), u.r, w.W - u.r); u.y = clamp(t.y + Math.sin(back) * (t.r + u.r + 6), u.r, w.H - u.r);
       u.vx = u.vy = 0; u.facing = u.mvA = ang(u, t); u.spd = 0; cast(u, 'thrust', 0.25);
-      zone(w, { x: u.x, y: u.y, r: 48, dur: 1.2, kind: 'smoke', src: u }); // round 10: a puff where she comes back in too
+      zone(w, { x: u.x, y: u.y, r: 48, dur: 1.2, kind: 'smoke', src: u });
       hurt(w, t, dmgOf(u, 4), u, { crit: true, noDodge: true, poison: tier >= 2 ? 40 : 0 });
-      if (tier >= 3 && !alive(t)) u.kit.cd.backstab = 0.5;
-      u.atkT = u.def.atkCd; u.mode = 'retreat'; u.modeT = 0; u.invulnT = Math.max(u.invulnT, 0.5); // (round 13: out of the shadow untouchable for a moment; she went down more than anyone)
+      done();
     },
   },
   dash: {
@@ -268,9 +285,14 @@ export const ABILITIES = {
       return u.mode !== 'retreat' && gap > 130 && gap < 320 && t.target && t.target !== u && lineClear(w, u.x, u.y, t.x, t.y, u.r) ? 0.8 : 0;
     },
     use(w, u, t, tier) {
+      // round 18 (lane dash18): the feint (dashes.js). Out: a step to one side, a shadow of her carrying on that way, and
+      // she is gone the other. In: the same step, then across the busy one's flank with a dagger out: one stab of her
+      // own as she passes. Nothing lands on her meanwhile (round 13). (It was a burst of speed in a straight line.)
       const out = dashOut(w, u);
       const a = out ? (out.kind === 'shot' ? awayFromShot(u, out) : angleTo(out.x, out.y, u.x, u.y)) : ang(u, t);
-      u.act = { type: 'dash', t: 0.2, max: 0.2, a }; u.invulnT = Math.max(u.invulnT, 0.3); // (round 13: nothing lands on her mid-dash; Dash was worth nothing and she went down most)
+      if (out || !t) dash(w, u, 'feint', { a, len: 118, inv: true, ghost: '#6E5E8E' });
+      else dash(w, u, 'feint', { t, inv: true, only: t, dmg: dmgOf(u, 1), hit: { knock: 40, ab: 'dash' }, ghost: '#6E5E8E', col: ['#9B86C9', '#F4EEFF'] });
+      u.invulnT = Math.max(u.invulnT, 0.3);
       if (tier >= 2) { zone(w, { x: u.x, y: u.y, r: 64, dur: 2.5, kind: 'smoke', src: u, smoke: true }); for (const e of foesNear(w, u, u.x, u.y, 90)) if (e.target === u) e.target = null; }
       if (tier >= 3) { u.kit.charges = (u.kit.charges ?? 1) - 1; if (u.kit.charges > 0) u.kit.cd.dash = 0.6; else u.kit.charges = 2; }
     },

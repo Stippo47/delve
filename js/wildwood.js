@@ -19,6 +19,7 @@ import { lineClear } from './path.js';
 import { ELITES, lob, cone, line, around, rush, rushTick, summon, shoot, blink, openSpot, hold, beginHold, due, again, targetOf, gapTo, crowd, stand, turnTo, later } from './elites.js';
 import { courtFalls, bruteBrain } from './enemies.js';
 import { variantUrl } from './recolor.js';
+import { dash } from './dashes.js'; // round 18 (lane dash18): the six dashes
 
 const ART = (f) => `art/enemies/${f}.svg`;
 const FOE = { team: 'enemy', turn: 4, accel: 220, face: 4, mass: 1.2, temp: 0.35, commit: 0.9 };
@@ -46,7 +47,7 @@ export function wolfBrain(w, u, dt) {
   if (!due(u, 'lunge', dt, 2)) return false;
   const g = gapTo(u, t); if (g < 50 || g > 230 || !lineClear(w, u.x, u.y, t.x, t.y, u.r * 0.8)) return false;
   again(u, 'lunge', 4, 6);
-  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 40, { tell: 0.35, dmg: u.def.dmg * 1.3, knock: 170, trail: 'rgba(200,194,180,0.6)' });
+  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 40, { style: 'pounce', tell: 0.35, dmg: u.def.dmg * 1.3, knock: 170, trail: 'rgba(200,194,180,0.6)' }); // (round 18, lane dash18: the wolf's lunge is a pounce: a crouch, a leap that hangs, a landing rake; it was a straight run through)
   return true;
 }
 // A pounce from far off that pins whoever it lands on (dire wolves, the Alpha).
@@ -56,11 +57,11 @@ function pinPounce(w, u, dt, o) {
   const d = dist(u.x, u.y, t.x, t.y); if (d < o.min || d > o.max || !lineClear(w, u.x, u.y, t.x, t.y, u.r)) return false;
   again(u, 'pin', ...o.every);
   const p = lead(t, 0.35), a = angleTo(u.x, u.y, p.x, p.y), L = Math.max(0, dist(u.x, u.y, p.x, p.y) - u.r - t.r * 0.5);
-  const x1 = u.x + Math.cos(a) * L, y1 = u.y + Math.sin(a) * L, dur = o.dur || 0.6;
-  addDanger(w, { shape: 'circle', x: x1, y: y1, r: o.r, t: dur, team: u.team, src: u, kind: 'blade', hit: { dmg: o.dmg * u.dmgMul, knock: 60, stagger: o.stagger || 0 },
-    onFire: (w2, z) => { for (const h of opponents(w2, u)) if (dist(h.x, h.y, z.x, z.y) < z.r + h.r * 0.5) { h.rootT = Math.max(h.rootT || 0, o.pin); if (o.maul) addBuff(u, { id: 'maul', dur: o.pin, atkSpeed: 2.2 }); } } });
-  u.act = { type: 'leap', t: dur, max: dur, x0: u.x, y0: u.y, x1, y1, land: () => puff(w, u.x, u.y, '#8C8270', 10, 110, 6, 0.4) };
-  u.facing = a; setAnim(u, 'ability', dur);
+  const x1 = u.x + Math.cos(a) * L, y1 = u.y + Math.sin(a) * L;
+  // round 18 (lane dash18): the pounce of dashes.js (a crouch, a leap that hangs, a landing rake); whoever the rake
+  // catches is pinned, as before. (It was a plain arc and a circle that struck.)
+  dash(w, u, 'pounce', { x: x1, y: y1, tell: 0.3, air: (o.dur || 0.6) * 0.75, r: o.r, dmg: o.dmg * u.dmgMul, hit: { knock: 60, stagger: o.stagger || 0 }, dustCol: '#8C8270', rest: 0.3,
+    land: (list) => { for (const h of list) { h.rootT = Math.max(h.rootT || 0, o.pin); if (o.maul) addBuff(u, { id: 'maul', dur: o.pin, atkSpeed: 2.2 }); } } });
   return false;
 }
 // Slime balls: lobbed globs that land with a splat (o.spawn: a slime climbs out of it).
@@ -175,7 +176,7 @@ function spearLunge(w, u, dt) {
   const t = targetOf(w, u); if (!t || !u.aggro || !due(u, 'lunge', dt, 2.5)) return false;
   const g = gapTo(u, t); if (g < 40 || g > 190 || !lineClear(w, u.x, u.y, t.x, t.y, u.r * 0.8)) return false;
   again(u, 'lunge', 5, 7);
-  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 50, { tell: 0.45, dmg: 12, knock: 220 });
+  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 50, { style: 'lance', tell: 0.45, dmg: 12, knock: 220 }); // (round 18: the spear lunge is the draw cut with a spear)
   return true;
 }
 // Poacher: a bow (its attack) and a net on a cooldown.
@@ -245,7 +246,7 @@ function sproutBrain(w, u, dt) {
   if (!due(u, 'dash', dt, 1.2)) return false;
   const g = gapTo(u, t); if (g < 20 || g > 150 || !lineClear(w, u.x, u.y, t.x, t.y, u.r * 0.8)) return false;
   again(u, 'dash', 1.8, 2.6);
-  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 26, { tell: 0.22, dmg: u.def.dmg, knock: 120, trail: 'rgba(140,190,90,0.6)' });
+  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 26, { style: 'pounce', r: u.r + 16, tell: 0.22, dmg: u.def.dmg, knock: 120, trail: 'rgba(140,190,90,0.6)' }); // (round 18: the sproutling's dash is a little pounce)
   return true;
 }
 // Ent: slams roots up in a line (Entangle); a hard blow knocks a sproutling loose from it.

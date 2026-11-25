@@ -414,6 +414,8 @@ export function poseFor(u, w, dt) {
   }
   if (u.act && u.act.type === 'drink') main = { r: 0.55, dy: -14 }; // the potion goes to the mouth
   if (u.sleepT > 0 || (u.st && u.st.stagger >= 100)) { main = addP(main, { r: -0.35, dy: -4 }); off = addP(off, { r: -0.35, dy: -4 }); }
+  // round 18 (lane dash18): a dash poses the weapon arm itself, so the blade is where its slash is drawn (dashes.js D.arm)
+  { const DV = u.act && u.act.dv; if (DV && DV.arm && !u.downed) { main = DV.arm; if (DV.off) off = DV.off; } }
   pose[hand] = hand === 'arm-r' ? main : mirror(main);
   pose[other] = other === 'arm-r' ? off : mirror(off);
   // round 10 (the heroes lane: "the falcon still shows on the Falconer's arm while it flies"): the bird rides the

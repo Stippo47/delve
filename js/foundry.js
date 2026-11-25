@@ -179,7 +179,7 @@ function circleAt(w, u, t, dt, R) {
 }
 function beeDash(w, u, t) {
   const g = gapTo(u, t); if (g < 80 || g > 400 || !lineClear(w, u.x, u.y, t.x, t.y, u.r)) return false;
-  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 180, { tell: 0.4, speed: u.def.speed * 4, dmg: u.def.dmg * 1.6, knock: 200, trail: 'rgba(255,210,120,0.6)' });
+  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 180, { style: 'hook', tell: 0.4, speed: u.def.speed * 4, dmg: u.def.dmg * 1.6, knock: 200, trail: 'rgba(255,210,120,0.6)' }); // (round 18, lane dash18: the hook: it swings round its mark and stings from behind)
   return true;
 }
 const stinger = (w, u, a) => shoot(w, u, a + rrange(-0.08, 0.08), { kind: 'dagger', speed: 360, dmg: u.def.dmg * 0.6, r: 5, life: 0.5, hitO: { knock: 30, poison: u.elite && u.def.wasp ? 18 : 0 } });
@@ -249,7 +249,7 @@ function crawlerBrain(w, u, dt) {
   const t = targetOf(w, u); if (!t || !u.aggro || !due(u, 'lunge', dt, 2.5)) return false;
   const g = gapTo(u, t); if (g < 60 || g > 280 || !lineClear(w, u.x, u.y, t.x, t.y, u.r)) return false;
   again(u, 'lunge', 5, 6.5);
-  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 80, { tell: 0.45, dmg: 13, knock: 220, status: { shock: 30 }, trail: 'rgba(255,240,170,0.6)' });
+  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 80, { style: 'plain', tell: 0.45, dmg: 13, knock: 220, status: { shock: 30 }, trail: 'rgba(255,240,170,0.6)' }); // (round 18: a chain's head keeps the straight run; its body follows its path)
   return true;
 }
 // The drill bot: a burrower (families.js): drills under the floor and comes up beside a hero spinning.

@@ -877,7 +877,7 @@ export function drawBodyFx(ctx, u, w) {
   }
   // a charge or a dash: speed lines streaming off behind
   const act = u.act;
-  if (act && (act.type === 'charge' || act.type === 'dash') && !act.roll && !act.slide && !act.gas) {
+  if (act && (act.type === 'charge' || act.type === 'dash') && !act.roll && !act.slide && !act.gas && (!act.dv || act.dv.lines)) { // (round 18, lane dash18: one of the six dashes only while it travels)
     const a = act.a + Math.PI, shadow = u.kind === 'twinfang';
     for (let i = 0; i < 4; i++) { const off = (i - 1.5) * u.vr * 0.5, ph = (T * 7 + i * 0.37) % 1, d = u.vr * 0.8 + ph * 34;
       const x = u.x + Math.cos(a) * d - Math.sin(a) * off, y = u.y + Math.sin(a) * d + Math.cos(a) * off;

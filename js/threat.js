@@ -17,6 +17,7 @@ import { dist, angleTo, angleDiff } from './util.js';
 import { opponents, alive } from './sim.js';
 import { inZone } from './sim.js';
 import { windMul } from './statuses.js';
+import { dashThreat } from './dashes.js'; // round 18 (lane dash18): the six dashes say when they will reach a unit
 
 const reactOf = (u) => (u.react == null ? 0.22 : u.react);
 const busy = (e) => e.stunT > 0 || e.frozenT > 0 || e.sleepT > 0 || e.koT > 0 || e.fearT > 0 || e.radiantT > 0;
@@ -34,6 +35,7 @@ export function threatened(w, u, horizon = 0.4) {
     else if (a && (a.type === 'chargeTell' || a.type === 'charge') && a.a != null) {
       const d = dist(e.x, e.y, u.x, u.y), off = angleDiff(a.a, angleTo(e.x, e.y, u.x, u.y));
       if (d < 420 && Math.sin(off) * d < u.r + e.r + 10 && off < 1.2) { const sp = (e.def.speed || 60) * 1.9; note((a.type === 'chargeTell' ? a.t : 0) + Math.max(0, gap) / Math.max(60, sp), 'charge', e.x, e.y, e); }
+    } else if (a && a.dv) { const t = dashThreat(w, e, u); if (t != null) note(t, 'charge', e.x, e.y, e); // (round 18: a dash of dashes.js on its way to u, its tell counted)
     } else if (!a && e.target === u && e.def.role !== 'ranged' && !e.def.windup && gap <= reach && (e.atkT || 0) <= horizon
       && angleDiff(angleTo(e.x, e.y, u.x, u.y), e.facing) < 0.9) note(Math.max(0, e.atkT || 0), 'melee', e.x, e.y, e);
   }

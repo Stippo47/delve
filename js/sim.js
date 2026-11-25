@@ -9,6 +9,7 @@ import { ARMOUR_CAP, ENEMY_ARMOUR, armourCut } from './armour.js';
 import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON, CHARM, CONFUSE, SLEEPY, BLEED, FEAR, SHACKLE, cdRate, setBackDue, windMul } from './statuses.js';
 import { MOB, bindBody, bodiesOf, mobMid, mobSlot, mobLead } from './mob.js'; // round 15 (the Mob): four bodies, one hero
 import { tallyHurt, tallyHeal, tallyDown, noteStatus, tallyBlock, AUDIT } from './stats.js';
+import { dash, dashStep } from './dashes.js'; // round 18 (lane dash18): the six dashes
 import { tagRes, douseRate, DOUSE, hasTag, kindledBuff, KINDLED, hitKinds, hitType, reaches, layerOf, anyHitRes, hitResOf } from './tags.js'; // round 17 (lane tags17): tags; docs/tags17.md
 
 let NEXT_ID = 1;
@@ -1587,13 +1588,10 @@ function useAbility(w, u) {
     case 'charge': {
       const a = angleTo(u.x, u.y, t.x, t.y);
       u.facing = a;
-      if (!heroic(w, u)) {
-        // an enemy shows its charge first (a lane on the floor the heroes can step out of), then goes
-        const len = u.def.speed * 1.9 * 0.55;
-        u.act = { type: 'chargeTell', t: 0.45, max: 0.45, a };
-        addDanger(w, { shape: 'line', x1: u.x, y1: u.y, x2: u.x + Math.cos(a) * len, y2: u.y + Math.sin(a) * len, hw: u.r + 6, t: 0.45, team: u.team, src: u, kind: 'blade' });
-        setAnim(u, 'ability', 0.45 + 0.55);
-      } else u.act = { type: 'charge', t: 0.55, max: 0.55, a, hit: new Set() };
+      // round 18 (lane dash18): the charge is the drag and fling (dashes.js): the first one it meets is carried on its
+      // front and flung at the end, the rest shouldered aside; an enemy shows its lane first, as before. (It ran a
+      // straight line at one speed and threw everyone aside the same.)
+      dash(w, u, 'dragFling', { a, len: u.def.speed * 1.9 * 0.6, tell: heroic(w, u) ? 0.2 : 0.45, speed: u.def.speed * 1.9, dmg: 18 * u.dmgMul, knock: 340, hit: {}, rest: 0.4 });
       break;
     }
     case 'shadowstep': {
@@ -1611,7 +1609,14 @@ function useAbility(w, u) {
       break;
     }
     case 'dash': {
-      u.act = { type: 'dash', t: 0.22, max: 0.22, a: u.mvA };
+      // round 18 (lane dash18): a small foe's dash is one of the six dashes (dashes.js), named on its def (def.dash:
+      // feint unless it says); the cut at the end of it is its own blow, in place of its next swing. (It was a burst of
+      // speed the way it was walking, and no more.)
+      const st = def.dash || 'feint', a = angleTo(u.x, u.y, t.x, t.y), gap = dist(u.x, u.y, t.x, t.y) - u.r - t.r;
+      const o = { t, a, dmg: hitDmg(u) * (def.dashMul ?? 1), hit: { ...blowOf(def), knock: def.knock || 60 }, rest: def.atkCd * 0.7 };
+      if (st === 'lance') dash(w, u, 'drawCut', { ...o, lance: true, len: gap + t.r * 2 + u.r + 24, hold: 0.16, tell: 0.42 });
+      else if (st === 'pounce') dash(w, u, 'pounce', { ...o, r: u.r + 20 });
+      else dash(w, u, st, o);
       break;
     }
     case 'slam': {
@@ -1625,6 +1630,7 @@ function useAbility(w, u) {
 const WIND_ACTS = new Set(['windup', 'chargeTell', 'slam']);
 function runAction(w, u, dt) {
   const a = u.act;
+  if (a.dv) { dashStep(w, u, a, dt); return; } // round 18 (lane dash18): one of the six dashes (dashes.js runs it)
   if (WIND_ACTS.has(a.type)) { u.winding = true; a.t -= dt / windMul(u); } else a.t -= dt; // round 14: sleepy, every wind-up runs slower
   if (a.type === 'windup') {
     u.dvx = u.dvy = 0;
@@ -1835,9 +1841,9 @@ function physics(w, dt) {
   }
   // unit-unit
   for (let i = 0; i < us.length; i++) {
-    const a = us[i]; if (a.dead || a.downed || a.ethereal) continue;
+    const a = us[i]; if (a.dead || a.downed || a.ethereal || a.passUntil > w.time) continue; // (round 18, lane dash18: passUntil, a dash going through bodies: dashes.js)
     for (let j = i + 1; j < us.length; j++) {
-      const b = us[j]; if (b.dead || b.downed || b.ethereal) continue;
+      const b = us[j]; if (b.dead || b.downed || b.ethereal || b.passUntil > w.time) continue;
       if (a.def.pass || b.def.pass || (a.fixed && b.fixed) || (a.linkTo && a.linkTo === b.linkTo) || a.linkTo === b || b.linkTo === a) continue; // round 10: things that roll through (gear sprites), chains (round 13, lane E: a chain's head and its own links too: the first link, fixed, shoved its head off across the room at ~1900 a second)
       const dx = b.x - a.x, dy = b.y - a.y; const d2 = dx * dx + dy * dy; const m = a.r + b.r;
       if (d2 >= m * m || d2 === 0) continue;
@@ -2015,6 +2021,7 @@ export function step(w, dt) {
     if (!alive(u)) continue;
     if (u.anim) { u.anim.t += dt / (u.winding ? windMul(u) : 1); if (u.anim.t >= u.anim.dur) u.anim = null; } // (round 14: a sleepy wind-up's pose plays out slower too)
     u.winding = false; // (set again this tick by whatever wind-up it is in: runAction, elites.js hold / rushTick, boss-kit chargeTick)
+    if (u.dvHop && !(u.act && u.act.dv)) { u.dvHop = 0; u.hop = 0; } // round 18 (lane dash18): a pounce stopped in the air comes down
     if (u.def.hops) hopTick(w, u, dt); // slimes (round 16): a hop in the air goes on whatever else holds it (see slime hops)
     if (u.frozenT > 0 || u.stunT > 0 || u.sleepT > 0) { if (!u.act || u.act.type !== 'slip') { u.dvx = u.dvy = 0; u.spd = 0; continue; } }
     // a unit with its own brain (bosses, special enemies) runs it first; returning true skips the usual brain

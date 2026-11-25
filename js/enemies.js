@@ -217,7 +217,7 @@ export const ENEMIES = {
     range: 250, keep: 160, atkCd: 1.7, dmg: 7, xp: 10, coins: [2, 5], attackAnim: 'draw', temp: 0.35 },
   rattlerSpear: { ...SKELETON, name: 'Bone Spear', art: 'art/enemies/rattler-jawless-spear.svg', r: 32, vr: 23, hp: 46, speed: 50, role: 'melee',
     range: 46, atkCd: 1.6, windup: 0.35, dmg: 11, knock: 140, arc: 0.8, xp: 11, coins: [2, 5], attackAnim: 'thrust',
-    ability: 'dash', abilCd: 4.5 }, // lunges in behind the spear
+    ability: 'dash', dash: 'lance', abilCd: 4.5 }, // lunges in behind the spear (round 18, lane dash18: def.dash names which of the six dashes, dashes.js; the draw cut with a spear)
   rattlerMace: { ...SKELETON, name: 'Loose Jaw', art: 'art/enemies/rattler-loosejaw.svg', r: 34, vr: 24, hp: 60, speed: 46, role: 'melee',
     range: 22, atkCd: 1.8, windup: 0.55, dmg: 14, knock: 210, arc: 1.6, heavy: true, xp: 12, coins: [2, 6], attackAnim: 'swing' },
   gaper: { ...SKELETON, name: 'Gaper', art: 'art/enemies/gaper.svg', r: 38, vr: 31, mass: 1.6, hp: 90, speed: 54, role: 'melee',
