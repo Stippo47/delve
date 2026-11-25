@@ -1315,6 +1315,7 @@ in docs/rogue19.md (rules, calls, numbers); clips docs/clips/rogue19/.
 - Calls (say if wrong): the Palm Strike note's "low acceleration but high max turn speed" read as Spun, not the Monk's
   own turning; who can be disarmed (tags.js ARMED) decided by each art (what shows a weapon that can be taken out);
   Inner Peace stops physical hits outright (shorter: 2 / 3 s); Blood Rite downs a hero friend (as at 0).
+- Round 19, chat: "Get a few opus agents to just make a bunch of art. Terrain, obstacles, walls in dungeons so they match doors and are taller than doors, character, projectile, effects, redo status effects to see if they can come up with better designs that I like, etc. go crazy for the last bit of credits left. Like honestly spawn like 8 agents maybe more." Eight Opus art lanes (art-walls, art-floors, art-props, art-statusfx, art-shots, art-hitfx, art-foeart, art-heroart): options only, in design/r19-art/, each with a Riffle board deck (stack r19art); nothing replaces live art until picked.
 ## Round 19, lane caster19 (2026-11-25): the Digger, Grandpa Sickle, the Alchemist, the Shaman, the Witch
 Every note on these five in the designer's 0.19 deck, done as asked; everything in docs/caster19.md. The lane's calls (say
 if any is wrong):

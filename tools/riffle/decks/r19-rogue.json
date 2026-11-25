@@ -1,0 +1,107 @@
+{
+  "title": "Round 19: Bandit, Shade, Monk, Cultist",
+  "topic": "art",
+  "stack": "r19",
+  "order": 2,
+  "priority": 1,
+  "cards": [
+    {
+      "id": "report",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Four heroes, your notes",
+      "text": "Bandit, Shade, Monk, Cultist from every 0.19 note, with two new rules: Disarmed and incorporeal. 0.29.0.",
+      "why": "Mark any part that's off. The calls I made are the cards after this.",
+      "videos": [
+        "../../../docs/clips/rogue19/bandit-lightFingers.mp4"
+      ],
+      "parts": [
+        {
+          "id": "disarm",
+          "title": "Disarmed",
+          "text": "Your rule: the weapon is knocked out of the hand and lies on the floor; weapon blows and weapon abilities stop; bites, claws, kicks and spells go on; slimes and beasts can't be disarmed. A disarmed foe goes to pick its weapon up. The Dame's Disarm uses it too.",
+          "videos": [
+            "../../../docs/clips/rogue19/dame-disarm.mp4"
+          ]
+        },
+        {
+          "id": "bandit",
+          "title": "Bandit",
+          "text": "Dirty Trick: forehand, backhand, forehand, then a punch with his other hand that disarms. Bolas: a hunter's trap ring with three weights pointing in; it can't move or turn. Trait: a chain of three dashes, disarming each. Stick 'Em Up became Hostage: he grabs a small foe and holds the cutlass at its throat, so blows from the front land on it.",
+          "videos": [
+            "../../../docs/clips/rogue19/bandit-dirtyTrick.mp4",
+            "../../../docs/clips/rogue19/bandit-bolas.mp4",
+            "../../../docs/clips/rogue19/bandit-hostage.mp4"
+          ]
+        },
+        {
+          "id": "shade",
+          "title": "Shade",
+          "text": "Daggers at her sides. Blackout follows her and makes her incorporeal: blades and blows pass through, magic still lands, no collision. Clones fight like her in the same shadow form. New Shadow Walk: gone for 4 s, blinking in beside foes to stab (the old blink chain is kept). Health 100 to 86.",
+          "videos": [
+            "../../../docs/clips/rogue19/shade-blackout.mp4",
+            "../../../docs/clips/rogue19/shade-shadowWalk.mp4",
+            "../../../docs/clips/rogue19/ghost-incorporeal.mp4"
+          ]
+        },
+        {
+          "id": "monk",
+          "title": "Monk",
+          "text": "Fists: a three-part combo, the third throws them far back and spins them. Flurry steps in with each punch, the last one late. Inner Peace stops blows and shots on gold plates. Palm Strike: a great flat hand pushing out a short cone.",
+          "videos": [
+            "../../../docs/clips/rogue19/monk-attack.mp4",
+            "../../../docs/clips/rogue19/monk-flurry.mp4",
+            "../../../docs/clips/rogue19/monk-innerPeace.mp4",
+            "../../../docs/clips/rogue19/monk-palmStrike.mp4"
+          ]
+        },
+        {
+          "id": "cultist",
+          "title": "Cultist",
+          "text": "Bolt puts on Anti-heal (heals do half). Blood Pact bleeds friends too. Ritual Circle goes round the foe nearest death; if it doesn't get out, it's sacrificed and his cooldowns drop. Sacrifice dashes through every bleeding foe, bursting each. Blood Rite takes a friend about to die and resets his cooldowns.",
+          "videos": [
+            "../../../docs/clips/rogue19/cultist-ritualCircle.mp4",
+            "../../../docs/clips/rogue19/cultist-sacrifice.mp4",
+            "../../../docs/clips/rogue19/cultist-bloodRite.mp4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "spun",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Palm Strike's spin",
+      "text": "I read your turning note as Palm Strike's effect on its target: slippery turning, then dazed. Right?",
+      "why": "The other reading was about the Monk's own turning, which already looks crisp. If you meant him, I'll tune his turning instead.",
+      "pick": "The target: slippery turning, then Dazed."
+    },
+    {
+      "id": "hostage",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Hostage for Stick 'Em Up",
+      "text": "Stick 'Em Up's replacement: he grabs a small foe and holds it as a shield, blade at its throat.",
+      "why": "It keeps the bandit's character and gives him a defensive trick. Tier II holds longer; tier III shoves it into its friends, disarmed.",
+      "pick": "Keep Hostage."
+    },
+    {
+      "id": "rite",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Blood Rite and downed",
+      "text": "Blood Rite takes a friend under 10%: they go down as if at 0, his cooldowns reset. Revived as normal.",
+      "why": "Killing a friend outright would lose a party member for the run; going down keeps the dark trade but lets revives bring them back.",
+      "pick": "Keep it: they go down, not die."
+    },
+    {
+      "id": "bleed-both",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Ritual Circle bleeds both",
+      "text": "At tier II the circle bleeds everyone inside, friends and foes, as your note read. Keep both sides?",
+      "why": "It makes the circle a risk for his own party, which fits a cultist, but costs his friends health.",
+      "pick": "Keep both sides."
+    }
+  ]
+}

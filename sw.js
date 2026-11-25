@@ -1,5 +1,5 @@
 // Keeps the whole game on the phone so it opens with no signal. Bump VERSION on every release.
-const VERSION = '0.28.0';
+const VERSION = '0.29.0';
 const CACHE = `delve-${VERSION}`;
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-192.png',
   'icons/icon-512.png', 'js/armour.js', 'js/audio.js', 'js/battle-ui.js', 'js/battle.js', 'js/bestiary.js',
@@ -10,8 +10,8 @@ const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png',
   'js/camp-scene.js', 'js/camp.js', 'js/convoy-art.js', 'js/convoy-ui.js', 'js/convoy.js', 'js/dashes.js',
   'js/dunes.js', 'js/dungeon.js', 'js/elderent.js', 'js/elites.js', 'js/enemies.js', 'js/env.js', 'js/families.js',
   'js/foe-draw.js', 'js/foes.js', 'js/foes10.js', 'js/foes9.js', 'js/foundry.js', 'js/fx-boss.js', 'js/fx-dash.js',
-  'js/fx-melee.js', 'js/fx-status.js', 'js/fx-water.js', 'js/fx.js', 'js/fx2.js', 'js/fx3.js', 'js/fxkit.js',
-  'js/fxtag.js', 'js/fxvar.js', 'js/height.js', 'js/heroes-water.js', 'js/heroes.js', 'js/heroes2.js',
+  'js/fx-melee.js', 'js/fx-rogue19.js', 'js/fx-status.js', 'js/fx-water.js', 'js/fx.js', 'js/fx2.js', 'js/fx3.js',
+  'js/fxkit.js', 'js/fxtag.js', 'js/fxvar.js', 'js/height.js', 'js/heroes-water.js', 'js/heroes.js', 'js/heroes2.js',
   'js/heroes3.js', 'js/hpstyle.js', 'js/hud.js', 'js/icons.js', 'js/inspect.js', 'js/kits-charm.js',
   'js/kits-water.js', 'js/kits.js', 'js/kits2.js', 'js/kits3.js', 'js/layout.js', 'js/leash.js', 'js/looks.js',
   'js/looks2.js', 'js/main.js', 'js/map.js', 'js/meta.js', 'js/mob.js', 'js/movetext.js', 'js/numbers.js',
