@@ -2192,7 +2192,7 @@ export const ABILITIES2 = {
       k2(w, { draw: 'wings', unit: u, x: u.x, y: u.y, r: u.r, max: 0.7, flap: true }); u.invulnT = Math.max(u.invulnT, 0.7);
       u.flyT = 0.55; // round 17 (lane tags17): flying on her saving leap
       u.act = { type: 'leap', t: 0.55, max: 0.55, x0: u.x, y0: u.y, x1, y1, land: () => {
-        if (!d.downed || d.dead) return; cleanse(d); d.downed = false; d.reviveT = 0; d.hp = d.maxHp * (tier >= 2 ? 0.4 : 0.25); d.invulnT = 1.5; d.revivedByKit = true;
+        if (!d.downed || d.dead) return; cleanse(d); d.downed = false; d.reviveT = 0; d.hp = d.maxHp * (tier >= 2 ? 0.4 : 0.25); d.invulnT = 1.5; d.revivedByKit = true; d.revivedBy = u; d.revivedAb = 'valkyrieCall';
         fx(w, { type: 'pillar', x: d.x, y: d.y, r: 34, kind: 'holy', max: 0.6 }); w.shake = Math.max(w.shake, 5);
         k2(w, { draw: 'radiantBurst', x: u.x, y: u.y, r: 140, max: 0.6 });
         for (const e of foesNear(w, u, u.x, u.y, 140)) { hurt(w, e, dmgOf(u, 0.8), u, { knock: 380, kAngle: ang(u, e), noDodge: true, radiance: 40, ab: 'valkyrieCall' }); }

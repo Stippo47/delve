@@ -1,0 +1,107 @@
+180 abilities x 3 tiers, 11.4s
+threw: 0
+never went off in a loop: 0
+not shown (a loop where it drew nothing of its own and touched no one): 3
+  werewolf:frenzy
+  enchantress:sweetheart
+  enchantress:heartbreak
+drawn but reached no one (a loop where nothing it made touched a foe or a friend): 19
+  paladin:guard
+  archer:roll
+  twinfang:dash
+  granny:oldBones
+  frost:iceWall
+  cleric:mend
+  bard:encore
+  druid:rejuvenate
+  plague:leeches
+  shade:shadowWalk
+  shade:blackout
+  grandpa:oldTales
+  shaman:spiritLink
+  chef:hotMeal
+  trapper:tripwire
+  gladiator:showboat
+  werewolf:turnWolf
+  clockwork:timeBubble
+  earthMage:stoneWall
+wrong scenario (the game's own scorer would not have used it there): 35
+  archer:roll (score 0)
+  twinfang:backstab (score 0)
+  twinfang:dash (score 0)
+  wildmane:cleave (score 0)
+  berserker:unstoppable (score 0)
+  granny:oldBones (score -)
+  frost:iceWall (score 0)
+  bard:encore (score 0)
+  druid:entangle (score 0)
+  necromancer:lifeDrain (score 0)
+  oldguard:pommelStrike (score 0)
+  dame:riposte (score 0)
+  griffon:wingShield (score 0)
+  bulwark:brace (score 0)
+  bulwark:shieldWall (score 0)
+  bearskin:hibernate (score 0)
+  grandpa:oldTales (score 0)
+  cultist:soulCandle (score 0)
+  monk:innerPeace (score 0)
+  quartermaster:resupply (score 0)
+  crossbowman:pavise (score 0)
+  ninja:substitution (score 0)
+  pirate:grog (score 0)
+  trapper:tripwire (score 0)
+  jester:befuddle (score 0)
+  samurai:focus (score 0)
+  werewolf:pounce (score 0)
+  enchantress:sweetheart (score 0)
+  enchantress:heartbreak (score 0)
+  mob:scatter (score 0)
+  warden:manacle (score 0)
+  warden:nullify (score 0)
+  earthMage:stoneWall (score 0)
+  waterMage:bubbleShield (score 0)
+  waterMage:waterDome (score 0.25)
+tiers identical (two tiers played the very same loop: nothing on the stage changed): 0
+tiers that differ only in where things went (the same foes reached, statuses, buffs, heals, summons, sizes): 29
+  paladin:guard I~II
+  archer:roll I~II
+  twinfang:dash II~III
+  berserker:unstoppable II~III
+  cleric:sanctuary II~III
+  bard:encore II~III
+  necromancer:lifeDrain I~II
+  plague:leeches II~III
+  oldguard:rallyCry II~III
+  bulwark:shieldWall II~III
+  bearskin:hibernate I~II
+  shade:shadowWalk I~II
+  grandpa:oldTales I~II
+  cultist:soulCandle I~II
+  seer:starfall I~II
+  chef:hotMeal II~III
+  beekeeper:honeyPot I~II
+  marksman:ricochet I~II
+  ninja:substitution II~III
+  trapper:tripwire II~III
+  gladiator:showboat I~II II~III
+  jester:mock II~III
+  samurai:iaido I~II
+  werewolf:turnWolf I~II II~III
+  enchantress:sweetheart I~II II~III
+  enchantress:heartbreak I~II II~III
+  clockwork:stopClock II~III
+  airMage:gale I~II
+  warden:nullify I~II
+abilities whose hero or friend took blows from nothing seen: 12 (656 blows)
+  granny:oldBones 12 hero<-bookDummy hero hp set
+  oldguard:pommelStrike 72 hero<-bookDummy hero<-bookDummy
+  dame:riposte 46 hero<-bookDummy hero<-bookDummy
+  griffon:wingShield 72 hero<-bookDummy hero<-bookDummy
+  bearskin:hibernate 42 hero<-bookDummy hero<-bookDummy
+  monk:innerPeace 64 hero<-bookDummy hero<-bookDummy
+  ninja:substitution 42 hero<-bookDummy hero<-bookDummy
+  trapper:tripwire 14 hero<-bookDummy hero<-bookDummy
+  jester:befuddle 126 hero<-bookDummy hero<-bookDummy
+  samurai:focus 106 hero<-bookDummy hero<-bookDummy
+  mob:scatter 54 hero<-bookDummy hero<-bookDummy
+  clockwork:rewind 6 paladin<-bookDummy paladin<-bookDummy

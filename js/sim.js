@@ -162,7 +162,7 @@ export function unitNumbers(u) {
     return { hit: aps ? dps / aps : 0, aps, hp: u.maxHp, speed: speedOf(u), range: u.def.range || 0, armor: u.armor || 0 }; }
   return { hit: hitDmg(u) * blowMul(u), aps: atkRate(u) / (u.def.atkCd || 1), hp: u.maxHp, speed: speedOf(u), range: u.def.range || 0, armor: u.armor || 0 };
 }
-const immuneTo = (u, type) => u.buffs.some((b) => b.statusImmune || (b.immune && b.immune.includes(type))) || hooksOf(u).some((h) => h.immune && h.immune.includes(type));
+export const immuneTo = (u, type) => u.buffs.some((b) => b.statusImmune || (b.immune && b.immune.includes(type))) || hooksOf(u).some((h) => h.immune && h.immune.includes(type));
 const knockImmune = (u) => u.buffs.some((b) => b.knockImmune) || hooksOf(u).some((h) => h.knockImmune);
 
 export function addBuff(u, b) {
@@ -508,7 +508,7 @@ function steer(w, u, gx, gy, opts = {}) {
       if (ad < spread) danger[i] = Math.max(danger[i], k * (1 - ad / (spread * 1.6)));
     }
   };
-  for (const p of w.pillars) if (!ownBoulder(u, p)) avoidCircle(p.x, p.y, p.r, 1, 70);
+  for (const p of w.pillars) if (!ownBoulder(u, p) && p.owner !== u) avoidCircle(p.x, p.y, p.r, 1, 70); // (round 17, lane foes17: nor its own boulder or snowball lying loose: a troll steered off the very boulder it was walking to; a yeti walks round its ball on a circle, foes10.js)
   // telegraphed hits: don't walk into one (escaping one that's already under you is movement()'s job)
   if (w.danger.length) for (const z of w.danger) {
     if (!threatens(z, u) || inZone(z, u.x, u.y, R * 0.6)) continue;
@@ -558,14 +558,18 @@ function steer(w, u, gx, gy, opts = {}) {
 const CLEAR_PAD = 42; // a route is pulled straight no tighter than this (the A* grid keeps 46 from walls)
 function goalVec(w, u, tx, ty) {
   if (w.detour) { const p = w.detour(u, tx, ty); if (p) { tx = p.x; ty = p.y; } } // lane W (round 14, convoy.js): the way round the wagon, which is solid and moves
-  if ((!w.walls.length && !w.pillars.length) || pathClear(w, u.x, u.y, tx, ty, u.r * 0.9)) { u.path = null; return [tx - u.x, ty - u.y]; }
+  // round 17 (lane foes17): a troll's own boulder (in its hands, or the one it is walking to) is not in its way: every
+  // line from a troll ran through the boulder in its fists, so it never went straight anywhere and crept from grid
+  // cell to grid cell instead; and a line to a boulder always ends inside it
+  const skip = u.bould ? (p) => p === u.bould && (ownBoulder(u, p) || dist(tx, ty, p.x, p.y) < p.r + 2) : null;
+  if ((!w.walls.length && !w.pillars.length) || pathClear(w, u.x, u.y, tx, ty, u.r * 0.9, skip)) { u.path = null; return [tx - u.x, ty - u.y]; }
   u.pathT -= 1 / 60;
   const moved = !u.pathGoal || Math.hypot(u.pathGoal.x - tx, u.pathGoal.y - ty) > 60;
-  if (!u.path || u.pathT <= 0 || moved) { u.path = findPath(w, u.x, u.y, tx, ty, Math.min(CLEAR_PAD, u.r * 0.9)); u.pathT = 0.6; u.pathGoal = { x: tx, y: ty }; }
+  if (!u.path || u.pathT <= 0 || moved) { u.path = findPath(w, u.x, u.y, tx, ty, Math.min(CLEAR_PAD, u.r * 0.9), skip); u.pathT = 0.6; u.pathGoal = { x: tx, y: ty }; }
   if (!u.path || !u.path.length) return [tx - u.x, ty - u.y];
   // the furthest route point we can see
   let k = 0;
-  for (let i = u.path.length - 1; i >= 0; i--) if (pathClear(w, u.x, u.y, u.path[i].x, u.path[i].y, u.r * 0.9)) { k = i; break; }
+  for (let i = u.path.length - 1; i >= 0; i--) if (pathClear(w, u.x, u.y, u.path[i].x, u.path[i].y, u.r * 0.9, skip)) { k = i; break; }
   if (k > 0) u.path.splice(0, k);
   const p = u.path[0];
   if (Math.hypot(p.x - u.x, p.y - u.y) < 16 && u.path.length > 1) u.path.shift();
@@ -1130,6 +1134,9 @@ export function hurt(w, u, amount, src, o = {}) {
   if (src && src.hitBurn && !o.dot && src !== u) addStatus(w, u, 'burn', src.hitBurn, src); // round 9: a burning Elder Ent's every blow burns
   if (src && alive(src) && !o.dot) for (const h of hooksOf(src)) if (h.hit) h.hit(w, src, u, amt, o);
   if (!o.dot) for (const h of hooksOf(u)) if (h.struck) h.struck(w, u, src, amt, o);
+  // (round 18, lane downed18: once only. A blow's own burn could scorch it to 0 inside this call, and then this call
+  // brought it down a second time: two 'heroDown's, two Wraith Veil ghosts, a kill counted twice)
+  if (!alive(me)) return amt;
   if (u.hp <= 0 && hooksOf(me).some((h) => h.downed && h.downed(w, me, src))) return amt;
   if (u.hp <= 0) { if (w.stats) tallyDown(w, me, src, o); kill(w, me, src); }
   return amt;
@@ -1145,7 +1152,11 @@ export function addStatus(w, u, type, amount, src, fromBlow, credit = null) { //
     if (!fromBlow) { const by = src || null, m = l.stAt || (l.stAt = {}); if (m[type] === w.time && l.stBy0 === by) amount *= MOB.share; else { m[type] = w.time; l.stBy0 = by; } }
     u = l;
   }
-  if (u.linkTo) { if (alive(u.linkTo)) addStatus(w, u.linkTo, type, amount * (u.def.segTaken ?? 0.6), src, undefined, credit); return; } // a chain's segment: its head takes it
+  if (u.linkTo) { // a chain's segment: its head takes it. Round 18 (the resistance audit): once a frame per status and source, not once
+    // per segment (one gas cloud over six coils built 4.6 to 5.8 times the status a single body would)
+    const h = u.linkTo; if (!alive(h)) return; const key = type + ':' + (src ? src.id : '-'), seen = h.segSt || (h.segSt = {});
+    if (seen[key] === w.time) return; seen[key] = w.time;
+    addStatus(w, h, type, amount * (u.def.segTaken ?? 0.6), src, undefined, credit); return; }
   if (type === 'radiance' && (u.radiantT > 0 || u.radImmuneT > 0)) return; // glowing, or just was: its own aura can't feed it
   if (type === 'entangle' && u.tangleImmuneT > 0) return; // held fast already (an entangle root), or just got free
   if (NEW_BURSTS.has(type) && u[type + 'ImmuneT'] > 0) return; // round 13: just burst
@@ -1420,7 +1431,10 @@ function killNow(w, u, src) {
   }
   if (u.summon) { u.dead = true; puff(w, u.x, u.y, '#B8C8DA', 10, 80, 5, 0.5); return; } // summons just fade (blue-grey: ours, round 8)
   for (const b of u.bodies || []) { b.act = null; b.target = null; b.forcedGoal = null; b.later = null; } // round 15 (the Mob): its other bodies drop what they were doing
-  if (u.team === 'hero' && !w.battle) {
+  // Round 18 (lane downed18, the designer: "Battle mode can have downed allies that can only be revived with
+  // abilities. (Corpses can be used for necromancy)"): in a battle a hero (a picked one: it has a kit) goes down too,
+  // on either side; monsters, bosses, summons and constructs die. battle.js bleeds the downed out (bleedOut).
+  if (w.battle ? !!u.kit && u.def.team === 'hero' && !u.def.boss : u.team === 'hero') {
     u.downed = true; u.act = null; u.frozenT = 0; u.st = freshStatuses(); u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; u.addledT = 0; u.fearT = 0; u.shackledT = 0;
     textU(w, u.x, u.y, u.r + 10, 'DOWN', '#FF8A80', 1.1);
     emit(w, 'heroDown', u);
@@ -1984,6 +1998,16 @@ function pickups(w, dt) {
     if (near && nd < 220 && (!near.coinGoal || nd < near.coinGoal.d)) near.coinGoal = { x: p.x, y: p.y, d: nd };
   }
   w.pickups = w.pickups.filter((p) => !p.got);
+}
+
+// Battle mode (round 18, lane downed18): a downed hero nobody brought back in time dies where it lies and leaves its
+// body, in the pose it lay in (render.js turns the downed by +0.6), for necromancy. No killer, no hooks: it fell before.
+export function bleedOut(w, u) {
+  if (!u.downed || u.dead) return;
+  u.downed = false; u.dead = true; u.hp = 0; u.act = null;
+  if (!u.def.noCorpse) for (const b of [u, ...(u.bodies || [])]) w.corpses.push({ kind: b.kind, x: b.x, y: b.y, r: b.r, vr: b.vr, facing: b.facing + 0.6, tint: b.tint, kx: 0, ky: 0, spin: 0, z: 0, vz: 0, age: 1, t: CORPSE_LIFE, max: CORPSE_LIFE, bled: true }); // (the Mob: each body its own)
+  if (w.corpses.length > MAX_CORPSES) w.corpses.splice(0, w.corpses.length - MAX_CORPSES);
+  puff(w, u.x, u.y, '#8A8496', 8, 50, 5, 0.6);
 }
 
 // Bodies: in the air they fly on, spinning, and bounce off walls; on the ground they slide to a stop and lie still.

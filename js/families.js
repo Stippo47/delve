@@ -53,23 +53,50 @@ export function touch(w, u, dmg, o = {}, cd = 0.7) {
 // ---------------------------------------------------------------- chains (snakes, centipedes)
 // The head is an ordinary unit with its own brain; on its first tick it lays out def.chain.n segments behind it
 // (def.chain.seg, each a unit with its own hit circle). A blow on a segment lands on the head (sim.js hurt, u.linkTo;
-// x segTaken), so the chain has one health bar; the body follows the head's path exactly; touching it hurts. When the
-// head dies the body goes with it. An elite or major head brings a body its own size.
+// x segTaken), so the chain has one health bar; touching it hurts. When the head dies the body goes with it. An elite or
+// major head brings a body its own size.
 // Round 13 (lane E; the designer on the sand serpent: "Wth is that snake enemy"): each link lies along the path where
 // it is (its facing is the chord across its own length, so the body bends smoothly, not link by link), and the path
 // remembers where its head went under the sand: a link that reaches that stretch goes under too (hidden, untouchable)
 // and comes up again where the head came up. foe-draw.js draws the chain as one body.
+// Round 17 (lane foes17; the designer: "Follow the leader segments, each with its own hit box"; the sand serpent: "I
+// want each segment to be the same size. Add a tail segment that has it taper off ... Have each segment chained back to
+// front. Not stacked near the head. Is always laying down. Moving like the centipedes from florr.io for reference. Just
+// in bursts and in a slither motion"):
+//  - follow the leader: the head's path is kept as a trail of points laid down by distance (one every CHAIN.step it
+//    moves); link i rides (i + 1) x gap along it, the tail tail.gap of a gap past the last link. The gap is about a
+//    link's own length (they just overlap, chained, not stacked: 26 -> 52 for the serpent, 28 -> 38 for the crawler),
+//    so the spacing along the body is the same at any speed, and when the head stops the body lies still;
+//  - every link the same size (the old taper made them smaller down the body); then one tail link that tapers to a
+//    point (foe-draw.js draws it), its hit circle smaller (tail.r of a link's);
+//  - knocked back into its own body (or anything else that would fold the trail back over itself): the body is shoved
+//    back as a chain instead, each link kept its gap from the one before it, and the trail laid again along it;
+//  - bursts: in its own walk (not a lunge, a strike, under the sand) the head goes in pulses (burst: a surge up to
+//    `high` of its pace over the first `surge` of each `beat` seconds, a glide at `low` the rest: its old pace on
+//    average), and slithers: its heading swings `wave.amp` radians either side, a full swing every `wave.len` gaps it
+//    travels; the body, following its path, carries the wave down itself, tied to the ground, as a snake's does;
+//  - it turns in a curve no tighter than CHAIN.bend gaps across (in its own walk), so it can't curl up on itself: a
+//    head that turned on the spot laid its trail in a knot and the body bunched up in it;
+//  - flat on the floor: no step bounce or breathing (render.js, def.flat), and the serpent's strike no longer lifts
+//    its head (dunes.js).
+export const CHAIN = { step: 3, bend: 0.8, burst: { beat: 1.1, surge: 0.4, low: 0.7, high: 2.2 }, wave: { amp: 0.5, len: 3.4 }, tail: { gap: 0.86, r: 0.62 } };
+// (a chain head's brain, wrapped: whether its head walks this step as it likes, so bursts and the slither only then)
+export const chainBrain = (fn) => (w, u, dt) => { const busy = fn(w, u, dt); u.chainFree = !busy; return busy; };
 export function chainHead(w, u, dt) {
   if (!u.segs) layChain(w, u);
   return false;
 }
 function layChain(w, u) {
-  const c = u.def.chain, k = u.r / u.def.r, gap = c.gap * k, a = u.facing + Math.PI;
+  const c = u.def.chain, k = u.r / u.def.r, gap = c.gap * k, a = u.facing + Math.PI, T = { ...CHAIN.tail, ...(c.tail || {}) };
   u.segs = []; u.trail = [{ x: u.x, y: u.y }];
-  for (let d = 4; d <= (c.n + 2) * gap; d += 4) u.trail.push({ x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d });
-  for (let i = 0; i < c.n; i++) {
-    const s = spawn(w, c.seg, u.x + Math.cos(a) * gap * (i + 1), u.y + Math.sin(a) * gap * (i + 1), { team: u.team, mult: w.mult, scale: k * (1 - 0.35 * (i / Math.max(1, c.n - 1)) * (c.taper || 0)) });
-    s.linkTo = u; s.idx = i; s.fixed = true; s.aggro = true; s.minion = true; s.facing = u.facing; s.dmgMul = u.dmgMul; s.look = u.look; s.gap = gap;
+  const len = c.n * gap + T.gap * gap;
+  for (let d = CHAIN.step; d <= len + 2 * gap; d += CHAIN.step) u.trail.push({ x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d });
+  for (let i = 0; i <= c.n; i++) { // (i === n: the tail)
+    const tail = i === c.n, at = tail ? c.n * gap + T.gap * gap : (i + 1) * gap;
+    const s = spawn(w, c.seg, u.x + Math.cos(a) * at, u.y + Math.sin(a) * at, { team: u.team, mult: w.mult, scale: k });
+    s.linkTo = u; s.idx = i; s.fixed = true; s.aggro = true; s.minion = true; s.facing = u.facing; s.dmgMul = u.dmgMul; s.look = u.look;
+    s.gap = gap; s.at = at; s.link = tail ? T.gap * gap : gap; // (s.at: how far along the trail it rides; s.link: how far behind the one before it)
+    if (tail) { s.tail = true; s.r *= T.r; }
     u.segs.push(s);
   }
 }
@@ -81,18 +108,87 @@ function trailPoint(tr, d) { // the point d along the head's trail (and whether 
   }
   const z = tr[tr.length - 1], y = tr[tr.length - 2] || z; return { x: z.x, y: z.y, a: angleTo(z.x, z.y, y.x, y.y), under: !!z.under };
 }
+// Once a step (from whichever of its links' brains runs first: a stunned link's doesn't), before the physics: the
+// head's walk shaped into bursts and a slither, then every link laid along the trail.
+function chainTick(w, h, dt) {
+  const c = h.def.chain, segs = h.segs.filter((s) => !s.dead);
+  if (!segs.length) return;
+  const B = { ...CHAIN.burst, ...(c.burst || {}) }, V = { ...CHAIN.wave, ...(c.wave || {}) }, gap = segs[0].gap;
+  // the head's own walk this step: a burst, then a glide; swinging side to side as it goes
+  const free = h.chainFree && !h.act && !h.hidden && !(h.el && (h.el.holdT > 0 || h.el.rush)) && !(h.stunT > 0) && !(h.frozenT > 0) && !(h.sleepT > 0) && !(h.rootT > 0);
+  if (free && Math.hypot(h.dvx, h.dvy) > 4) {
+    h.beat = ((h.beat ?? rand()) + dt / B.beat) % 1;
+    const k = h.beat < B.surge ? Math.sin(Math.PI * h.beat / B.surge) ** 2 : 0, m = B.low + (B.high - B.low) * k;
+    const th = V.amp * Math.sin(TAU * (h.odo || 0) / (V.len * gap)), cs = Math.cos(th), sn = Math.sin(th);
+    const vx = h.dvx * m, vy = h.dvy * m; h.dvx = vx * cs - vy * sn; h.dvy = vx * sn + vy * cs;
+    h.surge = k;
+    // no tighter a turn than CHAIN.bend gaps of radius, from the way its trail last ran
+    const t0 = h.trail[0], t1 = h.trail[1];
+    if (t1 && dist(t0.x, t0.y, t1.x, t1.y) > 0.5) {
+      const was = angleTo(t1.x, t1.y, t0.x, t0.y), sp = Math.hypot(h.dvx, h.dvy), want = Math.atan2(h.dvy, h.dvx);
+      const gone = dist(h.x, h.y, t0.x, t0.y) + sp * dt, most = gone / (CHAIN.bend * gap), a = was + clamp(wrapAngle(want - was), -most, most);
+      h.dvx = Math.cos(a) * sp; h.dvy = Math.sin(a) * sp;
+    }
+  } else h.surge = 0;
+  // where the physics will put the head this step (sim.js physics: its pace eases to dvx, then the knock on top)
+  const fz = h.frozenT > 0, acc = Math.min(1, dt * 20);
+  const vx = fz ? h.vx * 0.8 : h.vx + (h.dvx - h.vx) * acc, vy = fz ? h.vy * 0.8 : h.vy + (h.dvy - h.vy) * acc;
+  const hx = clamp(h.x + (vx + h.kx) * dt, h.r, w.W - h.r), hy = clamp(h.y + (vy + h.ky) * dt, h.r, w.H - h.r);
+  // round 18 (lane foes17b): a knock moves the whole body with the head, as one piece (the trail and every link go
+  // with it); only the head's own walk lays new trail. A hard knock back into the body used to be taken as a walk:
+  // the links were shoved apart one from the next but not from the rest, and the head ran over its own body into a
+  // pile that held until the body had crawled out of it.
+  const kdx = hx - clamp(h.x + vx * dt, h.r, w.W - h.r), kdy = hy - clamp(h.y + vy * dt, h.r, w.H - h.r);
+  if (kdx * kdx + kdy * kdy > 1e-4) for (const p of h.trail) { p.x += kdx; p.y += kdy; }
+  const tr = h.trail, f = tr[0], mx = hx - f.x, my = hy - f.y, mv = Math.hypot(mx, my);
+  let shove = false;
+  if (mv > CHAIN.step) {
+    const s = tr[1] || f, fl = dist(s.x, s.y, f.x, f.y) || 1, fx = (f.x - s.x) / fl, fy = (f.y - s.y) / fl;
+    // into its own body (a knock, a shove; not under the sand, where it may well double back): the body is pushed
+    if (!h.hidden && mx * fx + my * fy < -0.35 * mv) shove = true;
+    else { h.odo = (h.odo || 0) + mv; tr.unshift({ x: hx, y: hy, under: !!h.hidden }); }
+  } else f.under = !!h.hidden;
+  const len = segs[segs.length - 1].at + gap * 2;
+  { let L = 0; for (let i = 1; i < tr.length; i++) { L += dist(tr[i - 1].x, tr[i - 1].y, tr[i].x, tr[i].y); if (L > len) { tr.length = i + 1; break; } } }
+  // each link at its place along the trail, facing along it
+  let px = tr[0].x, py = tr[0].y, folded = shove;
+  if (!shove) for (const s of segs) {
+    const p = trailPoint(tr, s.at), p0 = trailPoint(tr, Math.max(0, s.at - s.link * 0.6)), p1 = trailPoint(tr, s.at + s.link * 0.6);
+    s.x = p.x; s.y = p.y; s.facing = dist(p0.x, p0.y, p1.x, p1.y) > 2 ? angleTo(p1.x, p1.y, p0.x, p0.y) : p.a; s.under = p.under;
+    if (!h.hidden && !p.under && dist(px, py, s.x, s.y) < s.link * 0.88) folded = true; // (a corner too sharp, or the trail laid back over itself: as a chain, below; not with its head under the sand, where the path may double back and the links go under as they reach it)
+    px = s.x; py = s.y;
+  }
+  if (folded) { // as a chain: each link its own gap behind the one before it, along the line it lies on from it
+    px = hx; py = hy; let pa = h.facing;
+    for (const s of segs) {
+      const d = dist(px, py, s.x, s.y), a = d > 0.5 ? angleTo(px, py, s.x, s.y) : pa + Math.PI;
+      s.x = px + Math.cos(a) * s.link; s.y = py + Math.sin(a) * s.link; s.facing = a + Math.PI; s.under = !!s.hidden;
+      pa = s.facing; px = s.x; py = s.y;
+    }
+    // the trail laid again along the body, head to tail, and on past the tail
+    const pts = [{ x: hx, y: hy, under: !!h.hidden }, ...segs.map((s) => ({ x: s.x, y: s.y, under: !!s.hidden }))], out = [pts[0]];
+    for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], b = pts[i], L = dist(a.x, a.y, b.x, b.y), n = Math.max(1, Math.round(L / CHAIN.step)); for (let j = 1; j <= n; j++) out.push({ x: a.x + (b.x - a.x) * j / n, y: a.y + (b.y - a.y) * j / n, under: !!(a.under && b.under) }); }
+    const z = segs[segs.length - 1], ba = z.facing + Math.PI; for (let d = CHAIN.step; d <= gap * 2; d += CHAIN.step) out.push({ x: z.x + Math.cos(ba) * d, y: z.y + Math.sin(ba) * d, under: !!z.hidden });
+    h.trail = out;
+  }
+  for (const s of segs) { s.mvA = s.facing; s.dvx = s.dvy = 0; s.spd = 0; }
+}
+// Would a lunge from the head along a, len long, go through its own body? (round 17, lane foes17: a serpent struck
+// straight back over itself at a hero behind it, its head on top of its own coils; now it turns round to them first)
+export function crossesBody(u, a, len) {
+  const dx = Math.cos(a), dy = Math.sin(a);
+  for (const s of u.segs || []) {
+    if (s.dead || s.hidden) continue;
+    const ox = s.x - u.x, oy = s.y - u.y, k = ox * dx + oy * dy; if (k < 0 || k > len) continue;
+    if (Math.abs(ox * dy - oy * dx) < s.r + u.r * 0.6) return true;
+  }
+  return false;
+}
 export function segBrain(w, s, dt) {
   const h = s.linkTo;
   if (!h || !alive(h)) { kill(w, s, null); return true; }
-  if (s.idx === 0) { // the first segment keeps the head's trail (it runs even while the head stands through a move)
-    const tr = h.trail, f = tr[0];
-    if (dist(f.x, f.y, h.x, h.y) > 3) { tr.unshift({ x: h.x, y: h.y, under: !!h.hidden }); let L = 0; for (let i = 1; i < tr.length; i++) { L += dist(tr[i - 1].x, tr[i - 1].y, tr[i].x, tr[i].y); if (L > (h.segs.length + 3) * s.gap) { tr.length = i + 1; break; } } }
-    else tr[0].under = !!h.hidden;
-  }
-  const d = (s.idx + 1) * s.gap, p = trailPoint(h.trail, d), p0 = trailPoint(h.trail, Math.max(0, d - s.gap * 0.6)), p1 = trailPoint(h.trail, d + s.gap * 0.6);
-  const a = dist(p0.x, p0.y, p1.x, p1.y) > 2 ? angleTo(p1.x, p1.y, p0.x, p0.y) : p.a; // (the chord across its length: a smooth bend)
-  s.x = p.x; s.y = p.y; s.facing = a; s.mvA = a; s.dvx = s.dvy = 0; s.spd = dist(0, 0, h.vx, h.vy);
-  if (p.under !== !!s.hidden) { s.hidden = p.under; s.ethereal = p.under; if (h.def.chain.dirt) puff(w, s.x, s.y, h.def.chain.dirt, 5, 70, 5, 0.4); } // going under, coming up
+  if (h.chainT !== w.time) { h.chainT = w.time; chainTick(w, h, dt); } // (the first of its links to run this step lays out the whole body)
+  if (!!s.under !== !!s.hidden) { s.hidden = !!s.under; s.ethereal = !!s.under; if (h.def.chain.dirt) puff(w, s.x, s.y, h.def.chain.dirt, 5, 70, 5, 0.4); } // going under, coming up
   if (!s.hidden) touch(w, s, s.def.touchDmg || 4, { knock: 140 });
   return true;
 }

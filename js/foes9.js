@@ -17,6 +17,7 @@
 //   The Crypt: the golden skeleton (double gold, homing golden bones that go through heroes and hit 1.5x; "immune to
 //     status effects completely and has more hp") and the harrowing skeleton ("Revive 1 time after death. On revival
 //     makes small burst of curse around them").
+import { BUILD_IDS } from './statuses.js';
 import { alive, opponents, allies, hurt, puff, sparks, flames, addStatus, setAnim, fx, addBuff, explode, spawn, heal, kill, addDanger, drive, steer, goalVec, turnSide, restoreSide } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange, chance } from './util.js';
 import { lineClear } from './path.js';
@@ -137,7 +138,12 @@ export const HOLD = -0.46;
 // colliders' 1.1 = 66: 41 room units), grown only as an elite or major troll is (u.r over its kind's r), so a smaller
 // troll still pushes the same boulder. def.boulderR overrides.
 export const BOULDER_R = 41;
-const BOULDER_JAM = 3, BOULDER_REST = 6; // round 14 (lane L): seconds getting nowhere before it lets the boulder be; seconds bare-handed after
+const BOULDER_JAM = 3, BOULDER_REST = 4; // round 14 (lane L): seconds getting nowhere before it lets the boulder be; seconds bare-handed after (round 17: 6 -> 4, and only when it had no line to roll it down)
+// Round 17 (lane foes17; the designer: "look into the troll shaped enemies not being able to get their boulders"):
+// BOULDER_REACH, how far past touching it can reach for its boulder (16 -> 26: a hero or a friend leaning on the far
+// side no longer keeps its hands off it); BOULDER_RIP, the stoop to tear a new boulder out of the floor when it can't
+// get to the one it has (wedged in a gap it can't fit through, walled in by its friends): the old one crumbles.
+const BOULDER_REACH = 26, BOULDER_RIP = 1.1;
 function boulderOf(w, u) {
   if (u.bould === undefined) {
     const big = u.elite && u.def.rock ? 1.25 : 1, r = Math.round((u.def.boulderR || BOULDER_R) * (u.r / (u.def.r || u.r)) * big);
@@ -155,6 +161,7 @@ function boulderOf(w, u) {
 }
 export function dropBoulder(w, u) { const b = u.bould; if (b) { const i = w.pillars.indexOf(b); if (i >= 0) w.pillars.splice(i, 1); puff(w, b.x, b.y, '#9A9088', 14, 150, 6, 0.5); } u.bould = null; }
 export function boulderBrain(w, u, dt) {
+  if (u.ripT > 0) return ripTick(w, u, dt); // tearing a new one out of the floor
   const b = u.bould === null ? null : boulderOf(w, u);
   if (!b) return false;
   const front = (k = 8) => ({ x: u.x + Math.cos(u.facing) * (u.r * (1 + HOLD) + b.r + k), y: u.y + Math.sin(u.facing) * (u.r * (1 + HOLD) + b.r + k) });
@@ -187,8 +194,16 @@ export function boulderBrain(w, u, dt) {
     if (u.def.rock && u.elite && b.vx * b.vx + b.vy * b.vy < 900 && due(u, 'recall', dt, 1)) {
       again(u, 'recall', 1.5); const a = angleTo(b.x, b.y, u.x, u.y); b.vx = Math.cos(a) * 300; b.vy = Math.sin(a) * 300; b.recalled = true;
     }
-    if (dist(u.x, u.y, b.x, b.y) < u.r + b.r + 16 && b.vx * b.vx + b.vy * b.vy < 3600) { b.held = true; b.recalled = false; b.hits.clear(); setAnim(u, 'ability', 0.3); jam.t = 0; return false; }
-    if ((jam.t += dt) > BOULDER_JAM) { jam.t = 0; u.bouldRest = BOULDER_REST; return false; } // it can't get to it: leave it a while
+    if (dist(u.x, u.y, b.x, b.y) < u.r + b.r + BOULDER_REACH && (b.vx * b.vx + b.vy * b.vy < 3600 || b.recalled)) { b.held = true; b.recalled = false; b.hits.clear(); setAnim(u, 'ability', 0.3); jam.t = 0; return false; } // (round 17: a boulder it called back is caught as it comes: it rolled on through the troll and away, back and forth)
+    // round 17 (lane foes17): it can't get to it (round 14 left it be a while and came back to try again, so a boulder
+    // in a gap too narrow for it, or behind its friends, kept it walking up to it and standing by it for good): it
+    // tears a new one out of the floor where it stands, and the old one crumbles
+    // (getting nowhere: no nearer to it by 20 in BOULDER_JAM seconds; sliding to and fro along a wall in front of it
+    // moved it far enough to count as getting somewhere)
+    const dB = dist(u.x, u.y, b.x, b.y), F = u.bFetch && u.bFetch.b === b && w.time - u.bFetch.at < 0.5 ? u.bFetch : (u.bFetch = { b, best: dB, t: 0, at: w.time });
+    F.at = w.time; if (dB < F.best - 20 || b.vx * b.vx + b.vy * b.vy > 3600 || Math.hypot(u.kx, u.ky) > 60) { F.best = Math.min(F.best, dB); F.t = 0; } // (not while it still rolls, or the troll is knocked about)
+    if (dB > F.best + 60) F.best = dB; // (knocked back from it: counted from there)
+    if ((F.t += dt) > BOULDER_JAM) { u.bFetch = null; jam.t = 0; startRip(w, u); return true; }
     const [gx, gy] = goalVec(w, u, b.x, b.y), [sx, sy] = steer(w, u, gx, gy);
     drive(u, sx, sy, u.def.speed * (u.moveMul || 1), dt);
     turnTo(u, angleTo(u.x, u.y, b.x, b.y), 3, dt);
@@ -197,7 +212,11 @@ export function boulderBrain(w, u, dt) {
   const t = targetOf(w, u);
   if (t && u.aggro && !u.chg && !(u.el && u.el.holdT > 0) && gapTo(u, t) > (u.def.range || 30) + 12) jam.t += dt; else jam.t = 0;
   if (jam.t > BOULDER_JAM && t) { // wedged with it: let it go at its mark (it rolls till something stops it)
-    jam.t = 0; u.bouldRest = BOULDER_REST; const a = angleTo(u.x, u.y, t.x, t.y);
+    // (round 17, lane foes17: bare-handed a while only when it has no line to roll it down: with a hero up against the
+    // boulder, or a clear way to them, this is its throw, and it goes straight for the boulder after it, as after any
+    // throw; the rest had it standing by its boulder for six seconds, then picking it up and wedging again)
+    const a = angleTo(u.x, u.y, t.x, t.y), atIt = dist(t.x, t.y, b.x, b.y) < b.r + t.r + 40;
+    jam.t = 0; u.bouldRest = atIt || lineClear(w, b.x, b.y, t.x, t.y, b.r * 0.7) ? 0 : BOULDER_REST;
     beginHold(u, 0.45, a, () => { if (!u.bould) return; const bb = u.bould; bb.held = false; const s = u.def.rock ? 360 : 320; bb.vx = Math.cos(a) * s; bb.vy = Math.sin(a) * s; bb.hits.clear(); });
     setAnim(u, 'throw', 0.45);
     return true;
@@ -219,6 +238,20 @@ export function boulderBrain(w, u, dt) {
     addDanger(w, { shape: 'line', x1: b.x, y1: b.y, x2: b.x + Math.cos(a) * 420, y2: b.y + Math.sin(a) * 420, hw: b.r + 6, t: 0.45, team: u.team, src: u, kind: 'bone' });
     setAnim(u, 'throw', 0.45);
   }
+  return true;
+}
+// The stoop to tear a new boulder out of the floor (round 17, lane foes17): the old one crumbles where it lies; the
+// troll stands over the spot in front of it, the floor cracking and heaving, and comes up with a new one in its fists.
+function startRip(w, u) {
+  const old = u.bould; if (old) dropBoulder(w, u);
+  u.bould = undefined; u.ripT = BOULDER_RIP; u.bJam = null; u.bouldRest = 0;
+  setAnim(u, 'ability', BOULDER_RIP); stand(u, 0);
+}
+function ripTick(w, u, dt) {
+  stand(u, dt); u.ripT -= dt;
+  const k = u.r * (1 + HOLD) + (u.def.boulderR || BOULDER_R) + 8, x = u.x + Math.cos(u.facing) * k, y = u.y + Math.sin(u.facing) * k;
+  if (rand() < dt * 18) { const a = rand() * TAU, d = rrange(0, 34); w.particles.push({ x: x + Math.cos(a) * d, y: y + Math.sin(a) * d, vx: Math.cos(a) * 60, vy: Math.sin(a) * 60, rise: 30, up: 0, life: 0.5, max: 0.5, size: rrange(4, 8), color: '#8C8270' }); }
+  if (u.ripT <= 0) { u.ripT = 0; boulderOf(w, u); puff(w, x, y, '#9A9088', 16, 160, 7, 0.5); w.shake = Math.max(w.shake, 3); }
   return true;
 }
 function rollBoulder(w, u, b, dt) {
@@ -459,7 +492,7 @@ export const FOES9 = {
     role: 'melee', range: 6, brain: brainLeechBrain },
   // ---- the Crypt
   rattlerGold: { variantOf: 'rattler', name: 'Golden Skeleton', hue: 28, sat: 2.2, light: 0.04, hp: 85, coins: [4, 10], xp: 16,
-    res: { poison: 0, burn: 0, chill: 0, wet: 0, shock: 0, stagger: 0, radiance: 0, curse: 0, entangle: 0 }, brain: goldenBrain },
+    res: Object.fromEntries(BUILD_IDS.map((k) => [k, 0])), brain: goldenBrain }, // round 18 (the resistance audit): the shell blocks all fifteen, so the list says so
   rattlerHarrow: { variantOf: 'rattler', name: 'Harrowing Skeleton', hue: 250, sat: 0.6, light: -0.12, xp: 13, onDeath: harrowDeath },
 };
 

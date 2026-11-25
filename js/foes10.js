@@ -18,7 +18,7 @@
 // golem, the ash wraith, the Dragonborn Champion, the Archon, the Hollow Saint.
 import { alive, opponents, allies, hurt, puff, sparks, flames, addStatus, setAnim, fx, addBuff, explode, spawn, heal, kill, addDanger, drive, steer, goalVec, silence } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, angleDiff, rand, rrange, chance } from './util.js';
-import { lineClear } from './path.js';
+import { lineClear, circleRect } from './path.js';
 import { ELITES, MAJOR_MOVES, lob, cone, line, around, rush, rushTick, summon, shoot, blink, openSpot, pounce, hold, beginHold, due, again, targetOf, gapTo, crowd, stand, turnTo, later } from './elites.js';
 import { slam, courtFalls } from './enemies.js';
 import { FOES } from './foes.js';
@@ -60,7 +60,7 @@ function fireball(w, u, a, o = {}) {
 //  - a hero beside or behind it while it pushes: it leaves the ball where it is and fights bare-handed a while.
 // The elite's ball is bigger and bursts into ice.
 const SNOW = { r: 0.62, elite: 1.15, grow: 1.3, growK: 0.0011, push: 0.55, turn: 1.2, fric: 200, heave: 400, hurtSp: 130, burstSp: 220, pack: 1.4, reach: 0.82,
-  hp: 50, dmg: 25, track: 7 };
+  hp: 50, dmg: 25, track: 7, haul: 0.45, haulT: 4.5, giveUp: 9 }; // (round 17, lane foes17: the haul, at haul of its pace for up to haulT s; giveUp: s getting nowhere with a ball before it packs another)
 // pathClear (path.js) for the ball: walls and the other round things, not itself
 function pathClear(w, ax, ay, bx, by, pad, self) {
   if (!lineClear(w, ax, ay, bx, by, pad)) return false;
@@ -123,6 +123,15 @@ function snowTick(w, b, dt) {
     b.seen.add(t); const a = angleTo(t.x, t.y, b.x, b.y); b.vx += Math.cos(a) * 160 * (26 / b.r); b.vy += Math.sin(a) * 160 * (26 / b.r); b.hp -= 8; b.held = false;
   }
   if (b.packing) return; // in the yeti's hands, still being made (yetiBrain)
+  // hauled out backwards (round 17, lane foes17: yetiBrain haulTick): it comes after its hands, rolling, as far as
+  // the walls and rocks let it
+  if (b.haul && b.held && up) {
+    const d = dist(u.x, u.y, b.x, b.y) || 1, want = handsOn(u, b), nx = (b.x - u.x) / d, ny = (b.y - u.y) / d;
+    const tx = u.x + nx * want, ty = u.y + ny * want;
+    const solid = tx < b.r || ty < b.r || tx > w.W - b.r || ty > w.H - b.r || w.walls.some((r) => circleRect(tx, ty, b.r, r)) || w.pillars.some((p) => p !== b && !p.painted && dist(tx, ty, p.x, p.y) < p.r + b.r);
+    if (!solid) { const step = dist(b.x, b.y, tx, ty); b.roll -= step / b.r; b.x = tx; b.y = ty; }
+    b.vx = b.vy = 0; return;
+  } else if (b.haul) b.haul = false;
   // pushed: the yeti's hands press into it, so it goes along the line from the yeti's middle through its own
   if (b.held && up) {
     const d = dist(u.x, u.y, b.x, b.y), want = handsOn(u, b);
@@ -269,15 +278,28 @@ function yetiBrain(w, u, dt) {
     addDanger(w, { shape: 'line', x1: b.x, y1: b.y, x2: b.x + Math.cos(Y.heave.a) * 200, y2: b.y + Math.sin(Y.heave.a) * 200, hw: b.r + 6, t: 0.45, team: u.team, src: u, kind: 'ice', ...WARN });
     return true;
   }
+  // ---- round 17 (lane foes17): a ball it can't get behind (against a wall or in a corner, with the way it wants it to
+  // go back into the wall): it gets its hands round the front of it and hauls it out backwards (haulTick)
+  if (Y.haul) return haulTick(w, u, Y, b, dt);
   // ---- round behind the ball, then push it on towards the target
   const straight = pathClear(w, b.x, b.y, tg.x, tg.y, b.r * 0.9, b); // (round the rocks and walls when it must)
-  const A = straight ? angleTo(b.x, b.y, tg.x, tg.y) : ballWay(w, b, tg.x, tg.y), want = handsOn(u, b), side = angleDiff(ba, A);
+  const A0 = straight ? angleTo(b.x, b.y, tg.x, tg.y) : ballWay(w, b, tg.x, tg.y), want = handsOn(u, b);
+  // (round 17, lane foes17: the way nearest A0 it can push it, with room for its body behind the ball and for the ball
+  // ahead: a ball against a wall it pushes along the wall or off it; it used to try for a spot inside the wall for good)
+  const A = pushWay(w, u, b, A0, want);
+  // (no way at all, or only a way well off the one it wants, along a wall: it hauls it out into the room first)
+  if (A == null || angleDiff(A, A0) > 1.1) { if ((Y.hauls = (Y.hauls || 0) + 1) > 2) { Y.hauls = 0; b.owner = null; u.snow = null; again(u, 'pack', 0.3, 0.6); return false; } startHaul(w, u, Y, b, want, A0); return true; } // (hauled twice and still no way to push it: it leaves it to melt)
+  // (and a ball it gets nowhere with for a long while it leaves to melt, and packs another)
+  if (b.held && dB < want + 10 && angleDiff(A, A0) < 0.6) Y.hauls = 0;
+  Y.lost = b.held ? 0 : (Y.lost || 0) + dt;
+  if (Y.lost > SNOW.giveUp) { Y.lost = 0; b.owner = null; u.snow = null; again(u, 'pack', 0.3, 0.6); return false; }
+  const side = angleDiff(ba, A);
   const px = b.x - Math.cos(A) * (want + 4), py = b.y - Math.sin(A) * (want + 4);
   b.held = dB < u.r + b.r + 16 && side < 1.1; // its hands go on it only from behind; otherwise it's in the way (solid)
   const lined = b.held && side < 0.55 && dB < want + 10;
   // the heave, when a hero is ahead with room to roll (a little off its line will do: it shuffles round as it crouches)
   const d = dist(b.x, b.y, tg.x, tg.y);
-  if (b.held && dB < want + 14 && d > 90 && d < 520 && side < 0.85 && straight && due(u, 'heave', dt, 0.4)) {
+  if (b.held && dB < want + 14 && d > 90 && d < 520 && side < 0.85 && straight && angleDiff(A, A0) < 0.3 && due(u, 'heave', dt, 0.4)) {
     again(u, 'heave', 0.8, 1.4);
     const a = angleTo(b.x, b.y, tg.x + (tg.vx || 0) * 0.4, tg.y + (tg.vy || 0) * 0.4);
     let len = 140; while (len < 620 && pathClear(w, b.x, b.y, b.x + Math.cos(a) * (len + 40), b.y + Math.sin(a) * (len + 40), b.r * 0.9, b)) len += 40;
@@ -288,7 +310,19 @@ function yetiBrain(w, u, dt) {
   if (!lined) { // walk round to the far side of it, or up to it
     Y.pushT = 0;
     const touching = b.held && dB < want + 6;
-    const [gx, gy] = goalVec(w, u, px, py), [sx, sy] = steer(w, u, gx, gy);
+    // (round 17, lane foes17: round the ball on a circle just clear of it, the short way where there's room: the way
+    // the path finder gave went straight through the ball, which it isn't in, and the steering pushed it back off the
+    // ball, so a yeti on the wrong side of its ball dithered there)
+    let wx = px, wy = py;
+    const ay = angleTo(b.x, b.y, u.x, u.y), turn = wrapAngle(A + Math.PI - ay);
+    if (Math.abs(turn) > 0.45 && dB < want + 160) {
+      const R = Math.max(dB, u.r + b.r + 12), step = Math.min(Math.abs(turn), 0.8);
+      // (the way round it holds once picked, a while: picking afresh every step, it turned back and forth where the two
+      // ways were near even, or one side's next step was against a wall)
+      if (!(Y.roundT > w.time)) Y.roundDir = 0;
+      for (const sg of Y.roundDir ? [Y.roundDir, -Y.roundDir] : [Math.sign(turn), -Math.sign(turn)]) { const a = ay + sg * step, x = b.x + Math.cos(a) * R, y = b.y + Math.sin(a) * R; if (standOk(w, u, b, x, y)) { wx = x; wy = y; if (sg !== Y.roundDir) { Y.roundDir = sg; Y.roundT = w.time + 2.5; } break; } }
+    }
+    const [gx, gy] = goalVec(w, u, wx, wy), [sx, sy] = steer(w, u, gx, gy);
     drive(u, sx, sy, u.def.speed * (u.moveMul || 1) * (touching ? SNOW.push : 1), dt);
     turnTo(u, dB < 150 ? ba : u.mvA, touching ? SNOW.turn : 3, dt);
     if (touching) { u.lean = 0.12; u._force = pushPose(u); }
@@ -302,6 +336,69 @@ function yetiBrain(w, u, dt) {
   drive(u, sx, sy, sp, dt, 0.5);
   turnTo(u, ba, SNOW.turn, dt);
   u.lean = 0.14; u._force = pushPose(u);
+  return true;
+}
+// Round 17 (lane foes17): where it can push the ball from. A way a (nearest the one it wants, a0, either side, out to
+// about 160 degrees) works when its body fits in the spot behind the ball (inside the room, clear of walls and rocks)
+// and the ball has room to roll ahead. null: no way works (the ball in a corner, or in a pocket between rocks).
+function standOk(w, u, b, x, y) {
+  const R = u.r + 8; // (with room to walk there: its steering keeps off walls by more than its own radius)
+  if (x < R || y < R || x > w.W - R || y > w.H - R) return false;
+  if (w.walls.some((r) => circleRect(x, y, R, r))) return false;
+  return !w.pillars.some((p) => p !== b && !p.painted && dist(x, y, p.x, p.y) < p.r + R);
+}
+function pushWay(w, u, b, a0, want) {
+  for (let k = 0; k <= 10; k++) for (const sg of k ? [1, -1] : [1]) {
+    const a = a0 + sg * k * 0.28, c = Math.cos(a), s = Math.sin(a);
+    const ax = b.x + c * 40, ay = b.y + s * 40; // (the room's edges aren't walls: pathClear doesn't see them)
+    if (ax < b.r || ay < b.r || ax > w.W - b.r || ay > w.H - b.r) continue;
+    if (standOk(w, u, b, b.x - c * (want + 4), b.y - s * (want + 4)) && pathClear(w, b.x, b.y, ax, ay, b.r * 0.95, b)) return a;
+  }
+  return null;
+}
+// The haul: it goes round to the open side of the ball (the way out with the most room, nearest itself), gets both
+// hands on the front of it and walks backwards, dragging it out after it (snowTick keeps it at its hands), slowly,
+// until it has room to get behind it again (or a while has gone by).
+function startHaul(w, u, Y, b, want, a0) {
+  let best = null, bv = -Infinity;
+  for (let i = 0; i < 16; i++) {
+    const a = i / 16 * TAU, c = Math.cos(a), s = Math.sin(a);
+    if (!standOk(w, u, b, b.x + c * (want + 4), b.y + s * (want + 4))) continue;
+    let room = 0; while (room < 200 && standOk(w, u, b, b.x + c * (want + 30 + room), b.y + s * (want + 30 + room))) room += 20;
+    const v = room - 0.4 * dist(u.x, u.y, b.x + c * want, b.y + s * want);
+    if (v > bv) { bv = v; best = a; }
+  }
+  if (best == null) { b.owner = null; u.snow = null; again(u, 'pack', 0.3, 0.6); return; } // (nowhere to stand at all: it leaves that one to melt)
+  Y.haul = { a: best, a0, t: 0, go: 0 };
+}
+function haulTick(w, u, Y, b, dt) {
+  const H = Y.haul, want = handsOn(u, b), c = Math.cos(H.a), s = Math.sin(H.a);
+  if (!H.pull) { // round to the open side of it
+    H.go += dt;
+    const px = b.x + c * (want + 4), py = b.y + s * (want + 4);
+    const dd = dist(u.x, u.y, px, py);
+    if (dd < (H.best ?? 1e9) - 10) { H.best = dd; H.go = 0; } // (the clock runs only while it gets no nearer)
+    if (dd < 14) { H.pull = true; b.held = true; b.haul = true; setAnim(u, 'ability', 0.3); }
+    else if (H.go > 2.5) { Y.haul = null; b.owner = null; u.snow = null; again(u, 'pack', 0.3, 0.6); return false; } // (it can't get round to it: it leaves it to melt)
+    else {
+      b.held = false;
+      const [gx, gy] = goalVec(w, u, px, py), [sx, sy] = steer(w, u, gx, gy);
+      drive(u, sx, sy, u.def.speed * (u.moveMul || 1), dt);
+      turnTo(u, dist(u.x, u.y, b.x, b.y) < 150 ? angleTo(u.x, u.y, b.x, b.y) : u.mvA, 3, dt);
+      return true;
+    }
+  }
+  H.t += dt; b.held = true; b.haul = true;
+  const sp = u.def.speed * (u.moveMul || 1) * SNOW.haul;
+  u.dvx = c * sp; u.dvy = s * sp; u.mvA = H.a; u.spd = sp;
+  turnTo(u, H.a + Math.PI, 6, dt); // (its face to the ball, walking backwards)
+  u.lean = -0.1; const st = Math.sin(H.t * 9); u._force = { 'arm-r': { dy: 6 + 2 * st, r: 0.2 }, 'arm-l': { dy: 6 - 2 * st, r: -0.2 } };
+  // (out far enough to push it the way it wants, with room to walk round it to get there, or already on that side)
+  const way = H.t > 0.5 ? pushWay(w, u, b, H.a0, want) : null, m = b.r + 2 * u.r + 44;
+  const room = b.x > m && b.y > m && b.x < w.W - m && b.y < w.H - m && !w.walls.some((r) => circleRect(b.x, b.y, m, r)) && !w.pillars.some((p) => p !== b && !p.painted && dist(b.x, b.y, p.x, p.y) < p.r + m);
+  const free = way != null && angleDiff(way, H.a0) < 0.6 && (room || angleDiff(angleTo(b.x, b.y, u.x, u.y), way + Math.PI) < 0.6);
+  if (H.t > SNOW.haulT || free || u.stuckHaul > 0.4) { Y.haul = null; b.haul = false; b.held = false; b.vx = b.vy = 0; u.stuckHaul = 0; }
+  const mv = Math.hypot(u.x - (H.lx ?? u.x), u.y - (H.ly ?? u.y)); H.lx = u.x; H.ly = u.y; u.stuckHaul = H.t > 0.2 && mv < sp * dt * 0.2 ? (u.stuckHaul || 0) + dt : 0;
   return true;
 }
 // Both hands on the ball, shoving with each step.

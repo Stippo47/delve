@@ -530,7 +530,8 @@ function unitFrame(ctx, u, w) {
   ctx.rotate(u.downed ? u.facing - Math.PI / 2 + 0.6 : u.def.upright ? (view.rot ? Math.PI / 2 : 0) : u.facing - Math.PI / 2);
   // in the sprite's own frame forward is +y
   let fx = 0, fy = 0, sc = 1, tilt = 0;
-  if (!u.downed && u.spd > 6) { // a small step bounce, no side-to-side wobble; the arms swing (parts.js)
+  const flat = u.def.flat; // (round 17, lane foes17: a snake or a centipede lies flat on the floor: no step bounce, no breathing)
+  if (!u.downed && u.spd > 6 && !flat) { // a small step bounce, no side-to-side wobble; the arms swing (parts.js)
     const k = clamp(u.spd / (u.def.speed || 60), 0, 1.3);
     sc = 1 + Math.abs(Math.cos(u.bob)) * 0.025 * k;
   }
@@ -549,7 +550,7 @@ function unitFrame(ctx, u, w) {
   if (!u.downed && sti.sleepy > 8 && !(u.sleepT > 0)) { const f = clamp(sti.sleepy / 100, 0, 1), ph = (T * 0.55 + u.id * 0.3) % 1, nod = ph < 0.8 ? ph / 0.8 : 1 - (ph - 0.8) / 0.2; tilt += 0.26 * f * nod * nod; fy += u.vr * 0.12 * f * nod; }
   if (!u.downed && (sti.fear > 8 || u.fearT > 0)) { const f = u.fearT > 0 ? 1 : clamp(sti.fear / 100, 0, 1), q = Math.floor(T * 30); fx += (hash(q, u.id) - 0.5) * 5 * f; fy += (hash(u.id, q) - 0.5) * 3 * f; }
   if (!u.downed && (sti.confuse > 8 || u.addledT > 0)) { const f = u.addledT > 0 ? 1 : clamp(sti.confuse / 100, 0, 1); tilt += Math.sin(T * 3.1 + u.id) * 0.2 * f; }
-  else if (!u.downed && u.spd <= 6 && !u.act) sc *= 1 + Math.sin(T * 2.6 + u.id) * 0.016; // breathing while it stands: nobody freezes stiff (round 9)
+  else if (!u.downed && u.spd <= 6 && !u.act && !flat) sc *= 1 + Math.sin(T * 2.6 + u.id) * 0.016; // breathing while it stands: nobody freezes stiff (round 9)
   // Granny leans her whole body into the scythe's sweep (round 9: "better animation of body too")
   if (u.kind === 'granny' && u.anim && u.anim.kind === 'swing') { const k = u.anim.t / u.anim.dur; tilt += k < 0.25 ? -0.3 * (k / 0.25) : -0.3 + 0.75 * Math.min(1, (k - 0.25) / 0.3) - 0.45 * Math.max(0, (k - 0.55) / 0.45); }
   sc *= bigOf(u);

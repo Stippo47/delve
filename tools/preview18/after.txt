@@ -1,0 +1,32 @@
+180 abilities x 3 tiers, 12.5s
+threw: 0
+never went off in a loop: 0
+not shown (a loop where it drew nothing of its own and touched no one): 0
+drawn but reached no one (a loop where nothing it made touched a foe or a friend): 3
+  archer:roll
+  trapper:tripwire
+  werewolf:turnWolf
+wrong scenario (the game's own scorer would not have used it there): 0
+tiers identical (two tiers played the very same loop: nothing on the stage changed): 0
+tiers that differ only in where things went (the same foes reached, statuses, buffs, heals, summons, sizes): 20
+  frost:iceShard I~II
+  storm:chainLightning I~II
+  bulwark:shieldWall II~III
+  digger:dirtFling I~II
+  cultist:soulCandle I~II
+  seer:starfall I~II
+  beekeeper:swarm I~II II~III
+  beekeeper:honeyPot I~II II~III
+  crossbowman:pavise I~II
+  grenadier:blastOff I~II
+  harpooner:rogueWave II~III
+  huntress:bound II~III
+  marksman:aimedShot I~II
+  marksman:ricochet I~II
+  ninja:substitution I~II II~III
+  samurai:iaido I~II
+  valkyrie:spearThrow II~III
+  werewolf:frenzy II~III
+  werewolf:pounce II~III
+  enchantress:heartstring II~III
+abilities whose hero or friend took blows from nothing seen: 0 (0 blows)

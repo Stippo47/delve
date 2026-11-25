@@ -90,7 +90,7 @@ export const BEASTS = {
   banditChief: { fun: 'Runs the camp, the road and the protection racket. Mostly runs, when it suits him.',
     habit: 'A mini-boss. Whistles up his gang or a wolf, throws knives in a fan, and vanishes in smoke to come out elsewhere.' },
   elderEnt: { fun: 'The oldest thing in the wood. It was here before the wood, and it remembers who cut the first tree.',
-    habit: 'The Wildwood\'s boss. Roots, root cages, falling branches, a grove that feeds it. Burning, it rampages: hits harder and faster, takes twice as much, and every blow burns.' },
+    habit: 'The Wildwood\'s boss. Roots, root cages, falling branches, a grove that feeds it. Burning, it rampages: hits harder and faster, takes twice as much, and every blow burns. Rooted deep: it cannot be stunned, rooted, frozen, knocked out or put to sleep.' },
   // ---- round 9: the Warren, the Sewers and the Crypt
   mouse: { fun: 'A goblin\'s best friend. Goblins are not great friends.', habit: 'Tiny, quick, nibbles. Comes with the goblins.' },
   dynamouse: { fun: 'Somebody strapped a stick of dynamite to a mouse. The mouse is thrilled.', habit: 'Runs up to you, fizzes, and blows.' },

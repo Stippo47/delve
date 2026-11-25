@@ -1,0 +1,41 @@
+hero:trait: 4
+  hero:cleric:trait:3 4 paladin<-nothing paladin<-nothing paladin<-nothing
+  hero:warhelm:trait:3 3 it health set lower it health set lower it health set lower
+  hero:valkyrie:trait:3 3 paladin<-nothing paladin<-nothing paladin<-nothing
+  hero:clockwork:trait:3 3 it<-bookDummy_sword it<-bookDummy_sword it<-bookDummy_sword
+trinket: 28
+  trinket:phoenixFeather:: 18 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:wraithVeil:: 6 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:timeSand:: 20 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:impLantern:: 32 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:blinkStone:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:thunderRing:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:boneCharm:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:widowLocket:: 18 it<-bookDummy it<-bookDummy archer<-bookDummy
+  trinket:whirlingKnives:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:cinderBoots:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:brambleVest:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:soulJar:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:frostBloom:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:galeFeather:: 32 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:salamanderScale:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:snakeCharm:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:kindlingFlask:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:howlingSkull:: 6 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:lastBreath:: 14 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:volatile:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:frostRing:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:emberRing:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:venomFang:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:tideShell:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:leadWeight:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:vampTooth:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:ironSkin:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  trinket:swiftBoots:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+potion: 5
+  potion:haste:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  potion:quick:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  potion:fireproof:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  potion:ironskin:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+  potion:regen:: 16 it<-bookDummy it<-bookDummy it<-bookDummy
+156 stages

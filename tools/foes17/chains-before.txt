@@ -1,0 +1,17 @@
+sandSerpent: head r 31, 5 links r 26 every 26.0, last r 17 26.0 behind, body 156 long
+  straight  spacing 0.93-1.15 of a link   nearest two links not side by side 1.9 gaps, head to its body 1.98   pace 0-120 (its speed 120)   path swing +-2.0
+  turn      spacing 0.46-1.6 of a link   nearest two links not side by side 0.67 gaps, head to its body 0.31
+  stop      spacing 0.93-1.15 of a link   nearest two links not side by side 1.9 gaps, head to its body 1.98
+  knock     spacing 0.1-1.28 of a link   nearest two links not side by side 0.19 gaps, head to its body 0.3 (links on top of each other 1.23 s a run)
+  dive      spacing 0.73-1.15 of a link   nearest two links not side by side 1.7 gaps, head to its body 1.79
+chainCrawler: head r 33, 7 links r 29 every 28.0, last r 23 28.0 behind, body 224 long
+  straight  spacing 0.92-1.15 of a link   nearest two links not side by side 1.89 gaps, head to its body 1.97   pace 124-124 (its speed 124)   path swing +-1.7
+  turn      spacing 0.45-1.26 of a link   nearest two links not side by side 0.65 gaps, head to its body 0.66
+  stop      spacing 0.92-1.15 of a link   nearest two links not side by side 1.89 gaps, head to its body 1.97
+  knock     spacing 0.1-1.23 of a link   nearest two links not side by side 0.2 gaps, head to its body 0.24 (links on top of each other 1.96 s a run)
+sandSerpent@1: head r 39, 5 links r 33 every 32.5, last r 21 32.5 behind, body 195 long
+  straight  spacing 0.92-1.18 of a link   nearest two links not side by side 1.89 gaps, head to its body 1.99   pace 0-180 (its speed 120)   path swing +-41.5
+  turn      spacing 0.61-1.46 of a link   nearest two links not side by side 0.85 gaps, head to its body 0.88
+  stop      spacing 0.92-1.18 of a link   nearest two links not side by side 1.89 gaps, head to its body 1.99
+  knock     spacing 0.1-1.18 of a link   nearest two links not side by side 0.22 gaps, head to its body 0.24 (links on top of each other 0.85 s a run)
+  dive      spacing 0.63-1.18 of a link   nearest two links not side by side 1.58 gaps, head to its body 1.83

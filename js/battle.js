@@ -7,7 +7,7 @@
 // A battle is a run-shaped object ({ mode: 'battle', world, phase, t, ... }) so main.js can step and draw it like a
 // run. The sim knows two teams, 'hero' and 'enemy'; w.battle = { side: { hero: 'a' | 'b', enemy: ... } } says which
 // colour each is. Bosses only know how to fight from the 'enemy' team, so the side with a boss gets that team.
-import { step, alive } from './sim.js';
+import { step, alive, bleedOut } from './sim.js';
 import { DEFS } from './units.js';
 import { HEROES, HERO_IDS, tierBuild } from './heroes.js';
 import { spawn } from './sim.js';
@@ -16,7 +16,7 @@ import { THEMES, DUNGEON_ORDER } from './themes.js';
 import { battleRoom, battleFoe, spawnHero, freeSpot, RANK_MULT, R12_MULT, DUNGEON_RANK } from './dungeon.js';
 import { battleStats } from './stats.js';
 import { dungeonState } from './progress.js';
-import { rrange } from './util.js';
+import { rrange, clamp, TAU, INK } from './util.js';
 
 export const SIDE_MAX = 20;      // units a side
 export const STACK_MAX = 12;     // of one kind
@@ -30,6 +30,13 @@ export const SIZES = { s: { name: 'Small', w: 960, h: 480 }, l: { name: 'Large',
 // "Add dev unlock": save.battleDev (a switch on the battle page) fields everything, beaten or not, owned or not.
 const devOpen = (save) => !!save.cheat || !!save.battleDev;
 const TIME_LIMIT = 240;          // a fight that hasn't ended by then goes to whoever has more health left
+// Round 18 (lane downed18), the designer: "Battle mode can have downed allies that can only be revived with abilities.
+// (Corpses can be used for necromancy)". A hero at 0 goes down as in a dungeon (sim.js killNow): out of the fight,
+// lying grey, not a target. Only an ability brings it back (Valkyrie's Call; the Clockmaker's Rewind III): no standing
+// over it, no getting up when the fight ends. Nobody can finish it off, but after BLEED_T it bleeds out: it dies
+// where it lies and leaves a body (sim.js bleedOut) that a Necromancer can raise. A downed hero is no body to raise.
+// A side whose every fighter is down or dead has lost (standing() counts only those up).
+export const BLEED_T = 15;
 
 // ---------------------------------------------------------------- who can be picked
 // Every enemy kind a dungeon holds, in the order you meet them; its bosses (the floors' named mini-bosses, then the
@@ -101,8 +108,11 @@ export function newBattle(save, setupIn) {
   w.battle = { side: { [teamOf.a]: 'a', [teamOf.b]: 'b' } };
   w.stats = battleStats([...setup.a.map((s) => keyOf('a', s)), ...setup.b.map((s) => keyOf('b', s))]);
   w.on.kill = (u) => { if (u.def.onDeath) u.def.onDeath(w, u); };
+  w.drawOver = (ctx) => drawDowned(ctx, w); // render.js: over the units
   const run = { mode: 'battle', theme: setup.arena, floor: 1, party: [], hired: [], heroes: {}, world: w, phase: 'fight', t: 0, fade: 1, coins: 0, gems: 0,
-    save, banner: null, stats: null, setup, sides: { a: [], b: [] }, winner: null };
+    save, banner: null, stats: null, setup, sides: { a: [], b: [] }, winner: null,
+    log: [] }; // round 18: { t, ev: 'down' | 'up' | 'out', side, k, by, ab } (who went down, who brought whom back, who bled out)
+  w.on.heroDown = (u) => { u.bleedT = BLEED_T; const S = w.stats.rows[u.bkey]; if (S) S.downs = (S.downs || 0) + 1; run.log.push({ t: run.t, ev: 'down', side: sideOf(w, u), k: u.kind }); };
 
   for (const side of ['a', 'b']) {
     const dir = side === 'a' ? 1 : -1;                                       // Blue starts low (the bottom of the screen), Red high
@@ -155,6 +165,7 @@ export function updateBattle(run, dt) {
   if (w.hitstop > 0) { w.hitstop -= dt; return; }
   run.t += dt;
   step(w, dt);
+  downedTick(run, dt);
   w.pickups.length = 0; // nothing to pick up in a battle
   w.stale = run.t > 75;  // a stand-off (a shooter kiting something that regrows): everyone presses in, nothing mends or flees
   const a = standing(run, 'a').length, b = standing(run, 'b').length;
@@ -162,6 +173,37 @@ export function updateBattle(run, dt) {
   const coming = w.danger.some((z) => z.spawns && !z.done) || w.fx.some((f) => f.spawns && !f.done);
   if ((!a || !b) && !coming) end(run, a ? 'a' : b ? 'b' : 'draw');
   else if (run.t > TIME_LIMIT) { const ha = healthOf(run, 'a'), hb = healthOf(run, 'b'); end(run, Math.abs(ha - hb) < 0.02 ? 'draw' : ha > hb ? 'a' : 'b', true); }
+}
+// Round 18: the downed bleed out; a revive (kits2.js Valkyrie's Call, kits3.js Rewind: u.revivedByKit) is noted.
+function downedTick(run, dt) {
+  const w = run.world;
+  for (const u of w.units) {
+    if (u.revivedByKit) {
+      u.revivedByKit = false; u.bleedT = 0;
+      const by = u.revivedBy, S = w.stats.rows;
+      if (S[u.bkey]) S[u.bkey].revived = (S[u.bkey].revived || 0) + 1;
+      if (by && S[by.bkey]) S[by.bkey].revives = (S[by.bkey].revives || 0) + 1;
+      run.log.push({ t: run.t, ev: 'up', side: sideOf(w, u), k: u.kind, by: by ? by.kind : null, ab: u.revivedAb || null });
+      u.revivedBy = null; u.revivedAb = null;
+    }
+    if (!u.downed || u.dead || u.partOf) continue;
+    if (u.bleedT == null) u.bleedT = BLEED_T;
+    u.bleedT -= dt;
+    if (u.bleedT <= 0) { bleedOut(w, u); run.log.push({ t: run.t, ev: 'out', side: sideOf(w, u), k: u.kind }); }
+  }
+}
+// A downed hero's ring in its side's colour runs down as it bleeds out, pulsing over its last few seconds.
+function drawDowned(ctx, w) {
+  for (const u of w.units) {
+    if (!u.downed || u.dead || u.partOf || u.bleedT == null) continue;
+    const left = clamp(u.bleedT / BLEED_T, 0, 1), late = u.bleedT < 4, R = u.vr * 1.6 + 8, sd = sideOf(w, u);
+    ctx.save(); ctx.lineCap = 'round';
+    ctx.globalAlpha = late ? 0.6 + 0.35 * Math.sin(w.time * 11) : 0.85;
+    ctx.strokeStyle = INK; ctx.lineWidth = 8; ctx.beginPath(); ctx.arc(u.x, u.y, R, 0, TAU); ctx.stroke();
+    ctx.strokeStyle = sd ? SIDES[sd].color : '#F2C14E'; ctx.lineWidth = 4.5;
+    ctx.beginPath(); ctx.arc(u.x, u.y, R, -Math.PI / 2, -Math.PI / 2 + Math.max(0.05, left) * TAU); ctx.stroke();
+    ctx.restore();
+  }
 }
 function end(run, winner, timeUp) { run.phase = 'over'; run.winner = winner; run.timeUp = !!timeUp; run.endT = 0; }
 // Stop it now (the Leave button): whoever has more of its health left takes it.
@@ -174,10 +216,12 @@ export function summarizeBattle(run) {
   for (const side of ['a', 'b']) {
     sides[side] = { left: 0, start: run.start[side], health: healthOf(run, side), rows: run.setup[side].map((s) => {
       const mine = run.sides[side].filter((u) => u.bkey === keyOf(side, s)), left = mine.filter(fighting).length;
-      return { k: s.k, n: s.n, rank: s.rank || 0, tier: s.tier, left, ...(S.rows[keyOf(side, s)] || {}) };
+      const down = mine.filter((u) => u.downed && !u.dead).length; // (round 18: lying downed when it ended)
+      return { k: s.k, n: s.n, rank: s.rank || 0, tier: s.tier, left, down, ...(S.rows[keyOf(side, s)] || {}) };
     }) };
     sides[side].left = sides[side].rows.reduce((n, r) => n + r.left, 0);
   }
-  run.summary = { battle: true, winner: run.winner, timeUp: !!run.timeUp, time: run.t, arena: run.theme, sides, setup: run.setup };
+  const revives = run.log.filter((e) => e.ev === 'up'), bleeds = run.log.filter((e) => e.ev === 'out').length;
+  run.summary = { battle: true, winner: run.winner, timeUp: !!run.timeUp, time: run.t, arena: run.theme, sides, setup: run.setup, revives, bleeds };
   return run.summary;
 }

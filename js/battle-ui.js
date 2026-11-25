@@ -183,8 +183,8 @@ export function buildBattleDock(run, onTap) {
 export function updateBattleDock(run) {
   const c = document.getElementById('cards'); if (!c || dockRun !== run || !c.classList.contains('bd')) return false;
   for (const side of ['a', 'b']) {
-    let hp = 0, max = 0; const left = {};
-    for (const u of run.sides[side]) { max += u.maxHp; const on = !u.dead && !u.downed; if (on) { hp += Math.max(0, u.hp); left[u.bkey] = (left[u.bkey] || 0) + 1; } }
+    let hp = 0, max = 0; const left = {}, down = {};
+    for (const u of run.sides[side]) { max += u.maxHp; const on = !u.dead && !u.downed; if (on) { hp += Math.max(0, u.hp); left[u.bkey] = (left[u.bkey] || 0) + 1; } else if (u.downed && !u.dead) down[u.bkey] = (down[u.bkey] || 0) + 1; }
     const bar = c.querySelector(`[data-bd="hp:${side}"]`); if (bar) bar.style.width = (max ? 100 * hp / max : 0) + '%';
     const cnt = c.querySelector(`[data-bd="count:${side}"]`); if (cnt) cnt.textContent = String(standing(run, side).length);
     for (const s of run.setup[side]) {
@@ -192,6 +192,7 @@ export function updateBattleDock(run) {
       const n = left[keyOf(side, s)] || 0;
       chip.querySelector('b').textContent = s.n > 1 ? `${n}/${s.n}` : '';
       chip.classList.toggle('out', !n);
+      chip.classList.toggle('down', !!down[keyOf(side, s)]); // (round 18: one of it lies downed: it can still be brought back)
     }
   }
   return true;
@@ -215,14 +216,17 @@ export function showBattleResult(sum, acts) {
     const S = sum.sides[id];
     const rows = S.rows.map((x) => {
       const tag = isHero(x.k) ? (x.tier == null ? '' : tierName(x.tier)) : x.rank ? RANKS[x.rank] : '';
-      const bits = [`took ${num(x.taken)}`, x.blocked > 0.5 ? `blocked ${num(x.blocked)}` : '', `${x.kills || 0} ${x.kills === 1 ? 'kill' : 'kills'}`, x.heal > 0.5 ? `healed ${num(x.heal)}` : ''].filter(Boolean).join(' · ');
+      const bits = [`took ${num(x.taken)}`, x.blocked > 0.5 ? `blocked ${num(x.blocked)}` : '', `${x.kills || 0} ${x.kills === 1 ? 'kill' : 'kills'}`, x.heal > 0.5 ? `healed ${num(x.heal)}` : '',
+        x.revives ? `${x.revives} ${x.revives === 1 ? 'revive' : 'revives'}` : '', x.downs ? `downed ${x.downs > 1 ? x.downs + ' times' : 'once'}${x.revived ? `, back up ${x.revived > 1 ? x.revived + ' times' : 'once'}` : ''}` : ''].filter(Boolean).join(' · ');
       return `<div class="br-row ${x.left ? '' : 'out'}">${pic(x.k, 'md')}
-        <div class="br-mid"><div class="br-top"><b>${esc(nameOf(x.k))}${x.n > 1 ? ` ×${x.n}` : ''}</b>${tag ? `<i class="br-tag">${esc(tag)}</i>` : ''}<span class="br-left">${x.left}/${x.n} left</span></div>
+        <div class="br-mid"><div class="br-top"><b>${esc(nameOf(x.k))}${x.n > 1 ? ` ×${x.n}` : ''}</b>${tag ? `<i class="br-tag">${esc(tag)}</i>` : ''}<span class="br-left">${x.left}/${x.n} left${x.down ? ` · ${x.down} down` : ''}</span></div>
           <div class="br-bar"><i style="width:${Math.max(1.5, 100 * (x.dmg || 0) / top)}%"></i><em>${num(x.dmg)} damage</em></div>
           <span class="br-bits">${bits}</span></div></div>`;
     }).join('');
+    // round 18: who brought whom back, in order
+    const revs = (sum.revives || []).filter((e) => e.side === id).map((e) => `${esc(e.by ? nameOf(e.by) : 'Someone')} brought back ${esc(nameOf(e.k))} at ${mmss(e.t)}`);
     return `<div class="br-side ${id} ${sum.winner === id ? 'win' : ''}"><div class="br-h"><i class="bs-dot"></i><b>${SIDES[id].name}</b><span class="quiet small">${S.left} of ${S.start} standing</span>
-        <div class="bar br-hp"><i style="width:${Math.round(S.health * 100)}%"></i></div></div>${rows}</div>`;
+        <div class="bar br-hp"><i style="width:${Math.round(S.health * 100)}%"></i></div></div>${rows}${revs.length ? `<p class="br-revs quiet small">${revs.join('<br>')}</p>` : ''}</div>`;
   };
   r.innerHTML = `<div class="rcard battle ${sum.winner}"><div class="r-scroll">
     <span class="cap">Battle${T ? ' · ' + esc(T.name) : ''} · ${mmss(sum.time)}</span>
