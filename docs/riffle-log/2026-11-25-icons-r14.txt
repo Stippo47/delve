@@ -1,0 +1,24 @@
+delve / art / icons-r14: "Icons: pick a style"
+  style (Icons: pick a style): GO, picked: A · Painted emblem, C · Scene medallion
+      item a (A · Painted emblem): "A as stats. Maybe B 
+And A and C are tied for abilities. 
+A as cooldown abilities. 
+
+I don’t like trinkets. I feel like they should not. A and C are good don’t like their container I think. Try trinkets again 
+
+
+For the abilities that I like more on A: 
+Shield bash. Sanctuary tied. Wolf call. Don’t like either raise dead or chain lightning. Everything else I think C is better. But I like the square borders more"
+      item c (C · Scene medallion): "Back stab should show the goblins nose forwards so it looks like they are facing us. 
+Barrage should have fletching. 
+Idk if this is on purpose but the slash on whirl is tapered "
+  style-a (Style A · Painted emblem): GO, picked: At real size on the phone
+      item a-real (At real size on the phone): "Yeah I like As stats. Don’t like the trinkets. Maybe just no container?
+
+Overall looks good"
+  style-b (Style B · Bold glyph): IDK
+  style-c (Style C · Scene medallion): IDK
+      item c-real (At real size on the phone): "Yeah the abilities are a bit harder to read when small but I like them "
+  stats (Stats beside a number): GO, picked: A · Painted emblem
+  DECK: done (5 of 5 answered)
+

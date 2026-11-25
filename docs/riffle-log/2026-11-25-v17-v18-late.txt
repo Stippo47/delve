@@ -1,0 +1,37 @@
+delve / runs / v17-heroes: "0.17.0: XP, the first 15 heroes"
+  xp (XP: catching up): DECENT on the card. Its parts: 1 words only, 1 not marked, 1 good
+      part downed (The downed get XP too): no mark, "50%?
+Idk if it should be rewarded going to the absolute hardest place they can go where the weakest unit doesnt have to do anything at all and still earns. I still think everyone getting the same amount of xp is wrong but idk how to balance it because if we go by damage then healers and tanks would get less than damage dealers "
+      part gold (A thing I saw: gold after wipes): GOOD
+  shockwave (Shockwave: pick one): IDK
+      item berserker-shockwave-v3-stomps (3 Stomps): "This is so close 😭. One at the r the other. "
+  wolfbite (Wolf bite: pick one): REDO, none of them
+      item druid-callWolf-v3-clamp (3 Clamp): "No. The original bite just rotated 90 degrees. Simple spikey mouth "
+  bonespear (Bone Spear: pick one): GO, picked: 1 Spear
+  oldbones (Old Bones: pick one): GO, picked: 1 Stand
+  fixes (Your showcase 4 notes): GO, picked: Archer: Frost Arrow, Storm: Chain Lightning, Storm: Zeus Bolt, tier III, Cleric: Sanctuary, Necromancer: Life Drain, Tower: Hold the Line, Wildmane: Cleave, Frost Mage: Ice Shard, Druid: Entangle
+      item archer-barrage (Archer: Barrage): "Want to see the bow actually load that many arrows "
+      item archer-roll (Archer: Roll): "An arrow is built into their bow, the caltrops do t spread out enough. Most of the movement is done before most of the spinning is done"
+      item berserker-attack (Berserker: Flail): "A bit unnoticeable now"
+      item berserker-whirl (Berserker: Whirl): "Look at his sprite, then at his mace. The spinning maces isnt the mace in his hand "
+      item granny-reap (Granny: Reap): "Dont like the slash. She also spins slow"
+      item storm-chainLightning (Storm: Chain Lightning): "Give each of the branches like 1 smaller branch. "
+      item storm-stormCloud-tier1 (Storm: Zeus Bolt, tier I): "Ok I see it now. In slow motion when the bolt hits something in jumps forwards, making it move faster than how fast it would move if it just pierced. It jumps 1 full sues bolts length in a single frame when it hits the first target"
+      item cleric-attack (Cleric: light orbs): "Ok 65 degrees apart and have them turn slower. "
+      item tower-holdTheLine (Tower: Hold the Line): "This should be the look for taunted. 
+
+Tower should slam the ground or something to get aggro. (Slam render below entities) "
+      item druid-entangle (Druid: Entangle): "Can you animate these vines growing in then playing the same animation in reverse. "
+  balance (Archer, Tower, the rest): DECENT on the card. Its parts: 2 decent, 1 words only, 1 good
+      part archer (Archer): DECENT, "Maybe too much damage for the dps classes. "
+      part tower (Tower against Paladin): no mark, "Should be opposite. Paladin the hp tank. "
+      part others (Others): GOOD
+      part reach (A call I made: reach): DECENT
+  DECK: done (7 of 7 answered)
+
+delve / runs / v18-bosses: "0.18.0: the bosses, redone"
+  all (Seven bosses, redone): not swiped yet. On its pictures:
+      comment on film img/v18-bosses-greatEngine-p1.mp4: "Head and hands should hover. Arms should not cross as much. Give a third arm behind and move the 2 other forwards a bit on the body. 
+
+Hands and head should render above entities. "
+
