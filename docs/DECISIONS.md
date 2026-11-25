@@ -1426,3 +1426,6 @@ The lane's calls (say if any is wrong):
 - **Left**: no sounds of its own; with the head down its near knees are drawn under it; `sw.js`'s list needs
   tools/build-sw.py (not run, as told); one fight in some 400 on an earlier build ran ten minutes without ending and
   was not seen again.
+- Lead, merge (0.34.0): clips checked by hand (walk, slam-hit, leg-break, collapse at the cited seconds: head high over
+  its shadow, the drop, the snapped stilt dragging, the floor fight all show). Merged, battles 532 / 0 problems,
+  preview-check 0 / 0 / 0, sw built (555 files). Riffle deck r19-idol (art, stack r19): report + draw-order + hidden-ring calls.

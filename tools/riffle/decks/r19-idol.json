@@ -1,0 +1,47 @@
+{
+  "title": "The Canopy Idol, on stilts",
+  "topic": "art",
+  "stack": "r19",
+  "order": 6,
+  "priority": 1,
+  "cards": [
+    {
+      "id": "report",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Stilt boss, try two",
+      "text": "A carved jungle idol head on six bamboo stilts, up near the Witch's broom height or above. 0.34.0. Old Longlegs stays.",
+      "why": "You wanted something on stilts, the head very high, much larger, jungle, leggy but not a spider. Try it in battle mode's 'No dungeon yet' tab or the Book. Mark any part that's off.",
+      "videos": ["../../../docs/clips/stilts19/walk.mp4"],
+      "parts": [
+        { "id": "look", "title": "The idol", "text": "A hardwood head: heavy brow, glowing eyes, toothed jaw with tusks, jade ear spools, moss and red blooms on its back, a crown of leaves with seed pods. Each stilt is ringed bamboo, lashed at the knee, on a carved stone hoof.", "videos": ["../../../docs/clips/stilts19/walk.mp4", "../../../docs/clips/stilts19/turn.mp4"] },
+        { "id": "height", "title": "Height and size", "text": "The head rides almost twice the broom's height (132 against 70; Old Longlegs 44), drawn bigger for being nearer, one shadow far below. Its feet stand in a ring 360 across (the spider's 252). It stays clear of the walls.", "videos": ["../../../docs/clips/stilts19/walk-far.mp4", "../../../docs/clips/stilts19/walk-wide.mp4"] },
+        { "id": "stomp", "title": "Stomp", "text": "A stilt swings up nearly straight, hangs, and stabs down into a red circle.", "videos": ["../../../docs/clips/stilts19/stomp.mp4"] },
+        { "id": "slam", "title": "Head slam", "text": "Eyes go orange, a circle follows its shadow, a short pause, then it drops the whole height. On a miss it lies stunned (longer per broken stilt) and takes extra damage.", "videos": ["../../../docs/clips/stilts19/slam-hit.mp4", "../../../docs/clips/stilts19/slam-miss.mp4"] },
+        { "id": "vine", "title": "Liana (new)", "text": "A vine drops on the furthest hero; caught, they're hauled in under the head and tangled for a moment.", "videos": ["../../../docs/clips/stilts19/vine.mp4"] },
+        { "id": "pods", "title": "Seed pods (new)", "text": "The crown shakes and three pods fall the whole height onto circles (four later). The first of each shower grows a Sproutling.", "videos": ["../../../docs/clips/stilts19/pods.mp4"] },
+        { "id": "legs", "title": "Broken stilts", "text": "As the spider: each hoof has its own health; broken, the stilt snaps to a swinging stump and drags. It slows with each. The fourth break drops it to the floor, where it fights on.", "videos": ["../../../docs/clips/stilts19/leg-break.mp4", "../../../docs/clips/stilts19/collapse.mp4", "../../../docs/clips/stilts19/death.mp4"] },
+        { "id": "strength", "title": "Strength", "text": "1550 health. Across four parties it wins about as often as Old Longlegs (118 against 128 of 160, within the noise).", "videos": ["../../../docs/clips/stilts19/fight.mp4"] }
+      ]
+    },
+    {
+      "id": "draw-order",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Stilts under the face",
+      "text": "Every stilt is drawn under the head, even the near knees, so the face is never covered.",
+      "why": "Strictly the near knees would cross in front of the face. Drawing them under keeps the idol's face readable all fight; it only looks off if you stare at the knees.",
+      "pick": "Keep it."
+    },
+    {
+      "id": "hidden",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Heroes under the head",
+      "text": "A hero hidden under the head shows as a pale dashed ring on top of it.",
+      "why": "The head is so big it hides whoever's under it. Fading the head instead would mean drawing it on its own layer, a bigger job.",
+      "pick": "Keep the ring.",
+      "videos": ["../../../docs/clips/stilts19/turn.mp4"]
+    }
+  ]
+}
