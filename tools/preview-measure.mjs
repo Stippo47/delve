@@ -14,6 +14,20 @@ const { AUDIT, CUR, sourceOf, ownerOf, newStats } = await import('../js/stats.js
 const { ABILITIES } = await import('../js/kits.js');
 const { setSeed } = await import('../js/util.js');
 const DT = 1 / 30;
+// (round 18b) a stage whose every loop numbers its units from the same id, whatever was stepped before it: sim.js reads
+// unit ids here and there (a wanderer's heading, Math.sin(u.id)), so the same stage measured after other stages played
+// a little differently and the counts moved with the order things were checked in
+export const ID_BASE = 700000;
+export function steadyStage(spec) {
+  AUDIT.idFrom = ID_BASE; const S = PS.makeStage(spec);
+  const r = S.reset; S.reset = () => { AUDIT.idFrom = ID_BASE; r(); };
+  return S;
+}
+// The hero side's measures (round 18's) keep the ids they get, as they did when their counts were taken; set this (the
+// check's --steady) to measure them from the same ids too. (Round 18b found: with steady ids, 35 abilities play the very
+// same loop at two tiers, and 15 more differ only in where things went: the ids had been making the loops differ.)
+export let STEADY_HEROES = false;
+export const steadyHeroes = (on) => { STEADY_HEROES = !!on; };
 
 const isWeaponDummy = (s) => s && s.def.dummy && /dummy-/.test(s.def.art || '');
 // a blow on the hero side that can be seen: a real unit, a shot, a zone or a burn, the hero's own price, a target that
@@ -29,7 +43,7 @@ export function seen(u, src, o) {
 
 export function measureAbility(id, ab, tier, loops = 2) {
   setSeed(11);
-  const S = PS.makeStage({ t: 'hero', id, move: ab, tier });
+  const S = (STEADY_HEROES ? steadyStage : PS.makeStage)({ t: 'hero', id, move: ab, tier });
   const A = ABILITIES[ab] || {}, passive = !!A.passiveTier || ab === 'oldBones';
   const rec = []; let cur = null;
   const newLoop = () => { cur = { brain: false, forced: false, cast: null, casts: 0, right: null, hook: 0, unseen: 0, unseenWhy: [], hit: new Set(), healed: new Set(), st: new Set(), buffs: new Set(), dmg: 0, heal: 0, summons: 0, fx: 0, r: 0, cc: 0, block: 0, kept: 0, dur: 0, kn: 0, trace: [], stAmt: {}, after: 0, held: new Set(), arc: 0, firstScore: null }; rec.push(cur); };
@@ -101,7 +115,7 @@ export function measureAbility(id, ab, tier, loops = 2) {
 // any stage: every blow the hero side takes over a couple of loops that has nothing seen behind it
 export function unseenBlows(spec, loops = 2) {
   setSeed(11);
-  const S = PS.makeStage(spec); let blows = 0; const why = [], seenKey = new Set();
+  const S = (STEADY_HEROES ? steadyStage : PS.makeStage)(spec); let blows = 0; const why = [], seenKey = new Set();
   AUDIT.on = (ev, w, u, src, amt, o = {}) => {
     if (w && w !== S.w) return;
     if (!(ev === 'takenBuffs' || ev === 'block' || ev === 'keep') || !u || !S.hero || u.team !== S.hero.team || u.summon || u.partOf || o.dot) return;
@@ -151,7 +165,7 @@ export function seenAny(u, src, o) {
 }
 export function measureStage(spec, loops = 2) {
   setSeed(11);
-  const S = PS.makeStage(spec);
+  const S = steadyStage(spec);
   if (S.locked) return [{ locked: true, why: S.why }];
   const rec = []; let cur = null;
   const side = () => (S.hero ? S.hero.team : 'enemy');

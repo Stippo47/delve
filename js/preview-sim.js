@@ -698,7 +698,7 @@ function foeStage(S, spec) {
     const [W, H] = S.size, w = S.w = room(W, H, S.w), K = big ? 1.6 : 1;
     w.mult = 1; w.bossAdds = ['goblin'];
     if (boss && d0.arena && BOSS_ARENAS[d0.arena]) { try { BOSS_ARENAS[d0.arena](w); buildGrid(w); } catch (e) { /* the hall is optional here */ } }
-    const ux = sc.at ? W * sc.at[0] : W * (move === 'attack' ? 0.68 : 0.8), uy = sc.at ? H * sc.at[1] : H / 2;
+    const ux = sc.at ? W * sc.at[0] : W * (move === 'attack' ? 0.68 : d0.role === 'ranged' && !boss ? 0.68 : 0.8), uy = sc.at ? H * sc.at[1] : H / 2; // (a shooter has room behind it to keep its distance)
     u = seededFoe(w, k, ux, uy, r);
     u.aggro = true; u.facing = Math.PI; u.dueSoon = sc.dueSoon ?? 0.4; u.abilT = sc.abilT ?? 1; // its moves come round soon, but not before you've seen it stand there
     if (move === 'attack') { u.def = { ...u.def, brain: null, ability: null, dashCd: 0 }; u.eliteFn = null; u.eliteDeath = null; }
@@ -733,7 +733,7 @@ function foeStage(S, spec) {
     if (fk) { friend = spawn(w, fk, ux - 40 * K, uy + 110 * K, { mult: 1 }); friend.aggro = true; friend.facing = Math.PI; friend.home = { x: friend.x, y: friend.y }; friend.hp = friend.maxHp * 0.45; friend.barAlways = true; friend.trinketHooks = [...(friend.trinketHooks || []), FOE_KEEP]; friend.dmgMul *= 0.6; }
     // a pack kind (wolves: howls that need the pack about) gets two of its own kind beside it as well
     pack = [];
-    if (move !== 'attack' && (sc.pack || d0.pack || d0.wolf)) for (const dy of [-1, 1]) { const o = spawn(w, k, ux + 30 * K, uy + dy * 105 * K, { mult: 1 }); o.aggro = true; o.facing = Math.PI; o.home = { x: o.x, y: o.y }; o.dueSoon = 9; o.barAlways = true; o.trinketHooks = [...(o.trinketHooks || []), FOE_KEEP]; o.dmgMul *= 0.6; pack.push(o); }
+    if (move !== 'attack' && !boss && (sc.pack || d0.pack || d0.wolf)) for (const dy of [-1, 1]) { const o = spawn(w, k, ux + 30 * K, uy + dy * 105 * K, { mult: 1 }); o.aggro = true; o.facing = Math.PI; o.home = { x: o.x, y: o.y }; o.dueSoon = 9; o.barAlways = true; o.trinketHooks = [...(o.trinketHooks || []), FOE_KEEP]; o.dmgMul *= 0.6; pack.push(o); }
     if (move !== 'attack' && fk && d0.res !== undefined && /rais/i.test(ELITE_MOVE[k] || '')) w.corpses.push({ kind: fk, x: ux - 90, y: uy - 60, r: 30, vr: 22, facing: 1, kx: 0, ky: 0, spin: 0, z: 0, vz: 0, age: 5, t: 14, max: 14 });
     killT = dies && !S.fit ? S.loop - 1.8 : Infinity; // (an elite or major falls a beat after its move: below)
     const lastA = { t: u.lastAttackT, abil: u.abilT }, hold = { x: u.x, y: u.y }; S.hits = hitWatch(); strikes = [];

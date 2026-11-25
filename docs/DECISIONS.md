@@ -1128,3 +1128,26 @@ fired 0, not offered 0. Clips: docs/clips/downed18/.
 - 0.24.1, the audit's Book fixes: the Book's resistance chips now show what really lands (a shell's or hook's immunities, the bosses' charm rule, tag rules), so bosses show Charm immunity and constructs their bleed/poison immunity; the Golden Skeleton's and Dust Devil's lists name all fifteen statuses; the Elder Ent's page says it can't be stunned, rooted, frozen, knocked out or put to sleep.
 - 0.24.2: foes17b, a knock back slides a chain's whole body as one piece (it piled the links up on the head); clips re-staged.
 - 0.25.0: preview18, the Book's ability previews are small real fights (js/preview-scenes.js: 22 scene recipes, real enemies with their own brains, no damage from nothing, the hero's own brain casts, scenes built for tier III). Wrong-scenario 35 -> 0, invisible damage 49 kinds -> 0, tiers alike 57 -> 18 (number-only tiers). docs/preview18.md. Still on straw dummies: the monster pages' previews.
+
+## Round 18, lane preview18b (2026-11-24): the monster pages and the statuses in the Book
+The rest of the designer's note on the Book's previews ("the dummies don't attack like how an enemy would, I don't want
+the heroes to just take invisible damage"): lane preview18 had done the heroes' abilities. The lane's calls (all in
+js/preview-scenes.js, easy to change; docs/preview18b.md has the audit, every number and what's still weak):
+- **A monster's moves are shown against real heroes** (FOE_SCENES: a Paladin and an Archer for most, three round it for
+  a quake, standing their ground for shells and bombs, backed against the edge for a charge, four in a boss's hall),
+  running their own brains with their abilities held, hitting softly and kept up. No straw targets, no pokes from
+  nowhere, no health set lower (a move that waits for it to be hurt starts it hurt), no target moved up to it; its
+  death move comes from a hero's blow in view.
+- **Every status comes from a fighter in view** (STATUS_SCENE): a build-up rides on a fitting hero's own blows (a third
+  a blow, bursting on the third), a timed state comes from the ability that puts it on in a run (Shield Bash II for
+  stunned, the Dame's Challenge for taunted, the Jester's Mock for warded...), a state on a hero is put on by a friend.
+- **Silenced has a preview**: a major choir sprite sings, the Cleric's Smite staggers it quiet (its own rule), its volley
+  of shots still goes while its song waits, then it sings again.
+- Measured (tools/preview18b/foe-audit.mjs, the same ruler before and after): monster previews on straw 975 -> 0, blows
+  or health lost with nothing behind them 720 previews (3205 blows) -> 0, the stage helping it 366 -> 0, wrong scenario
+  27 -> 8, late (not within 2.5 s) 75 -> 23; statuses on straw 41 -> 0, from nothing seen 41 -> 0, late 26 -> 0, no
+  preview 1 -> 0. tools/preview-check.mjs reports the monster moves and the statuses too; threw / never fired / not
+  offered 0 / 0 / 0. tools/battles.mjs: 528 battles, 0 problems. Clips: docs/clips/preview18b/.
+- Found on the way, not changed (the heroes' side): measured from the same unit ids every time, 35 hero abilities play
+  the very same loop at two tiers and 15 more differ only in where things went (`preview-check --steady`); the ids
+  had been making those loops differ.

@@ -304,6 +304,8 @@ export const FOE_SCENES = {
   // standing their ground, fighting from where they are (bombs, shells, fuses: things a hero would step out of, shown
   // landing on someone; a run's heroes are often too busy to)
   standing: { heroes: [H('paladin', [-170, 0], { hold: 3 }), H('archer', [-300, -90], { hold: 3 }), H('tower', [-290, 95], { hold: 3 })] },
+  // held a short way off, at the reach of a snap or a short lunge (it has to close a little to strike)
+  reach: { heroes: [H('paladin', [-175, 0], { hold: 2.6 }), H('archer', [-320, -90]), H('tower', [-190, 105], { hold: 2.6 })] },
   // backed up against the yard's edge (a charge that crashes into a wall behind them)
   edge: { heroes: [H('paladin', [-330, 0], { hold: 2.6 }), H('archer', [-350, -120], { hold: 2.6 }), H('tower', [-345, 115], { hold: 2.6 })] },
   // a boss's hall: four of them, spread
@@ -319,7 +321,7 @@ export const FOE_SCENE = {
   goblinBomber: FS('standing'), goblinSuicide: FS('standing'), dynamouse: FS('standing'), 'ogre:kit': FS('close'),
   // the Sewers
   'ratKing:elite': FS('close', { hp: 0.55 }), 'ratKing:major': FS('close', { hp: 0.55 }),
-  'crab:elite': FS('party'), 'crabBlue:elite': FS('party'), 'crabGreen:elite': FS('party'), // (a short snap: in reach already)
+  'crab:elite': FS('reach'), 'crabBlue:elite': FS('reach'), 'crabGreen:elite': FS('reach'), // (a short snap: a little way off)
   // the Crypt
   'mummy:kit': FS('far'),
   gaper: FS('far', { free: true, heroes: FAR_HELD, prep: (u) => { u.g = { cd: 0.5 }; } }), // (its charge keeps its own clock, not a due one: brought forward)
@@ -339,14 +341,15 @@ export function foeSceneFor(k, move, d, words = '', major = '') {
   if (d.boss) return FS('boss');
   if (move === 'attack') return FS('party');
   if (move === 'major') return FS({ quake: 'close', charge: 'far', volley: 'ring', call: 'party' }[major] || 'party', HURT_MOVE.test(words) ? { hp: 0.45 } : {});
-  if (move === 'kit' && (d.ability === 'charge' || d.ability === 'shadowstep' || d.ability === 'dash' || d.dashCd)) return FS('far'); // (a dash, a charge: room to close; a pack kind still brings its pack)
+  if (move === 'kit' && d.ability === 'shadowstep') return FS('weak'); // (a backstab goes for the hurt, and for one busy with someone else: sim.js abilityScore)
+  if (move === 'kit' && (d.ability === 'charge' || d.ability === 'dash' || d.dashCd)) return FS('far'); // (a dash, a charge: room to close; a pack kind still brings its pack)
   if ((d.pack || d.wolf) && move !== 'elite') return FS('pack');
   if (d.mends || !(d.dmg > 0)) return FS('friend');
   if (move === 'elite') {
     const hp = HURT_MOVE.test(words) ? { hp: 0.45 } : {};
     if (/mend|heal|rais|rall|war cry|quicken|shield[s ]+(its|the) |call/i.test(words)) return FS('friend', hp);
     if (/lob|bomb|shell|glob/i.test(words)) return FS('standing', hp);
-    if (/short (lunge|rush|dash)/i.test(words)) return FS('party', hp);
+    if (/short (lunge|rush|dash)/i.test(words)) return FS('reach', hp);
     if (/charge|rush|leap|pounce|lunge|thr[oe]w|spear|dash|dive|swoop|hook|pull|down a (long )?line|shockwave/i.test(words)) return FS('far', hp);
     if (/slam|quake|nova|spin|round it|all round|ring|stomp|sweep/i.test(words)) return FS('close', hp);
     if (/arrow|shot|reflect|shooter/i.test(words)) return FS('shooters', hp);

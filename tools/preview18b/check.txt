@@ -1,0 +1,64 @@
+2253 previews, 34.1s
+threw: 0
+a loop where the move or trait never fired: 0
+not offered in the Book (never fires, so its button is left out): 0
+locked (shown as locked): 0 not counting heroes' tier 0
+abilities at tiers I-III: 540 runs of two loops, 7.0s
+  first go: 0.65 s on average, 2.4 s at the latest; 1.01 goes a loop; the hero's own brain chose it in 1054 of 1080 loops
+a loop where it didn't go within 2.5 s: 0
+not shown (a loop where it drew nothing and touched no one): 0
+drawn but reached no one (a loop where nothing it made touched a foe or a friend: a roll, a bush, a change of shape): 3
+  archer:roll
+  trapper:tripwire
+  werewolf:turnWolf
+wrong scenario (a loop where the game's own scorer wouldn't have used it there): 0
+cast by the stage (the brain didn't pick it by forceAt, though the scorer agreed): 1
+tiers identical (the same loop at two tiers: nothing on the stage changed): 0
+tiers that differ only in where things went (the same foes reached, statuses, buffs, heals, summons, sizes): 22
+  frost:iceShard I~II  (I: Chills. | II: Chills harder. | III: Splits into three; the middle one is bigger and hits harder.)
+  bulwark:shieldWall II~III  (I: For 5s; allies near take 30% less. | II: For 7s. | III: Enemies that press against the shield are shoved back.)
+  bearskin:hibernate I~II  (I: He sleeps and heals. | II: Nothing can touch him with a status while he sleeps. | III: He wakes with a roar that throws enemies back.)
+  digger:dirtFling I~II  (I: One fling. | II: It staggers enemies. | III: Three flings in a row.)
+  shaman:healTotem II~III  (I: It stands 6s. | II: It stands 10s. | III: It cleans statuses off friends near it.)
+  witch:cursedBrew II~III  (I: Cursed fumes for 6s. | II: Wider fumes. | III: Enemies that die in them burst, cursing those near.)
+  cultist:soulCandle I~II  (I: Below a quarter of its health. | II: Below a third. | III: He spins as he lands: everything near bleeds.)
+  beekeeper:honeyPot I~II II~III  (I: A hive for 8s. | II: For 12s. | III: Its bees stay on their foes, stinging.)
+  quartermaster:resupply I~II  (I: One crate: 4s sooner. | II: 6s sooner. | III: Two crates.)
+  crossbowman:pavise I~II  (I: One pavise for 7s. | II: For 10s, and he reloads 35% faster behind it. | III: Three, set round him in a slanted row.)
+  grenadier:blastOff I~II  (I: Throws him clear and hurts those near. | II: The blast staggers. | III: He lands with a second blast.)
+  harpooner:rogueWave II~III  (I: Soaks and throws them back. | II: A bigger wave. | III: It leaves water on the floor.)
+  huntress:bound II~III  (I: A leap back and a heavy javelin. | II: The javelin pierces. | III: She lands lightly: 2s faster.)
+  marksman:aimedShot I~II  (I: Two and a half times the damage through the first enemy. | II: Through everything in the line. | III: Knocks out the first one hit.)
+  marksman:ricochet I~II  (I: Bounces three times. | II: Five times. | III: Each bounce hits harder than the last.)
+  ninja:substitution I~II II~III  (I: Escapes one blow. | II: The smoke blinds those near. | III: Ready again much sooner.)
+  samurai:iaido I~II  (I: One cut through. | II: Staggers them harder. | III: He cuts back through again.)
+  valkyrie:spearThrow II~III  (I: A shield of 28. | II: The strikes shock. | III: A shield of 45.)
+  werewolf:frenzy II~III  (I: Up to 60% faster / heals up to 6%. | II: Heals up to 9%. | III: At full speed he howls: everything near is staggered.)
+  werewolf:pounce II~III  (I: Pins it for 1s. | II: Pins it for 1.6s; the cleave staggers. | III: Mauls it while it's pinned.)
+  enchantress:heartstring II~III  (I: The thread holds 4s. | II: It holds 6s. | III: Once that enemy is won, the thread jumps to the next one.)
+  airMage:cyclone I~II  (I: For 5s. | II: A stronger pull, and for 7s. | III: When it dies down it bursts: everything in it is thrown outwards.)
+blows on the hero side with nothing seen behind them (a target with no weapon, health set lower): 0
+monster moves: 975 previews of two loops, 9.7s
+  first go: 0.99 s on average, 7.2 s at the latest; 2.39 goes a loop
+  a loop where it didn't go within 2.5 s: 23
+  straw targets on the stage (never moving, never striking back): 0
+  wrong scenario (went off, but nothing it made reached anyone in 3.5 s): 8
+  foe:ent:kit:1
+  foe:goblinSuicide:kit:0
+  foe:goblinSuicide:kit:1
+  foe:rockTroll:major:2
+  foe:ratPlague:kit:0
+  foe:boneKing:kit:0
+  foe:yeti:kit:1
+  foe:sawBlade:kit:0
+  the stage helped it (a target moved up to it, its health set lower): 0
+  blows or health lost with nothing seen behind them (either side): 0
+  a loop that showed only its plain blows (its own move never came): 31
+statuses: 42 previews of two loops, 0.2s
+  first go: 0.86 s on average, 2.1 s at the latest; 1.04 goes a loop
+  a loop where it didn't go within 2.5 s: 0
+  straw targets on the stage (never moving, never striking back): 0
+  wrong scenario (went off, but nothing it made reached anyone in 3.5 s; or it never came to its burst or state): 0
+  the stage helped it (a target moved up to it, its health set lower): 0
+  blows or health lost with nothing seen behind them (either side): 0
+  put on from nothing seen (no fighter in view put it on): 0

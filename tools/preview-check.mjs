@@ -1,7 +1,7 @@
 // The Book's safety net (round 13): every preview spec (js/preview-sim.js) stepped once through a whole loop in Node.
 // Fails (exit 1) on any that throw and any whose move, trait or item doesn't fire in every one of two loops.
 // Round 18: and reports, for every hero ability at every tier, how it goes in its scene (see below).
-//   node tools/preview-check.mjs [--only hero|foe|status|trinket|potion] [--id paladin] [--v] [--table]
+//   node tools/preview-check.mjs [--only hero|foe|status|trinket|potion] [--id paladin] [--v] [--table] [--steady]
 // Round 18b: and the same for the monsters' moves and the statuses (at the end).
 globalThis.location = { search: '?x' };
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
@@ -24,7 +24,7 @@ const t0 = Date.now();
 for (const s of specs) {
   setSeed(11);
   try {
-    const S = PS.makeStage(s);
+    const S = (await import('./preview-measure.mjs')).steadyStage(s); // (every loop's unit ids from the same number: the result doesn't hang on what was checked before)
     const n = Math.ceil(2 * S.loop / DT) + 6; // two whole loops (each loop is a fresh world with its own dice) and into the next
     for (let i = 0; i < n; i++) S.step(DT);
     if (S.locked) locked.push(PS.specKey(s) + (S.why ? ' (' + S.why + ')' : ''));
@@ -48,7 +48,7 @@ for (const l of locked) if (!/^hero:/.test(l)) console.log('  ' + l);
 //   --table   one line per ability: each tier's first go, times gone, brain or stage, what it reached
 const WITHIN = 2.5; // seconds: "fires within the first second or two"
 if (!opt('only') || opt('only') === 'hero') {
-  const M = await import('./preview-measure.mjs');
+  const M = await import('./preview-measure.mjs'); M.steadyHeroes(args.includes('--steady')); // (--steady: the abilities measured from the same unit ids too)
   const { HEROES } = await import('../js/heroes.js');
   const t1 = Date.now(), rows = [], late = [], notShown = [], noOne = [], forced = [], wrong = [], same = [], posOnly = [], unseen = [];
   let runs = 0, fires = 0, byBrain = 0, firstMax = 0, firstSum = 0, firstN = 0;
