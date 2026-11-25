@@ -1174,3 +1174,4 @@ js/preview-scenes.js, easy to change; docs/preview18b.md has the audit, every nu
 - Found on the way, not changed (the heroes' side): measured from the same unit ids every time, 35 hero abilities play
   the very same loop at two tiers and 15 more differ only in where things went (`preview-check --steady`); the ids
   had been making those loops differ.
+- 0.26.1: preview18b, monster pages and status previews play against real heroes (straw dummies 1016 -> 0, unseen blows 3205 -> 0), Silenced has a preview; unit ids steady per loop. Open: 7 monster previews hit nobody, 24 late; with steady ids 35 hero abilities play the same loop at two tiers; Rogue Wave and Mock show 2 unseen blows after the dash merge; trinket/potion previews still on dummies. docs/preview18b.md.

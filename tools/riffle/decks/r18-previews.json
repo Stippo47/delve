@@ -12,13 +12,56 @@
       "title": "Previews are real fights",
       "text": "Every ability's preview is now a small real fight set up for it: real enemies, no damage from nowhere.",
       "why": "You said many weren't shown, were in the wrong situation, didn't change by tier, and heroes took invisible damage. Open a few in the Book (0.25.0) and mark what's still off.",
-      "videos": ["../../../docs/clips/preview18/heal-cleric-mend-III.mp4"],
+      "videos": [
+        "../../../docs/clips/preview18/heal-cleric-mend-III.mp4"
+      ],
       "parts": [
-        { "id": "foes", "title": "Real enemies", "text": "Goblins, orcs, skeletons, archers, shamans, and a spider, hellhound and frost wolf for poison, burn and chill bites, all running their own brains: they walk up, swing, shoot and wind up. Every hit on a hero comes from something you can see (was 49 abilities, traits and trinkets with invisible damage).", "videos": ["../../../docs/clips/preview18/parry-oldguard-pommelStrike-II.mp4"] },
-        { "id": "scenes", "title": "A scene per ability", "text": "22 kinds of scene: a group, shooters, casters, a hurt friend, a downed friend, a blow about to land, a corpse and more. The hero's own brain picks the moment, as in a run, in 1052 of 1080 loops. Wrong-situation previews: 35 to 0.", "videos": ["../../../docs/clips/preview18/bubble-waterMage-bubbleShield-II.mp4", "../../../docs/clips/preview18/revive-valkyrie-valkyrieCall-I.mp4"] },
-        { "id": "tiers", "title": "Tiers", "text": "Scenes are built for tier III (a second hurt friend, a wall, oil, a kill), so lower tiers visibly do less: one turret, then two. Still alike: 18 tiers that only change a number or a cooldown, or last longer than the loop.", "videos": ["../../../docs/clips/preview18/summon-engineer-deployTurret-I.mp4", "../../../docs/clips/preview18/summon-engineer-deployTurret-III.mp4"] },
-        { "id": "left", "title": "Not done yet", "text": "The monster pages' previews still use the blue straw dummies, and Silenced has no preview yet. Next on my list." }
+        {
+          "id": "foes",
+          "title": "Real enemies",
+          "text": "Goblins, orcs, skeletons, archers, shamans, and a spider, hellhound and frost wolf for poison, burn and chill bites, all running their own brains: they walk up, swing, shoot and wind up. Every hit on a hero comes from something you can see (was 49 abilities, traits and trinkets with invisible damage).",
+          "videos": [
+            "../../../docs/clips/preview18/parry-oldguard-pommelStrike-II.mp4"
+          ]
+        },
+        {
+          "id": "scenes",
+          "title": "A scene per ability",
+          "text": "22 kinds of scene: a group, shooters, casters, a hurt friend, a downed friend, a blow about to land, a corpse and more. The hero's own brain picks the moment, as in a run, in 1052 of 1080 loops. Wrong-situation previews: 35 to 0.",
+          "videos": [
+            "../../../docs/clips/preview18/bubble-waterMage-bubbleShield-II.mp4",
+            "../../../docs/clips/preview18/revive-valkyrie-valkyrieCall-I.mp4"
+          ]
+        },
+        {
+          "id": "tiers",
+          "title": "Tiers",
+          "text": "Scenes are built for tier III (a second hurt friend, a wall, oil, a kill), so lower tiers visibly do less: one turret, then two. Still alike: 18 tiers that only change a number or a cooldown, or last longer than the loop.",
+          "videos": [
+            "../../../docs/clips/preview18/summon-engineer-deployTurret-I.mp4",
+            "../../../docs/clips/preview18/summon-engineer-deployTurret-III.mp4"
+          ]
+        },
+        {
+          "id": "left",
+          "title": "Not done yet",
+          "text": "The monster pages' previews still use the blue straw dummies, and Silenced has no preview yet. Next on my list."
+        }
       ]
+    },
+    {
+      "id": "monsters",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Monster pages too",
+      "text": "Monster and status previews now play against real heroes; every status comes from someone you can see.",
+      "why": "The last straw dummies are gone from the Book's monster pages. Silenced has its own preview now.",
+      "videos": [
+        "../../../docs/clips/preview18b/status-silenced.mp4",
+        "../../../docs/clips/preview18b/foe-boar-elite-crash.mp4",
+        "../../../docs/clips/preview18b/foe-wolf-kit-pack.mp4"
+      ],
+      "details": "Before, every monster preview used blue straw dummies and 720 of them showed health lost to nothing. Now each move faces a small party of real heroes fighting back (held at range for charges, in a ring for slams, against a wall for the boar's crash), and a death move is set off by a hero visibly killing it.\n\nStatuses build up on a hero's own blows (bursting on the third) or come from the ability that puts them on in a run.\n\nSilenced: a choir sprite sings and mends; the Cleric's Smite staggers it, the crossed-out bubble shows, the song stops while its ring of shots still fires, then it sings again.\n\nStill weak: 7 monster moves sometimes land on nobody (the heroes walk out of the zone, as they would in a run), and 24 slow ones take more than 2.5 s. Trinket and potion previews still use the old dummies; next on my list."
     }
   ]
 }
