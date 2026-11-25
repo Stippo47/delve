@@ -1,0 +1,257 @@
+{
+ "title": "Art: dungeon walls",
+ "topic": "art",
+ "stack": "r19art",
+ "order": 1,
+ "cards": [
+  {
+   "id": "wildwood",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Wildwood walls",
+   "text": "3 wall looks, each with two doors set in it, a corner and a hero for size. Tick the one you want.",
+   "why": "The walls are now taller than the doors: each door sits in its own frame in the wall, and the wall rises above it. Every picture is the game's real floor and doors at game scale.",
+   "pick": [
+    "wildwood-b"
+   ],
+   "items": [
+    {
+     "id": "wildwood-a",
+     "label": "Root bank",
+     "image": "../../../design/r19-art/walls/wildwood-a/wildwood-a.png",
+     "text": "A bank of packed earth held together by thick tree roots, with bushes along its top."
+    },
+    {
+     "id": "wildwood-b",
+     "label": "Log palisade",
+     "image": "../../../design/r19-art/walls/wildwood-b/wildwood-b.png",
+     "text": "A stockade of standing logs lashed with rope, their cut ends showing along the top; a crossbeam over each door."
+    },
+    {
+     "id": "wildwood-c",
+     "label": "Mossy drystone",
+     "image": "../../../design/r19-art/walls/wildwood-c/wildwood-c.png",
+     "text": "Round fieldstones stacked dry, moss on their tops and ferns along the wall; a great flat lintel over each door."
+    }
+   ]
+  },
+  {
+   "id": "warren",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Warren walls",
+   "text": "2 wall looks, each with two doors set in it, a corner and a hero for size. Tick the one you want.",
+   "why": "The walls are now taller than the doors: each door sits in its own frame in the wall, and the wall rises above it. Every picture is the game's real floor and doors at game scale.",
+   "pick": [
+    "warren-b"
+   ],
+   "items": [
+    {
+     "id": "warren-a",
+     "label": "Shored tunnel",
+     "image": "../../../design/r19-art/walls/warren-a/warren-a.png",
+     "text": "Dug earth held up by thick timber posts, boards and a heavy top beam with iron brackets; lanterns hang here and there."
+    },
+    {
+     "id": "warren-b",
+     "label": "Junk stockade",
+     "image": "../../../design/r19-art/walls/warren-b/warren-b.png",
+     "text": "Goblin work: odd planks nailed every which way, an iron band, sharpened stakes along the top, shields hung up."
+    }
+   ]
+  },
+  {
+   "id": "sewers",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Sewers walls",
+   "text": "3 wall looks, each with two doors set in it, a corner and a hero for size. Tick the one you want.",
+   "why": "The walls are now taller than the doors: each door sits in its own frame in the wall, and the wall rises above it. Every picture is the game's real floor and doors at game scale.",
+   "pick": [
+    "sewers-a"
+   ],
+   "items": [
+    {
+     "id": "sewers-a",
+     "label": "Sewer brick",
+     "image": "../../../design/r19-art/walls/sewers-a/sewers-a.png",
+     "text": "Old red brick on a green stone footing, moss and slime running down it; brick arches over the doors."
+    },
+    {
+     "id": "sewers-b",
+     "label": "Pipe wall",
+     "image": "../../../design/r19-art/walls/sewers-b/sewers-b.png",
+     "text": "Green stone blocks carrying two big copper pipes, flanged and bolted, valve wheels and gauges here and there."
+    },
+    {
+     "id": "sewers-c",
+     "label": "Glazed tile",
+     "image": "../../../design/r19-art/walls/sewers-c/sewers-c.png",
+     "text": "The city's old tiled tunnels: pale green glazed tiles, a dark green band, grime creeping up from the foot."
+    }
+   ]
+  },
+  {
+   "id": "crypt",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Crypt walls",
+   "text": "3 wall looks, each with two doors set in it, a corner and a hero for size. Tick the one you want.",
+   "why": "The walls are now taller than the doors: each door sits in its own frame in the wall, and the wall rises above it. Every picture is the game's real floor and doors at game scale.",
+   "pick": [
+    "crypt-b"
+   ],
+   "items": [
+    {
+     "id": "crypt-a",
+     "label": "Tomb ashlar",
+     "image": "../../../design/r19-art/walls/crypt-a/crypt-a.png",
+     "text": "Big grey cut blocks in courses on a plinth, a string course, burial niches with a skull now and then."
+    },
+    {
+     "id": "crypt-b",
+     "label": "Ossuary",
+     "image": "../../../design/r19-art/walls/crypt-b/crypt-b.png",
+     "text": "Stone bands with rows of skulls and stacked long bones set between them; a hood of skulls over each door."
+    },
+    {
+     "id": "crypt-c",
+     "label": "Blind arcade",
+     "image": "../../../design/r19-art/walls/crypt-c/crypt-c.png",
+     "text": "A row of tall pointed arches sunk into the stone, dark inside, a string course over them; candles in some."
+    }
+   ]
+  },
+  {
+   "id": "frost",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Frost Hollow walls",
+   "text": "3 wall looks, each with two doors set in it, a corner and a hero for size. Tick the one you want.",
+   "why": "The walls are now taller than the doors: each door sits in its own frame in the wall, and the wall rises above it. Every picture is the game's real floor and doors at game scale.",
+   "pick": [
+    "frost-b"
+   ],
+   "items": [
+    {
+     "id": "frost-a",
+     "label": "Ice blocks",
+     "image": "../../../design/r19-art/walls/frost-a/frost-a.png",
+     "text": "Big glassy blocks of blue ice, snow heaped along the top and icicles hanging down; an ice arch over each door."
+    },
+    {
+     "id": "frost-b",
+     "label": "Frosted rock",
+     "image": "../../../design/r19-art/walls/frost-b/frost-b.png",
+     "text": "Dark blue-grey rock with white rime on every stone, snow along the top and long icicles; a stone lintel heavy with snow."
+    },
+    {
+     "id": "frost-c",
+     "label": "Crystal ridge",
+     "image": "../../../design/r19-art/walls/frost-c/frost-c.png",
+     "text": "Packed snow and ice in blue bands, topped with a ridge of big ice crystals; crystals crown each door."
+    }
+   ]
+  },
+  {
+   "id": "ember",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Ember Deep walls",
+   "text": "2 wall looks, each with two doors set in it, a corner and a hero for size. Tick the one you want.",
+   "why": "The walls are now taller than the doors: each door sits in its own frame in the wall, and the wall rises above it. Every picture is the game's real floor and doors at game scale.",
+   "pick": [
+    "ember-b"
+   ],
+   "items": [
+    {
+     "id": "ember-a",
+     "label": "Basalt columns",
+     "image": "../../../design/r19-art/walls/ember-a/ember-a.png",
+     "text": "Black basalt in tall six-sided columns, their tops showing along the wall; lava glowing in the cracks at the foot."
+    },
+    {
+     "id": "ember-b",
+     "label": "Hell brick",
+     "image": "../../../design/r19-art/walls/ember-b/ember-b.png",
+     "text": "Dark red brick with fire glowing in the joints near the floor, an iron cap set with spikes; horned skulls over the doors."
+    }
+   ]
+  },
+  {
+   "id": "spire",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Gilded Spire walls",
+   "text": "2 wall looks, each with two doors set in it, a corner and a hero for size. Tick the one you want.",
+   "why": "The walls are now taller than the doors: each door sits in its own frame in the wall, and the wall rises above it. Every picture is the game's real floor and doors at game scale.",
+   "pick": [
+    "spire-b"
+   ],
+   "items": [
+    {
+     "id": "spire-a",
+     "label": "Marble and gold",
+     "image": "../../../design/r19-art/walls/spire-a/spire-a.png",
+     "text": "White marble panels framed in gold, a gold plinth and frieze; a sun of gold above each door."
+    },
+    {
+     "id": "spire-b",
+     "label": "Gilded colonnade",
+     "image": "../../../design/r19-art/walls/spire-b/spire-b.png",
+     "text": "White fluted columns with gold heads and feet, deep violet between them set with gold stars; a gold pediment over each door."
+    }
+   ]
+  },
+  {
+   "id": "dunes",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Sunken Dunes walls",
+   "text": "2 wall looks, each with two doors set in it, a corner and a hero for size. Tick the one you want.",
+   "why": "The walls are now taller than the doors: each door sits in its own frame in the wall, and the wall rises above it. Every picture is the game's real floor and doors at game scale.",
+   "pick": [
+    "dunes-a"
+   ],
+   "items": [
+    {
+     "id": "dunes-a",
+     "label": "Sandstone",
+     "image": "../../../design/r19-art/walls/dunes-a/dunes-a.png",
+     "text": "Warm cut sandstone with a carved band of signs, sand drifted against its foot and along its top; a winged sun over each door."
+    },
+    {
+     "id": "dunes-b",
+     "label": "Painted tomb",
+     "image": "../../../design/r19-art/walls/dunes-b/dunes-b.png",
+     "text": "Smooth plaster painted in teal, red and gold bands under a curved cornice; tapered frames and a sun disc at each door."
+    }
+   ]
+  },
+  {
+   "id": "foundry",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Foundry walls",
+   "text": "2 wall looks, each with two doors set in it, a corner and a hero for size. Tick the one you want.",
+   "why": "The walls are now taller than the doors: each door sits in its own frame in the wall, and the wall rises above it. Every picture is the game's real floor and doors at game scale.",
+   "pick": [
+    "foundry-a"
+   ],
+   "items": [
+    {
+     "id": "foundry-a",
+     "label": "Riveted plates",
+     "image": "../../../design/r19-art/walls/foundry-a/foundry-a.png",
+     "text": "Steel plates riveted at the seams on a brass plinth, a warning stripe at the foot; gear-headed brass hoods over the doors."
+    },
+    {
+     "id": "foundry-b",
+     "label": "Brass pipeworks",
+     "image": "../../../design/r19-art/walls/foundry-b/foundry-b.png",
+     "text": "Fire brick below, brass pipes, valves and gauges above, a big pipe along the top; pipes arch over each door."
+    }
+   ]
+  }
+ ]
+}

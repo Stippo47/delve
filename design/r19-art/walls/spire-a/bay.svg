@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -108 160 108" width="640" height="432">
+  <!-- spire walls, option a (Marble and gold): the stretch a door sits in. Round 19 art lane (walls). 1 SVG unit = 1 room unit. The wall's own frame: x runs along the wall, y = 0 is the foot (where the wall meets the floor; the room is below, +y), y < 0 rises up the wall away from the room. Face (the wall's inner side, folded flat like the doors' arch): y -90..0. Cap (the top, seen from above): y -108..-90. The whole wall is 108 deep; the doors' arch reaches y -57, so the wall rises 51 past it. Everything repeats every 160 along x, so runs tile end to end. No outline in the file: the renderer draws the one ink outline round the wall's mass. Rotate the piece so +y points into the room. An overlay: drawn over the run (which carries on under it) wherever a door stands, then the door (art/props/door-*.svg, box 141.4) on top, its doorway centred on (80, 0). -->
+  <defs>
+    <clipPath id="c0"><path d="M0 -108H160V0H0Z"/></clipPath>
+    <linearGradient id="g1" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#F7F2E8"/><stop offset="0.55" stop-color="#F6F0E4"/><stop offset="1" stop-color="#CFCAC0"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE69A"/><stop offset="0.35" stop-color="#E2B23C"/><stop offset="1" stop-color="#A87A22"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#EFEBE1"/><stop offset="1" stop-color="#C6C1B8"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F0EBE1"/><stop offset="1" stop-color="#C7C2B8"/></linearGradient>
+    <linearGradient id="g5" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F3EEE4"/><stop offset="1" stop-color="#CAC5BA"/></linearGradient>
+    <linearGradient id="g6" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F4EFE6"/><stop offset="1" stop-color="#CBC6BD"/></linearGradient>
+    <linearGradient id="g7" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE69A"/><stop offset="1" stop-color="#E2B23C"/></linearGradient>
+    <linearGradient id="g8" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE69A"/><stop offset="1" stop-color="#A87A22"/></linearGradient>
+    <radialGradient id="g9" cx="0.38" cy="0.32" r="0.8"><stop offset="0" stop-color="#FFF4C0"/><stop offset="0.6" stop-color="#E2B23C"/><stop offset="1" stop-color="#A87A22"/></radialGradient>
+  </defs>
+  <g id="sprite">
+<g clip-path="url(#c0)">
+<path d="M4 -78H18Q20 -78 20 -76V-2Q20 0 18 0H4Q2 0 2 -2V-76Q2 -78 4 -78Z" fill="url(#g1)"/>
+<path d="M6.4 -76.2H15.6Q17.6 -76.2 17.6 -74.2V-73.2Q17.6 -71.2 15.6 -71.2H6.4Q4.4 -71.2 4.4 -73.2V-74.2Q4.4 -76.2 6.4 -76.2Z" fill="#FFFFFF" opacity="0.35"/>
+<rect x="7" y="-72" width="2" height="64" fill="#D6CDBA" />
+<rect x="13" y="-72" width="2" height="64" fill="#D6CDBA" />
+<rect x="-2" y="-84" width="26" height="8" fill="url(#g2)" />
+<rect x="-2" y="-83" width="26" height="1.4" fill="#FFFFFF" opacity="0.5"/>
+<rect x="-2" y="-8" width="26" height="8" fill="url(#g2)" />
+<rect x="-2" y="-7" width="26" height="1.4" fill="#FFFFFF" opacity="0.5"/>
+<path d="M142 -78H156Q158 -78 158 -76V-2Q158 0 156 0H142Q140 0 140 -2V-76Q140 -78 142 -78Z" fill="url(#g1)"/>
+<path d="M144.4 -76.2H153.6Q155.6 -76.2 155.6 -74.2V-73.2Q155.6 -71.2 153.6 -71.2H144.4Q142.4 -71.2 142.4 -73.2V-74.2Q142.4 -76.2 144.4 -76.2Z" fill="#FFFFFF" opacity="0.35"/>
+<rect x="145" y="-72" width="2" height="64" fill="#D6CDBA" />
+<rect x="151" y="-72" width="2" height="64" fill="#D6CDBA" />
+<rect x="136" y="-84" width="26" height="8" fill="url(#g2)" />
+<rect x="136" y="-83" width="26" height="1.4" fill="#FFFFFF" opacity="0.5"/>
+<rect x="136" y="-8" width="26" height="8" fill="url(#g2)" />
+<rect x="136" y="-7" width="26" height="1.4" fill="#FFFFFF" opacity="0.5"/>
+<path d="M7 -22L11.1 -42L22.2 -56.7L38.5 -66.6L58.4 -72.2L80 -74L101.6 -72.2L121.5 -66.6L137.8 -56.7L148.9 -42L153 -22L139 -22L135.7 -36.7L126.7 -47.5L113.5 -54.7L97.5 -58.7L80 -60L62.5 -58.7L46.5 -54.7L33.3 -47.5L24.3 -36.7L21 -22Z" fill="#A87A22" />
+<path d="M20.6 -22.7C21.3 -23.3 24 -35.5 23.6 -36.2C23.2 -37 12.1 -41.7 11.5 -41.1C10.8 -40.5 7.3 -23.5 7.7 -22.7C8.1 -21.9 19.9 -22.1 20.6 -22.7Z" fill="url(#g3)" />
+<path d="M8.8 -22.5L12.5 -40.9L10.4 -41.3L6.6 -22.9Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M24.2 -37.4C25 -37.6 32.5 -46.6 32.4 -47.3C32.3 -48.1 23.1 -56.1 22.2 -55.8C21.4 -55.6 11.9 -43.1 12 -42.3C12.1 -41.5 23.3 -37.2 24.2 -37.4Z" fill="url(#g4)" />
+<path d="M12.9 -41.6L23.1 -55.2L21.3 -56.5L11.1 -43Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M33.4 -48.2C34.4 -48.1 45.4 -54.1 45.6 -54.8C45.8 -55.6 39.2 -65.7 38.3 -65.8C37.3 -65.9 23.4 -57.4 23.2 -56.7C23 -56 32.5 -48.3 33.4 -48.2Z" fill="url(#g5)" />
+<path d="M23.8 -55.8L38.8 -64.9L37.7 -66.8L22.6 -57.6Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M46.9 -55.4C47.8 -55.1 61.2 -58.4 61.7 -59.1C62.1 -59.8 58.8 -71.2 57.8 -71.5C56.9 -71.8 40 -67 39.6 -66.4C39.1 -65.7 46 -55.7 46.9 -55.4Z" fill="url(#g5)" />
+<path d="M39.9 -65.3L58.1 -70.4L57.5 -72.6L39.3 -67.4Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M63.2 -59.3C64 -58.9 78.5 -59.9 79.2 -60.5C79.9 -61.1 80 -72.9 79.2 -73.4C78.4 -73.8 60 -72.3 59.3 -71.8C58.7 -71.2 62.3 -59.8 63.2 -59.3Z" fill="url(#g6)" />
+<path d="M59.4 -70.7L79.3 -72.3L79.1 -74.5L59.2 -72.9Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M139.4 -22.7C138.7 -23.3 136 -35.5 136.4 -36.2C136.8 -37 147.9 -41.7 148.5 -41.1C149.2 -40.5 152.7 -23.5 152.3 -22.7C151.9 -21.9 140.1 -22.1 139.4 -22.7Z" fill="url(#g3)" />
+<path d="M153.4 -22.9L149.6 -41.3L147.5 -40.9L151.2 -22.5Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M135.8 -37.4C135 -37.6 127.5 -46.6 127.6 -47.3C127.7 -48.1 136.9 -56.1 137.8 -55.8C138.6 -55.6 148.1 -43.1 148 -42.3C147.9 -41.5 136.7 -37.2 135.8 -37.4Z" fill="url(#g4)" />
+<path d="M148.9 -43L138.7 -56.5L136.9 -55.2L147.1 -41.6Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M126.6 -48.2C125.6 -48.1 114.6 -54.1 114.4 -54.8C114.2 -55.6 120.8 -65.7 121.7 -65.8C122.7 -65.9 136.6 -57.4 136.8 -56.7C137 -56 127.5 -48.3 126.6 -48.2Z" fill="url(#g5)" />
+<path d="M137.4 -57.6L122.3 -66.8L121.2 -64.9L136.2 -55.8Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M113.1 -55.4C112.2 -55.1 98.8 -58.4 98.3 -59.1C97.9 -59.8 101.2 -71.2 102.2 -71.5C103.1 -71.8 120 -67 120.4 -66.4C120.9 -65.7 114 -55.7 113.1 -55.4Z" fill="url(#g5)" />
+<path d="M120.7 -67.4L102.5 -72.6L101.9 -70.4L120.1 -65.3Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M96.8 -59.3C96 -58.9 81.5 -59.9 80.8 -60.5C80.1 -61.1 80 -72.9 80.8 -73.4C81.6 -73.8 100 -72.3 100.7 -71.8C101.3 -71.2 97.7 -59.8 96.8 -59.3Z" fill="url(#g6)" />
+<path d="M100.8 -72.9L80.9 -74.5L80.7 -72.3L100.6 -70.7Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M87 -77.4L96.9 -76L87 -74.6Z" fill="url(#g7)" />
+<path d="M86.9 -74.4L91.1 -71.4L86.1 -72.3Z" fill="url(#g8)" />
+<path d="M85.9 -72.1L91.9 -64.1L83.9 -70.1Z" fill="url(#g7)" />
+<path d="M83.7 -69.9L84.6 -64.9L81.6 -69.1Z" fill="url(#g8)" />
+<path d="M81.4 -69L80 -59.1L78.6 -69Z" fill="url(#g7)" />
+<path d="M78.4 -69.1L75.4 -64.9L76.3 -69.9Z" fill="url(#g8)" />
+<path d="M76.1 -70.1L68.1 -64.1L74.1 -72.1Z" fill="url(#g7)" />
+<path d="M73.9 -72.3L68.9 -71.4L73.1 -74.4Z" fill="url(#g8)" />
+<path d="M73 -74.6L63.1 -76L73 -77.4Z" fill="url(#g7)" />
+<path d="M73.1 -77.6L68.9 -80.6L73.9 -79.7Z" fill="url(#g8)" />
+<path d="M74.1 -79.9L68.1 -87.9L76.1 -81.9Z" fill="url(#g7)" />
+<path d="M76.3 -82.1L75.4 -87.1L78.4 -82.9Z" fill="url(#g8)" />
+<path d="M78.6 -83L80 -92.9L81.4 -83Z" fill="url(#g7)" />
+<path d="M81.6 -82.9L84.6 -87.1L83.7 -82.1Z" fill="url(#g8)" />
+<path d="M83.9 -81.9L91.9 -87.9L85.9 -79.9Z" fill="url(#g7)" />
+<path d="M86.1 -79.7L91.1 -80.6L86.9 -77.6Z" fill="url(#g8)" />
+<circle cx="80" cy="-76" r="8.4" fill="#A87A22"/>
+<circle cx="80" cy="-76" r="7.5" fill="url(#g9)"/>
+<ellipse cx="77.8" cy="-78.6" rx="2.6" ry="1.5" fill="#FFFFFF" opacity="0.5"/>
+</g>
+  </g>
+</svg>

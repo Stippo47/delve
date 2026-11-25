@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -102 160 102" width="640" height="408">
+  <!-- warren walls, option b (Junk stockade): the stretch a door sits in. Round 19 art lane (walls). 1 SVG unit = 1 room unit. The wall's own frame: x runs along the wall, y = 0 is the foot (where the wall meets the floor; the room is below, +y), y < 0 rises up the wall away from the room. Face (the wall's inner side, folded flat like the doors' arch): y -80..0. Cap (the top, seen from above): y -102..-80. The whole wall is 102 deep; the doors' arch reaches y -57, so the wall rises 45 past it. Everything repeats every 160 along x, so runs tile end to end. No outline in the file: the renderer draws the one ink outline round the wall's mass. Rotate the piece so +y points into the room. An overlay: drawn over the run (which carries on under it) wherever a door stands, then the door (art/props/door-*.svg, box 141.4) on top, its doorway centred on (80, 0). -->
+  <defs>
+    <clipPath id="c0"><path d="M0 -102H160V0H0Z"/></clipPath>
+    <linearGradient id="g1" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#AD8760"/><stop offset="0.55" stop-color="#A07446"/><stop offset="1" stop-color="#86613B"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#A28463"/><stop offset="0.55" stop-color="#93704A"/><stop offset="1" stop-color="#7B5E3E"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#B8956A"/><stop offset="0.55" stop-color="#AD8452"/><stop offset="1" stop-color="#916F45"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#AB8562"/><stop offset="0.55" stop-color="#9D7149"/><stop offset="1" stop-color="#845F3D"/></linearGradient>
+    <linearGradient id="g5" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#B18A62"/><stop offset="0.55" stop-color="#A47748"/><stop offset="1" stop-color="#8A643C"/></linearGradient>
+    <linearGradient id="g6" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#9A7C5B"/><stop offset="0.55" stop-color="#8A6740"/><stop offset="1" stop-color="#745736"/></linearGradient>
+    <linearGradient id="g7" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#B9966B"/><stop offset="0.55" stop-color="#AE8553"/><stop offset="1" stop-color="#927046"/></linearGradient>
+    <linearGradient id="g8" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#AA8462"/><stop offset="0.55" stop-color="#9C7048"/><stop offset="1" stop-color="#835E3C"/></linearGradient>
+    <radialGradient id="g9" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#CFCCD1"/><stop offset="0.6" stop-color="#A8A2AC"/><stop offset="1" stop-color="#767178"/></radialGradient>
+    <radialGradient id="ga" cx="0.38" cy="0.3" r="0.8"><stop offset="0" stop-color="#F0A848"/><stop offset="1" stop-color="#9A4E1C"/></radialGradient>
+    <radialGradient id="gb" cx="0.38" cy="0.3" r="0.8"><stop offset="0" stop-color="#FFFDF4"/><stop offset="0.55" stop-color="#E6D8B8"/><stop offset="1" stop-color="#A19781"/></radialGradient>
+  </defs>
+  <g id="sprite">
+<g clip-path="url(#c0)">
+<path d="M2 -14H18Q20 -14 20 -12V-1Q20 1 18 1H2Q0 1 0 -1V-12Q0 -14 2 -14Z" fill="url(#g1)"/>
+<path d="M3.9 -12.2H16.1Q17.6 -12.2 17.6 -10.7V-10.7Q17.6 -9.2 16.1 -9.2H3.9Q2.4 -9.2 2.4 -10.7V-10.7Q2.4 -12.2 3.9 -12.2Z" fill="#FFFFFF" opacity="0.2"/>
+<path d="M4 -30H20Q22 -30 22 -28V-17Q22 -15 20 -15H4Q2 -15 2 -17V-28Q2 -30 4 -30Z" fill="url(#g2)"/>
+<path d="M5.9 -28.2H18.1Q19.6 -28.2 19.6 -26.7V-26.7Q19.6 -25.2 18.1 -25.2H5.9Q4.4 -25.2 4.4 -26.7V-26.7Q4.4 -28.2 5.9 -28.2Z" fill="#FFFFFF" opacity="0.2"/>
+<path d="M2 -46H18Q20 -46 20 -44V-33Q20 -31 18 -31H2Q0 -31 0 -33V-44Q0 -46 2 -46Z" fill="url(#g3)"/>
+<path d="M3.9 -44.2H16.1Q17.6 -44.2 17.6 -42.7V-42.7Q17.6 -41.2 16.1 -41.2H3.9Q2.4 -41.2 2.4 -42.7V-42.7Q2.4 -44.2 3.9 -44.2Z" fill="#FFFFFF" opacity="0.2"/>
+<path d="M4 -62H20Q22 -62 22 -60V-49Q22 -47 20 -47H4Q2 -47 2 -49V-60Q2 -62 4 -62Z" fill="url(#g4)"/>
+<path d="M5.9 -60.2H18.1Q19.6 -60.2 19.6 -58.7V-58.7Q19.6 -57.2 18.1 -57.2H5.9Q4.4 -57.2 4.4 -58.7V-58.7Q4.4 -60.2 5.9 -60.2Z" fill="#FFFFFF" opacity="0.2"/>
+<path d="M142 -14H158Q160 -14 160 -12V-1Q160 1 158 1H142Q140 1 140 -1V-12Q140 -14 142 -14Z" fill="url(#g5)"/>
+<path d="M143.9 -12.2H156.1Q157.6 -12.2 157.6 -10.7V-10.7Q157.6 -9.2 156.1 -9.2H143.9Q142.4 -9.2 142.4 -10.7V-10.7Q142.4 -12.2 143.9 -12.2Z" fill="#FFFFFF" opacity="0.2"/>
+<path d="M144 -30H160Q162 -30 162 -28V-17Q162 -15 160 -15H144Q142 -15 142 -17V-28Q142 -30 144 -30Z" fill="url(#g6)"/>
+<path d="M145.9 -28.2H158.1Q159.6 -28.2 159.6 -26.7V-26.7Q159.6 -25.2 158.1 -25.2H145.9Q144.4 -25.2 144.4 -26.7V-26.7Q144.4 -28.2 145.9 -28.2Z" fill="#FFFFFF" opacity="0.2"/>
+<path d="M142 -46H158Q160 -46 160 -44V-33Q160 -31 158 -31H142Q140 -31 140 -33V-44Q140 -46 142 -46Z" fill="url(#g7)"/>
+<path d="M143.9 -44.2H156.1Q157.6 -44.2 157.6 -42.7V-42.7Q157.6 -41.2 156.1 -41.2H143.9Q142.4 -41.2 142.4 -42.7V-42.7Q142.4 -44.2 143.9 -44.2Z" fill="#FFFFFF" opacity="0.2"/>
+<path d="M144 -62H160Q162 -62 162 -60V-49Q162 -47 160 -47H144Q142 -47 142 -49V-60Q142 -62 144 -62Z" fill="url(#g4)"/>
+<path d="M145.9 -60.2H158.1Q159.6 -60.2 159.6 -58.7V-58.7Q159.6 -57.2 158.1 -57.2H145.9Q144.4 -57.2 144.4 -58.7V-58.7Q144.4 -60.2 145.9 -60.2Z" fill="#FFFFFF" opacity="0.2"/>
+<path d="M0.5 -82H159.5Q162 -82 162 -79.5V-68.5Q162 -66 159.5 -66H0.5Q-2 -66 -2 -68.5V-79.5Q-2 -82 0.5 -82Z" fill="url(#g8)"/>
+<path d="M2.7 -80.2H157.3Q159.3 -80.2 159.3 -78.2V-78.2Q159.3 -76.2 157.3 -76.2H2.7Q0.7 -76.2 0.7 -78.2V-78.2Q0.7 -80.2 2.7 -80.2Z" fill="#FFFFFF" opacity="0.2"/>
+<circle cx="10.4" cy="-73.5" r="2.4" fill="#1A1020" opacity="0.28"/>
+<circle cx="10" cy="-74" r="2.4" fill="url(#g9)"/>
+<circle cx="150.4" cy="-73.5" r="2.4" fill="#1A1020" opacity="0.28"/>
+<circle cx="150" cy="-74" r="2.4" fill="url(#g9)"/>
+<circle cx="24" cy="-74" r="11" fill="url(#ga)"/>
+<circle cx="24" cy="-74" r="11" fill="none" stroke="#5E5A62" stroke-width="3"/>
+<circle cx="24.5" cy="-73.4" r="3" fill="#1A1020" opacity="0.28"/>
+<circle cx="24" cy="-74" r="3" fill="url(#g9)"/>
+<circle cx="136" cy="-74" r="11" fill="url(#ga)"/>
+<circle cx="136" cy="-74" r="11" fill="none" stroke="#5E5A62" stroke-width="3"/>
+<circle cx="136.5" cy="-73.4" r="3" fill="#1A1020" opacity="0.28"/>
+<circle cx="136" cy="-74" r="3" fill="url(#g9)"/>
+<path d="M87.7 -75.3C87.7 -74 87.1 -72.3 86.2 -71.2C85.3 -70.1 83.8 -69.2 82.3 -68.8C80.9 -68.3 78.9 -68 77.6 -68.5C76.2 -68.9 74.9 -70.2 74 -71.4C73.1 -72.5 72.2 -74 72.2 -75.3C72.2 -76.7 73.1 -78.2 74 -79.3C75 -80.4 76.3 -81.6 77.6 -82C79 -82.5 80.9 -82.3 82.3 -81.9C83.7 -81.5 85.3 -80.6 86.2 -79.5C87.1 -78.4 87.7 -76.7 87.7 -75.3Z" fill="url(#gb)" />
+<path d="M77.3 -70.8H82.7Q84.5 -70.8 84.5 -69V-67.7Q84.5 -65.9 82.7 -65.9H77.3Q75.5 -65.9 75.5 -67.7V-69Q75.5 -70.8 77.3 -70.8Z" fill="#C6BA9E" />
+<ellipse cx="76.9" cy="-74" rx="2.2" ry="2.4" fill="#2B2230" opacity="0.85"/>
+<ellipse cx="83.1" cy="-74" rx="2.2" ry="2.4" fill="#2B2230" opacity="0.85"/>
+<path d="M80 -72.2l-1.2 2.2h2.3Z" fill="#2B2230" opacity="0.75"/>
+<path d="M77.7 -69V-66.3M80 -69V-66.3M82.3 -69V-66.3" stroke="#6E6458" stroke-width="0.8" opacity="0.7"/>
+<ellipse cx="77.3" cy="-78.9" rx="2.3" ry="1.3" fill="#FFFFFF" opacity="0.55"/>
+</g>
+  </g>
+</svg>

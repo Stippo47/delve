@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -98 160 98" width="640" height="392">
+  <!-- sewers walls, option c (Glazed tile): the stretch a door sits in. Round 19 art lane (walls). 1 SVG unit = 1 room unit. The wall's own frame: x runs along the wall, y = 0 is the foot (where the wall meets the floor; the room is below, +y), y < 0 rises up the wall away from the room. Face (the wall's inner side, folded flat like the doors' arch): y -82..0. Cap (the top, seen from above): y -98..-82. The whole wall is 98 deep; the doors' arch reaches y -57, so the wall rises 41 past it. Everything repeats every 160 along x, so runs tile end to end. No outline in the file: the renderer draws the one ink outline round the wall's mass. Rotate the piece so +y points into the room. An overlay: drawn over the run (which carries on under it) wherever a door stands, then the door (art/props/door-*.svg, box 141.4) on top, its doorway centred on (80, 0). -->
+  <defs>
+    <clipPath id="c0"><path d="M0 -98H160V0H0Z"/></clipPath>
+    <linearGradient id="g1" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#578172"/><stop offset="0.55" stop-color="#3C6D5B"/><stop offset="1" stop-color="#325C4C"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#618C7C"/><stop offset="0.55" stop-color="#477967"/><stop offset="1" stop-color="#3C6657"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#578273"/><stop offset="0.55" stop-color="#3C6E5C"/><stop offset="1" stop-color="#325C4D"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#5B8777"/><stop offset="0.55" stop-color="#407461"/><stop offset="1" stop-color="#366151"/></linearGradient>
+    <linearGradient id="g5" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#588475"/><stop offset="0.55" stop-color="#3D705E"/><stop offset="1" stop-color="#335E4F"/></linearGradient>
+    <linearGradient id="g6" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#588474"/><stop offset="0.55" stop-color="#3D705D"/><stop offset="1" stop-color="#335E4E"/></linearGradient>
+    <linearGradient id="g7" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#588373"/><stop offset="0.55" stop-color="#3D6F5C"/><stop offset="1" stop-color="#335D4D"/></linearGradient>
+    <linearGradient id="g8" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#5E8679"/><stop offset="1" stop-color="#325B4C"/></linearGradient>
+    <linearGradient id="g9" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#5F8779"/><stop offset="1" stop-color="#325C4C"/></linearGradient>
+    <linearGradient id="ga" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#618B7B"/><stop offset="1" stop-color="#345F4F"/></linearGradient>
+    <linearGradient id="gb" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#6A9283"/><stop offset="1" stop-color="#3D6657"/></linearGradient>
+    <linearGradient id="gc" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#628D7D"/><stop offset="1" stop-color="#366151"/></linearGradient>
+    <linearGradient id="gd" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#D7E4D1"/><stop offset="0.55" stop-color="#D0E0C9"/><stop offset="1" stop-color="#AFBCA9"/></linearGradient>
+  </defs>
+  <g id="sprite">
+<g clip-path="url(#c0)">
+<path d="M3 -19H17Q20 -19 20 -16V-3Q20 0 17 0H3Q0 0 0 -3V-16Q0 -19 3 -19Z" fill="url(#g1)"/>
+<path d="M5 -17.2H15Q17 -17.2 17 -15.2V-15.2Q17 -13.2 15 -13.2H5Q3 -13.2 3 -15.2V-15.2Q3 -17.2 5 -17.2Z" fill="#FFFFFF" opacity="0.35"/>
+<path d="M3 -39H17Q20 -39 20 -36V-23Q20 -20 17 -20H3Q0 -20 0 -23V-36Q0 -39 3 -39Z" fill="url(#g2)"/>
+<path d="M5 -37.2H15Q17 -37.2 17 -35.2V-35.2Q17 -33.2 15 -33.2H5Q3 -33.2 3 -35.2V-35.2Q3 -37.2 5 -37.2Z" fill="#FFFFFF" opacity="0.35"/>
+<path d="M3 -59H17Q20 -59 20 -56V-43Q20 -40 17 -40H3Q0 -40 0 -43V-56Q0 -59 3 -59Z" fill="url(#g3)"/>
+<path d="M5 -57.2H15Q17 -57.2 17 -55.2V-55.2Q17 -53.2 15 -53.2H5Q3 -53.2 3 -55.2V-55.2Q3 -57.2 5 -57.2Z" fill="#FFFFFF" opacity="0.35"/>
+<path d="M3 -79H17Q20 -79 20 -76V-63Q20 -60 17 -60H3Q0 -60 0 -63V-76Q0 -79 3 -79Z" fill="url(#g4)"/>
+<path d="M5 -77.2H15Q17 -77.2 17 -75.2V-75.2Q17 -73.2 15 -73.2H5Q3 -73.2 3 -75.2V-75.2Q3 -77.2 5 -77.2Z" fill="#FFFFFF" opacity="0.35"/>
+<path d="M143 -19H157Q160 -19 160 -16V-3Q160 0 157 0H143Q140 0 140 -3V-16Q140 -19 143 -19Z" fill="url(#g5)"/>
+<path d="M145 -17.2H155Q157 -17.2 157 -15.2V-15.2Q157 -13.2 155 -13.2H145Q143 -13.2 143 -15.2V-15.2Q143 -17.2 145 -17.2Z" fill="#FFFFFF" opacity="0.35"/>
+<path d="M143 -39H157Q160 -39 160 -36V-23Q160 -20 157 -20H143Q140 -20 140 -23V-36Q140 -39 143 -39Z" fill="url(#g6)"/>
+<path d="M145 -37.2H155Q157 -37.2 157 -35.2V-35.2Q157 -33.2 155 -33.2H145Q143 -33.2 143 -35.2V-35.2Q143 -37.2 145 -37.2Z" fill="#FFFFFF" opacity="0.35"/>
+<path d="M143 -59H157Q160 -59 160 -56V-43Q160 -40 157 -40H143Q140 -40 140 -43V-56Q140 -59 143 -59Z" fill="url(#g7)"/>
+<path d="M145 -57.2H155Q157 -57.2 157 -55.2V-55.2Q157 -53.2 155 -53.2H145Q143 -53.2 143 -55.2V-55.2Q143 -57.2 145 -57.2Z" fill="#FFFFFF" opacity="0.35"/>
+<path d="M143 -79H157Q160 -79 160 -76V-63Q160 -60 157 -60H143Q140 -60 140 -63V-76Q140 -79 143 -79Z" fill="url(#g4)"/>
+<path d="M145 -77.2H155Q157 -77.2 157 -75.2V-75.2Q157 -73.2 155 -73.2H145Q143 -73.2 143 -75.2V-75.2Q143 -77.2 145 -77.2Z" fill="#FFFFFF" opacity="0.35"/>
+<path d="M7 -22L9.9 -39L17.8 -52.4L29.8 -62.2L44.9 -69L61.9 -72.8L80 -74L98.1 -72.8L115.1 -69L130.2 -62.2L142.2 -52.4L150.1 -39L153 -22L139 -22L136.7 -34.5L130.3 -44.3L120.6 -51.5L108.4 -56.4L94.6 -59.1L80 -60L65.4 -59.1L51.6 -56.4L39.4 -51.5L29.7 -44.3L23.3 -34.5L21 -22Z" fill="#6E7A68" />
+<path d="M20.5 -22.6C21.2 -23.1 23.1 -33.5 22.7 -34.1C22.3 -34.8 10.9 -38.8 10.3 -38.3C9.7 -37.8 7.2 -23.2 7.7 -22.6C8.1 -21.9 19.9 -22.1 20.5 -22.6Z" fill="url(#g8)" />
+<path d="M8.7 -22.4L11.4 -38.1L9.2 -38.5L6.6 -22.8Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M23.1 -35.2C23.8 -35.4 29.2 -43.5 29 -44.2C28.8 -44.8 18.8 -51.8 18 -51.6C17.2 -51.4 10.5 -40 10.7 -39.3C10.9 -38.6 22.3 -35 23.1 -35.2Z" fill="url(#g9)" />
+<path d="M11.6 -38.8L18.9 -51L17.1 -52.1L9.8 -39.9Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M29.7 -45C30.5 -44.9 38.6 -50.9 38.6 -51.6C38.6 -52.3 30.6 -61.4 29.8 -61.5C28.9 -61.5 18.7 -53.1 18.7 -52.4C18.7 -51.7 28.9 -45 29.7 -45Z" fill="url(#ga)" />
+<path d="M19.4 -51.5L30.5 -60.6L29.1 -62.3L18 -53.2Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M39.6 -52.2C40.4 -51.9 50.6 -56 50.8 -56.6C51 -57.3 45.4 -68 44.6 -68.2C43.7 -68.5 30.9 -62.7 30.7 -62.1C30.5 -61.4 38.8 -52.4 39.6 -52.2Z" fill="url(#ga)" />
+<path d="M31.2 -61L45 -67.2L44.1 -69.2L30.3 -63.1Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M51.9 -57C52.7 -56.6 64.2 -58.9 64.6 -59.5C65 -60.2 62.2 -71.7 61.4 -72.1C60.7 -72.5 46.1 -69.2 45.7 -68.6C45.3 -68 51.2 -57.4 51.9 -57Z" fill="url(#gb)" />
+<path d="M46 -67.5L61.7 -71L61.2 -73.2L45.5 -69.7Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M65.9 -59.7C66.6 -59.2 78.8 -59.9 79.3 -60.5C79.9 -61.1 80 -72.9 79.3 -73.4C78.7 -73.9 63.3 -72.9 62.7 -72.3C62.2 -71.7 65.2 -60.2 65.9 -59.7Z" fill="url(#gc)" />
+<path d="M62.8 -71.2L79.4 -72.3L79.3 -74.5L62.6 -73.4Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M139.5 -22.6C138.8 -23.1 136.9 -33.5 137.3 -34.1C137.7 -34.8 149.1 -38.8 149.7 -38.3C150.3 -37.8 152.8 -23.2 152.3 -22.6C151.9 -21.9 140.1 -22.1 139.5 -22.6Z" fill="url(#g8)" />
+<path d="M153.4 -22.8L150.8 -38.5L148.6 -38.1L151.3 -22.4Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M136.9 -35.2C136.2 -35.4 130.8 -43.5 131 -44.2C131.2 -44.8 141.2 -51.8 142 -51.6C142.8 -51.4 149.5 -40 149.3 -39.3C149.1 -38.6 137.7 -35 136.9 -35.2Z" fill="url(#g9)" />
+<path d="M150.2 -39.9L142.9 -52.1L141.1 -51L148.4 -38.8Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M130.3 -45C129.5 -44.9 121.4 -50.9 121.4 -51.6C121.4 -52.3 129.4 -61.4 130.2 -61.5C131.1 -61.5 141.3 -53.1 141.3 -52.4C141.3 -51.7 131.1 -45 130.3 -45Z" fill="url(#ga)" />
+<path d="M142 -53.2L130.9 -62.3L129.5 -60.6L140.6 -51.5Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M120.4 -52.2C119.6 -51.9 109.4 -56 109.2 -56.6C109 -57.3 114.6 -68 115.4 -68.2C116.3 -68.5 129.1 -62.7 129.3 -62.1C129.5 -61.4 121.2 -52.4 120.4 -52.2Z" fill="url(#ga)" />
+<path d="M129.7 -63.1L115.9 -69.2L115 -67.2L128.8 -61Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M108.1 -57C107.3 -56.6 95.8 -58.9 95.4 -59.5C95 -60.2 97.8 -71.7 98.6 -72.1C99.3 -72.5 113.9 -69.2 114.3 -68.6C114.7 -68 108.8 -57.4 108.1 -57Z" fill="url(#gb)" />
+<path d="M114.5 -69.7L98.8 -73.2L98.3 -71L114 -67.5Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M94.1 -59.7C93.4 -59.2 81.2 -59.9 80.7 -60.5C80.1 -61.1 80 -72.9 80.7 -73.4C81.3 -73.9 96.7 -72.9 97.3 -72.3C97.8 -71.7 94.8 -60.2 94.1 -59.7Z" fill="url(#gc)" />
+<path d="M97.4 -73.4L80.7 -74.5L80.6 -72.3L97.2 -71.2Z" fill="#FFFFFF" opacity="0.24"/>
+<path d="M73 -84H87Q90 -84 90 -81V-65Q90 -62 87 -62H73Q70 -62 70 -65V-81Q70 -84 73 -84Z" fill="url(#gd)"/>
+<path d="M75.5 -82.2H84.5Q87 -82.2 87 -79.7V-79.7Q87 -77.2 84.5 -77.2H75.5Q73 -77.2 73 -79.7V-79.7Q73 -82.2 75.5 -82.2Z" fill="#FFFFFF" opacity="0.4"/>
+</g>
+  </g>
+</svg>

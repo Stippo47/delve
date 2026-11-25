@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Delve floors preview</title>
+<style>html,body{margin:0;height:100%;background:#0E1120;overflow:hidden}iframe{border:0;width:100%;height:100%;display:block}</style>
+</head>
+<body>
+<!-- Round 19 art lane (art-floors): the game with the new floor options painted in, for looking only.
+     floors.html?floor=crypt-flags,sewers-tile (ids from js/floors19.js), or ?floor=a / b / c for that option in every
+     dungeon. Any other query (seed, env, party...) passes through to the game. Nothing in the game itself changes. -->
+<iframe id="game" title="Delve"></iframe>
+<script type="module">
+const q = new URLSearchParams(location.search), floor = q.get('floor') || 'a';
+q.delete('floor');
+const f = document.getElementById('game');
+f.addEventListener('load', () => {
+  // install in the game's own window, before any room is built (the game waits on the camp first)
+  const w = f.contentWindow; if (!/index\.html/.test(w.location.href) || w.__floors19) return;
+  w.__floors19 = true;
+  w.eval(`import('./js/floors19.js').then((m) => { window.__floors19 = m.installFloorPreview(${JSON.stringify(floor)}); })`);
+});
+f.src = 'index.html' + (q.toString() ? '?' + q : '');
+</script>
+</body>
+</html>
