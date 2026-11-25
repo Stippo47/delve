@@ -66,7 +66,7 @@ const CLIPS = {
   // a leg breaking: the party on one foot; it snaps, hangs and drags as the spider walks on
   'leg-break': { party: 'paladin,twinfang', q: 'bossmove=walk', secs: 9, speed: 0.6, zoom: 1.5, follow: 'ikSpider', stage: `
     const H = heroes(); tough(H, 30, 0.5); H.forEach(quiet); put(sp, CX + 60, CY, Math.PI); put(H[0], CX - 70, CY - 60, 0); put(H[1], CX - 90, CY - 110, 0);
-    each = (T) => { const kk = k(); if (!kk) return; const L = kk.legs[0]; at(T, 0.2, 'weak', () => { if (L.foot) L.foot.hp = L.foot.maxHp * 0.5; }); for (const h of H) if (L.foot && !L.foot.dead) { h.focus = L.foot; h.focusT = 1; }
+    each = (T) => { const kk = k(); if (!kk) return; const L = kk.legs[0]; at(T, 0.3, 'w1', () => { if (L.foot) L.foot.hp = L.foot.maxHp * 0.6; }); at(T, 1.3, 'w2', () => { if (L.foot) L.foot.hp = L.foot.maxHp * 0.3; }); at(T, 2.0, 'w3', () => { if (L.foot) L.foot.hp = 1; }); for (const h of H) if (L.foot && !L.foot.dead) { h.focus = L.foot; h.focusT = 1; }
       at(T, 4.5, 'go', () => { for (const h of H) { idle(h); stay(h); } put(H[0], CX - 520, CY + 200, 0); put(H[1], CX - 560, CY + 240, 0); }); };` },
   // walking with two legs broken, then three
   'walk-2broken': { party: 'paladin', q: 'bossmove=legs2', secs: 9, speed: 0.6, zoom: 1.4, follow: 'ikSpider', stage: `
@@ -76,7 +76,7 @@ const CLIPS = {
   // the fourth leg goes: it collapses, lies dazed, then fights from the floor (a slam from its belly)
   collapse: { party: 'paladin,twinfang', q: 'bossmove=legs3m', secs: 12, speed: 0.8, zoom: 1.2, follow: 'ikSpider', stage: `
     const H = heroes(); tough(H, 30, 0.4); H.forEach(quiet); put(sp, CX + 60, CY, Math.PI); put(H[0], CX - 70, CY - 60, 0); put(H[1], CX - 90, CY - 110, 0);
-    each = (T) => { const kk = k(); if (!kk) return; const L = kk.legs[0]; at(T, 0.3, 'weak', () => { if (L.foot) L.foot.hp = L.foot.maxHp * 0.3; }); for (const h of H) if (L.foot && !L.foot.dead) { h.focus = L.foot; h.focusT = 1; } };` },
+    each = (T) => { const kk = k(); if (!kk) return; const L = kk.legs[0]; at(T, 0.3, 'w1', () => { if (L.foot) L.foot.hp = L.foot.maxHp * 0.3; }); at(T, 1.6, 'w2', () => { if (L.foot) L.foot.hp = 1; }); for (const h of H) if (L.foot && !L.foot.dead) { h.focus = L.foot; h.focusT = 1; } };` },
   // web spit: one caught (it can't step away), then one that lands on bare floor and leaves a web
   web: { party: 'archer,cleric', q: 'bossmove=web', secs: 9, speed: 0.7, zoom: 1.0, stage: `
     const [a, b] = heroes(); tough([a, b]); idle(a); idle(b); stay(a); put(sp, CX + 200, CY, Math.PI); put(a, CX - 170, CY - 40, 0); put(b, CX - 700, CY + 300, 0);
@@ -91,7 +91,7 @@ const CLIPS = {
     each = (T) => { at(T, 1.6, 'die', () => { SIM.hurt(w, sp, sp.hp + 1e6, H[1], { noDodge: true, shot: true }); }); };` },
 };
 // the whole fight, in the boss room, as the batches measure it
-const FIGHT = { name: 'fight', args: ['--party', PARTY, '--level', '25', '--q', 'bossroom&boss=ikSpider&theme=sewers', '--secs', '75', '--speed', '1.5', '--zoom', '0.8', '--follow', 'ikSpider', '--seed', '4', '--max', '900'] };
+const FIGHT = { name: 'fight', args: ['--party', PARTY, '--level', '25', '--q', 'bossroom&boss=ikSpider&theme=sewers', '--secs', '50', '--speed', '3', '--zoom', '0.8', '--follow', 'ikSpider', '--seed', '4', '--max', '1500'] };
 
 const list = Object.entries(CLIPS).filter(([name]) => !only.length || only.includes(name));
 const run = ([name, c]) => new Promise((resolve) => {

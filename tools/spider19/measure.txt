@@ -1,0 +1,4 @@
+L25 paladin,archer,cleric,twinfang       sewers  won 34/40 lost 6 stuck 0 err 0 | ended on floor 1/2/3: 0/0/40 | minis 0/0 | avg 160s 1 rooms 85 gold +0.0 lv | fell at 3.7 3.7 3.7 3.7 3.7 3.7
+L25 tower,berserker,wildmane,cleric      sewers  won 34/40 lost 6 stuck 0 err 0 | ended on floor 1/2/3: 0/0/40 | minis 0/0 | avg 119s 1 rooms 81 gold +0.0 lv | fell at 3.7 3.7 3.7 3.7 3.7 3.7
+L25 paladin,archer,pyromancer,marksman   sewers  won 38/40 lost 2 stuck 0 err 0 | ended on floor 1/2/3: 0/0/40 | minis 0/0 | avg 93s 1 rooms 84 gold +0.0 lv | fell at 3.7 3.7
+L25 paladin,frost,storm,cleric           sewers  won 22/40 lost 18 stuck 0 err 0 | ended on floor 1/2/3: 0/0/40 | minis 0/0 | avg 217s 1 rooms 68 gold +0.0 lv | fell at 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7

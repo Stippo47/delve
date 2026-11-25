@@ -39,11 +39,11 @@ export const SP = {
   slow: [1, 0.9, 0.78, 0.66],     // its pace with 0, 1, 2, 3 legs broken
   collapseAt: 4, crawl: 0.42,     // this many broken: it can't stand; its pace on its belly
   keep: 112, turn: 1.15,          // how far it stands off its mark (a front leg's reach); how fast it turns (rad/s)
-  stomp: { r: 66, tell: 0.66, dmg: 42, stagger: 30, knock: 170, lift: 78, stuck: 0.5, reachMin: 56, reachMax: 128, clear: 66, sector: 0.62, cd: [1.7, 2.5] },
-  slam: { r: 96, track: 1.5, pause: 0.26, drop: 0.1, rear: 12, dmg: 95, knock: 320, stagger: 40, chase: 2.8,
+  stomp: { r: 66, tell: 0.66, dmg: 46, stagger: 30, knock: 170, lift: 78, stuck: 0.5, reachMin: 56, reachMax: 128, clear: 66, sector: 0.62, cd: [1.7, 2.5] },
+  slam: { r: 96, track: 1.5, pause: 0.26, drop: 0.1, rear: 12, dmg: 105, knock: 320, stagger: 40, chase: 2.3,
     stun: 1.0, perLeg: 0.3, hitRest: 0.45, rise: 0.4, taken: 1.25, cd: [5.5, 7], other: 0.4 },
-  web: { r: 62, tell: 0.85, dmg: 8, root: 1.5, patch: 6, cd: [6, 8], range: [150, 620] },
-  brood: { n: 1, drop: 0.7, cd: [15, 18], own: 3, scale: 0.7, hpMul: 0.45 },
+  web: { r: 62, tell: 0.85, dmg: 26, root: 1.5, patch: 6, cd: [6, 8], range: [150, 620] },
+  brood: { n: 1, drop: 0.8, high: 32, cd: [15, 18], own: 3, scale: 0.7, hpMul: 0.45 },
   collapse: { dazed: 1.8, taken: 1.25 },
 };
 export const PHASE_AT = [1, 0.6];
@@ -304,7 +304,7 @@ function stomp(w, u, k, L, p) {
     onFire: (w2, z2) => {
       let hit = 0;
       for (const h of heroesOf(w2, u)) if (!offFloor(h) && inZone(z2, h.x, h.y, h.r * 0.5)
-        && hurt(w2, h, S.dmg * u.dmgMul, L.foot, { noDodge: true, zone: 'bone', stagger: S.stagger, knock: S.knock, kAngle: angleTo(z2.x, z2.y, h.x, h.y), heavy: true }) > 0) hit++;
+        && hurt(w2, h, S.dmg * u.dmgMul, L.foot, { noDodge: true, zone: 'bone', stagger: S.stagger, knock: S.knock, kAngle: angleTo(k.gx, k.gy, h.x, h.y), heavy: true }) > 0) hit++; // (thrown away from the body, not under it)
       if (hit) k.stompHits++;
       bfx(w2, { type: 'spStomp', x: p.x, y: p.y, r: S.r, max: 0.6, seed: Math.round(p.x + p.y) }); puff(w2, p.x, p.y, DUST, 7, 150, 5, 0.4);
       w2.shake = Math.max(w2.shake, 5); k.bobV -= 50;
@@ -404,15 +404,21 @@ function web(w, u, k, t) {
 }
 
 // ---------------------------------------------------------------- the brood (phase 2)
-// Spiderlings let themselves down on threads from under its body. No more than four of its own at once.
+// Spiderlings let themselves down on threads from under its body. No more than three of its own at once. Each is a
+// Hunter Spider from the moment it leaves the belly: it hangs in the air on its thread (u.hop: drawn lifted, its shadow
+// on the floor, over the floor's units and under the body) and can do nothing until it lands.
 function brood(w, u, k) {
   const B = SP.brood; if (w.stale) return false;
-  const mine = w.units.reduce((n, o) => n + (o.calledBy === u && alive(o) ? 1 : 0), 0) + k.drops.length;
+  const mine = w.units.reduce((n, o) => n + (o.calledBy === u && alive(o) ? 1 : 0), 0);
   let n = 0;
   for (let i = 0; i < B.n + (k.phase >= 2 ? 1 : 0); i++) {
     if (mine + n >= B.own || crowd(w, u.team) + n >= 22) break;
-    const a = rand() * TAU, d = rrange(52, 92), p = inside(w, k.gx + Math.cos(a) * d, k.gy + Math.sin(a) * d, 50);
-    k.drops.push({ x: p.x, y: p.y, t: B.drop + i * 0.2, max: B.drop + i * 0.2, seed: Math.floor(rand() * 999) }); n++;
+    const a = rand() * TAU, d = rrange(52, 92), p = inside(w, k.gx + Math.cos(a) * d, k.gy + Math.sin(a) * d, 50), T = B.drop + i * 0.2;
+    const x0 = k.gx - Math.cos(u.facing) * 30, y0 = k.gy - Math.sin(u.facing) * 30;
+    const s = spawn(w, 'spiderHunter', x0, y0, { mult: w.mult || 1, hpMul: B.hpMul, scale: B.scale });
+    s.aggro = true; s.minion = true; s.calledBy = u; s.summonBy = u; s.facing = s.mvA = a; s.hop = B.high; s.atkT = T + 0.3;
+    addBuff(s, { id: 'onThread', dur: T, root: true });
+    k.drops.push({ s, x0, y0, x: p.x, y: p.y, t: T, max: T }); n++;
   }
   if (!n) return false;
   k.pose = { kind: 'brood', t: 0.9, max: 0.9 }; beginHold(u, 0.9, null);
@@ -421,10 +427,10 @@ function brood(w, u, k) {
 function dropsTick(w, u, k, dt) {
   if (!k.drops.length) return;
   for (const d of k.drops) {
-    if ((d.t -= dt) > 0) continue;
-    const s = spawn(w, 'spiderHunter', d.x, d.y, { mult: w.mult || 1, hpMul: SP.brood.hpMul, scale: SP.brood.scale });
-    s.aggro = true; s.minion = true; s.calledBy = u; s.summonBy = u; s.facing = angleTo(k.gx, k.gy, d.x, d.y);
-    puff(w, d.x, d.y, 'rgba(232,226,242,0.7)', 5, 70, 4, 0.3);
+    d.t -= dt;
+    const s = d.s; if (!alive(s)) { d.t = 0; continue; }
+    const q = clamp(1 - d.t / d.max, 0, 1), e = q * q * (3 - 2 * q);
+    place(s, d.x0 + (d.x - d.x0) * e, d.y0 + (d.y - d.y0) * e); s.hop = d.t > 0 ? SP.brood.high * (1 - e) : 0;
   }
   k.drops = k.drops.filter((d) => d.t > 0);
 }
@@ -440,7 +446,7 @@ function death(w, u) {
   const k = u.sp;
   for (const o of w.units) if (o.calledBy === u && o.kind === 'spiderHunter' && alive(o)) { o.noLoot = true; kill(w, o, null); }
   // (its feet go with it without a burst each: the animal dies as one, in the picture below)
-  if (k) for (const L of k.legs) if (L.foot && alive(L.foot)) { L.foot.partOf = null; L.foot.hp = 0; L.foot.dead = true; L.foot = null; }
+  if (k) for (const L of k.legs) if (L.foot && alive(L.foot)) { L.foot.partOf = null; L.foot.dead = true; L.foot = null; } // (health left on it: fx.js bursts whatever vanishes at 0)
   endParts(w, u);
   if (k) {
     for (const L of k.legs) for (const z of [L.job && L.job.z]) if (z && !z.done) { z.done = true; z.cancelled = true; z.t = -1; }
@@ -461,7 +467,7 @@ export const SPIDER = {
   defs: {
     // (home: the dungeon whose strength it fights at in battle mode, battle.js; bookOpen: its page in the Book is open
     // without meeting it, book.js: it lives in no dungeon yet)
-    ikSpider: { team: 'enemy', name: 'Old Longlegs', r: 42, vr: 46, turn: 1.6, accel: 200, face: 1.2, mass: 14, hp: 1250, speed: 40, role: 'melee', range: 30, atkCd: 999, arc: 2,
+    ikSpider: { team: 'enemy', name: 'Old Longlegs', r: 42, vr: 46, turn: 1.6, accel: 200, face: 1.2, mass: 14, hp: 1400, speed: 40, role: 'melee', range: 30, atkCd: 999, arc: 2,
       temp: 0.2, commit: 1.2, xp: 170, coins: [65, 85], boss: true, arena: 'spiderDen', noCorpse: true, labels: ['beast'], home: 'sewers', bookOpen: true,
       res: { stagger: 0.4 }, draw: drawSpider, shadows: spiderShadows, brain, onDeath: death, get portrait() { return spiderPortrait(); } },
     spiderFoot: PART('Old Longlegs (a foot)', { r: SP.leg.footR, vr: 17, mass: 30, hp: 100, labels: ['beast'], draw: drawSpiderFoot }),

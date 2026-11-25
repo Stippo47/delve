@@ -191,13 +191,6 @@ export function spiderPortrait() {
 
 // ---------------------------------------------------------------- its den, and what lies on the floor
 const mouthOf = (u) => { const k = u.sp, f = u.facing; return { x: k.gx + k.sx + Math.cos(f) * 64, y: k.gy + k.sy + Math.sin(f) * 64, z: Math.max(SP.body.low, k.h + k.bob) }; };
-function spiderling(ctx, x, y, r, a) { // a small dark spider, as the ones it calls are (the Hunter Spider's brown)
-  ctx.save(); ctx.translate(x, y); ctx.rotate(a);
-  for (let i = 0; i < 6; i++) { const s = i < 3 ? -1 : 1, b = (i % 3 - 1) * 0.75; inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(Math.cos(b) * r * 0.4, s * r * 0.5); ctx.lineTo(Math.cos(b) * r * 0.9 + Math.sin(b) * r * 0.5, s * r * 1.35); }, '#6D5249', 2.2); }
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-r * 0.25, 0, r * 0.75, r * 0.62, 0, 0, TAU); }, '#5A4343');
-  inked(ctx, () => { ctx.beginPath(); ctx.arc(r * 0.55, 0, r * 0.45, 0, TAU); }, '#6D5249');
-  ctx.restore();
-}
 export function drawDenFloor(ctx, w) {
   const [ux, uy] = up();
   if (w.spiderDen) { // old webs across the corners
@@ -209,17 +202,13 @@ export function drawDenFloor(ctx, w) {
     }
     ctx.restore();
   }
-  // its brood coming down on their threads, from under it (so: under the body, and in its shadow)
+  // its brood coming down: the thread each one hangs by, from under the body to the spiderling (the spiderling itself is
+  // a unit, drawn lifted by the renderer with its own shadow)
   for (const u of w.units) {
     const k = u.sp; if (!k || u.dead || !k.drops.length) continue;
-    const top = { x: k.gx + k.sx - Math.cos(u.facing) * 34, y: k.gy + k.sy - Math.sin(u.facing) * 34, z: Math.max(SP.body.low, k.h + k.bob) };
-    for (const d of k.drops) {
-      const q = clamp(1 - d.t / d.max, 0, 1), e = sm(q), x = top.x + (d.x - top.x) * e, y = top.y + (d.y - top.y) * e, z = top.z * (1 - e);
-      const tx = top.x + ux * top.z * 0.9, ty = top.y + uy * top.z * 0.9, px = x + ux * z * 0.9, py = y + uy * z * 0.9;
-      castShadow(d.x, d.y, 9 * (0.5 + 0.5 * e), 0.4 + 0.6 * e, z);
-      inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(px, py); }, SILK, 1.8);
-      spiderling(ctx, px, py, 9, hash(d.seed, 1) * TAU + q * 3);
-    }
+    const top = { x: k.gx + k.sx - Math.cos(u.facing) * 30, y: k.gy + k.sy - Math.sin(u.facing) * 30, z: Math.max(SP.body.low, k.h + k.bob) };
+    for (const d of k.drops) { const s = d.s; if (!s || s.dead) continue;
+      inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(top.x + ux * top.z * 0.9, top.y + uy * top.z * 0.9); ctx.lineTo(s.x + ux * (s.hop || 0) * 0.9, s.y + uy * (s.hop || 0) * 0.9); }, SILK, 1.8); }
   }
 }
 export function drawDenAir(ctx, w) {

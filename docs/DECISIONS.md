@@ -1341,3 +1341,24 @@ if any is wrong):
 - **Healing Totem**: its body is only its foot (r 13); its picture stands up the screen from there.
 - **For approval**: design/caster19/bear.png (a large brown bear, the spirit bear after approval) and salmon.png.
 - Round 19, chat: "Stop agents". Stopped (work so far kept on their branches, unmerged): wurm19, spider19, icons-abil, art-props, art-statusfx, art-shots.
+
+## Round 19, lane spider19 (2026-11-25): Old Longlegs, the IK spider (a test boss, in no dungeon)
+The designer: "Make a new boss. Doesn't have to be in a dungeon yet. Mostly to test the shape. An IK spider. Its head/body
+is always flying / in the air. It has 6 legs that keep it up and walk on the ground..." (the whole note, the body plan,
+every move and number: docs/BOSS-ik-spider.md; code js/boss-spider.js, js/boss-spider-fx.js; clips docs/clips/spider19/).
+The lane's calls (say if any is wrong):
+- **The body is on the flying layer while it is up**, and the unit stands where the body is drawn (its floor point plus
+  its height up the screen), so shots land on the body you see; its shadow is on the floor point, in the shared layer.
+- **Feet are units** (10% of its health each); a blow on a foot passes 85% on to the body. Shooters are sent to the body
+  and blades to the feet by marking the other "out of reach" (sim.js's own list), not by a new targeting rule.
+- **Legs**: two tripods taking turns; knees up; drawn by solving each knee in three dimensions and showing height the
+  game's way. A knee is drawn at 35% of its height over the hip, or the near legs cover the face.
+- **Four legs broken: it collapses** and fights from the floor; it needs three feet down to lift one, so no stomps with
+  three left. The slam's stun (1 s + 0.3 s a broken leg) keeps growing on the floor (2.8 s with all six gone).
+- **Extra abilities**: a web spit (holds 1.5 s, its own hold drawn as web, not Rooted's vines; the slam goes for whoever
+  is held) and a brood (Hunter Spiders let down on threads from under it).
+- **Where it is**: `?bossroom&boss=ikSpider`; battle mode's new tab "No dungeon yet" (always open, the third dungeon's
+  strength: bosses.js `LOOSE_BOSSES`, `def.home`); the Book, the same group (`def.bookOpen`). In no dungeon's roster.
+- **Where it sits**: level with the Great Ooze for the bench party at level 25 (34 of 40, 160 s); easier than the Ooze
+  for an all-blade party (34), three shooters (38) and two mages (22).
+- Checks: battles 530, 0 problems, 11 out of time; preview-check threw / never fired / not offered 0 / 0 / 0.

@@ -261,7 +261,7 @@ function foeOverview() {
   const by = {};
   for (const p of placesOf(k)) (by[p.theme] || (by[p.theme] = [])).push(p);
   const where = Object.entries(by).map(([t, ps]) => `<div class="fo-row">${statIcon('found')}<b>${THEMES[t].name}</b><span class="quiet small">${ps.some((p) => p.as === 'boss') ? 'the boss' : (ps.length === 1 ? 'floor ' : 'floors ') + ps.map((p) => p.floor).join(', ') + (ps.every((p) => p.as === 'mini') ? ' · mini-boss' : '')}</span></div>`).join('')
-    || `<div class="fo-row">${statIcon('found')}<b>No dungeon of its own</b><span class="quiet small">called in by others</span></div>`;
+    || `<div class="fo-row">${statIcon('found')}<b>No dungeon of its own</b><span class="quiet small">${d.bookOpen ? 'not placed yet' : 'called in by others'}</span></div>`; // (round 19, lane spider19: def.bookOpen, a boss in no dungeon yet)
   const rk = canRank(k) ? st.rank : 0;
   const moves = foeMoves(k, rk).map((m) => `<div class="fo-move"><span class="k-ico">${moveIcon(m.move)}</span><div><b>${MOVE_TITLE[m.move]}</b><span class="quiet small">${moveWords(k, m)}</span></div></div>`).join('');
   sc.innerHTML = `<div class="fo-top"><span class="b-pic fo-pic ${d.boss ? 'boss' : ''} r${rk}"><img src="${portrait(k)}" alt=""></span><p class="fo-fun">${beastFun(k)}</p></div>
