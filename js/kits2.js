@@ -698,7 +698,7 @@ export const ABILITIES2 = {
       after(u, 3 * GAP + 0.12, () => { if (!alive(t)) return; const a = ang(u, t); u.facing = a; setAnim(u, 'punch', 0.28); u.anim.hand = 'arm-l'; u.kx += Math.cos(a) * 80; u.ky += Math.sin(a) * 80;
         hurt(w, t, dmgOf(u, 1.2), u, { knock: 640, kAngle: a, heavy: true, noDodge: true, stagger: tier >= 3 ? 45 : 0, ab: 'pickpocket' });
         disarm(w, t, tier >= 2 ? 3 : 2.5, u);
-        k2(w, { draw: 'banditPunch', x: t.x - Math.cos(a) * t.r * 0.8, y: t.y - Math.sin(a) * t.r * 0.8, a, r: t.vr, max: 0.4, ab: 'pickpocket' });
+        k2(w, { draw: 'banditPunch', unit: t, x: t.x - Math.cos(a) * t.r * 0.8, y: t.y - Math.sin(a) * t.r * 0.8, a, r: t.vr, max: 0.3, ab: 'pickpocket' });
         flung(w, u, t, 0.8, null, (o, e) => { hurt(w, o, dmgOf(u, 0.9), u, { knock: 380, kAngle: a, noDodge: true, stagger: tier >= 3 ? 45 : 0, ab: 'pickpocket' }); puff(w, o.x, o.y, '#E9DDC2', 6, 80, 5, 0.35); });
       });
     },
@@ -756,6 +756,7 @@ export const ABILITIES2 = {
         if (S.out && w.time >= S.outUntil) { if (w.time >= S.until) return true; vanish(w, u, S); }
         if (!S.out && w.time >= S.next) { if (w.time >= S.until) return true; if (!blinkIn(w, u, S)) S.next = w.time + 0.15; }
         if (!S.out) { u.vx = u.vy = u.kx = u.ky = 0; u.spd = 0; u.atkT = Math.max(u.atkT, 0.1); }
+        for (const c in k.cd) if (c !== 'shadowWalk') k.cd[c] = Math.max(k.cd[c], 0.2); // (nothing else of hers while she walks)
         return false;
       }, () => { if (k.swalk !== S) return; k.swalk = null; appear(w, u, S, true); });
     },
@@ -2485,7 +2486,10 @@ function blinkIn(w, u, S) {
   return true;
 }
 function appear(w, u, S, last) {
-  S.out = true; S.outUntil = w.time + SWALK.out; u.hidden = false; u.ethereal = !last || !!(u.kit && u.kit.shadow); if (!last) u.invulnT = Math.max(u.invulnT, SWALK.out + 0.05);
+  // (out between blinks: drawn solid in her shadow form, a dark wash, and incorporeal: a spell can catch her, a blade can't;
+  // ethereal would draw her pale and see-through, a ghost's look)
+  S.out = true; S.outUntil = w.time + SWALK.out; u.hidden = false; u.ethereal = !!(u.kit && u.kit.shadow);
+  if (!last) { incorporeal(w, u, SWALK.out + 0.05, 'shadow'); addBuff(u, { id: 'blackoutForm', dur: SWALK.out + 0.1, wash: SHADE_FORM.wash }); }
   k2(w, { draw: 'shadowBlink', x: u.x, y: u.y, r: u.vr + 8, max: 0.4 });
   if (last && S.last && alive(S.last)) u.facing = angleTo(u.x, u.y, S.last.x, S.last.y);
 }
@@ -2881,7 +2885,7 @@ function lightChain(w, u, pool) {
   dash(w, u, 'drawCut', first);
 }
 // Round 19 (lane rogue19): the Monk's Fists, a combo of three
-const FISTS = { gap: 1.6, mul: 1.8, knock: 520, spun: 35 };
+const FISTS = { gap: 1.6, mul: 1.8, knock: 520, jab: 50, spun: 35 };
 // Round 19 (lane rogue19): the Cultist's Blood Rite
 const RITE2 = { below: 0.12, reach: 420, cd: 25, worth: 3 };
 // ---------------------------------------------------------------- traits
@@ -3037,7 +3041,7 @@ export const TRAITS2 = {
     dealt(w, u, t, amt, o) {
       if (o.dot || o.proc || o.shot || o.ab || o.pab || u.kit.using || !t || t === u) return amt;
       const k = u.kit; if (w.time - (k.comboAt ?? -9) > FISTS.gap) k.combo = 0; k.comboAt = w.time; k.combo = (k.combo || 0) + 1;
-      if (k.combo % 3) return amt;
+      if (k.combo % 3) { o.knock = FISTS.jab; return amt; } // (the first two hold it close for the third)
       o.knock = FISTS.knock; o.heavy = true; o.fistsThird = true; return amt * FISTS.mul;
     },
     hit(w, u, t, amt, o) { if (o.fistsThird && alive(t)) { spin(w, t, FISTS.spun); w.shake = Math.max(w.shake, 3); } },

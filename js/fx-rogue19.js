@@ -37,8 +37,9 @@ DRAW.disarmFlick = (ctx, f, w, layer) => {
   const sizeU = (f.vr || 20) * 220 / (f.headR || headR(u.kind)), s = sizeU / 220;
   if (layer === 'ground') { // its shadow, small while it is up, then lying under it
     ctx.save(); ctx.globalAlpha *= 0.28 * fade * (0.5 + 0.5 * (1 - Math.sin(Math.PI * k)));
-    ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(x, y, 12 * s * 5, 5 * s * 5, f.a, 0, TAU); ctx.fill(); ctx.restore(); return;
-  }
+    ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(x, y, 12 * s * 5, 5 * s * 5, f.a, 0, TAU); ctx.fill(); ctx.restore();
+    if (k < 1) return; // (once down it lies on the floor, under everyone: drawn here, not over them)
+  } else if (k >= 1) return;
   ctx.save(); ctx.globalAlpha *= fade * (k >= 1 ? 0.92 : 1);
   ctx.translate(x + vx * h, y + vy * h); ctx.rotate(rot);
   ctx.save(); ctx.scale(s, s);
@@ -101,19 +102,16 @@ DRAW.bolasTrap = (ctx, f, w, layer) => {
   ctx.restore();
   if (f.t < 0.18) { ctx.save(); ctx.globalAlpha *= 1 - f.t / 0.18; for (let i = 0; i < 6; i++) { const b = i / 6 * TAU, d = R + 4 + 10 * f.t / 0.18; inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(u.x + Math.cos(b) * d, u.y + Math.sin(b) * d); ctx.lineTo(u.x + Math.cos(b) * (d + 6), u.y + Math.sin(b) * (d + 6)); }, '#FFF4C8', 2); } ctx.restore(); }
 };
-// Dirty Trick's punch: his fist (inked skin, knuckles) driven into it along the blow, a white flash, speed lines behind
+// Dirty Trick's punch (his free fist is the arm itself, parts.js anim.hand: no fist is drawn floating): where it lands, on
+// the body it hit as that flies, a white flash, short white shock streaks thrown out the way the blow goes, a few stars
 DRAW.banditPunch = (ctx, f, w, layer) => {
-  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k01(k / 0.35)), a = f.a;
-  if (k < 0.2) lit(ctx, () => glowDisc(ctx, f.x, f.y, 30, '#FFFFFF', 0.8 * (1 - k / 0.2)));
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k01(k / 0.4)), a = f.a, u = f.unit;
+  const x = u && !u.dead ? u.x - Math.cos(a) * u.r * 0.8 : f.x, y = u && !u.dead ? u.y - Math.sin(a) * u.r * 0.8 : f.y;
+  if (k < 0.2) lit(ctx, () => glowDisc(ctx, x, y, 18, '#FFFFFF', 0.5 * (1 - k / 0.2)));
   ctx.save(); ctx.globalAlpha *= 1 - k * k;
-  const x = f.x - Math.cos(a) * (10 - 10 * e), y = f.y - Math.sin(a) * (10 - 10 * e);
-  for (let i = -1; i <= 1; i++) { const nx = -Math.sin(a) * i * 7, ny = Math.cos(a) * i * 7, L = 14 + 8 * (1 - k);
-    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x + nx - Math.cos(a) * (12 + L), y + ny - Math.sin(a) * (12 + L)); ctx.lineTo(x + nx - Math.cos(a) * 12, y + ny - Math.sin(a) * 12); }, '#FFFFFF', 2.6); }
-  ctx.save(); ctx.translate(x, y); ctx.rotate(a);
-  inked(ctx, () => roundRect(ctx, -9, -9, 16, 18, 6), '#F2D2B0');
-  ctx.strokeStyle = '#B88A6A'; ctx.lineWidth = 1.4; for (const yy of [-4.5, 0, 4.5]) { ctx.beginPath(); ctx.moveTo(2, yy); ctx.lineTo(6.5, yy); ctx.stroke(); }
-  ctx.restore();
-  for (let i = 0; i < 5; i++) { const b = a + (i - 2) * 0.5, d = 10 + 18 * e; inked(ctx, () => star(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 3.5 * (1 - k) + 1, 4, 0.35, b), '#FFF4C8'); }
+  for (let i = 0; i < 5; i++) { const b = a + (i - 2) * 0.42, d0 = 6 + 14 * e, L = 12 * (1 - k) + 4;
+    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x + Math.cos(b) * d0, y + Math.sin(b) * d0); ctx.lineTo(x + Math.cos(b) * (d0 + L), y + Math.sin(b) * (d0 + L)); }, '#FFFFFF', 3); }
+  inked(ctx, () => star(ctx, x, y, 9 * (1 - 0.5 * k), 6, 0.45, a), '#FFF4C8');
   ctx.restore();
 };
 // Hostage: the cutlass held across its throat (a steel edge with a glint running along it), sweat drops popping off its head
@@ -169,15 +167,13 @@ DRAW.passThrough = (ctx, f, w, layer) => {
 // big (the third blow, Flurry's last): wider, more spikes, speed lines and a dust ring on the floor
 function pow(ctx, x, y, a, r, k, big) {
   const e = easeOut(k01(k / 0.4));
-  if (k < 0.22) lit(ctx, () => glowDisc(ctx, x, y, r * 1.8, '#FFFFFF', 0.75 * (1 - k / 0.22)));
+  if (k < 0.18) lit(ctx, () => glowDisc(ctx, x, y, r * 1.1, '#FFFFFF', 0.45 * (1 - k / 0.18))); // (small: additive white on a pale floor goes to a flat white blob)
   ctx.save(); ctx.globalAlpha *= 1 - k * k;
   const n = big ? 9 : 6, span = big ? 2.6 : 1.9;
   for (let i = 0; i < n; i++) { const b = a + (i / (n - 1) - 0.5) * span, d0 = r * 0.35 + r * 0.3 * e, L = r * (0.55 + 0.35 * (i % 2)) * (1 - 0.5 * k);
     const x0 = x + Math.cos(b) * d0, y0 = y + Math.sin(b) * d0, x1 = x + Math.cos(b) * (d0 + L), y1 = y + Math.sin(b) * (d0 + L), nx = -Math.sin(b) * 2.6, ny = Math.cos(b) * 2.6;
     inked(ctx, () => { ctx.beginPath(); ctx.moveTo(x0 + nx, y0 + ny); ctx.lineTo(x1, y1); ctx.lineTo(x0 - nx, y0 - ny); ctx.closePath(); }, i % 2 ? '#FFF4C8' : '#F2A23A'); }
   inked(ctx, () => star(ctx, x, y, r * (0.42 + 0.12 * e) * (1 - 0.4 * k), big ? 8 : 6, 0.5, a), '#FFFBEA');
-  if (big) for (let i = -1; i <= 1; i++) { const nx = -Math.sin(a) * i * 9, ny = Math.cos(a) * i * 9;
-    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x + nx - Math.cos(a) * (r + 18), y + ny - Math.sin(a) * (r + 18)); ctx.lineTo(x + nx - Math.cos(a) * r * 0.8, y + ny - Math.sin(a) * r * 0.8); }, '#FFFFFF', 2.4); }
   ctx.restore();
 }
 DRAW.monkPow = (ctx, f, w, layer) => {
@@ -204,8 +200,8 @@ DRAW.bigPalm = (ctx, f, w, layer) => {
   if (layer === 'ground') { lit(ctx, () => glowDisc(ctx, cx, cy, 40, '#FFE7A0', 0.25 * (1 - k))); return; }
   const fade = k < 0.6 ? 1 : 1 - (k - 0.6) / 0.4, s = 0.55 + 0.45 * easeOut(k01(k / 0.25));
   ctx.save(); ctx.globalAlpha *= fade;
-  for (let i = -2; i <= 2; i++) { const nx = -Math.sin(a) * i * 9, ny = Math.cos(a) * i * 9, L = 18 + 16 * (1 - k);
-    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(cx + nx - Math.cos(a) * (26 + L), cy + ny - Math.sin(a) * (26 + L)); ctx.lineTo(cx + nx - Math.cos(a) * 24, cy + ny - Math.sin(a) * 24); }, '#FFF4C8', 2.2); }
+  lit(ctx, () => { ctx.lineCap = 'round'; for (let i = -1; i <= 1; i++) { const nx = -Math.sin(a) * i * 13, ny = Math.cos(a) * i * 13, L = 20 + 18 * (1 - k); // (the push of air behind it: light, not inked)
+    ctx.strokeStyle = 'rgba(255,240,200,' + (0.55 * (1 - k)) + ')'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(cx + nx - Math.cos(a) * (26 + L), cy + ny - Math.sin(a) * (26 + L)); ctx.lineTo(cx + nx - Math.cos(a) * 26, cy + ny - Math.sin(a) * 26); ctx.stroke(); } });
   ctx.translate(cx, cy); ctx.rotate(a - Math.PI / 2); ctx.scale(s, s);
   // (in the hand's frame: +y forward; the palm faces the way it pushes, so we see its back from above: flat, broad)
   const skin = '#F2D2B0', shade = '#D9AE8A';
@@ -222,7 +218,7 @@ DRAW.bigPalm = (ctx, f, w, layer) => {
 DRAW.peaceBlock = (ctx, f, w, layer) => {
   if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k01(k / 0.3)), u = f.unit, a = f.a;
   const R = (u ? u.r : 26) + 6 + 4 * e, cx = u ? u.x : f.x, cy = u ? u.y : f.y;
-  if (k < 0.25) lit(ctx, () => glowDisc(ctx, f.x, f.y, 30, '#FFF6C8', 0.8 * (1 - k / 0.25)));
+  if (k < 0.2) lit(ctx, () => glowDisc(ctx, f.x, f.y, 20, '#FFF6C8', 0.55 * (1 - k / 0.2)));
   ctx.save(); ctx.globalAlpha *= 1 - k * k;
   const span = 0.75 + 0.25 * e;
   inked(ctx, () => { ctx.beginPath(); ctx.arc(cx, cy, R + 5, a - span, a + span); ctx.arc(cx, cy, R, a + span, a - span, true); ctx.closePath(); }, '#FFE7A0');
