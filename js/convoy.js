@@ -12,7 +12,7 @@
 import { makeWorld, spawn, step, alive, puff, hurt } from './sim.js';
 import { DEFS } from './units.js';
 import { floorTheme, themeOf, weighted, DUNGEON_ORDER } from './themes.js';
-import { battleFoe, spawnHero, rollTrinket, trinketSlots, FOUND_EXTRA, RANK_MULT, PARTY_SCALE, BOSS_HP, XP_MUL, DUNGEON_RANK, xpScale, placeLevel } from './dungeon.js';
+import { battleFoe, spawnHero, rollTrinket, trinketSlots, FOUND_EXTRA, RANK_MULT, R12_MULT, PARTY_SCALE, BOSS_HP, XP_MUL, DUNGEON_RANK, xpScale, placeLevel } from './dungeon.js';
 import { buildGrid, segHitsRect } from './path.js';
 import { newStats, tallyFoe, finishStats, bankTally, tallyRevive } from './stats.js';
 import { addXp, runOptions, applyLoadout, RECOVER_DOWN, RECOVER_HURT, HURT_BELOW, trinketInfo, WIPE_LOSS } from './progress.js';
@@ -200,7 +200,7 @@ function buildStretch(run) {
       w.pillars.push(p); run.barricade.parts.push(p);
     }
     const n = Math.min(4, run.party.length), rank = DUNGEON_RANK[S.theme] || 0;
-    const chief = battleFoe(w, S.end, bx - 130, mid, RANK_MULT[rank] * 1.05, 0);
+    const chief = battleFoe(w, S.end, bx - 130, mid, (DEFS[S.end].boss ? R12_MULT : RANK_MULT)[rank] * 1.05, 0); // (round 17: a boss isn't priced: the old table)
     chief.maxHp = Math.round(chief.maxHp * (BOSS_HP[n - 1] || 1)); chief.hp = chief.maxHp;
     chief.facing = chief.mvA = Math.PI; chief.floorFoe = true; chief.chief = true; chief.coinMul = goldMul(run) * 1.5;
     run.chief = chief;
@@ -639,7 +639,8 @@ function onKill(run, u) {
   run.kills++; tallyFoe(run.stats, u);
   if (u.def.onDeath) u.def.onDeath(w, u);
   if (u.chief) run.chiefDown = true;
-  const xp = (u.def.xp || 0) * XP_MUL * Math.sqrt(w.mult || 1) * (u.major ? 7 : u.elite ? 3 : 1) * xpScale(placeLevel(DUNGEON_RANK[legOf(run).theme] || 0, 0.5));
+  const xp = (u.def.xp || 0) * XP_MUL * Math.sqrt((w.mult || 1) * R12_MULT[DUNGEON_RANK[legOf(run).theme] || 0] / RANK_MULT[DUNGEON_RANK[legOf(run).theme] || 0]) * // (round 17: at the old strength, so the pace holds)
+    (u.major ? 7 : u.elite ? 3 : 1) * xpScale(placeLevel(DUNGEON_RANK[legOf(run).theme] || 0, 0.5));
   if (u.chief) run.gems += 1; // the road's last foe drops a gem, as a floor's does
   // everyone in the party gets it, the downed too (dungeon.js shareXp)
   const up = heroesUp(run);

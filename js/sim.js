@@ -45,7 +45,9 @@ export function spawn(w, kind, x, y, opts = {}) {
   const team = opts.team || (w.battle && w.actor ? w.actor.team : d.team);
   const hero = d.team === 'hero';
   const lvl = opts.level || 1;
-  const mult = opts.mult || 1;
+  // (round 17: in a boss's room the room's mult is the old strength the boss is pitched at; a priced kind it calls up,
+  // prices.js, comes at the rooms' strength instead, w.priceMult)
+  const mult = w.priceMult && opts.mult === w.mult && d.cost < 99 ? w.priceMult : opts.mult || 1;
   const maxHp = hero ? levelHp(d.hp, lvl) : Math.round(d.hp * mult * (opts.hpMul || 1));
   if (AUDIT.idFrom) { NEXT_ID = AUDIT.idFrom; AUDIT.idFrom = 0; } // (round 16: tools/audit/worth starts every fight's unit ids from the same number, so one seed is one fight)
   const u = {

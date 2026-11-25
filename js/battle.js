@@ -13,7 +13,7 @@ import { HEROES, HERO_IDS, tierBuild } from './heroes.js';
 import { spawn } from './sim.js';
 import { initKit } from './kits.js';
 import { THEMES, DUNGEON_ORDER } from './themes.js';
-import { battleRoom, battleFoe, spawnHero, freeSpot, RANK_MULT, DUNGEON_RANK } from './dungeon.js';
+import { battleRoom, battleFoe, spawnHero, freeSpot, RANK_MULT, R12_MULT, DUNGEON_RANK } from './dungeon.js';
 import { battleStats } from './stats.js';
 import { dungeonState } from './progress.js';
 import { rrange } from './util.js';
@@ -125,7 +125,8 @@ export function newBattle(save, setupIn) {
         else { u = spawn(w, s.k, x, y, { level: 1, potions: 0, trinkets: [] }); initKit(u, s.k, { nodes: tierBuild(s.k, s.tier) }, 1); } // a set tier: that build, nothing else
       } else {
         const home = homeOf(s.k);
-        u = battleFoe(w, s.k, x, y, setup.scaled ? RANK_MULT[DUNGEON_RANK[home] || 0] || 1 : RANK_MULT[0], s.rank || 0);
+        // (round 17: a boss isn't priced, prices.js, so it keeps the old strength table, R12_MULT)
+        u = battleFoe(w, s.k, x, y, setup.scaled ? (isBoss(s.k) ? R12_MULT : RANK_MULT)[DUNGEON_RANK[home] || 0] || 1 : RANK_MULT[0], s.rank || 0);
       }
       u.team = teamOf[side]; u.aggro = true; u.adopt = false;
       u.facing = u.mvA = dir > 0 ? 0 : Math.PI;

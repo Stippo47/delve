@@ -254,7 +254,13 @@ export const DUNGEON_RANK = { wildwood: 0, warren: 1, sewers: 2, crypt: 3, frost
 // Round 12 (the campaign curve, tools/runs.mjs --campaign): set so each dungeon takes a fresh save about the same number
 // of runs as the one before (the Warren up, the Crypt on down). The numbers fold in how hard each dungeon's own kinds
 // are: the Spire's angels and the Foundry's floor 3 hit harder than their place in the list, so their numbers sit lower.
-export const RANK_MULT = [0.75, 2, 2.75, 3.2, 3.75, 4, 3.95, 4.6, 4.2];
+// Round 17 (lane foes16, docs/audit/foes16.md): every enemy kind is priced against the Wildwood's first floor now
+// (prices.js), so its own kinds no longer carry a dungeon's strength: all of it is here. Re-set so each dungeon is about
+// as hard as it was for a fixed party (tools/audit/foes16/dungeons.mjs); they run in order now, easiest first.
+// R12_MULT, the numbers before, is what the rest of a room stays pitched at: the designed bosses (not priced), the
+// rooms' own hazards and the XP a kill gives.
+export const RANK_MULT = [0.75, 2.27, 3.82, 3.96, 4.03, 5.22, 5.29, 6.5, 7.35];
+export const R12_MULT = [0.75, 2, 2.75, 3.2, 3.75, 4, 3.95, 4.6, 4.2];
 export const FLOOR_STEP = 0.3;   // each floor on from the first: +30% of the dungeon's own strength
 export const ROOM_STEP = 0.035;  // each room further into a floor: +3.5%
 // (opts.asRank, for the balance batches in tools/balance.mjs: a dungeon's own enemies and rooms at another dungeon's
@@ -270,9 +276,9 @@ export function placeLevel(rank, part = 0) {
 }
 export const xpScale = (lvl) => XP_BASE * Math.pow(XP_GROW, lvl - 1) / xpToNextR12(lvl);
 export const runLevel = (run) => placeLevel(rankOf(run), ((run.floor - 1) + Math.min(1, ((run.map && run.map.L) || 0) / LAYERS)) / FLOORS);
-export const enemyMult = (run, L) => {
+export const enemyMult = (run, L, table = RANK_MULT) => {
   const rank = rankOf(run);
-  return RANK_MULT[rank] * (1 + FLOOR_STEP * (run.floor - 1) + ROOM_STEP * L) + 0.22 * (run.depth - 1);
+  return table[rank] * (1 + FLOOR_STEP * (run.floor - 1) + ROOM_STEP * L) + 0.22 * (run.depth - 1);
 };
 // How many enemies, in budget points, for a fight room before the party-size scaling: more on later floors and in
 // later dungeons (round 8: +50% overall).
@@ -306,6 +312,7 @@ function buildRoom(run) {
   // enemy strength: the dungeon type, the run's depth, the floor and how far into it (each floor harder than the last;
   // round 7: harder steps, to match the stronger skill tree)
   w.mult = enemyMult(run, L);
+  w.worldMult = enemyMult(run, L, R12_MULT); // (round 17: the room itself, its hazards, its boss and its XP, at the old strength)
   const busy = kind === 'fight' || kind === 'hazard' || kind === 'elite';
   if (arena) buildArena(w, arena);
   else {
@@ -373,6 +380,10 @@ function buildRoom(run) {
     // a smaller party meets a weaker boss (the same party-size idea as the rooms' enemy budget)
     const own = DEFS[bossKind].boss; // a boss kind of its own (a warden, the dungeon's boss), or any kind made a mini-boss
     const hpMul = BOSS_HP[Math.min(4, run.party.length + run.hired.length) - 1] || 1;
+    // (round 17: a boss kind of its own isn't priced, so it and all it makes keep the old strength: the room's w.mult
+    // is the world's while it stands; the adds, priced kinds, come at the rooms' strength)
+    const addMult = w.mult;
+    if (own) { w.mult = w.worldMult; w.priceMult = addMult; } // (sim.js spawn: a priced kind the boss calls up comes at priceMult)
     const bm = w.mult * (run.floor === FLOORS ? 1 : 0.8);
     const b = own ? spawn(w, bossKind, bx, by, { mult: bm, hpMul })
       : foe(w, run, bossKind, bx, by, { mini: true, hpMul });
@@ -381,7 +392,7 @@ function buildRoom(run) {
     const adds = Math.round((2 + run.floor + Math.floor(run.depth / 2)) * partyScale * COUNT_MUL);
     // (round 17: an elite or major among the adds takes the place of others, as in the rooms: takeRanks)
     if (!arena) for (const { k, rank } of takeRanks(Array.from({ length: adds }, () => pick(T.bossAdds)), { elite: eliteP(run, L), major: majorP(run, L), free: freeRanks() })) {
-      const p = inCell(w, far, 30, 90); const u = foe(w, run, k, p.x, p.y, rankOpts(rank)); u.facing = Math.PI;
+      const p = inCell(w, far, 30, 90); const u = foe(w, run, k, p.x, p.y, { mult: addMult, ...rankOpts(rank) }); u.facing = Math.PI;
     }
   } else if (kind === 'fight' || kind === 'hazard' || kind === 'elite' || kind === 'treasure') {
     let homes = sh.cells.filter((c) => c !== w.entry);
@@ -492,7 +503,7 @@ function themeTick(w, dt) {
     h.cd = (h.cd ?? rrange(2, 6)) - dt;
     if (h.cd > 0 || !w.units.some((u) => alive(u) && dist(u.x, u.y, h.x, h.y) < 380)) continue;
     h.cd = rrange(4.5, 6.5); h.lit = 1.6;
-    addDanger(w, { shape: 'circle', x: h.x, y: h.y, r: h.r * 1.5, t: 0.9, team: 'neutral', kind: 'water', hit: { dmg: 9 * (0.65 + 0.35 * w.mult), knock: 160, burn: 26, wet: 30 },
+    addDanger(w, { shape: 'circle', x: h.x, y: h.y, r: h.r * 1.5, t: 0.9, team: 'neutral', kind: 'water', hit: { dmg: 9 * (0.65 + 0.35 * (w.worldMult || w.mult)), knock: 160, burn: 26, wet: 30 },
       onFire: (w2) => { for (let i = 0; i < 14; i++) { const a = rand() * Math.PI * 2, sp = rrange(30, 90); w2.particles.push({ x: h.x, y: h.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, rise: 50, up: 0, life: rrange(0.6, 1.1), max: 1.1, size: rrange(8, 14), color: 'rgba(236,240,244,0.6)', drag: 0.9 }); } } });
   }
   for (const h of w.hazards) if (h.type === 'beam' && !w.cleared) {
@@ -500,7 +511,7 @@ function themeTick(w, dt) {
     h.cd = (h.cd ?? rrange(2, 5)) - dt;
     if (h.cd > 0 || !w.units.some((u) => alive(u) && dist(u.x, u.y, h.x, h.y) < 420)) continue;
     h.cd = rrange(4, 6); h.lit = 1.1;
-    addDanger(w, { shape: 'circle', x: h.x, y: h.y, r: h.r, t: 1.1, team: 'neutral', kind: 'holy', hit: { dmg: 14 * (0.65 + 0.35 * w.mult), knock: 200 },
+    addDanger(w, { shape: 'circle', x: h.x, y: h.y, r: h.r, t: 1.1, team: 'neutral', kind: 'holy', hit: { dmg: 14 * (0.65 + 0.35 * (w.worldMult || w.mult)), knock: 200 },
       onFire: (w2) => fx(w2, { type: 'pillar', x: h.x, y: h.y, r: h.r * 0.8, kind: 'holy', max: 0.6 }) });
   }
   for (const u of w.units) {
@@ -546,7 +557,7 @@ function grant(run, reward, hero) {
     const hs = w.units.filter((u) => u.team === 'hero' && alive(u) && !u.summon && run.heroes[u.kind]) /* (round 14: not a charmed follower) */.sort((a, b) => a.potions - b.potions || a.hp / a.maxHp - b.hp / b.maxHp);
     const h = hs[0]; if (h) { h.potions++; run.heroes[h.kind].potions = h.potions; }
   } else if (reward === 'xp') {
-    shareXp(run, (30 + 20 * run.depth) * Math.sqrt(w.mult || 1) * xpScale(runLevel(run)));
+    shareXp(run, (30 + 20 * run.depth) * Math.sqrt(w.worldMult || w.mult || 1) * xpScale(runLevel(run)));
   } else if (reward === 'coins') {
     const n = Math.round((rint(10, 18) + run.depth * 6) * goldMul(run));
     scatterCoins(w, hero ? hero.x : w.W / 2, hero ? hero.y : w.H / 2, n);
@@ -630,7 +641,7 @@ function onKill(run, u) {
   }
   // tougher enemies (a harder dungeon, a deeper floor) are worth more; a mini-boss or boss a lot more
   // (round 14: and by the place's level, xpScale; not rounded, a goblin in the Wildwood's last rooms is worth about 1)
-  const xp = (u.def.xp || 0) * XP_MUL * (1 + 0.15 * (run.depth - 1)) * Math.sqrt(w.mult || 1) * (u.major ? 7 : u.elite ? 3 : 1) * xpScale(runLevel(run));
+  const xp = (u.def.xp || 0) * XP_MUL * (1 + 0.15 * (run.depth - 1)) * Math.sqrt(w.worldMult || w.mult || 1) * (u.major ? 7 : u.elite ? 3 : 1) * xpScale(runLevel(run)); // (round 17: worldMult, so the new RANK_MULT doesn't change the pace)
   // gems (round 9: "Gems stay"): each floor's last foe drops one, the dungeon's boss two; a major now and then
   if (u.floorFoe) run.gems += run.floor >= FLOORS ? 2 : 1;
   else if (u.major && chance(0.15)) run.gems++;
