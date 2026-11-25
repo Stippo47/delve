@@ -62,38 +62,38 @@ acceleration but high max turn speed. Slippery but for turning."
 | Stick 'Em Up: "Don't like" | **Hostage** (the lane's rework, id kept): he grabs the nearest enemy that isn't too big and holds it in front of him, the cutlass at its throat; it can't act, and every blow and shot that comes at his front lands on it instead. He fights on with the cutlass. II 4.5 s (I 3 s); III when he lets go he shoves it into its friends, disarmed. Why: a dirty move only a thief makes, it saves his skin (he is a skirmisher with 105 health), it is the one that handles shooters (the old one was the third "can't attack" on his kit), and nobody else has it. |
 | Dirty Trick: "Disarms?" | Yes: the punch Disarms (2.5 s, II 3 s). |
 | "Alternating slash visual" | The three cuts go forehand, backhand, forehand: each crescent sweeps the way the cutlass goes (fxkit swing `dir`), and the arm swings back for the second (parts.js `anim.back`). |
-| "that's not a 'kick'. Maybe punch with other hand" | His free hand punches (parts.js `anim.hand`: the left arm jabs); a flash, shock streaks and stars where it lands, on the body as it flies. |
+| "that's not a 'kick'. Maybe punch with other hand" | His free hand punches (parts.js `anim.hand`: the left arm jabs), 1.4x (the kick was 1.2x); a flash, shock streaks and stars where it lands, on the body as it flies (no fist drawn floating). |
 | "Slightly slower attack speed" | The cuts 0.17 s apart (were 0.11); the punch 0.12 s after. |
 | Bolas: "Should not make unique effect. Should trap like a hunters trap. Stops movement and turning." | It puts on **Trapped** (the Trapper's status: can't move, turn or use an ability; strikes straight ahead): 1.6 s, III 2.5 s. The Tripped knock-down and slow are gone. |
 | "Effect should look like a ring with 3 triangles pointing inwards spread out" | The cord pulled tight in a ring round its feet, three triangular iron weights on it a third of the way round from each other, points in; it snaps tight as it lands and jerks as the trapped one strains. The bolas in flight is the same three weights on cords. |
 | "No disarm" | Gone (III was "drops its weapon"). |
-| Trait: "Ability dash through 3 enemies in a chain disarming and dealing damage." | **Light Fingers** (Snatch is kept in the code, unused): every 11 s, with two or more enemies near, he dashes through up to three in a chain (dashes.js draw cuts, one straight after another, each cut landing as the cutlass passes: 0.9x his blow), and each one cut is Disarmed 2.5 s. An armed one first. |
+| Trait: "Ability dash through 3 enemies in a chain disarming and dealing damage." | **Light Fingers** (Snatch is kept in the code, unused): every 9 s, with two or more enemies near, he dashes through up to three in a chain (dashes.js draw cuts, one straight after another, each cut landing as the cutlass passes: 1.1x his blow), and each one cut is Disarmed 2.5 s. An armed one first. |
 
 ## The Shade
 
 | note | what changed |
 |---|---|
-| "Might have to lower base hp to balance her." | Measured first (below). |
+| "Might have to lower base hp to balance her." | Measured first: before, she sat in her band (9.79 rooms, skirmishers 9.63); with the new kit she was well above it (12.1 rooms at I), so her health is 86 (was 100) and the new pieces were trimmed (below). |
 | Attack: "still holding the blades crossed. Should keep them to the sides." | Both hands turned out (heroes2 `style.sides`, parts.js): the daggers held at her sides pointing ahead, not across her. Her clones the same. |
 | Blackout: "It follows them." | The dark is centred on her the whole time it lasts. |
 | "No physical attack can hit her but soul can. In this form she has no collision." | While it lasts she is **incorporeal** (above), in her shadow form (a dark wash, smoke off her). III as before: she is also unseen. |
 | "Ghost should also be able to go incorporeal." | Above. |
 | Shadow Clones: "Don't like. They should move identical to how she would." | They run her brain: the plain fighters' brain, her speed, turning and weight, her paired stab (no more circling at 1.6x through walls). |
-| "Also be in the same shadow form as she is in blackout." | Her Blackout form: dark, incorporeal, through bodies. A spell breaks them. |
+| "Also be in the same shadow form as she is in blackout." | Her Blackout form: dark, incorporeal, through bodies. A spell breaks them. Their blows 0.4x hers (0.55 before: blades no longer break them); III lasts 8 s (was 10). |
 | Shadow Walk: "...Changing it again. Keep this ability saved though." | The round 18 blink chain is kept as `shadowWalkChain` in kits2.js (on no kit). |
-| "For 4 seconds she will disappear completely. Blinking in and out of existence around a random enemy hitting them then vanishing. Upgrades boost duration." | Gone (not drawn, nobody's target, untouchable) for 4 s (II 5 s, III 6 s); every 0.55 s she blinks into being beside a random enemy near where she last was (puffs of shadow in and out), stabs it with both daggers (0.7x her blow each) and is gone again; at the end she stays out beside the last. The old II curse is gone (the tiers are its length now). |
+| "For 4 seconds she will disappear completely. Blinking in and out of existence around a random enemy hitting them then vanishing. Upgrades boost duration." | Gone (not drawn, nobody's target, untouchable) for 4 s (II 4.5 s, III 5 s); every 0.6 s she blinks into being beside a random enemy near where she last was (puffs of shadow in and out), in her shadow form for a quarter second (a spell can catch her then, a blade can't), stabs it with both daggers (0.35x her blow each) and is gone again; at the end she stays out beside the last. The old II curse is gone (the tiers are its length now). |
 
 ## The Monk
 
 | note | what changed |
 |---|---|
 | Fists: "Don't like visual." | A fist's pow where it lands: a white flash, a starburst of inked spikes (saffron and white) thrown the way the blow goes. No soft dots. |
-| "Has a 3 part combo with the last 1 dealing more damage, knockback and spun." | Every third blow in a run (no more than 1.6 s apart): 1.8x, thrown far back (520), Spun (35); swung bigger, a big pow and a gold spiral. The first two knock it back only a little (50) so the third can land. |
+| "Has a 3 part combo with the last 1 dealing more damage, knockback and spun." | Every third blow in a run (no more than 1.6 s apart): 1.5x, thrown far back (520), Spun (35); swung bigger, a big pow and a gold spiral. The first two knock it back only a little (50) so the third can land. |
 | Flurry: "He doesn't move forward. Don't lock positions." | He takes a step in with every punch, and each punch shoves it a little back: the two travel together; nothing is pinned (it set the facing and pushed both every punch before). |
-| "Final hit needs a short delay." | The last is drawn back first and lands 0.24 s after the one before (was 0.075). |
+| "Final hit needs a short delay." | The last is drawn back first and lands 0.24 s after the one before (was 0.075); 0.9x (the others 0.6x). |
 | "Upgrades also applied weakness." | II and III: the last punch leaves it Weakened 4 s. |
 | "Don't like visual" | The same pows, alternating hands, the last a big one with a dust ring. |
-| Inner Peace: "Doesnt look like he's blocking physical or ranged attacks." | Now he does block them: every physical blow or shot that reaches him is stopped (no damage), shown as a curved plate of gold light flaring where it met him, sparks thrown back; the striker is thrown back as before, shots fly back as before. Spells land 30% softer. A gold protection border on him while it lasts. |
+| Inner Peace: "Doesnt look like he's blocking physical or ranged attacks." | Now he does block them: every physical blow or shot that reaches him is stopped (no damage), shown as a curved plate of gold light flaring where it met him, sparks thrown back; the striker is thrown back as before, shots fly back as before. Spells land 30% softer. A gold protection border on him while it lasts. Shorter, since nothing physical gets through: 2 s (II 3 s; were 2.5 / 4). |
 | Palm Strike: "Don't like visual. Hand should turn large and flat. And push forward." | His open hand, grown great and flat (fingers together, pointing ahead), slides out in front of him, force streaks behind it. |
 | "Smaller range." | A cone in front (was all round him), reach u.r + 62 (III + 80; were 80 / 110). |
 | "Burst effect is dazed..." | Spun's burst is Dazed; Spun's turning is slippery (above). |
@@ -102,14 +102,14 @@ acceleration but high max turn speed. Slippery but for turning."
 
 | note | what changed |
 |---|---|
-| Shadow bolt: "Bolt instead applies anti heal." | The bolt leaves **Anti-heal** 3 s (it burst the bleeding before). The close-up dagger swipe still bleeds. |
+| Shadow bolt: "Bolt instead applies anti heal." | The bolt leaves **Anti-heal** 3 s (it burst the bleeding before). The lane's call: it also draws a little blood (bleed 12), so Sacrifice has bleeding foes to run to (the dagger only bleeds up close, and he keeps away); measured: without it he lost 1.1 rooms more. The close-up dagger swipe still bleeds. Bursting the bleeding was the engine of his damage, so his own numbers went up to hold his strength: health 88 (78), blow 15 (10), a bolt every 1.1 s (1.25). |
 | Blood Pact: "Don't like look of status effect" | Its own state, no longer Rage's red steam: a dark crimson wash and drops of blood rising slowly off the bound, a cut flashing across each as it is bound. |
-| "Should also give allies bleed" | Every friend bound bleeds (35; he 45). |
+| "Should also give allies bleed" | Every friend bound bleeds: a token cut, 18 (he 28); 35 / 45 cost the party 1.8 rooms. |
 | Ritual Circle: "Puts circle around centred around 1 entity that is at low hp. If they don't escape after x seconds they will be sacrificed, lowering all of his cooldowns, healing himself." | Round the enemy nearest death (under 55%; one held in place first), a skull over it counting down. Still inside after 3 s (III 2.4 s, wider): sacrificed (killed; a boss, major or mini-boss loses a fifth of its health), his cooldowns come 4 s nearer, he heals 15%. |
 | "Also slowly applies bleed to all entities within it at higher levels. Doesnt lock anyone in." | II: everything in the circle, either side, bleeds slowly (6 every 0.3 s). Nothing is held in or dragged (the old II drag and III lock are gone). |
-| Sacrifice: "Dashes to every enemy who has bleed, bursting them." | He runs round each bleeding enemy in turn (dashes.js hooks, one straight after another, nearest first, up to 6): a cut (0.5x) and its bleeding bursts at once (a Haemorrhage). |
+| Sacrifice: "Dashes to every enemy who has bleed, bursting them." | He runs round each bleeding enemy in turn (dashes.js hooks, one straight after another, nearest first, up to 6): a cut (0.5x) and its bleeding bursts at once (a Haemorrhage); the blood of each heals him 6% (the old Sacrifice healed him 15%). |
 | "Higher levels applies antiheal to everyone hit and gives him more damage buff status effect for each person hit. Temporary." | II: each one cut has Anti-heal 4 s. III: each one cut makes him 10% stronger for 6 s (it adds up, to 60%). |
-| Trait Blood Rite: "When ally is about to die (very low hp) he will dash to them killing them instantly but resets all of his cooldowns" | A friend under 12%, within 420, and an ability of his more than 3 s from ready: he darts to it and takes the last of its life; every cooldown is ready again. Once every 25 s. |
+| Trait Blood Rite: "When ally is about to die (very low hp) he will dash to them killing them instantly but resets all of his cooldowns" | A friend under 10% with something on it (a foe at it or a blow coming: about to die), within 420, and an ability of his more than 3 s from ready: he darts to it and takes the last of its life; every cooldown is ready again. Once every 25 s. (Measured: under 12% with nothing on it, it cost the party about a room.) |
 
 **The call on downed heroes** (round 18 made them): "killing" a hero friend is what reaching 0 does to anyone, so it
 goes **down**, as at 0 anywhere. In a dungeon it is downed as if it had fallen (it gets up as the downed do); in a
@@ -117,4 +117,53 @@ battle it can only be raised by a reviving ability and bleeds out after 15 s. He
 (nobody finishes the downed), a summon, the wagon, or one of the Mob's bodies.
 
 ## Numbers
-(filled in below once measured)
+`tools/ability-worth.mjs` (30 parties a hero, each played with all on and with each ability off; tier I at rank 0, tier
+III at rank 1), before (tools/rogue19/before/) and after the last tuning (tools/rogue19/final/ for the Shade and the
+Monk, tools/rogue19/final2/ for the Bandit and the Cultist). "Rooms" is what the hero's parties clear with everything
+on, the same parties and seeds both times; the noise is about +-0.5.
+
+| hero | tier I rooms, before -> after | tier III rooms, before -> after | what moved it, and what was done |
+|---|---|---|---|
+| Bandit | 9.97 -> 9.27 | 6.47 -> 5.90 | Snatch (every fourth blow) was worth more than the first Light Fingers: it went to every 9 s and 1.1x, the punch to 1.4x. Still a little under; he was the weakest skirmisher before too (balance.mjs tier I: 8.78 rooms, skirmishers 9.63; after, in a run with him leading: 0.29 under the average, was 1.78). |
+| Shade | 10.30 -> 10.67 | 6.57 -> 6.80 | The first pass was 12.13 / 9.93 (Shadow Walk at 0.7x a stab, clones unbreakable by blades): health 100 -> 86 (the designer's note), Shadow Walk 0.35x and 4 / 4.5 / 5 s, clones 0.4x and 8 s at III. balance.mjs still has her above her band (tier I +0.63, tier III +1.82 against that run's average; she goes down half as often): the next trim if the designer agrees is her health again. |
+| Monk | 9.10 -> 9.67 | 6.40 -> 6.70 | The first pass was 10.90 / 7.57 (combo 1.8x, Flurry's last 1.2x, Inner Peace blocking everything for 2.5 / 4 s): combo 1.5x, last punch 0.9x, Inner Peace 2 / 3 s. |
+| Cultist | 11.63 -> 10.90 | 7.40 -> 7.00 | The first pass was 7.07 / 4.60: the bolt's burst was most of his damage, Blood Pact's 35 bleed on friends cost 1.8 rooms, Blood Rite at 12% cost about one. Now: health 88, blow 15, a bolt every 1.1 s, the bolt bleeds 12, the Pact's cut 18 / 28, Blood Rite only with something on the friend, Sacrifice's blood heals 6% a cut. |
+
+Per ability (worth in rooms, its share of the hero's damage), tier I / tier III, after:
+- Bandit: Bolas +0.10 / +0.10 (6%), Dirty Trick -1.37 / +0.13 (23-25%), Hostage -0.87 / +0.57; Light Fingers 24% of his damage (balance.mjs).
+- Shade: Shadow Walk +1.47 / +1.20 (20-22%), Blackout +0.50 / +0.80, Shadow Clones +0.77 / +0.83.
+- Monk: Flurry +0.60 / +0.03 (25-34%), Palm Strike -0.77 / +0.33 (10%), Inner Peace +0.87 / +2.03.
+- Cultist: Blood Pact -1.63 / +0.50, Ritual Circle +1.47 / +0.67, Sacrifice +1.13 / -0.13.
+(Single abilities swing +-0.5 to 1 run to run; the hero's total is the steadier number.)
+
+Checks: `node tools/battles.mjs` 528 battles, 0 problems; `node tools/preview-check.mjs` threw 0, never fired 0, not
+offered 0 (new: Disarmed and Anti-heal have status previews; Light Fingers and Blood Rite trait previews; the Sacrifice
+stage has a Twinfang and a Wildmane whose cuts bleed the foes, `carry` in preview-sim.js; an old unused `lightFingers`
+trait stage, left from an earlier Bandit, was taken out: it had the same name and won).
+
+## Tools
+- `tools/rogue19/clips.mjs`: the clips. `tools/rogue19/sheet.sh`: a clip's frames as one sheet, for checking by eye.
+- `tools/rogue19/bare-board.mjs`: every art with its weapon and disarmed, side by side (`--hand 1`: the weapon hand only).
+- `tools/rogue19/worth-patch.mjs`: ability-worth with a trait switched off (how Blood Rite's cost was found).
+
+## Clips (docs/clips/rogue19/, git-ignored)
+- `bandit-bolas.mp4`
+- `bandit-dirtyTrick.mp4`
+- `bandit-hostage.mp4`
+- `bandit-lightFingers.mp4`
+- `cultist-attack.mp4`
+- `cultist-bloodPact.mp4`
+- `cultist-bloodRite.mp4`
+- `cultist-ritualCircle.mp4`
+- `cultist-sacrifice.mp4`
+- `dame-disarm.mp4`
+- `ghost-incorporeal.mp4`
+- `monk-attack.mp4`
+- `monk-flurry.mp4`
+- `monk-innerPeace.mp4`
+- `monk-palmStrike.mp4`
+- `shade-attack.mp4`
+- `shade-blackout.mp4`
+- `shade-clones.mp4`
+- `shade-shadowWalk.mp4`
+- `bare-*.png`: the weapon-out boards (left as drawn, right disarmed).

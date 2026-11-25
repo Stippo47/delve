@@ -1,9 +1,9 @@
-2255 previews, 73.9s
+2255 previews, 45.2s
 threw: 0
 a loop where the move or trait never fired: 0
 not offered in the Book (never fires, so its button is left out): 0
 locked (shown as locked): 0 not counting heroes' tier 0
-abilities at tiers I-III: 540 runs of two loops, 16.6s
+abilities at tiers I-III: 540 runs of two loops, 9.9s
   first go: 0.66 s on average, 2.4 s at the latest; 1.01 goes a loop; the hero's own brain chose it in 1055 of 1080 loops
 a loop where it didn't go within 2.5 s: 0
 not shown (a loop where it drew nothing and touched no one): 0
@@ -38,9 +38,8 @@ tiers that differ only in where things went (the same foes reached, statuses, bu
   enchantress:heartstring II~III  (I: The thread holds 4s. | II: It holds 6s. | III: Once that enemy is won, the thread jumps to the next one.)
   clockwork:timeBubble I~II  (I: For 5s. | II: Time runs fast for friends inside it: they move, strike and recharge 30% faster. | III: Wider, and for 7s.)
   waterMage:waterCannon II~III  (I: For 1.2s. | II: Wider, for 1.6s. | III: It follows the enemy it was aimed at, sweeping across whatever stands between.)
-blows on the hero side with nothing seen behind them (a target with no weapon, health set lower): 1
-  griffon:swoop  1 (hero<-nothing)
-monster moves: 975 previews of two loops, 21.6s
+blows on the hero side with nothing seen behind them (a target with no weapon, health set lower): 0
+monster moves: 975 previews of two loops, 14.2s
   first go: 1.01 s on average, 7.2 s at the latest; 2.34 goes a loop
   a loop where it didn't go within 2.5 s: 30
   straw targets on the stage (never moving, never striking back): 0
@@ -56,8 +55,8 @@ monster moves: 975 previews of two loops, 21.6s
   the stage helped it (a target moved up to it, its health set lower): 0
   blows or health lost with nothing seen behind them (either side): 0
   a loop that showed only its plain blows (its own move never came): 29
-statuses: 44 previews of two loops, 0.6s
-  first go: 0.87 s on average, 2.1 s at the latest; 1.03 goes a loop
+statuses: 44 previews of two loops, 0.3s
+  first go: 0.86 s on average, 2.1 s at the latest; 1.03 goes a loop
   a loop where it didn't go within 2.5 s: 0
   straw targets on the stage (never moving, never striking back): 0
   wrong scenario (went off, but nothing it made reached anyone in 3.5 s; or it never came to its burst or state): 0

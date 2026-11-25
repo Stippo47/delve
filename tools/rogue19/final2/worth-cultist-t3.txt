@@ -1,0 +1,6 @@
+tier 3, rank 1: each ability switched off in turn (the same parties and seeds), 0 errors
+hero          ability           rooms with  worth   share of dmg  hero dmg/s  party taken/s  party heal/s  party downs
+cultist       (all on)           7.00           attack  57%    13.12         4.95          3.10       4.10   (30 runs)
+              bloodPact                 +0.50            0%    +1.38        -1.09         +1.01       -0.33
+              ritualCircle              +0.67            7%    +1.73        -0.21         +0.32       -0.43
+              soulCandle                -0.13            4%    +2.61        -0.54         +0.54       -0.03
