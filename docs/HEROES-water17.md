@@ -97,7 +97,7 @@ All in `docs/balance/water17.txt` (Node, this branch). In short:
   +1.88, Water Cannon +2.88 (38% of her damage); tier III: +0.75, +1.57, +1.07. None negative; the cannon at tier I would
   sit about 12th of the round 16 audit's list (docs/audit/worth.md), not at the top. The bubble is worth least where
   little magic comes at the party (it waits for magic: it is its job).
-- **Checks** (tools/water17/checks.mjs, 40 checks, all pass): the beam's 2.02 s on / 1.52 s off at one frame's
+- **Checks** (tools/water17/checks.mjs, 42 checks, all pass): the beam's 2.02 s on / 1.52 s off at one frame's
   resolution; the beam on a friend heals, puts out burning, washes poison, never soaks; the bubble stops a fire-carrying
   blow and a fire bolt whole and lets a plain blow and an arrow through untouched, pops spent (Wet 40, a near enemy
   knocked 62 back); the dome holds an enemy outside (never nearer than 168 to the middle of a 135 dome) and one inside
