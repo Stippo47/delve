@@ -1481,7 +1481,7 @@ function inMeleeArc(u, o, extra = 0) {
 function meleeSwing(w, u, single) {
   const d = u.def;
   if (d.aoe) { // a blow that lands on the ground in front: everything in a small circle there (round 9: the Berserker's flail)
-    const cx = u.x + Math.cos(u.facing) * (u.r + d.range * 0.55), cy = u.y + Math.sin(u.facing) * (u.r + d.range * 0.55);
+    const fw = u.r + d.range * (d.aoeAt || 0.55), cx = u.x + Math.cos(u.facing) * fw, cy = u.y + Math.sin(u.facing) * fw; // (round 19: def.aoeAt, how far out in front it lands: the warhammers further)
     u.lungeT = 0.18;
     w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, src: u, aoe: { x: cx, y: cy, r: d.aoe } });
     for (const o of w.units) if (alive(o) && o.team !== u.team && !o.ethereal && dist(cx, cy, o.x, o.y) < d.aoe + o.r)

@@ -86,15 +86,7 @@ const DRAW = {
     if (layer !== 'air' || !f.unit) return; const u = f.unit, a = u.facing, x = u.x + Math.cos(a) * (u.r + 6), y = u.y + Math.sin(a) * (u.r + 6);
     lit(ctx, () => glowDisc(ctx, x, y, 22 + Math.sin(f.t * 12) * 3, '#EEF3F8', 0.28 * life(f)));
   },
-  // a parry: steel sparks thrown off the shield and the counter-thrust's streak
-  parry(ctx, f, w, layer) {
-    if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
-    if (k < 0.3) lit(ctx, () => glowDisc(ctx, f.x, f.y, 34, '#FFFFFF', 0.8 * (1 - k / 0.3)));
-    ctx.save(); ctx.globalAlpha *= 1 - k;
-    K.streak(ctx, f.x, f.y, f.a, 4, 10 + 46 * e, 5, '#EEF3F8', '#FFFFFF');
-    for (let i = -2; i <= 2; i++) { const b = f.a + Math.PI + i * 0.5; K.streak(ctx, f.x + Math.cos(b) * 6, f.y + Math.sin(b) * 6, b, 0, 8 + 10 * (1 - k), 2.4, '#FFF4C8', '#FFFFFF'); }
-    ctx.restore();
-  },
+  // (round 19: parry is fx-melee.js's)
   // Challenge: crossed swords over the challenged enemy's head, a thin red line to her on the floor
   duel(ctx, f, w, layer) {
     const e = f.unit, d = f.from; if (!e) return; const a = life(f, 0.25, 0.4);
@@ -133,13 +125,7 @@ const DRAW = {
       ctx.restore(); }
     ctx.restore();
   },
-  // Brace: a glint running up and down the set spear's head
-  brace(ctx, f, w, layer) {
-    if (layer !== 'air' || !f.unit) return; const u = f.unit, d = u.r + (u.def.range || 30) + 6, x = u.x + Math.cos(u.facing) * d, y = u.y + Math.sin(u.facing) * d;
-    const p = 0.5 + 0.5 * Math.sin(f.t * 9);
-    lit(ctx, () => glowDisc(ctx, x, y, 14 + 8 * p, '#FFFFFF', 0.4 * life(f)));
-    ctx.save(); ctx.globalAlpha *= life(f) * p; inked(ctx, () => star(ctx, x, y, 7, 4, 0.3, f.t * 2), '#FFFFFF'); ctx.restore();
-  },
+  // (round 19: brace is fx-melee.js's, at the spear's real head)
   // Shield Wall: warm light poured on the floor round him (no ring), plates of light standing in front
   shieldWall(ctx, f, w, layer) {
     if (!f.unit) return; const u = f.unit, a = life(f, 0.3, 0.5);
@@ -157,15 +143,7 @@ const DRAW = {
     if (f.t < 0.25) { const q = f.t / 0.25; lit(ctx, () => glowDisc(ctx, x, y, 34, '#FFFFFF', 0.6 * (1 - q))); }
     ctx.restore();
   },
-  // Hibernate: slow breath puffs and a warm glow while he lies curled up
-  hibernate(ctx, f, w, layer) {
-    if (layer !== 'air' || !f.unit) return; const u = f.unit, a = life(f, 0.3, 0.4), [vx, vy] = upVec();
-    lit(ctx, () => glowDisc(ctx, u.x, u.y, u.vr * 2, '#FFB070', 0.18 * a * (0.7 + 0.3 * Math.sin(f.t * 3))));
-    ctx.save(); ctx.globalAlpha *= a;
-    for (let i = 0; i < 3; i++) { const ph = (f.t * 0.6 + i / 3) % 1, up = u.vr + 4 + ph * 40;
-      ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI) * 0.8; inkDisc(ctx, u.x + vx * up + Math.cos(u.facing) * 10 + Math.sin(ph * 7) * 5, u.y + vy * up + Math.sin(u.facing) * 10, 4 + 5 * ph, '#F2E8DA'); ctx.restore(); }
-    ctx.restore();
-  },
+  // (round 19: hibernate is fx-melee.js's)
   // a roar: brown-and-bone streaks bursting out along the floor to its reach
   roar(ctx, f, w, layer) {
     if (layer !== 'ground') return; const k = k01(f.t / f.max), e = easeOut(k), u = f.unit, x = u && !u.dead ? u.x : f.x, y = u && !u.dead ? u.y : f.y;
@@ -619,40 +597,41 @@ DRAW.mine = (ctx, f, w, layer) => {
 // ---------------------------------------------------------------- round 13 (lane H2): slams and shot bursts of their own
 // SLAM2[look](ctx, m, k, layer): a hero's slam on the floor (fxkit slamGround / slamAir; a hero's style.slam names it)
 export const SLAM2 = {
-  // a warhammer head brought down on the spot: a dark dent, a flash, a ring of dust and stone chips (no flail ball)
-  hammer(ctx, m, k, layer) {
-    const e = easeOut(k01((k - 0.12) / 0.6)), R = m.r;
-    if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 1 - k; ctx.fillStyle = 'rgba(60,48,38,0.3)'; ctx.beginPath(); ctx.ellipse(m.x, m.y, R * 0.75, R * 0.6, m.a || 0, 0, TAU); ctx.fill();
-      ctx.strokeStyle = 'rgba(43,34,48,0.5)'; ctx.lineWidth = 2.2; for (let i = 0; i < 5; i++) { const b = i / 5 * TAU + hash(m.seed, i); ctx.beginPath(); ctx.moveTo(m.x + Math.cos(b) * R * 0.25, m.y + Math.sin(b) * R * 0.25); ctx.lineTo(m.x + Math.cos(b) * R * (0.55 + 0.25 * hash(i, m.seed)), m.y + Math.sin(b) * R * (0.55 + 0.25 * hash(i, m.seed))); ctx.stroke(); }
-      ctx.restore(); return; }
-    if (k < 0.14) { const [ux, uy] = upVec(), h = (1 - k / 0.14) * 30; // the head coming down
-      ctx.save(); ctx.translate(m.x + ux * h, m.y + uy * h); ctx.rotate(m.a || 0); inked(ctx, () => roundRect(ctx, -8, -13, 16, 26, 3), '#A8B0BA'); ctx.fillStyle = '#DCE3EC'; ctx.fillRect(-6, -11, 4, 22); ctx.restore(); return; }
-    if (k < 0.28) lit(ctx, () => glowDisc(ctx, m.x, m.y, R * 1.2, '#FFF4DC', 0.55 * (1 - (k - 0.14) / 0.14)));
-    ctx.save(); ctx.globalAlpha *= 1 - k * k;
-    K.dustPuffs(ctx, m.x, m.y, R * 1.05, e, m.seed, 7);
-    for (let i = 0; i < 5; i++) { const b = i / 5 * TAU + hash(i, m.seed) * 0.8, d = R * (0.3 + 0.9 * e), hh = Math.sin(k01(k * 1.6) * Math.PI) * 16 * hash(m.seed, i + 2), [ux, uy] = upVec();
-      inked(ctx, () => blob(ctx, m.x + Math.cos(b) * d + ux * hh, m.y + Math.sin(b) * d + uy * hh, 3.2, 5, i, 1), i % 2 ? '#A99C8B' : '#7A6A58'); }
-    ctx.restore();
-  },
+  // a warhammer head brought down on the spot (round 19, lane melee19: the Griffon's and Warhelm's one slam; the designer:
+  // "Circular crater, no cracks", and the falling grey head was "What is that?"): the hammer in his hand is what comes
+  // down (parts.js style.slamPose, a wind-up and a drive forward); the floor takes a round crater with a pale lip, a
+  // white flash, a ring of dust rolling out to the blow's real reach and stone chips kicked up. No cracks, no lone head.
+  hammer(ctx, m, k, layer) { crater(ctx, m, k, layer, { R: m.r, dust: '#E9DDC2', chips: ['#D8CCB6', '#B3A690'], hold: 0.9 }); },
 };
-// Maul (Bearskin): the club driven straight down: a crater with a raised rim, cracks running out, brown dust and chunks
-SLAM2.maul = (ctx, m, k, layer) => {
-  const e = easeOut(k01((k - 0.1) / 0.6)), R = m.r;
-  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 1 - k * 0.8;
-    ctx.fillStyle = 'rgba(52,40,30,0.38)'; ctx.beginPath(); ctx.arc(m.x, m.y, R * 0.55, 0, TAU); ctx.fill();
-    ctx.strokeStyle = 'rgba(169,156,139,0.55)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(m.x, m.y, R * 0.6, 0, TAU); ctx.stroke();
-    ctx.strokeStyle = 'rgba(43,34,48,0.55)'; ctx.lineWidth = 2.6;
-    for (let i = 0; i < 7; i++) { const b = i / 7 * TAU + hash(m.seed, i) * 0.5, L = R * (0.75 + 0.45 * hash(i, m.seed)) * Math.min(1, k * 4); ctx.beginPath(); ctx.moveTo(m.x + Math.cos(b) * R * 0.55, m.y + Math.sin(b) * R * 0.55);
-      ctx.lineTo(m.x + Math.cos(b + 0.12) * (R * 0.55 + L * 0.5), m.y + Math.sin(b + 0.12) * (R * 0.55 + L * 0.5)); ctx.lineTo(m.x + Math.cos(b - 0.05) * (R * 0.55 + L), m.y + Math.sin(b - 0.05) * (R * 0.55 + L)); ctx.stroke(); }
-    ctx.restore(); return; }
-  if (k < 0.1) { const [ux, uy] = upVec(), h = (1 - k / 0.1) * 34; inked(ctx, () => { ctx.beginPath(); ctx.ellipse(m.x + ux * h, m.y + uy * h, 13, 10, 0, 0, TAU); }, '#8A5A30'); return; }
-  if (k < 0.26) lit(ctx, () => glowDisc(ctx, m.x, m.y, R * 1.3, '#FFE9C8', 0.6 * (1 - (k - 0.1) / 0.16)));
-  ctx.save(); ctx.globalAlpha *= 1 - k * k;
-  K.dustPuffs(ctx, m.x, m.y, R * 1.15, e, m.seed, 9, '#C9A47A');
-  for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + hash(i, m.seed), d = R * (0.4 + 0.8 * e), hh = Math.sin(k01(k * 1.5) * Math.PI) * 22 * (0.5 + hash(m.seed, i)), [ux, uy] = upVec();
-    inked(ctx, () => blob(ctx, m.x + Math.cos(b) * d + ux * hh, m.y + Math.sin(b) * d + uy * hh, 4.5, 5, i, 1), i % 2 ? '#7A6A58' : '#5A4634'); }
-  ctx.restore();
-};
+export { crater };
+// A round crater (round 19, lane melee19), shared by the warhammer slam, Skull Splitter's landing and the Maul: o.R the
+// blow's reach, o.dust / o.chips its colours, o.hold how long the dent stays (s). The mark's own time is stretched to it.
+function crater(ctx, m, k, layer, o) {
+  if (!m._held) { m._held = true; m.max = Math.max(m.max, o.hold || 0.8); } // (fxkit gives a slam 0.42 s: the dent stays longer)
+  const T = m.t, R = o.R, e = easeOut(k01(T / 0.32)), fade = k01((m.max - T) / 0.35), D = R * (o.dent || 0.5);
+  if (layer === 'ground') {
+    ctx.save(); ctx.globalAlpha *= fade;
+    lit(ctx, () => glowDisc(ctx, m.x, m.y, R * (0.5 + 0.6 * e), '#FFF4DC', 0.22 * k01(1 - T / 0.3))); // light thrown on the floor
+    disc(ctx, m.x, m.y, D * 1.18, 'rgba(255,248,230,0.42)');            // the lip, pushed up and catching the light
+    disc(ctx, m.x, m.y, D, 'rgba(84,64,46,0.36)');                       // the dent
+    disc(ctx, m.x + D * 0.12, m.y + D * 0.14, D * 0.72, 'rgba(40,30,24,0.22)'); // its shadowed far side
+    ctx.restore(); return;
+  }
+  if (T < 0.12) lit(ctx, () => glowDisc(ctx, m.x, m.y, R * 1.25, '#FFFFFF', 0.85 * (1 - T / 0.12)));
+  // a low ring of dust rolling out to the reach: soft cream puffs, no ink (inked, they read as grey bubbles)
+  const q = k01(T / 0.5);
+  if (q < 1) { ctx.save(); const n = 10, rr = R * (0.4 + 0.65 * easeOut(q));
+    for (let i = 0; i < n; i++) { const b = i / n * TAU + hash(m.seed, i) * 0.4, pr = R * (0.2 + 0.08 * hash(i, m.seed)) * (1 - 0.45 * q) + 2, x = m.x + Math.cos(b) * rr, y = m.y + Math.sin(b) * rr;
+      ctx.globalAlpha = 0.7 * (1 - q) * (1 - q); disc(ctx, x, y, pr, o.dust); ctx.globalAlpha = 0.6 * (1 - q) * (1 - q); disc(ctx, x - pr * 0.2, y - pr * 0.25, pr * 0.6, '#FFF8E6'); }
+    ctx.restore(); }
+  // stone chips kicked up and falling back
+  const c = k01(T / 0.42);
+  if (c < 1) { ctx.save(); ctx.globalAlpha *= 1 - c * c; const [ux, uy] = upVec();
+    for (let i = 0; i < 5; i++) { const b = i / 7 * TAU + hash(i, m.seed) * 0.8, d = R * (0.25 + 0.75 * easeOut(c)) * (0.7 + 0.4 * hash(m.seed, i)), hh = Math.sin(c * Math.PI) * 22 * (0.5 + hash(m.seed, i + 3));
+      inked(ctx, () => blob(ctx, m.x + Math.cos(b) * d + ux * hh, m.y + Math.sin(b) * d + uy * hh, 3.6 + 1.4 * hash(i, 4), 5, i, 1), o.chips[i % 2]); }
+    ctx.restore(); }
+}
+// (round 19: SLAM2.maul is fx-melee.js's)
 // Bury (the Digger): the spade's blade driven flat into the floor: a split in the ground and earth thrown out
 SLAM2.spade = (ctx, m, k, layer) => {
   const e = easeOut(k01((k - 0.1) / 0.6)), R = m.r;
@@ -697,16 +676,7 @@ const alive2 = (u) => u && !u.dead && !u.downed;
 // the effect on a unit has ended (its hook or buff is gone): let the look fade out
 const ended = (f, gone) => { if (gone && f.max > f.t + 0.25) f.max = f.t + 0.25; };
 const hasHook = (u, id) => !!(u && u.h2 && u.h2.some((h) => h.id === id));
-// Parry: the greatsword held across him, a cold glint running along its edge while he waits
-DRAW.parryGuard = (ctx, f, w, layer) => {
-  const u = f.unit; if (layer !== 'air' || !alive2(u)) return; ended(f, !(u.kit && u.kit.parry && u.kit.parry.until > w.time && u.kit.parry.n > 0));
-  const a = life(f, 0.1, 0.25), b = u.facing + Math.PI / 2, cx = u.x + Math.cos(u.facing) * (u.r + 4), cy = u.y + Math.sin(u.facing) * (u.r + 4), L = u.r + 16;
-  const run = ((f.t * 1.6) % 1) * 2 - 1;
-  ctx.save(); ctx.globalAlpha *= a;
-  inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(cx - Math.cos(b) * L, cy - Math.sin(b) * L); ctx.lineTo(cx + Math.cos(b) * L, cy + Math.sin(b) * L); }, '#DCE3EC', 5);
-  lit(ctx, () => glowDisc(ctx, cx + Math.cos(b) * L * run, cy + Math.sin(b) * L * run, 14, '#FFFFFF', 0.7));
-  ctx.restore();
-};
+// (round 19: parryGuard is fx-melee.js's)
 // Last Stand: a gold blaze bursting up off him, and gold shards flung out low along the floor
 DRAW.lastStand = (ctx, f, w, layer) => {
   const u = f.unit, x = alive2(u) ? u.x : f.x, y = alive2(u) ? u.y : f.y, k = k01(f.t / f.max), e = easeOut(k);
@@ -729,25 +699,7 @@ DRAW.tauntMark = (ctx, f, w, layer) => {
     inked(ctx, () => { roundRect(ctx, -3, -14, 6, 15, 3); }, '#E04A3A'); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 6, 3.4, 0, TAU); }, '#E04A3A'); });
   ctx.restore();
 };
-// Haste: short pale speed lines streaming off the back of a hasted body as it moves
-DRAW.haste = (ctx, f, w, layer) => {
-  const u = f.unit; if (layer !== 'ground' || !alive2(u)) return; ended(f, !(u.buffs && u.buffs.some((b) => b.id === 'haste')));
-  const sp = Math.hypot(u.vx || 0, u.vy || 0), a = life(f, 0.1, 0.3) * clamp(sp / 60, 0.25, 1), m = sp > 8 ? Math.atan2(u.vy, u.vx) : u.facing;
-  ctx.save(); ctx.globalAlpha *= a * 0.8;
-  for (let i = -1; i <= 1; i++) { const ph = (f.t * 3 + hash(i + 2, u.id)) % 1, nx = -Math.sin(m) * i * 11, ny = Math.cos(m) * i * 11, d = u.r + 4 + ph * 18;
-    K.streak(ctx, u.x + nx - Math.cos(m) * d, u.y + ny - Math.sin(m) * d, m + Math.PI, 0, 18 * (1 - ph) + 4, 2.6, '#DDF6FF', '#FFFFFF'); }
-  ctx.restore();
-};
-// Whirled: white wind curls going round its feet, faster and more of them as it builds
-DRAW.whirled = (ctx, f, w, layer) => {
-  const u = f.unit; if (layer !== 'ground' || !alive2(u)) { if (!alive2(u)) ended(f, true); return; }
-  const q = clamp(((u.k2s && u.k2s.whirl) || 0) / 100, 0, 1); ended(f, q <= 0.01);
-  const a = life(f, 0.15, 0.25), n = 2 + Math.round(q * 3), R = u.vr * 1.25;
-  ctx.save(); ctx.globalAlpha *= a * (0.5 + 0.5 * q);
-  for (let i = 0; i < n; i++) { const b0 = f.t * (5 + 6 * q) + i / n * TAU;
-    inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(u.x, u.y + u.vr * 0.35, R, R * 0.45, 0, b0, b0 + 1.1); }, i % 2 ? '#EEF3F8' : '#FFFFFF', 3.2); }
-  ctx.restore();
-};
+// (round 19: haste and whirled are fx-melee.js's)
 // Whirled's burst: a white whirlwind spun up round it while it is flung about
 DRAW.whirlBurst = (ctx, f, w, layer) => {
   const u = f.unit, x = alive2(u) ? u.x : f.x, y = alive2(u) ? u.y : f.y, k = k01(f.t / f.max), [vx, vy] = upVec();
@@ -814,26 +766,7 @@ DRAW.gust = (ctx, f, w, layer) => {
     inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x0 - Math.sin(b) * c, y0 + Math.cos(b) * c); ctx.quadraticCurveTo(x0, y0, x1, y1); }, '#FFFFFF', 3.2 * (1 - k) + 1.2); }
   ctx.restore();
 };
-// Swoop's landing: three arms of wind spiralling out across the floor round him as he spins (under the units)
-DRAW.windSwirl = (ctx, f, w, layer) => {
-  if (layer !== 'ground') return; const k = k01(f.t / f.max), e = easeOut(k);
-  ctx.save(); ctx.globalAlpha *= (1 - k) * 0.95;
-  for (let i = 0; i < 3; i++) { const b0 = i / 3 * TAU + f.t * 7;
-    inkLine(ctx, () => { ctx.beginPath(); for (let j = 0; j <= 14; j++) { const q = j / 14, b = b0 + q * 2.4, R = f.r * (0.15 + 0.85 * q) * (0.4 + 0.6 * e); const x = f.x + Math.cos(b) * R, y = f.y + Math.sin(b) * R; if (j) ctx.lineTo(x, y); else ctx.moveTo(x, y); } }, i % 2 ? '#EEF3F8' : '#FFFFFF', 5 * (1 - k) + 1.5); }
-  lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 0.7, '#EEF3F8', 0.25 * (1 - k)));
-  ctx.restore();
-};
-// a small thunderclap: a flash, yellow sparks and a puff of white cloud (Stormhammer II, Wing Guard III's burst)
-DRAW.clap = (ctx, f, w, layer) => {
-  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
-  if (k < 0.25) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 1.2, '#FFF7C2', 0.7 * (1 - k / 0.25)));
-  ctx.save(); ctx.globalAlpha *= 1 - k * k;
-  for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + hash(i, f.x | 0), d = f.r * (0.2 + 0.7 * e);
-    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(f.x + Math.cos(b) * d, f.y + Math.sin(b) * d); ctx.lineTo(f.x + Math.cos(b + 0.25) * (d + 9), f.y + Math.sin(b + 0.25) * (d + 9)); ctx.lineTo(f.x + Math.cos(b) * (d + 16), f.y + Math.sin(b) * (d + 16)); }, '#FFE66B', 2.6);
-    if (i % 2) inked(ctx, () => { ctx.beginPath(); ctx.arc(f.x + Math.cos(b + 0.5) * d * 0.7, f.y + Math.sin(b + 0.5) * d * 0.7, 7 * (1 - 0.5 * k), 0, TAU); }, '#FFFFFF'); }
-  ctx.restore();
-};
-
+// (round 19: windSwirl and clap are fx-melee.js's)
 // Bear Claws: four claw rakes torn across the enemy, alternating sides, each one fast
 DRAW.clawRake = (ctx, f, w, layer) => {
   if (layer !== 'air') return; const k = k01(f.t / f.max), b = f.a + Math.PI / 2 + f.side * 0.55;
@@ -843,23 +776,7 @@ DRAW.clawRake = (ctx, f, w, layer) => {
   if (k < 0.2) lit(ctx, () => glowDisc(ctx, f.x, f.y, 24, '#FFFFFF', 0.5 * (1 - k / 0.2)));
   ctx.restore();
 };
-// a bite: two rows of fangs snapping shut on it, and drops of blood flung off
-DRAW.bite = (ctx, f, w, layer) => {
-  if (layer !== 'air') return; const k = k01(f.t / f.max), shut = easeOut(k01(k / 0.3)), s = clamp(f.r / 20, 0.8, 1.6), gap = (1 - shut) * 14 * s + 1.5;
-  ctx.save(); ctx.globalAlpha *= k01((1 - k) / 0.4);
-  for (const sd of [-1, 1]) { ctx.save(); ctx.translate(f.x - Math.sin(f.a) * gap * sd, f.y + Math.cos(f.a) * gap * sd); ctx.rotate(f.a + (sd > 0 ? Math.PI : 0));
-    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-14 * s, -2 * s); ctx.quadraticCurveTo(0, -5 * s, 14 * s, -2 * s); for (let i = 3; i >= 0; i--) { const x0 = -11 * s + i * 7.4 * s; ctx.lineTo(x0 + 3 * s, -1 * s); ctx.lineTo(x0, 6 * s); ctx.lineTo(x0 - 3 * s, -1 * s); } ctx.closePath(); }, '#FFF8F0'); ctx.restore(); }
-  if (shut > 0.95) for (let i = 0; i < 5; i++) { const b = f.a + (hash(i, 7) - 0.5) * 2.4, d = 8 + 26 * easeOut(k01((k - 0.3) / 0.7)); inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 3 * (1 - k) + 1, '#C8453D'); }
-  ctx.restore();
-};
-// Return Thrust: a glint on the spear's head that grows with each blow he takes, until the thrust lets it go
-DRAW.spearCharge = (ctx, f, w, layer) => {
-  const u = f.unit; if (layer !== 'air' || !alive2(u)) { if (!alive2(u)) ended(f, true); return; }
-  const n = (u.kit && u.kit.pent) || 0; ended(f, n <= 0); if (n <= 0) return;
-  const d = u.r + (u.def.range || 40) * 0.6, x = u.x + Math.cos(u.facing) * d, y = u.y + Math.sin(u.facing) * d, p = 0.5 + 0.5 * Math.sin(f.t * (6 + n * 2));
-  lit(ctx, () => glowDisc(ctx, x, y, 10 + 5 * n + 4 * p, n >= 5 ? '#FFE7A0' : '#FFFFFF', 0.25 + 0.1 * n));
-  ctx.save(); ctx.globalAlpha *= 0.6 + 0.4 * p; inked(ctx, () => star(ctx, x, y, 4 + n * 1.6, 4, 0.3, f.t * 2), '#FFFFFF'); ctx.restore();
-};
+// (round 19: spearCharge is fx-melee.js's, at the spear's real head)
 // Return Thrust let go: a long white thrust streak through the whole line, thicker the more was wound up
 DRAW.thrustLine = (ctx, f, w, layer) => {
   if (layer !== 'air') return; const k = k01(f.t / f.max), tip = f.r * easeOut(k01(k / 0.3)), base = f.r * 0.15 + tip * 0.6 * k01((k - 0.2) / 0.8);
@@ -972,18 +889,9 @@ DRAW.buried = (ctx, f, w, layer) => {
   ctx.restore();
 };
 // the Haymaker's hay bale (round 15, lane E: art round 12's art/summons/haybale.svg, a rolled bale lying across its way,
-// two twine bands; the code drawing's straw rolling over it and its flames are kept): straw lines in the picture's own
-// two colours run over its body as it rolls (u.roll, its way in room units), between the bands, as the old stripes did
+// two twine bands). Round 19 ("remove the hairs on it"): the straw lines that ran over it as it rolled are gone; it
+// leaves straw on the floor behind it instead (fx-melee.js hayTrail). Its flames are kept.
 ART2.haybale = {
-  top(ctx, u) {
-    const o = ((u.roll || 0) / 0.395) % 38, curve = (x, y) => y - 3 * (1 - ((x - 100) / 72) ** 2);
-    ctx.save(); ctx.beginPath(); ctx.moveTo(58, 39); ctx.lineTo(142, 39); ctx.arc(142, 75, 36, -Math.PI / 2, 0); ctx.lineTo(178, 125); ctx.arc(142, 125, 36, 0, Math.PI / 2); ctx.lineTo(58, 161); ctx.arc(58, 125, 36, Math.PI / 2, Math.PI); ctx.lineTo(22, 75); ctx.arc(58, 75, 36, Math.PI, Math.PI * 1.5); ctx.clip();
-    ctx.lineCap = 'round'; ctx.lineWidth = 3.6;
-    for (let i = -1; i < 4; i++) { const y = 43 + o + i * 38;
-      for (const [yy, col, a] of [[y, '#B88E2E', 0.6], [y + 19, '#F6E6A0', 0.7]]) { ctx.globalAlpha = a; ctx.strokeStyle = col; ctx.beginPath();
-        for (const [x0, x1] of [[24, 57], [71, 129], [143, 176]]) { ctx.moveTo(x0, curve(x0, yy)); ctx.quadraticCurveTo((x0 + x1) / 2, curve((x0 + x1) / 2, yy) - 1, x1, curve(x1, yy)); } ctx.stroke(); } }
-    ctx.restore();
-  },
   over(ctx, u) { if (u.st && u.st.burn > 10) { ctx.save(); ctx.globalAlpha = Math.min(1, u.st.burn / 60); for (let i = 0; i < 3; i++) upright(ctx, u.x + (i - 1) * 12, u.y - 6, () => flame(ctx, 0, 0, 8)); ctx.restore(); } },
 };
 
