@@ -98,6 +98,18 @@ export function snowRoll(ctx, p) {
 // is drawn at its head's turn, the way one figure's parts are (parts.js): every piece's outline first, tail to head,
 // then every piece's colours over them in the same order: the outline hugs the body as one shape, and the links' own
 // pattern runs on from one to the next. A link under the sand isn't drawn (its mound is: drawFoeGround).
+// Round 17 (lane foes17; the designer: "Show with and without each segment having its own outline"): ?chainlines=own
+// draws each link whole, its own outline round it, tail first, so each overlaps the one behind it; the default is the
+// one body above. The tail link (families.js) is its link's art cut to a taper (def.tailShape: the front's y, the
+// tip's y and the half width at the front, in the art's own units; facing down), outlined round the cut.
+const OWN_LINES = (() => { try { return typeof location !== 'undefined' && new URLSearchParams(location.search).get('chainlines') === 'own'; } catch { return false; } })();
+function taperPath(ctx, [front, tip, half]) {
+  const L = front - tip;
+  ctx.beginPath(); ctx.moveTo(100 - half, front);
+  ctx.bezierCurveTo(100 - half, front - 0.45 * L, 100 - half * 0.32, tip + 0.22 * L, 100, tip);
+  ctx.bezierCurveTo(100 + half * 0.32, tip + 0.22 * L, 100 + half, front - 0.45 * L, 100 + half, front);
+  ctx.quadraticCurveTo(100, front + half * 0.25, 100 - half, front); ctx.closePath();
+}
 function drawChain(ctx, h, w, dt, R) {
   const pieces = [...h.segs.filter((s) => !s.dead && !s.hidden).reverse(), ...(h.hidden ? [] : [h])];
   if (!pieces.length) return;
@@ -106,17 +118,23 @@ function drawChain(ctx, h, w, dt, R) {
   const pose = (p) => { if (p !== h) return {}; const q = poseFor(p, w, dt); q.front = { dy: 3 + 3 * Math.sin(w.time * 26 + p.id) * (Math.sin(w.time * 2.3 + p.id) > 0.3 ? 1 : 0) }; return q; }; // (the serpent's tongue flickers now and then)
   const frame = (s) => { ctx.save(); R.unitFrame(ctx, s.p, w); const k = s.sizeU / 220; ctx.scale(k, k); ctx.translate(-100, -100); };
   const poses = sets.map((s) => pose(s.p));
-  sets.forEach((s, i) => { frame(s); paintRig(ctx, s.set, poses[i], 'ink'); ctx.restore(); });
+  const shape = (s) => (s.p.tail && s.p.def.tailShape) || null;
+  const ink = (s, i) => { frame(s); const sh = shape(s);
+    if (sh) { taperPath(ctx, sh); ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineJoin = 'round'; ctx.lineWidth = 10; ctx.fill(); ctx.stroke(); } // (the tail: its own outline round the taper)
+    else paintRig(ctx, s.set, poses[i], 'ink');
+    ctx.restore(); };
   const eth = h.ethereal; h.ethereal = false; const washes = R.washesOf(h, w); h.ethereal = eth; // (its head under the sand is see-through; the links still up are not)
-  sets.forEach((s, i) => {
-    frame(s);
+  const fill = (s, i) => {
+    frame(s); const sh = shape(s); if (sh) { taperPath(ctx, sh); ctx.clip(); }
     if (s.p.flashT > 0.06) { const k = composeRig(s.set, poses[i], 'sil', '#FFFFFF'); drawComposed(ctx, k); } // the link that was struck flashes (and the head, which takes the blow), not the whole body
     else {
       paintRig(ctx, s.set, poses[i], 'sil'); // (the parts' colours, no outline)
       for (const [col, a] of washes) { if (a <= 0.01) continue; const k = composeRig(s.set, poses[i], 'sil', col); const ga = ctx.globalAlpha; ctx.globalAlpha = ga * a; drawComposed(ctx, k); ctx.globalAlpha = ga; }
     }
     ctx.restore();
-  });
+  };
+  if (OWN_LINES) sets.forEach((s, i) => { ink(s, i); fill(s, i); });
+  else { sets.forEach(ink); sets.forEach(fill); }
 }
 
 // ---------------------------------------------------------------- an elemental spirit's tail

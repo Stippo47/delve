@@ -507,7 +507,7 @@ function steer(w, u, gx, gy, opts = {}) {
       if (ad < spread) danger[i] = Math.max(danger[i], k * (1 - ad / (spread * 1.6)));
     }
   };
-  for (const p of w.pillars) if (!ownBoulder(u, p)) avoidCircle(p.x, p.y, p.r, 1, 70);
+  for (const p of w.pillars) if (!ownBoulder(u, p) && p.owner !== u) avoidCircle(p.x, p.y, p.r, 1, 70); // (round 17, lane foes17: nor its own boulder or snowball lying loose: a troll steered off the very boulder it was walking to; a yeti walks round its ball on a circle, foes10.js)
   // telegraphed hits: don't walk into one (escaping one that's already under you is movement()'s job)
   if (w.danger.length) for (const z of w.danger) {
     if (!threatens(z, u) || inZone(z, u.x, u.y, R * 0.6)) continue;
@@ -557,14 +557,18 @@ function steer(w, u, gx, gy, opts = {}) {
 const CLEAR_PAD = 42; // a route is pulled straight no tighter than this (the A* grid keeps 46 from walls)
 function goalVec(w, u, tx, ty) {
   if (w.detour) { const p = w.detour(u, tx, ty); if (p) { tx = p.x; ty = p.y; } } // lane W (round 14, convoy.js): the way round the wagon, which is solid and moves
-  if ((!w.walls.length && !w.pillars.length) || pathClear(w, u.x, u.y, tx, ty, u.r * 0.9)) { u.path = null; return [tx - u.x, ty - u.y]; }
+  // round 17 (lane foes17): a troll's own boulder (in its hands, or the one it is walking to) is not in its way: every
+  // line from a troll ran through the boulder in its fists, so it never went straight anywhere and crept from grid
+  // cell to grid cell instead; and a line to a boulder always ends inside it
+  const skip = u.bould ? (p) => p === u.bould && (ownBoulder(u, p) || dist(tx, ty, p.x, p.y) < p.r + 2) : null;
+  if ((!w.walls.length && !w.pillars.length) || pathClear(w, u.x, u.y, tx, ty, u.r * 0.9, skip)) { u.path = null; return [tx - u.x, ty - u.y]; }
   u.pathT -= 1 / 60;
   const moved = !u.pathGoal || Math.hypot(u.pathGoal.x - tx, u.pathGoal.y - ty) > 60;
-  if (!u.path || u.pathT <= 0 || moved) { u.path = findPath(w, u.x, u.y, tx, ty, Math.min(CLEAR_PAD, u.r * 0.9)); u.pathT = 0.6; u.pathGoal = { x: tx, y: ty }; }
+  if (!u.path || u.pathT <= 0 || moved) { u.path = findPath(w, u.x, u.y, tx, ty, Math.min(CLEAR_PAD, u.r * 0.9), skip); u.pathT = 0.6; u.pathGoal = { x: tx, y: ty }; }
   if (!u.path || !u.path.length) return [tx - u.x, ty - u.y];
   // the furthest route point we can see
   let k = 0;
-  for (let i = u.path.length - 1; i >= 0; i--) if (pathClear(w, u.x, u.y, u.path[i].x, u.path[i].y, u.r * 0.9)) { k = i; break; }
+  for (let i = u.path.length - 1; i >= 0; i--) if (pathClear(w, u.x, u.y, u.path[i].x, u.path[i].y, u.r * 0.9, skip)) { k = i; break; }
   if (k > 0) u.path.splice(0, k);
   const p = u.path[0];
   if (Math.hypot(p.x - u.x, p.y - u.y) < 16 && u.path.length > 1) u.path.shift();

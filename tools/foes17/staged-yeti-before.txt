@@ -1,0 +1,8 @@
+yeti         open     back within 15s 20/20  median   5.0s  never 0
+yeti         wall     back within 15s  0/20  median   -  s  never 20
+yeti         corner   back within 15s  0/20  median   -  s  never 20
+yeti         pillar   back within 15s 20/20  median   5.6s  never 0
+yeti         pocket   back within 15s  0/20  median   -  s  never 20
+yeti         friends  back within 15s 20/20  median   6.8s  never 0
+yeti         ring     back within 15s  0/20  median   -  s  never 20
+yeti         knocked  back within 15s 20/20  median   5.9s  never 0
