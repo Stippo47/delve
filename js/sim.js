@@ -1167,17 +1167,19 @@ export function hurt(w, u, amount, src, o = {}) {
   if (!o.dot) cue('hit', u, src, { amt, crit: o.crit, heavy: o.heavy, shot: o.shot, blocked: u.blockedAt === w.time });
   if (!o.dot) {
     u.hitT = 0.16; u.hitA = fromA; u.hitBlock = onShield; u.hitZap = !!o.shock || !!o.noMark; // (round 19, melee19: o.noMark, a blow that draws its own hit: the Maul) // (the renderer: no star for lightning, round 10)
+    if (w.ownHits) { u.hitTy = hitType(o, src); u.hitEl = hitKinds(o, src).elements; u.hitCrit = !!o.crit; u.hitShot = !!(o.shot || o.proj); u.hitBig = !!(o.heavy || o.crit || amt >= 14); u.hitSide = src ? src.team : null; } // round 19 (lane art-hitfx, ?hitfx=): what the blow was, for js/fx-hit-r19.js
     // the impact point: on the body's edge facing the blow, or on the shield's face (pushed out a little further)
     const back = fromA + Math.PI;
     const sa = onShield ? u.facing + clamp(wrapAngle(back - u.facing), -0.7, 0.7) : back;
     const sr = o.omni ? 0 : onShield ? u.r * 1.05 + 4 : u.r * 0.85; // omni: a blow from everywhere at once (Smite, round 9)
     u.hitX = u.x + Math.cos(sa) * sr; u.hitY = u.y + Math.sin(sa) * sr;
     if (o.at) { u.hitX = o.at.x; u.hitY = o.at.y; } // (round 19, melee19: where the weapon really met it: Bulwark's spear, held off to his side)
-    const big = o.heavy || o.crit || amt >= 14;
+    const big = o.heavy || o.crit || amt >= 14, np = w.particles.length; // (np: with ?hitfx= the sparks and puff below are drawn by js/fx-hit-r19.js; the dice still roll the same)
     if (o.omni) { u.hitOmni = true; for (let i = 0; i < 6; i++) sparks(w, u.x, u.y, i / 6 * TAU, 1, o.crit ? '#FFE14D' : '#FFFBEA', 1); }
     else if (onShield) sparks(w, u.hitX, u.hitY, sa, 6, '#FFF4C8', 1.1); // a clang: sparks thrown back off the shield
     else { u.hitOmni = false; sparks(w, u.hitX, u.hitY, fromA + (rand() < 0.5 ? Math.PI : 0), big ? 6 : 3, o.crit ? '#FFE14D' : '#FFFFFF', big ? 1.2 : 0.9); }
     if (big) puff(w, u.hitX, u.hitY, '#EDE6D6', 4, 90, 4, 0.3);
+    if (w.ownHits) w.particles.length = np;
     // punch without freezing the game: only a crit holds the frame, and only a hair; the shake is small
     if (o.crit) w.hitstop = Math.max(w.hitstop, 0.025);
     if (big) w.shake = Math.max(w.shake, 1.5);
@@ -1441,9 +1443,11 @@ function shatter(w, u, src) {
 }
 
 export function explode(w, x, y, r, dmg, statuses, src, color, skip) {
-  w.telegraphs.push({ type: 'blast', x, y, r, t: 0.25, max: 0.25, color });
+  w.telegraphs.push({ type: 'blast', x, y, r, t: 0.25, max: 0.25, color, burn: !!statuses.burn }); // (burn: round 19, lane art-hitfx)
+  const np = w.particles.length;
   if (statuses.burn) { flames(w, x, y, 14, r * 0.6, 90); sparks(w, x, y, 0, 0); }
   else puff(w, x, y, color, 16, r * 3, 6, 0.45);
+  if (w.ownHits) w.particles.length = np; // (?hitfx=: the blast is js/fx-hit-r19.js's; the dice still roll the same)
   w.shake = Math.max(w.shake, 4);
   for (const o of w.units) {
     if (!alive(o) || o === skip) continue;
@@ -1517,7 +1521,7 @@ function killNow(w, u, src) {
     spin: (rand() < 0.5 ? -1 : 1) * Math.min(14, cs / 40), z: 0, vz: Math.min(260, 60 + cs * 0.45), age: 0, t: CORPSE_LIFE, max: CORPSE_LIFE });
   if (w.corpses.length > MAX_CORPSES) w.corpses.splice(0, w.corpses.length - MAX_CORPSES);
   // the body itself flies now: a small puff (a slime, which leaves no body, bursts into goo)
-  puff(w, u.x, u.y, u.def.goo || (u.kind.startsWith('slime') ? '#6FA6E6' : u.kind === 'rat' ? '#9C8676' : '#EDE4CD'), u.def.noCorpse ? 14 : 6, 110, 4, 0.4);
+  { const np = w.particles.length; puff(w, u.x, u.y, u.def.goo || (u.kind.startsWith('slime') ? '#6FA6E6' : u.kind === 'rat' ? '#9C8676' : '#EDE4CD'), u.def.noCorpse ? 14 : 6, 110, 4, 0.4); if (w.ownHits) w.particles.length = np; } // (?hitfx=: the death is js/fx-hit-r19.js's)
   if (u.st.poison > 40) w.hazards.push({ type: 'gas', x: u.x, y: u.y, r: 52, t: 4, max: 4 });
   if (u.eliteDeath) u.eliteDeath(w, u); // an elite's own end (elites.js: the elite slime bursts into four)
   // splits (once: gen 0 only) into two of def.splitsInto (slimelets unless it says); u.noSplit stops it (a sludge

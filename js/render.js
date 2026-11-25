@@ -6,7 +6,7 @@ import { DEFS } from './units.js';
 import { drawGroundFx, drawAirFx, drawProjectile as projectile, drawStatusFx, noteHits, drawLocal, drawBeam, hash } from './fx.js';
 import { INK, TAU, clamp, OUTLINE } from './util.js';
 import { envId, obstacleFor } from './env.js';
-import { drawBodyFx, drawBodyGround, drawIceWall } from './fxkit.js';
+import { drawBodyFx, drawBodyGround, drawIceWall, HIT_OWN } from './fxkit.js';
 import { drawHazardPuddle, flushPuddles, drawPuddle } from './puddles.js';
 import { drawEnemyHp, hpWash, setHpSides } from './hpstyle.js';
 import { icon } from './icons.js';
@@ -15,6 +15,7 @@ import { drawMarks3 } from './fx3.js'; // round 15 (lane N): Shackled's irons
 import './fx-dash.js'; // round 18 (lane dash18): the six dashes' looks (it fills fx2.js's table)
 import './fx-melee.js'; // round 19 (lane melee19): the knights' and brutes' looks (it fills fx2.js's tables)
 import './fx-rogue19.js'; // round 19 (lane rogue19): the Bandit's, Shade's, Monk's and Cultist's looks, Disarmed and Anti-heal
+import './fx-hit-r19.js'; // round 19 (lane art-hitfx): trial looks for hits, deaths, heals, pickups... (only with ?hitfx=; it fills fxkit.js HIT_OWN)
 import { WALL2, ART2 } from './looks2.js';
 import { HEROES } from './heroes.js';
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
@@ -540,7 +541,8 @@ function unitFrame(ctx, u, w) {
   if (u.spin) { const k = (T - u.spin.t0) / u.spin.dur; if (k >= 0 && k < 1) ctx.rotate((u.spin.dir || 1) * TAU * k * k * (3 - 2 * k)); else if (k >= 1) u.spin = null; }
   if (u.act && u.act.type === 'dash' && u.act.roll) { const k = 1 - u.act.t / u.act.max; ctx.rotate(TAU * k * k * (3 - 2 * k) * (u.act.dir || 1)); }
   // hit: squashed and shoved along the blow
-  if (u.hitT > 0 && !u.downed) {
+  if (HIT_OWN.frame && !u.downed && HIT_OWN.frame(ctx, u, w)) { /* (round 19, lane art-hitfx: ?hitfx=, the blow's shove and a dodge's sidestep) */ }
+  else if (u.hitT > 0 && !u.downed) {
     const k = u.hitT / 0.16;
     ctx.rotate(u.hitA); ctx.translate((u.hitBlock ? 3 : 8) * k, 0); ctx.scale(1 - 0.2 * k, 1 + 0.12 * k); ctx.rotate(-u.hitA);
   }
@@ -730,7 +732,7 @@ function drawPartsUnit(ctx, u, w) {
   if (u.act && u.act.type === 'dash' && !u.act.dv && u.kind === 'twinfang') afterimages(ctx, u, w, set, pose, sizeU); // (round 18: her Dash is one of dashes.js's now: dashGhosts above)
   else u._trail = null;
   // (round 15, lane E: def.ownLook, a summon drawn in its own colours: the code drawings it replaces were never turned blue-grey)
-  drawRig(ctx, set, pose, { mode, alpha, washes: struck ? [['#FFFFFF', 0.55 * Math.min(1, u.flashT / 0.12)]] : washesOf(u, w), shift: isOurs(u) && u.kind !== 'minion' && !u.def.ownLook, /* round 10: the raised dead stay plain grey */ border: mode === 'normal' ? borderOf(u, w) : null });
+  drawRig(ctx, set, pose, { mode, alpha, washes: HIT_OWN.wash ? HIT_OWN.wash(u, w, struck, washesOf) : struck ? [['#FFFFFF', 0.55 * Math.min(1, u.flashT / 0.12)]] : washesOf(u, w), /* (round 19, lane art-hitfx: ?hitfx=) */ shift: isOurs(u) && u.kind !== 'minion' && !u.def.ownLook, /* round 10: the raised dead stay plain grey */ border: mode === 'normal' ? (HIT_OWN.rim && HIT_OWN.rim(u, w, struck)) || borderOf(u, w) : null });
   if (pose.glow && mode === 'normal') castGlow(ctx, pose.glow, w.time);
   if (u.kind === 'archer' && mode === 'normal') nockedArrow(ctx, u, set, pose, sizeU);
   if (X && X.top && mode !== 'grey') X.top(ctx, u, w);
@@ -852,7 +854,7 @@ function drawCorpse(ctx, c) {
   const lift = 1 + Math.min(0.35, (c.z || 0) / 160);
   const fade = clamp(c.t / 4, 0, 1);
   const m = c.z > 2 ? 0 : clamp(((c.age ?? 1) - 0.25) / 0.6, 0, 1); // 0 flying, 1 lying dead
-  const flash = (c.age ?? 1) < 0.07;
+  const flash = !HIT_OWN.death && (c.age ?? 1) < 0.07; // (round 19, lane art-hitfx: ?hitfx= deaths draw no white flash)
   const live = fade * (1 - m), dead = fade * m * DEAD_A; // the two looks cross-fade
   ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.facing - Math.PI / 2); ctx.scale(lift, lift);
   if (art) {

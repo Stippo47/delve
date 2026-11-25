@@ -1,0 +1,628 @@
+{
+ "title": "Art: hits and impacts",
+ "topic": "art",
+ "stack": "r19art",
+ "order": 6,
+ "cards": [
+  {
+   "id": "mark-sharp",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Hit mark: sharp",
+   "text": "The white star is gone. A blade or arrow landing (the Dame's sword here). Three takes.",
+   "why": "You called the star \"weird\" and said it hid the shots' own bursts. Each type of hit now has its own sign, kept off the attacker.",
+   "pick": [
+    "mark-sharp-2"
+   ],
+   "items": [
+    {
+     "id": "mark-sharp-1",
+     "label": "1 Gashes",
+     "video": "../../../design/r19-art/hitfx/mark-sharp/mark-sharp-1.mp4",
+     "text": "Two short slanted gashes on its edge, raw pink cores, two slivers out the sides."
+    },
+    {
+     "id": "mark-sharp-2",
+     "label": "2 Edge",
+     "video": "../../../design/r19-art/hitfx/mark-sharp/mark-sharp-2.mp4",
+     "text": "The struck side of its outline lights up, a thin cut across it."
+    },
+    {
+     "id": "mark-sharp-3",
+     "label": "3 Spray",
+     "video": "../../../design/r19-art/hitfx/mark-sharp/mark-sharp-3.mp4",
+     "text": "No shape on the body: fine slivers fly out of both sides."
+    }
+   ]
+  },
+  {
+   "id": "mark-blunt",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Hit mark: blunt",
+   "text": "A mace, hammer, club or stone landing (the Paladin's mace here). Three takes.",
+   "why": "Blunt blows should read as a thump, not a cut. All three keep clear of the one swinging.",
+   "pick": [
+    "mark-blunt-1"
+   ],
+   "items": [
+    {
+     "id": "mark-blunt-1",
+     "label": "1 Pow lines",
+     "video": "../../../design/r19-art/hitfx/mark-blunt/mark-blunt-1.mp4",
+     "text": "Comic impact lines out both sides of where it landed, a dust puff past each."
+    },
+    {
+     "id": "mark-blunt-2",
+     "label": "2 Dent",
+     "video": "../../../design/r19-art/hitfx/mark-blunt/mark-blunt-2.mp4",
+     "text": "A fat crescent on its edge squashes in; two ripples run off it."
+    },
+    {
+     "id": "mark-blunt-3",
+     "label": "3 Grit",
+     "video": "../../../design/r19-art/hitfx/mark-blunt/mark-blunt-3.mp4",
+     "text": "Chunky grit knocked out to the sides, a small puff of dust."
+    }
+   ]
+  },
+  {
+   "id": "mark-magic",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Hit mark: magic",
+   "text": "Spells by element: fire, frost, poison, holy, curse, nature, water, plain. Three takes.",
+   "why": "A spell's hit wears its element's colour and bits, so you can tell what landed without a white star on top.",
+   "pick": [
+    "mark-magic-1"
+   ],
+   "items": [
+    {
+     "id": "mark-magic-1",
+     "label": "1 Pop",
+     "video": "../../../design/r19-art/hitfx/mark-magic/mark-magic-1.mp4",
+     "text": "A quick glow and its element's bits (flames, ice chips, bubbles, glints) thrown out the sides."
+    },
+    {
+     "id": "mark-magic-2",
+     "label": "2 Edge",
+     "video": "../../../design/r19-art/hitfx/mark-magic/mark-magic-2.mp4",
+     "text": "The struck side of its outline lights up in the element, bits spilling off the ends."
+    },
+    {
+     "id": "mark-magic-3",
+     "label": "3 Spray",
+     "video": "../../../design/r19-art/hitfx/mark-magic/mark-magic-3.mp4",
+     "text": "A fan of the element's bits sprayed out of both sides."
+    }
+   ]
+  },
+  {
+   "id": "struck",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "The struck body",
+   "text": "How the body itself shows the blow (with hit mark 1). Now: a pale white wash.",
+   "why": "You said white puffs hid the hero. Two of these keep the picture fully clear.",
+   "pick": [
+    "struck-1"
+   ],
+   "items": [
+    {
+     "id": "struck-1",
+     "label": "1 Rim",
+     "video": "../../../design/r19-art/hitfx/struck/struck-1.mp4",
+     "text": "No wash: a bright rim round its outline for a blink, in the blow's colour."
+    },
+    {
+     "id": "struck-2",
+     "label": "2 Tint",
+     "video": "../../../design/r19-art/hitfx/struck/struck-2.mp4",
+     "text": "A short, light wash in the blow's colour (steel, cream, or the element)."
+    },
+    {
+     "id": "struck-3",
+     "label": "3 Jolt",
+     "video": "../../../design/r19-art/hitfx/struck/struck-3.mp4",
+     "text": "A harder shove and a shake, with a quick red flinch."
+    }
+   ]
+  },
+  {
+   "id": "crit",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Critical hits",
+   "text": "Every blow here is a crit. Now: only a gold number (not drawn) and a tiny freeze.",
+   "why": "Crits had nothing to show for them in the arena. Gold is kept for crits only.",
+   "pick": [
+    "crit-1"
+   ],
+   "items": [
+    {
+     "id": "crit-1",
+     "label": "1 Burst",
+     "video": "../../../design/r19-art/hitfx/crit/crit-1.mp4",
+     "text": "A gold comic burst pops beside the struck edge, speed lines past it."
+    },
+    {
+     "id": "crit-2",
+     "label": "2 Rays",
+     "video": "../../../design/r19-art/hitfx/crit/crit-2.mp4",
+     "text": "Thick gold rays shoot out from all round the body's edge."
+    },
+    {
+     "id": "crit-3",
+     "label": "3 Shards",
+     "video": "../../../design/r19-art/hitfx/crit/crit-3.mp4",
+     "text": "Gold shards fly out the sides and a thin gold ring snaps out."
+    }
+   ]
+  },
+  {
+   "id": "block",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Blocks on a shield",
+   "text": "Foes swinging at the Paladin's raised shield. Now: a white star and a pale arc.",
+   "why": "A blow on a shield should look turned away, not landed. Pale gold is the shield colour.",
+   "pick": [
+    "block-1"
+   ],
+   "items": [
+    {
+     "id": "block-1",
+     "label": "1 Clang",
+     "video": "../../../design/r19-art/hitfx/block/block-1.mp4",
+     "text": "The shield's face rings bright along its curve; sparks fly back off it."
+    },
+    {
+     "id": "block-2",
+     "label": "2 Ward",
+     "video": "../../../design/r19-art/hitfx/block/block-2.mp4",
+     "text": "A shield of light pops on its face and rings out twice."
+    },
+    {
+     "id": "block-3",
+     "label": "3 Deflect",
+     "video": "../../../design/r19-art/hitfx/block/block-3.mp4",
+     "text": "The blow glances off at an angle; dust kicks up behind his feet."
+    }
+   ]
+  },
+  {
+   "id": "miss",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Misses and dodges",
+   "text": "A foe dodging most blows. Now: nothing shows (the word \"dodge\" isn't drawn).",
+   "why": "A dodge was invisible: the blow just did nothing. No words: a shape.",
+   "pick": [
+    "miss-2"
+   ],
+   "items": [
+    {
+     "id": "miss-1",
+     "label": "1 Swoosh",
+     "video": "../../../design/r19-art/hitfx/miss/miss-1.mp4",
+     "text": "The blow's sweep carries on past the body, clear of its edge."
+    },
+    {
+     "id": "miss-2",
+     "label": "2 Sidestep",
+     "video": "../../../design/r19-art/hitfx/miss/miss-2.mp4",
+     "text": "Speed lines on the side it slipped from, dust kicked from its feet."
+    },
+    {
+     "id": "miss-3",
+     "label": "3 Air",
+     "video": "../../../design/r19-art/hitfx/miss/miss-3.mp4",
+     "text": "An empty pale puff and two curls where the blow fell on nothing."
+    }
+   ]
+  },
+  {
+   "id": "blast-small",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Small explosions",
+   "text": "Two small blasts among four skeletons (one with burn). Now: white flash, ring, flames.",
+   "why": "Explosions in the game's own flat style; each is quick so bodies show again fast.",
+   "pick": [
+    "blast-small-1"
+   ],
+   "items": [
+    {
+     "id": "blast-small-1",
+     "label": "1 Cloud",
+     "video": "../../../design/r19-art/hitfx/blast-small/blast-small-1.mp4",
+     "text": "Inked puffs roll out to the edge, a quick core, smoke rising after."
+    },
+    {
+     "id": "blast-small-2",
+     "label": "2 Burst",
+     "video": "../../../design/r19-art/hitfx/blast-small/blast-small-2.mp4",
+     "text": "A layered cartoon starburst blooms and folds in; chunks fly past it."
+    },
+    {
+     "id": "blast-small-3",
+     "label": "3 Shock",
+     "video": "../../../design/r19-art/hitfx/blast-small/blast-small-3.mp4",
+     "text": "A shock ring runs along the floor, sparks to the edge, flame boils up."
+    }
+   ]
+  },
+  {
+   "id": "blast-big",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Big explosions",
+   "text": "One big fire blast over four skeletons.",
+   "why": "The same three at full size, to see which still reads when it covers a crowd.",
+   "pick": [
+    "blast-big-1"
+   ],
+   "items": [
+    {
+     "id": "blast-big-1",
+     "label": "1 Cloud",
+     "video": "../../../design/r19-art/hitfx/blast-big/blast-big-1.mp4",
+     "text": "Inked puffs roll out to the edge, a quick core, smoke rising after."
+    },
+    {
+     "id": "blast-big-2",
+     "label": "2 Burst",
+     "video": "../../../design/r19-art/hitfx/blast-big/blast-big-2.mp4",
+     "text": "A layered cartoon starburst blooms and folds in; chunks fly past it."
+    },
+    {
+     "id": "blast-big-3",
+     "label": "3 Shock",
+     "video": "../../../design/r19-art/hitfx/blast-big/blast-big-3.mp4",
+     "text": "A shock ring runs along the floor, sparks to the edge, flame boils up."
+    }
+   ]
+  },
+  {
+   "id": "blast-element",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Elemental explosions",
+   "text": "Frost, poison, holy and curse blasts in turn.",
+   "why": "Each element brings its own colour and bits (ice chips, bubbles, glints, wisps).",
+   "pick": [
+    "blast-element-1"
+   ],
+   "items": [
+    {
+     "id": "blast-element-1",
+     "label": "1 Cloud",
+     "video": "../../../design/r19-art/hitfx/blast-element/blast-element-1.mp4",
+     "text": "Puffs in the element's colours with its bits among them."
+    },
+    {
+     "id": "blast-element-2",
+     "label": "2 Burst",
+     "video": "../../../design/r19-art/hitfx/blast-element/blast-element-2.mp4",
+     "text": "A starburst in the element's four colours, its bits flung out."
+    },
+    {
+     "id": "blast-element-3",
+     "label": "3 Shock",
+     "video": "../../../design/r19-art/hitfx/blast-element/blast-element-3.mp4",
+     "text": "The floor ring in its colour, sparks out, its bits rising."
+    }
+   ]
+  },
+  {
+   "id": "heal",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Heals landing",
+   "text": "A big heal, a heal over time, another big heal. The green crosses stay.",
+   "why": "Heals showed only small crosses; a big heal now feels big, a trickle stays quiet.",
+   "pick": [
+    "heal-2"
+   ],
+   "items": [
+    {
+     "id": "heal-1",
+     "label": "1 Lift",
+     "video": "../../../design/r19-art/hitfx/heal/heal-1.mp4",
+     "text": "Soft green light climbs up through the body; crosses pop at its edge."
+    },
+    {
+     "id": "heal-2",
+     "label": "2 Swirl",
+     "video": "../../../design/r19-art/hitfx/heal/heal-2.mp4",
+     "text": "Green motes wind up round the body and wink out over its head."
+    },
+    {
+     "id": "heal-3",
+     "label": "3 Glow",
+     "video": "../../../design/r19-art/hitfx/heal/heal-3.mp4",
+     "text": "The body takes a green wash and one big cross pops over its head."
+    }
+   ]
+  },
+  {
+   "id": "buff",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Buffs landing",
+   "text": "Rage, War Song, haste, a ward in turn. Now: nothing marks the moment.",
+   "why": "A buff landing had no moment of its own. Each in its own colour, no rings round heroes.",
+   "pick": [
+    "buff-1"
+   ],
+   "items": [
+    {
+     "id": "buff-1",
+     "label": "1 Chevrons",
+     "video": "../../../design/r19-art/hitfx/buff/buff-1.mp4",
+     "text": "Three chevrons in the buff's colour rise beside it."
+    },
+    {
+     "id": "buff-2",
+     "label": "2 Glints",
+     "video": "../../../design/r19-art/hitfx/buff/buff-2.mp4",
+     "text": "Four glints drop in onto its edge and it flashes the colour."
+    },
+    {
+     "id": "buff-3",
+     "label": "3 Spiral",
+     "video": "../../../design/r19-art/hitfx/buff/buff-3.mp4",
+     "text": "A ribbon of the buff's light winds up round it once."
+    }
+   ]
+  },
+  {
+   "id": "death-bone",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Deaths: bone",
+   "text": "Skeletons falling. Now: a white pop, a ring, puffs and white stars.",
+   "why": "Each family breaks apart its own way, in its own colours, no white puff over the body.",
+   "pick": [
+    "death-bone-1"
+   ],
+   "items": [
+    {
+     "id": "death-bone-1",
+     "label": "1 Bits",
+     "video": "../../../design/r19-art/hitfx/death-bone/death-bone-1.mp4",
+     "text": "Bones and a skull flung the way it was knocked, tumbling."
+    },
+    {
+     "id": "death-bone-2",
+     "label": "2 Poof",
+     "video": "../../../design/r19-art/hitfx/death-bone/death-bone-2.mp4",
+     "text": "A puff of bone dust and a few bones."
+    },
+    {
+     "id": "death-bone-3",
+     "label": "3 Soul",
+     "video": "../../../design/r19-art/hitfx/death-bone/death-bone-3.mp4",
+     "text": "A pale wisp rises off it; a few chips fly."
+    }
+   ]
+  },
+  {
+   "id": "death-slime",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Deaths: slime",
+   "text": "Slimes bursting (ice and plain).",
+   "why": "A slime leaves no body, so it splats: goo on the floor a moment.",
+   "pick": [
+    "death-slime-1"
+   ],
+   "items": [
+    {
+     "id": "death-slime-1",
+     "label": "1 Bits",
+     "video": "../../../design/r19-art/hitfx/death-slime/death-slime-1.mp4",
+     "text": "Goo blobs flung out, a splat on the floor."
+    },
+    {
+     "id": "death-slime-2",
+     "label": "2 Poof",
+     "video": "../../../design/r19-art/hitfx/death-slime/death-slime-2.mp4",
+     "text": "A splash of goo-coloured puffs."
+    },
+    {
+     "id": "death-slime-3",
+     "label": "3 Soul",
+     "video": "../../../design/r19-art/hitfx/death-slime/death-slime-3.mp4",
+     "text": "Bubbles rise and pop; a splat on the floor."
+    }
+   ]
+  },
+  {
+   "id": "death-beast",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Deaths: beast",
+   "text": "A wolf and a boar falling.",
+   "why": "Fur and dust, in the animal's coat colour.",
+   "pick": [
+    "death-beast-1"
+   ],
+   "items": [
+    {
+     "id": "death-beast-1",
+     "label": "1 Bits",
+     "video": "../../../design/r19-art/hitfx/death-beast/death-beast-1.mp4",
+     "text": "Tufts of fur flung the way it was knocked."
+    },
+    {
+     "id": "death-beast-2",
+     "label": "2 Poof",
+     "video": "../../../design/r19-art/hitfx/death-beast/death-beast-2.mp4",
+     "text": "A dust cloud in its coat colour, a few tufts."
+    },
+    {
+     "id": "death-beast-3",
+     "label": "3 Soul",
+     "video": "../../../design/r19-art/hitfx/death-beast/death-beast-3.mp4",
+     "text": "A pale wisp rises off it, a few tufts."
+    }
+   ]
+  },
+  {
+   "id": "death-construct",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Deaths: construct",
+   "text": "Machines breaking (an automaton, a cog sprite).",
+   "why": "Machines come apart: cogs, plates, soot and sparks.",
+   "pick": [
+    "death-construct-1"
+   ],
+   "items": [
+    {
+     "id": "death-construct-1",
+     "label": "1 Bits",
+     "video": "../../../design/r19-art/hitfx/death-construct/death-construct-1.mp4",
+     "text": "Cogs and bolted plates flung out, soot on the floor."
+    },
+    {
+     "id": "death-construct-2",
+     "label": "2 Poof",
+     "video": "../../../design/r19-art/hitfx/death-construct/death-construct-2.mp4",
+     "text": "A puff of grey smoke and a few parts."
+    },
+    {
+     "id": "death-construct-3",
+     "label": "3 Soul",
+     "video": "../../../design/r19-art/hitfx/death-construct/death-construct-3.mp4",
+     "text": "Steam rising, a cog sprung loose, sparks."
+    }
+   ]
+  },
+  {
+   "id": "death-spirit",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Deaths: spirit",
+   "text": "A ghost and a wisp fading out.",
+   "why": "Spirits have no body to break: they come undone into light.",
+   "pick": [
+    "death-spirit-3"
+   ],
+   "items": [
+    {
+     "id": "death-spirit-1",
+     "label": "1 Bits",
+     "video": "../../../design/r19-art/hitfx/death-spirit/death-spirit-1.mp4",
+     "text": "Wisps of it fly up and out."
+    },
+    {
+     "id": "death-spirit-2",
+     "label": "2 Poof",
+     "video": "../../../design/r19-art/hitfx/death-spirit/death-spirit-2.mp4",
+     "text": "A puff of its own mist."
+    },
+    {
+     "id": "death-spirit-3",
+     "label": "3 Soul",
+     "video": "../../../design/r19-art/hitfx/death-spirit/death-spirit-3.mp4",
+     "text": "The spirit spirals up and away."
+    }
+   ]
+  },
+  {
+   "id": "coin",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Coin pickups",
+   "text": "Coins scattered and pulled in. Now: a small sparkle.",
+   "why": "You asked for the coins to home in; the moment they land should show.",
+   "pick": [
+    "coin-2"
+   ],
+   "items": [
+    {
+     "id": "coin-1",
+     "label": "1 Flip",
+     "video": "../../../design/r19-art/hitfx/coin/coin-1.mp4",
+     "text": "The coin pops up spinning and winks out."
+    },
+    {
+     "id": "coin-2",
+     "label": "2 Hop",
+     "video": "../../../design/r19-art/hitfx/coin/coin-2.mp4",
+     "text": "The coin hops over the hero's head into its pocket."
+    },
+    {
+     "id": "coin-3",
+     "label": "3 Ring",
+     "video": "../../../design/r19-art/hitfx/coin/coin-3.mp4",
+     "text": "A thin gold ring and four glints."
+    }
+   ]
+  },
+  {
+   "id": "xp",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "XP from kills",
+   "text": "Two kills near the party. Now: nothing shows xp coming in.",
+   "why": "XP in the bar's violet, so it reads as the bar filling.",
+   "pick": [
+    "xp-1"
+   ],
+   "items": [
+    {
+     "id": "xp-1",
+     "label": "1 Motes",
+     "video": "../../../design/r19-art/hitfx/xp/xp-1.mp4",
+     "text": "Violet motes curve from the kill into each hero."
+    },
+    {
+     "id": "xp-2",
+     "label": "2 Orb",
+     "video": "../../../design/r19-art/hitfx/xp/xp-2.mp4",
+     "text": "One orb rises off the kill and splits to each hero."
+    },
+    {
+     "id": "xp-3",
+     "label": "3 Rise",
+     "video": "../../../design/r19-art/hitfx/xp/xp-3.mp4",
+     "text": "Motes drift straight up off the kill towards the bar."
+    }
+   ]
+  },
+  {
+   "id": "level",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Level-ups",
+   "text": "The Dame then the Archer levelling up. Now: only the sound.",
+   "why": "A level-up is a big moment and had no picture in the arena.",
+   "pick": [
+    "level-1"
+   ],
+   "items": [
+    {
+     "id": "level-1",
+     "label": "1 Pillar",
+     "video": "../../../design/r19-art/hitfx/level/level-1.mp4",
+     "text": "A column of gold light rises out of the hero, chevrons climbing it."
+    },
+    {
+     "id": "level-2",
+     "label": "2 Burst",
+     "video": "../../../design/r19-art/hitfx/level/level-2.mp4",
+     "text": "Gold rays shoot out, then confetti flutters down."
+    },
+    {
+     "id": "level-3",
+     "label": "3 Crest",
+     "video": "../../../design/r19-art/hitfx/level/level-3.mp4",
+     "text": "A gold up-arrow pops over the head, glints round it."
+    }
+   ]
+  }
+ ]
+}
