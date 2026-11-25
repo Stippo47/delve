@@ -28,14 +28,14 @@ export const HEROES2 = {
       { id: 'pommelStrike', name: 'Parry', cd: 9, tags: 'd', glyph: 'shield', desc: "Sets the greatsword across him: the next blow or shot that reaches him within 4s is caught. A shot flies back at whoever loosed it; a blow's force goes back into the one who struck.",
         tiers: ['One parry.', 'Two parries.', 'What he sends back hits 60% harder.'] },
     ],
-    trait: { id: 'lastStand', name: 'Last Stand', desc: "Once a room, when he is the last of the party standing: he can't be stopped or knocked about and is hasted for 10s, and all his abilities are ready again at once." },
+    trait: { id: 'lastStand', name: 'Last Stand', desc: "Once a room, whoever of his party is left standing last can't be stopped or knocked about and is hasted for 6s, its abilities half recharged. If it is him: 10s, hasted harder, and every ability ready again at once." },
   },
   dame: {
     name: 'Dame', art: 'art/heroes/dame.svg', role: 'tank', unlock: { gems: 2 },
     blurb: 'Kite shield, leaf sword, perfect manners. Answers every blow.',
     fun: 'Wears the tiara into battle because nobody has yet been brave enough to tell her not to.',
     stats: { hp: 155, speed: 58, r: 33, vr: 23, turn: 3.6, accel: 190, face: 3.8, mass: 2, range: 24, atkCd: 1.0, dmg: 11, knock: 120, arc: 1.6 },
-    weapon: 'blade', style: { hand: 'arm-l', off: 'shield', backhand: true }, // round 13: "Should swipe the opposite way"
+    weapon: 'blade', style: { hand: 'arm-l', off: 'shield', lefty: true }, // round 13: "Should swipe the opposite way"; round 19: "She swings her sword the wrong way. Out instead of in": the arm cuts in across her (no backhand), the arc with it
     attack: { name: 'Leaf sword', anim: 'swing', desc: 'A quick, neat backhand cut.' },
     abilities: [
       { id: 'riposte', name: 'Riposte', cd: 9, tags: 'ds', glyph: 'shield', desc: 'Raises the shield; every blow it stops from the front is answered with a thrust.',
@@ -51,9 +51,9 @@ export const HEROES2 = {
     name: 'Griffon', art: 'art/heroes/griffon.svg', role: 'tank', unlock: { gems: 3 },
     blurb: 'Winged helm, warhammer, shield. Drops out of the sky onto whoever is bothering his friends.',
     fun: 'The wings on the helm are not real. Nobody has told the helm.',
-    stats: { hp: 175, speed: 58, r: 34, vr: 24, turn: 3.4, accel: 180, face: 3.6, mass: 2.2, range: 24, atkCd: 1.3, dmg: 16, knock: 190, arc: 1.7, aoe: 40 },
+    stats: { hp: 175, speed: 58, r: 34, vr: 24, turn: 3.4, accel: 180, face: 3.6, mass: 2.2, range: 24, atkCd: 1.3, dmg: 16, knock: 190, arc: 1.7, aoe: 40, aoeAt: 0.9, windup: 0.2 }, // round 19: "a bit more forwards ... Maybe wind up"
     // round 13: "Flip his sprite. Should be an aoe slam on the ground like the berserker" (his own hammer slam, fx2 SLAM2)
-    weapon: 'heavy', style: { hand: 'arm-l', off: 'shield', flip: true, slam: 'hammer' },
+    weapon: 'heavy', style: { hand: 'arm-l', off: 'shield', flip: true, slam: 'hammer', slamPose: true },
     attack: { name: 'Warhammer', anim: 'swing', desc: 'A heavy hammer slammed into the floor in front: everything there is hit.' },
     abilities: [
       { id: 'swoop', name: 'Swoop', cd: 11, tags: 'ds', glyph: 'up', desc: 'A gust bursts round him as he beats his wings and flies to the ally in the most trouble; he lands spinning, and a swirl of wind whirls their attackers and throws them back.',
@@ -70,7 +70,7 @@ export const HEROES2 = {
     blurb: 'A winged spear and a big shield. Nothing gets past the end of the spear.',
     fun: 'Has stood in the same doorway for so long that the door now leans on him.',
     stats: { hp: 160, speed: 52, r: 34, vr: 24, turn: 3.1, accel: 160, face: 3.3, mass: 2.4, range: 40, atkCd: 1.2, dmg: 12, knock: 170, arc: 0.9 },
-    weapon: 'thrust', style: { off: 'shield', reach0: 1.15 }, // round 13: "Starts too close to them" (the stab starts out at the spear's head)
+    weapon: 'thrust', style: { off: 'shield', reach0: 1.15, stab: 1.7, stabX: -38 }, // round 19: the stab straight down the spear, drawn along it // round 13: "Starts too close to them" (the stab starts out at the spear's head)
     attack: { name: 'Winged spear', anim: 'thrust', desc: 'A long thrust that reaches past the front line.' },
     abilities: [
       { id: 'brace', name: 'Brace', cd: 10, tags: 'ds', glyph: 'shield', desc: 'Sets the spear and waits: whatever comes into its reach is struck hard and stopped dead.',
@@ -94,8 +94,8 @@ export const HEROES2 = {
         tiers: ['Stuns for 1s.', 'Stuns for 1.6s.', 'The ground cracks: everything round it is staggered.'] },
       { id: 'hibernate', name: 'Hibernate', cd: 18, tags: 'h', glyph: 'sleep', desc: 'Curls up under the pelt and falls asleep. Asleep, however it happens, he heals 7% a second; this sleep holds until the blows he takes outweigh the healing, or he is whole.',
         tiers: ['He sleeps and heals.', 'Nothing can touch him with a status while he sleeps.', 'He wakes with a roar that throws enemies back.'] },
-      { id: 'bearRoar', name: 'Bear Claws', cd: 13, tags: 'd', glyph: 'paw', desc: 'Puts the club away, dashes in and rakes an enemy with a flurry of claw swipes.',
-        tiers: ['Six swipes.', 'The swipes catch everything in front of him.', 'Six more, and a bite at the end that makes it bleed.'] },
+      { id: 'bearRoar', name: 'Bear Claws', cd: 13, tags: 'd', glyph: 'paw', desc: 'Puts the club away, pounces on an enemy and mauls it with heavy swings of his paws, stepping in with each.',
+        tiers: ['Three swings.', 'The swings catch everything in front of him.', 'Five harder swings, and a bite at the end that makes it bleed.'] },
     ],
     trait: { id: 'thickHide', name: 'Thick Hide', desc: 'Statuses build half as fast on him.' },
   },
@@ -104,8 +104,8 @@ export const HEROES2 = {
     name: 'Warhelm', art: 'art/heroes/r12/warhelm.svg', role: 'melee', unlock: { gems: 2 },
     blurb: 'A beard, a helm, a hammer the size of a sheep. Knocks things a long way.',
     fun: 'Nobody has seen his face. There is a rumour it is also a helm.',
-    stats: { hp: 140, speed: 56, r: 34, vr: 24, turn: 3.2, accel: 170, face: 3.4, mass: 2.2, range: 28, atkCd: 1.45, dmg: 17, knock: 230, arc: 1.8, aoe: 46 },
-    weapon: 'heavy', style: { hand: 'arm-l', slam: 'hammer' }, // round 13: "Needs to do a slam on the ground"
+    stats: { hp: 140, speed: 56, r: 34, vr: 24, turn: 3.2, accel: 170, face: 3.4, mass: 2.2, range: 28, atkCd: 1.45, dmg: 17, knock: 230, arc: 1.8, aoe: 46, aoeAt: 0.85, windup: 0.2 }, // round 19: "Same slam as griffon"
+    weapon: 'heavy', style: { hand: 'arm-l', slam: 'hammer', slamPose: true }, // round 13: "Needs to do a slam on the ground"
     attack: { name: 'Warhammer', anim: 'swing', desc: 'A huge hammer slammed into the floor in front, knocking back everything there.' },
     abilities: [
       { id: 'thunderBlow', name: 'Thunder Blow', cd: 9, tags: 'ds', glyph: 'fist', desc: 'Lunges and headbutts the enemy in front: a heavy blow that staggers it and throws it far back.',
