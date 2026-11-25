@@ -1,0 +1,167 @@
+180 abilities x 3 tiers, 8.2s
+threw: 0
+never went off in a loop: 1
+  granny:oldBones
+not shown (a loop where it drew nothing of its own and touched no one): 4
+  granny:oldBones
+  werewolf:frenzy
+  enchantress:sweetheart
+  enchantress:heartbreak
+drawn but reached no one (a loop where nothing it made touched a foe or a friend): 22
+  paladin:guard
+  archer:roll
+  twinfang:dash
+  frost:iceWall
+  cleric:mend
+  bard:encore
+  druid:rejuvenate
+  plague:leeches
+  shade:shadowWalk
+  shade:blackout
+  grandpa:oldTales
+  shaman:spiritLink
+  cultist:ritualCircle
+  seer:starfall
+  chef:hotMeal
+  falconer:keenEye
+  trapper:tripwire
+  gladiator:showboat
+  werewolf:turnWolf
+  enchantress:heartstring
+  clockwork:timeBubble
+  earthMage:stoneWall
+wrong scenario (the game's own scorer would not have used it there): 35
+  archer:roll (score 0)
+  twinfang:backstab (score 0)
+  twinfang:dash (score 0)
+  wildmane:cleave (score 0)
+  berserker:unstoppable (score 0)
+  granny:oldBones (score -)
+  frost:iceWall (score 0)
+  bard:encore (score 0)
+  druid:entangle (score 0)
+  necromancer:lifeDrain (score 0)
+  oldguard:pommelStrike (score 0)
+  dame:riposte (score 0)
+  griffon:wingShield (score 0)
+  bulwark:brace (score 0)
+  bulwark:shieldWall (score 0)
+  bearskin:hibernate (score 0)
+  grandpa:oldTales (score 0)
+  cultist:soulCandle (score 0)
+  monk:innerPeace (score 0)
+  quartermaster:resupply (score 0)
+  crossbowman:pavise (score 0)
+  ninja:substitution (score 0)
+  pirate:grog (score 0)
+  trapper:tripwire (score 0)
+  jester:befuddle (score 0)
+  samurai:focus (score 0)
+  werewolf:pounce (score 0)
+  enchantress:sweetheart (score 0)
+  enchantress:heartbreak (score 0)
+  mob:scatter (score 0)
+  warden:manacle (score 0)
+  warden:nullify (score 0)
+  earthMage:stoneWall (score 0)
+  waterMage:bubbleShield (score 0)
+  waterMage:waterDome (score 0.25)
+tier steps that made the same things: 85
+  paladin:guard I=II
+  tower:holdTheLine I=II II=III
+  archer:roll I=II
+  twinfang:backstab II=III
+  twinfang:dash II=III
+  twinfang:fanOfKnives I=II
+  wildmane:rage I=II II=III
+  wildmane:leap II=III
+  berserker:unstoppable I=II II=III
+  pyromancer:inferno I=II
+  frost:iceShard I=II
+  frost:iceWall I=II
+  cleric:mend I=II II=III
+  cleric:sanctuary II=III
+  cleric:smite II=III
+  bard:warSong I=II II=III
+  bard:lullaby II=III
+  bard:encore II=III
+  druid:rejuvenate I=II II=III
+  necromancer:raiseDead II=III
+  necromancer:lifeDrain I=II
+  necromancer:boneSpear I=II
+  plague:leeches I=II II=III
+  oldguard:rallyCry II=III
+  griffon:wingShield I=II
+  bulwark:shieldWall I=II II=III
+  bearskin:hibernate I=II
+  rogueBandit:lowBlow I=II II=III
+  shade:shadowWalk I=II
+  haymaker:pitchHay I=II
+  grandpa:breadToss II=III
+  grandpa:oldTales I=II
+  alchemist:bangFlask I=II
+  shaman:healTotem I=II II=III
+  shaman:spiritLink II=III
+  witch:cursedBrew II=III
+  warlock:eldritchBeam II=III
+  warlock:summonImp II=III
+  cultist:bloodPact I=II
+  cultist:ritualCircle I=II
+  cultist:soulCandle I=II
+  monk:flurry I=II
+  seer:foresight I=II II=III
+  seer:starfall I=II
+  chef:hotMeal I=II II=III
+  chef:foodFight I=II
+  beekeeper:swarm II=III
+  beekeeper:honeyPot I=II II=III
+  beekeeper:royalJelly I=II II=III
+  quartermaster:resupply I=II
+  quartermaster:oilBlades I=II II=III
+  falconer:looseFalcon I=II
+  falconer:keenEye II=III
+  falconer:flock I=II
+  grenadier:bigBomb I=II
+  grenadier:blastOff I=II
+  marksman:aimedShot I=II
+  marksman:ricochet I=II
+  ninja:substitution II=III
+  ninja:caltrops I=II
+  pirate:grog I=II
+  slinger:gravel II=III
+  trapper:tripwire II=III
+  gladiator:showboat I=II II=III
+  gladiator:shieldRush I=II
+  jester:mock I=II II=III
+  samurai:iaido I=II
+  samurai:focus I=II II=III
+  valkyrie:valkyrieCall I=II
+  valkyrie:skyDive I=II
+  engineer:tinker I=II II=III
+  engineer:shockMine I=II
+  werewolf:turnWolf I=II II=III
+  werewolf:frenzy I=II II=III
+  enchantress:heartstring I=II II=III
+  enchantress:sweetheart I=II II=III
+  enchantress:heartbreak I=II II=III
+  mob:scatter II=III
+  clockwork:stopClock II=III
+  warden:nullify I=II II=III
+  warden:chainGang I=II
+  telekinetic:levitate I=II
+  earthMage:stoneWall I=II II=III
+  waterMage:waterDome II=III
+  waterMage:waterCannon II=III
+abilities whose hero or friend took blows from nothing seen: 12 (656 blows)
+  granny:oldBones 12 hero<-bookDummy hero hp set
+  oldguard:pommelStrike 72 hero<-bookDummy hero<-bookDummy
+  dame:riposte 46 hero<-bookDummy hero<-bookDummy
+  griffon:wingShield 72 hero<-bookDummy hero<-bookDummy
+  bearskin:hibernate 42 hero<-bookDummy hero<-bookDummy
+  monk:innerPeace 64 hero<-bookDummy hero<-bookDummy
+  ninja:substitution 42 hero<-bookDummy hero<-bookDummy
+  trapper:tripwire 14 hero<-bookDummy hero<-bookDummy
+  jester:befuddle 126 hero<-bookDummy hero<-bookDummy
+  samurai:focus 106 hero<-bookDummy hero<-bookDummy
+  mob:scatter 54 hero<-bookDummy hero<-bookDummy
+  clockwork:rewind 6 paladin<-bookDummy paladin<-bookDummy

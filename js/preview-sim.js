@@ -14,8 +14,10 @@
 // stage loops by itself: it plays the move, waits a beat, and builds its world again.
 // Every list comes from the data (HEROES, DEFS and the dungeons' rosters, ELITES / MAJOR_MOVES, STATUS and the
 // Book's STATUSES words, TRINKETS, POTIONS), so new heroes, enemies, statuses and trinkets show up without edits here.
-import { makeWorld, spawn, step, setAnim, hurt, meleeSwing, addStatus, stun, addBuff, unitNumbers } from './sim.js';
-import { ABILITIES, initKit } from './kits.js';
+import { makeWorld, spawn, step, setAnim, hurt, meleeSwing, addStatus, stun, addBuff, unitNumbers, wallRect } from './sim.js';
+import { sceneOf as abilitySceneOf, attackSceneOf, KINDS, FOE_HP, FOE_DMG, HERO_FLOOR, FRIEND_FLOOR } from './preview-scenes.js';
+import { newStats } from './stats.js';
+import { ABILITIES, initKit, cooldownOf } from './kits.js';
 import { tagAbility } from './fxtag.js';
 import { DEFS } from './units.js';
 import { HEROES, tierBuild, freeNodes } from './heroes.js';
@@ -50,14 +52,7 @@ for (const wp of WEAPONS) {
 }
 export const isDummy = (k) => !!(DEFS[k] && DEFS[k].dummy);
 
-// ---------------------------------------------------------------- staging the hero's moves (the showcase's rules)
-// The same rules as lab.html?m=show (lab.js setupShow), which made the Riffle clips: where the dummies stand and who
-// else is needed, for the kits.js abilities that don't say it themselves (kits2.js abilities carry a `show`).
-const FAR = new Set(['charge', 'leap', 'hook', 'backstab', 'dash', 'barrage', 'frostArrow', 'fireball', 'flameWall', 'iceShard', 'iceWall',
-  'chainLightning', 'thunderclap', 'stormCloud', 'smite', 'entangle', 'raiseDead', 'lifeDrain', 'boneSpear', 'miasma', 'mend', 'rejuvenate', 'cure', 'encore']);
-const NEEDS_ALLY = new Set(['guard', 'mend', 'sanctuary', 'warSong', 'encore', 'rejuvenate', 'cure', 'consecrate']);
-const SINGLE = new Set(['shieldBash', 'backstab', 'smite', 'hook', 'mend', 'encore', 'rejuvenate', 'cure', 'guard']);
-const CAST_AT = 0.45; // when the ability goes off, seconds into the loop
+// ---------------------------------------------------------------- the stages' yards
 export const HERO_W = 470, HERO_H = 350, TRAIT_W = 380, TRAIT_H = 270;
 // keep: the stage's last world. It is emptied and filled again rather than replaced, so render.js's floor picture
 // (cached per world) is painted once per stage, not once per loop.
@@ -86,7 +81,7 @@ function tendDummy(w, d, dt, firm) {
   else { const k = Math.min(1, dt * (firm ? 6 : 1.6)); d.x += (d.home.x - d.x) * k; d.y += (d.home.y - d.y) * k; }
   if (d.hp < d.maxHp * 0.12) d.hp = d.maxHp;
   if (d.downed) { d.downed = false; d.hp = d.maxHp; }
-  if (!w.units.includes(d) && !d.gone) { d.dead = false; d.hp = d.maxHp; w.units.push(d); }
+  if (!w.units.includes(d) && !d.gone) { d.dead = false; d.dying = false; d.hp = d.maxHp; w.units.push(d); } // (round 18: dying cleared too, or sim.js kill never takes it again)
 }
 // a dummy knocked flat and taken away for the rest of the loop (either side: a hero-side one would only be downed)
 function fell(w, d) {
@@ -94,8 +89,10 @@ function fell(w, d) {
   for (const o of w.units) if (o.target === d) o.target = null;
   for (let k = 0; k < 10; k++) { const a = k / 10 * Math.PI * 2; w.particles.push({ x: d.x, y: d.y, vx: Math.cos(a) * 90, vy: Math.sin(a) * 90, life: 0.45, max: 0.45, size: 5, color: '#E6C979' }); }
 }
+// a friend at tier I of each of its abilities (held: the stage never lets it use one), so what asks whether a friend
+// would use an ability now (Encore, Old Tales, the Supply Crate) has an answer
 const fullAlly = (w, kind, x, y) => {
-  const a = spawn(w, kind, x, y, { level: 9 }); initKit(a, kind, {}, 1); for (const k in a.kit.cd) a.kit.cd[k] = 9;
+  const a = spawn(w, kind, x, y, { level: 9 }); initKit(a, kind, { nodes: { ...freeNodes(kind), ...Object.fromEntries(HEROES[kind].abilities.map((ab) => [ab.id + '1', 1])) } }, 1); for (const k in a.kit.cd) a.kit.cd[k] = 9;
   a.facing = 0; a.home = { x, y }; return a;
 };
 
@@ -245,90 +242,155 @@ export function makeStage(spec) {
   return S;
 }
 
-// A hero's attack or one of its abilities on the dummies (lab.js setupShow, at the tier asked).
+// A hero's attack or one of its abilities, in a small real fight set up for it (round 18, lane preview18; the scenes and
+// the rules they follow are in js/preview-scenes.js). Round 13 to 17 played it on straw targets that stood still and
+// never struck back; the stage cast the ability at 0.45 s whatever was going on, and the blows "parries" and "dodges"
+// were shown against came from targets with no weapon.
+//   S.scene    the scene's name; S.casts / S.castT / S.byBrain: how often it went off this loop, when it first did,
+//              and whether the hero's own brain chose it (the check tool reads them); S.forced: the stage cast it
+const FRIEND_KINDS = ['paladin', 'tower', 'archer', 'dame'];
+// an enemy that may not fall (the scene isn't about killing it): kept up at a quarter of its health
+const KEEP_UP = { keepUp: true, downed(w, u) { u.hp = Math.max(1, u.maxHp * 0.25); u.invulnT = Math.max(u.invulnT, 0.25); return true; } };
+// the hero doesn't fall in a preview: a blow that would bring it down leaves it on its last scrap of health instead
+// (after its own ways of not falling have had their say: Old Bones, Spare Second and the like come first, sim.js hooksOf)
+const HERO_KEEP = { keepUp: true, downed(w, u) { u.hp = Math.max(1, u.hp); return true; } };
+const tierNodes = (ab, tier) => { const o = {}; for (let i = 1; i <= tier; i++) o[ab + i] = 1; return o; };
 function heroStage(S, spec) {
-  const { id, move: ab, tier } = spec, H = HEROES[id], ranged = DEFS[id].role === 'ranged';
-  const A = ABILITIES[ab], sh = (A && A.show) || {};
-  // Round 14 ("Should still preview when locked"): an ability the tier hasn't unlocked still plays, as it is at tier I
-  // on a hero with nothing else bought; S.asLocked tells the page to mark it locked.
-  S.asLocked = ab !== 'attack' && tier < 1;
-  const useTier = ab === 'attack' ? tier : Math.max(1, tier);
+  const { id, move: ab, tier } = spec, attack = ab === 'attack', A = ABILITIES[ab];
+  // Round 14 ("Should still preview when locked"): an ability the tier hasn't unlocked still plays, as it is at tier I;
+  // S.asLocked tells the page to mark it locked.
+  S.asLocked = !attack && tier < 1;
+  const useTier = attack ? tier : Math.max(1, tier);
+  const sc = attack ? attackSceneOf(id) : abilitySceneOf(ab, A);
+  S.scene = sc.name;
+  const passive = !!(A && A.passiveTier) || ab === 'oldBones'; // (Old Bones works through kits.js OLD_BONES: its cast does nothing)
   // long enough to see it run out: the longest time its words name at this tier ("for 8s"), plus a beat
-  const H0 = HEROES[id].abilities.find((a) => a.id === ab);
+  const H0 = attack ? null : HEROES[id].abilities.find((a) => a.id === ab);
   const secs = H0 ? [H0.desc, ...H0.tiers.slice(0, useTier)].join(' ').match(/(\d+(?:\.\d+)?)\s?s\b/g) : null;
-  const longest = secs ? Math.max(...secs.map((x) => parseFloat(x))) : 0;
-  S.loop = ab === 'attack' ? 3 : Math.min(9.5, Math.max(3.4, CAST_AT + longest + 1));
-  let u, dummies, ally, pin, cast, last, dmg0;
+  const longest = sc.secs ?? Math.min(8, secs ? Math.max(...secs.map((x) => parseFloat(x))) : 0);
+  const readyAt = sc.readyAt ?? 0.3, forceAt = sc.forceAt ?? 2.4;
+  if (attack) S.loop = 4;
+  else S.fit = { min: 3.6, tail: longest + 1.5, max: Math.max(forceAt, sc.lethal || 0) + longest + 2.2 };
+  let u, foes, friends, waiting, strikes, cast, baseMove, did, cd0;
   return () => {
     const w = S.w = room(HERO_W, HERO_H, S.w);
-    const far = ab === 'attack' ? ranged : FAR.has(ab) || sh.far;
-    u = spawn(w, id, 110, 175, { level: 9 });
-    initKit(u, id, { nodes: S.asLocked ? { ...heroNodes(id, 0), [ab + '1']: 1 } : heroNodes(id, tier) }, 9);
+    const [hx, hy] = sc.hero || [100, 175];
+    u = spawn(w, id, hx, hy, { level: 9 });
+    initKit(u, id, { nodes: attack ? heroNodes(id, tier) : { ...freeNodes(id), ...tierNodes(ab, useTier) } }, 9);
     for (const k in u.kit.cd) u.kit.cd[k] = 999;
-    u.facing = u.mvA = 0;
-    const mx = far ? (ab === 'charge' ? 270 : 340) : 110 + u.r + 28 + (ab === 'attack' ? Math.max(8, DEFS[id].range - 6) : 14);
-    const spots = [[mx, 175], [mx + (far ? 30 : 22), 105], [mx + (far ? 30 : 22), 245]];
-    if (ab !== 'attack' && !SINGLE.has(ab) && !sh.single) spots.push([mx + 66, 175], [mx + 70, 100], [mx + 70, 250]); // six: enough for chains and jumps to run out at the lower tiers
-    dummies = spots.map(([x, y]) => dummyAt(w, x, y));
-    // bodies to raise (two: tier II raises two)
-    if (ab === 'raiseDead') for (const [cx, cy] of [[mx - 50, 125], [mx - 40, 235]]) w.corpses.push({ kind: 'rattler', x: cx, y: cy, r: 34, vr: 24, facing: 1, kx: 0, ky: 0, spin: 0, z: 0, vz: 0, age: 5, t: 14, max: 14 });
-    ally = null;
-    if (NEEDS_ALLY.has(ab) || sh.ally) {
-      const ak = id === 'paladin' ? 'archer' : 'paladin';
-      ally = fullAlly(w, ak, ab === 'warSong' || ab === 'sanctuary' || ab === 'consecrate' ? 155 : 190, 285);
-      ally.hp = ally.maxHp * 0.35; ally.barAlways = true; // its health shows, so a heal or a guard is seen on the bar
-      if (ab === 'cure') { ally.st.poison = 70; ally.st.burn = 50; }
-      if (ab === 'guard') { ally.target = dummies[0]; dummies[0].target = ally; }
+    u.facing = u.mvA = 0; u.home = { x: hx, y: hy };
+    baseMove = u.moveMul; u.moveMul = 1e-4; // it holds its ground until the ability has gone (sim.js reads 0 as 1)
+    if (sc.hp) u.hp = u.maxHp * sc.hp;
+    if (sc.heroSt) for (const k in sc.heroSt) u.st[k] = sc.heroSt[k];
+    if (sc.hp || sc.heroSt) u.barAlways = true;
+    u.trinketHooks = [...(u.trinketHooks || []), HERO_KEEP];
+    // an ability that only works through a hook (Substitution, Befuddle, Frenzy) shows when the hook acts
+    if (u.kit.extra) u.kit.extra = u.kit.extra.map((h) => watchHooks(h, w, S.mark, () => went(false)));
+    // the friends: real heroes, their abilities held, each where the scene puts it
+    const fk = FRIEND_KINDS.filter((k) => k !== id && DEFS[k]);
+    friends = (sc.friends || []).map((f, i) => {
+      const o = fullAlly(w, f.k || fk[i % fk.length], f.at[0], f.at[1]);
+      o.hp = o.maxHp * (f.hp ?? 0.6); o.barAlways = true; o.moveMul = 1e-4; o.spec = f; o.facing = 0;
+      if (f.st) for (const k in f.st) o.st[k] = f.st[k];
+      if (f.stun) stun(w, o, f.stun);
+      return o;
+    });
+    // the enemies: real kinds with their own brains, tougher and softer-hitting than in a run
+    foes = []; waiting = [];
+    const kindOf = (k) => (sc.foeKind && ['melee', 'fast', 'heavy'].includes(k) ? KINDS[sc.foeKind] : KINDS[k] || k);
+    const addFoe = (f) => {
+      const e = spawn(w, kindOf(f.k), f.at[0], f.at[1], { mult: 1, hpMul: FOE_HP });
+      e.aggro = true; e.dmgMul *= FOE_DMG; e.barAlways = true; e.spec = f; e.home = { x: f.at[0], y: f.at[1] };
+      e.facing = Math.atan2(hy - e.y, hx - e.x);
+      if (f.hp) e.hp = e.maxHp * f.hp;
+      if (f.hold || sc.holdFoes) { e.baseMove = e.moveMul; e.moveMul = 1e-4; } // held where it stands (a line to go through) until the ability has gone
+      if (!f.mortal) e.trinketHooks = [...(e.trinketHooks || []), KEEP_UP];
+      if (sc.charmed && foes.length < 3) { e.st.charm = 70; e.stBy = { ...(e.stBy || {}), charm: u }; }
+      foes.push(e); return e;
+    };
+    for (const f of sc.foes) if (f.delay) waiting.push(f); else addFoe(f);
+    for (const [cx, cy] of sc.corpses || []) w.corpses.push({ kind: 'rattler', x: cx, y: cy, r: 34, vr: 24, facing: 1, kx: 0, ky: 0, spin: 0, z: 0, vz: 0, age: 5, t: 14, max: 14 });
+    if (sc.wall) wallRect(w, sc.wall, 99, 'stone');
+    for (const [ox, oy, or] of sc.oil || []) w.hazards.push({ type: 'oil', x: ox, y: oy, r: or, t: 99, max: 99 });
+    w.stats = newStats([id, ...new Set(friends.map((o) => o.kind))]); // counted, never shown: the check tool reads what the ability did
+    strikes = []; did = {}; cast = attack; cd0 = 999; S.casts = 0; S.followAt = null; S.castT = null; S.byBrain = false; S.forced = false;
+    S.hits = hitWatch(); S.hero = u; S.dummies = foes; S.friends = friends;
+    // a blow the scene needs (a friend struck down, the blow Old Bones shrugs off): the enemy turns, winds up and swings
+    const strike = (e, v, dmg) => {
+      if (!e || !v) return;
+      const wind = Math.max(0.25, (e.def.windup || 0.3));
+      e.facing = Math.atan2(v.y - e.y, v.x - e.x); setAnim(e, e.def.attackAnim || 'swing', wind + 0.28); e.atkT = Math.max(e.atkT, wind + 0.6);
+      strikes.push({ at: S.t + wind, e, v, dmg });
+    };
+    const onWho = (f) => (f.on === 'hero' ? u : typeof f.on === 'number' ? friends[f.on] : null);
+    const attackerOf = (v) => foes.find((e) => onWho(e.spec) === v && !e.dead) || foes.slice().sort((a, b) => Math.hypot(a.x - v.x, a.y - v.y) - Math.hypot(b.x - v.x, b.y - v.y))[0];
+    function bestTarget() {
+      let best = null, bs = -1; const keep = u.target;
+      for (const e of foes) { if (e.dead) continue; u.target = e; let sc0 = 0; try { sc0 = Math.max(A.score ? A.score(w, u, e, useTier) : 0, A.reflex ? A.reflex(w, u, e, useTier) : 0); } catch (err) { sc0 = 0; } const d = Math.hypot(e.x - u.x, e.y - u.y); if (sc0 - d / 1e4 > bs) { bs = sc0 - d / 1e4; best = e; } }
+      u.target = keep; return best || friends.find((o) => !o.dead) || u; // (a crate, a song: whoever is there)
     }
-    if (id === 'cleric' && ab === 'attack') { ally = fullAlly(w, 'paladin', 230, 140); ally.hp = ally.maxHp * 0.5; }
-    if (id === 'waterMage' && ab === 'attack') { ally = fullAlly(w, 'paladin', 230, 140); ally.hp = ally.maxHp * 0.7; } // (round 17, lane water17: a friend beside the beam; at 70% it isn't hurt enough to take the beam off the enemy)
-    if (sh.mob === 'ally' && ally) dummies.forEach((d, i) => { const a = -0.6 + i * 0.9; d.x = d.home.x = ally.x + Math.cos(a) * 62; d.y = d.home.y = ally.y - 40 + Math.sin(a) * 50; });
-    if (sh.downed && ally) { ally.downed = true; ally.hp = 0; }
-    if (sh.strikeAlly && ally) ally.hp = ally.maxHp; // round 15 (lane N): the friend starts whole and is struck just before the cast (Rewind turns it back)
-    pin = { x: u.x, y: u.y }; cast = false; u.target = dummies[0]; last = u.lastAttackT; S.hits = hitWatch();
-    dmg0 = null;
-    S.hero = u; S.dummies = dummies;
+    function forceCast() {
+      const t = bestTarget(); if (!t) return;
+      u.target = t; u.kit.cd[ab] = cooldownOf(u, H0); u.kit.using = ab;
+      try { tagAbility(w, u, ab, useTier, () => A.use(w, u, t, useTier)); } finally { u.kit.using = null; }
+      S.forced = true; went(false); cd0 = u.kit.cd[ab]; if (u.kit.cd[ab] < 1.5) S.followAt = S.t + u.kit.cd[ab] + 1;
+    }
+    function went(byBrain) {
+      if (!cast) for (const e of foes) if (e.baseMove != null) { e.holdT = S.t + 0.4; } // held foes walk in a beat after it goes
+      cast = true;
+      if (S.castT == null) S.castT = S.t;
+      S.casts++; if (byBrain) S.byBrain = true;
+      S.fire();
+    }
     S.tick = (dt) => {
-      if (!cast && S.t >= CAST_AT && ab !== 'attack') {
-        cast = true; u.target = dummies[0];
-        S.mark(w); dmg0 = hpSum(w);
-        if (ab === 'oldBones') { u.kit.tiers.oldBones = useTier; u.kit.oldBonesUsed = false; u.invulnT = 0; u.hp = 1; hurt(w, u, 50, dummies[0], { noDodge: true }); }
-        else if (A) tagAbility(w, u, ab, useTier, () => A.use(w, u, dummies[0], useTier));
-        for (const k in u.kit.cd) u.kit.cd[k] = 999;
-        pin = { x: u.x, y: u.y };
-        // (round 14: no words on the stage. What a tier adds is in the caption under it; the stage shows it happening.)
+      // late arrivals walk in
+      for (const f of waiting) if (!f.in && S.t >= f.delay) { f.in = true; const e = addFoe(f); for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; w.particles.push({ x: e.x, y: e.y, vx: Math.cos(a) * 70, vy: Math.sin(a) * 70, life: 0.35, max: 0.35, size: 5, color: '#C9B48A' }); } }
+      // each enemy held to whoever the scene set it on
+      for (const e of foes) { const v = onWho(e.spec); if (v && !v.downed && !v.dead && !e.dead && !(e.tauntT > 0) && !e.flipKind) e.target = v; }
+      // the blows the scene asks for
+      if (sc.lethal && !did.lethal && S.t >= sc.lethal) { did.lethal = true; strike(attackerOf(u), u, u.hp + 60); }
+      friends.forEach((o, i) => { const f = o.spec;
+        if (f.falls && !o._fell && S.t >= f.falls) { o._fell = true; strike(attackerOf(o), o, o.hp + 999); }
+        if (f.struck && !o._struck && S.t >= f.struck) { o._struck = true; strike(attackerOf(o), o, o.maxHp * 0.55); } });
+      for (const s of strikes) if (!s.done && S.t >= s.at) { s.done = true; if (!s.e.dead && !s.v.dead && !s.v.downed) { if (s.v === u) u.invulnT = 0; hurt(w, s.v, s.dmg, s.e, { noDodge: true, heavy: true, knock: 160 }); } }
+      // the ability comes ready a moment in; the hero's own brain picks it when the scene calls for it (sim.js kitThink /
+      // kitReflex, as in a run), or the stage casts it at forceAt
+      if (!attack && !cast) {
+        u.kit.cd[ab] = S.t >= readyAt ? Math.min(u.kit.cd[ab], 0) : 999; if (S.t >= readyAt) cd0 = Math.min(cd0, u.kit.cd[ab]);
+        if (!passive && S.t >= forceAt && !u.act && A && A.use) forceCast();
       }
-      if (sh.strikeAlly && ally && !ally._struck && S.t >= 0.3) { ally._struck = true; hurt(w, ally, ally.maxHp * sh.strikeAlly, dummies[0], { noDodge: true, knock: 260 }); } // round 15 (lane N)
-      if (u.hp < u.maxHp - 0.5) u.barAlways = true; // once the hero is hurt its health shows (a heal, a shield, a refusal to fall)
-      if (ab !== 'attack' && !(sh.attacks && cast)) u.atkT = Math.max(u.atkT, 0.5);
-      else if (!ranged) { // melee: the brain won't swing while pinned, so the stage swings on a beat
-        u.atkT = 9; const d = DEFS[id], beat = d.role === 'skirmish' ? 0.5 : 1.1, t0 = S.t - CAST_AT;
-        if (t0 >= 0 && Math.floor(t0 / beat) !== Math.floor((t0 - dt) / beat || -1) && t0 < S.loop - 0.9) {
-          u.facing = Math.atan2(dummies[0].y - u.y, dummies[0].x - u.x); u.target = dummies[0];
-          meleeSwing(w, u, d.role === 'skirmish'); setAnim(u, d.attackAnim || 'swing', (d.windup || 0) + 0.28);
-        }
-      }
-      if ((sh.hitme || sh.shootme) && cast && Math.floor(S.t / 0.45) !== Math.floor((S.t - dt) / 0.45)) {
-        const d0 = dummies[0];
-        if (sh.hitme) { d0.facing = Math.atan2(u.y - d0.y, u.x - d0.x); hurt(w, u, 4, d0, { knock: 0 }); }
-        else { const spell = sh.shootme === 'spell', v = spell && ally && !ally.downed ? ally : u, a = Math.atan2(v.y - d0.y, v.x - d0.x); // (round 17, lane water17: 'spell': a fire bolt at the friend, the Water Mage's bubble stops it)
-          w.projectiles.push({ kind: spell ? 'bolt' : 'arrow', color: spell ? '#FF8A3D' : undefined, x: d0.x + Math.cos(a) * 30, y: d0.y + Math.sin(a) * 30, vx: Math.cos(a) * 420, vy: Math.sin(a) * 420, r: 6, team: d0.team, owner: d0, dmg: spell ? 8 : 4, o: { knock: 10, burn: spell ? 10 : 0 }, life: 1.2, a }); }
-      }
-      if (sh.mob === 'walk' && cast) for (const d of dummies) d.home.x = Math.max(u.x + 70, d.home.x - 70 * dt);
-      if (sh.killDummy && cast && S.t - CAST_AT > 0.6 && !u._killed) { u._killed = true; hurt(w, dummies[1], 99999, u, { noDodge: true }); hurt(w, dummies[2], 99999, u, { noDodge: true }); }
-      if (sh.hitDummy && cast && Math.floor(S.t / 0.45) !== Math.floor((S.t - dt) / 0.45)) hurt(w, dummies[0], 14, null, { noDodge: true });
+      // a tier that goes again at once (a second leap, a second lunge): if the brain hasn't taken it a second after it
+      // came round, the stage does, at the best target there is
+      if (cast && !attack && !passive && S.followAt != null && S.t >= S.followAt && u.kit.cd[ab] <= 0 && !u.act && S.casts < 3) { S.followAt = null; forceCast(); }
+      // it holds its own attack until the ability has gone, so the ability is the first thing it does
+      if ((!cast && !passive) || sc.noAttack) u.atkT = Math.max(u.atkT, 0.4); // (one that works through a hook fights from the start: its hook rides on the fight)
       // what it called up falls before the loop ends, so what happens when they fall (an explosion at a higher tier) shows
-      if (cast && !S.felled && S.t > S.loop - 0.8) { S.felled = true; for (const o of w.units) if (o !== u && o.team === u.team && !o.dead && !o.downed && o !== ally && !o.partOf && (o.summonBy === u || o.summon)) hurt(w, o, o.hp + 9999, dummies[0], { noDodge: true }); }
+      if (cast && !attack && !S.felled && S.t > S.loop - 0.8) { S.felled = true; for (const o of w.units) if (o !== u && o.team === u.team && !o.dead && !o.downed && !friends.includes(o) && !o.partOf && (o.summonBy === u || o.summon)) hurt(w, o, o.hp + 9999, foes[0], { noDodge: true }); }
     };
     S.after = (dt) => {
-      // did it do anything: a cast that left something in the world or changed someone's health; an attack that landed
-      if (ab === 'attack') { if (S.hits(ally ? [...dummies, ally] : dummies) > 0) S.fire(); }
-      else if (cast && S.t < CAST_AT + 2) { if (S.mark(w) > 0 || (dmg0 != null && Math.abs(hpSum(w) - dmg0) > 0.5)) S.fire(); }
-      if (u.act) pin = { x: u.x, y: u.y };
-      else if (!u.downed) { u.x = pin.x; u.y = pin.y; u.vx = u.vy = 0; }
-      if (u.downed) { u.downed = false; u.hp = u.maxHp; }
-      for (const d of dummies) { if (!(ally && d.target === ally)) d.target = null; tendDummy(w, d, dt); }
-      if (ally) { ally.atkT = 999; ally.x = ally.home.x; ally.y = ally.home.y; for (const k in ally.kit.cd) ally.kit.cd[k] = Math.max(ally.kit.cd[k], 5); }
+      // did it go: the brain spent it (sim.js fireAbility sets its cooldown), or, for the attack, a blow landed
+      if (attack) { if (S.hits(foes) > 0) went(true); }
+      // (its cooldown then runs as in a run: a tier that goes again at once, a second lunge or dash, does; most come
+      // round again only after the loop has ended)
+      else if (!passive && S.t >= readyAt && u.kit.cd[ab] > cd0 + 0.3 && u.kit.cd[ab] < 900) { went(true); if (u.kit.cd[ab] < 1.5) S.followAt = S.t + u.kit.cd[ab] + 1; }
+      cd0 = u.kit.cd[ab];
+      if (passive && u.kit.tiers.oldBones && u.kit.oldBonesUsed && !did.bones) { did.bones = true; went(false); }
+      // once it has gone it is itself again: it moves and fights as it would
+      if (cast && u.moveMul < 0.01) u.moveMul = baseMove;
+      if (!cast && !u.act && !u.forcedGoal) { const k = Math.min(1, dt * 2); u.x += (u.home.x - u.x) * k; u.y += (u.home.y - u.y) * k; }
+      if (u.hp < u.maxHp - 0.5) u.barAlways = true;
+      // the scene isn't about the hero falling (unless it is: Old Bones's blow): held above a share of its health
+      if (!u.downed) u.hp = Math.max(u.hp, did.lethal ? 1 : u.maxHp * HERO_FLOOR);
+      if (u.downed) { did.downT = (did.downT || 0) + dt; if (did.downT > 1) { u.downed = false; u.hp = u.maxHp * 0.3; did.downT = 0; } }
+      for (const o of friends) {
+        if (o.downed || o.dead) continue;
+        if (!o.spec.falls && o.hp < o.maxHp * FRIEND_FLOOR) o.hp = o.maxHp * FRIEND_FLOOR;
+        for (const k in o.kit.cd) o.kit.cd[k] = Math.max(o.kit.cd[k], 5);
+        if (!o.act && !o.forcedGoal) { const k = Math.min(1, dt * 3); o.x += (o.home.x - o.x) * k; o.y += (o.home.y - o.y) * k; }
+      }
+      // the enemies keep their health up (a slow mend once low), so the loop lasts
+      for (const e of foes) if (!e.dead && !e.spec.mortal && e.hp < e.maxHp * 0.35) e.hp += e.maxHp * 0.25 * dt;
+      for (const e of foes) if (e.baseMove != null && e.holdT != null && S.t >= e.holdT) { e.moveMul = e.baseMove; e.baseMove = null; }
     };
   };
 }
@@ -369,7 +431,7 @@ const TRAIT_SCENE = {
   kindling: { foes: [{ at: 'a', st: { burn: 45 } }, { at: 'b' }] },
   coldBlood: { foes: [{ at: 'far', w: 'bow', hits: 0.55, on: 'alt', dmg: 0.03, hitSt: { chill: 34 }, aim: false }], allies: [{ at: 'beside', hp: 1 }], hero: { idle: true } },
   conductor: { foes: [{ at: 'a', st: { wet: 70 } }, { at: 'b' }] },
-  raiser: { revive: true, foes: [] },
+  raiser: { revive: true, foes: [{ at: [168, 213], w: 'sword', aim: false }] }, // (round 18: whoever fells the friend is there and swings)
   rhythm: { aura: true, foes: [], allies: [{ at: 'near', hp: 1 }, { at: 'far', hp: 1 }], hero: { idle: true } },
   barkskin: { foes: [{ at: 'adj', w: 'sword', hits: 0.9, dmg: 0.1, aim: false }], hero: { idle: true, walk: [2.8, 5.2] }, loop: 5.6 },
   soulHarvest: { foes: [{ at: 'a', weak: true }, { at: 'b', weak: true }, { at: 'c', weak: true }], hero: { abilities: true } },
@@ -380,7 +442,7 @@ const TRAIT_SCENE = {
   snatch: { foes: [{ at: 'front', w: 'sword', hits: 1.4, dmg: 0.05, hpX: 14 }] },
   dirtIn: { foes: [{ at: 'front', w: 'sword', hits: 1.1, dmg: 0.1 }], hero: { abilities: true } },
   familiar: { foes: [{ at: 'far' }] },
-  bloodRite: { foes: [{ at: 'front', hpX: 30 }], hero: { abilities: true, hp: 0.55 } },
+  bloodRite: { foes: [{ at: 'front', w: 'sword', hits: 1.5, dmg: 0.03, hpX: 30 }], hero: { abilities: true, hp: 0.55 } },
   pollen: { foes: [{ at: 'adj', hpX: 30 }], allies: [{ at: 'near', hp: 0.4 }] },
   requisition: { foes: [{ at: 'far' }], allies: [{ at: 'near', hp: 0.7 }], hero: { set: (u) => { u.kit.reqW = null; } }, hold: (w, u) => { if (u.kit.reqW === w && u.kit.reqT > 1 && u.kit.reqT <= 3) u.kit.reqT = 1; } },
   huntingPartner: { foes: [{ at: 'far', hpX: 14 }] },
@@ -389,7 +451,7 @@ const TRAIT_SCENE = {
   plunder: { foes: [{ at: 'a', weak: true, coins: true }, { at: 'b', weak: true, coins: true }, { at: 'c', weak: true, coins: true }] },
   duelist: { foes: [{ at: 'front', w: 'sword', hits: 1, dmg: 0.08 }, { at: 'side', w: 'spear', hits: 1, off: 0.5, dmg: 0.08, joinAt: 3.2, aim: false }], hero: { abilities: true }, loop: 6.4 },
   keenEdge: { foes: [{ at: 'front', hpX: 12 }] },
-  valhalla: { revive: true, reviveAt: 2.6, foes: [], allies: [{ at: 'beside', hp: 0.45, downAt: 2.6 }], hero: { hp: 0.6, idle: true } },
+  valhalla: { revive: true, reviveAt: 2.6, foes: [{ at: [168, 213], w: 'sword', hits: 1.3, on: 'ally', dmg: 0.04, aim: false }], allies: [{ at: 'beside', hp: 0.45, downAt: 2.6 }], hero: { hp: 0.6, idle: true } },
   overclock: { foes: [{ at: 'far', hpX: 30 }], hero: { abilities: true } },
   fromTheWild: { foes: [{ at: 'front', w: 'sword', hits: 1, dmg: 0.08 }], hero: { abilities: true, cast: ['turnWolf'], downAt: 3.2 }, loop: 6 },
   grace: { foes: [{ at: 'front', hpX: 10 }] },
@@ -399,7 +461,7 @@ const TRAIT_SCENE = {
   ironWill: { foes: [{ at: 'front', w: 'hammer', hits: 0.9, dmg: 0.05, hitSt: { stagger: 55 }, hpX: 8 }], hero: { lowAt: 2.8 }, loop: 6.4 },
   lightFingers: { foes: [{ at: 'a', weak: true, coins: true }, { at: 'b', weak: true, coins: true }] },
   fade: { foes: [{ at: 'front', w: 'sword', hits: 1, dmg: 0.06, until: 0.9 }], hero: { quiet: 3.7 }, loop: 6 },
-  hardWork: { foes: [{ at: 'a', weak: true }, { at: 'b', weak: true }, { at: 'c', weak: true }], hero: { hp: 0.5 } },
+  hardWork: { foes: [{ at: 'a', weak: true }, { at: 'b', weak: true }, { at: 'c', weak: true }, { at: 'back', w: 'sword', hits: 1.4, dmg: 0.03, aim: false, hpX: 30 }], hero: { hp: 0.5 } },
   prospector: { foes: [{ at: 'front' }] },
   seenItAll: { aura: true, foes: [], allies: [{ at: 'near', hp: 1, st: { stagger: 85 } }, { at: 'far', hp: 1, st: { stagger: 85 } }], hero: { idle: true } },
   catalyst: { foes: [{ at: 'front', hpX: 30 }] },
@@ -425,9 +487,9 @@ const TRAIT_SCENE = {
   arena: { foes: [{ at: 'a' }, { at: 'b' }, { at: 'c' }] },
   pratfall: { foes: [{ at: 'adj', w: 'sword', hits: 0.42, dmg: 0.05, aim: false }], hero: { idle: true }, loop: 7 },
   bushido: { foes: [{ at: 'front', w: 'sword', hits: 1, dmg: 0.05, hpX: 14 }], hero: { lowAt: 2.6 }, loop: 6.4 },
-  chooser: { revive: true, foes: [] },
+  chooser: { revive: true, foes: [{ at: [168, 213], w: 'sword', aim: false }] },
   handy: { foes: [{ at: 'far' }], hero: { abilities: true } },
-  moonblood: { foes: [{ at: 'front', hpX: 14 }], hero: { hp: 0.5 } },
+  moonblood: { foes: [{ at: 'front', w: 'sword', hits: 1.5, dmg: 0.03, hpX: 14 }], hero: { hp: 0.5 } },
   firstImpression: { foes: [{ at: 'adj', w: 'sword', hits: 1.1, dmg: 0.08, aim: false }], hero: { idle: true } },
   // round 15 (lane N): the six newer heroes
   strengthInNumbers: { foes: [{ at: 'front', hpX: 40 }], loop: 5.6 },
@@ -507,6 +569,10 @@ function traitStage(S, spec) {
     const aims = () => foes.filter((f) => f.p.aim !== false && w.units.includes(f.d));
     u.target = (aims()[0] || {}).d || null;
     S.hero = u; S.dummies = foes.map((f) => f.d);
+    const armed = () => foes.find((f) => f.p.w && w.units.includes(f.d)) || null;
+    // a blow meant to leave him low lands in full: what armour and blocks took off it comes through in the same moment
+    const lowBlow = (v, d, to) => { for (let k = 0; to && k < 6 && !v.downed && v.hp > v.maxHp * to; k++) hurt(w, v, (v.hp - v.maxHp * (to - 0.03)) * 0.6, d, { noDodge: true, heavy: true, knock: 0 }); };
+    const swingAt = (d, v) => { d.facing = Math.atan2(v.y - d.y, v.x - d.x); setAnim(d, ANIM[d.def.art.includes('hammer') ? 'hammer' : 'sword'] || 'swing', 0.3); };
     const strike = (f, v) => { // a target's blow, or its shot
       const d = f.d, p = f.p, a = Math.atan2(v.y - d.y, v.x - d.x), dmg = v.maxHp * (p.dmg ?? 0.08);
       d.facing = a; setAnim(d, ANIM[p.w] || 'swing', 0.3);
@@ -538,7 +604,7 @@ function traitStage(S, spec) {
             for (const v of who) if (v) strike(f, v);
           }
         }
-        if (f.lands) { for (const l of f.lands) if (S.t >= l.at && !l.done) { l.done = true; if (!l.v.downed && !l.v.dead) hurt(w, l.v, l.dmg, d, { knock: 0, ...(p.hitSt || {}) }); } f.lands = f.lands.filter((l) => !l.done); }
+        if (f.lands) { for (const l of f.lands) if (S.t >= l.at && !l.done) { l.done = true; if (!l.v.downed && !l.v.dead) { hurt(w, l.v, l.dmg, d, { knock: 0, ...(p.hitSt || {}), ...(l.heavy ? { noDodge: true, heavy: true } : {}) }); lowBlow(l.v, d, l.to); } } f.lands = f.lands.filter((l) => !l.done); }
       }
       if (standing && sc.always && every(1)) acted();
       // the hero's own blows: a melee hero is pinned, so the stage swings for it, at the pace its attack speed gives
@@ -557,11 +623,12 @@ function traitStage(S, spec) {
         }
       }
       // what happens to the hero and its friends
-      if (H.lowAt && !did.low && S.t > H.lowAt) { did.low = true; u.hp = Math.min(u.hp, u.maxHp * 0.25); }
-      if (H.downAt && !did.down && S.t > H.downAt) { did.down = true; u.invulnT = 0; hurt(w, u, u.hp + 99999, (foes[0] || {}).d || null, { noDodge: true }); }
+      // (round 18: what brings him low, or down, is a blow from the target in front of him, seen: it winds up and lands)
+      if (H.lowAt && !did.low && S.t > H.lowAt) { did.low = true; const f = armed(); if (f) { swingAt(f.d, u); f.lands = (f.lands || []).concat([{ at: S.t + 0.16, v: u, dmg: Math.max(1, (u.hp - u.maxHp * 0.22) * 0.6), heavy: true, to: 0.24 }]); } }
+      if (H.downAt && !did.down && S.t > H.downAt) { did.down = true; u.invulnT = 0; const f = armed(); if (f) swingAt(f.d, u); hurt(w, u, u.hp + 99999, f ? f.d : null, { noDodge: true }); }
       for (const o of allies) {
         const a = o.spec;
-        if (a.downAt && !o._fell && S.t > a.downAt) { o._fell = true; const by = foes.find((f) => f.p.w); if (by) { by.d.facing = Math.atan2(o.y - by.d.y, o.x - by.d.x); setAnim(by.d, 'swing', 0.3); } hurt(w, o, o.hp + 99999, by ? by.d : null, { noDodge: true }); }
+        if (a.downAt && !o._fell && S.t > a.downAt) { o._fell = true; const by = armed(); if (by) swingAt(by.d, o); hurt(w, o, o.hp + 99999, by ? by.d : null, { noDodge: true }); }
         if (a.stunAt && !o._stun && S.t > a.stunAt) { o._stun = true; stun(w, o, 3); }
       }
       // a trait that works on friends near the hero: the ring goes round each friend it reaches
@@ -759,7 +826,7 @@ function trinketStage(S, spec) {
   const scene = sceneOf(spec), potion = spec.t === 'potion';
   const kind = scene === 'ranged' || scene === 'hook' ? 'archer' : 'paladin';
   S.loop = 5;
-  let u, dummies, ally, pin, did;
+  let u, dummies, ally, pin, did, lands;
   return () => {
     const w = S.w = room(HERO_W, HERO_H, S.w);
     const list = potion ? (spec.id === 'heal' ? [] : [elixirKey(spec.id)]) : [spec.id];
@@ -776,14 +843,18 @@ function trinketStage(S, spec) {
     if (scene === 'ranged') spots = [[300, 175], [360, 175], [420, 175]];
     if (scene === 'hook') spots = [[400, 120], [400, 240]];
     if (scene === 'drink') spots = [[430, 80], [430, 270]];
-    dummies = spots.map(([x, y]) => { const d = dummyAt(w, x, y); d.aggro = true; return d; });
+    // (round 18: whoever strikes the wearer holds a weapon and swings it; the far pair in the potion's yard shoot)
+    const wp = scene === 'drink' ? 'bow' : scene === 'ranged' || scene === 'hook' ? null : 'sword';
+    dummies = spots.map(([x, y]) => { const d = dummyAt(w, x, y, 'enemy', wp); d.aggro = true; return d; });
     ally = null;
     if (scene === 'friendDown' || scene === 'hook') { ally = fullAlly(w, 'archer', 220, 285); ally.barAlways = true; if (scene === 'hook') { dummies[1].target = ally; } }
     if (scene === 'fire') { w.hazards.push({ type: 'fire', x: 140, y: 175, r: 46, t: 99, max: 99 }); u.hp = u.maxHp * 0.6; }
     if (scene === 'hurt') u.hp = u.maxHp * 0.5;
-    if (scene === 'drink') u.hp = u.maxHp * 0.3;
+    if (scene === 'drink') u.hp = u.maxHp * 0.45; // (shot lower from across the yard, below)
     if (scene === 'burnFoe') for (const d of dummies) d.st.burn = 60;
-    pin = { x: u.x, y: u.y }; u.target = dummies[0]; did = {};
+    pin = { x: u.x, y: u.y }; u.target = dummies[0]; did = {}; lands = [];
+    // a target's blow: it turns, swings, and the blow lands a moment later
+    const swing = (d, v, dmg, o, to) => { if (!d || !w.units.includes(d)) return; d.facing = Math.atan2(v.y - d.y, v.x - d.x); setAnim(d, 'swing', 0.3); lands.push({ at: S.t + 0.16, d, v, dmg, o, to }); };
     S.hero = u; S.dummies = dummies;
     S.tick = (dt) => {
       const beat = (p) => Math.floor(S.t / p) !== Math.floor((S.t - dt) / p);
@@ -794,14 +865,17 @@ function trinketStage(S, spec) {
       }
       if (scene === 'drink') u.atkT = 9;
       if (scene !== 'drink' && scene !== 'ranged' && scene !== 'hook' && S.t > 0.5 && beat(0.6) && !u.downed && !u.ethereal) {
-        const d0 = dummies[0]; hurt(w, u, u.maxHp * 0.03, d0, { knock: 0, poison: scene === 'poison' ? 34 : 0 });
-        if (scene === 'crowd') hurt(w, u, u.maxHp * 0.01, dummies[1], { knock: 0 });
+        swing(dummies[0], u, u.maxHp * 0.03, { knock: 0, poison: scene === 'poison' ? 34 : 0 });
+        if (scene === 'crowd') swing(dummies[1], u, u.maxHp * 0.01, { knock: 0 });
       }
+      // the potion: the wearer is shot low from across the yard, then drinks once out of reach
+      if (scene === 'drink' && S.t > 0.2 && beat(0.45) && u.hp > u.maxHp * 0.36 && !u.downed) { const d = dummies[Math.floor(S.t / 0.5) % 2], a = Math.atan2(u.y - d.y, u.x - d.x); d.facing = a; setAnim(d, 'thrust', 0.3); w.projectiles.push({ kind: 'arrow', x: d.x + Math.cos(a) * 30, y: d.y + Math.sin(a) * 30, vx: Math.cos(a) * 520, vy: Math.sin(a) * 520, r: 6, team: d.team, owner: d, dmg: u.maxHp * 0.12, o: { knock: 10 }, life: 1.4, a }); }
+      for (const l of lands) if (!l.done && S.t >= l.at) { l.done = true; if (!l.v.downed && !l.v.dead && w.units.includes(l.d)) { hurt(w, l.v, l.dmg, l.d, l.o); for (let k = 0; l.to && k < 6 && !l.v.downed && l.v.hp > l.v.maxHp * l.to; k++) hurt(w, l.v, l.v.hp - l.v.maxHp * (l.to - 0.03), l.d, { noDodge: true, heavy: true, knock: 0 }); } }
       if (scene === 'burnFoe' && beat(1)) for (const d of dummies) d.st.burn = Math.max(d.st.burn, 60);
-      if (scene === 'kill' && beat(1.2) && S.t > 0.6) { const d = dummies[1 + (Math.floor(S.t / 1.2) % 2)]; if (d && w.units.includes(d)) { d.gone = true; hurt(w, d, 99999, u, { noDodge: true }); setTimeout0(d); } }
-      if (scene === 'down' && !did.down && S.t > 1.6) { did.down = true; u.invulnT = 0; hurt(w, u, u.hp + 99999, dummies[0], { noDodge: true }); }
-      if (scene === 'low' && !did.low && S.t > 1.6) { did.low = true; u.hp = u.maxHp * 0.36; hurt(w, u, u.maxHp * 0.08, dummies[0], { noDodge: true }); }
-      if (scene === 'friendDown' && !did.fd && S.t > 1.4) { did.fd = true; hurt(w, ally, ally.hp + 999, dummies[0], { noDodge: true }); }
+      if (scene === 'kill' && beat(0.6) && S.t > 0.6) { const d = dummies[1 + (Math.floor(S.t / 0.6) % 2)]; if (d && w.units.includes(d)) { d.gone = true; hurt(w, d, 99999, u, { noDodge: true }); setTimeout0(d); } }
+      if (scene === 'down' && !did.down && S.t > 1.6) { did.down = true; u.invulnT = 0; swing(dummies[0], u, u.hp + 99999, { noDodge: true }); }
+      if (scene === 'low' && !did.low && S.t > 2.3) { did.low = true; swing(dummies[0], u, Math.max(1, u.hp - u.maxHp * 0.28), { noDodge: true, heavy: true }, 0.3); }
+      if (scene === 'friendDown' && !did.fd && S.t > 1.4) { did.fd = true; swing(dummies[0], ally, ally.hp + 999, { noDodge: true }); }
       if (scene === 'walk') pin = { x: 140 + Math.sin(S.t * 1.6) * 70, y: 175 + Math.sin(S.t * 3.2) * 30 };
     };
     // a felled dummy stands again a moment later
