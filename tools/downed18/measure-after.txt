@@ -1,0 +1,31 @@
+downed18 measure: 8 seeds a setup
+
+valkyrie + party vs foes: 40 fights, 0 problems, 0 out of time, 29.23s a fight
+  Valkyrie's Call casts a fight 0.03, Rewind casts 0.00, Raise Dead casts 0.00
+  heroes downed a fight 0.23, revived 0.03 (valkyrieCall 1), bled out 0.17
+  share of downs revived 11%, fights ended with the loser's last ones downed: 0
+  bodies raised a fight 0.00 (hero bodies 0.00)
+
+heroes vs heroes (valkyrie each side): 16 fights, 0 problems, 0 out of time, 58.90s a fight
+  Valkyrie's Call casts a fight 1.38, Rewind casts 0.00, Raise Dead casts 0.00
+  heroes downed a fight 5.75, revived 1.38 (valkyrieCall 22), bled out 2.31
+  share of downs revived 24%, fights ended with the loser's last ones downed: 16
+  bodies raised a fight 0.00 (hero bodies 0.00)
+
+clockmaker (rewind III) + party: 24 fights, 0 problems, 0 out of time, 38.47s a fight
+  Valkyrie's Call casts a fight 0.00, Rewind casts 3.58, Raise Dead casts 0.00
+  heroes downed a fight 1.38, revived 0.25 (rewind 6), bled out 0.17
+  share of downs revived 18%, fights ended with the loser's last ones downed: 8
+  bodies raised a fight 0.00 (hero bodies 0.00)
+
+hero necromancer: 32 fights, 0 problems, 0 out of time, 32.69s a fight
+  Valkyrie's Call casts a fight 0.00, Rewind casts 0.00, Raise Dead casts 2.06
+  heroes downed a fight 1.66, revived 0.00 (none), bled out 0.41
+  share of downs revived 0%, fights ended with the loser's last ones downed: 24
+  bodies raised a fight 1.69 (hero bodies 0.00)
+
+seraph (raises foes): 24 fights, 0 problems, 0 out of time, 48.36s a fight
+  Valkyrie's Call casts a fight 0.08, Rewind casts 0.00, Raise Dead casts 0.00
+  heroes downed a fight 0.17, revived 0.08 (valkyrieCall 2), bled out 0.04
+  share of downs revived 50%, fights ended with the loser's last ones downed: 0
+  bodies raised a fight 1.13 (hero bodies 0.00)

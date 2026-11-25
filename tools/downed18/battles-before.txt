@@ -1,0 +1,6 @@
+example: a in 13.5s
+528 battles, 0 problems, 9 ran out of time
+
+real	0m54.009s
+user	0m0.015s
+sys	0m0.031s

@@ -1133,6 +1133,9 @@ export function hurt(w, u, amount, src, o = {}) {
   if (src && src.hitBurn && !o.dot && src !== u) addStatus(w, u, 'burn', src.hitBurn, src); // round 9: a burning Elder Ent's every blow burns
   if (src && alive(src) && !o.dot) for (const h of hooksOf(src)) if (h.hit) h.hit(w, src, u, amt, o);
   if (!o.dot) for (const h of hooksOf(u)) if (h.struck) h.struck(w, u, src, amt, o);
+  // (round 18, lane downed18: once only. A blow's own burn could scorch it to 0 inside this call, and then this call
+  // brought it down a second time: two 'heroDown's, two Wraith Veil ghosts, a kill counted twice)
+  if (!alive(me)) return amt;
   if (u.hp <= 0 && hooksOf(me).some((h) => h.downed && h.downed(w, me, src))) return amt;
   if (u.hp <= 0) { if (w.stats) tallyDown(w, me, src, o); kill(w, me, src); }
   return amt;
@@ -1427,7 +1430,10 @@ function killNow(w, u, src) {
   }
   if (u.summon) { u.dead = true; puff(w, u.x, u.y, '#B8C8DA', 10, 80, 5, 0.5); return; } // summons just fade (blue-grey: ours, round 8)
   for (const b of u.bodies || []) { b.act = null; b.target = null; b.forcedGoal = null; b.later = null; } // round 15 (the Mob): its other bodies drop what they were doing
-  if (u.team === 'hero' && !w.battle) {
+  // Round 18 (lane downed18, the designer: "Battle mode can have downed allies that can only be revived with
+  // abilities. (Corpses can be used for necromancy)"): in a battle a hero (a picked one: it has a kit) goes down too,
+  // on either side; monsters, bosses, summons and constructs die. battle.js bleeds the downed out (bleedOut).
+  if (w.battle ? !!u.kit && u.def.team === 'hero' && !u.def.boss : u.team === 'hero') {
     u.downed = true; u.act = null; u.frozenT = 0; u.st = freshStatuses(); u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; u.addledT = 0; u.fearT = 0; u.shackledT = 0;
     textU(w, u.x, u.y, u.r + 10, 'DOWN', '#FF8A80', 1.1);
     emit(w, 'heroDown', u);
@@ -1981,6 +1987,16 @@ function pickups(w, dt) {
     if (near && nd < 220 && (!near.coinGoal || nd < near.coinGoal.d)) near.coinGoal = { x: p.x, y: p.y, d: nd };
   }
   w.pickups = w.pickups.filter((p) => !p.got);
+}
+
+// Battle mode (round 18, lane downed18): a downed hero nobody brought back in time dies where it lies and leaves its
+// body, in the pose it lay in (render.js turns the downed by +0.6), for necromancy. No killer, no hooks: it fell before.
+export function bleedOut(w, u) {
+  if (!u.downed || u.dead) return;
+  u.downed = false; u.dead = true; u.hp = 0; u.act = null;
+  if (!u.def.noCorpse) for (const b of [u, ...(u.bodies || [])]) w.corpses.push({ kind: b.kind, x: b.x, y: b.y, r: b.r, vr: b.vr, facing: b.facing + 0.6, tint: b.tint, kx: 0, ky: 0, spin: 0, z: 0, vz: 0, age: 1, t: CORPSE_LIFE, max: CORPSE_LIFE, bled: true }); // (the Mob: each body its own)
+  if (w.corpses.length > MAX_CORPSES) w.corpses.splice(0, w.corpses.length - MAX_CORPSES);
+  puff(w, u.x, u.y, '#8A8496', 8, 50, 5, 0.6);
 }
 
 // Bodies: in the air they fly on, spinning, and bounce off walls; on the ground they slide to a stop and lie still.
