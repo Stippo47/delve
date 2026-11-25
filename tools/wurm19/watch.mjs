@@ -60,7 +60,7 @@ for (let i = 0; i < n; i++) {
   }, [1 / fps, follow]);
   log.push(st);
   await page.screenshot({ path: path.join(out, `f${String(i).padStart(5, '0')}.jpg`), type: 'jpeg', quality: 82 });
-  if (until && st && (st.run === 'won' || st.run === 'lost' || st.dead)) { if (++ended > fps * 4) break; }
+  if (until && st && (st.run === 'won' || st.run === 'lost' || st.phase === 'won' || st.phase === 'lost' || st.dead)) { if (++ended > fps * 4) break; }
 }
 await edge.close();
 fs.writeFileSync(path.join(out, 'state.json'), JSON.stringify(log));

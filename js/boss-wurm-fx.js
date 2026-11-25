@@ -213,7 +213,9 @@ export function drawDunesFloor(ctx, w) {
     if (u.dead) continue;
     // the mound: the sand swelling over its back, as wide as the wurm, slabs of crust tipping off its front, grit jumping.
     // It shows a beat after the wurm has gone down (it used to pop up on top of the hole, the pit still open under it).
-    if (u.hidden && !u.wurmOut && k.st !== 'tell') { const m = k.mound, hv = clamp(m.heave, 0.3, 2), R = 46 + 10 * hv + 3 * Math.sin(T * 13), [ux, uy] = up();
+    // (only while it runs under the sand: in the frame or two between the last ring going down and the fight's next
+    // step it flashed on at full, on the hole)
+    if (u.hidden && !u.wurmOut && (k.st === 'under' || k.st === 'asleep' || (k.st === 'coil' && !k.path))) { const m = k.mound, hv = clamp(m.heave, 0.3, 2), R = 46 + 10 * hv + 3 * Math.sin(T * 13), [ux, uy] = up();
       const fade = k.underAt == null || k.st === 'asleep' ? 1 : k01((k.t - k.underAt - 0.12) / 0.3); if (fade <= 0) continue;
       ctx.save(); ctx.globalAlpha = fade;
       shade(ctx, m.x, m.y, R * 1.7, R * 1.5, 0.22);

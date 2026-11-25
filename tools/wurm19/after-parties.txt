@@ -1,3 +1,3 @@
-as it is | level 51 archer,pyromancer,frost,storm: won 23/40 (58%), 107 s a fight, wins 110 s
-as it is | level 51 paladin,berserker,twinfang,tower: won 22/40 (55%), 106 s a fight, wins 112 s
-as it is | level 51 paladin: won 0/20 (0%), 23 s a fight, wins - s
+as it is | level 51 archer,pyromancer,frost,storm: won 16/40 (40%), 105 s a fight, wins 115 s
+as it is | level 51 paladin,berserker,twinfang,tower: won 15/40 (38%), 101 s a fight, wins 104 s
+as it is | level 51 paladin: won 0/20 (0%), 15 s a fight, wins - s

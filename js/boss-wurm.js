@@ -170,6 +170,7 @@ const STATES = {
   // reared up out of its hole: it sways after its mark, lunges, and (once) breathes the room in
   root(w, u, k, dt) {
     const R = SW.root, P = k.path; k.rootT += dt; k.lim = reachLim(w, k);
+    k.sway += ((k.rigid ? 0 : 1) - k.sway) * Math.min(1, dt * 7); // (round 19: the neck's sway eases out and in round a lunge or the breath; it snapped, a twitch of up to 34 at the head)
     const t = pickTarget(w, u, k, dt);
     if (k.act) { if (k.act(dt) === false) k.act = null; }
     else {
@@ -239,11 +240,11 @@ function startArc(w, u, k) {
 function startRoot(w, u, k) {
   const p = k.at, t = k.mark && alive(k.mark) ? k.mark : randomHero(w, u);
   k.aim = t ? angleTo(p.x, p.y, t.x, t.y) : rand() * TAU;
-  k.reach = 0; k.lim = SW.root.reach; k.lift = 0; k.rootT = 0; k.lungeT = 1.1; k.inhaled = k.phase < 1; k.act = null; k.st = 'root'; k.holeA = k.holes[k.holes.length - 1];
+  k.reach = 0; k.lim = SW.root.reach; k.sway = 0; k.rigid = false; k.lift = 0; k.rootT = 0; k.lungeT = 1.1; k.inhaled = k.phase < 1; k.act = null; k.st = 'root'; k.holeA = k.holes[k.holes.length - 1];
   if (k.plan === 'roar') { bfx(w, { type: 'wurmRoar', u, max: SW.roar.dur }); cue('bossPhase', u, k.phase); }
   const R = SW.root;
   k.path = { len: 1e9, comp: R.comp, x: p.x, y: p.y,
-    pt: (s) => { const a = k.aim + Math.sin(k.t * 1.7 + s * 0.011) * 0.2 * clamp(s / 200, 0, 1) * (k.rigid ? 0 : 1); return [p.x + Math.cos(a) * s, p.y + Math.sin(a) * s]; },
+    pt: (s) => { const a = k.aim + Math.sin(k.t * 1.7 + s * 0.011) * 0.2 * clamp(s / 200, 0, 1) * k.sway; return [p.x + Math.cos(a) * s, p.y + Math.sin(a) * s]; },
     h: (s) => clamp(s / Math.max(60, k.reach), 0, 1) * R.height * k.lift };
 }
 function sink(w, u, k) { k.st = 'sink'; k.act = null; k.rigid = false; }

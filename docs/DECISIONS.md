@@ -1341,3 +1341,36 @@ if any is wrong):
 - **Healing Totem**: its body is only its foot (r 13); its picture stands up the screen from there.
 - **For approval**: design/caster19/bear.png (a large brown bear, the spirit bear after approval) and salmon.png.
 - Round 19, chat: "Stop agents". Stopped (work so far kept on their branches, unmerged): wurm19, spider19, icons-abil, art-props, art-statusfx, art-shots.
+
+## Round 19, lane wurm19 (2026-11-25): the Sand Wurm's misc problems
+The designer: "Get a Fable agent on redoing the sandworm. It's good but has many misc problems." No specifics, so the
+lane recorded fights frame by frame and measured them; 29 faults found and written down before any fix, each with what
+was done and the clip and second where it shows: docs/wurm19.md. The fight itself is unchanged (burrow, heave, breach
+arcing hole to hole, rear-up with lunge and inhale, brood, coil); docs/BOSS-sand-wurm.md is as it is now.
+- **Plainly broken, fixed**: the body vanished the moment the head dived (a fifth of all the time it was out, its rings
+  were there to be hit and not drawn); the roar at each phase turn showed no wurm at all (so no phase change was ever
+  seen); health bars hung over single rings; its death was cut off by the summary 0.6 s after it fell.
+- **Drawn as two lots by height** (js/boss-wurm-fx.js): what is on the floor at a hole's mouth, what is up in the air;
+  each one figure with one outline through boss-draw's figure(); the lot in the air goes in the game's own "in the air"
+  pass. A ring is in the air for the game from 30 up (the low rings of a reared neck are floor bodies: the heroes at it
+  are seen). A status washes the whole body once (it showed every ring through the next, like glass).
+- **Sand that reads as sand**: rays of sand along the floor round a breach (the stakes standing on the hole, over the
+  wurm, are gone), dust as clouds, clods as dark lumps (they were floor-coloured discs: bubbles), a churned furrow as
+  wide as the wurm that lies 4 s and slumps in one (the designer's note on the Digger's burrow), sand heaped over the
+  head stuck after a lunge, a death in which each ring drops as itself and sinks into the sand.
+- **The bite is the head's own**: it draws back, darts and its jaws clap shut (two straight tusk bars closed from the
+  sides before, nothing like its mandibles).
+- **Where it comes up**: holes keep clear of columns and walls, arcs stay in the room and take the longest clear way,
+  the coil's ring is laid off the columns, the reared neck minds walls; an open hole can't be stood in.
+- **Calls** (each small, each in docs/wurm19.md): under the sand the head is still followed but can't be struck
+  (`u.noStrike`: sim.js tryAttack, kits.js kitThink; the party landed 112 blows a fight on the mound and threw 34
+  abilities at it; now 11 and none); with its blows and abilities kept for when the wurm is up the party won 97 of 100,
+  so its blows are 40% harder (breach 112, landing 76, lunge 136, bite 189, coil 162) and it stays reared 8.5 s again;
+  the roar can be hit; **every boss's room is held 1.3 s after it falls** (`BOSS_END_T`, js/dungeon.js); the Book's
+  page of it has a face (`def.picture`, js/inspect.js), sand under it, and words (js/bestiary.js: the designer's to
+  rewrite). Left: a frozen wurm hangs in mid-air.
+- **Measured** (level 51, where the campaign meets it; the band is 40-60%): before 67 of 100 (52 at level 48, 87 at 54); after 58 of 100 and 53 on other seeds (49 at 48, 73 at 54), fights of about 154 s;
+  a melee four 15 of 40, a four of shooters 16 of 40.
+  Checks: battles 528, 0 problems; preview-check 0 / 0 / 0 (the wurm's preview no longer a "wrong scenario").
+- **Found, outside the lane**: six designed bosses have no face or words in the Book; no designed boss plays the phase
+  sound (sfx.js reads `u.k.phase`); a hero with nothing to aim at does not heal.
