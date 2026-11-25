@@ -259,7 +259,7 @@ export const DUNGEON_RANK = { wildwood: 0, warren: 1, sewers: 2, crypt: 3, frost
 // as hard as it was for a fixed party (tools/audit/foes16/dungeons.mjs); they run in order now, easiest first.
 // R12_MULT, the numbers before, is what the rest of a room stays pitched at: the designed bosses (not priced), the
 // rooms' own hazards and the XP a kill gives.
-export const RANK_MULT = [0.75, 2.27, 3.82, 3.96, 4.03, 5.22, 5.29, 6.5, 7.35];
+export const RANK_MULT = [0.75, 2.15, 3.82, 3.96, 4.03, 5.22, 5.6, 6.5, 7];
 export const R12_MULT = [0.75, 2, 2.75, 3.2, 3.75, 4, 3.95, 4.6, 4.2];
 export const FLOOR_STEP = 0.3;   // each floor on from the first: +30% of the dungeon's own strength
 export const ROOM_STEP = 0.035;  // each room further into a floor: +3.5%

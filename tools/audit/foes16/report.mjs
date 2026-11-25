@@ -9,6 +9,7 @@ const DATA = resolve(ROOT, 'docs/audit/data/foes16');
 const read = (f) => JSON.parse(readFileSync(resolve(DATA, f), 'utf8'));
 const before = Object.fromEntries(read(opt('before', 'worth-before.json')).rows.map((r) => [r.k, r]));
 const after = read(opt('after', 'worth-final.json')).rows;
+const OLD = read('old-prices.json'); // (each kind's cost, pack, health and blow on main before this lane)
 const NAME = { wildwood: 'The Wildwood', warren: 'The Warren', sewers: 'The Sewers', crypt: 'The Crypt', frost: 'The Frost Hollow', ember: 'The Ember Deep',
   spire: 'The Gilded Spire', dunes: 'The Sunken Dunes', foundry: 'The Clockwork Foundry' };
 const f2 = (x) => (x == null ? '-' : (Math.round(x * 100) / 100).toFixed(2));
@@ -28,11 +29,11 @@ for (const id of Object.keys(NAME)) {
   if (!rows.length) continue;
   out.push(`### ${NAME[id]}\n`);
   out.push(table(['kind', 'cost', 'pack', 'hp', 'dmg', 'worth', '', 'cost', 'pack', 'hp', 'dmg', 'hit x', 'worth'], rows.map((r) => {
-    const b = before[r.k] || {}, p = PRICES[r.k] || {}, oldPack = b.pack !== undefined ? b.pack : null;
+    const b = before[r.k] || {}, p = PRICES[r.k] || {}, o = OLD[r.k] || {};
     n++; if (b.worth >= 0.8 && b.worth <= 1.25) inB++; if (r.worth >= 0.8 && r.worth <= 1.25) inA++;
     const dmgNow = (DEFS[r.k].dmg || 0) * (DEFS[r.k].hitMul || 1);
     const wa = r.worth < 0.8 || r.worth > 1.25 ? `**${f2(r.worth)}**` : f2(r.worth);
-    return [`${r.name} (${r.k})${r.helper ? ' H' : ''}`, n1(b.cost), pk(b.packOld), b.hp ?? '-', n1(b.dmg ?? 0), f2(b.worth), '->', n1(p.cost), pk(p.pack), DEFS[r.k].hp, n1(dmgNow), f2(p.hit), wa];
+    return [`${r.name} (${r.k})${r.helper ? ' H' : ''}`, n1(o.cost), pk(o.pack), o.hp ?? '-', n1(o.dmg ?? 0), f2(b.worth), '->', n1(p.cost), pk(p.pack), DEFS[r.k].hp, n1(dmgNow), f2(p.hit), wa];
   })) + '\n');
 }
 out.push(`Within 0.80-1.25: ${inB} of ${n} kinds before, ${inA} of ${n} after.\n`);
@@ -52,7 +53,7 @@ if (dfile && existsSync(resolve(DATA, dfile))) {
   const B = read('dungeons-before.json').rows, A = read(dfile).rows;
   out.push('## Each dungeon, floor by floor\n');
   out.push('A fixed party (paladin, archer, cleric, twinfang) at the level the campaign goes into each floor with, points spent, '
-    + `no trinkets or potions, ${read(dfile).n} runs a floor; "rooms" is rooms won on that floor (7 = the floor and its mini-boss or boss).\n`);
+    + `no trinkets or potions, ${A[0].n} runs a floor (this batch ran Warren, Spire and Foundry at RANK_MULT 2.27, 5.29 and 7.35, a step before the final numbers: see the second batch above); "rooms" is rooms won on that floor (7 = the floor and its mini-boss or boss).\n`);
   out.push(table(['dungeon', 'floor', 'level', 'rooms before', 'after', 'floor won before', 'after'], A.map((a) => {
     const b = B.find((x) => x.theme === a.theme && x.floor === a.floor) || {};
     return [NAME[a.theme], a.floor, a.level, f2(b.rooms), f2(a.rooms), Math.round(100 * b.won) + '%', Math.round(100 * a.won) + '%'];
@@ -61,7 +62,7 @@ if (dfile && existsSync(resolve(DATA, dfile))) {
     const b = B.filter((x) => x.theme === id), a = A.filter((x) => x.theme === id);
     const m = (xs) => xs.reduce((s, x) => s + x.rooms, 0) / xs.length;
     const rk = D.DUNGEON_RANK[id];
-    return [NAME[id], f2(m(b)), f2(m(a)), read('dungeons-before.json').mult ? read('dungeons-before.json').mult[rk] : [0.75, 2, 2.75, 3.2, 3.75, 4, 3.95, 4.6, 4.2][rk], D.RANK_MULT[rk]];
+    return [NAME[id], f2(m(b)), f2(m(a)), D.R12_MULT[rk], D.RANK_MULT[rk]];
   })) + '\n');
 }
 

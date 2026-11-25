@@ -1,0 +1,52 @@
+{
+ "party": [
+  "paladin",
+  "archer",
+  "cleric",
+  "twinfang"
+ ],
+ "n": 60,
+ "mult": [
+  0.75,
+  2.15,
+  3.82,
+  3.96,
+  4.03,
+  5.22,
+  5.15,
+  6.5,
+  7
+ ],
+ "rows": [
+  {
+   "theme": "warren",
+   "rank": 1,
+   "floor": 1,
+   "level": 11,
+   "n": 60,
+   "rooms": 6.98,
+   "won": 0.98,
+   "secs": 333
+  },
+  {
+   "theme": "warren",
+   "rank": 1,
+   "floor": 2,
+   "level": 13,
+   "n": 60,
+   "rooms": 5.38,
+   "won": 0.07,
+   "secs": 409
+  },
+  {
+   "theme": "warren",
+   "rank": 1,
+   "floor": 3,
+   "level": 15,
+   "n": 60,
+   "rooms": 3.87,
+   "won": 0.1,
+   "secs": 452
+  }
+ ]
+}

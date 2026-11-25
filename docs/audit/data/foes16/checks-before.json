@@ -13,8 +13,8 @@
    "winsB": 30,
    "draws": 0,
    "leftA": 0,
-   "leftB": 0.51,
-   "secs": 14
+   "leftB": 0.28,
+   "secs": 18
   },
   {
    "a": "wolf",
@@ -28,8 +28,8 @@
    "winsB": 30,
    "draws": 0,
    "leftA": 0,
-   "leftB": 0.51,
-   "secs": 15
+   "leftB": 0.33,
+   "secs": 18
   },
   {
    "a": "wolf",
@@ -43,8 +43,8 @@
    "winsB": 30,
    "draws": 0,
    "leftA": 0,
-   "leftB": 0.73,
-   "secs": 16
+   "leftB": 0.69,
+   "secs": 17
   },
   {
    "a": "rat",
@@ -204,12 +204,12 @@
    "nb": 2,
    "costB": 6,
    "scaled": false,
-   "winsA": 26,
-   "winsB": 4,
+   "winsA": 29,
+   "winsB": 1,
    "draws": 0,
-   "leftA": 0.23,
+   "leftA": 0.29,
    "leftB": 0.01,
-   "secs": 32
+   "secs": 31
   }
  ]
 }

@@ -1,0 +1,463 @@
+{
+ "made": "2026-11-25",
+ "args": [
+  "--n",
+  "40",
+  "--mult",
+  "1:2.500,2:3.438,3:4.000,4:4.688,5:5.000,6:4.938,7:5.750,8:5.250"
+ ],
+ "rows": [
+  {
+   "theme": "wildwood",
+   "rank": 0,
+   "floor": 1,
+   "level": 1,
+   "n": 40,
+   "rooms": 7,
+   "won": 1,
+   "secs": 254
+  },
+  {
+   "theme": "wildwood",
+   "rank": 0,
+   "floor": 2,
+   "level": 4,
+   "n": 40,
+   "rooms": 6.83,
+   "won": 0.93,
+   "secs": 295
+  },
+  {
+   "theme": "wildwood",
+   "rank": 0,
+   "floor": 3,
+   "level": 8,
+   "n": 40,
+   "rooms": 6.8,
+   "won": 0.9,
+   "secs": 411
+  },
+  {
+   "theme": "warren",
+   "rank": 1,
+   "floor": 1,
+   "level": 11,
+   "n": 40,
+   "rooms": 6.83,
+   "won": 0.9,
+   "secs": 385
+  },
+  {
+   "theme": "warren",
+   "rank": 1,
+   "floor": 2,
+   "level": 13,
+   "n": 40,
+   "rooms": 4.7,
+   "won": 0.03,
+   "secs": 409
+  },
+  {
+   "theme": "warren",
+   "rank": 1,
+   "floor": 3,
+   "level": 15,
+   "n": 40,
+   "rooms": 3.45,
+   "won": 0.03,
+   "secs": 549
+  },
+  {
+   "theme": "sewers",
+   "rank": 2,
+   "floor": 1,
+   "level": 17,
+   "n": 40,
+   "rooms": 5.8,
+   "won": 0.45,
+   "secs": 436
+  },
+  {
+   "theme": "sewers",
+   "rank": 2,
+   "floor": 2,
+   "level": 19,
+   "n": 40,
+   "rooms": 3.75,
+   "won": 0.03,
+   "secs": 375
+  },
+  {
+   "theme": "sewers",
+   "rank": 2,
+   "floor": 3,
+   "level": 22,
+   "n": 40,
+   "rooms": 2.88,
+   "won": 0,
+   "secs": 342
+  },
+  {
+   "theme": "crypt",
+   "rank": 3,
+   "floor": 1,
+   "level": 24,
+   "n": 40,
+   "rooms": 6.35,
+   "won": 0.68,
+   "secs": 454
+  },
+  {
+   "theme": "crypt",
+   "rank": 3,
+   "floor": 2,
+   "level": 27,
+   "n": 40,
+   "rooms": 4.63,
+   "won": 0.33,
+   "secs": 424
+  },
+  {
+   "theme": "crypt",
+   "rank": 3,
+   "floor": 3,
+   "level": 30,
+   "n": 40,
+   "rooms": 1.05,
+   "won": 0,
+   "secs": 205
+  },
+  {
+   "theme": "frost",
+   "rank": 4,
+   "floor": 1,
+   "level": 33,
+   "n": 40,
+   "rooms": 5.75,
+   "won": 0.53,
+   "secs": 380
+  },
+  {
+   "theme": "frost",
+   "rank": 4,
+   "floor": 2,
+   "level": 35,
+   "n": 40,
+   "rooms": 3.3,
+   "won": 0,
+   "secs": 331
+  },
+  {
+   "theme": "frost",
+   "rank": 4,
+   "floor": 3,
+   "level": 36,
+   "n": 40,
+   "rooms": 3.43,
+   "won": 0,
+   "secs": 504
+  },
+  {
+   "theme": "ember",
+   "rank": 5,
+   "floor": 1,
+   "level": 38,
+   "n": 40,
+   "rooms": 6.75,
+   "won": 0.8,
+   "secs": 364
+  },
+  {
+   "theme": "ember",
+   "rank": 5,
+   "floor": 2,
+   "level": 40,
+   "n": 40,
+   "rooms": 5.48,
+   "won": 0.43,
+   "secs": 470
+  },
+  {
+   "theme": "ember",
+   "rank": 5,
+   "floor": 3,
+   "level": 41,
+   "n": 40,
+   "rooms": 2.95,
+   "won": 0.05,
+   "secs": 373
+  },
+  {
+   "theme": "spire",
+   "rank": 6,
+   "floor": 1,
+   "level": 43,
+   "n": 40,
+   "rooms": 6.4,
+   "won": 0.48,
+   "secs": 413
+  },
+  {
+   "theme": "spire",
+   "rank": 6,
+   "floor": 2,
+   "level": 45,
+   "n": 40,
+   "rooms": 5.45,
+   "won": 0.28,
+   "secs": 424
+  },
+  {
+   "theme": "spire",
+   "rank": 6,
+   "floor": 3,
+   "level": 47,
+   "n": 40,
+   "rooms": 4.18,
+   "won": 0.15,
+   "secs": 470
+  },
+  {
+   "theme": "dunes",
+   "rank": 7,
+   "floor": 1,
+   "level": 49,
+   "n": 40,
+   "rooms": 7,
+   "won": 1,
+   "secs": 472
+  },
+  {
+   "theme": "dunes",
+   "rank": 7,
+   "floor": 2,
+   "level": 50,
+   "n": 40,
+   "rooms": 4.58,
+   "won": 0.45,
+   "secs": 479
+  },
+  {
+   "theme": "dunes",
+   "rank": 7,
+   "floor": 3,
+   "level": 52,
+   "n": 40,
+   "rooms": 4.75,
+   "won": 0.23,
+   "secs": 681
+  },
+  {
+   "theme": "foundry",
+   "rank": 8,
+   "floor": 1,
+   "level": 53,
+   "n": 40,
+   "rooms": 7,
+   "won": 1,
+   "secs": 583
+  },
+  {
+   "theme": "foundry",
+   "rank": 8,
+   "floor": 2,
+   "level": 55,
+   "n": 40,
+   "rooms": 6.45,
+   "won": 0.85,
+   "secs": 671
+  },
+  {
+   "theme": "foundry",
+   "rank": 8,
+   "floor": 3,
+   "level": 56,
+   "n": 40,
+   "rooms": 5.05,
+   "won": 0.08,
+   "secs": 759
+  }
+ ],
+ "extra": [
+  {
+   "party": [
+    "paladin",
+    "archer",
+    "cleric",
+    "twinfang"
+   ],
+   "n": 40,
+   "mult": [
+    0.75,
+    2.5,
+    3.438,
+    4,
+    4.688,
+    5,
+    4.938,
+    5.75,
+    5.25
+   ]
+  },
+  {
+   "party": [
+    "paladin",
+    "archer",
+    "cleric",
+    "twinfang"
+   ],
+   "n": 40,
+   "mult": [
+    0.75,
+    2.5,
+    3.438,
+    4,
+    4.688,
+    5,
+    4.938,
+    5.75,
+    5.25
+   ]
+  },
+  {
+   "party": [
+    "paladin",
+    "archer",
+    "cleric",
+    "twinfang"
+   ],
+   "n": 40,
+   "mult": [
+    0.75,
+    2.5,
+    3.438,
+    4,
+    4.688,
+    5,
+    4.938,
+    5.75,
+    5.25
+   ]
+  },
+  {
+   "party": [
+    "paladin",
+    "archer",
+    "cleric",
+    "twinfang"
+   ],
+   "n": 40,
+   "mult": [
+    0.75,
+    2.5,
+    3.438,
+    4,
+    4.688,
+    5,
+    4.938,
+    5.75,
+    5.25
+   ]
+  },
+  {
+   "party": [
+    "paladin",
+    "archer",
+    "cleric",
+    "twinfang"
+   ],
+   "n": 40,
+   "mult": [
+    0.75,
+    2.5,
+    3.438,
+    4,
+    4.688,
+    5,
+    4.938,
+    5.75,
+    5.25
+   ]
+  },
+  {
+   "party": [
+    "paladin",
+    "archer",
+    "cleric",
+    "twinfang"
+   ],
+   "n": 40,
+   "mult": [
+    0.75,
+    2.5,
+    3.438,
+    4,
+    4.688,
+    5,
+    4.938,
+    5.75,
+    5.25
+   ]
+  },
+  {
+   "party": [
+    "paladin",
+    "archer",
+    "cleric",
+    "twinfang"
+   ],
+   "n": 40,
+   "mult": [
+    0.75,
+    2.5,
+    3.438,
+    4,
+    4.688,
+    5,
+    4.938,
+    5.75,
+    5.25
+   ]
+  },
+  {
+   "party": [
+    "paladin",
+    "archer",
+    "cleric",
+    "twinfang"
+   ],
+   "n": 40,
+   "mult": [
+    0.75,
+    2.5,
+    3.438,
+    4,
+    4.688,
+    5,
+    4.938,
+    5.75,
+    5.25
+   ]
+  },
+  {
+   "party": [
+    "paladin",
+    "archer",
+    "cleric",
+    "twinfang"
+   ],
+   "n": 40,
+   "mult": [
+    0.75,
+    2.5,
+    3.438,
+    4,
+    4.688,
+    5,
+    4.938,
+    5.75,
+    5.25
+   ]
+  }
+ ]
+}

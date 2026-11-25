@@ -1,0 +1,51 @@
+{
+ "party": [
+  "paladin",
+  "archer",
+  "twinfang"
+ ],
+ "n": 60,
+ "mult": [
+  0.75,
+  2,
+  2.75,
+  3.2,
+  3.75,
+  4,
+  3.95,
+  4.6,
+  4.2
+ ],
+ "rows": [
+  {
+   "theme": "wildwood",
+   "rank": 0,
+   "floor": 1,
+   "level": 1,
+   "n": 60,
+   "rooms": 6.33,
+   "won": 0.7,
+   "secs": 256
+  },
+  {
+   "theme": "wildwood",
+   "rank": 0,
+   "floor": 2,
+   "level": 1,
+   "n": 60,
+   "rooms": 4.55,
+   "won": 0.07,
+   "secs": 252
+  },
+  {
+   "theme": "wildwood",
+   "rank": 0,
+   "floor": 3,
+   "level": 1,
+   "n": 60,
+   "rooms": 2.33,
+   "won": 0,
+   "secs": 259
+  }
+ ]
+}

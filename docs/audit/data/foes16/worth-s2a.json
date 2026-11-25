@@ -1,0 +1,93 @@
+{
+ "seeds": 6,
+ "rows": [
+  {
+   "k": "wolf",
+   "name": "Wolf",
+   "home": "wildwood",
+   "cost": 2,
+   "hp": 76,
+   "dmg": 5,
+   "hitMul": 1.5,
+   "helper": false,
+   "panelN": 6,
+   "panel": 1.18,
+   "duelN": 6,
+   "duelWin": 0.67,
+   "duel": 1.02,
+   "partner": "bandit",
+   "mixN": 2,
+   "mixP": 21.38,
+   "mixD": 0.83,
+   "worth": 1.1
+  },
+  {
+   "k": "slime",
+   "name": "Slime",
+   "home": "wildwood",
+   "cost": 2,
+   "hp": 34,
+   "dmg": 8,
+   "hitMul": 0.68,
+   "helper": false,
+   "panelN": 6,
+   "panel": 1.08,
+   "duelN": 6,
+   "duelWin": 0.25,
+   "duel": 1.01,
+   "partner": "bandit",
+   "mixN": 2,
+   "mixP": 11.93,
+   "mixD": 0.9,
+   "worth": 1.04
+  },
+  {
+   "k": "slimeBig",
+   "name": "Big Slime",
+   "home": "wildwood",
+   "cost": 7,
+   "hp": 142,
+   "dmg": 11,
+   "hitMul": 0.67,
+   "helper": false,
+   "panelN": 2,
+   "panel": 0.72,
+   "duelN": 2,
+   "duelWin": 0,
+   "duel": 1,
+   "partner": "bandit",
+   "mixN": 1,
+   "mixP": 11.28,
+   "mixD": 0.45,
+   "worth": 0.85
+  },
+  {
+   "k": "rat",
+   "name": "Rat",
+   "home": "sewers",
+   "cost": 1,
+   "hp": 42,
+   "dmg": 4,
+   "hitMul": 1.12,
+   "helper": false,
+   "panelN": 12,
+   "panel": 1.53,
+   "duelN": 12,
+   "duelWin": 0.5,
+   "duel": 0.99,
+   "partner": "bandit",
+   "mixN": 3,
+   "mixP": 0.95,
+   "mixD": 0.81,
+   "worth": 1.23
+  }
+ ],
+ "ref": {
+  "wildwood": {
+   "panel": 0.23641290591732125
+  },
+  "sewers": {
+   "panel": 0.2013290269385752
+  }
+ }
+}

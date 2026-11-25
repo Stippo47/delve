@@ -1,0 +1,52 @@
+{
+ "party": [
+  "paladin",
+  "archer",
+  "cleric",
+  "twinfang"
+ ],
+ "n": 60,
+ "mult": [
+  0.75,
+  2.15,
+  3.82,
+  3.96,
+  4.03,
+  5.22,
+  5.4,
+  6.5,
+  7
+ ],
+ "rows": [
+  {
+   "theme": "spire",
+   "rank": 6,
+   "floor": 1,
+   "level": 43,
+   "n": 60,
+   "rooms": 6.13,
+   "won": 0.37,
+   "secs": 419
+  },
+  {
+   "theme": "spire",
+   "rank": 6,
+   "floor": 2,
+   "level": 45,
+   "n": 60,
+   "rooms": 5.03,
+   "won": 0.2,
+   "secs": 412
+  },
+  {
+   "theme": "spire",
+   "rank": 6,
+   "floor": 3,
+   "level": 47,
+   "n": 60,
+   "rooms": 3.4,
+   "won": 0.25,
+   "secs": 394
+  }
+ ]
+}
