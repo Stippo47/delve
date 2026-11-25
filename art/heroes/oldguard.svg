@@ -110,7 +110,8 @@
   <!-- contact shadow of the sword held in front -->
   <g clip-path="url(#ogcBody)"><g transform="translate(1 4) translate(94 161) rotate(50)"><use href="#ogBlade" fill="#2B2230" opacity="0.22"/><use href="#ogGuard" fill="#2B2230" opacity="0.22"/><use href="#fistR" fill="#2B2230" opacity="0.22"/><use href="#fistR" transform="translate(0 -29)" fill="#2B2230" opacity="0.22"/></g></g>
 </g>
-<g id="arm-r" data-pivot="150 108">
+<g id="arm-r" data-pivot="105 152">
+  <!-- round 19 (lane sys19; the designer on Rally: "swings arm weird. Pivoting from 1 shoulder, not hands"): a weapon held in both hands turns about the hands on the grip (the two fists' middle), not about the right shoulder -->
   <!-- greatsword held two-handed in the middle, in front of the body: both fists wrap the grip (no arm-l). This group is drawn after #body, so the fists and the sword sit over the beard. -->
   <g transform="translate(94 161) rotate(50)">
     <use href="#ogBlade" fill="url(#g14)"/>

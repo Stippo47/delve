@@ -12,6 +12,7 @@ import { WALL2 } from './looks2.js';
 import { drawPuddle } from './puddles.js';
 import { drawPillarThemed } from './scenery.js';
 import { variant } from './fxvar.js';
+import { castShadow } from './height.js'; // round 19 (lane sys19): one shadow system
 
 const k01 = (v) => clamp(v, 0, 1);
 const lerp = (a, b, k) => a + (b - a) * k;
@@ -370,7 +371,7 @@ Object.assign(DRAW2, {
   tkThrow(ctx, f, w, layer) {
     const fly = k01((f.t - f.lift) / f.fly), up = f.t < f.lift ? easeOut(k01(f.t / f.lift)) : 1, gx = lerp(f.x, f.x1, fly * fly), gy = lerp(f.y, f.y1, fly * fly);
     const h = 40 * up * (1 - fly * fly) + 26 * Math.sin(fly * Math.PI), [vx, vy] = upVec(), X = gx + vx * h, Y = gy + vy * h;
-    if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.28; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(gx, gy, f.r * 0.9, f.r * 0.45, 0, 0, TAU); ctx.fill(); ctx.restore(); return; }
+    if (layer === 'ground') { /* round 19 (lane sys19): its shadow is the units' own (height.js castShadow) */ castShadow(gx, gy, f.r, 1, h); return; }
     lit(ctx, () => { glowDisc(ctx, X, Y, f.r * 2, FORCE[1], 0.45);
       if (f.t < f.lift && live(f.from)) { const [hx, hy] = handOf(f.from); ctx.strokeStyle = 'rgba(181,140,255,0.55)'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(hx, hy); ctx.quadraticCurveTo((hx + X) / 2, (hy + Y) / 2 - 18, X, Y); ctx.stroke(); } });
     ctx.save(); ctx.translate(X, Y); ctx.rotate(fly * 5 + (f.t < f.lift ? Math.sin(f.t * 20) * 0.06 : 0));

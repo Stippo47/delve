@@ -77,8 +77,9 @@
 <path id="fistL" d="M 4.5 -13.5 L -5.3 -13.5 Q -7.9 -13.5 -7.9 -10.5 A 3.52 3.52 0 0 0 -7.9 -5.25 A 3.52 3.52 0 0 0 -7.9 0 A 3.52 3.52 0 0 0 -7.9 5.25 A 3.52 3.52 0 0 0 -7.9 10.5 Q -7.9 13.5 -5.3 13.5 L 4.5 13.5 Q 10.5 13.5 10.5 7.5 L 10.5 -7.5 Q 10.5 -13.5 4.5 -13.5 Z"/>
 </defs>
 <g id="sprite" filter="url(#outline)">
-<g id="arm-l" data-pivot="50 108">
-  <!-- warhammer, held low: the haft passes under the left spaulder and the head comes out past the front of the body; only the fist shows at the body's edge -->
+<g id="arm-l-hammer" data-pivot="50 108">
+  <!-- warhammer, held low: the haft passes under the left spaulder and the head comes out past the front of the body; only the fist shows at the body's edge.
+       Round 19 (lane sys19): the hammer as its own part, as Warhelm's (it follows #arm-l, and is hidden while it flies: the thrown one is drawn from this part) -->
   <g transform="translate(50 142) rotate(-32)">
     <rect x="-5" y="-48" width="10" height="84" rx="3.5" fill="url(#g12)"/>
     <rect x="-5" y="-48" width="10" height="84" rx="3.5" fill="url(#g13)"/>
@@ -89,6 +90,11 @@
     <g clip-path="url(#gcHam)"><rect x="-25" y="31" width="10" height="28" fill="#F2F4F8" opacity="0.8"/><rect x="15" y="31" width="10" height="28" fill="#7E8899" opacity="0.6"/><rect x="-4" y="31" width="8" height="28" fill="url(#g9)"/></g>
     
     <g clip-path="url(#gcHaft)"><use href="#fistL" transform="translate(0 3)" fill="#2B2230" opacity="0.3"/></g>
+  </g>
+</g>
+<g id="arm-l" data-pivot="50 108">
+  <!-- round 19: the left fist alone -->
+  <g transform="translate(50 142) rotate(-32)">
     <use href="#fistL" fill="url(#gHand)"/>
   </g>
 </g>

@@ -6,7 +6,7 @@
 // Damage a trinket deals itself carries o.proc, and the trinkets that react to hits ignore proc hits, so one
 // trinket's sparks never set off another's in an endless loop.
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange, chance } from './util.js';
-import { hurt, addStatus, spawn, alive, hpRatio, puff, explode, blocked, stun, heal, fx, zone } from './sim.js';
+import { hurt, addStatus, spawn, alive, hpRatio, puff, explode, blocked, stun, heal, fx, zone, taunt } from './sim.js';
 import { shoot } from './kits.js';
 import { lineClear, circleRect } from './path.js';
 import { tagTrinket } from './stats.js';
@@ -372,7 +372,7 @@ export const TRINKETS = {
         s.t = 8;
         const d = dist(u.x, u.y, best.x, best.y) - u.r - best.r - 14, a = angleTo(best.x, best.y, u.x, u.y);
         best.kx = Math.cos(a) * d * 5; best.ky = Math.sin(a) * d * 5; best.act = null; stun(w, best, 0.6);
-        best.target = u; best.tauntBy = u; best.tauntT = 3;
+        taunt(w, best, u, 3); // (round 19: sim.js taunt, the red V)
         fx(w, { type: 'beam', x1: u.x, y1: u.y, x2: best.x, y2: best.y, kind: 'drain', max: 0.3 });
         streak(w, u.x, u.y, best.x, best.y, '#B8B8C0', 14, 3, 0.35);
         for (let i = 0; i < 5; i++) spark(w, best.x, best.y, a, '#D8D8E0');
