@@ -1178,6 +1178,20 @@ js/preview-scenes.js, easy to change; docs/preview18b.md has the audit, every nu
 
 Round 19 (2026-11-25, free rein from midnight the designer's time): the designer is answering the 0.19 heroes deck (v19-heroes) and the 0.21 one tonight; notes so far in docs/riffle-log/2026-11-25-v19-v21-partial.txt. Those notes go first, ahead of my own list. Lanes (Opus; Fable is at 92% until 02:00 PC): sys19 (shared rules from the notes: one shadow system, thrown things land on centre, airborne drawn above and not colliding with the floor, thrown weapons look like held ones, free hands don't float, the taunted V mark, previews don't pin, pronouns), melee19 (Old Guard, Dame, Griffon, Bulwark, Warhelm, Bearskin, Haymaker), rogue19 (Bandit with a Disarmed state, Shade incl. a new Shadow Walk with the blink chain kept spare, Monk, Cultist), caster19 (Digger, Grandpa, Alchemist, Shaman incl. bear and salmon sketches for approval, Witch). Queued: the Warlock's four-form redesign (Fable after the reset), the heroes still owed, the Mob's notes.
 
+## Round 19, lane outline19 (2026-11-25): one outline ("check that outline thickness is consistent everywhere")
+- **OUTLINE 2.4 room units for everything** (js/util.js): the median of the old spread and what code drawings used.
+  It was 1.2 (bees, wasps, slimelets) to 6 (the Gilded Seraph) on SVG figures, because the parts' ink was grown by 6
+  SVG units and so scaled with the sprite; props 1.4-4.1 px with their size; code-drawn bosses 3.6.
+- **Drawn by the renderer, not built into the art**: parts.js grows each part's ink by OUTLINE for the size the figure
+  is drawn at (getRig's sizeU; an elite's bigness doesn't thicken it), over body + hands + weapon as one; props are
+  outlined by sprites.js getProp (their #sprite only, never a #light or the oil); rats and mice by their size; boss-draw
+  OL = OUTLINE; the camp one CAMP_LINE (OUTLINE at the heroes' camp scale). Pictures in pages get the old filter back at
+  load (sprites.js uiArt), so portraits look as before.
+- **Stripped** (tools/outline19/strip-outlines.mjs, re-runnable): the #outline filter and data-line from 252 art files;
+  rock-3's stones marked data-ink="own" (each outlined on its own). Interior lines kept.
+- Frame cost unchanged (tools/outline19/perf.mjs). Open, for the designer: big bosses read lighter at a hero's line.
+  Details, numbers and sheets: docs/outline19.md, docs/clips/outline19/.
+
 ## Round 19, lane sys19 (2026-11-25): the shared rules in the designer's 0.19 notes
 - **One shadow system** (js/height.js castShadow / projZ; render.js drawShadows). Every shadow is a disc in the units'
   merged shadow layer (same colour, softness, strength), laid before pillars and pickups. Into it now: pillars, crates,

@@ -2,7 +2,6 @@
   <!-- PLACEHOLDER (round 7): art the designer marked not good, standing in for the new dungeons until it is redone. -->
 <!-- ANGEL (round 4), archer-sized, enemy or ally: big white feathered wings spread out behind, brown hair; a thin pale halo standing up behind the head instead of the ring over the hair (round 5), white robe shoulders with a gold collar, a gold spear (no eyes, the small mouth curve the heroes have). Parts: #back (wings, pivot at the centre of the back), #arm-r (spear + fist, before #body), #body, #arm-l (empty hand). Facing = DOWN (+y), centre (100,100). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#C9CEDE"/></linearGradient>
 <path id="p2" d="M118 92 C118.7 86.6 133.9 71.6 140 66 C146.1 60.4 163 48.2 170 44 C177 39.8 196 29.8 200 30 C204 30.2 204.2 42.3 204 46 C203.8 49.7 198.2 59 198 62 C197.8 65 202.9 69.4 202 72 C201.1 74.6 191.2 81.2 190 84 C188.8 86.8 193.4 93.7 192 96 C190.6 98.3 179.9 101.7 178 104 C176.1 106.3 178.1 114.6 176 116 C173.9 117.4 162.8 115.1 160 116 C157.2 116.9 155 124.5 152 124 C149 123.5 138 115.7 134 112 C130 108.3 117.3 97.4 118 92 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -53,7 +52,7 @@
 <path id="p49" d="M-4 -10.5 H4 A8 8 0 0 1 12 -2.5 V2.5 A8 8 0 0 1 4 10.5 H-4 A8 8 0 0 1 -12 2.5 V-2.5 A8 8 0 0 1 -4 -10.5 Z" transform="translate(44 144) rotate(0)"/>
 <clipPath id="c51"><use href="#p49"/></clipPath>
 <linearGradient id="gHalo" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#FFF8D8"/><stop offset="1" stop-color="#F0C860"/></linearGradient></defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 90"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

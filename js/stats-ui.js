@@ -1,6 +1,7 @@
 // The run stats on screen (round 9, lane T): the result card's "who did what" (leaders, the party with where each
 // hero's damage, healing and kills came from, the enemies defeated), a unit's real numbers (the pause panel and the
 // About page) and the lifetime totals (About, the book). Plain HTML strings in the UI v3 look; data from stats.js.
+import { uiArt } from './sprites.js'; // round 19 (lane outline19)
 import { HEROES } from './heroes.js';
 import { DEFS } from './units.js';
 import { TRINKETS } from './trinkets.js';
@@ -20,7 +21,7 @@ const PET_ABS = ['callWolf', 'raiseDead'];
 export function heroFace(id, size) {
   if (HEROES[id]) return face(id, size);
   const m = MERCS.find((x) => x.kind === id);
-  return `<span class="face" style="width:${size}px;height:${size}px;--rc:#8F97A3"><img src="${m ? m.art : portrait(id)}" alt=""></span>`;
+  return `<span class="face" style="width:${size}px;height:${size}px;--rc:#8F97A3"><img src="${m ? uiArt(m.art) : portrait(id)}" alt=""></span>`;
 }
 const heroName = (id) => (HEROES[id] ? HEROES[id].name : (MERCS.find((x) => x.kind === id) || DEFS[id] || { name: id }).name);
 

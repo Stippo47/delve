@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-80 -80 360 360" width="360" height="360">
   <!-- DOOR OPEN, fountain room behind: the passage glows #5DB7E0 and the light spills onto the floor. Seen from inside the room: the room is below (+y), outside is above. The room's edge (the wall's inner face) is the line y = 100, and the box centre (100,100) is the middle of the doorway on that line. 112 room units across (285 SVG units), the wall band 26 deep; the stone arch rises 16 room units past the wall's outer edge. Box 360 = 141.4 room units. #spill (no outline) is the light on the floor; the game can pulse it. Rotate the whole thing so +y points into the room. -->
   <defs>
-    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <linearGradient id="gStone" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#B9AD9B"/><stop offset="1" stop-color="#857A6B"/></linearGradient>
     <linearGradient id="gStoneLt" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#D6CCBA"/><stop offset="1" stop-color="#A69985"/></linearGradient>
     <linearGradient id="gDoor" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#B07A48"/><stop offset="1" stop-color="#7E5230"/></linearGradient>
@@ -20,7 +19,7 @@
     <ellipse cx="100" cy="100" rx="190" ry="180" fill="url(#gSpill)"/>
     <path d="M4 100 L40 100 L10 270 L-60 270 Z" fill="url(#gRay)" opacity="0.6"/><path d="M80 100 L120 100 L136 270 L64 270 Z" fill="url(#gRay)" opacity="0.6"/><path d="M160 100 L196 100 L260 270 L190 270 Z" fill="url(#gRay)" opacity="0.6"/>
   </g>
-  <g id="sprite" filter="url(#outline)">
+  <g id="sprite">
     <use href="#frame" fill="url(#gStone)"/>
     <g clip-path="url(#frameC)"><path d="M100 44 L-100 44 L-87.9 -24.4 Z" fill="#FFFFFF" opacity="0.13"/><path d="M100 44 L-53.2 -84.6 L-0 -129.2 Z" fill="#FFFFFF" opacity="0.13"/><path d="M100 44 L65.3 -153 L134.7 -153 Z" fill="#FFFFFF" opacity="0.13"/><path d="M100 44 L200 -129.2 L253.2 -84.6 Z" fill="#FFFFFF" opacity="0.13"/><path d="M100 44 L287.9 -24.4 L300 44 Z" fill="#FFFFFF" opacity="0.13"/><rect x="-50" y="48" width="50" height="22" fill="#FFFFFF" opacity="0.13"/><rect x="200" y="48" width="50" height="22" fill="#FFFFFF" opacity="0.13"/><rect x="-50" y="92" width="50" height="22" fill="#FFFFFF" opacity="0.13"/><rect x="200" y="92" width="50" height="22" fill="#FFFFFF" opacity="0.13"/><rect x="-50" y="70" width="50" height="22" fill="#2B2230" opacity="0.08"/><rect x="200" y="70" width="50" height="22" fill="#2B2230" opacity="0.08"/>
       <path d="M-42 104 V40 C-42 -16 30 -42 100 -42 C170 -42 242 -16 242 40 V104 H232 V40 C232 -8 168 -32 100 -32 C32 -32 -32 -8 -32 40 V104 Z" fill="#FFFFFF" opacity="0.12"/>

@@ -2,7 +2,6 @@
   <!-- PLACEHOLDER (round 7): art the designer marked not good, standing in for the new dungeons until it is redone. -->
 <!-- DEMON (round 5), big: dark plum-maroon skin cracked with glowing orange, no eyes; huge ram horns curling round the sides of the head, a glowing mouth, massive shoulders, two huge clawed fists; a short heavy tail straight back. Parts: #back (tail), #body, #arm-l, #arm-r (fists). Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#7C4859"/><stop offset="1" stop-color="#552941"/></linearGradient>
 <path id="p2" d="M106 91.3 C107.3 86.8 101.8 73.2 102 65.5 C102.2 57.9 106.8 52.1 107 45.5 C107.2 38.9 104.6 29 103 25.9 C101.3 22.8 97.7 23.7 97 26.9 C96.4 30 99.8 38.6 99 44.9 C98.2 51.2 92.8 56.9 92 64.9 C91.2 72.8 91.7 88.3 94 92.7 C96.4 97.1 104.6 95.9 106 91.3 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -62,7 +61,7 @@
 <path id="p57" d="M178.5 164 C178.8 163 185.2 163 185.5 164 C185.8 165 182 174 182 174 C182 174 178.2 165 178.5 164 Z"/>
 <clipPath id="c58"><use href="#p57"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 92"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

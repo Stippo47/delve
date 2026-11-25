@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 10) of design/class-round10/enemies/dunes-serpent-head.svg -->
 <!-- SAND SERPENT, the head (round 10): a real snake's head seen from above: a broad arrow of a head, widest at the jaws and narrowing to a blunt snout, two raised brow ridges (no eyes), two nostril pits, a pale lip, a forked tongue (#front, it flicks); behind it the neck, the body's width, with the body's pattern (dark diamonds edged pale down the back) so the first segment joins it. Parts: #body, #front (tongue). Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
 <path id="s1" d="M 100 7 H 100 A 40 40 0 0 1 140 47 V 77 A 40 40 0 0 1 100 117 H 100 A 40 40 0 0 1 60 77 V 47 A 40 40 0 0 1 100 7 Z"/>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#D9B574"/><stop offset="1" stop-color="#CC9737"/></linearGradient>
@@ -18,7 +17,7 @@
 <path id="s4" d="M 119 128 A 11 15 0 1 0 141 128 A 11 15 0 1 0 119 128 Z"/>
 <clipPath id="u4"><use href="#s1"/><use href="#s2"/><use href="#s3" transform="rotate(-22 70 128)"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="front" data-pivot="100 180"><!-- the tongue -->
 <path d="M 100 184 L 100 198 M 100 198 L 93 207 M 100 198 L 107 207" fill="none" stroke="#B8303A" stroke-width="4.5" stroke-linecap="round"/>
 </g>

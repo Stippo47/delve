@@ -5,7 +5,6 @@
        drawn before #body so the lower jaw covers its root), #body = chest, lid, mouth, teeth.
        The outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). -->
   <defs>
-    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <path id="lid" d="M56 36 H144 A18 18 0 0 1 162 54 V124 A8 8 0 0 1 154 132 H46 A8 8 0 0 1 38 124 V54 A18 18 0 0 1 56 36 Z"/>
     <clipPath id="lidC"><use href="#lid"/></clipPath>
     <path id="jaw" d="M40 140 H160 V158 A10 10 0 0 1 150 168 H50 A10 10 0 0 1 40 158 Z"/>
@@ -21,7 +20,7 @@
     <linearGradient id="gTongue" x1="86" y1="0" x2="116" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#F48AA2"/><stop offset="1" stop-color="#D2526E"/></linearGradient>
     <linearGradient id="gTooth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFBEE"/><stop offset="1" stop-color="#E6D9B6"/></linearGradient>
   </defs>
-  <g id="sprite" filter="url(#outline)">
+  <g id="sprite">
     <g id="arm-r" data-pivot="100 150">
       <use href="#tongue" fill="url(#gTongue)"/>
       <path d="M100 160 C100 172 102 182 104 190" fill="none" stroke="#B83E5A" stroke-width="3" stroke-linecap="round" opacity="0.7"/>

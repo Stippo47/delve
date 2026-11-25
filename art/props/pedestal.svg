@@ -1,10 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
   <!-- PEDESTAL (the choice room's) seen from straight above: an octagonal stone plinth, a violet cushion with gold piping and tassels. The reward floats over its centre (100,100). 42 room units across. Not turned to the screen. -->
   <defs>
-    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <linearGradient id="gBase" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#BFB3A0"/><stop offset="1" stop-color="#857966"/></linearGradient><linearGradient id="gTop" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0" stop-color="#DED4C2"/><stop offset="1" stop-color="#ADA08C"/></linearGradient><radialGradient id="gCush" cx="0.38" cy="0.36" r="0.75"><stop offset="0" stop-color="#B693E8"/><stop offset="1" stop-color="#7448A8"/></radialGradient>
   </defs>
-  <g id="sprite" filter="url(#outline)">
+  <g id="sprite">
     <polygon points="149.9,120.7 120.7,149.9 79.3,149.9 50.1,120.7 50.1,79.3 79.3,50.1 120.7,50.1 149.9,79.3" fill="url(#gBase)"/>
     <polygon points="140.7,116.8 116.8,140.7 83.2,140.7 59.3,116.8 59.3,83.2 83.2,59.3 116.8,59.3 140.7,83.2" fill="url(#gTop)"/>
     <rect x="70" y="70" width="60" height="60" rx="12" fill="#5E3A86"/>
