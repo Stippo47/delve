@@ -1461,3 +1461,7 @@ stands), three phases, its fire the game's fire.
   at its turns. Checks: battles 532, 0 problems; preview-check 0 / 0 / 0.
 - **Left / outside**: jammed at a wall with a hero in its bend it can lie in a tight C for a moment; status flames are
   drawn on its head only; four shooters cannot win it (0 of 40 before and after).
+- Lead, drake19 merge (0.35.0): clips checked by hand (phase-1 before/after, rush, scorch, bite, ring, death, full fight):
+  the body bends in curves, legs and tail move, the rush gallops. The body often reads pale peach in the zoomed fight:
+  that is the shared status wash (washOf, same code as before the lane), left as is and noted. Merged, battles 532 / 0,
+  preview-check 0 / 0 / 0, sw built. Riffle deck r19-drake (art, stack r19): report + numbers + no-spin calls.

@@ -1,0 +1,47 @@
+{
+  "title": "Cinder Drake, reworked",
+  "topic": "art",
+  "stack": "r19",
+  "order": 7,
+  "priority": 1,
+  "cards": [
+    {
+      "id": "report",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The drake, fixed",
+      "text": "Cinder now bends like an animal, attacks twice as often, and hunts through the party. Live in 0.35.0.",
+      "why": "You said its body moved weird, you didn't like its attacks, and it was very slow. 28 problems were found on film first, then fixed. Still wingless, per your round 9 note. Mark any part that's off.",
+      "videos": ["../../../docs/clips/drake19/before-phase1-zoomed.mp4", "../../../docs/clips/drake19/after-phase1-zoomed.mp4"],
+      "parts": [
+        { "id": "body", "title": "Body", "text": "Every joint used to replay the head's path, so the body was a zigzag of hard corners and knotted round whoever was at its neck. Now it's a chain that bends smoothly: the head turns on its neck and the body comes round in a curve.", "videos": ["../../../docs/clips/drake19/before-phase1-zoomed.mp4", "../../../docs/clips/drake19/after-phase1-zoomed.mp4"] },
+        { "id": "alive", "title": "Tail, legs, breath", "text": "The tail trails, swings out on turns and whips from the base. Thicker legs that keep up when it gallops. Standing still, it breathes; its chest swells before the fire.", "videos": ["../../../docs/clips/drake19/after-tail.mp4", "../../../docs/clips/drake19/after-scorch.mp4"] },
+        { "id": "bite", "title": "Bite", "text": "Was rare and a floating strip of teeth. Now the head rears, darts out and the jaws clap: about 11 a fight instead of 1.", "videos": ["../../../docs/clips/drake19/after-bite.mp4"] },
+        { "id": "scorch", "title": "Fire breath", "text": "Was most of the fight. Now it breathes in first, then a 2.4 s burst at whoever's ahead of it: half as much of the fight.", "videos": ["../../../docs/clips/drake19/after-scorch.mp4"] },
+        { "id": "rush", "title": "Rush", "text": "Was a slide into the far wall. Now it gathers, gallops past the furthest hero in front, and skids to a stop.", "videos": ["../../../docs/clips/drake19/before-rush.mp4", "../../../docs/clips/drake19/after-rush.mp4"] },
+        { "id": "claw", "title": "Claw (new)", "text": "A foreleg rakes and throws whoever hugs its chest, since it can't snap its head back at them any more.", "videos": ["../../../docs/clips/drake19/after-claw.mp4"] },
+        { "id": "pace", "title": "Pace", "text": "Twice the moves a minute (16 instead of 8); faster walk, shorter warnings. It runs through the party, wheels and comes back, instead of circling. Ring of Fire is one clean arc in 6 s; Fire Call no longer stops it dead.", "videos": ["../../../docs/clips/drake19/after-ring-firecall.mp4", "../../../docs/clips/drake19/after-full-fight.mp4"] },
+        { "id": "death", "title": "Death", "text": "Used to vanish in one frame. Now it drops, cools to char, and the husk stays.", "videos": ["../../../docs/clips/drake19/after-death.mp4"] },
+        { "id": "fixes", "title": "Also", "text": "Seven health bars over its back are gone; the whole body flashes when hit; hit areas match the drawing; it no longer lies over pillars or through walls; it has a Book page and plays the phase sound. Win rate 50% at level 44, in its band." }
+      ]
+    },
+    {
+      "id": "numbers",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Its hits got lighter",
+      "text": "Health 900 to 800, bite 80 to 70, breath and fireball about 10% lighter, to pay for attacking twice as often.",
+      "why": "Without that the faster drake would win too often. It now wins about half its fights at level 44, as before. Four ranged heroes alone still can't beat it, before or after.",
+      "pick": "Keep it."
+    },
+    {
+      "id": "turning",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Can't spin round",
+      "text": "Like a long animal, it can't snap round on someone behind it. The tail sweep and the new claw cover its back and chest.",
+      "why": "Snapping round is what tied the body in knots. Pinned at a wall with a hero in its bend, it can still curl into a tight C for a moment.",
+      "pick": "Keep it."
+    }
+  ]
+}
