@@ -65,19 +65,19 @@ function ringVolley(w, u, n, fn) { const a0 = rand() * TAU; for (let i = 0; i < 
 export const FOES = {
   // ---- the Frost Hollow: ice caves; bats in swarms, snowmen lobbing, spiders, the wailing dead, ogres
   bat: { ...FOE, name: 'Cave Bat', art: ART('bat'), headR: 44, r: 20, vr: 16, turn: 8, accel: 480, face: 8, mass: 0.5, hp: 22, speed: 82, role: 'skirmish',
-    range: 12, atkCd: 0.8, dmg: 4, arc: 1.5, temp: 0.7, commit: 0.4, xp: 5, coins: [1, 2], cost: 2, pack: [2, 4], attackAnim: 'thrust', ability: 'dash', abilCd: 2.8,
+    range: 12, atkCd: 0.8, dmg: 4, arc: 1.5, temp: 0.7, commit: 0.4, xp: 5, coins: [1, 2], attackAnim: 'thrust', ability: 'dash', abilCd: 2.8,
     brain: (w, u) => { if (!u.vamp) { u.vamp = true; addBuff(u, { id: 'vamp', dur: 1e9, lifesteal: 0.5 }); } return false; } }, // its bite drinks
   snowman: { ...FOE, name: 'Snowman', art: ART('snowman'), headR: 60, r: 32, vr: 25, turn: 3, accel: 150, face: 3, mass: 1.6, hp: 56, speed: 34, role: 'ranged',
-    range: 290, keep: 190, atkCd: 999, dmg: 6, xp: 12, coins: [2, 5], cost: 4, res: { chill: 0.1, burn: 1.6 },
+    range: 290, keep: 190, atkCd: 999, dmg: 6, xp: 12, coins: [2, 5], res: { chill: 0.1, burn: 1.6 },
     brain: (w, u, dt) => { every(w, u, dt, 'snow', 2.2, 3, 300, (t) => { setAnim(u, 'throw', 0.35); snowball(w, u, angleTo(u.x, u.y, t.x + (t.vx || 0) * 0.5, t.y + (t.vy || 0) * 0.5)); }); return false; } },
   spiderHunter: { ...FOE, name: 'Hunter Spider', art: ART('spider-hunter'), headR: 52, r: 26, vr: 20, turn: 7, accel: 420, face: 7, mass: 0.9, hp: 40, speed: 72, role: 'skirmish',
-    range: 14, atkCd: 0.9, dmg: 6, poison: 22, arc: 1.4, temp: 0.55, commit: 0.5, xp: 9, coins: [2, 4], cost: 3, attackAnim: 'thrust', ability: 'dash', abilCd: 3.4, hunter: 1.4, // (round 13: it hunts the party's healer)
+    range: 14, atkCd: 0.9, dmg: 6, poison: 22, arc: 1.4, temp: 0.55, commit: 0.5, xp: 9, coins: [2, 4], attackAnim: 'thrust', ability: 'dash', abilCd: 3.4, hunter: 1.4, // (round 13: it hunts the party's healer)
     onDeath: (w, u) => web(w, u.x, u.y, 44, 5) }, // its bite poisons; it dies into a web
   spiderMomma: { ...FOE, name: 'Momma Spider', art: ART('spider-momma'), headR: 58, r: 34, vr: 26, turn: 3.4, accel: 200, face: 3.4, mass: 1.8, hp: 90, speed: 46, role: 'ranged',
-    range: 250, keep: 170, atkCd: 999, dmg: 6, xp: 18, coins: [3, 7], cost: 6, onDeath: (w, u) => web(w, u.x, u.y, 60, 7),
+    range: 250, keep: 170, atkCd: 999, dmg: 6, xp: 18, coins: [3, 7], onDeath: (w, u) => web(w, u.x, u.y, 60, 7),
     brain: (w, u, dt) => { every(w, u, dt, 'web', 3.5, 5, 300, (t) => webShot(w, u, t)); return false; } },
   banshee: { ...FOE, name: 'Banshee', art: ART('banshee'), headR: 56, r: 28, vr: 22, mass: 0.7, hp: 60, speed: 58, role: 'ranged', range: 200, keep: 140, atkCd: 999, dmg: 7,
-    xp: 15, coins: [3, 6], cost: 5, undead: true, res: { poison: 0, burn: 1.3, chill: 0.2, curse: 0 },
+    xp: 15, coins: [3, 6], undead: true, res: { poison: 0, burn: 1.3, chill: 0.2, curse: 0 },
     brain: (w, u, dt) => {
       if (hold(u, dt)) return true;
       const t = targetOf(w, u); if (!t || !due(u, 'wail', dt, 2.5) || dist(u.x, u.y, t.x, t.y) > 240) return false;
@@ -86,19 +86,19 @@ export const FOES = {
       return true;
     } },
   ogre: { ...FOE, name: 'Ogre', art: ART('ogre'), headR: 66, r: 42, vr: 31, turn: 2.6, accel: 150, face: 2.6, mass: 3, hp: 160, speed: 42, role: 'melee',
-    range: 26, atkCd: 1.9, windup: 0.55, dmg: 18, knock: 260, arc: 2.0, heavy: true, temp: 0.25, commit: 1.2, xp: 28, coins: [6, 11], cost: 8, attackAnim: 'swing',
+    range: 26, atkCd: 1.9, windup: 0.55, dmg: 18, knock: 260, arc: 2.0, heavy: true, temp: 0.25, commit: 1.2, xp: 28, coins: [6, 11], attackAnim: 'swing',
     brain: (w, u, dt) => slam(w, u, dt, { r: 120, tell: 0.9, dmg: 14, cdMin: 7, cdMax: 9 }) },
 
   // ---- the Ember Deep: fiends; imps in swarms flinging fire, fire slimes, devils, demons, dragonborn
   imp: { ...FOE, name: 'Imp', art: ART('imp'), headR: 44, r: 20, vr: 16, turn: 7, accel: 420, face: 7, mass: 0.6, hp: 26, speed: 70, role: 'ranged', range: 240, keep: 170,
-    atkCd: 999, dmg: 4, temp: 0.6, commit: 0.5, xp: 5, coins: [1, 3], cost: 2, pack: [2, 3], res: { burn: 0 },
+    atkCd: 999, dmg: 4, temp: 0.6, commit: 0.5, xp: 5, coins: [1, 3], res: { burn: 0 },
     brain: (w, u, dt) => { every(w, u, dt, 'fire', 2.9, 3.9, 260, (t) => { setAnim(u, 'throw', 0.35); fireball(w, u, angleTo(u.x, u.y, t.x, t.y)); }); return false; } },
   fireSlime: { ...FOE, name: 'Fire Slime', art: ART('slime-fire'), headR: 60, r: 25, vr: 22, turn: 3, accel: 140, face: 3.5, mass: 1.6, hp: 50, speed: 40, role: 'melee',
-    range: 16, atkCd: 1.4, dmg: 8, knock: 90, arc: 2.2, temp: 0.3, commit: 1, xp: 10, coins: [2, 4], cost: 4, res: { burn: 0, chill: 1.5 },
+    range: 16, atkCd: 1.4, dmg: 8, knock: 90, arc: 2.2, temp: 0.3, commit: 1, xp: 10, coins: [2, 4], res: { burn: 0, chill: 1.5 },
     onDeath: (w, u) => firePatch(w, u.x, u.y, 46, 4),
     brain: (w, u, dt) => { if (u.aggro && u.spd > 20 && due(u, 'drip', dt, 1)) { again(u, 'drip', 1.1, 1.5); firePatch(w, u.x - Math.cos(u.mvA) * u.r, u.y - Math.sin(u.mvA) * u.r, 22, 2.5); } return false; } },
   devil: { ...FOE, name: 'Devil', art: ART('devil'), headR: 56, r: 32, vr: 24, hp: 70, speed: 62, role: 'melee', range: 44, atkCd: 1.3, windup: 0.3, dmg: 11, knock: 150, arc: 0.8,
-    xp: 15, coins: [3, 6], cost: 5, attackAnim: 'thrust', ability: 'dash', abilCd: 4, res: { burn: 0.2 } },
+    xp: 15, coins: [3, 6], attackAnim: 'thrust', ability: 'dash', abilCd: 4, res: { burn: 0.2 } },
   // round 13 (lane S): the Succubus (the designer: "Succubus enemies will also charm who hits them and deal extra damage
   // to charmed foes"). Whoever lands a blow on her is charmed a little (8, once a second each), so soon they can't hurt
   // her; she hunts the charmed, hits them 40% harder, and every few seconds blows a kiss at the most charmed hero in reach to
@@ -107,7 +107,7 @@ export const FOES = {
   // her and her answer is ready, she blows the striker a kiss back (charm SUCCUBUS.back, a heart flies to it), then
   // not again for SUCCUBUS.cd seconds, whoever hits her. (Round 13: 8 on every blow, once a second for each striker.)
   succubus: { variantOf: 'devil', name: 'Succubus', accent: { from: 0, range: 30, hue: 322, sat: 1.05, light: 0.1 }, hp: 60, dmg: 9, speed: 64, charm: 8, charmBonus: 0.4,
-    xp: 18, coins: [3, 7], cost: 5, ability: 'dash', abilCd: 5,
+    xp: 18, coins: [3, 7], ability: 'dash', abilCd: 5,
     struck: (w, u, src) => { if (!src || src.team === u.team || !src.st || src.flipKind === 'charm' || !(w.time >= (u.backT ?? 0))) return; u.backT = w.time + SUCCUBUS.cd;
       addStatus(w, src, 'charm', SUCCUBUS.back, u); fx(w, { type: 'statusBurst', kind: 'kissBack', from: u, unit: src, x: u.x, y: u.y, max: 0.55 }); },
     brain: (w, u, dt) => {
@@ -119,19 +119,19 @@ export const FOES = {
       return false;
     } },
   demon: { ...FOE, name: 'Demon', art: ART('demon'), headR: 64, r: 40, vr: 30, turn: 2.8, accel: 160, face: 2.8, mass: 2.6, hp: 150, speed: 46, role: 'melee',
-    range: 26, atkCd: 1.8, windup: 0.5, dmg: 17, knock: 240, arc: 2.0, heavy: true, temp: 0.25, commit: 1.2, xp: 28, coins: [6, 11], cost: 8, attackAnim: 'swing', res: { burn: 0.2 },
+    range: 26, atkCd: 1.8, windup: 0.5, dmg: 17, knock: 240, arc: 2.0, heavy: true, temp: 0.25, commit: 1.2, xp: 28, coins: [6, 11], attackAnim: 'swing', res: { burn: 0.2 },
     brain: (w, u, dt) => slam(w, u, dt, { r: 130, tell: 0.9, dmg: 15, cdMin: 7, cdMax: 9 }) },
   dragonborn: { ...FOE, name: 'Dragonborn', art: ART('dragonborn'), headR: 60, r: 36, vr: 27, turn: 3, accel: 180, face: 3, mass: 2, hp: 110, speed: 52, role: 'melee',
-    range: 30, atkCd: 1.6, windup: 0.45, dmg: 15, knock: 200, arc: 1.9, heavy: true, temp: 0.3, commit: 1.1, xp: 22, coins: [4, 9], cost: 7, attackAnim: 'swing',
+    range: 30, atkCd: 1.6, windup: 0.45, dmg: 15, knock: 200, arc: 1.9, heavy: true, temp: 0.3, commit: 1.1, xp: 22, coins: [4, 9], attackAnim: 'swing',
     ability: 'charge', abilCd: 9, res: { burn: 0.3 } },
 
   // ---- the Gilded Spire: the host above; cherubs shooting from the back, angels with spears, seraphs casting
   cherub: { ...FOE, name: 'Cherub', art: 'art/enemies/cherub.svg', headR: 40, r: 20, vr: 16, turn: 7, accel: 420, face: 7, mass: 0.6, hp: 24, speed: 66, role: 'ranged',
-    range: 260, keep: 180, atkCd: 1.4, dmg: 4, temp: 0.6, commit: 0.5, xp: 6, coins: [1, 3], cost: 2, pack: [2, 3], attackAnim: 'draw', radiance: 12, res: { radiance: 0 } },
+    range: 260, keep: 180, atkCd: 1.4, dmg: 4, temp: 0.6, commit: 0.5, xp: 6, coins: [1, 3], attackAnim: 'draw', radiance: 12, res: { radiance: 0 } },
   angel: { ...FOE, name: 'Angel', art: ART('angel'), headR: 56, r: 31, vr: 23, hp: 80, speed: 60, role: 'melee', range: 40, atkCd: 1.3, windup: 0.25, dmg: 10, knock: 150, arc: 0.9,
-    xp: 16, coins: [3, 7], cost: 5, attackAnim: 'thrust', ability: 'dash', abilCd: 4.5, radiance: 22, res: { radiance: 0 } },
+    xp: 16, coins: [3, 7], attackAnim: 'thrust', ability: 'dash', abilCd: 4.5, radiance: 22, res: { radiance: 0 } },
   seraph: { ...FOE, name: 'Seraph', art: 'art/enemies/seraph.svg', headR: 56, r: 31, vr: 23, hp: 60, speed: 52, role: 'ranged', range: 280, keep: 200, atkCd: 1.5, dmg: 7,
-    proj: 'bolt', projColor: '#FFF1B0', xp: 16, coins: [3, 7], cost: 5, attackAnim: 'cast', radiance: 20, res: { radiance: 0 } },
+    proj: 'bolt', projColor: '#FFF1B0', xp: 16, coins: [3, 7], attackAnim: 'cast', radiance: 20, res: { radiance: 0 } },
 
   // ---- wardens (floors 1 and 2) and bosses (floor 3): powered-up stand-ins
   broodQueen: { ...FOE, name: 'Brood Queen', art: ART('spider-momma'), headR: 58, r: 50, vr: 38, turn: 2.6, accel: 160, face: 2.6, mass: 4.5, hp: 400, speed: 44, role: 'melee',

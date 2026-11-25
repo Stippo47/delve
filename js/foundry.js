@@ -256,61 +256,61 @@ const DRILL = { up: [3, 4.5], under: [1.2, 2], near: 40, r: 64, tell: 0.6, hit: 
   then: (w, u) => { if (u.elite) for (let i = 0; i < 6; i++) shoot(w, u, i / 6 * TAU, { kind: 'bolt', color: '#C9CED6', speed: 320, dmg: 4, r: 6, life: 0.6, hitO: { knock: 60 } }); } };
 
 // ---------------------------------------------------------------- the kinds
-const TURRET = { ...FOE, headR: 60, r: 26, vr: 22, turn: 0, accel: 0, face: 0, mass: 99, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 6, xp: 9, coins: [1, 4], cost: 3.5,
+const TURRET = { ...FOE, headR: 60, r: 26, vr: 22, turn: 0, accel: 0, face: 0, mass: 99, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 6, xp: 9, coins: [1, 4],
   noCorpse: true, construct: true, goo: '#8A8F96', res: { ...MACHINE, stagger: 0 }, brain: turretBrain };
 const turretArt = (spec) => variantUrl('art/enemies/mimic.svg', spec); // (unused since art round 9: every turret has its own art)
 // the fire and gas mortars: the mortar with its brass trim turned red and green (art round 9)
 const mortarArt = (hue, light) => variantUrl('art/enemies/mortar.svg', { accent: { from: 40, range: 30, hue, sat: hue < 30 ? 1.25 : 1, light } });
 const BEE = { ...FOE, art: 'art/enemies/bee.svg', headR: 56, r: 15, vr: 12, turn: 8, accel: 520, face: 8, mass: 0.35, hp: 14, speed: 86,
-  role: 'skirmish', range: 10, atkCd: 0.8, dmg: 5, arc: 1.4, temp: 0.6, commit: 0.4, xp: 4, coins: [0, 2], cost: 1.2, pack: [3, 5], attackAnim: 'thrust', construct: true,
+  role: 'skirmish', range: 10, atkCd: 0.8, dmg: 5, arc: 1.4, temp: 0.6, commit: 0.4, xp: 4, coins: [0, 2], attackAnim: 'thrust', construct: true,
   noCorpse: true, goo: '#C9A46A', res: MACHINE, brain: beeBrain };
 // copper, bronze, steel: each more health and harm than the last
-const METAL = { Copper: { hue: 0, sat: 1, light: 0, hp: 1, dmg: 1, xp: 1, cost: 1 }, Bronze: { hue: 18, sat: 0.6, light: -0.08, hp: 1.6, dmg: 1.3, xp: 1.4, cost: 1.4 },
-  Steel: { hue: 190, sat: 0.25, light: 0.08, hp: 2.4, dmg: 1.7, xp: 1.9, cost: 1.9 } };
-const metal = (base, M, name) => { const m = METAL[M], d = base; return { variantOf: d.id, name: `${M} ${name}`, hue: m.hue, sat: m.sat, light: m.light, hp: Math.round(d.hp * m.hp), dmg: +(d.dmg * m.dmg).toFixed(1), xp: Math.round(d.xp * m.xp), cost: +(d.cost * m.cost).toFixed(1) }; };
+const METAL = { Copper: { hue: 0, sat: 1, light: 0, hp: 1, dmg: 1, xp: 1 }, Bronze: { hue: 18, sat: 0.6, light: -0.08, hp: 1.6, dmg: 1.3, xp: 1.4 },
+  Steel: { hue: 190, sat: 0.25, light: 0.08, hp: 2.4, dmg: 1.7, xp: 1.9 } };
+const metal = (base, M, name) => { const m = METAL[M], d = base; return { variantOf: d.id, name: `${M} ${name}`, hue: m.hue, sat: m.sat, light: m.light, hp: Math.round(d.hp * m.hp), dmg: +(d.dmg * m.dmg).toFixed(1), xp: Math.round(d.xp * m.xp) }; }; // (its cost and pack: prices.js, round 17)
 const BASES = {
   bee: { ...BEE, id: 'bee', name: 'Copper Bee' },
-  wasp: { ...BEE, id: 'wasp', name: 'Copper Wasp', wasp: true, art: 'art/enemies/wasp.svg', headR: 58, hp: 18, speed: 80, role: 'ranged', range: 200, keep: 150, atkCd: 999, dmg: 5, xp: 5, cost: 1.6, pack: [2, 3], brain: waspBrain },
-  hornet: { ...BEE, id: 'hornet', name: 'Copper Hornet', wasp: true, hornet: true, art: 'art/enemies/hornet.svg', headR: 62, r: 19, vr: 15, hp: 26, speed: 80, role: 'ranged', range: 200, keep: 150, atkCd: 999, dmg: 6, xp: 8, cost: 2.6, pack: [1, 2], brain: waspBrain },
+  wasp: { ...BEE, id: 'wasp', name: 'Copper Wasp', wasp: true, art: 'art/enemies/wasp.svg', headR: 58, hp: 18, speed: 80, role: 'ranged', range: 200, keep: 150, atkCd: 999, dmg: 5, xp: 5, brain: waspBrain },
+  hornet: { ...BEE, id: 'hornet', name: 'Copper Hornet', wasp: true, hornet: true, art: 'art/enemies/hornet.svg', headR: 62, r: 19, vr: 15, hp: 26, speed: 80, role: 'ranged', range: 200, keep: 150, atkCd: 999, dmg: 6, xp: 8, brain: waspBrain },
 };
 export const FOUNDRY = {
   gearSprite: { variantOf: 'slimeSmall', name: 'Gear Sprite', art: 'art/enemies/gear-sprite.svg', headR: 65, r: 20, vr: 18, mass: 1, hp: 30, speed: 92, dmg: 6, atkCd: 999, hops: null,
-    xp: 6, coins: [1, 3], cost: 2, pack: [1, 2], pass: true, construct: true, noCorpse: true, goo: '#8A8F96', res: MACHINE, brain: gearBrain },
-  cogSprite: { variantOf: 'gearSprite', name: 'Cog Sprite', art: 'art/enemies/cog-sprite.svg', homes: true, hp: 36, xp: 7, cost: 2.4 },
+    xp: 6, coins: [1, 3], pass: true, construct: true, noCorpse: true, goo: '#8A8F96', res: MACHINE, brain: gearBrain },
+  cogSprite: { variantOf: 'gearSprite', name: 'Cog Sprite', art: 'art/enemies/cog-sprite.svg', homes: true, hp: 36, xp: 7 },
   bombBot: { ...FOE, name: 'Bomb Bot', art: 'art/enemies/bomb-bot.svg', headR: 45, r: 22, vr: 19, turn: 5, accel: 300, face: 5, mass: 0.8,
-    hp: 26, speed: 68, role: 'melee', range: 10, atkCd: 999, dmg: 0, temp: 0.4, commit: 1, xp: 6, coins: [1, 3], cost: 2.5, pack: [1, 2], construct: true, noCorpse: true, goo: '#8A8F96',
+    hp: 26, speed: 68, role: 'melee', range: 10, atkCd: 999, dmg: 0, temp: 0.4, commit: 1, xp: 6, coins: [1, 3], construct: true, noCorpse: true, goo: '#8A8F96',
     res: { ...MACHINE, burn: 1.5 }, brain: bombBrain },
-  autoBomb: { variantOf: 'bombBot', name: 'Auto Bomb Bot', hue: 200, sat: 0.6, light: -0.02, auto: true, hp: 34, xp: 8, cost: 3 },
+  autoBomb: { variantOf: 'bombBot', name: 'Auto Bomb Bot', hue: 200, sat: 0.6, light: -0.02, auto: true, hp: 34, xp: 8 },
   automaton: { ...FOE, name: 'Automaton', art: 'art/enemies/automaton.svg', headR: 54, r: 33, vr: 24, turn: 4, accel: 240, face: 4, mass: 2,
-    hp: 96, speed: 54, role: 'melee', range: 26, atkCd: 0.9, windup: 0.25, dmg: 11, knock: 170, arc: 1.8, heavy: true, temp: 0.3, commit: 1.1, xp: 18, coins: [3, 7], cost: 6,
+    hp: 96, speed: 54, role: 'melee', range: 26, atkCd: 0.9, windup: 0.25, dmg: 11, knock: 170, arc: 1.8, heavy: true, temp: 0.3, commit: 1.1, xp: 18, coins: [3, 7],
     attackAnim: 'swing', construct: true, goo: '#C9A46A', res: MACHINE, brain: autoBrain },
   turretSteam: { ...TURRET, name: 'Steam Turret', art: 'art/enemies/turret-steam.svg', hp: 70, turret: { turn: 0.7, cd: 1.6, aim: 0.15, range: 520, fire: steamShot } },
   turretFlame: { ...TURRET, name: 'Flame Turret', art: 'art/enemies/turret-flame.svg', hp: 70, res: { ...TURRET.res, burn: 0 }, turret: { turn: 0.9, cd: 2.4, aim: 0.2, range: 230, fire: flameShot } },
   turretGun: { ...TURRET, name: 'Gun Turret', art: 'art/enemies/turret-gun.svg', hp: 60, turret: { wall: true, arc: 1.1, turn: 1.0, cd: 2.4, aim: 0.2, range: 560, fire: gunShot } },
-  turretLaser: { ...TURRET, name: 'Laser Turret', art: 'art/enemies/turret-laser.svg', hp: 64, cost: 4, turret: { wall: true, arc: 1.2, turn: 0.45, cd: 4.2, aim: 0.12, range: 760, fire: laserShot } },
-  mortar: { ...TURRET, name: 'Mortar', art: 'art/enemies/mortar.svg', hp: 72, cost: 4, turret: { turn: 1.2, cd: 3.4, aim: 0.6, range: 620, fire: shell('') } },
-  mortarFire: { ...TURRET, name: 'Fire Mortar', art: mortarArt(8, -0.04), hp: 72, cost: 4.5, res: { ...TURRET.res, burn: 0 }, turret: { turn: 1.2, cd: 3.6, aim: 0.6, range: 620, fire: shell('fire') } },
-  mortarPoison: { ...TURRET, name: 'Gas Mortar', art: mortarArt(95, -0.06), hp: 72, cost: 4.5, turret: { turn: 1.2, cd: 3.6, aim: 0.6, range: 620, fire: shell('poison') } },
-  teslaCoil: { ...TURRET, name: 'Tesla Coil', art: 'art/enemies/tesla-coil.svg', headR: 52, r: 24, vr: 20, hp: 80, cost: 4.5, res: { ...MACHINE, shock: 0, stagger: 0 }, turret: null, brain: teslaBrain },
+  turretLaser: { ...TURRET, name: 'Laser Turret', art: 'art/enemies/turret-laser.svg', hp: 64, turret: { wall: true, arc: 1.2, turn: 0.45, cd: 4.2, aim: 0.12, range: 760, fire: laserShot } },
+  mortar: { ...TURRET, name: 'Mortar', art: 'art/enemies/mortar.svg', hp: 72, turret: { turn: 1.2, cd: 3.4, aim: 0.6, range: 620, fire: shell('') } },
+  mortarFire: { ...TURRET, name: 'Fire Mortar', art: mortarArt(8, -0.04), hp: 72, res: { ...TURRET.res, burn: 0 }, turret: { turn: 1.2, cd: 3.6, aim: 0.6, range: 620, fire: shell('fire') } },
+  mortarPoison: { ...TURRET, name: 'Gas Mortar', art: mortarArt(95, -0.06), hp: 72, turret: { turn: 1.2, cd: 3.6, aim: 0.6, range: 620, fire: shell('poison') } },
+  teslaCoil: { ...TURRET, name: 'Tesla Coil', art: 'art/enemies/tesla-coil.svg', headR: 52, r: 24, vr: 20, hp: 80, res: { ...MACHINE, shock: 0, stagger: 0 }, turret: null, brain: teslaBrain },
   repairDrone: { ...FOE, name: 'Repair Drone', art: 'art/enemies/repair-drone.svg', mends: true, headR: 55, r: 18, vr: 15, turn: 6, accel: 300, face: 6, mass: 0.4,
-    hp: 30, speed: 62, role: 'ranged', range: 240, keep: 220, atkCd: 999, dmg: 0, temp: 0.5, commit: 0.6, xp: 10, coins: [2, 4], cost: 3, construct: true, noCorpse: true, goo: '#8A8F96',
+    hp: 30, speed: 62, role: 'ranged', range: 240, keep: 220, atkCd: 999, dmg: 0, temp: 0.5, commit: 0.6, xp: 10, coins: [2, 4], construct: true, noCorpse: true, goo: '#8A8F96',
     res: MACHINE, brain: droneBrain },
   foundrySmith: { ...FOE, name: 'Foundry Smith', art: 'art/enemies/smith.svg', headR: 66, r: 40, vr: 30, turn: 2.8, accel: 160, face: 2.8,
     mass: 2.8, hp: 160, speed: 42, role: 'melee', range: 28, atkCd: 1.9, windup: 0.55, dmg: 13, burn: 25, knock: 250, arc: 1.9, heavy: true, temp: 0.25, commit: 1.2, xp: 30, coins: [5, 10],
-    cost: 8, attackAnim: 'swing', res: { burn: 0, chill: 1.3 }, brain: smithBrain },
+    attackAnim: 'swing', res: { burn: 0, chill: 1.3 }, brain: smithBrain },
   ...BASES,
   beeBronze: metal(BASES.bee, 'Bronze', 'Bee'), beeSteel: metal(BASES.bee, 'Steel', 'Bee'),
   waspBronze: metal(BASES.wasp, 'Bronze', 'Wasp'), waspSteel: metal(BASES.wasp, 'Steel', 'Wasp'),
   hornetBronze: metal(BASES.hornet, 'Bronze', 'Hornet'), hornetSteel: metal(BASES.hornet, 'Steel', 'Hornet'),
   sawBlade: { variantOf: 'slimeSmall', name: 'Saw Blade', art: 'art/enemies/saw-blade.svg', headR: 67, r: 22, vr: 20, mass: 99, hp: 999, speed: 190, dmg: 8, atkCd: 999, hops: null,
-    xp: 0, coins: [0, 0], cost: 2.5, trap: true, pass: true, noElite: true, noCorpse: true, goo: '#C9CED6', brain: sawBrain },
+    xp: 0, coins: [0, 0], trap: true, pass: true, noElite: true, noCorpse: true, goo: '#C9CED6', brain: sawBrain },
   chainCrawler: { ...FOE, name: 'Chain Crawler', art: 'art/enemies/crawler-head.svg', headR: 40, r: 30, vr: 23, turn: 3.2, accel: 260, face: 4, mass: 2.4,
-    hp: 190, speed: 62, role: 'melee', range: 18, atkCd: 1.1, windup: 0.2, dmg: 11, knock: 150, arc: 1.4, temp: 0.4, commit: 1, xp: 32, coins: [5, 10], cost: 8, attackAnim: 'thrust',
+    hp: 190, speed: 62, role: 'melee', range: 18, atkCd: 1.1, windup: 0.2, dmg: 11, knock: 150, arc: 1.4, temp: 0.4, commit: 1, xp: 32, coins: [5, 10], attackAnim: 'thrust',
     construct: true, chain: { n: 8, seg: 'crawlerPlate', gap: 28, taper: 0.6 }, res: MACHINE, brain: crawlerBrain, onDeath: killChain },
   crawlerPlate: { variantOf: 'slimeSmall', name: 'Crawler Plate', art: 'art/enemies/crawler-plate.svg', headR: 46, r: 26, vr: 22, mass: 2, hp: 999, speed: 0, atkCd: 999, dmg: 0, hops: null,
     xp: 0, coins: [0, 0], cost: 99, noCorpse: true, noElite: true, segment: true, touchDmg: 5, segTaken: 0.6, construct: true, goo: '#8A8F96', brain: segBrain },
   drillBot: { ...FOE, name: 'Drill Bot', art: 'art/enemies/drill-bot.svg', headR: 49, r: 24, vr: 20, turn: 6, accel: 320, face: 6, mass: 1.2,
-    hp: 48, speed: 66, role: 'skirmish', range: 14, atkCd: 1.0, dmg: 7, arc: 1.6, temp: 0.5, commit: 0.6, xp: 10, coins: [2, 4], cost: 3.5, attackAnim: 'thrust', construct: true,
+    hp: 48, speed: 66, role: 'skirmish', range: 14, atkCd: 1.0, dmg: 7, arc: 1.6, temp: 0.5, commit: 0.6, xp: 10, coins: [2, 4], attackAnim: 'thrust', construct: true,
     noCorpse: true, goo: '#8A8F96', res: MACHINE, brain: (w, u, dt) => hold(u, dt) || burrowTick(w, u, dt, DRILL) },
   spiritShock: { ...spirit('shock', 'Storm Spirit', { hue: 15, sat: 1.4, light: 0.2 }, { shock: 0 }), art: 'art/enemies/spirit-core-shock.svg', portrait: 'art/enemies/spirit-shock.svg', headR: 30, tail: ['#FFF29A', '#E0A82A'] }, // art round 9
 };

@@ -16,7 +16,7 @@ const SPLIT = {
   wolf: 0.3, // the designer: the wolf maybe too little damage
 };
 const MIN_HELPER = 1; // (below this a helper would come by the handful; what's left is for its moves, not its price)
-const BAND = [0.9, 1.1], LO = 0.3, HI = 3.2, SKIP = new Set(['sawBlade']); // (a trap: battle mode can't measure it)
+const BAND = [+(opt('band') || '0.9,1.1').split(',')[0], +(opt('band') || '0.9,1.1').split(',')[1]], LO = 0.3, HI = 3.2, SKIP = new Set(['sawBlade']); // (a trap: battle mode can't measure it)
 const r2 = (x) => Math.round(x * 100) / 100;
 
 let cur = {};

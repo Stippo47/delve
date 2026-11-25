@@ -282,43 +282,43 @@ function wispBrain(w, u, dt) {
 
 // ---------------------------------------------------------------- the kinds
 const WOLF = { ...BEAST, wolf: true, art: ART('wolf'), headR: 35, r: 24, vr: 18, turn: 7, accel: 420, face: 7, mass: 0.9, hp: 26, speed: 84, role: 'skirmish',
-  range: 14, atkCd: 1.0, dmg: 5, arc: 1.4, temp: 0.6, commit: 0.5, xp: 7, coins: [1, 3], cost: 2, pack: [2, 3], attackAnim: 'thrust', brain: wolfBrain };
+  range: 14, atkCd: 1.0, dmg: 5, arc: 1.4, temp: 0.6, commit: 0.5, xp: 7, coins: [1, 3], attackAnim: 'thrust', brain: wolfBrain };
 const BANDIT = { ...HUMAN, art: ART('bandit'), r: 30, vr: 22, turn: 4, accel: 240, face: 4, mass: 1.3, hp: 52, speed: 56, role: 'melee', range: 22,
-  atkCd: 1.3, windup: 0.3, dmg: 9, knock: 130, arc: 1.6, xp: 11, coins: [2, 6], cost: 3, attackAnim: 'swing' };
+  atkCd: 1.3, windup: 0.3, dmg: 9, knock: 130, arc: 1.6, xp: 11, coins: [2, 6], attackAnim: 'swing' };
 export const WILDWOOD = {
   wolf: { ...WOLF, name: 'Wolf' },
-  direWolf: { variantOf: 'wolf', name: 'Dire Wolf', art: ART('dire-wolf'), size: 1.25, hp: 62, dmg: 9, speed: 80, xp: 14, coins: [2, 5], cost: 4, pack: [1, 2],
+  direWolf: { variantOf: 'wolf', name: 'Dire Wolf', art: ART('dire-wolf'), size: 1.25, hp: 62, dmg: 9, speed: 80, xp: 14, coins: [2, 5],
     brain: (w, u, dt) => pinPounce(w, u, dt, { min: 150, max: 360, every: [4.5, 6], r: 50, dmg: 11, pin: u.elite ? 1.6 : 1, maul: u.elite }) || wolfBrain(w, u, dt) },
-  slimeBig: { variantOf: 'slime', name: 'Big Slime', size: 1.6, light: -0.1, sat: 1.1, hp: 112, speed: 34, dmg: 11, knock: 150, xp: 16, coins: [3, 6], cost: 5,
+  slimeBig: { variantOf: 'slime', name: 'Big Slime', size: 1.6, light: -0.1, sat: 1.1, hp: 112, speed: 34, dmg: 11, knock: 150, xp: 16, coins: [3, 6],
     splitsInto: 'slime', hops: 1.5, brain: bigSlimeBrain },
-  slimePoison: { variantOf: 'slime', name: 'Poison Slime', hue: -125, sat: 1.15, light: 0.02, hp: 50, poison: 18, xp: 10, cost: 3, goo: '#A6E04A',
+  slimePoison: { variantOf: 'slime', name: 'Poison Slime', hue: -125, sat: 1.15, light: 0.02, hp: 50, poison: 18, xp: 10, goo: '#A6E04A',
     res: { poison: 0 }, splitsInto: 'slimeletPoison',
     onSplit: (w, u) => w.hazards.push({ type: 'gas', x: u.x, y: u.y, r: 58, t: 4, max: 4 }) },
   slimeletPoison: { variantOf: 'slimeSmall', name: 'Poison Slimelet', hue: -125, sat: 1.15, light: 0.02, poison: 10, goo: '#A6E04A', res: { poison: 0 } },
-  goblinOrange: { variantOf: 'goblin', name: 'Orange Goblin', hue: -72, sat: 1.15, light: 0.03, speed: 129, temp: 0.9, commit: 0.25, xp: 7, cost: 2, brain: weaveBrain },
+  goblinOrange: { variantOf: 'goblin', name: 'Orange Goblin', hue: -72, sat: 1.15, light: 0.03, speed: 129, temp: 0.9, commit: 0.25, xp: 7, brain: weaveBrain },
   // bandits: sword and shield, and five more weapons (the designer's list); the same placeholder art, recoloured
   bandit: { ...BANDIT, name: 'Bandit', shield: 0.5, brain: shieldBash },
   banditTorch: { variantOf: 'bandit', name: 'Torch Bandit', art: ART('bandit-torch'), shield: 0, burn: 10, brain: torchSweep },
   banditGreat: { variantOf: 'bandit', name: 'Greatsword Bandit', art: ART('bandit-greatsword'), shield: 0, hp: 70, speed: 48, dmg: 16, windup: 0.6,
-    range: 34, arc: 2.6, knock: 230, heavy: true, atkCd: 2.0, xp: 15, cost: 4, brain: greatSweep },
-  banditAxe: { variantOf: 'bandit', name: 'Axe Bandit', art: ART('bandit-axe'), shield: 0, dmg: 12, stagger: 20, windup: 0.45, heavy: true, xp: 13, cost: 4, brain: axeThrow },
+    range: 34, arc: 2.6, knock: 230, heavy: true, atkCd: 2.0, xp: 15, brain: greatSweep },
+  banditAxe: { variantOf: 'bandit', name: 'Axe Bandit', art: ART('bandit-axe'), shield: 0, dmg: 12, stagger: 20, windup: 0.45, heavy: true, xp: 13, brain: axeThrow },
   banditSpear: { variantOf: 'bandit', name: 'Spear Bandit', art: ART('bandit-spear'), shield: 0, range: 46, arc: 0.8, attackAnim: 'thrust',
     dmg: 10, xp: 12, brain: spearLunge },
   banditDagger: { variantOf: 'bandit', name: 'Knife Bandit', art: ART('bandit-daggers'), shield: 0, role: 'skirmish', hp: 40, speed: 80, dmg: 5, atkCd: 0.55, windup: 0,
     range: 14, poison: 8, temp: 0.6, commit: 0.4, attackAnim: 'thrust', ability: 'dash', abilCd: 3.2, brain: null },
   poacher: { ...HUMAN, name: 'Poacher', art: ART('poacher'), r: 30, vr: 22, hp: 44, speed: 54, role: 'ranged', range: 260, keep: 190, atkCd: 1.6, dmg: 7,
-    attackAnim: 'draw', xp: 13, coins: [2, 6], cost: 4, brain: poacherBrain },
+    attackAnim: 'draw', xp: 13, coins: [2, 6], brain: poacherBrain },
   banditBrute: { ...HUMAN, name: 'Bandit Brute', art: ART('bandit-brute'), headR: 64, r: 40, vr: 30, mass: 2.8, turn: 2.8, face: 2.8, hp: 150, speed: 42, role: 'melee',
-    range: 28, atkCd: 1.9, windup: 0.6, dmg: 15, knock: 260, arc: 1.9, heavy: true, temp: 0.25, commit: 1.2, xp: 28, coins: [5, 10], cost: 7, attackAnim: 'swing', brain: bruteSlam },
+    range: 28, atkCd: 1.9, windup: 0.6, dmg: 15, knock: 260, arc: 1.9, heavy: true, temp: 0.25, commit: 1.2, xp: 28, coins: [5, 10], attackAnim: 'swing', brain: bruteSlam },
   boar: { ...BEAST, name: 'Thornback Boar', art: ART('boar'), headR: 41, r: 32, vr: 25, turn: 3.6, accel: 260, face: 3.6, mass: 2.2, hp: 88, speed: 60, role: 'melee',
-    range: 18, atkCd: 1.4, windup: 0.25, dmg: 10, knock: 180, arc: 1.4, temp: 0.3, commit: 1, xp: 18, coins: [3, 7], cost: 5, attackAnim: 'thrust', brain: boarBrain },
+    range: 18, atkCd: 1.4, windup: 0.25, dmg: 10, knock: 180, arc: 1.4, temp: 0.3, commit: 1, xp: 18, coins: [3, 7], attackAnim: 'thrust', brain: boarBrain },
   sproutling: { ...FOE, name: 'Sproutling', art: ART('sproutling'), headR: 34, r: 20, vr: 15, turn: 6, accel: 380, face: 6,
-    mass: 0.6, hp: 20, speed: 68, role: 'melee', range: 60, atkCd: 999, dmg: 5, xp: 4, coins: [0, 2], cost: 1.5, pack: [3, 4], res: { burn: 1.6 }, brain: sproutBrain },
+    mass: 0.6, hp: 20, speed: 68, role: 'melee', range: 60, atkCd: 999, dmg: 5, xp: 4, coins: [0, 2], res: { burn: 1.6 }, brain: sproutBrain },
   ent: { ...FOE, name: 'Ent', art: ART('ent'), headR: 59, r: 46, vr: 34, turn: 2, accel: 110, face: 2,
     mass: 4, hp: 220, speed: 30, role: 'melee', range: 32, atkCd: 2.0, windup: 0.7, dmg: 15, knock: 240, arc: 2.2, heavy: true, temp: 0.2, commit: 1.4, xp: 36, coins: [6, 12],
-    cost: 9, attackAnim: 'swing', res: { burn: 1.8, entangle: 0 }, brain: entBrain },
+    attackAnim: 'swing', res: { burn: 1.8, entangle: 0 }, brain: entBrain },
   wisp: { ...FOE, name: 'Wisp', art: ART('wisp'), headR: 34, r: 20, vr: 16, turn: 6, accel: 300, face: 6,
-    mass: 0.4, hp: 26, speed: 62, role: 'ranged', range: 240, keep: 210, atkCd: 999, dmg: 0, temp: 0.5, commit: 0.6, xp: 9, coins: [1, 4], cost: 3, noCorpse: true, goo: '#E6FFAA',
+    mass: 0.4, hp: 26, speed: 62, role: 'ranged', range: 240, keep: 210, atkCd: 999, dmg: 0, temp: 0.5, commit: 0.6, xp: 9, coins: [1, 4], noCorpse: true, goo: '#E6FFAA',
     res: { poison: 0, curse: 0 }, brain: wispBrain },
 
   // ---- the mini-bosses

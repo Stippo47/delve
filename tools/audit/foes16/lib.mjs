@@ -39,8 +39,9 @@ export function leftOf(run, side) {
   return max ? Math.min(1, hp / max) : 0;
 }
 // One battle. setup: newBattle's. o.onFrame(run) each frame; o.tMax.
+const SEED_OFF = +opt('seedoff', 0); // (--seedoff N: the same batches on other dice, to check a result isn't the seeds')
 export function fight(setup, seed, o = {}) {
-  setSeed(seed); AUDIT.idFrom = 1;
+  setSeed(seed + SEED_OFF); AUDIT.idFrom = 1;
   const run = B.newBattle(SAVE, { size: 'l', scaled: false, ...setup });
   if (o.prep) o.prep(run);
   const tMax = o.tMax || TIME_LIMIT, w = run.world;

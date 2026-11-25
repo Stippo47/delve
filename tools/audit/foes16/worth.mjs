@@ -17,7 +17,7 @@
 //           kind it helps (HELPERS).
 //   mixD    the partner with about 3 of its points swapped for 3 of this kind, against the partner alone: from the
 //           square law, its worth w per point satisfies strength ratio = ((a cP + w m c) / (b cP))^2.
-// worth: the geometric mean of panel and duel (the duel capped at 1.6); for the helpers (kinds that do no damage
+// worth: the geometric mean of panel and duel (the duel capped at 1.6, mixD too); for the helpers (kinds that do no damage
 // themselves: spirits, the Wisp, the Drummer, the Choir Sprite, the Repair Drone, the Brain Leech), of mixP and mixD,
 // times the partner's own worth.
 // The panel's toll is a geometric mean over the four heroes (each +5), so one matchup can't swamp it.
@@ -108,7 +108,7 @@ export function measure(k) {
   out.mixP = r2(((tX - M.t0) / Math.max(1, M.t1 - M.t0)) * (M.dn * M.cP / mc));
   const a = M.nP - M.dn, dm = duel(arena, [...stacks(M.P, a), ...stacks(k, m)], stacks(M.P, M.nP), seed + 9);
   out.mixD = r2(Math.max(0.01, (M.nP * M.cP * Math.sqrt(dm.ratio) - a * M.cP) / mc));
-  out.worth = r2(out.helper ? gmean([Math.max(0.05, out.mixP), out.mixD]) : gmean([out.panel, Math.min(DUEL_CAP, out.duel)]));
+  out.worth = r2(out.helper ? gmean([Math.max(0.05, out.mixP), Math.min(DUEL_CAP, out.mixD)]) : gmean([out.panel, Math.min(DUEL_CAP, out.duel)]));
   return out;
 }
 

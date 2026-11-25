@@ -1,8 +1,8 @@
 // Extra enemy kinds (merged into DEFS by units.js). Same fields as the enemies in units.js, plus `art` (the
-// sprite file, built in parts), `headR` (the head's radius inside the 220 box, for sizing the art), `cost` (what one
-// is worth when a room's enemy budget is spent; see dungeon.js), `pack` ([min, max]: small things come in groups)
-// and optionally `brain(w, u, dt)` for behaviour of their own (return true to skip the usual brain that tick).
-// Dungeon themes pick from these (see js/themes.js). Brains stay simple: one habit each (designer, round 1 + 4).
+// sprite file, built in parts), `headR` (the head's radius inside the 220 box, for sizing the art) and optionally
+// `brain(w, u, dt)` for behaviour of their own (return true to skip the usual brain that tick). What each costs from a
+// room's budget and how many come together: js/prices.js (round 17). Dungeon themes pick from these (see js/themes.js).
+// Brains stay simple: one habit each (designer, round 1 + 4).
 import { alive, opponents, hurt, puff, goalVec, steer, drive, blocked, setAnim, addDanger, explode, sparks, spawn, addStatus, kill } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange, chance } from './util.js';
 import { BOSSES } from './boss.js';
@@ -212,44 +212,44 @@ export function courtFalls(w) { for (const o of w.units) if (o.court && alive(o)
 export const ENEMIES = {
   // the crypt's dead (art: art/enemies, round 3/4 picks)
   rattler: { ...SKELETON, name: 'Rattler', art: 'art/enemies/rattler.svg', r: 33, vr: 24, hp: 50, speed: 52, role: 'melee',
-    range: 22, atkCd: 1.4, windup: 0.4, dmg: 10, knock: 120, arc: 1.7, xp: 10, coins: [2, 5], cost: 3, attackAnim: 'swing' },
+    range: 22, atkCd: 1.4, windup: 0.4, dmg: 10, knock: 120, arc: 1.7, xp: 10, coins: [2, 5], attackAnim: 'swing' },
   rattlerBow: { ...SKELETON, name: 'Bone Archer', art: 'art/enemies/rattler-jawless-bow.svg', r: 31, vr: 23, hp: 36, speed: 50, role: 'ranged',
-    range: 250, keep: 160, atkCd: 1.7, dmg: 7, xp: 10, coins: [2, 5], cost: 3, attackAnim: 'draw', temp: 0.35 },
+    range: 250, keep: 160, atkCd: 1.7, dmg: 7, xp: 10, coins: [2, 5], attackAnim: 'draw', temp: 0.35 },
   rattlerSpear: { ...SKELETON, name: 'Bone Spear', art: 'art/enemies/rattler-jawless-spear.svg', r: 32, vr: 23, hp: 46, speed: 50, role: 'melee',
-    range: 46, atkCd: 1.6, windup: 0.35, dmg: 11, knock: 140, arc: 0.8, xp: 11, coins: [2, 5], cost: 3, attackAnim: 'thrust',
+    range: 46, atkCd: 1.6, windup: 0.35, dmg: 11, knock: 140, arc: 0.8, xp: 11, coins: [2, 5], attackAnim: 'thrust',
     ability: 'dash', abilCd: 4.5 }, // lunges in behind the spear
   rattlerMace: { ...SKELETON, name: 'Loose Jaw', art: 'art/enemies/rattler-loosejaw.svg', r: 34, vr: 24, hp: 60, speed: 46, role: 'melee',
-    range: 22, atkCd: 1.8, windup: 0.55, dmg: 14, knock: 210, arc: 1.6, heavy: true, xp: 12, coins: [2, 6], cost: 4, attackAnim: 'swing' },
+    range: 22, atkCd: 1.8, windup: 0.55, dmg: 14, knock: 210, arc: 1.6, heavy: true, xp: 12, coins: [2, 6], attackAnim: 'swing' },
   gaper: { ...SKELETON, name: 'Gaper', art: 'art/enemies/gaper.svg', r: 38, vr: 31, mass: 1.6, hp: 90, speed: 54, role: 'melee',
-    range: 26, atkCd: 1.3, windup: 0.3, dmg: 11, knock: 130, arc: 2.4, xp: 20, coins: [4, 8], cost: 6, attackAnim: 'swing', brain: gaperBrain },
+    range: 26, atkCd: 1.3, windup: 0.3, dmg: 11, knock: 130, arc: 2.4, xp: 20, coins: [4, 8], attackAnim: 'swing', brain: gaperBrain },
   brute: { ...SKELETON, name: 'Brute', art: 'art/enemies/brute.svg', r: 40, vr: 28, mass: 2.6, turn: 2.6, face: 2.6, hp: 140, speed: 44, role: 'melee',
-    range: 24, atkCd: 1.9, windup: 0.55, dmg: 17, knock: 230, arc: 1.8, heavy: true, xp: 26, coins: [5, 10], cost: 7, attackAnim: 'swing', brain: bruteBrain },
+    range: 24, atkCd: 1.9, windup: 0.55, dmg: 17, knock: 230, arc: 1.8, heavy: true, xp: 26, coins: [5, 10], attackAnim: 'swing', brain: bruteBrain },
   ghost: { team: 'enemy', name: 'Ghost', art: 'art/enemies/ghost.svg', headR: 58, r: 28, vr: 22, turn: 4, accel: 160, face: 4, mass: 0.6, hp: 40, speed: 64,
-    role: 'melee', range: 14, atkCd: 999, touchCd: 1.3, touchDmg: 6, dmg: 6, arc: 2, temp: 0.5, commit: 0.8, xp: 12, coins: [2, 5], cost: 3,
+    role: 'melee', range: 14, atkCd: 999, touchCd: 1.3, touchDmg: 6, dmg: 6, arc: 2, temp: 0.5, commit: 0.8, xp: 12, coins: [2, 5],
     res: { poison: 0, burn: 1.3, chill: 0.2, curse: 0 }, brain: ghostBrain },
   // the sewers (rats and slimes are in units.js)
   lizardman: { team: 'enemy', name: 'Lizardman', art: 'art/enemies/lizardman.svg', headR: 56, r: 32, vr: 23, turn: 4, accel: 220, face: 4, mass: 1.4,
     hp: 64, speed: 58, role: 'melee', range: 40, atkCd: 1.4, windup: 0.3, dmg: 10, knock: 120, arc: 0.9, temp: 0.35, commit: 0.9, xp: 14, coins: [3, 6],
-    cost: 5, attackAnim: 'thrust', res: { burn: 0.8, chill: 1.4 }, brain: (w, u, dt) => tailSpin(w, u, dt) },
+    attackAnim: 'thrust', res: { burn: 0.8, chill: 1.4 }, brain: (w, u, dt) => tailSpin(w, u, dt) },
   lizardBlade: { team: 'enemy', name: 'Lizard Blade', art: 'art/enemies/lizardman-blade.svg', headR: 56, r: 31, vr: 23, turn: 6, accel: 360, face: 6, mass: 1.1,
-    hp: 52, speed: 72, role: 'skirmish', range: 16, atkCd: 0.85, dmg: 8, arc: 1.6, temp: 0.5, commit: 0.5, xp: 12, coins: [2, 5], cost: 3,
+    hp: 52, speed: 72, role: 'skirmish', range: 16, atkCd: 0.85, dmg: 8, arc: 1.6, temp: 0.5, commit: 0.5, xp: 12, coins: [2, 5],
     attackAnim: 'swing', ability: 'dash', abilCd: 3.4, res: { burn: 0.8, chill: 1.4 } },
   // the warren (art: round-5 greenskins, design/class-round5/enemies; headR = body half-width x vr / r, so the body fills the hit circle)
   goblin: { team: 'enemy', name: 'Goblin', art: 'art/enemies/goblin.svg', headR: 42, r: 22, vr: 16, turn: 8, accel: 480, face: 8, mass: 0.6, hp: 22, speed: 86,
-    role: 'skirmish', range: 12, atkCd: 0.8, dmg: 5, arc: 1.5, temp: 0.7, commit: 0.4, xp: 5, coins: [1, 3], cost: 2, pack: [2, 3],
+    role: 'skirmish', range: 12, atkCd: 0.8, dmg: 5, arc: 1.5, temp: 0.7, commit: 0.4, xp: 5, coins: [1, 3],
     attackAnim: 'thrust', ability: 'dash', abilCd: 3 },
   hobgoblin: { team: 'enemy', name: 'Hobgoblin', art: 'art/enemies/hobgoblin.svg', headR: 54, r: 31, vr: 22, turn: 3.6, accel: 200, face: 3.6, mass: 1.4,
     hp: 60, speed: 52, role: 'melee', range: 20, atkCd: 1.3, windup: 0.3, dmg: 8, knock: 110, arc: 1.5, shield: 0.4, temp: 0.3, commit: 1,
-    xp: 11, coins: [2, 5], cost: 3, attackAnim: 'swing' },
+    xp: 11, coins: [2, 5], attackAnim: 'swing' },
   orc: { team: 'enemy', name: 'Orc', art: 'art/enemies/orc.svg', headR: 62, r: 36, vr: 27, turn: 3, accel: 170, face: 3, mass: 1.9, hp: 90, speed: 50,
-    role: 'melee', range: 22, atkCd: 1.7, windup: 0.5, dmg: 14, knock: 190, arc: 1.8, heavy: true, temp: 0.3, commit: 1.1, xp: 18, coins: [3, 7], cost: 5, attackAnim: 'swing',
+    role: 'melee', range: 22, atkCd: 1.7, windup: 0.5, dmg: 14, knock: 190, arc: 1.8, heavy: true, temp: 0.3, commit: 1.1, xp: 18, coins: [3, 7], attackAnim: 'swing',
     ability: 'charge', abilCd: 9 }, // barrels into the party, bowling them aside
   orcShaman: { team: 'enemy', name: 'Orc Shaman', art: 'art/enemies/orc-shaman.svg', headR: 56, r: 33, vr: 25, turn: 3.4, accel: 180, face: 3.4, mass: 1.4,
-    hp: 60, speed: 48, role: 'ranged', range: 250, keep: 190, atkCd: 999, dmg: 5, temp: 0.4, commit: 0.9, xp: 16, coins: [3, 7], cost: 5, brain: shamanBrain },
+    hp: 60, speed: 48, role: 'ranged', range: 250, keep: 190, atkCd: 999, dmg: 5, temp: 0.4, commit: 0.9, xp: 16, coins: [3, 7], brain: shamanBrain },
   // art round 8 (the designer on the round-6 troll: "make like 2x bigger overall"): twice the archer across (it was 1.4x):
   // r 42 -> 60, vr 31 -> 44, mass 3 -> 6; its art holds the boulder (foes9.js) in both fists
   troll: { team: 'enemy', name: 'Troll', art: 'art/enemies/troll.svg', headR: 66, r: 54, vr: 40, /* art round 11, the picked head: "Make them slightly smaller keep boulder same size" (r 60 -> 54, vr 44 -> 40; the boulder keeps its own size: foes9.js BOULDER_R) */ turn: 2.6, accel: 150, face: 2.6, mass: 6, hp: 170, speed: 46,
-    role: 'melee', range: 30, atkCd: 1.7, windup: 0.45, dmg: 16, knock: 200, arc: 2.4, temp: 0.25, commit: 1.2, xp: 30, coins: [6, 12], cost: 8,
+    role: 'melee', range: 30, atkCd: 1.7, windup: 0.45, dmg: 16, knock: 200, arc: 2.4, temp: 0.25, commit: 1.2, xp: 30, coins: [6, 12],
     attackAnim: 'swing', res: { burn: 1.4 }, // round 9: "The base troll should also attack with a boulder. But its boulder has a health pool and can break" (foes9.js)
     brain: (w, u, dt) => { const busy = boulderBrain(w, u, dt); trollBrain(w, u, dt); return busy; }, onDeath: (w, u) => dropBoulder(w, u) },
 

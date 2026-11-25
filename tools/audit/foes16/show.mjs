@@ -1,6 +1,7 @@
 // Prints a worth file as a table: node tools/audit/foes16/show.mjs worth.json [previous.json] [--out-of 0.8,1.25]
 import { readFileSync } from 'node:fs';
-const [f, g] = process.argv.slice(2).filter((a) => !a.startsWith('--'));
+const oi0 = process.argv.indexOf('--out-of'), pos = process.argv.slice(2).filter((a, i) => !a.startsWith('--') && i + 2 !== oi0 + 1);
+const [f, g] = pos;
 const rows = JSON.parse(readFileSync(f, 'utf8')).rows, prev = g ? Object.fromEntries(JSON.parse(readFileSync(g, 'utf8')).rows.map((r) => [r.k, r])) : {};
 const oi = process.argv.indexOf('--out-of'), band = oi > 0 ? process.argv[oi + 1].split(',').map(Number) : null;
 let n = 0, inBand = 0;
