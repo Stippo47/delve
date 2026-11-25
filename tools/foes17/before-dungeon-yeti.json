@@ -1,0 +1,33 @@
+{
+ "fetch": {},
+ "fights": {},
+ "dungeon": {
+  "frost": {
+   "releases": 397,
+   "back": 325,
+   "quick": 279,
+   "lost": 0,
+   "broke": 45,
+   "mean": 3.6,
+   "p90": 8.4
+  },
+  "warren": {
+   "releases": 512,
+   "back": 374,
+   "quick": 336,
+   "lost": 0,
+   "broke": 80,
+   "mean": 2.1,
+   "p90": 6
+  },
+  "crypt": {
+   "releases": 491,
+   "back": 412,
+   "quick": 362,
+   "lost": 0,
+   "broke": 42,
+   "mean": 3.1,
+   "p90": 7.4
+  }
+ }
+}
