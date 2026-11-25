@@ -89,6 +89,8 @@ export const BEASTS = {
     habit: 'A mini-boss. Calls the pack, howls them faster, pounces and pins, rends up close.' },
   banditChief: { fun: 'Runs the camp, the road and the protection racket. Mostly runs, when it suits him.',
     habit: 'A mini-boss. Whistles up his gang or a wolf, throws knives in a fan, and vanishes in smoke to come out elsewhere.' },
+  ikSpider: { fun: 'Nobody has seen where it sleeps. Its body never touches the floor if it can help it: six stilts do the walking, and the stamping.',
+    habit: 'Carried high on six legs: up there only shots reach it, so the fighters go for its feet. A foot destroyed breaks its leg: it walks slower, and lies stunned longer when a head slam misses. Four legs gone and it cannot stand. It stamps with single legs, drops its whole body on whoever is under the circle, spits webs that hold you fast, and lets its brood down on threads.' },
   elderEnt: { fun: 'The oldest thing in the wood. It was here before the wood, and it remembers who cut the first tree.',
     habit: 'The Wildwood\'s boss. Roots, root cages, falling branches, a grove that feeds it. Burning, it rampages: hits harder and faster, takes twice as much, and every blow burns. Rooted deep: it cannot be stunned, rooted, frozen, knocked out or put to sleep.' },
   // ---- round 9: the Warren, the Sewers and the Crypt

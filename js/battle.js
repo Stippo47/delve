@@ -17,6 +17,7 @@ import { battleRoom, battleFoe, spawnHero, freeSpot, RANK_MULT, R12_MULT, DUNGEO
 import { battleStats } from './stats.js';
 import { dungeonState } from './progress.js';
 import { rrange, clamp, TAU, INK } from './util.js';
+import { LOOSE_BOSSES } from './bosses.js'; // round 19 (lane spider19): bosses in no dungeon yet
 
 export const SIDE_MAX = 20;      // units a side
 export const STACK_MAX = 12;     // of one kind
@@ -59,12 +60,14 @@ export function battleRoster(save) {
     const fresh = (k) => (seen.has(k) ? false : (seen.add(k), true));
     dungeons.push({ id, name: T.name, open: devOpen(save) || dungeonState(save, id).cleared > 0, kinds: kinds.filter(fresh), bosses: bosses.filter(fresh) });
   }
+  // round 19 (lane spider19): bosses that live in no dungeon yet (bosses.js LOOSE_BOSSES) on a tab of their own, always open
+  { const loose = LOOSE_BOSSES.filter((k) => DEFS[k] && !seen.has(k)); if (loose.length) dungeons.push({ id: 'loose', name: 'No dungeon yet', open: true, kinds: [], bosses: loose, note: 'Not in a dungeon yet. As strong as a boss of the third dungeon.' }); }
   const heroes = HERO_IDS.filter((h) => devOpen(save) || (save.heroes[h] && save.heroes[h].owned));
   return { heroes, dungeons };
 }
 export const homeOf = (() => { let map = null; return (kind) => {
   if (!map) { map = {}; for (const id of DUNGEON_ORDER) { const T = THEMES[id]; if (!T) continue; const { kinds, bosses } = kindsOf(T); for (const k of [...kinds, ...bosses]) if (!map[k]) map[k] = id; } }
-  return map[kind] || null;
+  return map[kind] || (DEFS[kind] && DEFS[kind].home) || null; // (round 19, lane spider19: def.home, the dungeon whose strength a boss in no dungeon fights at)
 }; })();
 export const isHero = (k) => !!HEROES[k];
 export const isBoss = (k) => !!(DEFS[k] && DEFS[k].boss);

@@ -1,0 +1,24 @@
+<!doctype html><meta charset="utf-8"><title>spider19 pose board</title>
+<body style="margin:0;background:#8E9A76"><canvas id="c"></canvas>
+<script type="module">
+// Lane spider19: the spider's figure at eight headings (and a few heights), to judge its drawing without a fight.
+//   tools/spider19/board.mjs opens this on the lane's server and saves a picture.
+import { drawPose, restPose } from '../../js/boss-spider-fx.js';
+import { SP } from '../../js/boss-spider.js';
+const q = new URLSearchParams(location.search), sc = +(q.get('s') || 1.6), cols = 4, cell = 330;
+const hs = (q.get('h') || '44').split(',').map(Number), rows = 2 * hs.length;
+const c = document.getElementById('c'); c.width = cols * cell * sc; c.height = rows * cell * sc;
+const g = c.getContext('2d'); g.scale(sc, sc);
+g.fillStyle = '#9BA784'; g.fillRect(0, 0, cols * cell, rows * cell);
+hs.forEach((h, hi) => { for (let i = 0; i < 8; i++) {
+  const x = (i % 4 + 0.5) * cell, y = (hi * 2 + Math.floor(i / 4) + 0.5) * cell + 20, f = i * Math.PI / 4 + Math.PI / 2;
+  // its shadow: where the game's shadow layer would put it
+  g.fillStyle = 'rgba(43,34,48,0.28)'; for (const [dx, r] of [[16, 24], [-36, 29]]) { g.beginPath(); g.arc(x + Math.cos(f) * dx, y + Math.sin(f) * dx, r * 1.75 * 0.6 * (1 - Math.min(0.3, h / 150)), 0, 7); g.fill(); }
+  const P = restPose(x, y, f, h);
+  if (q.get('step')) { for (const L of P.legs) if ([0, 3, 4].includes(L.i)) { L.foot.z = 14; L.foot.x += Math.cos(f) * 20; L.foot.y += Math.sin(f) * 20; } else { L.foot.x -= Math.cos(f) * 22; L.foot.y -= Math.sin(f) * 22; } }
+  if (q.get('broken')) { for (const L of P.legs) if ([1, 2].includes(L.i)) { L.broken = true; L.foot.x -= Math.cos(f) * 30; L.foot.y -= Math.sin(f) * 30; } }
+  if (q.get('stomp')) { const L = P.legs[0]; L.foot.z = 70; }
+  drawPose(g, P, { up: [0, -1] });
+} });
+window.DONE = true;
+</script>
