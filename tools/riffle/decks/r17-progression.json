@@ -1,0 +1,102 @@
+{
+  "title": "Round 17: progression, played",
+  "topic": "balance",
+  "stack": "audit17",
+  "order": 3,
+  "priority": 2,
+  "cards": [
+    {
+      "id": "report",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "44 campaigns from zero",
+      "text": "The game played from a fresh save 44 times, 11 ways. Your lone archer maxing out in the Wildwood is real.",
+      "why": "You asked how levels, seats and gear come, and how hard each room and boss is. The calls after this card are what I'd change.",
+      "images": [
+        "../../../docs/audit/play16/curve-ratio.png",
+        "../../../docs/audit/play16/levels.png",
+        "../../../docs/audit/play16/campaign-sawtooth.png"
+      ],
+      "details": "Measured on 0.21.2, before this round's fixes. 4,156 runs, 14,328 rooms.\n\nA typical campaign (Archer, filling every seat as it opens):\n- Run 1: a fresh lone Archer dies in the very first room 27% of the time (Paladin 42%, Twinfang 50%). XP is kept on a wipe, and the first room is worth about 2 levels.\n- Run 4: the Alpha falls, seat 2. Run 5: level 11 (the level the Wildwood is pitched to end at).\n- Run 6: first tier III, at level 13.\n- The Elder Ent is a wall: 4 of 18 fights won. Run 10 it falls, seat 3, the Warren opens.\n- Run 13: all three abilities at tier III, level 18. Run 16: the Warren boss, seat 4. Run 27: Sewers boss. Run 32: Crypt boss, Archer level 33.\n- First trinket around run 7. Never leaving costs about two thirds of all gold, because a wipe takes 75% of the run's gold.\n\nThe first chart: each room's enemy strength per foe divided by the party's power per hero, when the party first gets there. From run to run it's even (0.7 to 0.86 through the Wildwood and Warren): heroes grow about as fast as foes. The third chart: inside a run it climbs steeply, 45 to 56% from the first room to the boss, while heroes don't grow mid-run.\n\nToo easy: the Alpha, the Warren's first floor, the Crypt. Spikes: the Wildwood's first rooms for a level 1 hero, the Elder Ent, the Warren's and Sewers' third floors (the Great Ooze is won 37%).\n\nYour three notes, checked:\n- Lone archer with all tier III in the Wildwood: yes. It's stuck at the Ent for about 21 runs, keeps its XP while dying, and reaches all three tier IIIs at level 18 still in the Wildwood (3 seeds of 4).\n- Majors in the first room: yes, 14 to 18% of first rooms have one, 56 to 61% an elite. A floor 1 major wolf (195 health) is as strong as the Alpha a lone hero meets (197). The enemy-pricing lane is already taking elites and majors out of the room budget and keeping majors off the Wildwood's first floor.\n- The weak Alpha: yes. Won at the first try 98% of the time in about 24 s. It spawns at 0.8 of the room's strength and, for one hero, at 0.45 of its health. The Elder Ent has 7.7 times its health.\n\nWhat strategy matters: fill every seat (a lone Archer takes twice as long and never beat the Crypt in 160 runs); abilities before stat nodes (stats first never beat the Warren); leaving in the free gap after each floor is fastest and loses least gold; a 4th hero beats gear; don't field fresh level 1 heroes in place of levelled ones; the starter matters (at tier III the Archer is 5.5x a fresh Archer, the Paladin 2.6x, the Twinfang 2.1x).\n\nAlso found: a Scorch could loop for ever and crash the game (5 of 44 campaigns). Fixed in 0.21.4."
+    },
+    {
+      "id": "tier3",
+      "kind": "options",
+      "rarity": "rare",
+      "title": "Tier III comes too soon",
+      "text": "A lone hero gets all three tier IIIs before leaving the first dungeon. Hold it back how?",
+      "why": "Tier III is most of a hero's power; reaching it in the Wildwood leaves little to grow into.",
+      "pick": "gate",
+      "options": [
+        {
+          "id": "gate",
+          "label": "Later levels",
+          "text": "Tier II from level 6, tier III from level 15. The Wildwood ends around 11 to 13."
+        },
+        {
+          "id": "cost",
+          "label": "Dearer",
+          "text": "Tier III costs 3 points instead of 2, so 15 points for all three."
+        },
+        {
+          "id": "both",
+          "label": "Both",
+          "text": "Later levels and 3 points."
+        },
+        {
+          "id": "keep",
+          "label": "Keep",
+          "text": "Leave it; the next dungeons get harder instead."
+        }
+      ]
+    },
+    {
+      "id": "bosses",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Wildwood bosses",
+      "text": "Make the Alpha a real fight and the Elder Ent less of a wall?",
+      "why": "The Alpha is won at the first try 98% of the time, then the Ent stops parties for about 6 runs. A smoother step between them.",
+      "pick": "Alpha at full room strength and 0.7 of its health for a lone hero (197 to about 380). Elder Ent about 30% less health."
+    },
+    {
+      "id": "start",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "A gentler first run",
+      "text": "A fresh lone hero dies in the very first room 27 to 50% of the time. Soften the first rooms?",
+      "why": "The first minute of the game decides whether someone keeps playing. Right now it's a coin flip for a Twinfang start.",
+      "pick": "Fewer foes in the Wildwood's first two rooms while the party is under level 4, on top of the no-majors rule already being built."
+    },
+    {
+      "id": "solo",
+      "kind": "options",
+      "rarity": "uncommon",
+      "title": "Should solo be viable?",
+      "text": "A lone hero stalls: it never beat the Crypt in 160 runs. Should going alone be viable?",
+      "why": "It decides whether a lone hero meets fewer foes than now, or whether seats are simply the way forward.",
+      "pick": "seats",
+      "options": [
+        {
+          "id": "seats",
+          "label": "Seats are the way",
+          "text": "Keep it hard alone; the game is about building a party."
+        },
+        {
+          "id": "viable",
+          "label": "Make it viable",
+          "text": "A lone hero meets fewer foes (room size 0.3 to about 0.22 of a full party)."
+        }
+      ]
+    },
+    {
+      "id": "steps",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "The climb inside a run",
+      "text": "Foes get 45-56% stronger from a run's first room to its boss; heroes don't. Flatten it?",
+      "why": "A run should get harder as it goes, but the third floors (Warren, Sewers) spike past the boss of the dungeon before.",
+      "pick": "Each floor +20% instead of +30%. I'd set it after the enemy-pricing lane lands, since it re-sets each dungeon's strength."
+    }
+  ]
+}

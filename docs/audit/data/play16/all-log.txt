@@ -1,0 +1,469 @@
+archer-fill seed 4: 29 runs, dungeons wildwood cp3 x1 | warren cp3 x1 | sewers cp3 x1 | crypt cp3 x1; r4 seat 2 (slotMini1); r4 wildwood mini 1; r5 wildwood mini 2; r12 seat 3 (slotBoss1); r12 wildwood boss; r12 opened warren; r13 warren mini 1; r13 warren mini 2; r18 seat 4 (slotBoss2); r18 warren boss; r18 opened sewers; r21 sewers mini 1; r22 sewers mini 2; r26 sewers mini 2; r27 sewers boss; r27 opened crypt; r28 crypt mini 1; r29 crypt mini 2; r29 crypt boss; r29 opened frost
+archer-fill seed 3: 30 runs, dungeons wildwood cp3 x1 | warren cp3 x1 | sewers cp3 x1 | crypt cp3 x1; r3 seat 2 (slotMini1); r3 wildwood mini 1; r6 wildwood mini 2; r12 seat 3 (slotBoss1); r12 wildwood boss; r12 opened warren; r13 warren mini 1; r14 warren mini 2; r15 seat 4 (slotBoss2); r15 warren boss; r15 opened sewers; r16 sewers mini 1; r18 sewers mini 2; r24 sewers boss; r24 opened crypt; r25 crypt mini 1; r25 crypt mini 2; r30 crypt boss; r30 opened frost
+archer-fill seed 2: 33 runs, dungeons wildwood cp3 x1 | warren cp3 x1 | sewers cp3 x1 | crypt cp3 x1; r4 seat 2 (slotMini1); r4 wildwood mini 1; r7 wildwood mini 2; r8 seat 3 (slotBoss1); r8 wildwood boss; r8 opened warren; r9 warren mini 1; r12 warren mini 2; r15 seat 4 (slotBoss2); r15 warren boss; r15 opened sewers; r21 sewers mini 1; r23 sewers mini 2; r27 sewers boss; r27 opened crypt; r28 crypt mini 1; r28 crypt mini 2; r33 crypt boss; r33 opened frost
+archer-fill seed 1: 49 runs, dungeons wildwood cp3 x1 | warren cp3 x1 | sewers cp3 x1 | crypt cp3 x1; r1 seat 2 (slotMini1); r1 wildwood mini 1; r3 wildwood mini 2; r5 seat 3 (slotBoss1); r5 wildwood boss; r5 opened warren; r6 warren mini 1; r7 warren mini 2; r17 seat 4 (slotBoss2); r17 warren boss; r17 opened sewers; r18 sewers mini 1; r28 sewers mini 2; r39 sewers boss; r39 opened crypt; r40 crypt mini 1; r41 crypt mini 2; r49 crypt boss; r49 opened frost
+archer-solo seed 3: 160 runs, dungeons wildwood cp3 x1 | warren cp3 x1 | sewers cp3 x1 | crypt cp3 x0; r3 seat 2 (slotMini1); r3 wildwood mini 1; r9 wildwood mini 2; r37 seat 3 (slotBoss1); r37 wildwood boss; r37 opened warren; r38 warren mini 1; r40 warren mini 2; r42 seat 4 (slotBoss2); r42 warren boss; r42 opened sewers; r43 sewers mini 1; r46 sewers mini 2; r68 sewers mini 2; r80 sewers boss; r80 opened crypt; r82 crypt mini 1; r90 crypt mini 2
+./js/sim.js:863
+  w.texts.push({ x, y, up, s: String(s), color, size, life: 0.9, max: 0.9, vy: -40, pop });
+          ^
+
+RangeError: Maximum call stack size exceeded
+    at Array.push (<anonymous>)
+    at textU (./js/sim.js:863:11)
+    at addStatus (./js/sim.js:1116:52)
+    at Object.hit (./js/kits.js:56:47)
+    at hurt (./js/sim.js:1009:79)
+    at explode (./js/sim.js:1244:5)
+    at addStatus (./js/sim.js:1116:330)
+    at hurt (./js/sim.js:1005:40)
+    at explode (./js/sim.js:1244:5)
+    at addStatus (./js/sim.js:1116:330)
+
+Node.js v24.16.0
+ (exit 1)
+archer-solo seed 1: 160 runs, dungeons wildwood cp3 x1 | warren cp3 x1 | sewers cp3 x1 | crypt cp3 x0; r1 seat 2 (slotMini1); r1 wildwood mini 1; r8 wildwood mini 2; r18 seat 3 (slotBoss1); r18 wildwood boss; r18 opened warren; r22 warren mini 1; r25 warren mini 2; r43 warren mini 2; r88 warren mini 2; r91 seat 4 (slotBoss2); r91 warren boss; r91 opened sewers; r93 sewers mini 1; r96 sewers mini 2; r104 sewers mini 2; r108 sewers mini 2; r130 sewers mini 2; r134 sewers mini 2; r134 sewers boss; r134 opened crypt; r135 crypt mini 1; r140 crypt mini 2
+archer-solo seed 2: 160 runs, dungeons wildwood cp3 x1 | warren cp3 x1 | sewers cp3 x1 | crypt cp3 x0; r4 seat 2 (slotMini1); r4 wildwood mini 1; r23 wildwood mini 2; r24 seat 3 (slotBoss1); r24 wildwood boss; r24 opened warren; r25 warren mini 1; r28 warren mini 2; r43 warren mini 2; r59 seat 4 (slotBoss2); r59 warren mini 2; r59 warren boss; r59 opened sewers; r60 sewers mini 1; r60 sewers mini 2; r66 sewers mini 2; r71 sewers mini 2; r75 sewers mini 2; r95 sewers boss; r95 opened crypt; r96 crypt mini 1; r104 crypt mini 1; r123 crypt mini 1; r127 crypt mini 2
+archer-trinkets seed 4: 71 runs, dungeons wildwood cp3 x1 | warren cp3 x1 | sewers cp3 x1 | crypt cp3 x1; r4 seat 2 (slotMini1); r4 wildwood mini 1; r5 wildwood mini 2; r9 seat 3 (slotBoss1); r9 wildwood boss; r9 opened warren; r10 warren mini 1; r21 warren mini 2; r24 seat 4 (slotBoss2); r24 warren boss; r24 opened sewers; r26 sewers mini 1; r33 sewers mini 1; r36 sewers mini 2; r44 sewers boss; r44 opened crypt; r45 crypt mini 1; r46 crypt mini 2; r59 crypt mini 2; r71 crypt boss; r71 opened frost
+archer-trinkets seed 3: 98 runs, dungeons wildwood cp3 x1 | warren cp3 x1 | sewers cp3 x1 | crypt cp3 x1; r3 seat 2 (slotMini1); r3 wildwood mini 1; r5 wildwood mini 2; r6 seat 3 (slotBoss1); r6 wildwood boss; r6 opened warren; r8 warren mini 1; r14 warren mini 2; r28 seat 4 (slotBoss2); r28 warren boss; r28 opened sewers; r30 sewers mini 1; r35 sewers mini 2; r50 sewers boss; r50 opened crypt; r51 crypt mini 1; r51 crypt mini 2; r96 crypt mini 2; r98 crypt boss; r98 opened frost
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+./tools/play16/campaign.mjs:167
+      errors.push({ run: runIdx + 1, room: run.rooms, msg: String(e && e.message), at: String(e && e.stack).split('
+                                                                                                                  ^
+
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:90:18)
+    at #translate (node:internal/modules/esm/loader:435:20)
+    at afterLoad (node:internal/modules/esm/loader:491:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:496:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:549:36)
+    at afterResolve (node:internal/modules/esm/loader:597:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:12)
+    at node:internal/modules/esm/loader:622:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.16.0
+ (exit 1)
+archer-solo seed 4: 160 runs, dungeons wildwood cp3 x1 | warren cp3 x0; r4 seat 2 (slotMini1); r4 wildwood mini 1; r6 wildwood mini 2; r11 seat 3 (slotBoss1); r11 wildwood boss; r11 opened warren; r16 warren mini 1; r18 warren mini 2; r22 warren mini 2; r29 warren mini 2; r80 warren mini 2; r106 warren mini 2; r111 warren mini 2; r122 warren mini 2; r154 warren mini 2
+archer-solo-stats seed 4: 160 runs, dungeons wildwood cp3 x1 | warren cp3 x0; r4 seat 2 (slotMini1); r4 wildwood mini 1; r20 wildwood mini 2; r28 seat 3 (slotBoss1); r28 wildwood boss; r28 opened warren; r29 warren mini 1; r46 warren mini 2; r87 warren mini 2; r107 warren mini 2; r141 warren mini 2
+archer-trinkets seed 2: 160 runs, dungeons wildwood cp3 x1 | warren cp3 x1 | sewers cp3 x1 | crypt cp3 x0; r4 seat 2 (slotMini1); r4 wildwood mini 1; r5 wildwood mini 2; r8 seat 3 (slotBoss1); r8 wildwood boss; r8 opened warren; r9 warren mini 1; r15 warren mini 2; r27 seat 4 (slotBoss2); r27 warren boss; r27 opened sewers; r31 sewers mini 1; r31 sewers mini 2; r37 sewers mini 2; r51 sewers boss; r51 opened crypt; r52 crypt mini 1; r53 crypt mini 2; r105 crypt mini 2; r113 crypt mini 2; r159 crypt mini 2
+archer-heroes seed 2: 83 runs, dungeons wildwood cp3 x1 | warren cp3 x1 | sewers cp3 x1 | crypt cp3 x1; r4 seat 2 (slotMini1); r4 wildwood mini 1; r5 wildwood mini 2; r15 seat 3 (slotBoss1); r15 wildwood boss; r15 opened warren; r16 warren mini 1; r18 warren mini 2; r27 seat 4 (slotBoss2); r27 warren boss; r27 opened sewers; r28 sewers mini 1; r29 sewers mini 2; r47 sewers mini 2; r78 sewers boss; r78 opened crypt; r79 crypt mini 1; r83 crypt mini 2; r83 crypt boss; r83 opened frost
+archer-solo-stats seed 2: 160 runs, dungeons wildwood cp3 x1 | warren cp3 x0; r4 seat 2 (slotMini1); r4 wildwood mini 1; r9 wildwood mini 1; r11 wildwood mini 2; r36 seat 3 (slotBoss1); r36 wildwood boss; r36 opened warren; r37 warren mini 1; r48 warren mini 1; r49 warren mini 2; r99 warren mini 2; r107 warren mini 2; r127 warren mini 2; r158 warren mini 2
+./js/sim.js:888
+export function hurt(w, u, amount, src, o = {}) {
+                    ^
+
+RangeError: Maximum call stack size exceeded
+    at hurt (./js/sim.js:888:21)
+    at addStatus (./js/sim.js:1116:149)
+    at Object.hit (./js/kits.js:56:47)
+    at hurt (./js/sim.js:1009:79)
+    at explode (./js/sim.js:1244:5)
+    at addStatus (./js/sim.js:1116:330)
+    at Object.hit (./js/kits.js:56:47)
+    at hurt (./js/sim.js:1009:79)
+    at explode (./js/sim.js:1244:5)
+    at addStatus (./js/sim.js:1116:330)
+
+Node.js v24.16.0
+ (exit 1)
+archer-potions seed 1: 160 runs, dungeons wildwood cp3 x1 | warren cp3 x1 | sewers cp3 x1 | crypt cp3 x0; r1 seat 2 (slotMini1); r1 wildwood mini 1; r3 wildwood mini 2; r6 seat 3 (slotBoss1); r6 wildwood boss; r6 opened warren; r9 warren mini 1; r10 warren mini 2; r22 seat 4 (slotBoss2); r22 warren boss; r22 opened sewers; r23 sewers mini 1; r43 sewers mini 2; r62 sewers mini 2; r71 sewers boss; r71 opened crypt; r72 crypt mini 1; r75 crypt mini 2
+./js/sim.js:888
+export function hurt(w, u, amount, src, o = {}) {
+                    ^
+
+RangeError: Maximum call stack size exceeded
+    at hurt (./js/sim.js:888:21)
+    at explode (./js/sim.js:1244:5)
+    at addStatus (./js/sim.js:1116:330)
+    at hurt (./js/sim.js:1005:40)
+    at explode (./js/sim.js:1244:5)
+    at addStatus (./js/sim.js:1116:330)
+    at hurt (./js/sim.js:1005:40)
+    at explode (./js/sim.js:1244:5)
+    at addStatus (./js/sim.js:1116:330)
+    at hurt (./js/sim.js:1005:40)
+
+Node.js v24.16.0
+ (exit 1)
+archer-heroes seed 4: 109 runs, dungeons wildwood cp3 x1 | warren cp3 x1 | sewers cp3 x1 | crypt cp3 x1; r4 seat 2 (slotMini1); r4 wildwood mini 1; r5 wildwood mini 2; r20 seat 3 (slotBoss1); r20 wildwood boss; r20 opened warren; r21 warren mini 1; r21 warren mini 2; r44 seat 4 (slotBoss2); r44 warren boss; r44 opened sewers; r45 sewers mini 1; r48 sewers mini 2; r69 sewers mini 2; r88 sewers boss; r88 opened crypt; r89 crypt mini 1; r92 crypt mini 2; r98 crypt mini 2; r109 crypt boss; r109 opened frost
+archer-potions seed 2: 160 runs, dungeons wildwood cp3 x1 | warren cp3 x1 | sewers cp3 x1 | crypt cp3 x0; r4 seat 2 (slotMini1); r4 wildwood mini 1; r9 seat 3 (slotBoss1); r9 wildwood mini 2; r9 wildwood boss; r9 opened warren; r10 warren mini 1; r13 warren mini 2; r35 seat 4 (slotBoss2); r35 warren boss; r35 opened sewers; r36 sewers mini 1; r42 sewers mini 2; r66 sewers mini 2; r84 sewers mini 2; r96 sewers mini 2; r107 sewers mini 2; r121 sewers mini 2; r127 sewers boss; r127 opened crypt; r128 crypt mini 1; r129 crypt mini 2
+archer-solo-stats seed 3: 160 runs, dungeons wildwood cp3 x1 | warren cp3 x0; r6 seat 2 (slotMini1); r6 wildwood mini 1; r24 wildwood mini 2; r37 seat 3 (slotBoss1); r37 wildwood boss; r37 opened warren; r38 warren mini 1; r39 warren mini 2; r51 warren mini 2; r140 warren mini 2
+archer-solo-stats seed 1: 160 runs, dungeons wildwood cp3 x1 | warren cp3 x0; r6 seat 2 (slotMini1); r6 wildwood mini 1; r26 wildwood mini 2; r39 seat 3 (slotBoss1); r39 wildwood boss; r39 opened warren; r40 warren mini 1; r44 warren mini 2; r62 warren mini 2; r97 warren mini 2; r105 warren mini 2; r134 warren mini 2

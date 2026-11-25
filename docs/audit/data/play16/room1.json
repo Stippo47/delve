@@ -1,0 +1,58 @@
+{
+ "1": {
+  "n": 600,
+  "foes": 7397,
+  "rooms": {
+   "anyElite": 338,
+   "anyMajor": 84,
+   "majorFirstLot": 16,
+   "majorInWaves": 69,
+   "twoMajors": 8
+  },
+  "elites": 531,
+  "majors": 93,
+  "waves": 1503
+ },
+ "2": {
+  "n": 600,
+  "foes": 7651,
+  "rooms": {
+   "anyElite": 354,
+   "anyMajor": 92,
+   "majorFirstLot": 16,
+   "majorInWaves": 80,
+   "twoMajors": 8
+  },
+  "elites": 565,
+  "majors": 100,
+  "waves": 1499
+ },
+ "3": {
+  "n": 600,
+  "foes": 7919,
+  "rooms": {
+   "anyElite": 366,
+   "anyMajor": 91,
+   "majorFirstLot": 14,
+   "majorInWaves": 77,
+   "twoMajors": 6
+  },
+  "elites": 589,
+  "majors": 97,
+  "waves": 1517
+ },
+ "4": {
+  "n": 600,
+  "foes": 8130,
+  "rooms": {
+   "anyElite": 357,
+   "anyMajor": 110,
+   "majorFirstLot": 23,
+   "majorInWaves": 88,
+   "twoMajors": 9
+  },
+  "elites": 543,
+  "majors": 121,
+  "waves": 1488
+ }
+}
