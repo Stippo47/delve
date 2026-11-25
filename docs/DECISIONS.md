@@ -1009,3 +1009,14 @@ own cost, RANK_MULT re-set to keep each dungeon's overall difficulty, elites x3 
 from the room budget, no majors on the Wildwood's first floor), play16 (fresh-save campaigns with several strategies,
 measurement only, on the game as it is now). Cooldown rule, Poison, Confused and the tournament still wait on the
 round 16 calls deck.
+Round 17 landed (0.21.3 to 0.22.0, 2026-11-24): the five bugs fixed (docs/audit/fixes16.md), abilities fire in their
+situation through js/threat.js (no number changes; Roll and Dash are checked every step while ready), Cure III bug
+fixed; slimes hop with height, skip floor effects while up, hit by landing (docs/slimes16.md; lead's calls: lobs and
+passing gas miss them mid-hop, heroes' leaps aren't airborne, Ice Slime chills on touch); every enemy priced on one
+yardstick at Wildwood floor 1 (js/prices.js, docs/audit/foes16.md), RANK_MULT re-set to [0.75, 2.15, 3.82, 3.96, 4.03,
+5.22, 5.6, 6.5, 7] keeping each dungeon's difficulty, R12_MULT keeps the old numbers for bosses, hazards and XP;
+elites cost x3 and majors x7 from the room budget, none on the Wildwood's first rooms, no majors on its first floor;
+Gilded Golem's mirror sends back half; the endless Scorch loop fixed. Playtests (docs/audit/play16.md, on 0.21.2): a
+lone hero reaches all tier IIIs in the Wildwood, the Alpha is won 98% at first try, the Ent is a wall, foes climb
+45-56% within a run. Open in Riffle (topic balance): tier III gates, Wildwood bosses, gentler first run, solo
+viability, floor step, enemy statuses growing with depth, Valkyrie's Call, three slime calls; plus the round 16 calls.
