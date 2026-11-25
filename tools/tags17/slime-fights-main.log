@@ -1,0 +1,8 @@
+wolf             vs slime                    blue wins 16/20  fight  17.6s  first slime down   6.2s  blue dealt   80  slimes dealt   48 (2.74/s)
+wolf             vs slimePoison              blue wins  0/20  fight  19.5s  first slime down  13.4s  blue dealt   86  slimes dealt   57 (2.93/s)
+wolf*2           vs slimeBig                 blue wins  0/20  fight  27.9s  first slime down  12.8s  blue dealt  221  slimes dealt  114 (4.08/s)
+wolf*2           vs fireSlime*2              blue wins  0/20  fight   6.1s  first slime down  nulls  blue dealt   41  slimes dealt  113 (18.57/s)
+paladin          vs slime*3                  blue wins 20/20  fight    26s  first slime down   5.4s  blue dealt  227  slimes dealt   67 (2.58/s)
+berserker        vs slime*3                  blue wins 20/20  fight   9.8s  first slime down   2.9s  blue dealt  233  slimes dealt   58 (5.98/s)
+archer           vs slimeSmall*4             blue wins 20/20  fight  33.1s  first slime down  14.6s  blue dealt  301  slimes dealt   91 (2.74/s)
+paladin,archer   vs slimeBig,slimePoison*2   blue wins 20/20  fight  33.4s  first slime down   7.3s  blue dealt  493  slimes dealt  174 (5.23/s)

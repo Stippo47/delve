@@ -1750,7 +1750,7 @@ function statusTick(w, u, dt) {
   // DOUSE), and steams; the word once in a while
   { const dr = douseRate(u); if (dr > 0) {
     hurt(w, u, dr * dt, null, { dot: true, color: '#BFE3F2', by: u.stBy && u.stBy.wet, stk: 'douse' });
-    if (rand() < dt * 9) w.particles.push({ x: u.x + rrange(-u.vr, u.vr) * 0.7, y: u.y - u.vr * 0.2 + rrange(-6, 6), vx: rrange(-14, 14), vy: -30, rise: 34, up: 0, life: 0.9, max: 0.9, size: rrange(5, 8), color: 'rgba(238,240,245,0.85)' });
+    if (rand() < dt * 16) w.particles.push({ x: u.x + rrange(-u.vr, u.vr) * 0.7, y: u.y - u.vr * 0.4 + rrange(-6, 6), vx: rrange(-16, 16), vy: -36, rise: 44, up: 0, life: 1.1, max: 1.1, size: rrange(6, 10), color: 'rgba(240,243,248,0.9)' }); // (the steam: rising puffs, bigger than a burn's flames)
     if (!(u.hissT > w.time)) { u.hissT = w.time + DOUSE.hissEvery; textU(w, u.x, u.y, u.r + 8, 'hiss', '#DCEFF7', 0.85); puff(w, u.x, u.y - u.vr * 0.3, 'rgba(238,240,245,0.85)', 8, 50, 7, 0.7); }
   } }
   if (s.chill > 0) s.chill = Math.max(0, s.chill - STATUS.chill.decay * dt);

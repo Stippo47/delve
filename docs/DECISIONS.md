@@ -1020,3 +1020,20 @@ Gilded Golem's mirror sends back half; the endless Scorch loop fixed. Playtests 
 lone hero reaches all tier IIIs in the Wildwood, the Alpha is won 98% at first try, the Ent is a wall, foes climb
 45-56% within a run. Open in Riffle (topic balance): tier III gates, Wildwood bosses, gentler first run, solo
 viability, floor step, enemy statuses growing with depth, Valkyrie's Call, three slime calls; plus the round 16 calls.
+
+## Round 17, lane tags17 (2026-11-24): the tag system
+The designer: construct-only healing (the Engineer's wrench on her turrets, not her allies), fire things hurt when wet
+or in water, silence stopping mouth abilities, "add the obvious ones", suggest the rest. During the lane: fire things
+set on fire get a rage-like boost instead of damage; sharp vs blunt; magic its own damage type, apart from the
+elements it carries; height layers (a hopping slime hovers; the Griffon's and Valkyrie's leaps and the Witch's broom
+fly). Everything in docs/tags17.md; code js/tags.js; checks tools/tags17/check.mjs.
+- One registry, js/tags.js: unit kinds (from honest def fields plus explicit lists), abilities (mouth, sound, magic;
+  the heroes' existing `tags` string left alone), enemy moves by their due() key, hits (hitKinds: type sharp | blunt |
+  magic, elements, delivery). Shown in the pause panel.
+- Built: the Engineer's wrench repair (12% of a construct's health a whack, with no foe within 90); constructs take no
+  bleed or poison; Doused fire things ((1.5 + 0.06 x wet)/s, in water at least 60 wet, bosses half); water puts out
+  half the burning; Kindled fire things (up to +30% dealt and attack speed, +15% move, Flare at full; bosses half;
+  only the other side's fire); Silenced = mouth only (rule change); the Warden's Nullify keeps its full lock as
+  Nullified (a mouth-only silence would stop 5% of what it stops); the undead tag for the Cleric's holy bonus (now
+  reaches the Bone King, Grave Warden, mummies, Icicle Wraith); layers floor / hovering / flying (slams miss hovering,
+  gas and explosions reach it; only shots reach flying); type resistances as a mechanism, none set.

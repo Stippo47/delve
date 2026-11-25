@@ -14,7 +14,9 @@
 //                below (or an ability def's own `labels` array).
 //   enemy moves  moveHas(u, key, tag): an enemy's timed moves (elites.js due(u, key)) by their clock's key, e.g.
 //                'howl', 'breath'; a key can be tagged for one kind only as 'kind:key'.
-//   hits         isMagicHit(o, src): is this blow magic or physical (hurt()'s options object and its source).
+//   hits         hitKinds(o, src): a blow's damage type (sharp | blunt | magic), the elements it carries and how it
+//                came (slam, explosion, gas, zone, shot...); isMagicHit(o, src) for "blocks magic, not physical".
+// And the rules built on them: Silenced (mouth moves only), Doused and Kindled fire things, the height layers.
 import { CUR } from './stats.js';
 
 // ---------------------------------------------------------------- the tags, in words (the inspect panel, the Book)
