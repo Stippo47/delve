@@ -1038,3 +1038,4 @@ Round 18, more rulings (chat):
 - "Fire tagged enemies that get set on fire don't take damage, instead getting a rage like boost." Given to tags17.
 - "Also think about the physical damage types, sharp vs blunt damage." Given to tags17 (hit kinds; obvious interactions built, the rest suggested).
 - "Get an agent on all enemies resistance and immunities and see if they make sense." Lane res18: an audit that proposes (no game code), on top of the tag system; its calls go to Riffle.
+- res18 landed (docs/audit/res18.md, 165 kinds): 7 plain bugs (the undead name test catches the Orc Warboss and misses the Bone King, Grave Warden, Mummy, Icicle Wraith; chains build statuses once per segment; four Book gaps) to be fixed after tags17 merges; rules by tag proposed; 8 calls sent to Riffle (deck r18-resistances).
