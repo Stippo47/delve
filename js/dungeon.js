@@ -8,7 +8,7 @@
 // of its own), floor 3 with the dungeon's boss. Each floor is its own place (themes.js floorTheme). A run can start at
 // a checkpoint floor (opts.floor). Heroes go in at their permanent level and keep the XP they earn (levels give skill
 // points, not strength).
-import { makeWorld, spawn, step, alive, addStatus, hurt, puff, fx, scatterCoins, addDanger, kill, restoreSide } from './sim.js';
+import { makeWorld, spawn, step, alive, addStatus, hurt, puff, fx, scatterCoins, addDanger, kill, restoreSide, resetIds, nextId, offFloor } from './sim.js';
 import { newStats, finishStats, tallyFoe, tallyRevive } from './stats.js';
 import { DEFS, levelHp, levelDmg, TRINKET_IDS, XP_BASE, XP_GROW, xpToNextR12 } from './units.js';
 import { trinketHooks, raiseGhost, wears } from './trinkets.js';
@@ -293,7 +293,7 @@ function buildRoom(run) {
   const bossKind = kind === 'boss' ? (run.floor >= FLOORS ? (DEFS[debugParam('boss')] ? debugParam('boss') : T.bossKind && DEFS[T.bossKind] ? T.bossKind : T.boss) : T.mini || T.warden) : null;
   const arena = bossKind && DEFS[bossKind].arena;
   const sh = arena ? arenaShape(arena) : makeShape(kind);
-  const w = makeWorld(sh.W, sh.H);
+  const w = makeWorld(sh.W, sh.H); resetIds(); // (round 16: every room's unit ids from 1, so a seed replays a run)
   w.theme = T; w.bossAdds = T.bossAdds;
   run.world = w; run.node = node; run.rooms++; w.stats = run.stats;
   w.cells = sh.cells; w.shape = sh.name;
@@ -504,7 +504,7 @@ function themeTick(w, dt) {
       onFire: (w2) => fx(w2, { type: 'pillar', x: h.x, y: h.y, r: h.r * 0.8, kind: 'holy', max: 0.6 }) });
   }
   for (const u of w.units) {
-    if (!alive(u)) continue;
+    if (!alive(u) || offFloor(u)) continue; // (round 16: a slime up in a hop is over all of it, the water too)
     for (const h of w.hazards) {
       if (h.type === 'mist') { if (dist(u.x, u.y, h.x, h.y) < h.r + u.r * 0.3) addStatus(w, u, 'chill', 15 * dt); }
       else if (h.type === 'web' && h.cold) { if (dist(u.x, u.y, h.x, h.y) < h.r + u.r * 0.3) addStatus(w, u, 'chill', 14 * dt); } // round 10: a frost spider's web chills
@@ -878,6 +878,7 @@ function enterRoom(w, f, x, y) {
   f.buffs = (f.buffs || []).filter((b) => b.t > 1e5); // (what it wears for good, a bat's thirst; not what was cast on it back there)
   if (f.el) { f.el.holdT = 0; f.el.then = null; f.el.rush = null; f.el.coming = 0; }
   if (f.segs) { f.trail = []; for (let d = 0; d <= (f.segs.length + 3) * (f.segs[0] ? f.segs[0].gap : 26); d += 4) f.trail.push({ x: x - d, y }); } // (a chain's body lies out behind its head again)
+  f.id = nextId(); // (round 16: ids start again each room; a follower takes the next one)
   w.units.push(f);
 }
 
@@ -1038,7 +1039,7 @@ export function battleRoom(themeId, { arena = null, big = false, obstacles = 2, 
   const T = floorTheme(themeId, 1);
   const W = Wd || (big ? 1040 : 960), Hh = Hd || (big ? 2 * ROW : ROW); // (round 13: the battle page picks a size)
   const sh = arena ? arenaShape(arena) : { name: 'battle', nr: 1, nc: 1, W, H: Hh, cells: [{ c: 0, r: 0, x: 0, y: 0, w: W, h: Hh }], solid: [] };
-  const w = makeWorld(sh.W, sh.H);
+  const w = makeWorld(sh.W, sh.H); resetIds(); // (round 16: a battle's unit ids from 1, so a seed replays it)
   w.theme = T; w.cells = sh.cells; w.shape = sh.name; w.chunks = { nc: sh.nc, nr: sh.nr };
   w.entry = sh.cells[0]; w.exits = [sh.cells[sh.cells.length - 1]]; w.doorIn = { x: 0, y: sh.H / 2 }; w.doors = []; w.mult = 1;
   if (arena) buildArena(w, arena);

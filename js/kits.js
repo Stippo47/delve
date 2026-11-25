@@ -20,9 +20,10 @@ import { HEROES, TIER_CD, ROLE_TUNE, statsFor, tierOf } from './heroes.js';
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange, chance } from './util.js';
 import {
   hurt, addStatus as simAddStatus, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, textU,
-  stun, heal as simHeal, addBuff, fx, zone as simZone, cleanse, wallRect,
+  stun, heal as simHeal, addBuff, fx, zone as simZone, cleanse, wallRect, offFloor,
 } from './sim.js';
 import { lineClear } from './path.js';
+import { threatened, attackers } from './threat.js'; // round 16 fixes: what is about to land on a unit, who is on it
 import { cue } from './sfx.js';
 import { tagAbility } from './fxtag.js';
 import { AUDIT } from './stats.js';
@@ -36,6 +37,9 @@ import { ABILITIES3, TRAITS3, ATTACKS3, kit3Tick } from './kits3.js'; // round 1
 // nodes (its damage, heal, statuses) apply while that ability is being used: kitThink sets u.kit.using around use(),
 // and what an ability leaves behind (a zone's ticks, a delayed blow, a ray, a shot) carries the ability with it.
 const abMod = (u, key, ab) => { const k = u && u.kit; if (!k || !k.mods) return 0; const a = k.mods.ab[ab || k.using]; return (a && a[key]) || 0; };
+// (round 16 fix: an ability that queues blows adds to the queue; it used to replace it, so Barrage cast during Frost
+// Arrow's draw threw the frost arrow away. kits2.js after() already worked this way.)
+const pending = (u) => (u.later || []).filter((l) => !l.done);
 function withAb(u, ab, f) {
   if (!ab || !u.kit) return f;
   return (...args) => { const k = u.kit, prev = k.using; k.using = ab; try { return f(...args); } finally { k.using = prev; } };
@@ -63,6 +67,17 @@ const near = (w, u, x, y, r, team) => w.units.filter((o) => alive(o) && !o.ether
 const foesNear = (w, u, x, y, r) => near(w, u, x, y, r, u.team === 'hero' ? 'enemy' : 'hero');
 const friendsNear = (w, u, x, y, r) => near(w, u, x, y, r, u.team);
 const hurtMost = (list) => list.reduce((b, o) => (!b || hpRatio(o) < hpRatio(b) ? o : b), null);
+// Round 16 fixes (when abilities fire): an ability of a's that is waiting on its cooldown, and that a would use now if it
+// were ready (its score clears the bar), is "wanted". wantedWait: the seconds a cut of `cut` off every cooldown would
+// buy, counting a wanted ability in full and one that is waiting for nothing at a quarter (it may be wanted soon).
+const wantedNow = (w, a, id) => { const A = ABILITIES[id], tier = a.kit.tiers[id]; return !!(A && tier && !A.passiveTier && A.score(w, a, a.target, tier) >= 0.3); };
+function wantedWait(w, a, cut) {
+  if (!a || !a.kit || !alive(a)) return 0; let g = 0;
+  for (const [id, c] of Object.entries(a.kit.cd)) if (c > 0.5 && a.kit.tiers[id] && ABILITIES[id] && !ABILITIES[id].passiveTier) g += Math.min(c, cut) * (wantedNow(w, a, id) ? 1 : 0.25);
+  return g;
+}
+// a friend being worked over: how many foes are on it (attackers), one more if a blow is about to land (threatened)
+const beset = (w, a, horizon = 0.6) => attackers(w, a).length + (threatened(w, a, horizon) ? 1 : 0);
 const dmgOf = (u, k) => (u.def.dmg || 8) * (u.dmgMul || 1) * k * (1 + abMod(u, 'abDmg'));
 const ang = (u, t) => angleTo(u.x, u.y, t.x, t.y);
 // where a caster's hands are, held out towards t (round 10: the storm mage's lightning comes from her hands)
@@ -97,7 +112,7 @@ function ring(w, u, x, y, r, dmg, o = {}, color = '#FFFFFF') {
 }
 const cast = (u, kind = 'cast', dur = 0.45) => setAnim(u, kind, dur);
 // for kits2.js (the new heroes' abilities)
-export { near, foesNear, friendsNear, hurtMost, dmgOf, ang, isUndead, arcHit, ring, cast, heal, addStatus, zone, withAb, abMod, rectGap };
+export { near, foesNear, friendsNear, hurtMost, dmgOf, ang, isUndead, arcHit, ring, cast, heal, addStatus, zone, withAb, abMod, rectGap, wantedNow, wantedWait, beset };
 
 // ---------------------------------------------------------------- abilities
 export const ABILITIES = {
@@ -112,9 +127,11 @@ export const ABILITIES = {
     },
   },
   guard: {
-    score: (w, u) => { const a = hurtMost(allies(w, u).filter((o) => !o.summon)); return a && hpRatio(a) < 0.65 && opponents(w, u).some((e) => e.target === a) ? 0.85 : 0; },
+    // (round 16 fixes: the friend being hit now, under 80% (or under 95% with two on it); it was the most hurt friend
+    // under 65% with a foe merely looking at it, and the guard went to the most hurt of all, summons too)
+    score: (w, u) => (guardee(w, u) ? 0.85 : 0),
     use(w, u, t, tier) {
-      const a = hurtMost(allies(w, u)); if (!a) return;
+      const a = guardee(w, u) || hurtMost(allies(w, u).filter((o) => !o.summon)); if (!a) return;
       cast(u, 'ability', 0.3);
       a.guardBy = u; a.guardT = 5; a.guardShare = tier >= 2 ? 0.6 : 0.4;
       u.forcedGoal = null; u.guardOf = a; u.guardOfT = 5;
@@ -160,7 +177,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       cast(u, 'ability', 0.4); w.shake = Math.max(w.shake, 7);
       ring(w, u, u.x, u.y, 125, dmgOf(u, 1.2), { knock: 300, heavy: true, stagger: tier >= 2 ? 40 : 0 }, '#E8D8B0');
-      if (tier >= 3) u.later = [{ t: 0.5, f: () => ring(w, u, u.x, u.y, 170, dmgOf(u, 0.6), { knock: 220, stagger: 20 }, '#E8D8B0') }];
+      if (tier >= 3) u.later = [...pending(u), { t: 0.5, f: () => ring(w, u, u.x, u.y, 170, dmgOf(u, 0.6), { knock: 220, stagger: 20 }, '#E8D8B0') }];
     },
   },
   // ----- Archer
@@ -173,7 +190,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       // round 9: a short charge first (the bow drawn, arrows gathering on it: fxkit), then the fan, each arrow at its own speed
       const n = tier >= 2 ? 7 : 5; u.aimT = u.aimMax = 0.42; u.aimCol = tier >= 2 ? '#FF8A3D' : null; u.aimHead = tier >= 2 ? '#FFD45A' : null; // (round 13: the bow is drawn back while it charges: parts.js)
-      u.later = [{ t: 0.4, f: () => {
+      u.later = [...pending(u), { t: 0.4, f: () => {
         const base = t && alive(t) ? ang(u, t) : u.facing; u.aimT = 0; u.recoilT = 0.14; cast(u, 'draw', 0.3);
         for (let i = 0; i < n; i++) shoot(w, u, base + (i - (n - 1) / 2) * 0.08, { kind: tier >= 2 ? 'fireArrow' : 'arrow', speed: 360 + ((i * 3) % n) / (n - 1) * 300, dmg: dmgOf(u, 0.75), st: tier >= 2 ? { burn: 20 } : {}, pierce: tier >= 3 ? 2 : 0 });
       } }];
@@ -186,7 +203,7 @@ export const ABILITIES = {
       // round 13 ("Doesnt charge back bow"): the string and the arrow come back with her hand through the charge
       // (parts.js reads u.aimT), and the loose plays when the arrow goes
       u.aimT = u.aimMax = 0.47; u.aimCol = '#9FB7C8'; u.aimHead = '#BFE9F8';
-      u.later = [{ t: 0.45, f: () => {
+      u.later = [...pending(u), { t: 0.45, f: () => {
         u.aimT = 0; u.recoilT = 0.14; cast(u, 'draw', 0.3);
         shoot(w, u, t && alive(t) ? ang(u, t) : u.facing, { kind: 'shard', speed: 560, dmg: dmgOf(u, 1.9), st: { chill: tier >= 2 ? 110 : 60 },
           land: (p) => { // round 10: "Remove the ice puddle" (the lingering rime it left)
@@ -195,10 +212,15 @@ export const ABILITIES = {
     },
   },
   roll: {
-    score(w, u) { const f = foesNear(w, u, u.x, u.y, 70); return f.length ? 0.9 : 0; },
+    // (round 16 fixes: only when a blow, a shot or a telegraphed hit is about to land on her, and checked every step
+    // while it is ready (reflex), not only on the 0.35 s think; it went whenever a foe stood within 70, hitting or not)
+    score: (w, u) => (threatened(w, u, 0.35) ? 1.2 : 0),
+    reflex: (w, u) => (threatened(w, u, 0.3) ? 1.2 : 0),
     use(w, u, t, tier) {
       const f = foesNear(w, u, u.x, u.y, 90); let ax = 0, ay = 0; for (const e of f) { ax += u.x - e.x; ay += u.y - e.y; }
-      const a = Math.atan2(ay, ax);
+      let a = Math.atan2(ay, ax);
+      const th = threatened(w, u, 0.6); // (round 16: away from what is coming at her; across a shot's path)
+      if (th) a = th.kind === 'shot' ? awayFromShot(u, th) : angleTo(th.x, th.y, u.x, u.y);
       // round 10: "Slide into position"; round 13: "They should slide out. Archer also needs to roll... spin": she rolls
       // back out of reach (a full turn as she goes, fast then slowing: sim.js act.slide, render.js u.spin), and at III
       // the caltrops skid out of her along the floor to where they lie (fxkit)
@@ -227,17 +249,21 @@ export const ABILITIES = {
     },
   },
   dash: {
+    // (round 16 fixes: out of reach only when a blow is about to land: as she falls back, when she is hurt, or when a
+    // charge or a telegraphed hit is coming (reflex, checked every step); it went whenever she fell back with a foe
+    // near. In at a busy enemy is as it was.)
+    reflex: (w, u) => (dashOut(w, u) ? 0.95 : 0),
     score(w, u, t) {
+      if (dashOut(w, u)) return 0.95;
       if (!t) return 0;
-      const close = foesNear(w, u, u.x, u.y, 60).length, gap = dist(u.x, u.y, t.x, t.y) - u.r - t.r;
-      if (u.mode === 'retreat' && close) return 0.95;
+      const gap = dist(u.x, u.y, t.x, t.y) - u.r - t.r;
       // (round 13: in only at one that is busy with someone else, as her trait wants: switched off, Dash made no
       // difference or a small one for the better at both tiers, before and after: she dashed in alone and went down)
       return u.mode !== 'retreat' && gap > 130 && gap < 320 && t.target && t.target !== u && lineClear(w, u.x, u.y, t.x, t.y, u.r) ? 0.8 : 0;
     },
     use(w, u, t, tier) {
-      const close = foesNear(w, u, u.x, u.y, 60);
-      const a = u.mode === 'retreat' && close.length ? angleTo(close[0].x, close[0].y, u.x, u.y) : ang(u, t);
+      const out = dashOut(w, u);
+      const a = out ? (out.kind === 'shot' ? awayFromShot(u, out) : angleTo(out.x, out.y, u.x, u.y)) : ang(u, t);
       u.act = { type: 'dash', t: 0.2, max: 0.2, a }; u.invulnT = Math.max(u.invulnT, 0.3); // (round 13: nothing lands on her mid-dash; Dash was worth nothing and she went down most)
       if (tier >= 2) { zone(w, { x: u.x, y: u.y, r: 64, dur: 2.5, kind: 'smoke', src: u, smoke: true }); for (const e of foesNear(w, u, u.x, u.y, 90)) if (e.target === u) e.target = null; }
       if (tier >= 3) { u.kit.charges = (u.kit.charges ?? 1) - 1; if (u.kit.charges > 0) u.kit.cd.dash = 0.6; else u.kit.charges = 2; }
@@ -248,7 +274,7 @@ export const ABILITIES = {
     use(w, u, t, tier) {
       // round 9: she spins once, throwing the knives one at a time round the circle as she turns
       const n = tier >= 3 ? 12 : 8, T = 0.42, a0 = u.facing; setAnim(u, 'spin', T); u.spin = { t0: w.time, dur: T, dir: 1 };
-      u.later = [];
+      u.later = pending(u);
       for (let i = 0; i < n; i++) u.later.push({ t: (i + 0.5) / n * T, f: () => shoot(w, u, a0 + (i + 0.5) / n * TAU, { kind: 'dagger', speed: 520, life: 0.45, dmg: dmgOf(u, 1.8), st: tier >= 2 ? { poison: 25 } : {}, pierce: tier >= 3 ? 1 : 0 }) });
     },
   },
@@ -277,7 +303,7 @@ export const ABILITIES = {
       // round 9: she spins round with the sword out (render.js u.spin), the blade's circle trailing it
       const spin = () => { setAnim(u, 'spin', 0.36); u.spin = { t0: w.time, dur: 0.36, dir: 1 }; fx(w, { type: 'ring', x: u.x, y: u.y, r: CLEAVE_R(u, tier), color: '#FFFFFF', max: 0.36, a: u.facing, unit: u });
         for (const e of foesNear(w, u, u.x, u.y, CLEAVE_R(u, tier))) hurt(w, e, dmgOf(u, 2.3), u, { knock: tier >= 2 ? 220 : 90, kAngle: ang(u, e) }); };
-      spin(); if (tier >= 3) u.later = [{ t: 0.35, f: spin }];
+      spin(); if (tier >= 3) u.later = [...pending(u), { t: 0.35, f: spin }];
     },
   },
   // ----- Berserker
@@ -289,7 +315,7 @@ export const ABILITIES = {
       // front that runs out along the floor from the slam, fanning wider, hits what it passes once and shoves it on.
       const a = ang(u, t), n = tier >= 2 ? 5 : 3; u.facing = a; cast(u, 'ability', 0.4); w.shake = Math.max(w.shake, 5);
       const ox = u.x + Math.cos(a) * (u.r + 12), oy = u.y + Math.sin(a) * (u.r + 12);
-      u.later = [];
+      u.later = pending(u);
       for (let i = 0; i < n; i++) u.later.push({ t: 0.12 + 0.2 * i, f: () => shockFront(w, u, ox, oy, a, tier) });
     },
   },
@@ -330,7 +356,7 @@ export const ABILITIES = {
       cast(u, 'throw', 0.5);
       // round 9: the hook flies out slower (it bites at 0.3s), pulls much harder and always staggers (harder from II)
       for (const e of far) fx(w, { type: 'beam', x1: u.x, y1: u.y, x2: e.x, y2: e.y, kind: 'drain', max: 0.85, hookTo: e, hookFrom: u });
-      u.later = [{ t: 0.3, f: () => { for (const e of far) { if (!alive(e)) continue;
+      u.later = [...pending(u), { t: 0.3, f: () => { for (const e of far) { if (!alive(e)) continue;
         const a = angleTo(e.x, e.y, u.x, u.y), d = dist(u.x, u.y, e.x, e.y) - u.r - e.r - 6;
         e.kx += Math.cos(a) * d * 5.4 / Math.max(1, Math.sqrt(e.mass)); e.ky += Math.sin(a) * d * 5.4 / Math.max(1, Math.sqrt(e.mass));
         hurt(w, e, dmgOf(u, 1.9), u, { noDodge: true, stagger: tier >= 2 ? 70 : 40 });
@@ -343,7 +369,7 @@ export const ABILITIES = {
     score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < u.def.range + 40 && !blocked(w, u.x, u.y, t.x, t.y) ? 0.3 + 0.3 * foesNear(w, u, t.x, t.y, 90).length : 0),
     use(w, u, t, tier) {
       cast(u, 'cast', 0.75); // round 9: a short charge up (the fire gathering in her hands: fxkit), then the throw
-      u.later = [{ t: 0.4, f: () => shoot(w, u, t && alive(t) ? ang(u, t) : u.facing, { kind: 'fireball', speed: 300, r: 10, dmg: dmgOf(u, 1.2), st: { burn: 25 }, land: (p) => {
+      u.later = [...pending(u), { t: 0.4, f: () => shoot(w, u, t && alive(t) ? ang(u, t) : u.facing, { kind: 'fireball', speed: 300, r: 10, dmg: dmgOf(u, 1.2), st: { burn: 25 }, land: (p) => {
         explode(w, p.x, p.y, tier >= 3 ? 110 : 80, dmgOf(u, 1.6), { burn: 35 }, u, '#FF8A3D');
         if (tier >= 2) zone(w, { x: p.x, y: p.y, r: 55, dur: 4, kind: 'fire', src: u, every: 0.3, tick(z) { for (const e of foesNear(w, u, z.x, z.y, z.r)) addStatus(w, e, 'burn', 12, u); } });
       } }) }];
@@ -386,7 +412,7 @@ export const ABILITIES = {
       // round 9: a charge up (cold drawn into her: fxkit), the burst, and snow and a cold rime that linger
       cast(u, 'ability', 0.8);
       const r = tier >= 2 ? 150 : 110;
-      u.later = [{ t: 0.35, f: () => {
+      u.later = [...pending(u), { t: 0.35, f: () => {
         fx(w, { type: 'ring', x: u.x, y: u.y, r, color: '#BFEFFF', max: 0.5 });
         fx(w, { type: 'zone', kind: 'snow', x: u.x, y: u.y, r: r * 0.9, max: 2.6 });
         for (const e of foesNear(w, u, u.x, u.y, r)) { hurt(w, e, dmgOf(u, 1.2), u, { noDodge: true, knock: 0 }); addStatus(w, e, 'chill', 140, u); if (tier >= 3) e.frozenBonus = 2; }
@@ -456,7 +482,7 @@ export const ABILITIES = {
       cast(u, 'throw', 0.6);
       const jumps = tier >= 2 ? 6 : 4, n = tier >= 3 ? 3 : 1;
       const first = [t, ...opponents(w, u).filter((e) => e !== t && dist(u.x, u.y, e.x, e.y) < u.def.range + 60 && !blocked(w, u.x, u.y, e.x, e.y)).sort((a, b) => dist(t.x, t.y, a.x, a.y) - dist(t.x, t.y, b.x, b.y))];
-      u.later = [];
+      u.later = pending(u);
       for (let i = 0; i < n; i++) u.later.push({ t: 0.08 + i * 0.15, f: () => {
         const e = alive(first[i % first.length]) ? first[i % first.length] : t; if (!alive(e)) return;
         const a = ang(u, e), x = u.x + Math.cos(a) * (u.r + 8), y = u.y + Math.sin(a) * (u.r + 8);
@@ -471,7 +497,8 @@ export const ABILITIES = {
     score(w, u) {
       if (u.rays && u.rays.length) return 0;
       const a = hurtMost(allies(w, u).filter((o) => !o.summon && rayable(w, u, o)));
-      return a && hpRatio(a) < 0.8 ? 1.15 - hpRatio(a) : 0;
+      // (round 16 fixes: also a friend under 90% that is being hit now; it waited for under 80% whatever was happening)
+      return a && (hpRatio(a) < 0.8 || (hpRatio(a) < 0.9 && beset(w, a))) ? 1.15 - hpRatio(a) : 0;
     },
     use(w, u, t, tier) {
       cast(u, 'cast', 0.4);
@@ -519,17 +546,26 @@ export const ABILITIES = {
     },
   },
   encore: {
-    score(w, u) { const a = allies(w, u).filter((o) => o.kit && Object.values(o.kit.cd).some((c) => c > 4)); return a.length && foesNear(w, u, u.x, u.y, 320).length ? 0.6 : 0; },
+    // (round 16 fixes: only for an ability a friend would use right now if it were ready (wanted), and that one is the
+    // one made ready; it went for any friend with a cooldown over 4 s and reset its longest, wanted or not)
+    score(w, u) { return encoreFor(w, u).length && foesNear(w, u, u.x, u.y, 320).length ? 0.7 : 0; },
     use(w, u, t, tier) {
       cast(u, 'cast', 0.5);
-      const list = allies(w, u).filter((o) => o.kit).sort((p, q) => maxCd(q) - maxCd(p)).slice(0, tier >= 3 ? 2 : 1);
-      for (const a of list) { const k = Object.keys(a.kit.cd).sort((p, q) => a.kit.cd[q] - a.kit.cd[p])[0]; if (k) a.kit.cd[k] = 0; if (tier >= 2) heal(w, a, a.maxHp * 0.1, u);
+      const want = encoreFor(w, u), list = (want.length ? want.map((x) => x.a) : allies(w, u).filter((o) => o.kit).sort((p, q) => maxCd(q) - maxCd(p))).slice(0, tier >= 3 ? 2 : 1);
+      for (const a of list) { const wk = want.find((x) => x.a === a), k = wk ? wk.id : Object.keys(a.kit.cd).sort((p, q) => a.kit.cd[q] - a.kit.cd[p])[0]; if (k) a.kit.cd[k] = 0; if (tier >= 2) heal(w, a, a.maxHp * 0.1, u);
         fx(w, { type: 'beam', x1: u.x, y1: u.y, x2: a.x, y2: a.y, kind: 'holy', max: 0.4 }); }
     },
   },
   // ----- Druid
   entangle: {
-    score: (w, u, t) => (t && dist(u.x, u.y, t.x, t.y) < 260 && foesNear(w, u, t.x, t.y, 80).length >= 2 ? 0.65 : 0),
+    // (round 16 fixes: roots stop feet, not blows, so it waits for foes on their way in (moving, not yet in reach of
+    // whoever they are after), one or more; it went at any two foes together, mostly ones already in melee, who went
+    // on hitting where they stood)
+    score(w, u, t, tier) {
+      if (!t || dist(u.x, u.y, t.x, t.y) > 260 || blocked(w, u.x, u.y, t.x, t.y)) return 0;
+      const inbound = foesNear(w, u, t.x, t.y, tier >= 2 ? 110 : 75).filter(onTheWay);
+      return inbound.length ? 0.5 + 0.15 * (inbound.length - 1) + (inbound.some((e) => e.target === u) ? 0.15 : 0) : 0;
+    },
     use(w, u, t, tier) {
       cast(u, 'cast', 0.5);
       const r = tier >= 2 ? 110 : 75;
@@ -551,7 +587,7 @@ export const ABILITIES = {
       // round 9: a summoning ring on the ground first, then the wolf steps out of it (not instant)
       const spots = []; for (let i = 0; i < (tier >= 3 ? 2 : 1); i++) { const a = u.facing + (i ? -1 : 1) * 0.9; spots.push({ x: clamp(u.x + Math.cos(a) * 60, 30, w.W - 30), y: clamp(u.y + Math.sin(a) * 60, 30, w.H - 30) }); }
       for (const p of spots) fx(w, { type: 'zone', kind: 'summon', x: p.x, y: p.y, r: 34, max: 1.1 });
-      u.later = [{ t: 0.7, f: () => { for (const p of spots) {
+      u.later = [...pending(u), { t: 0.7, f: () => { for (const p of spots) {
         const s = spawn(w, 'wolf', p.x, p.y, { team: u.team, scale: tier >= 2 ? 1.25 : 1, hpMul: tier >= 2 ? 1.25 : 1 });
         s.summon = true; s.summonBy = u; s.lifeT = 12; s.aggro = true; s.dmgMul = u.dmgMul * (tier >= 2 ? 1 : 0.8);
       } } }];
@@ -614,11 +650,15 @@ export const ABILITIES = {
     },
   },
   cure: {
-    score(w, u) { const a = [u, ...allies(w, u)].find((o) => (o.st.poison + o.st.burn + o.st.chill + (o.st.wet || 0)) > 50 || o.stunT > 0 || o.rootT > 0); return a ? 0.85 : 0; },
+    // (round 16 fixes: what a friend is carrying counts the statuses that hurt or hold (bleed, curse, and frozen, asleep,
+    // terrified, shackled, charmed too); Wet alone (harmless by itself) no longer counts. Cure III's bug: "every ally
+    // near" took only those within 200 of him, so the friend in trouble out at the front, the one it went for, was
+    // often left out (he cleansed and healed himself); III now always takes that friend and everyone near him as well.)
+    score(w, u) { const a = [u, ...allies(w, u)].find((o) => !o.summon && cureNeed(o) > 50); return a ? 0.85 : 0; },
     use(w, u, t, tier) {
       cast(u, 'cast', 0.4);
-      const all = [u, ...allies(w, u)];
-      const list = tier >= 3 ? all.filter((o) => dist(u.x, u.y, o.x, o.y) < 200) : [all.sort((a, b) => (b.st.poison + b.st.burn + b.st.chill) - (a.st.poison + a.st.burn + a.st.chill))[0]];
+      const all = [u, ...allies(w, u)].filter((o) => !o.summon), worst = all.slice().sort((a, b) => cureNeed(b) - cureNeed(a))[0];
+      const list = tier >= 3 ? [...new Set([worst, ...all.filter((o) => dist(u.x, u.y, o.x, o.y) < 200)])] : [worst];
       // round 9: what is drawn out goes into his flask, and his next attack throws all of it at the enemy, as strong
       const got = u.kit.cured || (u.kit.cured = {});
       for (const a of list) {
@@ -671,7 +711,7 @@ function shockFront(w, u, ox, oy, a, tier) {
   fx(w, { type: 'wave', x: ox, y: oy, a, r: SHOCK.reach, travel: SHOCK.T, w0: SHOCK.w0, wk: SHOCK.wk, max: SHOCK.T + 0.22, src: u, every: 0.03, tick(f) {
     const d = Math.min(1, f.t / SHOCK.T) * SHOCK.reach;
     for (const e of opponents(w, u)) {
-      if (hit.has(e) || e.ethereal) continue;
+      if (hit.has(e) || e.ethereal || offFloor(e)) continue; // (round 16: a slime up in a hop goes over the wave)
       const dx = e.x - ox, dy = e.y - oy, along = dx * ca + dy * sa, side = Math.abs(dy * ca - dx * sa);
       if (along < -e.r || along - e.r > d || side > SHOCK.w0 + Math.max(0, along) * SHOCK.wk + e.r) continue;
       hit.add(e); hurt(w, e, dmgOf(u, 0.9), u, { knock: 170, kAngle: a, noDodge: true, stagger: tier >= 3 ? 35 : 0 });
@@ -735,14 +775,14 @@ const ATTACKS = {
     // they stop"): all three leave the one point at her hands, 45 degrees apart, and curve in; an orb that meets a friend
     // heals it a little and ends there
     const volley = new Map();
-    u.later = [0, 1, 2].map((i) => ({ t: i * 0.1, f: () => {
+    u.later = [...pending(u), ...[0, 1, 2].map((i) => ({ t: i * 0.1, f: () => {
       const tt = t && alive(t) ? t : null, aim = tt ? ang(u, tt) : a, hp = { x: u.x + Math.cos(aim) * (u.r + 6), y: u.y + Math.sin(aim) * (u.r + 6) };
       const p = shoot(w, u, aim + (i - 1) * Math.PI / 4, { kind: 'orb', speed: 210, r: 5, life: 2, dmg: A(u, 0.34), knock: 10, color: '#FFF1B0',
         extra: { home: t, turn: 2.6, allyHit: (w2, p2, f) => { heal(w2, f, p2.dmg * 0.6, u); f.mendGlow = w2.time + 0.3; p2.life = 0;
           w2.particles.push({ x: p2.x, y: p2.y, vx: 0, vy: 0, rise: 40, up: 0, life: 0.6, max: 0.6, size: 4.5, color: '#9BE07A', shape: 'plus' }); },
           onHit: (w2, p2, e) => { const n = (volley.get(e) || 0) + 1; volley.set(e, n); if (n === 3) addStatus(w2, e, 'radiance', 25, u); } } });
       p.x = hp.x; p.y = hp.y;
-    } }));
+    } }))];
   },
   // four notes in a spread, slower, all of them going through
   bard(w, u, t, a) {
@@ -775,6 +815,23 @@ export function heroAttack(w, u, t, a) {
   const f = ATTACKS[u.kind]; if (!f || u.summon) return false;
   f(w, u, t, a); return true;
 }
+// round 16 fixes (when abilities fire): the helpers the scores above share
+function guardee(w, u) { const list = allies(w, u).filter((o) => !o.summon && !o.def.cargo && ((hpRatio(o) < 0.8 && beset(w, o)) || (hpRatio(o) < 0.95 && attackers(w, o).length >= 2))); return hurtMost(list); }
+// sideways off a shot's line, to the side she is already on
+function awayFromShot(u, th) { const p = th.src && th.src.x != null ? th.src : th; const a = angleTo(th.x, th.y, u.x, u.y), b = angleTo(p.x, p.y, th.x, th.y); return b + (Math.sin(a - b) >= 0 ? 1 : -1) * Math.PI / 2; }
+// Twinfang's Dash out: a blow about to land as she falls back or when she is hurt, or a charge or a telegraphed hit
+function dashOut(w, u) { const th = threatened(w, u, 0.3); return th && (u.mode === 'retreat' || hpRatio(u) < 0.6 || th.kind === 'charge' || th.kind === 'zone') ? th : null; }
+// a foe on its way in: a fighter moving, not yet in reach of whoever it is after
+const onTheWay = (e) => e.def.role !== 'ranged' && !(e.rootT > 0) && e.target && alive(e.target) && (e.spd || 0) > 15 && dist(e.x, e.y, e.target.x, e.target.y) - e.r - e.target.r > (e.def.range || 20) + 20;
+// Encore: friends with an ability they would use now that is waiting more than 4 s: [{ a, id }], longest wait first
+function encoreFor(w, u) {
+  const out = [];
+  for (const a of allies(w, u)) { if (!a.kit || a.summon) continue; let b = null; for (const [id, c] of Object.entries(a.kit.cd)) if (c > 4 && (!b || c > a.kit.cd[b]) && wantedNow(w, a, id)) b = id; if (b) out.push({ a, id: b, c: a.kit.cd[b] }); }
+  return out.sort((p, q) => q.c - p.c);
+}
+// Cure: how much of what hurts or holds a unit is on it
+const cureNeed = (o) => (o.st.poison || 0) + (o.st.burn || 0) + (o.st.chill || 0) + (o.st.bleed || 0) + (o.st.curse || 0)
+  + (o.stunT > 0 || o.rootT > 0 || o.frozenT > 0 || o.sleepT > 0 || o.fearT > 0 || o.shackledT > 0 || o.flipKind === 'charm' ? 60 : 0);
 const rayable = (w, u, o) => dist(u.x, u.y, o.x, o.y) < RAY_RANGE - 40 && !blocked(w, u.x, u.y, o.x, o.y);
 
 // Every step, for a unit with a kit: abilities that last (the Cleric's rays).
@@ -913,6 +970,18 @@ export function kitThink(w, u) {
   fireAbility(w, u, best);
   return true;
 }
+// Round 16 fixes: a dodge has to go the moment a blow is coming, not on the next 0.35 s think. An ability with a
+// reflex(w, u, t, tier) score is checked every step while it is ready (sim.js); it goes when that score clears the bar.
+export function kitReflex(w, u) {
+  const k = u.kit; if (!k || u.act || u.forcedGoal) return false;
+  for (const ab of HEROES[k.hero].abilities) {
+    const tier = k.tiers[ab.id], A = ABILITIES[ab.id]; if (!tier || k.cd[ab.id] > 0 || !A || !A.reflex) continue;
+    if (A.reflex(w, u, u.target, tier) < 0.3) continue;
+    if (u.st.sleepy > 0 && chance(SLEEPY.abilCut * fillOf(u, 'sleepy'))) return false;
+    fireAbility(w, u, ab); return true;
+  }
+  return false;
+}
 // Use one ability now (kitThink's pick, or every ready one at once when a confusion bursts).
 function fireAbility(w, u, best) {
   const k = u.kit;
@@ -922,7 +991,7 @@ function fireAbility(w, u, best) {
   k.using = best.id;
   try { tagAbility(w, u, best.id, k.tiers[best.id], () => ABILITIES[best.id].use(w, u, u.target, k.tiers[best.id])); } finally { k.using = null; } // fxtag.js: each ability drawn in its own look
   // what the ability left to happen later keeps its ability (its damage, heal and status nodes)
-  if (u.later && u.later !== hadLater) for (const l of u.later) if (!l.ab) { l.ab = best.id; l.f = withAb(u, best.id, l.f); }
+  if (u.later && u.later !== hadLater) { const was = new Set(hadLater || []); for (const l of u.later) if (!l.ab && !was.has(l)) { l.ab = best.id; l.f = withAb(u, best.id, l.f); } } // (only what this cast queued: the queue keeps what was already waiting)
   if (u.rays && u.rays !== hadRays) for (const r of u.rays) if (!r.ab) r.ab = best.id;
   cue('ability', u, best.id);
 }

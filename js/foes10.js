@@ -696,6 +696,7 @@ export const FOES10 = {
   // ---- the Frost Hollow
   frostWolf: { variantOf: 'wolf', name: 'Frost Wolf', art: 'art/enemies/frost-wolf.svg', chill: 20, hp: 30, xp: 9, res: { chill: 0.2, burn: 1.3 } },
   slimeIce: { variantOf: 'slime', name: 'Ice Slime', art: 'art/enemies/ice-slime.svg', headR: 49, /* art round 11: "I like the old one more": round 9's, without its icicles */ hp: 54, splits: false, xp: 10, goo: '#DFF6FF', res: { chill: 0, burn: 1.4 },
+    chill: 16, // round 16: its touch (its landing, sim.js slime hops) chills a little
     onHop: (w, u) => coldPatch(w, u.x, u.y, 36, 2.4), onDeath: (w, u) => shards(w, u, 7) },
   spiderFrost: { variantOf: 'spiderHunter', name: 'Frost Spider', art: 'art/enemies/frost-spider.svg', headR: 54, poison: 0, chill: 22, xp: 10, res: { chill: 0.2 },
     onDeath: (w, u) => w.hazards.push({ type: 'web', cold: true, x: u.x, y: u.y, r: 48, t: 6, max: 6 }) },

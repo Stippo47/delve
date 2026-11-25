@@ -9,7 +9,8 @@ import { hurt, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode,
 import { STATUS, WHIRLED, SPUN, DIRTY, TARGETED, TRACKED, TRAPPED, WARDED, WEAKENED, resTo } from './statuses.js';
 import { LOOK2 } from './looks2.js';
 import { lineClear, circleRect } from './path.js';
-import { foesNear, friendsNear, hurtMost, dmgOf, ang, ring, cast, heal, addStatus, zone, shoot, segDist, hooksOf } from './kits.js';
+import { foesNear, friendsNear, hurtMost, dmgOf, ang, ring, cast, heal, addStatus, zone, shoot, segDist, hooksOf, wantedWait, beset } from './kits.js';
+import { threatened, attackers } from './threat.js'; // round 16 fixes: what is about to land on a unit, who is on it
 import { AUDIT } from './stats.js'; // (round 16: tools/audit)
 
 // ---------------------------------------------------------------- helpers
@@ -207,6 +208,24 @@ function inTrouble(w, u, reach, pct = 0.45) {
   const list = allies(w, u).filter((a) => !a.summon && !a.def.cargo && hpRatio(a) < pct && dist(u.x, u.y, a.x, a.y) < reach);
   return list.sort((p, q) => hpRatio(p) - hpRatio(q))[0] || null;
 }
+// Round 16 fixes (when abilities fire): a friend in trouble that is being hit now (kits.js beset: foes on it, or a blow
+// about to land): the most hurt of those within reach, between near and far from u, under `pct` (or under `pct2` with
+// two or more on it). The rescues (Challenge, Swoop, Spear of the Sky) go for this one and their use() goes to the same.
+function besetFriend(w, u, { near = 0, far = 440, pct = 0.6, pct2 = 0.85 } = {}) {
+  const list = allies(w, u).filter((a) => { if (a.summon || a.def.cargo) return false; const d = dist(u.x, u.y, a.x, a.y); if (d < near || d > far) return false;
+    const n = beset(w, a), h = hpRatio(a); return n && (h < pct || (n >= 2 && h < pct2)); });
+  return list.sort((p, q) => hpRatio(p) - hpRatio(q))[0] || null;
+}
+// Challenge: the friend nearest death being hit, or (as before) one under 40% with a foe near
+const challengeFor = (w, u) => besetFriend(w, u, { far: 420, pct: 0.55, pct2: 0.75 }) || (() => { const a = inTrouble(w, u, 420, 0.4); return a && foesNear(w, u, a.x, a.y, 160).length ? a : null; })();
+// Spear of the Sky: a friend in trouble, or one held or loaded with statuses
+const spearFor = (w, u) => besetFriend(w, u, { near: 90, far: 420, pct: 0.8, pct2: 0.9 }) || inTrouble(w, u, 420, 0.6)
+  || allies(w, u).filter((a) => !a.summon && !a.def.cargo && burdened(a) && dist(u.x, u.y, a.x, a.y) > 90 && dist(u.x, u.y, a.x, a.y) < 420)[0] || null;
+// what holds or hurts a friend (the Valkyrie's spear cleanses it)
+const burdened = (o) => o.stunT > 0 || o.rootT > 0 || o.frozenT > 0 || o.sleepT > 0 || o.shackledT > 0 || ((o.st.poison || 0) + (o.st.burn || 0) + (o.st.chill || 0) + (o.st.bleed || 0) + (o.st.curse || 0)) > 60;
+// a fighter coming at u: moving towards it, within `range` of it, not yet in its reach
+const closing = (u, e, range) => { if (e.def.role === 'ranged' || e.target !== u) return false; const d = dist(u.x, u.y, e.x, e.y), gap = d - u.r - e.r;
+  if (gap > range || gap < 6) return false; const vx = e.vx || 0, vy = e.vy || 0; return ((u.x - e.x) * vx + (u.y - e.y) * vy) / Math.max(1, d) > 20; };
 
 // ---------------------------------------------------------------- abilities
 export const ABILITIES2 = {
@@ -306,9 +325,11 @@ export const ABILITIES2 = {
   // slightly, the nearest enemy is taunted. No challenge status."): she dashes to the friend nearest death, shoves them
   // clear of the fight, patches them up a little and plants herself in the enemy's way, calling the nearest one onto her
   challenge: {
-    score: (w, u) => { const a = inTrouble(w, u, 420, 0.4); return a && foesNear(w, u, a.x, a.y, 160).length ? 0.95 : 0; },
+    // (round 16 fixes: a friend under 55% that is being hit now (or under 75% with two on it), or under 40% with a foe
+    // near as before; it waited for under 40%, and its friends seldom got there while it was ready)
+    score: (w, u) => (challengeFor(w, u) ? 0.95 : 0),
     use(w, u, t, tier) {
-      const a = inTrouble(w, u, 440, 0.55) || hurtMost(allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 440)); if (!a) return;
+      const a = challengeFor(w, u) || inTrouble(w, u, 440, 0.55) || hurtMost(allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 440)); if (!a) return;
       const f = foesNear(w, u, a.x, a.y, 220).sort((p, q) => dist(a.x, a.y, p.x, p.y) - dist(a.x, a.y, q.x, q.y))[0];
       const fa = f ? angleTo(a.x, a.y, f.x, f.y) : angleTo(a.x, a.y, u.x, u.y);
       const x1 = clamp(a.x + Math.cos(fa) * (a.r + u.r + 2), u.r, w.W - u.r), y1 = clamp(a.y + Math.sin(fa) * (a.r + u.r + 2), u.r, w.H - u.r);
@@ -344,12 +365,11 @@ export const ABILITIES2 = {
   // knocks them back ... Applies a small aoe burst around area before the dash"): a gust bursts round him as he takes
   // off; he lands by the friend in trouble with a spin that throws a wind swirl out, whirling and shoving them back
   swoop: {
-    score(w, u) {
-      const a = allies(w, u).filter((o) => !o.summon && hpRatio(o) < 0.6 && dist(u.x, u.y, o.x, o.y) > 130 && dist(u.x, u.y, o.x, o.y) < 480 && foesNear(w, u, o.x, o.y, 100).length);
-      return a.length ? 0.95 : 0;
-    },
+    // (round 16 fixes: a friend 130-480 away being hit now, under 75% (or under 90% with two on it); it was under 60%
+    // with a foe merely near, and he flew to the most hurt friend of all, beset or not)
+    score: (w, u) => (besetFriend(w, u, { near: 130, far: 480, pct: 0.75, pct2: 0.9 }) ? 0.95 : 0),
     use(w, u, t, tier) {
-      const a = hurtMost(allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 520)) || t; if (!a) return;
+      const a = besetFriend(w, u, { near: 130, far: 520, pct: 0.75, pct2: 0.9 }) || hurtMost(allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 520)) || t; if (!a) return;
       const f = foesNear(w, u, a.x, a.y, 140).sort((p, q) => dist(a.x, a.y, p.x, p.y) - dist(a.x, a.y, q.x, q.y))[0];
       const ba = f ? angleTo(a.x, a.y, f.x, f.y) : angleTo(a.x, a.y, u.x, u.y), off = a.r + u.r + 4;
       const x1 = clamp(a.x + Math.cos(ba) * off, u.r, w.W - u.r), y1 = clamp(a.y + Math.sin(ba) * off, u.r, w.H - u.r);
@@ -430,7 +450,15 @@ export const ABILITIES2 = {
   },
   // ----- Bulwark
   brace: {
-    score: (w, u) => (foesNear(w, u, u.x, u.y, 240).some((e) => e.target === u || dist(u.x, u.y, e.x, e.y) < 160) ? 0.6 : 0),
+    // (round 16 fixes: a set spear is for what comes at him: a charge or a leap at him, or a fighter coming in (moving
+    // towards him, not yet in reach), or one in reach in front fighting him; it went for any foe near or looking at
+    // him, shooters too, and rooted him for nothing)
+    score(w, u) {
+      const th = threatened(w, u, 0.8); if (th && th.kind === 'charge') return 0.9;
+      const reach = u.def.range + 26, foes = opponents(w, u);
+      if (foes.some((e) => closing(u, e, reach + 150))) return 0.75;
+      return foes.some((e) => e.target === u && e.def.role !== 'ranged' && dist(u.x, u.y, e.x, e.y) - u.r - e.r < reach && angleDiff(ang(u, e), u.facing) < 0.75) ? 0.6 : 0;
+    },
     use(w, u, t, tier) {
       if (t) u.facing = ang(u, t);
       addBuff(u, { id: 'brace', dur: 3, root: true, frontBlock: 0.3 });
@@ -451,7 +479,15 @@ export const ABILITIES2 = {
     },
   },
   shieldWall: {
-    score: (w, u) => (foesNear(w, u, u.x, u.y, 260).length >= 3 && friendsNear(w, u, u.x, u.y, 170).length ? 0.75 : 0),
+    // (round 16 fixes: when the ones it covers (friends within 150, and him) are being hit: two or more foes on friends
+    // there, or two on him, or a telegraphed hit or a charge about to land on one of them; it went with three foes
+    // anywhere near and a friend near, and rooted him for 5-7 s whether anyone was being hit or not)
+    score(w, u) {
+      const mates = friendsNear(w, u, u.x, u.y, 150).filter((a) => a !== u && !a.summon);
+      const onMates = mates.reduce((n, a) => n + attackers(w, a).filter((e) => e.def.role !== 'ranged').length, 0), onMe = attackers(w, u).length;
+      const big = [u, ...mates].some((a) => { const th = threatened(w, a, 0.8); return th && (th.kind === 'zone' || th.kind === 'charge'); });
+      return (mates.length && (onMates >= 2 || (onMates >= 1 && onMe >= 1) || big)) || onMe >= 2 ? 0.75 : 0;
+    },
     use(w, u, t, tier) {
       if (t) u.facing = ang(u, t);
       const dur = tier >= 2 ? 7 : 5;
@@ -888,7 +924,13 @@ export const ABILITIES2 = {
   // Old Tales (round 13: "What does it do? Doesnt look the best"): a story book opens over him; each friend listening
   // has a gold clock over its head whose hand spins forward, and the seconds its abilities gain rise off it
   oldTales: {
-    score: (w, u) => (allies(w, u).filter((a) => a.kit && dist(u.x, u.y, a.x, a.y) < 220 && Object.values(a.kit.cd).filter((c) => c > 4).length >= 2).length >= 1 ? 0.55 : 0), // (balance: worth it only when friends have abilities waiting)
+    // (round 16 fixes: by the seconds it buys friends listening, counting in full an ability a friend would use now if it
+    // were ready (kits.js wantedWait) and the rest at a quarter: worth at least one story's worth; it went when one
+    // friend had two abilities over 4 s, wanted or not)
+    score(w, u, t, tier) {
+      const s2 = tier >= 2 ? 6 : 4, g = allies(w, u).filter((a) => a.kit && !a.summon && dist(u.x, u.y, a.x, a.y) < 220).reduce((n, a) => n + wantedWait(w, a, s2), 0);
+      return g >= s2 ? Math.min(0.9, 0.45 + 0.03 * g) : 0;
+    },
     use(w, u, t, tier) {
       cast(u, 'cast', 0.9); const s = tier >= 2 ? 6 : 4;
       k2(w, { draw: 'storyBook', unit: u, x: u.x, y: u.y, r: u.vr, max: 1.6 });
@@ -1151,7 +1193,16 @@ export const ABILITIES2 = {
   // Dark Bargain (round 13: "Gives 20% of his max hp go to his imp. Gets a huge attack speed boost for both of them and
   // attack does aoe."): blood drawn from him into the imp; both strike far faster, and every blow of theirs bursts
   darkBargain: {
-    score: (w, u) => (hpRatio(u) > 0.45 && mine(w, u, 'warlockImp').length && foesNear(w, u, u.x, u.y, 300).length >= 2 ? 0.7 : 0),
+    // (round 16 fixes: the blood buys both of them faster blows, so only when both are shooting at his target, there is
+    // fight enough left to use it (foes within 300 with half his health or more between them), nothing is on him, and
+    // the imp is out (not inside him: Awaken); it went at any two foes near, whether either of them was fighting)
+    score(w, u, t) {
+      if (hpRatio(u) <= 0.6) return 0; const imp = mine(w, u, 'warlockImp')[0]; if (!imp || imp.inHim) return 0;
+      // (both shoot at his target: the imp's bolts reach 280 (BRAINS.warlockImp), his about as far)
+      if (!t || !alive(t) || t.ethereal || dist(u.x, u.y, t.x, t.y) > 280 || dist(imp.x, imp.y, t.x, t.y) > 280 || blocked(w, imp.x, imp.y, t.x, t.y)) return 0;
+      const left = foesNear(w, u, u.x, u.y, 300).reduce((n, e) => n + e.hp, 0);
+      return left >= u.maxHp * 0.5 && attackers(w, u).length === 0 ? 0.7 : 0;
+    },
     use(w, u, t, tier) {
       cast(u, 'cast', 0.5); const imp = mine(w, u, 'warlockImp')[0]; if (!imp) return;
       const pay = Math.min(u.hp - 1, u.maxHp * 0.2), dur = tier >= 2 ? 8 : 6; u.hp -= pay;
@@ -1427,7 +1478,14 @@ export const ABILITIES2 = {
   // Supply Crate (resupply's slot): a crate dropped by the party: whoever touches it first has its abilities come round
   // sooner and is patched up a little
   resupply: {
-    score: (w, u) => (allies(w, u).filter((a) => a.kit && dist(u.x, u.y, a.x, a.y) < 300 && Object.values(a.kit.cd).filter((c) => c > 4).length >= 2).length >= 1 && !mine(w, u, 'crate').length ? 0.65 : 0),
+    // (round 16 fixes: by the seconds the crate buys whoever touches it, him too (its brain counts him), counting in full
+    // an ability they would use now (kits.js wantedWait): at least one cut's worth; it went for a friend with two
+    // abilities over 4 s, wanted or not, and never for himself)
+    score(w, u, t, tier) {
+      if (mine(w, u, 'crate').length || attackers(w, u).length >= 2 || foesNear(w, u, u.x, u.y, 160).length >= 3) return 0; const cut = tier >= 2 ? 6 : 4; // (not with foes pressing round him: it is lobbed, and walked to)
+      const g = [u, ...allies(w, u)].filter((a) => a.kit && !a.summon && !a.def.cargo && dist(u.x, u.y, a.x, a.y) < 300).reduce((n, a) => n + wantedWait(w, a, cut), 0);
+      return g >= cut ? Math.min(0.85, 0.45 + 0.03 * g) : 0;
+    },
     use(w, u, t, tier) {
       cast(u, 'throw', 0.4); const n = tier >= 3 ? 2 : 1;
       const al = allies(w, u).filter((a) => !a.summon && !a.def.cargo && a.kit).sort((p, q) => Object.values(q.kit.cd).reduce((s1, c) => s1 + c, 0) - Object.values(p.kit.cd).reduce((s1, c) => s1 + c, 0));
@@ -1439,6 +1497,9 @@ export const ABILITIES2 = {
   // Barricade (oilBlades's slot): a wooden barricade unfolded between the party and the enemies: it blocks their way and
   // their shots until it is broken
   oilBlades: {
+    // (round 16 fixes: tried "only for what is still coming, none on him yet" and put back: in the swarm the wall
+    // thrown down among the rats already on him is what keeps him alive (11 of 12 won with it, 1 of 12 without); its
+    // low worth in the audit is the recorder not counting walls)
     score(w, u) { const f = opponents(w, u).filter((e) => dist(u.x, u.y, e.x, e.y) < 300); return f.length >= 2 && !mine(w, u, 'barricade').length && allies(w, u).some((a) => !a.summon && a.def.role === 'ranged') ? 0.65 : f.length >= 3 && !mine(w, u, 'barricade').length ? 0.45 : 0; },
     use(w, u, t, tier) {
       const f = opponents(w, u).filter((e) => dist(u.x, u.y, e.x, e.y) < 400); if (!f.length) return;
@@ -2136,9 +2197,11 @@ export const ABILITIES2 = {
   // way. Cleanses ally and buffs them."): she flies spear-first along the line to the friend most hurt, striking every
   // enemy on the way, and cleanses and steels that friend (hasted, Warded)
   spearThrow: {
-    score: (w, u) => { const a = inTrouble(w, u, 420, 0.6); return a && dist(u.x, u.y, a.x, a.y) > 90 ? 0.75 : 0; },
+    // (round 16 fixes: as well as a friend under 60%, one being hit now under 80%, or one held or carrying a load of
+    // statuses (the spear cleanses and shields it); she flies to that one)
+    score: (w, u) => (spearFor(w, u) ? 0.75 : 0),
     use(w, u, t, tier) {
-      const a = inTrouble(w, u, 440, 0.7) || hurtMost(allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 440)); if (!a) return;
+      const a = spearFor(w, u) || inTrouble(w, u, 440, 0.7) || hurtMost(allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 440)); if (!a) return;
       const b = ang(u, a), x0 = u.x, y0 = u.y, x1 = clamp(a.x - Math.cos(b) * (a.r + u.r), u.r, w.W - u.r), y1 = clamp(a.y - Math.sin(b) * (a.r + u.r), u.r, w.H - u.r), T = clamp(dist(u.x, u.y, x1, y1) / 800, 0.12, 0.5), cut = new Set();
       u.facing = b; setAnim(u, 'thrust', T + 0.2); u.invulnT = Math.max(u.invulnT, T + 0.1); k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a: b, max: T + 0.35, col: '#FFE7A0' });
       u.act = { type: 'leap', t: T, max: T, x0, y0, x1, y1, land: () => {
@@ -2200,7 +2263,13 @@ export const ABILITIES2 = {
   // Wind-up Drones, in Shock Mine's slot (round 13: "Spawn 4 small wind up drones that walk towards target and go pop,
   // shocking a bit. He throws them in random directions around himself. Are slow."); id kept
   shockMine: {
-    score: (w, u) => (foesNear(w, u, u.x, u.y, 300).length >= 1 && mine(w, u, 'windup').length < 2 ? 0.55 : 0),
+    // (round 16 fixes: the drones only waddle, so they are thrown when a fighter is coming at her (they pop in its way)
+    // or at foes standing still near her (held, or planted in a fight); it went at any foe within 300, fast or far)
+    score(w, u) {
+      if (mine(w, u, 'windup').length >= 2) return 0;
+      const n = opponents(w, u).filter((e) => closing(u, e, 220) || (dist(u.x, u.y, e.x, e.y) < 200 && (e.rootT > 0 || e.stunT > 0 || e.frozenT > 0 || e.sleepT > 0 || (e.spd || 0) < 12))).length;
+      return n ? 0.55 + 0.1 * (n - 1) : 0;
+    },
     use(w, u, t, tier) {
       setAnim(u, 'throw', 0.35); const n = tier >= 3 ? 6 : 4;
       for (let i = 0; i < n; i++) { const a = rand() * TAU, d = rrange(40, 90), x = clamp(u.x + Math.cos(a) * d, 20, w.W - 20), y = clamp(u.y + Math.sin(a) * d, 20, w.H - 20);
@@ -2297,7 +2366,7 @@ BRAINS.shadowClone = shadowCloneBrain;
 export function shadowCloneBrain(w, u, dt) {
   let t = u.target; if (!t || !alive(t) || t.ethereal) t = u.target = opponents(w, u).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0] || null;
   if (!t) return true;
-  u.orbit = (u.orbit || 0) + dt * 3.4 * (u.spinDir || 1); if (Math.random() < dt * 0.6) u.spinDir = -(u.spinDir || 1);
+  u.orbit = (u.orbit || 0) + dt * 3.4 * (u.spinDir || 1); if (rand() < dt * 0.6) u.spinDir = -(u.spinDir || 1);
   const R = t.r + u.r + 10, gx = t.x + Math.cos(u.orbit) * R, gy = t.y + Math.sin(u.orbit) * R, d = dist(u.x, u.y, gx, gy), sp = u.def.speed * 1.6 * dt;
   const a = angleTo(u.x, u.y, gx, gy); u.x += Math.cos(a) * Math.min(d, sp); u.y += Math.sin(a) * Math.min(d, sp);
   u.x = clamp(u.x, u.r, w.W - u.r); u.y = clamp(u.y, u.r, w.H - u.r); u.spd = Math.min(d, sp) / Math.max(dt, 1e-3); u.mvA = a;

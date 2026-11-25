@@ -95,8 +95,10 @@ export const FOES = {
     brain: (w, u, dt) => { every(w, u, dt, 'fire', 2.9, 3.9, 260, (t) => { setAnim(u, 'throw', 0.35); fireball(w, u, angleTo(u.x, u.y, t.x, t.y)); }); return false; } },
   fireSlime: { ...FOE, name: 'Fire Slime', art: ART('slime-fire'), headR: 60, r: 25, vr: 22, turn: 3, accel: 140, face: 3.5, mass: 1.6, hp: 50, speed: 40, role: 'melee',
     range: 16, atkCd: 1.4, dmg: 8, knock: 90, arc: 2.2, temp: 0.3, commit: 1, xp: 10, coins: [2, 4], res: { burn: 0, chill: 1.5 },
-    onDeath: (w, u) => firePatch(w, u.x, u.y, 46, 4),
-    brain: (w, u, dt) => { if (u.aggro && u.spd > 20 && due(u, 'drip', dt, 1)) { again(u, 'drip', 1.1, 1.5); firePatch(w, u.x - Math.cos(u.mvA) * u.r, u.y - Math.sin(u.mvA) * u.r, 22, 2.5); } return false; } },
+    // round 16: it hops like every slime (sim.js slime hops); its touch burns, and it drips fire where it lands (it
+    // dripped as it walked)
+    hops: 1.1, burn: 18, onDeath: (w, u) => firePatch(w, u.x, u.y, 46, 4),
+    onHop: (w, u) => firePatch(w, u.x - Math.cos(u.mvA) * u.r * 0.5, u.y - Math.sin(u.mvA) * u.r * 0.5, 22, 2.5) },
   devil: { ...FOE, name: 'Devil', art: ART('devil'), headR: 56, r: 32, vr: 24, hp: 70, speed: 62, role: 'melee', range: 44, atkCd: 1.3, windup: 0.3, dmg: 11, knock: 150, arc: 0.8,
     xp: 15, coins: [3, 6], attackAnim: 'thrust', ability: 'dash', abilCd: 4, res: { burn: 0.2 } },
   // round 13 (lane S): the Succubus (the designer: "Succubus enemies will also charm who hits them and deal extra damage

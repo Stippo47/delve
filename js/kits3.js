@@ -5,7 +5,7 @@
 // The designer's standing rules for this file: no three abilities that are all "damage in a shape" (each hero's three
 // do three different jobs), nothing that only shows as a word popping up, nothing too weak to be worth its button.
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange } from './util.js';
-import { hurt, alive, opponents, allies, hpRatio, puff, setAnim, blocked, addBuff, fx, cleanse, sparks, wallRect } from './sim.js';
+import { hurt, alive, opponents, allies, hpRatio, puff, setAnim, blocked, addBuff, fx, cleanse, sparks, wallRect, offFloor } from './sim.js'; // (round 16: offFloor, a slime up in a hop)
 import { lineClear, buildGrid } from './path.js';
 import { foesNear, friendsNear, dmgOf, ang, cast, heal, addStatus, shoot, segDist, withAb, rectGap } from './kits.js';
 import { k2, after, timer, onUnit, offUnit, isOn, flung, shove, interrupt, foeWinding, whirl, inFront } from './kits2.js';
@@ -519,11 +519,11 @@ export const ABILITIES3 = {
       cast(u, 'ability', 0.7);
       k2(w, { draw: 'quake', x, y, r, max: dur, every: 0.5, src: u, tick: held(u, () => {
         w.shake = Math.max(w.shake, 3.5);
-        for (const e of foesNear(w, u, x, y, r)) { hurt(w, e, dmgOf(u, 0.4), u, { knock: 0, noDodge: true, stagger: 17 }); addBuff(e, { id: 'quake', dur: 0.7, move: 0.5 }); if (!bossy(e)) shove(e, rand() * TAU, 110); }
+        for (const e of foesNear(w, u, x, y, r)) if (!offFloor(e)) { hurt(w, e, dmgOf(u, 0.4), u, { knock: 0, noDodge: true, stagger: 17 }); addBuff(e, { id: 'quake', dur: 0.7, move: 0.5 }); if (!bossy(e)) shove(e, rand() * TAU, 110); }
       }) });
       if (tier >= 3) after(u, dur, held(u, () => {
         k2(w, { draw: 'heaveUp', x, y, r, max: 0.6 }); w.shake = Math.max(w.shake, 8);
-        for (const e of foesNear(w, u, x, y, r)) { hurt(w, e, dmgOf(u, 1.3), u, { knock: 0, noDodge: true, heavy: true }); if (!bossy(e)) shove(e, angleTo(x, y, e.x, e.y), 300); e.stunT = Math.max(e.stunT, e.def.boss ? 0.4 : 1); k2(w, { draw: 'tumble', unit: e, x: e.x, y: e.y, r: e.vr, max: e.def.boss ? 0.4 : 1 }); }
+        for (const e of foesNear(w, u, x, y, r)) if (!offFloor(e)) { hurt(w, e, dmgOf(u, 1.3), u, { knock: 0, noDodge: true, heavy: true }); if (!bossy(e)) shove(e, angleTo(x, y, e.x, e.y), 300); e.stunT = Math.max(e.stunT, e.def.boss ? 0.4 : 1); k2(w, { draw: 'tumble', unit: e, x: e.x, y: e.y, r: e.vr, max: e.def.boss ? 0.4 : 1 }); }
       }));
     },
     show: { far: true },

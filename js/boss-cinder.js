@@ -218,7 +218,7 @@ function fireCall(w, u, k, hs) {
     const h = hs[i % Math.max(1, hs.length)]; if (!h) break;
     const p = lead(h, 0.7), a = rand() * TAU, off = i < hs.length ? 0 : rrange(110, 190), q = inside(w, p.x + Math.cos(a) * off, p.y + Math.sin(a) * off, 50), tell = C.tell + i * 0.13;
     bfx(w, { type: 'fireFall', x: q.x, y: q.y, max: tell, r: C.r });
-    addDanger(w, { shape: 'circle', x: q.x, y: q.y, r: C.r, t: tell, team: u.team, src: null, kind: 'fire', quiet: true, hit: H(u, { dmg: C.dmg, burn: C.burn, knock: 170 }),
+    addDanger(w, { shape: 'circle', x: q.x, y: q.y, r: C.r, t: tell, team: u.team, src: null, by: u, kind: 'fire', quiet: true, hit: H(u, { dmg: C.dmg, burn: C.burn, knock: 170 }),
       onFire: (w2, z) => { w2.telegraphs.push({ type: 'blast', x: z.x, y: z.y, r: z.r, color: '#FFB347', t: 0.05, max: 0.05, ab: 'fireball' }); flames(w2, z.x, z.y, 8, z.r * 0.5, 100); w2.shake = Math.max(w2.shake, 4);
         if (w2.hazards.filter((x2) => x2.type === 'fire').length < 40) w2.hazards.push({ type: 'fire', x: z.x, y: z.y, r: 46, t: C.fire, max: C.fire }); } });
   }
