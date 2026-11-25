@@ -1,0 +1,81 @@
+{
+  "title": "The Sand Wurm, fixed",
+  "topic": "art",
+  "stack": "r19",
+  "order": 5,
+  "priority": 1,
+  "cards": [
+    {
+      "id": "report",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Sand Wurm: 30 fixes",
+      "text": "Same fight, its problems hunted down: 31 found by playing and filming it, 30 fixed. Live in 0.33.0.",
+      "why": "You said it was good but had many misc problems. Mark any part still off.",
+      "videos": [
+        "../../../docs/clips/wurm19/before-full-fight.mp4",
+        "../../../docs/clips/wurm19/after-full-fight.mp4"
+      ],
+      "parts": [
+        {
+          "id": "broken",
+          "title": "Plainly broken",
+          "text": "Its body vanished whenever the head dived; the phase-turn roar showed no wurm at all; single rings had health bars; heroes wasted most blows on the sand mound. All fixed: the body stays drawn, it comes up to roar, no ring bars, and heroes hold their hits until it's up.",
+          "videos": [
+            "../../../docs/clips/wurm19/after-burrow-breach.mp4",
+            "../../../docs/clips/wurm19/after-roar-phase2.mp4"
+          ]
+        },
+        {
+          "id": "looks",
+          "title": "Looks",
+          "text": "Drawn in the right order by height; sand rays along the floor instead of stakes over the wurm; one even status wash, not every ring see-through; a real bite with its own jaws; dust clouds and clods instead of bubbles; a wide churned furrow that slumps; sand heaps over a stuck head; a stronger inhale.",
+          "videos": [
+            "../../../docs/clips/wurm19/after-inhale-bite.mp4",
+            "../../../docs/clips/wurm19/after-coil.mp4"
+          ]
+        },
+        {
+          "id": "where",
+          "title": "Where it comes up",
+          "text": "Holes no longer open against columns or arcs bow through walls; heroes are edged out of an open hole; the ring comes up at half size out of the hole's dark; the lunge won't aim into a column; the reared head minds the walls.",
+          "videos": [
+            "../../../docs/clips/wurm19/after-rear-lunge.mp4"
+          ]
+        },
+        {
+          "id": "death",
+          "title": "Death and the Book",
+          "text": "Each ring drops as itself and sinks; the room holds 1.3 s after any boss falls so it's seen. Its Book page has a face, sand and a preview that shows the rear-up.",
+          "videos": [
+            "../../../docs/clips/wurm19/after-death.mp4",
+            "../../../docs/clips/wurm19/book-preview.mp4"
+          ]
+        },
+        {
+          "id": "numbers",
+          "title": "How hard",
+          "text": "It had drifted easy (67% won at its level); now 53-58%, inside its 40-60% band. Its blows are 40% harder because heroes now waste nothing on the sand."
+        }
+      ]
+    },
+    {
+      "id": "frozen",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Frozen mid-air",
+      "text": "Frozen mid-arc, the wurm hangs in the air until it thaws. Leave it?",
+      "why": "It's the game's rule for anything frozen while airborne; changing it would change it for every leaper.",
+      "pick": "Leave it: frozen means frozen."
+    },
+    {
+      "id": "boss-hold",
+      "kind": "question",
+      "rarity": "common",
+      "title": "A beat after a boss falls",
+      "text": "Every boss's room now holds 1.3 s after it dies, so the death is seen before the summary. Keep?",
+      "why": "The summary used to cut the wurm's death off after 0.6 s; this applies to all bosses.",
+      "pick": "Keep."
+    }
+  ]
+}
