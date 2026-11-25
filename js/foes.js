@@ -65,7 +65,7 @@ function ringVolley(w, u, n, fn) { const a0 = rand() * TAU; for (let i = 0; i < 
 export const FOES = {
   // ---- the Frost Hollow: ice caves; bats in swarms, snowmen lobbing, spiders, the wailing dead, ogres
   bat: { ...FOE, name: 'Cave Bat', art: ART('bat'), headR: 44, r: 20, vr: 16, turn: 8, accel: 480, face: 8, mass: 0.5, hp: 22, speed: 82, role: 'skirmish',
-    range: 12, atkCd: 0.8, dmg: 4, arc: 1.5, temp: 0.7, commit: 0.4, xp: 5, coins: [1, 2], attackAnim: 'thrust', ability: 'dash', dash: 'hook', abilCd: 2.8, // (round 18, lane dash18: it swoops round its mark and bites from behind)
+    range: 12, atkCd: 0.8, dmg: 4, arc: 1.5, temp: 0.7, commit: 0.4, xp: 5, coins: [1, 2], attackAnim: 'thrust', ability: 'dash', dash: 'hook', dashTell: 0.3, dashMul: 0.8, dashRest: 0.3, abilCd: 2.8, // (round 18, lane dash18: it swoops round its mark and bites from behind; quick, and most of a bite: a bat is all bites)
     brain: (w, u) => { if (!u.vamp) { u.vamp = true; addBuff(u, { id: 'vamp', dur: 1e9, lifesteal: 0.5 }); } return false; } }, // its bite drinks
   snowman: { ...FOE, name: 'Snowman', art: ART('snowman'), headR: 60, r: 32, vr: 25, turn: 3, accel: 150, face: 3, mass: 1.6, hp: 56, speed: 34, role: 'ranged',
     range: 290, keep: 190, atkCd: 999, dmg: 6, xp: 12, coins: [2, 5], res: { chill: 0.1, burn: 1.6 },

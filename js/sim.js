@@ -1619,7 +1619,7 @@ function useAbility(w, u) {
       // The nick carries the shove and nothing else (no venom, no light); a pounce is a bite and carries what its bite does.
       // def.dashTell / dashRest / dashMul: a kind's own (the orange goblin's is quick).
       const o = { t, a, dmg: hitDmg(u) * (def.dashMul ?? 0.35), hit: { knock: def.knock || 60 }, rest: def.atkCd * (def.dashRest ?? 0.7), tell: def.dashTell };
-      if (st === 'lance') dash(w, u, 'drawCut', { ...o, lance: true, len: gap + t.r * 2 + u.r + 24, hold: 0.16, tell: def.dashTell ?? 0.42 });
+      if (st === 'lance') dash(w, u, 'drawCut', { ...o, dmg: hitDmg(u) * (def.dashMul ?? 0.3), hit: { knock: (def.knock || 60) * 0.5 }, lance: true, len: gap + t.r * 2 + u.r + 24, hold: 0.16, tell: def.dashTell ?? 0.42 });
       else if (st === 'pounce') dash(w, u, 'pounce', { ...o, hit: { ...blowOf(def), knock: def.knock || 60 }, dmg: hitDmg(u) * (def.dashMul ?? 2), r: u.r + 24, tell: 0.2, air: clamp(0.2 + gap / 900, 0.26, 0.42), recover: 0.06, rest: def.atkCd * 0.1 });
       else dash(w, u, st, o);
       break;
