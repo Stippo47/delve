@@ -15,7 +15,7 @@
 // Every list comes from the data (HEROES, DEFS and the dungeons' rosters, ELITES / MAJOR_MOVES, STATUS and the
 // Book's STATUSES words, TRINKETS, POTIONS), so new heroes, enemies, statuses and trinkets show up without edits here.
 import { makeWorld, spawn, step, setAnim, hurt, meleeSwing, addStatus, stun, addBuff, unitNumbers, wallRect } from './sim.js';
-import { sceneOf as abilitySceneOf, attackSceneOf, KINDS, FOE_HP, FOE_DMG, HERO_FLOOR, FRIEND_FLOOR } from './preview-scenes.js';
+import { sceneOf as abilitySceneOf, attackSceneOf, KINDS, FOE_HP, FOE_DMG, HERO_FLOOR, FRIEND_FLOOR, foeSceneOf, FOE_HERO_DMG, FOE_HERO_FLOOR } from './preview-scenes.js';
 import { newStats } from './stats.js';
 import { ABILITIES, initKit, cooldownOf } from './kits.js';
 import { tagAbility } from './fxtag.js';
@@ -211,7 +211,7 @@ export function makeStage(spec) {
   const S = { spec, loop: 3, t: 0, w: null, fires: 0, locked: false, why: '', tick: () => {}, size: [HERO_W, HERO_H] };
   const build = make(S, spec);
   S.loops = 0; S.loopsFired = 0;
-  S.reset = () => { if (S.w) { S.loops++; if (S.fires > S.fires0) S.loopsFired++; } S.fires0 = S.fires; S.t = 0; S.firstT = null; S.felled = false; if (S.fit) S.loop = S.fit.max; S.mark = marker(); build(); S.mark(S.w); };
+  S.reset = () => { if (S.w) { S.loops++; if (S.fires > S.fires0) S.loopsFired++; } S.fires0 = S.fires; S.t = 0; S.firstT = null; S.felled = false; S.crutch = false; if (S.fit) S.loop = S.fit.max; S.mark = marker(); build(); S.mark(S.w); };
   S.step = (dt) => {
     if (S.t >= S.loop) S.reset();
     S.t += dt; S.tick(dt); step(S.w, dt); if (S.after) S.after(dt);
@@ -674,9 +674,14 @@ const seedOf = (k, r) => { let h = 2166136261; for (const c of k + ':' + r) h = 
 // stage shows the kind's own moves at that rank and nothing a trinket adds.
 function seededFoe(w, k, x, y, r) { const keep = getSeed(); setSeed(seedOf(k, r)); try { const u = battleFoe(w, k, x, y, 1, r); u.trinkets = []; u.trinketHooks = []; u.carried = null; return u; } finally { setSeed(keep); } }
 const dies0 = (k, move) => { const d = DEFS[k]; return !d.boss && !!(d.onDeath || d.splits || (eliteOf(k) && eliteOf(k).death)); };
-// An enemy at a rank against hero-coloured dummies. attack: its plain blows or shots only (no brain, no ability, no
-// elite move); kit: all it does at normal, with its first uses brought forward, and if it does something when it dies
-// it is struck down near the end so that shows too; elite / major: everything it does at that rank.
+/// An enemy at a rank, shown against real heroes (round 18b, lane preview18b; the scenes are js/preview-scenes.js
+// FOE_SCENES). attack: its plain blows or shots only (no brain, no ability, no elite move); kit: all it does at normal,
+// with its first uses brought forward, and if it does something when it dies a hero fells it near the end so that shows
+// too; elite / major: everything it does at that rank. Round 13 to 18 played it on blue straw targets that never moved,
+// poked it from nowhere, had its health set lower with no blow, and moved up to it when its move was slow to come.
+// The monster and its side don't fall (kept at a quarter, then mending) unless the stage fells it for its death move;
+// the heroes hit softly and are kept up (FOE_HERO_DMG, FOE_HERO_FLOOR), so the loop lasts and the move comes round.
+const FOE_KEEP = { keepUp: true, downed(w, u) { if (u._bookKilled) return false; u.hp = Math.max(1, u.maxHp * 0.25); u.invulnT = Math.max(u.invulnT, 0.25); return true; } };
 function foeStage(S, spec) {
   const { id: k, move, rank } = spec, d0 = DEFS[k], boss = !!d0.boss;
   const r = canRank(k) ? (move === 'elite' ? Math.max(1, rank) : move === 'major' ? 2 : rank) : 0;
@@ -685,14 +690,17 @@ function foeStage(S, spec) {
   S.loop = move === 'attack' ? 4 : boss ? 10 : 6.5;
   if (move === 'elite' || move === 'major') S.fit = { min: 4.5, tail: dies0(k, move) ? 3.6 : 2.6, max: 14 };
   const dies = move !== 'attack' && !boss && (d0.onDeath || d0.splits || ((move === 'elite' || move === 'major') && eliteOf(k) && eliteOf(k).death));
-  let u, dummies, killT, friend, pack = [];
+  const words = move === 'elite' || move === 'major' ? (ELITE_MOVE[k] || ELITE_MOVE[d0.eliteAs] || '') : '';
+  const sc = foeSceneOf(k, move, d0, words, MAJOR_KEY(d0));
+  S.scene = sc.name;
+  let u, heroes, killT, friend, pack = [], strikes;
   return () => {
-    const [W, H] = S.size, w = S.w = room(W, H, S.w);
+    const [W, H] = S.size, w = S.w = room(W, H, S.w), K = big ? 1.6 : 1;
     w.mult = 1; w.bossAdds = ['goblin'];
     if (boss && d0.arena && BOSS_ARENAS[d0.arena]) { try { BOSS_ARENAS[d0.arena](w); buildGrid(w); } catch (e) { /* the hall is optional here */ } }
-    const ux = W * (move === 'attack' ? 0.68 : 0.8), uy = H / 2;
+    const ux = sc.at ? W * sc.at[0] : W * (move === 'attack' ? 0.68 : 0.8), uy = sc.at ? H * sc.at[1] : H / 2;
     u = seededFoe(w, k, ux, uy, r);
-    u.aggro = true; u.facing = Math.PI; u.dueSoon = 0.4; u.abilT = 1; // its moves come round soon, but not before you've seen it stand there if (boss) u.floorFoe = true;
+    u.aggro = true; u.facing = Math.PI; u.dueSoon = sc.dueSoon ?? 0.4; u.abilT = sc.abilT ?? 1; // its moves come round soon, but not before you've seen it stand there
     if (move === 'attack') { u.def = { ...u.def, brain: null, ability: null, dashCd: 0 }; u.eliteFn = null; u.eliteDeath = null; }
     const watch = (fn, owns) => (fn ? function (...a) { S.mark(w); const hp0 = stateSum(w); const out = fn.apply(this, a); if (S.mark(w) > 0 || Math.abs(stateSum(w) - hp0) > 0.5 || (owns && out === true)) S.fire(); return out; } : fn); // owns: an elite move that takes the tick (returns true) is under way
     // what counts as its move going off: the kit's brain for 'kit'; the elite's own move for 'elite' (or its brain, when the
@@ -702,57 +710,77 @@ function foeStage(S, spec) {
     // while an elite or major is held for its move (below), its own brain waits too, unless that is where the move lives
     else if (u.def.brain && (move === 'major' || (move === 'elite' && !noop))) { const b0 = u.def.brain; u.def = { ...u.def, brain: function (...a) { return held() ? true : b0.apply(this, a); } }; }
     if (move === 'elite' || move === 'major') { u.eliteFn = watch(u.eliteFn, true); u.eliteDeath = watch(u.eliteDeath); }
-    const gap = (u.r || 30) + 30 + (move === 'attack' || move === 'kit' ? 0 : 200); // the elite's and major's moves often want room (throws, charges): their dummies start further off
-    const spots = big ? [[ux - gap - 60, uy], [ux - 260, uy - 170], [ux - 300, uy + 170], [ux - 470, uy]] : move === 'attack' ? [[ux - gap - 20, uy], [ux - 150, uy - 110], [ux - 170, uy + 110], [ux - 300, uy]] : [[ux - gap - 20, uy], [ux - 250, uy - 115], [ux - 275, uy + 115], [ux - 385, uy]];
-    dummies = spots.map(([x, y]) => dummyAt(w, x, y, 'hero'));
-    u.target = dummies[0];
-    // a friend of its own side, hurt, for the kinds that mend, guard or quicken others (no blows of their own) and for
-    // the elite and major moves (war cries, raising the fallen)
+    if (sc.hp) u.hp = u.maxHp * sc.hp; // (a move that waits for it to be hurt: it starts hurt, the heroes on it)
+    u.barAlways = true; u.trinketHooks = [...(u.trinketHooks || []), FOE_KEEP];
+    // the heroes: real ones, their abilities held, each where the scene puts them; they move and fight as in a run
+    const at = (p) => [Math.min(W - 40, Math.max(40, ux + p[0] * K)), Math.min(H - 40, Math.max(40, uy + p[1] * K))];
+    heroes = sc.heroes.map((h) => {
+      const [x, y] = at(h.at), kind = DEFS[h.k] && HEROES[h.k] ? h.k : 'paladin';
+      const o = fullAlly(w, kind, x, y);
+      o.dmgMul *= FOE_HERO_DMG; o.barAlways = true; o.spec = h; o.facing = Math.atan2(uy - y, ux - x);
+      if (h.hp) o.hp = o.maxHp * h.hp;
+      o.trinketHooks = [...(o.trinketHooks || []), HERO_KEEP];
+      if (h.hold) { o.baseMove = o.moveMul; o.moveMul = 1e-4; }
+      return o;
+    });
+    w.stats = newStats([...new Set(heroes.map((o) => o.kind))]); // counted, never shown (the check tool reads it)
+    // a friend of its own side, hurt, with a hero on it: for the kinds that mend, guard or quicken others (no blows of their
+    // own), for the elite and major moves (war cries, raising the fallen) and for the scenes that ask for one
     friend = null;
-    const fk = !boss && (!(d0.dmg > 0) || move === 'elite' || move === 'major') ? friendFor(k) : null;
-    if (fk) { friend = spawn(w, fk, ux - 40, uy + (big ? 160 : 110), { mult: 1 }); friend.aggro = true; friend.facing = Math.PI; friend.home = { x: friend.x, y: friend.y }; friend.hp = friend.maxHp * 0.5; }
+    const fk = !boss && (sc.friend || !(d0.dmg > 0) || move === 'elite' || move === 'major') ? friendFor(k) : null;
+    if (fk) { friend = spawn(w, fk, ux - 40 * K, uy + 110 * K, { mult: 1 }); friend.aggro = true; friend.facing = Math.PI; friend.home = { x: friend.x, y: friend.y }; friend.hp = friend.maxHp * 0.45; friend.barAlways = true; friend.trinketHooks = [...(friend.trinketHooks || []), FOE_KEEP]; friend.dmgMul *= 0.6; }
     // a pack kind (wolves: howls that need the pack about) gets two of its own kind beside it as well
     pack = [];
-    if (move !== 'attack' && (d0.pack || d0.wolf)) for (const dy of [-1, 1]) { const o = spawn(w, k, ux + 30, uy + dy * (big ? 150 : 105), { mult: 1 }); o.aggro = true; o.facing = Math.PI; o.home = { x: o.x, y: o.y }; o.dueSoon = 9; pack.push(o); }
+    if (move !== 'attack' && (sc.pack || d0.pack || d0.wolf)) for (const dy of [-1, 1]) { const o = spawn(w, k, ux + 30 * K, uy + dy * 105 * K, { mult: 1 }); o.aggro = true; o.facing = Math.PI; o.home = { x: o.x, y: o.y }; o.dueSoon = 9; o.barAlways = true; o.trinketHooks = [...(o.trinketHooks || []), FOE_KEEP]; o.dmgMul *= 0.6; pack.push(o); }
     if (move !== 'attack' && fk && d0.res !== undefined && /rais/i.test(ELITE_MOVE[k] || '')) w.corpses.push({ kind: fk, x: ux - 90, y: uy - 60, r: 30, vr: 22, facing: 1, kx: 0, ky: 0, spin: 0, z: 0, vz: 0, age: 5, t: 14, max: 14 });
     killT = dies && !S.fit ? S.loop - 1.8 : Infinity; // (an elite or major falls a beat after its move: below)
-    const lastA = { t: u.lastAttackT, abil: u.abilT }, hold = { x: u.x, y: u.y }; S.hits = hitWatch();
+    const lastA = { t: u.lastAttackT, abil: u.abilT }, hold = { x: u.x, y: u.y }; S.hits = hitWatch(); strikes = [];
     function held() { return (move === 'elite' || move === 'major') && !S.fired() && S.t < 2; }
-    S.hero = u; S.dummies = dummies;
+    u.target = heroes[sc.aim || 0] || heroes[0]; // (who it goes for first: the scene's first hero, unless it names another)
+    S.hero = u; S.dummies = heroes; S.friends = [friend, ...pack].filter(Boolean);
+    // the felling blow (a death move): the nearest hero turns on it and strikes, or shoots
+    const fellIt = () => {
+      const by = heroes.filter((o) => !o.downed).sort((a, b) => Math.hypot(a.x - u.x, a.y - u.y) - Math.hypot(b.x - u.x, b.y - u.y))[0];
+      if (!by) return;
+      const a = Math.atan2(u.y - by.y, u.x - by.x), d = Math.hypot(u.x - by.x, u.y - by.y);
+      by.facing = a; by.atkT = Math.max(by.atkT, 0.8);
+      if (by.def.role === 'ranged' || d > by.r + u.r + 70) {
+        setAnim(by, 'thrust', 0.3);
+        w.projectiles.push({ kind: by.def.proj || 'arrow', color: by.def.projColor, x: by.x + Math.cos(a) * (by.r + 6), y: by.y + Math.sin(a) * (by.r + 6), vx: Math.cos(a) * 620, vy: Math.sin(a) * 620, r: 7, team: by.team, owner: by, dmg: 0, o: {}, life: d / 620, a, noHit: true });
+        strikes.push({ at: S.t + d / 620, by });
+      } else { setAnim(by, by.def.attackAnim || 'swing', (by.def.windup || 0.2) + 0.28); strikes.push({ at: S.t + (by.def.windup || 0.2) + 0.1, by }); }
+    };
     S.tick = () => {
-      // a kit's spar: the close dummy falls part way through, so what it does at reach (throws, charges, spits) shows too
-      if (move === 'kit' && !boss && !dummies[0].gone && S.t > S.loop * 0.45) fell(w, dummies[0]);
-      if (dies && S.fit && (S.firstT != null ? S.t >= S.firstT + 1.4 : move === 'elite' && !(eliteOf(k) || {}).tick && S.t > 2.2)) killT = 0; // a move that is its death (falls apart and gets up) is shown by felling it
-      if (S.t >= killT && !u._bookKilled && !u.dead) { u._bookKilled = true; S.mark(w); u.invulnT = 0; hurt(w, u, u.hp + 1e6, dummies[0], { noDodge: true }); }
+      if (dies && S.fit && !lastA.fell && (S.firstT != null ? S.t >= S.firstT + 1.4 : move === 'elite' && !(eliteOf(k) || {}).tick && S.t > 2.2)) { lastA.fell = true; fellIt(); } // a move that is its death (falls apart and gets up) is shown by felling it
+      if (S.t >= killT && !lastA.fell) { lastA.fell = true; fellIt(); }
+      for (const s of strikes) if (!s.done && S.t >= s.at) { s.done = true; if (!u.dead && !u._bookKilled) { u._bookKilled = true; S.mark(w); u.invulnT = 0; hurt(w, u, u.hp + 1e6, s.by, { noDodge: true, heavy: true }); } }
+      for (const o of heroes) {
+        if (o.baseMove != null && S.t >= o.spec.hold) { o.moveMul = o.baseMove; o.baseMove = null; }
+        if (o.spec.on === 'friend' && friend && !friend.dead && !friend.downed) o.target = friend;
+      }
     };
     S.after = (dt) => {
       if (u.lastAttackT !== lastA.t) { lastA.t = u.lastAttackT; if (move === 'attack') S.fire(); }
       if (move === 'kit' && u.abilT > lastA.abil + 0.5) S.fire(); // its ability went off (sim.js resets the timer)
-      if (move === 'kit') { const n = w.hazards.length + w.danger.length + w.fx.length; if (n > (lastA.n || 0)) S.fire(); lastA.n = n; } // puddles, zones, effects: not from a plain blow
-      if ((move === 'elite' || move === 'major') && !lastA.hurt && S.t > 2.2) { lastA.hurt = true; u.hp = Math.max(1, u.maxHp * 0.45); } // moves that wait for it to be hurt
       lastA.abil = u.abilT;
       if (u._bookKilled && u.dead && S.mark(w) > 0) S.fire();
-      const hit = S.hits(dummies) > 0;
+      const hit = S.hits(heroes) > 0;
       if (hit && (move === 'attack' || move === 'kit')) S.fire(); // its blows landed (for a kit, its brain may be its attack)
-      for (const d of dummies) tendDummy(w, d, dt);
-      for (const o of pack) if (!o.dead) { o.x = o.home.x; o.y = o.home.y; o.atkT = Math.max(o.atkT, 0.5); }
-      if (friend && !friend.dead) { friend.x = friend.home.x; friend.y = friend.home.y; friend.atkT = Math.max(friend.atkT, 0.5); if (friend.hp > friend.maxHp * 0.7) friend.hp = friend.maxHp * 0.45; }
-      // the nearest dummy pokes back now and then (moves that answer a blow: counters, crashes)
-      // the nearest dummy swings at it now and then (moves that answer a blow: parries, counters, crashes). It turns,
-      // winds up (a swing a sidestepper can see coming) and lands a feather of a blow.
-      if (move !== 'attack' && !u.dead && Math.floor(S.t / 1.1) !== Math.floor((S.t - dt) / 1.1) && S.t > 0.6) { const d = dummies.reduce((b, o) => (Math.hypot(o.x - u.x, o.y - u.y) < Math.hypot(b.x - u.x, b.y - u.y) ? o : b)); if (Math.hypot(d.x - u.x, d.y - u.y) < u.r + d.r + 90) { d.facing = Math.atan2(u.y - d.y, u.x - d.x); setAnim(d, 'swing', 0.3); d._poke = S.t + 0.18; } }
-      for (const d of dummies) if (d._poke && S.t >= d._poke) { d._poke = 0; if (!u.dead && Math.hypot(d.x - u.x, d.y - u.y) < u.r + d.r + 110) hurt(w, u, 1, d, { knock: 0 }); }
-      // an elite or major is held where it stands (it can still act) until its move has gone off, so moves that want
-      // room (throws, charges, leaps) get it before it has walked up to the dummies; never longer than 3 s
-      if (held() && !u.dead && !u.act) { u.x = hold.x; u.y = hold.y; u.vx = u.vy = 0; }
-      // nothing yet by 2.4 s: the nearest dummy steps up close, for the moves that want a target at arm's length
-      if ((move === 'elite' || move === 'major') && !S.fired() && S.t > 2.4 && !lastA.stepped) { lastA.stepped = true; dummies[0]._free = 0; }
-      // and keeps at its side until the move comes. (Round 14: held there firmly, however its blows shove it: a turret's
-      // shots kept knocking it back out of reach, so some loops never showed the move.)
-      if (lastA.stepped && !S.fired() && !u.dead) { const d = dummies[0]; d.home = { x: Math.max(40, u.x - (u.r + d.r + 26)), y: u.y }; d._free = 0; const k = Math.min(1, dt * 5); d.x += (d.home.x - d.x) * k; d.y += (d.home.y - d.y) * k; }
       if (move === 'kit' && d0.pass && Math.hypot(u.x - hold.x, u.y - hold.y) > 150) S.fire(); // a roller: rolling and bouncing is what it does
-      // keep it on the stage and the stage going: hurt by its own moves or a reflected shot, it heals up
-      if (!u.dead && u.hp < u.maxHp * 0.2) u.hp = u.maxHp * 0.6;
+      // an elite or major is held where it stands (it can still act) until its move has gone off, so moves that want
+      // room (throws, charges, leaps) get it before it has walked up to them; never longer than 2 s
+      if (held() && !u.dead && !u.act) { u.x = hold.x; u.y = hold.y; u.vx = u.vy = 0; }
+      // the heroes: their abilities held, kept up (they mend when low), kept in the yard
+      for (const o of heroes) {
+        for (const c in o.kit.cd) o.kit.cd[c] = Math.max(o.kit.cd[c], 5);
+        if (o.downed) { o.downed = false; o.hp = o.maxHp * 0.3; }
+        if (o.hp < o.maxHp * FOE_HERO_FLOOR) o.hp = o.maxHp * FOE_HERO_FLOOR;
+        if (o.hp < o.maxHp * 0.35) o.hp += o.maxHp * 0.12 * dt;
+        o.x = Math.min(W - 30, Math.max(30, o.x)); o.y = Math.min(H - 30, Math.max(30, o.y));
+        if (o.baseMove != null && !o.act) { const q = Math.min(1, dt * 3), [hx, hy] = at(o.spec.at); o.x += (hx - o.x) * q; o.y += (hy - o.y) * q; }
+      }
+      // its own side: kept up, mending slowly once low (no health is ever set lower)
+      for (const o of [u, friend, ...pack]) if (o && !o.dead && !o._bookKilled && o.hp < o.maxHp * 0.35) o.hp += o.maxHp * 0.25 * dt;
       if (!u.dead) { u.x = Math.min(W - 40, Math.max(40, u.x)); u.y = Math.min(H - 40, Math.max(40, u.y)); }
     };
   };

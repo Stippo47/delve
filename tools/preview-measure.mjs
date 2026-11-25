@@ -121,3 +121,82 @@ export function unseenBlows(spec, loops = 2) {
   } finally { AUDIT.on = null; }
   return { blows, why };
 }
+
+// Round 18b (lane preview18b): the same ruler for the monsters' pages and the statuses.
+//   measureStage(spec, loops) -> one record a loop, for a { t: 'foe' } or { t: 'status' } spec:
+//     fired / first / fires   the move (or the status) went off that loop, when it first did, and how often (goes
+//                             at least 0.8 s apart)
+//     straw                   straw targets on the stage (dummies: never moving, never striking back of their own)
+//     against                 the real heroes it was shown on (kinds)
+//     reached                 what the move made touched someone within REACH s of going off: a hero struck,
+//                             statused, held or shoved by its side, or a friend of its own mended, shielded or quickened,
+//                             or help called in
+//     crutch                  the stage had to help it (a target stepped up to it, its health set lower)
+//     unseen / unseenWhy      blows on either side with nothing seen behind them (a target with no weapon swinging at
+//                             nothing, a blow from no one), or health set lower with no blow
+//     stFrom                  (statuses) where the status came from: 'seen' (a real fighter's blow, shot, zone or
+//                             ability), 'nothing' (put on by the stage, or by a straw target that never moved)
+const REACH = 3.5;
+const dummy = (s) => !!(s && s.def && s.def.dummy);
+export function seenAny(u, src, o) {
+  if (o.dot || o.zone || o.explosion || o.gas || o.shot || o.slam || o.guarded || o.hexTurned || o.proc || o.stk) return true; // (proc, stk: a status bursting)
+  if (!src) return Math.hypot(u.kx || 0, u.ky || 0) > 25 || (u.bodies || []).some((b) => Math.hypot(b.kx || 0, b.ky || 0) > 25);
+  if (src === u) return true;
+  if (!dummy(src)) return true;
+  return isWeaponDummy(src) && (!!src.anim || /bow/.test(src.def.art));
+}
+export function measureStage(spec, loops = 2) {
+  setSeed(11);
+  const S = PS.makeStage(spec);
+  if (S.locked) return [{ locked: true, why: S.why }];
+  const rec = []; let cur = null;
+  const side = () => (S.hero ? S.hero.team : 'enemy');
+  const newLoop = () => {
+    cur = { fired: false, first: null, fires: 0, straw: 0, against: new Set(), reached: false, crutch: !!S.crutch, unseen: 0, unseenWhy: [], stFrom: null };
+    rec.push(cur);
+    for (const o of S.w.units) { if (dummy(o)) cur.straw++; else if (S.hero && o.team !== side() && !o.summon) cur.against.add(o.kind); }
+  };
+  newLoop();
+  const keys = new Set();
+  const within = () => cur.first != null && S.t - cur.first <= REACH + 1e-6;
+  const mineSide = (src) => { const r = ownerOf(src); return !!r && r.team === side() && !dummy(r); };
+  AUDIT.on = (ev, w, u, src, amt, o = {}) => {
+    if (w && w !== S.w) return;
+    if ((ev === 'takenBuffs' || ev === 'block' || ev === 'keep') && u && !o.dot && !u.partOf) {
+      const key = u.id + ':' + (src ? src.id : 'x') + ':' + S.t.toFixed(3);
+      if (!keys.has(key)) { keys.add(key); if (!seenAny(u, src, o)) { cur.unseen++; if (cur.unseenWhy.length < 3) cur.unseenWhy.push((u === S.hero ? 'it' : u.kind) + '<-' + (src ? src.kind : 'nothing')); } }
+    }
+    if (spec.t === 'foe' && within() && u) {
+      if ((ev === 'hurt' || ev === 'status' || ev === 'block' || ev === 'keep') && u.team !== side() && (mineSide(src || o.by) || !(src || o.by))) cur.reached = true; // (no source: a blast, a zone of its own: nothing else on its stage hurts the heroes)
+      if (ev === 'heal' && u.team === side() && src && src !== u && mineSide(src)) cur.reached = true;
+      if (ev === 'buff' && u.team === side() && !dummy(u)) cur.reached = true;
+    }
+  };
+  const seenU = new WeakSet(); for (const o of S.w.units) seenU.add(o);
+  let loops0 = S.loops;
+  const N = Math.ceil((loops + 0.2) * S.loop / DT) + 400;
+  try {
+    for (let i = 0; i < N; i++) {
+      if (S.loops !== loops0) { loops0 = S.loops; if (rec.length >= loops) break; newLoop(); for (const o of S.w.units) seenU.add(o); }
+      if (!S.w.stats) S.w.stats = newStats([...new Set(S.w.units.filter((o) => o.team === 'hero' && !dummy(o)).map((o) => o.kind))]);
+      const hpBefore = new Map(S.w.units.filter((o) => !dummy(o) && !o.partOf).map((o) => [o, o.hp]));
+      const hurtSum = new Map(); const prev = AUDIT.on;
+      AUDIT.on = (ev, w, u, src, amt, o) => { if (ev === 'hurt' && u) hurtSum.set(u, (hurtSum.get(u) || 0) + amt); prev(ev, w, u, src, amt, o); };
+      const f0 = S.fires, L = S.loops;
+      S.step(DT);
+      AUDIT.on = prev;
+      if (S.loops !== L) continue;
+      if (S.fires > f0) { if (S.t - (cur.lastGo ?? -9) > 0.8) cur.fires++; cur.lastGo = S.t; if (cur.first == null) cur.first = S.t; cur.fired = true; } // (a go: what fires within 0.8 s of the last is the same go)
+      if (S.crutch) cur.crutch = true;
+      for (const [o, h] of hpBefore) if (S.w.units.includes(o) && !o.downed && !o.dead && !o.dying && o.maxHp && h - o.hp > (hurtSum.get(o) || 0) + o.maxHp * 0.02) { cur.unseen++; if (cur.unseenWhy.length < 3) cur.unseenWhy.push((o === S.hero ? 'it' : o.kind) + ' health set lower'); }
+      for (const o of S.w.units) if (!seenU.has(o)) { seenU.add(o); if (spec.t === 'foe' && within() && o.team === side() && !dummy(o)) cur.reached = true; }
+      if (spec.t === 'foe' && within() && !cur.reached) {
+        // held, frozen, rooted or put to sleep by its side (a grab, a pin: not always a blow)
+        for (const o of S.w.units) if (o.team !== side() && !dummy(o) && (o.stunT > 0.05 || o.rootT > 0.05 || o.frozenT > 0.05 || o.sleepT > 0.05 || o.forcedGoal)) { cur.reached = true; break; }
+      }
+      // (statuses) where it came from: the stage says (S.srcSeen: true when a real fighter put it on, in view)
+      if (spec.t === 'status' && S.fired() && cur.stFrom == null) cur.stFrom = S.srcSeen ? 'seen' : 'nothing';
+    }
+  } finally { AUDIT.on = null; }
+  return rec.slice(0, loops).map((r) => ({ ...r, against: [...r.against] }));
+}

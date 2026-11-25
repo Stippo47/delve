@@ -254,3 +254,82 @@ export function attackSceneOf(id) {
   const o = ATTACK_SCENE[id] || S('pair', { foes: [F('melee', [300, 150]), F('fast', [330, 215])] }), base = SCENES[o.scene];
   return { ...base, ...o, name: o.scene, foes: [...(o.foes || base.foes || [])], friends: [...(o.friends || base.friends || [])] };
 }
+
+// ---------------------------------------------------------------- the monsters' pages (round 18b, lane preview18b)
+// The designer, on the Book's previews: "the dummies don't attack like how an enemy would, I don't want the heroes to
+// just take invisible damage. I want to see how each ability works in the best way possible." Round 13 to 18 showed an
+// enemy's moves on blue straw targets that never moved and poked it now and then from nowhere; its health was set lower
+// with no blow so the moves that wait for it to be hurt came, and a target was moved up to it when its move hadn't come.
+// Now a monster's move is shown against a small party of real heroes running their own brains (they walk up, swing,
+// shoot, kite, as in a run), set out the way the move wants them:
+//   FOE_SCENES[name]: { heroes: [{ k, at, hp, hold, on }], friend, pack, hp, foeHold }
+//     heroes   who it faces: k a hero kind; at: [dx, dy] from the monster (scaled up on a big stage); hp: the share of
+//              health it starts on (always with the monster there to have done it); hold: seconds it holds its spot
+//              before it moves of its own (a lane to charge down stays a lane); on: 'friend', it goes for the monster's
+//              friend rather than the monster (a mender has someone to mend)
+//     friend   a fighter of the monster's own side beside it, hurt, with a hero on it (menders, guards, war cries,
+//              raising the fallen; friendFor picks one from its own dungeon); pack: two more of its own kind (howls)
+//     hp       the monster's own share of health at the start (moves that wait for it to be hurt), the heroes there
+// The heroes hit softly (FOE_HERO_DMG) and are kept up (FOE_HERO_FLOOR, then they mend), the monster and its side are
+// kept up too: so the loop lasts and its move comes round again.
+// FOE_SCENE['kind'] or FOE_SCENE['kind:move'] picks a scene and lays keys over it; with no entry the scene comes from
+// how the kind fights (foeSceneFor).
+export const FOE_HERO_DMG = 0.3, FOE_HERO_FLOOR = 0.2;
+const H = (k, at, o = {}) => ({ k, at, ...o });
+export const FOE_SCENES = {
+  // a fighter coming at it, a shooter behind: what most moves meet in a run
+  party: { heroes: [H('paladin', [-150, 20]), H('archer', [-320, -70])] },
+  // up close all round it (slams, quakes, spins, things that answer a blow)
+  close: { heroes: [H('paladin', [-80, 0]), H('dame', [-55, -85]), H('archer', [-300, 60])] },
+  // round it on every side (rings, novas, volleys)
+  ring: { heroes: [H('paladin', [-110, 0]), H('tower', [10, -120]), H('dame', [10, 120]), H('archer', [-300, -40])] },
+  // off at a distance, held a moment (charges, leaps, pounces, throws, lines, lobs)
+  far: { heroes: [H('paladin', [-290, 0], { hold: 1.6 }), H('archer', [-330, -110]), H('tower', [-300, 110], { hold: 1.6 })] },
+  // two close together off at a distance (spreads, barrages, splashes)
+  pair: { heroes: [H('paladin', [-250, -25], { hold: 1.4 }), H('tower', [-255, 45], { hold: 1.4 }), H('archer', [-360, -120])] },
+  // shooters (moves that answer shots: reflections, dodges, shields, going for the back row)
+  shooters: { heroes: [H('archer', [-300, -90]), H('crossbowman', [-320, 90]), H('paladin', [-160, 0])] },
+  // spell throwers (moves that answer magic)
+  casters: { heroes: [H('pyromancer', [-300, -90]), H('frost', [-320, 90]), H('paladin', [-160, 0])] },
+  // a hurt hero among them (moves that go for the weak)
+  weak: { heroes: [H('paladin', [-150, -40]), H('archer', [-230, 90], { hp: 0.3 }), H('cleric', [-340, -90])] },
+  // its own side hurt, a hero on it (menders, guards, war cries, the raising of the fallen)
+  friend: { friend: true, heroes: [H('paladin', [-150, 110], { on: 'friend' }), H('archer', [-320, -60])] },
+  // its pack beside it (howls)
+  pack: { pack: true, heroes: [H('paladin', [-170, 0]), H('archer', [-330, -80]), H('tower', [-300, 90])] },
+  // a boss's hall: four of them, spread
+  boss: { heroes: [H('paladin', [-200, -40]), H('tower', [-210, 80]), H('archer', [-420, -150]), H('cleric', [-440, 150])] },
+};
+// what to lay over the scene, by kind or kind:move ('kind:elite', 'kind:major', 'kind:kit', 'kind:attack')
+const FS = (scene, o = {}) => ({ scene, ...o });
+export const FOE_SCENE = {
+};
+const HURT_MOVE = /below half|half its health|when hurt|hurt,|once hurt|low on health|wounded/i;
+// the scene for a kind's move when it has no entry: from how it fights (its ability, its role) and its move's words
+export function foeSceneFor(k, move, d, words = '', major = '') {
+  const o = FOE_SCENE[k + ':' + move] || FOE_SCENE[k];
+  if (o) return o;
+  if (d.boss) return FS('boss');
+  if (move === 'attack') return FS('party');
+  if (move === 'major') return FS({ quake: 'close', charge: 'far', volley: 'ring', call: 'party' }[major] || 'party', HURT_MOVE.test(words) ? { hp: 0.45 } : {});
+  if ((d.pack || d.wolf) && move !== 'elite') return FS('pack');
+  if (d.mends || !(d.dmg > 0)) return FS('friend');
+  if (move === 'elite') {
+    const hp = HURT_MOVE.test(words) ? { hp: 0.45 } : {};
+    if (/mend|heal|rais|rall|war cry|quicken|shield[s ]+(its|the) |call/i.test(words)) return FS('friend', hp);
+    if (/charge|rush|leap|pounce|lunge|thr[oe]w|lob|spear|dash|dive|swoop|hook|pull/i.test(words)) return FS('far', hp);
+    if (/slam|quake|nova|spin|round it|all round|ring|stomp|sweep/i.test(words)) return FS('close', hp);
+    if (/arrow|shot|reflect|shooter/i.test(words)) return FS('shooters', hp);
+    return FS('party', hp);
+  }
+  if (d.ability === 'charge' || d.ability === 'shadowstep' || d.ability === 'dash' || d.dashCd) return FS('far');
+  if (d.ability === 'slam') return FS('close');
+  if (d.ability === 'barrage') return FS('pair');
+  return FS('party');
+}
+export function foeSceneOf(k, move, d, words, major) {
+  const o = foeSceneFor(k, move, d, words, major), base = FOE_SCENES[o.scene] || FOE_SCENES.party;
+  const out = { ...base, ...o, name: o.scene };
+  out.heroes = [...(o.heroes || base.heroes || []), ...(o.addHeroes || [])];
+  return out;
+}
