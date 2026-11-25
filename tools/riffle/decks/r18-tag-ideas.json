@@ -1,0 +1,99 @@
+{
+  "title": "Round 18: tag ideas",
+  "topic": "balance",
+  "stack": "audit18",
+  "order": 3,
+  "priority": 3,
+  "cards": [
+    {
+      "id": "metal-chain",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Lightning leaps metal",
+      "text": "A shock that lands on a machine, turret or golem jumps on to the nearest other metal thing.",
+      "why": "The Foundry starts rewarding lightning heroes, and a fight there looks different: sparks running down a line of bots.",
+      "pick": "Yes. Your own turrets are spared, so it never punishes the Engineer."
+    },
+    {
+      "id": "wet-short",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Wet machines short out",
+      "text": "A soaked machine hit by lightning stalls for a moment, in a shower of sparks.",
+      "why": "Water heroes (the new Water Mage) and storm heroes start working together. Machines already take more shock when wet, so it's one small step on.",
+      "pick": "Yes, about half a second, at most once every few seconds per machine."
+    },
+    {
+      "id": "repair-only",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Machines: repair only",
+      "text": "Healing spells, potions and songs do nothing to turrets, totems and golems; only repairs fix them.",
+      "why": "It makes the Engineer's wrench (and repair drones) the only way to keep a construct standing, so builders matter. It costs healers a little in parties with turrets.",
+      "pick": "Yes, for both sides: enemy repair drones keep their job, enemy healers can't mend machines."
+    },
+    {
+      "id": "deaf",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Deaf to songs",
+      "text": "Machines, golems and slimes ignore every song, shout and howl, both their side's and yours.",
+      "why": "No lullaby putting a turret to sleep, no war cry speeding up a golem. The rule is already in the tag system, waiting for kinds.",
+      "pick": "Yes."
+    },
+    {
+      "id": "fliers-fly",
+      "kind": "question",
+      "rarity": "rare",
+      "title": "Fliers really fly",
+      "text": "Bats, spirits and angels are in the air for good: puddles, fire and slams miss them, shots don't.",
+      "why": "Ranged heroes get a job, and flying rooms play differently. Big change: those enemies get harder for melee parties, so some abilities would need to bring them down.",
+      "pick": "Yes, with a few heroes able to ground them (nets, the bolas, a gust)."
+    },
+    {
+      "id": "edge-effects",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Sharp cuts, blunt dazes",
+      "text": "Every sharp blow builds a little bleeding, every blunt one a little stagger.",
+      "why": "Weapons would feel different even at the same damage: a sword party bleeds things down, a hammer party keeps them reeling.",
+      "pick": "Maybe. A lot of small numbers to tune; I'd try it after the resistance calls settle."
+    },
+    {
+      "id": "muzzle",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "A muzzle for loud ones",
+      "text": "An ability that hushes one enemy at a time: no howl, song, fire breath or bite for a few seconds.",
+      "why": "Silence now only stops the mouth, so it needs a way in for heroes. A hero picking off the Choir Sprite's song or a wolf pack's howl is a clear, readable job.",
+      "pick": "Yes, as a Monk ability (a vow of silence laid on a foe)."
+    },
+    {
+      "id": "tamer",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "A beast-tamer's calm",
+      "text": "Soothe an animal: wolves, boars and bats stop fighting for a while, or for good if they're weak.",
+      "why": "Uses the beast tag, and gives the Wildwood and the Warren an answer that isn't damage.",
+      "pick": "Yes, as a Druid tier or a new hero."
+    },
+    {
+      "id": "plants-spread",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Burning plants spread",
+      "text": "Ents, sproutlings and the hay bale, once burning, set fire to the ground they walk on.",
+      "why": "Fire heroes get a big payoff in the Wildwood, but burning enemies would also spread fire under your own feet.",
+      "pick": "Maybe. The Wildwood is the first dungeon, so I'd keep it to the Elder Ent's fight for now."
+    },
+    {
+      "id": "magic-hunter",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "A magic hunter",
+      "text": "A new enemy that shrugs off half of every spell's hit but still burns, freezes and gets soaked.",
+      "why": "Your own example. Mage parties have to lean on their effects instead of raw spell damage; weapon heroes get a target they're best at.",
+      "pick": "Yes, an elite in the Gilded Spire or the Crypt."
+    }
+  ]
+}
