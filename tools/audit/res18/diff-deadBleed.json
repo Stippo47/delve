@@ -1,0 +1,2932 @@
+[
+ {
+  "kind": "rat",
+  "name": "Rat",
+  "where": [
+   "sewers1",
+   "sewers2",
+   "sewers:extra",
+   "crypt1"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "slime",
+  "name": "Slime",
+  "where": [
+   "wildwood1",
+   "sewers1",
+   "sewers1:mini",
+   "sewers2",
+   "sewers:extra"
+  ],
+  "tags": [
+   "slime"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: slime"
+   }
+  ]
+ },
+ {
+  "kind": "slimeSmall",
+  "name": "Slimelet",
+  "where": [
+   "sewers1"
+  ],
+  "tags": [
+   "slime"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: slime"
+   }
+  ]
+ },
+ {
+  "kind": "skeleton",
+  "name": "Skeleton",
+  "where": [],
+  "tags": [
+   "undead",
+   "bone"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: undead"
+   }
+  ]
+ },
+ {
+  "kind": "boss",
+  "name": "Bone King",
+  "where": [],
+  "tags": [
+   "boss",
+   "undead",
+   "bone"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 0.6,
+    "is": 0.8,
+    "by": "bone"
+   },
+   {
+    "s": "chill",
+    "was": 0.6,
+    "is": 1.2,
+    "by": "bone"
+   },
+   {
+    "s": "poison",
+    "was": 0.3,
+    "is": 0.35,
+    "by": "bone"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: undead"
+   }
+  ]
+ },
+ {
+  "kind": "wolf",
+  "name": "Wolf",
+  "where": [
+   "wildwood1",
+   "wildwood1:adds",
+   "wildwood2",
+   "wildwood3",
+   "wildwood:extra"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "rattler",
+  "name": "Rattler",
+  "where": [
+   "crypt1",
+   "crypt:extra"
+  ],
+  "tags": [
+   "undead",
+   "bone"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: undead"
+   }
+  ]
+ },
+ {
+  "kind": "rattlerBow",
+  "name": "Bone Archer",
+  "where": [
+   "crypt1",
+   "crypt2",
+   "crypt:extra"
+  ],
+  "tags": [
+   "undead",
+   "bone"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: undead"
+   }
+  ]
+ },
+ {
+  "kind": "rattlerSpear",
+  "name": "Bone Spear",
+  "where": [
+   "crypt2",
+   "crypt3",
+   "crypt:extra"
+  ],
+  "tags": [
+   "undead",
+   "bone"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: undead"
+   }
+  ]
+ },
+ {
+  "kind": "rattlerMace",
+  "name": "Loose Jaw",
+  "where": [
+   "crypt1:mini",
+   "crypt2",
+   "crypt3"
+  ],
+  "tags": [
+   "undead",
+   "bone"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: undead"
+   }
+  ]
+ },
+ {
+  "kind": "gaper",
+  "name": "Gaper",
+  "where": [
+   "crypt2",
+   "crypt3"
+  ],
+  "tags": [
+   "undead",
+   "bone"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: undead"
+   }
+  ]
+ },
+ {
+  "kind": "brute",
+  "name": "Brute",
+  "where": [
+   "crypt3",
+   "crypt:extra"
+  ],
+  "tags": [
+   "undead",
+   "bone"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: undead"
+   }
+  ]
+ },
+ {
+  "kind": "ghost",
+  "name": "Ghost",
+  "where": [
+   "crypt1",
+   "crypt2",
+   "crypt3"
+  ],
+  "tags": [
+   "undead",
+   "spirit",
+   "flier"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: undead"
+   }
+  ]
+ },
+ {
+  "kind": "lizardman",
+  "name": "Lizardman",
+  "where": [
+   "sewers2",
+   "sewers3",
+   "sewers:extra"
+  ],
+  "tags": [
+   "reptile"
+  ],
+  "changes": [
+   {
+    "s": "chill",
+    "was": 1.4,
+    "is": 1.3,
+    "by": "reptile"
+   }
+  ]
+ },
+ {
+  "kind": "lizardBlade",
+  "name": "Lizard Blade",
+  "where": [
+   "sewers2",
+   "sewers2:mini",
+   "sewers3",
+   "sewers:extra"
+  ],
+  "tags": [
+   "reptile"
+  ],
+  "changes": [
+   {
+    "s": "chill",
+    "was": 1.4,
+    "is": 1.3,
+    "by": "reptile"
+   }
+  ]
+ },
+ {
+  "kind": "goblin",
+  "name": "Goblin",
+  "where": [
+   "wildwood1",
+   "warren1",
+   "warren2",
+   "warren3",
+   "warren:extra"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "hobgoblin",
+  "name": "Hobgoblin",
+  "where": [
+   "warren1",
+   "warren1:mini",
+   "warren2",
+   "warren3",
+   "warren:extra"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "orc",
+  "name": "Orc",
+  "where": [
+   "warren2",
+   "warren2:mini",
+   "warren3",
+   "warren:extra"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "orcShaman",
+  "name": "Orc Shaman",
+  "where": [
+   "warren2",
+   "warren3"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "troll",
+  "name": "Troll",
+  "where": [
+   "warren3",
+   "warren:extra"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "graveWarden",
+  "name": "Grave Warden",
+  "where": [
+   "crypt2:mini",
+   "crypt:warden"
+  ],
+  "tags": [
+   "boss",
+   "undead",
+   "bone"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: undead"
+   }
+  ]
+ },
+ {
+  "kind": "lizardChief",
+  "name": "Lizard Chief",
+  "where": [
+   "sewers:boss"
+  ],
+  "tags": [
+   "boss",
+   "reptile"
+  ],
+  "changes": [
+   {
+    "s": "chill",
+    "was": 1.2,
+    "is": 1.3,
+    "by": "reptile"
+   }
+  ]
+ },
+ {
+  "kind": "warboss",
+  "name": "Orc Warboss",
+  "where": [
+   "warren:boss"
+  ],
+  "tags": [
+   "boss"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "boneKing",
+  "name": "The Bone King",
+  "where": [
+   "crypt:boss"
+  ],
+  "tags": [
+   "boss",
+   "undead",
+   "bone"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed"
+   }
+  ]
+ },
+ {
+  "kind": "bat",
+  "name": "Cave Bat",
+  "where": [
+   "frost1",
+   "frost2"
+  ],
+  "tags": [
+   "beast",
+   "flier"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "snowman",
+  "name": "Snowman",
+  "where": [
+   "frost1",
+   "frost1:mini",
+   "frost3",
+   "frost:extra"
+  ],
+  "tags": [
+   "ice"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 1.6,
+    "is": 1.4,
+    "by": "ice"
+   },
+   {
+    "s": "chill",
+    "was": 0.1,
+    "is": 0,
+    "by": "own element"
+   }
+  ]
+ },
+ {
+  "kind": "spiderHunter",
+  "name": "Hunter Spider",
+  "where": [
+   "sewers3",
+   "frost2"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": [
+   {
+    "s": "poison",
+    "was": 1,
+    "is": 0,
+    "by": "own element"
+   }
+  ]
+ },
+ {
+  "kind": "spiderMomma",
+  "name": "Momma Spider",
+  "where": [
+   "frost2",
+   "frost2:mini",
+   "frost:warden"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": [
+   {
+    "s": "poison",
+    "was": 1,
+    "is": 0,
+    "by": "own element"
+   }
+  ]
+ },
+ {
+  "kind": "banshee",
+  "name": "Banshee",
+  "where": [
+   "crypt2",
+   "crypt3",
+   "frost3"
+  ],
+  "tags": [
+   "undead",
+   "spirit",
+   "flier"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: undead"
+   }
+  ]
+ },
+ {
+  "kind": "ogre",
+  "name": "Ogre",
+  "where": [
+   "warren3"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "imp",
+  "name": "Imp",
+  "where": [
+   "ember1",
+   "ember2",
+   "ember3",
+   "ember:extra"
+  ],
+  "tags": [
+   "fire",
+   "demon"
+  ],
+  "changes": [
+   {
+    "s": "chill",
+    "was": 1,
+    "is": 1.5,
+    "by": "fire"
+   },
+   {
+    "s": "wet",
+    "was": 1,
+    "is": 1.3,
+    "by": "fire"
+   }
+  ]
+ },
+ {
+  "kind": "fireSlime",
+  "name": "Fire Slime",
+  "where": [
+   "sewers3",
+   "ember1",
+   "ember1:mini",
+   "ember2"
+  ],
+  "tags": [
+   "slime",
+   "fire"
+  ],
+  "changes": [
+   {
+    "s": "wet",
+    "was": 1,
+    "is": 1.3,
+    "by": "fire"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: slime"
+   }
+  ]
+ },
+ {
+  "kind": "devil",
+  "name": "Devil",
+  "where": [
+   "ember2",
+   "ember3",
+   "ember:extra"
+  ],
+  "tags": [
+   "demon"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 0.2,
+    "is": 0.25,
+    "by": "demon"
+   }
+  ]
+ },
+ {
+  "kind": "succubus",
+  "name": "Succubus",
+  "where": [
+   "ember2",
+   "ember3"
+  ],
+  "tags": [
+   "demon"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 0.2,
+    "is": 0.25,
+    "by": "demon"
+   },
+   {
+    "s": "charm",
+    "was": 1,
+    "is": 0,
+    "by": "own element"
+   }
+  ]
+ },
+ {
+  "kind": "demon",
+  "name": "Demon",
+  "where": [
+   "ember3",
+   "ember:extra"
+  ],
+  "tags": [
+   "demon"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 0.2,
+    "is": 0.25,
+    "by": "demon"
+   }
+  ]
+ },
+ {
+  "kind": "dragonborn",
+  "name": "Dragonborn",
+  "where": [
+   "ember2",
+   "ember3"
+  ],
+  "tags": [
+   "reptile"
+  ],
+  "changes": [
+   {
+    "s": "chill",
+    "was": 1,
+    "is": 1.3,
+    "by": "reptile"
+   }
+  ]
+ },
+ {
+  "kind": "cherub",
+  "name": "Cherub",
+  "where": [
+   "spire1",
+   "spire2",
+   "spire3",
+   "spire:extra"
+  ],
+  "tags": [
+   "flier",
+   "holy"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "angel",
+  "name": "Angel",
+  "where": [
+   "spire1",
+   "spire1:mini",
+   "spire2",
+   "spire3",
+   "spire:extra"
+  ],
+  "tags": [
+   "flier",
+   "holy"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "seraph",
+  "name": "Seraph",
+  "where": [
+   "spire2",
+   "spire3"
+  ],
+  "tags": [
+   "flier",
+   "holy"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "broodQueen",
+  "name": "Brood Queen",
+  "where": [],
+  "tags": [
+   "boss"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "frostGiant",
+  "name": "Old Frost",
+  "where": [
+   "frost:boss"
+  ],
+  "tags": [
+   "boss",
+   "ice"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "pitLord",
+  "name": "Pit Lord",
+  "where": [
+   "ember2:mini",
+   "ember:warden"
+  ],
+  "tags": [
+   "boss",
+   "demon"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "archfiend",
+  "name": "The Archfiend",
+  "where": [
+   "ember:boss"
+  ],
+  "tags": [
+   "boss",
+   "demon"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "archon",
+  "name": "Archon",
+  "where": [],
+  "tags": [
+   "boss",
+   "holy"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "radiant",
+  "name": "The Radiant",
+  "where": [
+   "spire:boss"
+  ],
+  "tags": [
+   "boss",
+   "holy"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "direWolf",
+  "name": "Dire Wolf",
+  "where": [
+   "wildwood3"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "slimeBig",
+  "name": "Big Slime",
+  "where": [
+   "wildwood1",
+   "wildwood1:elite"
+  ],
+  "tags": [
+   "slime"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: slime"
+   }
+  ]
+ },
+ {
+  "kind": "slimePoison",
+  "name": "Poison Slime",
+  "where": [
+   "wildwood1",
+   "wildwood3",
+   "sewers1"
+  ],
+  "tags": [
+   "slime"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: slime"
+   }
+  ]
+ },
+ {
+  "kind": "slimeletPoison",
+  "name": "Poison Slimelet",
+  "where": [],
+  "tags": [
+   "slime"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: slime"
+   }
+  ]
+ },
+ {
+  "kind": "goblinOrange",
+  "name": "Orange Goblin",
+  "where": [
+   "wildwood1"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "bandit",
+  "name": "Bandit",
+  "where": [
+   "wildwood2",
+   "wildwood2:adds"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "banditTorch",
+  "name": "Torch Bandit",
+  "where": [
+   "wildwood2"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "banditGreat",
+  "name": "Greatsword Bandit",
+  "where": [
+   "wildwood2"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "banditAxe",
+  "name": "Axe Bandit",
+  "where": [
+   "wildwood2"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "banditSpear",
+  "name": "Spear Bandit",
+  "where": [
+   "wildwood2"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "banditDagger",
+  "name": "Knife Bandit",
+  "where": [
+   "wildwood2",
+   "wildwood2:adds"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "poacher",
+  "name": "Poacher",
+  "where": [
+   "wildwood2",
+   "wildwood2:adds"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "banditBrute",
+  "name": "Bandit Brute",
+  "where": [
+   "wildwood2",
+   "wildwood2:elite",
+   "wildwood:extra"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "boar",
+  "name": "Thornback Boar",
+  "where": [
+   "wildwood3"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "sproutling",
+  "name": "Sproutling",
+  "where": [
+   "wildwood3",
+   "wildwood3:adds",
+   "wildwood:extra"
+  ],
+  "tags": [
+   "plant"
+  ],
+  "changes": [
+   {
+    "s": "entangle",
+    "was": 1,
+    "is": 0,
+    "by": "plant"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: plant"
+   }
+  ]
+ },
+ {
+  "kind": "ent",
+  "name": "Ent",
+  "where": [
+   "wildwood3",
+   "wildwood3:elite"
+  ],
+  "tags": [
+   "plant"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 1.8,
+    "is": 1.6,
+    "by": "plant"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: plant"
+   }
+  ]
+ },
+ {
+  "kind": "wisp",
+  "name": "Wisp",
+  "where": [
+   "wildwood3",
+   "wildwood3:adds"
+  ],
+  "tags": [
+   "spirit",
+   "flier"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: spirit"
+   }
+  ]
+ },
+ {
+  "kind": "alpha",
+  "name": "The Alpha",
+  "where": [
+   "wildwood1:mini",
+   "wildwood:warden"
+  ],
+  "tags": [
+   "boss",
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "banditChief",
+  "name": "The Bandit Chief",
+  "where": [
+   "wildwood2:mini"
+  ],
+  "tags": [
+   "boss"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "elderEnt",
+  "name": "The Elder Ent",
+  "where": [
+   "wildwood:boss"
+  ],
+  "tags": [
+   "boss",
+   "plant"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed"
+   }
+  ]
+ },
+ {
+  "kind": "mouse",
+  "name": "Mouse",
+  "where": [
+   "warren1"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "dynamouse",
+  "name": "Dynamite Mouse",
+  "where": [
+   "warren1"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "goblinSpear",
+  "name": "Spear Goblin",
+  "where": [
+   "warren1",
+   "warren2"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "goblinBomber",
+  "name": "Goblin Bomber",
+  "where": [
+   "warren1",
+   "warren2"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "goblinSuicide",
+  "name": "Suicide Bomber",
+  "where": [
+   "warren2",
+   "warren3"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "drummer",
+  "name": "Drummer",
+  "where": [
+   "warren2",
+   "warren3"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "wolfRider",
+  "name": "Wolf Rider",
+  "where": [
+   "warren2"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "frostShaman",
+  "name": "Frost Shaman",
+  "where": [
+   "warren3"
+  ],
+  "tags": [
+   "ice"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 1.3,
+    "is": 1.4,
+    "by": "ice"
+   },
+   {
+    "s": "chill",
+    "was": 0.2,
+    "is": 0,
+    "by": "own element"
+   }
+  ]
+ },
+ {
+  "kind": "iceTotem",
+  "name": "Ice Totem",
+  "where": [],
+  "tags": [
+   "construct",
+   "stationary",
+   "ice"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 1,
+    "is": 1.4,
+    "by": "ice"
+   },
+   {
+    "s": "stagger",
+    "was": 1,
+    "is": 0,
+    "by": "stationary"
+   },
+   {
+    "s": "curse",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   },
+   {
+    "s": "entangle",
+    "was": 1,
+    "is": 0.5,
+    "by": "construct"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "rockTroll",
+  "name": "Rock Troll",
+  "where": [
+   "warren3"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "ratPlague",
+  "name": "Plague Rat",
+  "where": [
+   "sewers1",
+   "sewers3",
+   "sewers:extra"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "ratKing",
+  "name": "Rat King",
+  "where": [
+   "sewers3"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "slimeSludge",
+  "name": "Sludge Slime",
+  "where": [
+   "sewers1",
+   "sewers3"
+  ],
+  "tags": [
+   "slime"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: slime"
+   }
+  ]
+ },
+ {
+  "kind": "croc",
+  "name": "Croc",
+  "where": [
+   "sewers2",
+   "sewers3"
+  ],
+  "tags": [
+   "beast",
+   "reptile"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "crab",
+  "name": "Sewer Crab",
+  "where": [
+   "sewers2",
+   "sewers:extra"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "crabBlue",
+  "name": "Blue Crab",
+  "where": [
+   "sewers2"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "crabGreen",
+  "name": "Green Crab",
+  "where": [
+   "sewers3"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": [
+   {
+    "s": "poison",
+    "was": 1,
+    "is": 0,
+    "by": "own element"
+   }
+  ]
+ },
+ {
+  "kind": "leechBlood",
+  "name": "Blood Leech",
+  "where": [
+   "sewers1",
+   "sewers3"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "leechBrain",
+  "name": "Brain Leech",
+  "where": [
+   "sewers2"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "rattlerGold",
+  "name": "Golden Skeleton",
+  "where": [
+   "crypt2",
+   "crypt3"
+  ],
+  "tags": [
+   "undead",
+   "bone"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "rattlerHarrow",
+  "name": "Harrowing Skeleton",
+  "where": [
+   "crypt1",
+   "crypt2",
+   "crypt3"
+  ],
+  "tags": [
+   "undead",
+   "bone"
+  ],
+  "changes": [
+   {
+    "s": "curse",
+    "was": 1,
+    "is": 0,
+    "by": "own element"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: undead"
+   }
+  ]
+ },
+ {
+  "kind": "scarab",
+  "name": "Scarab",
+  "where": [
+   "dunes1",
+   "dunes2",
+   "dunes:extra"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "scarabGold",
+  "name": "Golden Scarab",
+  "where": [
+   "dunes1",
+   "dunes3"
+  ],
+  "tags": [
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "cobra",
+  "name": "Cobra",
+  "where": [
+   "dunes1",
+   "dunes1:mini",
+   "dunes2",
+   "dunes:extra"
+  ],
+  "tags": [
+   "beast",
+   "reptile"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 1,
+    "is": 0.8,
+    "by": "reptile"
+   },
+   {
+    "s": "chill",
+    "was": 1,
+    "is": 1.3,
+    "by": "reptile"
+   }
+  ]
+ },
+ {
+  "kind": "jackal",
+  "name": "Jackal Guard",
+  "where": [
+   "dunes2",
+   "dunes2:mini",
+   "dunes3",
+   "dunes:warden"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "mummy",
+  "name": "Mummy",
+  "where": [
+   "dunes2",
+   "dunes3",
+   "dunes:extra"
+  ],
+  "tags": [
+   "undead"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: undead"
+   }
+  ]
+ },
+ {
+  "kind": "sandMage",
+  "name": "Sand Mage",
+  "where": [
+   "dunes3"
+  ],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "dustDevil",
+  "name": "Dust Devil",
+  "where": [],
+  "tags": [
+   "spirit"
+  ],
+  "changes": [
+   {
+    "s": "charm",
+    "was": 1,
+    "is": 0,
+    "by": "exception"
+   },
+   {
+    "s": "confuse",
+    "was": 1,
+    "is": 0,
+    "by": "exception"
+   },
+   {
+    "s": "sleepy",
+    "was": 1,
+    "is": 0,
+    "by": "exception"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "exception"
+   },
+   {
+    "s": "fear",
+    "was": 1,
+    "is": 0,
+    "by": "exception"
+   },
+   {
+    "s": "shackle",
+    "was": 1,
+    "is": 0,
+    "by": "exception"
+   }
+  ]
+ },
+ {
+  "kind": "sandSerpent",
+  "name": "Sand Serpent",
+  "where": [
+   "dunes1",
+   "dunes3",
+   "dunes:boss"
+  ],
+  "tags": [
+   "beast",
+   "reptile"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 1,
+    "is": 0.8,
+    "by": "reptile"
+   },
+   {
+    "s": "chill",
+    "was": 1,
+    "is": 1.3,
+    "by": "reptile"
+   }
+  ]
+ },
+ {
+  "kind": "serpentCoil",
+  "name": "Serpent Coil",
+  "where": [],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "dartTrap",
+  "name": "Dart Trap",
+  "where": [
+   "dunes2",
+   "dunes3"
+  ],
+  "tags": [
+   "construct",
+   "stationary",
+   "stone"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 1,
+    "is": 0.6,
+    "by": "stone"
+   },
+   {
+    "s": "chill",
+    "was": 0.5,
+    "is": 0.6,
+    "by": "stone"
+   },
+   {
+    "s": "entangle",
+    "was": 1,
+    "is": 0.5,
+    "by": "construct"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "spiritPoison",
+  "name": "Venom Spirit",
+  "where": [
+   "dunes2",
+   "dunes3"
+  ],
+  "tags": [
+   "spirit",
+   "flier"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: spirit"
+   }
+  ]
+ },
+ {
+  "kind": "spiritHaste",
+  "name": "Wind Spirit",
+  "where": [
+   "dunes1",
+   "dunes3"
+  ],
+  "tags": [
+   "spirit",
+   "flier"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: spirit"
+   }
+  ]
+ },
+ {
+  "kind": "gearSprite",
+  "name": "Gear Sprite",
+  "where": [
+   "foundry1"
+  ],
+  "tags": [
+   "construct",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "cogSprite",
+  "name": "Cog Sprite",
+  "where": [
+   "foundry1"
+  ],
+  "tags": [
+   "construct",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "bombBot",
+  "name": "Bomb Bot",
+  "where": [
+   "foundry1",
+   "foundry:extra"
+  ],
+  "tags": [
+   "construct",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "autoBomb",
+  "name": "Auto Bomb Bot",
+  "where": [
+   "foundry2"
+  ],
+  "tags": [
+   "construct",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "automaton",
+  "name": "Automaton",
+  "where": [
+   "foundry1:mini",
+   "foundry2",
+   "foundry3",
+   "foundry:warden"
+  ],
+  "tags": [
+   "construct",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "turretSteam",
+  "name": "Steam Turret",
+  "where": [
+   "foundry2"
+  ],
+  "tags": [
+   "construct",
+   "stationary",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "turretFlame",
+  "name": "Flame Turret",
+  "where": [
+   "foundry2"
+  ],
+  "tags": [
+   "construct",
+   "stationary",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "turretGun",
+  "name": "Gun Turret",
+  "where": [
+   "foundry2"
+  ],
+  "tags": [
+   "construct",
+   "stationary",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "turretLaser",
+  "name": "Laser Turret",
+  "where": [
+   "foundry3"
+  ],
+  "tags": [
+   "construct",
+   "stationary",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "mortar",
+  "name": "Mortar",
+  "where": [
+   "foundry2"
+  ],
+  "tags": [
+   "construct",
+   "stationary",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "mortarFire",
+  "name": "Fire Mortar",
+  "where": [
+   "foundry3"
+  ],
+  "tags": [
+   "construct",
+   "stationary",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "mortarPoison",
+  "name": "Gas Mortar",
+  "where": [
+   "foundry3"
+  ],
+  "tags": [
+   "construct",
+   "stationary",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "teslaCoil",
+  "name": "Tesla Coil",
+  "where": [
+   "foundry3"
+  ],
+  "tags": [
+   "construct",
+   "stationary",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "repairDrone",
+  "name": "Repair Drone",
+  "where": [
+   "foundry2",
+   "foundry3"
+  ],
+  "tags": [
+   "construct",
+   "flier",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "foundrySmith",
+  "name": "Foundry Smith",
+  "where": [
+   "foundry2:mini",
+   "foundry3",
+   "foundry:extra"
+  ],
+  "tags": [],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 0,
+    "is": 0.5,
+    "by": "exception"
+   },
+   {
+    "s": "chill",
+    "was": 1.3,
+    "is": 1,
+    "by": ""
+   }
+  ]
+ },
+ {
+  "kind": "bee",
+  "name": "Copper Bee",
+  "where": [
+   "foundry1",
+   "foundry:extra"
+  ],
+  "tags": [
+   "construct",
+   "flier",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "wasp",
+  "name": "Copper Wasp",
+  "where": [
+   "foundry1"
+  ],
+  "tags": [
+   "construct",
+   "flier",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "hornet",
+  "name": "Copper Hornet",
+  "where": [],
+  "tags": [
+   "construct",
+   "flier",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "beeBronze",
+  "name": "Bronze Bee",
+  "where": [
+   "foundry2"
+  ],
+  "tags": [
+   "construct",
+   "flier",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "beeSteel",
+  "name": "Steel Bee",
+  "where": [
+   "foundry3"
+  ],
+  "tags": [
+   "construct",
+   "flier",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "waspBronze",
+  "name": "Bronze Wasp",
+  "where": [
+   "foundry2"
+  ],
+  "tags": [
+   "construct",
+   "flier",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "waspSteel",
+  "name": "Steel Wasp",
+  "where": [
+   "foundry3"
+  ],
+  "tags": [
+   "construct",
+   "flier",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "hornetBronze",
+  "name": "Bronze Hornet",
+  "where": [
+   "foundry2"
+  ],
+  "tags": [
+   "construct",
+   "flier",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "hornetSteel",
+  "name": "Steel Hornet",
+  "where": [
+   "foundry3"
+  ],
+  "tags": [
+   "construct",
+   "flier",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "sawBlade",
+  "name": "Saw Blade",
+  "where": [
+   "foundry1",
+   "foundry2"
+  ],
+  "tags": [
+   "metal"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "chainCrawler",
+  "name": "Chain Crawler",
+  "where": [
+   "foundry3",
+   "foundry:boss"
+  ],
+  "tags": [
+   "construct",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "shock",
+    "was": 1.4,
+    "is": 0,
+    "by": "own element"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "crawlerPlate",
+  "name": "Crawler Plate",
+  "where": [],
+  "tags": [
+   "construct",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "poison",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   },
+   {
+    "s": "wet",
+    "was": 1,
+    "is": 1.3,
+    "by": "metal"
+   },
+   {
+    "s": "shock",
+    "was": 1,
+    "is": 0,
+    "by": "own element"
+   },
+   {
+    "s": "curse",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   },
+   {
+    "s": "entangle",
+    "was": 1,
+    "is": 0.5,
+    "by": "construct"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "drillBot",
+  "name": "Drill Bot",
+  "where": [
+   "foundry1"
+  ],
+  "tags": [
+   "construct",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "spiritShock",
+  "name": "Storm Spirit",
+  "where": [
+   "foundry3"
+  ],
+  "tags": [
+   "spirit",
+   "flier"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: spirit"
+   }
+  ]
+ },
+ {
+  "kind": "frostWolf",
+  "name": "Frost Wolf",
+  "where": [
+   "frost1",
+   "frost3",
+   "frost:extra"
+  ],
+  "tags": [
+   "ice",
+   "beast"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 1.3,
+    "is": 1.4,
+    "by": "ice"
+   },
+   {
+    "s": "chill",
+    "was": 0.2,
+    "is": 0,
+    "by": "own element"
+   }
+  ]
+ },
+ {
+  "kind": "slimeIce",
+  "name": "Ice Slime",
+  "where": [
+   "frost1",
+   "frost2"
+  ],
+  "tags": [
+   "slime",
+   "ice"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: slime"
+   }
+  ]
+ },
+ {
+  "kind": "spiderFrost",
+  "name": "Frost Spider",
+  "where": [
+   "frost2",
+   "frost3",
+   "frost:extra"
+  ],
+  "tags": [
+   "ice",
+   "beast"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 1,
+    "is": 1.4,
+    "by": "ice"
+   },
+   {
+    "s": "chill",
+    "was": 0.2,
+    "is": 0,
+    "by": "own element"
+   }
+  ]
+ },
+ {
+  "kind": "yeti",
+  "name": "Yeti",
+  "where": [
+   "frost3",
+   "frost:extra"
+  ],
+  "tags": [
+   "ice",
+   "beast"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 1.3,
+    "is": 1.4,
+    "by": "ice"
+   }
+  ]
+ },
+ {
+  "kind": "frostWraith",
+  "name": "Icicle Wraith",
+  "where": [
+   "frost2",
+   "frost3"
+  ],
+  "tags": [
+   "ice",
+   "undead",
+   "spirit",
+   "flier"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 1.5,
+    "is": 1.4,
+    "by": "ice"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: undead"
+   }
+  ]
+ },
+ {
+  "kind": "spiritFrost",
+  "name": "Frost Spirit",
+  "where": [
+   "frost1",
+   "frost3"
+  ],
+  "tags": [
+   "ice",
+   "spirit",
+   "flier"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 1,
+    "is": 1.4,
+    "by": "ice"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: spirit"
+   }
+  ]
+ },
+ {
+  "kind": "spiderFire",
+  "name": "Fire Spider",
+  "where": [
+   "ember2",
+   "ember3"
+  ],
+  "tags": [
+   "fire",
+   "beast"
+  ],
+  "changes": [
+   {
+    "s": "chill",
+    "was": 1,
+    "is": 1.5,
+    "by": "fire"
+   },
+   {
+    "s": "wet",
+    "was": 1,
+    "is": 1.3,
+    "by": "fire"
+   }
+  ]
+ },
+ {
+  "kind": "hellhound",
+  "name": "Hellhound",
+  "where": [
+   "ember1",
+   "ember2",
+   "ember3",
+   "ember:extra"
+  ],
+  "tags": [
+   "fire",
+   "beast",
+   "demon"
+  ],
+  "changes": [
+   {
+    "s": "chill",
+    "was": 1.4,
+    "is": 1.5,
+    "by": "fire"
+   },
+   {
+    "s": "wet",
+    "was": 1,
+    "is": 1.3,
+    "by": "fire"
+   }
+  ]
+ },
+ {
+  "kind": "cinderBat",
+  "name": "Cinder Bat",
+  "where": [
+   "ember1",
+   "ember3"
+  ],
+  "tags": [
+   "fire",
+   "beast",
+   "flier"
+  ],
+  "changes": [
+   {
+    "s": "chill",
+    "was": 1,
+    "is": 1.5,
+    "by": "fire"
+   },
+   {
+    "s": "wet",
+    "was": 1,
+    "is": 1.3,
+    "by": "fire"
+   }
+  ]
+ },
+ {
+  "kind": "spiritFire",
+  "name": "Fire Spirit",
+  "where": [
+   "ember1",
+   "ember2",
+   "ember3"
+  ],
+  "tags": [
+   "fire",
+   "spirit",
+   "flier"
+  ],
+  "changes": [
+   {
+    "s": "chill",
+    "was": 1,
+    "is": 1.5,
+    "by": "fire"
+   },
+   {
+    "s": "wet",
+    "was": 1,
+    "is": 1.3,
+    "by": "fire"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: spirit"
+   }
+  ]
+ },
+ {
+  "kind": "angelFallen",
+  "name": "Fallen Angel",
+  "where": [
+   "spire2",
+   "spire3",
+   "spire:extra"
+  ],
+  "tags": [
+   "flier",
+   "holy"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "sunBlade",
+  "name": "Sun Blade",
+  "where": [
+   "spire1",
+   "spire2",
+   "spire3"
+  ],
+  "tags": [
+   "construct",
+   "flier",
+   "metal",
+   "holy"
+  ],
+  "changes": [
+   {
+    "s": "wet",
+    "was": 1,
+    "is": 1.3,
+    "by": "metal"
+   },
+   {
+    "s": "shock",
+    "was": 1,
+    "is": 1.4,
+    "by": "metal"
+   },
+   {
+    "s": "entangle",
+    "was": 1,
+    "is": 0.5,
+    "by": "construct"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "choirSprite",
+  "name": "Choir Sprite",
+  "where": [
+   "spire1",
+   "spire2"
+  ],
+  "tags": [
+   "holy"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "golem",
+  "name": "Golem",
+  "where": [
+   "spire3",
+   "dunes2",
+   "dunes3",
+   "dunes:extra"
+  ],
+  "tags": [
+   "construct",
+   "stone"
+  ],
+  "changes": [
+   {
+    "s": "entangle",
+    "was": 1,
+    "is": 0.5,
+    "by": "construct"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "gildedGolem",
+  "name": "Gilded Golem",
+  "where": [
+   "spire3",
+   "spire:extra"
+  ],
+  "tags": [
+   "construct",
+   "holy",
+   "stone"
+  ],
+  "changes": [
+   {
+    "s": "entangle",
+    "was": 1,
+    "is": 0.5,
+    "by": "construct"
+   },
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ },
+ {
+  "kind": "spiritHeal",
+  "name": "Light Spirit",
+  "where": [
+   "spire2"
+  ],
+  "tags": [
+   "spirit",
+   "flier",
+   "holy"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: spirit"
+   }
+  ]
+ },
+ {
+  "kind": "spiritWard",
+  "name": "Ward Spirit",
+  "where": [
+   "spire3"
+  ],
+  "tags": [
+   "spirit",
+   "flier",
+   "holy"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed: spirit"
+   }
+  ]
+ },
+ {
+  "kind": "heraldLight",
+  "name": "Herald of Light",
+  "where": [
+   "spire2:mini",
+   "spire:warden"
+  ],
+  "tags": [
+   "boss",
+   "holy"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "heraldFallen",
+  "name": "Fallen Herald",
+  "where": [],
+  "tags": [
+   "boss"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "chieftain",
+  "name": "The Goblin Chieftain",
+  "where": [
+   "warren:boss"
+  ],
+  "tags": [
+   "boss"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "warDrum",
+  "name": "War Drum",
+  "where": [],
+  "tags": [
+   "construct",
+   "stationary"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "greatOoze",
+  "name": "The Great Ooze",
+  "where": [
+   "sewers:boss"
+  ],
+  "tags": [
+   "boss",
+   "slime"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "call: deadBleed"
+   }
+  ]
+ },
+ {
+  "kind": "oozeHalf",
+  "name": "The Great Ooze (its other half)",
+  "where": [],
+  "tags": [
+   "slime"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "winterQueen",
+  "name": "The Winter Queen",
+  "where": [
+   "frost:boss"
+  ],
+  "tags": [
+   "boss",
+   "ice"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "queenImage",
+  "name": "Ice Mirror",
+  "where": [],
+  "tags": [
+   "ice"
+  ],
+  "changes": [
+   {
+    "s": "burn",
+    "was": 1.3,
+    "is": 1.4,
+    "by": "ice"
+   },
+   {
+    "s": "charm",
+    "was": 0,
+    "is": 1,
+    "by": ""
+   },
+   {
+    "s": "confuse",
+    "was": 0,
+    "is": 1,
+    "by": ""
+   },
+   {
+    "s": "sleepy",
+    "was": 0,
+    "is": 1,
+    "by": ""
+   },
+   {
+    "s": "fear",
+    "was": 0,
+    "is": 1,
+    "by": ""
+   }
+  ]
+ },
+ {
+  "kind": "cinder",
+  "name": "Cinder, the Old Drake",
+  "where": [
+   "ember:boss"
+  ],
+  "tags": [
+   "boss",
+   "fire"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "drakeSegment",
+  "name": "Cinder (body)",
+  "where": [],
+  "tags": [
+   "fire"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "drakeTail",
+  "name": "Cinder (tail)",
+  "where": [],
+  "tags": [
+   "fire"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "gildedSeraph",
+  "name": "The Gilded Seraph",
+  "where": [
+   "spire:boss"
+  ],
+  "tags": [
+   "boss",
+   "flier",
+   "holy"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "seraphHorn",
+  "name": "The Gilded Seraph (a trumpet)",
+  "where": [],
+  "tags": [
+   "stationary"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "seraphSinger",
+  "name": "Choir Singer",
+  "where": [],
+  "tags": [
+   "holy"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "sandWurm",
+  "name": "The Sand Wurm",
+  "where": [
+   "dunes:boss"
+  ],
+  "tags": [
+   "boss",
+   "beast"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "wurmSegment",
+  "name": "The Sand Wurm (body)",
+  "where": [],
+  "tags": [],
+  "changes": []
+ },
+ {
+  "kind": "greatEngine",
+  "name": "The Great Engine",
+  "where": [
+   "foundry:boss"
+  ],
+  "tags": [
+   "construct",
+   "boss",
+   "metal"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "engineHammer",
+  "name": "The Great Engine (hammer)",
+  "where": [],
+  "tags": [
+   "construct",
+   "metal"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "engineClaw",
+  "name": "The Great Engine (claw)",
+  "where": [],
+  "tags": [
+   "construct",
+   "metal"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "engineValve",
+  "name": "The Great Engine (valve)",
+  "where": [],
+  "tags": [
+   "stationary"
+  ],
+  "changes": []
+ },
+ {
+  "kind": "welderDrone",
+  "name": "Welder Drone",
+  "where": [],
+  "tags": [
+   "construct",
+   "flier",
+   "metal"
+  ],
+  "changes": [
+   {
+    "s": "bleed",
+    "was": 1,
+    "is": 0,
+    "by": "construct"
+   }
+  ]
+ }
+]

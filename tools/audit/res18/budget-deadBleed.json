@@ -1,0 +1,1406 @@
+{
+ "wildwood": {
+  "now": {
+   "burn": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 14
+   },
+   "chill": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "poison": {
+    "immune": 4,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shock": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "stagger": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 1,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 8,
+    "resists": 0,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   }
+  },
+  "prop": {
+   "burn": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 14
+   },
+   "chill": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "poison": {
+    "immune": 4,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shock": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "stagger": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 1,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 14,
+    "resists": 0,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 26,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   }
+  }
+ },
+ "warren": {
+  "now": {
+   "burn": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 12
+   },
+   "chill": {
+    "immune": 0,
+    "resists": 2,
+    "weak": 0
+   },
+   "poison": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shock": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "stagger": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   }
+  },
+  "prop": {
+   "burn": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 12
+   },
+   "chill": {
+    "immune": 2,
+    "resists": 0,
+    "weak": 0
+   },
+   "poison": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shock": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "stagger": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   }
+  }
+ },
+ "sewers": {
+  "now": {
+   "burn": {
+    "immune": 1,
+    "resists": 0,
+    "weak": 6
+   },
+   "chill": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 35
+   },
+   "poison": {
+    "immune": 7,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shock": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "stagger": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   }
+  },
+  "prop": {
+   "burn": {
+    "immune": 1,
+    "resists": 0,
+    "weak": 6
+   },
+   "chill": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 35
+   },
+   "poison": {
+    "immune": 15,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 1
+   },
+   "shock": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "stagger": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 19,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   }
+  }
+ },
+ "crypt": {
+  "now": {
+   "burn": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 16
+   },
+   "chill": {
+    "immune": 5,
+    "resists": 16,
+    "weak": 71
+   },
+   "poison": {
+    "immune": 21,
+    "resists": 71,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "shock": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "stagger": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 21,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   }
+  },
+  "prop": {
+   "burn": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 16
+   },
+   "chill": {
+    "immune": 5,
+    "resists": 16,
+    "weak": 71
+   },
+   "poison": {
+    "immune": 21,
+    "resists": 71,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "shock": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "stagger": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 30,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 91,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   }
+  }
+ },
+ "frost": {
+  "now": {
+   "burn": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 61
+   },
+   "chill": {
+    "immune": 27,
+    "resists": 43,
+    "weak": 0
+   },
+   "poison": {
+    "immune": 9,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shock": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "stagger": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 9,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   }
+  },
+  "prop": {
+   "burn": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 70
+   },
+   "chill": {
+    "immune": 67,
+    "resists": 3,
+    "weak": 0
+   },
+   "poison": {
+    "immune": 23,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shock": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "stagger": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 9,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 17,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   }
+  }
+ },
+ "ember": {
+  "now": {
+   "burn": {
+    "immune": 62,
+    "resists": 38,
+    "weak": 0
+   },
+   "chill": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 25
+   },
+   "poison": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shock": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "stagger": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   }
+  },
+  "prop": {
+   "burn": {
+    "immune": 62,
+    "resists": 38,
+    "weak": 0
+   },
+   "chill": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 76
+   },
+   "poison": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 62
+   },
+   "shock": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "stagger": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 6,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 9,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   }
+  }
+ },
+ "spire": {
+  "now": {
+   "burn": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "chill": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "poison": {
+    "immune": 23,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 0,
+    "resists": 12,
+    "weak": 0
+   },
+   "shock": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "stagger": {
+    "immune": 9,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 96,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 32,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   }
+  },
+  "prop": {
+   "burn": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "chill": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "poison": {
+    "immune": 23,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 0,
+    "resists": 12,
+    "weak": 9
+   },
+   "shock": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 9
+   },
+   "stagger": {
+    "immune": 9,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 96,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 32,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 0,
+    "resists": 21,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 23,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 0,
+    "resists": 0,
+    "weak": 0
+   }
+  }
+ },
+ "dunes": {
+  "now": {
+   "burn": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 14
+   },
+   "chill": {
+    "immune": 5,
+    "resists": 4,
+    "weak": 0
+   },
+   "poison": {
+    "immune": 57,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 5,
+    "resists": 13,
+    "weak": 0
+   },
+   "shock": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "stagger": {
+    "immune": 8,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 35,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   }
+  },
+  "prop": {
+   "burn": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 14
+   },
+   "chill": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 22
+   },
+   "poison": {
+    "immune": 57,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 5,
+    "resists": 13,
+    "weak": 0
+   },
+   "shock": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "stagger": {
+    "immune": 8,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 35,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 5,
+    "resists": 13,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 35,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 0
+   }
+  }
+ },
+ "foundry": {
+  "now": {
+   "burn": {
+    "immune": 11,
+    "resists": 0,
+    "weak": 8
+   },
+   "chill": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 6
+   },
+   "poison": {
+    "immune": 95,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 92
+   },
+   "shock": {
+    "immune": 5,
+    "resists": 0,
+    "weak": 89
+   },
+   "stagger": {
+    "immune": 17,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 95,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 3,
+    "resists": 92,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   }
+  },
+  "prop": {
+   "burn": {
+    "immune": 6,
+    "resists": 6,
+    "weak": 8
+   },
+   "chill": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "poison": {
+    "immune": 95,
+    "resists": 0,
+    "weak": 0
+   },
+   "wet": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 92
+   },
+   "shock": {
+    "immune": 8,
+    "resists": 0,
+    "weak": 86
+   },
+   "stagger": {
+    "immune": 17,
+    "resists": 0,
+    "weak": 0
+   },
+   "radiance": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "curse": {
+    "immune": 95,
+    "resists": 0,
+    "weak": 0
+   },
+   "entangle": {
+    "immune": 3,
+    "resists": 92,
+    "weak": 0
+   },
+   "charm": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "confuse": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "sleepy": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "bleed": {
+    "immune": 95,
+    "resists": 0,
+    "weak": 0
+   },
+   "fear": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   },
+   "shackle": {
+    "immune": 3,
+    "resists": 0,
+    "weak": 0
+   }
+  }
+ }
+}

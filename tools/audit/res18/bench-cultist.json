@@ -1,0 +1,1058 @@
+{
+ "seeds": 3,
+ "budget": 36,
+ "calls": [
+  "deadBleed",
+  "deadSleep",
+  "mindless",
+  "flier",
+  "holy",
+  "bossPoison"
+ ],
+ "rows": [
+  {
+   "hero": "cultist",
+   "status": "bleed",
+   "dungeon": "wildwood",
+   "none": {
+    "landed": 68.2,
+    "dps": 32.6,
+    "secs": 9,
+    "won": 100
+   },
+   "now": {
+    "landed": 68.1,
+    "dps": 32.3,
+    "secs": 9,
+    "won": 100
+   },
+   "prop": {
+    "landed": 68.1,
+    "dps": 32.3,
+    "secs": 9,
+    "won": 100
+   },
+   "propc": {
+    "landed": 47.5,
+    "dps": 32.2,
+    "secs": 9,
+    "won": 100
+   }
+  },
+  {
+   "hero": "cultist",
+   "status": "bleed",
+   "dungeon": "warren",
+   "none": {
+    "landed": 55.5,
+    "dps": 33.6,
+    "secs": 12,
+    "won": 100
+   },
+   "now": {
+    "landed": 53.7,
+    "dps": 33.4,
+    "secs": 12,
+    "won": 100
+   },
+   "prop": {
+    "landed": 53.7,
+    "dps": 33.4,
+    "secs": 12,
+    "won": 100
+   },
+   "propc": {
+    "landed": 53.7,
+    "dps": 33.4,
+    "secs": 12,
+    "won": 100
+   }
+  },
+  {
+   "hero": "cultist",
+   "status": "bleed",
+   "dungeon": "sewers",
+   "none": {
+    "landed": 44.1,
+    "dps": 28.4,
+    "secs": 11,
+    "won": 100
+   },
+   "now": {
+    "landed": 44.7,
+    "dps": 30.3,
+    "secs": 11,
+    "won": 100
+   },
+   "prop": {
+    "landed": 44.7,
+    "dps": 30.3,
+    "secs": 11,
+    "won": 100
+   },
+   "propc": {
+    "landed": 29.9,
+    "dps": 29.7,
+    "secs": 11,
+    "won": 100
+   }
+  },
+  {
+   "hero": "cultist",
+   "status": "bleed",
+   "dungeon": "crypt",
+   "none": {
+    "landed": 43,
+    "dps": 37,
+    "secs": 8,
+    "won": 100
+   },
+   "now": {
+    "landed": 36.6,
+    "dps": 34,
+    "secs": 8,
+    "won": 100
+   },
+   "prop": {
+    "landed": 36.6,
+    "dps": 34,
+    "secs": 8,
+    "won": 100
+   },
+   "propc": {
+    "landed": 5.5,
+    "dps": 33,
+    "secs": 8,
+    "won": 100
+   }
+  },
+  {
+   "hero": "cultist",
+   "status": "bleed",
+   "dungeon": "frost",
+   "none": {
+    "landed": 29.8,
+    "dps": 34.4,
+    "secs": 14,
+    "won": 100
+   },
+   "now": {
+    "landed": 27.9,
+    "dps": 33.3,
+    "secs": 14,
+    "won": 100
+   },
+   "prop": {
+    "landed": 27.9,
+    "dps": 33.3,
+    "secs": 14,
+    "won": 100
+   },
+   "propc": {
+    "landed": 14.2,
+    "dps": 31.3,
+    "secs": 15,
+    "won": 100
+   }
+  },
+  {
+   "hero": "cultist",
+   "status": "bleed",
+   "dungeon": "ember",
+   "none": {
+    "landed": 23.6,
+    "dps": 25.4,
+    "secs": 7,
+    "won": 100
+   },
+   "now": {
+    "landed": 25.8,
+    "dps": 30.2,
+    "secs": 8,
+    "won": 100
+   },
+   "prop": {
+    "landed": 26.5,
+    "dps": 31.4,
+    "secs": 7,
+    "won": 100
+   },
+   "propc": {
+    "landed": 24.9,
+    "dps": 31.3,
+    "secs": 7,
+    "won": 100
+   }
+  },
+  {
+   "hero": "cultist",
+   "status": "bleed",
+   "dungeon": "spire",
+   "none": {
+    "landed": 30.3,
+    "dps": 30.9,
+    "secs": 13,
+    "won": 100
+   },
+   "now": {
+    "landed": 30.4,
+    "dps": 30.5,
+    "secs": 14,
+    "won": 100
+   },
+   "prop": {
+    "landed": 21.7,
+    "dps": 29.3,
+    "secs": 13,
+    "won": 100
+   },
+   "propc": {
+    "landed": 18.2,
+    "dps": 28,
+    "secs": 14,
+    "won": 100
+   }
+  },
+  {
+   "hero": "cultist",
+   "status": "bleed",
+   "dungeon": "dunes",
+   "none": {
+    "landed": 29.9,
+    "dps": 30,
+    "secs": 12,
+    "won": 100
+   },
+   "now": {
+    "landed": 29.9,
+    "dps": 30,
+    "secs": 12,
+    "won": 100
+   },
+   "prop": {
+    "landed": 23.3,
+    "dps": 29.6,
+    "secs": 13,
+    "won": 100
+   },
+   "propc": {
+    "landed": 15.9,
+    "dps": 30.6,
+    "secs": 12,
+    "won": 100
+   }
+  },
+  {
+   "hero": "cultist",
+   "status": "bleed",
+   "dungeon": "foundry",
+   "none": {
+    "landed": 17.6,
+    "dps": 26,
+    "secs": 14,
+    "won": 100
+   },
+   "now": {
+    "landed": 18,
+    "dps": 25.5,
+    "secs": 15,
+    "won": 100
+   },
+   "prop": {
+    "landed": 2.1,
+    "dps": 24.5,
+    "secs": 14,
+    "won": 100
+   },
+   "propc": {
+    "landed": 2.1,
+    "dps": 24.5,
+    "secs": 14,
+    "won": 100
+   }
+  },
+  {
+   "hero": "werewolf",
+   "status": "bleed",
+   "dungeon": "wildwood",
+   "none": {
+    "landed": 27.6,
+    "dps": 47.6,
+    "secs": 10,
+    "won": 100
+   },
+   "now": {
+    "landed": 28.4,
+    "dps": 48.4,
+    "secs": 10,
+    "won": 100
+   },
+   "prop": {
+    "landed": 28.4,
+    "dps": 48.4,
+    "secs": 10,
+    "won": 100
+   },
+   "propc": {
+    "landed": 19.7,
+    "dps": 47.7,
+    "secs": 10,
+    "won": 100
+   }
+  },
+  {
+   "hero": "werewolf",
+   "status": "bleed",
+   "dungeon": "warren",
+   "none": {
+    "landed": 16.2,
+    "dps": 31.8,
+    "secs": 15,
+    "won": 100
+   },
+   "now": {
+    "landed": 16.2,
+    "dps": 31.8,
+    "secs": 15,
+    "won": 100
+   },
+   "prop": {
+    "landed": 16.2,
+    "dps": 31.8,
+    "secs": 15,
+    "won": 100
+   },
+   "propc": {
+    "landed": 16.2,
+    "dps": 31.8,
+    "secs": 15,
+    "won": 100
+   }
+  },
+  {
+   "hero": "werewolf",
+   "status": "bleed",
+   "dungeon": "sewers",
+   "none": {
+    "landed": 20.6,
+    "dps": 35,
+    "secs": 11,
+    "won": 100
+   },
+   "now": {
+    "landed": 23,
+    "dps": 37.2,
+    "secs": 11,
+    "won": 100
+   },
+   "prop": {
+    "landed": 23,
+    "dps": 37.2,
+    "secs": 11,
+    "won": 100
+   },
+   "propc": {
+    "landed": 14.9,
+    "dps": 37,
+    "secs": 11,
+    "won": 100
+   }
+  },
+  {
+   "hero": "werewolf",
+   "status": "bleed",
+   "dungeon": "crypt",
+   "none": {
+    "landed": 27.3,
+    "dps": 47.7,
+    "secs": 8,
+    "won": 100
+   },
+   "now": {
+    "landed": 28.1,
+    "dps": 47.6,
+    "secs": 9,
+    "won": 100
+   },
+   "prop": {
+    "landed": 28.1,
+    "dps": 47.6,
+    "secs": 9,
+    "won": 100
+   },
+   "propc": {
+    "landed": 3,
+    "dps": 42.2,
+    "secs": 10,
+    "won": 100
+   }
+  },
+  {
+   "hero": "werewolf",
+   "status": "bleed",
+   "dungeon": "frost",
+   "none": {
+    "landed": 16.2,
+    "dps": 28.2,
+    "secs": 18,
+    "won": 100
+   },
+   "now": {
+    "landed": 17.8,
+    "dps": 30.8,
+    "secs": 16,
+    "won": 100
+   },
+   "prop": {
+    "landed": 17.9,
+    "dps": 30.8,
+    "secs": 16,
+    "won": 100
+   },
+   "propc": {
+    "landed": 12,
+    "dps": 31.7,
+    "secs": 16,
+    "won": 100
+   }
+  },
+  {
+   "hero": "werewolf",
+   "status": "bleed",
+   "dungeon": "ember",
+   "none": {
+    "landed": 17.3,
+    "dps": 32.8,
+    "secs": 9,
+    "won": 100
+   },
+   "now": {
+    "landed": 18.2,
+    "dps": 33.8,
+    "secs": 9,
+    "won": 100
+   },
+   "prop": {
+    "landed": 18.6,
+    "dps": 34.3,
+    "secs": 9,
+    "won": 100
+   },
+   "propc": {
+    "landed": 16.9,
+    "dps": 33.8,
+    "secs": 9,
+    "won": 100
+   }
+  },
+  {
+   "hero": "werewolf",
+   "status": "bleed",
+   "dungeon": "spire",
+   "none": {
+    "landed": 14.4,
+    "dps": 20.4,
+    "secs": 16,
+    "won": 100
+   },
+   "now": {
+    "landed": 14.8,
+    "dps": 21.3,
+    "secs": 16,
+    "won": 100
+   },
+   "prop": {
+    "landed": 11.5,
+    "dps": 22.1,
+    "secs": 16,
+    "won": 100
+   },
+   "propc": {
+    "landed": 10.9,
+    "dps": 22.7,
+    "secs": 16,
+    "won": 100
+   }
+  },
+  {
+   "hero": "werewolf",
+   "status": "bleed",
+   "dungeon": "dunes",
+   "none": {
+    "landed": 24.5,
+    "dps": 39.3,
+    "secs": 12,
+    "won": 100
+   },
+   "now": {
+    "landed": 24.5,
+    "dps": 39.3,
+    "secs": 12,
+    "won": 100
+   },
+   "prop": {
+    "landed": 19.7,
+    "dps": 36.5,
+    "secs": 13,
+    "won": 100
+   },
+   "propc": {
+    "landed": 10.4,
+    "dps": 35.5,
+    "secs": 13,
+    "won": 100
+   }
+  },
+  {
+   "hero": "werewolf",
+   "status": "bleed",
+   "dungeon": "foundry",
+   "none": {
+    "landed": 26.3,
+    "dps": 36.5,
+    "secs": 14,
+    "won": 100
+   },
+   "now": {
+    "landed": 24.4,
+    "dps": 33.6,
+    "secs": 14,
+    "won": 100
+   },
+   "prop": {
+    "landed": 0.3,
+    "dps": 30.5,
+    "secs": 15,
+    "won": 100
+   },
+   "propc": {
+    "landed": 0,
+    "dps": 30.2,
+    "secs": 15,
+    "won": 100
+   }
+  },
+  {
+   "hero": "druid",
+   "status": "entangle",
+   "dungeon": "wildwood",
+   "none": {
+    "landed": 8.8,
+    "dps": 24.2,
+    "secs": 12,
+    "won": 100
+   },
+   "now": {
+    "landed": 8.8,
+    "dps": 26,
+    "secs": 11,
+    "won": 100
+   },
+   "prop": {
+    "landed": 7.6,
+    "dps": 25.9,
+    "secs": 12,
+    "won": 100
+   },
+   "propc": {
+    "landed": 7.4,
+    "dps": 25.5,
+    "secs": 12,
+    "won": 100
+   }
+  },
+  {
+   "hero": "druid",
+   "status": "entangle",
+   "dungeon": "warren",
+   "none": {
+    "landed": 8.8,
+    "dps": 20.6,
+    "secs": 17,
+    "won": 100
+   },
+   "now": {
+    "landed": 8.8,
+    "dps": 20.6,
+    "secs": 17,
+    "won": 100
+   },
+   "prop": {
+    "landed": 8.8,
+    "dps": 20.6,
+    "secs": 17,
+    "won": 100
+   },
+   "propc": {
+    "landed": 8.8,
+    "dps": 20.6,
+    "secs": 17,
+    "won": 100
+   }
+  },
+  {
+   "hero": "druid",
+   "status": "entangle",
+   "dungeon": "sewers",
+   "none": {
+    "landed": 9.2,
+    "dps": 22.8,
+    "secs": 14,
+    "won": 100
+   },
+   "now": {
+    "landed": 8.9,
+    "dps": 21.8,
+    "secs": 14,
+    "won": 100
+   },
+   "prop": {
+    "landed": 8.9,
+    "dps": 21.8,
+    "secs": 14,
+    "won": 100
+   },
+   "propc": {
+    "landed": 8.9,
+    "dps": 21.8,
+    "secs": 14,
+    "won": 100
+   }
+  },
+  {
+   "hero": "druid",
+   "status": "entangle",
+   "dungeon": "crypt",
+   "none": {
+    "landed": 10.3,
+    "dps": 24,
+    "secs": 10,
+    "won": 100
+   },
+   "now": {
+    "landed": 10.3,
+    "dps": 20.4,
+    "secs": 11,
+    "won": 100
+   },
+   "prop": {
+    "landed": 10.3,
+    "dps": 20.4,
+    "secs": 11,
+    "won": 100
+   },
+   "propc": {
+    "landed": 8.2,
+    "dps": 20.4,
+    "secs": 11,
+    "won": 100
+   }
+  },
+  {
+   "hero": "druid",
+   "status": "entangle",
+   "dungeon": "frost",
+   "none": {
+    "landed": 9.3,
+    "dps": 19.7,
+    "secs": 20,
+    "won": 100
+   },
+   "now": {
+    "landed": 9.9,
+    "dps": 20,
+    "secs": 20,
+    "won": 100
+   },
+   "prop": {
+    "landed": 10.3,
+    "dps": 20.5,
+    "secs": 20,
+    "won": 100
+   },
+   "propc": {
+    "landed": 6.7,
+    "dps": 20.4,
+    "secs": 20,
+    "won": 100
+   }
+  },
+  {
+   "hero": "druid",
+   "status": "entangle",
+   "dungeon": "ember",
+   "none": {
+    "landed": 8.6,
+    "dps": 19.4,
+    "secs": 8,
+    "won": 100
+   },
+   "now": {
+    "landed": 8.5,
+    "dps": 19.5,
+    "secs": 9,
+    "won": 100
+   },
+   "prop": {
+    "landed": 8.7,
+    "dps": 19.4,
+    "secs": 10,
+    "won": 100
+   },
+   "propc": {
+    "landed": 7.7,
+    "dps": 19.3,
+    "secs": 10,
+    "won": 100
+   }
+  },
+  {
+   "hero": "druid",
+   "status": "entangle",
+   "dungeon": "spire",
+   "none": {
+    "landed": 9.7,
+    "dps": 18.2,
+    "secs": 19,
+    "won": 100
+   },
+   "now": {
+    "landed": 9.2,
+    "dps": 16.8,
+    "secs": 19,
+    "won": 100
+   },
+   "prop": {
+    "landed": 8,
+    "dps": 16.4,
+    "secs": 20,
+    "won": 100
+   },
+   "propc": {
+    "landed": 5.6,
+    "dps": 18.2,
+    "secs": 19,
+    "won": 100
+   }
+  },
+  {
+   "hero": "druid",
+   "status": "entangle",
+   "dungeon": "dunes",
+   "none": {
+    "landed": 8.4,
+    "dps": 18.1,
+    "secs": 15,
+    "won": 100
+   },
+   "now": {
+    "landed": 7.3,
+    "dps": 16.3,
+    "secs": 15,
+    "won": 100
+   },
+   "prop": {
+    "landed": 6.9,
+    "dps": 17,
+    "secs": 15,
+    "won": 100
+   },
+   "propc": {
+    "landed": 7,
+    "dps": 17.6,
+    "secs": 15,
+    "won": 100
+   }
+  },
+  {
+   "hero": "druid",
+   "status": "entangle",
+   "dungeon": "foundry",
+   "none": {
+    "landed": 9.6,
+    "dps": 17.2,
+    "secs": 17,
+    "won": 100
+   },
+   "now": {
+    "landed": 5.1,
+    "dps": 13.6,
+    "secs": 20,
+    "won": 100
+   },
+   "prop": {
+    "landed": 5.1,
+    "dps": 13.6,
+    "secs": 20,
+    "won": 100
+   },
+   "propc": {
+    "landed": 5.1,
+    "dps": 13.6,
+    "secs": 20,
+    "won": 100
+   }
+  },
+  {
+   "hero": "warden",
+   "status": "shackle",
+   "dungeon": "wildwood",
+   "none": {
+    "landed": 118.4,
+    "dps": 37.2,
+    "secs": 10,
+    "won": 100
+   },
+   "now": {
+    "landed": 120.6,
+    "dps": 38.5,
+    "secs": 10,
+    "won": 100
+   },
+   "prop": {
+    "landed": 120.6,
+    "dps": 38.5,
+    "secs": 10,
+    "won": 100
+   },
+   "propc": {
+    "landed": 120.6,
+    "dps": 38.5,
+    "secs": 10,
+    "won": 100
+   }
+  },
+  {
+   "hero": "warden",
+   "status": "shackle",
+   "dungeon": "warren",
+   "none": {
+    "landed": 98.4,
+    "dps": 26.2,
+    "secs": 17,
+    "won": 100
+   },
+   "now": {
+    "landed": 99,
+    "dps": 26.4,
+    "secs": 17,
+    "won": 100
+   },
+   "prop": {
+    "landed": 99,
+    "dps": 26.4,
+    "secs": 17,
+    "won": 100
+   },
+   "propc": {
+    "landed": 99,
+    "dps": 26.4,
+    "secs": 17,
+    "won": 100
+   }
+  },
+  {
+   "hero": "warden",
+   "status": "shackle",
+   "dungeon": "sewers",
+   "none": {
+    "landed": 108.9,
+    "dps": 35.4,
+    "secs": 12,
+    "won": 100
+   },
+   "now": {
+    "landed": 110.2,
+    "dps": 35.8,
+    "secs": 13,
+    "won": 100
+   },
+   "prop": {
+    "landed": 110.2,
+    "dps": 35.8,
+    "secs": 13,
+    "won": 100
+   },
+   "propc": {
+    "landed": 110.2,
+    "dps": 35.8,
+    "secs": 13,
+    "won": 100
+   }
+  },
+  {
+   "hero": "warden",
+   "status": "shackle",
+   "dungeon": "crypt",
+   "none": {
+    "landed": 114.1,
+    "dps": 32.8,
+    "secs": 10,
+    "won": 100
+   },
+   "now": {
+    "landed": 113.8,
+    "dps": 35.1,
+    "secs": 9,
+    "won": 100
+   },
+   "prop": {
+    "landed": 113.8,
+    "dps": 35.1,
+    "secs": 9,
+    "won": 100
+   },
+   "propc": {
+    "landed": 112.5,
+    "dps": 36,
+    "secs": 9,
+    "won": 100
+   }
+  },
+  {
+   "hero": "warden",
+   "status": "shackle",
+   "dungeon": "frost",
+   "none": {
+    "landed": 81.4,
+    "dps": 22.3,
+    "secs": 19,
+    "won": 100
+   },
+   "now": {
+    "landed": 83.9,
+    "dps": 22.6,
+    "secs": 19,
+    "won": 100
+   },
+   "prop": {
+    "landed": 83.9,
+    "dps": 22.6,
+    "secs": 19,
+    "won": 100
+   },
+   "propc": {
+    "landed": 78,
+    "dps": 21.6,
+    "secs": 19,
+    "won": 100
+   }
+  },
+  {
+   "hero": "warden",
+   "status": "shackle",
+   "dungeon": "ember",
+   "none": {
+    "landed": 112.6,
+    "dps": 32,
+    "secs": 9,
+    "won": 100
+   },
+   "now": {
+    "landed": 95.9,
+    "dps": 28.5,
+    "secs": 10,
+    "won": 100
+   },
+   "prop": {
+    "landed": 97,
+    "dps": 28.8,
+    "secs": 10,
+    "won": 100
+   },
+   "propc": {
+    "landed": 100.9,
+    "dps": 29.1,
+    "secs": 10,
+    "won": 100
+   }
+  },
+  {
+   "hero": "warden",
+   "status": "shackle",
+   "dungeon": "spire",
+   "none": {
+    "landed": 84.3,
+    "dps": 21.6,
+    "secs": 16,
+    "won": 100
+   },
+   "now": {
+    "landed": 77.3,
+    "dps": 19.9,
+    "secs": 17,
+    "won": 100
+   },
+   "prop": {
+    "landed": 77.3,
+    "dps": 19.9,
+    "secs": 17,
+    "won": 100
+   },
+   "propc": {
+    "landed": 77.3,
+    "dps": 19.9,
+    "secs": 17,
+    "won": 100
+   }
+  },
+  {
+   "hero": "warden",
+   "status": "shackle",
+   "dungeon": "dunes",
+   "none": {
+    "landed": 21.4,
+    "dps": 5.7,
+    "secs": 59,
+    "won": 67
+   },
+   "now": {
+    "landed": 21.4,
+    "dps": 5.7,
+    "secs": 59,
+    "won": 67
+   },
+   "prop": {
+    "landed": 19.8,
+    "dps": 5.7,
+    "secs": 59,
+    "won": 67
+   },
+   "propc": {
+    "landed": 19.8,
+    "dps": 5.7,
+    "secs": 59,
+    "won": 67
+   }
+  },
+  {
+   "hero": "warden",
+   "status": "shackle",
+   "dungeon": "foundry",
+   "none": {
+    "landed": 44,
+    "dps": 10.4,
+    "secs": 32,
+    "won": 89
+   },
+   "now": {
+    "landed": 44.7,
+    "dps": 10.5,
+    "secs": 32,
+    "won": 89
+   },
+   "prop": {
+    "landed": 44.7,
+    "dps": 10.5,
+    "secs": 32,
+    "won": 89
+   },
+   "propc": {
+    "landed": 44.7,
+    "dps": 10.5,
+    "secs": 32,
+    "won": 89
+   }
+  }
+ ]
+}
