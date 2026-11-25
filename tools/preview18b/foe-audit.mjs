@@ -27,7 +27,7 @@ export const summarize = (out) => {
     if (R.some((r) => r.first == null || r.first > 2.5)) { C.late++; L.late.push(k + ' (' + R.map((r) => (r.first == null ? '-' : r.first.toFixed(1))).join(' ') + ')'); }
     if (R.some((r) => r.straw > 0)) C.straw++;
     const u = R.reduce((a, r) => a + r.unseen, 0); if (u) { C.unseen++; C.unseenBlows += u; L.unseen.push(k + ' ' + u + ' (' + R.flatMap((r) => r.unseenWhy).slice(0, 2).join(', ') + ')'); }
-    if (k.startsWith('foe:') && R.some((r) => r.fired && !r.reached)) { C.noReach++; L.noReach.push(k); }
+    if (R.some((r) => r.fired && !r.reached)) { C.noReach++; L.noReach.push(k); }
     if (R.some((r) => r.crutch)) { C.crutch++; L.crutch.push(k); }
     if (k.startsWith('status:') && R.some((r) => r.stFrom !== 'seen')) { C.stNothing++; L.stNothing.push(k + ' (' + R.map((r) => r.stFrom).join(' ') + ')'); }
   }
@@ -40,7 +40,7 @@ console.log(`a loop where it never went: ${C.never}`);
 console.log(`a loop where it didn't go within 2.5 s: ${C.late}`);
 console.log(`straw targets on the stage: ${C.straw}`);
 console.log(`blows or health lost with nothing seen behind them: ${C.unseen} previews (${C.unseenBlows} blows)`);
-console.log(`went off but reached no one in ${'3.5'} s (wrong scenario): ${C.noReach}`);
+console.log(`went off but reached no one in 3.5 s, or a status that never came to its burst or state (wrong scenario): ${C.noReach}`);
 console.log(`the stage had to help it (a target stepped up, its health set lower): ${C.crutch}`);
 console.log(`statuses put on from nothing seen: ${C.stNothing}`);
 if (args.includes('--v')) for (const [n, l] of Object.entries(L)) { console.log('## ' + n + ' ' + l.length); for (const x of l) console.log('  ' + x); }

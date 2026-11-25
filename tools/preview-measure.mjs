@@ -198,6 +198,7 @@ export function measureStage(spec, loops = 2) {
       }
       // (statuses) where it came from: the stage says (S.srcSeen: true when a real fighter put it on, in view)
       if (spec.t === 'status' && S.fired() && cur.stFrom == null) cur.stFrom = S.srcSeen ? 'seen' : 'nothing';
+      if (spec.t === 'status' && S.stDone) cur.reached = true; // (a status: its burst, or the state, came on the one it is shown on)
     }
   } finally { AUDIT.on = null; }
   return rec.slice(0, loops).map((r) => ({ ...r, against: [...r.against] }));

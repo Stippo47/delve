@@ -354,3 +354,44 @@ export function foeSceneOf(k, move, d, words, major) {
   out.heroes = [...(o.heroes || base.heroes || []), ...(o.addHeroes || [])];
   return out;
 }
+
+// ---------------------------------------------------------------- the statuses (round 18b, lane preview18b)
+// Round 13 to 18 built a status on a goblin in pulses from a blue straw target that never moved (or put the state on
+// directly, from nowhere). Now every status comes from a fighter in view:
+//   STATUS_SCENE[id]: { side, on, by, carry, ab, tier, foe, reach, castAt, trigger }
+//     carry    the share of what bursts it that each landed blow carries (0.38: the third bursts it)
+//     side 'foe' (the default): the one it is shown on is an enemy (on: its kind, an orc), fighting the hero who puts
+//          it on (by). A build-up rides on that hero's own blows or shots: each one that lands carries a third of what
+//          bursts it (carry: the share), so it bursts on the third; a timed state comes from that hero's ability (ab,
+//          at tier), cast by the stage at castAt (or once it is within reach of it)
+//     side 'hero': it is shown on a hero (on), an enemy (foe) on it, and the hero who puts it on (by) casts ab on them
+//          (by: 'self': the hero casts it on itself)
+//     at       where the hero who puts it on stands ([x, dy] from the middle)
+//     trigger  (the 'trigger' way, the states a blow breaks: frozen, asleep) the hero who strikes it once it is on
+// A status the Book names that has no entry is built by a Cleric's blows (any build-up) or put on by a Paladin's
+// Shield Bash (sim.js stun), so a new status still has a source in view.
+const ST = (by, o = {}) => ({ by, ...o });
+export const STATUS_SCENE = {
+  burn: ST('pyromancer'), chill: ST('frost', { trigger: 'warhelm' }), poison: ST('plague'), wet: ST('waterMage'),
+  shock: ST('storm'), stagger: ST('warhelm', { carry: 0.7 }), // (a reeling orc steadies quickly: more on each blow) radiance: ST('cleric'), curse: ST('witch'), entangle: ST('druid'),
+  charm: ST('enchantress'), confuse: ST('jester'), sleepy: ST('bard', { trigger: 'paladin' }), bleed: ST('twinfang'),
+  fear: ST('shade'), shackle: ST('warden'), whirled: ST('airMage'), spun: ST('monk'),
+  // timed states: the ability that puts each on, in a run
+  stun: ST('paladin', { ab: 'shieldBash', tier: 2, reach: 70 }),
+  root: ST('druid', { ab: 'entangle', castAt: 0.9 }),
+  sleep: ST('bard', { ab: 'lullaby', tier: 2, reach: 150, trigger: 'paladin' }),
+  taunt: ST('dame', { ab: 'challenge', on: 'orc', castAt: 1.0, archer: true, at: [110, -70] }),
+  debuff: ST('dame', { ab: 'disarm', reach: 50 }),
+  targeted: ST('marksman', { ab: 'aimedShot', castAt: 0.7 }),
+  tracked: ST('falconer', { ab: 'looseFalcon', castAt: 0.7 }),
+  trapped: ST('trapper', { ab: 'jawTrap', castAt: 0.5 }),
+  weakened: ST('shade', { ab: 'blackout', castAt: 0.8 }),
+  // on a hero
+  guard: ST('paladin', { side: 'hero', on: 'archer', hp: 0.5, ab: 'guard', castAt: 0.9 }),
+  invuln: ST('self', { side: 'hero', on: 'plague', hp: 0.45, ab: 'leeches', castAt: 1.1 }),
+  buff: ST('bard', { side: 'hero', on: 'paladin', ab: 'warSong', castAt: 0.8 }),
+  rage: ST('self', { side: 'hero', on: 'wildmane', hp: 0.5, ab: 'rage', castAt: 0.9 }),
+  dirty: ST('digger', { side: 'hero', on: 'paladin', ab: 'dirtFling', castAt: 0.9, front: true }),
+  warded: ST('jester', { side: 'hero', on: 'paladin', hp: 0.4, ab: 'mock', castAt: 0.9 }), // (it swaps places with the friend in trouble and wards it)
+};
+export const statusSceneOf = (id, from) => STATUS_SCENE[id] || STATUS_SCENE[from] || ST('cleric');

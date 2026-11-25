@@ -15,7 +15,7 @@
 // Every list comes from the data (HEROES, DEFS and the dungeons' rosters, ELITES / MAJOR_MOVES, STATUS and the
 // Book's STATUSES words, TRINKETS, POTIONS), so new heroes, enemies, statuses and trinkets show up without edits here.
 import { makeWorld, spawn, step, setAnim, hurt, meleeSwing, addStatus, stun, addBuff, unitNumbers, wallRect } from './sim.js';
-import { sceneOf as abilitySceneOf, attackSceneOf, KINDS, FOE_HP, FOE_DMG, HERO_FLOOR, FRIEND_FLOOR, foeSceneOf, FOE_HERO_DMG, FOE_HERO_FLOOR } from './preview-scenes.js';
+import { sceneOf as abilitySceneOf, attackSceneOf, KINDS, FOE_HP, FOE_DMG, HERO_FLOOR, FRIEND_FLOOR, foeSceneOf, FOE_HERO_DMG, FOE_HERO_FLOOR, statusSceneOf, STATUS_SCENE } from './preview-scenes.js';
 import { newStats } from './stats.js';
 import { ABILITIES, initKit, cooldownOf } from './kits.js';
 import { tagAbility } from './fxtag.js';
@@ -183,7 +183,7 @@ const PUT_ON = {
 // round 15 (lane E): Whirled and Spun build up and burst like the rest, through the function that puts each on
 const KIT_BUILD = { whirled: (w, s, amt, by) => whirl(w, s, amt, by), spun: (w, s, amt) => spin(w, s, amt) };
 export const statusIds = () => [...new Set([...Object.keys(STATUSES), ...Object.keys(STATUS)])];
-export const statusHow = (id) => (STATUS[id] || KIT_BUILD[id] ? 'build' : FROM_BURST[id] && STATUS[FROM_BURST[id]] ? 'burst' : PUT_ON[id] ? 'put' : null);
+export const statusHow = (id) => (STATUS[id] || KIT_BUILD[id] ? 'build' : FROM_BURST[id] && STATUS[FROM_BURST[id]] ? 'burst' : PUT_ON[id] || STATUS_SCENE[id] || id === 'silenced' ? 'put' : null); // (round 18b: Silenced, a choir sprite stunned quiet)
 export const trinketIds = () => Object.keys(TRINKETS).filter((k) => !TRINKETS[k].potion);
 export const potionIds = () => Object.keys(POTIONS);
 
@@ -786,57 +786,128 @@ function foeStage(S, spec) {
   };
 }
 
-// A status on a fighter (a goblin, of the monsters' side) sparring with a blue dummy, a friend beside it: the status
-// builds up in pulses to its burst, or the state it comes from is built, or the state is put on directly.
+// A status, put on by a fighter in view (round 18b, lane preview18b; who puts each on is js/preview-scenes.js
+// STATUS_SCENE). Round 13 to 18 built it in pulses on a goblin from a blue straw target that never moved, or put the
+// state on directly from nowhere. Now a build-up rides on a real hero's blows or shots (each one that lands carries a
+// share of it, so the bar jumps as it lands, and it bursts on the third), a timed state comes from the ability that
+// puts it on in a run, cast by the stage at the right moment, and a state on a hero is put on by a friend (or by the
+// hero itself) while an enemy is on it.
 // Round 14 ("For something like frozen show the shatter as well as just leaving it alone"): where what follows a burst
 // depends on what is done to it, the stage shows both, turn about (S.way; spec.way holds it to one):
-//   alone     nothing touches it: a frozen fighter thaws, a sleeper sleeps it out
-//   trigger   the target beside it, holding a hammer, strikes: ice shatters, a sleeper is woken
+//   alone     nothing touches it: a frozen fighter thaws, a sleeper sleeps it out (the hero who put it on stops)
+//   trigger   a hero beside it (STATUS_SCENE trigger: a Warhelm's hammer, a Paladin's sword) strikes: ice shatters,
+//             a sleeper is woken
 const WAYS = {
-  chill: { name: 'Shattered', weapon: 'hammer', when: (s) => s.frozenT > 0, wait: 0.9, blow: { heavy: true } },
-  sleepy: { name: 'Woken', weapon: 'sword', when: (s) => s.sleepT > 0, wait: 2.4, blow: {} },
-  sleep: { name: 'Woken', weapon: 'sword', when: (s) => s.sleepT > 0, wait: 1.1, blow: {} },
+  chill: { name: 'Shattered', when: (s) => s.frozenT > 0, wait: 0.9, blow: { heavy: true } },
+  sleepy: { name: 'Woken', when: (s) => s.sleepT > 0, wait: 2.4, blow: {} },
+  sleep: { name: 'Woken', when: (s) => s.sleepT > 0, wait: 1.1, blow: {} },
 };
 const wayOf = (id) => WAYS[FROM_BURST[id] || id] || null;
 export const statusWays = (id) => (wayOf(id) && statusHow(id) ? [{ id: 'alone', name: 'Left alone' }, { id: 'trigger', name: wayOf(id).name }] : null);
-const SUBJECT = ['goblin', 'orc', 'bandit'];
+// a timed state is on: its own timer, or the hook or buff it is made of (kits2.js onUnit: dirty, targeted, tracked...)
+const STATE_ON = { stun: (s) => s.stunT > 0, root: (s) => s.rootT > 0, sleep: (s) => s.sleepT > 0, guard: (s) => !!(s.guardBy && s.guardT > 0), invuln: (s) => s.invulnT > 0,
+  taunt: (s) => s.tauntT > 0, rage: (s) => s.buffs.some((b) => b.id === 'rage'), silenced: (s) => s.silencedT > 0,
+  buff: (s) => s.buffs.some((b) => b.dur >= 1 && b.dur < 900 && b.id !== 'rhythm' && ((b.atkSpeed || 1) > 1 || (b.move || 1) > 1 || (b.dealt || 1) > 1)),
+  debuff: (s) => s.buffs.some((b) => b.dur < 900 && ((b.atkSpeed || 1) < 1 || (b.move || 1) < 1 || (b.dealt || 1) < 1)) };
+const stateOn = (s, id) => (STATE_ON[id] ? STATE_ON[id](s) : (s.h2 || []).some((h) => h.id === id) || s.buffs.some((b) => b.id === id));
+// keep every ability of a fighter held (the stage casts the one it shows)
+const holdKit = (o) => { if (o && o.kit) for (const c in o.kit.cd) o.kit.cd[c] = Math.max(o.kit.cd[c], 5); };
+const ST_W = 420, ST_H = 270;
 function statusStage(S, spec) {
   const id = spec.id, how = statusHow(id), src = FROM_BURST[id] || id, W0 = wayOf(id);
-  S.loop = 6; S.size = [360, 250]; // a small yard: the one fighter is what matters, so it is drawn bigger
+  if (id === 'silenced') return silencedStage(S, spec);
+  S.loop = W0 ? 7.5 : 6; S.size = [ST_W, ST_H]; // a small yard: the few fighters are what matter, so they are drawn bigger
   if (!how) { S.locked = true; S.why = 'No preview for this one yet'; }
-  if (W0 && how) S.fit = { min: 4.5, tail: 2.6, max: 8.5 };
-  let s, dummy, friend, done, n = 0, struck;
+  const sc = statusSceneOf(id, src), heroSide = sc.side === 'hero', build = how === 'build' || how === 'burst';
+  const A = sc.ab ? ABILITIES[sc.ab] : null, tier = sc.tier || 1;
+  let s, by, foe, trig, done, struck, cast, n = 0, gave;
   return () => {
     const [W, H] = S.size, w = S.w = room(W, H, S.w);
     S.way = W0 && how ? spec.way || (n++ % 2 ? 'trigger' : 'alone') : null;
-    if (S.fit && S.way) S.fit.tail = S.way === 'trigger' ? 2.2 : 3.8; // left alone, it is watched until it wears off by itself
-    const kind = SUBJECT.find((k) => DEFS[k]) || 'rat';
-    s = spawn(w, kind, 205, 115, { mult: 1 }); s.aggro = true; s.facing = Math.PI;
-    friend = spawn(w, kind, 262, 190, { mult: 1 }); friend.aggro = false; friend.facing = Math.PI; friend.home = { x: friend.x, y: friend.y };
-    dummy = dummyAt(w, 205 - s.r - 46, 115, 'hero', S.way === 'trigger' ? W0.weapon : null);
-    s.target = dummy; done = false; struck = null;
-    S.hero = s; S.dummies = [dummy];
+    S.srcSeen = false; done = false; struck = null; cast = false; gave = 0; foe = null; trig = null;
+    const hy = H / 2 - 10;
+    const hero = (kind, x, y) => { const o = fullAlly(w, DEFS[kind] && HEROES[kind] ? kind : 'cleric', x, y); o.barAlways = true; o.dmgMul *= 0.25; o.trinketHooks = [...(o.trinketHooks || []), HERO_KEEP]; return o; };
+    const enemy = (kind, x, y) => { const e = spawn(w, kind, x, y, { mult: 1 }); e.aggro = true; e.facing = Math.PI; e.barAlways = true; e.dmgMul *= 0.35; e.trinketHooks = [...(e.trinketHooks || []), KEEP_UP]; e.home = { x, y }; return e; };
+    if (!heroSide) {
+      s = enemy(sc.on || 'orc', 290, hy);
+      const ranged = DEFS[sc.by] && DEFS[sc.by].role === 'ranged';
+      by = sc.at ? hero(sc.by, sc.at[0], hy + sc.at[1]) : hero(sc.by, ranged ? 95 : 205, hy);
+      s.target = by;
+      if (sc.archer) { const a = hero('archer', 120, hy + 80); s.target = a; s.tauntWant = a; } // (a taunt: it was going for the archer)
+    } else {
+      s = hero(sc.on, sc.front ? 190 : 165, hy); if (sc.hp) s.hp = s.maxHp * sc.hp;
+      foe = enemy('orc', 285, hy); foe.target = s;
+      by = sc.by === 'self' ? s : hero(sc.by, sc.front ? 105 : 90, hy + (sc.front ? 0 : 70));
+    }
+    if (S.way === 'trigger' && sc.trigger) { trig = hero(sc.trigger, 290, hy + 78); trig.atkT = 99; trig.facing = -Math.PI / 2; trig.home = { x: trig.x, y: trig.y }; }
+    w.stats = newStats([...new Set([by, s, trig].filter((o) => o && o.team === 'hero').map((o) => o.kind))]);
     const need = STATUS[src] ? (typeof STATUS[src].need === 'function' ? STATUS[src].need(s) : STATUS[src].need) : HERO_STATUS[src] && HERO_STATUS[src].need ? HERO_STATUS[src].need : 100;
-    S.tick = (dt) => {
-      if (S.locked) return;
-      // the trigger: once the burst's state is on it, the target winds up and strikes
-      if (S.way === 'trigger' && done && struck !== true && W0.when(s)) {
-        if (struck == null) struck = S.t + W0.wait;
-        if (S.t >= struck - 0.18 && !dummy._wound) { dummy._wound = true; dummy.facing = Math.atan2(s.y - dummy.y, s.x - dummy.x); setAnim(dummy, 'swing', 0.3); }
-        if (S.t >= struck) { struck = true; hurt(w, s, 16, dummy, { knock: 0, noDodge: true, ...W0.blow }); }
+    // a build-up rides on the hero's own blows and shots: each that lands on it carries a share
+    if (build && !sc.ab) by.trinketHooks = [...by.trinketHooks, { dealt(w2, a, t, amt, o) {
+      if (t === s && !o.dot && !o.proc && !done && S.t > 0.2) { S.srcSeen = true; gave++; const k = need * (sc.carry || 0.38); if (KIT_BUILD[src]) KIT_BUILD[src](w2, s, k, a); else addStatus(w2, s, src, k, a); }
+      return amt; } }];
+    S.hero = s; S.dummies = [by, foe, trig].filter((o) => o && o !== s);
+    S.tick = () => {
+      for (const o of [by, s, foe, trig]) holdKit(o);
+      if (!by.dead && !by.downed) { if (!heroSide) by.target = s; else if (foe && sc.by !== 'self' && by.target !== foe) by.target = foe; }
+      // the timed state: the ability that puts it on, cast once it is time (and in reach, for a blow)
+      if (A && !cast && S.t >= (sc.castAt ?? 0.6) && !by.act && !by.dead) {
+        const t = heroSide ? (foe || s) : s, gap = Math.hypot(t.x - by.x, t.y - by.y) - t.r - by.r;
+        if (!sc.reach || gap < sc.reach || S.t > 2.6) {
+          cast = true; by.target = t; by.kit.cd[sc.ab] = 0; by.kit.using = sc.ab; by.facing = Math.atan2(t.y - by.y, t.x - by.x);
+          try { tagAbility(w, by, sc.ab, tier, () => A.use(w, by, t, tier)); } finally { by.kit.using = null; }
+          S.srcSeen = true;
+        }
       }
-      if (done) return;
-      const beat = Math.floor(S.t / 0.28) !== Math.floor((S.t - dt) / 0.28);
-      if (how === 'put') { if (S.t > 0.6) { PUT_ON[id](w, s, { friend, dummy }); done = true; } return; }
-      if (S.t > 0.4 && beat) { if (KIT_BUILD[src]) KIT_BUILD[src](w, s, need / 7, dummy); else addStatus(w, s, src, need / 7, dummy); }
-      if (s.bursts && s.bursts[src] != null) done = true;
+      // the trigger: once the burst's state is on it, the hero beside it winds up and strikes
+      if (trig && done && struck !== true && W0.when(s)) {
+        if (struck == null) struck = S.t + W0.wait;
+        if (S.t >= struck - 0.3 && !trig._wound) { trig._wound = true; trig.facing = Math.atan2(s.y - trig.y, s.x - trig.x); setAnim(trig, trig.def.attackAnim || 'swing', 0.4); }
+        if (S.t >= struck) { struck = true; hurt(w, s, 16, trig, { knock: 0, noDodge: true, ...W0.blow }); }
+      }
+      if (!done) done = build ? !!(s.bursts && s.bursts[src] != null) || (src !== id && stateOn(s, id)) : stateOn(s, id);
+      S.stDone = done; // (the check tool reads it: the burst, or the state, came)
     };
     S.after = (dt) => {
-      if (done && (S.way !== 'trigger' || struck === true)) S.fire();
-      for (const o of [s, friend]) { if (!o.dead && o.hp < o.maxHp * 0.3) o.hp = o.maxHp; }
-      if (!friend.dead) { friend.x = friend.home.x; friend.y = friend.home.y; friend.atkT = 999; }
-      if (!s.dead) { s.x = Math.min(290, Math.max(150, s.x)); s.y = Math.min(200, Math.max(60, s.y)); }
-      tendDummy(w, dummy, dt, true);
+      if ((build && gave > 0 && !done) || (done && (!trig || struck === true || !W0 || !W0.when(s)))) S.fire(); // (it is on: building, or the state it bursts into)
+      if (!build && stateOn(s, id)) S.fire();
+      // once it is on, the one who put it on stops: what follows is the status's own (a sleeper sleeps, ice thaws)
+      if (done || A) by.atkT = Math.max(by.atkT, 0.3); // (and a timed state's ability is the first thing it does: its blows wait)
+      if (trig && !trig.dead) { trig.atkT = 99; if (!trig._wound) { trig.x = trig.home.x; trig.y = trig.home.y; } }
+      for (const o of [s, by, foe, trig]) if (o && !o.dead && !o.downed && o.hp < o.maxHp * 0.3) o.hp += o.maxHp * 0.3 * dt; // (kept up: they mend once low)
+      if (!s.dead) { s.x = Math.min(W - 40, Math.max(40, s.x)); s.y = Math.min(H - 40, Math.max(40, s.y)); }
+      if (foe && !foe.dead) { foe.x = Math.min(W - 40, Math.max(40, foe.x)); foe.y = Math.min(H - 40, Math.max(40, foe.y)); }
+      if (!by.dead) { by.x = Math.min(W - 30, Math.max(30, by.x)); by.y = Math.min(H - 30, Math.max(30, by.y)); }
+    };
+  };
+}
+// Silenced (round 18b): a choir sprite, a major, sings to mend the hobgoblin it is with (a mouth move); the Cleric's
+// Smite comes down on it, the blow staggers it and its song stops (sim.js silence, by the sprite's own rule: a stagger
+// silences it, foes10.js choirBrain), while the ring of shots a major throws out (no mouth in it) still goes; when the
+// silence ends it sings again.
+function silencedStage(S) {
+  S.loop = 9; S.size = [ST_W + 60, ST_H + 30];
+  let s, sl, pal, hob, cast;
+  return () => {
+    const [W, H] = S.size, w = S.w = room(W, H, S.w);
+    s = seededFoe(w, 'choirSprite', 330, 120, 2); s.aggro = true; s.facing = Math.PI; s.barAlways = true; s.trinketHooks = [KEEP_UP]; s.dueSoon = 0.5;
+    s.el = s.el || {}; s.el.mring = 3.1; // (its ring of shots comes round while it is silenced)
+    hob = spawn(w, 'hobgoblin', 300, 215, { mult: 1 }); hob.aggro = true; hob.hp = hob.maxHp * 0.4; hob.barAlways = true; hob.dmgMul *= 0.4; hob.trinketHooks = [KEEP_UP];
+    const hero = (kind, x, y) => { const o = fullAlly(w, kind, x, y); o.barAlways = true; o.dmgMul *= 0.2; o.trinketHooks = [...(o.trinketHooks || []), HERO_KEEP]; return o; };
+    pal = hero('paladin', 210, 215); sl = hero('cleric', 90, 110);
+    hob.target = pal; pal.target = hob;
+    w.stats = newStats(['paladin', 'cleric']);
+    cast = false; S.srcSeen = false; S.stDone = false; S.hero = s; S.dummies = [sl, pal]; S.friends = [hob];
+    S.tick = () => {
+      for (const o of [sl, pal]) holdKit(o);
+      pal.target = hob; sl.target = s;
+      if (!cast && S.t >= 1.3 && !sl.act) { cast = true; sl.kit.cd.smite = 0; sl.target = s; try { tagAbility(w, sl, 'smite', 1, () => ABILITIES.smite.use(w, sl, s, 1)); } finally { sl.kit.using = null; } S.srcSeen = true; }
+    };
+    S.after = (dt) => {
+      if (s.silencedT > 0) { S.fire(); S.stDone = true; }
+      sl.atkT = Math.max(sl.atkT, 0.3); // (the cleric only smites: its bolts would stagger it again)
+      for (const o of [s, hob, pal, sl]) if (!o.dead && !o.downed && o.hp < o.maxHp * 0.3) o.hp += o.maxHp * 0.3 * dt;
+      if (!s.dead) { s.x = Math.min(W - 40, Math.max(170, s.x)); s.y = Math.min(H - 40, Math.max(40, s.y)); }
     };
   };
 }
