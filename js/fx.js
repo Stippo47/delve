@@ -5,7 +5,7 @@ import { INK, TAU, clamp } from './util.js';
 import { OUTLINE, view } from './render.js';
 import { STYLE } from './parts.js';
 import { drawStatusBurst, drawBloodGround } from './fx-status.js'; // round 13 (lane S); round 14: blood on the floor
-import { noteWorld, drawMarks, drawSigGround, drawSigAir, abilityRing, abilityBeam, abilityZone, EL, abilityRingGround, hookGround, abilityZoneAir, soulOrb, dustPuffs } from './fxkit.js';
+import { noteWorld, drawMarks, drawSigGround, drawSigAir, abilityRing, abilityBeam, abilityZone, EL, abilityRingGround, hookGround, abilityZoneAir, soulOrb, dustPuffs, HIT_OWN } from './fxkit.js';
 import { drawPuddle, snowflake } from './puddles.js';
 import { PROJ2, drawK2 } from './fx2.js';
 import { variant } from './fxvar.js';
@@ -97,6 +97,7 @@ export function drawGroundFx(ctx, w) {
     else if (f.type === 'k2') drawK2(ctx, f, w, 'ground');
   }
   drawMarks(ctx, 0, 'ground');
+  if (HIT_OWN.ground) HIT_OWN.ground(ctx, w); // (round 19, lane art-hitfx: ?hitfx=)
 }
 const sm01 = (k) => k * k * (3 - 2 * k);
 // A small burst where a shot ends (round 9: the Pyromancer's spark, the Plague Doctor's cluster)
@@ -1036,11 +1037,12 @@ function burstColor(u) {
 }
 export function noteHits(w) {
   noteWorld(w);
+  if (HIT_OWN.note) HIT_OWN.note(w); // (round 19, lane art-hitfx: ?hitfx=, the trial looks note what they draw first)
   for (const u of w.units) {
     if (u.hitT > (u._seenHit || 0) + 0.02 && !u.downed && !u.hitZap) { // round 10: "I don't like the X hit effect of lightning"
       // at the point the sim worked out: the body's edge facing the blow, or the face of a raised shield
       const r = u.r * 0.85, x = u.hitX ?? u.x - Math.cos(u.hitA) * r, y = u.hitY ?? u.y - Math.sin(u.hitA) * r;
-      local.push({ type: 'impact', x, y, a: u.hitA, t: 0, max: u.hitBlock ? 0.16 : 0.13, big: u.flinchT > 0.15, block: u.hitBlock, fa: u.facing });
+      if (!HIT_OWN.mark) local.push({ type: 'impact', x, y, a: u.hitA, t: 0, max: u.hitBlock ? 0.16 : 0.13, big: u.flinchT > 0.15, block: u.hitBlock, fa: u.facing });
     }
     u._seenHit = u.hitT;
   }
@@ -1048,14 +1050,14 @@ export function noteHits(w) {
   // the sim, so it needs nothing from sim.js; a hero who goes down stays in the list and doesn't burst.
   const was = w._here, here = new Set();
   for (const u of w.units) if (!u.ethereal) here.add(u);
-  if (was) for (const u of was) if (!here.has(u) && u.hp <= 0) {
+  if (was && !HIT_OWN.death) for (const u of was) if (!here.has(u) && u.hp <= 0) {
     local.push({ type: 'death', x: u.x, y: u.y, r: Math.max(14, u.vr), color: burstColor(u), seed: u.id, t: 0, max: u.def.boss ? 0.75 : 0.5, big: !!u.def.boss });
   }
   w._here = here;
   // coins that vanished while still fresh were picked up
   const now = new Set();
   for (const p of w.pickups) if (p.type === 'coin') now.add(p);
-  if (w._coins) for (const p of w._coins) if (!now.has(p) && (p.life == null || p.life > 0.05)) local.push({ type: 'sparkle', x: p.x, y: p.y, t: 0, max: 0.4 });
+  if (w._coins && !HIT_OWN.coin) for (const p of w._coins) if (!now.has(p) && (p.life == null || p.life > 0.05)) local.push({ type: 'sparkle', x: p.x, y: p.y, t: 0, max: 0.4 });
   w._coins = now;
 }
 // A body bursting: a white pop at the core, a shock ring, puffs in its colour thrown outward, a few sparks past them.
@@ -1080,6 +1082,7 @@ function deathBurst(ctx, f, k) {
 }
 export function drawLocal(ctx, dt) {
   drawMarks(ctx, dt, 'air');
+  if (HIT_OWN.draw) HIT_OWN.draw(ctx, dt); // (round 19, lane art-hitfx: ?hitfx=)
   drawFlakes(ctx, dt);
   for (const f of local) {
     f.t += dt; const k = clamp(f.t / f.max, 0, 1);

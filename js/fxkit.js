@@ -109,6 +109,9 @@ export function weaponOf(u) {
 const SLASH_COL = { hero: ['#DCE3EC', '#FFFFFF'], enemy: ['#FFCDBD', '#FFF6F2'], scythe: ['#EDE4CD', '#FFFFFF'], smack: ['#8FD8C0', '#E8FFF6'], fire: ['#FF8A3D', '#FFF0B0'], ghost: ['#BFE6FF', '#FFFFFF'] };
 
 // ---------------------------------------------------------------- the renderer-side marks (impacts, arcs, strikes)
+// Round 19 (lane art-hitfx): the hooks js/fx-hit-r19.js fills when the page is opened with ?hitfx= (the trial looks for
+// hits, blows on shields, misses, blasts, heals, buffs, deaths, pickups and level-ups). Empty: everything as it was.
+export const HIT_OWN = {};
 const marks = [];
 const push = (m) => { m.t = 0; marks.push(m); if (marks.length > 160) marks.splice(0, marks.length - 160); };
 
@@ -132,7 +135,7 @@ export function noteWorld(w) {
       push({ type: 'slash', u, x: t.x, y: t.y, R: t.r, a: t.a, arc: t.arc, shape, dir: t.dir ?? ((shape === 'twin' || shape === 'twinBlade') && odd ? -1 : 1) * back, /* (round 19: t.dir, the swing's own way: the Bandit's backhand) */ side: odd ? 1 : -1, col, r0k: sty.reach0, sx: sty.stabX, // (round 19: style.stabX, the stab runs down the spear held off to one side: Bulwark)
         max: shape === 'bite' && u && u.kind === 'wolf' ? 0.5 : shape === 'bite' ? 0.42 /* round 14: open, then the snap */ : shape === 'great' ? 0.22 : shape === 'heavy' ? 0.24 : 0.28, seed: Math.round(t.x * 7 + t.y) });
     } else if (t.type === 'blast') {
-      push({ type: 'blast', x: t.x, y: t.y, r: t.r, color: t.color || '#FFB347', ab: t.ab, max: t.ab === 'fireball' ? 0.6 : 0.45, seed: Math.round(t.x + t.y * 3) });
+      push({ type: 'blast', x: t.x, y: t.y, r: t.r, color: t.color || '#FFB347', ab: t.ab, burn: t.burn, max: HIT_OWN.blastT ? HIT_OWN.blastT(t) : t.ab === 'fireball' ? 0.6 : 0.45, seed: Math.round(t.x + t.y * 3) });
     }
   }
   // shots that are gone burst where they stopped
@@ -161,7 +164,7 @@ export function drawMarks(ctx, dt, layer) {
     if (layer === 'air') m.t += dt;
     const k = k01(m.t / m.max);
     ctx.save();
-    if (layer === 'ground') { if (m.type === 'quake') quake(ctx, m.x, m.y, m.r, k, m.seed, m.col); else if (m.type === 'strike') strikeGround(ctx, m, k); else if (m.type === 'slam') slamGround(ctx, m, k); else if (m.type === 'oldBones') oldBonesGround(ctx, m, k); }
+    if (layer === 'ground') { if (m.type === 'quake') quake(ctx, m.x, m.y, m.r, k, m.seed, m.col); else if (m.type === 'strike') strikeGround(ctx, m, k); else if (m.type === 'slam') slamGround(ctx, m, k); else if (m.type === 'oldBones') oldBonesGround(ctx, m, k); else if (m.type === 'blast' && HIT_OWN.blastGround) HIT_OWN.blastGround(ctx, m, k); }
     else switch (m.type) {
       case 'slash': slash(ctx, m, k); break;
       case 'slam': slamAir(ctx, m, k); break;
@@ -433,6 +436,7 @@ function impact(ctx, m, k) {
 
 // ---------------------------------------------------------------- blasts (sim.js explode)
 function blast(ctx, m, k) {
+  if (HIT_OWN.blast && HIT_OWN.blast(ctx, m, k)) return; // (round 19, lane art-hitfx: ?hitfx=)
   const e = easeOut(k), x = m.x, y = m.y, R = m.r;
   const fire = /^#F[F-F][789AB]/i.test(m.color) || m.ab === 'fireball';
   const col = fire ? EL.fire : m.color === '#9BE07A' ? EL.necro : [m.color, m.color, '#FFFFFF', '#FFFFFF'];
