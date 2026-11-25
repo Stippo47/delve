@@ -17,6 +17,7 @@ import { ehpStyle, EHP_STYLES } from './hpstyle.js';
 import { DEFS } from './units.js';
 import { HEROES } from './heroes.js';
 import { buildGrid } from './path.js';
+import { leash, holdWalk } from './leash.js'; // round 19 (lane sys19): "the bench stops pinning people"
 import { setSeed, TAU } from './util.js';
 import { BOSS_ARENAS } from './bosses.js'; // lane B (bosses2): lab.html?m=boss
 
@@ -293,7 +294,7 @@ function setupShow() {
     if (sh.hitDummy && cast && Math.floor(w.time / 0.45) !== Math.floor((w.time - dt) / 0.45)) hurt(w, dummies[0], 14, null, { noDodge: true });
     step(w, dt);
     if (u.act) pin = { x: u.x, y: u.y };
-    else if (!u.downed) { u.x = pin.x; u.y = pin.y; u.vx = u.vy = 0; }
+    else { holdWalk(u); leash(u, pin, dt, 24); } // (round 19, lane sys19: no pinning, leash.js): a knock, a shove, a pull plays out; only far off does it walk back
     if (u.downed) { u.downed = false; u.hp = u.maxHp; }
     for (const d of dummies) {
       d.atkT = 999; d.target = ally && d.target === ally ? ally : null;
@@ -306,7 +307,7 @@ function setupShow() {
       if (!w.units.includes(d)) { d.dead = false; d.hp = d.maxHp; w.units.push(d); }
     }
     if (ally && sh.allyFree && cast) ally.home = { x: ally.x, y: ally.y }; // lane H2 (round 13): an ability that moves the friend (the Jester's Swap)
-    if (ally) { ally.atkT = 999; ally.x = ally.home.x; ally.y = ally.home.y; for (const k in ally.kit.cd) ally.kit.cd[k] = Math.max(ally.kit.cd[k], 5); }
+    if (ally) { ally.atkT = 999; holdWalk(ally); leash(ally, ally.home, dt, 40); /* (round 19, lane sys19: no pinning, leash.js) */ for (const k in ally.kit.cd) ally.kit.cd[k] = Math.max(ally.kit.cd[k], 5); }
   };
 }
 

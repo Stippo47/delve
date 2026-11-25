@@ -219,3 +219,9 @@ where a card came back with "none of them" the direction changed, not the polish
   feet and a trail where it walks; nothing on the body), 3 Drop (a drop beside its health bar fills like a gauge and
   throbs). Blood on the floor (`drawBloodGround`, splats kept on the world) is a ground effect: flat, no outline.
 - **The Succubus's answer**: a pink heart flies from her to the striker (fx-status.js 'kissBack').
+
+## Round 19 (lane sys19): one shadow system
+Every shadow is the units' own: a disc in the one merged layer (render.js drawShadows), never an ellipse drawn by an
+effect. Something drawn in code that is up in the air calls height.js `castShadow(x, y, r, a, h)` from its 'ground'
+layer; a lob's height is height.js `projZ` (fx.js lifts the drawing once). A thrown weapon of the hero's own draws with
+render.js `drawHeldWeapon(ctx, owner)` (the weapon part of the hero's art).

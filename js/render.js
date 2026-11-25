@@ -17,7 +17,8 @@ import './fx-rogue19.js'; // round 19 (lane rogue19): the Bandit's, Shade's, Mon
 import { WALL2, ART2 } from './looks2.js';
 import { HEROES } from './heroes.js';
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
-import { drawFoeGround, snowRoll, drawFoe } from './foe-draw.js'; // round 13 (lane E): the newer enemies' extra drawing
+import { drawFoeGround, snowRoll, drawFoe } from './foe-draw.js';
+import { airTier, projZ, takeShadows, shadowOfH, LOB_SHADOW_R } from './height.js'; // round 19 (lane sys19): heights, one shadow system // round 13 (lane E): the newer enemies' extra drawing
 
 // One outline thickness for everything drawn here, in room units. Matches what the SVG heroes show.
 export const OUTLINE = 2.4;
@@ -108,17 +109,6 @@ function inked(ctx, pathFn, fill) {
   ctx.fillStyle = fill; pathFn(); ctx.fill();
 }
 
-// A soft round shadow, made once: dark in the middle, fading at the rim.
-let shadowImg = null;
-function softShadow() {
-  if (shadowImg) return shadowImg;
-  const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d');
-  const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-  gr.addColorStop(0, 'rgba(43,34,48,0.26)'); gr.addColorStop(0.6, 'rgba(43,34,48,0.2)'); gr.addColorStop(1, 'rgba(43,34,48,0)');
-  g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
-  return (shadowImg = c);
-}
-
 // The circle shadow under a unit (round 6), smaller in round 7 and merged: where shadows overlap they make one shape
 // (their union), never a darker patch. Every disc goes at full strength into one layer at half the canvas's
 // resolution, and that layer goes onto the floor once, see-through (SHADOW_A). Only the part of the layer the discs
@@ -135,6 +125,15 @@ function unitShadow() { // solid to 60% of the radius, then a short soft rim
 }
 // The old single-image sprites (the hired Knight and Rogue) are drawn bigger than their vr: their shadow is sized to
 // the sprite, else it hides under it (round 9: "you can't see the knight's shadow").
+// round 19 (lane sys19): a thing that stands upright, foot down the screen (def.upright), casts its shadow at its foot:
+// def.foot [how far down from its middle, the foot's half-width], in its art's SVG units (the totem's carved foot, an
+// ellipse 72 wide at 88 below its middle). Without one an upright thing's shadow is under its middle, as any unit's.
+const FOOT = { totem: [88, 36] };
+function footOf(u) {
+  const f = u.def.upright && (u.def.foot || FOOT[u.kind]); if (!f) return null;
+  const k = u.vr / (u.def.headR || headR(u.kind)), [ux, uy] = upVec();
+  return { x: -ux * f[0] * k, y: -uy * f[0] * k, r: f[1] * k * 1.45 * bigOf(u) };
+}
 const shadowSize = (u) => (u.downed ? u.vr * 1.35 : u.vr * (u.def.art ? 1.75 : 2.2)) * (1 - Math.min(u.def.hops ? 0.5 : 0.35, (u.hop || 0) / 120)) * bigOf(u);
 // Elites and majors are just bigger versions of themselves (round 9: no gold outline).
 const bigOf = (u) => (u.major || u.mini ? 1.16 : u.elite ? 1.08 : 1);
@@ -156,9 +155,23 @@ function drawShadows(ctx, w, tf) {
     if (sx - sr < x0) x0 = sx - sr; if (sy - sr < y0) y0 = sy - sr; if (sx + sr > x1) x1 = sx + sr; if (sy + sr > y1) y1 = sy + sr;
   };
   // (round 13, lane E: def.shadows, a body that isn't round; lane B, bosses3: u.shadowK sizes a code-drawn boss's shadow (0: none: a wurm under the sand))
-  for (const u of w.units) if ((!u.ethereal || u.hiddenIn) && u.shadowK !== 0) { if (u.def.shadows) { for (const [x, y, r] of u.def.shadows(u)) disc(x, y, r * 1.75, 1); } else disc(u.x, u.y, shadowSize(u) * (u.shadowK ?? 1), 1); }
+  for (const u of w.units) if ((!u.ethereal || u.hiddenIn) && u.shadowK !== 0 && !u.hidden) {
+    if (u.def.shadows) { for (const [x, y, r] of u.def.shadows(u)) disc(x, y, r * 1.75, 1); continue; }
+    const ft = footOf(u); // a thing that stands (the totem): its shadow at its foot, the size of its foot
+    if (ft) disc(u.x + ft.x, u.y + ft.y, ft.r, 1); else disc(u.x, u.y, shadowSize(u) * (u.shadowK ?? 1), 1);
+  }
   // a body in the air leaves its shadow on the floor
   for (const cp of w.corpses) if (cp.z > 2) disc(cp.x, cp.y, cp.vr * 1.3, clamp(cp.t / 4, 0, 1) * 0.8);
+  // round 19 (lane sys19): the rest of the room's shadows, in the same layer. Obstacles and crates (they had a softer
+  // shadow of their own), the chest and the pedestal; a lobbed thing (kits2.js lob: bread, flasks, bombs, a totem or a
+  // hive on its way) on the floor under it, shrinking and fading as it rises (height.js projZ; it drew two of its own);
+  // and whatever an effect cast this frame (height.js castShadow: a cannonball falling, a hurled rock, a javelin from the
+  // sky, a hammer circling).
+  for (const p of w.pillars) if (!p.painted) disc(p.x, p.y, p.r * 1.45, 1);
+  for (const r of w.walls) if (r.prop) disc(r.x + r.w / 2, r.y + r.h / 2, r.w * 0.8, 1);
+  for (const p of w.pickups) if (p.type === 'chest') disc(p.x, p.y, 34, p.drop > 0 ? 1 - p.drop / 0.45 : 1); else if (p.type === 'pedestal') disc(p.x, p.y, 26, 1);
+  for (const p of w.projectiles) if (p.life > 0 && (p.lob || p.noHit)) { const h = projZ(p); if (h > 0 || p.lob) disc(p.x, p.y, shadowOfH(p.shadowR || LOB_SHADOW_R, h) * 1.75, 1 - Math.min(0.55, h / 160)); }
+  takeShadows((x, y, r, a) => disc(x, y, r * 1.75, a));
   g.globalAlpha = 1;
   x0 = Math.max(0, Math.floor(x0)); y0 = Math.max(0, Math.floor(y0)); x1 = Math.min(lw, Math.ceil(x1)); y1 = Math.min(lh, Math.ceil(y1));
   SH.box = x1 > x0 && y1 > y0 ? [x0, y0, x1, y1] : null;
@@ -193,22 +206,25 @@ export function draw(ctx, w) {
   drawGroundFx(ctx, w);
   drawFoeGround(ctx, w); // round 13 (lane E): snow tracks, burrow mounds
   flushPuddles(ctx, tf); // puddles.js: every ground body queued above; bodies of a kind merge into one (round 9)
-  for (const p of w.pickups) drawPickup(ctx, p, w.time);
-  // shadows straight down under each obstacle (top-down: never cast to one side)
-  for (const p of w.pillars) { if (p.painted) continue; const R = p.r * 1.45; ctx.drawImage(softShadow(), p.x - R, p.y - R, R * 2, R * 2); } // (lane W: p.painted = already in the ground's picture, convoy.js)
-  for (const p of w.pillars) if (!p.painted) drawPillar(ctx, p, w);
-  // crates on the grid (layout.js): square obstacles, colliding as the wall rectangle they are (48 across at sc 1)
-  for (const r of w.walls) if (r.prop) { const R = r.w * 0.8, x = r.x + r.w / 2, y = r.y + r.h / 2; ctx.drawImage(softShadow(), x - R, y - R, R * 2, R * 2); prop(ctx, r.prop, x, y, PROP_BOX, { sc: r.w / 48 }); }
-  // a round shadow straight under every unit (top-down: no side cast), all of them merged; a leaping unit's shrinks
-  // as it rises
+  // one shadow system (round 19, lane sys19: "MAKE SURE YOU USE 1 SHADOW SYSTEM FOR EVERYTHING"): a round shadow
+  // straight under every unit, obstacle, crate, chest, lobbed thing and code-drawn thing in the air (top-down: no side
+  // cast), all of them merged into one layer; a thing up in the air leaves its shadow on the floor under it, smaller and
+  // fainter the higher it is. Laid before the obstacles and pickups, so a shadow passes under a pillar, not over it.
   drawShadows(ctx, w, tf);
+  for (const p of w.pickups) drawPickup(ctx, p, w.time);
+  for (const p of w.pillars) if (!p.painted) drawPillar(ctx, p, w); // (lane W: p.painted = already in the ground's picture, convoy.js)
+  // crates on the grid (layout.js): square obstacles, colliding as the wall rectangle they are (48 across at sc 1)
+  for (const r of w.walls) if (r.prop) { const x = r.x + r.w / 2, y = r.y + r.h / 2; prop(ctx, r.prop, x, y, PROP_BOX, { sc: r.w / 48 }); }
   if (w.battle) { // whose side: a thin ring on the floor round each unit's feet (an outline round the body is kept for protection)
     ctx.lineWidth = 2.4;
     for (const u of w.units) { const c = SIDE_RING[w.battle.side[u.team]]; if (!c || u.dead || u.ethereal || (u.linkTo && u.def.segment)) continue; ctx.strokeStyle = c; ctx.beginPath(); ctx.arc(u.x, u.y, u.vr * 1.12 + 3, 0, TAU); ctx.stroke(); } // (round 13, lane E: one ring for a chain, its head's)
   }
   for (const t of w.telegraphs) if (t.type === 'ring') drawRing(ctx, t);
   for (const c of w.corpses) drawCorpse(ctx, c);
-  const order = [...w.units].sort((a, b) => (a.downed ? -1 : 0) - (b.downed ? -1 : 0) || screenDepth(a) - screenDepth(b));
+  // round 19 (lane sys19, the designer: in the air, "always render in front of everything on the ground until landed"):
+  // the downed first, then everything on the floor, then what hovers, then what flies (height.js airTier: a leap, a
+  // thrown foe, a pounce's hang, a hop, a swoop, the imps, the spirit eagle, bats), each by its depth on screen
+  const order = [...w.units].map((u) => (u._tier = airTier(u), u)).sort((a, b) => (a.downed ? -1 : 0) - (b.downed ? -1 : 0) || a._tier - b._tier || screenDepth(a) - screenDepth(b));
   const dt = Math.min(0.05, Math.max(0, w.time - (w._lastDraw ?? w.time))); w._lastDraw = w.time; w._dt = dt;
   noteHits(w);
   for (const u of order) drawBodyGround(ctx, u, w); // chains, rays and rings that lie under the units (round 9)
@@ -447,7 +463,6 @@ function drawPickup(ctx, p, t) {
   } else if (p.type === 'pedestal') {
     upright(ctx, p.x, p.y, () => {
       // the plinth seen from straight above (a soft shadow right under it); the reward floats over the cushion's middle
-      const R = 26; ctx.drawImage(softShadow(), -R, -R, R * 2, R * 2);
       if (prop(ctx, 'pedestal', 0, 0, PROP_BOX, { upright: false })) ctx.scale(0.9, 0.9);
       else inked(ctx, () => roundRect(ctx, -18, -14, 36, 28, 6), '#A99C8B');
       const col = { potion: '#E0604B', xp: '#FFE14D', coins: '#F2B53A', trinket: '#C9A7FF' }[p.reward];
@@ -488,7 +503,7 @@ function drawCoin(ctx, p, t) {
 }
 // The chest opens empty (round 6): its coins spill out onto the floor, so no glow or gold inside once it's open.
 function drawChest(ctx, p, t) {
-  { const R = 34; ctx.drawImage(softShadow(), p.x - R, p.y - R, R * 2, R * 2); } // straight down, under it
+  // (its shadow, straight down under it: render.js drawShadows, round 19)
   if (prop(ctx, p.open ? 'chest-open' : p.free ? 'chest-closed' : 'chest-locked', p.x, p.y, PROP_BOX, { extraA: 0 })) return;
   upright(ctx, p.x, p.y, () => {
     inked(ctx, () => roundRect(ctx, -21, -15, 42, 30, 6), p.open ? '#7A4A26' : '#A0683A');
@@ -644,6 +659,26 @@ function drawUnit(ctx, u, w) {
   ctx.restore();
   ctx.globalAlpha = 1;
   if (u.frozenT > 0) drawIce(ctx, u, w);
+}
+
+// Round 19 (lane sys19; the designer: "Thrown hammer looks different than held hammer", Warhelm "Throws a different
+// hammer than what he holds"): a weapon of the hero's own that leaves the hand (thrown, flung, circling, lying where it
+// fell) is drawn as the very part he holds it with: his art's weapon part (def.style.weaponPart, or a part named
+// arm-l-hammer, arm-r-club, ...: the weapon as its own part, hidden in his hand while it is out, parts.js), at his own
+// scale x k, centred on the weapon's middle (ctx's origin), turned by ctx. false when there is no such part or its
+// picture isn't ready yet (the caller draws its own then).
+const WEAPON_PART = /^arm-[lr]-(hammer|club|axe|sword|spear|blade|weapon)$/;
+export function drawHeldWeapon(ctx, u, k = 1) {
+  if (!u || !u.def || !u.def.art) return false;
+  const sizeU = u.vr * 220 / (u.def.headR || headR(u.kind)), set = getRig(u.def.art, sizeU * view.scale * view.dpr * 1.04 * k);
+  if (!set) return false;
+  const want = u.def.style && u.def.style.weaponPart, L = set.layers.find((l) => (want ? l.id === want : WEAPON_PART.test(l.id)));
+  if (!L) return false;
+  const s = sizeU / 220 * k * bigOf(u);
+  ctx.save(); ctx.scale(s, s); ctx.translate(-(L.x + L.w / 2), -(L.y + L.h / 2));
+  ctx.drawImage(L.ink, L.x, L.y, L.w, L.h); ctx.drawImage(L.img, L.x, L.y, L.w, L.h);
+  ctx.restore();
+  return true;
 }
 
 // Round 13 (lane E): what foe-draw.js drawFoe needs from here (a spirit's tail, a chain drawn as one body, a blade stuck in a wall).

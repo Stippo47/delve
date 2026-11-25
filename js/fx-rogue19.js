@@ -9,6 +9,7 @@ import { SLASH_OWN } from './fxkit.js';
 import { view } from './render.js';
 import { drawGear } from './parts.js';
 import { headR } from './sprites.js';
+import { castShadow } from './height.js'; // round 19 (lane sys19): the one shadow system
 
 const DRAW = DRAW2;
 const k01 = (v) => clamp(v, 0, 1);
@@ -35,9 +36,8 @@ DRAW.disarmFlick = (ctx, f, w, layer) => {
   const rot = f.facing - Math.PI / 2 + f.spin * TAU * e + (k >= 1 ? 0 : 0);
   const fade = f.back ? 1 - k01((f.t - (f.max - 0.35)) / 0.35) : 1;
   const sizeU = (f.vr || 20) * 220 / (f.headR || headR(u.kind)), s = sizeU / 220;
-  if (layer === 'ground') { // its shadow, small while it is up, then lying under it
-    ctx.save(); ctx.globalAlpha *= 0.28 * fade * (0.5 + 0.5 * (1 - Math.sin(Math.PI * k)));
-    ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(x, y, 12 * s * 5, 5 * s * 5, f.a, 0, TAU); ctx.fill(); ctx.restore();
+  if (layer === 'ground') { // its shadow (the one shadow system, height.js), shrinking as it rises; then it lies on the floor
+    castShadow(x, y, 9, 0.7 * fade, h);
     if (k < 1) return; // (once down it lies on the floor, under everyone: drawn here, not over them)
   } else if (k >= 1) return;
   ctx.save(); ctx.globalAlpha *= fade * (k >= 1 ? 0.92 : 1);
