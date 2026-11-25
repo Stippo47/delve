@@ -12,6 +12,7 @@ import { lineClear, circleRect } from './path.js';
 import { foesNear, friendsNear, hurtMost, dmgOf, ang, ring, cast, heal, addStatus, zone, shoot, segDist, hooksOf, wantedWait, beset } from './kits.js';
 import { threatened, attackers } from './threat.js'; // round 16 fixes: what is about to land on a unit, who is on it
 import { AUDIT } from './stats.js'; // (round 16: tools/audit)
+import { hasTag } from './tags.js'; // round 17 (lane tags17): the Engineer's wrench mends constructs
 
 // ---------------------------------------------------------------- helpers
 const k2 = (w, o) => fx(w, { type: 'k2', ...o });                 // a look of our own (fx2.js DRAW[o.draw])
@@ -378,6 +379,7 @@ export const ABILITIES2 = {
       for (const e of foesNear(w, u, u.x, u.y, 80)) { hurt(w, e, dmgOf(u, 0.5), u, { knock: 260, kAngle: ang(u, e), noDodge: true }); whirl(w, e, 25, u); }
       k2(w, { draw: 'gust', x: u.x, y: u.y, r: 80, max: 0.5 });
       k2(w, { draw: 'wings', unit: u, x: u.x, y: u.y, r: u.r, max: 0.62, flap: true });
+      u.flyT = 0.6; // round 17 (lane tags17): flying while he swoops (tags.js layerOf)
       u.act = { type: 'leap', t: 0.6, max: 0.6, x0: u.x, y0: u.y, x1, y1, land: () => {
         w.shake = Math.max(w.shake, 6);
         setAnim(u, 'spin', 0.45); u.spin = { t0: w.time, dur: 0.45, dir: 1 };
@@ -525,7 +527,7 @@ export const ABILITIES2 = {
         hurt(w, t, dmgOf(u, 2.2), u, { heavy: true, knock: 110, noDodge: true });
         stun(w, t, tier >= 2 ? 1.6 : 1); w.shake = Math.max(w.shake, 6);
         k2(w, { draw: 'bonk', x: t.x, y: t.y, unit: t, r: t.vr, max: tier >= 2 ? 1.6 : 1 });
-        if (tier >= 3) for (const e of foesNear(w, u, t.x, t.y, 90)) if (e !== t) hurt(w, e, dmgOf(u, 0.8), u, { stagger: 50, knock: 140, kAngle: angleTo(t.x, t.y, e.x, e.y), noDodge: true });
+        if (tier >= 3) for (const e of foesNear(w, u, t.x, t.y, 90)) if (e !== t) hurt(w, e, dmgOf(u, 0.8), u, { stagger: 50, knock: 140, kAngle: angleTo(t.x, t.y, e.x, e.y), noDodge: true, slam: true });
       });
     },
     show: { single: true },
@@ -645,7 +647,7 @@ export const ABILITIES2 = {
         u.act = { type: 'leap', t: 0.45, max: 0.45, x0: u.x, y0: u.y, x1, y1, land: () => {
           const R = tier >= 3 ? 105 : 80; w.shake = Math.max(w.shake, 8); u.kit.splitT = 0;
           swingMark(w, u, u.r + 20, 0.6, { x: u.x, y: u.y, r: R, look: 'hammer' });
-          for (const e of foesNear(w, u, u.x, u.y, R)) { hurt(w, e, dmgOf(u, 1.9), u, { knock: 300, kAngle: ang(u, e), heavy: true, noDodge: true, stagger: tier >= 2 ? 55 : 0, shock: 20 }); if (tier >= 3) stun(w, e, 0.8); }
+          for (const e of foesNear(w, u, u.x, u.y, R)) { hurt(w, e, dmgOf(u, 1.9), u, { knock: 300, kAngle: ang(u, e), heavy: true, noDodge: true, stagger: tier >= 2 ? 55 : 0, shock: 20, slam: true }); if (tier >= 3) stun(w, e, 0.8); }
         } };
         u.invulnT = Math.max(u.invulnT, 0.45);
       } }));
@@ -1115,7 +1117,7 @@ export const ABILITIES2 = {
       const T = tier >= 3 ? 3.5 : 2.5, foes = foesNear(w, u, u.x, u.y, 340);
       let cx = u.x, cy = u.y; if (foes.length) { cx = 0; cy = 0; for (const e of foes) { cx += e.x; cy += e.y; } cx /= foes.length; cy /= foes.length; }
       const R = clamp(dist(u.x, u.y, cx, cy), 90, 150); let th = angleTo(cx, cy, u.x, u.y), bombT = 0.25;
-      u.act = { type: 'ride', t: T + 0.2, max: T + 0.2 }; u.ethereal = true; u.kit.broomUntil = w.time + T; setAnim(u, 'ability', 0.4);
+      u.act = { type: 'ride', t: T + 0.2, max: T + 0.2 }; u.ethereal = true; u.kit.broomUntil = w.time + T; u.flyT = T; // (round 17: flying on the broom) setAnim(u, 'ability', 0.4);
       k2(w, { draw: 'broom', unit: u, x: u.x, y: u.y, a: u.facing, max: T + 0.1 });
       timer(u, 'broom', T, (dt) => {
         const k = Math.min(1, (T - (u.kit.broomUntil - w.time)) / 0.3);
@@ -2179,6 +2181,7 @@ export const ABILITIES2 = {
       const d = w.units.filter((a) => a.team === u.team && a.downed && !a.dead && !a.summon).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0]; if (!d) return;
       u.kit.callW = w; cast(u, 'ability', 0.7); const a = angleTo(d.x, d.y, u.x, u.y), x1 = clamp(d.x + Math.cos(a) * (d.r + u.r), u.r, w.W - u.r), y1 = clamp(d.y + Math.sin(a) * (d.r + u.r), u.r, w.H - u.r);
       k2(w, { draw: 'wings', unit: u, x: u.x, y: u.y, r: u.r, max: 0.7, flap: true }); u.invulnT = Math.max(u.invulnT, 0.7);
+      u.flyT = 0.55; // round 17 (lane tags17): flying on her saving leap
       u.act = { type: 'leap', t: 0.55, max: 0.55, x0: u.x, y0: u.y, x1, y1, land: () => {
         if (!d.downed || d.dead) return; cleanse(d); d.downed = false; d.reviveT = 0; d.hp = d.maxHp * (tier >= 2 ? 0.4 : 0.25); d.invulnT = 1.5; d.revivedByKit = true;
         fx(w, { type: 'pillar', x: d.x, y: d.y, r: 34, kind: 'holy', max: 0.6 }); w.shake = Math.max(w.shake, 5);
@@ -2188,7 +2191,7 @@ export const ABILITIES2 = {
         if (tier >= 3) after(u, 0.25, () => { if (!alive(u) || !alive(d)) return; const f = opponents(w, u); let ax = 0, ay = 0; for (const e of f) if (dist(e.x, e.y, u.x, u.y) < 320) { ax += u.x - e.x; ay += u.y - e.y; }
           const b = Math.hypot(ax, ay) > 1 ? Math.atan2(ay, ax) : a, sx = clamp(u.x + Math.cos(b) * 190, u.r, w.W - u.r), sy = clamp(u.y + Math.sin(b) * 190, u.r, w.H - u.r);
           k2(w, { draw: 'wings', unit: u, x: u.x, y: u.y, r: u.r, max: 0.6, flap: true }); u.kit.carry = d;
-          u.act = { type: 'leap', t: 0.5, max: 0.5, x0: u.x, y0: u.y, x1: sx, y1: sy, land: () => { u.kit.carry = null; } }; });
+          u.flyT = 0.5; u.act = { type: 'leap', t: 0.5, max: 0.5, x0: u.x, y0: u.y, x1: sx, y1: sy, land: () => { u.kit.carry = null; } }; });
       } };
     },
     show: { ally: true, downed: true, allyFree: true },
@@ -2220,7 +2223,7 @@ export const ABILITIES2 = {
       const a = [u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo).sort((p, q) => opponents(w, u).filter((e) => e.target === q).length - opponents(w, u).filter((e) => e.target === p).length)[0] || u;
       const f = foesNear(w, u, a.x, a.y, 140)[0], b = f ? angleTo(a.x, a.y, f.x, f.y) : 0, x1 = clamp(a.x + Math.cos(b) * (a.r + u.r), u.r, w.W - u.r), y1 = clamp(a.y + Math.sin(b) * (a.r + u.r), u.r, w.H - u.r);
       cast(u, 'ability', 0.9); k2(w, { draw: 'wings', unit: u, x: u.x, y: u.y, r: u.r, max: 0.95, flap: true }); u.invulnT = Math.max(u.invulnT, 0.9);
-      u.act = { type: 'ride', t: 0.95, max: 0.95 }; const x0 = u.x, y0 = u.y, t0 = w.time;
+      u.act = { type: 'ride', t: 0.95, max: 0.95 }; u.flyT = 0.85; const x0 = u.x, y0 = u.y, t0 = w.time; // (round 17: flying, up on her wings)
       timer(u, 'skyDive', 0.9, () => { const k = (w.time - t0) / 0.9; u.hop = Math.sin(Math.min(1, k * 1.6) * Math.PI / 2) * 80 * (k < 0.75 ? 1 : (1 - k) / 0.25); const q = clamp((k - 0.3) / 0.7, 0, 1); u.x = x0 + (x1 - x0) * q; u.y = y0 + (y1 - y0) * q; u.vx = u.vy = 0; },
         () => { u.hop = 0; if (u.act && u.act.type === 'ride') u.act = null; w.shake = Math.max(w.shake, 7);
           k2(w, { draw: 'radiantBurst', x: u.x, y: u.y, r: 110, max: 0.6 });
@@ -2607,6 +2610,28 @@ function juggleTick(w, u, dt) {
 function wolfBack(w, u) { const k = u.kit; if (!k.wolfUntil) return; u.def = k.human || u.def; k.wolfUntil = 0; if (k.size) { u.r = k.size.r; u.vr = k.size.vr; k.size = null; } puff(w, u.x, u.y, '#6E6A6A', 12, 100, 6, 0.5); }
 // the Engineer's towers (Tinker) and drones
 const TOWERS = ['torcher', 'tesla', 'snowMortar', 'medbay'];
+// Round 17 (lane tags17; the designer: "Think the engineer hitting its turrets with their wrenches. Can heal its
+// constructs but not his allies"): REPAIR. With nothing for her to hit close by, the Engineer goes to the most
+// damaged construct of her side (tags.js: her turrets and towers first, then anyone's barricade, crate or pavise)
+// below `below` of its health within `look`, and whacks it with the wrench in place of a blow: each whack mends `heal`
+// of its health, on her own attack clock. Her target has to be further than `busy` off for her to stop and mend. The
+// wrench never mends anything that isn't a construct.
+export const REPAIR = { below: 0.85, heal: 0.12, look: 420, reach: 30, busy: 90 };
+function wrenchRepair(w, u, dt) {
+  if (w.cleared || u.act || u.forcedGoal || u.shackledT > 0 || u.stunT > 0 || u.frozenT > 0 || u.sleepT > 0 || u.koT > 0 || u.fearT > 0 || u.radiantT > 0 || u.addledT > 0) return;
+  const c = w.units.filter((o) => o !== u && alive(o) && !o.ethereal && o.team === u.team && hasTag(o, 'construct') && o.hp < o.maxHp * REPAIR.below && dist(o.x, o.y, u.x, u.y) < REPAIR.look)
+    .sort((p, q) => (q.summonBy === u ? 1 : 0) - (p.summonBy === u ? 1 : 0) || hpRatio(p) - hpRatio(q))[0];
+  if (!c) return;
+  if (opponents(w, u).some((e) => dist(u.x, u.y, e.x, e.y) - u.r - e.r < REPAIR.busy)) return; // something to hit close by: that first
+  const gap = dist(u.x, u.y, c.x, c.y) - u.r - c.r;
+  u.coinGoal = { x: c.x, y: c.y, d: Math.max(0, gap) + 40, repair: true }; // (sim.js movement: repair, she walks to it whatever she was fighting)
+  if (gap > REPAIR.reach || u.atkT > 0) return;
+  u.facing = ang(u, c); setAnim(u, 'swing', 0.28); swingMark(w, u, u.r + 34, 1.6);
+  const amt = Math.min(c.maxHp - c.hp, c.maxHp * REPAIR.heal); if (amt > 0) heal(w, c, amt, u);
+  c.mendGlow = w.time + 0.4; c.flashT = 0.08;
+  k2(w, { draw: 'buildSparks', x: c.x, y: c.y, max: 0.5 }); sparks(w, c.x + Math.cos(u.facing + Math.PI) * c.r * 0.6, c.y + Math.sin(u.facing + Math.PI) * c.r * 0.6, u.facing + Math.PI, 6, '#FFE66B', 1.1);
+  u.atkT = u.def.atkCd * rrange(0.9, 1.1); u.lastAttackT = w.time; u.repairs = (u.repairs || 0) + 1;
+}
 const turnTo = (s2, want, rate, dt) => { const d = Math.atan2(Math.sin(want - s2.facing), Math.cos(want - s2.facing)); s2.facing += clamp(d, -rate * dt, rate * dt); return Math.abs(d); };
 const nearestFoe = (w, s2, R) => opponents(w, s2).filter((e) => dist(e.x, e.y, s2.x, s2.y) < R && !blocked(w, s2.x, s2.y, e.x, e.y)).sort((p, q) => dist(s2.x, s2.y, p.x, p.y) - dist(s2.x, s2.y, q.x, q.y))[0];
 // the turret: turns slowly to the nearest enemy and fires bursts of five
@@ -3044,6 +3069,7 @@ export function kit2Tick(w, u, dt) {
   // Warhelm: his hammer is out of his hand while it circles him (Storm Born) or flies ahead (Skull Splitter). (Round 15,
   // lane E: art round 12 split it from his fist, #arm-l-hammer: parts.js hides the hammer alone, his fist stays and punches.)
   if (u.kind === 'warhelm') u.kit.hammerOut = !!u.kit.storm || u.kit.splitT > w.time;
+  if (u.kind === 'engineer') wrenchRepair(w, u, dt); // round 17 (lane tags17): the wrench mends her constructs
   // the Alchemist's hand shows the next flask she'll throw (round 13: "Bottle in hand should change to what she will throw")
   if (u.kind === 'alchemist' && (u.kit.handW !== w || !u.kit.handFx || u.kit.handFx.t >= u.kit.handFx.max)) { u.kit.handW = w; u.kit.handFx = k2(w, { draw: 'handFlask', unit: u, x: u.x, y: u.y, max: 1e9 }); }
   // the Chef's plates: a friend who walks over one eats it (healed; the rest past whole is extra health); hurt friends

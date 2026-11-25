@@ -1039,3 +1039,20 @@ Round 18, more rulings (chat):
 - "Also think about the physical damage types, sharp vs blunt damage." Given to tags17 (hit kinds; obvious interactions built, the rest suggested).
 - "Get an agent on all enemies resistance and immunities and see if they make sense." Lane res18: an audit that proposes (no game code), on top of the tag system; its calls go to Riffle.
 - res18 landed (docs/audit/res18.md, 165 kinds): 7 plain bugs (the undead name test catches the Orc Warboss and misses the Bone King, Grave Warden, Mummy, Icicle Wraith; chains build statuses once per segment; four Book gaps) to be fixed after tags17 merges; rules by tag proposed; 8 calls sent to Riffle (deck r18-resistances).
+
+## Round 18, lane tags17 (2026-11-24): the tag system
+The designer: construct-only healing (the Engineer's wrench on her turrets, not her allies), fire things hurt when wet
+or in water, silence stopping mouth abilities, "add the obvious ones", suggest the rest. During the lane: fire things
+set on fire get a rage-like boost instead of damage; sharp vs blunt; magic its own damage type, apart from the
+elements it carries; height layers (a hopping slime hovers; the Griffon's and Valkyrie's leaps and the Witch's broom
+fly). Everything in docs/tags17.md; code js/tags.js; checks tools/tags17/check.mjs.
+- One registry, js/tags.js: unit kinds (from honest def fields plus explicit lists), abilities (mouth, sound, magic;
+  the heroes' existing `tags` string left alone), enemy moves by their due() key, hits (hitKinds: type sharp | blunt |
+  magic, elements, delivery). Shown in the pause panel.
+- Built: the Engineer's wrench repair (12% of a construct's health a whack, with no foe within 90); constructs take no
+  bleed or poison; Doused fire things ((1.5 + 0.06 x wet)/s, in water at least 60 wet, bosses half); water puts out
+  half the burning; Kindled fire things (up to +30% dealt and attack speed, +15% move, Flare at full; bosses half;
+  only the other side's fire); Silenced = mouth only (rule change); the Warden's Nullify keeps its full lock as
+  Nullified (a mouth-only silence would stop 5% of what it stops); the undead tag for the Cleric's holy bonus (now
+  reaches the Bone King, Grave Warden, mummies, Icicle Wraith); layers floor / hovering / flying (slams miss hovering,
+  gas and explosions reach it; only shots reach flying); type resistances as a mechanism, none set.
