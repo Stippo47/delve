@@ -1,0 +1,6 @@
+    at hurt (./js/sim.js:1005:40)
+
+Node.js v24.16.0
+    at Object.hit (./js/kits.js:56:47)
+
+Node.js v24.16.0
