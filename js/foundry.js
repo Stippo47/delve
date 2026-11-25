@@ -22,7 +22,7 @@ import { TAU, clamp, dist, angleTo, wrapAngle, angleDiff, rand, rrange, chance }
 import { lineClear } from './path.js';
 import { ELITES, lob, cone, line, around, rush, rushTick, shoot, hold, beginHold, due, again, targetOf, gapTo, crowd, stand, turnTo, later, openSpot } from './elites.js';
 import { variantUrl } from './recolor.js';
-import { sees, lead, every, burrowTick, chainHead, segBrain, killChain, turretBrain, bounceMove, touch, solidAt, blast, dropOn, overheat } from './families.js';
+import { sees, lead, every, burrowTick, chainHead, chainBrain, crossesBody, segBrain, killChain, turretBrain, bounceMove, touch, solidAt, blast, dropOn, overheat } from './families.js';
 import { spirit } from './foes10.js';
 
 const ART = (f) => `art/enemies/placeholder/${f}.svg`;
@@ -247,6 +247,7 @@ function crawlerBrain(w, u, dt) {
   if (rushTick(w, u, dt)) return true;
   const t = targetOf(w, u); if (!t || !u.aggro || !due(u, 'lunge', dt, 2.5)) return false;
   const g = gapTo(u, t); if (g < 60 || g > 280 || !lineClear(w, u.x, u.y, t.x, t.y, u.r)) return false;
+  if (crossesBody(u, angleTo(u.x, u.y, t.x, t.y), g + u.r)) { again(u, 'lunge', 0.4); return false; } // (round 17, lane foes17: not back over its own plates)
   again(u, 'lunge', 5, 6.5);
   rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 80, { tell: 0.45, dmg: 13, knock: 220, status: { shock: 30 }, trail: 'rgba(255,240,170,0.6)' });
   return true;
@@ -306,9 +307,9 @@ export const FOUNDRY = {
     xp: 0, coins: [0, 0], trap: true, pass: true, noElite: true, noCorpse: true, goo: '#C9CED6', brain: sawBrain },
   chainCrawler: { ...FOE, name: 'Chain Crawler', art: 'art/enemies/crawler-head.svg', headR: 40, r: 30, vr: 23, turn: 3.2, accel: 260, face: 4, mass: 2.4,
     hp: 190, speed: 62, role: 'melee', range: 18, atkCd: 1.1, windup: 0.2, dmg: 11, knock: 150, arc: 1.4, temp: 0.4, commit: 1, xp: 32, coins: [5, 10], attackAnim: 'thrust',
-    construct: true, chain: { n: 8, seg: 'crawlerPlate', gap: 28, taper: 0.6 }, res: MACHINE, brain: crawlerBrain, onDeath: killChain },
+    construct: true, chain: { n: 8, seg: 'crawlerPlate', gap: 38, burst: { beat: 0.9, surge: 0.35, low: 0.75, high: 2.2 }, wave: { amp: 0.22, len: 4 } }, flat: true, res: MACHINE, brain: chainBrain(crawlerBrain), onDeath: killChain }, // (round 17, lane foes17: gap 28 -> 38, a plate's length; no taper, a tail; quicker bursts, a small sway: families.js)
   crawlerPlate: { variantOf: 'slimeSmall', name: 'Crawler Plate', art: 'art/enemies/crawler-plate.svg', headR: 46, r: 26, vr: 22, mass: 2, hp: 999, speed: 0, atkCd: 999, dmg: 0, hops: null,
-    xp: 0, coins: [0, 0], cost: 99, noCorpse: true, noElite: true, segment: true, touchDmg: 5, segTaken: 0.6, construct: true, goo: '#8A8F96', brain: segBrain },
+    xp: 0, coins: [0, 0], cost: 99, noCorpse: true, noElite: true, segment: true, flat: true, tailShape: [141, 50, 50], touchDmg: 5, segTaken: 0.6, construct: true, goo: '#8A8F96', brain: segBrain },
   drillBot: { ...FOE, name: 'Drill Bot', art: 'art/enemies/drill-bot.svg', headR: 49, r: 24, vr: 20, turn: 6, accel: 320, face: 6, mass: 1.2,
     hp: 48, speed: 66, role: 'skirmish', range: 14, atkCd: 1.0, dmg: 7, arc: 1.6, temp: 0.5, commit: 0.6, xp: 10, coins: [2, 4], attackAnim: 'thrust', construct: true,
     noCorpse: true, goo: '#8A8F96', res: MACHINE, brain: (w, u, dt) => hold(u, dt) || burrowTick(w, u, dt, DRILL) },

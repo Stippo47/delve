@@ -197,7 +197,12 @@ export function boulderBrain(w, u, dt) {
     // round 17 (lane foes17): it can't get to it (round 14 left it be a while and came back to try again, so a boulder
     // in a gap too narrow for it, or behind its friends, kept it walking up to it and standing by it for good): it
     // tears a new one out of the floor where it stands, and the old one crumbles
-    if ((jam.t += dt) > BOULDER_JAM) { jam.t = 0; startRip(w, u); return true; }
+    // (getting nowhere: no nearer to it by 20 in BOULDER_JAM seconds; sliding to and fro along a wall in front of it
+    // moved it far enough to count as getting somewhere)
+    const dB = dist(u.x, u.y, b.x, b.y), F = u.bFetch && u.bFetch.b === b && w.time - u.bFetch.at < 0.5 ? u.bFetch : (u.bFetch = { b, best: dB, t: 0, at: w.time });
+    F.at = w.time; if (dB < F.best - 20 || b.vx * b.vx + b.vy * b.vy > 3600 || Math.hypot(u.kx, u.ky) > 60) { F.best = Math.min(F.best, dB); F.t = 0; } // (not while it still rolls, or the troll is knocked about)
+    if (dB > F.best + 60) F.best = dB; // (knocked back from it: counted from there)
+    if ((F.t += dt) > BOULDER_JAM) { u.bFetch = null; jam.t = 0; startRip(w, u); return true; }
     const [gx, gy] = goalVec(w, u, b.x, b.y), [sx, sy] = steer(w, u, gx, gy);
     drive(u, sx, sy, u.def.speed * (u.moveMul || 1), dt);
     turnTo(u, angleTo(u.x, u.y, b.x, b.y), 3, dt);
