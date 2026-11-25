@@ -1148,7 +1148,11 @@ export function addStatus(w, u, type, amount, src, fromBlow, credit = null) { //
     if (!fromBlow) { const by = src || null, m = l.stAt || (l.stAt = {}); if (m[type] === w.time && l.stBy0 === by) amount *= MOB.share; else { m[type] = w.time; l.stBy0 = by; } }
     u = l;
   }
-  if (u.linkTo) { if (alive(u.linkTo)) addStatus(w, u.linkTo, type, amount * (u.def.segTaken ?? 0.6), src, undefined, credit); return; } // a chain's segment: its head takes it
+  if (u.linkTo) { // a chain's segment: its head takes it. Round 18 (the resistance audit): once a frame per status and source, not once
+    // per segment (one gas cloud over six coils built 4.6 to 5.8 times the status a single body would)
+    const h = u.linkTo; if (!alive(h)) return; const key = type + ':' + (src ? src.id : '-'), seen = h.segSt || (h.segSt = {});
+    if (seen[key] === w.time) return; seen[key] = w.time;
+    addStatus(w, h, type, amount * (u.def.segTaken ?? 0.6), src, undefined, credit); return; }
   if (type === 'radiance' && (u.radiantT > 0 || u.radImmuneT > 0)) return; // glowing, or just was: its own aura can't feed it
   if (type === 'entangle' && u.tangleImmuneT > 0) return; // held fast already (an entangle root), or just got free
   if (NEW_BURSTS.has(type) && u[type + 'ImmuneT'] > 0) return; // round 13: just burst
