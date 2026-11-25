@@ -1340,3 +1340,4 @@ if any is wrong):
 - **Broom Ride**: seen and targetable now; she is on the flying layer, so only shots reach her. To keep her strength: its bombs 0.9 -> 1.0 of her damage, its cooldown 11 -> 10 s (measured level with main).
 - **Healing Totem**: its body is only its foot (r 13); its picture stands up the screen from there.
 - **For approval**: design/caster19/bear.png (a large brown bear, the spirit bear after approval) and salmon.png.
+- Round 19, chat: "Stop agents". Stopped (work so far kept on their branches, unmerged): wurm19, spider19, icons-abil, art-props, art-statusfx, art-shots.
