@@ -2,7 +2,6 @@
   <!-- PLACEHOLDER (round 7): art the designer marked not good, standing in for the new dungeons until it is redone. -->
 <!-- SLIME, fire (round 5): the round-4 cube slime with its drips turned 180 degrees (they now trail behind it, so it reads as moving forward) and no eyes. A soft rounded cube of jelly lit from the left, embers inside, one soft shine. Scaled 1.0. Parts: #body only (the game squashes it whole). Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#FFC070"/><stop offset="1" stop-color="#D8482A"/></linearGradient>
 <path id="p2" d="M56 70 C51.8 65.9 58.7 50.4 58.8 45.2 C58.9 40 54.8 42 56.7 39 C58.6 36 65.6 27.1 70 27.1 C74.4 27.1 81.4 36 83.3 39 C85.2 42 81.1 40 81.2 45.2 C81.3 50.4 88.2 65.9 84 70 C79.8 74.1 60.2 74.1 56 70 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -16,7 +15,7 @@
 <clipPath id="c11"><use href="#p9"/></clipPath>
 <linearGradient id="g12" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.3"/></linearGradient>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="body"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

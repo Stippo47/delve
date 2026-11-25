@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 10) of design/class-round10/enemies/foundry-bee.svg -->
 <!-- BEE (round 10: "1 maybe 2 body segments. Not 3"): a mechanical bee seen from above, in copper: one plump round body, striped with two dark iron bands, a short stinger at the back, the front end a little darker for a head with two short feelers; one wing of thin pale plate a side (arm-l, arm-r: they flap). The bronze and steel ones are this art turned by the game. No eyes. Parts: #arm-l / #arm-r (wings), #body. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
 <path id="s1" d="M 0 -4 C 5 -3.8 14.3 7.1 17.6 14 C 20.9 20.9 23 34.1 22 42 C 21 49.9 14.3 62.3 11 66.5 C 7.7 70.7 3.5 70.5 0 70 C -3.5 69.5 -9.1 67.7 -12.1 63 C -15.1 58.3 -19.3 46.1 -19.8 38.5 C -20.3 30.9 -18.4 19 -15.4 12.6 C -12.4 6.2 -5 -4.2 0 -4 Z"/>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F5F7FA"/><stop offset="1" stop-color="#B3C3D6"/></linearGradient>
@@ -19,7 +18,7 @@
 <linearGradient id="g5" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5E3316" stop-opacity="0"/><stop offset="1" stop-color="#5E3316" stop-opacity="0.42"/></linearGradient>
 <clipPath id="c6"><use href="#s6"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="arm-l" data-pivot="84 104"><!-- wing -->
 <use href="#s1" transform="translate(84 104) rotate(118)" fill="url(#g1)"/><g clip-path="url(#c1)"><g transform="translate(84 104) rotate(118)"><path d="M 0 7 L 0 60.2" stroke="#A8B2BE" stroke-width="3" stroke-linecap="round" opacity="0.8"/></g></g>
 </g>

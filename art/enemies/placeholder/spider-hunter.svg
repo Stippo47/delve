@@ -2,7 +2,6 @@
   <!-- PLACEHOLDER (round 7): art the designer marked not good, standing in for the new dungeons until it is redone. -->
 <!-- SPIDER, hunter (round 5): a sandy-brown hunting spider, chunky legs with dark tips, a dark chevron on the abdomen, two fangs at the front, no eyes. Seen from straight above, few big shapes. Parts: #back (the abdomen and the six rear legs), #arm-l / #arm-r (the front legs, so the game can raise them to bite), #body (head and fangs). Scaled 0.9. Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#9F7D5E"/><stop offset="1" stop-color="#6D5249"/></linearGradient>
 <path id="p2" d="M134.7 132 C139.3 133 173.7 124 179.9 125.9 C186 127.7 193.8 148.5 196.2 150.4 C198.6 152.4 205 149.2 203.8 145.6 C202.6 141.9 191.2 117.1 184.1 114.1 C177.1 111.2 138.3 114.2 133.3 116 C128.4 117.8 130 131 134.7 132 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -40,7 +39,7 @@
 <clipPath id="c35"><use href="#p2"/><use href="#p5"/><use href="#p7"/><use href="#p9"/><use href="#p11"/><use href="#p13"/><use href="#p16"/><use href="#p20"/><use href="#p22"/><use href="#p26"/><use href="#p30"/></clipPath>
 <clipPath id="c36"><use href="#p34"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 100"><g transform="translate(100 100) scale(0.9) translate(-100 -100)">
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><circle cx="200" cy="148" r="16" fill="#5A4343"/><use href="#p2" fill="url(#g4)"/></g>

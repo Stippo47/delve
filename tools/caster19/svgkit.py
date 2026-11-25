@@ -1,5 +1,5 @@
 """Build art SVGs in the game's own art convention (round 19, lane caster19): the art round 12 props' way of drawing
-(art/summons/spirit-beaver.svg): one #sprite group with the #outline filter, shapes drawn in order, each filled with a
+(art/summons/spirit-beaver.svg): one #sprite group (round 19, outline19: no outline in the file; the game draws it), shapes drawn in order, each filled with a
 top-lit gradient and a shade gradient down its right side, a soft drop shadow on what is under it (clipped to the shapes
 drawn before it), and details clipped to the shape itself. Front = DOWN (+y), centre (100, 100).
 
@@ -14,7 +14,6 @@ import math
 HEAD = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
 <!-- {note} -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 '''
 
 def f(v):
@@ -83,7 +82,7 @@ class Art:
     def raw(self, svg):
         self.body.append(svg)
     def text(self, part='body'):
-        s = HEAD.format(note=self.note) + '\n'.join(self.defs) + '\n</defs>\n<g id="sprite" filter="url(#outline)">\n'
+        s = HEAD.format(note=self.note) + '\n'.join(self.defs) + '\n</defs>\n<g id="sprite">\n'
         s += f'<g id="{part}" transform="translate(100 100) scale({self.scale}) translate(-100 -100)">\n' + '\n'.join(self.body) + '\n</g>\n</g>\n</svg>\n'
         return s
     def write(self, path, part='body'):

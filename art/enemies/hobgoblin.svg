@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
 <!-- HOBGOBLIN (round 5): olive-yellow skin, no eyes; a dented iron cap, short ears out to the sides, a flat nose and two small lower fangs, red-brown leather shoulders, a falchion and a round wooden shield. Parts: #arm-r (falchion + fist, before #body), #body, #arm-l (shield, hand hidden). Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#6A3E26"/><stop offset="1" stop-color="#40241A"/></linearGradient>
 <path id="p2" d="M-0.5 -21 H0.5 A4 4 0 0 1 4.5 -17 V1 A4 4 0 0 1 0.5 5 H-0.5 A4 4 0 0 1 -4.5 1 V-17 A4 4 0 0 1 -0.5 -21 Z" transform="translate(152 142) rotate(22)"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -52,7 +51,7 @@
 <clipPath id="c48"><use href="#p2"/><use href="#p6"/><use href="#p9"/><use href="#p13"/><use href="#p17"/><use href="#p20"/><use href="#p23"/><use href="#p27"/><use href="#p31"/><use href="#p32"/><use href="#p34"/><use href="#p38"/><use href="#p43"/></clipPath>
 <clipPath id="c49"><use href="#p47"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="arm-r" data-pivot="150 108"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

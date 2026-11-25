@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 8) of design/class-round8/enemies/greenskin-chieftain.svg -->
 <!-- CHIEFTAIN (round 8: the round-7 Troll A, mohawk, kept as it was and made the Warren's chieftain, the boss): blue-teal skin, no eyes; a ragged rust-red crest of hair from the brow back over the head and on down the back, long ears swept back and out, a broad round nose, a heavy underbite with two big tusks curving up out of the mouth; hunched shoulders, big plain fists, a knotted log club. Parts: #arm-r (club + fist, before #body), #body, #arm-l (free fist). Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0.2"><stop offset="0" stop-color="#C08A55"/><stop offset="1" stop-color="#7A4E2C"/></linearGradient>
 <path id="p2" d="M-7 -14 C-3.7 -24.5 3.7 -24.5 7 -14 C10.3 -3.5 14.2 43.4 15 56 C15.8 68.6 14.2 67.3 12 70 C9.8 72.7 3.6 74 0 74 C-3.6 74 -9.8 72.7 -12 70 C-14.2 67.3 -15.8 68.6 -15 56 C-14.2 43.4 -10.3 -3.5 -7 -14 Z" transform="translate(164 144) rotate(12)"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -50,7 +49,7 @@
 <clipPath id="c45"><use href="#p2"/><use href="#p6"/><use href="#p11"/><use href="#p14"/><use href="#p17"/><use href="#p21"/><use href="#p25"/><use href="#p30"/><use href="#p35"/><use href="#p38"/><use href="#p41"/></clipPath>
 <clipPath id="c46"><use href="#p44"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="arm-r" data-pivot="156 114"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><ellipse cx="9.0" cy="38.5" rx="4" ry="6" fill="#6A4024" opacity="0.6" transform="translate(164 144) rotate(12)"/><ellipse cx="-7.5" cy="56.0" rx="3.5" ry="5" fill="#6A4024" opacity="0.6" transform="translate(164 144) rotate(12)"/><use href="#p2" fill="url(#g4)"/></g>

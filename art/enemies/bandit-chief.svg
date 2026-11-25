@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 11) of design/class-round11/enemies/bandit-chief.svg -->
 <!-- THE BANDIT CHIEF (round 10): the gang's boss: a wide black cavalier hat, one side of its brim pinned up, with a gold band and a great red plume sweeping back over it; long black hair, the gang's red bandanna; a black coat with red facings, gold buttons and gold-fringed epaulettes, a short cape behind (#back, sways); a big gold-hilted cutlass in the right hand (arm-r, under the shoulder) and a black smoke bomb with a lit fuse in the left (arm-l). No eyes. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
 <path id="s1" d="M 50 100 C 63.1 104.7 136.9 104.7 150 100 C 163.1 95.3 162 68.2 162 60 C 162 51.8 154 32.8 150 30 C 146 27.2 132.2 36.9 128 36 C 123.8 35.1 117.3 22.2 114 22 C 110.7 21.8 103.3 34 100 34 C 96.7 34 89.3 21.8 86 22 C 82.7 22.2 76.2 35.1 72 36 C 67.8 36.9 54 27.2 50 30 C 46 32.8 38 51.8 38 60 C 38 68.2 36.9 95.3 50 100 Z"/>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#9C2E35"/><stop offset="1" stop-color="#7C2227"/></linearGradient>
@@ -81,7 +80,7 @@
 <path id="s22" d="M 20 135 A 5 5 0 1 0 30 135 A 5 5 0 1 0 20 135 Z"/>
 <linearGradient id="g25" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#FFCD6B"/><stop offset="1" stop-color="#FFB21C"/></linearGradient>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 90"><!-- cape -->
 <use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/><g clip-path="url(#c1)"><path d="M 72 40 L 76 90 M 100 38 L 100 92 M 128 40 L 124 90" fill="none" stroke="#6A1E26" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/></g>
 </g>

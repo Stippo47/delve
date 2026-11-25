@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
   <!-- Round 4: the lower jaw is back, as its own bone below the skull with a dark gap between; the bow claw is turned along the bow's grip | was: SKELETON round 3 "Rattler, no jaw" (bow): no lower jaw, upper teeth hang free. Parts in draw order: #arm-l (recurve bow, string, bow claw), #arm-r (arrow + drawing claw; the game pulls this back and should move the string middle (100,153) with it), #body (skull + shoulder balls). Bow and arrow are drawn before the body, so the limbs run behind the shoulders. Facing = DOWN (+y), centre (100,100). -->
   <defs>
-    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <linearGradient id="shX" x1="70" y1="0" x2="160" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4A3220" stop-opacity="0"/><stop offset="1" stop-color="#4A3220" stop-opacity="0.34"/></linearGradient>
     <linearGradient id="gSkull" x1="52" y1="40" x2="150" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FCF6E4"/><stop offset="0.5" stop-color="#F0E2BE"/><stop offset="1" stop-color="#D6C096"/></linearGradient>
     <radialGradient id="gDome" cx="84" cy="74" r="44" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
@@ -51,7 +50,7 @@
     <path id="fist-r-palm" d="M 97.62 156.86 L 99.57 156.86 A 5.07 5.07 0 0 1 104.64 161.93 L 104.64 172.07 A 5.07 5.07 0 0 1 99.57 177.14 L 97.62 177.14 A 5.07 5.07 0 0 1 92.55 172.07 L 92.55 161.93 A 5.07 5.07 0 0 1 97.62 156.86 Z"/>
     <clipPath id="under-fist-r-palm"><use href="#string"/><use href="#bow-tip-l"/><use href="#bow-tip-r"/><use href="#bow"/><use href="#fist-l-f0"/><use href="#fist-l-f1"/><use href="#fist-l-f2"/><use href="#fist-l-f3"/><use href="#fist-l-palm"/><use href="#ball-l"/><use href="#ball-r"/><use href="#tooth0"/><use href="#tooth1"/><use href="#tooth2"/><use href="#tooth3"/><use href="#tooth4"/><use href="#skull"/><use href="#jaw"/><use href="#ltooth0"/><use href="#ltooth1"/><use href="#ltooth2"/><use href="#ltooth3"/><use href="#shaft"/><use href="#arrowhead"/><use href="#fist-r-f0"/><use href="#fist-r-f1"/><use href="#fist-r-f2"/><use href="#fist-r-f3"/></clipPath>
   </defs>
-  <g id="sprite" filter="url(#outline)">
+  <g id="sprite">
     <g id="arm-l" data-pivot="40 110">
       <use href="#string" fill="#D9CFB8"/>
       <use href="#bow-tip-l" fill="url(#gBone2)"/>

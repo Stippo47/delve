@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 8) of design/class-round8/props/troll-boulder.svg -->
 <!-- TROLL BOULDER (round 8): the boulder a troll pushes and rolls: a big round grey stone, lit from the top left, a few flat chips, a cap of moss over the top. A prop: r 30 at scale 1 (the game scales it by r / 30). No parts. Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="g1" cx="0.36" cy="0.3" r="0.8"><stop offset="0" stop-color="#B6B0A4" stop-opacity="1"/><stop offset="1" stop-color="#6C645C" stop-opacity="1"/></radialGradient>
 <path id="p2" d="M173.6 107.7 C172.8 116.9 168 126.2 163.4 134.4 C158.8 142.6 153.3 151.3 146.1 156.9 C138.9 162.6 129.3 165.7 120.3 168.5 C111.3 171.2 101.4 174.4 92.3 173.6 C83.1 172.8 73.8 168 65.6 163.4 C57.4 158.8 48.7 153.3 43.1 146.1 C37.4 138.9 34.3 129.3 31.5 120.3 C28.8 111.3 25.6 101.4 26.4 92.3 C27.2 83.1 32 73.8 36.6 65.6 C41.2 57.4 46.7 48.7 53.9 43.1 C61.1 37.4 70.7 34.3 79.7 31.5 C88.7 28.8 98.6 25.6 107.7 26.4 C116.9 27.2 126.2 32 134.4 36.6 C142.6 41.2 151.3 46.7 156.9 53.9 C162.6 61.1 165.7 70.7 168.5 79.7 C171.2 88.7 174.4 98.6 173.6 107.7 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -13,7 +12,7 @@
 <clipPath id="c8"><use href="#p6"/></clipPath>
 <linearGradient id="g9" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.2"/></linearGradient>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="body"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><path d="M56 122 C57.8 119 67.8 113.7 72 114 C76.2 114.3 83.7 120.7 84 124 C84.3 127.3 77.6 134.5 74 136 C70.4 137.5 62.7 136.1 60 134 C57.3 131.9 54.2 125 56 122 Z" fill="#4E4842" opacity="0.16"/><path d="M118 140 C120.7 136.7 133.5 131.1 138 132 C142.5 132.9 148.9 142.1 148 146 C147.1 149.9 136.2 156.8 132 158 C127.8 159.2 122.1 156.7 120 154 C117.9 151.3 115.3 143.3 118 140 Z" fill="#4E4842" opacity="0.16"/><ellipse cx="72" cy="66" rx="20" ry="12" transform="rotate(-35 72 66)" fill="#FFFFF4" opacity="0.2"/><use href="#p2" fill="url(#g4)"/></g>

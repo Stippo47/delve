@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
 <!-- ORC SHAMAN (round 5): grey-sage skin, no eyes; a hide hood with a wolf-fur rim and three feathers trailing back, a bone collar, small tusks, a staff with a beast skull and a green-gold flame, a flame cupped in the free hand. Parts: #back (feathers), #arm-r (staff + fist, before #body), #body, #arm-l (fist + flame). Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#D06556"/><stop offset="1" stop-color="#A53E38"/></linearGradient>
 <path id="p2" d="M-7 0 C-4.5 6.7 4.5 6.7 7 0 C9.5 -6.7 9.2 -30 8 -40 C6.8 -50 0 -60 0 -60 C0 -60 -6.8 -50 -8 -40 C-9.2 -30 -9.5 -6.7 -7 0 Z" transform="translate(100 64) rotate(-22)"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -58,7 +57,7 @@
 <clipPath id="c54"><use href="#p52"/></clipPath>
 <path id="p55" d="M46 150 C49.3 150 54.3 156.3 56 160 C57.7 163.7 57.7 167.7 56 172 C54.3 176.3 46 186 46 186 C46 186 37.7 176.3 36 172 C34.3 167.7 34.3 163.7 36 160 C37.7 156.3 42.7 150 46 150 Z"/>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 70"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

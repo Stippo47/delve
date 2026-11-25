@@ -2,6 +2,7 @@
 // joined by their links. Drag to pan, pinch (or the wheel) to zoom, tap a node to see it in the panel at the bottom
 // and learn it there. Owned paths glow gold; what can be learned now glows teal; the rest waits in the dark.
 // Nodes come from meta.web(id) (x/y in layout units), so a tree of 100+ nodes just works.
+import { uiArt } from './sprites.js'; // round 19 (lane outline19): pictures in pages get their outline here
 import * as M from './meta.js';
 import { HEROES } from './heroes.js';
 import { icon } from './icons.js';
@@ -62,7 +63,7 @@ function nodeSvg(save, id, n, st, sel) {
     return `<g class="${cls}" data-n="${n.id}" transform="translate(${n.x} ${n.y})">
       <circle r="${r + 10}" class="halo"/><circle r="${r}" class="body"/>
       <clipPath id="wclip"><circle r="${r - 4}"/></clipPath>
-      <image href="${HEROES[id].portrait || HEROES[id].art}" x="${-r}" y="${-r + 2}" width="${2 * r}" height="${2 * r}" clip-path="url(#wclip)"/>
+      <image href="${uiArt(HEROES[id].portrait || HEROES[id].art)}" x="${-r}" y="${-r + 2}" width="${2 * r}" height="${2 * r}" clip-path="url(#wclip)"/>
       <circle r="${r}" class="rim"/></g>`;
   }
   if (n.kind === 'tier' || n.kind === 'ability') {

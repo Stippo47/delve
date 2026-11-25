@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 7) of design/class-round7/enemies/greenskin-ogre.svg: the designer's pick with the round-8 note applied. It stays under placeholder/ because js/foes.js loads it from here. -->
 <!-- OGRE (round 5): drab moss skin, no eyes; a big round bald head, a heavy underbite with two stubby teeth, fat shoulders with a spotted hide over one, and no weapon: two huge plain fists in iron cuffs (round 7: no knuckle bumps). Parts: #body, #arm-l and #arm-r (the fists, after #body). Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#8DA063"/><stop offset="1" stop-color="#66714D"/></linearGradient>
 <path id="p2" d="M10 112 A90 38 0 1 0 190 112 A90 38 0 1 0 10 112 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -57,7 +56,7 @@
 <clipPath id="c52"><use href="#p2"/><use href="#p6"/><use href="#p11"/><use href="#p14"/><use href="#p18"/><use href="#p22"/><use href="#p27"/><use href="#p31"/><use href="#p34"/><use href="#p37"/><use href="#p41"/><use href="#p44"/><use href="#p48"/></clipPath>
 <clipPath id="c53"><use href="#p51"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="body"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

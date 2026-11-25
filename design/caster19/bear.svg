@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
 <!-- BEAR (design sketch, round 19, lane caster19; the designer: "make a bear model (using the bearskin berserker as reference). Should be large. Then make a spirit bear after I approve of the design"): a big brown bear seen from above, the Bearskin's pelt colours: a heavy shaggy body with a hump over the shoulders, short thick legs and big paws with cream claws, a round head with small round ears, a tan muzzle and a dark nose, a stub of a tail. Not in the game: the spirit bear is made from it once the design is approved. Front = DOWN (+y), centre (100,100). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <path id="s1" d="M 49.4 54.5 A 17 21 12 1 0 82.6 61.5 A 17 21 12 1 0 49.4 54.5 Z"/>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#8C6448"/><stop offset="1" stop-color="#6A4734"/></linearGradient>
 <linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2E1A12" stop-opacity="0"/><stop offset="1" stop-color="#2E1A12" stop-opacity="0.42"/></linearGradient>
@@ -39,7 +38,7 @@
 <path id="s15" d="M 83 156 A 3 3.4 0 1 0 89 156 A 3 3.4 0 1 0 83 156 Z"/>
 <path id="s16" d="M 111 156 A 3 3.4 0 1 0 117 156 A 3 3.4 0 1 0 111 156 Z"/>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="body" transform="translate(100 100) scale(0.9) translate(-100 -100)">
 <use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/>
 <use href="#s2" fill="url(#g1)"/><use href="#s2" fill="url(#g2)"/>
