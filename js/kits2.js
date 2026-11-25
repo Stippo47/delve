@@ -897,7 +897,7 @@ export const ABILITIES2 = {
         const cx = u.x + Math.cos(u.facing) * (u.r + 36), cy = u.y + Math.sin(u.facing) * (u.r + 36), R = tier >= 3 ? 80 : 64;
         swingMark(w, u, u.r + 40, 0.9, { x: cx, y: cy, r: R, look: 'spade' }); w.shake = Math.max(w.shake, 6);
         for (const e of foesNear(w, u, cx, cy, R)) {
-          hurt(w, e, dmgOf(u, 1.6), u, { knock: 0, heavy: true, noDodge: true, ab: 'spadeBat' });
+          hurt(w, e, dmgOf(u, 1.6), u, { knock: 0, heavy: true, noDodge: true, ab: 'spadeBat' }); e.hitZap = true; // (round 19: the mound is its impact: no star)
           if (!alive(e)) continue;
           // (round 19: anything with a brain of its own is buried too now; only bosses, things fixed in place and the
           // parts of a bigger body just reel)

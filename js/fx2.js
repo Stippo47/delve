@@ -830,13 +830,13 @@ DRAW.dirtyOn = (ctx, f, w, layer) => {
   }
   ctx.save(); ctx.globalAlpha *= a;
   // puffs rising off its edge, soft (light: dust is not inked)
-  for (let i = 0; i < 5; i++) { const ph = (f.t * 0.9 + i / 5 + hash(u.id, i + 7) * 0.2) % 1, b = hash(i, u.id + 3) * TAU + f.t * 0.4, d = R * (0.75 + 0.3 * ph), up = 4 + ph * 16;
+  for (let i = 0; i < 5; i++) { const ph = (f.t * 0.9 + i / 5 + hash(u.id, i + 7) * 0.2) % 1, b = hash(i, u.id + 3) * TAU + f.t * 0.4, d = R * (1.0 + 0.3 * ph), up = 4 + ph * 16; // (off its edge: nothing over its face)
     ctx.save(); ctx.globalAlpha *= 0.6 * Math.sin(ph * Math.PI); disc(ctx, u.x + Math.cos(b) * d + vx * up, u.y + Math.sin(b) * d * 0.7 + vy * up, 4 + 7 * ph, DUST[(i + 1) % 3]); ctx.restore(); }
   // moving: puffs kicked up behind
   if ((u.spd || 0) > 25) for (let i = 0; i < 3; i++) { const ph = (f.t * 2.4 + i / 3) % 1, b = (u.mvA ?? u.facing) + Math.PI + (i - 1) * 0.5, d = R * (0.8 + 0.8 * ph);
     ctx.save(); ctx.globalAlpha *= 0.4 * (1 - ph); disc(ctx, u.x + Math.cos(b) * d, u.y + Math.sin(b) * d, 4 + 6 * ph, DUST[i % 3]); ctx.restore(); }
   // a crumb dropping off now and then (inked: a solid bit)
-  for (let j = 0; j < 2; j++) { const c = f.t * 0.9 + hash(u.id, 2) + j * 0.5, ph = c % 1, b = hash(Math.floor(c), u.id + j) * TAU, d = R * 0.7, h = (1 - ph) * 14;
+  for (let j = 0; j < 2; j++) { const c = f.t * 0.9 + hash(u.id, 2) + j * 0.5, ph = c % 1, b = hash(Math.floor(c), u.id + j) * TAU, d = R * 1.0, h = (1 - ph) * 14;
     if (ph < 0.85) { ctx.save(); ctx.globalAlpha *= 1 - ph / 0.85; inked(ctx, () => blob(ctx, u.x + Math.cos(b) * d + vx * h, u.y + Math.sin(b) * d * 0.7 + vy * h, 2.6, 4, b, 1), '#7A5A3A'); ctx.restore(); } }
   ctx.restore();
 };
@@ -844,8 +844,8 @@ DRAW.dirtyOn = (ctx, f, w, layer) => {
 DRAW.dirtOff = (ctx, f, w, layer) => {
   if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k), [vx, vy] = upVec();
   ctx.save(); ctx.globalAlpha *= 1 - k;
-  for (let i = 0; i < 8; i++) { const b = i / 8 * TAU + hash(i, f.x | 0), d = f.r * (0.5 + 1.0 * e); ctx.save(); ctx.globalAlpha *= 0.5; disc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d * 0.8, f.r * (0.3 + 0.25 * e), DUST[i % 3]); ctx.restore(); }
-  for (let i = 0; i < 7; i++) { const b = i / 7 * TAU + 0.4 + hash(i, 5), d = f.r * (0.4 + 1.3 * e), h = Math.sin(k * Math.PI) * 18 * hash(i, 9);
+  for (let i = 0; i < 8; i++) { const b = i / 8 * TAU + hash(i, f.x | 0), d = f.r * (0.95 + 0.8 * e); ctx.save(); ctx.globalAlpha *= 0.5; disc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d * 0.8, f.r * (0.3 + 0.25 * e), DUST[i % 3]); ctx.restore(); }
+  for (let i = 0; i < 7; i++) { const b = i / 7 * TAU + 0.4 + hash(i, 5), d = f.r * (1.0 + 1.0 * e), h = Math.sin(k * Math.PI) * 18 * hash(i, 9); // (from its edge outward: never over its face)
     inked(ctx, () => blob(ctx, f.x + Math.cos(b) * d + vx * h, f.y + Math.sin(b) * d * 0.8 + vy * h, 3.2 * (1 - 0.4 * k), 4, i, 1), i % 2 ? '#7A5A3A' : '#9C7650'); }
   ctx.restore();
 };
