@@ -34,19 +34,19 @@ import { drawSpider, drawSpiderFoot, drawDenFloor, drawDenAir, spiderShadows, sp
 
 export const SP = {
   body: { h: 44, low: 8, air: 30, hub: 6, hipR: 30 },   // how high it is carried; lying on the floor; flying from this height up; the hips sit round a hub this far ahead of its middle
-  leg: { l1: 66, l2: 88, restR: 126, hpK: 0.075, share: 0.4, more: 0.25,   // bones; where a foot rests; a foot's health (of the body's); what a blow on a foot passes on (and a second foot caught by the same blow)
+  leg: { l1: 66, l2: 88, restR: 126, hpK: 0.1, share: 0.85, more: 0.25,   // bones; where a foot rests; a foot's health (of the body's); what a blow on a foot passes on (and a second foot caught by the same blow)
     footR: 19, stepDist: 26, settle: 12, over: 0.55, stepT: 0.24, lift: 16, drag: 108 },
   slow: [1, 0.9, 0.78, 0.66],     // its pace with 0, 1, 2, 3 legs broken
   collapseAt: 4, crawl: 0.42,     // this many broken: it can't stand; its pace on its belly
   keep: 112, turn: 1.15,          // how far it stands off its mark (a front leg's reach); how fast it turns (rad/s)
-  stomp: { r: 54, tell: 0.7, dmg: 30, stagger: 30, knock: 170, lift: 78, stuck: 0.5, reachMin: 56, reachMax: 128, clear: 66, sector: 0.62, cd: [2.2, 3.2] },
-  slam: { r: 88, track: 1.5, pause: 0.3, drop: 0.1, rear: 12, dmg: 64, knock: 320, stagger: 40, chase: 2.0,
-    stun: 1.0, perLeg: 0.3, hitRest: 0.45, rise: 0.4, taken: 1.25, cd: [7, 9], other: 0.4 },
-  web: { r: 52, tell: 0.95, dmg: 8, root: 1.4, patch: 6, cd: [8, 11], range: [150, 620] },
-  brood: { n: 2, drop: 0.7, cd: [13, 16], own: 4, scale: 0.7, hpMul: 0.45 },
+  stomp: { r: 66, tell: 0.66, dmg: 42, stagger: 30, knock: 170, lift: 78, stuck: 0.5, reachMin: 56, reachMax: 128, clear: 66, sector: 0.62, cd: [1.7, 2.5] },
+  slam: { r: 96, track: 1.5, pause: 0.26, drop: 0.1, rear: 12, dmg: 95, knock: 320, stagger: 40, chase: 2.8,
+    stun: 1.0, perLeg: 0.3, hitRest: 0.45, rise: 0.4, taken: 1.25, cd: [5.5, 7], other: 0.4 },
+  web: { r: 62, tell: 0.85, dmg: 8, root: 1.5, patch: 6, cd: [6, 8], range: [150, 620] },
+  brood: { n: 1, drop: 0.7, cd: [15, 18], own: 3, scale: 0.7, hpMul: 0.45 },
   collapse: { dazed: 1.8, taken: 1.25 },
 };
-export const PHASE_AT = [1, 0.5];
+export const PHASE_AT = [1, 0.6];
 const WAKE = 470, DUST = '#D9CDB0';
 // th: where its foot rests round the body (0 is straight ahead); hip: where it joins the hub; side: -1 left, 1 right
 // (its knee bends out to its own side); grp: its tripod.
@@ -73,7 +73,12 @@ const ALOFT = {
   tick(w, u) {
     const k = u.sp; if (!k || k.h < SP.body.air) return;
     u.flyT = Math.max(u.flyT || 0, 0.12);
-    for (const h of heroesOf(w, u)) if (h.def.role !== 'ranged') (h.outOfReach || (h.outOfReach = new Map())).set(u, w.time + 0.4);
+    // (and the other way about: those who shoot have the body to shoot at, and leave the feet to the blades)
+    for (const h of heroesOf(w, u)) {
+      const m = h.outOfReach || (h.outOfReach = new Map());
+      if (h.def.role !== 'ranged') m.set(u, w.time + 0.4);
+      else for (const L of k.legs) if (L.foot) m.set(L.foot, w.time + 0.4);
+    }
   },
   struck(w, u) { if (u.sp) u.sp.hitT = w.time; }, // (a blow on the body itself: boss-kit.js part() lights u.flashT for a blow on a foot too)
 };
@@ -125,14 +130,14 @@ function act(w, u, k, dt) {
   if (!t) { stand(u, dt); return; }
   const hs = heroesOf(w, u), K = k.phase >= 2 ? 0.82 : 1, pace = paceOf(k);
   if (due(u, 'slam', dt, 4.5)) { again(u, 'slam', ...SP.slam.cd.map((x) => x * K)); startSlam(w, u, k, hs, t); return; }
-  if (k.phase >= 2 && due(u, 'brood', dt, 2)) { again(u, 'brood', ...SP.brood.cd); if (brood(w, u, k)) return; }
+  if (due(u, 'brood', dt, 7)) { again(u, 'brood', ...SP.brood.cd); if (brood(w, u, k)) return; }
   if (due(u, 'web', dt, 3)) {
     const who = webMark(u, k, hs);
     if (who) { again(u, 'web', ...SP.web.cd.map((x) => x * K)); web(w, u, k, who); return; }
     again(u, 'web', 1.5);
   }
   if (due(u, 'stomp', dt, 1.2)) {
-    if (stomps(w, u, k, hs, k.phase >= 2 ? 2 : 1)) { again(u, 'stomp', ...SP.stomp.cd.map((x) => x * K)); return; }
+    if (stomps(w, u, k, hs, k.phase >= 2 ? 3 : 2)) { again(u, 'stomp', ...SP.stomp.cd.map((x) => x * K)); return; }
     again(u, 'stomp', 0.35);
   }
   // aloft it stands off its mark by a front leg's reach; on its belly it drags itself right up to them
@@ -309,8 +314,8 @@ function stomp(w, u, k, L, p) {
 function stompTick(w, u, k, L, dt) {
   const j = L.job, S = SP.stomp, z = j.z;
   if (z.cancelled) { L.job = null; return; }
-  if (!z.done) { // up and over the mark, a hang at the top, then down in the last seventh
-    const q = clamp(1 - z.t / z.max, 0, 1), e0 = clamp(q / 0.6, 0, 1), e = e0 * e0 * (3 - 2 * e0), l0 = clamp(q / 0.5, 0, 1), dr = clamp((q - 0.86) / 0.14, 0, 1);
+  if (!z.done) { // straight up first, then carried over the mark, a hang at the top, and down in the last seventh
+    const q = clamp(1 - z.t / z.max, 0, 1), e0 = clamp((q - 0.25) / 0.45, 0, 1), e = e0 * e0 * (3 - 2 * e0), l0 = clamp(q / 0.36, 0, 1), dr = clamp((q - 0.86) / 0.14, 0, 1);
     L.x = j.x0 + (j.p.x - j.x0) * e; L.y = j.y0 + (j.p.y - j.y0) * e; L.z = S.lift * l0 * l0 * (3 - 2 * l0) * (1 - dr * dr);
     return;
   }
@@ -404,9 +409,9 @@ function brood(w, u, k) {
   const B = SP.brood; if (w.stale) return false;
   const mine = w.units.reduce((n, o) => n + (o.calledBy === u && alive(o) ? 1 : 0), 0) + k.drops.length;
   let n = 0;
-  for (let i = 0; i < B.n; i++) {
+  for (let i = 0; i < B.n + (k.phase >= 2 ? 1 : 0); i++) {
     if (mine + n >= B.own || crowd(w, u.team) + n >= 22) break;
-    const a = rand() * TAU, d = rrange(24, 62), p = inside(w, k.gx + Math.cos(a) * d, k.gy + Math.sin(a) * d, 50);
+    const a = rand() * TAU, d = rrange(52, 92), p = inside(w, k.gx + Math.cos(a) * d, k.gy + Math.sin(a) * d, 50);
     k.drops.push({ x: p.x, y: p.y, t: B.drop + i * 0.2, max: B.drop + i * 0.2, seed: Math.floor(rand() * 999) }); n++;
   }
   if (!n) return false;
@@ -434,6 +439,8 @@ function enter(w, u, k, p) {
 function death(w, u) {
   const k = u.sp;
   for (const o of w.units) if (o.calledBy === u && o.kind === 'spiderHunter' && alive(o)) { o.noLoot = true; kill(w, o, null); }
+  // (its feet go with it without a burst each: the animal dies as one, in the picture below)
+  if (k) for (const L of k.legs) if (L.foot && alive(L.foot)) { L.foot.partOf = null; L.foot.hp = 0; L.foot.dead = true; L.foot = null; }
   endParts(w, u);
   if (k) {
     for (const L of k.legs) for (const z of [L.job && L.job.z]) if (z && !z.done) { z.done = true; z.cancelled = true; z.t = -1; }
@@ -454,7 +461,7 @@ export const SPIDER = {
   defs: {
     // (home: the dungeon whose strength it fights at in battle mode, battle.js; bookOpen: its page in the Book is open
     // without meeting it, book.js: it lives in no dungeon yet)
-    ikSpider: { team: 'enemy', name: 'Old Longlegs', r: 42, vr: 46, turn: 1.6, accel: 200, face: 1.2, mass: 14, hp: 760, speed: 40, role: 'melee', range: 30, atkCd: 999, arc: 2,
+    ikSpider: { team: 'enemy', name: 'Old Longlegs', r: 42, vr: 46, turn: 1.6, accel: 200, face: 1.2, mass: 14, hp: 1250, speed: 40, role: 'melee', range: 30, atkCd: 999, arc: 2,
       temp: 0.2, commit: 1.2, xp: 170, coins: [65, 85], boss: true, arena: 'spiderDen', noCorpse: true, labels: ['beast'], home: 'sewers', bookOpen: true,
       res: { stagger: 0.4 }, draw: drawSpider, shadows: spiderShadows, brain, onDeath: death, get portrait() { return spiderPortrait(); } },
     spiderFoot: PART('Old Longlegs (a foot)', { r: SP.leg.footR, vr: 17, mass: 30, hp: 100, labels: ['beast'], draw: drawSpiderFoot }),

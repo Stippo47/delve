@@ -34,7 +34,9 @@ const PRELUDE = `(async () => {
   sp.aggro = true; sp.maxHp *= 20; sp.hp = sp.maxHp; // (awake at once; a clip is about one thing: it doesn't die or turn a phase in it unless the stage says so)
   let T = 0, each = () => {};
   STAGE
-  const rf = GAME.recFrame; GAME.recFrame = (dt) => { T += dt; try { each(T, dt); } catch (e) { console.error(e); throw e; } return rf.call(GAME, dt); };
+  // (its feet are a share of its health: made on its first tick, so brought back down from the padded figure here)
+  let feet = false; const fix = () => { if (feet || !k()) return; feet = true; for (const L of k().legs) if (L.foot) { L.foot.maxHp = Math.round(L.foot.maxHp / 20); L.foot.hp = L.foot.maxHp; } };
+  const rf = GAME.recFrame; GAME.recFrame = (dt) => { T += dt; try { fix(); each(T, dt); } catch (e) { console.error(e); throw e; } return rf.call(GAME, dt); };
 })();`;
 
 const PARTY = 'paladin,archer,cleric,twinfang';
@@ -57,12 +59,14 @@ const CLIPS = {
   'slam-hit': { party: 'paladin', q: 'bossmove=slam', secs: 7, speed: 0.6, zoom: 1.3, follow: 'ikSpider', stage: `
     const h = heroes()[0]; tough([h]); idle(h); stay(h); put(sp, CX + 110, CY, Math.PI); put(h, CX - 110, CY + 10, 0);` },
   // the head slam missing: everyone steps out of the circle; it lies stunned on the floor and the party piles on
-  'slam-miss': { party: PARTY, q: 'bossmove=slam', secs: 9, speed: 0.7, zoom: 1.2, follow: 'ikSpider', stage: `
-    const H = heroes(); tough(H, 30, 0.25); H.forEach(quiet); put(sp, CX + 120, CY, Math.PI); H.forEach((h, i) => put(h, CX - 130 - (i > 1 ? 140 : 0), CY + (i % 2 ? 60 : -60), 0));` },
+  'slam-miss': { party: 'twinfang,paladin,archer', q: 'bossmove=slam', secs: 9, speed: 0.7, zoom: 1.2, follow: 'ikSpider', stage: `
+    const H = heroes(), tw = H.find((h) => h.kind === 'twinfang'), rest = H.filter((h) => h !== tw); tough(H, 30, 0.25); H.forEach(quiet);
+    put(sp, CX + 120, CY, Math.PI); put(tw, CX - 20, CY + 20, 0); rest.forEach((h, i) => put(h, CX - 330 - i * 90, CY + (i ? 170 : -150), 0));
+    each = () => { const kk = k(); if (kk && kk.slam && kk.slam.st === 'track') kk.slam.who = tw; };` },
   // a leg breaking: the party on one foot; it snaps, hangs and drags as the spider walks on
   'leg-break': { party: 'paladin,twinfang', q: 'bossmove=walk', secs: 9, speed: 0.6, zoom: 1.5, follow: 'ikSpider', stage: `
     const H = heroes(); tough(H, 30, 0.5); H.forEach(quiet); put(sp, CX + 60, CY, Math.PI); put(H[0], CX - 70, CY - 60, 0); put(H[1], CX - 90, CY - 110, 0);
-    each = (T) => { const kk = k(); if (!kk) return; const L = kk.legs[0]; at(T, 0.2, 'weak', () => { if (L.foot) L.foot.hp = L.foot.maxHp * 0.45; }); for (const h of H) if (L.foot && !L.foot.dead) { h.focus = L.foot; h.focusT = 1; }
+    each = (T) => { const kk = k(); if (!kk) return; const L = kk.legs[0]; at(T, 0.2, 'weak', () => { if (L.foot) L.foot.hp = L.foot.maxHp * 0.5; }); for (const h of H) if (L.foot && !L.foot.dead) { h.focus = L.foot; h.focusT = 1; }
       at(T, 4.5, 'go', () => { for (const h of H) { idle(h); stay(h); } put(H[0], CX - 520, CY + 200, 0); put(H[1], CX - 560, CY + 240, 0); }); };` },
   // walking with two legs broken, then three
   'walk-2broken': { party: 'paladin', q: 'bossmove=legs2', secs: 9, speed: 0.6, zoom: 1.4, follow: 'ikSpider', stage: `

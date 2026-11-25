@@ -52,8 +52,12 @@ export function drawPose(ctx, P, o = {}) {
   const legs = P.legs.map((L) => {
     // a leg bends upwards (its knee is its highest point) and a little out to its own side; a broken one has no lift
     // left in it: its knee sags out sideways, down to the floor
-    const s = L.side, pole = L.broken ? { x: -fy * s, y: fx * s, z: -0.2 } : { x: -fy * s * KNEE_OUT, y: fx * s * KNEE_OUT, z: 1 };
-    const kn = knee3(L.hip, L.foot, G.l1, G.l2, pole); if (kn.z < 5) kn.z = 5;
+    const s = L.side;
+    let kn;
+    if (L.broken) { // it hangs from the hip: the knee rests on the floor a little way out, the shin lies along the floor to the foot it drags
+      const dx = L.foot.x - L.hip.x, dy = L.foot.y - L.hip.y, d = Math.hypot(dx, dy) || 1, kd = clamp(d - G.l2 * 0.86, 14, 40);
+      kn = { x: L.hip.x + dx / d * kd - dy / d * s * 7, y: L.hip.y + dy / d * kd + dx / d * s * 7, z: 4 };
+    } else { kn = knee3(L.hip, L.foot, G.l1, G.l2, { x: -fy * s * KNEE_OUT, y: fx * s * KNEE_OUT, z: 1 }); if (kn.z < 5) kn.z = 5; }
     // (how far up the screen the knee shows: only part of its height over the hip. At its true height a knee on the near
     // side of the body would be drawn over the body and its face)
     if (kn.z > L.hip.z) kn.z = L.hip.z + (kn.z - L.hip.z) * KNEE_UP;
@@ -75,7 +79,7 @@ export function drawPose(ctx, P, o = {}) {
 }
 function drawLeg(F, ctx, A) {
   const L = A.L, so = { flash: L.flash }, [hx, hy] = A.hip, [kx, ky] = A.knee, [x, y] = A.foot;
-  const ks = 1 + A.kz / 400, hs = 1 + L.hip.z / 400, fs = 1 + L.foot.z / 280;
+  const ks = 1 + A.kz / 400, hs = 1 + L.hip.z / 400, fs = 1 + L.foot.z / 170; // (a foot lifted towards you is drawn bigger)
   if (L.broken) {
     // the shin snapped a third of the way down: a stub, a strand of sinew, and the greave lying out of line on the floor
     const sx = kx + (x - kx) * 0.34, sy = ky + (y - ky) * 0.34, nx = -(y - ky), ny = x - kx, nl = Math.hypot(nx, ny) || 1, side = L.i & 1 ? 1 : -1;
@@ -232,13 +236,21 @@ export function drawDenAir(ctx, w) {
 }
 
 // ---------------------------------------------------------------- its blows
+// dust thrown out in a ring from r0 to r1: small inked puffs, fading
+function dustRing(ctx, x, y, r0, r1, k, seed, n, size) {
+  ctx.save(); ctx.globalAlpha *= 1 - k;
+  for (let i = 0; i < n; i++) { const a = (i + hash(seed, i)) / n * TAU, d = r0 + (r1 - r0) * easeOut(k) * (0.75 + 0.5 * hash(i, seed));
+    inkDisc(ctx, x + Math.cos(a) * d, y + Math.sin(a) * d, size * (1 - 0.5 * k) * (0.7 + 0.6 * hash(i, seed + 1)), i % 3 ? '#E9DDC2' : '#FFF8E6'); }
+  ctx.restore();
+}
 BFX.spStomp = { // a foot comes down: a small dent, a ring of dust
   ground(ctx, f, k) { quake(ctx, f.x, f.y, f.r, k, f.seed); },
   air(ctx, f, k) { if (k < 0.14) glow(ctx, f.x, f.y, f.r * 0.9, '#FFF8E6', 0.6 * (1 - k / 0.14)); dustPuffs(ctx, f.x, f.y, f.r * 0.5, k, f.seed, 5); },
 };
 BFX.spSlam = { // the body hits the floor: a wide dent, a wave of dust rolling out, stones
-  ground(ctx, f, k) { quake(ctx, f.x, f.y, f.r * 1.15, k, f.seed); },
-  air(ctx, f, k) { if (k < 0.16) glow(ctx, f.x, f.y, f.r * 1.2, '#FFF8E6', 0.8 * (1 - k / 0.16)); dustPuffs(ctx, f.x, f.y, f.r * 0.95, k, f.seed, 11); dustPuffs(ctx, f.x, f.y, f.r * 0.5, k, f.seed + 3, 6); },
+  // (the flash is on the floor, under it, and the dust is thrown out from its edge: the body itself stays in plain sight)
+  ground(ctx, f, k) { quake(ctx, f.x, f.y, f.r * 1.15, k, f.seed); if (k < 0.16) glow(ctx, f.x, f.y, f.r * 1.5, '#FFF8E6', 0.8 * (1 - k / 0.16)); },
+  air(ctx, f, k) { dustRing(ctx, f.x, f.y, f.r * 0.72, f.r * 1.75, k, f.seed, 15, 11); },
 };
 BFX.spDazed = { air(ctx, f, k, w) { // stunned on the floor: stars going round its head until it gets up
   const u = f.u; if (!u || u.dead || !u.sp || !dazedNow(u.sp)) return;
