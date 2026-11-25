@@ -823,9 +823,9 @@ DRAW.dirtyOn = (ctx, f, w, layer) => {
   const u = f.unit; if (!alive2(u)) { ended(f, true); return; } ended(f, !hasHook(u, 'dirty'));
   if (u.hidden) return; const a = life(f, 0.2, 0.3), [vx, vy] = upVec(), R = u.vr;
   if (layer === 'ground') { // the dust at its feet, under it
-    ctx.save(); ctx.globalAlpha *= a * 0.8;
+    ctx.save(); ctx.globalAlpha *= a * 0.95;
     for (let i = 0; i < 8; i++) { const ph = (f.t * 0.7 + i / 7 + hash(i, u.id) * 0.3) % 1, b = i / 7 * TAU + f.t * 0.6 + hash(u.id, i), d = R * (0.85 + 0.45 * ph);
-      ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); disc(ctx, u.x + Math.cos(b) * d, u.y + Math.sin(b) * d * 0.75, R * (0.22 + 0.2 * ph), DUST[i % 3]); ctx.restore(); }
+      ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); disc(ctx, u.x + Math.cos(b) * d, u.y + Math.sin(b) * d * 0.75, R * (0.3 + 0.25 * ph), DUST[i % 3]); ctx.restore(); }
     ctx.restore(); return;
   }
   ctx.save(); ctx.globalAlpha *= a;
