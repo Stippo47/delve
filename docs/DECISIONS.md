@@ -1125,3 +1125,4 @@ fights; every fight ended, 0 problems; the hero Necromancer raises 1.7 bodies a 
 tools/battles.mjs: 528 battles, 0 problems, 9 -> 10 out of time (lone kiters, new dice), blue 249 -> 246, red 274 ->
 277, draws 5 (after merging main: 8 out of time, blue 248, red 276, draws 4). tools/preview-check.mjs: threw 0, never
 fired 0, not offered 0. Clips: docs/clips/downed18/.
+- 0.24.1, the audit's Book fixes: the Book's resistance chips now show what really lands (a shell's or hook's immunities, the bosses' charm rule, tag rules), so bosses show Charm immunity and constructs their bleed/poison immunity; the Golden Skeleton's and Dust Devil's lists name all fifteen statuses; the Elder Ent's page says it can't be stunned, rooted, frozen, knocked out or put to sleep.

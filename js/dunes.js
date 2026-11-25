@@ -10,6 +10,7 @@
 // wurm ("Should probably be a boss") is lane B's Dunes boss: floors end on majors, and theme.bossKind is its hook.
 // Everything here wore PLACEHOLDER art (recoloured kinds; docs/ART-NEEDED.md) until art round 9 drew it (design/class-round9);
 // the golden scarab is the scarab's art with every green of its shell turned gold (an accent).
+import { BUILD_IDS } from './statuses.js';
 import { alive, opponents, allies, hurt, puff, sparks, addStatus, setAnim, fx, addBuff, spawn, kill, addDanger, inZone } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, angleDiff, rand, rrange, chance } from './util.js';
 import { lineClear } from './path.js';
@@ -21,7 +22,7 @@ import { spirit } from './foes10.js';
 const ART = (f) => `art/enemies/placeholder/${f}.svg`;
 const FOE = { team: 'enemy', turn: 4, accel: 220, face: 4, mass: 1.2, temp: 0.35, commit: 0.9 };
 const SAND = '#C9A86A';
-const ALL_ST = { poison: 0, burn: 0, chill: 0, wet: 0, shock: 0, stagger: 0, radiance: 0, curse: 0, entangle: 0 };
+const ALL_ST = Object.fromEntries(BUILD_IDS.map((k) => [k, 0])); // round 18 (the resistance audit): every status, the six newer ones too
 
 // ---------------------------------------------------------------- habits
 // Scarabs: under the sand, up beside a hero with a nip, a while fighting, then down again. The elite throws up a ring of

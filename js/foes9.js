@@ -17,6 +17,7 @@
 //   The Crypt: the golden skeleton (double gold, homing golden bones that go through heroes and hit 1.5x; "immune to
 //     status effects completely and has more hp") and the harrowing skeleton ("Revive 1 time after death. On revival
 //     makes small burst of curse around them").
+import { BUILD_IDS } from './statuses.js';
 import { alive, opponents, allies, hurt, puff, sparks, flames, addStatus, setAnim, fx, addBuff, explode, spawn, heal, kill, addDanger, drive, steer, goalVec, turnSide, restoreSide } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange, chance } from './util.js';
 import { lineClear } from './path.js';
@@ -491,7 +492,7 @@ export const FOES9 = {
     role: 'melee', range: 6, brain: brainLeechBrain },
   // ---- the Crypt
   rattlerGold: { variantOf: 'rattler', name: 'Golden Skeleton', hue: 28, sat: 2.2, light: 0.04, hp: 85, coins: [4, 10], xp: 16,
-    res: { poison: 0, burn: 0, chill: 0, wet: 0, shock: 0, stagger: 0, radiance: 0, curse: 0, entangle: 0 }, brain: goldenBrain },
+    res: Object.fromEntries(BUILD_IDS.map((k) => [k, 0])), brain: goldenBrain }, // round 18 (the resistance audit): the shell blocks all fifteen, so the list says so
   rattlerHarrow: { variantOf: 'rattler', name: 'Harrowing Skeleton', hue: 250, sat: 0.6, light: -0.12, xp: 13, onDeath: harrowDeath },
 };
 

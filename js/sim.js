@@ -161,7 +161,7 @@ export function unitNumbers(u) {
     return { hit: aps ? dps / aps : 0, aps, hp: u.maxHp, speed: speedOf(u), range: u.def.range || 0, armor: u.armor || 0 }; }
   return { hit: hitDmg(u) * blowMul(u), aps: atkRate(u) / (u.def.atkCd || 1), hp: u.maxHp, speed: speedOf(u), range: u.def.range || 0, armor: u.armor || 0 };
 }
-const immuneTo = (u, type) => u.buffs.some((b) => b.statusImmune || (b.immune && b.immune.includes(type))) || hooksOf(u).some((h) => h.immune && h.immune.includes(type));
+export const immuneTo = (u, type) => u.buffs.some((b) => b.statusImmune || (b.immune && b.immune.includes(type))) || hooksOf(u).some((h) => h.immune && h.immune.includes(type));
 const knockImmune = (u) => u.buffs.some((b) => b.knockImmune) || hooksOf(u).some((h) => h.knockImmune);
 
 export function addBuff(u, b) {
