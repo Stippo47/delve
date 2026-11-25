@@ -1021,6 +1021,24 @@ lone hero reaches all tier IIIs in the Wildwood, the Alpha is won 98% at first t
 45-56% within a run. Open in Riffle (topic balance): tier III gates, Wildwood bosses, gentler first run, solo
 viability, floor step, enemy statuses growing with depth, Valkyrie's Call, three slime calls; plus the round 16 calls.
 
+## Round 18 (2026-11-24): tags, boulders, snakes, the Water Mage
+
+The designer, in chat (while still reading round 17's report):
+- "Work on the tag system. For example constructs (stationary, built) can be tagged construct, then there could be a separate healing ability that only affects constructs. Think the engineer hitting its turrets with their wrenches. Can heal its constructs but not his allies. Or any fire tagged entity taking damage when wet or in water. Or the silence stopping mouth abilities. Add the obvious ones. Then anything else you could imagine being good, you can suggest. Also add to riffle."
+- "Also look into the troll shaped enemies not being able to get their boulders."
+- "And segmented snake enemy movement being right." (Riffle, earlier: follow-the-leader segments each with its own hit box; equal segments, a tapering tail, chained back to front not stacked near the head, always lying down, moving in bursts with a slither like florr.io's centipedes.)
+- New hero, the Water Mage: Bubble Shields (block magic, not physical; popped, they wet the one inside and knock those near back); Dome (large, wets every enemy in it, nothing enters or leaves, deflects projectiles, slowly heals allies); main attack a beam to the nearest target or a hurt ally, 2 s on, 1.5 s recharge, wets slowly, on allies heals and washes off what Wet would without wetting; Water Cannon (a large water laser healing allies, hurting and wetting enemies). Trait: hurt while on water, splashes 3 projectiles back at the attacker (as the lizards do).
+- Credits: the weekly limit resets tonight; no swarm of top-effort agents.
+
+Lanes (Opus, worktrees in delve-wt): tags17 (tag registry, construct repair by the Engineer's wrench, fire hurt by water, Silenced stops mouth abilities, the obvious tags, a suggestions list for Riffle), foes17 (troll boulder fetching, chain movement), water17 (the Water Mage; its bubble's magic check is wired to the tag lane's isMagicHit at merge).
+
+Round 18, more rulings (chat):
+- Valkyrie's Call: "Battle mode can have downed allies that can only be revived with abilities. (Corpses can be used for necromancy)". So battle mode gets a downed state; only reviving abilities bring them back; corpses feed necromancy. Queued for the next free lane (after tags17/foes17 merge: it touches battle.js and death).
+- Slime calls: "Gas can hit slimes ... aoe slams shouldn't hit them (like from hammer weapons). Explosions can hit them." Leaps: "The winged tank or Valkyries saving jumps make them airborne not hovering. Slime just goes to the hovering layer for a bit. A witch on her broom also goes to the flying layer." So height layers: floor, hovering, airborne/flying, with hit kinds deciding reach. Given to tags17.
+- "Fire tagged enemies that get set on fire don't take damage, instead getting a rage like boost." Given to tags17.
+- "Also think about the physical damage types, sharp vs blunt damage." Given to tags17 (hit kinds; obvious interactions built, the rest suggested).
+- "Get an agent on all enemies resistance and immunities and see if they make sense." Lane res18: an audit that proposes (no game code), on top of the tag system; its calls go to Riffle.
+
 ## Round 17, lane tags17 (2026-11-24): the tag system
 The designer: construct-only healing (the Engineer's wrench on her turrets, not her allies), fire things hurt when wet
 or in water, silence stopping mouth abilities, "add the obvious ones", suggest the rest. During the lane: fire things
