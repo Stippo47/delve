@@ -336,7 +336,7 @@ function heroStage(S, spec) {
       S.forced = true; went(false); cd0 = u.kit.cd[ab]; if (u.kit.cd[ab] < 1.5) S.followAt = S.t + u.kit.cd[ab] + 1;
     }
     function went(byBrain) {
-      if (!cast) for (const e of foes) if (e.baseMove != null) { e.holdT = S.t + 0.4; } // held foes walk in a beat after it goes
+      if (!cast) for (const e of foes) if (e.baseMove != null) { e.holdT = S.t + (sc.holdFor ?? 0.4); } // held foes walk in a beat after it goes (holdFor: after a long aim)
       cast = true;
       if (S.castT == null) S.castT = S.t;
       S.casts++; if (byBrain) S.byBrain = true;

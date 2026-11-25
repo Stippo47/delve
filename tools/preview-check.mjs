@@ -1,6 +1,7 @@
 // The Book's safety net (round 13): every preview spec (js/preview-sim.js) stepped once through a whole loop in Node.
 // Fails (exit 1) on any that throw and any whose move, trait or item doesn't fire in every one of two loops.
-//   node tools/preview-check.mjs [--only hero|foe|status|trinket|potion] [--id paladin] [--v]
+// Round 18: and reports, for every hero ability at every tier, how it goes in its scene (see below).
+//   node tools/preview-check.mjs [--only hero|foe|status|trinket|potion] [--id paladin] [--v] [--table]
 globalThis.location = { search: '?x' };
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
 const args = process.argv.slice(2);
@@ -37,16 +38,48 @@ console.log(`a loop where the move or trait never fired: ${quiet.length}`); for 
 console.log(`not offered in the Book (never fires, so its button is left out): ${notOffered.length}`); for (const q of notOffered) console.log('  ' + q);
 console.log(`locked (shown as locked): ${locked.filter((l) => !l.includes(':hero:') && !/^hero:/.test(l)).length} not counting heroes' tier 0`);
 for (const l of locked) if (!/^hero:/.test(l)) console.log('  ' + l);
-// tiers that look alike: each ability played one loop at tiers I, II and III with the same dice; if two tiers in a row
-// make exactly the same things (effects, shots, units, zones), the preview can't show what the tier changed
+// Round 18 (lane preview18): the report on the abilities, from tools/preview-measure.mjs. Each ability at tiers I, II
+// and III, two loops each with the same dice for every tier:
+//   when it first went off (and how often a loop), whether the hero's own brain chose it there or the stage had to cast
+//   it, whether what it did was seen at all and reached anyone, tiers that played the very same loop (nothing on the
+//   stage changed with the tier) and tiers that differ only in where things went, and blows on the hero side with
+//   nothing seen behind them, on every hero-side stage.
+//   --table   one line per ability: each tier's first go, times gone, brain or stage, what it reached
+const WITHIN = 2.5; // seconds: "fires within the first second or two"
 if (!opt('only') || opt('only') === 'hero') {
+  const M = await import('./preview-measure.mjs');
   const { HEROES } = await import('../js/heroes.js');
-  const same = [];
+  const t1 = Date.now(), rows = [], late = [], notShown = [], noOne = [], forced = [], wrong = [], same = [], posOnly = [], unseen = [];
+  let runs = 0, fires = 0, byBrain = 0, firstMax = 0, firstSum = 0, firstN = 0;
   for (const id of Object.keys(HEROES)) { if (opt('id') && id !== opt('id')) continue; for (const ab of HEROES[id].abilities) {
-    const sigs = [1, 2, 3].map((tier) => { setSeed(11); try { const S = PS.makeStage({ t: 'hero', id, move: ab.id, tier }); for (let i = 0; i < Math.ceil(S.loop / DT) - 1; i++) S.step(DT); return JSON.stringify(S.sig); } catch (e) { return 'err'; } });
-    const pairs = [sigs[0] === sigs[1] ? 'I=II' : '', sigs[1] === sigs[2] ? 'II=III' : ''].filter(Boolean);
-    if (pairs.length) same.push(`${id}:${ab.id} ${pairs.join(' ')}  (${ab.tiers.map((t, k) => ['I', 'II', 'III'][k] + ': ' + t).join(' | ')})`);
+    const k = id + ':' + ab.id, T = [1, 2, 3].map((tier) => { try { return M.measureAbility(id, ab.id, tier); } catch (e) { bad.push(k + ':' + tier + '  ' + (e && e.stack ? e.stack.split(String.fromCharCode(10)).slice(0, 3).join(' | ') : e)); return null; } });
+    if (T.some((x) => !x)) continue;
+    const L = T.flat(); runs += L.length;
+    for (const l of L) { fires += l.casts || (l.cast != null ? 1 : 0); if (l.brain) byBrain++; if (l.cast != null) { firstMax = Math.max(firstMax, l.cast); firstSum += l.cast; firstN++; } }
+    if (L.some((l) => l.cast == null || l.cast > WITHIN)) late.push(k + '  (' + L.map((l) => (l.cast == null ? '-' : l.cast.toFixed(1))).join(' ') + ' s)');
+    if (L.some((l) => !l.shown)) notShown.push(k); else if (L.some((l) => !l.reached)) noOne.push(k);
+    if (L.some((l) => l.forced && !l.brain)) forced.push(k);
+    if (L.some((l) => !l.right)) wrong.push(k);
+    const u = L.reduce((a, l) => a + l.unseen, 0); if (u) unseen.push(k + '  ' + u + ' (' + L.flatMap((l) => l.unseenWhy).slice(0, 2).join(', ') + ')');
+    const tr = T.map((x) => x[0].trace), sg = T.map((x) => JSON.stringify(x[0].sig)), words = '  (' + ab.tiers.map((t, i) => ['I', 'II', 'III'][i] + ': ' + t).join(' | ') + ')';
+    const eq = [tr[0] === tr[1] ? 'I=II' : '', tr[1] === tr[2] ? 'II=III' : ''].filter(Boolean); if (eq.length) same.push(k + ' ' + eq.join(' ') + words);
+    const po = [tr[0] !== tr[1] && sg[0] === sg[1] ? 'I~II' : '', tr[1] !== tr[2] && sg[1] === sg[2] ? 'II~III' : ''].filter(Boolean); if (po.length) posOnly.push(k + ' ' + po.join(' ') + words);
+    if (args.includes('--table')) rows.push(k.padEnd(28) + T.map((x, i) => ['I', 'II', 'III'][i] + ' ' + x.map((l) => (l.cast == null ? '  -  ' : l.cast.toFixed(1) + 's') + ' x' + (l.casts || (l.cast != null ? 1 : 0)) + (l.brain ? ' brain' : l.forced ? ' stage' : ' hook') + (l.reached ? '' : ' (no one)') + (l.unseen ? ' UNSEEN' + l.unseen : '')).join(' / ')).join('  |  '));
   } }
-  console.log(`tier steps that make the same things (round 14: what the tier adds is in the caption under the stage; on the stage it shows only in how long, how big or how much): ${same.length}`); for (const x of same) console.log('  ' + x);
+  for (const r of rows) console.log(r);
+  const list = (a) => { for (const x of a) console.log('  ' + x); };
+  console.log(`abilities at tiers I-III: ${runs / 2} runs of two loops, ${((Date.now() - t1) / 1000).toFixed(1)}s`);
+  console.log(`  first go: ${(firstSum / Math.max(1, firstN)).toFixed(2)} s on average, ${firstMax.toFixed(1)} s at the latest; ${(fires / runs).toFixed(2)} goes a loop; the hero's own brain chose it in ${byBrain} of ${runs} loops`);
+  console.log(`a loop where it didn't go within ${WITHIN} s: ${late.length}`); list(late);
+  console.log(`not shown (a loop where it drew nothing and touched no one): ${notShown.length}`); list(notShown);
+  console.log(`drawn but reached no one (a loop where nothing it made touched a foe or a friend: a roll, a bush, a change of shape): ${noOne.length}`); list(noOne);
+  console.log(`wrong scenario (a loop where the game's own scorer wouldn't have used it there): ${wrong.length}`); list(wrong);
+  console.log(`cast by the stage (the brain didn't pick it by forceAt, though the scorer agreed): ${forced.filter((k) => !wrong.includes(k)).length}`); if (args.includes('--v')) list(forced);
+  console.log(`tiers identical (the same loop at two tiers: nothing on the stage changed): ${same.length}`); list(same);
+  console.log(`tiers that differ only in where things went (the same foes reached, statuses, buffs, heals, summons, sizes): ${posOnly.length}`); list(posOnly);
+  // blows from nothing: the abilities' (above) and every other hero-side stage's
+  const others = specs.filter((s) => (s.t === 'hero' && (s.move === 'attack' || s.move === 'trait')) || s.t === 'trinket' || s.t === 'potion');
+  for (const s of others) { try { const r = M.unseenBlows(s); if (r.blows) unseen.push(PS.specKey(s) + '  ' + r.blows + ' (' + r.why.slice(0, 2).join(', ') + ')'); } catch (e) { /* counted above */ } }
+  console.log(`blows on the hero side with nothing seen behind them (a target with no weapon, health set lower): ${unseen.length}`); list(unseen);
 }
 if (bad.length || quiet.length) process.exitCode = 1; // a preview that doesn't fire every loop fails the check

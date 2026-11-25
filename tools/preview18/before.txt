@@ -1,16 +1,15 @@
-180 abilities x 3 tiers, 8.2s
+180 abilities x 3 tiers, 11.4s
 threw: 0
-never went off in a loop: 1
-  granny:oldBones
-not shown (a loop where it drew nothing of its own and touched no one): 4
-  granny:oldBones
+never went off in a loop: 0
+not shown (a loop where it drew nothing of its own and touched no one): 3
   werewolf:frenzy
   enchantress:sweetheart
   enchantress:heartbreak
-drawn but reached no one (a loop where nothing it made touched a foe or a friend): 22
+drawn but reached no one (a loop where nothing it made touched a foe or a friend): 19
   paladin:guard
   archer:roll
   twinfang:dash
+  granny:oldBones
   frost:iceWall
   cleric:mend
   bard:encore
@@ -20,14 +19,10 @@ drawn but reached no one (a loop where nothing it made touched a foe or a friend
   shade:blackout
   grandpa:oldTales
   shaman:spiritLink
-  cultist:ritualCircle
-  seer:starfall
   chef:hotMeal
-  falconer:keenEye
   trapper:tripwire
   gladiator:showboat
   werewolf:turnWolf
-  enchantress:heartstring
   clockwork:timeBubble
   earthMage:stoneWall
 wrong scenario (the game's own scorer would not have used it there): 35
@@ -66,92 +61,37 @@ wrong scenario (the game's own scorer would not have used it there): 35
   earthMage:stoneWall (score 0)
   waterMage:bubbleShield (score 0)
   waterMage:waterDome (score 0.25)
-tier steps that made the same things: 85
-  paladin:guard I=II
-  tower:holdTheLine I=II II=III
-  archer:roll I=II
-  twinfang:backstab II=III
-  twinfang:dash II=III
-  twinfang:fanOfKnives I=II
-  wildmane:rage I=II II=III
-  wildmane:leap II=III
-  berserker:unstoppable I=II II=III
-  pyromancer:inferno I=II
-  frost:iceShard I=II
-  frost:iceWall I=II
-  cleric:mend I=II II=III
-  cleric:sanctuary II=III
-  cleric:smite II=III
-  bard:warSong I=II II=III
-  bard:lullaby II=III
-  bard:encore II=III
-  druid:rejuvenate I=II II=III
-  necromancer:raiseDead II=III
-  necromancer:lifeDrain I=II
-  necromancer:boneSpear I=II
-  plague:leeches I=II II=III
-  oldguard:rallyCry II=III
-  griffon:wingShield I=II
-  bulwark:shieldWall I=II II=III
-  bearskin:hibernate I=II
-  rogueBandit:lowBlow I=II II=III
-  shade:shadowWalk I=II
-  haymaker:pitchHay I=II
-  grandpa:breadToss II=III
-  grandpa:oldTales I=II
-  alchemist:bangFlask I=II
-  shaman:healTotem I=II II=III
-  shaman:spiritLink II=III
-  witch:cursedBrew II=III
-  warlock:eldritchBeam II=III
-  warlock:summonImp II=III
-  cultist:bloodPact I=II
-  cultist:ritualCircle I=II
-  cultist:soulCandle I=II
-  monk:flurry I=II
-  seer:foresight I=II II=III
-  seer:starfall I=II
-  chef:hotMeal I=II II=III
-  chef:foodFight I=II
-  beekeeper:swarm II=III
-  beekeeper:honeyPot I=II II=III
-  beekeeper:royalJelly I=II II=III
-  quartermaster:resupply I=II
-  quartermaster:oilBlades I=II II=III
-  falconer:looseFalcon I=II
-  falconer:keenEye II=III
-  falconer:flock I=II
-  grenadier:bigBomb I=II
-  grenadier:blastOff I=II
-  marksman:aimedShot I=II
-  marksman:ricochet I=II
-  ninja:substitution II=III
-  ninja:caltrops I=II
-  pirate:grog I=II
-  slinger:gravel II=III
-  trapper:tripwire II=III
-  gladiator:showboat I=II II=III
-  gladiator:shieldRush I=II
-  jester:mock I=II II=III
-  samurai:iaido I=II
-  samurai:focus I=II II=III
-  valkyrie:valkyrieCall I=II
-  valkyrie:skyDive I=II
-  engineer:tinker I=II II=III
-  engineer:shockMine I=II
-  werewolf:turnWolf I=II II=III
-  werewolf:frenzy I=II II=III
-  enchantress:heartstring I=II II=III
-  enchantress:sweetheart I=II II=III
-  enchantress:heartbreak I=II II=III
-  mob:scatter II=III
-  clockwork:stopClock II=III
-  warden:nullify I=II II=III
-  warden:chainGang I=II
-  telekinetic:levitate I=II
-  earthMage:stoneWall I=II II=III
-  waterMage:waterDome II=III
-  waterMage:waterCannon II=III
+tiers identical (two tiers played the very same loop: nothing on the stage changed): 0
+tiers that differ only in where things went (the same foes reached, statuses, buffs, heals, summons, sizes): 29
+  paladin:guard I~II
+  archer:roll I~II
+  twinfang:dash II~III
+  berserker:unstoppable II~III
+  cleric:sanctuary II~III
+  bard:encore II~III
+  necromancer:lifeDrain I~II
+  plague:leeches II~III
+  oldguard:rallyCry II~III
+  bulwark:shieldWall II~III
+  bearskin:hibernate I~II
+  shade:shadowWalk I~II
+  grandpa:oldTales I~II
+  cultist:soulCandle I~II
+  seer:starfall I~II
+  chef:hotMeal II~III
+  beekeeper:honeyPot I~II
+  marksman:ricochet I~II
+  ninja:substitution II~III
+  trapper:tripwire II~III
+  gladiator:showboat I~II II~III
+  jester:mock II~III
+  samurai:iaido I~II
+  werewolf:turnWolf I~II II~III
+  enchantress:sweetheart I~II II~III
+  enchantress:heartbreak I~II II~III
+  clockwork:stopClock II~III
+  airMage:gale I~II
+  warden:nullify I~II
 abilities whose hero or friend took blows from nothing seen: 12 (656 blows)
   granny:oldBones 12 hero<-bookDummy hero hp set
   oldguard:pommelStrike 72 hero<-bookDummy hero<-bookDummy

@@ -34,7 +34,8 @@
 //   readyAt  when the ability comes ready (0.3 s); forceAt: when the stage casts it if the hero hasn't (2.4 s)
 //   secs     how long the loop runs on after it (the longest time its words name, at most 8 s)
 //   oil      puddles of oil on the floor [[x, y, r]...]; holdFoes: every foe holds its spot until the ability goes
-//            (a foe's own `hold` does the same for it alone: a line to go through stays a line)
+//            (a foe's own `hold` does the same for it alone: a line to go through stays a line); holdFor: how long
+//            after it goes they are let walk (0.4 s; longer for a shot that is aimed first)
 //   noAttack the hero keeps holding its attack after the cast too
 // An ability not in the table gets a scene from its kits `show` (sceneFor), so a new hero still has a scene.
 
@@ -106,7 +107,7 @@ export const ABILITY_SCENE = {
   // Berserker
   shockwave: S('line'), whirl: S('ring'), unstoppable: S('selfHurt', { hp: 0.35, heroSt: { poison: 60, chill: 50 }, foes: [F('poisoner', [235, 175], { on: 'hero' }), F('chiller', [250, 100], { on: 'hero' }), F('melee', [255, 255], { on: 'hero' })] }),
   // Granny
-  reap: S('ring'), hook: S('spread'), oldBones: S('ring', { lethal: 0.9, hp: 0.3 }),
+  reap: S('ring', { hp: 0.55 }), hook: S('spread'), oldBones: S('ring', { lethal: 0.9, hp: 0.3 }),
   // Pyromancer
   fireball: S('pack'), flameWall: S('pack', { oil: [[330, 175, 50], [420, 250, 44]] }), inferno: S('ring'),
   // Frost
@@ -177,9 +178,9 @@ export const ABILITY_SCENE = {
   // Huntress
   runningThrow: S('line'), bound: S('incoming', { foes: [F('heavy', [265, 175], { on: 'hero' }), F('melee', [345, 178], { hold: true }), F('melee', [415, 172], { hold: true })] }), prey: S('pack'),
   // Marksman
-  aimedShot: S('line', { holdFoes: true }), bayonet: S('incoming'), ricochet: S('spread'),
+  aimedShot: S('line', { holdFoes: true, holdFor: 1.4 }), bayonet: S('incoming'), ricochet: S('spread'),
   // Ninja
-  shurikenFan: S('ring'), substitution: S('incoming'), caltrops: S('ring'),
+  shurikenFan: S('ring'), substitution: S('incoming', { foes: [F('heavy', [235, 175], { on: 'hero' }), F('melee', [235, 95], { on: 'hero' })] }), caltrops: S('ring'),
   // Pirate
   pointBlank: S('pair'), grog: S('selfHurt', { friends: [{ at: [90, 290], hp: 0.4 }], foes: [F('heavy', [235, 175], { on: 'hero' }), F('fast', [250, 100], { on: 'hero' }), F('melee', [190, 300], { on: 0 })] }), broadside: S('pack'),
   // Slinger
@@ -189,7 +190,7 @@ export const ABILITY_SCENE = {
   // Gladiator
   netThrow: S('line'), showboat: S('pair', { hp: 0.55 }), shieldRush: S('line'),
   // Jester
-  mock: S('hurtFriend', { addFoes: [F('shooter', [420, 175])] }), befuddle: S('incoming'), juggle: S('spread'),
+  mock: S('hurtFriend', { addFoes: [F('shooter', [420, 175])] }), befuddle: S('incoming', { foes: [F('melee', [230, 175], { on: 'hero' }), F('fast', [240, 100], { on: 'hero' })] }), juggle: S('spread'),
   // Samurai
   iaido: S('line'), focus: S('incomingShots'), crescentCut: S('lowFoe'),
   // Valkyrie
@@ -198,7 +199,7 @@ export const ABILITY_SCENE = {
   // Engineer
   deployTurret: S('pack'), tinker: S('party', { friends: [{ at: [175, 92], hp: 0.45 }, { at: [175, 258], hp: 0.4 }] }), shockMine: S('front'),
   // Werewolf
-  turnWolf: S('front'), frenzy: S('duel'), pounce: S('pack'),
+  turnWolf: S('front'), frenzy: S('duel', { hp: 0.5 }), pounce: S('pack'),
   // Enchantress
   heartstring: S('pack'), sweetheart: S('hurtFriends'), heartbreak: S('front', { charmed: true, hp: 0.6, friends: [{ at: [175, 262], hp: 0.45 }] }),
   // Mob
