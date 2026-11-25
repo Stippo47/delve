@@ -1,0 +1,1 @@
+ember   won 24/40 lost 16 stuck 0 err 0 | ended on floor 1/2/3: 0/0/40 | minis 0/0 | avg 104s 1 rooms 54 gold +0.0 lv | fell at 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7 3.7

@@ -1,7 +1,7 @@
 fights 20 won 8 (40.0%) avg 151s
 share of the fight in each state: prowl 48.1%  scorch 16.0%  ring 11.8%  hold 9.3%  scorch-tell 5.1%  roar 5.1%  rush-tell 2.6%  rush 2.1%
 times each state began, a minute: roar 3.1  prowl 8.8  scorch-tell 3.0  scorch 3.0  hold 8.5  rush-tell 1.6  rush 1.6  ring 0.8
-attacks (not counting fireballs) 2.4 a minute; time between two: median 11.2 s, a quarter over 26.3 s, a tenth over 42.6 s, longest 143.7 s
+attacks (every move with a tell: bite, claw, tail, roar, scorch, rush, ring; not single fireballs) 7.9 a minute; time between two: median 7.0 s, a quarter over 9.8 s, a tenth over 14.1 s, longest 21.0 s
   tail: 2.8 a fight (1.14 a minute); caught 0.51 each; caught nobody 54.5%
   bite: 1.4 a fight (0.58 a minute); caught 0.64 each; caught nobody 42.9%
   roar: 1.8 a fight (0.72 a minute); caught 0.86 each; caught nobody 31.4%

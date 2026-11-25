@@ -1,0 +1,15 @@
+fights 20 won 11 (55.0%) avg 159s
+share of the fight in each state: prowl 51.6%  ring 9.7%  claw 8.6%  scorch 8.5%  bite 7.3%  roar 5.6%  scorch-tell 2.7%  hold 2.4%  rush 1.2%  rush-tell 1.2%  dazed 1.0%  rush-skid 0.4%
+times each state began, a minute: roar 3.9  hold 6.1  prowl 18.0  bite 4.5  claw 6.4  scorch-tell 2.0  scorch 2.0  rush-tell 1.0  rush 1.0  dazed 0.3  ring 1.0  rush-skid 0.7
+attacks (every move with a tell: bite, claw, tail, roar, scorch, rush, ring; not single fireballs) 16.5 a minute; time between two: median 3.3 s, a quarter over 4.7 s, a tenth over 6.1 s, longest 22.9 s
+  bite: 11.3 a fight (4.47 a minute); caught 0.64 each; caught nobody 53.7%
+  tail: 2.3 a fight (0.89 a minute); caught 0.40 each; caught nobody 68.9%
+  claw: 16.1 a fight (6.32 a minute); caught 0.82 each; caught nobody 37.7%
+  roar: 1.9 a fight (0.77 a minute); caught 0.54 each; caught nobody 53.8%
+  fireball: 41.9 a fight (16.51 a minute); caught 0.92 each; caught nobody 39.3%
+hero health lost while it is in each state (party-healths per fight): scorch 2.57  claw 1.40  prowl 1.19  bite 0.98  rush 0.49  roar 0.15  scorch-tell 0.14  ring 0.13  hold 0.04  rush-tell 0.03  dazed 0.02  rush-skid 0.01
+prowl speed 116 a second on average; standing still (under 12) 23.8% of the fight; turning 0.80 rad/s on average, fastest 26.0
+while prowling its mark is over 330 away 8.7% of the time
+head in a pillar 0.0 s a fight, at the room's edge 0.0 s; body boxes in a pillar 0.7 box-s a fight, out of the room 0.0
+its body crosses itself 0.3% of the fight, is kinked 8.1%; its tail's tip is through a wall 0.0%; its spine lies across a pillar 0.8%
+first hero down at (s): 13 20 25 31 32 40 43 47 48 52 65 70 76 76 87 89 107 107 137

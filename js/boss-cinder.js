@@ -4,12 +4,15 @@
 // More abilities." Round 12, on what was built: "Everything is off. The art. The attacks visuals. How it is stuck in 1
 // spot. And so on". So, round 13, from scratch: an animal that walks. Round 19 (lane drake19, docs/drake19.md), the
 // designer: "Body moves weird, don't like how it attacks. Very slow." So:
-//   - its body is a spine, not a train: a chain of joints dragged behind the head, each with a limit to how far it
-//     bends (a supple neck, a stiff trunk, a whippy tail), kept out of the pillars and inside the room. It cannot kink
-//     or knot. The tail is three springs: it trails, swings out when the hips turn, and whips base first;
-//   - it hunts: a brisk prowl round its mark, and every second or two a strike with the part of it that is nearest:
-//     the mouth (a bite: it rears back, then the head really darts), a foreleg (the claw: whoever hugs its chest), the
-//     tail (whoever is behind it), a gathered rush that skids, the scorch (it breathes in first, and creeps forward);
+//   - its body is a spine, not a train: a chain of joints dragged behind the head (so nothing in it moves faster than
+//     the head), each with a limit to how far it bends, stiff through the trunk, kept out of the pillars and inside the
+//     room. It cannot kink or knot. The head turns on its neck no further than a neck goes, and can lead the body no
+//     further than its chest lets it: the body comes round in a curve. The tail is three springs: it trails, swings
+//     out when the hips turn, and whips base first;
+//   - it hunts in passes (at its mark, by their side and on, a wheel, again), and every two or three seconds strikes
+//     with the part of it that is nearest: the mouth (a bite: it rears back, then the head really darts), a foreleg
+//     (the claw: whoever hugs its chest), the tail (whoever is behind it), a gathered rush that skids, the scorch (it
+//     breathes in first, and creeps forward after its flame);
 //   - its moves tell threat.js when they will land (u.strikes), so a dodge or a guard can be timed against them.
 // The head is the boss; the body is hit boxes along its spine (k.parts) and the tail's blade can be broken off.
 // Art: drawn in code as one animal (js/boss-cinder-fx.js).
@@ -29,20 +32,20 @@ export const LEN = 466, SHOULDER = 128, HIP = 276;
 export const rOf = (off) => { for (let i = 1; i < SPINE.length; i++) if (off <= SPINE[i][0]) { const [o0, r0] = SPINE[i - 1], [o1, r1] = SPINE[i], q = (off - o0) / (o1 - o0); return r0 + (r1 - r0) * q * q * (3 - 2 * q); } return SPINE[SPINE.length - 1][1]; };
 // the chain: a joint every SEG along it; how far each may bend from the one before (radians): the neck is supple, the
 // trunk between the shoulders and the hips stiff, the tail freer towards its tip
-const SEG = 18, NODES = Math.ceil(LEN / SEG) + 1, NECK = 0.55, HEAD_TURN = 1.5;
+const SEG = 18, NODES = Math.ceil(LEN / SEG) + 1, NECK = 0.55, HEAD_TURN = 1.5, LEAD = 1.1;
 const bendOf = (off) => (off <= 110 ? 0.42 : off <= HIP ? 0.24 : 0.3 + 0.08 * (off - HIP) / (LEN - HIP));
 const stiffOf = (off) => (off <= 110 ? 1.2 : off <= HIP ? 3.2 : 1.6);   // how fast a bend eases out (a second): the trunk is stiffest
 const BOXES = [[92, 27], [128, 40], [178, 44], [228, 43], [276, 38], [322, 28], [380, 21]]; // the hit boxes along it (offset, radius)
 export const CD = {
   share: 0.35, tailShare: 0.3, tailHp: 0.08, tailAt: 446, tailR: 22,
   gap: [0.55, 0.95],                                        // between two moves of its head and feet
-  prowl: { side: 92, past: 190, time: 6, run: 320, turn: 0.9, near: 230, on: 250 },
-  bite: { reach: 188, arc: 1.0, tell: 0.5, back: 26, lunge: 108, dart: 0.11, dmg: 76, burn: 20, knock: 250, rec: 0.32, cd: [3.0, 4.0] },
-  claw: { r: 138, arc: 2.2, tell: 0.42, swipe: 0.14, dmg: 50, knock: 230, rec: 0.25, near: 112, cd: [3.4, 4.4] },
-  scorch: { len: 460, arc: 0.44, tell: 0.75, dur: 2.4, turn: 0.6, creep: 0.32, tick: 0.15, dmg: 17, burn: 14, cd: [9, 11] },
+  prowl: { side: 92, past: 190, run: 320, turn: 1.0, clear: 150, on: 160, self: 125 },
+  bite: { reach: 188, arc: 1.0, tell: 0.5, back: 26, lunge: 108, dart: 0.11, dmg: 70, burn: 20, knock: 250, rec: 0.32, cd: [3.0, 4.0] },
+  claw: { r: 138, arc: 2.2, tell: 0.42, swipe: 0.14, dmg: 46, knock: 230, rec: 0.25, near: 112, cd: [3.4, 4.4] },
+  scorch: { len: 460, arc: 0.44, tell: 0.75, dur: 2.4, turn: 0.6, creep: 0.32, tick: 0.15, dmg: 15, burn: 13, cd: [7.5, 9.5] },
   tail: { r: 215, arc: 2.5, tell: 0.6, whip: 0.13, swing: 1.25, dmg: 70, knock: 380, near: 150, cd: [4, 5.2], reel: 2.0, reelTaken: 1.3 },
-  rush: { len: 640, past: 190, min: 260, from: 190, tell: 0.7, back: 30, dmg: 78, knock: 360, speed: 640, skid: 0.36, dazed: 1.7, dazedTaken: 1.35, cd: [9, 12] },
-  call: { r: 84, tell: 1.4, dmg: 68, burn: 30, fire: 5, extra: 3, roar: 0.75, cd: [10, 12.5] },
+  rush: { len: 640, past: 190, min: 260, from: 190, tell: 0.7, back: 30, dmg: 78, knock: 360, speed: 640, skid: 0.36, dazed: 1.7, dazedTaken: 1.35, cd: [6.5, 9] },
+  call: { r: 84, tell: 1.4, dmg: 62, burn: 30, fire: 5, extra: 3, roar: 0.75, cd: [10, 12.5] },
   ring: { r: 255, speed: 3.5, turn: 1.7, step: 44, fireR: 36, fireT: 11, cd: [24, 28] },
   roar: { r: 230, tell: 0.9, dmg: 17, knock: 340, burn: 20 },
   molten: { drip: 0.55, fireR: 30, fireT: 4, cap: 14 },
@@ -105,7 +108,7 @@ function brain(w, u, dt) {
     if (ready.ring) { again(u, 'ring', ...CD.ring.cd); if (startRing(w, u, k, hs)) return true; }
     if (ready.call) { again(u, 'call', ...CD.call.cd.map((x) => x * (k.phase >= 3 ? 0.75 : 1))); fireCall(w, u, k, hs); return true; }
     // someone in front of its chest, not under its chin: the scorch (its mark if it can, else whoever is nearest ahead)
-    if (ready.scorch) { const ok = (h) => { const dd = dist(u.x, u.y, h.x, h.y); return dd > 140 && dd < CD.scorch.len + 40 && angleDiff(cha, angleTo(u.x, u.y, h.x, h.y)) < 1.0; };
+    if (ready.scorch) { const ok = (h) => { const dd = dist(u.x, u.y, h.x, h.y); return dd > 140 && dd < CD.scorch.len + 40 && angleDiff(cha, angleTo(u.x, u.y, h.x, h.y)) < 1.25; };
       const v = ok(t) ? t : hs.filter(ok).sort((a, b) => dist(u.x, u.y, a.x, a.y) - dist(u.x, u.y, b.x, b.y))[0];
       if (v) { again(u, 'scorch', ...CD.scorch.cd.map((x) => x * K)); startBreath(w, u, k, v); return true; } }
     // someone well off in front of it (the furthest: the back line): the rush
@@ -174,7 +177,7 @@ function tailTick(u, k, dt) {
   let want = k.tailWant;
   if (want == null) want = 0.17 * Math.sin(k.t * 1.5) + 0.08 * Math.sin(k.t * 4.1 + 1) * clamp(sp / 60, 0, 1) - clamp(k.hipOm * 0.24, -0.55, 0.55);
   k.tailWant = null;
-  spring(k.tl[0], want, 17, 0.8, dt); spring(k.tl[1], k.tl[0].a, 13, 0.5, dt); spring(k.tl[2], k.tl[1].a, 11, 0.42, dt);
+  spring(k.tl[0], want, 17, 0.8, dt); spring(k.tl[1], k.tl[0].a, 13, 0.62, dt); spring(k.tl[2], k.tl[1].a, 11, 0.56, dt);
 }
 const tailBend = (k, q) => { const [a, b, c] = k.tl; return q < 0.45 ? a.a * q / 0.45 : q < 0.75 ? a.a + (b.a - a.a) * (q - 0.45) / 0.3 : b.a + (c.a - b.a) * (q - 0.75) / 0.25; };
 // What is drawn and hit (k.vis): the chain, with the walk's sway through the trunk and the tail's swing laid over it.
@@ -202,6 +205,7 @@ export function at_(k, u, off) {
   return { x: cr(p0.x, p1.x, p2.x, p3.x), y: cr(p0.y, p1.y, p2.y, p3.y), a: p1.a + wrapAngle(p2.a - p1.a) * q };
 }
 function body(w, u, k, dt) {
+  if (dt > 0) { k.moved = (k.moved || 0) + (dist(u.x, u.y, k.px ?? u.x, k.py ?? u.y) / dt - (k.moved || 0)) * Math.min(1, dt * 10); } k.px = u.x; k.py = u.y; // how fast its head really went (not how fast it tried to)
   spine(w, u, k, dt); tailTick(u, k, dt); pose(u, k, dt, w.W, w.H);
   for (const p of k.parts) if (alive(p)) { const q = at_(k, u, p.off); place(p, q.x, q.y, q.a); p.shadowK = 0.7; }
   u.shadowK = 0.75;
@@ -241,32 +245,38 @@ function clawFoot(k, u, l, c, rest) {
 }
 
 // ---------------------------------------------------------------- how it moves: the prowl
-// It hunts in passes: it comes at its mark, goes by close on one side and on past, wheels round in a wide curve and
-// comes again. So its mark is in front of it as it comes (the bite, the scorch, the rush), beside it as it passes (the
+// It hunts in passes: it comes at its mark, goes by close on one side and on past, wheels round in a curve and comes
+// again. So its mark is in front of it as it comes (the bite, the scorch, the rush), beside it as it passes (the
 // claw) and behind it as it goes (the tail). It turns like a long animal: in curves (it can't spin on the spot, so
 // it never winds round itself), its head and neck quick on top of that. It runs when its mark is far.
 // Every move starts from the prowl and ends back in it.
-function walk(w, u, k, x, y, mult, dt, turn) {
-  const d = u.def, was = d.turn, got = Math.hypot(u.vx || 0, u.vy || 0), stuck = (k.pace || 0) > 24 && got < (k.pace || 0) * 0.4; // (against a wall or a pillar it comes round quicker)
-  d.turn = stuck ? Math.max(turn, 1.7) : turn; walkTo(w, u, x, y, mult, dt); d.turn = was;
+function walk(w, u, k, x, y, mult, dt, turn, slowTurn) {
+  const d = u.def, was = d.turn, got = k.moved || 0, stuck = (k.pace || 0) > 24 && got < (k.pace || 0) * 0.4 && (u.x < 90 || u.y < 90 || u.x > w.W - 90 || u.y > w.H - 90 || w.pillars.some((q) => dist(u.x, u.y, q.x, q.y) < q.r + u.r + 30)); // (against a wall or a pillar it comes round quicker; not against a hero in its way: it would wind round them)
+  d.turn = slowTurn ? turn * 0.5 : stuck ? Math.max(turn, 1.7) : turn; walkTo(w, u, x, y, mult, dt); d.turn = was;
+  // it can only go where its chest lets it: no more than LEAD to either side of the way its chest points (the head led
+  // off sideways and back into its own flank; now the body has to come round with it, in a curve)
+  // (held up, by a wall or anything else, the head is let further round, so it works itself free)
+  k.jam = (k.pace || 0) > 24 && got < (k.pace || 0) * 0.4 ? (k.jam || 0) + dt : 0;
+  { const cha = chestA(k), lead = LEAD + Math.min(0.9, (k.jam || 0) * 1.8); u.mvA = wrapAngle(cha + clamp(wrapAngle(u.mvA - cha), -lead, lead)); }
   // the game's steering slows a walker right down in a turn (it would pivot on the spot and wind up); this one keeps most of its pace and goes round
-  const wish = Math.atan2(u.sdy, u.sdx), want = (u.wantSpd || 0) * Math.max(0.7, Math.cos(Math.min(Math.PI / 2, Math.abs(wrapAngle(wish - u.mvA))))), acc = d.accel * dt;
+  const wish = Math.atan2(u.sdy, u.sdx), want = (u.wantSpd || 0) * Math.max(0.8, Math.cos(Math.min(Math.PI / 2, Math.abs(wrapAngle(wish - u.mvA))))), acc = d.accel * dt;
   k.pace = (k.pace || 0) + clamp(want - (k.pace || 0), -acc * 1.6, acc); u.spd = k.pace; u.dvx = Math.cos(u.mvA) * u.spd; u.dvy = Math.sin(u.mvA) * u.spd;
   turnTo(u, u.spd > 6 ? u.mvA : u.facing, 3.4, dt);
 }
 function prowl(w, u, k, t, d, at, dt) {
-  const P = CD.prowl, pace = k.phase >= 3 ? 1.15 : 1;
-  let g = k.pass;
-  if (!g || (g.t -= dt) <= 0 || dist(u.x, u.y, g.x, g.y) < 70) {
-    const cha = chestA(k), was = g && g.on; g = null;
-    // its mark close by and not in front of it: it does not wind round on the spot after them, it goes on (its tail
-    // towards them), then wheels and comes again
-    if (!was && d < P.near && angleDiff(cha, at) > 1.1) { const x = u.x + Math.cos(cha) * P.on, y = u.y + Math.sin(cha) * P.on, q = inside(w, x, y, u.r + 60); if (dist(q.x, q.y, x, y) < 90) g = { ...q, t: 3.2, on: true }; }
-    if (!g) { const side = at + (k.orbit = -k.orbit) * Math.PI / 2, far = P.past + rrange(-30, 40);
-      g = { ...inside(w, t.x + Math.cos(at) * far + Math.cos(side) * P.side, t.y + Math.sin(at) * far + Math.sin(side) * P.side, u.r + 50), t: P.time }; }
-    k.pass = g;
-  }
-  walk(w, u, k, g.x, g.y, (d > P.run ? 1.5 : 1) * pace, dt, P.turn);
+  const P = CD.prowl, pace = k.phase >= 3 ? 1.15 : 1, cha = chestA(k), off = angleDiff(cha, at);
+  if (off < 1.2) { if (k.behind) k.orbit = -k.orbit; k.behind = false; } else if (off > 1.5) k.behind = true;
+  let gx = t.x, gy = t.y;
+  if (!k.behind) { const side = at + k.orbit * Math.PI / 2; gx += Math.cos(at) * P.past + Math.cos(side) * P.side; gy += Math.sin(at) * P.past + Math.sin(side) * P.side; } // its mark ahead: by their side and on past them
+  else if (d < P.clear) { // its mark close beside or behind it: it goes on a way (its tail towards them), it does not wind round on the spot...
+    const ax = u.x + Math.cos(cha) * P.on, ay = u.y + Math.sin(cha) * P.on, q = inside(w, ax, ay, u.r + 60);
+    if (dist(q.x, q.y, ax, ay) < 60) { gx = q.x; gy = q.y; } }
+  // ...then wheels round on them (the goal is its mark; it comes round in a curve)
+  // its own hindquarters and tail ahead of its nose (a wheel closing into a ring): straight on instead
+  const curled = k.sp.some((q, i) => i * SEG > HIP - 20 && dist(u.x, u.y, q.x, q.y) < P.self);
+  if (curled) { gx = u.x + Math.cos(cha) * P.on; gy = u.y + Math.sin(cha) * P.on; }
+  const g = inside(w, gx, gy, u.r + 50);
+  walk(w, u, k, g.x, g.y, (d > P.run || (k.behind && d > P.clear) ? 1.5 : 1) * pace, dt, P.turn, curled);
 }
 // its head moved by hand this tick (a dart, a rearing back): at speed v the way a
 const shove = (u, a, v) => { u.dvx = Math.cos(a) * v; u.dvy = Math.sin(a) * v; u.vx = u.dvx; u.vy = u.dvy; u.mvA = a; u.spd = v; };
@@ -347,15 +357,16 @@ function breathTick(w, u, k, dt) {
   const t = alive(b.v) && !b.v.ethereal ? b.v : pickTarget(w, u, k, dt);
   if (t) b.a = wrapAngle(b.a + clamp(wrapAngle(angleTo(u.x, u.y, t.x, t.y) - b.a), -b.turn * dt, b.turn * dt));
   { const cha = chestA(k); b.a = wrapAngle(cha + clamp(wrapAngle(b.a - cha), -1.4, 1.4)); } // (no further round than its neck goes)
-  u.facing = b.a; shove(u, b.a, u.def.speed * S.creep); k.tailWant = 0.5 * Math.sin(k.t * 5.5); // it creeps after its flame, tail lashing
-  const mx = u.x + Math.cos(b.a) * u.r * 1.3, my = u.y + Math.sin(b.a) * u.r * 1.3;
-  w.drakeBreath = { x: mx, y: my, a: b.a, arc: S.arc, len: S.len - u.r, t: (w.drakeBreath && w.drakeBreath.t || 0) + dt };
-  b.z = b.z && w.danger.includes(b.z) ? b.z : liveZone(w, u, { shape: 'cone', x: u.x, y: u.y, a: b.a, arc: S.arc + 0.12, r: S.len, kind: 'fire' });
-  keepZone(b.z, { x: u.x, y: u.y, a: b.a });
-  u.strikes = (h) => (inBreath(w, u, h, b.a, S) ? Math.max(0, b.tick) : null);
+  turnTo(u, b.a, 8, dt); const fa = u.facing; // (the flame goes where the head points: it comes round to its aim, it is not set there)
+  shove(u, fa, u.def.speed * S.creep); k.tailWant = 0.5 * Math.sin(k.t * 5.5); // it creeps after its flame, tail lashing
+  const mx = u.x + Math.cos(fa) * u.r * 1.3, my = u.y + Math.sin(fa) * u.r * 1.3;
+  w.drakeBreath = { x: mx, y: my, a: fa, arc: S.arc, len: S.len - u.r, t: (w.drakeBreath && w.drakeBreath.t || 0) + dt };
+  b.z = b.z && w.danger.includes(b.z) ? b.z : liveZone(w, u, { shape: 'cone', x: u.x, y: u.y, a: fa, arc: S.arc + 0.12, r: S.len, kind: 'fire' });
+  keepZone(b.z, { x: u.x, y: u.y, a: fa });
+  u.strikes = (h) => (inBreath(w, u, h, fa, S) ? Math.max(0, b.tick) : null);
   if ((b.tick -= dt) <= 0) {
     b.tick = S.tick;
-    for (const h of heroesOf(w, u)) if (inBreath(w, u, h, b.a, S)) hurt(w, h, S.dmg * u.dmgMul, u, { noDodge: true, burn: S.burn, knock: 40, kAngle: b.a });
+    for (const h of heroesOf(w, u)) if (inBreath(w, u, h, fa, S)) hurt(w, h, S.dmg * u.dmgMul, u, { noDodge: true, burn: S.burn, knock: 40, kAngle: fa });
   }
   if ((b.run -= dt) <= 0) { k.br = null; w.drakeBreath = null; still(u); beginHold(u, 0.35, null); rest(k, 0.6); }
   return true;
@@ -484,7 +495,7 @@ function pit(w) {
 
 export const CINDER = {
   defs: {
-    cinder: { team: 'enemy', name: 'Cinder, the Old Drake', r: 40, vr: 44, turn: 0.56, accel: 260, face: 3.4, mass: 12, hp: 900, speed: 84, role: 'melee', range: 30, atkCd: 999, arc: 2,
+    cinder: { team: 'enemy', name: 'Cinder, the Old Drake', r: 40, vr: 44, turn: 0.56, accel: 260, face: 3.4, mass: 12, hp: 800, speed: 84, role: 'melee', range: 30, atkCd: 999, arc: 2,
       temp: 0.2, commit: 1.2, xp: 200, coins: [80, 100], boss: true, arena: 'pit', noCorpse: true,
       res: { burn: 0, chill: 1.3, wet: 1.3, stagger: 0.4, poison: 0.25 }, draw: drawCinder, picture: cinderPicture, brain, onDeath: death },
     drakeSegment: PART('Cinder (body)', { r: 40, vr: 40, mass: 40, hp: 100, noBar: true, res: { burn: 0 }, draw: drawCinderPart }),
