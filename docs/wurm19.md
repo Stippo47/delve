@@ -210,6 +210,8 @@ each): other parties. `book-preview.mp4`, `book-preview-page.png`: the Book.
 - **The Book's words for it** (`js/bestiary.js`): a line of fun ("You never see all of it at once. That is the kindest
   thing about it.") and how it fights. The designer's to rewrite.
 - **Left as it is: a frozen wurm hangs in the air** (19).
+- **Left: in the Book's small stage the reared head can still touch a column** (the stage is 900 by 620 with the two
+  columns in it; there is no spot 210 from both). `book-preview.mp4` 6.1-6.6 s. In the real room it keeps clear.
 
 ## Found, outside this lane
 - **No designed boss has a face or words in the Book but the Bone King and the Elder Ent**: the Chieftain, the Ooze,
