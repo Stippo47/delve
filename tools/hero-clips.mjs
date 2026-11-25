@@ -15,7 +15,8 @@ const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 const port = opt('port', '8974'), out = path.resolve(opt('out', 'clips/r15/heroes')), jobs = +opt('jobs', 3);
 const only = (opt('only', '') || '').split(',').filter(Boolean), heroOnly = opt('hero', '');
-const TMP = path.join(os.tmpdir(), 'delve-lane-n-newheroes'); fs.mkdirSync(TMP, { recursive: true }); fs.mkdirSync(out, { recursive: true });
+const LANE = process.env.CLIP_LANE || 'delve-lane-n-newheroes'; // round 18: CLIP_LANE gives a run its own Edge folders, so its clean-up never stops another lane's
+const TMP = path.join(os.tmpdir(), LANE); fs.mkdirSync(TMP, { recursive: true }); fs.mkdirSync(out, { recursive: true });
 
 // What every stage script can use (runs in the page, after the battle or run has started).
 const PRELUDE = (hero) => `(async () => {
@@ -208,5 +209,5 @@ const run = ([name, c]) => new Promise((resolve) => {
 let i = 0; const next = async () => { while (i < list.length) await run(list[i++]); };
 await Promise.all(Array.from({ length: Math.min(jobs, list.length) }, next));
 // whatever Edge is still running on one of this lane's profile folders is stopped (never anyone else's)
-try { execFileSync('powershell', ['-NoProfile', '-Command', `Get-CimInstance Win32_Process -Filter "Name='msedge.exe'" | Where-Object { $_.CommandLine -like '*delve-lane-n-newheroes*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`], { stdio: 'ignore' }); } catch {}
+try { execFileSync('powershell', ['-NoProfile', '-Command', `Get-CimInstance Win32_Process -Filter "Name='msedge.exe'" | Where-Object { $_.CommandLine -like '*${LANE}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }`], { stdio: 'ignore' }); } catch {}
 console.log(`${list.length} clips -> ${path.relative(process.cwd(), out)}`);
