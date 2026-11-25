@@ -1213,3 +1213,22 @@ Round 19 (2026-11-25, free rein from midnight the designer's time): the designer
 - **Pronouns**: the Alchemist is they/them in its texts (heroes2.js, code notes); the others match the designer's use.
 - Checks: battles 528, 0 problems, 10 out of time; preview-check threw / never fired / not offered 0 / 0 / 0 (monster
   previews late 24 -> 30, wrong scenario 7 -> 8: borderline timings both ways). Clips docs/clips/sys19/ (-before beside).
+
+## Round 19, lane rogue19 (2026-11-25): the Bandit, the Shade, the Monk, the Cultist
+The designer's notes on 0.19 (`docs/riffle-log/2026-11-25-v19-v21-partial.txt`), all of them on these four. Everything is
+in docs/rogue19.md (rules, calls, numbers); clips docs/clips/rogue19/.
+- New shared rules: **Disarmed** (a status: weapon hidden and its blows and weapon abilities stopped; only what holds a
+  weapon; the Dame's Disarm folded in, a beast keeping the old softer blows), **incorporeal** (physical hits pass, magic
+  lands, no collision: the Shade's Blackout and clones, the Ghost), **Anti-heal** (heals do half), **Spun** slippery
+  turning and a Dazed burst.
+- Bandit: Hostage in Stick 'Em Up's slot (the lane's rework), Dirty Trick alternating cuts and a punch that disarms,
+  Bolas puts on Trapped (ring and three weights), trait Light Fingers (a chain of three draw cuts, each disarming).
+- Shade: daggers at her sides; Blackout follows her and makes her incorporeal; clones move as she does, in that form;
+  Shadow Walk is the 4-6 s blinking (the round 18 blink chain kept as shadowWalkChain).
+- Monk: three-part Fists combo; Flurry walks in, a late last punch, Weakened at II; Inner Peace blocks blows and shots
+  outright (gold plates); Palm Strike a great flat hand in a short cone.
+- Cultist: bolt Anti-heal; Blood Pact bleeds the friends too, its own look; Ritual Circle round one nearly dead,
+  sacrificed if it stays; Sacrifice a chain through the bleeding, bursting them; Blood Rite takes a dying friend for his
+  cooldowns (a hero goes down, as at 0).
+- Calls (say if wrong): the Palm Strike note's "low acceleration but high max turn speed" read as Spun, not the Monk's
+  own turning; a disarmed beast-free list (ARMED) from each art's look; Inner Peace's block made total for physical hits.
