@@ -133,7 +133,7 @@ export const ABILITIES = {
       cast(u, 'ability', 0.35); const a = ang(u, t); u.facing = a;
       const gap = Math.max(0, dist(u.x, u.y, t.x, t.y) - u.r - t.r), bash = (e) => { if (tier >= 2 && alive(e)) stun(w, e, 0.8); }, got = new Set(), k1 = dmgOf(u, 1.4);
       dash(w, u, 'dragFling', { a, len: gap + 44, speed: 560, tell: 0.1, dmg: dmgOf(u, 1.4), grabK: 0, fling: dmgOf(u, 1.4), knock: 280, flingHit: { stagger: 45 }, aside: tier >= 3 ? 1 : 0,
-        hit: { stagger: tier >= 3 ? 45 : 0, ab: 'shieldBash' }, brushed: (e) => { got.add(e); if (tier >= 3) bash(e); }, recover: 0.16, rest: 0.2,
+        hit: { stagger: tier >= 3 ? 45 : 0, ab: 'shieldBash' }, brushed: (e) => { got.add(e); if (tier >= 3) bash(e); }, recover: 0.16,
         flung: (e) => { got.add(e); bash(e); // III: everything in front of the shield as it lands, not just the one on it
           if (tier >= 3) for (const x of foesNear(w, u, u.x, u.y, u.r + 70)) if (!got.has(x) && angleDiff(ang(u, x), a) < 1.1) { got.add(x); hurt(w, x, k1, u, { knock: 280, heavy: true, stagger: 45, noDodge: true, ab: 'shieldBash' }); bash(x); } } });
     },
@@ -185,7 +185,7 @@ export const ABILITIES = {
       // are bowled aside as before. The run is as long as it was and the blow the same (round 13: 2x his own, 2.6 at II),
       // split between the pick-up and the throw. (It was one speed down a line, everyone thrown aside the same.)
       const a = ang(u, t), power = tier >= 2 ? 1.3 : 1, sp = u.def.speed * 1.9; u.facing = a;
-      dash(w, u, 'dragFling', { a, len: sp * (tier >= 2 ? 0.7 : 0.55) * 1.1, speed: sp, tell: 0.18, dmg: dmgOf(u, 2) * power, grabK: 0.45, fling: dmgOf(u, 2) * power * (tier >= 3 ? 0.4 : 0.5), knock: 340 * power, hit: { stagger: tier >= 3 ? 45 : 0, ab: 'charge' }, rest: 0.3 });
+      dash(w, u, 'dragFling', { a, len: sp * (tier >= 2 ? 0.7 : 0.55) * 1.1, speed: sp, tell: 0.18, dmg: dmgOf(u, 2) * power, grabK: 0.45, fling: dmgOf(u, 2) * power * (tier >= 3 ? 0.4 : 0.5), knock: 340 * power, hit: { stagger: tier >= 3 ? 45 : 0, ab: 'charge' } });
     },
   },
   groundPound: {

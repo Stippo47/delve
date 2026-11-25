@@ -195,7 +195,7 @@ export function rush(w, u, a, len, o = {}) {
     setAnim(u, 'ability', 0.2);
     if (st === 'dragFling') return dash(w, u, 'dragFling', { ...base, len, tell: o.tell || 0.12, speed: o.speed || u.def.speed * 2.6, knock: o.knock || 240, hit: { ...(o.status || {}) }, carry: o.carry });
     if (st === 'drawCut' || st === 'lance') return dash(w, u, 'drawCut', { ...base, dmg: dmg * 0.85, len, tell: Math.max(0.3, o.tell || 0), lance: st === 'lance', hold: o.hold ?? 0.2, hit: { ...hit, knock: (o.knock || 240) * 0.6 } }); // (0.85 of the old blow: the burst is too quick to step out of once it has gone)
-    if (st === 'pounce') return dash(w, u, 'pounce', { ...base, ...(t ? { t } : { x: u.x + Math.cos(a) * len, y: u.y + Math.sin(a) * len }), tell: Math.max(0.2, o.tell || 0), r: o.r || u.r + 24, air: o.air, land: o.land });
+    if (st === 'pounce') return dash(w, u, 'pounce', { ...base, ...(t ? { t } : { x: u.x + Math.cos(a) * len, y: u.y + Math.sin(a) * len }), tell: Math.max(0.2, o.tell || 0), r: o.r || u.r + 24, air: o.air ?? 0.32, close: o.close ?? 0.4, land: o.land }); // (it comes down on its mark, not short of it, after a third of a second in the air: the time there is to step out)
     if (t) return dash(w, u, st, { ...base, t, tell: Math.max(0.25, o.tell || 0) });
     return dash(w, u, 'dragFling', { ...base, len, tell: o.tell || 0.12, knock: o.knock || 240, hit: { ...(o.status || {}) } });
   }

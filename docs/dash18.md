@@ -128,7 +128,7 @@ Who the hit finds:
   Walk, the wolf's Pounce, Spear of the Sky). Enemies can be struck throughout.
 
 Numbers moved to hold each move's weight (section 4):
-- Shadow Walk's cut is 1.0x her blow (1.15x at III; it was 1.5x): the old run caught one or two on its line, the chain finds three.
+- Shadow Walk's cut is 0.9x her blow (1.15x at III; it was 1.5x): the old run caught one or two on its line, the chain finds three.
 - Iaido's cut is 0.85 of what it was (the blade's sweep is wider than the old line). Iaido III's cut back lands at 0.3
   of that: the sweep catches the ones the first cut threw off the line. Measured, the old cut back added nothing (the
   line missed them all), so III is now worth about a quarter more than I and II, where it was worth the same.

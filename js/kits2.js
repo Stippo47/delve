@@ -602,7 +602,7 @@ export const ABILITIES2 = {
       // whoever it lands on is hurt and stunned). (He jolted forward and the blow landed a moment later if it was near.)
       if (!t) return; const a = ang(u, t); u.facing = a; setAnim(u, 'ability', 0.4);
       const gap = Math.max(0, dist(u.x, u.y, t.x, t.y) - u.r - t.r);
-      dash(w, u, 'dragFling', { a, len: gap + 40, speed: 600, tell: 0.12, dmg: dmgOf(u, 1.7), grabK: 0, fling: dmgOf(u, 1.7), knock: 560, aside: 0, hit: { ab: 'thunderBlow' }, flingHit: { stagger: 60, shock: tier >= 2 ? 35 : 0 }, recover: 0.18, rest: 0.2,
+      dash(w, u, 'dragFling', { a, len: gap + 40, speed: 600, tell: 0.12, dmg: dmgOf(u, 1.7), grabK: 0, fling: dmgOf(u, 1.7), knock: 560, aside: 0, hit: { ab: 'thunderBlow' }, flingHit: { stagger: 60, shock: tier >= 2 ? 35 : 0 }, recover: 0.18,
         flung: (e) => { k2(w, { draw: 'headbutt', x: u.x + Math.cos(a) * u.r, y: u.y + Math.sin(a) * u.r, a, max: 0.45, ab: 'thunderBlow' }); w.shake = Math.max(w.shake, 7);
           if (tier >= 3 && alive(e)) flung(w, u, e, 0.8, null, (o) => { hurt(w, o, dmgOf(u, 0.8), u, { knock: 300, kAngle: a, noDodge: true, stagger: 40, ab: 'thunderBlow' }); stun(w, o, 0.6); }); } });
     },
@@ -722,7 +722,7 @@ export const ABILITIES2 = {
       // The cut is CUT x her own blow (it was 1.5x): the old run caught two on a good line and often one, the chain finds
       // its three, so each cut is lighter to keep what Shadow Walk deals where it was (a little less light at III, where
       // the old three runs each started on a fresh line).
-      const CUT = tier >= 3 ? 1.15 : 1.0;
+      const CUT = tier >= 3 ? 1.15 : 0.9;
       const runs = tier >= 3 ? 3 : 1, dmg = dmgOf(u, CUT), curse = tier >= 2 ? 30 : 0; let chaining = true, idle = 0;
       const marks = (x, y) => opponents(w, u).filter((e) => dist(x, y, e.x, e.y) < 280).sort((p, q) => dist(x, y, p.x, p.y) - dist(x, y, q.x, q.y));
       const back = () => { chaining = false; u.ethereal = !!(u.kit && u.kit.shadow); };
@@ -2068,7 +2068,7 @@ export const ABILITIES2 = {
       // length, the blows and the block are as they were. (He ran at one speed and the slam landed where he stopped.)
       if (!t) return; const a = ang(u, t), sp = u.def.speed * 2.1, T = 0.62, k1 = dmgOf(u, 1); u.facing = a;
       addBuff(u, { id: 'shieldRush', dur: T * 1.2 + 0.6, raise: true, frontBlock: 0.5, knockImmune: true });
-      dash(w, u, 'dragFling', { a, len: sp * T, speed: sp, tell: 0.16, dmg: k1, grabK: 0.8, fling: dmgOf(u, 2.15), knock: 260, aside: 0, hit: { ab: 'shieldRush' }, flingHit: { stagger: 60 }, rest: 0.25,
+      dash(w, u, 'dragFling', { a, len: sp * T, speed: sp, tell: 0.16, dmg: k1, grabK: 0.8, fling: dmgOf(u, 2.15), knock: 260, aside: 0, hit: { ab: 'shieldRush' }, flingHit: { stagger: 60 },
         brushed: (e, sd) => { if (tierOf(u, 'shieldRush') >= 2) { e.kx += Math.cos(a + sd * 1.2) * 260; e.ky += Math.sin(a + sd * 1.2) * 260; } },
         flung: (e) => { setAnim(u, 'ability', 0.3); k2(w, { draw: 'shoveAway', x: e.x, y: e.y, a, max: 0.4 }); if (tierOf(u, 'shieldRush') >= 3) stun(w, e, 1); puff(w, e.x, e.y, '#E9DDC2', 10, 110, 6, 0.45); } });
     },
@@ -2140,7 +2140,7 @@ export const ABILITIES2 = {
       // the old cut back added nothing at all to what Iaido dealt. It lands at BACK of the first cut's weight, so III is
       // worth about a quarter more than it was and no longer double.)
       const BACK = 0.3, FIRST = 0.85; // (FIRST: the blade's sweep is wider than the old line was, so the cut is a little lighter)
-      const cut = (a, tell, again, k = 1) => dash(w, u, 'drawCut', { a, len: reachOf(a), tell, hold: 0.3, settle: false, ghost: '#5E6B86',
+      const cut = (a, tell, again, k = 1) => dash(w, u, 'drawCut', { a, len: reachOf(a), tell, hold: 0.28, recover: 0.14, settle: false, ghost: '#5E6B86',
         dmg: (e) => (e.maxHp * (e.def.boss ? 0.03 : 0.1) + base) * FIRST * k, hit: { crit: true, knock: 120, ab: 'iaido' },
         mark: (e) => { stun(w, e, 0.3); addStatus(w, e, 'stagger', 25, u); }, again });
       cut(a0, 0.36, tier >= 3 ? () => ({ a: u.facing + Math.PI, len: reachOf(u.facing + Math.PI), tell: 0.16, again: null, dmg: (e) => (e.maxHp * (e.def.boss ? 0.03 : 0.1) + base) * FIRST * BACK }) : null);

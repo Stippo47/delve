@@ -100,7 +100,7 @@ export const FOES = {
     hops: 1.1, burn: 18, onDeath: (w, u) => firePatch(w, u.x, u.y, 46, 4),
     onHop: (w, u) => firePatch(w, u.x - Math.cos(u.mvA) * u.r * 0.5, u.y - Math.sin(u.mvA) * u.r * 0.5, 22, 2.5) },
   devil: { ...FOE, name: 'Devil', art: ART('devil'), headR: 56, r: 32, vr: 24, hp: 70, speed: 62, role: 'melee', range: 44, atkCd: 1.3, windup: 0.3, dmg: 11, knock: 150, arc: 0.8,
-    xp: 15, coins: [3, 6], attackAnim: 'thrust', ability: 'dash', dash: 'lance', abilCd: 4, res: { burn: 0.2 } }, // (round 18: the fork first: the draw cut with a spear)
+    xp: 15, coins: [3, 6], attackAnim: 'thrust', ability: 'dash', dash: 'lance', dashMul: 0.22, abilCd: 4, res: { burn: 0.2 } }, // (round 18: the fork first: the draw cut with a spear)
   // round 13 (lane S): the Succubus (the designer: "Succubus enemies will also charm who hits them and deal extra damage
   // to charmed foes"). Whoever lands a blow on her is charmed a little (8, once a second each), so soon they can't hurt
   // her; she hunts the charmed, hits them 40% harder, and every few seconds blows a kiss at the most charmed hero in reach to
@@ -131,7 +131,7 @@ export const FOES = {
   cherub: { ...FOE, name: 'Cherub', art: 'art/enemies/cherub.svg', headR: 40, r: 20, vr: 16, turn: 7, accel: 420, face: 7, mass: 0.6, hp: 24, speed: 66, role: 'ranged',
     range: 260, keep: 180, atkCd: 1.4, dmg: 4, temp: 0.6, commit: 0.5, xp: 6, coins: [1, 3], attackAnim: 'draw', radiance: 12, res: { radiance: 0 } },
   angel: { ...FOE, name: 'Angel', art: ART('angel'), headR: 56, r: 31, vr: 23, hp: 80, speed: 60, role: 'melee', range: 40, atkCd: 1.3, windup: 0.25, dmg: 10, knock: 150, arc: 0.9,
-    xp: 16, coins: [3, 7], attackAnim: 'thrust', ability: 'dash', dash: 'lance', abilCd: 4.5, radiance: 22, res: { radiance: 0 } },
+    xp: 16, coins: [3, 7], attackAnim: 'thrust', ability: 'dash', dash: 'lance', dashMul: 0.2, abilCd: 4.5, radiance: 22, res: { radiance: 0 } },
   seraph: { ...FOE, name: 'Seraph', art: 'art/enemies/seraph.svg', headR: 56, r: 31, vr: 23, hp: 60, speed: 52, role: 'ranged', range: 280, keep: 200, atkCd: 1.5, dmg: 7,
     proj: 'bolt', projColor: '#FFF1B0', xp: 16, coins: [3, 7], attackAnim: 'cast', radiance: 20, res: { radiance: 0 } },
 

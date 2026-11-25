@@ -71,7 +71,7 @@ function finish(w, u, A) {
   const D = A.dv; ribEnd(w, D);
   if (u.act === A) u.act = null;
   u.hop = 0; u.dvHop = 0; u.spd = 0; still(u);
-  u.atkT = Math.max(u.atkT || 0, D.o.rest ?? 0.25);
+  u.atkT = Math.max(u.atkT || 0, D.o.rest ?? (heroic(w, u) ? 0.05 : 0.25)); // (a hero is straight back to its blows, as after the old moves; an enemy takes a breath)
   if (D.o.onEnd) D.o.onEnd(D);
 }
 // One step of a dash (sim.js runAction; elites.js rushTick for the brains that run their own moves).
