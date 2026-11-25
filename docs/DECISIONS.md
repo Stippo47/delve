@@ -1394,3 +1394,4 @@ arcing hole to hole, rear-up with lunge and inhale, brood, coil); docs/BOSS-sand
   Checks: battles 530, 0 problems; preview-check 0 / 0 / 0 (the wurm's preview no longer a "wrong scenario").
 - **Found, outside the lane**: six designed bosses have no face or words in the Book; no designed boss plays the phase
   sound (sfx.js reads `u.k.phase`); a hero with nothing to aim at does not heal.
+- Round 19, chat: the IK spider "is good. Cool. Buuut, I was picturing something more on stilts, the head very high up like near where the witch would fly, much larger. Try again make this one jungle themed, spider shaped in how it has legs but not a spider." Old Longlegs stays; lane stilts19 (Fable, high) builds a second, jungle stilt-walker. And: "get another one on fixing the drake. Body moves weird, don't like how it attacks. Very slow, etc." Lane drake19 (Fable, high).
