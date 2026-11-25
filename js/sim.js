@@ -507,7 +507,7 @@ function steer(w, u, gx, gy, opts = {}) {
       if (ad < spread) danger[i] = Math.max(danger[i], k * (1 - ad / (spread * 1.6)));
     }
   };
-  for (const p of w.pillars) if (!ownBoulder(u, p) && !(p.boulder && p.owner === u)) avoidCircle(p.x, p.y, p.r, 1, 70); // (round 17, lane foes17: nor a troll's own boulder lying loose: it steered off the very boulder it was walking to)
+  for (const p of w.pillars) if (!ownBoulder(u, p) && p.owner !== u) avoidCircle(p.x, p.y, p.r, 1, 70); // (round 17, lane foes17: nor its own boulder or snowball lying loose: a troll steered off the very boulder it was walking to; a yeti walks round its ball on a circle, foes10.js)
   // telegraphed hits: don't walk into one (escaping one that's already under you is movement()'s job)
   if (w.danger.length) for (const z of w.danger) {
     if (!threatens(z, u) || inZone(z, u.x, u.y, R * 0.6)) continue;

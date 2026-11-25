@@ -54,12 +54,13 @@ const SPOTS = {
 function fetch(kind, spot, seed) {
   const S = stage(kind, seed); SPOTS[spot](S);
   { const own = S.w.pillars.filter((p) => p.owner); S.w.pillars = S.w.pillars.filter((p) => !p.owner); buildGrid(S.w); S.w.pillars.push(...own); } // (the staged rocks in the path grid, as a room's are)
-  const { run, u } = S; let t = 0, b = ballOf(u);
+  const { run, u } = S; let t = 0, b = ballOf(u); S.bx = b.x; S.by = b.y;
   while (t < MAXT) {
     if (S.kick && t >= S.kick.t) { u.kx = S.kick.kx; u.ky = S.kick.ky; S.kick = null; }
     B.updateBattle(run, DT); t += DT;
     const nb = ballOf(u); // (none: a new one being torn out of the floor, or packed: the wait goes on till one is in its hands)
-    if (nb && isHeld(u, nb) && t > 0.05) return { t, why: nb === b ? 'held' : 'new' };
+    // (a yeti: pushing it and it has moved 50 off where it lay; its hands on it against a wall isn't getting it back)
+    if (nb && isHeld(u, nb) && t > 0.05 && (!u.snow || nb !== b || Math.hypot(nb.x - S.bx, nb.y - S.by) > 50)) return { t, why: nb === b ? 'held' : 'new' };
   }
   return { t: null, why: 'never', x: Math.round(u.x), y: Math.round(u.y), bx: Math.round(b.x), by: Math.round(b.y), rest: u.bouldRest };
 }

@@ -41,8 +41,9 @@ yeti with its snowball (js/foes10.js, its own ball code). No other kind uses `bo
   gap for more than the 3 s jam.
 - foes10.js (yeti): `pushWay` picks the push direction nearest the one it wants that works (its body fits behind the
   ball, the ball has room ahead), so a ball on a wall is pushed along it or off it; when none works (a corner, a
-  pocket) it **hauls the ball out backwards**, hands on the front of it (`haulTick`; `snowTick` drags the ball after
-  its hands); it walks round its ball on a circle just clear of it; a ball it gets nowhere with for 9 s, or hauls
+  pocket; the room's edge counts as a wall here) it **hauls the ball out backwards**, hands on the front of it (`haulTick`; `snowTick` drags the ball after
+  its hands) until it has room to walk round it and push it the way it wants; it walks round its ball on a circle
+  just clear of it (one way round, held 2.5 s; it no longer steers off its own ball, sim.js); a ball it gets nowhere with for 9 s, or hauls
   twice with no way to push it, it leaves to melt and packs another.
 
 ### Numbers
@@ -55,10 +56,11 @@ its hands within 6 s; staged-before.txt / staged-after.txt):
 | troll / rock troll: open, wall, corner, pillar, pocket, friends, knocked | 20/20 each | 20/20 each |
 | troll / rock troll: in a ring of rocks it can't enter | 0/20 (never) | a new boulder in hand in 6.0 s median, 20/20 |
 | elite rock troll (recall), median | 5.1-5.4 s (19/20 in three spots) | 1.3-1.6 s, 20/20 everywhere (ring too) |
-| yeti: against a wall | 0/20 | 20/20 (4.5 s) |
-| yeti: in a corner | 0/20 | 20/20 (5.2 s, hauled out) |
-| yeti: in a pocket of rocks | 0/20 | 20/20 (4.6 s) |
-| yeti: in a ring it can't enter | 0/20 | a new ball in 1.9 s, 20/20 |
+| yeti, pushing it and it has rolled 50 off where it lay, within 15 s (staged-yeti-*.txt; open floor: 5.0 / 4.8 s) | | |
+| yeti: against a wall | 0/20 (never) | 20/20, 8.1 s (hauled off it, then pushed and heaved) |
+| yeti: in a corner (it starts 550 away) | 0/20 (never) | 20/20, 11.5 s (hauled out about 190, walks round, pushes) |
+| yeti: in a pocket of rocks | 0/20 (never) | nowhere to stand: it leaves it, a new ball in 1.9 s, 20/20 |
+| yeti: in a ring it can't enter | 0/20 (never) | a new ball in 1.9 s, 20/20 |
 
 Dungeon runs (`--dungeon`, only these kinds in the rooms, the starting party at level 6, 10 runs a dungeon; every
 time it lets go, how long until it has a boulder in its hands again; before-/after-dungeon-*.json):
@@ -68,11 +70,13 @@ time it lets go, how long until it has a boulder in its hands again; before-/aft
 | trolls, Warren | 465/567 (82%) | 386/411 (94%) | 2.1 -> 1.4 s |
 | trolls, Crypt | 423/609 (69%) | 602/623 (97%) | 2.9 -> 1.1 s |
 | trolls, Foundry | 234/297 (79%) | 239/249 (96%) | 2.0 -> 1.2 s |
-| yetis, Frost Hollow | 329/411 (80%) | 437/546 (80%) | 3.7 -> 3.0 s |
-| yetis, Crypt | 407/510 (80%) | 507/597 (85%) | 3.4 -> 2.4 s |
+| yetis, Frost Hollow | 329/411 (80%) | 348/434 (80%) | 3.7 -> 3.4 s |
+| yetis, Crypt | 407/510 (80%) | 388/495 (78%) | 3.4 -> 3.5 s |
 
-Fewer lets-go for trolls after: fewer jam releases. The yeti's remaining slow ones are mostly by design: it leaves
-its ball to brawl with a hero at its side (2.5-4 s), and two or three yetis' balls jostle in one room.
+Fewer lets-go for trolls after: fewer jam releases. The yeti in real rooms is about even: the hard spots that never
+ended now end, but the haul is slow on purpose (0.45 of its pace, up to 4.5 s) and counts as waiting here; most slow
+ones are by design: it leaves its ball to brawl with a hero at its side (2.5-4 s), and two or three yetis' balls
+jostle in one room.
 
 ## Job 2: segmented snake movement
 

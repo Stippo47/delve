@@ -3,24 +3,24 @@
  "fights": {},
  "dungeon": {
   "frost": {
-   "releases": 586,
-   "back": 557,
-   "quick": 485,
+   "releases": 434,
+   "back": 410,
+   "quick": 348,
    "lost": 0,
    "broke": 0,
    "died": 0,
-   "mean": 2.9,
-   "p90": 6.8
+   "mean": 3.4,
+   "p90": 8.9
   },
   "crypt": {
-   "releases": 567,
-   "back": 535,
-   "quick": 477,
+   "releases": 495,
+   "back": 461,
+   "quick": 388,
    "lost": 0,
    "broke": 0,
    "died": 0,
-   "mean": 2.6,
-   "p90": 6.2
+   "mean": 3.5,
+   "p90": 8.1
   }
  }
 }

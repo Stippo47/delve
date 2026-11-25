@@ -1038,7 +1038,8 @@ centipedes from florr.io ... in bursts and in a slither motion". Everything meas
 - **The yeti** (foes10.js): it pushes the ball the nearest way it can (its body fits behind, room ahead), so a ball on
   a wall goes along or off it; with no way (a corner, a pocket) it hauls the ball out backwards, hands on its front;
   it walks round its ball, not into it; a ball it gets nowhere with for 9 s it leaves to melt and packs another.
-  Staged wall / corner / pocket: 0/20 -> 20/20.
+  Staged wall / corner (the ball pushed 50 off where it lay within 15 s): 0/20 -> 20/20 (8 s, 11.5 s); in real
+  rooms about even (80% back within 6 s before and after: the haul is slow on purpose).
 - **Chains** (families.js; the sand serpent and the chain crawler; the Sand Wurm keeps its own body): a trail laid by
   distance, each link a fixed distance along it (gap = a link's length: serpent 26 -> 52, crawler 28 -> 38; bodies
   longer: 156 -> 357, 224 -> 337); equal links and a tapering tail link (smaller hit circle); a knock back into its body
