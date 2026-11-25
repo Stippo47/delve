@@ -719,11 +719,14 @@ function drawPartsUnit(ctx, u, w) {
   if (u.ethereal && !u.exiting && !u.hiddenIn) alpha *= 0.5;
   if (X && X.alpha) alpha *= X.alpha(u, w);
   if (DV && DV.body && DV.body.alpha) alpha *= DV.body.alpha;
-  const mode = u.downed ? 'grey' : u.flashT > (u.def.flashAt ?? 0.06) ? 'flash' : 'normal'; // (lane B, bosses3: def.flashAt, as in washesOf)
+  const struck = !u.downed && u.flashT > (u.def.flashAt ?? 0.06);
+  // round 19 (lane melee19, "big white puffs hiding the hero on impact"): a body struck flashes a pale wash, its picture
+  // still readable through it (it went solid white, a blob over whatever stood beside it) (lane B, bosses3: def.flashAt)
+  const mode = u.downed ? 'grey' : 'normal';
   if (u.act && u.act.type === 'dash' && !u.act.dv && u.kind === 'twinfang') afterimages(ctx, u, w, set, pose, sizeU); // (round 18: her Dash is one of dashes.js's now: dashGhosts above)
   else u._trail = null;
   // (round 15, lane E: def.ownLook, a summon drawn in its own colours: the code drawings it replaces were never turned blue-grey)
-  drawRig(ctx, set, pose, { mode, alpha, washes: washesOf(u, w), shift: isOurs(u) && u.kind !== 'minion' && !u.def.ownLook, /* round 10: the raised dead stay plain grey */ border: mode === 'normal' ? borderOf(u, w) : null });
+  drawRig(ctx, set, pose, { mode, alpha, washes: struck ? [['#FFFFFF', 0.55 * Math.min(1, u.flashT / 0.12)]] : washesOf(u, w), shift: isOurs(u) && u.kind !== 'minion' && !u.def.ownLook, /* round 10: the raised dead stay plain grey */ border: mode === 'normal' ? borderOf(u, w) : null });
   if (pose.glow && mode === 'normal') castGlow(ctx, pose.glow, w.time);
   if (u.kind === 'archer' && mode === 'normal') nockedArrow(ctx, u, set, pose, sizeU);
   if (X && X.top && mode !== 'grey') X.top(ctx, u, w);

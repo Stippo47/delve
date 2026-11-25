@@ -70,7 +70,7 @@ const DRAW = {
   rally(ctx, f, w, layer) {
     if (layer !== 'air') return; const k = k01(f.t / f.max), [vx, vy] = upVec();
     ctx.save(); ctx.globalAlpha *= 1 - k * k;
-    if (k < 0.3) lit(ctx, () => glowDisc(ctx, f.x, f.y, 40, (f.cols || ['#FFE7A0'])[0], 0.5 * (1 - k / 0.3)));
+    if (k < 0.3) lit(ctx, () => glowDisc(ctx, f.x, f.y, 30, (f.cols || ['#FFE7A0'])[0], 0.22 * (1 - k / 0.3))); // (round 19: dimmer, the body stays readable)
     for (let i = 0; i < 3; i++) { const q = k01(k * 1.4 - i * 0.18); if (q <= 0) continue; const up = f.r + 6 + 34 * easeOut(q) + i * 2;
       upright(ctx, f.x + vx * up, f.y + vy * up, () => inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-9, 5); ctx.lineTo(0, -3); ctx.lineTo(9, 5); }, (f.cols || ['#F2C14E', '#FFE7A0'])[i % 2], 4)); }
     ctx.restore();
@@ -612,7 +612,7 @@ export { crater };
 // blow's reach, o.dust / o.chips its colours, o.hold how long the dent stays (s). The mark's own time is stretched to it.
 function crater(ctx, m, k, layer, o) {
   if (!m._held) { m._held = true; m.max = Math.max(m.max, o.hold || 0.8); } // (fxkit gives a slam 0.42 s: the dent stays longer)
-  const T = m.t, R = o.R, e = easeOut(k01(T / 0.32)), fade = k01((m.max - T) / 0.35), D = R * (o.dent || 0.5);
+  const T = m.t, R = o.R, e = easeOut(k01(T / 0.32)), fade = k01((m.max - T) / 0.35), D = R * (o.dent || 0.42);
   if (layer === 'ground') {
     ctx.save(); ctx.globalAlpha *= fade;
     lit(ctx, () => glowDisc(ctx, m.x, m.y, R * (0.5 + 0.6 * e), '#FFF4DC', 0.22 * k01(1 - T / 0.3))); // light thrown on the floor
@@ -621,12 +621,12 @@ function crater(ctx, m, k, layer, o) {
     disc(ctx, m.x + D * 0.12, m.y + D * 0.14, D * 0.72, 'rgba(40,30,24,0.22)'); // its shadowed far side
     ctx.restore(); return;
   }
-  if (T < 0.12) lit(ctx, () => glowDisc(ctx, m.x, m.y, R * 1.25, '#FFFFFF', 0.85 * (1 - T / 0.12)));
+  if (T < 0.1) lit(ctx, () => glowDisc(ctx, m.x, m.y, R * 0.7, '#FFFFFF', 0.6 * (1 - T / 0.1))); // (round 19: small, so the body beside it stays readable)
   // a low ring of dust rolling out to the reach: soft cream puffs, no ink (inked, they read as grey bubbles)
   const q = k01(T / 0.5);
   if (q < 1) { ctx.save(); const n = 10, rr = R * (0.4 + 0.65 * easeOut(q));
-    for (let i = 0; i < n; i++) { const b = i / n * TAU + hash(m.seed, i) * 0.4, pr = R * (0.2 + 0.08 * hash(i, m.seed)) * (1 - 0.45 * q) + 2, x = m.x + Math.cos(b) * rr, y = m.y + Math.sin(b) * rr;
-      ctx.globalAlpha = 0.7 * (1 - q) * (1 - q); disc(ctx, x, y, pr, o.dust); ctx.globalAlpha = 0.6 * (1 - q) * (1 - q); disc(ctx, x - pr * 0.2, y - pr * 0.25, pr * 0.6, '#FFF8E6'); }
+    for (let i = 0; i < n; i++) { const b = i / n * TAU + hash(m.seed, i) * 0.4, pr = R * (0.13 + 0.05 * hash(i, m.seed)) * (1 - 0.45 * q) + 2, x = m.x + Math.cos(b) * rr, y = m.y + Math.sin(b) * rr;
+      ctx.globalAlpha = 0.55 * (1 - q) * (1 - q); disc(ctx, x, y, pr, o.dust); ctx.globalAlpha = 0.6 * (1 - q) * (1 - q); disc(ctx, x - pr * 0.2, y - pr * 0.25, pr * 0.6, '#FFF8E6'); }
     ctx.restore(); }
   // stone chips kicked up and falling back
   const c = k01(T / 0.42);
@@ -685,7 +685,7 @@ const hasHook = (u, id) => !!(u && u.h2 && u.h2.some((h) => h.id === id));
 DRAW.lastStand = (ctx, f, w, layer) => {
   const u = f.unit, x = alive2(u) ? u.x : f.x, y = alive2(u) ? u.y : f.y, k = k01(f.t / f.max), e = easeOut(k);
   if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 1 - k; for (let i = 0; i < 12; i++) { const b = i / 12 * TAU + 0.3, r0 = 20 + 90 * e; K.streak(ctx, x + Math.cos(b) * r0, y + Math.sin(b) * r0, b, 0, 22 * (1 - k) + 6, 4, i % 2 ? '#F2C14E' : '#FFE7A0', '#FFFBEA'); } ctx.restore(); return; }
-  if (k < 0.35) lit(ctx, () => glowDisc(ctx, x, y, 70, '#FFE7A0', 0.75 * (1 - k / 0.35)));
+  if (k < 0.35) lit(ctx, () => glowDisc(ctx, x, y, 50, '#FFE7A0', 0.3 * (1 - k / 0.35))); // (round 19: dimmer, the body stays readable)
 };
 // Challenge: the friend she shoves clear: a puff of dust and three chevrons pointing the way they go
 DRAW.shoveAway = (ctx, f, w, layer) => {

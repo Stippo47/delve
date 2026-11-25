@@ -247,7 +247,7 @@ function strokeString(g, pts, color, w) {
 // given. shift: our summons' cool hue (round 8; they wore a purple outline in round 7).
 const hidden = (pose, L) => !!(pose && pose[L.id] && pose[L.id].hide); // a part that's away (the Falconer's falcon in flight)
 export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = false, border = null) {
-  const Ls = underFirst(set.layers, pose && pose.under), str = set.string ? stringPts(set, pose) : null, strLayer = set.string && set.string.layer;
+  const Ls = overLast(underFirst(set.layers, pose && pose.under), pose && pose.over), str = set.string ? stringPts(set, pose) : null, strLayer = set.string && set.string.layer;
   if (border && mode === 'normal') {
     const ga = g.globalAlpha; g.globalAlpha = ga * (border.a ?? 1);
     for (const L of Ls) { if (hidden(pose, L)) continue; const b = bordered(L, set.k, border.color), p = b.pad / set.k;
@@ -273,6 +273,8 @@ export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = fals
   }
 }
 
+// round 19 (lane melee19): a part raised over the body (pose.over: Bearskin's club over his head) is drawn last
+function overLast(Ls, ids) { if (!ids) return Ls; const set = new Set([].concat(ids)), out = Ls.filter((l) => !set.has(l.id)); return out.concat(Ls.filter((l) => set.has(l.id))); }
 // round 19 (lane sys19): a free hand (pose.under) is drawn just before the body, so it sits at the body's side, behind it
 function underFirst(Ls, id) {
   if (!id) return Ls; const i = Ls.findIndex((l) => l.id === id), b = Ls.findIndex((l) => l.id === 'body');
@@ -355,6 +357,22 @@ function readyTarget(u) {
   return gap <= (d.range || 20) + 34 ? clamp(1 - u.atkT / 0.2, 0, 1) : 0;
 }
 
+// Round 19 (lane melee19): where a part turns (its data-pivot), and the striking hand's wound-back and struck-through
+// poses for a unit's plain blow, as poseFor plays them, in that part's own terms (fxkit draws a blow's slash along the
+// path its weapon really takes between the two: style.tip)
+const slamMove = (sty) => ({ ...MOVES.slam, W: sty.slamW || MOVES.slam.W, S: sty.slamS || MOVES.slam.S }); // (style.slamS: where that hammer's head comes down)
+export function partPivot(url, id) { const e = arts.get(url); const L = e && e.rig && e.rig.layers.find((l) => l.id === id); return L ? L.pivot : null; }
+export function blowPoses(u) {
+  const d = u.def, sty = STYLE[u.kind] || d.style || {}, url = d.art, base = d.attackAnim || 'swing';
+  const mv = (sty.slamPose && base === 'swing' ? slamMove(sty) : MOVES[base]) || MOVES.swing;
+  const amp = base === 'swing' ? clamp((d.arc || 1.9) / 1.9, 0.85, 1.35) * (sty.swingAmp || 1) : 1;
+  let W = scaleP(mv.W, amp), S = scaleP(mv.S, amp);
+  if (sty.backhand && base === 'swing') { W = { ...W, r: -W.r }; S = { ...S, r: -S.r }; }
+  if ((sty.straight || sty.stab) && base === 'thrust') { const k = sty.stab || 1; W = { r: 0, dx: 0, dy: W.dy * k }; S = { r: 0, dx: 0, dy: S.dy * k }; }
+  const hand = sty.hand && rigHas(url, sty.hand) ? sty.hand : rigHas(url, 'arm-r') ? 'arm-r' : 'arm-l';
+  return hand === 'arm-r' ? { hand, W, S, base } : { hand, W: mirror(W), S: mirror(S), base };
+}
+
 export function poseFor(u, w, dt) {
   const d = u.def, sty = STYLE[u.kind] || d.style || {}, url = d.art; // d.style: the new heroes' touches (heroes2.js)
   const pose = {};
@@ -362,8 +380,8 @@ export function poseFor(u, w, dt) {
   if (d.pose) return (u._pose = d.pose(u, w, dt));      // lane B (bosses3): a boss that poses its own parts (the angel's wheels)
   const kind = (u.anim && u.anim.kind) || d.attackAnim || (d.role === 'ranged' ? 'draw' : d.role === 'skirmish' ? 'thrust' : 'swing');
   const base = kind === 'ability' ? (d.attackAnim || 'swing') : kind;
-  const mv = (sty.slamPose && base === 'swing' && kind !== 'ability' ? MOVES.slam : MOVES[base]) || MOVES.swing; // (round 19: style.slamPose, the Griffon's and Warhelm's hammer)
-  const amp = base === 'swing' ? clamp((d.arc || 1.9) / 1.9, 0.85, 1.35) : 1;
+  const mv = (sty.slamPose && base === 'swing' && kind !== 'ability' ? slamMove(sty) : MOVES[base]) || MOVES.swing; // (round 19: style.slamPose, the Griffon's and Warhelm's hammer)
+  const amp = (base === 'swing' ? clamp((d.arc || 1.9) / 1.9, 0.85, 1.35) : 1) * (base === 'swing' && kind !== 'ability' ? sty.swingAmp || 1 : 1); // (round 19: style.swingAmp, a wider swing: the Dame)
   // which arm this blow uses
   if (u.anim && u.anim !== u._lastAnim) { u._lastAnim = u.anim; u._n = (u._n || 0) + 1; u._ready = 0; }
   const dual = sty.dual && rigHas(url, 'arm-l');

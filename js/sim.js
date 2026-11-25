@@ -1113,12 +1113,13 @@ export function hurt(w, u, amount, src, o = {}) {
   if (w.stats) tallyHurt(w, me, src, amt, o);
   if (!o.dot) cue('hit', u, src, { amt, crit: o.crit, heavy: o.heavy, shot: o.shot, blocked: u.blockedAt === w.time });
   if (!o.dot) {
-    u.hitT = 0.16; u.hitA = fromA; u.hitBlock = onShield; u.hitZap = !!o.shock; // (the renderer: no star for lightning, round 10)
+    u.hitT = 0.16; u.hitA = fromA; u.hitBlock = onShield; u.hitZap = !!o.shock || !!o.noMark; // (round 19, melee19: o.noMark, a blow that draws its own hit: the Maul) // (the renderer: no star for lightning, round 10)
     // the impact point: on the body's edge facing the blow, or on the shield's face (pushed out a little further)
     const back = fromA + Math.PI;
     const sa = onShield ? u.facing + clamp(wrapAngle(back - u.facing), -0.7, 0.7) : back;
     const sr = o.omni ? 0 : onShield ? u.r * 1.05 + 4 : u.r * 0.85; // omni: a blow from everywhere at once (Smite, round 9)
     u.hitX = u.x + Math.cos(sa) * sr; u.hitY = u.y + Math.sin(sa) * sr;
+    if (o.at) { u.hitX = o.at.x; u.hitY = o.at.y; } // (round 19, melee19: where the weapon really met it: Bulwark's spear, held off to his side)
     const big = o.heavy || o.crit || amt >= 14;
     if (o.omni) { u.hitOmni = true; for (let i = 0; i < 6; i++) sparks(w, u.x, u.y, i / 6 * TAU, 1, o.crit ? '#FFE14D' : '#FFFBEA', 1); }
     else if (onShield) sparks(w, u.hitX, u.hitY, sa, 6, '#FFF4C8', 1.1); // a clang: sparks thrown back off the shield
@@ -1130,7 +1131,7 @@ export function hurt(w, u, amount, src, o = {}) {
     // the body reacts: its stride breaks for a moment (heroes only on big hits, so a swarm can't pin them in place)
     if (!heroic(w, u) || big) { u.flinchT = Math.max(u.flinchT || 0, onShield ? 0.06 : big ? 0.2 : 0.1); u.spd *= onShield ? 0.85 : 0.6; }
     if (src && (src.kind === 'knight' || src.def.heroRole === 'tank') && (w.battle ? u.team !== src.team : u.team === 'enemy')) { u.tauntBy = src; u.tauntT = 3; }
-    u.flashT = 0.12; textU(w, u.x + rrange(-6, 6), u.y, u.r + 4, Math.round(amt), o.crit ? '#FFE14D' : '#FFFFFF', o.crit ? 1.3 : 1, true); }
+    u.flashT = o.noMark ? 0.04 : 0.12; textU(w, u.x + rrange(-6, 6), u.y, u.r + 4, Math.round(amt), o.crit ? '#FFE14D' : '#FFFFFF', o.crit ? 1.3 : 1, true); }
   else if (!o.quiet) { u.dotAcc += amt; if (u.dotAcc >= 4) { textU(w, u.x, u.y, u.r, Math.round(u.dotAcc), o.color || '#FF9A55', 0.75); u.dotAcc = 0; } }
   if (src && alive(src)) { const ls = src.buffs.reduce((a, b) => a + (b.lifesteal || 0), 0); if (ls) heal(w, src, amt * ls, src); }
   if (o.knock && !knockImmune(u)) {
@@ -1504,7 +1505,9 @@ function meleeSwing(w, u, single) {
   const targets = single && !wild ? (u.target && inMeleeArc(u, u.target, 6) ? [u.target] : []) : w.units.filter((o) => alive(o) && o !== u && !o.ethereal && (o.team !== u.team || wild) && inMeleeArc(u, o, 6));
   u.lungeT = 0.18;
   w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, color: u.team === 'hero' ? '#FFFFFF' : '#FFD2C2', src: u });
-  for (const o of targets) hurt(w, o, hitDmg(u) * rrange(0.9, 1.1), u, blowOf(d));
+  const sx = d.style && d.style.stabX, a = u.facing; // round 19 (melee19): a spear held off to one side meets the foe on its line
+  for (const o of targets) { const b = blowOf(d); if (sx) { const f = (o.x - u.x) * Math.cos(a) + (o.y - u.y) * Math.sin(a), l = -(o.x - u.x) * Math.sin(a) + (o.y - u.y) * Math.cos(a), lc = clamp(sx, l - o.r * 0.8, l + o.r * 0.8), fc = f - Math.sqrt(Math.max(0, o.r * o.r * 0.7 - (lc - l) * (lc - l)));
+      b.at = { x: u.x + Math.cos(a) * fc - Math.sin(a) * lc, y: u.y + Math.sin(a) * fc + Math.cos(a) * lc }; } hurt(w, o, hitDmg(u) * rrange(0.9, 1.1), u, b); }
 }
 // What a def's own blow carries (round 9: a def's blow can carry any build-up; round 10: an enemy's chill too, the
 // frost wolf's bite; round 13: the new five too; round 15: Shackled, the Warden's chain). A swing and a slime's

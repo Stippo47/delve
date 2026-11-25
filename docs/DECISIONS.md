@@ -1260,5 +1260,19 @@ Clips (not in git): docs/clips/melee19/before (as it was), w2-w4 (after); tools/
   8.9 at I, 7.1 -> 7.9 at III, inside the noise). The windup on the two warhammers (0.2 s, the blow lands then): Warhelm's
   dmg/s 7.25 -> 7.40 (I), 11.0 -> 10.8 (III); the Griffon's 3.52 -> 3.63 (I), 6.00 -> 4.45 (III, one noisy row: his attack
   share 52% -> 48%).
+- **Second pass (the coordinator's frame check of the clips)**. Why the first clips didn't show it: the clips were recording
+  the real ability code, but (a) the poses an ability holds (Parry, Toss, Maul) went through u._force and the Maul's club was
+  posed about the wrong axis and drawn under the pelt; (b) every struck body went solid white for 0.12 s (the "white puffs"
+  hiding heroes and foes); (c) the default cast star (fxkit castFlash) was the Maul's "weird star"; (d) the camera framed the
+  fight, not the move; (e) the attack arcs were drawn as a centred crescent, not where the weapon goes. Fixed: **slashes follow
+  the weapon** (fxkit tipSlash: style.tip names the weapon's point in the art; the arc is the band that point really sweeps
+  between parts.js's wound-back and struck-through poses, from where the body is; a stab is a streak down the line the point
+  travels; the slam lands where the hammer head comes down) for the Old Guard, Dame, Griffon, Bulwark, Bearskin, Warhelm and
+  Haymaker; a struck body now flashes a pale wash, its picture readable; the Maul hauls the club over his head (drawn over
+  him, parts.js pose.over) and squashes the foe flat, with no star and no white pop; Bear Claws' paws swing (kits2 CLAW_KEYS)
+  and the claw marks are drawn along the claws' real path; Parry's pose lies the sword across his front; Rally's three waves
+  0.28 s apart and a gold band of light out to its reach; Hibernate lies him flat, a warm pool under him, big Zs; the waking
+  roar without the dust cloud; the bale shows ahead of him, the hay burst thrown away from him; Bulwark's hit lands on the
+  spear's line (o.at); the Stormhammer doesn't burst when caught. Bear Claws re-measured: share 17% (I) / 28% (III).
 - Left to sys19 (shared): the taunted V mark, thrown hammers looking like the held ones, airborne drawing and collisions, free
   hands and shoulder pivots, one shadow system.

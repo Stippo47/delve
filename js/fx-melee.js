@@ -11,7 +11,10 @@
 //   Haymaker    hayTrail, hayBurst (Hay Bale)
 import { TAU, clamp, INK } from './util.js';
 import { inked, inkLine, glowDisc, star, upright, upVec, hash, easeOut } from './fx.js';
-import { DRAW2, SLAM2, crater } from './fx2.js';
+import { DRAW2, SLAM2, SIG2, crater } from './fx2.js';
+// (round 19: these draw their own cast; the kit's default cast star, a white four-point star at the hand, was the "weird
+// star" the designer saw on the Maul)
+for (const id of ['maul', 'hibernate', 'bearRoar', 'pommelStrike', 'rallyCry', 'toss', 'forkCharge', 'swoop', 'wingShield', 'skullSplitter']) SIG2[id] = () => false;
 import { OUTLINE } from './render.js';
 
 const k01 = (v) => clamp(v, 0, 1);
@@ -51,40 +54,42 @@ const lifted = (u) => { const [ux, uy] = upVec(), h = (u.hop || 0) * 0.9; return
 // Rally: a war cry. Gold sound bursts thrown out to his front and sides, three waves, and a gold light washing out over
 // the floor to the cry's real reach (240), no ring; the friends it reaches get their own chevrons (fx2 'rally').
 DRAW2.warCry = (ctx, f, w, layer) => {
-  const u = alive2(f.unit) ? f.unit : null, x = u ? u.x : f.x, y = u ? u.y : f.y, k = k01(f.t / f.max), fa = u ? u.facing : 0;
-  if (layer === 'ground') { const e = easeOut(k01(k / 0.6)); lit(ctx, () => glowDisc(ctx, x, y, f.r * (0.35 + 0.65 * e), '#F2C14E', 0.22 * (1 - k))); return; }
-  if (k < 0.18) lit(ctx, () => glowDisc(ctx, x, y, 60, '#FFE7A0', 0.7 * (1 - k / 0.18)));
+  const u = alive2(f.unit) ? f.unit : null, x = u ? u.x : f.x, y = u ? u.y : f.y, k = k01(f.t / f.max), fa = u ? u.facing : 0, T = f.t;
+  if (layer === 'ground') { // gold light poured over the floor out to the cry's reach, brightest at its edge (a soft band, no line)
+    const e = easeOut(k01(T / 0.5)), R = f.r * (0.3 + 0.7 * e), a = 0.5 * (1 - k01((T - 0.6) / 0.6));
+    if (a <= 0) return; const g = ctx.createRadialGradient(x, y, R * 0.2, x, y, R);
+    g.addColorStop(0, `rgba(242,193,78,${0.16 * a})`); g.addColorStop(0.82, `rgba(242,193,78,${0.42 * a})`); g.addColorStop(1, 'rgba(242,193,78,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, TAU); ctx.fill(); return; }
+  if (T < 0.12) lit(ctx, () => glowDisc(ctx, x, y, 34, '#FFE7A0', 0.3 * (1 - T / 0.12)));
+  // three waves of the shout, 0.28 s apart, each its own burst of thick gold sound strokes out of his front and sides
   const r0 = (u ? u.vr : 24) + 8, dirs = [-1.5, -0.75, 0, 0.75, 1.5];
-  for (let wv = 0; wv < 3; wv++) { const q = k01(k * 1.7 - wv * 0.22); if (q <= 0 || q >= 1) continue; const e = easeOut(q), R = r0 + 64 * e;
-    ctx.save(); ctx.globalAlpha *= (1 - q) * (1 - q * 0.5);
-    for (const d of dirs) { const b = fa + d, half = 0.3 - 0.1 * q; inkLine(ctx, () => { ctx.beginPath(); ctx.arc(x, y, R, b - half, b + half); }, wv % 2 ? '#FFE7A0' : '#F2C14E', 5.5 * (1 - 0.5 * q) + 1.5); }
+  for (let wv = 0; wv < 3; wv++) { const q = k01((T - wv * 0.28) / 0.5); if (q <= 0 || q >= 1) continue; const e = easeOut(q), R = r0 + 70 * e;
+    ctx.save(); ctx.globalAlpha *= 1 - q * q;
+    for (const d of dirs) { const b = fa + d, half = 0.28 - 0.08 * q; inkLine(ctx, () => { ctx.beginPath(); ctx.arc(x, y, R, b - half, b + half); }, wv % 2 ? '#FFE7A0' : '#F2C14E', 6 * (1 - 0.45 * q) + 1.5); }
     ctx.restore(); }
 };
 // Parry (round 19, "Don't like look. Good implementation though"): no bar of light any more. He holds the greatsword
 // itself flat across his front (kits2.js PARRY_POSE, through parts.js), and a cold glint runs up and down its edge while
-// he waits. The blade's ends are read off the posed sprite (art/heroes/oldguard.svg: the grip at 94,161, the point
-// 120 down the blade, turned 50 degrees).
-const OG_PIVOT = [105, 152], OG_BASE = [83.3, 170], OG_TIP = [3.6, 236.8];
+// he waits. The blade's ends are read off the posed sprite.
+const OG_PIVOT = [105, 152], OG_BASE = [81.7, 171.3], OG_TIP = [43.4, 203.4]; // (the blade's root and point: #ogBlade 16 and 66 down it, at 94,161 turned 50 degrees)
 DRAW2.parryGuard = (ctx, f, w, layer) => {
   const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const P = u.kit && u.kit.parry; ended(f, !(P && P.until > w.time && P.n > 0));
   if (w.time - ((P && P.caughtT) ?? -9) < 0.32) return; // (the guard drops for the riposte)
   const a = life(f, 0.15, 0.2), b0 = spritePt(u, ...OG_BASE, 'arm-r', OG_PIVOT), b1 = spritePt(u, ...OG_TIP, 'arm-r', OG_PIVOT), run = (Math.sin(f.t * 5) + 1) / 2;
   const gx = b0.x + (b1.x - b0.x) * run, gy = b0.y + (b1.y - b0.y) * run;
   ctx.save(); ctx.globalAlpha *= a;
-  lit(ctx, () => { glowDisc(ctx, gx, gy, 16, '#FFFFFF', 0.8); ctx.globalAlpha *= 0.4; ctx.strokeStyle = '#DDF0FF'; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(b0.x, b0.y); ctx.lineTo(b1.x, b1.y); ctx.stroke(); });
-  inked(ctx, () => star(ctx, gx, gy, 5.5, 4, 0.3, f.t * 3), '#FFFFFF');
+  lit(ctx, () => { glowDisc(ctx, gx, gy, 14, '#FFFFFF', 0.9); ctx.globalAlpha *= 0.55; ctx.strokeStyle = '#DDF0FF'; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(b0.x, b0.y); ctx.lineTo(b1.x, b1.y); ctx.stroke(); });
   ctx.restore();
 };
 // a blow caught on the blade (Parry; the Dame's Riposte on her shield): a white clash, steel sparks spraying off the
 // way the blow came, a short bright crescent where the blade turned it
 DRAW2.parry = (ctx, f, w, layer) => {
   if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
-  if (k < 0.3) lit(ctx, () => glowDisc(ctx, f.x, f.y, 42, '#FFFFFF', 0.9 * (1 - k / 0.3)));
+  if (k < 0.2) lit(ctx, () => glowDisc(ctx, f.x, f.y, 24, '#FFFFFF', 0.6 * (1 - k / 0.2))); // (small: the body behind it stays readable)
   ctx.save(); ctx.globalAlpha *= 1 - k * k;
   // the turn: a crescent of steel light across the line of the blow
   const half = 0.9; inkLine(ctx, () => { ctx.beginPath(); ctx.arc(f.x - Math.cos(f.a) * 10, f.y - Math.sin(f.a) * 10, 18 + 10 * e, f.a - half, f.a + half); }, '#EEF3F8', 5 * (1 - k) + 1);
   for (let i = 0; i < 7; i++) { const b = f.a + (hash(i, f.x | 0) - 0.5) * 2.2, d = 6 + 34 * e * (0.6 + 0.6 * hash(f.y | 0, i)); streak(ctx, f.x + Math.cos(b) * d * 0.4, f.y + Math.sin(b) * d * 0.4, b, 0, d * 0.6 + 6 * (1 - k), 3, i % 2 ? '#FFF4C8' : '#FFFFFF', null); }
-  if (k < 0.25) inked(ctx, () => star(ctx, f.x, f.y, 13 * (1 - k / 0.25) + 3, 4, 0.28, 0.4), '#FFFFFF');
   ctx.restore();
 };
 // Haste (round 19, the Rally's haste: "better visual effect"): a hasted body leaves pale blue copies of itself behind as
@@ -93,7 +98,7 @@ DRAW2.parry = (ctx, f, w, layer) => {
 DRAW2.haste = (ctx, f, w, layer) => {
   const u = f.unit; if (layer !== 'ground' || !alive2(u)) return; ended(f, !(u.buffs && u.buffs.some((b) => b.id === 'haste')));
   const sp = Math.hypot(u.vx || 0, u.vy || 0), a = life(f, 0.1, 0.3), m = sp > 8 ? Math.atan2(u.vy, u.vx) : u.facing;
-  if (sp > 24 && !u.hidden && f.t < f.max - 0.25) { const tr = u._dvTrail || (u._dvTrail = []); if (!f.lastT || w.time - f.lastT > 0.06) { f.lastT = w.time; tr.push({ x: u.x, y: u.y, f: u.facing, t: w.time, col: '#9FDDF6' }); } }
+  if (sp > 12 && !u.hidden && f.t < f.max - 0.25) { const tr = u._dvTrail || (u._dvTrail = []); if (!f.lastT || w.time - f.lastT > 0.05) { f.lastT = w.time; tr.push({ x: u.x, y: u.y, f: u.facing, t: w.time, col: '#9FDDF6' }); } }
   ctx.save(); ctx.globalAlpha *= a * clamp(sp / 50, 0, 1);
   for (let i = -1; i <= 1; i++) { const ph = (f.t * 3.4 + hash(i + 2, u.id)) % 1, nx = -Math.sin(m) * i * 12, ny = Math.cos(m) * i * 12, d = u.r + 2 + ph * 22;
     streak(ctx, u.x + nx - Math.cos(m) * d, u.y + ny - Math.sin(m) * d, m + Math.PI, 0, 30 * (1 - ph) + 10, 2.4, '#BFE9F8', '#FFFFFF'); }
@@ -130,7 +135,7 @@ DRAW2.griffWings = (ctx, f, w, layer) => {
   for (const sd of [-1, 1]) {
     const rx = x + nx * root * sd - Math.cos(fa) * 4, ry = y + ny * root * sd - Math.sin(fa) * 4, out = fa + sd * Math.PI / 2;
     let toward, s;
-    if (f.guard) { toward = out + (fa - out) * (0.34 * open) - sd * 0.5 * (1 - open) + Math.sin(f.t * 3) * 0.03 * sd; s = 0.74 * (0.7 + 0.3 * open); } // (mantled: out to his sides, curled a little forward) // (wrapped forward round him; folded back as they close)
+    if (f.guard) { toward = out + (fa - out) * (0.34 * open) - sd * 0.5 * (1 - open) + Math.sin(f.t * 3) * 0.03 * sd; s = 0.6 * (0.7 + 0.3 * open); } // (mantled: out to his sides, curled a little forward) // (wrapped forward round him; folded back as they close)
     else { const beat = Math.sin(f.t * 21); toward = out - sd * (0.32 + 0.38 * beat); s = 0.62 * (1 - 0.18 * Math.abs(beat)); }
     wing(ctx, rx, ry, toward, s * sc, sd);
   }
@@ -231,25 +236,32 @@ SLAM2.splitter = (ctx, m, k, layer) => {
   for (let i = 0; i < 5; i++) { const b = i / 5 * TAU + hash(i, m.seed) * 0.6, L = m.r * (0.6 + 0.4 * easeOut(q)) * (0.8 + 0.3 * hash(m.seed, i)), r0 = m.r * 0.3, pts = [];
     for (let j = 0; j <= 4; j++) { const d = r0 + (L - r0) * j / 4, o = j && j < 4 ? (hash(i * 7 + j, re) - 0.5) * 20 : 0; pts.push([m.x + Math.cos(b) * d - Math.sin(b) * o, m.y + Math.sin(b) * d + Math.cos(b) * o]); }
     const path = () => { ctx.beginPath(); pts.forEach(([x, y], j) => (j ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); };
-    lit(ctx, () => { ctx.globalAlpha *= 0.6; ctx.strokeStyle = '#FFE66B'; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; path(); ctx.stroke(); });
+    lit(ctx, () => { ctx.globalAlpha *= 0.35; ctx.strokeStyle = '#FFE66B'; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; path(); ctx.stroke(); });
     inkLine(ctx, path, '#FFE14D', 4.2); ctx.strokeStyle = '#FFFBEA'; ctx.lineWidth = 1.6; path(); ctx.stroke(); }
   ctx.restore();
 };
 
 // ================================================================ Bearskin
-// Bear Claws' swing (round 19: "He does the swinging"): three claw marks swept by his paw across his front, the way the
-// paw goes (the left and right in turn: parts.js alternates them), thick at their leading end, from his reach
+// Bear Claws' swing (round 19: "He does the swinging"): his paw is drawn back and raked in across his front (kits2.js
+// CLAW_KEYS, the left and right in turn), and three claw marks are drawn along the path his claws really take, from the
+// moment the rake starts, thick at their leading end, fading after
+const PAW = [[138, 172], [158, 170], [178, 163]], PAW_PIVOT = [160, 108];
+const mixP = (a, b, q) => ({ r: (a.r || 0) + ((b.r || 0) - (a.r || 0)) * q, dx: (a.dx || 0) + ((b.dx || 0) - (a.dx || 0)) * q, dy: (a.dy || 0) + ((b.dy || 0) - (a.dy || 0)) * q });
+function posedPt(u, sx, sy, pivot, p) {
+  const c = Math.cos(p.r || 0), s = Math.sin(p.r || 0), dx = sx - pivot[0], dy = sy - pivot[1]; sx = pivot[0] + (p.dx || 0) + dx * c - dy * s; sy = pivot[1] + (p.dy || 0) + dx * s + dy * c;
+  const k = u.vr / (u.def.headR || 54), a = u.facing - Math.PI / 2, x = (sx - 100) * k, y = (sy - 100) * k;
+  return { x: u.x + x * Math.cos(a) - y * Math.sin(a), y: u.y + x * Math.sin(a) + y * Math.cos(a) };
+}
 DRAW2.clawSwipe = (ctx, f, w, layer) => {
-  const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const k = k01(f.t / f.max);
-  if (f.dir == null) f.dir = (u._n || 0) % 2 ? -1 : 1; // (the paw this swing uses: arm-l, on his left, cuts back across to the right)
-  const span = 1.6, a0 = u.facing - f.dir * span / 2, head = a0 + f.dir * span * easeOut(k01(k / 0.38)), tail = a0 + f.dir * span * sm(k01((k - 0.14) / 0.86));
-  if (Math.abs(head - tail) < 0.02) return;
-  ctx.save(); ctx.globalAlpha *= k < 0.75 ? 1 : 1 - (k - 0.75) / 0.25;
-  for (let j = -1; j <= 1; j++) { const R = f.r + j * 10, N = 14;
-    inked(ctx, () => { ctx.beginPath();
-      for (let i = 0; i <= N; i++) { const q = i / N, b = tail + (head - tail) * q, t = Math.pow(q, 1.4) * (2.2 - 0.4 * Math.abs(j)); const x = u.x + Math.cos(b) * (R + t), y = u.y + Math.sin(b) * (R + t); if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); }
-      for (let i = N; i >= 0; i--) { const q = i / N, b = tail + (head - tail) * q, t = Math.pow(q, 1.4) * (2.2 - 0.4 * Math.abs(j)); ctx.lineTo(u.x + Math.cos(b) * (R - t), u.y + Math.sin(b) * (R - t)); }
-      ctx.closePath(); }, j ? '#FFF8F0' : '#FFFFFF'); }
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const T = f.t; if (T < f.t1) return;
+  const L = f.hand === 'arm-l', W = L ? { r: -f.W.r, dx: -f.W.dx, dy: f.W.dy } : f.W, S = L ? { r: -f.S.r, dx: -f.S.dx, dy: f.S.dy } : f.S, piv = L ? [200 - PAW_PIVOT[0], PAW_PIVOT[1]] : PAW_PIVOT;
+  const head = easeOut(k01((T - f.t1) / (f.t2 - f.t1))) * 1.15, tail = sm(k01((T - f.t2) / 0.22)) * 1.15, fade = k01((f.max - T) / 0.15);
+  if (head - tail < 0.03) return;
+  ctx.save(); ctx.globalAlpha *= fade;
+  for (const [px, py] of PAW) { const sx = L ? 200 - px : px, N = 10, pts = [];
+    for (let i = 0; i <= N; i++) { const q = tail + (head - tail) * i / N; pts.push(posedPt(u, sx, py, piv, mixP(W, S, q))); }
+    inked(ctx, () => { ctx.beginPath(); pts.forEach((p, i) => { const n = pts[Math.min(N, i + 1)], o = pts[Math.max(0, i - 1)], dx = n.x - o.x, dy = n.y - o.y, l = Math.hypot(dx, dy) || 1, wd = 4 * Math.pow(i / N, 1.2) + 0.5; (i ? ctx.lineTo : ctx.moveTo).call(ctx, p.x - dy / l * wd, p.y + dx / l * wd); });
+      for (let i = N; i >= 0; i--) { const p = pts[i], n = pts[Math.min(N, i + 1)], o = pts[Math.max(0, i - 1)], dx = n.x - o.x, dy = n.y - o.y, l = Math.hypot(dx, dy) || 1, wd = 4 * Math.pow(i / N, 1.2) + 0.5; ctx.lineTo(p.x + dy / l * wd, p.y - dx / l * wd); } ctx.closePath(); }, '#FFF8F0'); }
   ctx.restore();
 };
 // the bite at the end (round 19: "Rotate bite 90 degrees so it's always flat with him"): two rows of fangs lying across
@@ -271,11 +283,12 @@ const zPath = (c, s) => { c.beginPath(); c.moveTo(-6 * s, -7 * s); c.lineTo(6 * 
 DRAW2.hibernate = (ctx, f, w, layer) => {
   const u = f.unit; if (!alive2(u)) { ended(f, true); return; } ended(f, !(u.sleepT > 0));
   const a = life(f, 0.3, 0.35), [vx, vy] = upVec();
-  if (layer === 'ground') { lit(ctx, () => glowDisc(ctx, u.x, u.y, u.vr * 2.1, '#FFB070', 0.2 * a * (0.75 + 0.25 * Math.sin(f.t * 3.2)))); return; }
+  if (layer === 'ground') { const R = u.vr * 2.2, p = 0.8 + 0.2 * Math.sin(f.t * 3.2), g = ctx.createRadialGradient(u.x, u.y, 0, u.x, u.y, R); // (a warm pool of light under him, normal blend: additive is lost on a pale floor)
+    g.addColorStop(0, `rgba(255,150,60,${0.55 * a * p})`); g.addColorStop(0.7, `rgba(255,150,60,${0.3 * a * p})`); g.addColorStop(1, 'rgba(255,170,90,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(u.x, u.y, R, 0, TAU); ctx.fill(); return; }
   ctx.save(); ctx.globalAlpha *= a;
-  for (let i = 0; i < 3; i++) { const ph = (f.t * 0.55 + i / 3) % 1, up = u.vr + 22 + ph * 42, side = u.vr * 0.9 + ph * 14, s = 0.75 + 0.75 * ph;
+  for (let i = 0; i < 3; i++) { const ph = (f.t * 0.55 + i / 3) % 1, up = u.vr + 14 + ph * 50, side = u.vr * 1.35 + ph * 18, s = 1.5 + 1.3 * ph;
     ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI);
-    upright(ctx, u.x + vx * up + (vx ? 0 : side) + Math.sin(ph * 6 + i) * 4, u.y + vy * up + (vy ? 0 : side), () => { ctx.rotate(-0.18 + Math.sin(ph * 5) * 0.15); inked(ctx, () => zPath(ctx, s), '#EEF3F8'); });
+    upright(ctx, u.x + vx * up + (vx ? 0 : side) + Math.sin(ph * 6 + i) * 4, u.y + vy * up + (vy ? 0 : side), () => { ctx.rotate(-0.18 + Math.sin(ph * 5) * 0.15); inked(ctx, () => zPath(ctx, s), '#D8ECFF'); });
     ctx.restore(); }
   ctx.restore();
 };
@@ -283,8 +296,7 @@ DRAW2.hibernate = (ctx, f, w, layer) => {
 // sound bursts thrown out of his front, three waves, and dust blown out low along the floor all round to the roar's reach
 DRAW2.bearWake = (ctx, f, w, layer) => {
   const u = alive2(f.unit) ? f.unit : null, x = u ? u.x : f.x, y = u ? u.y : f.y, k = k01(f.t / f.max), e = easeOut(k), fa = u ? u.facing : 0;
-  if (layer === 'ground') { for (let i = 0; i < 12; i++) { const b = i / 12 * TAU + hash(i, f.t > 0 ? 5 : 5) * 0.4, d = f.r * (0.3 + 0.7 * e); softDust(ctx, x + Math.cos(b) * d, y + Math.sin(b) * d, (11 + 5 * hash(i, 3)) * (1 - 0.5 * k), 0.8 * (1 - k) * (1 - k), '#D9C3A0'); } return; }
-  if (k < 0.2) lit(ctx, () => glowDisc(ctx, x, y, 70, '#FFE9C8', 0.6 * (1 - k / 0.2)));
+  if (layer === 'ground') { for (let i = 0; i < 12; i++) { const b = i / 12 * TAU + hash(i, f.t > 0 ? 5 : 5) * 0.4, d = f.r * (0.3 + 0.7 * e); softDust(ctx, x + Math.cos(b) * d, y + Math.sin(b) * d, (7 + 4 * hash(i, 3)) * (1 - 0.5 * k), 0.5 * (1 - k) * (1 - k), '#D9C3A0'); } return; }
   const r0 = (u ? u.vr : 24) + 10;
   for (let wv = 0; wv < 3; wv++) { const q = k01(k * 1.6 - wv * 0.2); if (q <= 0 || q >= 1) continue; const R = r0 + (f.r - r0) * easeOut(q);
     ctx.save(); ctx.globalAlpha *= (1 - q) * (1 - q * 0.4);
@@ -314,7 +326,7 @@ DRAW2.hayBurst = (ctx, f, w, layer) => {
   if (k < 0.15) lit(ctx, () => glowDisc(ctx, f.x, f.y, 36, '#FFF0B0', 0.5 * (1 - k / 0.15)));
   for (let i = 0; i < 5; i++) { const b = i / 5 * TAU + hash(i, f.x | 0), d = 10 + 26 * e; softDust(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, (8 + 3 * hash(i, 2)) * (1 - 0.5 * k), 0.7 * (1 - k) * (1 - k), '#F2DC8A'); }
   ctx.save(); ctx.globalAlpha *= 1 - k * k;
-  for (let i = 0; i < 16; i++) { const b = (i < 11 ? f.a + (hash(i, 7) - 0.5) * 1.8 : hash(i, 3) * TAU), d = 8 + f.r * e * (0.4 + 0.6 * hash(i, 9)), h = Math.sin(k * Math.PI) * 26 * hash(i, 4);
+  for (let i = 0; i < 16; i++) { const b = f.a + (hash(i, 7) - 0.5) * 1.5, d = 14 + f.r * e * (0.4 + 0.6 * hash(i, 9)), h = Math.sin(k * Math.PI) * 26 * hash(i, 4);
     ctx.save(); ctx.translate(f.x + Math.cos(b) * d + ux * h, f.y + Math.sin(b) * d + uy * h); ctx.rotate(b + i + k * 6);
     inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-6, 0); ctx.lineTo(6, 0); }, ['#E8C860', '#F2DC8A', '#C9A040'][i % 3], 2.6); ctx.restore(); }
   ctx.restore();

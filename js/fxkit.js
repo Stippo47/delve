@@ -12,6 +12,7 @@ import { installFx3 } from './fx3.js'; // round 15 (lane N): the six newer heroe
 import { installFxWater } from './fx-water.js'; // round 17 (lane water17): the Water Mage's looks
 import { SIG2, installFx2, SLAM2, IMPACT2D } from './fx2.js'; // (lane H2, round 13: SLAM2 / IMPACT2D, a hero's own slam and shot-burst looks)
 import { variant } from './fxvar.js';
+import { blowPoses, partPivot } from './parts.js'; // round 19 (lane melee19): a blow's slash drawn along its weapon's real path
 
 // ---------------------------------------------------------------- palette (FX-STYLE.md): dark, main, light, core
 export const EL = {
@@ -124,6 +125,7 @@ export function noteWorld(w) {
       const team = u && u.team === 'hero' ? 'hero' : 'enemy';
       let col = SLASH_COL[team];
       if (shape === 'scythe') col = SLASH_COL.scythe; else if (shape === 'smack') col = u && u.kind === 'fireSlime' ? SLASH_COL.fire : SLASH_COL.smack; else if (u && u.kind === 'ghost') col = SLASH_COL.ghost;
+      if (t.aoe && !t.aoe.look && u && u.def.style && u.def.style.slamPose) { const T = tipPath(u); if (T) { const p = T.at(1); t.aoe.x = p.x; t.aoe.y = p.y; } } // round 19 (lane melee19): the crater where the hammer's head comes down
       if (t.aoe) { push({ type: 'slam', u, x: t.aoe.x, y: t.aoe.y, r: t.aoe.r, a: t.a, max: 0.42, seed: Math.round(t.x * 7 + t.y), look: t.aoe.look || (u && u.def.style && u.def.style.slam) }); continue; } // (lane H2: look, a hero's own slam: fx2 SLAM2)
       // arm-l is on the +normal side of the facing, arm-r on the -normal side (the art's left/right, front = +y)
       const sty = (u && u.def.style) || {}, back = sty.backhand || sty.flip || sty.lefty ? -1 : 1; // (round 19: style.lefty, a left hand's cut sweeping in across her: the Dame) // lane H2 (round 13): a backhand swing (Dame, Pirate), a mirrored sprite (Griffon)
@@ -174,8 +176,52 @@ export function drawMarks(ctx, dt, layer) {
 }
 
 // ---------------------------------------------------------------- melee arcs
+// ---------------------------------------------------------------- round 19 (lane melee19): slashes along the weapon
+// The designer: "spears slash is centered when the spear is usually off to 1 side". A hero whose style names its weapon's
+// striking point (style.tip: [x, y] in its art's units, on style.tipPart, else the striking hand; style.tipBase: the blade's
+// root, for a cut) has its blow drawn along the path that point really takes between the wound-back and the struck-through
+// poses parts.js plays (blowPoses), from where the body really is (its lunge too): a cut is the band the blade sweeps, a
+// stab a streak down the line the point travels (style.tines: a fork's three), a slam lands where the head comes down.
+const mixPose = (a, b, q) => ({ r: (a.r || 0) + ((b.r || 0) - (a.r || 0)) * q, dx: (a.dx || 0) + ((b.dx || 0) - (a.dx || 0)) * q, dy: (a.dy || 0) + ((b.dy || 0) - (a.dy || 0)) * q });
+function artPt(u, pt, piv, p, lunge = true) {
+  let sx = pt[0], sy = pt[1];
+  if (p) { const c = Math.cos(p.r || 0), sn = Math.sin(p.r || 0), dx = sx - piv[0], dy = sy - piv[1]; sx = piv[0] + (p.dx || 0) + dx * c - dy * sn; sy = piv[1] + (p.dy || 0) + dx * sn + dy * c; }
+  if (u.def.style && u.def.style.flip) sx = 200 - sx;
+  const k = u.vr / (u.def.headR || 54), a = u.facing - Math.PI / 2;
+  const fwd = lunge && u.lungeT > 0 ? u.vr * 0.5 * Math.sin(Math.PI * (1 - u.lungeT / 0.18)) : 0; // (render.js unitFrame's lunge, in room units)
+  const x = (sx - 100) * k, y = (sy - 100) * k + fwd;
+  return { x: u.x + x * Math.cos(a) - y * Math.sin(a), y: u.y + x * Math.sin(a) + y * Math.cos(a) };
+}
+// the blow's path: q 0 (wound back) .. 1 (struck through), the point (and the blade's root) where the art puts them
+export function tipPath(u) {
+  const sty = u && u.def.style; if (!sty || !sty.tip) return null;
+  const P = blowPoses(u), part = sty.tipPart || P.hand, piv = partPivot(u.def.art, part); if (!piv) return null;
+  return { P, at: (q, pt = sty.tip) => artPt(u, pt, piv, mixPose(P.W, P.S, q)), sty };
+}
+function tipSlash(ctx, m, k, u) {
+  const T = m.tp || (m.tp = tipPath(u)); if (!T) return false; const [main, core] = m.col, sty = T.sty;
+  if (m.shape === 'thrust' || m.shape === 'fork' || m.shape === 'twin') {
+    const a0 = T.at(0), a1 = T.at(1), a = Math.atan2(a1.y - a0.y, a1.x - a0.x), L = Math.hypot(a1.x - a0.x, a1.y - a0.y) + 18;
+    const tip = L * easeOut(k01(k / 0.3)), base = tip * sm(k01((k - 0.2) / 0.8)) * 0.9, n = m.shape === 'fork' ? sty.tines || 3 : 1;
+    for (let i = 0; i < n; i++) { const o = (i - (n - 1) / 2) * 7, ox = -Math.sin(a) * o, oy = Math.cos(a) * o;
+      streak(ctx, a0.x + ox, a0.y + oy, a, base, tip, (n > 1 ? 5.5 : 8) * (1 - 0.35 * k), main, core); }
+    return true;
+  }
+  // a cut: the band the blade sweeps, from its root to its point, its head running ahead and its tail catching up
+  const N = 14, hk = 0.4, tk = 0.16, head = easeOut(k01(k / hk)), tail = sm(k01((k - tk) / (1 - tk)));
+  if (head - tail < 0.02) return true;
+  const outer = [], inner = [], th = sty.slashTh || 0.45; // (how far down the blade the band reaches at its thickest)
+  for (let i = 0; i <= N; i++) { const q = tail + (head - tail) * i / N, p = T.at(q), b = T.at(q, sty.tipBase || sty.tip), f = Math.pow(i / N, 0.85) * th * (1 - 0.3 * k);
+    outer.push(p); inner.push({ x: p.x + (b.x - p.x) * f, y: p.y + (b.y - p.y) * f }); }
+  const path = () => { ctx.beginPath(); outer.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y))); for (let i = N; i >= 0; i--) ctx.lineTo(inner[i].x, inner[i].y); ctx.closePath(); };
+  inked(ctx, path, main);
+  ctx.fillStyle = core; ctx.beginPath(); for (let i = Math.floor(N * 0.35); i <= N; i++) { const p = outer[i], b = inner[i], x = p.x + (b.x - p.x) * 0.25, y = p.y + (b.y - p.y) * 0.25; if (i === Math.floor(N * 0.35)) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
+  for (let i = N; i >= Math.floor(N * 0.35); i--) { const p = outer[i], b = inner[i], x = p.x + (b.x - p.x) * 0.5, y = p.y + (b.y - p.y) * 0.5; ctx.lineTo(x, y); } ctx.closePath(); ctx.fill();
+  return true;
+}
 function slash(ctx, m, k) {
   const u = m.u, live = u && !u.dead;
+  if (live && u.def.style && u.def.style.tip && tipSlash(ctx, m, k, u)) return; // round 19 (lane melee19)
   const x = live ? u.x : m.x, y = live ? u.y : m.y;
   const [main, core] = m.col;
   const sh = m.shape;
