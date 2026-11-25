@@ -1,0 +1,295 @@
+{
+ "wildwood": {
+  "floors": [
+   {
+    "wolf": 0.317,
+    "slime": 0.148,
+    "goblin": 0.317,
+    "goblinOrange": 0.085,
+    "slimeBig": 0.089,
+    "slimePoison": 0.044
+   },
+   {
+    "bandit": 0.126,
+    "banditDagger": 0.126,
+    "banditSpear": 0.094,
+    "banditTorch": 0.088,
+    "banditAxe": 0.1,
+    "banditGreat": 0.084,
+    "poacher": 0.167,
+    "banditBrute": 0.132,
+    "wolf": 0.084
+   },
+   {
+    "ent": 0.249,
+    "sproutling": 0.182,
+    "wisp": 0.026,
+    "direWolf": 0.208,
+    "boar": 0.173,
+    "wolf": 0.121,
+    "slimePoison": 0.042
+   }
+  ]
+ },
+ "warren": {
+  "floors": [
+   {
+    "goblin": 0.501,
+    "mouse": 0.107,
+    "goblinSpear": 0.178,
+    "goblinBomber": 0.111,
+    "dynamouse": 0.023,
+    "hobgoblin": 0.08
+   },
+   {
+    "goblin": 0.199,
+    "hobgoblin": 0.143,
+    "orc": 0.175,
+    "orcShaman": 0.096,
+    "wolfRider": 0.12,
+    "drummer": 0.073,
+    "goblinSuicide": 0.066,
+    "goblinBomber": 0.064,
+    "goblinSpear": 0.064
+   },
+   {
+    "orc": 0.212,
+    "orcShaman": 0.099,
+    "frostShaman": 0.071,
+    "troll": 0.147,
+    "rockTroll": 0.127,
+    "hobgoblin": 0.064,
+    "goblin": 0.106,
+    "drummer": 0.065,
+    "goblinSuicide": 0.042,
+    "ogre": 0.068
+   }
+  ]
+ },
+ "sewers": {
+  "floors": [
+   {
+    "rat": 0.419,
+    "ratPlague": 0.068,
+    "slime": 0.175,
+    "slimeSludge": 0.126,
+    "slimePoison": 0.105,
+    "slimeSmall": 0.052,
+    "leechBlood": 0.056
+   },
+   {
+    "lizardBlade": 0.18,
+    "lizardman": 0.22,
+    "rat": 0.09,
+    "crab": 0.192,
+    "crabBlue": 0.144,
+    "croc": 0.12,
+    "leechBrain": 0.012,
+    "slime": 0.04
+   },
+   {
+    "lizardman": 0.229,
+    "lizardBlade": 0.114,
+    "croc": 0.165,
+    "crabGreen": 0.192,
+    "ratKing": 0.134,
+    "ratPlague": 0.028,
+    "spiderHunter": 0.046,
+    "fireSlime": 0.027,
+    "slimeSludge": 0.046,
+    "leechBlood": 0.018
+   }
+  ]
+ },
+ "crypt": {
+  "floors": [
+   {
+    "rat": 0.262,
+    "rattler": 0.35,
+    "rattlerBow": 0.219,
+    "rattlerHarrow": 0.117,
+    "ghost": 0.052
+   },
+   {
+    "rattlerSpear": 0.179,
+    "rattlerMace": 0.198,
+    "rattlerBow": 0.119,
+    "rattlerHarrow": 0.095,
+    "rattlerGold": 0.05,
+    "gaper": 0.19,
+    "ghost": 0.089,
+    "banshee": 0.079
+   },
+   {
+    "brute": 0.218,
+    "gaper": 0.206,
+    "ghost": 0.117,
+    "banshee": 0.14,
+    "rattlerMace": 0.093,
+    "rattlerSpear": 0.07,
+    "rattlerGold": 0.093,
+    "rattlerHarrow": 0.062
+   }
+  ]
+ },
+ "frost": {
+  "floors": [
+   {
+    "frostWolf": 0.41,
+    "bat": 0.281,
+    "snowman": 0.187,
+    "slimeIce": 0.112,
+    "spiritFrost": 0.009
+   },
+   {
+    "spiderHunter": 0.201,
+    "spiderFrost": 0.184,
+    "spiderMomma": 0.223,
+    "slimeIce": 0.125,
+    "bat": 0.201,
+    "frostWraith": 0.067
+   },
+   {
+    "yeti": 0.382,
+    "frostWraith": 0.08,
+    "frostWolf": 0.249,
+    "snowman": 0.127,
+    "spiritFrost": 0.022,
+    "spiderFrost": 0.06,
+    "banshee": 0.08
+   }
+  ]
+ },
+ "ember": {
+  "floors": [
+   {
+    "imp": 0.339,
+    "cinderBat": 0.233,
+    "fireSlime": 0.14,
+    "hellhound": 0.262,
+    "spiritFire": 0.026
+   },
+   {
+    "devil": 0.205,
+    "imp": 0.158,
+    "dragonborn": 0.199,
+    "spiderFire": 0.11,
+    "hellhound": 0.166,
+    "fireSlime": 0.038,
+    "spiritFire": 0.03,
+    "succubus": 0.095
+   },
+   {
+    "demon": 0.241,
+    "dragonborn": 0.202,
+    "devil": 0.108,
+    "hellhound": 0.145,
+    "spiderFire": 0.051,
+    "spiritFire": 0.036,
+    "cinderBat": 0.072,
+    "imp": 0.06,
+    "succubus": 0.084
+   }
+  ]
+ },
+ "spire": {
+  "floors": [
+   {
+    "cherub": 0.427,
+    "angel": 0.341,
+    "sunBlade": 0.154,
+    "choirSprite": 0.078
+   },
+   {
+    "seraph": 0.265,
+    "cherub": 0.245,
+    "angel": 0.184,
+    "choirSprite": 0.085,
+    "angelFallen": 0.143,
+    "spiritHeal": 0.029,
+    "sunBlade": 0.049
+   },
+   {
+    "seraph": 0.165,
+    "angel": 0.15,
+    "angelFallen": 0.135,
+    "gildedGolem": 0.252,
+    "golem": 0.108,
+    "sunBlade": 0.063,
+    "spiritWard": 0.036,
+    "cherub": 0.09
+   }
+  ]
+ },
+ "dunes": {
+  "floors": [
+   {
+    "scarab": 0.482,
+    "cobra": 0.275,
+    "scarabGold": 0.069,
+    "sandSerpent": 0.161,
+    "spiritHaste": 0.014
+   },
+   {
+    "jackal": 0.26,
+    "mummy": 0.249,
+    "scarab": 0.166,
+    "dartTrap": 0.073,
+    "golem": 0.125,
+    "spiritPoison": 0.042,
+    "cobra": 0.087
+   },
+   {
+    "sandMage": 0.219,
+    "mummy": 0.184,
+    "jackal": 0.153,
+    "sandSerpent": 0.15,
+    "golem": 0.147,
+    "scarabGold": 0.069,
+    "spiritHaste": 0.012,
+    "spiritPoison": 0.028,
+    "dartTrap": 0.037
+   }
+  ]
+ },
+ "foundry": {
+  "floors": [
+   {
+    "gearSprite": 0.168,
+    "cogSprite": 0.118,
+    "bombBot": 0.154,
+    "bee": 0.269,
+    "wasp": 0.131,
+    "drillBot": 0.114,
+    "sawBlade": 0.047
+   },
+   {
+    "automaton": 0.229,
+    "turretSteam": 0.072,
+    "turretFlame": 0.051,
+    "turretGun": 0.062,
+    "mortar": 0.044,
+    "autoBomb": 0.077,
+    "repairDrone": 0.095,
+    "beeBronze": 0.18,
+    "waspBronze": 0.097,
+    "hornetBronze": 0.063,
+    "sawBlade": 0.029
+   },
+   {
+    "teslaCoil": 0.073,
+    "foundrySmith": 0.166,
+    "automaton": 0.124,
+    "turretLaser": 0.035,
+    "mortarFire": 0.047,
+    "mortarPoison": 0.047,
+    "chainCrawler": 0.089,
+    "beeSteel": 0.17,
+    "waspSteel": 0.095,
+    "hornetSteel": 0.085,
+    "spiritShock": 0.012,
+    "repairDrone": 0.06
+   }
+  ]
+ }
+}

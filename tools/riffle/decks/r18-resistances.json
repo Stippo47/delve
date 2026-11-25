@@ -1,0 +1,97 @@
+{
+  "title": "Round 18: enemy resistances",
+  "topic": "balance",
+  "stack": "audit18",
+  "order": 1,
+  "priority": 1,
+  "cards": [
+    {
+      "id": "report",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Resistances, audited",
+      "text": "All 165 enemy kinds checked. Mostly fine, 7 plain bugs, and the Foundry shuts out half the status heroes.",
+      "why": "You asked whether enemies' resistances make sense and whether any should have more. The 8 cards after this are the calls; the bugs I'll just fix.",
+      "parts": [
+        { "id": "today", "title": "How it works now", "text": "A resistance today only changes how fast a status builds up (a Fire Spider takes a fireball's full hit but none of its burn), which already matches your two axes. Nothing yet changes damage by sharp, blunt or magic: armour is the only damage defence. The six newest statuses (Charm, Confused, Sleepy, Bleeding, Fear, Shackled) are in almost no enemy's list." },
+        { "id": "uneven", "title": "Like things differ", "text": "4 of 7 fire enemies aren't weak to cold; 3 of 12 frost enemies aren't weak to fire; 3 poisoners can be poisoned (Hunter Spider, Momma Spider, Green Crab); the Chain Crawler bites with lightning but takes extra shock; the Succubus can be charmed. The Bone King half-resists holy light." },
+        { "id": "foundry", "title": "The Foundry", "text": "95% of the Foundry's enemies can't be poisoned or cursed: a Plague Doctor lands 3% of its poison there, a Twinfang 1%, a Witch 16% of her curse. Ember Deep (burn 12%) and Frost Hollow (chill 24%) are low too, but that's their theme. A hero's total damage moves far less (mostly within 10%): it loses its signature effect, not its numbers." },
+        { "id": "bugs", "title": "Seven plain bugs", "text": "The Orc Warboss counts as undead (its name has 'boss' in it), while the Bone King, Grave Warden, Mummy and Icicle Wraith don't. A snake builds a status once per segment from one cloud (4.6 to 5.8 times too fast). The Book misses the bosses' Charm immunity, the golden shells' full list, the Dust Devil's newer immunities and the Elder Ent's wipe. I'll fix all seven." },
+        { "id": "rules", "title": "Rules by tag", "text": "Proposed: fire things don't burn, take extra chill and wet; ice things don't chill, burn more; plants burn more, can't be rooted; bones resist poison; spirits can't be poisoned or cursed; machines can't be poisoned, cut or cursed; metal takes extra shock; stone resists most; bosses can't be charmed. About 20 exceptions, each with a reason." }
+      ]
+    },
+    {
+      "id": "dead-bleed-sleep",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "The dead: no bleed, sleep",
+      "text": "Skeletons, ghosts and mummies immune to Bleeding and to Sleepy? They have no blood and don't sleep.",
+      "why": "The Crypt is nearly all undead, so a bleeding hero (Cultist, Werewolf, Huntress) or a sleep hero (Bard, Slinger) would land about a tenth of its effect there. Their damage barely moves; the signature effect goes.",
+      "pick": "Yes to both, shown in the Book, so a player picks a different hero for the Crypt on purpose."
+    },
+    {
+      "id": "machines-mind",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Machines and the mind",
+      "text": "Turrets, bots, golems and traps immune to Charm, Fear and Sleepy? A turret can't fall in love or panic.",
+      "why": "The Foundry is 94% machines: the Enchantress would land 3% of her charm there and the Bard and Slinger nothing. Only fair if the next card gives some heroes a way back in.",
+      "pick": "Yes, together with the jinx (the next card), so the Foundry shuts out different heroes, not nearly all of them."
+    },
+    {
+      "id": "jinx",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Cursed machines jinx",
+      "text": "Machines take Curse after all, as a jinx: a hexed turret's next shot backfires on it.",
+      "why": "Today no machine can be cursed, for no stated reason, and with poison and bleeding also out the Foundry leaves several heroes almost nothing. With the jinx the Witch's curse there goes from 16% to full.",
+      "pick": "Yes. Ghosts and spirits still can't be cursed."
+    },
+    {
+      "id": "fliers-roots",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Fliers and roots",
+      "text": "Should flying enemies resist being rooted? The hero Griffon can't be; enemy bats, angels and bees can.",
+      "why": "It's the same rule for both sides. It costs the Druid about a third of its roots in the Gilded Spire.",
+      "pick": "Half for fliers, spirits immune. Once height layers land: airborne immune, hovering half, floor full."
+    },
+    {
+      "id": "holy-dark",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Holy versus dark",
+      "text": "Holy light 30% stronger on the dead and demons, curses 30% stronger on angels and holy things?",
+      "why": "A classic that players read at once: the Paladin, Cleric and Valkyrie become the Crypt's answer, the Witch and Shade the Spire's. Today the Bone King even half-resists holy light.",
+      "pick": "Yes, and the Bone King's half resistance goes."
+    },
+    {
+      "id": "boss-poison",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Bosses and poison",
+      "text": "Six bosses resist poison on top of the rule that already softens poison on every boss. Drop the extra?",
+      "why": "Together only about an eighth of poison's worth reaches those bosses, so a Plague Doctor is nearly blank at the end of a run, while burn and chill heroes face no such cut.",
+      "pick": "Drop the extra, keep the shared boss rule. The Great Ooze and the Great Engine stay immune (a poison blob, a machine)."
+    },
+    {
+      "id": "ghosts",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Ghosts and spells",
+      "text": "Ghosts and spirits take 60% from weapons and 125% from magic?",
+      "why": "Easy to read once hits carry a type, and it makes spell-casters the answer to ghosts, wraiths and elemental spirits. It costs physical parties in the Crypt, where ghosts are 5 to 26% of a floor.",
+      "pick": "Yes, shown on the ghost's Book page."
+    },
+    {
+      "id": "sharp-blunt",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Hammers, blades, bones",
+      "text": "Hammers beat bones and stone, blades lose to them; blunt blows get past half the armour; slimes neutral?",
+      "why": "Gives the sharp and blunt split a job. Skeletons: blunt 1.25x, sharp 0.8x. Golems: blunt 1.2x, sharp 0.7x. Trees: sharp 1.2x.",
+      "pick": "Yes, slimes neutral: a hammer splats jelly and a blade passes through it, both stories work, and slimes are a new player's first enemy.",
+      "details": "Armour today: heavy blows and critical hits get past half of it. Under this, blunt blows (hammers, clubs, fists, boulders) get past half instead of 'heavy' ones, so armoured metal foes and shelled ones are a hammer's job.\n\nSlimes: either story works. A hammer splats jelly; a blade passes through it. Because slimes are the very first enemy a new player meets, keeping them neutral means no starter hero is punished in the first room."
+    }
+  ]
+}

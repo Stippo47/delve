@@ -1,0 +1,166 @@
+kind,name,where,flags,armour,puts,res_burn,res_chill,res_poison,res_wet,res_shock,res_stagger,res_radiance,res_curse,res_entangle,res_charm,res_confuse,res_sleepy,res_bleed,res_fear,res_shackle,takes_burn,takes_chill,takes_poison,takes_wet,takes_shock,takes_stagger,takes_radiance,takes_curse,takes_entangle,takes_charm,takes_confuse,takes_sleepy,takes_bleed,takes_fear,takes_shackle
+rat,"Rat","sewers1 sewers2 sewers:extra crypt1","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+slime,"Slime","wildwood1 sewers1 sewers1:mini sewers2 sewers:extra","hops",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+slimeSmall,"Slimelet","sewers1","hops",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+skeleton,"Skeleton","","",0,"",0.8,1.2,0.35,,,,,,,,,,,,,0.8,1.2,0.35,1,1,1,1,1,1,1,1,1,1,1,1
+boss,"Bone King","","boss",0,"",0.6,0.6,0.3,,,,,,,,,,,,,0.6,0.6,0.3,1,1,1,1,1,1,0,1,1,1,1,1
+wolf,"Wolf","wildwood1 wildwood1:adds wildwood2 wildwood3 wildwood:extra","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+rattler,"Rattler","crypt1 crypt:extra","",0,"",0.8,1.2,0.35,,,,,,,,,,,,,0.8,1.2,0.35,1,1,1,1,1,1,1,1,1,1,1,1
+rattlerBow,"Bone Archer","crypt1 crypt2 crypt:extra","",0,"",0.8,1.2,0.35,,,,,,,,,,,,,0.8,1.2,0.35,1,1,1,1,1,1,1,1,1,1,1,1
+rattlerSpear,"Bone Spear","crypt2 crypt3 crypt:extra","",0,"",0.8,1.2,0.35,,,,,,,,,,,,,0.8,1.2,0.35,1,1,1,1,1,1,1,1,1,1,1,1
+rattlerMace,"Loose Jaw","crypt1:mini crypt2 crypt3","",0,"",0.8,1.2,0.35,,,,,,,,,,,,,0.8,1.2,0.35,1,1,1,1,1,1,1,1,1,1,1,1
+gaper,"Gaper","crypt2 crypt3","",0,"",0.8,1.2,0.35,,,,,,,,,,,,,0.8,1.2,0.35,1,1,1,1,1,1,1,1,1,1,1,1
+brute,"Brute","crypt3 crypt:extra","",3,"",0.8,1.2,0.35,,,,,,,,,,,,,0.8,1.2,0.35,1,1,1,1,1,1,1,1,1,1,1,1
+ghost,"Ghost","crypt1 crypt2 crypt3","",0,"",1.3,0.2,0,,,,,0,,,,,,,,1.3,0.2,0,1,1,1,1,0,1,1,1,1,1,1,1
+lizardman,"Lizardman","sewers2 sewers3 sewers:extra","",0,"",0.8,1.4,,,,,,,,,,,,,,0.8,1.4,1,1,1,1,1,1,1,1,1,1,1,1,1
+lizardBlade,"Lizard Blade","sewers2 sewers2:mini sewers3 sewers:extra","",0,"",0.8,1.4,,,,,,,,,,,,,,0.8,1.4,1,1,1,1,1,1,1,1,1,1,1,1,1
+goblin,"Goblin","wildwood1 warren1 warren2 warren3 warren:extra","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+hobgoblin,"Hobgoblin","warren1 warren1:mini warren2 warren3 warren:extra","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+orc,"Orc","warren2 warren2:mini warren3 warren:extra","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+orcShaman,"Orc Shaman","warren2 warren3","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+troll,"Troll","warren3 warren:extra","",0,"",1.4,,,,,,,,,,,,,,,1.4,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+graveWarden,"Grave Warden","crypt2:mini crypt:warden","boss",4,"",0.8,1.2,0.35,,,,,,,,,,,,,0.8,1.2,0.35,1,1,1,1,1,1,0,1,1,1,1,1
+lizardChief,"Lizard Chief","sewers:boss","boss",0,"",0.8,1.2,,,,,,,,,,,,,,0.8,1.2,1,1,1,1,1,1,1,0,1,1,1,1,1
+warboss,"Orc Warboss","warren:boss","boss",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1
+boneKing,"The Bone King","crypt:boss","boss",0,"",0.6,0.5,0.3,,,,0.5,0,,,,,,,,0.6,0.5,0.3,1,1,1,0.5,0,1,0,1,1,1,1,1
+bat,"Cave Bat","frost1 frost2","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+snowman,"Snowman","frost1 frost1:mini frost3 frost:extra","",0,"",1.6,0.1,,,,,,,,,,,,,,1.6,0.1,1,1,1,1,1,1,1,1,1,1,1,1,1
+spiderHunter,"Hunter Spider","sewers3 frost2","",0,"poison:22",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+spiderMomma,"Momma Spider","frost2 frost2:mini frost:warden","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+banshee,"Banshee","crypt2 crypt3 frost3","undead",0,"",1.3,0.2,0,,,,,0,,,,,,,,1.3,0.2,0,1,1,1,1,0,1,1,1,1,1,1,1
+ogre,"Ogre","warren3","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+imp,"Imp","ember1 ember2 ember3 ember:extra","",0,"",0,,,,,,,,,,,,,,,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+fireSlime,"Fire Slime","sewers3 ember1 ember1:mini ember2","hops",0,"burn:18",0,1.5,,,,,,,,,,,,,,0,1.5,1,1,1,1,1,1,1,1,1,1,1,1,1
+devil,"Devil","ember2 ember3 ember:extra","",0,"",0.2,,,,,,,,,,,,,,,0.2,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+succubus,"Succubus","ember2 ember3","",0,"charm:8",0.2,,,,,,,,,,,,,,,0.2,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+demon,"Demon","ember3 ember:extra","",0,"",0.2,,,,,,,,,,,,,,,0.2,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+dragonborn,"Dragonborn","ember2 ember3","",0,"",0.3,,,,,,,,,,,,,,,0.3,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+cherub,"Cherub","spire1 spire2 spire3 spire:extra","",0,"radiance:12",,,,,,,0,,,,,,,,,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1
+angel,"Angel","spire1 spire1:mini spire2 spire3 spire:extra","",0,"radiance:22",,,,,,,0,,,,,,,,,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1
+seraph,"Seraph","spire2 spire3","",0,"radiance:20",,,,,,,0,,,,,,,,,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1
+broodQueen,"Brood Queen","","boss",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1
+frostGiant,"Old Frost","frost:boss","boss",0,"",1.4,0,,,,,,,,,,,,,,1.4,0,1,1,1,1,1,1,1,0,1,1,1,1,1
+pitLord,"Pit Lord","ember2:mini ember:warden","boss",0,"",0,,,,,,,,,,,,,,,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1
+archfiend,"The Archfiend","ember:boss","boss",0,"",0,,,,,,,,,,,,,,,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1
+archon,"Archon","","boss",0,"radiance:25",,,,,,,0,,,,,,,,,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1
+radiant,"The Radiant","spire:boss","boss",0,"radiance:25",,,,,,,0,,,,,,,,,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1
+direWolf,"Dire Wolf","wildwood3","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+slimeBig,"Big Slime","wildwood1 wildwood1:elite","hops",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+slimePoison,"Poison Slime","wildwood1 wildwood3 sewers1","hops",0,"poison:18",,,0,,,,,,,,,,,,,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1
+slimeletPoison,"Poison Slimelet","","hops",0,"poison:10",,,0,,,,,,,,,,,,,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1
+goblinOrange,"Orange Goblin","wildwood1","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+bandit,"Bandit","wildwood2 wildwood2:adds","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+banditTorch,"Torch Bandit","wildwood2","",0,"burn:10",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+banditGreat,"Greatsword Bandit","wildwood2","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+banditAxe,"Axe Bandit","wildwood2","",0,"stagger:20",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+banditSpear,"Spear Bandit","wildwood2","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+banditDagger,"Knife Bandit","wildwood2 wildwood2:adds","",0,"poison:8",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+poacher,"Poacher","wildwood2 wildwood2:adds","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+banditBrute,"Bandit Brute","wildwood2 wildwood2:elite wildwood:extra","",2,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+boar,"Thornback Boar","wildwood3","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+sproutling,"Sproutling","wildwood3 wildwood3:adds wildwood:extra","",0,"",1.6,,,,,,,,,,,,,,,1.6,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+ent,"Ent","wildwood3 wildwood3:elite","",0,"",1.8,,,,,,,,0,,,,,,,1.8,1,1,1,1,1,1,1,0,1,1,1,1,1,1
+wisp,"Wisp","wildwood3 wildwood3:adds","",0,"",,,0,,,,,0,,,,,,,,1,1,0,1,1,1,1,0,1,1,1,1,1,1,1
+alpha,"The Alpha","wildwood1:mini wildwood:warden","boss",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1
+banditChief,"The Bandit Chief","wildwood2:mini","boss",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1
+elderEnt,"The Elder Ent","wildwood:boss","boss",0,"",1,0,0,0,0,0,0,0,0,,,,,,,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1
+mouse,"Mouse","warren1","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+dynamouse,"Dynamite Mouse","warren1","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+goblinSpear,"Spear Goblin","warren1 warren2","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+goblinBomber,"Goblin Bomber","warren1 warren2","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+goblinSuicide,"Suicide Bomber","warren2 warren3","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+drummer,"Drummer","warren2 warren3","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+wolfRider,"Wolf Rider","warren2","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+frostShaman,"Frost Shaman","warren3","",0,"",1.3,0.2,,,,,,,,,,,,,,1.3,0.2,1,1,1,1,1,1,1,1,1,1,1,1,1
+iceTotem,"Ice Totem","","noElite",0,"",,0,0,,,,,,,,,,,,,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1
+rockTroll,"Rock Troll","warren3","",5,"",1.4,,,,,,,,,,,,,,,1.4,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+ratPlague,"Plague Rat","sewers1 sewers3 sewers:extra","",0,"poison:14",,,0,,,,,,,,,,,,,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1
+ratKing,"Rat King","sewers3","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+slimeSludge,"Sludge Slime","sewers1 sewers3","hops",0,"",1.4,,,,,,,,,,,,,,,1.4,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+croc,"Croc","sewers2 sewers3","",0,"",0.8,1.3,,,,,,,,,,,,,,0.8,1.3,1,1,1,1,1,1,1,1,1,1,1,1,1
+crab,"Sewer Crab","sewers2 sewers:extra","",4,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+crabBlue,"Blue Crab","sewers2","",3,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+crabGreen,"Green Crab","sewers3","",3,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+leechBlood,"Blood Leech","sewers1 sewers3","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+leechBrain,"Brain Leech","sewers2","",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+rattlerGold,"Golden Skeleton","crypt2 crypt3","",3,"",0,0,0,0,0,0,0,0,0,,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+rattlerHarrow,"Harrowing Skeleton","crypt1 crypt2 crypt3","",0,"",0.8,1.2,0.35,,,,,,,,,,,,,0.8,1.2,0.35,1,1,1,1,1,1,1,1,1,1,1,1
+scarab,"Scarab","dunes1 dunes2 dunes:extra","sandy",2,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+scarabGold,"Golden Scarab","dunes1 dunes3","sandy goldShell",4,"",0,0,0,0,0,0,0,0,0,,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+cobra,"Cobra","dunes1 dunes1:mini dunes2 dunes:extra","sandy",0,"",,,0,,,,,,,,,,,,,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1
+jackal,"Jackal Guard","dunes2 dunes2:mini dunes3 dunes:warden","sandy",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+mummy,"Mummy","dunes2 dunes3 dunes:extra","",0,"curse:22",1.8,,0,,,,,0,,,,,,,,1.8,1,0,1,1,1,1,0,1,1,1,1,1,1,1
+sandMage,"Sand Mage","dunes3","sandy",0,"",,,,,,,,,,,,,,,,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+dustDevil,"Dust Devil","","sandy noElite",0,"",0,0,0,0,0,0,0,0,0,,,,,,,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1
+sandSerpent,"Sand Serpent","dunes1 dunes3 dunes:boss","sandy chain",0,"poison:16",,,0,,,,,,,,,,,,,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1
+serpentCoil,"Serpent Coil","","sandy segment noElite",0,"",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+dartTrap,"Dart Trap","dunes2 dunes3","construct turret",0,"",,0.5,0,0.5,,0,,0,,,,,,,,1,0.5,0,0.5,1,0,1,0,1,1,1,1,1,1,1
+spiritPoison,"Venom Spirit","dunes2 dunes3","spirit:poison",0,"",,,0,,,,,0,,,,,,,,1,1,0,1,1,1,1,0,1,1,1,1,1,1,1
+spiritHaste,"Wind Spirit","dunes1 dunes3","spirit:haste",0,"",,,0,,,,,0,,,,,,,,1,1,0,1,1,1,1,0,1,1,1,1,1,1,1
+gearSprite,"Gear Sprite","foundry1","construct",3,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+cogSprite,"Cog Sprite","foundry1","construct",3,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+bombBot,"Bomb Bot","foundry1 foundry:extra","construct",1,"",1.5,,0,1.3,1.4,,,0,0.5,,,,,,,1.5,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+autoBomb,"Auto Bomb Bot","foundry2","construct",0,"",1.5,,0,1.3,1.4,,,0,0.5,,,,,,,1.5,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+automaton,"Automaton","foundry1:mini foundry2 foundry3 foundry:warden","construct",4,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+turretSteam,"Steam Turret","foundry2","construct turret",3,"",,,0,1.3,1.4,0,,0,0.5,,,,,,,1,1,0,1.3,1.4,0,1,0,0.5,1,1,1,1,1,1
+turretFlame,"Flame Turret","foundry2","construct turret",3,"",0,,0,1.3,1.4,0,,0,0.5,,,,,,,0,1,0,1.3,1.4,0,1,0,0.5,1,1,1,1,1,1
+turretGun,"Gun Turret","foundry2","construct turret",3,"",,,0,1.3,1.4,0,,0,0.5,,,,,,,1,1,0,1.3,1.4,0,1,0,0.5,1,1,1,1,1,1
+turretLaser,"Laser Turret","foundry3","construct turret",3,"",,,0,1.3,1.4,0,,0,0.5,,,,,,,1,1,0,1.3,1.4,0,1,0,0.5,1,1,1,1,1,1
+mortar,"Mortar","foundry2","construct turret",3,"",,,0,1.3,1.4,0,,0,0.5,,,,,,,1,1,0,1.3,1.4,0,1,0,0.5,1,1,1,1,1,1
+mortarFire,"Fire Mortar","foundry3","construct turret",3,"",0,,0,1.3,1.4,0,,0,0.5,,,,,,,0,1,0,1.3,1.4,0,1,0,0.5,1,1,1,1,1,1
+mortarPoison,"Gas Mortar","foundry3","construct turret",3,"",,,0,1.3,1.4,0,,0,0.5,,,,,,,1,1,0,1.3,1.4,0,1,0,0.5,1,1,1,1,1,1
+teslaCoil,"Tesla Coil","foundry3","construct",0,"",,,0,1.3,0,0,,0,0.5,,,,,,,1,1,0,1.3,0,0,1,0,0.5,1,1,1,1,1,1
+repairDrone,"Repair Drone","foundry2 foundry3","construct",0,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+foundrySmith,"Foundry Smith","foundry2:mini foundry3 foundry:extra","",3,"burn:25",0,1.3,,,,,,,,,,,,,,0,1.3,1,1,1,1,1,1,1,1,1,1,1,1,1
+bee,"Copper Bee","foundry1 foundry:extra","construct",0,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+wasp,"Copper Wasp","foundry1","construct",0,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+hornet,"Copper Hornet","","construct",0,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+beeBronze,"Bronze Bee","foundry2","construct",2,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+beeSteel,"Steel Bee","foundry3","construct",4,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+waspBronze,"Bronze Wasp","foundry2","construct",2,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+waspSteel,"Steel Wasp","foundry3","construct",4,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+hornetBronze,"Bronze Hornet","foundry2","construct",2,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+hornetSteel,"Steel Hornet","foundry3","construct",4,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+sawBlade,"Saw Blade","foundry1 foundry2","trap noElite",0,"",,,,,,,,,,,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+chainCrawler,"Chain Crawler","foundry3 foundry:boss","construct chain",3,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+crawlerPlate,"Crawler Plate","","construct segment noElite",4,"",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+drillBot,"Drill Bot","foundry1","construct",3,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
+spiritShock,"Storm Spirit","foundry3","spirit:shock",0,"",,,0,,0,,,0,,,,,,,,1,1,0,1,0,1,1,0,1,1,1,1,1,1,1
+frostWolf,"Frost Wolf","frost1 frost3 frost:extra","",0,"chill:20",1.3,0.2,,,,,,,,,,,,,,1.3,0.2,1,1,1,1,1,1,1,1,1,1,1,1,1
+slimeIce,"Ice Slime","frost1 frost2","hops",0,"chill:16",1.4,0,,,,,,,,,,,,,,1.4,0,1,1,1,1,1,1,1,1,1,1,1,1,1
+spiderFrost,"Frost Spider","frost2 frost3 frost:extra","",0,"chill:22",,0.2,,,,,,,,,,,,,,1,0.2,1,1,1,1,1,1,1,1,1,1,1,1,1
+yeti,"Yeti","frost3 frost:extra","",0,"stagger:30",1.3,0,,,,,,,,,,,,,,1.3,0,1,1,1,1,1,1,1,1,1,1,1,1,1
+frostWraith,"Icicle Wraith","frost2 frost3","",0,"",1.5,0,0,,,,,0,,,,,,,,1.5,0,0,1,1,1,1,0,1,1,1,1,1,1,1
+spiritFrost,"Frost Spirit","frost1 frost3","spirit:frost",0,"",,0,0,,,,,0,,,,,,,,1,0,0,1,1,1,1,0,1,1,1,1,1,1,1
+spiderFire,"Fire Spider","ember2 ember3","",0,"burn:20",0,,,,,,,,,,,,,,,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+hellhound,"Hellhound","ember1 ember2 ember3 ember:extra","",0,"burn:14 bleed:16",0,1.4,,,,,,,,,,,,,,0,1.4,1,1,1,1,1,1,1,1,1,1,1,1,1
+cinderBat,"Cinder Bat","ember1 ember3","",0,"",0,,,,,,,,,,,,,,,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+spiritFire,"Fire Spirit","ember1 ember2 ember3","spirit:fire",0,"",0,,0,,,,,0,,,,,,,,0,1,0,1,1,1,1,0,1,1,1,1,1,1,1
+angelFallen,"Fallen Angel","spire2 spire3 spire:extra","",0,"curse:22",,,,,,,0,0,,,,,,,,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1
+sunBlade,"Sun Blade","spire1 spire2 spire3","",0,"",,,0,,,0,0,0,,,,,,,,1,1,0,1,1,0,0,0,1,1,1,1,1,1,1
+choirSprite,"Choir Sprite","spire1 spire2","",0,"",,,,,,,0,,,,,,,,,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1
+golem,"Golem","spire3 dunes2 dunes3 dunes:extra","construct",6,"stagger:35",0.6,0.6,0,0.5,,,,0,,,,,,,,0.6,0.6,0,0.5,1,1,1,0,1,1,1,1,1,1,1
+gildedGolem,"Gilded Golem","spire3 spire:extra","construct",7,"stagger:35 radiance:18",0.6,0.6,0,0.5,,,0,0,,,,,,,,0.6,0.6,0,0.5,1,1,0,0,1,1,1,1,1,1,1
+spiritHeal,"Light Spirit","spire2","spirit:heal",0,"",,,0,,,,0,0,,,,,,,,1,1,0,1,1,1,0,0,1,1,1,1,1,1,1
+spiritWard,"Ward Spirit","spire3","spirit:ward",0,"",,,0,,,,0,0,,,,,,,,1,1,0,1,1,1,0,0,1,1,1,1,1,1,1
+heraldLight,"Herald of Light","spire2:mini spire:warden","boss",0,"radiance:24",,,,,,,0,,,,,,,,,1,1,1,1,1,1,0,1,1,0,1,1,1,1,1
+heraldFallen,"Fallen Herald","","boss",0,"curse:24",,,,,,,0,0,,,,,,,,1,1,1,1,1,1,0,0,1,0,1,1,1,1,1
+chieftain,"The Goblin Chieftain","warren:boss","boss",0,"",,0.7,0.3,,,0.5,,,,,,,,,,1,0.7,0.3,1,1,0.5,1,1,1,0,1,1,1,1,1
+warDrum,"War Drum","","part noElite",0,"",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+greatOoze,"The Great Ooze","sewers:boss","boss",0,"",1.4,1.2,0,0,,0.4,,,,,,,,,,1.4,1.2,0,0,1,0.4,1,1,1,0,1,1,1,1,1
+oozeHalf,"The Great Ooze (its other half)","","part noElite",0,"",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+winterQueen,"The Winter Queen","frost:boss","boss",0,"",1.3,0,0.3,0.5,,0.6,,,,,,,,,,1.3,0,0.3,0.5,1,0.6,1,1,1,0,1,1,1,1,1
+queenImage,"Ice Mirror","","noElite",0,"",1.3,0,,,,,,,,0,0,0,,0,,,,,,,,,,,,,,,,
+cinder,"Cinder, the Old Drake","ember:boss","boss",0,"",0,1.3,0.25,1.3,,0.4,,,,,,,,,,0,1.3,0.25,1.3,1,0.4,1,1,1,0,1,1,1,1,1
+drakeSegment,"Cinder (body)","","part noElite",0,"",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+drakeTail,"Cinder (tail)","","part noElite",0,"",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+gildedSeraph,"The Gilded Seraph","spire:boss","boss",0,"",,,0.3,,,0.5,0,0.5,,,,,,,,1,1,0.3,1,1,0.5,0,0.5,1,0,1,1,1,1,1
+seraphHorn,"The Gilded Seraph (a trumpet)","","part noElite",0,"",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+seraphSinger,"Choir Singer","","noElite",0,"",,,,,,,0,,,,,,,,,,,,,,,,,,,,,,,
+sandWurm,"The Sand Wurm","dunes:boss","boss sandy",0,"",0.8,,0.3,1.4,,0.4,,,,,,,,,,0.8,1,0.3,1.4,1,0.4,1,1,1,0,1,1,1,1,1
+wurmSegment,"The Sand Wurm (body)","","part sandy noElite",0,"",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+greatEngine,"The Great Engine","foundry:boss","boss construct",0,"",0.5,0.8,0,1.3,1.4,0.4,0.5,0.5,,,,,,,,0.5,0.8,0,1.3,1.4,0.4,0.5,0.5,1,0,1,1,1,1,1
+engineHammer,"The Great Engine (hammer)","","part construct noElite",0,"",0,0,0,0,1.4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1.4,0,0,0,0,0,0,0,0,0,0
+engineClaw,"The Great Engine (claw)","","part construct noElite",0,"",0,0,0,0,1.4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1.4,0,0,0,0,0,0,0,0,0,0
+engineValve,"The Great Engine (valve)","","part noElite",0,"",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+welderDrone,"Welder Drone","","construct noElite",0,"",,,0,1.3,1.4,,,0,0.5,,,,,,,1,1,0,1.3,1.4,1,1,0,0.5,1,1,1,1,1,1
