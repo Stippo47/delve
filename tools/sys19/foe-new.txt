@@ -1,0 +1,80 @@
+975 previews, 36.3s
+threw: 0
+a loop where the move or trait never fired: 0
+not offered in the Book (never fires, so its button is left out): 0
+locked (shown as locked): 0 not counting heroes' tier 0
+monster moves: 975 previews of two loops, 17.8s
+  first go: 1.01 s on average, 7.2 s at the latest; 2.34 goes a loop
+  a loop where it didn't go within 2.5 s: 30
+  foe:banditAxe:major:2  (1.7 2.6 s)
+  foe:boar:major:2  (3.2 3.0 s)
+  foe:orc:kit:0  (1.2 2.9 s)
+  foe:orcShaman:kit:0  (1.9 2.5 s)
+  foe:goblinSuicide:kit:0  (5.1 2.6 s)
+  foe:goblinSuicide:elite:1  (4.8 4.7 s)
+  foe:rockTroll:elite:1  (2.5 2.6 s)
+  foe:rockTroll:elite:2  (2.3 2.5 s)
+  foe:ogre:kit:1  (2.6 2.2 s)
+  foe:ratPlague:elite:2  (2.3 2.6 s)
+  foe:leechBlood:kit:0  (1.9 4.4 s)
+  foe:leechBlood:kit:1  (3.7 1.0 s)
+  foe:leechBlood:elite:1  (3.8 2.0 s)
+  foe:leechBrain:elite:1  (2.5 2.6 s)
+  foe:spiderHunter:kit:0  (2.9 1.8 s)
+  foe:rattlerHarrow:kit:0  (4.0 4.2 s)
+  foe:rattlerSpear:kit:2  (1.6 3.3 s)
+  foe:imp:elite:1  (7.2 4.3 s)
+  foe:devil:kit:2  (2.9 2.7 s)
+  foe:dragonborn:kit:0  (1.2 2.5 s)
+  foe:succubus:kit:2  (2.5 2.4 s)
+  foe:cinder:kit:0  (0.0 4.8 s)
+  foe:sunBlade:major:2  (6.8 7.2 s)
+  foe:cobra:elite:1  (2.6 1.7 s)
+  foe:sandSerpent:elite:1  (2.8 3.3 s)
+  foe:cogSprite:elite:1  (2.8 2.1 s)
+  foe:cogSprite:elite:2  (2.1 2.9 s)
+  foe:cogSprite:major:2  (2.1 2.9 s)
+  foe:automaton:elite:1  (2.7 2.1 s)
+  foe:chainCrawler:elite:1  (3.4 2.9 s)
+  straw targets on the stage (never moving, never striking back): 0
+  wrong scenario (went off, but nothing it made reached anyone in 3.5 s): 8
+  foe:ent:kit:1
+  foe:goblinSuicide:kit:0
+  foe:goblinSuicide:kit:1
+  foe:rockTroll:major:2
+  foe:boneKing:kit:0
+  foe:yeti:kit:1
+  foe:sandWurm:kit:0
+  foe:sawBlade:kit:0
+  the stage helped it (a target moved up to it, its health set lower): 0
+  blows or health lost with nothing seen behind them (either side): 0
+  a loop that showed only its plain blows (its own move never came): 29
+  foe:goblin:kit:1
+  foe:goblin:kit:2
+  foe:goblinOrange:kit:0
+  foe:banditDagger:kit:1
+  foe:banditDagger:kit:2
+  foe:banditAxe:kit:1
+  foe:banditAxe:kit:2
+  foe:mouse:kit:2
+  foe:orc:kit:0
+  foe:orc:kit:2
+  foe:ogre:kit:2
+  foe:rat:kit:2
+  foe:lizardBlade:kit:1
+  foe:lizardBlade:kit:2
+  foe:crab:kit:0
+  foe:rattlerSpear:kit:1
+  foe:rattlerSpear:kit:2
+  foe:brute:kit:0
+  foe:brute:kit:1
+  foe:brute:kit:2
+  foe:devil:kit:2
+  foe:dragonborn:kit:0
+  foe:dragonborn:kit:1
+  foe:dragonborn:kit:2
+  foe:demon:kit:2
+  foe:angel:kit:1
+  foe:angel:kit:2
+  foe:angelFallen:kit:2
+  foe:beeSteel:kit:2
