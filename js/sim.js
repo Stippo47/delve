@@ -1613,9 +1613,14 @@ function useAbility(w, u) {
       // feint unless it says); the cut at the end of it is its own blow, in place of its next swing. (It was a burst of
       // speed the way it was walking, and no more.)
       const st = def.dash || 'feint', a = angleTo(u.x, u.y, t.x, t.y), gap = dist(u.x, u.y, t.x, t.y) - u.r - t.r;
-      const o = { t, a, dmg: hitDmg(u) * (def.dashMul ?? 1), hit: { ...blowOf(def), knock: def.knock || 60 }, rest: def.atkCd * 0.7 };
-      if (st === 'lance') dash(w, u, 'drawCut', { ...o, lance: true, len: gap + t.r * 2 + u.r + 24, hold: 0.16, tell: 0.42 });
-      else if (st === 'pounce') dash(w, u, 'pounce', { ...o, r: u.r + 20 });
+      // (a third of its blow: the cut comes on top of the ground the dash covers. A pounce is quick and bites hard, twice
+      // its blow: the old dash cost it no time and could not be stepped out of; the pounce can, and a rat that misses has
+      // lost the bites it would have had.)
+      // The nick carries the shove and nothing else (no venom, no light); a pounce is a bite and carries what its bite does.
+      // def.dashTell / dashRest / dashMul: a kind's own (the orange goblin's is quick).
+      const o = { t, a, dmg: hitDmg(u) * (def.dashMul ?? 0.35), hit: { knock: def.knock || 60 }, rest: def.atkCd * (def.dashRest ?? 0.7), tell: def.dashTell };
+      if (st === 'lance') dash(w, u, 'drawCut', { ...o, lance: true, len: gap + t.r * 2 + u.r + 24, hold: 0.16, tell: def.dashTell ?? 0.42 });
+      else if (st === 'pounce') dash(w, u, 'pounce', { ...o, hit: { ...blowOf(def), knock: def.knock || 60 }, dmg: hitDmg(u) * (def.dashMul ?? 2), r: u.r + 24, tell: 0.2, air: clamp(0.2 + gap / 900, 0.26, 0.42), recover: 0.06, rest: def.atkCd * 0.1 });
       else dash(w, u, st, o);
       break;
     }

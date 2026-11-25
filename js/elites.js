@@ -191,11 +191,11 @@ export function around(w, u, o = {}) {
 export function rush(w, u, a, len, o = {}) {
   const st = o.style || 'dragFling', t = targetOf(w, u);
   if (st !== 'plain') {
-    const dmg = (o.dmg || 10) * u.dmgMul, hit = { knock: o.knock || 240, ...(o.status || {}) }, base = { a, dmg, hit, rest: 0.5, kind: o.kind, onEnd: o.onEnd };
+    const dmg = (o.dmg || 10) * u.dmgMul, hit = { knock: o.knock || 240, ...(o.status || {}) }, base = { a, dmg, hit, rest: o.rest ?? 0.5, recover: o.recover, kind: o.kind, onEnd: o.onEnd };
     setAnim(u, 'ability', 0.2);
     if (st === 'dragFling') return dash(w, u, 'dragFling', { ...base, len, tell: o.tell || 0.12, speed: o.speed || u.def.speed * 2.6, knock: o.knock || 240, hit: { ...(o.status || {}) }, carry: o.carry });
-    if (st === 'drawCut' || st === 'lance') return dash(w, u, 'drawCut', { ...base, len, tell: Math.max(0.3, o.tell || 0), lance: st === 'lance', hold: o.hold ?? 0.2, hit: { ...hit, knock: (o.knock || 240) * 0.6 } });
-    if (st === 'pounce') return dash(w, u, 'pounce', { ...base, ...(t ? { t } : { x: u.x + Math.cos(a) * len, y: u.y + Math.sin(a) * len }), tell: Math.max(0.25, o.tell || 0), r: o.r || u.r + 24, land: o.land });
+    if (st === 'drawCut' || st === 'lance') return dash(w, u, 'drawCut', { ...base, dmg: dmg * 0.85, len, tell: Math.max(0.3, o.tell || 0), lance: st === 'lance', hold: o.hold ?? 0.2, hit: { ...hit, knock: (o.knock || 240) * 0.6 } }); // (0.85 of the old blow: the burst is too quick to step out of once it has gone)
+    if (st === 'pounce') return dash(w, u, 'pounce', { ...base, ...(t ? { t } : { x: u.x + Math.cos(a) * len, y: u.y + Math.sin(a) * len }), tell: Math.max(0.2, o.tell || 0), r: o.r || u.r + 24, air: o.air, land: o.land });
     if (t) return dash(w, u, st, { ...base, t, tell: Math.max(0.25, o.tell || 0) });
     return dash(w, u, 'dragFling', { ...base, len, tell: o.tell || 0.12, knock: o.knock || 240, hit: { ...(o.status || {}) } });
   }
@@ -475,6 +475,6 @@ export function pounce(w, u, dt, o) {
   const x1 = u.x + Math.cos(a) * L, y1 = u.y + Math.sin(a) * L;
   // round 18 (lane dash18): the pounce of dashes.js: a crouch, a leap that hangs, a landing rake on whoever is under it
   // (the circle on the floor is where the rake reaches). It was a plain arc with the circle's hit at the end.
-  dash(w, u, 'pounce', { x: x1, y: y1, tell: o.tell ?? 0.26, r: o.r, dmg: o.dmg * u.dmgMul, hit: { knock: 180, ...(o.status || {}) }, kind: o.kind || 'bone', dustCol: o.dust, land: o.land, rest: 0.4 });
+  dash(w, u, 'pounce', { t, tell: o.tell ?? 0.26, r: o.r, dmg: o.dmg * u.dmgMul, hit: { knock: 180, ...(o.status || {}) }, kind: o.kind || 'bone', dustCol: o.dust, land: o.land, rest: 0.4 });
   return false;
 }

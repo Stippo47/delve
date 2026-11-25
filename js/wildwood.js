@@ -47,7 +47,7 @@ export function wolfBrain(w, u, dt) {
   if (!due(u, 'lunge', dt, 2)) return false;
   const g = gapTo(u, t); if (g < 50 || g > 230 || !lineClear(w, u.x, u.y, t.x, t.y, u.r * 0.8)) return false;
   again(u, 'lunge', 4, 6);
-  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 40, { style: 'pounce', tell: 0.35, dmg: u.def.dmg * 1.3, knock: 170, trail: 'rgba(200,194,180,0.6)' }); // (round 18, lane dash18: the wolf's lunge is a pounce: a crouch, a leap that hangs, a landing rake; it was a straight run through)
+  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 40, { style: 'pounce', tell: 0.28, rest: 0.25, r: u.r + 30, dmg: u.def.dmg * 1.95, knock: 170, trail: 'rgba(200,194,180,0.6)' }); // (round 18, lane dash18: the wolf's lunge is a pounce: a crouch, a leap that hangs, a landing rake; it was a straight run through)
   return true;
 }
 // A pounce from far off that pins whoever it lands on (dire wolves, the Alpha).
@@ -60,7 +60,7 @@ function pinPounce(w, u, dt, o) {
   const x1 = u.x + Math.cos(a) * L, y1 = u.y + Math.sin(a) * L;
   // round 18 (lane dash18): the pounce of dashes.js (a crouch, a leap that hangs, a landing rake); whoever the rake
   // catches is pinned, as before. (It was a plain arc and a circle that struck.)
-  dash(w, u, 'pounce', { x: x1, y: y1, tell: 0.3, air: (o.dur || 0.6) * 0.75, r: o.r, dmg: o.dmg * u.dmgMul, hit: { knock: 60, stagger: o.stagger || 0 }, dustCol: '#8C8270', rest: 0.3,
+  dash(w, u, 'pounce', { t, tell: 0.24, air: (o.dur || 0.6) * 0.6, r: o.r, dmg: o.dmg * 1.3 * u.dmgMul, hit: { knock: 60, stagger: o.stagger || 0 }, dustCol: '#8C8270', recover: 0.1, rest: 0.15,
     land: (list) => { for (const h of list) { h.rootT = Math.max(h.rootT || 0, o.pin); if (o.maul) addBuff(u, { id: 'maul', dur: o.pin, atkSpeed: 2.2 }); } } });
   return false;
 }
@@ -246,7 +246,7 @@ function sproutBrain(w, u, dt) {
   if (!due(u, 'dash', dt, 1.2)) return false;
   const g = gapTo(u, t); if (g < 20 || g > 150 || !lineClear(w, u.x, u.y, t.x, t.y, u.r * 0.8)) return false;
   again(u, 'dash', 1.8, 2.6);
-  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 26, { style: 'pounce', r: u.r + 16, tell: 0.22, dmg: u.def.dmg, knock: 120, trail: 'rgba(140,190,90,0.6)' }); // (round 18: the sproutling's dash is a little pounce)
+  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 26, { style: 'pounce', r: u.r + 22, tell: 0.18, air: 0.27, recover: 0.06, rest: 0.1, dmg: u.def.dmg * 1.3, knock: 120, trail: 'rgba(140,190,90,0.6)' }); // (round 18: the sproutling's dash is a little pounce)
   return true;
 }
 // Ent: slams roots up in a line (Entangle); a hard blow knocks a sproutling loose from it.
@@ -296,7 +296,8 @@ export const WILDWOOD = {
     res: { poison: 0 }, splitsInto: 'slimeletPoison',
     onSplit: (w, u) => w.hazards.push({ type: 'gas', x: u.x, y: u.y, r: 58, t: 4, max: 4 }) },
   slimeletPoison: { variantOf: 'slimeSmall', name: 'Poison Slimelet', hue: -125, sat: 1.15, light: 0.02, poison: 10, goo: '#A6E04A', res: { poison: 0 } },
-  goblinOrange: { variantOf: 'goblin', name: 'Orange Goblin', hue: -72, sat: 1.15, light: 0.03, speed: 129, temp: 0.9, commit: 0.25, xp: 7, brain: weaveBrain },
+  goblinOrange: { variantOf: 'goblin', name: 'Orange Goblin', hue: -72, sat: 1.15, light: 0.03, speed: 129, temp: 0.9, commit: 0.25, xp: 7, brain: weaveBrain,
+    dashTell: 0.12, dashRest: 0.2, dashMul: 0.6 }, // (round 18, lane dash18: its feint is quick, as it never stands still)
   // bandits: sword and shield, and five more weapons (the designer's list); the same placeholder art, recoloured
   bandit: { ...BANDIT, name: 'Bandit', shield: 0.5, brain: shieldBash },
   banditTorch: { variantOf: 'bandit', name: 'Torch Bandit', art: ART('bandit-torch'), shield: 0, burn: 10, brain: torchSweep },

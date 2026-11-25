@@ -720,8 +720,9 @@ export const ABILITIES2 = {
       // run. The cut (II cursing) lands where the blades cross a body. III: three runs in a row, each from where the
       // last ended. (It was one straight run at one speed, cutting whoever stood within reach of the line.)
       // The cut is CUT x her own blow (it was 1.5x): the old run caught two on a good line and often one, the chain finds
-      // its three, so each cut is lighter to keep what Shadow Walk deals where it was.
-      const CUT = 1.0;
+      // its three, so each cut is lighter to keep what Shadow Walk deals where it was (a little less light at III, where
+      // the old three runs each started on a fresh line).
+      const CUT = tier >= 3 ? 1.15 : 1.0;
       const runs = tier >= 3 ? 3 : 1, dmg = dmgOf(u, CUT), curse = tier >= 2 ? 30 : 0; let chaining = true, idle = 0;
       const marks = (x, y) => opponents(w, u).filter((e) => dist(x, y, e.x, e.y) < 280).sort((p, q) => dist(x, y, p.x, p.y) - dist(x, y, q.x, q.y));
       const back = () => { chaining = false; u.ethereal = !!(u.kit && u.kit.shadow); };
@@ -1809,7 +1810,7 @@ export const ABILITIES2 = {
       // nearest one a moment later, wherever the point was.)
       const e = foesNear(w, u, u.x, u.y, u.r + 70).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0]; if (!e) return;
       const a = ang(u, e); u.facing = a; const gap = Math.max(0, dist(u.x, u.y, e.x, e.y) - u.r - e.r);
-      dash(w, u, 'drawCut', { a, len: gap + 30, lance: true, now: true, tell: 0.1, burst: 0.09, recover: 0.14, inv: false, dmg: dmgOf(u, 1.2), straight: true, hit: { knock: 520, heavy: true, stagger: tier >= 2 ? 50 : 0, ab: 'bayonet' },
+      dash(w, u, 'drawCut', { a, len: gap + 30, lance: true, now: true, tell: 0.1, burst: 0.09, recover: 0.14, inv: false, only: e, dmg: dmgOf(u, 1.2), straight: true, hit: { knock: 520, heavy: true, stagger: tier >= 2 ? 50 : 0, ab: 'bayonet' },
         arrive: () => { k2(w, { draw: 'headbutt', x: u.x + Math.cos(a) * (u.r + 30), y: u.y + Math.sin(a) * (u.r + 30), a, max: 0.35 }); w.shake = Math.max(w.shake, 3); } });
       if (tier >= 3) after(u, 0.5, () => { if (!alive(e)) return; u.facing = ang(u, e); setAnim(u, 'shoot', 0.3); k2(w, { draw: 'muzzle', unit: u, x: u.x, y: u.y, a: u.facing, max: 0.4, big: true }); shoot(w, u, u.facing, { kind: 'bullet', speed: 1300, r: 6, dmg: dmgOf(u, 1.2), knock: 160 }); });
     },
@@ -2135,13 +2136,14 @@ export const ABILITIES2 = {
       if (!t) return; const a0 = ang(u, t), base = dmgOf(u, 1); u.facing = a0;
       k2(w, { draw: 'iaidoCharge', unit: u, x: u.x, y: u.y, a: a0, max: 0.38 });
       const reachOf = (a) => { const far = opponents(w, u).filter((e) => segDist(e.x, e.y, u.x, u.y, u.x + Math.cos(a) * 280, u.y + Math.sin(a) * 280) < e.r + 16); return far.length ? Math.min(280, Math.max(...far.map((e) => dist(u.x, u.y, e.x, e.y))) + 60) : 160; };
-      // (the cut back: the blade's sweep catches the ones the first cut threw off the line, which the old line did not, so
-      // it lands at BACK of the first cut's weight to keep what Iaido III deals where it was)
-      const BACK = 0.3;
+      // (the cut back: the blade's sweep catches the ones the first cut threw off the line. The old line did not: measured,
+      // the old cut back added nothing at all to what Iaido dealt. It lands at BACK of the first cut's weight, so III is
+      // worth about a quarter more than it was and no longer double.)
+      const BACK = 0.3, FIRST = 0.85; // (FIRST: the blade's sweep is wider than the old line was, so the cut is a little lighter)
       const cut = (a, tell, again, k = 1) => dash(w, u, 'drawCut', { a, len: reachOf(a), tell, hold: 0.3, settle: false, ghost: '#5E6B86',
-        dmg: (e) => (e.maxHp * (e.def.boss ? 0.03 : 0.1) + base) * k, hit: { crit: true, knock: 120, ab: 'iaido' },
+        dmg: (e) => (e.maxHp * (e.def.boss ? 0.03 : 0.1) + base) * FIRST * k, hit: { crit: true, knock: 120, ab: 'iaido' },
         mark: (e) => { stun(w, e, 0.3); addStatus(w, e, 'stagger', 25, u); }, again });
-      cut(a0, 0.36, tier >= 3 ? () => ({ a: u.facing + Math.PI, len: reachOf(u.facing + Math.PI), tell: 0.16, again: null, dmg: (e) => (e.maxHp * (e.def.boss ? 0.03 : 0.1) + base) * BACK }) : null);
+      cut(a0, 0.36, tier >= 3 ? () => ({ a: u.facing + Math.PI, len: reachOf(u.facing + Math.PI), tell: 0.16, again: null, dmg: (e) => (e.maxHp * (e.def.boss ? 0.03 : 0.1) + base) * FIRST * BACK }) : null);
     },
     show: { far: true },
   },
@@ -2214,10 +2216,10 @@ export const ABILITIES2 = {
       const a = spearFor(w, u) || inTrouble(w, u, 440, 0.7) || hurtMost(allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 440)); if (!a) return;
       // round 18 (lane dash18): the draw cut with a spear (dashes.js): she draws the spear back, bursts down the line to
       // her friend behind its point and stops beside them (cleansed and steeled on the spot, as before); each enemy the
-      // point went through carries a mark, and the wounds burst open down the line a beat after. The blow is the same.
+      // point went through carries a mark, and the wounds burst open down the line a beat after.
       // (She flew the line as a leap, and everything within reach of it was struck when she landed.)
       const b = ang(u, a), L = Math.max(20, dist(u.x, u.y, a.x, a.y) - a.r - u.r); u.facing = b;
-      dash(w, u, 'drawCut', { a: b, len: L, lance: true, tell: 0.14, burst: clamp(L / 2200, 0.1, 0.2), hold: 0.16, recover: 0.16, ghost: '#E8D49A', col: ['#FFE7A0', '#FFFBEA'], dmg: dmgOf(u, 1.5), hit: { knock: 220, shock: tier >= 2 ? 30 : 0, ab: 'spearThrow' },
+      dash(w, u, 'drawCut', { a: b, len: L, lance: true, tell: 0.14, burst: clamp(L / 2200, 0.1, 0.2), hold: 0.16, recover: 0.16, ghost: '#E8D49A', col: ['#FFE7A0', '#FFFBEA'], dmg: dmgOf(u, 1.0), hit: { knock: 220, shock: tier >= 2 ? 30 : 0, ab: 'spearThrow' }, // (1.0x, it was 1.5x: the spear's point now strikes what it really passes, which is more than the old line caught)
         arrive: () => { if (alive(a)) { cleanse(a); haste(w, a, 4, 1.3); ward(w, a, tier >= 3 ? 45 : 28, 5); k2(w, { draw: 'rally', unit: a, x: a.x, y: a.y, r: a.vr, max: 0.9 }); } } });
       u.invulnT = Math.max(u.invulnT, 0.4);
     },

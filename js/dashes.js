@@ -22,14 +22,13 @@
 // Numbers a caller gives: dmg (the blow, already multiplied by the unit's own), hit (hurt options: knock, statuses, ab),
 // tell, len and the like; nothing here reads a kit, so kits compute their damage when they start it.
 import { TAU, clamp, dist, angleTo, angleDiff, wrapAngle, rand, rrange } from './util.js';
-import { hurt, alive, opponents, addDanger, inZone, fx, puff, sparks, setAnim } from './sim.js';
+import { hurt, alive, opponents, addDanger, inZone, fx, puff, sparks } from './sim.js';
 import { circleRect } from './path.js';
 import { windMul } from './statuses.js';
 
 const heroic = (w, u) => (w.battle ? u.def.team === 'hero' : u.team === 'hero');
 const eOut = (k) => 1 - (1 - k) * (1 - k);
 const eOut3 = (k) => 1 - (1 - k) * (1 - k) * (1 - k);
-const eIn = (k) => k * k;
 const sm = (k) => k * k * (3 - 2 * k);
 const mix = (a, b, k) => a + (b - a) * k;
 const mixA = (a, b, k) => a + wrapAngle(b - a) * k;
@@ -154,8 +153,9 @@ export function drawCut(w, u, o) {
       tick(k, dt, D) { const e = eOut3(k); u.facing = mixA(u.facing, a, Math.min(1, dt * 14)); D.body = { lean: -0.4 * e, sx: 1 + 0.1 * e, sy: 1 - 0.2 * e, tilt: Math.sin(w.time * 46) * 0.02 * k };
         D.arm = o.lance ? { r: 0, dy: -16 * e } : { r: sheath * e, dy: -4 * e }; D.off = o.lance ? null : { r: 0.5 * e, dy: 6 * e }; } },
     { dur: T,
-      enter(D) { L *= D.short; D.passing = true; D.lines = true; if (o.lance) D.bodyR = u.r + 14; // (a spear's shaft is as wide as the old lunge's reach)
-        if (o.inv !== false) u.invulnT = Math.max(u.invulnT || 0, T + 0.05);
+      enter(D) { L *= D.short; D.passing = true; D.lines = true; if (o.inv == null) o.inv = heroic(w, u); // (nothing lands on a hero mid-burst, as with the old moves; an enemy can be struck)
+        if (o.lance) D.bodyR = o.width ?? (heroic(w, u) ? u.r + 14 : u.r * 0.85); // (a hero's spear is as wide as the old lunge's reach; an enemy's no wider than the lane it showed)
+        if (o.inv) u.invulnT = Math.max(u.invulnT || 0, T + 0.05);
         ribStart(w, u, D, { hold: !o.now, life: 0.24, lance: !!o.lance, th: o.lance ? 14 : 0 }); dust(w, x0, y0, a + Math.PI, 7); kPrev = 0;
         k2(w, { draw: 'dashKick', x: x0, y: y0, a, max: 0.35 }); },
       tick(k, dt, D) { D.body = { lean: 0.3, sx: 0.84, sy: 1.34, tilt: 0 }; D.arm = o.lance ? { r: 0, dy: 26 } : { r: mix(sheath, out, eOut(k)), dy: 8 };
@@ -189,7 +189,7 @@ export function blinkChain(w, u, o) {
   const next = () => { let e = list.shift(); while (e && (!alive(e) || seen.has(e))) e = list.shift();
     if (!e) e = opponents(w, u).filter((x) => !seen.has(x) && dist(u.x, u.y, x.x, x.y) < reach).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))[0];
     return e || null; };
-  const R = bladeReach(u, -4); let hopN = 0, sd = rand() < 0.5 ? 1 : -1, P = null, kPrev = 0, last = null;
+  const R = bladeReach(u, -4); let sd = rand() < 0.5 ? 1 : -1, P = null, kPrev = 0, last = null;
   const plan = (D) => { // the next crossing: from where it stands, through the mark's flank, out the far side
     const e = next(); if (!e) return false; seen.add(e); sd = -sd;
     const a0 = angleTo(u.x, u.y, e.x, e.y), a1 = a0 + sd * 0.42, d = dist(u.x, u.y, e.x, e.y);
@@ -205,8 +205,8 @@ export function blinkChain(w, u, o) {
     tick(k, dt, D) { const e = eOut3(k); D.body = { lean: -0.2 * e, sx: 1 + 0.1 * e, sy: 1 - 0.16 * e, tilt: 0, wash: o.wash && [o.wash[0], o.wash[1] * e] }; D.arm = { r: -0.5 * e, dy: -8 * e }; D.off = { r: -0.5 * e, dy: -8 * e }; } }];
   for (let i = 0; i < n; i++) {
     phs.push({ dur: HOP,
-      enter(D) { if (!plan(D)) { D.jump = phs.length - 2; return; } hopN++; D.passing = true; D.lines = true; kPrev = 0; u.facing = P.a;
-        if (o.inv !== false) u.invulnT = Math.max(u.invulnT || 0, HOP + BEAT + 0.05);
+      enter(D) { if (!plan(D)) { D.jump = phs.length - 2; return; } D.passing = true; D.lines = true; kPrev = 0; u.facing = P.a;
+        if (o.inv ?? heroic(w, u)) u.invulnT = Math.max(u.invulnT || 0, HOP + BEAT + 0.05);
         stamp(w, u, D, { life: 0.4, a: 0.8 }); D.cutting = false; ribEnd(w, D); },
       tick(k, dt, D) { D.body = { lean: 0.25, sx: 0.8, sy: 1.4, tilt: 0, alpha: o.alpha ?? 0.7, wash: o.wash };
         // the blades come out as she reaches the mark: the slash is drawn across it, not along the whole blink
@@ -323,7 +323,9 @@ export function feint(w, u, o) {
         blow(w, u, e, o.dmg, o, { kAngle: ga + sd * 0.8 }); if (o.each) o.each(e);
         k2(w, { draw: 'dashHit', x: e.x, y: e.y, a: ga, r: e.vr, max: 0.3, col: D.col }); } : null);
       kPrev = k; },
-    exit(D) { D.passing = false; D.lines = false; D.thr = null; ribEnd(w, D); dust(w, u.x, u.y, ga, 5, undefined, 110); } });
+    exit(D) { // (the one it was for, a step out of the blade: still caught, as the hook's is)
+      if (t && alive(t) && !t.ethereal && !D.hit.has(t) && segDist(t.x, t.y, fx0, fy0, u.x, u.y) < R + t.r + 14) { D.hit.add(t); blow(w, u, t, o.dmg, o, { kAngle: ga + sd * 0.8 }); if (o.each) o.each(t); k2(w, { draw: 'dashHit', x: t.x, y: t.y, a: ga, r: t.vr, max: 0.3, col: D.col }); }
+      D.passing = false; D.lines = false; D.thr = null; ribEnd(w, D); dust(w, u.x, u.y, ga, 5, undefined, 110); } });
   phs.push({ dur: o.recover ?? 0.15,
     tick(k, dt, D) { const e = sm(k); D.body = { lean: mix(0.3, 0, e), sx: mix(0.9, 1, e), sy: mix(1.2, 1, e), tilt: 0 }; D.arm = thrust ? { r: 0, dy: 26 * (1 - e) } : { r: 0.7 * (1 - e), dy: 8 * (1 - e) };
       if (t && alive(t)) u.facing = mixA(u.facing, angleTo(u.x, u.y, t.x, t.y), Math.min(1, dt * 16)); u.x += Math.cos(ga) * 50 * (1 - k) * dt; u.y += Math.sin(ga) * 50 * (1 - k) * dt; } });
@@ -399,7 +401,7 @@ export function pounce(w, u, o) {
   const AIR = o.air ?? clamp(0.3 + L / 900, 0.34, 0.52), H = o.h ?? clamp(26 + L * 0.08, 26, 50), rr = o.r ?? u.r + 30;
   // quick off the floor, slow at the top, quick down. A hero's leap onto a foe comes down where that foe is by then (it
   // may have stepped); an enemy's comes down where the floor showed.
-  const track = heroic(w, u) && o.t && o.track !== false; let tx = x0 + Math.cos(a) * L, ty = y0 + Math.sin(a) * L, cut = false; // (cut: Targeted, it falls short)
+  const track = heroic(w, u) && o.t && o.track !== false, eye = !heroic(w, u) && !!o.t && o.eye !== false, L0 = L; let tx = x0 + Math.cos(a) * L, ty = y0 + Math.sin(a) * L, cut = false; // (cut: Targeted, it falls short)
   const pos = (k) => { const s = clamp(k + 0.11 * Math.sin(TAU * k), 0, 1);
     if (track && !cut && alive(o.t) && k < 0.9) { const b = angleTo(x0, y0, o.t.x, o.t.y), d = Math.min(L + 90, Math.max(0, dist(x0, y0, o.t.x, o.t.y) - (u.r + o.t.r) * (o.close ?? 0.72))); tx = x0 + Math.cos(b) * d; ty = y0 + Math.sin(b) * d; }
     return { x: x0 + (tx - x0) * s, y: y0 + (ty - y0) * s }; };
@@ -408,7 +410,12 @@ export function pounce(w, u, o) {
       enter(D) { u.facing = a; D.bl = null; if (!heroic(w, u)) spot(w, u, D, x0 + Math.cos(a) * L, y0 + Math.sin(a) * L, rr, tell + AIR);
         D.thr = { shape: 'circle', x: x0 + Math.cos(a) * L, y: y0 + Math.sin(a) * L, r: rr, sp: 0, lead: AIR };
         k2(w, { draw: 'dashSettle', unit: u, x: u.x, y: u.y, a, max: tell, col: D.col, beast: true }); },
-      tick(k, dt, D) { const e = eOut3(k); u.facing = mixA(u.facing, a, Math.min(1, dt * 12)); D.body = { lean: -0.3 * e, sx: 1 + 0.16 * e, sy: 1 - 0.24 * e, tilt: Math.sin(w.time * 34) * 0.07 * k }; D.arm = { r: -0.2 * e, dy: -10 * e }; D.off = { r: -0.2 * e, dy: -10 * e }; } },
+      tick(k, dt, D) { const e = eOut3(k);
+        // an enemy keeps its eyes on its mark while it crouches (the circle on the floor follows), and picks its spot as it
+        // leaves the floor: from then the circle stays put, and the time in the air is the time to step out of it
+        if (eye && alive(o.t)) { const b = angleTo(x0, y0, o.t.x, o.t.y), d = Math.min(L0 + 90, Math.max(0, dist(x0, y0, o.t.x, o.t.y) - (u.r + o.t.r) * (o.close ?? 0.72)));
+          a = b; L = clearLen(w, x0, y0, a, d, u.r * 0.8); tx = x0 + Math.cos(a) * L; ty = y0 + Math.sin(a) * L; if (D.zones[0]) { D.zones[0].x = tx; D.zones[0].y = ty; } if (D.thr) { D.thr.x = tx; D.thr.y = ty; } }
+        u.facing = mixA(u.facing, a, Math.min(1, dt * 12)); D.body = { lean: -0.3 * e, sx: 1 + 0.16 * e, sy: 1 - 0.24 * e, tilt: Math.sin(w.time * 34) * 0.07 * k }; D.arm = { r: -0.2 * e, dy: -10 * e }; D.off = { r: -0.2 * e, dy: -10 * e }; } },
     { dur: AIR,
       enter(D) { L *= D.short; if (D.short < 1) { cut = true; tx = x0 + Math.cos(a) * L; ty = y0 + Math.sin(a) * L; } D.passing = true; if (o.inv) u.invulnT = Math.max(u.invulnT || 0, AIR); dust(w, x0, y0, a + Math.PI, 7, o.dustCol, 120); k2(w, { draw: 'dashKick', x: x0, y: y0, a, max: 0.35 }); },
       tick(k, dt, D) { const q = pos(k), up = Math.sin(Math.PI * k); u.x = q.x; u.y = q.y; if (track) a = angleTo(x0, y0, tx, ty); u.facing = a; u.mvA = a; u.hop = u.dvHop = H * Math.pow(up, 0.8);
@@ -423,7 +430,7 @@ export function pounce(w, u, o) {
     { dur: 0.16, // the landing: flat, the claws dragged back through
       tick(k, dt, D) { const e = eOut(k); D.body = { lean: mix(0.36, 0.05, e), sx: mix(1.18, 1, e), sy: mix(0.72, 1, e), tilt: 0 }; D.arm = { r: mix(0.6, 0, e), dy: mix(30, -6, e) }; D.off = { r: mix(0.6, 0, e), dy: mix(30, -6, e) };
         u.x += Math.cos(a) * 46 * (1 - k) * dt; u.y += Math.sin(a) * 46 * (1 - k) * dt; } },
-    { dur: o.recover ?? (heroic(w, u) ? 0.1 : 0.3), tick(k, dt, D) { D.body = { lean: 0, sx: 1, sy: 1, tilt: 0 }; D.arm = { r: 0, dy: -6 * (1 - k) }; D.off = { r: 0, dy: -6 * (1 - k) }; } },
+    { dur: o.recover ?? (heroic(w, u) ? 0.1 : 0.2), tick(k, dt, D) { D.body = { lean: 0, sx: 1, sy: 1, tilt: 0 }; D.arm = { r: 0, dy: -6 * (1 - k) }; D.off = { r: 0, dy: -6 * (1 - k) }; } },
   ]);
 }
 

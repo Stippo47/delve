@@ -52,12 +52,13 @@ const TWICE = (setup, go, t1 = 0.9, t2 = 3.7) => `
       if (T < ${t1} || (T > ${t2} - 0.5 && T < ${t2})) all.forEach((u) => pin(u));
       at(T, ${t2} - 0.5, 'r', reset); at(T, ${t1}, 'a', () => { ${go} }); at(T, ${t2}, 'b', () => { ${go} }); };`;
 // an enemy's move shown twice at a hero held in place
-const FOE = (setup, key) => `
+const FOE = (setup, key, hold = 0.52) => `
+    const HOLD = ${hold};
     clear(); ${setup}
     const go = () => { put(foe, ...spot); foe.act = null; if (foe.el) foe.el.rush = null; foe.aggro = true; foe.target = me; foe.el = foe.el || {}; for (const k in foe.el) if (typeof foe.el[k] === 'number') foe.el[k] = 99; foe.el['${key}'] = 0; foe.abilT = 99; foe.thinkT = 0; mend([me, foe]);
       ${key === 'abil' ? "foe.facing = foe.mvA = Math.atan2(me.y - foe.y, me.x - foe.x); const was = w.actor; w.actor = foe; SIM.unitAbility(w, foe); w.actor = was;" : ''} }; // (a plain unit's own ability is set off by hand: sim.js unitAbility)
     let last = 0;
-    each = (T) => { if (!busy(foe) || T - last < 0.35) pin(me); me.atkT = 9; // (held in place for the tell; a charge may carry it off)
+    each = (T) => { if (!busy(foe) || T - last < HOLD) pin(me); me.atkT = 9; // (held in place for the tell; a charge may carry it off)
       me.facing = Math.atan2(foe.y - me.y, foe.x - me.x); foe.atkT = Math.max(foe.atkT, 0.4); for (const f of friends()) { f.atkT = 9; if (!busy(foe) && T - last > 1.9) pin(f); }
       at(T, 0.8, 'a', () => { go(); last = T; }); at(T, 3.6, 'b', () => { go(); last = T; });
       if (!busy(foe) && (T < 0.8 || T - last > 1.9)) { put(foe, ...spot); foe.el = foe.el || {}; foe.el['${key}'] = 99; foe.abilT = 99; } };`;
@@ -95,7 +96,7 @@ const CLIPS = {
   'feint-goblin': { hero: 'paladin', ids: ['shieldBash', 'guard', 'consecrate'], battle: 'goblin*1|paladin', t: '000', crop: 0.46, stage: FOE(`
     const foe = foes()[0], spot = [CX - 95, CY + 6, 0]; tough([foe], 8, 0.6); me.maxHp *= 4; me.hp = me.maxHp; put(me, CX + 50, CY, Math.PI); put(foe, ...spot); foe.spd = 60; foe.mvA = 0;`, 'abil') },
   'dragFling-orc': { hero: 'archer', ids: ['barrage', 'frostArrow', 'roll'], battle: 'orc*1|archer,cleric', t: '000', crop: 0.56, stage: FOE(`
-    const foe = foes()[0], spot = [CX - 150, CY, 0], fr = friends()[0]; tough([foe], 8, 0.6); me.maxHp *= 4; me.hp = me.maxHp; fr.maxHp *= 4; fr.hp = fr.maxHp; put(me, CX - 10, CY, Math.PI); put(fr, CX + 60, CY + 30, Math.PI); put(foe, ...spot);`, 'abil') },
+    const foe = foes()[0], spot = [CX - 150, CY, 0], fr = friends()[0]; tough([foe], 8, 0.6); me.maxHp *= 4; me.hp = me.maxHp; fr.maxHp *= 4; fr.hp = fr.maxHp; put(me, CX - 10, CY, Math.PI); put(fr, CX + 60, CY + 30, Math.PI); put(foe, ...spot);`, 'abil', 0.85) }, // (held till the orc reaches it: left free, the archer steps out of the lane, as it should)
   'drawCut-boneSpear': { hero: 'paladin', ids: ['shieldBash', 'guard', 'consecrate'], battle: 'rattlerSpear*1|paladin', t: '000', crop: 0.46, stage: FOE(`
     const foe = foes()[0], spot = [CX - 130, CY + 6, 0]; tough([foe], 8, 0.6); me.maxHp *= 4; me.hp = me.maxHp; put(me, CX + 40, CY, Math.PI); put(foe, ...spot); foe.spd = 60; foe.mvA = 0;`, 'abil') },
   'hook-bat': { hero: 'paladin', ids: ['shieldBash', 'guard', 'consecrate'], battle: 'bat*1|paladin', t: '000', arena: 'crypt', crop: 0.52, stage: FOE(`

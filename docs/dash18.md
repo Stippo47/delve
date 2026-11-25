@@ -115,5 +115,24 @@ the Gaper (its own code: the charge ends in its spin), the orange goblin's dart 
 charges (each has its own tell, crash and daze written into its boss file and doc).
 
 What changed for the small enemies' `ability: 'dash'`: it was a burst of speed with no hit. It is now one of the six
-with a short tell (def.dash names which), and the cut at the end is the unit's own blow (def.dmg), after which its
-next swing waits 0.7 of its attack time: the dash's cut takes the place of a swing.
+with a short tell (def.dash names which). The cut at the end is half the unit's own blow (def.dashMul; a pounce: the
+whole blow, and quick), and its next swing then waits 0.7 of its attack time (0.3 after a pounce).
+
+Who the hit finds:
+- An enemy's line, hook or feint keeps to the path it showed on the floor. An enemy's pounce keeps its eyes on its
+  mark while it crouches (the circle follows), picks its spot as it leaves the floor, and from then the circle stays:
+  the time in the air is the time to step out.
+- A hero's hook and pounce follow their mark if it steps (the old ones landed whatever it did); a hero's feint aims
+  its real dash from the planted foot. If Backstab's mark falls on the way, the cut is for whoever is there.
+- Nothing lands on a hero mid-burst where the old move was untouchable (Iaido, Spear Lunge, Backstab, Dash, Shadow
+  Walk, the wolf's Pounce, Spear of the Sky). Enemies can be struck throughout.
+
+Numbers moved to hold each move's weight (section 4):
+- Shadow Walk's cut is 1.0x her blow (1.15x at III; it was 1.5x): the old run caught one or two on its line, the chain finds three.
+- Iaido's cut is 0.85 of what it was (the blade's sweep is wider than the old line). Iaido III's cut back lands at 0.3
+  of that: the sweep catches the ones the first cut threw off the line. Measured, the old cut back added nothing (the
+  line missed them all), so III is now worth about a quarter more than I and II, where it was worth the same.
+- Backstab is 4.3x (it was 4x): the run round takes a third of a second, in which the mark can fall to someone else.
+- Charge: of his blow, the one picked up takes 0.45 as it is hit and 0.5 as it is thrown; the rest take it all.
+- Spear of the Sky is 1.0x (it was 1.5x): the point now strikes what it passes, which the old line seldom did.
+- Twinfang's Dash in nicks for half a stab (it dealt nothing; the other dashes that cut all did).

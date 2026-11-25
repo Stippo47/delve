@@ -185,7 +185,7 @@ export const ABILITIES = {
       // are bowled aside as before. The run is as long as it was and the blow the same (round 13: 2x his own, 2.6 at II),
       // split between the pick-up and the throw. (It was one speed down a line, everyone thrown aside the same.)
       const a = ang(u, t), power = tier >= 2 ? 1.3 : 1, sp = u.def.speed * 1.9; u.facing = a;
-      dash(w, u, 'dragFling', { a, len: sp * (tier >= 2 ? 0.7 : 0.55) * 1.1, speed: sp, tell: 0.18, dmg: dmgOf(u, 2) * power, knock: 340 * power, hit: { stagger: tier >= 3 ? 45 : 0, ab: 'charge' }, rest: 0.3 });
+      dash(w, u, 'dragFling', { a, len: sp * (tier >= 2 ? 0.7 : 0.55) * 1.1, speed: sp, tell: 0.18, dmg: dmgOf(u, 2) * power, grabK: 0.45, fling: dmgOf(u, 2) * power * 0.5, knock: 340 * power, hit: { stagger: tier >= 3 ? 45 : 0, ab: 'charge' }, rest: 0.3 });
     },
   },
   groundPound: {
@@ -260,7 +260,8 @@ export const ABILITIES = {
       // round 18 (lane dash18): the hook (dashes.js). Out of the cloud a shadow of her runs round its side, banked into
       // the turn, and she is behind it with the daggers swung across its back: the same blow, landing where the blades
       // are. Nothing touches her on the way. (She vanished and was behind it, the blow landing the same instant.)
-      const A = dash(w, u, 'hook', { t, tell: 0.08, run: clamp(0.16 + dist(u.x, u.y, t.x, t.y) / 2000, 0.2, 0.32), inv: true, alpha: 0.5, only: t, dmg: dmgOf(u, 4), hit: { crit: true, poison: tier >= 2 ? 40 : 0, knock: 40, ab: 'backstab' }, ghost: '#6E5E8E', col: ['#9B86C9', '#F4EEFF'], recover: 0.12,
+      // The blow is 4.3x (it was 4x): the run round takes a third of a second, in which the mark can fall to someone else.
+      const A = dash(w, u, 'hook', { t, tell: 0.08, run: clamp(0.16 + dist(u.x, u.y, t.x, t.y) / 2000, 0.2, 0.32), inv: true, alpha: 0.5, only: t, dmg: dmgOf(u, 4.3), hit: { crit: true, poison: tier >= 2 ? 40 : 0, knock: 40, ab: 'backstab' }, ghost: '#6E5E8E', col: ['#9B86C9', '#F4EEFF'], recover: 0.12,
         arrive: () => zone(w, { x: u.x, y: u.y, r: 48, dur: 1.2, kind: 'smoke', src: u }), // round 10: a puff where she comes back in too
         each: (e) => fx(w, { type: 'k2', draw: 'dashCross', x: e.x, y: e.y, a: ang(u, e), r: e.vr, max: 0.42 }), // (the cross of two cuts, as her blades land)
         onEnd: done });
