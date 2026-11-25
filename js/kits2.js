@@ -5,7 +5,7 @@
 // Lasting things an ability starts run on the unit's own timers (u.k2, ticked from kitTick), not new sim acts.
 // The looks are in fx2.js: fx of type 'k2' with a `draw` name, shots of the new kinds, and each ability's 'sig'.
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange } from './util.js';
-import { hurt, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, stun, addBuff, fx, cleanse, textU, sparks, scatterCoins, turnSide, restoreSide, meleeSwing, kill } from './sim.js';
+import { hurt, spawn, alive, opponents, allies, hpRatio, puff, setAnim, explode, blocked, stun, addBuff, fx, cleanse, textU, sparks, scatterCoins, turnSide, restoreSide, meleeSwing, kill, taunt } from './sim.js';
 import { STATUS, WHIRLED, SPUN, DIRTY, TARGETED, TRACKED, TRAPPED, WARDED, WEAKENED, resTo } from './statuses.js';
 import { LOOK2 } from './looks2.js';
 import { lineClear, circleRect } from './path.js';
@@ -362,7 +362,7 @@ export const ABILITIES2 = {
       u.act = { type: 'leap', t: T, max: T, x0: u.x, y0: u.y, x1, y1, land: () => {
         if (alive(a)) { shove(a, fa + Math.PI, 520); heal(w, a, a.maxHp * (tier >= 2 ? 0.2 : 0.1), u); k2(w, { draw: 'shoveAway', x: a.x, y: a.y, a: fa + Math.PI, max: 0.5, ab: 'challenge' }); }
         const list = tier >= 3 ? foesNear(w, u, u.x, u.y, 200) : f && alive(f) ? [f] : [];
-        for (const e of list) { e.tauntBy = u; e.tauntT = 4; e.target = u; k2(w, { draw: 'tauntMark', unit: e, x: e.x, y: e.y, r: e.vr, max: 1, ab: 'challenge' }); }
+        for (const e of list) taunt(w, e, u, 4); // (round 19, lane sys19: the agreed red V over the head, sim.js taunt; it was a "!" of its own)
         if (f && alive(f)) u.facing = ang(u, f);
         puff(w, u.x, u.y, '#E9DDC2', 8, 90, 5, 0.4);
       } };
@@ -667,7 +667,7 @@ export const ABILITIES2 = {
       u.kit.splitT = w.time + 1.4;
       after(u, 0.12, () => shoot(w, u, a, { kind: 'warhammer', speed: 760, r: 14, life: L / 760, pierce: 9, dmg: dmgOf(u, 0.9), knock: 120, st: { shock: 30 }, land: (p) => {
         const x1 = clamp(p.x, u.r, w.W - u.r), y1 = clamp(p.y, u.r, w.H - u.r);
-        k2(w, { draw: 'hammerDown', x: x1, y: y1, a, max: 0.55 });
+        k2(w, { draw: 'hammerDown', x: x1, y: y1, a, max: 0.55, unit: u }); // (round 19: unit, drawn as the hammer he holds)
         u.act = { type: 'leap', t: 0.45, max: 0.45, x0: u.x, y0: u.y, x1, y1, land: () => {
           const R = tier >= 3 ? 105 : 80; w.shake = Math.max(w.shake, 8); u.kit.splitT = 0;
           swingMark(w, u, u.r + 20, 0.6, { x: u.x, y: u.y, r: R, look: 'hammer' });
@@ -1214,7 +1214,7 @@ export const ABILITIES2 = {
         if (bombT <= 0) { bombT = tierOf(u, 'broomRide') >= 2 ? 0.32 : 0.5;
           const e = opponents(w, u).filter((o) => dist(o.x, o.y, u.x, u.y) < 200).sort(() => rand() - 0.5)[0], bx = e ? e.x + rrange(-14, 14) : u.x, by = e ? e.y + rrange(-14, 14) : u.y;
           const fall = 0.42, h = u.hop * 0.9 + 18;
-          w.projectiles.push({ kind: 'hexBomb', x: u.x, y: u.y, vx: (bx - u.x) / fall, vy: (by - u.y) / fall, r: 6, team: u.team, owner: u, dmg: 0, o: {}, life: fall, life0: fall, drop: h, a: 0, noHit: true,
+          w.projectiles.push({ kind: 'hexBomb', x: u.x, y: u.y, vx: (bx - u.x) / fall, vy: (by - u.y) / fall, r: 6, team: u.team, owner: u, dmg: 0, o: {}, life: fall, life0: fall, drop: h, lob: { H: 0 }, a: 0, noHit: true, // (lob H 0: height.js projZ leaves it be; it falls from her height itself, fx2 PROJ2.hexBomb)
             land: () => { k2(w, { draw: 'hexPop', x: bx, y: by, r: 46, max: 0.45, ab: 'broomRide' }); for (const o of foesNear(w, u, bx, by, 46)) hurt(w, o, dmgOf(u, 0.9), u, { noDodge: true, knock: 120, kAngle: angleTo(bx, by, o.x, o.y), curse: 14, ab: 'broomRide' }); } }); }
       }, () => { u.hop = 0; u.flyT = 0; u.kit.broomUntil = 0; if (u.act && u.act.type === 'ride') u.act = null; puff(w, u.x, u.y, '#B07BE0', 8, 80, 5, 0.4); });
     },
@@ -2119,7 +2119,7 @@ export const ABILITIES2 = {
     score: (w, u, t) => (t && alive(t) && dist(u.x, u.y, t.x, t.y) < 160 && (t.elite || t.def.boss || foesNear(w, u, u.x, u.y, 200).length >= 2) && hpRatio(u) > 0.35 ? 0.7 : 0),
     use(w, u, t, tier) {
       if (!t) return; cast(u, 'ability', 0.6); const dur = 5, R = 130, cx = (u.x + t.x) / 2, cy = (u.y + t.y) / 2; u.kit.showUntil = w.time + dur; u.kit.arenaFoe = t;
-      t.tauntBy = u; t.tauntT = dur; t.target = u; u.target = t;
+      taunt(w, t, u, dur); u.target = t; // (round 19: sim.js taunt, the red V)
       if (tier >= 2) heal(w, u, u.maxHp * 0.15, u);
       k2(w, { draw: 'arenaRing', x: cx, y: cy, r: R, max: dur, ab: 'showboat' }); k2(w, { draw: 'horn', unit: u, x: u.x, y: u.y, r: 200, max: 0.8 });
       timer(u, 'arena', dur, () => {
@@ -2441,10 +2441,19 @@ function blast(w, u, x, y, r, k, o, ab, under) {
   w.shake = Math.max(w.shake, r > 90 ? 8 : 4);
 }
 // a lobbed thing (no hit on the way; it lands where it was thrown): kind, colour, land(x, y)
-function lob(w, u, x, y, kind, color, land) {
-  const d = Math.max(30, dist(u.x, u.y, x, y)), a = angleTo(u.x, u.y, x, y), sp = Math.max(260, d * 1.6);
-  w.projectiles.push({ kind, x: u.x + Math.cos(a) * u.r, y: u.y + Math.sin(a) * u.r, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: 6, team: u.team, owner: u, dmg: 0, o: {}, life: d / sp, life0: d / sp, a, noHit: true, color, land: () => land(x, y) }); // (life0: fx2 arcs a lobbed thing)
-  return w.projectiles[w.projectiles.length - 1];
+// Round 19 (lane sys19, the designer: "The bread doesn't come or land directly in the center of entities", the Elixir
+// "Thrown to bottom left corner. Not center of entity"): it leaves from the thrower's edge and flies only the rest of
+// the way (it went the whole distance from the edge, so it came down a body's width past the spot), and a lob thrown at a
+// unit (opts.at, or the unit standing exactly on x, y: what every `lob(w, u, a.x, a.y, ...)` means) follows it and lands
+// on its middle wherever it has got to (sim.js projectiles, p.lobTo); land then gets where it landed. Its arc and its one
+// shadow: height.js projZ, render.js drawShadows.
+function lob(w, u, x, y, kind, color, land, opts) {
+  const to = (opts && opts.at) || w.units.find((o) => o.x === x && o.y === y && !o.dead) || null;
+  const d0 = Math.max(30, dist(u.x, u.y, x, y)), a = angleTo(u.x, u.y, x, y), sp = Math.max(260, d0 * 1.6), s0 = Math.min(u.r, d0 * 0.4), d = d0 - s0;
+  const p = { kind, x: u.x + Math.cos(a) * s0, y: u.y + Math.sin(a) * s0, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: 6, team: u.team, owner: u, dmg: 0, o: {}, life: d / sp, life0: d / sp, a, noHit: true, color,
+    lob: {}, lobTo: to, lobV: sp, land: (q) => (to && q ? land(q.x, q.y) : land(x, y)) }; // (life0 and lob: height.js projZ arcs it)
+  w.projectiles.push(p);
+  return p;
 }
 
 // The Shade's shadow: unseen (nobody's target: ethereal) and dark, until she strikes (the Fade trait), or for `dur`
@@ -2513,7 +2522,7 @@ export function burrowTo(w, u, x1, y1, T, surface) {
     if (surface) surface(u);
   } };
 }
-// the Alchemist's brews: six pools (Brew Pools), three elixirs, her monstrous form
+// the Alchemist's brews: six pools (Brew Pools), three elixirs, their monstrous form
 const POOLS = ['acid', 'cold', 'fire', 'whirl', 'shock', 'water'];
 const POOL_COL = { acid: '#C8E63C', cold: '#9FDDF6', fire: '#FF8A3D', whirl: '#EEF3F8', shock: '#FFE66B', water: '#5DB7E0' };
 const ELIXIR_COL = { rage: '#FF5A3D', mend: '#9BE07A', ward: '#9FE0FF' };
@@ -3245,7 +3254,7 @@ export function kit2Tick(w, u, dt) {
   if (u.kind === 'engineer') wrenchRepair(w, u, dt); // round 17 (lane tags17): the wrench mends her constructs
   // round 19 (lane caster19): Grandpa's sheaves: a blow on a hayed foe quickens its striker's abilities (SHEAF.quick faster)
   if (u.kit.quickUntil > w.time) for (const k in u.kit.cd) if (u.kit.cd[k] > 0) u.kit.cd[k] -= dt * SHEAF.quick;
-  // the Alchemist's hand shows the next flask she'll throw (round 13: "Bottle in hand should change to what she will throw")
+  // the Alchemist's hand shows the next flask they'll throw (round 13: "Bottle in hand should change to what she will throw")
   // (round 19: the tube in their fist is part of their picture now, its brew painted by fx2 ART2.alchemist: no 'handFlask' fx)
   // the Chef's plates: a friend who walks over one eats it (healed; the rest past whole is extra health); hurt friends
   // with no enemy on them go and get one
@@ -3296,7 +3305,7 @@ export function kit2Tick(w, u, dt) {
   if (u.kind === 'griffon') {
     const out = w.projectiles.some((p) => p.owner === u && p.kind === 'hammer' && p.life > 0);
     u.kit.hammerOut = out;
-    if (out) u._force = { 'arm-l': { hide: true } }; else if (u._force && u._force['arm-l'] && u._force['arm-l'].hide) u._force = null;
+    // (round 19, lane sys19: his hammer is its own part now, arm-l-hammer, hidden by parts.js while it's out; his fist stays)
   }
   // Inner Peace (Monk): shots that reach him fly back at whoever loosed them; his palms are pressed together meanwhile
   if (u.kit.peaceUntil > w.time) {

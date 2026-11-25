@@ -215,7 +215,7 @@ Object.assign(HEROES2, {
     ],
     trait: { id: 'seenItAll', name: 'Seen It All', desc: 'Allies near him shake off stagger twice as fast.' },
   },
-  alchemist: {
+  alchemist: { // (round 19: the designer, "They. Pronouns.": the Alchemist is they/them in every text)
     name: 'Alchemist', art: 'art/heroes/alchemist.svg', role: 'caster', unlock: { gems: 2 },
     forms: ['art/heroes/alchemist-monster.svg'], // round 19 (lane caster19): Monstrosity's sprite, got ready with theirs (render.js warmArt)
     blurb: 'Wild white hair, brass goggles, a strap of flasks. Every throw is a different brew.',
@@ -241,7 +241,7 @@ Object.assign(HEROES2, {
     style: { hand: 'arm-l', glow: '#7FE0D0' },
     attack: { name: 'Spirit bolt', anim: 'cast', desc: 'A teal spirit; when it strikes near a hurt friend it leaps on to that friend and mends it.' },
     summons: { // round 13: the Healing Totem and the Ancestors' Call spirits (light blue; kits2.js BRAINS, fx2.js LOOK2)
-      totem: { name: 'Totem', art: 'art/summons/totem.svg', headR: 66, ownLook: true, upright: true, r: 13, vr: 26, standsUp: 33, /* round 19: it stands on its foot: its body is only its base (fx2 ART2.totem draws it up from there) */ turn: 0, accel: 0, face: 0, mass: 60, hp: 50, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
+      totem: { name: 'Totem', art: 'art/summons/totem.svg', headR: 66, ownLook: true, upright: true, r: 13, vr: 26, foot: [0, 36], /* round 19 (lane caster19): it stands on its foot: its body is only its base, and its picture is drawn up the screen from there (fx2 ART2.totem), so its foot (render.js footOf) is its middle */ turn: 0, accel: 0, face: 0, mass: 60, hp: 50, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
       spiritBear: { name: 'Spirit bear', art: 'art/summons/spirit-bear.svg', headR: 66, ownLook: true, r: 30, vr: 26, turn: 4, accel: 260, face: 4, mass: 3, hp: 45, speed: 62, role: 'melee', range: 18, atkCd: 1.1, dmg: 10, knock: 170, arc: 1.7, weapon: 'claw', attackAnim: 'swing' },
       spiritWolf: { name: 'Spirit wolf', art: 'art/summons/spirit-wolf.svg', headR: 47, ownLook: true, attackAnim: 'thrust', weapon: 'bite', r: 24, vr: 18, turn: 6, accel: 380, face: 6, mass: 1, hp: 25, speed: 92, role: 'skirmish', range: 14, atkCd: 0.8, dmg: 7, arc: 1.4 },
       spiritEagle: { name: 'Spirit eagle', art: 'art/summons/spirit-eagle.svg', headR: 56, ownLook: true, pass: true, r: 16, vr: 22, turn: 6, accel: 400, face: 6, mass: 0.6, hp: 20, speed: 120, role: 'melee', range: 0, atkCd: 999, dmg: 0 },

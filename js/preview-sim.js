@@ -14,7 +14,8 @@
 // stage loops by itself: it plays the move, waits a beat, and builds its world again.
 // Every list comes from the data (HEROES, DEFS and the dungeons' rosters, ELITES / MAJOR_MOVES, STATUS and the
 // Book's STATUSES words, TRINKETS, POTIONS), so new heroes, enemies, statuses and trinkets show up without edits here.
-import { makeWorld, spawn, step, setAnim, hurt, meleeSwing, addStatus, stun, addBuff, unitNumbers, wallRect } from './sim.js';
+import { leash, holdWalk, freeWalk } from './leash.js'; // round 19 (lane sys19): "the bench stops pinning people"
+import { makeWorld, spawn, step, setAnim, hurt, meleeSwing, addStatus, stun, addBuff, unitNumbers, wallRect, taunt } from './sim.js';
 import { sceneOf as abilitySceneOf, attackSceneOf, KINDS, FOE_HP, FOE_DMG, HERO_FLOOR, FRIEND_FLOOR, foeSceneOf, FOE_HERO_DMG, FOE_HERO_FLOOR, statusSceneOf, STATUS_SCENE } from './preview-scenes.js';
 import { newStats } from './stats.js';
 import { ABILITIES, initKit, cooldownOf } from './kits.js';
@@ -168,7 +169,7 @@ const PUT_ON = {
   stun: (w, s) => { stun(w, s, 1.6); },
   guard: (w, s, o) => { s.guardBy = o.friend; s.guardT = 4; o.friend.guardOf = s; },
   invuln: (w, s) => { s.invulnT = 2.5; },
-  taunt: (w, s, o) => { s.tauntBy = o.dummy; s.tauntT = 3.5; },
+  taunt: (w, s, o) => { taunt(w, s, o.dummy, 3.5); }, // (round 19: sim.js taunt, the red V)
   buff: (w, s) => { addBuff(s, { id: 'book-buff', dur: 3.5, atkSpeed: 1.5, move: 1.3 }); },
   debuff: (w, s) => { addBuff(s, { id: 'book-debuff', dur: 3.5, atkSpeed: 0.6, move: 0.6 }); },
   rage: (w, s) => { addBuff(s, { id: 'rage', dur: 3.5, atkSpeed: 1.5, move: 1.4, taken: 0.7 }); },
@@ -377,7 +378,7 @@ function heroStage(S, spec) {
       if (passive && u.kit.tiers.oldBones && u.kit.oldBonesUsed && !did.bones) { did.bones = true; went(false); }
       // once it has gone it is itself again: it moves and fights as it would
       if (cast && u.moveMul < 0.01) u.moveMul = baseMove;
-      if (!cast && !u.act && !u.forcedGoal) { const k = Math.min(1, dt * 2); u.x += (u.home.x - u.x) * k; u.y += (u.home.y - u.y) * k; }
+      if (!cast) leash(u, u.home, dt, 30); // (round 19, lane sys19: no pinning, leash.js): its walking is held till the ability goes; a knock plays out
       if (u.hp < u.maxHp - 0.5) u.barAlways = true;
       // the scene isn't about the hero falling (unless it is: Old Bones's blow): held above a share of its health
       if (!u.downed) u.hp = Math.max(u.hp, did.lethal ? 1 : u.maxHp * HERO_FLOOR);
@@ -386,7 +387,7 @@ function heroStage(S, spec) {
         if (o.downed || o.dead) continue;
         if (!o.spec.falls && o.hp < o.maxHp * FRIEND_FLOOR) o.hp = o.maxHp * FRIEND_FLOOR;
         for (const k in o.kit.cd) o.kit.cd[k] = Math.max(o.kit.cd[k], 5);
-        if (!o.act && !o.forcedGoal) { const k = Math.min(1, dt * 3); o.x += (o.home.x - o.x) * k; o.y += (o.home.y - o.y) * k; }
+        leash(o, o.home, dt, 50); // (round 19, lane sys19: no pinning, leash.js): a friend shoved, flung, carried or pulled stays where that put it a while
       }
       // the enemies keep their health up (a slow mend once low), so the loop lasts
       for (const e of foes) if (!e.dead && !e.spec.mortal && e.hp < e.maxHp * 0.35) e.hp += e.maxHp * 0.25 * dt;
@@ -565,7 +566,7 @@ function traitStage(S, spec) {
       return o;
     });
     for (const f of foes) if (f.p.busy && allies[0]) { f.d.target = allies[0]; f.d.facing = Math.atan2(allies[0].y - f.d.y, allies[0].x - f.d.x); }
-    pin = { x: u.x, y: u.y }; did = {}; swingT = 0.5; turn = 0; lastShot = u.lastAttackT; S.hits = hitWatch(); S.hits2 = hitWatch();
+    pin = { x: u.x, y: u.y }; did = {}; swingT = 0.5; turn = 0; lastShot = u.lastAttackT; S.hits = hitWatch(); S.hits2 = hitWatch(); holdWalk(u); // (round 19, lane sys19: no pinning, leash.js)
     const aims = () => foes.filter((f) => f.p.aim !== false && w.units.includes(f.d));
     u.target = (aims()[0] || {}).d || null;
     S.hero = u; S.dummies = foes.map((f) => f.d);
@@ -651,7 +652,7 @@ function traitStage(S, spec) {
     };
     S.after = (dt) => {
       if (did.walking) { u.x += (pin.x - u.x) * Math.min(1, dt * 8); u.y += (pin.y - u.y) * Math.min(1, dt * 8); u.vx = u.vy = 0; u.spd = 60; }
-      else if (!did.free) { if (u.act) pin = { x: u.x, y: u.y }; else if (!u.downed) { u.x = pin.x; u.y = pin.y; u.vx = u.vy = 0; u.spd = 0; } }
+      else if (!did.free) { if (u.act) pin = { x: u.x, y: u.y }; else leash(u, pin, dt, 24); } // (round 19, lane sys19: no pinning, leash.js)
       if (!H.downAt && !u.downed && u.hp < u.maxHp * 0.08) u.hp = u.maxHp * 0.08; // the scene isn't about him falling
       for (const f of foes) {
         const d = f.d, p = f.p;
@@ -662,7 +663,7 @@ function traitStage(S, spec) {
       }
       if (standing && S.hits([u]) > 0) acted();                 // a blow or a shot that carries it just landed on him
       if (dealing && S.hits2(foes.map((f) => f.d)) > 0) acted(); // his own blow just landed
-      for (const o of allies) if (!o.downed && !o.dead) { o.atkT = 999; const k = Math.hypot(o.kx, o.ky) > 20 ? 0 : Math.min(1, dt * 5); o.x += (o.home.x - o.x) * k; o.y += (o.home.y - o.y) * k; if (!did.up) o.facing = 0; }
+      for (const o of allies) if (!o.downed && !o.dead) { o.atkT = 999; holdWalk(o); leash(o, o.home, dt, 30); if (!did.up && !o._leashed) o.facing = 0; } // (round 19, lane sys19: no pinning, leash.js)
     };
   };
 }
@@ -771,7 +772,7 @@ function foeStage(S, spec) {
       if (move === 'kit' && d0.pass && Math.hypot(u.x - hold.x, u.y - hold.y) > 150) own(); // a roller: rolling and bouncing is what it does
       // an elite or major is held where it stands (it can still act) until its move has gone off, so moves that want
       // room (throws, charges, leaps) get it before it has walked up to them; never longer than 2 s
-      if (held() && !u.dead && !u.act) { u.x = hold.x; u.y = hold.y; u.vx = u.vy = 0; }
+      if (held()) holdWalk(u); else freeWalk(u); // (round 19, lane sys19: no pinning, leash.js): its walking held, not its place
       // the heroes: their abilities held, kept up (they mend when low), kept in the yard
       for (const o of heroes) {
         for (const c in o.kit.cd) o.kit.cd[c] = Math.max(o.kit.cd[c], 5);
@@ -779,7 +780,7 @@ function foeStage(S, spec) {
         if (o.hp < o.maxHp * FOE_HERO_FLOOR) o.hp = o.maxHp * FOE_HERO_FLOOR;
         if (o.hp < o.maxHp * 0.35) o.hp += o.maxHp * 0.12 * dt;
         o.x = Math.min(W - 30, Math.max(30, o.x)); o.y = Math.min(H - 30, Math.max(30, o.y));
-        if (o.baseMove != null && !o.act) { const q = Math.min(1, dt * 3), [hx, hy] = at(o.spec.at); o.x += (hx - o.x) * q; o.y += (hy - o.y) * q; }
+        if (o.baseMove != null) { const [hx, hy] = at(o.spec.at); leash(o, { x: hx, y: hy }, dt, 30); } // (round 19, lane sys19: no pinning, leash.js): a charge's knock back plays out
       }
       // its own side: kept up, mending slowly once low (no health is ever set lower)
       for (const o of [u, friend, ...pack]) if (o && !o.dead && !o._bookKilled && o.hp < o.maxHp * 0.35) o.hp += o.maxHp * 0.25 * dt;
@@ -875,7 +876,7 @@ function statusStage(S, spec) {
       if (!build && stateOn(s, id)) S.fire();
       // once it is on, the one who put it on stops: what follows is the status's own (a sleeper sleeps, ice thaws)
       if (done || A) by.atkT = Math.max(by.atkT, 0.3); // (and a timed state's ability is the first thing it does: its blows wait)
-      if (trig && !trig.dead) { trig.atkT = 99; if (!trig._wound) { trig.x = trig.home.x; trig.y = trig.home.y; } }
+      if (trig && !trig.dead) { trig.atkT = 99; if (!trig._wound) { holdWalk(trig); leash(trig, trig.home, dt, 20); } else freeWalk(trig); } // (round 19, lane sys19: no pinning, leash.js)
       for (const o of [s, by, foe, trig]) if (o && !o.dead && !o.downed && o.hp < o.maxHp * 0.3) o.hp += o.maxHp * 0.3 * dt; // (kept up: they mend once low)
       if (!s.dead) { s.x = Math.min(W - 40, Math.max(40, s.x)); s.y = Math.min(H - 40, Math.max(40, s.y)); }
       if (foe && !foe.dead) { foe.x = Math.min(W - 40, Math.max(40, foe.x)); foe.y = Math.min(H - 40, Math.max(40, foe.y)); }
@@ -984,11 +985,10 @@ function trinketStage(S, spec) {
     S.after = (dt) => {
       if (scene === 'walk' && !u.act) { const dx = pin.x - u.x, dy = pin.y - u.y; u.mvA = Math.atan2(dy, dx); u.spd = 120; u.x += dx * Math.min(1, dt * 6); u.y += dy * Math.min(1, dt * 6); }
       else if (u.act) pin = { x: u.x, y: u.y };
-      else if (!u.downed && !u.ethereal && scene !== 'drink') { u.x = pin.x; u.y = pin.y; u.vx = u.vy = 0; }
-      if (scene === 'drink') { u.x = pin.x; u.y = pin.y; }
+      else { holdWalk(u); leash(u, pin, dt, 24); } // (round 19, lane sys19: no pinning, leash.js)
       if (potion && spec.id === 'heal' && u.potions === 0) S.fire();
       for (const d of dummies) { if (d._back != null && S.t >= d._back) { d._back = null; d.gone = false; } tendDummy(w, d, dt, true); }
-      if (ally && !ally.downed) { ally.atkT = 999; ally.x = ally.home.x; ally.y = ally.home.y; }
+      if (ally && !ally.downed) { ally.atkT = 999; holdWalk(ally); leash(ally, ally.home, dt, 30); } // (round 19, lane sys19: no pinning, leash.js)
     };
   };
 }

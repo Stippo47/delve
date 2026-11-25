@@ -6,6 +6,7 @@
 import { TAU, clamp } from './util.js';
 import { flame, upright, inked, star, drawProjectile } from './fx.js';
 import { dustPuffs } from './fxkit.js';
+import { castShadow } from './height.js'; // round 19 (lane sys19): one shadow system
 import { drawPuddle } from './puddles.js';
 import { figure, washOf, flashing, lin, rad, ballFill, gloss, glow, shade, ell, circ, poly, soft, capsule, ribbon, ik2, up, BFX, easeOut, sm, k01, hash, slashBand, inkDisc, streak, rgbaOf } from './boss-draw.js';
 import { SPINE, LEN, SHOULDER, HIP, at_ } from './boss-cinder.js';
@@ -147,7 +148,7 @@ BFX.roarBurst = {
   air(ctx, f, k) { const r = f.r * (0.3 + 0.7 * easeOut(k)), n = 16; ctx.globalAlpha = 1 - k * k; for (let i = 0; i < n; i++) { const a = i / n * TAU; upright(ctx, f.x + Math.cos(a) * r, f.y + Math.sin(a) * r, () => flame(ctx, 0, 0, 11 * (1 - 0.6 * k))); } },
 };
 BFX.fireFall = { // a fireball out of the dark: its shadow gathers on the floor, then the ball itself comes down the last stretch
-  ground(ctx, f, k) { shade(ctx, f.x, f.y, 20 + 30 * k, 16 + 24 * k, 0.12 + 0.3 * k); },
+  ground(ctx, f, k) { /* round 19 (lane sys19): its shadow is the units' own (height.js castShadow) */ castShadow(f.x, f.y, (20 + 30 * k) * 0.55, 0.3 + 0.7 * k); },
   air(ctx, f, k, w) { const q = k01((k - 0.5) / 0.5); if (q <= 0) return; const [ux, uy] = up(), h = (1 - q * q) * 460;
     drawProjectile(ctx, { kind: 'fireball', ab: 'fireball', x: f.x + ux * h + uy * h * 0.12, y: f.y + uy * h - ux * h * 0.12, vx: -ux * 600 - uy * 70, vy: -uy * 600 + ux * 70, life: 1 }, w.time); },
 };

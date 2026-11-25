@@ -55,7 +55,12 @@ function splitSvg(text) {
   // art round 11 (the gaper: "has big outlines"): an art drawn bigger on screen than the rest of its family can ask for a
   // thinner line, so its outline comes out their weight: data-line on #sprite, in SVG units (LINE when absent)
   const line = +sprite.getAttribute('data-line') || LINE;
-  return { layers, string, line, has: Object.fromEntries(layers.map((l) => [l.id, true])) };
+  // round 19 (lane sys19; the designer on Warhelm: "Left should be behind, free hands don't get to float"): an arm part
+  // that is only a fist (three shapes or fewer: the fist, its shadow) drawn over the body in the file is a free hand;
+  // poseFor puts it under the body while the other hand holds the weapon (pose.under; paintRig)
+  const bodyAt = kids.findIndex((el) => el.getAttribute('id') === 'body'), free = new Set();
+  kids.forEach((el, i) => { const id = el.getAttribute('id') || ''; if (bodyAt >= 0 && i > bodyAt && /^arm-[lr]$/.test(id) && el.querySelectorAll('path,rect,circle,ellipse,polygon,line,use').length <= 3) free.add(id); });
+  return { layers, string, line, free, has: Object.fromEntries(layers.map((l) => [l.id, true])) };
 }
 
 function canvas(w, h) { const c = document.createElement('canvas'); c.width = Math.max(1, w); c.height = Math.max(1, h); return c; }
@@ -156,6 +161,7 @@ function prune(e) {
 }
 export const artReady = (url) => { const e = arts.get(url); return !!(e && e.rig); };
 export const rigHas = (url, id) => { const e = arts.get(url); return !!(e && e.rig && e.rig.has[id]); };
+const rigFree = (url, id) => { const e = arts.get(url); return !!(e && e.rig && e.rig.free && e.rig.free.has(id)); };
 
 // ---------------------------------------------------------------- drawing
 function colored(L, key, make) { return L.tints[key] || (L.tints[key] = make()); }
@@ -241,7 +247,7 @@ function strokeString(g, pts, color, w) {
 // given. shift: our summons' cool hue (round 8; they wore a purple outline in round 7).
 const hidden = (pose, L) => !!(pose && pose[L.id] && pose[L.id].hide); // a part that's away (the Falconer's falcon in flight)
 export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = false, border = null) {
-  const Ls = set.layers, str = set.string ? stringPts(set, pose) : null, strLayer = set.string && set.string.layer;
+  const Ls = underFirst(set.layers, pose && pose.under), str = set.string ? stringPts(set, pose) : null, strLayer = set.string && set.string.layer;
   if (border && mode === 'normal') {
     const ga = g.globalAlpha; g.globalAlpha = ga * (border.a ?? 1);
     for (const L of Ls) { if (hidden(pose, L)) continue; const b = bordered(L, set.k, border.color), p = b.pad / set.k;
@@ -265,6 +271,13 @@ export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = fals
     g.drawImage(mode === 'grey' ? washed(L, 'rgb(120,112,125)', 0.72) : shift ? shifted(L) : L.img, L.x, L.y, L.w, L.h);
     g.restore();
   }
+}
+
+// round 19 (lane sys19): a free hand (pose.under) is drawn just before the body, so it sits at the body's side, behind it
+function underFirst(Ls, id) {
+  if (!id) return Ls; const i = Ls.findIndex((l) => l.id === id), b = Ls.findIndex((l) => l.id === 'body');
+  if (i < 0 || b < 0 || i < b) return Ls;
+  const out = Ls.slice(); const [L] = out.splice(i, 1); out.splice(b, 0, L); return out;
 }
 
 // A scratch canvas for figures that must be composed first (see-through, or washed with a colour).
@@ -307,6 +320,7 @@ const scaleP = (p, s) => ({ r: (p.r || 0) * s, dx: (p.dx || 0) * s, dy: (p.dy ||
 const addP = (a, b) => ({ r: (a.r || 0) + (b.r || 0), dx: (a.dx || 0) + (b.dx || 0), dy: (a.dy || 0) + (b.dy || 0) });
 const mirror = (p) => ({ r: -(p.r || 0), dx: -(p.dx || 0), dy: p.dy || 0 });
 const ZERO = { r: 0, dx: 0, dy: 0 };
+const FREE_BACK = { dy: -18, dx: 3 }; // round 19 (lane sys19): where a free hand rests, from where the art put it (back towards the shoulder, a little out)
 
 // Per-kind touches. hand: which arm attacks. off: what the other arm does ('shield' pushes forward, else counters).
 // dual: both arms hold weapons and take turns. glow: the casting light.
@@ -418,6 +432,10 @@ export function poseFor(u, w, dt) {
   { const DV = u.act && u.act.dv; if (DV && DV.arm && !u.downed) { main = DV.arm; if (DV.off) off = DV.off; } }
   pose[hand] = hand === 'arm-r' ? main : mirror(main);
   pose[other] = other === 'arm-r' ? off : mirror(off);
+  // round 19 (lane sys19): the other hand, when it holds nothing (a bare fist over the body in the art) and isn't a
+  // shield, a bow hand or a second weapon, is drawn behind the body: "free hands don't get to float"
+  // (and it rests back at the body's side, not out at the front by the face: FREE_BACK, in arm-r terms)
+  if (!dual && !sty.bow && sty.off !== 'shield' && rigFree(url, other)) { pose.under = other; const b = addP(off, FREE_BACK); pose[other] = other === 'arm-r' ? b : mirror(b); }
   // round 10 (the heroes lane: "the falcon still shows on the Falconer's arm while it flies"): the bird rides the
   // left fist as its own part, and is gone from it while it's out hunting (kits2.js looseFalcon)
   pose['arm-l-bird'] = u.kit && u.kit.falconOut ? { hide: true } : pose['arm-l'];

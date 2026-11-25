@@ -9,6 +9,8 @@ import { TAU, clamp } from './util.js';
 import { inked, inkLine, glowDisc, star, upright, upVec, hash, easeOut, flame, blob, trail, roundRect } from './fx.js';
 import { drawPuddle } from './puddles.js';
 import { ART2, LOOK2 } from './looks2.js';
+import { castShadow } from './height.js';
+import { drawHeldWeapon } from './render.js'; // round 19 (lane sys19): a thrown weapon drawn as the one held // round 19 (lane sys19): one shadow system: what flies casts the units' shadow
 // round 15 (lane E): a thing that stands (render.js def.upright): world units straight down the screen from it
 const downAt = (u, d) => { const [vx, vy] = upVec(); return [u.x - vx * d, u.y - vy * d]; };
 const crackAt = (ctx, u, x0, y0, x1, y1) => { ctx.save(); ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(u.x + x0, u.y + y0); ctx.lineTo(u.x + x1, u.y + y1); ctx.stroke(); ctx.restore(); };
@@ -44,7 +46,9 @@ export const PROJ2 = {
     const s = p.big ? 1.5 : 1.2;
     ctx.save(); ctx.rotate(ang); trail(ctx, sp, 40 * s, 10 * s, p.o && p.o.shock ? '#FFE66B' : '#EEF3F8'); ctx.restore();
     if (p.o && p.o.shock) lit(ctx, () => glowDisc(ctx, 0, 0, 26 * s, '#FFE66B', 0.45));
-    ctx.rotate(T * 20 + p.x * 0.01); ctx.scale(s, s);
+    ctx.rotate(T * 20 + p.x * 0.01);
+    if (drawHeldWeapon(ctx, p.owner, p.big ? 1.25 : 1)) return; // round 19 (lane sys19): the hammer he holds
+    ctx.scale(s, s);
     inked(ctx, () => roundRect(ctx, -2.2, -2, 4.4, 20, 2), '#8A5A30');
     inked(ctx, () => roundRect(ctx, -10, -11, 20, 11, 2.5), '#A8B0BA');
     ctx.fillStyle = '#DCE3EC'; ctx.fillRect(-8.5, -10, 17, 3.2);
@@ -273,7 +277,9 @@ Object.assign(EL2, { thunderBlow: 'storm', warHorn: 'fire', skullSplitter: 'eart
 PROJ2.warhammer = (ctx, p, T, ang, sp) => {
   ctx.save(); ctx.rotate(ang); trail(ctx, sp, 50, 14, '#FFE66B'); ctx.restore();
   lit(ctx, () => glowDisc(ctx, 0, 0, 30, '#FFE66B', 0.4));
-  ctx.rotate(T * 18 + p.x * 0.01); ctx.scale(1.6, 1.6);
+  ctx.rotate(T * 18 + p.x * 0.01);
+  if (drawHeldWeapon(ctx, p.owner)) return; // round 19 (lane sys19): the hammer he holds
+  ctx.scale(1.6, 1.6);
   inked(ctx, () => roundRect(ctx, -2.4, -2, 4.8, 22, 2), '#7A4A28');
   inked(ctx, () => roundRect(ctx, -12, -13, 24, 13, 3), '#8E98A6'); ctx.fillStyle = '#C9D2DE'; ctx.fillRect(-10, -12, 20, 3.4);
 };
@@ -297,12 +303,10 @@ Object.assign(EL2, { breadToss: 'song', harvest: 'bone', oldTales: 'nature', aci
   healTotem: 'nature', spiritLink: 'water', rainDance: 'water', frogHex: 'nature', cursedBrew: 'necro', broomRide: 'necro',
   eldritchBeam: 'necro', summonImp: 'fire', darkBargain: 'blood' });
 Object.assign(ALIAS2, { flask: 'vial', spirit: 'bolt', hexbolt: 'bolt', bread: 'note', cauldron: 'vial' });
-// a lobbed thing rises and falls on its way (kits2 lob sets life0): lift the drawing by the arc, a shadow left below
-export function lobUp(ctx, p, H = 44) {
-  if (!p.life0) return; const k = clamp(1 - p.life / p.life0, 0, 1), h = Math.sin(Math.PI * k) * Math.min(H, 20 + p.life0 * 60), [vx, vy] = upVec();
-  ctx.save(); ctx.globalAlpha *= 0.25; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(0, 0, 8, 4, 0, 0, TAU); ctx.fill(); ctx.restore();
-  ctx.translate(vx * h, vy * h);
-}
+// a lobbed thing rises and falls on its way. Round 19 (lane sys19): fx.js drawProjectile lifts every lob by its arc
+// once (height.js projZ, each kind's peak kept there) and its shadow is the units' own (render.js drawShadows): this
+// drew a second shadow and lifted it a second time. Kept so the shots' drawings can go on calling it; it does nothing.
+export function lobUp() {}
 // a tube of coloured brew, end over end (round 19, lane caster19: "the potions they use should look like the vials on
 // their head. Skinny tubes. Same style but tubular"): pale glass, a cork, the brew filling its round bottom half
 function tube(ctx, col, s = 1, cork = true) {
@@ -431,7 +435,7 @@ DRAW.fuse = (ctx, f, w, layer) => {
 // Rain Dance: a cloud's shadow on the floor and rain streaking down through it
 DRAW.rain = (ctx, f, w, layer) => {
   const a = life(f, 0.3, 0.6);
-  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.3 * a; ctx.fillStyle = '#2F5F88'; blob(ctx, f.x, f.y, f.r, 9, 1, 1); ctx.fill(); ctx.restore(); return; }
+  if (layer === 'ground') { /* round 19 (lane sys19): its shadow is the units' own (height.js castShadow) */ castShadow(f.x, f.y, f.r * 0.62, 0.8 * a); return; } // (the cloud's shadow, the size of the rain)
   const [vx, vy] = upVec(); ctx.save(); ctx.globalAlpha *= a;
   for (let i = 0; i < 26; i++) { const ph = (f.t * 2.4 + hash(i, 3)) % 1, b = hash(i, 4) * TAU, d = f.r * Math.sqrt(hash(i, 6)), x = f.x + Math.cos(b) * d, y = f.y + Math.sin(b) * d, h = 60 * (1 - ph);
     inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x + vx * h, y + vy * h); ctx.lineTo(x + vx * (h - 12), y + vy * (h - 12)); }, '#9FD8F2', 1.8); }
@@ -970,13 +974,16 @@ DRAW.headbutt = (ctx, f, w, layer) => {
 DRAW.stormHammer = (ctx, f, w, layer) => {
   const u = f.unit, S = f.S; if (!alive2(u) || !S) { ended(f, true); return; } ended(f, !u.kit || u.kit.storm !== S);
   const a = life(f, 0.15, 0.25), [vx, vy] = upVec(), hh = 18 + 4 * Math.sin(f.t * 5);
-  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= a * 0.3; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(S.x, S.y, 12, 6, 0, 0, TAU); ctx.fill(); ctx.restore(); return; }
+  if (layer === 'ground') { /* round 19 (lane sys19): its shadow is the units' own (height.js castShadow) */ castShadow(S.x, S.y, 11, a, hh); return; }
   const x = S.x + vx * hh, y = S.y + vy * hh, rot = S.dart ? Math.atan2(S.y - u.y, S.x - u.x) + f.t * 18 : S.a + Math.PI / 2;
   ctx.save(); ctx.globalAlpha *= a;
   lit(ctx, () => glowDisc(ctx, x, y, 26, '#FFE66B', 0.35 + 0.15 * Math.sin(f.t * 30)));
-  ctx.translate(x, y); ctx.rotate(rot); ctx.scale(1.5, 1.5);
-  inked(ctx, () => roundRect(ctx, -2.4, -2, 4.8, 22, 2), '#7A4A28');
-  inked(ctx, () => roundRect(ctx, -12, -13, 24, 13, 3), '#8E98A6'); ctx.fillStyle = '#C9D2DE'; ctx.fillRect(-10, -12, 20, 3.4);
+  ctx.translate(x, y); ctx.rotate(rot);
+  if (!drawHeldWeapon(ctx, u)) { // round 19 (lane sys19): the hammer he holds
+    ctx.scale(1.5, 1.5);
+    inked(ctx, () => roundRect(ctx, -2.4, -2, 4.8, 22, 2), '#7A4A28');
+    inked(ctx, () => roundRect(ctx, -12, -13, 24, 13, 3), '#8E98A6'); ctx.fillStyle = '#C9D2DE'; ctx.fillRect(-10, -12, 20, 3.4);
+  }
   ctx.restore();
   if (Math.sin(f.t * 23) > 0.6) { ctx.save(); ctx.globalAlpha *= a; inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x - 10, y - 4); ctx.lineTo(x - 2, y + 3); ctx.lineTo(x + 3, y - 6); ctx.lineTo(x + 11, y + 2); }, '#FFE66B', 2.2); ctx.restore(); }
 };
@@ -984,7 +991,7 @@ DRAW.stormHammer = (ctx, f, w, layer) => {
 DRAW.hammerDown = (ctx, f, w, layer) => {
   if (layer !== 'air') return; const a = life(f, 0.02, 0.1);
   ctx.save(); ctx.globalAlpha *= a; ctx.translate(f.x, f.y); ctx.rotate(f.a + Math.PI / 2);
-  inked(ctx, () => roundRect(ctx, -2.6, -26, 5.2, 24, 2), '#7A4A28'); inked(ctx, () => roundRect(ctx, -13, -4, 26, 14, 3), '#8E98A6');
+  if (!drawHeldWeapon(ctx, f.unit)) { inked(ctx, () => roundRect(ctx, -2.6, -26, 5.2, 24, 2), '#7A4A28'); inked(ctx, () => roundRect(ctx, -13, -4, 26, 14, 3), '#8E98A6'); } // (round 19: the hammer he holds)
   ctx.restore();
 };
 
@@ -1427,7 +1434,7 @@ DRAW.poof = (ctx, f, w, layer) => {
 // (kits2.js shadowK), not a second one.
 DRAW.frog = (ctx, f, w, layer) => {
   const u = f.unit; if (!alive2(u)) { ended(f, true); return; } ended(f, !(u.frogUntil > w.time));
-  if (layer !== 'air') return;
+  if (layer === 'ground') { /* round 19 (lane sys19): its shadow is the units' own (height.js castShadow) */ const hp = u.frogHop != null ? k01((w.time - u.frogHop) / 0.35) : 1; castShadow(u.x, u.y, 9 * clamp(u.vr / 20, 0.8, 1.6), 1, Math.sin(hp * Math.PI) * 16); return; } // (the unit is hidden while it is a frog: this is its only shadow, frog sized: "Probably a smaller shadow")
   const hop = u.frogHop != null ? k01((w.time - u.frogHop) / 0.35) : 1, air = Math.sin(hop * Math.PI), h = air * 16, [vx, vy] = upVec(), s = clamp(u.vr / 20, 0.8, 1.6) * (1 + h / 80);
   const kick = hop < 1 ? Math.sin(Math.min(1, hop * 1.6) * Math.PI) : 0, body = '#5FAE34', back = '#4A8E28', pale = '#A9E07A', foot = '#4A8E28';
   ctx.save(); ctx.translate(u.x + vx * h, u.y + vy * h); ctx.rotate(u.facing - Math.PI / 2); ctx.scale(s, s * (1 + 0.15 * kick)); // (its frame: +y its front)
@@ -1500,7 +1507,7 @@ function broomUnder(ctx, w, T) {
 ART2.witch = { frame(ctx, u, w) { if (u.kit && u.kit.broomUntil > w.time && !u.downed) broomUnder(ctx, w, w.time); } };
 // a hex bomb dropped from the broom, and where it pops
 PROJ2.hexBomb = (ctx, p, T) => { // (round 19: dropped from her height: it falls, faster and faster, to where it bursts)
-  if (p.drop) { const q = 1 - p.life / p.life0, [vx, vy] = upVec(), h = p.drop * (1 - q * q); ctx.save(); ctx.globalAlpha *= 0.25; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(0, 0, 6 + 3 * q, 3 + 1.5 * q, 0, 0, TAU); ctx.fill(); ctx.restore(); ctx.translate(vx * h, vy * h); } else lobUp(ctx, p, 30);
+  if (p.drop) { const q = 1 - p.life / p.life0, [vx, vy] = upVec(), h = p.drop * (1 - q * q); ctx.translate(vx * h, vy * h); } // (its shadow is the units' own: render.js drawShadows)
   ctx.rotate(T * 10); lit(ctx, () => glowDisc(ctx, 0, 0, 16, '#9BE36B', 0.5)); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 7, 0, TAU); }, '#5A2A80'); inked(ctx, () => star(ctx, 0, 0, 5, 5, 0.42, T * 5), '#9BE36B'); };
 DRAW.hexPop = (ctx, f, w, layer) => {
   if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
@@ -1626,8 +1633,8 @@ DRAW.blindOn = (ctx, f, w, layer) => {
 // Ill Omen: a dark star turning slowly over the enemies, its shadow on the floor
 DRAW.omen = (ctx, f, w, layer) => {
   const a = life(f, 0.3, 0.5), [vx, vy] = upVec();
-  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.3 * a; ctx.fillStyle = '#2E2440'; star(ctx, f.x, f.y, f.r, 7, 0.55, f.t * 0.3); ctx.fill(); ctx.restore(); return; }
   const h = 60 + 4 * Math.sin(f.t * 2);
+  if (layer === 'ground') { /* round 19 (lane sys19): its shadow is the units' own (height.js castShadow) */ castShadow(f.x, f.y, 20, a, h); return; }
   ctx.save(); ctx.globalAlpha *= a;
   lit(ctx, () => glowDisc(ctx, f.x + vx * h, f.y + vy * h, 40, '#9B86C9', 0.35));
   inked(ctx, () => star(ctx, f.x + vx * h, f.y + vy * h, 20, 7, 0.45, f.t * 0.6), '#2E2440');
@@ -1761,7 +1768,7 @@ PROJ2.knife = (ctx, p, T, ang, sp) => { ctx.save(); ctx.rotate(ang); trail(ctx, 
 // the falcon in flight (showcase 4: "Make the falcon that flies look like the one he was holding"): his slate-grey falcon
 // with its pale chest, wings beating
 DRAW.falcon = (ctx, f, w, layer) => {
-  const [vx, vy] = upVec(), h = 26; if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.22 * life(f, 0.1, 0.1); ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(f.x, f.y, 12, 5, 0, 0, TAU); ctx.fill(); ctx.restore(); return; }
+  const [vx, vy] = upVec(), h = 26; if (layer === 'ground') { /* round 19 (lane sys19): its shadow is the units' own (height.js castShadow) */ castShadow(f.x, f.y, 10, life(f, 0.1, 0.1), h); return; }
   const beat = Math.sin(f.t * 26) * 0.45; ctx.save(); ctx.globalAlpha *= life(f, 0.05, 0.1); ctx.translate(f.x + vx * h, f.y + vy * h); ctx.rotate(f.a);
   for (const sd of [-1, 1]) { ctx.save(); ctx.scale(1, sd); ctx.rotate(-beat); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(4, 2); ctx.quadraticCurveTo(-2, 16, -12, 24); ctx.lineTo(-8, 16); ctx.lineTo(-14, 14); ctx.quadraticCurveTo(-6, 6, -4, 2); ctx.closePath(); }, '#4A5468'); ctx.restore(); }
   inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 11, 5.5, 0, 0, TAU); }, '#5A6478'); ctx.fillStyle = '#EFE6D4'; ctx.beginPath(); ctx.ellipse(2, 0, 6, 3.4, 0, 0, TAU); ctx.fill();
@@ -1776,7 +1783,7 @@ function smallBird(ctx, x, y, a, t, s2) { const beat = Math.sin(t * 30) * 0.6; c
   inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-6, -9 + beat * 5); ctx.quadraticCurveTo(-1, -3, 1, 0); ctx.quadraticCurveTo(-1, 3, -6, 9 - beat * 5); }, '#5A6478', 2.6);
   inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 5, 2.6, 0, 0, TAU); }, '#6E7890'); ctx.restore(); }
 DRAW.flockForm = (ctx, f, w, layer) => { const u = f.unit; if (!alive2(u)) return; const F = f.F, a = life(f, 0.1, 0.2), [vx, vy] = upVec();
-  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.18 * a; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y, 34, 16, 0, 0, TAU); ctx.fill(); ctx.restore(); return; }
+  if (layer === 'ground') { /* round 19 (lane sys19): its shadow is the units' own (height.js castShadow) */ for (const b of F.birds) { const ang = f.t * 4 * b.s + b.o; castShadow(u.x + Math.cos(ang) * b.r, u.y + Math.sin(ang) * b.r * 0.7, 6, a, 22); } return; } // (he is hidden: each bird its own)
   ctx.save(); ctx.globalAlpha *= a; for (const b of F.birds) { const ang = f.t * 4 * b.s + b.o, x = u.x + Math.cos(ang) * b.r + vx * 22, y = u.y + Math.sin(ang) * b.r * 0.7 + vy * 22; smallBird(ctx, x, y, ang + Math.PI / 2, f.t + b.o, 1.1); } ctx.restore(); };
 // the Grenadier's bomb (round 13: "Make sure shadow style matches"): an iron ball, a lit fuse, its shadow on the floor
 PROJ2.bomb = (ctx, p, T) => { lobUp(ctx, p, p.color === 'big' ? 56 : 44); const s2 = p.color === 'big' ? 1.6 : 1; ctx.rotate(T * 8); ctx.scale(s2, s2);
@@ -1837,7 +1844,7 @@ function anchorShape(ctx, s2) { ctx.scale(s2, s2);
   inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 4, 18, 0.15, Math.PI - 0.15); ctx.lineTo(-22, 10); ctx.lineTo(-14, 6); ctx.arc(0, 4, 13, Math.PI - 0.3, 0.3, true); ctx.lineTo(22, 10); ctx.closePath(); }, '#8A94A6'); }
 DRAW.anchor = (ctx, f, w, layer) => {
   const k = k01(f.t / f.max), u = f.from, [vx, vy] = upVec(), x = f.x0 + (f.x - f.x0) * k, y = f.y0 + (f.y - f.y0) * k, h = Math.sin(k * Math.PI) * 110;
-  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.25; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(x, y, 22 * (0.6 + 0.4 * k), 9, 0, 0, TAU); ctx.fill(); ctx.restore();
+  if (layer === 'ground') { /* round 19 (lane sys19): its shadow is the units' own (height.js castShadow) */ castShadow(x, y, 16, 1, h);
     if (alive2(u)) inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(u.x, u.y); ctx.lineTo(x, y); }, '#8A94A6', 3); return; }
   ctx.save(); ctx.translate(x + vx * h, y + vy * h); ctx.rotate(k * 3 - 1); anchorShape(ctx, 1.3 + 0.3 * Math.sin(k * Math.PI)); ctx.restore();
 };
@@ -1859,7 +1866,7 @@ PROJ2.javelin = (ctx, p, T, ang, sp) => { ctx.save(); ctx.rotate(ang); trail(ctx
   else inked(ctx, () => { ctx.beginPath(); ctx.moveTo(15, 0); ctx.quadraticCurveTo(8, -5, 2, -3.5); ctx.lineTo(2, 3.5); ctx.quadraticCurveTo(8, 5, 15, 0); ctx.closePath(); }, '#C9D2DE'); };
 // Javelin Rain: a javelin dropping out of the sky onto the spot, its shadow growing under it
 DRAW.javFall = (ctx, f, w, layer) => { const k = k01(f.t / f.max), [vx, vy] = upVec(), h = (1 - k * k) * 160;
-  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.3 * k; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(f.x, f.y, 6 + 6 * k, 3 + 3 * k, 0, 0, TAU); ctx.fill(); ctx.restore(); return; }
+  if (layer === 'ground') { /* round 19 (lane sys19): its shadow is the units' own (height.js castShadow) */ castShadow(f.x, f.y, 8, 0.3 + 0.7 * k, h); return; }
   ctx.save(); ctx.translate(f.x + vx * h, f.y + vy * h); ctx.rotate(Math.atan2(-vy, -vx)); ctx.scale(1.3, 1.3); inked(ctx, () => roundRect(ctx, -26, -1.8, 30, 3.6, 1.8), '#9A6A3A'); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(15, 0); ctx.quadraticCurveTo(8, -5, 2, -3.5); ctx.lineTo(2, 3.5); ctx.quadraticCurveTo(8, 5, 15, 0); ctx.closePath(); }, '#C9D2DE'); ctx.restore(); };
 DRAW.javStuck = (ctx, f, w, layer) => { if (layer !== 'air') return; const a = life(f, 0.02, 0.4), [vx, vy] = upVec(); ctx.save(); ctx.globalAlpha *= a; if (f.t < 0.2) lit(ctx, () => glowDisc(ctx, f.x, f.y, 30, '#FFFFFF', 0.6 * (1 - f.t / 0.2)));
   inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(f.x, f.y); ctx.lineTo(f.x + vx * 26 + 6, f.y + vy * 26); }, '#9A6A3A', 3.6); ctx.restore(); };
@@ -1897,7 +1904,7 @@ PROJ2.grogFly = (ctx, p, T) => { lobUp(ctx, p, 40); ctx.rotate(T * 10); inked(ct
 // Broadside (round 13: "They should come in from an arc off the screen"): a cannonball coming in from the edge of the
 // room on a high arc, its shadow racing in and growing where it will land
 DRAW.cannon = (ctx, f, w, layer) => { const k = k01(f.t / f.max), [vx, vy] = upVec(), x = f.sx + (f.x - f.sx) * k, y = f.sy + (f.y - f.sy) * k, h = Math.sin(k * Math.PI) * 220 + (1 - k) * 60;
-  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.15 + 0.3 * k; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(x, y, 8 + 8 * k, 4 + 4 * k, 0, 0, TAU); ctx.fill(); ctx.restore();
+  if (layer === 'ground') { /* round 19 (lane sys19): its shadow is the units' own (height.js castShadow) */ castShadow(x, y, 10 * (1.4 - 0.4 * k), 0.4 + 0.6 * k, h);
     ctx.save(); ctx.globalAlpha *= 0.4 * k; ctx.strokeStyle = '#C8453D'; ctx.lineWidth = 2; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (1.2 - 0.2 * k), 0, TAU); ctx.stroke(); ctx.restore(); return; }
   ctx.save(); ctx.translate(x + vx * h, y + vy * h); const s2 = 1.4 - 0.4 * k; ctx.scale(s2, s2); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 10, 0, TAU); }, '#2B2230'); disc(ctx, -3, -3, 3.2, '#5A5060'); ctx.restore(); };
 
@@ -1914,7 +1921,7 @@ DRAW.stoneCrack = (ctx, f, w, layer) => { if (layer !== 'air') return; const k =
 // pounding as it bounds; dust kicked up behind
 DRAW.ram = (ctx, f, w, layer) => {
   const bound = Math.abs(Math.sin(f.t * 16)), [vx, vy] = upVec(), h = bound * 8;
-  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.25 * life(f, 0.05, 0.2); ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(f.x, f.y, 26, 13, f.a, 0, TAU); ctx.fill(); ctx.restore(); K.dustPuffs(ctx, f.x - Math.cos(f.a) * 30, f.y - Math.sin(f.a) * 30, 18, 0.5 + 0.5 * bound, (f.t * 10) | 0, 3); return; }
+  if (layer === 'ground') { /* round 19 (lane sys19): its shadow is the units' own (height.js castShadow) */ castShadow(f.x, f.y, 20, life(f, 0.05, 0.2), h); K.dustPuffs(ctx, f.x - Math.cos(f.a) * 30, f.y - Math.sin(f.a) * 30, 18, 0.5 + 0.5 * bound, (f.t * 10) | 0, 3); return; }
   ctx.save(); ctx.globalAlpha *= life(f, 0.05, 0.2); ctx.translate(f.x + vx * h, f.y + vy * h); ctx.rotate(f.a); ctx.scale(1.25, 1.25);
   for (const [lx, ly] of [[10, -11], [10, 11], [-12, -11], [-12, 11]]) { const sw = Math.sin(f.t * 16 + lx) * 4; inked(ctx, () => roundRect(ctx, lx - 3 + sw, ly - 3, 7, 6, 2.5), '#3A3440'); }
   inked(ctx, () => { ctx.beginPath(); for (let i = 0; i < 12; i++) { const b = i / 12 * TAU, rr = (i % 2 ? 15 : 17); ctx.lineTo(Math.cos(b) * rr * 1.25 - 3, Math.sin(b) * rr); } ctx.closePath(); }, '#F4EEDC');
@@ -1927,7 +1934,7 @@ DRAW.wool = (ctx, f, w, layer) => { if (layer !== 'air') return; const k = k01(f
 // Counting Sheep: a little sheep bounding over the spot (in on one side, out the other), a number for each
 DRAW.sheepHop = (ctx, f, w, layer) => {
   const k = k01(f.t / f.max), [vx, vy] = upVec(), x = f.x + Math.cos(f.a) * (k - 0.5) * 90, y = f.y + Math.sin(f.a) * (k - 0.5) * 90, h = Math.sin(k * Math.PI) * 40;
-  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.22; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(x, y, 12, 6, 0, 0, TAU); ctx.fill(); ctx.restore(); return; }
+  if (layer === 'ground') { /* round 19 (lane sys19): its shadow is the units' own (height.js castShadow) */ castShadow(x, y, 11, 1, h); return; }
   ctx.save(); ctx.globalAlpha *= 1 - k01((k - 0.8) / 0.2); ctx.translate(x + vx * h, y + vy * h); ctx.rotate(f.a);
   for (const [lx, ly] of [[6, -6], [6, 6], [-6, -6], [-6, 6]]) inked(ctx, () => roundRect(ctx, lx - 2 + (k < 0.5 ? 2 : -2), ly - 2, 4, 4, 1.5), '#3A3440');
   inked(ctx, () => { ctx.beginPath(); for (let i = 0; i < 10; i++) { const b = i / 10 * TAU, rr = i % 2 ? 9 : 10.5; ctx.lineTo(Math.cos(b) * rr * 1.2, Math.sin(b) * rr); } ctx.closePath(); }, '#FFFFFF');

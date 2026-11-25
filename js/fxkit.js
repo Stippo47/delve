@@ -862,11 +862,12 @@ export function drawBodyFx(ctx, u, w) {
     } else if (b.whirling) whirlArcs(ctx, u, T);
   }
   // Hold the Line's mark (round 10: it pops in over the head; round 13, "The v should remain over them"): the red V stays
-  // over everything he holds for as long as he holds it, bobbing a little, and fades as the taunt runs out
+  // over everything he holds for as long as he holds it, bobbing a little, and fades as the taunt runs out. Round 19 (lane
+  // sys19): every taunt's mark (sim.js taunt: Challenge, Showboat, the Warden's chains, the trinket), not only his
   if (u.vMarkT > T && u.tauntBy && u.tauntBy === u.vMarkBy && !u.tauntBy.dead && !u.tauntBy.downed) {
     const age = T - u.vMarkT0, left = u.vMarkT - T, q = k01(age / 0.15), s = 0.6 + 0.6 * easeOut(q) - 0.2 * k01((age - 0.15) / 0.3);
     ctx.save(); ctx.globalAlpha = q * k01(left / 0.35);
-    upright(ctx, u.x, u.y, () => { ctx.translate(0, -u.vr - 17 + Math.sin(T * 5 + u.id) * 1.6); ctx.scale(s, s);
+    upright(ctx, u.x, u.y, () => { ctx.translate(0, -u.vr * (u.major || u.mini ? 1.16 : u.elite ? 1.08 : 1) - 31 + Math.sin(T * 5 + u.id) * 1.6); ctx.scale(s, s); // (round 19, lane sys19: over the health bar, which hid it)
       inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-8, -8); ctx.lineTo(0, 4); ctx.lineTo(8, -8); ctx.lineTo(0, -2); ctx.closePath(); }, '#FF6B5A'); });
     ctx.restore();
   }
