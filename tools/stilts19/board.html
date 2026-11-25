@@ -1,0 +1,40 @@
+<!doctype html><meta charset="utf-8"><title>stilts19 pose board</title>
+<body style="margin:0;background:#8E9A76"><canvas id="c"></canvas>
+<script type="module">
+// Lane stilts19: the Canopy Idol's figure at several headings and poses, to judge its drawing without a fight.
+//   tools/stilts19/board.mjs opens this on the lane's server and saves a picture.
+//   ?mode=turn (eight headings) | poses (step, stomp, broken, half down, down, roar) | size (beside Old Longlegs and a hero)
+import { drawPose, restPose } from '../../js/boss-stilt-fx.js';
+import { drawPose as spiderPose, restPose as spiderRest } from '../../js/boss-spider-fx.js';
+import { ID } from '../../js/boss-stilt.js';
+const q = new URLSearchParams(location.search), sc = +(q.get('s') || 1.2), mode = q.get('mode') || 'turn', cols = 4, cw = 440, ch = 560;
+const rows = 2;
+const c = document.getElementById('c'); c.width = cols * cw * sc; c.height = rows * ch * sc;
+const g = c.getContext('2d'); g.scale(sc, sc);
+g.fillStyle = '#9BA784'; g.fillRect(0, 0, cols * cw, rows * ch);
+const shadow = (x, y, f, h) => { g.fillStyle = 'rgba(43,34,48,0.28)'; const s = 1 - Math.min(0.26, h / 500); for (const [dx, r] of [[22, 26], [-20, 30]]) { g.beginPath(); g.arc(x + Math.cos(f) * dx, y + Math.sin(f) * dx, r * 1.75 * s, 0, 7); g.fill(); } };
+const hero = (x, y) => { g.fillStyle = '#3B6FB5'; g.strokeStyle = '#2B2230'; g.lineWidth = 3; g.beginPath(); g.arc(x, y, 17, 0, 7); g.fill(); g.stroke(); };
+for (let i = 0; i < 8; i++) {
+  const x = (i % 4 + 0.5) * cw, y = (Math.floor(i / 4) + 0.5) * ch + 60;
+  let f = i * Math.PI / 4 + Math.PI / 2, h = ID.body.h, P;
+  if (mode === 'turn') { P = restPose(x, y, f, h); }
+  else if (mode === 'size') {
+    if (i === 0) { P = restPose(x, y, Math.PI / 2, h); hero(x - 60, y + 40); }
+    else if (i === 1) { shadow(x, y, Math.PI / 2, 44); spiderPose(g, spiderRest(x, y, Math.PI / 2), { up: [0, -1] }); hero(x - 60, y + 40); continue; }
+    else { f = [0, 0, Math.PI, 0, Math.PI * 0.5, Math.PI * 1.5, Math.PI * 0.25, Math.PI * 1.25][i]; P = restPose(x, y, f, h); }
+  } else {
+    f = [Math.PI / 2, 0, Math.PI / 2, 0.4, Math.PI / 2, 0, Math.PI / 2, Math.PI][i];
+    h = [h, h, h, h, 70, 10, 10, h][i];
+    P = restPose(x, y, f, h);
+    if (i === 0 || i === 1) { for (const L of P.legs) if ([0, 3, 4].includes(L.i)) { L.foot.z = 38; L.foot.x += Math.cos(f) * 26; L.foot.y += Math.sin(f) * 26; } else { L.foot.x -= Math.cos(f) * 30; L.foot.y -= Math.sin(f) * 30; } }
+    if (i === 2) { const L = P.legs[1]; L.foot.z = 104; L.foot.x = L.hip.x + (L.foot.x - L.hip.x) * 1.45; L.foot.y = L.hip.y + (L.foot.y - L.hip.y) * 1.45; L.hurt = 0.7; P.legs[0].hurt = 0.4; }
+    if (i === 3) { for (const L of P.legs) if ([1, 2].includes(L.i)) { L.broken = true; L.foot.x = L.hip.x + (L.foot.x - L.hip.x) * 0.9 - Math.cos(f) * 60; L.foot.y = L.hip.y + (L.foot.y - L.hip.y) * 0.9 - Math.sin(f) * 60; L.sw = 0.4; } }
+    if (i === 5) { P.daze = true; }
+    if (i === 6) { P.daze = true; for (const L of P.legs) if ([1, 2, 4, 0].includes(L.i)) { L.broken = true; L.foot.x = L.hip.x + (L.foot.x - L.hip.x) * 0.95; L.foot.y = L.hip.y + (L.foot.y - L.hip.y) * 0.95; } }
+    if (i === 7) { P.maw = 1; P.glare = 1; P.shake = 0.6; P.T = 0.31; P.pods = 1; }
+  }
+  shadow(x, y, f, h);
+  drawPose(g, P, { up: [0, -1] });
+}
+window.DONE = true;
+</script>

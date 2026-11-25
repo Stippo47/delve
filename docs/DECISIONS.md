@@ -1394,3 +1394,38 @@ arcing hole to hole, rear-up with lunge and inhale, brood, coil); docs/BOSS-sand
   Checks: battles 530, 0 problems; preview-check 0 / 0 / 0 (the wurm's preview no longer a "wrong scenario").
 - **Found, outside the lane**: six designed bosses have no face or words in the Book; no designed boss plays the phase
   sound (sfx.js reads `u.k.phase`); a hero with nothing to aim at does not heal.
+- Round 19, chat: the IK spider "is good. Cool. Buuut, I was picturing something more on stilts, the head very high up like near where the witch would fly, much larger. Try again make this one jungle themed, spider shaped in how it has legs but not a spider." Old Longlegs stays; lane stilts19 (Fable, high) builds a second, jungle stilt-walker. And: "get another one on fixing the drake. Body moves weird, don't like how it attacks. Very slow, etc." Lane drake19 (Fable, high).
+## Round 19, lane stilts19 (2026-11-25): the Canopy Idol, the jungle stilt-walker (a second test boss, in no dungeon)
+The designer, on Old Longlegs: "This spider is good. Cool. Buuut, I was picturing something more on stilts, the head
+very high up like near where the witch would fly, much larger. Try again make this one jungle themed, spider shaped in
+how it has legs but not a spider." Old Longlegs is untouched. The new one, every move and number:
+docs/BOSS-stilt-idol.md; code js/boss-stilt.js, js/boss-stilt-fx.js; clips docs/clips/stilts19/.
+The lane's calls (say if any is wrong):
+- **What it is**: a carved hardwood idol head, mossed over, crowned with leaves and blooms, carried on a yoke by six
+  bamboo stilts shod with stone hooves. Working name: the Canopy Idol (`stiltIdol`).
+- **How high and how big**: the head rides 132 over the floor (the Witch's broom: 70; the spider: 44), drawn 119 up
+  the screen and 1.4 times bigger for being nearer; its hooves stand in a ring 360 across (the spider: 252). Higher
+  and the head leaves a phone's screen at the far wall; the floor point is held where the head is inside the walls.
+- **The spider's rules, kept**: flying layer while it is up, the unit where the head is drawn, hooves as units (10% of
+  its health, a blow passes 85% on), two tripods, stomps, the slam with its following circle, pause and stun (1 s +
+  0.3 s a broken stilt), collapse at four broken.
+- **Drawn differently from the spider**: every stilt goes under the head (a stilt behind the head's picture is below
+  it); a stomping stilt swings out nearly straight; a broken stilt is in two pieces (a stump hanging from the knee, the
+  rest dragged on a strand); a pale ring is drawn over the head where someone on the floor is hidden behind it.
+- **The long drop**: 150 in 0.16 s, with streaks down the screen, leaves left hanging where the crown was, the shadow
+  swelling, dust and leaves on landing.
+- **Its own two moves**: a liana let down on whoever stands furthest off, who is hauled in under the head and tangled
+  0.8 s; seed pods shaken out of the crown that fall the whole height, the first of each shower leaving a Sproutling.
+  Every tell is the game's red circle.
+- **Where it is**: `?bossroom&boss=stiltIdol`; battle mode's "No dungeon yet" tab and the Book's group of that name,
+  beside Old Longlegs (`LOOSE_BOSSES`, `def.home`, `def.bookOpen`: the spider lane's hooks, nothing new).
+- **Where it sits**: health 1550 (the spider: 1400). At level 25, of 40: bench party 39 (the spider 34), all blades 29
+  (34), three shooters 32 (38), two mages 18 (22): 118 of 160 against the spider's 128.
+- Checks: battles 532, 0 problems, 11 out of time (as before the lane, plus its two); preview-check threw / never fired /
+  not offered 0 / 0 / 0; tools/stilts19/planted.mjs: no planted hoof moved in a minute's fight.
+- **Left**: no sounds of its own; with the head down its near knees are drawn under it; `sw.js`'s list needs
+  tools/build-sw.py (not run, as told); one fight in some 400 on an earlier build ran ten minutes without ending and
+  was not seen again.
+- Lead, merge (0.34.0): clips checked by hand (walk, slam-hit, leg-break, collapse at the cited seconds: head high over
+  its shadow, the drop, the snapped stilt dragging, the floor fight all show). Merged, battles 532 / 0 problems,
+  preview-check 0 / 0 / 0, sw built (555 files). Riffle deck r19-idol (art, stack r19): report + draw-order + hidden-ring calls.
