@@ -13,6 +13,7 @@ import { icon } from './icons.js';
 import { heartPath, drawStatusMarks, bleedFlash, bleedLook } from './fx-status.js'; // round 13 (lane S): the new statuses' marks
 import { drawMarks3 } from './fx3.js'; // round 15 (lane N): Shackled's irons
 import './fx-dash.js'; // round 18 (lane dash18): the six dashes' looks (it fills fx2.js's table)
+import './fx-melee.js'; // round 19 (lane melee19): the knights' and brutes' looks (it fills fx2.js's tables)
 import './fx-rogue19.js'; // round 19 (lane rogue19): the Bandit's, Shade's, Monk's and Cultist's looks, Disarmed and Anti-heal
 import { WALL2, ART2 } from './looks2.js';
 import { HEROES } from './heroes.js';
