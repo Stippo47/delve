@@ -20,7 +20,8 @@ const f = S.spawn(w, 'orc', 340, 300, { mult: 1 }); f.maxHp = f.hp = 9999; d.fac
 K.ABILITIES.spadeBat.use(w, d, f, 3);
 for (let i = 0; i < 20; i++) { K2.kit2Tick(w, d, 1 / 60); S.step(w, 1 / 60); }
 const x0 = f.x, y0 = f.y; f.kx = 500;
-for (let i = 0; i < 60; i++) { S.step(w, 1 / 60); K2.kit2Tick(w, d, 1 / 60); }
+for (let i = 0; i < 60; i++) { d.atkT = 9; S.step(w, 1 / 60); K2.kit2Tick(w, d, 1 / 60); }
 console.log('buried:', f.buried, 'moved while buried:', Math.hypot(f.x - x0, f.y - y0).toFixed(1));
-for (let i = 0; i < 120; i++) { S.step(w, 1 / 60); K2.kit2Tick(w, d, 1 / 60); }
+for (let i = 0; i < 120; i++) { d.atkT = 9; S.step(w, 1 / 60); K2.kit2Tick(w, d, 1 / 60); } // (his own blows held: they would knock the dirt off)
 console.log('up again:', !f.buried, 'dirty:', dirtyOn(f));
+console.log('after: buried', f.buried, 'h2', (f.h2 || []).map((h) => h.id + ':' + (h.until - w.time).toFixed(2)).join(','), 'alive', !f.dead, 'stunT', f.stunT.toFixed(2), 'time', w.time.toFixed(2));
