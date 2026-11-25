@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -106 160 106" width="640" height="424">
+  <!-- dunes walls, option b (Painted tomb): the stretch a door sits in. Round 19 art lane (walls). 1 SVG unit = 1 room unit. The wall's own frame: x runs along the wall, y = 0 is the foot (where the wall meets the floor; the room is below, +y), y < 0 rises up the wall away from the room. Face (the wall's inner side, folded flat like the doors' arch): y -88..0. Cap (the top, seen from above): y -106..-88. The whole wall is 106 deep; the doors' arch reaches y -57, so the wall rises 49 past it. Everything repeats every 160 along x, so runs tile end to end. No outline in the file: the renderer draws the one ink outline round the wall's mass. Rotate the piece so +y points into the room. An overlay: drawn over the run (which carries on under it) wherever a door stands, then the door (art/props/door-*.svg, box 141.4) on top, its doorway centred on (80, 0). -->
+  <defs>
+    <clipPath id="c0"><path d="M0 -106H160V0H0Z"/></clipPath>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6E6C0"/><stop offset="1" stop-color="#D2B478"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#65A1AE"/><stop offset="1" stop-color="#3E8A9A"/></linearGradient>
+    <radialGradient id="g3" cx="0.38" cy="0.32" r="0.8"><stop offset="0" stop-color="#FFE0A0"/><stop offset="0.6" stop-color="#C0603A"/><stop offset="1" stop-color="#864329"/></radialGradient>
+  </defs>
+  <g id="sprite">
+<g clip-path="url(#c0)">
+<path d="M2 0L8 -80L26 -80L24 0Z" fill="url(#g1)" />
+<path d="M6 -30L7 -44L25.5 -44L24 -30Z" fill="#3E8A9A" />
+<path d="M158 0L152 -80L134 -80L136 0Z" fill="url(#g1)" />
+<path d="M154 -30L153 -44L134.5 -44L136 -30Z" fill="#3E8A9A" />
+<path d="M0 -80H160V-92C130 -98 30 -98 0 -92Z" fill="url(#g2)" />
+<rect x="0" y="-82" width="160" height="4" fill="#E8B84A" />
+<circle cx="80" cy="-89" r="7" fill="url(#g3)"/>
+</g>
+  </g>
+</svg>
