@@ -66,6 +66,12 @@ function padlock(ctx, x, y, s) {
   inked(ctx, () => roundRect(ctx, x - 5.5 * s, y - 3.5 * s, 11 * s, 9 * s, 2 * s), BRASS[1]);
   ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(x, y + 0.6 * s, 1.5 * s, 0, TAU); ctx.fill(); ctx.fillRect(x - 0.7 * s, y + 0.6 * s, 1.4 * s, 3 * s);
 }
+// a speech bubble (white, inked, its tail down-left) with a red bar struck across it: no word from this one
+function hushMark(ctx, x, y, s) {
+  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(x, y, 10 * s, 7.5 * s, 0, 0, TAU); ctx.moveTo(x - 6 * s, y + 4.5 * s); ctx.lineTo(x - 10 * s, y + 11 * s); ctx.lineTo(x - 1.5 * s, y + 6.5 * s); ctx.closePath(); }, '#FFFBEA');
+  ctx.fillStyle = INK; for (const dx of [-4.5, 0, 4.5]) { ctx.beginPath(); ctx.arc(x + dx * s, y, 1.3 * s, 0, TAU); ctx.fill(); }
+  inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x - 11 * s, y + 7 * s); ctx.lineTo(x + 11 * s, y - 7 * s); }, '#E5484D', 3 * s);
+}
 // a clock face on the floor: ticks round the rim and two hands at angles h1, h2 (no fill: the floor shows through)
 function dial(ctx, x, y, r, h1, h2, a = 1, ticks = 12) {
   ctx.save(); ctx.globalAlpha *= a;
@@ -313,10 +319,17 @@ Object.assign(DRAW2, {
     if (layer !== 'air') return; const k = k01(f.t / f.max), [vx, vy] = upVec();
     for (let i = 0; i < 5; i++) { const b = i / 5 * TAU; dust(ctx, f.x + Math.cos(b) * 10 * k - vx * 14 * k * k, f.y + Math.sin(b) * 10 * k - vy * 14 * k * k, 4 * (1 - k) + 1.5, 0.8 * (1 - k), '#C9D2DE'); }
   },
-  // silenced: a padlock on its chest for as long as it can use nothing
-  silenced(ctx, f, w, layer) {
+  // nullified (Nullify; round 17 lane tags17: it was 'silenced'): a padlock on its chest for as long as it can use nothing
+  nulled(ctx, f, w, layer) {
     const u = f.unit; if (layer !== 'air' || !u || !live(u) || u.hidden) return; const a = fade(f, 0.12, 0.3), pop = f.t < 0.2 ? 1 + 0.5 * Math.sin(f.t / 0.2 * Math.PI) : 1;
     ctx.save(); ctx.globalAlpha *= a; upright(ctx, u.x, u.y, () => padlock(ctx, 0, 1, 1.15 * pop)); ctx.restore();
+  },
+  // round 17 (lane tags17): SILENCED (sim.js silence): a speech bubble over its head, crossed out, while its mouth is
+  // shut. It ends early when the silence does (a cleanse).
+  hushed(ctx, f, w, layer) {
+    const u = f.unit; if (layer !== 'air' || !u || !live(u) || u.hidden) return; if (!(u.silencedT > 0)) { f.max = Math.min(f.max, f.t + 0.25); }
+    const a = fade(f, 0.12, 0.25), pop = f.t < 0.2 ? 1 + 0.4 * Math.sin(f.t / 0.2 * Math.PI) : 1, bob = Math.sin(f.t * 4) * 1.5;
+    ctx.save(); ctx.globalAlpha *= a; upright(ctx, u.x, u.y, () => hushMark(ctx, (u.vr || 20) * 0.75, -(u.vr || 20) * 1.55 + bob, 1.1 * pop)); ctx.restore();
   },
   // Chain Gang: a chain along the floor from his belt to each one he holds: slack when it stands close, taut at its end
   chainTo(ctx, f, w, layer) {

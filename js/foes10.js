@@ -16,7 +16,7 @@
 //     that separate them").
 // Out (RETHINK / IDK with no replacement): the Brood Queen, Old Frost (as a mini), the Winter Queen (lane B), the magma
 // golem, the ash wraith, the Dragonborn Champion, the Archon, the Hollow Saint.
-import { alive, opponents, allies, hurt, puff, sparks, flames, addStatus, setAnim, fx, addBuff, explode, spawn, heal, kill, addDanger, drive, steer, goalVec } from './sim.js';
+import { alive, opponents, allies, hurt, puff, sparks, flames, addStatus, setAnim, fx, addBuff, explode, spawn, heal, kill, addDanger, drive, steer, goalVec, silence } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, angleDiff, rand, rrange, chance } from './util.js';
 import { lineClear } from './path.js';
 import { ELITES, MAJOR_MOVES, lob, cone, line, around, rush, rushTick, summon, shoot, blink, openSpot, pounce, hold, beginHold, due, again, targetOf, gapTo, crowd, stand, turnTo, later } from './elites.js';
@@ -614,8 +614,8 @@ const bladeShadows = (u) => { const [x1, y1, x2, y2] = bladeEnds(u), out = [], k
 // Choir sprite: sings, and everything of its side in the song mends; a stagger (or any stun) silences it a while.
 // The elite's song quickens them too.
 function choirBrain(w, u, dt) {
-  if (u.st.stagger > 20 || u.koT > 0 || u.stunT > 0) { if (!(u.silT > 0)) { puff(w, u.x, u.y, '#B8B0C8', 8, 60, 5, 0.4); } u.silT = 4; }
-  if (u.silT > 0) { u.silT -= dt; return false; }
+  // (round 17, lane tags17: the one Silenced state, sim.js silence: its song is a mouth move, so the clock waits)
+  if (u.st.stagger > 20 || u.koT > 0 || u.stunT > 0) { if (!(u.silencedT > 0)) { puff(w, u.x, u.y, '#B8B0C8', 8, 60, 5, 0.4); } silence(w, u, 4, null); }
   if (!u.aggro || !due(u, 'song', dt, 1)) return false;
   again(u, 'song', 1);
   const R = 230;

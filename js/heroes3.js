@@ -97,7 +97,7 @@ export const HEROES3 = {
       { id: 'manacle', name: 'Manacles', cd: 10, tags: 's', glyph: 'chain', desc: 'Throws a pair of manacles at the enemy with the most to lose: a caster, a shooter, whatever is about to do something. They snap shut and it is Shackled at once: no basic attacks, and its abilities set back.',
         tiers: ['Shackles one enemy.', 'The chain is staked to the floor: it can\'t move either.', 'A second pair flies on to the next enemy.'] },
       { id: 'nullify', name: 'Nullify', cd: 16, tags: 's', glyph: 'null', desc: 'Raises the null key. In a wide ring round him nothing works: enemy shots drop out of the air, what enemies were winding up is broken off, and they can use no ability for a while.',
-        tiers: ['Breaks off their moves and silences them for 3s.', 'It strips what protects and strengthens them, and washes the statuses off friends in the ring.', 'Silenced for 5s, and the silenced take 20% more.'] },
+        tiers: ['Breaks off their moves and nullifies them for 3s: no ability of any kind.', 'It strips what protects and strengthens them, and washes the statuses off friends in the ring.', 'Nullified for 5s, and the nullified take 20% more.'] }, // (round 17, lane tags17: "silences" was this; Silenced is the mouth alone now)
       { id: 'chainGang', name: 'Chain Gang', cd: 14, tags: 's', glyph: 'chain', desc: 'Chains fly from his belt to the enemies round him and lock on. They are leashed to him: they can\'t get further than the chain allows, they have to fight him, they strike 25% slower with the chain dragging at them, and he takes 35% less while he holds them.',
         tiers: ['Three enemies, for 5s.', 'Five enemies.', 'At the end he hauls them all in at once and they are knocked reeling.'] },
     ],

@@ -8,6 +8,7 @@
 import { alive, opponents, allies, hurt, puff, sparks, flames, addDanger, spawn, addStatus, setAnim, fx, zone, addBuff, heal, explode, kill } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange, chance } from './util.js';
 import { lineClear } from './path.js';
+import { moveBlocked } from './tags.js'; // round 17 (lane tags17): Silenced, no mouth moves
 import { windMul, cdRate } from './statuses.js'; // round 14: sleepy, every tell lasts longer; round 15: Shackled, cooldowns run slower
 
 // 2-3x as strong (hp x2.4, blows x1.8), 1.5x as fast (walking; attacks x1.2), gold x0.8, XP x3 (dungeon.js).
@@ -128,7 +129,9 @@ const E = (u) => u.el || (u.el = {});
 // (round 13, the Book: u.dueSoon < 1 brings every move's first use forward, so a preview shows it in a short loop; never set in a run)
 // (round 15, lane N: Shackled. Each timer's full length is kept (e.dueLen), so the burst can set every move back by a
 // share of its own cooldown (statuses.js setBackDue), and while Shackled builds the timers run slower: statuses.js cdRate)
-export function due(u, key, dt, first = 2) { const e = E(u); if (e[key] == null) { e[key] = first * rrange(0.6, 1.2) * (u.dueSoon || 1); (e.dueLen || (e.dueLen = {}))[key] = Math.max(e[key], 1); } e[key] -= dt * cdRate(u); return e[key] <= 0; }
+// Round 17 (lane tags17): a move tagged mouth (tags.js MOVE_TAGS: a howl, a breath, a bite, a song) can't go while the
+// unit is Silenced: its clock is held just short of ready, and it goes 0.3 s after the silence ends.
+export function due(u, key, dt, first = 2) { const e = E(u); if (e[key] == null) { e[key] = first * rrange(0.6, 1.2) * (u.dueSoon || 1); (e.dueLen || (e.dueLen = {}))[key] = Math.max(e[key], 1); } e[key] -= dt * cdRate(u); if (e[key] <= 0 && moveBlocked(u, key)) { e[key] = 0.3; return false; } return e[key] <= 0; }
 export function again(u, key, a, b = a) { const e = E(u); e[key] = rrange(a, b); (e.dueLen || (e.dueLen = {}))[key] = e[key]; }
 // Standing still through a tell: true while it lasts (the caller returns true so the usual brain waits).
 export function hold(u, dt) {

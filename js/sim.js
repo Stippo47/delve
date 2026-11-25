@@ -9,6 +9,7 @@ import { ARMOUR_CAP, ENEMY_ARMOUR, armourCut } from './armour.js';
 import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON, CHARM, CONFUSE, SLEEPY, BLEED, FEAR, SHACKLE, cdRate, setBackDue, windMul } from './statuses.js';
 import { MOB, bindBody, bodiesOf, mobMid, mobSlot, mobLead } from './mob.js'; // round 15 (the Mob): four bodies, one hero
 import { tallyHurt, tallyHeal, tallyDown, noteStatus, tallyBlock, AUDIT } from './stats.js';
+import { tagRes, douseRate, DOUSE } from './tags.js'; // round 17 (lane tags17): tags; docs/tags17.md
 
 let NEXT_ID = 1;
 // Round 16 fix: unit ids feed some movement (the wander and spacing wobble), so a fight only replays from its seed if its
@@ -169,6 +170,15 @@ export function addBuff(u, b) {
   if (old) { Object.assign(old, b, { t: Math.max(old.t, b.dur) }); return old; }
   const nb = { ...b, t: b.dur }; u.buffs.push(nb); return nb;
 }
+// Round 17 (lane tags17): SILENCED, its mouth shut for t seconds: no ability or move tagged mouth (tags.js); everything
+// else as ever. Bosses 40% of the time, as for stuns. A speech bubble crossed out over its head (fx3.js 'hushed').
+export function silence(w, u, t, src) {
+  if (!alive(u) || u.ethereal) return;
+  const T = u.def.boss || u.def.part ? t * 0.4 : t, was = u.silencedT || 0;
+  u.silencedT = Math.max(was, T);
+  const f = u.hushFx; if (f && f.t < f.max && w.fx.includes(f)) f.max = Math.max(f.max, f.t + u.silencedT);
+  else if (u.silencedT > was + 0.05) u.hushFx = fx(w, { type: 'k2', draw: 'hushed', unit: u, x: u.x, y: u.y, r: u.vr, max: u.silencedT });
+}
 export function stun(w, u, t) { if (!alive(u)) return; u.stunT = Math.max(u.stunT, u.def.boss ? t * 0.4 : t); u.act = u.act && u.act.type === 'drink' ? null : u.act; }
 export function heal(w, u, amount, src, o) {
   if (!alive(u) || amount <= 0) return 0;
@@ -193,7 +203,7 @@ export function heal(w, u, amount, src, o) {
   if (u.hp - before > 2 && rand() < 0.5) { const a = rand() * Math.PI * 2, d = (u.vr || u.r) * (1 + 0.25 * rand()); w.particles.push({ x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d * 0.8, vx: 0, vy: 0, rise: 40, up: 0, life: 0.7, max: 0.7, size: 4.5, color: '#9BE07A', shape: 'plus' }); }
   return u.hp - before;
 }
-export function cleanse(u) { u.st = freshStatuses(); u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; u.addledT = 0; u.fearT = 0; u.lurchT = 0; u.shackledT = 0; if (u.flipKind === 'charm' && !u.follower) restoreSide(null, u); } // (round 14: a follower's charm is for good: a friend's cleanse doesn't break it)
+export function cleanse(u) { u.st = freshStatuses(); u.frozenT = 0; u.stunT = 0; u.rootT = 0; u.sleepT = 0; u.hexed = false; u.radiantT = 0; u.tangledT = 0; u.sickT = 0; u.addledT = 0; u.fearT = 0; u.lurchT = 0; u.shackledT = 0; u.silencedT = 0; if (u.flipKind === 'charm' && !u.follower) restoreSide(null, u); } // (round 14: a follower's charm is for good: a friend's cleanse doesn't break it)
 // Cursed's burst: an armed hex fires on the unit's next attack, heal or summon. hexFires() arms the window (everything
 // that action does in the next CURSE.windowT turns too) and says whether this one turns.
 function hexFires(w, u) {
@@ -438,7 +448,7 @@ function dangerTick(w, dt) {
     if (z.t > 0 || z.done) continue;
     z.done = true;
     if (z.src && (z.src.dead || z.src.downed)) { z.cancelled = true; continue; }
-    if (z.hit) for (const o of w.units) if (alive(o) && o.team !== z.team && !offFloor(o) && inZone(z, o.x, o.y, o.r * 0.5)) hurt(w, o, z.hit.dmg, z.src || null, { noDodge: true, ...z.hit, by: z.src ? undefined : z.by }); // (round 16 fix: a lobbed zone has no src on purpose, so it lands even if its thrower falls; by names the thrower, so its blow and statuses count for it) (slimes16: not a slime up in a hop)
+    if (z.hit) for (const o of w.units) if (alive(o) && o.team !== z.team && !offFloor(o) && inZone(z, o.x, o.y, o.r * 0.5)) hurt(w, o, z.hit.dmg, z.src || null, { noDodge: true, zone: z.kind, ...z.hit, by: z.src ? undefined : z.by }); // (round 16 fix: a lobbed zone has no src on purpose, so it lands even if its thrower falls; by names the thrower, so its blow and statuses count for it) (slimes16: not a slime up in a hop)
     if (z.onFire) actAs(w, z.src || z.by, () => z.onFire(w, z));
   }
   w.danger = w.danger.filter((z) => z.t > -0.3);
@@ -664,7 +674,7 @@ function movement(w, u, dt) {
     const sl = mobSlot(u), sd = dist(u.x, u.y, sl.x, sl.y);
     [gx, gy] = goalVec(w, u, sl.x, sl.y);
     if (sd < 12) gx = gy = 0; else mult = sd > MOB.leash ? MOB.rush : clamp(sd / 60, 0.3, 1);
-  } else if (u.coinGoal && (!t || dist(u.x, u.y, t.x, t.y) > 240)) {
+  } else if (u.coinGoal && (!t || dist(u.x, u.y, t.x, t.y) > 240 || u.coinGoal.repair)) { // (round 17, lane tags17: repair, the Engineer off to mend a construct: kits2.js wrenchRepair, only with no foe close)
     [gx, gy] = goalVec(w, u, u.coinGoal.x, u.coinGoal.y); mult = clamp(u.coinGoal.d / 90, 0.35, 0.9);
   } else if (!t && u.team === 'hero' && !w.cleared) {
     // nothing in sight: press on through the room together, the slowest setting the pace
@@ -1138,7 +1148,9 @@ export function addStatus(w, u, type, amount, src, fromBlow, credit = null) { //
   if (NEW_BURSTS.has(type) && u[type + 'ImmuneT'] > 0) return; // round 13: just burst
   if (type === 'charm' && (u.flipKind === 'charm' || charmProof(u))) return; // enthralled already; round 14: "Bosses immune to charm"
   if (src && src !== u && src.def && src.def.hitMul) amount *= src.def.hitMul; // (round 17: an enemy kind's hit, prices.js, carries to what its blows put on)
-  const res = (u.def.res && u.def.res[type]) ?? 1;
+  const own = u.def.res && u.def.res[type], tr = own == null ? tagRes(u, type) : null; // (round 17, lane tags17: a tag's own, tags.js TAG_RES: constructs don't bleed or sicken)
+  if (tr === 0) return;
+  const res = own ?? tr ?? 1;
   const s = u.st;
   noteStatus(u, type, src || credit); // its ticks and bursts count for whoever put it on (stats.js)
   if (type === 'chill' && s.wet > 30) amount *= 1.5;          // wet freezes easier
@@ -1149,6 +1161,7 @@ export function addStatus(w, u, type, amount, src, fromBlow, credit = null) { //
   const burst = () => { (u.bursts || (u.bursts = {}))[type] = w.time; if (AUDIT.on) AUDIT.on('burst', w, u, src || credit, 0, { type }); }; // the HUD ring flashes when it bursts
   if (type === 'wet') {
     s.poison *= 0.5;                                             // water washes poison off
+    if (s.burn > 0) { s.burn *= 0.5; if (s.burn < 8) s.burn = 0; } // round 17 (lane tags17): and puts out half the burning (what's left under 8 goes out)
     if (s.wet >= need) {                                         // soaked through: slips, spins, leaves a puddle
       s.wet = after; burst(); u.act = { type: 'slip', t: 1, max: 1 }; u.stunT = Math.max(u.stunT, 1);
       // no new puddle on top of one: slipping in a puddle used to make puddles that soak and slip again, without end
@@ -1697,7 +1710,7 @@ function statusTick(w, u, dt) {
     if (u.radiantT <= 0) { u.radiantT = 0; u.radImmuneT = RADIANCE.immuneT; }
   } else if (u.radImmuneT > 0) u.radImmuneT -= dt;
   if (u.hexed && (u.hexT -= dt) <= 0) u.hexed = false;           // an unused hex wears off
-  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT', 'gasT', 'focusT', 'charmCd']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
+  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT', 'gasT', 'focusT', 'charmCd', 'silencedT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
   const wm = windMul(u); // round 14: sleepy, a charged shot and anything else queued up comes slower
   if (u.aimT > 0) u.aimT = Math.max(0, u.aimT - dt / wm);
   for (const b of u.buffs) b.t -= dt;
@@ -1725,6 +1738,13 @@ function statusTick(w, u, dt) {
     if (s.burn >= 8) hurt(w, u, (1.5 + s.burn * 0.06) * dt, null, { dot: true, color: '#FF9A55', by: u.stBy && u.stBy.burn, stk: 'burn' });
     if (s.burn > 4 && rand() < dt * (4 + 10 * fillOf(u, 'burn'))) flames(w, u.x, u.y - u.vr * 0.3, 1, u.vr * 0.6, 60);
   }
+  // round 17 (lane tags17): DOUSED, a fire creature soaked or standing in water takes what burning would do (tags.js
+  // DOUSE), and steams; the word once in a while
+  { const dr = douseRate(u); if (dr > 0) {
+    hurt(w, u, dr * dt, null, { dot: true, color: '#BFE3F2', by: u.stBy && u.stBy.wet, stk: 'douse' });
+    if (rand() < dt * 9) w.particles.push({ x: u.x + rrange(-u.vr, u.vr) * 0.7, y: u.y - u.vr * 0.2 + rrange(-6, 6), vx: rrange(-14, 14), vy: -30, rise: 34, up: 0, life: 0.9, max: 0.9, size: rrange(5, 8), color: 'rgba(238,240,245,0.85)' });
+    if (!(u.hissT > w.time)) { u.hissT = w.time + DOUSE.hissEvery; textU(w, u.x, u.y, u.r + 8, 'hiss', '#DCEFF7', 0.85); puff(w, u.x, u.y - u.vr * 0.3, 'rgba(238,240,245,0.85)', 8, 50, 7, 0.7); }
+  } }
   if (s.chill > 0) s.chill = Math.max(0, s.chill - STATUS.chill.decay * dt);
   if (u.sickT > 0) { // sickened (poison's burst): a slow drain; it is weaker and slower meanwhile (blowMul, speedOf, atkRate)
     u.sickT = Math.max(0, u.sickT - dt);
@@ -1870,7 +1890,7 @@ function projectiles(w, dt) {
           break;
         }
         const friendly = p.team === 'neutral' && p.owner && u.team === p.owner.team;
-        const o = { ...p.o, kAngle: Math.atan2(p.vy, p.vx), shot: true, pab: p.ab, tk: p.tk };
+        const o = { ...p.o, kAngle: Math.atan2(p.vy, p.vx), shot: true, pab: p.ab, tk: p.tk, proj: p.kind }; // (proj, round 17 lane tags17: what kind of shot, for tags.js isMagicHit)
         if (friendly) { for (const k of ['chill', 'burn', 'poison']) if (o[k]) o[k] *= 0.4; }
         const mul = p.owner && p.owner.nextShotMul && !p.hitSet ? p.owner.nextShotMul : 1;
         if (mul > 1) p.owner.nextShotMul = 0;

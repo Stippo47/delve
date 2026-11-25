@@ -663,7 +663,7 @@ Object.assign(HEROES2, {
     fun: 'Can fix anything with a wrench. Has fixed several things that were not broken.',
     stats: { hp: 100, speed: 60, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 120, atkCd: 1.1, dmg: 10, knock: 150, arc: 1.6 },
     weapon: 'heavy', // round 13: "Hits she. Close. Throw bouncing cogs from afar"
-    attack: { name: 'Wrench and cogs', anim: 'throw', desc: 'Close up, a clanging swing of the wrench; further off, a cog thrown that bounces on to a second enemy.' },
+    attack: { name: 'Wrench and cogs', anim: 'throw', desc: 'Close up, a clanging swing of the wrench; further off, a cog thrown that bounces on to a second enemy. With nothing to hit close by, she goes to a damaged construct of her side (her turrets and towers first) and whacks it back into shape: 12% of its health a blow. The wrench mends nothing else.' },
     summons: {
       turret: { name: 'Turret', art: 'art/summons/turret.svg', headR: 52, turret: true, attackAnim: 'shoot', proj: 'bullet', r: 24, vr: 20, turn: 1, accel: 0, face: 1, mass: 8,
         hp: 70, speed: 0, role: 'ranged', range: 260, keep: 0, atkCd: 0.6, dmg: 5 },

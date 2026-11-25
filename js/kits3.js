@@ -5,7 +5,7 @@
 // The designer's standing rules for this file: no three abilities that are all "damage in a shape" (each hero's three
 // do three different jobs), nothing that only shows as a word popping up, nothing too weak to be worth its button.
 import { TAU, clamp, dist, angleTo, angleDiff, rand, rrange } from './util.js';
-import { hurt, alive, opponents, allies, hpRatio, puff, setAnim, blocked, addBuff, fx, cleanse, sparks, wallRect, offFloor } from './sim.js'; // (round 16: offFloor, a slime up in a hop)
+import { hurt, alive, opponents, allies, hpRatio, puff, setAnim, blocked, addBuff, fx, cleanse, sparks, wallRect, offFloor, silence } from './sim.js'; // (round 16: offFloor, a slime up in a hop)
 import { lineClear, buildGrid } from './path.js';
 import { foesNear, friendsNear, dmgOf, ang, cast, heal, addStatus, shoot, segDist, withAb, rectGap } from './kits.js';
 import { k2, after, timer, onUnit, offUnit, isOn, flung, shove, interrupt, foeWinding, whirl, inFront } from './kits2.js';
@@ -378,7 +378,7 @@ export const ABILITIES3 = {
     score(w, u, t, tier) {
       const R = 170, F = foesNear(w, u, u.x, u.y, R); if (!F.length && tier < 2) return 0;
       const shots = w.projectiles.filter((p) => p.team !== u.team && p.team !== 'neutral' && !p.noHit && dist(p.x, p.y, u.x, u.y) < R).length, wind = F.filter((e) => foeWinding(w, e)).length;
-      const kit = F.filter((e) => !isOn(w, e, 'silenced') && (e.def.ability || e.def.brain || e.eliteFn || e.kit)).length;
+      const kit = F.filter((e) => !isOn(w, e, 'nulled') && (e.def.ability || e.def.brain || e.eliteFn || e.kit)).length;
       const dirty = tier >= 2 ? friendsNear(w, u, u.x, u.y, R).filter((a) => !a.partOf && (a.stunT > 0.4 || a.frozenT > 0.4 || a.rootT > 0.6 || Object.values(a.st).some((v) => v > 55))).length : 0;
       return clamp(Math.min(0.5, shots * 0.17) + Math.min(0.6, wind * 0.4) + Math.min(0.45, kit * 0.15) + dirty * 0.3, 0, 0.95);
     },
@@ -390,9 +390,11 @@ export const ABILITIES3 = {
       for (const e of foesNear(w, u, u.x, u.y, R)) {
         interrupt(w, e);
         const T = e.def.boss || e.def.part ? dur * 0.4 : dur;
-        onUnit(w, e, 'silenced', T, { taken: (w2, u2, s2, amt, o) => (tier >= 3 && !o.dot ? amt * 1.2 : amt),
+        // round 17 (lane tags17): NULLIFIED, the old "can use nothing" (Silenced is the mouth alone now, tags.js); it silences too
+        silence(w, e, dur, u);
+        onUnit(w, e, 'nulled', T, { taken: (w2, u2, s2, amt, o) => (tier >= 3 && !o.dot ? amt * 1.2 : amt),
           tick(w2, u2) { u2.abilT = Math.max(u2.abilT || 0, 0.3); if (u2.kit) for (const c in u2.kit.cd) u2.kit.cd[c] = Math.max(u2.kit.cd[c], 0.3); const E = u2.el; if (E && E.dueLen) for (const c in E.dueLen) if (typeof E[c] === 'number') E[c] = Math.max(E[c], 0.3); } });
-        k2(w, { draw: 'silenced', unit: e, x: e.x, y: e.y, r: e.vr, max: T });
+        k2(w, { draw: 'nulled', unit: e, x: e.x, y: e.y, r: e.vr, max: T });
         if (tier >= 2) { const had = e.buffs.length, wd = e.buffs.some((b) => b.id === 'warded'); e.buffs = e.buffs.filter((b) => b.dur >= 1000 || !(b.dealt > 1 || b.atkSpeed > 1 || b.move > 1 || b.taken < 1 || b.border || b.lifesteal || b.statusImmune || b.knockImmune || b.frontBlock)); if (wd && !e.buffs.some((b) => b.id === 'warded')) offUnit(e, 'warded'); /* (round 15, lane E: Warded's shield goes with its border: it used to stay on, unseen) */ if (e.buffs.length < had) sparks(w, e.x, e.y, 0, 6, '#C9D2DE', 1); }
       }
       if (tier >= 2) for (const a of [u, ...friendsNear(w, u, u.x, u.y, R)]) { if (a.partOf) continue; const bad = a.stunT > 0 || a.frozenT > 0 || a.rootT > 0 || Object.values(a.st).some((v) => v > 4); if (bad) { cleanse(a); k2(w, { draw: 'rally', unit: a, x: a.x, y: a.y, r: a.vr, max: 0.7, cols: ['#C9D2DE', '#EEF3F8'] }); } }

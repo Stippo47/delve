@@ -12,6 +12,7 @@ import { lineClear, circleRect } from './path.js';
 import { foesNear, friendsNear, hurtMost, dmgOf, ang, ring, cast, heal, addStatus, zone, shoot, segDist, hooksOf, wantedWait, beset } from './kits.js';
 import { threatened, attackers } from './threat.js'; // round 16 fixes: what is about to land on a unit, who is on it
 import { AUDIT } from './stats.js'; // (round 16: tools/audit)
+import { hasTag } from './tags.js'; // round 17 (lane tags17): the Engineer's wrench mends constructs
 
 // ---------------------------------------------------------------- helpers
 const k2 = (w, o) => fx(w, { type: 'k2', ...o });                 // a look of our own (fx2.js DRAW[o.draw])
@@ -2607,6 +2608,28 @@ function juggleTick(w, u, dt) {
 function wolfBack(w, u) { const k = u.kit; if (!k.wolfUntil) return; u.def = k.human || u.def; k.wolfUntil = 0; if (k.size) { u.r = k.size.r; u.vr = k.size.vr; k.size = null; } puff(w, u.x, u.y, '#6E6A6A', 12, 100, 6, 0.5); }
 // the Engineer's towers (Tinker) and drones
 const TOWERS = ['torcher', 'tesla', 'snowMortar', 'medbay'];
+// Round 17 (lane tags17; the designer: "Think the engineer hitting its turrets with their wrenches. Can heal its
+// constructs but not his allies"): REPAIR. With nothing for her to hit close by, the Engineer goes to the most
+// damaged construct of her side (tags.js: her turrets and towers first, then anyone's barricade, crate or pavise)
+// below `below` of its health within `look`, and whacks it with the wrench in place of a blow: each whack mends `heal`
+// of its health, on her own attack clock. Her target has to be further than `busy` off for her to stop and mend. The
+// wrench never mends anything that isn't a construct.
+export const REPAIR = { below: 0.85, heal: 0.12, look: 420, reach: 30, busy: 90 };
+function wrenchRepair(w, u, dt) {
+  if (w.cleared || u.act || u.forcedGoal || u.shackledT > 0 || u.stunT > 0 || u.frozenT > 0 || u.sleepT > 0 || u.koT > 0 || u.fearT > 0 || u.radiantT > 0 || u.addledT > 0) return;
+  const c = w.units.filter((o) => o !== u && alive(o) && !o.ethereal && o.team === u.team && hasTag(o, 'construct') && o.hp < o.maxHp * REPAIR.below && dist(o.x, o.y, u.x, u.y) < REPAIR.look)
+    .sort((p, q) => (q.summonBy === u ? 1 : 0) - (p.summonBy === u ? 1 : 0) || hpRatio(p) - hpRatio(q))[0];
+  if (!c) return;
+  if (opponents(w, u).some((e) => dist(u.x, u.y, e.x, e.y) - u.r - e.r < REPAIR.busy)) return; // something to hit close by: that first
+  const gap = dist(u.x, u.y, c.x, c.y) - u.r - c.r;
+  u.coinGoal = { x: c.x, y: c.y, d: Math.max(0, gap) + 40, repair: true }; // (sim.js movement: repair, she walks to it whatever she was fighting)
+  if (gap > REPAIR.reach || u.atkT > 0) return;
+  u.facing = ang(u, c); setAnim(u, 'swing', 0.28); swingMark(w, u, u.r + 34, 1.6);
+  const amt = Math.min(c.maxHp - c.hp, c.maxHp * REPAIR.heal); if (amt > 0) heal(w, c, amt, u);
+  c.mendGlow = w.time + 0.4; c.flashT = 0.08;
+  k2(w, { draw: 'buildSparks', x: c.x, y: c.y, max: 0.5 }); sparks(w, c.x + Math.cos(u.facing + Math.PI) * c.r * 0.6, c.y + Math.sin(u.facing + Math.PI) * c.r * 0.6, u.facing + Math.PI, 6, '#FFE66B', 1.1);
+  u.atkT = u.def.atkCd * rrange(0.9, 1.1); u.lastAttackT = w.time; u.repairs = (u.repairs || 0) + 1;
+}
 const turnTo = (s2, want, rate, dt) => { const d = Math.atan2(Math.sin(want - s2.facing), Math.cos(want - s2.facing)); s2.facing += clamp(d, -rate * dt, rate * dt); return Math.abs(d); };
 const nearestFoe = (w, s2, R) => opponents(w, s2).filter((e) => dist(e.x, e.y, s2.x, s2.y) < R && !blocked(w, s2.x, s2.y, e.x, e.y)).sort((p, q) => dist(s2.x, s2.y, p.x, p.y) - dist(s2.x, s2.y, q.x, q.y))[0];
 // the turret: turns slowly to the nearest enemy and fires bursts of five
@@ -3044,6 +3067,7 @@ export function kit2Tick(w, u, dt) {
   // Warhelm: his hammer is out of his hand while it circles him (Storm Born) or flies ahead (Skull Splitter). (Round 15,
   // lane E: art round 12 split it from his fist, #arm-l-hammer: parts.js hides the hammer alone, his fist stays and punches.)
   if (u.kind === 'warhelm') u.kit.hammerOut = !!u.kit.storm || u.kit.splitT > w.time;
+  if (u.kind === 'engineer') wrenchRepair(w, u, dt); // round 17 (lane tags17): the wrench mends her constructs
   // the Alchemist's hand shows the next flask she'll throw (round 13: "Bottle in hand should change to what she will throw")
   if (u.kind === 'alchemist' && (u.kit.handW !== w || !u.kit.handFx || u.kit.handFx.t >= u.kit.handFx.max)) { u.kit.handW = w; u.kit.handFx = k2(w, { draw: 'handFlask', unit: u, x: u.x, y: u.y, max: 1e9 }); }
   // the Chef's plates: a friend who walks over one eats it (healed; the rest past whole is extra health); hurt friends

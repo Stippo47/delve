@@ -18,6 +18,7 @@
 // Everything here wore PLACEHOLDER art (recoloured kinds; docs/ART-NEEDED.md) until art round 9 drew it (design/class-round9):
 // the auto bomb bot, the bronze and steel bees, wasps and hornets, and the fire and gas mortars are recolours of it.
 import { alive, opponents, allies, hurt, puff, sparks, flames, addStatus, setAnim, fx, addBuff, explode, spawn, heal, kill, addDanger } from './sim.js';
+import { hasTag } from './tags.js'; // round 17 (lane tags17): what the repair drone mends
 import { TAU, clamp, dist, angleTo, wrapAngle, angleDiff, rand, rrange, chance } from './util.js';
 import { lineClear } from './path.js';
 import { ELITES, lob, cone, line, around, rush, rushTick, shoot, hold, beginHold, due, again, targetOf, gapTo, crowd, stand, turnTo, later, openSpot } from './elites.js';
@@ -139,7 +140,7 @@ function teslaBrain(w, u, dt) {
 // Repair drone: floats about mending the most broken construct near it (kill it first). The elite also shields it a while.
 function droneBrain(w, u, dt) {
   if (!due(u, 'mend', dt, 1.2)) return false;
-  const b = allies(w, u).filter((a) => a.def.construct && a.hp < a.maxHp * 0.95 && dist(a.x, a.y, u.x, u.y) < 340).sort((a, c) => a.hp / a.maxHp - c.hp / c.maxHp)[0];
+  const b = allies(w, u).filter((a) => hasTag(a, 'construct') && a.hp < a.maxHp * 0.95 && dist(a.x, a.y, u.x, u.y) < 340).sort((a, c) => a.hp / a.maxHp - c.hp / c.maxHp)[0];
   if (!b || w.stale) { again(u, 'mend', 0.6); return false; }
   again(u, 'mend', 2.4, 3); setAnim(u, 'cast', 0.4);
   heal(w, b, b.maxHp * 0.12, u);
