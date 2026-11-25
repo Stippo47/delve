@@ -4,7 +4,6 @@
 <!-- Round 3 (strap version): flail (arm-r) drawn before #body; bigger ball with pyramid spikes on its top face as well as round the rim; longer chain. -->
   <!-- BARBARIAN Flail Berserker (round 2, left shoulder a): shaved head, clean red mohawk crest running back-to-front with no fringe under it, jaw beard, spiked leather pauldron on the right. Flail held low in the right hand, chain and a big spiked ball forward. Parts: body / arm-l (raised empty fist) / arm-r (hand + flail). Facing = DOWN (+y). -->
   <defs>
-    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <linearGradient id="gF" x1="0" y1="48" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#E9BD98"/><stop offset="0.5" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient>
     <linearGradient id="gFs" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
     <path d="M26.0 108.0 C26.0 82 54.0 76 100 76 C146.0 76 174.0 82 174.0 108.0 C174.0 134 146.0 140 100 140 C54.0 140 26.0 134 26.0 108.0 Z" id="s1"/>
@@ -64,7 +63,7 @@
 <radialGradient id="bzgStud" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#F4F6FA"/><stop offset="0.55" stop-color="#A9B2C1"/><stop offset="1" stop-color="#4E5666"/></radialGradient>
 <linearGradient id="r5Steel" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E4E8EE"/><stop offset="1" stop-color="#7F8898"/></linearGradient><linearGradient id="r5Ivory" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#FFF8E8"/><stop offset="1" stop-color="#CDB98E"/></linearGradient>
 </defs>
-  <g id="sprite" filter="url(#outline)">
+  <g id="sprite">
     <g id="arm-r" data-pivot="160 108">
       <!-- flail, held low: the handle passes under the spiked pauldron and the chain and spiked ball hang out past the front of the body; only the fist shows at the body's edge -->
       <g transform="translate(159 146) rotate(40)">

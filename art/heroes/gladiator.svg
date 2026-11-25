@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
 <!-- FIGHTER Gladiator (round 5, new): a polished bronze helmet (round 7: a soft shine on it) with a broad brim and a tall red crest running front to back, bare tanned shoulders, a segmented steel arm guard (manica) on the sword shoulder, a leather strap. A broad gladius in the right hand (arm-r, before #body) and a small round bronze shield in the left (arm-l, after #body, hand hidden). Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
 <path id="s1" d="M -8 16 L 8 16 L 9 50 L 0 64 L -9 50 Z"/>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#EAECF0"/><stop offset="1" stop-color="#ABB7C7"/></linearGradient>
@@ -53,7 +52,7 @@
 <linearGradient id="g15" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#E5B974"/><stop offset="1" stop-color="#DD9A31"/></linearGradient>
 <linearGradient id="g16" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7C5312" stop-opacity="0"/><stop offset="1" stop-color="#7C5312" stop-opacity="0.42"/></linearGradient>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="arm-r" data-pivot="154 108"><!-- gladius -->
 <use href="#s1" transform="translate(152 136) rotate(12)" fill="url(#g1)"/><use href="#s1" transform="translate(152 136) rotate(12)" fill="url(#g2)"/><g clip-path="url(#c1)"><g transform="translate(152 136) rotate(12)"><path d="M -1 18 L -1 64 L 1 64 L 1 18 Z" fill="#F4F6FA" opacity="0.8"/></g></g>
 <g clip-path="url(#u2)"><use href="#s2" transform="translate(0 2) translate(152 136) rotate(12)" fill="#2B2230" opacity="0.3"/></g><use href="#s2" transform="translate(152 136) rotate(12)" fill="url(#g3)"/><use href="#s2" transform="translate(152 136) rotate(12)" fill="url(#g4)"/>

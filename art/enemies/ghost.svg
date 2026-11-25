@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 11) of design/class-round10/enemies/ghost-a-tail-point.svg -->
 <!-- GHOST, sheet (round 7): a white sheet ghost seen from above, with eyes: a teardrop, the round head at the front with two big dark eye holes and a small dark "o" mouth, the sheet narrowing behind it into a plump tail whose tip flicks to the side; two stubby sheet arms reach out at the sides. Round 10, tail type 1: the tail is a plain soft point straight back. No fold down the back (round 8). Parts: #arm-l / #arm-r (the arms, before #body), #body (sheet and face). Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#C4C5E3"/></linearGradient>
 <path id="p2" d="M68 112 C65.2 109.3 54.8 113.6 50 116 C45.2 118.4 38.7 124.1 36 128 C33.3 131.9 31.4 139 32 142 C32.6 145 36.5 147.8 40 148 C43.5 148.2 50.6 145.1 55 143 C59.4 140.9 67 138.7 69 134 C71 129.3 70.8 114.7 68 112 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -16,7 +15,7 @@
 <clipPath id="c11"><use href="#p10"/></clipPath>
 <linearGradient id="g12" x1="0" y1="0" x2="1" y2="0.25"><stop offset="0.45" stop-color="#1A1030" stop-opacity="0"/><stop offset="1" stop-color="#1A1030" stop-opacity="0.3"/></linearGradient>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="arm-l" data-pivot="64 120"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

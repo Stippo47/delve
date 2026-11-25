@@ -1,0 +1,17 @@
+| group | n | min | 10% | median | 90% | max |  (device px, iPhone 11 at the default zoom; before / after)
+|---|---|---|---|---|---|---|
+| hero before | 55 | 2.93 | 3.05 | 3.26 | 6.17 | 12.26 |
+| hero after | 55 | 2.88 | 2.98 | 3.11 | 6.09 | 12.24 |
+| summon before | 21 | 2.38 | 2.82 | 3.11 | 3.53 | 9.64 |
+| summon after | 21 | 2.88 | 2.94 | 3.2 | 3.6 | 9.66 |
+| enemy before | 135 | 1.33 | 1.93 | 3.28 | 5.05 | 14.65 |
+| enemy after | 135 | 2.63 | 2.94 | 3.2 | 4.26 | 14.65 |
+| boss before | 18 | 4.26 | 4.27 | 5.77 | 8.88 | 10.15 |
+| boss after | 18 | 2.79 | 2.88 | 3.24 | 7.2 | 7.8 |
+| prop before | 17 | 1.39 | 1.95 | 2.55 | 2.83 | 4.06 |
+| prop after | 17 | 2.55 | 2.63 | 2.83 | 3 | 3.27 |
+
+old outline in room units (computed: line x size), kinds per half unit: {"1.0":13,"1.5":12,"2.0":125,"2.5":38,"3.0":21,"3.5":15,"4.0":3,"4.5":1,"5.0":3,"6.0":1}
+n 232 min 1.24 median 2.44 max 6
+thinnest: wasp 1.24, waspBronze 1.24, waspSteel 1.24, bee 1.29, beeBronze 1.29, beeSteel 1.29
+thickest: archfiend 4.29, radiant 4.29, frostGiant 4.4, boneKing 4.56, alpha 5.1, sunBlade 5.38, elderEnt 5.45, gildedSeraph 6

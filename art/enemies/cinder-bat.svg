@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 9) of design/class-round9/enemies/ember-cinder-bat.svg -->
 <!-- CINDER BAT (round 9): the round-7 bat (the designer's pick) as a bat of cinders: its shapes as they were (a big round head with no body behind it, two big broad pointed ears standing up and out, a small snout with two fangs, membrane wings with a scalloped trailing edge), charred black, the wing bones and cracks across the head glowing orange like embers, the ears glowing inside, a trail of embers streaming behind. No eyes. Parts: #back (the ember trail, sways), #arm-l / #arm-r (the wings, pivots at the shoulders, so the game flaps them), #body (head and ears). Scaled 0.8. Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0" y2="-1"><stop offset="0" stop-color="#FF9A3D"/><stop offset="1" stop-color="#C8402A"/></linearGradient>
 <path id="p2" d="M117.8 89 C121.6 84.2 108.8 71.1 108 62.9 C107.1 54.7 113.2 42.9 112 34.3 C110.8 25.6 102.6 9.4 99.9 5.3 C97.2 1.1 94.7 2.5 94.1 6.7 C93.5 11 97.8 25.6 96 33.7 C94.2 41.9 84.1 51.9 82 61.1 C80 70.3 76.9 90.8 82.2 95 C87.6 99.1 113.9 93.9 117.8 89 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -44,7 +43,7 @@
 <path id="p39" d="M91 146 L97 146 L94 155 Z" transform="translate(100 106) scale(1.28) translate(-100 -112)"/>
 <path id="p40" d="M103 146 L109 146 L106 155 Z" transform="translate(100 106) scale(1.28) translate(-100 -112)"/>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 96.8"><g transform="translate(100 100) scale(0.8) translate(-100 -100)">
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><path d="M106.9 82.9 C108 78.9 100.8 65.2 100.2 58.2 C99.7 51.2 103.4 39.8 103.4 36.4 C103.5 33 102.3 32.4 100.6 35.6 C98.8 38.8 92.9 50.4 91.8 57.8 C90.6 65.2 90.8 81.3 93.1 85.1 C95.4 88.8 105.8 87 106.9 82.9 Z" fill="#FFE27A"/></g>

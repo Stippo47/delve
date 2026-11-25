@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 11) of design/class-round11/enemies/boss-goblin-chieftain.svg -->
 <!-- THE GOBLIN CHIEFTAIN (round 11: the hands held further forward, the choppers' edges turned in; round 10: two big feathers, lower fangs, a war chopper in each fist, more war paint, one clipped ear; round 9): the round-8 chieftain (the round-7 Troll A, mohawk, which the designer said to keep "but not as a troll") made the goblins' chief: the goblins' yellow-lime skin, their long hooked nose, wide grin with two small fangs and huge swept-back ears, no eyes; the ragged red war crest kept, now with a band of bone across the brow and three white brown-tipped feathers at the back of the crest; red war paint (a handprint on the left shoulder, stripes on the right); a cleaver in the right fist, a bundle of three spears tied across its back (#back, sways), the left fist free. Hunched shoulders and sizes as before. Parts: #back (the spears), #arm-r (cleaver + fist), #body, #arm-l (free fist). Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#A87A4A"/><stop offset="1" stop-color="#6E4A2A"/></linearGradient>
 <path id="p2" d="M0 -16 H0 A4 4 0 0 1 4 -12 V92 A4 4 0 0 1 0 96 H0 A4 4 0 0 1 -4 92 V-12 A4 4 0 0 1 0 -16 Z" transform="translate(64 132) rotate(206)"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -83,7 +82,7 @@
 <clipPath id="c78"><use href="#p2"/><use href="#p6"/><use href="#p8"/><use href="#p10"/><use href="#p12"/><use href="#p14"/><use href="#p17"/><use href="#p22"/><use href="#p26"/><use href="#p30"/><use href="#p33"/><use href="#p35"/><use href="#p37"/><use href="#p41"/><use href="#p45"/><use href="#p47"/><use href="#p51"/><use href="#p55"/><use href="#p59"/><use href="#p61"/><use href="#p63"/><use href="#p67"/><use href="#p71"/><use href="#p74"/></clipPath>
 <clipPath id="c79"><use href="#p77"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 100"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

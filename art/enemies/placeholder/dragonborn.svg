@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 7) of design/class-round7/enemies/dragonborn-a.svg: the designer's pick with the round-8 note applied. It stays under placeholder/ because js/foes.js loads it from here. -->
 <!-- DRAGONBORN (round 6, version a: the round-4 dragonborn in red, without eyes), ~115%: a dragon-flavoured lizardman warrior. Red scales (round 6: was sapphire-blue), a broad dragon snout, two big ivory horns growing out of the sides of the skull and sweeping back (round 7: they lay on top of the head), teal frill fans on the cheeks, small folded wings, bronze pauldrons, a falchion. Parts: #back (wings), #arm-r (falchion + claw, before #body), #body, #arm-l (empty claw). Scaled 1.12. Facing = DOWN (+y), centre (100,100). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#A8343A"/><stop offset="1" stop-color="#661820"/></linearGradient>
 <path id="p2" d="M118 86 C117.8 82.2 134.8 68.2 140 62 C145.2 55.8 156.2 41 160 36 C163.8 31 168.5 21 170 22 C171.5 23 172.8 40.2 172 44 C171.2 47.8 165.2 48.8 164 52 C162.8 55.2 163.8 67.2 162 70 C160.2 72.8 152.5 71.2 150 74 C147.5 76.8 146 90.5 142 92 C138 93.5 118.2 89.8 118 86 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -63,7 +62,7 @@
 <clipPath id="c58"><use href="#p57"/></clipPath>
 <path id="p59" d="M-13 -9.5 L-20 -6.5 L-13 -3.5 Z M-13 -3 L-20 0 L-13 3 Z M-13 3.5 L-20 6.5 L-13 9.5 Z" transform="translate(44 142) rotate(4)"/>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 82.1"><g transform="translate(100 100) scale(1.12) translate(-100 -100)">
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><use href="#p2" fill="url(#g4)"/></g>

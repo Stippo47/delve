@@ -5,7 +5,6 @@
 <!-- Round 3: spiked club (arm-r) drawn before #body; the handle is under the right paw, the club comes out diagonally under the face. -->
   <!-- BARBARIAN Bearskin (round 2): grizzly hide mantle with forepaws, bear-head helm (ears, long pale snout, fangs). Weapon (club) now in the right hand, low and point forward; club = fat wooden club with iron spikes along both sides, axe = double-bit war axe. Parts: body / arm-l (empty fist) / arm-r (hand + club). Facing = DOWN (+y). -->
   <defs>
-    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <linearGradient id="gF" x1="0" y1="118" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient>
     <linearGradient id="gFs" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
     <path d="M104.7 74.1 Q114.3 68.6 128.4 68.4 Q128.9 71.0 130.0 77.4 Q143.2 74.1 156.5 76.4 Q154.8 78.9 150.7 85.0 Q165.6 84.4 176.0 88.9 Q172.4 91.0 163.7 95.8 Q178.0 98.0 183.9 104.1 Q178.9 105.3 167.0 108.2 Q178.5 112.8 179.1 119.5 Q173.5 119.7 160.1 120.3 Q167.1 126.6 162.2 132.9 Q156.9 132.1 144.1 130.2 Q145.4 137.2 135.8 142.2 Q131.6 140.5 121.3 136.3 Q116.9 143.1 104.0 146.0 Q101.5 143.6 95.3 137.9 Q85.7 143.4 71.6 143.6 Q71.1 141.0 70.0 134.6 Q56.8 137.9 43.5 135.6 Q45.2 133.1 49.3 127.0 Q34.4 127.6 24.0 123.1 Q27.6 121.0 36.3 116.2 Q22.0 114.0 16.1 107.9 Q21.1 106.7 33.0 103.8 Q21.5 99.2 20.9 92.5 Q26.5 92.3 39.9 91.7 Q32.9 85.4 37.8 79.1 Q43.1 79.9 55.9 81.8 Q54.6 74.8 64.2 69.8 Q68.4 71.5 78.7 75.7 Q83.1 68.9 96.0 66.0 Q98.5 68.4 104.7 74.1 Z" id="s1"/>
@@ -88,7 +87,7 @@
 <linearGradient id="c12_g7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#51331D"/><stop offset="1" stop-color="#412715"/></linearGradient>
 <linearGradient id="c12_g8" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#22150B" stop-opacity="0"/><stop offset="1" stop-color="#22150B" stop-opacity="0.42"/></linearGradient>
 </defs>
-  <g id="sprite" filter="url(#outline)">
+  <g id="sprite">
     <g id="arm-r-club" data-pivot="160 108">
       <!-- round 12 ("I didn't like this club"): a new club, a gnarled root, in its own part (it follows #arm-r, or is hidden while he claws) -->
 <use href="#c12_s1" transform="translate(152 149) rotate(47)" fill="url(#c12_g1)"/><use href="#c12_s1" transform="translate(152 149) rotate(47)" fill="url(#c12_g2)"/>

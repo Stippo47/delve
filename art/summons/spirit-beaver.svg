@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 12, not wired yet) of design/class-round12/props/spirit-beaver.svg -->
 <!-- SPIRIT BEAVER (the Shaman's ancestor spirit; round 12): a beaver seen from above, its flat tail behind, two front teeth, in the ancestors' pale blue, the spirits' swirl on its back. The game draws it see-through. One part (#body) unless said. Front = DOWN (+y), centre (100,100); the outline comes from the #outline filter. Drawn at 0.697 of the box (each part carries the scale; pivots are in the box's own frame), so its outline is the heroes' weight: give the kind headR 51 (vr 20). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
 <path id="s1" d="M 73 40 A 27 36 0 1 0 127 40 A 27 36 0 1 0 73 40 Z"/>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#7CC5EC"/><stop offset="1" stop-color="#33A8E7"/></linearGradient>
@@ -35,7 +34,7 @@
 <linearGradient id="g8" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#009ED6" stop-opacity="0"/><stop offset="1" stop-color="#009ED6" stop-opacity="0.42"/></linearGradient>
 <path id="s12" d="M 93 177 A 7 4.6 0 1 0 107 177 A 7 4.6 0 1 0 93 177 Z"/>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="body" transform="translate(100 100) scale(0.697) translate(-100 -100)">
 <use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/><g clip-path="url(#c1)"><path d="M 80 26 L 120 54 M 78 44 L 110 68 M 92 12 L 124 36 M 120 26 L 80 54 M 122 44 L 90 68 M 108 12 L 76 36" fill="none" stroke="#2E6A9A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/></g>
 <use href="#s2" fill="url(#g1)"/><use href="#s2" fill="url(#g2)"/>

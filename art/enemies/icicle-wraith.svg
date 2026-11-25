@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 11) of design/class-round11/enemies/frost-icicle-wraith.svg -->
 <!-- ICICLE WRAITH (round 10: "Different look. Maybe more banshee looking"): a banshee of the ice seen from above, in the ghosts' build and Ghost B's pale blue: a round head with two tall dark eyes drawn down in grief and a long open wailing mouth, a crown of icicles standing up from the back of its head, long hair or veil streaming back in ragged tatters (#back, sways), two long tattered sleeves reaching forward with icicles at their ends. Parts: #back (the veil), #arm-l / #arm-r (the sleeves, before #body), #body (head, crown, face). Front = DOWN (+y). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1.0"><stop offset="0" stop-color="#D6E4F6"/><stop offset="1" stop-color="#8CA6D2"/></linearGradient>
 <path id="p2" d="M56 112 C48.5 108.5 42.8 97.8 40 92 C37.2 86.2 36.2 72.5 34 66 C31.8 59.5 22 40 22 40 C22 40 39 52.2 42 50 C45 47.8 46 22 46 22 C46 22 58.5 42 62 40 C65.5 38 74 6 74 6 C74 6 84.8 34.8 88 34 C91.2 33.2 100 0 100 0 C100 0 108.8 33.2 112 34 C115.2 34.8 126 6 126 6 C126 6 134.5 38 138 40 C141.5 42 154 22 154 22 C154 22 155 47.8 158 50 C161 52.2 178 40 178 40 C178 40 168.2 59.5 166 66 C163.8 72.5 162.8 86.2 160 92 C157.2 97.8 151.5 108.5 144 112 C136.5 115.5 111 120 100 120 C89 120 63.5 115.5 56 112 Z"/>
 <clipPath id="c3"><use href="#p2"/></clipPath>
@@ -44,7 +43,7 @@
 <clipPath id="c39"><use href="#p2"/><use href="#p7"/><use href="#p10"/><use href="#p13"/><use href="#p15"/><use href="#p17"/><use href="#p19"/><use href="#p21"/><use href="#p23"/><use href="#p25"/><use href="#p27"/><use href="#p29"/><use href="#p31"/><use href="#p33"/></clipPath>
 <clipPath id="c40"><use href="#p38"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 90"><g>
 <use href="#p2" fill="url(#g1)"/>
 <g clip-path="url(#c3)"><path d="M 62 104 Q 56 76 50 44 M 82 104 Q 78 70 76 30 M 118 104 Q 122 70 124 30 M 138 104 Q 144 76 150 44" fill="none" stroke="#8AA6D6" stroke-width="4" stroke-linecap="round" opacity="0.5"/><use href="#p2" fill="url(#g4)"/></g>

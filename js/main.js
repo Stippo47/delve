@@ -1,4 +1,4 @@
-import { loadSprites } from './sprites.js';
+import { loadSprites, uiArt } from './sprites.js';
 import { layout, draw, view, snapCamera, setZoom, warmArt } from './render.js';
 import { newRun, update, retreat, summarize, FLOORS } from './dungeon.js';
 import { loadSave, writeSave } from './save.js';
@@ -118,7 +118,7 @@ function endConvoy() {
 }
 
 const members = (r) => [...r.party, ...(r.hired || [])];
-const artOf = (k) => (DEFS[k] && (DEFS[k].portrait || DEFS[k].art)) || (MERCS.find((m) => m.kind === k) || {}).art || `art/${k}.svg`;
+const artOf = (k) => uiArt((DEFS[k] && (DEFS[k].portrait || DEFS[k].art)) || (MERCS.find((m) => m.kind === k) || {}).art || `art/${k}.svg`); // (round 19, lane outline19: uiArt)
 // The hero cards live in the dock along the bottom (hud.js); tapping one pauses and inspects that hero.
 function buildChips() {
   if (isBattle()) { buildBattleDock(run, (u) => { if (inspecting() && selected() === u) setPaused(false); else setPaused(true, u); }); return; }
