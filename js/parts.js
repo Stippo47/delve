@@ -426,6 +426,8 @@ export function poseFor(u, w, dt) {
   // part on his right paw, and is put away while he claws (Bear Claws)
   pose['arm-l-hammer'] = u.kit && u.kit.hammerOut ? { hide: true } : pose['arm-l'];
   pose['arm-r-club'] = u.kit && u.kit.clawsT > (w ? w.time : 0) ? { hide: true } : pose['arm-r'];
+  pose['arm-r-tube'] = u.kit && (u.kit.monster || u.kit.tubeGone > (w ? w.time : 0)) ? { hide: true } : pose['arm-r']; // round 19 (lane caster19): the Alchemist's tube, gone from the fist just after a throw and while they are the monster
+  pose['arm-l-broom'] = u.kit && u.kit.broomUntil > (w ? w.time : 0) ? { hide: true } : pose['arm-l']; // round 19 (lane caster19): the Witch's broom is under her while she rides it
   // a cape lags behind turns
   const df = u._pf == null ? 0 : wrapAngle(u.facing - u._pf); u._pf = u.facing;
   const capeT = clamp(-df / Math.max(dt, 1e-3) * 0.05, -0.16, 0.16);
@@ -444,4 +446,4 @@ export function poseFor(u, w, dt) {
 }
 
 // Corpses and the downed: arms flung out.
-export const LIMP = { 'arm-r': { r: -0.55, dy: -6 }, 'arm-l': { r: 0.55, dy: -6 }, 'arm-l-bird': { r: 0.55, dy: -6 }, 'arm-l-hammer': { r: 0.55, dy: -6 }, 'arm-r-club': { r: -0.55, dy: -6 }, back: { r: 0 } };
+export const LIMP = { 'arm-r': { r: -0.55, dy: -6 }, 'arm-l': { r: 0.55, dy: -6 }, 'arm-l-bird': { r: 0.55, dy: -6 }, 'arm-l-hammer': { r: 0.55, dy: -6 }, 'arm-r-club': { r: -0.55, dy: -6 }, 'arm-l-broom': { r: 0.55, dy: -6 }, 'arm-r-tube': { r: -0.55, dy: -6 }, back: { r: 0 } };

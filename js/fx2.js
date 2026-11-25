@@ -8,7 +8,7 @@
 import { TAU, clamp } from './util.js';
 import { inked, inkLine, glowDisc, star, upright, upVec, hash, easeOut, flame, blob, trail, roundRect } from './fx.js';
 import { drawPuddle } from './puddles.js';
-import { ART2 } from './looks2.js';
+import { ART2, LOOK2 } from './looks2.js';
 // round 15 (lane E): a thing that stands (render.js def.upright): world units straight down the screen from it
 const downAt = (u, d) => { const [vx, vy] = upVec(); return [u.x - vx * d, u.y - vy * d]; };
 const crackAt = (ctx, u, x0, y0, x1, y1) => { ctx.save(); ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(u.x + x0, u.y + y0); ctx.lineTo(u.x + x1, u.y + y1); ctx.stroke(); ctx.restore(); };
@@ -293,7 +293,7 @@ PROJ2.smokeBomb = (ctx, p, T, ang) => {
 };
 
 // ----- batch 3
-Object.assign(EL2, { breadToss: 'song', harvest: 'bone', oldTales: 'song', acidFlask: 'poison', elixir: 'blood', bangFlask: 'fire',
+Object.assign(EL2, { breadToss: 'song', harvest: 'bone', oldTales: 'nature', acidFlask: 'poison', elixir: 'blood', bangFlask: 'fire',
   healTotem: 'nature', spiritLink: 'water', rainDance: 'water', frogHex: 'nature', cursedBrew: 'necro', broomRide: 'necro',
   eldritchBeam: 'necro', summonImp: 'fire', darkBargain: 'blood' });
 Object.assign(ALIAS2, { flask: 'vial', spirit: 'bolt', hexbolt: 'bolt', bread: 'note', cauldron: 'vial' });
@@ -303,25 +303,78 @@ export function lobUp(ctx, p, H = 44) {
   ctx.save(); ctx.globalAlpha *= 0.25; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(0, 0, 8, 4, 0, 0, TAU); ctx.fill(); ctx.restore();
   ctx.translate(vx * h, vy * h);
 }
-// a round flask of coloured brew, spinning
-PROJ2.flask = (ctx, p, T) => {
-  lobUp(ctx, p); ctx.rotate(T * 11 + p.x * 0.01); ctx.scale(1.5, 1.5);
-  inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 2, 6.5, 0, TAU); ctx.rect(-2.4, -8, 4.8, 6); }, '#E8F0EA');
-  disc(ctx, 0, 3, 5, p.color || '#9BCB3C'); ctx.fillStyle = '#8A5A3A'; ctx.fillRect(-2.8, -10, 5.6, 3.2);
-  disc(ctx, -2, 0.5, 1.5, 'rgba(255,255,255,0.75)');
-};
+// a tube of coloured brew, end over end (round 19, lane caster19: "the potions they use should look like the vials on
+// their head. Skinny tubes. Same style but tubular"): pale glass, a cork, the brew filling its round bottom half
+function tube(ctx, col, s = 1, cork = true) {
+  ctx.save(); ctx.scale(s, s);
+  const glass = () => { ctx.beginPath(); ctx.moveTo(-3.6, -9); ctx.lineTo(3.6, -9); ctx.lineTo(3.6, 7); ctx.arc(0, 7, 3.6, 0, Math.PI); ctx.closePath(); };
+  inked(ctx, glass, '#EAF4F2');
+  ctx.save(); glass(); ctx.clip(); ctx.fillStyle = col; ctx.fillRect(-4, -1, 8, 13); ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.fillRect(-4, -1, 8, 1.4); ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.fillRect(-2.4, -8, 1.3, 15); ctx.restore();
+  if (cork) inked(ctx, () => roundRect(ctx, -3, -13, 6, 4.5, 1.2), '#9A6A3C');
+  ctx.restore();
+}
+PROJ2.flask = (ctx, p, T) => { lobUp(ctx, p); ctx.rotate(T * 12 + p.x * 0.01); tube(ctx, p.color || '#9BCB3C', 1.35); };
 // a crusty loaf
-// (round 13: "Doesnt look the best overall"): a big golden loaf, lobbed high, scored on top, steam curling off it
-PROJ2.bread = (ctx, p, T) => {
-  lobUp(ctx, p, 60); const [vx, vy] = upVec();
-  for (let i = 0; i < 2; i++) { const ph = (T * 1.6 + i * 0.5) % 1; ctx.save(); ctx.globalAlpha *= 0.7 * Math.sin(ph * Math.PI); inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo((i - 0.5) * 8, 0); ctx.quadraticCurveTo((i - 0.5) * 8 + 5 * Math.sin(T * 6 + i), 0, (i - 0.5) * 8 + vx * (10 + ph * 16), vy * (10 + ph * 16)); }, '#FFFFFF', 2.2); ctx.restore(); }
+// (round 13: "Doesnt look the best overall"): a big golden loaf, lobbed high, scored on top
+// (round 19, lane caster19: "Don't like steam": no steam)
+function loaf(ctx, T) {
   ctx.rotate(Math.sin(T * 5) * 0.4); ctx.scale(1.4, 1.4);
   inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 12, 7.5, 0, 0, TAU); }, '#D08A40');
   ctx.fillStyle = '#E8AC5C'; ctx.beginPath(); ctx.ellipse(-1, -1.5, 9, 4.5, 0, 0, TAU); ctx.fill();
   ctx.strokeStyle = '#F8DCA0'; ctx.lineWidth = 2; for (const x of [-5, 0, 5]) { ctx.beginPath(); ctx.moveTo(x - 2, -4); ctx.lineTo(x + 2, 3); ctx.stroke(); }
+}
+PROJ2.bread = (ctx, p, T) => { lobUp(ctx, p, 60); loaf(ctx, T); };
+// Bread Toss on himself (round 19: "If he eats 1 too he needs to throw it up and down"): his loaf goes up from his hands,
+// turning over, and drops back into them
+DRAW.breadUp = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const k = k01(f.t / f.max), [vx, vy] = upVec(), h = u.vr * 0.4 + Math.sin(Math.PI * k) * 58;
+  const fx0 = u.x + Math.cos(u.facing) * u.vr * 0.7, fy0 = u.y + Math.sin(u.facing) * u.vr * 0.7;
+  ctx.save(); ctx.translate(fx0 + vx * h, fy0 + vy * h); ctx.rotate(k * TAU); loaf(ctx, f.t); ctx.restore();
 };
-// the witch's cauldron flying (it lands upright)
-PROJ2.cauldron = (ctx, p, T) => { lobUp(ctx, p); ctx.rotate(T * 8); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 10, 0, TAU); }, '#3A3440'); disc(ctx, 0, 0, 6.5, '#7FCB3A'); };
+// Sheaves (round 19, lane caster19: Grandpa's hay bunches): a sheaf of wheat stood on its end, tied at the waist with
+// twine, its ears fanned out at the top; it sways, and settles in with a little bounce when it lands. Thrown, it turns
+// over and over on its way.
+function sheafShape(ctx, T, seed, s = 1) {
+  ctx.save(); ctx.scale(s, s);
+  const sway = Math.sin(T * 2.2 + seed) * 0.06;
+  ctx.rotate(sway);
+  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-9, 0); ctx.lineTo(-4, -16); ctx.lineTo(-11, -30); ctx.lineTo(11, -30); ctx.lineTo(4, -16); ctx.lineTo(9, 0); ctx.closePath(); }, '#C99A3C');
+  ctx.strokeStyle = '#A87A28'; ctx.lineWidth = 1.4; ctx.beginPath(); for (const x of [-5, -1.5, 2, 5.5]) { ctx.moveTo(x * 1.2, -1); ctx.lineTo(x * 0.4, -16); ctx.lineTo(x * 1.5, -29); } ctx.stroke();
+  inked(ctx, () => roundRect(ctx, -6, -19, 12, 5, 2), '#8A5A30');
+  for (let i = 0; i < 7; i++) { const b = -Math.PI / 2 + (i - 3) * 0.32, x = Math.cos(b) * 12, y = -30 + Math.sin(b) * 10 + 8;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(b + Math.PI / 2 + Math.sin(T * 3 + i) * 0.05);
+    inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, -5, 3.2, 6.5, 0, 0, TAU); }, i % 2 ? '#E8C860' : '#F2D474');
+    ctx.fillStyle = '#B88A2E'; for (const yy of [-8, -5, -2]) { ctx.fillRect(-1.6, yy, 3.2, 1); }
+    ctx.restore(); }
+  ctx.restore();
+}
+LOOK2.sheaf = (ctx, u, w) => {
+  const k = k01((w.time - (u.bornT ?? w.time)) / 0.3), s = 1 + 0.25 * Math.sin(k * Math.PI) * (1 - k), end = u.lifeT != null ? k01(u.lifeT / 0.4) : 1;
+  ctx.save(); ctx.globalAlpha *= end; upright(ctx, u.x, u.y + 8, () => { ctx.scale(1, 0.55 + 0.45 * easeOut(k)); sheafShape(ctx, w.time, u.id, s * 1.15); }); ctx.restore();
+};
+PROJ2.sheafFly = (ctx, p, T) => { lobUp(ctx, p, 50); ctx.rotate(T * 9); ctx.translate(0, 14); sheafShape(ctx, 0, 0, 0.8); };
+// a striker's abilities quickened (a blow on a hayed foe): a gold arrow whirling once round over its head
+DRAW.quicken = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const k = k01(f.t / f.max), [vx, vy] = upVec(), up = u.vr + 14, b0 = -Math.PI / 2 + easeOut(k) * TAU * 1.2;
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  upright(ctx, u.x + vx * up, u.y + vy * up, () => {
+    inkLine(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 10, b0 - 2.4, b0); }, '#F2C14E', 3);
+    ctx.save(); ctx.translate(Math.cos(b0) * 10, Math.sin(b0) * 10); ctx.rotate(b0 + Math.PI / 2); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(5, 0); ctx.lineTo(-3, -4.5); ctx.lineTo(-3, 4.5); ctx.closePath(); }, '#F2C14E'); ctx.restore();
+  });
+  if (k < 0.3) lit(ctx, () => glowDisc(ctx, u.x + vx * up, u.y + vy * up, 18, '#FFE7A0', 0.5 * (1 - k / 0.3)));
+  ctx.restore();
+};
+// the witch's cauldron flying (round 19, lane caster19: "the thrown projectile doesn't line up"): the very pot that lands,
+// seen from above (the same as art/summons/cauldron.svg), as big as it stands, rocking as it flies; its brew slops
+function potTop(ctx, s = 1) {
+  ctx.save(); ctx.scale(s, s);
+  for (let k = 0; k < 3; k++) { const b = Math.PI / 2 + k * TAU / 3; inkDisc(ctx, Math.cos(b) * 19, Math.sin(b) * 19, 4, '#3A3640'); }
+  for (const sd of [-1, 1]) inkDisc(ctx, sd * 21, 0, 4.4, '#5E5966');
+  inkDisc(ctx, 0, 0, 20, '#3A3640'); disc(ctx, 0, 0, 16.5, '#5E5966'); disc(ctx, 0, 0.3, 13.5, '#7FCB3A'); disc(ctx, -3, -3, 5, '#B6F07A');
+  disc(ctx, 4, 3, 2.2, '#EAFFD0'); disc(ctx, -5, 4, 1.6, '#EAFFD0');
+  ctx.restore();
+}
+PROJ2.cauldron = (ctx, p, T) => { lobUp(ctx, p, 70); ctx.rotate(Math.sin(T * 9) * 0.35); potTop(ctx, 1.45); };
 // the Shaman's spirit: a teal wisp with a curling tail
 PROJ2.spirit = (ctx, p, T, ang, sp) => {
   ctx.rotate(ang); trail(ctx, sp, 40, 8, '#7FE0D0');
@@ -757,14 +810,51 @@ DRAW.whirlBurst = (ctx, f, w, layer) => {
     inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(x + vx * h, y + vy * h, R, R * 0.4, 0, b0, b0 + 2.2); }, i % 2 ? '#EEF3F8' : '#FFFFFF', 3.6 - i * 0.4); }
   ctx.restore();
 };
-// Dirty: brown smears over the body and crumbs of dirt dropping off it
+// Dirty (round 19, lane caster19: "Don't like the dirtied effect visual"; one look for Dirt Fling, Bury and his trait, on
+// friend or foe): no smears on the face. The body takes a brown wash (its 'dirty' buff, render.js), and a little cloud of
+// dust hangs about it the way it does round someone who has been rolling in the dirt: soft puffs that swell and drift off
+// round its feet, more of them trailing when it moves, and now and then a crumb dropping off.
+const DUST = ['#B89A72', '#A8865E', '#C9AE86'];
 DRAW.dirtyOn = (ctx, f, w, layer) => {
-  const u = f.unit; if (layer !== 'air' || !alive2(u)) { if (!alive2(u)) ended(f, true); return; } ended(f, !hasHook(u, 'dirty'));
-  const a = life(f, 0.15, 0.3), [vx, vy] = upVec();
+  const u = f.unit; if (!alive2(u)) { ended(f, true); return; } ended(f, !hasHook(u, 'dirty'));
+  if (u.hidden) return; const a = life(f, 0.2, 0.3), [vx, vy] = upVec(), R = u.vr;
+  if (layer === 'ground') { // the dust at its feet, under it
+    ctx.save(); ctx.globalAlpha *= a * 0.55;
+    for (let i = 0; i < 7; i++) { const ph = (f.t * 0.7 + i / 7 + hash(i, u.id) * 0.3) % 1, b = i / 7 * TAU + f.t * 0.6 + hash(u.id, i), d = R * (0.85 + 0.45 * ph);
+      ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); disc(ctx, u.x + Math.cos(b) * d, u.y + Math.sin(b) * d * 0.75, R * (0.22 + 0.2 * ph), DUST[i % 3]); ctx.restore(); }
+    ctx.restore(); return;
+  }
   ctx.save(); ctx.globalAlpha *= a;
-  for (let i = 0; i < 5; i++) { const b = hash(i, u.id) * TAU, d = u.vr * 0.55 * hash(u.id, i + 3); ctx.save(); ctx.globalAlpha *= 0.8; inked(ctx, () => blob(ctx, u.x + Math.cos(b) * d, u.y + Math.sin(b) * d, 4 + 2 * hash(i, 9), 5, i, 1), i % 2 ? '#7A5A3A' : '#9C7650'); ctx.restore(); }
-  for (let i = 0; i < 3; i++) { const ph = (f.t * 1.2 + i / 3) % 1, b = hash(i, 4) * TAU, d = u.vr * 0.7;
-    ctx.save(); ctx.globalAlpha *= 1 - ph; disc(ctx, u.x + Math.cos(b) * d - vx * ph * 18, u.y + Math.sin(b) * d - vy * ph * 18, 2.4, '#7A5A3A'); ctx.restore(); }
+  // puffs rising off its edge, soft (light: dust is not inked)
+  for (let i = 0; i < 5; i++) { const ph = (f.t * 0.9 + i / 5 + hash(u.id, i + 7) * 0.2) % 1, b = hash(i, u.id + 3) * TAU + f.t * 0.4, d = R * (0.75 + 0.3 * ph), up = 4 + ph * 16;
+    ctx.save(); ctx.globalAlpha *= 0.42 * Math.sin(ph * Math.PI); disc(ctx, u.x + Math.cos(b) * d + vx * up, u.y + Math.sin(b) * d * 0.7 + vy * up, 3 + 6 * ph, DUST[(i + 1) % 3]); ctx.restore(); }
+  // moving: puffs kicked up behind
+  if ((u.spd || 0) > 25) for (let i = 0; i < 3; i++) { const ph = (f.t * 2.4 + i / 3) % 1, b = (u.mvA ?? u.facing) + Math.PI + (i - 1) * 0.5, d = R * (0.8 + 0.8 * ph);
+    ctx.save(); ctx.globalAlpha *= 0.4 * (1 - ph); disc(ctx, u.x + Math.cos(b) * d, u.y + Math.sin(b) * d, 4 + 6 * ph, DUST[i % 3]); ctx.restore(); }
+  // a crumb dropping off now and then (inked: a solid bit)
+  { const c = f.t * 0.8 + hash(u.id, 2), ph = c % 1, b = hash(Math.floor(c), u.id) * TAU, d = R * 0.7, h = (1 - ph) * 14;
+    if (ph < 0.85) { ctx.save(); ctx.globalAlpha *= 1 - ph / 0.85; inked(ctx, () => blob(ctx, u.x + Math.cos(b) * d + vx * h, u.y + Math.sin(b) * d * 0.7 + vy * h, 2.6, 4, b, 1), '#7A5A3A'); ctx.restore(); } }
+  ctx.restore();
+};
+// the dirt knocked off (the Digger's spade on a dirtied foe, or the coat soaking up a blow): a burst of dust and crumbs
+DRAW.dirtOff = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k), [vx, vy] = upVec();
+  ctx.save(); ctx.globalAlpha *= 1 - k;
+  for (let i = 0; i < 8; i++) { const b = i / 8 * TAU + hash(i, f.x | 0), d = f.r * (0.5 + 1.0 * e); ctx.save(); ctx.globalAlpha *= 0.5; disc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d * 0.8, f.r * (0.3 + 0.25 * e), DUST[i % 3]); ctx.restore(); }
+  for (let i = 0; i < 7; i++) { const b = i / 7 * TAU + 0.4 + hash(i, 5), d = f.r * (0.4 + 1.3 * e), h = Math.sin(k * Math.PI) * 18 * hash(i, 9);
+    inked(ctx, () => blob(ctx, f.x + Math.cos(b) * d + vx * h, f.y + Math.sin(b) * d * 0.8 + vy * h, 3.2 * (1 - 0.4 * k), 4, i, 1), i % 2 ? '#7A5A3A' : '#9C7650'); }
+  ctx.restore();
+};
+// the spade's blow landing (round 19: "Don't like the hit effect"): a flat thwack of earth: the flat of the blade leaves a
+// squashed puff of dust across the line of the blow, and chips of dirt flicked off to either side; no white star
+DRAW.spadeThud = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k), q = k01(k / 0.25);
+  ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.a);
+  if (k < 0.3) { ctx.save(); ctx.globalAlpha *= 0.6 * (1 - k / 0.3); ctx.fillStyle = '#E9DDC2'; ctx.beginPath(); ctx.ellipse(0, 0, 6 + 4 * q, f.r * (0.6 + 0.5 * q), 0, 0, TAU); ctx.fill(); ctx.restore(); }
+  ctx.globalAlpha *= 1 - k;
+  for (let i = 0; i < 4; i++) { const sd = i % 2 ? 1 : -1, lane = (i < 2 ? 0.45 : 0.8) * sd, d = f.r * (0.3 + 1.1 * e);
+    ctx.save(); ctx.globalAlpha *= 0.45; disc(ctx, -4 - 10 * e, lane * f.r * (0.8 + 0.6 * e), 4 + 5 * e, DUST[i % 3]); ctx.restore();
+    inked(ctx, () => blob(ctx, -2 - 6 * e + (i - 1.5) * 3, sd * d, 2.8 * (1 - 0.4 * k), 4, i, 1), i % 2 ? '#7A5A3A' : '#9C7650'); }
   ctx.restore();
 };
 // a crosshair on a unit: Targeted (red) and Tracked (amber, with a falcon's feather tick)
@@ -944,12 +1034,46 @@ DRAW.clods = (ctx, f, w, layer) => {
   K.dustPuffs(ctx, f.x + Math.cos(f.a) * f.r * 0.5 * e, f.y + Math.sin(f.a) * f.r * 0.5 * e, 40, e, 3, 5, '#C9A47A');
   ctx.restore();
 };
-// Burrow: churned earth left along the way under the floor, one merged body (puddles.js 'earth'), lingering then fading
+// Burrow (round 19, lane caster19: "Trail better. Maybe not transparent. And have it start fading later but much faster so u
+// see less 'crumbs' of dirt in a line. Bigger churned clumps in trail"): a solid furrow of turned earth (drawn in passes, so
+// it is one body with one outline), big churned clumps along it, the whole of it held while he is under and a good while
+// after, then gone together in a quarter of a second (no trail shrinking into dots)
+const SOIL = ['#4A3828', '#6E5238', '#8A6A48', '#A8865E'];
 DRAW.burrowTrail = (ctx, f, w, layer) => {
   if (layer !== 'ground' || !f.unit) return; const u = f.unit;
-  if (u.hidden && (!f.pts.length || Math.hypot(u.x - f.pts[f.pts.length - 1].x, u.y - f.pts[f.pts.length - 1].y) > 10)) f.pts.push({ x: u.x, y: u.y, t: f.t });
-  f.pts.forEach((p, i) => { const age = f.t - p.t, a = age < 1.6 ? 1 : k01(1 - (age - 1.6) / 1); if (a > 0.02) drawPuddle(ctx, 'earth', p.x, p.y, 15 * (0.4 + 0.6 * a) * (0.85 + 0.3 * hash(i, 5)), w.time, a, i * 7 + 3); });
-  if (u.hidden) { const wob = Math.sin(f.t * 40) * 2; ctx.save(); for (let i = 0; i < 4; i++) { const b = f.t * 8 + i * 1.6; inked(ctx, () => blob(ctx, u.x + Math.cos(b) * 10 + wob, u.y + Math.sin(b) * 8, 4, 5, i, 1), '#9C7650'); } ctx.restore(); }
+  if (u.hidden && (!f.pts.length || Math.hypot(u.x - f.pts[f.pts.length - 1].x, u.y - f.pts[f.pts.length - 1].y) > 7)) f.pts.push({ x: u.x, y: u.y, t: f.t });
+  const P = f.pts; if (!P.length) return;
+  const a = k01((f.max - f.t) / 0.25), W = 15;
+  ctx.save(); ctx.globalAlpha *= a;
+  const rOf = (p, i) => W * (0.85 + 0.3 * hash(i, 5)) * Math.min(1, (f.t - p.t) / 0.08 + 0.3);
+  const along = (fn) => { ctx.beginPath(); P.forEach((p, i) => fn(p, rOf(p, i), i)); };
+  ctx.fillStyle = '#2B2230'; along((p, r) => { ctx.moveTo(p.x + r + 2.4, p.y); ctx.arc(p.x, p.y, r + 2.4, 0, TAU); }); ctx.fill();
+  ctx.fillStyle = SOIL[1]; along((p, r) => { ctx.moveTo(p.x + r, p.y); ctx.arc(p.x, p.y, r, 0, TAU); }); ctx.fill();
+  ctx.fillStyle = SOIL[0]; along((p, r) => { const rr = r * 0.45; ctx.moveTo(p.x + rr, p.y + 2); ctx.arc(p.x, p.y + 2, rr, 0, TAU); }); ctx.fill(); // the furrow's dark middle
+  // the churned clumps, both sides of it
+  P.forEach((p, i) => { if (i % 2) return; const q = P[Math.min(P.length - 1, i + 1)], dir = Math.atan2(q.y - p.y, q.x - p.x) || 0;
+    for (const sd of [-1, 1]) { if (hash(i, sd + 3) < 0.25) continue; const off = W * (0.45 + 0.4 * hash(i, sd + 9)), cx = p.x + Math.cos(dir + sd * Math.PI / 2) * off, cy = p.y + Math.sin(dir + sd * Math.PI / 2) * off, r = 4.5 + 4 * hash(i, sd + 1);
+      inked(ctx, () => blob(ctx, cx, cy, r, 5, i + sd, 0.85), SOIL[2]); disc(ctx, cx - r * 0.25, cy - r * 0.3, r * 0.45, SOIL[3]); } });
+  ctx.restore();
+  // where he is now, under the floor: the earth heaving up over him
+  if (u.hidden) { const wob = Math.sin(f.t * 40) * 1.5; for (let i = 0; i < 5; i++) { const b = f.t * 7 + i * 1.26; inked(ctx, () => blob(ctx, u.x + Math.cos(b) * 9 + wob, u.y + Math.sin(b) * 7, 5 + (i % 2) * 2, 5, i, 0.85), i % 2 ? SOIL[2] : SOIL[3]); } }
+};
+// A mound of turned earth (round 19: "The dirt mound itself doesn't look good. Should also leave a mound behind when he
+// emerges"): a pile of loose soil seen from above: lumpy dark base, a lighter heap on it lit from the top, clumps round
+// its foot; open: a hole dug in its middle. It heaves up out of the floor, stays, and settles back in at the end.
+// Used where the Digger goes under and comes up (Burrow) and where a buried foe digs out (Bury).
+function mound(ctx, x, y, R, open, seed, rise = 1, wob = 0) {
+  const r = R * (0.55 + 0.45 * rise);
+  inked(ctx, () => blob(ctx, x + wob, y + 2, r * 1.12, 7, seed, 0.82), SOIL[1]);
+  ctx.fillStyle = SOIL[2]; blob(ctx, x + wob - r * 0.06, y - r * 0.1, r * 0.86, 7, seed + 1, 0.8); ctx.fill();
+  ctx.fillStyle = SOIL[3]; blob(ctx, x + wob - r * 0.18, y - r * 0.32, r * 0.48, 6, seed + 2, 0.7); ctx.fill();
+  if (open) { inked(ctx, () => { ctx.beginPath(); ctx.ellipse(x + wob, y - r * 0.02, r * 0.42, r * 0.32, 0, 0, TAU); }, SOIL[0]); ctx.fillStyle = '#2E2219'; ctx.beginPath(); ctx.ellipse(x + wob, y + r * 0.04, r * 0.3, r * 0.2, 0, 0, TAU); ctx.fill(); }
+  for (let i = 0; i < 6; i++) { const b = i / 6 * TAU + hash(seed, i), d = r * (0.95 + 0.2 * hash(i, seed)), cr = r * (0.16 + 0.08 * hash(seed, i + 4));
+    inked(ctx, () => blob(ctx, x + wob + Math.cos(b) * d, y + 2 + Math.sin(b) * d * 0.82, cr, 4, i, 0.9), i % 2 ? SOIL[2] : SOIL[1]); }
+}
+DRAW.mound = (ctx, f, w, layer) => {
+  if (layer !== 'ground') return; const rise = easeOut(k01(f.t / 0.18)), sink = k01((f.max - f.t) / 0.45);
+  ctx.save(); ctx.globalAlpha *= sink; mound(ctx, f.x, f.y, f.r, f.open, (f.x * 7 + f.y) | 0, rise * (0.7 + 0.3 * sink)); ctx.restore();
 };
 // earth bursting up out of the floor (going under, coming up, digging out): clods thrown up and out, dust; no ring
 DRAW.erupt = (ctx, f, w, layer) => {
@@ -962,13 +1086,15 @@ DRAW.erupt = (ctx, f, w, layer) => {
   K.dustPuffs(ctx, f.x, f.y, f.r, e, f.x | 0, f.big ? 7 : 5, '#C9A47A');
   ctx.restore();
 };
-// Bury: a mound of earth where it went down, twitching as it tries to dig out
+// Bury (round 19: "Doesn't look good"): it is under a mound of earth (the same mound Burrow leaves), shut over it; the
+// mound shakes harder and its top cracks as it digs its way out; a burrower's mound goes where it digs
 DRAW.buried = (ctx, f, w, layer) => {
-  const u = f.unit, x = f.x, y = f.y, a = life(f, 0.05, 0.15), wob = Math.sin(f.t * 30) * 1.5 * k01(f.t / f.max);
-  if (layer === 'ground') { drawPuddle(ctx, 'earth', x, y, f.r * 1.1, w.time, a, x | 0); return; }
-  ctx.save(); ctx.globalAlpha *= a;
-  inked(ctx, () => blob(ctx, x + wob, y, f.r * 0.85, 7, x | 0, 0.75), '#8A6A48');
-  for (let i = 0; i < 4; i++) { const b = i / 4 * TAU + 0.5; disc(ctx, x + Math.cos(b) * f.r * 0.4 + wob, y + Math.sin(b) * f.r * 0.3, 3, '#6E5034'); }
+  if (layer !== 'ground') return;
+  const u = f.unit, x = u && u.buried ? u.x : f.x, y = u && u.buried ? u.y : f.y, k = k01(f.t / f.max), a = life(f, 0.05, 0.12);
+  const shake = k > 0.55 ? Math.sin(f.t * 55) * 2.4 * (k - 0.55) / 0.45 : Math.sin(f.t * 30) * 0.6, R = Math.max(22, f.r * 1.05);
+  ctx.save(); ctx.globalAlpha *= a; mound(ctx, x, y, R, false, (f.x * 7 + f.y) | 0, easeOut(k01(f.t / 0.15)), shake);
+  if (k > 0.6) { const q = (k - 0.6) / 0.4; ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.beginPath();
+    for (let i = 0; i < 3; i++) { const b = i / 3 * TAU + 0.4, L = R * 0.6 * q, cx = x + shake - R * 0.1, cy = y - R * 0.2; ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(b) * L * 0.5 + 3, cy + Math.sin(b) * L * 0.5); ctx.lineTo(cx + Math.cos(b + 0.3) * L, cy + Math.sin(b + 0.3) * L); } ctx.stroke(); }
   ctx.restore();
 };
 // the Haymaker's hay bale (round 15, lane E: art round 12's art/summons/haybale.svg, a rolled bale lying across its way,
@@ -1014,37 +1140,103 @@ DRAW.tellClock = (ctx, f, w, layer) => {
   });
   ctx.restore();
 };
-// the Alchemist's hand: the flask she'll throw next, in its brew's colour (round 13: "Bottle in hand should change to
-// what she will throw"); hidden while she's a monster
-DRAW.handFlask = (ctx, f, w, layer) => {
-  const u = f.unit; if (layer !== 'air' || !alive2(u) || (u.kit && u.kit.monster)) return;
-  const next = (((u.kit && u.kit.brew3) ?? -1) + 1) % 3, col = ['#FF8A3D', '#9FDDF6', '#C8E63C'][next];
-  const a = u.facing - 0.53, d = u.vr * 1.3, x = u.x + Math.cos(a) * d, y = u.y + Math.sin(a) * d; // (over the flask in the art's hand)
-  ctx.save(); ctx.translate(x, y); ctx.rotate(u.facing - Math.PI / 2 + 0.5); ctx.scale(1.35, 1.35);
-  inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 1.5, 5.2, 0, TAU); ctx.rect(-1.8, -6, 3.6, 4.5); }, '#E8F0EA'); disc(ctx, 0, 2.2, 3.8, col); ctx.fillStyle = '#8A5A3A'; ctx.fillRect(-2.1, -7.4, 4.2, 2.4);
-  ctx.restore();
-  lit(ctx, () => glowDisc(ctx, x, y, 10, col, 0.35));
+// the Alchemist's tube (round 19, lane caster19): the brew in the tube in their fist (art/heroes/alchemist.svg #arm-r-tube),
+// painted in the colour of the one they'll throw next (round 13: "Bottle in hand should change to what she will throw"),
+// purple while they drink Monstrosity's, on the arm as it is posed, so it moves with the throw
+const BREW3 = ['#FF8A3D', '#9FDDF6', '#C8E63C'];
+const TUBE_IN = (ctx) => { ctx.beginPath(); ctx.moveTo(-5.2, -6); ctx.lineTo(5.2, -6); ctx.lineTo(5.2, 40); ctx.bezierCurveTo(5.2, 45, 2.6, 47.6, 0, 47.6); ctx.bezierCurveTo(-2.6, 47.6, -5.2, 45, -5.2, 40); ctx.closePath(); };
+ART2.alchemist = {
+  top(ctx, u, w) {
+    const P = u._pose; if (!P || !P['arm-r-tube'] || P['arm-r-tube'].hide || (u.kit && u.kit.monster)) return;
+    const p = P['arm-r-tube'], drink = u.kit && u.kit.drinkUntil > w.time, col = drink ? '#9A5CC8' : BREW3[(((u.kit && u.kit.brew3) ?? -1) + 1) % 3];
+    ctx.save(); ctx.translate(154 + (p.dx || 0), 108 + (p.dy || 0)); ctx.rotate(p.r || 0); ctx.translate(-154, -108); ctx.translate(148, 141); ctx.rotate(10 * Math.PI / 180);
+    TUBE_IN(ctx); ctx.clip();
+    const lvl = drink ? 20 + 26 * k01(1 - (u.kit.drinkUntil - w.time) / 0.55) : 20;
+    ctx.fillStyle = col; ctx.fillRect(-7, lvl, 14, 52 - lvl); ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fillRect(-7, lvl, 14, 2.4);
+    ctx.fillStyle = 'rgba(255,255,255,0.75)'; for (let i = 0; i < 2; i++) { const ph = (w.time * 0.9 + i * 0.5) % 1; ctx.beginPath(); ctx.arc(i ? 2 : -1.5, 46 - ph * (46 - lvl), 1.3, 0, TAU); ctx.fill(); }
+    ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.fillRect(-4, -4, 2.2, 42);
+    ctx.restore();
+  },
 };
-// Brew Pools: a pool of the brew on the floor (merged with its own kind) and what stands up out of it
-DRAW.brewPool = (ctx, f, w, layer) => {
-  const a = life(f, 0.2, 0.5), K2 = { acid: 'gas', cold: 'frost', fire: 'fire', whirl: 'mist', shock: 'mist', water: 'water' }[f.kind];
-  if (layer === 'ground') { drawPuddle(ctx, K2, f.x, f.y, f.r * (0.55 + 0.45 * easeOut(k01(f.t / 0.25))), w.time, a, Math.round(f.x * 5 + f.y)); return; }
+DRAW.handFlask = () => {}; // (round 19: the tube is part of their picture, ART2.alchemist above; nothing makes this fx now)
+// a tube drunk (Monstrosity's purple, or an Elixir they keep for themselves): bubbles fizz up off them as it goes down
+DRAW.tubeSip = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const k = k01(f.t / f.max), [vx, vy] = upVec();
+  const col = f.kind === 'monster' ? ['#9A5CC8', '#D9B6F2'] : [{ rage: '#FF5A3D', mend: '#9BE07A', ward: '#9FE0FF' }[f.kind] || '#9BE07A', '#FFFFFF'];
+  ctx.save();
+  for (let i = 0; i < 6; i++) { const ph = (k * 1.6 + i / 6) % 1, b = hash(i, u.id) * TAU, d = u.vr * 0.5, up = u.vr * 0.4 + ph * 30;
+    ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI) * (1 - k * 0.5); inkDisc(ctx, u.x + Math.cos(b) * d + vx * up, u.y + Math.sin(b) * d * 0.6 + vy * up, 2 + 2.5 * ph, i % 2 ? col[0] : col[1]); ctx.restore(); }
+  ctx.restore();
+};
+// Brew Pools (round 19, lane caster19, the designer: "Don't like ice puddle, lightning, water. Winds could be improved"): each
+// pool is the brew itself spilled out of its tube: a glossy splash of liquid in the brew's colour (soft-edged, no ring: a
+// ground effect), with droplets thrown round it, and what each brew does rising out of it: cold breathes a frosty mist and
+// snowflakes drift up off it (no ice); shocking fizzes, its bubbles popping in little crackling sparks (no bolts); water
+// ripples where drops fall back into it and spits droplets up; whirling turns into a whirlpool, its foam drawn round and in,
+// gusts curling up off it. Acid and fire are as they were.
+const BREWC = { cold: ['#5FB0DC', '#A9E2F8', '#E8F8FF'], shock: ['#D8B020', '#FFE66B', '#FFF7C2'], water: ['#2F7FB8', '#5DB7E0', '#BFE9F8'], whirl: ['#8FB8C4', '#D6EEF2', '#FFFFFF'] };
+function brewSplat(ctx, f, a, C) {
+  const r = f.r * (0.55 + 0.45 * easeOut(k01(f.t / 0.25))), sd = Math.round(f.x * 5 + f.y);
   ctx.save(); ctx.globalAlpha *= a;
-  if (f.kind === 'acid') for (let i = 0; i < 6; i++) { const ph = (f.t * 1.4 + hash(i, 5)) % 1, b = hash(i, 1) * TAU, d = f.r * 0.7 * hash(i, 8); ctx.save(); ctx.globalAlpha *= 1 - ph; inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 2 + 5 * ph, '#E6F7B0'); ctx.restore(); }
-  else if (f.kind === 'cold') for (let i = 0; i < 5; i++) { const b = hash(i, 3) * TAU, d = f.r * 0.6 * hash(i, 4); ctx.save(); ctx.translate(f.x + Math.cos(b) * d, f.y + Math.sin(b) * d); ctx.rotate(b); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -9); ctx.lineTo(3, 0); ctx.lineTo(0, 4); ctx.lineTo(-3, 0); ctx.closePath(); }, '#DDF6FF'); ctx.restore(); }
-  else if (f.kind === 'whirl') for (let i = 0; i < 3; i++) { const b0 = f.t * 6 + i / 3 * TAU; inkLine(ctx, () => { ctx.beginPath(); for (let j = 0; j <= 10; j++) { const q = j / 10, b = b0 + q * 2, R = f.r * (0.2 + 0.7 * q); const x = f.x + Math.cos(b) * R, y = f.y + Math.sin(b) * R; if (j) ctx.lineTo(x, y); else ctx.moveTo(x, y); } }, '#FFFFFF', 3); }
-  else if (f.kind === 'shock') { for (let i = 0; i < 3; i++) if (Math.sin(f.t * 17 + i * 2.1) > 0.3) { const b = hash(i, (f.t * 6) | 0) * TAU, d = f.r * 0.6; inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(f.x + Math.cos(b) * d * 0.2, f.y + Math.sin(b) * d * 0.2); ctx.lineTo(f.x + Math.cos(b + 0.4) * d * 0.6, f.y + Math.sin(b + 0.4) * d * 0.6); ctx.lineTo(f.x + Math.cos(b) * d, f.y + Math.sin(b) * d); }, '#FFE66B', 2.6); }
-    lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r, '#FFE66B', 0.15)); }
-  else if (f.kind === 'water') for (let i = 0; i < 3; i++) { const ph = (f.t * 0.8 + i / 3) % 1; ctx.save(); ctx.globalAlpha *= 1 - ph; inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(f.x + (i - 1) * 14, f.y + (i % 2) * 10, 4 + 14 * ph, (4 + 14 * ph) * 0.5, 0, 0, TAU); }, '#BFE9F8', 2); ctx.restore(); }
+  ctx.save(); ctx.globalAlpha *= 0.35; ctx.fillStyle = C[0]; blob(ctx, f.x, f.y, r * 1.08, 7, sd, 0.85); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.globalAlpha *= 0.8; ctx.fillStyle = C[0]; blob(ctx, f.x, f.y, r * 0.95, 7, sd + 1, 0.82); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.globalAlpha *= 0.85; ctx.fillStyle = C[1]; blob(ctx, f.x - r * 0.04, f.y - r * 0.05, r * 0.78, 6, sd + 2, 0.8); ctx.fill(); ctx.restore();
+  for (let i = 0; i < 6; i++) { const b = hash(sd, i) * TAU, d = r * (1.05 + 0.25 * hash(i, sd)); ctx.save(); ctx.globalAlpha *= 0.8; disc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d * 0.85, 2.5 + 3 * hash(i, 4), C[i % 2]); ctx.restore(); }
+  ctx.save(); ctx.globalAlpha *= 0.55; ctx.fillStyle = C[2]; ctx.beginPath(); ctx.ellipse(f.x - r * 0.3, f.y - r * 0.32, r * 0.28, r * 0.1, -0.45, 0, TAU); ctx.fill(); ctx.restore();
+  ctx.restore();
+}
+DRAW.brewPool = (ctx, f, w, layer) => {
+  const a = life(f, 0.2, 0.5), C = BREWC[f.kind];
+  if (!C) { // acid, fire: as before
+    const K2 = { acid: 'gas', fire: 'fire' }[f.kind];
+    if (layer === 'ground') { drawPuddle(ctx, K2, f.x, f.y, f.r * (0.55 + 0.45 * easeOut(k01(f.t / 0.25))), w.time, a, Math.round(f.x * 5 + f.y)); return; }
+    if (f.kind === 'acid') { ctx.save(); ctx.globalAlpha *= a; for (let i = 0; i < 6; i++) { const ph = (f.t * 1.4 + hash(i, 5)) % 1, b = hash(i, 1) * TAU, d = f.r * 0.7 * hash(i, 8); ctx.save(); ctx.globalAlpha *= 1 - ph; inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 2 + 5 * ph, '#E6F7B0'); ctx.restore(); } ctx.restore(); }
+    return;
+  }
+  const [vx, vy] = upVec(), R = f.r * 0.8, sd = Math.round(f.x * 5 + f.y);
+  if (layer === 'ground') {
+    brewSplat(ctx, f, a, C);
+    ctx.save(); ctx.globalAlpha *= a;
+    if (f.kind === 'water') for (let i = 0; i < 4; i++) { const ph = (f.t * 0.9 + i / 4) % 1, b = hash(i, sd) * TAU, d = R * 0.55 * hash(sd, i + 2); ctx.save(); ctx.globalAlpha *= 0.8 * (1 - ph); ctx.strokeStyle = C[2]; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.ellipse(f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 3 + 15 * ph, (3 + 15 * ph) * 0.6, 0, 0, TAU); ctx.stroke(); ctx.restore(); }
+    if (f.kind === 'whirl') { for (let arm = 0; arm < 3; arm++) { ctx.save(); ctx.globalAlpha *= 0.85; ctx.strokeStyle = arm % 2 ? C[0] : '#FFFFFF'; ctx.lineWidth = 3.2; ctx.lineCap = 'round'; ctx.beginPath();
+        for (let j = 0; j <= 14; j++) { const q = j / 14, b = -f.t * 5 + arm / 3 * TAU + q * 3.2, rr = R * (0.15 + 0.85 * q); const x = f.x + Math.cos(b) * rr, y = f.y + Math.sin(b) * rr * 0.85; j ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); ctx.restore(); }
+      disc(ctx, f.x, f.y, R * 0.14, C[0]); }
+    if (f.kind === 'shock') lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * (0.8 + 0.15 * Math.sin(f.t * 23)), '#FFE66B', 0.22));
+    if (f.kind === 'cold') lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 0.9, '#DDF6FF', 0.2));
+    ctx.restore(); return;
+  }
+  ctx.save(); ctx.globalAlpha *= a;
+  if (f.kind === 'cold') { // frosty breath rising, snowflakes drifting up out of it
+    for (let i = 0; i < 4; i++) { const ph = (f.t * 0.45 + i / 4) % 1, b = hash(i, sd) * TAU, d = R * 0.5 * hash(sd, i), up = ph * 34; ctx.save(); ctx.globalAlpha *= 0.4 * Math.sin(ph * Math.PI); disc(ctx, f.x + Math.cos(b) * d + Math.sin(f.t * 2 + i) * 6 + vx * up, f.y + Math.sin(b) * d * 0.7 + vy * up, 8 + 10 * ph, '#EEF9FF'); ctx.restore(); }
+    for (let i = 0; i < 5; i++) { const ph = (f.t * 0.55 + i / 5 + hash(i, 3) * 0.2) % 1, b = hash(i, sd + 7) * TAU, d = R * 0.7 * hash(sd, i + 9), up = ph * 40, x = f.x + Math.cos(b) * d + Math.sin(f.t * 3 + i) * 5 + vx * up, y = f.y + Math.sin(b) * d * 0.7 + vy * up;
+      ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); ctx.translate(x, y); ctx.rotate(f.t + i); inkLine(ctx, () => { ctx.beginPath(); for (let j = 0; j < 3; j++) { const c = Math.cos(j * Math.PI / 3) * 4, s2 = Math.sin(j * Math.PI / 3) * 4; ctx.moveTo(-c, -s2); ctx.lineTo(c, s2); } }, '#FFFFFF', 1.4); ctx.restore(); }
+  } else if (f.kind === 'shock') { // fizzing: bubbles swell and pop in a crackle of tiny sparks
+    for (let i = 0; i < 6; i++) { const ph = (f.t * 1.3 + i / 6 + hash(i, sd) * 0.3) % 1, b = hash(i, sd + 2) * TAU, d = R * 0.65 * hash(sd, i + 5), x = f.x + Math.cos(b) * d, y = f.y + Math.sin(b) * d * 0.8;
+      if (ph < 0.75) { ctx.save(); ctx.globalAlpha *= 0.9; inkDisc(ctx, x, y, 1.5 + 4 * ph, C[2]); ctx.restore(); }
+      else { const q = (ph - 0.75) / 0.25; lit(ctx, () => glowDisc(ctx, x, y, 12, '#FFE66B', 0.7 * (1 - q))); ctx.save(); ctx.globalAlpha *= 1 - q; ctx.strokeStyle = '#FFF7C2'; ctx.lineWidth = 1.8; ctx.lineCap = 'round'; ctx.beginPath();
+        for (let j = 0; j < 4; j++) { const c = j / 4 * TAU + i, L0 = 4 + 7 * q; ctx.moveTo(x + Math.cos(c) * L0, y + Math.sin(c) * L0); ctx.lineTo(x + Math.cos(c + 0.4) * (L0 + 3), y + Math.sin(c + 0.4) * (L0 + 3)); ctx.lineTo(x + Math.cos(c) * (L0 + 6), y + Math.sin(c) * (L0 + 6)); } ctx.stroke(); ctx.restore(); } }
+  } else if (f.kind === 'water') { // drops spat up that fall back in
+    for (let i = 0; i < 4; i++) { const ph = (f.t * 1.1 + i / 4 + hash(i, sd) * 0.3) % 1, b = hash(i, sd + 4) * TAU, d = R * 0.5 * hash(sd, i + 1), h = Math.sin(ph * Math.PI) * 22;
+      inkDisc(ctx, f.x + Math.cos(b) * (d + ph * 10) + vx * h, f.y + Math.sin(b) * (d + ph * 10) * 0.8 + vy * h, 2.8, i % 2 ? C[1] : C[2]); }
+  } else if (f.kind === 'whirl') { // gusts curling up off the whirlpool, turning with it
+    for (let i = 0; i < 3; i++) { const ph = (f.t * 0.8 + i / 3) % 1, b0 = -f.t * 4 + i / 3 * TAU, up = 6 + ph * 26, RR = R * (0.9 - 0.4 * ph);
+      ctx.save(); ctx.globalAlpha *= 0.9 * Math.sin(ph * Math.PI); inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(f.x + vx * up, f.y + vy * up, RR, RR * 0.35, 0, b0, b0 + 2.2); }, '#FFFFFF', 3); ctx.restore(); }
+  }
   ctx.restore();
 };
-// Elixir: the potion bursts over the friend in its colour, with the sign of what it gave rising off it
+// Elixir (round 19, lane caster19: "Splash could look better"): the tube breaks over the friend: a flash, shards of glass
+// glinting off, the brew bursting out over them in a ring of heavy drops that fall back down onto it, a soft glow of the
+// brew's colour sinking into the body, and the sign of what it gave rising off it
 DRAW.elixirSplash = (ctx, f, w, layer) => {
   if (layer !== 'air') return; const u = f.unit, x = alive2(u) ? u.x : f.x, y = alive2(u) ? u.y : f.y, k = k01(f.t / f.max), e = easeOut(k), [vx, vy] = upVec();
-  const col = { rage: '#FF5A3D', mend: '#9BE07A', ward: '#9FE0FF' }[f.kind];
-  if (k < 0.3) lit(ctx, () => glowDisc(ctx, x, y, 50, col, 0.6 * (1 - k / 0.3)));
+  const col = { rage: '#FF5A3D', mend: '#9BE07A', ward: '#9FE0FF' }[f.kind], light = { rage: '#FFB09A', mend: '#D6F5BE', ward: '#E2F8FF' }[f.kind];
+  if (k < 0.12) lit(ctx, () => glowDisc(ctx, x, y, 60, '#FFFFFF', 0.8 * (1 - k / 0.12)));
+  lit(ctx, () => glowDisc(ctx, x, y, f.r * 1.6, col, 0.45 * Math.sin(Math.min(1, k * 1.4) * Math.PI)));
   ctx.save(); ctx.globalAlpha *= 1 - k * k;
-  for (let i = 0; i < 9; i++) { const b = i / 9 * TAU + 0.3, d = f.r * (0.4 + 1.1 * e), h = Math.sin(k * Math.PI) * 14; inkDisc(ctx, x + Math.cos(b) * d + vx * h, y + Math.sin(b) * d * 0.7 + vy * h, 4 * (1 - 0.6 * k), i % 2 ? col : '#FFFFFF'); }
+  for (let i = 0; i < 4; i++) { const b = i / 4 * TAU + 0.8, d = 8 + 30 * e, h = Math.sin(k01(k * 2) * Math.PI) * 14; if (k > 0.5) break;
+    ctx.save(); ctx.translate(x + Math.cos(b) * d + vx * h, y + Math.sin(b) * d + vy * h); ctx.rotate(b + k * 8); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-3, -2); ctx.lineTo(4, 0); ctx.lineTo(-2, 3); ctx.closePath(); }, '#F4FAFA'); ctx.restore(); }
+  for (let i = 0; i < 10; i++) { const b = i / 10 * TAU + 0.3, q = k01(k / 0.7), d = f.r * (0.3 + 1.0 * easeOut(q)), h = Math.sin(q * Math.PI) * (18 + 10 * hash(i, 2));
+    inkDisc(ctx, x + Math.cos(b) * d + vx * h, y + Math.sin(b) * d * 0.75 + vy * h, (4.5 + 2 * hash(i, 5)) * (1 - 0.55 * k), i % 3 ? col : light); }
   const up = f.r + 10 + 26 * e;
   upright(ctx, x + vx * up, y + vy * up, () => {
     if (f.kind === 'mend') { inked(ctx, () => { ctx.beginPath(); ctx.rect(-3, -9, 6, 18); ctx.rect(-9, -3, 18, 6); }, '#9BE07A'); }
@@ -1057,9 +1249,9 @@ DRAW.elixirSplash = (ctx, f, w, layer) => {
 DRAW.monster = (ctx, f, w, layer) => {
   const u = f.unit; if (layer !== 'air' || !alive2(u)) { if (!alive2(u)) ended(f, true); return; } ended(f, !(u.kit && u.kit.monster));
   const [vx, vy] = upVec(); ctx.save(); ctx.globalAlpha *= life(f, 0.2, 0.3);
-  if (f.t < 0.35) lit(ctx, () => glowDisc(ctx, u.x, u.y, 70, '#9BE36B', 0.6 * (1 - f.t / 0.35)));
+  if (f.t < 0.35) lit(ctx, () => glowDisc(ctx, u.x, u.y, 70, '#C9A0F0', 0.6 * (1 - f.t / 0.35))); // (round 19: purple, the brew they drank)
   for (let i = 0; i < 6; i++) { const ph = (f.t * 1.5 + hash(i, u.id)) % 1, b = hash(i, 3) * TAU, d = u.vr * 0.8 * hash(i, 7), up = ph * 34;
-    ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); inkDisc(ctx, u.x + Math.cos(b) * d + vx * up, u.y + Math.sin(b) * d * 0.7 + vy * up, 2.5 + 3.5 * ph, i % 2 ? '#B5DE5E' : '#7DB83A'); ctx.restore(); }
+    ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI); inkDisc(ctx, u.x + Math.cos(b) * d + vx * up, u.y + Math.sin(b) * d * 0.7 + vy * up, 2.5 + 3.5 * ph, i % 2 ? '#D9B6F2' : '#9A5CC8'); ctx.restore(); }
   ctx.restore();
 };
 
@@ -1069,8 +1261,10 @@ const spiritA = (u) => (u.lifeT != null ? clamp(u.lifeT / 0.6, 0, 1) : 1) * 0.92
 // the winged totem (round 15, lane E: art round 12's art/summons/totem.svg, a carved spirit pole that stands, foot down
 // the screen; the code drawing's rise out of the floor and its crack under half health are kept)
 ART2.totem = {
-  frame(ctx, u, w) { const rise = easeOut(k01((w.time - (u.bornT ?? w.time)) / 0.25)), foot = 33; ctx.translate(0, foot); ctx.scale(1, rise); ctx.translate(0, -foot); },
-  over(ctx, u) { if (u.hp < u.maxHp * 0.5) crackAt(ctx, u, -5, -10, 2, -2); },
+  // (round 19, lane caster19: "Should only have collisions on the base of the totem": the unit is its foot now (r 13), and the
+  // picture stands up the screen from it)
+  frame(ctx, u, w) { const rise = easeOut(k01((w.time - (u.bornT ?? w.time)) / 0.25)), foot = 33; ctx.scale(1, rise); ctx.translate(0, -foot); },
+  over(ctx, u) { if (u.hp < u.maxHp * 0.5) crackAt(ctx, u, -5, -43, 2, -35); },
 };
 // the totem's reach: a faint teal glow on the floor round it with motes drifting in (no ring)
 DRAW.totemReach = (ctx, f, w, layer) => {
@@ -1085,13 +1279,65 @@ DRAW.totemTake = (ctx, f, w, layer) => {
   if (layer !== 'air' || !alive2(f.from)) return; const k = k01(f.t / f.max), t = f.from, a = Math.atan2(t.y - f.y, t.x - f.x), L = Math.hypot(t.x - f.x, t.y - f.y);
   ctx.save(); ctx.globalAlpha *= 1 - k; K.streak(ctx, f.x, f.y, a, L * k * 0.6, L * Math.min(1, k * 2), 4, '#7FE0D0', '#E8FFF6'); ctx.restore();
 };
+// the totem landing (round 19: "Should burst where it lands"): a white-teal flash, the ground knocked out round its
+// foot (a dust ring and clods), and teal feathers of light flung out to the edge of its reach and fading
+DRAW.totemLand = (ctx, f, w, layer) => {
+  const k = k01(f.t / f.max), e = easeOut(k);
+  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= (1 - k) * 0.5; lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * (0.4 + 0.7 * e), '#7FE0D0', 0.7)); ctx.restore(); K.dustPuffs(ctx, f.x, f.y, 34, e, f.x | 0, 7, '#C9A47A'); return; }
+  if (k < 0.18) lit(ctx, () => glowDisc(ctx, f.x, f.y, 60, '#E8FFF6', 0.8 * (1 - k / 0.18)));
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  for (let i = 0; i < 8; i++) { const b = i / 8 * TAU + 0.2, d = 16 + (f.r - 16) * e, x = f.x + Math.cos(b) * d, y = f.y + Math.sin(b) * d * 0.8;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(b); inked(ctx, () => { ctx.beginPath(); ctx.moveTo(9, 0); ctx.quadraticCurveTo(0, -5, -9, 0); ctx.quadraticCurveTo(0, 5, 9, 0); ctx.closePath(); }, i % 2 ? '#7FE0D0' : '#E8FFF6'); ctx.restore(); }
+  ctx.restore();
+};
+// a blow taken off a friend (round 19: "a light orb should home from hero to totem to be absorbed"): a ball of teal light
+// leaves the friend, swings out to one side and curls into the totem's carved head, where it sinks in with a flash
+DRAW.totemOrb = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const to = f.to; if (!alive2(to)) return; const k = k01(f.t / (f.max - 0.12)), [vx, vy] = upVec();
+  const tx = to.x + vx * 46, ty = to.y + vy * 46, x0 = f.x, y0 = f.y, mx = (x0 + tx) / 2 - (ty - y0) * 0.45 * f.side, my = (y0 + ty) / 2 + (tx - x0) * 0.45 * f.side, q = easeOut(k) * 0.4 + k * k * 0.6;
+  const px = (1 - q) * (1 - q) * x0 + 2 * (1 - q) * q * mx + q * q * tx, py = (1 - q) * (1 - q) * y0 + 2 * (1 - q) * q * my + q * q * ty;
+  if (k < 1) {
+    for (let i = 1; i <= 4; i++) { const qq = Math.max(0, q - i * 0.05), tx2 = (1 - qq) * (1 - qq) * x0 + 2 * (1 - qq) * qq * mx + qq * qq * tx, ty2 = (1 - qq) * (1 - qq) * y0 + 2 * (1 - qq) * qq * my + qq * qq * ty;
+      ctx.save(); ctx.globalAlpha *= 0.5 * (1 - i / 5); disc(ctx, tx2, ty2, 5 - i * 0.8, '#BFF6EC'); ctx.restore(); }
+    lit(ctx, () => glowDisc(ctx, px, py, 18, '#7FE0D0', 0.75)); inkDisc(ctx, px, py, 5.5, '#E8FFF6');
+  } else { const a = 1 - k01((f.t - (f.max - 0.12)) / 0.12); lit(ctx, () => glowDisc(ctx, tx, ty, 26, '#E8FFF6', 0.8 * a)); }
+};
 // Spirit Link (round 13: "Show underneath. Give outline."): inked teal threads between the linked, on the floor
+// (round 19, lane caster19: "Not showy enough"): the threads reach out from the Shaman to each one as it is cast, light
+// runs along them in both directions all the while, every one linked has a ring of teal motes going round its feet,
+// and a blow shared out is seen: a bright pulse runs from the one struck along every thread to the others
 DRAW.links = (ctx, f, w, layer) => {
-  if (layer !== 'ground') return; const g = (f.group || []).filter(alive2); if (g.length < 2) return; const a = life(f, 0.2, 0.4);
-  ctx.save(); ctx.globalAlpha *= a;
-  for (let i = 1; i < g.length; i++) { const p = g[i - 1], q = g[i], mx = (p.x + q.x) / 2 + Math.sin(f.t * 3 + i) * 10, my = (p.y + q.y) / 2 + Math.cos(f.t * 3 + i) * 10;
-    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.quadraticCurveTo(mx, my, q.x, q.y); }, '#7FE0D0', 4.5);
-    const ph = (f.t * 0.8 + i * 0.3) % 1; disc(ctx, p.x + (q.x - p.x) * ph, p.y + (q.y - p.y) * ph, 3.2, '#E8FFF6'); }
+  const g = (f.group || []).filter(alive2); if (g.length < 2) return; const a = life(f, 0.2, 0.4), grow = easeOut(k01(f.t / 0.35));
+  const hub = f.from && alive2(f.from) ? f.from : g[0];
+  const pairs = g.filter((o) => o !== hub).map((q, i) => [hub, q, i]);
+  const ctl = (p, q, i) => { const mx = (p.x + q.x) / 2 + Math.sin(f.t * 3 + i) * 12, my = (p.y + q.y) / 2 + Math.cos(f.t * 3 + i) * 12; return [mx, my]; };
+  const at = (p, q, i, t) => { const [mx, my] = ctl(p, q, i); return [(1 - t) * (1 - t) * p.x + 2 * (1 - t) * t * mx + t * t * q.x, (1 - t) * (1 - t) * p.y + 2 * (1 - t) * t * my + t * t * q.y]; };
+  if (layer === 'ground') {
+    ctx.save(); ctx.globalAlpha *= a;
+    for (const [p, q, i] of pairs) { // the thread, drawn out to its end as it grows
+      const n = 16, pts = []; for (let j = 0; j <= n; j++) pts.push(at(p, q, i, j / n * grow));
+      lit(ctx, () => { ctx.strokeStyle = 'rgba(127,224,208,0.35)'; ctx.lineWidth = 14; ctx.lineCap = 'round'; ctx.beginPath(); pts.forEach(([x, y], j) => (j ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke(); });
+      inkLine(ctx, () => { ctx.beginPath(); pts.forEach(([x, y], j) => (j ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); }, '#7FE0D0', 4.5);
+      ctx.strokeStyle = '#E8FFF6'; ctx.lineWidth = 1.6; ctx.beginPath(); pts.forEach(([x, y], j) => (j ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke();
+      if (grow >= 1) for (let m = 0; m < 3; m++) { const ph = (f.t * 0.7 + m / 3 + i * 0.17) % 1, t = m % 2 ? ph : 1 - ph, [x, y] = at(p, q, i, t); lit(ctx, () => glowDisc(ctx, x, y, 9, '#7FE0D0', 0.7)); disc(ctx, x, y, 2.8, '#FFFFFF'); }
+    }
+    for (const o of g) for (let m = 0; m < 5; m++) { const b = f.t * 2 + m / 5 * TAU + o.id, R = o.vr * 1.05; ctx.save(); ctx.globalAlpha *= 0.8 * grow; disc(ctx, o.x + Math.cos(b) * R, o.y + Math.sin(b) * R * 0.7, 2.4, m % 2 ? '#BFF6EC' : '#7FE0D0'); ctx.restore(); }
+    ctx.restore(); return;
+  }
+  // a shared blow: a bright pulse out from the one struck, through the hub, to everyone else on the link
+  for (const pu of f.pulses || []) { const age = (w.time - pu.t) / 0.45; if (age >= 1 || !alive2(pu.from)) continue;
+    for (const [p, q, i] of pairs) { const fromHub = pu.from === hub, onThis = pu.from === q;
+      if (!fromHub && !onThis) { if (age < 0.5) continue; } // (the others get it from the hub, a beat later)
+      const t = onThis ? 1 - k01(age / 0.5) : fromHub ? k01(age / 0.5) : k01((age - 0.5) / 0.5), [x, y] = at(p, q, i, t);
+      lit(ctx, () => glowDisc(ctx, x, y, 20, '#E8FFF6', 0.85)); inkDisc(ctx, x, y, 4.5, '#FFFFFF'); }
+    lit(ctx, () => glowDisc(ctx, pu.from.x, pu.from.y, pu.from.vr * 1.4, '#7FE0D0', 0.5 * (1 - age))); }
+};
+// Spirit Link binding one on: a spirit thread's end snaps onto it: a teal flash and motes drawn in round it
+DRAW.linkBind = (ctx, f, w, layer) => {
+  const u = f.unit; if (layer !== 'air' || !alive2(u)) return; const k = k01(f.t / f.max);
+  if (k < 0.3) lit(ctx, () => glowDisc(ctx, u.x, u.y, u.vr * 1.8, '#7FE0D0', 0.7 * (1 - k / 0.3)));
+  ctx.save(); ctx.globalAlpha *= 1 - k;
+  for (let i = 0; i < 8; i++) { const b = i / 8 * TAU + k * 2, d = u.vr * (1.8 - 0.9 * easeOut(k)); inkDisc(ctx, u.x + Math.cos(b) * d, u.y + Math.sin(b) * d * 0.8, 3 * (1 - 0.5 * k), i % 2 ? '#7FE0D0' : '#E8FFF6'); }
   ctx.restore();
 };
 // an ancestor spirit rising out of the floor: a teal-blue column of light and motes
@@ -1112,6 +1358,12 @@ ART2.spiritBear = {
   frame(ctx, u) { spiritGlow(ctx, u, u.vr * 1.7); ctx.rotate(Math.sin(u.bob || 0) * 0.08 * clamp(u.spd / 40, 0, 1)); },
   alpha: (u) => spiritA(u),
 };
+// round 19 (lane caster19, "In game the wolf looks different from the rest"): the wolf is drawn like the others now
+// (art/summons/spirit-wolf.svg, made with tools/caster19/animals.py), see-through, glowing, trotting with a sway
+ART2.spiritWolf = {
+  frame(ctx, u) { spiritGlow(ctx, u, u.vr * 1.6); ctx.rotate(Math.sin((u.bob || 0) * 1.4) * 0.07 * clamp(u.spd / 40, 0, 1)); },
+  alpha: (u) => spiritA(u),
+};
 ART2.spiritEagle = {
   frame(ctx, u, w) { spiritGlow(ctx, u, 34); ctx.scale(1 - 0.16 * (0.5 + 0.5 * Math.sin(w.time * 11 + u.id)), 1); },
   alpha: (u) => spiritA(u),
@@ -1121,22 +1373,44 @@ ART2.spiritBeaver = {
   alpha: (u) => spiritA(u),
 };
 // the totem in the air (thrown on an arc) and the beaver's homing spirit orb
-PROJ2.totemFly = (ctx, p, T) => { lobUp(ctx, p, 60); ctx.rotate(T * 9); inked(ctx, () => roundRect(ctx, -5, -16, 10, 26, 3), '#A0705A'); for (const sd of [-1, 1]) inked(ctx, () => { ctx.beginPath(); ctx.ellipse(sd * 9, -12, 7, 4, sd * 0.4, 0, TAU); }, '#2FB3A4'); };
+PROJ2.totemFly = (ctx, p, T) => { // (round 19: its wings and beak as on the totem: the back totem's swept teal wings, a cream beak)
+  lobUp(ctx, p, 60); ctx.rotate(Math.sin(T * 7) * 0.5);
+  for (const sd of [-1, 1]) inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -10); ctx.bezierCurveTo(sd * 8, -18, sd * 18, -20, sd * 26, -18); ctx.bezierCurveTo(sd * 22, -14, sd * 22, -10, sd * 20, -8); ctx.bezierCurveTo(sd * 14, -8, sd * 10, -6, 0, -2); ctx.closePath(); }, '#2FB3A4');
+  for (const sd of [-1, 1]) { ctx.fillStyle = '#F4EEDC'; ctx.beginPath(); ctx.moveTo(sd * 26, -18); ctx.bezierCurveTo(sd * 22, -14, sd * 22, -10, sd * 20, -8); ctx.lineTo(sd * 18, -16); ctx.closePath(); ctx.fill(); }
+  inked(ctx, () => roundRect(ctx, -6, -14, 12, 32, 3), '#8B604C'); inked(ctx, () => roundRect(ctx, -7, -16, 14, 12, 4), '#DC611F');
+  ctx.fillStyle = '#2FB3A4'; ctx.fillRect(-7, -14, 14, 3); ctx.fillStyle = '#F4EEDC'; ctx.beginPath(); ctx.moveTo(-3, -10); ctx.lineTo(0, -5); ctx.lineTo(3, -10); ctx.closePath(); ctx.fill();
+};
 PROJ2.spiritOrb = (ctx, p, T, ang, sp) => { ctx.save(); ctx.rotate(ang); trail(ctx, sp, 30, 8, SPIRIT[1]); ctx.restore(); lit(ctx, () => glowDisc(ctx, 0, 0, 18, SPIRIT[1], 0.6)); inkDisc(ctx, 0, 0, 6.5, SPIRIT[2]); };
 IMPACT2D.spiritOrb = (ctx, m, k) => { const e = easeOut(k); ctx.save(); ctx.globalAlpha *= 1 - k; for (let i = 0; i < 5; i++) { const b = i / 5 * TAU + m.seed, d = 4 + 16 * e; inkDisc(ctx, m.x + Math.cos(b) * d, m.y + Math.sin(b) * d, 3 * (1 - k) + 1, SPIRIT[2]); } ctx.restore(); };
 
 // ---------------------------------------------------------------- the Witch (round 13)
-// the hex bolt: a green spark wrapped round one of five witch's signs (p.sym): a moon, a star, an eye, a spiral, a skull
+// the hex bolt (round 19, lane caster19, the designer: "More like minecraft enchanting table shape"): each hex is a rune of
+// an old angular script (our own: straight strokes, hooks and dots, nothing copied), glowing pale green, held upright as
+// it flies; a faint trail of the same rune's ghosts behind it, and small rune scratches peeling off and drifting away.
+const RUNES = [
+  [[[-4, -7], [-4, 7]], [[-4, -2], [4, -2], [4, 4]]],
+  [[[-5, -6], [5, -6]], [[0, -6], [0, 6]], 'd', [4, 3]],
+  [[[5, -7], [5, 7]], [[5, 0], [-5, 0], [-5, -5]]],
+  [[[-5, -6], [5, -2], [-5, 2], [5, 6]]],
+  [[[-3, -7], [-3, -1]], [[-3, 2], [-3, 7]], [[3, -7], [3, 7]]],
+  [[[-5, -6], [-5, 6], [5, 6]], [[-1, -2], [3, 2]]],
+  [[[-5, -6], [5, -6], [5, 0], [-5, 0], [-5, 6], [5, 6]]],
+  [[[-4, -6], [-4, 2]], [[4, -7], [4, 4], [0, 7]]],
+  [[[0, -7], [-5, 0], [0, 7], [5, 0], [0, -7]], 'd', [0, 0]],
+  [[[-5, -5], [5, -5]], [[-5, 5], [5, 5]], [[0, -5], [0, 5]], 'd', [-4, 0]],
+];
+function rune(ctx, i, s, col, wd = 2.6) {
+  const R = RUNES[((i % RUNES.length) + RUNES.length) % RUNES.length], path = () => { ctx.beginPath(); for (const st of R) if (Array.isArray(st) && Array.isArray(st[0])) st.forEach(([x, y], j) => (j ? ctx.lineTo(x * s, y * s) : ctx.moveTo(x * s, y * s))); };
+  inkLine(ctx, path, col, wd);
+  for (let j = 0; j < R.length; j++) if (R[j] === 'd') inkDisc(ctx, R[j + 1][0] * s, R[j + 1][1] * s, wd * 0.75, col);
+}
 PROJ2.hexbolt = (ctx, p, T, ang, sp) => {
-  ctx.save(); ctx.rotate(ang); trail(ctx, sp, 34, 7, '#9BE36B'); ctx.restore();
-  lit(ctx, () => glowDisc(ctx, 0, 0, 20, '#9BE36B', 0.55));
-  upright(ctx, 0, 0, () => { const s = p.sym ?? 1, c = '#C9F59A';
-    if (s === 0) inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 8, 0.6, TAU - 0.6); ctx.arc(4, 0, 6, TAU - 0.9, 0.9, true); ctx.closePath(); }, c);
-    else if (s === 1) inked(ctx, () => star(ctx, 0, 0, 9, 5, 0.42, T * 4), c);
-    else if (s === 2) { inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-10, 0); ctx.quadraticCurveTo(0, -9, 10, 0); ctx.quadraticCurveTo(0, 9, -10, 0); ctx.closePath(); }, c); disc(ctx, 0, 0, 3.2, '#5A2A80'); }
-    else if (s === 3) inkLine(ctx, () => { ctx.beginPath(); for (let i = 0; i <= 20; i++) { const b = i / 20 * TAU * 1.7 + T * 6, r = 1.5 + i * 0.4; const x = Math.cos(b) * r, y = Math.sin(b) * r; if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); } }, c, 2.6);
-    else { inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -1.5, 7, Math.PI, 0); ctx.lineTo(5, 5); ctx.lineTo(-5, 5); ctx.closePath(); }, c); disc(ctx, -2.6, -1, 2, '#2B2230'); disc(ctx, 2.6, -1, 2, '#2B2230'); }
-  });
+  const id = p.sym ?? 1, wob = Math.sin(T * 7 + p.x * 0.05) * 0.18;
+  ctx.save(); ctx.rotate(ang); trail(ctx, sp, 30, 6, '#9BE36B'); ctx.restore();
+  for (let i = 1; i <= 2; i++) { ctx.save(); ctx.translate(-Math.cos(ang) * i * 11, -Math.sin(ang) * i * 11); ctx.globalAlpha *= 0.32 / i; upright(ctx, 0, 0, () => rune(ctx, id, 1.05, '#C9F59A', 2)); ctx.restore(); }
+  for (let i = 0; i < 2; i++) { const ph = (T * 2.2 + i * 0.5 + p.x * 0.01) % 1, b = ang + Math.PI + (i ? 0.7 : -0.7), d = 10 + ph * 18; ctx.save(); ctx.globalAlpha *= 0.6 * (1 - ph); upright(ctx, Math.cos(b) * d, Math.sin(b) * d - ph * 8, () => { ctx.rotate(ph); rune(ctx, id + 3 + i, 0.45, '#E4F5C8', 1.4); }); ctx.restore(); }
+  lit(ctx, () => glowDisc(ctx, 0, 0, 22, '#9BE36B', 0.55));
+  upright(ctx, 0, 0, () => { ctx.rotate(wob); rune(ctx, id, 1.25, '#E4F5C8', 2.8); });
 };
 // a puff of green hex smoke where a unit turns into something else
 DRAW.poof = (ctx, f, w, layer) => {
@@ -1146,25 +1420,54 @@ DRAW.poof = (ctx, f, w, layer) => {
   for (let i = 0; i < 8; i++) { const b = i / 8 * TAU + 0.3, d = f.r * (0.3 + 0.9 * e); inkDisc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, f.r * 0.35 * (1 - 0.5 * k), i % 2 ? f.col : '#E4F5C8'); }
   ctx.restore();
 };
-// Hex: the frog it has become, seen from above: a squat green body, big round eyes, folded back legs; it hops
+// Hex (round 19, lane caster19: "Better frog visual but good implementation. Probably a smaller shadow"): a frog seen from
+// above, drawn properly: a pear-shaped body, darker back with blotches and a pale stripe, big domed eyes on top of its
+// head with slit pupils, a wide mouth line, little front legs, and its long back legs folded up in a Z either side, the
+// webbed feet spread; on a hop the back legs kick out straight and it stretches. Its shadow is the unit's own, frog sized
+// (kits2.js shadowK), not a second one.
 DRAW.frog = (ctx, f, w, layer) => {
   const u = f.unit; if (!alive2(u)) { ended(f, true); return; } ended(f, !(u.frogUntil > w.time));
-  const hop = u.frogHop != null ? k01((w.time - u.frogHop) / 0.35) : 1, h = Math.sin(hop * Math.PI) * 16, [vx, vy] = upVec(), s = clamp(u.vr / 20, 0.8, 1.6) * (1 + h / 80);
-  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.3; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y, 13 * s, 7 * s, 0, 0, TAU); ctx.fill(); ctx.restore(); return; }
-  ctx.save(); ctx.translate(u.x + vx * h, u.y + vy * h); ctx.rotate(u.facing); ctx.scale(s, s);
-  const leg = hop < 1 ? 0.6 : 0;
-  for (const sd of [-1, 1]) { inked(ctx, () => { ctx.beginPath(); ctx.ellipse(-8 - leg * 6, sd * 9, 7 + leg * 4, 4, sd * (0.5 - leg), 0, TAU); }, '#4E9A2A'); inked(ctx, () => { ctx.beginPath(); ctx.ellipse(7, sd * 8, 4, 2.6, sd * 0.4, 0, TAU); }, '#4E9A2A'); }
-  inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 12, 10, 0, 0, TAU); }, u.flashT > 0.06 ? '#FFFFFF' : '#6FB83A');
-  ctx.fillStyle = '#A9E07A'; ctx.beginPath(); ctx.ellipse(-2, 0, 6, 5, 0, 0, TAU); ctx.fill();
-  for (const sd of [-1, 1]) { inked(ctx, () => { ctx.beginPath(); ctx.arc(8, sd * 5.5, 4, 0, TAU); }, '#E8F5C8'); disc(ctx, 9, sd * 5.5, 2, '#2B2230'); }
+  if (layer !== 'air') return;
+  const hop = u.frogHop != null ? k01((w.time - u.frogHop) / 0.35) : 1, air = Math.sin(hop * Math.PI), h = air * 16, [vx, vy] = upVec(), s = clamp(u.vr / 20, 0.8, 1.6) * (1 + h / 80);
+  const kick = hop < 1 ? Math.sin(Math.min(1, hop * 1.6) * Math.PI) : 0, body = '#5FAE34', back = '#4A8E28', pale = '#A9E07A', foot = '#4A8E28';
+  ctx.save(); ctx.translate(u.x + vx * h, u.y + vy * h); ctx.rotate(u.facing - Math.PI / 2); ctx.scale(s, s * (1 + 0.15 * kick)); // (its frame: +y its front)
+  for (const sd of [-1, 1]) { // the back legs: thigh out, shin back in, the webbed foot (straight back when it kicks)
+    const kx = sd * (13 - 5 * kick), ky = -6 - 6 * kick, fx0 = sd * (9 - 4 * kick), fy0 = -14 - 12 * kick;
+    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(sd * 6, -4); ctx.lineTo(kx, ky); ctx.lineTo(fx0, fy0); }, body, 5.5);
+    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(fx0, fy0); ctx.lineTo(fx0 + sd * 5, fy0 - 5); ctx.lineTo(fx0 + sd * 1, fy0 - 7); ctx.lineTo(fx0 - sd * 3, fy0 - 5); ctx.closePath(); }, foot);
+  }
+  for (const sd of [-1, 1]) { inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(sd * 6, 6); ctx.lineTo(sd * 11, 10); ctx.lineTo(sd * 10, 14); }, body, 3.5); }
+  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, 14); ctx.bezierCurveTo(9, 14, 11, 4, 10, -3); ctx.bezierCurveTo(9, -10, 5, -12, 0, -12); ctx.bezierCurveTo(-5, -12, -9, -10, -10, -3); ctx.bezierCurveTo(-11, 4, -9, 14, 0, 14); ctx.closePath(); }, u.flashT > 0.06 ? '#FFFFFF' : body);
+  ctx.fillStyle = back; ctx.beginPath(); ctx.ellipse(0, -3, 6.5, 7, 0, 0, TAU); ctx.fill();
+  ctx.fillStyle = pale; ctx.fillRect(-0.8, -9, 1.6, 12);
+  ctx.fillStyle = '#3E7A20'; for (const [x, y, r] of [[-5, -6, 1.6], [4, -1, 1.4], [-3, 2, 1.2], [6, -7, 1.1]]) { ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); }
+  ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 1.1; ctx.beginPath(); ctx.moveTo(-6, 11.5); ctx.quadraticCurveTo(0, 14, 6, 11.5); ctx.stroke();
+  const blink = (w.time * 0.7 + u.id * 0.37) % 1 < 0.05;
+  for (const sd of [-1, 1]) { inkDisc(ctx, sd * 5.5, 7, 3.8, '#F2E27A'); if (blink) { ctx.fillStyle = body; ctx.beginPath(); ctx.ellipse(sd * 5.5, 7, 3.8, 3.8, 0, 0, TAU); ctx.fill(); } else { ctx.fillStyle = '#2B2230'; ctx.beginPath(); ctx.ellipse(sd * 5.5, 7.3, 2.6, 1.1, 0, 0, TAU); ctx.fill(); disc(ctx, sd * 5.5 - 1, 5.8, 0.9, '#FFFFFF'); } }
   ctx.restore();
 };
-// the Witch's cauldron (round 15, lane E: art round 12's art/summons/cauldron.svg, black iron on three stub feet, green
-// brew to the brim; it stands, foot down the screen): the code drawing's little fire under it and the bubbles rising
-// off the brew are kept (the brew's middle is where the code's was: 4 up from its centre)
+// the Witch's cauldron (round 15, lane E: art round 12's art/summons/cauldron.svg; round 19, lane caster19: "More top down
+// cauldron. Opening more circular": the picture is seen from straight above now, and drawn flat like any unit): little
+// flames lick out from under its belly all round, and bubbles rise and pop off the brew in its mouth
 ART2.cauldron = {
-  frame(ctx, u, w) { for (let i = 0; i < 3; i++) { ctx.save(); ctx.translate((i - 1) * 10, 10); flame(ctx, 0, 0, 5 + Math.sin(w.time * 20 + i) * 1); ctx.restore(); } },
-  over(ctx, u, w) { upright(ctx, u.x, u.y, () => { for (let i = 0; i < 3; i++) { const ph = (w.time * 1.6 + i / 3) % 1; ctx.save(); ctx.globalAlpha *= 1 - ph; inkDisc(ctx, (i - 1) * 7, -4 - ph * 4, 2 + 3 * ph, '#C9F59A'); ctx.restore(); } }); },
+  under(ctx, u, w) { for (let i = 0; i < 5; i++) { const b = i / 5 * TAU + 0.3, R = u.vr * 1.05; upright(ctx, u.x + Math.cos(b) * R, u.y + Math.sin(b) * R * 0.9, () => flame(ctx, 0, 0, 4.5 + Math.sin(w.time * 20 + i * 1.7) * 1.2)); } },
+  over(ctx, u, w) { const [vx, vy] = upVec(); for (let i = 0; i < 3; i++) { const ph = (w.time * 1.6 + i / 3) % 1, b = i / 3 * TAU + 0.6, d = 6; ctx.save(); ctx.globalAlpha *= 1 - ph; inkDisc(ctx, u.x + Math.cos(b) * d + vx * ph * 10, u.y + Math.sin(b) * d + vy * ph * 10, 2 + 3 * ph, '#C9F59A'); ctx.restore(); } },
+};
+// Cursed Brew landing (round 19: "Don't like landing effect"): the pot comes down hard: a dark ring of dust knocked out
+// along the floor, green brew slopping over its rim in heavy drops that splash where they land, and a puff of purple curse
+DRAW.potSlam = (ctx, f, w, layer) => {
+  const k = k01(f.t / f.max), e = easeOut(k), [vx, vy] = upVec();
+  if (layer === 'ground') {
+    ctx.save(); ctx.globalAlpha *= (1 - k) * 0.6; ctx.strokeStyle = '#5A4A3A'; ctx.lineWidth = 16 * (1 - k) + 2; ctx.beginPath(); ctx.ellipse(f.x, f.y, f.r * (0.4 + 0.7 * e), f.r * (0.4 + 0.7 * e) * 0.85, 0, 0, TAU); ctx.stroke(); ctx.restore();
+    for (let i = 0; i < 7; i++) { const b = i / 7 * TAU + 0.4, d = f.r * (0.45 + 0.4 * hash(i, 3)), q = k01((k - 0.25) / 0.2); if (q <= 0) continue; ctx.save(); ctx.globalAlpha *= (1 - k) * 0.9; inked(ctx, () => blob(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d * 0.85, 4 + 3 * hash(i, 9) * q, 5, i, 0.7), '#7FCB3A'); ctx.restore(); }
+    return;
+  }
+  if (k < 0.15) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r, '#C9F59A', 0.5 * (1 - k / 0.15)));
+  ctx.save(); ctx.globalAlpha *= 1 - k;
+  for (let i = 0; i < 7; i++) { const b = i / 7 * TAU + 0.4, d = f.r * (0.45 + 0.4 * hash(i, 3)) * k01(k / 0.3), h = Math.sin(k01(k / 0.3) * Math.PI) * (22 + 12 * hash(i, 4)); if (k > 0.3) continue;
+    inkDisc(ctx, f.x + Math.cos(b) * d + vx * h, f.y + Math.sin(b) * d * 0.85 + vy * h, 4.5, i % 2 ? '#9BE36B' : '#C9F59A'); }
+  for (let i = 0; i < 5; i++) { const b = i / 5 * TAU + 1, d = 14 + 26 * e, up = 10 + 20 * e; ctx.save(); ctx.globalAlpha *= 0.7; disc(ctx, f.x + Math.cos(b) * d + vx * up, f.y + Math.sin(b) * d * 0.7 + vy * up, 8 + 6 * e, i % 2 ? '#9A5CC8' : '#5A2A80'); ctx.restore(); }
+  ctx.restore();
 };
 // Cursed Brew's fumes: purple wisps curling up off the pot and drifting out over its reach
 DRAW.fumes = (ctx, f, w, layer) => {
@@ -1175,21 +1478,30 @@ DRAW.fumes = (ctx, f, w, layer) => {
     ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI) * 0.8; inkDisc(ctx, u.x + Math.cos(b) * d + vx * up, u.y + Math.sin(b) * d + vy * up, 5 + 6 * ph, i % 2 ? '#9A5CC8' : '#5A2A80'); ctx.restore(); }
   ctx.restore();
 };
-// Broom Ride (round 13: "Doesnt look like they are ridding it"): the broom drawn under her body at her height, its
-// handle out past her front, the bristles behind, so she sits on it; wind lines behind
-DRAW.broom = (ctx, f, w, layer) => {
-  const u = f.unit; if (layer !== 'ground' || !alive2(u)) return; const a = life(f, 0.1, 0.2), up = u.hop || 0, [vx, vy] = upVec(), sc = 1 + up / 110;
-  ctx.save(); ctx.globalAlpha *= 0.25 * a; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(u.x, u.y, 26, 10, u.facing, 0, TAU); ctx.fill(); ctx.restore();
-  ctx.save(); ctx.globalAlpha *= a; ctx.translate(u.x, u.y); ctx.rotate(u.facing); ctx.scale(sc * 0.7, sc * 0.7);
-  inked(ctx, () => roundRect(ctx, -30, -2.6, 64, 5.2, 2.6), '#8A5A30');
-  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-26, -4); ctx.lineTo(-46, -13); ctx.lineTo(-50, 0); ctx.lineTo(-46, 13); ctx.lineTo(-26, 4); ctx.closePath(); }, '#D8B060');
-  ctx.strokeStyle = '#A8843A'; ctx.lineWidth = 1.6; for (let i = -2; i <= 2; i++) { ctx.beginPath(); ctx.moveTo(-28, i * 1.5); ctx.lineTo(-47, i * 4.4); ctx.stroke(); }
-  inked(ctx, () => roundRect(ctx, -29, -5, 5, 10, 2), '#5A2A80');
-  for (let i = -1; i <= 1; i++) K.streak(ctx, -52, i * 8, Math.PI, 0, 18 + 6 * Math.sin(f.t * 20 + i), 2.2, '#EEF3F8', '#FFFFFF');
-  ctx.restore();
-};
+// Broom Ride (round 19, lane caster19: "make sure the broom is under her. Not on the ground. Better broom visual. Remove the
+// broom from her hand when flying"): the broom is drawn in her own frame, under her body, so it is up there with her
+// (lifted by her height, ART2.witch). A long crooked handle runs out past her front with a knot at its tip, the twigs a
+// full bundle bound with a purple band flaring out behind her, their ends whipping in the wind; wind lines stream off it.
+// Nothing is drawn on the floor (the 'broom' fx is only her flight's marker for the Book now).
+DRAW.broom = () => {};
+function broomUnder(ctx, w, T) {
+  // (her frame: +y her front, room units)
+  for (let i = -1; i <= 1; i++) { ctx.save(); ctx.globalAlpha *= 0.7; K.streak(ctx, i * 9, -60 - Math.abs(i) * 4, -Math.PI / 2, 0, 22 + 7 * Math.sin(T * 22 + i * 2), 2.2, '#EEF3F8', '#FFFFFF'); ctx.restore(); }
+  // the twigs: a fan bound at the handle, each twig its own stroke, the ends flicking
+  const tw = (n, sp) => { for (let i = 0; i < n; i++) { const q = i / (n - 1) - 0.5, end = -58 - 4 * Math.cos(q * 3) + Math.sin(T * 30 + i) * 2.5; ctx.moveTo(q * 7, -22); ctx.quadraticCurveTo(q * sp * 0.6, -38, q * sp + Math.sin(T * 26 + i * 1.3) * 2, end); } };
+  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-5, -22); ctx.quadraticCurveTo(-17, -40, -18 + Math.sin(T * 26) * 2, -60); ctx.lineTo(18 + Math.sin(T * 24 + 1) * 2, -60); ctx.quadraticCurveTo(17, -40, 5, -22); ctx.closePath(); }, '#D8B060');
+  ctx.save(); ctx.strokeStyle = '#A8843A'; ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.beginPath(); tw(9, 30); ctx.stroke(); ctx.strokeStyle = '#F0D27A'; ctx.lineWidth = 1.1; ctx.beginPath(); tw(5, 22); ctx.stroke(); ctx.restore();
+  // the handle: crooked, with a knot near the tip
+  inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -26); ctx.bezierCurveTo(3, -4, -3, 18, 1, 40); }, '#8A5A30', 5);
+  ctx.save(); ctx.strokeStyle = '#B88250'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(-0.8, -24); ctx.bezierCurveTo(2, -4, -4, 18, 0, 38); ctx.stroke(); ctx.restore();
+  inkDisc(ctx, 1.5, 38, 4, '#7A4E2A');
+  inked(ctx, () => roundRect(ctx, -6.5, -27, 13, 6, 2.5), '#5A2A80'); ctx.fillStyle = '#9A5CC8'; ctx.fillRect(-5, -26, 10, 1.6);
+}
+ART2.witch = { frame(ctx, u, w) { if (u.kit && u.kit.broomUntil > w.time && !u.downed) broomUnder(ctx, w, w.time); } };
 // a hex bomb dropped from the broom, and where it pops
-PROJ2.hexBomb = (ctx, p, T) => { lobUp(ctx, p, 30); ctx.rotate(T * 10); lit(ctx, () => glowDisc(ctx, 0, 0, 16, '#9BE36B', 0.5)); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 7, 0, TAU); }, '#5A2A80'); inked(ctx, () => star(ctx, 0, 0, 5, 5, 0.42, T * 5), '#9BE36B'); };
+PROJ2.hexBomb = (ctx, p, T) => { // (round 19: dropped from her height: it falls, faster and faster, to where it bursts)
+  if (p.drop) { const q = 1 - p.life / p.life0, [vx, vy] = upVec(), h = p.drop * (1 - q * q); ctx.save(); ctx.globalAlpha *= 0.25; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(0, 0, 6 + 3 * q, 3 + 1.5 * q, 0, 0, TAU); ctx.fill(); ctx.restore(); ctx.translate(vx * h, vy * h); } else lobUp(ctx, p, 30);
+  ctx.rotate(T * 10); lit(ctx, () => glowDisc(ctx, 0, 0, 16, '#9BE36B', 0.5)); inked(ctx, () => { ctx.beginPath(); ctx.arc(0, 0, 7, 0, TAU); }, '#5A2A80'); inked(ctx, () => star(ctx, 0, 0, 5, 5, 0.42, T * 5), '#9BE36B'); };
 DRAW.hexPop = (ctx, f, w, layer) => {
   if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
   if (k < 0.25) lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 1.3, '#9BE36B', 0.6 * (1 - k / 0.25)));
@@ -1729,3 +2041,5 @@ export const DRAW2 = DRAW; // round 15 (lane N): fx3.js adds the six newer heroe
 
 // ---------------------------------------------------------------- signatures at the cast
 export const SIG2 = {};
+// round 19 (lane caster19): no cast flash for these (Harvest: "Shows a random star on him as he jumps"); each shows itself
+for (const id of ['breadToss', 'harvest', 'oldTales', 'dirtFling', 'burrow', 'spadeBat']) SIG2[id] = () => false;

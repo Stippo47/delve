@@ -85,7 +85,7 @@ export function unitStatuses(u, now) {
     const frac = long ? 1 : Math.min(1, b.t / (b.dur || b.t));
     if (b.potion) { out.push({ id: b.id, kind: 'potion', icon: b.potion, frac, color: POTIONS[b.potion].color, potion: b.potion }); continue; }
     if (b.id === 'rhythm') continue; // the bard's always-on hum: too constant to be worth a ring
-    if (b.id === 'warded' || b.id === 'weakened') continue; // (round 15, lane E: statuses now, above)
+    if (b.id === 'warded' || b.id === 'weakened' || b.id === 'dirty') continue; // (round 19: Dirty's wash rides on a buff) // (round 15, lane E: statuses now, above)
     // round 13 ("Some positive status effects don't show"): every buff by its own name and icon (bestiary.js BUFFS), with
     // what its numbers do; a stance that holds the hero still is a help, not "Rooted"
     const info = BUFFS[b.id], bad = info ? !!info.bad : badBuff(b);

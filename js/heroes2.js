@@ -181,8 +181,8 @@ export const HEROES2 = {
     blurb: 'A long-handled spade. Digs, flings, bats, and finds coins in the floor.',
     fun: 'Came down here looking for turnips. Found a dungeon. Kept digging.',
     stats: { hp: 115, speed: 58, r: 32, vr: 22, turn: 3.8, accel: 200, face: 4, mass: 1.6, range: 28, atkCd: 1.2, dmg: 13, knock: 160, arc: 1.7 },
-    weapon: 'heavy',
-    attack: { name: 'Spade', anim: 'swing', desc: 'A swing with the flat of the spade.' },
+    weapon: 'spade', // round 19 (lane caster19): its own swing and thwack (fxkit 'spade', kits2 TRAITS2.dirtIn)
+    attack: { name: 'Spade', anim: 'swing', desc: 'A swing with the flat of the spade; clods burst out behind whatever it hits.' },
     abilities: [
       { id: 'dirtFling', name: 'Dirt Fling', cd: 9, tags: 's', glyph: 'wave', desc: "Flings clods of earth in a fan: enemies are blinded (most of their blows miss for 2.5s); friends in it are cleaned of fire and poison and get a coat of dirt.",
         tiers: ['One fling.', 'It staggers enemies.', 'Three flings in a row.'] },
@@ -204,32 +204,34 @@ Object.assign(HEROES2, {
     stats: { hp: 115, speed: 52, r: 31, vr: 22, turn: 3.8, accel: 190, face: 4, mass: 1.3, range: 22, atkCd: 1.0, dmg: 9, arc: 1.7 },
     weapon: 'scythe',
     attack: { name: 'Sickle', anim: 'swing', desc: 'A short hooked cut.' },
+    summons: { sheaf: { name: 'Sheaf', ownLook: true, upright: true, r: 14, vr: 16, turn: 0, accel: 0, face: 0, mass: 60, hp: 8, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 } }, // round 19: Sheaves' hay (kits2.js SHEAF, drawn in code: fx2 LOOK2.sheaf)
     abilities: [
       { id: 'breadToss', name: 'Bread Toss', cd: 8, tags: 'h', glyph: 'heart', desc: 'Lobs a warm loaf high to a hurt ally; it heals them where it lands.',
         tiers: ['One loaf: heals 20%.', 'A loaf each for two allies.', 'Warm bread: 10% more over 4s.'] },
-      { id: 'harvest', name: 'Harvest', cd: 10, tags: 'ds', glyph: 'swirl', desc: 'Hurries to the friend most beset and sweeps the sickle low round his feet there, cutting at the legs of everything close.',
+      { id: 'harvest', name: 'Harvest', cd: 10, tags: 'ds', glyph: 'swirl', desc: 'Dashes to the friend most beset and turns a full circle with the sickle held out low, cutting at the legs of everything it passes.',
         tiers: ['They are slowed by half for 3s.', 'And staggered.', 'He heals 4% for each one cut.'] },
-      { id: 'oldTales', name: 'Old Tales', cd: 18, tags: 'h', glyph: 'note', desc: 'Opens his old story book and tells the party one of his stories: every friend listening has its abilities come round sooner.',
-        tiers: ['Each friend near: every ability 4s sooner.', '6s sooner.', 'And they heal 8%.'] },
+      { id: 'oldTales', name: 'Sheaves', cd: 18, tags: 'h', glyph: 'leaf', desc: 'Throws four sheaves of hay down about the fight. A friend who treads on one is fed by it; an enemy that breaks one is hayed (slowed, straw all over it), and every blow the party lands on a hayed enemy brings the striker\'s abilities round faster.',
+        tiers: ['Friends healed 10%; hayed for 4s.', 'Healed 15%; hayed for 6s.', 'A broken sheaf bursts, sharing it with everyone near.'] }, // round 19 (lane caster19): Old Tales changed (id kept)
     ],
     trait: { id: 'seenItAll', name: 'Seen It All', desc: 'Allies near him shake off stagger twice as fast.' },
   },
   alchemist: {
     name: 'Alchemist', art: 'art/heroes/alchemist.svg', role: 'caster', unlock: { gems: 2 },
+    forms: ['art/heroes/alchemist-monster.svg'], // round 19 (lane caster19): Monstrosity's sprite, got ready with theirs (render.js warmArt)
     blurb: 'Wild white hair, brass goggles, a strap of flasks. Every throw is a different brew.',
-    fun: 'Lost her eyebrows in the first week. Lost the lab in the second. Kept the goggles.',
+    fun: 'Lost their eyebrows in the first week. Lost the lab in the second. Kept the goggles.',
     stats: { hp: 72, speed: 64, r: 30, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1, range: 210, keep: 170, atkCd: 1.3, dmg: 8 },
     style: { glow: '#9BE36B' },
-    attack: { name: 'Unstable flask', anim: 'throw', desc: 'A lobbed flask that splashes where it lands; each one is a different brew: fire, frost or acid.' },
+    attack: { name: 'Unstable flask', anim: 'throw', desc: 'A tube of brew thrown from the hand that splashes where it lands; each one is a different brew: fire, frost or acid.' },
     abilities: [
       { id: 'acidFlask', name: 'Brew Pools', cd: 9, tags: 'ds', glyph: 'vial', desc: 'Throws two flasks in a spread; each bursts into a lingering pool of one of six brews: acid (eats at them, they take more), cold (chills), fire (burns), whirling (whirls and spins them), shocking (shocks) or water (soaks).',
         tiers: ['Two pools for 4s.', 'Three flasks.', 'Bigger pools, for 5s.'] },
-      { id: 'elixir', name: 'Elixir', cd: 12, tags: 'h', glyph: 'vial', desc: 'Throws a bright potion to the friend who needs it, one of three: cleansed and healed if hurt or afflicted; Warded (a shield soaking up 30) and swift if being hit; hasted and enraged if fighting.',
-        tiers: ['One friend: heals 14% / ward 30 / +25% damage.', 'Heals 22% / ward 45 / +35% damage.', 'It splashes every friend near the one it hits.'] },
-      { id: 'bangFlask', name: 'Monstrosity', cd: 18, tags: 'ds', glyph: 'burst', desc: 'Drinks an unstable concoction and becomes a monstrosity for 8s: bigger, faster, with rapid clawing blows and a lunge; nothing can hurt her or put a status on her, she is hard to shove, but it burns through a third of her health.',
-        tiers: ['8s as a monster.', 'Her blows land 25% harder.', 'Every blow puts a random status on what it hits.'] },
+      { id: 'elixir', name: 'Elixir', cd: 12, tags: 'h', glyph: 'vial', desc: 'Throws a bright tube of brew to the friend who needs it, one of three: cleansed and healed if hurt or afflicted; Warded (a shield soaking up 30) and swift if being hit; hasted and enraged if fighting.',
+        tiers: ['One friend: heals 14% / ward 30 / +25% damage.', 'A second tube as well: its own friend and its own brew, rolled.', 'Strong brews (heals 22% / ward 45 / +35%) that splash every friend near.'] },
+      { id: 'bangFlask', name: 'Monstrosity', cd: 18, tags: 'ds', glyph: 'burst', desc: 'Drinks a purple tube of unstable brew and becomes a monstrosity for 8s: bigger and much faster, pounding with left and right punches that throw things back hard, and a lunge; nothing can hurt them or put a status on them, they are hard to shove, but it burns through a third of their health.',
+        tiers: ['8s as a monster.', 'Their blows land 25% harder.', 'Every blow puts a random status on what it hits.'] },
     ],
-    trait: { id: 'catalyst', name: 'Catalyst', desc: 'The statuses she causes build 30% faster.' },
+    trait: { id: 'catalyst', name: 'Catalyst', desc: 'The statuses they cause build 30% faster.' },
   },
   shaman: {
     name: 'Shaman', art: 'art/heroes/shaman.svg', role: 'support', unlock: { gems: 2 },
@@ -239,9 +241,9 @@ Object.assign(HEROES2, {
     style: { hand: 'arm-l', glow: '#7FE0D0' },
     attack: { name: 'Spirit bolt', anim: 'cast', desc: 'A teal spirit; when it strikes near a hurt friend it leaps on to that friend and mends it.' },
     summons: { // round 13: the Healing Totem and the Ancestors' Call spirits (light blue; kits2.js BRAINS, fx2.js LOOK2)
-      totem: { name: 'Totem', art: 'art/summons/totem.svg', headR: 66, ownLook: true, upright: true, r: 20, vr: 26, turn: 0, accel: 0, face: 0, mass: 60, hp: 50, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
+      totem: { name: 'Totem', art: 'art/summons/totem.svg', headR: 66, ownLook: true, upright: true, r: 13, vr: 26, standsUp: 33, /* round 19: it stands on its foot: its body is only its base (fx2 ART2.totem draws it up from there) */ turn: 0, accel: 0, face: 0, mass: 60, hp: 50, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
       spiritBear: { name: 'Spirit bear', art: 'art/summons/spirit-bear.svg', headR: 66, ownLook: true, r: 30, vr: 26, turn: 4, accel: 260, face: 4, mass: 3, hp: 45, speed: 62, role: 'melee', range: 18, atkCd: 1.1, dmg: 10, knock: 170, arc: 1.7, weapon: 'claw', attackAnim: 'swing' },
-      spiritWolf: { name: 'Spirit wolf', art: 'art/summons/wolf.svg', headR: 35, wash: ['#9FE4FF', 0.55], attackAnim: 'thrust', weapon: 'bite', r: 24, vr: 18, turn: 6, accel: 380, face: 6, mass: 1, hp: 25, speed: 92, role: 'skirmish', range: 14, atkCd: 0.8, dmg: 7, arc: 1.4 },
+      spiritWolf: { name: 'Spirit wolf', art: 'art/summons/spirit-wolf.svg', headR: 47, ownLook: true, attackAnim: 'thrust', weapon: 'bite', r: 24, vr: 18, turn: 6, accel: 380, face: 6, mass: 1, hp: 25, speed: 92, role: 'skirmish', range: 14, atkCd: 0.8, dmg: 7, arc: 1.4 },
       spiritEagle: { name: 'Spirit eagle', art: 'art/summons/spirit-eagle.svg', headR: 56, ownLook: true, pass: true, r: 16, vr: 22, turn: 6, accel: 400, face: 6, mass: 0.6, hp: 20, speed: 120, role: 'melee', range: 0, atkCd: 999, dmg: 0 },
       spiritBeaver: { name: 'Spirit beaver', art: 'art/summons/spirit-beaver.svg', headR: 51, ownLook: true, r: 20, vr: 20, turn: 5, accel: 300, face: 5, mass: 1, hp: 20, speed: 60, role: 'melee', range: 0, atkCd: 999, dmg: 6 },
     },
@@ -261,14 +263,14 @@ Object.assign(HEROES2, {
     fun: 'The frogs in the dungeon all used to be something. Do not ask them what.',
     stats: { hp: 68, speed: 64, r: 30, vr: 22, turn: 4.5, accel: 240, face: 4.6, mass: 1, range: 230, keep: 180, atkCd: 1.2, dmg: 10 },
     style: { hand: 'arm-l', glow: '#B07BE0' },
-    attack: { name: 'Hex bolt', anim: 'cast', desc: 'Three hexes in quick succession, each a different witch\'s sign, curving after the target.' },
-    summons: { cauldron: { name: 'Cauldron', art: 'art/summons/cauldron.svg', headR: 61, ownLook: true, upright: true, r: 22, vr: 24, turn: 0, accel: 0, face: 0, mass: 60, hp: 30, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 } }, // round 13: Cursed Brew's pot
+    attack: { name: 'Hex bolt', anim: 'cast', desc: 'Three hexes in quick succession, each a glowing rune of the old script, curving after the target.' },
+    summons: { cauldron: { name: 'Cauldron', art: 'art/summons/cauldron.svg', headR: 61, ownLook: true, r: 22, vr: 24, turn: 0, accel: 0, face: 0, mass: 60, hp: 30, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 0 } }, // round 13: Cursed Brew's pot
     abilities: [
       { id: 'frogHex', name: 'Hex', cd: 12, tags: 's', glyph: 'skull', desc: "A hex that turns an enemy into a frog: it can't attack, takes 50% more, and hops about wherever it likes.",
         tiers: ['A frog for 2s.', 'For 3s.', 'The hex jumps on to a second enemy.'] },
       { id: 'cursedBrew', name: 'Cursed Brew', cd: 13, tags: 's', glyph: 'vial', desc: 'Drops a heavy bubbling cauldron on the enemies: it lands with a blow that throws them back, then stands (60 health) while its fumes curse whatever breathes them.',
         tiers: ['Cursed fumes for 6s.', 'Wider fumes.', 'Enemies that die in them burst, cursing those near.'] },
-      { id: 'broomRide', name: 'Broom Ride', cd: 11, tags: 'ds', glyph: 'dash', desc: 'Hops on the broom and flies high over the fight, circling the enemies and dropping hex bombs on them; nothing can pick her out while she flies.',
+      { id: 'broomRide', name: 'Broom Ride', cd: 11, tags: 'ds', glyph: 'dash', desc: 'Hops on the broom and flies high over the fight, circling the enemies and dropping hex bombs on them; up there only shots can reach her.',
         tiers: ['2.5s in the air.', 'More bombs.', '3.5s in the air.'] },
     ],
     trait: { id: 'crone', name: 'Crone', desc: 'Cursed enemies take 40% more from her.' },

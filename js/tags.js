@@ -31,6 +31,7 @@ export const TAG_INFO = {
   beast: { name: 'Beast', desc: 'An animal.' },
   slime: { name: 'Slime', desc: 'A blob of ooze that moves in hops.' },
   flier: { name: 'Flier', desc: 'Flies.' },
+  burrower: { name: 'Burrower', desc: 'At home under the ground: it digs about down there (buried, it can still move).' }, // round 19 (lane caster19: Bury)
   metal: { name: 'Metal', desc: 'Made of metal: lightning and water get into it.' },
   demon: { name: 'Demon', desc: 'A fiend from the pit.' },
   holy: { name: 'Holy', desc: 'A thing of the light.' },
@@ -70,6 +71,7 @@ export const KIND_TAGS = {
     'spiderHunter', 'spiderMomma', 'spiderFrost', 'spiderFire', 'scarab', 'scarabGold', 'cobra', 'ratPlague', 'ratKing', 'mouse', 'dynamouse',
     'alpha', 'sandSerpent', 'leechBlood', 'leechBrain', 'werewolfBeast', 'spiritBear', 'spiritWolf', 'spiritEagle', 'spiritBeaver', 'sandWurm'],
   slime: ['greatOoze', 'oozeHalf'],
+  burrower: ['scarab', 'scarabGold', 'sandSerpent', 'drillBot', 'sandWurm'], // round 19 (lane caster19): what lives under the floor (families.js burrowTick, the Sand Wurm)
   flier: ['bat', 'cinderBat', 'wisp', 'ghost', 'banshee', 'cherub', 'angel', 'seraph', 'angelFallen', 'spiritEagle', 'medDrone', 'repairDrone', 'welderDrone',
     'bee', 'wasp', 'hornet', 'beeBronze', 'beeSteel', 'waspBronze', 'waspSteel', 'hornetBronze', 'hornetSteel',
     'spiritPoison', 'spiritHaste', 'spiritShock', 'spiritFrost', 'spiritFire', 'spiritHeal', 'spiritWard', 'griffon', 'valkyrie', 'gildedSeraph'],
@@ -116,8 +118,8 @@ export function tagRes(u, type) {
 // mouth: done with the mouth (spoken, sung, shouted, whistled, a kiss, a breath, a bite): Silenced stops it.
 // sound: it works by being heard (for Deaf, not built yet). magic / physical: what its hits are (isMagicHit).
 export const ABILITY_TAGS = {
-  mouth: ['holdTheLine', 'warSong', 'lullaby', 'rallyCry', 'oldTales', 'broadside', 'ramCharge', 'sweetheart'],
-  sound: ['holdTheLine', 'warSong', 'lullaby', 'encore', 'rallyCry', 'oldTales', 'broadside', 'ramCharge', 'thunderclap'],
+  mouth: ['holdTheLine', 'warSong', 'lullaby', 'rallyCry', 'broadside', 'ramCharge', 'sweetheart'], // (round 19: Old Tales is Sheaves now, not spoken)
+  sound: ['holdTheLine', 'warSong', 'lullaby', 'encore', 'rallyCry', 'broadside', 'ramCharge', 'thunderclap'],
   magic: ['consecrate', 'mend', 'sanctuary', 'smite', 'fireball', 'flameWall', 'inferno', 'iceShard', 'frostNova', 'iceWall',
     'chainLightning', 'thunderclap', 'stormCloud', 'warSong', 'lullaby', 'encore', 'entangle', 'rejuvenate', 'callWolf',
     'raiseDead', 'lifeDrain', 'boneSpear', 'healTotem', 'spiritLink', 'rainDance', 'frogHex', 'cursedBrew', 'broomRide',
@@ -211,7 +213,7 @@ export const MAGIC_SHOTS = new Set(['bolt', 'fireball', 'frostbolt', 'holy', 'so
   'kiss', 'kissTo', 'kissBack', 'hexbolt', 'glimmer', 'eyeBolt', 'zeus', 'uncharm', 'spark', 'sleepy', 'shadowBolt', 'radiance',
   'heartstring', 'heartbreak', 'heartbreakCast', 'fear', 'confuse', 'charm', 'clockHand', 'loveArrow']);
 export const MAGIC_ZONES = new Set(['holy', 'soul', 'lightning', 'radiance', 'spirit', 'curse', 'hex']);
-export const EDGE_WEAPON = { great: 'sharp', blade: 'sharp', thrust: 'sharp', twin: 'sharp', fork: 'sharp', scythe: 'sharp', claw: 'sharp', bite: 'sharp', heavy: 'blunt', palm: 'blunt' };
+export const EDGE_WEAPON = { great: 'sharp', blade: 'sharp', thrust: 'sharp', twin: 'sharp', fork: 'sharp', scythe: 'sharp', claw: 'sharp', bite: 'sharp', heavy: 'blunt', palm: 'blunt', spade: 'blunt' }; // (round 19: the Digger's spade, the flat of it)
 export const EDGE_KINDS = {
   sharp: ['knight', 'rogue', 'twinfang', 'wildmane', 'granny', 'cultist', 'huntress', 'ninja', 'marksman', 'pirate', 'wolf', 'mobDagger', 'mobAxe', 'mobPitchfork'],
   blunt: ['paladin', 'tower', 'berserker', 'slinger', 'minion', 'warlockImp', 'golem', 'gildedGolem', 'ogre', 'troll', 'rockTroll', 'brute', 'rattlerMace',

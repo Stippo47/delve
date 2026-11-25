@@ -33,9 +33,12 @@
 <clipPath id="c27"><use href="#s2"/><use href="#s4"/><use href="#s8"/><use href="#s9"/><use href="#s13"/><use href="#s15"/><use href="#s18"/><use href="#s21"/><use href="#s24"/></clipPath>
 </defs>
 <g id="sprite" filter="url(#outline)">
-<g id="arm-l" data-pivot="46 108">
+<!-- Round 19 (lane caster19, Broom Ride: "Remove the broom from her hand when flying"): the broom is its own part riding her left fist (parts.js hides it while she flies on it). -->
+<g id="arm-l-broom" data-pivot="46 108">
 <use href="#s2" fill="url(#g1)"/><use href="#s2" fill="url(#sR)"/>
 <use href="#s4" fill="url(#g3)"/><g clip-path="url(#c5)"><g transform="translate(56.0 160.0) rotate(-21.99)"><rect x="-12" y="4" width="24" height="6" fill="#A8333A"/><path d="M -4 14 L -8 40 L -5 40 L -1 14 Z M 5 14 L 7 40 L 10 40 L 8 14 Z" fill="#9C7426" opacity="0.5"/></g></g><use href="#s4" fill="url(#sR)"/>
+</g>
+<g id="arm-l" data-pivot="46 108">
 <g clip-path="url(#c6)"><rect x="38.4" y="131.2" width="20" height="25" rx="8" transform="rotate(-22.0 48.4 141.2)" fill="#2B2230" opacity="0.28"/></g><rect x="38.4" y="128.7" width="20" height="25" rx="8" transform="rotate(-22.0 48.4 141.2)" fill="url(#gHand)"/><rect x="38.4" y="128.7" width="20" height="25" rx="8" transform="rotate(-22.0 48.4 141.2)" fill="url(#gUnder)"/>
 </g>
 <g id="body">

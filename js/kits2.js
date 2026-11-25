@@ -23,6 +23,8 @@ const after = (u, t, f) => { u.later = [...(u.later || []).filter((l) => !l.done
 const timer = (u, id, t, tick, end) => { const k = u.k2 || (u.k2 = []); const old = k.find((x) => x.id === id); if (old) { old.t = t; old.tick = tick; old.end = end; return old; } const n = { id, t, tick, end }; k.push(n); return n; };
 const inReach = (u, t, extra = 0) => t && alive(t) && dist(u.x, u.y, t.x, t.y) - u.r - t.r <= (u.def.range || 20) + extra;
 const inFront = (u, e, arc) => angleDiff(ang(u, e), u.facing) < arc / 2;
+// the Digger's plain swing of the spade (no ability's, no shot's, no splash's): round 19, his attack's hooks
+const spadeBlow = (o) => !!o && !o.dot && !o.proc && !o.ab && !o.pab && !o.shot && !o.blast && !o.redirected && !o.clod;
 const BUILDS = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse', 'entangle', 'charm', 'confuse', 'sleepy', 'bleed', 'fear', 'shackle'];
 // a melee blow drawn as a weapon arc (fxkit turns the 'swing' telegraph into the weapon's arc; aoe: a slam on the floor)
 const swingMark = (w, u, R, arc, aoe) => w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: R, a: u.facing, arc, t: 0.16, max: 0.16, color: '#FFFFFF', src: u, aoe });
@@ -115,17 +117,36 @@ export function whirl(w, e, amt, src) {
 // round 15 (lane N): the shared pieces, for kits3.js (the six newer heroes are built from the same parts)
 export { k2, after, timer, onUnit, offUnit, hookOf, isOn, flung, shove, interrupt, foeWinding, haste, atObstacle, swingMark, inFront, handAt, lob };
 // round 15 (lane E): and the statuses' own, for the Book's previews (preview-sim.js)
-export { dirty, targeted, tracked, trapped, spin, ward, weaken };
+export { dirty, dirtOff, targeted, tracked, trapped, spin, ward, weaken };
 const k01h = (v) => Math.max(0, Math.min(1, v));
 // DIRTY (the Digger: "Rub some dirt in it"): a coat of dirt. The next blow that would land is soaked up by it, and that
 // is the end of it; until then he attacks 30% slower, and fire and poison can't take on him (both are washed off now).
 // (statuses.js DIRTY)
-function dirty(w, a, dur = DIRTY.dur) {
+// Round 19 (lane caster19): one status for either side (Dirt Fling, Bury and his trait all put on this one). `by`, the one
+// who threw it: on a foe of `by` it is the foe's dirt (statuses.js DIRTY: its helps washed off, slower blows, and the
+// Digger's spade lands double on it and knocks it off: TRAITS2.dirtIn's dealt). Drawn the one way on anyone: a brown wash
+// (its 'dirty' buff) and a little cloud of dust going round it (fx2 'dirtyOn').
+const HELPS = (b) => b.id !== 'dirty' && !b.potion && ((b.dealt || 1) > 1 || (b.atkSpeed || 1) > 1 || (b.move || 1) > 1 || (b.taken != null && b.taken < 1) || b.border || b.statusImmune || b.lifesteal || b.frontBlock);
+function dirtOff(w, u, knocked) {
+  offUnit(u, 'dirty'); u.buffs = u.buffs.filter((b) => b.id !== 'dirty');
+  if (knocked) { puff(w, u.x, u.y, '#9C7650', 12, 120, 6, 0.5); k2(w, { draw: 'dirtOff', x: u.x, y: u.y, r: u.vr, max: 0.55 }); }
+}
+function dirty(w, a, dur, by) {
   if (!alive(a)) return;
-  for (const k of DIRTY.immune) a.st[k] = 0; a.sickT = 0;
-  onUnit(w, a, 'dirty', dur, { immune: DIRTY.immune, atkSpeed: () => DIRTY.atkSpeed,
-    evade(w2, u2, s2, amt, o) { if (o.dot) return false; offUnit(u2, 'dirty'); puff(w2, u2.x, u2.y, '#9C7650', 12, 110, 6, 0.5); textU(w2, u2.x, u2.y, u2.r + 6, 'dirt', '#C9A47A', 0.9); return true; } });
-  k2(w, { draw: 'dirtyOn', unit: a, x: a.x, y: a.y, r: a.vr, max: dur });
+  const foe = !!by && sideOfU(by) !== sideOfU(a), had = isOn(w, a, 'dirty');
+  dur = dur || (foe ? DIRTY.foeDur : DIRTY.dur);
+  if (foe) {
+    const r = resTo(a, 'dirty'); if (r <= 0) return; dur *= r;
+    const gone = a.buffs.filter(HELPS); if (gone.length) { a.buffs = a.buffs.filter((b) => !HELPS(b)); offUnit(a, 'warded'); }
+    onUnit(w, a, 'dirty', dur, { foe: true, atkSpeed: () => DIRTY.atkSpeed }, (u2) => { u2.buffs = u2.buffs.filter((b) => b.id !== 'dirty'); });
+  } else {
+    for (const k of DIRTY.immune) a.st[k] = 0; a.sickT = 0;
+    onUnit(w, a, 'dirty', dur, { immune: DIRTY.immune, atkSpeed: () => DIRTY.atkSpeed,
+      evade(w2, u2, s2, amt, o) { if (o.dot) return false; dirtOff(w2, u2, true); textU(w2, u2.x, u2.y, u2.r + 6, 'dirt', '#C9A47A', 0.9); return true; } },
+      (u2) => { u2.buffs = u2.buffs.filter((b) => b.id !== 'dirty'); });
+  }
+  a.buffs = a.buffs.filter((b) => b.id !== 'dirty'); addBuff(a, { id: 'dirty', dur, wash: DIRTY.wash });
+  if (!had) k2(w, { draw: 'dirtyOn', unit: a, x: a.x, y: a.y, r: a.vr, max: 1e9 }); // (it fades when the dirt is gone: fx2 ended)
 }
 // TARGETED (the Marksman's Aimed Shot, the Pirate's Point Blank): a crosshair on it. It takes 20% more, its dashes,
 // leaps and charges go 40% as far, and the Marksman's bullets go on through it. (statuses.js TARGETED)
@@ -825,7 +846,8 @@ export const ABILITIES2 = {
     score(w, u) {
       const f = foesNear(w, u, u.x, u.y, 140).filter((e) => inFront(u, e, 1.5)).length;
       const a = allies(w, u).some((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 150 && ((o.st.burn || 0) > 20 || (o.st.poison || 0) > 20 || o.sickT > 0));
-      return a ? 0.85 : f ? 0.6 : 0;
+      const helped = foesNear(w, u, u.x, u.y, 140).some((e) => inFront(u, e, 1.5) && e.buffs.some(HELPS)); // (round 19: dirt washes a foe's helps off)
+      return a ? 0.85 : helped ? 0.75 : f ? 0.6 : 0;
     },
     use(w, u, t, tier) {
       const al = allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 150 && ((o.st.burn || 0) > 20 || (o.st.poison || 0) > 20 || o.sickT > 0))[0];
@@ -835,9 +857,10 @@ export const ABILITIES2 = {
         k2(w, { draw: 'clods', x: u.x, y: u.y, a: u.facing, arc: 1.3, r: 150, max: 0.55, ab: 'dirtFling' });
         for (const e of foesNear(w, u, u.x, u.y, 150)) if (inFront(u, e, 1.5)) {
           addBuff(e, { id: 'dirt', dur: 2.5, blind: true });
-          hurt(w, e, dmgOf(u, 0.8), u, { noDodge: true, knock: 60, stagger: tier >= 2 ? 40 : 0, kAngle: ang(u, e) });
+          hurt(w, e, dmgOf(u, 0.8), u, { noDodge: true, knock: 60, stagger: tier >= 2 ? 40 : 0, kAngle: ang(u, e), ab: 'dirtFling' });
+          if (alive(e)) dirty(w, e, 0, u); // round 19: dirtied (its helps washed off; his spade lands double on it)
         }
-        for (const o of allies(w, u)) if (!o.summon && dist(u.x, u.y, o.x, o.y) < 160 && inFront(u, o, 1.6)) dirty(w, o);
+        for (const o of allies(w, u)) if (!o.summon && dist(u.x, u.y, o.x, o.y) < 160 && inFront(u, o, 1.6)) dirty(w, o, 0, u);
       };
       fling();
       if (tier >= 3) { after(u, 0.3, fling); after(u, 0.6, fling); }
@@ -876,13 +899,19 @@ export const ABILITIES2 = {
         for (const e of foesNear(w, u, cx, cy, R)) {
           hurt(w, e, dmgOf(u, 1.6), u, { knock: 0, heavy: true, noDodge: true, ab: 'spadeBat' });
           if (!alive(e)) continue;
-          if (e.def.boss || e.fixed || e.def.brain) { stun(w, e, 0.8); continue; }
-          const d = tier >= 2 ? 2.2 : 1.5; interrupt(w, e);
-          e.hidden = true; e.ethereal = true; e.buried = true; stun(w, e, d); e.target = null;
+          // (round 19: anything with a brain of its own is buried too now; only bosses, things fixed in place and the
+          // parts of a bigger body just reel)
+          if (e.def.boss || e.fixed || e.partOf || e.linkTo || e.def.segment || e.bodies) { stun(w, e, 0.8); continue; }
+          // Round 19 (the designer: "Should not be able to move when buried unless they are native to the underground like
+          // a sand worm"): held where it went down; a burrower (tags.js) digs about under there as it likes, its mound
+          // going with it. "Should be dirty when they get back up": it comes up Dirty.
+          const d = tier >= 2 ? 2.2 : 1.5, digs = hasTag(e, 'burrower'), x0 = e.x, y0 = e.y; interrupt(w, e);
+          e.hidden = true; e.ethereal = true; e.buried = true; if (!digs) stun(w, e, d); e.target = null;
           k2(w, { draw: 'buried', x: e.x, y: e.y, unit: e, r: e.r, max: d + 0.1, ab: 'spadeBat' });
-          onUnit(w, e, 'buried', d, { tick(w2, u2) { u2.vx = u2.vy = u2.kx = u2.ky = 0; } }, (u2) => {
+          onUnit(w, e, 'buried', d, { tick(w2, u2) { if (digs) return; u2.x = x0; u2.y = y0; u2.vx = u2.vy = u2.kx = u2.ky = u2.dvx = u2.dvy = 0; u2.spd = 0; } }, (u2) => {
             u2.hidden = false; u2.ethereal = false; u2.buried = false; puff(w, u2.x, u2.y, '#9C7650', 10, 100, 6, 0.45);
-            k2(w, { draw: 'erupt', x: u2.x, y: u2.y, r: 40, max: 0.5 });
+            k2(w, { draw: 'erupt', x: u2.x, y: u2.y, r: 40, max: 0.5 }); k2(w, { draw: 'mound', x: u2.x, y: u2.y, r: u2.r * 0.9, max: 3.2, open: true });
+            if (alive(u2)) dirty(w, u2, 0, u);
             if (tierOf(u, 'spadeBat') >= 3) addStatus(w, u2, 'stagger', 60, u);
           });
         }
@@ -898,7 +927,10 @@ export const ABILITIES2 = {
       cast(u, 'throw', 0.4);
       list.forEach((a, i) => after(u, 0.12 + i * 0.15, () => {
         if (!alive(a)) return;
-        if (a === u) { heal(w, u, u.maxHp * 0.2, u); k2(w, { draw: 'crumbs', x: u.x, y: u.y, unit: u, max: 0.6 }); return; }
+        // (round 19: "If he eats 1 too he needs to throw it up and down": his own loaf goes up over his head and drops back
+        // into his hands, and he eats it then)
+        if (a === u) { k2(w, { draw: 'breadUp', unit: u, x: u.x, y: u.y, max: 0.62 }); after(u, 0.6, () => { if (!alive(u)) return; heal(w, u, u.maxHp * 0.2, u); k2(w, { draw: 'crumbs', x: u.x, y: u.y, unit: u, max: 0.6, ab: 'breadToss' });
+          if (tierOf(u, 'breadToss') >= 3) { u.regenT = 4; u.regenRate = u.maxHp * 0.1 / 4; u.regenSrc = u; } }); return; }
         lob(w, u, a.x, a.y, 'bread', null, () => { if (!alive(a)) return; heal(w, a, a.maxHp * 0.2, u); k2(w, { draw: 'crumbs', x: a.x, y: a.y, unit: a, max: 0.6, ab: 'breadToss' });
           if (tierOf(u, 'breadToss') >= 3) { a.regenT = 4; a.regenRate = a.maxHp * 0.1 / 4; a.regenSrc = u; } });
       }));
@@ -906,6 +938,11 @@ export const ABILITIES2 = {
     show: { ally: true },
   },
   // Harvest (round 13: "Dashes to ally when he does it."): he hurries to the friend most beset and sweeps round his feet there
+  // Round 19 (lane caster19, the designer: "Looks like he jumps. Not dash. Should do a circular sweep like the granny reaper.
+  // Seems like the landing does damage but the sweep [doesn't]. Shows a random star on him as he jumps"): he runs there
+  // along the floor (no hop, dust off his heels, speed lines), then turns a full circle with the sickle held out, the Granny
+  // Reaper's sweep (fxkit's reap crescent riding his blade), and each one is cut as the blade passes it, not at once. No
+  // cast flash (fx2 SIG2.harvest).
   harvest: {
     score(w, u) {
       const n = foesNear(w, u, u.x, u.y, u.r + 70).length;
@@ -914,43 +951,61 @@ export const ABILITIES2 = {
     },
     use(w, u, t, tier) {
       const sweep = () => {
-        const r = u.r + 72; setAnim(u, 'spin', 0.4); u.spin = { t0: w.time, dur: 0.4, dir: 1 };
-        fx(w, { type: 'ring', x: u.x, y: u.y, r, color: '#EDE4CD', max: 0.4, a: u.facing, unit: u });
+        const r = u.r + 60, T = 0.45, a0 = u.facing - 1.1, hit = new Set(), t0 = w.time; setAnim(u, 'spin', T); u.spin = { t0: w.time, dur: T, dir: 1 };
+        fx(w, { type: 'ring', x: u.x, y: u.y, r, color: '#EDE4CD', max: T, a: u.facing, unit: u, ab: 'harvest', tier });
         let n = 0;
-        for (const e of foesNear(w, u, u.x, u.y, r)) { n++; hurt(w, e, dmgOf(u, 1.2), u, { knock: 60, kAngle: ang(u, e), stagger: tier >= 2 ? 40 : 0, ab: 'harvest' }); addBuff(e, { id: 'hamstrung', dur: 3, move: 0.5 }); }
-        if (tier >= 3 && n) heal(w, u, u.maxHp * 0.04 * n, u);
+        const cut = (all) => { const k = Math.min(1, (w.time - t0) / T), turn = TAU * k * k * (3 - 2 * k);
+          for (const e of foesNear(w, u, u.x, u.y, r)) { if (hit.has(e)) continue; const rel = ((angleTo(u.x, u.y, e.x, e.y) - a0) % TAU + TAU) % TAU; if (!all && rel > turn) continue;
+            hit.add(e); n++; hurt(w, e, dmgOf(u, 1.2), u, { knock: 60, kAngle: ang(u, e) + 0.9, stagger: tier >= 2 ? 40 : 0, ab: 'harvest' }); if (alive(e)) addBuff(e, { id: 'hamstrung', dur: 3, move: 0.5 });
+            if (tier >= 3) heal(w, u, u.maxHp * 0.04, u); } };
+        timer(u, 'harvestCut', T, () => cut(false), () => cut(true));
       };
       const a = allies(w, u).filter((o) => !o.summon && dist(u.x, u.y, o.x, o.y) < 380 && dist(u.x, u.y, o.x, o.y) > 80).sort((p, q) => foesNear(w, u, q.x, q.y, 90).length - foesNear(w, u, p.x, p.y, 90).length || hpRatio(p) - hpRatio(q))[0];
       if (!a || !foesNear(w, u, a.x, a.y, 90).length) { sweep(); return; }
       const f = foesNear(w, u, a.x, a.y, 110)[0], b = f ? angleTo(a.x, a.y, f.x, f.y) : angleTo(a.x, a.y, u.x, u.y);
       const x1 = clamp(a.x + Math.cos(b) * (a.r + u.r * 0.6), u.r, w.W - u.r), y1 = clamp(a.y + Math.sin(b) * (a.r + u.r * 0.6), u.r, w.H - u.r);
-      const T = clamp(dist(u.x, u.y, x1, y1) / 650, 0.12, 0.42); u.facing = angleTo(u.x, u.y, x1, y1);
-      k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a: u.facing, max: T + 0.3, col: '#EDE4CD' });
-      u.act = { type: 'leap', t: T, max: T, x0: u.x, y0: u.y, x1, y1, land: sweep }; u.invulnT = Math.max(u.invulnT, T);
+      const x0 = u.x, y0 = u.y, D = dist(x0, y0, x1, y1), T = clamp(D / 560, 0.14, 0.5), dir = angleTo(x0, y0, x1, y1); u.facing = dir;
+      k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a: dir, max: T + 0.25, col: '#EDE4CD' });
+      let s0 = 0; u.act = { type: 'ride', t: T + 0.05, max: T + 0.05 };
+      timer(u, 'harvestDash', T, (dt) => { s0 = Math.min(1, s0 + dt / T); const k = 1 - (1 - s0) * (1 - s0); // (quick off the mark, slowing into the sweep)
+        u.x = x0 + (x1 - x0) * k; u.y = y0 + (y1 - y0) * k; u.vx = u.vy = u.kx = u.ky = u.dvx = u.dvy = 0; u.facing = dir; u.mvA = dir; u.spd = D / T; u.hop = 0;
+        if (rand() < 0.6) w.particles.push({ x: u.x - Math.cos(dir) * u.r + rrange(-6, 6), y: u.y - Math.sin(dir) * u.r + rrange(-6, 6), vx: -Math.cos(dir) * 40, vy: -Math.sin(dir) * 40, life: 0.35, max: 0.35, size: 6, color: 'rgba(214,200,176,0.75)' }); },
+        () => { if (u.act && u.act.type === 'ride') u.act = null; u.spd = 0; if (f && alive(f)) u.facing = ang(u, f); sweep(); });
     },
     show: { ally: true, mob: 'ally' },
   },
-  // Old Tales (round 13: "What does it do? Doesnt look the best"): a story book opens over him; each friend listening
-  // has a gold clock over its head whose hand spins forward, and the seconds its abilities gain rise off it
+  // Sheaves, in Old Tales' slot (round 19, lane caster19, the designer: "I like the book. Doesn't look right here. Change
+  // ability. He throws out 4 planted hay bunches random. Low hp. If an ally breaks it, it heals them; enemies that break it
+  // become hayed (same effect the pitchfork farmer does). When a party member hits someone who is hayed their cooldowns come
+  // back faster. Like 15% boost to all non-full abilities."); id kept. The story book's drawing is kept in fx2.js (storyBook,
+  // tellClock) for another use. A sheaf is a summon on his side (SHEAF below): the enemy take it for one of the party and
+  // strike it (a blow breaks it, and the one that broke it is hayed); a friend breaks it by stepping on it (healed); hurt
+  // friends with no enemy on them go and fetch one, as they do the Chef's plates.
   oldTales: {
-    // (round 16 fixes: by the seconds it buys friends listening, counting in full an ability a friend would use now if it
-    // were ready (kits.js wantedWait) and the rest at a quarter: worth at least one story's worth; it went when one
-    // friend had two abilities over 4 s, wanted or not)
     score(w, u, t, tier) {
-      const s2 = tier >= 2 ? 6 : 4, g = allies(w, u).filter((a) => a.kit && !a.summon && dist(u.x, u.y, a.x, a.y) < 220).reduce((n, a) => n + wantedWait(w, a, s2), 0);
-      return g >= s2 ? Math.min(0.9, 0.45 + 0.03 * g) : 0;
+      if (mine(w, u, 'sheaf').length >= 2) return 0;
+      const f = opponents(w, u).filter((e) => dist(u.x, u.y, e.x, e.y) < 300).length, hurtF = [u, ...allies(w, u)].filter((a) => !a.summon && hpRatio(a) < 0.8).length;
+      return f >= 1 ? Math.min(0.85, 0.4 + 0.1 * f + 0.1 * hurtF) : 0;
     },
     use(w, u, t, tier) {
-      cast(u, 'cast', 0.9); const s = tier >= 2 ? 6 : 4;
-      k2(w, { draw: 'storyBook', unit: u, x: u.x, y: u.y, r: u.vr, max: 1.6 });
-      for (const a of friendsNear(w, u, u.x, u.y, 230)) {
-        if (a === u) continue;
-        if (a.kit) for (const k in a.kit.cd) a.kit.cd[k] = Math.max(0, a.kit.cd[k] - s);
-        if (tier >= 3) heal(w, a, a.maxHp * 0.08, u);
-        k2(w, { draw: 'tellClock', unit: a, x: a.x, y: a.y, r: a.vr, max: 1.3, secs: s });
+      cast(u, 'throw', 0.5);
+      const foes = opponents(w, u).filter((e) => dist(u.x, u.y, e.x, e.y) < 360);
+      let cx = u.x, cy = u.y; if (foes.length) { cx = u.x * 0.5; cy = u.y * 0.5; for (const e of foes) { cx += e.x * 0.5 / foes.length; cy += e.y * 0.5 / foes.length; } } // (between him and the fight)
+      const spots = [];
+      for (let i = 0; i < 40 && spots.length < SHEAF.n; i++) {
+        const b = rand() * TAU, d = rrange(40, 150), x = clamp(cx + Math.cos(b) * d, 40, w.W - 40), y = clamp(cy + Math.sin(b) * d, 40, w.H - 40);
+        if (spots.some((p) => dist(p.x, p.y, x, y) < 62) || w.walls.some((r) => circleRect(x, y, 18, r)) || w.pillars.some((p) => dist(x, y, p.x, p.y) < p.r + 18) || w.units.some((o) => alive(o) && dist(o.x, o.y, x, y) < o.r + 16)) continue;
+        spots.push({ x, y });
       }
+      spots.forEach((p, i) => after(u, 0.08 + i * 0.09, () => { if (!alive(u)) return;
+        lob(w, u, p.x, p.y, 'sheafFly', null, () => {
+          const s2 = summon(w, u, 'sheaf', p.x, p.y, { life: SHEAF.life, hp: SHEAF.hp }); s2.fixed = true; s2.passUntil = 1e9; s2.tier = tier; s2.bornT = w.time;
+          onUnit(w, s2, 'sheafSkin', 999, { taken(w2, u2, src, amt, o) { if (src && src.team !== u2.team && !o.dot && alive(src) && !src.summon) u2.breaker = src; return amt; } });
+          puff(w, p.x, p.y, '#E8C860', 6, 70, 4, 0.35);
+        });
+      }));
     },
-    show: { ally: true },
+    show: { far: true },
   },
   // ----- Alchemist
   // Brew Pools, in Acid Flask's slot (round 13: "Bad. Is just the plague doctors. Throws 2 lingering pools of liquid in a
@@ -969,21 +1024,27 @@ export const ABILITIES2 = {
     show: { far: true },
   },
   // Elixir (round 13: "Gives 1 of 3 buffs. Haste/rage, Cleanse and heal, Or swiftness and temporary shield. (Like 30
-  // negate)... Make look better"): she picks the one the friend needs: cleansed and healed when it is hurt or afflicted,
+  // negate)... Make look better"): they pick the one the friend needs: cleansed and healed when it is hurt or afflicted,
   // Warded and swift when it is being hit, hasted and enraged when it is fighting fine
+  // Round 19 (lane caster19, the designer: "Lvl 2 lets them throw 2 different potions each on their own roll for who and
+  // what kind"): II throws a second tube at once, its friend and its brew rolled on their own (weighted by need), never the
+  // same brew as the first; III's brews are the strong ones and splash every friend near. (Was: II stronger brews, III
+  // the splash.)
   elixir: {
     score: (w, u) => { const a = elixirFor(w, u); return a ? 0.75 : 0; },
     use(w, u, t, tier) {
       const a = elixirFor(w, u) || u; cast(u, 'throw', 0.4);
-      const kind = elixirKind(w, u, a);
-      const dose = (o) => {
-        if (kind === 'mend') { cleanse(o); heal(w, o, o.maxHp * (tier >= 2 ? 0.22 : 0.14), u); }
-        else if (kind === 'ward') { ward(w, o, tier >= 2 ? 45 : 30, 6); addBuff(o, { id: 'swift', dur: 5, move: 1.35 }); }
-        else { haste(w, o, 5, 1.3); rage(w, o, 5, tier >= 2 ? 1.35 : 1.25); }
-        k2(w, { draw: 'elixirSplash', x: o.x, y: o.y, unit: o, r: o.vr, kind, max: 0.9, ab: 'elixir' });
+      const strong = tier >= 3, kind = elixirKind(w, u, a);
+      const dose = (o, k) => {
+        if (k === 'mend') { cleanse(o); heal(w, o, o.maxHp * (strong ? 0.22 : 0.14), u); }
+        else if (k === 'ward') { ward(w, o, strong ? 45 : 30, 6); addBuff(o, { id: 'swift', dur: 5, move: 1.35 }); }
+        else { haste(w, o, 5, 1.3); rage(w, o, 5, strong ? 1.35 : 1.25); }
+        k2(w, { draw: 'elixirSplash', x: o.x, y: o.y, unit: o, r: o.vr, kind: k, max: 0.9, ab: 'elixir' });
       };
-      const go = () => { if (!alive(a)) return; dose(a); if (tier >= 3) for (const o of friendsNear(w, u, a.x, a.y, 110)) if (o !== a && !o.summon) dose(o); };
-      if (a === u) go(); else lob(w, u, a.x, a.y, 'flask', ELIXIR_COL[kind], go);
+      const go = (o, k) => () => { if (!alive(o)) return; dose(o, k); if (strong) for (const f of friendsNear(w, u, o.x, o.y, 110)) if (f !== o && !f.summon) dose(f, k); };
+      const toss = (o, k, delay) => after(u, delay, () => { if (!alive(u)) return; if (o === u) { k2(w, { draw: 'tubeSip', unit: u, x: u.x, y: u.y, kind: k, max: 0.45 }); after(u, 0.4, go(o, k)); } else lob(w, u, o.x, o.y, 'flask', ELIXIR_COL[k], go(o, k)); });
+      toss(a, kind, 0);
+      if (tier >= 2) { const b = elixirRoll(w, u) || a, k2nd = elixirKind(w, u, b, kind); toss(b, k2nd, 0.16); }
     },
     show: { ally: true },
   },
@@ -991,20 +1052,32 @@ export const ABILITIES2 = {
   // rapid melee attacks. Drains hp quickly when in form but are immune to damage and status effect, takes less knockback.
   // Will leave form when they lose 33% of their max hp over 8 seconds. Attacks deal ANY status effect each hit at max
   // level. Also gets a dash when in this form."); id kept
+  // Round 19 (lane caster19, the designer: "Should not hold a flask. It will be alternating punch attacks. Not claws. High
+  // knock back. They should have fast movement speed. Don't like visual. They should get a new altered sprite based off
+  // their base sprite. Purple skin. ... Should be shown drinking a purple tube flask first."): they stop and drink a purple
+  // tube (0.55 s, tipped up to the mouth), then swell into the monster: their own picture with purple skin and big fists
+  // (art/heroes/alchemist-monster.svg), no tube in hand, punching left and right in turn (knock back 320, was 160), moving
+  // 60% faster (was 25%). The rest as it was (8 s, untouchable, burns a third of their health, the lunge).
   bangFlask: {
-    score: (w, u, t) => (!u.kit.monster && hpRatio(u) > 0.5 && t && foesNear(w, u, u.x, u.y, 240).length >= 2 ? 0.65 : 0),
+    score: (w, u, t) => (!u.kit.monster && !(u.kit.drinkUntil > w.time) && hpRatio(u) > 0.5 && t && foesNear(w, u, u.x, u.y, 240).length >= 2 ? 0.65 : 0),
     use(w, u, t, tier) {
-      const human = u.def; setAnim(u, 'ability', 0.6);
-      u.def = { ...human, role: 'melee', range: 26, atkCd: 0.38, dmg: human.dmg * (tier >= 2 ? 1.25 : 1), knock: 160, arc: 1.8, speed: human.speed * 1.25, dashCd: 2.2, attackAnim: 'punch', weapon: 'claw', keep: 0 };
-      const M = u.kit.monster = { human, until: w.time + 8, r: u.r, vr: u.vr, mass: u.mass, hp0: u.maxHp };
-      u.r *= 1.3; u.vr *= 1.35; u.mass *= 3;
-      addBuff(u, { id: 'monster', dur: 8, statusImmune: true, wash: (T) => ['#7FCB3A', 0.28 + 0.08 * Math.sin(T * 9)] });
-      cleanse(u); w.shake = Math.max(w.shake, 5); puff(w, u.x, u.y, '#9BE36B', 16, 140, 7, 0.6);
-      k2(w, { draw: 'monster', unit: u, x: u.x, y: u.y, r: u.vr, max: 8.2 });
-      timer(u, 'monster', 8, (dt) => { u.hp = Math.max(1, u.hp - M.hp0 * 0.33 / 8 * dt); }, () => monsterEnd(w, u));
+      const D = 0.55; u.kit.drinkUntil = w.time + D; u.act = { type: 'ride', t: D, max: D };
+      u._force = { 'arm-r': { r: 0.55, dy: -14 }, 'arm-r-tube': { r: 0.55, dy: -14 } };
+      k2(w, { draw: 'tubeSip', unit: u, x: u.x, y: u.y, kind: 'monster', max: D });
+      after(u, D, () => {
+        u._force = null; if (u.act && u.act.type === 'ride') u.act = null; if (!alive(u)) return;
+        const human = u.def; setAnim(u, 'ability', 0.6);
+        u.def = { ...human, art: MONSTER_ART, role: 'melee', range: 26, atkCd: 0.38, dmg: human.dmg * (tier >= 2 ? 1.25 : 1), knock: 320, arc: 1.8, speed: human.speed * 1.6, dashCd: 2.2, attackAnim: 'punch', weapon: 'fist', keep: 0, style: { ...(human.style || {}), dual: true } };
+        const M = u.kit.monster = { human, until: w.time + 8, r: u.r, vr: u.vr, mass: u.mass, hp0: u.maxHp };
+        u.r *= 1.3; u.vr *= 1.35; u.mass *= 3;
+        addBuff(u, { id: 'monster', dur: 8, statusImmune: true, wash: (T) => ['#9A5CC8', 0.1 + 0.06 * Math.sin(T * 9)] });
+        cleanse(u); w.shake = Math.max(w.shake, 5); puff(w, u.x, u.y, '#B48AE8', 16, 140, 7, 0.6);
+        k2(w, { draw: 'monster', unit: u, x: u.x, y: u.y, r: u.vr, max: 8.2 });
+        timer(u, 'monster', 8, (dt) => { u.hp = Math.max(1, u.hp - M.hp0 * 0.33 / 8 * dt); }, () => monsterEnd(w, u));
+      });
     },
     hook: {
-      evade(w, u, src, amt, o) { if (!u.kit.monster) return false; sparks(w, u.x, u.y, src ? angleTo(u.x, u.y, src.x, src.y) : 0, 3, '#B5DE5E', 0.8); return true; },
+      evade(w, u, src, amt, o) { if (!u.kit.monster) return false; sparks(w, u.x, u.y, src ? angleTo(u.x, u.y, src.x, src.y) : 0, 3, '#D9B6F2', 0.8); return true; },
       taken(w, u, src, amt, o) { return u.kit.monster ? 0 : amt; },
       hit(w, u, t, amt, o) { if (!u.kit.monster || o.dot || o.proc || tierOf(u, 'bangFlask') < 3 || !alive(t)) return; const st = ANY_STATUS[Math.floor(rand() * ANY_STATUS.length)]; addStatus(w, t, st, 22, u); },
     },
@@ -1024,7 +1097,8 @@ export const ABILITIES2 = {
       lob(w, u, x, y, 'totemFly', null, () => {
         const s2 = summon(w, u, 'totem', x, y, { life: tier >= 2 ? 10 : 6, hp: 70 }); s2.fixed = true; s2.tier = tier; s2.R = 115;
         onUnit(w, s2, 'totemSkin', 99, { taken: (w2, u2, src, amt, o) => (o.redirected ? amt : amt * 0.5) });
-        puff(w, x, y, '#A0705A', 10, 100, 5, 0.45); w.shake = Math.max(w.shake, 3);
+        puff(w, x, y, '#A0705A', 10, 100, 5, 0.45); w.shake = Math.max(w.shake, 4);
+        k2(w, { draw: 'totemLand', x, y, r: s2.R, max: 0.7 }); // (round 19: "Should burst where it lands")
         k2(w, { draw: 'totemReach', unit: s2, x, y, r: s2.R, max: tier >= 2 ? 12 : 8 });
       });
     },
@@ -1040,8 +1114,9 @@ export const ABILITIES2 = {
       const group = [u, ...allies(w, u).filter((a) => !a.summon && dist(u.x, u.y, a.x, a.y) < 280).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))].slice(0, n);
       for (const tm of mine(w, u, 'totem')) if (dist(u.x, u.y, tm.x, tm.y) < 320) group.push(tm);
       if (group.length < 2) return;
-      u.kit.link = { group, until: w.time + dur, hp: group.map((a) => a.hp) };
-      k2(w, { draw: 'links', group, x: u.x, y: u.y, max: dur, ab: 'spiritLink' });
+      const f = k2(w, { draw: 'links', group, from: u, x: u.x, y: u.y, max: dur, ab: 'spiritLink', pulses: [] });
+      u.kit.link = { group, until: w.time + dur, hp: group.map((a) => a.hp), f };
+      for (const a of group) if (a !== u) k2(w, { draw: 'linkBind', unit: a, x: a.x, y: a.y, r: a.vr, from: u, max: 0.6 });
       if (tier >= 2) for (const a of group) addBuff(a, { id: 'spiritLink', dur, taken: 0.9 });
     },
     show: { ally: true, hitAlly: true },
@@ -1075,7 +1150,7 @@ export const ABILITIES2 = {
         const dur = tier >= 2 ? 3 : 2;
         shoot(w, u, ang(u, e), { kind: 'hexbolt', speed: 520, r: 8, life: 0.8, dmg: dmgOf(u, 0.4), knock: 0, extra: { home: e, turn: 8, sym: 4, onHit: (w2, p, x) => {
           if (x.def.boss) { addStatus(w2, x, 'curse', 40, u); return; }
-          interrupt(w2, x); x.frogUntil = w2.time + dur; x.hidden = true;
+          interrupt(w2, x); x.frogUntil = w2.time + dur; x.hidden = true; x.shadowK = 0.45; // (round 19: "Probably a smaller shadow": its own shadow, frog sized)
           k2(w2, { draw: 'poof', x: x.x, y: x.y, r: x.vr, col: '#9BE36B', max: 0.5 });
           k2(w2, { draw: 'frog', unit: x, x: x.x, y: x.y, r: x.vr, max: dur, ab: 'frogHex' });
           let hopT = 0;
@@ -1083,7 +1158,7 @@ export const ABILITIES2 = {
             u3.atkT = Math.max(u3.atkT, 0.2); u3.abilT = Math.max(u3.abilT || 0, 0.2); if (u3.act && u3.act.type !== 'slip') u3.act = null;
             addBuff(u3, { id: 'frog', dur: 0.1, move: 0.01 }); hopT -= dt;
             if (hopT <= 0) { hopT = 0.45 + rand() * 0.35; const b = rand() * TAU; shove(u3, b, 260); u3.facing = b; u3.frogHop = w3.time; }
-          } }, (u3) => { u3.frogUntil = 0; u3.hidden = false; puff(w2, u3.x, u3.y, '#9BE36B', 10, 90, 6, 0.45); });
+          } }, (u3) => { u3.frogUntil = 0; u3.hidden = false; u3.shadowK = undefined; puff(w2, u3.x, u3.y, '#9BE36B', 10, 90, 6, 0.45); });
         } } });
       };
       frog(t);
@@ -1101,7 +1176,7 @@ export const ABILITIES2 = {
       lob(w, u, t.x, t.y, 'cauldron', null, (x, y) => {
         const c = summon(w, u, 'cauldron', x, y, { life: 6, hp: 60 }); c.fixed = true; c.R = R;
         u.kit.brew = { x, y, r: R, until: w.time + 6, c };
-        w.shake = Math.max(w.shake, 5); k2(w, { draw: 'gust', x, y, r: 70, max: 0.45 });
+        w.shake = Math.max(w.shake, 6); k2(w, { draw: 'potSlam', x, y, r: 75, max: 0.6 }); // (round 19: "Don't like landing effect")
         for (const e of foesNear(w, u, x, y, 75)) hurt(w, e, dmgOf(u, 1.2), u, { knock: 380, kAngle: angleTo(x, y, e.x, e.y), heavy: true, noDodge: true, curse: 25, ab: 'cursedBrew' });
         k2(w, { draw: 'fumes', unit: c, x, y, r: R, max: 6.2, ab: 'cursedBrew' });
       });
@@ -1117,25 +1192,31 @@ export const ABILITIES2 = {
   },
   // Broom Ride (round 13: "Should fly above everything for a bit. Circling around. Dropping hex bombs below it. Doesnt
   // look like they are ridding it. Not targetable when flying"): up on the broom, high over the fight, circling the
-  // enemies; nothing can pick her out; hex bombs dropped on them below
+  // enemies; hex bombs dropped on them below
+  // Round 19 (lane caster19, the designer: "Don't make her invisible, make sure the broom is under her. Not on the ground.
+  // Better broom visual. Remove the broom from her hand when flying."): she is drawn solid; she is on the flying layer
+  // (tags.js: only shots reach her up there; round 18's ruling) and passes over bodies, but shots can pick her out now.
+  // The broom is drawn under her body at her height (fx2 ART2.witch), and her hand is empty meanwhile (parts.js hides
+  // #arm-l-broom). The bombs fall from her height.
   broomRide: {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 110).length ? 0.85 : foesNear(w, u, u.x, u.y, 300).length >= 3 ? 0.5 : 0),
     use(w, u, t, tier) {
       const T = tier >= 3 ? 3.5 : 2.5, foes = foesNear(w, u, u.x, u.y, 340);
       let cx = u.x, cy = u.y; if (foes.length) { cx = 0; cy = 0; for (const e of foes) { cx += e.x; cy += e.y; } cx /= foes.length; cy /= foes.length; }
       const R = clamp(dist(u.x, u.y, cx, cy), 90, 150); let th = angleTo(cx, cy, u.x, u.y), bombT = 0.25;
-      u.act = { type: 'ride', t: T + 0.2, max: T + 0.2 }; u.ethereal = true; u.kit.broomUntil = w.time + T; u.flyT = T; // (round 17: flying on the broom) setAnim(u, 'ability', 0.4);
+      u.act = { type: 'ride', t: T + 0.2, max: T + 0.2 }; u.kit.broomUntil = w.time + T; u.flyT = T; u.passUntil = w.time + T; // (round 17: flying on the broom)
       k2(w, { draw: 'broom', unit: u, x: u.x, y: u.y, a: u.facing, max: T + 0.1 });
       timer(u, 'broom', T, (dt) => {
-        const k = Math.min(1, (T - (u.kit.broomUntil - w.time)) / 0.3);
+        const k = Math.min(1, (T - (u.kit.broomUntil - w.time)) / 0.3), down = Math.min(1, (u.kit.broomUntil - w.time) / 0.3);
         th += dt * 2.4; const gx = clamp(cx + Math.cos(th) * R, u.r, w.W - u.r), gy = clamp(cy + Math.sin(th) * R, u.r, w.H - u.r), a = angleTo(u.x, u.y, gx, gy), d = dist(u.x, u.y, gx, gy);
         u.x += Math.cos(a) * Math.min(d, 420 * dt); u.y += Math.sin(a) * Math.min(d, 420 * dt); u.facing = a; u.vx = u.vy = u.kx = u.ky = 0;
-        u.hop = 70 * k; bombT -= dt;
+        u.hop = 70 * Math.min(k, down); bombT -= dt; u.flyT = Math.max(u.flyT, 0.05);
         if (bombT <= 0) { bombT = tierOf(u, 'broomRide') >= 2 ? 0.32 : 0.5;
           const e = opponents(w, u).filter((o) => dist(o.x, o.y, u.x, u.y) < 200).sort(() => rand() - 0.5)[0], bx = e ? e.x + rrange(-14, 14) : u.x, by = e ? e.y + rrange(-14, 14) : u.y;
-          const p = lob(w, u, bx, by, 'hexBomb', null, () => { k2(w, { draw: 'hexPop', x: bx, y: by, r: 46, max: 0.45, ab: 'broomRide' }); for (const o of foesNear(w, u, bx, by, 46)) hurt(w, o, dmgOf(u, 0.9), u, { noDodge: true, knock: 120, kAngle: angleTo(bx, by, o.x, o.y), curse: 14, ab: 'broomRide' }); });
-          p.x = u.x; p.y = u.y; }
-      }, () => { u.ethereal = false; u.hop = 0; if (u.act && u.act.type === 'ride') u.act = null; puff(w, u.x, u.y, '#B07BE0', 8, 80, 5, 0.4); });
+          const fall = 0.42, h = u.hop * 0.9 + 18;
+          w.projectiles.push({ kind: 'hexBomb', x: u.x, y: u.y, vx: (bx - u.x) / fall, vy: (by - u.y) / fall, r: 6, team: u.team, owner: u, dmg: 0, o: {}, life: fall, life0: fall, drop: h, a: 0, noHit: true,
+            land: () => { k2(w, { draw: 'hexPop', x: bx, y: by, r: 46, max: 0.45, ab: 'broomRide' }); for (const o of foesNear(w, u, bx, by, 46)) hurt(w, o, dmgOf(u, 0.9), u, { noDodge: true, knock: 120, kAngle: angleTo(bx, by, o.x, o.y), curse: 14, ab: 'broomRide' }); } }); }
+      }, () => { u.hop = 0; u.flyT = 0; u.kit.broomUntil = 0; if (u.act && u.act.type === 'ride') u.act = null; puff(w, u.x, u.y, '#B07BE0', 8, 80, 5, 0.4); });
     },
     show: { far: false, secs: 4 },
   },
@@ -2420,11 +2501,15 @@ function baleBurst(w, u, b) {
 export function burrowTo(w, u, x1, y1, T, surface) {
   puff(w, u.x, u.y, '#9C7650', 12, 100, 6, 0.5);
   u.hidden = true; u.ethereal = true; u.invulnT = Math.max(u.invulnT, T + 0.1);
-  k2(w, { draw: 'burrowTrail', unit: u, x: u.x, y: u.y, max: T + 2.6, pts: [], T });
-  k2(w, { draw: 'erupt', x: u.x, y: u.y, r: 40, max: 0.55 });
+  // round 19 (the designer: "Trail better. Maybe not transparent. And have it start fading later but much faster ... Bigger
+  // churned clumps in trail. The dirt mound itself doesn't look good. Should also leave a mound behind when he emerges"):
+  // a hole where he goes in, a solid churned trail that holds then goes quickly, and a mound left where he comes up
+  k2(w, { draw: 'burrowTrail', unit: u, x: u.x, y: u.y, max: T + 3.2, pts: [], T });
+  k2(w, { draw: 'erupt', x: u.x, y: u.y, r: 40, max: 0.55 }); k2(w, { draw: 'mound', x: u.x, y: u.y, r: u.r * 0.85, max: T + 3.2, open: true });
   u.act = { type: 'leap', t: T, max: T, x0: u.x, y0: u.y, x1, y1, under: true, land: () => {
     u.hidden = false; u.ethereal = false; u.hop = 0;
     k2(w, { draw: 'erupt', x: u.x, y: u.y, r: 70, max: 0.7, big: true }); w.shake = Math.max(w.shake, 6);
+    k2(w, { draw: 'mound', x: u.x, y: u.y, r: u.r * 1.05, max: 3.4, open: true });
     if (surface) surface(u);
   } };
 }
@@ -2432,6 +2517,7 @@ export function burrowTo(w, u, x1, y1, T, surface) {
 const POOLS = ['acid', 'cold', 'fire', 'whirl', 'shock', 'water'];
 const POOL_COL = { acid: '#C8E63C', cold: '#9FDDF6', fire: '#FF8A3D', whirl: '#EEF3F8', shock: '#FFE66B', water: '#5DB7E0' };
 const ELIXIR_COL = { rage: '#FF5A3D', mend: '#9BE07A', ward: '#9FE0FF' };
+export const MONSTER_ART = 'art/heroes/alchemist-monster.svg'; // round 19: Monstrosity's sprite (tools/caster19/alchemist_art.py)
 const ANY_STATUS = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'curse', 'bleed', 'confuse', 'sleepy', 'fear', 'radiance'];
 function brewPool(w, u, x, y, r, dur, kind) {
   k2(w, { draw: 'brewPool', x, y, r, kind, max: dur, ab: 'acidFlask' });
@@ -2448,13 +2534,31 @@ function brewPool(w, u, x, y, r, dur, kind) {
       else if (kind === 'water') { addStatus(w, e, 'wet', 10, u); hurt(w, e, dmgOf(u, 0.12), u, { dot: true, color: '#5DB7E0', ab: 'acidFlask' }); }
     } });
 }
+// where the tube in the Alchemist's right fist is, in the room (the art's point 144.5, 160.7, on #arm-r as it is posed
+// now: render.js keeps u._pose); in Node, nothing is posed: out in front of the right hand
+function alchHand(u) {
+  const P = u._pose && u._pose['arm-r'], k = u.vr / (u.def.headR || 54), c = Math.cos(u.facing - Math.PI / 2), s = Math.sin(u.facing - Math.PI / 2);
+  let x = 144.5, y = 160.7;
+  if (P) { const cr = Math.cos(P.r || 0), sr = Math.sin(P.r || 0), dx = x - 154, dy = y - 108; x = 154 + (P.dx || 0) + dx * cr - dy * sr; y = 108 + (P.dy || 0) + dx * sr + dy * cr; }
+  const ax = (x - 100) * k, ay = (y - 100) * k;
+  return { x: u.x + ax * c - ay * s, y: u.y + ax * s + ay * c };
+}
 function elixirFor(w, u) {
   const list = [u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo && dist(u.x, u.y, o.x, o.y) < 380 && !o.buffs.some((b) => b.id === 'haste' || b.id === 'warded'));
   const need = (o) => (1 - hpRatio(o)) + (o.target ? 0.3 : 0) + (opponents(w, u).filter((e) => e.target === o).length * 0.15) + ((o.st.burn + o.st.poison + (o.st.bleed || 0) + (o.st.curse || 0)) > 40 ? 0.4 : 0);
   const a = list.sort((p, q) => need(q) - need(p))[0];
   return a && need(a) > 0.45 ? a : null;
 }
-function elixirKind(w, u, a) {
+// Elixir II's second tube: a friend rolled at random, the needier the likelier (round 19)
+function elixirRoll(w, u) {
+  const list = [u, ...allies(w, u)].filter((o) => !o.summon && !o.def.cargo && dist(u.x, u.y, o.x, o.y) < 380);
+  const need = (o) => 0.15 + (1 - hpRatio(o)) + (opponents(w, u).filter((e) => e.target === o).length * 0.15);
+  let tot = 0; for (const o of list) tot += need(o); let r = rand() * tot;
+  for (const o of list) { r -= need(o); if (r <= 0) return o; }
+  return list[0] || null;
+}
+function elixirKind(w, u, a, not) {
+  if (not) { const k = elixirKind(w, u, a); if (k !== not) return k; const rest = ['mend', 'ward', 'rage'].filter((x) => x !== not); return rest[Math.floor(rand() * rest.length)]; }
   const bad = (a.st.burn + a.st.poison + (a.st.bleed || 0) + (a.st.curse || 0) + (a.st.chill || 0)) > 40 || a.sickT > 0;
   if (bad || hpRatio(a) < 0.45) return 'mend';
   if (opponents(w, u).filter((e) => e.target === a && dist(e.x, e.y, a.x, a.y) < 200).length >= 2) return rand() < 0.75 ? 'ward' : 'rage';
@@ -2463,8 +2567,40 @@ function elixirKind(w, u, a) {
 function monsterEnd(w, u) {
   const M = u.kit.monster; if (!M) return;
   u.def = M.human; u.r = M.r; u.vr = M.vr; u.mass = M.mass; u.kit.monster = null;
-  u.buffs = u.buffs.filter((b) => b.id !== 'monster'); puff(w, u.x, u.y, '#9BE36B', 12, 100, 6, 0.5); setAnim(u, 'ability', 0.4);
+  u.buffs = u.buffs.filter((b) => b.id !== 'monster'); puff(w, u.x, u.y, '#B48AE8', 12, 100, 6, 0.5); setAnim(u, 'ability', 0.4);
 }
+// Grandpa's sheaves (Sheaves, in Old Tales' slot): n of them, hp each (one blow breaks one), lasting `life` s. A friend
+// that steps on one: healed `heal` (II: heal2) of its health. An enemy that breaks one (a blow, or treading on it): hayed
+// for `hay` s (II: hay2): the Haymaker's Pitch Hay look and slow (the 'hay' buff, x0.6 move), and while it is hayed every
+// blow the party lands on it quickens the striker's abilities: cooldowns not yet ready run `quick` faster for `quickT` s
+// (kit2Tick). III: a sheaf bursts as it breaks: everyone within `burstR` gets the same (friends healed half).
+export const SHEAF = { n: 4, hp: 8, life: 14, heal: 0.10, heal2: 0.15, hay: 4, hay2: 6, quick: 0.15, quickT: 3, burstR: 75 };
+function hayed(w, e, dur, by) {
+  if (!alive(e) || e.summon && e.fixed) return;
+  addBuff(e, { id: 'hay', dur, move: 0.6 });
+  if (!isOn(w, e, 'hayed')) k2(w, { draw: 'hayOn', unit: e, x: e.x, y: e.y, r: e.vr, max: dur });
+  onUnit(w, e, 'hayed', dur, { taken(w2, u2, src, amt, o) {
+    if (src && alive(src) && src.kit && !o.dot && sideOfU(src) === sideOfU(by)) { const fresh = !(src.kit.quickUntil > w2.time); src.kit.quickUntil = w2.time + SHEAF.quickT; if (fresh) k2(w2, { draw: 'quicken', unit: src, x: src.x, y: src.y, r: src.vr, max: 0.7 }); }
+    return amt; } });
+}
+function sheafBreak(w, s2, who) {
+  const u = s2.summonBy, tier = s2.tier || 1; if (s2.broke) return; s2.broke = true;
+  k2(w, { draw: 'hayPuff', x: s2.x, y: s2.y, max: 0.6 }); k2(w, { draw: 'spray', x: s2.x, y: s2.y, a: 0, arc: TAU, r: tier >= 3 ? SHEAF.burstR : 46, max: 0.6, cols: ['#E8C860', '#F2DC8A', '#C9A040'] });
+  const give = (o, k) => { if (!alive(o) || o === s2) return; if (sideOfU(o) === sideOfU(s2)) { if (!o.summon) { heal(w, o, o.maxHp * (tier >= 2 ? SHEAF.heal2 : SHEAF.heal) * k, u); o.mendGlow = w.time + 0.4; } } else hayed(w, o, tier >= 2 ? SHEAF.hay2 : SHEAF.hay, s2); };
+  if (who) give(who, 1);
+  if (tier >= 3) for (const o of w.units) if (o !== who && alive(o) && !o.ethereal && dist(o.x, o.y, s2.x, s2.y) < SHEAF.burstR + o.r) give(o, 0.5);
+  if (alive(s2)) kill(w, s2, null);
+}
+BRAINS.sheaf = function (w, s2, dt) {
+  s2.vx = s2.vy = s2.kx = s2.ky = 0;
+  if (s2.breaker && !s2.broke) { sheafBreak(w, s2, s2.breaker); return true; }
+  if (s2.hp < s2.maxHp && !s2.broke) { sheafBreak(w, s2, null); return true; } // (broken by something with nobody behind it)
+  if (w.time - (s2.bornT || 0) < 0.25) return true; // (it has just landed)
+  for (const o of w.units) if (o !== s2 && alive(o) && !o.ethereal && !o.def.cargo && !(o.summon && o.fixed) && !o.buried && !(o.flyT > 0) && !o.airborne && !(o.hop > 8) && dist(o.x, o.y, s2.x, s2.y) < o.r + s2.r) { sheafBreak(w, s2, o.summon && sideOfU(o) === sideOfU(s2) ? null : o); return true; }
+  // hurt friends with nobody on them come and get it (as they do the Chef's plates)
+  for (const o of w.units) if (alive(o) && o.team === s2.team && !o.summon && !o.def.cargo && hpRatio(o) < 0.7 && dist(o.x, o.y, s2.x, s2.y) < 220 && !(o.target && dist(o.x, o.y, o.target.x, o.target.y) < 120)) o.coinGoal = { x: s2.x, y: s2.y, d: dist(o.x, o.y, s2.x, s2.y) };
+  return true;
+};
 // The Shaman's totem: blows on friends within its reach go to it instead (a hook it hangs on them while they are in
 // reach); it mends them a little; III cleans their statuses off every 1.5 s
 BRAINS.totem = function (w, s2, dt) {
@@ -2472,7 +2608,11 @@ BRAINS.totem = function (w, s2, dt) {
   s2.acc = (s2.acc || 0) + dt; s2.cl = (s2.cl || 0) + dt;
   for (const a of w.units) {
     if (a === s2 || !alive(a) || a.team !== s2.team || a.ethereal || dist(a.x, a.y, s2.x, s2.y) > s2.R + a.r) continue;
-    onUnit(w, a, 'totemCover', 0.15, { taken(w2, u2, src, amt, o) { if (!alive(s2) || o.redirected || o.dot) return amt; hurt(w2, s2, amt, src, { noDodge: true, redirected: true, knock: 0 }); k2(w2, { draw: 'totemTake', x: u2.x, y: u2.y, from: s2, max: 0.3 }); return 0; } });
+    // (round 19: "When an entity is hit a light orb should home from hero to totem to be absorbed": the blow is drawn off
+    // as an orb of light that leaves the friend, curls round to the totem and sinks into it; the blow lands on the totem
+    // as the orb is sent, so the numbers are as they were)
+    onUnit(w, a, 'totemCover', 0.15, { taken(w2, u2, src, amt, o) { if (!alive(s2) || o.redirected || o.dot) return amt; hurt(w2, s2, amt, src, { noDodge: true, redirected: true, knock: 0 });
+      if (!(u2.orbT > w2.time)) { u2.orbT = w2.time + 0.12; k2(w2, { draw: 'totemOrb', x: u2.x, y: u2.y, from: u2, to: s2, side: rand() < 0.5 ? -1 : 1, max: 0.55 }); } return 0; } });
     if (s2.acc >= 0.5 && !a.summon) heal(w, a, a.maxHp * 0.008, u);
     if (s2.tier >= 3 && s2.cl >= 1.5 && !a.summon) { const bad = (a.st.burn + a.st.poison + a.st.chill + (a.st.curse || 0) + (a.st.bleed || 0) + (a.st.stagger || 0)) > 20; if (bad) { cleanse(a); k2(w, { draw: 'splash', x: a.x, y: a.y, r: 26, col: '#7FE0D0', max: 0.5 }); } }
   }
@@ -2936,9 +3076,28 @@ export const TRAITS2 = {
   // Rub Some Dirt In It (round 13, the designer: "Every ability he uses applies a dirty effect to him.. Acts as a 1 time
   // shield but attack speed is slow until it's cleared. Basic attack doesnt apply it. Makes him immune to poison and fire
   // until removed."): the Dirty effect is put on by each of his abilities (kits2.js dirty); this hook only reports it
+  // Round 19 (lane caster19): his trait is the hook he always has, so his spade's own ways ride on it too (they are his
+  // attack's, not the trait's: the trait is only the tick):
+  //   - "Don't like the hit effect": a spade's blow lands as a flat thwack of earth (fx2 'spadeThud'), not the white star
+  //   - "have the projectiles burst out from behind anyone who was hit with the shovel": three clods fly on out of the far
+  //     side of each one his spade strikes, at whatever stands behind it (short range)
+  //   - a foe he dirtied (statuses.js DIRTY): his spade, or its clods, land double on it and knock the dirt off
   dirtIn: {
     show: { abilities: true }, // (the lab's trait bench)
     tick(w, u) { const k = u.kit, was = k.cdSeen || {}; let used = false; for (const id in k.cd) { if (k.cd[id] > (was[id] ?? 99) + 0.5) used = true; was[id] = k.cd[id]; } k.cdSeen = was; if (used) dirty(w, u); },
+    dealt(w, u, t, amt, o) {
+      if (!(spadeBlow(o) || o.clod) || !t || sideOfU(t) === sideOfU(u)) return amt;
+      const h = hookOf(t, 'dirty'); if (!h || !h.foe || !(h.until > w.time)) return amt;
+      dirtOff(w, t, true); textU(w, t.x, t.y, t.r + 10, 'x2', '#E9C48A', 1); return amt * DIRTY.spade;
+    },
+    hit(w, u, t, amt, o) {
+      if (o.clod && t) { t.hitZap = true; return; } // (a clod bursts in crumbs where it hits: fx2 IMPACT2D.clod, no star)
+      if (!spadeBlow(o) || !t) return;
+      t.hitZap = true; // (no white star: render.js skips its impact for a zap; the thwack is drawn instead)
+      const a = ang(u, t); k2(w, { draw: 'spadeThud', x: t.x - Math.cos(a) * t.r * 0.8, y: t.y - Math.sin(a) * t.r * 0.8, a, r: t.vr, max: 0.4 });
+      for (let i = -1; i <= 1; i++) { const b = a + i * 0.42 + rrange(-0.08, 0.08), x = t.x + Math.cos(b) * (t.r + 4), y = t.y + Math.sin(b) * (t.r + 4), sp = 400;
+        w.projectiles.push({ kind: 'clod', x, y, vx: Math.cos(b) * sp, vy: Math.sin(b) * sp, r: 6, team: u.team, owner: u, skip: t, dmg: dmgOf(u, 0.3), o: { knock: 40, clod: true }, life: 0.3, a: b }); }
+    },
   },
 };
 
@@ -2946,12 +3105,16 @@ export const TRAITS2 = {
 const A = (u, k) => dmgOf(u, k);
 export const ATTACKS2 = {
   // a lobbed flask that splashes; each one a different brew: fire, frost, acid in turn
+  // (round 19, lane caster19: "They aren't holding it": the tube leaves their hand: it starts where the tube in their fist
+  // is (alchHand), and the fist is empty until they pull the next one off the strap, 0.45 s later; the brew in the tube is
+  // the next one's colour, fx2 ART2.alchemist)
   alchemist(w, u, t, a) {
     const k = u.kit, b = k.brew3 = ((k.brew3 ?? -1) + 1) % 3, st = [{ burn: 14 }, { chill: 16 }, { poison: 14 }][b], col = ['#FF8A3D', '#9FDDF6', '#C8E63C'][b];
-    shoot(w, u, a, { kind: 'flask', speed: 400, r: 7, life: 1, dmg: A(u, 0.85), color: col, knock: 20, land: (p) => {
+    const p = shoot(w, u, a, { kind: 'flask', speed: 400, r: 7, life: 1, dmg: A(u, 0.85), color: col, knock: 20, land: (p) => {
       for (const e of opponents(w, u)) if (dist(p.x, p.y, e.x, e.y) < 38 + e.r) hurt(w, e, A(u, 0.3), u, { noDodge: true, ...st, kAngle: angleTo(p.x, p.y, e.x, e.y), knock: 30 });
       k2(w, { draw: 'splash', x: p.x, y: p.y, r: 38, col, max: 0.4 });
     } });
+    const h = alchHand(u); p.x = h.x; p.y = h.y; k.tubeGone = w.time + 0.45;
   },
   // a teal spirit; a share of what it deals mends the most hurt ally
   // round 13: "Jumps to ally if they are near and heals them. Otherwise no heal": it strikes, then (a friend within 170
@@ -2968,7 +3131,7 @@ export const ATTACKS2 = {
   // round 13: "Shoots 3 hexs in quick succession. Have each one look like 1 of 5 possible symbols."
   witch(w, u, t, a) {
     for (let i = 0; i < 3; i++) after(u, i * 0.1, () => { if (!alive(u)) return; const b = t && alive(t) ? ang(u, t) : a;
-      shoot(w, u, b + rrange(-0.3, 0.3), { kind: 'hexbolt', speed: 380, r: 7, life: 1.4, dmg: A(u, 0.4), knock: 15, extra: { home: t, turn: 3.5, sym: Math.floor(rand() * 5) } }); });
+      shoot(w, u, b + rrange(-0.3, 0.3), { kind: 'hexbolt', speed: 380, r: 7, life: 1.4, dmg: A(u, 0.4), knock: 15, extra: { home: t, turn: 3.5, sym: Math.floor(rand() * 10) } }); });
   },
   // a crystal mote that glances off onto a second enemy
   seer(w, u, t, a) {
@@ -3080,8 +3243,10 @@ export function kit2Tick(w, u, dt) {
   // lane E: art round 12 split it from his fist, #arm-l-hammer: parts.js hides the hammer alone, his fist stays and punches.)
   if (u.kind === 'warhelm') u.kit.hammerOut = !!u.kit.storm || u.kit.splitT > w.time;
   if (u.kind === 'engineer') wrenchRepair(w, u, dt); // round 17 (lane tags17): the wrench mends her constructs
+  // round 19 (lane caster19): Grandpa's sheaves: a blow on a hayed foe quickens its striker's abilities (SHEAF.quick faster)
+  if (u.kit.quickUntil > w.time) for (const k in u.kit.cd) if (u.kit.cd[k] > 0) u.kit.cd[k] -= dt * SHEAF.quick;
   // the Alchemist's hand shows the next flask she'll throw (round 13: "Bottle in hand should change to what she will throw")
-  if (u.kind === 'alchemist' && (u.kit.handW !== w || !u.kit.handFx || u.kit.handFx.t >= u.kit.handFx.max)) { u.kit.handW = w; u.kit.handFx = k2(w, { draw: 'handFlask', unit: u, x: u.x, y: u.y, max: 1e9 }); }
+  // (round 19: the tube in their fist is part of their picture now, its brew painted by fx2 ART2.alchemist: no 'handFlask' fx)
   // the Chef's plates: a friend who walks over one eats it (healed; the rest past whole is extra health); hurt friends
   // with no enemy on them go and get one
   if (u.kit.foods && u.kit.foods.length) {
@@ -3119,11 +3284,8 @@ export function kit2Tick(w, u, dt) {
   // the Haymaker's pitchfork (round 13: "Should show 3 stab slashes. Should dash forwards slightly too"): every jab is a
   // little lunge (the three tines' streaks are the 'fork' weapon in fxkit)
   if (u.kind === 'haymaker' && u.anim && u.anim !== u.kit.jabAnim && u.anim.kind === 'thrust' && u.anim.dur >= 0.25 && !u.act) { u.kit.jabAnim = u.anim; u.kx += Math.cos(u.facing) * 110; u.ky += Math.sin(u.facing) * 110; }
-  // the Digger's spade (round 13: "Slash also creates 3 dirt projectiles with short range")
-  if (u.kind === 'digger' && u.anim && u.anim !== u.kit.slashAnim && u.anim.kind === 'swing' && u.anim.dur >= 0.25 && !u.act && !u.kit.using) {
-    u.kit.slashAnim = u.anim; const a = u.facing;
-    for (let i = -1; i <= 1; i++) shoot(w, u, a + i * 0.28, { kind: 'clod', speed: 420, r: 6, life: 0.32, dmg: dmgOf(u, 0.25), knock: 40 });
-  }
+  // the Digger's spade (round 13: "Slash also creates 3 dirt projectiles with short range"; round 19: "have the projectiles
+  // burst out from behind anyone who was hit with the shovel. They don't get thrown automatically anymore": TRAITS2.dirtIn)
   // the Shade's daggers (round 13: "Attacks in 2 stabs at a time, quickly 1 after the other"): each stab is followed at
   // once by one from the other hand
   if (u.kind === 'shade' && u.anim && u.anim !== u.kit.stabAnim && u.anim.kind === 'thrust' && u.anim.dur >= 0.25 && !u.act && !u.kit.using) {
@@ -3166,7 +3328,9 @@ export function kit2Tick(w, u, dt) {
     else {
       const live = L.group.map((a, i) => ({ a, i })).filter(({ a }) => alive(a));
       let lost = 0; for (const { a, i } of live) lost += Math.max(0, L.hp[i] - a.hp);
-      if (lost > 0 && live.length > 1) { const share = lost / live.length; for (const { a, i } of live) a.hp = Math.min(a.maxHp, Math.max(1, a.hp + Math.max(0, L.hp[i] - a.hp) - share)); }
+      if (lost > 0 && live.length > 1) { const share = lost / live.length; for (const { a, i } of live) a.hp = Math.min(a.maxHp, Math.max(1, a.hp + Math.max(0, L.hp[i] - a.hp) - share));
+        // (round 19: "Not showy enough": the blow is seen going out along the threads from the one struck to the rest)
+        for (const { a, i } of live) if (L.hp[i] - a.hp > 0.5 && !(a.linkPulseT > w.time) && L.f) { a.linkPulseT = w.time + 0.2; L.f.pulses = [...(L.f.pulses || []).filter((q) => w.time - q.t < 0.6), { from: a, t: w.time }]; } }
       L.hp = L.group.map((a) => a.hp);
     }
   }
