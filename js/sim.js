@@ -1220,7 +1220,7 @@ export function addStatus(w, u, type, amount, src, fromBlow, credit = null) { //
   if (type === 'burn') {
     if (u.frozenT > 0) { u.frozenT = 0; s.chill = 0; puff(w, u.x, u.y, 'rgba(235,240,245,0.8)', 10, 60, 9, 0.8); textU(w, u.x, u.y, u.r, 'thaw', '#DDEAF2', 0.8); }
     s.chill = Math.max(0, s.chill - amount);
-    if (s.burn >= need) { s.burn = after; burst(); textU(w, u.x, u.y, u.r + 12, 'SCORCH', '#FF7A2F', 1.2); flames(w, u.x, u.y, 10, u.vr * 0.8, 90); hurt(w, u, 22, src, { noDodge: true, noHex: true, stk: 'burn', proc: true }); /* (proc: a scorch never sets off on-hit hooks again: with a fire-weak target that looped for ever) */ explode(w, u.x, u.y, 60, 10, { burn: 24, stk: 'burn' }, src, '#FF7A2F', u); }
+    if (s.burn >= need) { s.burn = after; burst(); textU(w, u.x, u.y, u.r + 12, 'SCORCH', '#FF7A2F', 1.2); flames(w, u.x, u.y, 10, u.vr * 0.8, 90); hurt(w, u, 22, src, { noDodge: true, noHex: true, stk: 'burn', proc: true }); /* (proc: a scorch never sets off on-hit hooks again: with a fire-weak target that looped for ever) */ explode(w, u.x, u.y, 60, 10, { burn: 24, stk: 'burn', proc: true }, src, '#FF7A2F', u); } // (round 17: its splash is a proc too: Potency's burn on each splash hit set off the next scorch, for ever)
   } else if (type === 'chill') {
     if (s.chill >= need && u.frozenT <= 0) {
       u.frozenT = u.def.boss ? 1.6 : 3; s.chill = after; s.burn = 0; u.freezeImmune += 45; u.act = null; burst();
@@ -1349,7 +1349,7 @@ export function explode(w, x, y, r, dmg, statuses, src, color, skip) {
     if (dist(x, y, o.x, o.y) > r + o.r) continue;
     const friendly = src && o.team === src.team;
     hurt(w, o, dmg * (friendly ? 0.4 : 1), src, { noDodge: true, knock: 110, kAngle: angleTo(x, y, o.x, o.y),
-      ...Object.fromEntries(Object.entries(statuses).filter(([, v]) => typeof v === 'number').map(([k, v]) => [k, v * (friendly ? 0.4 : 1)])), stk: statuses.stk, by: statuses.by }); // (round 13, lane E: by, who to count it for when src is null on purpose)
+      ...Object.fromEntries(Object.entries(statuses).filter(([, v]) => typeof v === 'number').map(([k, v]) => [k, v * (friendly ? 0.4 : 1)])), stk: statuses.stk, by: statuses.by, proc: !!statuses.proc }); // (round 13, lane E: by, who to count it for when src is null on purpose)
   }
   if (statuses.burn) igniteAround(w, x, y, r);
 }
