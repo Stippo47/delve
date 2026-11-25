@@ -1150,3 +1150,4 @@ which, the numbers); code js/dashes.js, looks js/fx-dash.js; checks tools/dash18
 - Left alone on purpose: the bosses' charges (their own tells, crashes and dazes), the boar and the Gaper (their own
   endings), chain heads (crawler, sand serpent: the plain straight run, their bodies follow the head's path), flights
   and rescues (Leap, Swoop, Sky Dive, Challenge, Burrow), Roll, the Ninja's Substitution.
+- 0.26.0: dash18 merged (six dash moves in js/dashes.js: draw cut, blink chain, hook, feint, drag and fling, pounce; every dash re-assigned; docs/dash18.md). Film check: none broken; to look at in the weapon-slash pass: the feint's crescent sweeps wide of the dagger, the bone spear's delayed wounds don't show, faint feint/hook copies, the Shade ends as a blob under a foe.

@@ -1,0 +1,68 @@
+{
+  "title": "Round 18: new dashes",
+  "topic": "balance",
+  "stack": "audit18",
+  "order": 5,
+  "priority": 1,
+  "cards": [
+    {
+      "id": "report",
+      "kind": "report",
+      "rarity": "epic",
+      "title": "Six new dashes",
+      "text": "Every dash, lunge, charge and pounce, heroes and enemies, now uses one of six new moves. Mark any that's off.",
+      "why": "You didn't like how dash slashes worked, from the wolf to the heroes. Each move now has a warning, a body that leans and stretches, a cut drawn where the blade really went, and hits only on what it passes through.",
+      "videos": ["../../../docs/clips/dash18/wolf-before.mp4", "../../../docs/clips/dash18/wolf-after.mp4"],
+      "parts": [
+        { "id": "draw", "title": "Draw cut", "text": "Settles with the blade at the hip, bursts down a line with the blade swept out, stops past them; each foe crossed gets a thin line and the cut opens a beat later. Iaido; with a spear, Spear Lunge, Spear of the Sky, Bayonet, and spear enemies.", "videos": ["../../../docs/clips/dash18/iaido-before.mp4", "../../../docs/clips/dash18/iaido-after.mp4", "../../../docs/clips/dash18/drawCut-spearLunge.mp4"] },
+        { "id": "blink", "title": "Blink chain", "text": "Sinks, then blinks from foe to foe, crossing each at a slant with a cut and leaving a copy of herself at each stop. The Shade's Shadow Walk.", "videos": ["../../../docs/clips/dash18/shadowWalk-before.mp4", "../../../docs/clips/dash18/shadowWalk-after.mp4"] },
+        { "id": "hook", "title": "Hook", "text": "A banked run round the target's side, arriving behind it with the cut across its back. Backstab, the Werewolf's man-form pounce, Sacrifice; bats, succubi, bees, wasps.", "videos": ["../../../docs/clips/dash18/hook-backstab.mp4", "../../../docs/clips/dash18/hook-bat.mp4"] },
+        { "id": "feint", "title": "Feint", "text": "A hop one way while a copy carries on, a planted foot, then the real dash back across the other flank. The Twinfang's Dash, Crescent Cut; goblins, knife bandits, crabs.", "videos": ["../../../docs/clips/dash18/feint-crescentCut.mp4", "../../../docs/clips/dash18/feint-goblin.mp4"] },
+        { "id": "drag", "title": "Drag and fling", "text": "Rocks back, runs slow then flat out, picks the first foe up on its front, shoulders the rest aside and flings it (into a wall if there is one). Charge, Shield Rush, Thunder Blow, Shield Bash; orcs and every major's charge.", "videos": ["../../../docs/clips/dash18/dragFling-charge.mp4", "../../../docs/clips/dash18/dragFling-orc.mp4"] },
+        { "id": "pounce", "title": "Pounce", "text": "A flat crouch with a wriggle, a leap that hangs, a landing that rakes three claw lines through what's under it. Wolves, the Alpha, rats, hunter spiders, jackals; Bear Claws and the Werewolf's wolf pounce.", "videos": ["../../../docs/clips/dash18/pounce-bearClaws.mp4"] },
+        { "id": "balance", "title": "Strength", "text": "Each ability kept within about 10% of its old worth, except where the old one hit nothing (the Twinfang's Dash and Spear of the Sky now deal a little; Iaido III's cut-back now lands). All 26 enemy kinds that changed stay within 10% of their worth per cost." }
+      ]
+    },
+    {
+      "id": "small-dash",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Small foes' dashes cut",
+      "text": "Rats, goblins and the like dashed without hitting. Now the dash ends in a small cut or pounce.",
+      "why": "A dash that does nothing reads as broken. It bends an older call that rats dash the way they're moving: the rat's is now a small pounce at whoever it's after. Their worth stays within 10%.",
+      "pick": "Keep it."
+    },
+    {
+      "id": "iaido",
+      "kind": "options",
+      "rarity": "uncommon",
+      "title": "Iaido III's cut back",
+      "text": "Iaido III's cut back used to miss (the first cut knocked them off the line). Now it lands. How hard?",
+      "why": "Landing at 0.3 of the first cut makes Iaido III about a quarter stronger than before.",
+      "pick": "light",
+      "options": [
+        { "id": "light", "label": "A third", "text": "0.3 of the first cut (what's live)." },
+        { "id": "full", "label": "Full", "text": "As hard as the first cut: a big tier III jump." },
+        { "id": "token", "label": "A nick", "text": "Barely anything, so tier III is about what it was." }
+      ]
+    },
+    {
+      "id": "carry",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Majors carry heroes",
+      "text": "Majors' charges (and the Herald's and Archon's) now pick up the first light hero and throw it.",
+      "why": "It reads clearly and fits a big charge, but it's harder on that hero than before, and elite and major moves weren't measured.",
+      "pick": "Keep it, and I'll measure majors next."
+    },
+    {
+      "id": "touchable",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Hitting a dashing foe",
+      "text": "Enemies can now be hit mid-dash; heroes stay untouchable during the dashes that were untouchable before.",
+      "why": "A charging orc you can't hit felt unfair. Heroes' untouchable dashes (Shadow Walk and the like) are part of those abilities.",
+      "pick": "Keep it."
+    }
+  ]
+}
