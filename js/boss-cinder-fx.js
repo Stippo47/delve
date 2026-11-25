@@ -1,27 +1,30 @@
-// Cinder, the Old Drake, drawn (lane B, bosses3). One animal, one outline (boss-draw.js): a long wingless drake seen
-// from above: a horned head on a neck, a deep-chested body that bends along the path it walks, four legs that step
-// (feet planted, knees bending), a tail tapering to a bone blade, dark scutes down its back. Its fire is the game's
-// fire: the same inked flames (fx.js flame), the same fire puddles on the floor (puddles.js), the Pyromancer's
-// fireball for what falls from the roof. The fight's state is u.cd (boss-cinder.js).
+// Cinder, the Old Drake, drawn (lane B, bosses3; round 19, lane drake19). One animal, one outline (boss-draw.js): a
+// long wingless drake seen from above: a horned head on a neck, a deep-chested body that bends like a spine (the chain
+// in boss-cinder.js), four legs that step (feet planted, knees bending), a tail tapering to a bone blade that trails
+// and whips, dark scutes down its back. It breathes; its chest swells before the scorch; it gathers before the rush.
+// Its fire is the game's fire: the same inked flames (fx.js flame), the same fire puddles on the floor (puddles.js),
+// the Pyromancer's fireball for what falls from the roof. The fight's state is u.cd (boss-cinder.js).
 import { TAU, clamp } from './util.js';
 import { flame, upright, inked, star, drawProjectile } from './fx.js';
 import { dustPuffs } from './fxkit.js';
 import { castShadow } from './height.js'; // round 19 (lane sys19): one shadow system
 import { drawPuddle } from './puddles.js';
-import { figure, washOf, flashing, lin, rad, ballFill, gloss, glow, shade, ell, circ, poly, soft, capsule, ribbon, ik2, up, BFX, easeOut, sm, k01, hash, slashBand, inkDisc, streak, rgbaOf } from './boss-draw.js';
-import { SPINE, LEN, SHOULDER, HIP, at_ } from './boss-cinder.js';
+import { figure, washOf, flashing, lin, ballFill, gloss, glow, ell, poly, soft, capsule, ribbon, ik2, up, BFX, easeOut, sm, k01, hash, slashBand, streak, rgbaOf } from './boss-draw.js';
+import { LEN, SHOULDER, HIP, at_, rOf } from './boss-cinder.js';
 
 const SCALE = ['#D2714A', '#9C432E', '#632318'], BELLY = ['#B55A3C', '#7E3323'], PLATE = ['#4E3038', '#301C24'], RIM = '#E9B48E', EMBER = '#FF9A4D';
 const HORN = ['#F4E6CC', '#BFA98C', '#5E4A44'], MOUTH = ['#3A1418', '#7A2A22'];
-const rOf = (off) => { for (let i = 1; i < SPINE.length; i++) if (off <= SPINE[i][0]) { const [o0, r0] = SPINE[i - 1], [o1, r1] = SPINE[i], q = (off - o0) / (o1 - o0); return r0 + (r1 - r0) * q * q * (3 - 2 * q); } return SPINE[SPINE.length - 1][1]; };
+// where the chest is (it swells with each breath, and a lot before the scorch)
+const chest = (off) => sm(k01((off - 60) / 70)) * (1 - sm(k01((off - 230) / 80)));
 
-function leg(F, ctx, hx, hy, fx, fy, bend, a, front) {
+function leg(F, ctx, hx, hy, fx, fy, bend, a, front, spread) {
   const j = ik2(hx, hy, fx, fy, front ? 40 : 44, front ? 42 : 44, bend);
-  F.shape(() => capsule(ctx, j.ex, j.ey, 12.5, fx, fy, 10), () => lin(ctx, j.ex, j.ey, fx, fy, BELLY[0], BELLY[1]));
-  F.shape(() => capsule(ctx, hx, hy, 18, j.ex, j.ey, 13.5), () => lin(ctx, hx, hy, j.ex, j.ey, SCALE[1], SCALE[0]));
-  F.at(fx, fy, a, () => { // the foot: a broad paw, three claws forward
-    for (const s of [-1, 0, 1]) F.shape(() => poly(ctx, [[8, s * 9 - 4.5], [27 - Math.abs(s) * 3, s * 12], [8, s * 9 + 4.5]]), HORN[0]);
-    F.shape(() => ell(ctx, 0, 0, 15.5, 14), ballFill(ctx, 0, 0, 15, SCALE[0], SCALE[1], SCALE[2]));
+  F.shape(() => capsule(ctx, j.ex, j.ey, 14.5, fx, fy, 11.5), () => lin(ctx, j.ex, j.ey, fx, fy, BELLY[0], BELLY[1]));
+  F.shape(() => capsule(ctx, hx, hy, 21, j.ex, j.ey, 15.5), () => lin(ctx, hx, hy, j.ex, j.ey, SCALE[1], SCALE[0]));
+  F.at(fx, fy, a, () => { // the foot: a broad paw, three claws forward (spread wide and long when it rakes)
+    const c = 1 + 0.45 * spread;
+    for (const s of [-1, 0, 1]) F.shape(() => poly(ctx, [[8, s * 10 * c - 5], [(29 - Math.abs(s) * 3) * c, s * 13 * c], [8, s * 10 * c + 5]]), HORN[0]);
+    F.shape(() => ell(ctx, 0, 0, 17, 15.5), ballFill(ctx, 0, 0, 16.5, SCALE[0], SCALE[1], SCALE[2]));
   });
 }
 function scute(ctx, s, molten, T, i) { // a back plate: a dark arrowhead pointing down the body, a pale (or ember) rim
@@ -57,44 +60,75 @@ function head(F, ctx, R, jaw, T, hot, molten) {
   });
 }
 
-export function drawCinder(ctx, u, w) {
-  const k = u.cd; if (!k) return;
-  const T = w.time, [ux, uy] = up(), molten = !!u.molten, hot = clamp(Math.max(k.br && k.br.t <= 0 ? 1 : 0, (k.roarT || 0) > 0 ? 0.8 : 0, (u.jaw || 0) > 0.6 ? 0.5 : 0), 0, 1);
+// The whole animal, from a pose: o.k has the spine (vis) and the feet, o.u the head ({ x, y, facing, vr }).
+// o: T, look (the head turned on its neck), jaw, hot, molten, tailOn, tailFlash, flash, wash, alpha, swell (the chest),
+// claw ({ s }: the foreleg that rakes), die (0..1: fallen, legs given way).
+function paint(ctx, o) {
+  const { k, u, T } = o, [ux, uy] = up(), die = o.die || 0, molten = !!o.molten;
+  const thick = (off) => rOf(off) * (1 + (o.swell || 0) * chest(off)) * (1 - 0.1 * die);
   const pts = []; for (let off = 26; off < LEN; off += 13) pts.push({ ...at_(k, u, off), off }); pts.push({ ...at_(k, u, LEN), off: LEN });
-  const sh = at_(k, u, SHOULDER), hp = at_(k, u, HIP), tip = pts[pts.length - 1];
-  const look = clamp(((k.look ?? u.facing) - u.facing + Math.PI * 3) % TAU - Math.PI, -0.65, 0.65), ha = u.facing + look;
-  const lg = (u.lungeT || 0) > 0 ? Math.sin((1 - u.lungeT / 0.18) * Math.PI) * 20 : 0, hx = u.x + Math.cos(ha) * lg, hy = u.y + Math.sin(ha) * lg;
-  const daze = k.dazed > 0 ? Math.sin(T * 9) * 0.12 : 0; if (k.dazed > 0) k.dazed -= w._dt || 0.016;
-  figure(ctx, { wash: washOf(u, w), alpha: u.invulnT > 0.3 ? 0.85 : 1 }, (F) => {
+  const sh = at_(k, u, SHOULDER), hp = at_(k, u, HIP), tip = pts[pts.length - 1], ha = u.facing + (o.look || 0);
+  figure(ctx, { wash: o.wash, alpha: o.alpha }, (F) => {
     F.flash = false;
     // the tail's blade (while it has one)
-    if (k.tail && !k.tail.dead) { F.flash = flashing(k.tail);
+    if (o.tailOn) { F.flash = !!o.tailFlash;
       F.at(tip.x, tip.y, tip.a + Math.PI, () => { F.shape(() => { ctx.beginPath(); ctx.moveTo(-6, -7); ctx.quadraticCurveTo(22, -34, 62, -12); ctx.lineTo(84, 0); ctx.lineTo(62, 12); ctx.quadraticCurveTo(22, 34, -6, 7); ctx.closePath(); }, () => lin(ctx, 0, 0, 84, 0, HORN[2], HORN[1], HORN[0]));
         F.detail(() => { ctx.strokeStyle = 'rgba(94,74,68,0.6)'; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(4, 0); ctx.lineTo(70, 0); ctx.stroke(); }); });
       F.flash = false; }
     // legs under the body: hind, then front
-    for (const l of [...k.legs].reverse()) { const p = l.off === SHOULDER ? sh : hp, r = rOf(l.off) * 0.62, lift = l.lift || 0;
-      leg(F, ctx, p.x + Math.cos(p.a + l.s * Math.PI / 2) * r, p.y + Math.sin(p.a + l.s * Math.PI / 2) * r, l.x + ux * lift, l.y + uy * lift, l.off === SHOULDER ? l.s : -l.s, p.a + l.s * 0.25, l.off === SHOULDER); }
+    for (const l of [...k.legs].reverse()) { const p = l.off === SHOULDER ? sh : hp, r = thick(l.off) * 0.62, lift = die ? 0 : l.lift || 0, front = l.off === SHOULDER;
+      const jx = p.x + Math.cos(p.a + l.s * Math.PI / 2) * r, jy = p.y + Math.sin(p.a + l.s * Math.PI / 2) * r;
+      const fx = l.x + (l.x - p.x) * 0.22 * die, fy = l.y + (l.y - p.y) * 0.22 * die, raking = !!o.claw && front && o.claw.s === l.s;
+      leg(F, ctx, jx, jy, fx + ux * lift, fy + uy * lift, front ? l.s : -l.s, raking ? Math.atan2(fy - jy, fx - jx) : p.a + l.s * (0.25 + 0.5 * die), front, raking ? 1 : 0); }
     // the body: one skin from the neck to the tail's tip
-    F.shape(() => ribbon(ctx, pts, (i) => rOf(pts[i].off)), SCALE[1]);
+    F.shape(() => ribbon(ctx, pts, (i) => thick(pts[i].off)), SCALE[1]);
     F.detail(() => {
       // lit along its back (a paler band, a little up-screen of the middle), darker down its flanks
-      ctx.save(); ribbon(ctx, pts, (i) => rOf(pts[i].off)); ctx.clip();
-      ctx.fillStyle = rgbaOf(SCALE[2], 0.55); ribbon(ctx, pts.map((p) => ({ x: p.x - ux * 7, y: p.y - uy * 7 })), (i) => rOf(pts[i].off)); ctx.fill();
-      ctx.fillStyle = SCALE[1]; ribbon(ctx, pts.map((p) => ({ x: p.x + ux * 3, y: p.y + uy * 3 })), (i) => rOf(pts[i].off) * 0.9); ctx.fill();
-      ctx.fillStyle = rgbaOf(SCALE[0], 0.8); ribbon(ctx, pts.map((p) => ({ x: p.x + ux * 5, y: p.y + uy * 5 })), (i) => rOf(pts[i].off) * 0.5); ctx.fill();
+      ctx.save(); ribbon(ctx, pts, (i) => thick(pts[i].off)); ctx.clip();
+      ctx.fillStyle = rgbaOf(SCALE[2], 0.55); ribbon(ctx, pts.map((p) => ({ x: p.x - ux * 7, y: p.y - uy * 7 })), (i) => thick(pts[i].off)); ctx.fill();
+      ctx.fillStyle = SCALE[1]; ribbon(ctx, pts.map((p) => ({ x: p.x + ux * 3, y: p.y + uy * 3 })), (i) => thick(pts[i].off) * 0.9); ctx.fill();
+      ctx.fillStyle = rgbaOf(SCALE[0], 0.8); ribbon(ctx, pts.map((p) => ({ x: p.x + ux * 5, y: p.y + uy * 5 })), (i) => thick(pts[i].off) * 0.5); ctx.fill();
       if (molten) { ctx.strokeStyle = rgbaOf(EMBER, 0.7 + 0.3 * Math.sin(T * 6)); ctx.lineWidth = 3; ctx.lineCap = 'round'; // cracks of fire across its flanks
-        for (let i = 2; i < pts.length - 4; i += 2) { const p = pts[i], r = rOf(p.off), s = i % 4 ? 1 : -1, nx = Math.cos(p.a + Math.PI / 2) * s, ny = Math.sin(p.a + Math.PI / 2) * s; ctx.beginPath(); ctx.moveTo(p.x + nx * r * 0.45, p.y + ny * r * 0.45); ctx.lineTo(p.x + nx * r * 0.7 + Math.cos(p.a) * 7, p.y + ny * r * 0.7 + Math.sin(p.a) * 7); ctx.lineTo(p.x + nx * r * 0.98, p.y + ny * r * 0.98); ctx.stroke(); } }
+        for (let i = 2; i < pts.length - 4; i += 2) { const p = pts[i], r = thick(p.off), s = i % 4 ? 1 : -1, nx = Math.cos(p.a + Math.PI / 2) * s, ny = Math.sin(p.a + Math.PI / 2) * s; ctx.beginPath(); ctx.moveTo(p.x + nx * r * 0.45, p.y + ny * r * 0.45); ctx.lineTo(p.x + nx * r * 0.7 + Math.cos(p.a) * 7, p.y + ny * r * 0.7 + Math.sin(p.a) * 7); ctx.lineTo(p.x + nx * r * 0.98, p.y + ny * r * 0.98); ctx.stroke(); } }
       ctx.restore();
+      // struck: the head goes white for a frame, the body with it but faintly (its whole length solid white at every blow was too much; the head alone was a white head on a red body)
+      if (o.flash) { ctx.fillStyle = 'rgba(255,255,255,0.22)'; ribbon(ctx, pts, (i) => thick(pts[i].off)); ctx.fill(); }
       // scutes down the spine, smaller towards the tail
-      for (let off = 50, i = 0; off < LEN - 30; off += 30, i++) { const p = at_(k, u, off), r = rOf(off); ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); scute(ctx, Math.max(6, r * 0.42), molten, T, i); ctx.restore(); }
+      for (let off = 50, i = 0; off < LEN - 30; off += 30, i++) { const p = at_(k, u, off), r = thick(off); ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); scute(ctx, Math.max(6, r * 0.42), molten, T, i); ctx.restore(); }
     });
-    // the head, turned towards its mark
-    F.flash = flashing(u);
-    F.at(hx, hy, ha + daze, () => head(F, ctx, u.vr, clamp(u.jaw || 0, 0, 1), T, hot, molten));
+    // the head, on its neck
+    F.flash = !!o.flash;
+    { const h0 = k.vis[0]; F.at(h0.x, h0.y, ha, () => head(F, ctx, u.vr, clamp(o.jaw || 0, 0, 1), T, o.hot || 0, molten)); }
   });
 }
+export function drawCinder(ctx, u, w) {
+  const k = u.cd; if (!k || !k.vis || !k.vis.length) return;
+  const T = w.time, hot = clamp(Math.max(k.br ? (k.br.t <= 0 ? 1 : 0.7) : 0, (k.roarT || 0) > 0 ? 0.8 : 0, (u.jaw || 0) > 0.6 ? 0.5 : 0), 0, 1);
+  const daze = k.dazed > 0 ? Math.sin(T * 9) * 0.12 : 0, breath = 0.028 * Math.sin(T * 2.3) + 0.15 * (k.inhale || 0) + 0.07 * (k.crouch || 0) + (k.br && k.br.t <= 0 ? 0.03 * Math.sin(T * 14) : 0);
+  paint(ctx, { k, u, T, look: (k.look || 0) + daze, jaw: u.jaw, hot, molten: !!u.molten, tailOn: !!(k.tail && !k.tail.dead), tailFlash: flashing(k.tail), flash: flashing(u),
+    wash: washOf(u, w), alpha: u.invulnT > 0.3 ? 0.85 : 1, swell: breath, claw: k.claw });
+}
 export function drawCinderPart() {} // (the body is drawn whole, with the head)
+
+// Its face for the Book, the inspect panel and the battle lists (inspect.js portrait: def.picture): the head, jaws a
+// little apart, on a stretch of neck. A picture's address, made once.
+let PIC = null;
+export function cinderPicture() {
+  if (PIC != null) return PIC;
+  if (typeof document === 'undefined') return '';
+  try {
+    const c = document.createElement('canvas'); c.width = c.height = 192; const g = c.getContext('2d');
+    g.translate(96, 96);
+    figure(g, { ol: 3.4 }, (F) => {
+      const pts = [{ x: 10, y: 96, off: 110 }, { x: 6, y: 70, off: 84 }, { x: 2, y: 44, off: 56 }, { x: 0, y: 22, off: 30 }];
+      F.shape(() => ribbon(g, pts, (i) => rOf(pts[i].off) * 1.02), SCALE[1]);
+      F.detail(() => { for (let i = 0; i < 3; i++) { g.save(); g.translate(pts[i].x, pts[i].y - 8); g.rotate(-Math.PI / 2); scute(g, 12, false, 0, i); g.restore(); } });
+      F.at(0, 2, -Math.PI / 2, () => head(F, g, 40, 0.45, 0, 0.3, false));
+    });
+    PIC = c.toDataURL('image/png');
+  } catch { PIC = ''; }
+  return PIC;
+}
 
 // ---------------------------------------------------------------- the pit's floor: lava at its edges, fire where it breathes
 export function drawPitFloor(ctx, w) {
@@ -131,14 +165,26 @@ function clipRay(w, x, y, a, len) {
 }
 
 // ---------------------------------------------------------------- its moves
-BFX.drakeBite = { air(ctx, f, k) { // the snap: two rows of fangs closing, a lick of fire between
-  const e = easeOut(k01(k / 0.35)), gap = f.r * 0.42 * (1 - e), cx = f.x + Math.cos(f.a) * f.r * 0.62, cy = f.y + Math.sin(f.a) * f.r * 0.62;
-  ctx.globalAlpha = k < 0.6 ? 1 : 1 - (k - 0.6) / 0.4;
-  for (const s of [-1, 1]) { ctx.save(); ctx.translate(cx - Math.sin(f.a) * gap * s, cy + Math.cos(f.a) * gap * s); ctx.rotate(f.a);
-    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-f.r * 0.42, s * 14); ctx.quadraticCurveTo(0, s * 30, f.r * 0.42, s * 14); for (let i = 3; i >= -3; i--) { ctx.lineTo(i * f.r * 0.12 + f.r * 0.06, s * 12); ctx.lineTo(i * f.r * 0.12, s * -4); } ctx.closePath(); }, HORN[0]); ctx.restore(); }
-  if (k > 0.25) for (let i = 0; i < 5; i++) { const a = f.a + (i - 2) * 0.35, d = f.r * (0.5 + 0.4 * k); upright(ctx, f.x + Math.cos(a) * d, f.y + Math.sin(a) * d, () => flame(ctx, 0, 0, 10 * (1 - k) + 2)); }
+BFX.drakeSnap = { air(ctx, f, k) { // the jaws clap shut on the dart's end: a white crack at the snout, two arcs closing on it from the corners of the mouth, a lick of flame
+  const u = f.u; if (!u) return; const a = u.facing, R = u.vr, sx = u.x + Math.cos(a) * R * 1.55, sy = u.y + Math.sin(a) * R * 1.55;
+  if (k < 0.35) { ctx.globalAlpha = 1 - k / 0.35; inked(ctx, () => star(ctx, sx, sy, 16 + 26 * easeOut(k / 0.35), 6, 0.36, a), '#FFF4DC'); }
+  const e = easeOut(k01(k / 0.4)); ctx.globalAlpha = k < 0.5 ? 1 : 1 - (k - 0.5) / 0.5;
+  for (const s of [-1, 1]) slashBand(ctx, u.x + Math.cos(a) * R * 0.5, u.y + Math.sin(a) * R * 0.5, R * 1.5, a + s * (1.15 - 0.2 * e), a + s * (1.15 - 1.05 * e), 13 * (1 - 0.5 * k), '#FFE9D6', '#FFFFFF', true);
+  for (let i = 0; i < 3; i++) { const b = a + (i - 1) * 0.5, d = R * (1.7 + 0.7 * k); upright(ctx, u.x + Math.cos(b) * d, u.y + Math.sin(b) * d, () => flame(ctx, 0, 0, 9 * (1 - k) + 1)); }
 } };
-BFX.drakeLash = { air(ctx, f, k) { const e = easeOut(k01(k / 0.55)), h = f.a0 + (f.a1 - f.a0) * e, t = f.a0 + (f.a1 - f.a0) * sm(k01((k - 0.2) / 0.8)); slashBand(ctx, f.x, f.y, f.r * 0.98, t, h, 34 * (1 - 0.5 * k), '#FFCDBD', '#FFF6F2', true); dustPuffs(ctx, f.x + Math.cos(h) * f.r * 0.8, f.y + Math.sin(h) * f.r * 0.8, 30, k, 3, 4); } };
+BFX.drakeClaw = { air(ctx, f, k) { // the rake: three furrows through the air, one a claw, out from the shoulder and back along the flank
+  const e = easeOut(k01(k / 0.5)), h = f.a0 + (f.a1 - f.a0) * e, t = f.a0 + (f.a1 - f.a0) * sm(k01((k - 0.25) / 0.75));
+  ctx.globalAlpha = k < 0.6 ? 1 : 1 - (k - 0.6) / 0.4;
+  for (let i = 0; i < 3; i++) slashBand(ctx, f.x, f.y, f.r * (0.98 - i * 0.14), t, h, 11 * (1 - 0.4 * k), '#FFD9C4', '#FFF8F2', true);
+} };
+BFX.drakeLash = { air(ctx, f, k) { // the tail's sweep: the band the blade cuts, about the hips where they are now
+  const u = f.u, K = u && u.cd; if (!K || !K.vis || !K.vis.length) return; const hip = at_(K, u, HIP), back = hip.a + Math.PI, a0 = back - f.dir * f.arc / 2, a1 = back + f.dir * f.arc / 2;
+  const e = easeOut(k01(k / 0.55)), h = a0 + (a1 - a0) * e, t = a0 + (a1 - a0) * sm(k01((k - 0.2) / 0.8)); slashBand(ctx, hip.x, hip.y, f.r * 0.98, t, h, 34 * (1 - 0.5 * k), '#FFCDBD', '#FFF6F2', true); dustPuffs(ctx, hip.x + Math.cos(h) * f.r * 0.8, hip.y + Math.sin(h) * f.r * 0.8, 30, k, 3, 4); } };
+BFX.drakeInhale = { air(ctx, f, k) { // the breath drawn in before the scorch: sparks pulled into its mouth, the glow in its throat growing
+  const u = f.u; if (!u || u.dead) return; const a = u.facing, R = u.vr, mx = u.x + Math.cos(a) * R * 1.3, my = u.y + Math.sin(a) * R * 1.3;
+  glow(ctx, mx, my, 40 + 30 * k, '#FF8A3D', 0.35 * k);
+  for (let i = 0; i < 9; i++) { const q = (k * 2.2 + hash(i, 7)) % 1, b = a + (hash(i, 3) - 0.5) * 1.5, d = (1 - q) * (90 + 70 * hash(i, 5)) + 6; upright(ctx, mx + Math.cos(b) * d, my + Math.sin(b) * d, () => flame(ctx, 0, 0, 3 + 5 * q)); }
+} };
 BFX.drakeRoar = { air(ctx, f, k, w) { // a roar: short lines bursting from its jaws, embers
   const u = f.u; if (!u || u.dead) return; const T = w.time, a0 = u.facing; ctx.globalAlpha = Math.min(1, k * 6, (1 - k) * 4);
   for (let i = 0; i < 9; i++) { const q = (T * 2.4 + i / 9) % 1, a = a0 + (i - 4) * 0.22; streak(ctx, u.x, u.y, a, u.vr * 1.7 + 80 * q, u.vr * 1.7 + 80 * q + 32, 5, '#FFE8C2'); }
@@ -153,14 +199,23 @@ BFX.fireFall = { // a fireball out of the dark: its shadow gathers on the floor,
     drawProjectile(ctx, { kind: 'fireball', ab: 'fireball', x: f.x + ux * h + uy * h * 0.12, y: f.y + uy * h - ux * h * 0.12, vx: -ux * 600 - uy * 70, vy: -uy * 600 + ux * 70, life: 1 }, w.time); },
 };
 BFX.ringMark = { ground(ctx, f, k, w) { ctx.globalAlpha = Math.min(1, (1 - k) * 3) * 0.8; ctx.strokeStyle = '#FF7A2F'; ctx.lineWidth = 4; ctx.setLineDash([14, 10]); ctx.lineDashOffset = -w.time * 40; ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, TAU); ctx.stroke(); ctx.setLineDash([]); } };
-BFX.drakeCrouch = { air(ctx, f, k) { const u = f.u; if (!u || u.dead) return; dustPuffs(ctx, u.x - Math.cos(u.facing) * 60, u.y - Math.sin(u.facing) * 60, 50, k, 2, 5); } };
+BFX.drakeCrouch = { air(ctx, f, k) { const u = f.u, K = u && u.cd; if (!K || u.dead) return; for (const l of K.legs) if (l.off === HIP) dustPuffs(ctx, l.x - Math.cos(u.facing) * 20, l.y - Math.sin(u.facing) * 20, 36, k, l.s + 2, 4); } }; // it digs its hind feet in
+BFX.drakeSkid = { air(ctx, f, k) { const u = f.u, K = u && u.cd; if (!K || u.dead) return; for (const l of K.legs) dustPuffs(ctx, l.x + Math.cos(u.facing) * 16, l.y + Math.sin(u.facing) * 16, 38, k, l.off + l.s, 4); } }; // the dust its four feet throw up as it brakes
 BFX.drakeCrash = { air(ctx, f, k) { if (k < 0.2) glow(ctx, f.x, f.y, 90, '#FFF4DC', 0.8 * (1 - k / 0.2)); ctx.globalAlpha = 1 - k; inked(ctx, () => star(ctx, f.x, f.y, 34 * easeOut(k) + 10, 6, 0.4, 0.3), '#FFF4DC'); dustPuffs(ctx, f.x, f.y, 70, k, 5, 8); } };
 BFX.drakeDazed = { air(ctx, f, k, w) { const u = f.u; if (!u || u.dead) return; const [ux, uy] = up(); ctx.globalAlpha = Math.min(1, (1 - k) * 4);
   for (let i = 0; i < 3; i++) { const a = w.time * 4 + i * TAU / 3, x = u.x + Math.cos(a) * u.vr * 0.8 + ux * u.vr * 0.9, y = u.y + Math.sin(a) * u.vr * 0.32 + uy * u.vr * 0.9; inked(ctx, () => star(ctx, x, y, 9, 4, 0.35, a), '#FFF7C2'); } } };
 BFX.drakeTailOff = { air(ctx, f, k) { const e = easeOut(k), [ux, uy] = up(), hop = Math.sin(k01(k * 1.2) * Math.PI) * 60; ctx.globalAlpha = k < 0.75 ? 1 : 1 - (k - 0.75) / 0.25;
   ctx.save(); ctx.translate(f.x - Math.cos(f.a) * 120 * e + ux * hop, f.y - Math.sin(f.a) * 120 * e + uy * hop); ctx.rotate(f.a + Math.PI + k * 9);
   inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-40, -7); ctx.quadraticCurveTo(-14, -30, 22, -12); ctx.lineTo(44, 0); ctx.lineTo(22, 12); ctx.quadraticCurveTo(-14, 30, -40, 7); ctx.closePath(); }, HORN[1]); ctx.restore(); } };
-BFX.drakeFall = { air(ctx, f, k) { const [ux, uy] = up(), e = easeOut(k); ctx.globalAlpha = k < 0.7 ? 1 : 1 - (k - 0.7) / 0.3;
-  for (let i = 0; i < 3; i++) { const a = f.a + 1.57 + i * 2.1 + hash(f.seed, i), d = f.r * 2 * e * (0.4 + hash(i, f.seed)), hop = Math.sin(k01(k * 1.3) * Math.PI) * 24;
-    ctx.save(); ctx.translate(f.x + Math.cos(a) * d + ux * hop, f.y + Math.sin(a) * d + uy * hop); ctx.rotate(a + k * 4); inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, f.r * 0.6, f.r * 0.4, 0, 0, TAU); }, i % 2 ? SCALE[1] : PLATE[0]); ctx.restore(); }
-  dustPuffs(ctx, f.x, f.y, f.r * 2, k, f.seed, 5, '#B5754A'); } };
+// Its death: the animal itself, as it stood (a pose kept of it), drawn on the floor: its legs give way and it drops,
+// the head rolls aside with the jaw slack, its colour cools to char as its fire goes out; the husk lies there.
+BFX.drakeDie = {
+  ground(ctx, f, k, w) { const t = k * f.max, fall = easeOut(k01(t / 0.5)), cool = sm(k01((t - 0.15) / 1.3)), out = k01((t - (f.max - 1.5)) / 1.5);
+    paint(ctx, { k: f.k, u: f.u, T: w.time, look: 0.45 * f.side * fall, jaw: f.jaw + (0.5 - f.jaw) * fall, hot: 0.6 * (1 - cool), molten: f.molten && cool < 0.4, tailOn: f.tailOn, wash: [['#2A1A1E', 0.8 * cool]], alpha: 1 - out, die: fall }); },
+  air(ctx, f, k) { const t = k * f.max; if (t > 3.2) return; const [ux, uy] = up();
+    for (let off = 20, i = 0; off < LEN; off += 62, i++) { const p = at_(f.k, f.u, off);
+      if (t < 0.8) dustPuffs(ctx, p.x, p.y, rOf(off) * 1.9, t / 0.8, f.seed + i, 5, '#B5754A');
+      const q = (t * 0.6 + hash(i, f.seed)) % 1; ctx.globalAlpha = k01((3.2 - t) / 1.2) * (1 - q); // small flames lifting off it and going out
+      upright(ctx, p.x + (hash(i, 2) - 0.5) * 30 + ux * q * 46, p.y + (hash(i, 4) - 0.5) * 30 + uy * q * 46, () => flame(ctx, 0, 0, 7 * (1 - q) + 2)); ctx.globalAlpha = 1; } },
+};
+

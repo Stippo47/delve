@@ -31,6 +31,7 @@ export function threatened(w, u, horizon = 0.4) {
   for (const e of opponents(w, u)) {
     if (busy(e)) continue;
     const a = e.act, gap = gapOf(e, u), reach = (e.def.range || 20) + 12;
+    if (e.strikes) { const t = e.strikes(u); if (t != null) note(t, 'charge', e.x, e.y, e); } // (round 19, lane drake19: a boss's own running move says when it will reach u: the Cinder's rush and scorch)
     if (a && a.type === 'windup' && e.target === u && gap <= reach && a.max - a.t >= Math.min(react, a.max * 0.6)) note(a.t * windMul(e), 'melee', e.x, e.y, e);
     else if (a && (a.type === 'chargeTell' || a.type === 'charge') && a.a != null) {
       const d = dist(e.x, e.y, u.x, u.y), off = angleDiff(a.a, angleTo(e.x, e.y, u.x, u.y));

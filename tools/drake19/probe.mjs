@@ -32,7 +32,7 @@ for (let i = 0; i < n; i++) {
     if (!firstDown && w.units.some((u) => u.team === 'hero' && u.downed)) firstDown = t;
     if (!k.phase || b.dead) continue;
     const mv = moveOf(b); T.st[mv] = (T.st[mv] || 0) + DT; T.awake += DT;
-    if (mv !== lastMv) { T.starts[mv] = (T.starts[mv] || 0) + 1; lastMv = mv; }
+    if (mv !== lastMv) { T.starts[mv] = (T.starts[mv] || 0) + 1; if (mv === 'scorch-tell' || mv === 'rush-tell' || mv === 'ring') { if (lastAtk != null) T.gaps.push(t - lastAtk); lastAtk = t; } lastMv = mv; }
     const sp = Math.hypot(b.vx || 0, b.vy || 0);
     if (mv === 'prowl') { T.walkSp += sp * DT; T.walkS += DT; }
     if (sp < 12) T.still += DT;
@@ -69,7 +69,7 @@ console.log(`fights ${T.fights} won ${T.won} (${pc(T.won, T.fights)}) avg ${Math
 console.log('share of the fight in each state:', Object.entries(T.st).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${pc(v, T.awake)}`).join('  '));
 console.log('times each state began, a minute:', Object.entries(T.starts).map(([k, v]) => `${k} ${(60 * v / T.awake).toFixed(1)}`).join('  '));
 const g = T.gaps.sort((a, b) => a - b), med = (q) => (g.length ? g[Math.floor(g.length * q)].toFixed(1) : '-');
-console.log(`attacks (not counting fireballs) ${(60 * (g.length + T.fights) / T.awake).toFixed(1)} a minute; time between two: median ${med(0.5)} s, a quarter over ${med(0.75)} s, a tenth over ${med(0.9)} s, longest ${med(0.999)} s`);
+console.log(`attacks (every move with a tell: bite, claw, tail, roar, scorch, rush, ring; not single fireballs) ${(60 * (g.length + T.fights) / T.awake).toFixed(1)} a minute; time between two: median ${med(0.5)} s, a quarter over ${med(0.75)} s, a tenth over ${med(0.9)} s, longest ${med(0.999)} s`);
 for (const [k, K] of Object.entries(T.zones)) console.log(`  ${k}: ${(K.n / T.fights).toFixed(1)} a fight (${(60 * K.n / T.awake).toFixed(2)} a minute); caught ${(K.hit / Math.max(1, K.n)).toFixed(2)} each; caught nobody ${pc(K.nobody, K.n)}`);
 console.log('hero health lost while it is in each state (party-healths per fight):', Object.entries(T.dmgIn).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${(v / T.fights).toFixed(2)}`).join('  '));
 console.log(`prowl speed ${(T.walkSp / Math.max(1, T.walkS)).toFixed(0)} a second on average; standing still (under 12) ${pc(T.still, T.awake)} of the fight; turning ${(T.turn / T.awake).toFixed(2)} rad/s on average, fastest ${T.turnMax.toFixed(1)}`);
