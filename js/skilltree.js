@@ -5,7 +5,7 @@
 import { uiArt } from './sprites.js'; // round 19 (lane outline19): pictures in pages get their outline here
 import * as M from './meta.js';
 import { HEROES } from './heroes.js';
-import { icon } from './icons.js';
+import { icon, statIcon, statPicked, hasStatIcon } from './icons.js';
 import { I, roman } from './ui-kit.js';
 
 const NS = 'http://www.w3.org/2000/svg';
@@ -55,6 +55,21 @@ function glyph(n) {
   return '<path d="M12 6v12M6 12h12" stroke-width="3"/>';
 }
 
+// Round 19 (icons-misc lane): with the painted stat icons picked (the default), a stat node shows the same picture as
+// the stat everywhere else (icons.js statIcon); an ability's own power, cooldown, mending and potency nodes wear its
+// spark. The line glyphs above stay for the stand-in pick.
+const WEB_STAT = [[/heal|mend/i, 'heal'], [/health|hp|vigor|life/i, 'hp'], [/cool|cd|quick/i, 'cd'], [/range|reach/i, 'range'], [/move|speed.*move|swift/i, 'speed'],
+  [/attack speed|haste|as\b/i, 'aps'], [/status|burn|poison|chill|shock|apply/i, 'potency'], [/armou?r|guard|block|defen/i, 'armor'], [/dmg|damage|might|power/i, 'dmg']];
+function webStat(n) {
+  if (!statPicked()) return null;
+  if (n.id && /Mastery$/.test(n.id)) return 'mastery';
+  const k = n.stats && n.stats[0] && n.stats[0].k;
+  if (k && hasStatIcon(k)) return k;
+  const s = `${n.stat || ''} ${n.id} ${n.name}`;
+  for (const [re, id] of WEB_STAT) if (re.test(s)) return id;
+  return null;
+}
+
 // ---------------------------------------------------------------- drawing
 function nodeSvg(save, id, n, st, sel) {
   const r = sizeOf(n), cls = `wn ${n.kind} ${st.state}${n.id === sel ? ' sel' : ''}`;
@@ -79,7 +94,9 @@ function nodeSvg(save, id, n, st, sel) {
     inner = `<path d="M0 -9L8 -2 0 10 -8 -2z" class="gl gem"/>`;
   } else {
     shape = `<circle r="${r}" class="body"/>`;
-    inner = `<svg x="-12" y="-12" width="24" height="24" viewBox="0 0 24 24" class="gl" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${glyph(n)}</svg>`;
+    const sid = webStat(n);
+    inner = sid ? statIcon(sid, 'wst').replace('<svg ', `<svg x="${-r * 0.74}" y="${-r * 0.74}" width="${r * 1.48}" height="${r * 1.48}" `)
+      : `<svg x="-12" y="-12" width="24" height="24" viewBox="0 0 24 24" class="gl" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${glyph(n)}</svg>`;
   }
   // ranks: a tick per rank round the node
   let ticks = '';
@@ -168,7 +185,7 @@ export function mountTree(host, o) {
     const rankTxt = s.max > 1 ? ` · ${s.rank}/${s.max}` : s.maxed ? ' · learned' : '';
     const miss = (s.needs || []).find((x) => !x.ok);
     const need = !s.owned ? 'Recruit this hero first' : !miss ? '' : miss.what === 'link' ? 'Learn a node next to it first' : miss.text;
-    const ico = n.kind === 'tier' || n.kind === 'ability' ? `<span class="np-ico ab">${icon('ability', n.ability || n.id)}</span>` : `<span class="np-ico ${n.kind}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${n.kind === 'keystone' ? '<path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="currentColor" stroke="none"/>' : n.kind === 'slot' ? '<path d="M12 3l8 6-8 12-8-12z"/>' : glyph(n)}</svg></span>`;
+    const ico = n.kind === 'tier' || n.kind === 'ability' ? `<span class="np-ico ab">${icon('ability', n.ability || n.id)}</span>` : n.kind === 'stat' && webStat(n) ? `<span class="np-ico ${n.kind} pst">${statIcon(webStat(n))}</span>` : `<span class="np-ico ${n.kind}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${n.kind === 'keystone' ? '<path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="currentColor" stroke="none"/>' : n.kind === 'slot' ? '<path d="M12 3l8 6-8 12-8-12z"/>' : glyph(n)}</svg></span>`;
     const btn = s.maxed ? `<button class="btn wide no" disabled>${I.check} Learned</button>`
       : `<button class="btn wide ${s.can ? 'teal' : 'no'}" data-learn="${n.id}">${s.can ? `Learn - ${s.cost} ${s.cost === 1 ? 'point' : 'points'}` : need || `Needs ${s.cost} ${s.cost === 1 ? 'point' : 'points'}`}</button>`;
     panel.innerHTML = `<div class="np-head">${ico}<div><b class="np-name">${n.name}</b><span class="cap">${kind}${rankTxt}</span></div><button class="np-x" data-close aria-label="close">×</button></div>

@@ -707,7 +707,13 @@ structure is in `docs/UI-v4.md`; what was decided, and what was read into the de
   floor's average, the designer's "or would just show average"); a boss or mini-boss in the floor's last room, for the
   party's present size. Trinkets left off.
 - **Stat icons** all come from `icons.js statIcon(id)`; the set there is a stand-in until the style is picked
-  (`design/icons-r14`).
+  (`design/icons-r14`). Round 19 (icons-misc lane): picked, "A as stats. Maybe B." statIcon now gives round 14's style A
+  painted emblems (`tools/icons-misc/stats.mjs`, built into `js/icons-r19.js`), the skill web's stat nodes included;
+  style B and the old stand-ins stay behind Settings -> Stat icons (`?icons=b`, `?icons=statold`). Trinkets and potions
+  were tried again with no container ("Maybe just no container?"), in two paints (painted object, soft paint), with the
+  stand-in UI pictures (coin, points, lock, flag, door...); they stay behind Settings -> Trinket, potion and small icons
+  (`?icons=r19`, `?icons=soft`) until the designer picks (deck `r19-icons-misc`). "I like the square borders more" was
+  read as about the abilities (lane icons-abil), so nothing here has a border.
 - **Previews, no words** (`preview-sim.js STAGE_TEXT = false`): the round 13 marks are gone and so are the game's own
   floating words and hit numbers on a stage (read as "No text pop up", all of it; one constant brings the game's
   numbers back if that was too much). Units that matter carry a health bar there (`u.barAlways`). What a tier adds is in

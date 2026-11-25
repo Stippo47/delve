@@ -3,6 +3,7 @@
 //   icon(kind, id, cls)   kind: 'trinket' | 'potion' | 'status' | 'ability'  -> '<svg ...>' markup
 // Anything without a drawing falls back to a gem in the item's colour, so new trinkets still show.
 import { GLYPH2 } from './heroes2.js';
+import { R19 } from './icons-r19.js'; // round 19 (icons-misc lane): the painted sets, built by tools/icons-misc/build.mjs
 const INK = '#2B2230';
 const O = `stroke="${INK}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke"`;
 const H = 'stroke="none"'; // highlights: no outline
@@ -274,6 +275,8 @@ export const abilityGlyph = (id) => ABILITY_GLYPH[id] || GLYPH2[id] || 'burst';
 // ---------------------------------------------------------------- the one entry point
 const gemFallback = (color = '#9B7BD6') => `<path d="M16 3l11 9-11 17L5 12z" fill="${color}"/><path d="M16 3l11 9H5z" fill="#FFFFFF" opacity=".45" ${H}/>`;
 export function icon(kind, id, cls = '', color) {
+  const r = (kind === 'trinket' || kind === 'potion') && r19Item(kind, id);
+  if (r) return paint(r, cls);
   let inner;
   if (kind === 'trinket') inner = TRINKET[id] || gemFallback(color);
   else if (kind === 'potion') inner = POTION[id] || POTION.heal;
@@ -323,4 +326,74 @@ const STAT = {
   floor: `<path d="M4 25h8v-6h8v-6h8" fill="none" stroke="${INK}" stroke-width="7"/><path d="M4 25h8v-6h8v-6h8" fill="none" stroke="#C3D0E6" stroke-width="3.200"/>`,
 };
 export const STAT_ICON_IDS = Object.keys(STAT);
-export function statIcon(id, cls = '') { return wrap(tidy(STAT[id] || STAT.best), 'stat ' + cls); }
+export function statIcon(id, cls = '') {
+  const r = r19Stat(id);
+  return r ? paint(r, 'stat ' + cls) : wrap(tidy(STAT[id] || STAT.best), 'stat ' + cls);
+}
+
+// ---------------------------------------------------------------- round 19 sets (icons-misc lane)
+// The designer picked style A for stats beside a number (docs/riffle-log, icons-r14: "A as stats. Maybe B."), so the
+// stat icons are round 14's painted emblems now (tools/icons-misc, generated into icons-r19.js). Trinkets, potions and
+// a few small UI pictures were tried again without a container, in two treatments; they stay behind the switch until
+// the designer picks. The picks (Settings -> Icons, kept in localStorage; or ?icons=... for a page load):
+//   stats  'a' painted emblem (default) | 'b' bold glyph | 'old' the stand-in set above
+//   items  'old' the drawings above (default) | 'paint' painted objects | 'soft' the lighter soft paint
+//   ?icons= a, b, statold, r19 / paint, soft, old (everything as before), default; several with commas (?icons=b,soft)
+const ICON_KEY = 'delve.icons';
+export const ICON_PICKS = {
+  stats: [{ id: 'a', name: 'Painted', blurb: 'Round 14 style A: the object itself, outlined and shaded.' }, { id: 'b', name: 'Bold glyph', blurb: 'Style B: one flat colour per stat.' }, { id: 'old', name: 'Stand-in', blurb: 'The plain set from before.' }],
+  items: [{ id: 'old', name: 'Stand-in', blurb: 'The small flat drawings from before.' }, { id: 'paint', name: 'Painted', blurb: 'Painted objects, no container.' }, { id: 'soft', name: 'Soft paint', blurb: 'Lighter: no ink, a soft shadow.' }],
+};
+function readPicks() {
+  const p = { stats: 'a', items: 'old' };
+  try { const v = JSON.parse(localStorage.getItem(ICON_KEY) || 'null'); if (v) { if (ICON_PICKS.stats.some((x) => x.id === v.stats)) p.stats = v.stats; if (ICON_PICKS.items.some((x) => x.id === v.items)) p.items = v.items; } } catch {}
+  let q = null; try { q = new URLSearchParams(location.search).get('icons'); } catch {}
+  for (const t of (q || '').split(/[,\s]+/).filter(Boolean)) {
+    if (t === 'a' || t === 'b') p.stats = t; else if (t === 'statold') p.stats = 'old';
+    else if (t === 'r19' || t === 'paint') p.items = 'paint'; else if (t === 'soft') p.items = 'soft';
+    else if (t === 'old') { p.stats = 'old'; p.items = 'old'; } else if (t === 'default') { p.stats = 'a'; p.items = 'old'; }
+  }
+  return p;
+}
+export const iconPicks = readPicks();
+let ALT = null; // the alternatives (style B stats, the soft paint) load only when one is picked
+const needAlt = () => iconPicks.stats === 'b' || iconPicks.items === 'soft';
+if (needAlt()) { try { ALT = (await import('./icons-r19-alt.js')).R19_ALT; } catch { ALT = null; } }
+export async function setIconPick(kind, v) {
+  if (!ICON_PICKS[kind] || !ICON_PICKS[kind].some((x) => x.id === v)) return;
+  iconPicks[kind] = v;
+  try { localStorage.setItem(ICON_KEY, JSON.stringify({ stats: iconPicks.stats, items: iconPicks.items })); } catch {}
+  if (needAlt() && !ALT) { try { ALT = (await import('./icons-r19-alt.js')).R19_ALT; } catch { ALT = null; } }
+}
+// each use gets its own ids (gradients and clips), so one hidden copy never blanks another
+let uid = 0;
+const paint = (s, cls) => { const n = 'i' + (++uid).toString(36); return s.replace('<svg ', `<svg class="ico ${cls}" aria-hidden="true" `).replace(/@I/g, n); };
+const STAT_ALIAS = { atkSpeed: 'aps', moveSpeed: 'speed', status: 'potency' }; // the skill web's names (heroes.js STATS)
+function r19Stat(id) {
+  const S = iconPicks.stats === 'a' ? R19.statsA : iconPicks.stats === 'b' && ALT ? ALT.statsB : null;
+  return S ? S[id] || S[STAT_ALIAS[id]] || null : null;
+}
+function r19Item(kind, id) {
+  if (iconPicks.items === 'old') return null;
+  const soft = iconPicks.items === 'soft' && ALT;
+  const S = kind === 'trinket' ? (soft ? ALT.trinketsSoft : R19.trinkets) : (soft ? ALT.potionsSoft : R19.potions);
+  return S[id] || null;
+}
+export const altLoaded = () => !!ALT;
+export async function loadIconAlt() { if (!ALT) { try { ALT = (await import('./icons-r19-alt.js')).R19_ALT; } catch { ALT = null; } } return !!ALT; }
+// three pictures in a given pick, for the settings tiles (whatever is picked now)
+export function iconSwatch(kind, pick) {
+  const old = (inner) => wrap(tidy(inner), 'sw');
+  if (kind === 'stats') {
+    const ids = ['hp', 'dmg', 'armor'], S = pick === 'a' ? R19.statsA : pick === 'b' && ALT ? ALT.statsB : null;
+    return ids.map((id) => (S ? paint(S[id], 'sw') : old(STAT[id]))).join('');
+  }
+  const soft = pick === 'soft' && ALT;
+  if (pick === 'old' || (pick === 'soft' && !ALT)) return [TRINKET.phoenixFeather, TRINKET.thunderRing, POTION.heal].map(old).join('');
+  const T = soft ? ALT.trinketsSoft : R19.trinkets, Pn = soft ? ALT.potionsSoft : R19.potions;
+  return [T.phoenixFeather, T.thunderRing, Pn.heal].map((s) => paint(s, 'sw')).join('');
+}
+export const statPicked = () => iconPicks.stats !== 'old';
+export const hasStatIcon = (id) => !!r19Stat(id);
+// a small UI picture (gold, points, key, lock, the camp's notes) when the painted items are picked, else null
+export function uiIcon(id, cls = '') { const s = iconPicks.items !== 'old' && R19.ui[id]; return s ? paint(s, 'ui ' + cls) : null; }

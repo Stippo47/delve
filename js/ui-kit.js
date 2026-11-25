@@ -2,6 +2,7 @@
 // No state of its own.
 import { uiArt } from './sprites.js'; // round 19 (lane outline19): pictures in pages get their outline here
 import { HEROES } from './heroes.js';
+import { uiIcon } from './icons.js'; // round 19 (icons-misc lane): painted UI pictures behind the icon switch
 
 const svg = (d, extra = '') => `<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${extra}>${d}</svg>`;
 // One line weight, one corner style: the tab bar and the small controls.
@@ -27,9 +28,16 @@ export const I = {
   sword: svg('<path d="M14.5 4H20v5.5L10 19.5 4.5 14z"/><path d="M3 21l3.5-3.5M8 13l3 3"/>'),
   fire: '<svg class="ico" viewBox="0 0 24 24"><path d="M12 2c1 4 6.5 6 6.5 12.2a6.5 6.5 0 0 1-13 0c0-3 2-5.2 3.2-6.4.1 2 1 3.2 2.1 3.2C11 7.8 10 5 12 2z" fill="#FF9A3D"/><path d="M12 11.5c1 1.2 2.4 2.2 2.4 3.9a2.4 2.4 0 0 1-4.8 0c0-1.4 1.1-2.6 2.4-3.9z" fill="#FFE07A"/></svg>',
 };
+// Round 19 (icons-misc lane): with the painted items picked (Settings -> Icons, icons.js uiIcon), the line glyphs that
+// stand for a thing (not a control) are painted objects, each use drawn fresh (its own gradient ids).
+for (const k of ['lock', 'flask', 'fire', 'moon', 'crown', 'flag', 'door', 'trader', 'sword', 'skull']) {
+  const line = I[k];
+  Object.defineProperty(I, k, { get: () => uiIcon(k) || line, enumerable: true });
+}
 export const coin = '<span class="coin"></span>';
-export const gold = (n) => `<span class="cost">${coin}${n}</span>`;
-export const pts = (n) => `<span class="pts">${n}</span>`;
+export const coinTag = () => uiIcon('coin', 'coin-ico') || coin; // the painted coin, or the CSS one
+export const gold = (n) => `<span class="cost">${coinTag()}${n}</span>`;
+export const pts = (n) => { const g = uiIcon('points', 'pts-ico'); return g ? `<span class="pts r19">${g}${n}</span>` : `<span class="pts">${n}</span>`; };
 export const ROLE = { tank: 'Tank', melee: 'Fighter', skirmish: 'Skirmisher', ranged: 'Ranged', caster: 'Caster', support: 'Support' };
 export const ROLE_COL = { tank: '#5B8CDB', melee: '#D0664E', skirmish: '#7DB046', ranged: '#4FA37A', caster: '#9B7BD6', support: '#E6A935' };
 export const roman = (n) => ['', 'I', 'II', 'III', 'IV', 'V', 'VI'][n] || String(n);
