@@ -1,0 +1,14 @@
+fights 20 won 8 (40.0%) avg 151s
+share of the fight in each state: prowl 48.1%  scorch 16.0%  ring 11.8%  hold 9.3%  scorch-tell 5.1%  roar 5.1%  rush-tell 2.6%  rush 2.1%
+times each state began, a minute: roar 3.1  prowl 8.8  scorch-tell 3.0  scorch 3.0  hold 8.5  rush-tell 1.6  rush 1.6  ring 0.8
+attacks (not counting fireballs) 2.4 a minute; time between two: median 11.2 s, a quarter over 26.3 s, a tenth over 42.6 s, longest 143.7 s
+  tail: 2.8 a fight (1.14 a minute); caught 0.51 each; caught nobody 54.5%
+  bite: 1.4 a fight (0.58 a minute); caught 0.64 each; caught nobody 42.9%
+  roar: 1.8 a fight (0.72 a minute); caught 0.86 each; caught nobody 31.4%
+  fireball: 28.4 a fight (11.76 a minute); caught 0.93 each; caught nobody 36.6%
+hero health lost while it is in each state (party-healths per fight): scorch 4.16  prowl 1.32  rush 0.76  hold 0.49  scorch-tell 0.20  ring 0.18  roar 0.12  rush-tell 0.08
+prowl speed 71 a second on average; standing still (under 12) 38.2% of the fight; turning 0.83 rad/s on average, fastest 8.0
+while prowling its mark is over 330 away 6.6% of the time
+head in a pillar 0.0 s a fight, at the room's edge 0.0 s; body boxes in a pillar 0.1 box-s a fight, out of the room 4.7
+its body crosses itself 2.5% of the fight, is kinked 76.1%; its tail's tip is through a wall 2.7%; its spine lies across a pillar 0.1%
+first hero down at (s): 12 12 13 24 27 28 32 33 36 44 50 51 57 58 60 75 78 92 105 113
