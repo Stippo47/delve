@@ -211,7 +211,7 @@ export function makeStage(spec) {
   const S = { spec, loop: 3, t: 0, w: null, fires: 0, locked: false, why: '', tick: () => {}, size: [HERO_W, HERO_H] };
   const build = make(S, spec);
   S.loops = 0; S.loopsFired = 0;
-  S.reset = () => { if (S.w) { S.loops++; if (S.fires > S.fires0) S.loopsFired++; } S.fires0 = S.fires; S.t = 0; S.firstT = null; S.felled = false; S.crutch = false; if (S.fit) S.loop = S.fit.max; S.mark = marker(); build(); S.mark(S.w); };
+  S.reset = () => { if (S.w) { S.loops++; if (S.fires > S.fires0) S.loopsFired++; } S.fires0 = S.fires; S.t = 0; S.firstT = null; S.felled = false; S.crutch = false; S.own = false; if (S.fit) S.loop = S.fit.max; S.mark = marker(); build(); S.mark(S.w); };
   S.step = (dt) => {
     if (S.t >= S.loop) S.reset();
     S.t += dt; S.tick(dt); step(S.w, dt); if (S.after) S.after(dt);
@@ -702,7 +702,8 @@ function foeStage(S, spec) {
     u = seededFoe(w, k, ux, uy, r);
     u.aggro = true; u.facing = Math.PI; u.dueSoon = sc.dueSoon ?? 0.4; u.abilT = sc.abilT ?? 1; // its moves come round soon, but not before you've seen it stand there
     if (move === 'attack') { u.def = { ...u.def, brain: null, ability: null, dashCd: 0 }; u.eliteFn = null; u.eliteDeath = null; }
-    const watch = (fn, owns) => (fn ? function (...a) { S.mark(w); const hp0 = stateSum(w); const out = fn.apply(this, a); if (S.mark(w) > 0 || Math.abs(stateSum(w) - hp0) > 0.5 || (owns && out === true)) S.fire(); return out; } : fn); // owns: an elite move that takes the tick (returns true) is under way
+    const own = () => { S.own = true; S.fire(); }; // (its own move, not a plain blow: the check tool reads S.own)
+    const watch = (fn, owns) => (fn ? function (...a) { S.mark(w); const hp0 = stateSum(w); const out = fn.apply(this, a); if (S.mark(w) > 0 || Math.abs(stateSum(w) - hp0) > 0.5 || (owns && out === true)) own(); return out; } : fn); // owns: an elite move that takes the tick (returns true) is under way
     // what counts as its move going off: the kit's brain for 'kit'; the elite's own move for 'elite' (or its brain, when the
     // elite move lives there: the entry's tick does nothing and the brain reads u.elite); the major's moves for 'major'
     const E0 = eliteOf(k), noop = !E0 || !E0.tick || /^\s*tick\s*\(\s*\)\s*\{\s*return false;?\s*\}\s*$/.test(String(E0.tick));
@@ -711,6 +712,7 @@ function foeStage(S, spec) {
     else if (u.def.brain && (move === 'major' || (move === 'elite' && !noop))) { const b0 = u.def.brain; u.def = { ...u.def, brain: function (...a) { return held() ? true : b0.apply(this, a); } }; }
     if (move === 'elite' || move === 'major') { u.eliteFn = watch(u.eliteFn, true); u.eliteDeath = watch(u.eliteDeath); }
     if (sc.hp) u.hp = u.maxHp * sc.hp; // (a move that waits for it to be hurt: it starts hurt, the heroes on it)
+    if (sc.prep) sc.prep(u);
     u.barAlways = true; u.trinketHooks = [...(u.trinketHooks || []), FOE_KEEP];
     // the heroes: real ones, their abilities held, each where the scene puts them; they move and fight as in a run
     const at = (p) => [Math.min(W - 40, Math.max(40, ux + p[0] * K)), Math.min(H - 40, Math.max(40, uy + p[1] * K))];
@@ -735,7 +737,7 @@ function foeStage(S, spec) {
     if (move !== 'attack' && fk && d0.res !== undefined && /rais/i.test(ELITE_MOVE[k] || '')) w.corpses.push({ kind: fk, x: ux - 90, y: uy - 60, r: 30, vr: 22, facing: 1, kx: 0, ky: 0, spin: 0, z: 0, vz: 0, age: 5, t: 14, max: 14 });
     killT = dies && !S.fit ? S.loop - 1.8 : Infinity; // (an elite or major falls a beat after its move: below)
     const lastA = { t: u.lastAttackT, abil: u.abilT }, hold = { x: u.x, y: u.y }; S.hits = hitWatch(); strikes = [];
-    function held() { return (move === 'elite' || move === 'major') && !S.fired() && S.t < 2; }
+    function held() { return (move === 'elite' || move === 'major') && !sc.free && !S.fired() && S.t < 2; }
     u.target = heroes[sc.aim || 0] || heroes[0]; // (who it goes for first: the scene's first hero, unless it names another)
     S.hero = u; S.dummies = heroes; S.friends = [friend, ...pack].filter(Boolean);
     // the felling blow (a death move): the nearest hero turns on it and strikes, or shoots
@@ -751,7 +753,7 @@ function foeStage(S, spec) {
       } else { setAnim(by, by.def.attackAnim || 'swing', (by.def.windup || 0.2) + 0.28); strikes.push({ at: S.t + (by.def.windup || 0.2) + 0.1, by }); }
     };
     S.tick = () => {
-      if (dies && S.fit && !lastA.fell && (S.firstT != null ? S.t >= S.firstT + 1.4 : move === 'elite' && !(eliteOf(k) || {}).tick && S.t > 2.2)) { lastA.fell = true; fellIt(); } // a move that is its death (falls apart and gets up) is shown by felling it
+      if (dies && S.fit && !lastA.fell && (S.firstT != null ? S.t >= S.firstT + 1.4 : move === 'elite' && !(eliteOf(k) || {}).tick && S.t > 1.2)) { lastA.fell = true; fellIt(); } // a move that is its death (falls apart and gets up) is shown by felling it
       if (S.t >= killT && !lastA.fell) { lastA.fell = true; fellIt(); }
       for (const s of strikes) if (!s.done && S.t >= s.at) { s.done = true; if (!u.dead && !u._bookKilled) { u._bookKilled = true; S.mark(w); u.invulnT = 0; hurt(w, u, u.hp + 1e6, s.by, { noDodge: true, heavy: true }); } }
       for (const o of heroes) {
@@ -760,13 +762,13 @@ function foeStage(S, spec) {
       }
     };
     S.after = (dt) => {
-      if (u.lastAttackT !== lastA.t) { lastA.t = u.lastAttackT; if (move === 'attack') S.fire(); }
-      if (move === 'kit' && u.abilT > lastA.abil + 0.5) S.fire(); // its ability went off (sim.js resets the timer)
+      if (u.lastAttackT !== lastA.t) { lastA.t = u.lastAttackT; if (move === 'attack') own(); }
+      if (move === 'kit' && u.abilT > lastA.abil + 0.5) own(); // its ability went off (sim.js resets the timer)
       lastA.abil = u.abilT;
-      if (u._bookKilled && u.dead && S.mark(w) > 0) S.fire();
+      if (u._bookKilled && u.dead && S.mark(w) > 0) own();
       const hit = S.hits(heroes) > 0;
-      if (hit && (move === 'attack' || move === 'kit')) S.fire(); // its blows landed (for a kit, its brain may be its attack)
-      if (move === 'kit' && d0.pass && Math.hypot(u.x - hold.x, u.y - hold.y) > 150) S.fire(); // a roller: rolling and bouncing is what it does
+      if (hit && (move === 'attack' || (move === 'kit' && !hasKit(d0)))) own(); else if (hit && move === 'kit') S.fire(); // its blows landed (for a kit, its brain may be its attack)
+      if (move === 'kit' && d0.pass && Math.hypot(u.x - hold.x, u.y - hold.y) > 150) own(); // a roller: rolling and bouncing is what it does
       // an elite or major is held where it stands (it can still act) until its move has gone off, so moves that want
       // room (throws, charges, leaps) get it before it has walked up to them; never longer than 2 s
       if (held() && !u.dead && !u.act) { u.x = hold.x; u.y = hold.y; u.vx = u.vy = 0; }

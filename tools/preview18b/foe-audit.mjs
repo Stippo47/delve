@@ -16,8 +16,8 @@ const out = {}; const t0 = Date.now();
 for (const s of specs) { try { out[PS.specKey(s)] = M.measureStage(s); } catch (e) { out[PS.specKey(s)] = [{ threw: String(e && e.stack || e).split('\n').slice(0, 3).join(' | ') }]; } }
 if (opt('out')) fs.writeFileSync(opt('out'), JSON.stringify(out, null, 0));
 export const summarize = (out) => {
-  const C = { n: 0, threw: 0, locked: 0, never: 0, late: 0, straw: 0, unseen: 0, unseenBlows: 0, noReach: 0, crutch: 0, stNothing: 0, firstSum: 0, firstN: 0, fires: 0, loops: 0 };
-  const L = { threw: [], locked: [], never: [], late: [], unseen: [], noReach: [], crutch: [], stNothing: [] };
+  const C = { n: 0, threw: 0, locked: 0, never: 0, late: 0, straw: 0, unseen: 0, unseenBlows: 0, noReach: 0, crutch: 0, stNothing: 0, blowsOnly: 0, firstSum: 0, firstN: 0, fires: 0, loops: 0 };
+  const L = { threw: [], locked: [], never: [], late: [], unseen: [], noReach: [], crutch: [], stNothing: [], blowsOnly: [] };
   for (const [k, R] of Object.entries(out)) {
     C.n++;
     if (R[0].threw) { C.threw++; L.threw.push(k + ' ' + R[0].threw); continue; }
@@ -29,6 +29,7 @@ export const summarize = (out) => {
     const u = R.reduce((a, r) => a + r.unseen, 0); if (u) { C.unseen++; C.unseenBlows += u; L.unseen.push(k + ' ' + u + ' (' + R.flatMap((r) => r.unseenWhy).slice(0, 2).join(', ') + ')'); }
     if (R.some((r) => r.fired && !r.reached)) { C.noReach++; L.noReach.push(k); }
     if (R.some((r) => r.crutch)) { C.crutch++; L.crutch.push(k); }
+    if (k.startsWith('foe:') && !k.includes(':attack:') && R.some((r) => r.fired && !r.own)) { C.blowsOnly++; L.blowsOnly.push(k); }
     if (k.startsWith('status:') && R.some((r) => r.stFrom !== 'seen')) { C.stNothing++; L.stNothing.push(k + ' (' + R.map((r) => r.stFrom).join(' ') + ')'); }
   }
   return { C, L };
@@ -43,4 +44,5 @@ console.log(`blows or health lost with nothing seen behind them: ${C.unseen} pre
 console.log(`went off but reached no one in 3.5 s, or a status that never came to its burst or state (wrong scenario): ${C.noReach}`);
 console.log(`the stage had to help it (a target stepped up, its health set lower): ${C.crutch}`);
 console.log(`statuses put on from nothing seen: ${C.stNothing}`);
+console.log(`a monster's move whose loop showed only its plain blows (its own move never came): ${C.blowsOnly}`);
 if (args.includes('--v')) for (const [n, l] of Object.entries(L)) { console.log('## ' + n + ' ' + l.length); for (const x of l) console.log('  ' + x); }

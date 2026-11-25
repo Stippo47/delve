@@ -131,6 +131,8 @@ export function unseenBlows(spec, loops = 2) {
 //     reached                 what the move made touched someone within REACH s of going off: a hero struck,
 //                             statused, held or shoved by its side, or a friend of its own mended, shielded or quickened,
 //                             or help called in
+//     own                     (monsters) its own move went off (a brain's, an ability, an elite's, a death), not
+//                             only its plain blows
 //     crutch                  the stage had to help it (a target stepped up to it, its health set lower)
 //     unseen / unseenWhy      blows on either side with nothing seen behind them (a target with no weapon swinging at
 //                             nothing, a blow from no one), or health set lower with no blow
@@ -190,6 +192,7 @@ export function measureStage(spec, loops = 2) {
       if (S.loops !== L) continue;
       if (S.fires > f0) { if (S.t - (cur.lastGo ?? -9) > 0.8) cur.fires++; cur.lastGo = S.t; if (cur.first == null) cur.first = S.t; cur.fired = true; } // (a go: what fires within 0.8 s of the last is the same go)
       if (S.crutch) cur.crutch = true;
+      if (S.own) cur.own = true; // (a monster's own move, not only its plain blows)
       for (const [o, h] of hpBefore) if (S.w.units.includes(o) && !o.downed && !o.dead && !o.dying && o.maxHp && h - o.hp > (hurtSum.get(o) || 0) + o.maxHp * 0.02) { cur.unseen++; if (cur.unseenWhy.length < 3) cur.unseenWhy.push((o === S.hero ? 'it' : o.kind) + ' health set lower'); }
       for (const o of S.w.units) if (!seenU.has(o)) { seenU.add(o); if (spec.t === 'foe' && within() && o.team === side() && !dummy(o)) cur.reached = true; }
       if (spec.t === 'foe' && within() && !cur.reached) {

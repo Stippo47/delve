@@ -270,6 +270,10 @@ export function attackSceneOf(id) {
 //     friend   a fighter of the monster's own side beside it, hurt, with a hero on it (menders, guards, war cries,
 //              raising the fallen; friendFor picks one from its own dungeon); pack: two more of its own kind (howls)
 //     hp       the monster's own share of health at the start (moves that wait for it to be hurt), the heroes there
+//     free     an elite or major isn't held where it stands until its move goes (its move comes out of its brain's
+//              own moves: a gaper's spin is part of its charge)
+//     prep     (u) => ...: a move that keeps its own clock (not elites.js due, which u.dueSoon brings forward) set to
+//              come round soon
 // The heroes hit softly (FOE_HERO_DMG) and are kept up (FOE_HERO_FLOOR, then they mend), the monster and its side are
 // kept up too: so the loop lasts and its move comes round again.
 // FOE_SCENE['kind'] or FOE_SCENE['kind:move'] picks a scene and lays keys over it; with no entry the scene comes from
@@ -307,15 +311,19 @@ export const FOE_SCENES = {
 };
 // what to lay over the scene, by kind or kind:move ('kind:elite', 'kind:major', 'kind:kit', 'kind:attack')
 const FS = (scene, o = {}) => ({ scene, ...o });
+const FAR_HELD = [H('paladin', [-290, 0], { hold: 2.8 }), H('archer', [-330, -110], { hold: 2.8 }), H('tower', [-300, 110], { hold: 2.8 })];
 export const FOE_SCENE = {
   // the Wildwood
-  banditAxe: FS('far'), boar: FS('edge'), bandit: FS('far'), 'bandit:kit': FS('close'), 'bandit:attack': FS('party'),
+  banditAxe: FS('far'), boar: FS('edge'), bandit: FS('far', { prep: (u) => { u.b = { cd: 0.4, up: 0 }; } }), 'bandit:kit': FS('close'), 'bandit:attack': FS('party'),
   // the Warren
   goblinBomber: FS('standing'), goblinSuicide: FS('standing'), dynamouse: FS('standing'), 'ogre:kit': FS('close'),
   // the Sewers
   'ratKing:elite': FS('close', { hp: 0.55 }), 'ratKing:major': FS('close', { hp: 0.55 }),
+  'crab:elite': FS('party'), 'crabBlue:elite': FS('party'), 'crabGreen:elite': FS('party'), // (a short snap: in reach already)
   // the Crypt
-  'mummy:kit': FS('far'), gaper: FS('far'), 'brute:elite': FS('far'), 'brute:major': FS('far'),
+  'mummy:kit': FS('far'),
+  gaper: FS('far', { free: true, heroes: FAR_HELD, prep: (u) => { u.g = { cd: 0.5 }; } }), // (its charge keeps its own clock, not a due one: brought forward)
+  'brute:elite': FS('far', { free: true, heroes: FAR_HELD, prep: (u) => { u.b = { cd: 0.4, up: 0 }; } }), 'brute:major': FS('far', { free: true, heroes: FAR_HELD, prep: (u) => { u.b = { cd: 0.4, up: 0 }; } }),
   // the Frost Hollow
   frostWraith: FS('standing'),
   // the Ember Deep
@@ -331,12 +339,14 @@ export function foeSceneFor(k, move, d, words = '', major = '') {
   if (d.boss) return FS('boss');
   if (move === 'attack') return FS('party');
   if (move === 'major') return FS({ quake: 'close', charge: 'far', volley: 'ring', call: 'party' }[major] || 'party', HURT_MOVE.test(words) ? { hp: 0.45 } : {});
+  if (move === 'kit' && (d.ability === 'charge' || d.ability === 'shadowstep' || d.ability === 'dash' || d.dashCd)) return FS('far'); // (a dash, a charge: room to close; a pack kind still brings its pack)
   if ((d.pack || d.wolf) && move !== 'elite') return FS('pack');
   if (d.mends || !(d.dmg > 0)) return FS('friend');
   if (move === 'elite') {
     const hp = HURT_MOVE.test(words) ? { hp: 0.45 } : {};
     if (/mend|heal|rais|rall|war cry|quicken|shield[s ]+(its|the) |call/i.test(words)) return FS('friend', hp);
     if (/lob|bomb|shell|glob/i.test(words)) return FS('standing', hp);
+    if (/short (lunge|rush|dash)/i.test(words)) return FS('party', hp);
     if (/charge|rush|leap|pounce|lunge|thr[oe]w|spear|dash|dive|swoop|hook|pull|down a (long )?line|shockwave/i.test(words)) return FS('far', hp);
     if (/slam|quake|nova|spin|round it|all round|ring|stomp|sweep/i.test(words)) return FS('close', hp);
     if (/arrow|shot|reflect|shooter/i.test(words)) return FS('shooters', hp);
