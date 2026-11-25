@@ -2,6 +2,7 @@
 // Fails (exit 1) on any that throw and any whose move, trait or item doesn't fire in every one of two loops.
 // Round 18: and reports, for every hero ability at every tier, how it goes in its scene (see below).
 //   node tools/preview-check.mjs [--only hero|foe|status|trinket|potion] [--id paladin] [--v] [--table]
+// Round 18b: and the same for the monsters' moves and the statuses (at the end).
 globalThis.location = { search: '?x' };
 globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
 const args = process.argv.slice(2);
@@ -81,5 +82,41 @@ if (!opt('only') || opt('only') === 'hero') {
   const others = specs.filter((s) => (s.t === 'hero' && (s.move === 'attack' || s.move === 'trait')) || s.t === 'trinket' || s.t === 'potion');
   for (const s of others) { try { const r = M.unseenBlows(s); if (r.blows) unseen.push(PS.specKey(s) + '  ' + r.blows + ' (' + r.why.slice(0, 2).join(', ') + ')'); } catch (e) { /* counted above */ } }
   console.log(`blows on the hero side with nothing seen behind them (a target with no weapon, health set lower): ${unseen.length}`); list(unseen);
+}
+// Round 18b (lane preview18b): the same report on the monsters' pages (every enemy kind's moves at every rank the Book
+// offers) and on the statuses, from tools/preview-measure.mjs measureStage, two loops each:
+//   when it first went off and how often a loop, a loop where it didn't go within 2.5 s, straw targets on the stage,
+//   wrong scenario (it went off but what it made reached no one, or a status never came to its burst or state), the
+//   stage helping it (a target moved up to it, its health set lower), blows or health lost with nothing seen behind
+//   them on either side, a status put on from nothing seen, and a monster's loop that showed only its plain blows.
+//   --table   one line per move: each loop's first go, goes, what it was shown against
+for (const t of ['foe', 'status']) {
+  if (opt('only') && opt('only') !== t) continue;
+  const M = await import('./preview-measure.mjs');
+  const list = specs.filter((s) => s.t === t), t1 = Date.now(), R = {};
+  for (const s of list) { try { R[PS.specKey(s)] = M.measureStage(s); } catch (e) { bad.push(PS.specKey(s) + '  ' + (e && e.stack ? e.stack.split(String.fromCharCode(10)).slice(0, 3).join(' | ') : e)); } }
+  const L = { late: [], straw: [], wrong: [], helped: [], unseen: [], fromNothing: [], blowsOnly: [] }; let loops = 0, goes = 0, fsum = 0, fn = 0, fmax = 0;
+  for (const [k, X] of Object.entries(R)) {
+    if (X[0].locked) continue;
+    for (const r of X) { loops++; goes += r.fires; if (r.first != null) { fsum += r.first; fn++; fmax = Math.max(fmax, r.first); } }
+    if (X.some((r) => r.first == null || r.first > WITHIN)) L.late.push(k + '  (' + X.map((r) => (r.first == null ? '-' : r.first.toFixed(1))).join(' ') + ' s)');
+    if (X.some((r) => r.straw > 0)) L.straw.push(k);
+    if (X.some((r) => r.fired && !r.reached)) L.wrong.push(k);
+    if (X.some((r) => r.crutch)) L.helped.push(k);
+    const u = X.reduce((a, r) => a + r.unseen, 0); if (u) L.unseen.push(k + '  ' + u + ' (' + X.flatMap((r) => r.unseenWhy).slice(0, 2).join(', ') + ')');
+    if (t === 'status' && X.some((r) => r.fired && r.stFrom !== 'seen')) L.fromNothing.push(k);
+    if (t === 'foe' && !k.includes(':attack:') && X.some((r) => r.fired && !r.own)) L.blowsOnly.push(k);
+    if (args.includes('--table')) console.log(k.padEnd(30) + X.map((r) => (r.first == null ? '  -  ' : r.first.toFixed(1) + 's') + ' x' + r.fires + (r.reached ? '' : ' (no one)') + (t === 'foe' && !r.own ? ' (blows only)' : '')).join(' / ') + (X[0].against.length ? '   vs ' + X[0].against.join(', ') : ''));
+  }
+  const show = (a) => { for (const x of a) console.log('  ' + x); };
+  console.log(`${t === 'foe' ? 'monster moves' : 'statuses'}: ${list.length} previews of two loops, ${((Date.now() - t1) / 1000).toFixed(1)}s`);
+  console.log(`  first go: ${(fsum / Math.max(1, fn)).toFixed(2)} s on average, ${fmax.toFixed(1)} s at the latest; ${(goes / Math.max(1, loops)).toFixed(2)} goes a loop`);
+  console.log(`  a loop where it didn't go within ${WITHIN} s: ${L.late.length}`); if (args.includes('--v')) show(L.late);
+  console.log(`  straw targets on the stage (never moving, never striking back): ${L.straw.length}`); show(L.straw);
+  console.log(`  wrong scenario (went off, but nothing it made reached anyone in 3.5 s${t === 'status' ? '; or it never came to its burst or state' : ''}): ${L.wrong.length}`); show(L.wrong);
+  console.log(`  the stage helped it (a target moved up to it, its health set lower): ${L.helped.length}`); show(L.helped);
+  console.log(`  blows or health lost with nothing seen behind them (either side): ${L.unseen.length}`); show(L.unseen);
+  if (t === 'status') { console.log(`  put on from nothing seen (no fighter in view put it on): ${L.fromNothing.length}`); show(L.fromNothing); }
+  if (t === 'foe') { console.log(`  a loop that showed only its plain blows (its own move never came): ${L.blowsOnly.length}`); if (args.includes('--v')) show(L.blowsOnly); }
 }
 if (bad.length || quiet.length) process.exitCode = 1; // a preview that doesn't fire every loop fails the check

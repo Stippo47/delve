@@ -161,7 +161,7 @@ export function measureStage(spec, loops = 2) {
     for (const o of S.w.units) { if (dummy(o)) cur.straw++; else if (S.hero && o.team !== side() && !o.summon) cur.against.add(o.kind); }
   };
   newLoop();
-  const keys = new Set();
+  const keys = new Set(); let stepReach = false;
   const within = () => cur.first != null && S.t - cur.first <= REACH + 1e-6;
   const mineSide = (src) => { const r = ownerOf(src); return !!r && r.team === side() && !dummy(r); };
   AUDIT.on = (ev, w, u, src, amt, o = {}) => {
@@ -170,10 +170,12 @@ export function measureStage(spec, loops = 2) {
       const key = u.id + ':' + (src ? src.id : 'x') + ':' + S.t.toFixed(3);
       if (!keys.has(key)) { keys.add(key); if (!seenAny(u, src, o)) { cur.unseen++; if (cur.unseenWhy.length < 3) cur.unseenWhy.push((u === S.hero ? 'it' : u.kind) + '<-' + (src ? src.kind : 'nothing')); } }
     }
-    if (spec.t === 'foe' && within() && u) {
-      if ((ev === 'hurt' || ev === 'status' || ev === 'block' || ev === 'keep') && u.team !== side() && (mineSide(src || o.by) || !(src || o.by))) cur.reached = true; // (no source: a blast, a zone of its own: nothing else on its stage hurts the heroes)
-      if (ev === 'heal' && u.team === side() && src && src !== u && mineSide(src)) cur.reached = true;
-      if (ev === 'buff' && u.team === side() && !dummy(u)) cur.reached = true;
+    if (spec.t === 'foe' && u && (within() || cur.first == null)) {
+      let r = false;
+      if ((ev === 'hurt' || ev === 'status' || ev === 'block' || ev === 'keep') && u.team !== side() && (mineSide(src || o.by) || !(src || o.by))) r = true; // (no source: a blast, a zone of its own: nothing else on its stage hurts the heroes)
+      if (ev === 'heal' && u.team === side() && src && src !== u && mineSide(src)) r = true;
+      if (ev === 'buff' && u.team === side() && !dummy(u)) r = true;
+      if (r) { if (within()) cur.reached = true; else stepReach = true; } // (in the step it first goes off: counted once it has)
     }
   };
   const seenU = new WeakSet(); for (const o of S.w.units) seenU.add(o);
@@ -190,7 +192,8 @@ export function measureStage(spec, loops = 2) {
       S.step(DT);
       AUDIT.on = prev;
       if (S.loops !== L) continue;
-      if (S.fires > f0) { if (S.t - (cur.lastGo ?? -9) > 0.8) cur.fires++; cur.lastGo = S.t; if (cur.first == null) cur.first = S.t; cur.fired = true; } // (a go: what fires within 0.8 s of the last is the same go)
+      if (S.fires > f0) { if (S.t - (cur.lastGo ?? -9) > 0.8) cur.fires++; cur.lastGo = S.t; if (cur.first == null) cur.first = S.t; cur.fired = true; }
+      if (stepReach && cur.first != null) cur.reached = true; stepReach = false; // (a go: what fires within 0.8 s of the last is the same go)
       if (S.crutch) cur.crutch = true;
       if (S.own) cur.own = true; // (a monster's own move, not only its plain blows)
       for (const [o, h] of hpBefore) if (S.w.units.includes(o) && !o.downed && !o.dead && !o.dying && o.maxHp && h - o.hp > (hurtSum.get(o) || 0) + o.maxHp * 0.02) { cur.unseen++; if (cur.unseenWhy.length < 3) cur.unseenWhy.push((o === S.hero ? 'it' : o.kind) + ' health set lower'); }

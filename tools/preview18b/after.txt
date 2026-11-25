@@ -1,0 +1,85 @@
+975 previews (11 s): threw 0, locked 0
+first go 1.00 s on average; 2.40 goes a loop
+a loop where it never went: 0
+a loop where it didn't go within 2.5 s: 25
+straw targets on the stage: 0
+blows or health lost with nothing seen behind them: 0 previews (0 blows)
+went off but reached no one in 3.5 s, or a status that never came to its burst or state (wrong scenario): 5
+the stage had to help it (a target stepped up, its health set lower): 0
+statuses put on from nothing seen: 0
+a monster's move whose loop showed only its plain blows (its own move never came): 36
+## threw 0
+## locked 0
+## never 0
+## late 25
+  foe:slimePoison:kit:1 (2.9 1.4)
+  foe:banditAxe:kit:0 (1.5 2.9)
+  foe:banditAxe:major:2 (1.6 2.6)
+  foe:boar:major:2 (3.2 3.0)
+  foe:goblinSuicide:kit:0 (2.7 1.7)
+  foe:goblinSuicide:elite:1 (5.2 3.3)
+  foe:ogre:kit:1 (2.6 2.2)
+  foe:leechBlood:kit:0 (1.9 4.3)
+  foe:leechBlood:kit:1 (3.7 0.9)
+  foe:leechBlood:elite:1 (1.4 3.6)
+  foe:crabGreen:elite:1 (0.7 2.5)
+  foe:spiderHunter:kit:0 (2.9 1.8)
+  foe:rattlerHarrow:kit:0 (3.9 1.1)
+  foe:imp:elite:1 (2.3 7.1)
+  foe:devil:kit:2 (2.8 3.2)
+  foe:dragonborn:kit:0 (1.2 2.5)
+  foe:succubus:kit:2 (2.5 2.0)
+  foe:cinder:kit:0 (0.0 4.8)
+  foe:sunBlade:major:2 (6.8 7.0)
+  foe:cobra:elite:1 (2.6 1.9)
+  foe:sandSerpent:elite:1 (3.4 3.1)
+  foe:cogSprite:elite:2 (2.9 3.1)
+  foe:cogSprite:major:2 (2.9 2.8)
+  foe:bee:attack:0 (1.4 2.7)
+  foe:chainCrawler:elite:1 (3.4 3.1)
+## unseen 0
+## noReach 5
+  foe:ent:kit:1
+  foe:goblinSuicide:kit:0
+  foe:goblinSuicide:kit:1
+  foe:boneKing:kit:0
+  foe:sawBlade:kit:0
+## crutch 0
+## stNothing 0
+## blowsOnly 36
+  foe:goblin:kit:0
+  foe:goblin:kit:1
+  foe:goblin:kit:2
+  foe:goblinOrange:kit:0
+  foe:banditDagger:kit:0
+  foe:banditDagger:kit:1
+  foe:banditDagger:kit:2
+  foe:banditAxe:kit:0
+  foe:banditAxe:kit:1
+  foe:banditAxe:kit:2
+  foe:mouse:kit:0
+  foe:mouse:kit:1
+  foe:mouse:kit:2
+  foe:ogre:kit:2
+  foe:rat:kit:0
+  foe:rat:kit:2
+  foe:lizardBlade:kit:0
+  foe:lizardBlade:kit:1
+  foe:lizardBlade:kit:2
+  foe:crab:kit:0
+  foe:crab:kit:1
+  foe:crab:kit:2
+  foe:rattlerSpear:kit:1
+  foe:rattlerSpear:kit:2
+  foe:brute:kit:0
+  foe:brute:kit:1
+  foe:brute:kit:2
+  foe:devil:kit:1
+  foe:devil:kit:2
+  foe:dragonborn:kit:1
+  foe:dragonborn:kit:2
+  foe:demon:kit:2
+  foe:angel:kit:1
+  foe:angel:kit:2
+  foe:angelFallen:kit:2
+  foe:beeBronze:kit:2
