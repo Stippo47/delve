@@ -1,9 +1,9 @@
-2256 previews, 48.9s
+2257 previews, 39.3s
 threw: 0
 a loop where the move or trait never fired: 0
 not offered in the Book (never fires, so its button is left out): 0
 locked (shown as locked): 0 not counting heroes' tier 0
-abilities at tiers I-III: 540 runs of two loops, 10.1s
+abilities at tiers I-III: 540 runs of two loops, 8.5s
   first go: 0.66 s on average, 2.4 s at the latest; 1.01 goes a loop; the hero's own brain chose it in 1053 of 1080 loops
 a loop where it didn't go within 2.5 s: 0
 not shown (a loop where it drew nothing and touched no one): 0
@@ -36,7 +36,7 @@ tiers that differ only in where things went (the same foes reached, statuses, bu
   clockwork:rewind II~III  (I: Back 3s (at most 35% of their health comes back). | II: Back 5s (at most 50%). | III: Once a room, a friend who has just fallen is turned back to before the blow that felled them.)
   clockwork:timeBubble I~II  (I: For 5s. | II: Time runs fast for friends inside it: they move, strike and recharge 30% faster. | III: Wider, and for 7s.)
 blows on the hero side with nothing seen behind them (a target with no weapon, health set lower): 0
-monster moves: 976 previews of two loops, 14.0s
+monster moves: 977 previews of two loops, 11.0s
   first go: 1.01 s on average, 7.2 s at the latest; 2.35 goes a loop
   a loop where it didn't go within 2.5 s: 29
   straw targets on the stage (never moving, never striking back): 0

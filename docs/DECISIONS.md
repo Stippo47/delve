@@ -1429,3 +1429,35 @@ The lane's calls (say if any is wrong):
 - Lead, merge (0.34.0): clips checked by hand (walk, slam-hit, leg-break, collapse at the cited seconds: head high over
   its shadow, the drop, the snapped stilt dragging, the floor fight all show). Merged, battles 532 / 0 problems,
   preview-check 0 / 0 / 0, sw built (555 files). Riffle deck r19-idol (art, stack r19): report + draw-order + hidden-ring calls.
+
+## Round 19, lane drake19 (2026-11-25): the Cinder Drake ("Body moves weird, don't like how it attacks. Very slow, etc.")
+Found first, by playing and filming it (28 faults, each with its clip and second: docs/drake19.md), then fixed. It
+stays what it is: the Ember Deep's boss, a long wingless fire drake that walks (round 9's "No wings. No flying."
+stands), three phases, its fire the game's fire.
+- **Its body is a spine** (js/boss-cinder.js spine / pose): a chain of joints dragged behind the head, each with a
+  limit to its bend, stiff through the trunk, pushed aside by pillars and kept in by the walls. It was a train on
+  rails (every joint replayed the head's path, corners and all: kinked 76% of the fight, and wound into knots round
+  whoever stood at its neck). Now it cannot kink or knot (8% and 0.3%, the tail mid-whip and walls). The tail is three
+  springs (it trails, swings out on a turn, whips base first); it breathes, swells before the scorch, gathers before
+  the rush; it sleeps curled up inside the room (it lay out through the far wall); its hit boxes sit where it is drawn
+  (`fixed`: the game was pushing them off each other); no health bars over its back.
+- **It turns like a long animal**: the head turns on its neck up to 1.5 rad from its chest, quickly; it can *go* at
+  most 1.1 rad off its chest (`LEAD`), so the body comes round in a curve about 280 across.
+- **It hunts in passes** (it prowled a ring 250 out, side-on to everyone): at its mark, by their side and on, a wheel
+  at a run, again. In front of it the mouth, beside it a claw, behind it the tail.
+- **Its moves**: the **Bite** rears back and really darts (the head moves 108), 1.4 a fight -> 11; a new move, the
+  **Claw** (a foreleg rakes whoever hugs its chest); the **Tail Sweep**'s arc rides with the hips; the **Scorch** is
+  told on its body (it breathes in), 2.4 s, creeping forward, aimed at who is ahead; the **Rush** gathers, gallops
+  190 past the furthest hero in front of it and skids. Fire Call, Ring of Fire, Molten and the phase roars kept
+  (the ring about 6 s). Its **death**: the whole animal drops where it stood and cools to a charred husk that stays.
+- **Its pace**: 7.9 -> 16.5 moves with a tell a minute; the median wait between two 7.0 -> 3.3 s. It walks at 84 (56).
+  Every move's clock runs whenever it is free (it ran only while that move could be used).
+- **threat.js**: a boss's own running move can say when it will reach a hero (`u.strikes`, one line): the drake's
+  rush and scorch do, so a dodge or a guard can be timed against them.
+- **Numbers** (level 44, where the campaign meets it; the band is 40-60%): before 40 of 100 and 46 on other seeds (37 at level 41, 67 at 47);
+  after 50 and 57 (48 at 41, 74 at 47), fights of about 159 s; a melee four 24 of 40 (23), four shooters 0 of 40 (0).
+  Health 800 (900); bite 70, claw 46, tail 70, rush 78, fireball 62 (68), scorch 15 a tick (17).
+- **Also**: its face and words in the Book (`def.picture`, js/bestiary.js: the designer's to rewrite), the phase sound
+  at its turns. Checks: battles 532, 0 problems; preview-check 0 / 0 / 0.
+- **Left / outside**: jammed at a wall with a hero in its bend it can lie in a tight C for a moment; status flames are
+  drawn on its head only; four shooters cannot win it (0 of 40 before and after).

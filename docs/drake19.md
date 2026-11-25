@@ -101,6 +101,8 @@ More, found while fixing:
 Clips are in `docs/clips/drake19/` (git-ignored), 30 frames a second, recorded with `tools/drake19/watch.mjs`
 (`tools/drake19/clips.sh` makes the whole set) and looked through on contact sheets (`tools/drake19/sheet.sh`).
 `before-full-fight.mp4` / `after-full-fight.mp4`: the same party, level, seed and view (the whole room).
+(Before, the party falls at 150 s with the drake at 53%, in phase 2; after, at 186 s with it at 6%: all three
+phases are in the after clip.)
 `before-phase1-zoomed.mp4` / `after-phase1-zoomed.mp4`: the same fight, close on the drake ("p1" below).
 One move each, close, with three heroes (paladin, twinfang, cleric: less of their own effects over it):
 `after-bite.mp4`, `after-claw.mp4`, `after-tail.mp4`, `after-scorch.mp4`, `after-rush.mp4`; with the four:
@@ -234,12 +236,44 @@ One move each, close, with three heroes (paladin, twinfang, cleric: less of thei
 (level 44 is where the campaign meets it, docs/balance/r15-bosses.txt; the band is 40-60% there).
 Before: `tools/drake19/before-*.txt`. After: `tools/drake19/after-*.txt` (`tools/drake19/measure.sh`).
 
-@@TABLE@@
+| | level 41 | level 44 | level 44, other seeds | level 47 | a fight at 44 |
+|---|---|---|---|---|---|
+| before | 37 | 40 | 46 | 67 | 156 s |
+| after | 48 | 50 | 57 | 74 | 159 s |
+
+Other parties at level 44 (40 fights each):
+| | paladin, berserker, twinfang, tower | archer, pyromancer, frost, storm |
+|---|---|---|
+| before | 23 of 40 | 0 of 40 |
+| after | 24 of 40 | 0 of 40 |
 
 What the fight does, measured (`tools/drake19/probe.mjs --n 20`, `probe-before.txt` / `probe-after.txt`; "before" is
 the same probe run on the code as it was):
 
-@@PROBE@@
+| | before | after |
+|---|---|---|
+| moves with a tell, a minute (bite, claw, tail, roar, scorch, rush, ring) | 7.9 | 16.5 |
+| the wait between two: median / a quarter over / a tenth over | 7.0 / 9.8 / 14.1 s | 3.3 / 4.7 / 6.1 s |
+| bites a fight | 1.4 | 11.3 |
+| claws a fight | - | 16.1 |
+| tail sweeps a fight (until the blade is broken off) | 2.8 | 2.3 |
+| scorches a minute, and the fight's share spent in them | 3.0, 21% | 2.0, 11% |
+| rushes a minute | 1.6 | 1.0 |
+| party-healths lost a fight in: scorch / bite / claw / rush / all else | 4.2 / (in "hold") / - / 0.8 / 2.3 | 2.6 / 1.0 / 1.4 / 0.5 / 1.7 |
+| standing still | 38% of the fight | 24% |
+| its pace prowling | 71 a second | 116 |
+| a bend sharper than 0.6 rad in 26 of spine | 76% of the fight | 8% |
+| its spine lying on itself | 2.5% | 0.3% |
+| the fastest its head turned | 8 rad/s | 26 (the bite's swing on the neck) |
+| body boxes out of the room | 4.7 box-s a fight | 0 |
+| the tail's tip through a wall | 2.7% of the fight | 0 |
+| longest stretch with no move (`tools/drake19/gaps.mjs`, 30 fights) | - | none over 11 s |
 
 ## Checks
-@@CHECKS@@
+- `node --check` on every `js/*.js`; `sim.js`, `render.js` and `bosses.js` import in Node.
+- `node tools/battles.mjs`: 532 battles, 0 problems, 11 ran out of time (as on main; `tools/drake19/battles.txt`).
+- `node tools/preview-check.mjs`: threw 0, never fired 0, not offered 0 (`tools/drake19/preview-check.txt`; the
+  monster previews' lists are the same as on main, none of them the drake's).
+- No page errors in any of the after recordings.
+- `main` merged in (0.34.0, the Canopy Idol) before the last fight clips and the numbers above; syntax, imports,
+  battles, preview-check and the win rates were run after the merge.
