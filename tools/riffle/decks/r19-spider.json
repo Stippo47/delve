@@ -1,0 +1,99 @@
+{
+  "title": "Old Longlegs, the IK spider",
+  "topic": "art",
+  "stack": "r19",
+  "order": 4,
+  "priority": 1,
+  "cards": [
+    {
+      "id": "report",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "The IK spider boss",
+      "text": "Your test boss: a body held up on six IK legs, stomps, a head slam with a stun on a miss, legs that break. 0.32.0.",
+      "why": "Try it in battle mode (the new 'No dungeon yet' tab) or the Book. Mark any part that's off; the calls are the cards after.",
+      "videos": [
+        "../../../docs/clips/spider19/walk.mp4"
+      ],
+      "parts": [
+        {
+          "id": "body",
+          "title": "Body and legs",
+          "text": "A plum spider four heroes long: bone face plate, fangs, four ember eyes, an hourglass. The body is up in the air, so only shots reach it and heroes walk under it; one shadow on the floor. Six legs with knees bent up, stepping in two alternating sets of three; feet stay planted until they step.",
+          "videos": [
+            "../../../docs/clips/spider19/walk.mp4",
+            "../../../docs/clips/spider19/turn.mp4"
+          ]
+        },
+        {
+          "id": "stomp",
+          "title": "Stomp",
+          "text": "A red circle at a hero, the leg lifts straight up and stabs down: a dent and dust. The foot sticks a moment after.",
+          "videos": [
+            "../../../docs/clips/spider19/stomp.mp4"
+          ]
+        },
+        {
+          "id": "slam",
+          "title": "Head slam",
+          "text": "Its eyes flare and a circle follows under it as it walks, then a split-second stop and the drop. On a miss it lies stunned on the floor about a second (longer per broken leg) and everyone can hit it.",
+          "videos": [
+            "../../../docs/clips/spider19/slam-hit.mp4",
+            "../../../docs/clips/spider19/slam-miss.mp4"
+          ]
+        },
+        {
+          "id": "legs",
+          "title": "Breaking legs",
+          "text": "Each foot has its own health; blades go for the feet. A broken leg turns grey and drags with its knee on the floor, can't stomp, slows it and lengthens the stun. Four broken: it collapses and fights from the floor, dragging itself, slamming from its belly.",
+          "videos": [
+            "../../../docs/clips/spider19/leg-break.mp4",
+            "../../../docs/clips/spider19/walk-3broken.mp4",
+            "../../../docs/clips/spider19/collapse.mp4"
+          ]
+        },
+        {
+          "id": "extra",
+          "title": "Extra moves",
+          "text": "Web spit: a ball arcs at a hero and holds them in web for 1.5 s (or leaves a web patch). Brood: spiderlings come down from under it, more in phase 2. At 60% health it hisses and gets quicker.",
+          "videos": [
+            "../../../docs/clips/spider19/web.mp4",
+            "../../../docs/clips/spider19/brood.mp4"
+          ]
+        },
+        {
+          "id": "numbers",
+          "title": "How hard",
+          "text": "At level 25 (the third boss's level) it's about as hard as the Great Ooze for a standard party and easier for blade-heavy ones. Health is the knob if you want it harder."
+        }
+      ]
+    },
+    {
+      "id": "knees",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Knee height",
+      "text": "Knees sit at a third of their real height so the front legs don't cover its face. Keep?",
+      "why": "At full height it looks leggier but hides the face.",
+      "pick": "Keep."
+    },
+    {
+      "id": "brood",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Spiderlings from the start",
+      "text": "It drops one spiderling at a time from the start of the fight (two in phase 2). Keep?",
+      "why": "With none a standard party won every time; with two at once it won 6 in 20.",
+      "pick": "Keep one at a time."
+    },
+    {
+      "id": "name",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Its name",
+      "text": "Working name: Old Longlegs. Keep or rename?",
+      "why": "It's a test boss for now; the name can wait until it gets a dungeon.",
+      "pick": "Keep it for now."
+    }
+  ]
+}
