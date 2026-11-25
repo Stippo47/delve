@@ -25,6 +25,10 @@ const inReach = (u, t, extra = 0) => t && alive(t) && dist(u.x, u.y, t.x, t.y) -
 const inFront = (u, e, arc) => angleDiff(ang(u, e), u.facing) < arc / 2;
 // the Digger's plain swing of the spade (no ability's, no shot's, no splash's): round 19, his attack's hooks
 const spadeBlow = (o) => !!o && !o.dot && !o.proc && !o.ab && !o.pab && !o.shot && !o.blast && !o.redirected && !o.clod;
+// Bear Claws (round 19): one swing every CLAW_GAP s; each of the 3 swings (I, II) is CLAW_K of his blow, each of III's 5 CLAW_K3
+// Toss (round 19): the fork goes in by TOSS_IN s, and the foe leaves its tines at TOSS_UP s
+const TOSS_IN = 0.2, TOSS_UP = 0.46;
+const CLAW_GAP = 0.27, CLAW_K = 0.58, CLAW_K3 = 0.66;
 const BUILDS = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse', 'entangle', 'charm', 'confuse', 'sleepy', 'bleed', 'fear', 'shackle'];
 // a melee blow drawn as a weapon arc (fxkit turns the 'swing' telegraph into the weapon's arc; aoe: a slam on the floor)
 const swingMark = (w, u, R, arc, aoe) => w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: R, a: u.facing, arc, t: 0.16, max: 0.16, color: '#FFFFFF', src: u, aoe });
@@ -278,8 +282,9 @@ export const ABILITIES2 = {
     use(w, u, t, tier) {
       cast(u, 'ability', 0.5);
       // round 13, the designer: "Get a haste boost when leveled up. Effect remains for a little bit." II: haste, and it
-      // all lasts 8 s
+      // all lasts 8 s. (Round 19: "Overall visuals just meh": a gold war cry bursts off him, fx-melee.js warCry.)
       const dur = tier >= 2 ? 8 : 5;
+      k2(w, { draw: 'warCry', unit: u, x: u.x, y: u.y, r: 240, max: 0.8, ab: 'rallyCry' });
       for (const a of [u, ...friendsNear(w, u, u.x, u.y, 240)]) {
         a.stunT = 0; a.rootT = 0; a.koT = 0; a.tangledT = 0; a.st.stagger = 0;
         addBuff(a, { id: 'rally', dur, knockImmune: true, glow: '#F2C14E' });
@@ -308,7 +313,7 @@ export const ABILITIES2 = {
     hook: {
       evade(w, u, src, amt, o) {
         const P = u.kit.parry; if (!P || P.until < w.time || P.n <= 0 || o.dot || o.shot || !src || src === u) return false;
-        P.n--; if (P.n <= 0) P.until = w.time + 0.25;
+        P.n--; if (P.n <= 0) P.until = w.time + 0.25; P.caughtT = w.time;
         u.facing = angleTo(u.x, u.y, src.x, src.y); setAnim(u, 'swing', 0.25);
         k2(w, { draw: 'parry', x: u.x + Math.cos(u.facing) * (u.r + 8), y: u.y + Math.sin(u.facing) * (u.r + 8), a: u.facing, max: 0.4, ab: 'pommelStrike' });
         if (alive(src)) hurt(w, src, Math.max(amt, dmgOf(u, 0.8)) * P.k, u, { noDodge: true, knock: 200, kAngle: angleTo(u.x, u.y, src.x, src.y), proc: true, ab: 'pommelStrike' });
@@ -358,6 +363,7 @@ export const ABILITIES2 = {
       const x1 = clamp(a.x + Math.cos(fa) * (a.r + u.r + 2), u.r, w.W - u.r), y1 = clamp(a.y + Math.sin(fa) * (a.r + u.r + 2), u.r, w.H - u.r);
       const T = clamp(dist(u.x, u.y, x1, y1) / 700, 0.12, 0.45);
       u.facing = angleTo(u.x, u.y, x1, y1); setAnim(u, 'ability', T + 0.3); u.invulnT = Math.max(u.invulnT, T + 0.1);
+      if (tier >= 3) haste(w, u, 4, 1.3); // round 19: "Lvl 3 she gets haste when going in as well"
       k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a: u.facing, max: T + 0.25, col: '#C8453D' });
       u.act = { type: 'leap', t: T, max: T, x0: u.x, y0: u.y, x1, y1, land: () => {
         if (alive(a)) { shove(a, fa + Math.PI, 520); heal(w, a, a.maxHp * (tier >= 2 ? 0.2 : 0.1), u); k2(w, { draw: 'shoveAway', x: a.x, y: a.y, a: fa + Math.PI, max: 0.5, ab: 'challenge' }); }
@@ -399,16 +405,20 @@ export const ABILITIES2 = {
       cast(u, 'ability', 0.8); u.facing = angleTo(u.x, u.y, x1, y1);
       // the gust as he beats up off the floor
       for (const e of foesNear(w, u, u.x, u.y, 80)) { hurt(w, e, dmgOf(u, 0.5), u, { knock: 260, kAngle: ang(u, e), noDodge: true }); whirl(w, e, 25, u); }
-      k2(w, { draw: 'gust', x: u.x, y: u.y, r: 80, max: 0.5 });
-      k2(w, { draw: 'wings', unit: u, x: u.x, y: u.y, r: u.r, max: 0.62, flap: true });
+      // round 19 ("Don't like wings, particle effects, or whirl effect"): his helm's own wings, beating over him as he
+      // flies (fx-melee.js griffWings), a downdraft of dust and loose feathers where he leaves the floor
+      k2(w, { draw: 'downdraft', x: u.x, y: u.y, r: 80, max: 0.6 });
+      k2(w, { draw: 'griffWings', unit: u, x: u.x, y: u.y, r: u.r, max: 0.66, flap: true });
       u.flyT = 0.6; // round 17 (lane tags17): flying while he swoops (tags.js layerOf)
       u.act = { type: 'leap', t: 0.6, max: 0.6, x0: u.x, y0: u.y, x1, y1, land: () => {
         w.shake = Math.max(w.shake, 6);
         setAnim(u, 'spin', 0.45); u.spin = { t0: w.time, dur: 0.45, dir: 1 };
-        k2(w, { draw: 'windSwirl', x: u.x, y: u.y, r: 125, max: 0.7, ab: 'swoop' });
+        k2(w, { draw: 'windSwirl', x: u.x, y: u.y, r: 125, max: 0.75, dir: 1, ab: 'swoop' });
         for (const e of foesNear(w, u, u.x, u.y, 125)) { hurt(w, e, dmgOf(u, 1.3), u, { knock: 340, kAngle: ang(u, e), heavy: true, noDodge: true, stagger: tier >= 2 ? 45 : 0 }); whirl(w, e, 45, u); }
         if (tier >= 3 && alive(a) && a !== t) addBuff(a, { id: 'swoopGuard', dur: 3, taken: 0.6, glow: '#FFE7A0' });
-        if (f && alive(f)) u.facing = ang(u, f);
+        // (round 19: "When they land they flip to be looking another direction": he lands facing the way he flew and
+        // turns to the foe at his own pace; it was set at once)
+        if (f && alive(f)) u.target = f;
       } };
       u.invulnT = Math.max(u.invulnT, 0.5);
     },
@@ -454,7 +464,7 @@ export const ABILITIES2 = {
     use(w, u, t, tier) {
       u.kit.wingUntil = w.time + 4; setAnim(u, 'ability', 0.4);
       addBuff(u, { id: 'wingShield', dur: 4, taken: 0.75, raise: true });
-      k2(w, { draw: 'wings', unit: u, x: u.x, y: u.y, r: u.r, max: 4, big: true });
+      k2(w, { draw: 'griffWings', unit: u, x: u.x, y: u.y, r: u.r, max: 4, guard: true, ab: 'wingShield' }); // round 19: his helm's wings, over him
     },
     hook: {
       struck(w, u, src, amt, o) {
@@ -462,7 +472,7 @@ export const ABILITIES2 = {
         if (dist(u.x, u.y, src.x, src.y) - u.r - src.r > 80) return;
         src.wingHitT = w.time + 0.5; const tier = tierOf(u, 'wingShield'), a = angleTo(u.x, u.y, src.x, src.y);
         hurt(w, src, dmgOf(u, 0.4), u, { knock: 620, kAngle: a, heavy: true, noDodge: true, proc: true, ab: 'wingShield' });
-        k2(w, { draw: 'gust', x: u.x + Math.cos(a) * u.r, y: u.y + Math.sin(a) * u.r, r: 50, a, max: 0.4 });
+        k2(w, { draw: 'wingBlast', x: u.x + Math.cos(a) * u.r, y: u.y + Math.sin(a) * u.r, r: 70, a, max: 0.45, ab: 'wingShield' });
         if (tier >= 2) flung(w, u, src, 0.9, (e) => {
           hurt(w, e, dmgOf(u, 1.2), u, { noDodge: true, heavy: true, knock: 0, proc: true, ab: 'wingShield' }); w.shake = Math.max(w.shake, 4);
           if (tier >= 3) { k2(w, { draw: 'clap', x: e.x, y: e.y, r: 75, max: 0.45, ab: 'wingShield' }); for (const o of foesNear(w, u, e.x, e.y, 75)) hurt(w, o, dmgOf(u, 0.9), u, { knock: 220, kAngle: angleTo(e.x, e.y, o.x, o.y), noDodge: true, proc: true, ab: 'wingShield' }); }
@@ -542,13 +552,16 @@ export const ABILITIES2 = {
   maul: {
     score: (w, u, t) => (inReach(u, t, 20) ? 0.55 + (foeWinding(w, t) ? 0.3 : 0) : 0),
     use(w, u, t, tier) {
-      if (!t) return; u.facing = ang(u, t); cast(u, 'ability', 0.6);
-      after(u, 0.22, () => {
+      // round 19 ("Don't like. Also weird star on target hit"): the club raised high over his head and held a beat, then
+      // brought straight down on it (the pose: kit2Tick, u.kit.maulT0); it is squashed flat into a round crater; no star
+      // of its own on it (the stun shows as every stun does)
+      if (!t) return; u.facing = ang(u, t); cast(u, 'ability', 0.7); u.kit.maulT0 = w.time;
+      after(u, 0.3, () => {
         if (!alive(t)) return;
         swingMark(w, u, u.r + u.def.range + 14, 0.8, { x: t.x, y: t.y, r: tier >= 3 ? 90 : 46, look: 'maul' });
         hurt(w, t, dmgOf(u, 2.2), u, { heavy: true, knock: 110, noDodge: true });
         stun(w, t, tier >= 2 ? 1.6 : 1); w.shake = Math.max(w.shake, 6);
-        k2(w, { draw: 'bonk', x: t.x, y: t.y, unit: t, r: t.vr, max: tier >= 2 ? 1.6 : 1 });
+        if (!t.fixed && !t.def.boss) onUnit(w, t, 'mauled', 0.45, { tick(w2, u2) { const q = 1 - (this.until - w2.time) / 0.45; u2.squish = 0.85 * (1 - q) * (1 - q); } }, (u2) => { u2.squish = 0; });
         if (tier >= 3) for (const e of foesNear(w, u, t.x, t.y, 90)) if (e !== t) hurt(w, e, dmgOf(u, 0.8), u, { stagger: 50, knock: 140, kAngle: angleTo(t.x, t.y, e.x, e.y), noDodge: true, slam: true });
       });
     },
@@ -578,10 +591,14 @@ export const ABILITIES2 = {
         if (H.took > H.healed + 0.5 || whole || w.time > H.until || !(u.sleepT > 0)) {
           u.kit.hib = null; u.sleepT = 0; u.deepT = 0;
           for (const f of w.fx) if (f.draw === 'hibernate' && f.unit === u) f.max = Math.min(f.max, f.t + 0.3);
-          if (tier >= 3 && alive(u)) { setAnim(u, 'ability', 0.4); ring(w, u, u.x, u.y, 130, dmgOf(u, 0.8), { knock: 300, heavy: true }, '#A0683A'); w.fx[w.fx.length - 1].ab = 'hibernate'; k2(w, { draw: 'roar', unit: u, x: u.x, y: u.y, r: 130, max: 0.6, ab: 'hibernate' }); }
+          u.squish = 0;
+          // III: he wakes with a roar (round 19: "Don't like the burst effect": no ring; he rears up and roars, the sound
+          // and the dust go out to its reach, fx-melee.js bearWake)
+          if (tier >= 3 && alive(u)) { setAnim(u, 'ability', 0.5); for (const e of foesNear(w, u, u.x, u.y, 130)) hurt(w, e, dmgOf(u, 0.8), u, { knock: 300, kAngle: ang(u, e), heavy: true, noDodge: true, ab: 'hibernate' }); w.shake = Math.max(w.shake, 5); k2(w, { draw: 'bearWake', unit: u, x: u.x, y: u.y, r: 130, max: 0.7, ab: 'hibernate' }); }
           return;
         }
         u.sleepT = Math.max(u.sleepT, 0.2); u.deepT = Math.max(u.deepT || 0, 0.2);
+        u.squish = 0.3 + 0.06 * Math.sin((w.time - H.t0) * 3.2); // (round 19: curled up low under the pelt, breathing slowly)
       },
       taken(w, u, src, amt, o) { if (u.kit.hib) u.kit.hib.took += amt; return amt; },
     },
@@ -592,22 +609,32 @@ export const ABILITIES2 = {
   bearRoar: {
     score: (w, u, t) => { if (!t) return 0; const g = dist(u.x, u.y, t.x, t.y) - u.r - t.r; return g < 160 ? 0.6 + (t.elite || t.def.boss ? 0.2 : 0) : 0; },
     use(w, u, t, tier) {
-      // round 18 (lane dash18): the pounce (dashes.js): the club put away, a crouch, a leap that hangs, and he lands on it
-      // with the first rake of the claws; the rest of the flurry follows as it did (the same swipes, the same blows; III
-      // the bite at the end). (It was a straight dash to its front, then the swipes.)
-      if (!t) return; const n = tier >= 3 ? 12 : 6, k1 = dmgOf(u, 0.42), k3 = dmgOf(u, 1); u.facing = ang(u, t);
-      u.kit.clawsT = w.time + 0.9 + n * 0.085 + (tier >= 3 ? 0.4 : 0.1);
-      const swipe = (i) => { if (!alive(t)) return; u.facing = ang(u, t); setAnim(u, 'punch', 0.09);
-        const list = tier >= 2 ? foesNear(w, u, u.x, u.y, u.r + u.def.range + 30).filter((e) => inFront(u, e, 1.6)) : inReach(u, t, 30) ? [t] : [];
-        for (const e of list) hurt(w, e, k1, u, { knock: 30, noDodge: true, ab: 'bearRoar' });
-        if (list.length) k2(w, { draw: 'clawRake', x: t.x, y: t.y, a: u.facing, side: i % 2 ? 1 : -1, max: 0.28, ab: 'bearRoar' }); };
-      dash(w, u, 'pounce', { t, only: tier >= 2 ? null : t, tell: 0.14, air: 0.3, h: 20, recover: 0.02, rest: 0, dmg: k1, hit: { knock: 30, ab: 'bearRoar' }, col: ['#FFF8F0', '#FFFFFF'],
-        land: () => { u.kit.clawsT = w.time + 0.2 + n * 0.085 + (tier >= 3 ? 0.4 : 0.1);
-          for (let i = 1; i < n; i++) after(u, 0.1 + i * 0.085, () => swipe(i));
-          if (tier >= 3) after(u, 0.1 + n * 0.085 + 0.1, () => {
-            if (!alive(t) || !inReach(u, t, 30)) return; setAnim(u, 'thrust', 0.25);
+      // round 18 (lane dash18): the pounce (dashes.js): the club put away, a crouch, a leap that hangs, and he lands on it.
+      // Round 19, the designer: "Doesn't look good. Too fast. He doesn't even swing or get near them. He does the swinging.
+      // Should dash forward slight with each swing ... Should do 3 at base, slower, higher damage, and upgraded it does 5
+      // then bite." So the landing only rakes it lightly; then he swings his paws, left and right in turn, one every
+      // CLAW_GAP s, stepping in with each so it stays in his reach: 3 swings (III: 5, then the bite). The claw marks are
+      // swept by his own paw (fx-melee.js clawSwipe), not drawn on the foe.
+      if (!t) return; const n = tier >= 3 ? 5 : 3, k1 = dmgOf(u, tier >= 3 ? CLAW_K3 : CLAW_K), k0 = dmgOf(u, 0.3), k3 = dmgOf(u, 1); u.facing = ang(u, t);
+      const human = u.def, end = 0.2 + n * CLAW_GAP + (tier >= 3 ? 0.45 : 0.1);
+      u.kit.clawsT = w.time + 0.9 + end; // (the club stays away from the crouch to the last swing)
+      const swipe = (i) => { if (!alive(u) || !alive(t) || u.stunT > 0) return; const a = ang(u, t); u.facing = a;
+        // a step in with the swing: further if it has backed off, a little if it is close
+        const gap = dist(u.x, u.y, t.x, t.y) - u.r - t.r, step = 110 + clamp(gap - 4, 0, 50) * 7; u.kx += Math.cos(a) * step; u.ky += Math.sin(a) * step;
+        setAnim(u, 'swing', CLAW_GAP * 0.95); u.atkT = Math.max(u.atkT, CLAW_GAP + 0.2);
+        const list = tier >= 2 ? foesNear(w, u, u.x, u.y, u.r + u.def.range + 34).filter((e) => inFront(u, e, 1.7)) : inReach(u, t, 34) ? [t] : [];
+        after(u, 0.07, () => { if (!alive(u)) return; for (const e of list) if (alive(e)) hurt(w, e, k1, u, { knock: 70, kAngle: u.facing, noDodge: true, ab: 'bearRoar' }); });
+        k2(w, { draw: 'clawSwipe', unit: u, x: u.x, y: u.y, side: i % 2 ? 1 : -1, r: u.r + 20, max: 0.32, ab: 'bearRoar' }); };
+      dash(w, u, 'pounce', { t, only: tier >= 2 ? null : t, tell: 0.16, air: 0.32, h: 22, recover: 0.04, rest: 0, dmg: k0, hit: { knock: 20, ab: 'bearRoar' }, col: ['#FFF8F0', '#FFFFFF'],
+        land: () => { u.kit.clawsT = w.time + end;
+          // his paws take turns (the left one, then the right): his def's style is dual while he claws
+          const clawDef = u.def === human ? { ...human, style: { ...(human.style || {}), dual: true } } : u.def; u.def = clawDef;
+          after(u, end, () => { if (u.def === clawDef) u.def = human; });
+          for (let i = 0; i < n; i++) after(u, 0.2 + i * CLAW_GAP, () => swipe(i));
+          if (tier >= 3) after(u, 0.2 + n * CLAW_GAP + 0.05, () => {
+            if (!alive(u) || !alive(t) || !inReach(u, t, 34)) return; const a = ang(u, t); u.facing = a; setAnim(u, 'thrust', 0.3); u.kx += Math.cos(a) * 140; u.ky += Math.sin(a) * 140;
             hurt(w, t, k3, u, { knock: 160, heavy: true, noDodge: true, ab: 'bearRoar' }); bleed(w, t, 70, u);
-            k2(w, { draw: 'bite', x: t.x, y: t.y, a: ang(u, t), r: t.vr, max: 0.45, ab: 'bearRoar' });
+            k2(w, { draw: 'bearBite', x: t.x, y: t.y, a, r: t.vr, max: 0.5, ab: 'bearRoar' });
           }); } });
     },
     show: { single: true },
@@ -638,7 +665,7 @@ export const ABILITIES2 = {
       const dur = tier >= 2 ? 9 : 6, human = u.def; cast(u, 'ability', 0.5);
       // (round 15, lane E: style.dual, his two fists take turns, now that art round 12's hammer is its own part and his
       // left fist stays when it goes: "punches with his fist alternating"; the pose only, parts.js)
-      u.def = { ...human, attackAnim: 'punch', weapon: 'thrust', aoe: 0, atkCd: 0.55, range: 24, style: { ...(human.style || {}), hand: 'arm-r', slam: null, dual: true } };
+      u.def = { ...human, attackAnim: 'punch', weapon: 'thrust', aoe: 0, windup: 0, atkCd: 0.55, range: 24, style: { ...(human.style || {}), hand: 'arm-r', slam: null, dual: true } };
       const S = u.kit.storm = { a: 0, dart: null, next: w.time + 0.6, x: u.x, y: u.y, until: w.time + dur, human };
       k2(w, { draw: 'stormHammer', unit: u, x: u.x, y: u.y, max: dur + 0.2, S, ab: 'warHorn' });
       timer(u, 'stormBorn', dur, (dt) => {
@@ -670,7 +697,7 @@ export const ABILITIES2 = {
         k2(w, { draw: 'hammerDown', x: x1, y: y1, a, max: 0.55, unit: u }); // (round 19: unit, drawn as the hammer he holds)
         u.act = { type: 'leap', t: 0.45, max: 0.45, x0: u.x, y0: u.y, x1, y1, land: () => {
           const R = tier >= 3 ? 105 : 80; w.shake = Math.max(w.shake, 8); u.kit.splitT = 0;
-          swingMark(w, u, u.r + 20, 0.6, { x: u.x, y: u.y, r: R, look: 'hammer' });
+          swingMark(w, u, u.r + 20, 0.6, { x: u.x, y: u.y, r: R, look: 'splitter' }); // round 19: "Better visual effects" (fx-melee.js SLAM2.splitter)
           for (const e of foesNear(w, u, u.x, u.y, R)) { hurt(w, e, dmgOf(u, 1.9), u, { knock: 300, kAngle: ang(u, e), heavy: true, noDodge: true, stagger: tier >= 2 ? 55 : 0, shock: 20, slam: true }); if (tier >= 3) stun(w, e, 0.8); }
         } };
         u.invulnT = Math.max(u.invulnT, 0.45);
@@ -787,20 +814,28 @@ export const ABILITIES2 = {
   },
   // ----- Haymaker
   // Toss (round 13: "Should toss enemy backwards. Needs better animation"): forked up and thrown high over his shoulder,
-  // turning head over heels, landing hard behind him
+  // turning head over heels, landing hard behind him. Round 19 ("They fly before he does an animation"): it goes in three
+  // beats, his fork posed by kit2Tick (u.kit.toss): he drives the fork in low (TOSS_IN s; it is caught and stopped), heaves
+  // it up on the tines and back over his head (to TOSS_UP s; it rides the fork's tip), and only then lets it fly.
   toss: {
     score: (w, u, t) => (inReach(u, t, 24) && !t.def.boss ? 0.55 : 0),
     use(w, u, t, tier) {
       const list = foesNear(w, u, u.x, u.y, u.r + u.def.range + 30).filter((e) => !isOn(w, e, 'tossed')).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y)).slice(0, tier >= 3 ? 2 : 1);
-      if (!list.length) return; u.facing = ang(u, list[0]); cast(u, 'ability', 0.6);
+      if (!list.length) return; u.facing = ang(u, list[0]); cast(u, 'ability', TOSS_UP + 0.3); u.kit.toss = { t0: w.time };
+      u.atkT = Math.max(u.atkT, TOSS_UP + 0.2);
       list.forEach((e, i) => {
-        if (e.def.boss || e.def.brain || e.eliteFn || e.mass > 3.5 || e.fixed) { hurt(w, e, dmgOf(u, 1.8), u, { knock: 200, stagger: 40, noDodge: true }); return; }
-        const back = u.facing + Math.PI + (i ? 0.6 : -0.3), x0 = e.x, y0 = e.y, x1 = clamp(u.x + Math.cos(back) * 150, e.r, w.W - e.r), y1 = clamp(u.y + Math.sin(back) * 150, e.r, w.H - e.r), T = 0.7;
-        e.stunT = Math.max(e.stunT, T); e.target = null; e.act = null; interrupt(w, e);
-        e.spin = { t0: w.time, dur: T, dir: i ? -1 : 1 }; const t0 = w.time;
-        k2(w, { draw: 'hayPuff', x: e.x, y: e.y, max: 0.5 });
-        onUnit(w, e, 'tossed', T, { tick(w2, u2) { const k = clamp((w2.time - t0) / T, 0, 1); u2.x = x0 + (x1 - x0) * k; u2.y = y0 + (y1 - y0) * k; u2.hop = Math.sin(Math.PI * k) * 95; u2.vx = u2.vy = u2.kx = u2.ky = 0; } }, (u2) => {
-          u2.hop = 0; u2.x = x1; u2.y = y1; puff(w, u2.x, u2.y, '#E9DDC2', 12, 120, 6, 0.5); w.shake = Math.max(w.shake, 4);
+        if (e.def.boss || e.def.brain || e.eliteFn || e.mass > 3.5 || e.fixed) { after(u, TOSS_IN, () => { if (alive(e)) hurt(w, e, dmgOf(u, 1.8), u, { knock: 200, stagger: 40, noDodge: true }); }); return; }
+        const T = 0.62, t0 = w.time; e.stunT = Math.max(e.stunT, TOSS_UP + T); e.target = null; e.act = null; interrupt(w, e);
+        // forked: caught on the tines as they go in, then carried up and back on them (the fork's tip: forkTip)
+        onUnit(w, e, 'tossed', TOSS_UP + T, { tick(w2, u2) {
+          const el = w2.time - t0; u2.vx = u2.vy = u2.kx = u2.ky = 0;
+          if (el < TOSS_IN) { if (el > TOSS_IN * 0.6 && !this.caught) { this.caught = true; k2(w2, { draw: 'hayPuff', x: u2.x, y: u2.y, max: 0.45 }); } return; }
+          if (el < TOSS_UP) { const tip = forkTip(u, i); if (!this.x0) { this.x0 = u2.x; this.y0 = u2.y; } const k = (el - TOSS_IN) / (TOSS_UP - TOSS_IN), e2 = k * k * (3 - 2 * k);
+            u2.x = this.x0 + (tip.x - this.x0) * e2; u2.y = this.y0 + (tip.y - this.y0) * e2; u2.hop = 46 * e2; return; }
+          if (!this.fly) { const back = u.facing + Math.PI + (i ? 0.6 : -0.3); this.fly = { x0: u2.x, y0: u2.y, x1: clamp(u.x + Math.cos(back) * 150, u2.r, w2.W - u2.r), y1: clamp(u.y + Math.sin(back) * 150, u2.r, w2.H - u2.r) };
+            u2.spin = { t0: w2.time, dur: T, dir: i ? -1 : 1 }; }
+          const F = this.fly, k = clamp((el - TOSS_UP) / T, 0, 1); u2.x = F.x0 + (F.x1 - F.x0) * k; u2.y = F.y0 + (F.y1 - F.y0) * k; u2.hop = 46 * (1 - k) + Math.sin(Math.PI * k) * 80; } }, (u2) => {
+          u2.hop = 0; const F = hookOf(u2, 'tossed'); puff(w, u2.x, u2.y, '#E9DDC2', 12, 120, 6, 0.5); w.shake = Math.max(w.shake, 4);
           k2(w, { draw: 'hayPuff', x: u2.x, y: u2.y, max: 0.6, land: true });
           hurt(w, u2, dmgOf(u, tierOf(u, 'toss') >= 2 ? 2.3 : 1.6), u, { noDodge: true, knock: 60, heavy: true, stagger: tierOf(u, 'toss') >= 2 ? 50 : 0, ab: 'toss' });
         });
@@ -2493,8 +2528,13 @@ BRAINS.haybale = function (w, b, dt) {
     b.hitAt.set(o, w.time); const side = Math.sin(angleTo(b.x, b.y, o.x, o.y) - b.head) > 0 ? 1 : -1;
     hurt(w, o, dmgOf(u, 1.5), u, { knock: 520, kAngle: b.head + side * 0.9, heavy: true, noDodge: true, stagger: b.tier >= 3 ? 40 : 0, ab: 'forkCharge' });
     w.shake = Math.max(w.shake, 3);
+    k2(w, { draw: 'hayBurst', x: (b.x + o.x) / 2, y: (b.y + o.y) / 2, a: b.head + side * 0.9, r: 60, max: 0.7, ab: 'forkCharge' }); // round 19: "burst with hay when hitting someone"
   }
-  u.x = b.x - 0.6; u.y = b.y + 0.6; u.vx = u.vy = u.kx = u.ky = 0; u.facing = b.head; // (a hair nearer the viewer than the bale: drawn on top of it) u.hop = 22 + Math.abs(Math.sin(b.roll * 0.05)) * 4;
+  // nearer the viewer than the bale by more than the bale moves in a step (render.js sorts by depth down the screen: at
+  // 0.6 the bale, moving on after this, often ended up nearer and was drawn over him: round 19, "Rendered wrong order")
+  u.x = b.x - 4; u.y = b.y + 4; u.vx = u.vy = u.kx = u.ky = 0; u.facing = b.head;
+  u.hop = 26 + Math.abs(Math.sin(b.roll * 0.06)) * 3; // round 19 ("Rendered wrong order"): stood up on top of it, bobbing as it rolls (this had slipped into the comment above)
+  if (!b.trail) b.trail = k2(w, { draw: 'hayTrail', bale: b, x: b.x, y: b.y, max: 60, pts: [], ab: 'forkCharge' }); // round 19: "leave a trail of hay hairs"
   return true;
 };
 // the bale gone (run down, burnt, broken): it bursts into hay that slows those round it, and he drops to the floor
@@ -2861,22 +2901,58 @@ function snatch(w, u, e) {
   } }, (u2) => { if (u2.forcedGoal && u2.forcedGoal.x === x) u2.forcedGoal = null; f.max = Math.min(f.max, f.t); });
 }
 // ---------------------------------------------------------------- traits
+// ---------------------------------------------------------------- round 19 (lane melee19): weapon poses and points
+const smo = (k) => { k = clamp(k, 0, 1); return k * k * (3 - 2 * k); };
+const mixPose = (a, b, k) => ({ r: (a.r || 0) + ((b.r || 0) - (a.r || 0)) * k, dx: (a.dx || 0) + ((b.dx || 0) - (a.dx || 0)) * k, dy: (a.dy || 0) + ((b.dy || 0) - (a.dy || 0)) * k });
+// a pose along a timeline of [time, pose] keys, eased between them; null past the last
+function poseAt(keys, t) { if (t < 0 || t > keys[keys.length - 1][0]) return null; for (let i = 1; i < keys.length; i++) if (t <= keys[i][0]) return mixPose(keys[i - 1][1], keys[i][1], smo((t - keys[i - 1][0]) / Math.max(1e-3, keys[i][0] - keys[i - 1][0]))); return keys[keys.length - 1][1]; }
+const Z0 = { r: 0, dx: 0, dy: 0 };
+// The Old Guard's parry: the greatsword laid flat across his front, point to his left
+export const PARRY_POSE = { r: 0.72, dx: 46, dy: 17 }; // (about the grip, arm-r's pivot since round 19: 105,152)
+// The Haymaker's toss: the fork driven in low, then heaved up and back over his left shoulder, then back to rest
+const TOSS_KEYS = [[0, Z0], [TOSS_IN, { r: 0.12, dy: 24 }], [TOSS_UP, { r: 1.75, dy: -8, dx: -6 }], [TOSS_UP + 0.08, { r: 1.85, dy: -10, dx: -6 }], [TOSS_UP + 0.34, Z0]];
+// Bearskin's maul: the club hauled up and back over his head, held, then brought straight down in front
+const MAUL_KEYS = [[0, Z0], [0.22, { r: -0.65, dy: -42 }], [0.28, { r: -0.7, dy: -46 }], [0.33, { r: 0.45, dy: 40 }], [0.45, { r: 0.45, dy: 40 }], [0.7, Z0]];
+function meleePose(w, u) {
+  let f = null;
+  if (u.kind === 'oldguard') { const P = u.kit.parry; if (P && P.until > w.time && P.n > 0 && !(w.time - (P.caughtT ?? -9) < 0.32)) f = { 'arm-r': PARRY_POSE }; }
+  else if (u.kind === 'haymaker' && u.kit.toss) { const p = poseAt(TOSS_KEYS, w.time - u.kit.toss.t0); if (p) f = { 'arm-r': p }; else u.kit.toss = null; }
+  else if (u.kind === 'bearskin' && u.kit.maulT0 != null) { const p = poseAt(MAUL_KEYS, w.time - u.kit.maulT0); if (p) f = { 'arm-r': p, 'arm-r-club': p }; else u.kit.maulT0 = null; }
+  if (f) { u._force = f; u._forceBy = 'melee'; } else if (u._forceBy === 'melee') { u._force = null; u._forceBy = null; }
+}
+// A point of a hero's sprite (SVG units, the 220 box, front = +y) in the room, with its part posed as p about pivot
+function spritePt(u, sx, sy, pivot, p) {
+  if (p) { const c = Math.cos(p.r || 0), s2 = Math.sin(p.r || 0), dx = sx - pivot[0], dy = sy - pivot[1]; sx = pivot[0] + (p.dx || 0) + dx * c - dy * s2; sy = pivot[1] + (p.dy || 0) + dx * s2 + dy * c; }
+  if (u.def.style && u.def.style.flip) sx = 200 - sx;
+  const k = u.vr / (u.def.headR || 54), a = u.facing - Math.PI / 2, x = (sx - 100) * k, y = (sy - 100) * k;
+  return { x: u.x + x * Math.cos(a) - y * Math.sin(a), y: u.y + x * Math.sin(a) + y * Math.cos(a) };
+}
+// where the Haymaker's fork tip is now (the second one tossed rides a little lower on the tines)
+function forkTip(u, i = 0) { const p = (u._force && u._force['arm-r']) || Z0; return spritePt(u, 108 - i * 8, 196 - i * 6, [154, 108], p); }
+export { spritePt };
+// Last Stand (round 19): me is still standing as v goes down; if no other friend of me's side is, me gets it from G
+function lastStandCheck(w, me, G, v) {
+  if (!G || !G.kit || G.kit.lastW === w || v.summon || !alive(me) || me.team !== G.team || !opponents(w, me).length) return;
+  if (allies(w, me).some((a) => a !== v && !a.summon && !a.def.cargo)) return; // (v is still standing as the hook runs)
+  G.kit.lastW = w; const him = me === G, dur = him ? 10 : 6;
+  addBuff(me, { id: 'unstoppable', dur, statusImmune: true, knockImmune: true, glow: '#FFE7A0' });
+  haste(w, me, dur, him ? 1.35 : 1.25);
+  if (me.kit) for (const k in me.kit.cd) me.kit.cd[k] = him ? 0 : me.kit.cd[k] * 0.5;
+  cleanse(me); setAnim(me, 'ability', 0.6); w.shake = Math.max(w.shake, him ? 6 : 4);
+  textU(w, me.x, me.y, me.r + 14, 'LAST STAND', '#FFE7A0', 1.3);
+  k2(w, { draw: 'rally', unit: me, x: me.x, y: me.y, r: me.vr, max: 1.2 });
+  k2(w, { draw: 'lastStand', unit: me, x: me.x, y: me.y, r: me.vr, max: 1.1, big: him });
+}
 export const TRAITS2 = {
   // Last Stand (round 13, the designer: "When last one in party gets a long unstoppable and haste buff, all abilities
-  // are reset."): once a room, the moment he is the last of his side standing
+  // are reset."). Round 19: "When on party gives anyone who is the last one standing the buff. Maybe just effects him
+  // better": while he is in the party (standing or not), whoever is left last standing gets it, once a room; on him it
+  // is the old Last Stand (10 s, hasted 35%, every ability ready); on a friend it is shorter and lighter (6 s, hasted
+  // 25%, its abilities half recharged). Each friend carries a small hook from him (lastStandAura) so the call still
+  // comes when he is the one already down.
   lastStand: {
-    allyDown(w, u, v) {
-      if (u.kit.lastW === w || v.summon || !alive(u) || !opponents(w, u).length) return;
-      if (allies(w, u).some((a) => a !== v && !a.summon && !a.def.cargo)) return; // (v is still standing as the hook runs)
-      u.kit.lastW = w;
-      addBuff(u, { id: 'unstoppable', dur: 10, statusImmune: true, knockImmune: true, glow: '#FFE7A0' });
-      haste(w, u, 10, 1.35);
-      for (const k in u.kit.cd) u.kit.cd[k] = 0;
-      cleanse(u); setAnim(u, 'ability', 0.6); w.shake = Math.max(w.shake, 6);
-      textU(w, u.x, u.y, u.r + 14, 'LAST STAND', '#FFE7A0', 1.3);
-      k2(w, { draw: 'rally', unit: u, x: u.x, y: u.y, r: u.vr, max: 1.2 });
-      k2(w, { draw: 'lastStand', unit: u, x: u.x, y: u.y, r: u.vr, max: 1.1 });
-    },
+    tick(w, u) { for (const a of allies(w, u)) if (!a.summon && !a.def.cargo && !hookOf(a, 'lastStandAura')) onUnit(w, a, 'lastStandAura', 1e6, { guard: u, allyDown(w2, me, v) { lastStandCheck(w2, me, this.guard, v); } }); },
+    allyDown(w, u, v) { lastStandCheck(w, u, u, v); },
   },
   grace: {
     dealt(w, u, t, amt, o) {
@@ -2895,7 +2971,7 @@ export const TRAITS2 = {
       const k = u.kit, n = k.pent || 0;
       if (!n || o.dot || o.proc || o.shot || o.ab || o.pab || k.using) return amt;
       k.pent = 0; const a = u.facing, L = u.r + (u.def.range || 40) * 2 + 40, ex = u.x + Math.cos(a) * L, ey = u.y + Math.sin(a) * L;
-      k2(w, { draw: 'thrustLine', x: u.x, y: u.y, a, r: L, n, max: 0.35 });
+      k2(w, { draw: 'thrustLine', x: u.x + Math.sin(a) * 38, y: u.y - Math.cos(a) * 38, a, r: L, n, max: 0.35 }); // (round 19: down the spear, held off to his right, as the stab is)
       for (const e of opponents(w, u)) if (e !== t && segDist(e.x, e.y, u.x, u.y, ex, ey) < e.r + 14 && inFront(u, e, 1.2))
         hurt(w, e, dmgOf(u, 1) * (1 + 0.3 * n), u, { knock: 220, kAngle: a, noDodge: true, proc: true });
       o.knock = (o.knock || 0) + 60 * n; if (n >= 3) o.heavy = true;
@@ -3302,6 +3378,9 @@ export function kit2Tick(w, u, dt) {
     u.kit.stabAnim = u.anim;
     after(u, 0.1, () => { if (!alive(u) || u.act || !u.target) return; setAnim(u, 'thrust', 0.18); u.kit.stabAnim = u.anim; meleeSwing(w, u, true); });
   }
+  // round 19 (lane melee19): poses an ability holds the weapon arm in (parts.js reads u._force): the Old Guard's parry, the
+  // Haymaker's toss, Bearskin's maul. Each is a pose of the arm in parts.js terms (r, dx, dy about the part's pivot).
+  meleePose(w, u);
   // Stormhammer: while the hammer is out of his hand it isn't drawn in it (round 13: "doesnt show in their hand when thrown")
   if (u.kind === 'griffon') {
     const out = w.projectiles.some((p) => p.owner === u && p.kind === 'hammer' && p.life > 0);
@@ -3325,7 +3404,7 @@ export function kit2Tick(w, u, dt) {
     const o = p.owner, sp = Math.hypot(p.vx, p.vy) * 1.15, a = o && alive(o) ? angleTo(p.x, p.y, o.x, o.y) : Math.atan2(-p.vy, -p.vx);
     p.team = u.team; p.owner = u; p.vx = Math.cos(a) * sp; p.vy = Math.sin(a) * sp; p.a = a; p.life = Math.max(p.life, 1); p.home = o && alive(o) ? o : null; p.turn = p.turn || 6;
     p.dmg = Math.max(p.dmg || 6, dmgOf(u, 0.8)) * PR.k; if (p.hitSet) p.hitSet = new Set();
-    PR.n--; if (PR.n <= 0) PR.until = w.time + 0.25;
+    PR.n--; if (PR.n <= 0) PR.until = w.time + 0.25; PR.caughtT = w.time;
     u.facing = a; setAnim(u, 'swing', 0.25); sparks(w, p.x, p.y, a, 7, '#FFF4C8', 1.1);
     k2(w, { draw: 'parry', x: u.x + Math.cos(a) * (u.r + 8), y: u.y + Math.sin(a) * (u.r + 8), a, max: 0.4, ab: 'pommelStrike' });
     textU(w, u.x, u.y, u.r + 8, 'PARRY', '#EEF3F8', 0.9);

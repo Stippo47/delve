@@ -340,6 +340,7 @@ const MOVES = {
   draw: { W: { dy: -26 }, S: { dy: 6 }, strike: 0.04, hold: 0.02 },
   shoot: { W: { dy: 4 }, S: { dy: -12, r: -0.05 }, strike: 0.03, hold: 0.06 },   // a gun: held still, then the kick back
   punch: { W: { dy: -10, r: -0.1 }, S: { dy: 30, r: 0.1 }, strike: 0.05, hold: 0.04 }, // fists: a straight jab
+  slam: { W: { r: -0.95, dy: -30 }, S: { r: 0.7, dy: 34 }, strike: 0.07, hold: 0.1 }, // round 19 (melee19): a warhammer raised back, then driven down in front (style.slamPose)
 };
 
 // How far into its swing a unit is "readying" before the blow lands (the sim attacks at once, so the wind-up is shown
@@ -361,7 +362,7 @@ export function poseFor(u, w, dt) {
   if (d.pose) return (u._pose = d.pose(u, w, dt));      // lane B (bosses3): a boss that poses its own parts (the angel's wheels)
   const kind = (u.anim && u.anim.kind) || d.attackAnim || (d.role === 'ranged' ? 'draw' : d.role === 'skirmish' ? 'thrust' : 'swing');
   const base = kind === 'ability' ? (d.attackAnim || 'swing') : kind;
-  const mv = MOVES[base] || MOVES.swing;
+  const mv = (sty.slamPose && base === 'swing' && kind !== 'ability' ? MOVES.slam : MOVES[base]) || MOVES.swing; // (round 19: style.slamPose, the Griffon's and Warhelm's hammer)
   const amp = base === 'swing' ? clamp((d.arc || 1.9) / 1.9, 0.85, 1.35) : 1;
   // which arm this blow uses
   if (u.anim && u.anim !== u._lastAnim) { u._lastAnim = u.anim; u._n = (u._n || 0) + 1; u._ready = 0; }
@@ -396,6 +397,7 @@ export function poseFor(u, w, dt) {
   // straight ahead, never turned in across each other (style.straight: the Shade, "should not cross blades")
   if (sty.backhand && base === 'swing') main = { ...main, r: -(main.r || 0) };
   if (sty.straight && base === 'thrust') main = { ...main, r: 0 };
+  if (sty.stab && base === 'thrust') main = { r: 0, dx: 0, dy: (main.dy || 0) * sty.stab }; // round 19 (Bulwark: "Don't like stab animation"): drawn back and driven straight out along the shaft, never waved
   // the other arm (all in arm-r terms, mirrored onto arm-l below): a shield pushes forward as the blow lands, a free
   // hand counters, casters lift both
   if (base === 'cast' || (u.anim && u.anim.kind === 'ability' && !sty.bow)) off = main;
