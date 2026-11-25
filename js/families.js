@@ -134,6 +134,12 @@ function chainTick(w, h, dt) {
   const fz = h.frozenT > 0, acc = Math.min(1, dt * 20);
   const vx = fz ? h.vx * 0.8 : h.vx + (h.dvx - h.vx) * acc, vy = fz ? h.vy * 0.8 : h.vy + (h.dvy - h.vy) * acc;
   const hx = clamp(h.x + (vx + h.kx) * dt, h.r, w.W - h.r), hy = clamp(h.y + (vy + h.ky) * dt, h.r, w.H - h.r);
+  // round 18 (lane foes17b): a knock moves the whole body with the head, as one piece (the trail and every link go
+  // with it); only the head's own walk lays new trail. A hard knock back into the body used to be taken as a walk:
+  // the links were shoved apart one from the next but not from the rest, and the head ran over its own body into a
+  // pile that held until the body had crawled out of it.
+  const kdx = hx - clamp(h.x + vx * dt, h.r, w.W - h.r), kdy = hy - clamp(h.y + vy * dt, h.r, w.H - h.r);
+  if (kdx * kdx + kdy * kdy > 1e-4) for (const p of h.trail) { p.x += kdx; p.y += kdy; }
   const tr = h.trail, f = tr[0], mx = hx - f.x, my = hy - f.y, mv = Math.hypot(mx, my);
   let shove = false;
   if (mv > CHAIN.step) {
