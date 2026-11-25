@@ -1020,3 +1020,32 @@ Gilded Golem's mirror sends back half; the endless Scorch loop fixed. Playtests 
 lone hero reaches all tier IIIs in the Wildwood, the Alpha is won 98% at first try, the Ent is a wall, foes climb
 45-56% within a run. Open in Riffle (topic balance): tier III gates, Wildwood bosses, gentler first run, solo
 viability, floor step, enemy statuses growing with depth, Valkyrie's Call, three slime calls; plus the round 16 calls.
+
+## Round 17, lane foes17 (2026-11-24): trolls get their boulders; chains follow the leader
+The designer: "look into the troll shaped enemies not being able to get their boulders"; the yeti's snowball "is its own
+entity. Should not move like it's nothing"; chains: "Follow the leader segments, each with its own hit box"; the sand
+serpent: "each segment the same size. Add a tail segment that has it taper off. Show with and without each segment
+having its own outline. ... chained back to front. Not stacked near the head. Is always laying down. Moving like the
+centipedes from florr.io ... in bursts and in a slither motion". Everything measured: docs/foes17.md.
+- **Trolls** (troll, rock troll; foes9.js boulderBrain): its own boulder was in the way of every path it asked for
+  (path.js pathClear now takes a skip; sim.js goalVec skips a troll's own boulder), it steered off its own loose
+  boulder, the round-14 jam rule stood it bare-handed 6 s beside its boulder every time a hero leaned on the boulder,
+  a boulder out of its reach was tried again for good, and the elite's recall rolled it through the troll. Now: reach
+  26 past touching; a recalled boulder is caught; a jam with a hero at the boulder or a line to its mark is just its
+  throw (no rest; 4 s rest only with no line); **a boulder it can't get to (no nearer by 20 in 3 s): it tears a new
+  one out of the floor (1.1 s) and the old one crumbles** (lead's call: the yeti's own rule for a ball it can't use).
+  Dungeon runs, back in its hands within 6 s of letting go: Warren 82% -> 94%, Crypt 69% -> 97%, Foundry 79% -> 96%.
+- **The yeti** (foes10.js): it pushes the ball the nearest way it can (its body fits behind, room ahead), so a ball on
+  a wall goes along or off it; with no way (a corner, a pocket) it hauls the ball out backwards, hands on its front;
+  it walks round its ball, not into it; a ball it gets nowhere with for 9 s it leaves to melt and packs another.
+  Staged wall / corner / pocket: 0/20 -> 20/20.
+- **Chains** (families.js; the sand serpent and the chain crawler; the Sand Wurm keeps its own body): a trail laid by
+  distance, each link a fixed distance along it (gap = a link's length: serpent 26 -> 52, crawler 28 -> 38; bodies
+  longer: 156 -> 357, 224 -> 337); equal links and a tapering tail link (smaller hit circle); a knock back into its body
+  or a too-sharp corner lays the body as a chain (each link its own gap); turns no tighter than 0.8 gap; bursts (a surge
+  to 2.2x its pace, a glide at 0.7x; serpent 1.1 s beat, crawler 0.9 s) and a slither (serpent +-0.5 rad, crawler
+  +-0.22) tied to the ground; no lunge back through its own body; flat (def.flat: no step bounce or breathing; the
+  serpent's strike no longer lifts its head). Spacing kept at 0.87-1.08 of a link in every test (before: down to 0.10
+  on a knock, links piled 1-2 s a run).
+- **Open, for the designer**: one body or each link outlined (`?chainlines=own`, clips both ways); the longer bodies;
+  the troll tearing up a new boulder; the head's two diamond shapes are in its SVG (not touched).

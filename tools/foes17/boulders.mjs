@@ -48,6 +48,7 @@ const SPOTS = {
   pillar: (S) => { place(S, 420, 480, 800, 480 + rrange(-15, 15), 1180, 160); S.w.pillars.push({ x: 640, y: 480, r: 44, prop: 'rock' }); },
   pocket: (S) => { const b = ballOf(S.u); place(S, 640, 520, 640, b.r + 2, 1180, 860); S.w.pillars.push({ x: 640 - b.r - 52, y: 50, r: 46, prop: 'rock' }, { x: 640 + b.r + 52, y: 50, r: 46, prop: 'rock' }); },
   friends: (S) => { place(S, 420, 480, 760, 480, 1180, 160); for (const [dx, dy] of [[-70, -40], [-70, 40], [-10, -80], [-10, 80], [70, 0]]) { const o = spawn(S.w, 'orc', 760 + dx, 480 + dy, { team: S.u.team }); o.rootT = 1e9; o.aggro = true; o.adopt = false; S.run.sides.b.push(o); } },
+  ring: (S) => { place(S, 960, 520, 640, 470, 1180, 860); for (let a = 40; a <= 320; a += 28) S.w.pillars.push({ x: 640 + Math.cos(a * Math.PI / 180) * 92, y: 470 + Math.sin(a * Math.PI / 180) * 92, r: 36, prop: 'rock' }); }, // (in a ring of rocks, its one gap too narrow for a troll)
   knocked: (S) => { place(S, 600, 480, 840, 480, 1180, 160); S.kick = { t: 0.4, kx: -900, ky: rrange(-200, 200) }; },
 };
 function fetch(kind, spot, seed) {
@@ -57,10 +58,8 @@ function fetch(kind, spot, seed) {
   while (t < MAXT) {
     if (S.kick && t >= S.kick.t) { u.kx = S.kick.kx; u.ky = S.kick.ky; S.kick = null; }
     B.updateBattle(run, DT); t += DT;
-    const nb = ballOf(u);
-    if (!nb) return { t: null, why: 'gone' };
-    if (nb !== b) return { t, why: 'new' }; // (a yeti left it and packed a new one)
-    if (isHeld(u, nb) && t > 0.05) return { t, why: 'held' };
+    const nb = ballOf(u); // (none: a new one being torn out of the floor, or packed: the wait goes on till one is in its hands)
+    if (nb && isHeld(u, nb) && t > 0.05) return { t, why: nb === b ? 'held' : 'new' };
   }
   return { t: null, why: 'never', x: Math.round(u.x), y: Math.round(u.y), bx: Math.round(b.x), by: Math.round(b.y), rest: u.bouldRest };
 }
@@ -111,7 +110,7 @@ for (const kind of KINDS) {
     const ok = res.filter((r) => r.t != null && r.t <= WITHIN), ts = res.filter((r) => r.t != null).map((r) => r.t).sort((a, b) => a - b);
     const med = ts.length ? ts[ts.length >> 1] : null, never = res.filter((r) => r.why === 'never').length, nw = res.filter((r) => r.why === 'new').length;
     out.fetch[`${kind}/${spot}`] = { ok: ok.length, n: N, med, never, new: nw };
-    console.log(`${kind.padEnd(12)} ${spot.padEnd(8)} back within ${WITHIN}s ${String(ok.length).padStart(2)}/${N}  median ${med == null ? '  -  ' : med.toFixed(1).padStart(5)}s  never ${never}${nw ? `  packed anew ${nw}` : ''}`);
+    console.log(`${kind.padEnd(12)} ${spot.padEnd(8)} back within ${WITHIN}s ${String(ok.length).padStart(2)}/${N}  median ${med == null ? '  -  ' : med.toFixed(1).padStart(5)}s  never ${never}${nw ? `  a new one ${nw}` : ''}`);
     if (V) for (const r of res) if (r.why === 'never') console.log('   ', JSON.stringify(r));
   }
 }
