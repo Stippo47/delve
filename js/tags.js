@@ -31,6 +31,7 @@ export const TAG_INFO = {
   beast: { name: 'Beast', desc: 'An animal.' },
   slime: { name: 'Slime', desc: 'A blob of ooze that moves in hops.' },
   flier: { name: 'Flier', desc: 'Flies.' },
+  burrower: { name: 'Burrower', desc: 'At home under the ground: it digs about down there (buried, it can still move).' }, // round 19 (lane caster19: Bury)
   hover: { name: 'Hovering', desc: 'Hovers off the floor: over pools, spikes and slams, drawn over those on the floor, and never shoved by them.' }, // round 19 (lane sys19): the imps
   metal: { name: 'Metal', desc: 'Made of metal: lightning and water get into it.' },
   demon: { name: 'Demon', desc: 'A fiend from the pit.' },
@@ -71,6 +72,7 @@ export const KIND_TAGS = {
     'spiderHunter', 'spiderMomma', 'spiderFrost', 'spiderFire', 'scarab', 'scarabGold', 'cobra', 'ratPlague', 'ratKing', 'mouse', 'dynamouse',
     'alpha', 'sandSerpent', 'leechBlood', 'leechBrain', 'werewolfBeast', 'spiritBear', 'spiritWolf', 'spiritEagle', 'spiritBeaver', 'sandWurm'],
   slime: ['greatOoze', 'oozeHalf'],
+  burrower: ['scarab', 'scarabGold', 'sandSerpent', 'drillBot', 'sandWurm'], // round 19 (lane caster19): what lives under the floor (families.js burrowTick, the Sand Wurm)
   flier: ['bat', 'cinderBat', 'wisp', 'ghost', 'banshee', 'cherub', 'angel', 'seraph', 'angelFallen', 'spiritEagle', 'medDrone', 'repairDrone', 'welderDrone',
     'bee', 'wasp', 'hornet', 'beeBronze', 'beeSteel', 'waspBronze', 'waspSteel', 'hornetBronze', 'hornetSteel',
     'spiritPoison', 'spiritHaste', 'spiritShock', 'spiritFrost', 'spiritFire', 'spiritHeal', 'spiritWard', 'griffon', 'valkyrie', 'gildedSeraph'],
@@ -118,8 +120,8 @@ export function tagRes(u, type) {
 // mouth: done with the mouth (spoken, sung, shouted, whistled, a kiss, a breath, a bite): Silenced stops it.
 // sound: it works by being heard (for Deaf, not built yet). magic / physical: what its hits are (isMagicHit).
 export const ABILITY_TAGS = {
-  mouth: ['holdTheLine', 'warSong', 'lullaby', 'rallyCry', 'oldTales', 'broadside', 'ramCharge', 'sweetheart'],
-  sound: ['holdTheLine', 'warSong', 'lullaby', 'encore', 'rallyCry', 'oldTales', 'broadside', 'ramCharge', 'thunderclap'],
+  mouth: ['holdTheLine', 'warSong', 'lullaby', 'rallyCry', 'broadside', 'ramCharge', 'sweetheart'], // (round 19: Old Tales is Sheaves now, not spoken)
+  sound: ['holdTheLine', 'warSong', 'lullaby', 'encore', 'rallyCry', 'broadside', 'ramCharge', 'thunderclap'],
   magic: ['consecrate', 'mend', 'sanctuary', 'smite', 'fireball', 'flameWall', 'inferno', 'iceShard', 'frostNova', 'iceWall',
     'chainLightning', 'thunderclap', 'stormCloud', 'warSong', 'lullaby', 'encore', 'entangle', 'rejuvenate', 'callWolf',
     'raiseDead', 'lifeDrain', 'boneSpear', 'healTotem', 'spiritLink', 'rainDance', 'frogHex', 'cursedBrew', 'broomRide',
@@ -152,8 +154,8 @@ export function moveHas(u, key, tag) {
 // does as ever. A Mute kind is silenced for good. (The Warden's Nullify, "nothing works", is NULLIFIED instead: every
 // ability locked, kits3.js; it silences as well.)
 export const isSilenced = (u) => !!u && (u.silencedT > 0 || hasTag(u, 'mute'));
-export const abilityBlocked = (u, id, ab) => isSilenced(u) && abilityHas(id, 'mouth', ab);
-export const moveBlocked = (u, key) => isSilenced(u) && moveHas(u, key, 'mouth');
+export const abilityBlocked = (u, id, ab) => (isSilenced(u) && abilityHas(id, 'mouth', ab)) || weaponBlocked(u, id, ab); // (round 19: Disarmed, at the end)
+export const moveBlocked = (u, key) => (isSilenced(u) && moveHas(u, key, 'mouth')) || (isDisarmed(u) && moveHas(u, key, 'weapon'));
 
 // ---------------------------------------------------------------- fire and water
 // DOUSED: a fire-tagged unit that is Wet, or stands in water, takes what Burn would do to anything else at that much
@@ -213,7 +215,7 @@ export const MAGIC_SHOTS = new Set(['bolt', 'fireball', 'frostbolt', 'holy', 'so
   'kiss', 'kissTo', 'kissBack', 'hexbolt', 'glimmer', 'eyeBolt', 'zeus', 'uncharm', 'spark', 'sleepy', 'shadowBolt', 'radiance',
   'heartstring', 'heartbreak', 'heartbreakCast', 'fear', 'confuse', 'charm', 'clockHand', 'loveArrow']);
 export const MAGIC_ZONES = new Set(['holy', 'soul', 'lightning', 'radiance', 'spirit', 'curse', 'hex']);
-export const EDGE_WEAPON = { great: 'sharp', blade: 'sharp', thrust: 'sharp', twin: 'sharp', fork: 'sharp', scythe: 'sharp', claw: 'sharp', bite: 'sharp', heavy: 'blunt', palm: 'blunt' };
+export const EDGE_WEAPON = { great: 'sharp', blade: 'sharp', thrust: 'sharp', twin: 'sharp', fork: 'sharp', scythe: 'sharp', claw: 'sharp', bite: 'sharp', heavy: 'blunt', palm: 'blunt', spade: 'blunt' }; // (round 19: the Digger's spade, the flat of it)
 export const EDGE_KINDS = {
   sharp: ['knight', 'rogue', 'twinfang', 'wildmane', 'granny', 'cultist', 'huntress', 'ninja', 'marksman', 'pirate', 'wolf', 'mobDagger', 'mobAxe', 'mobPitchfork'],
   blunt: ['paladin', 'tower', 'berserker', 'slinger', 'minion', 'warlockImp', 'golem', 'gildedGolem', 'ogre', 'troll', 'rockTroll', 'brute', 'rattlerMace',
@@ -305,3 +307,38 @@ export function reaches(layer, k) {
   if (layer === 'hovering') return !k.slam;
   return k.shot || k.dot;
 }
+
+// ---------------------------------------------------------------- Disarmed (round 19, lane rogue19)
+// The designer: "Disarm ability: makes it so an entity can't use their weapon (and weapon is hidden) for a bit (as well
+// as any ability attached to the weapon). Innate attacks built into the body aren't stopped. Can't disarm a slime."
+// ARMED: what holds a weapon (its art shows one in a hand: parts.js takes it out while it is disarmed). Everything else
+// (beasts, slimes, plants, spirits, constructs, the casters whose shots are spells, the Monk's fists) has nothing to
+// take and can't be disarmed. A kind whose art is still a placeholder drawn whole is left off (nothing can be shown
+// leaving its hand).
+export const ARMED = [
+  // heroes
+  'paladin', 'tower', 'archer', 'twinfang', 'wildmane', 'berserker', 'granny', 'oldguard', 'dame', 'griffon', 'bulwark', 'bearskin', 'warhelm',
+  'rogueBandit', 'shade', 'haymaker', 'digger', 'grandpa', 'cultist', 'pirate', 'gladiator', 'jester', 'samurai', 'valkyrie', 'engineer', 'werewolf',
+  'warden', 'crossbowman', 'falconer', 'huntress', 'marksman', 'ninja', 'slinger', 'trapper', 'harpooner',
+  // enemies
+  'skeleton', 'rattler', 'rattlerBow', 'rattlerSpear', 'rattlerMace', 'rattlerGold', 'rattlerHarrow', 'brute', 'lizardman', 'lizardBlade', 'lizardChief',
+  'goblin', 'goblinOrange', 'goblinSpear', 'hobgoblin', 'orc', 'warboss', 'bandit', 'banditTorch', 'banditGreat', 'banditAxe', 'banditSpear',
+  'poacher', 'jackal', 'foundrySmith', 'angelFallen', 'heraldLight', 'heraldFallen', 'chieftain'];
+// (left off, their art not reading right with the weapon taken out: the bandit brute, the knife bandit, the bandit chief)
+const ARMED_SET = new Set(ARMED);
+export const isArmed = (u) => !!u && (ARMED_SET.has(u.kind) || (u.def && (ARMED_SET.has(u.def.base) || ARMED_SET.has(u.def.variantOf)))) && !(u.kit && u.kit.wolf);
+export const isDisarmed = (u) => !!u && u.disarmT > 0 && isArmed(u);
+// The heroes' abilities done with the weapon in hand (a swing, a thrust, a shot, a throw of it): none of them while
+// disarmed. A shield, a kick, a headbutt, claws, a spell, a whistle, a trap set down are not the weapon.
+export const WEAPON_ABILITIES = ['barrage', 'frostArrow', 'backstab', 'fanOfKnives', 'cleave', 'shockwave', 'whirl', 'reap', 'hook',
+  'greatSweep', 'pommelStrike', 'riposte', 'disarm', 'hammerThrow', 'brace', 'impale', 'maul', 'warHorn', 'skullSplitter',
+  'pickpocket', 'lowBlow', 'shadowWalk', 'toss', 'pitchHay', 'dirtFling', 'spadeBat', 'harvest', 'soulCandle', 'pointBlank', 'netThrow',
+  'iaido', 'focus', 'crescentCut', 'spearThrow', 'pinBolt', 'crankUp', 'runningThrow', 'bound', 'prey', 'aimedShot', 'bayonet', 'ricochet',
+  'shurikenFan', 'stunStone', 'snareNet', 'reelIn'];
+ABILITY_TAGS.weapon = WEAPON_ABILITIES;
+for (const id of WEAPON_ABILITIES) (AB[id] || (AB[id] = new Set())).add('weapon');
+// An enemy's own moves (elites.js due keys) made with the weapon in hand, and its def.ability when it is one.
+MOVE_TAGS.weapon = ['cut', 'axe', 'jav', 'spear', 'trident', 'whip', 'bandit:volley', 'banditChief:volley', 'poacher:volley', 'rattlerBow:volley'];
+for (const k of MOVE_TAGS.weapon) (MV[k] || (MV[k] = new Set())).add('weapon');
+export const FOE_WEAPON_ABILITY = new Set(['barrage', 'shadowstep', 'dash']);
+export const weaponBlocked = (u, id, ab) => isDisarmed(u) && abilityHas(id, 'weapon', ab);

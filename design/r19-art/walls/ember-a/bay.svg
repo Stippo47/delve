@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -106 160 106" width="640" height="424">
+  <!-- ember walls, option a (Basalt columns): the stretch a door sits in. Round 19 art lane (walls). 1 SVG unit = 1 room unit. The wall's own frame: x runs along the wall, y = 0 is the foot (where the wall meets the floor; the room is below, +y), y < 0 rises up the wall away from the room. Face (the wall's inner side, folded flat like the doors' arch): y -84..0. Cap (the top, seen from above): y -106..-84. The whole wall is 106 deep; the doors' arch reaches y -57, so the wall rises 49 past it. Everything repeats every 160 along x, so runs tile end to end. No outline in the file: the renderer draws the one ink outline round the wall's mass. Rotate the piece so +y points into the room. An overlay: drawn over the run (which carries on under it) wherever a door stands, then the door (art/props/door-*.svg, box 141.4) on top, its doorway centred on (80, 0). -->
+  <defs>
+    <clipPath id="c0"><path d="M0 -106H160V0H0Z"/></clipPath>
+    <linearGradient id="g1" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#6E6165"/><stop offset="0.55" stop-color="#4A3A3E"/><stop offset="1" stop-color="#34292B"/></linearGradient>
+    <radialGradient id="g2" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#FFF0B0"/><stop offset="0.5" stop-color="#FFC85A"/><stop offset="1" stop-color="#FF7A2F"/></radialGradient>
+  </defs>
+  <g id="sprite">
+<g clip-path="url(#c0)">
+<path d="M0 0L0 -72L10 -76L10 0Z" fill="#6E5E5D" />
+<path d="M10 0L10 -76L20 -72L20 0Z" fill="#3B2B2A" />
+<path d="M140 0L140 -72L150 -76L150 0Z" fill="#6E5E5D" />
+<path d="M150 0L150 -76L160 -72L160 0Z" fill="#3B2B2A" />
+<path d="M1 -88H159Q162 -88 162 -85V-71Q162 -68 159 -68H1Q-2 -68 -2 -71V-85Q-2 -88 1 -88Z" fill="url(#g1)"/>
+<path d="M3 -86.2H157Q159 -86.2 159 -84.2V-84.2Q159 -82.2 157 -82.2H3Q1 -82.2 1 -84.2V-84.2Q1 -86.2 3 -86.2Z" fill="#FFFFFF" opacity="0.2"/>
+<path d="M8 -78L30 -80L44 -76L62 -79" fill="none" stroke="#FF7A2F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+<path d="M98 -79L116 -76L132 -80L152 -77" fill="none" stroke="#FF7A2F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+<circle cx="80" cy="-78" r="8" fill="url(#g2)"/>
+</g>
+  </g>
+</svg>

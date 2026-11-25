@@ -6,11 +6,11 @@
 //   figure(ctx, { flash, wash, alpha, ol }, (F) => { F.shape(path, fill); F.line(path, color, width); F.detail(fn); })
 // Also: gradients (lin, rad), paths (ell, rrect, capsule, poly, ribbon), two-bone arms (ik2), boss effects that live
 // for a moment (bfx: pushed by the fight, drawn under or over the units by time, no state of their own).
-import { INK, TAU, clamp } from './util.js';
+import { INK, TAU, clamp, OUTLINE } from './util.js';
 import { view } from './render.js';
 import { inked, upright } from './fx.js';
 
-export const OL = 3.6; // a boss's outline in room units (the heroes' is 2.4 at a third of the size)
+export const OL = OUTLINE; // a boss's outline in room units: the one outline (round 19, lane outline19; it was 3.6, half again the heroes')
 const SEAM = 'rgba(43,34,48,0.5)';
 
 export function figure(ctx, o, body) {

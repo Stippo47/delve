@@ -4,7 +4,6 @@
 <!-- Round 3: same as barbarian-wildmane.svg plus a short pale scar across where her left eye would be. -->
   <!-- BARBARIAN Wildmane, scar version (round 3): cream wolf-fur mantle, swept rust mane, fringe (round 4: no beard, long locks instead). Greatsword now held low in the right hand, point forward (+y), wider blade with a centre ridge. Parts: body / arm-l (empty fist) / arm-r (hand + greatsword). Facing = DOWN (+y). -->
   <defs>
-    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <linearGradient id="gF" x1="0" y1="100" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient>
     <linearGradient id="gFs" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
     <path d="M26.0 108.0 C26.0 82 54.0 76 100 76 C146.0 76 174.0 82 174.0 108.0 C174.0 134 146.0 140 100 140 C54.0 140 26.0 134 26.0 108.0 Z" id="s1"/>
@@ -61,7 +60,7 @@
 <path id="fistR" d="M -4.5 -13.5 L 5.3 -13.5 Q 7.9 -13.5 7.9 -10.5 A 3.52 3.52 0 0 1 7.9 -5.25 A 3.52 3.52 0 0 1 7.9 0 A 3.52 3.52 0 0 1 7.9 5.25 A 3.52 3.52 0 0 1 7.9 10.5 Q 7.9 13.5 5.3 13.5 L -4.5 13.5 Q -10.5 13.5 -10.5 7.5 L -10.5 -7.5 Q -10.5 -13.5 -4.5 -13.5 Z"/>
 <clipPath id="wcLocks"><use href="#s12"/></clipPath>
 </defs>
-  <g id="sprite" filter="url(#outline)">
+  <g id="sprite">
     <g id="arm-r" data-pivot="160 108">
       <!-- big broadsword, held low: the grip passes under the right side of the mantle and the blade comes out past the front of the body; only the fist shows at the body's edge -->
       <g transform="translate(176 141) rotate(50)">

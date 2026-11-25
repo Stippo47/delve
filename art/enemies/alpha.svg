@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 11) of design/class-round11/enemies/wild-alpha.svg -->
 <!-- THE ALPHA (round 8): the giant wolf, pack leader: pale silver fur, a great mane of pointed tufts over the shoulders, one ear torn, an old scar across the brow in one darker shade, the werewolf's skull and snout, big paws with white claws, a long bushy tail. No eyes. Round 11: the head 7 units further forward, the body 12 shorter. Round 10: drawn without its front paws. Parts: #back (tail, sways), #body. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
 <path id="s1" d="M 100 94 C 102.8 94 106.8 86 109.3 80 C 111.9 74 116.2 61.5 117 54 C 117.8 46.5 117 35.7 114.5 30 C 111.9 24.3 104.3 16 100 16 C 95.7 16 88.1 24.3 85.5 30 C 83 35.7 82.2 46.5 83 54 C 83.8 61.5 88.1 74 90.7 80 C 93.2 86 97.2 94 100 94 Z"/>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#DBD9D5"/><stop offset="1" stop-color="#B0ABA2"/></linearGradient>
@@ -33,7 +32,7 @@
 <linearGradient id="g7" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#332C3B"/><stop offset="1" stop-color="#28222F"/></linearGradient>
 <clipPath id="c8"><use href="#s8"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 76"><!-- tail -->
 <use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/><g clip-path="url(#c1)"><path d="M 81 22 A 19 15 0 1 0 119 22 A 19 15 0 1 0 81 22 Z" fill="#8E8A86"/></g>
 </g>

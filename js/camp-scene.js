@@ -12,13 +12,17 @@ import { HEROES, HERO_IDS } from './heroes.js';
 import { DEFS } from './units.js';
 import { getRig, drawRig, poseFor, LIMP } from './parts.js';
 import { headR } from './sprites.js';
-import { INK } from './util.js';
+import { INK, OUTLINE } from './util.js';
 import * as P from './progress.js';
 import * as M from './meta.js';
 import { paintWagon } from './convoy.js'; // lane C (convoy): the wagon parked at the camp's edge
 
 const TAU = Math.PI * 2;
 const HS = 0.46;            // a hero's sprite size in camp world units per sprite unit (a paladin is ~45 across)
+// Round 19 (lane outline19): one outline in the camp, in camp world units, for the heroes (parts.js grows their inks to it)
+// and every inked thing (ink() below; its calls asked for 1.2 to 2.4): OUTLINE at the heroes' camp scale, so a hero's
+// outline is the same share of him as in a fight.
+const CAMP_LINE = OUTLINE * HS;
 const SEAT_R = 60;          // how far the seats sit from the fire's middle
 const SEAT_A = [Math.PI * 0.75, Math.PI * 0.25, Math.PI * 1.25, Math.PI * 1.75]; // bottom-left, bottom-right, top-left, top-right
 const WALK = 38;            // wandering speed, world units a second
@@ -289,8 +293,8 @@ export function makeScene(canvas, api) {
     g.fillStyle = '#183230'; g.beginPath(); g.arc(x - r * 0.18, y - r * 0.2, r * 0.6, 0, TAU); g.fill();
     g.fillStyle = 'rgba(80,120,100,0.18)'; g.beginPath(); g.arc(x - r * 0.3, y - r * 0.32, r * 0.28, 0, TAU); g.fill();
   }
-  function ink(path, fill, w = 2.4) {
-    path(); g.lineJoin = 'round'; g.strokeStyle = INK; g.lineWidth = w * 2; g.stroke(); g.fillStyle = fill; g.fill();
+  function ink(path, fill) { // (a third argument, the width each call once asked for, is no longer read: CAMP_LINE)
+    path(); g.lineJoin = 'round'; g.strokeStyle = INK; g.lineWidth = CAMP_LINE * 2; g.stroke(); g.fillStyle = fill; g.fill();
   }
 
   // the fire: a ring of stones, crossed logs, flames that never sit still
@@ -381,7 +385,7 @@ export function makeScene(canvas, api) {
       ink(() => { g.beginPath(); g.roundRect ? g.roundRect(-42, -32, 84, 62, 8) : g.rect(-42, -32, 84, 62); }, '#7A5232', 1.6);
       for (let k = 0; k < 5; k++) { g.fillStyle = k % 2 ? '#E9DCC0' : '#B8423A'; g.fillRect(-38 + k * 15.2, -28, 15.2, 50); }
       g.strokeStyle = 'rgba(43,34,48,0.5)'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(-38, -3); g.lineTo(38, -3); g.stroke();
-      g.strokeStyle = INK; g.lineWidth = 3; g.strokeRect(-38, -28, 76, 50);
+      g.strokeStyle = INK; g.lineWidth = CAMP_LINE * 2; g.strokeRect(-38, -28, 76, 50);
       ink(() => { g.beginPath(); g.rect(-30, 26, 18, 16); g.rect(-8, 30, 14, 12); }, '#9A6B40', 1.3);
       g.strokeStyle = '#5A3A22'; g.lineWidth = 2; g.beginPath(); g.moveTo(-30, 34); g.lineTo(-12, 34); g.moveTo(-21, 26); g.lineTo(-21, 42); g.stroke();
       ink(() => { g.beginPath(); g.moveTo(-44, -6); g.lineTo(-64, -10); g.moveTo(-44, 6); g.lineTo(-64, 10); }, '#6E4A30', 1.2);
@@ -457,7 +461,7 @@ export function makeScene(canvas, api) {
     const looked = mode === 'focus' && focus && focus.type === 'hero' && focus.id === f.id;
     const fine = looked || (mode === 'fire' && (f.state === 'sit' || f.goalKind === 'sit'));
     // (asked for at the zoom the camera is heading to, not each size it passes through on the way)
-    const set = getRig(def.art, sizeU * (fine ? want.k : Math.min(want.k, s0 * 1.25)) * dpr * 1.04); if (!set) return;
+    const set = getRig(def.art, sizeU * (fine ? want.k : Math.min(want.k, s0 * 1.25)) * dpr * 1.04, sizeU * OUTLINE / CAMP_LINE); if (!set) return;
     const lying = f.state === 'rest';
     const pose = lying ? LIMP : poseFor(fu, {}, 1 / 60);
     g.save(); g.translate(fx, fy);

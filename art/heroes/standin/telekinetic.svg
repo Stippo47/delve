@@ -1,7 +1,6 @@
 <svg data-standin="telekinetic: seer recoloured (tools/standins.mjs)" xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
 <!-- SUPPORT Seer (round 5: hair redone): long smooth silver-lilac hair parted in the middle, one soft mass falling down the back and two tapered locks framing the face onto the shoulders; a violet blindfold tied over the eyes, its two tails trailing back over the hair; midnight shawl. A glowing crystal ball held out in front in both cupped hands (all in arm-r, after #body; arm-l left out). Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#f8d4b2"/><stop offset="1" stop-color="#dfa57f"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a2e2a" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5a2e2a" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#b07560"/><stop offset="0.2" stop-color="#d9a27f"/><stop offset="0.45" stop-color="#f2c7a0"/><stop offset="0.85" stop-color="#f4cba6"/><stop offset="1" stop-color="#e6b590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8a4e36" stop-opacity="0"/><stop offset="1" stop-color="#8a4e36" stop-opacity="0.28"/></linearGradient>
 <radialGradient id="gOrb" cx="0.38" cy="0.34" r="0.7"><stop offset="0" stop-color="#e9fffb"/><stop offset="0.35" stop-color="#8befe0"/><stop offset="1" stop-color="#2fa7b4"/></radialGradient>
 <path id="s1" d="M 52 96 C 46 62 62 30 100 26 C 138 30 154 62 148 96 C 150 70 146 40 134 22 C 124 8 112 2 100 2 C 88 2 76 8 66 22 C 54 40 50 70 52 96 Z"/>
@@ -47,7 +46,7 @@
 <clipPath id="u15"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4"/><use href="#s5"/><use href="#s6"/><use href="#s7"/><use href="#s8"/><use href="#s9"/><use href="#s10"/><use href="#s11"/><use href="#s12"/><use href="#s13" transform="translate(78 170) rotate(35)"/><use href="#s14" transform="translate(122 170) rotate(-35)"/></clipPath>
 <clipPath id="c15"><use href="#s15"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="100 70"><!-- hair falling down the back, blindfold tails -->
 <use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/>
 <use href="#s2" fill="url(#g1)"/><use href="#s2" fill="url(#g2)"/><g clip-path="url(#c2)"><path d="M 80 14 C 74 40 74 70 78 96 M 120 14 C 126 40 126 70 122 96" stroke="#d597d0" stroke-width="4" fill="none" opacity="0.6"/></g>

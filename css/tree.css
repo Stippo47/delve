@@ -27,6 +27,11 @@ svg.web { position: absolute; left: 0; top: 0; width: 100%; height: 100%; displa
 .wn.near .gl { color: #B8BEDA; }
 .wn.near .fillgl, .wn.near .gem { fill: #B8BEDA; }
 .wn.near.tier .ico, .wn.near.ability .ico { opacity: .7; filter: grayscale(.5); }
+/* round 19 (icons-misc lane): a stat node's painted icon, dimmed like an ability's until it can be learned */
+.wn .ico.wst { opacity: .3; filter: grayscale(1); }
+.wn.near .ico.wst { opacity: .7; filter: grayscale(.5); }
+.wn.open .ico.wst, .wn.owned .ico.wst, .wn.part .ico.wst { opacity: 1; filter: none; }
+.np-ico.pst { padding: 7px; } .np-ico.pst .ico { width: 100%; height: 100%; }
 /* open: learn it now */
 .wn.open .body { stroke: var(--teal); stroke-width: 3; fill: #163A48; }
 .wn.open .gl { color: #BFF6EF; }

@@ -1,0 +1,62 @@
+{
+  "title": "Round 19: stat, trinket and small icons",
+  "topic": "art",
+  "stack": "r19art",
+  "order": 10,
+  "cards": [
+    {
+      "id": "stats",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Stat icons in style A",
+      "text": "Every stat icon is now style A, painted, no tile. On by default. Style B is a switch in Settings.",
+      "why": "You picked A for stats beside a number (\"Maybe B\"), so A is in and B is built too. Mark any icon that doesn't read.",
+      "details": "35 icons: every stat the game shows (health, armour, speed, damage, hits a second, reach, cooldown, ability haste, healing, potency, kills, runs, taken, blocked, downs, revives, best hit, XP, gold, found in, elite, major, level, fills at, fades, time, in the bag, floor). Also the skill web's nodes, and two spares (regen, critical) that nothing uses yet.\n\nOne rule throughout: speed lines mean faster. That's the sword for hits a second, the boot for move speed, and the clock for ability haste. Cooldown is a clock with the game's own cooldown wipe on it.\n\nThe skill web's stat nodes use the same icons now, greyed until you can learn them, like the ability nodes. An ability's own power, cooldown, mending and potency nodes have a small spark on them.\n\nSettings has a new Stat icons row: Painted (A), Bold glyph (B), or Stand-in (the old set). ?icons=b also works in a browser.",
+      "images": ["../../../design/r19-icons/misc/set-stats-a.png", "../../../design/r19-icons/misc/phone-stats-a.png"],
+      "parts": [
+        { "id": "a-set", "title": "A, every icon", "text": "Big, then at 20 px and 14 px beside a number.", "images": ["../../../design/r19-icons/misc/set-stats-a.png"] },
+        { "id": "a-phone", "title": "A on the Stats page", "text": "The Paladin's Stats page at real size, and the all-runs part lower down.", "images": ["../../../design/r19-icons/misc/phone-stats-a.png", "../../../design/r19-icons/misc/phone-stats-a-runs.png"] },
+        { "id": "a-web", "title": "A in the skill web", "text": "Stat nodes show the same icons. They're greyed until you can learn them.", "images": ["../../../design/r19-icons/misc/phone-skill-web-a.png"] },
+        { "id": "b", "title": "B, behind the switch", "text": "The same set as bold glyphs, one flat colour each. Pick it in Settings → Stat icons.", "images": ["../../../design/r19-icons/misc/set-stats-b.png", "../../../design/r19-icons/misc/phone-stats-b.png", "../../../design/r19-icons/misc/phone-skill-web-b.png"] }
+      ]
+    },
+    {
+      "id": "trinkets",
+      "kind": "board",
+      "rarity": "epic",
+      "title": "Trinkets, tried again",
+      "text": "All 30 trinkets with no container, just the object. Two ways to paint them. Tick what works.",
+      "why": "You didn't like the trinkets' containers. Both sets live in Settings → Trinket, potion and small icons; until you pick one, the game keeps today's drawings.",
+      "pick": ["t1", "t1-trader", "t1-inspect"],
+      "items": [
+        { "id": "t1", "label": "1 · Painted object", "image": "../../../design/r19-icons/misc/set-trinkets-1-paint.png", "text": "Style A's painted object with no medallion: the sprite ink outline, one shade step, a highlight. Big, then on the trader's shelf, at 18 and 28 px, and dropped on a dungeon floor." },
+        { "id": "t2", "label": "2 · Soft paint", "image": "../../../design/r19-icons/misc/set-trinkets-2-soft.png", "text": "Lighter. No ink: the edge is a thin pale rim in a tint of the object's own colours, and it casts a soft shadow. The same drawings as 1." },
+        { "id": "t1-trader", "label": "1 at the trader", "image": "../../../design/r19-icons/misc/phone-trader-1-paint.png", "text": "Real size on the phone. The rarity ring is the trader's tile, not the icon's." },
+        { "id": "t2-trader", "label": "2 at the trader", "image": "../../../design/r19-icons/misc/phone-trader-2-soft.png" },
+        { "id": "t1-inspect", "label": "1 in a fight", "image": "../../../design/r19-icons/misc/phone-inspect-1-paint.png", "text": "The pause panel's Carrying list." },
+        { "id": "t2-inspect", "label": "2 in a fight", "image": "../../../design/r19-icons/misc/phone-inspect-2-soft.png" },
+        { "id": "t1-cards", "label": "1 on the battle cards", "image": "../../../design/r19-icons/misc/phone-cards-1-paint.png", "text": "The cards' 18 px trinkets and potions, zoomed in." },
+        { "id": "t2-cards", "label": "2 on the battle cards", "image": "../../../design/r19-icons/misc/phone-cards-2-soft.png" },
+        { "id": "t1-book", "label": "1 in the Book", "image": "../../../design/r19-icons/misc/phone-book-trinkets-1-paint.png" },
+        { "id": "t2-book", "label": "2 in the Book", "image": "../../../design/r19-icons/misc/phone-book-trinkets-2-soft.png" },
+        { "id": "today", "label": "Today, for comparison", "image": "../../../design/r19-icons/misc/phone-trader-today.png", "text": "The trader with the drawings the game shows now." }
+      ]
+    },
+    {
+      "id": "potions-ui",
+      "kind": "report",
+      "rarity": "uncommon",
+      "title": "Potions and small icons",
+      "text": "The 6 potions and the stand-in UI pictures, painted the same way, no container. They switch with the trinkets.",
+      "why": "Mark any that don't read. Each potion keeps its own bottle shape and colour, with its mark in the liquid.",
+      "details": "Potions: Healing Draught (round, a cross), Quicksilver Tonic (tall, a bolt and speed lines), Clockwork Elixir (wide, a clock), Salamander Oil (square, a crossed-out flame), Iron Skin Brew (square, a shield), Troll Draught (a cone flask, a leaf).\n\nUI pictures that change with the switch: the gold coin (it was a CSS circle), the skill-point gem, and the glyphs that stand for a thing: lock, potions button, the fire seat, resting moon, trait crown, checkpoint flag, the leave and new-dungeon door, the trader's bag, the weapon sword, skull. Controls (back, plus, check, pause, play, settings, the tab bar) stay as line icons.\n\nAlso drawn but not in the game yet: a key, a chest and a book. The camp's buttons (Book, Battle, Trader, Settings, Wagon) are scene art, not stand-ins, so they stay as they are.\n\nThe Settings row for this is in the last picture.",
+      "images": ["../../../design/r19-icons/misc/set-ui.png", "../../../design/r19-icons/misc/phone-potions-r19.png"],
+      "parts": [
+        { "id": "set", "title": "Potions and UI, big", "text": "Every one big, then real size beside prices and in the result notes.", "images": ["../../../design/r19-icons/misc/set-ui.png"] },
+        { "id": "potions", "title": "Potions at the fire", "text": "Handing out potions, real size.", "images": ["../../../design/r19-icons/misc/phone-potions-r19.png"] },
+        { "id": "camp", "title": "Camp and a Book page", "text": "The camp's purse with the painted coin, and a trinket's Book page (gold, in the chest, level).", "images": ["../../../design/r19-icons/misc/phone-camp-r19.png", "../../../design/r19-icons/misc/phone-book-trinket-r19.png"] },
+        { "id": "settings", "title": "The two switches", "text": "Settings: Stat icons, then Trinket, potion and small icons.", "images": ["../../../design/r19-icons/misc/phone-settings-icons.png"] }
+      ]
+    }
+  ]
+}

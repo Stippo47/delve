@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
+<!-- BANSHEE, round 19 option C, 'veil': option A under a sheer teal veil: the hair hidden but for two long locks by the face, the veil hanging back off the crown and trailing in a long ragged train (#back); the ghosts' eyes and the wailing mouth. Parts: #back (the veil's train), #body, #arm-l / #arm-r (reaching hands). Front = DOWN (+y), centre (100,100); the 220 box of every sprite. No outline in the file: the game draws one round the whole figure. -->
+<defs>
+<radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
+<path id="s1" d="M 104.3 87.3 C 109.6 83.2 127.8 65.6 130.8 57.4 C 133.7 49.2 123.3 39.5 124 32.8 C 124.6 26.1 138.3 19 135 12.9 C 131.7 6.8 108.2 -5.5 102 -8 C 95.9 -10.5 97.3 -6.3 94 -4 C 90.7 -1.7 84.6 1.5 80.1 7.4 C 75.6 13.3 63.7 26.9 64 35.2 C 64.3 43.5 77.4 55.6 82.1 63 C 86.9 70.4 92.4 81 95.7 84.7 C 99 88.3 99 91.4 104.3 87.3 Z"/>
+<linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#70B1AC"/><stop offset="1" stop-color="#4E948E"/></linearGradient>
+<linearGradient id="g2" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#284E4B" stop-opacity="0"/><stop offset="1" stop-color="#284E4B" stop-opacity="0.42"/></linearGradient>
+<clipPath id="c1"><use href="#s1"/></clipPath>
+<path id="s2" d="M 135 120 C 136.5 115.5 142.7 112 146 112 C 149.3 112 155.5 115.5 157 120 C 158.5 124.5 157.7 137.5 156 142 C 154.3 146.5 149 150 146 150 C 143 150 137.7 146.5 136 142 C 134.3 137.5 133.5 124.5 135 120 Z"/>
+<clipPath id="u2"><use href="#s1"/></clipPath>
+<linearGradient id="g3" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#F5F5FA"/><stop offset="1" stop-color="#C3BFE0"/></linearGradient>
+<linearGradient id="g4" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4E4595" stop-opacity="0"/><stop offset="1" stop-color="#4E4595" stop-opacity="0.42"/></linearGradient>
+<path id="s3" d="M 100 156 C 111.2 156 130.2 145.8 137.4 138 C 144.6 130.2 148.6 114.5 148 104 C 147.4 93.5 138.6 71.9 133.6 68 C 128.6 64.1 119.4 79.2 114.4 78 C 109.4 76.8 104.3 60 100 60 C 95.7 60 90.6 76.8 85.6 78 C 80.6 79.2 71.4 64.1 66.4 68 C 61.4 71.9 52.6 93.5 52 104 C 51.4 114.5 55.4 130.2 62.6 138 C 69.8 145.8 88.8 156 100 156 Z"/>
+<clipPath id="c3"><use href="#s3"/></clipPath>
+<path id="s4" d="M 50 110 C 46 72 68 48 100 48 C 132 48 154 72 150 110 C 150 128 144 144 136 154 C 132 136 130 114 118 102 C 108 96 92 96 82 102 C 70 114 68 136 64 154 C 56 144 50 128 50 110 Z"/>
+<clipPath id="u4"><use href="#s1"/><use href="#s2"/><use href="#s3"/></clipPath>
+<clipPath id="c4"><use href="#s4"/></clipPath>
+<path id="s5" d="M 43 120 C 44.5 115.5 50.7 112 54 112 C 57.3 112 63.5 115.5 65 120 C 66.5 124.5 65.7 137.5 64 142 C 62.4 146.5 57 150 54 150 C 51 150 45.6 146.5 44 142 C 42.4 137.5 41.5 124.5 43 120 Z"/>
+<clipPath id="u5"><use href="#s1"/><use href="#s2"/><use href="#s3"/><use href="#s4"/></clipPath>
+</defs>
+<g id="sprite">
+<g id="back" data-pivot="100 70"><!-- the veil's train -->
+<use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/><g clip-path="url(#c1)"><path d="M 100 80 C 108 58 92 36 104 12 M 90 74 C 96 54 84 40 92 20 M 112 72 C 118 54 104 38 114 22" fill="none" stroke="#2E6E6A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/></g>
+</g>
+<g id="arm-r" data-pivot="140 112"><!-- reaching hand -->
+<g clip-path="url(#u2)"><use href="#s2" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s2" fill="url(#g3)"/><use href="#s2" fill="url(#g4)"/>
+</g>
+<g id="body">
+<use href="#s3" fill="url(#g3)"/><use href="#s3" fill="url(#g4)"/><g clip-path="url(#c3)"><path d="M 66 82 A 16 22 0 1 0 98 82 A 16 22 0 1 0 66 82 Z" fill="#FFFFF4" opacity="0.25"/></g>
+<g clip-path="url(#u4)"><use href="#s4" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s4" fill="url(#g1)"/><use href="#s4" fill="url(#g2)"/><g clip-path="url(#c4)"><path d="M 66 64 A 14 8 0 1 0 94 64 A 14 8 0 1 0 66 64 Z" fill="#FFFFF4" opacity="0.25"/><path d="M 76 60 Q 100 52 124 60" fill="none" stroke="#9AD0CA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/></g>
+<path d="M 74.5 116 A 8.5 11 0 1 0 91.5 116 A 8.5 11 0 1 0 74.5 116 Z" fill="#2B2230"/>
+<path d="M 108.5 116 A 8.5 11 0 1 0 125.5 116 A 8.5 11 0 1 0 108.5 116 Z" fill="#2B2230"/>
+<path d="M 90 140 A 10 13 0 1 0 110 140 A 10 13 0 1 0 90 140 Z" fill="#2B2230"/><path d="M 94.5 143 A 5.5 5.9 0 1 0 105.5 143 A 5.5 5.9 0 1 0 94.5 143 Z" fill="#5A4E6E"/>
+</g>
+<g id="arm-l" data-pivot="60 112"><!-- reaching hand -->
+<g clip-path="url(#u5)"><use href="#s5" transform="translate(0 3) " fill="#2B2230" opacity="0.3"/></g><use href="#s5" fill="url(#g3)"/><use href="#s5" fill="url(#g4)"/>
+</g>
+</g>
+</svg>

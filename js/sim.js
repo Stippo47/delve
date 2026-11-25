@@ -6,12 +6,12 @@ import { kitThink, kitReflex, kitTick, hooksOf, segDist, heroAttack, kitReady, k
 import { trinketHooks } from './trinkets.js';
 import { cue } from './sfx.js';
 import { ARMOUR_CAP, ENEMY_ARMOUR, armourCut } from './armour.js';
-import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON, CHARM, CONFUSE, SLEEPY, BLEED, FEAR, SHACKLE, cdRate, setBackDue, windMul } from './statuses.js';
+import { STATUS, BUILD_IDS, needOf, fillOf, freshStatuses, RADIANCE, CURSE, ENTANGLE, POISON, CHARM, CONFUSE, SLEEPY, BLEED, FEAR, SHACKLE, cdRate, setBackDue, windMul, resTo } from './statuses.js';
 import { MOB, bindBody, bodiesOf, mobMid, mobSlot, mobLead } from './mob.js'; // round 15 (the Mob): four bodies, one hero
 import { tallyHurt, tallyHeal, tallyDown, noteStatus, tallyBlock, AUDIT } from './stats.js';
 import { bodiesMeet } from './height.js'; // round 19 (lane sys19): height off the floor, one shadow system
 import { dash, dashStep } from './dashes.js'; // round 18 (lane dash18): the six dashes
-import { tagRes, douseRate, DOUSE, hasTag, kindledBuff, KINDLED, hitKinds, hitType, reaches, layerOf, anyHitRes, hitResOf } from './tags.js'; // round 17 (lane tags17): tags; docs/tags17.md
+import { tagRes, douseRate, DOUSE, hasTag, kindledBuff, KINDLED, hitKinds, hitType, reaches, layerOf, anyHitRes, hitResOf, isArmed, isDisarmed, FOE_WEAPON_ABILITY } from './tags.js'; // round 17 (lane tags17): tags; docs/tags17.md
 
 let NEXT_ID = 1;
 // Round 16 fix: unit ids feed some movement (the wander and spacing wobble), so a fight only replays from its seed if its
@@ -180,6 +180,47 @@ export function silence(w, u, t, src) {
   u.silencedT = Math.max(was, T);
   const f = u.hushFx; if (f && f.t < f.max && w.fx.includes(f)) f.max = Math.max(f.max, f.t + u.silencedT);
   else if (u.silencedT > was + 0.05) u.hushFx = fx(w, { type: 'k2', draw: 'hushed', unit: u, x: u.x, y: u.y, r: u.vr, max: u.silencedT });
+}
+// Round 19 (lane rogue19): DISARMED for t seconds (tags.js isArmed / isDisarmed; statuses.js DISARMED): its weapon is
+// knocked out of its hand and hidden, it can't make a weapon attack or use an ability or move done with the weapon;
+// its body (bites, claws, a headbutt, a shield) and its spells go on as ever. Nothing that holds no weapon can be
+// disarmed (a slime, a wolf, a golem's fists). Bosses 40% of the time, as for stuns. Returns the time it took (0: none).
+export function disarm(w, u, t, src) {
+  if (!alive(u) || u.ethereal || !isArmed(u)) return 0;
+  const T = (u.def.boss || u.def.part ? t * 0.4 : t) * resTo(u, 'disarmed'), was = u.disarmT || 0;
+  if (T <= 0) return 0;
+  u.disarmT = Math.max(was, T); u.disarmMax = Math.max(u.disarmT, was > 0 ? u.disarmMax || T : T);
+  if (was <= 0.05) { // the weapon spins out of its hand and lands clear of it (fx-rogue19.js 'disarmFlick': the weapon its art holds)
+    let a = src ? angleTo(src.x, src.y, u.x, u.y) + (chance(0.5) ? 1 : -1) * rrange(0.9, 1.5) : rand() * TAU, d = u.r + 60 + rrange(0, 25); // (off to its side, not on past it)
+    const spot = (b) => ({ x: clamp(u.x + Math.cos(b) * d, 30, w.W - 30), y: clamp(u.y + Math.sin(b) * d, 30, w.H - 30) });
+    let at = spot(a); for (let i = 0; i < 6 && (w.walls.some((r) => circleRect(at.x, at.y, 10, r)) || dist(at.x, at.y, u.x, u.y) < u.r + 30); i++) { a += 1.1; at = spot(a); }
+    u.disarmAt = at;
+    fx(w, { type: 'k2', draw: 'disarmFlick', unit: u, x: u.x, y: u.y, x1: at.x, y1: at.y, a: angleTo(u.x, u.y, at.x, at.y), art: u.def.art, vr: u.vr, headR: u.def.headR, facing: u.facing, max: Math.max(1.2, u.disarmT) });
+    if (u.act && u.act.type === 'windup') u.act = null; // (a swing it was winding up goes nowhere)
+  }
+  return T;
+}
+// Round 19 (lane rogue19): INCORPOREAL for t seconds (the Shade in her Blackout and her shadows; the Ghost, now and
+// then; the designer: "No physical attack can hit her but soul can. In this form she has no collision. Ghost should also
+// be able to go incorporeal."): a blow or a shot whose damage type is physical (tags.js hitType: sharp or blunt) passes
+// through it; magic (spells, soul fire, holy light) lands as ever, and so does what is already ticking on it (burning,
+// poison, bleeding). It walks through bodies and bodies through it (sim.js physics, passUntil). Its look: kind's own
+// (fx-rogue19.js 'incorpOn'). look: 'shadow' (dark) or 'mist' (pale).
+export function incorporeal(w, u, t, look = 'shadow') {
+  if (!alive(u) || t <= 0) return 0;
+  const was = u.incorpT || 0; u.incorpT = Math.max(was, t); u.incorpLook = look;
+  if (was <= 0.05) fx(w, { type: 'k2', draw: 'incorpOn', unit: u, x: u.x, y: u.y, look, max: 60 });
+  return u.incorpT;
+}
+// a kind that goes incorporeal by itself (def.incorp = { every, dur, look }: the Ghost): when a foe is on it within
+// reach of a blow, or it has just been hurt, and its clock is ready
+function incorpWhenPressed(w, u, dt) {
+  const I = u.def.incorp; u.incorpCd = (u.incorpCd ?? I.first ?? 2) - dt;
+  if (u.incorpCd > 0) { u.incorpHp = u.hp; return; }
+  const hurtNow = u.incorpHp != null && u.hp < u.incorpHp - 0.5; u.incorpHp = u.hp;
+  const pressed = hurtNow || w.units.some((o) => alive(o) && o.team !== u.team && o.target === u && o.def.role !== 'ranged' && dist(o.x, o.y, u.x, u.y) - o.r - u.r < (o.def.range || 20) + 24);
+  if (!pressed) return;
+  u.incorpCd = rrange(...I.every); incorporeal(w, u, I.dur, I.look || 'mist');
 }
 // Taunted (round 19, lane sys19; the designer on the Dame's Challenge: "Should show the agreed lines V over their head.
 // For the taunted indicator. Already used somewhere else."): every taunt an ability or a trinket puts on goes through
@@ -984,6 +1025,15 @@ function updateFacing(u, dt) {
   // with nothing to look at, face the way it's going, but only once properly moving (slowing to a stop it holds its
   // facing rather than following every small change of heading)
   if (want === null && u.spd > Math.max(8, u.def.speed * 0.3)) want = u.mvA;
+  // round 19 (lane rogue19): SPUN, "slippery but for turning" (u.slipF 0..1, kits2.js spin): its turn has momentum, a
+  // low push (it gets going slowly) and a high top speed, and it damps out slowly, so it swings past and back
+  if (u.slipF > 0) {
+    const f = u.slipF, face = u.def.face || 5, acc = face * (9 - 6 * f), top = face * 2.4, wv = u.turnW || 0;
+    const err = want === null ? 0 : wrapAngle(want - u.facing);
+    u.turnW = clamp((wv + clamp(err * 60, -acc, acc) * dt) * Math.exp(-dt * (2.2 - 1.6 * f)), -top, top);
+    u.facing = wrapAngle(u.facing + u.turnW * dt); return;
+  }
+  u.turnW = 0;
   if (want === null) return;
   const rate = (u.def.face || 5) * dt;
   const diff = wrapAngle(want - u.facing);
@@ -1025,7 +1075,10 @@ export function hurt(w, u, amount, src, o = {}) {
   if (AUDIT.on && u && u.invulnT > 0 && alive(u) && amount > 0 && !u.ethereal) AUDIT.on('keep', w, u, src, amount, { why: 'invuln', dot: o.dot }); // (round 16: tools/audit: untouchable)
   if (u && u.invulnT > 0 && alive(u) && amount > 0 && !u.ethereal) { blockedBy(w, u, src, amount, o); return 0; }
   if (!alive(u) || u.invulnT > 0 || amount <= 0 || u.ethereal) return 0;
-  if (!o.dot && offFloor(u) && !reaches(layerOf(u), hitKinds(o, src))) return 0; // round 17 (lane tags17): a slam misses a slime mid-hop; only shots reach a flier up in the air
+  if (!o.dot && offFloor(u) && !reaches(layerOf(u), hitKinds(o, src))) return 0;
+  if (u.incorpT > 0 && !o.dot) { const ty = hitType(o, src); if (ty === 'sharp' || ty === 'blunt') { // round 19 (lane rogue19): INCORPOREAL, a physical blow passes through
+    if (!(u.passFxT > w.time)) { u.passFxT = w.time + 0.25; fx(w, { type: 'k2', draw: 'passThrough', unit: u, x: u.x, y: u.y, a: src ? angleTo(src.x, src.y, u.x, u.y) : o.kAngle || 0, look: u.incorpLook, max: 0.4 }); textU(w, u.x, u.y, u.r, 'through', '#CFE8FF', 0.8); } // (as a dodge says 'dodge')
+    if (AUDIT.on) AUDIT.on('nullified', w, u, src, amount, { why: 'incorporeal' }); return 0; } } // round 17 (lane tags17): a slam misses a slime mid-hop; only shots reach a flier up in the air
   // round 15 (the Mob, mob.js): a blow on any of its bodies comes off the one pool (u.hp is the lead's). One blow, or
   // one tick of a zone, that catches several bodies lands in full on the first and MOB.share on each more; the same
   // for the statuses it carries.
@@ -1113,24 +1166,27 @@ export function hurt(w, u, amount, src, o = {}) {
   if (w.stats) tallyHurt(w, me, src, amt, o);
   if (!o.dot) cue('hit', u, src, { amt, crit: o.crit, heavy: o.heavy, shot: o.shot, blocked: u.blockedAt === w.time });
   if (!o.dot) {
-    u.hitT = 0.16; u.hitA = fromA; u.hitBlock = onShield; u.hitZap = !!o.shock; // (the renderer: no star for lightning, round 10)
+    u.hitT = 0.16; u.hitA = fromA; u.hitBlock = onShield; u.hitZap = !!o.shock || !!o.noMark; // (round 19, melee19: o.noMark, a blow that draws its own hit: the Maul) // (the renderer: no star for lightning, round 10)
+    if (w.ownHits) { u.hitTy = hitType(o, src); u.hitEl = hitKinds(o, src).elements; u.hitCrit = !!o.crit; u.hitShot = !!(o.shot || o.proj); u.hitBig = !!(o.heavy || o.crit || amt >= 14); u.hitSide = src ? src.team : null; } // round 19 (lane art-hitfx, ?hitfx=): what the blow was, for js/fx-hit-r19.js
     // the impact point: on the body's edge facing the blow, or on the shield's face (pushed out a little further)
     const back = fromA + Math.PI;
     const sa = onShield ? u.facing + clamp(wrapAngle(back - u.facing), -0.7, 0.7) : back;
     const sr = o.omni ? 0 : onShield ? u.r * 1.05 + 4 : u.r * 0.85; // omni: a blow from everywhere at once (Smite, round 9)
     u.hitX = u.x + Math.cos(sa) * sr; u.hitY = u.y + Math.sin(sa) * sr;
-    const big = o.heavy || o.crit || amt >= 14;
+    if (o.at) { u.hitX = o.at.x; u.hitY = o.at.y; } // (round 19, melee19: where the weapon really met it: Bulwark's spear, held off to his side)
+    const big = o.heavy || o.crit || amt >= 14, np = w.particles.length; // (np: with ?hitfx= the sparks and puff below are drawn by js/fx-hit-r19.js; the dice still roll the same)
     if (o.omni) { u.hitOmni = true; for (let i = 0; i < 6; i++) sparks(w, u.x, u.y, i / 6 * TAU, 1, o.crit ? '#FFE14D' : '#FFFBEA', 1); }
     else if (onShield) sparks(w, u.hitX, u.hitY, sa, 6, '#FFF4C8', 1.1); // a clang: sparks thrown back off the shield
     else { u.hitOmni = false; sparks(w, u.hitX, u.hitY, fromA + (rand() < 0.5 ? Math.PI : 0), big ? 6 : 3, o.crit ? '#FFE14D' : '#FFFFFF', big ? 1.2 : 0.9); }
     if (big) puff(w, u.hitX, u.hitY, '#EDE6D6', 4, 90, 4, 0.3);
+    if (w.ownHits) w.particles.length = np;
     // punch without freezing the game: only a crit holds the frame, and only a hair; the shake is small
     if (o.crit) w.hitstop = Math.max(w.hitstop, 0.025);
     if (big) w.shake = Math.max(w.shake, 1.5);
     // the body reacts: its stride breaks for a moment (heroes only on big hits, so a swarm can't pin them in place)
     if (!heroic(w, u) || big) { u.flinchT = Math.max(u.flinchT || 0, onShield ? 0.06 : big ? 0.2 : 0.1); u.spd *= onShield ? 0.85 : 0.6; }
     if (src && (src.kind === 'knight' || src.def.heroRole === 'tank') && (w.battle ? u.team !== src.team : u.team === 'enemy')) { u.tauntBy = src; u.tauntT = 3; }
-    u.flashT = 0.12; textU(w, u.x + rrange(-6, 6), u.y, u.r + 4, Math.round(amt), o.crit ? '#FFE14D' : '#FFFFFF', o.crit ? 1.3 : 1, true); }
+    u.flashT = o.noMark ? 0.04 : 0.12; textU(w, u.x + rrange(-6, 6), u.y, u.r + 4, Math.round(amt), o.crit ? '#FFE14D' : '#FFFFFF', o.crit ? 1.3 : 1, true); }
   else if (!o.quiet) { u.dotAcc += amt; if (u.dotAcc >= 4) { textU(w, u.x, u.y, u.r, Math.round(u.dotAcc), o.color || '#FF9A55', 0.75); u.dotAcc = 0; } }
   if (src && alive(src)) { const ls = src.buffs.reduce((a, b) => a + (b.lifesteal || 0), 0); if (ls) heal(w, src, amt * ls, src); }
   if (o.knock && !knockImmune(u)) {
@@ -1387,9 +1443,11 @@ function shatter(w, u, src) {
 }
 
 export function explode(w, x, y, r, dmg, statuses, src, color, skip) {
-  w.telegraphs.push({ type: 'blast', x, y, r, t: 0.25, max: 0.25, color });
+  w.telegraphs.push({ type: 'blast', x, y, r, t: 0.25, max: 0.25, color, burn: !!statuses.burn }); // (burn: round 19, lane art-hitfx)
+  const np = w.particles.length;
   if (statuses.burn) { flames(w, x, y, 14, r * 0.6, 90); sparks(w, x, y, 0, 0); }
   else puff(w, x, y, color, 16, r * 3, 6, 0.45);
+  if (w.ownHits) w.particles.length = np; // (?hitfx=: the blast is js/fx-hit-r19.js's; the dice still roll the same)
   w.shake = Math.max(w.shake, 4);
   for (const o of w.units) {
     if (!alive(o) || o === skip) continue;
@@ -1463,7 +1521,7 @@ function killNow(w, u, src) {
     spin: (rand() < 0.5 ? -1 : 1) * Math.min(14, cs / 40), z: 0, vz: Math.min(260, 60 + cs * 0.45), age: 0, t: CORPSE_LIFE, max: CORPSE_LIFE });
   if (w.corpses.length > MAX_CORPSES) w.corpses.splice(0, w.corpses.length - MAX_CORPSES);
   // the body itself flies now: a small puff (a slime, which leaves no body, bursts into goo)
-  puff(w, u.x, u.y, u.def.goo || (u.kind.startsWith('slime') ? '#6FA6E6' : u.kind === 'rat' ? '#9C8676' : '#EDE4CD'), u.def.noCorpse ? 14 : 6, 110, 4, 0.4);
+  { const np = w.particles.length; puff(w, u.x, u.y, u.def.goo || (u.kind.startsWith('slime') ? '#6FA6E6' : u.kind === 'rat' ? '#9C8676' : '#EDE4CD'), u.def.noCorpse ? 14 : 6, 110, 4, 0.4); if (w.ownHits) w.particles.length = np; } // (?hitfx=: the death is js/fx-hit-r19.js's)
   if (u.st.poison > 40) w.hazards.push({ type: 'gas', x: u.x, y: u.y, r: 52, t: 4, max: 4 });
   if (u.eliteDeath) u.eliteDeath(w, u); // an elite's own end (elites.js: the elite slime bursts into four)
   // splits (once: gen 0 only) into two of def.splitsInto (slimelets unless it says); u.noSplit stops it (a sludge
@@ -1493,7 +1551,7 @@ function inMeleeArc(u, o, extra = 0) {
 function meleeSwing(w, u, single) {
   const d = u.def;
   if (d.aoe) { // a blow that lands on the ground in front: everything in a small circle there (round 9: the Berserker's flail)
-    const cx = u.x + Math.cos(u.facing) * (u.r + d.range * 0.55), cy = u.y + Math.sin(u.facing) * (u.r + d.range * 0.55);
+    const fw = u.r + d.range * (d.aoeAt || 0.55), cx = u.x + Math.cos(u.facing) * fw, cy = u.y + Math.sin(u.facing) * fw; // (round 19: def.aoeAt, how far out in front it lands: the warhammers further)
     u.lungeT = 0.18;
     w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, src: u, aoe: { x: cx, y: cy, r: d.aoe } });
     for (const o of w.units) if (alive(o) && o.team !== u.team && !o.ethereal && dist(cx, cy, o.x, o.y) < d.aoe + o.r)
@@ -1504,7 +1562,9 @@ function meleeSwing(w, u, single) {
   const targets = single && !wild ? (u.target && inMeleeArc(u, u.target, 6) ? [u.target] : []) : w.units.filter((o) => alive(o) && o !== u && !o.ethereal && (o.team !== u.team || wild) && inMeleeArc(u, o, 6));
   u.lungeT = 0.18;
   w.telegraphs.push({ type: 'swing', x: u.x, y: u.y, r: u.r + d.range + 10, a: u.facing, arc: d.arc || 1.5, t: 0.16, max: 0.16, color: u.team === 'hero' ? '#FFFFFF' : '#FFD2C2', src: u });
-  for (const o of targets) hurt(w, o, hitDmg(u) * rrange(0.9, 1.1), u, blowOf(d));
+  const sx = d.style && d.style.stabX, a = u.facing; // round 19 (melee19): a spear held off to one side meets the foe on its line
+  for (const o of targets) { const b = blowOf(d); if (sx) { const f = (o.x - u.x) * Math.cos(a) + (o.y - u.y) * Math.sin(a), l = -(o.x - u.x) * Math.sin(a) + (o.y - u.y) * Math.cos(a), lc = clamp(sx, l - o.r * 0.8, l + o.r * 0.8), fc = f - Math.sqrt(Math.max(0, o.r * o.r * 0.7 - (lc - l) * (lc - l)));
+      b.at = { x: u.x + Math.cos(a) * fc - Math.sin(a) * lc, y: u.y + Math.sin(a) * fc + Math.cos(a) * lc }; } hurt(w, o, hitDmg(u) * rrange(0.9, 1.1), u, b); }
 }
 // What a def's own blow carries (round 9: a def's blow can carry any build-up; round 10: an enemy's chill too, the
 // frost wolf's bite; round 13: the new five too; round 15: Shackled, the Warden's chain). A swing and a slime's
@@ -1754,7 +1814,7 @@ function statusTick(w, u, dt) {
     if (u.radiantT <= 0) { u.radiantT = 0; u.radImmuneT = RADIANCE.immuneT; }
   } else if (u.radImmuneT > 0) u.radImmuneT -= dt;
   if (u.hexed && (u.hexT -= dt) <= 0) u.hexed = false;           // an unused hex wears off
-  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT', 'gasT', 'focusT', 'charmCd', 'silencedT', 'flyT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
+  for (const k of ['stunT', 'rootT', 'sleepT', 'koT', 'guardT', 'guardOfT', 'flinchT', 'gasT', 'focusT', 'charmCd', 'silencedT', 'flyT', 'disarmT', 'incorpT']) if (u[k] > 0) u[k] = Math.max(0, u[k] - dt);
   const wm = windMul(u); // round 14: sleepy, a charged shot and anything else queued up comes slower
   if (u.aimT > 0) u.aimT = Math.max(0, u.aimT - dt / wm);
   for (const b of u.buffs) b.t -= dt;
@@ -2057,7 +2117,13 @@ export function step(w, dt) {
     u.flashT = Math.max(0, u.flashT - dt); if (!body) u.invulnT = Math.max(0, u.invulnT - dt);
     const cdr = cdRate(u); // round 15 (lane N): Shackled building, every ability cooldown runs slower
     u.atkT -= dt * atkRate(u); u.abilT -= dt * cdr;
-    if (u.shackledT > 0) u.atkT = Math.max(u.atkT, SHACKLE.hold); // SHACKLED: its attack clock is held (the brains that strike off u.atkT are held with it)
+    if (u.shackledT > 0) u.atkT = Math.max(u.atkT, SHACKLE.hold);
+    if (u.incorpT > 0) u.passUntil = Math.max(u.passUntil || 0, w.time + 0.05); // round 19: INCORPOREAL, no collision
+    else if (u.def.incorp && !body) incorpWhenPressed(w, u, dt);
+    // (Disarmed: a fighter with no kit goes after its weapon and stands over it, fumbling, till it has it back)
+    if (u.forcedGoal && u.forcedGoal.disarm && !(u.disarmT > 0)) u.forcedGoal = null;
+    else if (u.disarmT > 0 && u.disarmAt && !u.kit && !u.def.boss && !u.def.brain && !u.forcedGoal && !u.fixed && !u.linkTo && u.disarmT < u.disarmMax - 0.45) u.forcedGoal = { x: u.disarmAt.x, y: u.disarmAt.y, disarm: true };
+    if (u.disarmT > 0 && isDisarmed(u)) { if (!hasTag(u, 'caster')) u.atkT = Math.max(u.atkT, 0.2); if (FOE_WEAPON_ABILITY.has(u.def.ability) && (u.def.dash || 'feint') !== 'pounce') u.abilT = Math.max(u.abilT, 0.3); } // round 19 (lane rogue19): DISARMED, no weapon blow (a caster's spells still go: the Cultist's dagger is his own kit's) // SHACKLED: its attack clock is held (the brains that strike off u.atkT are held with it)
     if (u.kit && !body) for (const k in u.kit.cd) u.kit.cd[k] -= dt * (1 - Math.min(0.5, u.st.wet / 200)) * cdr; // wet slows abilities
     u.modeT += dt; u.bob += dt * (3 + u.spd * 0.09);
     u.lungeT = Math.max(0, u.lungeT - dt); u.recoilT = Math.max(0, u.recoilT - dt); u.hitT = Math.max(0, u.hitT - dt);

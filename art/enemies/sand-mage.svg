@@ -2,7 +2,6 @@
 <!-- GAME COPY (art round 10) of design/class-round10/enemies/dunes-sand-mage.svg -->
 <!-- SAND MAGE (round 10): a desert mage in the heroes' bust build: a teal turban wound in big folds with a gold brooch and a white plume, its tail of cloth lying back (#back, sways), a cream veil over the lower face (no eyes), an ochre robe with a turquoise border; a staff topped with a gold sun under the right shoulder (arm-r), and an orb of whirling sand held out in the left hand (arm-l); both lift when it casts. Parts in draw order inside #sprite; the outline comes from the #outline filter. Facing = DOWN (+y), centre (100,100). Hands and whatever they hold are in the arm groups, never in #body. -->
 <defs>
-<filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="gHand" cx="0.38" cy="0.35" r="0.75"><stop offset="0" stop-color="#F8D4B2"/><stop offset="1" stop-color="#DFA57F"/></radialGradient><linearGradient id="gUnder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2E2A" stop-opacity="0.5"/><stop offset="0.45" stop-color="#5A2E2A" stop-opacity="0"/></linearGradient><linearGradient id="gFace" x1="0" y1="95" x2="0" y2="153" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B07560"/><stop offset="0.2" stop-color="#D9A27F"/><stop offset="0.45" stop-color="#F2C7A0"/><stop offset="0.85" stop-color="#F4CBA6"/><stop offset="1" stop-color="#E6B590"/></linearGradient><linearGradient id="gFaceSide" x1="100" y1="0" x2="156" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8A4E36" stop-opacity="0"/><stop offset="1" stop-color="#8A4E36" stop-opacity="0.28"/></linearGradient>
 <path id="s1" d="M 115.3 57.5 C 119.5 56.7 133.8 53.7 140.7 49.2 C 147.6 44.7 159.7 34.5 161.4 27.4 C 163.1 20.3 154 5.8 151.9 2 C 149.9 -1.8 150.1 -0.2 148.1 2 C 146 4.2 142.3 12.3 138.6 16.6 C 134.9 20.9 127.2 25.1 123.3 30.8 C 119.4 36.5 113.9 50.5 112.7 54.5 C 111.5 58.5 111.1 58.3 115.3 57.5 Z"/>
 <linearGradient id="g1" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="#288D8C"/><stop offset="1" stop-color="#1D706F"/></linearGradient>
@@ -55,7 +54,7 @@
 <linearGradient id="g18" x1="0.45" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#93711B" stop-opacity="0"/><stop offset="1" stop-color="#93711B" stop-opacity="0.42"/></linearGradient>
 <clipPath id="c13"><use href="#s13"/></clipPath>
 </defs>
-<g id="sprite" filter="url(#outline)">
+<g id="sprite">
 <g id="back" data-pivot="112 56"><!-- the turban's tail -->
 <use href="#s1" fill="url(#g1)"/><use href="#s1" fill="url(#g2)"/>
 </g>

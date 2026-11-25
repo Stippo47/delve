@@ -137,25 +137,28 @@ export const ABILITY_SCENE = {
   // Warhelm
   thunderBlow: S('line'), warHorn: S('ring'), skullSplitter: S('pack'),
   // Bandit
-  smokeBomb: S('shooters'), pickpocket: S('line'), lowBlow: S('front'),
+  smokeBomb: S('shooters'), pickpocket: S('line'), lowBlow: S('front', { addFoes: [F('shooter', [425, 175], { on: 'hero' })] }), // (round 19: Hostage, a shooter on him to stop)
   // Shade
   shadowWalk: S('spread'), blackout: S('ring'), deathMark: S('front'),
   // Haymaker
   toss: S('pair'), pitchHay: S('front'), forkCharge: S('pack', { wall: WALL_R }),
   // Digger
-  dirtFling: S('front', { friends: [{ at: [175, 262], hp: 0.6, st: { burn: 60, poison: 40 } }], addFoes: [F('burner', [250, 320], { on: 0 })] }), burrow: S('spread'), spadeBat: S('front'),
+  dirtFling: S('front', { friends: [{ at: [175, 262], hp: 0.6, st: { burn: 40, poison: 40 } }], addFoes: [F('burner', [250, 320], { on: 0 })] }), burrow: S('spread'), spadeBat: S('front'),
   // Grandpa
-  breadToss: S('hurtFriends'), harvest: S('hurtFriend', { addFoes: [F('fast', [250, 320], { on: 0 })] }), oldTales: S('partyFight', { forceAt: 3.2 }),
+  // (round 19, lane caster19: Bread Toss with Grandpa hurt too, so II's second loaf is tossed up and caught; Sheaves, Old
+  // Tales' slot: hurt friends near the fight, enemies walking in through where the hay lands)
+  breadToss: S('hurtFriends', { hp: 0.4 }), harvest: S('hurtFriend', { addFoes: [F('fast', [250, 320], { on: 0 })] }),
+  oldTales: S('party', { friends: [{ at: [150, 92], hp: 0.45 }, { at: [150, 258], hp: 0.5 }], foes: [F('melee', [330, 128]), F('fast', [350, 222]), F('melee', [400, 175]), F('fast', [420, 100])] }),
   // Alchemist
-  acidFlask: S('pack'), elixir: S('hurtFriend'), bangFlask: S('ring'),
+  acidFlask: S('pack'), elixir: S('hurtFriends', { noAttack: true }), bangFlask: S('front'), // (round 19 check: in front of them, not round them, so the punches are seen going out) // (round 19: Elixir II's second tube has a second friend to go to; their own flasks held, so only the potions fly)
   // Shaman
-  healTotem: S('hurtFriend', { friends: [{ at: [205, 262], hp: 0.4, st: { poison: 60 } }], addFoes: [F('poisoner', [250, 320], { on: 0 })] }), spiritLink: S('party', { addFriends: [{ at: [70, 290], hp: 0.6 }] }), rainDance: S('party'),
+  healTotem: S('hurtFriend', { friends: [{ at: [205, 262], hp: 0.4, st: { poison: 60 } }], addFoes: [F('poisoner', [250, 320], { on: 0 })] }), spiritLink: S('partyFight', { friends: [{ at: [185, 92], hp: 0.7 }, { at: [185, 258], hp: 0.7 }, { at: [150, 175], hp: 0.75 }, { at: [70, 290], hp: 0.8 }], foes: [F('heavy', [262, 92], { on: 0 }), F('melee', [262, 258], { on: 1 }), F('fast', [300, 175], { on: 2 }), F('melee', [400, 175])] }), rainDance: S('party'), // (round 19: "Preview doesn't show off potential": four friends being hit, so every blow is seen going out along the threads, and III's five)
   // Witch
   frogHex: S('spread'), cursedBrew: S('pack', { foes: [F('melee', [340, 175], { hp: 0.3, mortal: true }), F('fast', [375, 125], { hp: 0.3, mortal: true }), F('fast', [375, 228]), F('melee', [410, 175])] }), broomRide: S('pack'),
   // Warlock
   eldritchBeam: S('pack'), summonImp: S('front'), darkBargain: S('front'),
   // Cultist
-  bloodPact: S('party'), ritualCircle: S('pack'), soulCandle: S('lowFoe'),
+  bloodPact: S('party'), ritualCircle: S('lowFoe'), soulCandle: S('front', { foes: [F('melee', [215, 95], { on: 0 }), F('melee', [215, 255], { on: 1 }), F('fast', [300, 175])], friends: [{ k: 'twinfang', at: [170, 95], hp: 0.9, carry: { bleed: 60 } }, { k: 'wildmane', at: [170, 255], hp: 0.9, carry: { bleed: 60 } }], readyAt: 1.4, forceAt: 4 }), // (round 19: the circle round one nearly gone; Sacrifice, foes a Twinfang's cuts have been bleeding)
   // Monk
   flurry: S('duel'), palmStrike: S('front'), innerPeace: S('incomingShots', { hp: 0.4, friends: [{ at: [90, 270], hp: 0.6, st: { poison: 60 } }], addFoes: [F('poisoner', [170, 320], { on: 0 })] }),
   // Seer
@@ -249,6 +252,9 @@ export function sceneOf(id, A) {
 export const ATTACK_SCENE = {
   cleric: S('hurtFriend', { hero: [100, 175], friends: [{ at: [230, 120], hp: 0.5 }], foes: [F('melee', [320, 120], { on: 0 }), F('melee', [320, 235])] }),
   waterMage: S('hurtFriend', { hero: [100, 175], friends: [{ at: [230, 120], hp: 0.7 }], foes: [F('melee', [320, 120], { on: 0 }), F('melee', [320, 235])] }),
+  // round 19 (lane caster19, the Shaman's Spirit bolt: "It's not shown in book"): a hurt friend fighting by the enemy it
+  // strikes, so the spirit is seen to leap on to the friend and mend it
+  shaman: S('hurtFriend', { hero: [90, 175], friends: [{ at: [250, 110], hp: 0.45 }], foes: [F('melee', [320, 125], { on: 0 }), F('melee', [330, 240])] }),
 };
 export function attackSceneOf(id) {
   const o = ATTACK_SCENE[id] || S('pair', { foes: [F('melee', [300, 150]), F('fast', [330, 215])] }), base = SCENES[o.scene];
@@ -394,7 +400,8 @@ export const STATUS_SCENE = {
   root: ST('druid', { ab: 'entangle', castAt: 0.9 }),
   sleep: ST('bard', { ab: 'lullaby', tier: 2, reach: 150, trigger: 'paladin' }),
   taunt: ST('dame', { ab: 'challenge', on: 'orc', castAt: 1.0, archer: true, at: [110, -70] }),
-  debuff: ST('dame', { ab: 'disarm', reach: 50 }),
+  debuff: ST('dame', { ab: 'disarm', reach: 50, on: 'wolf' }), // (round 19: a wolf: what holds no weapon keeps the old softer blows)
+  disarmed: ST('rogueBandit', { ab: 'pickpocket', reach: 40 }), antiheal: ST('cultist'), // round 19 (lane rogue19)
   targeted: ST('marksman', { ab: 'aimedShot', castAt: 0.7 }),
   tracked: ST('falconer', { ab: 'looseFalcon', castAt: 0.7 }),
   trapped: ST('trapper', { ab: 'jawTrap', castAt: 0.5 }),
@@ -404,7 +411,7 @@ export const STATUS_SCENE = {
   invuln: ST('self', { side: 'hero', on: 'plague', hp: 0.45, ab: 'leeches', castAt: 1.1 }),
   buff: ST('bard', { side: 'hero', on: 'paladin', ab: 'warSong', castAt: 0.8 }),
   rage: ST('self', { side: 'hero', on: 'wildmane', hp: 0.5, ab: 'rage', castAt: 0.9 }),
-  dirty: ST('digger', { side: 'hero', on: 'paladin', ab: 'dirtFling', castAt: 0.9, front: true }),
+  dirty: ST('digger', { side: 'hero', on: 'paladin', ab: 'dirtFling', castAt: 0.4, front: true }), // (round 19: thrown before he has walked round the friend, so it is in front of him)
   warded: ST('jester', { side: 'hero', on: 'paladin', hp: 0.4, ab: 'mock', castAt: 0.9 }), // (it swaps places with the friend in trouble and wards it)
 };
 export const statusSceneOf = (id, from) => STATUS_SCENE[id] || STATUS_SCENE[from] || ST('cleric');

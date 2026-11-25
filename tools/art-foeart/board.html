@@ -1,0 +1,67 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><base href="/"><title>foe art board</title>
+<style>body{margin:0;background:#EDE6D8}</style></head>
+<body>
+<script type="module">
+// Round 19 art lane (enemy sprites): one board per option, drawn by the game's own part renderer (js/parts.js), so the
+// outline is the game's (OUTLINE room units, grown round the whole figure), not a filter in the file.
+// window.board(spec) -> PNG data URL. spec: { title, sub, kind, sizeU?, cur: [{url,label}], opt: [{url,label}] }
+// Rows: big (3x game size) current beside the options; then each at game size in four facings, on a light and a dark floor.
+import { DEFS } from '/js/units.js';
+import { getRig, paintRig, loadArt } from '/js/parts.js';
+import { headR } from '/js/sprites.js';
+const PXU = 414 / 494 * 0.8 * 2; // device px per room unit (iPhone 11, default zoom), as tools/outline19/measure.html
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const cv = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+async function ready(url, px, sizeU) {
+  await loadArt(url);
+  for (let i = 0; i < 150; i++) { const s = getRig(url, px, sizeU); const want = px * 248 / 220; if (s && s.ready && Math.abs(s.px - want) / want < 0.15) return s; await sleep(40); }
+  return getRig(url, px, sizeU);
+}
+function draw(g, set, cx, cy, k, deg = 0, pose = {}) {
+  g.save(); g.translate(cx, cy); g.rotate(deg * Math.PI / 180); g.transform(k, 0, 0, k, -100 * k, -100 * k); paintRig(g, set, pose, 'normal'); g.restore();
+}
+window.board = async (spec) => {
+  const d = DEFS[spec.kind] || {};
+  const sizeU = spec.sizeU || (d.vr ? d.vr * 220 / (d.headR || headR(spec.kind)) : 86.4);
+  const big = spec.big || 3; const items = [...spec.cur.map((c) => ({ ...c, cur: true })), ...spec.opt].map((it) => it.url.startsWith('@') ? { ...it, url: DEFS[it.url.slice(1)].art } : it);
+  const bk = PXU * big * sizeU / 220, gk = PXU * sizeU / 220; // px per SVG unit, big and game size
+  const cell = Math.ceil(220 * bk * (spec.span || 1.12)), gcell = Math.ceil(220 * gk * 1.2);
+  const sets = [];
+  for (const it of items) sets.push({ big: await ready(it.url, 220 * bk, sizeU), game: await ready(it.url, 220 * gk, sizeU) });
+  const pad = 28, gap = 26, n = items.length;
+  const facW = gcell * 4 + 6;
+  const colW = Math.max(cell, facW);
+  const W = pad * 2 + n * colW + (n - 1) * gap, head = 74, labH = 40;
+  const H = head + cell + labH + 20 + gcell * 2 + 24 + 34;
+  const c = cv(W, H), g = c.getContext('2d');
+  g.fillStyle = '#EDE6D8'; g.fillRect(0, 0, W, H);
+  g.fillStyle = '#2B2230'; g.font = '700 26px Segoe UI, system-ui, sans-serif'; g.fillText(spec.title, pad, 38);
+  g.fillStyle = '#6b6070'; g.font = '600 17px Segoe UI, system-ui, sans-serif'; g.fillText(spec.sub || '', pad, 62);
+  items.forEach((it, i) => {
+    const x0 = pad + i * (colW + gap), s = sets[i];
+    if (it.cur || it.dim) { g.fillStyle = 'rgba(43,34,48,0.06)'; g.fillRect(x0 - 8, head - 4, colW + 16, H - head - 4); }
+    if (s.big) draw(g, s.big, x0 + colW / 2, head + cell / 2, bk);
+    g.fillStyle = it.cur ? '#6b6070' : '#2B2230'; g.font = (it.cur ? '600 18px' : '700 20px') + ' Segoe UI, system-ui, sans-serif';
+    const lab = it.label || '', tw = g.measureText(lab).width; g.fillText(lab, x0 + colW / 2 - tw / 2, head + cell + 26);
+    const y1 = head + cell + labH + 10;
+    for (let row = 0; row < 2; row++) {
+      const yy = y1 + row * (gcell + 6);
+      g.fillStyle = row ? '#3A3440' : '#D9D0BF'; g.fillRect(x0 + colW / 2 - facW / 2, yy, facW, gcell);
+      [0, -90, 180, 90].forEach((deg, j) => { if (s.game) draw(g, s.game, x0 + colW / 2 - facW / 2 + 3 + gcell * j + gcell / 2, yy + gcell / 2, gk, deg); });
+    }
+  });
+  g.fillStyle = '#6b6070'; g.font = '600 14px Segoe UI, system-ui, sans-serif';
+  g.fillText(`top: ${big}x game size. below: game size (iPhone 11, default zoom), four facings, light and dark floor. Outline drawn by the game's renderer.`, pad, H - 14);
+  return c.toDataURL('image/png');
+};
+// a square tile of the option alone at 3x game size (the deck's thumbnail)
+window.thumb = async (spec) => {
+  const d = DEFS[spec.kind] || {}, sizeU = spec.sizeU || (d.vr ? d.vr * 220 / (d.headR || headR(spec.kind)) : 86.4);
+  const k = PXU * 3 * sizeU / 220, S = Math.ceil(220 * k * 1.05), set = await ready(spec.opt[0].url, 220 * k, sizeU);
+  const c = cv(S, S), g = c.getContext('2d'); g.fillStyle = '#EDE6D8'; g.fillRect(0, 0, S, S); if (set) draw(g, set, S / 2, S / 2, k);
+  return c.toDataURL('image/png');
+};
+window.boardReady = true;
+</script>
+</body></html>

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -110 160 110" width="640" height="440">
+  <!-- spire walls, option b (Gilded colonnade): the stretch a door sits in. Round 19 art lane (walls). 1 SVG unit = 1 room unit. The wall's own frame: x runs along the wall, y = 0 is the foot (where the wall meets the floor; the room is below, +y), y < 0 rises up the wall away from the room. Face (the wall's inner side, folded flat like the doors' arch): y -92..0. Cap (the top, seen from above): y -110..-92. The whole wall is 110 deep; the doors' arch reaches y -57, so the wall rises 53 past it. Everything repeats every 160 along x, so runs tile end to end. No outline in the file: the renderer draws the one ink outline round the wall's mass. Rotate the piece so +y points into the room. An overlay: drawn over the run (which carries on under it) wherever a door stands, then the door (art/props/door-*.svg, box 141.4) on top, its doorway centred on (80, 0). -->
+  <defs>
+    <clipPath id="c0"><path d="M0 -110H160V0H0Z"/></clipPath>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F4EEE4"/><stop offset="0.3" stop-color="#F5F1E7"/><stop offset="0.65" stop-color="#F2ECE0"/><stop offset="1" stop-color="#9B978F"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0" stop-color="#E6BD57"/><stop offset="0.55" stop-color="#E2B23C"/><stop offset="1" stop-color="#BE9632"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE69A"/><stop offset="1" stop-color="#A87A22"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2ECE0"/><stop offset="1" stop-color="#D6CDBA"/></linearGradient>
+    <linearGradient id="g5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE69A"/><stop offset="1" stop-color="#E2B23C"/></linearGradient>
+    <linearGradient id="g6" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE69A"/><stop offset="1" stop-color="#A87A22"/></linearGradient>
+    <radialGradient id="g7" cx="0.38" cy="0.32" r="0.8"><stop offset="0" stop-color="#FFF4C0"/><stop offset="0.6" stop-color="#E2B23C"/><stop offset="1" stop-color="#A87A22"/></radialGradient>
+  </defs>
+  <g id="sprite">
+<g clip-path="url(#c0)">
+<path d="M4 -82H18Q21 -82 21 -79V-13Q21 -10 18 -10H4Q1 -10 1 -13V-79Q1 -82 4 -82Z" fill="url(#g1)"/>
+<path d="M6.6 -79H6.8Q8 -79 8 -77.8V-14.2Q8 -13 6.8 -13H6.6Q5.4 -13 5.4 -14.2V-77.8Q5.4 -79 6.6 -79Z" fill="#FFFFFF" opacity="0.26"/>
+<path d="M0 -86H22Q24 -86 24 -84V-78Q24 -76 22 -76H0Q-2 -76 -2 -78V-84Q-2 -86 0 -86Z" fill="url(#g2)"/>
+<path d="M1.9 -84.2H20.1Q21.6 -84.2 21.6 -82.7V-82.7Q21.6 -81.2 20.1 -81.2H1.9Q0.4 -81.2 0.4 -82.7V-82.7Q0.4 -84.2 1.9 -84.2Z" fill="#FFFFFF" opacity="0.45"/>
+<path d="M0 -12H22Q24 -12 24 -10V-2Q24 0 22 0H0Q-2 0 -2 -2V-10Q-2 -12 0 -12Z" fill="url(#g2)"/>
+<path d="M2.2 -10.2H19.8Q21.6 -10.2 21.6 -8.4V-8.4Q21.6 -6.6 19.8 -6.6H2.2Q0.4 -6.6 0.4 -8.4V-8.4Q0.4 -10.2 2.2 -10.2Z" fill="#FFFFFF" opacity="0.45"/>
+<path d="M142 -82H156Q159 -82 159 -79V-13Q159 -10 156 -10H142Q139 -10 139 -13V-79Q139 -82 142 -82Z" fill="url(#g1)"/>
+<path d="M144.6 -79H144.8Q146 -79 146 -77.8V-14.2Q146 -13 144.8 -13H144.6Q143.4 -13 143.4 -14.2V-77.8Q143.4 -79 144.6 -79Z" fill="#FFFFFF" opacity="0.26"/>
+<path d="M138 -86H160Q162 -86 162 -84V-78Q162 -76 160 -76H138Q136 -76 136 -78V-84Q136 -86 138 -86Z" fill="url(#g2)"/>
+<path d="M139.9 -84.2H158.1Q159.6 -84.2 159.6 -82.7V-82.7Q159.6 -81.2 158.1 -81.2H139.9Q138.4 -81.2 138.4 -82.7V-82.7Q138.4 -84.2 139.9 -84.2Z" fill="#FFFFFF" opacity="0.45"/>
+<path d="M138 -12H160Q162 -12 162 -10V-2Q162 0 160 0H138Q136 0 136 -2V-10Q136 -12 138 -12Z" fill="url(#g2)"/>
+<path d="M140.2 -10.2H157.8Q159.6 -10.2 159.6 -8.4V-8.4Q159.6 -6.6 157.8 -6.6H140.2Q138.4 -6.6 138.4 -8.4V-8.4Q138.4 -10.2 140.2 -10.2Z" fill="#FFFFFF" opacity="0.45"/>
+<path d="M-2 -84L80 -104L162 -84Z" fill="url(#g3)" />
+<path d="M16 -86L80 -100L144 -86Z" fill="url(#g4)" />
+<path d="M84.7 -91.9L91.3 -91L84.7 -90.1Z" fill="url(#g5)" />
+<path d="M84.6 -89.9L87.4 -87.9L84 -88.5Z" fill="url(#g6)" />
+<path d="M84 -88.4L88 -83L82.6 -87Z" fill="url(#g5)" />
+<path d="M82.5 -87L83.1 -83.6L81.1 -86.4Z" fill="url(#g6)" />
+<path d="M80.9 -86.3L80 -79.7L79.1 -86.3Z" fill="url(#g5)" />
+<path d="M78.9 -86.4L76.9 -83.6L77.5 -87Z" fill="url(#g6)" />
+<path d="M77.4 -87L72 -83L76 -88.4Z" fill="url(#g5)" />
+<path d="M76 -88.5L72.6 -87.9L75.4 -89.9Z" fill="url(#g6)" />
+<path d="M75.3 -90.1L68.8 -91L75.3 -91.9Z" fill="url(#g5)" />
+<path d="M75.4 -92.1L72.6 -94.1L76 -93.5Z" fill="url(#g6)" />
+<path d="M76 -93.6L72 -99L77.4 -95Z" fill="url(#g5)" />
+<path d="M77.5 -95L76.9 -98.4L78.9 -95.6Z" fill="url(#g6)" />
+<path d="M79.1 -95.7L80 -102.2L80.9 -95.7Z" fill="url(#g5)" />
+<path d="M81.1 -95.6L83.1 -98.4L82.5 -95Z" fill="url(#g6)" />
+<path d="M82.6 -95L88 -99L84 -93.6Z" fill="url(#g5)" />
+<path d="M84 -93.5L87.4 -94.1L84.6 -92.1Z" fill="url(#g6)" />
+<circle cx="80" cy="-91" r="5.6" fill="#A87A22"/>
+<circle cx="80" cy="-91" r="5" fill="url(#g7)"/>
+<ellipse cx="78.5" cy="-92.7" rx="1.8" ry="1" fill="#FFFFFF" opacity="0.5"/>
+</g>
+  </g>
+</svg>

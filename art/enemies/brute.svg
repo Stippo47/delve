@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
   <!-- Round 4: 15% bigger (body and shield scaled 1.15 about the centre); the axe is flipped (blade faces in toward the centre, back spike out); the claw is turned to the haft. | was: SKELETON round 3 "Brute": heavy skull with tusks and an underbite, big shoulder balls. Right claw: a rusty bearded axe, drawn before the body so the haft runs under the shoulder. Left: a round wooden shield with an iron rim and boss, drawn after the body (in front); the claw behind it is hidden. Draw order: #arm-r, #body, #arm-l. Facing = DOWN (+y), centre (100,100). -->
   <defs>
-    <filter id="outline" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="6 2.5" result="a"/><feMorphology in="SourceAlpha" operator="dilate" radius="2.5 6" result="b"/><feMorphology in="SourceAlpha" operator="dilate" radius="4.6" result="c"/><feMerge result="d"><feMergeNode in="a"/><feMergeNode in="b"/><feMergeNode in="c"/></feMerge><feFlood flood-color="#2B2230"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <linearGradient id="shX" x1="70" y1="0" x2="160" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4A3220" stop-opacity="0"/><stop offset="1" stop-color="#4A3220" stop-opacity="0.34"/></linearGradient>
     <linearGradient id="gSkull" x1="52" y1="40" x2="150" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FCF6E4"/><stop offset="0.5" stop-color="#F0E2BE"/><stop offset="1" stop-color="#D6C096"/></linearGradient>
     <radialGradient id="gDome" cx="84" cy="74" r="44" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></radialGradient>
@@ -58,7 +57,7 @@
     <clipPath id="under-boss"><use href="#haft"/><use href="#axe-spike"/><use href="#axe-head"/><use href="#axe-collar"/><use href="#fist-r-f0"/><use href="#fist-r-f1"/><use href="#fist-r-f2"/><use href="#fist-r-f3"/><use href="#fist-r-palm"/><use href="#collar-l"/><use href="#collar-r"/><use href="#ball-l"/><use href="#ball-r"/><use href="#skull"/><use href="#jaw"/><use href="#ltooth0"/><use href="#ltooth1"/><use href="#ltooth2"/><use href="#ltooth3"/><use href="#tusk-l"/><use href="#tusk-r"/><use href="#fist-l-f0"/><use href="#fist-l-f1"/><use href="#fist-l-f2"/><use href="#fist-l-f3"/><use href="#fist-l-palm"/><use href="#shield"/></clipPath>
     <clipPath id="boss-c"><use href="#boss"/></clipPath>
   </defs>
-  <g id="sprite" filter="url(#outline)">
+  <g id="sprite">
     <g id="arm-r" data-pivot="170 104">
       <use href="#haft" fill="url(#gWood)"/>
       <use href="#haft" fill="url(#shX)"/>
