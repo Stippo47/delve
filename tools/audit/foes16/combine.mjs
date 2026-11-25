@@ -1,10 +1,11 @@
 // Puts worth files of the same prices on different dice together: each measure is the geometric mean over the files
-// whose row for that kind has the same cost, health and hit as the last file's (else the last file's alone).
+// whose row for that kind has the same cost, health and hit as the latest file's that has it (else that one alone).
 //   node tools/audit/foes16/combine.mjs out.json a.json b.json [...]
 import { readFileSync, writeFileSync } from 'node:fs';
 const [out, ...files] = process.argv.slice(2);
 const sets = files.map((f) => Object.fromEntries(JSON.parse(readFileSync(f, 'utf8')).rows.map((r) => [r.k, r])));
-const last = sets[sets.length - 1], same = (a, b) => a && a.cost === b.cost && a.hp === b.hp && (a.hitMul || 1) === (b.hitMul || 1);
+const last = {}; for (const st of sets) Object.assign(last, st); // (each kind's latest row: the files may hold some kinds only)
+const same = (a, b) => a && a.cost === b.cost && a.hp === b.hp && (a.hitMul || 1) === (b.hitMul || 1);
 const g = (xs) => Math.exp(xs.reduce((a, x) => a + Math.log(Math.max(1e-3, x)), 0) / xs.length), r2 = (x) => Math.round(x * 100) / 100;
 const rows = Object.values(last).map((r) => {
   const like = sets.map((s) => s[r.k]).filter((x) => same(x, r));

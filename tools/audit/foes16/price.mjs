@@ -12,7 +12,8 @@ import { ROOT, DEFS, ROSTER, opt, flag } from './lib.mjs';
 const FILE = resolve(ROOT, 'js/prices.js');
 // the share of a kind's change that goes on its health (the rest on its hit); 0.5 by default
 const SPLIT = {
-  slime: 0.15, slimeBig: 0.3, slimeSmall: 0.3, slimeSludge: 0.3, slimeIce: 0.3, fireSlime: 0.3, slimePoison: 0.3, // the designer: slimes have too much health
+  // (slimes: the designer said too much health; the first pass put most of their cut on it, hp 0.8 and hit 1.25 for the
+  // Slime; since the slime lane's hops (their landing does the damage) they measure stronger, and both come down evenly)
   wolf: 0.3, // the designer: the wolf maybe too little damage
 };
 const MIN_HELPER = 1; // (below this a helper would come by the handful; what's left is for its moves, not its price)
