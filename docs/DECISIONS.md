@@ -1031,3 +1031,10 @@ The designer, in chat (while still reading round 17's report):
 - Credits: the weekly limit resets tonight; no swarm of top-effort agents.
 
 Lanes (Opus, worktrees in delve-wt): tags17 (tag registry, construct repair by the Engineer's wrench, fire hurt by water, Silenced stops mouth abilities, the obvious tags, a suggestions list for Riffle), foes17 (troll boulder fetching, chain movement), water17 (the Water Mage; its bubble's magic check is wired to the tag lane's isMagicHit at merge).
+
+Round 18, more rulings (chat):
+- Valkyrie's Call: "Battle mode can have downed allies that can only be revived with abilities. (Corpses can be used for necromancy)". So battle mode gets a downed state; only reviving abilities bring them back; corpses feed necromancy. Queued for the next free lane (after tags17/foes17 merge: it touches battle.js and death).
+- Slime calls: "Gas can hit slimes ... aoe slams shouldn't hit them (like from hammer weapons). Explosions can hit them." Leaps: "The winged tank or Valkyries saving jumps make them airborne not hovering. Slime just goes to the hovering layer for a bit. A witch on her broom also goes to the flying layer." So height layers: floor, hovering, airborne/flying, with hit kinds deciding reach. Given to tags17.
+- "Fire tagged enemies that get set on fire don't take damage, instead getting a rage like boost." Given to tags17.
+- "Also think about the physical damage types, sharp vs blunt damage." Given to tags17 (hit kinds; obvious interactions built, the rest suggested).
+- "Get an agent on all enemies resistance and immunities and see if they make sense." Lane res18: an audit that proposes (no game code), on top of the tag system; its calls go to Riffle.
