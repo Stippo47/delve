@@ -136,7 +136,7 @@ export const WHIRLED = { need: 100, decay: 12, boss: 0.45, stunT: 0.95, bossStun
 // SPUN (the Monk's Palm Strike): u.k2s.spun, 0..need, drains `decay` a second. While on: moves at `move`, and each step
 // a chance of `lock` x fill that it can't turn. Full: it marches off the way it faces for `marchT` s (bosses `bossT`),
 // fast, unable to attack (a unit with a brain of its own is stunned `brainStunT` instead); then `immuneT` s.
-export const SPUN = { need: 100, decay: 10, boss: 0.45, move: 0.8, lock: 0.9, marchT: 1.2, bossT: 0.5, brainStunT: 0.5, immuneT: 4, col: '#FFE7A0' };
+export const SPUN = { need: 100, decay: 10, boss: 0.45, move: 0.8, slip: 0.35, dazeT: 1.3, bossT: 0.5, immuneT: 4, col: '#FFE7A0' }; // (round 19: slip, how slippery its turning is from the first touch (to 1 full up); dazeT, the burst's daze; it marched for marchT 1.2 before)
 // DIRTY (the Digger: "Rub some dirt in it"): for `dur` s, the next blow (not damage over time) that would land is soaked
 // up by the dirt, and that ends it; meanwhile it attacks at `atkSpeed`, and the `immune` statuses can't take on it (both
 // washed off when the dirt goes on).
@@ -157,6 +157,13 @@ export const TRAPPED = { boss: 0.4, hold: 0.3, col: '#C9D2DE' };
 export const WARDED = { col: '#9FE0FF' };
 // WEAKENED (the Shade's Blackout): deals `dealt` as much, a grey wash and grey chevrons sinking off the body.
 export const WEAKENED = { dealt: 0.7, wash: ['#7E8794', 0.22], col: '#7E8794' };
+// Round 19 (lane rogue19). DISARMED (the Bandit's Dirty Trick and his trait, the Dame's Disarm): u.disarmT, a timer.
+// Its weapon is knocked out of its hand and hidden; no weapon blow, no ability or move done with the weapon; its body
+// and its spells as ever. Only what holds a weapon (tags.js ARMED) can be; bosses for `boss` of the time.
+export const DISARMED = { boss: 0.4, col: '#C9D2DE' };
+// ANTI-HEAL (the Cultist's shadow bolt, Sacrifice II): a buff 'antiheal': heals on it do `healTaken` of what they would.
+// Its look: dull broken crosses sinking off the body (healing's green crosses rise).
+export const ANTIHEAL = { healTaken: 0.5, boltT: 3, col: '#8A6A9A' }; // (boltT: how long the Cultist's bolt leaves it)
 // The eight as statuses: kind (build | timer), the colour of their ring, by (the heroes who put it on: the Book), and
 // what the HUD and the Book read off a unit:
 // value(u) (a build-up: 0..need), left(u, now) (a timer: seconds left, 0 when off), dur(u) (its whole time).
@@ -172,6 +179,8 @@ export const HERO_STATUS = {
   tracked: { kind: 'timer', ...TRACKED, by: ['falconer'], left: hookLeft('tracked'), dur: hookDur('tracked') },
   trapped: { kind: 'timer', ...TRAPPED, by: ['trapper'], left: hookLeft('trapped'), dur: hookDur('trapped') },
   warded: { kind: 'timer', ...WARDED, by: ['alchemist', 'jester', 'valkyrie', 'quartermaster', 'chef'], left: hookLeft('warded'), dur: hookDur('warded') },
+  disarmed: { kind: 'timer', ...DISARMED, by: ['rogueBandit', 'dame'], left: (u) => (u && u.disarmT > 0 ? u.disarmT : 0), dur: (u) => (u && u.disarmMax) || 1 },
+  antiheal: { kind: 'timer', ...ANTIHEAL, by: ['cultist'], left: (u) => { const b = buffOf(u, 'antiheal'); return b ? b.t : 0; }, dur: (u) => { const b = buffOf(u, 'antiheal'); return (b && b.dur) || 1; } },
   weakened: { kind: 'timer', ...WEAKENED, by: ['shade'], left: (u) => { const b = buffOf(u, 'weakened'); return b ? b.t : 0; }, dur: (u) => { const b = buffOf(u, 'weakened'); return (b && b.dur) || 1; } },
 };
 export const HERO_STATUS_IDS = Object.keys(HERO_STATUS);

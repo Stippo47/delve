@@ -13,6 +13,7 @@ import { icon } from './icons.js';
 import { heartPath, drawStatusMarks, bleedFlash, bleedLook } from './fx-status.js'; // round 13 (lane S): the new statuses' marks
 import { drawMarks3 } from './fx3.js'; // round 15 (lane N): Shackled's irons
 import './fx-dash.js'; // round 18 (lane dash18): the six dashes' looks (it fills fx2.js's table)
+import './fx-rogue19.js'; // round 19 (lane rogue19): the Bandit's, Shade's, Monk's and Cultist's looks, Disarmed and Anti-heal
 import { WALL2, ART2 } from './looks2.js';
 import { HEROES } from './heroes.js';
 import { paintFloor, drawWallThemed, drawPillarThemed, drawThemeHazard, drawArena, drawDanger, drawSpikeFx, drawMood, voidColor } from './scenery.js';
@@ -681,6 +682,7 @@ function drawPartsUnit(ctx, u, w) {
   if (u.invulnT > 0 && !u.act && !u.spin) alpha = 0.55 + 0.45 * Math.abs(Math.sin(w.time * 18)); // no flicker mid-leap or roll (round 9)
   if (u.downed) alpha = 0.62; // a hero who is down lies faint too (round 7)
   if (u.ethereal && !u.exiting && !u.hiddenIn) alpha *= 0.5;
+  else if (u.incorpT > 0) alpha *= u.incorpLook === 'mist' ? 0.55 : 0.78; // round 19 (lane rogue19): incorporeal (sim.js), see-through
   if (X && X.alpha) alpha *= X.alpha(u, w);
   if (DV && DV.body && DV.body.alpha) alpha *= DV.body.alpha;
   const mode = u.downed ? 'grey' : u.flashT > (u.def.flashAt ?? 0.06) ? 'flash' : 'normal'; // (lane B, bosses3: def.flashAt, as in washesOf)

@@ -127,7 +127,7 @@ export function noteWorld(w) {
       if (t.aoe) { push({ type: 'slam', u, x: t.aoe.x, y: t.aoe.y, r: t.aoe.r, a: t.a, max: 0.42, seed: Math.round(t.x * 7 + t.y), look: t.aoe.look || (u && u.def.style && u.def.style.slam) }); continue; } // (lane H2: look, a hero's own slam: fx2 SLAM2)
       // arm-l is on the +normal side of the facing, arm-r on the -normal side (the art's left/right, front = +y)
       const sty = (u && u.def.style) || {}, back = sty.backhand || sty.flip ? -1 : 1; // lane H2 (round 13): a backhand swing (Dame, Pirate), a mirrored sprite (Griffon)
-      push({ type: 'slash', u, x: t.x, y: t.y, R: t.r, a: t.a, arc: t.arc, shape, dir: ((shape === 'twin' || shape === 'twinBlade') && odd ? -1 : 1) * back, side: odd ? 1 : -1, col, r0k: sty.reach0,
+      push({ type: 'slash', u, x: t.x, y: t.y, R: t.r, a: t.a, arc: t.arc, shape, dir: t.dir ?? ((shape === 'twin' || shape === 'twinBlade') && odd ? -1 : 1) * back, /* (round 19: t.dir, the swing's own way: the Bandit's backhand) */ side: odd ? 1 : -1, col, r0k: sty.reach0,
         max: shape === 'bite' && u && u.kind === 'wolf' ? 0.5 : shape === 'bite' ? 0.42 /* round 14: open, then the snap */ : shape === 'great' ? 0.22 : shape === 'heavy' ? 0.24 : 0.28, seed: Math.round(t.x * 7 + t.y) });
     } else if (t.type === 'blast') {
       push({ type: 'blast', x: t.x, y: t.y, r: t.r, color: t.color || '#FFB347', ab: t.ab, max: t.ab === 'fireball' ? 0.6 : 0.45, seed: Math.round(t.x + t.y * 3) });
@@ -174,11 +174,13 @@ export function drawMarks(ctx, dt, layer) {
 }
 
 // ---------------------------------------------------------------- melee arcs
+export const SLASH_OWN = {}; // round 19 (lane rogue19): shape -> (ctx, m, k, x, y), returning false to fall through to the one here
 function slash(ctx, m, k) {
   const u = m.u, live = u && !u.dead;
   const x = live ? u.x : m.x, y = live ? u.y : m.y;
   const [main, core] = m.col;
   const sh = m.shape;
+  if (SLASH_OWN[sh] && SLASH_OWN[sh](ctx, m, k, x, y) !== false) return; // (round 19: a look of a weapon's own, filled by another file: fx-rogue19.js, the Monk's fists)
   if (sh === 'palm') { const px = x + Math.cos(m.a) * (m.R - 4), py = y + Math.sin(m.a) * (m.R - 4), e = easeOut(k01(k / 0.5)); if (k < 0.25) lit(ctx, () => glowDisc(ctx, px, py, 22, '#FFFFFF', 0.6 * (1 - k / 0.25))); ctx.save(); ctx.globalAlpha *= 1 - k * k; for (let i = 0; i < 5; i++) { const b = m.a + (i - 2) * 0.55, d = 4 + 16 * e; inkDisc(ctx, px + Math.cos(b) * d, py + Math.sin(b) * d, 5 * (1 - 0.6 * k) + 1.5, i % 2 ? m.col[0] : m.col[1]); } ctx.restore(); return; } // lane H2 (round 13): the Monk's fists, soft bursts of force
   if (sh === 'fork') { const vr = u ? u.vr : 20; for (let i = -1; i <= 1; i++) { const r0 = (u ? u.r : 20) * 0.7, r1 = m.R + 16, tip = r0 + (r1 - r0) * easeOut(k01(k / 0.3)), base = r0 + (tip - r0) * sm(k01((k - 0.2) / 0.8)), nx = -Math.sin(m.a) * i * 7, ny = Math.cos(m.a) * i * 7; streak(ctx, x + nx, y + ny, m.a, base, tip, 6 * (1 - 0.35 * k), m.col[0], m.col[1]); } return; } // lane H2 (round 13): the Haymaker's pitchfork, three tines
   if (sh === 'thrust' || sh === 'twin') {

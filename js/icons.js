@@ -187,6 +187,11 @@ const STATUS = {
   // warded (a pale blue shield of light), weakened (grey chevrons sinking)
   warded: `<path d="M16 3l11 4v8c0 7-5 12-11 14C10 27 5 22 5 15V7z" fill="#BFE9F8" opacity=".6"/><path d="M16 3l11 4v8c0 7-5 12-11 14C10 27 5 22 5 15V7z" fill="none" stroke="#9FE0FF" stroke-width="2.600" ${H}/><path d="M11 10l4 2" fill="none" stroke="#FFFFFF" stroke-width="2" ${H}/>`,
   weakened: `<path d="M6 6l10 8 10-8M6 15l10 8 10-8" fill="none" stroke="${INK}" stroke-width="6.400" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 6l10 8 10-8M6 15l10 8 10-8" fill="none" stroke="#7E8794" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" ${H}/>`,
+  // round 19 (lane rogue19): disarmed (an open empty hand, a sword spinning away from it), anti-heal (a healing cross,
+  // dull and cracked across)
+  disarmed: `<path d="M20 4l8 8-3 3-8-8z" fill="#C9D2DE" transform="rotate(20 22 10)"/><path d="M13 13l4 4" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M13 13l4 4" fill="none" stroke="#8A5A30" stroke-width="2.4" stroke-linecap="round" ${H}/>
+    <path d="M5 29c-2-4-1-9 2-12l2 1 1-6 2 1 1-5 2 1 1 5 2-2 2 2-3 8c-1 4-4 7-10 7z" fill="#F2D2B0"/>`,
+  antiheal: `<path d="M12 3h8v9h9v8h-9v9h-8v-9H3v-8h9z" fill="#8A9A7A"/><path d="M8 25L25 6" fill="none" stroke="${INK}" stroke-width="5.400" stroke-linecap="round"/><path d="M8 25L25 6" fill="none" stroke="#8A6A9A" stroke-width="2.600" stroke-linecap="round" ${H}/>`,
   // ---- round 13: helpful states (shown on the cards and in the pause panel with their own names: bestiary.js BUFFS)
   haste: `<path d="M4 10h9M2 16h11M4 22h9" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M4 10h9M2 16h11M4 22h9" fill="none" stroke="#FFF0A0" stroke-width="2" stroke-linecap="round" ${H}/><path d="M14 5l14 11-14 11 4-11z" fill="#E8D84A"/>`,
   might: `<path d="M16 2l4.400 4.400V20h-8.800V6.400z" fill="#E8EEF6"/><path d="M16 5v14" stroke="#FFFFFF" stroke-width="1.6" ${H}/><path d="M7 20h18v3.400H7z" fill="#E8B53A"/><path d="M14 23.400h4V30h-4z" fill="#8A5A30"/>`,

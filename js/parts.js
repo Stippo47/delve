@@ -50,12 +50,50 @@ function splitSvg(text) {
     }
     root.setAttribute('viewBox', `${B0} ${B0} ${BOX} ${BOX}`);
     root.removeAttribute('width'); root.removeAttribute('height');
-    layers.push({ id, pivot, moves: /^(arm-|back|front|top)/.test(id) && el.hasAttribute('data-pivot'), text: ser.serializeToString(root) });
+    const L = { id, pivot, moves: /^(arm-|back|front|top)/.test(id) && el.hasAttribute('data-pivot'), text: ser.serializeToString(root) };
+    layers.push(L);
+    // round 19 (lane rogue19, Disarmed): an arm that holds a weapon also gets a bare copy, the hand alone (drawn in its
+    // place while its owner is disarmed: pose[arm].bare)
+    if (/^arm-[lr]$/.test(id)) { const gear = bareArm(doc, root.cloneNode(true), id, false), bare = gear && bareArm(doc, root, id, true);
+      if (bare) layers.push({ id: id + '~bare', bareOf: id, pivot, moves: L.moves, text: ser.serializeToString(bare) }, { id: id + '~gear', gearOf: id, pivot, moves: false, text: ser.serializeToString(gear) }); }
   });
   // art round 11 (the gaper: "has big outlines"): an art drawn bigger on screen than the rest of its family can ask for a
   // thinner line, so its outline comes out their weight: data-line on #sprite, in SVG units (LINE when absent)
   const line = +sprite.getAttribute('data-line') || LINE;
   return { layers, string, line, has: Object.fromEntries(layers.map((l) => [l.id, true])) };
+}
+
+// Round 19 (lane rogue19): Disarmed hides the weapon. An arm part is a hand and whatever it holds; which shapes are the
+// hand is read off the art: a shape whose own fill (the first solid one it is painted with: a shading laid over it or a
+// shadow under it doesn't count) is a hand's (the heroes' gHand / gUnder, a skeleton's bone, skin, a fist or a palm), or
+// is a fill the other arm is painted with when that arm holds nothing metal or wooden (an enemy's free hand: its skin).
+// Everything else in the arm is the weapon. The bare copy is the arm with the weapon's shapes taken out (null when the
+// arm holds nothing).
+const HAND_FILL = /hand|under|fist|palm|bone|skin|flesh|paw/i, GEAR_FILL = /steel|iron|blade|wood|rust|metal|brass|gold|wrap|grip|haft/i;
+const LEAF = new Set(['path', 'use', 'rect', 'circle', 'ellipse', 'polygon', 'polyline', 'line']);
+const leavesOf = (el) => [...el.querySelectorAll('*')].filter((n) => LEAF.has(n.tagName) && !n.closest('defs,clipPath,mask,linearGradient,radialGradient'));
+const shapeKey = (n) => n.tagName === 'use' ? 'u:' + (n.getAttribute('href') || n.getAttribute('xlink:href')) : n.tagName + ':' + (n.getAttribute('d') || [n.getAttribute('x'), n.getAttribute('y'), n.getAttribute('width'), n.getAttribute('cx'), n.getAttribute('cy'), n.getAttribute('r'), n.getAttribute('points')].join(','));
+const solidFill = (n) => { const f = n.getAttribute('fill'), o = +(n.getAttribute('opacity') ?? 1); return f && f !== 'none' && o >= 0.99 && !n.closest('[clip-path]') && !/^#2B2230$/i.test(f) ? f : null; };
+function bareArm(doc, root, id, keepHand = true) { // (keepHand false: the weapon alone, for the look of it flying out of the hand)
+  const arm = root.querySelector('[id="' + id + '"]'), other = doc.getElementById(id === 'arm-r' ? 'arm-l' : 'arm-r');
+  if (!arm) return null;
+  const own = new Map(); // the shape -> its own fill
+  for (const n of leavesOf(arm)) { const k = shapeKey(n), f = solidFill(n); if (f && !own.has(k)) own.set(k, f); }
+  const otherFills = new Set(); let otherArmed = false;
+  if (other) for (const n of leavesOf(other)) { const f = solidFill(n); if (f) { otherFills.add(f); if (GEAR_FILL.test(f)) otherArmed = true; } }
+  const ownHands = !!doc.getElementById('gHand'); // (the heroes' art names its hands: go by the names alone)
+  const body = doc.getElementById('body'), bodyFills = new Set(); if (body) for (const n of leavesOf(body)) { const f = solidFill(n); if (f) bodyFills.add(f); }
+  // an enemy's hand, first try: a fill the other hand has and the body shows too (skin: its ears, its neck); then the
+  // other hand's alone (when it holds nothing metal or wooden); then the body's alone (the other hand is gloved)
+  const tries = ownHands ? [() => false] : [(f) => otherFills.has(f) && bodyFills.has(f), (f) => !otherArmed && otherFills.has(f), (f) => bodyFills.has(f)];
+  let isHand = null;
+  for (const t of tries) { const h = (f) => !!f && (HAND_FILL.test(f) || (!GEAR_FILL.test(f) && t(f))); isHand = h; if ([...own.values()].some(h)) break; }
+  let gone = 0, kept = 0;
+  for (const n of leavesOf(arm)) { const f = own.get(shapeKey(n)) || solidFill(n); if (isHand(f) === keepHand) kept++; else { n.remove(); gone++; } }
+  if (!gone || !kept) return null; // nothing held (or no hand found: leave the arm as it is)
+  // groups left empty (a clip round a shape that went) go too
+  for (let pass = 0; pass < 4; pass++) for (const g of [...arm.querySelectorAll('g')]) if (!leavesOf(g).length) g.remove();
+  return root;
 }
 
 function canvas(w, h) { const c = document.createElement('canvas'); c.width = Math.max(1, w); c.height = Math.max(1, h); return c; }
@@ -92,8 +130,9 @@ async function buildSet(rig, px) {
     }
     const w = x1 - x0, h = y1 - y0;
     const img = canvas(w, h); img.getContext('2d').drawImage(cvs[i], -x0, -y0);
-    out.push({ id: l.id, pivot: l.pivot, moves: l.moves, img, ink: grow(img, (rig.line || LINE) * k, INK), x: B0 + x0 / k, y: B0 + y0 / k, w: w / k, h: h / k, tints: {} });
+    out.push({ id: l.id, bareOf: l.bareOf, gearOf: l.gearOf, pivot: l.pivot, moves: l.moves, img, ink: grow(img, (rig.line || LINE) * k, INK), x: B0 + x0 / k, y: B0 + y0 / k, w: w / k, h: h / k, tints: {} });
   });
+  for (const L of out) if (L.bareOf) { const A = out.find((x) => x.id === L.bareOf); if (A) A.hasBare = true; } // (round 19: Disarmed)
   return { px, k, layers: out, string: rig.string, used: 0 };
 }
 
@@ -111,8 +150,10 @@ function grow(src, r, color) {
 function moveLooseShadows(rig, data) {
   const n = data[0].data.length;
   rig.layers.forEach((l, i) => {
-    if (l.moves) return;
-    const below = []; for (let j = i - 1; j >= 0; j--) if (rig.layers[j].moves) below.push(data[j].data);
+    if (l.moves || l.gearOf) return; // (round 19: a weapon alone, ~gear, is only drawn flying: it neither gives nor takes)
+    const below = []; for (let j = i - 1; j >= 0; j--) if (rig.layers[j].moves && !rig.layers[j].gearOf) below.push(data[j].data);
+    // (round 19: an arm and its bare copy are one part drawn two ways: a shadow handed to one goes to both)
+    const twinOf = new Map(); rig.layers.forEach((a, ai) => { if (a.bareOf) { const bi = rig.layers.findIndex((b) => b.id === a.bareOf); if (bi >= 0) { twinOf.set(data[ai].data, data[bi].data); twinOf.set(data[bi].data, data[ai].data); } } });
     if (!below.length) return;
     const s = data[i].data;
     for (let p = 0; p < n; p += 4) {
@@ -122,6 +163,7 @@ function moveLooseShadows(rig, data) {
       if (!t) continue;
       const f = a / 255;
       for (let c = 0; c < 3; c++) t[p + c] = Math.round(s[p + c] * f + t[p + c] * (1 - f));
+      const tw = twinOf.get(t); if (tw && tw[p + 3] > 0) for (let c = 0; c < 3; c++) tw[p + c] = Math.round(s[p + c] * f + tw[p + c] * (1 - f));
       s[p + 3] = 0;
     }
   });
@@ -155,6 +197,7 @@ function prune(e) {
   for (const [px] of ready.slice(3)) e.sets.delete(px);
 }
 export const artReady = (url) => { const e = arts.get(url); return !!(e && e.rig); };
+export const armedArt = (url) => rigHas(url, 'arm-r~bare') || rigHas(url, 'arm-l~bare'); // (round 19: its art holds a weapon)
 export const rigHas = (url, id) => { const e = arts.get(url); return !!(e && e.rig && e.rig.has[id]); };
 
 // ---------------------------------------------------------------- drawing
@@ -239,19 +282,22 @@ function strokeString(g, pts, color, w) {
 // Paint a figure into g, whose transform maps SVG units. mode: 'normal' | 'flash' (all white) | 'grey' (downed) |
 // 'sil' (the parts' own silhouette, for washing with a colour afterwards). ink: the outline's colour, INK when not
 // given. shift: our summons' cool hue (round 8; they wore a purple outline in round 7).
-const hidden = (pose, L) => !!(pose && pose[L.id] && pose[L.id].hide); // a part that's away (the Falconer's falcon in flight)
+// a part that's away (the Falconer's falcon in flight); round 19 (lane rogue19): an arm's bare copy is drawn only while
+// its arm is bare (pose[arm].bare: its owner disarmed), and the arm itself not then
+const hidden = (pose, L) => { if (L.gearOf) return true; const p = pose && pose[L.bareOf || L.id]; return L.bareOf ? !(p && p.bare) || !!p.hide : !!(p && (p.hide || (p.bare && L.hasBare))); };
+const pOf = (pose, L) => pose[L.bareOf || L.id];
 export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = false, border = null) {
   const Ls = set.layers, str = set.string ? stringPts(set, pose) : null, strLayer = set.string && set.string.layer;
   if (border && mode === 'normal') {
     const ga = g.globalAlpha; g.globalAlpha = ga * (border.a ?? 1);
     for (const L of Ls) { if (hidden(pose, L)) continue; const b = bordered(L, set.k, border.color), p = b.pad / set.k;
-      g.save(); place(g, L, pose[L.id]); place(g, L, swayOf(pose, L)); g.drawImage(b.c, L.x - p, L.y - p, L.w + p * 2, L.h + p * 2); g.restore(); }
+      g.save(); place(g, L, pOf(pose, L)); place(g, L, swayOf(pose, L)); g.drawImage(b.c, L.x - p, L.y - p, L.w + p * 2, L.h + p * 2); g.restore(); }
     g.globalAlpha = ga;
   }
   if (mode !== 'sil') {
     for (const L of Ls) {
       if (hidden(pose, L)) continue;
-      g.save(); place(g, L, pose[L.id]); place(g, L, swayOf(pose, L));
+      g.save(); place(g, L, pOf(pose, L)); place(g, L, swayOf(pose, L));
       g.drawImage(mode === 'flash' ? filled(L, '#FFFFFF') : ink ? filled(L, ink) : L.ink, L.x, L.y, L.w, L.h);
       g.restore();
     }
@@ -261,7 +307,7 @@ export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = fals
   for (const L of Ls) {
     if (hidden(pose, L)) continue;
     if (str && L.id === strLayer) strokeString(g, str, mode === 'grey' ? '#9A929C' : set.string.color, set.string.w);
-    g.save(); place(g, L, pose[L.id]); place(g, L, swayOf(pose, L));
+    g.save(); place(g, L, pOf(pose, L)); place(g, L, swayOf(pose, L));
     g.drawImage(mode === 'grey' ? washed(L, 'rgb(120,112,125)', 0.72) : shift ? shifted(L) : L.img, L.x, L.y, L.w, L.h);
     g.restore();
   }
@@ -354,6 +400,7 @@ export function poseFor(u, w, dt) {
   const dual = sty.dual && rigHas(url, 'arm-l');
   let hand = sty.hand && rigHas(url, sty.hand) ? sty.hand : rigHas(url, 'arm-r') ? 'arm-r' : 'arm-l'; // sty.hand: a weapon held in the left hand
   if (dual && (u._n || 0) % 2) hand = 'arm-l';
+  if (u.anim && u.anim.hand && rigHas(url, u.anim.hand)) hand = u.anim.hand; // (round 19: a blow with the other hand: the Bandit's punch)
   const other = hand === 'arm-r' ? 'arm-l' : 'arm-r';
   // readiness, eased
   const rt = u.anim ? 0 : readyTarget(u);
@@ -361,7 +408,7 @@ export function poseFor(u, w, dt) {
   let main = ZERO, off = ZERO, glow = 0, pop = 0;
   const W = scaleP(mv.W, amp), S = scaleP(mv.S, amp);
   if (u.anim) {
-    const a = u.anim, big = a.kind === 'ability' ? 1.45 : 1;
+    const a = u.anim, big = a.kind === 'ability' || a.big ? 1.45 : 1; // (round 19: a.big, a plain blow swung bigger: the Monk's third)
     const Wb = scaleP(W, big), Sb = scaleP(S, big);
     // when the blow lands: after the sim's wind-up (enemies), at a third of an ability, or at once (heroes)
     const at = a.kind === 'ability' ? a.dur * 0.32 : Math.max(0, Math.min(a.dur - 0.12, d.windup && a.kind === (d.attackAnim || a.kind) ? d.windup : 0));
@@ -380,7 +427,7 @@ export function poseFor(u, w, dt) {
   }
   // lane H2 (round 13): a backhand swing (style.backhand: the Dame, the Pirate, "swing the other way"); daggers stabbed
   // straight ahead, never turned in across each other (style.straight: the Shade, "should not cross blades")
-  if (sty.backhand && base === 'swing') main = { ...main, r: -(main.r || 0) };
+  if (!!sty.backhand !== !!(u.anim && u.anim.back) && base === 'swing') main = { ...main, r: -(main.r || 0) }; // (round 19: anim.back, one backhand stroke: the Bandit's Dirty Trick)
   if (sty.straight && base === 'thrust') main = { ...main, r: 0 };
   // the other arm (all in arm-r terms, mirrored onto arm-l below): a shield pushes forward as the blow lands, a free
   // hand counters, casters lift both
@@ -418,6 +465,9 @@ export function poseFor(u, w, dt) {
   { const DV = u.act && u.act.dv; if (DV && DV.arm && !u.downed) { main = DV.arm; if (DV.off) off = DV.off; } }
   pose[hand] = hand === 'arm-r' ? main : mirror(main);
   pose[other] = other === 'arm-r' ? off : mirror(off);
+  // round 19 (lane rogue19, the Shade: "They are still holding the blades crossed. Should keep them to the sides"):
+  // style.sides turns both hands out by that much (radians), so the daggers are held out at her sides, not across her
+  if (sty.sides && !u.downed && !(u.anim && u.anim.kind === 'spin')) { pose['arm-r'] = addP(pose['arm-r'], { r: -sty.sides }); pose['arm-l'] = addP(pose['arm-l'], { r: sty.sides }); }
   // round 10 (the heroes lane: "the falcon still shows on the Falconer's arm while it flies"): the bird rides the
   // left fist as its own part, and is gone from it while it's out hunting (kits2.js looseFalcon)
   pose['arm-l-bird'] = u.kit && u.kit.falconOut ? { hide: true } : pose['arm-l'];
@@ -426,6 +476,9 @@ export function poseFor(u, w, dt) {
   // part on his right paw, and is put away while he claws (Bear Claws)
   pose['arm-l-hammer'] = u.kit && u.kit.hammerOut ? { hide: true } : pose['arm-l'];
   pose['arm-r-club'] = u.kit && u.kit.clawsT > (w ? w.time : 0) ? { hide: true } : pose['arm-r'];
+  // round 19 (lane rogue19): Disarmed, the weapon is gone from its hands (the bare copies of the arms, splitSvg above)
+  // (the weapon hand, and the other too when both hold the weapon: two daggers, a bow and its arrow; a shield stays)
+  if (u.disarmT > 0 && !u.downed) for (const k of dual || sty.bow || d.attackAnim === 'draw' ? ['arm-r', 'arm-l'] : [hand]) if (pose[k]) pose[k] = { ...pose[k], bare: true };
   // a cape lags behind turns
   const df = u._pf == null ? 0 : wrapAngle(u.facing - u._pf); u._pf = u.facing;
   const capeT = clamp(-df / Math.max(dt, 1e-3) * 0.05, -0.16, 0.16);
@@ -445,3 +498,15 @@ export function poseFor(u, w, dt) {
 
 // Corpses and the downed: arms flung out.
 export const LIMP = { 'arm-r': { r: -0.55, dy: -6 }, 'arm-l': { r: 0.55, dy: -6 }, 'arm-l-bird': { r: 0.55, dy: -6 }, 'arm-l-hammer': { r: 0.55, dy: -6 }, 'arm-r-club': { r: -0.55, dy: -6 }, back: { r: 0 } };
+
+// Round 19 (lane rogue19): the weapon a figure holds, alone (Disarmed: it spins out of the hand). Draws the weapon of
+// `url`'s arm (arm-r unless it holds none) into ctx, centred on 0,0 in the arm's own frame (+y forward), at `px` pixels
+// per 220 SVG units; false if the art holds nothing (or isn't ready).
+export function drawGear(ctx, url, px, armId = 'arm-r') {
+  const set = getRig(url, px); if (!set) return false;
+  const L = set.layers.find((l) => l.gearOf === armId) || set.layers.find((l) => l.gearOf);
+  if (!L) return false;
+  ctx.save(); ctx.translate(-(L.x + L.w / 2), -(L.y + L.h / 2));
+  ctx.drawImage(L.ink, L.x, L.y, L.w, L.h); ctx.drawImage(L.img, L.x, L.y, L.w, L.h);
+  ctx.restore(); return true;
+}

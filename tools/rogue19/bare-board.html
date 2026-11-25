@@ -1,0 +1,15 @@
+<!doctype html><html><body style="margin:0;background:#E9E2D0"><canvas id=c></canvas><script type=module>
+import { loadArt, getRig, drawRig, rigHas } from '/js/parts.js';
+const files = ["art/enemies/bandit-axe.svg","art/enemies/bandit-chief.svg","art/enemies/bandit-daggers.svg","art/enemies/bandit-greatsword.svg","art/enemies/bandit-spear.svg","art/enemies/bandit-torch.svg","art/enemies/smith.svg","art/enemies/fallen-angel.svg","art/enemies/herald-fallen.svg","art/enemies/herald-light.svg","art/enemies/chieftain.svg","art/enemies/hobgoblin.svg","art/enemies/rattler-jawless-spear.svg","art/enemies/rattler-loosejaw.svg","art/enemies/brute.svg","art/enemies/lizardman-blade.svg","art/enemies/goblin.svg","art/enemies/orc.svg","art/enemies/bandit.svg","art/enemies/rattler.svg","art/enemies/lizardman.svg","art/enemies/jackal.svg","art/enemies/poacher.svg","art/enemies/rattler-jawless-bow.svg"];
+await Promise.all(files.map((f) => loadArt('/' + f)));
+const S = +(new URLSearchParams(location.search).get('S') || 96), cols = +(new URLSearchParams(location.search).get('cols') || 6), rows = Math.ceil(files.length / cols), c = document.getElementById('c'); c.width = cols * S * 2 + cols * 6; c.height = rows * (S + 16); const g = c.getContext('2d');
+const sets = files.map((f) => getRig('/' + f, S * 2));
+await new Promise((r) => setTimeout(r, 4000));
+const res = [];
+files.forEach((f, i) => { const set = getRig('/' + f, S * 2); const x0 = (i % cols) * (S * 2 + 6), y0 = Math.floor(i / cols) * (S + 16);
+  const armed = rigHas('/' + f, 'arm-r~bare') || rigHas('/' + f, 'arm-l~bare'); res.push([f, armed]);
+  g.fillStyle = armed ? '#F6F0E0' : '#D9D0BC'; g.fillRect(x0, y0, S * 2, S + 14);
+  if (set) for (const [j, pose] of [[0, {}], [1, (new URLSearchParams(location.search).get('hand') ? { 'arm-r': { bare: true } } : { 'arm-r': { bare: true }, 'arm-l': { bare: true } })]]) { g.save(); g.translate(x0 + j * S, y0); g.scale(S / 220, S / 220); g.translate(10, 10); drawRig(g, set, pose); g.restore(); }
+  g.fillStyle = '#2B2230'; g.font = '10px sans-serif'; g.fillText(f.replace('art/', '').replace('.svg', ''), x0 + 2, y0 + S + 11); });
+window.RES = res; window.DONE = true;
+</script></body></html>
