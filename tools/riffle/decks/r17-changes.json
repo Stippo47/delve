@@ -1,0 +1,58 @@
+{
+  "title": "Round 17: what changed",
+  "topic": "balance",
+  "stack": "audit17",
+  "order": 2,
+  "priority": 1,
+  "cards": [
+    {
+      "id": "report",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Fixes, slimes, prices",
+      "text": "Live in 0.22.0: the five bugs fixed, abilities fire when needed, slimes hop, every enemy priced on one scale.",
+      "why": "Everything you asked for in this round, in one place. Mark any part that's off.",
+      "videos": ["../../../docs/clips/slimes16/slime-over-fire.mp4"],
+      "parts": [
+        { "id": "bugs", "title": "Five bugs", "text": "Ethereal heroes no longer lose alone; Frost Arrow keeps its shot; lobs credit their thrower; trap-only sides are refused; a seed replays its fight exactly. Also: Cure III skipped its own target (fixed), and an endless Scorch loop crashed 5 of 44 playtest campaigns (fixed)." },
+        { "id": "timing", "title": "When abilities fire", "text": "A new check sees what's about to hit someone. Roll, Dash, Brace and Shield Wall fire when a blow is about to land; rescues and heals go to the friend being hit; Supply Crate, Old Tales and Encore only when a friend has something useful waiting. Clearly better: Cure, Supply Crate, Swoop, Challenge, Dark Bargain, Entangle, Roll, Spear of the Sky. No numbers changed." },
+        { "id": "slimes", "title": "Slimes hop", "text": "Squash, an arc up (the shadow stays on the floor), squash on landing. Further and quicker. In the air no pools, gas or danger zones touch them; blows and shots still do. The landing does the damage; Fire Slimes burn and Ice Slimes chill on touch.", "videos": ["../../../docs/clips/slimes16/poison-slime-vs-archer.mp4"] },
+        { "id": "prices", "title": "One price scale", "text": "Every enemy measured against the same yardstick at the Wildwood's first floor and set to about the same strength per cost (120 of 123 kinds within 0.8 to 1.25, was 31). Costs run 0.6 to 12 in every dungeon. Each dungeon's strength now lives in one number per dungeon, set so each stays about as hard as before." },
+        { "id": "wolf", "title": "Wolf, Slime, Rats", "text": "Equal cost: Wolf v Slime was 0-30, now 23-7. 2 Rats v 1 Wolf was 30-0, now 11-19. The Slime has much less health; the Wolf hits harder and has more health." },
+        { "id": "elites", "title": "Elites cost now", "text": "An elite costs 3x its kind and a major 7x, paid out of the room's enemy budget. Wildwood floor 1: no elites in rooms 1-2, a few from room 3, no majors. Majors from Wildwood floor 2 and floor 1 of later dungeons." }
+      ]
+    },
+    {
+      "id": "statuses-grow",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Enemy statuses and depth",
+      "text": "Enemy blows grow with the dungeon, but their poison and burn don't. Let enemy statuses grow too?",
+      "why": "Poisoners and burners are fair on the first floor but fall behind in their own deeper dungeons, so the Cobra and mortars soften the deeper you go.",
+      "pick": "Yes: enemy status build-up grows with the same dungeon strength as their blows. Best done with the Poison call from round 16."
+    },
+    {
+      "id": "valkyrie",
+      "kind": "options",
+      "rarity": "uncommon",
+      "title": "Valkyrie's Call",
+      "text": "It needs a downed friend, and battle mode has no downed state, so it never fires there. What should it do?",
+      "why": "In battles she plays with one ability missing. Any fix adds a rule, so it's yours to pick.",
+      "pick": "battle",
+      "options": [
+        { "id": "battle", "label": "Battle version", "text": "In battles it saves a friend about to die (a burst of healing and a shield) instead." },
+        { "id": "downed", "label": "Downed in battles", "text": "Battle mode gets the dungeon's downed state, for every hero." },
+        { "id": "leave", "label": "Dungeon only", "text": "Leave it; it's a dungeon ability." }
+      ]
+    },
+    {
+      "id": "slime-calls",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Three slime calls",
+      "text": "Mid-hop slimes dodge lobs and passing gas; heroes' leaps don't count as airborne. Keep?",
+      "why": "These were judgement calls while building the hop; each is a one-line change.",
+      "pick": "Keep all three. A hero's leap counting as airborne would be a new rule for every leaping hero."
+    }
+  ]
+}
