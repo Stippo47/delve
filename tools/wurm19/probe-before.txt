@@ -1,0 +1,16 @@
+fights 30 won 19 (63.3%) avg 158s
+time by state (s per fight): under 16.2  tell 27.8  arc 31.3  root 64.2  sink 3.7  coil 11.0
+boss health lost by state (% of max, per fight): tell 0.3  arc 19.3  root 64.3  root+stuck 8.7  sink 2.0  under 0.0  coil 1.8
+  breach: 697 (23.2 a fight); heroes in it when it showed 1.32, caught 0.54 each; caught nobody 53.8%
+  land: 492 (16.4 a fight); heroes in it when it showed 0.39, caught 0.20 each; caught nobody 81.9%
+  lunge: 227 (7.6 a fight); heroes in it when it showed 0.00, caught 0.79 each; caught nobody 30.8%
+  inhale: 177 (5.9 a fight); heroes in it when it showed 1.34, caught 0.54 each; caught nobody 52.5%
+  coil: 78 (2.6 a fight); heroes in it when it showed 1.64, caught 0.33 each; caught nobody 66.7%
+  roar: 60 (2.0 a fight); heroes in it when it showed 1.12, caught 1.02 each; caught nobody 25.0%
+holes 1397: beside a column 43 (3.1%), at a wall 25
+arcs 572: through a column 50, out of the room 9
+body in a column 31.7 part-s, out of the room 15.3 part-s
+out of the sand 99.1 s a fight; of that with the head under and rings still out (unseen) 19.9 s
+heroes: aiming at it while it is under 34.4% of their time; no target while it is under 0.5%; in an open hole 0.3%; in its quicksand 5.2%; out of the room 0.2 s; in a column 0.0 s; NaN 0
+brood: 0.52 alive on average, most 1; most pits 6; frozen in the air 1.4 s a fight
+first hero down at (s): 8 12 21 29 30 31 33 37 38 38 51 52 63 67 73 73 77 82 95 95 104 109 111 116 119 122 134

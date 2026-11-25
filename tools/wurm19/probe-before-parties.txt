@@ -1,0 +1,42 @@
+== paladin,berserker,twinfang,tower
+fights 12 won 5 (41.7%) avg 82s
+time by state (s per fight): under 9.2  tell 14.8  arc 15.4  root 30.3  sink 2.2  coil 6.5
+boss health lost by state (% of max, per fight): arc 25.5  root 54.7  root+stuck 8.8  sink 2.3  coil 2.5  tell 0.1  under 0.1
+  breach: 140 (11.7 a fight); heroes in it when it showed 1.55, caught 0.95 each; caught nobody 28.6%
+  lunge: 44 (3.7 a fight); heroes in it when it showed 0.00, caught 1.16 each; caught nobody 13.6%
+  inhale: 32 (2.7 a fight); heroes in it when it showed 1.56, caught 1.13 each; caught nobody 34.4%
+holes 294: beside a column 12 (4.1%), at a wall 1
+arcs 116: through a column 10, out of the room 0
+body in a column 6.7 part-s, out of the room 1.9 part-s
+out of the sand 46.4 s a fight; of that with the head under and rings still out (unseen) 10.0 s
+heroes: aiming at it while it is under 36.2% of their time; no target while it is under 0.7%; in an open hole 1.4%; in its quicksand 9.5%; out of the room 0.1 s; in a column 0.0 s; NaN 0
+brood: 0.55 alive on average, most 1; most pits 6; frozen in the air 0.0 s a fight
+first hero down at (s): 18 20 21 21 22 25 30 33 36 53 58 59
+== archer,pyromancer,frost,storm
+fights 12 won 6 (50.0%) avg 108s
+time by state (s per fight): under 14.9  tell 18.7  arc 21.3  root 39.2  sink 2.4  coil 7.8
+boss health lost by state (% of max, per fight): arc 23.8  root 56.4  root+stuck 8.0  sink 1.7  coil 3.1  tell 0.7  under 0.1
+  breach: 175 (14.6 a fight); heroes in it when it showed 1.27, caught 0.14 each; caught nobody 86.3%
+  lunge: 52 (4.3 a fight); heroes in it when it showed 0.00, caught 0.23 each; caught nobody 76.9%
+  inhale: 40 (3.3 a fight); heroes in it when it showed 0.10, caught 0.07 each; caught nobody 92.5%
+holes 363: beside a column 17 (4.7%), at a wall 8
+arcs 148: through a column 14, out of the room 3
+body in a column 5.7 part-s, out of the room 0.9 part-s
+out of the sand 62.1 s a fight; of that with the head under and rings still out (unseen) 13.9 s
+heroes: aiming at it while it is under 40.7% of their time; no target while it is under 0.6%; in an open hole 0.0%; in its quicksand 2.5%; out of the room 0.0 s; in a column 0.0 s; NaN 0
+brood: 0.49 alive on average, most 1; most pits 6; frozen in the air 1.2 s a fight
+first hero down at (s): 20 23 34 41 44 52 52 66 71 75
+== paladin
+fights 12 won 0 (0.0%) avg 24s
+time by state (s per fight): under 3.1  tell 5.3  arc 5.4  root 9.6  sink 0.3
+boss health lost by state (% of max, per fight): arc 1.5  root 6.0  root+stuck 0.7  sink 0.2
+  breach: 52 (4.3 a fight); heroes in it when it showed 1.00, caught 0.67 each; caught nobody 32.7%
+  lunge: 15 (1.3 a fight); heroes in it when it showed 0.00, caught 0.93 each; caught nobody 6.7%
+  inhale: 12 (1.0 a fight); heroes in it when it showed 1.00, caught 0.58 each; caught nobody 41.7%
+holes 80: beside a column 0 (0.0%), at a wall 1
+arcs 33: through a column 0, out of the room 0
+body in a column 2.0 part-s, out of the room 0.0 part-s
+out of the sand 15.1 s a fight; of that with the head under and rings still out (unseen) 3.2 s
+heroes: aiming at it while it is under 43.6% of their time; no target while it is under 0.8%; in an open hole 0.3%; in its quicksand 0.0%; out of the room 0.0 s; in a column 0.0 s; NaN 0
+brood: 0.00 alive on average, most 0; most pits 0; frozen in the air 0.0 s a fight
+first hero down at (s): 12 12 18 18 18 18 25 26 26 27 41 45
