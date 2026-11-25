@@ -13,7 +13,7 @@ const outDir = path.resolve('docs/clips/tags17'); fs.mkdirSync(outDir, { recursi
 // Each: the battle (Blue | Red), the staging (runs once, in the page, with the sim's modules), a step hook (each
 // frame), who the camera follows, the zoom and the length.
 const CLIPS = {
-  'wrench-repair': { blue: 'engineer,paladin', red: 'rattler', secs: 7, zoom: 1.45, follow: 'engineer', stage: `
+  'wrench-repair': { blue: 'engineer,paladin', red: 'rattler', secs: 7, zoom: 2.1, follow: 'engineer', stage: `
     const e = w.units.find((u) => u.kind === 'engineer'), p = w.units.find((u) => u.kind === 'paladin'), r = w.units.find((u) => u.kind === 'rattler');
     r.x = w.W - 40; r.y = w.H - 40; r.rootT = 1e9; r.aggro = false; r.maxHp = r.hp = 1e6; r.ethereal = false;
     e.x = w.W * 0.4; e.y = w.H * 0.5; p.x = e.x + 40; p.y = e.y + 70; p.hp = p.maxHp * 0.35; G.hold.push(p);
@@ -24,19 +24,19 @@ const CLIPS = {
     const cx = w.W * 0.5, cy = w.H * 0.5;
     w.hazards.push({ type: 'water', x: cx, y: cy, r: 110 });
     for (const [k, dx] of [['imp', -40], ['fireSlime', 50]]) { const u = w.units.find((o) => o.kind === k); u.x = cx + dx; u.y = cy; G.hold.push(u); u.maxHp = u.hp = 200; }` },
-  'kindled': { blue: 'pyromancer', red: 'imp', secs: 6, zoom: 1.4, follow: 'imp', stage: `
+  'kindled': { blue: 'pyromancer', red: 'imp', secs: 6, zoom: 2.2, follow: 'imp', stage: `
     const p = w.units.find((u) => u.kind === 'pyromancer'), i = w.units.find((u) => u.kind === 'imp');
     p.x = w.W * 0.4; p.y = w.H * 0.5; i.x = w.W * 0.56; i.y = w.H * 0.5; i.maxHp = i.hp = 400; p.maxHp = p.hp = 1e5; G.hold.push(p, i); G.p = p; G.i = i; G.last = -9;`,
     each: `if (w.time - G.last > 1.2) { G.last = w.time; const a = Math.atan2(G.i.y - G.p.y, G.i.x - G.p.x); G.p.facing = a; K.shoot(w, G.p, a, { kind: 'fireball', speed: 520, r: 9, dmg: 6, st: { burn: 34 }, color: '#FF8A3D' }); }` },
-  'choir-silenced': { blue: 'paladin', red: 'choirSprite,rattler*2', secs: 9, zoom: 1.4, follow: 'choirSprite', stage: `
+  'choir-silenced': { blue: 'paladin', red: 'choirSprite,rattler*2', secs: 9, zoom: 2.1, follow: 'choirSprite', stage: `
     const p = w.units.find((u) => u.kind === 'paladin'); p.x = 60; p.y = 60; G.hold.push(p); p.ethereal = true;
     const c = w.units.find((u) => u.kind === 'choirSprite'), cx = w.W * 0.5, cy = w.H * 0.5; c.x = cx; c.y = cy; G.hold.push(c); c.aggro = true; c.maxHp = c.hp = 1e5;
     w.units.filter((u) => u.kind === 'rattler').forEach((r, i) => { r.x = cx + (i ? 80 : -80); r.y = cy + 30; G.hold.push(r); r.maxHp = 600; r.hp = 150; });
     G.c = c; G.p = p;`, each: `if (!G.hit && w.time - G.t0 > 3.2) { G.hit = true; S.addStatus(w, G.c, 'stagger', 30, G.p); }` },
-  'slime-gas-and-slam': { blue: 'tower', red: 'slime,rattler', secs: 8, zoom: 1.35, follow: 'slime', stage: `
+  'slime-gas-and-slam': { blue: 'tower', red: 'slime,rattler', secs: 9, zoom: 1.9, follow: 'slime', stage: `
     const h = w.units.find((u) => u.kind === 'tower'), s = w.units.find((u) => u.kind === 'slime');
-    h.x = w.W * 0.62; h.y = w.H * 0.5; G.hold.push(h); h.maxHp = h.hp = 1e5; s.x = w.W * 0.22; s.y = w.H * 0.5; s.maxHp = s.hp = 2000; s.aggro = true;
-    w.hazards.push({ type: 'gas', x: w.W * 0.36, y: w.H * 0.5, r: 70 });
+    h.x = w.W * 0.52; h.y = w.H * 0.5; G.hold.push(h); h.maxHp = h.hp = 1e5; s.x = w.W * 0.2; s.y = w.H * 0.5; s.maxHp = s.hp = 2000; s.aggro = true;
+    w.hazards.push({ type: 'gas', x: w.W * 0.32, y: w.H * 0.5, r: 70 });
     const r = w.units.find((u) => u.kind === 'rattler'); r.x = h.x + 10; r.y = h.y + 85; r.maxHp = r.hp = 1e4; G.hold.push(r); // (on the floor inside the slam: it is hit, the slime up in its hop is not)
     G.h = h; G.s = s; G.last = -9;`,
     each: `const s = G.s, h = G.h; if (s && !s.dead && s.airborne && Math.hypot(s.x - h.x, s.y - h.y) < 120 && w.time - G.last > 1.2) { G.last = w.time; K.ABILITIES.groundPound.use(w, h, s, 1); }` },

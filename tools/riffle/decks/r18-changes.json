@@ -1,0 +1,83 @@
+{
+  "title": "Round 18: what changed",
+  "topic": "balance",
+  "stack": "audit18",
+  "order": 2,
+  "priority": 1,
+  "cards": [
+    {
+      "id": "report",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Tags, Water Mage, more",
+      "text": "Live in 0.24.2: tags, the Water Mage, trolls and snakes fixed, downed heroes in battles, truer Book.",
+      "why": "Everything you asked for this round. Mark any part that's off; the calls I made while building are the cards after this.",
+      "videos": ["../../../docs/clips/water17/waterMage-dome.mp4"],
+      "parts": [
+        { "id": "wrench", "title": "Wrench repair", "text": "With no enemy close, the Engineer walks to her most damaged turret or tower and whacks it: 12% of its health a hit. Her wrench never heals allies. Built things can't bleed or be poisoned.", "videos": ["../../../docs/clips/tags17/wrench-repair.mp4"] },
+        { "id": "water", "title": "Fire things and water", "text": "A fire creature that's Wet or standing in water steams and loses health about as fast as burning would hurt it: an imp in a puddle dies in 6 s. Bosses take half. Water also halves burning on anything it soaks.", "videos": ["../../../docs/clips/tags17/fire-in-water.mp4"] },
+        { "id": "kindled", "title": "Fire on fire things", "text": "Fire set on a fire creature by the other side does no burn damage: it gets up to 30% more damage and attack speed and 15% more speed, and flares at full burn. The fireball's own hit still hurts. Bosses get half the boost." },
+        { "id": "silence", "title": "Silence = mouth", "text": "Silenced now stops only mouth moves: shouts, songs, howls, breath, bites. Silenced wolves never howled but still lunged; the Choir Sprite stops singing and mending. The Warden's ability would have stopped 5% of what it does, so it keeps its full lock under a new name: Nullified." },
+        { "id": "layers", "title": "Height layers", "text": "Floor, hovering and flying. A hopping slime hovers: slams and floor pools miss it, gas, explosions, blows and shots don't. The Griffon's and Valkyrie's leaps and the Witch's broom fly: only shots reach them." },
+        { "id": "types", "title": "Sharp, blunt, magic", "text": "Every hit is sharp, blunt or magic, apart from the effect it carries. A magic-resistant enemy took half a fireball's hit and still burned in full. No enemy has a type resistance yet: that waits on the resistance deck." },
+        { "id": "mage", "title": "The Water Mage", "text": "Beam: 2 s on, 1.5 s off, wets foes, heals friends and puts out their fire. Bubbles stop magic and its effects; a fire arrow passes. The Dome holds enemies in or out, turns shots, heals friends; her own party walks through. The Cannon heals friends and hurts foes down a line. In the support band, on its strong side. Art is a placeholder.", "videos": ["../../../docs/clips/water17/waterMage-bubble.mp4", "../../../docs/clips/water17/waterMage-cannon.mp4", "../../../docs/clips/water17/waterMage-beam.mp4"] },
+        { "id": "trolls", "title": "Trolls' boulders", "text": "Trolls treated their own boulder as a wall and kept giving up on it. Now they get it back within 6 s 94 to 97% of the time (was 69 to 82%). One they can't reach crumbles and they tear up a new one. The yeti hauls its snowball off walls and out of corners.", "videos": ["../../../docs/clips/foes17/troll-slot-before.mp4", "../../../docs/clips/foes17/troll-slot-after.mp4", "../../../docs/clips/foes17/yeti-corner-after.mp4"] },
+        { "id": "snakes", "title": "Snakes", "text": "Sand Serpent and Chain Crawler: each link follows the path the head took, at an even gap; equal links and a tapering tail; lying flat; bursts with a slither down the body. A knock back slides the whole body as one piece instead of piling it up. Bodies are about twice as long.", "videos": ["../../../docs/clips/foes17/sandSerpent-before.mp4", "../../../docs/clips/foes17/sandSerpent-after.mp4", "../../../docs/clips/foes17/chainCrawler-after.mp4"] },
+        { "id": "downed", "title": "Downed in battles", "text": "Your Valkyrie answer: in battles heroes go down instead of dying; only abilities revive (Valkyrie's Call, Rewind III). After 15 s they die and leave a body a necromancer can raise. A side with nobody up loses. Valkyrie's Call went from 0 casts a fight to 1.4.", "videos": ["../../../docs/clips/downed18/valkyrie-revive.mp4", "../../../docs/clips/downed18/necro-raise.mp4"] },
+        { "id": "fixes", "title": "Fixes", "text": "The undead list (it caught the Orc Warboss, missed the Bone King, Grave Warden, Mummy, Icicle Wraith). Snakes took statuses 5 times too fast. The Book now shows real immunities (bosses can't be charmed, the golden shells block everything). A party with two of the Bard, Grandpa and Quartermaster could crash the game." }
+      ]
+    },
+    {
+      "id": "outlines",
+      "kind": "options",
+      "rarity": "common",
+      "title": "Snake outlines",
+      "text": "You asked to see both: one outline round the whole body, or each link outlined on its own?",
+      "why": "Each link outlined reads as beads; one outline reads as one creature.",
+      "pick": "each",
+      "videos": ["../../../docs/clips/foes17/sandSerpent-own-outlines.mp4"],
+      "options": [
+        { "id": "one", "label": "One body", "text": "One outline round the whole snake (what's live now)." },
+        { "id": "each", "label": "Each link", "text": "Every link with its own outline, like the clip." }
+      ]
+    },
+    {
+      "id": "troll-new",
+      "kind": "question",
+      "rarity": "common",
+      "title": "A new boulder",
+      "text": "When a troll can't get to its boulder, the old one crumbles and it tears a new one out of the floor (1.1 s).",
+      "why": "Otherwise a boulder stuck where the troll can't reach leaves it bare-handed for the whole fight. The yeti already packs a new snowball the same way.",
+      "pick": "Keep it."
+    },
+    {
+      "id": "bleed-out",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Downed for how long",
+      "text": "A downed hero in a battle dies after 15 s unless revived, and Valkyrie's Call works once per fight. Keep?",
+      "why": "Longer gives revives more chances but drags fights; a Call that recharges on its cooldown would make the Valkyrie much stronger in long battles.",
+      "pick": "15 s, once per fight, as in the dungeon's once per room."
+    },
+    {
+      "id": "tag-calls",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Calls in the tags",
+      "text": "Four calls made while building the tags. Details on the back.",
+      "why": "Each changes who an ability or rule touches. All are one-line changes.",
+      "pick": "Keep all four.",
+      "details": "1. Built things count as constructs even when they walk (the Foundry's machines), so the Engineer's wrench mends them and they can't bleed. Standing still is its own tag.\n\n2. The wrench mends any construct on her side, not only her own (a Quartermaster's barricade too).\n\n3. Bites count as mouth moves, so a silenced crocodile can't do its bite-and-drag. Drinking doesn't. Plain basic attacks and bosses' scripted roars are never stopped.\n\n4. Only elemental fire creatures are fire-tagged (imps, fire slimes, hellhounds, the Cinder). Demons like the Pit Lord and the Flame Turret aren't, so water doesn't hurt them and fire doesn't boost them."
+    },
+    {
+      "id": "mage-calls",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Calls in the Water Mage",
+      "text": "Rules your design left open, decided while building. Details on the back.",
+      "why": "They change how she plays in a party. All easy to change.",
+      "pick": "Keep them.",
+      "details": "Beam: goes to the most hurt friend in reach when one is under 60% (or burning or poisoned and under 90%), otherwise the nearest enemy; mid-beam it swings to a friend who drops under 40%. Never herself.\n\nThe beam puts out burning and halves poison (what Wet does), without making the friend Wet.\n\nBubbles: stop magic hits and their effects whole; physical hits pass and leave it up. It pops when it has soaked its share or runs out of time, wets the one inside and knocks back enemies only. Bubbles go first to friends with magic coming at them.\n\nDome: enemies outside stay out and enemies inside stay in, bosses too; her party walks through freely; every enemy shot glances off it; lobbed things splash on it. Telegraphed floor strikes still land.\n\nTrait: as the Lizardman's water balls, made a little faster so they reach.\n\nTier IIIs: a popped bubble throws the magic it caught back at its caster; the dome leaves a pool when it ends; the cannon follows its target."
+    }
+  ]
+}
