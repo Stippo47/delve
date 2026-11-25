@@ -15,6 +15,7 @@ import { view } from './render.js';
 import { I } from './ui-kit.js';
 import { numbersOf } from './numbers.js';
 import { numbersRow, runLine } from './stats-ui.js';
+import { tagsOf, TAG_INFO } from './tags.js'; // round 17 (lane tags17): what it is
 
 const ROLE = { tank: 'Tank', melee: 'Fighter', skirmish: 'Skirmisher', ranged: 'Ranged', caster: 'Caster', support: 'Support' };
 const roman = (n) => ['', 'I', 'II', 'III'][n] || '';
@@ -108,6 +109,7 @@ function body(u) {
     ${hs && !hs.merc ? `<div class="xpline"><span class="lvl">${hs.level}</span><div class="bar xp"><i style="width:${Math.min(100, 100 * hs.xp / xpToNext(hs.level))}%"></i><em>${Math.floor(hs.xp)}/${xpToNext(hs.level)}</em></div></div>` : ''}</div></div>`;
   // its real numbers right now (numbers.js, from sim.js unitNumbers: the web, trinkets, buffs and statuses all in), and this run so far
   html += numbersRow(numbersOf(u));
+  { const tg = [...tagsOf(u)].filter((t) => TAG_INFO[t] && t !== 'boss'); if (tg.length) html += `<p class="ip-p ip-tags">${tg.map((t) => `<b title="${TAG_INFO[t].desc}">${TAG_INFO[t].name}</b>`).join(' · ')}</p>`; } // (round 17, lane tags17: its tags, tags.js)
   const rs = run.stats && u.team === 'hero' && !u.summon && run.stats.heroes[u.kind];
   if (rs) html += `<h3 class="cap">This run</h3>${runLine(rs)}`;
   // statuses

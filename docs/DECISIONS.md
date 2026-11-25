@@ -1049,3 +1049,45 @@ centipedes from florr.io ... in bursts and in a slither motion". Everything meas
   on a knock, links piled 1-2 s a run).
 - **Open, for the designer**: one body or each link outlined (`?chainlines=own`, clips both ways); the longer bodies;
   the troll tearing up a new boulder; the head's two diamond shapes are in its SVG (not touched).
+
+## Round 18 (2026-11-24): tags, boulders, snakes, the Water Mage
+
+The designer, in chat (while still reading round 17's report):
+- "Work on the tag system. For example constructs (stationary, built) can be tagged construct, then there could be a separate healing ability that only affects constructs. Think the engineer hitting its turrets with their wrenches. Can heal its constructs but not his allies. Or any fire tagged entity taking damage when wet or in water. Or the silence stopping mouth abilities. Add the obvious ones. Then anything else you could imagine being good, you can suggest. Also add to riffle."
+- "Also look into the troll shaped enemies not being able to get their boulders."
+- "And segmented snake enemy movement being right." (Riffle, earlier: follow-the-leader segments each with its own hit box; equal segments, a tapering tail, chained back to front not stacked near the head, always lying down, moving in bursts with a slither like florr.io's centipedes.)
+- New hero, the Water Mage: Bubble Shields (block magic, not physical; popped, they wet the one inside and knock those near back); Dome (large, wets every enemy in it, nothing enters or leaves, deflects projectiles, slowly heals allies); main attack a beam to the nearest target or a hurt ally, 2 s on, 1.5 s recharge, wets slowly, on allies heals and washes off what Wet would without wetting; Water Cannon (a large water laser healing allies, hurting and wetting enemies). Trait: hurt while on water, splashes 3 projectiles back at the attacker (as the lizards do).
+- Credits: the weekly limit resets tonight; no swarm of top-effort agents.
+
+Lanes (Opus, worktrees in delve-wt): tags17 (tag registry, construct repair by the Engineer's wrench, fire hurt by water, Silenced stops mouth abilities, the obvious tags, a suggestions list for Riffle), foes17 (troll boulder fetching, chain movement), water17 (the Water Mage; its bubble's magic check is wired to the tag lane's isMagicHit at merge).
+
+Round 18, more rulings (chat):
+- Valkyrie's Call: "Battle mode can have downed allies that can only be revived with abilities. (Corpses can be used for necromancy)". So battle mode gets a downed state; only reviving abilities bring them back; corpses feed necromancy. Queued for the next free lane (after tags17/foes17 merge: it touches battle.js and death).
+- Slime calls: "Gas can hit slimes ... aoe slams shouldn't hit them (like from hammer weapons). Explosions can hit them." Leaps: "The winged tank or Valkyries saving jumps make them airborne not hovering. Slime just goes to the hovering layer for a bit. A witch on her broom also goes to the flying layer." So height layers: floor, hovering, airborne/flying, with hit kinds deciding reach. Given to tags17.
+- "Fire tagged enemies that get set on fire don't take damage, instead getting a rage like boost." Given to tags17.
+- "Also think about the physical damage types, sharp vs blunt damage." Given to tags17 (hit kinds; obvious interactions built, the rest suggested).
+- "Get an agent on all enemies resistance and immunities and see if they make sense." Lane res18: an audit that proposes (no game code), on top of the tag system; its calls go to Riffle.
+- res18 landed (docs/audit/res18.md, 165 kinds): 7 plain bugs (the undead name test catches the Orc Warboss and misses the Bone King, Grave Warden, Mummy, Icicle Wraith; chains build statuses once per segment; four Book gaps) to be fixed after tags17 merges; rules by tag proposed; 8 calls sent to Riffle (deck r18-resistances).
+
+## Round 18, lane tags17 (2026-11-24): the tag system
+The designer: construct-only healing (the Engineer's wrench on her turrets, not her allies), fire things hurt when wet
+or in water, silence stopping mouth abilities, "add the obvious ones", suggest the rest. During the lane: fire things
+set on fire get a rage-like boost instead of damage; sharp vs blunt; magic its own damage type, apart from the
+elements it carries; height layers (a hopping slime hovers; the Griffon's and Valkyrie's leaps and the Witch's broom
+fly). Everything in docs/tags17.md; code js/tags.js; checks tools/tags17/check.mjs.
+- One registry, js/tags.js: unit kinds (from honest def fields plus explicit lists), abilities (mouth, sound, magic;
+  the heroes' existing `tags` string left alone), enemy moves by their due() key, hits (hitKinds: type sharp | blunt |
+  magic, elements, delivery). Shown in the pause panel.
+- Built: the Engineer's wrench repair (12% of a construct's health a whack, with no foe within 90); constructs take no
+  bleed or poison; Doused fire things ((1.5 + 0.06 x wet)/s, in water at least 60 wet, bosses half); water puts out
+  half the burning; Kindled fire things (up to +30% dealt and attack speed, +15% move, Flare at full; bosses half;
+  only the other side's fire); Silenced = mouth only (rule change); the Warden's Nullify keeps its full lock as
+  Nullified (a mouth-only silence would stop 5% of what it stops); the undead tag for the Cleric's holy bonus (now
+  reaches the Bone King, Grave Warden, mummies, Icicle Wraith); layers floor / hovering / flying (slams miss hovering,
+  gas and explosions reach it; only shots reach flying); type resistances as a mechanism, none set.
+- Merged tags17 and water17 (0.23.0). At merge: the Water Mage's bubble asks tags.js isMagicHit, so magic is its own hit type and a fire-carrying blade (sharp + fire) passes the bubble (its check updated to match). Fixed a crash on main found by water17: Encore / Old Tales / Supply Crate asked each other's scores for ever in a party with two of the Bard, Grandpa Sickle, the Quartermaster (wantedNow now looks one level deep).
+
+Round 18, free rein (chat, 2026-11-24 ~20:00 the designer's time; the PC's clock is an hour behind theirs):
+- "If I don't get back to you by like 12 my time I just want you to work. Find something to do. Free to use fable how u see fit." Ideas they listed: cleanup / unify systems; audit for repetitiveness; more, better art with Fable; more effects and interactions; synergy ("I do like the idea of synergy so see where you can make that the case"); smarter brains; weapon slash looks that match the attack animation ("spears slash is centered when the spear is usually off to 1 side"); more interesting enemy shapes (Binding of Isaac variety: flies flying in formations); a clockwork boss built into the level ("they are the room").
+- Now: "I don't like how dash slash abilities work currently in general. Everyone from the wolf to hero's abilities. Make a few completely new variations of it." Lane dash18 (Fable, high: the current dashes were turned down).
+- Now: the Book's previews: "Many abilities aren't shown at all, aren't in the right scenario to show themselves off, don't change between tiers when sometimes they should, the dummies don't attack like how an enemy would, I don't want the hero's to just take invisible damage." Lane preview18 (Opus).

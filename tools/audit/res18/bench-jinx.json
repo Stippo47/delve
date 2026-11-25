@@ -1,0 +1,270 @@
+{
+ "seeds": 3,
+ "budget": 36,
+ "calls": [
+  "jinx"
+ ],
+ "rows": [
+  {
+   "hero": "witch",
+   "status": "curse",
+   "dungeon": "wildwood",
+   "none": {
+    "landed": 117.4,
+    "dps": 44.9,
+    "secs": 9,
+    "won": 100
+   },
+   "now": {
+    "landed": 118.8,
+    "dps": 45.4,
+    "secs": 9,
+    "won": 100
+   },
+   "prop": {
+    "landed": 118.8,
+    "dps": 45.4,
+    "secs": 9,
+    "won": 100
+   },
+   "propc": {
+    "landed": 118.8,
+    "dps": 45.4,
+    "secs": 9,
+    "won": 100
+   }
+  },
+  {
+   "hero": "witch",
+   "status": "curse",
+   "dungeon": "warren",
+   "none": {
+    "landed": 51.8,
+    "dps": 38,
+    "secs": 13,
+    "won": 100
+   },
+   "now": {
+    "landed": 51.8,
+    "dps": 38,
+    "secs": 13,
+    "won": 100
+   },
+   "prop": {
+    "landed": 51.8,
+    "dps": 38,
+    "secs": 13,
+    "won": 100
+   },
+   "propc": {
+    "landed": 51.8,
+    "dps": 38,
+    "secs": 13,
+    "won": 100
+   }
+  },
+  {
+   "hero": "witch",
+   "status": "curse",
+   "dungeon": "sewers",
+   "none": {
+    "landed": 92,
+    "dps": 36.8,
+    "secs": 12,
+    "won": 100
+   },
+   "now": {
+    "landed": 87.6,
+    "dps": 40.3,
+    "secs": 12,
+    "won": 100
+   },
+   "prop": {
+    "landed": 87.6,
+    "dps": 40.3,
+    "secs": 12,
+    "won": 100
+   },
+   "propc": {
+    "landed": 87.6,
+    "dps": 40.3,
+    "secs": 12,
+    "won": 100
+   }
+  },
+  {
+   "hero": "witch",
+   "status": "curse",
+   "dungeon": "crypt",
+   "none": {
+    "landed": 79.7,
+    "dps": 46.2,
+    "secs": 9,
+    "won": 100
+   },
+   "now": {
+    "landed": 48.6,
+    "dps": 43.3,
+    "secs": 10,
+    "won": 100
+   },
+   "prop": {
+    "landed": 48.6,
+    "dps": 43.3,
+    "secs": 10,
+    "won": 100
+   },
+   "propc": {
+    "landed": 48.6,
+    "dps": 43.3,
+    "secs": 10,
+    "won": 100
+   }
+  },
+  {
+   "hero": "witch",
+   "status": "curse",
+   "dungeon": "frost",
+   "none": {
+    "landed": 17.6,
+    "dps": 36.7,
+    "secs": 15,
+    "won": 100
+   },
+   "now": {
+    "landed": 13.1,
+    "dps": 33.8,
+    "secs": 15,
+    "won": 100
+   },
+   "prop": {
+    "landed": 13.1,
+    "dps": 33.8,
+    "secs": 15,
+    "won": 100
+   },
+   "propc": {
+    "landed": 13.1,
+    "dps": 33.8,
+    "secs": 15,
+    "won": 100
+   }
+  },
+  {
+   "hero": "witch",
+   "status": "curse",
+   "dungeon": "ember",
+   "none": {
+    "landed": 34,
+    "dps": 35.6,
+    "secs": 8,
+    "won": 100
+   },
+   "now": {
+    "landed": 31.5,
+    "dps": 37,
+    "secs": 8,
+    "won": 100
+   },
+   "prop": {
+    "landed": 29.4,
+    "dps": 35.2,
+    "secs": 8,
+    "won": 100
+   },
+   "propc": {
+    "landed": 29.4,
+    "dps": 35.2,
+    "secs": 8,
+    "won": 100
+   }
+  },
+  {
+   "hero": "witch",
+   "status": "curse",
+   "dungeon": "spire",
+   "none": {
+    "landed": 24,
+    "dps": 33.4,
+    "secs": 14,
+    "won": 100
+   },
+   "now": {
+    "landed": 15.3,
+    "dps": 34.3,
+    "secs": 14,
+    "won": 100
+   },
+   "prop": {
+    "landed": 15.3,
+    "dps": 34.3,
+    "secs": 14,
+    "won": 100
+   },
+   "propc": {
+    "landed": 22.9,
+    "dps": 34.6,
+    "secs": 13,
+    "won": 100
+   }
+  },
+  {
+   "hero": "witch",
+   "status": "curse",
+   "dungeon": "dunes",
+   "none": {
+    "landed": 64.7,
+    "dps": 33,
+    "secs": 12,
+    "won": 100
+   },
+   "now": {
+    "landed": 42.2,
+    "dps": 31.8,
+    "secs": 13,
+    "won": 100
+   },
+   "prop": {
+    "landed": 42.2,
+    "dps": 31.8,
+    "secs": 13,
+    "won": 100
+   },
+   "propc": {
+    "landed": 53.3,
+    "dps": 30.7,
+    "secs": 12,
+    "won": 100
+   }
+  },
+  {
+   "hero": "witch",
+   "status": "curse",
+   "dungeon": "foundry",
+   "none": {
+    "landed": 31.4,
+    "dps": 25.4,
+    "secs": 15,
+    "won": 100
+   },
+   "now": {
+    "landed": 5.1,
+    "dps": 25.2,
+    "secs": 15,
+    "won": 100
+   },
+   "prop": {
+    "landed": 5.2,
+    "dps": 25.4,
+    "secs": 15,
+    "won": 100
+   },
+   "propc": {
+    "landed": 33.2,
+    "dps": 24.9,
+    "secs": 15,
+    "won": 100
+   }
+  }
+ ]
+}

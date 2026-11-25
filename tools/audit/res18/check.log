@@ -1,0 +1,37 @@
+1. isUndead (kits.js) says undead:
+   skeleton (Skeleton), boss (Bone King), rattler (Rattler), rattlerBow (Bone Archer), rattlerSpear (Bone Spear), rattlerMace (Loose Jaw), gaper (Gaper), brute (Brute), ghost (Ghost), warboss (Orc Warboss), banshee (Banshee), rattlerGold (Golden Skeleton), rattlerHarrow (Harrowing Skeleton)
+   wrongly undead: warboss
+   undead it misses: graveWarden (Grave Warden), boneKing (The Bone King), mummy (Mummy), frostWraith (Icicle Wraith)
+
+2. a chain in burning ground (one step of the hazard loop, 34 burn a second):
+   sandSerpent: 7 bodies, head's burn after one step 2.61 (a lone body: 0.57) = x4.6
+   chainCrawler: 9 bodies, head's burn after one step 3.29 (a lone body: 0.57) = x5.8
+   wolf: 1 bodies, head's burn after one step 0.57 (a lone body: 0.57) = x1.0
+
+3. the Book's chips (def.res) against what lands:
+   boss (Bone King): charm shows 1 takes 0
+   graveWarden (Grave Warden): charm shows 1 takes 0
+   lizardChief (Lizard Chief): charm shows 1 takes 0
+   warboss (Orc Warboss): charm shows 1 takes 0
+   boneKing (The Bone King): charm shows 1 takes 0
+   broodQueen (Brood Queen): charm shows 1 takes 0
+   frostGiant (Old Frost): charm shows 1 takes 0
+   pitLord (Pit Lord): charm shows 1 takes 0
+   archfiend (The Archfiend): charm shows 1 takes 0
+   archon (Archon): charm shows 1 takes 0
+   radiant (The Radiant): charm shows 1 takes 0
+   alpha (The Alpha): charm shows 1 takes 0
+   banditChief (The Bandit Chief): charm shows 1 takes 0
+   elderEnt (The Elder Ent): charm shows 1 takes 0
+   rattlerGold (Golden Skeleton): charm shows 1 takes 0; confuse shows 1 takes 0; sleepy shows 1 takes 0; bleed shows 1 takes 0; fear shows 1 takes 0; shackle shows 1 takes 0
+   scarabGold (Golden Scarab): charm shows 1 takes 0; confuse shows 1 takes 0; sleepy shows 1 takes 0; bleed shows 1 takes 0; fear shows 1 takes 0; shackle shows 1 takes 0
+   sawBlade (Saw Blade): burn shows 1 takes 0; chill shows 1 takes 0; poison shows 1 takes 0; wet shows 1 takes 0; shock shows 1 takes 0; stagger shows 1 takes 0; radiance shows 1 takes 0; curse shows 1 takes 0; entangle shows 1 takes 0; charm shows 1 takes 0; confuse shows 1 takes 0; sleepy shows 1 takes 0; bleed shows 1 takes 0; fear shows 1 takes 0; shackle shows 1 takes 0
+   heraldLight (Herald of Light): charm shows 1 takes 0
+   heraldFallen (Fallen Herald): charm shows 1 takes 0
+   chieftain (The Goblin Chieftain): charm shows 1 takes 0
+   greatOoze (The Great Ooze): charm shows 1 takes 0
+   winterQueen (The Winter Queen): charm shows 1 takes 0
+   cinder (Cinder, the Old Drake): charm shows 1 takes 0
+   gildedSeraph (The Gilded Seraph): charm shows 1 takes 0
+   sandWurm (The Sand Wurm): charm shows 1 takes 0
+   greatEngine (The Great Engine): charm shows 1 takes 0

@@ -28,9 +28,11 @@ import { cue } from './sfx.js';
 import { tagAbility } from './fxtag.js';
 import { AUDIT } from './stats.js';
 import { STATUS, SLEEPY, fillOf } from './statuses.js';
+import { hasTag, abilityBlocked } from './tags.js'; // round 17 (lane tags17): undead by tag; Silenced, no mouth abilities
 import { ABILITIES2, TRAITS2, ATTACKS2, kit2Tick } from './kits2.js';
 import { CHARM_ABILITIES, CHARM_TRAITS, CHARM_ATTACKS, charmTick } from './kits-charm.js'; // round 13 (lane S): the Enchantress
 import { ABILITIES3, TRAITS3, ATTACKS3, kit3Tick } from './kits3.js'; // round 15 (lane N): the Mob, the Clockmaker, the Air and Earth mages, the Warden, the Telekinetic
+import { ABILITIES_WATER, TRAITS_WATER, ATTACKS_WATER, waterTick } from './kits-water.js'; // round 17 (lane water17): the Water Mage
 
 // ---------------------------------------------------------------- the skill web's stat nodes (round 8)
 // u.kit.mods = statsFor(hero, nodes) (heroes.js). Generic stats go straight onto the unit in initKit; an ability's own
@@ -70,7 +72,11 @@ const hurtMost = (list) => list.reduce((b, o) => (!b || hpRatio(o) < hpRatio(b) 
 // Round 16 fixes (when abilities fire): an ability of a's that is waiting on its cooldown, and that a would use now if it
 // were ready (its score clears the bar), is "wanted". wantedWait: the seconds a cut of `cut` off every cooldown would
 // buy, counting a wanted ability in full and one that is waiting for nothing at a quarter (it may be wanted soon).
-const wantedNow = (w, a, id) => { const A = ABILITIES[id], tier = a.kit.tiers[id]; return !!(A && tier && !A.passiveTier && A.score(w, a, a.target, tier) >= 0.3); };
+// Round 18: one level deep only. Encore, Old Tales and Supply Crate ask whether a friend's waiting ability is wanted, and
+// a friend's waiting Encore / Old Tales / Supply Crate asks the same back: two of them in a party recursed for ever.
+let wanting = false;
+const wantedNow = (w, a, id) => { const A = ABILITIES[id], tier = a.kit.tiers[id]; if (!(A && tier && !A.passiveTier)) return false; if (wanting) return false;
+  wanting = true; try { return A.score(w, a, a.target, tier) >= 0.3; } finally { wanting = false; } };
 function wantedWait(w, a, cut) {
   if (!a || !a.kit || !alive(a)) return 0; let g = 0;
   for (const [id, c] of Object.entries(a.kit.cd)) if (c > 0.5 && a.kit.tiers[id] && ABILITIES[id] && !ABILITIES[id].passiveTier) g += Math.min(c, cut) * (wantedNow(w, a, id) ? 1 : 0.25);
@@ -82,7 +88,7 @@ const dmgOf = (u, k) => (u.def.dmg || 8) * (u.dmgMul || 1) * k * (1 + abMod(u, '
 const ang = (u, t) => angleTo(u.x, u.y, t.x, t.y);
 // where a caster's hands are, held out towards t (round 10: the storm mage's lightning comes from her hands)
 const handPt = (u, t) => { const a = t ? ang(u, t) : u.facing, d = u.r + 6; return { x: u.x + Math.cos(a) * d, y: u.y + Math.sin(a) * d }; };
-const isUndead = (o) => /skeleton|rattler|gaper|brute|ghost|banshee|boss/.test(o.kind) || o.def.undead;
+const isUndead = (o) => hasTag(o, 'undead'); // (round 17, lane tags17: the tag, tags.js; it was a list of names here, which missed the Bone King, the Grave Warden, mummies, the Icicle Wraith)
 
 // A projectile with its own look and what happens when it lands.
 export function shoot(w, u, a, o) {
@@ -176,8 +182,8 @@ export const ABILITIES = {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 120).length >= 2 ? 0.7 : 0),
     use(w, u, t, tier) {
       cast(u, 'ability', 0.4); w.shake = Math.max(w.shake, 7);
-      ring(w, u, u.x, u.y, 125, dmgOf(u, 1.2), { knock: 300, heavy: true, stagger: tier >= 2 ? 40 : 0 }, '#E8D8B0');
-      if (tier >= 3) u.later = [...pending(u), { t: 0.5, f: () => ring(w, u, u.x, u.y, 170, dmgOf(u, 0.6), { knock: 220, stagger: 20 }, '#E8D8B0') }];
+      ring(w, u, u.x, u.y, 125, dmgOf(u, 1.2), { knock: 300, heavy: true, stagger: tier >= 2 ? 40 : 0, slam: true }, '#E8D8B0');
+      if (tier >= 3) u.later = [...pending(u), { t: 0.5, f: () => ring(w, u, u.x, u.y, 170, dmgOf(u, 0.6), { knock: 220, stagger: 20, slam: true }, '#E8D8B0') }];
     },
   },
   // ----- Archer
@@ -734,6 +740,7 @@ function whirlTick(w, u, dt) {
 Object.assign(ABILITIES, ABILITIES2); // round 10 (lane H): the new heroes' abilities
 Object.assign(ABILITIES, CHARM_ABILITIES); // round 13 (lane S)
 Object.assign(ABILITIES, ABILITIES3); // round 15 (lane N)
+Object.assign(ABILITIES, ABILITIES_WATER); // round 17 (lane water17)
 const RAY_T = 4, RAY_RANGE = 380;
 const CURE_STATUSES = ['burn', 'chill', 'poison', 'wet', 'shock', 'stagger', 'radiance', 'curse', 'entangle', 'charm', 'confuse', 'sleepy', 'bleed', 'fear', 'shackle'];
 // how far a unit is from the edge of a rectangle (0 inside)
@@ -810,6 +817,7 @@ const ATTACKS = {
 Object.assign(ATTACKS, ATTACKS2);
 Object.assign(ATTACKS, CHARM_ATTACKS); // round 13 (lane S)
 Object.assign(ATTACKS, ATTACKS3); // round 15 (lane N)
+Object.assign(ATTACKS, ATTACKS_WATER); // round 17 (lane water17)
 export const hasOwnAttack = (kind) => !!ATTACKS[kind]; // numbers.js measures these
 export function heroAttack(w, u, t, a) {
   const f = ATTACKS[u.kind]; if (!f || u.summon) return false;
@@ -838,6 +846,7 @@ const rayable = (w, u, o) => dist(u.x, u.y, o.x, o.y) < RAY_RANGE - 40 && !block
 export function kitTick(w, u, dt) {
   kit2Tick(w, u, dt);
   kit3Tick(w, u, dt); // round 15 (lane N)
+  waterTick(w, u, dt); // round 17 (lane water17): the Water Mage's beam
   if (u.kit && u.kit.string) charmTick(w, u, dt); // round 13: the Enchantress's Heartstring
   if (u.kit && u.kit.whirl) whirlTick(w, u, dt);
   if (u.gasForm) { const g = u.gasForm;
@@ -896,6 +905,7 @@ export const TRAITS = {
 Object.assign(TRAITS, TRAITS2);
 Object.assign(TRAITS, CHARM_TRAITS); // round 13 (lane S)
 Object.assign(TRAITS, TRAITS3); // round 15 (lane N)
+Object.assign(TRAITS, TRAITS_WATER); // round 17 (lane water17)
 // Granny's Old Bones is an ability on paper but works like a trait once bought.
 const OLD_BONES = {
   downed(w, u) {
@@ -957,7 +967,7 @@ export function kitThink(w, u) {
   const h = HEROES[k.hero];
   let best = null, bs = 0;
   for (const ab of h.abilities) {
-    const tier = k.tiers[ab.id]; if (!tier || k.cd[ab.id] > 0) continue;
+    const tier = k.tiers[ab.id]; if (!tier || k.cd[ab.id] > 0 || abilityBlocked(u, ab.id, ab)) continue; // (round 17: Silenced, a mouth ability waits)
     const A = ABILITIES[ab.id]; if (!A || A.passiveTier) continue;
     const raw = A.score(w, u, u.target, tier), s = raw * rrange(0.85, 1.15);
     if (AUDIT.on) AUDIT.on('score', w, u, u.target, raw, { ab: ab.id, tier, s }); // (round 16: tools/audit: what each ready ability scored)
@@ -975,7 +985,7 @@ export function kitThink(w, u) {
 export function kitReflex(w, u) {
   const k = u.kit; if (!k || u.act || u.forcedGoal) return false;
   for (const ab of HEROES[k.hero].abilities) {
-    const tier = k.tiers[ab.id], A = ABILITIES[ab.id]; if (!tier || k.cd[ab.id] > 0 || !A || !A.reflex) continue;
+    const tier = k.tiers[ab.id], A = ABILITIES[ab.id]; if (!tier || k.cd[ab.id] > 0 || !A || !A.reflex || abilityBlocked(u, ab.id, ab)) continue;
     if (A.reflex(w, u, u.target, tier) < 0.3) continue;
     if (u.st.sleepy > 0 && chance(SLEEPY.abilCut * fillOf(u, 'sleepy'))) return false;
     fireAbility(w, u, ab); return true;
@@ -999,7 +1009,7 @@ function fireAbility(w, u, best) {
 // abilities at once, will have a chance to trigger randomly while bursted"): kitReady says how many are ready, and
 // kitFireRandom lets off ONE of them, picked at random, whether it's worth it or not, at whatever it is looking at
 // (or the nearest foe). sim.js rolls the chance each tick while it is addled.
-const readyAbs = (u) => { const k = u.kit; return k ? HEROES[k.hero].abilities.filter((ab) => { const A = ABILITIES[ab.id]; return k.tiers[ab.id] && !(k.cd[ab.id] > 0) && A && !A.passiveTier && A.use; }) : []; };
+const readyAbs = (u) => { const k = u.kit; return k ? HEROES[k.hero].abilities.filter((ab) => { const A = ABILITIES[ab.id]; return k.tiers[ab.id] && !(k.cd[ab.id] > 0) && A && !A.passiveTier && A.use && !abilityBlocked(u, ab.id, ab); }) : []; };
 export const kitReady = (u) => readyAbs(u).length;
 export function kitFireRandom(w, u) {
   const list = readyAbs(u); if (!list.length) return false;

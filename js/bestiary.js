@@ -291,6 +291,7 @@ export const STATUSES = {
   terrified: { name: 'Terrified', desc: 'Running for its life: it can\'t attack or use an ability, the ones it had ready went to waste, and its panic frightens its friends nearby.' },
   // round 15 (lane N): the Warden's (numbers: statuses.js SHACKLE; rules: docs/STATUSES.md)
   shackle: { name: 'Shackles', desc: 'Irons closing on its wrists: its abilities come round slower and slower. Full up, they lock.' },
+  silenced: { name: 'Silenced', desc: 'Its mouth is shut: no shout, song, howl, breath, bite or kiss, nothing it does with its mouth. Everything else it does as ever. Bosses for less time.' }, // round 17 (lane tags17)
   shackled: { name: 'Shackled', desc: 'In irons: it can\'t make a basic attack, and every ability it has was set back by half its cooldown when the irons locked. Bosses shake them off far sooner and lose only a quarter.' },
   // round 15 (lane E): the newer heroes' own, lifted into the statuses (numbers: statuses.js HERO_STATUS; rules: docs/STATUSES.md)
   whirled: { name: 'Whirled', desc: 'Caught in the wind: every shove it takes throws it further, up to twice as far. Full up, it is flung about three times and can\'t act till it lands.' },
@@ -377,6 +378,8 @@ export const BUFFS = {
   stopped: { name: 'Stopped', icon: 'debuff', bad: true, desc: 'Stopped mid-step: its clock is not running.' },
   pressed: { name: 'Pressed', icon: 'debuff', bad: true, desc: 'A great weight on its shoulders.' },
   quake: { name: 'Shaken', icon: 'debuff', bad: true, desc: 'The floor won\'t hold still under it.' },
+  // round 17 (lane water17): the Water Mage
+  bubbled: { name: 'Bubble Shield', icon: 'ward', desc: 'In a bubble of water: magic can\'t get through it; swords, arrows and teeth can. Soaked when it pops.' },
   beloved: { name: 'Sweetheart', icon: 'charm', desc: 'Blown a kiss: whoever hits it falls for it, and soon can\'t hit it at all.' },
 };
 // States that aren't buffs (hud.js STATES reads the unit for these; the words are here so the Book can show them all).

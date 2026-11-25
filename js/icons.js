@@ -169,6 +169,9 @@ const STATUS = {
     <ellipse cx="22" cy="20" rx="4" ry="2.800" fill="none" stroke="${INK}" stroke-width="5"/><ellipse cx="22" cy="20" rx="4" ry="2.800" fill="none" stroke="#DCE3EC" stroke-width="1.800" ${H}/><ellipse cx="26.500" cy="25.500" rx="2.800" ry="4" fill="none" stroke="${INK}" stroke-width="5"/><ellipse cx="26.500" cy="25.500" rx="2.800" ry="4" fill="none" stroke="#A9B4C6" stroke-width="1.800" ${H}/>`,
   shackled: `<circle cx="9" cy="15" r="6" fill="none" stroke="${INK}" stroke-width="7"/><circle cx="9" cy="15" r="6" fill="none" stroke="#A9B4C6" stroke-width="3.200" ${H}/><circle cx="23" cy="15" r="6" fill="none" stroke="${INK}" stroke-width="7"/><circle cx="23" cy="15" r="6" fill="none" stroke="#A9B4C6" stroke-width="3.200" ${H}/>
     <path d="M12 6.500h8v6h-8z" fill="#E8B53A"/><circle cx="16" cy="9.500" r="1.300" fill="${INK}" ${H}/><path d="M6 25h20" fill="none" stroke="${INK}" stroke-width="6" stroke-linecap="round"/><path d="M6 25h20" fill="none" stroke="#DCE3EC" stroke-width="2.400" stroke-dasharray="3 2.500" ${H}/>`,
+  // round 17 (lane tags17): silenced, a speech bubble struck through in red (its mouth shut)
+  silenced: `<path d="M16 5c7 0 12 4 12 9.500S23 24 16 24c-1.400 0-2.800-.200-4-.500L5 28l2.400-6C5.300 20 4 17.400 4 14.500 4 9 9 5 16 5z" fill="#FFFBEA" stroke="${INK}" stroke-width="2.600" stroke-linejoin="round"/>
+    <circle cx="11" cy="14.500" r="1.700" fill="${INK}"/><circle cx="16" cy="14.500" r="1.700" fill="${INK}"/><circle cx="21" cy="14.500" r="1.700" fill="${INK}"/><path d="M5 24L27 6" fill="none" stroke="${INK}" stroke-width="6" stroke-linecap="round"/><path d="M5 24L27 6" fill="none" stroke="#E5484D" stroke-width="3" stroke-linecap="round"/>`,
   // ---- round 15 (lane E): the newer heroes' eight, lifted into the statuses (plain stand-ins in the look above)
   // whirled builds (a white curl of wind and two gusts), spun builds (a gold arrow turning back on itself)
   whirled: `<path d="M17 15.500a2.600 2.600 0 1 0-3.200 3 5.600 5.600 0 1 0 7.400-6.800A9 9 0 1 0 8.500 24" fill="none" stroke="${INK}" stroke-width="6" stroke-linecap="round"/><path d="M17 15.500a2.600 2.600 0 1 0-3.200 3 5.600 5.600 0 1 0 7.400-6.800A9 9 0 1 0 8.500 24" fill="none" stroke="#EEF3F8" stroke-width="2.600" stroke-linecap="round" ${H}/>
@@ -234,6 +237,10 @@ const G = {
   null: `<circle cx="16" cy="16" r="11" fill="none" stroke="${INK}" stroke-width="7.500"/><circle cx="16" cy="16" r="11" fill="none" stroke="#C9D2DE" stroke-width="3.400" ${H}/><path d="M8 24L24 8" fill="none" stroke="${INK}" stroke-width="7.500" stroke-linecap="round"/><path d="M8 24L24 8" fill="none" stroke="#C9D2DE" stroke-width="3.400" stroke-linecap="round" ${H}/>`,
   rock: `<path d="M6 20l3-10 8-5 9 4 2 10-6 8H10z" fill="#A99C8B"/><path d="M9 10l8-5 3 7-7 4z" fill="#E9DDC2" ${H}/><path d="M3 6l3 2M26 3l-2 3M29 24l-3-1" fill="none" stroke="#B58CFF" stroke-width="2.400" stroke-linecap="round"/>`,
   spike: `<path d="M3 28l5-15 4 9 4-19 4 19 4-9 5 15z" fill="#A99C8B"/><path d="M16 3l-2 12 2 6z" fill="#E9DDC2" ${H}/><path d="M8 13l-1 8 2 4z" fill="#E9DDC2" ${H}/>`,
+  // round 17 (lane water17): the Water Mage
+  bubble: `<circle cx="16" cy="16" r="12" fill="#BFE9F8" opacity=".55"/><circle cx="16" cy="16" r="12" fill="none" stroke="${INK}" stroke-width="5.4"/><circle cx="16" cy="16" r="12" fill="none" stroke="#9FE0FF" stroke-width="2.4" ${H}/><path d="M9 12a8 8 0 0 1 5-5" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" ${H}/><circle cx="23" cy="22" r="1.8" fill="#FFFFFF" ${H}/>`,
+  dome: `<path d="M3 26a13 13 0 0 1 26 0z" fill="#5DB7E0" opacity=".45"/><path d="M3 26a13 13 0 0 1 26 0" fill="none" stroke="${INK}" stroke-width="5.4"/><path d="M3 26a13 13 0 0 1 26 0" fill="none" stroke="#BFE9F8" stroke-width="2.4" ${H}/><path d="M2 27h28" fill="none" stroke="${INK}" stroke-width="4.4"/><path d="M2 27h28" fill="none" stroke="#5DB7E0" stroke-width="2" ${H}/><path d="M8 19a9 9 0 0 1 4-5" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" ${H}/>`,
+  jet: `<path d="M3 13h17l9-4v14l-9-4H3z" fill="#5DB7E0"/><path d="M3 13h17l9-4v14l-9-4H3z" fill="none" stroke="${INK}" stroke-width="2.4"/><path d="M4 16h22" fill="none" stroke="#F2FBFF" stroke-width="2.2" stroke-linecap="round" ${H}/><circle cx="27" cy="6" r="2" fill="#BFE9F8"/><circle cx="29" cy="26" r="1.8" fill="#BFE9F8"/>`,
   // round 13 (lane S): the Enchantress
   kiss: `<path d="M16 28C6 21 3 16 3 11.5a6.5 6.5 0 0 1 13-1.5 6.5 6.5 0 0 1 13 1.5C29 16 26 21 16 28z" fill="#FF8AC8"/><path d="M10 15c2 2 4 2 6 0 2 2 4 2 6 0-2 3.6-10 3.6-12 0z" fill="#C8306E" ${H}/><path d="M8 10a4 4 0 0 1 4-3" fill="none" stroke="#FFE0F0" stroke-width="2" ${H}/>`,
   string: `<path d="M4 26C10 20 8 10 16 10s6 10 12 4" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/><path d="M4 26C10 20 8 10 16 10s6 10 12 4" fill="none" stroke="#FF8AC8" stroke-width="2.2" stroke-linecap="round" ${H}/>
@@ -255,7 +262,8 @@ export const ABILITY_COLOR = { shield: '#5B8CDB', sun: '#F2C84A', dash: '#C8C0B0
   dagger: '#B8C4D4', flame: '#FF7A2F', bolt: '#F2E04A', cloud: '#9AA8BC', heart: '#7CC06F', note: '#FFD27A', leaf: '#7FA04A',
   skull: '#D9D2C0', vial: '#9BCB3C', swirl: '#D8DEE8', hook: '#A8A8B0', fist: '#E0604B', up: '#E8B53A', paw: '#A0683A',
   drain: '#C8553D', wall: '#9FDDF6', sleep: '#C9B8FF', vines: '#7FA04A', wave: '#E0B070', kiss: '#FF8AC8', string: '#FF8AC8', heartbreak: '#FF5AAE',
-  clock: '#DEAF59', chain: '#A9B4C6', null: '#C9D2DE', rock: '#B58CFF', spike: '#A99C8B' }; // (round 15, lane N: the last five)
+  clock: '#DEAF59', chain: '#A9B4C6', null: '#C9D2DE', rock: '#B58CFF', spike: '#A99C8B', // (round 15, lane N: those five)
+  bubble: '#9FE0FF', dome: '#5DB7E0', jet: '#5DB7E0' }; // (round 17, lane water17: the Water Mage's three)
 export const abilityGlyph = (id) => ABILITY_GLYPH[id] || GLYPH2[id] || 'burst';
 
 // ---------------------------------------------------------------- the one entry point

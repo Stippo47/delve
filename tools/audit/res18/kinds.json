@@ -1,0 +1,10627 @@
+[
+ {
+  "kind": "rat",
+  "name": "Rat",
+  "base": null,
+  "where": [
+   "sewers1",
+   "sewers2",
+   "sewers:extra",
+   "crypt1"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Small and quick. Darts in, bites, darts off.",
+  "fun": "There is never just one. If you see one rat, there are six rats, and one of them is behind you.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "slime",
+  "name": "Slime",
+  "base": null,
+  "where": [
+   "wildwood1",
+   "sewers1",
+   "sewers1:mini",
+   "sewers2",
+   "sewers:extra"
+  ],
+  "flags": [
+   "hops"
+  ],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Hops at you and lands on you: the landing is its blow. Up in a hop, nothing on the floor touches it. Splits into slimelets when it dies.",
+  "fun": "Mostly water, partly floor, slightly whoever it ate last week. Hit it hard enough and you get two smaller problems.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "slimeSmall",
+  "name": "Slimelet",
+  "base": null,
+  "where": [
+   "sewers1"
+  ],
+  "flags": [
+   "hops"
+  ],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Weak alone, annoying in a crowd. Quick little hops.",
+  "fun": "A slime's children. They take after their parent: wobbly, sticky, unbothered.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "skeleton",
+  "name": "Skeleton",
+  "base": null,
+  "where": [],
+  "flags": [],
+  "res": {
+   "poison": 0.35,
+   "burn": 0.8,
+   "chill": 1.2
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Winds up a heavy swing. Cold bites it; poison barely takes.",
+  "fun": "Got up one day and simply never stopped. Doesn't know why it fights. Fights anyway.",
+  "takes": {
+   "plain": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "boss",
+  "name": "Bone King",
+  "base": null,
+  "where": [],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "poison": 0.3,
+   "burn": 0.6,
+   "chill": 0.6
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Slams the ground.",
+  "fun": "An older Bone King, from before the crown fit.",
+  "takes": {
+   "plain": {
+    "burn": 0.6,
+    "chill": 0.6,
+    "poison": 0.3,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "wolf",
+  "name": "Wolf",
+  "base": null,
+  "where": [
+   "wildwood1",
+   "wildwood1:adds",
+   "wildwood2",
+   "wildwood3",
+   "wildwood:extra"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Circles, then lunges. Its howl turns the whole pack onto one hero.",
+  "fun": "Never alone, never quiet about it. If one howls, count the trees and assume each one is a wolf.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "rattler",
+  "name": "Rattler",
+  "base": null,
+  "where": [
+   "crypt1",
+   "crypt:extra"
+  ],
+  "flags": [],
+  "res": {
+   "poison": 0.35,
+   "burn": 0.8,
+   "chill": 1.2
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "A plain bony fighter. Shrugs off poison; cold bites it.",
+  "fun": "You hear it a room away. Every step sounds like someone dropping a box of spoons.",
+  "takes": {
+   "plain": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "rattlerBow",
+  "name": "Bone Archer",
+  "base": null,
+  "where": [
+   "crypt1",
+   "crypt2",
+   "crypt:extra"
+  ],
+  "flags": [],
+  "res": {
+   "poison": 0.35,
+   "burn": 0.8,
+   "chill": 1.2
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Keeps its distance and shoots.",
+  "fun": "Lost its jaw, kept its aim. Still holds a grudge about the jaw.",
+  "takes": {
+   "plain": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "rattlerSpear",
+  "name": "Bone Spear",
+  "base": null,
+  "where": [
+   "crypt2",
+   "crypt3",
+   "crypt:extra"
+  ],
+  "flags": [],
+  "res": {
+   "poison": 0.35,
+   "burn": 0.8,
+   "chill": 1.2
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Pokes from further away than you'd like.",
+  "fun": "Has a spear and the reach to prove it. Thinks the front line is a personality.",
+  "takes": {
+   "plain": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "rattlerMace",
+  "name": "Loose Jaw",
+  "base": null,
+  "where": [
+   "crypt1:mini",
+   "crypt2",
+   "crypt3"
+  ],
+  "flags": [],
+  "res": {
+   "poison": 0.35,
+   "burn": 0.8,
+   "chill": 1.2
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Heavy blows that knock heroes back.",
+  "fun": "The jaw hangs by a thread and the mace hangs by a grudge. Both swing.",
+  "takes": {
+   "plain": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "gaper",
+  "name": "Gaper",
+  "base": null,
+  "where": [
+   "crypt2",
+   "crypt3"
+  ],
+  "flags": [],
+  "res": {
+   "poison": 0.35,
+   "burn": 0.8,
+   "chill": 1.2
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Charges through a line with its swords in a V, then spins.",
+  "fun": "Mouth open since the day it died. Nobody has had the heart to tell it.",
+  "takes": {
+   "plain": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "brute",
+  "name": "Brute",
+  "base": null,
+  "where": [
+   "crypt3",
+   "crypt:extra"
+  ],
+  "flags": [],
+  "res": {
+   "poison": 0.35,
+   "burn": 0.8,
+   "chill": 1.2
+  },
+  "armour": 3,
+  "puts": [],
+  "habit": "Big, slow, hits like a falling door.",
+  "fun": "Built like a wardrobe someone filled with bones and anger.",
+  "takes": {
+   "plain": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "ghost",
+  "name": "Ghost",
+  "base": null,
+  "where": [
+   "crypt1",
+   "crypt2",
+   "crypt3"
+  ],
+  "flags": [],
+  "res": {
+   "poison": 0,
+   "burn": 1.3,
+   "chill": 0.2,
+   "curse": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Floats up close; its touch makes you drowsy, and enough of it puts you to sleep. Poison does nothing to it, fire does plenty.",
+  "fun": "Somebody's great-great-grandmother. She did not like your boots.",
+  "takes": {
+   "plain": {
+    "burn": 1.3,
+    "chill": 0.2,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.3,
+    "chill": 0.2,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.3,
+    "chill": 0.2,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "lizardman",
+  "name": "Lizardman",
+  "base": null,
+  "where": [
+   "sewers2",
+   "sewers3",
+   "sewers:extra"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 0.8,
+   "chill": 1.4
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "A spear with reach, and a tail it whips round in a spin. Cold slows it.",
+  "fun": "Cold-blooded, warm-hearted, sharp-speared. Likes long walks in damp tunnels.",
+  "takes": {
+   "plain": {
+    "burn": 0.8,
+    "chill": 1.4,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.8,
+    "chill": 1.4,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.8,
+    "chill": 1.4,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "lizardBlade",
+  "name": "Lizard Blade",
+  "base": null,
+  "where": [
+   "sewers2",
+   "sewers2:mini",
+   "sewers3",
+   "sewers:extra"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 0.8,
+   "chill": 1.4
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Darts in with blades, slips back out.",
+  "fun": "The quick one of the family. Has never once waited its turn.",
+  "takes": {
+   "plain": {
+    "burn": 0.8,
+    "chill": 1.4,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.8,
+    "chill": 1.4,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.8,
+    "chill": 1.4,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "goblin",
+  "name": "Goblin",
+  "base": null,
+  "where": [
+   "wildwood1",
+   "warren1",
+   "warren2",
+   "warren3",
+   "warren:extra"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Fast and flimsy. Gangs up on whoever is alone.",
+  "fun": "Three goblins in a coat would still be shorter than you. They come in fives.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "hobgoblin",
+  "name": "Hobgoblin",
+  "base": null,
+  "where": [
+   "warren1",
+   "warren1:mini",
+   "warren2",
+   "warren3",
+   "warren:extra"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "A tougher goblin with a proper weapon.",
+  "fun": "A goblin who ate its greens. Every single one of them.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "orc",
+  "name": "Orc",
+  "base": null,
+  "where": [
+   "warren2",
+   "warren2:mini",
+   "warren3",
+   "warren:extra"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Hits hard and takes a beating.",
+  "fun": "Loud, proud and mostly shoulders. Settles every argument the same way.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "orcShaman",
+  "name": "Orc Shaman",
+  "base": null,
+  "where": [
+   "warren2",
+   "warren3"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Hangs back and lobs fireballs that burst and burn.",
+  "fun": "Shakes a stick with feathers on it, then throws fire. The feathers are mostly for show.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "troll",
+  "name": "Troll",
+  "base": null,
+  "where": [
+   "warren3",
+   "warren:extra"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 1.4
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Huge and slow. Left alone, it grows back what it lost, unless it has been burned.",
+  "fun": "Heals faster than you can be rude to it. Very rude, very fast.",
+  "takes": {
+   "plain": {
+    "burn": 1.4,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.4,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.4,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "graveWarden",
+  "name": "Grave Warden",
+  "base": null,
+  "where": [
+   "crypt2:mini",
+   "crypt:warden"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "poison": 0.35,
+   "burn": 0.8,
+   "chill": 1.2
+  },
+  "armour": 4,
+  "puts": [],
+  "habit": "Guards the way down. Heavy, patient, cruel.",
+  "fun": "Keeps the crypt's keys and the crypt's rules. Rule one: nobody leaves.",
+  "takes": {
+   "plain": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "lizardChief",
+  "name": "Lizard Chief",
+  "base": null,
+  "where": [
+   "sewers:boss"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "burn": 0.8,
+   "chill": 1.2
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "A warden: quick and brutal.",
+  "fun": "Wears the biggest blade and the smuggest face in the drains.",
+  "takes": {
+   "plain": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "warboss",
+  "name": "Orc Warboss",
+  "base": null,
+  "where": [
+   "warren:boss"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "A warden: shouts, charges, smashes.",
+  "fun": "Became boss the orc way: by being the last one standing in the room.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "boneKing",
+  "name": "The Bone King",
+  "base": null,
+  "where": [
+   "crypt:boss"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "poison": 0.3,
+   "burn": 0.6,
+   "chill": 0.5,
+   "curse": 0,
+   "radiance": 0.5
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "The last boss. Calls his dead, slams, sweeps the room.",
+  "fun": "He was a king once. Now he is mostly crown. He would like his kingdom back, and yours too.",
+  "takes": {
+   "plain": {
+    "burn": 0.6,
+    "chill": 0.5,
+    "poison": 0.3,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0.5,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "bat",
+  "name": "Cave Bat",
+  "base": null,
+  "where": [
+   "frost1",
+   "frost2"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "snowman",
+  "name": "Snowman",
+  "base": null,
+  "where": [
+   "frost1",
+   "frost1:mini",
+   "frost3",
+   "frost:extra"
+  ],
+  "flags": [],
+  "res": {
+   "chill": 0.1,
+   "burn": 1.6
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1.6,
+    "chill": 0.1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.6,
+    "chill": 0.1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.6,
+    "chill": 0.1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "spiderHunter",
+  "name": "Hunter Spider",
+  "base": null,
+  "where": [
+   "sewers3",
+   "frost2"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [
+   "poison:22"
+  ],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "spiderMomma",
+  "name": "Momma Spider",
+  "base": null,
+  "where": [
+   "frost2",
+   "frost2:mini",
+   "frost:warden"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "banshee",
+  "name": "Banshee",
+  "base": null,
+  "where": [
+   "crypt2",
+   "crypt3",
+   "frost3"
+  ],
+  "flags": [
+   "undead"
+  ],
+  "res": {
+   "poison": 0,
+   "burn": 1.3,
+   "chill": 0.2,
+   "curse": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1.3,
+    "chill": 0.2,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.3,
+    "chill": 0.2,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.3,
+    "chill": 0.2,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "ogre",
+  "name": "Ogre",
+  "base": null,
+  "where": [
+   "warren3"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "imp",
+  "name": "Imp",
+  "base": null,
+  "where": [
+   "ember1",
+   "ember2",
+   "ember3",
+   "ember:extra"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "fireSlime",
+  "name": "Fire Slime",
+  "base": null,
+  "where": [
+   "sewers3",
+   "ember1",
+   "ember1:mini",
+   "ember2"
+  ],
+  "flags": [
+   "hops"
+  ],
+  "res": {
+   "burn": 0,
+   "chill": 1.5
+  },
+  "armour": 0,
+  "puts": [
+   "burn:18"
+  ],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 1.5,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0,
+    "chill": 1.5,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0,
+    "chill": 1.5,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "devil",
+  "name": "Devil",
+  "base": null,
+  "where": [
+   "ember2",
+   "ember3",
+   "ember:extra"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 0.2
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0.2,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.2,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.2,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "succubus",
+  "name": "Succubus",
+  "base": "devil",
+  "where": [
+   "ember2",
+   "ember3"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 0.2
+  },
+  "armour": 0,
+  "puts": [
+   "charm:8"
+  ],
+  "habit": "Every few seconds she answers a blow with a kiss that charms whoever struck it. She goes for the charmed and hits them harder, and every so often blows a kiss at whoever is closest to falling for her: a hero charmed full up fights for her for a while, and one half charmed cannot bring itself to hit her.",
+  "fun": "Has a lovely smile, and she knows it. So, before long, will you.",
+  "takes": {
+   "plain": {
+    "burn": 0.2,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.2,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.2,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "demon",
+  "name": "Demon",
+  "base": null,
+  "where": [
+   "ember3",
+   "ember:extra"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 0.2
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0.2,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.2,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.2,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "dragonborn",
+  "name": "Dragonborn",
+  "base": null,
+  "where": [
+   "ember2",
+   "ember3"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 0.3
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0.3,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.3,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.3,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "cherub",
+  "name": "Cherub",
+  "base": null,
+  "where": [
+   "spire1",
+   "spire2",
+   "spire3",
+   "spire:extra"
+  ],
+  "flags": [],
+  "res": {
+   "radiance": 0
+  },
+  "armour": 0,
+  "puts": [
+   "radiance:12"
+  ],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "angel",
+  "name": "Angel",
+  "base": null,
+  "where": [
+   "spire1",
+   "spire1:mini",
+   "spire2",
+   "spire3",
+   "spire:extra"
+  ],
+  "flags": [],
+  "res": {
+   "radiance": 0
+  },
+  "armour": 0,
+  "puts": [
+   "radiance:22"
+  ],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "seraph",
+  "name": "Seraph",
+  "base": null,
+  "where": [
+   "spire2",
+   "spire3"
+  ],
+  "flags": [],
+  "res": {
+   "radiance": 0
+  },
+  "armour": 0,
+  "puts": [
+   "radiance:20"
+  ],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "broodQueen",
+  "name": "Brood Queen",
+  "base": null,
+  "where": [],
+  "flags": [
+   "boss"
+  ],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "frostGiant",
+  "name": "Old Frost",
+  "base": null,
+  "where": [
+   "frost:boss"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "chill": 0,
+   "burn": 1.4
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1.4,
+    "chill": 0,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "pitLord",
+  "name": "Pit Lord",
+  "base": null,
+  "where": [
+   "ember2:mini",
+   "ember:warden"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "burn": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "A whip of fire down a line, rifts near the party that spit imps, a ring of fire, and a slam.",
+  "fun": "Runs the pit like a foreman runs a building site, except with more whips and fewer breaks.",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "archfiend",
+  "name": "The Archfiend",
+  "base": null,
+  "where": [
+   "ember:boss"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "burn": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "archon",
+  "name": "Archon",
+  "base": null,
+  "where": [],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "radiance": 0
+  },
+  "armour": 0,
+  "puts": [
+   "radiance:25"
+  ],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "radiant",
+  "name": "The Radiant",
+  "base": null,
+  "where": [
+   "spire:boss"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "radiance": 0
+  },
+  "armour": 0,
+  "puts": [
+   "radiance:25"
+  ],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "direWolf",
+  "name": "Dire Wolf",
+  "base": "wolf",
+  "where": [
+   "wildwood3"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Pounces from far off and pins whoever it lands on.",
+  "fun": "The wolf other wolves tell stories about. The stories end with someone being sat on.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "slimeBig",
+  "name": "Big Slime",
+  "base": "slime",
+  "where": [
+   "wildwood1",
+   "wildwood1:elite"
+  ],
+  "flags": [
+   "hops"
+  ],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Spits slime balls. Bursts into two slimes, which burst into slimelets.",
+  "fun": "What a slime becomes if you leave it alone long enough. Nobody has left one alone long enough to see what comes next.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "slimePoison",
+  "name": "Poison Slime",
+  "base": "slime",
+  "where": [
+   "wildwood1",
+   "wildwood3",
+   "sewers1"
+  ],
+  "flags": [
+   "hops"
+  ],
+  "res": {
+   "poison": 0
+  },
+  "armour": 0,
+  "puts": [
+   "poison:18"
+  ],
+  "habit": "Its touch poisons, and its splitting leaves a cloud of poison behind. Poison does nothing to it.",
+  "fun": "Glows a cheerful lime green. The cheer is a lie.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "slimeletPoison",
+  "name": "Poison Slimelet",
+  "base": "slimeSmall",
+  "where": [],
+  "flags": [
+   "hops"
+  ],
+  "res": {
+   "poison": 0
+  },
+  "armour": 0,
+  "puts": [
+   "poison:10"
+  ],
+  "habit": "Its touch poisons.",
+  "fun": "Small, green and very keen to share.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "goblinOrange",
+  "name": "Orange Goblin",
+  "base": "goblin",
+  "where": [
+   "wildwood1"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Half again as fast as a goblin; darts in, strikes, darts out, never still.",
+  "fun": "Ate something orange once and never slowed down again.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "bandit",
+  "name": "Bandit",
+  "base": null,
+  "where": [
+   "wildwood2",
+   "wildwood2:adds"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Sword and shield: blocks from the front and bashes you back.",
+  "fun": "Your money or your life. Mostly your money. Then your life, out of habit.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "banditTorch",
+  "name": "Torch Bandit",
+  "base": "bandit",
+  "where": [
+   "wildwood2"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [
+   "burn:10"
+  ],
+  "habit": "Its blows singe, and it sweeps the torch round in a burst of fire.",
+  "fun": "Brought a torch to a sword fight. It is working out better than you would think.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "banditGreat",
+  "name": "Greatsword Bandit",
+  "base": "bandit",
+  "where": [
+   "wildwood2"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Slow, wide swings, and a whirling sweep all round.",
+  "fun": "Compensating for something. The something is a very long sword.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "banditAxe",
+  "name": "Axe Bandit",
+  "base": "bandit",
+  "where": [
+   "wildwood2"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [
+   "stagger:20"
+  ],
+  "habit": "Heavy, staggering chops, and it throws the axe at anyone a little way off.",
+  "fun": "Believes every problem is a log. You are now a log.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "banditSpear",
+  "name": "Spear Bandit",
+  "base": "bandit",
+  "where": [
+   "wildwood2"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "A reaching thrust and a lunge, spear first.",
+  "fun": "Likes to keep strangers at arm's length. Its arm is very long.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "banditDagger",
+  "name": "Knife Bandit",
+  "base": "bandit",
+  "where": [
+   "wildwood2",
+   "wildwood2:adds"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [
+   "poison:8"
+  ],
+  "habit": "Quick and slippery: cuts that poison, then gone.",
+  "fun": "Two knives, no manners. The knives are poisoned; the manners never were.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "poacher",
+  "name": "Poacher",
+  "base": null,
+  "where": [
+   "wildwood2",
+   "wildwood2:adds"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "A bow, and a net now and then that holds you fast.",
+  "fun": "Hunts anything that moves. You moved.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "banditBrute",
+  "name": "Bandit Brute",
+  "base": null,
+  "where": [
+   "wildwood2",
+   "wildwood2:elite",
+   "wildwood:extra"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 2,
+  "puts": [],
+  "habit": "A slow wind-up slam that sends heroes flying.",
+  "fun": "Wears a bear. Nobody asks what happened to the bear.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "boar",
+  "name": "Thornback Boar",
+  "base": null,
+  "where": [
+   "wildwood3"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Charges in a straight line. Running into a wall or a rock dazes it.",
+  "fun": "Has exactly one idea and is very committed to it.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "sproutling",
+  "name": "Sproutling",
+  "base": null,
+  "where": [
+   "wildwood3",
+   "wildwood3:adds",
+   "wildwood:extra"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 1.6
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Darts in for a short jab. Left alone, it roots and turns into a little turret.",
+  "fun": "A tree's idea of a child. Cute, until it puts its roots down and starts spitting.",
+  "takes": {
+   "plain": {
+    "burn": 1.6,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.6,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.6,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "ent",
+  "name": "Ent",
+  "base": null,
+  "where": [
+   "wildwood3",
+   "wildwood3:elite"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 1.8,
+   "entangle": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Roots burst up in a line that entangles. Hit it hard and a sproutling falls off. Fire bites it.",
+  "fun": "Slow to anger. Slower to calm down. Has been angry since the last war, and the one before.",
+  "takes": {
+   "plain": {
+    "burn": 1.8,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 0,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.8,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 0,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.8,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 0,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "wisp",
+  "name": "Wisp",
+  "base": null,
+  "where": [
+   "wildwood3",
+   "wildwood3:adds"
+  ],
+  "flags": [],
+  "res": {
+   "poison": 0,
+   "curse": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Mends the beasts near it and blinks away from danger. Kill it first.",
+  "fun": "A light in the wood that leads travellers astray. It leads wolves to the travellers.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "alpha",
+  "name": "The Alpha",
+  "base": null,
+  "where": [
+   "wildwood1:mini",
+   "wildwood:warden"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "A mini-boss. Calls the pack, howls them faster, pounces and pins, rends up close.",
+  "fun": "The pack's whole opinion, in one wolf.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "banditChief",
+  "name": "The Bandit Chief",
+  "base": null,
+  "where": [
+   "wildwood2:mini"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "A mini-boss. Whistles up his gang or a wolf, throws knives in a fan, and vanishes in smoke to come out elsewhere.",
+  "fun": "Runs the camp, the road and the protection racket. Mostly runs, when it suits him.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "elderEnt",
+  "name": "The Elder Ent",
+  "base": null,
+  "where": [
+   "wildwood:boss"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "burn": 1,
+   "chill": 0,
+   "poison": 0,
+   "wet": 0,
+   "shock": 0,
+   "stagger": 0,
+   "radiance": 0,
+   "curse": 0,
+   "entangle": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "The Wildwood's boss. Roots, root cages, falling branches, a grove that feeds it. Burning, it rampages: hits harder and faster, takes twice as much, and every blow burns.",
+  "fun": "The oldest thing in the wood. It was here before the wood, and it remembers who cut the first tree.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "mouse",
+  "name": "Mouse",
+  "base": "rat",
+  "where": [
+   "warren1"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Tiny, quick, nibbles. Comes with the goblins.",
+  "fun": "A goblin's best friend. Goblins are not great friends.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "dynamouse",
+  "name": "Dynamite Mouse",
+  "base": "rat",
+  "where": [
+   "warren1"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Runs up to you, fizzes, and blows.",
+  "fun": "Somebody strapped a stick of dynamite to a mouse. The mouse is thrilled.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "goblinSpear",
+  "name": "Spear Goblin",
+  "base": "goblin",
+  "where": [
+   "warren1",
+   "warren2"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Throws a spear that cuts on the way out and on the way back.",
+  "fun": "Throws its spear and catches it again. Has dropped it only twice. Both times on its foot.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "goblinBomber",
+  "name": "Goblin Bomber",
+  "base": "goblin",
+  "where": [
+   "warren1",
+   "warren2"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Lobs bombs that sit fizzing a moment before they blow.",
+  "fun": "Red cap, short fuse, shorter life expectancy.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "goblinSuicide",
+  "name": "Suicide Bomber",
+  "base": "goblin",
+  "where": [
+   "warren2",
+   "warren3"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Runs up, stands next to you a moment, and explodes. Kill it quickly.",
+  "fun": "Has a plan. The plan has one step. Kill it before the step.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "drummer",
+  "name": "Drummer",
+  "base": "goblin",
+  "where": [
+   "warren2",
+   "warren3"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Does no damage; everything near it attacks faster while it plays.",
+  "fun": "Cannot fight, cannot sing, will not stop drumming.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "wolfRider",
+  "name": "Wolf Rider",
+  "base": null,
+  "where": [
+   "warren2"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Charges through the party, spear first. When the wolf falls, the goblin fights on.",
+  "fun": "Two bad tempers stacked one on the other.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "frostShaman",
+  "name": "Frost Shaman",
+  "base": "orcShaman",
+  "where": [
+   "warren3"
+  ],
+  "flags": [],
+  "res": {
+   "chill": 0.2,
+   "burn": 1.3
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Frost balls that chill, and ice totems that freeze everyone near them.",
+  "fun": "The orc shaman's cousin from up north. Brought the weather with him.",
+  "takes": {
+   "plain": {
+    "burn": 1.3,
+    "chill": 0.2,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.3,
+    "chill": 0.2,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.3,
+    "chill": 0.2,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "iceTotem",
+  "name": "Ice Totem",
+  "base": null,
+  "where": [],
+  "flags": [
+   "noElite"
+  ],
+  "res": {
+   "chill": 0,
+   "poison": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Chills everyone near it until it breaks or melts.",
+  "fun": "A lump of ice with a face carved on it. The face is judging you.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 0,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "rockTroll",
+  "name": "Rock Troll",
+  "base": "troll",
+  "where": [
+   "warren3"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 1.4
+  },
+  "armour": 5,
+  "puts": [],
+  "habit": "Pushes a boulder before it. Rolls it at you, or charges behind it. The boulder can't be hurt.",
+  "fun": "Rolls a boulder everywhere it goes. Has never once wondered why.",
+  "takes": {
+   "plain": {
+    "burn": 1.4,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.4,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.4,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "ratPlague",
+  "name": "Plague Rat",
+  "base": "rat",
+  "where": [
+   "sewers1",
+   "sewers3",
+   "sewers:extra"
+  ],
+  "flags": [],
+  "res": {
+   "poison": 0
+  },
+  "armour": 0,
+  "puts": [
+   "poison:14"
+  ],
+  "habit": "Its bite poisons; it bursts into a cloud of poison when it dies.",
+  "fun": "Green, damp, and coughing. Do not let it sneeze on you.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "ratKing",
+  "name": "Rat King",
+  "base": "rat",
+  "where": [
+   "sewers3"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Rats break loose from it as it's hurt, and three more when it dies.",
+  "fun": "Ten rats with one idea, all of them knotted at the tail.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "slimeSludge",
+  "name": "Sludge Slime",
+  "base": "slime",
+  "where": [
+   "sewers1",
+   "sewers3"
+  ],
+  "flags": [
+   "hops"
+  ],
+  "res": {
+   "burn": 1.4
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Leaves oil when it dies. Burning, it moves twice as fast; dying burning, it leaves fire and no slimes.",
+  "fun": "Half slime, half sump. Smells like a lamp that has given up.",
+  "takes": {
+   "plain": {
+    "burn": 1.4,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.4,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.4,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "croc",
+  "name": "Croc",
+  "base": null,
+  "where": [
+   "sewers2",
+   "sewers3"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 0.8,
+   "chill": 1.3
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Chops with two axes; its bite holds a hero and drags them off. Hits wet heroes harder.",
+  "fun": "Two axes and a smile with too many teeth in it.",
+  "takes": {
+   "plain": {
+    "burn": 0.8,
+    "chill": 1.3,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.8,
+    "chill": 1.3,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.8,
+    "chill": 1.3,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "crab",
+  "name": "Sewer Crab",
+  "base": null,
+  "where": [
+   "sewers2",
+   "sewers:extra"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 4,
+  "puts": [],
+  "habit": "Comes in on wide circles, always facing you. Armoured in front.",
+  "fun": "Walks sideways, thinks sideways, pinches straight ahead.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "crabBlue",
+  "name": "Blue Crab",
+  "base": "crab",
+  "where": [
+   "sewers2"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 3,
+  "puts": [],
+  "habit": "Circles in, and shoots slow bubbles that soak.",
+  "fun": "The crab that brought bubbles to a fight.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "crabGreen",
+  "name": "Green Crab",
+  "base": "crab",
+  "where": [
+   "sewers3"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 3,
+  "puts": [],
+  "habit": "Circles in, and shoots poison bubbles two at a time.",
+  "fun": "The bubbles are green. That is never good.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "leechBlood",
+  "name": "Blood Leech",
+  "base": "slimeSmall",
+  "where": [
+   "sewers1",
+   "sewers3"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Latches on and drinks, drops off and spits the blood back as shots.",
+  "fun": "Drinks deep, then gives it back, at speed.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "leechBrain",
+  "name": "Brain Leech",
+  "base": "slimeSmall",
+  "where": [
+   "sewers2"
+  ],
+  "flags": [],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Latches on and turns a hero on its friends. Their blows go to the leech; knock it off.",
+  "fun": "Has opinions, and puts them in your head.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "rattlerGold",
+  "name": "Golden Skeleton",
+  "base": "rattler",
+  "where": [
+   "crypt2",
+   "crypt3"
+  ],
+  "flags": [],
+  "res": {
+   "poison": 0,
+   "burn": 0,
+   "chill": 0,
+   "wet": 0,
+   "shock": 0,
+   "stagger": 0,
+   "radiance": 0,
+   "curse": 0,
+   "entangle": 0
+  },
+  "armour": 3,
+  "puts": [],
+  "habit": "Golden bones home in on heroes and go through them. Nothing sticks to it: no status at all. Drops double gold.",
+  "fun": "Buried with its treasure, and took that personally.",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   },
+   "elite": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   },
+   "major": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   }
+  }
+ },
+ {
+  "kind": "rattlerHarrow",
+  "name": "Harrowing Skeleton",
+  "base": "rattler",
+  "where": [
+   "crypt1",
+   "crypt2",
+   "crypt3"
+  ],
+  "flags": [],
+  "res": {
+   "poison": 0.35,
+   "burn": 0.8,
+   "chill": 1.2
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Gets up again once, with a burst of curse round it.",
+  "fun": "Dies the way other people take a nap.",
+  "takes": {
+   "plain": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.8,
+    "chill": 1.2,
+    "poison": 0.35,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "scarab",
+  "name": "Scarab",
+  "base": null,
+  "where": [
+   "dunes1",
+   "dunes2",
+   "dunes:extra"
+  ],
+  "flags": [
+   "sandy"
+  ],
+  "res": {},
+  "armour": 2,
+  "puts": [],
+  "habit": "Burrows under the sand (a trail of dug-up earth) and comes up beside a hero. Comes in swarms.",
+  "fun": "Rolls dung for a living. Has decided you are a career change.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "scarabGold",
+  "name": "Golden Scarab",
+  "base": "scarab",
+  "where": [
+   "dunes1",
+   "dunes3"
+  ],
+  "flags": [
+   "sandy",
+   "goldShell"
+  ],
+  "res": {
+   "poison": 0,
+   "burn": 0,
+   "chill": 0,
+   "wet": 0,
+   "shock": 0,
+   "stagger": 0,
+   "radiance": 0,
+   "curse": 0,
+   "entangle": 0
+  },
+  "armour": 4,
+  "puts": [],
+  "habit": "A tougher scarab. Nothing sticks to it: no status at all.",
+  "fun": "Sacred, shiny and absolutely certain of it.",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   },
+   "elite": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   },
+   "major": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   }
+  }
+ },
+ {
+  "kind": "cobra",
+  "name": "Cobra",
+  "base": null,
+  "where": [
+   "dunes1",
+   "dunes1:mini",
+   "dunes2",
+   "dunes:extra"
+  ],
+  "flags": [
+   "sandy"
+  ],
+  "res": {
+   "poison": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Spits poison from range, and rears back out of reach when you come close.",
+  "fun": "Hood up, manners down.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "jackal",
+  "name": "Jackal Guard",
+  "base": null,
+  "where": [
+   "dunes2",
+   "dunes2:mini",
+   "dunes3",
+   "dunes:warden"
+  ],
+  "flags": [
+   "sandy"
+  ],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Spear and shield. Sidesteps your blow, then lunges back.",
+  "fun": "Has guarded this door for three thousand years. Has opinions about visitors.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "mummy",
+  "name": "Mummy",
+  "base": null,
+  "where": [
+   "dunes2",
+   "dunes3",
+   "dunes:extra"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 1.8,
+   "poison": 0,
+   "curse": 0
+  },
+  "armour": 0,
+  "puts": [
+   "curse:22"
+  ],
+  "habit": "Slow. Its wrappings lash out and pull you in, and its touch curses. Fire loves it.",
+  "fun": "Wrapped for eternity. Eternity is chafing.",
+  "takes": {
+   "plain": {
+    "burn": 1.8,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.8,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.8,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "sandMage",
+  "name": "Sand Mage",
+  "base": null,
+  "where": [
+   "dunes3"
+  ],
+  "flags": [
+   "sandy"
+  ],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "Calls dust devils that spin off in straight lines, bowling heroes over and stopping shots.",
+  "fun": "Talks to the wind. The wind answers, rudely.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "dustDevil",
+  "name": "Dust Devil",
+  "base": null,
+  "where": [],
+  "flags": [
+   "sandy",
+   "noElite"
+  ],
+  "res": {
+   "poison": 0,
+   "burn": 0,
+   "chill": 0,
+   "wet": 0,
+   "shock": 0,
+   "stagger": 0,
+   "radiance": 0,
+   "curse": 0,
+   "entangle": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Spins in a straight line, bounces off walls, throws whoever it hits. Blocks shots. Blows itself out.",
+  "fun": "A small, angry weather.",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "sandSerpent",
+  "name": "Sand Serpent",
+  "base": null,
+  "where": [
+   "dunes1",
+   "dunes3",
+   "dunes:boss"
+  ],
+  "flags": [
+   "sandy",
+   "chain"
+  ],
+  "res": {
+   "poison": 0
+  },
+  "armour": 0,
+  "puts": [
+   "poison:16"
+  ],
+  "habit": "A head and a long body, one health: hit anywhere. It rears back, swaying, and strikes (a line shows first); its bite poisons and its coils hurt to touch. Now and then it dives into the sand, body and all, and comes up beside you: watch for the moving mound.",
+  "fun": "Long enough to have a different mood at each end.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "serpentCoil",
+  "name": "Serpent Coil",
+  "base": "slimeSmall",
+  "where": [],
+  "flags": [
+   "sandy",
+   "segment",
+   "noElite"
+  ],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "A blow here lands on the head.",
+  "fun": "Part of a snake. The rest of the snake is coming.",
+  "takes": {
+   "plain": {}
+  }
+ },
+ {
+  "kind": "dartTrap",
+  "name": "Dart Trap",
+  "base": null,
+  "where": [
+   "dunes2",
+   "dunes3"
+  ],
+  "flags": [
+   "construct",
+   "turret"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "chill": 0.5,
+   "wet": 0.5,
+   "stagger": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Set in a wall. Barely turns; fires poison darts at whoever crosses in front.",
+  "fun": "The tomb's original security system. Still under warranty.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 0.5,
+    "poison": 0,
+    "wet": 0.5,
+    "shock": 1,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 0.5,
+    "poison": 0,
+    "wet": 0.5,
+    "shock": 1,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 0.5,
+    "poison": 0,
+    "wet": 0.5,
+    "shock": 1,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "spiritPoison",
+  "name": "Venom Spirit",
+  "base": null,
+  "where": [
+   "dunes2",
+   "dunes3"
+  ],
+  "flags": [
+   "spirit:poison"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Its ray makes a friend's blows poison, and poison can't touch it. Bursts into venom when it dies.",
+  "fun": "Smells of old tombs and worse intentions.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "spiritHaste",
+  "name": "Wind Spirit",
+  "base": null,
+  "where": [
+   "dunes1",
+   "dunes3"
+  ],
+  "flags": [
+   "spirit:haste"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Its ray quickens a friend's feet and blows for as long as it holds.",
+  "fun": "A breeze that never learned to slow down.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "gearSprite",
+  "name": "Gear Sprite",
+  "base": "slimeSmall",
+  "where": [
+   "foundry1"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 3,
+  "puts": [],
+  "habit": "Doesn't aim: rolls where it's going, straight through the party, and off the walls at a slant.",
+  "fun": "A cog that came loose and liked it.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "cogSprite",
+  "name": "Cog Sprite",
+  "base": "slimeSmall",
+  "where": [
+   "foundry1"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 3,
+  "puts": [],
+  "habit": "Rolls and bounces like a gear sprite, but leans towards whoever is ahead of it.",
+  "fun": "A gear sprite with a sense of direction. Unfortunately.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "bombBot",
+  "name": "Bomb Bot",
+  "base": null,
+  "where": [
+   "foundry1",
+   "foundry:extra"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5,
+   "burn": 1.5
+  },
+  "armour": 1,
+  "puts": [],
+  "habit": "Sees you, lights its fuse and runs straight at you; blows up when it runs out. Knock it back into its friends. Fire sets it off.",
+  "fun": "Built to do one job, once.",
+  "takes": {
+   "plain": {
+    "burn": 1.5,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.5,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.5,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "autoBomb",
+  "name": "Auto Bomb Bot",
+  "base": "bombBot",
+  "where": [
+   "foundry2"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5,
+   "burn": 1.5
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "If it misses, it puts its fuse out, turns slowly round and tries again. Fire sets it off.",
+  "fun": "A bomb bot with a second opinion.",
+  "takes": {
+   "plain": {
+    "burn": 1.5,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.5,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.5,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "automaton",
+  "name": "Automaton",
+  "base": null,
+  "where": [
+   "foundry1:mini",
+   "foundry2",
+   "foundry3",
+   "foundry:warden"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 4,
+  "puts": [],
+  "habit": "Hits hard; after three blows it overheats and stands open, taking more harm.",
+  "fun": "Its makers gave it a sword and no off switch. Only one of those was a mistake.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "turretSteam",
+  "name": "Steam Turret",
+  "base": null,
+  "where": [
+   "foundry2"
+  ],
+  "flags": [
+   "construct",
+   "turret"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5,
+   "stagger": 0
+  },
+  "armour": 3,
+  "puts": [],
+  "habit": "Can't move, turns slowly, fires scalding steam that soaks. Get behind it.",
+  "fun": "The kettle of your nightmares.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "turretFlame",
+  "name": "Flame Turret",
+  "base": null,
+  "where": [
+   "foundry2"
+  ],
+  "flags": [
+   "construct",
+   "turret"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5,
+   "stagger": 0,
+   "burn": 0
+  },
+  "armour": 3,
+  "puts": [],
+  "habit": "Can't move. Turns to whoever is close and blasts a short cone of flame.",
+  "fun": "Fire safety was not a design goal.",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "turretGun",
+  "name": "Gun Turret",
+  "base": null,
+  "where": [
+   "foundry2"
+  ],
+  "flags": [
+   "construct",
+   "turret"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5,
+   "stagger": 0
+  },
+  "armour": 3,
+  "puts": [],
+  "habit": "Set in a wall: turns only so far, and fires a burst of rounds.",
+  "fun": "Bolted to the wall and furious about it.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "turretLaser",
+  "name": "Laser Turret",
+  "base": null,
+  "where": [
+   "foundry3"
+  ],
+  "flags": [
+   "construct",
+   "turret"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5,
+   "stagger": 0
+  },
+  "armour": 3,
+  "puts": [],
+  "habit": "Set in a wall: a long line shows, then the beam burns down it.",
+  "fun": "Points a red line at you, then a much worse one.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "mortar",
+  "name": "Mortar",
+  "base": null,
+  "where": [
+   "foundry2"
+  ],
+  "flags": [
+   "construct",
+   "turret"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5,
+   "stagger": 0
+  },
+  "armour": 3,
+  "puts": [],
+  "habit": "Can't move. Shells go up and come down where you were standing: a circle shows where.",
+  "fun": "Lobs things over walls, which is cheating.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "mortarFire",
+  "name": "Fire Mortar",
+  "base": null,
+  "where": [
+   "foundry3"
+  ],
+  "flags": [
+   "construct",
+   "turret"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5,
+   "stagger": 0,
+   "burn": 0
+  },
+  "armour": 3,
+  "puts": [],
+  "habit": "Its shells leave the floor burning.",
+  "fun": "Same mortar, extra spicy.",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "mortarPoison",
+  "name": "Gas Mortar",
+  "base": null,
+  "where": [
+   "foundry3"
+  ],
+  "flags": [
+   "construct",
+   "turret"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5,
+   "stagger": 0
+  },
+  "armour": 3,
+  "puts": [],
+  "habit": "Its shells leave a cloud of gas.",
+  "fun": "Somebody filled the shells with the canteen's soup.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "teslaCoil",
+  "name": "Tesla Coil",
+  "base": null,
+  "where": [
+   "foundry3"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 0,
+   "entangle": 0.5,
+   "stagger": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Can't move. A shock jumps from hero to hero; far worse on anyone wet.",
+  "fun": "Hums. You can feel it in your teeth.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "repairDrone",
+  "name": "Repair Drone",
+  "base": null,
+  "where": [
+   "foundry2",
+   "foundry3"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Floats about mending constructs. Kill it first.",
+  "fun": "Fixes everything except the actual problem, which is you.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "foundrySmith",
+  "name": "Foundry Smith",
+  "base": null,
+  "where": [
+   "foundry2:mini",
+   "foundry3",
+   "foundry:extra"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 0,
+   "chill": 1.3
+  },
+  "armour": 3,
+  "puts": [
+   "burn:25"
+  ],
+  "habit": "A red-hot hammer: every blow burns, and its slam sets the floor alight.",
+  "fun": "Has hit a lot of metal into shape. Sees no reason you should be different.",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 1.3,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0,
+    "chill": 1.3,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0,
+    "chill": 1.3,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "bee",
+  "name": "Copper Bee",
+  "base": null,
+  "where": [
+   "foundry1",
+   "foundry:extra"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Swarms. Zigzags in, then a long straight dash through you.",
+  "fun": "A bee, but made of copper, and much less interested in flowers.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "wasp",
+  "name": "Copper Wasp",
+  "base": null,
+  "where": [
+   "foundry1"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Circles its mark, flicking short stingers.",
+  "fun": "Circles. Waits. Stings. Repeats.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "hornet",
+  "name": "Copper Hornet",
+  "base": null,
+  "where": [],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Circles, then takes turns: five stingers, then a bee's dash.",
+  "fun": "The wasp's big sister, and she is not happy.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "beeBronze",
+  "name": "Bronze Bee",
+  "base": "bee",
+  "where": [
+   "foundry2"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 2,
+  "puts": [],
+  "habit": "A tougher bee.",
+  "fun": "The bronze model. Heavier, angrier, same lack of flowers.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "beeSteel",
+  "name": "Steel Bee",
+  "base": "bee",
+  "where": [
+   "foundry3"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 4,
+  "puts": [],
+  "habit": "The toughest bee.",
+  "fun": "Steel. Polished. Furious.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "waspBronze",
+  "name": "Bronze Wasp",
+  "base": "wasp",
+  "where": [
+   "foundry2"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 2,
+  "puts": [],
+  "habit": "A tougher wasp.",
+  "fun": "A bronze wasp. The circling is somehow more smug.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "waspSteel",
+  "name": "Steel Wasp",
+  "base": "wasp",
+  "where": [
+   "foundry3"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 4,
+  "puts": [],
+  "habit": "The toughest wasp.",
+  "fun": "Steel wasp. Even the buzzing sounds sharp.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "hornetBronze",
+  "name": "Bronze Hornet",
+  "base": "hornet",
+  "where": [
+   "foundry2"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 2,
+  "puts": [],
+  "habit": "A tougher hornet.",
+  "fun": "Bronze, and bigger, and still not happy.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "hornetSteel",
+  "name": "Steel Hornet",
+  "base": "hornet",
+  "where": [
+   "foundry3"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 4,
+  "puts": [],
+  "habit": "The toughest hornet.",
+  "fun": "The foundry's finest. Mind the end with the point.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "sawBlade",
+  "name": "Saw Blade",
+  "base": "slimeSmall",
+  "where": [
+   "foundry1",
+   "foundry2"
+  ],
+  "flags": [
+   "trap",
+   "noElite"
+  ],
+  "res": {},
+  "armour": 0,
+  "puts": [],
+  "habit": "A trap: runs along a wall, half sunk in it, cutting whoever it meets. Can't be hurt; stops when the room is won.",
+  "fun": "Runs along the wall all day. Never once looked where it was going.",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   }
+  }
+ },
+ {
+  "kind": "chainCrawler",
+  "name": "Chain Crawler",
+  "base": null,
+  "where": [
+   "foundry3",
+   "foundry:boss"
+  ],
+  "flags": [
+   "construct",
+   "chain"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 3,
+  "puts": [],
+  "habit": "A head and eight plates, one health: hit anywhere. Lunges, and its bite shocks; its plates hurt to touch.",
+  "fun": "A centipede somebody built on purpose. Nobody will say who.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "crawlerPlate",
+  "name": "Crawler Plate",
+  "base": "slimeSmall",
+  "where": [],
+  "flags": [
+   "construct",
+   "segment",
+   "noElite"
+  ],
+  "res": {},
+  "armour": 4,
+  "puts": [],
+  "habit": "A blow here lands on the head.",
+  "fun": "One of many legs. Kicks like all of them.",
+  "takes": {
+   "plain": {}
+  }
+ },
+ {
+  "kind": "drillBot",
+  "name": "Drill Bot",
+  "base": null,
+  "where": [
+   "foundry1"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 3,
+  "puts": [],
+  "habit": "Drills under the floor and comes up spinning beside a hero.",
+  "fun": "Digs for gold. Finds you. Close enough.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "spiritShock",
+  "name": "Storm Spirit",
+  "base": null,
+  "where": [
+   "foundry3"
+  ],
+  "flags": [
+   "spirit:shock"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "shock": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Its ray makes a friend's blows shock, and shock can't touch it. Bursts with lightning when it dies.",
+  "fun": "A thunderstorm the size of a teacup.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 0,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 0,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 0,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "frostWolf",
+  "name": "Frost Wolf",
+  "base": "wolf",
+  "where": [
+   "frost1",
+   "frost3",
+   "frost:extra"
+  ],
+  "flags": [],
+  "res": {
+   "chill": 0.2,
+   "burn": 1.3
+  },
+  "armour": 0,
+  "puts": [
+   "chill:20"
+  ],
+  "habit": "Runs with the pack. Its bite chills; a few bites and a hero freezes solid.",
+  "fun": "Its breath freezes in the air, and then it freezes you. It has never once been warm and holds it against everyone.",
+  "takes": {
+   "plain": {
+    "burn": 1.3,
+    "chill": 0.2,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.3,
+    "chill": 0.2,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.3,
+    "chill": 0.2,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "slimeIce",
+  "name": "Ice Slime",
+  "base": "slime",
+  "where": [
+   "frost1",
+   "frost2"
+  ],
+  "flags": [
+   "hops"
+  ],
+  "res": {
+   "chill": 0,
+   "burn": 1.4
+  },
+  "armour": 0,
+  "puts": [
+   "chill:16"
+  ],
+  "habit": "Where it lands after each hop the air goes freezing for a moment, and its touch chills. Shatters into ice shards when it dies.",
+  "fun": "A slime that sat in the cold too long and decided it liked it.",
+  "takes": {
+   "plain": {
+    "burn": 1.4,
+    "chill": 0,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.4,
+    "chill": 0,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.4,
+    "chill": 0,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "spiderFrost",
+  "name": "Frost Spider",
+  "base": "spiderHunter",
+  "where": [
+   "frost2",
+   "frost3",
+   "frost:extra"
+  ],
+  "flags": [],
+  "res": {
+   "chill": 0.2
+  },
+  "armour": 0,
+  "puts": [
+   "chill:22"
+  ],
+  "habit": "Its bite chills, and the web it dies into chills whoever walks through.",
+  "fun": "Spins its webs out of frost. They are beautiful. They are also a trap. Mostly a trap.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 0.2,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 0.2,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 0.2,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "yeti",
+  "name": "Yeti",
+  "base": null,
+  "where": [
+   "frost3",
+   "frost:extra"
+  ],
+  "flags": [],
+  "res": {
+   "chill": 0,
+   "burn": 1.3
+  },
+  "armour": 0,
+  "puts": [
+   "stagger:30"
+  ],
+  "habit": "Pushes a heavy snowball before it, slow to get going and slow to turn, then runs it at you and lets it go (a line shows first): it bowls over whoever is in its way (heavy cold, a big shove) and bursts on a wall it hits hard. Shots knock the ball off course and chip it. Without one it fights with its fists (they stagger) and stoops to pack another; hit it hard while it packs and the snow falls apart.",
+  "fun": "Has never seen a snowball fight it didn't win. Has never seen a snowball fight end.",
+  "takes": {
+   "plain": {
+    "burn": 1.3,
+    "chill": 0,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.3,
+    "chill": 0,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.3,
+    "chill": 0,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "frostWraith",
+  "name": "Icicle Wraith",
+  "base": "ghost",
+  "where": [
+   "frost2",
+   "frost3"
+  ],
+  "flags": [],
+  "res": {
+   "poison": 0,
+   "burn": 1.5,
+   "chill": 0,
+   "curse": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Hangs back and drops icicles from above: a shadow shows where.",
+  "fun": "Haunts the roof of the cave. Drops by now and then, sharply.",
+  "takes": {
+   "plain": {
+    "burn": 1.5,
+    "chill": 0,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1.5,
+    "chill": 0,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1.5,
+    "chill": 0,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "spiritFrost",
+  "name": "Frost Spirit",
+  "base": null,
+  "where": [
+   "frost1",
+   "frost3"
+  ],
+  "flags": [
+   "spirit:frost"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "chill": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Its ray lends a friend the cold: every blow chills, and cold can't touch it. Bursts into frost when it dies.",
+  "fun": "A breath of winter that decided to help. It is not helping you.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 0,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 0,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 0,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "spiderFire",
+  "name": "Fire Spider",
+  "base": "spiderHunter",
+  "where": [
+   "ember2",
+   "ember3"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 0
+  },
+  "armour": 0,
+  "puts": [
+   "burn:20"
+  ],
+  "habit": "Its bite burns, and it spits fireballs from a way off.",
+  "fun": "Eight legs, all of them on fire, none of them bothered.",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "hellhound",
+  "name": "Hellhound",
+  "base": "wolf",
+  "where": [
+   "ember1",
+   "ember2",
+   "ember3",
+   "ember:extra"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 0,
+   "chill": 1.4
+  },
+  "armour": 0,
+  "puts": [
+   "burn:14",
+   "bleed:16"
+  ],
+  "habit": "Runs with the pack and leaves fire where it runs, and goes for whoever is doing the healing. Its bite bleeds; up close it breathes a short cone of flame.",
+  "fun": "Good dog. Bad breath. Very, very bad breath.",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 1.4,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0,
+    "chill": 1.4,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0,
+    "chill": 1.4,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "cinderBat",
+  "name": "Cinder Bat",
+  "base": "bat",
+  "where": [
+   "ember1",
+   "ember3"
+  ],
+  "flags": [],
+  "res": {
+   "burn": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Dives straight at a hero and bursts into flame. Shoot it before it gets there.",
+  "fun": "Lives fast, dies young, takes you with it.",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "spiritFire",
+  "name": "Fire Spirit",
+  "base": null,
+  "where": [
+   "ember1",
+   "ember2",
+   "ember3"
+  ],
+  "flags": [
+   "spirit:fire"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "burn": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Its ray sets a friend's blows alight, and fire can't touch it. Bursts into flame when it dies.",
+  "fun": "A spark with ambitions.",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "angelFallen",
+  "name": "Fallen Angel",
+  "base": "angel",
+  "where": [
+   "spire2",
+   "spire3",
+   "spire:extra"
+  ],
+  "flags": [],
+  "res": {
+   "radiance": 0,
+   "curse": 0
+  },
+  "armour": 0,
+  "puts": [
+   "curse:22"
+  ],
+  "habit": "An angel's spear, but its blows curse instead of blinding with light.",
+  "fun": "Still has the wings. Lost the rest of the job description.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "sunBlade",
+  "name": "Sun Blade",
+  "base": null,
+  "where": [
+   "spire1",
+   "spire2",
+   "spire3"
+  ],
+  "flags": [],
+  "res": {
+   "stagger": 0,
+   "radiance": 0,
+   "poison": 0,
+   "curse": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "A great sword three heroes long. It turns onto a line (the floor shows the band it will sweep), cocks back and spins down it, cutting whoever its blade passes over, and drives its point into the wall at the end. Nothing stops or shoves it on the way. Stuck, it is open: blows land half again as hard until it works itself free.",
+  "fun": "A sword so holy it doesn't need anyone to hold it. It finds that freeing.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "choirSprite",
+  "name": "Choir Sprite",
+  "base": null,
+  "where": [
+   "spire1",
+   "spire2"
+  ],
+  "flags": [],
+  "res": {
+   "radiance": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Everything of its side inside its song mends, and everyone of yours inside it grows sleepy. A stagger silences it for a while.",
+  "fun": "Knows one song. It is a lovely song. It is the reason the others keep getting up.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "golem",
+  "name": "Golem",
+  "base": null,
+  "where": [
+   "spire3",
+   "dunes2",
+   "dunes3",
+   "dunes:extra"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "burn": 0.6,
+   "chill": 0.6,
+   "curse": 0,
+   "wet": 0.5
+  },
+  "armour": 6,
+  "puts": [
+   "stagger:35"
+  ],
+  "habit": "Slow and hard to shift. Every blow staggers, and it stamps a crack along the floor at you.",
+  "fun": "Somebody carved a guard out of a hill and forgot to tell it the war was over.",
+  "takes": {
+   "plain": {
+    "burn": 0.6,
+    "chill": 0.6,
+    "poison": 0,
+    "wet": 0.5,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.6,
+    "chill": 0.6,
+    "poison": 0,
+    "wet": 0.5,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.6,
+    "chill": 0.6,
+    "poison": 0,
+    "wet": 0.5,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "gildedGolem",
+  "name": "Gilded Golem",
+  "base": "golem",
+  "where": [
+   "spire3",
+   "spire:extra"
+  ],
+  "flags": [
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "burn": 0.6,
+   "chill": 0.6,
+   "curse": 0,
+   "wet": 0.5,
+   "radiance": 0
+  },
+  "armour": 7,
+  "puts": [
+   "stagger:35",
+   "radiance:18"
+  ],
+  "habit": "A golem whose front throws shots straight back at whoever fired them. Get round it.",
+  "fun": "Gold all the way through. You would think that would make it softer. It does not.",
+  "takes": {
+   "plain": {
+    "burn": 0.6,
+    "chill": 0.6,
+    "poison": 0,
+    "wet": 0.5,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 0.6,
+    "chill": 0.6,
+    "poison": 0,
+    "wet": 0.5,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 0.6,
+    "chill": 0.6,
+    "poison": 0,
+    "wet": 0.5,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "spiritHeal",
+  "name": "Light Spirit",
+  "base": null,
+  "where": [
+   "spire2"
+  ],
+  "flags": [
+   "spirit:heal"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "radiance": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Its ray mends a friend for as long as it holds. Kill it first.",
+  "fun": "A little sunbeam with a job to do.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "spiritWard",
+  "name": "Ward Spirit",
+  "base": null,
+  "where": [
+   "spire3"
+  ],
+  "flags": [
+   "spirit:ward"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "radiance": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "Its ray takes half the harm off a friend for as long as it holds.",
+  "fun": "Small, shy, and the reason that angel won't go down.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "elite": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   },
+   "major": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "heraldLight",
+  "name": "Herald of Light",
+  "base": null,
+  "where": [
+   "spire2:mini",
+   "spire:warden"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "radiance": 0
+  },
+  "armour": 0,
+  "puts": [
+   "radiance:24"
+  ],
+  "habit": "With its fallen twin: each mends while the other is near, so pull them apart. It blinks far off and calls light down on the party.",
+  "fun": "One of a pair. Finishes its twin's sentences, and its twin's enemies.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "heraldFallen",
+  "name": "Fallen Herald",
+  "base": null,
+  "where": [],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "radiance": 0,
+   "curse": 0
+  },
+  "armour": 0,
+  "puts": [
+   "curse:24"
+  ],
+  "habit": "With its twin of light: each mends while the other is near. It charges clean across the room, and its gloom curses.",
+  "fun": "The other one of the pair. Always the one who gets blamed.",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 1,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 1,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "chieftain",
+  "name": "The Goblin Chieftain",
+  "base": null,
+  "where": [
+   "warren:boss"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "stagger": 0.5,
+   "chill": 0.7,
+   "poison": 0.3
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 0.7,
+    "poison": 0.3,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 0.5,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "warDrum",
+  "name": "War Drum",
+  "base": null,
+  "where": [],
+  "flags": [
+   "part",
+   "noElite"
+  ],
+  "res": {
+   "burn": 0,
+   "chill": 0,
+   "poison": 0,
+   "wet": 0,
+   "shock": 0,
+   "stagger": 0,
+   "radiance": 0,
+   "curse": 0,
+   "entangle": 0,
+   "charm": 0,
+   "confuse": 0,
+   "sleepy": 0,
+   "bleed": 0,
+   "fear": 0,
+   "shackle": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   }
+  }
+ },
+ {
+  "kind": "greatOoze",
+  "name": "The Great Ooze",
+  "base": null,
+  "where": [
+   "sewers:boss"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "poison": 0,
+   "wet": 0,
+   "stagger": 0.4,
+   "burn": 1.4,
+   "chill": 1.2
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1.4,
+    "chill": 1.2,
+    "poison": 0,
+    "wet": 0,
+    "shock": 1,
+    "stagger": 0.4,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "oozeHalf",
+  "name": "The Great Ooze (its other half)",
+  "base": null,
+  "where": [],
+  "flags": [
+   "part",
+   "noElite"
+  ],
+  "res": {
+   "burn": 0,
+   "chill": 0,
+   "poison": 0,
+   "wet": 0,
+   "shock": 0,
+   "stagger": 0,
+   "radiance": 0,
+   "curse": 0,
+   "entangle": 0,
+   "charm": 0,
+   "confuse": 0,
+   "sleepy": 0,
+   "bleed": 0,
+   "fear": 0,
+   "shackle": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   }
+  }
+ },
+ {
+  "kind": "winterQueen",
+  "name": "The Winter Queen",
+  "base": null,
+  "where": [
+   "frost:boss"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "chill": 0,
+   "wet": 0.5,
+   "burn": 1.3,
+   "stagger": 0.6,
+   "poison": 0.3
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1.3,
+    "chill": 0,
+    "poison": 0.3,
+    "wet": 0.5,
+    "shock": 1,
+    "stagger": 0.6,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "queenImage",
+  "name": "Ice Mirror",
+  "base": null,
+  "where": [],
+  "flags": [
+   "noElite"
+  ],
+  "res": {
+   "chill": 0,
+   "burn": 1.3,
+   "charm": 0,
+   "fear": 0,
+   "confuse": 0,
+   "sleepy": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {}
+  }
+ },
+ {
+  "kind": "cinder",
+  "name": "Cinder, the Old Drake",
+  "base": null,
+  "where": [
+   "ember:boss"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "burn": 0,
+   "chill": 1.3,
+   "wet": 1.3,
+   "stagger": 0.4,
+   "poison": 0.25
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 1.3,
+    "poison": 0.25,
+    "wet": 1.3,
+    "shock": 1,
+    "stagger": 0.4,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "drakeSegment",
+  "name": "Cinder (body)",
+  "base": null,
+  "where": [],
+  "flags": [
+   "part",
+   "noElite"
+  ],
+  "res": {
+   "burn": 0,
+   "chill": 0,
+   "poison": 0,
+   "wet": 0,
+   "shock": 0,
+   "stagger": 0,
+   "radiance": 0,
+   "curse": 0,
+   "entangle": 0,
+   "charm": 0,
+   "confuse": 0,
+   "sleepy": 0,
+   "bleed": 0,
+   "fear": 0,
+   "shackle": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   }
+  }
+ },
+ {
+  "kind": "drakeTail",
+  "name": "Cinder (tail)",
+  "base": null,
+  "where": [],
+  "flags": [
+   "part",
+   "noElite"
+  ],
+  "res": {
+   "burn": 0,
+   "chill": 0,
+   "poison": 0,
+   "wet": 0,
+   "shock": 0,
+   "stagger": 0,
+   "radiance": 0,
+   "curse": 0,
+   "entangle": 0,
+   "charm": 0,
+   "confuse": 0,
+   "sleepy": 0,
+   "bleed": 0,
+   "fear": 0,
+   "shackle": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   }
+  }
+ },
+ {
+  "kind": "gildedSeraph",
+  "name": "The Gilded Seraph",
+  "base": null,
+  "where": [
+   "spire:boss"
+  ],
+  "flags": [
+   "boss"
+  ],
+  "res": {
+   "radiance": 0,
+   "curse": 0.5,
+   "poison": 0.3,
+   "stagger": 0.5
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0.3,
+    "wet": 1,
+    "shock": 1,
+    "stagger": 0.5,
+    "radiance": 0,
+    "curse": 0.5,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "seraphHorn",
+  "name": "The Gilded Seraph (a trumpet)",
+  "base": null,
+  "where": [],
+  "flags": [
+   "part",
+   "noElite"
+  ],
+  "res": {
+   "burn": 0,
+   "chill": 0,
+   "poison": 0,
+   "wet": 0,
+   "shock": 0,
+   "stagger": 0,
+   "radiance": 0,
+   "curse": 0,
+   "entangle": 0,
+   "charm": 0,
+   "confuse": 0,
+   "sleepy": 0,
+   "bleed": 0,
+   "fear": 0,
+   "shackle": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   }
+  }
+ },
+ {
+  "kind": "seraphSinger",
+  "name": "Choir Singer",
+  "base": null,
+  "where": [],
+  "flags": [
+   "noElite"
+  ],
+  "res": {
+   "radiance": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {}
+  }
+ },
+ {
+  "kind": "sandWurm",
+  "name": "The Sand Wurm",
+  "base": null,
+  "where": [
+   "dunes:boss"
+  ],
+  "flags": [
+   "boss",
+   "sandy"
+  ],
+  "res": {
+   "poison": 0.3,
+   "stagger": 0.4,
+   "wet": 1.4,
+   "burn": 0.8
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0.8,
+    "chill": 1,
+    "poison": 0.3,
+    "wet": 1.4,
+    "shock": 1,
+    "stagger": 0.4,
+    "radiance": 1,
+    "curse": 1,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "wurmSegment",
+  "name": "The Sand Wurm (body)",
+  "base": null,
+  "where": [],
+  "flags": [
+   "part",
+   "sandy",
+   "noElite"
+  ],
+  "res": {
+   "burn": 0,
+   "chill": 0,
+   "poison": 0,
+   "wet": 0,
+   "shock": 0,
+   "stagger": 0,
+   "radiance": 0,
+   "curse": 0,
+   "entangle": 0,
+   "charm": 0,
+   "confuse": 0,
+   "sleepy": 0,
+   "bleed": 0,
+   "fear": 0,
+   "shackle": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   }
+  }
+ },
+ {
+  "kind": "greatEngine",
+  "name": "The Great Engine",
+  "base": null,
+  "where": [
+   "foundry:boss"
+  ],
+  "flags": [
+   "boss",
+   "construct"
+  ],
+  "res": {
+   "poison": 0,
+   "burn": 0.5,
+   "chill": 0.8,
+   "shock": 1.4,
+   "wet": 1.3,
+   "stagger": 0.4,
+   "radiance": 0.5,
+   "curse": 0.5
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0.5,
+    "chill": 0.8,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 0.4,
+    "radiance": 0.5,
+    "curse": 0.5,
+    "entangle": 1,
+    "charm": 0,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ },
+ {
+  "kind": "engineHammer",
+  "name": "The Great Engine (hammer)",
+  "base": null,
+  "where": [],
+  "flags": [
+   "part",
+   "construct",
+   "noElite"
+  ],
+  "res": {
+   "burn": 0,
+   "chill": 0,
+   "poison": 0,
+   "wet": 0,
+   "shock": 1.4,
+   "stagger": 0,
+   "radiance": 0,
+   "curse": 0,
+   "entangle": 0,
+   "charm": 0,
+   "confuse": 0,
+   "sleepy": 0,
+   "bleed": 0,
+   "fear": 0,
+   "shackle": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   }
+  }
+ },
+ {
+  "kind": "engineClaw",
+  "name": "The Great Engine (claw)",
+  "base": null,
+  "where": [],
+  "flags": [
+   "part",
+   "construct",
+   "noElite"
+  ],
+  "res": {
+   "burn": 0,
+   "chill": 0,
+   "poison": 0,
+   "wet": 0,
+   "shock": 1.4,
+   "stagger": 0,
+   "radiance": 0,
+   "curse": 0,
+   "entangle": 0,
+   "charm": 0,
+   "confuse": 0,
+   "sleepy": 0,
+   "bleed": 0,
+   "fear": 0,
+   "shackle": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 1.4,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   }
+  }
+ },
+ {
+  "kind": "engineValve",
+  "name": "The Great Engine (valve)",
+  "base": null,
+  "where": [],
+  "flags": [
+   "part",
+   "noElite"
+  ],
+  "res": {
+   "burn": 0,
+   "chill": 0,
+   "poison": 0,
+   "wet": 0,
+   "shock": 0,
+   "stagger": 0,
+   "radiance": 0,
+   "curse": 0,
+   "entangle": 0,
+   "charm": 0,
+   "confuse": 0,
+   "sleepy": 0,
+   "bleed": 0,
+   "fear": 0,
+   "shackle": 0
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 0,
+    "chill": 0,
+    "poison": 0,
+    "wet": 0,
+    "shock": 0,
+    "stagger": 0,
+    "radiance": 0,
+    "curse": 0,
+    "entangle": 0,
+    "charm": 0,
+    "confuse": 0,
+    "sleepy": 0,
+    "bleed": 0,
+    "fear": 0,
+    "shackle": 0
+   }
+  }
+ },
+ {
+  "kind": "welderDrone",
+  "name": "Welder Drone",
+  "base": "repairDrone",
+  "where": [],
+  "flags": [
+   "construct",
+   "noElite"
+  ],
+  "res": {
+   "poison": 0,
+   "curse": 0,
+   "wet": 1.3,
+   "shock": 1.4,
+   "entangle": 0.5
+  },
+  "armour": 0,
+  "puts": [],
+  "habit": "",
+  "fun": "",
+  "takes": {
+   "plain": {
+    "burn": 1,
+    "chill": 1,
+    "poison": 0,
+    "wet": 1.3,
+    "shock": 1.4,
+    "stagger": 1,
+    "radiance": 1,
+    "curse": 0,
+    "entangle": 0.5,
+    "charm": 1,
+    "confuse": 1,
+    "sleepy": 1,
+    "bleed": 1,
+    "fear": 1,
+    "shackle": 1
+   }
+  }
+ }
+]

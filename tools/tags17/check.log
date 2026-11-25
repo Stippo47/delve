@@ -1,0 +1,65 @@
+fire and water (DOUSE: (1.5 + 0.06 x wet) a second from 8 wet; in water at least 60; bosses x0.5)
+  ok   imp standing in water loses 6.87/s (wet 84), expected 6.72/s
+  ok   fireSlime standing in water loses 6.87/s (wet 84), expected 6.72/s
+  ok   cinder standing in water loses 3.45/s (wet 90), expected 3.45/s
+  ok   imp soaked to 80 once (no water under it) loses 49.6 over the 12 s it dries
+  ok   a plain imp (32 health) left standing in a puddle goes out in 6.0 s
+  ok   a rat (not fire) in the same water loses nothing (0)
+  ok   a cinder bat (a flier) over water: the water under it does not count, only what wets it
+  ok   water puts out half the burning on anything soaked (35)
+  ok   it hisses (the word once, steam all the while)
+Silenced (mouth moves and abilities only)
+  ok   wolves howl 28 times in 4 x 30 s; silenced, 0
+  ok   their lunges go on silenced (54 as ever, 58 silenced)
+  ok   the Old Guard's Rally: 10 as ever, 0 silenced
+  ok   his Great Sweep goes on: 16 as ever, 16 silenced
+  ok   a Choir Sprite's song mends 80 in 3 s; staggered it is silenced and mends 0 in the next 3.5 s
+  ok   Nullify: the orc is nullified (its charge held) and silenced (abilT 0.30, silenced 1.5 s)
+  ok   a boss is silenced 40% of the time (2)
+the Engineer's wrench (REPAIR: 12% of the construct's health a whack, below 85%)
+  ok   she walks to her turret (56/140) and mends it to 123 with 4 whacks
+  ok   the hurt Paladin beside her gets nothing (130 -> 130)
+  ok   with a foe on her she fights it, no mending (0 whacks)
+construct tag resistances
+  ok   a turret takes no bleed and no poison; a skeleton still bleeds
+isMagicHit
+  ok   a fireball shot: magic
+  ok   an arrow: physical
+  ok   the Pyromancer's plain bolt: magic
+  ok   a sword blow: physical
+  ok   a rat bite: physical
+  ok   Smite (by its ability): magic
+  ok   a holy zone: magic
+  ok   a blade zone: physical
+  ok   burning ticking: physical
+  ok   said so: o.magic: magic
+  ok   said so: o.physical: physical
+  ok   a telekinetic stone (a caster's shot): magic
+fire set on fire (KINDLED: up to x1.3 dealt, x1.3 attack speed, x1.15 move; bosses half the extra)
+  ok   an imp (burn resistance 0) takes burning in (66 left after 2 s), loses no health, and is kindled (x1.20 dealt, x1.20 speed)
+  ok   full up it FLARES (no scorch damage to itself): the whole boost for 4 s
+  ok   a fire boss (Cinder) flares at half the extra (x1.15)
+  ok   fire with nobody behind it (a pool, its own trail) does nothing to a fire thing, as before
+  ok   a rat burns as ever (11.8)
+height layers
+  ok   a slime mid-hop: a hammer slam misses it
+  ok   a blow lands
+  ok   a shot lands
+  ok   an explosion lands (20)
+  ok   gas reaches it (poison builds), the fire pool under it does not (poison 10.4, burn 0)
+  ok   a flier up in the air: a blow misses it, a shot lands
+hit kinds: one damage type (sharp | blunt | magic) and the elements it carries, apart
+  ok   a knight sword: sharp
+  ok   the Warhelm hammer: blunt
+  ok   an arrow: sharp shot
+  ok   a frost arrow: sharp +frost shot
+  ok   a sling stone: blunt shot
+  ok   a wolf bite: sharp
+  ok   a slime landing: blunt
+  ok   Ground Pound: blunt slam
+  ok   a bomb: blunt +fire explosion
+  ok   a fireball: magic +fire shot
+  ok   Smite: magic +holy
+  ok   burning ticking:  +fire
+  ok   a magic-proof foe (hitRes magic 0.5) takes half a fireball's hit (20 of 40) and burns in full (30 of 30)
+all passed

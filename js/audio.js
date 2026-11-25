@@ -225,7 +225,7 @@ const SHOT = { arrow: 'bow', fireArrow: 'bow', bolt: 'zap', fireball: 'fire_cast
 const BOLT = { pyromancer: 'bolt_fire', frost: 'bolt_frost', storm: 'zap', cleric: 'orb' };
 const ZONE = { fire: 'fire_cast', poison: 'gas', ice: 'frost_cast', storm: 'lightning', holy: 'holy', sanctuary: 'holy', heal: 'heal', vines: 'vines', drain: 'drain' };
 const STATUS = { burn: 'ignite', chill: 'chill', poison: 'bubbles', wet: 'splash', shock: 'buzz', stagger: 'bonk', root: 'vines', sleep: 'sleep' };
-const WORD = { dodge: 'whoosh', CHARGE: 'charge', BACKSTAB: 'stab', thaw: 'steam', 'NOT YET': 'revive', REAPED: 'drain' };
+const WORD = { dodge: 'whoosh', CHARGE: 'charge', BACKSTAB: 'stab', thaw: 'steam', hiss: 'steam', 'NOT YET': 'revive', REAPED: 'drain' };
 const at = (o) => o ? { x: o.x ?? o.x1, y: o.y ?? o.y1 } : {};
 
 // Turn one cue into the sounds to play: [[name, { x, y, vol, rate, delay }], ...]

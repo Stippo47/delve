@@ -23,7 +23,7 @@ the problem (an archer's frost arrow is 34 chill: about three to freeze). Now ea
 | **Burn** | fire arrows, fireballs, fire patches (34/s), breath | 100 | 7 | from 8: (1.5 + 0.06 x value) damage a second; flames on the body, more as it builds; thaws a freeze and melts chill | **Scorch**: 22 damage and a fire blast round it (60 across, 10 damage, burn 24 on whoever's near); drops to 20 |
 | **Chill** | frost arrows, snowballs, blizzards, the Bone King's soul fire | 100, +45 after each freeze (that extra drains 4/s) | 6 | slower, up to 60% (value / 160) | **Freeze**: frozen 3 s (bosses 1.6), can't act; a hard hit while frozen **shatters** (26 damage, icicles); drops to 0, burn too |
 | **Poison** | spider bites, gas | 100 | 4 | 0.07 x value damage a second; over 20: moves and attacks 10% slower | **Sickened** (round 11; it used to take 15% of max health at once): for 6 s it loses 10% of its max health in all (bosses 4%), deals 30% less damage and moves and attacks 20% slower; drops to 30, and to 20 when the sickness ends (round 14; round 13 had 0). Anything that cleans statuses ends it |
-| **Wet** | water shots, puddles (to 90 only) | 100 | 6 | abilities come back slower (up to half speed); over 30 freezes 1.5x easier; over 60 flies 1.7x further when hit; each soaking washes off half the poison | **Slip**: spins helplessly for 1 s and leaves a puddle; drops to 60 |
+| **Wet** | water shots, puddles (to 90 only) | 100 | 6 | abilities come back slower (up to half speed); over 30 freezes 1.5x easier; over 60 flies 1.7x further when hit; each soaking washes off half the poison and (round 17) half the burning; a fire-tagged unit is Doused (docs/tags17.md) | **Slip**: spins helplessly for 1 s and leaves a puddle; drops to 60 |
 | **Shock** | Chain Lightning, Storm abilities | 100 | 14 | from 20: a 0.3 s jolt (stun) every 1.1 s (bosses 0.1 s) | **Overload**: a 1 s stun, and arcs 30 shock to up to two of its side within 140; drops to 0 |
 | **Stagger** | heavy blows, bone spikes, the banshee's wail, bat screech | 100 | 12 | every hit that adds stagger stops it for 0.15 s (bosses 0.05) | **Knocked out**: 2.5 s (bosses 1.2) helpless and taking 1.5x damage; drops to 0 |
 | **Radiance** (new) | angels (blows 22, smite 30), cherubs (arrows 12, arrow rain 18), seraphs (bolts 20), the Archon and the Radiant (blows 25, the Radiant's ring 40) | 100 | 6 | attacks come up to 35% slower and hit up to 60% weaker (both scale with value / threshold) | **Radiant**: for 3 s it glows (an aura 120 across), **can't attack or use an ability**, and everyone else inside the aura gains 24 radiance a second (not itself); drops to 0, and it can't gain radiance again until 4 s after the glow ends |
@@ -266,3 +266,16 @@ plainly a bug.
 Proof (same seeds before and after, `--v`): `node tools/runs.mjs --n 3 --theme all`, and with these heroes in the party
 at level 30 and with every node (`--party griffon,digger,marksman,falconer`, `trapper,monk,alchemist,shade`,
 `airMage,pirate,griffon,monk`): the same output line for line (docs/DECISIONS.md, round 15 lane E).
+
+## Round 17 (lane tags17): Silenced, Nullified, Doused, Kindled
+The rules and numbers are in docs/tags17.md and js/tags.js.
+- **Silenced** (`u.silencedT`, sim.js `silence`): no ability or move tagged mouth (shouts, songs, howls, breath,
+  bites, kisses, whistles); everything else as ever. Bosses 40% of the time. A crossed-out speech bubble over it. A
+  cleanse ends it.
+- **Nullified** (the Warden's Nullify: what it called "silenced" before): every ability and timed move locked, the
+  padlock; unchanged. It silences as well.
+- **Doused**: a fire-tagged unit Wet or in water takes (1.5 + 0.06 x wet) a second (at least 60 wet in water), bosses
+  half; it steams and hisses.
+- **Kindled / Flare**: a fire-tagged unit set burning by the other side takes no burn damage: up to +30% dealt and
+  attack speed, +15% move (x fill); its Scorch is a Flare instead (the whole boost for 4 s); bosses half the extra.
+- Constructs take no Bleeding and no Poison.

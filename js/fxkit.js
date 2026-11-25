@@ -9,6 +9,7 @@ import { OUTLINE, view } from './render.js';
 import { hash, rgba, upright, upVec, inked, inkLine, flame, blob, star, glowDisc, bolt, easeOut, leaf, snowBurst } from './fx.js';
 import { drawPuddle } from './puddles.js';
 import { installFx3 } from './fx3.js'; // round 15 (lane N): the six newer heroes' looks
+import { installFxWater } from './fx-water.js'; // round 17 (lane water17): the Water Mage's looks
 import { SIG2, installFx2, SLAM2, IMPACT2D } from './fx2.js'; // (lane H2, round 13: SLAM2 / IMPACT2D, a hero's own slam and shot-burst looks)
 import { variant } from './fxvar.js';
 
@@ -618,6 +619,7 @@ EL.cold = ['#6E7680', '#A8B0BA', '#D8DEE4', '#F2F5F8']; // Raise Dead (round 9: 
 export const abilityEl = (id) => EL[CAST_EL[id]] || EL.steel;
 installFx2({ SIG_T, CAST_EL, IMPACT_EL, IMPACT_ALIAS, EL, castFlash, streak, dustPuffs, drawIn });
 installFx3({ SIG_T, CAST_EL, IMPACT_EL, IMPACT_ALIAS, EL, castFlash, streak, dustPuffs, drawIn }); // round 15 (lane N)
+installFxWater({ CAST_EL }); // round 17 (lane water17)
 
 // A burst of light in front of the caster's hands as an ability goes off (every cast gets one: the tell's end).
 function castFlash(ctx, f, k, el, at = 0) {

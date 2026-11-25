@@ -9,6 +9,7 @@
 // icon, icons.js). The kits are in kits2.js, the looks in fx2.js, the kits written out in docs/HEROES.md.
 
 import { HEROES3 } from './heroes3.js'; // round 15 (lane N): six more heroes; their ability glyphs join GLYPH2 below
+import { HEROES_WATER } from './heroes-water.js'; // round 17 (lane water17): the Water Mage's glyphs too
 export const HEROES2 = {
   // ------------------------------------------------------------------ batch 1: the knights and the bear
   oldguard: {
@@ -663,7 +664,7 @@ Object.assign(HEROES2, {
     fun: 'Can fix anything with a wrench. Has fixed several things that were not broken.',
     stats: { hp: 100, speed: 60, r: 32, vr: 22, turn: 4, accel: 210, face: 4.2, mass: 1.6, range: 190, keep: 120, atkCd: 1.1, dmg: 10, knock: 150, arc: 1.6 },
     weapon: 'heavy', // round 13: "Hits she. Close. Throw bouncing cogs from afar"
-    attack: { name: 'Wrench and cogs', anim: 'throw', desc: 'Close up, a clanging swing of the wrench; further off, a cog thrown that bounces on to a second enemy.' },
+    attack: { name: 'Wrench and cogs', anim: 'throw', desc: 'Close up, a clanging swing of the wrench; further off, a cog thrown that bounces on to a second enemy. With nothing to hit close by, she goes to a damaged construct of her side (her turrets and towers first) and whacks it back into shape: 12% of its health a blow. The wrench mends nothing else.' },
     summons: {
       turret: { name: 'Turret', art: 'art/summons/turret.svg', headR: 52, turret: true, attackAnim: 'shoot', proj: 'bullet', r: 24, vr: 20, turn: 1, accel: 0, face: 1, mass: 8,
         hp: 70, speed: 0, role: 'ranged', range: 260, keep: 0, atkCd: 0.6, dmg: 5 },
@@ -733,3 +734,4 @@ Object.assign(HEROES2, {
 export const GLYPH2 = {};
 for (const h of Object.values(HEROES2)) for (const ab of h.abilities) if (ab.glyph) GLYPH2[ab.id] = ab.glyph;
 for (const h of Object.values(HEROES3)) for (const ab of h.abilities) if (ab.glyph) GLYPH2[ab.id] = ab.glyph; // round 15 (lane N)
+for (const h of Object.values(HEROES_WATER)) for (const ab of h.abilities) if (ab.glyph) GLYPH2[ab.id] = ab.glyph; // round 17 (lane water17)

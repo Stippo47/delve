@@ -142,3 +142,11 @@ because the game swings those arms.
 | Warden (`warden`) | the Tower in dark iron | a jailer in iron plate with a ring of keys; **the chain as its own part in `arm-r`** (a weighted chain: the game swings the arm and draws the links flying out along the arc, fx3.js `chainSwing`; with the chain in the art it could draw less); shield arm `arm-l` as now, or a lantern |
 | Telekinetic (`telekinetic`) | the Seer in magenta (her crystal ball, her blindfold) | no blindfold, no ball: hands held out, empty; both arms as parts (anim `cast`) |
 | Earth Mage (`earthMage`) | the Druid in browns (his antlers) | no antlers: bare feet and clay to the elbows don't show from above, so a clay-stained apron or stone bangles; both arms as parts (anim `cast`) |
+
+### Round 17 (lane water17): the Water Mage
+`art/heroes/waterMage.svg` is a **placeholder sketch**, not a stand-in recolour: built by hand on the Frost Mage's file
+(same base body, same parts and pivots), so it can be replaced by the real file at the same path with nothing else to
+change. What it has now: a deep-teal hood, a sea-foam ruff, a water-drop gem at the front, curling wave crests on the
+shoulders, a driftwood staff in `arm-r` with a ball of water at its head (the beam and the cannon come from that side of
+her, fx-water.js `handOf`); empty left fist. For the art round: anything in sea blues and teals; keep the staff (or an
+orb) in `arm-r`; anim `cast`. Her effects (the beam, bubbles, the dome, the jet) are drawn in code (js/fx-water.js).

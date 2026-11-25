@@ -1,0 +1,216 @@
+{
+ "paladin": {
+  "stagger": 35
+ },
+ "tower": {
+  "stagger": 192
+ },
+ "archer": {
+  "burn": 281,
+  "chill": 213,
+  "stagger": 14
+ },
+ "twinfang": {
+  "poison": 103
+ },
+ "wildmane": {
+  "stagger": 2
+ },
+ "berserker": {
+  "stagger": 94
+ },
+ "granny": {
+  "stagger": 25
+ },
+ "pyromancer": {
+  "burn": 521
+ },
+ "frost": {
+  "chill": 508
+ },
+ "storm": {
+  "shock": 519,
+  "stagger": 101
+ },
+ "cleric": {
+  "radiance": 17,
+  "stagger": 15
+ },
+ "bard": {
+  "sleepy": 28
+ },
+ "druid": {
+  "entangle": 14,
+  "poison": 48
+ },
+ "necromancer": {
+  "curse": 4
+ },
+ "plague": {
+  "poison": 290
+ },
+ "oldguard": {
+  "stagger": 131
+ },
+ "dame": {
+  "stagger": 65
+ },
+ "griffon": {
+  "shock": 109
+ },
+ "bulwark": {
+  "stagger": 73
+ },
+ "bearskin": {
+  "stagger": 32,
+  "bleed": 8
+ },
+ "warhelm": {
+  "shock": 223,
+  "stagger": 53
+ },
+ "rogueBandit": {
+  "bleed": 23,
+  "stagger": 43
+ },
+ "shade": {
+  "curse": 50
+ },
+ "haymaker": {
+  "stagger": 198
+ },
+ "digger": {
+  "stagger": 226
+ },
+ "grandpa": {
+  "stagger": 77
+ },
+ "alchemist": {
+  "burn": 8,
+  "chill": 68,
+  "poison": 7,
+  "stagger": 5,
+  "confuse": 5,
+  "wet": 28,
+  "shock": 57,
+  "radiance": 7,
+  "fear": 7,
+  "bleed": 6,
+  "sleepy": 5,
+  "curse": 4
+ },
+ "shaman": {},
+ "witch": {
+  "curse": 539
+ },
+ "warlock": {
+  "burn": 135
+ },
+ "cultist": {
+  "bleed": 111,
+  "stagger": 24
+ },
+ "monk": {
+  "stagger": 64
+ },
+ "seer": {
+  "radiance": 10,
+  "confuse": 69
+ },
+ "chef": {
+  "burn": 167
+ },
+ "beekeeper": {
+  "poison": 29,
+  "sleepy": 11
+ },
+ "quartermaster": {
+  "stagger": 31,
+  "confuse": 15
+ },
+ "crossbowman": {
+  "stagger": 115
+ },
+ "falconer": {},
+ "grenadier": {
+  "stagger": 217,
+  "burn": 78
+ },
+ "harpooner": {
+  "wet": 96,
+  "stagger": 19
+ },
+ "huntress": {
+  "stagger": 155,
+  "bleed": 33
+ },
+ "marksman": {
+  "stagger": 7
+ },
+ "ninja": {
+  "poison": 53,
+  "stagger": 81
+ },
+ "pirate": {
+  "stagger": 86
+ },
+ "slinger": {
+  "stagger": 134,
+  "sleepy": 66
+ },
+ "trapper": {
+  "stagger": 26
+ },
+ "gladiator": {
+  "stagger": 29
+ },
+ "jester": {
+  "burn": 3,
+  "confuse": 46,
+  "chill": 3,
+  "stagger": 3,
+  "shock": 3,
+  "sleepy": 3,
+  "charm": 3,
+  "wet": 4,
+  "poison": 2
+ },
+ "samurai": {
+  "stagger": 29
+ },
+ "valkyrie": {
+  "stagger": 74,
+  "radiance": 36
+ },
+ "engineer": {
+  "burn": 24,
+  "shock": 46,
+  "chill": 28
+ },
+ "werewolf": {
+  "bleed": 37,
+  "stagger": 19
+ },
+ "enchantress": {
+  "charm": 45
+ },
+ "mob": {
+  "burn": 146,
+  "stagger": 29,
+  "bleed": 7
+ },
+ "clockwork": {},
+ "airMage": {
+  "stagger": 112
+ },
+ "warden": {
+  "shackle": 132,
+  "stagger": 108
+ },
+ "telekinetic": {
+  "stagger": 326
+ },
+ "earthMage": {
+  "stagger": 468
+ }
+}

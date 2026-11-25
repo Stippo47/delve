@@ -63,6 +63,7 @@ export function unitStatuses(u, now) {
   // round 15 (lane N): Shackled
   if (u.shackledT > 0) out.push({ id: 'shackled', kind: 'status', icon: 'shackled', frac: u.shackledT / (u.shackledMax || SHACKLE.dur), color: STATUS.shackle.col, left: u.shackledT });
   else build('shackle', s.shackle > 2);
+  if (u.silencedT > 0) out.push({ id: 'silenced', kind: 'status', icon: 'silenced', frac: Math.min(1, u.silencedT / 3), color: '#E5484D', left: u.silencedT }); // round 17 (lane tags17)
   // round 15 (lane E): the newer heroes' eight (statuses.js HERO_STATUS): Whirled and Spun fill toward their burst, as
   // the build-ups above; Dirty, Targeted, Tracked, Trapped, Warded and Weakened run out (Warded and Weakened were shown
   // as plain buffs: they are skipped below)
