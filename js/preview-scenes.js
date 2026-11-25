@@ -215,7 +215,7 @@ export const ABILITY_SCENE = {
   // Earth Mage
   earthquake: S('pack'), spikeChain: S('spread'), stoneWall: S('pack', { addFoes: [F('shooter', [430, 175])] }),
   // Water Mage
-  bubbleShield: S('casters', { hero: [80, 175], friends: [{ at: [200, 95], hp: 0.75 }, { at: [205, 255], hp: 0.75 }], foes: [F('caster', [400, 95], { on: 0 }), F('caster', [410, 255], { on: 1 }), F('caster', [430, 175], { on: 0 })] }),
+  bubbleShield: S('casters', { forceAt: 4.5, hero: [80, 175], friends: [{ at: [200, 95], hp: 0.75 }, { at: [205, 255], hp: 0.75 }], foes: [F('caster', [400, 95], { on: 0 }), F('caster', [410, 255], { on: 1 }), F('caster', [430, 175], { on: 0 })] }),
   waterDome: S('party', { addFoes: [F('shooter', [420, 80]), F('shooter', [425, 270])] }), waterCannon: S('line', { friends: [{ at: [180, 175], hp: 0.5 }] }),
 };
 

@@ -1,4 +1,4 @@
-180 abilities x 3 tiers, 11.5s
+180 abilities x 3 tiers, 12.5s
 threw: 0
 never went off in a loop: 0
 not shown (a loop where it drew nothing of its own and touched no one): 0

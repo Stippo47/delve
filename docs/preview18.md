@@ -23,7 +23,7 @@ on. "When a blow is coming" abilities were shown against a straw target with no 
 | Wrong scenario: the game's own scorer (its `score` / `reflex`) would not have used it there | 35 | 0 |
 | Chosen by the hero's own brain, as in a run (loops) | 0 of 1080 | 1052 of 1080 (the rest: the stage cast it, scorer agreeing) |
 | Tiers alike, the old tool's measure (two tiers make the same count of effects, shots, units, zones) | 57 | 18 |
-| Tiers alike, the new finer measure (same foes reached, statuses and their amounts, buffs and their terms, heals, summons, sizes, holds) | 29 | 20 |
+| Tiers alike, the new finer measure (same foes reached, statuses and their amounts, buffs and their terms, heals, summons, sizes, holds) | 29 | 19 |
 | Tiers that played the very same loop (nothing on the stage changed with the tier) | 0 | 0 |
 | Straw targets standing in for enemies (never moving, never attacking) | 180 | 0 |
 | Abilities where the hero or a friend took blows from nothing seen | 12 (656 blows) | 0 |
@@ -90,11 +90,12 @@ behind them across every hero-side stage (abilities, attacks, traits, trinkets, 
 per ability with each tier's first go, times, and whether the brain or the stage cast it. Current:
 
 - 2253 previews: threw 0, never fired 0, not offered 0 (one status, Silenced, still shows "no preview yet": not this lane's)
-- abilities: first go 0.65 s on average (2.4 s at the latest), 1.0 goes a loop, the brain chose it in 1052 of 1080
-  loops (the stage cast Leap III's second leap and Hook III); a loop where it didn't go within 2.5 s 0, not shown 0,
-  reached no one 3, wrong scenario 0, tiers identical 0, tiers differing only in where things went 20, blows from
-  nothing 0 (`tools/preview18/check.txt`)
-- `node tools/battles.mjs`: 528 battles, 0 problems (9 ran out of time, as on main)
+- abilities: first go 0.65 s on average, 1.0 goes a loop, the brain chose it in 1052 of 1080 loops (the stage cast
+  the rest: Leap III's second leap, Hook, Pot Helmet, the scorer agreeing each time); a loop where it didn't go within
+  2.5 s: 1 (Bubble Shields waits for an orc shaman's first fireball, 4.4 s in one loop), not shown 0, reached no one 3,
+  wrong scenario 0, tiers identical 0, tiers differing only in where things went 19, blows from nothing 0
+  (`tools/preview18/check.txt`, after `git merge main`)
+- `node tools/battles.mjs`: 528 battles, 0 problems (8 ran out of time)
 
 ## Still weak in preview, and why
 
