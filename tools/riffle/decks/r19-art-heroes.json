@@ -1,0 +1,225 @@
+{
+  "title": "Art: heroes and bosses",
+  "topic": "art",
+  "stack": "r19art",
+  "order": 8,
+  "cards": [
+    {
+      "id": "waterMage",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Water Mage: final art",
+      "text": "Her art is still the placeholder sketch. Three takes, sea blues; staff or orb in her right hand.",
+      "why": "She went in on a quick sketch built on the Frost Mage's file. Each take keeps her parts, so the beam, cannon and bubbles still come from her right side. Each picture is the take beside the art in the game now, at 3x and at game size.",
+      "pick": [
+        "wave"
+      ],
+      "items": [
+        {
+          "id": "wave",
+          "label": "Wave",
+          "image": "../../../design/r19-art/heroes/waterMage/waterMage-wave.png",
+          "text": "Her hood rises at the back into a breaking wave; a foam ruff; driftwood staff."
+        },
+        {
+          "id": "orb",
+          "label": "Orb",
+          "image": "../../../design/r19-art/heroes/waterMage/waterMage-orb.png",
+          "text": "No hood: sea-green hair, a starfish pin, shell circlet; a ball of water held up."
+        },
+        {
+          "id": "shell",
+          "label": "Shell",
+          "image": "../../../design/r19-art/heroes/waterMage/waterMage-shell.png",
+          "text": "A sea priestess in a conch shell hood, fin frills, a coral staff."
+        }
+      ]
+    },
+    {
+      "id": "quartermaster",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Quartermaster: new look",
+      "text": "Your note: 'Overall don't like... Needs to be more unique.' His kit changed; his art never did.",
+      "why": "Round 13 gave him crates, a barricade and a pot to throw, but he still wore the old merchant. Each take is built round his new kit, with both fists on the straps as now.",
+      "pick": [
+        "ledger"
+      ],
+      "items": [
+        {
+          "id": "pots",
+          "label": "Pot helmet",
+          "image": "../../../design/r19-art/heroes/quartermaster/quartermaster-pots.png",
+          "text": "A cooking pot for a helmet (his Pot Helmet), moustache, pans and a boot on his pack."
+        },
+        {
+          "id": "ledger",
+          "label": "Ledger",
+          "image": "../../../design/r19-art/heroes/quartermaster/quartermaster-ledger.png",
+          "text": "A supply clerk: peaked cap, crates on a carrying frame, a ledger in one fist."
+        },
+        {
+          "id": "sack",
+          "label": "Big sack",
+          "image": "../../../design/r19-art/heroes/quartermaster/quartermaster-sack.png",
+          "text": "A small packer under a huge patched sack with a broom, pan and boot poking out."
+        }
+      ]
+    },
+    {
+      "id": "beekeeper",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Beekeeper: new look",
+      "text": "Your note: 'Overall don't like. Visuals...' The kit was redone, the art wasn't. Three takes.",
+      "why": "Same parts as now: the smoker in his right fist (now held out where it shows, puffing), a free left fist, bees around him that the game can move.",
+      "pick": [
+        "veil"
+      ],
+      "items": [
+        {
+          "id": "veil",
+          "label": "Veil hood",
+          "image": "../../../design/r19-art/heroes/beekeeper/beekeeper-veil.png",
+          "text": "The beekeeper's suit: a white hood with a black mesh window, honey gloves."
+        },
+        {
+          "id": "skep",
+          "label": "Skep hat",
+          "image": "../../../design/r19-art/heroes/beekeeper/beekeeper-skep.png",
+          "text": "A straw beehive worn as a hat, bees crawling on it, a striped scarf, a beard."
+        },
+        {
+          "id": "beard",
+          "label": "Bee beard",
+          "image": "../../../design/r19-art/heroes/beekeeper/beekeeper-beard.png",
+          "text": "A beard that is a swarm of bees, under a wide straw sun hat."
+        }
+      ]
+    },
+    {
+      "id": "rogueBandit",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Bandit: new look",
+      "text": "Your note: 'Overall don't like hero.' He still wears the enemy bandits' red bandanna. Three takes.",
+      "why": "His kit was redone (Hostage, Bolas, Light Fingers), but the art is the round-5 one the Wildwood's bandits also wear. The cutlass stays in his right fist, so Disarmed still takes it.",
+      "pick": [
+        "highwayman"
+      ],
+      "items": [
+        {
+          "id": "highwayman",
+          "label": "Highwayman",
+          "image": "../../../design/r19-art/heroes/rogueBandit/rogueBandit-highwayman.png",
+          "text": "A tricorn with a red feather, a black mask, a wine coat with the collar up."
+        },
+        {
+          "id": "cutpurse",
+          "label": "Cutpurse",
+          "image": "../../../design/r19-art/heroes/rogueBandit/rogueBandit-cutpurse.png",
+          "text": "A green hood with a long tail, a scarf over the mouth, purses on a cord."
+        },
+        {
+          "id": "rascal",
+          "label": "Rascal",
+          "image": "../../../design/r19-art/heroes/rogueBandit/rogueBandit-rascal.png",
+          "text": "A floppy hat pushed back, stubble, a gold earring, bolas over one shoulder."
+        }
+      ]
+    },
+    {
+      "id": "winterQueen",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Winter Queen: boss art",
+      "text": "You said keep her but bring her up to a boss. Three takes; her face has blue lips and a frost mark now.",
+      "why": "Her art is from art round 9: a blank pale face and a small crown. Same parts as now: the train sways, both hands lift when she casts. Her mirrors stay drawn in code.",
+      "pick": [
+        "mantle"
+      ],
+      "items": [
+        {
+          "id": "spires",
+          "label": "Spire crown",
+          "image": "../../../design/r19-art/bosses/winterQueen/winterQueen-spires.png",
+          "text": "Five tall ice spires, an ice-shard collar, a frost mantle, a snowflake in her hand."
+        },
+        {
+          "id": "mantle",
+          "label": "Fur mantle",
+          "image": "../../../design/r19-art/bosses/winterQueen/winterQueen-mantle.png",
+          "text": "A circlet of hanging icicles over a lilac veil, a white fur mantle, an ice sceptre."
+        },
+        {
+          "id": "glacier",
+          "label": "Glacier",
+          "image": "../../../design/r19-art/bosses/winterQueen/winterQueen-glacier.png",
+          "text": "Armour of glacier ice, a crown of shards, a white braid, an ice dagger in each fist."
+        }
+      ]
+    },
+    {
+      "id": "chieftain",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Goblin Chieftain: art",
+      "text": "Your note on 0.12: the art isn't good. Three takes, drawn as one of the goblins, only a chief.",
+      "why": "Your notes kept: one clipped ear, fixed teeth (lower fangs), more war paint, a weapon in each fist held forward with the edges in. The goblins' own build: big ears, long nose.",
+      "pick": [
+        "skull"
+      ],
+      "items": [
+        {
+          "id": "skull",
+          "label": "Boar skull",
+          "image": "../../../design/r19-art/bosses/chieftain/chieftain-skull.png",
+          "text": "A boar's skull helmet, black feathers, spears on his back, two cleavers."
+        },
+        {
+          "id": "mohawk",
+          "label": "Mohawk",
+          "image": "../../../design/r19-art/bosses/chieftain/chieftain-mohawk.png",
+          "text": "The red mohawk kept, a hand print of paint, a tooth necklace, a wolf pelt, two axes."
+        },
+        {
+          "id": "crown",
+          "label": "Stolen crown",
+          "image": "../../../design/r19-art/bosses/chieftain/chieftain-crown.png",
+          "text": "A king's crown far too small, a stolen royal cape, a cleaver and a sceptre-club."
+        }
+      ]
+    },
+    {
+      "id": "graveWarden",
+      "kind": "board",
+      "rarity": "uncommon",
+      "title": "Grave Warden: own art",
+      "text": "The Crypt's mini-boss still wears the Brute skeleton's sprite. Three of its own.",
+      "why": "It has been a powered-up stand-in since the Crypt was built. Each take is a big skull in the Bone King's family, dressed for the graveyard, with a weapon to swing.",
+      "pick": [
+        "coffin"
+      ],
+      "items": [
+        {
+          "id": "digger",
+          "label": "Gravedigger",
+          "image": "../../../design/r19-art/bosses/graveWarden/graveWarden-digger.png",
+          "text": "A ragged green cowl, a grave spade, a lantern with a green ghost-light."
+        },
+        {
+          "id": "coffin",
+          "label": "Coffin lid",
+          "image": "../../../design/r19-art/bosses/graveWarden/graveWarden-coffin.png",
+          "text": "A rusted pot helm with a bone crest, a coffin lid for a shield, a flanged mace."
+        },
+        {
+          "id": "undertaker",
+          "label": "Undertaker",
+          "image": "../../../design/r19-art/bosses/graveWarden/graveWarden-undertaker.png",
+          "text": "A tall black hat, a grey shroud, a coffin-maker's mallet, a ring of keys."
+        }
+      ]
+    }
+  ]
+}
