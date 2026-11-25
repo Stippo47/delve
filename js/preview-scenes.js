@@ -155,7 +155,7 @@ export const ABILITY_SCENE = {
   // Warlock
   eldritchBeam: S('pack'), summonImp: S('front'), darkBargain: S('front'),
   // Cultist
-  bloodPact: S('party'), ritualCircle: S('lowFoe'), soulCandle: S('front', { foes: [F('melee', [215, 95], { on: 0 }), F('melee', [215, 255], { on: 1 }), F('fast', [300, 175])], friends: [{ k: 'twinfang', at: [170, 95], hp: 0.9, carry: { bleed: 45 } }, { k: 'wildmane', at: [170, 255], hp: 0.9, carry: { bleed: 45 } }], readyAt: 2.2, forceAt: 5 }), // (round 19: the circle round one nearly gone; Sacrifice, foes a Twinfang's cuts have been bleeding)
+  bloodPact: S('party'), ritualCircle: S('lowFoe'), soulCandle: S('front', { foes: [F('melee', [215, 95], { on: 0 }), F('melee', [215, 255], { on: 1 }), F('fast', [300, 175])], friends: [{ k: 'twinfang', at: [170, 95], hp: 0.9, carry: { bleed: 60 } }, { k: 'wildmane', at: [170, 255], hp: 0.9, carry: { bleed: 60 } }], readyAt: 1.4, forceAt: 4 }), // (round 19: the circle round one nearly gone; Sacrifice, foes a Twinfang's cuts have been bleeding)
   // Monk
   flurry: S('duel'), palmStrike: S('front'), innerPeace: S('incomingShots', { hp: 0.4, friends: [{ at: [90, 270], hp: 0.6, st: { poison: 60 } }], addFoes: [F('poisoner', [170, 320], { on: 0 })] }),
   // Seer

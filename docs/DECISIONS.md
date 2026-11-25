@@ -1231,4 +1231,5 @@ in docs/rogue19.md (rules, calls, numbers); clips docs/clips/rogue19/.
   sacrificed if it stays; Sacrifice a chain through the bleeding, bursting them; Blood Rite takes a dying friend for his
   cooldowns (a hero goes down, as at 0).
 - Calls (say if wrong): the Palm Strike note's "low acceleration but high max turn speed" read as Spun, not the Monk's
-  own turning; a disarmed beast-free list (ARMED) from each art's look; Inner Peace's block made total for physical hits.
+  own turning; who can be disarmed (tags.js ARMED) decided by each art (what shows a weapon that can be taken out);
+  Inner Peace stops physical hits outright (shorter: 2 / 3 s); Blood Rite downs a hero friend (as at 0).

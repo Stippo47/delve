@@ -785,10 +785,10 @@ export const ABILITIES2 = {
   deathMark: {
     score: (w, u) => (foesNear(w, u, u.x, u.y, 300).length >= 1 && !mine(w, u, 'shadowClone').length ? 0.7 : 0),
     use(w, u, t, tier) {
-      cast(u, 'ability', 0.4); const n = tier >= 2 ? 3 : 2, life = tier >= 3 ? 10 : 6;
+      cast(u, 'ability', 0.4); const n = tier >= 2 ? 3 : 2, life = tier >= 3 ? 8 : 6; // (III 10 s before: incorporeal clones last out a fight)
       for (let i = 0; i < n; i++) { const a = u.facing + Math.PI + (i - (n - 1) / 2) * 1.1, x = u.x + Math.cos(a) * 36, y = u.y + Math.sin(a) * 36;
         k2(w, { draw: 'shadowBlink', x, y, r: 26, max: 0.5 });
-        const c = summon(w, u, 'shadowClone', x, y, { life, hit: 0.55 }); c.facing = c.mvA = u.facing; c.target = t; c.aggro = true;
+        const c = summon(w, u, 'shadowClone', x, y, { life, hit: 0.4 }); // (0.55 before: incorporeal now, so blades don't break them) c.facing = c.mvA = u.facing; c.target = t; c.aggro = true;
         incorporeal(w, c, life + 1, 'shadow'); }
     },
     show: { far: false },
@@ -1298,7 +1298,7 @@ export const ABILITIES2 = {
       cast(u, 'cast', 0.6); const k = tier >= 2 ? 1.4 : 1.3, dur = 6;
       for (const a of [u, ...friendsNear(w, u, u.x, u.y, 230)]) {
         if (a.summon) continue;
-        addStatus(w, a, 'bleed', a === u ? 45 : PACT.bleed, u);
+        addStatus(w, a, 'bleed', a === u ? PACT.self : PACT.bleed, u);
         addBuff(a, { id: 'bloodPact', dur, dealt: k, atkSpeed: 1 + (k - 1) * 0.8, wash: PACT.wash, ...(tier >= 3 ? { lifesteal: 0.15 } : {}) });
         k2(w, { draw: 'pactOn', unit: a, x: a.x, y: a.y, r: a.vr, max: dur, cut: true });
         if (a !== u) k2(w, { draw: 'bloodTo', from: u, to: a, x: u.x, y: u.y, max: 0.6 });
@@ -1342,7 +1342,7 @@ export const ABILITIES2 = {
   // the dagger across its back as he comes round: a cut, and its bleeding bursts at once (a Haemorrhage). II: each one cut
   // is Anti-healed. III: each one cut makes him SAC.might stronger for SAC.dur s (it adds up).
   soulCandle: {
-    score: (w, u) => { const n = bleedersOf(w, u).length; return n >= 2 ? 0.85 : n && bleedersOf(w, u)[0].st.bleed > 25 ? 0.5 : 0; },
+    score: (w, u) => { const n = bleedersOf(w, u).length; return n >= 2 ? 0.85 : n && bleedersOf(w, u)[0].st.bleed > 15 ? 0.55 : 0; },
     use(w, u, t, tier) {
       const done = new Set(); let n = 0;
       const next = () => {
@@ -1370,7 +1370,7 @@ export const ABILITIES2 = {
         if (!last) { setAnim(u, 'punch', 0.1); u.anim.hand = i % 2 ? 'arm-l' : 'arm-r'; }
         const gap = dist(u.x, u.y, t.x, t.y) - u.r - t.r, step = clamp(gap - 4, 4, 14); // (a step in: closing what the last shove opened, and a little more)
         u.x += Math.cos(a) * step; u.y += Math.sin(a) * step;
-        hurt(w, t, dmgOf(u, last ? 1.2 : 0.6), u, { knock: last ? (tier >= 2 ? 520 : 300) : 70, kAngle: a, heavy: last, noDodge: true, ab: 'flurry' });
+        hurt(w, t, dmgOf(u, last ? 0.9 : 0.6), u, { knock: last ? (tier >= 2 ? 520 : 300) : 70, kAngle: a, heavy: last, noDodge: true, ab: 'flurry' });
         heal(w, u, u.maxHp * 0.012, u);
         if (last && tier >= 2 && alive(t)) weaken(w, t, 4);
         const sd = i % 2 ? 1 : -1, hx = t.x - Math.cos(a) * t.r * 0.7 - Math.sin(a) * sd * 6, hy = t.y - Math.sin(a) * t.r * 0.7 + Math.cos(a) * sd * 6;
@@ -1413,7 +1413,7 @@ export const ABILITIES2 = {
     score: (w, u) => { const bad = (o) => (o.st.burn + o.st.poison + o.st.chill + (o.st.curse || 0) + (o.st.stagger || 0) + (o.st.bleed || 0)) > 50; const shots = w.projectiles.filter((p) => p.team !== u.team && !p.noHit && dist(p.x, p.y, u.x, u.y) < 260).length;
       return bad(u) || hpRatio(u) < 0.45 || shots >= 2 || opponents(w, u).filter((e) => e.target === u && dist(e.x, e.y, u.x, u.y) < 90).length >= 3 ? 0.85 : 0; },
     use(w, u, t, tier) {
-      const dur = tier >= 2 ? 4 : 2.5;
+      const dur = tier >= 2 ? 3 : 2; // (round 19: every physical blow stopped outright now; it was 2.5 / 4 s of 30% less)
       cleanse(u); u.kit.peaceUntil = w.time + dur;
       addBuff(u, { id: 'innerPeace', dur, root: true, taken: 0.7, border: '#FFE7A0' });
       u.act = { type: 'channel', t: dur, max: dur, every: 0.25, acc: 0, tick: () => {
@@ -2474,7 +2474,7 @@ function leaveShadow(w, u) { const k = u.kit; if (!k || !k.shadow) return; k.sha
 // smoke curling off it (fx-rogue19.js 'incorpOn', look 'shadow')
 const SHADE_FORM = { wash: ['#140E1E', 0.62] };
 // Shadow Walk (round 19): gone, then in and out of being beside a random enemy, stabbing, gone again
-const SWALK = { dur: [4, 5, 6], first: 0.3, every: 0.55, out: 0.26, reach: 300, stab: 0.7 };
+const SWALK = { dur: [4, 4.5, 5], first: 0.3, every: 0.6, out: 0.26, reach: 300, stab: 0.35 }; // (stab 0.7 measured +1.7 / +2.5 rooms, a third of her damage: halved)
 function vanish(w, u, S) {
   S.out = false; S.next = w.time + SWALK.every - SWALK.out; u.hidden = true; u.ethereal = true; u.invulnT = Math.max(u.invulnT, 0.3);
   k2(w, { draw: 'shadowBlink', x: u.x, y: u.y, r: u.vr + 8, max: 0.45, out: true });
@@ -2669,7 +2669,7 @@ export function antiheal(w, e, dur) {
   const had = e.buffs.some((b) => b.id === 'antiheal' && b.t > 0); addBuff(e, { id: 'antiheal', dur, healTaken: ANTIHEAL.healTaken });
   if (!had) k2(w, { draw: 'antihealOn', unit: e, x: e.x, y: e.y, r: e.vr, max: dur + 60 });
 }
-const PACT = { bleed: 35, wash: ['#6A0E1E', 0.2] };
+const PACT = { bleed: 18, self: 28, wash: ['#6A0E1E', 0.2] }; // (the cut: a token of blood, not a wound; 35 / 45 measured -1.8 rooms)
 const RITE = { r: 72, r3: 92, t: 3, t3: 2.4, bleed: 6, big: 0.2, cdCut: 4, heal: 0.15, below: 0.55, reach: 320 };
 const SAC = { max: 6, reach: 380, cut: 0.5, anti: 4, might: 0.1, dur: 6 };
 // held where it stands (it can't walk out of a circle)
@@ -2894,9 +2894,9 @@ function lightChain(w, u, pool) {
   dash(w, u, 'drawCut', first);
 }
 // Round 19 (lane rogue19): the Monk's Fists, a combo of three
-const FISTS = { gap: 1.6, mul: 1.8, knock: 520, jab: 50, spun: 35 };
+const FISTS = { gap: 1.6, mul: 1.5, knock: 520, jab: 50, spun: 35 };
 // Round 19 (lane rogue19): the Cultist's Blood Rite
-const RITE2 = { below: 0.12, reach: 420, cd: 25, worth: 3 };
+const RITE2 = { below: 0.1, reach: 420, cd: 25, worth: 3 };
 // ---------------------------------------------------------------- traits
 export const TRAITS2 = {
   // Last Stand (round 13, the designer: "When last one in party gets a long unstoppable and haste buff, all abilities
@@ -3030,7 +3030,7 @@ export const TRAITS2 = {
       const k = u.kit; if (k.riteW !== w) { k.riteW = w; k.riteT = 0; }
       k.riteT -= dt; if (k.riteT > 0 || u.act || k.using || u.stunT > 0 || u.forcedGoal) return;
       if (!Object.values(k.cd).some((c) => c > RITE2.worth)) return; // (nothing to get back: no point)
-      const v = allies(w, u).filter((a) => !a.summon && !a.def.cargo && !a.partOf && !a.def.rig && hpRatio(a) < RITE2.below && dist(u.x, u.y, a.x, a.y) < RITE2.reach && !blocked(w, u.x, u.y, a.x, a.y))
+      const v = allies(w, u).filter((a) => !a.summon && !a.def.cargo && !a.partOf && !a.def.rig && hpRatio(a) < RITE2.below && beset(w, a) && dist(u.x, u.y, a.x, a.y) < RITE2.reach && !blocked(w, u.x, u.y, a.x, a.y)) // (about to die: low, and something on it)
         .sort((p, q) => hpRatio(p) - hpRatio(q))[0];
       if (!v) return;
       k.riteT = RITE2.cd; const a = ang(u, v), d = dist(u.x, u.y, v.x, v.y), T = clamp(d / 900, 0.12, 0.34);
@@ -3283,7 +3283,7 @@ export const ATTACKS2 = {
       u.facing = ang(u, t); setAnim(u, 'swing', 0.25); swingMark(w, u, u.r + 34, 1.6);
       hurt(w, t, A(u, 1.1), u, { knock: 80 }); addStatus(w, t, 'bleed', 26, u); u.recoilT = 0; return;
     }
-    shoot(w, u, a, { kind: 'shadowBolt', speed: 470, r: 7, dmg: A(u, 1), color: '#9A5CC8', knock: 25, extra: { onHit: (w2, p, e) => { antiheal(w2, e, ANTIHEAL.boltT); } } });
+    shoot(w, u, a, { kind: 'shadowBolt', speed: 470, r: 7, dmg: A(u, 1), color: '#9A5CC8', knock: 25, extra: { onHit: (w2, p, e) => { antiheal(w2, e, ANTIHEAL.boltT); addStatus(w2, e, 'bleed', ANTIHEAL.boltBleed, u); } } }); // (the lane's call: a little bleeding too, so Sacrifice has bleeding foes to run to; measured, docs/rogue19.md)
   },
   // the Engineer (round 13: "Hits she. Close. Throw bouncing cogs from afar"): the wrench when close, else a cog thrown
   // that bounces on to the next enemy

@@ -163,7 +163,7 @@ export const WEAKENED = { dealt: 0.7, wash: ['#7E8794', 0.22], col: '#7E8794' };
 export const DISARMED = { boss: 0.4, col: '#C9D2DE' };
 // ANTI-HEAL (the Cultist's shadow bolt, Sacrifice II): a buff 'antiheal': heals on it do `healTaken` of what they would.
 // Its look: dull broken crosses sinking off the body (healing's green crosses rise).
-export const ANTIHEAL = { healTaken: 0.5, boltT: 3, col: '#8A6A9A' }; // (boltT: how long the Cultist's bolt leaves it)
+export const ANTIHEAL = { healTaken: 0.5, boltT: 3, boltBleed: 12, col: '#8A6A9A' }; // (boltT: how long the Cultist's bolt leaves it; boltBleed: the bleeding it carries too)
 // The eight as statuses: kind (build | timer), the colour of their ring, by (the heroes who put it on: the Book), and
 // what the HUD and the Book read off a unit:
 // value(u) (a build-up: 0..need), left(u, now) (a timer: seconds left, 0 when off), dur(u) (its whole time).

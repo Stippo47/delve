@@ -139,7 +139,7 @@ export const HEROES2 = {
     name: 'Shade', art: 'art/heroes/shade.svg', role: 'skirmish', unlock: { gems: 3 },
     blurb: 'Two mirrored daggers and a cape the colour of a shadow. Hard to find, harder to hit.',
     fun: 'Arrives before the door opens and leaves after it closes. Nobody has seen the in between.',
-    stats: { hp: 100, speed: 98, r: 29, vr: 20, turn: 7, accel: 430, face: 7, mass: 0.85, range: 16, atkCd: 0.8, dmg: 8, arc: 1.4, dodge: 0.2 },
+    stats: { hp: 86, speed: 98, r: 29, vr: 20, turn: 7, accel: 430, face: 7, mass: 0.85, range: 16, atkCd: 0.8, dmg: 8, arc: 1.4, dodge: 0.2 }, // (round 19: hp 100; the designer: "Might have to lower base hp to balance her": measured, docs/rogue19.md)
     weapon: 'twin', style: { dual: true, straight: true, sides: 0.55 }, // round 13: "Should not cross blades. Attacks in 2 stabs at a time"; round 19: "Should keep them to the sides" (parts.js style.sides)
     attack: { name: 'Twin daggers', anim: 'thrust', desc: 'Two quick stabs, one from each hand, one right after the other.' },
     summons: { // Death Mark's shadow clones (round 13): her own figure, dark (round 19: her Blackout form; atkCd half hers: her stab comes in pairs)
@@ -150,11 +150,11 @@ export const HEROES2 = {
     },
     abilities: [
       { id: 'shadowWalk', name: 'Shadow Walk', cd: 11, tags: 'ds', glyph: 'dagger', desc: 'She is gone. Then she blinks into being beside one enemy after another, at random, stabs it with both daggers and is gone again. Nothing can touch her meanwhile.',
-        tiers: ['For 4s.', 'For 5s.', 'For 6s.'] },
+        tiers: ['For 4s.', 'For 4.5s.', 'For 5s.'] },
       { id: 'blackout', name: 'Blackout', cd: 15, tags: 's', glyph: 'cloud', desc: 'Snuffs out the light round her, and the dark goes with her. In it she is incorporeal: no physical blow or shot can touch her (spells still can) and she walks through bodies. Enemies in the dark are Weakened (they deal 30% less) and she hits them 30% harder.',
         tiers: ['For 4s.', 'Bigger.', 'For 6s, and no enemy can pick her out.'] },
       { id: 'deathMark', name: 'Shadow Clones', cd: 14, tags: 'd', glyph: 'skull', desc: 'Her shadow splits off into copies of her that move and fight just as she does, in her Blackout form: dark, and no physical blow can touch them, but a spell breaks them.',
-        tiers: ['Two clones for 6s.', 'Three clones.', 'They last 10s.'] },
+        tiers: ['Two clones for 6s.', 'Three clones.', 'They last 8s.'] },
     ],
     trait: { id: 'fade', name: 'Fade', desc: 'After 3s without attacking or being hurt she becomes a shadow: no enemy can pick her out until she strikes or uses an ability.' },
   },
@@ -304,9 +304,9 @@ Object.assign(HEROES2, {
     name: 'Cultist', art: 'art/heroes/cultist.svg', role: 'caster', unlock: { gems: 2 },
     blurb: 'A tall black hood, a curved dagger and a burning black candle. Pays in blood for the party\'s strength.',
     fun: 'Says the eye on his hood sees everything. It mostly sees the inside of the hood.',
-    stats: { hp: 78, speed: 62, r: 30, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1, range: 220, keep: 175, atkCd: 1.25, dmg: 10 },
+    stats: { hp: 88, speed: 62, r: 30, vr: 22, turn: 4.4, accel: 230, face: 4.4, mass: 1, range: 220, keep: 175, atkCd: 1.1, dmg: 15 }, // (round 19: hp 78, atkCd 1.25, dmg 10 before: his bolt no longer bursts the bleeding, the engine of his damage; measured, docs/rogue19.md)
     proj: ['bolt', '#9A5CC8'], style: { glow: '#9A5CC8' },
-    attack: { name: 'Shadow bolt', anim: 'cast', desc: 'Close up, a swipe of the curved dagger that makes it bleed; further off, a bolt of violet shadow from the candle that leaves Anti-heal: heals on it do half for 3s.' },
+    attack: { name: 'Shadow bolt', anim: 'cast', desc: 'Close up, a swipe of the curved dagger that makes it bleed; further off, a bolt of violet shadow from the candle that draws a little blood and leaves Anti-heal: heals on it do half for 3s.' },
     abilities: [
       { id: 'bloodPact', name: 'Blood Pact', cd: 15, tags: 'h', glyph: 'drain', desc: 'Cuts himself and every friend near him open: they all bleed, and all are bound in blood: harder, quicker blows for 6s.',
         tiers: ['+30% damage, quicker blows.', '+40%.', 'They heal from 15% of what they deal.'] },
@@ -330,7 +330,7 @@ Object.assign(HEROES2, {
       { id: 'palmStrike', name: 'Palm Strike', cd: 9, tags: 'ds', glyph: 'wave', desc: 'His open hand grows into a great flat palm that pushes out in front of him: what it meets is thrown back, turned to face away and Spun: its turns go slippery, and when that fills up it is dazed.',
         tiers: ['Close in front.', 'It staggers them.', 'Further, and they spin faster.'] },
       { id: 'innerPeace', name: 'Inner Peace', cd: 16, tags: 'h', glyph: 'sun', desc: 'Sits with his palms pressed together: his statuses fall away and he heals 15%. No blow or shot gets through to him (spells land softer): shots fly back, and whoever strikes him is thrown far back.',
-        tiers: ['For 2.5s.', 'For 4s.', 'A glow round him heals friends near and clears their statuses.'] },
+        tiers: ['For 2s.', 'For 3s.', 'A glow round him heals friends near and clears their statuses.'] },
     ],
     trait: { id: 'deflect', name: 'Deflect', desc: 'Swats aside 40% of the shots that reach him from the front.' },
   },
