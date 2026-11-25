@@ -697,7 +697,8 @@ export function update(run, dt) {
   }
   if (run.phase === 'loot') { if (doTasks(run, dt)) { run.phase = 'choose'; run.t = 0; } return; }
   if (run.phase === 'choose') {
-    if (run.node.kind === 'boss') { finishRoomHp(run); endFloor(run); return; } // (leaving after it is free: the floor is done)
+    // (round 19, lane wurm19: a beat before the floor ends. It ended 0.6 s after the boss fell: its death was cut off by the summary.)
+    if (run.node.kind === 'boss') { if (run.t < BOSS_END_T) return; finishRoomHp(run); endFloor(run); return; } // (leaving after it is free: the floor is done)
     if (run.leaving) { finishRoomHp(run); run.phase = 'retreated'; summarize(run); return; } // leaving: the room is done, out we go
     const hs = heroesAlive(run);
     if (run.doorK == null) {
@@ -749,6 +750,7 @@ function exitTick(run, h, dt) {
 // on its rail doesn't chase and doesn't count. Once kept away it stays away a moment (it used to flip between going and
 // fighting every tick as a blade or a bouncing gear passed the 260 mark, and stood still between the two); a helper
 // that gets no closer for a few seconds gives that friend up for a while and fights.
+const BOSS_END_T = 1.3; // the boss has fallen: how long the room is still shown before the floor ends
 const REVIVE_T = 3, REVIVE_HP = 0.1, REVIVE_HOLD = 2, REVIVE_GIVEUP = 4, REVIVE_REST = 8;
 const menace = (e) => e.team === 'enemy' && !e.dead && !e.downed && e.aggro && !e.def.trap && !e.ethereal && !e.hidden;
 const inReachOf = (e, h) => e.def.role === 'ranged' && !e.def.boss && e.target === h && dist(e.x, e.y, h.x, h.y) - e.r - h.r < (e.def.range || 0) + 60; // (a shooter: a boss's reach is its own business, and blocking every revive it eyed cost boss fights)

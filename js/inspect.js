@@ -82,6 +82,7 @@ export function portrait(kind) {
   const d = DEFS[kind]; if (!d) return '';
   if (d.portrait || d.art) return d.portrait || d.art; // (round 13, lane E: def.portrait, a still picture when the art alone isn't the whole look: a spirit's tail is drawn by the game)
   if (faceCache[kind]) return faceCache[kind];
+  if (d.picture) return (faceCache[kind] = d.picture() || ''); // (round 19, lane wurm19: a boss drawn in code paints its own face: the Sand Wurm's was a blank disc)
   const spr = getSprite(kind === 'slimeSmall' ? 'slimeSmall' : kind, 120);
   return (faceCache[kind] = spr && spr.img && spr.img.toDataURL ? spr.img.toDataURL() : '');
 }

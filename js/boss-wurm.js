@@ -7,18 +7,20 @@
 import { alive, puff, spawn, addDanger, addBuff, kill } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange, chance } from './util.js';
 import { crowd } from './elites.js';
+import { cue } from './sfx.js';
 import { heroesOf, H, steady, pickTarget, randomHero, lead, clipLine, part, endParts, PART, place, logOf, notePhase, inside, stage, bfx, param, TEST_MOVE } from './boss-kit.js';
-import { drawWurm, drawWurmPart, drawDunesFloor, drawDunesAir } from './boss-wurm-fx.js';
+import { drawWurm, drawWurmPart, drawDunesFloor, drawDunesAir, wurmPicture } from './boss-wurm-fx.js';
+import { THEMES } from './themes.js';
 
 export const SW = {
   seg: [43, 43, 41, 39, 37, 35, 33, 30, 27, 24, 20], space: 0.66, share: 0.5,
   under: { speed: 420, min: 0.8, max: 2.0 },
-  breach: { r: 120, tell: 1.15, dmg: 80, knock: 400, stagger: 30, len: [300, 400], speed: 440, height: 96, landR: 90, landDmg: 54 },
+  breach: { r: 120, tell: 1.15, dmg: 80, knock: 400, stagger: 30, len: [300, 400], speed: 440, height: 72, landR: 90, landDmg: 54 },
   root: { dur: 9.5, reach: 170, height: 44, turn: 1.5, comp: 0.74 },
   lunge: { len: 380, hw: 46, tell: 0.8, dmg: 97, knock: 320, stuck: 0.7, stuckTaken: 1.45, cd: [2.1, 2.7] },
   inhale: { tell: 0.8, dur: 2.7, pull: 74, range: 640, r: 150, dmg: 135, knock: 420, at: 0.42 },
   pit: { r: 60, t: 10 }, brood: { n: 1, cap: 1, hpMul: 0.3, dmgMul: 0.4 }, // round 14 (lane L): 2 at a time to 5 at full health -> 1 at a time at 30%: see BOSS_ADDS in dungeon.js
-  coil: { r0: 150, r1: 345, mid: 248, tell: 2.1, dmg: 116, knock: 380, arc: 3.9, speed: 720, height: 84 },
+  coil: { r0: 150, r1: 345, mid: 248, tell: 2.1, dmg: 116, knock: 380, arc: 3.9, speed: 720, height: 66 },
   roar: { r: 250, tell: 1.0, dmg: 19, knock: 360, dur: 1.6 },
   chain: [2, 2, 3], // breaches in a row before it rears, by phase
 };
@@ -31,17 +33,19 @@ export const BODY_LEN = OFF[OFF.length - 1] + 20;
 function brain(w, u, dt) {
   const k = u.sw || (u.sw = make(w, u));
   steady(u); logOf(w, u, k); stage(w, 'wurm', drawDunesFloor, drawDunesAir);
-  k.t += dt; if (k.stuckT > 0) k.stuckT -= dt;
+  if (!w.wurms || !w.wurms.includes(k)) (w.wurms || (w.wurms = [])).push(k); // (boss-wurm-fx.js: its furrow and holes are the room's, and stay when it dies)
+  k.now = w.time; k.t += dt; if (k.stuckT > 0) k.stuckT -= dt;
   for (const h of k.holes) h.age += dt;
   k.holes = k.holes.filter((h) => h.open || h.age < h.shut + 1.2);
+  keepOut(w, u, k, dt);
   if (k.st === 'asleep') { // coiled under the sand at the far end: a slow mound; it comes for whoever walks in
     hideHead(u, k); k.mound.heave = 0.4 + 0.2 * Math.sin(k.t * 2);
     if (u.aggro || heroesOf(w, u).some((h) => dist(h.x, h.y, u.x, u.y) < WAKE)) {
       u.aggro = true; k.phase = 1; notePhase(w, k);
       const n = Math.round(+param('bossphase') || 1);
       if (n > 1 && n <= PHASE_AT.length) { u.hp = u.maxHp * (PHASE_AT[n - 1] + 0.005); k.phase = n - 1; }
-      k.left = SW.chain[0]; goUnder(w, u, k);
-      if (TEST_MOVE === 'root') k.left = 0; if (TEST_MOVE === 'coil') { k.phase = 3; k.coilNext = true; } if (TEST_MOVE === 'inhale') { k.left = 0; k.inhaleFirst = true; k.phase = Math.max(k.phase, 2); }
+      k.left = w.bookPreview ? 1 : SW.chain[0]; goUnder(w, u, k); // (the Book's 10 s loop: one breach, then it rears and lunges; two breaches filled the loop)
+      if (TEST_MOVE === 'root') k.left = 0; if (TEST_MOVE === 'coil') { k.phase = 3; k.coilNext = true; } if (TEST_MOVE === 'inhale') { k.left = 0; k.inhaleFirst = true; k.phase = Math.max(k.phase, 2); } if (TEST_MOVE === 'roar') { k.roarNext = true; goUnder(w, u, k); }
     }
     layout(w, u, k); return true;
   }
@@ -50,12 +54,13 @@ function brain(w, u, dt) {
   return true;
 }
 function make(w, u) {
-  const k = { phase: 0, t: 0, st: 'asleep', left: 2, holes: [], path: null, s: 0, jaw: 0.15, mound: { x: u.x, y: u.y, a: Math.PI, heave: 0.5 }, trail: [], parts: [], aim: Math.PI, stuckT: 0 };
+  const k = { u, now: w.time, phase: 0, t: 0, st: 'asleep', left: 2, holes: [], path: null, s: 0, jaw: 0.15, mound: { x: u.x, y: u.y, a: Math.PI, heave: 0.5 }, trail: [], parts: [], aim: Math.PI, stuckT: 0 };
   SW.seg.forEach((r, i) => { const p = part(w, u, 'wurmSegment', u.x, u.y, { share: SW.share }); p.r = r; p.vr = r; p.seg = i; p.last = i === SW.seg.length - 1; k.parts.push(p); });
   u.homeR = u.r;
   return k;
 }
-function hideHead(u, k) { u.hidden = true; u.shadowK = 0; u.invulnT = Math.max(u.invulnT, 0.12); u.r = 6; place(u, k.mound.x, k.mound.y, k.mound.a); u.hop = 0; }
+// under the sand the head is not there at all (round 19: the party aimed at it 34% of its time, swinging at the mound)
+function hideHead(u, k) { u.hidden = true; u.ethereal = true; u.shadowK = 0; u.invulnT = Math.max(u.invulnT, 0.12); u.r = 6; place(u, k.mound.x, k.mound.y, k.mound.a); u.hop = 0; u.vis = 0; }
 
 // ---------------------------------------------------------------- the body on its path
 // A path: { len, pt(s) -> [x, y], h(s) -> height off the floor, dive: it goes back under at len }. The head is at
@@ -66,31 +71,54 @@ function layout(w, u, k) {
     if (!P || s <= 2 || s >= P.len - (P.dive ? 2 : -1e9)) { if (o !== u) { o.hidden = true; o.ethereal = true; o.shadowK = 0; o.vis = 0; } return false; }
     const [x, y] = P.pt(s), [x2, y2] = P.pt(s + 6), edge = Math.min(1, s / 46, P.dive ? (P.len - s) / 46 : 1);
     place(o, x, y, Math.atan2(y2 - y, x2 - x));
-    o.hidden = false; o.ethereal = false; o.hop = P.h(s) * edge; o.vis = edge; o.shadowK = 0.55 + 0.25 * edge; o.r = r0 * (0.5 + 0.5 * edge);
+    o.hidden = false; o.ethereal = false; o.hop = P.h(s) * edge; o.vis = 0.5 + 0.5 * edge; o.shadowK = 0.55 + 0.25 * edge; o.r = r0 * (0.3 + 0.7 * edge);
     return true;
   };
   if (!(P && put(u, k.s, u.homeR))) hideHead(u, k);
-  if (!u.hidden) u.invulnT = Math.min(u.invulnT, k.safe ? 9 : 0.05);
-  k.parts.forEach((p, i) => { if (alive(p)) put(p, k.s - OFF[i] * comp, SW.seg[i]); });
-  u.jaw = k.jaw; u.wurmOut = !u.hidden;
+  if (!u.hidden) u.invulnT = Math.min(u.invulnT, 0.05);
+  let any = !u.hidden;
+  k.parts.forEach((p, i) => { if (!alive(p)) return; if (put(p, k.s - OFF[i] * comp, SW.seg[i])) any = true; p.hp = p.maxHp; /* (a ring keeps no health: no bar of its own) */ });
+  u.jaw = k.jaw; u.wurmOut = any; // (sim.js WINDOW_PULL: any of it out is the party's window, not only the head)
 }
 const out = (k) => k.path && k.s > 2;
-function hole(k, x, y, r = 54) { const h = { x, y, r, age: 0, open: true, shut: 0 }; k.holes.push(h); return h; }
+const sm = (q) => { q = clamp(q, 0, 1); return q * q * (3 - 2 * q); };
+function hole(k, x, y, r = 54) { const h = { x, y, r, age: 0, open: true, shut: 0, t0: k.now, shutT: null }; k.holes.push(h); return h; }
 function shut(w, u, k, h, pit) {
-  if (!h || !h.open) return; h.open = false; h.shut = h.age;
+  if (!h || !h.open) return; h.open = false; h.shut = h.age; h.shutT = w.time;
   if (pit && k.phase >= 2 && w.hazards.filter((z) => z.wurmPit).length < 6) w.hazards.push({ type: 'quicksand', x: h.x, y: h.y, r: SW.pit.r, t: SW.pit.t, max: SW.pit.t, wurmPit: true });
 }
-function sandBurst(w, x, y, n = 18, sp = 300) { for (let i = 0; i < n; i++) { const a = rand() * TAU, v = rrange(80, sp); w.particles.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0.7, max: 0.7, size: rrange(4, 9), color: i % 3 ? 'rgba(217,192,138,0.9)' : 'rgba(181,139,90,0.9)', drag: 0.9 }); } }
+function sandBurst(w, x, y, n = 18, sp = 300) { for (let i = 0; i < n; i++) { const a = rand() * TAU, v = rrange(80, sp); w.particles.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0.7, max: 0.7, size: rrange(4, 9), color: i % 3 === 0 ? 'rgba(142,106,58,0.95)' : i % 3 === 1 ? 'rgba(244,230,190,0.95)' : 'rgba(181,139,90,0.95)', drag: 0.9 }); } }
+// A place for a hole: clear of the broken columns by the hole's own width (round 19: 3-5% of holes opened against one,
+// the neck and the lunge lying across it), and inside the room.
+function clearSpot(w, x, y, r = 60, m = 90) {
+  let p = inside(w, x, y, m);
+  for (let i = 0; i < 4; i++) { let moved = false;
+    for (const c of w.pillars) { const need = c.r + r + 26, d = dist(p.x, p.y, c.x, c.y); if (d >= need) continue; const a = d > 1 ? angleTo(c.x, c.y, p.x, p.y) : rand() * TAU; p = inside(w, c.x + Math.cos(a) * need, c.y + Math.sin(a) * need, m); moved = true; }
+    if (!moved) break; }
+  return p;
+}
+// An open hole is a pit: whoever of the other side stands in it is edged out to its rim (round 19: heroes stood in the
+// middle of the hole the body was pouring out of). Not what is in the air over it.
+function keepOut(w, u, k, dt) {
+  for (const h of k.holes) { if (!h.open || h.age < 0.1) continue;
+    for (const o of heroesOf(w, u)) { if ((o.hop || 0) > 8 || o.def.boss || o.def.part) continue; const rim = h.r * 0.8 + o.r * 0.4, d = dist(o.x, o.y, h.x, h.y); if (d >= rim) continue;
+      const a = d > 1 ? angleTo(h.x, h.y, o.x, o.y) : o.id * 2.4, st = Math.min(rim - d, 260 * dt), q = inside(w, o.x + Math.cos(a) * st, o.y + Math.sin(a) * st, o.r); o.x = q.x; o.y = q.y; } }
+}
 
 // ---------------------------------------------------------------- under the sand
 function goUnder(w, u, k) {
   // a phase line passed while it was up: its next rise is the roar
   if (k.phase < PHASE_AT.length && u.hp / u.maxHp < PHASE_AT[k.phase]) { k.phase++; notePhase(w, k); k.roarNext = true; if (k.phase === 3) k.coilNext = true; }
-  k.path = null; k.s = 0; k.st = 'under'; k.jaw = 0.15;
+  k.path = null; k.s = 0; k.st = 'under'; k.jaw = 0.15; k.underAt = k.t;
   const hs = heroesOf(w, u);
   if (k.roarNext) { k.goal = { x: w.W / 2, y: w.H / 2 }; k.plan = 'roar'; }
   else if (k.coilNext && hs.length) { k.plan = 'coil'; const cx = hs.reduce((a, h) => a + h.x, 0) / hs.length, cy = hs.reduce((a, h) => a + h.y, 0) / hs.length, m = SW.coil.mid + 40;
-    k.coilAt = { x: clamp(cx, Math.min(m, w.W / 2), Math.max(w.W - m, w.W / 2)), y: clamp(cy, Math.min(m, w.H / 2), Math.max(w.H - m, w.H / 2)) }; const a = angleTo(k.coilAt.x, k.coilAt.y, k.mound.x, k.mound.y); k.goal = { x: k.coilAt.x + Math.cos(a) * SW.coil.mid, y: k.coilAt.y + Math.sin(a) * SW.coil.mid }; }
+    const fit = (x, y) => ({ x: clamp(x, Math.min(m, w.W / 2), Math.max(w.W - m, w.W / 2)), y: clamp(y, Math.min(m, w.H / 2), Math.max(w.H - m, w.H / 2)) });
+    // the ring is where it bursts out and runs: moved the least it takes for no column to stand on it (round 19)
+    const onRing = (c) => w.pillars.some((p) => Math.abs(dist(c.x, c.y, p.x, p.y) - SW.coil.mid) < p.r + 70);
+    let c0 = fit(cx, cy), best = c0;
+    if (onRing(c0)) { let bd = Infinity; for (let rr = 40; rr <= 240 && bd === Infinity; rr += 40) for (let i = 0; i < 12; i++) { const c = fit(c0.x + Math.cos(i / 12 * TAU) * rr, c0.y + Math.sin(i / 12 * TAU) * rr), d = dist(c.x, c.y, c0.x, c0.y); if (!onRing(c) && d < bd) { bd = d; best = c; } } }
+    k.coilAt = best; const a = angleTo(k.coilAt.x, k.coilAt.y, k.mound.x, k.mound.y); k.goal = { x: k.coilAt.x + Math.cos(a) * SW.coil.mid, y: k.coilAt.y + Math.sin(a) * SW.coil.mid }; }
   else { k.plan = k.left > 0 ? 'breach' : 'root'; k.mark = (chance(0.55) && pickTarget(w, u, k, 9)) || randomHero(w, u) || null; }
   const g = k.goal || (k.mark ? k.mark : k.mound), d = dist(k.mound.x, k.mound.y, g.x, g.y);
   k.underT = clamp(d / SW.under.speed, SW.under.min, SW.under.max) * (k.phase >= 3 ? 0.8 : 1);
@@ -135,16 +163,16 @@ const STATES = {
   },
   // reared up out of its hole: it sways after its mark, lunges, and (once) breathes the room in
   root(w, u, k, dt) {
-    const R = SW.root, P = k.path; k.rootT += dt;
+    const R = SW.root, P = k.path; k.rootT += dt; k.lim = reachLim(w, k);
     const t = pickTarget(w, u, k, dt);
     if (k.act) { if (k.act(dt) === false) k.act = null; }
     else {
-      k.reach += (R.reach - k.reach) * Math.min(1, dt * 5); k.lift += (1 - k.lift) * Math.min(1, dt * 5); k.jaw += (0.25 + 0.1 * Math.sin(k.t * 3) - k.jaw) * Math.min(1, dt * 6);
+      k.reach += (k.lim - k.reach) * Math.min(1, dt * 5); k.lift += (1 - k.lift) * Math.min(1, dt * 5); k.jaw += (0.25 + 0.1 * Math.sin(k.t * 3) - k.jaw) * Math.min(1, dt * 6);
       if (t) k.aim = wrapAngle(k.aim + clamp(wrapAngle(angleTo(P.x, P.y, t.x, t.y) - k.aim), -R.turn * dt, R.turn * dt));
-      if (k.plan === 'roar') { if (k.rootT > SW.roar.dur) return sink(w, u, k); k.jaw = 1; return; }
+      if (k.plan === 'roar') { if (k.rootT > SW.roar.dur) return sink(w, u, k); k.jaw = 1; k.s = k.reach; return; }
       if (k.rootT > R.dur * (k.phase >= 3 ? 0.8 : 1)) return sink(w, u, k);
       if (!k.inhaled && (k.inhaleFirst || k.rootT > R.dur * SW.inhale.at)) { k.inhaled = true; k.inhaleFirst = false; return inhale(w, u, k); }
-      if ((k.lungeT -= dt) <= 0 && t) { k.lungeT = rrange(...SW.lunge.cd) * (k.phase >= 3 ? 0.8 : 1); lunge(w, u, k, t); }
+      if ((k.lungeT -= dt) <= 0 && t) { k.lungeT = (lunge(w, u, k, t) || heroesOf(w, u).some((h) => h !== t && lunge(w, u, k, h))) ? rrange(...SW.lunge.cd) * (k.phase >= 3 ? 0.8 : 1) : 0.4; }
     }
     k.s = k.reach;
   },
@@ -153,7 +181,7 @@ const STATES = {
     if (k.reach > -BODY_LEN * SW.root.comp * 0.25 && k.reach > -60) return;
     shut(w, u, k, k.holeA, true); if (k.plan !== 'roar') brood(w, u, k, k.holeA);
     if (k.phase >= 3 && k.plan !== 'roar') k.coilNext = true; // phase 3: every cycle opens with the coil
-    k.safe = false; k.left = SW.chain[k.phase - 1] || 2; k.roarNext = false; goUnder(w, u, k);
+    k.left = SW.chain[k.phase - 1] || 2; k.roarNext = false; goUnder(w, u, k);
   },
   // phase 3: the mound races round the party in a ring; the ring is where it will burst out (stand in the middle)
   coil(w, u, k, dt) {
@@ -175,7 +203,7 @@ const STATES = {
 };
 function startTell(w, u, k) {
   const B = SW.breach, roar = k.plan === 'roar', t = k.mark && alive(k.mark) ? k.mark : randomHero(w, u);
-  const p0 = roar ? { x: w.W / 2, y: w.H / 2 } : t ? lead(t, 0.35) : k.mound, p = inside(w, p0.x, p0.y, 90);
+  const p0 = roar ? { x: w.W / 2, y: w.H / 2 } : t ? lead(t, 0.35) : k.mound, p = clearSpot(w, p0.x, p0.y, 60, k.plan === 'breach' ? 90 : 150);
   k.at = p; k.mound.x = p.x; k.mound.y = p.y; k.st = 'tell';
   const tell = (roar ? SW.roar.tell : B.tell) * (k.phase >= 3 ? 0.88 : 1); k.tellT = tell; k.tellK = () => 1 - clamp(k.tellT / tell, 0, 1);
   bfx(w, { type: 'wurmHeave', x: p.x, y: p.y, r: roar ? SW.roar.r : B.r, max: tell, seed: Math.round(p.x + p.y * 7) });
@@ -187,8 +215,14 @@ function startArc(w, u, k) {
   // over towards someone else, or across the room's middle
   const to = hs.length ? hs[Math.floor(rand() * hs.length)] : { x: w.W / 2 + rrange(-200, 200), y: w.H / 2 + rrange(-150, 150) };
   let a = angleTo(p.x, p.y, to.x, to.y) + rrange(-0.25, 0.25), L = rrange(...B.len);
-  for (let i = 0; i < 8; i++) { const e = clipLine(w, p.x, p.y, a, L + 70, 50, 0); if (e.d >= 250) { L = Math.min(L, e.d - 60); break; } a += 0.8; }
-  const bow = rrange(40, 90) * (chance(0.5) ? 1 : -1), ca = Math.cos(a), sa = Math.sin(a);
+  // (round 19: it took the first way with 250 clear, and an arc 190 long bunched the body between its two holes:
+  // now the first way with its whole length clear, else the longest of the eight)
+  { let best = null; for (let i = 0; i < 8; i++) { const ai = a + i * 0.8, e = clipLine(w, p.x, p.y, ai, L + 70, 50, 0); if (!best || e.d > best.d) best = { a: ai, d: e.d }; if (e.d >= L + 60) break; }
+    a = best.a; L = Math.max(150, Math.min(L, best.d - 60)); }
+  let bow = rrange(40, 90) * (chance(0.5) ? 1 : -1); const ca = Math.cos(a), sa = Math.sin(a);
+  // (round 19: an arc along a wall bowed out through it: bow the other way, or not at all)
+  const inRoom = (b) => { const x = p.x + ca * L / 2 - sa * b, y = p.y + sa * L / 2 + ca * b; return x > 70 && y > 70 && x < w.W - 70 && y < w.H - 70; };
+  if (!inRoom(bow)) bow = inRoom(-bow) ? -bow : 0;
   k.path = { len: L, speed: B.speed * (k.phase >= 3 ? 1.12 : 1), dive: true, x: p.x, y: p.y,
     pt: (s) => { const q = s / L, b = Math.sin(clamp(q, 0, 1) * Math.PI) * bow; return [p.x + ca * s - sa * b, p.y + sa * s + ca * b]; },
     h: (s) => Math.sin(clamp(s / L, 0, 1) * Math.PI) * B.height };
@@ -199,39 +233,46 @@ function startArc(w, u, k) {
 function startRoot(w, u, k) {
   const p = k.at, t = k.mark && alive(k.mark) ? k.mark : randomHero(w, u);
   k.aim = t ? angleTo(p.x, p.y, t.x, t.y) : rand() * TAU;
-  k.reach = 0; k.lift = 0; k.rootT = 0; k.lungeT = 1.1; k.inhaled = k.phase < 1; k.act = null; k.st = 'root'; k.holeA = k.holes[k.holes.length - 1];
-  k.safe = k.plan === 'roar'; if (k.safe) { u.invulnT = SW.roar.dur + 0.6; bfx(w, { type: 'wurmRoar', u, max: SW.roar.dur }); }
+  k.reach = 0; k.lim = SW.root.reach; k.lift = 0; k.rootT = 0; k.lungeT = 1.1; k.inhaled = k.phase < 1; k.act = null; k.st = 'root'; k.holeA = k.holes[k.holes.length - 1];
+  if (k.plan === 'roar') { bfx(w, { type: 'wurmRoar', u, max: SW.roar.dur }); cue('bossPhase', u, k.phase); }
   const R = SW.root;
   k.path = { len: 1e9, comp: R.comp, x: p.x, y: p.y,
     pt: (s) => { const a = k.aim + Math.sin(k.t * 1.7 + s * 0.011) * 0.2 * clamp(s / 200, 0, 1) * (k.rigid ? 0 : 1); return [p.x + Math.cos(a) * s, p.y + Math.sin(a) * s]; },
     h: (s) => clamp(s / Math.max(60, k.reach), 0, 1) * R.height * k.lift };
 }
 function sink(w, u, k) { k.st = 'sink'; k.act = null; k.rigid = false; }
+// How far the reared neck can reach the way it faces: its full reach, or less with a wall or a column in the way (round
+// 19: reared near a wall its head hung out of the room, and its neck lay across a column).
+const reachLim = (w, k) => clamp(clipLine(w, k.path.x, k.path.y, k.aim, SW.root.reach + 100, 30, 0).d - 70, 70, SW.root.reach);
 // ---- Lunge: the neck draws back, then strikes out along a line; its head sticks in the sand a moment (hit it)
 function lunge(w, u, k, t) {
-  const L = SW.lunge, P = k.path, a = angleTo(P.x, P.y, t.x + (t.vx || 0) * 0.3, t.y + (t.vy || 0) * 0.3), e = clipLine(w, P.x, P.y, a, L.len, 30, 40);
+  const L = SW.lunge, P = k.path, a = angleTo(P.x, P.y, t.x + (t.vx || 0) * 0.3, t.y + (t.vy || 0) * 0.3), e = clipLine(w, P.x, P.y, a, L.len, 44, 40);
+  if (e.d < 170) return false; // (round 19: a column or the wall right there: a stab 40 long into it; it waits and sways instead)
   const tell = L.tell * (k.phase >= 3 ? 0.85 : 1); let tt = 0, struck = false;
   addDanger(w, { shape: 'line', x1: P.x, y1: P.y, x2: e.x, y2: e.y, hw: L.hw, t: tell, team: u.team, src: u, kind: 'blade', col: '#D98A4B', quiet: true, hit: H(u, { dmg: L.dmg, knock: L.knock, kAngle: a, heavy: true }),
-    onFire: (w2) => { bfx(w2, { type: 'wurmLunge', x1: P.x, y1: P.y, x2: e.x, y2: e.y, max: 0.45 }); sandBurst(w2, e.x, e.y, 12, 240); w2.shake = Math.max(w2.shake, 7); } });
+    onFire: (w2) => { bfx(w2, { type: 'wurmLunge', x1: P.x, y1: P.y, x2: e.x, y2: e.y, max: 0.45 }); bfx(w2, { type: 'wurmStuck', x: e.x, y: e.y, a, max: 0.1 + L.stuck + 0.3, seed: Math.round(e.x + e.y) }); sandBurst(w2, e.x, e.y, 12, 240); w2.shake = Math.max(w2.shake, 7); } });
   k.act = (dt) => {
     tt += dt; k.rigid = true;
     k.aim = wrapAngle(k.aim + clamp(wrapAngle(a - k.aim), -9 * dt, 9 * dt));
-    if (tt < tell) { const q = tt / tell; k.reach += (SW.root.reach * (1 - 0.42 * q) - k.reach) * Math.min(1, dt * 10); k.jaw = 0.3 + 0.7 * q; k.lift = 1 + 0.25 * q; return true; }
-    if (tt < tell + 0.1) { k.reach = SW.root.reach * 0.58 + (e.d - 26 - SW.root.reach * 0.58) * ((tt - tell) / 0.1); k.jaw = 1 - (tt - tell) / 0.1; k.lift = 1 - 0.9 * (tt - tell) / 0.1; return true; }
+    if (tt < tell) { const q = tt / tell; k.reach += (k.lim * (1 - 0.42 * q) - k.reach) * Math.min(1, dt * 10); k.jaw = 0.3 + 0.7 * q; k.lift = 1 + 0.25 * q; return true; }
+    if (tt < tell + 0.1) { k.reach = k.lim * 0.58 + (e.d - 26 - k.lim * 0.58) * ((tt - tell) / 0.1); k.jaw = 1 - (tt - tell) / 0.1; k.lift = 1 - 0.9 * (tt - tell) / 0.1; return true; }
     if (tt < tell + 0.1 + L.stuck) { if (!struck) { struck = true; } k.reach = e.d - 26; k.jaw = 0; k.lift = 0.1; addBuff(u, { id: 'stuck', dur: 0.15, taken: L.stuckTaken }); u.stuck = 0.15; return true; }
-    if (tt < tell + 0.1 + L.stuck + 0.45) { const q = (tt - tell - 0.1 - L.stuck) / 0.45; k.reach = e.d - 26 + (SW.root.reach - (e.d - 26)) * q * q * (3 - 2 * q); k.lift = 0.1 + 0.9 * q; return true; }
+    if (tt < tell + 0.1 + L.stuck + 0.45) { const q = (tt - tell - 0.1 - L.stuck) / 0.45; k.reach = e.d - 26 + (k.lim - (e.d - 26)) * q * q * (3 - 2 * q); k.lift = 0.1 + 0.9 * q; return true; }
     k.rigid = false; return false;
   };
+  return true;
 }
 // ---- Inhale: its maw gapes and the room is dragged towards it; at the end it bites down on whatever came too close
 function inhale(w, u, k) {
   const I = SW.inhale, P = k.path; let tt = 0;
-  const mouth = () => ({ x: P.x + Math.cos(k.aim) * (SW.root.reach + 40), y: P.y + Math.sin(k.aim) * (SW.root.reach + 40) });
+  const mouth = () => inside(w, P.x + Math.cos(k.aim) * (k.lim + 40), P.y + Math.sin(k.aim) * (k.lim + 40), 30);
   const m0 = mouth(), f = bfx(w, { type: 'wurmInhale', u, max: I.tell + I.dur, range: I.range });
   const z = addDanger(w, { shape: 'circle', x: m0.x, y: m0.y, r: I.r, t: I.tell + I.dur, team: u.team, src: u, kind: 'bone', col: '#D98A4B', quiet: true, hit: H(u, { dmg: I.dmg, knock: I.knock, heavy: true }),
     onFire: (w2, zz) => { bfx(w2, { type: 'wurmChomp', x: zz.x, y: zz.y, r: I.r, a: k.aim, max: 0.5 }); sandBurst(w2, zz.x, zz.y, 16, 300); w2.shake = Math.max(w2.shake, 10); } });
   k.act = (dt) => {
-    tt += dt; k.rigid = true; k.reach += (SW.root.reach - k.reach) * Math.min(1, dt * 6); k.lift += (0.7 - k.lift) * Math.min(1, dt * 6);
+    // (round 19: the bite is the head's own: it draws back in the last 0.3 s of the breath, then darts out and its jaws clap shut)
+    tt += dt; k.rigid = true; const back = tt > I.tell + I.dur - 0.3 && tt < I.tell + I.dur;
+    k.reach += (k.lim - (back ? 36 : 0) - k.reach) * Math.min(1, dt * (back ? 12 : 6)); k.lift += (0.7 - k.lift) * Math.min(1, dt * 6);
     if (tt < I.tell + I.dur) {
       k.jaw += (1 - k.jaw) * Math.min(1, dt * 8); const m = mouth(); f.mx = m.x; f.my = m.y; z.x = m.x; z.y = m.y; u.inhaling = 0.2;
       if (tt > I.tell) for (const h of heroesOf(w, u)) { // dragged towards the maw (not what can't be moved)
@@ -242,7 +283,7 @@ function inhale(w, u, k) {
       }
       return true;
     }
-    if (tt < I.tell + I.dur + 0.5) { k.jaw = 0; return true; } // jaws shut: a beat
+    if (tt < I.tell + I.dur + 0.5) { const q = (tt - I.tell - I.dur) / 0.5; k.jaw = 0; k.reach = k.lim + (q < 0.16 ? -36 + 78 * (q / 0.16) : 42 * (1 - sm((q - 0.16) / 0.84))); k.lift = 0.7 - 0.45 * (q < 0.16 ? q / 0.16 : 1 - sm((q - 0.16) / 0.84)); return true; } // the bite, and a beat
     k.rigid = false; return false;
   };
 }
@@ -262,7 +303,14 @@ function brood(w, u, k, h) {
 }
 function death(w, u) {
   const k = u.sw;
-  if (k) { for (const p of [u, ...k.parts]) if (!p.hidden) { bfx(w, { type: 'wurmChunk', x: p.x, y: p.y, r: p.vr, a: p.facing, max: 1.2, seed: p.id }); sandBurst(w, p.x, p.y, 8, 220); } for (const h of k.holes) h.open = false; }
+  if (k) {
+    // each ring of it that is out drops where it is, as itself, and sinks into the sand (round 19: it burst into brown ovals)
+    for (const p of [u, ...k.parts]) if (!p.hidden) { bfx(w, { type: 'wurmChunk', x: p.x, y: p.y, r: p === u ? u.vr : SW.seg[p.seg], a: p.facing, hop: p.hop || 0, vis: p.vis ?? 1, head: p === u, seg: p.seg, last: !!p.last, jaw: k.jaw, max: 1.5, seed: p.id }); sandBurst(w, p.x, p.y, 6, 200); }
+    for (const h of k.holes) if (h.open) { h.open = false; h.shut = h.age; h.shutT = w.time; }
+    // its rings are not deaths of their own (round 19: each of the eleven went through the sim's kill: a death puff where
+    // each lay, also the ones under the sand, and eleven "something died near you" for every hero's hooks)
+    for (const p of k.parts) { p.partOf = null; p.dead = true; }
+  }
   for (const o of w.units) if (o.calledBy === u && o.kind === 'scarab' && alive(o)) kill(w, o, null);
   endParts(w, u); w.shake = Math.max(w.shake, 12);
 }
@@ -274,6 +322,7 @@ function dunes(w) {
   for (const [fx, fy] of [[0.38, 0.24], [0.6, 0.78]]) w.pillars.push({ x: W * fx, y: Hh * fy, r: 36 });
   w.arenaDecor = [[0.2, 0.3, 'rubble'], [0.75, 0.2, 'bonepile'], [0.3, 0.82, 'bones']].map(([fx, fy, type]) => ({ type, x: W * fx, y: Hh * fy, a: rand() * TAU, s: 1.3, v: 0 }));
   w.dunesRoom = true;
+  if (w.bookPreview && !w.theme) w.theme = THEMES.dunes; // (round 19: the Book showed it burrowing through a flagstone floor)
   stage(w, 'wurm', drawDunesFloor, drawDunesAir);
 }
 
@@ -281,7 +330,7 @@ export const WURM = {
   defs: {
     sandWurm: { team: 'enemy', name: 'The Sand Wurm', r: 46, vr: 50, turn: 2.2, accel: 140, face: 2.2, mass: 12, hp: 660, speed: 60, role: 'melee', range: 30, atkCd: 999, arc: 2,
       temp: 0.2, commit: 1.2, xp: 230, coins: [90, 110], boss: true, arena: 'dunes', noCorpse: true, sandy: true,
-      res: { poison: 0.3, stagger: 0.4, wet: 1.4, burn: 0.8 }, draw: drawWurm, brain, onDeath: death },
+      res: { poison: 0.3, stagger: 0.4, wet: 1.4, burn: 0.8 }, draw: drawWurm, picture: wurmPicture, brain, onDeath: death },
     wurmSegment: PART('The Sand Wurm (body)', { r: 36, vr: 36, mass: 40, hp: 100, sandy: true, draw: drawWurmPart }),
   },
   arenas: { dunes },

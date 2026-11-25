@@ -25,7 +25,8 @@ const ctx = await edge.browser.newContext({ viewport: { width: W, height: H }, d
 const page = await ctx.newPage();
 const errors = [];
 page.on('pageerror', (e) => errors.push(String(e)));
-page.on('console', (m) => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
+page.on('response', (r) => { if (r.status() === 404) errors.push('404: ' + new URL(r.url()).pathname); });
+page.on('console', (m) => { if (m.type() === 'error' && !/404/.test(m.text())) errors.push('console: ' + m.text()); });
 const url = `http://localhost:${port}/?seed=${seed}&theme=${opt('theme', 'dunes')}&bossroom&boss=${opt('boss', 'sandWurm')}${q ? '&' + q : ''}`;
 for (let i = 0; ; i++) { try { if (i) await page.reload(); else await page.goto(url); await page.waitForFunction(() => window.GAME && GAME.state === 'camp' && GAME.ready, null, { timeout: 30000, polling: 200 }); break; } catch (e) { if (i >= 5) throw e; } }
 await page.evaluate(async ([party, level]) => {
