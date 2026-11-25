@@ -72,7 +72,11 @@ const hurtMost = (list) => list.reduce((b, o) => (!b || hpRatio(o) < hpRatio(b) 
 // Round 16 fixes (when abilities fire): an ability of a's that is waiting on its cooldown, and that a would use now if it
 // were ready (its score clears the bar), is "wanted". wantedWait: the seconds a cut of `cut` off every cooldown would
 // buy, counting a wanted ability in full and one that is waiting for nothing at a quarter (it may be wanted soon).
-const wantedNow = (w, a, id) => { const A = ABILITIES[id], tier = a.kit.tiers[id]; return !!(A && tier && !A.passiveTier && A.score(w, a, a.target, tier) >= 0.3); };
+// Round 18: one level deep only. Encore, Old Tales and Supply Crate ask whether a friend's waiting ability is wanted, and
+// a friend's waiting Encore / Old Tales / Supply Crate asks the same back: two of them in a party recursed for ever.
+let wanting = false;
+const wantedNow = (w, a, id) => { const A = ABILITIES[id], tier = a.kit.tiers[id]; if (!(A && tier && !A.passiveTier)) return false; if (wanting) return false;
+  wanting = true; try { return A.score(w, a, a.target, tier) >= 0.3; } finally { wanting = false; } };
 function wantedWait(w, a, cut) {
   if (!a || !a.kit || !alive(a)) return 0; let g = 0;
   for (const [id, c] of Object.entries(a.kit.cd)) if (c > 0.5 && a.kit.tiers[id] && ABILITIES[id] && !ABILITIES[id].passiveTier) g += Math.min(c, cut) * (wantedNow(w, a, id) ? 1 : 0.25);

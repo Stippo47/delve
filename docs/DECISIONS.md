@@ -1056,3 +1056,4 @@ fly). Everything in docs/tags17.md; code js/tags.js; checks tools/tags17/check.m
   Nullified (a mouth-only silence would stop 5% of what it stops); the undead tag for the Cleric's holy bonus (now
   reaches the Bone King, Grave Warden, mummies, Icicle Wraith); layers floor / hovering / flying (slams miss hovering,
   gas and explosions reach it; only shots reach flying); type resistances as a mechanism, none set.
+- Merged tags17 and water17 (0.23.0). At merge: the Water Mage's bubble asks tags.js isMagicHit, so magic is its own hit type and a fire-carrying blade (sharp + fire) passes the bubble (its check updated to match). Fixed a crash on main found by water17: Encore / Old Tales / Supply Crate asked each other's scores for ever in a party with two of the Bard, Grandpa Sickle, the Quartermaster (wantedNow now looks one level deep).

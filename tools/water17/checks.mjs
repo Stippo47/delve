@@ -47,7 +47,8 @@ console.log('Bubble Shields');
   KW.ABILITIES_WATER.bubbleShield.use(w, u, e, 1); const on = (o) => o.h2 && o.h2.some((h) => h.id === 'bubble');
   const who = [u, f].filter(on); ok('one bubble at tier I', who.length === 1);
   const a = who[0]; a.hp = a.maxHp = 300; const B0 = 300;
-  const got = hurt(w, a, 30, e, { knock: 0, burn: 20 }); ok('a magic blow (it carries fire) is stopped whole', got === 0 && a.hp === B0 && !(a.st.burn > 0));
+  const got = hurt(w, a, 30, e, { knock: 0, magic: true, burn: 20 }); ok('a magic blow (it carries fire) is stopped whole', got === 0 && a.hp === B0 && !(a.st.burn > 0));
+  { const hp0 = a.hp; const g3 = hurt(w, a, 10, e, { knock: 0, burn: 20 }); ok('a fire-carrying blade (sharp + fire) goes through (round 18: type and element are apart)', g3 > 0 && a.hp < hp0 && on(a)); a.st.burn = 0; a.hp = B0; }
   const got2 = hurt(w, a, 30, e, { knock: 0 }); ok('a physical blow goes through', got2 > 0 && a.hp < B0, Math.round(got2));
   ok('and leaves the bubble be', on(a));
   // shots: a fire bolt at it is caught before it lands; an arrow goes through
@@ -56,13 +57,13 @@ console.log('Bubble Shields');
   hp1 = a.hp; shot('arrow', {}); run(w, 0.5); ok('an arrow goes through it', a.hp < hp1, Math.round(hp1 - a.hp));
   // spend it: it pops, soaks the one inside, knocks a near enemy back
   const near = foe(w, 'rattler', a.x + 60, a.y); near.dmgMul = 0; const x0 = near.x; a.st.wet = 0;
-  hurt(w, a, 1000, e, { knock: 0, chill: 10 });
+  hurt(w, a, 1000, e, { knock: 0, magic: true, chill: 10 });
   ok('spent, it pops', !on(a));
   ok('the one inside is soaked', a.st.wet >= 35, a.st.wet.toFixed(0));
   run(w, 0.3); ok('an enemy near is knocked back', near.x - x0 > 15, Math.round(near.x - x0)); }
 { const w = room(), u = mage(w, 300, 280, '300'), f = hero(w, 'paladin', 420, 280), g = hero(w, 'archer', 380, 360), e = foe(w, 'rattler', 600, 280); e.dmgMul = 0;
   KW.ABILITIES_WATER.bubbleShield.use(w, u, e, 3); const n = [u, f, g].filter((o) => o.h2 && o.h2.some((h) => h.id === 'bubble')).length; ok('three bubbles at tier III', n === 3);
-  const caster = foe(w, 'rattler', 640, 200); caster.dmgMul = 0; hurt(w, f, 9999, caster, { knock: 0, curse: 10 });
+  const caster = foe(w, 'rattler', 640, 200); caster.dmgMul = 0; hurt(w, f, 9999, caster, { knock: 0, magic: true, curse: 10 });
   ok('III: a popped bubble throws what it caught back at its caster', w.projectiles.some((p) => p.kind === 'water' && p.owner === u && p.home === caster)); }
 { const w = room(), u = mage(w, 300, 280, '100'), e = foe(w, 'rattler', 600, 280); hurt(w, u, 1, e, {}); u.hp = u.maxHp;
   const s0 = KW.ABILITIES_WATER.bubbleShield.score(w, u, e, 1);

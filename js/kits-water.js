@@ -6,6 +6,7 @@ import { hurt, alive, opponents, allies, hpRatio, puff, blocked, addBuff, sparks
 import { foesNear, friendsNear, dmgOf, ang, cast, heal, segDist, withAb, beset } from './kits.js';
 import { k2, onUnit, offUnit, isOn, shove } from './kits2.js';
 import { cue } from './sfx.js';
+import { isMagicHit } from './tags.js';
 
 const tierOf = (u, id) => (u.kit && u.kit.tiers[id]) || 0;
 const held = (u, f) => withAb(u, u.kit && u.kit.using, f); // what an ability leaves running keeps its web nodes
@@ -26,7 +27,7 @@ const drops = (w, x, y, n = 8, sp = 90) => puff(w, x, y, '#8FD3F0', n, sp, 5, 0.
 //   - any other blow (a swing, a slam, a danger zone, an ability's strike) is magic when it carries a spell's status
 //     (burn, chill, shock, wet, curse, radiance, charm, sleepy, confuse, fear), or is an ability of a caster hero
 //     (battle mode); everything else is physical: weapons, bites, claws, slams, shoves, bleeding cuts.
-// WIRE: tags.js isMagicHit at merge
+// Wired (round 18 merge): js/tags.js isMagicHit decides; a fire-carrying blade is sharp + fire, so it passes the bubble.
 const SPELL_ST = ['burn', 'chill', 'shock', 'wet', 'curse', 'radiance', 'charm', 'sleepy', 'confuse', 'fear'];
 const PHYSICAL_SHOTS = new Set(['arrow', 'fireArrow', 'loveArrow', 'bullet', 'pellet', 'dagger', 'knife', 'kunai', 'shuriken', 'javelin', 'harpoon',
   'stone', 'tkStone', 'clod', 'rock', 'boulder', 'cbolt', 'bolas', 'hammer', 'warhammer', 'aresSpear', 'cog', 'bomb', 'pot', 'pie', 'food', 'ball',
@@ -34,12 +35,9 @@ const PHYSICAL_SHOTS = new Set(['arrow', 'fireArrow', 'loveArrow', 'bullet', 'pe
 const MAGIC_SHOTS = new Set(['bolt', 'spark', 'frostbolt', 'fireball', 'orb', 'note', 'water', 'gust', 'shard', 'icicle', 'hexbolt', 'eyeBolt', 'shadowBolt',
   'spiritOrb', 'glimmer', 'zeus', 'kiss', 'kissTo', 'kissBack', 'heartbreak', 'soul', 'spirit', 'cluster', 'radiance', 'sleepy', 'fear', 'confuse', 'charm']);
 const spellSt = (o) => SPELL_ST.some((k) => o[k] > 0);
-function isMagic(o, src) {
+function isMagic(o, src) { // wired to the tag system at merge (round 18): magic is its own hit type, apart from the elements a hit carries
   if (!o || o.dot) return false;
-  if (o.magic) return true; if (o.physical) return false;
-  if (o.shotKind) return PHYSICAL_SHOTS.has(o.shotKind) ? false : MAGIC_SHOTS.has(o.shotKind) || spellSt(o);
-  if (spellSt(o)) return true;
-  return !!(src && src.def && src.def.heroRole === 'caster' && (o.ab || o.pab));
+  return isMagicHit(o.shotKind && !o.proj ? { ...o, proj: o.shotKind } : o, src);
 }
 // a shot as the bubble sees it, before it lands
 const shotO = (p) => ({ ...(p.o || {}), shot: true, shotKind: p.kind });
