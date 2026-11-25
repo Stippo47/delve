@@ -25,38 +25,43 @@ ROOT = os.path.join(os.path.dirname(__file__), '..', '..')
 
 # ------------------------------------------------------------------ the spirit wolf (in the game)
 def wolf(pal=None):
-    a = Art('SPIRIT WOLF (the Shaman\'s ancestor spirit; round 19, lane caster19, the designer: "In game the wolf looks different from the rest ... do wolf (in the same style)"): a wolf seen from above in the beaver\'s and the bear\'s way: the ancestors\' pale blue, a long body, a bushy tail out behind, pricked ears, a long muzzle, the spirits\' swirl on its back. The game draws it see-through. One part (#body). Front = DOWN (+y), centre (100,100); drawn at 0.72 of the box: give the kind headR 40 (vr 18).', scale=0.72)
-    tail = blobpath([(100, 62), (88, 46), (86, 26), (94, 8), (106, 8), (114, 26), (112, 46)])
-    a.shape(tail, DARK, DARK_S, inner='<path d="M 95 46 L 97 18 M 105 46 L 104 18" fill="none" stroke="#2E6A9A" stroke-width="2.6" stroke-linecap="round" opacity="0.3"/>')
-    for x in (67, 133): a.shape(ell(x, 74, 14, 17, 14 if x < 100 else -14), DARK, DARK_S)
-    for x in (69, 131): a.shape(ell(x, 124, 14, 16, -10 if x < 100 else 10), DARK, DARK_S)
-    a.shape(ell(100, 94, 35, 45), LIGHT, LIGHT_S, drop=3, inner=swirl(100, 90) + gloss(84, 70, 14, 7))
-    # the ears: pointed, out at the back corners of the head and past the body's sides, so they show in its outline
-    ear = [(76, 150), (50, 118), (90, 130)]
-    a.shape(blobpath(ear, 0.3), DARK, DARK_S, drop=2, inner='<path d="M 60 124 L 78 138" stroke="#F0FBFF" stroke-width="6" stroke-linecap="round" opacity="0.6"/>')
-    a.shape(blobpath(mirror(ear), 0.3), DARK, DARK_S, drop=2, inner='<path d="M 140 124 L 122 138" stroke="#F0FBFF" stroke-width="6" stroke-linecap="round" opacity="0.6"/>')
-    a.shape(ell(100, 148, 27, 23), LIGHT, LIGHT_S, drop=3, inner=gloss(90, 142, 9, 4.5))
-    a.shape(blobpath([(89, 154), (111, 154), (113, 172), (106, 190), (94, 190), (87, 172)]), PALE, PALE_S, drop=2)
-    a.shape(ell(100, 187, 7, 5), NOSE)
+    a = Art('SPIRIT WOLF (the Shaman\'s ancestor spirit; round 19, lane caster19, the designer: "In game the wolf looks different from the rest ... do wolf (in the same style)"): a wolf seen from above in the beaver\'s and the bear\'s way: the ancestors\' pale blue, a long body, a bushy tail out behind, pricked ears, a long muzzle, the spirits\' swirl on its back. The game draws it see-through. One part (#body). Front = DOWN (+y), centre (100,100); drawn at 0.8 of the box: give the kind headR 34 (vr 18).', scale=0.8)
+    # (round 19 check: "the wolves read as round beaver-like blobs": a lean long body, legs out in a stride, a long bushy
+    # tail, tall pointed ears, a long tapering muzzle with eyes either side of it, and a darker saddle down its back, so
+    # it is a wolf at game size)
+    tail = blobpath([(100, 60), (86, 44), (82, 20), (90, 0), (100, -8), (110, 0), (118, 20), (114, 44)])
+    a.shape(tail, DARK, DARK_S, inner='<path d="M 89 2 Q 100 -12 111 2 L 108 14 Q 100 6 92 14 Z" fill="#DDF6FF" opacity="0.85"/>')
+    # the legs out in a stride, past the body's sides: the back pair reaching back, the front pair forward
+    for x, y, r in ((66, 54, 40), (134, 58, -40), (64, 126, -38), (136, 122, 38)): a.shape(ell(x, y, 7.5, 20, r), DARK, DARK_S)
+    body = [(100, 46), (116, 54), (124, 78), (127, 102), (119, 122), (100, 130), (81, 122), (73, 102), (76, 78), (84, 54)]
+    a.shape(blobpath(body), LIGHT, LIGHT_S, drop=3, inner=f'<path d="{ell(100, 82, 12, 30)}" fill="#5FB8E8" opacity="0.55"/>' + swirl(100, 92, 0.55, 4.5))
+    a.shape(ell(100, 140, 20, 18), LIGHT, LIGHT_S, drop=3, inner=gloss(93, 134, 7, 3.5))
+    ear = [(84, 136), (62, 110), (97, 127)]
+    a.shape(poly(ear), DARK, DARK_S, drop=2, inner='<path d="M 69 116 L 84 131" stroke="#F0FBFF" stroke-width="5" stroke-linecap="round" opacity="0.75"/>')
+    a.shape(poly(mirror(ear)), DARK, DARK_S, drop=2, inner='<path d="M 131 116 L 116 131" stroke="#F0FBFF" stroke-width="5" stroke-linecap="round" opacity="0.75"/>')
+    a.shape(poly([(90, 147), (110, 147), (106, 174), (100, 194), (94, 174)]), PALE, PALE_S, drop=2)
+    a.shape(ell(100, 190, 6, 4.5), NOSE)
+    for sd in (-1, 1): a.shape(ell(100 + sd * 10, 147, 3.4, 2.2, sd * 30), '#2E6A9A')
     return a
 
 # ------------------------------------------------------------------ the spirit eagle (in the game)
 def eagle():
     a = Art('SPIRIT EAGLE (the Shaman\'s ancestor spirit; round 19, lane caster19, the designer: "Eagle doesnt look right ... eagle (better shape)"): an eagle seen from above, wings spread wide: broad wings that end in spread finger feathers, a fan of a tail behind, a white head and a hooked gold beak in front; the ancestors\' pale blue, the spirits\' swirl on its back. The game beats its wings (drawn narrower and wider) and draws it see-through. One part (#body). Front = DOWN (+y), centre (100,100); drawn at 0.86 of the box: give the kind headR 56 (vr 22).', scale=0.86)
-    tail = blobpath([(93, 72), (82, 36), (88, 26), (100, 22), (112, 26), (118, 36), (107, 72)], 0.8)
-    a.shape(tail, DARK, DARK_S, inner='<path d="M 96 66 L 89 32 M 100 66 L 100 26 M 104 66 L 111 32" stroke="#2E6A9A" stroke-width="2.2" stroke-linecap="round" opacity="0.3"/>')
-    # front is down: the leading edge of each wing is its lower edge, the scalloped trailing edge its upper one, the
-    # finger feathers spread at the tip
-    wing = [(92, 112), (70, 116), (46, 112), (26, 106), (10, 100), (0, 96), (9, 91), (0, 86), (11, 84), (4, 78), (17, 78), (13, 71), (26, 76), (33, 70), (41, 77), (49, 69), (57, 76), (65, 68), (73, 75), (81, 68), (92, 78)]
-    feathers = lambda m: '<path d="' + ' '.join(f'M {m(x0)} {y0} L {m(x1)} {y1}' for x0, y0, x1, y1 in [(12, 88, 30, 92), (16, 80, 34, 88), (30, 76, 40, 88), (46, 74, 52, 88), (62, 72, 66, 88), (78, 72, 80, 88)]) + '" stroke="#2E6A9A" stroke-width="2.4" stroke-linecap="round" opacity="0.32"/>'
+    # (round 19 check: "the eagle's head looks blue not white, finger feathers / fan tail not readable": a white head, five
+    # long finger feathers spread apart at each wing tip, a tail fanned into rounded feathers with pale tips)
+    tail = [(92, 74), (78, 34), (84, 24), (90, 32), (95, 18), (100, 28), (105, 18), (110, 32), (116, 24), (122, 34), (108, 74)]
+    a.shape(poly(tail), DARK, DARK_S, inner='<path d="M 80 30 L 88 26 M 93 22 L 99 22 M 103 22 L 108 24 M 112 28 L 119 30" stroke="#DDF6FF" stroke-width="5" stroke-linecap="round" opacity="0.85"/><path d="M 96 68 L 88 34 M 100 68 L 100 30 M 104 68 L 112 34" stroke="#2E6A9A" stroke-width="2" stroke-linecap="round" opacity="0.3"/>')
+    wing = [(92, 112), (70, 116), (46, 113), (28, 108), (16, 104), (-4, 104), (12, 98), (-8, 92), (12, 90), (-6, 80), (14, 82), (0, 70), (20, 76), (12, 62), (28, 72), (36, 66), (44, 74), (54, 66), (62, 74), (72, 66), (80, 74), (92, 70)]
+    feathers = lambda m: '<path d="' + ' '.join(f'M {m(x0)} {y0} L {m(x1)} {y1}' for x0, y0, x1, y1 in [(4, 101, 26, 100), (2, 92, 26, 94), (4, 81, 28, 88), (16, 68, 32, 84), (40, 72, 46, 90), (58, 70, 62, 90), (76, 70, 78, 90)]) + '" stroke="#2E6A9A" stroke-width="2.4" stroke-linecap="round" opacity="0.35"/>'
     a.shape(poly(wing), DARK, DARK_S, inner=feathers(lambda x: x))
     a.shape(poly(mirror(wing)), DARK, DARK_S, inner=feathers(lambda x: 200 - x))
-    cov = [(92, 110), (70, 113), (46, 109), (24, 102), (38, 94), (60, 95), (80, 93), (92, 92)]
+    cov = [(92, 110), (70, 113), (46, 110), (30, 104), (42, 96), (60, 96), (80, 94), (92, 92)]
     a.shape(blobpath(cov), LIGHT, LIGHT_S, drop=2, inner=gloss(58, 104, 16, 3.5, -4, 0.35))
     a.shape(blobpath(mirror(cov)), LIGHT, LIGHT_S, drop=2)
     a.shape(ell(100, 98, 16, 32), LIGHT, LIGHT_S, drop=3, inner=swirl(100, 94, 0.62, 4.5))
-    a.shape(ell(100, 136, 14, 15), PALE, PALE_S, drop=3, inner=gloss(95, 130, 6, 3.5))
-    a.shape(blobpath([(93, 146), (107, 146), (105, 156), (100, 163), (95, 156)], 0.6), ('#FFF1C2', '#F2C14E'), '#A8862C', drop=2, inner='<path d="M 95 152 Q 100 155 105 152" fill="none" stroke="#8A6A1E" stroke-width="1.6" opacity="0.6"/>')
+    a.shape(ell(100, 137, 15, 16), ('#FFFFFF', '#E2EEF4'), '#8AA8B8', drop=3, inner=gloss(95, 131, 6, 3.5, -30, 0.5))
+    a.shape(blobpath([(92, 147), (108, 147), (106, 158), (100, 166), (94, 158)], 0.6), ('#FFE08A', '#F2B830'), '#A8862C', drop=2, inner='<path d="M 94 154 Q 100 158 106 154" fill="none" stroke="#8A6A1E" stroke-width="1.8" opacity="0.7"/>')
+    for sd in (-1, 1): a.shape(ell(100 + sd * 8, 140, 2.6, 2), '#2B2230')
     return a
 
 # ------------------------------------------------------------------ design sketches (not in the game)

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 220 220" width="220" height="220">
-<!-- ALCHEMIST AS THE MONSTER (round 19, lane caster19, Monstrosity: "They should get a new altered sprite based off their base sprite. Purple skin."): her own picture with the skin turned purple, fists half as big again and empty (no potion: "Should not hold a flask"). A sketch for the art round; tools/caster19/alchemist_art.py makes it from alchemist.svg. -->
+<!-- ALCHEMIST AS THE MONSTER (round 19, lane caster19, Monstrosity: "They should get a new altered sprite based off their base sprite. Purple skin."): her own picture with the skin turned purple, fists nearly twice as big and empty (no potion: "Should not hold a flask"). A sketch for the art round; tools/caster19/alchemist_art.py makes it from alchemist.svg. -->
 <!-- ALCHEMIST A (round 5: no hat, so hair and hat can't fight): a big wild cloud of white hair, brass goggles pushed up on the forehead on a leather strap; a strap of six corked vials over the shoulders; a round flask of green brew in the right fist (behind the body), to throw; empty left fist. -->
 <!-- Parts: groups inside #sprite in draw order; weapon arms come before #body so the weapon sits under the body and only the fist shows. Pivots: the shoulder points. Front = down (+y), centre (100,100). -->
 <defs>
@@ -85,7 +85,7 @@
 <g id="sprite" filter="url(#outline)">
 <g id="arm-r" data-pivot="154 108">
 
-<rect x="133.5" y="122.9" width="29.0" height="36.2" rx="11.6" transform="rotate(10.0 148.0 141.0)" fill="url(#gHand)"/><rect x="133.5" y="122.9" width="29.0" height="36.2" rx="11.6" transform="rotate(10.0 148.0 141.0)" fill="url(#gUnder)"/>
+<rect x="130.0" y="118.5" width="36.0" height="45.0" rx="14.4" transform="rotate(10.0 148.0 141.0)" fill="url(#gHand)"/><rect x="130.0" y="118.5" width="36.0" height="45.0" rx="14.4" transform="rotate(10.0 148.0 141.0)" fill="url(#gUnder)"/>
 </g>
 <g id="body">
 <g clip-path="url(#c6)"><use href="#s8" transform="translate(0 3)" fill="#1A1030" opacity="0.28"/></g><use href="#s8" fill="url(#g7)"/><g clip-path="url(#c9)"><rect x="0" y="0" width="200" height="200" fill="#5A3A22"/><path d="M 26 108 C 26 82 54 76 100 76 C 146 76 174 82 174 108 C 174 134 146 140 100 140 C 54 140 26 134 26 108 Z" transform="translate(0 -8)" fill="url(#g7)"/></g><use href="#s8" fill="url(#sR)"/>
@@ -111,7 +111,7 @@
 <g clip-path="url(#c73)"><use href="#s72" transform="translate(0 3)" fill="#1A1030" opacity="0.3"/></g><use href="#s72" fill="url(#g71)"/><g clip-path="url(#c74)"><circle cx="118" cy="90" r="8.5" fill="#6FCFC0"/><circle cx="115" cy="87" r="3" fill="#EFFFFA"/></g><use href="#s72" fill="url(#sRl)"/>
 </g>
 <g id="arm-l" data-pivot="46 108">
-<rect x="39.6" y="124.8" width="34.8" height="30.4" rx="11.6" transform="rotate(0.0 57.0 140.0)" fill="url(#gHand)"/>
+<rect x="35.4" y="121.1" width="43.2" height="37.8" rx="14.4" transform="rotate(0.0 57.0 140.0)" fill="url(#gHand)"/>
 </g>
 </g>
 </svg>

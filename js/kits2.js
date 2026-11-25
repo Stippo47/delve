@@ -131,9 +131,10 @@ const k01h = (v) => Math.max(0, Math.min(1, v));
 // Digger's spade lands double on it and knocks it off: TRAITS2.dirtIn's dealt). Drawn the one way on anyone: a brown wash
 // (its 'dirty' buff) and a little cloud of dust going round it (fx2 'dirtyOn').
 const HELPS = (b) => b.id !== 'dirty' && !b.potion && ((b.dealt || 1) > 1 || (b.atkSpeed || 1) > 1 || (b.move || 1) > 1 || (b.taken != null && b.taken < 1) || b.border || b.statusImmune || b.lifesteal || b.frontBlock);
-function dirtOff(w, u, knocked) {
+function dirtOff(w, u, knocked, by) {
   offUnit(u, 'dirty'); u.buffs = u.buffs.filter((b) => b.id !== 'dirty');
-  if (knocked) { puff(w, u.x, u.y, '#9C7650', 12, 120, 6, 0.5); k2(w, { draw: 'dirtOff', x: u.x, y: u.y, r: u.vr, max: 0.55 }); }
+  // (round 19 check: the dirt is knocked off the side the blow came from, out the far side: a fan, not a ring round it)
+  if (knocked) { const a = by ? angleTo(by.x, by.y, u.x, u.y) : u.facing + Math.PI; k2(w, { draw: 'dirtOff', x: u.x, y: u.y, r: u.vr, a, max: 0.55 }); }
 }
 function dirty(w, a, dur, by) {
   if (!alive(a)) return;
@@ -146,7 +147,7 @@ function dirty(w, a, dur, by) {
   } else {
     for (const k of DIRTY.immune) a.st[k] = 0; a.sickT = 0;
     onUnit(w, a, 'dirty', dur, { immune: DIRTY.immune, atkSpeed: () => DIRTY.atkSpeed,
-      evade(w2, u2, s2, amt, o) { if (o.dot) return false; dirtOff(w2, u2, true); textU(w2, u2.x, u2.y, u2.r + 6, 'dirt', '#C9A47A', 0.9); return true; } },
+      evade(w2, u2, s2, amt, o) { if (o.dot) return false; dirtOff(w2, u2, true, s2); textU(w2, u2.x, u2.y, u2.r + 6, 'dirt', '#C9A47A', 0.9); return true; } },
       (u2) => { u2.buffs = u2.buffs.filter((b) => b.id !== 'dirty'); });
   }
   a.buffs = a.buffs.filter((b) => b.id !== 'dirty'); addBuff(a, { id: 'dirty', dur, wash: DIRTY.wash });
@@ -986,8 +987,8 @@ export const ABILITIES2 = {
     },
     use(w, u, t, tier) {
       const sweep = () => {
-        const r = u.r + 60, T = 0.45, a0 = u.facing - 1.1, hit = new Set(), t0 = w.time; setAnim(u, 'spin', T); u.spin = { t0: w.time, dur: T, dir: 1 };
-        fx(w, { type: 'ring', x: u.x, y: u.y, r, color: '#EDE4CD', max: T, a: u.facing, unit: u, ab: 'harvest', tier });
+        const r = u.r + 60, T = 0.55, a0 = u.facing - 1.1, hit = new Set(), t0 = w.time; setAnim(u, 'spin', T); u.spin = { t0: w.time, dur: T, dir: 1 };
+        fx(w, { type: 'ring', x: u.x, y: u.y, r, color: '#EDE4CD', max: T / 0.75, a: u.facing, unit: u, ab: 'harvest', tier }); // (its look: the blade's way round in T, then the swept circle fading)
         let n = 0;
         const cut = (all) => { const k = Math.min(1, (w.time - t0) / T), turn = TAU * k * k * (3 - 2 * k);
           for (const e of foesNear(w, u, u.x, u.y, r)) { if (hit.has(e)) continue; const rel = ((angleTo(u.x, u.y, e.x, e.y) - a0) % TAU + TAU) % TAU; if (!all && rel > turn) continue;
@@ -1024,12 +1025,14 @@ export const ABILITIES2 = {
     },
     use(w, u, t, tier) {
       cast(u, 'throw', 0.5);
-      const foes = opponents(w, u).filter((e) => dist(u.x, u.y, e.x, e.y) < 360);
-      let cx = u.x, cy = u.y; if (foes.length) { cx = u.x * 0.5; cy = u.y * 0.5; for (const e of foes) { cx += e.x * 0.5 / foes.length; cy += e.y * 0.5 / foes.length; } } // (between him and the fight)
+      // (round 19 check: planted round him on the side the enemy is coming from, 55-150 out, where friends fight and the
+      // enemy reaches them; thrown out in a spread one after another)
+      const foes = opponents(w, u).filter((e) => dist(u.x, u.y, e.x, e.y) < 420);
+      let fx = 0, fy = 0; for (const e of foes) { fx += e.x - u.x; fy += e.y - u.y; } const toward = foes.length ? Math.atan2(fy, fx) : u.facing;
       const spots = [];
-      for (let i = 0; i < 40 && spots.length < SHEAF.n; i++) {
-        const b = rand() * TAU, d = rrange(40, 150), x = clamp(cx + Math.cos(b) * d, 40, w.W - 40), y = clamp(cy + Math.sin(b) * d, 40, w.H - 40);
-        if (spots.some((p) => dist(p.x, p.y, x, y) < 62) || w.walls.some((r) => circleRect(x, y, 18, r)) || w.pillars.some((p) => dist(x, y, p.x, p.y) < p.r + 18) || w.units.some((o) => alive(o) && dist(o.x, o.y, x, y) < o.r + 16)) continue;
+      for (let i = 0; i < 60 && spots.length < SHEAF.n; i++) {
+        const b = toward + rrange(-1.4, 1.4), d = rrange(55, 150), x = clamp(u.x + Math.cos(b) * d, 40, w.W - 40), y = clamp(u.y + Math.sin(b) * d, 40, w.H - 40);
+        if (spots.some((p) => dist(p.x, p.y, x, y) < 58) || w.walls.some((r) => circleRect(x, y, 18, r)) || w.pillars.some((p) => dist(x, y, p.x, p.y) < p.r + 18) || w.units.some((o) => alive(o) && dist(o.x, o.y, x, y) < o.r + 16)) continue;
         spots.push({ x, y });
       }
       spots.forEach((p, i) => after(u, 0.08 + i * 0.09, () => { if (!alive(u)) return;
@@ -1051,7 +1054,7 @@ export const ABILITIES2 = {
       if (!t) return; cast(u, 'throw', 0.4);
       const n = tier >= 2 ? 3 : 2, r = tier >= 3 ? 78 : 62, dur = tier >= 3 ? 5 : 4, a0 = ang(u, t), d0 = dist(u.x, u.y, t.x, t.y);
       for (let i = 0; i < n; i++) after(u, i * 0.1, () => {
-        const kind = POOLS[Math.floor(rand() * POOLS.length)], a = a0 + (i - (n - 1) / 2) * 0.42, d = Math.max(60, d0 + (i % 2 ? -20 : 20));
+        const kind = nextBrew(u), a = a0 + (i - (n - 1) / 2) * 0.42, d = Math.max(60, d0 + (i % 2 ? -20 : 20));
         const x = clamp(u.x + Math.cos(a) * d, 20, w.W - 20), y = clamp(u.y + Math.sin(a) * d, 20, w.H - 20);
         lob(w, u, x, y, 'flask', POOL_COL[kind], () => brewPool(w, u, x, y, r, dur, kind));
       });
@@ -1146,7 +1149,7 @@ export const ABILITIES2 = {
     use(w, u, t, tier) {
       cast(u, 'cast', 0.5);
       const n = tier >= 3 ? 5 : 3, dur = tier >= 3 ? 7 : 5;
-      const group = [u, ...allies(w, u).filter((a) => !a.summon && dist(u.x, u.y, a.x, a.y) < 280).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))].slice(0, n);
+      const group = [u, ...allies(w, u).filter((a) => !a.summon && dist(u.x, u.y, a.x, a.y) < 320).sort((p, q) => dist(u.x, u.y, p.x, p.y) - dist(u.x, u.y, q.x, q.y))].slice(0, n + 1); // (round 19 check: up to n friends besides him; it was n with him, so one friend in reach went without a thread)
       for (const tm of mine(w, u, 'totem')) if (dist(u.x, u.y, tm.x, tm.y) < 320) group.push(tm);
       if (group.length < 2) return;
       const f = k2(w, { draw: 'links', group, from: u, x: u.x, y: u.y, max: dur, ab: 'spiritLink', pulses: [] });
@@ -1243,7 +1246,7 @@ export const ABILITIES2 = {
       k2(w, { draw: 'broom', unit: u, x: u.x, y: u.y, a: u.facing, max: T + 0.1 });
       timer(u, 'broom', T, (dt) => {
         const k = Math.min(1, (T - (u.kit.broomUntil - w.time)) / 0.3), down = Math.min(1, (u.kit.broomUntil - w.time) / 0.3);
-        th += dt * 2.4; const gx = clamp(cx + Math.cos(th) * R, u.r, w.W - u.r), gy = clamp(cy + Math.sin(th) * R, u.r, w.H - u.r), a = angleTo(u.x, u.y, gx, gy), d = dist(u.x, u.y, gx, gy);
+        th += dt * 2.4; const gx = clamp(cx + Math.cos(th) * R, u.r, w.W - u.r), gy = clamp(cy + Math.sin(th) * R, u.r + 95, w.H - u.r) /* (round 19 check: she is drawn 63 up the screen; kept off the top wall so all of her stays in the room) */, a = angleTo(u.x, u.y, gx, gy), d = dist(u.x, u.y, gx, gy);
         u.x += Math.cos(a) * Math.min(d, 420 * dt); u.y += Math.sin(a) * Math.min(d, 420 * dt); u.facing = a; u.vx = u.vy = u.kx = u.ky = 0;
         u.hop = 70 * Math.min(k, down); bombT -= dt; u.flyT = Math.max(u.flyT, 0.05);
         if (bombT <= 0) { bombT = tierOf(u, 'broomRide') >= 2 ? 0.32 : 0.5;
@@ -2564,6 +2567,9 @@ export function burrowTo(w, u, x1, y1, T, surface) {
 }
 // the Alchemist's brews: six pools (Brew Pools), three elixirs, their monstrous form
 const POOLS = ['acid', 'cold', 'fire', 'whirl', 'shock', 'water'];
+// round 19: the brews come out of a shuffled rack of the six: no brew again till all six have been thrown (so a cast's
+// flasks are all different, and the next cast's are the rest); u.kit.poolBag
+function nextBrew(u) { const k = u.kit; if (!k.poolBag || !k.poolBag.length) { const b = POOLS.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } k.poolBag = b; } return k.poolBag.shift(); }
 const POOL_COL = { acid: '#C8E63C', cold: '#9FDDF6', fire: '#FF8A3D', whirl: '#EEF3F8', shock: '#FFE66B', water: '#5DB7E0' };
 const ELIXIR_COL = { rage: '#FF5A3D', mend: '#9BE07A', ward: '#9FE0FF' };
 export const MONSTER_ART = 'art/heroes/alchemist-monster.svg'; // round 19: Monstrosity's sprite (tools/caster19/alchemist_art.py)
@@ -2619,7 +2625,7 @@ function monsterEnd(w, u) {
   u.buffs = u.buffs.filter((b) => b.id !== 'monster'); puff(w, u.x, u.y, '#B48AE8', 12, 100, 6, 0.5); setAnim(u, 'ability', 0.4);
 }
 // Grandpa's sheaves (Sheaves, in Old Tales' slot): n of them, hp each (one blow breaks one), lasting `life` s. A friend
-// that steps on one: healed `heal` (II: heal2) of its health. An enemy that breaks one (a blow, or treading on it): hayed
+// that steps on one: healed `heal` (II: heal2) of its health. An enemy that breaks one (with a blow): hayed
 // for `hay` s (II: hay2): the Haymaker's Pitch Hay look and slow (the 'hay' buff, x0.6 move), and while it is hayed every
 // blow the party lands on it quickens the striker's abilities: cooldowns not yet ready run `quick` faster for `quickT` s
 // (kit2Tick). III: a sheaf bursts as it breaks: everyone within `burstR` gets the same (friends healed half).
@@ -2646,7 +2652,8 @@ BRAINS.sheaf = function (w, s2, dt) {
   if (s2.breaker && !s2.broke) { sheafBreak(w, s2, s2.breaker); return true; }
   if (s2.hp < s2.maxHp && !s2.broke) { sheafBreak(w, s2, null); return true; } // (broken by something with nobody behind it)
   if (w.time - (s2.bornT || 0) < 0.25) return true; // (it has just landed)
-  for (const o of w.units) if (o !== s2 && alive(o) && !o.ethereal && !o.def.cargo && !(o.summon && o.fixed) && !o.buried && !(o.flyT > 0) && !o.airborne && !(o.hop > 8) && dist(o.x, o.y, s2.x, s2.y) < o.r + s2.r) { sheafBreak(w, s2, o.summon && sideOfU(o) === sideOfU(s2) ? null : o); return true; }
+  // a friend treads on it (the enemy only break one with a blow: round 19 check, they trampled them all at once)
+  for (const o of w.units) if (o !== s2 && alive(o) && !o.summon && sideOfU(o) === sideOfU(s2) && !o.ethereal && !o.def.cargo && !(o.flyT > 0) && !(o.hop > 8) && dist(o.x, o.y, s2.x, s2.y) < o.r + s2.r) { sheafBreak(w, s2, o); return true; }
   // hurt friends with nobody on them come and get it (as they do the Chef's plates)
   for (const o of w.units) if (alive(o) && o.team === s2.team && !o.summon && !o.def.cargo && hpRatio(o) < 0.7 && dist(o.x, o.y, s2.x, s2.y) < 220 && !(o.target && dist(o.x, o.y, o.target.x, o.target.y) < 120)) o.coinGoal = { x: s2.x, y: s2.y, d: dist(o.x, o.y, s2.x, s2.y) };
   return true;
@@ -3174,14 +3181,16 @@ export const TRAITS2 = {
     dealt(w, u, t, amt, o) {
       if (!(spadeBlow(o) || o.clod) || !t || sideOfU(t) === sideOfU(u)) return amt;
       const h = hookOf(t, 'dirty'); if (!h || !h.foe || !(h.until > w.time)) return amt;
-      dirtOff(w, t, true); textU(w, t.x, t.y, t.r + 10, 'x2', '#E9C48A', 1); return amt * DIRTY.spade;
+      dirtOff(w, t, true, u); textU(w, t.x, t.y, t.r + 10, 'x2', '#E9C48A', 1); return amt * DIRTY.spade;
     },
     hit(w, u, t, amt, o) {
       if (o.clod && t) { t.hitZap = true; return; } // (a clod bursts in crumbs where it hits: fx2 IMPACT2D.clod, no star)
       if (!spadeBlow(o) || !t) return;
       t.hitZap = true; // (no white star: render.js skips its impact for a zap; the thwack is drawn instead)
-      const a = ang(u, t); k2(w, { draw: 'spadeThud', x: t.x - Math.cos(a) * t.r * 0.8, y: t.y - Math.sin(a) * t.r * 0.8, a, r: t.vr, max: 0.4 });
-      for (let i = -1; i <= 1; i++) { const b = a + i * 0.42 + rrange(-0.08, 0.08), x = t.x + Math.cos(b) * (t.r + 4), y = t.y + Math.sin(b) * (t.r + 4), sp = 400;
+      const a = ang(u, t); k2(w, { draw: 'spadeThud', unit: t, x: t.x, y: t.y, a, r: t.vr, max: 0.4 });
+      // (round 19 check: all three come out of one spot on its far side, fanning out from there, with a burst of dirt)
+      const ex = t.x + Math.cos(a) * (t.r + 2), ey = t.y + Math.sin(a) * (t.r + 2); k2(w, { draw: 'clodBurst', x: ex, y: ey, a, r: 30, max: 0.45 });
+      for (let i = -1; i <= 1; i++) { const b = a + i * 0.5 + rrange(-0.06, 0.06), x = ex, y = ey, sp = 360;
         w.projectiles.push({ kind: 'clod', x, y, vx: Math.cos(b) * sp, vy: Math.sin(b) * sp, r: 6, team: u.team, owner: u, skip: t, dmg: dmgOf(u, 0.3), o: { knock: 40, clod: true }, life: 0.3, a: b }); }
     },
   },

@@ -150,7 +150,7 @@ export const ABILITY_SCENE = {
   breadToss: S('hurtFriends', { hp: 0.4 }), harvest: S('hurtFriend', { addFoes: [F('fast', [250, 320], { on: 0 })] }),
   oldTales: S('party', { friends: [{ at: [150, 92], hp: 0.45 }, { at: [150, 258], hp: 0.5 }], foes: [F('melee', [330, 128]), F('fast', [350, 222]), F('melee', [400, 175]), F('fast', [420, 100])] }),
   // Alchemist
-  acidFlask: S('pack'), elixir: S('hurtFriends'), bangFlask: S('ring'), // (round 19: Elixir II's second tube has a second friend to go to)
+  acidFlask: S('pack'), elixir: S('hurtFriends', { noAttack: true }), bangFlask: S('ring'), // (round 19: Elixir II's second tube has a second friend to go to; their own flasks held, so only the potions fly)
   // Shaman
   healTotem: S('hurtFriend', { friends: [{ at: [205, 262], hp: 0.4, st: { poison: 60 } }], addFoes: [F('poisoner', [250, 320], { on: 0 })] }), spiritLink: S('partyFight', { friends: [{ at: [185, 92], hp: 0.7 }, { at: [185, 258], hp: 0.7 }, { at: [150, 175], hp: 0.75 }, { at: [70, 290], hp: 0.8 }], foes: [F('heavy', [262, 92], { on: 0 }), F('melee', [262, 258], { on: 1 }), F('fast', [300, 175], { on: 2 }), F('melee', [400, 175])] }), rainDance: S('party'), // (round 19: "Preview doesn't show off potential": four friends being hit, so every blow is seen going out along the threads, and III's five)
   // Witch

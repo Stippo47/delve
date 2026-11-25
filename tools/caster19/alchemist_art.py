@@ -34,9 +34,9 @@ SKIN = {'#F8D4B2': '#D9B6F2', '#DFA57F': '#9C6CC8', '#B07560': '#6A4290', '#D9A2
 for a, b in SKIN.items(): m = m.replace(a, b)
 # big fists: each hand's rect drawn half as big again about its own middle
 def fist(mo):
-    x, y, w, h = map(float, mo.group(1, 2, 3, 4)); cx, cy = x + w / 2, y + h / 2; k = 1.45
+    x, y, w, h = map(float, mo.group(1, 2, 3, 4)); cx, cy = x + w / 2, y + h / 2; k = 1.8
     return f'<rect x="{cx - w * k / 2:.1f}" y="{cy - h * k / 2:.1f}" width="{w * k:.1f}" height="{h * k:.1f}" rx="{8 * k:.1f}"'
 m = re.sub(r'<g clip-path="url\(#c\d+\)"><rect [^>]*opacity="0.28"/></g>', '', m) # (the fists' own small shadows: they no longer fit)
 m = re.sub(r'<rect x="([\d.]+)" y="([\d.]+)" width="(2[04])" height="(2[15])" rx="8"', fist, m)
-m = m.replace('<!-- ALCHEMIST', '<!-- ALCHEMIST AS THE MONSTER (round 19, lane caster19, Monstrosity: "They should get a new altered sprite based off their base sprite. Purple skin."): her own picture with the skin turned purple, fists half as big again and empty (no potion: "Should not hold a flask"). A sketch for the art round; tools/caster19/alchemist_art.py makes it from alchemist.svg. -->\n<!-- ALCHEMIST', 1)
+m = m.replace('<!-- ALCHEMIST', '<!-- ALCHEMIST AS THE MONSTER (round 19, lane caster19, Monstrosity: "They should get a new altered sprite based off their base sprite. Purple skin."): her own picture with the skin turned purple, fists nearly twice as big and empty (no potion: "Should not hold a flask"). A sketch for the art round; tools/caster19/alchemist_art.py makes it from alchemist.svg. -->\n<!-- ALCHEMIST', 1)
 open(os.path.join(ROOT, 'art', 'heroes', 'alchemist-monster.svg'), 'w', encoding='utf-8').write(m); print('monster written')

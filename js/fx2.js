@@ -792,25 +792,35 @@ DRAW.dirtyOn = (ctx, f, w, layer) => {
     if (ph < 0.85) { ctx.save(); ctx.globalAlpha *= 1 - ph / 0.85; inked(ctx, () => blob(ctx, u.x + Math.cos(b) * d + vx * h, u.y + Math.sin(b) * d * 0.7 + vy * h, 2.6, 4, b, 1), '#7A5A3A'); ctx.restore(); } }
   ctx.restore();
 };
-// the dirt knocked off (the Digger's spade on a dirtied foe, or the coat soaking up a blow): a burst of dust and crumbs
+// the dirt knocked off (the Digger's spade on a dirtied foe, or the coat soaking up a blow): dust and crumbs knocked out of
+// the far side of it, away from the blow (f.a), in a fan (round 19 check: a ring of crumbs round it read as spots on it)
 DRAW.dirtOff = (ctx, f, w, layer) => {
-  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k), [vx, vy] = upVec();
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k), [vx, vy] = upVec(), A = f.a ?? 0;
   ctx.save(); ctx.globalAlpha *= 1 - k;
-  for (let i = 0; i < 8; i++) { const b = i / 8 * TAU + hash(i, f.x | 0), d = f.r * (0.95 + 0.8 * e); ctx.save(); ctx.globalAlpha *= 0.5; disc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d * 0.8, f.r * (0.3 + 0.25 * e), DUST[i % 3]); ctx.restore(); }
-  for (let i = 0; i < 7; i++) { const b = i / 7 * TAU + 0.4 + hash(i, 5), d = f.r * (1.0 + 1.0 * e), h = Math.sin(k * Math.PI) * 18 * hash(i, 9); // (from its edge outward: never over its face)
-    inked(ctx, () => blob(ctx, f.x + Math.cos(b) * d + vx * h, f.y + Math.sin(b) * d * 0.8 + vy * h, 3.2 * (1 - 0.4 * k), 4, i, 1), i % 2 ? '#7A5A3A' : '#9C7650'); }
+  for (let i = 0; i < 6; i++) { const b = A + (i / 5 - 0.5) * 1.6, d = f.r * (0.9 + 0.9 * e); ctx.save(); ctx.globalAlpha *= 0.5; disc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, f.r * (0.3 + 0.25 * e), DUST[i % 3]); ctx.restore(); }
+  for (let i = 0; i < 6; i++) { const b = A + (hash(i, 5) - 0.5) * 1.5, d = f.r * (1.0 + 1.4 * e * (0.6 + 0.4 * hash(i, 2))), h = Math.sin(k * Math.PI) * 16 * hash(i, 9);
+    inked(ctx, () => blob(ctx, f.x + Math.cos(b) * d + vx * h, f.y + Math.sin(b) * d + vy * h, 3.2 * (1 - 0.4 * k), 6, i, 1), i % 2 ? '#7A5A3A' : '#9C7650'); }
+  ctx.restore();
+};
+// the spade's clods bursting out of the far side of what it struck: a spurt of dirt and dust fanning out from that spot
+DRAW.clodBurst = (ctx, f, w, layer) => {
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k);
+  ctx.save(); ctx.globalAlpha *= 1 - k;
+  for (let i = 0; i < 5; i++) { const b = f.a + (i / 4 - 0.5) * 1.1, d = 4 + f.r * e; ctx.save(); ctx.globalAlpha *= 0.55; disc(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 4 + 7 * e, DUST[i % 3]); ctx.restore(); }
+  for (let i = 0; i < 6; i++) { const b = f.a + (hash(i, 3) - 0.5) * 1.2, d = 6 + f.r * 1.2 * e * (0.5 + 0.5 * hash(i, 7)); inked(ctx, () => blob(ctx, f.x + Math.cos(b) * d, f.y + Math.sin(b) * d, 2.4 * (1 - 0.4 * k), 6, i, 1), i % 2 ? '#7A5A3A' : '#9C7650'); }
   ctx.restore();
 };
 // the spade's blow landing (round 19: "Don't like the hit effect"): a flat thwack of earth: the flat of the blade leaves a
 // squashed puff of dust across the line of the blow, and chips of dirt flicked off to either side; no white star
 DRAW.spadeThud = (ctx, f, w, layer) => {
-  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k), q = k01(k / 0.25);
-  ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.a);
-  if (k < 0.3) { ctx.save(); ctx.globalAlpha *= 0.6 * (1 - k / 0.3); ctx.fillStyle = '#E9DDC2'; ctx.beginPath(); ctx.ellipse(0, 0, 6 + 4 * q, f.r * (0.6 + 0.5 * q), 0, 0, TAU); ctx.fill(); ctx.restore(); }
+  if (layer !== 'air') return; const k = k01(f.t / f.max), e = easeOut(k), q = k01(k / 0.25), u = f.unit;
+  const R = (u && alive2(u) ? u.r : f.r) * 0.85, x = (u && alive2(u) ? u.x : f.x) - Math.cos(f.a) * R, y = (u && alive2(u) ? u.y : f.y) - Math.sin(f.a) * R; // (on its near side, where the flat of the spade met it, riding on it)
+  ctx.save(); ctx.translate(x, y); ctx.rotate(f.a);
+  if (k < 0.3) { ctx.save(); ctx.globalAlpha *= 0.55 * (1 - k / 0.3); ctx.fillStyle = '#A8865E'; ctx.beginPath(); ctx.ellipse(0, 0, 5 + 3 * q, f.r * (0.5 + 0.4 * q), 0, 0, TAU); ctx.fill(); ctx.restore(); }
   ctx.globalAlpha *= 1 - k;
-  for (let i = 0; i < 4; i++) { const sd = i % 2 ? 1 : -1, lane = (i < 2 ? 0.45 : 0.8) * sd, d = f.r * (0.3 + 1.1 * e);
-    ctx.save(); ctx.globalAlpha *= 0.45; disc(ctx, -4 - 10 * e, lane * f.r * (0.8 + 0.6 * e), 4 + 5 * e, DUST[i % 3]); ctx.restore();
-    inked(ctx, () => blob(ctx, -2 - 6 * e + (i - 1.5) * 3, sd * d, 2.8 * (1 - 0.4 * k), 4, i, 1), i % 2 ? '#7A5A3A' : '#9C7650'); }
+  for (let i = 0; i < 4; i++) { const sd = i % 2 ? 1 : -1, lane = (i < 2 ? 0.45 : 0.8) * sd, d = f.r * (0.3 + 1.0 * e);
+    ctx.save(); ctx.globalAlpha *= 0.45; disc(ctx, -4 - 10 * e, lane * f.r * (0.8 + 0.5 * e), 4 + 5 * e, DUST[i % 3]); ctx.restore();
+    inked(ctx, () => blob(ctx, -2 - 6 * e + (i - 1.5) * 3, sd * d, 2.8 * (1 - 0.4 * k), 6, i, 1), i % 2 ? '#7A5A3A' : '#9C7650'); }
   ctx.restore();
 };
 // a crosshair on a unit: Targeted (red) and Tracked (amber, with a falcon's feather tick)
@@ -1236,9 +1246,9 @@ DRAW.links = (ctx, f, w, layer) => {
       lit(ctx, () => { ctx.strokeStyle = 'rgba(127,224,208,0.35)'; ctx.lineWidth = 14; ctx.lineCap = 'round'; ctx.beginPath(); pts.forEach(([x, y], j) => (j ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke(); });
       inkLine(ctx, () => { ctx.beginPath(); pts.forEach(([x, y], j) => (j ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); }, '#7FE0D0', 4.5);
       ctx.strokeStyle = '#E8FFF6'; ctx.lineWidth = 1.6; ctx.beginPath(); pts.forEach(([x, y], j) => (j ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke();
-      if (grow >= 1) for (let m = 0; m < 3; m++) { const ph = (f.t * 0.7 + m / 3 + i * 0.17) % 1, t = m % 2 ? ph : 1 - ph, [x, y] = at(p, q, i, t); lit(ctx, () => glowDisc(ctx, x, y, 9, '#7FE0D0', 0.7)); disc(ctx, x, y, 2.8, '#FFFFFF'); }
+      if (grow >= 1) for (let m = 0; m < 3; m++) { const ph = (f.t * 0.7 + m / 3 + i * 0.17) % 1, t = m % 2 ? ph : 1 - ph, [x, y] = at(p, q, i, t); lit(ctx, () => glowDisc(ctx, x, y, 9, '#7FE0D0', 0.7)); disc(ctx, x, y, 2.8, '#BFF6EC'); }
     }
-    for (const o of g) for (let m = 0; m < 5; m++) { const b = f.t * 2 + m / 5 * TAU + o.id, R = o.vr * 1.05; ctx.save(); ctx.globalAlpha *= 0.8 * grow; disc(ctx, o.x + Math.cos(b) * R, o.y + Math.sin(b) * R * 0.7, 2.4, m % 2 ? '#BFF6EC' : '#7FE0D0'); ctx.restore(); }
+    for (const o of g) for (let m = 0; m < 6; m++) { const b = f.t * 2 + m / 6 * TAU + o.id, R = o.vr * 1.05; ctx.save(); ctx.globalAlpha *= 0.9 * grow; inkDisc(ctx, o.x + Math.cos(b) * R, o.y + Math.sin(b) * R * 0.7, 3, m % 2 ? '#2FB3A4' : '#5FD0C0'); ctx.restore(); } // (round 19 check: teal, not white)
     ctx.restore(); return;
   }
   // a shared blow: a bright pulse out from the one struck, through the hub, to everyone else on the link
@@ -1246,7 +1256,7 @@ DRAW.links = (ctx, f, w, layer) => {
     for (const [p, q, i] of pairs) { const fromHub = pu.from === hub, onThis = pu.from === q;
       if (!fromHub && !onThis) { if (age < 0.5) continue; } // (the others get it from the hub, a beat later)
       const t = onThis ? 1 - k01(age / 0.5) : fromHub ? k01(age / 0.5) : k01((age - 0.5) / 0.5), [x, y] = at(p, q, i, t);
-      lit(ctx, () => glowDisc(ctx, x, y, 20, '#E8FFF6', 0.85)); inkDisc(ctx, x, y, 4.5, '#FFFFFF'); }
+      lit(ctx, () => glowDisc(ctx, x, y, 20, '#7FE0D0', 0.85)); inkDisc(ctx, x, y, 5, '#5FD0C0'); }
     lit(ctx, () => glowDisc(ctx, pu.from.x, pu.from.y, pu.from.vr * 1.4, '#7FE0D0', 0.5 * (1 - age))); }
 };
 // Spirit Link binding one on: a spirit thread's end snaps onto it: a teal flash and motes drawn in round it
@@ -1409,9 +1419,11 @@ function broomUnder(ctx, w, T) {
   inked(ctx, () => { ctx.beginPath(); ctx.moveTo(-5, -22); ctx.quadraticCurveTo(-17, -40, -18 + Math.sin(T * 26) * 2, -60); ctx.lineTo(18 + Math.sin(T * 24 + 1) * 2, -60); ctx.quadraticCurveTo(17, -40, 5, -22); ctx.closePath(); }, '#D8B060');
   ctx.save(); ctx.strokeStyle = '#A8843A'; ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.beginPath(); tw(9, 30); ctx.stroke(); ctx.strokeStyle = '#F0D27A'; ctx.lineWidth = 1.1; ctx.beginPath(); tw(5, 22); ctx.stroke(); ctx.restore();
   // the handle: crooked, with a knot near the tip
-  inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -26); ctx.bezierCurveTo(3, -4, -3, 18, 1, 40); }, '#8A5A30', 5);
-  ctx.save(); ctx.strokeStyle = '#B88250'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(-0.8, -24); ctx.bezierCurveTo(2, -4, -4, 18, 0, 38); ctx.stroke(); ctx.restore();
-  inkDisc(ctx, 1.5, 38, 4, '#7A4E2A');
+  // (round 19 check: "reads beside/behind her": the handle runs on well out past her front, so it is seen going in under
+  // her and out again)
+  inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -26); ctx.bezierCurveTo(3, 2, -3, 34, 1, 64); }, '#8A5A30', 5.5);
+  ctx.save(); ctx.strokeStyle = '#B88250'; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(-0.8, -24); ctx.bezierCurveTo(2, 2, -4, 34, 0, 62); ctx.stroke(); ctx.restore();
+  inkDisc(ctx, 1.5, 63, 4.6, '#7A4E2A');
   inked(ctx, () => roundRect(ctx, -6.5, -27, 13, 6, 2.5), '#5A2A80'); ctx.fillStyle = '#9A5CC8'; ctx.fillRect(-5, -26, 10, 1.6);
 }
 ART2.witch = { frame(ctx, u, w) { if (u.kit && u.kit.broomUntil > w.time && !u.downed) broomUnder(ctx, w, w.time); } };

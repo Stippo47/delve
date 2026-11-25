@@ -105,7 +105,7 @@ export function weaponOf(u) {
   if (d.heavy || d.mass >= 2.8) return 'heavy';
   return 'blade';
 }
-const SLASH_COL = { hero: ['#DCE3EC', '#FFFFFF'], enemy: ['#FFCDBD', '#FFF6F2'], scythe: ['#EDE4CD', '#FFFFFF'], smack: ['#8FD8C0', '#E8FFF6'], fire: ['#FF8A3D', '#FFF0B0'], ghost: ['#BFE6FF', '#FFFFFF'], spade: ['#C9B28C', '#F4EAD4'] };
+const SLASH_COL = { hero: ['#DCE3EC', '#FFFFFF'], enemy: ['#FFCDBD', '#FFF6F2'], scythe: ['#EDE4CD', '#FFFFFF'], smack: ['#8FD8C0', '#E8FFF6'], fire: ['#FF8A3D', '#FFF0B0'], ghost: ['#BFE6FF', '#FFFFFF'], spade: ['#8E6A44', '#D2B07E'] };
 
 // ---------------------------------------------------------------- the renderer-side marks (impacts, arcs, strikes)
 const marks = [];
@@ -181,8 +181,10 @@ function slash(ctx, m, k) {
   const sh = m.shape;
   if (sh === 'fist') { // round 19 (lane caster19): the Alchemist's monster punching: a knuckle-shaped thump of purple force where the fist lands, three short thick strokes thrown on past it
     const px = x + Math.cos(m.a) * (m.R - 2), py = y + Math.sin(m.a) * (m.R - 2), e = easeOut(k01(k / 0.4)); if (k < 0.22) lit(ctx, () => glowDisc(ctx, px, py, 26, '#E8D8FF', 0.7 * (1 - k / 0.22)));
-    ctx.save(); ctx.globalAlpha *= 1 - k * k; for (let i = -1; i <= 1; i++) { const b = m.a + i * 0.5; streak(ctx, px + Math.cos(b) * (6 + 14 * e), py + Math.sin(b) * (6 + 14 * e), b, 0, 14 * (1 - k) + 4, 5 - Math.abs(i) * 1.2, '#B48AE8', '#F4EAFF'); }
-    inkDisc(ctx, px, py, 7 * (1 - 0.6 * e) + 2, '#D9B6F2'); ctx.restore(); return; }
+    // (round 19 check: bigger, so each punch reads: a purple fist-shaped thump, knuckles and all, and thick strokes on past it)
+    ctx.save(); ctx.globalAlpha *= 1 - k * k; for (let i = -2; i <= 2; i++) { const b = m.a + i * 0.38; streak(ctx, px + Math.cos(b) * (10 + 22 * e), py + Math.sin(b) * (10 + 22 * e), b, 0, 20 * (1 - k) + 6, 6.5 - Math.abs(i) * 1.3, '#9A5CC8', '#F4EAFF'); }
+    ctx.translate(px, py); ctx.rotate(m.a); const S = 1.25 - 0.35 * e; ctx.scale(S, S);
+    inked(ctx, () => { ctx.beginPath(); ctx.ellipse(0, 0, 9, 12, 0, 0, TAU); }, '#C9A0F0'); for (const yy of [-7, -2.4, 2.4, 7]) inkDisc(ctx, 6.5, yy, 3.2, '#D9B6F2'); ctx.restore(); return; }
   if (sh === 'palm') { const px = x + Math.cos(m.a) * (m.R - 4), py = y + Math.sin(m.a) * (m.R - 4), e = easeOut(k01(k / 0.5)); if (k < 0.25) lit(ctx, () => glowDisc(ctx, px, py, 22, '#FFFFFF', 0.6 * (1 - k / 0.25))); ctx.save(); ctx.globalAlpha *= 1 - k * k; for (let i = 0; i < 5; i++) { const b = m.a + (i - 2) * 0.55, d = 4 + 16 * e; inkDisc(ctx, px + Math.cos(b) * d, py + Math.sin(b) * d, 5 * (1 - 0.6 * k) + 1.5, i % 2 ? m.col[0] : m.col[1]); } ctx.restore(); return; } // lane H2 (round 13): the Monk's fists, soft bursts of force
   if (sh === 'fork') { const vr = u ? u.vr : 20; for (let i = -1; i <= 1; i++) { const r0 = (u ? u.r : 20) * 0.7, r1 = m.R + 16, tip = r0 + (r1 - r0) * easeOut(k01(k / 0.3)), base = r0 + (tip - r0) * sm(k01((k - 0.2) / 0.8)), nx = -Math.sin(m.a) * i * 7, ny = Math.cos(m.a) * i * 7; streak(ctx, x + nx, y + ny, m.a, base, tip, 6 * (1 - 0.35 * k), m.col[0], m.col[1]); } return; } // lane H2 (round 13): the Haymaker's pitchfork, three tines
   if (sh === 'thrust' || sh === 'twin') {
@@ -986,11 +988,13 @@ export function abilityRing(ctx, f) {
       // round 13 (Cleave: "Slash is too far ahead from sword"): the crescent's head is where the blade is: it turns with
       // the sprite (the same easing as render.js's spin) from where the weapon is held out (SPIN_AT, measured off the
       // art), and its tail trails behind by at most a third of a turn
-      const scy = f.ab === 'reap' || f.ab === 'harvest', a0 = f.a != null ? f.a : hash(seed) * TAU, turn = TAU * sm(k), at = scy ? SPIN_AT.reap : SPIN_AT.cleave;
+      const hv = f.ab === 'harvest', scy = f.ab === 'reap' || hv, a0 = f.a != null ? f.a : hash(seed) * TAU, turn = TAU * sm(hv ? Math.min(1, k / 0.75) : k), at = scy ? SPIN_AT.reap : SPIN_AT.cleave; // (Harvest: the blade goes round in the first 3/4 of the look, then the whole circle it swept fades)
       const x = f.unit && !f.unit.dead ? f.unit.x : f.x, y = f.unit && !f.unit.dead ? f.unit.y : f.y;
-      const h = a0 + at + turn, len = Math.min(turn, 2.1) * (1 - sm(k01((k - 0.8) / 0.2)));
+      const h = a0 + at + turn, len = hv ? Math.min(turn, TAU * 0.97) : Math.min(turn, 2.1) * (1 - sm(k01((k - 0.8) / 0.2))); // (round 19 check: Harvest's band runs the whole way round behind the blade, a full circle swept)
       // (and it starts at the blade's tip, not far out past it: kits.js brought the reach in to what a blade that long sweeps)
+      if (hv) { ctx.save(); ctx.globalAlpha *= 1 - sm(k01((k - 0.75) / 0.25)); }
       slashBand(ctx, x, y, f.r, h - Math.max(0.05, len), h, ((f.tier || 1) >= 2 ? 34 : 24) * (1 - 0.2 * k), scy ? EL.bone[1] : '#DCE3EC', '#FFFFFF', !scy);
+      if (hv) ctx.restore();
       return true;
     }
     case 'groundPound': case 'leap': case 'oldBones': return true; // on the ground layer (abilityRingGround)
