@@ -1,2 +1,2 @@
 example: a in 13.9s
-528 battles, 0 problems, 11 ran out of time
+530 battles, 0 problems, 11 ran out of time

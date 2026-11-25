@@ -255,8 +255,10 @@ What the fight does, measured (`tools/wurm19/probe.mjs --n 30`, `probe-before.tx
 
 ## Checks
 - `node --check` on every `js/*.js`; `sim.js` and `render.js` import in Node.
-- `node tools/battles.mjs`: 528 battles, 0 problems, 11 ran out of time (the same eleven as on main).
+- `node tools/battles.mjs`: 530 battles, 0 problems, 11 ran out of time (the same eleven as on main; 528 before main's
+  spider boss came in).
 - `node tools/preview-check.mjs`: threw 0, never fired 0, not offered 0; the wurm's preview is no longer in the
   monster previews' "wrong scenario" list (7 listed, none of them the wurm).
 - No page errors in any of the after recordings.
-- `main` (0.31.1) merged in before the last checks and clips.
+- `main` merged in twice: 0.31.1 before the last clips, and 0.32.0 (the test spider boss, in no dungeon) after them;
+  syntax, imports, battles, preview-check and the level 51 win rate (58 of 100) were run again after the second.

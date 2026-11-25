@@ -1391,6 +1391,6 @@ arcing hole to hole, rear-up with lunge and inhale, brood, coil); docs/BOSS-sand
   rewrite). Left: a frozen wurm hangs in mid-air.
 - **Measured** (level 51, where the campaign meets it; the band is 40-60%): before 67 of 100 (52 at level 48, 87 at 54); after 58 of 100 and 53 on other seeds (49 at 48, 73 at 54), fights of about 154 s;
   a melee four 15 of 40, a four of shooters 16 of 40.
-  Checks: battles 528, 0 problems; preview-check 0 / 0 / 0 (the wurm's preview no longer a "wrong scenario").
+  Checks: battles 530, 0 problems; preview-check 0 / 0 / 0 (the wurm's preview no longer a "wrong scenario").
 - **Found, outside the lane**: six designed bosses have no face or words in the Book; no designed boss plays the phase
   sound (sfx.js reads `u.k.phase`); a hero with nothing to aim at does not heal.

@@ -1,9 +1,9 @@
-2255 previews, 55.4s
+2256 previews, 40.8s
 threw: 0
 a loop where the move or trait never fired: 0
 not offered in the Book (never fires, so its button is left out): 0
 locked (shown as locked): 0 not counting heroes' tier 0
-abilities at tiers I-III: 540 runs of two loops, 11.8s
+abilities at tiers I-III: 540 runs of two loops, 8.7s
   first go: 0.66 s on average, 2.4 s at the latest; 1.01 goes a loop; the hero's own brain chose it in 1053 of 1080 loops
 a loop where it didn't go within 2.5 s: 0
 not shown (a loop where it drew nothing and touched no one): 0
@@ -36,8 +36,8 @@ tiers that differ only in where things went (the same foes reached, statuses, bu
   clockwork:rewind II~III  (I: Back 3s (at most 35% of their health comes back). | II: Back 5s (at most 50%). | III: Once a room, a friend who has just fallen is turned back to before the blow that felled them.)
   clockwork:timeBubble I~II  (I: For 5s. | II: Time runs fast for friends inside it: they move, strike and recharge 30% faster. | III: Wider, and for 7s.)
 blows on the hero side with nothing seen behind them (a target with no weapon, health set lower): 0
-monster moves: 975 previews of two loops, 16.8s
-  first go: 1.01 s on average, 7.2 s at the latest; 2.34 goes a loop
+monster moves: 976 previews of two loops, 11.3s
+  first go: 1.01 s on average, 7.2 s at the latest; 2.35 goes a loop
   a loop where it didn't go within 2.5 s: 30
   straw targets on the stage (never moving, never striking back): 0
   wrong scenario (went off, but nothing it made reached anyone in 3.5 s): 7
@@ -51,7 +51,7 @@ monster moves: 975 previews of two loops, 16.8s
   the stage helped it (a target moved up to it, its health set lower): 0
   blows or health lost with nothing seen behind them (either side): 0
   a loop that showed only its plain blows (its own move never came): 29
-statuses: 44 previews of two loops, 0.4s
+statuses: 44 previews of two loops, 0.3s
   first go: 0.85 s on average, 2.1 s at the latest; 1.03 goes a loop
   a loop where it didn't go within 2.5 s: 0
   straw targets on the stage (never moving, never striking back): 0
