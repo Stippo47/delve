@@ -140,7 +140,9 @@ const REACH = 3.5;
 const dummy = (s) => !!(s && s.def && s.def.dummy);
 export function seenAny(u, src, o) {
   if (o.dot || o.zone || o.explosion || o.gas || o.shot || o.slam || o.guarded || o.hexTurned || o.proc || o.stk) return true; // (proc, stk: a status bursting)
-  if (!src) return Math.hypot(u.kx || 0, u.ky || 0) > 25 || (u.bodies || []).some((b) => Math.hypot(b.kx || 0, b.ky || 0) > 25);
+  // (no source: sim.js physics, a body slammed into a wall or bowled over by one flying into it, or spikes: a plain
+  // noDodge blow, seen as it lands)
+  if (!src) return Math.hypot(u.kx || 0, u.ky || 0) > 25 || (u.bodies || []).some((b) => Math.hypot(b.kx || 0, b.ky || 0) > 25) || (o.noDodge && Object.keys(o).length === 1);
   if (src === u) return true;
   if (!dummy(src)) return true;
   return isWeaponDummy(src) && (!!src.anim || /bow/.test(src.def.art));
@@ -192,7 +194,7 @@ export function measureStage(spec, loops = 2) {
       for (const o of S.w.units) if (!seenU.has(o)) { seenU.add(o); if (spec.t === 'foe' && within() && o.team === side() && !dummy(o)) cur.reached = true; }
       if (spec.t === 'foe' && within() && !cur.reached) {
         // held, frozen, rooted or put to sleep by its side (a grab, a pin: not always a blow)
-        for (const o of S.w.units) if (o.team !== side() && !dummy(o) && (o.stunT > 0.05 || o.rootT > 0.05 || o.frozenT > 0.05 || o.sleepT > 0.05 || o.forcedGoal)) { cur.reached = true; break; }
+        for (const o of S.w.units) if (o.trueTeam && o.trueTeam !== side()) { cur.reached = true; break; } else if (o.team !== side() && !dummy(o) && (o.stunT > 0.05 || o.rootT > 0.05 || o.frozenT > 0.05 || o.sleepT > 0.05 || o.forcedGoal || o.charmed || o.trueTeam)) { cur.reached = true; break; } // (charmed, trueTeam: ridden by a leech, turned)
       }
       // (statuses) where it came from: the stage says (S.srcSeen: true when a real fighter put it on, in view)
       if (spec.t === 'status' && S.fired() && cur.stFrom == null) cur.stFrom = S.srcSeen ? 'seen' : 'nothing';

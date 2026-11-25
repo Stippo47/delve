@@ -297,17 +297,36 @@ export const FOE_SCENES = {
   friend: { friend: true, heroes: [H('paladin', [-150, 110], { on: 'friend' }), H('archer', [-320, -60])] },
   // its pack beside it (howls)
   pack: { pack: true, heroes: [H('paladin', [-170, 0]), H('archer', [-330, -80]), H('tower', [-300, 90])] },
+  // standing their ground, fighting from where they are (bombs, shells, fuses: things a hero would step out of, shown
+  // landing on someone; a run's heroes are often too busy to)
+  standing: { heroes: [H('paladin', [-170, 0], { hold: 3 }), H('archer', [-300, -90], { hold: 3 }), H('tower', [-290, 95], { hold: 3 })] },
+  // backed up against the yard's edge (a charge that crashes into a wall behind them)
+  edge: { heroes: [H('paladin', [-330, 0], { hold: 2.6 }), H('archer', [-350, -120], { hold: 2.6 }), H('tower', [-345, 115], { hold: 2.6 })] },
   // a boss's hall: four of them, spread
   boss: { heroes: [H('paladin', [-200, -40]), H('tower', [-210, 80]), H('archer', [-420, -150]), H('cleric', [-440, 150])] },
 };
 // what to lay over the scene, by kind or kind:move ('kind:elite', 'kind:major', 'kind:kit', 'kind:attack')
 const FS = (scene, o = {}) => ({ scene, ...o });
 export const FOE_SCENE = {
+  // the Wildwood
+  banditAxe: FS('far'), boar: FS('edge'), bandit: FS('far'), 'bandit:kit': FS('close'), 'bandit:attack': FS('party'),
+  // the Warren
+  goblinBomber: FS('standing'), goblinSuicide: FS('standing'), dynamouse: FS('standing'), 'ogre:kit': FS('close'),
+  // the Sewers
+  'ratKing:elite': FS('close', { hp: 0.55 }), 'ratKing:major': FS('close', { hp: 0.55 }),
+  // the Crypt
+  'mummy:kit': FS('far'), gaper: FS('far'), 'brute:elite': FS('far'), 'brute:major': FS('far'),
+  // the Frost Hollow
+  frostWraith: FS('standing'),
+  // the Ember Deep
+  cinderBat: FS('far'), imp: FS('standing'),
+  // the Foundry
+  cogSprite: FS('far'), bee: FS('far'), beeBronze: FS('far'), beeSteel: FS('far'), automaton: FS('close'), 'automaton:attack': FS('party'),
 };
-const HURT_MOVE = /below half|half its health|when hurt|hurt,|once hurt|low on health|wounded/i;
+const HURT_MOVE = /below half|half its health|when hurt|hurt badly|hurt,|once hurt|low on health|wounded/i;
 // the scene for a kind's move when it has no entry: from how it fights (its ability, its role) and its move's words
 export function foeSceneFor(k, move, d, words = '', major = '') {
-  const o = FOE_SCENE[k + ':' + move] || FOE_SCENE[k];
+  const o = FOE_SCENE[k + ':' + move] || (move !== 'attack' ? FOE_SCENE[k] : null); // (a kind's entry is for its moves; its plain attack keeps the plain party unless it names one)
   if (o) return o;
   if (d.boss) return FS('boss');
   if (move === 'attack') return FS('party');
@@ -317,11 +336,13 @@ export function foeSceneFor(k, move, d, words = '', major = '') {
   if (move === 'elite') {
     const hp = HURT_MOVE.test(words) ? { hp: 0.45 } : {};
     if (/mend|heal|rais|rall|war cry|quicken|shield[s ]+(its|the) |call/i.test(words)) return FS('friend', hp);
-    if (/charge|rush|leap|pounce|lunge|thr[oe]w|lob|spear|dash|dive|swoop|hook|pull/i.test(words)) return FS('far', hp);
+    if (/lob|bomb|shell|glob/i.test(words)) return FS('standing', hp);
+    if (/charge|rush|leap|pounce|lunge|thr[oe]w|spear|dash|dive|swoop|hook|pull|down a (long )?line|shockwave/i.test(words)) return FS('far', hp);
     if (/slam|quake|nova|spin|round it|all round|ring|stomp|sweep/i.test(words)) return FS('close', hp);
     if (/arrow|shot|reflect|shooter/i.test(words)) return FS('shooters', hp);
     return FS('party', hp);
   }
+  if (d.turret) return FS('standing');
   if (d.ability === 'charge' || d.ability === 'shadowstep' || d.ability === 'dash' || d.dashCd) return FS('far');
   if (d.ability === 'slam') return FS('close');
   if (d.ability === 'barrage') return FS('pair');
