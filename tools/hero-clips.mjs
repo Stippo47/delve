@@ -39,7 +39,7 @@ const PRELUDE = (hero) => `(async () => {
 // name: { hero, battle (Red | Blue) or run: party, t: the tier of each of its three abilities (three digits), secs, zoom, follow, q, stage }
 const N = (hero, t) => { const ids = ABS[hero]; return hero + ':' + (ids.flatMap((id, i) => Array.from({ length: +t[i] }, (_, k) => id + (k + 1))).join('+') || 'root'); };
 const ABS = { mob: ['pileOn', 'surround', 'scatter'], clockwork: ['rewind', 'timeBubble', 'stopClock'], airMage: ['gale', 'updraft', 'cyclone'], warden: ['manacle', 'nullify', 'chainGang'],
-  telekinetic: ['hurl', 'levitate', 'mindShield'], earthMage: ['earthquake', 'spikeChain', 'stoneWall'] };
+  telekinetic: ['hurl', 'levitate', 'mindShield'], earthMage: ['earthquake', 'spikeChain', 'stoneWall'], waterMage: ['bubbleShield', 'waterDome', 'waterCannon'] };
 const CLIPS = {
   // ------------------------------------------------------------ the Mob
   'mob-attack': { hero: 'mob', battle: 'rattlerMace*1,rattler*1|mob', t: '000', secs: 6, stage: `
@@ -156,6 +156,33 @@ const CLIPS = {
   'earthMage-trait': { hero: 'earthMage', battle: 'rattler*3|earthMage', t: '010', secs: 6, stage: `
     clear(); const F = foes(); tough(F, 4, 0.3); put(me, CX - 220, CY, 0); [[20, -30], [110, 50], [200, -40]].forEach(([x, y], i) => put(F[i], CX + x, CY + y, Math.PI));
     each = (T) => { if (T < 1) for (const u of F) { u.x = u.home.x; u.y = u.home.y; u.vx = u.vy = 0; } at(T, 1.0, 'a', () => use('spikeChain', 1, F[0])); };` },
+  // ------------------------------------------------------------ the Water Mage (round 17, lane water17; --out docs/clips/water17)
+  // the beam on an enemy, then (the paladin knocked under 40%) swung onto the friend: healed and washed, not soaked
+  'waterMage-beam': { hero: 'waterMage', zoom: 1.05, battle: 'rattlerMace*2|waterMage,paladin', t: '000', secs: 8, stage: `
+    clear(); const pal = friends()[0], F = foes(); tough(F, 4, 0.2); put(me, CX - 150, CY + 60, 0); put(pal, CX - 50, CY - 30, 0); put(F[0], CX + 10, CY + 30, Math.PI); put(F[1], CX + 60, CY - 70, Math.PI);
+    pal.potions = 0; each = (T) => { me.x = me.home.x; me.y = me.home.y; me.vx = me.vy = 0; pal.atkT = Math.max(pal.atkT, 0.5); at(T, 3.9, 'hit', () => { pal.hp = pal.maxHp * 0.3; SIM.addStatus(w, pal, 'burn', 70, F[0]); }); };` },
+  // a bubble on the friend: three fire bolts stop on it, a sword goes through it, the third bolt pops it (soaked, the near one knocked back)
+  'waterMage-bubble': { hero: 'waterMage', zoom: 1.05, battle: 'rattlerMace*1,seraph*1|waterMage,paladin', t: '100', secs: 8, stage: `
+    clear(); const pal = friends()[0], F = foes(), mace = F.find((u) => u.kind === 'rattlerMace'), ser = F.find((u) => u.kind === 'seraph'); tough(F, 4, 0.25);
+    put(me, CX - 230, CY + 70, 0); put(pal, CX - 60, CY, 0); put(mace, CX + 2, CY + 30, Math.PI); put(ser, CX + 230, CY - 60, Math.PI); me.atkT = 99;
+    const bolt = () => { const a = Math.atan2(pal.y - ser.y, pal.x - ser.x); w.projectiles.push({ kind: 'bolt', color: '#FF8A3D', x: ser.x + Math.cos(a) * 34, y: ser.y + Math.sin(a) * 34, vx: Math.cos(a) * 430, vy: Math.sin(a) * 430, r: 7, team: ser.team, owner: ser, dmg: pal.maxHp * 0.13, o: { knock: 20, burn: 14 }, life: 1.4, a }); SIM.setAnim(ser, 'cast', 0.3); };
+    each = (T) => { me.atkT = Math.max(me.atkT, 0.5); ser.atkT = 9; pal.atkT = Math.max(pal.atkT, 0.5); at(T, 0.9, 'a', () => use('bubbleShield', 1, mace)); at(T, 1.5, 'b1', bolt); at(T, 2.4, 'b2', bolt); at(T, 3.8, 'b3', bolt); at(T, 4.6, 'b4', bolt); };` },
+  // the Dome (tier II): the skeletons outside pressed against its skin, the archers' arrows glancing off, the one caught inside soaked
+  'waterMage-dome': { hero: 'waterMage', zoom: 1.05, battle: 'rattler*4,rattlerBow*2|waterMage,paladin,archer', t: '020', secs: 9, stage: `
+    clear(); const [pal, arc] = friends(), F = foes(), bows = F.filter((u) => u.kind === 'rattlerBow'), mel = F.filter((u) => u.kind !== 'rattlerBow'); tough(F, 4, 0.3);
+    put(me, CX - 150, CY, 0); put(pal, CX - 80, CY + 30, 0); put(arc, CX - 170, CY - 70, 0); mel.forEach((u, i) => put(u, CX + 130 + (i % 2) * 70, CY + (i - 1.5) * 60, Math.PI)); bows.forEach((u, i) => put(u, CX + 300, CY + (i ? 100 : -100), Math.PI));
+    const caught = mel[3]; put(caught, CX - 60, CY - 60, Math.PI);
+    each = (T) => { for (const f of [me, pal, arc]) { f.x = f.home.x; f.y = f.home.y; f.vx = f.vy = 0; } at(T, 1.0, 'a', () => use('waterDome', 2, mel[0])); };` },
+  // the Water Cannon (tier III): down a line of skeletons, through the hurt paladin standing in it (healed, burning put out), following the one it was aimed at
+  'waterMage-cannon': { hero: 'waterMage', zoom: 1.05, battle: 'rattler*4|waterMage,paladin', t: '003', secs: 6, stage: `
+    clear(); const pal = friends()[0], F = foes(); tough(F, 4, 0.2); put(me, CX - 260, CY, 0); put(pal, CX - 130, CY + 8, 0); pal.hp = pal.maxHp * 0.45; SIM.addStatus(w, pal, 'burn', 60, F[0]);
+    [[10, -10], [90, 20], [170, -30], [250, 60]].forEach(([x, y], i) => put(F[i], CX + x, CY + y, Math.PI));
+    each = (T) => { pal.atkT = Math.max(pal.atkT, 0.5); if (T < 1) for (const u of F) { u.x = u.home.x; u.y = u.home.y; u.vx = u.vy = 0; } at(T, 1.0, 'a', () => use('waterCannon', 3, F[1])); };` },
+  // Splashback: struck while she stands in a puddle, three balls of water fly back at whoever struck her
+  'waterMage-trait': { hero: 'waterMage', zoom: 1.05, battle: 'rattlerMace*2|waterMage', t: '000', secs: 7, stage: `
+    clear(); const F = foes(); tough(F, 4, 0.25); put(me, CX - 60, CY, 0); put(F[0], CX + 10, CY - 30, Math.PI); put(F[1], CX + 10, CY + 50, Math.PI);
+    w.hazards.push({ type: 'water', x: CX - 60, y: CY, r: 58 }); me.barAlways = true;
+    each = (T) => { me.x = CX - 60; me.y = CY; me.vx = me.vy = 0; };` },
   'timeBubble-2-glass': { hero: 'clockwork', battle: 'rattler*4,rattlerBow*2|clockwork,paladin', t: '020', secs: 8, q: 'v_timeBubble=2', same: 'clockwork-timeBubble' },
 };
 for (const c of Object.values(CLIPS)) if (c.same) c.stage = CLIPS[c.same].stage;
