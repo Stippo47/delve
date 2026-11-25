@@ -1021,6 +1021,36 @@ lone hero reaches all tier IIIs in the Wildwood, the Alpha is won 98% at first t
 45-56% within a run. Open in Riffle (topic balance): tier III gates, Wildwood bosses, gentler first run, solo
 viability, floor step, enemy statuses growing with depth, Valkyrie's Call, three slime calls; plus the round 16 calls.
 
+## Round 17, lane foes17 (2026-11-24): trolls get their boulders; chains follow the leader
+The designer: "look into the troll shaped enemies not being able to get their boulders"; the yeti's snowball "is its own
+entity. Should not move like it's nothing"; chains: "Follow the leader segments, each with its own hit box"; the sand
+serpent: "each segment the same size. Add a tail segment that has it taper off. Show with and without each segment
+having its own outline. ... chained back to front. Not stacked near the head. Is always laying down. Moving like the
+centipedes from florr.io ... in bursts and in a slither motion". Everything measured: docs/foes17.md.
+- **Trolls** (troll, rock troll; foes9.js boulderBrain): its own boulder was in the way of every path it asked for
+  (path.js pathClear now takes a skip; sim.js goalVec skips a troll's own boulder), it steered off its own loose
+  boulder, the round-14 jam rule stood it bare-handed 6 s beside its boulder every time a hero leaned on the boulder,
+  a boulder out of its reach was tried again for good, and the elite's recall rolled it through the troll. Now: reach
+  26 past touching; a recalled boulder is caught; a jam with a hero at the boulder or a line to its mark is just its
+  throw (no rest; 4 s rest only with no line); **a boulder it can't get to (no nearer by 20 in 3 s): it tears a new
+  one out of the floor (1.1 s) and the old one crumbles** (lead's call: the yeti's own rule for a ball it can't use).
+  Dungeon runs, back in its hands within 6 s of letting go: Warren 82% -> 94%, Crypt 69% -> 97%, Foundry 79% -> 96%.
+- **The yeti** (foes10.js): it pushes the ball the nearest way it can (its body fits behind, room ahead), so a ball on
+  a wall goes along or off it; with no way (a corner, a pocket) it hauls the ball out backwards, hands on its front;
+  it walks round its ball, not into it; a ball it gets nowhere with for 9 s it leaves to melt and packs another.
+  Staged wall / corner (the ball pushed 50 off where it lay within 15 s): 0/20 -> 20/20 (8 s, 11.5 s); in real
+  rooms about even (80% back within 6 s before and after: the haul is slow on purpose).
+- **Chains** (families.js; the sand serpent and the chain crawler; the Sand Wurm keeps its own body): a trail laid by
+  distance, each link a fixed distance along it (gap = a link's length: serpent 26 -> 52, crawler 28 -> 38; bodies
+  longer: 156 -> 357, 224 -> 337); equal links and a tapering tail link (smaller hit circle); a knock back into its body
+  or a too-sharp corner lays the body as a chain (each link its own gap); turns no tighter than 0.8 gap; bursts (a surge
+  to 2.2x its pace, a glide at 0.7x; serpent 1.1 s beat, crawler 0.9 s) and a slither (serpent +-0.5 rad, crawler
+  +-0.22) tied to the ground; no lunge back through its own body; flat (def.flat: no step bounce or breathing; the
+  serpent's strike no longer lifts its head). Spacing kept at 0.87-1.08 of a link in every test (before: down to 0.10
+  on a knock, links piled 1-2 s a run).
+- **Open, for the designer**: one body or each link outlined (`?chainlines=own`, clips both ways); the longer bodies;
+  the troll tearing up a new boulder; the head's two diamond shapes are in its SVG (not touched).
+
 ## Round 18 (2026-11-24): tags, boulders, snakes, the Water Mage
 
 The designer, in chat (while still reading round 17's report):
@@ -1057,3 +1087,43 @@ fly). Everything in docs/tags17.md; code js/tags.js; checks tools/tags17/check.m
   reaches the Bone King, Grave Warden, mummies, Icicle Wraith); layers floor / hovering / flying (slams miss hovering,
   gas and explosions reach it; only shots reach flying); type resistances as a mechanism, none set.
 - Merged tags17 and water17 (0.23.0). At merge: the Water Mage's bubble asks tags.js isMagicHit, so magic is its own hit type and a fire-carrying blade (sharp + fire) passes the bubble (its check updated to match). Fixed a crash on main found by water17: Encore / Old Tales / Supply Crate asked each other's scores for ever in a party with two of the Bard, Grandpa Sickle, the Quartermaster (wantedNow now looks one level deep).
+
+Round 18, free rein (chat, 2026-11-24 ~20:00 the designer's time; the PC's clock is an hour behind theirs):
+- "If I don't get back to you by like 12 my time I just want you to work. Find something to do. Free to use fable how u see fit." Ideas they listed: cleanup / unify systems; audit for repetitiveness; more, better art with Fable; more effects and interactions; synergy ("I do like the idea of synergy so see where you can make that the case"); smarter brains; weapon slash looks that match the attack animation ("spears slash is centered when the spear is usually off to 1 side"); more interesting enemy shapes (Binding of Isaac variety: flies flying in formations); a clockwork boss built into the level ("they are the room").
+- Now: "I don't like how dash slash abilities work currently in general. Everyone from the wolf to hero's abilities. Make a few completely new variations of it." Lane dash18 (Fable, high: the current dashes were turned down).
+- Now: the Book's previews: "Many abilities aren't shown at all, aren't in the right scenario to show themselves off, don't change between tiers when sometimes they should, the dummies don't attack like how an enemy would, I don't want the hero's to just take invisible damage." Lane preview18 (Opus).
+- Merged foes17 (0.23.1): trolls fetch their boulders (path checks skip their own boulder, a lean-on jam counts as a throw, an unreachable boulder crumbles and a new one is torn from the floor: a call), the yeti hauls its snowball off walls and out of corners, the sand serpent and chain crawler follow the leader with equal links, a tapering tail, bursts and a slither (docs/foes17.md; `?chainlines=own` draws each link outlined). Audit fixes: the undead tag (tags17) already fixed the name test; a chain now takes a status once a frame per source, not once per segment (x4.6-5.8 -> x1.6, the head plus one link's share).
+
+## Round 18, lane downed18 (2026-11-24): downed heroes in battle mode
+The designer, on Valkyrie's Call never firing in battle mode: "Battle mode can have downed allies that can only be
+revived with abilities. (Corpses can be used for necromancy)". The lead's calls, all easy to change (js/battle.js top):
+- **Who goes down.** In a battle a picked hero (anything with a kit), on either side, goes down at 0 as in a dungeon
+  (sim.js killNow: the same state, grey and limp, out of the fight, not a target, no statuses). Monsters, elites,
+  majors, bosses, summons, constructs and the Mob's other bodies just die and leave bodies, as before.
+- **Only abilities bring them back**: Valkyrie's Call (any tier; once a fight, as it is once a room) and the
+  Clockmaker's Rewind III (a friend who fell in the last few seconds; once a fight). No standing over them (the Raiser
+  and Light of Valhalla revive speeds don't apply in a battle), no getting up when it ends. The cheat-death hooks
+  (Phoenix Feather, Old Bones, Spare Second, Back From the Wild) still keep a hero from going down, as before.
+- **Bleeding out**: nobody can finish a downed hero, but after 15 s (BLEED_T) unrevived it dies where it lies and leaves
+  its body. A ring in its side's colour runs down round it, pulsing over the last 4 s.
+- **Losing**: a side with nobody up (everyone downed or dead) has lost at once; the downed count for nothing in the
+  health-left tie-break.
+- **Bodies**: whatever dies leaves a body as before (that already held in battle mode). A downed hero is not a body: no
+  Necromancer can raise it while it might still be revived; once it bleeds out, the Necromancer's Raise Dead (either
+  side) can. The Seraph's and the Radiant's raise stays as it was: only their own host's kinds, so never a hero.
+- **Wraith Veil** in a battle: the ghost rises and fights on while its hero lies downed (it used to vanish at once, the
+  hero being dead), on either side.
+- **Result card**: a row says how many lie downed at the end ("1/2 left · 1 down"), "downed once, back up once",
+  "1 revive" for the one who revived; under each side, who brought whom back and when. The strip under the fight
+  shows a downed stack's chip faint brown-grey rather than gone.
+- **Fixed on the way** (sim.js hurt): a blow whose own burn scorched its target to 0 brought it down twice (two
+  'heroDown's, two Wraith Veil ghosts, a kill counted twice); now once.
+Measured (tools/downed18/measure.mjs, tier III heroes, 8 seeds a setup): Valkyrie's Call casts in hero-vs-hero fights
+0 -> 1.38 a fight (22 of 22 casts brought someone back; 24% of all downs revived, 40% bled out); with a party against
+majors 0 -> 0.03 (heroes rarely go down there, and mostly it's the Valkyrie herself); Rewind III brought 6 back in 24
+fights; every fight ended, 0 problems; the hero Necromancer raises 1.7 bodies a fight, the Seraph 1.1.
+tools/battles.mjs: 528 battles, 0 problems, 9 -> 10 out of time (lone kiters, new dice), blue 249 -> 246, red 274 ->
+277, draws 5 (after merging main: 8 out of time, blue 248, red 276, draws 4). tools/preview-check.mjs: threw 0, never
+fired 0, not offered 0. Clips: docs/clips/downed18/.
+- 0.24.1, the audit's Book fixes: the Book's resistance chips now show what really lands (a shell's or hook's immunities, the bosses' charm rule, tag rules), so bosses show Charm immunity and constructs their bleed/poison immunity; the Golden Skeleton's and Dust Devil's lists name all fifteen statuses; the Elder Ent's page says it can't be stunned, rooted, frozen, knocked out or put to sleep.
+- 0.24.2: foes17b, a knock back slides a chain's whole body as one piece (it piled the links up on the head); clips re-staged.

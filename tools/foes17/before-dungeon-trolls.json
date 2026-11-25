@@ -1,0 +1,36 @@
+{
+ "fetch": {},
+ "fights": {},
+ "dungeon": {
+  "warren": {
+   "releases": 567,
+   "back": 539,
+   "quick": 465,
+   "lost": 0,
+   "broke": 0,
+   "died": 0,
+   "mean": 2.1,
+   "p90": 6
+  },
+  "crypt": {
+   "releases": 609,
+   "back": 596,
+   "quick": 423,
+   "lost": 0,
+   "broke": 0,
+   "died": 0,
+   "mean": 2.9,
+   "p90": 6
+  },
+  "foundry": {
+   "releases": 297,
+   "back": 282,
+   "quick": 234,
+   "lost": 0,
+   "broke": 0,
+   "died": 0,
+   "mean": 2,
+   "p90": 6
+  }
+ }
+}

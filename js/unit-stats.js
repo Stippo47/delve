@@ -6,7 +6,9 @@
 // No DOM here.
 import { HEROES, statsFor } from './heroes.js';
 import { DEFS } from './units.js';
-import { makeWorld } from './sim.js';
+import { makeWorld, immuneTo, charmProof } from './sim.js';
+import { BUILD_IDS } from './statuses.js';
+import { tagRes } from './tags.js';
 import { cooldownOf, hooksOf } from './kits.js';
 import { numbersOf, quietly } from './numbers.js';
 import { heroProbe, battleFoe, enemyMult, FLOORS, BOSS_HP, LAYERS, placeLevel, DUNGEON_RANK } from './dungeon.js';
@@ -80,7 +82,10 @@ export function foeSheet(k, rank, place, party = 4) {
     const n = numbersOf(u);
     if (!((d.dmg || 0) > 0)) { n.hit = 0; n.aps = 0; } // nothing of its own to hit with
     else if ((d.atkCd || 0) >= 99) n.aps = 0;      // it hits only through how it fights: no steady pace to give
-    const res = Object.entries(d.res || {}).filter(([, v]) => v !== 1).map(([id, v]) => ({ id, v }));
+    // round 18 (the resistance audit): what really lands, not only the kind's own list: a shell's or a hook's immunities,
+    // the bosses' charm rule, the tags' rules (constructs don't bleed or sicken)
+    const effRes = (id) => (immuneTo(u, id) || (id === 'charm' && charmProof(u)) ? 0 : (d.res && d.res[id]) ?? tagRes(u, id) ?? 1);
+    const res = BUILD_IDS.map((id) => ({ id, v: effRes(id) })).filter((r) => r.v !== 1);
     return { n, res, mult, level: Math.round(placeLevel(DUNGEON_RANK[place.theme] ?? 0, (place.floor - 0.5) / FLOORS)), last, here: !!here, party: last ? Math.max(1, Math.min(4, party)) : 0 };
   });
 }

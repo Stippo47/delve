@@ -1,0 +1,26 @@
+{
+ "fetch": {},
+ "fights": {},
+ "dungeon": {
+  "frost": {
+   "releases": 434,
+   "back": 410,
+   "quick": 348,
+   "lost": 0,
+   "broke": 0,
+   "died": 0,
+   "mean": 3.4,
+   "p90": 8.9
+  },
+  "crypt": {
+   "releases": 495,
+   "back": 461,
+   "quick": 388,
+   "lost": 0,
+   "broke": 0,
+   "died": 0,
+   "mean": 3.5,
+   "p90": 8.1
+  }
+ }
+}

@@ -72,10 +72,12 @@ export function lineClear(w, ax, ay, bx, by, pad = 0, over = null) {
 // lineClear, and round obstacles too (pillars, barrels, boulders, braziers): can a body of radius pad go straight
 // from a to b? Steering used to head straight at a goal behind two boulders sitting side by side (a gap narrower than
 // the body), because only the walls were checked, and pushed back and forth at the gap.
-export function pathClear(w, ax, ay, bx, by, pad = 0) {
+// skip (round 17, lane foes17): a test for round things not to count (a troll's own boulder, for its own way about)
+export function pathClear(w, ax, ay, bx, by, pad = 0, skip = null) {
   if (!lineClear(w, ax, ay, bx, by, pad)) return false;
   const dx = bx - ax, dy = by - ay, L2 = dx * dx + dy * dy || 1;
   for (const p of w.pillars) {
+    if (skip && skip(p)) continue;
     const k = clamp(((p.x - ax) * dx + (p.y - ay) * dy) / L2, 0, 1), qx = ax + dx * k - p.x, qy = ay + dy * k - p.y;
     if (qx * qx + qy * qy < (p.r + pad) ** 2) return false;
   }
@@ -124,7 +126,7 @@ function heap(f) {
 
 // A route of points from (ax,ay) to (bx,by), pulled straight, or null. pad: how wide a line the route keeps clear
 // when it's pulled straight (the walker's radius), so a big body isn't sent across a corner it can't fit past.
-export function findPath(w, ax, ay, bx, by, pad = 30) {
+export function findPath(w, ax, ay, bx, by, pad = 30, skip = null) {
   const g = w.grid; if (!g) return null;
   const [si, sj] = nearestOpen(g, ...cellOf(g, ax, ay));
   const [ti, tj] = nearestOpen(g, ...cellOf(g, bx, by));
@@ -159,7 +161,7 @@ export function findPath(w, ax, ay, bx, by, pad = 30) {
   const out = []; let px = ax, py = ay, i = 0;
   while (i < pts.length) {
     let j = pts.length - 1;
-    while (j > i && !pathClear(w, px, py, pts[j].x, pts[j].y, pad)) j--;
+    while (j > i && !pathClear(w, px, py, pts[j].x, pts[j].y, pad, skip)) j--;
     out.push(pts[j]); px = pts[j].x; py = pts[j].y; i = j + 1;
   }
   return out;

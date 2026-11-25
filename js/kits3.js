@@ -215,7 +215,7 @@ export const ABILITIES3 = {
       rewindLook(w, a, p);
       after(u, 0.34, held(u, () => {
         if (a.dead) return;
-        if (a.downed) { a.downed = false; a.reviveT = 0; a.hp = 1; a.invulnT = 1.2; a.revivedByKit = true; a.st = freshStatuses(); u.kit.rewindW = w; }
+        if (a.downed) { a.downed = false; a.reviveT = 0; a.hp = 1; a.invulnT = 1.2; a.revivedByKit = true; a.revivedBy = u; a.revivedAb = 'rewind'; a.st = freshStatuses(); u.kit.rewindW = w; }
         const lost = Math.max(0, p.hp - a.hp);
         putBack(w, a, p);
         heal(w, a, Math.min(lost, a.maxHp * cap), u); a.mendGlow = w.time + 0.4;

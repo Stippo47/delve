@@ -10,18 +10,19 @@
 // wurm ("Should probably be a boss") is lane B's Dunes boss: floors end on majors, and theme.bossKind is its hook.
 // Everything here wore PLACEHOLDER art (recoloured kinds; docs/ART-NEEDED.md) until art round 9 drew it (design/class-round9);
 // the golden scarab is the scarab's art with every green of its shell turned gold (an accent).
+import { BUILD_IDS } from './statuses.js';
 import { alive, opponents, allies, hurt, puff, sparks, addStatus, setAnim, fx, addBuff, spawn, kill, addDanger, inZone } from './sim.js';
 import { TAU, clamp, dist, angleTo, wrapAngle, angleDiff, rand, rrange, chance } from './util.js';
 import { lineClear } from './path.js';
 import { ELITES, cone, line, around, rush, rushTick, shoot, hold, beginHold, due, again, targetOf, gapTo, crowd, stand, turnTo, later, openSpot } from './elites.js';
 import { variantUrl } from './recolor.js';
-import { sees, lead, every, burrowTick, chainHead, segBrain, killChain, turretBrain, bounceMove, touch } from './families.js';
+import { sees, lead, every, burrowTick, chainHead, chainBrain, crossesBody, segBrain, killChain, turretBrain, bounceMove, touch } from './families.js';
 import { spirit } from './foes10.js';
 
 const ART = (f) => `art/enemies/placeholder/${f}.svg`;
 const FOE = { team: 'enemy', turn: 4, accel: 220, face: 4, mass: 1.2, temp: 0.35, commit: 0.9 };
 const SAND = '#C9A86A';
-const ALL_ST = { poison: 0, burn: 0, chill: 0, wet: 0, shock: 0, stagger: 0, radiance: 0, curse: 0, entangle: 0 };
+const ALL_ST = Object.fromEntries(BUILD_IDS.map((k) => [k, 0])); // round 18 (the resistance audit): every status, the six newer ones too
 
 // ---------------------------------------------------------------- habits
 // Scarabs: under the sand, up beside a hero with a nip, a while fighting, then down again. The elite throws up a ring of
@@ -147,8 +148,8 @@ function serpentBrain(w, u, dt) {
   if (S.rear) { // rearing: the head lifts and draws back along its body, swaying, then the strike
     const R = S.rear; R.t += dt; const k = clamp(R.t / R.T, 0, 1), e = Math.sin(k * Math.PI / 2);
     stand(u, dt); u.facing = wrapAngle(R.a + Math.sin(R.t * 10) * 0.16 * (1 - k * 0.6));
-    u.lean = -0.38 * e; u.hop = 13 * e;
-    if (R.t >= R.T) { S.rear = null; u.lean = 0; u.hop = 0; rush(w, u, R.a, R.len, { tell: 0, speed: u.def.speed * 6.5, dmg: 13, knock: 200, status: { poison: 30 }, trail: 'rgba(226,198,144,0.7)' }); }
+    u.lean = -0.38 * e; // (round 17, lane foes17: "Is always laying down": it draws back along the floor, the head no longer lifted, u.hop)
+    if (R.t >= R.T) { S.rear = null; u.lean = 0; rush(w, u, R.a, R.len, { tell: 0, speed: u.def.speed * 6.5, dmg: 13, knock: 200, status: { poison: 30 }, trail: 'rgba(226,198,144,0.7)' }); }
     return true;
   }
   if (rushTick(w, u, dt)) return true;
@@ -156,8 +157,9 @@ function serpentBrain(w, u, dt) {
   if (burrowTick(w, u, dt, SERPENT_DIG)) return true; // under the sand (or just going under)
   const t = targetOf(w, u); if (!t || !u.aggro || !due(u, 'strike', dt, 1.6)) return false;
   const g = gapTo(u, t); if (g < 40 || g > 220 || !lineClear(w, u.x, u.y, t.x, t.y, u.r)) { again(u, 'strike', 0.4); return false; }
-  again(u, 'strike', 3.5, 5);
   const a = angleTo(u.x, u.y, t.x + (t.vx || 0) * 0.3, t.y + (t.vy || 0) * 0.3), len = Math.min(260, g + 50), T = 0.6;
+  if (crossesBody(u, a, len + u.r)) { again(u, 'strike', 0.4); return false; } // (round 17: not back over its own coils: it turns to them first)
+  again(u, 'strike', 3.5, 5);
   S.rear = { a, t: 0, T, len };
   addDanger(w, { shape: 'line', x1: u.x, y1: u.y, x2: u.x + Math.cos(a) * (len + u.r), y2: u.y + Math.sin(a) * (len + u.r), hw: u.r + 4, t: T + 0.12, team: u.team, src: u, kind: 'poison' });
   setAnim(u, 'ability', T + 0.3);
@@ -191,9 +193,9 @@ export const DUNES = {
     res: { ...ALL_ST }, brain: devilBrain },
   sandSerpent: { ...FOE, name: 'Sand Serpent', art: 'art/enemies/serpent-head.svg', headR: 40, r: 28, vr: 21, turn: 3.4, accel: 260, face: 4, mass: 2,
     hp: 150, speed: 60, role: 'melee', range: 18, atkCd: 1.2, windup: 0.25, dmg: 10, poison: 16, knock: 140, arc: 1.4, temp: 0.4, commit: 1, xp: 26, coins: [4, 9],
-    attackAnim: 'thrust', sandy: true, chain: { n: 6, seg: 'serpentCoil', gap: 26, taper: 1, dirt: SAND }, res: { poison: 0 }, brain: serpentBrain, onDeath: killChain },
+    attackAnim: 'thrust', sandy: true, chain: { n: 6, seg: 'serpentCoil', gap: 52, dirt: SAND }, flat: true, res: { poison: 0 }, brain: chainBrain(serpentBrain), onDeath: killChain }, // (round 17, lane foes17: gap 26 -> 52, a link's length: chained, not stacked; no taper, a tail: families.js)
   serpentCoil: { variantOf: 'slimeSmall', name: 'Serpent Coil', art: 'art/enemies/serpent-coil.svg', headR: 55, r: 24, vr: 20, mass: 2, hp: 999, speed: 0, atkCd: 999, dmg: 0, hops: null,
-    xp: 0, coins: [0, 0], cost: 99, noCorpse: true, noElite: true, segment: true, touchDmg: 4, segTaken: 0.6, goo: '#E2C690', sandy: true, brain: segBrain },
+    xp: 0, coins: [0, 0], cost: 99, noCorpse: true, noElite: true, segment: true, flat: true, tailShape: [172, 26, 52], touchDmg: 4, segTaken: 0.6, goo: '#E2C690', sandy: true, brain: segBrain },
   dartTrap: { ...FOE, name: 'Dart Trap', art: 'art/enemies/dart-trap.svg', headR: 45, r: 24, vr: 20, turn: 0, accel: 0, face: 0, mass: 99,
     hp: 60, speed: 0, role: 'melee', range: 0, atkCd: 999, dmg: 5, xp: 7, coins: [1, 3], noCorpse: true, construct: true, goo: '#B9AE9C',
     res: { poison: 0, curse: 0, chill: 0.5, wet: 0.5, stagger: 0 }, turret: { wall: true, arc: 0.45, turn: 0.6, cd: 2.4, aim: 0.5, range: 600, fire: darts }, brain: turretBrain },

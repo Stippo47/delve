@@ -93,7 +93,7 @@ export const TRINKETS = {
   wraithVeil: {
     name: 'Wraith Veil', rarity: 'legendary', price: 520, color: '#C8DCFF',
     desc: 'When you go down your ghost rises from the body and fights on, faint and untouchable, until you are revived.',
-    hooks: { fallen(w, u) { if (u.team === 'hero' && !u.summon) raiseGhost(w, u); } },
+    hooks: { fallen(w, u) { if (u.def.team === 'hero' && !u.summon) raiseGhost(w, u); } }, // (round 18: by kind, so a battle's hero on the boss's side gets its ghost too)
   },
   timeSand: {
     name: 'Hourglass of Sand', rarity: 'legendary', price: 480, color: '#E8C878',

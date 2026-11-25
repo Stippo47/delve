@@ -113,6 +113,8 @@ body.battle .hud-gold, body.battle .hud-gem, body.battle #mapCanvas { display: n
 .bd-chip em { position: absolute; left: -3px; top: -3px; min-width: 15px; height: 15px; border-radius: 999px; background: var(--teal); color: #062B27; font-style: normal; font-size: 10px; font-weight: 900; line-height: 15px; text-align: center; }
 .bd-chip.out { opacity: .38; }
 .bd-chip.out img { filter: grayscale(1); }
+.bd-chip.out.down { opacity: .62; } /* round 18: lying downed, can still be brought back */
+.bd-chip.out.down img { filter: grayscale(1) sepia(.5); }
 .ip-face.side-a { border-radius: 12px; box-shadow: inset 0 0 0 1.5px var(--blue); }
 .ip-face.side-b { border-radius: 12px; }
 
@@ -141,6 +143,7 @@ body.battle .hud-gold, body.battle .hud-gem, body.battle #mapCanvas { display: n
 .br-side.b .br-bar > i { background: var(--redd); }
 .br-bar > em { position: absolute; left: 7px; top: 0; font-style: normal; font-size: 11px; font-weight: 900; line-height: 16px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.8); white-space: nowrap; }
 .br-bits { display: block; font-size: 11.5px; font-weight: 700; color: var(--quiet); }
+.br-revs { margin: 6px 0 2px 4px; font-weight: 700; line-height: 1.5; } /* round 18: who brought whom back */
 .br-row.out .br-top b, .br-row.out .br-bits { color: var(--faint); }
 .br-row.out img { filter: grayscale(1) brightness(.7); }
 .br-row.out .br-bar > i { opacity: .55; }
