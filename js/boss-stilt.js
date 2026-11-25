@@ -31,10 +31,10 @@ import { up } from './boss-draw.js';
 import { drawIdol, drawIdolFoot, drawGladeFloor, drawGladeAir, idolShadows, idolPortrait } from './boss-stilt-fx.js';
 
 export const ID = {
-  hp: 1400,
+  hp: 1550,                       // (Old Longlegs: 1400. With 1400 the bench party won 40 fights of 40)
   body: { h: 132, low: 10, air: 34, sc: 330, big: 1.15 },   // how high the head is carried; lying on the floor; flying from this height up; how much bigger it is drawn for being nearer (1 + h / sc); the head's own size
-  leg: { l1: 80, l2: 160, restR: 180, hpK: 0.1, share: 0.85, more: 0.25,   // thigh, shin; where a hoof rests; a hoof's health (of the head's); what a blow on a hoof passes on (and a second hoof caught by the same blow)
-    footR: 22, stepDist: 44, settle: 18, over: 0.55, stepT: 0.36, lift: 34, drag: 150 },
+  leg: { l1: 80, l2: 165, restR: 180, hpK: 0.1, share: 0.85, more: 0.25,   // thigh, shin; where a hoof rests; a hoof's health (of the head's); what a blow on a hoof passes on (and a second hoof caught by the same blow)
+    footR: 22, stepDist: 38, settle: 18, over: 0.55, stepT: 0.32, lift: 34, drag: 150 },
   slow: [1, 0.9, 0.78, 0.66],     // its pace with 0, 1, 2, 3 stilts broken
   collapseAt: 4, crawl: 0.42,     // this many broken: it can't stand; its pace on its belly
   keep: 150, turn: 0.85,          // how far it stands off its mark (a front stilt's reach); how fast it turns (rad/s)
@@ -42,12 +42,11 @@ export const ID = {
   stomp: { r: 70, tell: 0.74, dmg: 46, stagger: 30, knock: 170, lift: 104, stuck: 0.5, reachMin: 70, reachMax: 184, clear: 84, sector: 0.62, cd: [1.7, 2.5] },
   slam: { r: 110, track: 1.5, pause: 0.3, drop: 0.16, rear: 18, dmg: 105, knock: 340, stagger: 40, chase: 2.3,
     stun: 1.0, perLeg: 0.3, hitRest: 0.45, rise: 0.7, taken: 1.25, cd: [5.5, 7], other: 0.4 },
-  vine: { r: 56, tell: 0.9, dmg: 22, haul: 0.5, off: 64, root: 0.8, cd: [7, 9], range: [190, 660] },
+  vine: { r: 56, tell: 0.9, dmg: 22, haul: 0.5, off: 64, root: 0.8, cd: [9, 12], range: [190, 660] },
   pods: { n: 3, r: 52, tell: 1.2, drop: 0.45, dmg: 30, cd: [13, 16], hatch: 1, own: 3, scale: 0.9, hpMul: 0.45, near: [70, 150] },
   collapse: { dazed: 1.8, taken: 1.25 },
 };
 export const PHASE_AT = [1, 0.6];
-/*TUNE*/ if (typeof process !== 'undefined' && process.env && process.env.IDOL) for (const kv of process.env.IDOL.split(',')) { const [key, v] = kv.split('='), [g, f] = key.split('.'), val = v.includes('/') ? v.split('/').map(Number) : +v; if (f) ID[g][f] = val; else ID[g] = val; }
 const WAKE = 500, DUST = '#D9CDB0', LEAF = '#6BA544';
 // th: where its hoof rests round the floor point (0 is straight ahead); hx, hy: its hip on the yoke (ahead, to the
 // right); side: -1 left, 1 right (its knee bends out to its own side); grp: its tripod.
@@ -174,7 +173,7 @@ function testMove(w, u, k, m) { // ?bossmove=walk|slam|stomp|vine|pods|legs1..le
 // stilt-walker's longer, slower stride.)
 function legsTick(w, u, k, dt) {
   const G = ID.leg, om = wrapAngle(u.facing - k.f0) / Math.max(dt, 1e-4);
-  const down = !!k.fall || (!!k.slam && k.slam.st !== 'track');   // dropping, lying or getting up: nobody steps
+  const down = !!k.fall || (!!k.slam && k.slam.st !== 'track' && k.slam.st !== 'pause');   // lying or getting up: nobody steps (stopped before the drop, the hooves it left behind catch up)
   const live = k.legs.filter((L) => !L.broken), air = [0, 0];
   for (const L of live) if (L.step || (L.job && L.z > 1)) air[L.grp]++;
   for (const L of k.legs) {
@@ -214,7 +213,7 @@ function legsTick(w, u, k, dt) {
       for (const L of live) {
         if (L.grp !== g || L.step || L.job) continue;
         if (!L.need && L.err <= (L.mv ? G.stepDist * 0.45 : G.settle)) continue;
-        if (air[0] + air[1] >= maxAir && !L.urgent) break;
+        if (air[0] + air[1] >= maxAir) break; // (however far it is stretched: half its stilts stay on the floor)
         startStep(k, L, n++); air[g]++;
       }
       break; // one tripod a tick
@@ -234,7 +233,7 @@ function startStep(k, L, n) {
   const others = k.legs.filter((o) => !o.broken && o.grp !== L.grp && !o.step && !o.job);
   let over = G.over;
   if (others.length) over = clamp((G.over + 1) / 2 - others.reduce((a, o) => a + (o.along || 0), 0) / others.length / G.stepDist, 0.3, 1);
-  L.step = { t: -n * 0.045, T: clamp(G.stepT * (1.15 - sp / 300), 0.2, 0.4), x0: L.x, y0: L.y, over: over * G.stepDist, ovx: 0, ovy: 0, lift: G.lift + Math.min(20, L.err * 0.3) };
+  L.step = { t: -n * 0.045, T: clamp(G.stepT * (1.15 - sp / 300), 0.2, 0.36), x0: L.x, y0: L.y, over: over * G.stepDist, ovx: 0, ovy: 0, lift: G.lift + Math.min(20, L.err * 0.3) };
 }
 // a hoof never comes down outside the room or inside a pillar
 function footSpot(w, x, y) {

@@ -270,7 +270,7 @@ function liana(ctx, a, b, sag, wig, T, alpha = 1) {
     const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1;
     pts.push([a.x + dx * s - dy / d * wv + ux * Math.max(0, z) * 0.9, a.y + dy * s + dx / d * wv + uy * Math.max(0, z) * 0.9]); }
   ctx.save(); ctx.globalAlpha *= alpha;
-  inkLine(ctx, () => { ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); }, VINE[1], 4.4);
+  inkLine(ctx, () => { ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); }, VINE[1], 5.4);
   ctx.strokeStyle = VINE[0]; ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.beginPath(); pts.forEach(([x, y], i) => (i ? ctx.lineTo(x - 0.8, y - 0.8) : ctx.moveTo(x - 0.8, y - 0.8))); ctx.stroke();
   for (let i = 2; i < n; i += 3) { const [x, y] = pts[i], [x2, y2] = pts[i + 1]; leafBit(ctx, x + (i % 2 ? 5 : -5), y + 4, Math.atan2(y2 - y, x2 - x) + (i % 2 ? 1 : -1), 5.5, LEAF[1]); }
   ctx.restore();
@@ -304,7 +304,7 @@ export function drawGladeAir(ctx, w) {
       if (h === u || h.dead || h.def.part || h.flyT > 0 || h.team === u.team) continue;
       const dx = h.x - u.x, dy = h.y - u.y, lx = dx * c + dy * sn, ly = -dx * sn + dy * c;
       if ((lx / ((lx > 0 ? 60 : 62) * sc)) ** 2 + (ly / (40 * sc)) ** 2 > 1) continue;
-      ctx.save(); ctx.lineWidth = 2.6; ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.fillStyle = 'rgba(255,255,255,0.14)'; ctx.setLineDash([7, 5]);
+      ctx.save(); ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.fillStyle = 'rgba(255,255,255,0.16)'; ctx.setLineDash([7, 5]);
       ctx.beginPath(); ctx.arc(h.x, h.y, h.vr * 1.05, 0, TAU); ctx.fill(); ctx.stroke(); ctx.restore();
     }
   }

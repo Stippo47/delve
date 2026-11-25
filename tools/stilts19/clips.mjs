@@ -50,16 +50,18 @@ const CLIPS = {
   // the same walk at full speed and further out, across the hall on a slant
   'walk-far': { party: 'paladin', q: 'bossmove=walk', secs: 9, zoom: 0.8, follow: 'stiltIdol', stage: `
     const h = heroes()[0]; tough([h]); idle(h); stay(h); put(sp, CX + 480, CY - 250, Math.PI); put(h, CX - 480, CY + 300, 0);` },
-  // the same on a wide screen (a desktop: "up" is up the short side there), from the bottom wall to the top one
-  'walk-wide': { party: 'paladin', q: 'bossmove=walk', secs: 8, zoom: 0.8, w: 1100, h: 620, stage: `
-    const h = heroes()[0]; tough([h]); idle(h); stay(h); put(sp, CX + 300, CY + 300, Math.PI); put(h, CX - 300, 70, 0); w.camAt = { x: CX, y: CY };` },
+  // the same on a wide screen (a desktop: "up" is up the short side there), up to a hero standing at the top wall
+  'walk-wide': { party: 'paladin', q: 'bossmove=walk', secs: 9, zoom: 0.8, w: 1100, h: 620, stage: `
+    const h = heroes()[0]; tough([h]); idle(h); stay(h); put(sp, CX + 260, CY + 40, Math.PI); put(h, CX - 160, 60, 0); w.camAt = { x: CX, y: 200 };` },
   // turning: its mark is carried round it in a circle; it turns on the spot, hooves swinging round
   turn: { party: 'paladin', q: 'bossmove=walk', secs: 10, speed: 0.6, zoom: 1.0, follow: 'stiltIdol', stage: `
     const h = heroes()[0]; tough([h]); idle(h); stay(h); put(sp, CX + 119, CY, Math.PI); put(h, CX - 150, CY, 0);
     each = (T) => { const a = Math.PI + T * 0.7, g = k() || { gx: sp.x - 119, gy: sp.y }; put(h, g.gx + Math.cos(a) * 156, g.gy + Math.sin(a) * 156, a + Math.PI); };` },
-  // a stomp: a hero who can't step away is stamped on; one who can steps out of the next
+  // a stomp: its mark stands straight ahead of it (so it has no turning to do); beside the mark, in a front stilt's reach,
+  // one who can't step away is stamped on, and then, let go, steps out of the next
   stomp: { party: 'paladin,tower', q: 'bossmove=stomp', secs: 8, speed: 0.6, zoom: 1.0, follow: 'stiltIdol', stage: `
-    const [a, b] = heroes(); tough([a, b]); idle(a); idle(b); stay(a); const GX = CX + 60; put(sp, GX + 119, CY, Math.PI); put(a, GX - 140, CY - 90, 0); put(b, GX - 130, CY + 110, 0);` },
+    const [a, b] = heroes(); tough([a, b]); idle(a); idle(b); stay(a); stay(b); const GX = CX + 60; put(sp, GX + 119, CY, Math.PI); put(a, GX - 150, CY, 0); put(b, GX - 149, CY + 76, 0);
+    each = (T) => { at(T, 2.6, 'free', () => { b.moveMul = 1; }); };` },
   // the head slam landing: its mark can't get away
   'slam-hit': { party: 'paladin', q: 'bossmove=slam', secs: 8, speed: 0.6, zoom: 0.95, follow: 'stiltIdol', stage: `
     const h = heroes()[0]; tough([h]); idle(h); stay(h); const GX = CX + 110; put(sp, GX + 119, CY, Math.PI); put(h, GX - 190, CY + 10, 0);` },
