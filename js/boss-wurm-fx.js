@@ -2,9 +2,9 @@
 // in the sand serpent's colours, thorned along its sides, tapering to a tail spike; a head whose two great mandibles
 // open on a red maw ringed with teeth. What is under the sand shows on the floor: the mound that runs ahead of it, the
 // furrow it leaves, the ground lifting in slabs where it will come up, the holes it uses. The fight's state is u.sw.
-import { TAU, clamp } from './util.js';
+import { TAU, clamp, OUTLINE } from './util.js';
 import { inked } from './fx.js';
-import { OUTLINE } from './render.js';
+
 import { figure, washOf, flashing, lin, rad, ballFill, gloss, glow, shade, ell, circ, poly, soft, capsule, up, upRot, BFX, easeOut, sm, k01, hash, inkDisc, streak, rgbaOf } from './boss-draw.js';
 
 const GOLD = ['#F0D48C', '#CFA04C', '#9C6E2A'], PLATE = ['#7A5330', '#55371A'], CREAM = '#F4E3B4', BONE = ['#FFF8EA', '#EADBB4', '#C9B487'];
@@ -63,18 +63,18 @@ function head(F, ctx, R, jaw, T) {
 // render.js skips once it is hidden: the rest of the body vanished the moment the head dived).
 function drawLot(ctx, u, w, air) {
   const k = u.sw, [ux, uy] = up();
-  const mine = (p) => !p.dead && !p.hidden && ((p._tier || 0) > 0) === air;
+  const mine = (p) => !p.dead && !p.hidden && ((p.hop || 0) > 0) === air;
   const list = [...k.parts].reverse().filter(mine), headIn = mine(u);
   if (!list.length && !headIn) return;
   const sh = headIn && u.stuck > 0 ? Math.sin(w.time * 70) * 1.5 : 0;
   let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
   const box = (x, y, r) => { if (x - r < x0) x0 = x - r; if (y - r < y0) y0 = y - r; if (x + r > x1) x1 = x + r; if (y + r > y1) y1 = y + r; };
-  for (const p of list) { const h = p.hop || 0; box(p.x + ux * h * 0.9, p.y + uy * h * 0.9, (SEGR[p.seg] ?? p.vr) * 3.6); }
-  if (headIn) { const h = u.hop || 0; box(u.x + ux * h * 0.9, u.y + uy * h * 0.9, u.vr * 3.2); }
+  for (const p of list) { const h = p.lift || 0; box(p.x + ux * h * 0.9, p.y + uy * h * 0.9, (SEGR[p.seg] ?? p.vr) * 3.6); }
+  if (headIn) { const h = u.lift || 0; box(u.x + ux * h * 0.9, u.y + uy * h * 0.9, u.vr * 3.2); }
   const body = (F, c) => {
-    for (const p of list) { F.flash = false; const h = p.hop || 0; // (a blow on a ring of it doesn't flash: four heroes on eleven rings read as a white wurm)
+    for (const p of list) { F.flash = false; const h = p.lift || 0; // (a blow on a ring of it doesn't flash: four heroes on eleven rings read as a white wurm)
       F.at(p.x + ux * h * 0.9, p.y + uy * h * 0.9, p.facing, () => segment(F, c, SEGR[p.seg] ?? p.vr, p.last, 0, p.seg), (p.vis ?? 1) * (1 + h / 300)); }
-    if (headIn) { F.flash = flashing(u); const h = u.hop || 0;
+    if (headIn) { F.flash = flashing(u); const h = u.lift || 0;
       F.at(u.x + ux * h * 0.9 + sh, u.y + uy * h * 0.9, u.facing, () => head(F, c, u.vr, u.jaw ?? 0.2, 0), (u.vis ?? 1) * (1 + h / 300)); }
   };
   figure(ctx, {}, (F) => body(F, ctx));
@@ -116,7 +116,7 @@ function washOver(ctx, washes, body, b) {
 // The head and every ring are units; each draws the lot it belongs to, once a frame (the floor's drawing clears the mark).
 function drawPiece(ctx, u, me, w) {
   const k = u && u.sw; if (!k) return;
-  const air = (me._tier || 0) > 0, bit = air ? 2 : 1;
+  const air = (me.hop || 0) > 0, bit = air ? 2 : 1;
   if (k.drew & bit) return; k.drew |= bit;
   drawLot(ctx, u, w, air);
 }
@@ -133,12 +133,11 @@ export function wurmPicture() {
   if (typeof document === 'undefined') return '';
   try {
     const c = document.createElement('canvas'); c.width = c.height = 192; const g = c.getContext('2d');
-    g.translate(96, 84); g.scale(0.74, 0.74);
-    figure(g, {}, (F) => {
-      F.at(26, 150, -1.95, () => segment(F, g, 41, false, 0, 2));
-      F.at(6, 96, -1.72, () => segment(F, g, 43, false, 0, 1));
+    g.translate(96, 100); g.scale(1.02, 1.02);
+    figure(g, { ol: 3.4 }, (F) => {
+      F.at(8, 92, -1.72, () => segment(F, g, 43, false, 0, 1));
       F.at(0, 40, -Math.PI / 2, () => segment(F, g, 43, false, 0, 0));
-      F.at(0, -14, -Math.PI / 2, () => head(F, g, 50, 0.8, 0));
+      F.at(0, -14, -Math.PI / 2, () => head(F, g, 50, 0.7, 0));
     });
     PIC = c.toDataURL();
   } catch (e) { PIC = ''; }
@@ -147,10 +146,10 @@ export function wurmPicture() {
 
 // ---------------------------------------------------------------- the floor: ripples, the furrow, the mound, the holes
 // a heap of loose sand seen from above: a shadow on its down-screen side, a lit top
-function heap(ctx, x, y, rx, ry, rot, a = 1, lit = 0.8) {
+function heap(ctx, x, y, rx, ry, rot, a = 1, lit = 0.8, dark = 0.4) {
   const [ux, uy] = up();
   ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
-  ctx.fillStyle = `rgba(96,64,28,${0.4 * a})`; ctx.beginPath(); ctx.ellipse(0, 0, rx * 1.12, ry * 1.2, 0, 0, TAU); ctx.fill(); ctx.restore();
+  ctx.fillStyle = `rgba(96,64,28,${dark * a})`; ctx.beginPath(); ctx.ellipse(0, 0, rx * 1.12, ry * 1.2, 0, 0, TAU); ctx.fill(); ctx.restore();
   ctx.save(); ctx.translate(x + ux * ry * 0.22, y + uy * ry * 0.22); ctx.rotate(rot);
   ctx.fillStyle = rgbaOf(SAND[2], 0.95 * a); ctx.beginPath(); ctx.ellipse(0, 0, rx, ry, 0, 0, TAU); ctx.fill();
   ctx.fillStyle = rgbaOf(SAND[3], lit * a); ctx.beginPath(); ctx.ellipse(-rx * 0.12, -ry * 0.2, rx * 0.6, ry * 0.5, 0, 0, TAU); ctx.fill();
@@ -192,8 +191,8 @@ function drawFurrow(ctx, k, T) {
   for (let i = 0; i < n; i++) { const p = tr[i], a = aOf(p); if (a <= 0) continue;
     const nx = Math.cos(p.a + 1.57), ny = Math.sin(p.a + 1.57), ax = Math.cos(p.a), ay = Math.sin(p.a), sd = Math.round(p.x * 3 + p.y * 7);
     for (const s of [-1, 1]) { const h1 = hash(sd, s + 2), h2 = hash(sd, s + 5), h3 = hash(sd, s + 8), d = 21 + 15 * h1, f = 16 * (h2 - 0.5), rx = 13 + 13 * h3;
-      heap(ctx, p.x + nx * d * s + ax * f, p.y + ny * d * s + ay * f, rx, rx * (0.62 + 0.2 * h1), p.a + (h2 - 0.5) * 1.6, a, 0.45); }
-    if (hash(sd, 11) < 0.3) { const h = hash(sd, 12); heap(ctx, p.x + nx * 14 * (h - 0.5) + ax * 8, p.y + ny * 14 * (h - 0.5) + ay * 8, 9 + 6 * h, 6 + 4 * h, p.a + h * 2, a * 0.85, 0.4); } }
+      heap(ctx, p.x + nx * d * s + ax * f, p.y + ny * d * s + ay * f, rx, rx * (0.55 + 0.2 * h1), p.a + (h2 - 0.5) * 1.6, a, 0.3, 0.3); }
+    if (hash(sd, 11) < 0.3) { const h = hash(sd, 12); heap(ctx, p.x + nx * 14 * (h - 0.5) + ax * 8, p.y + ny * 14 * (h - 0.5) + ay * 8, 9 + 6 * h, 6 + 4 * h, p.a + h * 2, a * 0.85, 0.25, 0.3); } }
 }
 export function drawDunesFloor(ctx, w) {
   const T = w.time;
@@ -231,8 +230,8 @@ export function drawDunesAir() {}
 
 // ---------------------------------------------------------------- its moves, on the floor and in the air
 // Round 19: the grit and dust were discs in the floor's own colour with an ink outline, fading out: on sand they read
-// as soap bubbles. Dust is the game's dust now (fxkit.js dustPuffs: pale, solid, each puff shrinking away to nothing),
-// and a clod is a small angular lump of darker, damp sand with a lit top.
+// as soap bubbles. Dust is pale, solid clouds that shrink away to nothing (as fxkit.js dustPuffs do), and a clod is a
+// small angular lump of darker, damp sand with a lit top.
 // dust rolling out round (x, y): n clouds of it, each a clump of three puffs under one outline (single outlined discs
 // read as balls), `size` across at its biggest, swelling fast and then shrinking away to nothing
 function dustRing(ctx, x, y, R, k, seed, n, size = 12) {
@@ -352,7 +351,7 @@ BFX.wurmRing = { // the whole ring bursts: sand shot out every few paces round i
   },
 };
 BFX.wurmRoar = { air(ctx, f, k, w) { // its roar: sound lines bursting from the maw, wave after wave (the game's shout lines, a boss's size)
-  const u = f.u; if (!u || u.dead || u.hidden) return; const T = w.time, [ux, uy] = up(), x = u.x + ux * (u.hop || 0) * 0.9, y = u.y + uy * (u.hop || 0) * 0.9;
+  const u = f.u; if (!u || u.dead || u.hidden) return; const T = w.time, [ux, uy] = up(), x = u.x + ux * (u.lift || 0) * 0.9, y = u.y + uy * (u.lift || 0) * 0.9;
   ctx.globalAlpha = Math.min(1, k * 6, (1 - k) * 4) * (u.vis ?? 1);
   for (let j = 0; j < 2; j++) for (let i = 0; i < 9; i++) { const q = (T * 1.8 + j / 2 + i * 0.037) % 1, a = u.facing + (i - 4) * 0.2, r0 = u.vr * 1.4 + 150 * q, th = 8.5 * (1 - 0.6 * q);
     if (th > 1.5) streak(ctx, x, y, a, r0, r0 + 52 - 14 * q, th, '#FFF4D6'); }

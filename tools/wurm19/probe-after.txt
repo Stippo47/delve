@@ -1,0 +1,17 @@
+fights 30 won 16 (53.3%) avg 141s
+time by state (s per fight): under 14.1  tell 26.0  arc 29.9  root 56.8  sink 3.4  coil 7.4
+boss health lost by state (% of max, per fight): arc 19.5  root 57.3  root+stuck 7.4  sink 1.6  coil 1.4  under 0.0  tell 0.0
+  breach: 651 (21.7 a fight); heroes in it when it showed 1.27, caught 0.33 each; caught nobody 68.0%
+  land: 453 (15.1 a fight); heroes in it when it showed 0.22, caught 0.09 each; caught nobody 91.4%
+  lunge: 187 (6.2 a fight); heroes in it when it showed 0.00, caught 0.69 each; caught nobody 36.9%
+  inhale: 177 (5.9 a fight); heroes in it when it showed 1.10, caught 0.29 each; caught nobody 72.9%
+  coil: 54 (1.8 a fight); heroes in it when it showed 1.57, caught 0.28 each; caught nobody 75.9%
+  roar: 58 (1.9 a fight); heroes in it when it showed 0.86, caught 0.52 each; caught nobody 60.3%
+holes 1259: beside a column 0 (0.0%), at a wall 14
+arcs 507: through a column 15, out of the room 0
+body in a column 1.9 part-s, out of the room 0.1 part-s
+out of the sand 91.5 s a fight; of that with the head under and rings still out (unseen) 18.1 s
+heroes: aiming at it while it is under 33.5% of their time; no target while it is under 0.5%; in an open hole 0.1%; in its quicksand 4.5%; out of the room 0.1 s; in a column 0.0 s; NaN 0
+brood: 0.48 alive on average, most 1; most pits 6; frozen in the air 1.5 s a fight
+first hero down at (s): 12 12 12 13 17 18 18 18 19 24 31 31 32 36 44 49 54 60 62 64 71 76 81 81 88 91 101 118 121 124
+paladin,archer,cleric,twinfang: blows on the buried head 11.8 a fight; abilities cast with it as the target while it is under 20.9 of 140.1 a fight (fanOfKnives 2.7, sanctuary 1.9, dash 8.3, mend 3.4, roll 3.2, consecrate 0.8, guard 0.6); 142 s a fight

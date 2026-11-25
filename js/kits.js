@@ -988,6 +988,9 @@ export function hooksOf(u) {
   return out;
 }
 // Each think, pick the best ready ability (if any is worth it) and use it.
+// (round 19, lane wurm19: a target that can't be struck now, t.noStrike (the Sand Wurm under the sand), is no target for an
+// ability: the party burnt Smite and the like on a mound of sand)
+const struck = (t) => (t && t.noStrike ? null : t);
 export function kitThink(w, u) {
   const k = u.kit; if (!k || u.act || u.forcedGoal) return false;
   const h = HEROES[k.hero];
@@ -995,7 +998,7 @@ export function kitThink(w, u) {
   for (const ab of h.abilities) {
     const tier = k.tiers[ab.id]; if (!tier || k.cd[ab.id] > 0 || abilityBlocked(u, ab.id, ab)) continue; // (round 17: Silenced, a mouth ability waits)
     const A = ABILITIES[ab.id]; if (!A || A.passiveTier) continue;
-    const raw = A.score(w, u, u.target, tier), s = raw * rrange(0.85, 1.15);
+    const raw = A.score(w, u, struck(u.target), tier), s = raw * rrange(0.85, 1.15);
     if (AUDIT.on) AUDIT.on('score', w, u, u.target, raw, { ab: ab.id, tier, s }); // (round 16: tools/audit: what each ready ability scored)
     if (s > bs) { bs = s; best = ab; }
   }
@@ -1012,7 +1015,7 @@ export function kitReflex(w, u) {
   const k = u.kit; if (!k || u.act || u.forcedGoal) return false;
   for (const ab of HEROES[k.hero].abilities) {
     const tier = k.tiers[ab.id], A = ABILITIES[ab.id]; if (!tier || k.cd[ab.id] > 0 || !A || !A.reflex || abilityBlocked(u, ab.id, ab)) continue;
-    if (A.reflex(w, u, u.target, tier) < 0.3) continue;
+    if (A.reflex(w, u, struck(u.target), tier) < 0.3) continue;
     if (u.st.sleepy > 0 && chance(SLEEPY.abilCut * fillOf(u, 'sleepy'))) return false;
     fireAbility(w, u, ab); return true;
   }

@@ -15,17 +15,17 @@ import { THEMES } from './themes.js';
 export const SW = {
   seg: [43, 43, 41, 39, 37, 35, 33, 30, 27, 24, 20], space: 0.66, share: 0.5,
   under: { speed: 420, min: 0.8, max: 2.0 },
-  breach: { r: 120, tell: 1.15, dmg: 80, knock: 400, stagger: 30, len: [300, 400], speed: 440, height: 72, landR: 90, landDmg: 54 },
-  root: { dur: 9.5, reach: 170, height: 44, turn: 1.5, comp: 0.74 },
-  lunge: { len: 380, hw: 46, tell: 0.8, dmg: 97, knock: 320, stuck: 0.7, stuckTaken: 1.45, cd: [2.1, 2.7] },
-  inhale: { tell: 0.8, dur: 2.7, pull: 74, range: 640, r: 150, dmg: 135, knock: 420, at: 0.42 },
+  breach: { r: 120, tell: 1.15, dmg: 112, knock: 400, stagger: 30, len: [300, 400], speed: 440, height: 72, landR: 90, landDmg: 76 },
+  root: { dur: 8.5, reach: 170, height: 44, turn: 1.5, comp: 0.74 },
+  lunge: { len: 380, hw: 46, tell: 0.8, dmg: 136, knock: 320, stuck: 0.7, stuckTaken: 1.45, cd: [2.1, 2.7] },
+  inhale: { tell: 0.8, dur: 2.7, pull: 74, range: 640, r: 150, dmg: 189, knock: 420, at: 0.42 },
   pit: { r: 60, t: 10 }, brood: { n: 1, cap: 1, hpMul: 0.3, dmgMul: 0.4 }, // round 14 (lane L): 2 at a time to 5 at full health -> 1 at a time at 30%: see BOSS_ADDS in dungeon.js
-  coil: { r0: 150, r1: 345, mid: 248, tell: 2.1, dmg: 116, knock: 380, arc: 3.9, speed: 720, height: 66 },
+  coil: { r0: 150, r1: 345, mid: 248, tell: 2.1, dmg: 162, knock: 380, arc: 3.9, speed: 720, height: 66 },
   roar: { r: 250, tell: 1.0, dmg: 19, knock: 360, dur: 1.6 },
   chain: [2, 2, 3], // breaches in a row before it rears, by phase
 };
 export const PHASE_AT = [1, 0.66, 0.34];
-const WAKE = 1500, SAND = '#D9C08A';
+const WAKE = 1500, SAND = '#D9C08A', AIR = 30;
 // how far behind the head each segment rides
 const OFF = (() => { const out = []; let o = 0, pr = 48; for (const r of SW.seg) { o += (pr + r) * SW.space; out.push(o); pr = r; } return out; })();
 export const BODY_LEN = OFF[OFF.length - 1] + 20;
@@ -59,8 +59,11 @@ function make(w, u) {
   u.homeR = u.r;
   return k;
 }
-// under the sand the head is not there at all (round 19: the party aimed at it 34% of its time, swinging at the mound)
-function hideHead(u, k) { u.hidden = true; u.ethereal = true; u.shadowK = 0; u.invulnT = Math.max(u.invulnT, 0.12); u.r = 6; place(u, k.mound.x, k.mound.y, k.mound.a); u.hop = 0; u.vis = 0; }
+// Under the sand the head is where the mound is: still the party's target (they follow it and back off from it, as they
+// always did), but not to be struck (u.noStrike: sim.js tryAttack, kits.js kitThink). Round 19: the party spent a third
+// of its time swinging, shooting and casting at the mound. (Making the head ethereal instead, no target at all, was
+// tried: nobody minded the mound any more, and a party of shooters stood on it and lost 40 fights of 40.)
+function hideHead(u, k) { u.hidden = true; u.noStrike = true; u.shadowK = 0; u.invulnT = Math.max(u.invulnT, 0.12); u.r = 6; place(u, k.mound.x, k.mound.y, k.mound.a); u.hop = 0; u.lift = 0; u.vis = 0; }
 
 // ---------------------------------------------------------------- the body on its path
 // A path: { len, pt(s) -> [x, y], h(s) -> height off the floor, dive: it goes back under at len }. The head is at
@@ -71,7 +74,10 @@ function layout(w, u, k) {
     if (!P || s <= 2 || s >= P.len - (P.dive ? 2 : -1e9)) { if (o !== u) { o.hidden = true; o.ethereal = true; o.shadowK = 0; o.vis = 0; } return false; }
     const [x, y] = P.pt(s), [x2, y2] = P.pt(s + 6), edge = Math.min(1, s / 46, P.dive ? (P.len - s) / 46 : 1);
     place(o, x, y, Math.atan2(y2 - y, x2 - x));
-    o.hidden = false; o.ethereal = false; o.hop = P.h(s) * edge; o.vis = 0.5 + 0.5 * edge; o.shadowK = 0.55 + 0.25 * edge; o.r = r0 * (0.3 + 0.7 * edge);
+    // o.lift: how high it is drawn. o.hop (what the game reads: height.js airTier, bodiesMeet): off the floor only from
+    // AIR up. Round 19: the low rings of a reared neck (10-30 up) counted as in the air, so the whole neck was drawn
+    // over the heroes fighting at it; now they are floor bodies, drawn by depth and solid, and what is high is over all.
+    o.hidden = false; o.ethereal = false; o.noStrike = false; o.lift = P.h(s) * edge; o.hop = o.lift >= AIR ? o.lift : 0; o.vis = 0.5 + 0.5 * edge; o.shadowK = 0.55 + 0.25 * edge; o.r = r0 * (0.3 + 0.7 * edge);
     return true;
   };
   if (!(P && put(u, k.s, u.homeR))) hideHead(u, k);
@@ -203,7 +209,7 @@ const STATES = {
 };
 function startTell(w, u, k) {
   const B = SW.breach, roar = k.plan === 'roar', t = k.mark && alive(k.mark) ? k.mark : randomHero(w, u);
-  const p0 = roar ? { x: w.W / 2, y: w.H / 2 } : t ? lead(t, 0.35) : k.mound, p = clearSpot(w, p0.x, p0.y, 60, k.plan === 'breach' ? 90 : 150);
+  const p0 = roar ? { x: w.W / 2, y: w.H / 2 } : t ? lead(t, 0.35) : k.mound, p = k.plan === 'breach' ? clearSpot(w, p0.x, p0.y, 60, 90) : clearSpot(w, p0.x, p0.y, 150, 150);
   k.at = p; k.mound.x = p.x; k.mound.y = p.y; k.st = 'tell';
   const tell = (roar ? SW.roar.tell : B.tell) * (k.phase >= 3 ? 0.88 : 1); k.tellT = tell; k.tellK = () => 1 - clamp(k.tellT / tell, 0, 1);
   bfx(w, { type: 'wurmHeave', x: p.x, y: p.y, r: roar ? SW.roar.r : B.r, max: tell, seed: Math.round(p.x + p.y * 7) });
@@ -243,7 +249,7 @@ function startRoot(w, u, k) {
 function sink(w, u, k) { k.st = 'sink'; k.act = null; k.rigid = false; }
 // How far the reared neck can reach the way it faces: its full reach, or less with a wall or a column in the way (round
 // 19: reared near a wall its head hung out of the room, and its neck lay across a column).
-const reachLim = (w, k) => clamp(clipLine(w, k.path.x, k.path.y, k.aim, SW.root.reach + 100, 30, 0).d - 70, 70, SW.root.reach);
+const reachLim = (w, k) => clamp(clipLine(w, k.path.x, k.path.y, k.aim, SW.root.reach + 100, 100, 0).d - 30, 70, SW.root.reach);
 // ---- Lunge: the neck draws back, then strikes out along a line; its head sticks in the sand a moment (hit it)
 function lunge(w, u, k, t) {
   const L = SW.lunge, P = k.path, a = angleTo(P.x, P.y, t.x + (t.vx || 0) * 0.3, t.y + (t.vy || 0) * 0.3), e = clipLine(w, P.x, P.y, a, L.len, 44, 40);
@@ -305,7 +311,7 @@ function death(w, u) {
   const k = u.sw;
   if (k) {
     // each ring of it that is out drops where it is, as itself, and sinks into the sand (round 19: it burst into brown ovals)
-    for (const p of [u, ...k.parts]) if (!p.hidden) { bfx(w, { type: 'wurmChunk', x: p.x, y: p.y, r: p === u ? u.vr : SW.seg[p.seg], a: p.facing, hop: p.hop || 0, vis: p.vis ?? 1, head: p === u, seg: p.seg, last: !!p.last, jaw: k.jaw, max: 1.5, seed: p.id }); sandBurst(w, p.x, p.y, 6, 200); }
+    for (const p of [u, ...k.parts]) if (!p.hidden) { bfx(w, { type: 'wurmChunk', x: p.x, y: p.y, r: p === u ? u.vr : SW.seg[p.seg], a: p.facing, hop: p.lift || 0, vis: p.vis ?? 1, head: p === u, seg: p.seg, last: !!p.last, jaw: k.jaw, max: 1.5, seed: p.id }); sandBurst(w, p.x, p.y, 6, 200); }
     for (const h of k.holes) if (h.open) { h.open = false; h.shut = h.age; h.shutT = w.time; }
     // its rings are not deaths of their own (round 19: each of the eleven went through the sim's kill: a death puff where
     // each lay, also the ones under the sand, and eleven "something died near you" for every hero's hooks)
@@ -331,7 +337,7 @@ export const WURM = {
     sandWurm: { team: 'enemy', name: 'The Sand Wurm', r: 46, vr: 50, turn: 2.2, accel: 140, face: 2.2, mass: 12, hp: 660, speed: 60, role: 'melee', range: 30, atkCd: 999, arc: 2,
       temp: 0.2, commit: 1.2, xp: 230, coins: [90, 110], boss: true, arena: 'dunes', noCorpse: true, sandy: true,
       res: { poison: 0.3, stagger: 0.4, wet: 1.4, burn: 0.8 }, draw: drawWurm, picture: wurmPicture, brain, onDeath: death },
-    wurmSegment: PART('The Sand Wurm (body)', { r: 36, vr: 36, mass: 40, hp: 100, sandy: true, draw: drawWurmPart }),
+    wurmSegment: PART('The Sand Wurm (body)', { r: 36, vr: 36, mass: 40, hp: 100, sandy: true, noBar: true, draw: drawWurmPart }),
   },
   arenas: { dunes },
 };

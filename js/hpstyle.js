@@ -35,7 +35,9 @@ const GREEN = '#6CCB5F', RED = '#E0604B', LOST = '#FFE7D6', BACK = '#3A2F3E';
 let SIDES = null; const BLUE = '#5FA8FF';
 export function setHpSides(s) { SIDES = s || null; }
 // (round 14, lane U: u.barAlways, set by the Book's previews: this unit's bar shows whatever its side, hurt or not)
-const shows = (u) => (u.barAlways ? !u.downed && !u.dead && !u.ethereal : SIDES ? !u.downed && !u.dead && !u.ethereal && u.team !== 'neutral' : u.team === 'enemy' && !u.def.boss && !u.downed && !u.dead && u.hp < u.maxHp - 0.01 && !u.ethereal);
+// (round 19, lane wurm19: a hidden unit shows no bar: the Sand Wurm's hung over its mound in the Book and in battles;
+// nor does a kind with def.noBar: a ring of its body, which keeps no health of its own but flickered a bar when struck)
+const shows = (u) => !u.hidden && !u.def.noBar && (u.barAlways ? !u.downed && !u.dead && !u.ethereal : SIDES ? !u.downed && !u.dead && !u.ethereal && u.team !== 'neutral' : u.team === 'enemy' && !u.def.boss && !u.downed && !u.dead && u.hp < u.maxHp - 0.01 && !u.ethereal);
 // tanky: an elite or a major, or a big, heavy body
 export const tanky = (u) => !!(u.elite || u.major || u.mini || u.maxHp >= 170 || (u.def.mass || 1) >= 2.8);
 function rr(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); }

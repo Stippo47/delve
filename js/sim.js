@@ -1593,7 +1593,7 @@ function flail(w, u, dt) {
 }
 function tryAttack(w, u) {
   const t = u.target;
-  if (!t || u.atkT > 0 || u.act || u.forcedGoal || u.shackledT > 0) return; // (round 15: Shackled, no basic attacks)
+  if (!t || t.noStrike || u.atkT > 0 || u.act || u.forcedGoal || u.shackledT > 0) return; // (round 15: Shackled, no basic attacks) (round 19, lane wurm19: t.noStrike, a foe to follow and keep clear of that can't be struck now: the Sand Wurm under the sand)
   const d = dist(u.x, u.y, t.x, t.y);
   const face = angleDiff(angleTo(u.x, u.y, t.x, t.y), u.facing);
   const def = u.def;
