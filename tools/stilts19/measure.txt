@@ -1,0 +1,9 @@
+# sh tools/stilts19/measure.sh 40 25 (the Canopy Idol as committed; Old Longlegs on this branch), 2026-11-25
+L25 paladin,archer,cleric,twinfang       stiltIdol  sewers  won 39/40 lost 1 stuck 0 err 0 avg 162s
+L25 tower,berserker,wildmane,cleric      stiltIdol  sewers  won 29/40 lost 11 stuck 0 err 0 avg 163s
+L25 paladin,archer,pyromancer,marksman   stiltIdol  sewers  won 32/40 lost 8 stuck 0 err 0 avg 112s
+L25 paladin,frost,storm,cleric           stiltIdol  sewers  won 18/40 lost 22 stuck 0 err 0 avg 251s
+L25 paladin,archer,cleric,twinfang       ikSpider   sewers  won 34/40 lost 6 stuck 0 err 0 avg 162s
+L25 tower,berserker,wildmane,cleric      ikSpider   sewers  won 34/40 lost 6 stuck 0 err 0 avg 120s
+L25 paladin,archer,pyromancer,marksman   ikSpider   sewers  won 38/40 lost 2 stuck 0 err 0 avg 94s
+L25 paladin,frost,storm,cleric           ikSpider   sewers  won 22/40 lost 18 stuck 0 err 0 avg 217s

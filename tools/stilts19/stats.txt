@@ -1,0 +1,4 @@
+40 fights: won 39, about 162.4 s (wins 161.6 s); stilts broken 4.1 a fight; collapsed in 35 (127.5 s in); phase 2 in 40 (61.3 s in); slams landed 119 of 544; stomps 288 of 696; lianas 48 of 327; pods 34 of 916
+40 fights: won 29, about 163.2 s (wins 154.8 s); stilts broken 5.6 a fight; collapsed in 38 (58.6 s in); phase 2 in 39 (56.9 s in); slams landed 307 of 592; stomps 463 of 494; lianas 92 of 322; pods 195 of 1002
+40 fights: won 32, about 112.3 s (wins 109.6 s); stilts broken 3 a fight; collapsed in 12 (96.9 s in); phase 2 in 40 (33.4 s in); slams landed 79 of 385; stomps 218 of 243; lianas 52 of 229; pods 26 of 690
+40 fights: won 18, about 250.9 s (wins 317.8 s); stilts broken 3.8 a fight; collapsed in 21 (205.5 s in); phase 2 in 35 (116.6 s in); slams landed 144 of 859; stomps 409 of 440; lianas 125 of 510; pods 37 of 1399

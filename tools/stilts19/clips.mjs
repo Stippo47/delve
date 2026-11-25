@@ -81,7 +81,7 @@ const CLIPS = {
   'walk-3broken': { party: 'paladin', q: 'bossmove=legs3', secs: 10, speed: 0.6, zoom: 1.0, follow: 'stiltIdol', stage: `
     const h = heroes()[0]; tough([h]); idle(h); stay(h); put(sp, CX + 480, CY, Math.PI); put(h, CX - 480, CY + 30, 0);` },
   // the fourth stilt goes: it collapses, lies dazed, then fights from the floor (a slam from its belly)
-  collapse: { party: 'paladin,twinfang', q: 'bossmove=legs3m', secs: 13, speed: 0.8, zoom: 0.9, follow: 'stiltIdol', stage: `
+  collapse: { party: 'paladin,twinfang', q: 'bossmove=legs3m', secs: 15, speed: 0.8, zoom: 0.9, follow: 'stiltIdol', stage: `
     const H = heroes(); tough(H, 30, 0.4); H.forEach(quiet); const GX = CX + 60; put(sp, GX + 119, CY, Math.PI); put(H[0], GX - 150, CY - 130, 0); put(H[1], GX - 180, CY - 80, 0);
     each = (T) => { const kk = k(); if (!kk) return; const L = kk.legs[0]; at(T, 0.3, 'w1', () => { if (L.foot) L.foot.hp = L.foot.maxHp * 0.3; }); at(T, 1.6, 'w2', () => { if (L.foot) L.foot.hp = 1; }); for (const h of H) if (L.foot && !L.foot.dead) { h.focus = L.foot; h.focusT = 1; } };` },
   // the liana: one caught (it can't step away) and hauled in under the head; then one that comes down on bare floor

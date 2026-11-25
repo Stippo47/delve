@@ -1,0 +1,8 @@
+L22 paladin,archer,cleric,twinfang       stiltIdol  sewers  won 17/20 lost 3 stuck 0 err 0 avg 213s
+L22 tower,berserker,wildmane,cleric      stiltIdol  sewers  won 18/20 lost 2 stuck 0 err 0 avg 163s
+L22 paladin,archer,pyromancer,marksman   stiltIdol  sewers  won 16/20 lost 4 stuck 0 err 0 avg 119s
+L22 paladin,frost,storm,cleric           stiltIdol  sewers  won 3/20 lost 17 stuck 0 err 0 avg 219s
+L28 paladin,archer,cleric,twinfang       stiltIdol  sewers  won 20/20 lost 0 stuck 0 err 0 avg 157s
+L28 tower,berserker,wildmane,cleric      stiltIdol  sewers  won 18/20 lost 2 stuck 0 err 0 avg 157s
+L28 paladin,archer,pyromancer,marksman   stiltIdol  sewers  won 15/20 lost 5 stuck 0 err 0 avg 110s
+L28 paladin,frost,storm,cleric           stiltIdol  sewers  won 10/20 lost 10 stuck 0 err 0 avg 258s
