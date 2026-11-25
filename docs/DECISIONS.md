@@ -1213,6 +1213,7 @@ Round 19 (2026-11-25, free rein from midnight the designer's time): the designer
 - **Pronouns**: the Alchemist is they/them in its texts (heroes2.js, code notes); the others match the designer's use.
 - Checks: battles 528, 0 problems, 10 out of time; preview-check threw / never fired / not offered 0 / 0 / 0 (monster
   previews late 24 -> 30, wrong scenario 7 -> 8: borderline timings both ways). Clips docs/clips/sys19/ (-before beside).
+- Round 19, chat: "Also check that outline thickness is consistent everywhere. Outlines shouldn't if possible be built into the sprites." Lane outline19: audit every outline (baked vs drawn, on-screen thickness), one renderer-drawn outline at one constant thickness over the whole assembled figure (the old ruling: outline added afterwards, like a shader), a re-runnable script strips baked outer strokes from the SVGs, frame cost measured.
 
 ## Round 19, lane caster19 (2026-11-25): the Digger, Grandpa Sickle, the Alchemist, the Shaman, the Witch
 Every note on these five in the designer's 0.19 deck, done as asked; everything in docs/caster19.md. The lane's calls (say
