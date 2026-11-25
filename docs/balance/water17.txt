@@ -1,0 +1,69 @@
+Round 17, lane water17: the Water Mage's numbers (Node, tools/balance.mjs and tools/ability-worth.mjs on this branch, 2026-11-24).
+
+== balance.mjs --tier 1 (every hero leads, 9 dungeons x 3, rank 0; the support rows and the role lines)
+tier 1, parties of 3, every dungeon at rank 0: 1620 runs, 9 errors, 10.82 rooms a run on average
+dungeons: wildwood 12.7 rooms, crypt 11.4 rooms, sewers 12.3 rooms, warren 11.6 rooms, frost 11.5 rooms, ember 10.6 rooms, spire 9.8 rooms, dunes 8.7 rooms, foundry 8.8 rooms
+  tank      rooms 9.88  damage  22%  healing  18%  taken  48%  downs 2.60
+  ranged    rooms 11.76  damage  44%  healing   9%  taken  24%  downs 1.32
+  skirmish  rooms 9.78  damage  36%  healing  16%  taken  41%  downs 2.43
+  melee     rooms 9.89  damage  37%  healing  30%  taken  47%  downs 2.70
+  caster    rooms 11.22  damage  38%  healing  29%  taken  24%  downs 1.45
+  support   rooms 11.32  damage  21%  healing  52%  taken  28%  downs 1.64
+hero          role      runs  rooms  vs avg   dmg  heal taken   blk  downs  dmg/s  top sources of its damage
+  support   rooms 11.32  damage  21%  healing  52%  taken  28%  downs 1.64
+hero          role      runs  rooms  vs avg   dmg  heal taken   blk  downs  dmg/s  top sources of its damage
+chef          support     60  14.05  + 3.23   24%   82%   37%    5%   0.95    3.4  attack 87%, foodFight 10%, greaseFire 3%
+shaman        support     63  12.63  + 1.82   22%   79%   23%   14%   0.92    3.0  attack 71%, pet 29%, ~chill 0%
+quartermaster support     62  12.61  + 1.80   18%   59%   31%   12%   1.61    2.6  attack 85%, flare 15%
+waterMage     support     69  12.57  + 1.75   22%   71%   20%    9%   1.64    3.2  attack 63%, waterCannon 36%, bubbleShield 1%, other 0%
+druid         support     57  12.54  + 1.73   19%   73%   26%    3%   1.09    2.7  attack 83%, pet 17%, ~entangle 0%, ~chill 0%
+beekeeper     support    118  12.51  + 1.69   26%   77%   26%    0%   0.97    3.5  attack 85%, ~poison 10%, swarm 4%, ~entangle 0%
+clockwork     support     60  12.05  + 1.23   21%   59%   29%    4%   0.93    2.9  attack 100%
+valkyrie      support     92  12.01  + 1.19   22%   71%   43%   30%   3.85    3.1  attack 85%, skyDive 14%, spearThrow 1%, valkyrieCall 0%
+cleric        support     82  10.80  -0.01   13%   74%   22%    2%   1.45    1.5  attack 61%, smite 36%, sanctuary 3%, mend 0%
+seer          support     68   9.96  -0.86   22%    0%   23%   20%   1.49    2.9  attack 91%, premonition 9%
+grandpa       support     70   9.57  -1.25   18%   75%   47%    4%   3.24    2.3  attack 77%, harvest 23%
+bard          support     74   9.39  -1.42   20%    0%   23%    2%   1.59    2.7  attack 100%
+enchantress   support    146   9.09  -1.73   22%    0%   21%    0%   1.31    2.8  attack 85%, heartbreak 15%, ~poison 0%
+
+== balance.mjs --tier 3
+tier 3, parties of 3, every dungeon at rank 0: 1620 runs, 19 errors, 16.50 rooms a run on average
+dungeons: wildwood 18.3 rooms, crypt 17.4 rooms, sewers 17.8 rooms, warren 16.4 rooms, frost 16.5 rooms, ember 17.3 rooms, spire 16.2 rooms, dunes 13.6 rooms, foundry 15.1 rooms
+  tank      rooms 15.43  damage  22%  healing  25%  taken  47%  downs 2.10
+  ranged    rooms 16.75  damage  43%  healing   9%  taken  23%  downs 0.82
+  skirmish  rooms 16.54  damage  41%  healing   8%  taken  42%  downs 2.82
+  melee     rooms 16.11  damage  42%  healing  36%  taken  51%  downs 1.92
+  caster    rooms 16.90  damage  37%  healing  23%  taken  23%  downs 1.03
+  support   rooms 16.80  damage  19%  healing  61%  taken  27%  downs 0.90
+hero          role      runs  rooms  vs avg   dmg  heal taken   blk  downs  dmg/s  top sources of its damage
+  support   rooms 16.80  damage  19%  healing  61%  taken  27%  downs 0.90
+hero          role      runs  rooms  vs avg   dmg  heal taken   blk  downs  dmg/s  top sources of its damage
+grandpa       support     78  17.69  + 1.20   16%   83%   60%   11%   2.71    2.9  attack 76%, harvest 24%
+beekeeper     support     95  17.33  + 0.83   23%   76%   18%    2%   0.37    4.2  attack 83%, ~poison 13%, swarm 3%, ~entangle 0%
+waterMage     support     86  17.26  + 0.76   22%   65%   22%   19%   0.63    3.8  attack 54%, waterCannon 41%, bubbleShield 4%, other 0%
+druid         support    133  17.08  + 0.59   19%   73%   21%    4%   0.47    3.5  attack 59%, pet 32%, ~poison 9%, ~entangle 0%
+quartermaster support     82  17.02  + 0.53   16%   64%   27%   18%   0.49    3.1  attack 72%, flare 23%, other 5%
+clockwork     support     86  16.92  + 0.42   20%   36%   24%    3%   0.38    3.5  attack 86%, stopClock 14%, ~chill 0%
+bard          support     63  16.89  + 0.39   14%   48%   23%    6%   2.05    2.7  attack 100%
+shaman        support     96  16.80  + 0.30   20%   71%   21%   22%   0.35    3.2  attack 57%, pet 43%, ~chill 0%
+seer          support     79  16.72  + 0.22   17%    0%   21%   32%   0.95    3.2  attack 90%, premonition 10%
+enchantress   support     91  16.46  -0.04   16%   60%   21%    3%   0.53    2.8  attack 84%, heartbreak 16%, ~chill 0%
+chef          support     97  16.37  -0.13   24%   63%   29%   11%   0.47    4.1  attack 73%, ~burn 14%, foodFight 11%, greaseFire 3%
+cleric        support     63  16.29  -0.21   15%   73%   24%    5%   0.16    2.6  smite 61%, attack 37%, sanctuary 2%, mend 0%
+valkyrie      support     78  15.28  -1.22   21%   66%   48%   28%   2.99    3.1  attack 87%, skyDive 12%, spearThrow 1%, valkyrieCall 0%
+
+== ability-worth.mjs --heroes waterMage --tier 1 --n 40
+hero          ability           rooms with  worth   share of dmg  hero dmg/s  party taken/s  party heal/s  party downs
+waterMage     (all on)          13.93           attack  61%     3.18         2.56          1.86       3.75   (40 runs)
+              bubbleShield              +1.13            0%    +0.04        +0.24         -0.18       +0.42
+              waterDome                 +1.88            0%    +0.23        +0.05         +0.27       +1.38
+              waterCannon               +2.88           38%    +1.07        +0.08         +0.09       +0.53
+
+== ability-worth.mjs --heroes waterMage --tier 3 --n 40 (rank 1)
+hero          ability           rooms with  worth   share of dmg  hero dmg/s  party taken/s  party heal/s  party downs
+waterMage     (all on)           8.70           attack  52%     4.35         3.75          2.89       4.08   (40 runs)
+              bubbleShield              +0.75            5%    +0.63        +0.51         -0.47       +0.72
+              waterDome                 +1.57            0%    +0.21        +0.01         +0.32       +0.42
+              waterCannon               +1.07           42%    +1.67        +0.03         +0.15       +0.27
+
+Errors in the batches (9 at tier I, 19 at III) are all 'Maximum call stack size exceeded' in parties with two of the Bard, Grandpa Sickle and the Quartermaster (kits.js wantedNow: their abilities' scores ask each other's scores). None has the Water Mage; it is on main too (the code is untouched here).

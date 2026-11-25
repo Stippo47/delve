@@ -88,4 +88,24 @@ through a wall. The beam's pick is the attack's own rule (below).
 11. **Unlock**: 2 gems, as the Air and Earth Mages.
 
 ## The numbers
-See `docs/balance/water17.txt` (written at the end of the lane).
+All in `docs/balance/water17.txt` (Node, this branch). In short:
+- **Against the other supports** (tools/balance.mjs, every hero leads, 1620 runs a tier): tier I +1.75 rooms against the
+  batch (4th of 13 supports; the supports run -1.73 to +3.23), 22% of the party's damage (supports 21%), 71% of its
+  healing (52%), 20% of what it takes, 1.64 downs a run. Tier III +0.76 (3rd of 13; -1.22 to +1.20), 22% damage
+  (19%), 65% healing (61%). Inside the band, on its strong side; nothing eased.
+- **Each ability switched off** (tools/ability-worth.mjs, 40 parties x 4): tier I: Bubble Shields +1.13 rooms, Dome
+  +1.88, Water Cannon +2.88 (38% of her damage); tier III: +0.75, +1.57, +1.07. None negative; the cannon at tier I would
+  sit about 12th of the round 16 audit's list (docs/audit/worth.md), not at the top. The bubble is worth least where
+  little magic comes at the party (it waits for magic: it is its job).
+- **Checks** (tools/water17/checks.mjs, 40 checks, all pass): the beam's 2.02 s on / 1.52 s off at one frame's
+  resolution; the beam on a friend heals, puts out burning, washes poison, never soaks; the bubble stops a fire-carrying
+  blow and a fire bolt whole and lets a plain blow and an arrow through untouched, pops spent (Wet 40, a near enemy
+  knocked 62 back); the dome holds an enemy outside (never nearer than 168 to the middle of a 135 dome) and one inside
+  (never further than 117), turns 9 of 9 arrows, heals and soaks inside, lets a friend out; the cannon hurts and shoves
+  both enemies on its line and heals and washes the friend on it without hurting him; the trait throws three balls
+  only in water, not again within 0.6 s.
+- tools/battles.mjs: 528 battles, 0 problems (the nine that run out of time are enemy-only or other heroes' fights);
+  tools/preview-check.mjs: threw 0, never fired 0, not offered 0.
+
+## Clips (docs/clips/water17/, git-ignored like every clip; recorded with tools/hero-clips.mjs --hero waterMage)
+`waterMage-beam`, `waterMage-bubble`, `waterMage-dome`, `waterMage-cannon`, `waterMage-trait`.

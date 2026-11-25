@@ -31,7 +31,7 @@ Winged helm, warhammer, shield. Drops out of the sky onto whoever is bothering h
 - **Trait: Skyborn.** Can't be rooted or entangled.
 
 ## Bulwark (`bulwark`, tank, 700 gold)
-A winged spear and a big shield. Nothing gets past the end of the spear. Art: `art/heroes/bulwark.svg`.
+A winged spear and a big shield. Nothing gets past the end of the spear. Art: `art/heroes/r12/bulwark.svg`.
 
 - **Attack: Winged spear.** A long thrust that reaches past the front line.
 - **Brace** (10s). Sets the spear and waits: whatever comes into its reach is struck hard and stopped dead. I: For 3s, the first enemy to come in. II: Every enemy that comes in. III: They are pinned to the spot for 1s.
@@ -40,7 +40,7 @@ A winged spear and a big shield. Nothing gets past the end of the spear. Art: `a
 - **Trait: Return Thrust.** Every blow he takes winds him up, up to five. His next thrust lets it go: twice the reach, through everything in a line, and 30% harder for each.
 
 ## Bearskin (`bearskin`, melee, 700 gold)
-A studded club and a bear on his back. Hits like the bear did. Art: `art/heroes/bearskin.svg`.
+A studded club and a bear on his back. Hits like the bear did. Art: `art/heroes/r12/bearskin.svg`.
 
 - **Attack: Studded club.** A heavy club blow.
 - **Maul** (8s). Raises the club high and brings it straight down on one enemy, cratering the floor. I: Stuns for 1s. II: Stuns for 1.6s. III: The ground cracks: everything round it is staggered.
@@ -49,7 +49,7 @@ A studded club and a bear on his back. Hits like the bear did. Art: `art/heroes/
 - **Trait: Thick Hide.** Statuses build half as fast on him.
 
 ## Warhelm (`warhelm`, melee, 700 gold)
-A beard, a helm, a hammer the size of a sheep. Knocks things a long way. Art: `art/heroes/warhelm.svg`.
+A beard, a helm, a hammer the size of a sheep. Knocks things a long way. Art: `art/heroes/r12/warhelm.svg`.
 
 - **Attack: Warhammer.** A huge hammer slammed into the floor in front, knocking back everything there.
 - **Thunder Blow** (9s). Lunges and headbutts the enemy in front: a heavy blow that staggers it and throws it far back. I: A headbutt that staggers and throws back. II: It shocks. III: The one thrown knocks down whatever it hits.
@@ -274,7 +274,7 @@ A shepherd in a ram's fleece with a sling and a crook. Stones, and the flock beh
 - **Trait: Watchful.** Allies near him shake off stuns and sleep 40% faster.
 
 ## Trapper (`trapper`, ranged, 700 gold)
-A fur cap with the flaps down, a short rifle and a jaw trap. Catches things. Art: `art/heroes/trapper.svg`.
+A fur cap with the flaps down, a short rifle and a jaw trap. Catches things. Art: `art/heroes/r12/trapper.svg`.
 
 - **Attack: Shotgun.** A short-range blast of six pellets.
 - **Jaw Trap** (9s). Sets a steel jaw trap where the enemies are coming; the first to step in is Trapped: it can't move, turn or use an ability, only strike straight ahead. A trap never takes what another trap holds. I: Holds it for 2s. II: Holds 3s and bites harder. III: Two traps.
@@ -301,7 +301,7 @@ A three-pointed cap with bells and a marotte on a stick. Makes enemies look fool
 - **Trait: Pratfall.** A quarter of the blows swung at him miss, and whoever swung is spun round to face away.
 
 ## Samurai (`samurai`, melee, 1050 gold)
-An indigo kabuto with gold horns and a long katana. Waits, then cuts. Art: `art/heroes/samurai.svg`.
+An indigo kabuto with gold horns and a long katana. Waits, then cuts. Art: `art/heroes/r12/samurai.svg`.
 
 - **Attack: Katana.** A clean, wide cut, stepping in with it.
 - **Iaido** (10s). Settles, the blade half drawn, light gathering on it; then he is simply on the far side of the enemies in his line. Each one he passed through is staggered a moment, then takes the cut: a tenth of its health and more. I: One cut through. II: Staggers them harder. III: He cuts back through again.
@@ -310,7 +310,7 @@ An indigo kabuto with gold horns and a long katana. Waits, then cuts. Art: `art/
 - **Trait: Keen Edge.** Every blow also takes 3% of its target's greatest health (a boss 1%).
 
 ## Valkyrie (`valkyrie`, support, 1050 gold)
-A winged helm, long plaits and a big spear. Carries the fallen back into the fight. Art: `art/heroes/valkyrie.svg`.
+A winged helm, long plaits and a big spear. Carries the fallen back into the fight. Art: `art/heroes/r12/valkyrie.svg`.
 
 - **Attack: Spear.** A long spear thrust.
 - **Valkyrie's Call** (30s). Flies to a fallen friend and brings it back to its feet in a burst of light that throws the enemies round back and makes them radiant. I: Back up at 25% health, once a room. II: At 40%. III: She takes it up and flies the two of them clear of the fight.
@@ -398,3 +398,12 @@ Bare feet, clay to the elbows. The floor does what she tells it: it shakes, it b
 - **Spike Chain** (9s). A line of stone spikes bursts out of the floor one after another, running from her to an enemy; from there it runs on to the next enemy, and the next. I: Runs through three enemies. II: Through five. III: The last spike under each holds it fast: rooted for 1.4s.
 - **Stone Wall** (15s). A wall of stone slabs heaves up out of the floor across the way of whoever is coming for the party, striking and throwing back whatever stands where it comes up. It is a real wall: nothing walks through it and the enemy can't shoot through it; the party shoots over it. I: Stands for 6s. II: A longer wall, for 8s. III: When it comes down it falls on the enemies' side: those near it are hurt and staggered.
 - **Trait: Aftershock.** The ground remembers. A moment after one of her abilities hurts an enemy, a stone spike comes up under it.
+
+## Water Mage (`waterMage`, support, 700 gold)
+Sea-green robes and a staff with a ball of water at its head. Heals with the tide; drowns with it too. Art: `art/heroes/waterMage.svg`.
+
+- **Attack: Tide beam.** A beam of water from her staff held on the nearest enemy for 2s, then 1.5s to draw breath: it hurts, and slowly soaks. A friend in trouble gets it instead: it heals them and puts out burning and washes off half their poison, without soaking them.
+- **Bubble Shields** (11s). Blows a bubble of water round a friend about to be hit by magic. Spells, fire, frost and curses can't get through it; swords, arrows and teeth go straight through and leave it whole. When it pops, the one inside is soaked and everything near is knocked back. I: One bubble, for 6s; it holds a third of their health in magic. II: Two bubbles, for 8s, holding more. III: Three bubbles, and a popped one throws the magic it caught back at whoever cast it.
+- **Dome** (16s). A great dome of water over the party. Enemies outside can't get in and enemies inside can't get out; enemy shots glance off it. Enemies inside are soaked, and friends inside slowly heal. The party walks in and out as it likes. I: For 4s. II: Bigger, for 6s. III: When it comes down the water stays: the floor is flooded where it stood.
+- **Water Cannon** (10s). A great jet of water straight through a line of enemies: it hurts them, shoves them back down the line and soaks them; friends it passes through are healed and washed. She stands still to aim it. I: For 1.2s. II: Wider, for 1.6s. III: It follows the enemy it was aimed at, sweeping across whatever stands between.
+- **Trait: Splashback.** Hit while she stands in water, she splashes three balls of it back at whoever hit her, like the ones a lizardman throws: each hurts and soaks.
