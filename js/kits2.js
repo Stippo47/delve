@@ -1215,7 +1215,7 @@ export const ABILITIES2 = {
           const e = opponents(w, u).filter((o) => dist(o.x, o.y, u.x, u.y) < 200).sort(() => rand() - 0.5)[0], bx = e ? e.x + rrange(-14, 14) : u.x, by = e ? e.y + rrange(-14, 14) : u.y;
           const fall = 0.42, h = u.hop * 0.9 + 18;
           w.projectiles.push({ kind: 'hexBomb', x: u.x, y: u.y, vx: (bx - u.x) / fall, vy: (by - u.y) / fall, r: 6, team: u.team, owner: u, dmg: 0, o: {}, life: fall, life0: fall, drop: h, lob: { H: 0 }, a: 0, noHit: true, // (lob H 0: height.js projZ leaves it be; it falls from her height itself, fx2 PROJ2.hexBomb)
-            land: () => { k2(w, { draw: 'hexPop', x: bx, y: by, r: 46, max: 0.45, ab: 'broomRide' }); for (const o of foesNear(w, u, bx, by, 46)) hurt(w, o, dmgOf(u, 0.9), u, { noDodge: true, knock: 120, kAngle: angleTo(bx, by, o.x, o.y), curse: 14, ab: 'broomRide' }); } }); }
+            land: () => { k2(w, { draw: 'hexPop', x: bx, y: by, r: 46, max: 0.45, ab: 'broomRide' }); for (const o of foesNear(w, u, bx, by, 46)) hurt(w, o, dmgOf(u, 1.0), u, { noDodge: true, knock: 120, kAngle: angleTo(bx, by, o.x, o.y), curse: 14, ab: 'broomRide' }) /* (round 19: 0.9 -> 1.0, she can be shot up there now) */; } }); }
       }, () => { u.hop = 0; u.flyT = 0; u.kit.broomUntil = 0; if (u.act && u.act.type === 'ride') u.act = null; puff(w, u.x, u.y, '#B07BE0', 8, 80, 5, 0.4); });
     },
     show: { far: false, secs: 4 },

@@ -144,5 +144,40 @@ up"; the trait: "Don't like the dirtied effect visual".
   legs folded in a Z with webbed feet, kicking out straight on each hop); its one shadow is frog sized (9 x its size, was
   11; sys19's shadow system).
 
-## Numbers (tools/ability-worth.mjs, 24 parties each, rank 1 at III and rank 0 at I; "rooms" is the whole worth, +-0.5)
-See the tables at the end (filled in from tools/caster19/worth-*.txt).
+## Numbers (tools/ability-worth.mjs, 24 parties each; tier III at rank 1, tier I at rank 0; "rooms" is the worth, +-0.5)
+Before: tools/caster19/worth-before-t*.txt (the lane's starting commit); after: worth-after-t*.txt (the lane's changes,
+before sys19 merged: the same base, so the two compare). Rooms the party clears with every ability on, and each changed
+ability's worth (rooms lost when it alone is switched off):
+
+| hero | III all on | I all on | changed ability: III worth before -> after | I worth before -> after |
+|---|---|---|---|---|
+| Digger | 7.75 -> 6.79 | 10.50 -> 10.21 | Dirt Fling +1.04 -> +1.21; Burrow +0.79 -> -0.33; Bury +1.21 -> +0.04 | +2.08 -> +0.75; +0.29 -> +0.50; +1.29 -> +1.08 |
+| Grandpa | 6.92 -> 8.04 | 10.92 -> 10.46 | Bread Toss +1.96 -> +2.96; Harvest +0.38 -> +0.92; Old Tales -0.33 -> Sheaves +1.04 | +3.21 -> +3.00; +1.08 -> +0.21; +2.63 -> +1.96 |
+| Alchemist | 9.08 -> 9.75 | 12.13 -> 10.79 | Brew Pools +1.25 -> +0.71; Elixir +4.21 -> +5.88; Monstrosity +0.54 -> +0.08 | +1.83 -> -0.04; +4.00 -> +2.38; +0.46 -> -0.96 |
+| Shaman | 8.08 -> 8.67 | 12.29 -> 13.08 | Totem +1.67 -> +2.08; Link +0.58 -> -0.08; Ancestors +0.83 -> +2.08 | +0.92 -> +2.29; -0.58 -> +0.58; +1.96 -> +1.83 |
+| Witch | 9.42 -> 8.54 | 10.92 -> 9.88 | Hex +2.33 -> +1.92; Cursed Brew +2.08 -> +2.08; Broom Ride +3.17 -> +2.46 | +0.63 -> +0.75; -0.08 -> +0.25; +1.71 -> +0.50 |
+
+Read: within the noise for the Shaman and Grandpa (Sheaves is worth more than Old Tales was at III, a little less at I);
+the Alchemist about level overall (Elixir II's second tube is the strongest piece, III's strong brews with it; Monstrosity
+a little weaker at I); the Witch about a room weaker at both tiers, from Broom Ride (she can be shot up there now): its
+bombs went from 0.9 to 1.0 of her damage to make some of it back (worth-final-t3.txt); the Digger about a room weaker at
+III, from Bury (things with brains of their own are buried now, so they can't be hit for its 1.5-2.2 s either) and Burrow
+(noise: nothing in it changed but its looks). Battle and dungeon checks: tools/battles.mjs 528 battles, 0 problems, 10
+out of time (as sys19's); tools/preview-check.mjs threw / never fired / not offered 0 / 0 / 0, unseen blows only the
+Griffon's Swoop (not this lane's).
+
+tools/balance.mjs (tier III, parties of 3, every dungeon at rank 1, 4 reps; before: tools/caster19/balance-before-t3.txt
+from the starting commit; after: balance-after-t3.txt, with sys19 merged): rooms a run in the parties each hero was in,
+and against the average of all parties.
+
+| hero | rooms before -> after | vs the average before -> after |
+|---|---|---|
+| Digger | 7.33 -> 7.93 | -0.47 -> -0.58 |
+| Grandpa | 7.72 -> 8.43 | -0.08 -> -0.09 |
+| Alchemist | 8.18 -> 10.08 | +0.38 -> +1.57 |
+| Shaman | 8.32 -> 8.76 | +0.52 -> +0.24 |
+| Witch | 7.53 -> 7.60 | -0.27 -> -0.91 |
+
+The two rulers disagree in size but agree in direction for the Witch (weaker: the bombs went up a little) and put the
+Alchemist a little stronger (Elixir II's second tube): if the designer wants them level, Elixir II's second tube can carry
+the tier I brews at 80%, or the strong brews go back to II with the second tube at III.

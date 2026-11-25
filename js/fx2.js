@@ -1181,7 +1181,7 @@ DRAW.tubeSip = (ctx, f, w, layer) => {
 // snowflakes drift up off it (no ice); shocking fizzes, its bubbles popping in little crackling sparks (no bolts); water
 // ripples where drops fall back into it and spits droplets up; whirling turns into a whirlpool, its foam drawn round and in,
 // gusts curling up off it. Acid and fire are as they were.
-const BREWC = { cold: ['#5FB0DC', '#A9E2F8', '#E8F8FF'], shock: ['#D8B020', '#FFE66B', '#FFF7C2'], water: ['#2F7FB8', '#5DB7E0', '#BFE9F8'], whirl: ['#5FB4A4', '#A8E6D8', '#F0FFFB'] };
+const BREWC = { cold: ['#5FB0DC', '#A9E2F8', '#E8F8FF'], shock: ['#C8A028', '#EFD25C', '#FFF7C2'], water: ['#2F7FB8', '#5DB7E0', '#BFE9F8'], whirl: ['#5FB4A4', '#A8E6D8', '#F0FFFB'] };
 function brewSplat(ctx, f, a, C) {
   const r = f.r * (0.55 + 0.45 * easeOut(k01(f.t / 0.25))), sd = Math.round(f.x * 5 + f.y);
   ctx.save(); ctx.globalAlpha *= a;
@@ -1208,7 +1208,7 @@ DRAW.brewPool = (ctx, f, w, layer) => {
     if (f.kind === 'whirl') { for (let arm = 0; arm < 3; arm++) { ctx.save(); ctx.globalAlpha *= 0.85; ctx.strokeStyle = arm % 2 ? C[0] : '#FFFFFF'; ctx.lineWidth = 3.2; ctx.lineCap = 'round'; ctx.beginPath();
         for (let j = 0; j <= 14; j++) { const q = j / 14, b = -f.t * 5 + arm / 3 * TAU + q * 3.2, rr = R * (0.15 + 0.85 * q); const x = f.x + Math.cos(b) * rr, y = f.y + Math.sin(b) * rr * 0.85; j ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); ctx.restore(); }
       disc(ctx, f.x, f.y, R * 0.14, C[0]); }
-    if (f.kind === 'shock') lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * (0.8 + 0.15 * Math.sin(f.t * 23)), '#FFE66B', 0.22));
+    if (f.kind === 'shock') lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * (0.8 + 0.15 * Math.sin(f.t * 23)), '#FFE66B', 0.08));
     if (f.kind === 'cold') lit(ctx, () => glowDisc(ctx, f.x, f.y, f.r * 0.8, '#DDF6FF', 0.08));
     ctx.restore(); return;
   }
