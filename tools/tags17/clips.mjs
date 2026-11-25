@@ -79,7 +79,7 @@ try {
     const out = path.join(outDir, name + '.mp4');
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(fps), '-i', path.join(frames, 'f%04d.png'), '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '24', '-movflags', '+faststart', out]);
     fs.rmSync(frames, { recursive: true, force: true });
-    const facts = await page.evaluate(() => { const G = window.__G || {}, w = GAME.run && GAME.run.world; return JSON.stringify({ repairs: G.e && G.e.repairs, turret: G.t && Math.round(G.t.hp) + '/' + Math.round(G.t.maxHp), paladin: G.p && Math.round(G.p.hp) + '/' + Math.round(G.p.maxHp), slime: G.s && Math.round(G.s.hp), time: w && w.time.toFixed(1) }); });
+    const facts = await page.evaluate(() => { const G = window.__G || {}, w = GAME.run && GAME.run.world; return JSON.stringify({ repairs: G.e && G.e.repairs, turret: G.t && Math.round(G.t.hp) + '/' + Math.round(G.t.maxHp), paladin: G.p && Math.round(G.p.hp) + '/' + Math.round(G.p.maxHp), slime: G.s && Math.round(G.s.hp), roots: (G.hold || []).map((u) => u.kind + ':' + (u.rootT || 0).toFixed(2) + ':' + (u._rootFade || 0).toFixed(2)).join(' '), time: w && w.time.toFixed(1) }); });
     console.log(name, '->', out, errors.length ? 'page errors: ' + errors.join(' | ') : 'no page errors', facts);
     await ctx.close();
   }
