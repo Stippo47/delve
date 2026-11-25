@@ -1,10 +1,10 @@
-2253 previews, 47.2s
+2253 previews, 35.7s
 threw: 0
 a loop where the move or trait never fired: 0
 not offered in the Book (never fires, so its button is left out): 0
 locked (shown as locked): 1 not counting heroes' tier 0
   status:silenced:: (No preview for this one yet)
-abilities at tiers I-III: 540 runs of two loops, 10.7s
+abilities at tiers I-III: 540 runs of two loops, 10.5s
   first go: 0.66 s on average, 4.4 s at the latest; 1.01 goes a loop; the hero's own brain chose it in 1051 of 1080 loops
 a loop where it didn't go within 2.5 s: 1
   waterMage:bubbleShield  (2.1 1.4 2.1 1.4 2.1 4.4 s)

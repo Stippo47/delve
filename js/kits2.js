@@ -722,7 +722,7 @@ export const ABILITIES2 = {
       // The cut is CUT x her own blow (it was 1.5x): the old run caught two on a good line and often one, the chain finds
       // its three, so each cut is lighter to keep what Shadow Walk deals where it was (a little less light at III, where
       // the old three runs each started on a fresh line).
-      const CUT = tier >= 3 ? 1.15 : 0.9;
+      const CUT = tier >= 3 ? 1.0 : 0.9;
       const runs = tier >= 3 ? 3 : 1, dmg = dmgOf(u, CUT), curse = tier >= 2 ? 30 : 0; let chaining = true, idle = 0;
       const marks = (x, y) => opponents(w, u).filter((e) => dist(x, y, e.x, e.y) < 280).sort((p, q) => dist(x, y, p.x, p.y) - dist(x, y, q.x, q.y));
       const back = () => { chaining = false; u.ethereal = !!(u.kit && u.kit.shadow); };
@@ -2139,7 +2139,7 @@ export const ABILITIES2 = {
       // (the cut back: the blade's sweep catches the ones the first cut threw off the line. The old line did not: measured,
       // the old cut back added nothing at all to what Iaido dealt. It lands at BACK of the first cut's weight, so III is
       // worth about a quarter more than it was and no longer double.)
-      const BACK = 0.3, FIRST = 0.85; // (FIRST: the blade's sweep is wider than the old line was, so the cut is a little lighter)
+      const BACK = 0.3, FIRST = 0.78; // (FIRST: the blade's sweep is wider than the old line was, so the cut is a little lighter)
       const cut = (a, tell, again, k = 1) => dash(w, u, 'drawCut', { a, len: reachOf(a), tell, hold: 0.28, recover: 0.14, settle: false, ghost: '#5E6B86',
         dmg: (e) => (e.maxHp * (e.def.boss ? 0.03 : 0.1) + base) * FIRST * k, hit: { crit: true, knock: 120, ab: 'iaido' },
         mark: (e) => { stun(w, e, 0.3); addStatus(w, e, 'stagger', 25, u); }, again });
