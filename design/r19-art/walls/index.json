@@ -1,0 +1,222 @@
+[
+ {
+  "id": "crypt-a",
+  "theme": "crypt",
+  "letter": "a",
+  "name": "Tomb ashlar",
+  "blurb": "Big grey cut blocks in courses on a plinth, a string course, burial niches with a skull now and then.",
+  "H": 104,
+  "F": 86,
+  "floorShade": null
+ },
+ {
+  "id": "crypt-b",
+  "theme": "crypt",
+  "letter": "b",
+  "name": "Ossuary",
+  "blurb": "Stone bands with rows of skulls and stacked long bones set between them; a hood of skulls over each door.",
+  "H": 100,
+  "F": 84,
+  "floorShade": null
+ },
+ {
+  "id": "crypt-c",
+  "theme": "crypt",
+  "letter": "c",
+  "name": "Blind arcade",
+  "blurb": "A row of tall pointed arches sunk into the stone, dark inside, a string course over them; candles in some.",
+  "H": 108,
+  "F": 90,
+  "floorShade": null
+ },
+ {
+  "id": "wildwood-a",
+  "theme": "wildwood",
+  "letter": "a",
+  "name": "Root bank",
+  "blurb": "A bank of packed earth held together by thick tree roots, with bushes along its top.",
+  "H": 100,
+  "F": 80,
+  "floorShade": null
+ },
+ {
+  "id": "wildwood-b",
+  "theme": "wildwood",
+  "letter": "b",
+  "name": "Log palisade",
+  "blurb": "A stockade of standing logs lashed with rope, their cut ends showing along the top; a crossbeam over each door.",
+  "H": 98,
+  "F": 78,
+  "floorShade": null
+ },
+ {
+  "id": "wildwood-c",
+  "theme": "wildwood",
+  "letter": "c",
+  "name": "Mossy drystone",
+  "blurb": "Round fieldstones stacked dry, moss on their tops and ferns along the wall; a great flat lintel over each door.",
+  "H": 100,
+  "F": 82,
+  "floorShade": null
+ },
+ {
+  "id": "warren-a",
+  "theme": "warren",
+  "letter": "a",
+  "name": "Shored tunnel",
+  "blurb": "Dug earth held up by thick timber posts, boards and a heavy top beam with iron brackets; lanterns hang here and there.",
+  "H": 100,
+  "F": 82,
+  "floorShade": null
+ },
+ {
+  "id": "warren-b",
+  "theme": "warren",
+  "letter": "b",
+  "name": "Junk stockade",
+  "blurb": "Goblin work: odd planks nailed every which way, an iron band, sharpened stakes along the top, shields hung up.",
+  "H": 102,
+  "F": 80,
+  "floorShade": null
+ },
+ {
+  "id": "sewers-a",
+  "theme": "sewers",
+  "letter": "a",
+  "name": "Sewer brick",
+  "blurb": "Old red brick on a green stone footing, moss and slime running down it; brick arches over the doors.",
+  "H": 100,
+  "F": 84,
+  "floorShade": null
+ },
+ {
+  "id": "sewers-b",
+  "theme": "sewers",
+  "letter": "b",
+  "name": "Pipe wall",
+  "blurb": "Green stone blocks carrying two big copper pipes, flanged and bolted, valve wheels and gauges here and there.",
+  "H": 104,
+  "F": 86,
+  "floorShade": null
+ },
+ {
+  "id": "sewers-c",
+  "theme": "sewers",
+  "letter": "c",
+  "name": "Glazed tile",
+  "blurb": "The city's old tiled tunnels: pale green glazed tiles, a dark green band, grime creeping up from the foot.",
+  "H": 98,
+  "F": 82,
+  "floorShade": null
+ },
+ {
+  "id": "frost-a",
+  "theme": "frost",
+  "letter": "a",
+  "name": "Ice blocks",
+  "blurb": "Big glassy blocks of blue ice, snow heaped along the top and icicles hanging down; an ice arch over each door.",
+  "H": 104,
+  "F": 84,
+  "floorShade": null
+ },
+ {
+  "id": "frost-b",
+  "theme": "frost",
+  "letter": "b",
+  "name": "Frosted rock",
+  "blurb": "Dark blue-grey rock with white rime on every stone, snow along the top and long icicles; a stone lintel heavy with snow.",
+  "H": 102,
+  "F": 82,
+  "floorShade": null
+ },
+ {
+  "id": "frost-c",
+  "theme": "frost",
+  "letter": "c",
+  "name": "Crystal ridge",
+  "blurb": "Packed snow and ice in blue bands, topped with a ridge of big ice crystals; crystals crown each door.",
+  "H": 110,
+  "F": 82,
+  "floorShade": null
+ },
+ {
+  "id": "ember-a",
+  "theme": "ember",
+  "letter": "a",
+  "name": "Basalt columns",
+  "blurb": "Black basalt in tall six-sided columns, their tops showing along the wall; lava glowing in the cracks at the foot.",
+  "H": 106,
+  "F": 84,
+  "floorShade": null
+ },
+ {
+  "id": "ember-b",
+  "theme": "ember",
+  "letter": "b",
+  "name": "Hell brick",
+  "blurb": "Dark red brick with fire glowing in the joints near the floor, an iron cap set with spikes; horned skulls over the doors.",
+  "H": 104,
+  "F": 86,
+  "floorShade": null
+ },
+ {
+  "id": "spire-a",
+  "theme": "spire",
+  "letter": "a",
+  "name": "Marble and gold",
+  "blurb": "White marble panels framed in gold, a gold plinth and frieze; a sun of gold above each door.",
+  "H": 108,
+  "F": 90,
+  "floorShade": null
+ },
+ {
+  "id": "spire-b",
+  "theme": "spire",
+  "letter": "b",
+  "name": "Gilded colonnade",
+  "blurb": "White fluted columns with gold heads and feet, deep violet between them set with gold stars; a gold pediment over each door.",
+  "H": 110,
+  "F": 92,
+  "floorShade": null
+ },
+ {
+  "id": "dunes-a",
+  "theme": "dunes",
+  "letter": "a",
+  "name": "Sandstone",
+  "blurb": "Warm cut sandstone with a carved band of signs, sand drifted against its foot and along its top; a winged sun over each door.",
+  "H": 104,
+  "F": 86,
+  "floorShade": null
+ },
+ {
+  "id": "dunes-b",
+  "theme": "dunes",
+  "letter": "b",
+  "name": "Painted tomb",
+  "blurb": "Smooth plaster painted in teal, red and gold bands under a curved cornice; tapered frames and a sun disc at each door.",
+  "H": 106,
+  "F": 88,
+  "floorShade": null
+ },
+ {
+  "id": "foundry-a",
+  "theme": "foundry",
+  "letter": "a",
+  "name": "Riveted plates",
+  "blurb": "Steel plates riveted at the seams on a brass plinth, a warning stripe at the foot; gear-headed brass hoods over the doors.",
+  "H": 104,
+  "F": 86,
+  "floorShade": null
+ },
+ {
+  "id": "foundry-b",
+  "theme": "foundry",
+  "letter": "b",
+  "name": "Brass pipeworks",
+  "blurb": "Fire brick below, brass pipes, valves and gauges above, a big pipe along the top; pipes arch over each door.",
+  "H": 108,
+  "F": 88,
+  "floorShade": null
+ }
+]

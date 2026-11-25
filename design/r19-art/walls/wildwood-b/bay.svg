@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -98 160 98" width="640" height="392">
+  <!-- wildwood walls, option b (Log palisade): the stretch a door sits in. Round 19 art lane (walls). 1 SVG unit = 1 room unit. The wall's own frame: x runs along the wall, y = 0 is the foot (where the wall meets the floor; the room is below, +y), y < 0 rises up the wall away from the room. Face (the wall's inner side, folded flat like the doors' arch): y -78..0. Cap (the top, seen from above): y -98..-78. The whole wall is 98 deep; the doors' arch reaches y -57, so the wall rises 41 past it. Everything repeats every 160 along x, so runs tile end to end. No outline in the file: the renderer draws the one ink outline round the wall's mass. Rotate the piece so +y points into the room. An overlay: drawn over the run (which carries on under it) wherever a door stands, then the door (art/props/door-*.svg, box 141.4) on top, its doorway centred on (80, 0). -->
+  <defs>
+    <clipPath id="c0"><path d="M0 -98H160V0H0Z"/></clipPath>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#85684C"/><stop offset="0.3" stop-color="#957C65"/><stop offset="0.65" stop-color="#745334"/><stop offset="1" stop-color="#4A3521"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A89079"/><stop offset="0.25" stop-color="#927457"/><stop offset="0.6" stop-color="#836140"/><stop offset="1" stop-color="#553F2A"/></linearGradient>
+    <radialGradient id="g3" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#E5CA99"/><stop offset="1" stop-color="#B59D72"/></radialGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D9C297"/><stop offset="0.25" stop-color="#CFB27C"/><stop offset="0.6" stop-color="#C9A86A"/><stop offset="1" stop-color="#836D45"/></linearGradient>
+  </defs>
+  <g id="sprite">
+<g clip-path="url(#c0)">
+<path d="M8 -74H16Q22 -74 22 -68V-6Q22 0 16 0H8Q2 0 2 -6V-68Q2 -74 8 -74Z" fill="url(#g1)"/>
+<path d="M7.6 -71H7.8Q9 -71 9 -69.8V-4.2Q9 -3 7.8 -3H7.6Q6.4 -3 6.4 -4.2V-69.8Q6.4 -71 7.6 -71Z" fill="#FFFFFF" opacity="0.26"/>
+<path d="M144 -74H152Q158 -74 158 -68V-6Q158 0 152 0H144Q138 0 138 -6V-68Q138 -74 144 -74Z" fill="url(#g1)"/>
+<path d="M143.6 -71H143.8Q145 -71 145 -69.8V-4.2Q145 -3 143.8 -3H143.6Q142.4 -3 142.4 -4.2V-69.8Q142.4 -71 143.6 -71Z" fill="#FFFFFF" opacity="0.26"/>
+<path d="M6 -84H154Q162 -84 162 -76V-76Q162 -68 154 -68H6Q-2 -68 -2 -76V-76Q-2 -84 6 -84Z" fill="url(#g2)"/>
+<path d="M2.3 -81.8H157.7Q159 -81.8 159 -80.5V-80.5Q159 -79.2 157.7 -79.2H2.3Q1 -79.2 1 -80.5V-80.5Q1 -81.8 2.3 -81.8Z" fill="#FFFFFF" opacity="0.32"/>
+<circle cx="-1" cy="-76" r="7" fill="url(#g3)"/>
+<circle cx="161" cy="-76" r="7" fill="url(#g3)"/>
+<path d="M7 -80H17Q21 -80 21 -76V-76Q21 -72 17 -72H7Q3 -72 3 -76V-76Q3 -80 7 -80Z" fill="url(#g4)"/>
+<path d="M6.6 -78.9H17.4Q18 -78.9 18 -78.2V-78.2Q18 -77.6 17.4 -77.6H6.6Q6 -77.6 6 -78.2V-78.2Q6 -78.9 6.6 -78.9Z" fill="#FFFFFF" opacity="0.32"/>
+<path d="M6.5 -71H17.5Q21 -71 21 -67.5V-67.5Q21 -64 17.5 -64H6.5Q3 -64 3 -67.5V-67.5Q3 -71 6.5 -71Z" fill="url(#g4)"/>
+<path d="M6.6 -70H17.4Q18 -70 18 -69.5V-69.5Q18 -68.9 17.4 -68.9H6.6Q6 -68.9 6 -69.5V-69.5Q6 -70 6.6 -70Z" fill="#FFFFFF" opacity="0.32"/>
+<path d="M143 -80H153Q157 -80 157 -76V-76Q157 -72 153 -72H143Q139 -72 139 -76V-76Q139 -80 143 -80Z" fill="url(#g4)"/>
+<path d="M142.6 -78.9H153.4Q154 -78.9 154 -78.2V-78.2Q154 -77.6 153.4 -77.6H142.6Q142 -77.6 142 -78.2V-78.2Q142 -78.9 142.6 -78.9Z" fill="#FFFFFF" opacity="0.32"/>
+<path d="M142.5 -71H153.5Q157 -71 157 -67.5V-67.5Q157 -64 153.5 -64H142.5Q139 -64 139 -67.5V-67.5Q139 -71 142.5 -71Z" fill="url(#g4)"/>
+<path d="M142.6 -70H153.4Q154 -70 154 -69.5V-69.5Q154 -68.9 153.4 -68.9H142.6Q142 -68.9 142 -69.5V-69.5Q142 -70 142.6 -70Z" fill="#FFFFFF" opacity="0.32"/>
+</g>
+  </g>
+</svg>
