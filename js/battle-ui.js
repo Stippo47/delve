@@ -76,7 +76,7 @@ function pickerHtml() {
     body = R.heroes.length ? `${as}<div class="bp-grid">${R.heroes.map(tile).join('')}</div><p class="quiet small bp-foot">${hint}</p>` : '<p class="quiet">No heroes yet.</p>';
   } else {
     const d = R.dungeons.find((x) => x.id === tab);
-    body = !d ? '' : d.open ? `${as}<div class="bp-grid">${[...d.kinds, ...d.bosses].map(tile).join('')}</div><p class="quiet small bp-foot">${setup.scaled ? `As strong as on the first floor of ${esc(d.name)}.` : 'Strength is evened out: every monster as at the first dungeon.'} Bosses have no ranks.</p>`
+    body = !d ? '' : d.open ? `${as}<div class="bp-grid">${[...d.kinds, ...d.bosses].map(tile).join('')}</div><p class="quiet small bp-foot">${d.note ? esc(d.note) : setup.scaled ? `As strong as on the first floor of ${esc(d.name)}.` : 'Strength is evened out: every monster as at the first dungeon.'} Bosses have no ranks.</p>`
       : `<div class="bp-locked">${I.lock}<p>Beat the boss of ${esc(d.name)} to pin its monsters here.</p></div>`;
   }
   return `<div class="bp"><div class="bp-back" data-b="done"></div><div class="bp-panel ${adding}">

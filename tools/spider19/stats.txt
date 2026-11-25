@@ -1,0 +1,5 @@
+40 fights: won 34, about 160.6 s (wins 160.9 s); legs broken 4.5 a fight; collapsed in 33 (118 s in); phase 2 in 40 (58.4 s in); slams landed 80 of 540; stomps landed 245 of 597
+sewers  won 34/40 lost 6 stuck 0 err 0 | ended on floor 1/2/3: 0/0/40 | minis 0/0 | avg 160s 1 rooms 85 gold +0.0 lv | fell at 3.7 3.7 3.7 3.7 3.7 3.7
+40 fights: won 34, about 119.3 s (wins 118.1 s); legs broken 6 a fight; collapsed in 40 (41.4 s in); phase 2 in 40 (41.1 s in); slams landed 179 of 408; stomps landed 375 of 407
+sewers  won 34/40 lost 6 stuck 0 err 0 | ended on floor 1/2/3: 0/0/40 | minis 0/0 | avg 119s 1 rooms 81 gold +0.0 lv | fell at 3.7 3.7 3.7 3.7 3.7 3.7
+done

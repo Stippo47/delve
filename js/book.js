@@ -68,7 +68,7 @@ if (typeof window !== 'undefined') window.BOOK = BOOK;
 
 // ---------------------------------------------------------------- who is in the Book
 const owned = (id) => !!(save.heroes[id] && save.heroes[id].owned);
-const metFoe = (k) => !!save.cheat || !!((save.seen && save.seen[k] && save.seen[k].met) || (foeCount(save, k) || {}).n);
+const metFoe = (k) => !!save.cheat || !!(DEFS[k] && DEFS[k].bookOpen) || !!((save.seen && save.seen[k] && save.seen[k].met) || (foeCount(save, k) || {}).n); // (round 19, lane spider19: def.bookOpen, a boss in no dungeon yet: its page is open unmet)
 let groups = null;
 const groupsOf = () => groups || (groups = foeGroups());
 const statusList = () => statusIds().filter((id) => STATUSES[id] || STATUS[id]);
