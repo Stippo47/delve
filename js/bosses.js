@@ -11,8 +11,9 @@ import { ANGEL } from './boss-angel.js'; // (bosses3: the Gilded Seraph remade a
 import { WURM } from './boss-wurm.js';
 import { ENGINE } from './boss-engine.js';
 import { SPIDER } from './boss-spider.js'; // round 19 (lane spider19): Old Longlegs, the IK spider; a test boss, in no dungeon yet
+import { STILT } from './boss-stilt.js'; // round 19 (lane stilts19): the Canopy Idol, the jungle stilt-walker; a test boss, in no dungeon yet
 
-const BOSS_FILES = [CHIEFTAIN, OOZE, QUEEN, CINDER, ANGEL, WURM, ENGINE, SPIDER];
+const BOSS_FILES = [CHIEFTAIN, OOZE, QUEEN, CINDER, ANGEL, WURM, ENGINE, SPIDER, STILT];
 
 // every boss (and its parts and adds) by kind
 export const BOSS_DEFS = Object.assign({}, ...BOSS_FILES.map((b) => b.defs));
@@ -22,4 +23,4 @@ export const BOSS_ARENAS = Object.assign({}, ...BOSS_FILES.map((b) => b.arenas))
 export const BOSS_OF = { warren: 'chieftain', sewers: 'greatOoze', frost: 'winterQueen', ember: 'cinder', spire: 'gildedSeraph', dunes: 'sandWurm', foundry: 'greatEngine' };
 // bosses that live in no dungeon yet (round 19): battle mode lists them on a tab of their own (battle.js battleRoster),
 // at the strength of the dungeon their def names as `home`; ?bossroom&boss=<id> fights them in a boss room
-export const LOOSE_BOSSES = ['ikSpider'];
+export const LOOSE_BOSSES = ['ikSpider', 'stiltIdol'];
