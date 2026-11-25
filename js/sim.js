@@ -190,9 +190,12 @@ export function disarm(w, u, t, src) {
   const T = (u.def.boss || u.def.part ? t * 0.4 : t) * resTo(u, 'disarmed'), was = u.disarmT || 0;
   if (T <= 0) return 0;
   u.disarmT = Math.max(was, T); u.disarmMax = Math.max(u.disarmT, was > 0 ? u.disarmMax || T : T);
-  if (was <= 0.05) { // the weapon spins out of its hand (fx-rogue19.js 'disarmFlick': the weapon its art holds)
-    const a = src ? angleTo(src.x, src.y, u.x, u.y) + rrange(-0.9, 0.9) : rand() * TAU;
-    fx(w, { type: 'k2', draw: 'disarmFlick', unit: u, x: u.x, y: u.y, a, art: u.def.art, vr: u.vr, headR: u.def.headR, facing: u.facing, max: Math.max(1.2, u.disarmT) });
+  if (was <= 0.05) { // the weapon spins out of its hand and lands clear of it (fx-rogue19.js 'disarmFlick': the weapon its art holds)
+    let a = src ? angleTo(src.x, src.y, u.x, u.y) + (chance(0.5) ? 1 : -1) * rrange(0.9, 1.5) : rand() * TAU, d = u.r + 60 + rrange(0, 25); // (off to its side, not on past it)
+    const spot = (b) => ({ x: clamp(u.x + Math.cos(b) * d, 30, w.W - 30), y: clamp(u.y + Math.sin(b) * d, 30, w.H - 30) });
+    let at = spot(a); for (let i = 0; i < 6 && (w.walls.some((r) => circleRect(at.x, at.y, 10, r)) || dist(at.x, at.y, u.x, u.y) < u.r + 30); i++) { a += 1.1; at = spot(a); }
+    u.disarmAt = at;
+    fx(w, { type: 'k2', draw: 'disarmFlick', unit: u, x: u.x, y: u.y, x1: at.x, y1: at.y, a: angleTo(u.x, u.y, at.x, at.y), art: u.def.art, vr: u.vr, headR: u.def.headR, facing: u.facing, max: Math.max(1.2, u.disarmT) });
     if (u.act && u.act.type === 'windup') u.act = null; // (a swing it was winding up goes nowhere)
   }
   return T;
@@ -1074,7 +1077,7 @@ export function hurt(w, u, amount, src, o = {}) {
   if (!alive(u) || u.invulnT > 0 || amount <= 0 || u.ethereal) return 0;
   if (!o.dot && offFloor(u) && !reaches(layerOf(u), hitKinds(o, src))) return 0;
   if (u.incorpT > 0 && !o.dot) { const ty = hitType(o, src); if (ty === 'sharp' || ty === 'blunt') { // round 19 (lane rogue19): INCORPOREAL, a physical blow passes through
-    if (!(u.passFxT > w.time)) { u.passFxT = w.time + 0.25; fx(w, { type: 'k2', draw: 'passThrough', unit: u, x: u.x, y: u.y, a: src ? angleTo(src.x, src.y, u.x, u.y) : o.kAngle || 0, look: u.incorpLook, max: 0.4 }); }
+    if (!(u.passFxT > w.time)) { u.passFxT = w.time + 0.25; fx(w, { type: 'k2', draw: 'passThrough', unit: u, x: u.x, y: u.y, a: src ? angleTo(src.x, src.y, u.x, u.y) : o.kAngle || 0, look: u.incorpLook, max: 0.4 }); textU(w, u.x, u.y, u.r, 'through', '#CFE8FF', 0.8); } // (as a dodge says 'dodge')
     if (AUDIT.on) AUDIT.on('nullified', w, u, src, amount, { why: 'incorporeal' }); return 0; } } // round 17 (lane tags17): a slam misses a slime mid-hop; only shots reach a flier up in the air
   // round 15 (the Mob, mob.js): a blow on any of its bodies comes off the one pool (u.hp is the lead's). One blow, or
   // one tick of a zone, that catches several bodies lands in full on the first and MOB.share on each more; the same
@@ -2110,6 +2113,9 @@ export function step(w, dt) {
     if (u.shackledT > 0) u.atkT = Math.max(u.atkT, SHACKLE.hold);
     if (u.incorpT > 0) u.passUntil = Math.max(u.passUntil || 0, w.time + 0.05); // round 19: INCORPOREAL, no collision
     else if (u.def.incorp && !body) incorpWhenPressed(w, u, dt);
+    // (Disarmed: a fighter with no kit goes after its weapon and stands over it, fumbling, till it has it back)
+    if (u.forcedGoal && u.forcedGoal.disarm && !(u.disarmT > 0)) u.forcedGoal = null;
+    else if (u.disarmT > 0 && u.disarmAt && !u.kit && !u.def.boss && !u.def.brain && !u.forcedGoal && !u.fixed && !u.linkTo && u.disarmT < u.disarmMax - 0.45) u.forcedGoal = { x: u.disarmAt.x, y: u.disarmAt.y, disarm: true };
     if (u.disarmT > 0 && isDisarmed(u)) { if (!hasTag(u, 'caster')) u.atkT = Math.max(u.atkT, 0.2); if (FOE_WEAPON_ABILITY.has(u.def.ability) && (u.def.dash || 'feint') !== 'pounce') u.abilT = Math.max(u.abilT, 0.3); } // round 19 (lane rogue19): DISARMED, no weapon blow (a caster's spells still go: the Cultist's dagger is his own kit's) // SHACKLED: its attack clock is held (the brains that strike off u.atkT are held with it)
     if (u.kit && !body) for (const k in u.kit.cd) u.kit.cd[k] -= dt * (1 - Math.min(0.5, u.st.wet / 200)) * cdr; // wet slows abilities
     u.modeT += dt; u.bob += dt * (3 + u.spd * 0.09);

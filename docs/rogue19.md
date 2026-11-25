@@ -22,6 +22,10 @@ any ability attached to the weapon). Innate attacks built into the body aren't s
   javelin, spear, trident, whip, the bowman's volley) and its def.ability when it is a weapon's (a barrage, a backstab, a
   knife dash; not a pounce). Bites, claws, a headbutt, a shield, a kick, a spell go on.
 - **Bosses** 40% of the time (as stuns). A cleanse doesn't give a weapon back.
+- **What it does meanwhile** (after the clip check: a disarmed orc stood frozen): a fighter with no kit and no brain of
+  its own goes after its weapon, where it landed (60-85 from it, clear of its body), and stands over it, fumbling, till
+  it has it back; then the weapon on the floor fades and is in its hand again. Heroes (their kits) fight on with what
+  isn't the weapon.
 - **Look**: the weapon is taken out of the hand (parts.js reads each art's arms: the hand's shapes stay, the rest is the
   weapon; the bare arm is drawn instead) and it spins up out of the hand, lands a little way off and lies there (its own
   picture: the weapon alone, parts.js `drawGear`) till the owner has it back. Checked on every armed art:
@@ -48,7 +52,7 @@ through with violet, sinking off the body (healing's bright crosses rise).
 ### Spun (changed: the Monk's status)
 The designer, in Palm Strike's note: "Burst effect is dazed. Has a hard time controlling turn, overshoots. Like has low
 acceleration but high max turn speed. Slippery but for turning."
-- **The lane's reading**: this is what Spun should do to whoever has it (the paragraph is about Palm Strike's status:
+- **Call (the lane's, kept after the round 19 check; say if wrong)**: this is what Spun should do to whoever has it (the paragraph is about Palm Strike's status:
   its burst, then how the spun one turns), not the Monk's own turning. (The brief read it as the Monk's turning; his own
   turning is the plain hero turn, 5.5 rad/s, and turns crisply: nothing to fix there.) Say if it was meant for him.
 - While Spun its turning has momentum (sim.js `updateFacing`, `u.slipF`): a weak push, a high top speed, slow to damp,
@@ -59,7 +63,7 @@ acceleration but high max turn speed. Slippery but for turning."
 
 | note | what changed |
 |---|---|
-| Stick 'Em Up: "Don't like" | **Hostage** (the lane's rework, id kept): he grabs the nearest enemy that isn't too big and holds it in front of him, the cutlass at its throat; it can't act, and every blow and shot that comes at his front lands on it instead. He fights on with the cutlass. II 4.5 s (I 3 s); III when he lets go he shoves it into its friends, disarmed. Why: a dirty move only a thief makes, it saves his skin (he is a skirmisher with 105 health), it is the one that handles shooters (the old one was the third "can't attack" on his kit), and nobody else has it. |
+| Stick 'Em Up: "Don't like" | **Hostage** (the lane's rework, id kept): he grabs the nearest enemy that isn't too big and holds it in front of him, the cutlass at its throat; it can't act, and every blow and shot that comes at his front lands on it instead. Both his hands are busy (no cuts while he holds it). II 4.5 s (I 3 s); III when he lets go he shoves it into its friends, disarmed. Why: a dirty move only a thief makes, it saves his skin (he is a skirmisher with 105 health), it is the one that handles shooters (the old one was the third "can't attack" on his kit), and nobody else has it. |
 | Dirty Trick: "Disarms?" | Yes: the punch Disarms (2.5 s, II 3 s). |
 | "Alternating slash visual" | The three cuts go forehand, backhand, forehand: each crescent sweeps the way the cutlass goes (fxkit swing `dir`), and the arm swings back for the second (parts.js `anim.back`). |
 | "that's not a 'kick'. Maybe punch with other hand" | His free hand punches (parts.js `anim.hand`: the left arm jabs), 1.4x (the kick was 1.2x); a flash, shock streaks and stars where it lands, on the body as it flies (no fist drawn floating). |

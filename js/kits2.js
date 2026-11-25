@@ -722,10 +722,13 @@ export const ABILITIES2 = {
       if (!t) return; const GAP = 0.17; // (was 0.11: "slightly slower")
       for (let i = 0; i < 3; i++) after(u, i * GAP, () => { if (!alive(t)) return; u.facing = ang(u, t); setAnim(u, 'swing', GAP + 0.02); u.anim.back = i % 2 === 1;
         swingMark(w, u, u.r + u.def.range + 8, 1.5, null, i % 2 ? -1 : 1); hurt(w, t, dmgOf(u, 0.7), u, { knock: 20, noDodge: true, ab: 'pickpocket' }); if (tier >= 2) bleed(w, t, 18, u); });
-      after(u, 3 * GAP + 0.12, () => { if (!alive(t)) return; const a = ang(u, t); u.facing = a; setAnim(u, 'punch', 0.28); u.anim.hand = 'arm-l'; u.kx += Math.cos(a) * 80; u.ky += Math.sin(a) * 80;
+      // (his left fist drawn back, then driven in at full stretch: posed outright, u._force, so it reads at a glance)
+      after(u, 3 * GAP + 0.02, () => { if (alive(t)) { u.facing = ang(u, t); u._force = { 'arm-l': { r: 0.35, dy: -16 } }; u._forceBy = 'punch'; } });
+      after(u, 3 * GAP + 0.38, () => { if (u._forceBy === 'punch') { u._force = null; u._forceBy = null; } });
+      after(u, 3 * GAP + 0.16, () => { if (!alive(t)) return; const a = ang(u, t); u.facing = a; u._force = { 'arm-l': { r: -0.2, dy: 54 } }; u._forceBy = 'punch'; u.kx += Math.cos(a) * 80; u.ky += Math.sin(a) * 80;
         hurt(w, t, dmgOf(u, 1.4), u, { knock: 640, kAngle: a, heavy: true, noDodge: true, stagger: tier >= 3 ? 45 : 0, ab: 'pickpocket' });
         disarm(w, t, tier >= 2 ? 3 : 2.5, u);
-        k2(w, { draw: 'banditPunch', unit: t, x: t.x - Math.cos(a) * t.r * 0.8, y: t.y - Math.sin(a) * t.r * 0.8, a, r: t.vr, max: 0.3, ab: 'pickpocket' });
+        k2(w, { draw: 'banditPunch', unit: t, by: u, x: t.x - Math.cos(a) * t.r * 0.8, y: t.y - Math.sin(a) * t.r * 0.8, a, r: t.vr, max: 0.3, ab: 'pickpocket' });
         flung(w, u, t, 0.8, null, (o, e) => { hurt(w, o, dmgOf(u, 0.9), u, { knock: 380, kAngle: a, noDodge: true, stagger: tier >= 3 ? 45 : 0, ab: 'pickpocket' }); puff(w, o.x, o.y, '#E9DDC2', 6, 80, 5, 0.35); });
       });
     },
@@ -753,6 +756,7 @@ export const ABILITIES2 = {
         e2.atkT = Math.max(e2.atkT, 0.2); e2.abilT = Math.max(e2.abilT || 0, 0.3); if (e2.kit) for (const c in e2.kit.cd) e2.kit.cd[c] = Math.max(e2.kit.cd[c], 0.3);
         if (e2.act && e2.act.type !== 'drink') e2.act = null; addBuff(e2, { id: 'held', dur: 0.1, root: true });
       } }, (e2) => { if (k.hostage === e2) k.hostage = null; letGo(w, u, e2, tierOf(u, 'lowBlow')); });
+      u._force = { 'arm-r': { r: 1.15, dy: 16 }, 'arm-l': { r: 0.5, dy: 18 } }; // (the cutlass laid across its throat, his other hand on its shoulder)
       onUnit(w, u, 'holding', d, {
         // what comes at his front lands on the one he holds (a shot by its heading, a blow by where its striker stands)
         evade(w2, u2, src, amt, o) {
@@ -762,7 +766,8 @@ export const ABILITIES2 = {
           hurt(w2, h, amt, src, { ...o, hostaged: true, noDodge: true }); return true;
         },
         moveSpeed: () => 0.8,
-      }, () => { if (k.hostage) offUnit(k.hostage, 'hostage'); });
+        tick(w2, u2) { u2.atkT = Math.max(u2.atkT, 0.15); }, // (both hands busy: no cuts while he holds it)
+      }, () => { if (k.hostage) offUnit(k.hostage, 'hostage'); if (u._force && u._force['arm-r'] && u._force['arm-r'].r === 1.15) u._force = null; });
     },
     show: { single: true, shootme: true },
   },
@@ -1399,13 +1404,13 @@ export const ABILITIES2 = {
   flurry: {
     score: (w, u, t) => (inReach(u, t, 14) ? 0.6 + (hpRatio(u) < 0.6 ? 0.2 : 0) : 0),
     use(w, u, t, tier) {
-      if (!t) return; const n = tier >= 3 ? 9 : 6, GAP = 0.08, LATE = 0.24;
+      if (!t) return; const n = tier >= 3 ? 9 : 6, GAP = 0.09, LATE = 0.34;
       const punch = (i) => {
         if (!alive(t)) return; const a = ang(u, t), last = i === n - 1; u.facing = a;
         if (!last) { setAnim(u, 'punch', 0.1); u.anim.hand = i % 2 ? 'arm-l' : 'arm-r'; }
-        const gap = dist(u.x, u.y, t.x, t.y) - u.r - t.r, step = clamp(gap - 4, 4, 14); // (a step in: closing what the last shove opened, and a little more)
+        const gap = dist(u.x, u.y, t.x, t.y) - u.r - t.r, step = clamp(gap - 2, 8, 24); // (a step in: closing what the last shove opened, and a little more)
         u.x += Math.cos(a) * step; u.y += Math.sin(a) * step;
-        hurt(w, t, dmgOf(u, last ? 0.9 : 0.6), u, { knock: last ? (tier >= 2 ? 520 : 300) : 70, kAngle: a, heavy: last, noDodge: true, ab: 'flurry' });
+        hurt(w, t, dmgOf(u, last ? 0.9 : 0.6), u, { knock: last ? (tier >= 2 ? 520 : 300) : 90, kAngle: a, heavy: last, noDodge: true, ab: 'flurry' });
         heal(w, u, u.maxHp * 0.012, u);
         if (last && tier >= 2 && alive(t)) weaken(w, t, 4);
         const sd = i % 2 ? 1 : -1, hx = t.x - Math.cos(a) * t.r * 0.7 - Math.sin(a) * sd * 6, hy = t.y - Math.sin(a) * t.r * 0.7 + Math.cos(a) * sd * 6;
@@ -1462,7 +1467,7 @@ export const ABILITIES2 = {
       evade(w, u, src, amt, o) {
         if (!(u.kit.peaceUntil > w.time) || o.dot || src === u || hitType(o, src) === 'magic') return false;
         const from = o.shot && o.kAngle != null ? o.kAngle + Math.PI : src ? angleTo(u.x, u.y, src.x, src.y) : u.facing;
-        k2(w, { draw: 'peaceBlock', unit: u, x: u.x + Math.cos(from) * (u.r + 4), y: u.y + Math.sin(from) * (u.r + 4), a: from, max: 0.4 });
+        k2(w, { draw: 'peaceBlock', unit: u, x: u.x + Math.cos(from) * (u.r + 4), y: u.y + Math.sin(from) * (u.r + 4), a: from, max: 0.6 });
         if (src && alive(src) && !o.shot && !o.proc && !((src.peaceHitT || 0) > w.time) && src.team !== u.team) {
           src.peaceHitT = w.time + 0.4; const a = angleTo(u.x, u.y, src.x, src.y);
           hurt(w, src, dmgOf(u, 0.5), u, { knock: 640, kAngle: a, heavy: true, noDodge: true, proc: true, ab: 'innerPeace' });
@@ -2727,7 +2732,7 @@ function bleedersOf(w, u, from = u) {
 function cutOpen(w, u, e, tier) {
   if (!alive(e)) return; u.facing = ang(u, e);
   hurt(w, e, dmgOf(u, SAC.cut), u, { noDodge: true, knock: 100, kAngle: ang(u, e), ab: 'soulCandle' }); heal(w, u, u.maxHp * SAC.heal, u); // (its blood heals him a little, as the old Sacrifice's did)
-  if (alive(e) && !(e.bleedImmuneT > 0)) addStatus(w, e, 'bleed', 300, u);
+  if (alive(e) && !(e.bleedImmuneT > 0)) { addStatus(w, e, 'bleed', 300, u); k2(w, { draw: 'bloodBurst', unit: e, x: e.x, y: e.y, r: e.vr, max: 0.6 }); }
   k2(w, { draw: 'sacrifice', x: e.x, y: e.y, a: u.facing, r: e.vr, max: 0.6, ab: 'soulCandle' });
   if (tier >= 2) antiheal(w, e, SAC.anti);
   if (tier >= 3) { const b = u.buffs.find((x) => x.id === 'sacrificeMight' && x.t > 0), n = Math.min(6, ((b && b.stacks) || 0) + 1);
@@ -3109,9 +3114,9 @@ export const TRAITS2 = {
       const v = allies(w, u).filter((a) => !a.summon && !a.def.cargo && !a.partOf && !a.def.rig && hpRatio(a) < RITE2.below && beset(w, a) && dist(u.x, u.y, a.x, a.y) < RITE2.reach && !blocked(w, u.x, u.y, a.x, a.y)) // (about to die: low, and something on it)
         .sort((p, q) => hpRatio(p) - hpRatio(q))[0];
       if (!v) return;
-      k.riteT = RITE2.cd; const a = ang(u, v), d = dist(u.x, u.y, v.x, v.y), T = clamp(d / 900, 0.12, 0.34);
+      k.riteT = RITE2.cd; const a = ang(u, v), d = dist(u.x, u.y, v.x, v.y), T = clamp(d / 450, 0.28, 0.5); // (slow enough to see him go)
       const x1 = clamp(v.x - Math.cos(a) * (v.r + u.r), u.r, w.W - u.r), y1 = clamp(v.y - Math.sin(a) * (v.r + u.r), u.r, w.H - u.r);
-      u.facing = a; k2(w, { draw: 'streak', unit: u, x: u.x, y: u.y, a, max: T + 0.25, col: '#7A2C40' });
+      u.facing = a; k2(w, { draw: 'riteDash', unit: u, x: u.x, y: u.y, x1, y1, max: T + 0.35 });
       u.act = { type: 'leap', t: T, max: T, x0: u.x, y0: u.y, x1, y1, land: () => {
         if (!alive(v) || !alive(u)) return; u.facing = ang(u, v); setAnim(u, 'thrust', 0.3);
         k2(w, { draw: 'sacrifice', x: v.x, y: v.y, a: u.facing, r: v.vr, max: 0.7, ab: 'bloodRite' });

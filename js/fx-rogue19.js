@@ -29,7 +29,8 @@ DRAW.disarmFlick = (ctx, f, w, layer) => {
   const u = f.unit; if (!u || u.dead) { ended(f, true); return; }
   if (!(u.disarmT > 0) && !f.back) { f.back = true; f.max = Math.min(f.max, f.t + 0.35); }
   const FLY = 0.42, k = k01(f.t / FLY), e = easeOut(k);
-  if (f.x1 == null) { const d = 46 + 18 * hash(u.id, 3); f.x1 = f.x + Math.cos(f.a) * d; f.y1 = f.y + Math.sin(f.a) * d; f.spin = (hash(u.id, 7) < 0.5 ? -1 : 1) * (2.2 + hash(u.id, 9)); }
+  if (f.x1 == null) { const d = 46 + 18 * hash(u.id, 3); f.x1 = f.x + Math.cos(f.a) * d; f.y1 = f.y + Math.sin(f.a) * d; }
+  if (f.spin == null) f.spin = (hash(u.id, 7) < 0.5 ? -1 : 1) * (2.2 + hash(u.id, 9));
   const slide = k >= 1 ? easeOut(k01((f.t - FLY) / 0.25)) * 8 : 0;
   const x = f.x + (f.x1 - f.x) * e + Math.cos(f.a) * slide, y = f.y + (f.y1 - f.y) * e + Math.sin(f.a) * slide;
   const [vx, vy] = upVec(), h = Math.sin(Math.PI * k) * 34 * (k < 1 ? 1 : 0);
@@ -63,8 +64,8 @@ DRAW.antihealOn = (ctx, f, w, layer) => {
     const up = u.vr * 0.9 + 10 - ph * 22, x = u.x + vx * up - vy * side * u.vr * 0.9, y = u.y + vy * up + vx * side * u.vr * 0.9;
     ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI);
     upright(ctx, x, y, () => {
-      inked(ctx, () => { ctx.beginPath(); const a = 2.2, b = 6.4; ctx.moveTo(-a, -b); ctx.lineTo(a, -b); ctx.lineTo(a, -a); ctx.lineTo(b, -a); ctx.lineTo(b, a); ctx.lineTo(a, a); ctx.lineTo(a, b); ctx.lineTo(-a, b); ctx.lineTo(-a, a); ctx.lineTo(-b, a); ctx.lineTo(-b, -a); ctx.lineTo(-a, -a); ctx.closePath(); }, '#8A9A7A');
-      inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-7, 6); ctx.lineTo(-1, 0); ctx.lineTo(1, 2); ctx.lineTo(7, -6); }, '#9B7BD6', 2.4);
+      inked(ctx, () => { ctx.beginPath(); const a = 2.2, b = 6.4; ctx.moveTo(-a, -b); ctx.lineTo(a, -b); ctx.lineTo(a, -a); ctx.lineTo(b, -a); ctx.lineTo(b, a); ctx.lineTo(a, a); ctx.lineTo(a, b); ctx.lineTo(-a, b); ctx.lineTo(-a, a); ctx.lineTo(-b, a); ctx.lineTo(-b, -a); ctx.lineTo(-a, -a); ctx.closePath(); }, '#6E7468');
+      inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(-7, 6); ctx.lineTo(-1, 0); ctx.lineTo(1, 2); ctx.lineTo(7, -6); }, '#5E4A78', 2.4);
     });
     ctx.restore();
   }
@@ -93,12 +94,12 @@ DRAW.bolasTrap = (ctx, f, w, layer) => {
   if (!(u.h2 && u.h2.some((h) => h.id === 'trapped'))) ended(f, true);
   if (layer !== 'air') return;
   const snap = easeOut(k01(f.t / 0.14)), strain = Math.pow(Math.max(0, Math.sin(f.t * 7 + u.id)), 6) * 2.5;
-  const R = (u.vr * 0.95 + 6) * (1 + 0.6 * (1 - snap)) + strain * 0.5, a0 = (f.a || 0) + 0.3;
+  const R = (u.vr * 1.05 + 8) * (1 + 0.6 * (1 - snap)) + strain * 0.5, a0 = (f.a || 0) + 0.3;
   ctx.save(); ctx.globalAlpha *= life(f, 0.04, 0.25);
-  inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(u.x, u.y, R, R * 0.92, 0, 0, TAU); }, CORD, 3.2);
+  inkLine(ctx, () => { ctx.beginPath(); ctx.ellipse(u.x, u.y, R, R * 0.92, 0, 0, TAU); }, CORD, 4.6);
   ctx.strokeStyle = '#E8CDA0'; ctx.lineWidth = 1.1; ctx.beginPath(); ctx.ellipse(u.x, u.y - 0.8, R, R * 0.92, 0, Math.PI * 1.05, Math.PI * 1.7); ctx.stroke();
   for (let i = 0; i < 3; i++) { const b = a0 + i / 3 * TAU + Math.sin(f.t * 9 + i) * 0.02 * strain, x = u.x + Math.cos(b) * R, y = u.y + Math.sin(b) * R * 0.92;
-    ctx.save(); ctx.translate(x, y); ctx.rotate(b + Math.PI / 2); weight(ctx, 1.15); ctx.restore(); }
+    ctx.save(); ctx.translate(x, y); ctx.rotate(b + Math.PI / 2); weight(ctx, 1.5); ctx.restore(); }
   ctx.restore();
   if (f.t < 0.18) { ctx.save(); ctx.globalAlpha *= 1 - f.t / 0.18; for (let i = 0; i < 6; i++) { const b = i / 6 * TAU, d = R + 4 + 10 * f.t / 0.18; inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(u.x + Math.cos(b) * d, u.y + Math.sin(b) * d); ctx.lineTo(u.x + Math.cos(b) * (d + 6), u.y + Math.sin(b) * (d + 6)); }, '#FFF4C8', 2); } ctx.restore(); }
 };
@@ -113,6 +114,12 @@ DRAW.banditPunch = (ctx, f, w, layer) => {
     inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(x + Math.cos(b) * d0, y + Math.sin(b) * d0); ctx.lineTo(x + Math.cos(b) * (d0 + L), y + Math.sin(b) * (d0 + L)); }, '#FFFFFF', 3); }
   inked(ctx, () => star(ctx, x, y, 9 * (1 - 0.5 * k), 6, 0.45, a), '#FFF4C8');
   ctx.restore();
+  // the swing of his free arm: three curved whoosh lines from his left shoulder round to where it landed (which hand hit)
+  const b = f.by; if (b && !b.dead && k < 0.6) { const fa = b.facing, side = fa + Math.PI / 2, sx = b.x + Math.cos(side) * b.r * 0.9, sy = b.y + Math.sin(side) * b.r * 0.9;
+    ctx.save(); ctx.globalAlpha *= 1 - k / 0.6;
+    for (let i = 0; i < 3; i++) { const o = (i - 1) * 5, nx = -Math.sin(fa) * o, ny = Math.cos(fa) * o;
+      inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(sx + nx - Math.cos(fa) * 6, sy + ny - Math.sin(fa) * 6); ctx.quadraticCurveTo(sx + Math.cos(fa) * b.r * 1.2 + nx, sy + Math.sin(fa) * b.r * 1.2 + ny, x + nx * 0.4, y + ny * 0.4); }, '#FFFFFF', 2.6); }
+    ctx.restore(); }
 };
 // Hostage: the cutlass held across its throat (a steel edge with a glint running along it), sweat drops popping off its head
 DRAW.hostage = (ctx, f, w, layer) => {
@@ -120,8 +127,13 @@ DRAW.hostage = (ctx, f, w, layer) => {
   if (!(e.h2 && e.h2.some((h) => h.id === 'hostage'))) ended(f, true);
   if (layer !== 'air') return; const [vx, vy] = upVec();
   ctx.save(); ctx.globalAlpha *= life(f, 0.1, 0.2);
-  const a = b.facing, cx = e.x - Math.cos(a) * e.r * 0.15, cy = e.y - Math.sin(a) * e.r * 0.15, n = -Math.sin(a), m = Math.cos(a), L = e.r * 0.95;
-  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(cx - n * L, cy - m * L); ctx.quadraticCurveTo(cx + Math.cos(a) * 6, cy + Math.sin(a) * 6, cx + n * L, cy + m * L); ctx.lineTo(cx + n * L - Math.cos(a) * 4, cy + m * L - Math.sin(a) * 4); ctx.quadraticCurveTo(cx + Math.cos(a) * 1, cy + Math.sin(a) * 1, cx - n * L - Math.cos(a) * 4, cy - m * L - Math.sin(a) * 4); ctx.closePath(); }, '#DCE3EC');
+  // (the throat is at its front: it faces the way he does, its back to him; the blade lies across it, the hilt on his
+  // right, a gold guard and a brown grip running back towards his hand)
+  const a = b.facing, cx = e.x + Math.cos(a) * e.r * 0.45, cy = e.y + Math.sin(a) * e.r * 0.45, n = -Math.sin(a), m = Math.cos(a), L = e.r * 1.2, c = Math.cos(a), sn = Math.sin(a);
+  inked(ctx, () => { ctx.beginPath(); ctx.moveTo(cx - n * L, cy - m * L); ctx.quadraticCurveTo(cx + c * 9, cy + sn * 9, cx + n * L * 0.9, cy + m * L * 0.9); ctx.lineTo(cx + n * L * 0.9 - c * 6, cy + m * L * 0.9 - sn * 6); ctx.quadraticCurveTo(cx + c * 2, cy + sn * 2, cx - n * L - c * 6, cy - m * L - sn * 6); ctx.closePath(); }, '#DCE3EC');
+  const hx = cx + n * L * 0.9 - c * 3, hy = cy + m * L * 0.9 - sn * 3;
+  inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(hx - c * 9, hy - sn * 9); ctx.lineTo(hx + c * 9, hy + sn * 9); }, '#E8A030', 5);
+  inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(hx + n * 3, hy + m * 3); ctx.lineTo(hx + n * 15 - c * 6, hy + m * 15 - sn * 6); }, '#5A3A26', 5);
   const g = (f.t * 0.8) % 1; if (g < 0.25) lit(ctx, () => glowDisc(ctx, cx + n * L * (g * 8 - 1), cy + m * L * (g * 8 - 1), 7, '#FFFFFF', 0.8));
   for (let i = 0; i < 2; i++) { const ph = (f.t * 1.4 + i * 0.5) % 1, sd = i ? 1 : -1, up = e.vr + 4 + ph * 10;
     ctx.save(); ctx.globalAlpha *= Math.sin(ph * Math.PI);
@@ -155,8 +167,8 @@ DRAW.incorpOn = (ctx, f, w, layer) => {
 DRAW.passThrough = (ctx, f, w, layer) => {
   const u = f.unit; if (layer !== 'air' || !u) return; const k = k01(f.t / f.max), a = f.a, mist = f.look === 'mist';
   ctx.save(); ctx.globalAlpha *= (1 - k) * 0.9;
-  for (let i = -1; i <= 1; i++) { const nx = -Math.sin(a) * i * 8, ny = Math.cos(a) * i * 8, d0 = -u.r + (u.r * 2.2) * easeOut(k), L = 12;
-    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(u.x + nx + Math.cos(a) * d0, u.y + ny + Math.sin(a) * d0); ctx.lineTo(u.x + nx + Math.cos(a) * (d0 + L), u.y + ny + Math.sin(a) * (d0 + L)); }, mist ? '#EAF6FF' : '#9B86C9', 2.4); }
+  for (let i = -1; i <= 1; i++) { const nx = -Math.sin(a) * i * 9, ny = Math.cos(a) * i * 9, d0 = -u.r * 1.2 + (u.r * 2.8) * easeOut(k), L = 20;
+    inkLine(ctx, () => { ctx.beginPath(); ctx.moveTo(u.x + nx + Math.cos(a) * d0, u.y + ny + Math.sin(a) * d0); ctx.lineTo(u.x + nx + Math.cos(a) * (d0 + L), u.y + ny + Math.sin(a) * (d0 + L)); }, mist ? '#5E86B0' : '#9B86C9', 3.6); }
   for (let i = 0; i < 4; i++) { const b = a + Math.PI / 2 * (i % 2 ? 1 : -1) + (i > 1 ? 0.5 : -0.5), d = u.r * 0.6 + 12 * k; inkDisc(ctx, u.x + Math.cos(b) * d, u.y + Math.sin(b) * d, 3.5 * (1 - k) + 1, mist ? '#DCEFFF' : '#3E3158'); }
   ctx.restore();
 };
@@ -220,9 +232,9 @@ DRAW.peaceBlock = (ctx, f, w, layer) => {
   const R = (u ? u.r : 26) + 6 + 4 * e, cx = u ? u.x : f.x, cy = u ? u.y : f.y;
   if (k < 0.2) lit(ctx, () => glowDisc(ctx, f.x, f.y, 20, '#FFF6C8', 0.55 * (1 - k / 0.2)));
   ctx.save(); ctx.globalAlpha *= 1 - k * k;
-  const span = 0.75 + 0.25 * e;
-  inked(ctx, () => { ctx.beginPath(); ctx.arc(cx, cy, R + 5, a - span, a + span); ctx.arc(cx, cy, R, a + span, a - span, true); ctx.closePath(); }, '#FFE7A0');
-  ctx.strokeStyle = '#FFFBEA'; ctx.lineWidth = 1.6; for (let i = -1; i <= 1; i++) { const b = a + i * span * 0.6; ctx.beginPath(); ctx.moveTo(cx + Math.cos(b) * R, cy + Math.sin(b) * R); ctx.lineTo(cx + Math.cos(b) * (R + 5), cy + Math.sin(b) * (R + 5)); ctx.stroke(); }
+  const span = 0.85 + 0.3 * e;
+  inked(ctx, () => { ctx.beginPath(); ctx.arc(cx, cy, R + 9, a - span, a + span); ctx.arc(cx, cy, R, a + span, a - span, true); ctx.closePath(); }, '#F2C14E');
+  ctx.strokeStyle = '#FFFBEA'; ctx.lineWidth = 1.6; for (let i = -1; i <= 1; i++) { const b = a + i * span * 0.6; ctx.beginPath(); ctx.moveTo(cx + Math.cos(b) * R, cy + Math.sin(b) * R); ctx.lineTo(cx + Math.cos(b) * (R + 9), cy + Math.sin(b) * (R + 9)); ctx.stroke(); }
   for (let i = 0; i < 4; i++) { const b = a + (i - 1.5) * 0.45, d = R + 8 + 16 * e; inked(ctx, () => star(ctx, cx + Math.cos(b) * d, cy + Math.sin(b) * d, 3.5 * (1 - k) + 1, 4, 0.35, b), '#FFF4C8'); }
   ctx.restore();
 };
@@ -265,5 +277,28 @@ DRAW.doomMark = (ctx, f, w, layer) => {
     inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -1.5, 7.5, Math.PI * 0.85, Math.PI * 2.15); ctx.lineTo(4.5, 6); ctx.lineTo(-4.5, 6); ctx.closePath(); }, '#EDE4CD');
     ctx.fillStyle = '#2B2230'; ctx.beginPath(); ctx.arc(-3, -1.5, 2.1, 0, TAU); ctx.arc(3, -1.5, 2.1, 0, TAU); ctx.fill(); ctx.fillRect(-0.7, 2, 1.4, 2.4);
   });
+  ctx.restore();
+};
+
+// Sacrifice's burst (round 19 check: "the bursts show only as blood splats"): the bleeding opened all at once, a ring of
+// inked blood drops thrown out from the body and a dark red flash on it, as big as the body
+DRAW.bloodBurst = (ctx, f, w, layer) => {
+  const u = f.unit, x = u && !u.dead ? u.x : f.x, y = u && !u.dead ? u.y : f.y, k = k01(f.t / f.max), e = easeOut(k), r = f.r || 22;
+  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.45 * (1 - k); ctx.fillStyle = '#7A1020'; ctx.beginPath(); ctx.arc(x, y, r * (0.8 + 0.9 * e), 0, TAU); ctx.fill(); ctx.restore(); return; }
+  ctx.save(); ctx.globalAlpha *= 1 - k * k;
+  for (let i = 0; i < 10; i++) { const b = i / 10 * TAU + hash(i, f.x | 0) * 0.5, d = r * 0.6 + r * 1.3 * e, s = (4.5 + 2 * hash(i, 4)) * (1 - 0.5 * k);
+    ctx.save(); ctx.translate(x + Math.cos(b) * d, y + Math.sin(b) * d); ctx.rotate(b + Math.PI / 2);
+    inked(ctx, () => { ctx.beginPath(); ctx.moveTo(0, -s * 1.5); ctx.quadraticCurveTo(s, s * 0.2, 0, s); ctx.quadraticCurveTo(-s, s * 0.2, 0, -s * 1.5); }, i % 2 ? '#8A1E28' : '#C8453D'); ctx.restore(); }
+  if (k < 0.3) inked(ctx, () => star(ctx, x, y, r * 0.7 * (1 - k), 8, 0.5, 0.3), '#C8453D');
+  ctx.restore();
+};
+// Blood Rite's dart to the dying friend: a crimson smear down the floor along his way, copies of his hood fading behind
+DRAW.riteDash = (ctx, f, w, layer) => {
+  const u = f.unit; if (!u) return; const k = k01(f.t / f.max), a = Math.atan2(f.y1 - f.y, f.x1 - f.x), L = Math.hypot(f.x1 - f.x, f.y1 - f.y);
+  const reach = L * k01(f.t / Math.max(0.05, f.max - 0.35));
+  if (layer === 'ground') { ctx.save(); ctx.globalAlpha *= 0.55 * (1 - k01((f.t - (f.max - 0.35)) / 0.35));
+    ctx.strokeStyle = '#7A1020'; ctx.lineCap = 'round'; ctx.lineWidth = 16; ctx.beginPath(); ctx.moveTo(f.x, f.y); ctx.lineTo(f.x + Math.cos(a) * reach, f.y + Math.sin(a) * reach); ctx.stroke(); ctx.restore(); return; }
+  ctx.save(); ctx.globalAlpha *= 0.7 * (1 - k);
+  for (let i = 1; i <= 3; i++) { const q = Math.max(0, reach - i * 22); inkDisc(ctx, f.x + Math.cos(a) * q, f.y + Math.sin(a) * q, 10 - i * 2, '#3A1424'); }
   ctx.restore();
 };
