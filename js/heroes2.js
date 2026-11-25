@@ -270,7 +270,7 @@ Object.assign(HEROES2, {
         tiers: ['A frog for 2s.', 'For 3s.', 'The hex jumps on to a second enemy.'] },
       { id: 'cursedBrew', name: 'Cursed Brew', cd: 13, tags: 's', glyph: 'vial', desc: 'Drops a heavy bubbling cauldron on the enemies: it lands with a blow that throws them back, then stands (60 health) while its fumes curse whatever breathes them.',
         tiers: ['Cursed fumes for 6s.', 'Wider fumes.', 'Enemies that die in them burst, cursing those near.'] },
-      { id: 'broomRide', name: 'Broom Ride', cd: 11, tags: 'ds', glyph: 'dash', desc: 'Hops on the broom and flies high over the fight, circling the enemies and dropping hex bombs on them; up there only shots can reach her.',
+      { id: 'broomRide', name: 'Broom Ride', cd: 10, /* round 19: 11 -> 10 (she can be shot up there now) */ tags: 'ds', glyph: 'dash', desc: 'Hops on the broom and flies high over the fight, circling the enemies and dropping hex bombs on them; up there only shots can reach her.',
         tiers: ['2.5s in the air.', 'More bombs.', '3.5s in the air.'] },
     ],
     trait: { id: 'crone', name: 'Crone', desc: 'Cursed enemies take 40% more from her.' },

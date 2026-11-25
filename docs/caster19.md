@@ -181,3 +181,9 @@ and against the average of all parties.
 The two rulers disagree in size but agree in direction for the Witch (weaker: the bombs went up a little) and put the
 Alchemist a little stronger (Elixir II's second tube): if the designer wants them level, Elixir II's second tube can carry
 the tier I brews at 80%, or the strong brews go back to II with the second tube at III.
+
+With sys19 merged on both sides (tools/caster19/worth-main-t3.txt: main without this lane; worth-final-t3.txt: this
+lane), tier III, 24 parties: the Digger 7.33 -> 8.08 rooms (Dirt Fling +1.21 -> +2.42, Burrow +0.58 -> +1.58, Bury +0.96
+-> +1.38): about level, a little up; the Witch 8.67 -> 7.92 (Broom Ride +0.92 -> -0.33: being seen and shot up there
+costs it), so Broom Ride's cooldown went 11 -> 10 on top of the bombs' 0.9 -> 1.0 (worth-witch-final.txt).
+After that: the Witch 8.71 rooms (main 8.67), Broom Ride +0.58: level again.
