@@ -64,7 +64,7 @@ function jackalBrain(w, u, dt) {
         if (!f || !alive(f) || gapTo(u, f) > 160) return true;
         const a = angleTo(u.x, u.y, f.x, f.y);
         if (u.elite) cone(w, u, a, { r: u.r + 90, arc: 1.7, tell: 0.2, kind: 'blade', anim: 'swing', hit: { dmg: 13, knock: 280, stagger: 45 } });
-        else rush(w, u, a, gapTo(u, f) + 34, { style: 'pounce', tell: 0.12, dmg: 15, knock: 260, status: { stagger: 40 } }); // (round 18, lane dash18: its bite after the sidestep is a pounce)
+        else rush(w, u, a, gapTo(u, f) + 34, { style: 'pounce', tell: 0.12, air: 0.28, rest: 0.25, dmg: 19, knock: 260, status: { stagger: 40 } }); // (round 18, lane dash18: its bite after the sidestep is a pounce)
       }
       return true;
     }

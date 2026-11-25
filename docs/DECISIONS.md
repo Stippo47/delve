@@ -1128,3 +1128,25 @@ fired 0, not offered 0. Clips: docs/clips/downed18/.
 - 0.24.1, the audit's Book fixes: the Book's resistance chips now show what really lands (a shell's or hook's immunities, the bosses' charm rule, tag rules), so bosses show Charm immunity and constructs their bleed/poison immunity; the Golden Skeleton's and Dust Devil's lists name all fifteen statuses; the Elder Ent's page says it can't be stunned, rooted, frozen, knocked out or put to sleep.
 - 0.24.2: foes17b, a knock back slides a chain's whole body as one piece (it piled the links up on the head); clips re-staged.
 - 0.25.0: preview18, the Book's ability previews are small real fights (js/preview-scenes.js: 22 scene recipes, real enemies with their own brains, no damage from nothing, the hero's own brain casts, scenes built for tier III). Wrong-scenario 35 -> 0, invisible damage 49 kinds -> 0, tiers alike 57 -> 18 (number-only tiers). docs/preview18.md. Still on straw dummies: the monster pages' previews.
+
+## Round 18, lane dash18 (2026-11-24): the dashes
+
+The designer: "I don't like how dash slash abilities work currently in general. Everyone from the wolf to hero's
+abilities. Make a few completely new variations of it." Everything is in docs/dash18.md (the survey, the six, who uses
+which, the numbers); code js/dashes.js, looks js/fx-dash.js; checks tools/dash18/ (smoke.mjs, threat-check.mjs).
+- Six variations in one module any unit can use: draw cut, blink chain, hook, feint, drag and fling, pounce. Each has a
+  tell (the body settles; anything not a hero shows its path on the floor, and threat.js sees it coming), a posed body, a
+  weapon that is tracked (the hit is what the blade or body really passed through; the slash drawn is the path the
+  blade's point took), and a follow-through. A dash is still a 'dash' act, so what stops or shortens dashes still does.
+- Re-assigned: Iaido, Spear Lunge, Spear of the Sky, Bayonet (draw cut); Shadow Walk (blink chain); Backstab, the
+  Werewolf's man-form Pounce, Sacrifice (hook); Twinfang's Dash, Crescent Cut (feint); Charge, Shield Rush, Thunder Blow,
+  Shield Bash (drag and fling); the Werewolf's wolf Pounce, Bear Claws (pounce). Enemies: every rush() names its style;
+  a small foe's `ability: 'dash'` names one on its def (def.dash) and its cut is a part of its own blow.
+- Lane calls (say if any is wrong): an enemy's pounce watches its mark while it crouches and picks its spot as it leaves
+  the floor; a hero's hook and pounce follow their mark; enemies are not untouchable mid-dash, heroes are where the old
+  move was; Shadow Walk's cut is lighter (the chain finds three marks); Iaido III's cut back lands at 0.3 of the first
+  cut (measured, the old cut back hit nothing, so III was worth what II was; it is now worth about a quarter more); Twinfang's
+  Dash in nicks for half a stab; Spear of the Sky is 1.0x (it now hits what the point passes).
+- Left alone on purpose: the bosses' charges (their own tells, crashes and dazes), the boar and the Gaper (their own
+  endings), chain heads (crawler, sand serpent: the plain straight run, their bodies follow the head's path), flights
+  and rescues (Leap, Swoop, Sky Dive, Challenge, Burrow), Roll, the Ninja's Substitution.

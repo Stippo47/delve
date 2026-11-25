@@ -185,7 +185,7 @@ export const ABILITIES = {
       // are bowled aside as before. The run is as long as it was and the blow the same (round 13: 2x his own, 2.6 at II),
       // split between the pick-up and the throw. (It was one speed down a line, everyone thrown aside the same.)
       const a = ang(u, t), power = tier >= 2 ? 1.3 : 1, sp = u.def.speed * 1.9; u.facing = a;
-      dash(w, u, 'dragFling', { a, len: sp * (tier >= 2 ? 0.7 : 0.55) * 1.1, speed: sp, tell: 0.18, dmg: dmgOf(u, 2) * power, grabK: 0.45, fling: dmgOf(u, 2) * power * 0.5, knock: 340 * power, hit: { stagger: tier >= 3 ? 45 : 0, ab: 'charge' }, rest: 0.3 });
+      dash(w, u, 'dragFling', { a, len: sp * (tier >= 2 ? 0.7 : 0.55) * 1.1, speed: sp, tell: 0.18, dmg: dmgOf(u, 2) * power, grabK: 0.45, fling: dmgOf(u, 2) * power * (tier >= 3 ? 0.4 : 0.5), knock: 340 * power, hit: { stagger: tier >= 3 ? 45 : 0, ab: 'charge' }, rest: 0.3 });
     },
   },
   groundPound: {

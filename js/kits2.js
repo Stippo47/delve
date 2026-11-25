@@ -2064,11 +2064,11 @@ export const ABILITIES2 = {
     use(w, u, t, tier) {
       // round 18 (lane dash18): the drag and fling (dashes.js). He rocks back behind the shield and runs, slow off the mark
       // then flat out; the first one he meets is picked up on the shield (0.8x), carried to the end of the rush and
-      // slammed off it (2x, staggered; III stunned), into a wall if there is one. II: the rest are knocked aside. The
+      // slammed off it (2.15x, it was 2x; staggered; III stunned), into a wall if there is one. II: the rest are knocked aside. The
       // length, the blows and the block are as they were. (He ran at one speed and the slam landed where he stopped.)
       if (!t) return; const a = ang(u, t), sp = u.def.speed * 2.1, T = 0.62, k1 = dmgOf(u, 1); u.facing = a;
       addBuff(u, { id: 'shieldRush', dur: T * 1.2 + 0.6, raise: true, frontBlock: 0.5, knockImmune: true });
-      dash(w, u, 'dragFling', { a, len: sp * T, speed: sp, tell: 0.16, dmg: k1, grabK: 0.8, fling: dmgOf(u, 2), knock: 260, aside: 0, hit: { ab: 'shieldRush' }, flingHit: { stagger: 60 }, rest: 0.25,
+      dash(w, u, 'dragFling', { a, len: sp * T, speed: sp, tell: 0.16, dmg: k1, grabK: 0.8, fling: dmgOf(u, 2.15), knock: 260, aside: 0, hit: { ab: 'shieldRush' }, flingHit: { stagger: 60 }, rest: 0.25,
         brushed: (e, sd) => { if (tierOf(u, 'shieldRush') >= 2) { e.kx += Math.cos(a + sd * 1.2) * 260; e.ky += Math.sin(a + sd * 1.2) * 260; } },
         flung: (e) => { setAnim(u, 'ability', 0.3); k2(w, { draw: 'shoveAway', x: e.x, y: e.y, a, max: 0.4 }); if (tierOf(u, 'shieldRush') >= 3) stun(w, e, 1); puff(w, e.x, e.y, '#E9DDC2', 10, 110, 6, 0.45); } });
     },
@@ -2170,7 +2170,7 @@ export const ABILITIES2 = {
       // planted foot, and the real cut back across the other flank: the same heavy slash (a tenth of its health and
       // more), landing as the blade crosses it. III: a kill and he goes again. (He flew straight at it and the slash
       // landed as he arrived.)
-      const base = dmgOf(u, 1.4), stg = tier >= 2 ? 40 : 0;
+      const base = dmgOf(u, 1.6), stg = tier >= 2 ? 40 : 0; // (1.6x, it was 1.4x: the step and the cut back take a third of a second longer than the old leap did)
       const strike = (e, n) => {
         if (!e || !alive(e) || n > 4) return;
         dash(w, u, 'feint', { t: e, only: e, ghost: '#5E6B86', dmg: (x) => x.maxHp * (x.def.boss ? 0.03 : 0.1) + base, hit: { heavy: true, crit: true, knock: 200, stagger: stg, ab: 'crescentCut' },

@@ -47,7 +47,7 @@ export function wolfBrain(w, u, dt) {
   if (!due(u, 'lunge', dt, 2)) return false;
   const g = gapTo(u, t); if (g < 50 || g > 230 || !lineClear(w, u.x, u.y, t.x, t.y, u.r * 0.8)) return false;
   again(u, 'lunge', 4, 6);
-  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 40, { style: 'pounce', tell: 0.28, rest: 0.25, r: u.r + 30, dmg: u.def.dmg * 1.95, knock: 170, trail: 'rgba(200,194,180,0.6)' }); // (round 18, lane dash18: the wolf's lunge is a pounce: a crouch, a leap that hangs, a landing rake; it was a straight run through)
+  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 40, { style: 'pounce', tell: 0.28, rest: 0.25, r: u.r + 30, dmg: u.def.dmg * 2.15, knock: 170, trail: 'rgba(200,194,180,0.6)' }); // (round 18, lane dash18: the wolf's lunge is a pounce: a crouch, a leap that hangs, a landing rake; it was a straight run through)
   return true;
 }
 // A pounce from far off that pins whoever it lands on (dire wolves, the Alpha).
@@ -60,7 +60,7 @@ function pinPounce(w, u, dt, o) {
   const x1 = u.x + Math.cos(a) * L, y1 = u.y + Math.sin(a) * L;
   // round 18 (lane dash18): the pounce of dashes.js (a crouch, a leap that hangs, a landing rake); whoever the rake
   // catches is pinned, as before. (It was a plain arc and a circle that struck.)
-  dash(w, u, 'pounce', { t, tell: 0.24, air: (o.dur || 0.6) * 0.6, r: o.r, dmg: o.dmg * 1.3 * u.dmgMul, hit: { knock: 60, stagger: o.stagger || 0 }, dustCol: '#8C8270', recover: 0.1, rest: 0.15,
+  dash(w, u, 'pounce', { t, tell: 0.24, air: (o.dur || 0.6) * 0.6, r: o.r, dmg: o.dmg * 1.45 * u.dmgMul, hit: { knock: 60, stagger: o.stagger || 0 }, dustCol: '#8C8270', recover: 0.1, rest: 0.15,
     land: (list) => { for (const h of list) { h.rootT = Math.max(h.rootT || 0, o.pin); if (o.maul) addBuff(u, { id: 'maul', dur: o.pin, atkSpeed: 2.2 }); } } });
   return false;
 }
@@ -246,7 +246,7 @@ function sproutBrain(w, u, dt) {
   if (!due(u, 'dash', dt, 1.2)) return false;
   const g = gapTo(u, t); if (g < 20 || g > 150 || !lineClear(w, u.x, u.y, t.x, t.y, u.r * 0.8)) return false;
   again(u, 'dash', 1.8, 2.6);
-  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 26, { style: 'pounce', r: u.r + 22, tell: 0.18, air: 0.27, recover: 0.06, rest: 0.1, dmg: u.def.dmg * 1.3, knock: 120, trail: 'rgba(140,190,90,0.6)' }); // (round 18: the sproutling's dash is a little pounce)
+  rush(w, u, angleTo(u.x, u.y, t.x, t.y), g + 26, { style: 'pounce', r: u.r + 22, tell: 0.18, air: 0.27, recover: 0.06, rest: 0.1, dmg: u.def.dmg * 1.2, knock: 120, trail: 'rgba(140,190,90,0.6)' }); // (round 18: the sproutling's dash is a little pounce)
   return true;
 }
 // Ent: slams roots up in a line (Entangle); a hard blow knocks a sproutling loose from it.
