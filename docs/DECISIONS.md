@@ -1057,3 +1057,34 @@ fly). Everything in docs/tags17.md; code js/tags.js; checks tools/tags17/check.m
   reaches the Bone King, Grave Warden, mummies, Icicle Wraith); layers floor / hovering / flying (slams miss hovering,
   gas and explosions reach it; only shots reach flying); type resistances as a mechanism, none set.
 - Merged tags17 and water17 (0.23.0). At merge: the Water Mage's bubble asks tags.js isMagicHit, so magic is its own hit type and a fire-carrying blade (sharp + fire) passes the bubble (its check updated to match). Fixed a crash on main found by water17: Encore / Old Tales / Supply Crate asked each other's scores for ever in a party with two of the Bard, Grandpa Sickle, the Quartermaster (wantedNow now looks one level deep).
+
+## Round 18, lane downed18 (2026-11-24): downed heroes in battle mode
+The designer, on Valkyrie's Call never firing in battle mode: "Battle mode can have downed allies that can only be
+revived with abilities. (Corpses can be used for necromancy)". The lead's calls, all easy to change (js/battle.js top):
+- **Who goes down.** In a battle a picked hero (anything with a kit), on either side, goes down at 0 as in a dungeon
+  (sim.js killNow: the same state, grey and limp, out of the fight, not a target, no statuses). Monsters, elites,
+  majors, bosses, summons, constructs and the Mob's other bodies just die and leave bodies, as before.
+- **Only abilities bring them back**: Valkyrie's Call (any tier; once a fight, as it is once a room) and the
+  Clockmaker's Rewind III (a friend who fell in the last few seconds; once a fight). No standing over them (the Raiser
+  and Light of Valhalla revive speeds don't apply in a battle), no getting up when it ends. The cheat-death hooks
+  (Phoenix Feather, Old Bones, Spare Second, Back From the Wild) still keep a hero from going down, as before.
+- **Bleeding out**: nobody can finish a downed hero, but after 15 s (BLEED_T) unrevived it dies where it lies and leaves
+  its body. A ring in its side's colour runs down round it, pulsing over the last 4 s.
+- **Losing**: a side with nobody up (everyone downed or dead) has lost at once; the downed count for nothing in the
+  health-left tie-break.
+- **Bodies**: whatever dies leaves a body as before (that already held in battle mode). A downed hero is not a body: no
+  Necromancer can raise it while it might still be revived; once it bleeds out, the Necromancer's Raise Dead (either
+  side) can. The Seraph's and the Radiant's raise stays as it was: only their own host's kinds, so never a hero.
+- **Wraith Veil** in a battle: the ghost rises and fights on while its hero lies downed (it used to vanish at once, the
+  hero being dead), on either side.
+- **Result card**: a row says how many lie downed at the end ("1/2 left · 1 down"), "downed once, back up once",
+  "1 revive" for the one who revived; under each side, who brought whom back and when. The strip under the fight
+  shows a downed stack's chip faint brown-grey rather than gone.
+- **Fixed on the way** (sim.js hurt): a blow whose own burn scorched its target to 0 brought it down twice (two
+  'heroDown's, two Wraith Veil ghosts, a kill counted twice); now once.
+Measured (tools/downed18/measure.mjs, tier III heroes, 8 seeds a setup): Valkyrie's Call casts in hero-vs-hero fights
+0 -> 1.38 a fight (22 of 22 casts brought someone back; 24% of all downs revived, 40% bled out); with a party against
+majors 0 -> 0.03 (heroes rarely go down there, and mostly it's the Valkyrie herself); Rewind III brought 6 back in 24
+fights; every fight ended, 0 problems; the hero Necromancer raises 1.7 bodies a fight, the Seraph 1.1.
+tools/battles.mjs: 528 battles, 0 problems, 9 -> 10 out of time (lone kiters, new dice), blue 249 -> 246, red 274 ->
+277, draws 5. tools/preview-check.mjs: threw 0, never fired 0, not offered 0. Clips: docs/clips/downed18/.

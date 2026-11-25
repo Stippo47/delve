@@ -1,0 +1,12 @@
+example: a in 13.9s
+  time ran out: wildmane,cleric vs banditBrute*3
+  time ran out: troll*2@1 vs troll@2
+  time ran out: rockTroll*2@1 vs rockTroll@2
+  time ran out: crabBlue*2@1 vs crabBlue@2
+  time ran out: leechBrain*2@1 vs leechBrain@2
+  time ran out: crabGreen*2@1 vs crabGreen@2
+  time ran out: choirSprite*2@1 vs choirSprite@2
+  time ran out: gearSprite*3 vs paladin,archer
+  time ran out: wildmane,cleric vs repairDrone*3
+  time ran out: foundrySmith*3 vs paladin,archer
+528 battles, 0 problems, 10 ran out of time; blue 246, red 277, draws 5
