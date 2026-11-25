@@ -16,8 +16,8 @@
 // The defs no longer carry cost or pack: this list is where they live.
 export const PRICES = {
   // the Wildwood
-  wolf: { cost: 2, pack: [2, 3], hp: 1.13, hit: 1.33 },
-  slime: { cost: 2, hp: 0.5, hit: 0.75 },
+  wolf: { cost: 2, pack: [2, 3], hp: 1.45, hit: 1.5 },
+  slime: { cost: 2, hp: 0.38, hit: 0.68 },
   goblin: { cost: 2, pack: [2, 3], hp: 1.38, hit: 1.38 },
   goblinOrange: { cost: 2, pack: [2, 3], hp: 0.83, hit: 0.83 },
   slimeBig: { cost: 7, hp: 0.63, hit: 0.67 },
@@ -51,7 +51,7 @@ export const PRICES = {
   rockTroll: { cost: 9, hp: 0.94, hit: 0.94 },
   ogre: { cost: 8, hp: 1.6, hit: 1.6 },
   // the Sewers
-  rat: { cost: 1, pack: [2, 4], hp: 1.06, hit: 1.06 },
+  rat: { cost: 1, pack: [2, 4], hp: 1.15, hit: 1.12 },
   ratPlague: { cost: 1.3, hp: 0.63, hit: 0.63 },
   slimeSludge: { cost: 3, hp: 1.06, hit: 1.42 },
   slimeSmall: { cost: 0.6, pack: [2, 3], hp: 0.95, hit: 1.45 },
