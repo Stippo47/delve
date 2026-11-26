@@ -263,6 +263,7 @@ function carry(w, u, b, t, dt) {
         C.way = ahead > behind ? 1 : behind > 0 ? -1 : 0; C.wayT = w.time + 1.2;
       }
       fwd = C.way > 0 ? sp * 0.8 : C.way < 0 ? -sp * CARRY.haul : 0;
+      if (!fwd) C.idleAt = w.time; // (nothing it can do with the boulder here: boulderBrain counts it as wedged)
     }
   }
   rodWalk(w, u, b, fwd, tan, dt);
@@ -359,7 +360,9 @@ export function boulderBrain(w, u, dt) {
     return true;
   }
   const t = targetOf(w, u), phi = angleTo(u.x, u.y, b.x, b.y);
-  if (t && u.aggro && !(u.el && u.el.holdT > 0) && gapTo(u, t) > (u.def.range || 30) + 12) jam.t += dt; else jam.t = 0;
+  // (round 19, lane troll19: or with no way to turn the boulder to its mark where it stands, carry's C.idleAt: its mark
+  // may be in reach of its fists, behind it, and its fists are on the boulder)
+  if (t && u.aggro && !(u.el && u.el.holdT > 0) && (gapTo(u, t) > (u.def.range || 30) + 12 || (u.bCar && w.time - u.bCar.idleAt < 0.1))) jam.t += dt; else jam.t = 0;
   if (jam.t > BOULDER_JAM && t) { // wedged with it: let it go at its mark (it rolls till something stops it)
     // (round 17, lane foes17: bare-handed a while only when it has no line to roll it down: with a hero up against the
     // boulder, or a clear way to them, this is its throw, and it goes straight for the boulder after it, as after any
