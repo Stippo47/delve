@@ -1,0 +1,940 @@
+{
+ "title": "Normal people: the bases",
+ "topic": "art",
+ "stack": "r19b",
+ "order": 4,
+ "cards": [
+  {
+   "id": "base",
+   "kind": "design",
+   "rarity": "rare",
+   "title": "The plain base person",
+   "text": "One plain villager in a sack tunic, built on your approved base body. Everything after this sits on it.",
+   "why": "You asked for normal looking bases, no armour or equipment, a basic sack tunic. Judge this one first: every hair, skin, beard and build in the next cards is built on it. Same head, shoulders and fists as the heroes. The film is eight of this one person walking and punching. Pin what looks wrong.",
+   "pick": "Keep it as the base: the approved head and fists, the bowl cut of approved base 1, undyed sackcloth shoulders with a rough weave.",
+   "images": [
+    "../../../docs/clips/bases19/boards/base.png"
+   ],
+   "videos": [
+    "../../../docs/clips/bases19/base.mp4"
+   ]
+  },
+  {
+   "id": "bodies",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Body types",
+   "text": "Seven builds on the same base, so only the build changes. Tick the ones that read right to you.",
+   "why": "You asked for fat, brutish, skinny, feminine. From above a build is shoulder width, belly, fist size, jaw and how they stand, so each has its own outline rather than the base made bigger or smaller. Each picture is one build, large, then at game size in four facings.",
+   "pick": [
+    "fat",
+    "brute",
+    "skinny",
+    "old"
+   ],
+   "items": [
+    {
+     "id": "average",
+     "label": "Average",
+     "image": "../../../docs/clips/bases19/boards/body-average.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/body-average.png",
+     "text": "The base build: every hero stands on these shoulders."
+    },
+    {
+     "id": "skinny",
+     "label": "Skinny",
+     "image": "../../../docs/clips/bases19/boards/body-skinny.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/body-skinny.png",
+     "text": "Thin sloping shoulders, a narrower jaw, small fists."
+    },
+    {
+     "id": "fat",
+     "label": "Fat",
+     "image": "../../../docs/clips/bases19/boards/body-fat.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/body-fat.png",
+     "text": "A round body past the head all the way round, a rope belt over the belly, full cheeks."
+    },
+    {
+     "id": "brute",
+     "label": "Brutish",
+     "image": "../../../docs/clips/bases19/boards/body-brute.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/body-brute.png",
+     "text": "Shoulders nearly twice as wide, a square jaw, big fists held low."
+    },
+    {
+     "id": "feminine",
+     "label": "Feminine",
+     "image": "../../../docs/clips/bases19/boards/body-feminine.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/body-feminine.png",
+     "text": "Narrow sloped shoulders, a slimmer jaw, the chest curving forward beside it, small fists held out."
+    },
+    {
+     "id": "old",
+     "label": "Old",
+     "image": "../../../docs/clips/bases19/boards/body-old.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/body-old.png",
+     "text": "Stooped: the shoulders sit back behind the head and the fists come together in front."
+    },
+    {
+     "id": "young",
+     "label": "Young",
+     "image": "../../../docs/clips/bases19/boards/body-young.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/body-young.png",
+     "text": "Smaller all over, narrow shoulders, small fists."
+    }
+   ]
+  },
+  {
+   "id": "skin",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Skin colours",
+   "text": "Seven skin colours from pale to deep, and four fantasy ones kept apart. Tick the ones to keep.",
+   "why": "Each is one colour; the shading of the face, ears and fists is worked out from it the same way the heroes are shaded. The four fantasy ones (moss, slate, ash, ember) are never given to anyone unless switched on.",
+   "pick": [
+    "pale",
+    "fair",
+    "olive",
+    "tan",
+    "brown",
+    "dark",
+    "deep"
+   ],
+   "items": [
+    {
+     "id": "pale",
+     "label": "Pale",
+     "image": "../../../docs/clips/bases19/boards/skin-pale.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/skin-pale.png"
+    },
+    {
+     "id": "fair",
+     "label": "Fair",
+     "image": "../../../docs/clips/bases19/boards/skin-fair.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/skin-fair.png"
+    },
+    {
+     "id": "olive",
+     "label": "Olive",
+     "image": "../../../docs/clips/bases19/boards/skin-olive.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/skin-olive.png"
+    },
+    {
+     "id": "tan",
+     "label": "Tan",
+     "image": "../../../docs/clips/bases19/boards/skin-tan.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/skin-tan.png"
+    },
+    {
+     "id": "brown",
+     "label": "Brown",
+     "image": "../../../docs/clips/bases19/boards/skin-brown.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/skin-brown.png"
+    },
+    {
+     "id": "dark",
+     "label": "Dark",
+     "image": "../../../docs/clips/bases19/boards/skin-dark.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/skin-dark.png"
+    },
+    {
+     "id": "deep",
+     "label": "Deep",
+     "image": "../../../docs/clips/bases19/boards/skin-deep.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/skin-deep.png"
+    },
+    {
+     "id": "moss",
+     "label": "Moss (fantasy)",
+     "image": "../../../docs/clips/bases19/boards/skin-moss.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/skin-moss.png"
+    },
+    {
+     "id": "slate",
+     "label": "Slate (fantasy)",
+     "image": "../../../docs/clips/bases19/boards/skin-slate.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/skin-slate.png"
+    },
+    {
+     "id": "ash",
+     "label": "Ash (fantasy)",
+     "image": "../../../docs/clips/bases19/boards/skin-ash.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/skin-ash.png"
+    },
+    {
+     "id": "ember",
+     "label": "Ember (fantasy)",
+     "image": "../../../docs/clips/bases19/boards/skin-ember.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/skin-ember.png"
+    }
+   ]
+  },
+  {
+   "id": "hair",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Hair styles",
+   "text": "Twenty hair styles drawn to read from above, all in brown on the base. Tick the ones you like.",
+   "why": "Three are the hair of your three approved bases; the rest are new. No shine patches and no lines on any of them, tails and braids come out from under the hair, and the tail and the long braid sway when they turn. Pin any that reads as a hat or a hood.",
+   "pick": [
+    "bowl",
+    "swept",
+    "crop",
+    "afro",
+    "bun",
+    "long",
+    "braids",
+    "mohawk",
+    "messy",
+    "pigtails"
+   ],
+   "items": [
+    {
+     "id": "bald",
+     "label": "Bald",
+     "image": "../../../docs/clips/bases19/boards/hair-bald.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-bald.png",
+     "text": "Bare, with a shine."
+    },
+    {
+     "id": "shaved",
+     "label": "Shaved",
+     "image": "../../../docs/clips/bases19/boards/hair-shaved.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-shaved.png",
+     "text": "Cut to the scalp: the colour shows through the skin."
+    },
+    {
+     "id": "crop",
+     "label": "Short crop",
+     "image": "../../../docs/clips/bases19/boards/hair-crop.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-crop.png",
+     "text": "The tufty crop of approved base 3."
+    },
+    {
+     "id": "bowl",
+     "label": "Bowl cut",
+     "image": "../../../docs/clips/bases19/boards/hair-bowl.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-bowl.png",
+     "text": "The bowl cut of approved base 1 (the base wears it)."
+    },
+    {
+     "id": "swept",
+     "label": "Side-swept",
+     "image": "../../../docs/clips/bases19/boards/hair-swept.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-swept.png",
+     "text": "The side-swept fringe of approved base 2."
+    },
+    {
+     "id": "slick",
+     "label": "Combed back",
+     "image": "../../../docs/clips/bases19/boards/hair-slick.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-slick.png",
+     "text": "Combed back, the hairline dipping to a small peak."
+    },
+    {
+     "id": "messy",
+     "label": "Shaggy",
+     "image": "../../../docs/clips/bases19/boards/hair-messy.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-messy.png",
+     "text": "Shaggy spikes and a jagged fringe."
+    },
+    {
+     "id": "curly",
+     "label": "Curly",
+     "image": "../../../docs/clips/bases19/boards/hair-curly.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-curly.png",
+     "text": "A cap of soft curls."
+    },
+    {
+     "id": "afro",
+     "label": "Afro",
+     "image": "../../../docs/clips/bases19/boards/hair-afro.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-afro.png",
+     "text": "Big and round, well past the head."
+    },
+    {
+     "id": "bun",
+     "label": "Bun",
+     "image": "../../../docs/clips/bases19/boards/hair-bun.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-bun.png",
+     "text": "Combed back into a bun behind the head."
+    },
+    {
+     "id": "topknot",
+     "label": "Topknot",
+     "image": "../../../docs/clips/bases19/boards/hair-topknot.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-topknot.png",
+     "text": "Cut to the scalp but for a small knot on top."
+    },
+    {
+     "id": "ponytail",
+     "label": "Ponytail",
+     "image": "../../../docs/clips/bases19/boards/hair-ponytail.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-ponytail.png",
+     "text": "Combed back; the tail hangs behind and sways when they turn."
+    },
+    {
+     "id": "long",
+     "label": "Long loose",
+     "image": "../../../docs/clips/bases19/boards/hair-long.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-long.png",
+     "text": "Parted in the middle, a lock down each side onto the shoulders."
+    },
+    {
+     "id": "bob",
+     "label": "Bob",
+     "image": "../../../docs/clips/bases19/boards/hair-bob.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-bob.png",
+     "text": "Chin length, a straight fringe."
+    },
+    {
+     "id": "braids",
+     "label": "Two braids",
+     "image": "../../../docs/clips/bases19/boards/hair-braids.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-braids.png",
+     "text": "Parted, two braids out from under the hair over the shoulders."
+    },
+    {
+     "id": "backbraid",
+     "label": "Long braid",
+     "image": "../../../docs/clips/bases19/boards/hair-backbraid.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-backbraid.png",
+     "text": "One thick braid down the back; it sways when they turn."
+    },
+    {
+     "id": "pigtails",
+     "label": "Bunches",
+     "image": "../../../docs/clips/bases19/boards/hair-pigtails.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-pigtails.png",
+     "text": "Parted, a bunch at each side."
+    },
+    {
+     "id": "locs",
+     "label": "Locs",
+     "image": "../../../docs/clips/bases19/boards/hair-locs.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-locs.png",
+     "text": "Thick strands: a fringe of them, more hanging at the sides."
+    },
+    {
+     "id": "mohawk",
+     "label": "Mohawk",
+     "image": "../../../docs/clips/bases19/boards/hair-mohawk.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-mohawk.png",
+     "text": "A crest from the brow to past the back of the head, the sides cut short."
+    },
+    {
+     "id": "balding",
+     "label": "Balding",
+     "image": "../../../docs/clips/bases19/boards/hair-balding.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/hair-balding.png",
+     "text": "Bare on top, soft tufts left over the ears."
+    }
+   ]
+  },
+  {
+   "id": "haircol",
+   "kind": "board",
+   "rarity": "common",
+   "title": "Hair colours",
+   "text": "Nine hair colours, each shown on the same side-swept hair with a short beard.",
+   "why": "A beard always takes the hair colour. Old folk mostly get grey or white. Black is a touch lighter than the outline so the hair still shows inside it.",
+   "pick": [
+    "black",
+    "umber",
+    "brown",
+    "chestnut",
+    "ginger",
+    "sandy",
+    "blonde",
+    "grey",
+    "white"
+   ],
+   "items": [
+    {
+     "id": "black",
+     "label": "Black",
+     "image": "../../../docs/clips/bases19/boards/haircol-black.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/haircol-black.png"
+    },
+    {
+     "id": "umber",
+     "label": "Dark brown",
+     "image": "../../../docs/clips/bases19/boards/haircol-umber.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/haircol-umber.png"
+    },
+    {
+     "id": "brown",
+     "label": "Brown",
+     "image": "../../../docs/clips/bases19/boards/haircol-brown.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/haircol-brown.png"
+    },
+    {
+     "id": "chestnut",
+     "label": "Chestnut",
+     "image": "../../../docs/clips/bases19/boards/haircol-chestnut.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/haircol-chestnut.png"
+    },
+    {
+     "id": "ginger",
+     "label": "Ginger",
+     "image": "../../../docs/clips/bases19/boards/haircol-ginger.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/haircol-ginger.png"
+    },
+    {
+     "id": "sandy",
+     "label": "Sandy",
+     "image": "../../../docs/clips/bases19/boards/haircol-sandy.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/haircol-sandy.png"
+    },
+    {
+     "id": "blonde",
+     "label": "Blonde",
+     "image": "../../../docs/clips/bases19/boards/haircol-blonde.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/haircol-blonde.png"
+    },
+    {
+     "id": "grey",
+     "label": "Grey",
+     "image": "../../../docs/clips/bases19/boards/haircol-grey.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/haircol-grey.png"
+    },
+    {
+     "id": "white",
+     "label": "White",
+     "image": "../../../docs/clips/bases19/boards/haircol-white.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/haircol-white.png"
+    }
+   ]
+  },
+  {
+   "id": "beards",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Facial hair",
+   "text": "Ten kinds of facial hair, and clean. Tick the ones you like.",
+   "why": "Built to your earlier notes: a beard and its sideburns are one shape, a beard sits on the face with the small curve above it, and a moustache covers the curve rather than sitting over it. Pin any that reads as a grin, a strap or a mask.",
+   "pick": [
+    "stubble",
+    "moustache",
+    "vandyke",
+    "scruff",
+    "full",
+    "long"
+   ],
+   "items": [
+    {
+     "id": "none",
+     "label": "Clean",
+     "image": "../../../docs/clips/bases19/boards/beard-none.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/beard-none.png",
+     "text": "Clean."
+    },
+    {
+     "id": "stubble",
+     "label": "Stubble",
+     "image": "../../../docs/clips/bases19/boards/beard-stubble.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/beard-stubble.png",
+     "text": "A soft shadow of the hair colour on the jaw (as on approved base 3)."
+    },
+    {
+     "id": "moustache",
+     "label": "Moustache",
+     "image": "../../../docs/clips/bases19/boards/beard-moustache.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/beard-moustache.png",
+     "text": "Two soft halves; it covers the small curve on the face."
+    },
+    {
+     "id": "vandyke",
+     "label": "Moustache and goatee",
+     "image": "../../../docs/clips/bases19/boards/beard-vandyke.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/beard-vandyke.png",
+     "text": "A smaller moustache over a chin beard."
+    },
+    {
+     "id": "goatee",
+     "label": "Goatee",
+     "image": "../../../docs/clips/bases19/boards/beard-goatee.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/beard-goatee.png",
+     "text": "A chin beard, the tip past the chin."
+    },
+    {
+     "id": "chops",
+     "label": "Mutton chops",
+     "image": "../../../docs/clips/bases19/boards/beard-chops.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/beard-chops.png",
+     "text": "Sideburns down the cheeks to the jaw, the chin bare."
+    },
+    {
+     "id": "scruff",
+     "label": "Short beard",
+     "image": "../../../docs/clips/bases19/boards/beard-scruff.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/beard-scruff.png",
+     "text": "Sideburns and beard as one shape round the jaw, the curve above it."
+    },
+    {
+     "id": "full",
+     "label": "Full beard",
+     "image": "../../../docs/clips/bases19/boards/beard-full.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/beard-full.png",
+     "text": "The same, thicker, with a lobed lower edge past the chin."
+    },
+    {
+     "id": "long",
+     "label": "Long beard",
+     "image": "../../../docs/clips/bases19/boards/beard-long.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/beard-long.png",
+     "text": "Down to the chest, a moustache on top of it."
+    },
+    {
+     "id": "braided",
+     "label": "Braided beard",
+     "image": "../../../docs/clips/bases19/boards/beard-braided.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/beard-braided.png",
+     "text": "A full beard with one braid from the chin, held by a metal clasp."
+    },
+    {
+     "id": "forked",
+     "label": "Forked beard",
+     "image": "../../../docs/clips/bases19/boards/beard-forked.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/beard-forked.png",
+     "text": "A full beard ending in two points."
+    }
+   ]
+  },
+  {
+   "id": "jewels",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Jewellery",
+   "text": "Eleven pieces, each alone on the base. Any of them can be worn together. Tick the ones to keep.",
+   "why": "Gold here; the same pieces also come in silver and copper. At game size most are a small glint, so the bigger ones (torc, beads, headband, hoops) do the most. Rings are close to invisible in a fight.",
+   "pick": [
+    "earrings",
+    "beads",
+    "torc",
+    "headband",
+    "circlet",
+    "bangles"
+   ],
+   "items": [
+    {
+     "id": "earrings",
+     "label": "Earrings",
+     "image": "../../../docs/clips/bases19/boards/jewel-earrings.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/jewel-earrings.png",
+     "text": "A hoop in each ear."
+    },
+    {
+     "id": "studs",
+     "label": "Ear studs",
+     "image": "../../../docs/clips/bases19/boards/jewel-studs.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/jewel-studs.png",
+     "text": "A small stud in each ear."
+    },
+    {
+     "id": "nosering",
+     "label": "Nose ring",
+     "image": "../../../docs/clips/bases19/boards/jewel-nosering.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/jewel-nosering.png",
+     "text": "A small ring under the curve."
+    },
+    {
+     "id": "necklace",
+     "label": "Pendant",
+     "image": "../../../docs/clips/bases19/boards/jewel-necklace.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/jewel-necklace.png",
+     "text": "A cord with a teal stone that hangs out from under the chin."
+    },
+    {
+     "id": "beads",
+     "label": "Bead string",
+     "image": "../../../docs/clips/bases19/boards/jewel-beads.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/jewel-beads.png",
+     "text": "Wooden beads, a big red one in front."
+    },
+    {
+     "id": "torc",
+     "label": "Torc",
+     "image": "../../../docs/clips/bases19/boards/jewel-torc.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/jewel-torc.png",
+     "text": "A thick open ring, its two knobs meeting in front."
+    },
+    {
+     "id": "armbands",
+     "label": "Armbands",
+     "image": "../../../docs/clips/bases19/boards/jewel-armbands.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/jewel-armbands.png",
+     "text": "A band round each upper arm (shown on bare arms: over a sleeve they read as stripes)."
+    },
+    {
+     "id": "bangles",
+     "label": "Bangles",
+     "image": "../../../docs/clips/bases19/boards/jewel-bangles.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/jewel-bangles.png",
+     "text": "A band at each wrist."
+    },
+    {
+     "id": "rings",
+     "label": "Rings",
+     "image": "../../../docs/clips/bases19/boards/jewel-rings.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/jewel-rings.png",
+     "text": "A ring on each fist. Tiny at game size."
+    },
+    {
+     "id": "headband",
+     "label": "Headband",
+     "image": "../../../docs/clips/bases19/boards/jewel-headband.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/jewel-headband.png",
+     "text": "A strip of cloth tied round the brow, the knot at the side."
+    },
+    {
+     "id": "circlet",
+     "label": "Circlet",
+     "image": "../../../docs/clips/bases19/boards/jewel-circlet.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/jewel-circlet.png",
+     "text": "A thin metal band with a red stone."
+    }
+   ]
+  },
+  {
+   "id": "tunics",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Tunics and cloth",
+   "text": "Six tunics, then nine cloth colours. From above a tunic is mostly two shoulders, so these are small.",
+   "why": "The heroes show no arms and no chest, only shoulders, so a tunic can only change the shoulders: a patch, a rope, bare arms, a collar. A rope belt shows only on the fat build, where the belly is in view. The colours are dull dyes, kept plain on purpose.",
+   "pick": [
+    "sack",
+    "patched",
+    "sleeveless",
+    "oat",
+    "brown",
+    "moss",
+    "rust",
+    "woad"
+   ],
+   "items": [
+    {
+     "id": "sack",
+     "label": "Sack tunic",
+     "image": "../../../docs/clips/bases19/boards/tunic-sack.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/tunic-sack.png",
+     "text": "The base tunic: undyed sackcloth with a rough weave."
+    },
+    {
+     "id": "patched",
+     "label": "Patched",
+     "image": "../../../docs/clips/bases19/boards/tunic-patched.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/tunic-patched.png",
+     "text": "A square patch stitched on each shoulder."
+    },
+    {
+     "id": "roped",
+     "label": "Rope strap",
+     "image": "../../../docs/clips/bases19/boards/tunic-roped.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/tunic-roped.png",
+     "text": "A rope tied over one shoulder."
+    },
+    {
+     "id": "sleeveless",
+     "label": "Sleeveless",
+     "image": "../../../docs/clips/bases19/boards/tunic-sleeveless.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/tunic-sleeveless.png",
+     "text": "Bare arms: the shoulders are skin, the tunic a narrower piece."
+    },
+    {
+     "id": "torn",
+     "label": "Torn sleeves",
+     "image": "../../../docs/clips/bases19/boards/tunic-torn.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/tunic-torn.png",
+     "text": "The sleeves torn off, ragged ends."
+    },
+    {
+     "id": "yoke",
+     "label": "Collar",
+     "image": "../../../docs/clips/bases19/boards/tunic-yoke.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/tunic-yoke.png",
+     "text": "A second cloth round the neck, in another colour."
+    },
+    {
+     "id": "oat",
+     "label": "Undyed sack",
+     "image": "../../../docs/clips/bases19/boards/cloth-oat.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/cloth-oat.png"
+    },
+    {
+     "id": "flax",
+     "label": "Flax",
+     "image": "../../../docs/clips/bases19/boards/cloth-flax.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/cloth-flax.png"
+    },
+    {
+     "id": "brown",
+     "label": "Brown",
+     "image": "../../../docs/clips/bases19/boards/cloth-brown.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/cloth-brown.png"
+    },
+    {
+     "id": "grey",
+     "label": "Grey wool",
+     "image": "../../../docs/clips/bases19/boards/cloth-grey.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/cloth-grey.png"
+    },
+    {
+     "id": "moss",
+     "label": "Moss",
+     "image": "../../../docs/clips/bases19/boards/cloth-moss.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/cloth-moss.png"
+    },
+    {
+     "id": "rust",
+     "label": "Rust",
+     "image": "../../../docs/clips/bases19/boards/cloth-rust.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/cloth-rust.png"
+    },
+    {
+     "id": "woad",
+     "label": "Woad blue",
+     "image": "../../../docs/clips/bases19/boards/cloth-woad.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/cloth-woad.png"
+    },
+    {
+     "id": "ochre",
+     "label": "Ochre",
+     "image": "../../../docs/clips/bases19/boards/cloth-ochre.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/cloth-ochre.png"
+    },
+    {
+     "id": "plum",
+     "label": "Plum",
+     "image": "../../../docs/clips/bases19/boards/cloth-plum.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/cloth-plum.png"
+    }
+   ]
+  },
+  {
+   "id": "mixes",
+   "kind": "board",
+   "rarity": "uncommon",
+   "title": "Twenty random people",
+   "text": "Twenty people rolled from the layers, as the game rolls them. Tick the ones that look right.",
+   "why": "Nothing here was picked by hand: this is what a crowd gets. The roll leans a little: feminine and young builds get no beard, old ones go grey and bald, armbands only go on bare arms. Pin any mix that looks wrong and I can rule it out.",
+   "pick": [
+    "01",
+    "03",
+    "07",
+    "11",
+    "15",
+    "18"
+   ],
+   "items": [
+    {
+     "id": "01",
+     "label": "Mix 1",
+     "image": "../../../docs/clips/bases19/boards/mixes-01.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-01.png",
+     "text": "fat, brown, slick, umber, moustache, torn, oat"
+    },
+    {
+     "id": "02",
+     "label": "Mix 2",
+     "image": "../../../docs/clips/bases19/boards/mixes-02.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-02.png",
+     "text": "average, fair, backbraid, umber, yoke, flax, studs"
+    },
+    {
+     "id": "03",
+     "label": "Mix 3",
+     "image": "../../../docs/clips/bases19/boards/mixes-03.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-03.png",
+     "text": "old, deep, long, white, full, yoke, ochre, bangles"
+    },
+    {
+     "id": "04",
+     "label": "Mix 4",
+     "image": "../../../docs/clips/bases19/boards/mixes-04.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-04.png",
+     "text": "average, pale, long, black, stubble, patched, oat, necklace, bangles, headband"
+    },
+    {
+     "id": "05",
+     "label": "Mix 5",
+     "image": "../../../docs/clips/bases19/boards/mixes-05.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-05.png",
+     "text": "young, fair, pigtails, chestnut, yoke, brown, copper, necklace"
+    },
+    {
+     "id": "06",
+     "label": "Mix 6",
+     "image": "../../../docs/clips/bases19/boards/mixes-06.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-06.png",
+     "text": "feminine, dark, curly, umber, patched, grey, studs"
+    },
+    {
+     "id": "07",
+     "label": "Mix 7",
+     "image": "../../../docs/clips/bases19/boards/mixes-07.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-07.png",
+     "text": "average, dark, crop, grey, scruff, patched, moss, silver, bangles"
+    },
+    {
+     "id": "08",
+     "label": "Mix 8",
+     "image": "../../../docs/clips/bases19/boards/mixes-08.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-08.png",
+     "text": "old, pale, slick, white, moustache, sack, rust, copper, nosering, rings"
+    },
+    {
+     "id": "09",
+     "label": "Mix 9",
+     "image": "../../../docs/clips/bases19/boards/mixes-09.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-09.png",
+     "text": "average, pale, topknot, blonde, stubble, yoke, grey, studs, beads, headband"
+    },
+    {
+     "id": "10",
+     "label": "Mix 10",
+     "image": "../../../docs/clips/bases19/boards/mixes-10.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-10.png",
+     "text": "feminine, pale, crop, blonde, roped, oat, silver, bangles, headband"
+    },
+    {
+     "id": "11",
+     "label": "Mix 11",
+     "image": "../../../docs/clips/bases19/boards/mixes-11.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-11.png",
+     "text": "fat, brown, crop, black, goatee, yoke, oat"
+    },
+    {
+     "id": "12",
+     "label": "Mix 12",
+     "image": "../../../docs/clips/bases19/boards/mixes-12.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-12.png",
+     "text": "skinny, dark, messy, brown, full, sack, grey"
+    },
+    {
+     "id": "13",
+     "label": "Mix 13",
+     "image": "../../../docs/clips/bases19/boards/mixes-13.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-13.png",
+     "text": "skinny, dark, shaved, brown, moustache, roped, woad, torc"
+    },
+    {
+     "id": "14",
+     "label": "Mix 14",
+     "image": "../../../docs/clips/bases19/boards/mixes-14.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-14.png",
+     "text": "fat, olive, bowl, brown, full, patched, oat, studs, necklace"
+    },
+    {
+     "id": "15",
+     "label": "Mix 15",
+     "image": "../../../docs/clips/bases19/boards/mixes-15.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-15.png",
+     "text": "average, deep, bowl, umber, forked, roped, grey"
+    },
+    {
+     "id": "16",
+     "label": "Mix 16",
+     "image": "../../../docs/clips/bases19/boards/mixes-16.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-16.png",
+     "text": "feminine, pale, bun, blonde, yoke, rust, silver"
+    },
+    {
+     "id": "17",
+     "label": "Mix 17",
+     "image": "../../../docs/clips/bases19/boards/mixes-17.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-17.png",
+     "text": "feminine, olive, long, umber, roped, plum"
+    },
+    {
+     "id": "18",
+     "label": "Mix 18",
+     "image": "../../../docs/clips/bases19/boards/mixes-18.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-18.png",
+     "text": "fat, brown, crop, umber, goatee, roped, oat, bangles"
+    },
+    {
+     "id": "19",
+     "label": "Mix 19",
+     "image": "../../../docs/clips/bases19/boards/mixes-19.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-19.png",
+     "text": "fat, olive, curly, brown, full, yoke, oat, earrings, headband"
+    },
+    {
+     "id": "20",
+     "label": "Mix 20",
+     "image": "../../../docs/clips/bases19/boards/mixes-20.png",
+     "thumb": "../../../docs/clips/bases19/boards/thumbs/mixes-20.png",
+     "text": "feminine, deep, ponytail, umber, sack, woad, bangles"
+    }
+   ]
+  },
+  {
+   "id": "crowd",
+   "kind": "report",
+   "rarity": "common",
+   "title": "A crowd of them in game",
+   "text": "A test unit, the Villager, wears the layers: every one is a different person, and they walk and brawl.",
+   "why": "They are split into parts like the heroes, so the game swings their fists, sways tails and braids, and draws its own outline round them. Pin any frame that looks wrong.",
+   "videos": [
+    "../../../docs/clips/bases19/crowd.mp4"
+   ],
+   "parts": [
+    {
+     "id": "crowd",
+     "title": "Twenty-four at game size",
+     "text": "Two lines of twelve walk in (first 3 seconds), then fight with their fists, a fist at a time.",
+     "videos": [
+      "../../../docs/clips/bases19/crowd.mp4"
+     ]
+    },
+    {
+     "id": "close",
+     "title": "Fourteen, closer",
+     "text": "The same closer in: hair, beards, jewellery and builds as they turn, walk (first 3 seconds) and punch.",
+     "videos": [
+      "../../../docs/clips/bases19/close.mp4"
+     ]
+    },
+    {
+     "id": "try",
+     "title": "Trying it yourself",
+     "text": "Battle mode, the \"No dungeon yet\" tab: Villager. Plain and weak, no ability. Every one you field is rolled afresh."
+    },
+    {
+     "id": "marks",
+     "title": "The punch mark",
+     "text": "A punch draws the game's own white poke mark, the same one a jab or a dagger gets. It can read as a blade; a fist mark of its own would be a small job."
+    }
+   ]
+  },
+  {
+   "id": "next",
+   "kind": "options",
+   "rarity": "uncommon",
+   "title": "Where do these go next?",
+   "text": "The bases are only in the test Villager for now. Where should they be used first?",
+   "why": "The layers can dress anyone: a crowd in the camp, human enemies, or the bodies under new heroes. Each is a different next job, so it helps to know which you had in mind.",
+   "options": [
+    {
+     "id": "foes",
+     "label": "Human enemies (bandits, cultists) built on them"
+    },
+    {
+     "id": "camp",
+     "label": "Townsfolk standing about in the camp"
+    },
+    {
+     "id": "heroes",
+     "label": "The bodies new heroes are dressed on"
+    },
+    {
+     "id": "wait",
+     "label": "Nothing yet: just the bases"
+    }
+   ],
+   "pick": "foes"
+  }
+ ]
+}
