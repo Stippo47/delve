@@ -1,9 +1,9 @@
 // Sprite cache. Every unit is one sprite drawn front-down in a 220x220 box centred on (100,100),
 // then rotated whole in-game. SVG art is rasterised once per pixel size; rats and slimes are drawn
 // procedurally in the same space so they match the outline/gradient rendering.
-import { INK, OUTLINE, OUTLINES } from './util.js';
+import { INK, OUTLINE, OUTLINES, OLCOL, OLKEY, inkFor, inkRGB } from './util.js'; // (round 19, lane looks19: the outline's own colour)
 import { DEFS } from './units.js';
-import { loadArt, growInk } from './parts.js';
+import { loadArt, growInk, growOwn, domOf } from './parts.js';
 import { recolorCanvas } from './recolor.js';
 
 // (the skeleton kind is drawn from parts now, in the Rattler's art: units.js)
@@ -100,7 +100,7 @@ function drawRat(g, lw) {
   const tail = new Path2D('M100 50 C98 30 112 18 126 14 C136 12 140 4 136 -2');
   g.lineJoin = 'round'; g.lineCap = 'round';
   // the tail is drawn by the renderer as its own springy part
-  if (lw > 0) for (const p of [earL, earR, body]) { g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = lw; g.fill(p); g.stroke(p); }
+  if (lw > 0) for (const p of [earL, earR, body]) { g.fillStyle = g.strokeStyle = inkFor(p === body ? '#86705F' : '#D9A39A'); g.lineWidth = lw; g.fill(p); g.stroke(p); } // (round 19, lane looks19: inkFor)
   g.fillStyle = grad(g, 60, 100, '#E9B7AE', '#C98E86'); g.fill(earL); g.fill(earR);
   g.fillStyle = grad(g, 44, 176, '#9C8676', '#6F5A4D'); g.fill(body);
   g.save(); g.clip(body); g.fillStyle = 'rgba(43,34,48,0.18)'; g.fillRect(100, 0, 120, 220); g.restore();
@@ -110,7 +110,7 @@ function drawRat(g, lw) {
 function drawSlime(g, tint, lw) {
   const body = new Path2D('M100 42 C140 42 156 72 156 104 C156 138 134 158 100 160 C66 158 44 138 44 104 C44 72 60 42 100 42 Z');
   const drip = new Path2D('M86 152 C90 170 96 180 100 184 C104 180 110 170 114 152 Z');
-  if (lw > 0) for (const p of [drip, body]) { g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = lw; g.lineJoin = 'round'; g.fill(p); g.stroke(p); }
+  if (lw > 0) for (const p of [drip, body]) { g.fillStyle = g.strokeStyle = inkFor(tint[1]); g.lineWidth = lw; g.lineJoin = 'round'; g.fill(p); g.stroke(p); } // (round 19, lane looks19: inkFor)
   g.fillStyle = grad(g, 42, 184, tint[0], tint[1]); g.fill(body); g.fill(drip);
   g.save(); g.clip(body);
   g.fillStyle = 'rgba(20,70,60,0.22)'; g.beginPath(); g.arc(108, 112, 30, 0, Math.PI * 2); g.fill();
@@ -141,7 +141,7 @@ function proceduralCanvas(kind, px, lw0) {
 export function getSprite(kind, px, sizeU) {
   const size = Math.max(16, Math.min(512, Math.round(px / 8) * 8));
   const lw = !OUTLINES ? -1 : sizeU > 0 ? Math.round(OUTLINE * 2 * 220 / sizeU * 4) / 4 : 0; // (-1: outlines off, lane toggles19)
-  const key = kind + ':' + size + ':' + lw;
+  const key = kind + ':' + size + ':' + lw + OLKEY; // (round 19, lane looks19: OLKEY, its outline's colour)
   let e = cache.get(key);
   if (e) return e.ready ? e : null;
   e = { ready: false };
@@ -217,12 +217,14 @@ function inkProp(layers, px, line) {
     if (L.ink && line > 0) {
       const p = makeCanvas(px + pad * 2), pg = p.getContext('2d'); pg.drawImage(L.c, pad, pad);
       try { const d = pg.getImageData(0, 0, p.width, p.height), q = d.data; for (let i = 3; i < q.length; i += 4) q[i] = Math.max(0, Math.min(255, (q[i] - 110) * 3)); pg.putImageData(d, 0, 0); } catch {}
-      g.drawImage(growInk(p, line, INK), 0, 0);
+      g.drawImage(!OLCOL.own ? growInk(p, line, INK) : OLCOL.how === 'pixel' ? growOwn(p, line) : growInk(p, line, ownDom(p)), 0, 0); // (round 19, lane looks19: Own colour)
     }
     g.drawImage(L.c, pad, pad);
   }
   return { c, pad };
 }
+// (round 19, lane looks19) a picture's commonest colour, shaded for its outline (the 'part' / 'figure' ways of Own colour)
+function ownDom(c) { try { const d = c.getContext('2d').getImageData(0, 0, c.width, c.height), m = domOf(d.data, c.width); return m ? inkRGB(m[0], m[1], m[2]) : INK; } catch { return INK; } }
 // { img, extra, pad } canvases for a prop at about px pixels across its box, its outline linePx pixels (OUTLINE in the
 // caller's pixels; the default: 6 units of the box, the old filter's), or null while it renders. img is pad pixels
 // bigger on every side than the box (extra is the box).
@@ -230,7 +232,7 @@ export function getProp(name, px, linePx) {
   const src = propText[name]; if (!src) return null;
   const size = Math.max(16, Math.min(1024, Math.ceil(px / 16) * 16));
   const line = src.ink && OUTLINES ? Math.round((linePx > 0 ? linePx * size / px : size * 6 / 220) * 4) / 4 : 0;
-  const key = name + ':' + size + ':' + line;
+  const key = name + ':' + OLKEY + ':' + size + ':' + line; // (round 19, lane looks19: OLKEY)
   let e = propCache.get(key);
   if (!e) {
     e = { ready: false }; propCache.set(key, e);

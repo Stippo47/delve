@@ -2,7 +2,7 @@
 // (Disarmed, Anti-heal), in the one effects style (docs/FX-STYLE.md): solid things inked, light additive and never
 // outlined, ground effects soft-edged and under the units, nothing that matters thinner than 3 units, hashed noise, no
 // blur. It adds its looks to fx2.js's table ('k2' fx by `draw` name), as fx-dash.js does.
-import { TAU, clamp, OUTLINES } from './util.js';
+import { TAU, clamp, OUTLINES, inkFor } from './util.js'; // (round 19, lane looks19: inkFor)
 import { inked, inkLine, glowDisc, star, hash, easeOut, upright, upVec, roundRect } from './fx.js';
 import { DRAW2, PROJ2 } from './fx2.js';
 import { SLASH_OWN } from './fxkit.js';
@@ -272,7 +272,7 @@ DRAW.doomMark = (ctx, f, w, layer) => {
   ctx.save(); ctx.globalAlpha *= life(f, 0.15, 0.2) * (inside ? 1 : 0.4);
   upright(ctx, x, y, () => {
     ctx.scale(pulse, pulse);
-    if (OUTLINES) { ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(0, 0, 13, -Math.PI / 2, -Math.PI / 2 + TAU * left); ctx.stroke(); } // (round 19, lane toggles19)
+    if (OUTLINES) { ctx.strokeStyle = inkFor('#C8453D'); /* (round 19, lane looks19) */ ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(0, 0, 13, -Math.PI / 2, -Math.PI / 2 + TAU * left); ctx.stroke(); } // (round 19, lane toggles19)
     ctx.strokeStyle = '#C8453D'; ctx.lineWidth = 2.6; ctx.beginPath(); ctx.arc(0, 0, 13, -Math.PI / 2, -Math.PI / 2 + TAU * left); ctx.stroke();
     inked(ctx, () => { ctx.beginPath(); ctx.arc(0, -1.5, 7.5, Math.PI * 0.85, Math.PI * 2.15); ctx.lineTo(4.5, 6); ctx.lineTo(-4.5, 6); ctx.closePath(); }, '#EDE4CD');
     ctx.fillStyle = '#2B2230'; ctx.beginPath(); ctx.arc(-3, -1.5, 2.1, 0, TAU); ctx.arc(3, -1.5, 2.1, 0, TAU); ctx.fill(); ctx.fillRect(-0.7, 2, 1.4, 2.4);

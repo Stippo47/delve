@@ -2,7 +2,7 @@
 // brass furnace mouth and a lamp for an eye, two smokestacks at its back, and two jointed arms (shoulder hub, upper
 // arm, elbow gear, forearm, wrist) that end in a hammer and a three-fingered claw. The arms telescope on bright piston
 // rods when they reach. All of it shares one outline. The fight's state is u.ge (boss-engine.js).
-import { TAU, clamp, dist, OUTLINES } from './util.js';
+import { TAU, clamp, dist, OUTLINES, inkFor } from './util.js'; // (round 19, lane looks19: inkFor)
 import { flame, upright, inked, star } from './fx.js';
 import { quake, dustPuffs, EL } from './fxkit.js';
 import { figure, washOf, flashing, lin, rad, ballFill, gloss, glow, shade, ell, circ, rrect, capsule, gear, poly, ik2, up, BFX, easeOut, sm, k01, hash, slashBand, inkDisc, rgbaOf } from './boss-draw.js';
@@ -183,7 +183,7 @@ export function drawEngineAir(ctx, w) {
   if (b) { // the beam: an inked white-hot core, a halo, a flare where it stops
     const a = Math.atan2(b.y2 - b.y1, b.x2 - b.x1), fl = 0.85 + 0.15 * Math.sin(T * 50), wdt = b.hw * 0.8 * fl * clamp(b.t / 0.15, 0.2, 1);
     ctx.save(); ctx.lineCap = 'round';
-    if (OUTLINES) { ctx.strokeStyle = '#2B2230'; ctx.lineWidth = wdt + 7; ctx.beginPath(); ctx.moveTo(b.x1, b.y1); ctx.lineTo(b.x2, b.y2); ctx.stroke(); } // (round 19, lane toggles19)
+    if (OUTLINES) { ctx.strokeStyle = inkFor(HOT[2]); /* (round 19, lane looks19) */ ctx.lineWidth = wdt + 7; ctx.beginPath(); ctx.moveTo(b.x1, b.y1); ctx.lineTo(b.x2, b.y2); ctx.stroke(); } // (round 19, lane toggles19)
     ctx.strokeStyle = HOT[2]; ctx.lineWidth = wdt; ctx.beginPath(); ctx.moveTo(b.x1, b.y1); ctx.lineTo(b.x2, b.y2); ctx.stroke();
     ctx.strokeStyle = HOT[0]; ctx.lineWidth = wdt * 0.55; ctx.beginPath(); ctx.moveTo(b.x1, b.y1); ctx.lineTo(b.x2, b.y2); ctx.stroke();
     ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = wdt * 0.2; ctx.beginPath(); ctx.moveTo(b.x1, b.y1); ctx.lineTo(b.x2, b.y2); ctx.stroke();

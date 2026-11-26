@@ -1,7 +1,7 @@
 // The angel's hall and moves, drawn (lane B, bosses3). The angel itself is the art lane's sprite (round 10,
 // art/bosses/biblical-angel.svg): what is drawn here in code is made to sit beside it: gold in the same four tones, the
 // same blue eyes, one ink outline on solid things, none on light. Chains and hoops lie on the floor, under the units.
-import { INK, TAU, clamp, OUTLINE, OUTLINES } from './util.js';
+import { INK, TAU, clamp, OUTLINE, OUTLINES, inkFor } from './util.js'; // (round 19, lane looks19: inkFor)
 import { inked, inkLine, star, upright } from './fx.js';
 import { figure, flashing, lin, rad, gloss, glow, shade, ell, circ, soft, poly, up, BFX, easeOut, sm, k01, hash, inkDisc, streak, rgbaOf } from './boss-draw.js';
 
@@ -20,7 +20,7 @@ function eye(ctx, x, y, s, rot = 0, open = 1) {
 function hoop(ctx, x, y, r, wd, rot, a = 1) {
   if (r < 8) return;
   ctx.save(); ctx.globalAlpha *= a; ctx.lineCap = 'butt';
-  if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = wd + OUTLINE * 2; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.stroke(); }
+  if (OUTLINES) { ctx.strokeStyle = inkFor(GOLD[2]); /* (round 19, lane looks19) */ ctx.lineWidth = wd + OUTLINE * 2; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.stroke(); }
   ctx.strokeStyle = GOLD[2]; ctx.lineWidth = wd; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.stroke();
   ctx.strokeStyle = GOLD[1]; ctx.lineWidth = wd * 0.7; ctx.beginPath(); ctx.arc(x, y, r + wd * 0.06, 0, TAU); ctx.stroke();
   ctx.strokeStyle = GOLD[0]; ctx.lineWidth = wd * 0.22; ctx.beginPath(); ctx.arc(x, y, r + wd * 0.2, 0, TAU); ctx.stroke();
@@ -37,13 +37,14 @@ function chain(ctx, x1, y1, a, d, T, rattle = 0) {
     for (let i = 0; i < n; i++) { const x = (i + 0.5) * (d / n), y = rattle ? Math.sin(T * 40 + i * 1.7) * rattle : 0;
       if (i % 2) { ctx.moveTo(x - 9, y); ctx.lineTo(x + 9, y); } else { ctx.moveTo(x + 10, y); ctx.ellipse(x, y, 10, 6.5, 0, 0, TAU); } }
     ctx.stroke(); };
-  if (OUTLINES) links(INK, 4.6 + OUTLINE * 2); links(GOLD[2], 4.6); links(GOLD[0], 1.8);
+  if (OUTLINES) links(inkFor(GOLD[2]), 4.6 + OUTLINE * 2); // (round 19, lane looks19: inkFor)
+  links(GOLD[2], 4.6); links(GOLD[0], 1.8);
   ctx.restore();
 }
 function shackle(ctx, x, y, a, shut) { // the chain's end: a gold cuff, open as it flies, shut on what it holds
   ctx.save(); ctx.translate(x, y); ctx.rotate(a);
   const gap = shut ? 0.25 : 1.1, p = () => { ctx.beginPath(); ctx.arc(14, 0, 19, gap, TAU - gap); };
-  ctx.lineCap = 'round'; if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = 7.5 + OUTLINE * 2; p(); ctx.stroke(); } ctx.strokeStyle = GOLD[1]; ctx.lineWidth = 7.5; p(); ctx.stroke(); ctx.strokeStyle = GOLD[0]; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.arc(14, 0, 21, Math.PI * 0.9, Math.PI * 1.5); ctx.stroke();
+  ctx.lineCap = 'round'; if (OUTLINES) { ctx.strokeStyle = inkFor(GOLD[1]); /* (round 19, lane looks19) */ ctx.lineWidth = 7.5 + OUTLINE * 2; p(); ctx.stroke(); } ctx.strokeStyle = GOLD[1]; ctx.lineWidth = 7.5; p(); ctx.stroke(); ctx.strokeStyle = GOLD[0]; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.arc(14, 0, 21, Math.PI * 0.9, Math.PI * 1.5); ctx.stroke();
   inkDisc(ctx, -5, 0, 6.5, GOLD[2]);
   ctx.restore();
 }
@@ -118,7 +119,7 @@ BFX.hoop = { ground(ctx, f, k, w) { // a wheel flown out: it spreads to its ring
 BFX.hornBlast = { air(ctx, f, k) { // the note let go: short bars of sound bursting down the cone
   ctx.lineCap = 'round';
   for (let row = 0; row < 4; row++) { const q = k01(k * 1.3 - row * 0.1); if (q <= 0 || q >= 1) continue; const d = 70 + (f.r - 70) * easeOut(q) * (0.5 + row * 0.17);
-    for (let i = -2; i <= 2; i++) { const a = f.a + i * f.arc / 5.2; if (OUTLINES) { ctx.strokeStyle = INK; ctx.lineWidth = 12 * (1 - q) + 3; ctx.beginPath(); ctx.arc(f.x, f.y, d, a - 0.07, a + 0.07); ctx.stroke(); }
+    for (let i = -2; i <= 2; i++) { const a = f.a + i * f.arc / 5.2; if (OUTLINES) { ctx.strokeStyle = inkFor(row % 2 ? GOLD[0] : WHITE); /* (round 19, lane looks19) */ ctx.lineWidth = 12 * (1 - q) + 3; ctx.beginPath(); ctx.arc(f.x, f.y, d, a - 0.07, a + 0.07); ctx.stroke(); }
       ctx.strokeStyle = row % 2 ? GOLD[0] : WHITE; ctx.lineWidth = 8 * (1 - q) + 1; ctx.beginPath(); ctx.arc(f.x, f.y, d, a - 0.07, a + 0.07); ctx.stroke(); } }
 } };
 BFX.chainCatch = { air(ctx, f, k) { glow(ctx, f.x, f.y, 46, WHITE, 0.7 * (1 - k)); ctx.globalAlpha = 1 - k; inked(ctx, () => star(ctx, f.x, f.y, 22 * easeOut(k) + 6, 4, 0.3, 0.4), WHITE); } };

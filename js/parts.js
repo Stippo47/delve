@@ -9,7 +9,7 @@
 // a hero's and a bee's half; the gaper's data-line made up for it by hand). The art files carry no outline of their own.
 //
 // Coordinates: everything here is in SVG units, the sprite's own frame (220 box, centre 100,100, front = +y).
-import { INK, OUTLINE, OUTLINES, clamp, wrapAngle } from './util.js';
+import { INK, OUTLINE, OUTLINES, OLCOL, inkRGB, inkFor, shadePixels, clamp, wrapAngle } from './util.js'; // (round 19, lane looks19: OLCOL, inkRGB, inkFor: the outline's own colour)
 import { parseVariantUrl, recolorSvgText } from './recolor.js';
 
 const LINE = 6;            // outline radius in SVG units when the caller doesn't say how big it draws the figure (about OUTLINE at hero size)
@@ -127,9 +127,10 @@ async function buildSet(rig, px, line) {
   try { data = cvs.map((c) => c.getContext('2d').getImageData(0, 0, px, px)); } catch { data = null; }
   if (data) moveLooseShadows(rig, data);
   const out = [];
+  const all = new Map(); // (round 19, lane looks19: the whole figure's colours, for its own-colour outline)
   rig.layers.forEach((l, i) => {
-    let x0 = 0, y0 = 0, x1 = px, y1 = px;
-    if (data) {
+    let x0 = 0, y0 = 0, x1 = px, y1 = px, dom = null;
+    if (data) { dom = domOf(data[i].data, px, l.bareOf || l.gearOf ? null : all);
       const d = data[i].data; x0 = px; y0 = px; x1 = 0; y1 = 0;
       for (let y = 0; y < px; y++) for (let x = 0; x < px; x++) if (d[(y * px + x) * 4 + 3] > 2) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
       if (x1 < x0) return; // an empty layer
@@ -139,11 +140,28 @@ async function buildSet(rig, px, line) {
     }
     const w = x1 - x0, h = y1 - y0;
     const img = canvas(w, h); img.getContext('2d').drawImage(cvs[i], -x0, -y0);
-    out.push({ id: l.id, bareOf: l.bareOf, gearOf: l.gearOf, pivot: l.pivot, moves: l.moves, img, ink: grow(img, line * k, INK), x: B0 + x0 / k, y: B0 + y0 / k, w: w / k, h: h / k, tints: {} });
+    out.push({ id: l.id, bareOf: l.bareOf, gearOf: l.gearOf, pivot: l.pivot, moves: l.moves, img, ink: grow(img, line * k, INK), x: B0 + x0 / k, y: B0 + y0 / k, w: w / k, h: h / k, tints: {}, dom });
   });
   for (const L of out) if (L.bareOf) { const A = out.find((x) => x.id === L.bareOf); if (A) A.hasBare = true; } // (round 19: Disarmed)
-  return { px, k, line, layers: out, string: rig.string, used: 0 };
+  const set = { px, k, line, layers: out, string: rig.string, used: 0, dom: topOf(all) };
+  if (OLCOL.own) for (const L of out) ownInk(L, set); // (round 19, lane looks19: the Own colour outline made now, with the picture, not on its first frame)
+  return set;
 }
+
+// Round 19 (lane looks19): a picture's own colour, for its outline in the Own colour look: the commonest colour of its
+// solid pixels (colours grouped 8 levels a channel, the group's mean), leaving out the near-black ones (eyes, mouths,
+// lines drawn in ink). Every other pixel is read, which is plenty. into: a map that gathers the whole figure's counts.
+export function domOf(d, px, into = null) {
+  const m = new Map();
+  for (let y = 0; y < px; y += 2) for (let x = 0; x < px; x += 2) {
+    const p = (y * px + x) * 4; if (d[p + 3] < 200) continue;
+    const r = d[p], g = d[p + 1], b = d[p + 2]; if (r + g + b < 110) continue;
+    const key = (r >> 5) << 6 | (g >> 5) << 3 | (b >> 5);
+    for (const M of into ? [m, into] : [m]) { const e = M.get(key); if (e) { e[0]++; e[1] += r; e[2] += g; e[3] += b; } else M.set(key, [1, r, g, b]); }
+  }
+  return topOf(m);
+}
+function topOf(m) { let best = null; for (const e of m.values()) if (!best || e[0] > best[0]) best = e; return best ? [best[1] / best[0], best[2] / best[0], best[3] / best[0]] : null; }
 
 // The silhouette grown by r pixels, filled with one colour: stamps of the alpha round two circles.
 export function growInk(src, r, color) { return grow(src, r, color); }
@@ -154,6 +172,29 @@ function grow(src, r, color) {
   g.globalCompositeOperation = 'source-in'; g.fillStyle = color; g.fillRect(0, 0, c.width, c.height);
   return c;
 }
+
+// Round 19 (lane looks19): the outline in each pixel's own colour (the Own colour look, 'pixel'): the part's picture
+// itself grown by r pixels (stamps round two circles, the nearest last, so an outline pixel takes the colour of the edge
+// it rings), then darkened toward INK by OLCOL.k. A red cloak gets a dark red edge, a steel blade a dark steel one.
+export function growOwn(src, r) {
+  const c = canvas(src.width, src.height), g = c.getContext('2d');
+  const ring = (rr, n, ph) => { for (let i = 0; i < n; i++) { const a = (i + ph) / n * Math.PI * 2; g.drawImage(src, Math.cos(a) * rr, Math.sin(a) * rr); } };
+  ring(r, 24, 0); ring(r * 0.55, 12, 0.5); g.drawImage(src, 0, 0);
+  try { const d = g.getImageData(0, 0, c.width, c.height); shadePixels(d.data); g.putImageData(d, 0, 0); }
+  catch { g.globalCompositeOperation = 'source-atop'; g.globalAlpha = OLCOL.k; g.fillStyle = INK; g.fillRect(0, 0, c.width, c.height); }
+  return c;
+}
+// A part's outline in the Own colour look (cached with its tints): per pixel ('pixel'), the part's commonest colour
+// ('part') or the whole figure's ('figure').
+function ownInk(L, set) {
+  return colored(L, 'o' + OLCOL.key, () => {
+    const how = OLCOL.how, dom = how === 'figure' ? set.dom : L.dom;
+    if (how === 'pixel') return growOwn(L.img, (set.line || LINE) * set.k);
+    return dom ? filled(L, inkRGB(dom[0], dom[1], dom[2])) : L.ink;
+  });
+}
+// the outline picture of a part as the look has it (render.js: a hero's weapon flying on its own)
+export function inkOf(L, set) { return OLCOL.own && set ? ownInk(L, set) : L.ink; }
 
 // A fixed layer (the body) can hold shadows it casts on a moving part under it (the shoulders' shadow on a sword
 // where it comes out from under them). Those must move with the part, so they are handed down to it.
@@ -329,10 +370,10 @@ export function paintRig(g, set, pose, mode = 'normal', ink = null, shift = fals
     for (const L of Ls) {
       if (hidden(pose, L)) continue;
       g.save(); place(g, L, pOf(pose, L)); place(g, L, swayOf(pose, L));
-      g.drawImage(mode === 'flash' ? filled(L, '#FFFFFF') : ink ? filled(L, ink) : L.ink, L.x, L.y, L.w, L.h);
+      g.drawImage(mode === 'flash' ? filled(L, '#FFFFFF') : ink ? filled(L, ink) : OLCOL.own ? ownInk(L, set) : L.ink, L.x, L.y, L.w, L.h); // (round 19, lane looks19: Own colour)
       g.restore();
     }
-    if (str) strokeString(g, str, mode === 'flash' ? '#FFFFFF' : ink || INK, set.string.w + (set.line || LINE) * 2);
+    if (str) strokeString(g, str, mode === 'flash' ? '#FFFFFF' : ink || inkFor(set.string.color), set.string.w + (set.line || LINE) * 2);
     if (mode === 'flash' || mode === 'ink') return; // (round 13, lane E: 'ink', the outline alone: a chain's links are inked together, then filled)
   }
   for (const L of Ls) {

@@ -48,3 +48,41 @@ export function hpSwatch(l) {
   if (l.id === 3) return `<svg viewBox="0 0 64 32">${body()}${[0, 1, 2, 3, 4].map((i) => `<circle cx="${24 + i * 4}" cy="3.5" r="1.6" fill="${i < 3 ? '#E0604B' : '#000'}" opacity="${i < 3 ? 1 : 0.4}"/>`).join('')}</svg>`;
   return `<svg viewBox="0 0 64 32">${body('#8A4A44')}<circle cx="32" cy="15" r="8" fill="none" stroke="#E0604B" stroke-opacity=".6" stroke-width="2"/></svg>`;
 }
+
+// ---------------------------------------------------------------- round 19 (lane looks19): the two looks being tried
+// The designer: "tried coloured outlines depending on the colour of the entity. I'm exploring looks." and "I want to
+// see what they look like pixelated". Settings: Outline colour (util.js OLCOL / setOlColor) and Pixel look (util.js
+// PIXEL / setPixel), with a little picture each.
+import { inkPreview, INK as INK_C } from './util.js';
+export const OL_LOOKS = [
+  { id: 'ink', name: 'Ink', blurb: 'One dark ink line round everything, as before.' },
+  { id: 'mid', name: 'Own colour', blurb: 'Every part ringed in a dark shade of its own colour.' },
+  { id: 'light', name: 'Own colour, bright', blurb: 'A lighter shade: more colour, a softer edge.' },
+  { id: 'figure', name: 'One colour each', blurb: 'Each thing ringed in one shade: its main colour.' },
+];
+// four little figures: a red blob, a blue one with a gold hilt, a green one, a bone-white one
+export function olSwatch(l) {
+  const ring = (c) => (l.id === 'ink' ? INK_C : inkPreview(c, l.id));
+  const one = (main, part) => (l.id === 'figure' ? ring(main) : ring(part));
+  const fig = (x, main, part) => `<circle cx="${x}" cy="17" r="5.4" fill="${main}" stroke="${ring(main)}" stroke-width="2.6"/><rect x="${x + 2.5}" y="6" width="3.4" height="7" rx="1.2" fill="${part}" stroke="${one(main, part)}" stroke-width="2"/>`;
+  return `<svg viewBox="0 0 64 32"><rect x="0" y="0" width="64" height="32" rx="6" fill="#B9B5B2"/>${fig(9, '#D9534F', '#E8C26A')}${fig(24.5, '#3F7AC4', '#E8C26A')}${fig(40, '#7FB04A', '#B07A4A')}${fig(55.3, '#EDE3CB', '#9AA0AA')}</svg>`;
+}
+export const PX_LOOKS = [
+  { id: 0, name: 'Off', blurb: 'Sharp, as it has always been.' },
+  { id: 2, name: 'Small pixels', blurb: 'Each pixel 2 points across.' },
+  { id: 3, name: 'Medium pixels', blurb: 'Each pixel 3 points across.' },
+  { id: 4, name: 'Big pixels', blurb: 'Each pixel 4 points across.' },
+];
+// a red blob with its outline, drawn on a grid of the look's pixels (or smooth for Off)
+export function pxSwatch(l) {
+  const bg = '<rect x="0" y="0" width="64" height="32" rx="6" fill="#B9B5B2"/>';
+  if (!l.id) return `<svg viewBox="0 0 64 32">${bg}<circle cx="22" cy="16" r="9" fill="#D9534F" stroke="${INK_C}" stroke-width="2.4"/><circle cx="44" cy="16" r="6" fill="#3F7AC4" stroke="${INK_C}" stroke-width="2.4"/></svg>`;
+  const c = l.id * 1.45, cells = [];
+  for (const [cx, cy, r, col] of [[22, 16, 9, '#D9534F'], [44, 16, 6, '#3F7AC4']])
+    for (let y = cy - r - 2 * c; y < cy + r + 2 * c; y += c) for (let x = cx - r - 2 * c; x < cx + r + 2 * c; x += c) {
+      const gx = Math.floor(x / c) * c, gy = Math.floor(y / c) * c, d = Math.hypot(gx + c / 2 - cx, gy + c / 2 - cy);
+      if (d < r) cells.push([gx, gy, d < r * 0.4 && gx < cx && gy < cy ? '#F08A80' : col]); else if (d < r + c) cells.push([gx, gy, INK_C]);
+    }
+  const seen = new Set();
+  return `<svg viewBox="0 0 64 32" shape-rendering="crispEdges">${bg}${cells.filter(([x, y]) => { const k = x + ',' + y; if (seen.has(k)) return false; seen.add(k); return true; }).map(([x, y, f]) => `<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${(c + 0.05).toFixed(2)}" height="${(c + 0.05).toFixed(2)}" fill="${f}"/>`).join('')}</svg>`;
+}

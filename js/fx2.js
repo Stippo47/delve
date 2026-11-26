@@ -5,7 +5,7 @@
 //   SIG2[abilityId](ctx, f, k, el, w) an ability's own signature at the cast (fxkit.js drawSigAir; return false to skip
 //                                     the default cast flash)
 // installFx2 (called by fxkit.js) adds each new ability's element and signature time, and how its shots burst.
-import { TAU, clamp, OUTLINES } from './util.js';
+import { TAU, clamp, OUTLINES, inkFor } from './util.js'; // (round 19, lane looks19: inkFor)
 import { inked, inkLine, glowDisc, star, upright, upVec, hash, easeOut, flame, blob, trail, roundRect } from './fx.js';
 import { drawPuddle } from './puddles.js';
 import { ART2, LOOK2 } from './looks2.js';
@@ -616,7 +616,7 @@ DRAW.shell = (ctx, f, w, layer) => {
 DRAW.netOn = (ctx, f, w, layer) => {
   if (layer !== 'air') return; const e = f.unit, x = e ? e.x : f.x, y = e ? e.y : f.y, r = f.r, a = life(f, 0.05, 0.3);
   ctx.save(); ctx.globalAlpha *= 0.85 * a; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.clip();
-  if (OUTLINES) { ctx.strokeStyle = '#2B2230'; ctx.lineWidth = 3.2; for (let i = -6; i <= 6; i++) { ctx.beginPath(); ctx.moveTo(x + i * 10 - r, y - r); ctx.lineTo(x + i * 10 + r, y + r); ctx.moveTo(x + i * 10 + r, y - r); ctx.lineTo(x + i * 10 - r, y + r); ctx.stroke(); } } // (round 19, lane toggles19)
+  if (OUTLINES) { ctx.strokeStyle = inkFor('#C9A070'); /* (round 19, lane looks19) */ ctx.lineWidth = 3.2; for (let i = -6; i <= 6; i++) { ctx.beginPath(); ctx.moveTo(x + i * 10 - r, y - r); ctx.lineTo(x + i * 10 + r, y + r); ctx.moveTo(x + i * 10 + r, y - r); ctx.lineTo(x + i * 10 - r, y + r); ctx.stroke(); } } // (round 19, lane toggles19)
   ctx.strokeStyle = '#C9A070'; ctx.lineWidth = 1.6; for (let i = -6; i <= 6; i++) { ctx.beginPath(); ctx.moveTo(x + i * 10 - r, y - r); ctx.lineTo(x + i * 10 + r, y + r); ctx.moveTo(x + i * 10 + r, y - r); ctx.lineTo(x + i * 10 - r, y + r); ctx.stroke(); }
   ctx.restore();
 };
@@ -981,7 +981,7 @@ DRAW.burrowTrail = (ctx, f, w, layer) => {
   ctx.save(); ctx.globalAlpha *= a;
   const rOf = (p, i) => W * (0.85 + 0.3 * hash(i, 5)) * Math.min(1, (f.t - p.t) / 0.08 + 0.3);
   const along = (fn) => { ctx.beginPath(); P.forEach((p, i) => fn(p, rOf(p, i), i)); };
-  if (OUTLINES) { ctx.fillStyle = '#2B2230'; along((p, r) => { ctx.moveTo(p.x + r + 2.4, p.y); ctx.arc(p.x, p.y, r + 2.4, 0, TAU); }); ctx.fill(); }
+  if (OUTLINES) { ctx.fillStyle = inkFor(SOIL[1]); /* (round 19, lane looks19) */ along((p, r) => { ctx.moveTo(p.x + r + 2.4, p.y); ctx.arc(p.x, p.y, r + 2.4, 0, TAU); }); ctx.fill(); }
   ctx.fillStyle = SOIL[1]; along((p, r) => { ctx.moveTo(p.x + r, p.y); ctx.arc(p.x, p.y, r, 0, TAU); }); ctx.fill();
   ctx.fillStyle = SOIL[0]; along((p, r) => { const rr = r * 0.45; ctx.moveTo(p.x + rr, p.y + 2); ctx.arc(p.x, p.y + 2, rr, 0, TAU); }); ctx.fill(); // the furrow's dark middle
   // the churned clumps, both sides of it

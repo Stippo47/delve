@@ -26,7 +26,7 @@ import { setShowAll, showAll } from './skilltree.js';
 import { makeScene } from './camp-scene.js';
 import { makeMap } from './camp-map.js';
 import * as LOOKS from './looks.js';
-import { OUTLINES, setOutlines } from './util.js'; // round 19 (lane toggles19): the two drawing switches
+import { OUTLINES, setOutlines, OLCOL, setOlColor, PIXEL, setPixel } from './util.js'; // round 19 (lane toggles19): the two drawing switches; (lane looks19): outline colour, pixel look
 import { HPBARS, setHpBars } from './hpstyle.js';
 import { resultStats, wireStats } from './stats-ui.js';
 
@@ -264,6 +264,8 @@ function settingsView() {
     <section class="group draw-opts"><h3 class="cap">Outlines and health bars</h3>
       <div role="button" class="rowbtn ${OUTLINES ? 'on' : ''}" data-act="outlines"><div><b>Outlines</b><span class="quiet small">The dark ink line round every hero, monster, boss, prop and effect, in fights and at camp.</span></div><span class="switch"><i></i></span></div>
       <div role="button" class="rowbtn ${HPBARS ? 'on' : ''}" data-act="hpbars"><div><b>Health bars</b><span class="quiet small">Bars over the fighters and the boss's bar at the top. The party's cards keep theirs.</span></div><span class="switch"><i></i></span></div></section>
+    <section class="group ${OUTLINES ? '' : 'inactive'}"><h3 class="cap">Outline colour${OUTLINES ? '' : ' <span class="off-note">off: outlines are off</span>'}</h3>${looks(LOOKS.OL_LOOKS, OLCOL.name, 'olcolor', LOOKS.olSwatch)}</section>
+    <section class="group"><h3 class="cap">Pixel look</h3>${looks(LOOKS.PX_LOOKS, PIXEL, 'pixel', LOOKS.pxSwatch)}</section>
     <section class="group ${HPBARS ? '' : 'inactive'}"><h3 class="cap">Enemy health, once hurt${HPBARS ? '' : ' <span class="off-note">off: health bars are off</span>'}</h3>${looks(LOOKS.hpStyles(), LOOKS.hpStyle(), 'hpstyle', LOOKS.hpSwatch)}</section>
     <section class="group icon-picks"><h3 class="cap">Stat icons</h3>${looks(ICON_PICKS.stats, iconPicks.stats, 'iconstats', (l) => iconSwatch('stats', l.id))}
       <h3 class="cap">Trinket, potion and small icons</h3>${looks(ICON_PICKS.items, iconPicks.items, 'iconitems', (l) => iconSwatch('items', l.id))}</section>
@@ -409,6 +411,8 @@ function onClick(e) {
     case 'hpstyle': if (!HPBARS) { no(); return; } LOOKS.setHpStyle(arg); cue('tap'); render(); break;
     case 'outlines': setOutlines(!OUTLINES); cue('tap'); render(); break; // (round 19, lane toggles19: the camp behind repaints at once)
     case 'hpbars': setHpBars(!HPBARS); cue('tap'); render(); break;
+    case 'olcolor': if (!OUTLINES) { no(); return; } setOlColor(arg); cue('tap'); render(); break; // (round 19, lane looks19)
+    case 'pixel': setPixel(+arg); cue('tap'); render(); break;
     case 'iconstats': case 'iconitems': setIconPick(act === 'iconstats' ? 'stats' : 'items', arg).then(() => render()); cue('tap'); break;
     case 'cheat': save.cheat = !save.cheat; ok(); break;
     case 'battleDev': save.battleDev = !save.battleDev; cue('tap'); ok(); break;

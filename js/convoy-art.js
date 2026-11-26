@@ -4,7 +4,7 @@
 // cache through w.paintGround; drawCanopy keeps two strips of its own); a frame only copies them.
 // World axes: x runs up the road (up the screen in portrait), y across it. In portrait the light comes from the screen's
 // top left = world (+x, -y); shadows fall to world (-x, +y).
-import { INK, TAU, clamp, OUTLINES } from './util.js';
+import { INK, TAU, clamp, OUTLINES, OLKEY, inkFor } from './util.js'; // (round 19, lane looks19: OLKEY, inkFor)
 
 // a fixed hash, so the caches come out the same every time
 const hz = (a, b = 0) => { let h = Math.imul((a * 73856093) ^ (b * 19349663), 0x9E3779B1) >>> 0; h = Math.imul(h ^ (h >>> 15), 0x85EBCA6B) >>> 0; return ((h ^ (h >>> 13)) >>> 0) / 4294967296; };
@@ -124,7 +124,7 @@ export function paintRock(g, x, y, r, look, seed = 0) {
   const [dk, md, lt] = look.rock;
   g.fillStyle = 'rgba(14,16,10,0.34)'; g.beginPath(); g.ellipse(x - LX * r * 0.35, y - LY * r * 0.35, r * 1.15, r * 0.95, 0, 0, TAU); g.fill();
   const poly = (pts) => { g.beginPath(); pts.forEach(([px, py], i) => (i ? g.lineTo(px, py) : g.moveTo(px, py))); g.closePath(); };
-  g.save(); g.lineJoin = 'round'; poly(out); if (OUTLINES) { g.strokeStyle = INK; g.lineWidth = 5; g.stroke(); } g.fillStyle = dk; g.fill(); g.restore(); // (round 19, lane toggles19)
+  g.save(); g.lineJoin = 'round'; poly(out); if (OUTLINES) { g.strokeStyle = inkFor(md); g.lineWidth = 5; g.stroke(); } g.fillStyle = dk; g.fill(); g.restore(); // (round 19, lane toggles19; lane looks19: inkFor)
   for (let i = 0; i < n; i++) { // the side facets
     const a = out[i], b = out[(i + 1) % n], c = top[(i + 1) % n], d = top[i];
     const ex = (a[0] + b[0]) / 2 - x, ey = (a[1] + b[1]) / 2 - y, l = Math.hypot(ex, ey) || 1, lit = (ex * LX + ey * LY) / l;
@@ -134,7 +134,7 @@ export function paintRock(g, x, y, r, look, seed = 0) {
   g.fillStyle = lin(g, x + LX * r, y + LY * r, x - LX * r * 0.3, y - LY * r * 0.3, lt, md); poly(top); g.fill();
   g.strokeStyle = 'rgba(30,26,30,0.35)'; g.lineWidth = 1.4; poly(top); g.stroke();
   if (look.cap) { g.save(); poly(top); g.clip(); g.fillStyle = hexA(look.cap, look.snow ? 0.95 : 0.7); g.beginPath(); g.ellipse(x + LX * r * 0.35, y + LY * r * 0.35, r * 0.45, r * 0.3, 0.5, 0, TAU); g.fill(); g.restore(); }
-  if (OUTLINES) { g.save(); g.lineJoin = 'round'; g.strokeStyle = INK; g.lineWidth = 4.8; poly(out); g.stroke(); g.restore(); }
+  if (OUTLINES) { g.save(); g.lineJoin = 'round'; g.strokeStyle = inkFor(md); /* (round 19, lane looks19) */ g.lineWidth = 4.8; poly(out); g.stroke(); g.restore(); }
 }
 
 // ---------------------------------------------------------------- the tree line (round 14; drawn over the units)
@@ -189,7 +189,7 @@ export function drawCanopy(ctx, w, view, opt) {
   let s = view.base * view.dpr; // (not the zoom: a pinch must not repaint it)
   if ((PER + LAP) * D * s * s > 1.5e6) s = Math.sqrt(1.5e6 / ((PER + LAP) * D));
   s = Math.round(s * 20) / 20;
-  const key = `${EDGE}:${s}:${style}:${opt.key}:${OUTLINES}`; // (round 19, lane toggles19: repainted when the outlines are switched)
+  const key = `${EDGE}:${s}:${style}:${opt.key}:${OUTLINES}${OLKEY}`; // (round 19, lane toggles19: repainted when the outlines are switched; lane looks19: or their colour)
   if (!tiles || tiles.key !== key) tiles = { key, c: [0, 1].map((layer) => [-1, 1].map((side) => paintTile(layer, side, style, look, EDGE, s))) };
   const half = (view.rot ? view.ch : view.cw) / view.scale / 2 + 60, x0 = view.camX - half, x1 = view.camX + half;
   ctx.fillStyle = deepOf(look); // the deep wood past the tiles (a camera dragged past the world's edge)
@@ -241,7 +241,7 @@ function cragSil(g, x, d, r, k, grow) {
 }
 function paintCrown(g, t, sil, ink, L, look) {
   const { x, d, r, k } = t, [c0, c1, c2] = t.pal, path = (dx, dd, rr = r) => { g.beginPath(); sil(g, x + dx, d + dd, rr, k, 0); };
-  if (OUTLINES) { g.strokeStyle = INK; g.fillStyle = INK; g.lineWidth = ink * 2; path(0, 0); g.fill(); g.stroke(); }
+  if (OUTLINES) { g.strokeStyle = g.fillStyle = inkFor(c0); /* (round 19, lane looks19) */ g.lineWidth = ink * 2; path(0, 0); g.fill(); g.stroke(); }
   g.fillStyle = c0; path(0, 0); g.fill();
   g.save(); path(0, 0); g.clip();
   g.fillStyle = c1; path(L.x * r * 0.15, L.d * r * 0.15); g.fill();
@@ -264,7 +264,7 @@ function paintFir(g, t, sil, ink, L, look) {
   const { x, d, r, k } = t, [c0, c1, c2] = look.snow ? [t.pal[0], '#DCE8F2', '#FFFFFF'] : t.pal; // (snow on the upper tier)
   [[1, 0, ink, c0], [0.56, 0.1, ink * 0.7, c1]].forEach(([q, off, lw, col], i) => {
     g.beginPath(); firSil(g, x + L.x * r * off, d + L.d * r * off, r * q, k + i * 0.0625, 0);
-    if (OUTLINES) { g.strokeStyle = INK; g.fillStyle = INK; g.lineWidth = lw * 2; g.fill(); g.stroke(); }
+    if (OUTLINES) { g.strokeStyle = g.fillStyle = inkFor(col); /* (round 19, lane looks19) */ g.lineWidth = lw * 2; g.fill(); g.stroke(); }
     g.fillStyle = col; g.fill();
   });
   g.fillStyle = c2; g.beginPath(); firSil(g, x + L.x * r * 0.17, d + L.d * r * 0.17, r * 0.2, k + 0.125, 0); g.fill();
@@ -280,7 +280,7 @@ function paintBank(g, all, pal, cfg, L, layer, lip, lipD) {
   const ribbon = (body, under, lift, slide, shadow) => {
     const path = (dx, dd) => { g.beginPath(); for (const t of all) bankSil(g, t.x + slide + dx, t.d + lift + dd, t.r, t.k, 0); g.rect(-400, -OUT - 400, PER + 800, OUT + 400 + lo + lift + dd); };
     if (shadow) { g.fillStyle = lip; path(-20, lipD); g.fill(); }
-    if (OUTLINES) { g.strokeStyle = INK; g.fillStyle = INK; g.lineWidth = cfg.ink * 2; path(0, 0); g.fill(); g.stroke(); }
+    if (OUTLINES) { g.strokeStyle = g.fillStyle = inkFor(under); /* (round 19, lane looks19) */ g.lineWidth = cfg.ink * 2; path(0, 0); g.fill(); g.stroke(); }
     g.fillStyle = under; path(0, 0); g.fill();
     g.save(); path(0, 0); g.clip(); g.fillStyle = body; path(L.x * 20, L.d * 20); g.fill(); g.restore();
   };
@@ -297,7 +297,7 @@ function paintBank(g, all, pal, cfg, L, layer, lip, lipD) {
 // on the road. (0, 0) is the middle of the bed, the unit's centre.
 export function paintWagon(ctx, { roll = 0, hurt = 0, flash = false } = {}) {
   const rr = (x, y, w, h, r) => { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); };
-  const ink = (fn, fill, lw = 2.4) => { if (OUTLINES) { ctx.save(); ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineWidth = lw * 2; ctx.lineJoin = 'round'; fn(); ctx.fill(); ctx.stroke(); ctx.restore(); } ctx.fillStyle = fill; fn(); ctx.fill(); };
+  const ink = (fn, fill, lw = 2.4) => { if (OUTLINES) { ctx.save(); ctx.fillStyle = ctx.strokeStyle = inkFor(fill); /* (round 19, lane looks19) */ ctx.lineWidth = lw * 2; ctx.lineJoin = 'round'; fn(); ctx.fill(); ctx.stroke(); ctx.restore(); } ctx.fillStyle = fill; fn(); ctx.fill(); };
   const L = (x0, y0, x1, y1, a, b) => { const gr = ctx.createLinearGradient(x0, y0, x1, y1); gr.addColorStop(0, a); gr.addColorStop(1, b); return gr; };
   ctx.save();
   // one soft shadow under the whole team
@@ -350,7 +350,7 @@ export function paintWagon(ctx, { roll = 0, hurt = 0, flash = false } = {}) {
 }
 
 // ---------------------------------------------------------------- bits
-function inked(g, fn, fill, lw = 2.4) { if (OUTLINES) { g.save(); g.fillStyle = INK; g.strokeStyle = INK; g.lineWidth = lw * 2; g.lineJoin = 'round'; fn(); g.fill(); g.stroke(); g.restore(); } g.fillStyle = fill; fn(); g.fill(); }
+function inked(g, fn, fill, lw = 2.4) { if (OUTLINES) { g.save(); g.fillStyle = g.strokeStyle = inkFor(fill); /* (round 19, lane looks19) */ g.lineWidth = lw * 2; g.lineJoin = 'round'; fn(); g.fill(); g.stroke(); g.restore(); } g.fillStyle = fill; fn(); g.fill(); }
 function lin(g, x0, y0, x1, y1, a, b) { const gr = g.createLinearGradient(x0, y0, x1, y1); gr.addColorStop(0, a); gr.addColorStop(1, b); return gr; }
 function poly(g, x, y, r, n, k) { for (let i = 0; i <= n; i++) { const a = i / n * TAU + k, rr = r * (0.82 + 0.18 * hz(i, (k * 100) | 0)); i ? g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr) : g.moveTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } g.closePath(); }
 function mix(a, b, t) { const p = parseInt(a.slice(1), 16), q = parseInt(b.slice(1), 16), f = (sh) => Math.round(((p >> sh) & 255) * (1 - t) + ((q >> sh) & 255) * t); return '#' + ((1 << 24) | (f(16) << 16) | (f(8) << 8) | f(0)).toString(16).slice(1); }

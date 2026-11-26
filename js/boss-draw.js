@@ -6,7 +6,7 @@
 //   figure(ctx, { flash, wash, alpha, ol }, (F) => { F.shape(path, fill); F.line(path, color, width); F.detail(fn); })
 // Also: gradients (lin, rad), paths (ell, rrect, capsule, poly, ribbon), two-bone arms (ik2), boss effects that live
 // for a moment (bfx: pushed by the fight, drawn under or over the units by time, no state of their own).
-import { INK, TAU, clamp, OUTLINE, OUTLINES } from './util.js';
+import { INK, TAU, clamp, OUTLINE, OUTLINES, OLCOL, inkFor } from './util.js'; // (round 19, lane looks19: OLCOL, inkFor)
 import { view } from './render.js';
 import { inked, upright } from './fx.js';
 
@@ -14,26 +14,33 @@ export const OL = OUTLINE; // a boss's outline in room units: the one outline (r
 const SEAM = 'rgba(43,34,48,0.5)';
 
 export function figure(ctx, o, body) {
-  const F = { ctx, pass: 0, ol: o.ol || OL, flash: !!o.flash, wash: null,
+  const F = { ctx, pass: 0, ol: o.ol || OUTLINE, flash: !!o.flash, wash: null, // (round 19, lane looks19: OUTLINE live, so the pixel look's one-pixel line reaches the bosses)
     // a filled shape; fill: a colour, a gradient, or () => either (made only when painting). o.seam: false for no seam.
     shape(path, fill, so) {
-      if (F.pass === 0) { ctx.fillStyle = INK; ctx.strokeStyle = INK; ctx.lineWidth = F.ol * 2; ctx.lineJoin = 'round'; path(); ctx.fill(); ctx.stroke(); return; }
+      // (round 19, lane looks19: the Own colour look inks and seams each shape in a dark shade of its own fill; 'figure',
+      // one colour for the whole figure: the shade most of its shapes have, tallied in a first pass, F.pass 3)
+      if (F.pass === 3) { const o = inkFor(typeof fill === 'function' ? fill() : fill); F.tally.set(o, (F.tally.get(o) || 0) + 1); return; }
+      if (F.pass === 0) { const o = OLCOL.own ? F.one || inkFor(typeof fill === 'function' ? fill() : fill) : INK; ctx.fillStyle = o; ctx.strokeStyle = o; ctx.lineWidth = F.ol * 2; ctx.lineJoin = 'round'; path(); ctx.fill(); ctx.stroke(); return; }
       if (F.pass === 2) { ctx.fillStyle = F.wash; path(); ctx.fill(); return; }
-      if (OUTLINES && !(so && so.seam === false)) { ctx.strokeStyle = SEAM; ctx.lineWidth = 2.6; ctx.lineJoin = 'round'; path(); ctx.stroke(); }
-      ctx.fillStyle = typeof fill === 'function' ? fill() : fill; path(); ctx.fill();
+      const fl = typeof fill === 'function' ? fill() : fill;
+      if (OUTLINES && !(so && so.seam === false)) { ctx.lineWidth = 2.6; ctx.lineJoin = 'round'; if (OLCOL.own) { ctx.save(); ctx.globalAlpha *= 0.5; ctx.strokeStyle = inkFor(fl); path(); ctx.stroke(); ctx.restore(); } else { ctx.strokeStyle = SEAM; path(); ctx.stroke(); } }
+      ctx.fillStyle = fl; path(); ctx.fill();
       // struck: a white wash over the shape for a frame (a big body gone solid white every blow was too much)
       if (F.flash || (so && so.flash)) { ctx.save(); ctx.globalAlpha *= 0.6; ctx.fillStyle = '#FFFFFF'; path(); ctx.fill(); ctx.restore(); }
     },
     // a stroked line as a solid thing (a rod, a chain link's bar)
     line(path, color, width, cap = 'round') {
       ctx.lineCap = cap; ctx.lineJoin = 'round';
-      if (F.pass === 0) { ctx.strokeStyle = INK; ctx.lineWidth = width + F.ol * 2; path(); ctx.stroke(); return; }
+      if (F.pass === 3) { const o = inkFor(typeof color === 'function' ? color() : color); F.tally.set(o, (F.tally.get(o) || 0) + 1); return; }
+      if (F.pass === 0) { ctx.strokeStyle = OLCOL.own ? F.one || inkFor(typeof color === 'function' ? color() : color) : INK; ctx.lineWidth = width + F.ol * 2; path(); ctx.stroke(); return; } // (round 19, lane looks19)
       if (F.pass === 2) { ctx.strokeStyle = F.wash; ctx.lineWidth = width; path(); ctx.stroke(); return; }
-      if (OUTLINES) { ctx.strokeStyle = SEAM; ctx.lineWidth = width + 2.4; path(); ctx.stroke(); }
-      ctx.strokeStyle = typeof color === 'function' ? color() : color; ctx.lineWidth = width; path(); ctx.stroke();
+      const cl = typeof color === 'function' ? color() : color;
+      if (OUTLINES) { ctx.lineWidth = width + 2.4; if (OLCOL.own) { ctx.save(); ctx.globalAlpha *= 0.5; ctx.strokeStyle = inkFor(cl); path(); ctx.stroke(); ctx.restore(); } else { ctx.strokeStyle = SEAM; path(); ctx.stroke(); } }
+      ctx.strokeStyle = cl; ctx.lineWidth = width; path(); ctx.stroke();
     },
     // paint that sits on the shapes (highlights, rivets, glows): only in the paint pass
     detail(fn) { if (F.pass === 1) fn(); },
+    tally: null, one: null, // (round 19, lane looks19: the 'figure' way of Own colour)
     // in a frame of its own: at (x, y), turned by a, scaled by s
     at(x, y, a, fn, s) { ctx.save(); ctx.translate(x, y); if (a) ctx.rotate(a); if (s && s !== 1) ctx.scale(s, s); fn(); ctx.restore(); },
   };
@@ -41,6 +48,7 @@ export function figure(ctx, o, body) {
   if (o.alpha != null && o.alpha < 1) ctx.globalAlpha *= o.alpha;
   // (round 19, lane toggles19: outlines off, no ink pass; nor the seams, whose outer half would ring the figure in a
   // faint line where the ink used to cover it)
+  if (OUTLINES && OLCOL.own && OLCOL.how === 'figure') { F.tally = new Map(); F.pass = 3; body(F); let n = 0; for (const [c, k] of F.tally) if (k > n) { n = k; F.one = c; } } // (round 19, lane looks19)
   if (OUTLINES) { F.pass = 0; body(F); }
   F.pass = 1; body(F);
   for (const [col, a] of o.wash || []) { F.pass = 2; F.wash = col; ctx.save(); ctx.globalAlpha *= a; body(F); ctx.restore(); }

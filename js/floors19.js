@@ -7,7 +7,7 @@
 // floor's chunks except water channels and free-standing walls, then its own soft shadow at the walls' feet.
 // Rules kept: a narrow value range and low contrast (the units must pop off it), big chunky shapes, soft lit
 // gradients, light from the screen's top left, no outlines, no speckle or fine noise, dressing never looks solid.
-import { TAU, INK, OUTLINES } from './util.js';
+import { TAU, INK, OUTLINES, inkFor } from './util.js'; // (round 19, lane looks19: inkFor)
 import { view, OUTLINE } from './render.js';
 
 // ---------------------------------------------------------------- colour, chance, light
@@ -835,7 +835,7 @@ export function paintFloor19(g, w, id) {
 }
 // The sewer channel as scenery.js paints it: murky water between two stone banks.
 function water(g, c) {
-  if (OUTLINES) { g.fillStyle = INK; g.fillRect(c.x - OUTLINE * 2 - 3, c.y, c.w + OUTLINE * 4 + 6, c.h); } // (round 19, lane toggles19)
+  if (OUTLINES) { g.fillStyle = inkFor('#7E8A6C'); g.fillRect(c.x - OUTLINE * 2 - 3, c.y, c.w + OUTLINE * 4 + 6, c.h); } // (round 19, lane toggles19; lane looks19: inkFor)
   g.fillStyle = '#7E8A6C'; g.fillRect(c.x - 3, c.y, c.w + 6, c.h);
   const wg = g.createLinearGradient(c.x, 0, c.x + c.w, 0); wg.addColorStop(0, '#4F8C8A'); wg.addColorStop(1, '#2E5E63');
   g.fillStyle = wg; g.fillRect(c.x + 3, c.y, c.w - 6, c.h);
