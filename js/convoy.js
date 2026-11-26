@@ -186,6 +186,7 @@ function buildStretch(run) {
   w.convoy = { gate: gateOf(), last: last(run), name: S.name, camp: !last(run), look, key: S.theme };
   w.paintGround = paintRoad; // render.js paints it into the floor's cached picture
   w.drawOver = (ctx, ww, view) => { if (SHOW_SIDES) drawSides(ctx, run); drawCanopy(ctx, ww, view, { EDGE, look, key: ww.convoy.key, from: START_X + AHEAD }); drawDowned(ctx, run, view); drawArrows(ctx, run, view); }; // render.js: over the units
+  w.drawBodies = (ctx) => drawDownRings(ctx, run); // render.js: with the bodies, under everything (round 19, lane corpses19)
   // round 14: each hero keeps to its own side of the wagon (sim.js asks these two)
   w.pick = (u, o) => pickFor(run, u, o);            // may u go for o, and how much it would rather (guarding sides)
   w.detour = (u, tx, ty) => roundRig(run, u, tx, ty); // the way round the wagon to somewhere on its other side
@@ -829,7 +830,8 @@ function drawSides(ctx, run) {
   ctx.restore();
 }
 // A downed hero carries a ring that runs down as the road carries them towards the bottom of the screen: gold while
-// there's time, red and pulsing when they're about to be left behind; the revive's progress fills it in gold-white.
+// there's time, red and pulsing when they're about to be left behind; the revive's progress fills it in gold-white
+// (drawDownRings). Over the units: a gatherer's coin.
 function drawDowned(ctx, run, view) {
   const wg = run.wagon, w = run.world; if (!wg) return;
   // a gatherer on its way to gold: a coin bobbing over its head (so the trait reads)
@@ -840,6 +842,10 @@ function drawDowned(ctx, run, view) {
     ctx.fillStyle = '#F2C14E'; ctx.beginPath(); ctx.arc(cx, cy, 7, 0, TAU); ctx.fill();
     ctx.fillStyle = '#FFE9A0'; ctx.beginPath(); ctx.arc(cx + (view && view.rot ? 2 : -2), cy - 2, 2.6, 0, TAU); ctx.fill(); ctx.restore();
   }
+}
+// (round 19, lane corpses19: the ring with the downed body, under everything, render.js drawBodies; it was over the units)
+function drawDownRings(ctx, run) {
+  const wg = run.wagon, w = run.world; if (!wg) return;
   for (const u of w.units) {
     if (!u.downed || u.dead || u.def.cargo || !run.heroes[u.kind] || u.team !== wg.team) continue;
     const left = clamp((u.x - (wg.x - BEHIND)) / 560, 0, 1), late = left < 0.35, R = u.vr * 1.7 + 8;

@@ -111,7 +111,7 @@ export function newBattle(save, setupIn) {
   w.battle = { side: { [teamOf.a]: 'a', [teamOf.b]: 'b' } };
   w.stats = battleStats([...setup.a.map((s) => keyOf('a', s)), ...setup.b.map((s) => keyOf('b', s))]);
   w.on.kill = (u) => { if (u.def.onDeath) u.def.onDeath(w, u); };
-  w.drawOver = (ctx) => drawDowned(ctx, w); // render.js: over the units
+  w.drawBodies = (ctx) => drawDowned(ctx, w); // render.js: with the bodies, under everything (round 19, lane corpses19: it was over the units)
   const run = { mode: 'battle', theme: setup.arena, floor: 1, party: [], hired: [], heroes: {}, world: w, phase: 'fight', t: 0, fade: 1, coins: 0, gems: 0,
     save, banner: null, stats: null, setup, sides: { a: [], b: [] }, winner: null,
     log: [] }; // round 18: { t, ev: 'down' | 'up' | 'out', side, k, by, ab } (who went down, who brought whom back, who bled out)
