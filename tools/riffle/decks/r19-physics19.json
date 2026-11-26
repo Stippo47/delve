@@ -23,6 +23,10 @@
           "videos": [
             "../../../docs/clips/physics19/before-spider-feet.mp4",
             "../../../docs/clips/physics19/after-spider-feet.mp4"
+          ],
+          "images": [
+            "../../../docs/clips/physics19/still-spider-feet-before.png",
+            "../../../docs/clips/physics19/still-spider-feet-after.png"
           ]
         },
         {
@@ -79,6 +83,10 @@
           "videos": [
             "../../../docs/clips/physics19/before-spikes-under.mp4",
             "../../../docs/clips/physics19/after-spikes-under.mp4"
+          ],
+          "images": [
+            "../../../docs/clips/physics19/still-spikes-before.png",
+            "../../../docs/clips/physics19/still-spikes-after.png"
           ]
         },
         {

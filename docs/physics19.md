@@ -322,3 +322,7 @@ seconds: the counts are their proof.
 - `node tools/physics19/detect.mjs [--root scratch/before] [--set bosses,segs,crowd,fliers,structs,trolls,dungeons]
   [--boss cinder] [--exs]`, `probe.mjs --boss ikSpider` (every snap of a part with what its boss was doing),
   `staged.mjs`, `winrate.mjs`, `bosses.sh`, `clips.mjs --only spider-feet --which before,after`.
+
+Stills (one each, full size): `still-spider-feet-before.png` / `-after.png` (the film at 0:07: the berserker and the
+tower thrown out past the feet, and standing among them), `still-spikes-before.png` / `-after.png` (the film at 0:05.7:
+the Earth Mage's spikes over three heroes, and under them).
