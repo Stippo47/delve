@@ -99,14 +99,18 @@ BFX.fanGather = { air(ctx, f, k) { // five crystals form in a fan over her shoul
   glow(ctx, u.x + Math.cos(f.a) * u.vr, u.y + Math.sin(f.a) * u.vr, 44, ICE[2], 0.4 * k);
 } };
 BFX.frostBurst = { // ice bursts out of the floor: a ring of tall crystals, a second ring behind it, snow thrown up
+  // (round 19, lane physics19: "spikes shouldn't ever render onto of an entity": the crystals stand out of the floor
+  // under every body; they were drawn over them. The snow thrown up is still in the air)
   ground(ctx, f, k) { ctx.globalAlpha = (1 - k) * 0.55; ctx.fillStyle = ICE[2]; ctx.beginPath(); ctx.arc(f.x, f.y, f.r * (0.4 + 0.6 * easeOut(k)), 0, TAU); ctx.fill(); },
-  air(ctx, f, k) {
+  low(ctx, f, k) { // (over the floor's own effects, her frost sheet too; under the bodies)
     const up2 = k < 0.16 ? easeOut(k / 0.16) : 1 - sm(k01((k - 0.5) / 0.5));
     if (k < 0.15) glow(ctx, f.x, f.y, f.r * 1.1, ICE[3], 0.8 * (1 - k / 0.15));
     const list = [];
     for (const [rr, n, hh] of [[0.92, Math.max(10, Math.round(f.r / 13)), 46], [0.56, Math.max(7, Math.round(f.r / 22)), 32]]) for (let i = 0; i < n; i++) { const a = (i + 0.5 * hash(i, f.seed)) / n * TAU, x = f.x + Math.cos(a) * f.r * rr, y = f.y + Math.sin(a) * f.r * rr; list.push([y, x, hh * (0.75 + 0.5 * hash(f.seed, i)), Math.cos(a) * 0.3]); }
     list.sort((p, q) => p[0] - q[0]);
     for (const [y, x, h, lean] of list) crystal(ctx, x, y, h * up2, 9, lean);
+  },
+  air(ctx, f, k) {
     const [ux, uy] = up();
     for (let i = 0; i < 10; i++) { const a = hash(i, f.seed) * TAU, d = f.r * (0.3 + 0.8 * hash(f.seed, i)) * easeOut(k), hop = Math.sin(k * Math.PI) * 40 * hash(i, 4); ctx.save(); ctx.globalAlpha = 1 - k; snowflake(ctx, f.x + Math.cos(a) * d + ux * hop, f.y + Math.sin(a) * d + uy * hop, 7, a); ctx.restore(); }
   },

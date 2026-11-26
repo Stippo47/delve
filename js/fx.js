@@ -82,7 +82,7 @@ const ZONE = {
 export function drawGroundFx(ctx, w) {
   drawBloodGround(ctx, w); // round 14 (lane S): bleeding's splats and pools, under everything else
   for (const f of w.fx || []) {
-    if (f.type === 'zone') { if (!(f.ab || f.smoke || f.kind === 'smoke') || !abilityZone(ctx, f, w.time)) zone(ctx, f, w.time); }
+    if (f.type === 'zone') { if (!(f.ab || f.smoke || f.kind === 'smoke') || !abilityZone(ctx, f, w.time)) zone(ctx, f, w.time); if (f.kind === 'vines' && f.ab !== 'roll' && f.ab !== 'entangle' && f.ab !== 'rejuvenate' && f.ab !== 'cure') zoneAir(ctx, f, w.time); /* (round 19, lane physics19: vines grown out of the floor stand under the bodies, like spikes; they were drawn over them) */ }
     else if (f.type === 'rift') rift(ctx, f, w.time);
     else if (f.type === 'sig') drawSigGround(ctx, f, w);
     else if (f.type === 'wave' && f.ab === 'shockwave') shockwave(ctx, f, 'ground');
@@ -313,7 +313,7 @@ export function drawAirFx(ctx, w) {
     else if (f.type === 'soulOrb') soulOrb(ctx, f);
     else if (f.type === 'cure') cureFx(ctx, f, w.time);
     else if (f.type === 'zone' && (f.ab === 'rejuvenate' || f.ab === 'cure')) abilityZoneAir(ctx, f, w.time);
-    else if (f.type === 'zone' && (f.kind === 'snow' || (f.kind === 'vines' && f.ab !== 'roll' && f.ab !== 'entangle'))) zoneAir(ctx, f, w.time);
+    else if (f.type === 'zone' && f.kind === 'snow') zoneAir(ctx, f, w.time); // (round 19, lane physics19: vines are on the ground layer now, drawGroundFx)
     else if (f.type === 'wave') { if (f.ab === 'shockwave') shockwave(ctx, f, 'air'); else if (f.kind === 'note') noteCone(ctx, f, w.time); else wave(ctx, f); }
     else if (f.type === 'pillar') pillar(ctx, f, w.time);
     else if (f.type === 'hex') hexMark(ctx, f, w.time);

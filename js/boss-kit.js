@@ -6,6 +6,7 @@
 // makes one; its blows go on to the boss (shared: the part keeps no health of its own; or a pool of its own that
 // breaks).
 import { alive, hurt, puff, sparks, spawn, kill, addDanger, fx } from './sim.js';
+import { heightOf } from './layers.js'; // (round 19, lane physics19: footClear)
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange } from './util.js';
 import { circleRect } from './path.js';
 import { stand } from './elites.js';
@@ -110,6 +111,7 @@ export function thud(w, x, y, col = '#D9CDB0', n = 16, shake = 6) {
 export function part(w, core, kind, x, y, o = {}) {
   const p = spawn(w, kind, x, y, { mult: w.mult || 1, hpMul: o.hpMul || 1, team: core.team });
   p.core = core; p.aggro = true; p.partOf = core; p.facing = core.facing; p.mvA = core.facing;
+  if (!(p.def.speed > 0)) core.hasParts = true; // (round 19, lane physics19: a body its brain hangs placed parts on: sim.js physics holds it still while its brain is held, layers.js heldFast)
   p.dmgMul = core.dmgMul;
   if (o.hp) { p.maxHp = Math.round(o.hp); p.hp = p.maxHp; }
   const share = o.share ?? 1, pool = !!o.pool;
@@ -134,6 +136,31 @@ export const PART = (name, o) => ({ team: 'enemy', name, r: 30, vr: 30, turn: 0,
 // A unit moved by hand: put it at (x, y), facing a, with no slide of its own.
 export function place(u, x, y, a) { u.x = x; u.y = y; u.vx = u.vy = u.dvx = u.dvy = u.kx = u.ky = 0; u.spd = 0; if (a != null) { u.facing = a; u.mvA = a; } }
 
+// (round 19, lane physics19) Where a foot may come down: beside whoever stands there, never on them. The designer: "If a
+// spider puts its foot down on an entity either the spider jumps in a spit second or the entity does and it's
+// jarring." Gives how far the spot (x, y) has to be moved for a foot of radius r to clear every body on the floor that
+// isn't the animal's own (0, 0 if it is clear). The caller eases towards it, so a body walking under the spot moves it
+// rather than snapping it; a foot that still comes down on somebody eases them out from under it (layers.js softPush),
+// and never moves for them (a part is an anchor).
+export function footClear(w, core, x, y, r) {
+  let ox = 0, oy = 0;
+  for (const o of w.units) {
+    if (o.dead || o.downed || o.ethereal || o === core || o.partOf === core) continue;
+    const dx = x + ox - o.x, dy = y + oy - o.y, m = o.r + r;
+    if (dx > m || dx < -m || dy > m || dy < -m) continue;
+    const d2 = dx * dx + dy * dy; if (d2 >= m * m || heightOf(o) !== 0) continue;
+    const d = Math.sqrt(d2);
+    if (d > 0.01) { ox += dx / d * (m - d); oy += dy / d * (m - d); } else ox += m;
+  }
+  return { x: ox, y: oy };
+}
+// that offset eased into a step's own (s.ax, s.ay): all of it at once on the step's first tick (the foot has not left
+// the floor yet), then no faster than `rate` a second
+export function easeClear(s, av, dt, rate = 300) {
+  if (s.ax == null) { s.ax = av.x; s.ay = av.y; return; }
+  const m = rate * dt; s.ax += clamp(av.x - s.ax, -m, m); s.ay += clamp(av.y - s.ay, -m, m);
+}
+
 // The boss's line for tools/runs.mjs --v: the phase it got to and how long its fight ran.
 export function logOf(w, u, k) { w.bossLog = () => `phase ${k.phase} at ${Math.round(100 * Math.max(0, u.hp) / u.maxHp)}%${k.phaseT ? ' (' + k.phaseT.map((t) => Math.round(t)).join('/') + 's)' : ''}`; }
 export function notePhase(w, k) { (k.phaseT || (k.phaseT = [])).push(w.time); }
@@ -150,6 +177,7 @@ export function stage(w, key, ground, air) {
   const S = w.bossStage || (w.bossStage = { keys: {}, ground: [], air: [], g: null, a: null });
   if (!S.keys[key]) { S.keys[key] = true; if (ground) S.ground.push(ground); if (air) S.air.push(air); }
   if (w.arenaDraw !== S.g) { const g0 = w.arenaDraw; S.g = w.arenaDraw = (ctx, w2) => { if (g0) g0(ctx, w2); for (const f of S.ground) f(ctx, w2); drawBfx(ctx, w2, 'ground'); }; }
+  if (!w.arenaLow) w.arenaLow = (ctx, w2) => drawBfx(ctx, w2, 'low'); // (round 19, lane physics19: a third place for a boss's effects: what stands out of the floor, over the floor's own effects and under every body. render.js drawScene)
   if (w.arenaAir !== S.a) { const a0 = w.arenaAir; S.a = w.arenaAir = (ctx, w2) => { if (a0) a0(ctx, w2); for (const f of S.air) f(ctx, w2); drawBfx(ctx, w2, 'air'); }; }
 }
 // An effect that lives for f.max seconds from now (boss-draw.js BFX[f.type] draws it by the room's clock).

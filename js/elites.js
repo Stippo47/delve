@@ -137,11 +137,11 @@ export function again(u, key, a, b = a) { const e = E(u); e[key] = rrange(a, b);
 // Standing still through a tell: true while it lasts (the caller returns true so the usual brain waits).
 export function hold(u, dt) {
   const e = E(u); if (!(e.holdT > 0)) return false;
-  u.winding = true; e.holdT -= dt / windMul(u); stand(u, dt); if (e.face != null) turnTo(u, e.face, 7, dt); // (round 14: sleepy, a tell lasts longer: sim.js slows its danger zone with it)
+  u.winding = true; e.holdT -= dt / windMul(u); stand(u, dt); if (e.face != null) turnTo(u, e.face, e.turn || 7, dt); /* (round 19, lane physics19: e.turn, a body that turns slower than a man: beginHold's last word) */ // (round 14: sleepy, a tell lasts longer: sim.js slows its danger zone with it)
   if (e.holdT <= 0 && e.then) { const f = e.then; e.then = null; f(); }
   return true;
 }
-export function beginHold(u, t, face, then) { const e = E(u); e.holdT = t; e.face = face; e.then = then || null; }
+export function beginHold(u, t, face, then, turn) { const e = E(u); e.holdT = t; e.face = face; e.then = then || null; e.turn = turn || 0; } // (round 19, lane physics19: turn, how fast it comes round to `face`, rad/s; 7 unless given)
 const live = (t) => t && alive(t) && !t.ethereal;
 export const targetOf = (w, u) => (live(u.target) ? u.target : null);
 export const gapTo = (u, t) => dist(u.x, u.y, t.x, t.y) - u.r - t.r;

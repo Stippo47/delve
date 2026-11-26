@@ -1,0 +1,148 @@
+{
+  "title": "Bodies under everything",
+  "topic": "art",
+  "stack": "r19b",
+  "order": 5,
+  "cards": [
+    {
+      "id": "report",
+      "kind": "report",
+      "rarity": "rare",
+      "title": "Bodies lie under all",
+      "text": "Nothing shoves a body now, and every body lies on the floor under everything else. Films: before, then after.",
+      "why": "You said corpses shouldn't collide or draw on top of anything. Every film is the same fight twice: the old game, then the new. Downed heroes count as bodies too. Mark any part that still looks off.",
+      "videos": [
+        "../../../docs/clips/corpses19/boulder-before.mp4",
+        "../../../docs/clips/corpses19/boulder-after.mp4"
+      ],
+      "parts": [
+        {
+          "id": "boulder",
+          "title": "Boulders roll over them",
+          "text": "A rolling boulder pushed bodies along, and a downed knight was drawn over the ball. Now it rolls over them.",
+          "videos": [
+            "../../../docs/clips/corpses19/boulder-before.mp4",
+            "../../../docs/clips/corpses19/boulder-after.mp4"
+          ]
+        },
+        {
+          "id": "crowd",
+          "title": "In a plain brawl",
+          "text": "Small change: bodies were already under the fighters. Now also under their shadows, rings, rocks, crates.",
+          "videos": [
+            "../../../docs/clips/corpses19/crowd-before.mp4",
+            "../../../docs/clips/corpses19/crowd-after.mp4"
+          ]
+        },
+        {
+          "id": "air",
+          "title": "On top only in the air",
+          "text": "A body thrown by its killing blow is drawn over everything while it flies, and goes under as it lands.",
+          "videos": [
+            "../../../docs/clips/corpses19/crowd-after.mp4"
+          ]
+        },
+        {
+          "id": "downed",
+          "title": "Downed heroes too",
+          "text": "A downed knight lay over the rock by him, his ring over the skeletons on him. Now he and his ring lie under.",
+          "videos": [
+            "../../../docs/clips/corpses19/necro-before.mp4",
+            "../../../docs/clips/corpses19/necro-after.mp4"
+          ]
+        },
+        {
+          "id": "raise",
+          "title": "Necromancer still raises",
+          "text": "The Necromancer still raises minions from where the bodies lie.",
+          "videos": [
+            "../../../docs/clips/corpses19/raise-before.mp4",
+            "../../../docs/clips/corpses19/raise-after.mp4"
+          ]
+        },
+        {
+          "id": "wurm",
+          "title": "Sand Wurm's rings",
+          "text": "Its rings lay over the heroes while they sank. Now they're on top only as they drop, then lie under.",
+          "videos": [
+            "../../../docs/clips/corpses19/wurm-before.mp4",
+            "../../../docs/clips/corpses19/wurm-after.mp4"
+          ]
+        },
+        {
+          "id": "engine",
+          "title": "Great Engine's wreck",
+          "text": "Its dome and cog lay over the heroes. Now they lie under them; the flying plates still pass over.",
+          "videos": [
+            "../../../docs/clips/corpses19/engine-before.mp4",
+            "../../../docs/clips/corpses19/engine-after.mp4"
+          ]
+        },
+        {
+          "id": "drake",
+          "title": "Drake's husk",
+          "text": "Already lay under everything; filmed to show it still does with the heroes standing on it.",
+          "videos": [
+            "../../../docs/clips/corpses19/drake-before.mp4",
+            "../../../docs/clips/corpses19/drake-after.mp4"
+          ]
+        },
+        {
+          "id": "puddles",
+          "title": "Lying in puddles",
+          "text": "Bodies lay over oil, fire, gas and blood. Now they lie in them, under the puddle; thick oil hides them.",
+          "videos": [
+            "../../../docs/clips/corpses19/puddles-before.mp4",
+            "../../../docs/clips/corpses19/puddles-after.mp4"
+          ]
+        },
+        {
+          "id": "count",
+          "title": "Counted: 998 shoves to 0",
+          "text": "In hundreds of test fights bodies were shoved 998 times before, 0 now. Shots and walkers pass through them.",
+          "videos": []
+        }
+      ]
+    },
+    {
+      "id": "stop",
+      "kind": "question",
+      "rarity": "uncommon",
+      "title": "Stop at rocks in flight?",
+      "text": "A body still flying from its killing blow stops at a rock or crate it hits. Once still, nothing moves it.",
+      "why": "This is the only bump a body has left. Without it a body flies into a crate and lies inside it, hidden under the crate: I tried that first and bodies vanished. Boulders, balls and raised walls never move a body.",
+      "pick": "Keep the stop: a body never ends up hidden inside a rock or crate."
+    },
+    {
+      "id": "downed",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Downed heroes as bodies?",
+      "text": "Downed heroes now lie under everything, rings too. On the road the wagon still nudges them aside.",
+      "why": "They're lying bodies too, so they follow the same rule. The wagon still nudges them aside as it rolls over where they fell: under the wagon nobody could stand over them to bring them back.",
+      "pick": "Yes, bodies like any other; keep the wagon's nudge so they can be revived."
+    },
+    {
+      "id": "puddles",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Bodies under oil?",
+      "text": "Puddles and blood draw over a body lying in them. A body deep in an oil slick is hidden till it goes.",
+      "why": "Bodies go down first, so everything lies over them: the fire's flames and gas clouds do belong over a body, and danger circles stay readable. Oil, water and blood could go under bodies instead, at the cost of bodies then lying over danger circles too.",
+      "pick": "Keep: one simple rule, nothing ever drawn over by a body. Oil hiding one now and then is the cost.",
+      "videos": [
+        "../../../docs/clips/corpses19/puddles-before.mp4",
+        "../../../docs/clips/corpses19/puddles-after.mp4"
+      ]
+    },
+    {
+      "id": "folk",
+      "kind": "question",
+      "rarity": "common",
+      "title": "Dead villagers look plain",
+      "text": "A villager that dies turns into the plain bald base, not its own look. A small fix, not asked for.",
+      "why": "The body is drawn from the kind's picture, but each villager's look is rolled for that one villager. Once lying it's grey and faint, but while it flies it's in full colour, and the hair changes.",
+      "pick": "Fix it: the body keeps its own look."
+    }
+  ]
+}

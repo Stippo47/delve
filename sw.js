@@ -1,5 +1,5 @@
 // Keeps the whole game on the phone so it opens with no signal. Bump VERSION on every release.
-const VERSION = '0.41.0';
+const VERSION = '0.43.0';
 const CACHE = `delve-${VERSION}`;
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-192.png',
   'icons/icon-512.png', 'js/armour.js', 'js/audio.js', 'js/battle-ui.js', 'js/battle.js', 'js/bestiary.js',
@@ -16,13 +16,13 @@ const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png',
   'js/fxkit.js', 'js/fxtag.js', 'js/fxvar.js', 'js/height.js', 'js/heroes-water.js', 'js/heroes.js', 'js/heroes2.js',
   'js/heroes3.js', 'js/hpstyle.js', 'js/hud.js', 'js/icons-r19-alt.js', 'js/icons-r19.js', 'js/icons.js',
   'js/inspect.js', 'js/kits-charm.js', 'js/kits-water.js', 'js/kits.js', 'js/kits2.js', 'js/kits3.js',
-  'js/layout.js', 'js/leash.js', 'js/looks.js', 'js/looks2.js', 'js/main.js', 'js/map.js', 'js/meta.js', 'js/mob.js',
-  'js/movetext.js', 'js/numbers.js', 'js/pager.js', 'js/parts.js', 'js/path.js', 'js/potions.js',
-  'js/preview-scenes.js', 'js/preview-sim.js', 'js/preview.js', 'js/prices.js', 'js/progress.js', 'js/puddles.js',
-  'js/recolor.js', 'js/render.js', 'js/save.js', 'js/scenery.js', 'js/sfx.js', 'js/sim.js', 'js/skilltree.js',
-  'js/sprites.js', 'js/stats-ui.js', 'js/stats.js', 'js/statuses.js', 'js/stock.js', 'js/tags.js', 'js/themes.js',
-  'js/threat.js', 'js/trinkets.js', 'js/ui-kit.js', 'js/unit-stats.js', 'js/unit.js', 'js/units.js', 'js/util.js',
-  'js/wildwood.js', 'css/base.css', 'css/battle.css', 'css/book.css', 'css/camp.css', 'css/convoy.css',
+  'js/layers.js', 'js/layout.js', 'js/leash.js', 'js/looks.js', 'js/looks2.js', 'js/main.js', 'js/map.js',
+  'js/meta.js', 'js/mob.js', 'js/movetext.js', 'js/numbers.js', 'js/pager.js', 'js/parts.js', 'js/path.js',
+  'js/potions.js', 'js/preview-scenes.js', 'js/preview-sim.js', 'js/preview.js', 'js/prices.js', 'js/progress.js',
+  'js/puddles.js', 'js/recolor.js', 'js/render.js', 'js/save.js', 'js/scenery.js', 'js/sfx.js', 'js/sim.js',
+  'js/skilltree.js', 'js/sprites.js', 'js/stats-ui.js', 'js/stats.js', 'js/statuses.js', 'js/stock.js', 'js/tags.js',
+  'js/themes.js', 'js/threat.js', 'js/trinkets.js', 'js/ui-kit.js', 'js/unit-stats.js', 'js/unit.js', 'js/units.js',
+  'js/util.js', 'js/wildwood.js', 'css/base.css', 'css/battle.css', 'css/book.css', 'css/camp.css', 'css/convoy.css',
   'css/hud.css', 'css/tree.css', 'css/unit.css', 'art/archer.svg', 'art/boss.svg', 'art/bosses/biblical-angel.svg',
   'art/bosses/bone-king.svg', 'art/bosses/choir-singer.svg', 'art/bosses/gilded-seraph-fallen.svg',
   'art/bosses/gilded-seraph.svg', 'art/bosses/goblin-chieftain.svg', 'art/bosses/winter-queen.svg',

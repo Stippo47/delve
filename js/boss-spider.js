@@ -28,7 +28,7 @@ import { alive, hurt, puff, addDanger, addBuff, spawn, kill, inZone, offFloor } 
 import { TAU, clamp, dist, angleTo, wrapAngle, rand, rrange } from './util.js';
 import { hold, beginHold, due, again, stand, turnTo, crowd } from './elites.js';
 import { walkTo } from './enemies.js';
-import { heroesOf, H, steady, asleep, phaseGate, pickTarget, lead, part, endParts, PART, place, notePhase, inside, stage, bfx, TEST_MOVE } from './boss-kit.js';
+import { heroesOf, H, steady, asleep, phaseGate, pickTarget, lead, part, endParts, PART, place, notePhase, inside, stage, bfx, TEST_MOVE, footClear, easeClear } from './boss-kit.js'; // (round 19, lane physics19: footClear, easeClear)
 import { up } from './boss-draw.js';
 import { drawSpider, drawSpiderFoot, drawDenFloor, drawDenAir, spiderShadows, spiderPortrait } from './boss-spider-fx.js';
 
@@ -71,7 +71,15 @@ export function hipOf(u, k, L) {
 // chooseTarget reads a unit's outOfReach list). Runs every step, stunned or not (sim.js statusTick: a hook's tick).
 const ALOFT = {
   tick(w, u) {
-    const k = u.sp; if (!k || k.h < SP.body.air) return;
+    const k = u.sp; if (!k) return;
+    // (round 19, lane physics19: stunned, frozen or asleep its brain does not run, so a leg lifted to stomp hung in
+    // the air while its circle ran out and struck, and when it woke the foot was on the mark in one step, 20 to 30
+    // from where it hung. Held fast, a stomp is called off: the leg stays where it is and steps back when it wakes)
+    if (u.stunT > 0 || u.frozenT > 0 || u.sleepT > 0) for (const L of k.legs) if (L.job) {
+      const z = L.job.z; if (z && !z.done) { z.done = true; z.cancelled = true; z.t = -1; }
+      L.job = null; if (!L.broken) L.step = { t: 0, T: 0.3, x0: L.x, y0: L.y, over: 0, ovx: 0, ovy: 0, lift: 0, z0: L.z };
+    }
+    if (k.h < SP.body.air) return;
     u.flyT = Math.max(u.flyT || 0, 0.12);
     // (and the other way about: those who shoot have the body to shoot at, and leave the feet to the blades)
     for (const h of heroesOf(w, u)) {
@@ -177,15 +185,17 @@ function legsTick(w, u, k, dt) {
     const sp = Math.hypot(L.hvx, L.hvy), mv = sp > 12, e2 = Math.min(1, dt * 10);
     s.ovx += ((mv ? L.hvx / sp * s.over : 0) - s.ovx) * e2; s.ovy += ((mv ? L.hvy / sp * s.over : 0) - s.ovy) * e2;
     s.t += dt;
-    const q = clamp(s.t / s.T, 0, 1), e = q * q * (3 - 2 * q), tg = footSpot(w, L.hx + s.ovx, L.hy + s.ovy);
-    L.x = s.x0 + (tg.x - s.x0) * e; L.y = s.y0 + (tg.y - s.y0) * e; L.z = Math.sin(Math.PI * q) * s.lift;
+    easeClear(s, footClear(w, u, L.hx + s.ovx, L.hy + s.ovy, G.footR), dt); // (round 19, lane physics19: it comes down beside whoever stands on its spot, not on them)
+    const q = clamp(s.t / s.T, 0, 1), e = q * q * (3 - 2 * q), tg = footSpot(w, L.hx + s.ovx + s.ax, L.hy + s.ovy + s.ay);
+    L.x = s.x0 + (tg.x - s.x0) * e; L.y = s.y0 + (tg.y - s.y0) * e; L.z = Math.sin(Math.PI * q) * s.lift + (s.z0 || 0) * (1 - e); // (z0: a step begun in the air, a stomp called off)
     if (q >= 1) { L.step = null; L.z = 0; L.x = tg.x; L.y = tg.y; if (rand() < 0.6) w.particles.push({ x: L.x, y: L.y, vx: rrange(-14, 14), vy: rrange(-14, 14), life: 0.3, max: 0.3, size: 3.6, color: 'rgba(217,205,176,0.55)' }); }
   }
   if (!down) {
     const need = [false, false], lag = [0, 0];
     for (const L of live) {
       if (L.step || L.job) continue;
-      const ex = L.hx - L.x, ey = L.hy - L.y, d = Math.hypot(ex, ey), sp = Math.hypot(L.hvx, L.hvy), mv = sp > 12;
+      const av = footClear(w, u, L.hx, L.hy, G.footR); // (round 19, lane physics19: its place is beside whoever stands on it, or it would step at them for ever)
+      const ex = L.hx + av.x - L.x, ey = L.hy + av.y - L.y, d = Math.hypot(ex, ey), sp = Math.hypot(L.hvx, L.hvy), mv = sp > 12;
       L.err = d; L.along = mv ? (ex * L.hvx + ey * L.hvy) / sp : 0; L.stillT = mv ? 0 : L.stillT + dt; L.mv = mv;
       const hp = hipOf(u, k, L);
       L.urgent = Math.hypot(L.x - hp.x, L.y - hp.y, hp.z) > (G.l1 + G.l2) * 0.93; // stretched as far as it goes: it steps now
@@ -222,7 +232,9 @@ function startStep(k, L, n) {
   const others = k.legs.filter((o) => !o.broken && o.grp !== L.grp && !o.step && !o.job);
   let over = G.over;
   if (others.length) over = clamp((G.over + 1) / 2 - others.reduce((a, o) => a + (o.along || 0), 0) / others.length / G.stepDist, 0.3, 1);
-  L.step = { t: -n * 0.035, T: clamp(G.stepT * (1.15 - sp / 300), 0.17, 0.3), x0: L.x, y0: L.y, over: over * G.stepDist, ovx: 0, ovy: 0, lift: G.lift + Math.min(14, L.err * 0.25) };
+  // (round 19, lane physics19: a long step takes longer, so no foot goes faster than 660 a second at the middle of its
+  // swing: a foot far from its place (after a stomp, a quick turn) crossed 120 to 300 in 0.17 s, 18 to 29 a step)
+  L.step = { t: -n * 0.035, T: Math.max(clamp(G.stepT * (1.15 - sp / 300), 0.17, 0.3), 1.5 * (L.err + over * G.stepDist) / 660), x0: L.x, y0: L.y, over: over * G.stepDist, ovx: 0, ovy: 0, lift: G.lift + Math.min(14, L.err * 0.25) };
 }
 // a foot never comes down outside the room or inside a pillar
 function footSpot(w, x, y) {
@@ -400,7 +412,7 @@ function web(w, u, k, t) {
     } });
   bfx(w, { type: 'spWebShot', u, x1: p.x, y1: p.y, max: tell, seed: Math.round(p.x + p.y) });
   k.pose = { kind: 'spit', t: tell * 0.55, max: tell * 0.55 };
-  beginHold(u, tell * 0.55 + 0.15, angleTo(k.gx, k.gy, p.x, p.y));
+  beginHold(u, tell * 0.55 + 0.15, angleTo(k.gx, k.gy, p.x, p.y), null, SP.turn * 2.6); // (round 19, lane physics19: it comes round to its mark at 3 rad/s, not 7: at 7 its feet, 126 out, had 880 a second to cover and whipped across the floor 18 to 29 a step)
 }
 
 // ---------------------------------------------------------------- the brood (phase 2)

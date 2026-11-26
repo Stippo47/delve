@@ -1,0 +1,10 @@
+== the game as it was (scratch/before)
+ikSpider      6 runs of 12s: a standing hero's worst single step 50.5, steps of 6 or more 50, moved 257 a run in all; a foot left standing on a hero 0 times; the boss's own worst unexplained step 0.0
+stiltIdol     6 runs of 12s: a standing hero's worst single step 16.0, steps of 6 or more 8, moved 19 a run in all; a foot left standing on a hero 0 times; the boss's own worst unexplained step 24.8
+cinder        6 runs of 12s: a standing hero's worst single step 15.9, steps of 6 or more 44, moved 227 a run in all; a foot left standing on a hero 0 times; the boss's own worst unexplained step 10.4
+sandSerpent   6 runs of 12s: a standing hero's worst single step 31.7, steps of 6 or more 5, moved 84 a run in all; a foot left standing on a hero 0 times; the boss's own worst unexplained step 28.6
+== the game as it is
+ikSpider      6 runs of 12s: a standing hero's worst single step 3.7, steps of 6 or more 0, moved 62 a run in all; a foot left standing on a hero 0 times; the boss's own worst unexplained step 0.0
+stiltIdol     6 runs of 12s: a standing hero's worst single step 2.2, steps of 6 or more 0, moved 26 a run in all; a foot left standing on a hero 0 times; the boss's own worst unexplained step 0.0
+cinder        6 runs of 12s: a standing hero's worst single step 5.5, steps of 6 or more 0, moved 211 a run in all; a foot left standing on a hero 0 times; the boss's own worst unexplained step 10.5
+sandSerpent   6 runs of 12s: a standing hero's worst single step 5.5, steps of 6 or more 0, moved 77 a run in all; a foot left standing on a hero 0 times; the boss's own worst unexplained step 5.2
