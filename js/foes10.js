@@ -78,7 +78,7 @@ const handsOn = (u, b) => u.r * SNOW.reach + b.r; // the ball against its hands 
 // body the ball's size; the ball itself taken out of the room while it asks)
 function ballWay(w, b, tx, ty) {
   const nav = b.nav || (b.nav = { path: null, pathT: 0, pathGoal: null });
-  nav.x = b.x; nav.y = b.y; nav.r = b.r;
+  nav.x = b.x; nav.y = b.y; nav.r = b.r; nav.def = nav.def || (b.owner && b.owner.def) || {}; // (round 19, lane troll19: the wagon mode's way round the wagon reads u.def, convoy.js roundRig: a yeti on the road threw an error here the first time its ball had no straight way)
   const i = w.pillars.indexOf(b); if (i >= 0) w.pillars.splice(i, 1);
   try { const [gx, gy] = goalVec(w, nav, tx, ty); return Math.atan2(gy, gx); } finally { if (i >= 0) w.pillars.splice(i, 0, b); }
 }

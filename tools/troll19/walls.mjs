@@ -33,11 +33,11 @@ const save = freshSave(); save.cheat = true;
 (0, eval)(FS.readFileSync(PATH.join(here, 'stage.js'), 'utf8'));
 T19.regrid = (w) => { const own = w.pillars.filter((p) => p.owner); w.pillars = w.pillars.filter((p) => !p.owner); buildGrid(w); w.pillars.push(...own); };
 const ballOf = T19.ballOf;
-const all = !has('staged') && !has('battles') && !opt('dungeon');
+const all = !has('staged') && !has('battles') && !opt('dungeon') && !has('convoy');
 
 // ---------------------------------------------------------------- the audit
-const KEYS = ['inWall', 'out', 'deep', 'inRock', 'inBall', 'ballInWall', 'ballOut', 'ballDeep', 'ballInRock', 'ownerInBall'];
-const newCount = () => ({ steps: 0, by: Object.fromEntries(KEYS.map((k) => [k, { steps: 0, times: 0, worst: 0 }])), other: { inWall: 0, out: 0, deep: 0, inRock: 0 }, seen: new Map(), ex: [] });
+const KEYS = ['inWall', 'out', 'deep', 'inRock', 'inBall', 'ballInWall', 'ballOut', 'ballDeep', 'ballInRock', 'ownerInBall', 'stuck'];
+const newCount = () => ({ steps: 0, by: Object.fromEntries(KEYS.map((k) => [k, { steps: 0, times: 0, worst: 0 }])), other: { inWall: 0, out: 0, deep: 0, inRock: 0 }, seen: new Map(), stall: new Map(), ex: [] });
 function wallPen(w, x, y, r) { // how far a circle is into a wall or past the room's edge (0: clear), and whether its middle is in / out
   let pen = Math.max(0, r - x, r - y, x - (w.W - r), y - (w.H - r)), inW = false;
   const out = x < 0 || y < 0 || x > w.W || y > w.H;
@@ -68,6 +68,16 @@ function audit(w, C, tag) {
     else { if (inW) C.other.inWall++; if (out) C.other.out++; if (deep) C.other.deep++; if (inRock) C.other.inRock++; }
     let ib = 0; for (const b of balls) if (b.owner !== u) ib = Math.max(ib, u.r + b.r - Math.hypot(u.x - b.x, u.y - b.y));
     mark('inBall', u, ib > 14, ib);
+  }
+  // stuck: a troll-shaped unit with somebody to fight that for 15 s has not moved 50, been hurt, struck, or let its
+  // boulder go at speed
+  for (const u of w.units) {
+    if (u.dead || !(u.kind === 'troll' || u.kind === 'rockTroll' || u.kind === 'yeti')) continue;
+    const b = ballOf(u), fast = b && Math.hypot(b.vx, b.vy) > 150;
+    let K = C.stall.get(u);
+    if (!K || Math.hypot(u.x - K.x, u.y - K.y) > 50 || u.hp < K.hp - 0.5 || u.lastAttackT !== K.atk || fast || !u.aggro || !u.target || u.stunT > 0 || u.frozenT > 0 || u.sleepT > 0) C.stall.set(u, (K = { x: u.x, y: u.y, t: w.time, hp: u.hp, atk: u.lastAttackT }));
+    K.hp = Math.max(K.hp, u.hp);
+    mark('stuck', u, w.time - K.t > 15, w.time - K.t);
   }
   for (const b of balls) {
     const { pen, inW, out } = wallPen(w, b.x, b.y, b.r);
@@ -105,7 +115,7 @@ function staged(kind, scene, seed, secs = 12) {
     far = Math.max(far, Math.hypot(h.x - h0.x, h.y - h0.y));
     if (scene === 'thin' && Math.abs(h.x - run.world.W / 2) < 215 && ((py > 416 && h.y < 380) || (h.y > 380 && h.y < 416))) crossed = true; // (in the wall, or over it in one step; round its end is fair)
     py = h.y;
-    if (scene === 'door') { const b = ballOf(u); if (b && b.y < 400 + 20 && Math.abs(b.x - run.world.W / 2) < 60) crossed = true; } // (the boulder's middle up in the doorway)
+    if (scene === 'door') { const b = ballOf(u); if (b && b.r * 2 > 74 && b.y < 400 + 20 && Math.abs(b.x - run.world.W / 2) < 60) crossed = true; } // (the boulder's middle up in the doorway)
   }
   return { C, crossed, far };
 }
@@ -183,3 +193,34 @@ function dungeon(themes) {
 }
 if (all || opt('dungeon')) dungeon((opt('dungeon') || 'warren,crypt,frost').split(','));
 if (opt('json')) FS.writeFileSync(opt('json'), JSON.stringify(out, null, 1));
+
+// ---------------------------------------------------------------- the wagon mode (--convoy [lands])
+// Trips with a troll, a rock troll and a yeti put on the open ground beside the wagon every 25 s (the road has no
+// walls: the wagon's own body, the rocks painted into the ground and the tree line's edge are what a boulder can
+// push somebody into).
+if (opt('convoy') || has('convoy')) {
+  console.log('== the wagon mode ==');
+  const C2 = await import('../../js/convoy.js'), { spawn } = await import('../../js/sim.js'), { STARTERS } = HE;
+  const C = newCount(); let trips = 0, secs = 0, errs = 0;
+  for (let i = 0; i < N; i++) {
+    setSeed(31000 + i);
+    const s = freshSave(), lvl = +opt('level', 12); for (const k of STARTERS) { s.heroes[k].owned = true; s.heroes[k].level = lvl; s.heroes[k].points = P.START_POINTS + lvl - 1; P.autoSpend(s, k); }
+    s.party = STARTERS.slice();
+    try {
+      const run = C2.newConvoy(s, { party: STARTERS.slice(), lands: ['wildwood'] });
+      let t = 0, next = 6;
+      while (!run.summary && t < +opt('secs', 240)) {
+        if (run.phase === 'roadside') { C2.autoShop(run); C2.setOff(run); }
+        C2.updateConvoy(run, DT); t += DT;
+        const w = run.world, wg = run.wagon;
+        if (run.phase === 'road' && t > next) { next = t + 25; for (const [k, dy] of [['troll', -260], ['rockTroll', 260], ['yeti', -330]]) { const u = spawn(w, k, wg.x + 260, Math.max(120, Math.min(w.H - 120, wg.y + dy)), { mult: w.mult || 1 }); u.aggro = true; } }
+        if (w.units.some((u) => u.bould || u.snow)) audit(w, C, `trip ${i}`);
+      }
+      trips++; secs += t;
+    } catch (e) { errs++; console.log('  ERROR', e.stack.split('\n').slice(0, 4).join('\n')); }
+  }
+  out.convoy = { trips, secs: Math.round(secs), errs, steps: C.steps, ...Object.fromEntries(KEYS.map((q) => [q, C.by[q]])), other: C.other, ex: C.ex.slice(0, 12) };
+  console.log(`${trips} trips, ${Math.round(secs)}s, errors ${errs}, ${C.steps} steps with a boulder about  ${line(C)}  | away from any boulder: in a wall ${C.other.inWall}, out ${C.other.out}, deep ${C.other.deep}, in a rock ${C.other.inRock}`);
+  if (V) for (const e of C.ex.slice(0, 10)) console.log('    ', JSON.stringify(e));
+  if (opt('json')) FS.writeFileSync(opt('json'), JSON.stringify(out, null, 1));
+}

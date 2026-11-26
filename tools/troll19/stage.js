@@ -33,8 +33,8 @@
       thin: () => { w.walls.push({ x: W / 2 - 220, y: 380, w: 440, h: 36, t19: true }); put(W / 2, 760, up, W / 2, 416 + h.r + 1); },
       // the hero against a rock
       pillar: () => { w.pillars.push({ x: W / 2, y: 380, r: 46, prop: 'rock' }); put(W / 2, 760, up, W / 2, 380 + 46 + h.r + 1); },
-      // the hero behind a doorway 74 wide in a wall: too narrow for the boulder (82 across)
-      door: () => { w.walls.push({ x: W / 2 - 400, y: 400, w: 400 - 37, h: 40, t19: true }, { x: W / 2 + 37, y: 400, w: 400 - 37, h: 40, t19: true }); put(W / 2, 720, up, W / 2, 400 - h.r - 4); },
+      // the hero behind a doorway 74 wide in a wall right across the room: too narrow for the boulder (82 across), and the only way
+      door: () => { w.walls.push({ x: 0, y: 400, w: W / 2 - 37, h: 40, t19: true }, { x: W / 2 + 37, y: 400, w: W / 2 - 37, h: 40, t19: true }); put(W / 2, 720, up, W / 2, 400 - h.r - 4); },
       // the hero at the corner of a crate (a square block), the troll coming at the corner
       crate: () => { w.walls.push({ x: W / 2 - 40, y: 340, w: 80, h: 80, t19: true }); put(W / 2 + 40 + 260, 420 + 260, -Math.PI * 0.75, W / 2 + 40 + h.r * 0.72, 420 + h.r * 0.72); },
       // open floor: the hero off to its side, or behind it; how does it come round?

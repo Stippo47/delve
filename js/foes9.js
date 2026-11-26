@@ -155,13 +155,16 @@ const BOULDER_REACH = 26, BOULDER_RIP = 1.1;
 // now: walls, rocks and the room's edge stop it, bodies push back on it by their mass, and a stopped boulder stops
 // the troll (boulders.js).
 //  orbit       how fast it steps round its boulder, of its walking pace (the rock troll's is the slower)
+//  roll        as it steps round, it heaves the boulder a little the other way: the two turn about a point this share of
+//              the rod from the boulder's middle (0: the boulder stays put and only the troll walks; 1 was the old way,
+//              the boulder swinging round the troll). The boulder's part is solid too: against a wall only the troll moves
 //  gain        it eases off as it comes onto its line (pace per radian still to go, of the rod's length a second)
 //  pushOff/Span  it pushes at full pace within pushOff radians of its line, not at all past pushOff + pushSpan
 //  haul        of its pace: dragging the boulder back out of a spot where it has no room to get round it
 //  lose        this far past the rod's length the boulder is out of its fists (knocked away from it; the boulder caught)
-//  flank / brawl / calm  with a foe in reach of its fists at its side or back for `flank` seconds and no line for the
-//              boulder, it sets the boulder down and fights with its fists for `brawl` seconds; then not again for `calm`
-const CARRY = { orbit: 2.2, orbitRock: 1.8, gain: 3.4, pushOff: 0.28, pushSpan: 0.5, acc: 520, haul: 0.6, lose: 34, flank: 1.1, brawl: [2.4, 3.2], calm: [4.5, 6.5] };
+//  setDown     seconds bare-handed after it sets the boulder down wedged, its mark where it can't bring the boulder round to
+const CARRY = { orbit: 2.4, orbitRock: 1.9, roll: 0.3, gain: 3.4, pushOff: 0.28, pushSpan: 0.5, acc: 520, haul: 0.6, lose: 34, setDown: 3 };
+if (globalThis.T19C) Object.assign(CARRY, globalThis.T19C); // TEMP (tuning)
 const gripOf = (u, b) => u.r * (1 + HOLD) + b.r + 8; // the rod: the boulder's middle from the troll's, against its fists
 function boulderOf(w, u) {
   if (u.bould === undefined) {
@@ -172,6 +175,7 @@ function boulderOf(w, u) {
     // the troll whatever stood there, a wall included)
     ballSweep(w, b, u.x + Math.cos(u.facing) * b.grip, u.y + Math.sin(u.facing) * b.grip);
     if (!u.def.rock) { b.hp = b.maxHp = Math.round(55 * (w.mult || 1)); }
+    b.rollTick = (w2, dt2) => rollBoulder(w2, u, b, dt2); // (round 19, lane troll19: boulders.js rolls it on while its troll is stunned, frozen or asleep: it stopped dead in mid-roll)
     u.bould = b; w.pillars.push(b);
   }
   if (u.bould && u.bould.hp != null && u.bould.hp <= 0) { // broken to pieces
@@ -185,25 +189,28 @@ export function dropBoulder(w, u) { const b = u.bould; if (b) { const i = w.pill
 // Its steps for one tick with its fists on the boulder (round 19, lane troll19): fwd along the line through the
 // boulder (into it: pushing; negative: dragging it back), tan round it (positive swings the line anticlockwise: the
 // troll goes the other way round), with a little momentum; its face is to the boulder.
-function rodWalk(u, b, fwd, tan, dt, acc = CARRY.acc) {
+function rodWalk(w, u, b, fwd, tan, dt, acc = CARRY.acc) {
   const phi = angleTo(u.x, u.y, b.x, b.y), c = Math.cos(phi), s = Math.sin(phi);
   let vx = c * fwd + s * tan, vy = s * fwd - c * tan;
   const ax = vx - u.dvx, ay = vy - u.dvy, al = Math.hypot(ax, ay), m = acc * dt;
   if (al > m) { vx = u.dvx + ax / al * m; vy = u.dvy + ay / al * m; }
   u.dvx = vx; u.dvy = vy; u.spd = Math.hypot(vx, vy); if (u.spd > 3) u.mvA = Math.atan2(vy, vx);
   u.facing = phi; u.sdx = u.sdy = 0;
+  // the boulder's part of the turn: heaved the other way round the point they turn about, as far as the room lets it
+  const got = u.dvx * s - u.dvy * c, k = CARRY.roll / (1 - CARRY.roll) * got * dt;
+  if (Math.abs(k) > 0.01) ballSweep(w, b, b.x - s * k, b.y + c * k);
 }
 // Round onto the line a behind its boulder within `left` seconds (a tell: it shuffles round quickly, fists on it).
-function lineUp(u, b, a, left, dt) {
+function lineUp(w, u, b, a, left, dt) {
   const err = wrapAngle(a - angleTo(u.x, u.y, b.x, b.y)), top = u.def.speed * (u.moveMul || 1) * 4.5;
-  rodWalk(u, b, 0, clamp(err * b.grip / Math.max(left, dt * 2), -top, top), dt, 3000);
+  rodWalk(w, u, b, 0, clamp(err * b.grip * (1 - CARRY.roll) / Math.max(left, dt * 2), -top, top), dt, 3000);
 }
 // Which way the boulder has to go to get to (tx, ty): straight, or round the walls and rocks (the path finder asked for
 // a body the troll's width at the boulder's place; the boulder itself out of the room while it asks. As the yeti's
 // ballWay, foes10.js).
 function boulderWay(w, u, b, tx, ty) {
   const nav = b.nav || (b.nav = { path: null, pathT: 0, pathGoal: null });
-  nav.x = b.x; nav.y = b.y; nav.r = Math.max(u.r, b.r);
+  nav.x = b.x; nav.y = b.y; nav.r = Math.max(u.r, b.r); nav.def = u.def; // (def: the wagon mode's way round the wagon reads it, convoy.js roundRig)
   const i = w.pillars.indexOf(b); if (i >= 0) w.pillars.splice(i, 1);
   try { const [gx, gy] = goalVec(w, nav, tx, ty); return Math.atan2(gy, gx); } finally { if (i >= 0) w.pillars.splice(i, 0, b); }
 }
@@ -223,7 +230,7 @@ function roundFree(w, u, b, phi, sg, span) {
 // out until it has. sim.js skips its own walking and facing for the tick (u.carryAt).
 function carry(w, u, b, t, dt) {
   u.carryAt = w.time;
-  if (!t || !u.aggro) { rodWalk(u, b, 0, 0, dt); return; } // nothing to go for: it stands by its boulder
+  if (!t || !u.aggro) { rodWalk(w, u, b, 0, 0, dt); return; } // nothing to go for: it stands by its boulder
   const sp = speedOf(u), phi = angleTo(u.x, u.y, b.x, b.y);
   const A = boulderWay(w, u, b, t.x, t.y), err = wrapAngle(A - phi), ae = Math.abs(err);
   const C = u.bCar || (u.bCar = { dir: 0, until: 0 });
@@ -235,7 +242,7 @@ function carry(w, u, b, t, dt) {
       if (roundFree(w, u, b, phi, -dir, rem(-dir))) { dir = -dir; C.dir = dir; C.until = w.time + 2.5; } // (the way round holds once picked, a while)
       else dir = 0;
     }
-    if (dir) tan = dir * Math.min(sp * (u.def.rock ? CARRY.orbitRock : CARRY.orbit), rem(dir) * b.grip * CARRY.gain);
+    if (dir) tan = dir * Math.min(sp * (u.def.rock ? CARRY.orbitRock : CARRY.orbit), rem(dir) * b.grip * (1 - CARRY.roll) * CARRY.gain);
     else if (ae > CARRY.pushOff) {
       // no room to get round it here (walls or rocks on both sides of it): on with the boulder, or back out dragging it,
       // whichever way has the more room, until it can step round it (the way holds a moment once picked)
@@ -249,7 +256,7 @@ function carry(w, u, b, t, dt) {
       fwd = C.way > 0 ? sp * 0.8 : C.way < 0 ? -sp * CARRY.haul : 0;
     }
   }
-  rodWalk(u, b, fwd, tan, dt);
+  rodWalk(w, u, b, fwd, tan, dt);
 }
 // The boulder let go down its line: `tell` seconds in which the troll steps round behind it onto the line (the line
 // is on the floor from the boulder), then it goes, along the line through the troll and the boulder.
@@ -262,7 +269,7 @@ function throwTick(w, u, b, dt) {
   const T = u.bThrow;
   if (!b.held) { u.bThrow = null; return false; }
   u.winding = true; T.t -= dt / windMul(u);
-  lineUp(u, b, T.a, T.t, dt);
+  lineUp(w, u, b, T.a, T.t, dt);
   if (T.t <= 0) {
     u.bThrow = null;
     const a = angleTo(u.x, u.y, b.x, b.y), s = u.def.rock ? 360 : 320;
@@ -282,7 +289,7 @@ export function boulderBrain(w, u, dt) {
   const b = u.bould === null ? null : boulderOf(w, u);
   if (!b) return false;
   b.grip = gripOf(u, b);
-  if (!b.held) rollBoulder(w, u, b, dt);
+  if (!b.held) { rollBoulder(w, u, b, dt); b.rolledAt = w.time; }
   // (round 19, lane troll19: out of its fists: it was knocked away from it, or the boulder caught on something as it
   // was dragged: it lies where it is and the troll goes for it again)
   else if (dist(u.x, u.y, b.x, b.y) > b.grip + CARRY.lose) { b.held = false; b.vx = b.vy = 0; u.bThrow = null; u.chg = null; }
@@ -303,10 +310,10 @@ export function boulderBrain(w, u, dt) {
   if (u.chg) {
     const c = u.chg;
     if (!b.held) u.chg = null;
-    else if (c.tell > 0) { c.tell -= dt; u.winding = true; lineUp(u, b, c.a, c.tell, dt); return true; } // (round 19: it steps round behind the boulder onto its line)
+    else if (c.tell > 0) { c.tell -= dt; u.winding = true; lineUp(w, u, b, c.a, c.tell, dt); return true; } // (round 19: it steps round behind the boulder onto its line)
     else {
       const phi = angleTo(u.x, u.y, b.x, b.y), err = wrapAngle(c.a - phi);
-      rodWalk(u, b, c.sp, clamp(err * b.grip * 6, -c.sp * 0.6, c.sp * 0.6), dt, 4000); u.vx = u.dvx; u.vy = u.dvy;
+      rodWalk(w, u, b, c.sp, clamp(err * b.grip * 6, -c.sp * 0.6, c.sp * 0.6), dt, 4000); u.vx = u.dvx; u.vy = u.dvy;
       boulderHits(w, u, b, c.sp, phi);
       // (round 19: the boulder is solid, so it also ends when the boulder is stopped: a wall, a rock, somebody it can't shift)
       const mv = Math.hypot(b.x - (c.bx ?? b.x), b.y - (c.by ?? b.y)); c.bx = b.x; c.by = b.y; c.run = (c.run || 0) + dt;
@@ -356,18 +363,8 @@ export function boulderBrain(w, u, dt) {
     const lined = angleDiff(a, phi) < 1.1;
     if ((u.bouldRest > 0 || !lined) && wedgedAgain(w, u, 3)) { startRip(w, u); return true; }
     if (lined) startThrow(w, u, b, a, 0.45, false);
-    else { b.held = false; b.vx = b.vy = 0; u.bouldRest = Math.max(u.bouldRest, CARRY.brawl[1]); return false; }
+    else { b.held = false; b.vx = b.vy = 0; u.bouldRest = Math.max(u.bouldRest, CARRY.setDown); return false; }
     return true;
-  }
-  // (round 19, lane troll19) a foe in reach of its fists at its side or its back, where the boulder isn't: after a
-  // moment it sets the boulder down and fights with its fists a while (it can't swing with both fists on the boulder,
-  // and stepping round the boulder to bring it to bear on someone at its back takes it seconds). The yeti's own rule.
-  const C = u.bCar || (u.bCar = { dir: 0, until: 0 });
-  if (t && u.aggro && !w.stale && !(C.calm > w.time)) {
-    const reach = (u.def.range || 30) + 14;
-    const flank = opponents(w, u).some((h) => gapTo(u, h) < reach && angleDiff(angleTo(u.x, u.y, h.x, h.y), phi) > 1.0);
-    C.flank = flank ? (C.flank || 0) + dt : Math.max(0, (C.flank || 0) - dt * 2);
-    if (C.flank > CARRY.flank) { C.flank = 0; b.held = false; b.vx = b.vy = 0; u.bouldRest = rrange(...CARRY.brawl); C.calm = w.time + u.bouldRest + rrange(...CARRY.calm); return false; }
   }
   if (t && u.aggro && due(u, 'boulder', dt, 2)) {
     // (round 19, lane troll19: the line is the boulder's own, from it to the mark, and how far off it the troll stands

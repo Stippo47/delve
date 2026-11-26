@@ -74,6 +74,13 @@ export function ballFits(w, b, x, y, r = b.r) {
   return true;
 }
 export function ballStatics(w, b) { return outOfSolids(w, b, (p) => !solidTo(b, p)); }
+// Is a circle in a wall or past the room's edge by more than a hair? (a slot too narrow for it: nothing can push it out)
+function inWalls(w, c, slack = 0.75) {
+  const R = c.r - slack;
+  if (c.x < R || c.y < R || c.x > w.W - R || c.y > w.H - R) return true;
+  for (const r of w.walls) if (c.x > r.x - R && c.x < r.x + r.w + R && c.y > r.y - R && c.y < r.y + r.h + R && circleRect(c.x, c.y, R, r)) return true;
+  return false;
+}
 // A ball moved towards (tx, ty), sliding along whatever is solid, in steps short enough that nothing is jumped; at
 // most `max` far. Returns how far it still is from there.
 export function ballSweep(w, b, tx, ty, max = Infinity) {
@@ -100,6 +107,8 @@ export function ballPass(w, dt, slam) {
     // terrified, or thrown up in the air: it has let go
     if (u && b.pull && (u.fearT > 0 || (u.hop || 0) > 10 || u.flyT > 0)) { b.held = false; u = null; }
     const x0 = b.x, y0 = b.y;
+    // rolling loose while its owner's brain is not running (stunned, frozen, asleep): it rolls on
+    if (!u && b.rollTick && b.rolledAt !== w.time && b.owner && !b.owner.dead && (b.vx || b.vy)) b.rollTick(w, dt);
     // 1. the rod
     if (u && b.grip > 0) {
       const dx = b.x - u.x, dy = b.y - u.y, d = Math.hypot(dx, dy);
@@ -126,11 +135,12 @@ export function ballPass(w, dt, slam) {
         const d = Math.sqrt(d2), nx = d > 1e-4 ? dx / d : 1, ny = d > 1e-4 ? dy / d : 0, over = m - d;
         const fixedBall = still && b.owner !== o;
         if (o.fixed) { if (!fixedBall) { b.x -= nx * over; b.y -= ny * over; bx -= nx * over; by -= ny * over; again = true; } continue; }
-        const share = fixedBall ? 1 : M / (M + (o.mass || 1));
+        const share = fixedBall ? 1 : M / (M + (o.mass || 1)), ox = o.x, oy = o.y;
         o.x += nx * over * share; o.y += ny * over * share;
         if (share < 1) { b.x -= nx * over * (1 - share); b.y -= ny * over * (1 - share); bx -= nx * over * (1 - share); by -= ny * over * (1 - share); again = true; }
         // the body against the room: what it can't give, the ball gives back
         if (outOfSolids(w, o, (p) => p === b || (p.owner === o && isBall(p) && own(o, p)))) {
+          if (inWalls(w, o)) { o.x = ox; o.y = oy; } // (pushed into a slot too narrow for it: it stays where it was, and the ball gives all of it)
           const ex = o.x - b.x, ey = o.y - b.y, e = Math.hypot(ex, ey), rem = m - e;
           // (a ball lying still gives too, for this: it is a rock to walk into, not one to be crushed against a wall by)
           if (rem > 0.01) { const qx = e > 1e-4 ? ex / e : nx, qy = e > 1e-4 ? ey / e : ny; b.x -= qx * rem; b.y -= qy * rem; bx -= qx * rem; by -= qy * rem; again = true; }
@@ -161,6 +171,10 @@ export function ballPass(w, dt, slam) {
         }
       }
     }
+    // pushed into a slot too narrow for it (between a wall's end and the room's edge, between two crates): nothing can
+    // push it out of both sides, and each step's shove took it further in: back to where it last fitted
+    if (inWalls(w, b)) { if (b.okx != null && Math.hypot(b.okx - b.x, b.oky - b.y) < 80 && !inWalls(w, { x: b.okx, y: b.oky, r: b.r })) { b.x = b.okx; b.y = b.oky; } }
+    else { b.okx = b.x; b.oky = b.y; }
     b.mvx = b.x - x0; b.mvy = b.y - y0; // how it moved this step (the rod, the room and the bodies; not its own roll)
   }
 }
