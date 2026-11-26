@@ -1465,6 +1465,10 @@ stands), three phases, its fire the game's fire.
   the body bends in curves, legs and tail move, the rush gallops. The body often reads pale peach in the zoomed fight:
   that is the shared status wash (washOf, same code as before the lane), left as is and noted. Merged, battles 532 / 0,
   preview-check 0 / 0 / 0, sw built. Riffle deck r19-drake (art, stack r19): report + numbers + no-spin calls.
+- Round 19, chat: "Give me an option to turn off outlines and hp bars completely in settings". Lane toggles19 (Opus, high):
+  two Settings switches, on by default. Outlines off = every ink silhouette outline in the arena and camp (units, bosses,
+  props, shots, effects); text outlines, UI icons, protective rings and telegraphs stay. Bars off = every bar over units
+  and the boss's top bar; the hero cards' bars in the HUD stay (the party panel, not the fight).
 
 ## Round 19, lane toggles19 (2026-11-25): "Give me an option to turn off outlines and hp bars completely in settings"
 - **Two switches** in Settings, a new group "Outlines and health bars" above "Enemy health, once hurt": **Outlines**
