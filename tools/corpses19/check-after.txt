@@ -1,0 +1,40 @@
+real fights (4 seeds each):
+  villagers                    bodies  79, downed  0 | corpse pushes 169 {"thrown body stopped by: pillar":166,"thrown body stopped by: room's edge":3} | downed {}
+  goblins vs skeletons         bodies  48, downed  0 | corpse pushes 177 {"thrown body stopped by: room's edge":104,"thrown body stopped by: crate":1,"thrown body stopped by: pillar":72} | downed {}
+  necromancer raising          bodies   5, downed 13 | corpse pushes 0 {} | downed {}
+  trolls and boulders          bodies  26, downed  0 | corpse pushes 151 {"thrown body stopped by: room's edge":5,"thrown body stopped by: pillar":146} | downed {}
+  yetis and snowballs          bodies  49, downed  0 | corpse pushes 74 {"thrown body stopped by: room's edge":20,"thrown body stopped by: crate":1,"thrown body stopped by: pillar":53} | downed {}
+  bombers (blasts)             bodies  41, downed  0 | corpse pushes 189 {"thrown body stopped by: room's edge":186,"thrown body stopped by: crate":1,"thrown body stopped by: pillar":2} | downed {}
+  heroes going down            bodies  23, downed 29 | corpse pushes 0 {} | downed {}
+  the Mob and the Telekinetic  bodies  36, downed 24 | corpse pushes 4 {"poltergeist throw (an ability)":4} | downed {}
+  heroes mixed 1               bodies  23, downed 29 | corpse pushes 0 {} | downed {}
+  heroes mixed 2               bodies  15, downed 31 | corpse pushes 0 {} | downed {}
+  heroes mixed 3               bodies   2, downed 25 | corpse pushes 0 {} | downed {}
+  heroes mixed 4               bodies  23, downed 32 | corpse pushes 0 {} | downed {}
+  heroes mixed 5               bodies  16, downed 27 | corpse pushes 0 {} | downed {}
+  heroes mixed 6               bodies  12, downed 26 | corpse pushes 0 {} | downed {}
+  heroes mixed 7               bodies  22, downed 30 | corpse pushes 0 {} | downed {}
+  heroes mixed 8               bodies  15, downed 28 | corpse pushes 0 {} | downed {}
+  heroes mixed 9               bodies   1, downed 24 | corpse pushes 0 {} | downed {}
+  heroes mixed 10              bodies  22, downed 30 | corpse pushes 0 {} | downed {}
+  heroes mixed 11              bodies  11, downed 24 | corpse pushes 0 {} | downed {}
+  heroes mixed 12              bodies  21, downed 35 | corpse pushes 0 {} | downed {}
+dungeon runs (9 lands, the starting party, up to 300 s each):
+  wildwood                     bodies  70, downed  0 | corpse pushes 114 {"thrown body stopped by: room's stone wall":7,"thrown body stopped by: pillar":97,"thrown body stopped by: room's edge":10} | downed {}
+  crypt                        bodies   7, downed  5 | corpse pushes 3 {"thrown body stopped by: room's edge":3} | downed {}
+  sewers                       bodies  12, downed  3 | corpse pushes 3 {"thrown body stopped by: room's stone wall":2,"thrown body stopped by: room's edge":1} | downed {}
+  warren                       bodies  52, downed  0 | corpse pushes 57 {"thrown body stopped by: room's edge":16,"thrown body stopped by: pillar":29,"thrown body stopped by: room's stone wall":9,"thrown body stopped by: crate":3} | downed {}
+  frost                        bodies  14, downed  3 | corpse pushes 3 {"thrown body stopped by: room's edge":2,"thrown body stopped by: room's stone wall":1} | downed {}
+  ember                        bodies   7, downed  5 | corpse pushes 0 {} | downed {}
+  spire                        bodies   1, downed  3 | corpse pushes 0 {} | downed {}
+  dunes                        bodies   3, downed  3 | corpse pushes 1 {"thrown body stopped by: room's edge":1} | downed {}
+  foundry                      bodies   0, downed  3 | corpse pushes 0 {} | downed {}
+staged:
+  walk     a villager walking through 3 bodies and a downed hero: furthest off its line 2.6, 2.50 s to cross, bodies moved 0.0
+  walk0    the same walk with no bodies there: furthest off its line 2.6, 2.50 s to cross
+  boulder  a boulder rolled through 2 bodies and a downed hero: it went to x 719, bodies moved 0.0
+  shots    10 arrows across 2 bodies and a downed hero at a target behind: 10 reached it, 0 stopped short; bodies moved 0.0
+  wall     a wall raised on a body and on a downed hero: they moved 0.0
+  blast    a blast beside 2 bodies and a downed hero: they moved 0.0, knock stored 0
+
+bodies 656, downed 432. Pushes and collisions involving a body: 0  (kept on purpose: thrown body stopped by: pillar 565, thrown body stopped by: room's edge 351, thrown body stopped by: crate 6, poltergeist throw (an ability) 4, thrown body stopped by: room's stone wall 19)

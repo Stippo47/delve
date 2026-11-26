@@ -234,15 +234,18 @@ BFX.boilerBlast = {
   air(ctx, f, k) { if (k < 0.2) glow(ctx, f.x, f.y, f.r * 0.8, '#FFF8E6', 0.9 * (1 - k / 0.2)); steamPuffs(ctx, f.x, f.y, f.r * 0.8, k, 11, 16); steamPuffs(ctx, f.x, f.y, f.r * 0.45, k, 5, 9);
     const n = 10; for (let i = 0; i < n; i++) { const a = i / n * TAU + 0.3, d = f.r * 0.7 * easeOut(k); ctx.save(); ctx.globalAlpha = 1 - k; upright(ctx, f.x + Math.cos(a) * d, f.y + Math.sin(a) * d, () => flame(ctx, 0, 0, 13 * (1 - k) + 3)); ctx.restore(); } },
 };
-BFX.engineWreck = { air(ctx, f, k) { // it comes apart: the dome drops, the cog rolls off, plates and bolts fly
-  const e = easeOut(k), [ux, uy] = up();
+BFX.engineWreck = { ground(ctx, f, k) { // (round 19, lane corpses19: the dome and the cog lie on the floor, under the units; they were over them)
+  const e = easeOut(k);
   ctx.globalAlpha = k < 0.75 ? 1 : 1 - (k - 0.75) / 0.25;
-  if (k < 0.25) glow(ctx, f.x, f.y, 150, '#FFF0B0', 0.9 * (1 - k / 0.25));
   const cx = f.x + Math.cos(f.a + 2.2) * 150 * e, cy = f.y + Math.sin(f.a + 2.2) * 150 * e;
   inked(ctx, () => gear(ctx, cx, cy, 60, 12, 0.15, k * 9), '#3A3F4C');
   inked(ctx, () => circ(ctx, cx, cy, 20), '#22252C');
-  const dx = f.x + Math.cos(f.a - 1.2) * 60 * e, dy = f.y + Math.sin(f.a - 1.2) * 60 * e + uy * 0;
+  const dx = f.x + Math.cos(f.a - 1.2) * 60 * e, dy = f.y + Math.sin(f.a - 1.2) * 60 * e;
   ctx.save(); ctx.translate(dx, dy); ctx.rotate(k * 1.4); inked(ctx, () => circ(ctx, 0, 0, 50), IRON[1]); ctx.fillStyle = IRON[0]; ctx.beginPath(); ctx.ellipse(-14, -16, 22, 12, -0.6, 0, TAU); ctx.fill(); inked(ctx, () => circ(ctx, 0, -6, 15), BRASS[1]); ctx.fillStyle = '#1E2230'; ctx.beginPath(); ctx.arc(0, -6, 10, 0, TAU); ctx.fill(); ctx.restore();
+}, air(ctx, f, k) { // it comes apart: the dome drops, the cog rolls off (ground, above), plates and bolts fly
+  const e = easeOut(k), [ux, uy] = up();
+  ctx.globalAlpha = k < 0.75 ? 1 : 1 - (k - 0.75) / 0.25;
+  if (k < 0.25) glow(ctx, f.x, f.y, 150, '#FFF0B0', 0.9 * (1 - k / 0.25));
   for (let i = 0; i < 9; i++) { const b = i / 9 * TAU + hash(f.seed, i), d = (80 + 130 * hash(i, f.seed)) * e, hop = Math.sin(k01(k * 1.2) * Math.PI) * 50 * hash(i, 3), x = f.x + Math.cos(b) * d + ux * hop, y = f.y + Math.sin(b) * d + uy * hop;
     ctx.save(); ctx.translate(x, y); ctx.rotate(b + k * 8); inked(ctx, () => rrect(ctx, -10, -7, 20, 14, 3), i % 3 ? IRON[1] : BRASS[1]); ctx.restore(); }
   dustPuffs(ctx, f.x, f.y, 150, k, f.seed, 12, '#EEF0F5');

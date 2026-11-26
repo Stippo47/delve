@@ -165,7 +165,7 @@ function drawShadows(ctx, w, tf) {
     if (sx - sr < x0) x0 = sx - sr; if (sy - sr < y0) y0 = sy - sr; if (sx + sr > x1) x1 = sx + sr; if (sy + sr > y1) y1 = sy + sr;
   };
   // (round 13, lane E: def.shadows, a body that isn't round; lane B, bosses3: u.shadowK sizes a code-drawn boss's shadow (0: none: a wurm under the sand))
-  for (const u of w.units) if ((!u.ethereal || u.hiddenIn) && u.shadowK !== 0 && !u.hidden) {
+  for (const u of w.units) if ((!u.ethereal || u.hiddenIn) && u.shadowK !== 0 && !u.hidden && !u.downed /* (round 19, lane corpses19: a body on the floor, drawBodies) */) {
     if (u.def.shadows) { for (const [x, y, r] of u.def.shadows(u)) disc(x, y, r * 1.75, 1); continue; }
     const ft = footOf(u); // a thing that stands (the totem): its shadow at its foot, the size of its foot
     if (ft) disc(u.x + ft.x, u.y + ft.y, ft.r, 1); else disc(u.x, u.y, shadowSize(u) * (u.shadowK ?? 1), 1);
@@ -257,6 +257,8 @@ function drawScene(ctx, w) {
   if (view.pixel && floorCache.exact) ctx.imageSmoothingEnabled = false; // (round 19, lane looks19: the floor at its own pixels)
   ctx.drawImage(fl, -floorCache.pad, -floorCache.pad, fl.width / floorCache.s, fl.height / floorCache.s);
   if (view.pixel) ctx.imageSmoothingEnabled = !NEAREST;
+  const dt = Math.min(0.05, Math.max(0, w.time - (w._lastDraw ?? w.time))); // (round 19, lane corpses19: up here, as the downed are drawn now; w._dt is still set where it was, as the arena's drawing reads it)
+  drawBodies(ctx, w, dt); // (round 19, lane corpses19: the bodies first, on the bare floor, under everything)
   drawDoors(ctx, w);
   for (const r of w.walls) if (r.temp != null) { if (r.kind === 'ice') drawIceWall(ctx, r, w.time); else if (WALL2[r.kind]) WALL2[r.kind](ctx, r, w.time); /* round 15 (lane N): a wall with its own look (the Earth Mage's stone) */ else drawWallThemed(ctx, r, w); } // the rest are in the floor cache
   for (const h of w.hazards) if (!drawHazardPuddle(ctx, h, w.time) && !drawThemeHazard(ctx, h, w.time)) drawHazard(ctx, h, w.time); // puddles.js: the player's puddle style
@@ -278,19 +280,20 @@ function drawScene(ctx, w) {
   for (const r of w.walls) if (r.prop) { const x = r.x + r.w / 2, y = r.y + r.h / 2; prop(ctx, r.prop, x, y, PROP_BOX, { sc: r.w / 48 }); }
   if (w.battle) { // whose side: a thin ring on the floor round each unit's feet (an outline round the body is kept for protection)
     ctx.lineWidth = 2.4;
-    for (const u of w.units) { const c = SIDE_RING[w.battle.side[u.team]]; if (!c || u.dead || u.ethereal || (u.linkTo && u.def.segment)) continue; ctx.strokeStyle = c; ctx.beginPath(); ctx.arc(u.x, u.y, u.vr * 1.12 + 3, 0, TAU); ctx.stroke(); } // (round 13, lane E: one ring for a chain, its head's)
+    for (const u of w.units) { const c = SIDE_RING[w.battle.side[u.team]]; if (!c || u.dead || u.downed /* (round 19, lane corpses19: the downed's, with the bodies) */ || u.ethereal || (u.linkTo && u.def.segment)) continue; ctx.strokeStyle = c; ctx.beginPath(); ctx.arc(u.x, u.y, u.vr * 1.12 + 3, 0, TAU); ctx.stroke(); } // (round 13, lane E: one ring for a chain, its head's)
   }
   for (const t of w.telegraphs) if (t.type === 'ring') drawRing(ctx, t);
-  for (const c of w.corpses) drawCorpse(ctx, c);
   // round 19 (lane sys19, the designer: in the air, "always render in front of everything on the ground until landed"):
   // the downed first, then everything on the floor, then what hovers, then what flies (height.js airTier: a leap, a
   // thrown foe, a pounce's hang, a hop, a swoop, the imps, the spirit eagle, bats), each by its depth on screen
+  // (round 19, lane corpses19: the downed are drawn with the bodies now, drawBodies; still first here for the overlays)
   const order = [...w.units].map((u) => (u._tier = airTier(u), u)).sort((a, b) => (a.downed ? -1 : 0) - (b.downed ? -1 : 0) || a._tier - b._tier || screenDepth(a) - screenDepth(b));
-  const dt = Math.min(0.05, Math.max(0, w.time - (w._lastDraw ?? w.time))); w._lastDraw = w.time; w._dt = dt;
+  w._lastDraw = w.time; w._dt = dt;
   noteHits(w);
   for (const u of order) drawBodyGround(ctx, u, w); // chains, rays and rings that lie under the units (round 9)
   // a rat drawn by hand gets its springy tail; the rat king's art (art round 8) has its own tails knotted in it
-  for (const u of order) { if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.def.art && !u.downed) drawTail(ctx, u, dt); if (!drawFoe(ctx, u, w, dt, RH)) drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawStatusMarks(ctx, u, w.time, w); drawMarks3(ctx, u, w); /* round 15 (lane N): Shackled's irons */ drawBodyFx(ctx, u, w); }
+  for (const u of order) { if (u.downed) continue; /* (round 19, lane corpses19: drawn with the bodies) */ if ((u.kind === 'rat' || u.def.spriteOf === 'rat') && !u.def.art) drawTail(ctx, u, dt); if (!drawFoe(ctx, u, w, dt, RH)) drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawStatusMarks(ctx, u, w.time, w); drawMarks3(ctx, u, w); /* round 15 (lane N): Shackled's irons */ drawBodyFx(ctx, u, w); }
+  for (const c of w.corpses) if (inAir(c)) drawCorpse(ctx, c); // (round 19, lane corpses19: a body still flying from its killing blow, over what's on the floor, till it lands)
   if (w.drawOver) w.drawOver(ctx, w, view); // lane W (convoy.js): the forest's canopy, over the units at the edge (a cached picture)
   for (const p of w.projectiles) projectile(ctx, p, w.time);
   for (const p of w.particles) drawParticle(ctx, p);
@@ -298,7 +301,7 @@ function drawScene(ctx, w) {
   if (w.arenaAir) w.arenaAir(ctx, w); // lane B (bosses2): a boss arena's things in the air (falling fire, snow)
   drawAirFx(ctx, w);
   // a ray a caster holds on its target (Life Drain, round 9): over the target, under the caster
-  for (const f of w.fx) if (f.type === 'beam' && f.over && !f.over.dead && w.units.includes(f.over)) { drawBeam(ctx, f, w.time); drawUnit(ctx, f.over, w); }
+  for (const f of w.fx) if (f.type === 'beam' && f.over && !f.over.dead && !f.over.downed /* (round 19, lane corpses19) */ && w.units.includes(f.over)) { drawBeam(ctx, f, w.time); drawUnit(ctx, f.over, w); }
   drawLocal(ctx, dt);
   // melee swings and blasts are drawn as weapon arcs and bursts by fxkit.js (drawLocal), round 8
   for (const f of w.fx) drawSpikeFx(ctx, f);
@@ -306,6 +309,26 @@ function drawScene(ctx, w) {
   return order;
 }
 const screenDepth = (u) => (view.rot ? -u.x : u.y);
+// Round 19 (lane corpses19; the designer: "Also corpses should not collide or render ontop of anything"). The bodies, on
+// the bare floor before anything else is laid on it, so everything in the room draws over them: the doors, walls raised,
+// puddles and blood (a body lies in them), danger marks and ability zones, shadows, pickups, pillars, boulders, crates,
+// the side rings, the living and every effect. First the dead that have landed (a body still flying from its killing
+// blow is drawn after the units until it lands: inAir), then the downed lying grey, nearest the top first, each with
+// its side's ring under it in a battle, then the ring round them (battle.js, convoy.js: w.drawBodies). A downed hero
+// casts no shadow, as a body on the floor doesn't (drawShadows); its shadow would lie over it now.
+const inAir = (c) => c.z > 0 || c.vz > 0;
+function drawBodies(ctx, w, dt) {
+  for (const c of w.corpses) if (!inAir(c)) drawCorpse(ctx, c);
+  const down = w.units.filter((u) => u.downed && !u.dead);
+  if (!down.length) { if (w.drawBodies) w.drawBodies(ctx, w, view); return; }
+  down.sort((a, b) => screenDepth(a) - screenDepth(b));
+  for (const u of down) {
+    const c = w.battle && SIDE_RING[w.battle.side[u.team]];
+    if (c && !u.ethereal && !(u.linkTo && u.def.segment)) { ctx.lineWidth = 2.4; ctx.strokeStyle = c; ctx.beginPath(); ctx.arc(u.x, u.y, u.vr * 1.12 + 3, 0, TAU); ctx.stroke(); }
+    if (!drawFoe(ctx, u, w, dt, RH)) drawUnit(ctx, u, w); drawStatusFx(ctx, u, w.time); drawStatusMarks(ctx, u, w.time, w); drawMarks3(ctx, u, w); drawBodyFx(ctx, u, w);
+  }
+  if (w.drawBodies) w.drawBodies(ctx, w, view);
+}
 
 // The way in (behind the party) and the doors ahead, each marked with what kind of room it leads to.
 const DOOR_COL = { fight: '#C8553D', hazard: '#E0884B', elite: '#8E3B5B', treasure: '#F2B53A', fountain: '#5DB7E0', decision: '#9B7BD6', boss: '#2B2230' };

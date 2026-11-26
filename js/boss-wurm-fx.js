@@ -360,11 +360,16 @@ BFX.wurmRoar = { air(ctx, f, k, w) { // its roar: sound lines bursting from the 
 } };
 // Dead: each ring of it that was out drops where it is, as itself (the same ring, the same head), tips a little, and
 // sinks into the sand, which heaps over it (round 19: it burst into brown ovals).
+// (round 19, lane corpses19; the designer: "Also corpses should not collide or render ontop of anything": a ring is drawn
+// over the units only while it drops; landed (k 0.2 on) it lies on the floor under them, over its heap as before)
+const wurmBody = (ctx, f, k) => {
+  const [ux, uy] = up(), fall = k01(k / 0.2), h = f.hop * (1 - fall * fall), sink = 1 - 0.92 * sm((k - 0.4) / 0.5), turn = (hash(f.seed, 3) - 0.5) * 0.9 * sm(k / 0.4);
+  figure(ctx, {}, (F) => F.at(f.x + ux * h * 0.9, f.y + uy * h * 0.9, f.a + turn, () => (f.head ? head(F, ctx, f.r, f.jaw * (1 - fall), 0) : segment(F, ctx, f.r, f.last, 0, f.seg)), f.vis * (1 + h / 300) * sink));
+};
 BFX.wurmChunk = {
-  ground(ctx, f, k) { const g = sm((k - 0.3) / 0.4) * (1 - k01((k - 0.85) / 0.15)); if (g > 0.02) heap(ctx, f.x, f.y, f.r * 1.05 * g, f.r * 0.8 * g, f.a, 1); },
+  ground(ctx, f, k) { const g = sm((k - 0.3) / 0.4) * (1 - k01((k - 0.85) / 0.15)); if (g > 0.02) heap(ctx, f.x, f.y, f.r * 1.05 * g, f.r * 0.8 * g, f.a, 1); if (k >= 0.2 && k < 0.92) wurmBody(ctx, f, k); },
   air(ctx, f, k) {
-    const [ux, uy] = up(), fall = k01(k / 0.2), h = f.hop * (1 - fall * fall), sink = 1 - 0.92 * sm((k - 0.4) / 0.5), turn = (hash(f.seed, 3) - 0.5) * 0.9 * sm(k / 0.4);
-    if (k < 0.92) figure(ctx, {}, (F) => F.at(f.x + ux * h * 0.9, f.y + uy * h * 0.9, f.a + turn, () => (f.head ? head(F, ctx, f.r, f.jaw * (1 - fall), 0) : segment(F, ctx, f.r, f.last, 0, f.seg)), f.vis * (1 + h / 300) * sink));
+    if (k < 0.2) wurmBody(ctx, f, k);
     if (k > 0.18) dustRing(ctx, f.x, f.y, f.r * 1.5, k01((k - 0.18) / 0.6), f.seed, 3, 11);
   },
 };
