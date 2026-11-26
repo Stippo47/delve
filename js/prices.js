@@ -49,6 +49,7 @@ export const PRICES = {
   frostShaman: { cost: 5, hp: 0.68, hit: 0.68 },
   troll: { cost: 8, hp: 1.38, hit: 1.38 },
   rockTroll: { cost: 9, hp: 0.94, hit: 0.94 },
+  tumbleTroll: { cost: 8, hp: 1.1, hit: 1.1 }, // (round 19, lane rider19: tools/rider19/winrate.mjs)
   ogre: { cost: 8, hp: 1.6, hit: 1.6 },
   // the Sewers
   rat: { cost: 1, pack: [2, 4], hp: 1.15, hit: 1.12 },

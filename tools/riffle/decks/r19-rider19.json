@@ -1,0 +1,110 @@
+{
+ "title": "Tumble Troll",
+ "topic": "art",
+ "stack": "r19b",
+ "order": 5,
+ "priority": 1,
+ "cards": [
+  {
+   "id": "report",
+   "kind": "report",
+   "rarity": "rare",
+   "title": "Tumble Troll",
+   "text": "A troll that rides its boulder like the farmer on his hay bale, feet working the top.",
+   "why": "You said: \"It would be fun if you made a troll variant that can walk on the boulders like the farmer on hay.\" Each part below is one piece of it with its film. Mark any part that is off.",
+   "videos": [
+    "../../../docs/clips/rider19/cross.mp4"
+   ],
+   "images": [
+    "../../../docs/clips/rider19/art.png"
+   ],
+   "parts": [
+    {
+     "id": "look",
+     "title": "Its look",
+     "text": "Lean and gangly, arms out wide for balance, big hands and feet, long ears, a braid. Troll moss and nose.",
+     "images": [
+      "../../../docs/clips/rider19/art.png"
+     ]
+    },
+    {
+     "id": "ride",
+     "title": "Riding",
+     "text": "It walks the ball along, feet stepping on top. Fast on a straight, wide arcs to turn.",
+     "videos": [
+      "../../../docs/clips/rider19/cross.mp4"
+     ]
+    },
+    {
+     "id": "heroes",
+     "title": "Rolling through you",
+     "text": "The ball throws whoever it hits out of its way; the troll stays up and rolls on, then comes round.",
+     "videos": [
+      "../../../docs/clips/rider19/line.mp4",
+      "../../../docs/clips/rider19/cross.mp4"
+     ]
+    },
+    {
+     "id": "wall",
+     "title": "Hitting a wall",
+     "text": "Into a wall: a crack, a chip off the ball, and it teeters, arms flailing. Your moment to hit it.",
+     "videos": [
+      "../../../docs/clips/rider19/wall.mp4"
+     ]
+    },
+    {
+     "id": "break",
+     "title": "Ball broken",
+     "text": "Break the ball and it falls off, dazed, then fights on foot for good.",
+     "videos": [
+      "../../../docs/clips/rider19/break.mp4"
+     ]
+    },
+    {
+     "id": "fight",
+     "title": "A whole fight",
+     "text": "Nothing staged: three heroes against it in the Warren.",
+     "videos": [
+      "../../../docs/clips/rider19/fight.mp4"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "flee",
+   "kind": "question",
+   "rarity": "uncommon",
+   "title": "After it falls off",
+   "text": "Once its ball breaks it fights on foot for good. Or should it run, or find a new ball?",
+   "why": "Fighting on foot ends the fight cleanly and makes breaking the ball worth it. Running away drags fights out with nothing to do; a new ball would make it the rock troll's twin.",
+   "pick": "Keep: on foot for good.",
+   "videos": [
+    "../../../docs/clips/rider19/break.mp4"
+   ]
+  },
+  {
+   "id": "shots",
+   "kind": "question",
+   "rarity": "uncommon",
+   "title": "Arrows hit the ball",
+   "text": "Shots at the troll hit its ball first. Fighters next to the ball can reach the troll.",
+   "why": "It stands on the ball, so the ball is in the way. Archers end up breaking the ball, fighters do both. The other way: shots fly over the ball and hit the troll.",
+   "pick": "Keep: shots hit the ball.",
+   "videos": [
+    "../../../docs/clips/rider19/break.mp4"
+   ]
+  },
+  {
+   "id": "where",
+   "kind": "question",
+   "rarity": "uncommon",
+   "title": "Where it lives",
+   "text": "The Pit, the Warren's third floor, with the troll and the rock troll. A bit rarer than them.",
+   "why": "It is a troll, so it lives where the trolls do. It is about as strong as a troll in tests.",
+   "pick": "The Pit, a bit rarer than the troll.",
+   "videos": [
+    "../../../docs/clips/rider19/fight.mp4"
+   ]
+  }
+ ]
+}

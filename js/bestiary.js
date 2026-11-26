@@ -108,6 +108,8 @@ export const BEASTS = {
   frostShaman: { fun: 'The orc shaman\'s cousin from up north. Brought the weather with him.',
     habit: 'Frost balls that chill, and ice totems that freeze everyone near them.' },
   iceTotem: { fun: 'A lump of ice with a face carved on it. The face is judging you.', habit: 'Chills everyone near it until it breaks or melts.' },
+  tumbleTroll: { fun: 'Learned to ride the boulder the day it got tired of pushing it. Has not walked anywhere since.', // (round 19, lane rider19)
+    habit: 'Stands up on its boulder and walks it along under its feet, rolling through you and coming round for another pass; it throws whoever it hits. A wall stops it dead and it teeters. Break the boulder and it falls off and fights on foot.' },
   rockTroll: { fun: 'Rolls a boulder everywhere it goes. Has never once wondered why.',
     habit: 'Stands off behind a huge boulder, rears back (a line shows) and bowls it at you: it throws whoever it hits. The boulder rolls home to it by itself. Break the boulder and it has only its fists, until it tears up another.' }, // (round 19, lane troll19b: it said the boulder could not be hurt)
   ratPlague: { fun: 'Green, damp, and coughing. Do not let it sneeze on you.', habit: 'Its bite poisons; it bursts into a cloud of poison when it dies.' },

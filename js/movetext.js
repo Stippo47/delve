@@ -86,6 +86,7 @@ export const ELITE_MOVE = {
   sproutling: "Rooted, it spits three seeds that tangle.",
   sunBlade: "Its pass glances off the first wall into a second leg, and light flies back off the wall where it sticks.",
   troll: "Rips up the floor and hurls a boulder.",
+  tumbleTroll: "Rolls faster and turns sharper.", // (round 19, lane rider19)
   wisp: "Its light hardens the beast it mends.",
   wolf: "Its howl also hastens the pack.",
   wolfRider: "Charges more often, and its goblin gets up elite too.",

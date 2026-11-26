@@ -205,7 +205,7 @@ const BOWL = { speed: 400, speedRock: 420, fric: 0.6, fricSpent: 0.8, keep: [0.7
   fetch: 2.0, knock: 900, knockPow: 0.75, shield: 0.8, stun: 0.2, hitstop: 0.04, dmg: 6, dmgRock: 7, hp: 0.25, hpRock: 0.7, regrow: 7, rockR: 54, charge: 0.15,
   ret: 330, retElite: 400, retSlow: 120, retSpent: 1.3, retAfter: 2.4, retGive: 5, swat: 0.9, swatRest: 1.2 };
 if (globalThis.BOWL19) Object.assign(BOWL, globalThis.BOWL19); // (for the tools: tools/troll19b, a test's own numbers)
-function boulderOf(w, u) {
+export function boulderOf(w, u) { // (round 19, lane rider19: exported: the tumble troll rides one, js/tumble.js)
   if (u.bould === undefined) {
     // (round 19, lane troll19b: "Rock troll should have a huge boulder": BOWL.rockR, 54 against the troll's 41, nearly
     // as wide as the rock troll itself. Its elite's and its major's grow a little less than they do (66 and 80; they
@@ -230,7 +230,7 @@ function boulderOf(w, u) {
 }
 // Broken to pieces (round 19, lane troll19b: its health ran out, boulders.js): it bursts where it is, the way a thrown
 // rock does (fx3.js rockBurst: a white knock, dust rolling out, rock thrown every way), and the troll is bare-handed.
-function breakBoulder(w, u, b) {
+export function breakBoulder(w, u, b) { // (round 19, lane rider19: exported, js/tumble.js)
   const i = w.pillars.indexOf(b); if (i >= 0) w.pillars.splice(i, 1);
   retireBody(b);
   if (u.bould === b) { u.bould = null; u.bThrow = null; u.chg = null; u.bPose = true; u.regrowT = BOWL.regrow; }
@@ -262,7 +262,7 @@ function lineUp(w, u, b, a, left, dt, fwd = 0) { // (round 19, lane troll19b: fw
 // Which way the boulder has to go to get to (tx, ty): straight, or round the walls and rocks (the path finder asked for
 // a body the troll's width at the boulder's place; the boulder itself out of the room while it asks. As the yeti's
 // ballWay, foes10.js).
-function boulderWay(w, u, b, tx, ty) {
+export function boulderWay(w, u, b, tx, ty) { // (round 19, lane rider19: exported, js/tumble.js)
   const nav = b.nav || (b.nav = { path: null, pathT: 0, pathGoal: null });
   nav.x = b.x; nav.y = b.y; nav.r = Math.max(u.r, b.r); nav.def = u.def; // (def: the wagon mode's way round the wagon reads it, convoy.js roundRig)
   const i = w.pillars.indexOf(b); if (i >= 0) w.pillars.splice(i, 1);
@@ -610,16 +610,17 @@ function rollBoulder(w, u, b, dt) {
 // shakes, and a hair of hit-stop. The boulder loses some of its speed to each (BOWL.keep, more to a heavy body) and
 // rolls on.
 // Walls stop a thrown body as they stop any knocked body (sim.js physics, and its wallHit).
-function boulderHits(w, u, b, sp, a) {
-  if (sp < 110) return;
+// (round 19, lane rider19: exported, with o: { full, dmg, stagger, min, side } for the tumble troll's ridden boulder, js/tumble.js)
+export function boulderHits(w, u, b, sp, a, o = null) {
+  if (sp < (o ? o.min : 110)) return;
   if (b.recalled && !u.elite) return; // (rolling home: the plain rock troll's only shoulders people aside, boulders.js)
-  const full = u.def.rock ? BOWL.speedRock : BOWL.speed, k = clamp(0.55 + 0.45 * sp / full, 0.55, 1) * (b.recalled ? 0.6 : 1); // (a slower boulder throws less far: from full at full speed to a little over half)
+  const full = o ? o.full : u.def.rock ? BOWL.speedRock : BOWL.speed, k = clamp(0.55 + 0.45 * sp / full, 0.55, 1) * (b.recalled ? 0.6 : 1); // (a slower boulder throws less far: from full at full speed to a little over half)
   for (const h of opponents(w, u)) {
     if (b.hits.has(h) || dist(h.x, h.y, b.x, b.y) > b.r + h.r + 6) continue;
     b.hits.add(h);
     const to = angleTo(b.x, b.y, h.x, h.y), side = Math.sign(Math.sin(to - a)) || 1, m = Math.max(0.5, h.mass || 1);
     const kx0 = h.kx, ky0 = h.ky, shove = BOWL.knock * k * m ** BOWL.knockPow;
-    hurt(w, h, (u.def.rock ? BOWL.dmgRock : BOWL.dmg) * (b.recalled ? 0.6 : 1) * u.dmgMul, u, { knock: shove, kAngle: a + side * 0.33, heavy: true, stagger: 30 }); // (stagger 50 -> 30: it bowls about twice as often, and three in a row are not to stun for seconds)
+    hurt(w, h, (o ? o.dmg : u.def.rock ? BOWL.dmgRock : BOWL.dmg) * (b.recalled ? 0.6 : 1) * u.dmgMul, u, { knock: shove, kAngle: a + side * (o ? o.side : 0.33), heavy: true, stagger: o ? o.stagger : 30 }); // (round 19, lane rider19: o) // (stagger 50 -> 30: it bowls about twice as often, and three in a row are not to stun for seconds)
     // (a raised shield takes two fifths of any shove, sim.js hurt; of a boulder's it takes a fifth: BOWL.shield)
     { const gx = h.kx - kx0, gy = h.ky - ky0, got = Math.hypot(gx, gy), least = shove * 1.6 / m * BOWL.shield; if (got > 1 && got < least) { h.kx = kx0 + gx / got * least; h.ky = ky0 + gy / got * least; } }
     if (h.ballOf) continue; // (another troll's boulder: hurt, no more)

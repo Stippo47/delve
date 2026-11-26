@@ -218,7 +218,7 @@ export const MAGIC_ZONES = new Set(['holy', 'soul', 'lightning', 'radiance', 'sp
 export const EDGE_WEAPON = { great: 'sharp', blade: 'sharp', thrust: 'sharp', twin: 'sharp', fork: 'sharp', scythe: 'sharp', claw: 'sharp', bite: 'sharp', heavy: 'blunt', palm: 'blunt', spade: 'blunt' }; // (round 19: the Digger's spade, the flat of it)
 export const EDGE_KINDS = {
   sharp: ['knight', 'rogue', 'twinfang', 'wildmane', 'granny', 'cultist', 'huntress', 'ninja', 'marksman', 'pirate', 'wolf', 'mobDagger', 'mobAxe', 'mobPitchfork'],
-  blunt: ['paladin', 'tower', 'berserker', 'slinger', 'minion', 'warlockImp', 'golem', 'gildedGolem', 'ogre', 'troll', 'rockTroll', 'brute', 'rattlerMace',
+  blunt: ['paladin', 'tower', 'berserker', 'slinger', 'minion', 'warlockImp', 'golem', 'gildedGolem', 'ogre', 'troll', 'rockTroll', 'tumbleTroll' /* (round 19, lane rider19) */, 'brute', 'rattlerMace',
     'yeti', 'snowman', 'drummer', 'banditBrute', 'mummy', 'crab', 'crabBlue', 'crabGreen', 'engineHammer', 'greatEngine', 'chainCrawler', 'warDrum', 'boss', 'boneKing', 'frostGiant', 'hobgoblin'],
 };
 export const EDGE_ABILITIES = {

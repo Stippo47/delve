@@ -103,7 +103,7 @@ export function ballSweep(w, b, tx, ty, max = Infinity) {
   return Math.hypot(tx - b.x, ty - b.y);
 }
 // Is this ball its owner's to walk through (in its hands, or still rolling off out of them)? As sim.js ownBoulder.
-const own = (u, b) => b.owner === u && (b.held || b.vx * b.vx + b.vy * b.vy > 10000);
+const own = (u, b) => b.owner === u && (b.held || b.rider === u || b.vx * b.vx + b.vy * b.vy > 10000); // (round 19, lane rider19: b.rider, a tumble troll stands on its own boulder, js/tumble.js)
 
 // Shedding (see 3 above): a body square in a moving ball's way slips round its face at `k` of the ball's speed, never
 // slower than `min` nor faster than `max` (room units a second); `from`..`full`: how squarely in the way it has to be
@@ -223,6 +223,7 @@ export function ballPass(w, dt, slam) {
     b.px = b.x; b.py = b.y;
     b.mvx = b.x - x0; b.mvy = b.y - y0; // how it moved this step (the rod, the room and the bodies; not its own roll)
     bodySync(w, b, dt); // (round 19, lane troll19b: its health, below)
+    if (b.afterPass) b.afterPass(w, b, dt); // (round 19, lane rider19: the tumble troll put back on top of its boulder once everything has moved, js/tumble.js)
   }
 }
 // A body pushed out of the walls and the room's edge once more (sim.js physics: after a rock has thrown it out of
